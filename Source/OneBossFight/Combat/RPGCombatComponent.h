@@ -88,7 +88,7 @@ public:
 	bool IsHitWindowOpen() const { return bHitWindowOpen; }
 
 	UFUNCTION(BlueprintPure, Category = "Combat")
-	bool IsInvulnerable() const { return bInvulnerable; }
+	bool IsInvulnerable() const { return bInvulnerable || bExternalInvulnerable; }
 
 	UFUNCTION(BlueprintPure, Category = "Combat")
 	bool IsCancelWindowOpen() const { return bCancelWindowOpen; }
@@ -131,6 +131,10 @@ public:
 	void SetHitWindow(bool bOpen);
 	void SetComboWindow(bool bOpen);
 	void SetInvulnerable(bool bInvulnerableNow);
+
+	/** Invulnerability owned by a controller (boss entrance, phase transition). Survives state changes. */
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void SetExternalInvulnerable(bool bInvulnerableNow) { bExternalInvulnerable = bInvulnerableNow; }
 	void SetCancelWindow(bool bOpen);
 
 	/** The current action is over (montage finished or fallback timeline done). Returns to Locomotion. */
@@ -145,6 +149,18 @@ public:
 
 	/** Outgoing hit data for the attack being performed; the melee trace stamps location and direction. */
 	FRPGHitInfo BuildOutgoingHit() const;
+
+	/**
+	 * Starts an attack from data that is not part of a weapon (boss attacks). Costs no stamina. Only allowed
+	 * while free to act. Returns true if it started.
+	 */
+	bool StartCustomAttack(const FRPGAttackData& Attack);
+
+	/**
+	 * One-shot area hit around Center for animation-driven shockwaves and slams. Hits each enemy-team combatant
+	 * in range once with the current attack's damage. Returns how many were hit.
+	 */
+	int32 ApplyRadialHit(const FVector& Center, float Radius);
 
 	/** Interrupts the current action and enters Staggered. No effect when dead. */
 	UFUNCTION(BlueprintCallable, Category = "Combat")
@@ -200,6 +216,7 @@ private:
 	bool bHitWindowOpen = false;
 	bool bComboWindowOpen = false;
 	bool bInvulnerable = false;
+	bool bExternalInvulnerable = false;
 	bool bCancelWindowOpen = false;
 
 	FRPGAttackData CurrentAttack;

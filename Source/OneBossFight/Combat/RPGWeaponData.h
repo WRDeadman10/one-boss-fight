@@ -34,6 +34,10 @@ struct FRPGAttackData
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", meta = (ClampMin = "0"))
 	float PoiseDamage = 15.f;
 
+	/** Grabs and some boss attacks ignore the target's block. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
+	bool bUnblockable = false;
+
 	/** Seconds. Used only without a montage. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Fallback Timing", meta = (ClampMin = "0.05"))
 	float FallbackDuration = 0.8f;

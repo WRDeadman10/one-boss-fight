@@ -17,7 +17,12 @@ public class OneBossFight : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"InputCore",
-			"EnhancedInput"
+			"EnhancedInput",
+			"GameplayTags",
+			"AIModule",                // UBrainComponent (base of UStateTreeComponent)
+			"GameplayTasks",
+			"StateTreeModule",         // boss state tree tasks and conditions
+			"GameplayStateTreeModule"  // UStateTreeComponent
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
@@ -26,5 +31,15 @@ public class OneBossFight : ModuleRules
 			"RenderCore", // game/render thread timings for the benchmark
 			"RHI"         // GPU frame time for the benchmark
 		});
+
+		// Authoring helper that builds the boss StateTree asset (editor builds only).
+		if (Target.bBuildEditor)
+		{
+			PrivateDependencyModuleNames.AddRange(new string[]
+			{
+				"UnrealEd",
+				"StateTreeEditorModule"
+			});
+		}
 	}
 }

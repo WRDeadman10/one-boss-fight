@@ -14,3 +14,7 @@
 | KI-010 | Input | Lock-on target switching uses a mouse flick (`SwitchFlickThreshold`, raw delta per frame). Gamepad stick switching is not implemented | Add a dedicated switch action | Open |
 | KI-011 | Content | Paragon `GreystonePlayerCharacter` had a compile error (VR reset node) that made Play-In-Editor show a blocking dialog. The node was deleted in the (git-ignored) pack asset. A fresh Fab download restores it | Delete the node again, or delete the unused BP together with the pack | Workaround applied |
 | KI-012 | Tooling | `Scripts/Editor/pie_combat_smoke.py` needs the editor window in the foreground and the editor started with `-unattended` (otherwise PIE stops on a modal dialog) | Run as documented in the script | Open |
+| KI-013 | Boss | No 3-hit combo and no real lightning: Sevarog has no chained montage and no lightning VFX yet (`Lightning` is a radial hit using `Cast`; combo needs a multi-segment montage) | Add in M5 with VFX | Open |
+| KI-014 | Boss | Boss walks by direct steering without a navmesh, so it can snag on arena pillars | Add NavMeshBoundsVolume and AI MoveTo if it happens in playtests | Open |
+| KI-015 | Boss | Attack ranges, windows and damage are first-pass numbers; hit windows come from scythe tip speed | Tune in playtest | Open |
+| KI-016 | Boss | Phase roar uses `Ultimate_Targeting` as a stand-in animation | Replace with a real roar if one is found | Open |

@@ -81,3 +81,15 @@ void URPGANS_CancelWindow::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequ
 		Combat->SetCancelWindow(false);
 	}
 }
+
+void URPGAN_RadialHit::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
+{
+	Super::Notify(MeshComp, Animation, EventReference);
+
+	const AActor* Owner = MeshComp ? MeshComp->GetOwner() : nullptr;
+	URPGCombatComponent* Combat = Owner ? Owner->FindComponentByClass<URPGCombatComponent>() : nullptr;
+	if (Owner && Combat)
+	{
+		Combat->ApplyRadialHit(Owner->GetActorLocation() + Owner->GetActorForwardVector() * ForwardOffset, Radius);
+	}
+}
