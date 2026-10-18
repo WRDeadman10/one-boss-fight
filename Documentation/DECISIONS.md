@@ -10,6 +10,11 @@
 | 2026-10-18 | Git LFS for `.uasset`, `.umap`, art, audio | Binary assets | Done |
 | 2026-10-18 | Editor MCP: UnrealClaude plugin via node bridge (`localhost:3000`); Blender MCP connected | Lets Claude edit Blueprints, assets, scenes | Done |
 | 2026-10-18 | codex-aider-bridge pipeline waived for this project; Claude writes C++ directly | User decision | Locked |
+| 2026-10-18 | Module headers are included as `"Folder/File.h"`; module root added to include paths in `OneBossFight.Build.cs` | Feature folders (Characters/, Arena/, Benchmark/, Core/) without Public/Private split | Done |
+| 2026-10-18 | `bEnableLegacyInputScales=False` in `DefaultInput.ini` | Legacy scales multiply pitch by a negative factor and flip look direction; we map raw mouse/stick values | Done |
+| 2026-10-18 | Look sign convention: IA_Look Y positive = look up; mouse mapped raw (no Negate) | Pairs with the setting above; `LookSensitivity` tunes feel | Provisional, confirm in playtest |
+| 2026-10-18 | Input assets under `/Game/OneBossFight/Input/` (IA_Move, IA_Look, IA_Jump, IA_Sprint, IMC_Default) | Keyboard/mouse + gamepad, created via Unreal MCP | Done |
+| 2026-10-18 | Benchmark runner (`ARPGBenchmarkRunner`) writes `Saved/Benchmark/<label>_<time>/frames.csv` + `summary.json`; run with `-RPGBenchmark -RPGBenchmarkQuit -RPGBenchmarkLabel=<name>` | Repeatable, comparable frame-time capture | Done |
 
 ## Provisional
 

@@ -8,6 +8,9 @@ public class OneBossFight : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
+		// Headers live in feature folders (Characters/, Arena/, ...) and are included as "Folder/File.h".
+		PublicIncludePaths.Add(ModuleDirectory);
+
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
 			"Core",
@@ -17,6 +20,9 @@ public class OneBossFight : ModuleRules
 			"EnhancedInput"
 		});
 
-		PrivateDependencyModuleNames.AddRange(new string[] { });
+		PrivateDependencyModuleNames.AddRange(new string[]
+		{
+			"Json"
+		});
 	}
 }
