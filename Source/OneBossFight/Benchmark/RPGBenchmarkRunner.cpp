@@ -14,6 +14,8 @@
 #include "HAL/PlatformMemory.h"
 #include "HAL/PlatformMisc.h"
 #include "HAL/PlatformTime.h"
+#include "RHIGlobals.h"
+#include "RenderTimer.h"
 #include "Misc/App.h"
 #include "Misc/CommandLine.h"
 #include "CoreGlobals.h"
@@ -68,8 +70,11 @@ void ARPGBenchmarkRunner::StartBenchmark()
 		ResolvedLabel = LabelOverride;
 	}
 
-	FrameTimesMs.Reset();
-	FrameTimesMs.Reserve(FMath::CeilToInt(DurationSeconds * 600.f));
+	const int32 ExpectedFrames = FMath::CeilToInt(DurationSeconds * 600.f);
+	FrameTimesMs.Reset(ExpectedFrames);
+	GameThreadMs.Reset(ExpectedFrames);
+	RenderThreadMs.Reset(ExpectedFrames);
+	GpuMs.Reset(ExpectedFrames);
 
 	ApplyUncappedFrameRate();
 
@@ -122,6 +127,9 @@ void ARPGBenchmarkRunner::Tick(float DeltaSeconds)
 	if (LastTickTime > 0.0 && Elapsed >= WarmupSeconds)
 	{
 		FrameTimesMs.Add((Now - LastTickTime) * 1000.0);
+		GameThreadMs.Add(FPlatformTime::ToMilliseconds(GGameThreadTime));
+		RenderThreadMs.Add(FPlatformTime::ToMilliseconds(GRenderThreadTime));
+		GpuMs.Add(FPlatformTime::ToMilliseconds(GGPUFrameTime));
 	}
 	LastTickTime = Now;
 
@@ -175,10 +183,11 @@ void ARPGBenchmarkRunner::WriteResults(const FRPGFrameStats& Stats) const
 	// Per-frame times.
 	FString Csv;
 	Csv.Reserve(FrameTimesMs.Num() * 8 + 16);
-	Csv += TEXT("frame,ms\n");
+	Csv += TEXT("frame,ms,game_ms,render_ms,gpu_ms\n");
 	for (int32 Index = 0; Index < FrameTimesMs.Num(); ++Index)
 	{
-		Csv += FString::Printf(TEXT("%d,%.4f\n"), Index, FrameTimesMs[Index]);
+		Csv += FString::Printf(TEXT("%d,%.4f,%.4f,%.4f,%.4f\n"), Index, FrameTimesMs[Index],
+			GameThreadMs[Index], RenderThreadMs[Index], GpuMs[Index]);
 	}
 	FFileHelper::SaveStringToFile(Csv, *FPaths::Combine(Folder, TEXT("frames.csv")));
 
@@ -222,6 +231,17 @@ void ARPGBenchmarkRunner::WriteResults(const FRPGFrameStats& Stats) const
 	Json->SetNumberField(TEXT("max_ms"), Stats.MaxMs);
 	Json->SetNumberField(TEXT("budget_ms"), Stats.BudgetMs);
 	Json->SetNumberField(TEXT("frames_over_budget"), Stats.FramesOverBudget);
+
+	// Thread timings overlap in the render pipeline; compare each against the budget, do not add them.
+	const FRPGFrameStats GameStats = FRPGFrameStats::Compute(GameThreadMs, Stats.BudgetMs);
+	const FRPGFrameStats RenderStats = FRPGFrameStats::Compute(RenderThreadMs, Stats.BudgetMs);
+	const FRPGFrameStats GpuStats = FRPGFrameStats::Compute(GpuMs, Stats.BudgetMs);
+	Json->SetNumberField(TEXT("game_thread_avg_ms"), GameStats.AverageMs);
+	Json->SetNumberField(TEXT("game_thread_p99_ms"), GameStats.P99Ms);
+	Json->SetNumberField(TEXT("render_thread_avg_ms"), RenderStats.AverageMs);
+	Json->SetNumberField(TEXT("render_thread_p99_ms"), RenderStats.P99Ms);
+	Json->SetNumberField(TEXT("gpu_avg_ms"), GpuStats.AverageMs);
+	Json->SetNumberField(TEXT("gpu_p99_ms"), GpuStats.P99Ms);
 	Json->SetNumberField(TEXT("target_fps"), TargetFPS);
 	Json->SetBoolField(TEXT("meets_target"), Stats.MeetsTarget(TargetFPS));
 	Json->SetNumberField(TEXT("used_physical_mb"), static_cast<double>(MemoryStats.UsedPhysical) / (1024.0 * 1024.0));

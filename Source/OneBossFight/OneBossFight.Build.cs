@@ -22,7 +22,9 @@ public class OneBossFight : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
-			"Json"
+			"Json",
+			"RenderCore", // game/render thread timings for the benchmark
+			"RHI"         // GPU frame time for the benchmark
 		});
 	}
 }

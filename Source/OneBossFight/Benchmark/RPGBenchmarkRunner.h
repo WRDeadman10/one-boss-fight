@@ -82,6 +82,13 @@ private:
 	double StartTime = 0.0;
 	double LastTickTime = 0.0;
 	TArray<double> FrameTimesMs;
+
+	// Engine-reported per-frame thread times (ms), sampled alongside the wall-clock frame time.
+	// They overlap in the pipeline, so they identify the bottleneck; they are not summed.
+	TArray<double> GameThreadMs;
+	TArray<double> RenderThreadMs;
+	TArray<double> GpuMs;
+
 	FRPGFrameStats LastStats;
 	FString ResolvedLabel;
 
