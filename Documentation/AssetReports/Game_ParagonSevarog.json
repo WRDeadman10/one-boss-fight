@@ -1,0 +1,1409 @@
+{
+  "root": "/Game/ParagonSevarog",
+  "asset_counts": {
+    "Texture2D": 126,
+    "Material": 61,
+    "MaterialFunction": 53,
+    "VectorFieldStatic": 2,
+    "MaterialParameterCollection": 1,
+    "AnimBlueprint": 1,
+    "Blueprint": 1,
+    "MapBuildDataRegistry": 3,
+    "World": 3,
+    "AnimSequence": 144,
+    "AnimMontage": 3,
+    "AimOffsetBlendSpace1D": 2,
+    "AimOffsetBlendSpace": 1,
+    "BlendSpace": 2,
+    "BlendSpace1D": 5,
+    "ParticleSystem": 36,
+    "Skeleton": 1,
+    "PhysicsAsset": 2,
+    "SkeletalMesh": 4,
+    "StaticMesh": 21,
+    "DialogueVoice": 1,
+    "DialogueWave": 234,
+    "SoundCue": 127,
+    "SoundWave": 234,
+    "TextureCube": 1,
+    "SubUVAnimation": 2
+  },
+  "skeletal_meshes": [
+    {
+      "name": "Sevarog",
+      "size_cm": [
+        207,
+        307,
+        311
+      ],
+      "skeleton": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.Sevarog_Skeleton",
+      "bone_count": 155,
+      "material_slots": 6
+    },
+    {
+      "name": "SevarogChronos",
+      "size_cm": [
+        207,
+        307,
+        311
+      ],
+      "skeleton": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.Sevarog_Skeleton",
+      "bone_count": 155,
+      "material_slots": 6
+    },
+    {
+      "name": "SevarogBloodred",
+      "size_cm": [
+        207,
+        307,
+        311
+      ],
+      "skeleton": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.Sevarog_Skeleton",
+      "bone_count": 155,
+      "material_slots": 6
+    },
+    {
+      "name": "Sevarog_MaskedReaper_GDC",
+      "size_cm": [
+        207,
+        307,
+        311
+      ],
+      "skeleton": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.Sevarog_Skeleton",
+      "bone_count": 155,
+      "material_slots": 6
+    }
+  ],
+  "skeletons": [
+    "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.Sevarog_Skeleton"
+  ],
+  "anim_sequences": [
+    {
+      "name": "Walk_Right",
+      "length_s": 1.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Walk_Left",
+      "length_s": 1.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Walk_Fwd",
+      "length_s": 1.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Walk_Bwd",
+      "length_s": 1.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Victory_Emote",
+      "length_s": 23.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Ultimate_Targeting_poseMSA",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Ultimate_Targeting_pose",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Ultimate_Targeting_MSA",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Ultimate_Targeting_Loop_MSA",
+      "length_s": 2.233,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Ultimate_Targeting_Loop",
+      "length_s": 2.233,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Ultimate_Targeting",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Ultimate_Swing_120fps",
+      "length_s": 2.633,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Turn_Rt_90",
+      "length_s": 1.733,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Turn_Rt_180",
+      "length_s": 2.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Turn_Lt_90",
+      "length_s": 1.733,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Turn_Lt_180",
+      "length_s": 2.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Travel_Mode_Start_MSA",
+      "length_s": 1.2,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Travel_Mode_Start_InPlace_MSA",
+      "length_s": 1.5,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Travel_Mode_Start_InPlace",
+      "length_s": 1.5,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Travel_Mode_Start",
+      "length_s": 1.2,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Travel_Mode_Idle_Hover_Rt",
+      "length_s": 8.9,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Travel_Mode_Idle_Hover_Left",
+      "length_s": 8.9,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Travel_Mode_Idle",
+      "length_s": 8.9,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Travel_Mode_Bwd_Start_MSA",
+      "length_s": 1.2,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Travel_Mode_Bwd_Start",
+      "length_s": 1.2,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing_loop_pose_additive",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Swing_In_Air_120fps",
+      "length_s": 1.833,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing_In_Air",
+      "length_s": 1.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing3_Slow_120fps",
+      "length_s": 1.5,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing3_Slow",
+      "length_s": 1.7,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing3_Return2Idle_Medium",
+      "length_s": 1.267,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing3_Return2Idle_120fps",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing3_Return2Idle",
+      "length_s": 1.233,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing3_Medium",
+      "length_s": 1.133,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing3_FAST_v2",
+      "length_s": 0.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing3_FAST_120fps",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing3_120fps",
+      "length_s": 1.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing2_Slow_120fps",
+      "length_s": 1.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing2_Slow",
+      "length_s": 1.7,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing2_Return2Idle_120fps",
+      "length_s": 2.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing2_Return2Idle",
+      "length_s": 2.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing2_Medium",
+      "length_s": 1.133,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing2_FAST_v2",
+      "length_s": 0.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing2_FAST_120fps",
+      "length_s": 0.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing2_120fps",
+      "length_s": 1.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing1_Slow_120fps",
+      "length_s": 1.5,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing1_Slow",
+      "length_s": 1.7,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing1_Return2Idle_120fps",
+      "length_s": 2.1,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing1_Return2Idle",
+      "length_s": 2.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing1_Medium",
+      "length_s": 1.133,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing1_FAST_v2",
+      "length_s": 0.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing1_FAST_120fps",
+      "length_s": 0.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing1_120fps",
+      "length_s": 1.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Swing1Start_120fps",
+      "length_s": 0.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Subjugation",
+      "length_s": 2.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Stun_Start",
+      "length_s": 1.7,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Stun_Loop",
+      "length_s": 2.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Stun_End",
+      "length_s": 0.733,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Stage_4",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 0.8299999833106995,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Stage_3",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 0.8299999833106995,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Stage_2",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 0.8299999833106995,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Stage_1",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 0.8299999833106995,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Sprint_Rt",
+      "length_s": 4.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Sprint_Lt",
+      "length_s": 4.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Sprint_Fwd_Uphill",
+      "length_s": 4.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Sprint_Fwd_Downhill",
+      "length_s": 4.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Sprint_Fwd_Circle_Rt",
+      "length_s": 4.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Sprint_Fwd_Circle_Lt",
+      "length_s": 4.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Sprint_Fwd",
+      "length_s": 4.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Sprint_Bwd",
+      "length_s": 4.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Sprint",
+      "length_s": 1.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Speedburst",
+      "length_s": 1.267,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Soul_Siphon_Targeting_pose_MSA",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Soul_Siphon_Targeting_pose",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Soul_Siphon_Targeting_MSA",
+      "length_s": 0.367,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Soul_Siphon_Targeting_Loop_MSA",
+      "length_s": 1.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Soul_Siphon_Targeting_Loop",
+      "length_s": 1.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Soul_Siphon_Targeting",
+      "length_s": 0.367,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Soul_Siphon",
+      "length_s": 1.833,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "SelectScreen_Start",
+      "length_s": 3.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Run_Right",
+      "length_s": 1.6,
+      "root_motion": false,
+      "rate_scale": 1.25,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Run_Left",
+      "length_s": 1.6,
+      "root_motion": false,
+      "rate_scale": 1.25,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Run_Fwd",
+      "length_s": 1.6,
+      "root_motion": false,
+      "rate_scale": 1.25,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Run_Bwd",
+      "length_s": 1.6,
+      "root_motion": false,
+      "rate_scale": 1.25,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Recall",
+      "length_s": 8.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "LevelStart",
+      "length_s": 5.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "LaunchPad",
+      "length_s": 2.167,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Knock_back_bwd",
+      "length_s": 2.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Knock_back",
+      "length_s": 2.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Start",
+      "length_s": 0.233,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Recovery_NonAdditive",
+      "length_s": 0.767,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Recovery_MSA",
+      "length_s": 0.767,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Recovery",
+      "length_s": 0.767,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Mid",
+      "length_s": 3.333,
+      "root_motion": false,
+      "rate_scale": 0.6499999761581421,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Landing",
+      "length_s": 3.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Land",
+      "length_s": 0.167,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Fall_Loop",
+      "length_s": 1.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Apex",
+      "length_s": 0.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Right",
+      "length_s": 9.0,
+      "root_motion": false,
+      "rate_scale": 0.8299999833106995,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Left",
+      "length_s": 9.0,
+      "root_motion": false,
+      "rate_scale": 0.8299999833106995,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Fwd_Uphill",
+      "length_s": 9.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Fwd_Pose",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Fwd_Pivot_180",
+      "length_s": 1.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Fwd_Downhill",
+      "length_s": 9.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Fwd_Circle_Rt",
+      "length_s": 9.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Fwd_Circle_Lt",
+      "length_s": 9.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Fwd",
+      "length_s": 9.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Bwd_Pivot_180",
+      "length_s": 1.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Bwd",
+      "length_s": 9.0,
+      "root_motion": false,
+      "rate_scale": 0.8299999833106995,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_additive",
+      "length_s": 8.9,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle",
+      "length_s": 8.9,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Hitreact_Right",
+      "length_s": 1.567,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Hitreact_Left",
+      "length_s": 1.967,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Hitreact_Front",
+      "length_s": 1.767,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Hitreact_Back",
+      "length_s": 1.9,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "FrontEndPose",
+      "length_s": 8.9,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Thriller",
+      "length_s": 7.233,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Pull_MC_T1",
+      "length_s": 9.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Pointing_MC_T3",
+      "length_s": 9.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Clap_T1",
+      "length_s": 6.2,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Boogie",
+      "length_s": 8.167,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Death_front",
+      "length_s": 0.967,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Cast",
+      "length_s": 1.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Bound",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_RC_pose",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_RBC_pose",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_LC_pose",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_LBC_pose",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_CC_pose",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RBU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RBD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RBC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LBU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LBD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LBC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_CU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_CD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_CC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    }
+  ],
+  "anim_montages": [
+    {
+      "name": "Swing2_Medium_Montage",
+      "length_s": 1.133,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    },
+    {
+      "name": "Swing1_Medium_Montage",
+      "length_s": 1.133,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    },
+    {
+      "name": "LevelStart_Montage",
+      "length_s": 5.0,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    }
+  ],
+  "blendspaces": [
+    "JogFwdSlopeLean",
+    "Sevarog_Locomotion_1D",
+    "Sevarog_TravelMode_Locomotion_1D",
+    "Sevarog_TravelMode_Start",
+    "Sevarog_TravelMode_TurnInPlace",
+    "Sevarog_TurnInPlace",
+    "SprintFwdSlopeLean"
+  ],
+  "anim_blueprints": [
+    "Sevarog_AnimBlueprint"
+  ],
+  "niagara_systems": [],
+  "sounds": 361,
+  "core_coverage": {
+    "idle": [
+      "Idle",
+      "Idle_AO_CC",
+      "Idle_AO_CD",
+      "Idle_AO_CU",
+      "Idle_AO_LBC",
+      "Idle_AO_LBD",
+      "Idle_AO_LBU",
+      "Idle_AO_LC",
+      "Idle_AO_LD",
+      "Idle_AO_LU",
+      "Idle_AO_RBC",
+      "Idle_AO_RBD",
+      "Idle_AO_RBU",
+      "Idle_AO_RC",
+      "Idle_AO_RD",
+      "Idle_AO_RU",
+      "Idle_CC_pose",
+      "Idle_LBC_pose",
+      "Idle_LC_pose",
+      "Idle_RBC_pose",
+      "Idle_RC_pose",
+      "Idle_additive",
+      "Swing1_Return2Idle",
+      "Swing1_Return2Idle_120fps",
+      "Swing2_Return2Idle",
+      "Swing2_Return2Idle_120fps",
+      "Swing3_Return2Idle",
+      "Swing3_Return2Idle_120fps",
+      "Swing3_Return2Idle_Medium",
+      "Travel_Mode_Idle",
+      "Travel_Mode_Idle_Hover_Left",
+      "Travel_Mode_Idle_Hover_Rt"
+    ],
+    "locomotion": [
+      "Jog_Bwd",
+      "Jog_Bwd_Pivot_180",
+      "Jog_Fwd",
+      "Jog_Fwd_Circle_Lt",
+      "Jog_Fwd_Circle_Rt",
+      "Jog_Fwd_Downhill",
+      "Jog_Fwd_Pivot_180",
+      "Jog_Fwd_Pose",
+      "Jog_Fwd_Uphill",
+      "Jog_Left",
+      "Jog_Right",
+      "Run_Bwd",
+      "Run_Fwd",
+      "Run_Left",
+      "Run_Right",
+      "Sprint",
+      "Sprint_Bwd",
+      "Sprint_Fwd",
+      "Sprint_Fwd_Circle_Lt",
+      "Sprint_Fwd_Circle_Rt",
+      "Sprint_Fwd_Downhill",
+      "Sprint_Fwd_Uphill",
+      "Sprint_Lt",
+      "Sprint_Rt",
+      "Walk_Bwd",
+      "Walk_Fwd",
+      "Walk_Left",
+      "Walk_Right"
+    ],
+    "dodge": [],
+    "attack": [
+      "Swing1Start_120fps",
+      "Swing1_120fps",
+      "Swing1_FAST_120fps",
+      "Swing1_FAST_v2",
+      "Swing1_Medium",
+      "Swing1_Medium_Montage",
+      "Swing1_Return2Idle",
+      "Swing1_Return2Idle_120fps",
+      "Swing1_Slow",
+      "Swing1_Slow_120fps",
+      "Swing2_120fps",
+      "Swing2_FAST_120fps",
+      "Swing2_FAST_v2",
+      "Swing2_Medium",
+      "Swing2_Medium_Montage",
+      "Swing2_Return2Idle",
+      "Swing2_Return2Idle_120fps",
+      "Swing2_Slow",
+      "Swing2_Slow_120fps",
+      "Swing3_120fps",
+      "Swing3_FAST_120fps",
+      "Swing3_FAST_v2",
+      "Swing3_Medium",
+      "Swing3_Return2Idle",
+      "Swing3_Return2Idle_120fps",
+      "Swing3_Return2Idle_Medium",
+      "Swing3_Slow",
+      "Swing3_Slow_120fps",
+      "Swing_In_Air",
+      "Swing_In_Air_120fps",
+      "Swing_loop_pose_additive",
+      "Ultimate_Swing_120fps"
+    ],
+    "ranged_or_special": [
+      "Cast",
+      "Ultimate_Swing_120fps",
+      "Ultimate_Targeting",
+      "Ultimate_Targeting_Loop",
+      "Ultimate_Targeting_Loop_MSA",
+      "Ultimate_Targeting_MSA",
+      "Ultimate_Targeting_pose",
+      "Ultimate_Targeting_poseMSA"
+    ],
+    "hit_react": [
+      "Hitreact_Back",
+      "Hitreact_Front",
+      "Hitreact_Left",
+      "Hitreact_Right",
+      "Knock_back",
+      "Knock_back_bwd",
+      "Stun_End",
+      "Stun_Loop",
+      "Stun_Start"
+    ],
+    "death": [
+      "Death_front"
+    ],
+    "block": [],
+    "intro_or_transition": [
+      "Emote_Boogie",
+      "Emote_Clap_T1",
+      "Emote_Pointing_MC_T3",
+      "Emote_Pull_MC_T1",
+      "Emote_Thriller",
+      "Victory_Emote"
+    ]
+  },
+  "root_motion_sequences": []
+}

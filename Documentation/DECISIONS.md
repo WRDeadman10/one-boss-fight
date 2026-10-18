@@ -25,6 +25,27 @@
 | Toolchain | Visual Studio 2026 (18.x), MSVC 14.51, Windows SDK 10.0.26100. UE 5.5 prefers MSVC 14.38 and warns "not a preferred version". M0 module compiled with 0 errors. Revisit if a later build fails: install MSVC 14.38 (17.8) from the VS Installer. |
 | Target PC | RTX 2060 Super 8 GB. CPU, RAM, driver to be recorded at first baseline (M1). |
 
+## M2 asset inspection (2026-10-18, reports in `Documentation/AssetReports/`)
+
+| Pack | Height cm | Skeleton bones | Anims | Fits |
+|---|---|---|---|---|
+| Greystone | ~206 | 180 | 154 seq, 4 montages | Player: A/B/C/D light chain with Fast/Med/Slow + recovery, Deflect (parry), jump set, hit react, stun, death. No dodge, no block idle. |
+| Steel | ~355 (needs scaling) | 178 | 186 seq, 5 montages | Shield block set, guard break, dash with root motion (Test_FullDash). Oversized. |
+| Grux | ~222-256 | 176 | 108 seq, 6 montages | Boss: PrimaryAttack LA/RA/LB/RB, FourStrikes combo montage, Stampede, Ultimate_Roar, LevelStart. Only a stun idle. |
+| Sevarog | ~311 | 155 | 144 seq, 3 montages | Boss: Swing1-3 each Fast/Medium/Slow with Return2Idle, Ultimate_Swing, Swing_In_Air, Cast, Stun start/loop/end, LevelStart, knockback. One death. |
+
+All four use their own non-Mannequin skeleton, in-place animation (root motion only on 2 Steel clips), and no dodge-roll. Provisional picks: **player Greystone, boss Sevarog** (Grux is the fallback). No retargeting is needed to run each character with its own AnimBP; one is needed only to borrow animations across skeletons (e.g. a dash or roll). The inspection script found no anim notifies; treat that as unconfirmed until viewed in the editor.
+
+## M2 visual proof (2026-10-18)
+
+`L_AssetProof` (built by `Scripts/Editor/build_asset_proof_map.py`) plays 12 Greystone and 12 Sevarog animations in a row, each on its own skeleton. Screenshots in `Documentation/AssetProof/`.
+
+- Confirmed visually: Greystone wields a **sword and a shield** (Deflect raises the shield: usable as the parry/guard animation). Light A to D attack poses play on the Greystone mesh. Sevarog plays Swing 2/3, Ultimate Swing (hammer raised), Cast, Hit Front, Stun Loop, Death (collapsing) and Level Start (intro), all on the Sevarog mesh with correct proportions (about 3.1 m).
+- Not yet viewed: Greystone Death/Hit/Jump and Sevarog Idle/Jog/Swing In Air (they are in the map; run it to check).
+- Both characters work with their own skeleton and no retargeting. Confirmed gaps: **dodge roll** (neither pack), a guard-idle for Greystone, a boss phase-transition roar (Sevarog), a boss lunge (use Swing_In_Air or Speedburst, to be checked).
+- Authoring note: single-node animation persists only through `AnimationData.AnimToPlay`; `play_animation` is runtime-only. The editor skips animating skeletal meshes unless `bUpdateAnimationInEditor` is set, and the viewport throttles when the editor is not the foreground window (captures then show stale frames).
+- The Paragon `*PlayerCharacter` Blueprints log compile errors (missing VR function). They are unused; delete them with the unused packs.
+
 ## Open
 
 - Boss concept (dragon? `CuteDragon.blend` exists in project root).

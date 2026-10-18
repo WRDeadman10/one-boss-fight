@@ -77,3 +77,8 @@ DerivedDataCache/*
 # Blender backups
 *.blend1
 *.blend2
+
+# Third-party store assets (Fab/Paragon): large and license-restricted. Re-download from Fab; see Documentation/ASSET_LICENSES.md.
+Content/Paragon*/
+# Plugin-generated script history
+Content/UnrealClaude/
