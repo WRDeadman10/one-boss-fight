@@ -27,14 +27,14 @@ SLOT = "FullBody"  # Sevarog's AnimBP has a FullBody slot node after the locomot
 TIP_BONE = "root_weapon_end_r"
 BASE_BONE = "weapon_r"
 
-# name, sequence, hit-window mode ("motion" | "none"), radial (radius, forward offset, time fraction or None=peak) or None
+# name, sequence, hit-window mode ("motion" | "none"), radial (radius, forward offset, time fraction or None=peak, effect asset, sound asset) or None
 MONTAGES = [
     ("AM_Sevarog_Sweep", "Swing1_Medium", "motion", None),
     ("AM_Sevarog_Backhand", "Swing2_Medium", "motion", None),
     ("AM_Sevarog_Overhead", "Swing3_Medium", "motion", None),
     ("AM_Sevarog_Lunge", "Swing_In_Air", "motion", None),
-    ("AM_Sevarog_Shockwave", "Ultimate_Swing_120fps", "none", (500.0, 200.0, None)),
-    ("AM_Sevarog_Lightning", "Cast", "none", (350.0, 600.0, 0.5)),
+    ("AM_Sevarog_Shockwave", "Ultimate_Swing_120fps", "none", (500.0, 200.0, None, "/Game/ParagonSevarog/FX/Particles/Abilities/Ultimate/FX/P_UltMeshArc_Expanding", "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Ability_Ultimate")),
+    ("AM_Sevarog_Lightning", "Cast", "none", (350.0, 600.0, 0.5, "/Game/ParagonSevarog/FX/Particles/Abilities/Subjugate/FX/P_Sevarog_Subjugate_Blast", "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Ability_Q")),
     ("AM_Sevarog_Entrance", "LevelStart", "none", None),
     ("AM_Sevarog_PhaseRoar", "Ultimate_Targeting", "none", None),
     ("AM_Sevarog_HitReact", "Hitreact_Front", "none", None),
@@ -149,7 +149,7 @@ def build_montage(name, sequence_name, mode, radial):
         detail = "hit window %.2f-%.2fs" % (start, end)
 
     if radial is not None:
-        radius, forward, fraction = radial
+        radius, forward, fraction, effect_path, sound_path = radial
         if fraction is not None:
             when = length * fraction
         else:
@@ -161,6 +161,13 @@ def build_montage(name, sequence_name, mode, radial):
         notify = unreal.AnimationLibrary.add_animation_notify_event(montage, track, when, unreal.RPGAN_RadialHit)
         notify.set_editor_property("radius", radius)
         notify.set_editor_property("forward_offset", forward)
+        notify.set_editor_property("effect_ground_drop", 155.0)
+        effect = unreal.load_asset(effect_path)
+        sound = unreal.load_asset(sound_path)
+        if effect:
+            notify.set_editor_property("effect", effect)
+        if sound:
+            notify.set_editor_property("sound", sound)
         detail += " radial %.0f cm at %.2fs" % (radius, when)
 
     unreal.EditorAssetLibrary.save_loaded_asset(montage)

@@ -7,6 +7,7 @@
 #include "Combat/RPGAttributeComponent.h"
 #include "Combat/RPGCombatComponent.h"
 #include "Combat/RPGTargetLockComponent.h"
+#include "Combat/RPGWeaponData.h"
 #include "Components/CapsuleComponent.h"
 #include "Core/RPGEncounterSubsystem.h"
 #include "EnhancedInputComponent.h"
@@ -48,6 +49,12 @@ void ARPGPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	GetAttributes()->OnStaminaDepleted.AddUniqueDynamic(this, &ARPGPlayerCharacter::HandleStaminaDepleted);
+
+	if (Weapons.Num() > 0 && Weapons[0])
+	{
+		WeaponIndex = 0;
+		GetCombat()->EquipWeapon(Weapons[0]);
+	}
 
 	if (URPGEncounterSubsystem* Encounter = GetWorld()->GetSubsystem<URPGEncounterSubsystem>())
 	{
@@ -143,6 +150,10 @@ void ARPGPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	{
 		EnhancedInput->BindAction(LockOnAction, ETriggerEvent::Started, this, &ARPGPlayerCharacter::ToggleLockOn);
 	}
+	if (SwitchWeaponAction)
+	{
+		EnhancedInput->BindAction(SwitchWeaponAction, ETriggerEvent::Started, this, &ARPGPlayerCharacter::SwitchWeapon);
+	}
 }
 
 bool ARPGPlayerCharacter::CanJumpInternal_Implementation() const
@@ -203,6 +214,37 @@ void ARPGPlayerCharacter::ToggleLockOn()
 	TargetLock->ToggleLock();
 }
 
+void ARPGPlayerCharacter::SetWeapons(const TArray<TObjectPtr<URPGWeaponData>>& NewWeapons)
+{
+	Weapons = NewWeapons;
+	WeaponIndex = 0;
+	if (Weapons.Num() > 0 && Weapons[0])
+	{
+		GetCombat()->EquipWeapon(Weapons[0]);
+	}
+}
+
+void ARPGPlayerCharacter::SwitchWeapon()
+{
+	CycleWeapon();
+}
+
+bool ARPGPlayerCharacter::CycleWeapon()
+{
+	if (Weapons.Num() < 2)
+	{
+		return false;
+	}
+
+	const int32 Next = (WeaponIndex + 1) % Weapons.Num();
+	if (Weapons[Next] && GetCombat()->EquipWeapon(Weapons[Next]))
+	{
+		WeaponIndex = Next;
+		return true;
+	}
+	return false;
+}
+
 void ARPGPlayerCharacter::StartSprint()
 {
 	if (GetAttributes()->GetStamina() <= 0.f)
@@ -235,6 +277,12 @@ void ARPGPlayerCharacter::HandleDeath()
 void ARPGPlayerCharacter::ResetCombatant()
 {
 	Super::ResetCombatant();
+	// A retry starts with the first weapon, as a fresh run would.
+	if (Weapons.Num() > 0 && Weapons[0])
+	{
+		WeaponIndex = 0;
+		GetCombat()->EquipWeapon(Weapons[0]);
+	}
 	StopSprint();
 	TargetLock->ClearTarget();
 }

@@ -9,7 +9,7 @@
 | KI-006 | Content | Player used the engine tutorial mannequin as a placeholder | Replaced by Greystone in M3 | Closed (M3) |
 | KI-002 | Build | ~68 C4996 deprecation warnings from engine headers (UE 5.5 API deprecations) | Ignore; not project code | Open |
 | KI-007 | Animation | No dodge animation exists in any chosen pack. Dodge runs as a code-driven dash with timed i-frames (no montage); the character slides while the locomotion pose plays | Retarget or author a roll (M3 follow-up) | Open |
-| KI-008 | Animation | Heavy attack uses `Attack_RMB`, a 3 s ability with a long wind-up; it feels too slow for a heavy swing. Light combo montages are 0.8-1.9 s | Pick another heavy source (`Attack_*_Slow`) or raise `PlayRate` in `DA_Weapon_GreystoneSword` | Open |
+| KI-008 | Animation | Heavy attack used the 3 s `Attack_RMB` | Heavy now uses `Attack_*_Slow` (0.8 s) | Closed (M5) |
 | KI-009 | Animation | Greystone's own AnimBP drives attacks through its Paragon character Blueprint (cast fails on our character). Montages play only through its `UpperBody` slot, and the whole body is used only while the animation's `FullBody` curve is active and the character is not accelerating | Own AnimBP in the polish milestone | Open |
 | KI-010 | Input | Lock-on target switching uses a mouse flick (`SwitchFlickThreshold`, raw delta per frame). Gamepad stick switching is not implemented | Add a dedicated switch action | Open |
 | KI-011 | Content | Paragon `GreystonePlayerCharacter` had a compile error (VR reset node) that made Play-In-Editor show a blocking dialog. The node was deleted in the (git-ignored) pack asset. A fresh Fab download restores it | Delete the node again, or delete the unused BP together with the pack | Workaround applied |
@@ -18,3 +18,6 @@
 | KI-014 | Boss | Boss walks by direct steering without a navmesh, so it can snag on arena pillars | Add NavMeshBoundsVolume and AI MoveTo if it happens in playtests | Open |
 | KI-015 | Boss | Attack ranges, windows and damage are first-pass numbers; hit windows come from scythe tip speed | Tune in playtest | Open |
 | KI-016 | Boss | Phase roar uses `Ultimate_Targeting` as a stand-in animation | Replace with a real roar if one is found | Open |
+| KI-017 | Audio | The packs have no weapon impact, swing whoosh, footstep, boss telegraph or music assets. Only character voice (efforts, pain, death) is wired | Needs audio assets, see `Documentation/M5_ASSET_CHECKLIST.md` | Open |
+| KI-018 | VFX | All effects are Paragon Cascade particle systems (Cascade is deprecated in UE 5). Lightning is a placeholder blast. Cost at 120 FPS is not measured | Niagara replacements and a measurement in M6 | Open |
+| KI-019 | Art | Arena is still the grey greybox; no licensed modular kit, materials, baked lighting or fog yet | Needs a kit you choose, see the checklist | Open |

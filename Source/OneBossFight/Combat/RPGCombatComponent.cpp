@@ -5,10 +5,14 @@
 #include "Animation/AnimMontage.h"
 #include "Characters/RPGCharacterBase.h"
 #include "Combat/RPGAttributeComponent.h"
+#include "Combat/RPGCombatFeedbackData.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/OverlapResult.h"
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
+#include "Sound/SoundBase.h"
 
 URPGCombatComponent::URPGCombatComponent()
 {
@@ -20,6 +24,12 @@ void URPGCombatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	GetAttributes();
+}
+
+void URPGCombatComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	EndHitStop();
+	Super::EndPlay(EndPlayReason);
 }
 
 URPGAttributeComponent* URPGCombatComponent::GetAttributes()
@@ -95,6 +105,10 @@ void URPGCombatComponent::SetHitWindow(bool bOpen)
 			return;
 		}
 		bHitWindowOpen = true;
+		if (Weapon && GetOwner())
+		{
+			PlaySoundAt(Weapon->SwingSound, GetOwner()->GetActorLocation());
+		}
 		OnHitWindowChanged.Broadcast(true);
 		return;
 	}
@@ -340,6 +354,10 @@ bool URPGCombatComponent::StartDodge(const FVector& Direction)
 
 	StopActionMontage();
 	SetState(ERPGCombatState::Dodging);
+	if (Feedback && GetOwner())
+	{
+		PlaySoundAt(Feedback->DodgeSound, GetOwner()->GetActorLocation());
+	}
 
 	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
 	{
@@ -466,6 +484,10 @@ void URPGCombatComponent::Die()
 
 	StopActionMontage();
 	SetState(ERPGCombatState::Dead);
+	if (Feedback && GetOwner())
+	{
+		PlaySoundAt(Feedback->DeathSound, GetOwner()->GetActorLocation());
+	}
 
 	if (URPGAttributeComponent* Attributes = GetAttributes())
 	{
@@ -485,6 +507,7 @@ void URPGCombatComponent::ResetCombat()
 	ComboIndex = 0;
 	CurrentAttack = FRPGAttackData();
 
+	EndHitStop();
 	StopActionMontage();
 	if (const ACharacter* Character = Cast<ACharacter>(GetOwner()))
 	{
@@ -560,8 +583,125 @@ FRPGHitResult URPGCombatComponent::ProcessIncomingHit(const FRPGHitInfo& Hit)
 		}
 	}
 
+	// Feedback: what the victim sounds like, then what the attacker's weapon does at the impact point.
+	const FVector Where = Hit.HitLocation.IsNearlyZero() ? GetOwner()->GetActorLocation() : Hit.HitLocation;
+	if (Result.bBlocked)
+	{
+		if (Feedback)
+		{
+			PlaySoundAt(Feedback->BlockSound, Where);
+			SpawnEffectAt(Feedback->BlockEffect, Where, (-Hit.HitDirection).Rotation());
+		}
+	}
+	else
+	{
+		if (Feedback && !Result.bKilled)
+		{
+			PlaySoundAt(Result.bPoiseBroken && Feedback->HeavyPainSound ? Feedback->HeavyPainSound.Get() : Feedback->PainSound.Get(), Where);
+		}
+		if (Hit.Instigator)
+		{
+			if (URPGCombatComponent* Attacker = Hit.Instigator->FindComponentByClass<URPGCombatComponent>())
+			{
+				Attacker->HandleDealtHit(Hit, Result, GetOwner());
+			}
+		}
+	}
+
 	OnHitReceived.Broadcast(Hit, Result);
 	return Result;
+}
+
+void URPGCombatComponent::PlaySoundAt(USoundBase* Sound, const FVector& Location) const
+{
+	if (Sound && GetWorld())
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound, Location);
+	}
+}
+
+void URPGCombatComponent::SpawnEffectAt(UParticleSystem* Effect, const FVector& Location, const FRotator& Rotation) const
+{
+	if (Effect && GetWorld())
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Effect, Location, Rotation, /*bAutoDestroy=*/true);
+	}
+}
+
+void URPGCombatComponent::HandleDealtHit(const FRPGHitInfo& Hit, const FRPGHitResult& Result, AActor* Victim)
+{
+	if (!Weapon)
+	{
+		return;
+	}
+	PlaySoundAt(Weapon->ImpactSound, Hit.HitLocation);
+	SpawnEffectAt(Weapon->ImpactEffect, Hit.HitLocation, (-Hit.HitDirection).Rotation());
+	ApplyHitStop(Weapon->HitStopSeconds, Victim);
+}
+
+void URPGCombatComponent::ApplyHitStop(float RealSeconds, AActor* Victim)
+{
+	if (RealSeconds <= 0.f || !GetOwner())
+	{
+		return;
+	}
+
+	// Slow only the two fighters, not the world, for a short real-time moment.
+	EndHitStop();
+	HitStopActors.Add(GetOwner());
+	if (Victim)
+	{
+		HitStopActors.Add(Victim);
+	}
+	for (const TWeakObjectPtr<AActor>& Actor : HitStopActors)
+	{
+		if (Actor.IsValid())
+		{
+			Actor->CustomTimeDilation = HitStopTimeDilation;
+		}
+	}
+	HitStopTicker = FTSTicker::GetCoreTicker().AddTicker(
+		FTickerDelegate::CreateUObject(this, &URPGCombatComponent::OnHitStopTick), RealSeconds);
+}
+
+bool URPGCombatComponent::OnHitStopTick(float DeltaTime)
+{
+	HitStopTicker.Reset();
+	EndHitStop();
+	return false;
+}
+
+void URPGCombatComponent::EndHitStop()
+{
+	if (HitStopTicker.IsValid())
+	{
+		FTSTicker::GetCoreTicker().RemoveTicker(HitStopTicker);
+		HitStopTicker.Reset();
+	}
+	for (const TWeakObjectPtr<AActor>& Actor : HitStopActors)
+	{
+		if (Actor.IsValid())
+		{
+			Actor->CustomTimeDilation = 1.f;
+		}
+	}
+	HitStopActors.Reset();
+}
+
+bool URPGCombatComponent::EquipWeapon(URPGWeaponData* NewWeapon)
+{
+	const bool bFree = State == ERPGCombatState::Locomotion || State == ERPGCombatState::Blocking;
+	if (!NewWeapon || NewWeapon == Weapon || !bFree)
+	{
+		return false;
+	}
+
+	Weapon = NewWeapon;
+	ComboIndex = 0;
+	CurrentAttack = FRPGAttackData();
+	BufferedAction = ERPGBufferedAction::None;
+	OnWeaponChanged.Broadcast(NewWeapon);
+	return true;
 }
 
 FRPGHitInfo URPGCombatComponent::BuildOutgoingHit() const

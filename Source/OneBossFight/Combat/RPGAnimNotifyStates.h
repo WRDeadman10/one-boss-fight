@@ -8,6 +8,8 @@
 #include "RPGAnimNotifyStates.generated.h"
 
 class URPGCombatComponent;
+class UParticleSystem;
+class USoundBase;
 
 /** Shared plumbing: finds the owner's combat component. Does nothing in editor previews that have none. */
 UCLASS(Abstract)
@@ -80,6 +82,17 @@ public:
 	/** Distance in front of the attacker (negative = behind). Zero centers on the attacker. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radial Hit")
 	float ForwardOffset = 0.f;
+
+	/** Spawned at the center of the hit, on the ground. Optional. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radial Hit")
+	TObjectPtr<UParticleSystem> Effect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radial Hit")
+	TObjectPtr<USoundBase> Sound;
+
+	/** Lowers the effect from the actor origin to the floor (half the capsule height is typical). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radial Hit")
+	float EffectGroundDrop = 0.f;
 
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 	virtual FString GetNotifyName_Implementation() const override { return TEXT("RPG Radial Hit"); }

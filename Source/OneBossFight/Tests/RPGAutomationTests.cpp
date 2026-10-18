@@ -15,6 +15,7 @@
 #include "Characters/RPGTrainingDummy.h"
 #include "Combat/RPGAttributeComponent.h"
 #include "Combat/RPGCombatComponent.h"
+#include "Combat/RPGCombatFeedbackData.h"
 #include "Combat/RPGMeleeTraceComponent.h"
 #include "Combat/RPGTargetLockComponent.h"
 #include "Combat/RPGWeaponData.h"
@@ -1164,6 +1165,121 @@ bool FRPGBossStateTreeMirrorTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+// ---------------------------------------------------------------------------------------------
+// Weapons and feedback
+// ---------------------------------------------------------------------------------------------
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGWeaponSwitchTest, "OneBossFight.Weapons.EquipAndCycle",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGWeaponSwitchTest::RunTest(const FString& Parameters)
+{
+	RPGTests::FScopedTestWorld Scope;
+	ARPGPlayerCharacter* Player = RPGTests::SpawnCombatant<ARPGPlayerCharacter>(Scope.World, FVector(0.f, 0.f, 100.f));
+	if (!TestNotNull(TEXT("player"), Player))
+	{
+		return false;
+	}
+	URPGCombatComponent* Combat = Player->GetCombat();
+
+	// Three weapons that differ only in data.
+	URPGWeaponData* Sword = NewObject<URPGWeaponData>(GetTransientPackage());
+	Sword->LightCombo.SetNum(4);
+	Sword->LightCombo[0].Damage = 28.f;
+	URPGWeaponData* Quick = NewObject<URPGWeaponData>(GetTransientPackage());
+	Quick->LightCombo.SetNum(5);
+	Quick->LightCombo[0].Damage = 14.f;
+	Quick->LightCombo[0].StaminaCost = 10.f;
+	URPGWeaponData* Great = NewObject<URPGWeaponData>(GetTransientPackage());
+	Great->LightCombo.SetNum(2);
+	Great->LightCombo[0].Damage = 60.f;
+	Great->LightCombo[0].StaminaCost = 30.f;
+
+	TArray<TObjectPtr<URPGWeaponData>> List;
+	List.Add(Sword);
+	List.Add(Quick);
+	List.Add(Great);
+	Player->SetWeapons(List);
+	TestTrue(TEXT("first weapon equipped"), Combat->Weapon == Sword);
+
+	// The weapon decides the attack: cost and damage come from the asset.
+	TestTrue(TEXT("attack with the sword"), Combat->RequestLightAttack());
+	TestEqual(TEXT("sword damage"), Combat->GetCurrentAttack().Damage, 28.f);
+
+	// No swapping mid-attack.
+	TestFalse(TEXT("cycle refused while attacking"), Player->CycleWeapon());
+	TestTrue(TEXT("still the sword"), Combat->Weapon == Sword);
+
+	Combat->EndCurrentAction();
+	TestTrue(TEXT("cycle to the quick blade"), Player->CycleWeapon());
+	TestTrue(TEXT("quick blade equipped"), Combat->Weapon == Quick);
+	TestTrue(TEXT("attack with the quick blade"), Combat->RequestLightAttack());
+	TestEqual(TEXT("quick blade damage"), Combat->GetCurrentAttack().Damage, 14.f);
+
+	Combat->EndCurrentAction();
+	TestTrue(TEXT("cycle to the great blade"), Player->CycleWeapon());
+	TestTrue(TEXT("great blade equipped"), Combat->Weapon == Great);
+	TestTrue(TEXT("cycle wraps to the sword"), Player->CycleWeapon());
+	TestEqual(TEXT("index wrapped"), Player->GetWeaponIndex(), 0);
+
+	// A single weapon cannot cycle; equipping the current weapon is not a change.
+	TestFalse(TEXT("equipping the same weapon"), Combat->EquipWeapon(Sword));
+	TestFalse(TEXT("equipping nothing"), Combat->EquipWeapon(nullptr));
+
+	// Reset returns to the first weapon.
+	Player->CycleWeapon();
+	Player->ResetCombatant();
+	TestTrue(TEXT("reset re-equips the first weapon"), Combat->Weapon == Sword);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGHitStopFeedbackTest, "OneBossFight.Weapons.FeedbackAndHitStop",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGHitStopFeedbackTest::RunTest(const FString& Parameters)
+{
+	RPGTests::FScopedTestWorld Scope;
+	ARPGPlayerCharacter* Attacker = RPGTests::SpawnCombatant<ARPGPlayerCharacter>(Scope.World, FVector(0.f, 0.f, 100.f));
+	ARPGTrainingDummy* Target = RPGTests::SpawnCombatant<ARPGTrainingDummy>(Scope.World, FVector(300.f, 0.f, 100.f));
+	if (!TestNotNull(TEXT("attacker"), Attacker) || !TestNotNull(TEXT("target"), Target))
+	{
+		return false;
+	}
+
+	// Feedback assets with no sounds or effects must be harmless; hit-stop is asset-driven.
+	URPGWeaponData* Weapon = NewObject<URPGWeaponData>(GetTransientPackage());
+	Weapon->HitStopSeconds = 0.08f;
+	Attacker->GetCombat()->Weapon = Weapon;
+	Attacker->GetCombat()->Feedback = NewObject<URPGCombatFeedbackData>(GetTransientPackage());
+	Target->GetCombat()->Feedback = NewObject<URPGCombatFeedbackData>(GetTransientPackage());
+
+	TestEqual(TEXT("normal time before the hit"), Attacker->CustomTimeDilation, 1.f);
+
+	FRPGHitInfo Hit = RPGTests::MakeHit(20.f, 0.f);
+	Hit.Instigator = Attacker;
+	Hit.HitLocation = Target->GetActorLocation();
+	const FRPGHitResult Result = Target->GetCombat()->ProcessIncomingHit(Hit);
+	TestTrue(TEXT("hit processed"), Result.bProcessed);
+
+	TestEqual(TEXT("attacker frozen during hit-stop"), Attacker->CustomTimeDilation, Attacker->GetCombat()->HitStopTimeDilation);
+	TestEqual(TEXT("victim frozen during hit-stop"), Target->CustomTimeDilation, Attacker->GetCombat()->HitStopTimeDilation);
+
+	// Reset must never leave a fighter frozen.
+	Attacker->GetCombat()->ResetCombat();
+	Target->GetCombat()->ResetCombat();
+	TestEqual(TEXT("attacker unfrozen after reset"), Attacker->CustomTimeDilation, 1.f);
+	TestEqual(TEXT("victim unfrozen after reset"), Target->CustomTimeDilation, 1.f);
+
+	// A blocked hit gives no impact feedback or hit-stop.
+	Target->GetCombat()->StartBlock();
+	Hit.HitDirection = FVector(-1.f, 0.f, 0.f);
+	const FRPGHitResult Blocked = Target->GetCombat()->ProcessIncomingHit(Hit);
+	TestTrue(TEXT("blocked"), Blocked.bBlocked);
+	TestEqual(TEXT("no hit-stop on a block"), Attacker->CustomTimeDilation, 1.f);
+	return true;
+}
+
 #endif // WITH_DEV_AUTOMATION_TESTS
+
 
 

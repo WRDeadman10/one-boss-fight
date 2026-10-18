@@ -4,6 +4,8 @@
 #include "Characters/RPGBossCharacter.h"
 #include "Characters/RPGPlayerCharacter.h"
 #include "Combat/RPGAttributeComponent.h"
+#include "Combat/RPGCombatComponent.h"
+#include "Combat/RPGWeaponData.h"
 #include "Core/RPGEncounterSubsystem.h"
 #include "Engine/Canvas.h"
 #include "Engine/Engine.h"
@@ -42,6 +44,10 @@ void ARPGHUD::DrawHUD()
 		const float Y = Canvas->SizeY - 110.f * Scale;
 		DrawBar(X, Y, 420.f * Scale, 18.f * Scale, Attr->GetHealthFraction(), FLinearColor(0.75f, 0.1f, 0.1f));
 		DrawBar(X, Y + 30.f * Scale, 320.f * Scale, 12.f * Scale, Attr->GetStaminaFraction(), FLinearColor(0.2f, 0.65f, 0.25f));
+		if (const URPGWeaponData* Weapon = Player->GetCombat()->Weapon)
+		{
+			DrawText(Weapon->DisplayName.ToString(), FLinearColor(0.85f, 0.85f, 0.8f), X, Y + 52.f * Scale, GEngine->GetSmallFont(), Scale);
+		}
 	}
 
 	const URPGEncounterSubsystem* Encounter = GetWorld() ? GetWorld()->GetSubsystem<URPGEncounterSubsystem>() : nullptr;

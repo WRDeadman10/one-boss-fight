@@ -74,6 +74,19 @@ All four use their own non-Mannequin skeleton, in-place animation (root motion o
 | `ARPGHUD` canvas HUD: player bars, boss bar, YOU DIED / ENEMY FELLED | No asset dependency; UMG in polish |
 | Boss attacks use Sevarog montages in the `FullBody` slot; `AM_Sevarog_PhaseRoar` reuses `Ultimate_Targeting`, `Lightning` is a radial placeholder using `Cast` | No roar or lightning animation in the pack |
 
+## M5 content and weapons (2026-10-18, partly done: needs assets from you)
+
+| Decision | Reason |
+|---|---|
+| A weapon is a `URPGWeaponData` asset only: attacks, trace sockets, swing sound, impact sound and effect, hit-stop. Three exist (Sword, Quick Blade, Greatblade), all from Greystone's own animations; no code per weapon | Proves the data pipeline. Play rate makes them feel different (1.3 / 1.0 / 0.8 lights) |
+| `EquipWeapon` only while free to act; player cycles with R or D-pad up; a retry re-equips the first weapon | No weapon swap mid-attack; reset invariants |
+| `URPGCombatFeedbackData` (pain, heavy pain, block, dodge, death sounds; block effect) per character; weapon impact feedback lives on the weapon | Sounds follow who is hit, effects follow what hit them |
+| Hit-stop: both fighters' `CustomTimeDilation` drops to 0.05 for the weapon's real-time `HitStopSeconds`, ticked on the real-time ticker, cleared on reset and EndPlay | World time stays normal; no fighter can be left frozen |
+| Victory slow motion: world time 0.25 for 2.5 real seconds, cleared on reset | Presentation of the kill |
+| Audio from the packs is voice only (efforts, pain, death); particle effects are Paragon Cascade systems | The packs contain no weapon impact, whoosh or footstep sounds, and no Niagara |
+| Heavy attacks now use the `Attack_*_Slow` sequences (0.8 s) instead of the 3 s `Attack_RMB` | KI-008 |
+| Radial notify (`RPG Radial Hit`) carries an optional effect and sound; Sevarog's Shockwave uses `P_UltMeshArc_Expanding`, Lightning uses `P_Sevarog_Subjugate_Blast` | Placeholders until lightning VFX is authored |
+
 ## Open
 
 - Boss concept (dragon? `CuteDragon.blend` exists in project root).

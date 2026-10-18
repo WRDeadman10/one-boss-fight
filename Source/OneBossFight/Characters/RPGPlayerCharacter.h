@@ -12,6 +12,7 @@ class USpringArmComponent;
 class UInputAction;
 class UInputMappingContext;
 class URPGTargetLockComponent;
+class URPGWeaponData;
 
 /**
  * Player character: camera-relative movement, sprint, jump, look, and combat input (light/heavy attack,
@@ -42,6 +43,15 @@ public:
 
 	virtual void ResetCombatant() override;
 
+	/** Equips the next weapon from Weapons (wrapping). Returns true if the weapon changed. */
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	bool CycleWeapon();
+
+	int32 GetWeaponIndex() const { return WeaponIndex; }
+
+	/** Replaces the cycle list and equips the first entry. */
+	void SetWeapons(const TArray<TObjectPtr<URPGWeaponData>>& NewWeapons);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
@@ -56,6 +66,7 @@ protected:
 	void HeavyAttack();
 	void Dodge();
 	void ToggleLockOn();
+	void SwitchWeapon();
 
 	UFUNCTION()
 	void HandleStaminaDepleted();
@@ -115,6 +126,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Input|Combat")
 	TObjectPtr<UInputAction> LockOnAction;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input|Combat")
+	TObjectPtr<UInputAction> SwitchWeaponAction;
+
+	/** Weapons the player can cycle through. The first is equipped at BeginPlay. Each is a data asset only. */
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	TArray<TObjectPtr<URPGWeaponData>> Weapons;
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<USpringArmComponent> CameraBoom;
@@ -127,4 +145,5 @@ private:
 
 	bool bSprinting = false;
 	bool bSprintWanted = false;
+	int32 WeaponIndex = 0;
 };
