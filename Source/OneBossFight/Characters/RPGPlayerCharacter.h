@@ -11,10 +11,12 @@ class UCameraComponent;
 class USpringArmComponent;
 class UInputAction;
 class UInputMappingContext;
+class URPGTargetLockComponent;
 
 /**
- * Player character: camera-relative movement, sprint, jump and look through Enhanced Input.
- * Input assets are assigned on a Blueprint subclass; no key is hardcoded here.
+ * Player character: camera-relative movement, sprint, jump, look, and combat input (light/heavy attack,
+ * dodge, lock-on) through Enhanced Input. Input assets are assigned on a Blueprint subclass; no key is
+ * hardcoded here.
  */
 UCLASS()
 class ONEBOSSFIGHT_API ARPGPlayerCharacter : public ARPGCharacterBase
@@ -26,8 +28,9 @@ public:
 
 	USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	URPGTargetLockComponent* GetTargetLock() const { return TargetLock; }
 
-	/** True while sprint input is held. Stamina gating is added with the combat milestone. */
+	/** True while sprint input is held and stamina remains. */
 	UFUNCTION(BlueprintPure, Category = "Movement")
 	bool IsSprinting() const { return bSprinting; }
 
@@ -37,12 +40,25 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void StopSprint();
 
+	virtual void ResetCombatant() override;
+
 protected:
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void PawnClientRestart() override;
+	virtual bool CanJumpInternal_Implementation() const override;
+	virtual void HandleDeath() override;
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void LightAttack();
+	void HeavyAttack();
+	void Dodge();
+	void ToggleLockOn();
+
+	UFUNCTION()
+	void HandleStaminaDepleted();
 
 	/** Jog speed in cm/s. */
 	UPROPERTY(EditDefaultsOnly, Category = "Movement", meta = (ClampMin = "0"))
@@ -51,6 +67,10 @@ protected:
 	/** Sprint speed in cm/s. */
 	UPROPERTY(EditDefaultsOnly, Category = "Movement", meta = (ClampMin = "0"))
 	float SprintSpeed = 650.f;
+
+	/** Stamina drained per second while sprinting and moving. */
+	UPROPERTY(EditDefaultsOnly, Category = "Movement", meta = (ClampMin = "0"))
+	float SprintStaminaPerSecond = 12.f;
 
 	/** Multiplier applied to look input; tune per device. */
 	UPROPERTY(EditDefaultsOnly, Category = "Camera", meta = (ClampMin = "0"))
@@ -83,6 +103,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> SprintAction;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input|Combat")
+	TObjectPtr<UInputAction> LightAttackAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|Combat")
+	TObjectPtr<UInputAction> HeavyAttackAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|Combat")
+	TObjectPtr<UInputAction> DodgeAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input|Combat")
+	TObjectPtr<UInputAction> LockOnAction;
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<USpringArmComponent> CameraBoom;
@@ -90,5 +122,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<UCameraComponent> FollowCamera;
 
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	TObjectPtr<URPGTargetLockComponent> TargetLock;
+
 	bool bSprinting = false;
+	bool bSprintWanted = false;
 };
