@@ -46,6 +46,20 @@ All four use their own non-Mannequin skeleton, in-place animation (root motion o
 - Authoring note: single-node animation persists only through `AnimationData.AnimToPlay`; `play_animation` is runtime-only. The editor skips animating skeletal meshes unless `bUpdateAnimationInEditor` is set, and the viewport throttles when the editor is not the foreground window (captures then show stale frames).
 - The Paragon `*PlayerCharacter` Blueprints log compile errors (missing VR function). They are unused; delete them with the unused packs.
 
+## M3 player combat (2026-10-18)
+
+| Decision | Reason |
+|---|---|
+| All combat state lives in C++ components: `URPGAttributeComponent`, `URPGCombatComponent`, `URPGMeleeTraceComponent`, `URPGTargetLockComponent`; data in `URPGWeaponData` (Data Asset) | Testable headlessly; new weapons and bosses are data |
+| Single damage path: `URPGCombatComponent::ProcessIncomingHit` | One place for i-frames, block, poise, stagger, death |
+| Windows come from anim notify states (`RPGANS_HitWindow`, `ComboWindow`, `IFrames`, `CancelWindow`); without a montage the same windows run from fallback times | Animation owns timing like Souls games; combat is testable without animations |
+| Melee trace sweeps each sample point from its previous to current position every frame, once per swing per target | Frame-rate independent hits; verified from 1 to 480 frames per crossing |
+| Hit windows in the montages were placed from the sword tip speed (peak above 40 %), `Scripts/Editor/setup_m3_content.py` | First pass matches the visible swing; tune in the montage editor |
+| Montages are built from Greystone sequences and play in slot `UpperBody` (the only slot in its AnimBP) | The factory default `DefaultSlot` does not exist there |
+| Input: LMB light, RMB heavy, Space dodge, Q or MMB lock-on, Jump moved to F (Elden Ring style); gamepad RB, RT, B, R3; gamepad sprint moves to L3 | Space is the Souls dodge key |
+| Dodge: stamina 25 once, 0.05 to 0.35 s i-frames, dash 900 cm/s, no animation yet (KI-007) | No roll in any pack |
+| Combat: team ids (player 0, enemies 1), early inputs buffered 0.4 s, attacks need stamina above zero and may empty it | Souls-like rules |
+
 ## Open
 
 - Boss concept (dragon? `CuteDragon.blend` exists in project root).
