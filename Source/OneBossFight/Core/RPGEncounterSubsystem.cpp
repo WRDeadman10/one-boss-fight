@@ -13,6 +13,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/Controller.h"
+#include "Kismet/GameplayStatics.h"
 
 void URPGEncounterSubsystem::RegisterBoss(ARPGBossCharacter* NewBoss)
 {
@@ -79,11 +80,52 @@ void URPGEncounterSubsystem::HandleBossDied()
 	if (State == ERPGEncounterState::Active)
 	{
 		SetState(ERPGEncounterState::Victory);
+		StartVictorySlowMo();
 	}
+}
+
+void URPGEncounterSubsystem::StartVictorySlowMo()
+{
+	UWorld* World = GetWorld();
+	if (!World || VictorySlowMoSeconds <= 0.f || VictorySlowMoScale >= 1.f)
+	{
+		return;
+	}
+	UGameplayStatics::SetGlobalTimeDilation(World, VictorySlowMoScale);
+	// Real time, so the slow motion does not stretch itself.
+	SlowMoTicker = FTSTicker::GetCoreTicker().AddTicker(
+		FTickerDelegate::CreateUObject(this, &URPGEncounterSubsystem::OnSlowMoTick), VictorySlowMoSeconds);
+}
+
+bool URPGEncounterSubsystem::OnSlowMoTick(float DeltaTime)
+{
+	SlowMoTicker.Reset();
+	EndVictorySlowMo();
+	return false;
+}
+
+void URPGEncounterSubsystem::EndVictorySlowMo()
+{
+	if (SlowMoTicker.IsValid())
+	{
+		FTSTicker::GetCoreTicker().RemoveTicker(SlowMoTicker);
+		SlowMoTicker.Reset();
+	}
+	if (UWorld* World = GetWorld())
+	{
+		UGameplayStatics::SetGlobalTimeDilation(World, 1.f);
+	}
+}
+
+void URPGEncounterSubsystem::Deinitialize()
+{
+	EndVictorySlowMo();
+	Super::Deinitialize();
 }
 
 void URPGEncounterSubsystem::ResetEncounter()
 {
+	EndVictorySlowMo();
 	if (UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().ClearTimer(RetryTimer);

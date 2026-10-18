@@ -3,6 +3,9 @@
 #include "Combat/RPGAnimNotifyStates.h"
 #include "Combat/RPGCombatComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
+#include "Sound/SoundBase.h"
 
 URPGCombatComponent* URPGAnimNotifyStateBase::GetCombat(const USkeletalMeshComponent* MeshComp)
 {
@@ -90,6 +93,17 @@ void URPGAN_RadialHit::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
 	URPGCombatComponent* Combat = Owner ? Owner->FindComponentByClass<URPGCombatComponent>() : nullptr;
 	if (Owner && Combat)
 	{
-		Combat->ApplyRadialHit(Owner->GetActorLocation() + Owner->GetActorForwardVector() * ForwardOffset, Radius);
+		const FVector Center = Owner->GetActorLocation() + Owner->GetActorForwardVector() * ForwardOffset;
+		Combat->ApplyRadialHit(Center, Radius);
+
+		const FVector Ground = Center - FVector(0.f, 0.f, EffectGroundDrop);
+		if (Effect && Owner->GetWorld())
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(Owner->GetWorld(), Effect, Ground, Owner->GetActorRotation(), true);
+		}
+		if (Sound && Owner->GetWorld())
+		{
+			UGameplayStatics::PlaySoundAtLocation(Owner->GetWorld(), Sound, Ground);
+		}
 	}
 }

@@ -8,6 +8,8 @@
 #include "RPGWeaponData.generated.h"
 
 class UAnimMontage;
+class UParticleSystem;
+class USoundBase;
 
 /**
  * One attack. The montage owns the timing through anim notify states (hit window, combo window, ...).
@@ -89,6 +91,21 @@ public:
 	/** Points sampled along the base-tip line. More points catch thin targets on long blades. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Trace", meta = (ClampMin = "1", ClampMax = "8"))
 	int32 TraceSamples = 4;
+
+	/** Played when the hit window of an attack opens (the swing). */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Feedback")
+	TObjectPtr<USoundBase> SwingSound;
+
+	/** Played at the impact point when a hit lands (not when it is blocked). */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Feedback")
+	TObjectPtr<USoundBase> ImpactSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Feedback")
+	TObjectPtr<UParticleSystem> ImpactEffect;
+
+	/** Real seconds both fighters freeze when a hit lands. Zero disables hit-stop. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Feedback", meta = (ClampMin = "0", ClampMax = "0.3"))
+	float HitStopSeconds = 0.f;
 
 	/** The attack for a type and combo index. Falls back to a default attack when the asset has none, never null. */
 	const FRPGAttackData& GetAttack(ERPGAttackType Type, int32 ComboIndex) const;

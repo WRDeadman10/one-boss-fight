@@ -4,15 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Containers/Ticker.h"
 #include "Combat/RPGCombatTypes.h"
 #include "Combat/RPGWeaponData.h"
 #include "RPGCombatComponent.generated.h"
 
 class UAnimMontage;
 class URPGAttributeComponent;
+class URPGCombatFeedbackData;
+class UParticleSystem;
+class USoundBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FRPGCombatStateChangedSignature, ERPGCombatState, OldState, ERPGCombatState, NewState);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FRPGHitReceivedSignature, const FRPGHitInfo&, Hit, const FRPGHitResult&, Result);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRPGWeaponChangedSignature, URPGWeaponData*, NewWeapon);
 DECLARE_MULTICAST_DELEGATE_OneParam(FRPGHitWindowChanged, bool /*bOpen*/);
 
 /**
@@ -41,6 +46,14 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	TObjectPtr<URPGWeaponData> Weapon;
+
+	/** Sounds and effects for taking hits, blocking, dodging and dying. Optional. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Feedback")
+	TObjectPtr<URPGCombatFeedbackData> Feedback;
+
+	/** Time scale applied to a fighter during hit-stop. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Feedback", meta = (ClampMin = "0.01", ClampMax = "1"))
+	float HitStopTimeDilation = 0.05f;
 
 	/** Combatants on the same team never damage each other. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
@@ -162,6 +175,13 @@ public:
 	 */
 	int32 ApplyRadialHit(const FVector& Center, float Radius);
 
+	/**
+	 * Swaps the equipped weapon. Only while free to act (not mid-attack, dodge or stagger). Returns true if it changed.
+	 * Attacks, trace sockets and impact feedback all come from the weapon asset, so a weapon is data only.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	bool EquipWeapon(URPGWeaponData* NewWeapon);
+
 	/** Interrupts the current action and enters Staggered. No effect when dead. */
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void Stagger();
@@ -184,11 +204,15 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Combat")
 	FRPGHitReceivedSignature OnHitReceived;
 
+	UPROPERTY(BlueprintAssignable, Category = "Combat")
+	FRPGWeaponChangedSignature OnWeaponChanged;
+
 	/** The melee trace listens to this to arm and disarm itself. */
 	FRPGHitWindowChanged OnHitWindowChanged;
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
@@ -210,6 +234,14 @@ private:
 	void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted, int32 ForActionId);
 	UFUNCTION()
 	void OnDeathFromAttributes();
+
+	/** Feedback helpers. All tolerate missing assets. */
+	void PlaySoundAt(USoundBase* Sound, const FVector& Location) const;
+	void SpawnEffectAt(UParticleSystem* Effect, const FVector& Location, const FRotator& Rotation) const;
+	void HandleDealtHit(const FRPGHitInfo& Hit, const FRPGHitResult& Result, AActor* Victim);
+	void ApplyHitStop(float RealSeconds, AActor* Victim);
+	void EndHitStop();
+	bool OnHitStopTick(float DeltaTime);
 	void BeginFallback(EFallbackKind Kind, float Duration);
 
 	ERPGCombatState State = ERPGCombatState::Locomotion;
@@ -237,4 +269,7 @@ private:
 	float FallbackElapsed = 0.f;
 	float FallbackDuration = 0.f;
 	bool bBoundToAttributes = false;
+
+	FTSTicker::FDelegateHandle HitStopTicker;
+	TArray<TWeakObjectPtr<AActor>> HitStopActors;
 };

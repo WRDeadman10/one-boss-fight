@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
+#include "Containers/Ticker.h"
 #include "TimerManager.h"
 #include "RPGEncounterSubsystem.generated.h"
 
@@ -41,6 +42,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Encounter", meta = (ClampMin = "0"))
 	float RetryDelay = 4.f;
 
+	/** World time scale during the victory slow motion. 1 disables it. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Encounter|Presentation", meta = (ClampMin = "0.05", ClampMax = "1"))
+	float VictorySlowMoScale = 0.25f;
+
+	/** Real seconds the victory slow motion lasts. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Encounter|Presentation", meta = (ClampMin = "0"))
+	float VictorySlowMoSeconds = 2.5f;
+
 	UPROPERTY(BlueprintAssignable, Category = "Encounter")
 	FRPGEncounterStateChangedSignature OnEncounterStateChanged;
 
@@ -75,6 +84,8 @@ public:
 	/** True if everything that must be clean after a reset is clean; otherwise OutReason says what is not. */
 	bool VerifyResetInvariants(FString& OutReason) const;
 
+	virtual void Deinitialize() override;
+
 private:
 	UFUNCTION()
 	void HandlePlayerDied();
@@ -83,6 +94,9 @@ private:
 	void HandleBossDied();
 
 	void SetState(ERPGEncounterState NewState);
+	void StartVictorySlowMo();
+	void EndVictorySlowMo();
+	bool OnSlowMoTick(float DeltaTime);
 
 	ERPGEncounterState State = ERPGEncounterState::Idle;
 	TWeakObjectPtr<ARPGBossCharacter> Boss;
@@ -90,4 +104,5 @@ private:
 	FTransform PlayerStart;
 	FTimerHandle RetryTimer;
 	int32 ResetCount = 0;
+	FTSTicker::FDelegateHandle SlowMoTicker;
 };
