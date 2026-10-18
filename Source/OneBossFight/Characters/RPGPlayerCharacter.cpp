@@ -8,6 +8,7 @@
 #include "Combat/RPGCombatComponent.h"
 #include "Combat/RPGTargetLockComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Core/RPGEncounterSubsystem.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
@@ -47,6 +48,11 @@ void ARPGPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	GetAttributes()->OnStaminaDepleted.AddUniqueDynamic(this, &ARPGPlayerCharacter::HandleStaminaDepleted);
+
+	if (URPGEncounterSubsystem* Encounter = GetWorld()->GetSubsystem<URPGEncounterSubsystem>())
+	{
+		Encounter->RegisterPlayer(this);
+	}
 }
 
 void ARPGPlayerCharacter::Tick(float DeltaSeconds)

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Animation/AnimNotifies/AnimNotify.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "RPGAnimNotifyStates.generated.h"
 
@@ -64,4 +65,22 @@ public:
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 	virtual FString GetNotifyName_Implementation() const override { return TEXT("RPG Cancel Window"); }
+};
+
+/** One-shot area hit for shockwaves and slams, centered ForwardOffset ahead of the attacker. */
+UCLASS(meta = (DisplayName = "RPG Radial Hit"))
+class ONEBOSSFIGHT_API URPGAN_RadialHit : public UAnimNotify
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radial Hit", meta = (ClampMin = "1"))
+	float Radius = 300.f;
+
+	/** Distance in front of the attacker (negative = behind). Zero centers on the attacker. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radial Hit")
+	float ForwardOffset = 0.f;
+
+	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
+	virtual FString GetNotifyName_Implementation() const override { return TEXT("RPG Radial Hit"); }
 };

@@ -60,6 +60,20 @@ All four use their own non-Mannequin skeleton, in-place animation (root motion o
 | Dodge: stamina 25 once, 0.05 to 0.35 s i-frames, dash 900 cm/s, no animation yet (KI-007) | No roll in any pack |
 | Combat: team ids (player 0, enemies 1), early inputs buffered 0.4 s, attacks need stamina above zero and may empty it | Souls-like rules |
 
+## M4 boss and encounter (2026-10-18)
+
+| Decision | Reason |
+|---|---|
+| Boss brain is `URPGBossCombatComponent`: weighted selection (distance, facing arc, phase, cooldown, repeat limit) with the random roll passed in | Distribution and rules are unit-tested |
+| Boss attacks are `URPGBossAttackData` assets wrapping an `FRPGAttackData`; performing them reuses `URPGCombatComponent` (windows, hit trace, poise, death) | Same damage path as the player; no second combat system |
+| Top-level boss flow (Dormant, Entrance, Combat, PhaseTransition, Dead) is owned by the C++ boss component and mirrored by a **StateTree asset** (`ST_Boss`, schema StateTree Component) | As originally locked. Thin mirror: custom condition `RPG Boss State Is` and task `RPG Boss Mirror`; each state has the task, every state transitions on tick to any state the component is in. The tree is built and compiled by `URPGBossStateTreeBuilder` (`Scripts/Editor/setup_m4_statetree.py`), so it is reproducible. StateTree and GameplayStateTree plugins enabled; modules StateTreeModule, GameplayStateTreeModule, AIModule, GameplayTasks added |
+| Phase changes once per threshold: the first hit across it makes the boss untouchable, so same-frame hits cannot start a second transition | Test `Boss.PhaseAndFlow` |
+| Boss is untouchable while Dormant, in Entrance and during PhaseTransition (`SetExternalInvulnerable`, independent of i-frames) | No cheese during roars |
+| `URPGEncounterSubsystem` (world subsystem) runs start, victory, defeat, auto-retry after 4 s, and `VerifyResetInvariants` after every reset; `ARPGEncounterTrigger` starts it | Reset leaves no stale state: 10 cycles in `Boss.Encounter.ResetCycles` |
+| Boss moves by direct steering (no navmesh), turns toward the player until the first hit window, then commits | Greybox arena; tracking cutoff is the fairness rule |
+| `ARPGHUD` canvas HUD: player bars, boss bar, YOU DIED / ENEMY FELLED | No asset dependency; UMG in polish |
+| Boss attacks use Sevarog montages in the `FullBody` slot; `AM_Sevarog_PhaseRoar` reuses `Ultimate_Targeting`, `Lightning` is a radial placeholder using `Cast` | No roar or lightning animation in the pack |
+
 ## Open
 
 - Boss concept (dragon? `CuteDragon.blend` exists in project root).

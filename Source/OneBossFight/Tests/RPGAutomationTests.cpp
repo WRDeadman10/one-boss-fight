@@ -6,6 +6,11 @@
 
 #include "Arena/RPGGreyboxArena.h"
 #include "Benchmark/RPGFrameStats.h"
+#include "Boss/RPGBossAttackData.h"
+#include "Boss/RPGBossCombatComponent.h"
+#include "Boss/RPGBossStateTree.h"
+#include "StateTree.h"
+#include "Characters/RPGBossCharacter.h"
 #include "Characters/RPGPlayerCharacter.h"
 #include "Characters/RPGTrainingDummy.h"
 #include "Combat/RPGAttributeComponent.h"
@@ -13,6 +18,7 @@
 #include "Combat/RPGMeleeTraceComponent.h"
 #include "Combat/RPGTargetLockComponent.h"
 #include "Combat/RPGWeaponData.h"
+#include "Core/RPGEncounterSubsystem.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -50,6 +56,23 @@ namespace RPGTests
 		FActorSpawnParameters Params;
 		Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		return World->SpawnActor<T>(Location, Rotation, Params);
+	}
+
+	URPGBossAttackData* MakeBossAttack(FName Name, float MinRange, float MaxRange, float Weight, float Cooldown = 0.f,
+		int32 MaxRepeats = 1, int32 MinPhase = 1, int32 MaxPhase = 9, float Damage = 20.f)
+	{
+		URPGBossAttackData* Data = NewObject<URPGBossAttackData>(GetTransientPackage());
+		Data->AttackName = Name;
+		Data->MinRange = MinRange;
+		Data->MaxRange = MaxRange;
+		Data->Weight = Weight;
+		Data->Cooldown = Cooldown;
+		Data->MaxConsecutiveRepeats = MaxRepeats;
+		Data->MinPhase = MinPhase;
+		Data->MaxPhase = MaxPhase;
+		Data->Attack.Damage = Damage;
+		Data->Attack.PoiseDamage = 0.f;
+		return Data;
 	}
 
 	/** A hit with the given damage and poise damage, coming from the +X side so a target facing +X is hit head-on. */
@@ -739,4 +762,408 @@ bool FRPGLockOnToggleTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+// ---------------------------------------------------------------------------------------------
+// Boss
+// ---------------------------------------------------------------------------------------------
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGBossSelectionTest, "OneBossFight.Boss.Selection",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGBossSelectionTest::RunTest(const FString& Parameters)
+{
+	using Boss = URPGBossCombatComponent;
+	TArray<TObjectPtr<URPGBossAttackData>> Attacks;
+	Attacks.Add(RPGTests::MakeBossAttack("A", 0.f, 300.f, 3.f, 0.f, 99));              // 0 heavy weight, close
+	Attacks.Add(RPGTests::MakeBossAttack("B", 0.f, 300.f, 1.f, 0.f, 99));              // 1 close
+	Attacks.Add(RPGTests::MakeBossAttack("C", 500.f, 1500.f, 1.f, 0.f, 99));           // 2 far
+	Attacks.Add(RPGTests::MakeBossAttack("D", 0.f, 300.f, 100.f, 0.f, 99, 2, 9));      // 3 phase 2 only
+
+	FRPGAttackSelectionContext Close;
+	Close.Distance = 200.f;
+	Close.AngleDegrees = 0.f;
+	Close.Phase = 1;
+	const TArray<float> Ready;
+
+	// Weighted pick: A owns [0,3) of 4, B owns [3,4).
+	TestEqual(TEXT("low roll picks A"), Boss::ChooseAttack(Attacks, Ready, Close, 0.f), 0);
+	TestEqual(TEXT("high roll picks B"), Boss::ChooseAttack(Attacks, Ready, Close, 0.8f), 1);
+	TestEqual(TEXT("roll just below 1 still valid"), Boss::ChooseAttack(Attacks, Ready, Close, 0.999999f), 1);
+
+	// Distribution over many rolls follows the weights (A 75 %, B 25 %) and never picks the gated ones.
+	FRandomStream Stream(1234);
+	int32 Counts[4] = {0, 0, 0, 0};
+	const int32 Rolls = 20000;
+	for (int32 Index = 0; Index < Rolls; ++Index)
+	{
+		const int32 Pick = Boss::ChooseAttack(Attacks, Ready, Close, Stream.FRand());
+		if (Pick >= 0) { ++Counts[Pick]; }
+	}
+	TestEqual(TEXT("A share"), static_cast<float>(Counts[0]) / Rolls, 0.75f, 0.02f);
+	TestEqual(TEXT("B share"), static_cast<float>(Counts[1]) / Rolls, 0.25f, 0.02f);
+	TestEqual(TEXT("far attack never picked up close"), Counts[2], 0);
+	TestEqual(TEXT("phase 2 attack never picked in phase 1"), Counts[3], 0);
+
+	// Range gates.
+	FRPGAttackSelectionContext Far = Close;
+	Far.Distance = 800.f;
+	TestEqual(TEXT("only the far attack at 800"), Boss::ChooseAttack(Attacks, Ready, Far, 0.5f), 2);
+	FRPGAttackSelectionContext Gap = Close;
+	Gap.Distance = 400.f;
+	TestEqual(TEXT("nothing in the gap between ranges"), Boss::ChooseAttack(Attacks, Ready, Gap, 0.5f), static_cast<int32>(INDEX_NONE));
+
+	// Facing arc: the default 60 degree half-angle refuses a target at 90 degrees.
+	FRPGAttackSelectionContext Side = Close;
+	Side.AngleDegrees = 90.f;
+	TestEqual(TEXT("target outside the arc"), Boss::ChooseAttack(Attacks, Ready, Side, 0.5f), static_cast<int32>(INDEX_NONE));
+
+	// Phase gate: in phase 2 the heavy-weight D appears and dominates.
+	FRPGAttackSelectionContext Phase2 = Close;
+	Phase2.Phase = 2;
+	TestEqual(TEXT("phase 2 attack available"), Boss::ChooseAttack(Attacks, Ready, Phase2, 0.5f), 3);
+
+	// Cooldown removes an attack until it expires.
+	const TArray<float> ACooling = {1.f, 0.f, 0.f, 0.f};
+	TestEqual(TEXT("cooling attack skipped"), Boss::ChooseAttack(Attacks, ACooling, Close, 0.f), 1);
+
+	// Repeat limit: A may be chosen 2 times in a row, not 3.
+	Attacks[0]->MaxConsecutiveRepeats = 2;
+	FRPGAttackSelectionContext Repeat = Close;
+	Repeat.LastAttackIndex = 0;
+	Repeat.ConsecutiveRepeats = 1;
+	TestEqual(TEXT("second repeat allowed"), Boss::ChooseAttack(Attacks, Ready, Repeat, 0.f), 0);
+	Repeat.ConsecutiveRepeats = 2;
+	TestEqual(TEXT("third repeat refused"), Boss::ChooseAttack(Attacks, Ready, Repeat, 0.f), 1);
+
+	// Simulated fight: with repeat limits no attack ever runs longer than its limit.
+	Attacks[0]->MaxConsecutiveRepeats = 2;
+	Attacks[1]->MaxConsecutiveRepeats = 1;
+	FRPGAttackSelectionContext Sim = Close;
+	int32 Run = 0;
+	int32 MaxRun = 0;
+	for (int32 Index = 0; Index < 5000; ++Index)
+	{
+		const int32 Pick = Boss::ChooseAttack(Attacks, Ready, Sim, Stream.FRand());
+		if (Pick == INDEX_NONE) { break; }
+		Run = (Pick == Sim.LastAttackIndex) ? Run + 1 : 1;
+		MaxRun = FMath::Max(MaxRun, Run);
+		Sim.ConsecutiveRepeats = Run;
+		Sim.LastAttackIndex = Pick;
+		if (Run > Attacks[Pick]->MaxConsecutiveRepeats)
+		{
+			AddError(TEXT("an attack ran past its repeat limit"));
+			break;
+		}
+	}
+	TestEqual(TEXT("A did repeat sometimes"), MaxRun, 2);
+
+	// A single allowed attack with a repeat limit of 1 cannot be chosen twice in a row.
+	TArray<TObjectPtr<URPGBossAttackData>> Single;
+	Single.Add(RPGTests::MakeBossAttack("Only", 0.f, 300.f, 1.f, 0.f, 1));
+	FRPGAttackSelectionContext Once = Close;
+	TestEqual(TEXT("first use"), Boss::ChooseAttack(Single, Ready, Once, 0.f), 0);
+	Once.LastAttackIndex = 0;
+	Once.ConsecutiveRepeats = 1;
+	TestEqual(TEXT("no infinite repeat"), Boss::ChooseAttack(Single, Ready, Once, 0.f), static_cast<int32>(INDEX_NONE));
+
+	// Zero weight and null entries are never chosen.
+	TArray<TObjectPtr<URPGBossAttackData>> Odd;
+	Odd.Add(nullptr);
+	Odd.Add(RPGTests::MakeBossAttack("Off", 0.f, 300.f, 0.f));
+	TestEqual(TEXT("null and zero weight skipped"), Boss::ChooseAttack(Odd, Ready, Close, 0.5f), static_cast<int32>(INDEX_NONE));
+
+	// Phases from health fractions.
+	const TArray<float> Thresholds = {0.5f, 0.2f};
+	TestEqual(TEXT("full health phase"), Boss::ComputePhase(Thresholds, 1.f), 1);
+	TestEqual(TEXT("just above first threshold"), Boss::ComputePhase(Thresholds, 0.51f), 1);
+	TestEqual(TEXT("at first threshold"), Boss::ComputePhase(Thresholds, 0.5f), 2);
+	TestEqual(TEXT("between thresholds"), Boss::ComputePhase(Thresholds, 0.3f), 2);
+	TestEqual(TEXT("at second threshold"), Boss::ComputePhase(Thresholds, 0.2f), 3);
+	TestEqual(TEXT("a big hit skips straight to phase 3"), Boss::ComputePhase(Thresholds, 0.05f), 3);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGBossFlowTest, "OneBossFight.Boss.PhaseAndFlow",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGBossFlowTest::RunTest(const FString& Parameters)
+{
+	RPGTests::FScopedTestWorld Scope;
+	ARPGBossCharacter* Boss = RPGTests::SpawnCombatant<ARPGBossCharacter>(Scope.World, FVector(0.f, 0.f, 100.f));
+	ARPGPlayerCharacter* Player = RPGTests::SpawnCombatant<ARPGPlayerCharacter>(Scope.World, FVector(600.f, 0.f, 100.f));
+	if (!TestNotNull(TEXT("boss spawned"), Boss) || !TestNotNull(TEXT("player spawned"), Player))
+	{
+		return false;
+	}
+	URPGBossCombatComponent* Brain = Boss->GetBossCombat();
+	URPGCombatComponent* Combat = Boss->GetCombat();
+	URPGAttributeComponent* Attr = Boss->GetAttributes();
+	const float MaxHealth = Attr->MaxHealth;
+
+	// Dormant: untouchable.
+	TestEqual(TEXT("starts dormant"), Brain->GetBossState(), ERPGBossState::Dormant);
+	TestTrue(TEXT("dormant boss is invulnerable"), Combat->IsInvulnerable());
+	TestTrue(TEXT("hit ignored while dormant"), Combat->ProcessIncomingHit(RPGTests::MakeHit(100.f, 0.f)).bIgnoredInvulnerable);
+	TestEqual(TEXT("no damage while dormant"), Attr->GetHealth(), MaxHealth);
+
+	// Entrance: still untouchable, then the fight starts.
+	TestFalse(TEXT("cannot engage nothing"), Brain->Engage(nullptr));
+	TestTrue(TEXT("engage"), Brain->Engage(Player));
+	TestFalse(TEXT("cannot engage twice"), Brain->Engage(Player));
+	TestEqual(TEXT("entrance"), Brain->GetBossState(), ERPGBossState::Entrance);
+	Brain->TickBoss(1.f);
+	TestEqual(TEXT("entrance lasts"), Brain->GetBossState(), ERPGBossState::Entrance);
+	TestTrue(TEXT("untouchable during entrance"), Combat->IsInvulnerable());
+	Brain->TickBoss(2.5f);
+	TestEqual(TEXT("combat after entrance"), Brain->GetBossState(), ERPGBossState::Combat);
+	TestFalse(TEXT("hittable in combat"), Combat->IsInvulnerable());
+
+	// Damage above the threshold does not change phase.
+	Combat->ProcessIncomingHit(RPGTests::MakeHit(700.f, 0.f));
+	TestEqual(TEXT("still phase 1 at 53 %"), Brain->GetPhase(), 1);
+	TestEqual(TEXT("no transition yet"), Brain->GetPhaseTransitionCount(), 0);
+
+	// Two hits in the same frame across the 50 % line: one transition, the second hit is ignored.
+	const FRPGHitResult First = Combat->ProcessIncomingHit(RPGTests::MakeHit(100.f, 0.f));
+	const FRPGHitResult Second = Combat->ProcessIncomingHit(RPGTests::MakeHit(100.f, 0.f));
+	TestTrue(TEXT("first hit lands"), First.bProcessed && !First.bIgnoredInvulnerable);
+	TestTrue(TEXT("second same-frame hit ignored"), Second.bIgnoredInvulnerable);
+	TestEqual(TEXT("phase 2"), Brain->GetPhase(), 2);
+	TestEqual(TEXT("exactly one transition"), Brain->GetPhaseTransitionCount(), 1);
+	TestEqual(TEXT("transition state"), Brain->GetBossState(), ERPGBossState::PhaseTransition);
+	TestEqual(TEXT("health after the hits"), Attr->GetHealth(), MaxHealth - 800.f);
+
+	// The roar: untouchable, then back to the fight in phase 2.
+	TestTrue(TEXT("untouchable during the roar"), Combat->ProcessIncomingHit(RPGTests::MakeHit(100.f, 0.f)).bIgnoredInvulnerable);
+	Brain->TickBoss(3.1f);
+	TestEqual(TEXT("fighting again"), Brain->GetBossState(), ERPGBossState::Combat);
+	TestEqual(TEXT("still phase 2"), Brain->GetPhase(), 2);
+
+	// No second transition from more damage with a single threshold.
+	Combat->ProcessIncomingHit(RPGTests::MakeHit(300.f, 0.f));
+	TestEqual(TEXT("still one transition"), Brain->GetPhaseTransitionCount(), 1);
+
+	// Death.
+	Combat->ProcessIncomingHit(RPGTests::MakeHit(5000.f, 0.f));
+	TestEqual(TEXT("dead"), Brain->GetBossState(), ERPGBossState::Dead);
+	TestTrue(TEXT("combat dead"), Combat->IsDead());
+
+	// Reset restores everything.
+	Boss->SetHomeTransform(FTransform(FVector(0.f, 0.f, 100.f)));
+	Boss->ResetCombatant();
+	TestEqual(TEXT("dormant after reset"), Brain->GetBossState(), ERPGBossState::Dormant);
+	TestEqual(TEXT("phase 1 after reset"), Brain->GetPhase(), 1);
+	TestEqual(TEXT("transition count reset"), Brain->GetPhaseTransitionCount(), 0);
+	TestEqual(TEXT("health restored"), Attr->GetHealth(), MaxHealth);
+	TestTrue(TEXT("invulnerable again"), Combat->IsInvulnerable());
+	TestTrue(TEXT("engage works again"), Brain->Engage(Player));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGBossAttackLoopTest, "OneBossFight.Boss.AttackLoop",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGBossAttackLoopTest::RunTest(const FString& Parameters)
+{
+	RPGTests::FScopedTestWorld Scope;
+	ARPGBossCharacter* Boss = RPGTests::SpawnCombatant<ARPGBossCharacter>(Scope.World, FVector(0.f, 0.f, 100.f));
+	ARPGPlayerCharacter* Player = RPGTests::SpawnCombatant<ARPGPlayerCharacter>(Scope.World, FVector(150.f, 0.f, 100.f));
+	if (!TestNotNull(TEXT("boss spawned"), Boss) || !TestNotNull(TEXT("player spawned"), Player))
+	{
+		return false;
+	}
+	Player->GetAttributes()->MaxHealth = 100000.f;
+
+	URPGBossCombatComponent* Brain = Boss->GetBossCombat();
+	Brain->Attacks.Add(RPGTests::MakeBossAttack("Sweep", 0.f, 300.f, 1.f, 2.f, 1));
+	Brain->Attacks.Add(RPGTests::MakeBossAttack("Slam", 0.f, 300.f, 1.f, 2.f, 1));
+	Brain->SetRandomSeed(7);
+	Brain->Engage(Player);
+
+	URPGCombatComponent* Combat = Boss->GetCombat();
+	URPGMeleeTraceComponent* Melee = Boss->GetMeleeTrace();
+	const FVector BossLocation = Boss->GetActorLocation();
+	const FVector PlayerLocation = Player->GetActorLocation();
+
+	TArray<int32> History;
+	int32 LastIndex = INDEX_NONE;
+	const float Step = 0.05f;
+	for (int32 Tick = 0; Tick < 600; ++Tick) // 30 simulated seconds
+	{
+		Brain->TickBoss(Step);
+		Combat->TickCombat(Step);
+		if (Combat->IsHitWindowOpen())
+		{
+			// The melee trace component does not tick in this headless world; drive its sweep by hand.
+			Melee->ProcessSweep(BossLocation, PlayerLocation, 60.f);
+		}
+
+		const int32 Current = Brain->GetCurrentAttackIndex();
+		if (Current != INDEX_NONE && LastIndex == INDEX_NONE)
+		{
+			History.Add(Current);
+		}
+		LastIndex = Current;
+	}
+
+	TestTrue(TEXT("the boss attacked several times"), History.Num() >= 5);
+
+	// One hit per swing: each attack that started dealt exactly its damage once.
+	const float Taken = Player->GetAttributes()->MaxHealth - Player->GetAttributes()->GetHealth();
+	TestEqual(TEXT("damage equals swings times damage"), Taken, 20.f * History.Num(), 0.01f);
+
+	// Repeat limit 1 and two attacks: it alternates and never repeats back to back.
+	bool bRepeated = false;
+	for (int32 Index = 1; Index < History.Num(); ++Index)
+	{
+		bRepeated |= History[Index] == History[Index - 1];
+	}
+	TestFalse(TEXT("never the same attack twice in a row"), bRepeated);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGEncounterResetTest, "OneBossFight.Boss.Encounter.ResetCycles",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGEncounterResetTest::RunTest(const FString& Parameters)
+{
+	RPGTests::FScopedTestWorld Scope;
+	UWorld* World = Scope.World;
+	URPGEncounterSubsystem* Encounter = World->GetSubsystem<URPGEncounterSubsystem>();
+	if (!TestNotNull(TEXT("encounter subsystem exists in the world"), Encounter))
+	{
+		return false;
+	}
+
+	const FVector PlayerStart(-800.f, 0.f, 100.f);
+	const FVector BossHome(0.f, 0.f, 100.f);
+	ARPGPlayerCharacter* Player = RPGTests::SpawnCombatant<ARPGPlayerCharacter>(World, PlayerStart);
+	ARPGBossCharacter* Boss = RPGTests::SpawnCombatant<ARPGBossCharacter>(World, BossHome, FRotator(0.f, 180.f, 0.f));
+	if (!TestNotNull(TEXT("player"), Player) || !TestNotNull(TEXT("boss"), Boss))
+	{
+		return false;
+	}
+	Boss->SetHomeTransform(Boss->GetActorTransform());
+	Boss->GetBossCombat()->Attacks.Add(RPGTests::MakeBossAttack("Sweep", 0.f, 5000.f, 1.f, 1.f, 1, 1, 9, 5.f));
+	Encounter->RegisterPlayer(Player);
+	Encounter->RegisterBoss(Boss);
+
+	FString Reason;
+	TestTrue(TEXT("clean at the start"), Encounter->VerifyResetInvariants(Reason));
+	TestEqual(TEXT("idle"), Encounter->GetState(), ERPGEncounterState::Idle);
+
+	for (int32 Cycle = 0; Cycle < 10; ++Cycle)
+	{
+		const FString Label = FString::Printf(TEXT("cycle %d"), Cycle);
+		const bool bPlayerLoses = (Cycle % 2) == 0;
+
+		TestTrue(*(Label + TEXT(": starts")), Encounter->StartEncounter());
+		TestEqual(*(Label + TEXT(": active")), Encounter->GetState(), ERPGEncounterState::Active);
+		TestFalse(*(Label + TEXT(": cannot start twice")), Encounter->StartEncounter());
+
+		// Make a mess: boss into phase 2 mid-attack, player locked on, sprinting, swinging, with a buffered press.
+		Boss->GetBossCombat()->TickBoss(3.5f);
+		Boss->GetBossCombat()->TickBoss(1.5f);
+		Player->GetTargetLock()->ToggleLock();
+		Player->StartSprint();
+		Player->GetCombat()->RequestLightAttack();
+		Player->GetCombat()->TickCombat(0.3f);
+		Player->GetCombat()->RequestDodge(FVector::ZeroVector);
+		Boss->GetCombat()->ProcessIncomingHit(RPGTests::MakeHit(800.f, 0.f));
+		Boss->GetBossCombat()->TickBoss(0.1f);
+
+		if (bPlayerLoses)
+		{
+			Player->GetCombat()->ProcessIncomingHit(RPGTests::MakeHit(100000.f, 0.f));
+			TestEqual(*(Label + TEXT(": defeat")), Encounter->GetState(), ERPGEncounterState::Defeat);
+		}
+		else
+		{
+			// The boss is mid phase transition (untouchable) after the earlier damage; let the roar finish first.
+			Boss->GetBossCombat()->TickBoss(3.5f);
+			Boss->GetCombat()->ProcessIncomingHit(RPGTests::MakeHit(100000.f, 0.f));
+			TestEqual(*(Label + TEXT(": victory")), Encounter->GetState(), ERPGEncounterState::Victory);
+		}
+
+		Encounter->ResetEncounter();
+		const bool bClean = Encounter->VerifyResetInvariants(Reason);
+		TestTrue(*(Label + FString::Printf(TEXT(": clean after reset (%s)"), *Reason)), bClean);
+		TestEqual(*(Label + TEXT(": back to idle")), Encounter->GetState(), ERPGEncounterState::Idle);
+		TestTrue(*(Label + TEXT(": player back at the start")), Player->GetActorLocation().Equals(PlayerStart, 1.f));
+		TestTrue(*(Label + TEXT(": boss back home")), Boss->GetActorLocation().Equals(BossHome, 1.f));
+	}
+
+	TestEqual(TEXT("reset count"), Encounter->GetResetCount(), 10);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGBossStateTreeMirrorTest, "OneBossFight.Boss.StateTreeMirror",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGBossStateTreeMirrorTest::RunTest(const FString& Parameters)
+{
+	UStateTree* Tree = LoadObject<UStateTree>(nullptr, TEXT("/Game/OneBossFight/Boss/ST_Boss.ST_Boss"));
+	if (!TestNotNull(TEXT("ST_Boss exists (run Scripts/Editor/setup_m4_statetree.py)"), Tree))
+	{
+		return false;
+	}
+
+	RPGTests::FScopedTestWorld Scope;
+	ARPGBossCharacter* Boss = RPGTests::SpawnCombatant<ARPGBossCharacter>(Scope.World, FVector(0.f, 0.f, 100.f));
+	ARPGPlayerCharacter* Player = RPGTests::SpawnCombatant<ARPGPlayerCharacter>(Scope.World, FVector(600.f, 0.f, 100.f));
+	if (!TestNotNull(TEXT("boss"), Boss) || !TestNotNull(TEXT("player"), Player))
+	{
+		return false;
+	}
+
+	URPGBossCombatComponent* Brain = Boss->GetBossCombat();
+	URPGBossStateTreeComponent* StateTreeComponent = Boss->GetStateTreeComponent();
+	StateTreeComponent->SetStateTreeAsset(Tree);
+	StateTreeComponent->StartLogic();
+	TestTrue(TEXT("state tree running"), StateTreeComponent->IsRunning());
+
+	// A tick lets the tree react; the mirror task reports the state it entered.
+	auto TickTree = [&](float Seconds)
+	{
+		StateTreeComponent->TickComponent(Seconds, LEVELTICK_All, nullptr);
+	};
+
+	TickTree(0.1f);
+	TestTrue(TEXT("tree entered a state on start"), Brain->GetStateTreeEnterCount() >= 1);
+	TestEqual(TEXT("mirrors dormant"), Brain->GetMirroredState(), ERPGBossState::Dormant);
+
+	Brain->Engage(Player);
+	TickTree(0.1f);
+	TestEqual(TEXT("mirrors entrance"), Brain->GetMirroredState(), ERPGBossState::Entrance);
+
+	Brain->TickBoss(3.5f);
+	TickTree(0.1f);
+	TestEqual(TEXT("mirrors combat"), Brain->GetMirroredState(), ERPGBossState::Combat);
+
+	// Phase transition: force it with damage and follow it.
+	Boss->GetCombat()->ProcessIncomingHit(RPGTests::MakeHit(800.f, 0.f));
+	TestEqual(TEXT("boss in phase transition"), Brain->GetBossState(), ERPGBossState::PhaseTransition);
+	TickTree(0.1f);
+	TestEqual(TEXT("mirrors phase transition"), Brain->GetMirroredState(), ERPGBossState::PhaseTransition);
+
+	Brain->TickBoss(3.5f);
+	TickTree(0.1f);
+	TestEqual(TEXT("mirrors combat again"), Brain->GetMirroredState(), ERPGBossState::Combat);
+
+	Boss->GetCombat()->ProcessIncomingHit(RPGTests::MakeHit(100000.f, 0.f));
+	TickTree(0.1f);
+	TestEqual(TEXT("mirrors dead"), Brain->GetMirroredState(), ERPGBossState::Dead);
+
+	// A reset goes back to dormant; the tree follows.
+	Boss->SetHomeTransform(Boss->GetActorTransform());
+	Boss->ResetCombatant();
+	TickTree(0.1f);
+	TestEqual(TEXT("mirrors dormant after reset"), Brain->GetMirroredState(), ERPGBossState::Dormant);
+	TestEqual(TEXT("boss itself is dormant"), Brain->GetBossState(), ERPGBossState::Dormant);
+
+	StateTreeComponent->StopLogic(TEXT("test over"));
+	return true;
+}
+
 #endif // WITH_DEV_AUTOMATION_TESTS
+
+

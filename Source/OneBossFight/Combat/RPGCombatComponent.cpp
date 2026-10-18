@@ -6,6 +6,8 @@
 #include "Characters/RPGCharacterBase.h"
 #include "Combat/RPGAttributeComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Engine/OverlapResult.h"
+#include "Engine/World.h"
 #include "GameFramework/Character.h"
 
 URPGCombatComponent::URPGCombatComponent()
@@ -365,6 +367,69 @@ bool URPGCombatComponent::StartDodge(const FVector& Direction)
 	return true;
 }
 
+bool URPGCombatComponent::StartCustomAttack(const FRPGAttackData& Attack)
+{
+	if (State != ERPGCombatState::Locomotion && State != ERPGCombatState::Blocking)
+	{
+		return false;
+	}
+
+	++ActionId;
+	CurrentAttack = Attack;
+	CurrentAttackType = ERPGAttackType::Light;
+	ComboIndex = 0;
+	BufferedAction = ERPGBufferedAction::None;
+	FallbackKind = EFallbackKind::None;
+
+	StopActionMontage();
+	SetState(ERPGCombatState::Attacking);
+	if (!PlayActionMontage(Attack.Montage, Attack.PlayRate))
+	{
+		BeginFallback(EFallbackKind::Attack, Attack.FallbackDuration / FMath::Max(Attack.PlayRate, 0.1f));
+	}
+	return true;
+}
+
+int32 URPGCombatComponent::ApplyRadialHit(const FVector& Center, float Radius)
+{
+	UWorld* World = GetWorld();
+	AActor* Owner = GetOwner();
+	if (!World || !Owner || Radius <= 0.f)
+	{
+		return 0;
+	}
+
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(RPGRadialHit), false, Owner);
+	TArray<FOverlapResult> Overlaps;
+	World->OverlapMultiByObjectType(Overlaps, Center, FQuat::Identity, FCollisionObjectQueryParams(ECC_Pawn),
+		FCollisionShape::MakeSphere(Radius), Params);
+
+	TSet<AActor*> Seen;
+	int32 Hits = 0;
+	for (const FOverlapResult& Overlap : Overlaps)
+	{
+		AActor* Target = Overlap.GetActor();
+		if (!Target || Seen.Contains(Target))
+		{
+			continue;
+		}
+		Seen.Add(Target);
+
+		URPGCombatComponent* TargetCombat = Target->FindComponentByClass<URPGCombatComponent>();
+		if (!TargetCombat || TargetCombat->TeamId == TeamId)
+		{
+			continue;
+		}
+
+		FRPGHitInfo Info = BuildOutgoingHit();
+		Info.HitLocation = Target->GetActorLocation();
+		Info.HitDirection = (Target->GetActorLocation() - Center).GetSafeNormal2D();
+		TargetCombat->ProcessIncomingHit(Info);
+		++Hits;
+	}
+	return Hits;
+}
+
 void URPGCombatComponent::Stagger()
 {
 	if (State == ERPGCombatState::Dead)
@@ -442,7 +507,7 @@ FRPGHitResult URPGCombatComponent::ProcessIncomingHit(const FRPGHitInfo& Hit)
 	{
 		return Result;
 	}
-	if (bInvulnerable)
+	if (IsInvulnerable())
 	{
 		Result.bIgnoredInvulnerable = true;
 		OnHitReceived.Broadcast(Hit, Result);
@@ -505,6 +570,7 @@ FRPGHitInfo URPGCombatComponent::BuildOutgoingHit() const
 	Info.Instigator = GetOwner();
 	Info.Damage = CurrentAttack.Damage;
 	Info.PoiseDamage = CurrentAttack.PoiseDamage;
+	Info.bUnblockable = CurrentAttack.bUnblockable;
 	return Info;
 }
 
