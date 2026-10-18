@@ -15,6 +15,8 @@
 | 2026-10-18 | Look sign convention: IA_Look Y positive = look up; mouse mapped raw (no Negate) | Pairs with the setting above; `LookSensitivity` tunes feel | Provisional, confirm in playtest |
 | 2026-10-18 | Input assets under `/Game/OneBossFight/Input/` (IA_Move, IA_Look, IA_Jump, IA_Sprint, IMC_Default) | Keyboard/mouse + gamepad, created via Unreal MCP | Done |
 | 2026-10-18 | Benchmark runner (`ARPGBenchmarkRunner`) writes `Saved/Benchmark/<label>_<time>/frames.csv` + `summary.json`; run with `-RPGBenchmark -RPGBenchmarkQuit -RPGBenchmarkLabel=<name>` | Repeatable, comparable frame-time capture | Done |
+| 2026-10-18 | PythonScriptPlugin + EditorScriptingUtilities enabled; content built by `Scripts/Editor/setup_m1_content.py` run headless | Reproducible, reviewable content setup without a GUI session | Done |
+| 2026-10-18 | Benchmark records game/render/GPU thread ms alongside frame time | Identify the bottleneck, not just FPS | Done |
 
 ## Provisional
 

@@ -34,7 +34,10 @@ Loop for every feature: **spec → C++ → headless compile → editor wiring (M
 
 **Gate:** project builds clean from CLI, opens in editor with the module loaded, MCP reaches both tools.
 
-### M1 — Foundation and benchmark (weeks 1–2)
+### M1 — Foundation and benchmark (weeks 1–2) — STATUS (2026-10-18): built and measured, awaiting playtest
+
+Done: base/player character, Enhanced Input assets, game mode, procedural greybox arena, benchmark runner with thread timings, 4 passing automation tests, `L_Greybox` and `L_Benchmark`, packaging and benchmark scripts, first baselines (see `Documentation/PERFORMANCE_LOG.md`). Pending: your playtest of movement/camera feel; baseline on the real target GPU (this PC is an RTX 3060).
+
 - Third-person character in C++ (`ARPGCharacterBase`, `ARPGPlayerCharacter`), Enhanced Input assets, camera boom, sprint/jump.
 - Greybox circular arena (primitives) + a **benchmark map** with scripted camera path and frame-time logging.
 - Packaging script (`Scripts/Package.ps1`) for a Development build; capture script using `stat unit` / Unreal Insights trace args.
