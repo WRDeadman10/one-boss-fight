@@ -1,0 +1,1151 @@
+{
+  "root": "/Game/ParagonGrux",
+  "asset_counts": {
+    "Texture2D": 378,
+    "MaterialFunction": 101,
+    "Material": 130,
+    "SubsurfaceProfile": 4,
+    "TextureCube": 2,
+    "MaterialParameterCollection": 2,
+    "AnimBlueprint": 1,
+    "Blueprint": 1,
+    "MapBuildDataRegistry": 3,
+    "World": 3,
+    "AnimSequence": 108,
+    "AnimMontage": 6,
+    "AimOffsetBlendSpace": 1,
+    "BlendSpace1D": 4,
+    "BlendSpace": 2,
+    "MaterialInstanceConstant": 35,
+    "Rig": 1,
+    "Skeleton": 1,
+    "PhysicsAsset": 3,
+    "SkeletalMesh": 7,
+    "DialogueVoice": 1,
+    "DialogueWave": 207,
+    "SoundCue": 109,
+    "SoundWave": 207,
+    "StaticMesh": 31,
+    "PhysicalMaterial": 2,
+    "ParticleSystem": 52,
+    "VectorFieldStatic": 4
+  },
+  "skeletal_meshes": [
+    {
+      "name": "Grux",
+      "size_cm": [
+        161,
+        217,
+        222
+      ],
+      "skeleton": "/Game/ParagonGrux/Characters/Heroes/Grux/Meshes/Grux_Skeleton.Grux_Skeleton",
+      "bone_count": 176,
+      "material_slots": 9
+    },
+    {
+      "name": "GruxHalloween",
+      "size_cm": [
+        161,
+        217,
+        222
+      ],
+      "skeleton": "/Game/ParagonGrux/Characters/Heroes/Grux/Meshes/Grux_Skeleton.Grux_Skeleton",
+      "bone_count": 176,
+      "material_slots": 9
+    },
+    {
+      "name": "GruxWarchief",
+      "size_cm": [
+        161,
+        217,
+        222
+      ],
+      "skeleton": "/Game/ParagonGrux/Characters/Heroes/Grux/Meshes/Grux_Skeleton.Grux_Skeleton",
+      "bone_count": 176,
+      "material_slots": 9
+    },
+    {
+      "name": "GruxChestplate",
+      "size_cm": [
+        161,
+        217,
+        222
+      ],
+      "skeleton": "/Game/ParagonGrux/Characters/Heroes/Grux/Meshes/Grux_Skeleton.Grux_Skeleton",
+      "bone_count": 176,
+      "material_slots": 10
+    },
+    {
+      "name": "GruxMolten",
+      "size_cm": [
+        187,
+        238,
+        228
+      ],
+      "skeleton": "/Game/ParagonGrux/Characters/Heroes/Grux/Meshes/Grux_Skeleton.Grux_Skeleton",
+      "bone_count": 176,
+      "material_slots": 8
+    },
+    {
+      "name": "GruxBeetleRed",
+      "size_cm": [
+        187,
+        238,
+        228
+      ],
+      "skeleton": "/Game/ParagonGrux/Characters/Heroes/Grux/Meshes/Grux_Skeleton.Grux_Skeleton",
+      "bone_count": 176,
+      "material_slots": 8
+    },
+    {
+      "name": "GruxQilin",
+      "size_cm": [
+        161,
+        219,
+        256
+      ],
+      "skeleton": "/Game/ParagonGrux/Characters/Heroes/Grux/Meshes/Grux_Skeleton.Grux_Skeleton",
+      "bone_count": 176,
+      "material_slots": 11
+    }
+  ],
+  "skeletons": [
+    "/Game/ParagonGrux/Characters/Heroes/Grux/Meshes/Grux_Skeleton.Grux_Skeleton"
+  ],
+  "anim_sequences": [
+    {
+      "name": "Ultimate_Roar_MSA",
+      "length_s": 1.4,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Ultimate_Roar",
+      "length_s": 1.4,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Turn_Right_90",
+      "length_s": 1.167,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Turn_Right_180",
+      "length_s": 1.167,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Turn_Right_135",
+      "length_s": 1.167,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Turn_Left_90",
+      "length_s": 1.167,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Turn_Left_180",
+      "length_s": 1.167,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Turn_Left_135",
+      "length_s": 1.167,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Start_MSA",
+      "length_s": 0.833,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Start",
+      "length_s": 0.833,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Rgt",
+      "length_s": 1.2,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Lft",
+      "length_s": 1.2,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Idle",
+      "length_s": 10.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Fwd_Stop",
+      "length_s": 1.167,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Fwd_Pivot180",
+      "length_s": 2.1,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Fwd",
+      "length_s": 1.2,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Bwd_Stop",
+      "length_s": 1.133,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Bwd_Pivot180",
+      "length_s": 0.933,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Bwd",
+      "length_s": 1.2,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Stun_Idle",
+      "length_s": 5.233,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Stampede_Knockup",
+      "length_s": 1.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Stampede",
+      "length_s": 0.7,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "SelectScreen_Emote",
+      "length_s": 5.4,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Run_Rt_Stop",
+      "length_s": 0.767,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Run_Rt_Start",
+      "length_s": 1.267,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Run_Rt",
+      "length_s": 1.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Run_Lft_Stop",
+      "length_s": 0.733,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Run_Lft_Start",
+      "length_s": 1.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Run_Lft",
+      "length_s": 1.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Run_Fwd_Stop",
+      "length_s": 0.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Run_Fwd_Start",
+      "length_s": 1.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Run_Fwd",
+      "length_s": 1.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Run_Bwd_Stop",
+      "length_s": 0.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Run_Bwd_Start",
+      "length_s": 1.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Run_Bwd",
+      "length_s": 1.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Respawn",
+      "length_s": 1.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Recall",
+      "length_s": 8.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "PrimaryAttack_Start",
+      "length_s": 0.567,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "PrimaryAttack_RB",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "PrimaryAttack_RA_Recovery_Moving",
+      "length_s": 1.433,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "PrimaryAttack_RA_Recovery",
+      "length_s": 0.833,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "PrimaryAttack_RA_Fast",
+      "length_s": 0.633,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "PrimaryAttack_RA",
+      "length_s": 1.133,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "PrimaryAttack_LB",
+      "length_s": 1.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "PrimaryAttack_LA_Recovery",
+      "length_s": 0.833,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "PrimaryAttack_LA_Fast",
+      "length_s": 0.633,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "PrimaryAttack_LA",
+      "length_s": 1.133,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "PrimaryAttack_FourStrikes",
+      "length_s": 3.7,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "LevelStart",
+      "length_s": 5.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "LaunchPad",
+      "length_s": 2.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Knock_Up",
+      "length_s": 2.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Knock_Back_Bwd",
+      "length_s": 2.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Knock_Back",
+      "length_s": 2.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Up",
+      "length_s": 0.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Start",
+      "length_s": 0.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Mid",
+      "length_s": 0.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Loop",
+      "length_s": 1.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Land_Additive",
+      "length_s": 0.9,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Land",
+      "length_s": 0.9,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Fall",
+      "length_s": 1.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "JumpApex",
+      "length_s": 0.2,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Rt_Pivot180",
+      "length_s": 1.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Rgt_Combat",
+      "length_s": 1.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Rgt",
+      "length_s": 1.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Lft_Pivot180",
+      "length_s": 1.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Lft_Combat",
+      "length_s": 1.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Lft",
+      "length_s": 1.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Fwd_Pivot180",
+      "length_s": 1.1,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Fwd",
+      "length_s": 1.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Bwd_Pivot180",
+      "length_s": 1.367,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Bwd",
+      "length_s": 1.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle",
+      "length_s": 24.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "HitReact_Right",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "HitReact_Left",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "HitReact_Front",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "HitReact_Back",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Gruxx_Ultimate_Noise_Additive",
+      "length_s": 1.167,
+      "root_motion": false,
+      "rate_scale": 0.4000000059604645,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "FrontEndPose",
+      "length_s": 24.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Taunt_FootSlide_T1",
+      "length_s": 5.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Skywalk_Outro",
+      "length_s": 1.567,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Skywalk_Loop",
+      "length_s": 2.733,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Skywalk_Intro",
+      "length_s": 1.167,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Skywalk",
+      "length_s": 5.467,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Master_BattleCry_T3",
+      "length_s": 7.5,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_BackScratch_T3_RubyGrux",
+      "length_s": 9.167,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_BackScratch_T3",
+      "length_s": 9.167,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Ears_Still",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "DoublePain",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Death_B",
+      "length_s": 1.633,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Death_A",
+      "length_s": 1.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Cast",
+      "length_s": 0.967,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Bound",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_Melee_Air",
+      "length_s": 1.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RBU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RBD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RBC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LBU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LBD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LBC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_CU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_CD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_CC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    }
+  ],
+  "anim_montages": [
+    {
+      "name": "PrimaryAttack_RA_Montage",
+      "length_s": 1.133,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    },
+    {
+      "name": "PrimaryAttack_RA_Fast_Montage",
+      "length_s": 0.633,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    },
+    {
+      "name": "PrimaryAttack_LA_Montage",
+      "length_s": 1.133,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    },
+    {
+      "name": "PrimaryAttack_LA_Fast_Montage",
+      "length_s": 0.633,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    },
+    {
+      "name": "PrimaryAttack_FourStrikes_Montage",
+      "length_s": 3.7,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    },
+    {
+      "name": "LevelStart_Montage",
+      "length_s": 5.0,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    }
+  ],
+  "blendspaces": [
+    "BaseHero_Locomotion_BS",
+    "BaseHero_Locomotion_TravelMode_BS1D",
+    "Grux_MeleeStrafe_BS1D",
+    "Idle2Run",
+    "Idle2RunStrafes",
+    "Run_Strafe1D"
+  ],
+  "anim_blueprints": [
+    "Grux_AnimBlueprint"
+  ],
+  "niagara_systems": [],
+  "sounds": 316,
+  "core_coverage": {
+    "idle": [
+      "Idle",
+      "Idle_AO_CC",
+      "Idle_AO_CD",
+      "Idle_AO_CU",
+      "Idle_AO_LBC",
+      "Idle_AO_LBD",
+      "Idle_AO_LBU",
+      "Idle_AO_LC",
+      "Idle_AO_LD",
+      "Idle_AO_LU",
+      "Idle_AO_RBC",
+      "Idle_AO_RBD",
+      "Idle_AO_RBU",
+      "Idle_AO_RC",
+      "Idle_AO_RD",
+      "Idle_AO_RU",
+      "Stun_Idle",
+      "TravelMode_Idle"
+    ],
+    "locomotion": [
+      "Emote_Skywalk",
+      "Emote_Skywalk_Intro",
+      "Emote_Skywalk_Loop",
+      "Emote_Skywalk_Outro",
+      "Jog_Bwd",
+      "Jog_Bwd_Pivot180",
+      "Jog_Fwd",
+      "Jog_Fwd_Pivot180",
+      "Jog_Lft",
+      "Jog_Lft_Combat",
+      "Jog_Lft_Pivot180",
+      "Jog_Rgt",
+      "Jog_Rgt_Combat",
+      "Jog_Rt_Pivot180",
+      "Run_Bwd",
+      "Run_Bwd_Start",
+      "Run_Bwd_Stop",
+      "Run_Fwd",
+      "Run_Fwd_Start",
+      "Run_Fwd_Stop",
+      "Run_Lft",
+      "Run_Lft_Start",
+      "Run_Lft_Stop",
+      "Run_Rt",
+      "Run_Rt_Start",
+      "Run_Rt_Stop"
+    ],
+    "dodge": [],
+    "attack": [
+      "Attack_Melee_Air",
+      "PrimaryAttack_FourStrikes",
+      "PrimaryAttack_FourStrikes_Montage",
+      "PrimaryAttack_LA",
+      "PrimaryAttack_LA_Fast",
+      "PrimaryAttack_LA_Fast_Montage",
+      "PrimaryAttack_LA_Montage",
+      "PrimaryAttack_LA_Recovery",
+      "PrimaryAttack_LB",
+      "PrimaryAttack_RA",
+      "PrimaryAttack_RA_Fast",
+      "PrimaryAttack_RA_Fast_Montage",
+      "PrimaryAttack_RA_Montage",
+      "PrimaryAttack_RA_Recovery",
+      "PrimaryAttack_RA_Recovery_Moving",
+      "PrimaryAttack_RB",
+      "PrimaryAttack_Start"
+    ],
+    "ranged_or_special": [
+      "Cast",
+      "Gruxx_Ultimate_Noise_Additive",
+      "Ultimate_Roar",
+      "Ultimate_Roar_MSA"
+    ],
+    "hit_react": [
+      "HitReact_Back",
+      "HitReact_Front",
+      "HitReact_Left",
+      "HitReact_Right",
+      "Knock_Back",
+      "Knock_Back_Bwd",
+      "Knock_Up",
+      "Stampede_Knockup",
+      "Stun_Idle"
+    ],
+    "death": [
+      "Death_A",
+      "Death_B"
+    ],
+    "block": [],
+    "intro_or_transition": [
+      "Emote_BackScratch_T3",
+      "Emote_BackScratch_T3_RubyGrux",
+      "Emote_Master_BattleCry_T3",
+      "Emote_Skywalk",
+      "Emote_Skywalk_Intro",
+      "Emote_Skywalk_Loop",
+      "Emote_Skywalk_Outro",
+      "Emote_Taunt_FootSlide_T1",
+      "Respawn",
+      "SelectScreen_Emote",
+      "Ultimate_Roar",
+      "Ultimate_Roar_MSA"
+    ]
+  },
+  "root_motion_sequences": []
+}

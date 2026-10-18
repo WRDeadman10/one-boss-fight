@@ -1,0 +1,1854 @@
+{
+  "root": "/Game/ParagonSteel",
+  "asset_counts": {
+    "DialogueVoice": 1,
+    "SoundCue": 140,
+    "DialogueWave": 339,
+    "SoundWave": 339,
+    "Texture2D": 246,
+    "MaterialFunction": 92,
+    "Material": 92,
+    "TextureCube": 2,
+    "SubsurfaceProfile": 9,
+    "MaterialParameterCollection": 2,
+    "AnimBlueprint": 1,
+    "Blueprint": 1,
+    "MapBuildDataRegistry": 2,
+    "World": 2,
+    "AnimSequence": 186,
+    "AnimMontage": 5,
+    "AimOffsetBlendSpace": 1,
+    "BlendSpace": 6,
+    "BlendSpace1D": 3,
+    "MaterialInstanceConstant": 26,
+    "Skeleton": 1,
+    "PhysicsAsset": 2,
+    "PhysicalMaterial": 3,
+    "SkeletalMesh": 6,
+    "Rig": 1,
+    "StaticMesh": 26,
+    "ParticleSystem": 49,
+    "VectorFieldStatic": 3
+  },
+  "skeletal_meshes": [
+    {
+      "name": "Steel",
+      "size_cm": [
+        254,
+        147,
+        355
+      ],
+      "skeleton": "/Game/ParagonSteel/Characters/Heroes/Steel/Meshes/Steel_Skeleton.Steel_Skeleton",
+      "bone_count": 178,
+      "material_slots": 9
+    },
+    {
+      "name": "Steel_Aegis",
+      "size_cm": [
+        254,
+        147,
+        355
+      ],
+      "skeleton": "/Game/ParagonSteel/Characters/Heroes/Steel/Meshes/Steel_Skeleton.Steel_Skeleton",
+      "bone_count": 178,
+      "material_slots": 9
+    },
+    {
+      "name": "Steel_BlackCarbon",
+      "size_cm": [
+        254,
+        147,
+        355
+      ],
+      "skeleton": "/Game/ParagonSteel/Characters/Heroes/Steel/Meshes/Steel_Skeleton.Steel_Skeleton",
+      "bone_count": 178,
+      "material_slots": 9
+    },
+    {
+      "name": "Steel_Cobalt",
+      "size_cm": [
+        254,
+        147,
+        355
+      ],
+      "skeleton": "/Game/ParagonSteel/Characters/Heroes/Steel/Meshes/Steel_Skeleton.Steel_Skeleton",
+      "bone_count": 178,
+      "material_slots": 9
+    },
+    {
+      "name": "Steel_Diesel",
+      "size_cm": [
+        254,
+        147,
+        355
+      ],
+      "skeleton": "/Game/ParagonSteel/Characters/Heroes/Steel/Meshes/Steel_Skeleton.Steel_Skeleton",
+      "bone_count": 178,
+      "material_slots": 9
+    },
+    {
+      "name": "Steel_Doomsday",
+      "size_cm": [
+        251,
+        146,
+        360
+      ],
+      "skeleton": "/Game/ParagonSteel/Characters/Heroes/Steel/Meshes/Steel_Skeleton.Steel_Skeleton",
+      "bone_count": 178,
+      "material_slots": 16
+    }
+  ],
+  "skeletons": [
+    "/Game/ParagonSteel/Characters/Heroes/Steel/Meshes/Steel_Skeleton.Steel_Skeleton"
+  ],
+  "anim_sequences": [
+    {
+      "name": "WeightingClip",
+      "length_s": 33.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Victory_Emote",
+      "length_s": 21.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "VictoryPose_1",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Walk_Right_Combat",
+      "length_s": 1.267,
+      "root_motion": false,
+      "rate_scale": 0.8700000047683716,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Walk_Left_Combat",
+      "length_s": 1.267,
+      "root_motion": false,
+      "rate_scale": 0.8700000047683716,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Walk_Fwd_Combat",
+      "length_s": 1.267,
+      "root_motion": false,
+      "rate_scale": 0.8700000047683716,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Walk_Bwd_Combat",
+      "length_s": 1.267,
+      "root_motion": false,
+      "rate_scale": 0.8700000047683716,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_TurnRight_Combat",
+      "length_s": 0.5,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_TurnLeft_Combat",
+      "length_s": 0.5,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_TurbineSpin_Additive_Start",
+      "length_s": 1.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_TurbineSpin_Additive_Loop",
+      "length_s": 1.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Transition_Jog2Idle_Additive",
+      "length_s": 0.633,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Transition_Idle2Jog_Additive",
+      "length_s": 0.633,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Test_HalfDash",
+      "length_s": 1.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Test_FullDash",
+      "length_s": 1.0,
+      "root_motion": true,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Sprint_TravelMode_Casting_Additive",
+      "length_s": 5.967,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Sprint_TravelMode_60fps",
+      "length_s": 0.567,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Sprint_TravelMode",
+      "length_s": 0.567,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Sprint_Fwd_LeanRight",
+      "length_s": 0.667,
+      "root_motion": false,
+      "rate_scale": 1.2999999523162842,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Sprint_Fwd_LeanLeft",
+      "length_s": 0.667,
+      "root_motion": false,
+      "rate_scale": 1.2999999523162842,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Sprint_Fwd",
+      "length_s": 0.667,
+      "root_motion": false,
+      "rate_scale": 1.2999999523162842,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Sprint_BackPedal_TravelMode",
+      "length_s": 0.567,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Slope_Right",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Slope_Left",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Slope_FwdRight",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Slope_FwdLeft",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Slope_Fwd",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Slope_BwdRight",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Slope_BwdLeft",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Slope_Bwd",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Run_Right_Combat",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.399999976158142,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Run_Left_Combat",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.399999976158142,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Run_Fwd_LeanRight",
+      "length_s": 0.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Run_Fwd_LeanLeft",
+      "length_s": 0.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Run_Fwd_Combat_LeanRight",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.5,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Run_Fwd_Combat_LeanLeft",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.5,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Run_Fwd_Combat",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.399999976158142,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Run_Fwd",
+      "length_s": 0.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Run_Bwd_Combat",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 0.9229999780654907,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_RotateRight90_Additive",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_RotateLeft90_Additive",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_RootMotion",
+      "length_s": 1.0,
+      "root_motion": true,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Recall_Start",
+      "length_s": 2.2,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Recall_Loop",
+      "length_s": 2.633,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Recall_End",
+      "length_s": 0.5,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_NewShieldPose",
+      "length_s": 0.017,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Locomotion_PopUp_Additive",
+      "length_s": 0.4,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Locomotion_Noise_Additive",
+      "length_s": 28.267,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Locomotion_LeanRight_Additive",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Locomotion_LeanLeft_Additive",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Locomotion_DropDown_Additive",
+      "length_s": 0.367,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Locomotion_DirectionChange_Right_Additive",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Locomotion_DirectionChange_Left_Additive",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Locomotion_DirectionChange_Forward_Additive",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Locomotion_DirectionChange_Back_Additive",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Locomotion_DirectionalStop_Right_Additive",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Locomotion_DirectionalStop_Left_Additive",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Locomotion_DirectionalStop_Front_Additive",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Locomotion_DirectionalStop_Back_Additive",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_LevelEntry",
+      "length_s": 3.133,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Knockdown_Idle",
+      "length_s": 1.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Knockdown_Enter",
+      "length_s": 0.467,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Knockdown_Counter",
+      "length_s": 1.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_KnockBack_Bwd",
+      "length_s": 2.0,
+      "root_motion": false,
+      "rate_scale": 1.5,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_KnockBack",
+      "length_s": 2.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jump_Start_Additive",
+      "length_s": 0.567,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jump_Start",
+      "length_s": 0.267,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jump_Mid",
+      "length_s": 0.433,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jump_Land_Additive",
+      "length_s": 0.9,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jump_InPlace_Loop",
+      "length_s": 0.9,
+      "root_motion": false,
+      "rate_scale": 0.800000011920929,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jump_Fwd_Loop",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 0.800000011920929,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jump_Fall_Extended",
+      "length_s": 4.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jump_Fall_Additive",
+      "length_s": 1.967,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jump_Fall",
+      "length_s": 2.0,
+      "root_motion": false,
+      "rate_scale": 0.75,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jump_End",
+      "length_s": 0.4,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jump_Bwd_Loop",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": -0.800000011920929,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_Right_Combat",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 0.9229999780654907,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_RightToLeft_Transition",
+      "length_s": 0.633,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_ReverseRight",
+      "length_s": 0.633,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_ReverseLeft",
+      "length_s": 0.633,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_Left_Combat",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 0.9229999780654907,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_LeftToRight_Transition",
+      "length_s": 0.633,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_Fwd_PreJump_Start",
+      "length_s": 4.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_Fwd_PreJump_Loop",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_Fwd_LeanRight",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_Fwd_LeanLeft",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_Fwd_Combat_LeanRight",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_Fwd_Combat_LeanLeft",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_Fwd_Combat",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 0.9229999780654907,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_Fwd",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_FaceRight_Combat",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_FaceLeft_Combat",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_Bwd_PreJump_Start",
+      "length_s": 4.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_Bwd_PreJump_Loop",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Jog_Bwd_Combat",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 0.9229999780654907,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Idle_PreJump_Tell",
+      "length_s": 0.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Idle_PreJump_Start",
+      "length_s": 4.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Idle_PreJump_ReadyPose",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Idle_PreJump_Loop",
+      "length_s": 5.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Idle_Combat",
+      "length_s": 4.967,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_IdlePose_Zero_Additive",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Idle",
+      "length_s": 4.967,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_HitReact_Right",
+      "length_s": 0.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_HitReact_Left",
+      "length_s": 0.733,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_HitReact_Front",
+      "length_s": 0.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_HitReact_Cringe_B",
+      "length_s": 0.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_HitReact_Cringe",
+      "length_s": 0.567,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_HitReact_Back",
+      "length_s": 0.733,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Death_B",
+      "length_s": 2.233,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Death_A",
+      "length_s": 0.767,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_D_V1_Recovery",
+      "length_s": 0.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_D_V1",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_D_Fast_V1",
+      "length_s": 0.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_C_Slow",
+      "length_s": 1.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_C_Normal_V1_Recovery",
+      "length_s": 0.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_C_Normal_V1",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_C_Fast",
+      "length_s": 0.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_Charge_C",
+      "length_s": 2.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_Charge_A",
+      "length_s": 2.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_C",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_B_Slow",
+      "length_s": 1.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_B_Normal_V1_Recovery",
+      "length_s": 0.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_B_Normal_V1",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_B_Fast",
+      "length_s": 0.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_B",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_A_Slow",
+      "length_s": 1.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_A_Normal_V1_Recovery",
+      "length_s": 0.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_A_Normal_V1",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_A_Fast",
+      "length_s": 0.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_A",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_GuardBreak_A",
+      "length_s": 1.2,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Air_Light_Slow",
+      "length_s": 1.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Air_Light_Fast",
+      "length_s": 0.4,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Air_Light",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_Ultimate_Intro",
+      "length_s": 3.433,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_Shield_Walk_Right",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_Shield_Walk_Left",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_Shield_Walk_Fwd",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_Shield_Walk_Bwd",
+      "length_s": 0.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_Shield_Transition_Overhead",
+      "length_s": 0.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_Shield_Throw",
+      "length_s": 0.733,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_Shield_Targeting_Cancel",
+      "length_s": 0.467,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_Shield_Jog_Overhead",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_Shield_Idle_Overhead",
+      "length_s": 5.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_Shield_Idle",
+      "length_s": 5.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_Shield_Deploy",
+      "length_s": 1.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_ShieldDive_Recover",
+      "length_s": 1.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_ShieldDive",
+      "length_s": 1.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_ShieldBlock_Deploy",
+      "length_s": 0.2,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_GroundSmash_Loop",
+      "length_s": 0.833,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_GroundSmash_End",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_GroundSmah_Start",
+      "length_s": 0.167,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_CowCatcher_Targeting_Idle",
+      "length_s": 5.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_CowCatcher_Start",
+      "length_s": 0.4,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_CowCatcher_End",
+      "length_s": 0.5,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_CowCatcher_Deploy",
+      "length_s": 0.233,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_CowCatcher_Charge",
+      "length_s": 1.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_Block_Idle",
+      "length_s": 3.633,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_Ability_Bash",
+      "length_s": 1.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "SelectScreen_Start",
+      "length_s": 8.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Recall",
+      "length_s": 9.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "LevelStart",
+      "length_s": 4.967,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "JumpPad",
+      "length_s": 2.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "FrontEndPose",
+      "length_s": 5.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Taunt_Bow_T1",
+      "length_s": 5.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Steelamania",
+      "length_s": 5.5,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Master_ShieldBang_T3",
+      "length_s": 7.967,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_BigClap",
+      "length_s": 3.367,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Backspin",
+      "length_s": 7.433,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Cast",
+      "length_s": 1.133,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Bound",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_AO_RU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_AO_RD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_AO_RC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_AO_RBU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_AO_RBD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_AO_RBC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_AO_LU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_AO_LD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_AO_LC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_AO_LBU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_AO_LBD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_AO_LBC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_AO_CU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_AO_CD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Steel_AO_CC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    }
+  ],
+  "anim_montages": [
+    {
+      "name": "Steel_Attack_Melee_D_V1_Montage",
+      "length_s": 0.8,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_C_Montage",
+      "length_s": 0.867,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_B_Montage",
+      "length_s": 0.867,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    },
+    {
+      "name": "Steel_Attack_Melee_A_Montage",
+      "length_s": 0.867,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    },
+    {
+      "name": "LevelStart_Montage",
+      "length_s": 4.967,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    }
+  ],
+  "blendspaces": [
+    "Steel_Ability_Shield_Walk",
+    "Steel_Jog_Combat",
+    "Steel_LocomotionLean_Additive_BS",
+    "Steel_Locomotion_BS",
+    "Steel_Locomotion_DirectionChange_Additive",
+    "Steel_Locomotion_DirectionalStop_Additive",
+    "Steel_Run_Combat_Leans",
+    "Steel_Run_OutOfCombat_Leans",
+    "Steel_Slope_Blendspace"
+  ],
+  "anim_blueprints": [
+    "Steel_AnimBlueprint"
+  ],
+  "niagara_systems": [],
+  "sounds": 479,
+  "core_coverage": {
+    "idle": [
+      "Steel_Ability_Block_Idle",
+      "Steel_Ability_CowCatcher_Targeting_Idle",
+      "Steel_Ability_Shield_Idle",
+      "Steel_Ability_Shield_Idle_Overhead",
+      "Steel_Idle",
+      "Steel_IdlePose_Zero_Additive",
+      "Steel_Idle_Combat",
+      "Steel_Idle_PreJump_Loop",
+      "Steel_Idle_PreJump_ReadyPose",
+      "Steel_Idle_PreJump_Start",
+      "Steel_Idle_PreJump_Tell",
+      "Steel_Knockdown_Idle",
+      "Steel_Transition_Idle2Jog_Additive",
+      "Steel_Transition_Jog2Idle_Additive"
+    ],
+    "locomotion": [
+      "Steel_Ability_Shield_Jog_Overhead",
+      "Steel_Ability_Shield_Walk_Bwd",
+      "Steel_Ability_Shield_Walk_Fwd",
+      "Steel_Ability_Shield_Walk_Left",
+      "Steel_Ability_Shield_Walk_Right",
+      "Steel_Jog_Bwd_Combat",
+      "Steel_Jog_Bwd_PreJump_Loop",
+      "Steel_Jog_Bwd_PreJump_Start",
+      "Steel_Jog_FaceLeft_Combat",
+      "Steel_Jog_FaceRight_Combat",
+      "Steel_Jog_Fwd",
+      "Steel_Jog_Fwd_Combat",
+      "Steel_Jog_Fwd_Combat_LeanLeft",
+      "Steel_Jog_Fwd_Combat_LeanRight",
+      "Steel_Jog_Fwd_LeanLeft",
+      "Steel_Jog_Fwd_LeanRight",
+      "Steel_Jog_Fwd_PreJump_Loop",
+      "Steel_Jog_Fwd_PreJump_Start",
+      "Steel_Jog_LeftToRight_Transition",
+      "Steel_Jog_Left_Combat",
+      "Steel_Jog_ReverseLeft",
+      "Steel_Jog_ReverseRight",
+      "Steel_Jog_RightToLeft_Transition",
+      "Steel_Jog_Right_Combat",
+      "Steel_Locomotion_DirectionChange_Back_Additive",
+      "Steel_Locomotion_DirectionChange_Forward_Additive",
+      "Steel_Locomotion_DirectionChange_Left_Additive",
+      "Steel_Locomotion_DirectionChange_Right_Additive",
+      "Steel_Locomotion_DirectionalStop_Back_Additive",
+      "Steel_Locomotion_DirectionalStop_Front_Additive",
+      "Steel_Locomotion_DirectionalStop_Left_Additive",
+      "Steel_Locomotion_DirectionalStop_Right_Additive",
+      "Steel_Locomotion_DropDown_Additive",
+      "Steel_Locomotion_LeanLeft_Additive",
+      "Steel_Locomotion_LeanRight_Additive",
+      "Steel_Locomotion_Noise_Additive",
+      "Steel_Locomotion_PopUp_Additive",
+      "Steel_Run_Bwd_Combat",
+      "Steel_Run_Fwd",
+      "Steel_Run_Fwd_Combat",
+      "Steel_Run_Fwd_Combat_LeanLeft",
+      "Steel_Run_Fwd_Combat_LeanRight",
+      "Steel_Run_Fwd_LeanLeft",
+      "Steel_Run_Fwd_LeanRight",
+      "Steel_Run_Left_Combat",
+      "Steel_Run_Right_Combat",
+      "Steel_Sprint_BackPedal_TravelMode",
+      "Steel_Sprint_Fwd",
+      "Steel_Sprint_Fwd_LeanLeft",
+      "Steel_Sprint_Fwd_LeanRight",
+      "Steel_Sprint_TravelMode",
+      "Steel_Sprint_TravelMode_60fps",
+      "Steel_Sprint_TravelMode_Casting_Additive",
+      "Steel_Transition_Idle2Jog_Additive",
+      "Steel_Transition_Jog2Idle_Additive",
+      "Steel_Walk_Bwd_Combat",
+      "Steel_Walk_Fwd_Combat",
+      "Steel_Walk_Left_Combat",
+      "Steel_Walk_Right_Combat"
+    ],
+    "dodge": [
+      "Steel_Test_FullDash",
+      "Steel_Test_HalfDash"
+    ],
+    "attack": [
+      "Steel_Ability_GroundSmash_End",
+      "Steel_Ability_GroundSmash_Loop",
+      "Steel_Attack_Air_Light",
+      "Steel_Attack_Air_Light_Fast",
+      "Steel_Attack_Air_Light_Slow",
+      "Steel_Attack_GuardBreak_A",
+      "Steel_Attack_Melee_A",
+      "Steel_Attack_Melee_A_Fast",
+      "Steel_Attack_Melee_A_Montage",
+      "Steel_Attack_Melee_A_Normal_V1",
+      "Steel_Attack_Melee_A_Normal_V1_Recovery",
+      "Steel_Attack_Melee_A_Slow",
+      "Steel_Attack_Melee_B",
+      "Steel_Attack_Melee_B_Fast",
+      "Steel_Attack_Melee_B_Montage",
+      "Steel_Attack_Melee_B_Normal_V1",
+      "Steel_Attack_Melee_B_Normal_V1_Recovery",
+      "Steel_Attack_Melee_B_Slow",
+      "Steel_Attack_Melee_C",
+      "Steel_Attack_Melee_C_Fast",
+      "Steel_Attack_Melee_C_Montage",
+      "Steel_Attack_Melee_C_Normal_V1",
+      "Steel_Attack_Melee_C_Normal_V1_Recovery",
+      "Steel_Attack_Melee_C_Slow",
+      "Steel_Attack_Melee_Charge_A",
+      "Steel_Attack_Melee_Charge_C",
+      "Steel_Attack_Melee_D_Fast_V1",
+      "Steel_Attack_Melee_D_V1",
+      "Steel_Attack_Melee_D_V1_Montage",
+      "Steel_Attack_Melee_D_V1_Recovery"
+    ],
+    "ranged_or_special": [
+      "Cast",
+      "Steel_Ability_Bash",
+      "Steel_Ability_Block_Idle",
+      "Steel_Ability_CowCatcher_Charge",
+      "Steel_Ability_CowCatcher_Deploy",
+      "Steel_Ability_CowCatcher_End",
+      "Steel_Ability_CowCatcher_Start",
+      "Steel_Ability_CowCatcher_Targeting_Idle",
+      "Steel_Ability_GroundSmah_Start",
+      "Steel_Ability_GroundSmash_End",
+      "Steel_Ability_GroundSmash_Loop",
+      "Steel_Ability_ShieldBlock_Deploy",
+      "Steel_Ability_ShieldDive",
+      "Steel_Ability_ShieldDive_Recover",
+      "Steel_Ability_Shield_Deploy",
+      "Steel_Ability_Shield_Idle",
+      "Steel_Ability_Shield_Idle_Overhead",
+      "Steel_Ability_Shield_Jog_Overhead",
+      "Steel_Ability_Shield_Targeting_Cancel",
+      "Steel_Ability_Shield_Throw",
+      "Steel_Ability_Shield_Transition_Overhead",
+      "Steel_Ability_Shield_Walk_Bwd",
+      "Steel_Ability_Shield_Walk_Fwd",
+      "Steel_Ability_Shield_Walk_Left",
+      "Steel_Ability_Shield_Walk_Right",
+      "Steel_Ability_Ultimate_Intro",
+      "Steel_Attack_Melee_Charge_A",
+      "Steel_Attack_Melee_Charge_C",
+      "Steel_Sprint_TravelMode_Casting_Additive"
+    ],
+    "hit_react": [
+      "Steel_HitReact_Back",
+      "Steel_HitReact_Cringe",
+      "Steel_HitReact_Cringe_B",
+      "Steel_HitReact_Front",
+      "Steel_HitReact_Left",
+      "Steel_HitReact_Right",
+      "Steel_KnockBack",
+      "Steel_KnockBack_Bwd",
+      "Steel_Knockdown_Counter",
+      "Steel_Knockdown_Enter",
+      "Steel_Knockdown_Idle"
+    ],
+    "death": [
+      "Steel_Death_A",
+      "Steel_Death_B"
+    ],
+    "block": [
+      "Emote_Master_ShieldBang_T3",
+      "Steel_Ability_Block_Idle",
+      "Steel_Ability_ShieldBlock_Deploy",
+      "Steel_Ability_ShieldDive",
+      "Steel_Ability_ShieldDive_Recover",
+      "Steel_Ability_Shield_Deploy",
+      "Steel_Ability_Shield_Idle",
+      "Steel_Ability_Shield_Idle_Overhead",
+      "Steel_Ability_Shield_Jog_Overhead",
+      "Steel_Ability_Shield_Targeting_Cancel",
+      "Steel_Ability_Shield_Throw",
+      "Steel_Ability_Shield_Transition_Overhead",
+      "Steel_Ability_Shield_Walk_Bwd",
+      "Steel_Ability_Shield_Walk_Fwd",
+      "Steel_Ability_Shield_Walk_Left",
+      "Steel_Ability_Shield_Walk_Right",
+      "Steel_Attack_GuardBreak_A",
+      "Steel_NewShieldPose"
+    ],
+    "intro_or_transition": [
+      "Emote_Backspin",
+      "Emote_BigClap",
+      "Emote_Master_ShieldBang_T3",
+      "Emote_Steelamania",
+      "Emote_Taunt_Bow_T1",
+      "Steel_Ability_Shield_Transition_Overhead",
+      "Steel_Ability_Ultimate_Intro",
+      "Steel_Jog_LeftToRight_Transition",
+      "Steel_Jog_RightToLeft_Transition",
+      "Steel_Knockdown_Enter",
+      "Steel_Transition_Idle2Jog_Additive",
+      "Steel_Transition_Jog2Idle_Additive",
+      "Victory_Emote"
+    ]
+  },
+  "root_motion_sequences": [
+    "Steel_Test_FullDash",
+    "Steel_RootMotion"
+  ]
+}

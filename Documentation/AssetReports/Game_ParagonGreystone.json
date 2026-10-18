@@ -1,0 +1,1518 @@
+{
+  "root": "/Game/ParagonGreystone",
+  "asset_counts": {
+    "DialogueVoice": 1,
+    "SoundCue": 140,
+    "DialogueWave": 337,
+    "SoundWave": 337,
+    "Texture2D": 342,
+    "MaterialInstanceConstant": 29,
+    "Material": 137,
+    "MaterialFunction": 94,
+    "TextureCube": 2,
+    "SubsurfaceProfile": 4,
+    "MaterialParameterCollection": 2,
+    "AnimBlueprint": 1,
+    "Blueprint": 1,
+    "MapBuildDataRegistry": 2,
+    "World": 2,
+    "AnimSequence": 154,
+    "AnimMontage": 4,
+    "AimOffsetBlendSpace": 1,
+    "BlendSpace": 8,
+    "BlendSpace1D": 1,
+    "Skeleton": 1,
+    "PhysicsAsset": 2,
+    "SkeletalMesh": 5,
+    "StaticMesh": 57,
+    "PhysicalMaterial": 1,
+    "ParticleSystem": 64,
+    "VectorFieldStatic": 7
+  },
+  "skeletal_meshes": [
+    {
+      "name": "Greystone",
+      "size_cm": [
+        152,
+        169,
+        206
+      ],
+      "skeleton": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Meshes/Greystone_Skeleton.Greystone_Skeleton",
+      "bone_count": 180,
+      "material_slots": 17
+    },
+    {
+      "name": "Greystone_Dragonlord",
+      "size_cm": [
+        152,
+        169,
+        206
+      ],
+      "skeleton": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Meshes/Greystone_Skeleton.Greystone_Skeleton",
+      "bone_count": 180,
+      "material_slots": 17
+    },
+    {
+      "name": "Greystone_Novaborn",
+      "size_cm": [
+        143,
+        163,
+        205
+      ],
+      "skeleton": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Meshes/Greystone_Skeleton.Greystone_Skeleton",
+      "bone_count": 180,
+      "material_slots": 16
+    },
+    {
+      "name": "Greystone_Tough",
+      "size_cm": [
+        143,
+        163,
+        207
+      ],
+      "skeleton": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Meshes/Greystone_Skeleton.Greystone_Skeleton",
+      "bone_count": 180,
+      "material_slots": 11
+    },
+    {
+      "name": "Greystone_WhiteTiger",
+      "size_cm": [
+        152,
+        169,
+        206
+      ],
+      "skeleton": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Meshes/Greystone_Skeleton.Greystone_Skeleton",
+      "bone_count": 180,
+      "material_slots": 17
+    }
+  ],
+  "skeletons": [
+    "/Game/ParagonGreystone/Characters/Heroes/Greystone/Meshes/Greystone_Skeleton.Greystone_Skeleton"
+  ],
+  "anim_sequences": [
+    {
+      "name": "Ultimate_Part2",
+      "length_s": 2.267,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Ultimate_Part1",
+      "length_s": 1.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Ultimate_Entry",
+      "length_s": 0.967,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Turn_Right_90",
+      "length_s": 1.967,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Turn_Right_180",
+      "length_s": 2.2,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Turn_Left_90",
+      "length_s": 1.967,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Turn_Left_180",
+      "length_s": 2.2,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Uphill_Fwd",
+      "length_s": 0.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Uphill_Bwd",
+      "length_s": 0.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Right",
+      "length_s": 1.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Left",
+      "length_s": 1.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Fwd_Stop",
+      "length_s": 2.967,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Fwd_Start",
+      "length_s": 1.933,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Fwd_Pivot180",
+      "length_s": 2.733,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Fwd_Circle_Right",
+      "length_s": 1.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Fwd_Circle_Left",
+      "length_s": 1.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Fwd",
+      "length_s": 1.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Downhill_Fwd",
+      "length_s": 0.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Downhill_Bwd",
+      "length_s": 0.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Bwd_Stop",
+      "length_s": 1.567,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Travelmode_Bwd_Start",
+      "length_s": 1.1,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Bwd_Pivot180",
+      "length_s": 2.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Bwd_Circle_Right",
+      "length_s": 1.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Bwd_Circle_Left",
+      "length_s": 1.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "TravelMode_Bwd",
+      "length_s": 1.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Stun_Start",
+      "length_s": 2.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Stun_Idle",
+      "length_s": 12.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Spin_Jog_Fwd2Bwd_CW",
+      "length_s": 3.133,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Spin_Jog_Fwd2Bwd_CCW",
+      "length_s": 3.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Spin_Jog_Bwd2Fwd_CW",
+      "length_s": 2.533,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Spin_Jog_Bwd2Fwd_CCW",
+      "length_s": 4.633,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "RMB_Targeting_MSA",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "RMB_Targeting",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Respawn",
+      "length_s": 0.933,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Recall",
+      "length_s": 13.433,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "LevelStart",
+      "length_s": 5.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Start",
+      "length_s": 0.367,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Recovery_Additive",
+      "length_s": 0.733,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Recovery",
+      "length_s": 0.733,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_pad",
+      "length_s": 2.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Melee_MSA",
+      "length_s": 1.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Melee",
+      "length_s": 1.067,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Land",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 0.20000000298023224,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Fall",
+      "length_s": 1.2,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jump_Apex",
+      "length_s": 0.233,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Uphill_Right",
+      "length_s": 0.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Uphill_Left",
+      "length_s": 0.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Uphill_Fwd",
+      "length_s": 0.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Uphill_Bwd",
+      "length_s": 0.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Right_Stop",
+      "length_s": 2.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Right_Start",
+      "length_s": 2.233,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Right_Pivot180",
+      "length_s": 2.833,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Right_Circle_Right",
+      "length_s": 1.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Right_Circle_Left",
+      "length_s": 1.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Right",
+      "length_s": 1.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Left_Stop",
+      "length_s": 2.233,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Left_Start",
+      "length_s": 2.467,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Left_Pivot180",
+      "length_s": 2.5,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Left_Circle_Right",
+      "length_s": 1.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Left_Circle_Left",
+      "length_s": 1.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Left",
+      "length_s": 1.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Fwd_Stop",
+      "length_s": 2.5,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Fwd_Start",
+      "length_s": 2.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Fwd_Pivot180",
+      "length_s": 3.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Fwd_Circle_Right",
+      "length_s": 1.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Fwd_Circle_Left",
+      "length_s": 1.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Fwd",
+      "length_s": 1.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Downhill_Right",
+      "length_s": 0.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Downhill_Left",
+      "length_s": 0.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Downhill_Fwd",
+      "length_s": 0.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Downhill_Bwd",
+      "length_s": 0.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Bwd_Stop",
+      "length_s": 1.833,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Bwd_Start",
+      "length_s": 2.367,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Bwd_Pivot180",
+      "length_s": 3.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Bwd_Circle_Right",
+      "length_s": 1.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Bwd_Circle_Left",
+      "length_s": 1.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Jog_Bwd",
+      "length_s": 1.3,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle",
+      "length_s": 29.967,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "HitReact_Right",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "HitReact_Left",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "HitReact_Front",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "HitReact_Back",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_LOCAL_SPACE_BASE: 1>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Taunt_SwordPoint_T1",
+      "length_s": 3.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Taunt_BringItOn_T1",
+      "length_s": 6.267,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_OooLaLa_T3",
+      "length_s": 9.167,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_Master_SwordPlay_T3",
+      "length_s": 8.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_EpicRiff_Outro",
+      "length_s": 5.0,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_EpicRiff_Loop",
+      "length_s": 1.433,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_EpicRiff_Intro",
+      "length_s": 3.167,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Emote_EpicRiff",
+      "length_s": 9.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Deflect_InPlace",
+      "length_s": 1.133,
+      "root_motion": false,
+      "rate_scale": 1.100000023841858,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Death",
+      "length_s": 1.2,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Cast_MSA",
+      "length_s": 1.133,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Cast",
+      "length_s": 1.133,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "CardCast_MSA",
+      "length_s": 0.833,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "CardCast",
+      "length_s": 0.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Bound",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_RMB",
+      "length_s": 3.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_PrimaryC",
+      "length_s": 1.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_PrimaryB",
+      "length_s": 1.4,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_PrimaryA",
+      "length_s": 1.667,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_D_Slow_Recovery_MSA",
+      "length_s": 0.5,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_D_Slow_Recovery",
+      "length_s": 0.5,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_D_Slow_MSA",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_D_Slow",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_D_Med_MSA",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_D_Med",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_D_Fast_MSA",
+      "length_s": 0.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_D_Fast",
+      "length_s": 0.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_C_Slow_Recovery_MSA",
+      "length_s": 0.633,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_C_Slow_Recovery",
+      "length_s": 0.633,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_C_Slow_MSA",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_C_Slow",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_C_Med_MSA",
+      "length_s": 1.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_C_Med",
+      "length_s": 1.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_C_Fast_MSA",
+      "length_s": 0.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_C_Fast",
+      "length_s": 0.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_B_Slow_Recovery_MSA",
+      "length_s": 0.5,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_B_Slow_Recovery",
+      "length_s": 0.5,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_B_Slow_MSA",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_B_Slow",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_B_Med_MSA",
+      "length_s": 1.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_B_Med",
+      "length_s": 1.333,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_B_Fast_MSA",
+      "length_s": 0.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_B_Fast",
+      "length_s": 0.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_A_Slow_Recovery_MSA",
+      "length_s": 0.833,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_A_Slow_Recovery",
+      "length_s": 0.833,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_A_Slow_MSA",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_A_Slow",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_A_Med_MSA",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_A_Med",
+      "length_s": 0.8,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_A_Fast_MSA",
+      "length_s": 0.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Attack_A_Fast",
+      "length_s": 0.6,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Ability_Ultimate_FrozenPose",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Ability_Ultimate",
+      "length_s": 4.367,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Ability_R",
+      "length_s": 1.867,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Ability_Q",
+      "length_s": 0.933,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Ability_E_MSA",
+      "length_s": 1.267,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Ability_E",
+      "length_s": 1.267,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_NONE: 0>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RBU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RBD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_RBC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LBU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LBD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_LBC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_CU",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_CD",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    },
+    {
+      "name": "Idle_AO_CC",
+      "length_s": 0.033,
+      "root_motion": false,
+      "rate_scale": 1.0,
+      "additive": "<AdditiveAnimationType.AAT_ROTATION_OFFSET_MESH_SPACE: 2>",
+      "notifies": []
+    }
+  ],
+  "anim_montages": [
+    {
+      "name": "LevelStart_Montage",
+      "length_s": 5.0,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    },
+    {
+      "name": "Attack_PrimaryC_Montage",
+      "length_s": 1.867,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    },
+    {
+      "name": "Attack_PrimaryB_Montage",
+      "length_s": 1.4,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    },
+    {
+      "name": "Attack_PrimaryA_Montage",
+      "length_s": 1.667,
+      "sections": [],
+      "slots": [],
+      "root_motion": false,
+      "notifies": []
+    }
+  ],
+  "blendspaces": [
+    "Greystone_Locomotion_BS",
+    "JogBwdSlopeLean",
+    "JogFwdSlopeLean",
+    "JogLeftSlopeLean",
+    "JogRightSlopeLean",
+    "Locomotion_BS",
+    "Locomotion_TravelMode_BS1D",
+    "SprintBwdSlopeLean",
+    "SprintFwdSlopeLean"
+  ],
+  "anim_blueprints": [
+    "Greystone_AnimBlueprint"
+  ],
+  "niagara_systems": [],
+  "sounds": 477,
+  "core_coverage": {
+    "idle": [
+      "Idle",
+      "Idle_AO_CC",
+      "Idle_AO_CD",
+      "Idle_AO_CU",
+      "Idle_AO_LBC",
+      "Idle_AO_LBD",
+      "Idle_AO_LBU",
+      "Idle_AO_LC",
+      "Idle_AO_LD",
+      "Idle_AO_LU",
+      "Idle_AO_RBC",
+      "Idle_AO_RBD",
+      "Idle_AO_RBU",
+      "Idle_AO_RC",
+      "Idle_AO_RD",
+      "Idle_AO_RU",
+      "Stun_Idle"
+    ],
+    "locomotion": [
+      "Jog_Bwd",
+      "Jog_Bwd_Circle_Left",
+      "Jog_Bwd_Circle_Right",
+      "Jog_Bwd_Pivot180",
+      "Jog_Bwd_Start",
+      "Jog_Bwd_Stop",
+      "Jog_Downhill_Bwd",
+      "Jog_Downhill_Fwd",
+      "Jog_Downhill_Left",
+      "Jog_Downhill_Right",
+      "Jog_Fwd",
+      "Jog_Fwd_Circle_Left",
+      "Jog_Fwd_Circle_Right",
+      "Jog_Fwd_Pivot180",
+      "Jog_Fwd_Start",
+      "Jog_Fwd_Stop",
+      "Jog_Left",
+      "Jog_Left_Circle_Left",
+      "Jog_Left_Circle_Right",
+      "Jog_Left_Pivot180",
+      "Jog_Left_Start",
+      "Jog_Left_Stop",
+      "Jog_Right",
+      "Jog_Right_Circle_Left",
+      "Jog_Right_Circle_Right",
+      "Jog_Right_Pivot180",
+      "Jog_Right_Start",
+      "Jog_Right_Stop",
+      "Jog_Uphill_Bwd",
+      "Jog_Uphill_Fwd",
+      "Jog_Uphill_Left",
+      "Jog_Uphill_Right",
+      "Spin_Jog_Bwd2Fwd_CCW",
+      "Spin_Jog_Bwd2Fwd_CW",
+      "Spin_Jog_Fwd2Bwd_CCW",
+      "Spin_Jog_Fwd2Bwd_CW"
+    ],
+    "dodge": [],
+    "attack": [
+      "Attack_A_Fast",
+      "Attack_A_Fast_MSA",
+      "Attack_A_Med",
+      "Attack_A_Med_MSA",
+      "Attack_A_Slow",
+      "Attack_A_Slow_MSA",
+      "Attack_A_Slow_Recovery",
+      "Attack_A_Slow_Recovery_MSA",
+      "Attack_B_Fast",
+      "Attack_B_Fast_MSA",
+      "Attack_B_Med",
+      "Attack_B_Med_MSA",
+      "Attack_B_Slow",
+      "Attack_B_Slow_MSA",
+      "Attack_B_Slow_Recovery",
+      "Attack_B_Slow_Recovery_MSA",
+      "Attack_C_Fast",
+      "Attack_C_Fast_MSA",
+      "Attack_C_Med",
+      "Attack_C_Med_MSA",
+      "Attack_C_Slow",
+      "Attack_C_Slow_MSA",
+      "Attack_C_Slow_Recovery",
+      "Attack_C_Slow_Recovery_MSA",
+      "Attack_D_Fast",
+      "Attack_D_Fast_MSA",
+      "Attack_D_Med",
+      "Attack_D_Med_MSA",
+      "Attack_D_Slow",
+      "Attack_D_Slow_MSA",
+      "Attack_D_Slow_Recovery",
+      "Attack_D_Slow_Recovery_MSA",
+      "Attack_PrimaryA",
+      "Attack_PrimaryA_Montage",
+      "Attack_PrimaryB",
+      "Attack_PrimaryB_Montage",
+      "Attack_PrimaryC",
+      "Attack_PrimaryC_Montage",
+      "Attack_RMB",
+      "Jump_Melee",
+      "Jump_Melee_MSA"
+    ],
+    "ranged_or_special": [
+      "Ability_E",
+      "Ability_E_MSA",
+      "Ability_Q",
+      "Ability_R",
+      "Ability_Ultimate",
+      "Ability_Ultimate_FrozenPose",
+      "CardCast",
+      "CardCast_MSA",
+      "Cast",
+      "Cast_MSA",
+      "Ultimate_Entry",
+      "Ultimate_Part1",
+      "Ultimate_Part2"
+    ],
+    "hit_react": [
+      "HitReact_Back",
+      "HitReact_Front",
+      "HitReact_Left",
+      "HitReact_Right",
+      "Stun_Idle",
+      "Stun_Start"
+    ],
+    "death": [
+      "Death"
+    ],
+    "block": [],
+    "intro_or_transition": [
+      "Emote_EpicRiff",
+      "Emote_EpicRiff_Intro",
+      "Emote_EpicRiff_Loop",
+      "Emote_EpicRiff_Outro",
+      "Emote_Master_SwordPlay_T3",
+      "Emote_OooLaLa_T3",
+      "Emote_Taunt_BringItOn_T1",
+      "Emote_Taunt_SwordPoint_T1",
+      "Respawn"
+    ]
+  },
+  "root_motion_sequences": []
+}
