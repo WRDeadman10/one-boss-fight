@@ -1,0 +1,8 @@
+SM_Pillar_Intact -> Extent: (X=145.0, Y=145.0, Z=450.0), Origin: (X=0.0, Y=-0.0, Z=450.0), Radius: 472.8
+SM_Pillar_Cracked -> Extent: (X=145.0, Y=145.0, Z=450.0), Origin: (X=0.0, Y=-0.0, Z=450.0), Radius: 472.8
+SM_Pillar_Broken -> Extent: (X=253.3, Y=198.6, Z=240.0), Origin: (X=17.9, Y=-58.6, Z=240.0), Radius: 342.1
+SM_Wall_Curved_Intact -> Extent: (X=48.2, Y=201.8, Z=150.0), Origin: (X=-3.2, Y=0.0, Z=150.0), Radius: 254.8
+SM_Wall_Curved_Damaged -> Extent: (X=48.2, Y=201.8, Z=150.0), Origin: (X=-3.2, Y=0.0, Z=150.0), Radius: 254.8
+SM_Entrance_Arch -> Extent: (X=92.0, Y=492.0, Z=447.5), Origin: (X=0.0, Y=-0.0, Z=447.5), Radius: 669.7
+SM_Arena_Brazier -> Extent: (X=60.0, Y=59.3, Z=57.5), Origin: (X=5.0, Y=0.0, Z=57.5), Radius: 89.3
+SM_Arena_Rubble_Cluster -> Extent: (X=138.6, Y=80.1, Z=23.6), Origin: (X=0.0, Y=1.2, Z=23.6), Radius: 149.9

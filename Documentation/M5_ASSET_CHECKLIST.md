@@ -1,4 +1,5 @@
 # M5 asset checklist
+> Superseded by `ENVIRONMENT_ASSET_REQUEST.md`.
 
 M5 work that needs files only you can download. Free assets first; check the license on each Fab listing at download
 time and record it in `ASSET_LICENSES.md`. Nothing here is a purchase decision for me to make.

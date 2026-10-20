@@ -1,0 +1,12 @@
+Clip: AN_Boss01_A2_ApexHold
+Length: 1.167
+FPS: 30
+Frames: 36 (0 to 35)
+Loop: Yes (Clean loop, frames 0 to 35; frame 36 omitted to prevent duplicate end frame in Unreal montage loop section)
+RootMotion: In Place
+ApexReached: 0.00
+CommitTime: N/A
+ActiveStartTime: N/A
+ActiveEndTime: N/A
+RecoveryEndTime: N/A
+Notes: Strained overhead poise with two-handed greatsword held at peak apex (hands at Z=2.1-2.2 m, hand separation 13.9 cm). Both feet stay firmly planted flat on the floor (foot Z=0.29m, pelvis Z=0.89m, knees braced, zero airborne leap). Subtle isometric tension flutter (4 Hz) and core respiration cycle conveying massive physical effort under the 184 cm iron blade. Blade angled forward/overhead, never resting behind the head. Exactly 36 frames (0 to 35) designed for seamless montage section looping without stutter.

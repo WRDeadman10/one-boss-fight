@@ -3,6 +3,8 @@
 #include "Benchmark/RPGBenchmarkRunner.h"
 #include "OneBossFight.h"
 #include "Camera/CameraActor.h"
+#include "Kismet/GameplayStatics.h"
+#include "Pack/RPGBlueprintCall.h"
 #include "Dom/JsonObject.h"
 #include "Engine/Engine.h"
 #include "Engine/GameViewportClient.h"
@@ -63,6 +65,12 @@ void ARPGBenchmarkRunner::StartBenchmark()
 		return;
 	}
 
+	bFightMode = bFightMode || FParse::Param(FCommandLine::Get(), TEXT("RPGBenchmarkFight"));
+	bFightStarted = false;
+	bBotInCombat = false;
+	bPhase2Forced = false;
+	FightCenter = GetActorLocation();
+
 	ResolvedLabel = RunLabel;
 	FString LabelOverride;
 	if (FParse::Value(FCommandLine::Get(), TEXT("RPGBenchmarkLabel="), LabelOverride) && !LabelOverride.IsEmpty())
@@ -78,7 +86,7 @@ void ARPGBenchmarkRunner::StartBenchmark()
 
 	ApplyUncappedFrameRate();
 
-	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+	if (APlayerController* PlayerController = bFightMode ? nullptr : GetWorld()->GetFirstPlayerController())
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -133,11 +141,118 @@ void ARPGBenchmarkRunner::Tick(float DeltaSeconds)
 	}
 	LastTickTime = Now;
 
-	UpdateCamera(Elapsed);
+	if (bFightMode)
+	{
+		TickFight(Elapsed, DeltaSeconds);
+	}
+	if (!bFightMode)
+	{
+		UpdateCamera(Elapsed);
+	}
 
 	if (Elapsed >= WarmupSeconds + DurationSeconds)
 	{
 		FinishBenchmark();
+	}
+}
+
+void ARPGBenchmarkRunner::TickFight(double ElapsedSeconds, float DeltaSeconds)
+{
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	// Player and boss are resolved lazily: the boss is a Blueprint pawn from the pack.
+	if (!FightPlayer.IsValid())
+	{
+		FightPlayer = UGameplayStatics::GetPlayerPawn(World, 0);
+	}
+	if (!FightBoss.IsValid())
+	{
+		TArray<AActor*> Pawns;
+		UGameplayStatics::GetAllActorsOfClass(World, APawn::StaticClass(), Pawns);
+		for (AActor* Candidate : Pawns)
+		{
+			if (Candidate->GetClass()->GetName().StartsWith(TEXT("BP_SevarogBossPack")))
+			{
+				FightBoss = Candidate;
+				break;
+			}
+		}
+	}
+	APawn* Player = FightPlayer.Get();
+	AActor* Boss = FightBoss.Get();
+	if (!Player || !Boss)
+	{
+		return;
+	}
+	FightCenter = Boss->GetActorLocation();
+	bFightStarted = true;
+
+	// The bot never dies and the boss never does either: the fight must last the whole run.
+	BotHealTimer -= DeltaSeconds;
+	if (BotHealTimer <= 0.f)
+	{
+		BotHealTimer = 0.5f;
+		double Health = 0.0, MaxHealth = 0.0;
+		if (RPGPack::ReadAttribute(Player, TEXT("Attribute.Health"), true, MaxHealth) && RPGPack::ReadAttribute(Player, TEXT("Attribute.Health"), false, Health) && Health < MaxHealth * 0.6)
+		{
+			RPGPack::WriteAttribute(Player, TEXT("Attribute.Health"), MaxHealth);
+		}
+		double BossHealth = 0.0, BossMax = 0.0;
+		if (RPGPack::ReadAttribute(Boss, TEXT("Attribute.Health"), true, BossMax) && RPGPack::ReadAttribute(Boss, TEXT("Attribute.Health"), false, BossHealth) && BossMax > 0.0)
+		{
+			const double Fraction = BossHealth / BossMax;
+			if (!bPhase2Forced && ElapsedSeconds < Phase2AtSeconds)
+			{
+				if (Fraction < 0.7)
+				{
+					RPGPack::WriteAttribute(Boss, TEXT("Attribute.Health"), BossMax);
+				}
+			}
+			else if (!bPhase2Forced)
+			{
+				bPhase2Forced = true;
+				RPGPack::WriteAttribute(Boss, TEXT("Attribute.Health"), BossMax * 0.45);
+				UE_LOG(LogOneBossFight, Log, TEXT("Benchmark fight: boss pushed into phase 2 at %.1fs"), ElapsedSeconds);
+			}
+			else if (Fraction < 0.25)
+			{
+				RPGPack::WriteAttribute(Boss, TEXT("Attribute.Health"), BossMax * 0.5);
+			}
+		}
+	}
+
+	// Face the boss and walk up to him.
+	const FVector ToBoss = Boss->GetActorLocation() - Player->GetActorLocation();
+	const double Distance = ToBoss.Size2D();
+	if (!ToBoss.GetSafeNormal2D().IsNearlyZero())
+	{
+		Player->SetActorRotation(ToBoss.GetSafeNormal2D().Rotation());
+		if (Distance > 190.0 && Distance < 2500.0)
+		{
+			Player->AddMovementInput(ToBoss.GetSafeNormal2D(), 1.f);
+		}
+	}
+
+	// Bot input through the pack's abilities: enter combat once, melee while in reach, a dodge every few seconds.
+	BotAttackTimer -= DeltaSeconds;
+	BotDodgeTimer -= DeltaSeconds;
+	if (!bBotInCombat && Distance < 900.0)
+	{
+		bBotInCombat = RPGPack::TryActivateByTag(Player, TEXT("Ability.EnterCombat"));
+	}
+	else if (bBotInCombat && BotDodgeTimer <= 0.f)
+	{
+		BotDodgeTimer = 5.f;
+		RPGPack::TryActivateByTag(Player, TEXT("Ability.Dodge"));
+	}
+	else if (bBotInCombat && BotAttackTimer <= 0.f && Distance < 420.0)
+	{
+		BotAttackTimer = 0.4f;
+		RPGPack::TryActivateByTag(Player, TEXT("Ability.Melee"));
 	}
 }
 
@@ -148,7 +263,7 @@ void ARPGBenchmarkRunner::UpdateCamera(double ElapsedSeconds)
 		return;
 	}
 
-	const FVector Center = GetActorLocation();
+	const FVector Center = bFightMode ? FightCenter : GetActorLocation();
 	const double Angle = 2.0 * PI * ElapsedSeconds / FMath::Max(OrbitPeriodSeconds, 1.f);
 	const FVector Location = Center + FVector(FMath::Cos(Angle) * OrbitRadius, FMath::Sin(Angle) * OrbitRadius, OrbitHeight);
 	const FRotator Rotation = (Center - Location).Rotation();
@@ -209,6 +324,7 @@ void ARPGBenchmarkRunner::WriteResults(const FRPGFrameStats& Stats) const
 	Json->SetStringField(TEXT("label"), ResolvedLabel);
 	Json->SetStringField(TEXT("timestamp"), Stamp);
 	Json->SetStringField(TEXT("map"), GetWorld() ? GetWorld()->GetMapName() : FString());
+	Json->SetBoolField(TEXT("fight_mode"), bFightMode);
 	Json->SetStringField(TEXT("engine_version"), FEngineVersion::Current().ToString());
 	Json->SetStringField(TEXT("build_configuration"), LexToString(FApp::GetBuildConfiguration()));
 	Json->SetStringField(TEXT("gpu"), GpuBrand);

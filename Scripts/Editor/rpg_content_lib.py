@@ -112,3 +112,16 @@ def attack_struct(montage, damage, poise, stamina, unblockable=False, play_rate=
     attack.set_editor_property("unblockable", unblockable)
     attack.set_editor_property("play_rate", play_rate)
     return attack
+
+
+def quit_editor_soon(ticks=90):
+    """Quit a real editor a little after startup. Quitting inside the startup script crashes the level editor."""
+    state = {"n": 0, "handle": None}
+
+    def tick(_delta):
+        state["n"] += 1
+        if state["n"] >= ticks:
+            unreal.unregister_slate_post_tick_callback(state["handle"])
+            unreal.SystemLibrary.execute_console_command(None, "QUIT_EDITOR")
+
+    state["handle"] = unreal.register_slate_post_tick_callback(tick)

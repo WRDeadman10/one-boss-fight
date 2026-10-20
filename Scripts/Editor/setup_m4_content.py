@@ -27,14 +27,20 @@ SLOT = "FullBody"  # Sevarog's AnimBP has a FullBody slot node after the locomot
 TIP_BONE = "root_weapon_end_r"
 BASE_BONE = "weapon_r"
 
-# name, sequence, hit-window mode ("motion" | "none"), radial (radius, forward offset, time fraction or None=peak, effect asset, sound asset) or None
+# Niagara effects (imported in M7). Cascade effects stay as the fallback when these assets are missing.
+NS_SHOCKWAVE = "/Game/Free_Spells/VFX_Niagara/NS_Free_Spells_Shockwave"
+NS_CIRCLE = "/Game/Free_Spells/VFX_Niagara/NS_Free_Spells_Circle"
+NS_BOLT = "/Game/BeamPack/Niagara/LaserBeam/NS_Thunder_Beam7"
+
+# name, sequence, hit-window mode ("motion" | "none"), radial (radius, forward offset, time fraction or None=peak, effect asset,
+# sound asset, Niagara effect asset, ground telegraph Niagara asset or None) or None
 MONTAGES = [
     ("AM_Sevarog_Sweep", "Swing1_Medium", "motion", None),
     ("AM_Sevarog_Backhand", "Swing2_Medium", "motion", None),
     ("AM_Sevarog_Overhead", "Swing3_Medium", "motion", None),
     ("AM_Sevarog_Lunge", "Swing_In_Air", "motion", None),
-    ("AM_Sevarog_Shockwave", "Ultimate_Swing_120fps", "none", (500.0, 200.0, None, "/Game/ParagonSevarog/FX/Particles/Abilities/Ultimate/FX/P_UltMeshArc_Expanding", "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Ability_Ultimate")),
-    ("AM_Sevarog_Lightning", "Cast", "none", (350.0, 600.0, 0.5, "/Game/ParagonSevarog/FX/Particles/Abilities/Subjugate/FX/P_Sevarog_Subjugate_Blast", "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Ability_Q")),
+    ("AM_Sevarog_Shockwave", "Ultimate_Swing_120fps", "none", (500.0, 200.0, None, "/Game/ParagonSevarog/FX/Particles/Abilities/Ultimate/FX/P_UltMeshArc_Expanding", "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Ability_Ultimate", NS_SHOCKWAVE, None)),
+    ("AM_Sevarog_Lightning", "Cast", "none", (350.0, 600.0, 0.5, "/Game/ParagonSevarog/FX/Particles/Abilities/Subjugate/FX/P_Sevarog_Subjugate_Blast", "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Ability_Q", NS_BOLT, NS_CIRCLE)),
     ("AM_Sevarog_Entrance", "LevelStart", "none", None),
     ("AM_Sevarog_PhaseRoar", "Ultimate_Targeting", "none", None),
     ("AM_Sevarog_HitReact", "Hitreact_Front", "none", None),
@@ -58,8 +64,13 @@ ATTACKS = [
     ("DA_Boss_Shockwave", "AM_Sevarog_Shockwave", dict(
         attack_name="Shockwave", min_range=0, max_range=600, max_angle=180, weight=2, cooldown=10, max_consecutive_repeats=1,
         tracking_turn_rate=0, recovery_pause=1.0), dict(damage=70, poise_damage=45)),
+    # Three hits in a row: the attack plus two follow-ups (montage, damage, poise damage), no decision in between.
+    ("DA_Boss_Combo", "AM_Sevarog_Sweep", dict(
+        attack_name="Triple Combo", min_range=0, max_range=360, max_angle=60, weight=2, cooldown=9, max_consecutive_repeats=1,
+        tracking_turn_rate=110, recovery_pause=1.2,
+        follow_ups=[("AM_Sevarog_Backhand", 36, 22), ("AM_Sevarog_Overhead", 55, 38)]), dict(damage=34, poise_damage=22)),
     ("DA_Boss_Lightning", "AM_Sevarog_Lightning", dict(
-        attack_name="Lightning (placeholder)", min_range=300, max_range=1500, max_angle=45, weight=3, cooldown=8,
+        attack_name="Lightning Strike", min_range=300, max_range=1500, max_angle=45, weight=3, cooldown=8,
         max_consecutive_repeats=1, min_phase=2, tracking_turn_rate=90, recovery_pause=1.0), dict(damage=45, poise_damage=30)),
 ]
 
@@ -149,7 +160,7 @@ def build_montage(name, sequence_name, mode, radial):
         detail = "hit window %.2f-%.2fs" % (start, end)
 
     if radial is not None:
-        radius, forward, fraction, effect_path, sound_path = radial
+        radius, forward, fraction, effect_path, sound_path, niagara_path, telegraph_path = radial
         if fraction is not None:
             when = length * fraction
         else:
@@ -168,6 +179,17 @@ def build_montage(name, sequence_name, mode, radial):
             notify.set_editor_property("effect", effect)
         if sound:
             notify.set_editor_property("sound", sound)
+        niagara = unreal.load_asset(niagara_path) if niagara_path else None
+        if niagara:
+            notify.set_editor_property("niagara_effect", niagara)
+        telegraph = unreal.load_asset(telegraph_path) if telegraph_path else None
+        if telegraph:
+            # A ground marker 0.45 s before the strike lands, at the same spot.
+            marker = unreal.AnimationLibrary.add_animation_notify_event(montage, track, max(0.05, when - 0.45), unreal.RPGAN_SpawnEffect)
+            marker.set_editor_property("niagara_effect", telegraph)
+            marker.set_editor_property("forward_offset", forward)
+            marker.set_editor_property("ground_drop", 155.0)
+            marker.set_editor_property("scale", radius / 100.0)
         detail += " radial %.0f cm at %.2fs" % (radius, when)
 
     unreal.EditorAssetLibrary.save_loaded_asset(montage)
@@ -179,7 +201,9 @@ def build_montage(name, sequence_name, mode, radial):
 # Data assets
 # ---------------------------------------------------------------------------------------------
 
-def build_attack(asset_name, montage, boss_fields, attack_fields):
+def build_attack(asset_name, montage, boss_fields, attack_fields, montages):
+    boss_fields = dict(boss_fields)
+    follow_ups = boss_fields.pop("follow_ups", [])
     factory = unreal.DataAssetFactory()
     factory.set_editor_property("data_asset_class", unreal.RPGBossAttackData)
     data = recreate(BOSS_DIR + "/" + asset_name, unreal.RPGBossAttackData, factory)
@@ -190,6 +214,15 @@ def build_attack(asset_name, montage, boss_fields, attack_fields):
     for key, value in attack_fields.items():
         attack.set_editor_property(key, value)
     data.set_editor_property("attack", attack)
+    chain = []
+    for follow_montage, damage, poise in follow_ups:
+        step = unreal.RPGAttackData()
+        step.set_editor_property("montage", montages[follow_montage])
+        step.set_editor_property("damage", damage)
+        step.set_editor_property("poise_damage", poise)
+        chain.append(step)
+    if chain:
+        data.set_editor_property("follow_ups", chain)
     unreal.EditorAssetLibrary.save_loaded_asset(data)
     return data
 
@@ -284,7 +317,7 @@ def main():
     for name, sequence, mode, radial in MONTAGES:
         montages[name] = build_montage(name, sequence, mode, radial)
 
-    attacks = [build_attack(asset, montages[montage], boss_fields, attack_fields)
+    attacks = [build_attack(asset, montages[montage], boss_fields, attack_fields, montages)
                for asset, montage, boss_fields, attack_fields in ATTACKS]
     weapon = build_weapon()
     boss_bp = configure_boss(montages, attacks, weapon)

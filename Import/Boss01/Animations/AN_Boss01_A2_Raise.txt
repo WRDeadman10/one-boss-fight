@@ -1,0 +1,12 @@
+Clip: AN_Boss01_A2_Raise
+Length: 0.60
+FPS: 30
+Frames: 19 (0 to 18)
+Loop: No (One-shot)
+RootMotion: In Place
+ApexReached: 0.60
+CommitTime: N/A
+ActiveStartTime: N/A
+ActiveEndTime: N/A
+RecoveryEndTime: N/A
+Notes: Authentic two-handed greatsword hoist edited from pack reference clips (REF_GS_ChargedAttack). Both feet stay firmly planted flat on the floor (foot Z=0.28-0.29m, zero airborne lift). Left and right hands stay locked to the hilt throughout (separation 13.9-33.6 cm). Torso coils and hips load weight into back leg. Hoists blade from neutral combat stance into high forward overhead poise without going behind the head. Matches frame 0 of AN_Boss01_A2_ApexHold.
