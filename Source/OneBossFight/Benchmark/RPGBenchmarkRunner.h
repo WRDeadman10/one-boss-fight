@@ -62,6 +62,18 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Benchmark")
 	FString RunLabel = TEXT("run");
 
+	/**
+	 * Fight mode (also -RPGBenchmarkFight): instead of an empty arena, run the real encounter on the pack. A bot drives Greystone through the pack's own abilities
+	 * (enter combat, melee, dodge), walks him up to Sevarog and keeps him alive, pushes the boss into phase 2 at Phase2AtSeconds, and heals the boss so the fight
+	 * never ends. The view stays the player's camera. Boss animation, spells, hit effects and the HUD all run, so this is the worst case the game has.
+	 */
+	UPROPERTY(EditAnywhere, Category = "Benchmark|Fight")
+	bool bFightMode = false;
+
+	/** Seconds after the benchmark starts when the boss is brought to phase 2. */
+	UPROPERTY(EditAnywhere, Category = "Benchmark|Fight", meta = (ClampMin = "0"))
+	float Phase2AtSeconds = 30.f;
+
 	/** Target for pass/fail in the summary. */
 	UPROPERTY(EditAnywhere, Category = "Benchmark", meta = (ClampMin = "1"))
 	float TargetFPS = 120.f;
@@ -73,6 +85,7 @@ protected:
 
 private:
 	void FinishBenchmark();
+	void TickFight(double ElapsedSeconds, float DeltaSeconds);
 	void WriteResults(const FRPGFrameStats& Stats) const;
 	void ApplyUncappedFrameRate();
 	void RestoreFrameRate();
@@ -94,6 +107,17 @@ private:
 
 	UPROPERTY(Transient)
 	TObjectPtr<ACameraActor> BenchmarkCamera;
+
+	// Fight mode state.
+	TWeakObjectPtr<AActor> FightBoss;
+	TWeakObjectPtr<APawn> FightPlayer;
+	bool bFightStarted = false;
+	bool bPhase2Forced = false;
+	float BotAttackTimer = 0.f;
+	float BotDodgeTimer = 0.f;
+	float BotHealTimer = 0.f;
+	bool bBotInCombat = false;
+	FVector FightCenter = FVector::ZeroVector;
 
 	// Saved cvar/engine state restored when the run ends.
 	bool bFrameRateOverridden = false;

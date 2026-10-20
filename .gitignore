@@ -82,3 +82,53 @@ DerivedDataCache/*
 Content/Paragon*/
 # Plugin-generated script history
 Content/UnrealClaude/
+
+# Other third-party packs imported in M7 (sizes and sources in Documentation/ASSET_LICENSES.md). Re-import from the originals;
+# Scripts/ImportAssetClosure.py copies only what is used.
+Content/Mage/
+Content/BeamPack/
+Content/BloodPack/
+Content/Deadly_Ruins/
+Content/AdvancedARPGCombat/
+Content/Free_Spells/
+Content/RealisticSwordSoundEffects/
+Shiva_Statue_Project/
+
+
+# Dark Ruins Megascans sample content (third party, copied from the sample project; see ASSET_LICENSES.md)
+Content/MS/
+Content/MSPresets/
+Content/CustomAssets/
+Content/Smart/
+Content/Materials/
+Content/Blueprints/
+Content/Effects/
+Content/Textures/
+
+# Third-party content: never on git (2026-10-20). Only own work is tracked: Source, Config, Scripts, Documentation,
+# Content/OneBossFight (own Blueprints, levels, Blender arena meshes, materials), Import (own FBX exports).
+# Footsteps, effects and starter content
+Content/Essential_Foosteps_SK/
+Content/Vefects/
+Content/StarterContent/
+# Retargets and copies made from third-party packs (Paragon Greystone and Sevarog)
+Content/OneBossFight/GreystonePack/
+Content/OneBossFight/SevarogPack/
+Content/OneBossFight/Characters/Greystone/
+Content/RMB_Cast_Grey1.uasset
+# Per-user editor folders
+Content/Developers/
+Content/Collections/
+# Drop zone for assets brought in by hand (animation packs, VFX, models, music). Everything in here stays off git.
+Content/ThirdParty/
+Import/ThirdParty/
+# Copies of third-party pack content inside the archive of the retired C++ combat
+Archive/**/Characters/Greystone/
+Archive/**/*Sevarog*
+Archive/
+# Music brought in by hand
+Import/Audio/
+Content/__ExternalActors__/Free_Spells/
+Content/__ExternalObjects__/Free_Spells/
+*.pyc
+__pycache__/

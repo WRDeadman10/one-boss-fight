@@ -8,7 +8,7 @@ public class OneBossFight : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		// Headers live in feature folders (Characters/, Arena/, ...) and are included as "Folder/File.h".
+		// Headers live in feature folders (Arena/, Boss/, Pack/, ...) and are included as "Folder/File.h".
 		PublicIncludePaths.Add(ModuleDirectory);
 
 		PublicDependencyModuleNames.AddRange(new string[]
@@ -19,26 +19,28 @@ public class OneBossFight : ModuleRules
 			"InputCore",
 			"EnhancedInput",
 			"GameplayTags",
-			"AIModule",                // UBrainComponent (base of UStateTreeComponent)
+			"AIModule",
 			"GameplayTasks",
-			"StateTreeModule",         // boss state tree tasks and conditions
-			"GameplayStateTreeModule"  // UStateTreeComponent
+			"UMG",
+			"Slate",
+			"SlateCore",
+			"Niagara"                  // the spawn-effect notify (Sevarog shockwave)
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"Json",
+			"AssetRegistry", // content wiring test: dependencies of the pack assets
 			"RenderCore", // game/render thread timings for the benchmark
 			"RHI"         // GPU frame time for the benchmark
 		});
 
-		// Authoring helper that builds the boss StateTree asset (editor builds only).
+		// Editor-only authoring helpers (skeleton sockets, montage slots).
 		if (Target.bBuildEditor)
 		{
 			PrivateDependencyModuleNames.AddRange(new string[]
 			{
-				"UnrealEd",
-				"StateTreeEditorModule"
+				"UnrealEd"
 			});
 		}
 	}

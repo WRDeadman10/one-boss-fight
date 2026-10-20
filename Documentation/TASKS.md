@@ -1,0 +1,186 @@
+# Tasks
+
+Rewritten 2026-10-20 around `Master_Design_Freeze_v1_2_AI_Implementation_Ready.md` (the **Freeze**, final and the single
+source of truth: where the project and the Freeze disagree, the project changes). IDs of `KNOWN_ISSUES.md` (KI) and
+`TEST_PLAN.md` are kept. Art requests are in `ASSET_REQUEST_BOSS01.md`.
+
+**Owners:** C = Claude (C++, scripts, tests, project docs, review). AG = Antigravity (Blender, models, animation, VFX, and
+the in-editor content work listed in section 3). U = the project owner (decisions, hand tests, music, commits).
+**Status:** Todo, Doing, Built (code done, not proved), Verified (tests or a run passed, noted), Blocked (reason given).
+Nobody commits except U. A row is changed only by its owner; others write a note under "Notes".
+
+## 0. Working rules
+- One Unreal editor can open this project at a time. Whoever needs it tells U first; C closes it before C++ builds (`Scripts/Rebuild.ps1`).
+- Own content in `Content/OneBossFight/` and own source art in `Import/Boss01/` may be committed by U. Third-party material goes only to `Content/ThirdParty/` and `Import/ThirdParty/` (git ignored).
+- AG never edits `Source/`, `Config/`, `Scripts/` or the pack's Blueprints. C never edits Blender files or AG's Niagara systems except to rewire them, and says so.
+- Testing policy (decided 2026-10-20, replaces the Freeze's blanket 20 trial rule for non-timing items): deterministic logic (dedupe, posture math, phase once, reset twice, riposte once, bleed proc once, i-frame window edges, damage path) gets automation tests or a scripted PIE run with 20 trials per edge, as the Freeze asks. Visual and feel items get a screenshot or capture plus a U hand test. One 30-encounter soak at Gate 4. No per-item ten-field audit table: one delta audit (G0-1), then a short report per task.
+- Report vocabulary: Present, Code-confirmed, Runtime-confirmed, Partially working, Missing, Blocked (Freeze 8.3).
+
+## 1. Gates and tasks (C unless stated)
+
+### Gate 0: alignment (no gameplay change except G0-5)
+| ID | Task | Owner | Depends | Done when | Status |
+|---|---|---|---|---|---|
+| G0-1 | Delta audit: every Freeze requirement (sections 3, 10 to 22, 36) mapped to Present / Code-confirmed / Runtime-confirmed / Partial / Missing with the real file and symbol. Output `DELTA_AUDIT.md` | C | none | File written, conflicts listed | Done 2026-10-20 |
+| G0-2 | Pack coverage check: open pack boss and player montages in the editor (look, timing, root motion), mark every row of `ASSET_REQUEST_BOSS01.md` section 4 and 5 Needed or Covered | C | editor | Request doc updated, AG told | Done 2026-10-20 (verdicts in `DELTA_AUDIT.md` section 2; riposte pair still unchecked) |
+| G0-3 | Pack facts AG needs: skeleton asset path and bone list, boss mesh scale, weapon trace socket names, `ANS_CollisionTrace` usage. Send in the request doc | C | G0-2 | Section 3 of request doc has real names | Done 2026-10-20 (`DELTA_AUDIT.md` section 1, reference FBX in `Import/ThirdParty/Reference/`) |
+| G0-4 | Parameter registry (Freeze 36): find the current owner of each value, add missing ones as properties on the owning component. No new data asset system | C | G0-1 | Table in `DELTA_AUDIT.md`, values editable | Done 2026-10-20 (section 4); missing values get created with their features |
+| G0-5 | Align project to Freeze: phase two 0.60 (now 0.50), remove the legacy fireball grant from phase two, (double tap window is already 0.30 in code, no change), critical multiplier only on the riposte hit (remove the blanket x2.5 in `URPGBossStagger`), stagger and cooldown values per 17.2 | C | G0-1 | Tests updated and green, DECISIONS entry | Done 2026-10-20: threshold 0.60, `bFireballEnabled` false, `bCriticalOnEveryHit` false (critical returns with the riposte), window already 0.30; guards in `Content.PackWiring`; 6/6 automation tests pass. Old PIE scripts `pie_boss_stagger.py` and `pie_boss_phase_two.py` still expect the old values and need updating when next used |
+| G0-6 | Debug mode (Freeze 22): one console switch, one log category, overlay lines for dodge stage, boss state and attack ID, trace, invulnerability, posture, bleed, phase, encounter generation. Off in Shipping | C | G0-1 | Switch works in PIE | Done 2026-10-20: `rpg.Debug` 0/1/2, `URPGCombatDebug` (encounter, phase, stagger, health, poise, montage with position and effective rate, distances, dodge stage and counters). Attack ID, trace, posture and bleed lines are added with those features |
+| G0-7 | Scripted PIE driver for timing scenarios (Freeze 35.3): start a dodge at a set offset from the active window, N trials, result table in the log | C | G0-6 | Driver runs one scenario end to end | Done for the dodge window: `pie_dodge_trials.py`, 180/180 trials pass (8 gaps x 20, triple tap x 10, single tap x 10; the driver repeated 58 trials where it dropped key presses). The A2 offset scenarios come with Gate 1 (G1-9) |
+| G0-8 | Encounter generation token (Freeze 32.2): check `URPGBossEncounter`, add the smallest token so stale timers, montage callbacks and projectiles cannot touch a new fight | C | G0-1 | Reset twice test (L10) in G2-10 uses it | Done 2026-10-20: `GetGeneration()` starts at 1 and rises on every reset, `IsCurrentGeneration(token)`; shown in the overlay. Nothing uses it yet: the first users are the A5 javelin and any timer added in Gate 1 and 2 |
+
+### Gate 1: the single delayed overhead slam (A2) - Freeze 24 Gate 1
+| ID | Task | Owner | Depends | Done when | Status |
+|---|---|---|---|---|---|
+| G1-1 | Attack timing data struct with the Freeze 15 fields (`WindupDuration`, `CommitTime`, `ActiveStartTime`, `ActiveEndTime`, `RecoveryEndTime`, `RecoveryPunishWindow`) per attack, read by notifies | C | G0-1 | A2 data filled from the montage | Done 2026-10-20: `FRPGAttackTiming` in `Player/RPGAttackTracker.h`; A2 stand-in: commit 1.68 s, active 1.93 to 2.11 s, recovery end 3.14 s (measured, see TEST_PLAN A2-*) |
+| G1-2 | Rotation lock notify state: stores and restores every rotation owner (controller focus, orient to movement, root motion, custom interp), idempotent cleanup on interrupt, death, reset | C | G0-1 | B03 to B05, A2 scenario 7 | Built 2026-10-20 as `URPGAttackTracker` (turns towards the player before commit, locks the actor yaw after; no state outlives the montage, so interrupt, stagger, death and reset end it by themselves). Yaw drift after commit 0.0 deg in all scenario trials. Interruptions tested 2026-10-20 (TEST_PLAN A2-INT): stance break and encounter reset 24/24, boss death ends the attack in the tracker (a real damage kill is still to test, G2-9). Not tested: controller focus fighting the lock |
+| G1-3 | One authoritative source for each window (commit, active trace) from the montage; no timer duplicates | C | G1-1 | Freeze 32.1 checked | Built: the tracker has no timers (montage position only) and only observes the pack's trace notify. The real clip's own notifies come with the AAA animation (AGI-2) |
+| G1-4 | Weapon trace review: swept previous to current, per attack instance dedupe, new hit stage resets it, stops on interrupt, debug draw | C | G0-6 | H01 to H07, H11 | Todo |
+| G1-5 | Damage path: invulnerability checked where damage resolves, separate quick dash and roll windows in montage seconds, cleanup on every exit | C | G0-6 | D12 to D15, H08 | Todo |
+| G1-6 | A2 with a stand-in (pack charged attack plus a temporary hold) so the logic is testable now | C | G1-1 to G1-3 | Slam plays with commit and active windows | Todo |
+| G1-7 | Swap in the real A2 clips and sword (A-01, A-02, A-03, M-02, V-01 to V-03) | C + AG | AG deliveries | Request doc rows Accepted | Blocked (assets) |
+| G1-8 | Boss test override: A2 only (off by default), map the existing AI states to the Freeze vocabulary | C | G1-6 | Override documented | Done for the override: `HoldForTest` (freezes the pack AI, drawn weapon not needed: the pack boss has no weapon actor), `URPGAttackTracker::StartMove("A2")`, forced activation of the pack ability by tag `Ability.Melee.CloseRare`. State vocabulary mapping still to do |
+| G1-9 | The seven A2 timing scenarios (35.3), 20 trials per timing edge, reported as "N/N under setup X" | C | G0-7, G1-7 | All pass | Driver built (`pie_a2_scenarios.py`, 21 scenarios x 3 trials) and run on the stand-in; results in TEST_PLAN. The 20 trial run waits for the real A2 clip (G1-7) |
+| G1-10 | Gate 1 hand test: early roll gets caught, correct roll passes, walk away after commit, whiff leaves 1.2 s | U | G1-9 | U says pass | Todo |
+
+### Gate 2: complete boss (A1 to A6, posture, riposte, phase two) - Freeze 24 Gate 2
+| ID | Task | Owner | Depends | Done when | Status |
+|---|---|---|---|---|---|
+| G2-1 | A1 and A3 from the pack montages with Freeze data; A3 branch cone with tunable angle and range; stage IDs | C | G1-3 | B07, B08, H05 | Built and verified 2026-10-20 on the stand-ins (`pie_close_attacks.py`, 43/43): stage IDs A1 (Attack03), A1b (Attack04), A3a (Attack01), A3b (Attack02), each with its own commitment point and heading lock; branch check at the start of a chained stage (`BranchRange` 400 cm, `BranchConeDegrees` 120, both tunable) stops the stage before it can hurt. Open: the pack's windups are 0.12 to 0.17 s against the Freeze's 0.35 to 0.40 s (readable tell needs the authored clips), per-stage hit deduplication is the pack trace's own (H05 not re-tested), the pack decides when to chain |
+| G2-2 | A4 low sweep with a ground height hitbox so a jump clears it | C | A-04 | B09 | Blocked (A-04) |
+| G2-3 | A5 heal punish: tag listener, legal state, range 400 to 1000, line of sight, queued not instant, projectile that travels, one per cooldown, never cancels a committed attack | C | A-05, M-03, V-08 | P01 to P08 | Blocked (assets) |
+| G2-4 | A6 leap (pack leap or A-10): landing target on valid floor, motion warp or fixed travel, center impact then radial wave low to the floor, one damage event | C | G0-2, V-04, V-05 | A04, A05, B10 | Todo |
+| G2-5 | Boss posture (Layer A): 100 points, 6 s delay, 13 per s, one break event, data on weapon attacks, never from boss attacks | C | G0-4 | S01 to S05, S12 | Doing: `URPGBossPosture` built on the pack's poise attribute (100 points); regeneration by the Freeze rule (6 s after the last drain, 13 per s) verified 2026-10-20 (S03, S04: a second drain at 3 s moved the start of regen from 6 to 9 s). Still open: per weapon drain values (18 / 38 / 6) with G3-1, S01/S02/S05 with real hits, S12 after the break (the stagger refills poise at the end of the get-up) |
+| G2-6 | Stagger owner entry point from posture; clear all attacks and traces on break; visible cooldown policy (no hidden ignored hits) | C | G2-5 | S06, S07 | Mostly done 2026-10-20: the stance break cooldown default is 0 (no hidden ignored breaks; the pool refills at the end of the get-up); a break during the A2 stand-in cancels it and no damage lands (A2-INT 12/12). Open: a break starting while the boss is in a phase transition (Freeze: the transition wins) |
+| G2-7 | Frontal riposte: 150 cm, 120 degree cone (dot >= 0.5), Light Attack input, locked state, synchronized montages, motion warp if usable, damage once from the impact notify, fail-safes | C | G2-6, A-11 or pack fatality | S08 to S11 | Logic built and verified 2026-10-20 with a stand-in (the pack's normal attack plays): `URPGRiposteInput` + `URPGBossStagger::TryRiposte`, range 150, cone 120, player facing check, once per break, critical x2.5 only on the first hit after an accepted press (S08a, S08b, S09, S09b PASS). Open: the synchronized execution clips (the pack's fatality needs per weapon paired montages; the sword has none: `GA_Sword_Melee.FatalityAttackMontages` is empty), alignment and lock of both characters, fail-safes (S10, S11) |
+| G2-8 | Phase two: once at 0.60, queued behind stagger and riposte, death wins, stats applied once, sword ignite plus armor glow through material parameters, A6 unlock | C | G0-5, G2-4 | L01 to L08 | Partly verified 2026-10-20 (`pie_phase_reset.py`, 14/14): once at 0.60, repeated health drops do not repeat it, buffs once (Attack 35 to 43.75), again after a reset, queued behind a stance break, death during the roar gets no buffs. Open: queue behind a running riposte hit (the riposte is one hit, the stagger queue covers it), sword ignite and glow (assets), A6 unlock |
+| G2-9 | Death short circuit and priority table (Freeze 21, 32.3), victory once | C | G0-8 | L08, L11 | Death priority verified 2026-10-20 with a real player hit (`pie_real_kill.py`): the boss dies during the A2 windup (hits at 0.5 s and 1.5 s after the start), goes ragdoll, the tracker ends the attack, the player takes no damage from the cancelled slam. Victory signal built and verified 2026-10-20 (`URPGBossHud::OnVictory`, once per encounter generation; `pie_boss_hud.py`). Open: disable player combat input on victory and a retry prompt (L11), the pack's death ability does not stop the montage clock (harmless: ragdoll) |
+| G2-10 | Encounter reset checklist (Freeze 18.3), safe to call twice | C | G0-8 | L09, L10 | Partly verified 2026-10-20: reset twice in a row: generation +2, phase one and buffs restored, posture full, no duplicate components (L10a to L10d). Open: projectiles and props (none exist yet), HUD, audio state, player-death during a riposte (L09) |
+| G2-11 | Boss attack selection: legal states only, no double launches, real recovery, weights | C | G1-8 | B02, B06, B10 | Todo |
+| G2-12 | Boss HUD: name plate, health bar, posture flash, phase subtitle, riposte prompt | C | V-11 | Visible in PIE | Built and verified 2026-10-20 (`URPGBossHud` and `URPGBossHudWidget`, Cinzel font; 29/29 PIE checks, screenshots looked at): bar with a slow damage trail, name, "Embers Unbound" subtitle in phase two, thin posture bar that flashes white on a break, riposte prompt only while a press would be accepted, the pack's own boss bar collapsed. Open: player bars and flask counter are the pack's; boss name and subtitle are provisional |
+| G2-13 | Entrance moment: fog gate closes on engage and opens on death, boss name banner, wake animation, music start | C | A-06, A-07 | B01, hand look | Fog gate built and verified 2026-10-20 (`ARPGFogGate`: thin mist while the boss sleeps, full mist and a blocking box while the fight runs, gone when the boss dies; 6/6 PIE checks). Boss name banner (fades in 0.6 s, holds 2.2 s, out 1.0 s) and the victory banner ("EMBER WARDEN FALLS", survives the boss being destroyed) built 2026-10-20; gate mist emissive lowered from 700 to 60 (it was blown out white). Open: wake animation (A-06, A-07), music start sync |
+| G2-14 | Legend pass: camera shake on slam and roar, hit stop on riposte, slow motion on the kill, music phase swap at phase two | C | G2-8 | U look review | Todo |
+| G2-15 | Boss look swap: `SK_Boss01` and sword on `BP_ExampleGreatSwordBoss` (or a child), material parameters `PhaseGlow`, `Dissolve` wired | C + AG | M-01, M-02 | Same fight plays | Blocked (assets) |
+| G2-16 | Automated tests for the deterministic items of the Freeze 23 matrix (B, H, S, L, P groups) | C | per feature | Suite green | Todo |
+| G2-17 | Gate 2 hand test: start to finish fight, death and reset repeatedly | U | all of Gate 2 | U says pass | Todo |
+
+### Gate 3: two builds and status - Freeze 24 Gate 3
+| ID | Task | Owner | Depends | Done when | Status |
+|---|---|---|---|---|---|
+| G3-1 | Per-weapon-attack data: posture damage, stamina cost, hyperarmor window (`ANS_HyperArmor`, not invulnerable), bleed buildup. Replaces the pack's poise numbers for the boss | C | G2-5 | Values in data, KI-032 closed | Todo |
+| G3-2 | Strength build (great sword): 18 light, 38 jump heavy, stamina 35; three jump heavies break posture (S-test arithmetic) | C | G3-1 | Build defeats boss | Todo |
+| G3-3 | Dex build (pack dual swords or twinblades, curved sword meshes): 4 stage chain with stage IDs, posture 6 | C | G3-1, M-05 | Chain works | Todo |
+| G3-4 | Bleed component: 20 per hit, threshold 100 then +20 up to 200, proc burst 10.5 % max HP once per event, never during death or transition | C | G3-3 | Proc tests, V-12 | Todo |
+| G3-5 | Build selector at the shrine, build indicator on the HUD, flask counter | C | M-07 | Build chosen before the fight | Todo |
+| G3-6 | Balance runs with both builds; neither bypasses the loop | C + U | G3-2 to G3-4 | Both defeat the boss, U feel test | Todo |
+
+### Gate 4: portfolio package - Freeze 24 Gate 4
+| ID | Task | Owner | Depends | Done when | Status |
+|---|---|---|---|---|---|
+| G4-1 | Performance pass to 60 FPS on named hardware: frame time not average, bottleneck first | C | Gate 2 | Numbers in `PERFORMANCE_LOG.md` | Todo |
+| G4-2 | Package (`Scripts/Package.ps1`), run outside the editor, cooked asset check, full fight, die and reset, win and retry | C | G4-1 | Q03, Q04 | Todo |
+| G4-3 | Debug off in Shipping, logs checked | C | G4-2 | No debug text | Todo |
+| G4-4 | 30 encounter soak: double actions, illegal cancels, stuck states | C | Gate 2 | Report | Todo |
+| G4-5 | Presentation art items (fog gate frame, corpse, dissolve, dust) | AG | M-08, M-09, V-09, V-14, V-15 | Accepted | Todo |
+| G4-6 | Gameplay capture and a README for the portfolio | U | G4-2 | Video exists | Todo |
+
+### Audio (U brings tracks, C wires)
+| ID | Task | Owner | Notes | Status |
+|---|---|---|---|---|
+| AU-1 | Brief 01 T4 (Accepted as candidates: two Kevin MacLeod tracks, 73 and 112 BPM, cross fade) | Boss battle music: Phase 1 and Phase 2 tracks (same motif; same key and tempo preferred so Phase 2 can layer or cross fade) and a victory sting | AG sources, U approves | Files to `Import/Audio/` with creator and source link. Placeholder `Starter_Music_Cue` plays now | Todo |
+| AU-2 | Boss footsteps, slam, roar, javelin, armor foley | U | Wiring is ready (`URPGFootsteps`, attack data sounds) | Todo |
+| AU-3 | Listen test of footsteps, wind, fire (KI-061) | U | Built and tested in logic only | Todo |
+
+## 2. Antigravity asset tracker (spec in `ASSET_REQUEST_BOSS01.md`)
+AG sets the first status. C sets Accepted or Returned (reason in Notes).
+
+| Asset IDs | Wave | Pri | Delivery status | Notes |
+|---|---|---|---|---|
+| M-02 | 1 | P1 | Report 03: sockets, size, textures fixed; one material slot in Unreal (Brief 04 G2). **Returned twice before** (Report 01: 308 tris; Report 02: imports, 185 cm, but sockets named `*_001`, one material slot, flat textures). Brief 03 F2 | Size is right |
+| A-01, A-02, A-03 | 1 | P1 | **Returned twice**. Report 02: two-handed and weighty (good) but 25 fps export (1.2x length) and feet off the ground in the hold. Brief 03 F3 | Loop export 36 frames (0 to 35) |
+| M-01 | 1 | P1 | **Route decided: Paragon Sevarog base** (owner, 2026-10-20). Report 02 body **does not import** (root bone `root.022`), Brief 03 F1. Concepts **Returned** (primitive blockouts). Brief 02 T0 (capability report), T1 (Paragon Sevarog rig proof on `SK_CombatMannequin`), T2 (real concepts) | AAA bar now in numbers in `AG/BRIEF_02.md`; body route decided after T0 and T1 |
+| A-04, A-05, M-03, M-04, V-04, V-05, V-06, V-08 | 1 | P1/P2 | Not started | Gate 2 attacks |
+| A-06, A-07 | 1 | P2 | Not started | Gate 4 presentation, needed by G2-13 |
+| A-08, A-09, A-10, A-11, V-07, V-10, V-11 | 2 | P1/P2 | Waits for G0-2 | Some may be Covered by the pack |
+| M-05, M-06, M-07, A-13, V-12, V-13 | 2 | P2 | Waits | Gate 3 |
+| M-08, M-09, A-12, V-09, V-14, V-15 | 2 | P3 | Waits | Gate 4 |
+
+### Review loop (Claude is in charge of sequencing)
+1. Claude writes `Documentation/AG/BRIEF_NN.md` (tasks, rules, done-when). Current: `BRIEF_01.md`.
+2. Antigravity works, then copies `Documentation/AG/REPORT_TEMPLATE.md` to `REPORT_NN.md` and fills it in.
+3. The project owner tells Claude "Report NN is ready". Claude reads it, checks the files (import test, size, bones, loops, timing sheets), marks each asset Accepted or Returned in the table above, and writes `BRIEF_(NN+1).md` so Antigravity always has a next job.
+4. Claude keeps coding in parallel on the gates; the editor changes owner only through the owner log below.
+
+## 3. Antigravity in-editor queue (starts when assets land; C reviews results, does not redo them)
+These need editor access for AG (open question to U). C writes the notify classes, data structs and parameter names in
+Gates 0 and 1; each task below is then a content job with a check C can run.
+
+| ID | Task | Needs | C checks |
+|---|---|---|---|
+| AGI-1 | Import FBX, build physics asset and sockets, retarget the clip set, screenshot per clip | Delivery accepted | Skeleton match, bone count, no extra bones |
+| AGI-2 | Build one montage per move with sections (Windup, Hold, Slam, Recovery) and place notifies from the timing sheet using C's notify classes | G1-1 to G1-3 | Timing report from the debug mode |
+| AGI-3 | Fill the attack timing data assets from the timing sheets | G1-1 | Values match the clip |
+| AGI-4 | Boss materials: scalar parameters `PhaseGlow` (0 to 1), `Dissolve` (0 to 1), `HitFlash`; emissive seams and eyes; cape material | M-01 | Parameters change in PIE |
+| AGI-5 | Hook Niagara systems to sockets, expose `Color`, `Intensity`, `Scale`; check cost in a worst case frame | V items | Frame time with all effects on |
+| AGI-6 | Dex and strength weapon sockets and grip offsets | M-05 | Trace aligns with blade |
+| AGI-7 | Playblast of every finished move next to the asset | all | Clip plays without foot slide |
+
+## 4. Carried over from the earlier list
+| Old # | Item | Where it went |
+|---|---|---|
+| 0 | Old Greystone and Sevarog content | CLOSED: keep everything on disk (user, 2026-10-20). Off git only |
+| 0a | Jump attacks and dodge hand tests (KI-056, KI-057, KI-059) | Covered by G1-10 and G0-5 retest |
+| 0c | Lock-on camera hand test | U |
+| 0d, 0e | Boss stance break and encounter flow | Rebuilt to the Freeze in G2-5 to G2-10 |
+| 1 | Performance milestone (on hold, target now 60 FPS) | G4-1 |
+| 2 | Controller and menu playtest (KI-050, KI-020, KI-022) | U, before Gate 4 |
+| 3 | Per-attack poise (KI-032) | G3-1 |
+| 4, 5 | Audio and arena look review (KI-061, KI-062) | AU-1 to AU-3, U look review |
+| 6 | Boss feel pass | Replaced by Gates 1 and 2 |
+| 7 | Cleanups: unused `Content/OneBossFight/Input` assets, `GA_Sev_PhaseRoar`, `RMB_Cast_Grey1`, stale montages (KI-045), delete `Archive/` after U commits | After Gate 2 |
+| 8, 9 | Pack re-import recipe, behaviour manager noise | Only if needed |
+
+## 5. Done (newest first)
+- 2026-10-20 Report 05 reviewed in the engine (owner said ready): sword imports 62.0 x 11.5 x 184.6 cm with origin at the grip, 3 slots, clean sockets; body imports 181 cm tall (the 100x error is gone) but 97 x 161 cm in footprint, which does not match the 120 x 59 vertex bounding box in the report (it matches the evaluated, posed dimensions): the body is probably exported in a pose; A2 apex clip splays the body's hanging blades; the three A2 clips are one frame short (0.567, 1.133, 1.333 s); sword textured render has a second sword in frame and the tip cropped. Checker 0 problems. `AG/BRIEF_06.md` sent. Engine looks done by `pie_body_look_short.py` (offset camera, test sword attached by `DebugAttachTestMesh`).
+- 2026-10-20 A1 and A3 stand-ins on the attack tracker (G2-1): four stages with their own commitment points and heading locks, branch check of chained stages (range and cone), `PlayMoveMontageForTest`, `StartMove("Close")`; 43/43 PIE checks.
+- 2026-10-20 Report 04 reviewed in the engine (the file appeared before the owner said it was ready): animation lengths exact (0.600, 1.167, 1.367, 3.967, 3.467 s), sword has three material slots and clean sockets; NOT accepted: body imports 100 times too big (96.65 x 161.15 x 180.92 m; FBX nodes carry Lcl Scaling 100 and rotation -90), sword imports as a 0.4 x 1.7 x 0.7 cm speck (mesh object carries a translation and a rotation), picture descriptions do not match the pictures (all-black unchanged Sevarog, cropped sword render), body not customised. The checker now reads FBX node transforms (10 problems on Report 04). `AG/BRIEF_05.md` sent.
+- 2026-10-20 Boss HUD, name and victory banners and the victory signal (G2-9, G2-12, G2-13 parts): `UI/RPGBossHud.h/.cpp` (component on the boss plus a widget built in C++), `URPGBossStagger::IsRiposteAvailable`; 29/29 PIE checks (`Scripts/Editor/pie_boss_hud.py`), 6/6 automation tests (PackWiring now also checks the pack boss's HUD widget variable and the Cinzel font). Fog gate emissive lowered to 60.
+- 2026-10-20 Report 03 reviewed in the engine: root bone fixed (body imports on the skeleton), animation lengths exact (0.600, 1.167, 1.367 s), sword sockets clean (`Weapon Start` and `Weapon End` renamed with spaces inside Unreal by `import_boss01.py`). Not accepted: body imports 1.55 x 1.49 x 1.64 cm (was 120 x 59 x 181), sword has one material slot, A2 pose regressed (no sword visible, hands behind the head), renders show no model and several are pixel identical. The checker was defeated (file bytes, horizon line as subject) and is fixed (decoded pixels, edge detail, extra geometry nodes): 34 problems on Report 03. `AG/BRIEF_04.md` sent. Boss01 sword and the three A2 clips are imported at `/Game/OneBossFight/Boss01/`; the wrong-scale body import was deleted.
+- 2026-10-20 Fog gate actor (`ARPGFogGate`, replaces the static gate cards), real kill during A2, stagger cooldown default 0; PIE checks pass. The arena dressing script was re-run to place the gate (an editor stop mid-run left a Restore Packages dialog: delete `Saved/Autosaves/PackageRestoreData.json` before relaunching after a forced stop).
+- 2026-10-20 Gate 2 code: frontal riposte logic (stand-in clip), phase two and reset checks (14/14), posture regeneration, A2 interruption tests. Riposte: accepted inside 150 cm and the 120 degree cone, the hit costs 102.5 against 41.0 for a normal hit (2.50), no second critical in the same break.
+- 2026-10-20 Report 02 reviewed against the engine: body FBX does not import (root bone named `root.022`), sword sockets arrive as `BladeEnd_001` etc. and only one material slot, textures flat (normal map 16 colors), A2 clips import at 1.2x length (25 fps) and the hold has the feet off the ground, renders unusable. `AG/BRIEF_03.md` sent with a fix list, `Scripts/check_boss01_delivery.py` (40 problems on Report 02) and parallel tasks (dormant idle, wake). Posture regeneration (`URPGBossPosture`) built and verified; interruption tests of the A2 stand-in passed.
+- 2026-10-20 Gate 1 groundwork on the pack's own charged attack: `URPGAttackTracker` (commit, heading lock, windows, attack instance counter), `HoldForTest`, forced ability start, A2 scenario driver. Findings: only the second trace window (about 2.00 s) hurts; it acts as a ground slam with about 330 cm radius; walking away before the commit escapes, after commit does not; a roll started 0.05 s before the hit is caught 1 to 2 times in 3; rolls started 0.15 s or more before the hit avoid it (also because the 5 m roll leaves the radius).
+- 2026-10-20 Report 01 reviewed: only the music accepted; sword, concepts and A2 animation returned against an explicit AAA bar; `AG/BRIEF_02.md` sent (capability report, Paragon Sevarog rig proof, real concepts, sword, A2 as an edit of the pack's charged attack). Reference FBX exported (Sevarog and Grux skins, pack boss attack clips).
+- 2026-10-20 G0-6, G0-7, G0-8: combat debug overlay (`rpg.Debug`), generation token, dodge trial driver (180/180 pass, window 0.30 s press to press); 6/6 automation tests pass.
+- 2026-10-20 Gate 0 started: `DELTA_AUDIT.md` (pack facts, requirement status, parameter registry), G0-5 alignment in code (phase two 0.60, legacy fireball off, no blanket critical), `AG/BRIEF_01.md` and report template, reference FBX exported; 6/6 tests pass.
+- 2026-10-20 Direction set: Freeze v1.2 final, `ASSET_REQUEST_BOSS01.md`, this tracker; third-party content moved off git (`.gitignore`, index only, files stay on disk); old `Master_Design_Freeze_v1.md` deleted.
+- 2026-10-20 Arena polish: embers, drifting mist, fog gate, banners, hanging chains, pillar stone, dark outside ground; six automation tests pass.
+- 2026-10-20 Presentation pass 1: Dark Ruins Megascans closure copied (git-ignored), `ARPGArenaDressing`, `ARPGFireSource`, atmosphere script, `URPGFootsteps`, `URPGBossMusic`, `ARPGArenaAmbience`; six automation tests pass.
+- 2026-10-20 Encounter flow milestone: boss gate, home reset after a player respawn, phase two (`RPGBossEncounter`, `RPGBossPhases`); `Content.PackWiring` guards the phase-two assets; 5/5 automation tests pass.
+- 2026-10-19 `Arena.ArtPass` fixed (KI-054): the test now waits for static mesh compilation.
+- 2026-10-19 Back to the pack's own player and boss: 60 pack assets reverted from the Grey copies, game mode default pawn restored, `L_SevarogArena` boss is `BP_ExampleGreatSwordBoss`; PIE fight verified, 0 Blueprint errors (KI-052). Details in `DECISIONS.md`.
+- 2026-10-19 Jump attacks, dodge (tap quick, double tap full roll, hold sprint), boss poise stagger and critical, lock-on camera fix (see `DECISIONS.md`).
+- 2026-10-20 Smaller items: bone hider for baked weapons, weapon fit check, triple combo, shockwave telegraph, lightning strike (KI-038, 044, 046).
+- 2026-10-20 KI-047 charge attack, KI-048 benchmark runner, KI-049 ability grant; entrance, exit and death montage references repaired.
+- 2026-10-19 Stage 5 C++ combat, StateTree mirror, HUD, menus (23 tests retired and archived); Sevarog parity; Greystone polish; stages 1 to 4.
+- 2026-10-18 M0 to M7: build, benchmark stats, arena, player and boss C++ combat, weapons, UI, asset integration, roll fix (superseded by the pack).
+
+## 6. Decisions
+- 2026-10-20 (user): the boss body is the **Paragon Sevarog mesh** rigged to `SK_CombatMannequin` by Antigravity (Brief 02 T1), customised (T2) with a new AAA great sword (T3). Fully custom body only if T1 fails.
+Answered 2026-10-20 (user, with Antigravity and ChatGPT input):
+- Boss re-skin accepted (great sword, ember javelin, sword leap). Working name **The Ember Warden**, final name, silhouette and body look still open: AG shows silhouette concepts before M-01 starts. Test the 310 cm height in the arena (camera, lock-on, trace, spacing) before the body mesh is final.
+- Nothing is deleted. Greystone, Sevarog, archive copies stay on disk (off git). Greystone armor pieces already rigged to the mannequin may become a player build look (M-06). Task 0 of the old list is closed.
+- Dex weapons: pack straight swords as stand-ins for Gates 1 and 2, custom curved swords modelled by AG in Blender at Gate 3.
+- Apex hold is a looping clip (A-02), montage jumps Raise to ApexHold (looping section) to Slam. The loop must exit cleanly on death, stagger, phase change and reset (AGI-2, G1-2).
+- Music: AG sources two tracks (Phase 1 and Phase 2) and delivers the files with creator and source link, in `Import/Audio/`, for `URPGBossMusic`. Final music does not block Gates 0 and 1 (AU-1).
+- Both agents have editor access: one editor owner at a time (below).
+
+Editor owner log (update on every handoff: files touched, saved, tests, unresolved, next owner acknowledges):
+| Date | Owner | Files or assets touched | Saved | Next owner |
+|---|---|---|---|---|
+| 2026-10-20 | C (Claude) | Opened the editor (`-nosound`). Read only scripts (`g0_pack_boss.py`, `g0_weapon.py`, `g0_probe_api.py`), exported two reference FBX to `Import/ThirdParty/Reference/`. No asset changed or saved | n/a | C keeps the editor this round; AG works offline (BRIEF_01) |
+
+Open:
+- Dodge window: already 0.30 s in code, measured press to press, inclusive (`DELTA_AUDIT.md` D-01). G0-7 adds the scripted fast double tap trials so the earlier roll bug cannot come back.
+- G0-5 gameplay edits start only after `DELTA_AUDIT.md` is written (it is) and the user has seen it; the user said to start, so G0-5 is in progress.

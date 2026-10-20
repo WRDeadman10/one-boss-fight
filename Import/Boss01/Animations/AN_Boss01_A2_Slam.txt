@@ -1,0 +1,12 @@
+Clip: AN_Boss01_A2_Slam
+Length: 1.37
+FPS: 30
+Frames: 42 (0 to 41)
+Loop: No (One-shot)
+RootMotion: In Place
+ApexReached: 0.00
+CommitTime: 0.00
+ActiveStartTime: 0.07
+ActiveEndTime: 0.17
+RecoveryEndTime: 1.37
+Notes: Starts from ApexHold pose. Explosive 0.17s downward snap crashing blade into floor directly in front of the character at frame 5 (0.17s), dropping pelvis from 0.89m into deep impact crouch at 0.70m while both feet stay planted flat on the floor (foot Z=0.28m). Both hands stay locked to the grip (separation 13.9 cm). Recoil shudder from 0.17s to 0.33s (frames 5 to 10), blade wrench pull from 0.33s to 0.67s (frames 10 to 20), full recovery to neutral two-handed combat stance by 1.37s (frame 41).

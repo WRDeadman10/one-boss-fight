@@ -1,0 +1,7 @@
+BladeStart: X=0.00 Y=0.00 Z=15.00
+MiddleSocket: X=0.00 Y=0.00 Z=78.00
+BladeEnd: X=0.00 Y=0.00 Z=140.00
+Weapon Start: X=0.00 Y=0.00 Z=15.00
+Weapon End: X=0.00 Y=0.00 Z=142.00
+TrailStartSocket: X=0.00 Y=0.00 Z=15.00
+TrailEndSocket: X=0.00 Y=0.00 Z=142.00

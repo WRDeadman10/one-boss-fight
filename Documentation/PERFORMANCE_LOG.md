@@ -38,8 +38,34 @@ Variants are applied with `-ExecCmds` at launch, not yet in project config.
 - Headroom is thin before any boss, VFX, lightning, fog or post-processing exist. Expect the real fight to cost more.
 - `r.AllowStaticLighting=False` currently prevents baked lighting. Decide in M6 whether to enable static lighting for the arena.
 
+## Fight captures (M6 start, 2026-10-18) - PARKED, no settings applied
+
+Packaged Development build, `L_Greybox`, `-RPGBenchmark -RPGBenchmarkFight` (bot fights Sevarog, phase 2 forced at 30 s, Cascade effects, hit-stop, HUD), RTX 3060, 1920x1080 native, 60 s recorded. Raw summaries in `Documentation/PerfCaptures/` (`fight_*`, `v_*`, `w_*`). Run `Scripts/RunVariants.ps1` to repeat. Run-to-run noise is about 5 % (v_gi_off_a vs v_gi_off_b).
+
+| Label | Settings | Avg FPS | p99 ms | GPU avg ms | Render thread avg / p99 ms |
+|---|---|---|---|---|---|
+| fight_defaults | Lumen GI, Lumen reflections, VSM, TSR | 84.2 | 14.28 | 10.5 | 11.6 / 13.9 |
+| v_gi_off_a / b | GI off, SSR | 132.7 / 125.8 | 8.98 / 9.28 | 6.8 / 7.2 | 7.4 / 7.8 |
+| v_no_ao, v_no_motionblur_bloom, v_no_ssr, v_vsm_off_a/b | one change vs gi_off | 125 to 133 | 8.9 to 9.6 | 6.8 to 7.2 | about 7.5 | 
+| v_sp85 | gi_off + 85 % screen percentage | 109.3 | 10.33 | 8.4 | slower (upscaling cost outweighed the saving) |
+| w_taa | gi_off + TAA | 163.2 | 10.33 | 3.5 | 6.0 / 10.2 |
+| w_fxaa | gi_off + FXAA | 165.8 | 10.02 | 3.2 | 5.9 / 9.9 |
+| w_fxaa_noshadow | FXAA + shadows off (diagnostic only) | 188.1 | 8.64 | 2.4 | 5.2 / 8.8 |
+
+What the data says (nothing is applied; the project still has its default render settings):
+- With the boss fight running the game thread is cheap (2 ms); the cost is rendering.
+- Lumen GI plus Lumen reflections cost about 4 ms of GPU; TSR costs about 3.3 ms more. AO, bloom, motion blur, SSR and virtual shadow maps are each within noise.
+- Once GPU time drops below about 4 ms the **render thread** limits the frame (p99 about 10 ms, GPU p99 only 3.4 ms). Shadows are the largest part of it. Particles are not.
+- The 120 FPS p99 gate (8.33 ms) is not met by any variant yet on this PC; the nearest are about 8.6 to 9 ms p99.
+
+Decision (user, 2026-10-18): performance work waits until mechanics, engineering and environment integration are done. M6 continues from these numbers then.
+
 ## Open
 
 - Repeat on the actual target GPU (RTX 2060 Super) if available.
 - Re-run with background apps closed and 3+ repeats per variant to measure run-to-run variance.
 - Move chosen settings into `DefaultEngine.ini`/scalability once the lighting decision is made.
+
+## 2026-10-20: baseline on the pack (unpackaged)
+
+`ARPGBenchmarkRunner` fight mode in `L_SevarogArena`, editor binary in game mode, 1920x1080 windowed, 5 s warm-up and 60 s recorded: 4754 frames, average 79.2 FPS (12.6 ms), median 11.9 ms, p95 14.9 ms, p99 27.1 ms, max 504 ms (shader compile at the start), 99.3 % of frames over 8.33 ms. Not comparable to the earlier C++ numbers (different content, unpackaged). The performance milestone is still ahead; see KI-051.

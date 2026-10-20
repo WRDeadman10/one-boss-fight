@@ -25,4 +25,9 @@ public:
 	/** First slot name on the montage, or None. For verifying imported montages. */
 	UFUNCTION(BlueprintPure, Category = "RPG|Authoring")
 	static FName GetMontageSlot(const UAnimMontage* Montage);
+
+	/** One line per anim notify of the montage (class, time, duration of states), preceded by a line with its length, rate scale, sections and blends. Python cannot read
+	 *  a montage's notifies, so editor scripts use this to see what a pack clip carries (invulnerability frames, input buffer windows, cancel frames). */
+	UFUNCTION(BlueprintCallable, Category = "RPG|Authoring")
+	static TArray<FString> DescribeNotifies(const UAnimMontage* Montage);
 };

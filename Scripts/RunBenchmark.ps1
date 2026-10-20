@@ -3,7 +3,7 @@
   Runs the packaged benchmark and prints the summary.
 
 .DESCRIPTION
-  Launches the staged build on L_Benchmark with -RPGBenchmark -RPGBenchmarkQuit. The runner removes the
+  Launches the staged build on L_SevarogArena with -RPGBenchmark -RPGBenchmarkFight -RPGBenchmarkQuit (the bot fights Sevarog; -Empty orbits an empty arena). The runner removes the
   frame cap, discards the warmup, records raw frame times and writes frames.csv + summary.json under the
   staged project's Saved\Benchmark\<label>_<timestamp>. Close other heavy apps first (browser, editor).
 
@@ -15,7 +15,8 @@ param(
 	[string]$Label = 'run',
 	[int]$ResX = 1920,
 	[int]$ResY = 1080,
-	[string]$Map = '/Game/OneBossFight/Levels/L_Benchmark',
+	[string]$Map = '/Game/OneBossFight/Levels/L_SevarogArena',
+	[switch]$Empty,   # empty-arena orbit camera instead of the full fight
 	[string]$ExtraArgs = ''
 )
 
@@ -32,6 +33,7 @@ $LaunchArgs = @(
 	'-windowed', "-ResX=$ResX", "-ResY=$ResY", '-ForceRes',
 	'-nosplash', '-NoSound', '-log'
 )
+if (-not $Empty) { $LaunchArgs += '-RPGBenchmarkFight' }
 if ($ExtraArgs) { $LaunchArgs += $ExtraArgs }
 
 Write-Host "Running benchmark '$Label' at ${ResX}x${ResY} ..."
