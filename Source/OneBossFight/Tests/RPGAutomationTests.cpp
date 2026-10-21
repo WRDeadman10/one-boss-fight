@@ -15,6 +15,10 @@
 #include "Player/RPGBossStagger.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossRules.h"
+#include "Pack/RPGPackTrace.h"
+#include "Player/RPGDamageResolver.h"
+#include "Player/RPGLegend.h"
+#include "Audio/RPGBossMusic.h"
 #include "Player/RPGAttackTracker.h"
 #include "Player/RPGBossHealPunish.h"
 #include "Player/RPGBossLowSweep.h"
@@ -132,6 +136,38 @@ bool FRPGFrameStatsGateTest::RunTest(const FString& Parameters)
 }
 
 // ---------------------------------------------------------------------------------------------
+// Damage resolver decision order (Freeze 12.1)
+// ---------------------------------------------------------------------------------------------
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGDamageDecideTest, "OneBossFight.Combat.DamageResolver.Decide",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGDamageDecideTest::RunTest(const FString& Parameters)
+{
+	// All 32 combinations against the written order: dead target, stale attacker or generation, duplicate swing, invulnerable target, else accepted.
+	for (int32 Bits = 0; Bits < 32; ++Bits)
+	{
+		const bool bTargetAlive = (Bits & 1) != 0;
+		const bool bAttackerAlive = (Bits & 2) != 0;
+		const bool bCurrent = (Bits & 4) != 0;
+		const bool bDuplicate = (Bits & 8) != 0;
+		const bool bInvulnerable = (Bits & 16) != 0;
+		ERPGDamageOutcome Expected = ERPGDamageOutcome::Accepted;
+		if (!bTargetAlive) { Expected = ERPGDamageOutcome::RejectedDead; }
+		else if (!bAttackerAlive || !bCurrent) { Expected = ERPGDamageOutcome::RejectedStale; }
+		else if (bDuplicate) { Expected = ERPGDamageOutcome::RejectedDuplicate; }
+		else if (bInvulnerable) { Expected = ERPGDamageOutcome::RejectedInvulnerable; }
+		TestEqual(*FString::Printf(TEXT("decision for flags %d"), Bits), static_cast<int32>(RPGDamageRules::Decide(bTargetAlive, bAttackerAlive, bCurrent, bDuplicate, bInvulnerable)), static_cast<int32>(Expected));
+	}
+	// A rejected contact for invulnerability is never an accepted one, and the names are stable (the drivers read them).
+	TestEqual(TEXT("name of RejectedInvulnerable"), FString(RPGDamageRules::Name(ERPGDamageOutcome::RejectedInvulnerable)), FString(TEXT("RejectedInvulnerable")));
+	TestEqual(TEXT("name of Accepted"), FString(RPGDamageRules::Name(ERPGDamageOutcome::Accepted)), FString(TEXT("Accepted")));
+	TestEqual(TEXT("A4 damage 20 (0.4 of the Freeze 50)"), GetDefault<URPGBossLowSweep>()->Damage, 20.f);
+	TestEqual(TEXT("A5 damage 12 (0.4 of the Freeze 30)"), GetDefault<URPGBossHealPunish>()->Damage, 12.f);
+	return true;
+}
+
+// ---------------------------------------------------------------------------------------------
 // Boss state priority rules (Freeze 21): stance break versus phase transition
 // ---------------------------------------------------------------------------------------------
 
@@ -186,6 +222,114 @@ bool FRPGTransitionRulesTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("stagger seconds 2.5"), GetDefault<URPGBossStagger>()->StaggerSeconds, 2.5f);
 	TestEqual(TEXT("stagger cooldown 0 (decision G0-5)"), GetDefault<URPGBossStagger>()->CooldownSeconds, 0.f);
 	TestEqual(TEXT("transition seconds 1.8"), GetDefault<URPGBossPhases>()->TransitionSeconds, 1.8f);
+	return true;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Legend pass (SPEC_M3): camera shake scale, time dilation bookkeeping, defaults
+// ---------------------------------------------------------------------------------------------
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGLegendShakeScaleTest, "OneBossFight.Legend.ShakeScale",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGLegendShakeScaleTest::RunTest(const FString& Parameters)
+{
+	TestNearlyEqual(TEXT("at the epicentre"), RPGLegend::ShakeScale(0.f, 500.f, 2500.f, 1.5f), 1.f);
+	TestNearlyEqual(TEXT("at the inner radius"), RPGLegend::ShakeScale(500.f, 500.f, 2500.f, 1.5f), 1.f);
+	TestNearlyEqual(TEXT("halfway, falloff 1.5"), RPGLegend::ShakeScale(1500.f, 500.f, 2500.f, 1.5f), FMath::Pow(0.5f, 1.5f), 0.0001f);
+	TestNearlyEqual(TEXT("halfway, falloff 1"), RPGLegend::ShakeScale(1500.f, 500.f, 2500.f, 1.f), 0.5f, 0.0001f);
+	TestNearlyEqual(TEXT("halfway, falloff 2"), RPGLegend::ShakeScale(1500.f, 500.f, 2500.f, 2.f), 0.25f, 0.0001f);
+	TestNearlyEqual(TEXT("at the outer radius"), RPGLegend::ShakeScale(2500.f, 500.f, 2500.f, 1.5f), 0.f);
+	TestNearlyEqual(TEXT("beyond the outer radius"), RPGLegend::ShakeScale(9000.f, 500.f, 2500.f, 1.5f), 0.f);
+	TestNearlyEqual(TEXT("a negative distance counts as zero"), RPGLegend::ShakeScale(-5.f, 500.f, 2500.f, 1.5f), 1.f);
+	// Outer at or below Inner is a cliff, never a division by zero.
+	TestNearlyEqual(TEXT("cliff inside"), RPGLegend::ShakeScale(400.f, 500.f, 500.f, 1.5f), 1.f);
+	TestNearlyEqual(TEXT("cliff outside"), RPGLegend::ShakeScale(501.f, 500.f, 500.f, 1.5f), 0.f);
+	TestNearlyEqual(TEXT("inverted radii are a cliff too"), RPGLegend::ShakeScale(501.f, 500.f, 100.f, 1.5f), 0.f);
+	// The slam at the player's usual distance (600 cm) is nearly full, at 1500 cm it is a third.
+	const FRPGShakeSettings Slam = GetDefault<URPGBossLegend>()->Slam;
+	TestTrue(TEXT("slam at 600 cm is above 0.9"), RPGLegend::ShakeScale(600.f, Slam.InnerRadius, Slam.OuterRadius, Slam.Falloff) > 0.9f);
+	const float Far = RPGLegend::ShakeScale(1500.f, Slam.InnerRadius, Slam.OuterRadius, Slam.Falloff);
+	TestTrue(TEXT("slam at 1500 cm is between 0.2 and 0.4"), Far > 0.2f && Far < 0.4f);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGLegendDilationScopeTest, "OneBossFight.Legend.DilationScope",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGLegendDilationScopeTest::RunTest(const FString& Parameters)
+{
+	FRPGDilationScope Scope;
+	TestFalse(TEXT("idle"), Scope.bActive);
+	TestTrue(TEXT("the first request starts the effect"), Scope.Begin(0.25f, 100.0, 1.2, 1.f));
+	TestNearlyEqual(TEXT("saved is what the first request saw"), Scope.Saved, 1.f);
+	TestNearlyEqual(TEXT("applied is absolute"), Scope.Applied, 0.25f);
+	// A second request 0.5 s later sees the already dilated world: it must not capture 0.25 as the value to restore, and must not multiply.
+	TestFalse(TEXT("the second request only extends"), Scope.Begin(0.25f, 100.5, 1.2, 0.25f));
+	TestNearlyEqual(TEXT("saved stays 1"), Scope.Saved, 1.f);
+	TestNearlyEqual(TEXT("applied stays 0.25 (never 0.0625)"), Scope.Applied, 0.25f);
+	TestEqual(TEXT("the deadline moved to the later one"), Scope.DeadlineReal, 101.7);
+	// A request that would end sooner never shortens it.
+	Scope.Begin(0.25f, 100.6, 0.01, 0.25f);
+	TestEqual(TEXT("the deadline never moves earlier"), Scope.DeadlineReal, 101.7);
+	TestFalse(TEXT("not expired just before"), Scope.Expired(101.69));
+	TestTrue(TEXT("expired at the deadline"), Scope.Expired(101.7));
+	TestNearlyEqual(TEXT("end returns the saved value"), Scope.End(), 1.f);
+	TestFalse(TEXT("inactive after the end"), Scope.bActive);
+	TestFalse(TEXT("an inactive scope is never expired"), Scope.Expired(1000.0));
+
+	// 20 random sequences of requests and ends against a world value: after every end the world is back to what it was before the first request.
+	FRandomStream Random(7);
+	for (int32 Sequence = 0; Sequence < 20; ++Sequence)
+	{
+		float World = 1.f;
+		FRPGDilationScope S;
+		double Now = 0.0;
+		for (int32 Step = 0; Step < 30; ++Step)
+		{
+			Now += Random.FRandRange(0.f, 0.5f);
+			if (Random.FRand() < 0.6f)
+			{
+				if (S.Begin(Random.FRand() < 0.5f ? 0.05f : 0.25f, Now, Random.FRandRange(0.05f, 1.f), World))
+				{
+					World = S.Applied;
+				}
+			}
+			else if (S.bActive)
+			{
+				World = S.End();
+				TestNearlyEqual(*FString::Printf(TEXT("sequence %d step %d restored"), Sequence, Step), World, 1.f);
+			}
+		}
+		if (S.bActive)
+		{
+			World = S.End();
+		}
+		TestNearlyEqual(*FString::Printf(TEXT("sequence %d ends restored"), Sequence), World, 1.f);
+	}
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGLegendDefaultsTest, "OneBossFight.Legend.Defaults",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGLegendDefaultsTest::RunTest(const FString& Parameters)
+{
+	const URPGBossLegend* Legend = GetDefault<URPGBossLegend>();
+	TestTrue(TEXT("hit stop 0.06 to 0.10 s (the Freeze task)"), Legend->HitStopSeconds >= 0.06f && Legend->HitStopSeconds <= 0.10f);
+	TestTrue(TEXT("hit stop dilation is nearly frozen but above zero"), Legend->HitStopDilation > 0.f && Legend->HitStopDilation <= 0.1f);
+	TestEqual(TEXT("slow motion scale 0.25"), Legend->SlowMotionScale, 0.25f);
+	TestEqual(TEXT("slow motion 1.2 s"), Legend->SlowMotionSeconds, 1.2f);
+	TestTrue(TEXT("no hit stop on a lethal riposte"), Legend->bSkipHitStopOnLethal);
+	// A shake is applied after the camera spring arm (34 cm probe): its location amplitude stays far below it.
+	TestTrue(TEXT("slam location amplitude under 10 cm"), Legend->Slam.LocationAmplitude.GetMax() <= 10.0);
+	TestTrue(TEXT("roar location amplitude under 10 cm"), Legend->Roar.LocationAmplitude.GetMax() <= 10.0);
+	TestTrue(TEXT("the roar is felt farther than the slam"), Legend->Roar.OuterRadius > Legend->Slam.OuterRadius);
+	TestEqual(TEXT("the roar shake lasts as long as the roar clip (1.5 s)"), Legend->Roar.Duration, 1.5f);
+	const URPGBossMusic* Music = GetDefault<URPGBossMusic>();
+	TestTrue(TEXT("crossfade is above zero"), Music->CrossfadeSeconds > 0.f);
+	TestTrue(TEXT("Phase 2 plays quieter than Phase 1 (it measures louder)"), Music->PhaseTwoVolume < Music->Volume);
+	TestTrue(TEXT("the victory fade is shorter than the 4 s fade (the pack removes the boss about 3.5 s after death)"), Music->VictoryFadeOutSeconds < Music->FadeOutSeconds);
 	return true;
 }
 
@@ -526,12 +670,22 @@ bool FRPGPackWiringTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("double tap window is 0.30 s"), DodgeDefaults->DoubleTapWindow, 0.30f);
 	TestFalse(TEXT("no blanket critical while the boss is down"), GetDefault<URPGBossStagger>()->bCriticalOnEveryHit);
 
+	// The weapon trace facade (Pack/RPGPackTrace, used by URPGTraceGuard and URPGTraceAudit) reads these names of the pack's trace classes by reflection: a pack update that renames one fails here, not silently in a fight.
+	FString MissingTraceNames;
+	const bool bTraceNames = RPGPackTrace::CheckClassNames(MissingTraceNames);
+	TestTrue(*FString::Printf(TEXT("the pack's trace classes have every name the facade reads (missing: %s)"), *MissingTraceNames), bTraceNames);
+
 	// Sounds the subsystem and the dressing script assign by path: concrete footsteps, the placeholder boss music, the fire crackle and the wind bed.
 	for (const TCHAR* Sound : {TEXT("/Game/Essential_Foosteps_SK/CUE/Concrete/Footstep_Concrete_Boots_Walk_1_Cue"), TEXT("/Game/Essential_Foosteps_SK/CUE/Concrete/Footstep_Concrete_Boots_Jog_8_Cue"),
 		TEXT("/Game/Essential_Foosteps_SK/CUE/Concrete/Footstep_Concrete_Boots_Run_8_Cue"), TEXT("/Game/Essential_Foosteps_SK/CUE/Concrete/Footstep_Concrete_Boots_Land_4_Cue"),
 		TEXT("/Game/StarterContent/Audio/Starter_Music_Cue"), TEXT("/Game/StarterContent/Audio/Fire01_Cue"), TEXT("/Game/StarterContent/Audio/Starter_Wind05")})
 	{
 		TestTrue(*FString::Printf(TEXT("sound %s exists"), Sound), FPackageName::DoesPackageExist(Sound));
+	}
+	// The two boss music tracks the subsystem loads by path (Scripts/Editor/import_audio.py puts them there).
+	for (const TCHAR* Track : {TEXT("/Game/OneBossFight/Audio/MX_Boss01_Phase1"), TEXT("/Game/OneBossFight/Audio/MX_Boss01_Phase2")})
+	{
+		TestTrue(*FString::Printf(TEXT("boss music %s exists"), Track), FPackageName::DoesPackageExist(Track));
 	}
 
 	// The boss stance break (Player/RPGBossStagger) names its clips and the pack's immunity effect by path.

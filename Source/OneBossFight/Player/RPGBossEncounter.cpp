@@ -1,6 +1,8 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGIFrameMonitor.h"
+#include "Player/RPGTraceGuard.h"
 #include "Player/RPGBossStagger.h"
 #include "Player/RPGBossPhases.h"
 #include "Pack/RPGBlueprintCall.h"
@@ -222,8 +224,13 @@ void URPGBossEncounter::Wake()
 void URPGBossEncounter::ResetEncounter()
 {
 	AActor* Owner = GetOwner();
+	URPGTraceGuard::CloseFor(Owner, TEXT("reset")); // first: before the montage stops, the weapon is sheathed and the boss is teleported, so no stale sweep can run across the arena
 	++ResetCount;
 	++Generation; // every callback made for the old fight is stale from here on
+	if (URPGIFrameMonitor* IFrames = URPGIFrameMonitor::Find(this))
+	{
+		IFrames->OnEncounterReset(); // a dodge's invulnerability does not survive the reset (Freeze 800)
+	}
 	UE_LOG(LogRPGEncounter, Log, TEXT("%s: encounter reset %d (generation %d, player respawned), from %s back to %s"), *Owner->GetName(), ResetCount, Generation, *Owner->GetActorLocation().ToCompactString(),
 		*HomeTransform.GetLocation().ToCompactString());
 

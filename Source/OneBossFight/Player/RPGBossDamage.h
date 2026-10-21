@@ -15,19 +15,25 @@
  */
 namespace RPGBossDamage
 {
-	inline bool IsInvulnerable(AActor* Player)
+	inline bool HasTag(AActor* Actor, const TCHAR* TagName)
 	{
-		bool bInvulnerable = false;
-		RPGPack::CallBlueprintFunction(Player, TEXT("HasMatchingGameplayTag"),
-			[](UFunction& F, uint8* P) { RPGPack::SetTag(F, P, TEXT("TagToCheck"), FGameplayTag::RequestGameplayTag(TEXT("Status.Invulnerable"), false)); },
-			[&bInvulnerable](UFunction& F, uint8* P)
+		bool bHas = false;
+		const FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName(TagName), false);
+		RPGPack::CallBlueprintFunction(Actor, TEXT("HasMatchingGameplayTag"),
+			[&Tag](UFunction& F, uint8* P) { RPGPack::SetTag(F, P, TEXT("TagToCheck"), Tag); },
+			[&bHas](UFunction& F, uint8* P)
 			{
 				if (const FBoolProperty* Result = CastField<FBoolProperty>(F.FindPropertyByName(TEXT("ReturnValue"))))
 				{
-					bInvulnerable = Result->GetPropertyValue_InContainer(P);
+					bHas = Result->GetPropertyValue_InContainer(P);
 				}
 			});
-		return bInvulnerable;
+		return bHas;
+	}
+
+	inline bool IsInvulnerable(AActor* Player)
+	{
+		return HasTag(Player, TEXT("Status.Invulnerable"));
 	}
 
 	inline bool IsAlive(const AActor* Actor)

@@ -37,7 +37,7 @@ public:
 	ARPGBossJavelin();
 
 	/** Sets the flight (called right after spawning). */
-	void Launch(URPGBossHealPunish* InOwner, const FVector& InDirection, float InSpeed, float InRadius, float InDamage, float InMaxRange, int32 InGeneration);
+	void Launch(URPGBossHealPunish* InOwner, const FVector& InDirection, float InSpeed, float InRadius, float InDamage, float InMaxRange, int32 InGeneration, int32 InAttackInstance);
 
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -61,6 +61,7 @@ private:
 	float MaxRange = 3000.f;
 	float Travelled = 0.f;
 	int32 Generation = 0;
+	int32 AttackInstance = 0; // the tracker's attack instance of the throw (the damage resolver's duplicate key)
 	bool bDodgedCounted = false;
 	bool bFinished = false;
 };

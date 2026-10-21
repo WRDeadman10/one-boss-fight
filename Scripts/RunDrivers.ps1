@@ -1,10 +1,11 @@
 # Runs the PIE regression drivers one after the other in the open editor (the project is open, the bridge on port 3000 is up) and prints a table.
 # A driver passes when its final log line shows no failure and at least the expected number of checks ran (a driver that silently runs fewer checks fails).
-# Usage: powershell -ExecutionPolicy Bypass -File Scripts\RunDrivers.ps1 [-Only pie_a4_low_sweep,pie_a5_heal_punish] [-Full] [-SkipWarmup] [-TimeoutSeconds 420]
+# Usage: powershell -ExecutionPolicy Bypass -File Scripts\RunDrivers.ps1 [-Only pie_a4_low_sweep,pie_a5_heal_punish]  (the whole list takes about 100 minutes: run it in chunks with -Only, -SkipWarmup after the first) [-Full] [-SkipWarmup] [-TimeoutSeconds 420]
 #   -Full adds the long drivers (the 180 trial dodge scan).
 # Resumable: the script keeps no state; run it again after an interruption (use -Only for the drivers not yet run). If a driver times out its tick callback stays registered
 # until the editor restarts: restart the editor (Scripts\Rebuild.ps1) before running anything else.
 param([string[]]$Only, [switch]$Full, [switch]$SkipWarmup, [int]$TimeoutSeconds = 420)
+if ($Only) { $Only = @($Only | ForEach-Object { $_ -split ',' }) }  # powershell -File passes a comma list as one string
 
 $root = Split-Path $PSScriptRoot -Parent
 $logPath = Join-Path $root "Saved\Logs\OneBossFight.log"
@@ -16,6 +17,10 @@ $drivers = @(
     @{ N = 'pie_a4_low_sweep';        K = 'R'; Min = 14 },
     @{ N = 'pie_a5_heal_punish';      K = 'R'; Min = 31 },
     @{ N = 'pie_player_death_reset';  K = 'R'; Min = 25 },
+    @{ N = 'pie_damage_path';         K = 'R'; Min = 17; T = 900 },
+    @{ N = 'pie_iframes';             K = 'R'; Min = 19; T = 1500 },
+    @{ N = 'pie_trace_audit';         K = 'R'; Min = 30; T = 1500 },
+    @{ N = 'pie_legend';              K = 'R'; Min = 22; T = 900 },
     @{ N = 'pie_close_attacks';       K = 'R'; Min = 43 },
     @{ N = 'pie_leap_wave';           K = 'R'; Min = 17 },
     @{ N = 'pie_attack_rules';        K = 'R'; Min = 13 },
@@ -24,7 +29,8 @@ $drivers = @(
     @{ N = 'pie_camera_scenarios';    K = 'R'; Min = 6 },
     @{ N = 'pie_phase_reset';         K = 'S'; Min = 14 },
     @{ N = 'pie_riposte';             K = 'S'; Min = 5 },
-    @{ N = 'pie_fog_gate';            K = 'S'; Min = 6 }
+    @{ N = 'pie_fog_gate';            K = 'S'; Min = 6 },
+    @{ N = 'pie_transition_rules';    K = 'R'; Min = 28; T = 900 }   # mode from Saved\transition_mode.txt: quick (3 trials, about 6 min) for the gate, main (spec trial counts, about 20 min) before a release
 )
 if ($Only) { $drivers = @($drivers | Where-Object { $Only -contains $_.N }) }
 
@@ -50,11 +56,16 @@ function Test-Bridge() {
     catch { return ($_.Exception.Response -ne $null) }  # a 404 from the route handler still means the bridge is up
 }
 
-if (-not (Test-Bridge)) { 'The editor bridge (http://localhost:3000) is not reachable: start the editor first (Scripts\Rebuild.ps1 -NoRelaunch is not needed; just open the project with -nosound).'; exit 2 }
+# The editor may still be starting (a rebuild relaunches it): wait for the bridge up to 4 minutes.
+$waited = 0
+while (-not (Test-Bridge) -and $waited -lt 240) { Start-Sleep -Seconds 5; $waited += 5 }
+if (-not (Test-Bridge)) { 'The editor bridge (http://localhost:3000) is not reachable after 4 minutes: open the project with -nosound (Scripts\Rebuild.ps1 does it).'; exit 2 }
+if ($waited -gt 0) { Start-Sleep -Seconds 30 }  # the bridge is up before the map is loaded
 
 if (-not $SkipWarmup) {
     # The first PIE after an editor start has broken player attributes (health 0): run the overlay driver once, with the editor throttle off.
     Invoke-Editor 'no_throttle.py'
+    Invoke-Editor 'legend_off.py'  # the legend pass (hit stop, slow motion, camera shake) would change the timings the older drivers measure; pie_legend.py switches it on itself
     Invoke-Editor 'pie_debug_overlay.py'
     Start-Sleep -Seconds 40
 }
@@ -64,7 +75,8 @@ foreach ($d in $drivers) {
     $name = $d.N
     $start = Count-Log
     Invoke-Editor "$name.py"
-    $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+    $limit = if ($d.T) { [int]$d.T } else { $TimeoutSeconds }  # a driver may carry its own limit (T)
+    $deadline = (Get-Date).AddSeconds($limit)
     $final = $null
     $lines = @()
     while ((Get-Date) -lt $deadline) {
@@ -76,7 +88,7 @@ foreach ($d in $drivers) {
     }
     if (-not $final) {
         Invoke-Editor 'pie_stop.py'
-        $rows += [pscustomobject]@{ Driver = $name; Result = 'TIMEOUT'; Detail = "no final line in $TimeoutSeconds s: restart the editor before going on (a stale tick callback survives)" }
+        $rows += [pscustomobject]@{ Driver = $name; Result = 'TIMEOUT'; Detail = "no final line in $limit s: restart the editor before going on (a stale tick callback survives)" }
         break
     }
     if ($d.K -eq 'R') {

@@ -10,6 +10,7 @@
 #include "Player/RPGAttackTracker.h"
 #include "Player/RPGBossDamage.h"
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGDamageResolver.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRPGSweep, Log, All);
 
@@ -83,7 +84,13 @@ void URPGBossLowSweep::Test(float FromAngle, float ToAngle)
 		return;
 	}
 
-	// The blade touches the player's capsule: now decide what it does.
+	// The blade touches the player's capsule in the plane: now decide what it does.
+	FRPGDamagePayload Payload;
+	Payload.MoveId = MoveId;
+	Payload.AttackInstance = LastInstance;
+	Payload.Generation = SweepGeneration;
+	Payload.HPDamage = Damage;
+	URPGDamageResolver* Resolver = URPGDamageResolver::FindOrAdd(GetOwner());
 	const float FeetHeight = RPGBossDamage::FeetZ(Player) - GroundZ;
 	if (FeetHeight >= BladeHeight)
 	{
@@ -92,6 +99,7 @@ void URPGBossLowSweep::Test(float FromAngle, float ToAngle)
 			bJumpCounted = true;
 			++JumpedCount;
 			UE_LOG(LogRPGSweep, Log, TEXT("blade passed under the player (feet %.0f cm above the floor, blade %.0f cm)"), FeetHeight, BladeHeight);
+			Resolver->NoteMiss(Payload, ERPGDamageOutcome::MissJumped, TEXT("feet above the blade"));
 		}
 		return;
 	}
@@ -110,27 +118,31 @@ void URPGBossLowSweep::Test(float FromAngle, float ToAngle)
 				bBlockedCounted = true;
 				++BlockedCount;
 				UE_LOG(LogRPGSweep, Log, TEXT("blade blocked by %s"), *GetNameSafe(Hit.GetActor()));
+				Resolver->NoteMiss(Payload, ERPGDamageOutcome::MissWorld, *GetNameSafe(Hit.GetActor()));
 			}
 			return;
 		}
 	}
-	if (RPGBossDamage::IsInvulnerable(const_cast<ACharacter*>(Player)))
+	// The blade really touches the player: the resolver decides (invulnerability at this moment, dead, stale, duplicate) and applies the health once.
+	Resolver->NoteOverlap(Payload);
+	const FRPGDamageResult Result = Resolver->Resolve(const_cast<ACharacter*>(Player), Payload);
+	switch (Result.Outcome)
 	{
+	case ERPGDamageOutcome::Accepted:
+		bDamaged = true;
+		++HitCount;
+		UE_LOG(LogRPGSweep, Log, TEXT("blade hit the player at %.0f cm, angle %.0f deg, feet %.0f cm above the floor: health %.0f -> %.0f"), Distance, Angle, FeetHeight, Result.HealthBefore, Result.HealthAfter);
+		break;
+	case ERPGDamageOutcome::RejectedInvulnerable:
 		if (!bInvulnerableCounted)
 		{
 			bInvulnerableCounted = true;
 			++InvulnerableCount;
 			UE_LOG(LogRPGSweep, Log, TEXT("blade ignored: player invulnerable (dodge i-frames) at blade angle %.0f"), BladeAngle);
 		}
-		return; // the blade can still catch the player if the i-frames end while it is touching
-	}
-	double Before = 0.0;
-	double After = 0.0;
-	if (RPGBossDamage::HurtPlayer(Player, Damage, Before, After))
-	{
-		bDamaged = true;
-		++HitCount;
-		UE_LOG(LogRPGSweep, Log, TEXT("blade hit the player at %.0f cm, angle %.0f deg, feet %.0f cm above the floor: health %.0f -> %.0f"), Distance, Angle, FeetHeight, Before, After);
+		break; // the blade can still catch the player if the i-frames end while it is touching
+	default:
+		break; // dead player, stale generation: nothing happens, no hit is counted
 	}
 }
 

@@ -1,0 +1,11 @@
+Clip: AN_Boss01_StaggerDown
+Length: 1.000
+FPS: 30
+Frames: 31 (0 to 30)
+Loop: Yes (Seamless Loop, Frame 0 == Frame 30)
+RootMotion: In Place
+WindupEndTime: 0.00
+ActiveStartTime: 0.00
+ActiveEndTime: 1.000
+RecoveryEndTime: 1.000
+Notes: Posture Break Stagger: Kneeling Exhausted Breathing Loop. Perfect seamless loop where Frame 0 and Frame 30 are bitwise identical in all 88 bone transforms. Starts in kneeling pose matching StaggerFall Frame 21 (pelvis Z = 47.7 cm, right knee on floor, left foot planted, head bowed); ragged exhausted chest heave and inhale (0.00-0.50s, pelvis lifts 2.2 cm to 49.9 cm, chest lifts 8 deg); shuddering heavy exhale sinks torso back into resting posture (0.50-1.00s, pelvis returns to 47.7 cm). Left and right feet fully grounded.

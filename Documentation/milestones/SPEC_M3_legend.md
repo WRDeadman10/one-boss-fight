@@ -320,4 +320,9 @@ Open questions for the owner:
 - ASSET_LICENSES.md: two music rows (credits from Import/Audio/SOURCES.txt).
 - Freeze deviations: none expected.
 
-STATUS: DRAFT
+STATUS: IMPLEMENTED 2026-10-21 (code, `pie_legend.py` 22/22, 3 automation tests). Deviations from this draft, all recorded in DECISIONS "Legend pass (M3)":
+- The shake distance is camera to the boss's feet and the camera sits about 380 cm behind the player: scale 0.66 at a player distance of 600 cm (the draft said 0.93), 0.17 at 1500 cm.
+- The camera proof is a high-pass measure (deviation from the line between neighbouring samples), not peak to peak: the camera is never still (settling after a placement, following the boss).
+- `EngineCameras` is a public module dependency (the draft said private); the music component keeps `Music` for Phase 1; no `StartForTest` for Phase 2.
+- L8 (victory retry during slow motion) and L9 (PIE end during an effect) were not driven; a `cap` group takes the four pictures.
+- Phase 1 was imported from the WAV (the OGG import returned nothing), Phase 2 from the OGG.

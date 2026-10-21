@@ -12,6 +12,7 @@
 #include "Player/RPGBossDamage.h"
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGBossHealPunish.h"
+#include "Player/RPGDamageResolver.h"
 #include "UObject/ConstructorHelpers.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRPGJavelin, Log, All);
@@ -56,7 +57,7 @@ ARPGBossJavelin::ARPGBossJavelin()
 	Glow->SetCastShadows(false);
 }
 
-void ARPGBossJavelin::Launch(URPGBossHealPunish* InOwner, const FVector& InDirection, float InSpeed, float InRadius, float InDamage, float InMaxRange, int32 InGeneration)
+void ARPGBossJavelin::Launch(URPGBossHealPunish* InOwner, const FVector& InDirection, float InSpeed, float InRadius, float InDamage, float InMaxRange, int32 InGeneration, int32 InAttackInstance)
 {
 	Source = InOwner;
 	Direction = InDirection.GetSafeNormal();
@@ -65,6 +66,7 @@ void ARPGBossJavelin::Launch(URPGBossHealPunish* InOwner, const FVector& InDirec
 	Damage = InDamage;
 	MaxRange = InMaxRange;
 	Generation = InGeneration;
+	AttackInstance = InAttackInstance;
 	SetActorRotation(Direction.Rotation());
 	// Placeholder materials until the javelin has its own: the engine's tintable basic material on every slot (iron, grip, ember band; the light does the glowing).
 	UMaterialInterface* Base = LoadObject<UMaterialInterface>(nullptr, TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"));
@@ -134,25 +136,32 @@ void ARPGBossJavelin::Tick(float DeltaSeconds)
 
 	if (bPlayerHit && (!bWorld || PawnHit.Time <= WorldHit.Time))
 	{
-		if (RPGBossDamage::IsInvulnerable(Player))
+		// The resolver decides (Freeze 488): invulnerability at this moment, dead player, stale generation, duplicate. A rejected contact does not spend the javelin: it flies on.
+		FRPGDamagePayload Payload;
+		Payload.MoveId = TEXT("A5");
+		Payload.AttackInstance = AttackInstance;
+		Payload.Generation = Generation;
+		Payload.HPDamage = Damage;
+		URPGDamageResolver* Resolver = URPGDamageResolver::FindOrAdd(Boss);
+		Resolver->NoteOverlap(Payload);
+		const FRPGDamageResult Result = Resolver->Resolve(Player, Payload);
+		switch (Result.Outcome)
 		{
+		case ERPGDamageOutcome::Accepted:
+		case ERPGDamageOutcome::Failed:
+			UE_LOG(LogRPGJavelin, Log, TEXT("javelin hit the player after %.0f cm: health %.0f -> %.0f"), Travelled + Step * PawnHit.Time, Result.HealthBefore, Result.HealthAfter);
+			Finish(ERPGJavelinResult::Hit, TEXT("hit the player"));
+			return;
+		case ERPGDamageOutcome::RejectedInvulnerable:
 			if (!bDodgedCounted)
 			{
 				bDodgedCounted = true;
 				UE_LOG(LogRPGJavelin, Log, TEXT("javelin passes through the player: invulnerable (dodge i-frames)"));
 				Punish->ReportJavelin(ERPGJavelinResult::Dodged);
 			}
-		}
-		else if (RPGBossDamage::IsAlive(Player))
-		{
-			double Before = 0.0;
-			double After = 0.0;
-			if (RPGBossDamage::HurtPlayer(Player, Damage, Before, After))
-			{
-				UE_LOG(LogRPGJavelin, Log, TEXT("javelin hit the player after %.0f cm: health %.0f -> %.0f"), Travelled + Step * PawnHit.Time, Before, After);
-			}
-			Finish(ERPGJavelinResult::Hit, TEXT("hit the player"));
-			return;
+			break;
+		default:
+			break; // dead player or stale: it flies on (a stale javelin ends through its own generation check)
 		}
 	}
 	else if (bWorld)

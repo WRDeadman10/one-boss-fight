@@ -27,7 +27,8 @@ public class OneBossFight : ModuleRules
 			"UMG",
 			"Slate",
 			"SlateCore",
-			"Niagara"                  // the spawn-effect notify (Sevarog shockwave)
+			"Niagara",                 // the spawn-effect notify (Sevarog shockwave)
+			"EngineCameras"            // the wave oscillator pattern of the slam and roar camera shakes
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]

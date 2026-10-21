@@ -1,7 +1,9 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGPlayerMovesSubsystem.h"
+#include "Combat/RPGInputTestUtils.h"
 #include "Player/RPGDodgeTiming.h"
+#include "Player/RPGIFrameMonitor.h"
 #include "Player/RPGBossStagger.h"
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGBossPhases.h"
@@ -12,7 +14,11 @@
 #include "Player/RPGBossShockwave.h"
 #include "Player/RPGBossLowSweep.h"
 #include "Player/RPGBossHealPunish.h"
+#include "Player/RPGDamageResolver.h"
+#include "Player/RPGTraceAudit.h"
+#include "Player/RPGTraceGuard.h"
 #include "Player/RPGCombatDebug.h"
+#include "Player/RPGLegend.h"
 #include "UI/RPGBossHud.h"
 #include "Audio/RPGBossMusic.h"
 #include "Audio/RPGFootsteps.h"
@@ -48,6 +54,7 @@ void URPGPlayerMovesSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 
 void URPGPlayerMovesSubsystem::Deinitialize()
 {
+	URPGInputTestUtils::RestoreFixedFrameRate(); // a driver that was cut must not leave the editor at 30 FPS
 	if (UWorld* World = GetWorld())
 	{
 		World->RemoveOnActorSpawnedHandler(SpawnHandle);
@@ -129,8 +136,14 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
 		if (!Pawn->FindComponentByClass<URPGBossMusic>())
 		{
 			URPGBossMusic* Music = NewObject<URPGBossMusic>(Pawn, TEXT("RPGBossMusic"));
-			// Placeholder until a real boss track is licensed.
-			Music->Music = LoadObject<USoundBase>(nullptr, TEXT("/Game/StarterContent/Audio/Starter_Music_Cue.Starter_Music_Cue"));
+			// The two tracks of the fight (Scripts/Editor/import_audio.py imports them). A missing Phase 1 file falls back to the starter cue with a warning; a missing Phase 2 file means no swap.
+			Music->Music = LoadObject<USoundBase>(nullptr, TEXT("/Game/OneBossFight/Audio/MX_Boss01_Phase1.MX_Boss01_Phase1"), nullptr, LOAD_NoWarn);
+			if (!Music->Music)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Boss music: /Game/OneBossFight/Audio/MX_Boss01_Phase1 is not imported, the starter cue plays instead (run Scripts/Editor/import_audio.py)"));
+				Music->Music = LoadObject<USoundBase>(nullptr, TEXT("/Game/StarterContent/Audio/Starter_Music_Cue.Starter_Music_Cue"));
+			}
+			Music->PhaseTwoMusic = LoadObject<USoundBase>(nullptr, TEXT("/Game/OneBossFight/Audio/MX_Boss01_Phase2.MX_Boss01_Phase2"), nullptr, LOAD_NoWarn);
 			Music->RegisterComponent();
 		}
 	}
@@ -150,7 +163,12 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
 		URPGDodgeTiming* Timing = NewObject<URPGDodgeTiming>(Pawn, TEXT("RPGDodgeTiming"));
 		Timing->RegisterComponent();
 	}
-	else if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossStagger>())
+	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGIFrameMonitor>())
+	{
+		URPGIFrameMonitor* IFrames = NewObject<URPGIFrameMonitor>(Pawn, TEXT("RPGIFrameMonitor"));
+		IFrames->RegisterComponent();
+	}
+	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossStagger>())
 	{
 		URPGBossStagger* Stagger = NewObject<URPGBossStagger>(Pawn, TEXT("RPGBossStagger"));
 		Stagger->RegisterComponent();
@@ -190,6 +208,18 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
 		URPGBossHealPunish* Punish = NewObject<URPGBossHealPunish>(Pawn, TEXT("RPGBossHealPunish"));
 		Punish->RegisterComponent();
 	}
+	if (IsPackBoss(Pawn))
+	{
+		URPGDamageResolver::FindOrAdd(Pawn); // the one place that lowers the player's health for the boss's moves
+		if (!Pawn->FindComponentByClass<URPGTraceGuard>())
+		{
+			NewObject<URPGTraceGuard>(Pawn, TEXT("RPGTraceGuard"))->RegisterComponent(); // closes the pack's weapon trace on every interrupt, carries the hit set per instance, blocks hits through walls
+		}
+		if (!Pawn->FindComponentByClass<URPGTraceAudit>())
+		{
+			NewObject<URPGTraceAudit>(Pawn, TEXT("RPGTraceAudit"))->RegisterComponent(); // observer: trace overlap versus damage accepted (empty in Shipping)
+		}
+	}
 	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossHud>())
 	{
 		URPGBossHud* Hud = NewObject<URPGBossHud>(Pawn, TEXT("RPGBossHud"));
@@ -200,5 +230,10 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
 		// Shows nothing until the console variable rpg.Debug is above 0.
 		URPGCombatDebug* Debug = NewObject<URPGCombatDebug>(Pawn, TEXT("RPGCombatDebug"));
 		Debug->RegisterComponent();
+	}
+	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossLegend>())
+	{
+		// The presentation layer (camera shake, hit stop, slow motion): after the tracker, phases, stagger and HUD it polls. Inert while rpg.Legend is 0.
+		NewObject<URPGBossLegend>(Pawn, TEXT("RPGBossLegend"))->RegisterComponent();
 	}
 }

@@ -49,3 +49,12 @@ another folder would break every internal reference). Only what is used is impor
 | Deadly Ruins Modular asset pack | `Deadly_Ruins/` (detail and world-blend master materials, rock wall, brick floor, metal textures) | 166 MB | Stone textures for the arena floor, wall, pillars, arch, rubble and braziers | **to be filled** |
 | Arena meshes (authored in Blender, imported by Antigravity) | `OneBossFight/Environment/Meshes` | 1 MB | Pillars, curved walls, entrance arch, brazier, rubble | Project asset, no third-party licence |
 | Dark Ruins Megascans sample (Epic project) | Epic Games / Quixel | local project `DarkRuinsMegascansSample` (source URL not recorded: add it) | **not verified**: Megascans content from Epic samples is normally limited to use in Unreal Engine projects, and the exact sample terms have not been read; the user said the build is a portfolio piece, not published or commercial | 2026-10-20 | Arena ruins, floor stone, decals, props, flame and fog materials | `Content/MS`, `MSPresets`, `CustomAssets`, `Smart`, `Materials`, `Blueprints`, `Effects`, `Textures` (about 9.5 GB, git-ignored) |
+
+## Boss music (Import/Audio, imported to Content/OneBossFight/Audio)
+
+Credits as supplied in `Import/Audio/SOURCES.txt` (Kevin MacLeod, incompetech.com, Creative Commons Attribution 3.0 / 4.0 International): the credit lines must appear in the game's credits.
+
+| Asset | Title and creator | Source |
+|---|---|---|
+| `MX_Boss01_Phase1` | "Darkness is Coming" by Kevin MacLeod | https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100584 |
+| `MX_Boss01_Phase2` | "Final Battle of the Dark Wizards" by Kevin MacLeod | https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100224 |

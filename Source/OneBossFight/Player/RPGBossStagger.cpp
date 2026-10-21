@@ -520,6 +520,14 @@ void URPGBossStagger::ResumeBehaviour()
 	{
 		return;
 	}
+	// A scripted test keeps the boss frozen for its whole length (URPGBossEncounter::bTestFreeze): a break ending must not restart the pack's behaviour behind it,
+	// or the boss can start an attack in the frames before the encounter component stops the logic again.
+	const URPGBossEncounter* Encounter = GetOwner()->FindComponentByClass<URPGBossEncounter>();
+	if (Encounter && Encounter->bTestFreeze && !Encounter->IsDormant())
+	{
+		bBehaviourHeld = false;
+		return;
+	}
 	if (UObject* Manager = FindControllerComponent(Controller, TEXT("BP_BehaviorManagerComponent_C")))
 	{
 		CallBlueprintFunction(Manager, TEXT("SetBehaviorDisabled"),

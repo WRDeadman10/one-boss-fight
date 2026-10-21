@@ -9,6 +9,7 @@
 #include "Player/RPGBossHealPunish.h"
 #include "Player/RPGBossLowSweep.h"
 #include "Player/RPGBossShockwave.h"
+#include "Player/RPGTraceGuard.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRPGInterrupt, Log, All);
 
@@ -45,6 +46,7 @@ void RPGBossInterrupt::CancelOffence(AActor* Boss, const TCHAR* Reason)
 		UE_LOG(LogRPGInterrupt, Log, TEXT("%s: offence cancelled (%s): move %s (%s), blade %d, wave %d, pending punish %d, montage %s at %.2f s"), *Boss->GetName(), Reason,
 			Tracker ? *Tracker->GetCurrentMove().ToString() : TEXT("-"), Tracker ? *Tracker->GetPhaseName() : TEXT("-"), bBlade ? 1 : 0, bWave ? 1 : 0, bPending ? 1 : 0, *Montage, Position);
 	}
+	URPGTraceGuard::CloseFor(Boss, FName(Reason)); // the pack's own weapon trace window ends now, not when the replacing montage's notify state catches up (Freeze 548)
 	if (Sweep)
 	{
 		Sweep->Cancel(Reason);

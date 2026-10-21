@@ -60,6 +60,10 @@
 		{
 			"Name": "Niagara",
 			"Enabled": true
+		},
+		{
+			"Name": "EngineCameras",
+			"Enabled": true
 		}
 	]
 }
