@@ -1,0 +1,12 @@
+Clip: AN_Boss01_A1_QuickSlash
+Length: 1.200
+FPS: 30
+Frames: 37 (0 to 36)
+Loop: No (One-shot)
+RootMotion: In Place
+WindupEndTime: 0.35
+ActiveStartTime: 0.35
+ActiveEndTime: 0.50
+RecoveryEndTime: 1.200
+CommitTime: 0.33
+Notes: Quick Horizontal Slash. Fast wide right-to-left horizontal slash at chest height. Wide readable windup coils right and drops stance 11 cm (0.00-0.35s); active strike slices violently across 180 degree arc (0.35-0.50s); recovery decelerates and returns to combat ready idle (0.50-1.20s). Both hands maintain greatsword grip (wrist distance 9.8-13.4 cm) throughout the sweep. Both feet remain grounded flat on the floor at Z ≈ 0.

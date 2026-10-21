@@ -40,6 +40,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	void DumpPlayerFunctions() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Debug")
+	void DumpBossFunctions() const;
+
 	/** Test drivers only: sets the boss's posture (poise attribute) to a value, as a hit would leave it. */
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	void DebugSetBossPosture(float Value) const;
@@ -60,11 +63,31 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	void DebugRefillPlayer() const;
 
+	/** Test drivers only: sets the first player's health to Value (to stand in for damage from another source). */
+	UFUNCTION(BlueprintCallable, Category = "Debug")
+	void DebugSetPlayerHealth(float Value) const;
+
 	/** Test drivers only: attaches a static mesh (a candidate weapon) to a socket of the boss mesh so a delivery can be looked at in a pose. Replaces the previous test mesh. */
+	/** Test drivers only: adds a skeletal piece (crown, mantle, gauntlet) that follows the boss mesh's pose (leader pose component). */
+	UFUNCTION(BlueprintCallable, Category = "Debug")
+	void DebugAddSkeletalPiece(USkeletalMesh* Piece);
+
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	void DebugAttachTestMesh(UStaticMesh* Mesh, FName Socket, FRotator RelativeRotation, FVector RelativeLocation);
 
+	/** Test drivers only: spawns a movable engine cube (100 cm edge, scaled by Scale) that blocks sight and projectiles, to test line of sight rules. DebugClearWalls removes all of them. */
+	UFUNCTION(BlueprintCallable, Category = "Debug")
+	void DebugSpawnWall(FVector Location, FRotator Rotation, FVector Scale);
+
+	UFUNCTION(BlueprintCallable, Category = "Debug")
+	void DebugClearWalls();
+
 private:
+	void DumpFunctionsOf(const AActor* Actor) const;
+
+	UPROPERTY(Transient)
+	TArray<TObjectPtr<AActor>> TestWalls;
+
 	UPROPERTY(Transient)
 	TObjectPtr<class UStaticMeshComponent> TestMeshComponent;
 

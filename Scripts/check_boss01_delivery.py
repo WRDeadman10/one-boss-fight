@@ -47,6 +47,17 @@ def node_transform(path, node):
     return out
 
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from fbx_materials import slot_usage
+
+
+def material_problem(path, name, minimum):
+    """A skinned or static mesh that declares several material slots must really use them: the FBX layer must map by polygon and at least `minimum` slot indices must carry polygons."""
+    mapping, counts = slot_usage(path, quiet=True)
+    if mapping != "ByPolygon" or len(counts) < minimum:
+        problems.append("%s: material layer is %s and only slots %s carry polygons (need ByPolygon with at least %d slots used): every face sits in one material, so the engine shows one material on the whole mesh" % (name, mapping, sorted(counts), minimum))
+
+
 ref_nodes = [n for n in nodes(REF) if not n.startswith("SKM_")] if os.path.exists(REF) else []
 for f in sorted(glob.glob(os.path.join(BOSS, "**", "*.fbx"), recursive=True)):
     name = os.path.relpath(f, BOSS)
@@ -55,6 +66,7 @@ for f in sorted(glob.glob(os.path.join(BOSS, "**", "*.fbx"), recursive=True)):
         suffixed = [n for n in ns if re.search(r"\.\d{3}$", n)]
         if suffixed:
             problems.append("%s: node names with a Blender suffix: %s" % (name, suffixed[:5]))
+        material_problem(f, name, 3)
         for main in [n for n in ns if not n.startswith("SOCKET_")][:1]:
             t = node_transform(f, main) or {}
             if any(abs(v) > 0.001 for v in t.get("Tra", (0, 0, 0))) or any(abs(v) > 0.001 for v in t.get("Rot", (0, 0, 0))) or any(abs(v - 1) > 0.001 for v in t.get("Sca", (1, 1, 1))):
@@ -70,6 +82,8 @@ for f in sorted(glob.glob(os.path.join(BOSS, "**", "*.fbx"), recursive=True)):
         t = node_transform(f, main) or {}
         if any(abs(v - 1) > 0.001 for v in t.get("Sca", (1, 1, 1))):
             problems.append("%s: node %s has scaling %s (Unreal imports the mesh 100 times too big or small): unit scale must be centimetres and every object scale 1" % (name, main, t["Sca"]))
+    if name in ("SK_Boss01_Body.fbx", "SK_Boss01_Sevarog_Test.fbx"):
+        material_problem(f, name, 4)
     if "Body" in name:
         geo = [m.decode("latin-1") for m in re.findall(rb"([A-Za-z0-9_\. ]+)\x00\x01Geometry", open(f, "rb").read())]
         extra_geo = [g for g in geo if "Morph" in g or "stage" in g.lower()]
@@ -123,6 +137,19 @@ if Image:
     for h, files in hashes.items():
         if len(files) > 1:
             problems.append("identical pictures (same pixels, different file bytes counts): %s" % files)
+
+# 5. animation clips must be exported at 30 fps: the FBX time mode of the pack's and our own clips is 6 (30 fps). A PAL scene (mode 10, 25 fps) makes Unreal read the clip 1.2 times too long (Report 08: 1.767 s became 2.120 s).
+for f in sorted(glob.glob(os.path.join(BOSS, "Animations", "*.fbx"))):
+    m = re.search(rb"TimeModeS\x04\x00\x00\x00enumS\x00\x00\x00\x00S\x00\x00\x00\x00I(.{4})", open(f, "rb").read(400000), re.S)
+    mode = int.from_bytes(m.group(1), "little") if m else None
+    if mode != 6:
+        problems.append("%s: FBX time mode is %s, must be 6 (30 fps; 10 is 25 fps PAL and stretches the clip by 1.2 in Unreal): set the scene frame rate to 30 with base 1.0 before exporting" % (os.path.relpath(f, BOSS), mode))
+
+# 6. material names inside the FBX carry no Blender duplicate suffix (Unreal turns "M_Boss01_Blade.003" into the slot name "M_Boss01_Blade_003").
+for f in sorted(glob.glob(os.path.join(BOSS, "**", "*.fbx"), recursive=True)):
+    suffixed = sorted({m.decode("latin-1") for m in re.findall(rb"([A-Za-z0-9_]+\.\d{3})\x00\x01Material", open(f, "rb").read())})
+    if suffixed:
+        problems.append("%s: material names with a Blender suffix: %s" % (os.path.relpath(f, BOSS), suffixed[:5]))
 
 for p in problems:
     print("FAIL " + p)

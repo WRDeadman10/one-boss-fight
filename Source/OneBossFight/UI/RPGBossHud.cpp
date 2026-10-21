@@ -15,6 +15,8 @@
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossPosture.h"
 #include "Player/RPGBossStagger.h"
+#include "Kismet/GameplayStatics.h"
+#include "InputCoreTypes.h"
 #include "Styling/CoreStyle.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRPGBossHud, Log, All);
@@ -95,9 +97,10 @@ TSharedRef<SWidget> URPGBossHudWidget::RebuildWidget()
 		SubtitleText = AddText(Canvas, TEXT("BossSubtitle"), FVector2D(0.5f, 1.f), FVector2D(1.f, 1.f), FVector2D(450.f, -96.f), 15, FLinearColor(0.85f, 0.6f, 0.3f));
 		PromptText = AddText(Canvas, TEXT("RipostePrompt"), FVector2D(0.5f, 0.66f), FVector2D(0.5f, 0.5f), FVector2D::ZeroVector, 22, FLinearColor(0.96f, 0.84f, 0.45f));
 		BannerTextBlock = AddText(Canvas, TEXT("Banner"), FVector2D(0.5f, 0.4f), FVector2D(0.5f, 0.5f), FVector2D::ZeroVector, 62, FLinearColor::White);
+		RetryTextBlock = AddText(Canvas, TEXT("Retry"), FVector2D(0.5f, 0.62f), FVector2D(0.5f, 0.5f), FVector2D::ZeroVector, 24, FLinearColor(0.93f, 0.88f, 0.75f));
 
 		for (UWidget* Hidden : { static_cast<UWidget*>(Plate), static_cast<UWidget*>(TrailBar), static_cast<UWidget*>(HealthBar), static_cast<UWidget*>(PostureBar), static_cast<UWidget*>(NameText),
-			static_cast<UWidget*>(SubtitleText), static_cast<UWidget*>(PromptText), static_cast<UWidget*>(BannerTextBlock) })
+			static_cast<UWidget*>(SubtitleText), static_cast<UWidget*>(PromptText), static_cast<UWidget*>(BannerTextBlock), static_cast<UWidget*>(RetryTextBlock) })
 		{
 			Hidden->SetVisibility(ESlateVisibility::Collapsed);
 		}
@@ -125,6 +128,23 @@ void URPGBossHudWidget::SetBanner(const FText& Text, const FLinearColor& Color, 
 void URPGBossHudWidget::ClearBanner()
 {
 	BannerStart = -1.0;
+}
+
+void URPGBossHudWidget::EnableRetry(const FText& Text, float DelaySeconds)
+{
+	bRetryEnabled = true;
+	RetryText = Text;
+	RetryShowAt = (GetWorld() ? GetWorld()->GetRealTimeSeconds() : 0.0) + DelaySeconds;
+}
+
+void URPGBossHudWidget::DisableRetry()
+{
+	bRetryEnabled = false;
+}
+
+bool URPGBossHudWidget::IsRetryShown() const
+{
+	return bRetryEnabled && GetWorld() && GetWorld()->GetRealTimeSeconds() >= RetryShowAt;
 }
 
 void URPGBossHudWidget::Detach()
@@ -162,10 +182,27 @@ void URPGBossHudWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 		return;
 	}
 	const float Alpha = BannerAlpha();
-	if (bDetached && Alpha <= 0.f)
+	if (bDetached && Alpha <= 0.f && !bRetryEnabled)
 	{
 		RemoveFromParent();
 		return;
+	}
+	const bool bRetry = IsRetryShown();
+	RetryTextBlock->SetVisibility(bRetry ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+	RetryTextBlock->SetText(RetryText);
+	if (bRetry)
+	{
+		// The player's own input is disabled after a victory; these keys are read from the controller directly.
+		if (APlayerController* Controller = GetOwningPlayer())
+		{
+			if (Controller->WasInputKeyJustPressed(EKeys::R) || Controller->WasInputKeyJustPressed(EKeys::Gamepad_FaceButton_Top))
+			{
+				bRetryEnabled = false;
+				UE_LOG(LogRPGBossHud, Log, TEXT("retry: reloading the level"));
+				UGameplayStatics::OpenLevel(this, FName(*UGameplayStatics::GetCurrentLevelName(this, true)));
+				return;
+			}
+		}
 	}
 	const ESlateVisibility BarVisibility = Current.bShowBar ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed;
 	for (UWidget* Part : { static_cast<UWidget*>(Plate), static_cast<UWidget*>(TrailBar), static_cast<UWidget*>(HealthBar), static_cast<UWidget*>(PostureBar), static_cast<UWidget*>(NameText) })
@@ -342,6 +379,16 @@ void URPGBossHud::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 		if (Widget)
 		{
 			Widget->ClearBanner();
+			Widget->DisableRetry();
+		}
+		if (bPlayerLocked)
+		{
+			APlayerController* LockController = World->GetFirstPlayerController();
+			if (APawn* LockPawn = LockController ? LockController->GetPawn() : nullptr)
+			{
+				LockPawn->EnableInput(LockController);
+			}
+			bPlayerLocked = false;
 		}
 		State = EState::Dormant;
 	}
@@ -369,6 +416,20 @@ void URPGBossHud::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 				VictoryFiredGeneration = Generation;
 				++VictoryCount;
 				UE_LOG(LogRPGBossHud, Log, TEXT("victory (generation %d, count %d)"), Generation, VictoryCount);
+				if (bLockPlayerOnVictory)
+				{
+					// Freeze 18.2 and L11: no combat action may run after the boss has fallen. The pawn's whole input is switched off; the controller stays alive for the retry keys.
+					APlayerController* LockController = World->GetFirstPlayerController();
+					if (APawn* LockPawn = LockController ? LockController->GetPawn() : nullptr)
+					{
+						LockPawn->DisableInput(LockController);
+						bPlayerLocked = true;
+					}
+				}
+				if (Widget)
+				{
+					Widget->EnableRetry(RetryText, RetryDelaySeconds);
+				}
 				OnVictory.Broadcast(Generation);
 			}
 		}

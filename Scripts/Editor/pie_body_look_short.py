@@ -5,7 +5,10 @@ import unreal
 log = lambda m: unreal.log("[BodyLook] " + m)
 _sf = os.path.join(unreal.SystemLibrary.get_project_directory(), "Saved", "body_scale.txt")
 SCALE = float(open(_sf).read().strip()) if os.path.exists(_sf) else 100.0
-SHOTS = [(None, 0.0), ("AN_Boss01_A2_Raise", 0.5), ("AN_Boss01_A2_ApexHold", 0.5), ("AN_Boss01_A2_Slam", 0.6), ("AN_Boss01_Wake", 3.3)]
+SHOTS = [(None, 0.0), ("AN_Boss01_A4_LowSweep", 0.75), ("AN_Boss01_A1_QuickSlash", 0.40), ("AN_Boss01_A3a_Combo1", 0.50), ("AN_Boss01_A3b_Combo2", 0.27), ("AN_Boss01_A5_JavelinThrow", 0.45)]
+# camera offset from the boss (cm east, cm north, extra yaw): Saved/look_cfg.txt as "x,y,yaw"; default is the old view (330, 330, 28)
+_cf = os.path.join(unreal.SystemLibrary.get_project_directory(), "Saved", "look_cfg.txt")
+CAM = tuple(float(v) for v in open(_cf).read().strip().split(",")) if os.path.exists(_cf) else (330.0, 330.0, 28.0)
 state = {"phase": "start", "t": 0.0, "step": 0, "wait": 0.0, "i": 0}
 handle = None
 
@@ -37,6 +40,8 @@ def _tick(dt):
         mesh.set_skeletal_mesh_asset(body)
         mesh.set_relative_scale3d(unreal.Vector(SCALE, SCALE, SCALE))
         comp(boss, "RPGCombatDebug").debug_attach_test_mesh(unreal.load_asset("/Game/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword"), "HeavySwordSocket_R", unreal.Rotator(0, 0, 0), unreal.Vector(0, 0, 0))
+        for piece in ("SK_Boss01_Crown", "SK_Boss01_Mantle", "SK_Boss01_BrazierGauntlet"):
+            comp(boss, "RPGCombatDebug").debug_add_skeletal_piece(unreal.load_asset("/Game/OneBossFight/Boss01/Body/" + piece))
         log("body set, scale %.1f, bounds %s" % (SCALE, mesh.get_editor_property("bounds_scale")))
         s["step"] = 1
         s["wait"] = s["t"] + 2.5
@@ -49,10 +54,10 @@ def _tick(dt):
             log("done")
             return
         clip, t = SHOTS[s["i"]]
-        pp = unreal.Vector(bl.x + 330, bl.y + 330, bl.z + 20)
+        pp = unreal.Vector(bl.x + CAM[0], bl.y + CAM[1], bl.z + 20)
         yaw0 = unreal.MathLibrary.find_look_at_rotation(pp, bl).yaw
         pawn.set_actor_location_and_rotation(pp, unreal.Rotator(0, 0, yaw0 + 140), False, True)
-        pc.set_control_rotation(unreal.Rotator(roll=0, pitch=-3, yaw=yaw0 + 28))
+        pc.set_control_rotation(unreal.Rotator(roll=0, pitch=-3, yaw=yaw0 + CAM[2]))
         if clip:
             anim = unreal.load_asset("/Game/OneBossFight/Boss01/Animations/" + clip)
             mesh.set_animation_mode(unreal.AnimationMode.ANIMATION_SINGLE_NODE)

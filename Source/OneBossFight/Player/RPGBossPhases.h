@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "UObject/SoftObjectPtr.h"
+#include "Player/RPGBossRules.h"
 #include "RPGBossPhases.generated.h"
 
 class UAnimMontage;
@@ -69,6 +70,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase")
 	FString AttackAbilityPrefix = TEXT("GA_GS_Boss_");
 
+	/** A6, the leap, is a phase two move (Freeze 16, 30.1): until the phase transition has finished the leap ability's tag is in the boss's blocked ability tags, so the pack's behaviour cannot pick it. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase")
+	bool bLockLeapUntilPhaseTwo = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase")
+	FName LeapAbilityTag = TEXT("Ability.Melee.LeapAttack");
+
+	UFUNCTION(BlueprintPure, Category = "Phase")
+	bool IsLeapBlocked() const { return bLeapBlocked; }
+
 	UFUNCTION(BlueprintPure, Category = "Phase")
 	bool IsPhaseTwo() const { return bPhaseTwo; }
 
@@ -81,22 +92,48 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Phase")
 	int32 GetPhaseTwoCount() const { return PhaseTwoCount; }
 
-	/** Back to phase one: speeds, attack rates and the Attack attribute restored, the fireball stopped. */
+	/** Back to phase one: speeds, attack rates and the Attack attribute restored, the fireball stopped, the roar's immunity effect and posture pin removed. */
 	UFUNCTION(BlueprintCallable, Category = "Phase")
 	void ResetPhases();
+
+	/** Posture is paused during the roar (Freeze 766): the pool is pinned at its value and hits are ignored, so the pack gate cannot refill it. Off = the pack's gate keeps cycling it. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase")
+	bool bPausePostureInTransition = true;
+
+	/** Called by the stance break when it ends: starts a transition that crossed its threshold during the break, with the behaviour still held when bBehaviourAlreadyHeld (no gap, no resume in between).
+	 *  Returns true when a transition began. Stateless: the queue is derived from health, so a reset or a death clears it by itself. */
+	bool TryStartQueuedTransition(bool bBehaviourAlreadyHeld);
+
+	/** True while the threshold is crossed but a stance break keeps the transition waiting (Freeze 770 and 1201). */
+	UFUNCTION(BlueprintPure, Category = "Phase")
+	bool IsTransitionQueued() const;
+
+	/** World time the last transition began (-1 none) and how many began from the end of a stance break. */
+	UFUNCTION(BlueprintPure, Category = "Phase")
+	double GetLastTransitionStartTime() const { return LastTransitionStart; }
+
+	UFUNCTION(BlueprintPure, Category = "Phase")
+	int32 GetQueuedStartCount() const { return QueuedStarts; }
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	void StartTransition();
+	/** The Freeze 21 rule applied to the boss's state right now (health, dormancy, stagger, phase flags). */
+	RPGBossRules::ETransitionResult ResolveNow() const;
+	/** bHeldAlready: the stance break that just ended still holds the behaviour; the transition takes that hold over instead of stopping the behaviour a second time. */
+	void StartTransition(bool bHeldAlready);
 	void FinishTransition();
+	/** Removes the hit stun immunity the roar applied (the effect would otherwise outlive the roar by about 2 s and a reset), and releases the posture pin. */
+	void RemoveImmunity();
 	void ApplyPhaseTwoBuffs();
 	void RemovePhaseTwoBuffs();
 	/** Multiplies the PlayRate of every montage entry of the boss's attack abilities by Factor. */
 	void ScaleAttackRates(float Factor);
 	void TryFireball(double Now);
+	/** Adds or removes LeapAbilityTag in the ability system component's blocked ability tags. Returns false while the component is not there yet. */
+	bool SetLeapBlocked(bool bBlocked);
 	void HoldBehaviour();
 	void ResumeBehaviour();
 
@@ -105,6 +142,10 @@ private:
 	bool bHeld = false;
 	bool bBuffsApplied = false;
 	bool bFireballGiven = false;
+	bool bLeapBlocked = false;
+	bool bImmunityApplied = false;
+	double LastTransitionStart = -1.0;
+	int32 QueuedStarts = 0;
 	double TransitionEnd = 0.0;
 	double NextFireball = 0.0;
 	double AppliedAttack = 0.0;

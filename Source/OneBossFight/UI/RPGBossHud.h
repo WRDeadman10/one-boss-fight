@@ -46,6 +46,13 @@ public:
 	/** The boss is gone (destroyed after its death): drop the bar and prompt, let a running banner finish, then remove the widget from the screen. */
 	void Detach();
 
+	/** Victory retry (Freeze L11: victory exposes retry/reset): after DelaySeconds a line appears and R (or the gamepad Y button) reloads the level. Survives Detach. */
+	void EnableRetry(const FText& Text, float DelaySeconds);
+	void DisableRetry();
+
+	UFUNCTION(BlueprintPure, Category = "Hud")
+	bool IsRetryShown() const;
+
 	/** Tests: what the widget currently shows. */
 	UFUNCTION(BlueprintPure, Category = "Hud")
 	bool IsBarShown() const;
@@ -83,6 +90,8 @@ private:
 	TObjectPtr<UTextBlock> PromptText;
 	UPROPERTY(Transient)
 	TObjectPtr<UTextBlock> BannerTextBlock;
+	UPROPERTY(Transient)
+	TObjectPtr<UTextBlock> RetryTextBlock;
 
 	float BannerAlpha() const;
 
@@ -94,6 +103,9 @@ private:
 	float Trail = 1.f;
 	bool bBuilt = false;
 	bool bDetached = false;
+	bool bRetryEnabled = false;
+	double RetryShowAt = 0.0;
+	FText RetryText;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRPGVictoryDelegate, int32, Generation);
@@ -129,6 +141,19 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hud", meta = (ClampMin = "0.0"))
 	float VictoryBannerSeconds = 4.f;
+
+	/** Victory (Freeze 18.2, L11): the player's input is disabled (no combat action can run) and a retry line appears after this many seconds. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hud")
+	bool bLockPlayerOnVictory = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hud", meta = (ClampMin = "0.0"))
+	float RetryDelaySeconds = 3.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hud")
+	FText RetryText = NSLOCTEXT("RPG", "RetryText", "PRESS  R  OR  Y  TO FACE IT AGAIN");
+
+	UFUNCTION(BlueprintPure, Category = "Encounter")
+	bool IsPlayerLocked() const { return bPlayerLocked; }
 
 	/** Collapse the pack's own boss bar (its Blueprint variable "Boss HUD") so only this HUD shows. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Hud")
@@ -183,6 +208,7 @@ private:
 	int32 VictoryCount = 0;
 	bool bSeenAlive = false;
 	bool bWasStaggered = false;
+	bool bPlayerLocked = false;
 	double FlashEnd = 0.0;
 	double NextPackBarCheck = 0.0;
 };

@@ -17,7 +17,7 @@ def _tick(dt):
     boss = next((a for a in unreal.GameplayStatics.get_all_actors_of_class(w, unreal.Character) if a.get_class().get_name() == "BP_ExampleGreatSwordBoss_C"), None) if w else None
     if boss is None or s["t"] < 9.0:
         return
-    next(c for c in boss.get_components_by_class(unreal.ActorComponent) if c.get_class().get_name() == "RPGCombatDebug").dump_player_functions()
+    next(c for c in boss.get_components_by_class(unreal.ActorComponent) if c.get_class().get_name() == "RPGCombatDebug").dump_boss_functions()
     unreal.unregister_slate_post_tick_callback(handle)
     handle = None
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()

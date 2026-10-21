@@ -1,0 +1,12 @@
+Clip: AN_Boss01_A3b_Combo2
+Length: 1.350
+FPS: 30
+Frames: 41 (0 to 40)
+Loop: No (One-shot)
+RootMotion: In Place
+WindupEndTime: 0.15
+ActiveStartTime: 0.15
+ActiveEndTime: 0.40
+RecoveryEndTime: 1.350
+CommitTime: 0.13
+Notes: Two-Hit Branch Combo: Slash 2. Explosive rising reverse horizontal slash slicing from low-left up and across to the right flank. Starts seamlessly from A3a Frame 24 ready pose (0.00s); quick snap torque windup (0.00-0.15s); powerful reverse sweep whips across player (0.15-0.40s); deceleration and flourish recovery smoothly returns to combat ready idle (0.40-1.35s). Both hands maintain greatsword grip (wrist distance 9.8-13.6 cm). Feet grounded flat at Z ≈ 0.

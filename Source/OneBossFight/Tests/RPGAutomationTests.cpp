@@ -14,7 +14,12 @@
 #include "Player/RPGDodgeTiming.h"
 #include "Player/RPGBossStagger.h"
 #include "Player/RPGBossPhases.h"
+#include "Player/RPGBossRules.h"
+#include "Player/RPGAttackTracker.h"
+#include "Player/RPGBossHealPunish.h"
+#include "Player/RPGBossLowSweep.h"
 #include "UI/RPGBossHud.h"
+#include "Player/RPGCameraRig.h"
 #include "Blueprint/UserWidget.h"
 #include "Animation/AnimMontage.h"
 #include "InputAction.h"
@@ -123,6 +128,64 @@ bool FRPGFrameStatsGateTest::RunTest(const FString& Parameters)
 	const FRPGFrameStats Single = FRPGFrameStats::Compute(One);
 	TestEqual(TEXT("single p99"), Single.P99Ms, 4.0);
 	TestEqual(TEXT("single median"), Single.MedianMs, 4.0);
+	return true;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Boss state priority rules (Freeze 21): stance break versus phase transition
+// ---------------------------------------------------------------------------------------------
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGTransitionRulesTest, "OneBossFight.Boss.TransitionRules",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGTransitionRulesTest::RunTest(const FString& Parameters)
+{
+	using namespace RPGBossRules;
+	// All 32 combinations of the five flags a break looks at, with and without the cooldown being ignored, against the written order.
+	for (int32 Bits = 0; Bits < 32; ++Bits)
+	{
+		FFlags F;
+		F.bDead = (Bits & 1) != 0;
+		F.bDormant = (Bits & 2) != 0;
+		F.bTransition = (Bits & 4) != 0;
+		F.bStaggered = (Bits & 8) != 0;
+		F.bCooldown = (Bits & 16) != 0;
+		for (const bool bIgnoreCooldown : {false, true})
+		{
+			EBreakResult Expected = EBreakResult::Started;
+			if (F.bDead) { Expected = EBreakResult::Dead; }
+			else if (F.bDormant) { Expected = EBreakResult::Dormant; }
+			else if (F.bTransition) { Expected = EBreakResult::Transition; }
+			else if (F.bStaggered) { Expected = EBreakResult::AlreadyStaggered; }
+			else if (F.bCooldown && !bIgnoreCooldown) { Expected = EBreakResult::Cooldown; }
+			TestEqual(*FString::Printf(TEXT("break flags %d ignore cooldown %d"), Bits, bIgnoreCooldown ? 1 : 0), static_cast<int32>(ResolveBreak(F, bIgnoreCooldown)), static_cast<int32>(Expected));
+		}
+	}
+
+	// The phase two check at the Freeze threshold (0.60 of 500 health = 300).
+	FFlags Idle;
+	TestEqual(TEXT("300 of 500 starts (at or below)"), static_cast<int32>(ResolveTransition(Idle, 300.0, 500.0, 0.6f)), static_cast<int32>(ETransitionResult::Start));
+	TestEqual(TEXT("300.5 of 500 is above"), static_cast<int32>(ResolveTransition(Idle, 300.5, 500.0, 0.6f)), static_cast<int32>(ETransitionResult::AboveThreshold));
+	TestEqual(TEXT("health 0 is dead"), static_cast<int32>(ResolveTransition(Idle, 0.0, 500.0, 0.6f)), static_cast<int32>(ETransitionResult::Dead));
+	TestEqual(TEXT("no maximum is not ready"), static_cast<int32>(ResolveTransition(Idle, 100.0, 0.0, 0.6f)), static_cast<int32>(ETransitionResult::NotReady));
+	FFlags Down;
+	Down.bStaggered = true;
+	TestEqual(TEXT("below the threshold during a break is queued"), static_cast<int32>(ResolveTransition(Down, 250.0, 500.0, 0.6f)), static_cast<int32>(ETransitionResult::QueuedBehindStagger));
+	TestEqual(TEXT("above the threshold during a break is above"), static_cast<int32>(ResolveTransition(Down, 400.0, 500.0, 0.6f)), static_cast<int32>(ETransitionResult::AboveThreshold));
+	FFlags Done;
+	Done.bPhaseTwo = true;
+	TestEqual(TEXT("phase two already begun never starts again"), static_cast<int32>(ResolveTransition(Done, 100.0, 500.0, 0.6f)), static_cast<int32>(ETransitionResult::AlreadyDone));
+	FFlags Asleep;
+	Asleep.bDormant = true;
+	TestEqual(TEXT("a dormant boss does not start"), static_cast<int32>(ResolveTransition(Asleep, 100.0, 500.0, 0.6f)), static_cast<int32>(ETransitionResult::Dormant));
+	FFlags DeadFlag;
+	DeadFlag.bDead = true;
+	TestEqual(TEXT("the dead flag wins over a crossing"), static_cast<int32>(ResolveTransition(DeadFlag, 100.0, 500.0, 0.6f)), static_cast<int32>(ETransitionResult::Dead));
+
+	// Defaults that other rules rely on.
+	TestEqual(TEXT("stagger seconds 2.5"), GetDefault<URPGBossStagger>()->StaggerSeconds, 2.5f);
+	TestEqual(TEXT("stagger cooldown 0 (decision G0-5)"), GetDefault<URPGBossStagger>()->CooldownSeconds, 0.f);
+	TestEqual(TEXT("transition seconds 1.8"), GetDefault<URPGBossPhases>()->TransitionSeconds, 1.8f);
 	return true;
 }
 
@@ -476,6 +539,22 @@ bool FRPGPackWiringTest::RunTest(const FString& Parameters)
 	TestNotNull(TEXT("stance break fall montage"), StaggerDefaults->FallMontage.LoadSynchronous());
 	TestNotNull(TEXT("stance break get-up montage"), StaggerDefaults->GetUpMontage.LoadSynchronous());
 	TestNotNull(TEXT("hit stun immunity effect"), StaggerDefaults->ImmunityEffect.LoadSynchronous());
+	// A4 low sweep and A5 heal punish (Player/RPGBossLowSweep, RPGBossHealPunish): the clips they play through the attack tracker, the pack's drink montage whose start is the heal signal, and the Freeze values.
+	TestNotNull(TEXT("the pack's drink montage (the heal start signal of A5)"), LoadObject<UAnimMontage>(nullptr, TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/DrinkingPotion_Montage.DrinkingPotion_Montage")));
+	const URPGAttackTracker* TrackerDefaults = GetDefault<URPGAttackTracker>();
+	for (const TCHAR* Move : {TEXT("A4"), TEXT("A5")})
+	{
+		const FRPGAttackTiming* Timing = TrackerDefaults->Attacks.FindByPredicate([Move](const FRPGAttackTiming& T) { return T.MoveId == FName(Move); });
+		TestTrue(*FString::Printf(TEXT("%s is a tracked move with a clip"), Move), Timing && !Timing->ClipPath.IsEmpty());
+		TestTrue(*FString::Printf(TEXT("the clip of %s exists"), Move), Timing && FPackageName::DoesPackageExist(FPackageName::ObjectPathToPackageName(Timing->ClipPath)));
+	}
+	const URPGBossHealPunish* PunishDefaults = GetDefault<URPGBossHealPunish>();
+	TestEqual(TEXT("heal punish minimum range is 400 cm"), PunishDefaults->MinRange, 400.f);
+	TestEqual(TEXT("heal punish maximum range is 1000 cm"), PunishDefaults->MaxRange, 1000.f);
+	TestEqual(TEXT("heal punish cooldown is 4 s"), PunishDefaults->Cooldown, 4.f);
+	// Dodgeable on the heal exit: the release (0.45 s) plus the flight lands after the 1.13 s drink animation plus the 0.2 s a dodge needs to start moving.
+	TestTrue(TEXT("the javelin lands after the player can dodge"), 0.45f + PunishDefaults->FlightTime >= 1.13f + 0.2f);
+	TestTrue(TEXT("the A4 blade is at most 40 cm high (a jump clears it)"), GetDefault<URPGBossLowSweep>()->BladeHeight <= 40.f);
 	// The boss HUD (UI/RPGBossHud) loads the pack's display font by path and hides the pack's own boss bar through the boss Blueprint's "Boss HUD" widget variable.
 	TestTrue(TEXT("Cinzel display font exists"), FPackageName::DoesPackageExist(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/UI/Fonts/Cinzel/Cinzel")));
 	if (const UBlueprint* BossBlueprint = LoadObject<UBlueprint>(nullptr, *(Blueprints + TEXT("AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss"))))
@@ -491,6 +570,10 @@ bool FRPGPackWiringTest::RunTest(const FString& Parameters)
 	{
 		AddError(TEXT("BP_ExampleGreatSwordBoss is missing"));
 	}
+	// Camera rig (Player/RPGCameraRig): a probe wider than the near clip distance and a limited upward pitch keep the camera off the floor.
+	const URPGCameraRig* CameraDefaults = GetDefault<URPGCameraRig>();
+	TestTrue(TEXT("camera probe is wider than the near clip plane"), CameraDefaults->ProbeSize >= 25.f);
+	TestTrue(TEXT("camera looks up at most 45 degrees"), CameraDefaults->PitchMax <= 45.f && CameraDefaults->PitchMin >= -80.f);
 	const URPGBossHud* HudDefaults = GetDefault<URPGBossHud>();
 	TestTrue(TEXT("the pack's boss bar is hidden by default"), HudDefaults->bHidePackBar);
 	TestFalse(TEXT("the boss HUD has a name"), HudDefaults->BossName.IsEmpty());

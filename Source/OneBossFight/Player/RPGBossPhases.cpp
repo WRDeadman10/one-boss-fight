@@ -2,6 +2,8 @@
 
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGBossInterrupt.h"
+#include "Player/RPGBossPosture.h"
 #include "Player/RPGBossStagger.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "AIController.h"
@@ -60,6 +62,46 @@ void URPGBossPhases::BeginPlay()
 	{
 		BaseWalkSpeed = Character->GetCharacterMovement() ? Character->GetCharacterMovement()->MaxWalkSpeed : 0.f;
 	}
+	// When a hit breaks posture and crosses the threshold in the same frame, the break must be seen first (the transition is then queued behind it, Freeze 1201): the stance break component ticks before this one.
+	if (const URPGBossStagger* Stagger = GetOwner()->FindComponentByClass<URPGBossStagger>())
+	{
+		AddTickPrerequisiteComponent(const_cast<URPGBossStagger*>(Stagger));
+	}
+}
+
+RPGBossRules::ETransitionResult URPGBossPhases::ResolveNow() const
+{
+	const AActor* Owner = GetOwner();
+	const URPGBossEncounter* Encounter = Owner->FindComponentByClass<URPGBossEncounter>();
+	const URPGBossStagger* Stagger = Owner->FindComponentByClass<URPGBossStagger>();
+	RPGBossRules::FFlags Flags;
+	Flags.bDormant = Encounter && Encounter->IsDormant();
+	Flags.bStaggered = Stagger && Stagger->IsStaggered();
+	Flags.bPhaseTwo = bPhaseTwo;
+	Flags.bTransition = bTransition;
+	double Health = 0.0, Max = 0.0;
+	if (!ReadAttribute(Owner, HealthTag, false, Health) || !ReadAttribute(Owner, HealthTag, true, Max))
+	{
+		return RPGBossRules::ETransitionResult::NotReady; // unreadable: treated as not crossed
+	}
+	return RPGBossRules::ResolveTransition(Flags, Health, Max, PhaseTwoHealthFraction);
+}
+
+bool URPGBossPhases::IsTransitionQueued() const
+{
+	return ResolveNow() == RPGBossRules::ETransitionResult::QueuedBehindStagger;
+}
+
+bool URPGBossPhases::TryStartQueuedTransition(bool bBehaviourAlreadyHeld)
+{
+	if (ResolveNow() != RPGBossRules::ETransitionResult::Start)
+	{
+		return false;
+	}
+	++QueuedStarts;
+	UE_LOG(LogRPGPhases, Log, TEXT("%s: the transition queued behind the stance break starts now (behaviour already held: %d)"), *GetOwner()->GetName(), bBehaviourAlreadyHeld ? 1 : 0);
+	StartTransition(bBehaviourAlreadyHeld);
+	return true;
 }
 
 void URPGBossPhases::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -72,6 +114,10 @@ void URPGBossPhases::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	}
 	const double Now = World->GetTimeSeconds();
 	AActor* Owner = GetOwner();
+	if (bLockLeapUntilPhaseTwo && !bPhaseTwo && !bLeapBlocked)
+	{
+		SetLeapBlocked(true); // phase one, and again after a reset
+	}
 	const URPGBossEncounter* Encounter = Owner->FindComponentByClass<URPGBossEncounter>();
 	const URPGBossStagger* Stagger = Owner->FindComponentByClass<URPGBossStagger>();
 	const bool bDormant = Encounter && Encounter->IsDormant();
@@ -96,9 +142,10 @@ void URPGBossPhases::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	}
 	if (!bPhaseTwo)
 	{
-		if (!bStaggered && Health / Max <= PhaseTwoHealthFraction)
+		// The Freeze 21 rule: a crossing during a stance break is queued (it starts from the end of the break, TryStartQueuedTransition), otherwise it starts now.
+		if (ResolveNow() == RPGBossRules::ETransitionResult::Start)
 		{
-			StartTransition();
+			StartTransition(false);
 		}
 		return;
 	}
@@ -120,18 +167,89 @@ void URPGBossPhases::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	}
 }
 
-void URPGBossPhases::StartTransition()
+bool URPGBossPhases::SetLeapBlocked(bool bBlocked)
+{
+	UObject* Asc = FindComponentByClassName(GetOwner(), TEXT("BP_AdvancedAbilitySystemComponent_C"));
+	if (!Asc)
+	{
+		return false;
+	}
+	const FGameplayTag Tag = FGameplayTag::RequestGameplayTag(LeapAbilityTag, false);
+	if (!Tag.IsValid())
+	{
+		UE_LOG(LogRPGPhases, Warning, TEXT("leap ability tag %s is not a registered tag"), *LeapAbilityTag.ToString());
+		return false;
+	}
+	const bool bCalled = CallBlueprintFunction(Asc, bBlocked ? TEXT("AddBlockedAbilityTags") : TEXT("RemoveBlockedAbilityTags"),
+		[&](UFunction& F, uint8* P)
+		{
+			if (const FStructProperty* Container = CastField<FStructProperty>(F.FindPropertyByName(bBlocked ? TEXT("TagsToAdd") : TEXT("TagsToRemove"))))
+			{
+				Container->ContainerPtrToValuePtr<FGameplayTagContainer>(P)->AddTag(Tag);
+			}
+		},
+		[](UFunction&, uint8*) {});
+	if (bCalled)
+	{
+		bLeapBlocked = bBlocked;
+		UE_LOG(LogRPGPhases, Log, TEXT("%s: leap %s (%s)"), *GetOwner()->GetName(), bBlocked ? TEXT("blocked until phase two") : TEXT("unlocked"), *LeapAbilityTag.ToString());
+	}
+	return bCalled;
+}
+
+void URPGBossPhases::RemoveImmunity()
+{
+	if (bImmunityApplied)
+	{
+		bImmunityApplied = false;
+		if (UObject* Asc = FindComponentByClassName(GetOwner(), TEXT("BP_AdvancedAbilitySystemComponent_C")))
+		{
+			if (UClass* Effect = ImmunityEffect.Get())
+			{
+				CallBlueprintFunction(Asc, TEXT("Remove Active Gameplay Effect By Class"),
+					[&](UFunction& F, uint8* P)
+					{
+						if (const FClassProperty* ClassProp = CastField<FClassProperty>(F.FindPropertyByName(TEXT("GameplayEffectClass"))))
+						{
+							ClassProp->SetPropertyValue_InContainer(P, Effect);
+						}
+					},
+					[](UFunction&, uint8*) {});
+			}
+		}
+	}
+}
+
+void URPGBossPhases::StartTransition(bool bHeldAlready)
 {
 	const UWorld* World = GetWorld();
 	bPhaseTwo = true;
 	bTransition = true;
 	++PhaseTwoCount;
-	TransitionEnd = World->GetTimeSeconds() + TransitionSeconds;
-	HoldBehaviour();
+	LastTransitionStart = World->GetTimeSeconds();
+	TransitionEnd = LastTransitionStart + TransitionSeconds;
+	// Freeze 18.1 (line 766): the transition blocks attack selection, clears active windows and pending punishes, and pauses posture.
+	RPGBossInterrupt::CancelOffence(GetOwner(), TEXT("phase transition"));
+	if (bPausePostureInTransition)
+	{
+		if (URPGBossPosture* Posture = GetOwner()->FindComponentByClass<URPGBossPosture>())
+		{
+			Posture->BeginHold(URPGBossPosture::EHold::Pinned);
+		}
+	}
+	if (bHeldAlready)
+	{
+		bHeld = true; // the stance break that just ended still holds the behaviour: this transition takes the hold over
+	}
+	else
+	{
+		HoldBehaviour();
+	}
 	if (UObject* Asc = FindComponentByClassName(GetOwner(), TEXT("BP_AdvancedAbilitySystemComponent_C")))
 	{
 		if (UClass* Effect = ImmunityEffect.LoadSynchronous())
 		{
+			bImmunityApplied = true;
 			CallBlueprintFunction(Asc, TEXT("Apply Gameplay Effect by Class"),
 				[&](UFunction& F, uint8* P)
 				{
@@ -146,6 +264,10 @@ void URPGBossPhases::StartTransition()
 				},
 				[](UFunction&, uint8*) {});
 		}
+		else
+		{
+			UE_LOG(LogRPGPhases, Warning, TEXT("%s: the hit stun immunity effect class did not load: the roar can be interrupted"), *GetOwner()->GetName());
+		}
 	}
 	if (const ACharacter* Character = Cast<ACharacter>(GetOwner()))
 	{
@@ -159,6 +281,10 @@ void URPGBossPhases::StartTransition()
 			{
 				Anim->Montage_Play(Roar, 1.f);
 			}
+			else
+			{
+				UE_LOG(LogRPGPhases, Warning, TEXT("%s: the roar montage did not load, the transition runs silent for %.1f s"), *GetOwner()->GetName(), TransitionSeconds);
+			}
 		}
 	}
 	UE_LOG(LogRPGPhases, Log, TEXT("%s: phase two begins (transition %.1f s)"), *GetOwner()->GetName(), TransitionSeconds);
@@ -167,6 +293,12 @@ void URPGBossPhases::StartTransition()
 void URPGBossPhases::FinishTransition()
 {
 	bTransition = false;
+	// The protection ends with the roar (Freeze 771); the posture pool stays at the pinned value and regenerates RegenDelaySeconds from now.
+	RemoveImmunity();
+	if (URPGBossPosture* Posture = GetOwner()->FindComponentByClass<URPGBossPosture>())
+	{
+		Posture->EndHold(false);
+	}
 	double Health = 1.0;
 	if (ReadAttribute(GetOwner(), HealthTag, false, Health) && Health <= 0.0)
 	{
@@ -175,6 +307,10 @@ void URPGBossPhases::FinishTransition()
 		return;
 	}
 	ApplyPhaseTwoBuffs();
+	if (bLockLeapUntilPhaseTwo && bLeapBlocked)
+	{
+		SetLeapBlocked(false); // the transition has finished: the leap becomes selectable
+	}
 	ResumeBehaviour();
 	const double Now = GetWorld()->GetTimeSeconds();
 	NextFireball = Now + FMath::RandRange(FireballCooldown.X, FMath::Max(FireballCooldown.X, FireballCooldown.Y));
@@ -371,6 +507,11 @@ void URPGBossPhases::ResetPhases()
 		bHeld = false; // the encounter reset holds and resumes the behaviour itself
 	}
 	RemovePhaseTwoBuffs();
+	RemoveImmunity();
+	if (URPGBossPosture* Posture = GetOwner()->FindComponentByClass<URPGBossPosture>())
+	{
+		Posture->EndHold(true);
+	}
 	if (bPhaseTwo)
 	{
 		UE_LOG(LogRPGPhases, Log, TEXT("%s: back to phase one"), *GetOwner()->GetName());
