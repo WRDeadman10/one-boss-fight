@@ -1,0 +1,12 @@
+Clip: AN_Boss01_PhaseRoar
+Length: 1.800
+FPS: 30
+Frames: 55 (0 to 54)
+Loop: No (One-shot)
+RootMotion: In Place
+WindupEndTime: 0.50
+ActiveStartTime: 0.50
+ActiveEndTime: 1.30
+RecoveryEndTime: 1.800
+NotifyTime: 0.70
+Notes: Phase Two Transition Roar. Coiled anticipation (0.00-0.20s, pelvis drops to 86 cm); explosive heave into roar pose (0.20-0.50s); Roar Peak at 0.70s (notify moment: head arched back 38 deg, chest out, left arm flung wide, greatsword raised aloft at 75 deg, wide grounded stance); sustained apex hold with ember shudder (0.50-1.30s); controlled exhale and sword recovery settling smoothly back to combat ready idle (1.30-1.80s). Both feet grounded at Z ≈ 0.

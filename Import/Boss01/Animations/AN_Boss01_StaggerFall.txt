@@ -1,0 +1,11 @@
+Clip: AN_Boss01_StaggerFall
+Length: 0.700
+FPS: 30
+Frames: 22 (0 to 21)
+Loop: No (One-shot)
+RootMotion: In Place
+WindupEndTime: 0.13
+ActiveStartTime: 0.13
+ActiveEndTime: 0.50
+RecoveryEndTime: 0.700
+Notes: Posture Break Stagger: Knees Give Way. Starts from combat idle (0.00s); heavy posture break impact recoils upper torso backward (0.00-0.13s); knees collapse under weight, dropping pelvis from 95.9 cm to 72.0 cm (0.13-0.30s); right knee contacts floor as left foot braces (0.30-0.50s); settles into stable grounded kneeling rest with head bowed and greatsword resting against floor at pelvis Z = 47.7 cm (0.50-0.70s). Perfectly transitions into AN_Boss01_StaggerDown F0.

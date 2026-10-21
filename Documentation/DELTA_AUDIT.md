@@ -66,13 +66,13 @@ Labels: P = Present, C = Code-confirmed, R = Runtime-confirmed earlier (see `TES
 | D-01 | Tap quick, double tap full roll | C, R | `RPGDodgeTiming` | Window is **0.30 s already** in code (my earlier note of 0.35 was wrong). Window runs press to press, inclusive (`<=`). Freeze 11.2 anchor question answered: first press to second press |
 | D-02 | Second tap consumed once, no triple | C, R | `ForceFullRoll`, ignore while full roll runs | Needs scripted D06 trial |
 | D-03 | No-input dodge goes backward | C, R | `bBackwardWithoutInput` | Lock-on case not tested (KI-059 area) |
-| D-04 | I-frames, separate windows quick/full, montage seconds | P | pack `ANS_iFrames` in `Dodge_To_Idle` (0 to 0.70 s), plays at rate 1.3 for quick | One window serves both. Needs measuring where the damage resolves and a separate quick window (G1-5) |
-| D-05 | Damage rejected at resolution, not by montage | Missing (unverified) | pack damage Blueprints | Read the pack damage path first (G1-5) |
-| D-06 | Cleanup on every dodge exit | Partial | pack ability end, our `bTurning` reset | Test death, reset, interruption |
-| TR-01 | Swept trace, previous to current | P | pack `BP_SweepingSocketTraceTarget` (stores `LastSocketLocations`, loops sockets) | Confirm sweep and tunneling (H01 to H03) in a scripted test |
-| TR-02 | Per attack instance dedupe | P | pack collision component and attack data | Read the hit set logic; confirm reset per instance (H04) |
-| TR-03 | Trace stops on interrupt, stagger, death | Partial | notify end, ability end | Our stagger plays a montage over it; test H07 |
-| TR-04 | Debug draw and reasons | Missing | | G0-6 |
+| D-04 | I-frames, separate windows quick/full, montage seconds | Done | pack `ANS_iFrames` in two montages: quick `Dodge_Small_Forward_Roll` (rate 1.30, 0.10718 to 0.48975 montage s = 0.294 s) and full `Dodge_To_Idle` (effective rate 2.00, 0.0001 to 0.69987 = 0.350 s) | Measured at 30, 60 and 120 FPS (`IFR-01`); the earlier note "one window serves both" was wrong. Windows shorter than the 26 to 28 frame test baseline: kept by the owner decision of 2026-10-21 (KI-075 closed) |
+| D-05 | Damage rejected at resolution, not by montage | Done | `URPGDamageResolver::Decide`; the pack rejects at `Can Hit Actor?` through `GameplayTagsToIgnore` (Status.Dead, Status.Invulnerable) per SPEC_M2, our moves reject in the resolver | Verified `DMG-01` (17 checks) and the automation test (32 combinations) |
+| D-06 | Cleanup on every dodge exit | Done | monitor watchdog 0.1 s, death, reset | Stop 10/10 and 10/10, reset 5/5, watchdog 5/5, foreign tag untouched 5/5 (`IFR-01`) |
+| TR-01 | Swept trace, previous to current | Done | pack `BP_SweepingSocketTraceTarget`, 5 sockets, radius 50, one sweep per frame | `TRACE-01` T1, T2: no tunnelling at 30 and 60 FPS (peak step 412 cm at 30 FPS) |
+| TR-02 | Per attack instance dedupe | Done | pack hit set per window, carried per instance by `URPGTraceGuard` | `TRACE-01` T3 to T6: one insertion per swing, one damage event per instance (A2 two windows, 30/30) |
+| TR-03 | Trace stops on interrupt, stagger, death | Done | `RPGBossInterrupt::CancelOffence` and the reset call `URPGTraceGuard::CloseFor` | `TRACE-01` T8: 0 samples after a stop, stance break, phase transition, reset and death |
+| TR-04 | Debug draw and reasons | Done | overlay lines "trace overlap", "damage accepted", "rejected" (`URPGTraceAudit`) | `TRACE-01` T10 |
 | AI-01 | Boss state vocabulary | Partial | pack behavior tree and manager, our `Dormant/Held` flags | Map in G1-8 |
 | AI-02 | Tracking only until commit, rotation lock | Partial | pack `ANS_SetDesiredRotation` windows (0.24 to 0.32 s of each montage, none on the charged attack) | Own commit notify and lock needed for A2 (G1-2) |
 | AI-03 | Heal-punish A5 | Done on the delivered clip | `URPGBossHealPunish`, `ARPGBossJavelin`, tracker move A5 | Javelin effect, `JavelinSpawn` socket and flinch open. Deviation: javelin damage 12 (Freeze 30), see DECISIONS |
@@ -81,14 +81,14 @@ Labels: P = Present, C = Code-confirmed, R = Runtime-confirmed earlier (see `TES
 | ATK-03 | A4 low sweep | Done on the delivered clip | `URPGBossLowSweep`, tracker move A4 | Knockdown and natural selection open. Deviation: damage 20 (Freeze 50), see DECISIONS |
 | ATK-04 | A6 leap and shockwave | Done on the pack leap | tracker stage A6, `URPGBossShockwave`, leap lock until phase two (`URPGBossPhases`) | Landing validation, wave visual and hit reaction open. Deviation: wave damage 48 (Freeze 120), see DECISIONS |
 | POST-01 | 100 pt posture, 6 s delay, 13 per s | Missing | pack has **poise** (`BP_PoiseExtendedAttribute`), hit power maps to poise damage by `Scripts/poise_by_power.py` | Build posture component (G2-5); keep poise only as the pack's flinch gate |
-| POST-02 | One break event into the stagger owner | Partial | `URPGBossStagger` triggers when the pack's hit stun ability activates | New entry point from posture (G2-6) |
-| POST-03 | Stagger and cooldown visible | Partial | `CooldownSeconds` 5 s silently ignores a break, logged only | Must be visible or removed (17.2) |
+| POST-02 | One break event into the stagger owner | Done | `URPGBossStagger::RequestBreak` is the one gate (pack hit stun edge and test hooks) | Exactly one break per request burst (S07) |
+| POST-03 | Stagger and cooldown visible | Done | dropped breaks counted by reason, cooldown on the overlay; cooldown stays 0 by decision G0-5 | S16 |
 | POST-04 | Critical on the riposte hit only | **Conflict** | `URPGBossStagger::ApplyCritical` multiplies all health loss while down | Remove blanket multiplier (G0-5), apply in the riposte (G2-7) |
 | POST-05 | Frontal riposte, 150 cm, cone | Missing | | G2-7 |
 | PH-01 | Phase two once at 0.60 | **Conflict** | `PhaseTwoHealthFraction = 0.5` in `RPGBossPhases.h` | Set 0.60 (G0-5) |
-| PH-02 | Idempotent, death wins | Partial | `bPhaseTwo` set once; returns when health <= 0 | Add explicit dead flag and queue behind riposte (G2-8) |
+| PH-02 | Idempotent, death wins | Done | `RPGBossRules::ResolveTransition` (dead and dormant first, `bPhaseTwo` covers a running transition) | Verified `TRANS-01`, automation test |
 | PH-03 | Stats scaled once | C, R | `bBuffsApplied` guard | Keep; test L04 |
-| PH-04 | Queue behind stagger | C | tick skips while `IsStaggered()`, then starts | Matches 30.2 item 8 for stagger; riposte not built |
+| PH-04 | Queue behind stagger | Done | derived queue, hand-off inside `EndStagger` (gap 0) | Verified for Down, riposte flag and get-up (S04 to S06) |
 | PH-05 | Legacy fireball off | **Conflict** | `TryFireball`, `FireballAbility` granted at runtime | Disable by default (G0-5), keep the asset |
 | PH-06 | Hammer spawn | Replaced | re-skin: sword ignites (VFX) | G2-8, V-06 |
 | RST-01 | Reset restores all (18.3) | Partial | `URPGBossEncounter::ResetEncounter` (stagger abort, health, poise, transform, behavior, perception, montage) | Generation token and HUD state (bar, banner, victory latch) done; missing: projectiles, spawned props, audio state. G2-10 |
@@ -100,7 +100,7 @@ Labels: P = Present, C = Code-confirmed, R = Runtime-confirmed earlier (see `TES
 | BLD-03 | Bleed | Missing | pack has a poison effect only | G3-4 |
 | BLD-04 | Build selector | Missing | | G3-5 |
 | UI-01 | Boss bar, name, posture flash, prompt | Done | `URPGBossHud` and `URPGBossHudWidget` (the pack's `BP_BossHUD` bar is collapsed by reflection on the boss's "Boss HUD" variable) | Player side stays the pack's |
-| AUD-01 | Boss music phases | Partial | `URPGBossMusic` fades one track in and out | Phase swap (AU-1, G2-14) |
+| AUD-01 | Boss music phases | Done | `URPGBossMusic`: Phase 1, equal power crossfade to Phase 2 at phase two, fades on reset and death, one voice per track | `LEG-01` group m (logic); heard: no (KI-078) |
 | ENC-01 | Dormant until 1200 cm or hurt | C, R | `URPGBossEncounter` | Keep |
 | TEST-01 | Automation tests | C | 6 tests incl. gate and percentile | Extend per feature |
 | DBG-01 | Debug mode (22) | Missing | | G0-6 |

@@ -10,6 +10,7 @@
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGAttackTracker.h"
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGDamageResolver.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRPGWave, Log, All);
 
@@ -90,34 +91,36 @@ void URPGBossShockwave::Resolve()
 		bClearedBand = true; // inside the band but high enough: decided when the band has passed
 		return;
 	}
-	bResolved = true;
+	bResolved = true; // this wave has decided about the player: one damage event per move (the central hit has priority)
+	FRPGDamagePayload Payload;
+	Payload.MoveId = MoveId;
+	Payload.AttackInstance = LastInstance;
+	Payload.Generation = LaunchGeneration;
+	Payload.HPDamage = Damage;
+	URPGDamageResolver* Resolver = URPGDamageResolver::FindOrAdd(GetOwner());
+	Resolver->NoteOverlap(Payload);
 	double Health = 0.0;
 	ReadAttribute(Player, TEXT("Attribute.Health"), false, Health);
-	bool bInvulnerable = false;
-	CallBlueprintFunction(const_cast<ACharacter*>(Player), TEXT("HasMatchingGameplayTag"),
-		[](UFunction& F, uint8* P) { SetTag(F, P, TEXT("TagToCheck"), FGameplayTag::RequestGameplayTag(TEXT("Status.Invulnerable"), false)); },
-		[&bInvulnerable](UFunction& F, uint8* P)
-		{
-			if (const FBoolProperty* Result = CastField<FBoolProperty>(F.FindPropertyByName(TEXT("ReturnValue"))))
-			{
-				bInvulnerable = Result->GetPropertyValue_InContainer(P);
-			}
-		});
-	if (bInvulnerable)
-	{
-		++InvulnerableCount;
-		UE_LOG(LogRPGWave, Log, TEXT("wave ignored: player invulnerable (dodge i-frames)"));
-	}
-	else if (HealthAtLaunch >= 0.0 && Health < HealthAtLaunch)
+	if (HealthAtLaunch >= 0.0 && Health < HealthAtLaunch)
 	{
 		++CentralPriorityCount;
 		UE_LOG(LogRPGWave, Log, TEXT("wave ignored: the move already hurt the player (health %.0f -> %.0f), the central hit has priority"), HealthAtLaunch, Health);
+		Resolver->NoteMiss(Payload, ERPGDamageOutcome::Superseded, TEXT("central hit has priority"));
+		return;
 	}
-	else
+	const FRPGDamageResult Result = Resolver->Resolve(const_cast<ACharacter*>(Player), Payload);
+	switch (Result.Outcome)
 	{
+	case ERPGDamageOutcome::Accepted:
 		++HitCount;
-		WriteAttribute(Player, TEXT("Attribute.Health"), FMath::Max(0.0, Health - Damage));
-		UE_LOG(LogRPGWave, Log, TEXT("wave hit the player at %.0f cm (feet %.0f cm above the floor): health %.0f -> %.0f"), Distance, FeetZ - GroundZ, Health, FMath::Max(0.0, Health - Damage));
+		UE_LOG(LogRPGWave, Log, TEXT("wave hit the player at %.0f cm (feet %.0f cm above the floor): health %.0f -> %.0f"), Distance, FeetZ - GroundZ, Result.HealthBefore, Result.HealthAfter);
+		break;
+	case ERPGDamageOutcome::RejectedInvulnerable:
+		++InvulnerableCount;
+		UE_LOG(LogRPGWave, Log, TEXT("wave ignored: player invulnerable (dodge i-frames)"));
+		break;
+	default:
+		break; // dead player or stale generation: no hit is counted
 	}
 }
 

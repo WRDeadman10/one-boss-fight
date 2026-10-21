@@ -142,6 +142,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Attack")
 	bool IsActiveWindow() const { return Phase == EPhase::Active; }
 
+	/** True from the first frame the attack instance reached its active window until it ends (Active or Recovery): an event of that window is not lost when a frame hitch skips Active. */
+	bool HasReachedActive() const { return Phase == EPhase::Active || Phase == EPhase::Recovery; }
+
 	UFUNCTION(BlueprintPure, Category = "Attack")
 	float GetCommittedYaw() const { return CommittedYaw; }
 

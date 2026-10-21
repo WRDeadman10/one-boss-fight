@@ -5,10 +5,13 @@
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGBossHealPunish.h"
 #include "Player/RPGBossLowSweep.h"
+#include "Player/RPGDamageResolver.h"
+#include "Player/RPGTraceAudit.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossPosture.h"
 #include "Player/RPGBossStagger.h"
 #include "Player/RPGDodgeTiming.h"
+#include "Player/RPGIFrameMonitor.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
@@ -117,6 +120,10 @@ TArray<FString> URPGCombatDebug::BuildLines() const
 		Lines.Add(FString::Printf(TEXT("  attack %s  phase %s  instance %d  commits %d  interrupted %d  committed yaw %.0f  drift %.1f"), *Tracker->GetCurrentMove().ToString(), *Tracker->GetPhaseName(), Tracker->GetAttackInstance(),
 			Tracker->GetCommitCount(), Tracker->GetInterruptedCount(), Tracker->GetCommittedYaw(), Tracker->GetMaxYawDriftAfterCommit()));
 	}
+	if (const URPGTraceAudit* TraceAudit = Boss->FindComponentByClass<URPGTraceAudit>())
+	{
+		Lines.Append(TraceAudit->BuildLines());
+	}
 	if (const URPGBossLowSweep* Sweep = Boss->FindComponentByClass<URPGBossLowSweep>())
 	{
 		Lines.Add(FString::Printf(TEXT("  A4 blade %s angle %.0f  sweeps %d  hits %d  jumped %d  invulnerable %d  blocked %d"), Sweep->IsBladeActive() ? TEXT("ACTIVE") : TEXT("idle"), Sweep->GetBladeAngle(), Sweep->GetSweepCount(), Sweep->GetHitCount(),
@@ -127,6 +134,10 @@ TArray<FString> URPGCombatDebug::BuildLines() const
 		Lines.Add(FString::Printf(TEXT("  A5 heal punish %s  cooldown %.1f s  heals %d  accepted %d  released %d  discarded busy %d range %d sight %d cooldown %d pending %d  javelin hit %d dodged %d world %d"), Punish->IsPending() ? TEXT("PENDING") : TEXT("ready"),
 			Punish->GetCooldownRemaining(), Punish->GetHealEventCount(), Punish->GetAcceptedCount(), Punish->GetReleasedCount(), Punish->GetDiscardedBusyCount(), Punish->GetDiscardedRangeCount(), Punish->GetDiscardedSightCount(),
 			Punish->GetDiscardedCooldownCount(), Punish->GetDiscardedPendingCount(), Punish->GetJavelinHitCount(), Punish->GetJavelinDodgedCount(), Punish->GetJavelinWorldCount()));
+	}
+	if (const URPGDamageResolver* Resolver = Boss->FindComponentByClass<URPGDamageResolver>())
+	{
+		Lines.Add(Resolver->BuildSummaryLine());
 	}
 	if (const ACharacter* BossCharacter = Cast<ACharacter>(Boss))
 	{
@@ -139,6 +150,11 @@ TArray<FString> URPGCombatDebug::BuildLines() const
 		Lines.Add(FString::Printf(TEXT("PLAYER  dodge %s  presses %d  forced rolls %d  ignored %d  last gap %.3f s (window %.2f)"), Dodge ? *Dodge->GetStageName() : TEXT("?"), Dodge ? Dodge->GetPressCount() : 0,
 			Dodge ? Dodge->GetForcedRollCount() : 0, Dodge ? Dodge->GetIgnoredPressCount() : 0, Dodge ? Dodge->GetLastPressGap() : -1.0, Dodge ? Dodge->DoubleTapWindow : 0.f));
 		Lines.Add(FString::Printf(TEXT("  %s  %s  %s"), *AttributeLine(Player, TEXT("Attribute.Health"), TEXT("health")), *AttributeLine(Player, TEXT("Attribute.Stamina"), TEXT("stamina")), *MontageLine(Player)));
+		if (const URPGIFrameMonitor* IFrames = Player->FindComponentByClass<URPGIFrameMonitor>())
+		{
+			Lines.Add(FString::Printf(TEXT("  IFRAME  invulnerable %s  source %s  records %d  early drops %d  stale cleared %d  death clears %d  reset clears %d"), IFrames->IsInvulnerableNow() ? TEXT("ON") : TEXT("off"), *IFrames->GetSourceText(),
+				IFrames->GetRecordCount(), IFrames->GetUnexpectedDropCount(), IFrames->GetStaleClearedCount(), IFrames->GetDeathClearCount(), IFrames->GetResetClearCount()));
+		}
 	}
 	return Lines;
 }

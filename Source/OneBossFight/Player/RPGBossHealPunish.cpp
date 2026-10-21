@@ -178,7 +178,7 @@ void URPGBossHealPunish::Release()
 	Parameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	if (ARPGBossJavelin* Javelin = GetWorld()->SpawnActor<ARPGBossJavelin>(ARPGBossJavelin::StaticClass(), From, Direction.Rotation(), Parameters))
 	{
-		Javelin->Launch(this, Direction, Speed, JavelinRadius, Damage, JavelinMaxRange, Encounter ? Encounter->GetGeneration() : 0);
+		Javelin->Launch(this, Direction, Speed, JavelinRadius, Damage, JavelinMaxRange, Encounter ? Encounter->GetGeneration() : 0, Boss->FindComponentByClass<URPGAttackTracker>() ? Boss->FindComponentByClass<URPGAttackTracker>()->GetAttackInstance() : 0);
 		Flying.Add(Javelin);
 	}
 	UE_LOG(LogRPGHealPunish, Log, TEXT("%s: javelin %d released from (%.0f, %.0f, %.0f) towards the player at %.0f cm, speed %.0f cm/s, cooldown %.1f s"), *Boss->GetName(), Released, From.X, From.Y, From.Z, FVector::Dist(From, Target), Speed, Cooldown);

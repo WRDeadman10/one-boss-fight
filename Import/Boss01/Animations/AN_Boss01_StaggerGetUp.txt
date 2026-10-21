@@ -1,0 +1,11 @@
+Clip: AN_Boss01_StaggerGetUp
+Length: 1.400
+FPS: 30
+Frames: 43 (0 to 42)
+Loop: No (One-shot)
+RootMotion: In Place
+WindupEndTime: 0.20
+ActiveStartTime: 0.20
+ActiveEndTime: 0.90
+RecoveryEndTime: 1.400
+Notes: Posture Break Stagger: Recovery Get-Up. Starts from exhausted kneeling pose matching StaggerDown Frame 30 (pelvis Z = 47.7 cm); boss tightens grip on greatsword and snaps head up (0.00-0.20s); drives forcefully up through legs and quads, right knee leaving floor and pelvis climbing rapidly to 76 cm (0.20-0.50s); sweeps upright, swinging greatsword off the floor and across body into high-mid guard (0.50-0.90s); re-centers balance and steps into wide grounded combat ready stance (0.90-1.40s, pelvis settles smoothly at 95.9 cm).
