@@ -1,0 +1,12 @@
+Clip: AN_Boss01_A5_JavelinThrow
+Length: 1.000
+FPS: 30
+Frames: 31 (0 to 30)
+Loop: No (One-shot)
+RootMotion: In Place
+WindupEndTime: 0.40
+ActiveStartTime: 0.40
+ActiveEndTime: 0.43
+RecoveryEndTime: 1.000
+CommitTime: 0.35
+Notes: Telegraph and throw of the ember javelin from the left brazier gauntlet. Windup draws the left arm back high beside the cowl (0.00-0.40s) with glowing ember telegraph from the dorsal crucible; projectile release event occurs at 0.40s (Frame 12); overhand follow-through and recoil returns cleanly to combat idle (0.40-1.00s). Both feet stay grounded flat on the arena floor throughout (zero airborne lift).

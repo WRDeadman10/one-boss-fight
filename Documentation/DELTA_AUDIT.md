@@ -75,11 +75,11 @@ Labels: P = Present, C = Code-confirmed, R = Runtime-confirmed earlier (see `TES
 | TR-04 | Debug draw and reasons | Missing | | G0-6 |
 | AI-01 | Boss state vocabulary | Partial | pack behavior tree and manager, our `Dormant/Held` flags | Map in G1-8 |
 | AI-02 | Tracking only until commit, rotation lock | Partial | pack `ANS_SetDesiredRotation` windows (0.24 to 0.32 s of each montage, none on the charged attack) | Own commit notify and lock needed for A2 (G1-2) |
-| AI-03 | Heal-punish A5 | Missing | | G2-3 |
+| AI-03 | Heal-punish A5 | Done on the delivered clip | `URPGBossHealPunish`, `ARPGBossJavelin`, tracker move A5 | Javelin effect, `JavelinSpawn` socket and flinch open. Deviation: javelin damage 12 (Freeze 30), see DECISIONS |
 | ATK-01 | A1, A3 | Done on stand-ins | `URPGAttackTracker` stages A1, A1b, A3a, A3b with commitment, heading lock and the branch check | Windup length needs the authored clips |
 | ATK-02 | A2 delayed overhead with hold | Partial | `GS_ChargedAttack` stand-in | Hold clip and data (G1) |
-| ATK-03 | A4 low sweep | Missing | | G2-2 |
-| ATK-04 | A6 leap and shockwave | Partial | `GS_LeapAttack` | Wave, landing, rules (G2-4) |
+| ATK-03 | A4 low sweep | Done on the delivered clip | `URPGBossLowSweep`, tracker move A4 | Knockdown and natural selection open. Deviation: damage 20 (Freeze 50), see DECISIONS |
+| ATK-04 | A6 leap and shockwave | Done on the pack leap | tracker stage A6, `URPGBossShockwave`, leap lock until phase two (`URPGBossPhases`) | Landing validation, wave visual and hit reaction open. Deviation: wave damage 48 (Freeze 120), see DECISIONS |
 | POST-01 | 100 pt posture, 6 s delay, 13 per s | Missing | pack has **poise** (`BP_PoiseExtendedAttribute`), hit power maps to poise damage by `Scripts/poise_by_power.py` | Build posture component (G2-5); keep poise only as the pack's flinch gate |
 | POST-02 | One break event into the stagger owner | Partial | `URPGBossStagger` triggers when the pack's hit stun ability activates | New entry point from posture (G2-6) |
 | POST-03 | Stagger and cooldown visible | Partial | `CooldownSeconds` 5 s silently ignores a break, logged only | Must be visible or removed (17.2) |
@@ -117,7 +117,7 @@ Labels: P = Present, C = Code-confirmed, R = Runtime-confirmed earlier (see `TES
 | Phase two move, attack rate, damage scale | 1.2, 1.2, 1.25 | same | `URPGBossPhases` |
 | `Boss.RiposteRange / Cone / Multiplier` | 150, 120 deg, 2.5 | none (multiplier applied to all hits) | to create |
 | `Boss.StaggerHoldDuration` / `Cooldown` | 2.5, 5.0 | 2.5, 5.0 | `URPGBossStagger` |
-| Heal punish range / cooldown | 400 to 1000 cm, 4 s | none | to create |
+| Heal punish range / cooldown | 400 to 1000 cm, 4 s | 400 to 1000 cm, 4 s | `URPGBossHealPunish` (`MinRange`, `MaxRange`, `Cooldown`, `FlightTime`, `Damage`) |
 | Bleed values | 100, 20, 0.105, +20, 200 | none | to create |
 
 ## 5. Corrections to my earlier notes

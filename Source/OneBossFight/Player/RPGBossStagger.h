@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "UObject/SoftObjectPtr.h"
+#include "Player/RPGBossRules.h"
 #include "RPGBossStagger.generated.h"
 
 class UAnimMontage;
@@ -107,13 +108,39 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Stagger")
 	bool IsCriticalWindowOpen() const { return Phase == EPhase::Down; }
 
-	/** Ends a stance break in progress without handing the boss back to its behaviour (an encounter reset does that itself): stops the clips, removes the immunity, refills poise. */
+	/** The one gate for a stance break (Freeze 21 priority, SPEC M4): dead, dormant, a phase transition (not interrupted by a normal break, Freeze 729), a break already running (exactly one) and the cooldown
+	 *  each drop the request, counted and logged, never silently. The pack's hit stun edge and the test hooks both go through here. */
+	RPGBossRules::EBreakResult RequestBreak(bool bIgnoreCooldown);
+
+	/** Ends a stance break in progress without handing the boss back to its behaviour (an encounter reset does that itself): stops the clips, removes the immunity, refills poise, clears the cooldown. Safe at any time. */
 	UFUNCTION(BlueprintCallable, Category = "Stagger")
 	void AbortStagger();
 
-	/** Tests: starts a stance break now, as a poise break would (ignores the cooldown). Does nothing while a break is running. */
+	/** Tests: asks for a stance break now, ignoring the cooldown, through the real gate. Returns the result: "started", "dead", "dormant", "transition", "staggered" or "cooldown". */
 	UFUNCTION(BlueprintCallable, Category = "Stagger")
-	void ForceBreakForTest();
+	FString ForceBreakForTest();
+
+	/** Tests: the same request but obeying the cooldown. */
+	UFUNCTION(BlueprintCallable, Category = "Stagger")
+	FString TryBreakForTest();
+
+	/** Breaks the gate dropped, by reason ("transition", "dead", "dormant", "staggered", "cooldown"). */
+	UFUNCTION(BlueprintPure, Category = "Stagger")
+	int32 GetDroppedBreakCount(const FString& Reason) const;
+
+	UFUNCTION(BlueprintPure, Category = "Stagger")
+	FString GetLastBreakResult() const { return LastBreakResult; }
+
+	/** World time the last stance break ended (-1 when none yet) and the seconds left of the cooldown. */
+	UFUNCTION(BlueprintPure, Category = "Stagger")
+	double GetLastEndTime() const { return LastEndTime; }
+
+	UFUNCTION(BlueprintPure, Category = "Stagger")
+	float GetCooldownRemaining() const;
+
+	/** During a stance break the posture pool is held at 0 and further hits are ignored (Freeze 713); it refills at the end of the get-up (714). Off = the pack's pool cycles as before. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stagger")
+	bool bHoldPostureAtZero = true;
 
 	UFUNCTION(BlueprintPure, Category = "Stagger")
 	int32 GetStaggerCount() const { return StaggerCount; }
@@ -129,7 +156,10 @@ private:
 	enum class EPhase : uint8 { Idle, Down, GetUp };
 
 	void StartStagger();
-	void EndStagger(bool bResumeBehaviour);
+	/** Ends the break. bClearCooldown (reset, abort) starts no cooldown. With bResumeBehaviour a phase transition that queued behind the break starts right here, with the behaviour still held (no gap, Freeze 770). */
+	void EndStagger(bool bResumeBehaviour, bool bClearCooldown = false);
+	/** Ends the pack's 0.8 s flinch ability so it cannot play over a roar or a death clip. Returns true when it was active. */
+	bool EndPackFlinch();
 	void HoldBehaviour();
 	void ResumeBehaviour();
 	/** Takes the extra critical damage off the health attribute when health dropped since the last tick. */
@@ -153,5 +183,12 @@ private:
 	FString LastRiposteResult;
 	int32 StaggerCount = 0;
 	int32 CriticalHitCount = 0;
+	double LastEndTime = -1.0;
+	FString LastBreakResult;
+	int32 DroppedTransition = 0;
+	int32 DroppedDead = 0;
+	int32 DroppedDormant = 0;
+	int32 DroppedStaggered = 0;
+	int32 DroppedCooldown = 0;
 	TWeakObjectPtr<UObject> CachedHitStun;
 };

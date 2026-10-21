@@ -47,6 +47,10 @@ struct FRPGAttackTiming
 	/** The second stage of a chain (Freeze 16 A3: slash 2 only when the player is in the frontal cone and in range). The branch check runs when this stage's montage starts; a failed check stops the montage. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	bool bBranchStage = false;
+
+	/** Moves without a pack ability (A4, A5): the animation asset that StartMove plays on the boss as a dynamic montage. MontageName is then the name of that animation. Empty for pack montages. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
+	FString ClipPath;
 };
 
 /**
@@ -73,9 +77,34 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	bool bEnabled = true;
 
-	/** Starts the pack ability that plays this move now (tests and scripted fights). Returns false if the move is unknown or the ability refused. */
+	/** Starts the pack ability that plays this move now (tests and scripted fights). bForce skips the ability's own activation conditions (blocked tags, cooldown). Returns false if the move is unknown or the ability refused.
+	 *  A move with a ClipPath (A4, A5) has no pack ability: its clip plays as a dynamic montage in the pack's montage slot; without bForce it starts only when the boss plays no montage and is in no stance break,
+	 *  phase transition or sleep. */
 	UFUNCTION(BlueprintCallable, Category = "Attack")
-	bool StartMove(FName MoveId);
+	bool StartMove(FName MoveId, bool bForce = true);
+
+	/** True while the boss may start a move of its own (nothing playing, no attack tracked, not staggered, not in a phase transition, not dormant, not dead). */
+	UFUNCTION(BlueprintPure, Category = "Attack")
+	bool IsNeutral() const;
+
+	/** Montage position (seconds) of the tracked attack, and the timing entry of a move (false if unknown). */
+	UFUNCTION(BlueprintPure, Category = "Attack")
+	float GetPosition() const { return LastPosition; }
+
+	UFUNCTION(BlueprintPure, Category = "Attack")
+	bool GetTiming(FName MoveId, FRPGAttackTiming& OutTiming) const;
+
+	/** Attack priority (Freeze 21): a new attack may not begin while the boss is staggered, in a phase transition or dormant. With this on, such a start is stopped at once and counted (a safety net:
+	 *  the pack's behaviour is already held in those states). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
+	bool bVetoIllegalStarts = true;
+
+	/** Counters (tests): starts vetoed by the priority rule, and attacks that replaced another one before its active window ended (a double launch; chained stages are legal). */
+	UFUNCTION(BlueprintPure, Category = "Attack")
+	int32 GetIllegalStartCount() const { return IllegalStarts; }
+
+	UFUNCTION(BlueprintPure, Category = "Attack")
+	int32 GetDoubleLaunchCount() const { return DoubleLaunches; }
 
 	/** Branch check of chained stages (A3 slash 2): the player must be within BranchRange cm (horizontal) and inside a frontal cone of BranchConeDegrees in total (Freeze 16: 120 degrees). Tunable, not a literal in code. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack", meta = (ClampMin = "0.0"))
@@ -141,6 +170,8 @@ private:
 
 	void End(const TCHAR* Reason, float Position);
 	bool BranchAllowedNow() const;
+	bool PlayClip(const FRPGAttackTiming& Timing);
+	int32 FindTimingIndex(const UAnimMontage* Montage) const;
 
 	EPhase Phase = EPhase::None;
 	FName CurrentMove;
@@ -148,6 +179,8 @@ private:
 	int32 AttackInstance = 0;
 	int32 CommitCount = 0;
 	int32 InterruptedCount = 0;
+	int32 IllegalStarts = 0;
+	int32 DoubleLaunches = 0;
 	int32 BranchAllowed = 0;
 	int32 BranchDenied = 0;
 	float CommittedYaw = 0.f;

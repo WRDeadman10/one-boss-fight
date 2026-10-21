@@ -63,6 +63,62 @@ bool URPGBossPosture::ConfigureAttribute()
 	return false;
 }
 
+void URPGBossPosture::BeginHold(EHold Mode)
+{
+	if (Hold != EHold::None || Mode == EHold::None)
+	{
+		return;
+	}
+	Hold = Mode;
+	double Now = 0.0;
+	if (Mode == EHold::Zero)
+	{
+		HeldValue = 0.f;
+		WriteAttribute(GetOwner(), PoiseTag, 0.0);
+	}
+	else
+	{
+		HeldValue = ReadAttribute(GetOwner(), PoiseTag, false, Now) ? static_cast<float>(Now) : FMath::Max(Posture, 0.f);
+	}
+	Posture = HeldValue;
+	UE_LOG(LogRPGPosture, Log, TEXT("%s: posture hold %s at %.1f"), *GetOwner()->GetName(), *GetHoldName(), HeldValue);
+}
+
+void URPGBossPosture::EndHold(bool bRefill)
+{
+	if (Hold == EHold::None)
+	{
+		return;
+	}
+	Hold = EHold::None;
+	if (bRefill)
+	{
+		double Max = 0.0;
+		if (ReadAttribute(GetOwner(), PoiseTag, true, Max))
+		{
+			WriteAttribute(GetOwner(), PoiseTag, Max);
+			Posture = static_cast<float>(Max);
+		}
+	}
+	else
+	{
+		Posture = HeldValue;
+	}
+	// Regeneration waits the normal delay from here (no drain is counted for the write above).
+	LastDrainTime = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0;
+	UE_LOG(LogRPGPosture, Log, TEXT("%s: posture hold ended (refill %d), posture %.1f, %d hits ignored so far"), *GetOwner()->GetName(), bRefill ? 1 : 0, Posture, SuppressedDrains);
+}
+
+FString URPGBossPosture::GetHoldName() const
+{
+	switch (Hold)
+	{
+	case EHold::Zero: return TEXT("Zero");
+	case EHold::Pinned: return TEXT("Pinned");
+	default: return TEXT("None");
+	}
+}
+
 void URPGBossPosture::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -76,6 +132,17 @@ void URPGBossPosture::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		return;
 	}
 	MaxPosture = static_cast<float>(Max);
+	if (Hold != EHold::None)
+	{
+		// Held: whatever the pack wrote (a hit's drain, or its gate refilling the pool at zero) is put back. No drain counting, no regeneration.
+		if (FMath::Abs(Now - HeldValue) > 0.01)
+		{
+			WriteAttribute(GetOwner(), PoiseTag, HeldValue);
+			++SuppressedDrains;
+		}
+		Posture = HeldValue;
+		return;
+	}
 	if (Posture >= 0.f && Now < Posture - 0.01)
 	{
 		++DrainCount;

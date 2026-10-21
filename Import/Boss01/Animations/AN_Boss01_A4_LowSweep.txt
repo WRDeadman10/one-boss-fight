@@ -1,0 +1,12 @@
+Clip: AN_Boss01_A4_LowSweep
+Length: 1.767
+FPS: 30
+Frames: 54 (0 to 53)
+Loop: No (One-shot)
+RootMotion: In Place
+WindupEndTime: 0.60
+ActiveStartTime: 0.60
+ActiveEndTime: 0.90
+RecoveryEndTime: 1.767
+CommitTime: 0.50
+Notes: Authentic wide horizontal low sweep with greatsword held low across the arena floor (<40 cm above floor, below player knees for reliable jump counterplay). Windup coils torso and drops pelvis 16 cm (0.00-0.60s); active slash sweeps across 220 degree arc from right to left (0.60-0.90s); deceleration and recovery smoothly returns to combat idle (0.90-1.767s). Both feet stay grounded flat on the arena floor throughout (zero airborne lift).

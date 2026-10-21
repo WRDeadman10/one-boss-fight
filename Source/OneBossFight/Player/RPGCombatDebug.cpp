@@ -3,6 +3,8 @@
 #include "Player/RPGCombatDebug.h"
 #include "Player/RPGAttackTracker.h"
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGBossHealPunish.h"
+#include "Player/RPGBossLowSweep.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossPosture.h"
 #include "Player/RPGBossStagger.h"
@@ -13,6 +15,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
+#include "Engine/StaticMeshActor.h"
+#include "Engine/SkeletalMesh.h"
 #include "Engine/BlueprintGeneratedClass.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
@@ -71,7 +75,12 @@ TArray<FString> URPGCombatDebug::BuildLines() const
 	const APawn* Player = UGameplayStatics::GetPlayerPawn(this, 0);
 
 	FString State = TEXT("Combat");
-	if (Encounter && Encounter->IsDormant())
+	double BossHealth = 1.0;
+	if (ReadAttribute(Boss, TEXT("Attribute.Health"), false, BossHealth) && BossHealth <= 0.0)
+	{
+		State = TEXT("Dead");
+	}
+	else if (Encounter && Encounter->IsDormant())
 	{
 		State = TEXT("Dormant");
 	}
@@ -89,6 +98,12 @@ TArray<FString> URPGCombatDebug::BuildLines() const
 	if (Stagger)
 	{
 		Lines.Add(FString::Printf(TEXT("  riposte armed %d  accepted %d  rejected %d  last press: %s"), Stagger->IsRiposteArmed(), Stagger->GetRiposteCount(), Stagger->GetRiposteRejectCount(), *Stagger->GetLastRiposteResult()));
+		// Freeze 919 and 922: the stance break cooldown, what the break gate dropped and why, the queued transition and the posture hold.
+		Lines.Add(FString::Printf(TEXT("  stance break cooldown %.1f s  breaks dropped: transition %d dead %d dormant %d staggered %d cooldown %d  last: %s"), Stagger->GetCooldownRemaining(), Stagger->GetDroppedBreakCount(TEXT("transition")),
+			Stagger->GetDroppedBreakCount(TEXT("dead")), Stagger->GetDroppedBreakCount(TEXT("dormant")), Stagger->GetDroppedBreakCount(TEXT("staggered")), Stagger->GetDroppedBreakCount(TEXT("cooldown")), *Stagger->GetLastBreakResult()));
+		const URPGBossPosture* HoldPosture = Boss->FindComponentByClass<URPGBossPosture>();
+		Lines.Add(FString::Printf(TEXT("  transition queued %d  last start %.1f s  queued starts %d  posture hold %s  ignored posture hits %d"), Phases && Phases->IsTransitionQueued(), Phases ? Phases->GetLastTransitionStartTime() : -1.0,
+			Phases ? Phases->GetQueuedStartCount() : 0, HoldPosture ? *HoldPosture->GetHoldName() : TEXT("-"), HoldPosture ? HoldPosture->GetSuppressedDrainCount() : 0));
 	}
 	if (const URPGBossPosture* PostureComponent = Boss->FindComponentByClass<URPGBossPosture>())
 	{
@@ -101,6 +116,17 @@ TArray<FString> URPGCombatDebug::BuildLines() const
 	{
 		Lines.Add(FString::Printf(TEXT("  attack %s  phase %s  instance %d  commits %d  interrupted %d  committed yaw %.0f  drift %.1f"), *Tracker->GetCurrentMove().ToString(), *Tracker->GetPhaseName(), Tracker->GetAttackInstance(),
 			Tracker->GetCommitCount(), Tracker->GetInterruptedCount(), Tracker->GetCommittedYaw(), Tracker->GetMaxYawDriftAfterCommit()));
+	}
+	if (const URPGBossLowSweep* Sweep = Boss->FindComponentByClass<URPGBossLowSweep>())
+	{
+		Lines.Add(FString::Printf(TEXT("  A4 blade %s angle %.0f  sweeps %d  hits %d  jumped %d  invulnerable %d  blocked %d"), Sweep->IsBladeActive() ? TEXT("ACTIVE") : TEXT("idle"), Sweep->GetBladeAngle(), Sweep->GetSweepCount(), Sweep->GetHitCount(),
+			Sweep->GetJumpedCount(), Sweep->GetInvulnerableCount(), Sweep->GetBlockedCount()));
+	}
+	if (const URPGBossHealPunish* Punish = Boss->FindComponentByClass<URPGBossHealPunish>())
+	{
+		Lines.Add(FString::Printf(TEXT("  A5 heal punish %s  cooldown %.1f s  heals %d  accepted %d  released %d  discarded busy %d range %d sight %d cooldown %d pending %d  javelin hit %d dodged %d world %d"), Punish->IsPending() ? TEXT("PENDING") : TEXT("ready"),
+			Punish->GetCooldownRemaining(), Punish->GetHealEventCount(), Punish->GetAcceptedCount(), Punish->GetReleasedCount(), Punish->GetDiscardedBusyCount(), Punish->GetDiscardedRangeCount(), Punish->GetDiscardedSightCount(),
+			Punish->GetDiscardedCooldownCount(), Punish->GetDiscardedPendingCount(), Punish->GetJavelinHitCount(), Punish->GetJavelinDodgedCount(), Punish->GetJavelinWorldCount()));
 	}
 	if (const ACharacter* BossCharacter = Cast<ACharacter>(Boss))
 	{
@@ -165,8 +191,17 @@ void URPGCombatDebug::DumpPlayerAbilities() const
 
 void URPGCombatDebug::DumpPlayerFunctions() const
 {
+	DumpFunctionsOf(UGameplayStatics::GetPlayerPawn(this, 0));
+}
+
+void URPGCombatDebug::DumpBossFunctions() const
+{
+	DumpFunctionsOf(GetOwner());
+}
+
+void URPGCombatDebug::DumpFunctionsOf(const AActor* Player) const
+{
 #if !UE_BUILD_SHIPPING
-	const AActor* Player = UGameplayStatics::GetPlayerPawn(this, 0);
 	if (!Player)
 	{
 		return;
@@ -286,6 +321,52 @@ void URPGCombatDebug::DebugKillBoss() const
 #endif
 }
 
+void URPGCombatDebug::DebugSpawnWall(FVector Location, FRotator Rotation, FVector Scale)
+{
+#if !UE_BUILD_SHIPPING
+	AStaticMeshActor* Wall = GetWorld() ? GetWorld()->SpawnActor<AStaticMeshActor>(Location, Rotation) : nullptr;
+	UStaticMesh* Cube = LoadObject<UStaticMesh>(nullptr, TEXT("/Engine/BasicShapes/Cube.Cube"));
+	if (!Wall || !Cube)
+	{
+		UE_LOG(LogRPGDebug, Warning, TEXT("DebugSpawnWall: could not spawn the wall"));
+		return;
+	}
+	Wall->SetMobility(EComponentMobility::Movable);
+	Wall->GetStaticMeshComponent()->SetStaticMesh(Cube);
+	Wall->SetActorScale3D(Scale);
+	TestWalls.Add(Wall);
+#endif
+}
+
+void URPGCombatDebug::DebugClearWalls()
+{
+#if !UE_BUILD_SHIPPING
+	for (AActor* Wall : TestWalls)
+	{
+		if (Wall)
+		{
+			Wall->Destroy();
+		}
+	}
+	TestWalls.Reset();
+#endif
+}
+
+void URPGCombatDebug::DebugAddSkeletalPiece(USkeletalMesh* Piece)
+{
+	ACharacter* Boss = Cast<ACharacter>(GetOwner());
+	if (!Boss || !Boss->GetMesh() || !Piece)
+	{
+		return;
+	}
+	USkeletalMeshComponent* Component = NewObject<USkeletalMeshComponent>(Boss, *FString::Printf(TEXT("RPGDebugPiece_%s"), *Piece->GetName()));
+	Component->SetSkeletalMesh(Piece);
+	Component->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Component->RegisterComponent();
+	Component->AttachToComponent(Boss->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	Component->SetLeaderPoseComponent(Boss->GetMesh());
+}
+
 void URPGCombatDebug::DebugAttachTestMesh(UStaticMesh* Mesh, FName Socket, FRotator RelativeRotation, FVector RelativeLocation)
 {
 	ACharacter* Boss = Cast<ACharacter>(GetOwner());
@@ -303,6 +384,16 @@ void URPGCombatDebug::DebugAttachTestMesh(UStaticMesh* Mesh, FName Socket, FRota
 	TestMeshComponent->SetStaticMesh(Mesh);
 	TestMeshComponent->SetRelativeRotation(RelativeRotation);
 	TestMeshComponent->SetRelativeLocation(RelativeLocation);
+}
+
+void URPGCombatDebug::DebugSetPlayerHealth(float Value) const
+{
+#if !UE_BUILD_SHIPPING
+	if (const APawn* Player = UGameplayStatics::GetPlayerPawn(this, 0))
+	{
+		WriteAttribute(Player, TEXT("Attribute.Health"), Value);
+	}
+#endif
 }
 
 void URPGCombatDebug::DebugRefillPlayer() const

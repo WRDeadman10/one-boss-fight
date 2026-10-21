@@ -8,6 +8,10 @@
 #include "Player/RPGAttackTracker.h"
 #include "Player/RPGRiposteInput.h"
 #include "Player/RPGBossPosture.h"
+#include "Player/RPGCameraRig.h"
+#include "Player/RPGBossShockwave.h"
+#include "Player/RPGBossLowSweep.h"
+#include "Player/RPGBossHealPunish.h"
 #include "Player/RPGCombatDebug.h"
 #include "UI/RPGBossHud.h"
 #include "Audio/RPGBossMusic.h"
@@ -131,6 +135,11 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
 		}
 	}
 
+	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGCameraRig>())
+	{
+		URPGCameraRig* Rig = NewObject<URPGCameraRig>(Pawn, TEXT("RPGCameraRig"));
+		Rig->RegisterComponent();
+	}
 	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGRiposteInput>())
 	{
 		URPGRiposteInput* Riposte = NewObject<URPGRiposteInput>(Pawn, TEXT("RPGRiposteInput"));
@@ -165,6 +174,21 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
 	{
 		URPGAttackTracker* Tracker = NewObject<URPGAttackTracker>(Pawn, TEXT("RPGAttackTracker"));
 		Tracker->RegisterComponent();
+	}
+	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossShockwave>())
+	{
+		URPGBossShockwave* Wave = NewObject<URPGBossShockwave>(Pawn, TEXT("RPGBossShockwave"));
+		Wave->RegisterComponent();
+	}
+	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossLowSweep>())
+	{
+		URPGBossLowSweep* Sweep = NewObject<URPGBossLowSweep>(Pawn, TEXT("RPGBossLowSweep"));
+		Sweep->RegisterComponent();
+	}
+	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossHealPunish>())
+	{
+		URPGBossHealPunish* Punish = NewObject<URPGBossHealPunish>(Pawn, TEXT("RPGBossHealPunish"));
+		Punish->RegisterComponent();
 	}
 	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossHud>())
 	{

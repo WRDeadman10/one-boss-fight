@@ -49,6 +49,23 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Posture")
 	bool IsConfigured() const { return bConfigured; }
 
+	/** Hold policy (SPEC M4, Freeze 713 and 766): during a stance break the pool is held at 0 (more hits are ignored and counted, the pack's gate would otherwise refill it and cycle it); during the phase
+	 *  transition it is pinned at the value it had (posture is paused). None = normal. */
+	enum class EHold : uint8 { None, Zero, Pinned };
+
+	/** Zero writes 0 now; Pinned keeps the current value. Does nothing when a hold is already running. */
+	void BeginHold(EHold Mode);
+
+	/** Ends the hold. bRefill writes the maximum (end of the get-up, Freeze 714). Regeneration waits RegenDelaySeconds after this call. No-op when nothing is held. */
+	void EndHold(bool bRefill);
+
+	UFUNCTION(BlueprintPure, Category = "Posture")
+	FString GetHoldName() const;
+
+	/** Hits that were written back to the held value (ignored posture damage). */
+	UFUNCTION(BlueprintPure, Category = "Posture")
+	int32 GetSuppressedDrainCount() const { return SuppressedDrains; }
+
 protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -56,6 +73,9 @@ private:
 	/** Writes RegenDelaySeconds and RegenPerSecond into the boss's poise attribute object (a Blueprint instance) by reflection. */
 	bool ConfigureAttribute();
 
+	EHold Hold = EHold::None;
+	float HeldValue = 0.f;
+	int32 SuppressedDrains = 0;
 	float Posture = -1.f;
 	float MaxPosture = 100.f;
 	int32 DrainCount = 0;

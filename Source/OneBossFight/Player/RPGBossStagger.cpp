@@ -1,6 +1,10 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGBossStagger.h"
+#include "Player/RPGBossEncounter.h"
+#include "Player/RPGBossInterrupt.h"
+#include "Player/RPGBossPhases.h"
+#include "Player/RPGBossPosture.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "AIController.h"
 #include "Animation/AnimInstance.h"
@@ -76,13 +80,10 @@ void URPGBossStagger::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	{
 		if (bActive && !bWasActive)
 		{
-			if (Now >= CooldownEnd)
-			{
-				bWasActive = bActive;
-				StartStagger();
-				return;
-			}
-			UE_LOG(LogRPGStagger, Log, TEXT("%s: poise break ignored, stance break cooldown (%.1f s left)"), *GetOwner()->GetName(), CooldownEnd - Now);
+			// The pack's poise gate started its hit stun: that is the break request. It goes through the same gate as the test hooks.
+			bWasActive = bActive;
+			RequestBreak(false);
+			return;
 		}
 		bWasActive = bActive;
 		return;
@@ -124,6 +125,88 @@ void URPGBossStagger::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	}
 }
 
+bool URPGBossStagger::EndPackFlinch()
+{
+	UObject* Asc = FindComponentByClassName(GetOwner(), TEXT("BP_AdvancedAbilitySystemComponent_C"));
+	UObject* HitStun = CachedHitStun.Get();
+	if (!Asc || !HitStun)
+	{
+		return false;
+	}
+	const bool bWasPlaying = IsAbilityInstanceActive(HitStun);
+	CallBlueprintFunction(Asc, TEXT("End Ability"),
+		[&](UFunction& F, uint8* P)
+		{
+			if (const FObjectProperty* Object = CastField<FObjectProperty>(F.FindPropertyByName(TEXT("AbilityToEnd"))))
+			{
+				Object->SetObjectPropertyValue(Object->ContainerPtrToValuePtr<void>(P), HitStun);
+			}
+		},
+		[](UFunction&, uint8*) {});
+	return bWasPlaying;
+}
+
+float URPGBossStagger::GetCooldownRemaining() const
+{
+	return GetWorld() ? static_cast<float>(FMath::Max(0.0, CooldownEnd - GetWorld()->GetTimeSeconds())) : 0.f;
+}
+
+int32 URPGBossStagger::GetDroppedBreakCount(const FString& Reason) const
+{
+	if (Reason == TEXT("transition")) { return DroppedTransition; }
+	if (Reason == TEXT("dead")) { return DroppedDead; }
+	if (Reason == TEXT("dormant")) { return DroppedDormant; }
+	if (Reason == TEXT("staggered")) { return DroppedStaggered; }
+	if (Reason == TEXT("cooldown")) { return DroppedCooldown; }
+	return 0;
+}
+
+RPGBossRules::EBreakResult URPGBossStagger::RequestBreak(bool bIgnoreCooldown)
+{
+	using namespace RPGBossRules;
+	const UWorld* World = GetWorld();
+	const double Now = World ? World->GetTimeSeconds() : 0.0;
+	FFlags Flags;
+	double Health = 1.0;
+	Flags.bDead = ReadAttribute(GetOwner(), HealthTag, false, Health) && Health <= 0.0;
+	const URPGBossEncounter* Encounter = GetOwner()->FindComponentByClass<URPGBossEncounter>();
+	const URPGBossPhases* Phases = GetOwner()->FindComponentByClass<URPGBossPhases>();
+	Flags.bDormant = Encounter && Encounter->IsDormant();
+	Flags.bTransition = Phases && Phases->IsInTransition();
+	Flags.bStaggered = Phase != EPhase::Idle;
+	Flags.bCooldown = Now < CooldownEnd;
+	const EBreakResult Result = ResolveBreak(Flags, bIgnoreCooldown);
+	LastBreakResult = Name(Result);
+	switch (Result)
+	{
+	case EBreakResult::Started:
+		StartStagger();
+		return Result;
+	case EBreakResult::Dead:
+		++DroppedDead;
+		EndPackFlinch(); // no hit stun after a lethal hit (Freeze 1269): the flinch must not play over the death clip
+		break;
+	case EBreakResult::Dormant:
+		++DroppedDormant;
+		break;
+	case EBreakResult::Transition:
+		++DroppedTransition;
+		if (EndPackFlinch())
+		{
+			UE_LOG(LogRPGStagger, Warning, TEXT("%s: the pack flinch was active during the phase transition (the immunity effect did not hold), ended"), *GetOwner()->GetName());
+		}
+		break;
+	case EBreakResult::AlreadyStaggered:
+		++DroppedStaggered;
+		break;
+	case EBreakResult::Cooldown:
+		++DroppedCooldown;
+		break;
+	}
+	UE_LOG(LogRPGStagger, Log, TEXT("%s: stance break dropped: %s%s"), *GetOwner()->GetName(), Name(Result), Result == EBreakResult::Cooldown ? *FString::Printf(TEXT(" (%.1f s left)"), CooldownEnd - Now) : TEXT(""));
+	return Result;
+}
+
 void URPGBossStagger::StartStagger()
 {
 	const double Now = GetWorld()->GetTimeSeconds();
@@ -135,21 +218,19 @@ void URPGBossStagger::StartStagger()
 	bRiposteUsed = false;
 	RiposteArmedUntil = -1.0;
 
+	// Freeze 17.3 items 2 and 3: the break disables the boss's own attack windows, blade, wave and projectiles, and records what it cancelled.
+	RPGBossInterrupt::CancelOffence(GetOwner(), TEXT("stance break"));
+	if (bHoldPostureAtZero)
+	{
+		if (URPGBossPosture* Posture = GetOwner()->FindComponentByClass<URPGBossPosture>())
+		{
+			Posture->BeginHold(URPGBossPosture::EHold::Zero);
+		}
+	}
+
 	UObject* Asc = FindComponentByClassName(GetOwner(), TEXT("BP_AdvancedAbilitySystemComponent_C"));
 	// The flinch ability would end its montage under ours: end it first.
-	if (Asc && CachedHitStun.IsValid())
-	{
-		UObject* HitStun = CachedHitStun.Get();
-		CallBlueprintFunction(Asc, TEXT("End Ability"),
-			[&](UFunction& F, uint8* P)
-			{
-				if (const FObjectProperty* Object = CastField<FObjectProperty>(F.FindPropertyByName(TEXT("AbilityToEnd"))))
-				{
-					Object->SetObjectPropertyValue(Object->ContainerPtrToValuePtr<void>(P), HitStun);
-				}
-			},
-			[](UFunction&, uint8*) {});
-	}
+	EndPackFlinch();
 	// Temporary immunity (4 s) so further hits do not replay a flinch over the pose.
 	if (Asc)
 	{
@@ -190,11 +271,12 @@ void URPGBossStagger::StartStagger()
 	UE_LOG(LogRPGStagger, Log, TEXT("%s: poise break %d, stance break for %.1f s, hits are critical x%.1f (every hit: %d)"), *GetOwner()->GetName(), StaggerCount, StaggerSeconds, CriticalMultiplier, bCriticalOnEveryHit);
 }
 
-void URPGBossStagger::EndStagger(bool bResumeBehaviour)
+void URPGBossStagger::EndStagger(bool bResumeBehaviour, bool bClearCooldown)
 {
 	const double Now = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0;
 	Phase = EPhase::Idle;
-	CooldownEnd = Now + CooldownSeconds;
+	LastEndTime = Now;
+	CooldownEnd = bClearCooldown ? 0.0 : Now + CooldownSeconds;
 	bFrozen = false;
 
 	if (UObject* Asc = FindComponentByClassName(GetOwner(), TEXT("BP_AdvancedAbilitySystemComponent_C")))
@@ -212,15 +294,32 @@ void URPGBossStagger::EndStagger(bool bResumeBehaviour)
 				[](UFunction&, uint8*) {});
 		}
 	}
-	// Poise starts full again.
-	double MaxPoise = 0.0;
-	if (ReadAttribute(GetOwner(), PoiseTag, true, MaxPoise))
+	// Poise starts full again (Freeze 714): the hold ends with a refill; without the posture component the direct write is the fallback.
+	URPGBossPosture* Posture = GetOwner()->FindComponentByClass<URPGBossPosture>();
+	if (Posture && Posture->GetHoldName() != TEXT("None"))
 	{
-		WriteAttribute(GetOwner(), PoiseTag, MaxPoise);
+		Posture->EndHold(true);
+	}
+	else
+	{
+		double MaxPoise = 0.0;
+		if (ReadAttribute(GetOwner(), PoiseTag, true, MaxPoise))
+		{
+			WriteAttribute(GetOwner(), PoiseTag, MaxPoise);
+		}
 	}
 	if (bResumeBehaviour)
 	{
-		ResumeBehaviour();
+		// A phase transition that crossed its threshold during the break starts now, with the behaviour still held: one hand-off, never a gap and never two montages (Freeze 770).
+		URPGBossPhases* Phases = GetOwner()->FindComponentByClass<URPGBossPhases>();
+		if (Phases && Phases->TryStartQueuedTransition(bBehaviourHeld))
+		{
+			bBehaviourHeld = false; // the phase component owns the hold now
+		}
+		else
+		{
+			ResumeBehaviour();
+		}
 	}
 	UE_LOG(LogRPGStagger, Log, TEXT("%s: stance break over (%d critical hits), resume behaviour %d"), *GetOwner()->GetName(), CriticalHitCount, bResumeBehaviour);
 }
@@ -289,29 +388,38 @@ bool URPGBossStagger::TryRiposte(const AActor* Player)
 	return true;
 }
 
-void URPGBossStagger::ForceBreakForTest()
+FString URPGBossStagger::ForceBreakForTest()
 {
-	if (Phase == EPhase::Idle)
-	{
-		CooldownEnd = 0.0;
-		bWasActive = true;
-		StartStagger();
-	}
+	bWasActive = true; // the pack's hit stun edge must not be read as a second request
+	return RPGBossRules::Name(RequestBreak(true));
+}
+
+FString URPGBossStagger::TryBreakForTest()
+{
+	bWasActive = true;
+	return RPGBossRules::Name(RequestBreak(false));
 }
 
 void URPGBossStagger::AbortStagger()
 {
-	if (Phase == EPhase::Idle)
+	// A reset leaves nothing behind (Freeze 18.3 line 791): the cooldown, the riposte and the posture hold go in every case, also when no break is running.
+	CooldownEnd = 0.0;
+	RiposteArmedUntil = -1.0;
+	bRiposteUsed = false;
+	if (Phase != EPhase::Idle)
 	{
-		return;
+		if (UAnimInstance* Anim = GetAnimInstance())
+		{
+			Anim->Montage_Stop(0.1f, FallMontage.Get());
+			Anim->Montage_Stop(0.1f, GetUpMontage.Get());
+		}
+		EndStagger(false, true);
+		bBehaviourHeld = false; // the caller decides what the behaviour does next
 	}
-	if (UAnimInstance* Anim = GetAnimInstance())
+	if (URPGBossPosture* Posture = GetOwner()->FindComponentByClass<URPGBossPosture>())
 	{
-		Anim->Montage_Stop(0.1f, FallMontage.Get());
-		Anim->Montage_Stop(0.1f, GetUpMontage.Get());
+		Posture->EndHold(true);
 	}
-	EndStagger(false);
-	bBehaviourHeld = false; // the caller decides what the behaviour does next
 }
 
 void URPGBossStagger::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -330,6 +438,12 @@ void URPGBossStagger::ApplyCritical()
 	if (Health <= 0.0)
 	{
 		UE_LOG(LogRPGStagger, Log, TEXT("%s: died during the stance break"), *GetOwner()->GetName());
+		if (UAnimInstance* Anim = GetAnimInstance())
+		{
+			// Only our two clips: a plain Montage_Stop() would also stop the pack's death clip.
+			Anim->Montage_Stop(0.1f, FallMontage.Get());
+			Anim->Montage_Stop(0.1f, GetUpMontage.Get());
+		}
 		EndStagger(false);
 		return;
 	}

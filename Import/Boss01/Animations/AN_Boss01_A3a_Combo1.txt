@@ -1,0 +1,12 @@
+Clip: AN_Boss01_A3a_Combo1
+Length: 0.800
+FPS: 30
+Frames: 25 (0 to 24)
+Loop: No (One-shot)
+RootMotion: In Place
+WindupEndTime: 0.40
+ActiveStartTime: 0.40
+ActiveEndTime: 0.60
+RecoveryEndTime: 0.800
+CommitTime: 0.38
+Notes: Two-Hit Branch Combo: Slash 1. Descending diagonal cleave cutting from high-right across midline. Windup raises greatsword in high guard with arched torso and drops stance 9 cm (0.00-0.40s); active cleave strikes diagonally across player (0.40-0.60s); transition recovery checks blade at left hip in loaded ready pose (0.60-0.80s), matching exact initial pose of A3b. Both hands locked to grip (wrist distance 9.5-12.8 cm). Feet grounded flat at Z ≈ 0.

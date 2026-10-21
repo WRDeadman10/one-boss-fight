@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"EngineAssociation": "5.5",
 	"Category": "",
-	"Description": "",
+	"Description": "Single-player third-person Soulslike boss duel in Unreal Engine 5.",
 	"Modules": [
 		{
 			"Name": "OneBossFight",

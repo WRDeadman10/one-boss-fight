@@ -8,6 +8,9 @@ public class OneBossFight : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
+		// Several files keep helper names (HealthTag, FindControllerComponent) in anonymous namespaces; a unity build merges them and collides when files are added.
+		bUseUnity = false;
+
 		// Headers live in feature folders (Arena/, Boss/, Pack/, ...) and are included as "Folder/File.h".
 		PublicIncludePaths.Add(ModuleDirectory);
 
