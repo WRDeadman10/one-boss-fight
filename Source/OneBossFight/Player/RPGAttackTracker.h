@@ -155,6 +155,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Attack")
 	int32 GetInterruptedCount() const { return InterruptedCount; }
 
+	/** Attacks that ended while still in their windup (stopped by the pack before the commit point): they never commit, so tests compare commits plus these with the attacks counted. */
+	UFUNCTION(BlueprintPure, Category = "Attack")
+	int32 GetEndedBeforeCommitCount() const { return EndedBeforeCommitCount; }
+
 	UFUNCTION(BlueprintPure, Category = "Attack")
 	float GetMaxYawDriftAfterCommit() const { return MaxYawDrift; }
 
@@ -181,6 +185,7 @@ private:
 	int32 TimingIndex = INDEX_NONE;
 	int32 AttackInstance = 0;
 	int32 CommitCount = 0;
+	int32 EndedBeforeCommitCount = 0;
 	int32 InterruptedCount = 0;
 	int32 IllegalStarts = 0;
 	int32 DoubleLaunches = 0;

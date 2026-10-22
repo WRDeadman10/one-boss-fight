@@ -1,6 +1,9 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGBossBleed.h"
+#include "Player/RPGBossDeath.h"
+#include "Player/RPGBossPosture.h"
 #include "Player/RPGIFrameMonitor.h"
 #include "Player/RPGTraceGuard.h"
 #include "Player/RPGBossStagger.h"
@@ -224,6 +227,13 @@ void URPGBossEncounter::Wake()
 void URPGBossEncounter::ResetEncounter()
 {
 	AActor* Owner = GetOwner();
+	// A boss that is dying stays dead: the pack destroys it a few seconds after its death whatever is done, so a reset would only bring back a corpse-less ghost with the ragdoll's changes on it (review D).
+	if (const URPGBossDeath* Death = Owner->FindComponentByClass<URPGBossDeath>(); Death && Death->IsDeathActive())
+	{
+		++DeathResetRefusals;
+		UE_LOG(LogRPGEncounter, Log, TEXT("%s: encounter reset refused: the boss is dying (%s), the dead boss stays dead"), *Owner->GetName(), *Death->GetDeathStateName());
+		return;
+	}
 	URPGTraceGuard::CloseFor(Owner, TEXT("reset")); // first: before the montage stops, the weapon is sheathed and the boss is teleported, so no stale sweep can run across the arena
 	++ResetCount;
 	++Generation; // every callback made for the old fight is stale from here on
@@ -294,6 +304,14 @@ void URPGBossEncounter::ResetEncounter()
 	if (ReadAttribute(Owner, PoiseTag, true, Max))
 	{
 		WriteAttribute(Owner, PoiseTag, Max);
+	}
+	if (URPGBossPosture* Posture = Owner->FindComponentByClass<URPGBossPosture>())
+	{
+		Posture->ResetPool(); // the posture pool is the component's own (Gate 3, M9)
+	}
+	if (URPGBossBleed* Bleed = Owner->FindComponentByClass<URPGBossBleed>())
+	{
+		Bleed->ResetBleed();
 	}
 	if (GateRadius > 0.f)
 	{

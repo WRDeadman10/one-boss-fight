@@ -9,6 +9,7 @@
 #include "RPGBossStagger.generated.h"
 
 class UAnimMontage;
+class UAnimSequence;
 
 /**
  * Stance break for the pack's boss (Elden Ring style): a poise break leaves the boss down for a few seconds, and hits taken while it is down are critical.
@@ -61,9 +62,54 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Riposte")
 	bool TryRiposte(const AActor* Player);
 
+	/** The synchronized execution (Freeze 17.4, G2-7): an accepted press plays Antigravity's paired clips, the player's strike (AN_Riposte_Player_Front, 1.6 s, the player advances 90 cm) and the boss's reaction
+	 *  (AN_Riposte_Boss_Reaction, 2.0 s), both with their impact at 0.8 s. The player's input is locked for the execution, the pack's own attack that the same press started is cut, the player slides to RipostePlayerStartGap from the boss
+	 *  in the first RiposteAlignSeconds (the clip then closes the last 90 cm by its own root motion), and the critical damage is applied ONCE at the impact: RiposteBaseDamage x CriticalMultiplier (no weapon trace, no armed multiplier).
+	 *  Off, or when a clip does not load: the stand-in (the pack's attack plays, the next hit within RiposteArmSeconds is critical). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Riposte")
+	bool bUseRiposteClips = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Riposte")
+	TSoftObjectPtr<UAnimSequence> RipostePlayerClip;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Riposte")
+	TSoftObjectPtr<UAnimSequence> RiposteBossClip;
+
+	/** Distance in cm from the boss at which the player's clip starts (the clip's root travels 90 cm, so the strike ends 60 cm from the boss; the top-down sheet of the clip pair). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Riposte", meta = (ClampMin = "50.0"))
+	float RipostePlayerStartGap = 150.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Riposte", meta = (ClampMin = "0.05"))
+	float RiposteAlignSeconds = 0.3f;
+
+	/** Seconds from the start of the clips to the impact frame (frame 24 of both clips). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Riposte", meta = (ClampMin = "0.1"))
+	float RiposteImpactSeconds = 0.8f;
+
+	/** The base hit of the riposte; CriticalMultiplier is applied to it once (40 x 2.5 = 100 of the boss's 500). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Riposte", meta = (ClampMin = "0.0"))
+	float RiposteBaseDamage = 40.f;
+
+	UFUNCTION(BlueprintCallable, Category = "Riposte")
+	void SetUseRiposteClipsForTest(bool bOn) { bUseRiposteClips = bOn; }
+
+	/** True from the accepted press until the clips are over (or the execution was aborted). */
+	UFUNCTION(BlueprintPure, Category = "Riposte")
+	bool IsRiposteExecuting() const { return bRiposteRunning; }
+
+	/** Impacts applied (one per execution, never two) and executions that were aborted before their end. */
+	UFUNCTION(BlueprintPure, Category = "Riposte")
+	int32 GetRiposteImpactCount() const { return RiposteImpacts; }
+
+	UFUNCTION(BlueprintPure, Category = "Riposte")
+	int32 GetRiposteAbortCount() const { return RiposteAborts; }
+
 	/** True when a press right now would be accepted (boss down, riposte unused, player in range, in the boss's cone and facing it). The HUD prompt uses it; it changes nothing. */
 	UFUNCTION(BlueprintPure, Category = "Riposte")
 	bool IsRiposteAvailable(const AActor* Player) const;
+
+	/** The bleed proc has just taken Loss health that is not a player hit: lower the baseline by exactly that, so the critical multiplier never sees it (Freeze 20.2) while a weapon hit that landed in the same frame still does. */
+	void AcknowledgeHealthLoss(double Loss);
 
 	UFUNCTION(BlueprintPure, Category = "Riposte")
 	bool IsRiposteArmed() const;
@@ -87,6 +133,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stagger", meta = (ClampMin = "0.0"))
 	float CooldownSeconds = 0.f;
 
+	/** Test drivers only. Python must not change a component property in PIE (set_editor_property re-runs the owning Blueprint's construction scripts, the pack's components are rebuilt and its gameplay effects point at the old ones):
+	 *  these functions change the same values without that side effect. */
+	UFUNCTION(BlueprintCallable, Category = "Stagger")
+	void SetCooldownForTest(float Seconds) { CooldownSeconds = FMath::Max(0.f, Seconds); }
+
+	UFUNCTION(BlueprintCallable, Category = "Stagger")
+	void SetCriticalOnEveryHitForTest(bool bOn) { bCriticalOnEveryHit = bOn; }
+
+	UFUNCTION(BlueprintCallable, Category = "Stagger")
+	void SetStaggerSecondsForTest(float Seconds) { StaggerSeconds = FMath::Max(0.5f, Seconds); }
+
+	UFUNCTION(BlueprintCallable, Category = "Stagger")
+	void SetUseClipsForTest(bool bOn) { bUseClips = bOn; }
+
 	/** Class name of the boss's hit stun ability (a Blueprint instance in its ability system component). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stagger")
 	FName HitStunAbilityClassName = TEXT("GA_GS_Boss_HitStun_C");
@@ -96,6 +156,28 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stagger")
 	TSoftObjectPtr<UAnimMontage> GetUpMontage;
+
+	/** The project's own stance break clips (Antigravity, on the mannequin skeleton): the fall to the knees (StaggerFall, 0.7 s), the kneel (StaggerDown, a 1 s loop that plays for the rest of the stance break) and the get-up (the fall played
+	 *  backwards at GetUpRate, so it ends exactly in the standing pose it started from). When both clips load they replace the pack's knockdown montages above, which stay the fallback. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stagger")
+	bool bUseClips = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stagger")
+	TSoftObjectPtr<UAnimSequence> FallClip;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stagger")
+	TSoftObjectPtr<UAnimSequence> DownClip;
+
+	/** Play rate of the backwards fall that gets the boss up (0.6: 1.2 s). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stagger", meta = (ClampMin = "0.1"))
+	float GetUpRate = 0.6f;
+
+	/** True while the running stance break plays the project's clips; the stage is "none", "fall", "down" or "getup". */
+	UFUNCTION(BlueprintPure, Category = "Stagger")
+	bool IsUsingClips() const { return bClipMode; }
+
+	UFUNCTION(BlueprintPure, Category = "Stagger")
+	FString GetClipStageName() const;
 
 	/** The pack's temporary hit stun immunity effect (4 s, enough for the fall, the hold and the get-up). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stagger")
@@ -156,6 +238,21 @@ private:
 	enum class EPhase : uint8 { Idle, Down, GetUp };
 
 	void StartStagger();
+	/** Accepted press with the clips available: the execution is requested now and starts next frame (after the pack's own handling of the same press). */
+	bool BeginRiposteExecution(const AActor* PlayerActor);
+	void StartRiposteClips();
+	void TickRiposte(double Now);
+	void ApplyRiposteImpact();
+	/** After the execution the player may stand inside the boss's capsule (the clip ends 60 cm from the boss's centre): the collision between them is switched back on and the player is slid out to the contact distance in 0.25 s. */
+	void TickRiposteExit(double Now);
+	/** Ends the execution. bCompleted: the clips ran to their end (the kneel loop resumes); otherwise it was aborted (death, reset, the stance break ended): the clips are stopped. */
+	void EndRiposteExecution(bool bCompleted, const TCHAR* Why, bool bResumeKneel = false);
+	/** Starts the stance break's clips (the fall) when they load; false means the pack's knockdown montages play instead. */
+	bool StartClipFall();
+	/** The fall hands over to the kneel loop when it ends, the kneel hands over to the get-up when the stance break time is up. */
+	void TickClipDown(UAnimInstance* Anim, double Elapsed, double Now);
+	/** Stops the stance break's montages (the pack's and the clips'). */
+	void StopStaggerMontages(float BlendOut);
 	/** Ends the break. bClearCooldown (reset, abort) starts no cooldown. With bResumeBehaviour a phase transition that queued behind the break starts right here, with the behaviour still held (no gap, Freeze 770). */
 	void EndStagger(bool bResumeBehaviour, bool bClearCooldown = false);
 	/** Ends the pack's 0.8 s flinch ability so it cannot play over a roar or a death clip. Returns true when it was active. */
@@ -168,6 +265,41 @@ private:
 	const TCHAR* CheckRiposte(const AActor* Player, double& OutDistance) const;
 
 	UAnimInstance* GetAnimInstance() const;
+
+	enum class EClipStage : uint8 { None, Fall, Down, GetUp, Riposte };
+
+	bool bRiposteIgnoring = false;
+	bool bRiposteExiting = false;
+	float RiposteAlignDone = 0.f;
+	double RiposteExitStart = 0.0;
+	FVector RiposteExitFrom = FVector::ZeroVector;
+	FVector RiposteExitTo = FVector::ZeroVector;
+	bool bRiposteRunning = false;
+	bool bRiposteStarted = false;
+	bool bRiposteImpactDone = false;
+	double RiposteStartTime = 0.0;
+	double RiposteEndTime = 0.0;
+	FVector RiposteAlignFrom = FVector::ZeroVector;
+	FVector RiposteAlignTo = FVector::ZeroVector;
+	int32 RiposteImpacts = 0;
+	int32 RiposteAborts = 0;
+	TWeakObjectPtr<ACharacter> RipostePlayer;
+	TWeakObjectPtr<UAnimMontage> RipostePlayerMontage;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UAnimSequence> LoadedRipostePlayer;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UAnimSequence> LoadedRiposteBoss;
+	bool bClipMode = false;
+	EClipStage ClipStage = EClipStage::None;
+	TWeakObjectPtr<UAnimMontage> ClipMontage;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UAnimSequence> LoadedFall;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UAnimSequence> LoadedDown;
 
 	EPhase Phase = EPhase::Idle;
 	double PhaseStart = 0.0;

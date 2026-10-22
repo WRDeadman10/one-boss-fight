@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGBossLowSweep.h"
+#include "Player/RPGBossMath.h"
 #include "Components/CapsuleComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
@@ -69,17 +70,10 @@ void URPGBossLowSweep::Test(float FromAngle, float ToAngle)
 	const FVector ToPlayer = (Player->GetActorLocation() - Boss->GetActorLocation()) * FVector(1.f, 1.f, 0.f);
 	const float Distance = ToPlayer.Size();
 	const float Radius = Player->GetCapsuleComponent() ? Player->GetCapsuleComponent()->GetScaledCapsuleRadius() : 34.f;
-	if (Distance - Radius > Reach || Distance + Radius < InnerRadius || Distance < KINDA_SMALL_NUMBER)
-	{
-		return;
-	}
-	// Angle of the player from the committed forward direction, positive to the boss's right, and how wide the player's capsule looks from the boss.
+	// Angle of the player from the committed forward direction, positive to the boss's right.
 	const float PlayerYaw = FMath::RadiansToDegrees(FMath::Atan2(ToPlayer.Y, ToPlayer.X));
 	const float Angle = FMath::FindDeltaAngleDegrees(ForwardYaw, PlayerYaw);
-	const float Tolerance = FMath::RadiansToDegrees(FMath::Asin(FMath::Clamp(Radius / FMath::Max(Distance, 1.f), 0.f, 1.f)));
-	const float Low = FMath::Min(FromAngle, ToAngle) - Tolerance;
-	const float High = FMath::Max(FromAngle, ToAngle) + Tolerance;
-	if (Angle < Low || Angle > High)
+	if (!RPGBossMath::SweepTouches(Distance, Radius, Reach, InnerRadius, Angle, FromAngle, ToAngle))
 	{
 		return;
 	}

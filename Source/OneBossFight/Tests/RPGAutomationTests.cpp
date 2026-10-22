@@ -2,6 +2,10 @@
 
 #include "Misc/AutomationTest.h"
 #include "Misc/PackageName.h"
+#include "Misc/FileHelper.h"
+#include "Misc/ConfigCacheIni.h"
+#include "HAL/FileManager.h"
+#include "Internationalization/Regex.h"
 #include <limits>
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -15,6 +19,14 @@
 #include "Player/RPGBossStagger.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossRules.h"
+#include "Player/RPGBossMath.h"
+#include "Player/RPGHitIntake.h"
+#include "Player/RPGWeaponAttackTable.h"
+#include "Player/RPGSwingRules.h"
+#include "Player/RPGBleedRules.h"
+#include "Player/RPGBossBleed.h"
+#include "Player/RPGBossPosture.h"
+#include "Player/RPGBossShockwave.h"
 #include "Pack/RPGPackTrace.h"
 #include "Player/RPGDamageResolver.h"
 #include "Player/RPGLegend.h"
@@ -222,6 +234,403 @@ bool FRPGTransitionRulesTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("stagger seconds 2.5"), GetDefault<URPGBossStagger>()->StaggerSeconds, 2.5f);
 	TestEqual(TEXT("stagger cooldown 0 (decision G0-5)"), GetDefault<URPGBossStagger>()->CooldownSeconds, 0.f);
 	TestEqual(TEXT("transition seconds 1.8"), GetDefault<URPGBossPhases>()->TransitionSeconds, 1.8f);
+	return true;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Boss rules with numbers (G2-16): posture regeneration, riposte geometry, low sweep geometry, Freeze defaults
+// ---------------------------------------------------------------------------------------------
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGPostureRegenTest, "OneBossFight.Boss.PostureRegen",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGPostureRegenTest::RunTest(const FString& Parameters)
+{
+	using namespace RPGBossMath;
+	// Freeze 17.2: 100 points, regeneration starts 6 s after the last drain, 13 per second, never above the maximum.
+	const URPGBossPosture* Defaults = GetDefault<URPGBossPosture>();
+	TestEqual(TEXT("regeneration delay 6 s"), Defaults->RegenDelaySeconds, 6.f);
+	TestEqual(TEXT("regeneration 13 per second"), Defaults->RegenPerSecond, 13.f);
+
+	TestEqual(TEXT("5.99 s after the drain: nothing"), RegenStep(40.f, 100.f, 5.99, 0.0, 6.f, 13.f, 1.f), 40.f);
+	TestEqual(TEXT("exactly 6.00 s after the drain: starts"), RegenStep(40.f, 100.f, 6.0, 0.0, 6.f, 13.f, 1.f), 53.f);
+	TestEqual(TEXT("one second of regeneration adds 13"), RegenStep(40.f, 100.f, 20.0, 0.0, 6.f, 13.f, 1.f), 53.f);
+	TestEqual(TEXT("0.05 s tick adds 0.65"), RegenStep(40.f, 100.f, 20.0, 0.0, 6.f, 13.f, 0.05f), 40.65f);
+	TestEqual(TEXT("never above the maximum"), RegenStep(95.f, 100.f, 20.0, 0.0, 6.f, 13.f, 1.f), 100.f);
+	TestEqual(TEXT("at the maximum nothing changes"), RegenStep(100.f, 100.f, 20.0, 0.0, 6.f, 13.f, 1.f), 100.f);
+	TestEqual(TEXT("at zero (a stance break holds it) nothing regenerates"), RegenStep(0.f, 100.f, 20.0, 0.0, 6.f, 13.f, 1.f), 0.f);
+	TestEqual(TEXT("at zero with nothing holding it (a dropped break) it comes back after the delay"), RegenStep(0.f, 100.f, 20.0, 0.0, 6.f, 13.f, 1.f, true), 13.f);
+	TestEqual(TEXT("at zero with nothing holding it, still inside the delay: nothing"), RegenStep(0.f, 100.f, 5.99, 0.0, 6.f, 13.f, 1.f, true), 0.f);
+	TestEqual(TEXT("never drained (-1) regenerates at once"), RegenStep(40.f, 100.f, 0.5, -1.0, 6.f, 13.f, 1.f), 53.f);
+
+	// A drain to 40 at t = 0, simulated at 20 ticks per second: flat for 6 s, then 13 per second, full after 4.62 s more (60 / 13).
+	float Posture = 40.f;
+	float AtFive = -1.f, AtEight = -1.f, AtEleven = -1.f;
+	for (int32 Step = 1; Step <= 300; ++Step)
+	{
+		const double Time = Step * 0.05;
+		Posture = RegenStep(Posture, 100.f, Time, 0.0, 6.f, 13.f, 0.05f);
+		if (Step == 100) { AtFive = Posture; }
+		if (Step == 160) { AtEight = Posture; }
+		if (Step == 220) { AtEleven = Posture; }
+	}
+	TestEqual(TEXT("40 at 5 s"), AtFive, 40.f);
+	TestTrue(*FString::Printf(TEXT("about 66 at 8 s (got %.2f)"), AtEight), FMath::IsNearlyEqual(AtEight, 40.f + 13.f * 2.f, 1.f));
+	TestEqual(TEXT("full at 11 s"), AtEleven, 100.f);
+	TestEqual(TEXT("full at 15 s"), Posture, 100.f);
+
+	// A second drain restarts the delay: drained again at t = 3 (to 30), the regeneration starts at 9 s, not 6 s.
+	float Second = 30.f;
+	float At8 = -1.f, At10 = -1.f;
+	for (int32 Step = 61; Step <= 200; ++Step)
+	{
+		Second = RegenStep(Second, 100.f, Step * 0.05, 3.0, 6.f, 13.f, 0.05f);
+		if (Step == 160) { At8 = Second; }
+		if (Step == 200) { At10 = Second; }
+	}
+	TestEqual(TEXT("second drain at 3 s: still 30 at 8 s"), At8, 30.f);
+	TestTrue(*FString::Printf(TEXT("second drain at 3 s: about 43 at 10 s (got %.2f)"), At10), FMath::IsNearlyEqual(At10, 30.f + 13.f, 1.f));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGRiposteGeometryTest, "OneBossFight.Boss.RiposteGeometry",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGRiposteGeometryTest::RunTest(const FString& Parameters)
+{
+	using namespace RPGBossMath;
+	// Freeze: 150 cm, 120 degree front cone, the player faces the boss within 120 degrees.
+	const URPGBossStagger* Defaults = GetDefault<URPGBossStagger>();
+	TestEqual(TEXT("riposte range 150"), Defaults->RiposteRange, 150.f);
+	TestEqual(TEXT("riposte cone 120"), Defaults->RiposteConeDegrees, 120.f);
+	TestEqual(TEXT("riposte facing 120"), Defaults->RiposteFacingDegrees, 120.f);
+	TestEqual(TEXT("arm window 1.2 s"), Defaults->RiposteArmSeconds, 1.2f);
+	TestEqual(TEXT("critical x2.5"), Defaults->CriticalMultiplier, 2.5f);
+
+	const FVector Boss(0.f, 0.f, 0.f);
+	const FVector BossForward(1.f, 0.f, 0.f);
+	const FVector FaceBoss(-1.f, 0.f, 0.f);
+	auto Verdict = [&](const FVector& Player, const FVector& PlayerForward)
+	{
+		return static_cast<int32>(RiposteGeometry(Boss, BossForward, Player, PlayerForward, 150.f, 120.f, 120.f));
+	};
+	const int32 Accept = static_cast<int32>(ERiposteVerdict::Accept);
+	TestEqual(TEXT("100 cm in front, facing the boss"), Verdict(FVector(100.f, 0.f, 0.f), FaceBoss), Accept);
+	TestEqual(TEXT("exactly 150 cm is in"), Verdict(FVector(150.f, 0.f, 0.f), FaceBoss), Accept);
+	TestEqual(TEXT("150.5 cm is too far"), Verdict(FVector(150.5f, 0.f, 0.f), FaceBoss), static_cast<int32>(ERiposteVerdict::TooFar));
+	TestEqual(TEXT("height is ignored (500 cm up)"), Verdict(FVector(100.f, 0.f, 500.f), FaceBoss), Accept);
+	// Cone: 60 degrees is the half angle.
+	const auto At = [](float Degrees, float Distance) { return FVector(FMath::Cos(FMath::DegreesToRadians(Degrees)), FMath::Sin(FMath::DegreesToRadians(Degrees)), 0.f) * Distance; };
+	TestEqual(TEXT("59 degrees off the boss's front is inside the cone"), Verdict(At(59.f, 100.f), -At(59.f, 1.f)), Accept);
+	TestEqual(TEXT("-59 degrees too"), Verdict(At(-59.f, 100.f), -At(-59.f, 1.f)), Accept);
+	TestEqual(TEXT("61 degrees is outside"), Verdict(At(61.f, 100.f), -At(61.f, 1.f)), static_cast<int32>(ERiposteVerdict::NotInFront));
+	TestEqual(TEXT("behind the boss"), Verdict(FVector(-100.f, 0.f, 0.f), FVector(1.f, 0.f, 0.f)), static_cast<int32>(ERiposteVerdict::NotInFront));
+	// Facing: the player looks 59 degrees away from the boss is fine, 61 is not.
+	const FVector Player(100.f, 0.f, 0.f);
+	TestEqual(TEXT("player turned 59 degrees from the boss"), Verdict(Player, At(180.f + 59.f, 1.f)), Accept);
+	TestEqual(TEXT("player turned 61 degrees from the boss"), Verdict(Player, At(180.f + 61.f, 1.f)), static_cast<int32>(ERiposteVerdict::NotFacing));
+	TestEqual(TEXT("player facing away"), Verdict(Player, FVector(1.f, 0.f, 0.f)), static_cast<int32>(ERiposteVerdict::NotFacing));
+	// Order of the checks: too far wins over the cone; the cone wins over the facing.
+	TestEqual(TEXT("far and behind: too far"), Verdict(FVector(-400.f, 0.f, 0.f), FVector(1.f, 0.f, 0.f)), static_cast<int32>(ERiposteVerdict::TooFar));
+	TestEqual(TEXT("behind and facing away: not in front"), Verdict(FVector(-100.f, 0.f, 0.f), FVector(-1.f, 0.f, 0.f)), static_cast<int32>(ERiposteVerdict::NotInFront));
+	// The reason texts the drivers read.
+	TestTrue(TEXT("accepted has no reason"), RiposteReason(ERiposteVerdict::Accept) == nullptr);
+	TestEqual(TEXT("reason too far"), FString(RiposteReason(ERiposteVerdict::TooFar)), FString(TEXT("too far")));
+	TestEqual(TEXT("reason not in front"), FString(RiposteReason(ERiposteVerdict::NotInFront)), FString(TEXT("not in front of the boss")));
+	TestEqual(TEXT("reason not facing"), FString(RiposteReason(ERiposteVerdict::NotFacing)), FString(TEXT("player not facing the boss")));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGBossMoveNumbersTest, "OneBossFight.Boss.MoveNumbers",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGBossMoveNumbersTest::RunTest(const FString& Parameters)
+{
+	using namespace RPGBossMath;
+	// A4 low sweep: ring 60 to 380 cm, blade 40 cm high, swinging from 90 to -90 degrees.
+	const URPGBossLowSweep* Sweep = GetDefault<URPGBossLowSweep>();
+	TestEqual(TEXT("A4 reach 380"), Sweep->Reach, 380.f);
+	TestEqual(TEXT("A4 inner radius 60"), Sweep->InnerRadius, 60.f);
+	TestEqual(TEXT("A4 blade height 40"), Sweep->BladeHeight, 40.f);
+	TestEqual(TEXT("A4 from 90"), Sweep->SweepFromDegrees, 90.f);
+	TestEqual(TEXT("A4 to -90"), Sweep->SweepToDegrees, -90.f);
+	const float R = 34.f; // the player capsule
+	TestTrue(TEXT("250 cm straight ahead is touched"), SweepTouches(250.f, R, 380.f, 60.f, 0.f, 90.f, -90.f));
+	TestTrue(TEXT("414 cm (capsule edge at 380) is touched"), SweepTouches(414.f, R, 380.f, 60.f, 0.f, 90.f, -90.f));
+	TestFalse(TEXT("420 cm is out of reach"), SweepTouches(420.f, R, 380.f, 60.f, 0.f, 90.f, -90.f));
+	TestFalse(TEXT("20 cm (inside the inner radius even with the capsule)"), SweepTouches(20.f, R, 380.f, 60.f, 0.f, 90.f, -90.f));
+	TestTrue(TEXT("40 cm (capsule edge past 60) is touched"), SweepTouches(40.f, R, 380.f, 60.f, 0.f, 90.f, -90.f));
+	TestFalse(TEXT("a player on the boss's position never counts"), SweepTouches(0.f, R, 380.f, 0.f, 0.f, 90.f, -90.f));
+	// Angles: the arc is widened by asin(34 / 250) = 7.8 degrees at 250 cm.
+	TestTrue(TEXT("95 degrees at 250 cm is inside the widened arc"), SweepTouches(250.f, R, 380.f, 60.f, 95.f, 90.f, -90.f));
+	TestFalse(TEXT("100 degrees at 250 cm is outside"), SweepTouches(250.f, R, 380.f, 60.f, 100.f, 90.f, -90.f));
+	TestFalse(TEXT("behind the boss (180) is never touched"), SweepTouches(250.f, R, 380.f, 60.f, 180.f, 90.f, -90.f));
+	TestTrue(TEXT("a reversed arc (from -90 to 90) covers the same angles"), SweepTouches(250.f, R, 380.f, 60.f, 0.f, -90.f, 90.f));
+	TestTrue(TEXT("a blade that moved only from 10 to 20 touches 15"), SweepTouches(250.f, R, 380.f, 60.f, 15.f, 10.f, 20.f));
+	TestFalse(TEXT("a blade that moved only from 10 to 20 does not touch 40"), SweepTouches(250.f, R, 380.f, 60.f, 40.f, 10.f, 20.f));
+
+	// A5 heal punish: range 400 to 1000, cooldown 4 s, damage 12, flight 1.2 s.
+	const URPGBossHealPunish* Punish = GetDefault<URPGBossHealPunish>();
+	TestEqual(TEXT("A5 min range 400"), Punish->MinRange, 400.f);
+	TestEqual(TEXT("A5 max range 1000"), Punish->MaxRange, 1000.f);
+	TestEqual(TEXT("A5 cooldown 4"), Punish->Cooldown, 4.f);
+	TestEqual(TEXT("A5 flight time 1.2"), Punish->FlightTime, 1.2f);
+
+	// A6 leap wave: one ring from 200 to 1100 cm at 1000 cm/s, 180 cm thick, 48 damage, jumpable from 50 cm.
+	const URPGBossShockwave* Wave = GetDefault<URPGBossShockwave>();
+	TestEqual(TEXT("A6 damage 48"), Wave->Damage, 48.f);
+	TestEqual(TEXT("A6 start radius 200"), Wave->StartRadius, 200.f);
+	TestEqual(TEXT("A6 max radius 1100"), Wave->MaxRadius, 1100.f);
+	TestEqual(TEXT("A6 speed 1000"), Wave->Speed, 1000.f);
+	TestEqual(TEXT("A6 thickness 180"), Wave->Thickness, 180.f);
+	TestEqual(TEXT("A6 jump clearance 50"), Wave->JumpClearance, 50.f);
+	TestTrue(TEXT("the wave reaches its maximum in 0.9 s (1100 - 200) / 1000"), FMath::IsNearlyEqual((Wave->MaxRadius - Wave->StartRadius) / Wave->Speed, 0.9f, 0.001f));
+	return true;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Hit intake (Gate 3, M7): the kind of attack from the pack's attack data name and the stance
+// ---------------------------------------------------------------------------------------------
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGAttackClassifyTest, "OneBossFight.Hit.Classify",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGAttackClassifyTest::RunTest(const FString& Parameters)
+{
+	auto Kind = [](const TCHAR* Name, bool bAirborne) { return static_cast<int32>(RPGClassifyAttack(FName(Name), bAirborne)); };
+	TestEqual(TEXT("default data on the ground is a light attack"), Kind(TEXT("DefaultMeleeAttackData"), false), static_cast<int32>(ERPGAttackKind::Light));
+	TestEqual(TEXT("default data in the air is a jump light"), Kind(TEXT("DefaultMeleeAttackData"), true), static_cast<int32>(ERPGAttackKind::JumpLight));
+	TestEqual(TEXT("strong data on the ground is a strong attack"), Kind(TEXT("StrongMeleeAttackData"), false), static_cast<int32>(ERPGAttackKind::Strong));
+	TestEqual(TEXT("strong data in the air is the jumping heavy"), Kind(TEXT("StrongMeleeAttackData"), true), static_cast<int32>(ERPGAttackKind::JumpHeavy));
+	TestEqual(TEXT("charged data is a charged attack on the ground"), Kind(TEXT("ChargedMeleeAttackData"), false), static_cast<int32>(ERPGAttackKind::Charged));
+	TestEqual(TEXT("charged data in the air stays charged"), Kind(TEXT("ChargedMeleeAttackData"), true), static_cast<int32>(ERPGAttackKind::Charged));
+	TestEqual(TEXT("knockdown data"), Kind(TEXT("MeleeKnockdownAttackData"), false), static_cast<int32>(ERPGAttackKind::Knockdown));
+	TestEqual(TEXT("no data is unknown"), Kind(TEXT("None"), false), static_cast<int32>(ERPGAttackKind::Unknown));
+	TestEqual(TEXT("another asset is unknown"), Kind(TEXT("FireBallAttackData"), true), static_cast<int32>(ERPGAttackKind::Unknown));
+	TestEqual(TEXT("names are stable (the drivers read them)"), FString(RPGAttackKindName(ERPGAttackKind::JumpHeavy)), FString(TEXT("JumpHeavy")));
+	return true;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Weapon attack table (Gate 3, M8): the Freeze starting values and the lookup order
+// ---------------------------------------------------------------------------------------------
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGWeaponTableTest, "OneBossFight.Hit.WeaponTable",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGWeaponTableTest::RunTest(const FString& Parameters)
+{
+	// The defaults of a fresh table (the class constructor), whatever the project asset holds: the Freeze starting values (5, 20.1, 20.2).
+	const URPGWeaponAttackTable* Defaults = GetDefault<URPGWeaponAttackTable>();
+	FRPGWeaponAttackRow Row;
+	TestTrue(TEXT("strength light row exists"), Defaults->Find(TEXT("ClaymoreCombatStyle"), ERPGAttackKind::Light, Row));
+	TestEqual(TEXT("strength light posture 18"), Row.PostureDamage, 18.f);
+	TestTrue(TEXT("strength jump heavy row exists"), Defaults->Find(TEXT("ClaymoreCombatStyle"), ERPGAttackKind::JumpHeavy, Row));
+	TestEqual(TEXT("strength jump heavy posture 38"), Row.PostureDamage, 38.f);
+	TestEqual(TEXT("strength jump heavy stamina 35"), Row.StaminaCost, 35.f);
+	TestEqual(TEXT("strength has no bleed"), Row.BleedBuildup, 0.f);
+	TestTrue(TEXT("dex light row exists"), Defaults->Find(TEXT("DualSwordCombatStyle"), ERPGAttackKind::Light, Row));
+	TestEqual(TEXT("dex light posture 6"), Row.PostureDamage, 6.f);
+	TestEqual(TEXT("dex stamina 10"), Row.StaminaCost, 10.f);
+	TestEqual(TEXT("dex bleed 20 per hit"), Row.BleedBuildup, 20.f);
+	TestTrue(TEXT("dex jump heavy row exists"), Defaults->Find(TEXT("DualSwordCombatStyle"), ERPGAttackKind::JumpHeavy, Row));
+	TestEqual(TEXT("dex jump heavy posture 14"), Row.PostureDamage, 14.f);
+	TestTrue(TEXT("the starter sword has a row"), Defaults->Find(TEXT("SwordCombatStyle"), ERPGAttackKind::Light, Row));
+	TestEqual(TEXT("the starter sword keeps the pack's stamina cost"), Row.StaminaCost, -1.f);
+	// The hyperarmor windows (M13/M14): the Strength build's strong, jump heavy and charged swings carry one inside the montage, nothing else does.
+	auto HasWindow = [&](const URPGWeaponAttackTable* Table, const TCHAR* Weapon, ERPGAttackKind Kind, float& OutStart, float& OutEnd)
+	{
+		FRPGWeaponAttackRow R;
+		Table->Find(Weapon, Kind, R);
+		OutStart = R.HyperArmorStart;
+		OutEnd = R.HyperArmorEnd;
+		return R.HasHyperArmor();
+	};
+	float WinStart = 0.f, WinEnd = 0.f;
+	TestTrue(TEXT("the strength jump heavy has a hyperarmor window"), HasWindow(Defaults, TEXT("ClaymoreCombatStyle"), ERPGAttackKind::JumpHeavy, WinStart, WinEnd));
+	TestTrue(TEXT("it opens before the strike (the first trace window opens at 0.432 s) and closes with it (0.618 s)"), WinStart < 0.432f && WinStart > 0.2f && FMath::IsNearlyEqual(WinEnd, 0.618f, 0.001f));
+	TestTrue(TEXT("the strength strong has the same window"), HasWindow(Defaults, TEXT("ClaymoreCombatStyle"), ERPGAttackKind::Strong, WinStart, WinEnd) && FMath::IsNearlyEqual(WinEnd, 0.618f, 0.001f));
+	TestTrue(TEXT("the strength charged has a window that ends inside the swing (the effect lasts 4 s, the montage 2.7 s)"), HasWindow(Defaults, TEXT("ClaymoreCombatStyle"), ERPGAttackKind::Charged, WinStart, WinEnd) && WinEnd <= 1.1f && WinEnd > WinStart);
+	TestFalse(TEXT("the strength light has none"), HasWindow(Defaults, TEXT("ClaymoreCombatStyle"), ERPGAttackKind::Light, WinStart, WinEnd));
+	TestFalse(TEXT("the strength jump light has none"), HasWindow(Defaults, TEXT("ClaymoreCombatStyle"), ERPGAttackKind::JumpLight, WinStart, WinEnd));
+	TestFalse(TEXT("the starter sword's jump heavy has none"), HasWindow(Defaults, TEXT("SwordCombatStyle"), ERPGAttackKind::JumpHeavy, WinStart, WinEnd));
+	TestFalse(TEXT("the dual swords' jump heavy has none"), HasWindow(Defaults, TEXT("DualSwordCombatStyle"), ERPGAttackKind::JumpHeavy, WinStart, WinEnd));
+	// The asset of the project holds the same windows (an overwrite of the asset must not drop them silently: Scripts/Editor/set_weapon_windows.py writes them).
+	if (const URPGWeaponAttackTable* Asset = LoadObject<URPGWeaponAttackTable>(nullptr, URPGWeaponAttackTable::AssetPath(), nullptr, LOAD_NoWarn))
+	{
+		float AssetStart = 0.f, AssetEnd = 0.f;
+		TestTrue(TEXT("the asset's strength jump heavy has the window"), HasWindow(Asset, TEXT("ClaymoreCombatStyle"), ERPGAttackKind::JumpHeavy, AssetStart, AssetEnd) && AssetEnd > AssetStart && AssetEnd <= 5.f);
+		TestTrue(TEXT("the asset's strength strong has the window"), HasWindow(Asset, TEXT("ClaymoreCombatStyle"), ERPGAttackKind::Strong, AssetStart, AssetEnd) && AssetEnd <= 5.f);
+		TestTrue(TEXT("the asset's strength charged has the window"), HasWindow(Asset, TEXT("ClaymoreCombatStyle"), ERPGAttackKind::Charged, AssetStart, AssetEnd) && AssetEnd <= 5.f);
+		TestFalse(TEXT("the asset's starter sword jump heavy has none"), HasWindow(Asset, TEXT("SwordCombatStyle"), ERPGAttackKind::JumpHeavy, AssetStart, AssetEnd));
+	}
+	else
+	{
+		AddWarning(TEXT("the weapon attack table asset is not in the project: its hyperarmor windows were not checked"));
+	}
+	// The Freeze arithmetic, from the table's rows and the posture component's own pool: three strength jump heavies (3 x 38 = 114) break it, six lights (6 x 18 = 108) do and five do not (90), a dex light needs 17 hits.
+	const float PoolMax = GetDefault<URPGBossPosture>()->PostureMax;
+	TestEqual(TEXT("the posture pool is 100 points (Freeze 17.2)"), PoolMax, 100.f);
+	auto HitsToBreak = [&](const TCHAR* Weapon, ERPGAttackKind Kind)
+	{
+		FRPGWeaponAttackRow R;
+		Defaults->Find(Weapon, Kind, R);
+		return R.PostureDamage > 0.f ? FMath::CeilToInt(PoolMax / R.PostureDamage) : 0;
+	};
+	TestEqual(TEXT("three strength jump heavies break the pool"), HitsToBreak(TEXT("ClaymoreCombatStyle"), ERPGAttackKind::JumpHeavy), 3);
+	TestEqual(TEXT("six strength lights break the pool"), HitsToBreak(TEXT("ClaymoreCombatStyle"), ERPGAttackKind::Light), 6);
+	TestEqual(TEXT("a dex light needs 17 hits (6 x 17 = 102, 16 x 6 = 96)"), HitsToBreak(TEXT("DualSwordCombatStyle"), ERPGAttackKind::Light), 17);
+
+	// The lookup order on a table of our own: the exact row, then the row of the kind for any weapon, then Fallback.
+	URPGWeaponAttackTable* Table = NewObject<URPGWeaponAttackTable>(GetTransientPackage());
+	Table->Rows.Reset();
+	FRPGWeaponAttackRow Exact;
+	Exact.Weapon = TEXT("A");
+	Exact.Kind = ERPGAttackKind::Light;
+	Exact.PostureDamage = 11.f;
+	FRPGWeaponAttackRow Any;
+	Any.Kind = ERPGAttackKind::Light;
+	Any.PostureDamage = 7.f;
+	Table->Rows.Add(Any);
+	Table->Rows.Add(Exact);
+	Table->Fallback.PostureDamage = 3.f;
+	TestTrue(TEXT("exact row found"), Table->Find(TEXT("A"), ERPGAttackKind::Light, Row));
+	TestEqual(TEXT("exact row wins over the any-weapon row"), Row.PostureDamage, 11.f);
+	TestTrue(TEXT("another weapon finds the any-weapon row"), Table->Find(TEXT("B"), ERPGAttackKind::Light, Row));
+	TestEqual(TEXT("any-weapon row value"), Row.PostureDamage, 7.f);
+	TestFalse(TEXT("a kind without a row falls back"), Table->Find(TEXT("A"), ERPGAttackKind::Strong, Row));
+	TestEqual(TEXT("fallback value"), Row.PostureDamage, 3.f);
+	TestTrue(TEXT("the fallback row names what was asked"), Row.Weapon == FName(TEXT("A")) && Row.Kind == ERPGAttackKind::Strong);
+	TestTrue(TEXT("no weapon name finds the any-weapon row, not the exact row of a weapon"), Table->Find(NAME_None, ERPGAttackKind::Light, Row));
+	TestEqual(TEXT("and its value is the any-weapon value"), Row.PostureDamage, 7.f);
+	return true;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Swing rules (Gate 3, M10 and M11): the hyperarmor window of a swing, the stamina on top of the pack's cost, the refresh of the timed effect
+// ---------------------------------------------------------------------------------------------
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGSwingRulesTest, "OneBossFight.Swing.Rules",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGSwingRulesTest::RunTest(const FString& Parameters)
+{
+	using namespace RPGSwingRules;
+	// The window of a swing: the row's, replaced by a test override, none when neither has one.
+	FRPGWeaponAttackRow Row;
+	float Start = 9.f, End = 9.f;
+	ResolveWindow(Row, nullptr, Start, End);
+	TestTrue(TEXT("a row without a window gives no window"), Start < 0.f && End < 0.f);
+	Row.HyperArmorStart = 0.2f;
+	Row.HyperArmorEnd = 0.5f;
+	ResolveWindow(Row, nullptr, Start, End);
+	TestTrue(TEXT("a row's window is used"), FMath::IsNearlyEqual(Start, 0.2f) && FMath::IsNearlyEqual(End, 0.5f));
+	const FVector2D Override(0.05, 1.5);
+	ResolveWindow(Row, &Override, Start, End);
+	TestTrue(TEXT("an override wins over the row"), FMath::IsNearlyEqual(Start, 0.05f) && FMath::IsNearlyEqual(End, 1.5f));
+	FRPGWeaponAttackRow NoWindow;
+	ResolveWindow(NoWindow, &Override, Start, End);
+	TestTrue(TEXT("an override opens a window on a row without one"), FMath::IsNearlyEqual(Start, 0.05f) && FMath::IsNearlyEqual(End, 1.5f));
+	Row.HyperArmorEnd = 0.1f; // end before start: no window (HasHyperArmor)
+	ResolveWindow(Row, nullptr, Start, End);
+	TestTrue(TEXT("a row whose end is not after its start gives no window"), Start < 0.f && End < 0.f);
+
+	// When the window wants the effect (both ends inclusive).
+	TestTrue(TEXT("window open at its start"), WindowOpen(0.2f, 0.5f, 0.2f));
+	TestTrue(TEXT("window open at its end"), WindowOpen(0.2f, 0.5f, 0.5f));
+	TestFalse(TEXT("window closed just before"), WindowOpen(0.2f, 0.5f, 0.19f));
+	TestFalse(TEXT("window closed just after"), WindowOpen(0.2f, 0.5f, 0.51f));
+	TestFalse(TEXT("no start: never open"), WindowOpen(-1.f, 0.5f, 0.3f));
+	TestFalse(TEXT("end not after start: never open"), WindowOpen(0.3f, 0.3f, 0.3f));
+
+	// Stamina on top of the pack's 15: the table's rows through the rule (Freeze 5: strength heavies 35, dex 10; the starter sword keeps the pack's cost).
+	const URPGWeaponAttackTable* Defaults = GetDefault<URPGWeaponAttackTable>();
+	FRPGWeaponAttackRow Found;
+	Defaults->Find(TEXT("ClaymoreCombatStyle"), ERPGAttackKind::JumpHeavy, Found);
+	TestEqual(TEXT("a strength jump heavy takes 20 more than the pack's 15"), StaminaExtra(Found.StaminaCost, 15.f, 100.0), 20.f);
+	Defaults->Find(TEXT("DualSwordCombatStyle"), ERPGAttackKind::Light, Found);
+	TestEqual(TEXT("a dex light gives 5 back"), StaminaExtra(Found.StaminaCost, 15.f, 100.0), -5.f);
+	Defaults->Find(TEXT("SwordCombatStyle"), ERPGAttackKind::Strong, Found);
+	TestEqual(TEXT("the starter sword leaves the pack's cost"), StaminaExtra(Found.StaminaCost, 15.f, 100.0), 0.f);
+	TestEqual(TEXT("a cost equal to the pack's changes nothing"), StaminaExtra(15.f, 15.f, 100.0), 0.f);
+	TestEqual(TEXT("never below zero: 12 stamina left, 20 more wanted"), StaminaExtra(35.f, 15.f, 12.0), 12.f);
+	TestEqual(TEXT("no stamina left: nothing more to take"), StaminaExtra(35.f, 15.f, 0.0), 0.f);
+	TestEqual(TEXT("a negative stamina value takes nothing"), StaminaExtra(35.f, 15.f, -3.0), 0.f);
+	TestEqual(TEXT("giving back is not limited by the stamina left"), StaminaExtra(10.f, 15.f, 0.0), -5.f);
+
+	// The pack's timed effect (4 s): applied again when it is old enough and the window is still open.
+	TestFalse(TEXT("2.9 s old: not yet"), NeedsRefresh(12.9, 10.0, 3.f));
+	TestTrue(TEXT("3.0 s old: again"), NeedsRefresh(13.0, 10.0, 3.f));
+	TestFalse(TEXT("a refresh time of zero switches it off"), NeedsRefresh(100.0, 10.0, 0.f));
+	return true;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Bleed (Gate 3, M12): the status rules of the dexterity build (Freeze 20.2 and 36)
+// ---------------------------------------------------------------------------------------------
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGBleedRulesTest, "OneBossFight.Boss.Bleed",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGBleedRulesTest::RunTest(const FString& Parameters)
+{
+	using namespace RPGBleedRules;
+	// The Freeze 36 registry values are the component's defaults.
+	const URPGBossBleed* Defaults = GetDefault<URPGBossBleed>();
+	TestEqual(TEXT("initial threshold 100"), Defaults->InitialThreshold, 100.f);
+	TestEqual(TEXT("threshold increase 20"), Defaults->ThresholdIncrease, 20.f);
+	TestEqual(TEXT("threshold maximum 200"), Defaults->ThresholdMax, 200.f);
+	TestEqual(TEXT("proc takes 10.5 percent"), Defaults->HpFraction, 0.105f);
+
+	const FConfig Config;
+	FState State;
+	// Five hits of 20 proc once (Freeze 5: "five valid buildup applications"); four do not.
+	for (int32 Hit = 1; Hit <= 4; ++Hit)
+	{
+		TestEqual(*FString::Printf(TEXT("hit %d adds"), Hit), static_cast<int32>(Apply(State, Config, 20.f, false, false, false, false)), static_cast<int32>(EResult::Added));
+	}
+	TestEqual(TEXT("80 of 100 after four hits"), State.Buildup, 80.f);
+	TestEqual(TEXT("the fifth hit procs"), static_cast<int32>(Apply(State, Config, 20.f, false, false, false, false)), static_cast<int32>(EResult::Proc));
+	TestEqual(TEXT("the buildup is reset"), State.Buildup, 0.f);
+	TestEqual(TEXT("the next threshold is 120"), State.Threshold, 120.f);
+	TestEqual(TEXT("one proc counted"), State.Procs, 1);
+	// The thresholds rise by 20 and stop at 200: hits needed per proc are 5, 6, 7, 8, 9, 10, 10.
+	const int32 Expected[] = {6, 7, 8, 9, 10, 10};
+	for (int32 Index = 0; Index < 6; ++Index)
+	{
+		int32 Hits = 0;
+		EResult Result = EResult::Added;
+		while (Result != EResult::Proc && Hits < 50)
+		{
+			Result = Apply(State, Config, 20.f, false, false, false, false);
+			++Hits;
+		}
+		TestEqual(*FString::Printf(TEXT("proc %d needs %d hits"), Index + 2, Expected[Index]), Hits, Expected[Index]);
+	}
+	TestEqual(TEXT("the threshold stays at the maximum 200"), State.Threshold, 200.f);
+	TestEqual(TEXT("seven procs counted"), State.Procs, 7);
+
+	// Nothing builds up on a dead boss, a sleeping boss, during the phase transition, or in the frame of a proc; nothing without an amount.
+	FState Fresh;
+	TestEqual(TEXT("dead is ignored"), static_cast<int32>(Apply(Fresh, Config, 20.f, true, false, false, false)), static_cast<int32>(EResult::IgnoredDead));
+	TestEqual(TEXT("dormant is ignored"), static_cast<int32>(Apply(Fresh, Config, 20.f, false, true, false, false)), static_cast<int32>(EResult::IgnoredDormant));
+	TestEqual(TEXT("the phase transition is ignored"), static_cast<int32>(Apply(Fresh, Config, 20.f, false, false, true, false)), static_cast<int32>(EResult::IgnoredTransition));
+	TestEqual(TEXT("the frame of a proc is ignored"), static_cast<int32>(Apply(Fresh, Config, 20.f, false, false, false, true)), static_cast<int32>(EResult::IgnoredSameFrame));
+	TestEqual(TEXT("no amount is ignored"), static_cast<int32>(Apply(Fresh, Config, 0.f, false, false, false, false)), static_cast<int32>(EResult::IgnoredAmount));
+	TestEqual(TEXT("an ignored hit leaves the buildup at 0"), Fresh.Buildup, 0.f);
+	// Dead wins over the others (the order of the checks).
+	TestEqual(TEXT("dead wins over dormant and transition"), static_cast<int32>(Apply(Fresh, Config, 20.f, true, true, true, true)), static_cast<int32>(EResult::IgnoredDead));
+	// A crossing with a surplus procs once and resets to 0 (no carry over).
+	FState Surplus;
+	Surplus.Buildup = 90.f;
+	TestEqual(TEXT("90 + 30 crosses 100 once"), static_cast<int32>(Apply(Surplus, Config, 30.f, false, false, false, false)), static_cast<int32>(EResult::Proc));
+	TestEqual(TEXT("no carry over"), Surplus.Buildup, 0.f);
+
+	// The burst: 10.5 percent of the maximum health, never the last point.
+	TestEqual(TEXT("10.5 percent of 500 is 52.5"), ProcDamage(500.f, 500.f, Config), 52.5f);
+	TestEqual(TEXT("with 40 health left the proc leaves 1"), ProcDamage(500.f, 40.f, Config), 39.f);
+	TestEqual(TEXT("with half a point left it takes nothing"), ProcDamage(500.f, 0.5f, Config), 0.f);
+	TestEqual(TEXT("names are stable (the drivers read them)"), FString(Name(EResult::Proc)), FString(TEXT("proc")));
 	return true;
 }
 
@@ -675,6 +1084,11 @@ bool FRPGPackWiringTest::RunTest(const FString& Parameters)
 	const bool bTraceNames = RPGPackTrace::CheckClassNames(MissingTraceNames);
 	TestTrue(*FString::Printf(TEXT("the pack's trace classes have every name the facade reads (missing: %s)"), *MissingTraceNames), bTraceNames);
 
+	// The hit intake (Player/RPGHitIntake) binds to the player's OnHit(FHitResult) and reads the trace target's HitData and the attack data by name; the classifier names the four melee attack data assets.
+	FString MissingHitNames;
+	const bool bHitNames = URPGHitIntake::CheckPackNames(MissingHitNames);
+	TestTrue(*FString::Printf(TEXT("the pack's hit classes have every name the hit intake reads (missing: %s)"), *MissingHitNames), bHitNames);
+
 	// Sounds the subsystem and the dressing script assign by path: concrete footsteps, the placeholder boss music, the fire crackle and the wind bed.
 	for (const TCHAR* Sound : {TEXT("/Game/Essential_Foosteps_SK/CUE/Concrete/Footstep_Concrete_Boots_Walk_1_Cue"), TEXT("/Game/Essential_Foosteps_SK/CUE/Concrete/Footstep_Concrete_Boots_Jog_8_Cue"),
 		TEXT("/Game/Essential_Foosteps_SK/CUE/Concrete/Footstep_Concrete_Boots_Run_8_Cue"), TEXT("/Game/Essential_Foosteps_SK/CUE/Concrete/Footstep_Concrete_Boots_Land_4_Cue"),
@@ -791,6 +1205,84 @@ bool FRPGPackWiringTest::RunTest(const FString& Parameters)
 		}
 		TestEqual(TEXT("pack great-sword bosses in the arena"), Bosses, 1);
 	}
+	return true;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Packaging (Gate 4 groundwork): every asset the C++ loads by path must be cooked
+// ---------------------------------------------------------------------------------------------
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGCookCoverageTest, "OneBossFight.Content.CookCoverage",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGCookCoverageTest::RunTest(const FString& Parameters)
+{
+	// The cooker finds an asset through the references of the assets it cooks. An asset that only C++ loads by a /Game path (LoadObject, a soft path in a component's defaults) has no such reference and is left out of a
+	// packaged build, so the A4 sweep clip, the music or the weapon attack table would silently be missing there. Config/DefaultGame.ini lists the directories that are always cooked: every /Game path literal in the sources must be under one.
+	TArray<FString> CookDirectories;
+	TArray<FString> Entries;
+	GConfig->GetArray(TEXT("/Script/UnrealEd.ProjectPackagingSettings"), TEXT("DirectoriesToAlwaysCook"), Entries, GGameIni);
+	for (const FString& Entry : Entries)
+	{
+		int32 Start = INDEX_NONE;
+		if (Entry.FindChar(TEXT('"'), Start))
+		{
+			const int32 End = Entry.Find(TEXT("\""), ESearchCase::CaseSensitive, ESearchDir::FromStart, Start + 1);
+			if (End > Start)
+			{
+				CookDirectories.Add(Entry.Mid(Start + 1, End - Start - 1));
+			}
+		}
+	}
+	TestTrue(TEXT("Config/DefaultGame.ini lists directories to always cook"), CookDirectories.Num() > 0);
+
+	// Path literals that are directory prefixes used for filtering, not assets that are loaded (the PackWiring test above).
+	const TSet<FString> NotAssets = {TEXT("/Game/AdvancedARPGCombat"), TEXT("/Game/OneBossFight/GreystonePack"), TEXT("/Game/OneBossFight/SevarogPack")};
+	TArray<FString> Files;
+	IFileManager::Get().FindFilesRecursive(Files, *(FPaths::ProjectDir() / TEXT("Source/OneBossFight")), TEXT("*.cpp"), true, false);
+	IFileManager::Get().FindFilesRecursive(Files, *(FPaths::ProjectDir() / TEXT("Source/OneBossFight")), TEXT("*.h"), true, false, /*bClearFileNames=*/false);
+	TestTrue(TEXT("the sources are found next to the project"), Files.Num() > 20);
+	const FRegexPattern Pattern(TEXT("\"(/Game/[^\"]+)\""));
+	TSet<FString> Seen;
+	int32 Checked = 0;
+	for (const FString& File : Files)
+	{
+		FString Text;
+		if (!FFileHelper::LoadFileToString(Text, *File))
+		{
+			continue;
+		}
+		FRegexMatcher Matcher(Pattern, Text);
+		while (Matcher.FindNext())
+		{
+			FString Path = Matcher.GetCaptureGroup(1);
+			int32 Format = INDEX_NONE;
+			if (Path.FindChar(TEXT('%'), Format))
+			{
+				Path = Path.Left(Format); // "/Game/Dir/%s.%s": the directory part decides
+			}
+			if (Path.EndsWith(TEXT("/")) || NotAssets.Contains(Path) || Seen.Contains(Path))
+			{
+				continue;
+			}
+			Seen.Add(Path);
+			++Checked;
+			bool bCovered = false;
+			for (const FString& Dir : CookDirectories)
+			{
+				if (Path.StartsWith(Dir + TEXT("/")))
+				{
+					bCovered = true;
+					break;
+				}
+			}
+			if (!bCovered)
+			{
+				AddError(FString::Printf(TEXT("%s is loaded by path in %s and is not under a directory of DirectoriesToAlwaysCook (Config/DefaultGame.ini): a packaged build would not contain it"), *Path, *FPaths::GetCleanFilename(File)));
+			}
+		}
+	}
+	TestTrue(*FString::Printf(TEXT("path literals were found (%d in %d files)"), Checked, Files.Num()), Checked > 30);
 	return true;
 }
 

@@ -88,7 +88,7 @@ def noop(w, pc, pawn, boss):
 
 SCENARIOS = [
     ("stance break", setup_break, noop, 0.0, 1.0),
-    ("riposte", setup_riposte, act_riposte, 0.5, 1.3),
+    ("riposte", setup_riposte, act_riposte, 1.0, 2.3),  # the press waits for the kneel (the interaction opens when the 0.7 s fall clip is over); the paired clips start at once and the impact lands 0.8 s later: the player dies 1.3 s after the press, with the clips still running
     ("A4 sweep", setup_a4, noop, 0.0, 0.8),
     ("A5 javelin in flight", setup_a5, noop, 0.0, 1.0),
 ]
@@ -147,7 +147,7 @@ def _tick(dt):
         extra = ""
         if name.startswith("riposte"):
             extra = " (riposte count %d -> %d)" % (s["mem"]["riposte0"], p["stg"].get_riposte_count())
-            check("riposte: the riposte was accepted and still running when the player dies", p["stg"].get_riposte_count() == s["mem"]["riposte0"] + 1 and p["stg"].is_staggered(), extra)
+            check("riposte: the riposte was accepted, its impact has landed and the execution is still running when the player dies", p["stg"].get_riposte_count() == s["mem"]["riposte0"] + 1 and p["stg"].is_staggered() and p["stg"].is_riposte_executing(), extra)
         if name.startswith("A5"):
             extra = " (javelins in flight %d)" % len(javelins(w))
         log("== %s: killing the player%s" % (name, extra))
@@ -171,7 +171,7 @@ def _tick(dt):
         check("%s: encounter reset once (generation +1)" % name, enc.get_generation() == s["mem"]["gen"] + 1 and enc.get_reset_count() == s["mem"]["resets"] + 1, "generation %d -> %d" % (s["mem"]["gen"], enc.get_generation()))
         check("%s: boss back at its start, dormant" % name, away < 10.0 and enc.is_dormant(), "%.1f cm from home, dormant %s" % (away, enc.is_dormant()))
         check("%s: boss not staggered, no montage left" % name, (not stg.is_staggered()) and montage is None, "staggered %s, montage %s" % (stg.is_staggered(), montage.get_name() if montage else None))
-        check("%s: boss health and poise full" % name, (attr(boss, "Attribute.Health") or 0) >= 499.0 and (attr(boss, "Attribute.Poise") or 0) >= 99.0, "health %s poise %s" % (attr(boss, "Attribute.Health"), attr(boss, "Attribute.Poise")))
+        check("%s: boss health and poise full" % name, (attr(boss, "Attribute.Health") or 0) >= 499.0 and (attr(boss, "Attribute.Poise") or 0) >= 99.0 and comp(boss, "RPGBossPosture").get_posture() >= 99.0, "health %s poise %s" % (attr(boss, "Attribute.Health"), attr(boss, "Attribute.Poise")))
         check("%s: no blade, no pending punish, no javelin" % name, (not p["sw"].is_blade_active()) and (not p["pu"].is_pending()) and len(javelins(w)) == 0, "blade %s pending %s javelins %d" % (p["sw"].is_blade_active(), p["pu"].is_pending(), len(javelins(w))))
         check("%s: the new player starts at full health" % name, php is not None and php >= 99.0, "health %s" % php)
         s["i"] += 1

@@ -1,8 +1,13 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGBossStagger.h"
+#include "Player/RPGBossMath.h"
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGBossInterrupt.h"
+#include "Player/RPGBossClips.h"
+#include "GameFramework/PlayerController.h"
+#include "Components/CapsuleComponent.h"
+#include "TimerManager.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossPosture.h"
 #include "Pack/RPGBlueprintCall.h"
@@ -52,6 +57,112 @@ URPGBossStagger::URPGBossStagger()
 	FallMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage")));
 	GetUpMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage")));
 	ImmunityEffect = TSoftClassPtr<UObject>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C")));
+	FallClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall")));
+	DownClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown")));
+	RipostePlayerClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.AN_Riposte_Player_Front")));
+	RiposteBossClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction")));
+}
+
+FString URPGBossStagger::GetClipStageName() const
+{
+	if (!bClipMode)
+	{
+		return TEXT("none");
+	}
+	switch (ClipStage)
+	{
+	case EClipStage::Fall: return TEXT("fall");
+	case EClipStage::Down: return TEXT("down");
+	case EClipStage::GetUp: return TEXT("getup");
+	case EClipStage::Riposte: return TEXT("riposte");
+	default: return TEXT("none");
+	}
+}
+
+bool URPGBossStagger::StartClipFall()
+{
+	bClipMode = false;
+	ClipStage = EClipStage::None;
+	ClipMontage = nullptr;
+	if (!bUseClips)
+	{
+		return false;
+	}
+	LoadedFall = FallClip.LoadSynchronous();
+	LoadedDown = DownClip.LoadSynchronous();
+	const ACharacter* Character = Cast<ACharacter>(GetOwner());
+	if (!LoadedFall || !LoadedDown || !Character)
+	{
+		return false;
+	}
+	UAnimMontage* Montage = RPGBossClips::Play(Character, LoadedFall, 0.1f, 0.f); // no blend out: the kneel loop takes over at the last frame, which is the same pose
+	if (!Montage)
+	{
+		return false;
+	}
+	ClipMontage = Montage;
+	ClipStage = EClipStage::Fall;
+	bClipMode = true;
+	return true;
+}
+
+void URPGBossStagger::TickClipDown(UAnimInstance* Anim, double Elapsed, double Now)
+{
+	const ACharacter* Character = Cast<ACharacter>(GetOwner());
+	const float FallLength = LoadedFall ? LoadedFall->GetPlayLength() : 0.7f;
+	if (bRiposteRunning)
+	{
+		return; // the execution plays its own clips; the kneel loop resumes when it ends and the get-up starts after that
+	}
+	if (ClipStage == EClipStage::Fall && Anim)
+	{
+		UAnimMontage* Montage = ClipMontage.Get();
+		const bool bPlaying = Montage && Anim->Montage_IsPlaying(Montage);
+		// A montage that another system started over the fall (a boss attack that the attack tracker vetoes in the next frame) is left alone: the kneel starts when the fall is over, or when the fall was stopped and nothing else plays.
+		if ((bPlaying && Anim->Montage_GetPosition(Montage) >= FallLength - 0.03f) || (!bPlaying && !Anim->GetCurrentActiveMontage()))
+		{
+			// The last frame of the fall is the first frame of the kneel (difference 0.0001): the swap shows nothing.
+			ClipMontage = RPGBossClips::Play(Character, LoadedDown, 0.f, 0.15f, 1.f, 40);
+			ClipStage = EClipStage::Down;
+		}
+	}
+	else if (ClipStage == EClipStage::Down && Anim && !Anim->GetCurrentActiveMontage())
+	{
+		// The kneel loop was stopped by something else (a vetoed attack): the boss would stand up in its critical window. The loop starts again.
+		ClipMontage = RPGBossClips::Play(Character, LoadedDown, 0.1f, 0.15f, 1.f, 40);
+	}
+	if (ClipStage == EClipStage::Down && Elapsed >= StaggerSeconds)
+	{
+		// The get-up is the fall backwards: from the kneel to the standing pose the fall started from.
+		ClipMontage = RPGBossClips::Play(Character, LoadedFall, 0.1f, 0.2f, -GetUpRate, 1, FallLength); // blend in 0.1: the kneel loop (a replaced montage stops with the new one's blend in) leaves from any point of its loop
+		ClipStage = EClipStage::GetUp;
+		Phase = EPhase::GetUp;
+		PhaseStart = Now;
+		UE_LOG(LogRPGStagger, Log, TEXT("%s: down for %.2f s, %d critical hits, getting up (clip, rate -%.2f)"), *GetOwner()->GetName(), Elapsed, CriticalHitCount, GetUpRate);
+	}
+}
+
+void URPGBossStagger::StopStaggerMontages(float BlendOut)
+{
+	if (UAnimInstance* Anim = GetAnimInstance())
+	{
+		// Only our montages: a plain Montage_Stop() would also stop the pack's death clip.
+		// Montage_Stop with a null montage stops every montage of the boss, the pack's death clip included: each pointer is checked (a soft pointer is only resident when something loaded it).
+		if (UAnimMontage* Fall = FallMontage.Get())
+		{
+			Anim->Montage_Stop(BlendOut, Fall);
+		}
+		if (UAnimMontage* GetUp = GetUpMontage.Get())
+		{
+			Anim->Montage_Stop(BlendOut, GetUp);
+		}
+		if (UAnimMontage* Clip = ClipMontage.Get())
+		{
+			Anim->Montage_Stop(BlendOut, Clip);
+		}
+	}
+	bClipMode = false;
+	ClipStage = EClipStage::None;
 }
 
 UAnimInstance* URPGBossStagger::GetAnimInstance() const
@@ -75,13 +186,30 @@ void URPGBossStagger::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	}
 	UObject* HitStun = CachedHitStun.Get();
 	const bool bActive = HitStun && IsAbilityInstanceActive(HitStun);
+	if (bRiposteRunning)
+	{
+		TickRiposte(Now);
+	}
+	if (bRiposteExiting)
+	{
+		TickRiposteExit(Now);
+	}
 
 	if (Phase == EPhase::Idle)
 	{
 		if (bActive && !bWasActive)
 		{
-			// The pack's poise gate started its hit stun: that is the break request. It goes through the same gate as the test hooks.
 			bWasActive = bActive;
+			URPGBossPosture* Posture = GetOwner()->FindComponentByClass<URPGBossPosture>();
+			if (Posture && Posture->IsPackPoisePinned())
+			{
+				// The posture pool owns the stance break (Gate 3, M9) and the pack's poise is pinned full: a pack hit stun is the pack's own gate slipping through between two pins (two heavy hits inside 0.05 s took
+				// its 100 to 0), not a break the pool earned. End the flinch and pin again; the table's drains decide.
+				EndPackFlinch();
+				Posture->NotePackStunSuppressed();
+				return;
+			}
+			// No pool (or an unpinned pack poise): the pack's poise gate started its hit stun, that is the break request. It goes through the same gate as the test hooks.
 			RequestBreak(false);
 			return;
 		}
@@ -101,6 +229,11 @@ void URPGBossStagger::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	}
 	if (Phase == EPhase::Down)
 	{
+		if (bClipMode)
+		{
+			TickClipDown(Anim, Elapsed, Now);
+			return;
+		}
 		if (Anim && Fall && !bFrozen && Anim->Montage_IsPlaying(Fall) && Anim->Montage_GetPosition(Fall) >= FreezeAtPosition)
 		{
 			Anim->Montage_Pause(Fall); // stay on the ground
@@ -119,6 +252,16 @@ void URPGBossStagger::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		return;
 	}
 	// Getting up
+	if (bClipMode)
+	{
+		const UAnimMontage* Montage = ClipMontage.Get();
+		const float Length = LoadedFall ? LoadedFall->GetPlayLength() : 0.7f;
+		if (!Anim || !Montage || !Anim->Montage_IsPlaying(Montage) || Anim->Montage_GetPosition(Montage) <= 0.04f || Elapsed > Length / GetUpRate + 0.6)
+		{
+			EndStagger(true); // the backwards fall is at its last frames, the standing pose; it blends out by itself
+		}
+		return;
+	}
 	if (!Anim || !GetUp || !Anim->Montage_IsPlaying(GetUp) || Elapsed > GetUp->GetPlayLength() + 0.5)
 	{
 		EndStagger(true);
@@ -261,9 +404,12 @@ void URPGBossStagger::StartStagger()
 	}
 	if (UAnimInstance* Anim = GetAnimInstance())
 	{
-		if (UAnimMontage* Fall = FallMontage.LoadSynchronous())
+		if (!StartClipFall()) // the project's own fall clip (it stops whatever the boss was playing), else the pack's knockdown montage
 		{
-			Anim->Montage_Play(Fall, 1.f); // stops whatever the boss was playing
+			if (UAnimMontage* Fall = FallMontage.LoadSynchronous())
+			{
+				Anim->Montage_Play(Fall, 1.f);
+			}
 		}
 	}
 	double Health = 0.0;
@@ -273,8 +419,14 @@ void URPGBossStagger::StartStagger()
 
 void URPGBossStagger::EndStagger(bool bResumeBehaviour, bool bClearCooldown)
 {
+	if (bRiposteRunning)
+	{
+		EndRiposteExecution(false, TEXT("the stance break ended"));
+	}
 	const double Now = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0;
 	Phase = EPhase::Idle;
+	bClipMode = false; // the get-up clip (if one plays) blends out by itself
+	ClipStage = EClipStage::None;
 	LastEndTime = Now;
 	CooldownEnd = bClearCooldown ? 0.0 : Now + CooldownSeconds;
 	bFrozen = false;
@@ -294,11 +446,11 @@ void URPGBossStagger::EndStagger(bool bResumeBehaviour, bool bClearCooldown)
 				[](UFunction&, uint8*) {});
 		}
 	}
-	// Poise starts full again (Freeze 714): the hold ends with a refill; without the posture component the direct write is the fallback.
+	// Poise starts full again (Freeze 714): the hold ends with a refill (or the pool is refilled when no hold was running); without the posture component the direct write is the fallback.
 	URPGBossPosture* Posture = GetOwner()->FindComponentByClass<URPGBossPosture>();
-	if (Posture && Posture->GetHoldName() != TEXT("None"))
+	if (Posture)
 	{
-		Posture->EndHold(true);
+		Posture->RefillAfterBreak();
 	}
 	else
 	{
@@ -342,28 +494,21 @@ const TCHAR* URPGBossStagger::CheckRiposte(const AActor* Player, double& OutDist
 	{
 		return TEXT("boss is not down");
 	}
+	if (bClipMode && ClipStage == EClipStage::Fall)
+	{
+		return TEXT("boss is still falling"); // the paired clips are made for the kneel: the interaction (and the HUD prompt) opens when the fall clip is over
+	}
 	if (bRiposteUsed)
 	{
 		return TEXT("riposte already used in this stance break");
 	}
-	const FVector ToPlayer = (Player->GetActorLocation() - Boss->GetActorLocation()) * FVector(1.f, 1.f, 0.f);
-	OutDistance = ToPlayer.Size();
-	if (OutDistance > RiposteRange)
+	double PlayerHealth = 1.0;
+	if (ReadAttribute(Player, HealthTag, false, PlayerHealth) && PlayerHealth <= 0.0)
 	{
-		return TEXT("too far");
+		return TEXT("player is dead");
 	}
-	const FVector Direction = ToPlayer.GetSafeNormal();
-	const FVector BossForward = (Boss->GetActorForwardVector() * FVector(1.f, 1.f, 0.f)).GetSafeNormal();
-	if (FVector::DotProduct(BossForward, Direction) < FMath::Cos(FMath::DegreesToRadians(RiposteConeDegrees * 0.5f)))
-	{
-		return TEXT("not in front of the boss");
-	}
-	const FVector PlayerForward = (Player->GetActorForwardVector() * FVector(1.f, 1.f, 0.f)).GetSafeNormal();
-	if (FVector::DotProduct(PlayerForward, -Direction) < FMath::Cos(FMath::DegreesToRadians(RiposteFacingDegrees * 0.5f)))
-	{
-		return TEXT("player not facing the boss");
-	}
-	return nullptr;
+	OutDistance = ((Player->GetActorLocation() - Boss->GetActorLocation()) * FVector(1.f, 1.f, 0.f)).Size();
+	return RPGBossMath::RiposteReason(RPGBossMath::RiposteGeometry(Boss->GetActorLocation(), Boss->GetActorForwardVector(), Player->GetActorLocation(), Player->GetActorForwardVector(), RiposteRange, RiposteConeDegrees, RiposteFacingDegrees));
 }
 
 bool URPGBossStagger::IsRiposteAvailable(const AActor* Player) const
@@ -382,10 +527,267 @@ bool URPGBossStagger::TryRiposte(const AActor* Player)
 		UE_LOG(LogRPGStagger, Log, TEXT("riposte rejected: %s"), Reason);
 		return false;
 	}
-	RiposteArmedUntil = GetWorld()->GetTimeSeconds() + RiposteArmSeconds;
 	LastRiposteResult = TEXT("accepted");
+	if (bUseRiposteClips && BeginRiposteExecution(Player))
+	{
+		UE_LOG(LogRPGStagger, Log, TEXT("riposte accepted at %.0f cm: the paired clips play, the critical hit (x%.1f) lands once at the impact"), Distance, CriticalMultiplier);
+		return true;
+	}
+	RiposteArmedUntil = GetWorld()->GetTimeSeconds() + RiposteArmSeconds;
 	UE_LOG(LogRPGStagger, Log, TEXT("riposte accepted at %.0f cm, the next hit within %.1f s is critical x%.1f"), Distance, RiposteArmSeconds, CriticalMultiplier);
 	return true;
+}
+
+bool URPGBossStagger::BeginRiposteExecution(const AActor* PlayerActor)
+{
+	ACharacter* Player = Cast<ACharacter>(const_cast<AActor*>(PlayerActor));
+	const ACharacter* Boss = Cast<ACharacter>(GetOwner());
+	if (!Player || !Boss || !GetWorld() || !bClipMode || bRiposteRunning || ClipStage != EClipStage::Down)
+	{
+		return false; // the paired clips are made for the kneel of the stance break clips
+	}
+	LoadedRipostePlayer = RipostePlayerClip.LoadSynchronous();
+	LoadedRiposteBoss = RiposteBossClip.LoadSynchronous();
+	if (!LoadedRipostePlayer || !LoadedRiposteBoss)
+	{
+		return false;
+	}
+	RipostePlayer = Player;
+	bRiposteRunning = true;
+	bRiposteStarted = false;
+	bRiposteImpactDone = false;
+	bRiposteUsed = true; // once per stance break; further presses are rejected from now on
+	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateUObject(this, &URPGBossStagger::StartRiposteClips));
+	return true;
+}
+
+void URPGBossStagger::StartRiposteClips()
+{
+	ACharacter* Player = RipostePlayer.Get();
+	ACharacter* Boss = Cast<ACharacter>(GetOwner());
+	if (!bRiposteRunning || !Player || !Boss || Phase != EPhase::Down)
+	{
+		EndRiposteExecution(false, TEXT("could not start"), true);
+		return;
+	}
+	const double Now = GetWorld()->GetTimeSeconds();
+	// Lock the player: no input, no movement; the pack's own attack that the same press started is cut before its trace window opens.
+	if (APlayerController* Controller = Cast<APlayerController>(Player->GetController()))
+	{
+		Player->DisableInput(Controller);
+	}
+	if (UCharacterMovementComponent* Movement = Player->GetCharacterMovement())
+	{
+		Movement->StopMovementImmediately();
+	}
+	if (UAnimInstance* PlayerAnim = Player->GetMesh() ? Player->GetMesh()->GetAnimInstance() : nullptr)
+	{
+		PlayerAnim->Montage_Stop(0.f);
+	}
+	// The strike ends 60 cm from the boss's centre, inside its capsule (radius ~63 cm, the player's 42): while the clips run the two capsules ignore each other, so the clip's own root motion is not stopped by the contact.
+	if (UCapsuleComponent* PlayerCapsule = Player->GetCapsuleComponent())
+	{
+		PlayerCapsule->IgnoreActorWhenMoving(Boss, true);
+		bRiposteIgnoring = true;
+	}
+	if (UCapsuleComponent* BossCapsule = Boss->GetCapsuleComponent())
+	{
+		BossCapsule->IgnoreActorWhenMoving(Player, true);
+	}
+	// Alignment: the player faces the boss and slides to the clip's start distance along the line from the boss (the clip then travels 90 cm by its root motion).
+	const FVector BossLocation = Boss->GetActorLocation();
+	FVector ToPlayer = (Player->GetActorLocation() - BossLocation) * FVector(1.f, 1.f, 0.f);
+	ToPlayer = ToPlayer.IsNearlyZero() ? Boss->GetActorForwardVector() : ToPlayer.GetSafeNormal();
+	RiposteAlignDone = 0.f;
+	RiposteAlignFrom = Player->GetActorLocation();
+	RiposteAlignTo = FVector(BossLocation.X + ToPlayer.X * RipostePlayerStartGap, BossLocation.Y + ToPlayer.Y * RipostePlayerStartGap, RiposteAlignFrom.Z);
+	if (UWorld* World = GetWorld())
+	{
+		if (const UCapsuleComponent* Capsule = Player->GetCapsuleComponent())
+		{
+			// The slide back must not push the capsule through a wall or a pillar: it stops just short of what is in the way.
+			FHitResult Hit;
+			FCollisionQueryParams Params(SCENE_QUERY_STAT(RiposteAlign), false, Player);
+			Params.AddIgnoredActor(Boss);
+			if (World->SweepSingleByChannel(Hit, RiposteAlignFrom, RiposteAlignTo, FQuat::Identity, ECC_WorldStatic, FCollisionShape::MakeCapsule(Capsule->GetScaledCapsuleRadius(), Capsule->GetScaledCapsuleHalfHeight()), Params))
+			{
+				RiposteAlignTo = RiposteAlignFrom + (RiposteAlignTo - RiposteAlignFrom) * FMath::Max(0.f, Hit.Time - 0.02f);
+			}
+		}
+	}
+	const float FaceYaw = (-ToPlayer).Rotation().Yaw;
+	Player->SetActorRotation(FRotator(0.f, FaceYaw, 0.f));
+	if (APlayerController* Controller = Cast<APlayerController>(Player->GetController()))
+	{
+		Controller->SetControlRotation(FRotator(0.f, FaceYaw, 0.f));
+	}
+	// The paired clips.
+	RipostePlayerMontage = RPGBossClips::Play(Player, LoadedRipostePlayer, 0.05f, 0.2f);
+	UAnimMontage* BossMontage = RPGBossClips::Play(Boss, LoadedRiposteBoss, 0.1f, 0.f); // no blend out: the kneel loop takes over at the last frame, the same pose
+	if (!RipostePlayerMontage.IsValid() || !BossMontage)
+	{
+		EndRiposteExecution(false, TEXT("a clip did not play"), true);
+		return;
+	}
+	ClipMontage = BossMontage;
+	ClipStage = EClipStage::Riposte;
+	bRiposteStarted = true;
+	RiposteStartTime = Now;
+	RiposteEndTime = Now + FMath::Max(LoadedRipostePlayer->GetPlayLength(), LoadedRiposteBoss->GetPlayLength()) - 0.03;
+}
+
+void URPGBossStagger::TickRiposte(double Now)
+{
+	if (!bRiposteStarted)
+	{
+		return; // the start is one frame away
+	}
+	ACharacter* Player = RipostePlayer.Get();
+	if (!Player)
+	{
+		EndRiposteExecution(false, TEXT("the player is gone"), true);
+		return;
+	}
+	double PlayerHealth = 1.0;
+	if (ReadAttribute(Player, HealthTag, false, PlayerHealth) && PlayerHealth <= 0.0)
+	{
+		EndRiposteExecution(false, TEXT("the player died"), true);
+		return;
+	}
+	const double T = Now - RiposteStartTime;
+	if (RiposteAlignDone < 1.f)
+	{
+		// The slide is added to the clip's own root motion (a delta per frame, never an absolute position: that would throw the root motion of the first 0.3 s away).
+		const float Alpha = FMath::Clamp(static_cast<float>(T / RiposteAlignSeconds), 0.f, 1.f);
+		if (Alpha > RiposteAlignDone)
+		{
+			Player->AddActorWorldOffset((RiposteAlignTo - RiposteAlignFrom) * (Alpha - RiposteAlignDone), false, nullptr, ETeleportType::TeleportPhysics);
+			RiposteAlignDone = Alpha;
+		}
+	}
+	if (!bRiposteImpactDone && T >= RiposteImpactSeconds)
+	{
+		ApplyRiposteImpact();
+	}
+	if (Now >= RiposteEndTime)
+	{
+		EndRiposteExecution(true, TEXT("clips over"));
+	}
+}
+
+void URPGBossStagger::TickRiposteExit(double Now)
+{
+	ACharacter* Player = RipostePlayer.Get();
+	const double Alpha = FMath::Clamp((Now - RiposteExitStart) / 0.25, 0.0, 1.0);
+	if (!Player || Alpha >= 1.0)
+	{
+		if (Player)
+		{
+			Player->SetActorLocation(RiposteExitTo, false, nullptr, ETeleportType::TeleportPhysics);
+		}
+		bRiposteExiting = false;
+		return;
+	}
+	Player->SetActorLocation(FMath::Lerp(RiposteExitFrom, RiposteExitTo, static_cast<float>(Alpha)), false, nullptr, ETeleportType::TeleportPhysics);
+}
+
+void URPGBossStagger::ApplyRiposteImpact()
+{
+	bRiposteImpactDone = true;
+	double Health = 0.0;
+	if (!ReadAttribute(GetOwner(), HealthTag, false, Health) || Health <= 0.0)
+	{
+		return;
+	}
+	// One designated damage event at the impact frame: the critical multiplier applies to the base hit once (Freeze 17.4). The baseline moves with it so ApplyCritical sees no second loss.
+	const double Damage = RiposteBaseDamage * CriticalMultiplier;
+	const double NewHealth = FMath::Max(0.0, Health - Damage);
+	WriteAttribute(GetOwner(), HealthTag, NewHealth);
+	LastHealth = NewHealth;
+	if (NewHealth <= 0.0)
+	{
+		TryActivateByTag(GetOwner(), TEXT("Ability.Dead"), true); // writing the attribute alone does not start the pack's death ability (as DebugKillBoss)
+	}
+	++RiposteCount;
+	++CriticalHitCount;
+	++RiposteImpacts;
+	RiposteArmedUntil = -1.0;
+	UE_LOG(LogRPGStagger, Log, TEXT("riposte impact: %.0f x %.1f = %.0f damage, health %.0f -> %.0f (impact %d)"), RiposteBaseDamage, CriticalMultiplier, Damage, Health, NewHealth, RiposteImpacts);
+}
+
+void URPGBossStagger::EndRiposteExecution(bool bCompleted, const TCHAR* Why, bool bResumeKneel)
+{
+	if (!bRiposteRunning)
+	{
+		return;
+	}
+	bRiposteRunning = false;
+	const bool bWasStarted = bRiposteStarted;
+	bRiposteStarted = false;
+	ACharacter* Player = RipostePlayer.Get();
+	if (Player)
+	{
+		UAnimInstance* PlayerAnim = Player->GetMesh() ? Player->GetMesh()->GetAnimInstance() : nullptr;
+		if (!bCompleted && PlayerAnim && RipostePlayerMontage.IsValid())
+		{
+			PlayerAnim->Montage_Stop(0.1f, RipostePlayerMontage.Get());
+		}
+		double BossHealth = 1.0;
+		const bool bBossAlive = !ReadAttribute(GetOwner(), HealthTag, false, BossHealth) || BossHealth > 0.0;
+		double PlayerHealth = 1.0;
+		const bool bPlayerAlive = !ReadAttribute(Player, HealthTag, false, PlayerHealth) || PlayerHealth > 0.0;
+		// The player's input comes back when both live; after the boss's death the HUD's victory lock owns it, after the player's death the reset does.
+		if (bBossAlive && bPlayerAlive)
+		{
+			if (APlayerController* Controller = Cast<APlayerController>(Player->GetController()))
+			{
+				Player->EnableInput(Controller);
+			}
+		}
+	}
+	if (bRiposteIgnoring)
+	{
+		bRiposteIgnoring = false;
+		ACharacter* Boss = Cast<ACharacter>(GetOwner());
+		if (Player && Boss && Player->GetCapsuleComponent() && Boss->GetCapsuleComponent())
+		{
+			Player->GetCapsuleComponent()->IgnoreActorWhenMoving(Boss, false);
+			Boss->GetCapsuleComponent()->IgnoreActorWhenMoving(Player, false);
+			// Slide the player out to the capsules' contact distance (plus 3 cm) along the line from the boss, so the movement component does not push him out in one frame.
+			const FVector BossLocation = Boss->GetActorLocation();
+			FVector Out = (Player->GetActorLocation() - BossLocation) * FVector(1.f, 1.f, 0.f);
+			const float Contact = Boss->GetCapsuleComponent()->GetScaledCapsuleRadius() + Player->GetCapsuleComponent()->GetScaledCapsuleRadius() + 3.f;
+			if (Out.Size() < Contact && GetWorld())
+			{
+				Out = Out.IsNearlyZero() ? Boss->GetActorForwardVector() : Out.GetSafeNormal();
+				RiposteExitFrom = Player->GetActorLocation();
+				RiposteExitTo = FVector(BossLocation.X + Out.X * Contact, BossLocation.Y + Out.Y * Contact, RiposteExitFrom.Z);
+				FHitResult Hit;
+				FCollisionQueryParams Params(SCENE_QUERY_STAT(RiposteExit), false, Player);
+				Params.AddIgnoredActor(Boss);
+				if (GetWorld()->SweepSingleByChannel(Hit, RiposteExitFrom, RiposteExitTo, FQuat::Identity, ECC_WorldStatic, FCollisionShape::MakeCapsule(Player->GetCapsuleComponent()->GetScaledCapsuleRadius(), Player->GetCapsuleComponent()->GetScaledCapsuleHalfHeight()), Params))
+				{
+					RiposteExitTo = RiposteExitFrom + (RiposteExitTo - RiposteExitFrom) * FMath::Max(0.f, Hit.Time - 0.02f);
+				}
+				RiposteExitStart = GetWorld()->GetTimeSeconds();
+				bRiposteExiting = true;
+			}
+		}
+	}
+	if (!bCompleted)
+	{
+		++RiposteAborts;
+	}
+	if (!bCompleted && bResumeKneel && !bRiposteImpactDone)
+	{
+		bRiposteUsed = false; // aborted before the impact by something on the player's side: the stance break keeps its riposte
+	}
+	if ((bCompleted || bResumeKneel) && Phase == EPhase::Down && bClipMode && LoadedDown)
+	{
+		ClipMontage = RPGBossClips::Play(Cast<ACharacter>(GetOwner()), LoadedDown, 0.f, 0.15f, 1.f, 40); // the reaction's last frame is the kneel's first frame
+		ClipStage = EClipStage::Down;
+	}
+	UE_LOG(LogRPGStagger, Log, TEXT("%s: riposte execution over (%s, %s, started %d, impacts %d)"), *GetOwner()->GetName(), bCompleted ? TEXT("completed") : TEXT("aborted"), Why, bWasStarted ? 1 : 0, RiposteImpacts);
 }
 
 FString URPGBossStagger::ForceBreakForTest()
@@ -408,11 +810,7 @@ void URPGBossStagger::AbortStagger()
 	bRiposteUsed = false;
 	if (Phase != EPhase::Idle)
 	{
-		if (UAnimInstance* Anim = GetAnimInstance())
-		{
-			Anim->Montage_Stop(0.1f, FallMontage.Get());
-			Anim->Montage_Stop(0.1f, GetUpMontage.Get());
-		}
+		StopStaggerMontages(0.1f);
 		EndStagger(false, true);
 		bBehaviourHeld = false; // the caller decides what the behaviour does next
 	}
@@ -428,6 +826,14 @@ void URPGBossStagger::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
+void URPGBossStagger::AcknowledgeHealthLoss(double Loss)
+{
+	if (LastHealth >= 0.0)
+	{
+		LastHealth = FMath::Max(0.0, LastHealth - Loss);
+	}
+}
+
 void URPGBossStagger::ApplyCritical()
 {
 	double Health = 0.0;
@@ -438,12 +844,7 @@ void URPGBossStagger::ApplyCritical()
 	if (Health <= 0.0)
 	{
 		UE_LOG(LogRPGStagger, Log, TEXT("%s: died during the stance break"), *GetOwner()->GetName());
-		if (UAnimInstance* Anim = GetAnimInstance())
-		{
-			// Only our two clips: a plain Montage_Stop() would also stop the pack's death clip.
-			Anim->Montage_Stop(0.1f, FallMontage.Get());
-			Anim->Montage_Stop(0.1f, GetUpMontage.Get());
-		}
+		StopStaggerMontages(0.1f); // only the stance break's own montages: a plain Montage_Stop() would also stop the pack's death clip
 		EndStagger(false);
 		return;
 	}
@@ -451,11 +852,7 @@ void URPGBossStagger::ApplyCritical()
 	{
 		// Health went up while the boss was down: the pack reset the encounter (the player died and respawned). Stand the boss up and hand it back to its behaviour.
 		UE_LOG(LogRPGStagger, Log, TEXT("%s: health rose %.0f -> %.0f during the stance break (encounter reset), ending it"), *GetOwner()->GetName(), LastHealth, Health);
-		if (UAnimInstance* Anim = GetAnimInstance())
-		{
-			Anim->Montage_Stop(0.2f, FallMontage.Get());
-			Anim->Montage_Stop(0.2f, GetUpMontage.Get());
-		}
+		StopStaggerMontages(0.2f);
 		LastHealth = Health;
 		EndStagger(true);
 		return;
@@ -466,6 +863,10 @@ void URPGBossStagger::ApplyCritical()
 		const double Loss = LastHealth - Health;
 		const double NewHealth = FMath::Max(0.0, Health - Loss * (CriticalMultiplier - 1.0));
 		WriteAttribute(GetOwner(), HealthTag, NewHealth);
+		if (NewHealth <= 0.0)
+		{
+			TryActivateByTag(GetOwner(), TEXT("Ability.Dead"), true); // the bonus can take the last health: writing the attribute alone does not start the pack's death ability (review D)
+		}
 		bRiposteUsed = true;
 		RiposteArmedUntil = -1.0;
 		++RiposteCount;
@@ -478,6 +879,10 @@ void URPGBossStagger::ApplyCritical()
 		const double Loss = LastHealth - Health;
 		const double NewHealth = FMath::Max(0.0, Health - Loss * (CriticalMultiplier - 1.0));
 		WriteAttribute(GetOwner(), HealthTag, NewHealth);
+		if (NewHealth <= 0.0)
+		{
+			TryActivateByTag(GetOwner(), TEXT("Ability.Dead"), true); // as above
+		}
 		++CriticalHitCount;
 		UE_LOG(LogRPGStagger, Log, TEXT("critical hit: lost %.0f, took %.0f in total (health %.0f -> %.0f)"), Loss, Loss + (Health - NewHealth), LastHealth, NewHealth);
 		Health = NewHealth;

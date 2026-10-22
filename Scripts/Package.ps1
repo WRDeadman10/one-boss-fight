@@ -27,7 +27,7 @@ $StageDir = Join-Path $ProjectRoot 'Saved\StagedBuilds'
 if (-not (Test-Path $Uat)) { throw "RunUAT.bat not found at $Uat" }
 
 # Only the maps we ship are cooked.
-$Maps = '/Game/OneBossFight/Levels/L_Greybox+/Game/OneBossFight/Levels/L_Benchmark'
+$Maps = '/Game/OneBossFight/Levels/L_SevarogArena'
 
 Write-Host "Packaging $Configuration build -> $StageDir"
 

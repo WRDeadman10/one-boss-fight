@@ -9,6 +9,7 @@
 #include "RPGBossPhases.generated.h"
 
 class UAnimMontage;
+class UAnimSequence;
 
 /**
  * Phase two for the pack's great-sword boss. At PhaseTwoHealthFraction of its health (once per fight, not while it is dormant or in a stance break):
@@ -33,8 +34,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase", meta = (ClampMin = "0.2"))
 	float TransitionSeconds = 1.8f;
 
+	/** The roar of the project: Antigravity's clip AN_Boss01_PhaseRoar (1.8 s, the boss leans back and howls). Played when it loads; the pack's montage below is the fallback. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase")
+	bool bUseRoarClip = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase")
+	TSoftObjectPtr<UAnimSequence> RoarClip;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase")
 	TSoftObjectPtr<UAnimMontage> TransitionMontage;
+
+	/** Name of the clip or montage the roar plays ("" before the first transition), for tests. */
+	UFUNCTION(BlueprintPure, Category = "Phase")
+	FString GetRoarSourceName() const { return RoarSourceName; }
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase")
 	TSoftClassPtr<UObject> ImmunityEffect;
@@ -147,6 +159,7 @@ private:
 	double LastTransitionStart = -1.0;
 	int32 QueuedStarts = 0;
 	double TransitionEnd = 0.0;
+	FString RoarSourceName;
 	double NextFireball = 0.0;
 	double AppliedAttack = 0.0;
 	float BaseWalkSpeed = 0.f;

@@ -1,0 +1,13 @@
+Clip: AN_Riposte_Player_Front
+Length: 1.600
+FPS: 30
+Frames: 49 (0 to 48)
+Loop: No (One-shot)
+RootMotion: Yes (Forward along +Y: (0, 0, 0) to (0, 90, 0) cm)
+RootYaw: 0 (Character faces +Y on every frame)
+WindupEndTime: 0.70
+Impact: 0.80 (Frame 24)
+ActiveStartTime: 0.70
+ActiveEndTime: 1.10
+RecoveryEndTime: 1.600
+Notes: Paired Riposte Execution (Player Perspective, Asset A-11). Root yaw 0 throughout, facing +Y. Root advances forward along +Y from (0, 0, 0) to (0, 90, 0) cm reached at 0.70s (F21) and held through 1.60s. Heavy torso coil and arm windup (0.0 to 0.70s); lethal lunge thrust with hand_r 64.95 cm ahead of root at 107.95 cm height at 0.80s Impact (Frame 24); body movement inside root frame between 0.467s and 0.80s is 2974.8 cm (>> 400 cm); recovery (1.00-1.60s) returning hand_r, hand_l, head within 0.4 cm (<= 15 cm) of frame 0 relative pose.

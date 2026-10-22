@@ -43,7 +43,7 @@ def s_arm(w, pc, pawn, boss):
 
 
 def snap(tr):
-    return {"inst": tr.get_attack_instance(), "ill": tr.get_illegal_start_count(), "dbl": tr.get_double_launch_count()}
+    return {"inst": tr.get_attack_instance(), "ill": tr.get_illegal_start_count(), "dbl": tr.get_double_launch_count(), "commits": tr.get_commit_count(), "cut": tr.get_ended_before_commit_count()}
 
 
 def s_r1(w, pc, pawn, boss):
@@ -163,7 +163,9 @@ def s_r5_check(w, pc, pawn, boss):
     check("R5 the boss attacked in the fight (%d tracked attacks)" % n, n >= 4)
     check("R5 no double launch in the natural fight", tr.get_double_launch_count() == m["dbl"], "%d -> %d" % (m["dbl"], tr.get_double_launch_count()))
     check("R5 no vetoed start in the natural fight", tr.get_illegal_start_count() == m["ill"], "%d -> %d" % (m["ill"], tr.get_illegal_start_count()))
-    check("R5 every tracked attack committed once", tr.get_commit_count() >= n)
+    # attacks the pack stopped in their windup (KI-069) never reach the commit point: they are counted apart
+    cut = tr.get_ended_before_commit_count() - m.get("cut", 0)
+    check("R5 every tracked attack that reached its commit point committed once (%d attacks, %d stopped in the windup)" % (n, cut), tr.get_commit_count() - m.get("commits", 0) + cut >= n, "commits %d" % (tr.get_commit_count() - m.get("commits", 0)))
 
 
 STEPS = [

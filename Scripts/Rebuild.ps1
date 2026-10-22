@@ -36,7 +36,12 @@ if ($out | Select-String -Pattern "error C|: error") { 'BUILD FAILED'; return }
 if ($Tests) {
   $log = Join-Path $env:TEMP "obf_tests.log"
   & "$engine\Binaries\Win64\UnrealEditor-Cmd.exe" $project -ExecCmds="Automation RunTests OneBossFight; Quit" -unattended -nullrhi -nosound -nosplash -abslog="$log" | Out-Null
-  Select-String -Path $log -Pattern "Test Completed|Expected" | ForEach-Object { $_.Line.Substring([Math]::Min(30, $_.Line.Length)) }
+  $done = @(Select-String -Path $log -Pattern "Test Completed|Expected")
+  $done | ForEach-Object { $_.Line.Substring([Math]::Min(30, $_.Line.Length)) }
+  $ok = @($done | Where-Object { $_.Line -match "Result=\{Success\}" }).Count
+  $finished = @($done | Where-Object { $_.Line -match "Test Completed" }).Count
+  "automation tests: $finished finished, $ok passed"
+  if ($finished -eq 0) { 'TESTS DID NOT RUN (no Test Completed line in the log: a disconnected Windows session makes the engine exit at startup, KI-093; see ' + $log + ')' }
 }
 if (-not $NoRelaunch) {
   Start-Process -FilePath "$engine\Binaries\Win64\UnrealEditor.exe" -ArgumentList "`"$project`"", '-nosplash', '-nosound'

@@ -4,11 +4,17 @@
 #include "Combat/RPGInputTestUtils.h"
 #include "Player/RPGDodgeTiming.h"
 #include "Player/RPGIFrameMonitor.h"
+#include "Player/RPGHitIntake.h"
+#include "Player/RPGSwingTracker.h"
+#include "Player/RPGBuildLoadout.h"
 #include "Player/RPGBossStagger.h"
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGAttackTracker.h"
 #include "Player/RPGRiposteInput.h"
+#include "Player/RPGBossBleed.h"
+#include "Player/RPGBossLook.h"
+#include "Player/RPGBossDeath.h"
 #include "Player/RPGBossPosture.h"
 #include "Player/RPGCameraRig.h"
 #include "Player/RPGBossShockwave.h"
@@ -163,6 +169,18 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
 		URPGDodgeTiming* Timing = NewObject<URPGDodgeTiming>(Pawn, TEXT("RPGDodgeTiming"));
 		Timing->RegisterComponent();
 	}
+	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGSwingTracker>())
+	{
+		NewObject<URPGSwingTracker>(Pawn, TEXT("RPGSwingTracker"))->RegisterComponent(); // the swing of the player: weapon, kind, stamina cost from the weapon table (Gate 3)
+	}
+	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGHitIntake>())
+	{
+		NewObject<URPGHitIntake>(Pawn, TEXT("RPGHitIntake"))->RegisterComponent(); // the record of every hit the player lands on the boss (Gate 3)
+	}
+	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGBuildLoadout>())
+	{
+		NewObject<URPGBuildLoadout>(Pawn, TEXT("RPGBuildLoadout"))->RegisterComponent(); // the weapon of the chosen build (rpg.Build) before the fight, the weapon slot locked in it; nothing is called while no build is chosen (Gate 3, M13)
+	}
 	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGIFrameMonitor>())
 	{
 		URPGIFrameMonitor* IFrames = NewObject<URPGIFrameMonitor>(Pawn, TEXT("RPGIFrameMonitor"));
@@ -187,6 +205,18 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
 	{
 		URPGBossPosture* Posture = NewObject<URPGBossPosture>(Pawn, TEXT("RPGBossPosture"));
 		Posture->RegisterComponent();
+	}
+	if (IsPackBoss(Pawn))
+	{
+		URPGBossDeath::Attach(Pawn, ERPGBossDeathMode::OwnClip); // the death clip (G2-9): the component plays AN_Boss01_DeathLegend itself, holds the pose and keeps the pack's ragdoll off (the pack's ragdoll ability ignores DeathMontages: probe 2026-10-22, DEATH_CLIP_NOTES.md)
+	}
+	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossLook>())
+	{
+		NewObject<URPGBossLook>(Pawn, TEXT("RPGBossLook"))->RegisterComponent(); // the final look: Antigravity's body, crown, mantle, gauntlet and the greatsword on top of the pack mesh that keeps driving the fight (G2-15)
+	}
+	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossBleed>())
+	{
+		NewObject<URPGBossBleed>(Pawn, TEXT("RPGBossBleed"))->RegisterComponent(); // the hemorrhage status (Gate 3)
 	}
 	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGAttackTracker>())
 	{
