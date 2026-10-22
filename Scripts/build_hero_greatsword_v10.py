@@ -6,6 +6,7 @@ from blender_exec import execute_blender
 
 code = r"""
 import bpy
+import os
 import bmesh
 import math
 from mathutils import Vector, Euler, Matrix
@@ -104,21 +105,20 @@ for i in range(n_pom):
     f1.material_index = 1
     f2.material_index = 1
 
-# Hub walls (leave gaps at X extremes for quillons: i=0..2 and i=12..14)
+# Hub walls: fully closed watertight cylinder
 for i in range(n_hub):
     ni = (i + 1) % n_hub
-    if i not in [0, 1, 12, 13]:
-        f1 = bm.faces.new([hub_bot[i], hub_bot[ni], hub_mid[ni], hub_mid[i]])
-        f2 = bm.faces.new([hub_mid[i], hub_mid[ni], hub_top[ni], hub_top[i]])
-        f1.material_index = 1
-        f2.material_index = 1
+    f1 = bm.faces.new([hub_bot[i], hub_bot[ni], hub_mid[ni], hub_mid[i]])
+    f2 = bm.faces.new([hub_mid[i], hub_mid[ni], hub_top[ni], hub_top[i]])
+    f1.material_index = 1
+    f2.material_index = 1
 
 # -------------------------------------------------------------
 # 4. THICK QUILLONS WELDED TO HUB (span 62.0 cm: X = -31.0 to +31.0)
 # -------------------------------------------------------------
-for sign_x, h_root in [(1.0, [hub_bot[0], hub_top[0], hub_top[2], hub_bot[2]]),
-                       (-1.0, [hub_bot[12], hub_top[12], hub_top[14], hub_bot[14]])]:
+for sign_x, idx_top, idx_bot, idx_front, idx_back in [(1.0, 0, 0, 23, 1), (-1.0, 12, 12, 13, 11)]:
     q_profile = [
+        (sign_x * 9.0,  3.7, 5.5, 4.5), # quillon shoulder covering inner spire bases
         (sign_x * 12.0, 3.5, 5.5, 3.0),
         (sign_x * 18.0, 3.2, 5.2, 2.7),
         (sign_x * 23.5, 2.8, 6.5, 2.4),
@@ -126,7 +126,12 @@ for sign_x, h_root in [(1.0, [hub_bot[0], hub_top[0], hub_top[2], hub_bot[2]]),
         (sign_x * 30.2, 1.4, 10.8, 1.4),
         (sign_x * 31.0, 0.6, 11.5, 0.6),
     ]
-    prev_qr = h_root
+    prev_qr = [
+        hub_mid[idx_front],
+        hub_top[idx_top],
+        hub_mid[idx_back],
+        hub_bot[idx_bot],
+    ]
     for x, yt, zc, zt in q_profile:
         qr = [
             bm.verts.new(Vector((x, -yt, zc))),
@@ -149,17 +154,17 @@ for sign_x, h_root in [(1.0, [hub_bot[0], hub_top[0], hub_top[2], hub_bot[2]]),
 # 5. FIVE PROMINENT GUARD SPIRES (> 8 cm tall, readable at 8 m)
 # -------------------------------------------------------------
 # Spires are 3D gothic crown pyramids rising from guard top (Z = 10 to 11 cm)
-# Spire 1 (outer left):  X = -17.0, Y = +1.5, base Z = 9.5,  tip Z = 19.5 (10.0 cm tall)
-# Spire 2 (inner left):  X =  -8.0, Y = -1.2, base Z = 10.5, tip Z = 21.0 (10.5 cm tall)
-# Spire 3 (center peak): X =   0.0, Y = -2.5, base Z = 11.0, tip Z = 22.5 (11.5 cm tall)
-# Spire 4 (inner right): X =  +8.0, Y = -1.2, base Z = 10.5, tip Z = 21.0 (10.5 cm tall)
-# Spire 5 (outer right): X = +17.0, Y = +1.5, base Z = 9.5,  tip Z = 19.5 (10.0 cm tall)
+# Spire 1 (outer left):  X = -17.0, Y =  0.0, base Z = 5.0, tip Z = 19.5 (14.5 cm tall)
+# Spire 2 (inner left):  X =  -9.0, Y =  0.0, base Z = 5.0, tip Z = 21.0 (16.0 cm tall, depth 6.0 cm in quillon)
+# Spire 3 (center peak): X =   0.0, Y = -1.8, base Z = 8.0, tip Z = 22.5 (14.5 cm tall, depth 13.0 cm in hub)
+# Spire 4 (inner right): X =  +9.0, Y =  0.0, base Z = 5.0, tip Z = 21.0 (16.0 cm tall, depth 6.0 cm in quillon)
+# Spire 5 (outer right): X = +17.0, Y =  0.0, base Z = 5.0, tip Z = 19.5 (14.5 cm tall)
 spire_specs = [
-    (-17.0,  1.5,  9.5, 19.5, 2.2, 1.8),
-    ( -8.0, -1.2, 10.5, 21.0, 2.6, 2.0),
-    (  0.0, -2.5, 11.0, 22.5, 3.0, 2.2),
-    (  8.0, -1.2, 10.5, 21.0, 2.6, 2.0),
-    ( 17.0,  1.5,  9.5, 19.5, 2.2, 1.8)
+    (-17.0,  0.0,  5.0, 19.5, 2.2, 1.8),
+    ( -9.0,  0.0,  5.0, 21.0, 1.8, 1.2),
+    (  0.0, -1.8,  8.0, 22.5, 3.0, 2.2),
+    (  9.0,  0.0,  5.0, 21.0, 1.8, 1.2),
+    ( 17.0,  0.0,  5.0, 19.5, 2.2, 1.8)
 ]
 
 for sx, sy, sbz, stz, sw, sth in spire_specs:
@@ -169,12 +174,13 @@ for sx, sy, sbz, stz, sw, sth in spire_specs:
     v3 = bm.verts.new(Vector((sx - sw*0.5, sy + sth*0.5, sbz)))
     v_tip = bm.verts.new(Vector((sx, sy, stz)))
     
-    # 4 faces of pyramid
+    # 4 faces of pyramid + base face to seal manifold
     f0 = bm.faces.new([v0, v1, v_tip])
     f1 = bm.faces.new([v1, v2, v_tip])
     f2 = bm.faces.new([v2, v3, v_tip])
     f3 = bm.faces.new([v3, v0, v_tip])
-    for f in [f0, f1, f2, f3]:
+    f_base = bm.faces.new([v0, v3, v2, v1])
+    for f in [f0, f1, f2, f3, f_base]:
         f.material_index = 1
 
 # -------------------------------------------------------------
@@ -332,7 +338,7 @@ poly_count = len(sw_mesh.polygons)
 slot_counts = {m.name: sum(1 for p in sw_mesh.polygons if p.material_index == idx) for idx, m in enumerate(sw_mesh.materials)}
 
 # Export to Import/Boss01/Weapons/SM_Boss01_Greatsword.fbx
-out_fbx = "c:/Users/winss/Documents/Unreal Projects/OneBossFight/Import/Boss01/Weapons/SM_Boss01_Greatsword.fbx"
+out_fbx = os.path.abspath("Import/Boss01/Weapons/SM_Boss01_Greatsword.fbx")
 
 bpy.ops.object.select_all(action='DESELECT')
 sw_obj.select_set(True)

@@ -120,7 +120,9 @@ def _tick(dt):
             away = (boss.get_actor_location() - home).length()
             check("boss fights and leaves its start", away > 150.0 and not dorm, "(%.0f cm from home, hp %s)" % (away, attr(boss, "Attribute.Health")))
             set_attr(boss, "Attribute.Health", 300.0)  # hurt, so the reset has something to heal
-            set_attr(boss, "Attribute.Poise", 30.0)
+            set_attr(boss, "Attribute.Poise", 30.0)  # the pack's poise is pinned full by the posture component within 0.05 s: the pool below is what the reset has to restore
+            comp(boss, "RPGCombatDebug").debug_set_boss_posture(30.0)
+            log("   posture pool lowered to %.0f" % comp(boss, "RPGBossPosture").get_posture())
             s.update(stage="die", stage_t0=s["t"], die_pos=boss.get_actor_location())
             set_attr(pawn, "Attribute.Health", 0.0)
             log("== killing the player (boss at %.0f,%.0f, hp %s, poise %s)" % (boss.get_actor_location().x, boss.get_actor_location().y, attr(boss, "Attribute.Health"), attr(boss, "Attribute.Poise")))
@@ -137,7 +139,8 @@ def _tick(dt):
             at_home = (boss.get_actor_location() - home).length()
             hp, mx = attr(boss, "Attribute.Health"), None
             check("boss back at its start after the respawn", at_home < 10.0, "(%.1f cm from home)" % at_home)
-            check("boss health and poise full", (attr(boss, "Attribute.Health") or 0) >= 499.0 and (attr(boss, "Attribute.Poise") or 0) >= 99.0, "(hp %s poise %s)" % (attr(boss, "Attribute.Health"), attr(boss, "Attribute.Poise")))
+            pool = comp(boss, "RPGBossPosture").get_posture()
+            check("boss health, poise and posture pool full", (attr(boss, "Attribute.Health") or 0) >= 499.0 and (attr(boss, "Attribute.Poise") or 0) >= 99.0 and pool >= 99.0, "(hp %s poise %s posture pool %.1f)" % (attr(boss, "Attribute.Health"), attr(boss, "Attribute.Poise"), pool))
             check("boss dormant again", dorm and enc.get_reset_count() >= 1, "(dormant %s, resets %d, montage %s)" % (dorm, enc.get_reset_count(), m))
             s.update(stage="idle_far", stage_t0=s["t"])
     elif s["stage"] == "idle_far":

@@ -232,6 +232,11 @@ void URPGAttackTracker::End(const TCHAR* Reason, float Position)
 	{
 		++InterruptedCount;
 	}
+	if (Phase == EPhase::Windup)
+	{
+		// The pack stopped the move before its commit point: the instance was counted but could never commit (KI-069).
+		++EndedBeforeCommitCount;
+	}
 	UE_LOG(LogRPGAttack, Log, TEXT("%s: attack %s instance %d ended (%s) at %.2f s, phase was %s, yaw drift after commit %.1f deg"), *GetOwner()->GetName(), *CurrentMove.ToString(), AttackInstance, Reason, Position, *GetPhaseName(), MaxYawDrift);
 	Phase = EPhase::None;
 	TimingIndex = INDEX_NONE;

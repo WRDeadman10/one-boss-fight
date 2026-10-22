@@ -1,0 +1,11 @@
+Clip: AN_Boss01_Wake
+Length: 3.500
+FPS: 30
+Frames: 106 (0 to 105)
+Loop: No (One-shot)
+RootMotion: In Place (Root at (0, 0, 0) throughout)
+RootYaw: 0 (Character faces +Y on every frame)
+SwordFree: 1.50 (Frame 45: tip leaves floor)
+StandUp: 2.50 (Frame 75: boss achieves standing balance)
+RecoveryEndTime: 3.500 (Frame 105)
+Notes: Boss 01 Awakening Sequence (Asset A-07). Starts in exact first frame of AN_Boss01_DormantIdle (Frame 0 local diff 0.0005 <= 0.01 tolerance). Phase 1 (0.0 to 1.0s): head lifts, eyes flare; Phase 2 (1.0 to 2.0s): hands grip hilt and draw the planted blade up out of the stone (SwordFree notify at 1.50s / Frame 45); Phase 3 (2.0 to 3.0s): boss rises from kneeling posture, spine straightens, achieves standing balance (StandUp notify at 2.50s / Frame 75); Phase 4 (3.0 to 3.5s): settles smoothly into combat ready stance, ending in the exact pose of AN_Boss01_PhaseRoar frame 0 (Frame 105 local diff 0.0000).

@@ -331,7 +331,8 @@ def l4_hit_stop():
         h0, rip0 = leg.get_hit_stop_count(), p["stg"].get_riposte_count()
         base_boss, base_pawn = cdil(p["boss"]), cdil(p["pawn"])
         hit_riposte(p)
-        yield from rwait(0.4)
+        yield from until(lambda: P()["stg"].get_clip_stage_name() == "down", 3.0)  # the interaction opens when the fall clip is over
+        yield from rwait(0.2)
         t_press = time.perf_counter()
         press()
         fired = yield from until(lambda: P()["leg"].get_hit_stop_count() > h0, 3.0)
@@ -343,6 +344,8 @@ def l4_hit_stop():
         delta = p["leg"].get_hit_stop_count() - h0
         # a second press in the same break: a normal hit, no riposte, no second hit stop
         h1 = p["leg"].get_hit_stop_count()
+        yield from until(lambda: not P()["stg"].is_riposte_executing(), 4.0)  # the player is locked for the execution: the second press comes after it
+        yield from rwait(0.3)
         press()
         yield from rwait(1.2)
         p = P()

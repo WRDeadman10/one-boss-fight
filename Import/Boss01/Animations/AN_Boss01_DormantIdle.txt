@@ -1,0 +1,9 @@
+Clip: AN_Boss01_DormantIdle
+Length: 5.000
+FPS: 30
+Frames: 151 (0 to 150)
+Loop: Yes (Seamless meditative loop: Frame 0 == Frame 150 local diff 0.0000)
+RootMotion: In Place (Root at (0, 0, 0) throughout)
+RootYaw: 0 (Character faces +Y on every frame)
+SwordTipFloorHeight: 0.74 cm (planted on floor Z in [0, 2] cm)
+Notes: Boss 01 Dormant Idle Stance (Asset A-06). Meditative boss encounter intro pose. Boss kneels in corrected kneel pose (min ankle Z=6.57 cm >= 3 cm, min ball Z=2.49 cm >= -1 cm). Hero greatsword planted point-down into the floor in front of boss (sword tip at Z=0.74 cm); both hands rest clasped upon pommel; head reverently bowed looking downward; subtle cyclical breathing loop with 3.01 cm peak displacement on middle_03_l at t=2.5s (0.1 < motion < 6.0 cm, loop closure diff 0.0000).

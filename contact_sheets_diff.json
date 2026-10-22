@@ -1,0 +1,149 @@
+{
+  "contact_sheet_PhaseRoar.png": {
+    "Panel_1_vs_Panel_2": {
+      "differing_pixels": 16708,
+      "total_pixels": 153600,
+      "percent_difference": 10.88
+    },
+    "Panel_1_vs_Panel_3": {
+      "differing_pixels": 20947,
+      "total_pixels": 153600,
+      "percent_difference": 13.64
+    },
+    "Panel_1_vs_Panel_4": {
+      "differing_pixels": 21668,
+      "total_pixels": 153600,
+      "percent_difference": 14.11
+    },
+    "Panel_1_vs_Panel_5": {
+      "differing_pixels": 20705,
+      "total_pixels": 153600,
+      "percent_difference": 13.48
+    },
+    "Panel_1_vs_Panel_6": {
+      "differing_pixels": 0,
+      "total_pixels": 153600,
+      "percent_difference": 0.0
+    }
+  },
+  "contact_sheet_StaggerFall.png": {
+    "Panel_1_vs_Panel_2": {
+      "differing_pixels": 18641,
+      "total_pixels": 153600,
+      "percent_difference": 12.14
+    },
+    "Panel_1_vs_Panel_3": {
+      "differing_pixels": 22824,
+      "total_pixels": 153600,
+      "percent_difference": 14.86
+    },
+    "Panel_1_vs_Panel_4": {
+      "differing_pixels": 22729,
+      "total_pixels": 153600,
+      "percent_difference": 14.8
+    },
+    "Panel_1_vs_Panel_5": {
+      "differing_pixels": 20346,
+      "total_pixels": 153600,
+      "percent_difference": 13.25
+    },
+    "Panel_1_vs_Panel_6": {
+      "differing_pixels": 22227,
+      "total_pixels": 153600,
+      "percent_difference": 14.47
+    }
+  },
+  "contact_sheet_Riposte_Player_Front.png": {
+    "Panel_1_vs_Panel_2": {
+      "differing_pixels": 20544,
+      "total_pixels": 153600,
+      "percent_difference": 13.38
+    },
+    "Panel_1_vs_Panel_3": {
+      "differing_pixels": 27252,
+      "total_pixels": 153600,
+      "percent_difference": 17.74
+    },
+    "Panel_1_vs_Panel_4": {
+      "differing_pixels": 29978,
+      "total_pixels": 153600,
+      "percent_difference": 19.52
+    },
+    "Panel_1_vs_Panel_5": {
+      "differing_pixels": 30284,
+      "total_pixels": 153600,
+      "percent_difference": 19.72
+    },
+    "Panel_1_vs_Panel_6": {
+      "differing_pixels": 27714,
+      "total_pixels": 153600,
+      "percent_difference": 18.04
+    }
+  },
+  "contact_sheet_Riposte_Boss_Reaction.png": {
+    "Panel_1_vs_Panel_2": {
+      "differing_pixels": 12042,
+      "total_pixels": 153600,
+      "percent_difference": 7.84
+    },
+    "Panel_1_vs_Panel_3": {
+      "differing_pixels": 17763,
+      "total_pixels": 153600,
+      "percent_difference": 11.56
+    },
+    "Panel_1_vs_Panel_4": {
+      "differing_pixels": 20801,
+      "total_pixels": 153600,
+      "percent_difference": 13.54
+    },
+    "Panel_1_vs_Panel_5": {
+      "differing_pixels": 0,
+      "total_pixels": 153600,
+      "percent_difference": 0.0
+    },
+    "Panel_1_vs_Panel_6": {
+      "differing_pixels": 0,
+      "total_pixels": 153600,
+      "percent_difference": 0.0
+    }
+  },
+  "contact_sheet_DeathLegend.png": {
+    "Panel_1_vs_Panel_2": {
+      "differing_pixels": 0,
+      "total_pixels": 153600,
+      "percent_difference": 0.0
+    },
+    "Panel_1_vs_Panel_3": {
+      "differing_pixels": 0,
+      "total_pixels": 153600,
+      "percent_difference": 0.0
+    },
+    "Panel_1_vs_Panel_4": {
+      "differing_pixels": 25611,
+      "total_pixels": 153600,
+      "percent_difference": 16.67
+    },
+    "Panel_1_vs_Panel_5": {
+      "differing_pixels": 30103,
+      "total_pixels": 153600,
+      "percent_difference": 19.6
+    },
+    "Panel_1_vs_Panel_6": {
+      "differing_pixels": 30103,
+      "total_pixels": 153600,
+      "percent_difference": 19.6
+    }
+  },
+  "contact_sheet_Riposte_Paired_TopDown.png": {
+    "Panel_1_vs_Panel_2": {
+      "differing_pixels": 76966,
+      "total_pixels": 172800,
+      "percent_difference": 44.54
+    },
+    "Panel_1_vs_Panel_3": {
+      "differing_pixels": 44054,
+      "total_pixels": 172800,
+      "percent_difference": 25.49
+    }
+  }
+}

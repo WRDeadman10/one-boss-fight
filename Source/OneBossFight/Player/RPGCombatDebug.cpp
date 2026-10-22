@@ -11,6 +11,7 @@
 #include "Player/RPGBossPosture.h"
 #include "Player/RPGBossStagger.h"
 #include "Player/RPGDodgeTiming.h"
+#include "Player/RPGBossClips.h"
 #include "Player/RPGIFrameMonitor.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Animation/AnimInstance.h"
@@ -195,6 +196,83 @@ static void DumpAbilitiesOf(const AActor* Actor)
 #endif
 }
 
+#if !UE_BUILD_SHIPPING
+static void DumpObjectVariables(const UObject* Object, int32 Depth, const FString& Indent, TSet<const UObject*>& Seen)
+{
+	if (!Object || Seen.Contains(Object))
+	{
+		return;
+	}
+	Seen.Add(Object);
+	UE_LOG(LogRPGDebug, Log, TEXT("%sOBJECT %s (%s)"), *Indent, *Object->GetName(), *Object->GetClass()->GetName());
+	for (TFieldIterator<FProperty> It(Object->GetClass()); It; ++It)
+	{
+		// Blueprint variables only: skip what native classes define.
+		if (!Cast<UBlueprintGeneratedClass>(It->GetOwnerClass()) || It->GetName() == TEXT("UberGraphFrame"))
+		{
+			continue;
+		}
+		FString Value;
+		const void* Ptr = It->ContainerPtrToValuePtr<void>(Object);
+		It->ExportTextItem_Direct(Value, Ptr, nullptr, nullptr, PPF_None);
+		UE_LOG(LogRPGDebug, Log, TEXT("%s   %s (%s) = %s"), *Indent, *It->GetName(), *It->GetClass()->GetName(), *Value.Left(300));
+		if (const FMulticastDelegateProperty* Delegate = CastField<FMulticastDelegateProperty>(*It))
+		{
+			// The signature of an event dispatcher: what a listener would receive.
+			FString Params;
+			if (const UFunction* Signature = Delegate->SignatureFunction)
+			{
+				for (TFieldIterator<FProperty> P(Signature); P && P->HasAnyPropertyFlags(CPF_Parm); ++P)
+				{
+					const FObjectPropertyBase* ObjectParam = CastField<FObjectPropertyBase>(*P);
+					Params += FString::Printf(TEXT("%s%s:%s"), Params.IsEmpty() ? TEXT("") : TEXT(", "), *P->GetName(), ObjectParam && ObjectParam->PropertyClass ? *ObjectParam->PropertyClass->GetName() : *P->GetClass()->GetName());
+				}
+			}
+			UE_LOG(LogRPGDebug, Log, TEXT("%s      SIGNATURE %s(%s)"), *Indent, *It->GetName(), *Params);
+		}
+		if (Depth <= 0)
+		{
+			continue;
+		}
+		if (const FObjectProperty* Reference = CastField<FObjectProperty>(*It))
+		{
+			if (const UObject* Child = Reference->GetObjectPropertyValue(Ptr))
+			{
+				if (!Child->IsA<UClass>() && !Child->IsA<UWorld>() && !Child->IsA<AActor>() && !Child->IsA<UActorComponent>())
+				{
+					DumpObjectVariables(Child, Depth - 1, Indent + TEXT("      "), Seen);
+				}
+			}
+		}
+		else if (const FArrayProperty* Array = CastField<FArrayProperty>(*It))
+		{
+			if (const FObjectProperty* Inner = CastField<FObjectProperty>(Array->Inner))
+			{
+				FScriptArrayHelper Helper(Array, Ptr);
+				for (int32 Index = 0; Index < Helper.Num() && Index < 12; ++Index)
+				{
+					if (const UObject* Child = Inner->GetObjectPropertyValue(Helper.GetRawPtr(Index)))
+					{
+						if (!Child->IsA<UClass>() && !Child->IsA<AActor>())
+						{
+							DumpObjectVariables(Child, Depth - 1, Indent + TEXT("      "), Seen);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+#endif
+
+void URPGCombatDebug::DumpObject(UObject* Object, int32 Depth) const
+{
+#if !UE_BUILD_SHIPPING
+	TSet<const UObject*> Seen;
+	DumpObjectVariables(Object, FMath::Clamp(Depth, 0, 4), FString(), Seen);
+#endif
+}
+
 void URPGCombatDebug::DumpAbilities() const
 {
 	DumpAbilitiesOf(GetOwner());
@@ -292,29 +370,20 @@ void URPGCombatDebug::DumpAttributes() const
 void URPGCombatDebug::DebugSetBossPosture(float Value) const
 {
 #if !UE_BUILD_SHIPPING
-	WriteAttribute(GetOwner(), TEXT("Attribute.Poise"), Value);
+	if (URPGBossPosture* Posture = GetOwner()->FindComponentByClass<URPGBossPosture>())
+	{
+		Posture->SetPostureForTest(Value);
+	}
 #endif
 }
 
 void URPGCombatDebug::DebugDrainBossPosture(float Amount) const
 {
 #if !UE_BUILD_SHIPPING
-	UObject* Attributes = FindComponentByClassName(GetOwner(), TEXT("BP_AttributesComponent_C"));
-	const FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName(TEXT("Attribute.Poise")), false);
-	if (!Attributes || !Tag.IsValid())
+	if (URPGBossPosture* Posture = GetOwner()->FindComponentByClass<URPGBossPosture>())
 	{
-		return;
+		Posture->ApplyPostureDamage(Amount, TEXT("debug"));
 	}
-	CallBlueprintFunction(Attributes, TEXT("Modify Attribute"),
-		[&](UFunction& F, uint8* P)
-		{
-			SetTag(F, P, TEXT("AttributeTag"), Tag);
-			if (const FNumericProperty* Number = CastField<FNumericProperty>(F.FindPropertyByName(TEXT("Value"))))
-			{
-				Number->SetFloatingPointPropertyValue(Number->ContainerPtrToValuePtr<void>(P), -static_cast<double>(Amount));
-			}
-		},
-		[](UFunction&, uint8*) {});
 #endif
 }
 
@@ -410,6 +479,25 @@ void URPGCombatDebug::DebugSetPlayerHealth(float Value) const
 		WriteAttribute(Player, TEXT("Attribute.Health"), Value);
 	}
 #endif
+}
+
+namespace
+{
+	FString ActiveMontageAnimName(const ACharacter* Character)
+	{
+		const UAnimInstance* Anim = Character && Character->GetMesh() ? Character->GetMesh()->GetAnimInstance() : nullptr;
+		return Anim ? RPGBossClips::MontageAnimName(Anim->GetCurrentActiveMontage()) : FString();
+	}
+}
+
+FString URPGCombatDebug::DebugBossMontageAnimName() const
+{
+	return ActiveMontageAnimName(Cast<ACharacter>(GetOwner()));
+}
+
+FString URPGCombatDebug::DebugPlayerMontageAnimName() const
+{
+	return ActiveMontageAnimName(Cast<ACharacter>(UGameplayStatics::GetPlayerPawn(this, 0)));
 }
 
 void URPGCombatDebug::DebugRefillPlayer() const

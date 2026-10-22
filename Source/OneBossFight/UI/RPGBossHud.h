@@ -28,6 +28,9 @@ struct FRPGBossHudState
 	FText Name;
 	FText Subtitle;
 	FText Prompt;
+	/** The player's build line (M13: "Build: Strength (Claymore)"), shown top centre while a build is chosen, also while the boss sleeps. */
+	FText BuildLine;
+	bool bShowBuild = false;
 };
 
 /** Boss health bar with name plate and phase subtitle, thin posture bar with a flash on a break, riposte prompt and a centre banner. The tree is built in C++ (no Widget Blueprint to keep in sync). */
@@ -66,6 +69,13 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Hud")
 	FText GetBannerText() const;
 
+	/** Tests: the build line is on screen, and its text. */
+	UFUNCTION(BlueprintPure, Category = "Hud")
+	bool IsBuildLineShown() const;
+
+	UFUNCTION(BlueprintPure, Category = "Hud")
+	FText GetBuildLineText() const;
+
 protected:
 	virtual TSharedRef<SWidget> RebuildWidget() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -92,6 +102,8 @@ private:
 	TObjectPtr<UTextBlock> BannerTextBlock;
 	UPROPERTY(Transient)
 	TObjectPtr<UTextBlock> RetryTextBlock;
+	UPROPERTY(Transient)
+	TObjectPtr<UTextBlock> BuildTextBlock;
 
 	float BannerAlpha() const;
 

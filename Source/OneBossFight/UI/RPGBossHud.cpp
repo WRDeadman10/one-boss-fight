@@ -12,6 +12,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGBuildLoadout.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossPosture.h"
 #include "Player/RPGBossStagger.h"
@@ -98,9 +99,11 @@ TSharedRef<SWidget> URPGBossHudWidget::RebuildWidget()
 		PromptText = AddText(Canvas, TEXT("RipostePrompt"), FVector2D(0.5f, 0.66f), FVector2D(0.5f, 0.5f), FVector2D::ZeroVector, 22, FLinearColor(0.96f, 0.84f, 0.45f));
 		BannerTextBlock = AddText(Canvas, TEXT("Banner"), FVector2D(0.5f, 0.4f), FVector2D(0.5f, 0.5f), FVector2D::ZeroVector, 62, FLinearColor::White);
 		RetryTextBlock = AddText(Canvas, TEXT("Retry"), FVector2D(0.5f, 0.62f), FVector2D(0.5f, 0.5f), FVector2D::ZeroVector, 24, FLinearColor(0.93f, 0.88f, 0.75f));
+		// Top centre: the pack's own HUD owns top left, top right and bottom left, this bar owns bottom centre.
+		BuildTextBlock = AddText(Canvas, TEXT("BuildLine"), FVector2D(0.5f, 0.f), FVector2D(0.5f, 0.f), FVector2D(0.f, 18.f), 18, FLinearColor(0.93f, 0.8f, 0.45f));
 
 		for (UWidget* Hidden : { static_cast<UWidget*>(Plate), static_cast<UWidget*>(TrailBar), static_cast<UWidget*>(HealthBar), static_cast<UWidget*>(PostureBar), static_cast<UWidget*>(NameText),
-			static_cast<UWidget*>(SubtitleText), static_cast<UWidget*>(PromptText), static_cast<UWidget*>(BannerTextBlock), static_cast<UWidget*>(RetryTextBlock) })
+			static_cast<UWidget*>(SubtitleText), static_cast<UWidget*>(PromptText), static_cast<UWidget*>(BannerTextBlock), static_cast<UWidget*>(RetryTextBlock), static_cast<UWidget*>(BuildTextBlock) })
 		{
 			Hidden->SetVisibility(ESlateVisibility::Collapsed);
 		}
@@ -212,6 +215,9 @@ void URPGBossHudWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	SubtitleText->SetVisibility(Current.bShowBar && !Current.Subtitle.IsEmpty() ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
 	PromptText->SetVisibility(Current.bPrompt ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
 	BannerTextBlock->SetVisibility(Alpha > 0.01f ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+	// Not part of the bar parts: the build line shows while the boss sleeps too.
+	BuildTextBlock->SetVisibility(Current.bShowBuild && !Current.BuildLine.IsEmpty() ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+	BuildTextBlock->SetText(Current.BuildLine);
 
 	NameText->SetText(Current.Name);
 	SubtitleText->SetText(Current.Subtitle);
@@ -241,6 +247,16 @@ void URPGBossHudWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 bool URPGBossHudWidget::IsBarShown() const
 {
 	return Current.bShowBar;
+}
+
+bool URPGBossHudWidget::IsBuildLineShown() const
+{
+	return BuildTextBlock && BuildTextBlock->GetVisibility() != ESlateVisibility::Collapsed && BuildTextBlock->GetVisibility() != ESlateVisibility::Hidden;
+}
+
+FText URPGBossHudWidget::GetBuildLineText() const
+{
+	return BuildTextBlock ? BuildTextBlock->GetText() : FText::GetEmpty();
 }
 
 bool URPGBossHudWidget::IsPromptShown() const
@@ -466,6 +482,15 @@ void URPGBossHud::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	Hud.bPostureFlash = Now < FlashEnd;
 	const APlayerController* Controller = World->GetFirstPlayerController();
 	Hud.bPrompt = State == EState::Fighting && Stagger && Stagger->IsCriticalWindowOpen() && Controller && Stagger->IsRiposteAvailable(Controller->GetPawn());
+	// The build the player really holds (M13 truth rule): shown only while a build is chosen, a default run shows no extra text.
+	if (const APawn* PlayerPawn = Controller ? Controller->GetPawn() : nullptr)
+	{
+		if (const URPGBuildLoadout* Loadout = PlayerPawn->FindComponentByClass<URPGBuildLoadout>())
+		{
+			Hud.bShowBuild = Loadout->HasChoice();
+			Hud.BuildLine = FText::FromString(Loadout->GetBuildLine());
+		}
+	}
 
 	Last = Hud;
 	if (Widget)

@@ -2,7 +2,9 @@
 
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGHitIntake.h"
 #include "Player/RPGBossInterrupt.h"
+#include "Player/RPGBossClips.h"
 #include "Player/RPGBossPosture.h"
 #include "Player/RPGBossStagger.h"
 #include "Pack/RPGBlueprintCall.h"
@@ -50,6 +52,7 @@ URPGBossPhases::URPGBossPhases()
 	PrimaryComponentTick.bStartWithTickEnabled = true;
 	PrimaryComponentTick.TickInterval = 0.1f;
 
+	RoarClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar")));
 	TransitionMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage")));
 	ImmunityEffect = TSoftClassPtr<UObject>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C")));
 	FireballAbility = TSoftClassPtr<UObject>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C")));
@@ -63,6 +66,7 @@ void URPGBossPhases::BeginPlay()
 		BaseWalkSpeed = Character->GetCharacterMovement() ? Character->GetCharacterMovement()->MaxWalkSpeed : 0.f;
 	}
 	// When a hit breaks posture and crosses the threshold in the same frame, the break must be seen first (the transition is then queued behind it, Freeze 1201): the stance break component ticks before this one.
+	// Since Gate 3 the pool's break request is made one frame after the pack's hit event (RPGHitIntake finishes its record on the next tick), so a threshold crossing also waits for the intake (TickComponent).
 	if (const URPGBossStagger* Stagger = GetOwner()->FindComponentByClass<URPGBossStagger>())
 	{
 		AddTickPrerequisiteComponent(const_cast<URPGBossStagger*>(Stagger));
@@ -142,6 +146,18 @@ void URPGBossPhases::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	}
 	if (!bPhaseTwo)
 	{
+		// A hit of the player that is still on its way into the posture pool (its record is finished next frame) may break the boss in the frame it crosses the threshold: the break must be seen first, so wait for it
+		// (Freeze 21 and 1201: the crossing is then queued behind the break instead of starting the roar over a break that was earned).
+		if (const APawn* Player = UGameplayStatics::GetPlayerPawn(World, 0))
+		{
+			if (const URPGHitIntake* Intake = Player->FindComponentByClass<URPGHitIntake>())
+			{
+				if (Intake->HasPendingRecords())
+				{
+					return;
+				}
+			}
+		}
 		// The Freeze 21 rule: a crossing during a stance break is queued (it starts from the end of the break, TryStartQueuedTransition), otherwise it starts now.
 		if (ResolveNow() == RPGBossRules::ETransitionResult::Start)
 		{
@@ -277,13 +293,21 @@ void URPGBossPhases::StartTransition(bool bHeldAlready)
 		}
 		if (UAnimInstance* Anim = Character->GetMesh() ? Character->GetMesh()->GetAnimInstance() : nullptr)
 		{
-			if (UAnimMontage* Roar = TransitionMontage.LoadSynchronous())
+			UAnimSequence* Clip = bUseRoarClip ? RoarClip.LoadSynchronous() : nullptr;
+			UAnimMontage* Roar = Clip ? nullptr : TransitionMontage.LoadSynchronous();
+			if (Clip && RPGBossClips::Play(Character, Clip, 0.15f, 0.25f))
+			{
+				RoarSourceName = Clip->GetName(); // the project's own roar (frame 0 is the combat idle, the clip is 1.8 s like TransitionSeconds)
+			}
+			else if (Roar || (Roar = TransitionMontage.LoadSynchronous()))
 			{
 				Anim->Montage_Play(Roar, 1.f);
+				RoarSourceName = Roar->GetName();
 			}
 			else
 			{
-				UE_LOG(LogRPGPhases, Warning, TEXT("%s: the roar montage did not load, the transition runs silent for %.1f s"), *GetOwner()->GetName(), TransitionSeconds);
+				RoarSourceName = TEXT("none");
+				UE_LOG(LogRPGPhases, Warning, TEXT("%s: neither the roar clip nor the roar montage loaded, the transition runs silent for %.1f s"), *GetOwner()->GetName(), TransitionSeconds);
 			}
 		}
 	}
@@ -443,6 +467,8 @@ void URPGBossPhases::TryFireball(double Now)
 	UObject* Asc = FindComponentByClassName(GetOwner(), TEXT("BP_AdvancedAbilitySystemComponent_C"));
 	if (!Ability || !Asc)
 	{
+		NextFireball = Now + 5.0; // the class did not load (a package that is not cooked): back off instead of a synchronous load on every tick
+		UE_LOG(LogRPGPhases, Warning, TEXT("%s: no fireball: the ability class (%d) or the ability system (%d) is missing, trying again in 5 s"), *GetOwner()->GetName(), Ability ? 1 : 0, Asc ? 1 : 0);
 		return;
 	}
 	if (!bFireballGiven)

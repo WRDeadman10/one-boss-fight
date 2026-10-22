@@ -1,0 +1,13 @@
+Clip: AN_Riposte_Boss_Reaction
+Length: 2.000
+FPS: 30
+Frames: 61 (0 to 60)
+Loop: No (One-shot)
+RootMotion: In Place (Root at (0, 0, 0) throughout)
+RootYaw: 0 (Character faces +Y on every frame)
+WindupEndTime: 0.70
+Impact: 0.80 (Frame 24)
+ActiveStartTime: 0.80
+ActiveEndTime: 1.30
+RecoveryEndTime: 2.000
+Notes: Paired Riposte Reaction (Boss Perspective, Asset A-11). Starts in identical kneeling pose of AN_Boss01_StaggerDown last frame (F0 local diff 0.0000 against StaggerDown F30). Takes lethal chest impact at 0.80s (Frame 24): head minus pelvis Y = -20.31 cm (<= -15 cm), Z = 63.07 cm (<= 64 cm), neck_01 minus pelvis Y = -16.95 cm (<= -8 cm). Recoil recovers by 1.30s (F39) returning within 0.12 cm of F0. Corrected kneel pose maintained throughout (knees at floor ~3.6 cm, ankles >= 6.0 cm, balls of feet >= 2.6 cm). Ends in exact pose of StaggerDown F0 (local diff 0.0000).

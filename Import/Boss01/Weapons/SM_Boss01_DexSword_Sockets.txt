@@ -1,0 +1,21 @@
+# Socket definitions for SM_Boss01_DexSword_L and SM_Boss01_DexSword_R
+# Sockets are exported as child empties named SOCKET_<name>
+# Coordinates in weapon local space (centimetres relative to grip origin at (0, 0, 0)):
+
+# Left Dex Curved Sword (SM_Boss01_DexSword_L):
+BladeStart: (0.0, 0.0, 2.0)
+MiddleSocket: (-4.5, 0.0, 42.0)
+BladeEnd: (0.0, 0.0, 81.5)
+Weapon_Start: (0.0, 0.0, 2.0)
+Weapon_End: (0.0, 0.0, 82.0)
+TrailStartSocket: (0.0, 0.0, 2.0)
+TrailEndSocket: (0.0, 0.0, 82.0)
+
+# Right Dex Curved Sword (SM_Boss01_DexSword_R):
+BladeStart: (0.0, 0.0, 2.0)
+MiddleSocket: (4.5, 0.0, 42.0)
+BladeEnd: (0.0, 0.0, 81.5)
+Weapon_Start: (0.0, 0.0, 2.0)
+Weapon_End: (0.0, 0.0, 82.0)
+TrailStartSocket: (0.0, 0.0, 2.0)
+TrailEndSocket: (0.0, 0.0, 82.0)

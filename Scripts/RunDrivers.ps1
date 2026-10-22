@@ -15,6 +15,20 @@ $editorScripts = Join-Path $root "Scripts\Editor"
 # Kind R: final line "RESULT <passed>/<total> passed". Kind S: final line "SUMMARY <total> checks, <failed> failed". Min = the number of checks the driver is expected to run.
 $drivers = @(
     @{ N = 'pie_a4_low_sweep';        K = 'R'; Min = 14 },
+    @{ N = 'pie_hit_intake';          K = 'R'; Min = 36; T = 600 },
+    @{ N = 'pie_posture_hits';        K = 'R'; Min = 25; T = 1100 },
+    @{ N = 'pie_stamina_cost';        K = 'R'; Min = 17; T = 900 },
+    @{ N = 'pie_hyperarmor';          K = 'R'; Min = 23; T = 900 },
+    @{ N = 'pie_bleed';               K = 'R'; Min = 19; T = 900 },
+    @{ N = 'pie_boss_clips';          K = 'R'; Min = 14; T = 600 },
+    @{ N = 'pie_riposte_exec';         K = 'R'; Min = 15; T = 700 },
+    @{ N = 'pie_riposte_lethal';       K = 'R'; Min = 3; T = 300 },
+    @{ N = 'pie_boss_look';            K = 'R'; Min = 14; T = 300 },
+    @{ N = 'pie_boss_death';           K = 'R'; Min = 11; T = 300 },
+    @{ N = 'pie_boss_death_states';    K = 'R'; Min = 28; T = 600 },
+    @{ N = 'pie_builds';               K = 'R'; Min = 103; T = 1500 },
+    @{ N = 'pie_build_hyperarmor';     K = 'R'; Min = 20; T = 900 },
+    @{ N = 'pie_build_hud';            K = 'R'; Min = 8; T = 600 },
     @{ N = 'pie_a5_heal_punish';      K = 'R'; Min = 31 },
     @{ N = 'pie_player_death_reset';  K = 'R'; Min = 25 },
     @{ N = 'pie_damage_path';         K = 'R'; Min = 17; T = 900 },
@@ -32,7 +46,14 @@ $drivers = @(
     @{ N = 'pie_fog_gate';            K = 'S'; Min = 6 },
     @{ N = 'pie_transition_rules';    K = 'R'; Min = 28; T = 900 }   # mode from Saved\transition_mode.txt: quick (3 trials, about 6 min) for the gate, main (spec trial counts, about 20 min) before a release
 )
-if ($Only) { $drivers = @($drivers | Where-Object { $Only -contains $_.N }) }
+# Balance runs (M14): the scripted player bot with each build. Not part of the gate (a fight is not deterministic and takes minutes): run them with -Only pie_build_fight_starter,pie_build_fight_strength,pie_build_fight_dex.
+# A row with S runs that script under its own name; Setup = file (relative to the project) and the text written to it first (the build of the run).
+$balance = @(
+    @{ N = 'pie_build_fight_starter';  S = 'pie_build_fight'; K = 'R'; Min = 10; T = 1000; Setup = @('Saved/build_fight_build.txt', 'Starter') },
+    @{ N = 'pie_build_fight_strength'; S = 'pie_build_fight'; K = 'R'; Min = 10; T = 1000; Setup = @('Saved/build_fight_build.txt', 'Strength') },
+    @{ N = 'pie_build_fight_dex';      S = 'pie_build_fight'; K = 'R'; Min = 10; T = 1000; Setup = @('Saved/build_fight_build.txt', 'Dex') }
+)
+if ($Only) { $drivers = @(($drivers + $balance) | Where-Object { $Only -contains $_.N }) }
 
 function Read-LogFrom([int]$skip) {
     # The editor keeps the log open for writing: open it with sharing and return the lines after the first $skip lines.
@@ -66,6 +87,7 @@ if (-not $SkipWarmup) {
     # The first PIE after an editor start has broken player attributes (health 0): run the overlay driver once, with the editor throttle off.
     Invoke-Editor 'no_throttle.py'
     Invoke-Editor 'legend_off.py'  # the legend pass (hit stop, slow motion, camera shake) would change the timings the older drivers measure; pie_legend.py switches it on itself
+    Invoke-Editor 'build_off.py'  # rpg.Build is process wide: a build left by an aborted pie_builds.py run would change every later PIE
     Invoke-Editor 'pie_debug_overlay.py'
     Start-Sleep -Seconds 40
 }
@@ -74,7 +96,9 @@ $rows = @()
 foreach ($d in $drivers) {
     $name = $d.N
     $start = Count-Log
-    Invoke-Editor "$name.py"
+    if ($d.Setup) { Set-Content -Path (Join-Path $root $d.Setup[0]) -Value $d.Setup[1] -Encoding ascii }
+    $scriptName = if ($d.S) { $d.S } else { $name }
+    Invoke-Editor "$scriptName.py"
     $limit = if ($d.T) { [int]$d.T } else { $TimeoutSeconds }  # a driver may carry its own limit (T)
     $deadline = (Get-Date).AddSeconds($limit)
     $final = $null

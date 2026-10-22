@@ -41,6 +41,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Encounter")
 	int32 GetResetCount() const { return ResetCount; }
 
+	/** Resets refused because the boss was dying (a dead boss stays dead; the pack destroys it a few seconds after the death); tests. */
+	UFUNCTION(BlueprintPure, Category = "Encounter")
+	int32 GetDeathResetRefusals() const { return DeathResetRefusals; }
+
 	/**
 	 * Encounter generation (Freeze 32.2). Starts at 1 and goes up on every reset. A timer, montage callback or projectile that outlives the fight it was made for stores the generation
 	 * it started in and drops itself when this value has changed (IsCurrentGeneration).
@@ -82,6 +86,7 @@ private:
 	bool bHeld = false;
 	bool bWantsHold = false;
 	int32 ResetCount = 0;
+	int32 DeathResetRefusals = 0;
 	int32 Generation = 1;
 	float DormantTime = 0.f;
 	double HealthBaseline = -1.0;

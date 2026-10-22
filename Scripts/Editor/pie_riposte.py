@@ -122,18 +122,18 @@ def _tick(dt):
         reset_boss()
         stg.force_break_for_test()
         place(300, 0, 180)
-        nxt(0.5)
+        nxt(1.0)  # the interaction opens when the 0.7 s fall clip is over: a press before that is rejected as "boss is still falling"
     elif n == 3:
         r0 = stg.get_riposte_count()
         press()
-        nxt(1.2)
+        nxt(0.6)
     elif n == 4:
         check("S08a rejected when too far", stg.get_riposte_reject_count() >= 1 and stg.get_riposte_count() == 0 and "too far" in stg.get_last_riposte_result(), stg.get_last_riposte_result())
         place(-110, 0, 0)
         nxt(0.4)
     elif n == 5:
         press()
-        nxt(1.0)
+        nxt(0.5)
     elif n == 6:
         check("S08b rejected when behind the boss", stg.get_riposte_count() == 0 and "front" in stg.get_last_riposte_result(), stg.get_last_riposte_result())
         nxt(0.2)
@@ -150,28 +150,24 @@ def _tick(dt):
         stg.force_break_for_test()
         place(110, 0, 180)
         c["h1"] = attr(boss, "Attribute.Health")
-        nxt(0.3)
+        nxt(1.0)
     elif n == 9:
         press()
-        nxt(1.4)
+        nxt(0.7)
     elif n == 10:
+        # Since G2-7 an accepted press plays the paired clips (the player is locked for 2 s) and ONE critical hit lands at the impact: a second request in the same break is asked directly
+        again = stg.try_riposte(pawn)
+        c["again"] = again
+        c["again_text"] = stg.get_last_riposte_result()
+        nxt(3.0)
+    elif n == 11:
         h = attr(boss, "Attribute.Health")
         R = c["h1"] - h
-        log("riposte hit R = %.1f (health %.1f -> %.1f), L = %.1f, ratio %.2f" % (R, c["h1"], h, c["L"], R / max(c["L"], 0.01)))
-        check("S09 riposte accepted", stg.get_riposte_count() == 1, stg.get_last_riposte_result())
-        c["R"] = R
-        c["h2"] = h
-        place(110, 0, 180)
-        nxt(0.2)
-    elif n == 11:
-        press()
-        nxt(1.4)
-    elif n == 12:
-        h = attr(boss, "Attribute.Health")
-        R2 = c["h2"] - h
-        log("second press hit = %.1f" % R2)
-        check("S09b no second critical in the same break", stg.get_riposte_count() == 1 and R2 > 1 and "already used" in stg.get_last_riposte_result(), "second hit %.1f, count %d, %s" % (R2, stg.get_riposte_count(), stg.get_last_riposte_result()))
-        check("S09 riposte hit is 2.5x a normal hit", abs(c["R"] / max(R2, 0.01) - 2.5) < 0.3, "riposte %.1f, normal %.1f, ratio %.2f" % (c["R"], R2, c["R"] / max(R2, 0.01)))
+        expected = stg.get_editor_property("riposte_base_damage") * stg.get_editor_property("critical_multiplier")  # reading a property is harmless, only setting one in PIE is not (KI-083)
+        log("riposte hit R = %.1f (health %.1f -> %.1f), baseline normal hit L = %.1f, ratio %.2f, expected %.1f" % (R, c["h1"], h, c["L"], R / max(c["L"], 0.01), expected))
+        check("S09 riposte accepted and executed once", stg.get_riposte_count() == 1 and stg.get_riposte_impact_count() == 1, stg.get_last_riposte_result())
+        check("S09 the riposte hit is the critical multiplier times the base hit, once (%.1f, expected %.1f; a normal hit is about %.1f)" % (R, expected, c["L"]), abs(R - expected) < 1.0)
+        check("S09b no second critical in the same break (a second request: %s, %s), the count is still 1" % (c["again"], c["again_text"]), c["again"] is False and "already used" in c["again_text"] and stg.get_riposte_count() == 1)
         finish()
         s["step"] = 99
 

@@ -200,7 +200,7 @@ def s02_posture_pinned():
         P()["dbg"].debug_drain_boss_posture(20.0)
         yield 0.4
         p = P()
-        posture = attr(p["boss"], "Attribute.Poise")
+        posture = p["post"].get_posture()
         ok = abs(posture - 30.0) <= 1.0 and p["post"].get_suppressed_drain_count() >= s0 + 2 and p["post"].get_hold_name() == "Pinned" and not p["stg"].is_staggered()
         outcomes.append(ok)
         if not ok:
@@ -220,7 +220,7 @@ def s03_regen_after():
     samples = {}
     for k in (3.0, 6.5, 8.0):
         yield max(0.0, t_end + k - S["now"])
-        samples[k] = attr(P()["boss"], "Attribute.Poise")
+        samples[k] = P()["post"].get_posture()
     check("S03 after the roar: posture still 60 at +3.0 s, about 66.5 at +6.5 s, about 86 at +8.0 s (regeneration starts 6 s after the end)", abs(samples[3.0] - 60) <= 0.5 and abs(samples[6.5] - 66.5) <= 3 and abs(samples[8.0] - 86) <= 3, "%s" % samples)
 
 
@@ -228,21 +228,23 @@ def queue_gap_trial(kind):
     """kind 'down' (health set during the Down window), 'getup' (during the get-up), 'riposte' (after an accepted riposte). Returns (ok, detail)."""
     yield from fresh(combat=(kind == "riposte"))
     p = P()
-    p["stg"].set_editor_property("stagger_seconds", 0.6 if kind != "riposte" else 2.5)
+    p["stg"].set_stagger_seconds_for_test(0.6 if kind != "riposte" else 2.5)
     place(p, 110, 0)
     c0 = (p["ph"].get_phase_two_count(), p["stg"].get_stagger_count(), p["ph"].get_queued_start_count(), p["stg"].get_riposte_count())
     r = p["stg"].force_break_for_test()
     if kind == "getup":
         yield from until(lambda: P()["stg"].is_staggered() and not P()["stg"].is_critical_window_open(), 3.0)
+    elif kind == "riposte":
+        yield from until(lambda: P()["stg"].get_clip_stage_name() == "down", 3.0)  # the interaction opens when the fall clip is over
+        yield 0.2
+        S["press_until"] = S["now"] + 0.12
+        yield 0.4
     else:
         yield 0.3
     P()["dbg"].debug_set_boss_health_fraction(0.55)
     yield 0.2
     p = P()
     queued = p["ph"].is_transition_queued() and not p["ph"].is_in_transition() and p["ph"].get_phase_two_count() == c0[0]
-    if kind == "riposte":
-        S["press_until"] = S["now"] + 0.12
-        yield 0.4
     both = {"bad": False}
     started = yield from until(lambda: P()["ph"].is_in_transition() or P()["ph"].get_phase_two_count() > c0[0], 8.0)
     p = P()
@@ -457,7 +459,7 @@ def s14_reset_in_roar():
         yield 0.3
         p = P()
         a = attr(p["boss"], "Attribute.Attack")
-        poise = attr(p["boss"], "Attribute.Poise")
+        poise = p["post"].get_posture()
         ok = ((not p["ph"].is_in_transition()) and (not p["ph"].is_phase_two()) and abs(a - A0) < 0.6 and has_tag(p["boss"], "Status.HitStunImmune") is False and p["post"].get_hold_name() == "None" and poise >= 99.5
               and p["enc"].get_generation() == g0 + 1 and p["enc"].is_dormant())
         c = p["ph"].get_phase_two_count()
@@ -487,7 +489,7 @@ def s15_reset_in_break():
         P()["enc"].hold_for_test(True)
         yield 4.0
         p = P()
-        poise = attr(p["boss"], "Attribute.Poise")
+        poise = p["post"].get_posture()
         ok = (not p["stg"].is_staggered()) and (not p["ph"].is_transition_queued()) and p["ph"].get_phase_two_count() == c and poise >= 99.5 and p["stg"].get_cooldown_remaining() == 0.0 and p["post"].get_hold_name() == "None"
         outcomes.append(ok)
         if not ok:
@@ -537,20 +539,20 @@ def s19_hold_in_break():
         p = P()
         p["stg"].force_break_for_test()
         yield 0.2
-        z0 = attr(P()["boss"], "Attribute.Poise")
+        z0 = P()["post"].get_posture()
         s0 = P()["post"].get_suppressed_drain_count()
         yield 0.3
         P()["dbg"].debug_drain_boss_posture(20.0)
         yield 0.2
-        z1 = attr(P()["boss"], "Attribute.Poise")
+        z1 = P()["post"].get_posture()
         yield 0.3
         P()["dbg"].debug_drain_boss_posture(20.0)
         yield 0.2
-        z2 = attr(P()["boss"], "Attribute.Poise")
+        z2 = P()["post"].get_posture()
         sup = P()["post"].get_suppressed_drain_count() - s0
         yield from until(lambda: not P()["stg"].is_staggered(), 8.0)
         yield 0.3
-        z3 = attr(P()["boss"], "Attribute.Poise")
+        z3 = P()["post"].get_posture()
         ok = abs(z0) <= 0.5 and abs(z1) <= 0.5 and abs(z2) <= 0.5 and sup >= 2 and abs(z3 - 100.0) <= 0.5
         outcomes.append(ok)
         if not ok:

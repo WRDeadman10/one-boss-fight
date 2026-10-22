@@ -43,11 +43,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	void DumpBossFunctions() const;
 
+	/** Logs the Blueprint variables of any object (a data asset, an ability, a component), and recurses into object references and arrays of objects up to Depth levels (an object is dumped once). For reading the pack's setup, e.g. the player's collision component and its trace targets. */
+	UFUNCTION(BlueprintCallable, Category = "Debug")
+	void DumpObject(UObject* Object, int32 Depth = 1) const;
+
 	/** Test drivers only: sets the boss's posture (poise attribute) to a value, as a hit would leave it. */
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	void DebugSetBossPosture(float Value) const;
 
-	/** Test drivers only: lowers the boss's posture by Amount through the pack's Modify Attribute (the path a hit takes, so the pack's regeneration timer restarts like in a fight). */
+	/** Test drivers only: takes Amount posture points from the boss's own posture pool (URPGBossPosture::ApplyPostureDamage: the path a hit takes, so the regeneration timer restarts and a pool at zero asks for the stance break). */
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	void DebugDrainBossPosture(float Amount) const;
 
@@ -58,6 +62,13 @@ public:
 	/** Test drivers only: sets the boss's health to zero through the pack's attribute (its own death logic then runs). */
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	void DebugKillBoss() const;
+
+	/** Test drivers only: the name of the animation asset that the boss's (or the first player's) active montage plays, "" when no montage plays. */
+	UFUNCTION(BlueprintPure, Category = "Debug")
+	FString DebugBossMontageAnimName() const;
+
+	UFUNCTION(BlueprintPure, Category = "Debug")
+	FString DebugPlayerMontageAnimName() const;
 
 	/** Test drivers only: fills the first player's health and stamina so a long series of dodges is not stopped by the stamina cost. Does nothing in Shipping builds. */
 	UFUNCTION(BlueprintCallable, Category = "Debug")
