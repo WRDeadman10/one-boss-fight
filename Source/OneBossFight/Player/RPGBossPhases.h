@@ -129,6 +129,17 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	/** Loaded at BeginPlay (strong references): the immunity effect and the roar clip or montage of the phase change must not be loaded in the middle of the fight (audit A01). */
+	UPROPERTY(Transient)
+	TObjectPtr<UClass> LoadedImmunityEffect;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UAnimSequence> LoadedRoarClip;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UAnimMontage> LoadedTransitionMontage;
+
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:

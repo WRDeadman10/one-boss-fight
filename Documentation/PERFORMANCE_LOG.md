@@ -1,6 +1,6 @@
 # Performance Log
 
-Target: packaged build, 1920x1080, average >= 120 FPS and 99th-percentile frame time <= 8.33 ms, full encounter including phase 2.
+Target (2026-10-20 decision, DECISIONS.md: the owner accepts 60 FPS, look first): packaged build, 1920x1080, average >= 60 FPS and 99th-percentile frame time <= 16.67 ms, full encounter including phase 2. 120 FPS and 8.33 ms are stretch telemetry only.
 
 ## Hardware record
 
@@ -13,7 +13,7 @@ Target: packaged build, 1920x1080, average >= 120 FPS and 99th-percentile frame 
 | UE version | 5.5.4 |
 | Build type | Development (packaged), windowed 1920x1080, uncapped, VSync off |
 
-**Target-hardware warning:** the plan targets an RTX 2060 Super (8 GB). This PC has an RTX 3060, which is usually faster. Numbers below are not 2060 Super results. Treat 120 FPS here as a necessary, not sufficient, check.
+**Target-hardware warning:** the plan targets an RTX 2060 Super (8 GB). This PC has an RTX 3060, which is usually faster. Numbers below are not 2060 Super results. The final target is 60 FPS average and p99 <= 16.67 ms (owner, 2026-10-22); numbers from this PC are labelled "proxy" and 120 FPS is stretch telemetry only.
 
 ## Method
 

@@ -61,6 +61,9 @@ URPGBossPhases::URPGBossPhases()
 void URPGBossPhases::BeginPlay()
 {
 	Super::BeginPlay();
+	LoadedImmunityEffect = ImmunityEffect.LoadSynchronous();
+	LoadedRoarClip = RoarClip.LoadSynchronous();
+	LoadedTransitionMontage = TransitionMontage.LoadSynchronous();
 	if (const ACharacter* Character = Cast<ACharacter>(GetOwner()))
 	{
 		BaseWalkSpeed = Character->GetCharacterMovement() ? Character->GetCharacterMovement()->MaxWalkSpeed : 0.f;

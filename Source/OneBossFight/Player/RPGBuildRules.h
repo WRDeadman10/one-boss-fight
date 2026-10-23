@@ -167,7 +167,7 @@ namespace RPGBuildRules
 	{
 		/** A build was chosen (console variable, key or test hook). False: the player's weapon is left alone, whatever it is. */
 		bool bExplicit = false;
-		/** The combat component answered with a combat style and the equipment component exists (the pack finished starting). */
+		/** The pack's combat and equipment components are ready, including a populated weapon slot. The style itself may be None: equipping is what restores an unarmed player. */
 		bool bStyleKnown = false;
 		/** The weapon the player holds belongs to the chosen build (StyleMatchesBuild). */
 		bool bStyleMatches = false;
