@@ -54,6 +54,10 @@ $balance = @(
     @{ N = 'pie_build_fight_dex';      S = 'pie_build_fight'; K = 'R'; Min = 10; T = 1000; Setup = @('Saved/build_fight_build.txt', 'Dex') }
 )
 if ($Only) { $drivers = @(($drivers + $balance) | Where-Object { $Only -contains $_.N }) }
+if ($Only) {
+    $unknown = @($Only | Where-Object { $_ -notin $drivers.N })
+    if ($unknown.Count -gt 0) { throw "Unknown driver(s): $($unknown -join ', ')" }
+}
 
 function Read-LogFrom([int]$skip) {
     # The editor keeps the log open for writing: open it with sharing and return the lines after the first $skip lines.
@@ -73,8 +77,8 @@ function Invoke-Editor([string]$scriptName) {
 }
 
 function Test-Bridge() {
-    try { Invoke-WebRequest -Uri 'http://localhost:3000/' -UseBasicParsing -TimeoutSec 3 | Out-Null; return $true }
-    catch { return ($_.Exception.Response -ne $null) }  # a 404 from the route handler still means the bridge is up
+    try { Invoke-WebRequest -Uri 'http://127.0.0.1:3000/mcp/status' -UseBasicParsing -TimeoutSec 3 | Out-Null; return $true }
+    catch { return $false }
 }
 
 # The editor may still be starting (a rebuild relaunches it): wait for the bridge up to 4 minutes.
@@ -124,6 +128,14 @@ foreach ($d in $drivers) {
     }
     $ok = ($failed -eq 0) -and ($total -ge $d.Min)
     $detail = "$pass/$total passed (expected at least $($d.Min) checks)"
+    if ($d.Setup -and $d.S -eq 'pie_build_fight') {
+        $expectedBuild = [regex]::Escape($d.Setup[1])
+        $identity = @($lines | Where-Object { $_ -match "\[BuildFight\] METRIC build = $expectedBuild \(" })
+        if ($identity.Count -ne 1) {
+            $ok = $false
+            $detail += " | missing or mismatched build identity: expected $($d.Setup[1])"
+        }
+    }
     if (-not $ok) {
         $fails = @($lines | Where-Object { $_ -match 'LogPython: \[[^\]]+\] FAIL' } | ForEach-Object { ($_ -replace '^.*LogPython: ', '') } | Select-Object -First 3)
         if ($fails.Count -gt 0) { $detail += ' | ' + ($fails -join ' | ') }

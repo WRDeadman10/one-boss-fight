@@ -1,6 +1,6 @@
 # One Boss Fight
 
-UE 5.5.4 Soulslike boss duel: Greystone vs Sevarog in `L_SevarogArena`, built on the Advanced ARPG Combat pack. Target packaged 1080p / 120 FPS (RTX 2060 Super).
+UE 5.5.4 Soulslike boss duel: Greystone vs Sevarog in `L_SevarogArena`, built on the Advanced ARPG Combat pack. Target packaged 1080p / 60 FPS, p99 <= 16.67 ms (RTX 2060 Super; final, owner 2026-10-22).
 
 Read `Documentation/PROJECT_STATE.md` first (state, layout, commands, gotchas), then `Documentation/TASKS.md`. Other docs only when needed: `DECISIONS.md` (why), `KNOWN_ISSUES.md`, `TEST_PLAN.md`, `PERFORMANCE_LOG.md`, `PROGRESS_LOG.md`.
 

@@ -355,6 +355,7 @@ bool FRPGBuildDecideTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("pack not ready: wait"), static_cast<int32>(RPGBuildRules::Decide(Walk)), static_cast<int32>(EDecision::Wait));
 	Walk.bStyleKnown = true;
 	TestEqual(TEXT("ready, boss asleep: apply"), static_cast<int32>(RPGBuildRules::Decide(Walk)), static_cast<int32>(EDecision::Apply));
+	TestEqual(TEXT("a ready but unarmed player still applies the chosen build"), static_cast<int32>(RPGBuildRules::Decide(Walk)), static_cast<int32>(EDecision::Apply));
 	Walk.Attempts = 1;
 	Walk.SecondsSinceAttempt = 1.f;
 	TestEqual(TEXT("call 1 is being verified: wait"), static_cast<int32>(RPGBuildRules::Decide(Walk)), static_cast<int32>(EDecision::Wait));

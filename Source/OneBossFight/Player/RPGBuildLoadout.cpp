@@ -699,8 +699,8 @@ void URPGBuildLoadout::Poll()
 	ReadChoice();
 
 	// What the player holds and what the pack has.
-	const UObject* Combat = FindComponentByClassName(Pawn, TEXT("BP_CombatComponent_C"));
-	const UObject* Equipment = FindComponentByClassName(Pawn, TEXT("BP_EquipmentComponent_C"));
+	UObject* Combat = FindComponentByClassName(Pawn, TEXT("BP_CombatComponent_C"));
+	UObject* Equipment = FindComponentByClassName(Pawn, TEXT("BP_EquipmentComponent_C"));
 	if (!bWiringChecked && Combat && Equipment)
 	{
 		bWiringChecked = true;
@@ -742,8 +742,13 @@ void URPGBuildLoadout::Poll()
 	const bool bLockChanged = SyncLock(bBossPresent, bBossDormant);
 
 	Rules::FDecideInput In;
+	FWeaponSlotInfo WeaponSlot;
+	FString WeaponSlotWhy;
+	const bool bWeaponSlotReady = bExplicit && Equipment && ReadWeaponSlot(Equipment, WeaponSlot, WeaponSlotWhy);
 	In.bExplicit = bExplicit;
-	In.bStyleKnown = Combat && Equipment && !Style.IsNone() && (Now - StartTime) >= StartupDelaySeconds; // an Unarmed player is a known style too: the equip is what brings the weapon back (review of M13)
+	// Do not use CurrentCombatStyle as the readiness gate. On a cold spawn the pack can report None until the weapon item is equipped;
+	// once EquipmentSlots has the weapon slot, Apply restores that item instead of waiting forever for a style that cannot appear by itself.
+	In.bStyleKnown = Combat && bWeaponSlotReady && (Now - StartTime) >= StartupDelaySeconds;
 	In.bStyleMatches = Rules::StyleMatchesBuild(Style, Chosen);
 	In.bBossAwake = !bBossDormant;
 	// The pack is only asked what the decision needs: with no choice nothing is read from it besides the style.

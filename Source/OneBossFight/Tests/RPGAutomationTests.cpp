@@ -132,6 +132,11 @@ bool FRPGFrameStatsGateTest::RunTest(const FString& Parameters)
 	TArray<double> Slow;
 	Slow.Init(9.0, 500);
 	TestFalse(TEXT("steady 9 ms frames miss 120 FPS"), FRPGFrameStats::Compute(Slow).MeetsTarget(120.0));
+	// The default gate is the final 60 FPS target: 9 ms frames pass it, 20 ms frames (50 FPS) fail it.
+	TestTrue(TEXT("steady 9 ms frames meet the default 60 FPS gate"), FRPGFrameStats::Compute(Slow).MeetsTarget());
+	TArray<double> Slower;
+	Slower.Init(20.0, 200);
+	TestFalse(TEXT("steady 20 ms frames miss the default 60 FPS gate"), FRPGFrameStats::Compute(Slower).MeetsTarget());
 
 	// Empty input is safe and never passes.
 	const FRPGFrameStats Empty = FRPGFrameStats::Compute(TArray<double>());

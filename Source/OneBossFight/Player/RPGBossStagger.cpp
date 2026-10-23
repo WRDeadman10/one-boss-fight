@@ -171,6 +171,16 @@ UAnimInstance* URPGBossStagger::GetAnimInstance() const
 	return Character && Character->GetMesh() ? Character->GetMesh()->GetAnimInstance() : nullptr;
 }
 
+void URPGBossStagger::BeginPlay()
+{
+	Super::BeginPlay();
+	// Load the clips of the stance break and the riposte now: a synchronous load at the first break, riposte or phase change would block the game thread in the middle of the fight (audit A01, Gate 4 p99). The strong references keep them alive.
+	LoadedFall = FallClip.LoadSynchronous();
+	LoadedDown = DownClip.LoadSynchronous();
+	LoadedRipostePlayer = RipostePlayerClip.LoadSynchronous();
+	LoadedRiposteBoss = RiposteBossClip.LoadSynchronous();
+}
+
 void URPGBossStagger::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);

@@ -25,6 +25,10 @@ Log prefix [BuildFight]; the metric lines are also written to Saved/build_fight_
 import math
 import os
 import re
+import datetime
+import hashlib
+import json
+import uuid
 import unreal
 
 log = lambda m: unreal.log("[BuildFight] " + m)
@@ -34,6 +38,11 @@ log = lambda m: unreal.log("[BuildFight] " + m)
 # ===================================================================================================================================================================================================
 SAVED = os.path.join(unreal.SystemLibrary.get_project_directory(), "Saved")
 BUILDS = ("Starter", "Strength", "Dex")
+POLICY = "close-recovery-v3"
+RUN_ID = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S") + "_" + uuid.uuid4().hex[:8]
+SCRIPT_PATH = os.path.join(unreal.SystemLibrary.get_project_directory(), "Scripts", "Editor", "pie_build_fight.py")
+with open(SCRIPT_PATH, "rb") as source_file:
+    SOURCE_HASH = hashlib.sha256(source_file.read()).hexdigest()
 
 
 def read_build():
@@ -44,13 +53,13 @@ def read_build():
             with open(path, encoding="utf-8-sig") as f:
                 words = f.read().split()
             text = words[0] if words else ""
-            hit = next((b for b in BUILDS if b.lower() == text.lower()), None)
+            hit = next((b for b in BUILDS if b.lower() == text.lower()), None) if len(words) == 1 else None
             if hit:
                 return hit, "Saved/build_fight_build.txt"
-            return "Strength", "the file says '%s' which is not a build: default Strength" % text[:30]
+            return "Invalid", "the scenario file does not name Starter, Strength or Dex"
     except Exception as e:
-        return "Strength", "the file is unreadable (%s): default Strength" % e
-    return "Strength", "no file: default Strength"
+        return "Invalid", "the scenario file is unreadable: %s" % type(e).__name__
+    return "Invalid", "the scenario file is missing"
 
 
 BUILD, BUILD_NOTE = read_build()
@@ -86,15 +95,17 @@ ACTIONS = {
     "JumpHeavy": ("IA_StrongAttack", 0.12, True),
 }
 # GUESSES (nothing measured): seconds from the press to the first hit. The log prints the measured delay of every swing; replace these numbers with the medians.
-HIT_DELAY = {"Light": 0.30, "Strong": 0.45, "Charged": 1.9, "JumpLight": 0.55, "JumpHeavy": 0.85}
+HIT_DELAY = {"Light": 0.34, "Strong": 0.69, "Charged": 1.9, "JumpLight": 0.55, "JumpHeavy": 0.85}
 # The opener of each build by kind of opening: first one that fits the time left and the stamina wins.
 OPENERS = {
     "Strength": {"stagger": ["JumpHeavy", "Strong", "Light"], "recovery": ["Strong", "Light"], "roar": ["Strong", "Light"]},
     "Dex": {"stagger": ["Light"], "recovery": ["Light"], "roar": ["Light"]},
-    "Starter": {"stagger": ["Strong", "Light"], "recovery": ["Light"], "roar": ["Strong", "Light"]},
+    "Starter": {"stagger": ["Strong", "Light"], "recovery": ["Strong", "Light"], "roar": ["Strong", "Light"]},
 }
 CHAIN = {"Strength": 1, "Dex": 3, "Starter": 2}   # taps of a Light opener (pie_builds.py B6 taps three times, 0.5 s apart)
 TAP_SPACING = 0.5
+HEAVY_KINDS = ("Strong", "Charged", "JumpHeavy")
+HEAVY_OPENER_BUILDS = ("Starter", "Strength")
 
 # ===================================================================================================================================================================================================
 # 1. KNOBS OF THE BOT (all guesses until a run says otherwise; each is named in the notes)
@@ -103,23 +114,26 @@ LIMIT_FIGHT_S = 420.0          # world seconds from the wake (the first run, Str
 LIMIT_RUN_S = 720.0            # real seconds from the first frame with a pawn and a boss, whatever the world clock does (a paused world must not hang the editor)
 SETTLE_S = 9.0                 # the pack needs this long after the PIE start (pie_builds.py)
 START_DIST = 800.0             # cm in front of the boss at the wake (inside the 1200 cm gate)
+RESET_DIST = 1600.0            # cm during reset: outside the 1200 cm wake gate
+BASE_BOSS_HEALTH = 500.0       # encounter contract; verified before a balance run starts
+BASE_POSTURE = 100.0           # own posture-pool contract; verified before a balance run starts
 REFILL_BEFORE_FIGHT = True     # one debug_refill_player() before the wake; the bot is never healed afterwards
-STRIKE_RANGE0 = 165.0          # centre to centre cm at which a swing is thrown (pie_builds.py swings from 110); lowered after a whiff
+STRIKE_RANGE0 = 125.0
 STRIKE_MIN = 110.0
 WALK_SPEED = 450.0             # cm/s, a guess used only to decide whether a closing walk fits an opening (measured speed is logged)
-SPACING_MIN = 230.0
-SPACING_MAX = 380.0
-RETREAT = True                 # back off inside SPACING_MIN while the boss is neutral
+SPACING_MIN = 170.0
+SPACING_MAX = 260.0
+RETREAT = False
 WALL_RADIUS = 1000.0           # cm from the boss's home beyond which the bot does not back off any further (the arena radius is not read)
-BAIT_AFTER_S = 14.0            # no boss attack and no opening for this long: walk up and throw one light attack
+BAIT_AFTER_S = 1.0
 DODGE_PRESS_S = 0.08           # the key stays down this long (pie_iframes.py); the pack dodges when it is released
 DODGE_MIN_GAP = 0.45           # two presses closer than RPGDodgeTiming.DoubleTapWindow (0.30 s) would be the full roll
 DODGE_STAMINA_MIN = 12.0       # below this the bot does not even press (the cost of a dodge is not known: the log samples it)
 DODGE_RESERVE = 20.0           # a swing is only thrown when stamina stays above its cost plus this
 IFRAME_FIRST = 0.162           # s after the key goes down: first i-frame (montage 0.107 s at rate 1.3 plus the 0.08 s press), pie_iframes.py QUICK_WINDOW
 IFRAME_LAST = 0.457            # last i-frame
-CLOSE_DODGE = "side"           # the dodge against the quick close swings: "side" (stick right or left) or "flank" (60 degrees forward-sideways, ends near the boss's flank)
-FLANK = (0.866, 0.5)
+CLOSE_DODGE = "flank"
+FLANK = (0.5, 0.866)
 UNTRACKED_DODGE_AT = 0.20      # montage seconds at which an unknown boss attack montage is dodged
 UNTRACKED_REACH = 700.0
 OPENING_MIN = 0.45             # an opening shorter than this (real seconds) is logged but not counted as usable
@@ -135,7 +149,7 @@ LOW_STAMINA = 15.0
 PLAN = {
     "A1": ("close", 0.30, 330.0), "A1b": ("close", 0.30, 330.0), "A3a": ("close", 0.30, 330.0), "A3b": ("close", 0.30, 330.0),
     "A2": ("in", 0.25, 450.0),
-    "A6": ("back", 0.15, 1200.0),
+    "A6": ("jump", 0.15, 1200.0),
     "A4": ("back", 0.25, 450.0),
     "A5": ("close", 0.20, 1100.0),
 }
@@ -161,7 +175,7 @@ S = {"phase": "start", "t": 0.0, "run_t": 0.0, "now": 0.0, "w": None, "gen": Non
      "pawn_name": None, "gone": 0.0, "nopawn": 0.0, "home": None, "style0": None,
      "last_dodge_t": -99.0, "dodged_inst": -1, "dodged_bm": -1, "side": 1.0, "strike": STRIKE_RANGE0, "event_t": 0.0,
      "rip_done": {}, "rip_presses": {}, "stag_n_seen": 0, "stag_t0": 0.0, "roar_n": 0, "roar_t0": 0.0, "was_transition": False,
-     "bm_last": None, "bm_last_pos": 0.0, "bm_serial": 0, "mode": None, "last_skip": ""}
+     "bm_last": None, "bm_last_pos": 0.0, "bm_serial": 0, "mode": None, "last_skip": "", "decision_t": -1.0}
 handle = None
 TAGS = {}
 WARNED = set()
@@ -176,8 +190,9 @@ def new_metrics():
             "hp_hit": 0.0, "hp_bleed": 0.0, "hp_rip": 0.0, "hp_unmatched": 0.0, "hp_by_kind": {}, "pend_drops": [], "pend_recs": [], "rec_no_drop": 0, "drop_no_rec": 0,
             "hits": 0, "hits_seen": 0, "hits_kind": {}, "swings_seen": 0, "swings_kind": {}, "presses": {}, "presses_total": 0, "whiffs": 0, "ignored": 0, "swing_delays": {}, "cuts": 0,
             "procs_seen": 0, "rip_imp_seen": 0, "base": {}, "rip_press": 0, "rip_accepted": 0, "rip_rejected": 0,
-            "dodge_presses": 0, "dodge_montages": 0, "dodge_quick": 0, "dodge_full": 0, "dodge_refused": 0, "dodge_late": 0, "dodge_costs": [], "was_dodging": False,
+    "dodge_presses": 0, "dodge_montages": 0, "dodge_quick": 0, "dodge_full": 0, "dodge_refused": 0, "dodge_late": 0, "dodge_costs": [], "wave_jumps": 0, "was_dodging": False,
             "taken": [], "taken_total": 0.0, "pl_regen": 0.0, "inst": {}, "cur_inst": None, "inst_seen_t": 0.0, "attacks": {}, "untracked": {},
+            "brain_inactive_s": 0.0, "neutral_inactive_s": 0.0, "move_blocked_s": 0.0,
             "openings": [], "open_cur": None, "p2_t": None, "p2_hp": None, "style_changes": 0, "walk_sum": 0.0, "walk_n": 0, "last_pos": None, "metrics_lines": 0}
 
 
@@ -342,6 +357,14 @@ def observe(p):
     O["off_front"] = abs(O["polar"])
     home = S["home"]
     O["home_dist"] = math.hypot(pl.x - home[0], pl.y - home[1]) if home else 0.0
+    controller = boss.get_controller()
+    brains = controller.get_components_by_class(unreal.BrainComponent) if controller else []
+    O["brain_running"] = bool(brains[0].is_running()) if brains else None
+    O["move_ignored"] = p["pc"].is_move_input_ignored()
+    O["test_freeze"] = bool(safe("enc.test_freeze", lambda: enc.get_editor_property("test_freeze"), False)) if enc else None
+    player_velocity, boss_velocity = pawn.get_velocity(), boss.get_velocity()
+    O["player_speed"] = math.hypot(player_velocity.x, player_velocity.y)
+    O["boss_speed"] = math.hypot(boss_velocity.x, boss_velocity.y)
     # attributes
     O["boss_hp"] = attr(boss, "Attribute.Health")
     O["pl_hp"] = attr(pawn, "Attribute.Health")
@@ -529,6 +552,13 @@ def account(O):
     dt = max(0.0, t - M["last_t"])
     M["last_t"] = t
     M["fight_t"] = t - M["t0"]
+    if O["brain_running"] is False:
+        M["brain_inactive_s"] += dt
+    if O["move_ignored"]:
+        M["move_blocked_s"] += dt
+    M["neutral_inactive_s"] = M["neutral_inactive_s"] + dt if O["neutral"] and O["brain_running"] is False else 0.0
+    if M["neutral_inactive_s"] >= 10.0 or O["test_freeze"]:
+        end_fight("ai_inactive", "boss AI inactive while neutral for %.1f s; test freeze %s" % (M["neutral_inactive_s"], O["test_freeze"]))
     # ---- boss health: every drop is a weapon hit, a bleed proc or the riposte impact
     hp = O["boss_hp"]
     if hp is not None:
@@ -776,18 +806,16 @@ def riposte_vec(O):
 
 
 def plan_punish(O, op):
-    """The swing that fits this opening, or the walk that gets the bot into range for it, or None (the reason goes to S['last_skip'] and into the opening's log line)."""
+    """The opener for an opening, or the walk that gets the bot into range. Recovery deliberately does not use a fit estimate: a measured attempt is more useful than another skipped opening."""
     kind_open, key, left = op
     cls = "stagger" if kind_open == "stagger" else ("roar" if kind_open == "roar" else "recovery")
-    if left < OPENING_MIN * 0.6:
-        S["last_skip"] = "only %.2f s left" % left
-        return None
-    if O["falling"]:
+    if O["falling"] or O["dodging"]:
         S["last_skip"] = "the bot is in the air"
         return None
     st = O["pl_st"] if O["pl_st"] is not None else 0.0
     gap = max(0.0, O["dist"] - S["strike"])
-    t_close = gap / WALK_SPEED
+    if gap > 0.0 and st >= COST[BUILD]["Light"] + DODGE_RESERVE:
+        return ("move", (0.0, 1.0), "close during %s (%.0f cm, %.2f s left)" % (kind_open, O["dist"], left))
     why_not = []
     for kind in OPENERS[BUILD][cls]:
         if not CAPS[BUILD][kind]:
@@ -795,11 +823,8 @@ def plan_punish(O, op):
         if st < COST[BUILD][kind] + DODGE_RESERVE:
             why_not.append("%s needs %.0f stamina + %.0f reserve, has %.0f" % (kind, COST[BUILD][kind], DODGE_RESERVE, st))
             continue
-        if left < t_close + HIT_DELAY[kind] * 0.85:
-            why_not.append("%s does not fit: %.2f s left, %.2f s to walk %.0f cm + %.2f s to the hit" % (kind, left, t_close, gap, HIT_DELAY[kind]))
-            continue
         if gap > 0.0:
-            return ("move", (0.0, 1.0), "close in for a %s (%.0f cm, %.2f s left)" % (kind, O["dist"], left))
+            return ("move", (0.0, 1.0), "close in for a %s during %s (%.0f cm, %.2f s left; no fit veto)" % (kind, kind_open, O["dist"], left))
         taps = CHAIN.get(BUILD, 1) if kind == "Light" else 1
         return ("chain" if taps > 1 else "swing", kind, "%s opening, %.2f s left, stamina %.0f" % (kind_open, left, st), taps)
     S["last_skip"] = "; ".join(why_not) or "no opener of the build for this opening"
@@ -812,6 +837,8 @@ def decide(O):
         return ("wait", "riposte execution (input locked)")
     plan = dodge_due(O)
     if plan:
+        if plan["how"] == "jump":
+            return ("jump", plan)
         return ("dodge", plan)
     if O["dodging"]:
         return ("wait", "dodge running (a swing pressed now is eaten)")
@@ -830,12 +857,13 @@ def decide(O):
         if pun is not None:
             return pun
         return ("wait", "opening skipped (%s)" % S["last_skip"])
-    if O["neutral"]:
+    if O["neutral"] and not O["pmontage"] and not O["falling"]:
         if O["t"] - S["event_t"] > BAIT_AFTER_S:
             if O["pl_st"] is not None and O["pl_st"] >= COST[BUILD]["Light"] + DODGE_RESERVE:
                 if O["dist"] > S["strike"] + 10.0:
                     return ("move", (0.0, 1.0), "walk up for a bait swing (no boss attack for %.0f s)" % (O["t"] - S["event_t"]))
-                return ("swing", "Light", "bait: no boss attack for %.0f s" % (O["t"] - S["event_t"]), 1)
+                kind = "Strong" if BUILD == "Strength" and O["pl_st"] >= COST[BUILD]["Strong"] + DODGE_RESERVE else "Light"
+                return ("swing", kind, "neutral pressure: no boss action for %.1f s" % (O["t"] - S["event_t"]), 1)
         if O["dist"] > SPACING_MAX:
             return ("move", (0.0, 1.0), "approach to %.0f cm (now %.0f)" % (SPACING_MAX, O["dist"]))
         if RETREAT and O["dist"] < SPACING_MIN and O["home_dist"] < WALL_RADIUS:
@@ -913,6 +941,28 @@ def do_dodge(plan):
     if st0 is not None and st1 is not None:
         M["dodge_costs"].append(st0 - st1)
         log("INFO dodge stamina %.1f -> %.1f (cost sample %.1f, the pack's regeneration may be in it)" % (st0, st1, st0 - st1))
+    yield from until(lambda: not S["O"]["dodging"], 0.9)
+    after = S["O"]
+    log("DODGE END: distance %.0f -> %.0f, displacement %.0f cm, off-front %.0f, boss yaw %.0f, mode %s" % (
+        O["dist"], after["dist"], math.hypot(after["px"] - O["px"], after["py"] - O["py"]), after["off_front"], after["boss_yaw"], S["mode"]))
+    return "ok"
+
+
+def do_wave_jump(plan):
+    """A6's ground wave is jumpable; LEAP-01 proves a jump at wave launch clears it. This is an observed input sequence only when the editor owner runs the bot."""
+    O = S["O"]
+    S["dodged_inst"] = plan["key"]
+    M["wave_jumps"] += 1
+    clear_stick()
+    key_hold(JUMP_KEY, 0.12)
+    log("WAVE JUMP #%d: boss %s %s at montage position %.2f s, wave active starts in %.2f s; bot at %.0f cm" % (
+        M["wave_jumps"], plan["move"], O["phase"], O["pos"], plan["tta"], O["dist"]))
+    S["event_t"] = O["t"]
+    yield from until(lambda: S["O"]["falling"], 0.5)
+    yield from until(lambda: not S["O"]["falling"], 1.5)
+    after = S["O"]
+    log("WAVE JUMP END: distance %.0f -> %.0f, displacement %.0f cm, feet state falling %s, mode %s" % (
+        O["dist"], after["dist"], math.hypot(after["px"] - O["px"], after["py"] - O["py"]), after["falling"], S["mode"]))
     return "ok"
 
 
@@ -1024,18 +1074,26 @@ def fight():
     while M["outcome"] is None:
         O = S["O"]
         act = decide(O)
+        if O["move"] != "None" and O["t"] - S["decision_t"] >= 0.5:
+            S["decision_t"] = O["t"]
+            log("DECIDE %s/%s %.2f: distance %.0f, posture %.0f, stamina %s, action %s" % (
+                O["move"], O["phase"], O["pos"], O["dist"], O["posture"], O["pl_st"], act))
         note_mode(act)
         kind = act[0]
         if kind == "dodge":
             yield from do_dodge(act[1])
+        elif kind == "jump":
+            yield from do_wave_jump(act[1])
         elif kind == "riposte":
             yield from do_riposte(act[1])
         elif kind in ("swing", "chain"):
+            clear_stick()
             yield from do_swing(act[1], act[2], act[3])
         elif kind == "move":
             set_stick(act[1][0], act[1][1])
             yield 0.0
         else:
+            clear_stick()
             yield 0.0
 
 
@@ -1103,13 +1161,23 @@ def script():
     S["home"] = (home.x, home.y) if home is not None else (bl.x, bl.y)
     load_timing()
     read_boss_numbers()
-    # 1 the encounter reset: the boss sleeps (the loadout only applies a build while it does)
+    # 1 the encounter reset: move outside the wake gate first, then require the full dormant baseline.
+    # A prior PIE can leave the pawn near the boss; without this, the encounter wakes again before the build applies.
+    place_player(RESET_DIST)
     C["enc"].reset_for_test()
-    yield from pause(1.0)
+    baseline = yield from until(lambda: parts()["enc"].is_dormant()
+                                and (attr(S["P"]["boss"], "Attribute.Health") or 0.0) >= BASE_BOSS_HEALTH - 0.5
+                                and parts()["post"].get_posture() >= BASE_POSTURE - 0.5, 3.0)
     C = parts()
-    M["flags"]["slept"] = bool(C["enc"].is_dormant())
+    boss_health = attr(S["P"]["boss"], "Attribute.Health")
+    posture = C["post"].get_posture()
+    M["flags"]["slept"] = bool(baseline)
     M["flags"]["intake_bound"] = bool(safe("intake.is_hit_intake_bound", lambda: C["intake"].is_hit_intake_bound(), False))
-    log("SETUP the boss sleeps: %s; hit intake bound: %s; generation %s" % (M["flags"]["slept"], M["flags"]["intake_bound"], safe("enc.get_generation", lambda: C["enc"].get_generation(), "?")))
+    log("SETUP dormant baseline: %s; health %s/%s, posture %s/%s; hit intake bound: %s; generation %s" % (
+        M["flags"]["slept"], boss_health, BASE_BOSS_HEALTH, posture, BASE_POSTURE, M["flags"]["intake_bound"], safe("enc.get_generation", lambda: C["enc"].get_generation(), "?")))
+    if not baseline:
+        end_fight("setup_failed", "reset baseline was not dormant/full (health %s, posture %s)" % (boss_health, posture))
+        return
     # 2 the build: rpg.Build was set before the PIE; the loadout equips it while the boss sleeps
     want = STYLE[BUILD]
     ld = C["ld"]
@@ -1124,7 +1192,7 @@ def script():
         ld.get_actual_style_name(), want, ld.get_state_name(), ld.get_chosen_build_name(), ld.get_equipped_actor_class_name(), ABILITY[BUILD], ld.has_weapon_ability_for_test(ABILITY[BUILD]), ld.get_build_line(),
         ld.get_apply_attempt_count(), ld.get_last_result()[:200])
     # the style, the idle loadout and the weapon ability decide; the weapon actor's class is only reported (pie_builds.py proved it after an equip, a fresh Starter sword has not been looked at)
-    M["flags"]["build_ok"] = bool(ok) and ld.has_weapon_ability_for_test(ABILITY[BUILD])
+    M["flags"]["build_ok"] = bool(ok) and ld.has_weapon_ability_for_test(ABILITY[BUILD]) and ld.get_chosen_build_name() == BUILD
     log("SETUP build %s %s after %.1f s: %s" % (BUILD, "EQUIPPED" if M["flags"]["build_ok"] else "NOT EQUIPPED", S["now"] - t0, detail))
     if ld.get_equipped_actor_class_name() != ACTOR[BUILD]:
         log("INFO the weapon actor in the slot is '%s', pie_builds.py expects '%s' for this build" % (ld.get_equipped_actor_class_name(), ACTOR[BUILD]))
@@ -1179,11 +1247,34 @@ def report():
 
     base = M["base"] or {}
     O = S["O"] or {}
-    fight_s = (M["end_t"] - M["t0"]) if (M["t0"] is not None and M["end_t"] is not None) else M["fight_t"]
+    fight_s = M["fight_t"]
     metric("build", "%s (%s); weapon style at the end %s" % (BUILD, BUILD_NOTE, O.get("style", "?")))
+    metric("run_id", RUN_ID)
+    metric("policy", "%s; source %s" % (POLICY, SOURCE_HASH))
     metric("outcome", "%s (%s)" % (M["outcome"], M["why"] or "-"))
     metric("fight_seconds", "%.1f of %.0f allowed (world time from the wake)" % (fight_s, LIMIT_FIGHT_S))
     lost = (M["boss_hp0"] - M["boss_hp_last"]) if (M["boss_hp0"] is not None and M["boss_hp_last"] is not None) else None
+    coverage = []
+    if M["outcome"] != "boss_dead":
+        coverage.append("no victory")
+    if lost is None or lost < 0.4 * (M["boss_hp0"] or 1.0):
+        coverage.append("less than 40 percent boss health removed")
+    if not base or O.get("stag_n", 0) <= base.get("stagger", 0):
+        coverage.append("no posture break")
+    if not base or O.get("rip_imp", 0) <= base.get("rip_imp", 0):
+        coverage.append("no riposte impact")
+    if BUILD == "Strength" and not any(M["hits_kind"].get(kind, 0) for kind in ("Strong", "Charged", "JumpHeavy")):
+        coverage.append("no Strength heavy hit")
+    heavy_presses = sum(M["presses"].get(kind, 0) for kind in HEAVY_KINDS)
+    if BUILD in HEAVY_OPENER_BUILDS and heavy_presses < 3:
+        coverage.append("only %d heavy swing(s); need at least 3 to exercise the heavy-opener policy" % heavy_presses)
+    if BUILD == "Dex" and (not base or O.get("procs", 0) <= base.get("procs", 0)):
+        coverage.append("no Dex bleed proc")
+    if M["dodge_late"] > 0:
+        coverage.append("%d dodge(s) pressed too late for the i-frames (close attacks are not reactively dodgeable: the run measures the bot)" % M["dodge_late"])
+    if M["untracked"]:
+        coverage.append("untracked boss moves dodged at a guessed time (%s)" % ", ".join(sorted(str(k) for k in M["untracked"])))
+    metric("balance_evidence", "INCONCLUSIVE: " + "; ".join(coverage) if coverage else "mechanics exercised; repeated runs and owner feel test still required")
     if lost is not None:
         metric("boss_health", "%.0f -> %.0f, lost %.1f = %.1f weapon hits + %.1f bleed procs + %.1f riposte impacts + %.1f other" % (M["boss_hp0"], M["boss_hp_last"], lost, M["hp_hit"], M["hp_bleed"], M["hp_rip"], lost - M["hp_hit"] - M["hp_bleed"] - M["hp_rip"]))
     else:
@@ -1201,14 +1292,14 @@ def report():
     metric("ripostes", "%d done (impacts), %d presses, %d accepted, %d rejected by the press itself, %d rejected requests counted by the boss" % (
         (O.get("rip_imp", 0) - base.get("rip_imp", 0)) if base else 0, M["rip_press"], M["rip_accepted"], M["rip_rejected"], (O.get("rip_rej", 0) - base.get("rip_rej", 0)) if base else 0))
     metric("bleed_procs", "%d (last proc took %.1f health)" % ((O.get("procs", 0) - base.get("procs", 0)) if base else 0, O.get("proc_dmg", 0.0)))
-    metric("dodges", "%d presses, %d dodge montages (%d quick, %d full), %d ignored by the pack, %d late (the i-frames start after the hit was due), stamina cost samples %s" % (
-        M["dodge_presses"], M["dodge_montages"], M["dodge_quick"], M["dodge_full"], M["dodge_refused"], M["dodge_late"], ", ".join("%.0f" % c for c in M["dodge_costs"][:8]) or "none"))
+    metric("dodges", "%d presses, %d dodge montages (%d quick, %d full), %d wave jumps, %d ignored by the pack, %d late (the i-frames start after the hit was due), stamina cost samples %s" % (
+        M["dodge_presses"], M["dodge_montages"], M["dodge_quick"], M["dodge_full"], M["wave_jumps"], M["dodge_refused"], M["dodge_late"], ", ".join("%.0f" % c for c in M["dodge_costs"][:8]) or "none"))
     by_move = {}
     for t in M["taken"]:
         key = t["who"].split(" at ")[0]
         by_move[key] = by_move.get(key, 0) + 1
     metric("hits_taken", "%d for %.0f health (%s); player health %s -> %s (lowest %s)" % (len(M["taken"]), M["taken_total"], counts_text(by_move), M["pl_hp0"], M["pl_hp_last"], M["pl_hp_min"]))
-    metric("attacks_seen", "; ".join("%s %d (hit me %d, avoided by a dodge %d, missed on its own %d)" % (k, v["seen"], v["hit_me"], v["avoided"], v["missed"]) for k, v in sorted(M["attacks"].items())) or "no tracked attack")
+    metric("attacks_seen", "; ".join("%s %d (hit me %d, not hit after a dodge %d (NOT a dodge success rate: out of range counts too), missed on its own %d)" % (k, v["seen"], v["hit_me"], v["avoided"], v["missed"]) for k, v in sorted(M["attacks"].items())) or "no tracked attack")
     usable = [o for o in M["openings"] if o["usable"]]
     used = [o for o in usable if o["used"]]
     tried = [o for o in usable if o["attempted"]]
@@ -1226,19 +1317,36 @@ def report():
     metric("strike_range", "%.0f cm at the end (started at %.0f)" % (S["strike"], STRIKE_RANGE0))
     M["metrics_lines"] = len(lines)
     try:
+        archive = os.path.join(SAVED, "BalanceRuns")
+        os.makedirs(archive, exist_ok=True)
+        record = {"run_id": RUN_ID, "policy": POLICY, "source_sha256": SOURCE_HASH, "build": BUILD,
+                  "build_source": BUILD_NOTE, "actual_style": O.get("style"), "flags": M["flags"], "outcome": M["outcome"],
+                  "fight_seconds": fight_s, "boss_start": M["boss_hp0"], "boss_end": M["boss_hp_last"],
+                  "player_start": M["pl_hp0"], "player_end": M["pl_hp_last"], "hits_by_kind": M["hits_kind"],
+                  "posture_breaks": O.get("stag_n", 0) - base.get("stagger", 0) if base else 0,
+                  "ripostes": O.get("rip_imp", 0) - base.get("rip_imp", 0) if base else 0,
+                  "bleed_procs": O.get("procs", 0) - base.get("procs", 0) if base else 0,
+                  "hits_taken": len(M["taken"]), "damage_taken": M["taken_total"], "coverage_gaps": coverage,
+                  "errors": S["errors"], "error": M["error"], "metrics": lines,
+                  "settings": {"spacing_max": SPACING_MAX, "strike_range": STRIKE_RANGE0, "close_dodge": CLOSE_DODGE,
+                               "neutral_delay": BAIT_AFTER_S, "fight_limit": LIMIT_FIGHT_S}}
+        with open(os.path.join(archive, "%s_%s.json" % (RUN_ID, BUILD)), "x", encoding="utf-8") as output:
+            json.dump(record, output, indent=2)
         with open(os.path.join(SAVED, "build_fight_result_%s.txt" % BUILD), "w", encoding="utf-8") as f:
             f.write("\n".join(lines) + "\n")
     except Exception as e:
+        S["errors"] += 1
+        M["error"] = "could not persist balance metrics"
         log("could not write the metrics file: %s" % e)
 
 
 def final_checks():
     """Always the same ten checks, however the run ended (RESULT n/m must not shrink when the fight is lost)."""
     f = M["flags"]
-    attacks = sum(v["seen"] for v in M["attacks"].values()) + sum(v["n"] for v in M["untracked"].values())
+    attacks = sum(v["seen"] for v in M["attacks"].values()) + sum(v["n"] for v in M["untracked"].values() if v["attack_like"])
     check("S1 the pawn, the boss and the components of the fight exist (tracker, stagger, posture, phases, encounter, debug, swing tracker, hit intake, loadout)", f["parts"], "")
     check("S2 the boss slept before the fight (dormant after the reset)", f["slept"], "")
-    check("S3 the %s build was equipped before the wake (%s, loadout state Idle, weapon ability granted)" % (BUILD, STYLE[BUILD]), f["build_ok"], "")
+    check("S3 the %s build was equipped before the wake (%s, loadout state Idle, weapon ability granted)" % (BUILD, STYLE.get(BUILD, "invalid scenario")), f["build_ok"], "")
     check("S4 the fight started: the boss woke and the clock ran (%.1f s of fight time, woke by %s)" % (M["fight_t"], M["woke_by"]), M["t0"] is not None, "")
     check("S5 the boss attacked at least once (%d tracked or untracked attack(s) seen)" % attacks, attacks >= 1, "")
     check("S6 the bot threw at least one swing (%d presses) and the hit intake was bound" % M["presses_total"], M["presses_total"] >= 1 and f["intake_bound"], "")
@@ -1296,6 +1404,8 @@ def finish():
 # ===================================================================================================================================================================================================
 def heartbeat(O):
     if O is not None and M["fight_on"]:
+        log("AI running %s, test freeze %s, boss speed %.0f; player speed %.0f, move ignored %s" % (
+            O["brain_running"], O["test_freeze"], O["boss_speed"], O["player_speed"], O["move_ignored"]))
         log("heartbeat: fight %.0f s | boss health %s%s, posture %.0f | player health %s stamina %s | dist %.0f | boss %s/%s | mode %s | hits %d, presses %d, dodges %d, taken %d, breaks %d, ripostes %d" % (
             M["fight_t"], O["boss_hp"], " (phase two)" if O["phase2"] else "", O["posture"], O["pl_hp"], ("%.0f" % O["pl_st"]) if O["pl_st"] is not None else "?", O["dist"], O["move"], O["phase"], S["mode"],
             M["hits"], M["presses_total"], M["dodge_presses"], len(M["taken"]), O["stag_n"] - M["base"].get("stagger", 0), O["rip_imp"] - M["base"].get("rip_imp", 0)))
@@ -1309,6 +1419,11 @@ def _tick(dt):
     s["t"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            if BUILD not in BUILDS:
+                M["error"] = BUILD_NOTE
+                end_fight("setup_failed", BUILD_NOTE)
+                finish()
+                return
             console('rpg.Build "%s"' % BUILD)   # before the PIE: the first pawn's loadout reads it at its start (process wide, cleared in finish())
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0)

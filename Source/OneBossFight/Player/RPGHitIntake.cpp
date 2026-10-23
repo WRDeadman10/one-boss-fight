@@ -336,7 +336,7 @@ void URPGHitIntake::FinalizePending()
 	const bool bShared = Pending.Num() > 1;
 	TArray<FPending> Batch = MoveTemp(Pending);
 	Pending.Reset();
-	// Hits of one swing on one target in one frame are ONE hit for the table (the dual swords' two blades strike together: the pack deals the damage once, probe 2026-10-22): the first entry is the record, the others are merged into it and counted apart.
+	// Hits of one swing on one target in one frame are ONE hit for the table (the dual swords' two blades strike together; the pack deals its health damage for EACH blade, 32 instead of 16 per swing in the probe of 2026-10-22, KI-092, while posture and bleed are applied once here): the first entry is the record, the others are merged into it and counted apart.
 	TArray<FName> SeenMontages;
 	for (FPending& Entry : Batch)
 	{

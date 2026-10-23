@@ -6,7 +6,7 @@
 
 /**
  * Frame-time statistics for the performance gate.
- * Release target: average >= 120 FPS AND 99th-percentile frame time <= 8.33 ms.
+ * Release target (final, owner 2026-10-22): average >= 60 FPS AND 99th-percentile frame time <= 16.67 ms. 120 FPS / 8.33 ms is stretch telemetry only (pass 120.0 to MeetsTarget).
  * Average FPS alone hides spikes, so both are always reported.
  */
 struct ONEBOSSFIGHT_API FRPGFrameStats
@@ -37,7 +37,7 @@ struct ONEBOSSFIGHT_API FRPGFrameStats
 	static double PercentileSorted(const TArray<double>& SortedMs, double P);
 
 	/** True when both the average-FPS and 99th-percentile gates pass for the given target. */
-	bool MeetsTarget(double TargetFPS = 120.0) const;
+	bool MeetsTarget(double TargetFPS = 60.0) const;
 
 	FString ToLogString() const;
 };

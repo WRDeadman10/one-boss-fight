@@ -76,7 +76,7 @@ public:
 
 	/** Target for pass/fail in the summary. */
 	UPROPERTY(EditAnywhere, Category = "Benchmark", meta = (ClampMin = "1"))
-	float TargetFPS = 120.f;
+	float TargetFPS = 60.f; // the final release gate: 60 FPS average and p99 <= 16.67 ms
 
 protected:
 	virtual void BeginPlay() override;
