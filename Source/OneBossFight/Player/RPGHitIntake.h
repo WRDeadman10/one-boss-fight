@@ -10,6 +10,8 @@
 #include "Player/RPGWeaponAttackTable.h"
 #include "RPGHitIntake.generated.h"
 
+class UMaterialInterface;
+
 /** What one player hit on the boss was (Gate 3, M7): who, with which weapon and which attack data, in what stance. Plain data, no Unreal object is held strongly. */
 struct FRPGHitRecord
 {
@@ -34,6 +36,7 @@ struct FRPGHitRecord
 	/** The stance at the moment of the hit. */
 	bool bAirborne = false;
 	FName HitBone;
+	FVector ImpactPoint = FVector::ZeroVector;
 	TWeakObjectPtr<AActor> Target;
 	/** The weapon attack table row of this hit (posture damage, stamina, bleed, hyperarmor). */
 	FRPGWeaponAttackRow Row;
@@ -160,6 +163,8 @@ private:
 	TWeakObjectPtr<UObject> BoundCollision;
 	UPROPERTY(Transient)
 	TObjectPtr<URPGWeaponAttackTable> Table;
+	UPROPERTY(Transient)
+	TObjectPtr<UMaterialInterface> LoadedHitSparkFlipbook;
 	TSet<FString> WarnedRows;
 	FName TrackedMontage;
 	float LastMontagePosition = 0.f;

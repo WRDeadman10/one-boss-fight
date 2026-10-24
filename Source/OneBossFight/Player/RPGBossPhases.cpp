@@ -2,6 +2,7 @@
 
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGBossDormantWake.h"
 #include "Player/RPGHitIntake.h"
 #include "Player/RPGBossInterrupt.h"
 #include "Player/RPGBossClips.h"
@@ -241,6 +242,7 @@ void URPGBossPhases::RemoveImmunity()
 
 void URPGBossPhases::StartTransition(bool bHeldAlready)
 {
+	URPGBossDormantWake::StopFor(GetOwner(), TEXT("phase transition"));
 	const UWorld* World = GetWorld();
 	bPhaseTwo = true;
 	bTransition = true;

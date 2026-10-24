@@ -519,6 +519,33 @@ FString URPGCombatDebug::DebugPlayerMontageAnimName() const
 	return ActiveMontageAnimName(Cast<ACharacter>(UGameplayStatics::GetPlayerPawn(this, 0)));
 }
 
+TArray<FString> URPGCombatDebug::DebugBossMontageInstances() const
+{
+	TArray<FString> Lines;
+#if !UE_BUILD_SHIPPING
+	const ACharacter* Boss = Cast<ACharacter>(GetOwner());
+	const USkeletalMeshComponent* Mesh = Boss ? Boss->GetMesh() : nullptr;
+	const UAnimInstance* Anim = Mesh ? Mesh->GetAnimInstance() : nullptr;
+	if (!Mesh || !Anim)
+	{
+		return Lines;
+	}
+
+	const FVector RelativeLocation = Mesh->GetRelativeLocation();
+	const FRotator RelativeRotation = Mesh->GetRelativeRotation();
+	Lines.Add(FString::Printf(TEXT("mesh relative loc %.2f %.2f %.2f rot %.2f %.2f %.2f"), RelativeLocation.X, RelativeLocation.Y, RelativeLocation.Z, RelativeRotation.Roll, RelativeRotation.Pitch, RelativeRotation.Yaw));
+	for (const FAnimMontageInstance* Instance : Anim->MontageInstances)
+	{
+		if (!Instance)
+		{
+			continue;
+		}
+		Lines.Add(FString::Printf(TEXT("montage %s weight %.3f pos %.3f playing %d stopped %d rootMotionDisabled %d"), *GetNameSafe(Instance->Montage), Instance->GetWeight(), Instance->GetPosition(), Instance->IsPlaying() ? 1 : 0, Instance->IsStopped() ? 1 : 0, Instance->IsRootMotionDisabled() ? 1 : 0));
+	}
+#endif
+	return Lines;
+}
+
 void URPGCombatDebug::DebugRefillPlayer() const
 {
 #if !UE_BUILD_SHIPPING

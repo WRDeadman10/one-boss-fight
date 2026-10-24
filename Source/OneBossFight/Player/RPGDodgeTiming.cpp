@@ -1,8 +1,10 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGDodgeTiming.h"
+#include "Player/RPGFlipbookEffect.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Animation/AnimMontage.h"
+#include "Components/CapsuleComponent.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -32,6 +34,7 @@ URPGDodgeTiming::URPGDodgeTiming()
 void URPGDodgeTiming::BeginPlay()
 {
 	Super::BeginPlay();
+	LoadedDodgeDustFlipbook = ARPGFlipbookEffect::LoadMaterial(ERPGEFlipbookKind::DodgeDust);
 	TryBind();
 }
 
@@ -41,10 +44,6 @@ void URPGDodgeTiming::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	if (!bBound)
 	{
 		TryBind();
-	}
-	if (!bBackwardWithoutInput)
-	{
-		return;
 	}
 	if (!CachedAbility.IsValid())
 	{
@@ -57,6 +56,10 @@ void URPGDodgeTiming::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		OnDodgeStarted();
 	}
 	bWasActive = bActive;
+	if (!bBackwardWithoutInput)
+	{
+		return;
+	}
 	if (bTurning)
 	{
 		if (bActive)
@@ -72,6 +75,16 @@ void URPGDodgeTiming::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 void URPGDodgeTiming::OnDodgeStarted()
 {
+	if (const ACharacter* Walker = Cast<ACharacter>(GetOwner()))
+	{
+		// the dust belongs on the floor: the actor location is the capsule centre
+		const float HalfHeight = Walker->GetCapsuleComponent() ? Walker->GetCapsuleComponent()->GetScaledCapsuleHalfHeight() : 90.f;
+		ARPGFlipbookEffect::Spawn(GetWorld(), Walker->GetActorLocation() - FVector(0.f, 0.f, HalfHeight), ERPGEFlipbookKind::DodgeDust, LoadedDodgeDustFlipbook);
+	}
+	if (!bBackwardWithoutInput)
+	{
+		return;
+	}
 	const ACharacter* Character = Cast<ACharacter>(GetOwner());
 	const UCharacterMovementComponent* Movement = Character ? Character->GetCharacterMovement() : nullptr;
 	if (!Movement || Movement->GetLastInputVector().Size() >= NoInputThreshold)

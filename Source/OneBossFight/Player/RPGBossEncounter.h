@@ -42,6 +42,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Encounter")
 	bool IsDormant() const { return bDormant; }
 
+	/** The authored wake sequence is playing; the pack behaviour remains held until it completes. */
+	UFUNCTION(BlueprintPure, Category = "Encounter")
+	bool IsWaking() const { return bWaking; }
+
 	UFUNCTION(BlueprintPure, Category = "Encounter")
 	int32 GetResetCount() const { return ResetCount; }
 
@@ -74,6 +78,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Encounter")
 	void Wake();
 
+	/** Called only by URPGBossDormantWake after its sequence ended or was interrupted. */
+	void FinishWake();
+	void CancelWake();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -87,6 +95,7 @@ private:
 
 	FTransform HomeTransform;
 	bool bDormant = false;
+	bool bWaking = false;
 	bool bHeld = false;
 	bool bWantsHold = false;
 	int32 ResetCount = 0;

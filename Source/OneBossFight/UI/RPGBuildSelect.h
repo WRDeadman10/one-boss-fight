@@ -11,7 +11,9 @@
 #include "RPGBuildSelect.generated.h"
 
 class UCanvasPanel;
+class UImage;
 class UTextBlock;
+class UTexture2D;
 class UInputComponent;
 class FRPGBuildSelectKeyListener;
 
@@ -34,6 +36,7 @@ private:
 	class URPGBuildSelect* Selector = nullptr;
 	UTextBlock* TitleText = nullptr;
 	TArray<UTextBlock*> Rows;
+	TArray<UImage*> Icons;
 };
 
 /** Pre-fight build chooser (G3-5): a raw B-key panel that delegates every choice to URPGBuildLoadout. */
@@ -66,6 +69,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Build Select")
 	FString GetRowText(int32 Row) const;
 
+	/** Optional art for one build row. A missing texture leaves its existing text-only row intact. */
+	UTexture2D* GetRowIcon(int32 Row) const;
+
 	void OnWidgetRowClicked(int32 Row);
 
 protected:
@@ -85,9 +91,13 @@ private:
 	bool ConsumeBKeyDown();
 	class URPGBuildLoadout* GetLoadout() const;
 	class APlayerController* GetController() const;
+	void LoadRowIcons();
 
 	UPROPERTY(Transient)
 	TObjectPtr<URPGBuildSelectWidget> Widget;
+
+	UPROPERTY(Transient)
+	TArray<TObjectPtr<UTexture2D>> RowIcons;
 	TSharedPtr<FRPGBuildSelectKeyListener> KeyListener;
 	TAtomic<bool> bBKeyPending = false;
 	bool bOpen = false;

@@ -5,10 +5,12 @@
 #include "Blueprint/WidgetTree.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/InputComponent.h"
 #include "CoreGlobals.h"
 #include "Engine/World.h"
+#include "Engine/Texture2D.h"
 #include "Framework/Application/IInputProcessor.h"
 #include "Framework/Application/SlateApplication.h"
 #include "GameFramework/Character.h"
@@ -26,6 +28,7 @@
 #include "Styling/CoreStyle.h"
 #include "EngineUtils.h"
 #include "Misc/CoreMisc.h"
+#include "UObject/SoftObjectPath.h"
 
 class FRPGBuildSelectKeyListener final : public IInputProcessor
 {
@@ -76,6 +79,18 @@ namespace
 		Slot->SetAutoSize(true);
 		return Text;
 	}
+
+	UImage* AddIcon(UWidgetTree* Tree, UCanvasPanel* Canvas, const TCHAR* Name, const FVector2D& Position)
+	{
+		UImage* Image = Tree->ConstructWidget<UImage>(UImage::StaticClass(), Name);
+		Image->SetVisibility(ESlateVisibility::HitTestInvisible);
+		UCanvasPanelSlot* Slot = Canvas->AddChildToCanvas(Image);
+		Slot->SetAnchors(FAnchors(0.5f, 0.25f));
+		Slot->SetAlignment(FVector2D(1.f, 0.5f));
+		Slot->SetPosition(Position);
+		Slot->SetSize(FVector2D(32.f, 32.f));
+		return Image;
+	}
 }
 
 URPGBuildSelectWidget::URPGBuildSelectWidget(const FObjectInitializer& ObjectInitializer)
@@ -90,6 +105,18 @@ void URPGBuildSelectWidget::SetSelector(URPGBuildSelect* InSelector)
 	for (int32 Row = 0; Row < Rows.Num(); ++Row)
 	{
 		Rows[Row]->SetText(FText::FromString(FString::Printf(TEXT("%d  %s"), Row + 1, *Selector->GetRowText(Row))));
+		if (Icons.IsValidIndex(Row))
+		{
+			if (UTexture2D* Icon = Selector->GetRowIcon(Row))
+			{
+				Icons[Row]->SetBrushFromTexture(Icon, true);
+				Icons[Row]->SetVisibility(ESlateVisibility::HitTestInvisible);
+			}
+			else
+			{
+				Icons[Row]->SetVisibility(ESlateVisibility::Collapsed);
+			}
+		}
 	}
 }
 
@@ -105,6 +132,7 @@ TSharedRef<SWidget> URPGBuildSelectWidget::RebuildWidget()
 		{
 			UTextBlock* Text = AddText(WidgetTree, Canvas, *FString::Printf(TEXT("BuildRow%d"), Row), FVector2D(0.f, 52.f + Row * 42.f), 20);
 			Rows.Add(Text);
+			Icons.Add(AddIcon(WidgetTree, Canvas, *FString::Printf(TEXT("BuildIcon%d"), Row), FVector2D(-112.f, 68.f + Row * 42.f)));
 		}
 	}
 	return Super::RebuildWidget();
@@ -155,8 +183,29 @@ URPGBuildSelect::URPGBuildSelect()
 void URPGBuildSelect::BeginPlay()
 {
 	Super::BeginPlay();
+	LoadRowIcons();
 	bBKeyPending.Store(false);
 	RegisterKeyListener();
+}
+
+void URPGBuildSelect::LoadRowIcons()
+{
+	static const TCHAR* Paths[] =
+	{
+		TEXT("/Game/OneBossFight/UI/Art/T_Boss01_Icon_Starter.T_Boss01_Icon_Starter"),
+		TEXT("/Game/OneBossFight/UI/Art/T_Boss01_Icon_Strength.T_Boss01_Icon_Strength"),
+		TEXT("/Game/OneBossFight/UI/Art/T_Boss01_Icon_Dex.T_Boss01_Icon_Dex")
+	};
+	RowIcons.Reset();
+	for (const TCHAR* Path : Paths)
+	{
+		RowIcons.Add(TSoftObjectPtr<UTexture2D>(FSoftObjectPath(Path)).LoadSynchronous());
+	}
+}
+
+UTexture2D* URPGBuildSelect::GetRowIcon(int32 Row) const
+{
+	return RowIcons.IsValidIndex(Row) ? RowIcons[Row].Get() : nullptr;
 }
 
 void URPGBuildSelect::EndPlay(const EEndPlayReason::Type EndPlayReason)

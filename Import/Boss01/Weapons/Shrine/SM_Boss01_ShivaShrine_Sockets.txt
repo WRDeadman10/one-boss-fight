@@ -1,0 +1,10 @@
+# Sockets for SM_Boss01_ShivaShrine (Lord Shiva Shrine M-07)
+# Coordinate system: Unreal Engine (X=Right, +Y=Front facing player, +Z=Up)
+SOCKET_Interact, (0.0, 120.0, 100.0), (0.0, 0.0, 0.0), (1.0, 1.0, 1.0)
+SOCKET_Glow_ThirdEye, (0.0, 11.1, 226.2), (0.0, 0.0, 0.0), (1.0, 1.0, 1.0)
+SOCKET_Glow_Crescent, (-8.6, 6.2, 241.6), (0.0, 0.0, 0.0), (1.0, 1.0, 1.0)
+
+# Notes:
+# - SOCKET_Interact: 120 cm in front of rock base at waist height (Z=100) for player prayer/interaction prompt
+# - SOCKET_Glow_ThirdEye: at sacred vertical Trinetra on forehead center for ember flame/eye particle
+# - SOCKET_Glow_Crescent: at Chandra crescent moon cradled on topknot for celestial rim glow

@@ -113,6 +113,12 @@ private:
 	TWeakObjectPtr<APawn> FightPlayer;
 	bool bFightStarted = false;
 	bool bPhase2Forced = false;
+
+	/** Console variables applied by -RPGBenchmarkCvars="name=value;name=value" (performance experiments, works in Shipping), as "name=value" with a note when unknown; written to summary.json. */
+	FString AppliedCvars;
+	/** -RPGBenchmarkProfileGPUAt=<seconds>: runs ProfileGPU once at that benchmark time (Development builds only; the pass table goes to the log). */
+	float ProfileGpuAt = -1.f;
+	bool bProfileGpuDone = false;
 	float BotAttackTimer = 0.f;
 	float BotDodgeTimer = 0.f;
 	float BotHealTimer = 0.f;

@@ -143,6 +143,10 @@ For a failed set, add the selected bottleneck and exactly one follow-up cvar or 
    State whether the RTX 2060 Super meets average FPS >= 60 and p99 <= 16.67
    ms. A non-2060 result is a proxy only.
 
+### Benchmark on another PC (owner decision 2026-10-24)
+
+The owner runs the benchmark on another PC that has its own Claude. On the development PC: `.\Scripts\Package.ps1 -Configuration Shipping`, then `powershell -NoProfile -ExecutionPolicy Bypass -File Scripts\MakeBenchKit.ps1 -OutDir C:/BenchTransfer -Zip` (forward slashes: the Git Bash shell eats backslashes) builds `C:\BenchTransfer\OneBossFight_BenchKit` (about 3.1 GB, no .pdb files) and the same as a zip (tar.exe writes it, Compress-Archive of Windows PowerShell 5.1 fails above 2 GB). Kit of 2026-10-24 20:10 (before B10b and the Shiva shrine). `Documentation/BENCHKIT_README.md` (inside the kit) holds the prompt for the Claude on that PC; its `Scripts\BenchKit_Collect.ps1` writes `bench_results_<computer>_<time>.zip` (run folders with frames.csv and summary.json, system_info.txt with the session type and GPU, the summary table, the game log). Bring that zip back, put it under `Savedench_return\`, and read it with `python -I Scripts\SummarizeBenchmark.py --root Savedench_return\<unzipped>uns`. A result counts only when the session was `console`, the `gpu` names the NVIDIA card and `fight_started` is true. The owner accepted the RTX 3060 as a stand-in for the 2060 Super (`DECISIONS.md`).
+
 ### Manual hand tests
 
 These are owner observations, not automated claims. Record `pass`, `fail`, or

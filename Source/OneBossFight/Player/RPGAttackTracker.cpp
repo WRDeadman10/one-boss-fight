@@ -41,23 +41,26 @@ URPGAttackTracker::URPGAttackTracker()
 	// notify (0.54 s) and Attack03 to Attack04 at once (observed in PIE with pie_close_combo_watch.py). Mapping: A1 = Attack03 (single quick slash), A1b = Attack04 (its chained follow-up),
 	// A3a and A3b = Attack01 and Attack02 (the two-hit combo). Each stage has its own commitment point. The pack tracks the player only for the first 0.3 s, so the heading locks 0.04 to 0.07 s before the
 	// trace opens. These pack clips have a 0.12 to 0.17 s windup against the Freeze's 0.35 to 0.40 s: the readable tell comes with the authored clips (TASKS A-xx), this is the stand-in.
-	auto AddClose = [this](const TCHAR* Move, const TCHAR* Montage, float Commit, float ActiveStart, float ActiveEnd, float RecoveryEnd, bool bBranch)
+	auto AddClose = [this](const TCHAR* Move, const TCHAR* Montage, const TCHAR* FallbackMontage, const TCHAR* MontagePath, float Commit, float ActiveStart, float ActiveEnd, float RecoveryEnd, bool bBranch, bool bAuthoredWindup)
 	{
 		FRPGAttackTiming T;
 		T.MoveId = Move;
 		T.MontageName = Montage;
+		T.FallbackMontageName = FallbackMontage;
+		T.MontagePath = MontagePath;
 		T.CommitTime = Commit;
 		T.ActiveStartTime = ActiveStart;
 		T.ActiveEndTime = ActiveEnd;
 		T.RecoveryEndTime = RecoveryEnd;
 		T.TrackTurnRate = 360.f;
 		T.bBranchStage = bBranch;
+		T.bAuthoredWindup = bAuthoredWindup;
 		Attacks.Add(T);
 	};
-	AddClose(TEXT("A1"), TEXT("GS_Attack03_Montage"), 0.08f, 0.12f, 0.42f, 1.04f, false);
-	AddClose(TEXT("A1b"), TEXT("GS_Attack04_Montage"), 0.12f, 0.16f, 0.46f, 1.25f, true);
-	AddClose(TEXT("A3a"), TEXT("GS_Attack01_Montage"), 0.13f, 0.17f, 0.47f, 0.54f, false);
-	AddClose(TEXT("A3b"), TEXT("GS_Attack02_Montage"), 0.10f, 0.14f, 0.44f, 1.20f, true);
+	AddClose(TEXT("A1"), TEXT("AM_Boss01_A1"), TEXT("GS_Attack03_Montage"), TEXT("/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1"), 0.33f, 0.35f, 0.50f, 1.20f, false, true);
+	AddClose(TEXT("A1b"), TEXT("GS_Attack04_Montage"), TEXT(""), TEXT(""), 0.12f, 0.16f, 0.46f, 1.25f, true, false);
+	AddClose(TEXT("A3a"), TEXT("AM_Boss01_A3a"), TEXT("GS_Attack01_Montage"), TEXT("/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a"), 0.38f, 0.40f, 0.60f, 0.80f, false, true);
+	AddClose(TEXT("A3b"), TEXT("AM_Boss01_A3b"), TEXT("GS_Attack02_Montage"), TEXT("/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b"), 0.13f, 0.15f, 0.40f, 1.3333f, true, true);
 
 	// A6, the phase two leap (Freeze 16). Stand-in: the pack's GS_LeapAttack (1.87 s): the pack turns the boss only in 0 to 0.16 s and again in 0.69 to 0.83 s, and its trace (the central hit) runs 0.75 to 1.17 s.
 	// The heading locks at 0.16 s (end of the first rotation window) and stays locked through the landing, so the boss does not steer in flight (Freeze 16: no aimbot rotation); the wave component starts at
@@ -115,7 +118,7 @@ int32 URPGAttackTracker::FindTimingIndex(const UAnimMontage* Montage) const
 			ClipName = Clip->GetName();
 		}
 	}
-	return Attacks.IndexOfByPredicate([&Name, &ClipName](const FRPGAttackTiming& T) { return T.MontageName == Name || (!T.ClipPath.IsEmpty() && T.MontageName == ClipName); });
+	return Attacks.IndexOfByPredicate([&Name, &ClipName](const FRPGAttackTiming& T) { return T.MontageName == Name || T.FallbackMontageName == Name || (!T.ClipPath.IsEmpty() && T.MontageName == ClipName); });
 }
 
 bool URPGAttackTracker::GetTiming(FName MoveId, FRPGAttackTiming& OutTiming) const
@@ -139,7 +142,7 @@ bool URPGAttackTracker::IsNeutral() const
 	const URPGBossStagger* Stagger = GetOwner()->FindComponentByClass<URPGBossStagger>();
 	const URPGBossPhases* Phases = GetOwner()->FindComponentByClass<URPGBossPhases>();
 	const URPGBossEncounter* Encounter = GetOwner()->FindComponentByClass<URPGBossEncounter>();
-	return !(Stagger && Stagger->IsStaggered()) && !(Phases && Phases->IsInTransition()) && !(Encounter && Encounter->IsDormant());
+	return !(Stagger && Stagger->IsStaggered()) && !(Phases && Phases->IsInTransition()) && !(Encounter && (Encounter->IsDormant() || Encounter->IsWaking()));
 }
 
 bool URPGAttackTracker::PlayClip(const FRPGAttackTiming& Timing)
@@ -199,7 +202,10 @@ bool URPGAttackTracker::PlayMoveMontageForTest(FName MoveId)
 	{
 		return PlayClip(*Timing);
 	}
-	UAnimMontage* Montage = LoadObject<UAnimMontage>(nullptr, *FString::Printf(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/GreatswordBoss/%s.%s"), *Timing->MontageName, *Timing->MontageName));
+	const FString Path = Timing->MontagePath.IsEmpty()
+		? FString::Printf(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/GreatswordBoss/%s.%s"), *Timing->MontageName, *Timing->MontageName)
+		: Timing->MontagePath;
+	UAnimMontage* Montage = LoadObject<UAnimMontage>(nullptr, *Path);
 	return Montage && Anim->Montage_Play(Montage) > 0.f;
 #endif
 }
@@ -227,6 +233,10 @@ bool URPGAttackTracker::EnterCombat()
 
 bool URPGAttackTracker::StartMove(FName MoveId, bool bForce)
 {
+	if (const URPGBossEncounter* Encounter = GetOwner()->FindComponentByClass<URPGBossEncounter>(); Encounter && Encounter->IsWaking())
+	{
+		return false;
+	}
 	// The pack ability that plays each tracked move, by tag. "Close" is the pack's own close attack pick (Attack01 to 04, chained by the pack): the pack ability sets the attack data the damage trace needs, a bare montage does not hurt.
 	static const TMap<FName, const TCHAR*> AbilityByMove = {{TEXT("A2"), TEXT("Ability.Melee.CloseRare")}, {TEXT("Close"), TEXT("Ability.Melee.Close")}, {TEXT("A6"), TEXT("Ability.Melee.LeapAttack")}};
 	if (const FRPGAttackTiming* Timing = Attacks.FindByPredicate([MoveId](const FRPGAttackTiming& T) { return T.MoveId == MoveId && !T.ClipPath.IsEmpty(); }))
@@ -274,6 +284,11 @@ void URPGAttackTracker::RestoreTelegraph()
 
 void URPGAttackTracker::UpdateTelegraph(UAnimMontage* Montage, const FRPGAttackTiming& Timing, float Position)
 {
+	if (Timing.bAuthoredWindup && Montage && Montage->GetName() == Timing.MontageName)
+	{
+		RestoreTelegraph();
+		return;
+	}
 	const float Target = RPGTelegraphRules::TargetFor(Timing.MoveId, CVarRPGCloseTelegraph.GetValueOnGameThread());
 	if (Target <= 0.f || Position >= Timing.ActiveStartTime)
 	{
@@ -380,7 +395,7 @@ void URPGAttackTracker::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 			const URPGBossStagger* Stagger = GetOwner()->FindComponentByClass<URPGBossStagger>();
 			const URPGBossPhases* Phases = GetOwner()->FindComponentByClass<URPGBossPhases>();
 			const URPGBossEncounter* Encounter = GetOwner()->FindComponentByClass<URPGBossEncounter>();
-			const TCHAR* Reason = (Stagger && Stagger->IsStaggered()) ? TEXT("the boss is staggered") : (Phases && Phases->IsInTransition()) ? TEXT("a phase transition is running") : (Encounter && Encounter->IsDormant()) ? TEXT("the boss is dormant") : nullptr;
+			const TCHAR* Reason = (Stagger && Stagger->IsStaggered()) ? TEXT("the boss is staggered") : (Phases && Phases->IsInTransition()) ? TEXT("a phase transition is running") : (Encounter && Encounter->IsDormant()) ? TEXT("the boss is dormant") : (Encounter && Encounter->IsWaking()) ? TEXT("the boss is waking") : nullptr;
 			if (Reason)
 			{
 				++IllegalStarts;

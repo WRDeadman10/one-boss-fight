@@ -19,6 +19,22 @@ Target (2026-10-20 decision, DECISIONS.md: the owner accepts 60 FPS, look first)
 
 Development package of the full game (`Scripts/Package.ps1`, exit 0; first attempt failed: `RerunConstructionScripts` is editor only, six call sites guarded), `Scripts/RunBenchmark.ps1`, map `L_SevarogArena`, fight mode, 1920x1080, 5 s warm-up discarded, 60 s recorded: warm-up 29.6 FPS (p99 41.1 ms); `g4_baseline_a/b/c` 36.5, 36.5 and 36.5 FPS (p99 32.7, 32.7 and 32.6 ms; game thread p99 3.9 to 4.2 ms, render thread p99 32.4 ms, GPU p99 31.5 ms), 2191 frames, all over the 16.67 ms budget. **Why it is not a result:** `summary.json` says `gpu: Microsoft Remote Display Adapter`: the owner's session is an RDP session (`rdp-tcp#0`), so the game presented through the remote display adapter, and the 23 to 33 ms frame band is the signature of the remote session, not of the RTX 3060 in the machine (`-graphicsadapter=1` gave the same 36.6 FPS and the same adapter name, `-graphicsadapter=2` 0.3 FPS). The CPU is now a Ryzen 7 5800X (the hardware table above says Ryzen 5 5500: the machine changed). A valid run needs the console session (the owner at the PC or a session on the physical console), `gpu` in `summary.json` naming the NVIDIA card, and the same driver for every compared run. The game thread (about 4 ms) is not the limit.
 
+## Gate 4 first VALID packaged result, 2026-10-24: the target is NOT met
+
+Shipping package of 2026-10-24 (before B10b, the shrine and the perf switches), `Scripts/RunBenchmark.ps1`, map `L_SevarogArena`, fight mode, 1920x1080 windowed, 5 s warm-up discarded, 60 s recorded, run by the owner on the physical console of the PC `GANPATIGAMERBOI` (session `console`, valid GPU: RTX 3060, driver 610.88, Ryzen 5 5500, 32 GB, Windows 11 25H2) with the benchmark kit (`BENCHKIT_README.md`, results zip in `Saved/bench_return/r1`). The RTX 3060 is accepted as the proxy of the 2060 Super (owner, 2026-10-24).
+
+| Run | Avg FPS | p95 ms | p99 ms | Max ms | Game p99 | Render p99 | GPU p99 | fight_started |
+|---|---|---|---|---|---|---|---|---|
+| baseline_a | 29.10 | 38.33 | 40.31 | 184.51 | 4.11 | 3.85 | 39.79 | true |
+| baseline_b | 28.37 | 39.32 | 41.45 | 44.11 | 3.51 | 4.01 | 40.99 | true |
+| baseline_c | 29.38 | 37.81 | 39.59 | 40.69 | 3.41 | 3.77 | 39.10 | true |
+| warm-up (thrown away) | 29.73 | 37.48 | 39.52 | 40.54 | 3.60 | 4.37 | 39.06 | true |
+| smoke (empty arena, no fight) | 33.47 | 32.62 | 34.91 | 694.68 | 4.26 | 5.60 | 34.13 | n/a |
+
+- Result: 28 to 29 fps average, p99 about 40 ms, every frame over the 16.67 ms budget: NOT met on this hardware. GPU frame time about 34 ms; the game and render threads cost 3 to 4 ms: the frame is GPU bound. The empty arena alone runs at 33 fps: the cost is the arena (its dressing and effects, or the render settings on it), not the fight.
+- The same PC and the same project settings (Lumen GI, Lumen reflections, virtual shadow maps, TSR) ran the old greybox fight at 84 fps (GPU 10.5 ms) on 2026-10-18 (section above): the dressed arena costs about 24 ms more GPU time. The 29.6 fps of the 2026-10-23 Remote Desktop run was therefore probably true, not a Remote Display artefact.
+- Next (2026-10-24): `Scripts/RunPerfExperiments.ps1` (about 26 one-minute fights with graphics settings and the `rpg.Perf.*` arena switches applied by `-RPGBenchmarkCvars`) and a `ProfileGPU` pass table from the Development build (`-RPGBenchmarkProfileGPUAt`), run on the same PC (kit round 2); the optimisation follows the data.
+
 ## Method
 
 Packaged build, map `L_Benchmark` (greybox arena, no boss, no VFX yet), `ARPGBenchmarkRunner` orbits a camera 30 s per revolution; 5 s warmup discarded, 60 s recorded. Raw wall-clock frame times. Run with `Scripts/RunBenchmark.ps1 -Label <name>`. Raw summaries are in `Documentation/PerfCaptures/` (run 1 of baseline_defaults is missing: it was wiped when the build was re-staged; its numbers were copied from the console).

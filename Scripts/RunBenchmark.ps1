@@ -17,13 +17,14 @@ param(
 	[int]$ResY = 1080,
 	[string]$Map = '/Game/OneBossFight/Levels/L_SevarogArena',
 	[switch]$Empty,   # empty-arena orbit camera instead of the full fight
-	[string]$ExtraArgs = ''
+	[string]$ExtraArgs = '',
+	[string]$StageDir = ''   # a different staged build folder (the one that holds OneBossFight.exe), e.g. the Development stage of the kit
 )
 
 $ErrorActionPreference = 'Stop'
 
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
-$StageRoot = Join-Path $ProjectRoot 'Saved\StagedBuilds\Windows'
+$StageRoot = if ($StageDir) { $StageDir } else { Join-Path $ProjectRoot 'Saved\StagedBuilds\Windows' }
 $Exe = Join-Path $StageRoot 'OneBossFight.exe'
 if (-not (Test-Path $Exe)) { throw "Packaged build not found at $Exe. Run Scripts\Package.ps1 first." }
 

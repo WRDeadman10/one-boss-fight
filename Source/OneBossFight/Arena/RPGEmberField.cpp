@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Arena/RPGEmberField.h"
+#include "Arena/RPGPerfSwitches.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Components/SceneComponent.h"
 #include "Engine/StaticMesh.h"
@@ -102,6 +103,12 @@ void ARPGEmberField::OnConstruction(const FTransform& Transform)
 void ARPGEmberField::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+#if !UE_BUILD_SHIPPING
+	if (Instances)
+	{
+		Instances->SetVisibility(RPGPerf::Embers());
+	}
+#endif
 	if (!Instances || Embers.IsEmpty())
 	{
 		return;

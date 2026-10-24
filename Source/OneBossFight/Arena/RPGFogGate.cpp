@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Arena/RPGFogGate.h"
+#include "Arena/RPGPerfSwitches.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGPlayerMovesSubsystem.h"
@@ -118,6 +119,12 @@ ARPGFogGate::EState ARPGFogGate::ReadBossState()
 void ARPGFogGate::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+#if !UE_BUILD_SHIPPING
+	if (Cards)
+	{
+		Cards->SetVisibility(RPGPerf::GateMist());
+	}
+#endif
 	const UWorld* World = GetWorld();
 	if (!World || !World->IsGameWorld())
 	{
