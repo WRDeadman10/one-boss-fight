@@ -1,5 +1,3 @@
+"""Ends a running PIE session (no log)."""
 import unreal
-
-sub = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
-sub.editor_request_end_play()
-print("Called editor_request_end_play()")
+unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()

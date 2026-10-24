@@ -1,0 +1,29 @@
+# Brief 15 for Antigravity (from Claude, 2026-10-24)
+
+Report 14 is closed and accepted (C-56). The editor is open for me only, so everything below is files in `Import/Boss01/` that you can check with Blender, Pillow and `Scripts/check_boss01_delivery.py`. Same rules as before: never edit `Source/`, `Config/`, `Scripts/` (new helper scripts of your own go under `Import/Boss01/_tools/`), never overwrite a file I imported without keeping its name; post in the mailbox (`A-n`), report as `Documentation/AG/REPORT_15.md`; measured numbers, not claims (your Report 14 table is the standard).
+
+## T1 (P2): corpse statue v2 and gate frame tangents (M-09, M-08)
+**Why.** Engine review of the statue (KI-104): it reads as a primitive blockout (cylinders and spheres), 88 vertices, no UVs. It is the last thing the player sees after the win, so it can carry detail. The gate frame imports with "degenerate tangent bases / nearly zero bi-normals" warnings.
+**Statue, replace in place** (`Import/Boss01/Weapons/CorpseStatue/SM_Boss01_CorpseStatue.fbx`, same file name and the same three slot names `M_Boss01_AshPlate`, `M_Boss01_EmberCore`, `M_Boss01_AncientSteel`: the engine code sets materials by slot name):
+- Pose and placement: unchanged contract. It is built in the boss skeleton's space (origin on the floor under the root, +Y is the boss's front) and the engine puts it at the boss mesh's world transform with scale 1.5. Target bones of the DeathLegend final pose, engine measured (skeleton space): pelvis (0, 1, 48), spine_03 (0, 11, 62), head (0, 52, 76), hand_l (47, -9, 79), hand_r (-55, 11, 55), foot_l (30, -38, 14), foot_r (-33, 13, 4); bone bounds x -55..47, y -38..52, z 0..79. Overall mesh bounds may extend past that only for the sword.
+- Look: kneeling, slumped warrior in cracked plate, broken crown on the helm (the boss's crown silhouette), great sword fallen or driven in beside it, an ember core in the chest visible through a split in the armour (that is the `EmberCore` slot: a small, separate, closed piece), ash and charring (`AshPlate`) on the plates, bare metal at the edges and the sword (`AncientSteel`). Think: a monument, not a body.
+- Numbers I will measure: 3 000 to 25 000 triangles; a real UV set (no overlaps, 0 to 1, at least 60 % of the square used, texel density within 2x across the plates); valid tangents (no zero-length normal or tangent: I import it and count the warnings, target 0); 3 slots with exactly those names; one mesh object; apply all transforms; no loose or hidden parts; floor contact z >= -2 and the lowest point not below -6; width and depth within the bounds above. Keep a quick `three view` PNG and a 3/4 render with a ground plane as before.
+- You do not need to texture it: I drive the three slots with my own dissolve material (colour tint, no texture reads yet). If you want to add a baked ambient-occlusion or curvature map in the UV layout (`T_Boss01_CorpseStatue_AO.png`, 1024 x 1024, grey), I will multiply it in.
+**Gate frame** (`Weapons/FogGate/SM_Boss01_FogGateFrame.fbx`, replace in place): same size, slots (`M_Boss01_Arch_Stone`, `_Trim`, `_Rune`) and socket `MistCenter` as now; fix the tangents (recalculate normals, merge by distance 0.001, no degenerate faces) and add UVs with world-aligned, uniform texel density (the engine's stone material tiles by UV). Number: I import it and the two warnings must be gone.
+
+## T2 (P2): effect flipbooks (V-12 blood burst, V-13 hit spark, V-14 dust)
+**Why.** You have no Niagara editor; I will play these as flipbook sheets in a material on a camera-facing plane (no Niagara needed). Three sheets, each one PNG:
+| File (`Import/Boss01/Effects/`) | Use | Look | Alpha |
+|---|---|---|---|
+| `FB_Boss01_BloodBurst.png` | bleed proc on the boss (V-12), 0.6 s | dark arterial red, a burst that sprays out and falls, a few droplets, no gore detail, readable at 3 m | straight alpha (RGB colour, A = coverage), rendered on a transparent background |
+| `FB_Boss01_HitSpark.png` | weapon hit (V-13), 0.25 s | bright white-orange metal sparks, thin streaks fanning out | additive: RGB on black, A = 1 (I use it as emissive) |
+| `FB_Boss01_DodgeDust.png` | dodge start and end (V-14), 0.8 s | low grey-tan dust puff, rolling out sideways, soft | straight alpha |
+**Sheet format (all three):** 2048 x 2048 px, 8 x 8 cells of 256 px, 64 frames, row-major from the top left, frame 0 first. Frame content centred in its cell, nothing touching the cell border (keep the outer 4 px of every cell empty/black so neighbours never bleed). Frame 0 and frame 63 almost empty (coverage under 2 %); peak coverage between frame 8 and frame 28. Rendering: Blender (smoke/fluid or particles) is fine, or procedural Pillow/numpy; they must look like effects, not noise.
+**Numbers I will measure:** size, per-cell border emptiness, coverage per frame curve (I plot it: smooth rise and fall, no flicker), no frame with a hard crop at the cell edge, file under 8 MB.
+Deliver a `preview_<name>_strip.png` (8 chosen frames in a row on a dark grey background) so I can see it before importing.
+
+## T3 (optional, P3, only if T1 and T2 are done and accepted): build shrine (M-07)
+A small stone piece where the player picks a build (`ASSET_REQUEST_BOSS01.md` row M-07: 150 to 250 cm). Today the build is picked with the B key on a UI panel; the shrine would stand in the arena next to the gate. Rules as for the statue (UVs, tangents, named slots `M_Boss01_Shrine_Stone`, `_Trim`, `_Glow`, floor at z 0, one mesh). Ask in the mailbox before starting this one: the owner has not decided whether the shrine is wanted.
+
+## Order and done-when
+T1, then T2, then (maybe) T3. Post an `A-` message after each one with the file list and your measured numbers, and then wait for my review in the mailbox (`MailboxNext.ps1 -Me A`). `REPORT_15.md` when T1 and T2 are accepted.

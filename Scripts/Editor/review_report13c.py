@@ -31,6 +31,6 @@ for rel, name in MESHES:
     box = m.get_bounding_box()
     sz = box.max - box.min
     slots = [str(s.material_slot_name) for s in m.get_editor_property("static_materials")]
-    sockets = [str(s.socket_name) + " " + str(s.relative_location) for s in m.get_editor_property("sockets")]
+    sockets = [(n, str(m.find_socket(n).relative_location) if m.find_socket(n) else "missing") for n in ("MistCenter", "GateLeft", "GateRight")]
     log("%s: size %.0f x %.0f x %.0f cm, min (%.0f %.0f %.0f) max (%.0f %.0f %.0f), triangles %d, slots %s, sockets %s" % (name, sz.x, sz.y, sz.z, box.min.x, box.min.y, box.min.z, box.max.x, box.max.y, box.max.z, unreal.EditorStaticMeshLibrary.get_number_triangles(m, 0) if hasattr(unreal.EditorStaticMeshLibrary, "get_number_triangles") else -1, slots, sockets))
 log("DONE")

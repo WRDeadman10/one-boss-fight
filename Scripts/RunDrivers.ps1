@@ -26,6 +26,7 @@ $drivers = @(
     @{ N = 'pie_boss_look';            K = 'R'; Min = 14; T = 300 },
     @{ N = 'pie_boss_death';           K = 'R'; Min = 11; T = 300 },
     @{ N = 'pie_boss_death_states';    K = 'R'; Min = 28; T = 600 },
+    @{ N = 'pie_remains';              K = 'R'; Min = 4; T = 600 },
     @{ N = 'pie_builds';               K = 'R'; Min = 103; T = 1500 },
     @{ N = 'pie_build_hyperarmor';     K = 'R'; Min = 20; T = 900 },
     @{ N = 'pie_build_hud';            K = 'R'; Min = 8; T = 600 },

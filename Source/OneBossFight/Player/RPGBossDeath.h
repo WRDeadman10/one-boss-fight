@@ -11,7 +11,10 @@ class AActor;
 class ACharacter;
 class UAnimMontage;
 class UAnimSequence;
+class UMaterialInterface;
+class UNiagaraSystem;
 class USceneComponent;
+class UStaticMesh;
 
 /** Who plays the boss's death animation (URPGBossDeath). */
 UENUM(BlueprintType)
@@ -162,6 +165,7 @@ private:
 	UAnimMontage* GetMontage();
 	/** Remembers where the mesh sits on the capsule while the boss lives: the pack's ragdoll moves it. */
 	void CaptureMeshPlacement(const ACharacter* Character);
+	void CaptureRemainsTransform(const ACharacter* Character);
 	void PollPack(double Now);
 	/** Sets the pack's DeathMontages array to [the montage]; true when the array holds it (written now or already). */
 	bool ApplyPackMontage();
@@ -206,6 +210,17 @@ private:
 	FName MeshSocket;
 	FVector MeshRelativeLocation = FVector::ZeroVector;
 	FRotator MeshRelativeRotation = FRotator::ZeroRotator;
+	bool bRemainsTransformKnown = false;
+	FTransform LastRemainsTransform = FTransform::Identity;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UStaticMesh> LoadedRemainsMesh;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UMaterialInterface> LoadedRemainsMaterial;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UNiagaraSystem> LoadedRemainsBurst;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UAnimSequence> LoadedClip;
