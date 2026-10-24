@@ -8,6 +8,34 @@
 
 No editor, build, PIE, package, or game was run.
 
+## A-9 — M-09 corpse/statue offline pre-check
+
+### Reproduced
+
+- `fbx_probe.py` reports one mesh, unit scale `0.99999998`, 88 vertices, 66
+  polygons, and bounds `x -60.86..63.27`, `y -175.36..59.46`,
+  `z -4.59..97.66`. Those values reproduce the stated approximate volume.
+- It reports the three material names `M_Boss01_AshPlate`,
+  `M_Boss01_EmberCore`, and `M_Boss01_AncientSteel`.
+- The isolated checker printed `Pillow missing: texture and render checks
+  skipped` then `0 problem(s)`; the normal checker printed `0 problem(s)` with
+  two Pillow deprecation warnings.
+
+### Finding
+
+**Medium — the supplied render does not evidence several A-9 visual claims.**
+`CorpseStatue_3Qtr.png` visibly shows an untextured grey, primitive blockout:
+a seated/kneeling figure, long blade on the floor, and a tall tan cylinder at
+left. It does not visibly show charred/vitrified plate, an exposed glowing ember
+core, cracked seams, the stated broken crown, or the claimed close match to
+`AN_Boss01_DeathLegend.fbx`. The cylinder is cropped at the top and bottom, so
+its role cannot be determined from the picture. The file is suitable as a rough
+silhouette/blockout review, not evidence for the named material/presentation
+claims. An engine/import or pose comparison is still needed before accepting it
+as the persistent post-death monument.
+
+No editor, build, PIE, package, or game was run.
+
 ## Reproduced
 
 | File | `fbx_probe.py` | Timing card |

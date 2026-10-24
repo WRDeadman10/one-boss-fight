@@ -13,9 +13,10 @@ Brief 14 focused on delivering engine-verified boss animation clips with explici
 
 Key milestones achieved:
 1. **8 Animation Clips Verified & Imported In-Place (Engine Accepted in C-52 & C-54):**
-   - Wakeup: `AN_Boss01_Wake.fbx`
-   - A2 Heavy Overhead Slam Trio: `AN_Boss01_A2_Raise.fbx`, `AN_Boss01_A2_ApexHold.fbx`, `AN_Boss01_A2_Slam.fbx`
-   - Close Attack Trio: `AN_Boss01_A1_QuickSlash.fbx`, `AN_Boss01_A3a_Combo1.fbx`, `AN_Boss01_A3b_Combo2.fbx`
+   - Dormant Intro: `AN_Boss01_DormantIdle.fbx` (5.000 s, 151 frames)
+   - Wakeup: `AN_Boss01_Wake.fbx` (3.500 s, 106 frames)
+   - A2 Heavy Overhead Slam Trio: `AN_Boss01_A2_Raise.fbx` (0.600 s), `AN_Boss01_A2_ApexHold.fbx` (1.167 s), `AN_Boss01_A2_Slam.fbx` (1.367 s)
+   - Close Attack Trio: `AN_Boss01_A1_QuickSlash.fbx` (1.200 s), `AN_Boss01_A3a_Combo1.fbx` (0.800 s), `AN_Boss01_A3b_Combo2.fbx` (1.333 s)
    - All clips meet strict engine kinematic criteria: feet planted on floor ($Z \ge -1.5\text{ cm}$), trajectory bounding boxes, smooth bone rotations ($\le 20.4^\circ$), and seamless loop/transition seams ($\le 0.0069$, combo seam $0.0000$).
 2. **V-09 Boss Death Dissolve 2D Textures Delivered:**
    - `Import/Boss01/Effects/T_Boss01_DissolveNoise.png` ($512 \times 512$, tileable multi-frequency noise, mean edge diff $0.0000 < 2.0$).
@@ -31,7 +32,8 @@ Key milestones achieved:
 ### Animations (`Import/Boss01/Animations/`)
 | Asset Name | Frames | FPS / TimeMode | Duration | Role / Choreography | Engine Status |
 |---|---|---|---|---|---|
-| `AN_Boss01_Wake.fbx` | 0..36 (37) | 30 / Mode 6 | 1.200 s | Intro rise from kneel; eyes ignite; combat rest | **Accepted (C-52)** |
+| `AN_Boss01_DormantIdle.fbx` | 0..150 (151) | 30 / Mode 6 | 5.000 s | Meditative kneeling loop; hands on pommel; breathing cycle | **Accepted (Report 13 / C-52)** |
+| `AN_Boss01_Wake.fbx` | 0..105 (106) | 30 / Mode 6 | 3.500 s | Intro rise from kneel; eyes ignite; combat rest | **Accepted (C-52)** |
 | `AN_Boss01_A2_Raise.fbx` | 0..18 (19) | 30 / Mode 6 | 0.600 s | Two-handed greatsword raise to overhead apex ($Z=280\text{ cm}$) | **Accepted (C-52)** |
 | `AN_Boss01_A2_ApexHold.fbx` | 0..35 (36) | 30 / Mode 6 | 1.167 s | Overhead holding loop waiting for commit telegraph | **Accepted (C-52)** |
 | `AN_Boss01_A2_Slam.fbx` | 0..41 (42) | 30 / Mode 6 | 1.367 s | Downward slam; floor impact at 0.17 s ($Z=1.9\text{ cm}$), crouch recovery | **Accepted (C-52)** |

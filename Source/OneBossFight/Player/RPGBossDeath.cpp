@@ -3,6 +3,7 @@
 #include "Player/RPGBossDeath.h"
 #include "Player/RPGBossClips.h"
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGBossRemains.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossPosture.h"
 #include "Player/RPGBossStagger.h"
@@ -114,6 +115,13 @@ void URPGBossDeath::BeginPlay()
 
 void URPGBossDeath::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	if (!bEnding && State == EState::Dead && EndPlayReason == EEndPlayReason::Destroyed)
+	{
+		if (UWorld* World = GetWorld(); World && !World->bIsTearingDown && bRemainsTransformKnown)
+		{
+			ARPGBossRemains::Spawn(World, LastRemainsTransform, LoadedRemainsMesh, LoadedRemainsMaterial, LoadedRemainsBurst);
+		}
+	}
 	// The pack destroys a dead boss a few seconds after its death (KI-083): from here on the mesh, its physics and its montages are not touched.
 	bEnding = true;
 	bGuardActive = false;
@@ -175,6 +183,16 @@ void URPGBossDeath::CaptureMeshPlacement(const ACharacter* Character)
 	MeshRelativeLocation = Mesh->GetRelativeLocation();
 	MeshRelativeRotation = Mesh->GetRelativeRotation();
 	bMeshPlacementKnown = MeshParent.IsValid();
+}
+
+void URPGBossDeath::CaptureRemainsTransform(const ACharacter* Character)
+{
+	const USkeletalMeshComponent* Mesh = Character ? Character->GetMesh() : nullptr;
+	if (Mesh && !Mesh->IsAnySimulatingPhysics())
+	{
+		LastRemainsTransform = Mesh->GetComponentTransform();
+		bRemainsTransformKnown = true;
+	}
 }
 
 bool URPGBossDeath::NotePackMiss(const FString& Why)
@@ -345,6 +363,14 @@ void URPGBossDeath::BeginDeath(ACharacter* Character, double Now)
 	bPoseHeld = false;
 	RestartsThisDeath = 0;
 	++DeathCount;
+	CaptureRemainsTransform(Character);
+	UStaticMesh* RemainsMesh = nullptr;
+	UMaterialInterface* RemainsMaterial = nullptr;
+	UNiagaraSystem* RemainsBurst = nullptr;
+	ARPGBossRemains::PreloadAssets(RemainsMesh, RemainsMaterial, RemainsBurst);
+	LoadedRemainsMesh = RemainsMesh;
+	LoadedRemainsMaterial = RemainsMaterial;
+	LoadedRemainsBurst = RemainsBurst;
 	UE_LOG(LogRPGBossDeath, Log, TEXT("%s: death seen (health 0), mode %s"), *Character->GetName(), *GetDeathModeName());
 	if (DeathMode == ERPGBossDeathMode::OwnClip)
 	{
@@ -368,6 +394,7 @@ void URPGBossDeath::BeginDeath(ACharacter* Character, double Now)
 
 void URPGBossDeath::EndDeathState(ACharacter* Character, const TCHAR* Why)
 {
+	ARPGBossRemains::DestroyForWorld(GetWorld());
 	UE_LOG(LogRPGBossDeath, Log, TEXT("%s: death state ended (%s), after %.2f s, pose held %d"), *Character->GetName(), Why, GetDeathAge(), bPoseHeld ? 1 : 0);
 	UAnimMontage* Montage = ClipMontage.Get();
 	UAnimInstance* Anim = Character->GetMesh() ? Character->GetMesh()->GetAnimInstance() : nullptr;
@@ -385,6 +412,7 @@ void URPGBossDeath::EndDeathState(ACharacter* Character, const TCHAR* Why)
 
 void URPGBossDeath::TickDeath(ACharacter* Character, double Now)
 {
+	CaptureRemainsTransform(Character);
 	const double Age = Now - DeathTime;
 	if (State == EState::Dying && Age >= DyingSeconds)
 	{

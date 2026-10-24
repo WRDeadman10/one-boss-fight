@@ -3,6 +3,7 @@
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGBossBleed.h"
 #include "Player/RPGBossDeath.h"
+#include "Player/RPGBossRemains.h"
 #include "Player/RPGBossPosture.h"
 #include "Player/RPGIFrameMonitor.h"
 #include "Player/RPGTraceGuard.h"
@@ -267,6 +268,7 @@ void URPGBossEncounter::Wake()
 void URPGBossEncounter::ResetEncounter()
 {
 	AActor* Owner = GetOwner();
+	ARPGBossRemains::DestroyForWorld(Owner ? Owner->GetWorld() : nullptr);
 	// A boss that is dying stays dead: the pack destroys it a few seconds after its death whatever is done, so a reset would only bring back a corpse-less ghost with the ragdoll's changes on it (review D).
 	if (const URPGBossDeath* Death = Owner->FindComponentByClass<URPGBossDeath>(); Death && Death->IsDeathActive())
 	{
