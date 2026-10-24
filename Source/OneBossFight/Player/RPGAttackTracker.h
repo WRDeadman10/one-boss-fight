@@ -169,13 +169,22 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Attack")
 	float GetLastActiveStartPosition() const { return LastActiveStartPosition; }
 
+	UFUNCTION(BlueprintPure, Category = "Attack|Telegraph")
+	float GetTelegraphRate() const { return TelegraphRate; }
+
+	UFUNCTION(BlueprintPure, Category = "Attack|Telegraph")
+	float GetLastStageWindupSeconds() const { return LastStageWindupSeconds; }
+
 protected:
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
 	enum class EPhase : uint8 { None, Windup, Committed, Active, Recovery };
 
 	void End(const TCHAR* Reason, float Position);
+	void RestoreTelegraph();
+	void UpdateTelegraph(UAnimMontage* Montage, const FRPGAttackTiming& Timing, float Position);
 	bool BranchAllowedNow() const;
 	bool PlayClip(const FRPGAttackTiming& Timing);
 	int32 FindTimingIndex(const UAnimMontage* Montage) const;
@@ -196,6 +205,10 @@ private:
 	float LastCommitPosition = -1.f;
 	float LastActiveStartPosition = -1.f;
 	float LastPosition = 0.f;
+	float TelegraphRate = 1.f;
+	float LastStageWindupSeconds = -1.f;
+	double StageWorldStart = -1.0;
+	TWeakObjectPtr<UAnimMontage> TelegraphMontage;
 	float DeathCheckTimer = 0.f;
 	bool bDead = false;
 	TWeakObjectPtr<const UAnimMontage> DeniedMontage;

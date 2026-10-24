@@ -40,6 +40,7 @@ void URPGBossLook::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void URPGBossLook::SetEnabledForTest(bool bOn)
 {
+#if !UE_BUILD_SHIPPING
 	bEnabled = bOn;
 	if (bOn)
 	{
@@ -49,6 +50,7 @@ void URPGBossLook::SetEnabledForTest(bool bOn)
 	{
 		Revert();
 	}
+#endif
 }
 
 void URPGBossLook::Apply()

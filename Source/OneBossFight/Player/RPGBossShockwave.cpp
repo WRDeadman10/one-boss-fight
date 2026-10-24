@@ -23,7 +23,9 @@ URPGBossShockwave::URPGBossShockwave()
 
 void URPGBossShockwave::LaunchForTest()
 {
+#if !UE_BUILD_SHIPPING
 	Launch();
+#endif
 }
 
 void URPGBossShockwave::Launch()

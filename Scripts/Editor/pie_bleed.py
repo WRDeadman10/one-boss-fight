@@ -1,5 +1,5 @@
 """
-Gate 3, M12: the bleed status (URPGBossBleed): buildup per hit, a proc at the threshold (100, then +20 up to 200) that takes 10.5 percent of the boss's maximum health once, never during death, sleep or the phase
+Gate 3, M12: the bleed status (URPGBossBleed): buildup per hit, a proc at the threshold (100, then +20 up to 200) that takes 3 percent of the boss's maximum health once, never during death, sleep or the phase
 transition, never twice in one frame, never multiplied by the stance break's critical, cleared by the encounter reset. The boss is held awake and the player stands 110 cm in front of it; the first scenarios drive the
 buildup directly (add_buildup_for_test), the last uses real light hits with the intake's bleed override (the sword's own rows have no bleed: the dex weapons come with the builds, M13). Generator style: `yield seconds` waits.
 Log prefix [Bleed]; ends with RESULT n/m passed. Run pie_debug_overlay.py once after an editor start first.
@@ -9,6 +9,7 @@ import unreal
 
 log = lambda m: unreal.log("[Bleed] " + m)
 IA = "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/"
+BLEED_FRACTION = 0.03  # Owner decision; RPGBossBleed has no reflected fraction getter.
 results = []
 S = {"phase": "start", "t": 0.0, "now": 0.0, "wait": 0.0, "gen": None, "press_until": 0.0, "action": "IA_NormalAttack"}
 handle = None
@@ -29,6 +30,16 @@ def attr(actor, tag):
     t.import_text('(TagName="%s")' % tag)
     try:
         return c.call_method("Get Current Attribute Value", args=(t,))
+    except Exception:
+        return None
+
+
+def max_attr(actor, tag):
+    c = comp(actor, "BP_AttributesComponent_C")
+    t = unreal.GameplayTag()
+    t.import_text('(TagName="%s")' % tag)
+    try:
+        return c.call_method("GetMaxAttributeValue", args=(t,))
     except Exception:
         return None
 
@@ -116,6 +127,11 @@ def health(p):
     return attr(p["boss"], "Attribute.Health")
 
 
+def expected_proc_damage(p):
+    maximum = max_attr(p["boss"], "Attribute.Health")
+    return maximum * BLEED_FRACTION if maximum is not None else None
+
+
 # ---- scenarios -------------------------------------------------------------------------------------------------------------------------------------------------------------
 def a_five_hits_proc():
     yield from fresh()
@@ -131,7 +147,8 @@ def a_five_hits_proc():
     p = P()
     h1 = health(p)
     check("A the fifth hit procs once", r5 == "proc" and p["bleed"].get_proc_count() == 1, "%s procs %d" % (r5, p["bleed"].get_proc_count()))
-    check("A the proc takes 10.5 percent of 500 = 52.5 health", abs((h0 - h1) - 52.5) <= 0.6 and abs(p["bleed"].get_last_proc_damage() - 52.5) <= 0.1, "health %s -> %s, last proc damage %.1f" % (h0, h1, p["bleed"].get_last_proc_damage()))
+    expected = expected_proc_damage(p)
+    check("A the proc takes 3 percent of maximum health", expected is not None and abs((h0 - h1) - expected) <= 0.6 and abs(p["bleed"].get_last_proc_damage() - expected) <= 0.1, "health %s -> %s, expected %.1f, last proc damage %.1f" % (h0, h1, expected or -1.0, p["bleed"].get_last_proc_damage()))
     check("A the buildup is reset and the next threshold is 120", p["bleed"].get_buildup() == 0.0 and p["bleed"].get_threshold() == 120.0, "buildup %.0f threshold %.0f" % (p["bleed"].get_buildup(), p["bleed"].get_threshold()))
 
 
@@ -197,13 +214,14 @@ def e_no_critical_and_no_kill():
     yield 0.5
     p = P()
     h1 = health(p)
-    check("E a proc while the boss is down (the break started: %s) takes 52.5, not 52.5 x 2.5" % broke, down and abs((h0 - h1) - 52.5) <= 0.6, "staggered %s, health %s -> %s" % (down, h0, h1))
+    expected = expected_proc_damage(p)
+    check("E a proc while the boss is down (the break started: %s) takes 3 percent of maximum health, not 3 percent x 2.5" % broke, down and expected is not None and abs((h0 - h1) - expected) <= 0.6, "staggered %s, health %s -> %s, expected %.1f" % (down, h0, h1, expected or -1.0))
     p["stg"].set_critical_on_every_hit_for_test(False)
     yield from until(lambda: not P()["stg"].is_staggered(), 8.0)
     P()["bleed"].reset_bleed()  # the proc above raised the threshold to 120: five more hits of 20 would not proc
-    # a proc never kills: 30 health left, a proc leaves 1. Below 60 percent the roar starts: wait for it to end first (buildup is ignored during it).
+    # A proc never kills: 2 percent health left (less than the 3 percent proc), so the proc leaves 1. Below 60 percent the roar starts: wait for it to end first (buildup is ignored during it).
     p = P()
-    p["dbg"].debug_set_boss_health_fraction(0.06)  # 30 of 500
+    p["dbg"].debug_set_boss_health_fraction(0.02)
     yield 0.4
     yield from until(lambda: P()["ph"].is_in_transition(), 3.0)
     yield from until(lambda: not P()["ph"].is_in_transition(), 5.0)
@@ -215,7 +233,7 @@ def e_no_critical_and_no_kill():
         yield 0.05
     yield 0.4
     h3 = health(P())
-    check("E a proc never kills: 30 health left, the proc leaves 1", h2 is not None and h3 is not None and abs(h3 - 1.0) <= 0.6, "health %s -> %s" % (h2, h3))
+    check("E a proc never kills: 2 percent health left, the proc leaves 1", h2 is not None and h3 is not None and abs(h3 - 1.0) <= 0.6, "health %s -> %s" % (h2, h3))
 
 
 def f_real_hits_and_reset():

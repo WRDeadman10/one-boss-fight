@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Engine/EngineTypes.h"
 #include "Player/RPGAttackKind.h"
+#include "Player/RPGDamageScale.h"
 #include "Player/RPGWeaponAttackTable.h"
 #include "RPGHitIntake.generated.h"
 
@@ -38,6 +39,8 @@ struct FRPGHitRecord
 	FRPGWeaponAttackRow Row;
 	/** True when the table had a row for the weapon and kind; false when the table's Fallback was used. */
 	bool bRowFound = false;
+	/** The row's health damage multiplier (1 = the pack's damage, KI-097). */
+	float HealthMultiplier = 1.f;
 	/** Where the attack data came from: "HitData" (read one frame after the event), "TargetAttackData" or "none". */
 	FName Source;
 
@@ -110,11 +113,23 @@ public:
 
 	/** Test drivers only: every hit adds this bleed buildup instead of its table row's (negative: off). */
 	UFUNCTION(BlueprintCallable, Category = "Hit intake")
-	void SetBleedOverrideForTest(float Buildup) { BleedOverride = Buildup; }
+	void SetBleedOverrideForTest(float Buildup)
+	{
+#if !UE_BUILD_SHIPPING
+		BleedOverride = Buildup;
+#endif
+	}
 
 	/** Test drivers only: forgets the counters and the records. */
 	UFUNCTION(BlueprintCallable, Category = "Hit intake")
 	void ResetCounters();
+
+	/** Health damage multiplier of the weapon table (KI-097): hits whose health loss was scaled, and the health given back (positive) or taken away (negative) in total. Tests. */
+	UFUNCTION(BlueprintPure, Category = "Hit intake")
+	int32 GetScaledHitCount() const { return ScaledHitCount; }
+
+	UFUNCTION(BlueprintPure, Category = "Hit intake")
+	float GetHealthAdjustTotal() const { return static_cast<float>(HealthAdjustTotal); }
 
 protected:
 	virtual void BeginPlay() override;
@@ -138,6 +153,10 @@ private:
 	/** Latches the stance when a new attack montage starts, every frame (a strong attack made in the air lands after the player does). */
 	void TrackMontage();
 
+	/** Watches the boss's health every frame and applies the weapon table's health damage multiplier (FRPGDamageScaler matches a loss with a hit record). */
+	void TrackBossHealth(float DeltaTime);
+	void AdjustBossHealth(AActor* Boss, double Adjust, const TCHAR* Why);
+
 	TWeakObjectPtr<UObject> BoundCollision;
 	UPROPERTY(Transient)
 	TObjectPtr<URPGWeaponAttackTable> Table;
@@ -157,4 +176,13 @@ private:
 	int32 OtherHitCount = 0;
 	FRPGHitRecord LastRecord;
 	TArray<FString> Lines;
+
+	FRPGDamageScaler Scaler;
+	TWeakObjectPtr<AActor> WatchedBoss;
+	double PrevBossHealth = -1.0;
+	float BossSearchTimer = 0.f;
+	float HealthSampleTimer = 0.f;
+	double HotUntil = 0.0; // world time until which the boss's health is sampled every frame (a weapon hit's loss arrives in the frame of the pack's event or a few frames later)
+	int32 ScaledHitCount = 0;
+	double HealthAdjustTotal = 0.0;
 };

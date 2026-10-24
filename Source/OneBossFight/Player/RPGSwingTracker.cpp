@@ -62,14 +62,17 @@ void URPGSwingTracker::BeginPlay()
 
 void URPGSwingTracker::ClearCostOverrides()
 {
+#if !UE_BUILD_SHIPPING
 	CostOverrides.Reset();
 	HyperArmorOverrides.Reset();
 	Table = OriginalTable;
 	TestTable = nullptr;
+#endif
 }
 
 void URPGSwingTracker::SetRowHyperArmorForTest(FName Weapon, ERPGAttackKind Kind, float Start, float End)
 {
+#if !UE_BUILD_SHIPPING
 	if (!OriginalTable)
 	{
 		return;
@@ -95,6 +98,7 @@ void URPGSwingTracker::SetRowHyperArmorForTest(FName Weapon, ERPGAttackKind Kind
 	Row.HyperArmorStart = Start;
 	Row.HyperArmorEnd = End;
 	TestTable->Rows.Add(Row);
+#endif
 }
 
 bool URPGSwingTracker::IsPlayerHitStunBlockedByImmunity() const
@@ -131,12 +135,16 @@ void URPGSwingTracker::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void URPGSwingTracker::SetHyperArmorOverrideForTest(ERPGAttackKind Kind, float Start, float End)
 {
+#if !UE_BUILD_SHIPPING
 	HyperArmorOverrides.Add(Kind, FVector2D(Start, End));
+#endif
 }
 
 void URPGSwingTracker::SetCostOverrideForTest(ERPGAttackKind Kind, float Cost)
 {
+#if !UE_BUILD_SHIPPING
 	CostOverrides.Add(Kind, Cost);
+#endif
 }
 
 void URPGSwingTracker::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

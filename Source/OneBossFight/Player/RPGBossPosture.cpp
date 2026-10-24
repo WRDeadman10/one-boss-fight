@@ -122,6 +122,7 @@ URPGBossPosture::EDrainResult URPGBossPosture::ApplyPostureDamage(float Amount, 
 
 void URPGBossPosture::SetPostureForTest(float Value)
 {
+#if !UE_BUILD_SHIPPING
 	const float Clamped = FMath::Clamp(Value, 0.f, PostureMax);
 	if (Hold != EHold::None)
 	{
@@ -133,6 +134,7 @@ void URPGBossPosture::SetPostureForTest(float Value)
 		LastDrainTime = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0;
 	}
 	Posture = Clamped;
+#endif
 }
 
 void URPGBossPosture::ResetPool()

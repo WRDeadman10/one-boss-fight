@@ -29,6 +29,13 @@ def attr(actor, tag):
     return c.call_method("Get Current Attribute Value", args=(t,)) if c else None
 
 
+def max_attr(actor, tag):
+    c = comp(actor, "BP_AttributesComponent_C")
+    t = unreal.GameplayTag()
+    t.import_text('(TagName="%s")' % tag)
+    return c.call_method("GetMaxAttributeValue", args=(t,)) if c else None
+
+
 def set_attr(actor, tag, value):
     c = comp(actor, "BP_AttributesComponent_C")
     t = unreal.GameplayTag()
@@ -137,10 +144,10 @@ def _tick(dt):
     elif s["stage"] == "after_respawn":
         if el > 3.0:
             at_home = (boss.get_actor_location() - home).length()
-            hp, mx = attr(boss, "Attribute.Health"), None
+            hp, mx = attr(boss, "Attribute.Health"), max_attr(boss, "Attribute.Health")
             check("boss back at its start after the respawn", at_home < 10.0, "(%.1f cm from home)" % at_home)
             pool = comp(boss, "RPGBossPosture").get_posture()
-            check("boss health, poise and posture pool full", (attr(boss, "Attribute.Health") or 0) >= 499.0 and (attr(boss, "Attribute.Poise") or 0) >= 99.0 and pool >= 99.0, "(hp %s poise %s posture pool %.1f)" % (attr(boss, "Attribute.Health"), attr(boss, "Attribute.Poise"), pool))
+            check("boss health, poise and posture pool full", hp is not None and mx is not None and abs(hp - mx) <= 0.5 and (attr(boss, "Attribute.Poise") or 0) >= 99.0 and pool >= 99.0, "(hp %s/%s poise %s posture pool %.1f)" % (hp, mx, attr(boss, "Attribute.Poise"), pool))
             check("boss dormant again", dorm and enc.get_reset_count() >= 1, "(dormant %s, resets %d, montage %s)" % (dorm, enc.get_reset_count(), m))
             s.update(stage="idle_far", stage_t0=s["t"])
     elif s["stage"] == "idle_far":

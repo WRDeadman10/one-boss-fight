@@ -1,12 +1,13 @@
 """
-PIE edge cases of the boss stance break (URPGBossStagger). MODE "boss_dies": during the stance break the boss is put at 60 HP and hit with a light attack (a critical,
+PIE edge cases of the boss stance break (URPGBossStagger). MODE "boss_dies": during the stance break the boss is put at 3 percent of its runtime maximum health and hit with a light attack (a critical,
 x2.5, kills it); logs what the component and the boss do afterwards. MODE "player_dies": one second into the stance break the player's health is set to 0 (the pack's
 death task respawns the player); logs the respawn, the stagger state and what the boss does for 12 s afterwards. Log prefix [EdgePie]. Open L_SevarogArena first; run
-with Scripts/run_in_editor.py (editor throttling off). MODE "boss_resets": one second into the stance break the boss health is set back to 500 (what the pack does on a player respawn); the stance break must end at once and the boss must get up. Set MODE below.
+with Scripts/run_in_editor.py (editor throttling off). MODE "boss_resets": one second into the stance break the boss health is set back to its maximum (what the pack does on a player respawn); the stance break must end at once and the boss must get up. Set MODE below.
 """
 import unreal
 
 MODE = "boss_resets"
+LETHAL_HEALTH_FRACTION = 0.03
 log = lambda m: unreal.log("[EdgePie] " + m)
 ACTIONS = "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/"
 state = {"phase": "start", "t": 0.0, "press": None, "press_until": -1.0, "next_press": 0.0, "stage": "break", "last_m": None, "t_event": None, "heal_t": 0.0, "pawn_id": None,
@@ -30,6 +31,13 @@ def attr(actor, tag):
     t = unreal.GameplayTag()
     t.import_text('(TagName="%s")' % tag)
     return c.call_method("Get Current Attribute Value", args=(t,)) if c else None
+
+
+def max_attr(actor, tag):
+    c = comp(actor, "BP_AttributesComponent_C")
+    t = unreal.GameplayTag()
+    t.import_text('(TagName="%s")' % tag)
+    return c.call_method("GetMaxAttributeValue", args=(t,)) if c else None
 
 
 def set_attr(actor, tag, value):
@@ -137,16 +145,20 @@ def _tick(dt):
     if s["stage"] == "window" and MODE == "boss_resets" and s["t"] - s["t_event"] > 1.0 and not s["act_done"]:
         s["act_done"] = True
         s["t_event"] = s["t"]
-        log("== resetting the boss health to 500 now (it is down)")
-        set_attr(boss, "Attribute.Health", 500.0)
+        maximum = max_attr(boss, "Attribute.Health")
+        log("== resetting the boss health to its maximum now (it is down): %s" % maximum)
+        if maximum is not None:
+            set_attr(boss, "Attribute.Health", maximum)
         s["stage"] = "after"
     if s["stage"] == "window" and MODE == "boss_dies" and not s["act_done"] and s["t"] >= s["next_press"] and not s["press"]:
         s["act_done"] = True
-        set_attr(boss, "Attribute.Health", 60.0)
+        maximum = max_attr(boss, "Attribute.Health")
+        if maximum is not None:
+            set_attr(boss, "Attribute.Health", maximum * LETHAL_HEALTH_FRACTION)
         s["press"], s["press_until"] = "IA_NormalAttack", s["t"] + 0.2
         s["t_event"] = s["t"]
         s["stage"] = "after"
-        log("== boss set to 60 HP, striking it while it is down")
+        log("== boss set to 3 percent of maximum health (%s), striking it while it is down" % maximum)
     if s["stage"] == "break" and not s["press"] and s["t"] >= s["next_press"] and flat.length() <= 260.0:
         s["press"], s["press_until"], s["next_press"] = "IA_StrongAttack", s["t"] + 0.2, s["t"] + 1.3
         log("press heavy")

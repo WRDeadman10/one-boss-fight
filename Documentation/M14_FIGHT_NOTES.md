@@ -140,3 +140,67 @@ Reading: these are useful first mechanics traces, not a balance verdict. The act
 | Dex | boss dead | 36.6 s | 509 (304 + 105 + 100) | 19 (19/0) | 1, 1 | 0 | 18.4 s |
 
 Reading: all three builds win, each through the intended loop (stance break, riposte, bleed procs on Dex: two procs of 52.5), and each run is marked INCONCLUSIVE by the bot itself (late dodges against the close attacks, untracked moves dodged at a guessed time). One run per build is a sample, not a result. The finding that matters: a plain bot kills the boss in 23 to 40 seconds because 500 health is small against 16 to 22 health per hit and a 100 to 212 health riposte; the Freeze gives no boss health and no fight length. That is an owner decision (KI-096). Repeat each build three times before drawing any comparison between builds.
+
+## 13. Nine runs with per-event data (2026-10-23, `-Repeat 3`, collector `Scripts/CollectBalanceRuns.py`, accounting closes in every run: `bad_accounting=none`)
+
+| Build | Outcomes | Fight time (min / median / max) | Damage per hit (health, n) | Riposte impact | Bleed proc | Stamina minimum | Hits taken |
+|---|---|---|---|---|---|---|---|
+| Starter | 2 boss dead, 1 player dead | 11.8 / 19.7 / 23.2 s | Light 41.0 (15), Strong 57.4 (7) | 100 (n 2) | none | 5 | 8 for 288 |
+| Strength | 3 boss dead | 37.2 / 38.8 / 43.7 s | Light 16.0 (38), Strong 22.4 (12) | mean 79.6, min 18.4, max 100 (n 8) | none | 0 | 7 for 261 |
+| Dex | 3 boss dead | 32.4 / 38.2 / 43.6 s | Light 16.0 (57) | 100 (n 3) | 52.5 (n 6) | 10 | 4 |
+
+Findings: (1) the earlier assumption "Starter light 16" was wrong: the pack's starter sword does 41 health per light and 57.4 per strong, 2.6 times the damage of the Strength and Dex weapons (16 and 22.4), because health damage comes from the pack's attack data and weapon, not from the project's weapon table (which carries posture, stamina, bleed and hyperarmor only). The starter is the strongest weapon and kills the boss in 12 to 23 s. (2) A riposte takes 100 health (min 18.4 is a capped last hit). (3) Strength reaches 0 stamina, the Starter 5: stamina limits them; Dex never goes below 10. (4) All three builds win in under 45 s with this bot, so the fight is too short for every build (KI-096); the Starter is out of line with the builds (KI-097). The bot's evidence flag is still INCONCLUSIVE for late dodges against close attacks: use these as relative numbers.
+
+## 14. Boss health 2000, bleed 0.03, starter 0.39 (2026-10-23, raw pacing / `rpg.CloseTelegraph 0`)
+
+These nine archived flat driver records are the first calibration set under the
+new health, bleed and Starter multiplier. The times, damage parts and outcomes
+below are read from their `metrics` arrays, not inferred from the older
+500-health history. `W` is boss dead and `D` is player dead.
+
+| Run ID | Build | Outcome / seconds | Health damage per hit | Riposte total (count) | Bleed total (count) | Hits taken |
+|---|---|---|---|---:|---:|---:|
+| `20261023T135708_44c87d61` | Starter | W / 137.9 | Light 16.4 (59), Strong 22.4 (2) | 1000.0 (10) | 0 (0) | 3 |
+| `20261023T135948_45a72ee1` | Starter | W / 143.5 | Light 16.4 (61), Strong 22.4 (1) | 1000.0 (10) | 0 (0) | 1 |
+| `20261023T140235_25c00119` | Starter | W / 136.5 | Light 16.4 (60), Strong 22.4 (1) | 1000.0 (10) | 0 (0) | 0 |
+| `20261023T140515_6eaa9fce` | Strength | D / 23.6 | Light 16.0 (2), Strong 22.4 (4) | 100.0 (1) | 0 (0) | 4 |
+| `20261023T140601_4155c6cc` | Strength | W / 126.1 | Light 16.0 (44), Strong 22.4 (12) | 1027.2 (11) | 0 (0) | 1 |
+| `20261023T140829_cf3f5e30` | Strength | W / 122.6 | Light 16.0 (45), Strong 22.4 (11) | 1033.6 (11) | 0 (0) | 0 |
+| `20261023T141052_b07722d9` | Dex | D / 17.5 | Light 16.0 (9) | 0 (0) | 60.0 (1) | 4 |
+| `20261023T141131_b92de201` | Dex | W / 127.5 | Light 16.0 (70) | 400.0 (4) | 480.0 (8) | 1 |
+| `20261023T141402_c0de7c31` | Dex | W / 131.0 | Light 16.0 (70) | 400.0 (4) | 480.0 (8) | 0 |
+
+Seven runs win in 122.6 to 143.5 s. The two early deaths are the Strength
+23.6 s run and Dex 17.5 s run: each took four 36-health hits, exhausting the
+player's 120 health. Q4 found that the terminal unscaled 41-health Starter hit
+is the killing-blow behavior (health is already zero), not valid normal DPS
+evidence. Q10 found 14 hits across these records: A3b supplied 6, then A1 and
+A1b supplied 3 each, and every recorded hit followed a dodge outside its
+i-frame window; this points to close-stage anticipation/telegraph rather than
+a boss-health retune.
+
+Q9's empirical reconstruction was within 3.6 percent on the six completed
+runs because it pools their recorded weapon, bleed and riposte damage. It is a
+record reconstruction, not a forward prediction of survival, human play or a
+different bot policy.
+
+## 15. Telegraph 0.4 (2026-10-24, boss health 2000 / bleed 0.03 / starter 0.39)
+
+The newest six files in `Saved/BalanceRuns/`, written 2026-10-24 03:37 to
+03:50 local, are the `rpg.CloseTelegraph 0.4` comparison set. All six won;
+four took no damage. This table quotes the JSON top-level fields directly.
+
+| Run ID | Build | Fight seconds | Hits taken | Damage taken | Player end |
+|---|---|---:|---:|---:|---:|
+| `20261023T220426_38aaccd1` | Starter | 151.8 | 1 | 36 | 84 |
+| `20261023T220721_a8949515` | Starter | 136.6 | 0 | 0 | 120 |
+| `20261023T221000_dd74c7bf` | Strength | 122.9 | 0 | 0 | 120 |
+| `20261023T221227_5093664e` | Strength | 140.2 | 3 | 108 | 12 |
+| `20261023T221511_974dcffe` | Dex | 129.0 | 0 | 0 | 120 |
+| `20261023T221742_7ca61cd5` | Dex | 144.8 | 0 | 0 | 120 |
+
+That is 6/6 wins in 122.9 to 151.8 s and four hits in six runs, versus 14
+hits in the nine raw-pacing records. The samples support the owner decision to
+ship `rpg.CloseTelegraph 0.4` as the temporary default while authored clips
+remain unavailable. They do not prove survival or human feel; retain the
+owner's hand test as the decision check.

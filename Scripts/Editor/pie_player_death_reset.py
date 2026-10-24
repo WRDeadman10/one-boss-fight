@@ -31,6 +31,16 @@ def attr(actor, tag):
         return None
 
 
+def max_attr(actor, tag):
+    c = comp(actor, "BP_AttributesComponent_C")
+    t = unreal.GameplayTag()
+    t.import_text('(TagName="%s")' % tag)
+    try:
+        return c.call_method("GetMaxAttributeValue", args=(t,))
+    except Exception:
+        return None
+
+
 def place(pawn, boss, dist, ang_deg):
     bl = boss.get_actor_location()
     r = math.radians(boss.get_actor_rotation().yaw + ang_deg)
@@ -171,7 +181,8 @@ def _tick(dt):
         check("%s: encounter reset once (generation +1)" % name, enc.get_generation() == s["mem"]["gen"] + 1 and enc.get_reset_count() == s["mem"]["resets"] + 1, "generation %d -> %d" % (s["mem"]["gen"], enc.get_generation()))
         check("%s: boss back at its start, dormant" % name, away < 10.0 and enc.is_dormant(), "%.1f cm from home, dormant %s" % (away, enc.is_dormant()))
         check("%s: boss not staggered, no montage left" % name, (not stg.is_staggered()) and montage is None, "staggered %s, montage %s" % (stg.is_staggered(), montage.get_name() if montage else None))
-        check("%s: boss health and poise full" % name, (attr(boss, "Attribute.Health") or 0) >= 499.0 and (attr(boss, "Attribute.Poise") or 0) >= 99.0 and comp(boss, "RPGBossPosture").get_posture() >= 99.0, "health %s poise %s" % (attr(boss, "Attribute.Health"), attr(boss, "Attribute.Poise")))
+        health, maximum = attr(boss, "Attribute.Health"), max_attr(boss, "Attribute.Health")
+        check("%s: boss health and poise full" % name, health is not None and maximum is not None and abs(health - maximum) <= 0.5 and (attr(boss, "Attribute.Poise") or 0) >= 99.0 and comp(boss, "RPGBossPosture").get_posture() >= 99.0, "health %s/%s poise %s" % (health, maximum, attr(boss, "Attribute.Poise")))
         check("%s: no blade, no pending punish, no javelin" % name, (not p["sw"].is_blade_active()) and (not p["pu"].is_pending()) and len(javelins(w)) == 0, "blade %s pending %s javelins %d" % (p["sw"].is_blade_active(), p["pu"].is_pending(), len(javelins(w))))
         check("%s: the new player starts at full health" % name, php is not None and php >= 99.0, "health %s" % php)
         s["i"] += 1

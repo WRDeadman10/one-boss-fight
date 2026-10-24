@@ -9,6 +9,10 @@ results = []
 S = {"phase": "start", "t": 0.0, "i": 0, "next": 0.0, "mem": {}}
 handle = None
 
+# The tracker's rules (commitment, heading lock, branch check) are tested against the stand-in pacing of the pack's clips: the scenarios step the player aside at fixed real times, and the default telegraph (rpg.CloseTelegraph 0.4, since 2026-10-24) moves the commitment later in real time. The telegraph itself is pie_telegraph.py.
+TELEGRAPH_INITIAL = unreal.SystemLibrary.get_console_variable_float_value("rpg.CloseTelegraph")
+unreal.SystemLibrary.execute_console_command(unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world(), "rpg.CloseTelegraph 0")
+
 
 def check(name, ok, detail=""):
     results.append(ok)
@@ -177,6 +181,7 @@ def _tick(dt):
         unreal.unregister_slate_post_tick_callback(handle)
         handle = None
         unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
+        unreal.SystemLibrary.execute_console_command(unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world(), "rpg.CloseTelegraph %s" % TELEGRAPH_INITIAL)  # back to the session's value
         log("RESULT %d/%d passed" % (sum(1 for r in results if r), len(results)))
         return
     _, fn = STEPS[s["i"]]

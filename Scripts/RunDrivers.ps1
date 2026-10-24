@@ -1,10 +1,10 @@
 # Runs the PIE regression drivers one after the other in the open editor (the project is open, the bridge on port 3000 is up) and prints a table.
 # A driver passes when its final log line shows no failure and at least the expected number of checks ran (a driver that silently runs fewer checks fails).
-# Usage: powershell -ExecutionPolicy Bypass -File Scripts\RunDrivers.ps1 [-Only pie_a4_low_sweep,pie_a5_heal_punish]  (the whole list takes about 100 minutes: run it in chunks with -Only, -SkipWarmup after the first) [-Full] [-SkipWarmup] [-TimeoutSeconds 420]
+# Usage: powershell -ExecutionPolicy Bypass -File Scripts\RunDrivers.ps1 [-Only pie_a4_low_sweep,pie_a5_heal_punish]  (the whole list takes about 100 minutes: run it in chunks with -Only, -SkipWarmup after the first) [-Full] [-SkipWarmup] [-Repeat 3] [-TimeoutSeconds 420]
 #   -Full adds the long drivers (the 180 trial dodge scan).
 # Resumable: the script keeps no state; run it again after an interruption (use -Only for the drivers not yet run). If a driver times out its tick callback stays registered
 # until the editor restarts: restart the editor (Scripts\Rebuild.ps1) before running anything else.
-param([string[]]$Only, [switch]$Full, [switch]$SkipWarmup, [int]$TimeoutSeconds = 420)
+param([string[]]$Only, [switch]$Full, [switch]$SkipWarmup, [ValidateRange(1, 100)][int]$Repeat = 1, [int]$TimeoutSeconds = 420)
 if ($Only) { $Only = @($Only | ForEach-Object { $_ -split ',' }) }  # powershell -File passes a comma list as one string
 
 $root = Split-Path $PSScriptRoot -Parent
@@ -29,6 +29,9 @@ $drivers = @(
     @{ N = 'pie_builds';               K = 'R'; Min = 103; T = 1500 },
     @{ N = 'pie_build_hyperarmor';     K = 'R'; Min = 20; T = 900 },
     @{ N = 'pie_build_hud';            K = 'R'; Min = 8; T = 600 },
+    @{ N = 'pie_build_select';         K = 'R'; Min = 18; T = 600 },
+    @{ N = 'pie_telegraph';            K = 'R'; Min = 22; T = 600 },
+    @{ N = 'pie_soak';                 K = 'R'; Min = 213; T = 900 },
     @{ N = 'pie_a5_heal_punish';      K = 'R'; Min = 31 },
     @{ N = 'pie_player_death_reset';  K = 'R'; Min = 25 },
     @{ N = 'pie_damage_path';         K = 'R'; Min = 17; T = 900 },
@@ -97,8 +100,16 @@ if (-not $SkipWarmup) {
 }
 
 $rows = @()
-foreach ($d in $drivers) {
-    $name = $d.N
+$expandedDrivers = @()
+foreach ($driver in $drivers) {
+    $count = if ($driver.S -eq 'pie_build_fight') { $Repeat } else { 1 }
+    for ($index = 1; $index -le $count; $index++) {
+        $expandedDrivers += [pscustomobject]@{ Definition = $driver; Index = $index; Count = $count }
+    }
+}
+foreach ($entry in $expandedDrivers) {
+    $d = $entry.Definition
+    $name = if ($entry.Count -gt 1) { "$($d.N) [$($entry.Index)/$($entry.Count)]" } else { $d.N }
     $start = Count-Log
     if ($d.Setup) { Set-Content -Path (Join-Path $root $d.Setup[0]) -Value $d.Setup[1] -Encoding ascii }
     $scriptName = if ($d.S) { $d.S } else { $name }

@@ -40,10 +40,14 @@ Write-Host "Running benchmark '$Label' at ${ResX}x${ResY} ..."
 $Process = Start-Process -FilePath $Exe -ArgumentList $LaunchArgs -PassThru -Wait
 Write-Host "Exit code: $($Process.ExitCode)"
 
-$BenchmarkDir = Join-Path $StageRoot 'OneBossFight\Saved\Benchmark'
-$Latest = Get-ChildItem $BenchmarkDir -Directory -Filter "${Label}_*" -ErrorAction SilentlyContinue |
+# A Development build writes next to the staged game (Saved\StagedBuilds\Windows\OneBossFight\Saved); a SHIPPING build writes to the user's local data folder (%LOCALAPPDATA%\OneBossFight\Saved), found 2026-10-24: both places are searched, the newest run of this label wins.
+$BenchmarkDirs = @(
+	(Join-Path $StageRoot 'OneBossFight\Saved\Benchmark'),
+	(Join-Path $env:LOCALAPPDATA 'OneBossFight\Saved\Benchmark')
+)
+$Latest = $BenchmarkDirs | ForEach-Object { Get-ChildItem $_ -Directory -Filter "${Label}_*" -ErrorAction SilentlyContinue } |
 	Sort-Object LastWriteTime -Descending | Select-Object -First 1
-if (-not $Latest) { throw "No results found under $BenchmarkDir" }
+if (-not $Latest) { throw "No results found under: $($BenchmarkDirs -join '; ')" }
 
 $Summary = Get-Content (Join-Path $Latest.FullName 'summary.json') -Raw | ConvertFrom-Json
 Write-Host "Results: $($Latest.FullName)"

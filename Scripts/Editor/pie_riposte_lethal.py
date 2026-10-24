@@ -1,5 +1,5 @@
 """
-A lethal synchronized riposte (Freeze 17.4 and 18.2): the boss has 40 health, the riposte impact (100) takes it to zero and the pack's death must start: Status.Dead / the boss destroyed by the pack, one impact, no second damage.
+A lethal synchronized riposte (Freeze 17.4 and 18.2): the boss is set to 3 percent of its runtime maximum health, the riposte impact (100) takes it to zero and the pack's death must start: Status.Dead / the boss destroyed by the pack, one impact, no second damage.
 Log prefix [RipostLethal]; ends with RESULT n/m passed. Run pie_debug_overlay.py once after an editor start first.
 """
 import math
@@ -7,6 +7,7 @@ import unreal
 
 log = lambda m: unreal.log("[RipostLethal] " + m)
 IA = "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/"
+LETHAL_HEALTH_FRACTION = 0.03  # Owner's new bleed fraction; at 2000 maximum this is 60, below the fixed 100-damage riposte.
 results = []
 S = {"phase": "start", "t": 0.0, "now": 0.0, "wait": 0.0, "gen": None, "press_until": 0.0, "action": "IA_NormalAttack", "samples": None}
 handle = None
@@ -27,6 +28,16 @@ def attr(actor, tag):
     t.import_text('(TagName="%s")' % tag)
     try:
         return c.call_method("Get Current Attribute Value", args=(t,))
+    except Exception:
+        return None
+
+
+def max_attr(actor, tag):
+    c = comp(actor, "BP_AttributesComponent_C")
+    t = unreal.GameplayTag()
+    t.import_text('(TagName="%s")' % tag)
+    try:
+        return c.call_method("GetMaxAttributeValue", args=(t,))
     except Exception:
         return None
 
@@ -125,7 +136,9 @@ def script():
     p = P()
     place(p)
     p["dbg"].debug_refill_player()
-    p["dbg"].debug_set_boss_health_fraction(0.08)  # 40 of 500
+    maximum = max_attr(p["boss"], "Attribute.Health")
+    if maximum is not None:
+        set_attr(p["boss"], "Attribute.Health", maximum * LETHAL_HEALTH_FRACTION)
     yield 0.6
     p = P()
     impacts0 = p["stg"].get_riposte_impact_count()

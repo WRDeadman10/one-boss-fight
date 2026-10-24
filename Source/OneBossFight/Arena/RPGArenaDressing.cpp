@@ -79,7 +79,9 @@ void ARPGArenaDressing::OnConstruction(const FTransform& Transform)
 
 void ARPGArenaDressing::Rebuild()
 {
+#if WITH_EDITOR // RerunConstructionScripts exists only in editor builds (the packaged game target failed to compile without this guard)
 	RerunConstructionScripts();
+#endif
 }
 
 void ARPGArenaDressing::Tick(float DeltaSeconds)

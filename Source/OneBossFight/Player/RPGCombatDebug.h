@@ -80,6 +80,7 @@ public:
 
 	/** Test drivers only: attaches a static mesh (a candidate weapon) to a socket of the boss mesh so a delivery can be looked at in a pose. Replaces the previous test mesh. */
 	/** Test drivers only: adds a skeletal piece (crown, mantle, gauntlet) that follows the boss mesh's pose (leader pose component). */
+	// UHT does not accept a UFUNCTION inside "#if !UE_BUILD_SHIPPING": the declarations stay in every configuration and the bodies do nothing in Shipping (RPGCombatDebug.cpp).
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	void DebugAddSkeletalPiece(USkeletalMesh* Piece);
 

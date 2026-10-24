@@ -7,6 +7,7 @@
 
 #include "Player/RPGBuildLoadout.h"
 #include "Player/RPGBuildRules.h"
+#include "Player/RPGDamageScale.h"
 #include "Player/RPGWeaponAttackTable.h"
 
 // ---------------------------------------------------------------------------------------------
@@ -417,6 +418,50 @@ bool FRPGBuildAssetsTest::RunTest(const FString& Parameters)
 	TestFalse(TEXT("no pack classes: the names are reported missing"), URPGBuildLoadout::CheckPackSignatures(nullptr, nullptr, Missing));
 	TestTrue(TEXT("the report names the equip function"), Missing.Contains(TEXT("Update Equip Slot Item")));
 	TestTrue(TEXT("the report names the style variable"), Missing.Contains(TEXT("CurrentCombatStyle")));
+	return true;
+}
+
+// ---------------------------------------------------------------------------------------------
+// The health damage multiplier (KI-097): the scaler matches a loss with a hit record in either order
+// ---------------------------------------------------------------------------------------------
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGDamageScalerTest, "OneBossFight.Build.DamageScaler",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGDamageScalerTest::RunTest(const FString& Parameters)
+{
+	// Loss first, record one frame later: the 41 health of a starter light give back 61 percent (25).
+	FRPGDamageScaler A;
+	TestEqual(TEXT("a loss with no hit waiting adjusts nothing"), A.OnLoss(10.0, 41.0), 0.0);
+	TestEqual(TEXT("the record claims the loss and gives 25 back (41 * 0.61)"), A.OnHit(10.016, 0.39f), 41.0 * 0.61, 0.001);
+	TestEqual(TEXT("a loss and a hit that were matched do not match again"), A.OnLoss(10.5, 16.0), 0.0);
+
+	// Record first, loss one frame later.
+	FRPGDamageScaler B;
+	TestEqual(TEXT("a scaled hit with no loss yet adjusts nothing"), B.OnHit(20.0, 0.39f), 0.0);
+	TestEqual(TEXT("the loss meets the waiting hit"), B.OnLoss(20.016, 57.4), 57.4 * 0.61, 0.001);
+
+	// A hit of multiplier 1 (a build) claims its loss and queues nothing, so a later scaled hit cannot take it.
+	FRPGDamageScaler C;
+	C.OnLoss(30.0, 16.0);
+	TestEqual(TEXT("a build hit adjusts nothing"), C.OnHit(30.016, 1.f), 0.0);
+	TestEqual(TEXT("and leaves no scaled hit waiting"), C.OnHit(30.5, 1.f), 0.0);
+	TestEqual(TEXT("a loss of the bleed proc long after a scaled hit is not scaled"), C.OnLoss(31.0, 60.0), 0.0);
+
+	// A scaled hit that never lost health (blocked, or the boss dormant) expires: it must not scale a later bleed proc.
+	FRPGDamageScaler D;
+	D.OnHit(40.0, 0.39f);
+	TestEqual(TEXT("a loss after the window is not scaled"), D.OnLoss(41.0, 60.0), 0.0);
+
+	// A multiplier above 1 takes more.
+	FRPGDamageScaler E;
+	E.OnLoss(50.0, 10.0);
+	TestEqual(TEXT("1.5 takes 5 more"), E.OnHit(50.0, 1.5f), -5.0, 0.001);
+
+	// The result is clamped: never above the maximum, never below 1, never revives.
+	TestEqual(TEXT("a give back stops at the maximum"), FRPGDamageScaler::Apply(1990.0, 25.0, 2000.0), 2000.0);
+	TestEqual(TEXT("a take away never kills"), FRPGDamageScaler::Apply(3.0, -25.0, 2000.0), 1.0);
+	TestEqual(TEXT("a dead boss stays dead"), FRPGDamageScaler::Apply(0.0, 25.0, 2000.0), 0.0);
 	return true;
 }
 

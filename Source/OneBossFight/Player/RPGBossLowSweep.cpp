@@ -24,8 +24,12 @@ URPGBossLowSweep::URPGBossLowSweep()
 
 bool URPGBossLowSweep::StartForTest(bool bForce)
 {
+#if UE_BUILD_SHIPPING
+	return false;
+#else
 	URPGAttackTracker* Tracker = GetOwner() ? GetOwner()->FindComponentByClass<URPGAttackTracker>() : nullptr;
 	return Tracker && Tracker->StartMove(MoveId, bForce);
+#endif
 }
 
 void URPGBossLowSweep::Begin(float InForwardYaw)

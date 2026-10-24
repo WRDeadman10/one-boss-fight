@@ -802,14 +802,22 @@ void URPGBossStagger::EndRiposteExecution(bool bCompleted, const TCHAR* Why, boo
 
 FString URPGBossStagger::ForceBreakForTest()
 {
+#if UE_BUILD_SHIPPING
+	return TEXT("unavailable in Shipping");
+#else
 	bWasActive = true; // the pack's hit stun edge must not be read as a second request
 	return RPGBossRules::Name(RequestBreak(true));
+#endif
 }
 
 FString URPGBossStagger::TryBreakForTest()
 {
+#if UE_BUILD_SHIPPING
+	return TEXT("unavailable in Shipping");
+#else
 	bWasActive = true;
 	return RPGBossRules::Name(RequestBreak(false));
+#endif
 }
 
 void URPGBossStagger::AbortStagger()

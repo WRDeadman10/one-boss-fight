@@ -30,6 +30,13 @@ def attr(actor, tag):
     return c.call_method("Get Current Attribute Value", args=(t,)) if c else None
 
 
+def max_attr(actor, tag):
+    c = comp(actor, "BP_AttributesComponent_C")
+    t = unreal.GameplayTag()
+    t.import_text('(TagName="%s")' % tag)
+    return c.call_method("GetMaxAttributeValue", args=(t,)) if c else None
+
+
 def tags(*names):
     c = unreal.GameplayTagContainer()
     c.import_text("(GameplayTags=(%s))" % ",".join('(TagName="%s")' % n for n in names))
@@ -116,8 +123,9 @@ def _tick(dt):
         s["healed"] = True
         t = unreal.GameplayTag()
         t.import_text('(TagName="Attribute.Health")')
-        comp(boss, "BP_AttributesComponent_C").call_method("Set Current Attribute Value", args=(t, 500.0))  # so the cooldown check is not cut short by a death
-        s["last_hp"] = 500.0
+        maximum = max_attr(boss, "Attribute.Health")
+        comp(boss, "BP_AttributesComponent_C").call_method("Set Current Attribute Value", args=(t, maximum)) if maximum is not None else None  # so the cooldown check is not cut short by a death
+        s["last_hp"] = maximum
     if s["stage"] == "after" and s["t"] - s["t_down_end"] > 16.0:
         finish("done: boss attacks after the stance break: %d, stance breaks in total: %d (the cooldown is 5 s)" % (s["attacks_after"], stag.get_stagger_count()))
         return
