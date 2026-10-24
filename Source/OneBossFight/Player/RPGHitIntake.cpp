@@ -10,6 +10,7 @@
 #include "Animation/AnimMontage.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/World.h"
+#include "EngineUtils.h"
 #include "Misc/PackageName.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -189,6 +190,86 @@ void URPGHitIntake::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 		}
 	}
 	TrackMontage();
+	TrackBossHealth(DeltaTime);
+}
+
+void URPGHitIntake::TrackBossHealth(float DeltaTime)
+{
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+	AActor* Boss = WatchedBoss.Get();
+	if (!Boss)
+	{
+		BossSearchTimer += DeltaTime;
+		if (BossSearchTimer < 0.5f)
+		{
+			return;
+		}
+		BossSearchTimer = 0.f;
+		for (TActorIterator<ACharacter> It(World); It; ++It)
+		{
+			if (URPGPlayerMovesSubsystem::IsPackBoss(*It))
+			{
+				Boss = *It;
+				WatchedBoss = Boss;
+				PrevBossHealth = -1.0;
+				break;
+			}
+		}
+		if (!Boss)
+		{
+			return;
+		}
+	}
+	// Reading a pack attribute is a reflected Blueprint call: every frame only around a weapon hit (HandlePackHit arms it), otherwise ten times a second.
+	HealthSampleTimer += DeltaTime;
+	if (World->GetTimeSeconds() > HotUntil && HealthSampleTimer < 0.1f)
+	{
+		return;
+	}
+	HealthSampleTimer = 0.f;
+	double Health = 0.0;
+	if (!RPGPack::ReadAttribute(Boss, TEXT("Attribute.Health"), false, Health))
+	{
+		return;
+	}
+	if (PrevBossHealth >= 0.0 && Health > PrevBossHealth + 0.5)
+	{
+		// A gain is an encounter reset (the refill) or a heal: whatever the scaler still holds belongs to the old fight (a pending scaled hit would refund 61 percent of the first loss of the next one).
+		Scaler.Reset();
+	}
+	if (PrevBossHealth >= 0.0 && Health < PrevBossHealth - 0.01)
+	{
+		const double Adjust = Scaler.OnLoss(World->GetTimeSeconds(), PrevBossHealth - Health);
+		if (FMath::Abs(Adjust) > 0.01)
+		{
+			AdjustBossHealth(Boss, Adjust, TEXT("loss first"));
+			RPGPack::ReadAttribute(Boss, TEXT("Attribute.Health"), false, Health);
+		}
+	}
+	PrevBossHealth = Health;
+}
+
+void URPGHitIntake::AdjustBossHealth(AActor* Boss, double Adjust, const TCHAR* Why)
+{
+	double Health = 0.0, MaxHealth = 0.0;
+	if (!Boss || !RPGPack::ReadAttribute(Boss, TEXT("Attribute.Health"), false, Health) || !RPGPack::ReadAttribute(Boss, TEXT("Attribute.Health"), true, MaxHealth) || Health <= 0.0)
+	{
+		return; // a dead boss stays dead: the scaler never revives and never kills
+	}
+	const double NewHealth = FRPGDamageScaler::Apply(Health, Adjust, MaxHealth);
+	if (FMath::Abs(NewHealth - Health) < 0.01)
+	{
+		return;
+	}
+	RPGPack::WriteAttribute(Boss, TEXT("Attribute.Health"), NewHealth);
+	PrevBossHealth = NewHealth;
+	++ScaledHitCount;
+	HealthAdjustTotal += NewHealth - Health;
+	UE_LOG(LogRPGHitIntake, Log, TEXT("health damage multiplier (%s): boss health %.1f -> %.1f (%+.1f)"), Why, Health, NewHealth, NewHealth - Health);
 }
 
 void URPGHitIntake::TrackMontage()
@@ -318,6 +399,10 @@ void URPGHitIntake::HandlePackHit(FHitResult HitResult)
 		++OtherHitCount;
 		return;
 	}
+	if (GetWorld())
+	{
+		HotUntil = GetWorld()->GetTimeSeconds() + FRPGDamageScaler::Window + 0.1;
+	}
 	FPending Entry;
 	UObject* ActiveTarget = nullptr;
 	Entry.Record = BuildRecord(HitResult, Target, ActiveTarget);
@@ -402,6 +487,15 @@ void URPGHitIntake::FinalizePending()
 				}
 			}
 		}
+		Record.HealthMultiplier = Record.Row.HealthDamageMultiplier;
+		if (AActor* ScaledBoss = Record.Target.Get())
+		{
+			const double Adjust = Scaler.OnHit(GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0, Record.HealthMultiplier);
+			if (FMath::Abs(Adjust) > 0.01)
+			{
+				AdjustBossHealth(ScaledBoss, Adjust, TEXT("record first"));
+			}
+		}
 		Record.bAmbiguous = bShared;
 		Record.Id = ++BossHitCount;
 		LastRecord = Record;
@@ -441,6 +535,9 @@ void URPGHitIntake::ResetCounters()
 	Pending.Reset();
 	MergedHitCount = 0;
 	SwingKindOverrideCount = 0;
+	ScaledHitCount = 0;
+	HealthAdjustTotal = 0.0;
+	Scaler.Reset();
 	BossHitCount = 0;
 	OtherHitCount = 0;
 	LastRecord = FRPGHitRecord();

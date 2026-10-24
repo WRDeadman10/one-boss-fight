@@ -1,0 +1,5 @@
+Socket: MistCenter
+RelativeLocation: 0.0, 0.0, 300.0
+RelativeRotation: 0.0, 0.0, 0.0
+RelativeScale: 1.0, 1.0, 1.0
+Description: Center point of the 800 cm wide fog portal opening.

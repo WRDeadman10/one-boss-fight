@@ -30,7 +30,7 @@ PIE_AUDIT_ALLOWLIST = {
     "pie_boss01_look", "pie_boss_abilities", "pie_boss_arm_diag", "pie_boss_fireball",
     "pie_boss_look_shots", "pie_cam_probe", "pie_clip_look", "pie_clip_look12",
     "pie_close_combo_watch", "pie_death_probe", "pie_debug_overlay", "pie_dump_abilities",
-    "pie_dump_player_functions", "pie_g3_probe", "pie_gate_look", "pie_hit_diag",
+    "pie_dump_player_functions", "pie_g3_probe", "pie_gate_look", "pie_health_probe", "pie_hit_diag",
     "pie_hud_probe", "pie_input_smoke", "pie_jump_probe", "pie_montage_shots",
     "pie_montage_travel", "pie_player_tags", "pie_poise_enemy_test", "pie_soak",
     "pie_stamina_trace", "pie_state", "pie_stop", "pie_vfx_gallery",

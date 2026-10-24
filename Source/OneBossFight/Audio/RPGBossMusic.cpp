@@ -131,7 +131,9 @@ void URPGBossMusic::StopAll(bool bBossDead)
 
 void URPGBossMusic::StartForTest()
 {
+#if !UE_BUILD_SHIPPING
 	StartTrack(ETrack::Phase1);
+#endif
 }
 
 void URPGBossMusic::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

@@ -36,9 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bleed", meta = (ClampMin = "1.0"))
 	float ThresholdMax = 200.f;
 
-	/** Fraction of the maximum health a proc takes (Boss.BleedBossHpFraction: 0.105). */
+	/** Fraction of the maximum health a proc takes (Boss.BleedBossHpFraction: 0.03 since 2026-10-23, was 0.105 at 500 health; a proc takes 60 at 2000). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bleed", meta = (ClampMin = "0.0", ClampMax = "1.0"))
-	float HpFraction = 0.105f;
+	float HpFraction = 0.03f;
 
 	/** The blood burst at the proc (the project's blood pack, a placeholder until the effect of the art list, V-12). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bleed")

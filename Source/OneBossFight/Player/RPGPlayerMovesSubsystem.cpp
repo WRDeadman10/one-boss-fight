@@ -26,6 +26,7 @@
 #include "Player/RPGCombatDebug.h"
 #include "Player/RPGLegend.h"
 #include "UI/RPGBossHud.h"
+#include "UI/RPGBuildSelect.h"
 #include "Audio/RPGBossMusic.h"
 #include "Audio/RPGFootsteps.h"
 #include "Sound/SoundBase.h"
@@ -181,6 +182,7 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
 	{
 		NewObject<URPGBuildLoadout>(Pawn, TEXT("RPGBuildLoadout"))->RegisterComponent(); // the weapon of the chosen build (rpg.Build) before the fight, the weapon slot locked in it; nothing is called while no build is chosen (Gate 3, M13)
 	}
+	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGBuildSelect>()) NewObject<URPGBuildSelect>(Pawn, TEXT("RPGBuildSelect"))->RegisterComponent(); // pre-fight B-key build selector (Gate 3, G3-5)
 	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGIFrameMonitor>())
 	{
 		URPGIFrameMonitor* IFrames = NewObject<URPGIFrameMonitor>(Pawn, TEXT("RPGIFrameMonitor"));

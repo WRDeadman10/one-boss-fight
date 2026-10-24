@@ -17,7 +17,7 @@ namespace RPGBleedRules
 		float ThresholdIncrease = 20.f;
 		float ThresholdMax = 200.f;
 		/** Fraction of the boss's maximum health taken by a proc. */
-		float HpFraction = 0.105f;
+		float HpFraction = 0.03f; // 0.105 at 500 health (Freeze 20.2, a tunable custom rule); 0.03 of the 2000 maximum health of the 2 to 4 minute duel is 60 per proc
 	};
 
 	struct FState

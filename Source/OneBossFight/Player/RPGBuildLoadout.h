@@ -25,6 +25,7 @@ class ONEBOSSFIGHT_API URPGBuildLoadout : public UActorComponent
 
 public:
 	URPGBuildLoadout();
+	FString SetBuild(const FString& Name);
 
 	/** Calls of the pack's equip function per request before the loadout gives up. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Build", meta = (ClampMin = "1"))
@@ -139,11 +140,11 @@ public:
 
 	/** Test drivers only: the equip waits for the combat mode to end (true) or not (false). */
 	UFUNCTION(BlueprintCallable, Category = "Build")
-	void SetApplyOnlyOutOfCombatForTest(bool bOnlyOutOfCombat) { bApplyOnlyOutOfCombat = bOnlyOutOfCombat; }
+	void SetApplyOnlyOutOfCombatForTest(bool bOnlyOutOfCombat);
 
 	/** Test drivers only: whether the quickslot ability is blocked while the boss is awake. */
 	UFUNCTION(BlueprintCallable, Category = "Build")
-	void SetLockWeaponSlotForTest(bool bLock) { bLockWeaponSlotInFight = bLock; }
+	void SetLockWeaponSlotForTest(bool bLock);
 
 	/** Test drivers only: forgets the counters and the events (the choice and the lock stay). */
 	UFUNCTION(BlueprintCallable, Category = "Build")

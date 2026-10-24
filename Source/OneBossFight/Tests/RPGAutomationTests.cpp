@@ -442,6 +442,14 @@ bool FRPGWeaponTableTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("dex jump heavy posture 14"), Row.PostureDamage, 14.f);
 	TestTrue(TEXT("the starter sword has a row"), Defaults->Find(TEXT("SwordCombatStyle"), ERPGAttackKind::Light, Row));
 	TestEqual(TEXT("the starter sword keeps the pack's stamina cost"), Row.StaminaCost, -1.f);
+	// The health damage multiplier (KI-097): the starter sword's hits take 16 / 41 of the pack's health, the builds' hits what the pack gives.
+	TestEqual(TEXT("the starter sword's light takes 0.39 of the pack's health damage"), Row.HealthDamageMultiplier, 0.39f);
+	TestTrue(TEXT("the starter sword has a strong row"), Defaults->Find(TEXT("SwordCombatStyle"), ERPGAttackKind::Strong, Row));
+	TestEqual(TEXT("the starter sword's strong takes 0.39 too"), Row.HealthDamageMultiplier, 0.39f);
+	TestTrue(TEXT("the strength row exists"), Defaults->Find(TEXT("ClaymoreCombatStyle"), ERPGAttackKind::Light, Row));
+	TestEqual(TEXT("the strength build keeps the pack's health damage"), Row.HealthDamageMultiplier, 1.f);
+	TestTrue(TEXT("the dex row exists"), Defaults->Find(TEXT("DualSwordCombatStyle"), ERPGAttackKind::Light, Row));
+	TestEqual(TEXT("the dex build keeps the pack's health damage"), Row.HealthDamageMultiplier, 1.f);
 	// The hyperarmor windows (M13/M14): the Strength build's strong, jump heavy and charged swings carry one inside the montage, nothing else does.
 	auto HasWindow = [&](const URPGWeaponAttackTable* Table, const TCHAR* Weapon, ERPGAttackKind Kind, float& OutStart, float& OutEnd)
 	{
@@ -468,6 +476,9 @@ bool FRPGWeaponTableTest::RunTest(const FString& Parameters)
 		TestTrue(TEXT("the asset's strength strong has the window"), HasWindow(Asset, TEXT("ClaymoreCombatStyle"), ERPGAttackKind::Strong, AssetStart, AssetEnd) && AssetEnd <= 5.f);
 		TestTrue(TEXT("the asset's strength charged has the window"), HasWindow(Asset, TEXT("ClaymoreCombatStyle"), ERPGAttackKind::Charged, AssetStart, AssetEnd) && AssetEnd <= 5.f);
 		TestFalse(TEXT("the asset's starter sword jump heavy has none"), HasWindow(Asset, TEXT("SwordCombatStyle"), ERPGAttackKind::JumpHeavy, AssetStart, AssetEnd));
+		FRPGWeaponAttackRow AssetRow;
+		TestTrue(TEXT("the asset has the starter sword's light row"), Asset->Find(TEXT("SwordCombatStyle"), ERPGAttackKind::Light, AssetRow));
+		TestEqual(TEXT("the asset's starter sword takes 0.39 of the pack's health damage (Scripts/Editor/set_health_multiplier.py writes it)"), AssetRow.HealthDamageMultiplier, 0.39f);
 	}
 	else
 	{
@@ -585,7 +596,7 @@ bool FRPGBleedRulesTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("initial threshold 100"), Defaults->InitialThreshold, 100.f);
 	TestEqual(TEXT("threshold increase 20"), Defaults->ThresholdIncrease, 20.f);
 	TestEqual(TEXT("threshold maximum 200"), Defaults->ThresholdMax, 200.f);
-	TestEqual(TEXT("proc takes 10.5 percent"), Defaults->HpFraction, 0.105f);
+	TestEqual(TEXT("proc takes 3 percent of the maximum health (0.105 at the 500 health of the pack)"), Defaults->HpFraction, 0.03f);
 
 	const FConfig Config;
 	FState State;
@@ -631,9 +642,10 @@ bool FRPGBleedRulesTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("90 + 30 crosses 100 once"), static_cast<int32>(Apply(Surplus, Config, 30.f, false, false, false, false)), static_cast<int32>(EResult::Proc));
 	TestEqual(TEXT("no carry over"), Surplus.Buildup, 0.f);
 
-	// The burst: 10.5 percent of the maximum health, never the last point.
-	TestEqual(TEXT("10.5 percent of 500 is 52.5"), ProcDamage(500.f, 500.f, Config), 52.5f);
-	TestEqual(TEXT("with 40 health left the proc leaves 1"), ProcDamage(500.f, 40.f, Config), 39.f);
+	// The burst: 3 percent of the maximum health, never the last point.
+	TestEqual(TEXT("3 percent of 2000 is 60"), ProcDamage(2000.f, 2000.f, Config), 60.f);
+	TestEqual(TEXT("3 percent of 500 is 15"), ProcDamage(500.f, 500.f, Config), 15.f);
+	TestEqual(TEXT("with 10 health left the proc leaves 1"), ProcDamage(2000.f, 10.f, Config), 9.f);
 	TestEqual(TEXT("with half a point left it takes nothing"), ProcDamage(500.f, 0.5f, Config), 0.f);
 	TestEqual(TEXT("names are stable (the drivers read them)"), FString(Name(EResult::Proc)), FString(TEXT("proc")));
 	return true;
@@ -855,7 +867,9 @@ bool FRPGArenaArtPassTest::RunTest(const FString& Parameters)
 	Arena->EntranceArch = Arch;
 	Arena->Brazier = Props[3];
 	Arena->Rubble = Props[4];
+#if WITH_EDITOR // RerunConstructionScripts exists only in editor builds (the packaged game target failed to compile without this guard)
 	Arena->RerunConstructionScripts();
+#endif
 
 	FHitResult Hit;
 

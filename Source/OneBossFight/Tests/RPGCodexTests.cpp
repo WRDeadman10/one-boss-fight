@@ -9,7 +9,10 @@
 #include "Player/RPGBossMath.h"
 #include "Player/RPGBossRules.h"
 #include "Player/RPGBuildRules.h"
+#include "Player/RPGDamageScale.h"
 #include "Player/RPGSwingRules.h"
+#include "Player/RPGTelegraphRules.h"
+#include "UI/RPGBuildSelectRules.h"
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGCodexAttackKindEdgesTest, "OneBossFight.Codex.AttackKindEdges",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
@@ -88,7 +91,7 @@ bool FRPGCodexBleedEdgesTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("proc clears buildup"), State.Buildup, 0.f);
 	TestEqual(TEXT("proc raises threshold once"), State.Threshold, 120.f);
 	TestEqual(TEXT("same-frame follow-up does not build"), static_cast<uint8>(Apply(State, Config, 20.f, false, false, false, true)), static_cast<uint8>(EResult::IgnoredSameFrame));
-	TestEqual(TEXT("proc damage leaves the final health point"), ProcDamage(500.f, 20.f, Config), 19.f);
+	TestEqual(TEXT("proc damage leaves the final health point"), ProcDamage(500.f, 10.f, Config), 9.f);
 	TestEqual(TEXT("proc damage is zero at one health"), ProcDamage(500.f, 1.f, Config), 0.f);
 	return true;
 }
@@ -142,6 +145,118 @@ bool FRPGCodexBuildRulesEdgesTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("lock needs enabled, present, awake boss"), ShouldLockSlot(true, true, false));
 	TestFalse(TEXT("dormant boss does not lock"), ShouldLockSlot(true, true, true));
 	TestEqual(TEXT("off-build HUD says what is held"), BuildLine(TEXT("MagicCombatStyle"), EDecision::Done), FString(TEXT("Build: Off-build (Magic)")));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGCodexBuildSelectRulesTest, "OneBossFight.Codex.BuildSelectRules",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGCodexBuildSelectRulesTest::RunTest(const FString& Parameters)
+{
+	using namespace RPGBuildSelectRules;
+	for (int32 Bits = 0; Bits < 16; ++Bits)
+	{
+		const bool bDormant = (Bits & 1) != 0;
+		const bool bAlive = (Bits & 2) != 0;
+		const bool bGrounded = (Bits & 4) != 0;
+		const bool bTransition = (Bits & 8) != 0;
+		TestEqual(*FString::Printf(TEXT("CanOpen truth-table row %d"), Bits), CanOpen(bDormant, bAlive, bGrounded, bTransition), bDormant && bAlive && bGrounded && !bTransition);
+	}
+
+	for (int32 Row = 0; Row < 3; ++Row)
+	{
+		ERPGBuild Build = ERPGBuild::Starter;
+		TestTrue(*FString::Printf(TEXT("row %d selects a build"), Row), BuildForRow(Row, Build));
+		TestEqual(*FString::Printf(TEXT("row %d selects the expected build"), Row), static_cast<uint8>(Build), static_cast<uint8>(static_cast<ERPGBuild>(Row)));
+		TestFalse(*FString::Printf(TEXT("row %d text is not empty"), Row), RowText(Row).IsEmpty());
+	}
+	for (const int32 Row : {-1, 3})
+	{
+		ERPGBuild Build = ERPGBuild::Starter;
+		TestFalse(*FString::Printf(TEXT("row %d is rejected"), Row), BuildForRow(Row, Build));
+		TestTrue(*FString::Printf(TEXT("row %d text is empty"), Row), RowText(Row).IsEmpty());
+	}
+
+	const TCHAR* Names[] = {TEXT("starter"), TEXT("STRENGTH"), TEXT("dEx")};
+	const ERPGBuild ExpectedBuilds[] = {ERPGBuild::Starter, ERPGBuild::Strength, ERPGBuild::Dex};
+	for (int32 Index = 0; Index < UE_ARRAY_COUNT(Names); ++Index)
+	{
+		ERPGBuild Build = ERPGBuild::Starter;
+		TestTrue(*FString::Printf(TEXT("%s parses regardless of case"), Names[Index]), ParseBuild(FName(Names[Index]), Build));
+		TestEqual(*FString::Printf(TEXT("%s selects the expected build"), Names[Index]), static_cast<uint8>(Build), static_cast<uint8>(ExpectedBuilds[Index]));
+	}
+	ERPGBuild Build = ERPGBuild::Starter;
+	TestFalse(TEXT("garbage build name is rejected"), ParseBuild(FName(TEXT("mace")), Build));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGCodexDamageScalerTest, "OneBossFight.Codex.DamageScaler",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGCodexDamageScalerTest::RunTest(const FString& Parameters)
+{
+	FRPGDamageScaler LossFirst;
+	TestEqual(TEXT("loss first waits for its hit"), LossFirst.OnLoss(1.0, 40.0), 0.0);
+	TestEqual(TEXT("loss first returns the expected adjustment"), LossFirst.OnHit(1.0, 0.5f), 20.0);
+
+	FRPGDamageScaler HitFirst;
+	TestEqual(TEXT("hit first waits for its loss"), HitFirst.OnHit(1.0, 0.5f), 0.0);
+	TestEqual(TEXT("hit first returns the same adjustment"), HitFirst.OnLoss(1.0, 40.0), 20.0);
+
+	FRPGDamageScaler Unscaled;
+	Unscaled.OnLoss(2.0, 30.0);
+	TestEqual(TEXT("multiplier one claims without adjusting"), Unscaled.OnHit(2.0, 1.0f), 0.0);
+	TestEqual(TEXT("a claimed unscaled loss cannot be reused"), Unscaled.OnHit(2.0, 0.5f), 0.0);
+
+	FRPGDamageScaler SymmetricAfter;
+	SymmetricAfter.OnLoss(3.0, 20.0);
+	TestEqual(TEXT("hit just after loss is in the symmetric window"), SymmetricAfter.OnHit(3.0 + FRPGDamageScaler::Window - 0.01, 0.5f), 10.0);
+	FRPGDamageScaler SymmetricBefore;
+	SymmetricBefore.OnHit(4.0, 0.5f);
+	TestEqual(TEXT("hit just before loss is in the symmetric window"), SymmetricBefore.OnLoss(4.0 + FRPGDamageScaler::Window - 0.01, 20.0), 10.0);
+
+	FRPGDamageScaler Expired;
+	Expired.OnLoss(5.0, 20.0);
+	TestEqual(TEXT("expired loss does not match a later hit"), Expired.OnHit(5.0 + FRPGDamageScaler::Window + 0.01, 0.5f), 0.0);
+	TestEqual(TEXT("expired loss was pruned"), Expired.Losses.Num(), 0);
+
+	TestEqual(TEXT("adjustment cannot exceed max health"), FRPGDamageScaler::Apply(90.0, 20.0, 100.0), 100.0);
+	TestEqual(TEXT("adjustment cannot reduce a living boss below one"), FRPGDamageScaler::Apply(5.0, -20.0, 100.0), 1.0);
+	TestEqual(TEXT("adjustment does not revive a dead boss"), FRPGDamageScaler::Apply(0.0, 20.0, 100.0), 0.0);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGCodexTelegraphRulesTest, "OneBossFight.Codex.TelegraphRules",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGCodexTelegraphRulesTest::RunTest(const FString& Parameters)
+{
+	using namespace RPGTelegraphRules;
+	TestEqual(TEXT("zero target leaves the rate unchanged"), RateFor(0.17f, 0.f), 1.f);
+	TestEqual(TEXT("target at active start leaves the rate unchanged"), RateFor(0.17f, 0.17f), 1.f);
+	TestEqual(TEXT("target before active start leaves the rate unchanged"), RateFor(0.17f, 0.10f), 1.f);
+	TestEqual(TEXT("zero active start leaves the rate unchanged"), RateFor(0.f, 0.40f), 1.f);
+	TestTrue(TEXT("A3a reaches the requested 0.425 rate"), FMath::IsNearlyEqual(RateFor(0.17f, 0.40f), 0.425f));
+	TestEqual(TEXT("the rate clamps to one tenth"), RateFor(0.02f, 0.50f), 0.1f);
+	TestEqual(TEXT("A1 seen at 0.04 s still gets about its 0.35 s tell"), RateFor(0.12f, 0.35f, 0.04f), 0.08f / 0.31f, 0.0001f);
+	TestEqual(TEXT("A1 seen 0.10 s late is clamped, not stopped"), RateFor(0.12f, 0.35f, 0.10f), 0.1f);
+	TestTrue(TEXT("the rate never exceeds one"), RateFor(0.17f, 0.10f) <= 1.f);
+
+	TestEqual(TEXT("zero cvar disables A3a"), TargetFor(TEXT("A3a"), 0.f), 0.f);
+	TestEqual(TEXT("A1 caps at its Freeze target"), TargetFor(TEXT("A1"), 0.40f), 0.35f);
+	TestEqual(TEXT("A1b caps at its Freeze target"), TargetFor(TEXT("A1b"), 0.40f), 0.35f);
+	TestEqual(TEXT("A3a keeps the cvar target"), TargetFor(TEXT("A3a"), 0.40f), 0.40f);
+	TestEqual(TEXT("A3b keeps the cvar target"), TargetFor(TEXT("A3b"), 0.40f), 0.40f);
+	for (const FName MoveId : {FName(TEXT("A2")), FName(TEXT("A4")), FName(TEXT("Unknown"))})
+	{
+		TestEqual(*FString::Printf(TEXT("%s is not a close telegraph move"), *MoveId.ToString()), TargetFor(MoveId, 0.40f), 0.f);
+	}
+	// The rate is worked out from where the montage is when it is applied (the tracker sees a stage a frame or two late): the rest of the windup, 0.17 - 0.05, must take 0.40 - 0.05 real seconds.
+	TestEqual(TEXT("a late start works out the rest of the windup"), RateFor(0.17f, 0.40f, 0.05f), 0.12f / 0.35f, 0.0001f);
+	TestEqual(TEXT("position 0 is the plain ratio"), RateFor(0.17f, 0.40f, 0.f), 0.425f, 0.0001f);
+	TestEqual(TEXT("a montage already past the active start is not stretched"), RateFor(0.17f, 0.40f, 0.17f), 1.f);
+	TestEqual(TEXT("a montage already past the target is not stretched"), RateFor(0.17f, 0.10f, 0.12f), 1.f);
+	TestEqual(TEXT("a negative position is refused"), RateFor(0.17f, 0.40f, -0.1f), 1.f);
 	return true;
 }
 

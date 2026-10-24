@@ -137,7 +137,12 @@ public:
 	void SetDeathModeForTest(const FString& Mode);
 
 	UFUNCTION(BlueprintCallable, Category = "Death")
-	void SetGuardPackDeathForTest(bool bOn) { bGuardPackDeath = bOn; }
+	void SetGuardPackDeathForTest(bool bOn)
+	{
+#if !UE_BUILD_SHIPPING
+		bGuardPackDeath = bOn;
+#endif
+	}
 
 	/** Tests: looks at the pack's death ability now (PackMontage) and returns what it found, the same text as GetLastPackResult. */
 	UFUNCTION(BlueprintCallable, Category = "Death")

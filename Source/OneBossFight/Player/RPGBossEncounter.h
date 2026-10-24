@@ -35,6 +35,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Encounter")
 	bool bResetOnPlayerRespawn = true;
 
+	/** The boss's maximum (and starting) health (M14, owner 2026-10-23: a 2 to 4 minute duel; the pack's own value is 500). Applied once at the start and kept by every reset (a reset refills to the maximum). 0 or less = the pack's value. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Encounter")
+	float BossMaxHealth = 2000.f;
+
 	UFUNCTION(BlueprintPure, Category = "Encounter")
 	bool IsDormant() const { return bDormant; }
 
@@ -64,7 +68,7 @@ public:
 
 	/** Tests: runs the encounter reset as if the player had died and respawned. */
 	UFUNCTION(BlueprintCallable, Category = "Encounter")
-	void ResetForTest() { ResetEncounter(); }
+	void ResetForTest();
 
 	/** Wakes the boss now (tests and scripted encounters). */
 	UFUNCTION(BlueprintCallable, Category = "Encounter")
@@ -86,6 +90,9 @@ private:
 	bool bHeld = false;
 	bool bWantsHold = false;
 	int32 ResetCount = 0;
+	bool bMaxHealthApplied = false;
+	float StartupTime = 0.f; // seconds since BeginPlay: the pack finishes its own attribute set-up a moment after the first write (probe 2026-10-23: current health read 500 half a second after the write of 2000)
+	static constexpr float StartupEnforceSeconds = 4.f;
 	int32 DeathResetRefusals = 0;
 	int32 Generation = 1;
 	float DormantTime = 0.f;

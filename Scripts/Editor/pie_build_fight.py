@@ -110,12 +110,11 @@ HEAVY_OPENER_BUILDS = ("Starter", "Strength")
 # ===================================================================================================================================================================================================
 # 1. KNOBS OF THE BOT (all guesses until a run says otherwise; each is named in the notes)
 # ===================================================================================================================================================================================================
-LIMIT_FIGHT_S = 420.0          # world seconds from the wake (the first run, Strength, left the boss at 51 of 500 health after 240 s)
+LIMIT_FIGHT_S = 420.0          # world seconds from the wake (the first run, Strength, left the boss with 51 health after 240 s)
 LIMIT_RUN_S = 720.0            # real seconds from the first frame with a pawn and a boss, whatever the world clock does (a paused world must not hang the editor)
 SETTLE_S = 9.0                 # the pack needs this long after the PIE start (pie_builds.py)
 START_DIST = 800.0             # cm in front of the boss at the wake (inside the 1200 cm gate)
 RESET_DIST = 1600.0            # cm during reset: outside the 1200 cm wake gate
-BASE_BOSS_HEALTH = 500.0       # encounter contract; verified before a balance run starts
 BASE_POSTURE = 100.0           # own posture-pool contract; verified before a balance run starts
 REFILL_BEFORE_FIGHT = True     # one debug_refill_player() before the wake; the bot is never healed afterwards
 STRIKE_RANGE0 = 125.0
@@ -193,7 +192,8 @@ def new_metrics():
     "dodge_presses": 0, "dodge_montages": 0, "dodge_quick": 0, "dodge_full": 0, "dodge_refused": 0, "dodge_late": 0, "dodge_costs": [], "wave_jumps": 0, "was_dodging": False,
             "taken": [], "taken_total": 0.0, "pl_regen": 0.0, "inst": {}, "cur_inst": None, "inst_seen_t": 0.0, "attacks": {}, "untracked": {},
             "brain_inactive_s": 0.0, "neutral_inactive_s": 0.0, "move_blocked_s": 0.0,
-            "openings": [], "open_cur": None, "p2_t": None, "p2_hp": None, "style_changes": 0, "walk_sum": 0.0, "walk_n": 0, "last_pos": None, "metrics_lines": 0}
+            "openings": [], "open_cur": None, "p2_t": None, "p2_hp": None, "style_changes": 0, "walk_sum": 0.0, "walk_n": 0, "last_pos": None, "metrics_lines": 0,
+            "posture_last": None, "stamina_event_t": -999.0}
 
 
 M = new_metrics()
@@ -268,6 +268,16 @@ def attr(actor, tag):
         return None
 
 
+def max_attr(actor, tag):
+    c = comp(actor, "BP_AttributesComponent_C")
+    if c is None:
+        return None
+    try:
+        return c.call_method("GetMaxAttributeValue", args=(tag_obj(tag),))
+    except Exception:
+        return None
+
+
 def world():
     return unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
 
@@ -331,6 +341,29 @@ def avg(xs):
 
 def counts_text(d):
     return ", ".join("%s %d" % (k, v) for k, v in sorted(d.items())) or "none"
+
+
+def event_line(prefix, fields):
+    """Writes machine-readable balance data. Values deliberately contain no spaces."""
+    fields = dict(fields)
+    parts = []
+    for key in sorted(fields):
+        value = fields[key]
+        if isinstance(value, bool):
+            value = 1 if value else 0
+        elif isinstance(value, float):
+            value = "%.3f" % value
+        value = re.sub(r"\s+", "_", str(value))
+        parts.append("%s=%s" % (key, value))
+    log(prefix + " " + " ".join(parts))
+
+
+def event(name, **values):
+    event_line("EVENT", {"event": name, "run": RUN_ID, "t": "%.3f" % M["fight_t"], **values})
+
+
+def run_summary(**values):
+    event_line("RUN_SUMMARY", {"run": RUN_ID, **values})
 
 
 # ===================================================================================================================================================================================================
@@ -460,6 +493,8 @@ def begin_fight(O):
     M["boss_hp0"] = M["boss_hp_last"] = M["boss_hp_max"] = O["boss_hp"]
     M["pl_hp0"] = M["pl_hp_last"] = M["pl_hp_min"] = O["pl_hp"]
     M["pl_st0"] = O["pl_st"]
+    M["posture_last"] = O["posture"]
+    M["stamina_event_t"] = -999.0
     M["hits_seen"], M["swings_seen"], M["procs_seen"], M["rip_imp_seen"] = O["hits"], O["swings"], O["procs"], O["rip_imp"]
     M["base"] = {"hits": O["hits"], "swings": O["swings"], "procs": O["procs"], "stagger": O["stag_n"], "rip_count": O["rip_count"], "rip_imp": O["rip_imp"], "rip_rej": O["rip_rej"], "dodge_presses": O["dodge_presses"]}
     M["last_pos"] = (O["px"], O["py"])
@@ -518,14 +553,22 @@ def track_opening(O):
         S["event_t"] = O["t"]
 
 
-def match_drops(t):
+def match_drops(O, expire=False):
     """Pairs the boss's health drops with the hit intake's records in order (a record arrives one frame after the pack's hit event, so a drop and its record are less than 0.4 s apart)."""
+    t = O["t"]
     recs, drops = M["pend_recs"], M["pend_drops"]
     while recs and drops:
-        rt, kind = recs[0]
-        drop_t, amount = drops[0]
+        rec, drop = recs[0], drops[0]
+        rt, kind = rec["t"], rec["kind"]
+        drop_t, amount = drop["t"], drop["amount"]
         if abs(rt - drop_t) <= 0.4:
             M["hp_by_kind"].setdefault(kind, []).append(amount)
+            M["hp_hit"] += amount
+            event("hit", kind=kind, style=O["style"] or "unknown", boss_before=drop["before"], boss_after=drop["after"], damage=amount,
+                  riposte_execution=drop["rip_exec"], bleed_proc=drop["bleed_proc"], shared_frame=rec["shared"])
+            before, after = rec["posture_before"], rec["posture_after"]
+            if before is not None and after >= 0.0 and abs(after - before) > 0.01:
+                event("posture", kind=kind, before=before, after=after, change=after - before)
             recs.pop(0)
             drops.pop(0)
         elif rt < drop_t:
@@ -534,14 +577,16 @@ def match_drops(t):
         else:
             M["drop_no_rec"] += 1
             M["hp_unmatched"] += amount
+            event("other", reason="drop_without_hit_record", boss_before=drop["before"], boss_after=drop["after"], damage=amount)
             drops.pop(0)
-    while recs and t - recs[0][0] > 0.6:
+    while recs and (expire or t - recs[0]["t"] > 0.6):
         M["rec_no_drop"] += 1
         recs.pop(0)
-    while drops and t - drops[0][0] > 0.6:
+    while drops and (expire or t - drops[0]["t"] > 0.6):
         M["drop_no_rec"] += 1
-        M["hp_unmatched"] += drops[0][1]
-        drops.pop(0)
+        drop = drops.pop(0)
+        M["hp_unmatched"] += drop["amount"]
+        event("other", reason="drop_without_hit_record", boss_before=drop["before"], boss_after=drop["after"], damage=drop["amount"])
 
 
 def account(O):
@@ -561,23 +606,40 @@ def account(O):
         end_fight("ai_inactive", "boss AI inactive while neutral for %.1f s; test freeze %s" % (M["neutral_inactive_s"], O["test_freeze"]))
     # ---- boss health: every drop is a weapon hit, a bleed proc or the riposte impact
     hp = O["boss_hp"]
+    proc_now = O["procs"] > M["procs_seen"]
+    rip_now = O["rip_imp"] > M["rip_imp_seen"]
+    proc_evented = False
+    rip_evented = False
     if hp is not None:
         last = M["boss_hp_last"]
         if last is not None and hp < last - 0.01:
             drop = last - hp
-            part_bleed = min(drop, max(0.0, O["proc_dmg"])) if O["procs"] > M["procs_seen"] else 0.0
+            part_bleed = min(drop, max(0.0, O["proc_dmg"])) if proc_now else 0.0
             rest = drop - part_bleed
             part_rip = 0.0
-            if O["rip_imp"] > M["rip_imp_seen"]:
+            if rip_now:
                 part_rip, rest = rest, 0.0
             M["hp_bleed"] += part_bleed
             M["hp_rip"] += part_rip
+            source_before = last
+            if part_bleed > 0.01:
+                event("bleed", damage=part_bleed, boss_before=source_before, boss_after=source_before - part_bleed)
+                source_before -= part_bleed
+                proc_evented = True
+            if part_rip > 0.01:
+                event("riposte", damage=part_rip, boss_before=source_before, boss_after=source_before - part_rip)
+                source_before -= part_rip
+                rip_evented = True
             if rest > 0.01:
-                M["hp_hit"] += rest
-                M["pend_drops"].append((t, rest))
+                M["pend_drops"].append({"t": t, "amount": rest, "before": source_before, "after": hp,
+                                        "rip_exec": O["rip_exec"], "bleed_proc": proc_now})
             log("BOSS HEALTH -%.1f (%s) -> %.0f (%.0f%%)%s" % (drop, ("bleed proc %.1f" % part_bleed if part_bleed else "") + (" riposte %.1f" % part_rip if part_rip else "") + (" weapon hit %.1f" % rest if rest > 0.01 else ""),
                                                                  hp, 100.0 * hp / max(M["boss_hp0"] or 1.0, 1.0), " [phase two]" if O["phase2"] else ""))
         M["boss_hp_last"] = hp
+    if proc_now and not proc_evented:
+        event("bleed", damage=0.0, boss_before=hp if hp is not None else -1.0, boss_after=hp if hp is not None else -1.0, pending_health=1)
+    if rip_now and not rip_evented:
+        event("riposte", damage=0.0, boss_before=hp if hp is not None else -1.0, boss_after=hp if hp is not None else -1.0, pending_health=1)
     M["procs_seen"] = max(M["procs_seen"], O["procs"])
     M["rip_imp_seen"] = max(M["rip_imp_seen"], O["rip_imp"])
     # ---- hit records of the intake (kind of each hit)
@@ -589,10 +651,11 @@ def account(O):
             m = re.search(r"kind (\w+)", line)
             kind = m.group(1) if m else "Unknown"
             M["hits_kind"][kind] = M["hits_kind"].get(kind, 0) + 1
-            M["pend_recs"].append((t, kind))
+            M["pend_recs"].append({"t": t, "kind": kind, "shared": "(shared frame)" in line,
+                                    "posture_before": M["posture_last"], "posture_after": O["posture"]})
         M["hits_seen"] = O["hits"]
         M["hits"] = O["hits"] - M["base"]["hits"]
-    match_drops(t)
+    match_drops(O)
     # ---- swings of the swing tracker (kind of each)
     n_sw = O["swings"] - M["swings_seen"]
     if n_sw > 0:
@@ -602,6 +665,7 @@ def account(O):
         kind = m.group(1) if m else "Unknown"
         M["swings_kind"][kind] = M["swings_kind"].get(kind, 0) + n_sw
         M["swings_seen"] = O["swings"]
+        event("stamina", reason="swing", value=O["pl_st"] if O["pl_st"] is not None else -1.0)
     # ---- boss attack instances (tracked moves); before the player's health so that a hit in the first frame of an attack is attributed to it
     if O["phase"] != "None" and O["move"] != "None":
         iid = O["inst"]
@@ -628,6 +692,7 @@ def account(O):
             rec = {"t": t, "amount": amount, "who": who, "dist": O["dist"], "invuln": O["invuln"], "dodging": O["dodging"], "since_dodge": t - S["last_dodge_t"], "pmontage": O["pmontage"]}
             M["taken"].append(rec)
             M["taken_total"] += amount
+            event("taken", move=O["move"], damage=amount, health_after=php)
             if iid is not None and iid in M["inst"]:
                 M["inst"][iid]["hit"] = True
             log("HIT TAKEN -%.1f -> player health %.0f: boss %s at %.0f cm, player montage %s, i-frames %s, last dodge %.2f s ago, stamina %s" % (
@@ -639,6 +704,9 @@ def account(O):
     # ---- stamina
     st = O["pl_st"]
     if st is not None:
+        if M["fight_t"] - M["stamina_event_t"] >= 1.0:
+            event("stamina", reason="sample", value=st)
+            M["stamina_event_t"] = M["fight_t"]
         if M["st_min"] is None or st < M["st_min"]:
             M["st_min"], M["st_min_t"] = st, M["fight_t"]
         if st < LOW_STAMINA:
@@ -649,6 +717,7 @@ def account(O):
             if M["st_dips"] <= 8:
                 log("STAMINA dipped below 20 (%.0f) at %.1f s, mode %s" % (st, M["fight_t"], S["mode"]))
         M["st_dip"] = low
+    M["posture_last"] = O["posture"]
     # ---- boss montages the tracker does not know
     bm = O["bmontage"]
     if bm is not None and O["move"] == "None" and bm not in TRACKED_NAMES and bm not in M["untracked"] and not O["stag"] and not O["transition"]:
@@ -927,6 +996,7 @@ def do_dodge(plan):
         M["dodge_late"] += 1
     key_hold(DODGE_KEY, DODGE_PRESS_S)
     st0 = O["pl_st"]
+    event("stamina", reason="dodge", value=st0 if st0 is not None else -1.0)
     log("DODGE %s %s: boss %s %s at montage position %.2f s, the active window opens in %.2f s (aimed %.2f s before it)%s; bot at %.0f cm, stamina %s%s" % (
         direction, "press #%d" % M["dodge_presses"], plan["move"], O["phase"] if plan["kind"] == "tracked" else "(untracked montage)", O["pos"] if plan["kind"] == "tracked" else O["bpos"], plan["tta"], plan["aim"],
         " [LATE: the i-frames start %.2f s after the key, the hit is due sooner]" % IFRAME_FIRST if late else "", O["dist"], ("%.0f" % st0) if st0 is not None else "?", " (cuts the swing in progress)" if O["pmontage"] and not O["dodging"] else ""))
@@ -1006,6 +1076,7 @@ def do_swing(kind, why, taps=1):
         face_now()
         M["presses"][kind] = M["presses"].get(kind, 0) + 1
         M["presses_total"] += 1
+        event("stamina", reason="swing_press", kind=kind, value=O["pl_st"] if O["pl_st"] is not None else -1.0)
         S["event_t"] = O["t"]
         log("SWING %s%s: %s; bot at %.0f cm (strike range %.0f), stamina %s, boss %s/%s" % (kind, " tap %d of %d" % (tap + 1, taps) if taps > 1 else "", why, d0, S["strike"], ("%.0f" % O["pl_st"]) if O["pl_st"] is not None else "?", O["move"], O["phase"]))
         if jump:
@@ -1166,15 +1237,18 @@ def script():
     place_player(RESET_DIST)
     C["enc"].reset_for_test()
     baseline = yield from until(lambda: parts()["enc"].is_dormant()
-                                and (attr(S["P"]["boss"], "Attribute.Health") or 0.0) >= BASE_BOSS_HEALTH - 0.5
+                                and attr(S["P"]["boss"], "Attribute.Health") is not None
+                                and max_attr(S["P"]["boss"], "Attribute.Health") is not None
+                                and abs(attr(S["P"]["boss"], "Attribute.Health") - max_attr(S["P"]["boss"], "Attribute.Health")) <= 0.5
                                 and parts()["post"].get_posture() >= BASE_POSTURE - 0.5, 3.0)
     C = parts()
     boss_health = attr(S["P"]["boss"], "Attribute.Health")
+    boss_max_health = max_attr(S["P"]["boss"], "Attribute.Health")
     posture = C["post"].get_posture()
     M["flags"]["slept"] = bool(baseline)
     M["flags"]["intake_bound"] = bool(safe("intake.is_hit_intake_bound", lambda: C["intake"].is_hit_intake_bound(), False))
     log("SETUP dormant baseline: %s; health %s/%s, posture %s/%s; hit intake bound: %s; generation %s" % (
-        M["flags"]["slept"], boss_health, BASE_BOSS_HEALTH, posture, BASE_POSTURE, M["flags"]["intake_bound"], safe("enc.get_generation", lambda: C["enc"].get_generation(), "?")))
+        M["flags"]["slept"], boss_health, boss_max_health, posture, BASE_POSTURE, M["flags"]["intake_bound"], safe("enc.get_generation", lambda: C["enc"].get_generation(), "?")))
     if not baseline:
         end_fight("setup_failed", "reset baseline was not dormant/full (health %s, posture %s)" % (boss_health, posture))
         return
@@ -1247,6 +1321,8 @@ def report():
 
     base = M["base"] or {}
     O = S["O"] or {}
+    if M["fight_on"] and O:
+        match_drops(O, True)
     fight_s = M["fight_t"]
     metric("build", "%s (%s); weapon style at the end %s" % (BUILD, BUILD_NOTE, O.get("style", "?")))
     metric("run_id", RUN_ID)
@@ -1315,6 +1391,12 @@ def report():
     metric("untracked_boss_montages", "; ".join("%s x%d (%s)" % (k, v["n"], "attack-like: dodged" if v["attack_like"] else "ignored") for k, v in sorted(M["untracked"].items())) or "none")
     metric("walk_speed", "%.0f cm/s measured over %d frames (the bot assumed %.0f)" % (M["walk_sum"] / M["walk_n"], M["walk_n"], WALK_SPEED) if M["walk_n"] else "not measured")
     metric("strike_range", "%.0f cm at the end (started at %.0f)" % (S["strike"], STRIKE_RANGE0))
+    other = M["hp_unmatched"]
+    accounted = M["hp_hit"] + M["hp_bleed"] + M["hp_rip"] + other
+    accounting_delta = (lost - accounted) if lost is not None else 0.0
+    run_summary(build=BUILD, outcome=M["outcome"] or "unknown", fight_seconds=fight_s, weapon=M["hp_hit"], riposte=M["hp_rip"],
+                bleed=M["hp_bleed"], other=other + accounting_delta, health_lost=lost if lost is not None else 0.0,
+                accounting="closed" if abs(accounting_delta) <= 0.01 else "open")
     M["metrics_lines"] = len(lines)
     try:
         archive = os.path.join(SAVED, "BalanceRuns")

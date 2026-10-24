@@ -79,7 +79,11 @@ RPGBleedRules::EResult URPGBossBleed::AddBuildup(float Amount, const TCHAR* Sour
 
 FString URPGBossBleed::AddBuildupForTest(float Amount)
 {
+#if UE_BUILD_SHIPPING
+	return TEXT("unavailable in Shipping");
+#else
 	return RPGBleedRules::Name(AddBuildup(Amount, TEXT("test")));
+#endif
 }
 
 void URPGBossBleed::DoProc()

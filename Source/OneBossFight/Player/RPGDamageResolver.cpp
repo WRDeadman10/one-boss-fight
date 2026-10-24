@@ -201,6 +201,9 @@ FString URPGDamageResolver::BuildSummaryLine() const
 
 FString URPGDamageResolver::ResolveForTest(FName MoveId, int32 Instance, float HP, FName HitKey, int32 Generation)
 {
+#if UE_BUILD_SHIPPING
+	return TEXT("unavailable in Shipping");
+#else
 	FRPGDamagePayload Payload;
 	Payload.MoveId = MoveId;
 	Payload.AttackInstance = Instance;
@@ -209,14 +212,17 @@ FString URPGDamageResolver::ResolveForTest(FName MoveId, int32 Instance, float H
 	Payload.Generation = Generation >= 0 ? Generation : CurrentGeneration();
 	const FRPGDamageResult Result = Resolve(UGameplayStatics::GetPlayerPawn(this, 0), Payload);
 	return RPGDamageRules::Name(Result.Outcome);
+#endif
 }
 
 void URPGDamageResolver::NoteOverlapForTest(FName MoveId, int32 Instance, FName HitKey)
 {
+#if !UE_BUILD_SHIPPING
 	FRPGDamagePayload Payload;
 	Payload.MoveId = MoveId;
 	Payload.AttackInstance = Instance;
 	Payload.HitKey = HitKey;
 	Payload.Generation = CurrentGeneration();
 	NoteOverlap(Payload);
+#endif
 }

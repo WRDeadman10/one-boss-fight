@@ -69,6 +69,18 @@ def attr(actor, tag_name):
     except Exception:
         return None
 
+
+def max_attr(actor, tag_name):
+    attributes = comp(actor, "BP_AttributesComponent_C")
+    if attributes is None:
+        return None
+    tag = unreal.GameplayTag()
+    tag.import_text('(TagName="%s")' % tag_name)
+    try:
+        return attributes.call_method("GetMaxAttributeValue", args=(tag,))
+    except Exception:
+        return None
+
 def place(pawn, boss, distance=220.0):
     origin = boss.get_actor_location()
     radians = math.radians(boss.get_actor_rotation().yaw)
@@ -150,11 +162,12 @@ def finalize_reset(scenario, goal, goal_ok, baseline, expected_resets=1):
     counters = snapshot(p)
     home = p["enc"].get_home_transform().translation
     health = attr(boss, "Attribute.Health")
+    maximum_health = max_attr(boss, "Attribute.Health")
     player_before = attr(pawn, "Attribute.Health")
     stale = leftovers(game_world)
     wave_active = p["wave"].is_wave_active()
     start_ok = ((boss.get_actor_location() - home).length() < 10.0 and p["enc"].is_dormant() and
-                health is not None and health >= 499.0 and p["posture"].get_posture() >= 99.0 and
+                health is not None and maximum_health is not None and abs(health - maximum_health) <= 0.5 and p["posture"].get_posture() >= 99.0 and
                 not p["stagger"].is_staggered() and not p["debug"].debug_boss_montage_anim_name())
     generation_ok = (counters["generation"] == baseline["generation"] + expected_resets and
                      p["enc"].get_reset_count() == baseline["resets"] + expected_resets)
@@ -200,8 +213,12 @@ def natural():
         current["debug"].debug_refill_player()
         remember(current)
         yield 0.5
-    _, _, _, boss = actors()
+    _, _, current_pawn, boss = actors()
     if boss is not None:
+        if current_pawn is not None:
+            # a real respawn puts the player far from the boss: with the player 220 cm away the boss, which is not held here, wakes again at once and the start state cannot be read (soak run 1, 6 of 6 natural encounters)
+            far = boss.get_actor_location() + unreal.Vector(0.0, 2500.0, 20.0)
+            current_pawn.set_actor_location_and_rotation(far, unreal.Rotator(0, 0, 0), False, True)
         parts(boss)["enc"].reset_for_test()
     yield from finalize_reset("natural", "20-second awake fight with player refilled", survived, baseline)
 

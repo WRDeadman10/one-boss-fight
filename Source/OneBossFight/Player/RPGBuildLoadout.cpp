@@ -380,7 +380,7 @@ bool URPGBuildLoadout::HasWeaponAbilityForTest(const FString& ClassName) const
 	return FindAbilityByClassName(GetOwner(), FName(*ClassName)) != nullptr;
 }
 
-FString URPGBuildLoadout::SetBuildForTest(const FString& Name)
+FString URPGBuildLoadout::SetBuild(const FString& Name)
 {
 	ERPGBuild Build = ERPGBuild::Starter;
 	const Rules::EParse Parsed = Rules::Parse(Name, Build);
@@ -408,14 +408,42 @@ FString URPGBuildLoadout::SetBuildForTest(const FString& Name)
 	return LastDecision == Rules::EDecision::Defer ? TEXT("Deferred") : TEXT("Accepted");
 }
 
+FString URPGBuildLoadout::SetBuildForTest(const FString& Name)
+{
+#if UE_BUILD_SHIPPING
+	return TEXT("unavailable in Shipping");
+#else
+	return SetBuild(Name);
+#endif
+}
+
 FString URPGBuildLoadout::ApplyNowForTest()
 {
+#if UE_BUILD_SHIPPING
+	return TEXT("unavailable in Shipping");
+#else
 	Poll();
 	return Rules::DecisionName(LastDecision);
+#endif
+}
+
+void URPGBuildLoadout::SetApplyOnlyOutOfCombatForTest(bool bOnlyOutOfCombat)
+{
+#if !UE_BUILD_SHIPPING
+	bApplyOnlyOutOfCombat = bOnlyOutOfCombat;
+#endif
+}
+
+void URPGBuildLoadout::SetLockWeaponSlotForTest(bool bLock)
+{
+#if !UE_BUILD_SHIPPING
+	bLockWeaponSlotInFight = bLock;
+#endif
 }
 
 void URPGBuildLoadout::ResetCountersForTest()
 {
+#if !UE_BUILD_SHIPPING
 	ApplyCallCount = 0;
 	ApplySuccessCount = 0;
 	ApplyFailureCount = 0;
@@ -425,6 +453,7 @@ void URPGBuildLoadout::ResetCountersForTest()
 	UnlockCount = 0;
 	LockBreachCount = 0;
 	Events.Reset();
+#endif
 }
 
 // ---------------------------------------------------------------------------------------------

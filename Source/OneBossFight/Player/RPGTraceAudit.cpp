@@ -22,8 +22,13 @@ using namespace RPGPack;
 
 URPGTraceAudit::URPGTraceAudit()
 {
+#if UE_BUILD_SHIPPING
+	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bStartWithTickEnabled = false;
+#else
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.TickGroup = TG_PostUpdateWork; // after the pack's sample of the frame
+#endif
 }
 
 void URPGTraceAudit::BeginPlay()

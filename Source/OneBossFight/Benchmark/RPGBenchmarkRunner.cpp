@@ -5,6 +5,7 @@
 #include "Camera/CameraActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Pack/RPGBlueprintCall.h"
+#include "Player/RPGPlayerMovesSubsystem.h"
 #include "Dom/JsonObject.h"
 #include "Engine/Engine.h"
 #include "Engine/GameViewportClient.h"
@@ -175,7 +176,8 @@ void ARPGBenchmarkRunner::TickFight(double ElapsedSeconds, float DeltaSeconds)
 		UGameplayStatics::GetAllActorsOfClass(World, APawn::StaticClass(), Pawns);
 		for (AActor* Candidate : Pawns)
 		{
-			if (Candidate->GetClass()->GetName().StartsWith(TEXT("BP_SevarogBossPack")))
+			// The arena's boss is the pack's great sword boss (BP_ExampleGreatSwordBoss): the old lookup by the name of the retired Sevarog pack boss never found it, the fight mode never fought and the run measured an empty arena (found by Codex B5, 2026-10-24).
+			if (URPGPlayerMovesSubsystem::IsPackBoss(Candidate))
 			{
 				FightBoss = Candidate;
 				break;
@@ -325,6 +327,7 @@ void ARPGBenchmarkRunner::WriteResults(const FRPGFrameStats& Stats) const
 	Json->SetStringField(TEXT("timestamp"), Stamp);
 	Json->SetStringField(TEXT("map"), GetWorld() ? GetWorld()->GetMapName() : FString());
 	Json->SetBoolField(TEXT("fight_mode"), bFightMode);
+	Json->SetBoolField(TEXT("fight_started"), bFightStarted); // false in a fight-mode run means the bot never found the boss: the run measured an idle arena and is not valid
 	Json->SetStringField(TEXT("engine_version"), FEngineVersion::Current().ToString());
 	Json->SetStringField(TEXT("build_configuration"), LexToString(FApp::GetBuildConfiguration()));
 	Json->SetStringField(TEXT("gpu"), GpuBrand);

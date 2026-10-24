@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGAttackTracker.h"
+#include "Player/RPGTelegraphRules.h"
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossStagger.h"
@@ -9,10 +10,14 @@
 #include "Animation/AnimMontage.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/World.h"
+#include "HAL/IConsoleManager.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRPGAttack, Log, All);
+
+static TAutoConsoleVariable<float> CVarRPGCloseTelegraph(TEXT("rpg.CloseTelegraph"), 0.4f,
+	TEXT("Close-attack telegraph: the time in seconds from the start of an A3 stage to its active window (A1 and A1b: at most 0.35). The pack's stand-in clips have 0.14 to 0.17 s, the Freeze asks for 0.35 to 0.40 s (KI-102); the montage play rate is lowered until the active window. 0.4 is the default until the authored clips arrive (owner, 2026-10-24); 0 keeps the pack's pacing."), ECVF_Default);
 
 using namespace RPGPack;
 
@@ -180,6 +185,9 @@ bool URPGAttackTracker::BranchAllowedNow() const
 
 bool URPGAttackTracker::PlayMoveMontageForTest(FName MoveId)
 {
+#if UE_BUILD_SHIPPING
+	return false;
+#else
 	const FRPGAttackTiming* Timing = Attacks.FindByPredicate([MoveId](const FRPGAttackTiming& T) { return T.MoveId == MoveId; });
 	const ACharacter* Boss = Cast<ACharacter>(GetOwner());
 	UAnimInstance* Anim = Boss && Boss->GetMesh() ? Boss->GetMesh()->GetAnimInstance() : nullptr;
@@ -193,6 +201,7 @@ bool URPGAttackTracker::PlayMoveMontageForTest(FName MoveId)
 	}
 	UAnimMontage* Montage = LoadObject<UAnimMontage>(nullptr, *FString::Printf(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/GreatswordBoss/%s.%s"), *Timing->MontageName, *Timing->MontageName));
 	return Montage && Anim->Montage_Play(Montage) > 0.f;
+#endif
 }
 
 FString URPGAttackTracker::GetPhaseName() const
@@ -209,7 +218,11 @@ FString URPGAttackTracker::GetPhaseName() const
 
 bool URPGAttackTracker::EnterCombat()
 {
+#if UE_BUILD_SHIPPING
+	return false;
+#else
 	return TryActivateByTag(GetOwner(), TEXT("Ability.EnterCombat"), true);
+#endif
 }
 
 bool URPGAttackTracker::StartMove(FName MoveId, bool bForce)
@@ -227,6 +240,7 @@ bool URPGAttackTracker::StartMove(FName MoveId, bool bForce)
 
 void URPGAttackTracker::End(const TCHAR* Reason, float Position)
 {
+	RestoreTelegraph();
 	const FRPGAttackTiming* Timing = Attacks.IsValidIndex(TimingIndex) ? &Attacks[TimingIndex] : nullptr;
 	if (Timing && Position < Timing->RecoveryEndTime - 0.1f)
 	{
@@ -242,6 +256,59 @@ void URPGAttackTracker::End(const TCHAR* Reason, float Position)
 	TimingIndex = INDEX_NONE;
 }
 
+void URPGAttackTracker::RestoreTelegraph()
+{
+	if (TelegraphRate == 1.f)
+	{
+		return;
+	}
+	const ACharacter* Boss = Cast<ACharacter>(GetOwner());
+	UAnimInstance* Anim = Boss && Boss->GetMesh() ? Boss->GetMesh()->GetAnimInstance() : nullptr;
+	if (Anim && TelegraphMontage.IsValid())
+	{
+		Anim->Montage_SetPlayRate(TelegraphMontage.Get(), 1.f);
+	}
+	TelegraphRate = 1.f;
+	TelegraphMontage = nullptr;
+}
+
+void URPGAttackTracker::UpdateTelegraph(UAnimMontage* Montage, const FRPGAttackTiming& Timing, float Position)
+{
+	const float Target = RPGTelegraphRules::TargetFor(Timing.MoveId, CVarRPGCloseTelegraph.GetValueOnGameThread());
+	if (Target <= 0.f || Position >= Timing.ActiveStartTime)
+	{
+		RestoreTelegraph();
+		return;
+	}
+	if (TelegraphRate < 1.f && TelegraphMontage.Get() == Montage)
+	{
+		return; // applied once per stage: the rate stays until the active window opens
+	}
+	// The tracker sees a stage a frame or two after it began, at rate 1: the rate is worked out from where the montage is now, so that the whole windup lasts Target.
+	const float Rate = RPGTelegraphRules::RateFor(Timing.ActiveStartTime, Target, Position);
+	if (Rate >= 1.f)
+	{
+		RestoreTelegraph();
+		return;
+	}
+	{
+		RestoreTelegraph();
+		const ACharacter* Boss = Cast<ACharacter>(GetOwner());
+		if (UAnimInstance* Anim = Boss && Boss->GetMesh() ? Boss->GetMesh()->GetAnimInstance() : nullptr)
+		{
+			Anim->Montage_SetPlayRate(Montage, Rate);
+			TelegraphRate = Rate;
+			TelegraphMontage = Montage;
+		}
+	}
+}
+
+void URPGAttackTracker::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	RestoreTelegraph();
+	Super::EndPlay(EndPlayReason);
+}
+
 void URPGAttackTracker::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -249,6 +316,10 @@ void URPGAttackTracker::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	UAnimInstance* Anim = Boss && Boss->GetMesh() ? Boss->GetMesh()->GetAnimInstance() : nullptr;
 	if (!bEnabled || !Anim)
 	{
+		if (!bEnabled)
+		{
+			RestoreTelegraph();
+		}
 		return;
 	}
 	// Death wins over everything (Freeze 21): a boss at zero health ends its attack instance and the heading lock at once, whatever the pack's death ability does with the montage.
@@ -270,7 +341,7 @@ void URPGAttackTracker::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		}
 		return;
 	}
-	const UAnimMontage* Montage = Anim->GetCurrentActiveMontage();
+	UAnimMontage* Montage = Anim->GetCurrentActiveMontage();
 	const int32 Index = FindTimingIndex(Montage);
 
 	if (Phase != EPhase::None && (Index != TimingIndex))
@@ -302,6 +373,7 @@ void URPGAttackTracker::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		Phase = EPhase::Windup;
 		++AttackInstance;
 		MaxYawDrift = 0.f;
+		StageWorldStart = GetWorld() ? GetWorld()->GetTimeSeconds() - Position : -1.0; // the stage began Position montage seconds ago (rate 1 until now)
 		if (bVetoIllegalStarts)
 		{
 			// Freeze 21: stance break, phase transition and dormancy outrank a new attack.
@@ -342,6 +414,7 @@ void URPGAttackTracker::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		}
 		UE_LOG(LogRPGAttack, Log, TEXT("%s: attack %s instance %d begins (generation %d)"), *GetOwner()->GetName(), *CurrentMove.ToString(), AttackInstance, GetOwner()->FindComponentByClass<URPGBossEncounter>() ? GetOwner()->FindComponentByClass<URPGBossEncounter>()->GetGeneration() : 0);
 	}
+	UpdateTelegraph(Montage, Timing, Position);
 
 	// Heading: turn towards the player before the commitment point, hold the committed heading until the last active moment.
 	if (Phase == EPhase::Windup)
@@ -382,6 +455,10 @@ void URPGAttackTracker::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	else if (Position >= Timing.ActiveStartTime && Phase == EPhase::Committed)
 	{
 		Phase = EPhase::Active;
+		if (StageWorldStart >= 0.0 && GetWorld())
+		{
+			LastStageWindupSeconds = static_cast<float>(GetWorld()->GetTimeSeconds() - StageWorldStart);
+		}
 		LastActiveStartPosition = Position;
 		UE_LOG(LogRPGAttack, Log, TEXT("%s: attack %s active window opens at %.2f s"), *GetOwner()->GetName(), *CurrentMove.ToString(), Position);
 	}

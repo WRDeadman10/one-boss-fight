@@ -517,24 +517,40 @@ int32 URPGBossLegend::GetTimeSuppressedCount() const
 
 bool URPGBossLegend::FireSlamForTest(FName Move)
 {
+#if UE_BUILD_SHIPPING
+	return false;
+#else
 	FindParts();
 	return Encounter && HandleSlam(Move);
+#endif
 }
 
 bool URPGBossLegend::FireRoarForTest()
 {
+#if UE_BUILD_SHIPPING
+	return false;
+#else
 	FindParts();
 	return Encounter && HandleRoar();
+#endif
 }
 
 bool URPGBossLegend::FireHitStopForTest(bool bLethal)
 {
+#if UE_BUILD_SHIPPING
+	return false;
+#else
 	FindParts();
 	return Encounter && HandleHitStop(bLethal);
+#endif
 }
 
 bool URPGBossLegend::FireSlowMotionForTest()
 {
+#if UE_BUILD_SHIPPING
+	return false;
+#else
 	FindParts();
 	return Encounter && HandleSlowMotion();
+#endif
 }

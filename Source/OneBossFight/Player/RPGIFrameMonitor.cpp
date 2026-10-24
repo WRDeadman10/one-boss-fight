@@ -110,11 +110,13 @@ FString URPGIFrameMonitor::GetSourceText() const
 
 void URPGIFrameMonitor::DebugForceOwned(bool bOwned)
 {
+#if !UE_BUILD_SHIPPING
 	bForceOwned = bOwned;
 	if (bOwned && bTag)
 	{
 		bOwnedNow = true;
 	}
+#endif
 }
 
 void URPGIFrameMonitor::RemoveTag(const TCHAR* Reason)

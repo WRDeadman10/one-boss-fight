@@ -56,6 +56,14 @@ void URPGWeaponAttackTable::FillDefaults()
 		Rows.Add(bWindow ? WithWindow(JumpHeavy, 0.352f, 0.618f, TEXT("Ability_E_Anim_Montage")) : JumpHeavy);
 		Rows.Add(Make(Weapon, ERPGAttackKind::Knockdown, 38.f, Heavy, 0.f, TEXT("proposal")));
 	}
+	// The pack's starter sword deals 41 health per light and 57.4 per strong hit, the builds' weapons 16 and 22.4 (measured over nine bot runs 2026-10-23, KI-097): 16 / 41 and 22.4 / 57.4 are both 0.39.
+	for (FRPGWeaponAttackRow& Row : Rows)
+	{
+		if (Row.Weapon == FName(TEXT("SwordCombatStyle")))
+		{
+			Row.HealthDamageMultiplier = 0.39f;
+		}
+	}
 	// Dexterity archetype (Freeze 5 and 20.2): light 6, jumping heavy 14, stamina 10 per swing, bleed 20 per hit.
 	const TCHAR* Dexterity[] = {TEXT("DualSwordCombatStyle"), TEXT("TwinbladeCombatStyle")};
 	for (const TCHAR* Weapon : Dexterity)

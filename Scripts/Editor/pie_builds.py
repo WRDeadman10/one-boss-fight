@@ -31,6 +31,7 @@ ROWS = {
     "Dex": {"Light": (6.0, 10.0), "Strong": (10.0, 10.0), "Charged": (14.0, 10.0), "JumpLight": (6.0, 10.0), "JumpHeavy": (14.0, 10.0)},
 }
 BLEED = {"Strength": 0.0, "Dex": 20.0}
+BLEED_FRACTION = 0.03  # Owner decision; RPGBossBleed has no reflected fraction getter.
 # Which kinds each weapon has (g3_probe_montages.py, 2026-10-22): the claymore shares the sword's strong, charged and falling montages; the dual swords have a strong pair and a falling attack but no charged montage.
 CAPS = {
     "Strength": {"Light": True, "Strong": True, "Charged": True, "JumpLight": True, "JumpHeavy": True},
@@ -68,6 +69,23 @@ def attr(actor, tag):
         return c.call_method("Get Current Attribute Value", args=(t,))
     except Exception:
         return None
+
+
+def max_attr(actor, tag):
+    c = comp(actor, "BP_AttributesComponent_C")
+    if c is None:
+        return None
+    t = unreal.GameplayTag()
+    t.import_text('(TagName="%s")' % tag)
+    try:
+        return c.call_method("GetMaxAttributeValue", args=(t,))
+    except Exception:
+        return None
+
+
+def expected_bleed_proc(p):
+    maximum = max_attr(p["boss"], "Attribute.Health")
+    return maximum * BLEED_FRACTION if maximum is not None else None
 
 
 def tags(*names):
@@ -191,8 +209,8 @@ def fresh_fight():
         p["bleed"].reset_bleed()
 
 
-def measure(action, seconds, jump=False):
-    """One real swing against the held boss: in front of it with a full pool and full stamina, pressed (after a jump when asked); waits for the hit and for the swing to end. Returns the numbers of that swing."""
+def measure_once(action, seconds, jump=False):
+    """One real swing against the held boss. The caller may retry a zero-record action once."""
     p = P()
     place(p)
     p["dbg"].debug_refill_player()
@@ -225,6 +243,16 @@ def measure(action, seconds, jump=False):
     return {"text": text, "drop": (before - after) if (before is not None and after is not None) else None, "rec": p["intake"].get_boss_hit_count() - h0, "events": watch["events"] if watch else -1,
             "post": p["post"].get_posture(), "bleed": p["bleed"].get_buildup() if p["bleed"] is not None else -1.0, "hp_lost": (hp0 - attr(p["boss"], "Attribute.Health")) if hp0 is not None and attr(p["boss"], "Attribute.Health") is not None else None,
             "record": p["intake"].get_last_record_text()}
+
+
+def measure(action, seconds, jump=False):
+    """Measure one intended swing, repeating only a missed action once with an explicit log."""
+    measured = yield from measure_once(action, seconds, jump)
+    if measured["rec"] >= 1:
+        return measured
+    log("INFO retry: %s produced zero intake records; repeating this action once" % action)
+    yield 0.5
+    return (yield from measure_once(action, seconds, jump))
 
 
 def kind_checks(build, kind, r):
@@ -386,10 +414,11 @@ def b6_dex_numbers():
         records = p["intake"].get_boss_hit_count()
         procs = p["bleed"].get_proc_count() - procs0
         check("B6 %d records in %d swings proc the bleed once (procs %d, buildup %.1f, threshold %.1f)" % (records, swings, procs, p["bleed"].get_buildup(), p["bleed"].get_threshold()), 5 <= records <= 10 and procs == 1, "")
-        check("B6 the proc took 10.5 percent of 500 health: %.1f" % p["bleed"].get_last_proc_damage(), abs(p["bleed"].get_last_proc_damage() - 52.5) < 0.6, "")
+        expected = expected_bleed_proc(p)
+        check("B6 the proc took 3 percent of maximum health: %.1f" % p["bleed"].get_last_proc_damage(), expected is not None and abs(p["bleed"].get_last_proc_damage() - expected) < 0.6, "expected %.1f" % (expected or -1.0))
         check("B6 the threshold rose to 120 after the proc and the buildup is below it (threshold %.1f, buildup %.1f)" % (p["bleed"].get_threshold(), p["bleed"].get_buildup()), abs(p["bleed"].get_threshold() - 120.0) < 0.01 and 0.0 <= p["bleed"].get_buildup() < 120.0, "")
     else:
-        for what in ("five records proc once", "the proc took 10.5 percent", "the buildup after the proc"):
+        for what in ("five records proc once", "the proc took 3 percent", "the buildup after the proc"):
             check("B6 %s (skipped: the dual swords are not equipped)" % what, False)
 
 

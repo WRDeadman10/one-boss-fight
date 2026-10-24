@@ -22,7 +22,9 @@ ARPGEmberField::ARPGEmberField()
 
 void ARPGEmberField::Rebuild()
 {
+#if WITH_EDITOR // RerunConstructionScripts exists only in editor builds (the packaged game target failed to compile without this guard)
 	RerunConstructionScripts();
+#endif
 }
 
 void ARPGEmberField::Respawn(FEmber& Ember, bool bRandomAge)

@@ -74,6 +74,37 @@ void URPGBossEncounter::BeginPlay()
 void URPGBossEncounter::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	StartupTime += DeltaTime;
+	if (bMaxHealthApplied && bDormant && StartupTime < StartupEnforceSeconds)
+	{
+		// The pack sets the current health from its own data (500) again after the first write: while the boss still sleeps at the start, nothing can have hurt it, so the full health is written until the pack has finished.
+		double Max = 0.0, Current = 0.0;
+		if (ReadAttribute(GetOwner(), HealthTag, true, Max) && ReadAttribute(GetOwner(), HealthTag, false, Current) && FMath::Abs(Max - BossMaxHealth) <= 0.5 && Current > 0.0 && Current < Max - 0.5)
+		{
+			WriteAttribute(GetOwner(), HealthTag, Max);
+			UE_LOG(LogRPGEncounter, Log, TEXT("%s: start-up health %.0f restored to %.0f (the pack set it again)"), *GetOwner()->GetName(), Current, Max);
+		}
+	}
+	if (!bMaxHealthApplied && BossMaxHealth > 1.f)
+	{
+		// The pack's attributes exist a moment after BeginPlay and the first PIE of an editor session reads health 0 (KI-081): wait for a living reading, then set the maximum and carry the current health over in proportion (a boss nobody has hurt is at its full new maximum).
+		double Max = 0.0, Current = 0.0;
+		if (ReadAttribute(GetOwner(), HealthTag, true, Max) && ReadAttribute(GetOwner(), HealthTag, false, Current) && Max > 0.0 && Current > 0.0)
+		{
+			double NewMax = 0.0;
+			if (FMath::Abs(Max - BossMaxHealth) <= 0.5)
+			{
+				bMaxHealthApplied = true;
+			}
+			else if (WriteMaxAttribute(GetOwner(), HealthTag, BossMaxHealth) && ReadAttribute(GetOwner(), HealthTag, true, NewMax) && FMath::Abs(NewMax - BossMaxHealth) <= 0.5)
+			{
+				// Only a maximum that reads back as written lets the current health follow; otherwise the next tick tries again (a 2000 / 500 state is never written).
+				bMaxHealthApplied = true;
+				WriteAttribute(GetOwner(), HealthTag, Current * BossMaxHealth / Max);
+				UE_LOG(LogRPGEncounter, Log, TEXT("%s: boss maximum health %.0f -> %.0f (health %.0f -> %.0f)"), *GetOwner()->GetName(), Max, static_cast<double>(BossMaxHealth), Current, Current * BossMaxHealth / Max);
+			}
+		}
+	}
 	if (bTestFreeze && !bDormant)
 	{
 		// The pack restarts its behaviour when it perceives the player again: keep it stopped for the whole test.
@@ -117,7 +148,7 @@ void URPGBossEncounter::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		double Health = 0.0;
 		bool bHurt = false;
 		DormantTime += DeltaTime;
-		if (DormantTime > 1.0 && ReadAttribute(GetOwner(), HealthTag, false, Health))
+		if (DormantTime > 1.0 && StartupTime > StartupEnforceSeconds && ReadAttribute(GetOwner(), HealthTag, false, Health))
 		{
 			if (HealthBaseline < 0.0)
 			{
@@ -201,6 +232,7 @@ void URPGBossEncounter::Sleep()
 
 void URPGBossEncounter::HoldForTest(bool bHold)
 {
+#if !UE_BUILD_SHIPPING
 	bTestFreeze = bHold;
 	if (bHold)
 	{
@@ -210,6 +242,14 @@ void URPGBossEncounter::HoldForTest(bool bHold)
 	{
 		ResumeBehaviour();
 	}
+#endif
+}
+
+void URPGBossEncounter::ResetForTest()
+{
+#if !UE_BUILD_SHIPPING
+	ResetEncounter();
+#endif
 }
 
 void URPGBossEncounter::Wake()

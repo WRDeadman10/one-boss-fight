@@ -81,7 +81,12 @@ public:
 
 	/** Tests: reports a heal start as if the player's drink montage had begun (same path as the real one). */
 	UFUNCTION(BlueprintCallable, Category = "Punish")
-	void NotifyHealStartedForTest() { OnHealStarted(); }
+	void NotifyHealStartedForTest()
+	{
+#if !UE_BUILD_SHIPPING
+		OnHealStarted();
+#endif
+	}
 
 	/** True from an accepted heal until the javelin is released (or the attempt is cleared). */
 	UFUNCTION(BlueprintPure, Category = "Punish")

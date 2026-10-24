@@ -75,15 +75,21 @@ double URPGBossDeath::GetDeathAge() const
 
 void URPGBossDeath::SetDeathModeForTest(const FString& Mode)
 {
+#if !UE_BUILD_SHIPPING
 	DeathMode = Mode.StartsWith(TEXT("own"), ESearchCase::IgnoreCase) ? ERPGBossDeathMode::OwnClip : ERPGBossDeathMode::PackMontage;
 	bPreloaded = false; // the next tick loads what the new mode needs
 	NextPackPoll = 0.0;
+#endif
 }
 
 FString URPGBossDeath::ApplyPackMontageNow()
 {
+#if UE_BUILD_SHIPPING
+	return TEXT("unavailable in Shipping");
+#else
 	ApplyPackMontage();
 	return LastPackResult;
+#endif
 }
 
 void URPGBossDeath::BeginPlay()

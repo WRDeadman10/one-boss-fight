@@ -33,6 +33,13 @@ def attr(actor, tag):
     return c.call_method("Get Current Attribute Value", args=(t,)) if c else None
 
 
+def max_attr(actor, tag):
+    c = comp(actor, "BP_AttributesComponent_C")
+    t = unreal.GameplayTag()
+    t.import_text('(TagName="%s")' % tag)
+    return c.call_method("GetMaxAttributeValue", args=(t,)) if c else None
+
+
 def tags(*names):
     c = unreal.GameplayTagContainer()
     c.import_text("(GameplayTags=(%s))" % ",".join('(TagName="%s")' % n for n in names))
@@ -108,7 +115,8 @@ def _tick(dt):
         t.import_text('(TagName="Attribute.Health")')
         comp(pawn, "BP_AttributesComponent_C").call_method("Set Current Attribute Value", args=(t, 100.0))
         # keep the boss alive for the whole probe
-        comp(boss, "BP_AttributesComponent_C").call_method("Set Current Attribute Value", args=(t, 500.0)) if (attr(boss, "Attribute.Health") or 0) < 150 else None
+        maximum = max_attr(boss, "Attribute.Health")
+        comp(boss, "BP_AttributesComponent_C").call_method("Set Current Attribute Value", args=(t, maximum)) if maximum is not None and (attr(boss, "Attribute.Health") or 0) < maximum * 0.3 else None
     hs_now = hit_stun(boss)
     try:
         act_now = hs_now.call_method("IsAbilityActive?")

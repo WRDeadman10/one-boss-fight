@@ -237,7 +237,7 @@ def f_break_and_threshold_in_one_hit():
     for trial in range(1, 6):
         yield from fresh()
         p = P()
-        p["dbg"].debug_set_boss_health_fraction(0.602)  # 301 of 500: any hit crosses 300
+        p["dbg"].debug_set_boss_health_fraction(0.602)  # 0.2 percent above the phase-two threshold: any light hit crosses it
         p["dbg"].debug_set_boss_posture(10.0)  # one light hit (18) empties the pool
         yield 0.4
         h0 = attr(P()["boss"], "Attribute.Health")

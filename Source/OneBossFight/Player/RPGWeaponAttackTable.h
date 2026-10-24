@@ -35,6 +35,10 @@ struct ONEBOSSFIGHT_API FRPGWeaponAttackRow
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack", meta = (ClampMin = "0.0"))
 	float BleedBuildup = 0.f;
 
+	/** Scales the HEALTH a hit of this weapon takes from the boss (KI-097): the pack deals its own health damage (the starter sword 41 per light hit, the builds 16); the hit intake gives the difference back (below 1) or takes it away (above 1). 1 = the pack's damage. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack", meta = (ClampMin = "0.0"))
+	float HealthDamageMultiplier = 1.f;
+
 	/** Hyperarmor window in seconds from the start of the attack montage (Freeze 20.1: only the authored part of the downswing, HP damage still applies). Negative start: none. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	float HyperArmorStart = -1.f;

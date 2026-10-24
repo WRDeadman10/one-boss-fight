@@ -28,11 +28,15 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-DEFINE_LOG_CATEGORY_STATIC(LogRPGDebug, Log, All);
+#if !UE_BUILD_SHIPPING
+DEFINE_LOG_CATEGORY_STATIC(LogRPGDebug, Log, All); // every use is inside a non-Shipping block: the Shipping binary carries no debug log category and no rpg.Debug variable (Gate 4 G4-3, Scripts/CheckShippingBinary.py)
+#endif
 
 using namespace RPGPack;
 
+#if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<int32> CVarRPGDebug(TEXT("rpg.Debug"), 0, TEXT("Combat debug: 0 off, 1 on-screen overlay, 2 overlay plus one log line per second (LogRPGDebug)."), ECVF_Default);
+#endif
 
 namespace
 {
@@ -61,8 +65,13 @@ namespace
 
 URPGCombatDebug::URPGCombatDebug()
 {
+#if UE_BUILD_SHIPPING
+	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bStartWithTickEnabled = false;
+#else
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.bStartWithTickEnabled = true;
+#endif
 }
 
 TArray<FString> URPGCombatDebug::BuildLines() const
@@ -437,6 +446,7 @@ void URPGCombatDebug::DebugClearWalls()
 #endif
 }
 
+#if !UE_BUILD_SHIPPING
 void URPGCombatDebug::DebugAddSkeletalPiece(USkeletalMesh* Piece)
 {
 	ACharacter* Boss = Cast<ACharacter>(GetOwner());
@@ -470,6 +480,15 @@ void URPGCombatDebug::DebugAttachTestMesh(UStaticMesh* Mesh, FName Socket, FRota
 	TestMeshComponent->SetRelativeRotation(RelativeRotation);
 	TestMeshComponent->SetRelativeLocation(RelativeLocation);
 }
+#else
+void URPGCombatDebug::DebugAddSkeletalPiece(USkeletalMesh* Piece)
+{
+}
+
+void URPGCombatDebug::DebugAttachTestMesh(UStaticMesh* Mesh, FName Socket, FRotator RelativeRotation, FVector RelativeLocation)
+{
+}
+#endif
 
 void URPGCombatDebug::DebugSetPlayerHealth(float Value) const
 {

@@ -118,7 +118,12 @@ public:
 
 	/** Test drivers only (Python must not change a component property in PIE: it re-runs the owner's construction scripts and breaks the pack's components). */
 	UFUNCTION(BlueprintCallable, Category = "Swing")
-	void SetHyperArmorRefreshForTest(float Seconds) { HyperArmorRefreshSeconds = Seconds; }
+	void SetHyperArmorRefreshForTest(float Seconds)
+	{
+#if !UE_BUILD_SHIPPING
+		HyperArmorRefreshSeconds = Seconds;
+#endif
+	}
 
 	/** Times the effect was applied again inside one window. */
 	UFUNCTION(BlueprintPure, Category = "Swing")
