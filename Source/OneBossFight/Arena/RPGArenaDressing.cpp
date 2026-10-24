@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Arena/RPGArenaDressing.h"
+#include "Arena/RPGPerfSwitches.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Components/SceneComponent.h"
 #include "Engine/StaticMesh.h"
@@ -87,6 +88,22 @@ void ARPGArenaDressing::Rebuild()
 void ARPGArenaDressing::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+#if !UE_BUILD_SHIPPING
+	// performance experiments (rpg.Perf.*): see RPGPerfSwitches.h
+	for (UInstancedStaticMeshComponent* Component : Built)
+	{
+		if (!Component)
+		{
+			continue;
+		}
+		const bool bMist = Component->GetStaticMesh() && Component->GetStaticMesh()->GetName().Contains(TEXT("FogCard"));
+		Component->SetVisibility(RPGPerf::DressingAll() && (RPGPerf::DressingMist() || !bMist));
+		if (!RPGPerf::DressingShadows())
+		{
+			Component->SetCastShadow(false);
+		}
+	}
+#endif
 	if (Swaying.IsEmpty())
 	{
 		return;

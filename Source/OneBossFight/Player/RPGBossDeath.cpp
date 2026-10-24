@@ -3,6 +3,7 @@
 #include "Player/RPGBossDeath.h"
 #include "Player/RPGBossClips.h"
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGBossDormantWake.h"
 #include "Player/RPGBossRemains.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossPosture.h"
@@ -358,6 +359,7 @@ void URPGBossDeath::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
 void URPGBossDeath::BeginDeath(ACharacter* Character, double Now)
 {
+	URPGBossDormantWake::StopFor(GetOwner(), TEXT("death"));
 	State = EState::Dying;
 	DeathTime = Now;
 	bPoseHeld = false;

@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Arena/RPGFireSource.h"
+#include "Arena/RPGPerfSwitches.h"
 #include "Components/AudioComponent.h"
 #include "Components/PointLightComponent.h"
 #include "Components/SceneComponent.h"
@@ -92,6 +93,18 @@ void ARPGFireSource::BeginPlay()
 void ARPGFireSource::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+#if !UE_BUILD_SHIPPING
+	// performance experiments (rpg.Perf.*): see RPGPerfSwitches.h
+	Light->SetVisibility(RPGPerf::FireLights());
+	Light->SetCastShadows(bCastShadows && RPGPerf::FireShadows());
+	for (UParticleSystemComponent* Component : {Fire.Get(), Smoke.Get(), Sparks.Get()})
+	{
+		if (Component)
+		{
+			Component->SetVisibility(RPGPerf::FireFx());
+		}
+	}
+#endif
 	Clock += DeltaSeconds * FlickerSpeed;
 	const float T = Seed + Clock;
 	// Two noise octaves: a slow swell plus a fast flutter.

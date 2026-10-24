@@ -70,6 +70,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Debug")
 	FString DebugPlayerMontageAnimName() const;
 
+	/** Test drivers only: one line per boss montage instance plus the mesh transform, including blends that are no longer the active montage. */
+	UFUNCTION(BlueprintPure, Category = "Debug")
+	TArray<FString> DebugBossMontageInstances() const;
+
 	/** Test drivers only: fills the first player's health and stamina so a long series of dodges is not stopped by the stamina cost. Does nothing in Shipping builds. */
 	UFUNCTION(BlueprintCallable, Category = "Debug")
 	void DebugRefillPlayer() const;

@@ -9,6 +9,7 @@
 
 class UNiagaraSystem;
 class USoundBase;
+class UMaterialInterface;
 
 /**
  * Bleed (hemorrhage) status of the boss (Gate 3, M12; Freeze 20.2). Player hits add the buildup of their weapon attack table row (URPGHitIntake calls AddBuildup); at the threshold the status procs once: the buildup resets,
@@ -57,6 +58,9 @@ public:
 
 	UPROPERTY(Transient)
 	TObjectPtr<USoundBase> LoadedSound;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UMaterialInterface> LoadedBloodFlipbook;
 
 	/** Adds the buildup of one hit. Returns what happened (RPGBleedRules::Name). Ignored when Amount is zero or negative. */
 	RPGBleedRules::EResult AddBuildup(float Amount, const TCHAR* Source);

@@ -25,6 +25,18 @@ struct FRPGAttackTiming
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	FString MontageName;
 
+	/** The pack montage name accepted as a fallback while a live authored replacement is unavailable. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
+	FString FallbackMontageName;
+
+	/** Explicit asset path for a project-owned montage; empty keeps the pack montage path. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
+	FString MontagePath;
+
+	/** Authored close clips already contain their designed windup and must not receive rpg.CloseTelegraph rate scaling. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
+	bool bAuthoredWindup = false;
+
 	/** The boss may turn towards its target until this time; from here its heading is locked until ActiveEndTime (the commitment point). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	float CommitTime = 0.f;

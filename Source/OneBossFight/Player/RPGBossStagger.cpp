@@ -3,6 +3,7 @@
 #include "Player/RPGBossStagger.h"
 #include "Player/RPGBossMath.h"
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGBossDormantWake.h"
 #include "Player/RPGBossInterrupt.h"
 #include "Player/RPGBossClips.h"
 #include "GameFramework/PlayerController.h"
@@ -362,6 +363,7 @@ RPGBossRules::EBreakResult URPGBossStagger::RequestBreak(bool bIgnoreCooldown)
 
 void URPGBossStagger::StartStagger()
 {
+	URPGBossDormantWake::StopFor(GetOwner(), TEXT("stance break"));
 	const double Now = GetWorld()->GetTimeSeconds();
 	Phase = EPhase::Down;
 	PhaseStart = Now;

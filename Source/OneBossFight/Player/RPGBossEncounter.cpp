@@ -3,6 +3,7 @@
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGBossBleed.h"
 #include "Player/RPGBossDeath.h"
+#include "Player/RPGBossDormantWake.h"
 #include "Player/RPGBossRemains.h"
 #include "Player/RPGBossPosture.h"
 #include "Player/RPGIFrameMonitor.h"
@@ -223,11 +224,16 @@ void URPGBossEncounter::ResumeBehaviour()
 
 void URPGBossEncounter::Sleep()
 {
+	CancelWake();
 	bDormant = true;
 	DormantTime = 0.f;
 	HealthBaseline = -1.0;
 	bWantsHold = true;
 	HoldBehaviour();
+	if (URPGBossDormantWake* Clips = URPGBossDormantWake::Find(GetOwner()))
+	{
+		Clips->BeginDormant();
+	}
 	UE_LOG(LogRPGEncounter, Log, TEXT("%s: dormant at %s (gate %.0f cm)"), *GetOwner()->GetName(), *GetOwner()->GetActorLocation().ToCompactString(), GateRadius);
 }
 
@@ -260,14 +266,38 @@ void URPGBossEncounter::Wake()
 		return;
 	}
 	bDormant = false;
+	bWantsHold = true;
+	HoldBehaviour();
+	if (URPGBossDormantWake* Clips = URPGBossDormantWake::Find(GetOwner()); Clips && Clips->BeginWake())
+	{
+		bWaking = true;
+		UE_LOG(LogRPGEncounter, Log, TEXT("%s: wake clip begins; behaviour held"), *GetOwner()->GetName());
+		return;
+	}
+	FinishWake();
+}
+
+void URPGBossEncounter::FinishWake()
+{
+	if (bDormant)
+	{
+		return;
+	}
+	bWaking = false;
 	bWantsHold = false;
 	ResumeBehaviour();
 	UE_LOG(LogRPGEncounter, Log, TEXT("%s: awake, the fight begins"), *GetOwner()->GetName());
 }
 
+void URPGBossEncounter::CancelWake()
+{
+	bWaking = false;
+}
+
 void URPGBossEncounter::ResetEncounter()
 {
 	AActor* Owner = GetOwner();
+	URPGBossDormantWake::StopFor(Owner, TEXT("encounter reset"));
 	ARPGBossRemains::DestroyForWorld(Owner ? Owner->GetWorld() : nullptr);
 	// A boss that is dying stays dead: the pack destroys it a few seconds after its death whatever is done, so a reset would only bring back a corpse-less ghost with the ragdoll's changes on it (review D).
 	if (const URPGBossDeath* Death = Owner->FindComponentByClass<URPGBossDeath>(); Death && Death->IsDeathActive())

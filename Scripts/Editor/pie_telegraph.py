@@ -43,6 +43,12 @@ def parts():
             component(boss, "RPGCombatDebug"), pawn, boss)
 
 
+def front(pawn, boss):
+    # A1b and A3b are branch stages: the tracker stops them unless the player stands in the boss's frontal cone and in range at the stage start
+    place = boss.get_actor_location() + boss.get_actor_forward_vector() * 180.0
+    pawn.set_actor_location_and_rotation(unreal.Vector(place.x, place.y, boss.get_actor_location().z), unreal.Rotator(0, 0, 0), False, True)
+
+
 def start(tracker, move):
     ok = tracker.play_move_montage_for_test(move)
     check("%s montage starts" % move, ok)
@@ -74,19 +80,32 @@ def scenario():
         check("T1 cvar zero keeps A3a rate one", close(tracker.get_telegraph_rate(), 1.0, 0.01), "rate %.3f" % tracker.get_telegraph_rate())
         yield from settle(0.35)
         windup = tracker.get_last_stage_windup_seconds()
-        check("T1 cvar zero keeps A3a windup", close(windup, 0.17, 0.05), "windup %.3f" % windup)
+        check("T1 cvar zero keeps the authored A3a windup (0.40 s since the authored clips, B10)", close(windup, 0.40, 0.06), "windup %.3f" % windup)
     yield from settle(0.8)
 
     console("rpg.CloseTelegraph 0.4")
     if start(tracker, "A3a"):
         yield 0.05
         rate = tracker.get_telegraph_rate()
-        check("T2 A3a slows before active", rate < 1.0, "rate %.3f" % rate)
+        check("T2 authored A3a is not stretched by the cvar (its own windup is already 0.40 s)", close(rate, 1.0, 0.01), "rate %.3f" % rate)
         yield from settle(0.55)
         windup = tracker.get_last_stage_windup_seconds()
-        check("T2 A3a reaches the 0.4 second target", close(windup, 0.40, 0.06), "windup %.3f" % windup)
-        check("T2 A3a restores rate after active", close(tracker.get_telegraph_rate(), 1.0, 0.01), "rate %.3f" % tracker.get_telegraph_rate())
+        check("T2 authored A3a windup stays 0.40 seconds", close(windup, 0.40, 0.06), "windup %.3f" % windup)
+        check("T2 authored A3a rate is one after active", close(tracker.get_telegraph_rate(), 1.0, 0.01), "rate %.3f" % tracker.get_telegraph_rate())
     yield from settle(0.8)
+
+    # A1b is still the pack montage (no authored clip yet): the cvar stretches it to the 0.35 s cap
+    front(pawn, boss)
+    yield 0.1
+    if start(tracker, "A1b"):
+        yield 0.05
+        rate = tracker.get_telegraph_rate()
+        check("T2b pack A1b slows before active", rate < 1.0, "rate %.3f" % rate)
+        yield from settle(0.55)
+        windup = tracker.get_last_stage_windup_seconds()
+        check("T2b pack A1b reaches the 0.35 second cap", close(windup, 0.35, 0.06), "windup %.3f" % windup)
+        check("T2b pack A1b restores rate after active", close(tracker.get_telegraph_rate(), 1.0, 0.01), "rate %.3f" % tracker.get_telegraph_rate())
+    yield from settle(1.0)
 
     if start(tracker, "A1"):
         yield 0.50
@@ -102,9 +121,11 @@ def scenario():
         check("T4 A2 never changes telegraph rate", close(tracker.get_telegraph_rate(), 1.0, 0.01), "rate %.3f" % tracker.get_telegraph_rate())
     yield from settle(1.0)
 
-    if start(tracker, "A3a"):
+    front(pawn, boss)
+    yield 0.1
+    if start(tracker, "A1b"):
         yield 0.05
-        check("T5 A3a is slowed before cvar reset", tracker.get_telegraph_rate() < 1.0, "rate %.3f" % tracker.get_telegraph_rate())
+        check("T5 pack A1b is slowed before cvar reset", tracker.get_telegraph_rate() < 1.0, "rate %.3f" % tracker.get_telegraph_rate())
         console("rpg.CloseTelegraph 0")
         yield 0.15
         check("T5 cvar reset restores rate within 0.2 seconds", close(tracker.get_telegraph_rate(), 1.0, 0.01), "rate %.3f" % tracker.get_telegraph_rate())

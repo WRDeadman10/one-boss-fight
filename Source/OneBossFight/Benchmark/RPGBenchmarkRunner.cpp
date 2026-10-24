@@ -87,6 +87,35 @@ void ARPGBenchmarkRunner::StartBenchmark()
 
 	ApplyUncappedFrameRate();
 
+	// Performance experiments: -RPGBenchmarkCvars="r.ScreenPercentage=75;r.Shadow.Virtual.Enable=0" sets each variable through the console manager (works in Shipping, where -ExecCmds is not reliable)
+	AppliedCvars.Reset();
+	FString CvarArg;
+	if (FParse::Value(FCommandLine::Get(), TEXT("RPGBenchmarkCvars="), CvarArg, false) && !CvarArg.IsEmpty())
+	{
+		TArray<FString> Pairs;
+		CvarArg.ParseIntoArray(Pairs, TEXT(";"), true);
+		for (const FString& Pair : Pairs)
+		{
+			FString Name, Value;
+			if (!Pair.Split(TEXT("="), &Name, &Value))
+			{
+				continue;
+			}
+			Name.TrimStartAndEndInline();
+			Value.TrimStartAndEndInline();
+			IConsoleVariable* Variable = IConsoleManager::Get().FindConsoleVariable(*Name);
+			if (Variable)
+			{
+				Variable->Set(*Value, ECVF_SetByConsole);
+			}
+			AppliedCvars += FString::Printf(TEXT("%s=%s%s; "), *Name, *Value, Variable ? TEXT("") : TEXT(" (UNKNOWN variable)"));
+		}
+		UE_LOG(LogOneBossFight, Log, TEXT("Benchmark cvars applied: %s"), *AppliedCvars);
+	}
+	ProfileGpuAt = -1.f;
+	bProfileGpuDone = false;
+	FParse::Value(FCommandLine::Get(), TEXT("RPGBenchmarkProfileGPUAt="), ProfileGpuAt);
+
 	if (APlayerController* PlayerController = bFightMode ? nullptr : GetWorld()->GetFirstPlayerController())
 	{
 		FActorSpawnParameters SpawnParams;
@@ -141,6 +170,15 @@ void ARPGBenchmarkRunner::Tick(float DeltaSeconds)
 		GpuMs.Add(FPlatformTime::ToMilliseconds(GGPUFrameTime));
 	}
 	LastTickTime = Now;
+
+#if !UE_BUILD_SHIPPING
+	if (ProfileGpuAt >= 0.f && !bProfileGpuDone && Elapsed >= ProfileGpuAt)
+	{
+		bProfileGpuDone = true;
+		UE_LOG(LogOneBossFight, Log, TEXT("Benchmark: ProfileGPU at %.1f s"), Elapsed);
+		GEngine->Exec(GetWorld(), TEXT("ProfileGPU"));
+	}
+#endif
 
 	if (bFightMode)
 	{
@@ -330,6 +368,7 @@ void ARPGBenchmarkRunner::WriteResults(const FRPGFrameStats& Stats) const
 	Json->SetBoolField(TEXT("fight_started"), bFightStarted); // false in a fight-mode run means the bot never found the boss: the run measured an idle arena and is not valid
 	Json->SetStringField(TEXT("engine_version"), FEngineVersion::Current().ToString());
 	Json->SetStringField(TEXT("build_configuration"), LexToString(FApp::GetBuildConfiguration()));
+	Json->SetStringField(TEXT("cvars"), AppliedCvars);
 	Json->SetStringField(TEXT("gpu"), GpuBrand);
 	Json->SetStringField(TEXT("gpu_driver_user"), DriverInfo.UserDriverVersion);
 	Json->SetStringField(TEXT("gpu_driver_internal"), DriverInfo.InternalDriverVersion);

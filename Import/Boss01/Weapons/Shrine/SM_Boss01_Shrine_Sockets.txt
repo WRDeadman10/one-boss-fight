@@ -1,0 +1,9 @@
+# Sockets for SM_Boss01_Shrine (Lord Shiva Shrine M-07)
+# Format: SocketName, Location(X,Y,Z), Rotation(Roll,Pitch,Yaw), Scale(X,Y,Z)
+# Engine coordinate system: Unreal Engine (X=Forward/Right depending on shrine orient, +Y=Front feature facing, +Z=Up)
+SOCKET_Interact, (0.0, 100.0, 100.0), (0.0, 0.0, 0.0), (1.0, 1.0, 1.0)
+SOCKET_Glow, (0.0, 31.0, 100.0), (0.0, 0.0, 0.0), (1.0, 1.0, 1.0)
+
+# Notes:
+# - SOCKET_Interact: 100 cm in front of shrine (+Y) at waist height (Z=100) for player prayer/communion prompt
+# - SOCKET_Glow: positioned directly at the consecrated Diya lamp flame bowl (+Y=31, Z=100) for Niagara ember/fire particle attachment

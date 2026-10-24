@@ -9,8 +9,10 @@
 #include "Player/RPGBuildLoadout.h"
 #include "Player/RPGBossStagger.h"
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGBossDormantWake.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGAttackTracker.h"
+#include "Player/RPGBossCloseClipSwap.h"
 #include "Player/RPGRiposteInput.h"
 #include "Player/RPGBossBleed.h"
 #include "Player/RPGBossLook.h"
@@ -27,6 +29,7 @@
 #include "Player/RPGLegend.h"
 #include "UI/RPGBossHud.h"
 #include "UI/RPGBuildSelect.h"
+#include "UI/RPGFlaskHud.h"
 #include "Audio/RPGBossMusic.h"
 #include "Audio/RPGFootsteps.h"
 #include "Sound/SoundBase.h"
@@ -183,6 +186,7 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
 		NewObject<URPGBuildLoadout>(Pawn, TEXT("RPGBuildLoadout"))->RegisterComponent(); // the weapon of the chosen build (rpg.Build) before the fight, the weapon slot locked in it; nothing is called while no build is chosen (Gate 3, M13)
 	}
 	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGBuildSelect>()) NewObject<URPGBuildSelect>(Pawn, TEXT("RPGBuildSelect"))->RegisterComponent(); // pre-fight B-key build selector (Gate 3, G3-5)
+	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGFlaskHud>()) NewObject<URPGFlaskHud>(Pawn, TEXT("RPGFlaskHud"))->RegisterComponent(); // own overlay for the pack HealthPotion stack (Gate 3, G3-5); the pack widget stays unmodified
 	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGIFrameMonitor>())
 	{
 		URPGIFrameMonitor* IFrames = NewObject<URPGIFrameMonitor>(Pawn, TEXT("RPGIFrameMonitor"));
@@ -202,6 +206,10 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
 	{
 		URPGBossEncounter* Encounter = NewObject<URPGBossEncounter>(Pawn, TEXT("RPGBossEncounter"));
 		Encounter->RegisterComponent();
+	}
+	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossDormantWake>())
+	{
+		NewObject<URPGBossDormantWake>(Pawn, TEXT("RPGBossDormantWake"))->RegisterComponent(); // the authored idle loop and wake gate: behaviour resumes only after AN_Boss01_Wake ends
 	}
 	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossPosture>())
 	{
@@ -224,6 +232,10 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
 	{
 		URPGAttackTracker* Tracker = NewObject<URPGAttackTracker>(Pawn, TEXT("RPGAttackTracker"));
 		Tracker->RegisterComponent();
+	}
+	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossCloseClipSwap>())
+	{
+		NewObject<URPGBossCloseClipSwap>(Pawn, TEXT("RPGBossCloseClipSwap"))->RegisterComponent();
 	}
 	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossShockwave>())
 	{

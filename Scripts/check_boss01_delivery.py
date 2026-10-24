@@ -111,8 +111,8 @@ if Image:
             problems.append("%s: only %d colors in a 128x128 downsample (%s): flat, no baked or painted detail" % (os.path.relpath(f, BOSS), colors, im.size))
     hashes = {}
     for f in sorted(glob.glob(os.path.join(BOSS, "**", "*.png"), recursive=True)):
-        if "Textures" in f:
-            continue
+        if "Textures" in f or os.path.basename(f).startswith(("FB_", "T_Boss01_")):
+            continue  # texture data and effect flipbooks (additive sheets are black by design) are not 3D renders
         rel = os.path.relpath(f, BOSS)
         img = Image.open(f).convert("RGB")
         # duplicates are judged on the decoded pixels, not on the file bytes (metadata or padding must not hide a repeated image)

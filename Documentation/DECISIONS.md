@@ -577,11 +577,19 @@ Code: `Player/RPGBossClips.h`, `URPGBossStagger` (clip stages and the execution)
 
 - Telegraph evidence (2026-10-24): six bot fights with `rpg.CloseTelegraph 0.4`: six wins, 123 to 152 s, four hits taken in total (14 in the nine runs with it off, two early deaths); the fight length does not change, only the damage the player takes. Recommendation to the owner: make 0.4 the default until the authored clips arrive, if the feel test agrees.
 
+## Owner decisions of 2026-10-24 (the owner's answers in chat)
+
+- The RTX 3060 of the development PC is an ACCEPTABLE proxy for the RTX 2060 Super target; the 60 FPS target stands (average 60 or more, p99 16.67 ms or less). A 3060 benchmark result counts as the Gate 4 evidence (the 2060 Super is not required).
+- The benchmark is run by the owner on another PC (with its own Claude) from a copy of the packaged Shipping build; its results are brought back here (the prompt and the file list are in `GATE4_RUNBOOK.md`, section "Benchmark on another PC").
+- The owner does the hand tests (the full fight with win and retry, the B-key selector, the telegraph feel test 0 against 0.4, G1-10, G2-17); Claude keeps the editor or the log running to collect data and guides the owner on request.
+- A build shrine is WANTED: a Lord Shiva shrine, which is the existing 8-armed Lord Shiva statue of `Shiva_Statue_Project/` (AG, 2026-10-19, about 66 000 polygons), made engine-ready by AG (Brief 16 T3 v2: one mesh, 300 cm, 30 000 to 45 000 triangles, 4 named slots, front to +Y in the engine) and placed in the arena by Claude; the design of the statue is not changed.
+- Flask counter art is WANTED (AG Brief 16 T4): our own overlay, the pack's widget is not edited.
+- The owner commits; Claude never commits or pushes.
+
 ## Open
 
 Settled: player and boss are the pack's mannequin player and great-sword boss (2026-10-19). Greystone (Paragon) and Sevarog (Paragon) come back only on a pack that has been fixed for them.
 
 - Lighting strategy: baked first; Lumen benchmarked separately (decide at the packaged performance milestone, `TASKS.md` G4-1).
 - Whether pack crafting, dialogue and inventory screens stay reachable (KI-030).
-- Whether a 3060 packaged result is an acceptable proxy for the 2060 Super target.
 - Boss music: needs an asset from the user (a placeholder plays until then).

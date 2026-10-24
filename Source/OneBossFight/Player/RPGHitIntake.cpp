@@ -4,6 +4,7 @@
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGBossBleed.h"
 #include "Player/RPGBossPosture.h"
+#include "Player/RPGFlipbookEffect.h"
 #include "Player/RPGPlayerMovesSubsystem.h"
 #include "Player/RPGSwingTracker.h"
 #include "Animation/AnimInstance.h"
@@ -163,6 +164,7 @@ void URPGHitIntake::BeginPlay()
 {
 	Super::BeginPlay();
 	Table = URPGWeaponAttackTable::LoadOrDefault();
+	LoadedHitSparkFlipbook = ARPGFlipbookEffect::LoadMaterial(ERPGEFlipbookKind::HitSpark);
 	TryBind();
 }
 
@@ -361,6 +363,7 @@ FRPGHitRecord URPGHitIntake::BuildRecord(const FHitResult& HitResult, AActor* Ta
 	Record.Time = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0;
 	Record.Target = Target;
 	Record.HitBone = HitResult.BoneName;
+	Record.ImpactPoint = HitResult.ImpactPoint;
 	Record.Source = TEXT("none");
 
 	// The weapon: the combat style the pack's combat component holds now.
@@ -521,6 +524,7 @@ void URPGHitIntake::FinalizePending()
 				Bleed->AddBuildup(BleedOverride >= 0.f ? BleedOverride : Record.Row.BleedBuildup, *FString::Printf(TEXT("%s %s"), *Record.Weapon.ToString(), RPGAttackKindName(Record.Kind)));
 			}
 		}
+		ARPGFlipbookEffect::Spawn(GetWorld(), Record.ImpactPoint, ERPGEFlipbookKind::HitSpark, LoadedHitSparkFlipbook);
 		OnBossHit.Broadcast(Record);
 	}
 }

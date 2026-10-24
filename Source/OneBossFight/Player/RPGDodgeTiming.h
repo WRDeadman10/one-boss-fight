@@ -10,6 +10,7 @@
 
 class UAnimMontage;
 class UInputAction;
+class UMaterialInterface;
 struct FInputActionInstance;
 
 /**
@@ -143,6 +144,8 @@ private:
 	bool bTurning = false;
 	float TurnTargetYaw = 0.f;
 	TWeakObjectPtr<UObject> CachedAbility;
+	UPROPERTY(Transient)
+	TObjectPtr<UMaterialInterface> LoadedDodgeDustFlipbook;
 	/** The clip the ability will play or is playing. */
 	EKind Selected = EKind::None;
 };

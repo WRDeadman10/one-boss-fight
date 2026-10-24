@@ -5,6 +5,7 @@
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossStagger.h"
+#include "Player/RPGFlipbookEffect.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraSystem.h"
 #include "Engine/World.h"
@@ -33,6 +34,7 @@ void URPGBossBleed::BeginPlay()
 	State.Threshold = InitialThreshold;
 	LoadedEffect = ProcEffect.LoadSynchronous();
 	LoadedSound = ProcSound.LoadSynchronous();
+	LoadedBloodFlipbook = ARPGFlipbookEffect::LoadMaterial(ERPGEFlipbookKind::BloodBurst);
 	if (!LoadedEffect || !LoadedSound)
 	{
 		UE_LOG(LogRPGBleed, Warning, TEXT("%s: the bleed proc effect (%d) or sound (%d) did not load: a proc will be silent"), *GetOwner()->GetName(), LoadedEffect ? 1 : 0, LoadedSound ? 1 : 0);
@@ -108,6 +110,7 @@ void URPGBossBleed::DoProc()
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), LoadedEffect, Where, FRotator::ZeroRotator, FVector(2.f));
 	}
+	ARPGFlipbookEffect::Spawn(GetWorld(), Where, ERPGEFlipbookKind::BloodBurst, LoadedBloodFlipbook);
 	if (LoadedSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, LoadedSound, Where, 1.2f, 0.7f);
