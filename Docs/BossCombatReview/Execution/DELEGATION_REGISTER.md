@@ -43,3 +43,10 @@ CI-COORD-01 and CI-P0-R-01 transfer to Claude (acting technical lead; X-98 relea
 | CI-P0-D-01 | Codex | `Execution/Codex/` (D01 inventory, D02 data model, D03 reconciliation progress), mailbox appends | assigned in `P0_CODEX_BRIEF_DATA_DRIVEN.md`; not acknowledged yet |
 | CI-P0-A-02 | Antigravity | `Execution/Antigravity/` (corrections, `AUTHORING_CONTRACT.md`, `Evidence/movesheets/`) | assigned in `P0_AG_BRIEF_AUTHORING_CONTRACT.md`; not acknowledged yet |
 | CI-P0-C-01 | Claude | `Execution/Claude/` | in progress |
+
+## Update 2026-10-25 (Claude): work order 01
+
+| Task | Accountable | Exclusive files | Status |
+|---|---|---|---|
+| CI-DD1-S1 (DD-1 step 1 implementation) | Codex implements; Claude reviews, builds, tests | NEW `RPGCombatCatalog.h/.cpp`, `RPGCombatCatalogTests.cpp`, `make_combat_catalog.py`, `pie_combat_catalog.py`; EDIT `RPGBuildRules.h`, `RPGBuildSelectRules.h`, `RPGBuildSelect.cpp/.h`, `RPGBuildLoadout.h/.cpp`, one row of `RunDrivers.ps1` | assigned in `CODEX_WORK_ORDER_01.md` (WP-1/WP-2); claim to be posted by Codex before the first edit; nothing built before the clean baseline ends |
+| CI-WO1 WP-3 to WP-6 | Codex | `Codex/` (D07 v3, D09 files, D10) | assigned |
