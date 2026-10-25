@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Player/RPGCombatCatalog.h"
 
 /** The builds of Gate 3 (Freeze 5 and 20): the starter sword the pack gives, the strength build (claymore) and the dex build (dual swords). Not a UENUM: no Unreal object holds it, the console variable and the tests use the names. */
 enum class ERPGBuild : uint8
@@ -59,6 +60,15 @@ namespace RPGBuildRules
 
 	/** The pack's combat style asset name of a build (SwordCombatStyle, ClaymoreCombatStyle, DualSwordCombatStyle). */
 	inline const TCHAR* StyleOfBuild(ERPGBuild Build) { return Entry(Build).Style; }
+	/** Context-explicit data view; old no-context APIs below stay immutable legacy witnesses. */
+	inline int32 BuildCountEffective(const RPGCombatRegistry::FEpoch& Epoch) { return Epoch.Builds.Num(); }
+	inline RPGCombatRegistry::EResolve Parse(const RPGCombatRegistry::FEpoch& Epoch, const FString& Text, FName& OutId) { return Epoch.Parse(Text, OutId); }
+	inline bool LegacySlotOf(const RPGCombatRegistry::FEpoch& Epoch, FName Id, ERPGBuild& Out)
+	{
+		const auto* B = Epoch.Find(Id);
+		if (!B || B->LegacySlot < 0 || B->LegacySlot >= BuildCount) return false;
+		Out = static_cast<ERPGBuild>(B->LegacySlot); return true;
+	}
 
 	/**
 	 * The build a pack combat style belongs to. The starter build is the sword and the sword with a shield (the pack merges them, the table has no row for the merge: it is treated as the starter), the strength build is

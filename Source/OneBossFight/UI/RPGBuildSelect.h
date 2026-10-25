@@ -8,6 +8,7 @@
 #include "Input/Events.h"
 #include "Input/Reply.h"
 #include "Templates/Atomic.h"
+#include "Player/RPGCombatCatalog.h"
 #include "RPGBuildSelect.generated.h"
 
 class UCanvasPanel;
@@ -31,6 +32,7 @@ protected:
 	virtual TSharedRef<SWidget> RebuildWidget() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 private:
 	class URPGBuildSelect* Selector = nullptr;
@@ -68,6 +70,11 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Build Select")
 	FString GetRowText(int32 Row) const;
+	UFUNCTION(BlueprintPure, Category = "Build Select")
+	int32 GetRowCount() const;
+	UFUNCTION(BlueprintPure, Category = "Build Select")
+	bool IsRowVisible(int32 Row, float Height) const;
+	float LayoutHeight() const;
 
 	/** Optional art for one build row. A missing texture leaves its existing text-only row intact. */
 	UTexture2D* GetRowIcon(int32 Row) const;
@@ -102,4 +109,5 @@ private:
 	TAtomic<bool> bBKeyPending = false;
 	bool bOpen = false;
 	FString LastPickResult = TEXT("not picked");
+	TSharedPtr<const RPGCombatRegistry::FEpoch> Epoch;
 };

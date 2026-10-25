@@ -29,6 +29,7 @@ $drivers = @(
     @{ N = 'pie_remains';              K = 'R'; Min = 4; T = 600 },
     @{ N = 'pie_flipbooks';            K = 'R'; Min = 7; T = 300 },
     @{ N = 'pie_builds';               K = 'R'; Min = 103; T = 1500 },
+    @{ N = 'pie_combat_catalog';       K = 'R'; Min = 91; T = 300 },
     @{ N = 'pie_build_hyperarmor';     K = 'R'; Min = 20; T = 900 },
     @{ N = 'pie_build_hud';            K = 'R'; Min = 8; T = 600 },
     @{ N = 'pie_build_select';         K = 'R'; Min = 18; T = 600 },

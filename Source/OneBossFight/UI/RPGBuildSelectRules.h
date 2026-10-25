@@ -8,6 +8,10 @@
 /** Pure selector rules: the component supplies the live pawn and encounter state. */
 namespace RPGBuildSelectRules
 {
+	inline FName BuildIdForRow(const RPGCombatRegistry::FEpoch& Epoch, int32 Row)
+	{
+		return Epoch.Builds.IsValidIndex(Row) ? Epoch.Builds[Row].BuildId : NAME_None;
+	}
 	inline bool CanOpen(bool bBossDormant, bool bPlayerAlive, bool bGrounded, bool bInTransition)
 	{
 		return bBossDormant && bPlayerAlive && bGrounded && !bInTransition;

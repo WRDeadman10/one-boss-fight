@@ -168,7 +168,7 @@ def finalize_reset(scenario, goal, goal_ok, baseline, expected_resets=1):
     wave_active = p["wave"].is_wave_active()
     start_ok = ((boss.get_actor_location() - home).length() < 10.0 and p["enc"].is_dormant() and
                 health is not None and maximum_health is not None and abs(health - maximum_health) <= 0.5 and p["posture"].get_posture() >= 99.0 and
-                not p["stagger"].is_staggered() and not p["debug"].debug_boss_montage_anim_name())
+                not p["stagger"].is_staggered() and (p["debug"].debug_boss_montage_anim_name() or "") in ("", "AN_Boss01_DormantIdle"))  # since B11 a dormant boss plays its authored idle loop (2026-10-25)
     generation_ok = (counters["generation"] == baseline["generation"] + expected_resets and
                      p["enc"].get_reset_count() == baseline["resets"] + expected_resets)
     yield 1.5

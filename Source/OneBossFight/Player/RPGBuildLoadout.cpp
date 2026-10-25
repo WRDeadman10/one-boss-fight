@@ -259,6 +259,7 @@ URPGBuildLoadout::URPGBuildLoadout()
 void URPGBuildLoadout::BeginPlay()
 {
 	Super::BeginPlay();
+	Epoch = RPGCombatRegistry::ForWorld(GetWorld());
 	StartTime = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0;
 	AddEvent(FString::Printf(TEXT("started, rpg.Build is '%s'"), *CVarRPGBuild.GetValueOnGameThread()));
 }
@@ -275,22 +276,43 @@ void URPGBuildLoadout::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 FString URPGBuildLoadout::GetBuildName() const
 {
-	ERPGBuild Build = ERPGBuild::Starter;
-	if (Rules::BuildOfStyle(ActualStyle, Build))
-	{
-		return Rules::BuildName(Build);
-	}
+	FName Build = VerifiedBuildId;
+	if (Epoch && (Epoch->Matches(ActualStyle, Build) || Epoch->StyleToBuild(ActualStyle, Build) == RPGCombatRegistry::EResolve::Found))
+		if (const auto* B = Epoch->Find(Build)) return B->DisplayName;
 	return ActualStyle.IsNone() ? FString(TEXT("Unknown")) : FString(TEXT("OffBuild"));
 }
 
 FString URPGBuildLoadout::GetChosenBuildName() const
 {
-	return Rules::BuildName(bExplicit ? Chosen : ERPGBuild::Starter);
+	return bExplicit ? ChosenName() : TEXT("Starter");
 }
 
 FString URPGBuildLoadout::GetBuildLine() const
 {
-	return Rules::BuildLine(ActualStyle, LastDecision);
+	if (!Epoch) return Rules::BuildLine(ActualStyle, LastDecision);
+	// Reuse the exact legacy suffix, replace only the context-aware equipment description.
+	const FString LegacyLine = Rules::BuildLine(ActualStyle, LastDecision);
+	const FString LegacyDescription = Rules::DescribeStyle(ActualStyle);
+	return FString(TEXT("Build: ")) + Epoch->Describe(ActualStyle, VerifiedBuildId) + LegacyLine.Mid(7 + LegacyDescription.Len());
+}
+
+const TCHAR* URPGBuildLoadout::ChosenName() const
+{
+	const auto* B = Epoch ? Epoch->Find(ChosenId) : nullptr;
+	return B ? *B->ConsoleName : TEXT("Unknown");
+}
+
+FString URPGBuildLoadout::GetCatalogDiagnostic() const
+{
+	RPGCombatRegistry::ForWorld(GetWorld()); // observe/log a changed startup setting, never republish
+	return Epoch ? Epoch->Source + TEXT(":") + Epoch->Id.ToString() : TEXT("unavailable:data required");
+}
+
+TArray<FString> URPGBuildLoadout::GetCatalogCoverageLines() const
+{
+	TArray<FString> Lines;
+	if (Epoch) for (const auto& C : Epoch->Coverage) Lines.Add(FString::Printf(TEXT("%s/%s=%s posture=%g stamina=%g bleed=%g health=%g"), *C.WeaponId.ToString(), RPGAttackKindName(C.Kind), *C.Route, C.Effective.PostureDamage, C.Effective.StaminaCost, C.Effective.BleedBuildup, C.Effective.HealthDamageMultiplier));
+	return Lines;
 }
 
 FString URPGBuildLoadout::GetStateName() const
@@ -382,15 +404,16 @@ bool URPGBuildLoadout::HasWeaponAbilityForTest(const FString& ClassName) const
 
 FString URPGBuildLoadout::SetBuild(const FString& Name)
 {
-	ERPGBuild Build = ERPGBuild::Starter;
-	const Rules::EParse Parsed = Rules::Parse(Name, Build);
+	FName Build;
+	const auto Resolved = Epoch ? Epoch->Parse(Name, Build) : RPGCombatRegistry::EResolve::UnknownId;
+	const Rules::EParse Parsed = Resolved == RPGCombatRegistry::EResolve::Found ? Rules::EParse::Build : Resolved == RPGCombatRegistry::EResolve::Empty ? Rules::EParse::Empty : Rules::EParse::Invalid;
 	if (Parsed == Rules::EParse::Invalid)
 	{
 		++InvalidRequestCount;
 		NoteFailure(FString::Printf(TEXT("invalid %s"), *Name), FString::Printf(TEXT("rpg.Build '%s' is not a build (Starter, Strength, Dex or empty): ignored"), *Name));
 		return TEXT("Invalid");
 	}
-	const bool bSame = (Parsed == Rules::EParse::Build) ? (bExplicit && Chosen == Build) : !bExplicit;
+	const bool bSame = (Parsed == Rules::EParse::Build) ? (bExplicit && ChosenId == Build) : !bExplicit;
 	// The same variable the console sets, with the console's priority, so the choice also survives a respawn (the next pawn's loadout reads it).
 	if (IConsoleVariable* Variable = IConsoleManager::Get().FindConsoleVariable(TEXT("rpg.Build")))
 	{
@@ -499,8 +522,9 @@ void URPGBuildLoadout::ReadChoice()
 	const bool bFirst = !bChoiceRead;
 	bChoiceRead = true;
 	ChoiceText = Text;
-	ERPGBuild Build = ERPGBuild::Starter;
-	switch (Rules::Parse(Text, Build))
+	FName Build;
+	const auto Resolved = Epoch ? Epoch->Parse(Text, Build) : RPGCombatRegistry::EResolve::UnknownId;
+	switch (Resolved == RPGCombatRegistry::EResolve::Found ? Rules::EParse::Build : Resolved == RPGCombatRegistry::EResolve::Empty ? Rules::EParse::Empty : Rules::EParse::Invalid)
 	{
 	case Rules::EParse::Empty:
 		if (bExplicit)
@@ -512,15 +536,16 @@ void URPGBuildLoadout::ReadChoice()
 		}
 		break;
 	case Rules::EParse::Build:
-		if (bExplicit && Chosen == Build)
+		if (bExplicit && ChosenId == Build)
 		{
 			break; // the same build in another spelling
 		}
 		bExplicit = true;
-		Chosen = Build;
+		ChosenId = Build;
+		Rules::LegacySlotOf(*Epoch, ChosenId, Chosen); // derived compatibility view only
 		ResetRequest();
-		LastResult = FString::Printf(TEXT("build %s chosen"), Rules::BuildName(Build));
-		AddEvent(FString::Printf(TEXT("build %s chosen (rpg.Build '%s'%s)"), Rules::BuildName(Build), *Text, bFirst ? TEXT(", the value at the start") : TEXT("")));
+		LastResult = FString::Printf(TEXT("build %s chosen"), ChosenName());
+		AddEvent(FString::Printf(TEXT("build %s chosen (rpg.Build '%s'%s)"), ChosenName(), *Text, bFirst ? TEXT(", the value at the start") : TEXT("")));
 		break;
 	case Rules::EParse::Invalid:
 		++InvalidRequestCount;
@@ -634,7 +659,7 @@ bool URPGBuildLoadout::CallSetSlotDisabled(bool bDisable)
 		[](UFunction&, uint8*) {});
 }
 
-bool URPGBuildLoadout::CallEquip(ERPGBuild Build, int32 UpdateType, FString& OutResult)
+bool URPGBuildLoadout::CallEquip(FName Build, int32 UpdateType, FString& OutResult)
 {
 	UObject* Equipment = FindComponentByClassName(GetOwner(), TEXT("BP_EquipmentComponent_C"));
 	if (!Equipment)
@@ -642,11 +667,13 @@ bool URPGBuildLoadout::CallEquip(ERPGBuild Build, int32 UpdateType, FString& Out
 		OutResult = TEXT("the pawn has no BP_EquipmentComponent_C");
 		return false;
 	}
-	const Rules::FBuildEntry& Wanted = Rules::Entry(Build);
-	UObject* Item = LoadObject<UObject>(nullptr, Wanted.ItemPath, nullptr, LOAD_NoWarn);
+	const auto* Definition = Epoch ? Epoch->Find(Build) : nullptr;
+	const auto* Wanted = Definition ? Epoch->Weapon(Definition->WeaponId) : nullptr;
+	if (!Wanted) { OutResult = TEXT("catalog unavailable or unknown BuildId"); return false; }
+	UObject* Item = Wanted->ItemPath.TryLoad();
 	if (!Item)
 	{
-		OutResult = FString::Printf(TEXT("the weapon item %s did not load"), Wanted.ItemPath);
+		OutResult = FString::Printf(TEXT("the weapon item %s did not load"), *Wanted->ItemPath.ToString());
 		return false;
 	}
 	// Everything the call needs is checked before it is made: a pack that changed must not get a half-built struct.
@@ -724,6 +751,7 @@ void URPGBuildLoadout::Poll()
 	{
 		return;
 	}
+	if (!Epoch) return; // strict data failure is not permission to use legacy per lookup
 	const double Now = World->GetTimeSeconds();
 	ReadChoice();
 
@@ -753,6 +781,7 @@ void URPGBuildLoadout::Poll()
 		}
 		AddEvent(FString::Printf(TEXT("combat style %s -> %s%s"), *ActualStyle.ToString(), *Style.ToString(), bLocked ? TEXT(" (the weapon slot is locked: the lock did not hold)") : TEXT("")));
 		ActualStyle = Style;
+		if (!Epoch->Matches(Style, VerifiedBuildId)) VerifiedBuildId = NAME_None;
 	}
 
 	// The boss: no boss at all counts as dormant (the pack destroys a dead one), a new fight (generation) starts the attempts again.
@@ -778,7 +807,7 @@ void URPGBuildLoadout::Poll()
 	// Do not use CurrentCombatStyle as the readiness gate. On a cold spawn the pack can report None until the weapon item is equipped;
 	// once EquipmentSlots has the weapon slot, Apply restores that item instead of waiting forever for a style that cannot appear by itself.
 	In.bStyleKnown = Combat && bWeaponSlotReady && (Now - StartTime) >= StartupDelaySeconds;
-	In.bStyleMatches = Rules::StyleMatchesBuild(Style, Chosen);
+	In.bStyleMatches = Epoch->Matches(Style, ChosenId);
 	In.bBossAwake = !bBossDormant;
 	// The pack is only asked what the decision needs: with no choice nothing is read from it besides the style.
 	In.bPlayerDead = bExplicit && IsPlayerDead();
@@ -790,6 +819,7 @@ void URPGBuildLoadout::Poll()
 	In.SecondsSinceAttempt = LastAttemptTime >= 0.0 ? static_cast<float>(Now - LastAttemptTime) : -1.f;
 	In.VerifySeconds = VerifySeconds;
 	Rules::EDecision Decision = Rules::Decide(In);
+	if (In.bStyleMatches && bExplicit) VerifiedBuildId = ChosenId;
 	if (Decision == Rules::EDecision::Apply && (bLockChanged || bLocked))
 	{
 		Decision = Rules::EDecision::Wait; // the slot is still disabled, or was enabled in this very poll: the pack gets a poll before the equip
@@ -798,7 +828,7 @@ void URPGBuildLoadout::Poll()
 	if (Decision == Rules::EDecision::Done && bExplicit && In.bStyleMatches && Attempts > 0)
 	{
 		++ApplySuccessCount;
-		LastResult = FString::Printf(TEXT("build %s equipped (style %s) after %d call(s)"), Rules::BuildName(Chosen), *Style.ToString(), Attempts);
+		LastResult = FString::Printf(TEXT("build %s equipped (style %s) after %d call(s)"), ChosenName(), *Style.ToString(), Attempts);
 		AddEvent(LastResult);
 		ResetRequest();
 	}
@@ -807,13 +837,13 @@ void URPGBuildLoadout::Poll()
 		if (Decision == Rules::EDecision::Defer)
 		{
 			++DeferredCount;
-			LastResult = FString::Printf(TEXT("build %s waits for the fight to end"), Rules::BuildName(Chosen));
+			LastResult = FString::Printf(TEXT("build %s waits for the fight to end"), ChosenName());
 			AddEvent(LastResult);
 		}
 		else if (Decision == Rules::EDecision::GiveUp)
 		{
 			++ApplyFailureCount;
-			const FString Message = FString::Printf(TEXT("build %s gave up after %d call(s): the style is still %s (the last call: %s)"), Rules::BuildName(Chosen), Attempts, *Style.ToString(), *LastResult);
+			const FString Message = FString::Printf(TEXT("build %s gave up after %d call(s): the style is still %s (the last call: %s)"), ChosenName(), Attempts, *Style.ToString(), *LastResult);
 			NoteFailure(Message, Message);
 			AddEvent(Message);
 		}
@@ -824,7 +854,7 @@ void URPGBuildLoadout::Poll()
 	{
 		const int32 UpdateType = Rules::UpdateTypeForAttempt(Attempts + 1);
 		FString Result;
-		const bool bCalled = CallEquip(Chosen, UpdateType, Result);
+		const bool bCalled = CallEquip(ChosenId, UpdateType, Result);
 		if (bCalled)
 		{
 			CallFailureStreak = 0;
@@ -832,8 +862,8 @@ void URPGBuildLoadout::Poll()
 			++ApplyCallCount;
 			LastAttemptTime = Now;
 			LastResult = Result;
-			AddEvent(FString::Printf(TEXT("call %d of %d for build %s: %s"), Attempts, MaxAttempts, Rules::BuildName(Chosen), *Result));
-			AddEvent(FString::Printf(TEXT("style right after the call: %s (wanted %s)"), *ReadStyle().ToString(), Rules::StyleOfBuild(Chosen)));
+			AddEvent(FString::Printf(TEXT("call %d of %d for build %s: %s"), Attempts, MaxAttempts, ChosenName(), *Result));
+			AddEvent(FString::Printf(TEXT("style right after the call: %s (wanted %s)"), *ReadStyle().ToString(), *Epoch->Weapon(Epoch->Find(ChosenId)->WeaponId)->StyleName.ToString()));
 		}
 		else
 		{
@@ -844,7 +874,7 @@ void URPGBuildLoadout::Poll()
 				CallFailureStreak = 0;
 				++Attempts;
 			}
-			NoteFailure(Result, FString::Printf(TEXT("call for build %s could not be made (%d of %d attempts used): %s"), Rules::BuildName(Chosen), Attempts, MaxAttempts, *Result));
+			NoteFailure(Result, FString::Printf(TEXT("call for build %s could not be made (%d of %d attempts used): %s"), ChosenName(), Attempts, MaxAttempts, *Result));
 			AddEvent(LastResult);
 		}
 	}
