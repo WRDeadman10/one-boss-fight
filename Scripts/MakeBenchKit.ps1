@@ -9,7 +9,7 @@
 .EXAMPLE
   powershell -NoProfile -ExecutionPolicy Bypass -File Scripts\MakeBenchKit.ps1 -OutDir C:/BenchTransfer -IncludeDevelopment -Zip
 #>
-param([Parameter(Mandatory = $true)][string]$OutDir, [switch]$IncludeDevelopment, [switch]$Zip,
+param([Parameter(Mandatory = $true)][string]$OutDir, [switch]$IncludeDevelopment, [switch]$DevelopmentOnly, [switch]$Zip,
       [string]$ShippingStage = '', [string]$DevelopmentStage = '')
 $ErrorActionPreference = 'Stop'
 $Root = Split-Path -Parent $PSScriptRoot
@@ -18,7 +18,8 @@ if (-not $ShippingStage) {
     if (-not (Test-Path (Join-Path $ShippingStage 'OneBossFight.exe'))) { $ShippingStage = Join-Path $Root 'Saved\StagedBuilds\Windows' }
 }
 if (-not $DevelopmentStage) { $DevelopmentStage = Join-Path $Root 'Saved\StagedBuilds\Windows' }
-if (-not (Test-Path (Join-Path $ShippingStage 'OneBossFight.exe'))) { throw "No staged Shipping build at ${ShippingStage}: run Scripts\Package.ps1 -Configuration Shipping first." }
+if ($DevelopmentOnly) { $IncludeDevelopment = $true }
+if (-not $DevelopmentOnly -and -not (Test-Path (Join-Path $ShippingStage 'OneBossFight.exe'))) { throw "No staged Shipping build at ${ShippingStage}: run Scripts\Package.ps1 -Configuration Shipping first." }
 $Kit = Join-Path $OutDir 'OneBossFight_BenchKit'
 if (Test-Path $Kit) { Remove-Item $Kit -Recurse -Force }
 New-Item -ItemType Directory -Force -Path (Join-Path $Kit 'Scripts') | Out-Null
@@ -28,8 +29,10 @@ function Copy-Stage($From, $To) {
     $null = robocopy $From $To /E /XF *.pdb /NFL /NDL /NJH /NJS /NP
     if ($LASTEXITCODE -ge 8) { throw "robocopy failed with exit code $LASTEXITCODE" }
 }
-Write-Host "Copying the Shipping stage (about 3 GB) ..."
-Copy-Stage $ShippingStage (Join-Path $Kit 'Saved\StagedBuilds\Windows')
+if (-not $DevelopmentOnly) {
+    Write-Host "Copying the Shipping stage (about 3 GB) ..."
+    Copy-Stage $ShippingStage (Join-Path $Kit 'Saved\StagedBuilds\Windows')
+}
 if ($IncludeDevelopment) {
     if (-not (Test-Path (Join-Path $DevelopmentStage 'OneBossFight.exe'))) { throw "No staged Development build at ${DevelopmentStage}" }
     Write-Host "Copying the Development stage (about 3.5 GB) ..."
@@ -39,8 +42,9 @@ foreach ($f in 'RunBenchmark.ps1', 'SummarizeBenchmark.py', 'BenchKit_Collect.ps
     Copy-Item (Join-Path $Root "Scripts\$f") (Join-Path $Kit "Scripts\$f") -Force
 }
 Copy-Item (Join-Path $Root 'Documentation\BENCHKIT_README.md') (Join-Path $Kit 'BENCHKIT_README.md') -Force
-$exe = Get-Item (Join-Path $Kit 'Saved\StagedBuilds\Windows\OneBossFight\Binaries\Win64\OneBossFight-Win64-Shipping.exe')
-"Shipping executable time: $($exe.LastWriteTime.ToString('o')); size $($exe.Length)`r`nDevelopment stage included: $IncludeDevelopment" | Out-File (Join-Path $Kit 'BUILD_INFO.txt') -Encoding utf8
+$exePath = if ($DevelopmentOnly) { Join-Path $Kit 'Saved\StagedBuilds_Development\Windows\OneBossFight\Binaries\Win64\OneBossFight.exe' } else { Join-Path $Kit 'Saved\StagedBuilds\Windows\OneBossFight\Binaries\Win64\OneBossFight-Win64-Shipping.exe' }
+$exe = Get-Item $exePath
+"Executable time: $($exe.LastWriteTime.ToString('o')); size $($exe.Length)`r`nShipping stage included: $(-not $DevelopmentOnly); Development stage included: $IncludeDevelopment" | Out-File (Join-Path $Kit 'BUILD_INFO.txt') -Encoding utf8
 Write-Host "Kit: $Kit"
 if ($Zip) {
     $z = Join-Path $OutDir 'OneBossFight_BenchKit.zip'

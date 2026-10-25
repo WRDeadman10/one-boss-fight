@@ -1,0 +1,226 @@
+[P0Trace] tracer registered
+[P0Trace] tracer registered
+[2026.10.25-08.33.12:815][870]LogRPGHitIntake: hit 1 at 13.65 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.33.14:323][919]LogRPGHitIntake: hit 2 at 15.16 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryB_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[P0Trace] START GS_EquipWeapon_Montage
+[P0Trace] tick t=16.175 montage=GS_EquipWeapon_Montage pos=0.000 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.206 montage=GS_EquipWeapon_Montage pos=0.046 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.236 montage=GS_EquipWeapon_Montage pos=0.092 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.267 montage=GS_EquipWeapon_Montage pos=0.138 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.298 montage=GS_EquipWeapon_Montage pos=0.184 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.328 montage=GS_EquipWeapon_Montage pos=0.230 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.360 montage=GS_EquipWeapon_Montage pos=0.277 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.393 montage=GS_EquipWeapon_Montage pos=0.327 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.424 montage=GS_EquipWeapon_Montage pos=0.372 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.455 montage=GS_EquipWeapon_Montage pos=0.419 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.486 montage=GS_EquipWeapon_Montage pos=0.465 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.516 montage=GS_EquipWeapon_Montage pos=0.511 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.547 montage=GS_EquipWeapon_Montage pos=0.558 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.578 montage=GS_EquipWeapon_Montage pos=0.604 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] END of trace
+[2026.10.25-08.33.15:895][970]LogRPGHitIntake: hit 3 at 16.73 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryC_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[P0Trace] START GS_Attack04_Montage
+[P0Trace] tick t=17.107 montage=GS_Attack04_Montage pos=0.000 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.33.16:300][983]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A1b instance 1 begins (generation 2)
+[P0Trace] tick t=17.142 montage=GS_Attack04_Montage pos=0.035 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.172 montage=GS_Attack04_Montage pos=0.047 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.202 montage=GS_Attack04_Montage pos=0.059 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.232 montage=GS_Attack04_Montage pos=0.071 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.263 montage=GS_Attack04_Montage pos=0.083 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.294 montage=GS_Attack04_Montage pos=0.095 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.325 montage=GS_Attack04_Montage pos=0.108 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.33.16:514][990]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A1b committed at 0.12 s, heading 162.9 deg
+[P0Trace] tick t=17.356 montage=GS_Attack04_Montage pos=0.120 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.387 montage=GS_Attack04_Montage pos=0.132 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.419 montage=GS_Attack04_Montage pos=0.145 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.450 montage=GS_Attack04_Montage pos=0.157 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.33.16:639][994]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A1b active window opens at 0.17 s
+[P0Trace] tick t=17.481 montage=GS_Attack04_Montage pos=0.170 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.516 montage=GS_Attack04_Montage pos=0.204 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] END of trace
+[2026.10.25-08.33.16:956][  4]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A1b recovery from 0.49 s (heading lock released)
+[P0Trace] START AM_Boss01_A3a
+[P0Trace] tick t=18.351 montage=AM_Boss01_A3a pos=0.000 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.33.17:539][ 23]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A1b instance 1 ended (replaced by another attack) at 1.04 s, phase was Recovery, yaw drift after commit 18.1 deg
+[2026.10.25-08.33.17:540][ 23]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3a instance 2 begins (generation 2)
+[2026.10.25-08.33.17:542][ 23]LogRPGHitIntake: hit 4 at 18.38 s: weapon SwordCombatStyle, kind Strong, posture 30, stamina -1, bleed 0, attack data StrongMeleeAttackData (power 3, pack poise damage 20, from HitData), montage Ability_E_Anim_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[P0Trace] tick t=18.381 montage=AM_Boss01_A3a pos=0.030 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=18.411 montage=AM_Boss01_A3a pos=0.060 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=18.440 montage=AM_Boss01_A3a pos=0.089 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=18.470 montage=AM_Boss01_A3a pos=0.119 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=18.500 montage=AM_Boss01_A3a pos=0.149 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=18.530 montage=AM_Boss01_A3a pos=0.180 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=18.561 montage=AM_Boss01_A3a pos=0.211 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=18.592 montage=AM_Boss01_A3a pos=0.241 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=18.626 montage=AM_Boss01_A3a pos=0.275 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=18.656 montage=AM_Boss01_A3a pos=0.305 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=18.686 montage=AM_Boss01_A3a pos=0.336 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=18.717 montage=AM_Boss01_A3a pos=0.367 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.33.17:905][ 35]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3a committed at 0.40 s, heading 117.7 deg
+[P0Trace] tick t=18.747 montage=AM_Boss01_A3a pos=0.396 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] END of trace
+[2026.10.25-08.33.17:936][ 36]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3a active window opens at 0.43 s
+[2026.10.25-08.33.18:061][ 40]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3a instance 2 ended (montage stopped) at 0.52 s, phase was Active, yaw drift after commit 0.0 deg
+[P0Trace] START AM_Boss01_A3b
+[P0Trace] tick t=19.249 montage=AM_Boss01_A3b pos=0.000 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.33.18:438][ 52]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3b instance 3 begins (generation 2)
+[P0Trace] tick t=19.280 montage=AM_Boss01_A3b pos=0.031 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.311 montage=AM_Boss01_A3b pos=0.061 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.341 montage=AM_Boss01_A3b pos=0.092 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.377 montage=AM_Boss01_A3b pos=0.128 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.33.18:570][ 56]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3b committed at 0.16 s, heading 173.2 deg
+[2026.10.25-08.33.18:570][ 56]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3b active window opens at 0.16 s
+[P0Trace] tick t=19.408 montage=AM_Boss01_A3b pos=0.159 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.438 montage=AM_Boss01_A3b pos=0.189 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.469 montage=AM_Boss01_A3b pos=0.219 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.499 montage=AM_Boss01_A3b pos=0.250 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.530 montage=AM_Boss01_A3b pos=0.280 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.561 montage=AM_Boss01_A3b pos=0.312 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.592 montage=AM_Boss01_A3b pos=0.343 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.623 montage=AM_Boss01_A3b pos=0.373 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.33.18:811][ 64]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3b recovery from 0.40 s (heading lock released)
+[P0Trace] tick t=19.653 montage=AM_Boss01_A3b pos=0.403 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] END of trace
+[2026.10.25-08.33.19:425][ 84]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3b instance 3 ended (montage stopped) at 0.99 s, phase was Recovery, yaw drift after commit 0.0 deg
+[2026.10.25-08.33.21:027][136]LogRPGHitIntake: hit 5 at 21.87 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.33.21:027][136]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: poise break 1, stance break for 2.5 s, hits are critical x2.5 (every hit: 0)
+[2026.10.25-08.33.22:236][176]LogRPGStagger: riposte accepted at 122 cm: the paired clips play, the critical hit (x2.5) lands once at the impact
+[2026.10.25-08.33.23:048][203]LogRPGStagger: riposte impact: 40 x 2.5 = 100 damage, health 1914 -> 1814 (impact 1)
+[2026.10.25-08.33.24:225][242]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: riposte execution over (completed, clips over, started 1, impacts 1)
+[2026.10.25-08.33.24:225][242]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: down for 3.20 s, 1 critical hits, getting up (clip, rate -0.60)
+[2026.10.25-08.33.25:196][274]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: stance break over (1 critical hits), resume behaviour 1
+[2026.10.25-08.33.25:648][289]LogRPGHitIntake: hit 6 at 26.49 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.33.27:499][349]LogRPGHitIntake: hit 7 at 28.34 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.33.29:348][410]LogRPGHitIntake: hit 8 at 30.19 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.33.31:165][468]LogRPGHitIntake: hit 9 at 32.00 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.33.32:700][517]LogRPGHitIntake: hit 10 at 33.54 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryB_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.33.34:282][568]LogRPGHitIntake: hit 11 at 35.12 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.33.34:283][568]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: poise break 2, stance break for 2.5 s, hits are critical x2.5 (every hit: 0)
+[2026.10.25-08.33.35:663][614]LogRPGStagger: riposte accepted at 149 cm: the paired clips play, the critical hit (x2.5) lands once at the impact
+[2026.10.25-08.33.36:470][641]LogRPGStagger: riposte impact: 40 x 2.5 = 100 damage, health 1718 -> 1618 (impact 2)
+[2026.10.25-08.33.37:637][680]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: riposte execution over (completed, clips over, started 1, impacts 2)
+[2026.10.25-08.33.37:637][680]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: down for 3.36 s, 1 critical hits, getting up (clip, rate -0.60)
+[2026.10.25-08.33.38:636][713]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: stance break over (1 critical hits), resume behaviour 1
+[2026.10.25-08.33.39:032][726]LogRPGHitIntake: hit 12 at 39.87 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.33.40:937][787]LogRPGHitIntake: hit 13 at 41.77 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.33.42:758][846]LogRPGHitIntake: hit 14 at 43.60 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.33.46:484][968]LogRPGHitIntake: hit 15 at 47.32 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.33.48:015][ 18]LogRPGHitIntake: hit 16 at 48.85 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryB_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.33.49:553][ 68]LogRPGHitIntake: hit 17 at 50.39 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryC_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.33.49:554][ 68]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: poise break 3, stance break for 2.5 s, hits are critical x2.5 (every hit: 0)
+[2026.10.25-08.33.50:738][108]LogRPGStagger: riposte accepted at 149 cm: the paired clips play, the critical hit (x2.5) lands once at the impact
+[2026.10.25-08.33.51:539][135]LogRPGStagger: riposte impact: 40 x 2.5 = 100 damage, health 1522 -> 1422 (impact 3)
+[2026.10.25-08.33.52:719][175]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: riposte execution over (completed, clips over, started 1, impacts 3)
+[2026.10.25-08.33.52:719][175]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: down for 3.17 s, 1 critical hits, getting up (clip, rate -0.60)
+[2026.10.25-08.33.53:698][208]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: stance break over (1 critical hits), resume behaviour 1
+[2026.10.25-08.33.54:148][223]LogRPGHitIntake: hit 18 at 54.99 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.33.55:999][284]LogRPGHitIntake: hit 19 at 56.84 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.33.57:874][346]LogRPGHitIntake: hit 20 at 58.71 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.33.59:758][409]LogRPGHitIntake: hit 21 at 60.60 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.01:542][468]LogRPGHitIntake: hit 22 at 62.38 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.03:434][530]LogRPGHitIntake: hit 23 at 64.27 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.03:434][530]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: poise break 4, stance break for 2.5 s, hits are critical x2.5 (every hit: 0)
+[2026.10.25-08.34.04:615][570]LogRPGStagger: riposte accepted at 112 cm: the paired clips play, the critical hit (x2.5) lands once at the impact
+[2026.10.25-08.34.05:442][598]LogRPGStagger: riposte impact: 40 x 2.5 = 100 damage, health 1326 -> 1226 (impact 4)
+[2026.10.25-08.34.06:602][637]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: riposte execution over (completed, clips over, started 1, impacts 4)
+[2026.10.25-08.34.06:602][637]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: down for 3.17 s, 1 critical hits, getting up (clip, rate -0.60)
+[2026.10.25-08.34.07:590][670]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: stance break over (1 critical hits), resume behaviour 1
+[2026.10.25-08.34.08:005][684]LogRPGHitIntake: hit 24 at 68.85 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.09:514][735]LogRPGHitIntake: hit 25 at 70.35 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryB_Montage, grounded, bone upperarm_r, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.11:029][786]LogRPGHitIntake: hit 26 at 71.87 s: weapon SwordCombatStyle, kind Strong, posture 30, stamina -1, bleed 0, attack data StrongMeleeAttackData (power 3, pack poise damage 20, from HitData), montage Ability_E_Anim_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.12:896][849]LogRPGHitIntake: hit 27 at 73.73 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.14:835][913]LogRPGHitIntake: hit 28 at 75.67 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.16:623][971]LogRPGHitIntake: hit 29 at 77.46 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.18:566][ 35]LogRPGHitIntake: hit 30 at 79.40 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.18:566][ 35]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: poise break 5, stance break for 2.5 s, hits are critical x2.5 (every hit: 0)
+[2026.10.25-08.34.19:793][ 77]LogRPGStagger: riposte accepted at 106 cm: the paired clips play, the critical hit (x2.5) lands once at the impact
+[2026.10.25-08.34.20:614][105]LogRPGStagger: riposte impact: 40 x 2.5 = 100 damage, health 1108 -> 1008 (impact 5)
+[2026.10.25-08.34.21:789][145]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: riposte execution over (completed, clips over, started 1, impacts 5)
+[2026.10.25-08.34.21:789][145]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: down for 3.23 s, 1 critical hits, getting up (clip, rate -0.60)
+[2026.10.25-08.34.22:759][178]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: stance break over (1 critical hits), resume behaviour 1
+[2026.10.25-08.34.23:176][192]LogRPGHitIntake: hit 31 at 84.02 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.24:766][246]LogRPGHitIntake: hit 32 at 85.60 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryB_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.26:447][301]LogRPGHitIntake: hit 33 at 87.29 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.27:983][350]LogRPGHitIntake: hit 34 at 88.82 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryB_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.29:517][399]LogRPGHitIntake: hit 35 at 90.36 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryC_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.31:410][461]LogRPGHitIntake: hit 36 at 92.25 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.31:410][461]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: poise break 6, stance break for 2.5 s, hits are critical x2.5 (every hit: 0)
+[2026.10.25-08.34.32:613][502]LogRPGStagger: riposte accepted at 113 cm: the paired clips play, the critical hit (x2.5) lands once at the impact
+[2026.10.25-08.34.33:439][530]LogRPGStagger: riposte impact: 40 x 2.5 = 100 damage, health 912 -> 812 (impact 6)
+[2026.10.25-08.34.34:593][569]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: riposte execution over (completed, clips over, started 1, impacts 6)
+[2026.10.25-08.34.34:593][569]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: down for 3.19 s, 1 critical hits, getting up (clip, rate -0.60)
+[2026.10.25-08.34.35:578][602]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: stance break over (1 critical hits), resume behaviour 1
+[2026.10.25-08.34.35:995][616]LogRPGHitIntake: hit 37 at 96.83 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.37:912][679]LogRPGHitIntake: hit 38 at 98.75 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone hand_l, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.39:470][730]LogRPGHitIntake: hit 39 at 100.31 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryB_Montage, grounded, bone upperarm_r, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.41:035][781]LogRPGHitIntake: hit 40 at 101.87 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryC_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.42:924][843]LogRPGHitIntake: hit 41 at 103.76 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.44:833][905]LogRPGHitIntake: hit 42 at 105.67 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.44:833][905]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: poise break 7, stance break for 2.5 s, hits are critical x2.5 (every hit: 0)
+[2026.10.25-08.34.46:125][948]LogRPGStagger: riposte accepted at 148 cm: the paired clips play, the critical hit (x2.5) lands once at the impact
+[2026.10.25-08.34.46:940][975]LogRPGStagger: riposte impact: 40 x 2.5 = 100 damage, health 716 -> 616 (impact 7)
+[2026.10.25-08.34.48:107][ 14]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: riposte execution over (completed, clips over, started 1, impacts 7)
+[2026.10.25-08.34.48:107][ 14]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: down for 3.28 s, 1 critical hits, getting up (clip, rate -0.60)
+[2026.10.25-08.34.49:077][ 46]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: stance break over (1 critical hits), resume behaviour 1
+[2026.10.25-08.34.49:531][ 61]LogRPGHitIntake: hit 43 at 110.37 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.51:092][113]LogRPGHitIntake: hit 44 at 111.93 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryB_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.52:659][165]LogRPGHitIntake: hit 45 at 113.50 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryC_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.54:550][227]LogRPGHitIntake: hit 46 at 115.39 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.56:458][290]LogRPGHitIntake: hit 47 at 117.30 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.58:384][353]LogRPGHitIntake: hit 48 at 119.22 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.34.58:385][353]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: poise break 8, stance break for 2.5 s, hits are critical x2.5 (every hit: 0)
+[2026.10.25-08.34.59:612][395]LogRPGStagger: riposte accepted at 141 cm: the paired clips play, the critical hit (x2.5) lands once at the impact
+[2026.10.25-08.35.00:432][423]LogRPGStagger: riposte impact: 40 x 2.5 = 100 damage, health 520 -> 420 (impact 8)
+[2026.10.25-08.35.01:589][462]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: riposte execution over (completed, clips over, started 1, impacts 8)
+[2026.10.25-08.35.01:589][462]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: down for 3.21 s, 1 critical hits, getting up (clip, rate -0.60)
+[2026.10.25-08.35.02:574][495]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: stance break over (1 critical hits), resume behaviour 1
+[2026.10.25-08.35.02:990][509]LogRPGHitIntake: hit 49 at 123.83 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.35.04:509][560]LogRPGHitIntake: hit 50 at 125.35 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryB_Montage, grounded, bone upperarm_r, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.35.06:131][614]LogRPGHitIntake: hit 51 at 126.97 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryC_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.35.07:992][675]LogRPGHitIntake: hit 52 at 128.83 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.35.09:556][726]LogRPGHitIntake: hit 53 at 130.39 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryB_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.35.11:122][777]LogRPGHitIntake: hit 54 at 131.96 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryC_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.35.11:122][777]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: poise break 9, stance break for 2.5 s, hits are critical x2.5 (every hit: 0)
+[2026.10.25-08.35.12:242][814]LogRPGStagger: riposte accepted at 110 cm: the paired clips play, the critical hit (x2.5) lands once at the impact
+[2026.10.25-08.35.13:056][841]LogRPGStagger: riposte impact: 40 x 2.5 = 100 damage, health 324 -> 224 (impact 9)
+[2026.10.25-08.35.14:223][880]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: riposte execution over (completed, clips over, started 1, impacts 9)
+[2026.10.25-08.35.14:223][880]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: down for 3.10 s, 1 critical hits, getting up (clip, rate -0.60)
+[2026.10.25-08.35.15:196][912]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: stance break over (1 critical hits), resume behaviour 1
+[2026.10.25-08.35.15:625][926]LogRPGHitIntake: hit 55 at 136.47 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.35.17:588][990]LogRPGHitIntake: hit 56 at 138.43 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.35.19:526][ 54]LogRPGHitIntake: hit 57 at 140.36 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.35.21:446][117]LogRPGHitIntake: hit 58 at 142.29 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.35.23:384][181]LogRPGHitIntake: hit 59 at 144.22 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.35.25:190][242]LogRPGHitIntake: hit 60 at 146.03 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.35.25:191][242]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: poise break 10, stance break for 2.5 s, hits are critical x2.5 (every hit: 0)
+[2026.10.25-08.35.26:419][284]LogRPGStagger: riposte accepted at 114 cm: the paired clips play, the critical hit (x2.5) lands once at the impact
+[2026.10.25-08.35.27:238][312]LogRPGStagger: riposte impact: 40 x 2.5 = 100 damage, health 128 -> 28 (impact 10)
+[2026.10.25-08.35.28:413][352]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: riposte execution over (completed, clips over, started 1, impacts 10)
+[2026.10.25-08.35.28:413][352]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: down for 3.23 s, 1 critical hits, getting up (clip, rate -0.60)
+[2026.10.25-08.35.29:389][385]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: stance break over (1 critical hits), resume behaviour 1
+[2026.10.25-08.35.29:812][399]LogRPGHitIntake: hit 61 at 150.65 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[BuildFight] METRIC build = Starter (Saved/build_fight_build.txt); weapon style at the end SwordCombatStyle
+[BuildFight] METRIC run_id = 20261025T083258_8097a7e3
+[BuildFight] METRIC policy = close-recovery-v3; source 4c3e4cfc912dc9a1275084771b1878f4c98b28a3e82348b065f4e68c2191db02
+[BuildFight] METRIC outcome = boss_dead (boss health -13.191963577747174, death state dying, HUD Fighting)
+[BuildFight] METRIC fight_seconds = 140.1 of 420 allowed (world time from the wake)
+[BuildFight] METRIC balance_evidence = INCONCLUSIVE: only 2 heavy swing(s); need at least 3 to exercise the heavy-opener policy; 1 dodge(s) pressed too late for the i-frames (close attacks are not reactively dodgeable: the run measures the bot); untracked boss moves dodged at a guessed time (AnimMontage_238, AnimMontage_300, GS_EquipWeapon_Montage)
+[BuildFight] METRIC boss_health = 2000 -> -13, lost 2013.2 = 1013.2 weapon hits + 0.0 bleed procs + 1000.0 riposte impacts + 0.0 other
+[BuildFight] METRIC hits_landed = 61 (Light 59, Strong 2); 0 hit record(s) without a health drop, 0 health drop(s) without a record
+[BuildFight] METRIC boss_health_per_hit = 16.6 on average over all hits (weapon damage 1013.2 / 61 hits); by kind: Light 16.4 (n=59), Strong 22.4 (n=2)
+[BuildFight] METRIC swings_thrown = 62 bot presses (Light 60, Strong 2), 72 swings seen by the swing tracker (Light 70, Strong 2), 1 whiffs, 0 ignored by the pack, 2 cut short by a dodge
+[BuildFight] METRIC swing_to_hit_delay = Light median 0.39 s (n=57, guess 0.34); Strong median 0.57 s (n=1, guess 0.69)
+[BuildFight] METRIC posture_breaks = 10
+[BuildFight] METRIC ripostes = 10 done (impacts), 10 presses, 10 accepted, 0 rejected by the press itself, 0 rejected requests counted by the boss
+[BuildFight] METRIC bleed_procs = 0 (last proc took 0.0 health)
+[BuildFight] METRIC dodges = 2 presses, 2 dodge montages (2 quick, 0 full), 0 wave jumps, 0 ignored by the pack, 1 late (the i-frames start after the hit was due), stamina cost samples 20, 20
+[BuildFight] METRIC hits_taken = 1 for 36 health (A3b/Active 1); player health 120.0 -> 84.0 (lowest 84.0)
+[BuildFight] METRIC attacks_seen = A1b 1 (hit me 0, not hit after a dodge 1 (NOT a dodge success rate: out of range counts too), missed on its own 0); A3a 1 (hit me 0, not hit after a dodge 1 (NOT a dodge success rate: out of range counts too), missed on its own 0); A3b 1 (hit me 1, not hit after a dodge 0 (NOT a dodge success rate: out of range counts too), missed on its own 0)
+[BuildFight] METRIC openings = 13 usable (>= 0.45 s) seen, 12 used (at least one hit), 12 tried; 0 too short; by kind (seen/used): rec:A1b 1/1; rec:A3b 1/0; roar 1/1; stagger 10/10
+[BuildFight] METRIC stamina = start 100.0, lowest 0.0 at 6.8 s, below 15 for 1.8 s, 1 dips below 20
+[BuildFight] METRIC phase_two = reached at 58.7 s (boss health 1193.854015278578)
+[BuildFight] METRIC untracked_boss_montages = AnimMontage_238 x1 (ignored); AnimMontage_300 x1 (ignored); GS_EquipWeapon_Montage x1 (ignored)
+[BuildFight] METRIC walk_speed = 299 cm/s measured over 254 frames (the bot assumed 450)
+[BuildFight] METRIC strike_range = 113 cm at the end (started at 125)
+[BuildFight] RESULT 10/10 passed
+[P0Trace] done

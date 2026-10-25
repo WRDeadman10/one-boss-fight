@@ -1,0 +1,55 @@
+{
+  "contract_version": "1.0",
+  "clip_name": "AN_Riposte_Player_Front",
+  "source_asset": {
+    "fbx_path": "Import/Boss01/Animations/AN_Riposte_Player_Front.fbx",
+    "sha256": "e57dc0aed931a024b71311a4b7b24897c04f7497824e990a9a5a3a8b239acd84",
+    "byte_size": 825244
+  },
+  "timing_and_framing": {
+    "fps": 30,
+    "samples": 49,
+    "elapsed_duration_s": 1.6,
+    "frame_conventions": {
+      "blender_1based_range": [
+        1,
+        49
+      ],
+      "metadata_0based_range": [
+        0,
+        48
+      ],
+      "offset_rule": "F_blender = F_metadata + 1"
+    }
+  },
+  "author_intent_markers": {
+    "commit_time_s": null,
+    "windup_end_s": 0.7,
+    "active_start_s": 0.7,
+    "active_end_s": 1.1,
+    "recovery_end_s": 1.6,
+    "impact_time_s": 0.8,
+    "is_looping": false,
+    "author_notes": "Paired Riposte Execution (Player Perspective, Asset A-11). Root yaw 0 throughout, facing +Y. Root advances forward along +Y from (0, 0, 0) to (0, 90, 0) cm reached at 0.70s (F21) and held through 1.60s. Heavy torso coil and arm windup (0.0 to 0.70s); lethal lunge thrust with hand_r 64.95 cm ahead of root at 107.95 cm height at 0.80s Impact (Frame 24); body movement inside root frame between 0.467s and 0.80s is 2974.8 cm (>> 400 cm); recovery (1.00-1.60s) returning hand_r, hand_l, head within 0.4 cm (<= 15 cm) of frame 0 relative pose."
+  },
+  "offline_kinematic_bounds": {
+    "root_sampling_mode": "armature_object(root)",
+    "max_root_excursion_cm": 90.0,
+    "end_start_displacement_cm": 90.0,
+    "pelvis_z_range_cm": [
+      85.92,
+      95.9
+    ],
+    "foot_z_range_cm": [
+      -10.19,
+      9.47
+    ],
+    "hand_r_max_reach_cm": 158.42
+  },
+  "contract_compliance": {
+    "fps_compliant": true,
+    "root_motion_category": "Travel",
+    "root_motion_compliant": true,
+    "has_sidecar": true
+  }
+}

@@ -1,0 +1,13 @@
+AttackID,Name,AvailableFromPhase,Geometry,MinRangeCm,MaxRangeCm,PreferredRangeCm,MinYawDeg,MaxYawDeg,WindupS,HoldS,ActiveS,RecoveryS,Damage,PostureDamage,TraceRadiusOrReachCm,CooldownS,BaseWeight,HitPolicy,PunishClass,ExampleFollowups,AngleInterpretation,MinAbsYawDeg,MaxAbsYawDeg
+A01,Needle Thrust,1,Thrust,65,245,165,-55,55,0.25,0,0.13,0.38,48,14,110,1.2,0.78,OncePerAttack,Short,A02,Front,0,55
+A02,Crescent Sweep,1,Sweep,120,390,265,-135,135,0.55,0,0.25,0.6,69,19,180,2.0,1.0,OncePerAttack,Conditional,A07|A05,FrontAndSide,0,135
+A03,Bellfall Overhead,1,Slam,150,420,270,-48,48,0.7,0.28,0.19,0.98,118,30,170,5.5,0.6,ImpactPlusSplash,GuaranteedLong,,Front,0,48
+A04,Procession Lunge,1,Thrust,340,800,550,-46,46,0.62,0,0.22,0.68,83,23,225,4.0,0.76,OncePerAttack,Medium,,Front,0,46
+A05,Backhook,1,Sweep,50,220,145,115,180,0.43,0,0.22,0.55,65,17,145,4.2,0.42,OncePerAttack,Medium,,Rear,115,180
+A06,Crossguard Riposte,1,Counter,50,210,140,-85,85,0.31,0,0.17,0.42,55,15,110,5.0,0.36,OncePerAttack,Short,,Front,0,85
+A07,Twin Toll Slash,1,MultiHitSweep,115,380,245,-105,105,0.43,0.18,0.19,0.64,53,15,170,4.0,0.59,OncePerWindow,Conditional,A09,FrontAndSide,0,105
+A08,False Mercy,1,Slam,140,410,260,-50,50,0.5,0.65,0.18,0.98,125,33,180,7.0,0.28,ImpactPlusSplash,GuaranteedLong,,Front,0,50
+A09,Ash Spiral,2,MultiHitSweep,70,340,200,-180,180,0.72,0,0.52,0.75,45,12,175,8.0,0.52,OncePerWindow,Medium,,Any,0,180
+A10,Funeral Bell Ring,2,RadialRing,130,820,485,-180,180,1.05,0,0.58,1.0,98,25,160,12.0,0.37,OncePerAttack,GuaranteedLong,,Any,0,180
+A11,Ember Fissure,2,Lane,270,950,620,-45,45,0.82,0,0.45,0.83,90,21,180,10.0,0.43,OncePerAttack,Medium,,Front,0,45
+A12,Oathbreaker Grab,2,Grab,50,170,110,-55,55,0.68,0,0.16,1.15,140,0,135,11.0,0.25,OncePerAttack,GuaranteedLong,,Front,0,55

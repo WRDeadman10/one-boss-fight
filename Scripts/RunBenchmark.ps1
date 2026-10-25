@@ -18,6 +18,7 @@ param(
 	[string]$Map = '/Game/OneBossFight/Levels/L_SevarogArena',
 	[switch]$Empty,   # empty-arena orbit camera instead of the full fight
 	[string]$ExtraArgs = '',
+	[switch]$KeepConfig,
 	[string]$StageDir = ''   # a different staged build folder (the one that holds OneBossFight.exe), e.g. the Development stage of the kit
 )
 
@@ -37,6 +38,12 @@ $LaunchArgs = @(
 if (-not $Empty) { $LaunchArgs += '-RPGBenchmarkFight' }
 if ($ExtraArgs) { $LaunchArgs += $ExtraArgs }
 
+# Precaution: every run starts from the default graphics settings. A previous run can leave GameUserSettings.ini behind (suspected, not proven: in the round 2 experiments of 2026-10-25 the first ten runs were slow and the later ones fast with no clear cause). Only the staged game's own Saved\Config and the local data copy of a Shipping build are cleaned, never the project.
+if (-not $KeepConfig) {
+	foreach ($cfg in @((Join-Path $StageRoot 'OneBossFight\Saved\Config'), (Join-Path $env:LOCALAPPDATA 'OneBossFight\Saved\Config'))) {
+		if (Test-Path $cfg) { Get-ChildItem $cfg -Recurse -Filter 'GameUserSettings.ini' -ErrorAction SilentlyContinue | Remove-Item -Force }
+	}
+}
 Write-Host "Running benchmark '$Label' at ${ResX}x${ResY} ..."
 $Process = Start-Process -FilePath $Exe -ArgumentList $LaunchArgs -PassThru -Wait
 Write-Host "Exit code: $($Process.ExitCode)"

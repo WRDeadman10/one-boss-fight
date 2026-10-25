@@ -1,0 +1,55 @@
+{
+  "contract_version": "1.0",
+  "clip_name": "AN_Riposte_Boss_Reaction",
+  "source_asset": {
+    "fbx_path": "Import/Boss01/Animations/AN_Riposte_Boss_Reaction.fbx",
+    "sha256": "58dc6cccce401cd807319570e6b144a4710be37362bb806cffa3e29356b3c212",
+    "byte_size": 866124
+  },
+  "timing_and_framing": {
+    "fps": 30,
+    "samples": 61,
+    "elapsed_duration_s": 2.0,
+    "frame_conventions": {
+      "blender_1based_range": [
+        1,
+        61
+      ],
+      "metadata_0based_range": [
+        0,
+        60
+      ],
+      "offset_rule": "F_blender = F_metadata + 1"
+    }
+  },
+  "author_intent_markers": {
+    "commit_time_s": null,
+    "windup_end_s": 0.7,
+    "active_start_s": 0.8,
+    "active_end_s": 1.3,
+    "recovery_end_s": 2.0,
+    "impact_time_s": 0.8,
+    "is_looping": false,
+    "author_notes": "Paired Riposte Reaction (Boss Perspective, Asset A-11). Starts in identical kneeling pose of AN_Boss01_StaggerDown last frame (F0 local diff 0.0000 against StaggerDown F30). Takes lethal chest impact at 0.80s (Frame 24): head minus pelvis Y = -20.31 cm (<= -15 cm), Z = 63.07 cm (<= 64 cm), neck_01 minus pelvis Y = -16.95 cm (<= -8 cm). Recoil recovers by 1.30s (F39) returning within 0.12 cm of F0. Corrected kneel pose maintained throughout (knees at floor ~3.6 cm, ankles >= 6.0 cm, balls of feet >= 2.6 cm). Ends in exact pose of StaggerDown F0 (local diff 0.0000)."
+  },
+  "offline_kinematic_bounds": {
+    "root_sampling_mode": "armature_object(root)",
+    "max_root_excursion_cm": 0.0,
+    "end_start_displacement_cm": 0.0,
+    "pelvis_z_range_cm": [
+      47.64,
+      47.74
+    ],
+    "foot_z_range_cm": [
+      -0.01,
+      8.2
+    ],
+    "hand_r_max_reach_cm": 73.47
+  },
+  "contract_compliance": {
+    "fps_compliant": true,
+    "root_motion_category": "InPlace",
+    "root_motion_compliant": true,
+    "has_sidecar": true
+  }
+}

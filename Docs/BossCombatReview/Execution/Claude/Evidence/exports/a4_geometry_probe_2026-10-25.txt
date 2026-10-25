@@ -1,0 +1,111 @@
+[P0A4] geometry probe registered
+[P0A4] geometry probe registered
+[P0A4] setup: boss scale <Struct 'Vector' (0x0000024D8E5B11E0) {x: 1.000000, y: 1.000000, z: 1.000000}>, Reach 380, InnerRadius 60, BladeHeight 40, sweep 90 -> -90 deg, boss at (0,0,146) yaw 180.0
+[P0A4] visible sword component: RPGLookSword
+[P0A4] socket SOCKET_Weapon_Start exists on the mesh: False
+[P0A4] socket SOCKET_Weapon_End exists on the mesh: False
+[P0A4] socket SOCKET_BladeEnd exists on the mesh: False
+[P0A4] socket BladeEnd exists on the mesh: False
+[P0A4] socket BladeStart exists on the mesh: False
+[P0A4] socket SOCKET_TrailEndSocket exists on the mesh: False
+[P0A4] A4 forced start accepted: True
+[P0A4] t=0.024 montage_pos=0.024 phase=Windup blade_active=False blade_angle=0.0 root_yaw=-175.7 mesh_origin=(-42,-93,102) d_h=102 h=100 mesh_tip(0,0,163.3)=(-258,-31,6) d_h=260 h=4
+[P0A4] t=0.048 montage_pos=0.048 phase=Windup blade_active=False blade_angle=0.0 root_yaw=-171.3 mesh_origin=(-39,-72,107) d_h=82 h=105 mesh_tip(0,0,163.3)=(-262,13,53) d_h=262 h=51
+[P0A4] t=0.072 montage_pos=0.072 phase=Windup blade_active=False blade_angle=0.0 root_yaw=-167.1 mesh_origin=(-39,-46,119) d_h=60 h=117 mesh_tip(0,0,163.3)=(-260,59,124) d_h=266 h=122
+[P0A4] t=0.095 montage_pos=0.095 phase=Windup blade_active=False blade_angle=0.0 root_yaw=-162.9 mesh_origin=(-40,-21,139) d_h=45 h=137 mesh_tip(0,0,163.3)=(-247,86,214) d_h=262 h=212
+[P0A4] t=0.119 montage_pos=0.119 phase=Windup blade_active=False blade_angle=0.0 root_yaw=-158.5 mesh_origin=(-38,-21,144) d_h=43 h=142 mesh_tip(0,0,163.3)=(-253,55,234) d_h=258 h=231
+[P0A4] t=0.144 montage_pos=0.144 phase=Windup blade_active=False blade_angle=0.0 root_yaw=-154.1 mesh_origin=(-34,-27,143) d_h=43 h=141 mesh_tip(0,0,163.3)=(-258,12,234) d_h=258 h=232
+[P0A4] t=0.167 montage_pos=0.167 phase=Windup blade_active=False blade_angle=0.0 root_yaw=-149.9 mesh_origin=(-29,-32,142) d_h=43 h=140 mesh_tip(0,0,163.3)=(-256,-31,234) d_h=258 h=232
+[P0A4] t=0.196 montage_pos=0.196 phase=Windup blade_active=False blade_angle=0.0 root_yaw=-144.8 mesh_origin=(-22,-37,141) d_h=44 h=139 mesh_tip(0,0,163.3)=(-245,-79,235) d_h=257 h=233
+[P0A4] t=0.220 montage_pos=0.220 phase=Windup blade_active=False blade_angle=0.0 root_yaw=-140.5 mesh_origin=(-17,-41,140) d_h=44 h=138 mesh_tip(0,0,163.3)=(-230,-115,235) d_h=257 h=233
+[P0A4] t=0.244 montage_pos=0.244 phase=Windup blade_active=False blade_angle=0.0 root_yaw=-136.1 mesh_origin=(-10,-43,139) d_h=44 h=137 mesh_tip(0,0,163.3)=(-212,-146,234) d_h=257 h=231
+[P0A4] t=0.268 montage_pos=0.268 phase=Windup blade_active=False blade_angle=0.0 root_yaw=-131.8 mesh_origin=(-4,-45,138) d_h=45 h=136 mesh_tip(0,0,163.3)=(-191,-173,232) d_h=257 h=229
+[P0A4] t=0.292 montage_pos=0.292 phase=Windup blade_active=False blade_angle=0.0 root_yaw=-127.4 mesh_origin=(2,-46,137) d_h=46 h=135 mesh_tip(0,0,163.3)=(-169,-195,229) d_h=258 h=227
+[P0A4] t=0.316 montage_pos=0.316 phase=Windup blade_active=False blade_angle=0.0 root_yaw=-123.1 mesh_origin=(8,-46,136) d_h=46 h=133 mesh_tip(0,0,163.3)=(-145,-214,226) d_h=259 h=224
+[P0A4] t=0.340 montage_pos=0.340 phase=Windup blade_active=False blade_angle=0.0 root_yaw=-118.8 mesh_origin=(14,-45,134) d_h=47 h=132 mesh_tip(0,0,163.3)=(-120,-230,223) d_h=260 h=221
+[P0A4] t=0.364 montage_pos=0.364 phase=Windup blade_active=False blade_angle=0.0 root_yaw=-114.5 mesh_origin=(19,-43,133) d_h=47 h=131 mesh_tip(0,0,163.3)=(-93,-243,220) d_h=260 h=218
+[P0A4] t=0.389 montage_pos=0.389 phase=Windup blade_active=False blade_angle=0.0 root_yaw=-110.1 mesh_origin=(24,-41,132) d_h=48 h=130 mesh_tip(0,0,163.3)=(-62,-254,217) d_h=261 h=215
+[P0A4] t=0.412 montage_pos=0.412 phase=Committed blade_active=False blade_angle=0.0 root_yaw=-110.1 mesh_origin=(26,-40,131) d_h=47 h=129 mesh_tip(0,0,163.3)=(-48,-257,217) d_h=262 h=215
+[P0A4] t=0.436 montage_pos=0.436 phase=Committed blade_active=False blade_angle=0.0 root_yaw=-110.1 mesh_origin=(26,-39,130) d_h=47 h=128 mesh_tip(0,0,163.3)=(-30,-260,218) d_h=262 h=216
+[P0A4] t=0.459 montage_pos=0.459 phase=Committed blade_active=False blade_angle=0.0 root_yaw=-110.1 mesh_origin=(25,-37,129) d_h=45 h=127 mesh_tip(0,0,163.3)=(-6,-263,221) d_h=263 h=219
+[P0A4] t=0.487 montage_pos=0.487 phase=Committed blade_active=False blade_angle=0.0 root_yaw=-110.1 mesh_origin=(24,-36,129) d_h=44 h=127 mesh_tip(0,0,163.3)=(25,-263,222) d_h=264 h=220
+[P0A4] t=0.511 montage_pos=0.511 phase=Committed blade_active=False blade_angle=0.0 root_yaw=-110.1 mesh_origin=(23,-35,129) d_h=42 h=127 mesh_tip(0,0,163.3)=(49,-261,222) d_h=265 h=219
+[P0A4] t=0.534 montage_pos=0.534 phase=Committed blade_active=False blade_angle=0.0 root_yaw=-110.1 mesh_origin=(22,-35,129) d_h=41 h=127 mesh_tip(0,0,163.3)=(70,-257,220) d_h=267 h=217
+[P0A4] t=0.558 montage_pos=0.558 phase=Committed blade_active=False blade_angle=0.0 root_yaw=-110.1 mesh_origin=(23,-34,129) d_h=41 h=127 mesh_tip(0,0,163.3)=(83,-256,213) d_h=269 h=211
+[P0A4] t=0.583 montage_pos=0.583 phase=Committed blade_active=False blade_angle=0.0 root_yaw=-110.1 mesh_origin=(25,-32,128) d_h=41 h=125 mesh_tip(0,0,163.3)=(88,-257,202) d_h=271 h=200
+[P0A4] t=0.607 montage_pos=0.607 phase=Active blade_active=True blade_angle=85.7 root_yaw=-110.1 mesh_origin=(26,-32,126) d_h=42 h=123 mesh_tip(0,0,163.3)=(68,-265,191) d_h=273 h=188
+[P0A4] t=0.631 montage_pos=0.631 phase=Active blade_active=True blade_angle=71.3 root_yaw=-110.1 mesh_origin=(24,-37,123) d_h=44 h=121 mesh_tip(0,0,163.3)=(1,-272,185) d_h=272 h=183
+[P0A4] t=0.657 montage_pos=0.657 phase=Active blade_active=True blade_angle=55.8 root_yaw=-110.1 mesh_origin=(10,-45,122) d_h=46 h=120 mesh_tip(0,0,163.3)=(-140,-223,198) d_h=263 h=196
+[P0A4] t=0.680 montage_pos=0.680 phase=Active blade_active=True blade_angle=41.8 root_yaw=-110.1 mesh_origin=(-7,-44,124) d_h=45 h=122 mesh_tip(0,0,163.3)=(-229,-108,204) d_h=253 h=202
+[P0A4] t=0.704 montage_pos=0.704 phase=Active blade_active=True blade_angle=27.9 root_yaw=-110.1 mesh_origin=(-21,-36,124) d_h=42 h=122 mesh_tip(0,0,163.3)=(-251,31,174) d_h=253 h=172
+[P0A4] t=0.728 montage_pos=0.728 phase=Active blade_active=True blade_angle=13.0 root_yaw=-110.1 mesh_origin=(-20,-30,116) d_h=36 h=114 mesh_tip(0,0,163.3)=(-183,107,-4) d_h=212 h=-6
+[P0A4] t=0.752 montage_pos=0.752 phase=Active blade_active=True blade_angle=-1.4 root_yaw=-110.1 mesh_origin=(-0,-30,121) d_h=30 h=119 mesh_tip(0,0,163.3)=(22,67,-103) d_h=70 h=-105
+[P0A4] t=0.781 montage_pos=0.781 phase=Active blade_active=True blade_angle=-18.8 root_yaw=-110.1 mesh_origin=(50,-45,165) d_h=67 h=163 mesh_tip(0,0,163.3)=(218,59,20) d_h=226 h=18
+[P0A4] t=0.805 montage_pos=0.805 phase=Active blade_active=True blade_angle=-32.7 root_yaw=-110.1 mesh_origin=(92,-19,199) d_h=94 h=197 mesh_tip(0,0,163.3)=(72,102,-13) d_h=125 h=-15
+[P0A4] t=0.829 montage_pos=0.829 phase=Active blade_active=True blade_angle=-47.1 root_yaw=-110.1 mesh_origin=(77,-41,206) d_h=88 h=204 mesh_tip(0,0,163.3)=(240,78,68) d_h=253 h=66
+[P0A4] t=0.853 montage_pos=0.853 phase=Active blade_active=True blade_angle=-61.6 root_yaw=-110.1 mesh_origin=(29,-72,197) d_h=78 h=194 mesh_tip(0,0,163.3)=(235,-204,210) d_h=311 h=208
+[P0A4] t=0.877 montage_pos=0.877 phase=Active blade_active=True blade_angle=-75.9 root_yaw=-110.1 mesh_origin=(-22,-63,164) d_h=66 h=161 mesh_tip(0,0,163.3)=(-51,-296,95) d_h=300 h=93
+[P0A4] t=0.900 montage_pos=0.900 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-43,-28,142) d_h=51 h=139 mesh_tip(0,0,163.3)=(-184,-113,-40) d_h=216 h=-42
+[P0A4] t=0.925 montage_pos=0.925 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-44,-19,136) d_h=48 h=134 mesh_tip(0,0,163.3)=(-169,-16,-74) d_h=170 h=-77
+[P0A4] t=0.949 montage_pos=0.949 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-43,-10,132) d_h=44 h=130 mesh_tip(0,0,163.3)=(-139,66,-80) d_h=154 h=-82
+[P0A4] t=0.972 montage_pos=0.972 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-41,-4,130) d_h=41 h=128 mesh_tip(0,0,163.3)=(-109,129,-64) d_h=169 h=-66
+[P0A4] t=0.997 montage_pos=0.997 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-39,1,130) d_h=39 h=127 mesh_tip(0,0,163.3)=(-88,175,-35) d_h=196 h=-38
+[P0A4] t=1.021 montage_pos=1.021 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-38,3,129) d_h=38 h=127 mesh_tip(0,0,163.3)=(-83,205,-2) d_h=221 h=-4
+[P0A4] t=1.045 montage_pos=1.045 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-37,4,130) d_h=38 h=128 mesh_tip(0,0,163.3)=(-90,223,34) d_h=241 h=32
+[P0A4] t=1.073 montage_pos=1.073 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-37,4,131) d_h=37 h=128 mesh_tip(0,0,163.3)=(-111,230,74) d_h=256 h=72
+[P0A4] t=1.097 montage_pos=1.097 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-37,2,131) d_h=37 h=129 mesh_tip(0,0,163.3)=(-137,224,105) d_h=263 h=103
+[P0A4] t=1.121 montage_pos=1.121 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-37,0,132) d_h=37 h=130 mesh_tip(0,0,163.3)=(-165,209,128) d_h=266 h=126
+[P0A4] t=1.145 montage_pos=1.145 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-37,-2,133) d_h=38 h=131 mesh_tip(0,0,163.3)=(-190,189,146) d_h=268 h=144
+[P0A4] t=1.169 montage_pos=1.169 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-38,-5,134) d_h=38 h=132 mesh_tip(0,0,163.3)=(-210,167,158) d_h=268 h=156
+[P0A4] t=1.193 montage_pos=1.193 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-37,-7,135) d_h=38 h=132 mesh_tip(0,0,163.3)=(-223,149,165) d_h=269 h=163
+[P0A4] t=1.217 montage_pos=1.217 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-37,-10,135) d_h=39 h=133 mesh_tip(0,0,163.3)=(-232,135,169) d_h=269 h=167
+[P0A4] t=1.241 montage_pos=1.241 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-37,-12,136) d_h=39 h=134 mesh_tip(0,0,163.3)=(-239,123,172) d_h=269 h=170
+[P0A4] t=1.265 montage_pos=1.265 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-37,-13,137) d_h=39 h=135 mesh_tip(0,0,163.3)=(-244,111,175) d_h=268 h=173
+[P0A4] t=1.289 montage_pos=1.289 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-36,-15,138) d_h=39 h=136 mesh_tip(0,0,163.3)=(-249,100,179) d_h=268 h=177
+[P0A4] t=1.313 montage_pos=1.313 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-36,-17,138) d_h=39 h=136 mesh_tip(0,0,163.3)=(-252,88,183) d_h=267 h=181
+[P0A4] t=1.336 montage_pos=1.336 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-35,-18,139) d_h=39 h=137 mesh_tip(0,0,163.3)=(-255,78,187) d_h=267 h=185
+[P0A4] t=1.364 montage_pos=1.364 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-34,-20,140) d_h=40 h=138 mesh_tip(0,0,163.3)=(-258,65,192) d_h=266 h=190
+[P0A4] t=1.389 montage_pos=1.389 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-33,-21,140) d_h=40 h=138 mesh_tip(0,0,163.3)=(-260,55,196) d_h=265 h=194
+[P0A4] t=1.413 montage_pos=1.413 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-33,-22,141) d_h=40 h=139 mesh_tip(0,0,163.3)=(-261,44,201) d_h=264 h=198
+[P0A4] t=1.437 montage_pos=1.437 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-32,-24,141) d_h=40 h=139 mesh_tip(0,0,163.3)=(-261,34,205) d_h=264 h=203
+[P0A4] t=1.461 montage_pos=1.461 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-31,-25,142) d_h=40 h=140 mesh_tip(0,0,163.3)=(-262,24,209) d_h=263 h=207
+[P0A4] t=1.485 montage_pos=1.485 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-30,-26,143) d_h=40 h=140 mesh_tip(0,0,163.3)=(-262,13,213) d_h=262 h=211
+[P0A4] t=1.509 montage_pos=1.509 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-29,-27,143) d_h=40 h=141 mesh_tip(0,0,163.3)=(-261,1,217) d_h=261 h=215
+[P0A4] t=1.534 montage_pos=1.534 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-28,-29,144) d_h=40 h=142 mesh_tip(0,0,163.3)=(-260,-10,220) d_h=261 h=218
+[P0A4] t=1.557 montage_pos=1.557 phase=Recovery blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-27,-30,144) d_h=41 h=142 mesh_tip(0,0,163.3)=(-259,-22,223) d_h=260 h=221
+[P0A4] t=1.582 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-26,-32,145) d_h=41 h=142 mesh_tip(0,0,163.3)=(-257,-34,226) d_h=260 h=224
+[P0A4] t=1.604 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-19,-33,140) d_h=38 h=138 mesh_tip(0,0,163.3)=(-247,-85,213) d_h=261 h=211
+[P0A4] t=1.628 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-12,-33,135) d_h=35 h=133 mesh_tip(0,0,163.3)=(-228,-133,193) d_h=264 h=191
+[P0A4] t=1.657 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(-2,-32,130) d_h=32 h=128 mesh_tip(0,0,163.3)=(-192,-183,161) d_h=265 h=159
+[P0A4] t=1.679 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(6,-30,126) d_h=31 h=124 mesh_tip(0,0,163.3)=(-158,-212,131) d_h=264 h=129
+[P0A4] t=1.704 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(14,-27,123) d_h=30 h=121 mesh_tip(0,0,163.3)=(-116,-233,98) d_h=260 h=96
+[P0A4] t=1.729 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(22,-23,121) d_h=32 h=118 mesh_tip(0,0,163.3)=(-69,-243,63) d_h=252 h=61
+[P0A4] t=1.753 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(29,-18,119) d_h=35 h=117 mesh_tip(0,0,163.3)=(-23,-242,33) d_h=243 h=31
+[P0A4] t=1.778 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(33,-16,118) d_h=37 h=116 mesh_tip(0,0,163.3)=(4,-237,18) d_h=237 h=16
+[P0A4] t=1.802 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(33,-16,118) d_h=37 h=116 mesh_tip(0,0,163.3)=(4,-238,18) d_h=238 h=16
+[P0A4] t=1.826 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(34,-16,118) d_h=37 h=116 mesh_tip(0,0,163.3)=(5,-238,18) d_h=238 h=16
+[P0A4] t=1.850 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(34,-16,118) d_h=37 h=116 mesh_tip(0,0,163.3)=(5,-238,18) d_h=238 h=16
+[P0A4] t=1.874 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(34,-16,118) d_h=37 h=116 mesh_tip(0,0,163.3)=(5,-238,18) d_h=238 h=16
+[P0A4] t=1.897 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(34,-16,118) d_h=38 h=116 mesh_tip(0,0,163.3)=(6,-238,18) d_h=238 h=16
+[P0A4] t=1.922 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(34,-16,118) d_h=38 h=116 mesh_tip(0,0,163.3)=(6,-238,19) d_h=238 h=16
+[P0A4] t=1.949 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(34,-16,119) d_h=38 h=116 mesh_tip(0,0,163.3)=(6,-238,19) d_h=239 h=17
+[P0A4] t=1.973 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(34,-17,119) d_h=38 h=116 mesh_tip(0,0,163.3)=(7,-239,19) d_h=239 h=17
+[P0A4] t=1.998 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(34,-17,119) d_h=38 h=116 mesh_tip(0,0,163.3)=(6,-239,19) d_h=239 h=17
+[P0A4] t=2.022 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(34,-17,119) d_h=38 h=117 mesh_tip(0,0,163.3)=(6,-239,19) d_h=239 h=17
+[P0A4] t=2.046 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(34,-17,119) d_h=38 h=117 mesh_tip(0,0,163.3)=(6,-239,19) d_h=239 h=17
+[P0A4] t=2.069 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(35,-17,119) d_h=38 h=117 mesh_tip(0,0,163.3)=(5,-239,20) d_h=239 h=17
+[P0A4] t=2.093 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(35,-17,119) d_h=38 h=117 mesh_tip(0,0,163.3)=(5,-239,20) d_h=239 h=18
+[P0A4] t=2.117 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(35,-17,119) d_h=38 h=117 mesh_tip(0,0,163.3)=(4,-239,20) d_h=239 h=18
+[P0A4] t=2.141 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(35,-17,119) d_h=38 h=117 mesh_tip(0,0,163.3)=(4,-239,20) d_h=239 h=18
+[P0A4] t=2.165 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(35,-17,119) d_h=38 h=117 mesh_tip(0,0,163.3)=(4,-239,21) d_h=239 h=19
+[P0A4] t=2.189 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(35,-17,119) d_h=39 h=117 mesh_tip(0,0,163.3)=(4,-239,21) d_h=239 h=19
+[P0A4] t=2.213 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(35,-17,119) d_h=39 h=117 mesh_tip(0,0,163.3)=(4,-239,21) d_h=239 h=19
+[P0A4] t=2.242 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(35,-16,120) d_h=39 h=117 mesh_tip(0,0,163.3)=(4,-239,22) d_h=239 h=20
+[P0A4] t=2.265 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(35,-16,120) d_h=39 h=117 mesh_tip(0,0,163.3)=(4,-239,22) d_h=239 h=20
+[P0A4] t=2.289 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(35,-16,120) d_h=39 h=117 mesh_tip(0,0,163.3)=(4,-239,22) d_h=239 h=20
+[P0A4] t=2.314 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(36,-16,120) d_h=39 h=118 mesh_tip(0,0,163.3)=(5,-239,22) d_h=239 h=20
+[P0A4] t=2.337 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(36,-16,120) d_h=39 h=118 mesh_tip(0,0,163.3)=(5,-239,22) d_h=239 h=20
+[P0A4] t=2.361 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(36,-16,120) d_h=39 h=118 mesh_tip(0,0,163.3)=(6,-239,22) d_h=239 h=20
+[P0A4] t=2.384 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(36,-16,120) d_h=40 h=118 mesh_tip(0,0,163.3)=(7,-239,22) d_h=239 h=20
+[P0A4] t=2.408 montage_pos=1.557 phase=None blade_active=False blade_angle=-90.0 root_yaw=-110.1 mesh_origin=(36,-16,120) d_h=40 h=118 mesh_tip(0,0,163.3)=(7,-239,21) d_h=239 h=19
+[P0A4] done, 99 ticks logged

@@ -1,0 +1,1298 @@
+[
+  {
+    "frame_1based": 1,
+    "frame_0based": 0,
+    "time_s": 0.0,
+    "hand_cm": [
+      -4.26,
+      -16.46,
+      99.02
+    ],
+    "socket_cm": [
+      1.51,
+      -30.26,
+      98.55
+    ],
+    "tip_cm": [
+      146.04,
+      64.9,
+      271.92
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 159.81,
+    "tip_height_above_armature_origin_cm": 271.92
+  },
+  {
+    "frame_1based": 2,
+    "frame_0based": 1,
+    "time_s": 0.033,
+    "hand_cm": [
+      -4.64,
+      -16.33,
+      98.86
+    ],
+    "socket_cm": [
+      0.72,
+      -30.29,
+      98.44
+    ],
+    "tip_cm": [
+      148.35,
+      61.3,
+      271.12
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 160.52,
+    "tip_height_above_armature_origin_cm": 271.12
+  },
+  {
+    "frame_1based": 3,
+    "frame_0based": 2,
+    "time_s": 0.067,
+    "hand_cm": [
+      -5.64,
+      -15.93,
+      98.43
+    ],
+    "socket_cm": [
+      -1.39,
+      -30.28,
+      98.14
+    ],
+    "tip_cm": [
+      153.94,
+      51.35,
+      269.05
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 162.28,
+    "tip_height_above_armature_origin_cm": 269.05
+  },
+  {
+    "frame_1based": 4,
+    "frame_0based": 3,
+    "time_s": 0.1,
+    "hand_cm": [
+      -7.06,
+      -15.25,
+      97.77
+    ],
+    "socket_cm": [
+      -4.45,
+      -29.99,
+      97.67
+    ],
+    "tip_cm": [
+      160.44,
+      36.2,
+      266.29
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 164.47,
+    "tip_height_above_armature_origin_cm": 266.29
+  },
+  {
+    "frame_1based": 5,
+    "frame_0based": 4,
+    "time_s": 0.133,
+    "hand_cm": [
+      -8.69,
+      -14.3,
+      96.92
+    ],
+    "socket_cm": [
+      -8.02,
+      -29.25,
+      97.04
+    ],
+    "tip_cm": [
+      165.62,
+      17.4,
+      263.4
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 166.53,
+    "tip_height_above_armature_origin_cm": 263.4
+  },
+  {
+    "frame_1based": 6,
+    "frame_0based": 5,
+    "time_s": 0.167,
+    "hand_cm": [
+      -10.33,
+      -13.13,
+      95.94
+    ],
+    "socket_cm": [
+      -11.68,
+      -28.03,
+      96.28
+    ],
+    "tip_cm": [
+      168.04,
+      -2.82,
+      260.8
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 168.07,
+    "tip_height_above_armature_origin_cm": 260.8
+  },
+  {
+    "frame_1based": 7,
+    "frame_0based": 6,
+    "time_s": 0.2,
+    "hand_cm": [
+      -11.87,
+      -11.91,
+      94.88
+    ],
+    "socket_cm": [
+      -15.05,
+      -26.52,
+      95.43
+    ],
+    "tip_cm": [
+      167.5,
+      -21.82,
+      258.7
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 168.91,
+    "tip_height_above_armature_origin_cm": 258.7
+  },
+  {
+    "frame_1based": 8,
+    "frame_0based": 7,
+    "time_s": 0.233,
+    "hand_cm": [
+      -13.28,
+      -10.85,
+      93.8
+    ],
+    "socket_cm": [
+      -17.93,
+      -25.06,
+      94.51
+    ],
+    "tip_cm": [
+      166.14,
+      -37.77,
+      255.62
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 170.38,
+    "tip_height_above_armature_origin_cm": 255.62
+  },
+  {
+    "frame_1based": 9,
+    "frame_0based": 8,
+    "time_s": 0.267,
+    "hand_cm": [
+      -14.63,
+      -9.98,
+      92.7
+    ],
+    "socket_cm": [
+      -20.41,
+      -23.76,
+      93.54
+    ],
+    "tip_cm": [
+      165.43,
+      -51.5,
+      250.68
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 173.26,
+    "tip_height_above_armature_origin_cm": 250.68
+  },
+  {
+    "frame_1based": 10,
+    "frame_0based": 9,
+    "time_s": 0.3,
+    "hand_cm": [
+      -15.88,
+      -9.21,
+      91.61
+    ],
+    "socket_cm": [
+      -22.58,
+      -22.57,
+      92.54
+    ],
+    "tip_cm": [
+      164.77,
+      -63.88,
+      244.84
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 176.72,
+    "tip_height_above_armature_origin_cm": 244.84
+  },
+  {
+    "frame_1based": 11,
+    "frame_0based": 10,
+    "time_s": 0.333,
+    "hand_cm": [
+      -16.98,
+      -8.45,
+      90.58
+    ],
+    "socket_cm": [
+      -24.45,
+      -21.38,
+      91.55
+    ],
+    "tip_cm": [
+      163.35,
+      -75.48,
+      239.21
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 179.94,
+    "tip_height_above_armature_origin_cm": 239.21
+  },
+  {
+    "frame_1based": 12,
+    "frame_0based": 11,
+    "time_s": 0.367,
+    "hand_cm": [
+      -17.83,
+      -7.63,
+      89.6
+    ],
+    "socket_cm": [
+      -26.04,
+      -20.11,
+      90.56
+    ],
+    "tip_cm": [
+      160.3,
+      -86.62,
+      234.96
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 182.21,
+    "tip_height_above_armature_origin_cm": 234.96
+  },
+  {
+    "frame_1based": 13,
+    "frame_0based": 12,
+    "time_s": 0.4,
+    "hand_cm": [
+      -18.33,
+      -6.68,
+      88.68
+    ],
+    "socket_cm": [
+      -27.29,
+      -18.63,
+      89.57
+    ],
+    "tip_cm": [
+      154.68,
+      -97.52,
+      233.32
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 182.85,
+    "tip_height_above_armature_origin_cm": 233.32
+  },
+  {
+    "frame_1based": 14,
+    "frame_0based": 13,
+    "time_s": 0.433,
+    "hand_cm": [
+      -17.92,
+      -5.88,
+      88.12
+    ],
+    "socket_cm": [
+      -27.8,
+      -17.12,
+      88.43
+    ],
+    "tip_cm": [
+      135.66,
+      -106.69,
+      247.35
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 172.59,
+    "tip_height_above_armature_origin_cm": 247.35
+  },
+  {
+    "frame_1based": 15,
+    "frame_0based": 14,
+    "time_s": 0.467,
+    "hand_cm": [
+      -16.72,
+      -5.47,
+      88.14
+    ],
+    "socket_cm": [
+      -27.43,
+      -15.88,
+      87.12
+    ],
+    "tip_cm": [
+      96.59,
+      -108.18,
+      277.12
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 145.03,
+    "tip_height_above_armature_origin_cm": 277.12
+  },
+  {
+    "frame_1based": 16,
+    "frame_0based": 15,
+    "time_s": 0.5,
+    "hand_cm": [
+      -15.54,
+      -5.2,
+      88.54
+    ],
+    "socket_cm": [
+      -26.63,
+      -14.93,
+      86.0
+    ],
+    "tip_cm": [
+      46.64,
+      -97.95,
+      304.5
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 108.48,
+    "tip_height_above_armature_origin_cm": 304.5
+  },
+  {
+    "frame_1based": 17,
+    "frame_0based": 16,
+    "time_s": 0.533,
+    "hand_cm": [
+      -14.96,
+      -4.74,
+      89.01
+    ],
+    "socket_cm": [
+      -26.03,
+      -14.06,
+      85.22
+    ],
+    "tip_cm": [
+      1.48,
+      -81.65,
+      319.04
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 81.66,
+    "tip_height_above_armature_origin_cm": 319.04
+  },
+  {
+    "frame_1based": 18,
+    "frame_0based": 17,
+    "time_s": 0.567,
+    "hand_cm": [
+      -15.34,
+      -3.74,
+      89.15
+    ],
+    "socket_cm": [
+      -26.34,
+      -12.77,
+      84.5
+    ],
+    "tip_cm": [
+      -24.62,
+      -74.81,
+      321.45
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 78.76,
+    "tip_height_above_armature_origin_cm": 321.45
+  },
+  {
+    "frame_1based": 19,
+    "frame_0based": 18,
+    "time_s": 0.6,
+    "hand_cm": [
+      -17.0,
+      -1.91,
+      88.73
+    ],
+    "socket_cm": [
+      -28.02,
+      -10.45,
+      83.29
+    ],
+    "tip_cm": [
+      -24.65,
+      -95.51,
+      312.97
+    ],
+    "tip_to_socket_dist_cm": 244.94,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 98.64,
+    "tip_height_above_armature_origin_cm": 312.97
+  },
+  {
+    "frame_1based": 20,
+    "frame_0based": 19,
+    "time_s": 0.633,
+    "hand_cm": [
+      -18.87,
+      -5.38,
+      86.36
+    ],
+    "socket_cm": [
+      -27.72,
+      -16.61,
+      81.94
+    ],
+    "tip_cm": [
+      51.87,
+      -112.54,
+      292.79
+    ],
+    "tip_to_socket_dist_cm": 244.94,
+    "tip_to_hand_dist_cm": 243.1,
+    "tip_horizontal_reach_cm": 123.92,
+    "tip_height_above_armature_origin_cm": 292.79
+  },
+  {
+    "frame_1based": 21,
+    "frame_0based": 20,
+    "time_s": 0.667,
+    "hand_cm": [
+      -15.47,
+      -13.89,
+      83.98
+    ],
+    "socket_cm": [
+      -15.43,
+      -28.8,
+      82.78
+    ],
+    "tip_cm": [
+      151.84,
+      -5.07,
+      260.12
+    ],
+    "tip_to_socket_dist_cm": 244.93,
+    "tip_to_hand_dist_cm": 243.09,
+    "tip_horizontal_reach_cm": 151.92,
+    "tip_height_above_armature_origin_cm": 260.12
+  },
+  {
+    "frame_1based": 22,
+    "frame_0based": 21,
+    "time_s": 0.7,
+    "hand_cm": [
+      -7.26,
+      -18.81,
+      84.49
+    ],
+    "socket_cm": [
+      3.08,
+      -29.55,
+      85.85
+    ],
+    "tip_cm": [
+      119.5,
+      149.93,
+      205.13
+    ],
+    "tip_to_socket_dist_cm": 244.93,
+    "tip_to_hand_dist_cm": 243.09,
+    "tip_horizontal_reach_cm": 191.73,
+    "tip_height_above_armature_origin_cm": 205.13
+  },
+  {
+    "frame_1based": 23,
+    "frame_0based": 22,
+    "time_s": 0.733,
+    "hand_cm": [
+      1.5,
+      -21.41,
+      89.32
+    ],
+    "socket_cm": [
+      9.0,
+      -25.49,
+      77.03
+    ],
+    "tip_cm": [
+      141.4,
+      171.33,
+      138.07
+    ],
+    "tip_to_socket_dist_cm": 244.93,
+    "tip_to_hand_dist_cm": 243.1,
+    "tip_horizontal_reach_cm": 222.14,
+    "tip_height_above_armature_origin_cm": 138.07
+  },
+  {
+    "frame_1based": 24,
+    "frame_0based": 23,
+    "time_s": 0.767,
+    "hand_cm": [
+      3.28,
+      -19.3,
+      90.54
+    ],
+    "socket_cm": [
+      -9.83,
+      -19.64,
+      83.34
+    ],
+    "tip_cm": [
+      116.2,
+      118.51,
+      -74.86
+    ],
+    "tip_to_socket_dist_cm": 244.94,
+    "tip_to_hand_dist_cm": 243.1,
+    "tip_horizontal_reach_cm": 165.97,
+    "tip_height_above_armature_origin_cm": -74.86
+  },
+  {
+    "frame_1based": 25,
+    "frame_0based": 24,
+    "time_s": 0.8,
+    "hand_cm": [
+      -75.08,
+      5.0,
+      133.44
+    ],
+    "socket_cm": [
+      -66.07,
+      15.71,
+      128.15
+    ],
+    "tip_cm": [
+      -155.79,
+      -66.16,
+      -84.55
+    ],
+    "tip_to_socket_dist_cm": 244.94,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 169.26,
+    "tip_height_above_armature_origin_cm": -84.55
+  },
+  {
+    "frame_1based": 26,
+    "frame_0based": 25,
+    "time_s": 0.833,
+    "hand_cm": [
+      -55.36,
+      -26.9,
+      135.91
+    ],
+    "socket_cm": [
+      -60.56,
+      -12.98,
+      137.7
+    ],
+    "tip_cm": [
+      -198.55,
+      -80.24,
+      -53.17
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 214.15,
+    "tip_height_above_armature_origin_cm": -53.17
+  },
+  {
+    "frame_1based": 27,
+    "frame_0based": 26,
+    "time_s": 0.867,
+    "hand_cm": [
+      -2.99,
+      -36.92,
+      104.26
+    ],
+    "socket_cm": [
+      -6.53,
+      -48.79,
+      112.66
+    ],
+    "tip_cm": [
+      -89.21,
+      -129.75,
+      -103.23
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 157.46,
+    "tip_height_above_armature_origin_cm": -103.23
+  },
+  {
+    "frame_1based": 28,
+    "frame_0based": 27,
+    "time_s": 0.9,
+    "hand_cm": [
+      13.17,
+      -14.39,
+      92.76
+    ],
+    "socket_cm": [
+      24.34,
+      -24.14,
+      90.68
+    ],
+    "tip_cm": [
+      -32.6,
+      18.33,
+      -143.74
+    ],
+    "tip_to_socket_dist_cm": 244.94,
+    "tip_to_hand_dist_cm": 243.1,
+    "tip_horizontal_reach_cm": 37.4,
+    "tip_height_above_armature_origin_cm": -143.74
+  },
+  {
+    "frame_1based": 29,
+    "frame_0based": 28,
+    "time_s": 0.933,
+    "hand_cm": [
+      13.78,
+      -10.28,
+      93.12
+    ],
+    "socket_cm": [
+      26.88,
+      -14.84,
+      87.51
+    ],
+    "tip_cm": [
+      -56.43,
+      108.27,
+      -107.16
+    ],
+    "tip_to_socket_dist_cm": 244.94,
+    "tip_to_hand_dist_cm": 243.1,
+    "tip_horizontal_reach_cm": 122.09,
+    "tip_height_above_armature_origin_cm": -107.16
+  },
+  {
+    "frame_1based": 30,
+    "frame_0based": 29,
+    "time_s": 0.967,
+    "hand_cm": [
+      13.92,
+      -7.95,
+      93.48
+    ],
+    "socket_cm": [
+      27.24,
+      -8.32,
+      86.68
+    ],
+    "tip_cm": [
+      -78.85,
+      166.46,
+      -48.19
+    ],
+    "tip_to_socket_dist_cm": 244.94,
+    "tip_to_hand_dist_cm": 243.1,
+    "tip_horizontal_reach_cm": 184.19,
+    "tip_height_above_armature_origin_cm": -48.19
+  },
+  {
+    "frame_1based": 31,
+    "frame_0based": 30,
+    "time_s": 1.0,
+    "hand_cm": [
+      13.85,
+      -7.07,
+      93.74
+    ],
+    "socket_cm": [
+      27.06,
+      -4.95,
+      87.03
+    ],
+    "tip_cm": [
+      -83.73,
+      202.32,
+      18.06
+    ],
+    "tip_to_socket_dist_cm": 244.94,
+    "tip_to_hand_dist_cm": 243.1,
+    "tip_horizontal_reach_cm": 218.97,
+    "tip_height_above_armature_origin_cm": 18.06
+  },
+  {
+    "frame_1based": 32,
+    "frame_0based": 31,
+    "time_s": 1.033,
+    "hand_cm": [
+      13.59,
+      -7.3,
+      93.9
+    ],
+    "socket_cm": [
+      26.92,
+      -4.25,
+      87.81
+    ],
+    "tip_cm": [
+      -68.44,
+      221.33,
+      83.89
+    ],
+    "tip_to_socket_dist_cm": 244.94,
+    "tip_to_hand_dist_cm": 243.1,
+    "tip_horizontal_reach_cm": 231.67,
+    "tip_height_above_armature_origin_cm": 83.89
+  },
+  {
+    "frame_1based": 33,
+    "frame_0based": 32,
+    "time_s": 1.067,
+    "hand_cm": [
+      13.06,
+      -8.27,
+      93.99
+    ],
+    "socket_cm": [
+      26.76,
+      -5.58,
+      88.61
+    ],
+    "tip_cm": [
+      -37.52,
+      224.2,
+      143.98
+    ],
+    "tip_to_socket_dist_cm": 244.94,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 227.32,
+    "tip_height_above_armature_origin_cm": 143.98
+  },
+  {
+    "frame_1based": 34,
+    "frame_0based": 33,
+    "time_s": 1.1,
+    "hand_cm": [
+      12.23,
+      -9.65,
+      94.1
+    ],
+    "socket_cm": [
+      26.31,
+      -8.23,
+      89.25
+    ],
+    "tip_cm": [
+      0.38,
+      211.72,
+      193.89
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 211.72,
+    "tip_height_above_armature_origin_cm": 193.89
+  },
+  {
+    "frame_1based": 35,
+    "frame_0based": 34,
+    "time_s": 1.133,
+    "hand_cm": [
+      11.15,
+      -11.13,
+      94.29
+    ],
+    "socket_cm": [
+      25.41,
+      -11.46,
+      89.74
+    ],
+    "tip_cm": [
+      35.81,
+      188.6,
+      230.68
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 191.97,
+    "tip_height_above_armature_origin_cm": 230.68
+  },
+  {
+    "frame_1based": 36,
+    "frame_0based": 35,
+    "time_s": 1.167,
+    "hand_cm": [
+      10.01,
+      -12.49,
+      94.66
+    ],
+    "socket_cm": [
+      24.14,
+      -14.58,
+      90.22
+    ],
+    "tip_cm": [
+      62.26,
+      164.0,
+      253.49
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 175.42,
+    "tip_height_above_armature_origin_cm": 253.49
+  },
+  {
+    "frame_1based": 37,
+    "frame_0based": 36,
+    "time_s": 1.2,
+    "hand_cm": [
+      9.04,
+      -13.57,
+      95.27
+    ],
+    "socket_cm": [
+      22.93,
+      -17.01,
+      90.9
+    ],
+    "tip_cm": [
+      77.73,
+      148.77,
+      262.69
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 167.85,
+    "tip_height_above_armature_origin_cm": 262.69
+  },
+  {
+    "frame_1based": 38,
+    "frame_0based": 37,
+    "time_s": 1.233,
+    "hand_cm": [
+      8.19,
+      -14.37,
+      95.94
+    ],
+    "socket_cm": [
+      21.84,
+      -18.81,
+      91.73
+    ],
+    "tip_cm": [
+      86.54,
+      142.06,
+      264.74
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 166.35,
+    "tip_height_above_armature_origin_cm": 264.74
+  },
+  {
+    "frame_1based": 39,
+    "frame_0based": 38,
+    "time_s": 1.267,
+    "hand_cm": [
+      7.25,
+      -14.96,
+      96.44
+    ],
+    "socket_cm": [
+      20.64,
+      -20.34,
+      92.47
+    ],
+    "tip_cm": [
+      93.29,
+      136.39,
+      266.13
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 165.24,
+    "tip_height_above_armature_origin_cm": 266.13
+  },
+  {
+    "frame_1based": 40,
+    "frame_0based": 39,
+    "time_s": 1.3,
+    "hand_cm": [
+      6.28,
+      -15.37,
+      96.82
+    ],
+    "socket_cm": [
+      19.37,
+      -21.63,
+      93.15
+    ],
+    "tip_cm": [
+      98.54,
+      131.74,
+      266.97
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 164.51,
+    "tip_height_above_armature_origin_cm": 266.97
+  },
+  {
+    "frame_1based": 41,
+    "frame_0based": 40,
+    "time_s": 1.333,
+    "hand_cm": [
+      5.29,
+      -15.63,
+      97.09
+    ],
+    "socket_cm": [
+      18.05,
+      -22.72,
+      93.78
+    ],
+    "tip_cm": [
+      102.82,
+      127.93,
+      267.33
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 164.13,
+    "tip_height_above_armature_origin_cm": 267.33
+  },
+  {
+    "frame_1based": 42,
+    "frame_0based": 41,
+    "time_s": 1.367,
+    "hand_cm": [
+      4.32,
+      -15.77,
+      97.3
+    ],
+    "socket_cm": [
+      16.7,
+      -23.66,
+      94.38
+    ],
+    "tip_cm": [
+      106.57,
+      124.7,
+      267.34
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 164.03,
+    "tip_height_above_armature_origin_cm": 267.34
+  },
+  {
+    "frame_1based": 43,
+    "frame_0based": 42,
+    "time_s": 1.4,
+    "hand_cm": [
+      3.38,
+      -15.84,
+      97.47
+    ],
+    "socket_cm": [
+      15.34,
+      -24.47,
+      94.96
+    ],
+    "tip_cm": [
+      110.11,
+      121.73,
+      267.13
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 164.15,
+    "tip_height_above_armature_origin_cm": 267.13
+  },
+  {
+    "frame_1based": 44,
+    "frame_0based": 43,
+    "time_s": 1.433,
+    "hand_cm": [
+      2.48,
+      -15.85,
+      97.63
+    ],
+    "socket_cm": [
+      13.97,
+      -25.22,
+      95.54
+    ],
+    "tip_cm": [
+      113.72,
+      118.65,
+      266.86
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 164.35,
+    "tip_height_above_armature_origin_cm": 266.86
+  },
+  {
+    "frame_1based": 45,
+    "frame_0based": 44,
+    "time_s": 1.467,
+    "hand_cm": [
+      1.65,
+      -15.85,
+      97.8
+    ],
+    "socket_cm": [
+      12.59,
+      -25.91,
+      96.1
+    ],
+    "tip_cm": [
+      117.54,
+      115.06,
+      266.73
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 164.48,
+    "tip_height_above_armature_origin_cm": 266.73
+  },
+  {
+    "frame_1based": 46,
+    "frame_0based": 45,
+    "time_s": 1.5,
+    "hand_cm": [
+      0.88,
+      -15.86,
+      98.01
+    ],
+    "socket_cm": [
+      11.22,
+      -26.6,
+      96.67
+    ],
+    "tip_cm": [
+      121.63,
+      110.55,
+      266.95
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 164.36,
+    "tip_height_above_armature_origin_cm": 266.95
+  },
+  {
+    "frame_1based": 47,
+    "frame_0based": 46,
+    "time_s": 1.533,
+    "hand_cm": [
+      0.11,
+      -15.93,
+      98.23
+    ],
+    "socket_cm": [
+      9.76,
+      -27.32,
+      97.18
+    ],
+    "tip_cm": [
+      126.09,
+      104.73,
+      267.56
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 163.92,
+    "tip_height_above_armature_origin_cm": 267.56
+  },
+  {
+    "frame_1based": 48,
+    "frame_0based": 47,
+    "time_s": 1.567,
+    "hand_cm": [
+      -0.73,
+      -16.04,
+      98.43
+    ],
+    "socket_cm": [
+      8.18,
+      -28.04,
+      97.6
+    ],
+    "tip_cm": [
+      130.71,
+      97.82,
+      268.33
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 163.26,
+    "tip_height_above_armature_origin_cm": 268.33
+  },
+  {
+    "frame_1based": 49,
+    "frame_0based": 48,
+    "time_s": 1.6,
+    "hand_cm": [
+      -1.58,
+      -16.16,
+      98.61
+    ],
+    "socket_cm": [
+      6.57,
+      -28.69,
+      97.93
+    ],
+    "tip_cm": [
+      135.07,
+      90.32,
+      269.17
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 162.49,
+    "tip_height_above_armature_origin_cm": 269.17
+  },
+  {
+    "frame_1based": 50,
+    "frame_0based": 49,
+    "time_s": 1.633,
+    "hand_cm": [
+      -2.4,
+      -16.27,
+      98.75
+    ],
+    "socket_cm": [
+      5.03,
+      -29.25,
+      98.18
+    ],
+    "tip_cm": [
+      138.89,
+      82.81,
+      270.0
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 161.7,
+    "tip_height_above_armature_origin_cm": 270.0
+  },
+  {
+    "frame_1based": 51,
+    "frame_0based": 50,
+    "time_s": 1.667,
+    "hand_cm": [
+      -3.13,
+      -16.35,
+      98.87
+    ],
+    "socket_cm": [
+      3.64,
+      -29.69,
+      98.35
+    ],
+    "tip_cm": [
+      141.96,
+      75.89,
+      270.75
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 160.97,
+    "tip_height_above_armature_origin_cm": 270.75
+  },
+  {
+    "frame_1based": 52,
+    "frame_0based": 51,
+    "time_s": 1.7,
+    "hand_cm": [
+      -3.72,
+      -16.41,
+      98.95
+    ],
+    "socket_cm": [
+      2.52,
+      -30.0,
+      98.47
+    ],
+    "tip_cm": [
+      144.2,
+      70.18,
+      271.36
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 160.37,
+    "tip_height_above_armature_origin_cm": 271.36
+  },
+  {
+    "frame_1based": 53,
+    "frame_0based": 52,
+    "time_s": 1.733,
+    "hand_cm": [
+      -4.12,
+      -16.45,
+      99.0
+    ],
+    "socket_cm": [
+      1.78,
+      -30.2,
+      98.53
+    ],
+    "tip_cm": [
+      145.57,
+      66.32,
+      271.77
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 159.96,
+    "tip_height_above_armature_origin_cm": 271.77
+  },
+  {
+    "frame_1based": 54,
+    "frame_0based": 53,
+    "time_s": 1.767,
+    "hand_cm": [
+      -4.26,
+      -16.46,
+      99.02
+    ],
+    "socket_cm": [
+      1.51,
+      -30.26,
+      98.55
+    ],
+    "tip_cm": [
+      146.04,
+      64.9,
+      271.92
+    ],
+    "tip_to_socket_dist_cm": 244.95,
+    "tip_to_hand_dist_cm": 243.11,
+    "tip_horizontal_reach_cm": 159.81,
+    "tip_height_above_armature_origin_cm": 271.92
+  }
+]

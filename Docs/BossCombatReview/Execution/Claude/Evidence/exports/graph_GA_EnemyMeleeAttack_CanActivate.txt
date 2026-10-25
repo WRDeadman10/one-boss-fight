@@ -1,0 +1,14 @@
+( -944,    0) FunctionEntry          Can Activate Ability?
+( -320,  160) VariableGet            Get CombatComponent
+( -320,  192) CallFunction           Get Focused Combat Target / Target is BP Combat Component
+(  -64,  112) CallFunction           Is Combat Enabled? / Target is BP Combat Component
+(  -48,   64) VariableGet            Get CombatComponent
+(  224,  160) CommutativeAssociativeBinaryOperator AND Boolean
+(  512,    0) FunctionResult         Return Node
+( -144,  368) CallFunction           Is Ability Active? / Target is BP Advanced Ability System Component
+(  -32,  208) CallFunction           Is Valid
+(    0,  320) CallFunction           NOT Boolean
+( -384,  416) VariableGet            Get AbilitySystemComponent
+( -176,  480) CallFunction           Get Animating Ability / Target is BP Advanced Ability System Component
+( -176,  640) CallFunction           Is Cooldown Active?
+(   96,  656) CallFunction           NOT Boolean

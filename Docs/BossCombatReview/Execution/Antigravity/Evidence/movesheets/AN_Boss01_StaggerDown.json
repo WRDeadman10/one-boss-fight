@@ -1,0 +1,55 @@
+{
+  "contract_version": "1.0",
+  "clip_name": "AN_Boss01_StaggerDown",
+  "source_asset": {
+    "fbx_path": "Import/Boss01/Animations/AN_Boss01_StaggerDown.fbx",
+    "sha256": "61e805ab0a9bc8fe27404875d096ac4f60b0d8fb258dcb0e2177b1e8339529e0",
+    "byte_size": 761516
+  },
+  "timing_and_framing": {
+    "fps": 30,
+    "samples": 31,
+    "elapsed_duration_s": 1.0,
+    "frame_conventions": {
+      "blender_1based_range": [
+        1,
+        31
+      ],
+      "metadata_0based_range": [
+        0,
+        30
+      ],
+      "offset_rule": "F_blender = F_metadata + 1"
+    }
+  },
+  "author_intent_markers": {
+    "commit_time_s": null,
+    "windup_end_s": 0.0,
+    "active_start_s": 0.0,
+    "active_end_s": 1.0,
+    "recovery_end_s": 1.0,
+    "impact_time_s": null,
+    "is_looping": true,
+    "author_notes": "Posture Break Stagger: Kneeling Exhausted Breathing Loop. Perfect seamless loop where Frame 0 and Frame 30 are bitwise identical in all 88 bone transforms. Starts in kneeling pose matching StaggerFall Frame 21 (pelvis Z = 47.7 cm, right knee on floor, left foot planted, head bowed); ragged exhausted chest heave and inhale (0.00-0.50s, pelvis lifts 2.2 cm to 49.9 cm, chest lifts 8 deg); shuddering heavy exhale sinks torso back into resting posture (0.50-1.00s, pelvis returns to 47.7 cm). Left and right feet fully grounded."
+  },
+  "offline_kinematic_bounds": {
+    "root_sampling_mode": "armature_object(root)",
+    "max_root_excursion_cm": 0.0,
+    "end_start_displacement_cm": 0.0,
+    "pelvis_z_range_cm": [
+      47.74,
+      49.94
+    ],
+    "foot_z_range_cm": [
+      -0.01,
+      10.19
+    ],
+    "hand_r_max_reach_cm": 65.32
+  },
+  "contract_compliance": {
+    "fps_compliant": true,
+    "root_motion_category": "InPlace",
+    "root_motion_compliant": true,
+    "has_sidecar": true
+  }
+}

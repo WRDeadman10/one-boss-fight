@@ -1,0 +1,23 @@
+TestId,System,Setup,ExpectedResult,Verification,Severity
+QA01,Decision,"Target 170cm front, idle",A01/A02/A03 eligible if cooldown; unreachable lunge gated appropriately,Log candidates and reject reasons,Critical
+QA02,Decision,Player 180cm behind,"A05 rear hook eligible, frontal attacks gated",Log yaw and candidate list,High
+QA03,Tracking,Player rolls behind after A03 commit,Boss does not snap 180° during active strike,Draw facing yaw per frame,Critical
+QA04,Collision,Blade crosses player at 30fps,One logical hit max per strike; no tunneling,Trace screenshots + event log,Critical
+QA05,Defense,Player dodge i-frames overlap hit,Health damage zero; contact may be logged,Log defense resolution,Critical
+QA06,Combo,"A02 gate, player stays close front phase2","Permitted A07 continuation only once, up to max depth",Capture gate reason,High
+QA07,Combo,"A02 gate, player escapes range",Boss enters recovery not invisible follow-up,Observe graph state,High
+QA08,Interruption,Stance break during active sweep,Hit trace off; no stuck executor or movement mode,Force posture break,Critical
+QA09,Phase,Cross phase threshold during active slam,Deferred phase transition occurs after safe gate,Log both attack and transition,Critical
+QA10,Movement,Root-motion lunge near arena wall,Does not clip or teleport; fallback/clip resolution,Rewind and track root,High
+QA11,Healing,Heal out of LOS while boss neutral,No exact reactive heal counter,Perception trace,High
+QA12,Punish,Light/slow heavy attacks after overhead,Intended light punish works; heavy safe only from certain position,Measure response timing,High
+QA13,AoE,Player stands inside wave after ring passed,No additional damage,Plot ring radius and victim list,Critical
+QA14,Grab,Grab montage interrupted by death,Player control restored; player not stuck attached,Force death mid grab,Critical
+QA15,Performance,"30/60/120FPS, timescale 0.8/1.25",No duplicate hits or out-of-window contact,Trace timing histogram,High
+QA16,Nav,Player on ledge above boss,Boss recognizes unreachable melee zone; no hits through floor,Debug nav and Z checks,High
+QA17,AI,No attacks eligible,Fallback reposition/wait; no infinite BT loops,Force all cooldowns,Critical
+QA18,Damage,Impact+AOE collide with same victim,No accidental double-dip unless data explicitly authorizes,Log victim instance/window,Critical
+QA19,AntiCheese,Player continuously guards,"Guard-break offered with cooldown, misses punishable",Run fixed guard script,Medium
+QA20,Camera,Near arena wall and boss overhead,Weapon release visually readable in camera,Capture footage,High
+QA21,Network,"If optional coop, 150ms simulated RTT",Server authoritative damage; no duplicate wave hits,Dual-client trace,High
+QA22,Recovery,Player 200cm away after A03,Compute actual travel+startup; confirm intended punish classification,Timing instrumentation,High

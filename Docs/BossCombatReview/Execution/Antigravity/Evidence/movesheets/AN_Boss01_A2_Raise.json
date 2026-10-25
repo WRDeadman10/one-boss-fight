@@ -1,0 +1,55 @@
+{
+  "contract_version": "1.0",
+  "clip_name": "AN_Boss01_A2_Raise",
+  "source_asset": {
+    "fbx_path": "Import/Boss01/Animations/AN_Boss01_A2_Raise.fbx",
+    "sha256": "0349bfcf38b18ad8489c7dd5a6b869d703a67b6f6db84039234fc5dc9b2e63b1",
+    "byte_size": 663804
+  },
+  "timing_and_framing": {
+    "fps": 30,
+    "samples": 19,
+    "elapsed_duration_s": 0.6,
+    "frame_conventions": {
+      "blender_1based_range": [
+        1,
+        19
+      ],
+      "metadata_0based_range": [
+        0,
+        18
+      ],
+      "offset_rule": "F_blender = F_metadata + 1"
+    }
+  },
+  "author_intent_markers": {
+    "commit_time_s": null,
+    "windup_end_s": null,
+    "active_start_s": null,
+    "active_end_s": null,
+    "recovery_end_s": null,
+    "impact_time_s": null,
+    "is_looping": false,
+    "author_notes": "Authentic two-handed greatsword hoist edited from pack reference clips (REF_GS_ChargedAttack). Both feet stay firmly planted flat on the floor (foot Z=0.28-0.29m, zero airborne lift). Left and right hands stay locked to the hilt throughout (separation 13.9-33.6 cm). Torso coils and hips load weight into back leg. Hoists blade from neutral combat stance into high forward overhead poise without going behind the head. Matches frame 0 of AN_Boss01_A2_ApexHold."
+  },
+  "offline_kinematic_bounds": {
+    "root_sampling_mode": "armature_object(root)",
+    "max_root_excursion_cm": 0.0,
+    "end_start_displacement_cm": 0.0,
+    "pelvis_z_range_cm": [
+      95.9,
+      95.9
+    ],
+    "foot_z_range_cm": [
+      0.05,
+      8.81
+    ],
+    "hand_r_max_reach_cm": 70.56
+  },
+  "contract_compliance": {
+    "fps_compliant": true,
+    "root_motion_category": "InPlace",
+    "root_motion_compliant": true,
+    "has_sidecar": true
+  }
+}

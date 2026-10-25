@@ -1,0 +1,23 @@
+METRIC build = Strength (Saved/build_fight_build.txt); weapon style at the end ClaymoreCombatStyle
+METRIC run_id = 20261023T221227_5093664e
+METRIC policy = close-recovery-v3; source 4c3e4cfc912dc9a1275084771b1878f4c98b28a3e82348b065f4e68c2191db02
+METRIC outcome = boss_dead (boss health -1.5999946594238281, death state dying, HUD Fighting)
+METRIC fight_seconds = 140.2 of 420 allowed (world time from the wake)
+METRIC balance_evidence = INCONCLUSIVE: 4 dodge(s) pressed too late for the i-frames (close attacks are not reactively dodgeable: the run measures the bot); untracked boss moves dodged at a guessed time (AnimMontage_377, GS_EquipWeapon_Montage, Mid01_Anim_Montage)
+METRIC boss_health = 2000 -> -2, lost 2001.6 = 1001.6 weapon hits + 0.0 bleed procs + 1000.0 riposte impacts + 0.0 other
+METRIC hits_landed = 57 (Light 43, Strong 14); 0 hit record(s) without a health drop, 0 health drop(s) without a record
+METRIC boss_health_per_hit = 17.6 on average over all hits (weapon damage 1001.6 / 57 hits); by kind: Light 16.0 (n=43), Strong 22.4 (n=14)
+METRIC swings_thrown = 61 bot presses (Light 47, Strong 14), 71 swings seen by the swing tracker (Light 57, Strong 14), 4 whiffs, 0 ignored by the pack, 1 cut short by a dodge
+METRIC swing_to_hit_delay = Light median 0.23 s (n=42, guess 0.34); Strong median 0.57 s (n=13, guess 0.69)
+METRIC posture_breaks = 10
+METRIC ripostes = 10 done (impacts), 10 presses, 10 accepted, 0 rejected by the press itself, 0 rejected requests counted by the boss
+METRIC bleed_procs = 0 (last proc took 0.0 health)
+METRIC dodges = 6 presses, 6 dodge montages (6 quick, 0 full), 0 wave jumps, 0 ignored by the pack, 4 late (the i-frames start after the hit was due), stamina cost samples 20, 20, 15, 15, 15, 20
+METRIC hits_taken = 3 for 108 health (A1/Active 1, A1b/Active 1, no tracked move (boss montage Mid01_Anim_Montage) 1); player health 120.0 -> 12.0 (lowest 12.0)
+METRIC attacks_seen = A1 1 (hit me 1, not hit after a dodge 0 (NOT a dodge success rate: out of range counts too), missed on its own 0); A1b 2 (hit me 1, not hit after a dodge 1 (NOT a dodge success rate: out of range counts too), missed on its own 0); A2 1 (hit me 0, not hit after a dodge 1 (NOT a dodge success rate: out of range counts too), missed on its own 0); A3a 1 (hit me 0, not hit after a dodge 1 (NOT a dodge success rate: out of range counts too), missed on its own 0)
+METRIC openings = 13 usable (>= 0.45 s) seen, 11 used (at least one hit), 11 tried; 1 too short; by kind (seen/used): rec:A1 1/0; rec:A1b 1/0; roar 1/1; stagger 10/10
+METRIC stamina = start 100.0, lowest 5.0 at 22.3 s, below 15 for 5.2 s, 11 dips below 20
+METRIC phase_two = reached at 59.2 s (boss health 1193.6000022888184)
+METRIC untracked_boss_montages = AnimMontage_377 x1 (ignored); GS_EquipWeapon_Montage x1 (ignored); Mid01_Anim_Montage x1 (attack-like: dodged)
+METRIC walk_speed = 303 cm/s measured over 320 frames (the bot assumed 450)
+METRIC strike_range = 110 cm at the end (started at 125)

@@ -13,7 +13,12 @@
 #endif
 
 RPG_PERF_SWITCH(FireLights, "FireLights", "0 turns off the point lights of the fire sources (performance experiment).")
-RPG_PERF_SWITCH(FireShadows, "FireShadows", "0 turns off the shadows of the fire source lights (performance experiment).")
+#if !UE_BUILD_SHIPPING
+static TAutoConsoleVariable<int32> CVarFireShadows(TEXT("rpg.Perf.FireShadows"), -1, TEXT("-1 shadows as authored; 0 no fire light casts a shadow; N only the first N braziers keep their shadow (performance experiment)."), ECVF_Default);
+int32 RPGPerf::FireShadows() { return CVarFireShadows.GetValueOnGameThread(); }
+#else
+int32 RPGPerf::FireShadows() { return -1; }
+#endif
 RPG_PERF_SWITCH(FireFx, "FireFx", "0 hides the fire, smoke and spark particle systems of the fire sources (performance experiment).")
 RPG_PERF_SWITCH(GateMist, "GateMist", "0 hides the fog gate cards (performance experiment).")
 RPG_PERF_SWITCH(DressingAll, "DressingAll", "0 hides every instanced mesh of the arena dressing (performance experiment).")

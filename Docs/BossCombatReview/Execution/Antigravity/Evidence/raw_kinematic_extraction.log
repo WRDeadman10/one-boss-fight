@@ -1,0 +1,255 @@
+================================================================================
+ANTIGRAVITY OFFLINE KINEMATIC & GEOMETRIC EXTRACTION LOG (REVISION 05)
+Initiative: P0-P8 Boss Combat Improvement Program (CI-P0-A-01)
+Tool: Blender 5.1.2 (headless) | Scene Units: Metric (1.0 scale, meters)
+Coordinate System: Blender Right-Handed (Z-Up, Y-Forward, X-Right)
+Provenance: Pose semantics cite authored .txt sidecars (author intent).
+Root Sampling: Strict guard against silent zero excursion on missing root.
+================================================================================
+
+--- 1. WEAPON STATIC MESHES ---
+Asset: SM_KwangSword.fbx (Hidden Leader Reference Mesh)
+  Path: C:\UnrealProject\OneBossFight\Import\ThirdParty\Reference\SM_KwangSword.fbx
+  SHA-256: c25846828a7c47e507c861943a109be8fb995158cf0de374f99b6949e3109a7b
+  Byte Size: 348080 bytes
+  Mesh: SM_KwangSword | Verts: 2028 | Polys: 4018
+  World Bounds X (Width):  [-10.56, 11.95] cm (Delta: 22.51 cm)
+  World Bounds Y (Thick):  [-8.07, 8.06] cm (Delta: 16.13 cm)
+  World Bounds Z (Length): [-41.50, 142.90] cm (Delta: 184.40 cm)
+  Blade Reach above Origin (Z>0): 142.90 cm
+  Hilt Reach below Origin (Z<0):  -41.50 cm
+
+Asset: SM_Boss01_Greatsword.fbx (Visible Follower Project Mesh)
+  Path: C:\UnrealProject\OneBossFight\Import\Boss01\Weapons\SM_Boss01_Greatsword.fbx
+  SHA-256: f61ea86f0e8d90bf702d73b2f9bb4d77139ab7340fb8f59d2e89fe895f049307
+  Byte Size: 35996 bytes
+  Mesh: SM_Boss01_Greatsword | Verts: 541 | Polys: 569
+  World Bounds X (Width):  [-31.00, 31.00] cm (Delta: 62.00 cm)
+  World Bounds Y (Thick):  [-3.82, 3.82] cm (Delta: 7.64 cm)
+  World Bounds Z (Length): [-21.33, 163.30] cm (Delta: 184.63 cm)
+  Blade Reach above Origin (Z>0): 163.30 cm
+  Hilt Reach below Origin (Z<0):  -21.33 cm
+  Exported Empty/Socket: SOCKET_BladeEnd at (X=0.00, Y=0.00, Z=140.00) cm
+  Exported Empty/Socket: SOCKET_BladeStart at (X=0.00, Y=0.00, Z=15.00) cm
+  Exported Empty/Socket: SOCKET_MiddleSocket at (X=0.00, Y=0.00, Z=78.00) cm
+  Exported Empty/Socket: SOCKET_TrailEndSocket at (X=0.00, Y=0.00, Z=142.00) cm
+  Exported Empty/Socket: SOCKET_TrailStartSocket at (X=0.00, Y=0.00, Z=15.00) cm
+  Exported Empty/Socket: SOCKET_Weapon_End at (X=0.00, Y=0.00, Z=142.00) cm
+  Exported Empty/Socket: SOCKET_Weapon_Start at (X=0.00, Y=0.00, Z=15.00) cm
+
+Asset: SM_Boss01_EmberJavelin.fbx (Ember Javelin Project Mesh)
+  Path: C:\UnrealProject\OneBossFight\Import\Boss01\Weapons\SM_Boss01_EmberJavelin.fbx
+  SHA-256: 0b87b0d075c24ca1648b7c28ba795d2405a8362d89d01e21c7d6490950a646a3
+  Byte Size: 25964 bytes
+  Mesh: SM_Boss01_EmberJavelin | Verts: 118 | Polys: 124
+  World Bounds X (Width):  [0.00, 160.00] cm (Delta: 160.00 cm)
+  World Bounds Y (Thick):  [-3.80, 3.80] cm (Delta: 7.60 cm)
+  World Bounds Z (Length): [-2.30, 2.30] cm (Delta: 4.60 cm)
+  Blade Reach above Origin (Z>0): 2.30 cm
+  Hilt Reach below Origin (Z<0):  -2.30 cm
+
+--- 2. ANIMATION CLIPS (30 FPS SKELETAL EXTRACTION) ---
+Clip: AN_Boss01_A1_QuickSlash.fbx
+  SHA-256: f048d09fce6d57d23e406b3295db7fad16fdd536e5e7bd9116647cee4f927962
+  Byte Size: 751516 bytes
+  Frame Range: 1 to 37 (37 samples @ 30 fps)
+  Elapsed Duration: 1.200 s ((samples - 1) / fps)
+  Root Sampling Mode: armature_object(root)
+  Max Root Excursion from Fr 1: 0.0000 cm
+  End-Minus-Start Root Displacement: 0.0000 cm
+  Pelvis Bone-Origin Z Range: [95.90, 95.90] cm
+  Foot/Ball Bone-Origin Z Range: [-0.02, 11.98] cm
+  Hand_R Max 2D Planar Distance from Origin: 69.41 cm
+
+Clip: AN_Boss01_A2_Raise.fbx
+  SHA-256: 0349bfcf38b18ad8489c7dd5a6b869d703a67b6f6db84039234fc5dc9b2e63b1
+  Byte Size: 663804 bytes
+  Frame Range: 1 to 19 (19 samples @ 30 fps)
+  Elapsed Duration: 0.600 s ((samples - 1) / fps)
+  Root Sampling Mode: armature_object(root)
+  Max Root Excursion from Fr 1: 0.0000 cm
+  End-Minus-Start Root Displacement: 0.0000 cm
+  Pelvis Bone-Origin Z Range: [95.90, 95.90] cm
+  Foot/Ball Bone-Origin Z Range: [0.05, 8.81] cm
+  Hand_R Max 2D Planar Distance from Origin: 70.56 cm
+
+Clip: AN_Boss01_A2_ApexHold.fbx
+  SHA-256: 5825a809b459f3b0ed7bd8112841ef6f228600660b93353a14fe1947d1dc87c2
+  Byte Size: 741404 bytes
+  Frame Range: 1 to 36 (36 samples @ 30 fps)
+  Elapsed Duration: 1.167 s ((samples - 1) / fps)
+  Root Sampling Mode: armature_object(root)
+  Max Root Excursion from Fr 1: 0.0000 cm
+  End-Minus-Start Root Displacement: 0.0000 cm
+  Pelvis Bone-Origin Z Range: [95.90, 95.90] cm
+  Foot/Ball Bone-Origin Z Range: [0.23, 8.51] cm
+  Hand_R Max 2D Planar Distance from Origin: 18.45 cm
+
+Clip: AN_Boss01_A2_Slam.fbx
+  SHA-256: 7ec06e673aa8ed625b3b9769349c6ff3fc733928361703fcf5f073bdef6b02ab
+  Byte Size: 775420 bytes
+  Frame Range: 1 to 42 (42 samples @ 30 fps)
+  Elapsed Duration: 1.367 s ((samples - 1) / fps)
+  Root Sampling Mode: armature_object(root)
+  Max Root Excursion from Fr 1: 0.0000 cm
+  End-Minus-Start Root Displacement: 0.0000 cm
+  Pelvis Bone-Origin Z Range: [95.90, 95.90] cm
+  Foot/Ball Bone-Origin Z Range: [-0.02, 10.07] cm
+  Hand_R Max 2D Planar Distance from Origin: 70.44 cm
+
+Clip: AN_Boss01_A3a_Combo1.fbx
+  SHA-256: 81f30a2907f526485607ff45df5d8618188d4cc02fcb4fe50415d169ce5c3a31
+  Byte Size: 712652 bytes
+  Frame Range: 1 to 25 (25 samples @ 30 fps)
+  Elapsed Duration: 0.800 s ((samples - 1) / fps)
+  Root Sampling Mode: armature_object(root)
+  Max Root Excursion from Fr 1: 0.0000 cm
+  End-Minus-Start Root Displacement: 0.0000 cm
+  Pelvis Bone-Origin Z Range: [95.90, 95.90] cm
+  Foot/Ball Bone-Origin Z Range: [-0.02, 12.92] cm
+  Hand_R Max 2D Planar Distance from Origin: 68.96 cm
+
+Clip: AN_Boss01_A3b_Combo2.fbx
+  SHA-256: a34cbc6c936ec5de470e3316f80f81774ebbb08c466f6afff515742bf9853af1
+  Byte Size: 773900 bytes
+  Frame Range: 1 to 41 (41 samples @ 30 fps)
+  Elapsed Duration: 1.333 s ((samples - 1) / fps)
+  Root Sampling Mode: armature_object(root)
+  Max Root Excursion from Fr 1: 0.0000 cm
+  End-Minus-Start Root Displacement: 0.0000 cm
+  Pelvis Bone-Origin Z Range: [95.90, 95.90] cm
+  Foot/Ball Bone-Origin Z Range: [-0.01, 12.92] cm
+  Hand_R Max 2D Planar Distance from Origin: 67.32 cm
+
+Clip: AN_Boss01_A4_LowSweep.fbx
+  SHA-256: 10ae9415748510760120d890751b06d17a65519376d791db446cb450709dd0c3
+  Byte Size: 857852 bytes
+  Frame Range: 1 to 54 (54 samples @ 30 fps)
+  Elapsed Duration: 1.767 s ((samples - 1) / fps)
+  Root Sampling Mode: armature_object(root)
+  Max Root Excursion from Fr 1: 0.0000 cm
+  End-Minus-Start Root Displacement: 0.0000 cm
+  Pelvis Bone-Origin Z Range: [79.93, 95.88] cm
+  Foot/Ball Bone-Origin Z Range: [-8.64, 34.04] cm
+  Hand_R Max 2D Planar Distance from Origin: 75.25 cm
+
+Clip: AN_Boss01_A5_JavelinThrow.fbx
+  SHA-256: b84a1bf37b2e8cecaca52b0497d5be4527bd78dd47fc1b8930b1c690b80c44ca
+  Byte Size: 761532 bytes
+  Frame Range: 1 to 31 (31 samples @ 30 fps)
+  Elapsed Duration: 1.000 s ((samples - 1) / fps)
+  Root Sampling Mode: armature_object(root)
+  Max Root Excursion from Fr 1: 0.0000 cm
+  End-Minus-Start Root Displacement: 0.0000 cm
+  Pelvis Bone-Origin Z Range: [91.52, 95.90] cm
+  Foot/Ball Bone-Origin Z Range: [-4.45, 9.04] cm
+  Hand_R Max 2D Planar Distance from Origin: 52.28 cm
+
+Clip: AN_Boss01_DormantIdle.fbx
+  SHA-256: 7925b28fa7b6a5cecb19ba072897d6ce76c4713dca0ce60fe7b628871df7219f
+  Byte Size: 1304204 bytes
+  Frame Range: 1 to 151 (151 samples @ 30 fps)
+  Elapsed Duration: 5.000 s ((samples - 1) / fps)
+  Root Sampling Mode: armature_object(root)
+  Max Root Excursion from Fr 1: 0.0000 cm
+  End-Minus-Start Root Displacement: 0.0000 cm
+  Pelvis Bone-Origin Z Range: [47.74, 48.14] cm
+  Foot/Ball Bone-Origin Z Range: [2.49, 9.10] cm
+  Hand_R Max 2D Planar Distance from Origin: 67.15 cm
+
+Clip: AN_Boss01_Wake.fbx
+  SHA-256: 45a5d12f40656f67cf11881d6fef9ca09150da0b6d48abe9710444ac73ddba4c
+  Byte Size: 1102668 bytes
+  Frame Range: 1 to 106 (106 samples @ 30 fps)
+  Elapsed Duration: 3.500 s ((samples - 1) / fps)
+  Root Sampling Mode: armature_object(root)
+  Max Root Excursion from Fr 1: 0.0000 cm
+  End-Minus-Start Root Displacement: 0.0000 cm
+  Pelvis Bone-Origin Z Range: [47.74, 95.90] cm
+  Foot/Ball Bone-Origin Z Range: [-0.32, 14.97] cm
+  Hand_R Max 2D Planar Distance from Origin: 67.38 cm
+
+Clip: AN_Boss01_PhaseRoar.fbx
+  SHA-256: 5d63a4ac0e5f8f9b45dc98bcad0eaa04f3c8d3af5aeb1d248020aa6b29403062
+  Byte Size: 848412 bytes
+  Frame Range: 1 to 55 (55 samples @ 30 fps)
+  Elapsed Duration: 1.800 s ((samples - 1) / fps)
+  Root Sampling Mode: armature_object(root)
+  Max Root Excursion from Fr 1: 0.0000 cm
+  End-Minus-Start Root Displacement: 0.0000 cm
+  Pelvis Bone-Origin Z Range: [94.40, 95.90] cm
+  Foot/Ball Bone-Origin Z Range: [-1.32, 9.98] cm
+  Hand_R Max 2D Planar Distance from Origin: 69.81 cm
+
+Clip: AN_Boss01_StaggerFall.fbx
+  SHA-256: ed996cc93c3e12609dc1ba6003fd50a30d5622b588866cc10a79a5e4f24ebd2a
+  Byte Size: 687820 bytes
+  Frame Range: 1 to 22 (22 samples @ 30 fps)
+  Elapsed Duration: 0.700 s ((samples - 1) / fps)
+  Root Sampling Mode: armature_object(root)
+  Max Root Excursion from Fr 1: 0.0000 cm
+  End-Minus-Start Root Displacement: 0.0000 cm
+  Pelvis Bone-Origin Z Range: [47.74, 95.90] cm
+  Foot/Ball Bone-Origin Z Range: [-0.01, 20.86] cm
+  Hand_R Max 2D Planar Distance from Origin: 65.59 cm
+
+Clip: AN_Boss01_StaggerDown.fbx
+  SHA-256: 61e805ab0a9bc8fe27404875d096ac4f60b0d8fb258dcb0e2177b1e8339529e0
+  Byte Size: 761516 bytes
+  Frame Range: 1 to 31 (31 samples @ 30 fps)
+  Elapsed Duration: 1.000 s ((samples - 1) / fps)
+  Root Sampling Mode: armature_object(root)
+  Max Root Excursion from Fr 1: 0.0000 cm
+  End-Minus-Start Root Displacement: 0.0000 cm
+  Pelvis Bone-Origin Z Range: [47.74, 49.94] cm
+  Foot/Ball Bone-Origin Z Range: [-0.01, 10.19] cm
+  Hand_R Max 2D Planar Distance from Origin: 65.32 cm
+
+Clip: AN_Boss01_StaggerGetUp.fbx
+  SHA-256: 7d9aa124de9a3af139f92bbdb254979e0d8b9aade4000bdf2ba5e960c5af4665
+  Byte Size: 792492 bytes
+  Frame Range: 1 to 43 (43 samples @ 30 fps)
+  Elapsed Duration: 1.400 s ((samples - 1) / fps)
+  Root Sampling Mode: armature_object(root)
+  Max Root Excursion from Fr 1: 0.0000 cm
+  End-Minus-Start Root Displacement: 0.0000 cm
+  Pelvis Bone-Origin Z Range: [47.74, 95.90] cm
+  Foot/Ball Bone-Origin Z Range: [-48.30, 8.24] cm
+  Hand_R Max 2D Planar Distance from Origin: 66.75 cm
+
+Clip: AN_Boss01_DeathLegend.fbx
+  SHA-256: 56ab42fbfe36dbad961d528463fca180bd9e09124f8ecfee84584497dfc6c004
+  Byte Size: 1076556 bytes
+  Frame Range: 1 to 106 (106 samples @ 30 fps)
+  Elapsed Duration: 3.500 s ((samples - 1) / fps)
+  Root Sampling Mode: armature_object(root)
+  Max Root Excursion from Fr 1: 0.0000 cm
+  End-Minus-Start Root Displacement: 0.0000 cm
+  Pelvis Bone-Origin Z Range: [47.74, 95.90] cm
+  Foot/Ball Bone-Origin Z Range: [0.04, 21.53] cm
+  Hand_R Max 2D Planar Distance from Origin: 65.50 cm
+
+Clip: AN_Riposte_Player_Front.fbx
+  SHA-256: e57dc0aed931a024b71311a4b7b24897c04f7497824e990a9a5a3a8b239acd84
+  Byte Size: 825244 bytes
+  Frame Range: 1 to 49 (49 samples @ 30 fps)
+  Elapsed Duration: 1.600 s ((samples - 1) / fps)
+  Root Sampling Mode: armature_object(root)
+  Max Root Excursion from Fr 1: 90.0000 cm
+  End-Minus-Start Root Displacement: 90.0000 cm
+  Pelvis Bone-Origin Z Range: [85.92, 95.90] cm
+  Foot/Ball Bone-Origin Z Range: [-10.19, 9.47] cm
+  Hand_R Max 2D Planar Distance from Origin: 158.42 cm
+
+Clip: AN_Riposte_Boss_Reaction.fbx
+  SHA-256: 58dc6cccce401cd807319570e6b144a4710be37362bb806cffa3e29356b3c212
+  Byte Size: 866124 bytes
+  Frame Range: 1 to 61 (61 samples @ 30 fps)
+  Elapsed Duration: 2.000 s ((samples - 1) / fps)
+  Root Sampling Mode: armature_object(root)
+  Max Root Excursion from Fr 1: 0.0000 cm
+  End-Minus-Start Root Displacement: 0.0000 cm
+  Pelvis Bone-Origin Z Range: [47.64, 47.74] cm
+  Foot/Ball Bone-Origin Z Range: [-0.01, 8.20] cm
+  Hand_R Max 2D Planar Distance from Origin: 73.47 cm
+

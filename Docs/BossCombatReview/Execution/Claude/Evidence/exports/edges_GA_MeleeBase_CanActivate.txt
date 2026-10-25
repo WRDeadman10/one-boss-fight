@@ -1,0 +1,44 @@
+# graph 'Can Activate Ability?': 15 nodes
+NODE K2Node_FunctionEntry_0 (K2Node_FunctionEntry) 
+NODE K2Node_FunctionResult_0 (K2Node_FunctionResult) 
+NODE K2Node_VariableGet_4 (K2Node_VariableGet) CombatComponent
+NODE K2Node_CallFunction_7 (K2Node_CallFunction) 
+NODE K2Node_CommutativeAssociativeBinaryOperator_1 (K2Node_CommutativeAssociativeBinaryOperator) BooleanAND
+NODE K2Node_CallFunction_11 (K2Node_CallFunction) EnoughResources?
+NODE K2Node_VariableGet_13 (K2Node_VariableGet) CombatComponent
+NODE K2Node_CallFunction_2 (K2Node_CallFunction) GetAbilitySystemComponent
+NODE K2Node_EnumEquality_0 (K2Node_EnumEquality) 
+NODE K2Node_VariableGet_10 (K2Node_VariableGet) 
+NODE K2Node_CallFunction_9 (K2Node_CallFunction) 
+NODE K2Node_CallFunction_6 (K2Node_CallFunction) Not_PreBool ApplyGameplayEffectToTarget
+NODE K2Node_CallFunction_4 (K2Node_CallFunction) 
+NODE K2Node_Message_0 (K2Node_Message) 
+NODE K2Node_CallFunction_0 (K2Node_CallFunction) Not_PreBool BreakHitResult ExecuteUbergraph_GA_MeleeBase ExecuteUbergraph_GA_MeleeBase
+
+# edges (EXEC = execution pin)
+EXEC K2Node_FunctionEntry_0.then -> K2Node_Message_0.execute
+EXEC K2Node_FunctionEntry_0.then -> ?.E7061EC8
+     K2Node_FunctionEntry_0.EventData -> ?.D4B70A89
+EXEC K2Node_FunctionEntry_0.then -> ?.8AA97ADC
+     K2Node_FunctionEntry_0.Result -> ?.15C0FA37
+EXEC K2Node_FunctionEntry_0.then -> K2Node_CallFunction_0.execute
+     K2Node_VariableGet_4.CombatComponent -> K2Node_CallFunction_7.self
+     K2Node_CallFunction_7.ReturnValue -> K2Node_CommutativeAssociativeBinaryOperator_1.A
+     K2Node_CommutativeAssociativeBinaryOperator_1.ReturnValue -> K2Node_FunctionResult_0.Condition
+     K2Node_CallFunction_11.ReturnValue -> K2Node_CommutativeAssociativeBinaryOperator_1.B
+     K2Node_VariableGet_13.CombatComponent -> K2Node_CallFunction_2.self
+     K2Node_CallFunction_2.ReturnValue -> K2Node_EnumEquality_0.A
+     K2Node_CallFunction_2.ReturnValue -> ?.D0887D96
+     K2Node_CallFunction_2.ReturnValue -> K2Node_CallFunction_6.Target
+     K2Node_EnumEquality_0.ReturnValue -> K2Node_CommutativeAssociativeBinaryOperator_1.D
+     K2Node_CallFunction_9.ReturnValue -> K2Node_CallFunction_6.A
+     K2Node_CallFunction_6.ReturnValue -> K2Node_CommutativeAssociativeBinaryOperator_1.C
+EXEC K2Node_Message_0.then -> K2Node_FunctionResult_0.execute
+     K2Node_Message_0.ReturnValue -> K2Node_CallFunction_0.A
+     K2Node_CallFunction_0.ReturnValue -> K2Node_CommutativeAssociativeBinaryOperator_1.E
+     K2Node_CallFunction_0.Location -> ?.02299848
+     K2Node_CallFunction_0.Normal -> ?.F6370924
+     K2Node_CallFunction_0.PhysMat -> ?.559A332B
+     K2Node_CallFunction_0.HitComponent -> ?.D31735DB
+     K2Node_CallFunction_0.HitBoneName -> ?.F751ACB7
+# 25 edges

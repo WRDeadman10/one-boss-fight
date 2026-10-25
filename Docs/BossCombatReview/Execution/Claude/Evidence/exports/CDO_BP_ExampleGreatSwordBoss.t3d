@@ -1,0 +1,187 @@
+Begin Object Class=/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C Name="Default__BP_ExampleGreatSwordBoss_C" ExportPath="/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.Default__BP_ExampleGreatSwordBoss_C'"
+   Begin Object Class=/Script/Engine.CapsuleComponent Name="CollisionCylinder" Archetype="/Script/Engine.CapsuleComponent'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/BP_MasterSoulEnemy.Default__BP_MasterSoulEnemy_C:CollisionCylinder'" ExportPath="/Script/Engine.CapsuleComponent'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.Default__BP_ExampleGreatSwordBoss_C:CollisionCylinder'"
+      Begin Object Class=/Script/Engine.BodySetup Name="BodySetup_0" ExportPath="/Script/Engine.BodySetup'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.Default__BP_ExampleGreatSwordBoss_C:CollisionCylinder.BodySetup_0'"
+      End Object
+   End Object
+   Begin Object Class=/Script/Engine.ArrowComponent Name="Arrow" Archetype="/Script/Engine.ArrowComponent'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/BP_MasterSoulEnemy.Default__BP_MasterSoulEnemy_C:Arrow'" ExportPath="/Script/Engine.ArrowComponent'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.Default__BP_ExampleGreatSwordBoss_C:Arrow'"
+   End Object
+   Begin Object Class=/Script/Engine.CharacterMovementComponent Name="CharMoveComp" Archetype="/Script/Engine.CharacterMovementComponent'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/BP_MasterSoulEnemy.Default__BP_MasterSoulEnemy_C:CharMoveComp'" ExportPath="/Script/Engine.CharacterMovementComponent'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.Default__BP_ExampleGreatSwordBoss_C:CharMoveComp'"
+   End Object
+   Begin Object Class=/Script/Engine.SkeletalMeshComponent Name="CharacterMesh0" Archetype="/Script/Engine.SkeletalMeshComponent'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/BP_MasterSoulEnemy.Default__BP_MasterSoulEnemy_C:CharacterMesh0'" ExportPath="/Script/Engine.SkeletalMeshComponent'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.Default__BP_ExampleGreatSwordBoss_C:CharacterMesh0'"
+   End Object
+   Begin Object Name="CollisionCylinder" ExportPath="/Script/Engine.CapsuleComponent'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.Default__BP_ExampleGreatSwordBoss_C:CollisionCylinder'"
+      Begin Object Name="BodySetup_0" ExportPath="/Script/Engine.BodySetup'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.Default__BP_ExampleGreatSwordBoss_C:CollisionCylinder.BodySetup_0'"
+         AggGeom=(SphylElems=((Radius=63.000000,Length=162.000000)))
+         bNeverNeedsCookedCollisionData=True
+         DefaultInstance=()
+         CollisionTraceFlag=CTF_UseSimpleAsComplex
+      End Object
+      CapsuleHalfHeight=144.000000
+      CapsuleRadius=63.000000
+   End Object
+   Begin Object Name="Arrow" ExportPath="/Script/Engine.ArrowComponent'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.Default__BP_ExampleGreatSwordBoss_C:Arrow'"
+      AttachParent="CollisionCylinder"
+   End Object
+   Begin Object Name="CharMoveComp" ExportPath="/Script/Engine.CharacterMovementComponent'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.Default__BP_ExampleGreatSwordBoss_C:CharMoveComp'"
+   End Object
+   Begin Object Name="CharacterMesh0" ExportPath="/Script/Engine.SkeletalMeshComponent'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.Default__BP_ExampleGreatSwordBoss_C:CharacterMesh0'"
+      SkeletalMesh="/Script/Engine.SkeletalMesh'/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SKM_CombatMannequin_Simple.SKM_CombatMannequin_Simple'"
+      SkinnedAsset="/Script/Engine.SkeletalMesh'/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SKM_CombatMannequin_Simple.SKM_CombatMannequin_Simple'"
+      OverrideMaterials(0)="/Script/Engine.MaterialInstanceConstant'/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Materials/Instances/Manny/MI_Manny_01_Red.MI_Manny_01_Red'"
+      OverrideMaterials(1)="/Script/Engine.MaterialInstanceConstant'/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Materials/Instances/Manny/MI_Manny_02_Red.MI_Manny_02_Red'"
+      AttachParent="CollisionCylinder"
+      RelativeLocation=(X=0.000000,Y=0.000856,Z=-142.000000)
+      RelativeScale3D=(X=1.500000,Y=1.500000,Z=1.500000)
+   End Object
+   Weapon Mesh=None
+   Boss HUD=None
+   HealthBarWidget=None
+   AttributesComponent=None
+   PatrolComponent=None
+   LocomotionComponent=None
+   CollisionComponent=None
+   StateManagerComponent=None
+   AbilitySystemComponent=None
+   CombatComponent=None
+   LockOnWidget=None
+   Boss Stealth Kill=None
+   PelvisBoneName="Pelvis"
+   InteractionHitActor=None
+   InteractionHitResult=(FaceIndex=0,Time=1.000000,Distance=0.000000,Location=(X=0.000000,Y=0.000000,Z=0.000000),ImpactPoint=(X=0.000000,Y=0.000000,Z=0.000000),Normal=(X=0.000000,Y=0.000000,Z=0.000000),ImpactNormal=(X=0.000000,Y=0.000000,Z=0.000000),TraceStart=(X=0.000000,Y=0.000000,Z=0.000000),TraceEnd=(X=0.000000,Y=0.000000,Z=0.000000),PenetrationDepth=0.000000,MyItem=-1,Item=0,ElementIndex=0,bBlockingHit=False,bStartPenetrating=False,PhysMaterial=None,HitObjectHandle=(ReferenceObject=None),Component=None,BoneName="",MyBoneName="")
+   FootStepSounds=()
+   FootStepVFX=()
+   GameplayTags=(GameplayTags=((TagName="Enemy.Character")))
+   EnemyInfoRef="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/DataAssets/BP_EnemyInfo.BP_EnemyInfo_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleSwordEnemy/ExampleSwordEnemy.ExampleSwordEnemy'"
+   Base AI Controller=None
+   EnemySpawner=None
+   bIsTargeted=False
+   EnemyInfo=None
+   Mesh="/Script/Engine.SkeletalMeshComponent'CharacterMesh0'"
+   CharacterMovement="/Script/Engine.CharacterMovementComponent'CharMoveComp'"
+   CapsuleComponent="/Script/Engine.CapsuleComponent'CollisionCylinder'"
+   ArrowComponent="/Script/Engine.ArrowComponent'Arrow'"
+   BasedMovement=(BaseID=0,bServerHasBaseComponent=False,bRelativeRotation=False,bServerHasVelocity=False,BoneName="",MovementBase=None,Location=(X=0.000000,Y=0.000000,Z=0.000000),Rotation=(Pitch=0.000000,Yaw=0.000000,Roll=0.000000))
+   ReplicatedBasedMovement=(BaseID=0,bServerHasBaseComponent=False,bRelativeRotation=False,bServerHasVelocity=False,BoneName="",MovementBase=None,Location=(X=0.000000,Y=0.000000,Z=0.000000),Rotation=(Pitch=0.000000,Yaw=0.000000,Roll=0.000000))
+   ReplicatedServerLastTransformUpdateTimeStamp=0.000000
+   ReplayLastTransformUpdateTimeStamp=0.000000
+   BaseRotationOffset=(X=0.000000,Y=0.000000,Z=0.000000,W=1.000000)
+   BaseTranslationOffset=(X=0.000000,Y=0.000000,Z=0.000000)
+   ReplicatedGravityDirection=(X=0.000000,Y=0.000000,Z=-1.000000)
+   AnimRootMotionTranslationScale=1.000000
+   CrouchedEyeHeight=32.000000
+   bInBaseReplication=False
+   bIsCrouched=False
+   bPressedJump=False
+   bSimGravityDisabled=False
+   ReplicatedMovementMode=0
+   JumpMaxHoldTime=0.000000
+   JumpMaxCount=1
+   JumpCurrentCount=0
+   JumpCurrentCountPreJump=0
+   OnReachedJumpApex=()
+   LandedDelegate=()
+   MovementModeChangedDelegate=()
+   OnCharacterMovementUpdated=()
+   RepRootMotion=(Animation=None,bIsActive=False,bRelativePosition=False,bRelativeRotation=False,Position=0.000000,Location=(X=0.000000,Y=0.000000,Z=0.000000),Rotation=(Pitch=0.000000,Yaw=0.000000,Roll=0.000000),MovementBase=None,MovementBaseBoneName="",AuthoritativeRootMotion=(bHasAdditiveSources=False,bHasOverrideSources=False,bHasOverrideSourcesWithIgnoreZAccumulate=False,bIsAdditiveVelocityApplied=False,LastAccumulatedSettings=(Flags=0),LastPreAdditiveVelocity=(X=0.000000,Y=0.000000,Z=0.000000)),Acceleration=(X=0.000000,Y=0.000000,Z=0.000000),LinearVelocity=(X=0.000000,Y=0.000000,Z=0.000000))
+   bUseControllerRotationPitch=False
+   bUseControllerRotationYaw=False
+   bUseControllerRotationRoll=False
+   bCanAffectNavigationGeneration=False
+   BaseEyeHeight=64.000000
+   AutoPossessPlayer=Disabled
+   AutoPossessAI=PlacedInWorldOrSpawned
+   RemoteViewPitch=0
+   AIControllerClass="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BP_BaseAIController.BP_BaseAIController_C'"
+   PlayerState=None
+   Controller=None
+   ReceiveControllerChangedDelegate=()
+   ReceiveRestartedDelegate=()
+   OverrideInputComponentClass=None
+   PrimaryActorTick=(TickGroup=TG_PrePhysics,EndTickGroup=TG_PrePhysics,bTickEvenWhenPaused=False,bCanEverTick=True,bStartWithTickEnabled=True,bAllowTickOnDedicatedServer=True,TickInterval=0.000000)
+   bNetTemporary=False
+   bOnlyRelevantToOwner=False
+   bAlwaysRelevant=False
+   bReplicateMovement=True
+   bCallPreReplication=True
+   bCallPreReplicationForReplay=True
+   bHidden=False
+   bTearOff=False
+   bForceNetAddressable=False
+   bIsMainWorldOnly=False
+   bNetLoadOnClient=True
+   bNetUseOwnerRelevancy=False
+   bRelevantForNetworkReplays=True
+   bRelevantForLevelBounds=True
+   bReplayRewindable=False
+   bAllowTickBeforeBeginPlay=False
+   bAutoDestroyWhenFinished=False
+   bCanBeDamaged=True
+   bBlockInput=False
+   bCollideWhenPlacing=True
+   bFindCameraComponentWhenViewTarget=True
+   bGenerateOverlapEventsDuringLevelStreaming=True
+   bIgnoresOriginShifting=False
+   bEnableAutoLODGeneration=True
+   bIsEditorOnlyActor=False
+   bReplicates=True
+   bCanBeInCluster=False
+   bAllowReceiveTickEventOnDedicatedServer=True
+   bReplicateUsingRegisteredSubObjectList=False
+   bActorEnableCollision=True
+   bAsyncPhysicsTickEnabled=False
+   UpdateOverlapsMethodDuringLevelStreaming=UseConfigDefault
+   DefaultUpdateOverlapsMethodDuringLevelStreaming=OnlyUpdateMovable
+   InitialLifeSpan=0.000000
+   CustomTimeDilation=1.000000
+   RayTracingGroupId=-1
+   RuntimeGrid=""
+   ReplicatedMovement=(LocationQuantizationLevel=RoundTwoDecimals,VelocityQuantizationLevel=RoundWholeNumber,RotationQuantizationLevel=ByteComponents)
+   Owner=None
+   NetDriverName="GameNetDriver"
+   Role=ROLE_Authority
+   NetDormancy=DORM_Awake
+   SpawnCollisionHandlingMethod=AdjustIfPossibleButDontSpawnIfColliding
+   AutoReceiveInput=Disabled
+   InputPriority=0
+   InputComponent=None
+   NetCullDistanceSquared=225000000.000000
+   NetUpdateFrequency=100.000000
+   MinNetUpdateFrequency=2.000000
+   NetPriority=3.000000
+   PhysicsReplicationMode=Default
+   Instigator=None
+   RootComponent="/Script/Engine.CapsuleComponent'CollisionCylinder'"
+   PivotOffset=(X=0.000000,Y=0.000000,Z=0.000000)
+   HLODLayer=None
+   ParentComponent=None
+   ContentBundleGuid=00000000000000000000000000000000
+   ExternalDataLayerAsset=None
+   SpriteScale=1.000000
+   ActorLabel="MyPawn_C-1"
+   FolderPath=""
+   FolderGuid=00000000000000000000000000000000
+   bHiddenEd=False
+   bLockLocation=False
+   bActorLabelEditable=True
+   bEditable=True
+   bListedInSceneOutliner=True
+   bOptimizeBPComponentData=False
+   bCanPlayFromHere=False
+   bIsSpatiallyLoaded=True
+   OnTakeAnyDamage=()
+   OnTakePointDamage=()
+   OnTakeRadialDamage=()
+   OnActorBeginOverlap=()
+   OnActorEndOverlap=()
+   OnBeginCursorOver=()
+   OnEndCursorOver=()
+   OnClicked=()
+   OnReleased=()
+   OnInputTouchBegin=()
+   OnInputTouchEnd=()
+   OnInputTouchEnter=()
+   OnInputTouchLeave=()
+   OnActorHit=()
+   OnDestroyed=()
+   OnEndPlay=()
+End Object
