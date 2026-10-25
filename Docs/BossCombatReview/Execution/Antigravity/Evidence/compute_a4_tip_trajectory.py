@@ -29,8 +29,17 @@ import math
 import mathutils
 import json
 
-ANIM_FBX = r"C:/UnrealProject/OneBossFight/Import/Boss01/Animations/AN_Boss01_A4_LowSweep.fbx"
-OUT_JSON = r"C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/Evidence/a4_offline_tip_trajectory.json"
+def find_repo_root():
+    curr = os.path.dirname(os.path.abspath(__file__))
+    while curr and os.path.dirname(curr) != curr:
+        if os.path.exists(os.path.join(curr, "OneBossFight.uproject")):
+            return curr
+        curr = os.path.dirname(curr)
+    return os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "..", ".."))
+
+ROOT_DIR = find_repo_root()
+ANIM_FBX = os.path.join(ROOT_DIR, "Import", "Boss01", "Animations", "AN_Boss01_A4_LowSweep.fbx")
+OUT_JSON = os.path.join(ROOT_DIR, "Docs", "BossCombatReview", "Execution", "Antigravity", "Evidence", "a4_offline_tip_trajectory.json")
 
 # Clean scene setup
 bpy.ops.wm.read_factory_settings(use_empty=True)

@@ -1,12 +1,25 @@
 {
-  "contract_version": "1.0",
-  "clip_name": "AN_Boss01_StaggerFall",
-  "source_asset": {
-    "fbx_path": "Import/Boss01/Animations/AN_Boss01_StaggerFall.fbx",
-    "sha256": "ed996cc93c3e12609dc1ba6003fd50a30d5622b588866cc10a79a5e4f24ebd2a",
-    "byte_size": 687820
+  "schema_version": "2.0",
+  "move_id": "AN_Boss01_StaggerFall",
+  "move_category": "ProjectAuthoredAnimation",
+  "declared_intent": {
+    "has_declared_intent": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_StaggerFall.txt",
+    "source_hash": "3ce2cfd1100b9f91810b505e09a2b833c754e865e14bd231801a08c5332f5c3b",
+    "commit_time_s": null,
+    "windup_end_s": 0.13,
+    "active_start_s": 0.13,
+    "active_end_s": 0.5,
+    "recovery_end_s": 0.7,
+    "impact_time_s": null,
+    "is_looping": false,
+    "notes": "Posture Break Stagger: Knees Give Way. Starts from combat idle (0.00s); heavy posture break impact recoils upper torso backward (0.00-0.13s); knees collapse under weight, dropping pelvis from 95.9 cm to 72.0 cm (0.13-0.30s); right knee contacts floor as left foot braces (0.30-0.50s); settles into stable grounded kneeling rest with head bowed and greatsword resting against floor at pelvis Z = 47.7 cm (0.50-0.70s). Perfectly transitions into AN_Boss01_StaggerDown F0."
   },
-  "timing_and_framing": {
+  "measured_extraction": {
+    "has_measured_extraction": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_StaggerFall.fbx",
+    "source_hash": "ed996cc93c3e12609dc1ba6003fd50a30d5622b588866cc10a79a5e4f24ebd2a",
+    "byte_size": 687820,
     "fps": 30,
     "samples": 22,
     "elapsed_duration_s": 0.7,
@@ -20,19 +33,7 @@
         21
       ],
       "offset_rule": "F_blender = F_metadata + 1"
-    }
-  },
-  "author_intent_markers": {
-    "commit_time_s": null,
-    "windup_end_s": 0.13,
-    "active_start_s": 0.13,
-    "active_end_s": 0.5,
-    "recovery_end_s": 0.7,
-    "impact_time_s": null,
-    "is_looping": false,
-    "author_notes": "Posture Break Stagger: Knees Give Way. Starts from combat idle (0.00s); heavy posture break impact recoils upper torso backward (0.00-0.13s); knees collapse under weight, dropping pelvis from 95.9 cm to 72.0 cm (0.13-0.30s); right knee contacts floor as left foot braces (0.30-0.50s); settles into stable grounded kneeling rest with head bowed and greatsword resting against floor at pelvis Z = 47.7 cm (0.50-0.70s). Perfectly transitions into AN_Boss01_StaggerDown F0."
-  },
-  "offline_kinematic_bounds": {
+    },
     "root_sampling_mode": "armature_object(root)",
     "max_root_excursion_cm": 0.0,
     "end_start_displacement_cm": 0.0,
@@ -46,10 +47,28 @@
     ],
     "hand_r_max_reach_cm": 65.59
   },
-  "contract_compliance": {
-    "fps_compliant": true,
-    "root_motion_category": "InPlace",
-    "root_motion_compliant": true,
-    "has_sidecar": true
+  "engine_timeline": {
+    "has_engine_timeline": false,
+    "reason": "No live montage notify export available for standalone clip; pending montage wrapper or non-attack utility",
+    "source_file": null,
+    "source_hash": null,
+    "montage_name": null,
+    "asset_type": null,
+    "length_s": null,
+    "rate_scale": null,
+    "blend_in_s": null,
+    "blend_out_s": null,
+    "damage_windows": [],
+    "movement_disable_windows": [],
+    "rotation_windows": [],
+    "hit_stun_immune_windows": [],
+    "notifies": []
+  },
+  "approved_runtime": {
+    "status": "PENDING_ARCHITECTURE_GATE_APPROVAL",
+    "approved_by": null,
+    "approval_date": null,
+    "source_hash": null,
+    "runtime_definition": {}
   }
 }

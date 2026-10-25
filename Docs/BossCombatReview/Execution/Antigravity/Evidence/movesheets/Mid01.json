@@ -1,0 +1,90 @@
+{
+  "schema_version": "2.0",
+  "move_id": "Mid01",
+  "move_category": "PackMidAttack",
+  "declared_intent": {
+    "has_declared_intent": false,
+    "reason": "No authored sidecar exists for third-party pack clip; pack assets are unedited",
+    "source_file": null,
+    "source_hash": null,
+    "commit_time_s": null,
+    "windup_end_s": null,
+    "active_start_s": null,
+    "active_end_s": null,
+    "recovery_end_s": null,
+    "impact_time_s": null,
+    "is_looping": null,
+    "notes": null
+  },
+  "measured_extraction": {
+    "has_measured_extraction": false,
+    "reason": "No authored FBX source exists for third-party pack clip; third-party assets are unedited",
+    "source_file": null,
+    "source_hash": null,
+    "byte_size": null,
+    "fps": null,
+    "samples": null,
+    "elapsed_duration_s": null,
+    "frame_conventions": null,
+    "root_sampling_mode": null,
+    "max_root_excursion_cm": null,
+    "end_start_displacement_cm": null,
+    "pelvis_z_range_cm": null,
+    "foot_z_range_cm": null,
+    "hand_r_max_reach_cm": null
+  },
+  "engine_timeline": {
+    "has_engine_timeline": true,
+    "source_file": "Docs/BossCombatReview/Execution/Claude/Evidence/exports/montage_notifies_2026-10-25.txt",
+    "source_hash": "950c611ee5eae7bcdd7abca1ea56c051c3b42d988b427cf64452829142ab0b31",
+    "montage_name": "Mid01_Anim_Montage",
+    "asset_type": "AnimMontage",
+    "length_s": 2.6666667461395264,
+    "rate_scale": 1.0,
+    "blend_in_s": 0.25,
+    "blend_out_s": 0.25,
+    "damage_windows": [
+      {
+        "notify": "ANS_CollisionTrace_C",
+        "start_s": 0.637,
+        "duration_s": 0.247,
+        "end_s": 0.884
+      }
+    ],
+    "movement_disable_windows": [],
+    "rotation_windows": [
+      {
+        "notify": "ANS_SetDesiredRotation_C",
+        "start_s": 0.127,
+        "duration_s": 0.488,
+        "end_s": 0.615
+      }
+    ],
+    "hit_stun_immune_windows": [],
+    "notifies": [
+      {
+        "notify": "ANS_SetDesiredRotation_C",
+        "start_s": 0.127,
+        "duration_s": 0.488,
+        "end_s": 0.615
+      },
+      {
+        "notify": "AnimNotify_PlaySound",
+        "time_s": 0.627
+      },
+      {
+        "notify": "ANS_CollisionTrace_C",
+        "start_s": 0.637,
+        "duration_s": 0.247,
+        "end_s": 0.884
+      }
+    ]
+  },
+  "approved_runtime": {
+    "status": "PENDING_ARCHITECTURE_GATE_APPROVAL",
+    "approved_by": null,
+    "approval_date": null,
+    "source_hash": null,
+    "runtime_definition": {}
+  }
+}

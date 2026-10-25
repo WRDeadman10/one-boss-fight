@@ -1,12 +1,25 @@
 {
-  "contract_version": "1.0",
-  "clip_name": "AN_Boss01_PhaseRoar",
-  "source_asset": {
-    "fbx_path": "Import/Boss01/Animations/AN_Boss01_PhaseRoar.fbx",
-    "sha256": "5d63a4ac0e5f8f9b45dc98bcad0eaa04f3c8d3af5aeb1d248020aa6b29403062",
-    "byte_size": 848412
+  "schema_version": "2.0",
+  "move_id": "AN_Boss01_PhaseRoar",
+  "move_category": "ProjectAuthoredAnimation",
+  "declared_intent": {
+    "has_declared_intent": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_PhaseRoar.txt",
+    "source_hash": "f66f2849da723c9b91934c44c1604c3d76e16d63a7289d92a8081ff5bac91aad",
+    "commit_time_s": null,
+    "windup_end_s": 0.5,
+    "active_start_s": 0.5,
+    "active_end_s": 1.3,
+    "recovery_end_s": 1.8,
+    "impact_time_s": null,
+    "is_looping": false,
+    "notes": "Phase Two Transition Roar. Coiled anticipation (0.00-0.20s, pelvis drops to 86 cm); explosive heave into roar pose (0.20-0.50s); Roar Peak at 0.70s (notify moment: head arched back 38 deg, chest out, left arm flung wide, greatsword raised aloft at 75 deg, wide grounded stance); sustained apex hold with ember shudder (0.50-1.30s); controlled exhale and sword recovery settling smoothly back to combat ready idle (1.30-1.80s). Both feet grounded at Z \u2248 0."
   },
-  "timing_and_framing": {
+  "measured_extraction": {
+    "has_measured_extraction": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_PhaseRoar.fbx",
+    "source_hash": "5d63a4ac0e5f8f9b45dc98bcad0eaa04f3c8d3af5aeb1d248020aa6b29403062",
+    "byte_size": 848412,
     "fps": 30,
     "samples": 55,
     "elapsed_duration_s": 1.8,
@@ -20,19 +33,7 @@
         54
       ],
       "offset_rule": "F_blender = F_metadata + 1"
-    }
-  },
-  "author_intent_markers": {
-    "commit_time_s": null,
-    "windup_end_s": 0.5,
-    "active_start_s": 0.5,
-    "active_end_s": 1.3,
-    "recovery_end_s": 1.8,
-    "impact_time_s": null,
-    "is_looping": false,
-    "author_notes": "Phase Two Transition Roar. Coiled anticipation (0.00-0.20s, pelvis drops to 86 cm); explosive heave into roar pose (0.20-0.50s); Roar Peak at 0.70s (notify moment: head arched back 38 deg, chest out, left arm flung wide, greatsword raised aloft at 75 deg, wide grounded stance); sustained apex hold with ember shudder (0.50-1.30s); controlled exhale and sword recovery settling smoothly back to combat ready idle (1.30-1.80s). Both feet grounded at Z \u2248 0."
-  },
-  "offline_kinematic_bounds": {
+    },
     "root_sampling_mode": "armature_object(root)",
     "max_root_excursion_cm": 0.0,
     "end_start_displacement_cm": 0.0,
@@ -46,10 +47,28 @@
     ],
     "hand_r_max_reach_cm": 69.81
   },
-  "contract_compliance": {
-    "fps_compliant": true,
-    "root_motion_category": "InPlace",
-    "root_motion_compliant": true,
-    "has_sidecar": true
+  "engine_timeline": {
+    "has_engine_timeline": false,
+    "reason": "No live montage notify export available for standalone clip; pending montage wrapper or non-attack utility",
+    "source_file": null,
+    "source_hash": null,
+    "montage_name": null,
+    "asset_type": null,
+    "length_s": null,
+    "rate_scale": null,
+    "blend_in_s": null,
+    "blend_out_s": null,
+    "damage_windows": [],
+    "movement_disable_windows": [],
+    "rotation_windows": [],
+    "hit_stun_immune_windows": [],
+    "notifies": []
+  },
+  "approved_runtime": {
+    "status": "PENDING_ARCHITECTURE_GATE_APPROVAL",
+    "approved_by": null,
+    "approval_date": null,
+    "source_hash": null,
+    "runtime_definition": {}
   }
 }

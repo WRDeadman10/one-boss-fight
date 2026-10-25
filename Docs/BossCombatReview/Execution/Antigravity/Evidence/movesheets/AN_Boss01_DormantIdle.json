@@ -1,12 +1,25 @@
 {
-  "contract_version": "1.0",
-  "clip_name": "AN_Boss01_DormantIdle",
-  "source_asset": {
-    "fbx_path": "Import/Boss01/Animations/AN_Boss01_DormantIdle.fbx",
-    "sha256": "7925b28fa7b6a5cecb19ba072897d6ce76c4713dca0ce60fe7b628871df7219f",
-    "byte_size": 1304204
+  "schema_version": "2.0",
+  "move_id": "AN_Boss01_DormantIdle",
+  "move_category": "ProjectAuthoredAnimation",
+  "declared_intent": {
+    "has_declared_intent": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_DormantIdle.txt",
+    "source_hash": "90d0409bb561175ebcf71ec504c54fd9646ed348b0d213927ad624c6514fd189",
+    "commit_time_s": null,
+    "windup_end_s": null,
+    "active_start_s": null,
+    "active_end_s": null,
+    "recovery_end_s": null,
+    "impact_time_s": null,
+    "is_looping": true,
+    "notes": "Boss 01 Dormant Idle Stance (Asset A-06). Meditative boss encounter intro pose. Boss kneels in corrected kneel pose (min ankle Z=6.57 cm >= 3 cm, min ball Z=2.49 cm >= -1 cm). Hero greatsword planted point-down into the floor in front of boss (sword tip at Z=0.74 cm); both hands rest clasped upon pommel; head reverently bowed looking downward; subtle cyclical breathing loop with 3.01 cm peak displacement on middle_03_l at t=2.5s (0.1 < motion < 6.0 cm, loop closure diff 0.0000)."
   },
-  "timing_and_framing": {
+  "measured_extraction": {
+    "has_measured_extraction": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_DormantIdle.fbx",
+    "source_hash": "7925b28fa7b6a5cecb19ba072897d6ce76c4713dca0ce60fe7b628871df7219f",
+    "byte_size": 1304204,
     "fps": 30,
     "samples": 151,
     "elapsed_duration_s": 5.0,
@@ -20,19 +33,7 @@
         150
       ],
       "offset_rule": "F_blender = F_metadata + 1"
-    }
-  },
-  "author_intent_markers": {
-    "commit_time_s": null,
-    "windup_end_s": null,
-    "active_start_s": null,
-    "active_end_s": null,
-    "recovery_end_s": null,
-    "impact_time_s": null,
-    "is_looping": true,
-    "author_notes": "Boss 01 Dormant Idle Stance (Asset A-06). Meditative boss encounter intro pose. Boss kneels in corrected kneel pose (min ankle Z=6.57 cm >= 3 cm, min ball Z=2.49 cm >= -1 cm). Hero greatsword planted point-down into the floor in front of boss (sword tip at Z=0.74 cm); both hands rest clasped upon pommel; head reverently bowed looking downward; subtle cyclical breathing loop with 3.01 cm peak displacement on middle_03_l at t=2.5s (0.1 < motion < 6.0 cm, loop closure diff 0.0000)."
-  },
-  "offline_kinematic_bounds": {
+    },
     "root_sampling_mode": "armature_object(root)",
     "max_root_excursion_cm": 0.0,
     "end_start_displacement_cm": 0.0,
@@ -46,10 +47,28 @@
     ],
     "hand_r_max_reach_cm": 67.15
   },
-  "contract_compliance": {
-    "fps_compliant": true,
-    "root_motion_category": "InPlace",
-    "root_motion_compliant": true,
-    "has_sidecar": true
+  "engine_timeline": {
+    "has_engine_timeline": false,
+    "reason": "No live montage notify export available for standalone clip; pending montage wrapper or non-attack utility",
+    "source_file": null,
+    "source_hash": null,
+    "montage_name": null,
+    "asset_type": null,
+    "length_s": null,
+    "rate_scale": null,
+    "blend_in_s": null,
+    "blend_out_s": null,
+    "damage_windows": [],
+    "movement_disable_windows": [],
+    "rotation_windows": [],
+    "hit_stun_immune_windows": [],
+    "notifies": []
+  },
+  "approved_runtime": {
+    "status": "PENDING_ARCHITECTURE_GATE_APPROVAL",
+    "approved_by": null,
+    "approval_date": null,
+    "source_hash": null,
+    "runtime_definition": {}
   }
 }

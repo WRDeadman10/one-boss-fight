@@ -1,12 +1,25 @@
 {
-  "contract_version": "1.0",
-  "clip_name": "AN_Boss01_A2_Raise",
-  "source_asset": {
-    "fbx_path": "Import/Boss01/Animations/AN_Boss01_A2_Raise.fbx",
-    "sha256": "0349bfcf38b18ad8489c7dd5a6b869d703a67b6f6db84039234fc5dc9b2e63b1",
-    "byte_size": 663804
+  "schema_version": "2.0",
+  "move_id": "AN_Boss01_A2_Raise",
+  "move_category": "ProjectAuthoredAnimation",
+  "declared_intent": {
+    "has_declared_intent": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_A2_Raise.txt",
+    "source_hash": "4bb73002a801de7cf75802420e21439a52d1197b2312fa7d41f11222433f6579",
+    "commit_time_s": null,
+    "windup_end_s": null,
+    "active_start_s": null,
+    "active_end_s": null,
+    "recovery_end_s": null,
+    "impact_time_s": null,
+    "is_looping": false,
+    "notes": "Authentic two-handed greatsword hoist edited from pack reference clips (REF_GS_ChargedAttack). Both feet stay firmly planted flat on the floor (foot Z=0.28-0.29m, zero airborne lift). Left and right hands stay locked to the hilt throughout (separation 13.9-33.6 cm). Torso coils and hips load weight into back leg. Hoists blade from neutral combat stance into high forward overhead poise without going behind the head. Matches frame 0 of AN_Boss01_A2_ApexHold."
   },
-  "timing_and_framing": {
+  "measured_extraction": {
+    "has_measured_extraction": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_A2_Raise.fbx",
+    "source_hash": "0349bfcf38b18ad8489c7dd5a6b869d703a67b6f6db84039234fc5dc9b2e63b1",
+    "byte_size": 663804,
     "fps": 30,
     "samples": 19,
     "elapsed_duration_s": 0.6,
@@ -20,19 +33,7 @@
         18
       ],
       "offset_rule": "F_blender = F_metadata + 1"
-    }
-  },
-  "author_intent_markers": {
-    "commit_time_s": null,
-    "windup_end_s": null,
-    "active_start_s": null,
-    "active_end_s": null,
-    "recovery_end_s": null,
-    "impact_time_s": null,
-    "is_looping": false,
-    "author_notes": "Authentic two-handed greatsword hoist edited from pack reference clips (REF_GS_ChargedAttack). Both feet stay firmly planted flat on the floor (foot Z=0.28-0.29m, zero airborne lift). Left and right hands stay locked to the hilt throughout (separation 13.9-33.6 cm). Torso coils and hips load weight into back leg. Hoists blade from neutral combat stance into high forward overhead poise without going behind the head. Matches frame 0 of AN_Boss01_A2_ApexHold."
-  },
-  "offline_kinematic_bounds": {
+    },
     "root_sampling_mode": "armature_object(root)",
     "max_root_excursion_cm": 0.0,
     "end_start_displacement_cm": 0.0,
@@ -46,10 +47,28 @@
     ],
     "hand_r_max_reach_cm": 70.56
   },
-  "contract_compliance": {
-    "fps_compliant": true,
-    "root_motion_category": "InPlace",
-    "root_motion_compliant": true,
-    "has_sidecar": true
+  "engine_timeline": {
+    "has_engine_timeline": false,
+    "reason": "No live montage notify export available for standalone clip; pending montage wrapper or non-attack utility",
+    "source_file": null,
+    "source_hash": null,
+    "montage_name": null,
+    "asset_type": null,
+    "length_s": null,
+    "rate_scale": null,
+    "blend_in_s": null,
+    "blend_out_s": null,
+    "damage_windows": [],
+    "movement_disable_windows": [],
+    "rotation_windows": [],
+    "hit_stun_immune_windows": [],
+    "notifies": []
+  },
+  "approved_runtime": {
+    "status": "PENDING_ARCHITECTURE_GATE_APPROVAL",
+    "approved_by": null,
+    "approval_date": null,
+    "source_hash": null,
+    "runtime_definition": {}
   }
 }

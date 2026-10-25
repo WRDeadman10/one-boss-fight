@@ -1,12 +1,25 @@
 {
-  "contract_version": "1.0",
-  "clip_name": "AN_Boss01_A2_Slam",
-  "source_asset": {
-    "fbx_path": "Import/Boss01/Animations/AN_Boss01_A2_Slam.fbx",
-    "sha256": "7ec06e673aa8ed625b3b9769349c6ff3fc733928361703fcf5f073bdef6b02ab",
-    "byte_size": 775420
+  "schema_version": "2.0",
+  "move_id": "AN_Boss01_A2_Slam",
+  "move_category": "ProjectAuthoredAnimation",
+  "declared_intent": {
+    "has_declared_intent": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_A2_Slam.txt",
+    "source_hash": "cf207269b77857c8b2ba94f2b297215797571671a658e90ebdf9b16cccda27e5",
+    "commit_time_s": 0.0,
+    "windup_end_s": null,
+    "active_start_s": 0.07,
+    "active_end_s": 0.17,
+    "recovery_end_s": 1.37,
+    "impact_time_s": null,
+    "is_looping": false,
+    "notes": "Starts from ApexHold pose. Explosive 0.17s downward snap crashing blade into floor directly in front of the character at frame 5 (0.17s), dropping pelvis from 0.89m into deep impact crouch at 0.70m while both feet stay planted flat on the floor (foot Z=0.28m). Both hands stay locked to the grip (separation 13.9 cm). Recoil shudder from 0.17s to 0.33s (frames 5 to 10), blade wrench pull from 0.33s to 0.67s (frames 10 to 20), full recovery to neutral two-handed combat stance by 1.37s (frame 41)."
   },
-  "timing_and_framing": {
+  "measured_extraction": {
+    "has_measured_extraction": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_A2_Slam.fbx",
+    "source_hash": "7ec06e673aa8ed625b3b9769349c6ff3fc733928361703fcf5f073bdef6b02ab",
+    "byte_size": 775420,
     "fps": 30,
     "samples": 42,
     "elapsed_duration_s": 1.367,
@@ -20,19 +33,7 @@
         41
       ],
       "offset_rule": "F_blender = F_metadata + 1"
-    }
-  },
-  "author_intent_markers": {
-    "commit_time_s": 0.0,
-    "windup_end_s": null,
-    "active_start_s": 0.07,
-    "active_end_s": 0.17,
-    "recovery_end_s": 1.37,
-    "impact_time_s": null,
-    "is_looping": false,
-    "author_notes": "Starts from ApexHold pose. Explosive 0.17s downward snap crashing blade into floor directly in front of the character at frame 5 (0.17s), dropping pelvis from 0.89m into deep impact crouch at 0.70m while both feet stay planted flat on the floor (foot Z=0.28m). Both hands stay locked to the grip (separation 13.9 cm). Recoil shudder from 0.17s to 0.33s (frames 5 to 10), blade wrench pull from 0.33s to 0.67s (frames 10 to 20), full recovery to neutral two-handed combat stance by 1.37s (frame 41)."
-  },
-  "offline_kinematic_bounds": {
+    },
     "root_sampling_mode": "armature_object(root)",
     "max_root_excursion_cm": 0.0,
     "end_start_displacement_cm": 0.0,
@@ -46,10 +47,28 @@
     ],
     "hand_r_max_reach_cm": 70.44
   },
-  "contract_compliance": {
-    "fps_compliant": true,
-    "root_motion_category": "InPlace",
-    "root_motion_compliant": true,
-    "has_sidecar": true
+  "engine_timeline": {
+    "has_engine_timeline": false,
+    "reason": "No live montage notify export available for standalone clip; pending montage wrapper or non-attack utility",
+    "source_file": null,
+    "source_hash": null,
+    "montage_name": null,
+    "asset_type": null,
+    "length_s": null,
+    "rate_scale": null,
+    "blend_in_s": null,
+    "blend_out_s": null,
+    "damage_windows": [],
+    "movement_disable_windows": [],
+    "rotation_windows": [],
+    "hit_stun_immune_windows": [],
+    "notifies": []
+  },
+  "approved_runtime": {
+    "status": "PENDING_ARCHITECTURE_GATE_APPROVAL",
+    "approved_by": null,
+    "approval_date": null,
+    "source_hash": null,
+    "runtime_definition": {}
   }
 }

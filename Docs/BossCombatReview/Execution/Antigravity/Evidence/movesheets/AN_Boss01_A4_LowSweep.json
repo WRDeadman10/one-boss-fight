@@ -1,12 +1,25 @@
 {
-  "contract_version": "1.0",
-  "clip_name": "AN_Boss01_A4_LowSweep",
-  "source_asset": {
-    "fbx_path": "Import/Boss01/Animations/AN_Boss01_A4_LowSweep.fbx",
-    "sha256": "10ae9415748510760120d890751b06d17a65519376d791db446cb450709dd0c3",
-    "byte_size": 857852
+  "schema_version": "2.0",
+  "move_id": "AN_Boss01_A4_LowSweep",
+  "move_category": "ProjectAuthoredAnimation",
+  "declared_intent": {
+    "has_declared_intent": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_A4_LowSweep.txt",
+    "source_hash": "277d40972528e68f9eccf71c7e2f8dbaefaf208d248588252e3e3d69695eae7f",
+    "commit_time_s": 0.5,
+    "windup_end_s": 0.6,
+    "active_start_s": 0.6,
+    "active_end_s": 0.9,
+    "recovery_end_s": 1.767,
+    "impact_time_s": null,
+    "is_looping": false,
+    "notes": "Authentic wide horizontal low sweep with greatsword held low across the arena floor (<40 cm above floor, below player knees for reliable jump counterplay). Windup coils torso and drops pelvis 16 cm (0.00-0.60s); active slash sweeps across 220 degree arc from right to left (0.60-0.90s); deceleration and recovery smoothly returns to combat idle (0.90-1.767s). Both feet stay grounded flat on the arena floor throughout (zero airborne lift)."
   },
-  "timing_and_framing": {
+  "measured_extraction": {
+    "has_measured_extraction": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_A4_LowSweep.fbx",
+    "source_hash": "10ae9415748510760120d890751b06d17a65519376d791db446cb450709dd0c3",
+    "byte_size": 857852,
     "fps": 30,
     "samples": 54,
     "elapsed_duration_s": 1.767,
@@ -20,19 +33,7 @@
         53
       ],
       "offset_rule": "F_blender = F_metadata + 1"
-    }
-  },
-  "author_intent_markers": {
-    "commit_time_s": 0.5,
-    "windup_end_s": 0.6,
-    "active_start_s": 0.6,
-    "active_end_s": 0.9,
-    "recovery_end_s": 1.767,
-    "impact_time_s": null,
-    "is_looping": false,
-    "author_notes": "Authentic wide horizontal low sweep with greatsword held low across the arena floor (<40 cm above floor, below player knees for reliable jump counterplay). Windup coils torso and drops pelvis 16 cm (0.00-0.60s); active slash sweeps across 220 degree arc from right to left (0.60-0.90s); deceleration and recovery smoothly returns to combat idle (0.90-1.767s). Both feet stay grounded flat on the arena floor throughout (zero airborne lift)."
-  },
-  "offline_kinematic_bounds": {
+    },
     "root_sampling_mode": "armature_object(root)",
     "max_root_excursion_cm": 0.0,
     "end_start_displacement_cm": 0.0,
@@ -46,10 +47,27 @@
     ],
     "hand_r_max_reach_cm": 75.25
   },
-  "contract_compliance": {
-    "fps_compliant": true,
-    "root_motion_category": "InPlace",
-    "root_motion_compliant": true,
-    "has_sidecar": true
+  "engine_timeline": {
+    "has_engine_timeline": true,
+    "source_file": "Docs/BossCombatReview/Execution/Claude/Evidence/exports/montage_notifies_2026-10-25.txt",
+    "source_hash": "950c611ee5eae7bcdd7abca1ea56c051c3b42d988b427cf64452829142ab0b31",
+    "montage_name": "AN_Boss01_A4_LowSweep",
+    "asset_type": "AnimSequence",
+    "length_s": 1.7666666507720947,
+    "rate_scale": 1.0,
+    "blend_in_s": 0.25,
+    "blend_out_s": 0.25,
+    "damage_windows": [],
+    "movement_disable_windows": [],
+    "rotation_windows": [],
+    "hit_stun_immune_windows": [],
+    "notifies": []
+  },
+  "approved_runtime": {
+    "status": "PENDING_ARCHITECTURE_GATE_APPROVAL",
+    "approved_by": null,
+    "approval_date": null,
+    "source_hash": null,
+    "runtime_definition": {}
   }
 }
