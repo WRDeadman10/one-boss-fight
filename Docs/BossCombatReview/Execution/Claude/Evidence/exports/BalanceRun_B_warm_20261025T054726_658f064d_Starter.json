@@ -1,0 +1,70 @@
+{
+  "run_id": "20261025T054726_658f064d",
+  "policy": "close-recovery-v3",
+  "source_sha256": "4c3e4cfc912dc9a1275084771b1878f4c98b28a3e82348b065f4e68c2191db02",
+  "build": "Starter",
+  "build_source": "Saved/build_fight_build.txt",
+  "actual_style": "SwordCombatStyle",
+  "flags": {
+    "parts": true,
+    "slept": true,
+    "build_ok": true,
+    "intake_bound": true
+  },
+  "outcome": "player_dead",
+  "fight_seconds": 24.371917001903057,
+  "boss_start": 2000.0,
+  "boss_end": 1775.2780053372385,
+  "player_start": 120.0,
+  "player_end": -24.0,
+  "hits_by_kind": {
+    "Light": 5,
+    "Strong": 2
+  },
+  "posture_breaks": 1,
+  "ripostes": 1,
+  "bleed_procs": 0,
+  "hits_taken": 4,
+  "damage_taken": 144.0,
+  "coverage_gaps": [
+    "no victory",
+    "less than 40 percent boss health removed",
+    "only 2 heavy swing(s); need at least 3 to exercise the heavy-opener policy",
+    "2 dodge(s) pressed too late for the i-frames (close attacks are not reactively dodgeable: the run measures the bot)",
+    "untracked boss moves dodged at a guessed time (AnimMontage_155, GS_EquipWeapon_Montage, Mid01_Anim_Montage)"
+  ],
+  "errors": 0,
+  "error": null,
+  "metrics": [
+    "METRIC build = Starter (Saved/build_fight_build.txt); weapon style at the end SwordCombatStyle",
+    "METRIC run_id = 20261025T054726_658f064d",
+    "METRIC policy = close-recovery-v3; source 4c3e4cfc912dc9a1275084771b1878f4c98b28a3e82348b065f4e68c2191db02",
+    "METRIC outcome = player_dead (player health -24.0)",
+    "METRIC fight_seconds = 24.4 of 420 allowed (world time from the wake)",
+    "METRIC balance_evidence = INCONCLUSIVE: no victory; less than 40 percent boss health removed; only 2 heavy swing(s); need at least 3 to exercise the heavy-opener policy; 2 dodge(s) pressed too late for the i-frames (close attacks are not reactively dodgeable: the run measures the bot); untracked boss moves dodged at a guessed time (AnimMontage_155, GS_EquipWeapon_Montage, Mid01_Anim_Montage)",
+    "METRIC boss_health = 2000 -> 1775, lost 224.7 = 124.7 weapon hits + 0.0 bleed procs + 100.0 riposte impacts + 0.0 other",
+    "METRIC hits_landed = 7 (Light 5, Strong 2); 0 hit record(s) without a health drop, 0 health drop(s) without a record",
+    "METRIC boss_health_per_hit = 17.8 on average over all hits (weapon damage 124.7 / 7 hits); by kind: Light 16.0 (n=5), Strong 22.4 (n=2)",
+    "METRIC swings_thrown = 7 bot presses (Light 5, Strong 2), 8 swings seen by the swing tracker (Light 6, Strong 2), 0 whiffs, 0 ignored by the pack, 2 cut short by a dodge",
+    "METRIC swing_to_hit_delay = Light median 0.39 s (n=4, guess 0.34); Strong median 0.68 s (n=1, guess 0.69)",
+    "METRIC posture_breaks = 1",
+    "METRIC ripostes = 1 done (impacts), 1 presses, 1 accepted, 0 rejected by the press itself, 0 rejected requests counted by the boss",
+    "METRIC bleed_procs = 0 (last proc took 0.0 health)",
+    "METRIC dodges = 7 presses, 7 dodge montages (7 quick, 0 full), 0 wave jumps, 0 ignored by the pack, 2 late (the i-frames start after the hit was due), stamina cost samples 15, 20, 20, 20, 20, 20, 15",
+    "METRIC hits_taken = 4 for 144 health (A1b/Active 3, A3a/Active 1); player health 120.0 -> -24.0 (lowest -24.0)",
+    "METRIC attacks_seen = A1 2 (hit me 0, not hit after a dodge 2 (NOT a dodge success rate: out of range counts too), missed on its own 0); A1b 3 (hit me 3, not hit after a dodge 0 (NOT a dodge success rate: out of range counts too), missed on its own 0); A2 3 (hit me 0, not hit after a dodge 1 (NOT a dodge success rate: out of range counts too), missed on its own 2); A3a 2 (hit me 1, not hit after a dodge 1 (NOT a dodge success rate: out of range counts too), missed on its own 0)",
+    "METRIC openings = 5 usable (>= 0.45 s) seen, 3 used (at least one hit), 3 tried; 0 too short; by kind (seen/used): rec:A1 2/0; rec:A1b 1/1; rec:A2 1/1; stagger 1/1",
+    "METRIC stamina = start 100.0, lowest 5.0 at 21.3 s, below 15 for 2.8 s, 2 dips below 20",
+    "METRIC phase_two = not reached",
+    "METRIC untracked_boss_montages = AnimMontage_155 x1 (ignored); GS_EquipWeapon_Montage x1 (ignored); Mid01_Anim_Montage x1 (attack-like: dodged)",
+    "METRIC walk_speed = 412 cm/s measured over 75 frames (the bot assumed 450)",
+    "METRIC strike_range = 125 cm at the end (started at 125)"
+  ],
+  "settings": {
+    "spacing_max": 260.0,
+    "strike_range": 125.0,
+    "close_dodge": "flank",
+    "neutral_delay": 1.0,
+    "fight_limit": 420.0
+  }
+}

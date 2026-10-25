@@ -1,0 +1,62 @@
+{
+  "notes": "Illustrative settings only. Centimeters, seconds and degrees unless noted. Not verified Elden Ring internals or UE defaults.",
+  "targetFPS": 60,
+  "phases": {
+    "phase1": {
+      "hpAboveFraction": 0.55,
+      "maxComboDepth": 2,
+      "neutralWaitRangeS": [
+        0.35,
+        0.85
+      ],
+      "maxPressure": 90
+    },
+    "phase2": {
+      "hpAtOrBelowFraction": 0.55,
+      "maxComboDepth": 3,
+      "neutralWaitRangeS": [
+        0.25,
+        0.7
+      ],
+      "maxPressure": 110
+    }
+  },
+  "awareness": {
+    "contextRefreshHz": 8,
+    "minimumReactiveLatencyS": 0.22,
+    "frontHalfAngleDeg": 55,
+    "rearStartAbsYawDeg": 135,
+    "lineOfSightRequiredForHealPunish": true
+  },
+  "utility": {
+    "range": 0.28,
+    "angle": 0.2,
+    "opportunity": 0.2,
+    "spacing": 0.12,
+    "phase": 0.1,
+    "variety": 0.1,
+    "nearBestScoreGap": 0.12,
+    "samplingTemperature": 0.18,
+    "antiRepeatHalfLifeS": 6
+  },
+  "executor": {
+    "watchdogMarginS": 0.5,
+    "minRecoveryLockS": 0.3,
+    "maximumComboDurationS": 7
+  },
+  "trace": {
+    "bladeSampleCount": 6,
+    "maxSampleTravelCm": 25,
+    "maxAngularDeltaDeg": 12,
+    "singleHitPerInstanceByDefault": true
+  },
+  "posture": {
+    "max": 100,
+    "regenDelayS": 4,
+    "regenPointsPerSecond": 8
+  },
+  "pressure": {
+    "neutralRegenerationPerS": 18,
+    "recoveryRegenerationPerS": 5
+  }
+}

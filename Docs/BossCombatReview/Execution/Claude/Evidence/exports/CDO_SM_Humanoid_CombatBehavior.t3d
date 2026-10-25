@@ -1,0 +1,42 @@
+Begin Object Class=/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/States/SM_Humanoid_CombatBehavior.SM_Humanoid_CombatBehavior_C Name="Default__SM_Humanoid_CombatBehavior_C" ExportPath="/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/States/SM_Humanoid_CombatBehavior.SM_Humanoid_CombatBehavior_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/States/SM_Humanoid_CombatBehavior.Default__SM_Humanoid_CombatBehavior_C'"
+   AttackingDistance=800.000000
+   AttackingBehaviorMaxDistance=1000.000000
+   Chance to Attack After Attacking=40
+   StrafingRange=800.000000
+   Chance to Attack While Following=50
+   Chance to Attack While Strafing=45
+   StartFollowingRange=800.000000
+   MinFollowingRange=350.000000
+   MinFollowTime=1.500000
+   FollowMovementSpeed=600.000000
+   FollowTime=0.000000
+   Chance to Attack After Turning=50
+   ChangeToAttackAfterDefending=40
+   Chance to Attack After Hit=60
+   AttackingMovementSpeed=600.000000
+   Min Strafing Time=2.000000
+   Max Strafing Time=3.000000
+   StrafingMovementSpeed=300.000000
+   StrafingTime=0.000000
+   CurrentMaxStrafingTime=0.000000
+   AbilitySystemComponent=None
+   MinimumTurningDistance=250.000000
+   CollisionComponent=None
+   Return To Post Acceptable Radius=500.000000
+   Allowed Distance from Spawn Location=4000.000000
+   ReturnToPostMaxDistToTarget=2000.000000
+   CombatComponent=None
+   ReturnToPostLoseSightDistance=6000.000000
+   AttributesComponent=None
+   RetaliateDistance=800.000000
+   MaxHealingDistance=800.000000
+   HealthPercentageForHealing=50
+   "MaxDodgingDistance(Melee)"=350.000000
+   "Max Dodging Distance(Ranged)"=900.000000
+   AggressionLevel=8
+   Aggression Multiplier=(ValueSourceType_6_7248C1604501FA84ED1EDE80B957AC05=NewEnumerator1,Value_7_3E03993943E112E525E2909FAD5A4D08=0.000000,CurveTable_9_40AC58F44A05966EBEBE0386B15E94CC=(ScalableFloat_11_A1B9CD07453E57E387C324BC61130CF1=1.000000,CurveTable_10_C3CCA9AB479A503EC258CE983B7AE9EB=(CurveTable="/Script/Engine.CurveTable'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/CurveTables/CT_EnemyAggression.CT_EnemyAggression'",RowName="AggressionMultiplier")))
+   BehaviorManager=None
+   PerformingActor=None
+   StateManagerComponent=None
+   StateTag=(TagName="StateMachine.CombatBehavior")
+End Object

@@ -31,6 +31,7 @@ def place_far(pawn, boss):
 
 def finish():
     global handle
+    unreal.SystemLibrary.execute_console_command(unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world(), "rpg.WakeClip 0")  # back to the session default the older drivers need
     if handle:
         unreal.unregister_slate_post_tick_callback(handle)
         handle = None
@@ -87,6 +88,7 @@ def tick(delta):
         state["time"] += delta
         if state["phase"] == "start":
             if state["time"] > 0.5:
+                unreal.SystemLibrary.execute_console_command(unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world(), "rpg.WakeClip 1")  # this driver tests the wake clip itself
                 unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
                 state.update(phase="play", time=0.0, next=8.0)
             return

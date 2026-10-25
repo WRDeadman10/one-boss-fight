@@ -1,0 +1,55 @@
+{
+  "contract_version": "1.0",
+  "clip_name": "AN_Boss01_A5_JavelinThrow",
+  "source_asset": {
+    "fbx_path": "Import/Boss01/Animations/AN_Boss01_A5_JavelinThrow.fbx",
+    "sha256": "b84a1bf37b2e8cecaca52b0497d5be4527bd78dd47fc1b8930b1c690b80c44ca",
+    "byte_size": 761532
+  },
+  "timing_and_framing": {
+    "fps": 30,
+    "samples": 31,
+    "elapsed_duration_s": 1.0,
+    "frame_conventions": {
+      "blender_1based_range": [
+        1,
+        31
+      ],
+      "metadata_0based_range": [
+        0,
+        30
+      ],
+      "offset_rule": "F_blender = F_metadata + 1"
+    }
+  },
+  "author_intent_markers": {
+    "commit_time_s": 0.35,
+    "windup_end_s": 0.4,
+    "active_start_s": 0.4,
+    "active_end_s": 0.43,
+    "recovery_end_s": 1.0,
+    "impact_time_s": null,
+    "is_looping": false,
+    "author_notes": "Telegraph and throw of the ember javelin from the left brazier gauntlet. Windup draws the left arm back high beside the cowl (0.00-0.40s) with glowing ember telegraph from the dorsal crucible; projectile release event occurs at 0.40s (Frame 12); overhand follow-through and recoil returns cleanly to combat idle (0.40-1.00s). Both feet stay grounded flat on the arena floor throughout (zero airborne lift)."
+  },
+  "offline_kinematic_bounds": {
+    "root_sampling_mode": "armature_object(root)",
+    "max_root_excursion_cm": 0.0,
+    "end_start_displacement_cm": 0.0,
+    "pelvis_z_range_cm": [
+      91.52,
+      95.9
+    ],
+    "foot_z_range_cm": [
+      -4.45,
+      9.04
+    ],
+    "hand_r_max_reach_cm": 52.28
+  },
+  "contract_compliance": {
+    "fps_compliant": true,
+    "root_motion_category": "InPlace",
+    "root_motion_compliant": true,
+    "has_sidecar": true
+  }
+}

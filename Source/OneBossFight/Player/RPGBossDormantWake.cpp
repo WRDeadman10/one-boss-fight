@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGBossDormantWake.h"
+#include "HAL/IConsoleManager.h"
 
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimSequence.h"
@@ -90,8 +91,19 @@ void URPGBossDormantWake::BeginDormant()
 	}
 }
 
+#if !UE_BUILD_SHIPPING
+// Test sessions: rpg.WakeClip 0 skips the 3.5 s wake clip so that the older drivers, which attack right after Wake(), keep their timings (Scripts/RunDrivers.ps1 runs Scripts/Editor/wake_clip_off.py; pie_dormant_wake.py switches it on itself). Shipping always plays it.
+static TAutoConsoleVariable<int32> CVarWakeClip(TEXT("rpg.WakeClip"), 1, TEXT("0 skips the authored wake clip (tests only)."), ECVF_Default);
+#endif
+
 bool URPGBossDormantWake::BeginWake()
 {
+#if !UE_BUILD_SHIPPING
+	if (CVarWakeClip.GetValueOnGameThread() == 0)
+	{
+		return false;
+	}
+#endif
 	StopClips(TEXT("wake"));
 	ACharacter* Boss = GetBoss();
 	WakeMontage = RPGBossClips::Play(Boss, GetWakeClip(), 0.1f, 0.1f);

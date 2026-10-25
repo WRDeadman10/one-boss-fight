@@ -1,0 +1,85 @@
+[P0Notify] == GS_Attack01_Montage (AnimMontage) length=1.2000000476837158 rate_scale=1.0
+[P0Notify]    length 1.200 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25
+[P0Notify]    [state] ANS_DisableMovement_C at 0.000 s for 1.200 s
+[P0Notify]    [state] ANS_SetDesiredRotation_C at 0.000 s for 0.317 s
+[P0Notify]    AnimNotify_PlaySound at 0.164 s
+[P0Notify]    [state] ANS_CollisionTrace_C at 0.166 s for 0.303 s
+[P0Notify]    AN_PerformFollowUp_C at 0.544 s
+[P0Notify]    AN_EndAnimatingAbility_C at 0.962 s
+[P0Notify] == GS_Attack02_Montage (AnimMontage) length=1.2666666507720947 rate_scale=1.0
+[P0Notify]    length 1.267 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25
+[P0Notify]    [state] ANS_DisableMovement_C at 0.000 s for 1.267 s
+[P0Notify]    [state] ANS_SetDesiredRotation_C at 0.000 s for 0.236 s
+[P0Notify]    AnimNotify_PlaySound at 0.141 s
+[P0Notify]    [state] ANS_CollisionTrace_C at 0.141 s for 0.303 s
+[P0Notify]    AN_EndAnimatingAbility_C at 0.830 s
+[P0Notify] == GS_Attack03_Montage (AnimMontage) length=1.2666666507720947 rate_scale=1.0
+[P0Notify]    length 1.267 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25
+[P0Notify]    [state] ANS_DisableMovement_C at 0.000 s for 1.267 s
+[P0Notify]    [state] ANS_SetDesiredRotation_C at 0.000 s for 0.279 s
+[P0Notify]    AnimNotify_PlaySound at 0.114 s
+[P0Notify]    [state] ANS_CollisionTrace_C at 0.115 s for 0.303 s
+[P0Notify] == GS_Attack04_Montage (AnimMontage) length=1.4666666984558105 rate_scale=1.0
+[P0Notify]    length 1.467 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25
+[P0Notify]    [state] ANS_DisableMovement_C at 0.000 s for 1.467 s
+[P0Notify]    [state] ANS_SetDesiredRotation_C at 0.000 s for 0.279 s
+[P0Notify]    AnimNotify_PlaySound at 0.159 s
+[P0Notify]    [state] ANS_CollisionTrace_C at 0.162 s for 0.303 s
+[P0Notify] == GS_ChargedAttack_Montage (AnimMontage) length=3.4000000953674316 rate_scale=1.0
+[P0Notify]    length 3.400 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25
+[P0Notify]    [state] ANS_DisableMovement_C at 0.000 s for 4.933 s
+[P0Notify]    [state] ANS_CollisionTrace_C at 1.567 s for 0.193 s
+[P0Notify]    AnimNotify_PlaySound at 1.593 s
+[P0Notify]    AnimNotify_PlaySound at 1.817 s
+[P0Notify]    [state] ANS_CollisionTrace_C at 1.925 s for 0.179 s
+[P0Notify] == GS_LeapAttack_Montage (AnimMontage) length=1.8666666746139526 rate_scale=1.0
+[P0Notify]    length 1.867 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25
+[P0Notify]    [state] ANS_SetDesiredRotation_C at -0.000 s for 0.157 s
+[P0Notify]    [state] ANS_SetDesiredRotation_C at 0.691 s for 0.141 s
+[P0Notify]    [state] ANS_CollisionTrace_C at 0.754 s for 0.421 s
+[P0Notify] == GS_SprintAttackFollowUp_Montage (AnimMontage) length=1.8666666746139526 rate_scale=1.0
+[P0Notify]    length 1.867 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25
+[P0Notify]    [state] ANS_DisableMovement_C at 0.000 s for 3.400 s
+[P0Notify]    AnimNotify_PlaySound at 0.037 s
+[P0Notify]    [state] ANS_CollisionTrace_C at 0.037 s for 0.193 s
+[P0Notify]    AnimNotify_PlaySound at 0.361 s
+[P0Notify]    [state] ANS_CollisionTrace_C at 0.364 s for 0.187 s
+[P0Notify] == Mid01_Anim_Montage (AnimMontage) length=2.6666667461395264 rate_scale=1.0
+[P0Notify]    length 2.667 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25
+[P0Notify]    [state] ANS_SetDesiredRotation_C at 0.127 s for 0.488 s
+[P0Notify]    AnimNotify_PlaySound at 0.627 s
+[P0Notify]    [state] ANS_CollisionTrace_C at 0.637 s for 0.247 s
+[P0Notify] == RetaliationAttack_Montage (AnimMontage) length=1.2666666507720947 rate_scale=1.0
+[P0Notify]    length 1.267 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25
+[P0Notify]    [state] ANS_DisableMovement_C at 0.000 s for 1.267 s
+[P0Notify]    [state] ANS_HitStunImmune_C at 0.000 s for 1.267 s
+[P0Notify]    [state] ANS_SetDesiredRotation_C at 0.000 s for 0.257 s
+[P0Notify]    [state] ANS_CollisionTrace_C at 0.444 s for 0.186 s
+[P0Notify]    AnimNotify_PlaySound at 0.446 s
+[P0Notify]    [state] AnimNotifyState_Trail at 0.446 s for 0.190 s
+[P0Notify] == AM_Boss01_A1 (AnimMontage) length=1.2000000476837158 rate_scale=1.0
+[P0Notify]    length 1.200 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25
+[P0Notify]    [state] ANS_DisableMovement_C at 0.000 s for 0.500 s
+[P0Notify]    [state] ANS_SetDesiredRotation_C at 0.000 s for 0.330 s
+[P0Notify]    AnimNotify_PlaySound at 0.330 s
+[P0Notify]    [state] ANS_CollisionTrace_C at 0.350 s for 0.150 s
+[P0Notify] == AM_Boss01_A3a (AnimMontage) length=0.800000011920929 rate_scale=1.0
+[P0Notify]    length 0.800 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25
+[P0Notify]    [state] ANS_DisableMovement_C at 0.000 s for 0.600 s
+[P0Notify]    [state] ANS_SetDesiredRotation_C at 0.000 s for 0.380 s
+[P0Notify]    AnimNotify_PlaySound at 0.380 s
+[P0Notify]    [state] ANS_CollisionTrace_C at 0.400 s for 0.200 s
+[P0Notify]    AN_PerformFollowUp_C at 0.750 s
+[P0Notify]    AN_EndAnimatingAbility_C at 0.780 s
+[P0Notify] == AM_Boss01_A3b (AnimMontage) length=1.3333333730697632 rate_scale=1.0
+[P0Notify]    length 1.333 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25
+[P0Notify]    [state] ANS_DisableMovement_C at 0.000 s for 0.400 s
+[P0Notify]    [state] ANS_SetDesiredRotation_C at 0.000 s for 0.130 s
+[P0Notify]    AnimNotify_PlaySound at 0.130 s
+[P0Notify]    [state] ANS_CollisionTrace_C at 0.150 s for 0.250 s
+[P0Notify]    AN_EndAnimatingAbility_C at 1.313 s
+[P0Notify] == AN_Boss01_A4_LowSweep (AnimSequence) length=1.7666666507720947 rate_scale=1.0
+[P0Notify]    (AnimSequence: notifies are not readable from Python; see the authored sidecar and the montage wrappers AM_Boss01_*)
+[P0Notify] == AN_Boss01_A5_JavelinThrow (AnimSequence) length=1.0 rate_scale=1.0
+[P0Notify]    (AnimSequence: notifies are not readable from Python; see the authored sidecar and the montage wrappers AM_Boss01_*)
+[P0Notify] done

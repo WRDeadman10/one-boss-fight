@@ -1,0 +1,451 @@
+ABILITY GA_GS_Boss_HitStun_C
+   UberGraphFrame (StructProperty) = ()
+   BehaviorManagerComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/Components/BP_BehaviorManagerComponent.BP_BehaviorManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_BaseAIController_C_0.BehaviorManagerComponent'
+   bHitStunImmuneOnMaxHitCount? (BoolProperty) = False
+   UberGraphFrame (StructProperty) = ()
+   Hit React Montages (MapProperty) = ((NewEnumerator43, (AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/HitReactions/HitReact_Front_Montage.HitReact_Front_Montage'",EndTimeMultiplier_25_4247AE084F3CB1DE868E22BC4C8A46AA=0.600000)),(NewEnumerator72, (AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/HitReactions/HitReact_Back_Montage.HitReact_Back_Montage'",En
+   Hit React Montages (in Air) (MapProperty) = ()
+   State Manager Component (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/StateMachine/StateManagerComponent.StateManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.StateManagerComponent'
+   AttributesComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AttributesSystem/BP_AttributesComponent.BP_AttributesComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AttributesComponent'
+   Hit Count Attribute Tag (StructProperty) = (TagName="Attribute.HitCount")
+   UberGraphFrame (StructProperty) = ()
+   Directional? (BoolProperty) = True
+   UseInAirMontages? (BoolProperty) = False
+   UseSwingDirection? (BoolProperty) = False
+   SwingDirection(front) (MapProperty) = ((NewEnumerator19, NewEnumerator43),(NewEnumerator0, NewEnumerator49),(NewEnumerator1, NewEnumerator58),(NewEnumerator2, NewEnumerator43),(NewEnumerator3, NewEnumerator43),(NewEnumerator8, NewEnumerator43))
+   SwingDirection(back) (MapProperty) = ((NewEnumerator19, NewEnumerator72),(NewEnumerator0, NewEnumerator58),(NewEnumerator1, NewEnumerator49),(NewEnumerator2, NewEnumerator72),(NewEnumerator3, NewEnumerator72),(NewEnumerator8, NewEnumerator72))
+   SwingDirection(right) (MapProperty) = ((NewEnumerator19, NewEnumerator49),(NewEnumerator0, NewEnumerator72),(NewEnumerator1, NewEnumerator43),(NewEnumerator2, NewEnumerator49),(NewEnumerator3, NewEnumerator49),(NewEnumerator8, NewEnumerator49))
+   SwingDirection(left) (MapProperty) = ((NewEnumerator19, NewEnumerator58),(NewEnumerator0, NewEnumerator43),(NewEnumerator1, NewEnumerator72),(NewEnumerator2, NewEnumerator58),(NewEnumerator3, NewEnumerator58),(NewEnumerator8, NewEnumerator58))
+   RotateToFaceApplier? (MapProperty) = ()
+   MaxRotation (DoubleProperty) = 180.000000
+   RotationPerSecond (DoubleProperty) = 720.000000
+   Hit Data (ObjectProperty) = None
+   RotationTime (DoubleProperty) = 0.000000
+   TimePassed (DoubleProperty) = 0.000000
+   bEnableHitReactionRotation (BoolProperty) = False
+   bCanRecieveKnockback (BoolProperty) = True
+   Perfroming Character (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   KnockbackSpeed (DoubleProperty) = 0.000000
+   HitCount (IntProperty) = 0
+   RequiredSourceTags (StructProperty) = (GameplayTags=((TagName="ImpactDecision.Hit")))
+   RequiredAttackTypeTags (StructProperty) = ()
+   bUsesPoise (BoolProperty) = True
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   ActiveAbilityMontage (ObjectProperty) = None
+   AbilitySystemComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+   AbilityTags (StructProperty) = (GameplayTags=((TagName="Ability.HitReaction")))
+   Performing Actor (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   ActivationOwnedTags (StructProperty) = (GameplayTags=((TagName="Status.ActionCommitted")))
+   bPendingClearAbility? (BoolProperty) = False
+   ActivationRequiredTags (StructProperty) = ()
+   ActivationBlockedTags (StructProperty) = (GameplayTags=((TagName="Status.HitStunImmune")))
+   CancelAbilitiesWithTags (StructProperty) = ()
+   Cooldown Time (DoubleProperty) = 0.000000
+   CooldownLoopInterval (DoubleProperty) = 0.000000
+   Current Cooldown Time (DoubleProperty) = 0.000000
+   bCooldownActive? (BoolProperty) = False
+   Cost Gameplay Effect Class (ClassProperty) = None
+   Level (IntProperty) = 0
+   BlockAbilitiesWithTags (StructProperty) = ()
+   GameplayEventTags (StructProperty) = ()
+   bCanBeCanceled (BoolProperty) = True
+   bWaitingForRuntimeEvent (BoolProperty) = False
+   Waiting Event Tag (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   BlueprintHelperComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+ABILITY GA_GS_Boss_EnterCombat_C
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   StateManager (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/StateMachine/StateManagerComponent.StateManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.StateManagerComponent'
+   Enter Combat Montage (StructProperty) = (AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/GreatswordBoss/GS_EquipWeapon_Montage.GS_EquipWeapon_Montage'",PlayRate_4_2531EA39496C020B25EC63ABDF2CF569=1.000000,EndTimeMultiplier_25_4247AE084F3CB1DE868E22BC4C8A46AA=0.800000)
+   CombatComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Components/BP_CombatComponent.BP_CombatComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.CombatComponent'
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   ActiveAbilityMontage (ObjectProperty) = None
+   AbilitySystemComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+   AbilityTags (StructProperty) = (GameplayTags=((TagName="Ability.EnterCombat")))
+   Performing Actor (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   ActivationOwnedTags (StructProperty) = ()
+   bPendingClearAbility? (BoolProperty) = False
+   ActivationRequiredTags (StructProperty) = ()
+   ActivationBlockedTags (StructProperty) = ()
+   CancelAbilitiesWithTags (StructProperty) = ()
+   Cooldown Time (DoubleProperty) = 0.000000
+   CooldownLoopInterval (DoubleProperty) = 0.100000
+   Current Cooldown Time (DoubleProperty) = 0.000000
+   bCooldownActive? (BoolProperty) = False
+   Cost Gameplay Effect Class (ClassProperty) = None
+   Level (IntProperty) = 0
+   BlockAbilitiesWithTags (StructProperty) = ()
+   GameplayEventTags (StructProperty) = ()
+   bCanBeCanceled (BoolProperty) = True
+   bWaitingForRuntimeEvent (BoolProperty) = False
+   Waiting Event Tag (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   BlueprintHelperComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+ABILITY GA_GS_Boss_ExitCombat_C
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   StateManager (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/StateMachine/StateManagerComponent.StateManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.StateManagerComponent'
+   ExitCombatMontage (StructProperty) = (AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/GreatswordBoss/GS_UnequipWeapon_Montage.GS_UnequipWeapon_Montage'",PlayRate_4_2531EA39496C020B25EC63ABDF2CF569=1.000000,EndTimeMultiplier_25_4247AE084F3CB1DE868E22BC4C8A46AA=0.800000)
+   CombatComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Components/BP_CombatComponent.BP_CombatComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.CombatComponent'
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   ActiveAbilityMontage (ObjectProperty) = None
+   AbilitySystemComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+   AbilityTags (StructProperty) = (GameplayTags=((TagName="Ability.ExitCombat")))
+   Performing Actor (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   ActivationOwnedTags (StructProperty) = ()
+   bPendingClearAbility? (BoolProperty) = False
+   ActivationRequiredTags (StructProperty) = ()
+   ActivationBlockedTags (StructProperty) = ()
+   CancelAbilitiesWithTags (StructProperty) = ()
+   Cooldown Time (DoubleProperty) = 0.000000
+   CooldownLoopInterval (DoubleProperty) = 0.100000
+   Current Cooldown Time (DoubleProperty) = 0.000000
+   bCooldownActive? (BoolProperty) = False
+   Cost Gameplay Effect Class (ClassProperty) = None
+   Level (IntProperty) = 0
+   BlockAbilitiesWithTags (StructProperty) = ()
+   GameplayEventTags (StructProperty) = ()
+   bCanBeCanceled (BoolProperty) = True
+   bWaitingForRuntimeEvent (BoolProperty) = False
+   Waiting Event Tag (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   BlueprintHelperComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+ABILITY GA_GS_Boss_CloseAttack_C
+   UberGraphFrame (StructProperty) = ()
+   Behavior Manager Component (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/Components/BP_BehaviorManagerComponent.BP_BehaviorManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_BaseAIController_C_0.BehaviorManagerComponent'
+   Master AI (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   AttackMontages (ArrayProperty) = ((AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/GreatswordBoss/GS_Attack01_Montage.GS_Attack01_Montage'",AbilityEndType_32_951260D64E59D4A64784A3872E20F496=NewEnumerator1),(AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/GreatswordBoss/GS_Attack02_Montage.GS_Attack02_Montage'",AbilityEndType_32_951260D64E59D4A64784A3872E20F496=N
+   AttackData (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_AttackData.BP_AttackData_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/DataAssets/AttackData/DefaultMeleeAttackData.DefaultMeleeAttackData'
+   ResetAttackTime (DoubleProperty) = 0.250000
+   Attack Index (IntProperty) = 0
+   BlockGameplayCuesByImpactTags (StructProperty) = (GameplayTags=((TagName="ImpactDecision.BlockedHit"),(TagName="ImpactDecision.DeflectedHit"),(TagName="ImpactDecision.ParriedHit")))
+   StateManager (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/StateMachine/StateManagerComponent.StateManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.StateManagerComponent'
+   CombatComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Components/BP_CombatComponent.BP_CombatComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.CombatComponent'
+   Performing Character (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   LastAttackIndex (IntProperty) = 0
+   Random Attack Index? (BoolProperty) = True
+   CurrentAttackIndex (IntProperty) = 0
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   ActiveAbilityMontage (ObjectProperty) = None
+   AbilitySystemComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+   AbilityTags (StructProperty) = (GameplayTags=((TagName="Ability.Melee.Close")))
+   Performing Actor (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   ActivationOwnedTags (StructProperty) = ()
+   bPendingClearAbility? (BoolProperty) = False
+   ActivationRequiredTags (StructProperty) = ()
+   ActivationBlockedTags (StructProperty) = ()
+   CancelAbilitiesWithTags (StructProperty) = ()
+   Cooldown Time (DoubleProperty) = 0.000000
+   CooldownLoopInterval (DoubleProperty) = 0.100000
+   Current Cooldown Time (DoubleProperty) = 0.000000
+   bCooldownActive? (BoolProperty) = False
+   Cost Gameplay Effect Class (ClassProperty) = None
+   Level (IntProperty) = 0
+   BlockAbilitiesWithTags (StructProperty) = ()
+   GameplayEventTags (StructProperty) = ()
+   bCanBeCanceled (BoolProperty) = True
+   bWaitingForRuntimeEvent (BoolProperty) = False
+   Waiting Event Tag (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   BlueprintHelperComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+ABILITY GA_GS_Boss_CloseRare_C
+   UberGraphFrame (StructProperty) = ()
+   Behavior Manager Component (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/Components/BP_BehaviorManagerComponent.BP_BehaviorManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_BaseAIController_C_0.BehaviorManagerComponent'
+   Master AI (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   AttackMontages (ArrayProperty) = ((AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/GreatswordBoss/GS_ChargedAttack_Montage.GS_ChargedAttack_Montage'"))
+   AttackData (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_AttackData.BP_AttackData_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/DataAssets/AttackData/DefaultMeleeAttackData.DefaultMeleeAttackData'
+   ResetAttackTime (DoubleProperty) = 0.250000
+   Attack Index (IntProperty) = 0
+   BlockGameplayCuesByImpactTags (StructProperty) = (GameplayTags=((TagName="ImpactDecision.BlockedHit"),(TagName="ImpactDecision.DeflectedHit"),(TagName="ImpactDecision.ParriedHit")))
+   StateManager (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/StateMachine/StateManagerComponent.StateManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.StateManagerComponent'
+   CombatComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Components/BP_CombatComponent.BP_CombatComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.CombatComponent'
+   Performing Character (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   LastAttackIndex (IntProperty) = 0
+   Random Attack Index? (BoolProperty) = True
+   CurrentAttackIndex (IntProperty) = 0
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   ActiveAbilityMontage (ObjectProperty) = None
+   AbilitySystemComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+   AbilityTags (StructProperty) = (GameplayTags=((TagName="Ability.Melee.CloseRare")))
+   Performing Actor (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   ActivationOwnedTags (StructProperty) = ()
+   bPendingClearAbility? (BoolProperty) = False
+   ActivationRequiredTags (StructProperty) = ()
+   ActivationBlockedTags (StructProperty) = ()
+   CancelAbilitiesWithTags (StructProperty) = ()
+   Cooldown Time (DoubleProperty) = 0.000000
+   CooldownLoopInterval (DoubleProperty) = 0.100000
+   Current Cooldown Time (DoubleProperty) = 0.000000
+   bCooldownActive? (BoolProperty) = False
+   Cost Gameplay Effect Class (ClassProperty) = None
+   Level (IntProperty) = 0
+   BlockAbilitiesWithTags (StructProperty) = ()
+   GameplayEventTags (StructProperty) = ()
+   bCanBeCanceled (BoolProperty) = True
+   bWaitingForRuntimeEvent (BoolProperty) = False
+   Waiting Event Tag (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   BlueprintHelperComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+ABILITY GA_GS_Boss_MidRangeAttack_C
+   UberGraphFrame (StructProperty) = ()
+   Behavior Manager Component (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/Components/BP_BehaviorManagerComponent.BP_BehaviorManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_BaseAIController_C_0.BehaviorManagerComponent'
+   Master AI (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   AttackMontages (ArrayProperty) = ((AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/ExampleSwordMob/Mid01_Anim_Montage.Mid01_Anim_Montage'"))
+   AttackData (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_AttackData.BP_AttackData_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/DataAssets/AttackData/DefaultMeleeAttackData.DefaultMeleeAttackData'
+   ResetAttackTime (DoubleProperty) = 0.250000
+   Attack Index (IntProperty) = 0
+   BlockGameplayCuesByImpactTags (StructProperty) = (GameplayTags=((TagName="ImpactDecision.BlockedHit"),(TagName="ImpactDecision.DeflectedHit"),(TagName="ImpactDecision.ParriedHit")))
+   StateManager (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/StateMachine/StateManagerComponent.StateManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.StateManagerComponent'
+   CombatComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Components/BP_CombatComponent.BP_CombatComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.CombatComponent'
+   Performing Character (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   LastAttackIndex (IntProperty) = 0
+   Random Attack Index? (BoolProperty) = True
+   CurrentAttackIndex (IntProperty) = 0
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   ActiveAbilityMontage (ObjectProperty) = None
+   AbilitySystemComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+   AbilityTags (StructProperty) = (GameplayTags=((TagName="Ability.Melee.Far")))
+   Performing Actor (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   ActivationOwnedTags (StructProperty) = ()
+   bPendingClearAbility? (BoolProperty) = False
+   ActivationRequiredTags (StructProperty) = ()
+   ActivationBlockedTags (StructProperty) = ()
+   CancelAbilitiesWithTags (StructProperty) = ()
+   Cooldown Time (DoubleProperty) = 0.000000
+   CooldownLoopInterval (DoubleProperty) = 0.100000
+   Current Cooldown Time (DoubleProperty) = 0.000000
+   bCooldownActive? (BoolProperty) = False
+   Cost Gameplay Effect Class (ClassProperty) = None
+   Level (IntProperty) = 0
+   BlockAbilitiesWithTags (StructProperty) = ()
+   GameplayEventTags (StructProperty) = ()
+   bCanBeCanceled (BoolProperty) = True
+   bWaitingForRuntimeEvent (BoolProperty) = False
+   Waiting Event Tag (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   BlueprintHelperComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+ABILITY GA_GS_Boss_LeapAttack_C
+   UberGraphFrame (StructProperty) = ()
+   MinDistance (DoubleProperty) = 500.000000
+   MaxAllowedLeapDistance (DoubleProperty) = 1200.000000
+   StartLoc (StructProperty) = (X=0.000000,Y=0.000000,Z=0.000000)
+   LeapSpeed (FloatProperty) = 1000.000000
+   LeapMaxHeight (DoubleProperty) = 350.000000
+   UberGraphFrame (StructProperty) = ()
+   Behavior Manager Component (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/Components/BP_BehaviorManagerComponent.BP_BehaviorManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_BaseAIController_C_0.BehaviorManagerComponent'
+   Master AI (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   AttackMontages (ArrayProperty) = ((AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/GreatswordBoss/GS_LeapAttack_Montage.GS_LeapAttack_Montage'"))
+   AttackData (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_AttackData.BP_AttackData_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/DataAssets/AttackData/DefaultMeleeAttackData.DefaultMeleeAttackData'
+   ResetAttackTime (DoubleProperty) = 0.000000
+   Attack Index (IntProperty) = 0
+   BlockGameplayCuesByImpactTags (StructProperty) = (GameplayTags=((TagName="ImpactDecision.BlockedHit"),(TagName="ImpactDecision.DeflectedHit"),(TagName="ImpactDecision.ParriedHit")))
+   StateManager (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/StateMachine/StateManagerComponent.StateManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.StateManagerComponent'
+   CombatComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Components/BP_CombatComponent.BP_CombatComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.CombatComponent'
+   Performing Character (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   LastAttackIndex (IntProperty) = 0
+   Random Attack Index? (BoolProperty) = True
+   CurrentAttackIndex (IntProperty) = 0
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   ActiveAbilityMontage (ObjectProperty) = None
+   AbilitySystemComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+   AbilityTags (StructProperty) = (GameplayTags=((TagName="Ability.Melee.LeapAttack"),(TagName="Ability.Melee.FarRare")))
+   Performing Actor (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   ActivationOwnedTags (StructProperty) = ()
+   bPendingClearAbility? (BoolProperty) = False
+   ActivationRequiredTags (StructProperty) = ()
+   ActivationBlockedTags (StructProperty) = ()
+   CancelAbilitiesWithTags (StructProperty) = ()
+   Cooldown Time (DoubleProperty) = 15.000000
+   CooldownLoopInterval (DoubleProperty) = 0.100000
+   Current Cooldown Time (DoubleProperty) = 0.000000
+   bCooldownActive? (BoolProperty) = False
+   Cost Gameplay Effect Class (ClassProperty) = None
+   Level (IntProperty) = 0
+   BlockAbilitiesWithTags (StructProperty) = ()
+   GameplayEventTags (StructProperty) = ()
+   bCanBeCanceled (BoolProperty) = True
+   bWaitingForRuntimeEvent (BoolProperty) = False
+   Waiting Event Tag (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   BlueprintHelperComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+ABILITY GA_GS_Boss_SprintAttack_C
+   UberGraphFrame (StructProperty) = ()
+   FollowUpRange (DoubleProperty) = 200.000000
+   SprintSpeed (DoubleProperty) = 800.000000
+   Timelimit (DoubleProperty) = 1.500000
+   UberGraphFrame (StructProperty) = ()
+   Behavior Manager Component (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/Components/BP_BehaviorManagerComponent.BP_BehaviorManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_BaseAIController_C_0.BehaviorManagerComponent'
+   Master AI (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   AttackMontages (ArrayProperty) = ((AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/GreatswordBoss/GS_SprintAttackFollowUp_Montage.GS_SprintAttackFollowUp_Montage'"))
+   AttackData (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_AttackData.BP_AttackData_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/DataAssets/AttackData/DefaultMeleeAttackData.DefaultMeleeAttackData'
+   ResetAttackTime (DoubleProperty) = 0.000000
+   Attack Index (IntProperty) = 0
+   BlockGameplayCuesByImpactTags (StructProperty) = (GameplayTags=((TagName="ImpactDecision.BlockedHit"),(TagName="ImpactDecision.DeflectedHit"),(TagName="ImpactDecision.ParriedHit")))
+   StateManager (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/StateMachine/StateManagerComponent.StateManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.StateManagerComponent'
+   CombatComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Components/BP_CombatComponent.BP_CombatComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.CombatComponent'
+   Performing Character (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   LastAttackIndex (IntProperty) = 0
+   Random Attack Index? (BoolProperty) = True
+   CurrentAttackIndex (IntProperty) = 0
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   ActiveAbilityMontage (ObjectProperty) = None
+   AbilitySystemComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+   AbilityTags (StructProperty) = (GameplayTags=((TagName="Ability.Melee.SprintAttack"),(TagName="Ability.Melee.FarRare")))
+   Performing Actor (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   ActivationOwnedTags (StructProperty) = ()
+   bPendingClearAbility? (BoolProperty) = False
+   ActivationRequiredTags (StructProperty) = ()
+   ActivationBlockedTags (StructProperty) = ()
+   CancelAbilitiesWithTags (StructProperty) = ()
+   Cooldown Time (DoubleProperty) = 0.000000
+   CooldownLoopInterval (DoubleProperty) = 0.100000
+   Current Cooldown Time (DoubleProperty) = 0.000000
+   bCooldownActive? (BoolProperty) = False
+   Cost Gameplay Effect Class (ClassProperty) = None
+   Level (IntProperty) = 0
+   BlockAbilitiesWithTags (StructProperty) = ()
+   GameplayEventTags (StructProperty) = ()
+   bCanBeCanceled (BoolProperty) = True
+   bWaitingForRuntimeEvent (BoolProperty) = False
+   Waiting Event Tag (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   BlueprintHelperComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+ABILITY GA_GS_Boss_RetaliationAttack_C
+   UberGraphFrame (StructProperty) = ()
+   Behavior Manager Component (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/Components/BP_BehaviorManagerComponent.BP_BehaviorManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_BaseAIController_C_0.BehaviorManagerComponent'
+   Master AI (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   AttackMontages (ArrayProperty) = ((AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/ExampleSwordMob/RetaliationAttack_Montage.RetaliationAttack_Montage'"))
+   AttackData (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_AttackData.BP_AttackData_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/DataAssets/AttackData/DefaultMeleeAttackData.DefaultMeleeAttackData'
+   ResetAttackTime (DoubleProperty) = 0.000000
+   Attack Index (IntProperty) = 0
+   BlockGameplayCuesByImpactTags (StructProperty) = (GameplayTags=((TagName="ImpactDecision.BlockedHit"),(TagName="ImpactDecision.DeflectedHit"),(TagName="ImpactDecision.ParriedHit")))
+   StateManager (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/StateMachine/StateManagerComponent.StateManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.StateManagerComponent'
+   CombatComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Components/BP_CombatComponent.BP_CombatComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.CombatComponent'
+   Performing Character (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   LastAttackIndex (IntProperty) = 0
+   Random Attack Index? (BoolProperty) = True
+   CurrentAttackIndex (IntProperty) = 0
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   ActiveAbilityMontage (ObjectProperty) = None
+   AbilitySystemComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+   AbilityTags (StructProperty) = (GameplayTags=((TagName="Ability.Melee.RetaliationAttack")))
+   Performing Actor (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   ActivationOwnedTags (StructProperty) = ()
+   bPendingClearAbility? (BoolProperty) = False
+   ActivationRequiredTags (StructProperty) = ()
+   ActivationBlockedTags (StructProperty) = ()
+   CancelAbilitiesWithTags (StructProperty) = ()
+   Cooldown Time (DoubleProperty) = 0.000000
+   CooldownLoopInterval (DoubleProperty) = 0.100000
+   Current Cooldown Time (DoubleProperty) = 0.000000
+   bCooldownActive? (BoolProperty) = False
+   Cost Gameplay Effect Class (ClassProperty) = None
+   Level (IntProperty) = 0
+   BlockAbilitiesWithTags (StructProperty) = ()
+   GameplayEventTags (StructProperty) = ()
+   bCanBeCanceled (BoolProperty) = True
+   bWaitingForRuntimeEvent (BoolProperty) = False
+   Waiting Event Tag (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   BlueprintHelperComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+ABILITY GA_GS_Boss_TurnInPlace_C
+   UberGraphFrame (StructProperty) = ()
+   MinAngle (DoubleProperty) = -50.000000
+   MaxAngle (DoubleProperty) = 50.000000
+   Turn Left 90 (StructProperty) = (AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/TurnInPlace/Idle_Turn_Left_90_Anim_Montage.Idle_Turn_Left_90_Anim_Montage'",PlayRate_4_2531EA39496C020B25EC63ABDF2CF569=1.000000,EndTimeMultiplier_25_4247AE084F3CB1DE868E22BC4C8A46AA=0.800000)
+   Turn Right 90 (StructProperty) = (AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/TurnInPlace/Idle_Turn_Right_90_Anim_Montage.Idle_Turn_Right_90_Anim_Montage'",PlayRate_4_2531EA39496C020B25EC63ABDF2CF569=1.000000,EndTimeMultiplier_25_4247AE084F3CB1DE868E22BC4C8A46AA=0.800000)
+   Turn Left 180 (StructProperty) = (AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/TurnInPlace/Idle_Turn_Left_180_Anim_Montage.Idle_Turn_Left_180_Anim_Montage'",PlayRate_4_2531EA39496C020B25EC63ABDF2CF569=1.000000,EndTimeMultiplier_25_4247AE084F3CB1DE868E22BC4C8A46AA=0.800000)
+   Turn Right 180 (StructProperty) = (AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/TurnInPlace/Idle_Turn_Right_180_Anim_Montage.Idle_Turn_Right_180_Anim_Montage'",PlayRate_4_2531EA39496C020B25EC63ABDF2CF569=1.000000,EndTimeMultiplier_25_4247AE084F3CB1DE868E22BC4C8A46AA=0.800000)
+   DesiredTurnInPlaceMontage (StructProperty) = (PlayRate_4_2531EA39496C020B25EC63ABDF2CF569=1.000000,EndTimeMultiplier_25_4247AE084F3CB1DE868E22BC4C8A46AA=0.800000)
+   CombatComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Components/BP_CombatComponent.BP_CombatComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.CombatComponent'
+   UberGraphFrame (StructProperty) = ()
+   Behavior Manager Component (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/Components/BP_BehaviorManagerComponent.BP_BehaviorManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_BaseAIController_C_0.BehaviorManagerComponent'
+   Master AI (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   LastMontageIndex (IntProperty) = 0
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   ActiveAbilityMontage (ObjectProperty) = None
+   AbilitySystemComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+   AbilityTags (StructProperty) = (GameplayTags=((TagName="Ability.TurnInPlace")))
+   Performing Actor (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   ActivationOwnedTags (StructProperty) = ()
+   bPendingClearAbility? (BoolProperty) = False
+   ActivationRequiredTags (StructProperty) = ()
+   ActivationBlockedTags (StructProperty) = ()
+   CancelAbilitiesWithTags (StructProperty) = ()
+   Cooldown Time (DoubleProperty) = 0.000000
+   CooldownLoopInterval (DoubleProperty) = 0.100000
+   Current Cooldown Time (DoubleProperty) = 0.000000
+   bCooldownActive? (BoolProperty) = False
+   Cost Gameplay Effect Class (ClassProperty) = None
+   Level (IntProperty) = 0
+   BlockAbilitiesWithTags (StructProperty) = ()
+   GameplayEventTags (StructProperty) = ()
+   bCanBeCanceled (BoolProperty) = True
+   bWaitingForRuntimeEvent (BoolProperty) = False
+   Waiting Event Tag (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   BlueprintHelperComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+ABILITY GA_EnemyRagdollDeath_C
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   PhysicsVelocitySpeed (DoubleProperty) = 2000.000000
+   UberGraphFrame (StructProperty) = ()
+   StateManagerComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/StateMachine/StateManagerComponent.StateManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.StateManagerComponent'
+   DeathMontages (ArrayProperty) = 
+   Random Montage Index? (BoolProperty) = True
+   Death Task (ClassProperty) = /Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Tasks/BP_EnemyDeathTask.BP_EnemyDeathTask_C'
+   UberGraphFrame (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   ActiveAbilityMontage (ObjectProperty) = None
+   AbilitySystemComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+   AbilityTags (StructProperty) = (GameplayTags=((TagName="Ability.Dead")))
+   Performing Actor (ObjectProperty) = /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3'
+   ActivationOwnedTags (StructProperty) = ()
+   bPendingClearAbility? (BoolProperty) = False
+   ActivationRequiredTags (StructProperty) = ()
+   ActivationBlockedTags (StructProperty) = ()
+   CancelAbilitiesWithTags (StructProperty) = ()
+   Cooldown Time (DoubleProperty) = 0.000000
+   CooldownLoopInterval (DoubleProperty) = 0.100000
+   Current Cooldown Time (DoubleProperty) = 0.000000
+   bCooldownActive? (BoolProperty) = False
+   Cost Gameplay Effect Class (ClassProperty) = None
+   Level (IntProperty) = 0
+   BlockAbilitiesWithTags (StructProperty) = (GameplayTags=((TagName="Ability")))
+   GameplayEventTags (StructProperty) = ()
+   bCanBeCanceled (BoolProperty) = True
+   bWaitingForRuntimeEvent (BoolProperty) = False
+   Waiting Event Tag (StructProperty) = ()
+   UberGraphFrame (StructProperty) = ()
+   BlueprintHelperComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_ExampleGreatSwordBoss_C_3.AbilitySystemComponent'
+ABILITY GA_PlayerHitStun_C
+   UberGraphFrame (StructProperty) = ()
+   Hit React Montages (MapProperty) = ((NewEnumerator43, (AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/HitReactions/HitReact_Front_Montage.HitReact_Front_Montage'")),(NewEnumerator72, (AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/HitReactions/HitReact_Back_Montage.HitReact_Back_Montage'")),(NewEnumerator49, (AnimMontage_5_2620D50C4D110CA156B1A28F49A308
+   Hit React Montages (in Air) (MapProperty) = ()
+   State Manager Component (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/StateMachine/StateManagerComponent.StateManagerComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_CombatPlayerCharacter_C_0.StateManagerComponent'
+   AttributesComponent (ObjectProperty) = /Game/AdvancedARPGCombat/AdvancedCombatFramework/AttributesSystem/BP_AttributesComponent.BP_AttributesComponent_C'/Game/OneBossFight/Levels/UEDPIE_0_L_SevarogArena.L_SevarogArena:PersistentLevel.BP_CombatPlayerCharacter_C_0.AttributesComponent'
+   Hit Count Attribute Tag (StructProperty) = (TagName="Attribute.HitCount")
+   UberGraphFrame (StructProperty) = ()

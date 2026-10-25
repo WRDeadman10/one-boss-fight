@@ -1,0 +1,21 @@
+Begin Object Class=/Script/Engine.Blueprint Name="GA_GS_Boss_SprintAttack" ExportPath="/Script/Engine.Blueprint'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_SprintAttack.GA_GS_Boss_SprintAttack'"
+   Begin Object Class=/Script/Engine.EdGraph Name="EventGraph" ExportPath="/Script/Engine.EdGraph'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_SprintAttack.GA_GS_Boss_SprintAttack:EventGraph'"
+   End Object
+   Begin Object Class=/Script/UnrealEd.SceneThumbnailInfo Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_SprintAttack.GA_GS_Boss_SprintAttack:SceneThumbnailInfo_0'"
+   End Object
+   Begin Object Name="EventGraph" ExportPath="/Script/Engine.EdGraph'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_SprintAttack.GA_GS_Boss_SprintAttack:EventGraph'"
+      Schema="/Script/CoreUObject.Class'/Script/BlueprintGraph.EdGraphSchema_K2'"
+      bAllowDeletion=False
+      GraphGuid=C1574E4C4429DCDFB440E4ACFE807B3F
+   End Object
+   Begin Object Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_SprintAttack.GA_GS_Boss_SprintAttack:SceneThumbnailInfo_0'"
+   End Object
+   ParentClass="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Abilities/AI/GA_EnemySprintAttack.GA_EnemySprintAttack_C'"
+   BlueprintSystemVersion=2
+   UbergraphPages(0)="/Script/Engine.EdGraph'EventGraph'"
+   LastEditedDocuments(0)=(EditedObjectPath="/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_SprintAttack.GA_GS_Boss_SprintAttack:EventGraph",SavedZoomAmount=1.000000)
+   ThumbnailInfo="/Script/UnrealEd.SceneThumbnailInfo'SceneThumbnailInfo_0'"
+   GeneratedClass="/Script/Engine.BlueprintGeneratedClass'GA_GS_Boss_SprintAttack_C'"
+   bLegacyNeedToPurgeSkelRefs=False
+   BlueprintGuid=D476EA2A4005A6BCCB543EAEAD721FBF
+End Object

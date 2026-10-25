@@ -1,0 +1,55 @@
+{
+  "contract_version": "1.0",
+  "clip_name": "AN_Boss01_A1_QuickSlash",
+  "source_asset": {
+    "fbx_path": "Import/Boss01/Animations/AN_Boss01_A1_QuickSlash.fbx",
+    "sha256": "f048d09fce6d57d23e406b3295db7fad16fdd536e5e7bd9116647cee4f927962",
+    "byte_size": 751516
+  },
+  "timing_and_framing": {
+    "fps": 30,
+    "samples": 37,
+    "elapsed_duration_s": 1.2,
+    "frame_conventions": {
+      "blender_1based_range": [
+        1,
+        37
+      ],
+      "metadata_0based_range": [
+        0,
+        36
+      ],
+      "offset_rule": "F_blender = F_metadata + 1"
+    }
+  },
+  "author_intent_markers": {
+    "commit_time_s": 0.33,
+    "windup_end_s": 0.35,
+    "active_start_s": 0.35,
+    "active_end_s": 0.5,
+    "recovery_end_s": 1.2,
+    "impact_time_s": null,
+    "is_looping": false,
+    "author_notes": "Quick Horizontal Slash. Fast wide right-to-left horizontal slash at chest height. Wide readable windup coils right and drops stance 11 cm (0.00-0.35s); active strike slices violently across 180 degree arc (0.35-0.50s); recovery decelerates and returns to combat ready idle (0.50-1.20s). Both hands maintain greatsword grip (wrist distance 9.8-13.4 cm) throughout the sweep. Both feet remain grounded flat on the floor at Z \u2248 0."
+  },
+  "offline_kinematic_bounds": {
+    "root_sampling_mode": "armature_object(root)",
+    "max_root_excursion_cm": 0.0,
+    "end_start_displacement_cm": 0.0,
+    "pelvis_z_range_cm": [
+      95.9,
+      95.9
+    ],
+    "foot_z_range_cm": [
+      -0.02,
+      11.98
+    ],
+    "hand_r_max_reach_cm": 69.41
+  },
+  "contract_compliance": {
+    "fps_compliant": true,
+    "root_motion_category": "InPlace",
+    "root_motion_compliant": true,
+    "has_sidecar": true
+  }
+}

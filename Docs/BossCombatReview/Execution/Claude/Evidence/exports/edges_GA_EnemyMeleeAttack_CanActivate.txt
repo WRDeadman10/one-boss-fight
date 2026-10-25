@@ -1,0 +1,37 @@
+# graph 'Can Activate Ability?': 14 nodes
+NODE K2Node_FunctionEntry_0 (K2Node_FunctionEntry) Get Abilit FunctionReference=(MemberParent= ResetAttac FunctionReference=(MemberParent=
+NODE K2Node_FunctionResult_0 (K2Node_FunctionResult) 
+NODE K2Node_VariableGet_0 (K2Node_VariableGet) CombatComponent
+NODE K2Node_CallFunction_7 (K2Node_CallFunction) 
+NODE K2Node_CommutativeAssociativeBinaryOperator_1 (K2Node_CommutativeAssociativeBinaryOperator) BooleanAND
+NODE K2Node_CallFunction_3 (K2Node_CallFunction) IsValid SetLastAttackIndex
+NODE K2Node_VariableGet_1 (K2Node_VariableGet) CombatComponent
+NODE K2Node_CallFunction_4 (K2Node_CallFunction) 
+NODE K2Node_VariableGet_3 (K2Node_VariableGet) 
+NODE K2Node_CallFunction_1 (K2Node_CallFunction) RandomIntegerInRange
+NODE K2Node_CallFunction_2 (K2Node_CallFunction) 
+NODE K2Node_CallFunction_5 (K2Node_CallFunction) Not_PreBool EqualEqual_IntInt
+NODE K2Node_CallFunction_0 (K2Node_CallFunction) 
+NODE K2Node_CallFunction_6 (K2Node_CallFunction) Not_PreBool Get Last Attack Index
+
+# edges (EXEC = execution pin)
+EXEC K2Node_FunctionEntry_0.then -> K2Node_FunctionResult_0.execute
+EXEC K2Node_FunctionEntry_0.then -> ?.FED20EB5
+EXEC K2Node_FunctionEntry_0.then -> ?.03101D2C
+EXEC K2Node_FunctionEntry_0.then -> ?.7DC047DD
+     K2Node_FunctionEntry_0.Result -> ?.0C498BAB
+EXEC K2Node_FunctionEntry_0.then -> ?.B5475577
+EXEC K2Node_FunctionEntry_0.then -> ?.AA8371A2
+     K2Node_FunctionEntry_0.OwningActor -> ?.3AAC805A
+     K2Node_VariableGet_0.CombatComponent -> ?.836F26B4
+     K2Node_CommutativeAssociativeBinaryOperator_1.ReturnValue -> K2Node_FunctionResult_0.Condition
+     K2Node_CallFunction_3.ReturnValue -> K2Node_CommutativeAssociativeBinaryOperator_1.B
+EXEC K2Node_CallFunction_3.then -> ?.824D0BBB
+     K2Node_VariableGet_1.CombatComponent -> ?.1A44DD6F
+     K2Node_CallFunction_1.ReturnValue -> K2Node_CallFunction_5.A
+     K2Node_CallFunction_1.ReturnValue -> ?.CB787349
+     K2Node_CallFunction_5.ReturnValue -> K2Node_CommutativeAssociativeBinaryOperator_1.C
+     K2Node_CallFunction_5.ReturnValue -> ?.1F23A264
+     K2Node_CallFunction_6.ReturnValue -> K2Node_CommutativeAssociativeBinaryOperator_1.D
+     K2Node_CallFunction_6.ReturnValue -> ?.BE0CA420
+# 19 edges

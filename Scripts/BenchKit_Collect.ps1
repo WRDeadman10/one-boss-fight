@@ -78,6 +78,7 @@ foreach ($ld in $logDirs) {
     $li++
 }
 # the experiment tables of RunPerfExperiments.ps1
+Get-ChildItem (Join-Path $Kit 'Saved') -Filter 'smi_*.csv' -ErrorAction SilentlyContinue | ForEach-Object { Copy-Item $_.FullName $Work -Force }
 Get-ChildItem (Join-Path $Kit 'Saved') -Filter 'perf_experiments_*.txt' -ErrorAction SilentlyContinue | ForEach-Object { Copy-Item $_.FullName $Work -Force }
 
 $zip = Join-Path (Split-Path -Parent $Kit) "bench_results_${env:COMPUTERNAME}_$Stamp.zip"

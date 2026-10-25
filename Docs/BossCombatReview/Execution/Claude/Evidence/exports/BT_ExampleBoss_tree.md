@@ -1,0 +1,335 @@
+# Behavior tree runtime tree from BT_ExampleBoss.t3d
+
+RootNode: BTComposite_Selector_0
+BT asset block: BT_ExampleBoss
+
+## Asset-level properties
+- RootNode="/Script/AIModule.BTComposite_Selector'BTComposite_Selector_0'"
+- BTGraph="/Script/BehaviorTreeEditor.BehaviorTreeGraph'Behavior Tree'"
+- LastEditedDocuments(0)=(EditedObjectPath="/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/BT_ExampleBoss.BT_ExampleBoss:Behavior Tree",SavedViewOffset=(X=-1146.475184,Y=-156.125560),SavedZoom
+- BlackboardAsset="/Script/AIModule.BlackboardData'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base'"
+
+## Tree
+- **BTComposite_Selector_0** `BTComposite_Selector`
+    - NodeName="Main Selector"
+    - SERVICE:
+      - **S_CalculateTargetValues_C_0** `S_CalculateTargetValues_C`
+          - Target Actor=(SelectedKeyName="TargetActor")
+          - Distance To Target=(SelectedKeyName="DistanceToTarget")
+          - Angle To Target=(SelectedKeyName="AngleToTarget")
+          - Interval=0.100000
+          - RandomDeviation=0.000000
+    - SERVICE:
+      - **S_UpdateBehavior_C_0** `S_UpdateBehavior_C`
+          - TargetKey=(SelectedKeyName="TargetActor")
+          - Interval=1.000000
+          - RandomDeviation=0.000000
+  - child 0:
+      - DECORATOR:
+        - **D_IsCurrentBehaviorEqual_C_8** `D_IsCurrentBehaviorEqual_C`
+            - Behavior Tag=(TagName="Behavior.Dead")
+            - FlowAbortMode=Both
+            - NodeName="Is Behavior Dead?"
+    - **BTComposite_Sequence_7** `BTComposite_Sequence`
+        - NodeName="Dead"
+      - child 0:
+        - **BTTask_Wait_3** `BTTask_Wait`
+            - WaitTime=(DefaultValue=10.000000)
+  - child 1:
+      - DECORATOR:
+        - **D_IsCurrentBehaviorEqual_C_3** `D_IsCurrentBehaviorEqual_C`
+            - Behavior Tag=(TagName="Behavior.Hit")
+            - FlowAbortMode=Both
+            - NodeName="Is Behavior Hit?"
+    - **BTComposite_Sequence_6** `BTComposite_Sequence`
+      - child 0:
+        - **T_WaitAnimatingAbilityEnd_C_0** `T_WaitAnimatingAbilityEnd_C`
+            - NodeName="Wait Hit Reaction End"
+  - child 2:
+      - DECORATOR:
+        - **D_IsCurrentBehaviorEqual_C_7** `D_IsCurrentBehaviorEqual_C`
+            - Behavior Tag=(TagName="Behavior.Parried")
+            - FlowAbortMode=Both
+            - NodeName="Is Behavior Parried?"
+    - **BTComposite_Sequence_2** `BTComposite_Sequence`
+      - child 0:
+        - **T_WaitAnimatingAbilityEnd_C_1** `T_WaitAnimatingAbilityEnd_C`
+            - NodeName="Wait Parried End"
+  - child 3:
+    - **BTComposite_Selector_2** `BTComposite_Selector`
+        - NodeName="Toggle Combat"
+      - child 0:
+          - DECORATOR:
+            - **D_IsCurrentBehaviorEqual_C_5** `D_IsCurrentBehaviorEqual_C`
+                - Behavior Tag=(TagName="Behavior.ExitCombat")
+                - FlowAbortMode=Self
+        - **BTComposite_Sequence_1** `BTComposite_Sequence`
+          - child 0:
+            - **BTTask_Wait_4** `BTTask_Wait`
+                - WaitTime=(DefaultValue=2.000000)
+                - RandomDeviation=(DefaultValue=1.000000)
+          - child 1:
+            - **T_TryPerformActionByTags_C_0** `T_TryActivateAbilitiesByTags_C`
+                - Ability Tags=(GameplayTags=((TagName="Ability.ExitCombat")))
+                - NodeName="Exit Combat"
+      - child 1:
+          - DECORATOR:
+            - **D_IsCurrentBehaviorEqual_C_13** `D_IsCurrentBehaviorEqual_C`
+                - Behavior Tag=(TagName="Behavior.EnterCombat")
+                - FlowAbortMode=Self
+        - **T_TryPerformActionByTags_C_1** `T_TryActivateAbilitiesByTags_C`
+            - Ability Tags=(GameplayTags=((TagName="Ability.EnterCombat")))
+            - NodeName="Enter Combat"
+  - child 4:
+      - DECORATOR:
+        - **D_IsCurrentBehaviorEqual_C_0** `D_IsCurrentBehaviorEqual_C`
+            - Behavior Tag=(TagName="Behavior.Patrol")
+            - FlowAbortMode=Self
+    - **BTComposite_Sequence_0** `BTComposite_Sequence`
+      - child 0:
+        - **T_SetMovementSpeed_C_3** `T_SetMovementSpeed_C`
+            - Movement Speed=250.000000
+      - child 1:
+        - **T_FindNextPatrolPoint_C_0** `T_FindNextPatrolPoint_C`
+            - TargetLocation=(SelectedKeyName="TargetLocation")
+      - child 2:
+        - **BTTask_MoveTo_0** `BTTask_MoveTo`
+            - BlackboardKey=(SelectedKeyName="TargetLocation")
+      - child 3:
+        - **BTTask_Wait_0** `BTTask_Wait`
+            - WaitTime=(DefaultValue=2.000000)
+  - child 5:
+      - DECORATOR:
+        - **D_IsCurrentBehaviorEqual_C_1** `D_IsCurrentBehaviorEqual_C`
+            - Behavior Tag=(TagName="Behavior.Nothing")
+            - FlowAbortMode=Self
+            - NodeName="Nothing"
+    - **BTComposite_Sequence_8** `BTComposite_Sequence`
+      - child 0:
+        - **BTTask_Wait_1** `BTTask_Wait`
+  - child 6:
+      - DECORATOR:
+        - **D_IsCurrentBehaviorEqual_C_14** `D_IsCurrentBehaviorEqual_C`
+            - Behavior Tag=(TagName="Behavior.Attacking")
+            - FlowAbortMode=Self
+            - NodeName="Is Behavior Attacking"
+    - **BTComposite_Selector_8** `BTComposite_Selector`
+      - child 0:
+          - DECORATOR:
+            - **D_IsCurrentBehaviorEqual_C_15** `D_IsCurrentBehaviorEqual_C`
+                - Behavior Tag=(TagName="Behavior.Attacking.Retaliation")
+                - FlowAbortMode=Self
+                - NodeName="Is Behavior Retaliation Attack"
+        - **BTComposite_Selector_4** `BTComposite_Selector`
+            - NodeName="Retaliation Attacks"
+          - child 0:
+            - **T_TryActivateAbilitiesByTags_C_2** `T_TryActivateAbilitiesByTags_C`
+                - Ability Tags=(GameplayTags=((TagName="Ability.Melee.RetaliationAttack")))
+                - NodeName="Retaliation Attack Abilities"
+      - child 1:
+          - DECORATOR:
+            - **BTDecorator_Blackboard_2** `BTDecorator_Blackboard`
+                - FloatValue=250.000000
+                - CachedDescription="DistanceToTarget Is Less Than 250.000000"
+                - OperationType=2
+                - ArithmeticOperation=Less
+                - BlackboardKey=(SelectedKeyName="DistanceToTarget")
+                - NodeName="Attack Distance Check"
+        - **BTComposite_Selector_7** `BTComposite_Selector`
+            - NodeName="Close Range Attacks"
+          - child 0:
+              - DECORATOR:
+                - **D_ChanceCondition_C_0** `D_ChanceCondition_C`
+                    - ChancePercentage=25
+                    - NodeName="Rare Attack Chance"
+            - **T_TryActivateAbilitiesByTags_C_10** `T_TryActivateAbilitiesByTags_C`
+                - Ability Tags=(GameplayTags=((TagName="Ability.Melee.CloseRare")))
+                - NodeName="Close Range Rare Attacks"
+          - child 1:
+            - **T_TryActivateAbilitiesByTags_C_13** `T_TryActivateAbilitiesByTags_C`
+                - Ability Tags=(GameplayTags=((TagName="Ability.Melee.Close")))
+                - NodeName="Close Range Attacks"
+      - child 2:
+          - DECORATOR:
+            - **BTDecorator_Blackboard_3** `BTDecorator_Blackboard`
+                - FloatValue=800.000000
+                - CachedDescription="DistanceToTarget Is Less Than 800.000000"
+                - OperationType=2
+                - ArithmeticOperation=Less
+                - BlackboardKey=(SelectedKeyName="DistanceToTarget")
+                - NodeName="Attack Distance Check"
+        - **BTComposite_Selector_3** `BTComposite_Selector`
+            - NodeName="Medium Range Attacks"
+          - child 0:
+              - DECORATOR:
+                - **D_ChanceCondition_C_3** `D_ChanceCondition_C`
+                    - ChancePercentage=25
+                    - NodeName="Rare Attack Chance"
+            - **T_TryActivateAbilitiesByTags_C_11** `T_TryActivateAbilitiesByTags_C`
+                - Ability Tags=(GameplayTags=((TagName="Ability.Melee.FarRare")))
+                - NodeName="Medium Range Rare Attacks"
+          - child 1:
+            - **T_TryActivateAbilitiesByTags_C_15** `T_TryActivateAbilitiesByTags_C`
+                - Ability Tags=(GameplayTags=((TagName="Ability.Melee.Far")))
+                - NodeName="Medium Range Attacks"
+      - child 3:
+          - DECORATOR:
+            - **BTDecorator_Blackboard_6** `BTDecorator_Blackboard`
+                - FloatValue=1000.000000
+                - CachedDescription="DistanceToTarget Is Less Than 1000.000000"
+                - OperationType=2
+                - ArithmeticOperation=Less
+                - BlackboardKey=(SelectedKeyName="DistanceToTarget")
+                - NodeName="Attack Distance Check"
+        - **BTComposite_Selector_5** `BTComposite_Selector`
+            - NodeName="High Range Attacks"
+          - child 0:
+              - DECORATOR:
+                - **D_ChanceCondition_C_2** `D_ChanceCondition_C`
+                    - ChancePercentage=25
+                    - NodeName="Rare Attack Chance"
+            - **T_TryActivateAbilitiesByTags_C_5** `T_TryActivateAbilitiesByTags_C`
+                - Ability Tags=(GameplayTags=((TagName="Ability.Melee.RangedRare")))
+                - NodeName="High Range Rare Attacks"
+          - child 1:
+            - **T_TryActivateAbilitiesByTags_C_7** `T_TryActivateAbilitiesByTags_C`
+                - Ability Tags=(GameplayTags=((TagName="Ability.Melee.Ranged")))
+                - NodeName="High Range Attacks"
+      - child 4:
+          - DECORATOR:
+            - **BTDecorator_Blackboard_4** `BTDecorator_Blackboard`
+                - FloatValue=249.000000
+                - CachedDescription="DistanceToTarget Is Greater Than 249.000000"
+                - OperationType=4
+                - ArithmeticOperation=Greater
+                - BlackboardKey=(SelectedKeyName="DistanceToTarget")
+                - FlowAbortMode=Self
+        - **BTComposite_Sequence_10** `BTComposite_Sequence`
+            - SERVICE:
+              - **S_UpdateTrackTarget_C_0** `S_UpdateTrackTarget_C`
+          - child 0:
+            - **BTTask_MoveTo_3** `BTTask_MoveTo`
+                - AcceptableRadius=(DefaultValue=50.000000)
+                - bAllowStrafe=(DefaultValue=True)
+                - BlackboardKey=(SelectedKeyName="TargetActor")
+  - child 7:
+      - DECORATOR:
+        - **D_IsCurrentBehaviorEqual_C_11** `D_IsCurrentBehaviorEqual_C`
+            - Behavior Tag=(TagName="Behavior.Reposition")
+            - FlowAbortMode=Self
+    - **BTComposite_Sequence_11** `BTComposite_Sequence`
+        - NodeName="Reposition"
+      - child 0:
+        - **T_TryActivateAbilitiesByTags_C_14** `T_TryActivateAbilitiesByTags_C`
+            - Ability Tags=(GameplayTags=((TagName="Behavior.Reposition")))
+  - child 8:
+      - DECORATOR:
+        - **D_IsCurrentBehaviorEqual_C_22** `D_IsCurrentBehaviorEqual_C`
+            - Behavior Tag=(TagName="Behavior.Retaliate")
+            - FlowAbortMode=Self
+            - NodeName="Is Behavior Retaliate"
+    - **BTComposite_Sequence_19** `BTComposite_Sequence`
+        - NodeName="Retaliate"
+      - child 0:
+        - **T_TryActivateAbilitiesByTags_C_8** `T_TryActivateAbilitiesByTags_C`
+            - Ability Tags=(GameplayTags=((TagName="Ability.Retaliate")))
+  - child 9:
+      - DECORATOR:
+        - **D_IsCurrentBehaviorEqual_C_6** `D_IsCurrentBehaviorEqual_C`
+            - Behavior Tag=(TagName="Behavior.Defend")
+            - FlowAbortMode=Self
+            - NodeName="Is Behavior Defend"
+    - **BTComposite_Sequence_3** `BTComposite_Sequence`
+        - NodeName="Retaliate"
+      - child 0:
+        - **T_TryActivateAbilitiesByTags_C_0** `T_TryActivateAbilitiesByTags_C`
+            - Ability Tags=(GameplayTags=((TagName="Ability.Defend")))
+  - child 10:
+      - DECORATOR:
+        - **D_IsCurrentBehaviorEqual_C_12** `D_IsCurrentBehaviorEqual_C`
+            - Behavior Tag=(TagName="Behavior.Strafing")
+            - FlowAbortMode=Self
+            - NodeName="Is Behavior Strafing"
+    - **BTComposite_Sequence_12** `BTComposite_Sequence`
+        - NodeName="Stafing"
+        - SERVICE:
+          - **S_ReactToTarget_C_1** `S_UpdateTrackTarget_C`
+              - Interval=0.050000
+              - RandomDeviation=0.000000
+      - child 0:
+        - **T_Strafing_C_0** `T_Strafing_C`
+            - Min Strafing Time=2.000000
+            - Max Strafing Time=3.000000
+  - child 11:
+      - DECORATOR:
+        - **D_IsCurrentBehaviorEqual_C_10** `D_IsCurrentBehaviorEqual_C`
+            - Behavior Tag=(TagName="Behavior.Healing")
+            - FlowAbortMode=Self
+            - NodeName="Is Behavior Equal to Healing?"
+    - **BTComposite_Sequence_9** `BTComposite_Sequence`
+        - NodeName="Healing"
+      - child 0:
+        - **T_TryActivateAbilitiesByTags_C_1** `T_TryActivateAbilitiesByTags_C`
+            - Ability Tags=(GameplayTags=((TagName="Ability.Heal")))
+  - child 12:
+      - DECORATOR:
+        - **D_IsCurrentBehaviorEqual_C_9** `D_IsCurrentBehaviorEqual_C`
+            - Behavior Tag=(TagName="Behavior.Custom")
+            - FlowAbortMode=Self
+            - NodeName="Is custom Behavior?"
+    - **BTComposite_Sequence_4** `BTComposite_Sequence`
+        - NodeName="Custom Behavior"
+      - child 0:
+        - **BTTask_Wait_6** `BTTask_Wait`
+  - child 13:
+      - DECORATOR:
+        - **D_IsCurrentBehaviorEqual_C_18** `D_IsCurrentBehaviorEqual_C`
+            - Behavior Tag=(TagName="Behavior.Turning")
+            - FlowAbortMode=Self
+            - NodeName="Is Behavior Turning"
+    - **BTComposite_Sequence_17** `BTComposite_Sequence`
+        - NodeName="Turning"
+      - child 0:
+        - **T_TryActivateAbilitiesByTags_C_18** `T_TryActivateAbilitiesByTags_C`
+            - Ability Tags=(GameplayTags=((TagName="Ability.TurnInPlace")))
+            - NodeName="Turning Ability"
+  - child 14:
+      - DECORATOR:
+        - **D_IsCurrentBehaviorEqual_C_2** `D_IsCurrentBehaviorEqual_C`
+            - Behavior Tag=(TagName="Behavior.Follow")
+            - FlowAbortMode=Self
+            - NodeName="Is Behavior Following"
+    - **BTComposite_Sequence_14** `BTComposite_Sequence`
+        - NodeName="Follow"
+        - SERVICE:
+          - **S_UpdateTrackTarget_C_1** `S_UpdateTrackTarget_C`
+              - Interval=0.050000
+              - RandomDeviation=0.000000
+      - child 0:
+        - **BTComposite_Selector_1** `BTComposite_Selector`
+          - child 0:
+              - DECORATOR:
+                - **BTDecorator_DoesPathExist_1** `BTDecorator_DoesPathExist`
+                    - BlackboardKeyB=(SelectedKeyName="TargetActor")
+            - **BTTask_MoveTo_4** `BTTask_MoveTo`
+                - bAllowStrafe=(DefaultValue=True)
+                - BlackboardKey=(SelectedKeyName="TargetActor")
+          - child 1:
+            - **T_RunBehaviorState_C_1** `T_RunBehaviorState_C`
+                - State Tag=(TagName="Behavior.Strafing")
+  - child 15:
+      - DECORATOR:
+        - **D_IsCurrentBehaviorEqual_C_4** `D_IsCurrentBehaviorEqual_C`
+            - Behavior Tag=(TagName="Behavior.ReturnToPost")
+            - FlowAbortMode=Self
+            - NodeName="Is Behavior Return to Post"
+    - **BTComposite_Sequence_13** `BTComposite_Sequence`
+        - NodeName="Return To Post"
+      - child 0:
+        - **T_SetMovementSpeed_C_0** `T_SetMovementSpeed_C`
+            - Movement Speed=300.000000
+      - child 1:
+        - **BTTask_MoveTo_5** `BTTask_MoveTo`
+            - bAllowStrafe=(DefaultValue=True)
+            - BlackboardKey=(SelectedKeyName="OriginalLocation")
+          - TASK SERVICE: S_RotateCharacter_C_0

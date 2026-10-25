@@ -1,0 +1,55 @@
+{
+  "contract_version": "1.0",
+  "clip_name": "AN_Boss01_Wake",
+  "source_asset": {
+    "fbx_path": "Import/Boss01/Animations/AN_Boss01_Wake.fbx",
+    "sha256": "45a5d12f40656f67cf11881d6fef9ca09150da0b6d48abe9710444ac73ddba4c",
+    "byte_size": 1102668
+  },
+  "timing_and_framing": {
+    "fps": 30,
+    "samples": 106,
+    "elapsed_duration_s": 3.5,
+    "frame_conventions": {
+      "blender_1based_range": [
+        1,
+        106
+      ],
+      "metadata_0based_range": [
+        0,
+        105
+      ],
+      "offset_rule": "F_blender = F_metadata + 1"
+    }
+  },
+  "author_intent_markers": {
+    "commit_time_s": null,
+    "windup_end_s": null,
+    "active_start_s": null,
+    "active_end_s": null,
+    "recovery_end_s": 3.5,
+    "impact_time_s": null,
+    "is_looping": false,
+    "author_notes": "Boss 01 Awakening Sequence (Asset A-07). Starts in exact first frame of AN_Boss01_DormantIdle (Frame 0 local diff 0.0005 <= 0.01 tolerance). Phase 1 (0.0 to 1.0s): head lifts, eyes flare; Phase 2 (1.0 to 2.0s): hands grip hilt and draw the planted blade up out of the stone (SwordFree notify at 1.50s / Frame 45); Phase 3 (2.0 to 3.0s): boss rises from kneeling posture, spine straightens, achieves standing balance (StandUp notify at 2.50s / Frame 75); Phase 4 (3.0 to 3.5s): settles smoothly into combat ready stance, ending in the exact pose of AN_Boss01_PhaseRoar frame 0 (Frame 105 local diff 0.0000)."
+  },
+  "offline_kinematic_bounds": {
+    "root_sampling_mode": "armature_object(root)",
+    "max_root_excursion_cm": 0.0,
+    "end_start_displacement_cm": 0.0,
+    "pelvis_z_range_cm": [
+      47.74,
+      95.9
+    ],
+    "foot_z_range_cm": [
+      -0.32,
+      14.97
+    ],
+    "hand_r_max_reach_cm": 67.38
+  },
+  "contract_compliance": {
+    "fps_compliant": true,
+    "root_motion_category": "InPlace",
+    "root_motion_compliant": true,
+    "has_sidecar": true
+  }
+}

@@ -1,0 +1,44 @@
+Begin Object Class=/Script/AIModule.BlackboardData Name="BB_Base" ExportPath="/Script/AIModule.BlackboardData'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base'"
+   Begin Object Class=/Script/AIModule.BlackboardKeyType_Bool Name="BlackboardKeyType_Bool_0" ExportPath="/Script/AIModule.BlackboardKeyType_Bool'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base:BlackboardKeyType_Bool_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.BlackboardKeyType_Float Name="BlackboardKeyType_Float_0" ExportPath="/Script/AIModule.BlackboardKeyType_Float'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base:BlackboardKeyType_Float_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.BlackboardKeyType_Float Name="BlackboardKeyType_Float_1" ExportPath="/Script/AIModule.BlackboardKeyType_Float'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base:BlackboardKeyType_Float_1'"
+   End Object
+   Begin Object Class=/Script/AIModule.BlackboardKeyType_Object Name="BlackboardKeyType_Object_0" ExportPath="/Script/AIModule.BlackboardKeyType_Object'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base:BlackboardKeyType_Object_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.BlackboardKeyType_Object Name="BlackboardKeyType_Object_1" ExportPath="/Script/AIModule.BlackboardKeyType_Object'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base:BlackboardKeyType_Object_1'"
+   End Object
+   Begin Object Class=/Script/AIModule.BlackboardKeyType_String Name="BlackboardKeyType_String_0" ExportPath="/Script/AIModule.BlackboardKeyType_String'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base:BlackboardKeyType_String_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.BlackboardKeyType_Vector Name="BlackboardKeyType_Vector_0" ExportPath="/Script/AIModule.BlackboardKeyType_Vector'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base:BlackboardKeyType_Vector_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.BlackboardKeyType_Vector Name="BlackboardKeyType_Vector_1" ExportPath="/Script/AIModule.BlackboardKeyType_Vector'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base:BlackboardKeyType_Vector_1'"
+   End Object
+   Begin Object Name="BlackboardKeyType_Bool_0" ExportPath="/Script/AIModule.BlackboardKeyType_Bool'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base:BlackboardKeyType_Bool_0'"
+   End Object
+   Begin Object Name="BlackboardKeyType_Float_0" ExportPath="/Script/AIModule.BlackboardKeyType_Float'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base:BlackboardKeyType_Float_0'"
+   End Object
+   Begin Object Name="BlackboardKeyType_Float_1" ExportPath="/Script/AIModule.BlackboardKeyType_Float'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base:BlackboardKeyType_Float_1'"
+   End Object
+   Begin Object Name="BlackboardKeyType_Object_0" ExportPath="/Script/AIModule.BlackboardKeyType_Object'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base:BlackboardKeyType_Object_0'"
+      BaseClass="/Script/CoreUObject.Class'/Script/Engine.Actor'"
+   End Object
+   Begin Object Name="BlackboardKeyType_Object_1" ExportPath="/Script/AIModule.BlackboardKeyType_Object'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base:BlackboardKeyType_Object_1'"
+      BaseClass="/Script/CoreUObject.Class'/Script/Engine.Actor'"
+   End Object
+   Begin Object Name="BlackboardKeyType_String_0" ExportPath="/Script/AIModule.BlackboardKeyType_String'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base:BlackboardKeyType_String_0'"
+   End Object
+   Begin Object Name="BlackboardKeyType_Vector_0" ExportPath="/Script/AIModule.BlackboardKeyType_Vector'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base:BlackboardKeyType_Vector_0'"
+   End Object
+   Begin Object Name="BlackboardKeyType_Vector_1" ExportPath="/Script/AIModule.BlackboardKeyType_Vector'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base:BlackboardKeyType_Vector_1'"
+   End Object
+   Keys(0)=(EntryName="SelfActor",KeyType="/Script/AIModule.BlackboardKeyType_Object'BlackboardKeyType_Object_0'")
+   Keys(1)=(EntryName="TargetActor",KeyType="/Script/AIModule.BlackboardKeyType_Object'BlackboardKeyType_Object_1'")
+   Keys(2)=(EntryName="TargetLocation",KeyType="/Script/AIModule.BlackboardKeyType_Vector'BlackboardKeyType_Vector_0'")
+   Keys(3)=(EntryName="bCombatEnabled",KeyType="/Script/AIModule.BlackboardKeyType_Bool'BlackboardKeyType_Bool_0'")
+   Keys(4)=(EntryName="DistanceToTarget",KeyType="/Script/AIModule.BlackboardKeyType_Float'BlackboardKeyType_Float_0'")
+   Keys(5)=(EntryName="AngleToTarget",KeyType="/Script/AIModule.BlackboardKeyType_Float'BlackboardKeyType_Float_1'")
+   Keys(6)=(EntryName="CurrentBehaviorTag",KeyType="/Script/AIModule.BlackboardKeyType_String'BlackboardKeyType_String_0'")
+   Keys(7)=(EntryName="OriginalLocation",KeyType="/Script/AIModule.BlackboardKeyType_Vector'BlackboardKeyType_Vector_1'")
+End Object

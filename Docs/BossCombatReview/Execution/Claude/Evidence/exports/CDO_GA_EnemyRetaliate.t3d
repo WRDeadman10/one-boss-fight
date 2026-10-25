@@ -1,0 +1,28 @@
+Begin Object Class=/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Abilities/AI/GA_EnemyRetaliate.GA_EnemyRetaliate_C Name="Default__GA_EnemyRetaliate_C" ExportPath="/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Abilities/AI/GA_EnemyRetaliate.GA_EnemyRetaliate_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Abilities/AI/GA_EnemyRetaliate.Default__GA_EnemyRetaliate_C'"
+   AttributesComponent=None
+   CombatComponent=None
+   Behavior Manager Component=None
+   Master AI=None
+   LastMontageIndex=0
+   ActiveAbilityMontage=None
+   AbilitySystemComponent=None
+   AbilityTags=(GameplayTags=((TagName="Ability.Retaliate")))
+   Performing Actor=None
+   ActivationOwnedTags=(GameplayTags=)
+   bPendingClearAbility?=False
+   ActivationRequiredTags=(GameplayTags=)
+   ActivationBlockedTags=(GameplayTags=)
+   CancelAbilitiesWithTags=(GameplayTags=)
+   Cooldown Time=0.000000
+   CooldownLoopInterval=0.100000
+   Current Cooldown Time=0.000000
+   bCooldownActive?=False
+   Cost Gameplay Effect Class=None
+   Level=1
+   BlockAbilitiesWithTags=(GameplayTags=)
+   GameplayEventTags=(GameplayTags=)
+   bCanBeCanceled=True
+   bWaitingForRuntimeEvent=False
+   Waiting Event Tag=(TagName="")
+   BlueprintHelperComponent=None
+End Object

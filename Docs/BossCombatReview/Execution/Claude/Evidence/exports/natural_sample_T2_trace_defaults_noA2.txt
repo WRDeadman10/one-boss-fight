@@ -1,0 +1,127 @@
+[P0Trace] tracer registered
+[P0Trace] tracer registered
+[2026.10.25-08.31.45:460][914]LogRPGHitIntake: hit 1 at 13.65 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.31.47:050][966]LogRPGHitIntake: hit 2 at 15.24 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryB_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[P0Trace] START GS_EquipWeapon_Montage
+[P0Trace] tick t=16.186 montage=GS_EquipWeapon_Montage pos=0.000 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.216 montage=GS_EquipWeapon_Montage pos=0.045 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.246 montage=GS_EquipWeapon_Montage pos=0.091 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.276 montage=GS_EquipWeapon_Montage pos=0.136 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.310 montage=GS_EquipWeapon_Montage pos=0.187 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.340 montage=GS_EquipWeapon_Montage pos=0.231 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.370 montage=GS_EquipWeapon_Montage pos=0.276 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.400 montage=GS_EquipWeapon_Montage pos=0.321 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.432 montage=GS_EquipWeapon_Montage pos=0.369 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.460 montage=GS_EquipWeapon_Montage pos=0.412 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.491 montage=GS_EquipWeapon_Montage pos=0.457 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.521 montage=GS_EquipWeapon_Montage pos=0.503 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.552 montage=GS_EquipWeapon_Montage pos=0.549 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=16.583 montage=GS_EquipWeapon_Montage pos=0.596 playing=True stopped=False current=GS_EquipWeapon_Montage activated=['GA_GS_Boss_EnterCombat_C'] animating=GA_GS_Boss_EnterCombat_C behavior_state=SM_Behavior_C
+[P0Trace] END of trace
+[2026.10.25-08.31.48:580][ 16]LogRPGHitIntake: hit 3 at 16.77 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryC_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[P0Trace] START AM_Boss01_A3b
+[P0Trace] tick t=17.110 montage=AM_Boss01_A3b pos=0.000 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.31.48:945][ 28]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3b instance 1 begins (generation 2)
+[P0Trace] tick t=17.141 montage=AM_Boss01_A3b pos=0.030 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.171 montage=AM_Boss01_A3b pos=0.061 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.201 montage=AM_Boss01_A3b pos=0.091 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.232 montage=AM_Boss01_A3b pos=0.122 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.31.49:071][ 32]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3b committed at 0.15 s, heading 180.0 deg
+[2026.10.25-08.31.49:071][ 32]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3b active window opens at 0.15 s
+[P0Trace] tick t=17.261 montage=AM_Boss01_A3b pos=0.151 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.292 montage=AM_Boss01_A3b pos=0.181 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.323 montage=AM_Boss01_A3b pos=0.213 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.354 montage=AM_Boss01_A3b pos=0.244 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.385 montage=AM_Boss01_A3b pos=0.274 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.419 montage=AM_Boss01_A3b pos=0.309 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.450 montage=AM_Boss01_A3b pos=0.340 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=17.481 montage=AM_Boss01_A3b pos=0.371 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.31.49:316][ 40]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3b recovery from 0.40 s (heading lock released)
+[P0Trace] tick t=17.513 montage=AM_Boss01_A3b pos=0.402 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] END of trace
+[2026.10.25-08.31.50:000][ 62]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3b instance 1 ended (montage stopped) at 1.05 s, phase was Recovery, yaw drift after commit 0.0 deg
+[2026.10.25-08.31.50:034][ 63]LogRPGHitIntake: hit 4 at 18.23 s: weapon SwordCombatStyle, kind Strong, posture 30, stamina -1, bleed 0, attack data StrongMeleeAttackData (power 3, pack poise damage 20, from HitData), montage Ability_E_Anim_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[P0Trace] START GS_Attack04_Montage
+[P0Trace] tick t=19.250 montage=GS_Attack04_Montage pos=0.000 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.31.51:088][ 97]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A1b instance 2 begins (generation 2)
+[P0Trace] tick t=19.285 montage=GS_Attack04_Montage pos=0.035 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.316 montage=GS_Attack04_Montage pos=0.047 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.346 montage=GS_Attack04_Montage pos=0.059 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.376 montage=GS_Attack04_Montage pos=0.071 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.408 montage=GS_Attack04_Montage pos=0.084 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.438 montage=GS_Attack04_Montage pos=0.096 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.468 montage=GS_Attack04_Montage pos=0.108 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.31.51:303][104]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A1b committed at 0.12 s, heading 9.3 deg
+[P0Trace] tick t=19.499 montage=GS_Attack04_Montage pos=0.120 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.530 montage=GS_Attack04_Montage pos=0.132 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.559 montage=GS_Attack04_Montage pos=0.144 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.589 montage=GS_Attack04_Montage pos=0.156 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.31.51:424][108]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A1b active window opens at 0.17 s
+[P0Trace] tick t=19.620 montage=GS_Attack04_Montage pos=0.168 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=19.654 montage=GS_Attack04_Montage pos=0.202 playing=True stopped=False current=GS_Attack04_Montage activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] END of trace
+[2026.10.25-08.31.51:742][118]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A1b recovery from 0.49 s (heading lock released)
+[P0Trace] START AM_Boss01_A3a
+[P0Trace] tick t=20.498 montage=AM_Boss01_A3a pos=0.000 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.31.52:333][137]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A1b instance 2 ended (replaced by another attack) at 1.05 s, phase was Recovery, yaw drift after commit 17.6 deg
+[2026.10.25-08.31.52:333][137]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3a instance 3 begins (generation 2)
+[P0Trace] tick t=20.529 montage=AM_Boss01_A3a pos=0.030 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=20.560 montage=AM_Boss01_A3a pos=0.062 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=20.591 montage=AM_Boss01_A3a pos=0.092 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=20.622 montage=AM_Boss01_A3a pos=0.124 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=20.652 montage=AM_Boss01_A3a pos=0.154 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=20.683 montage=AM_Boss01_A3a pos=0.184 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=20.713 montage=AM_Boss01_A3a pos=0.215 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=20.744 montage=AM_Boss01_A3a pos=0.245 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=20.778 montage=AM_Boss01_A3a pos=0.280 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=20.809 montage=AM_Boss01_A3a pos=0.310 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=20.839 montage=AM_Boss01_A3a pos=0.341 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=20.870 montage=AM_Boss01_A3a pos=0.371 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.31.52:704][149]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3a committed at 0.40 s, heading 89.8 deg
+[2026.10.25-08.31.52:704][149]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3a active window opens at 0.40 s
+[P0Trace] tick t=20.900 montage=AM_Boss01_A3a pos=0.402 playing=True stopped=False current=AM_Boss01_A3a activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] END of trace
+[2026.10.25-08.31.52:857][154]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3a instance 3 ended (montage stopped) at 0.52 s, phase was Active, yaw drift after commit 0.0 deg
+[2026.10.25-08.31.53:797][184]LogRPGHitIntake: hit 5 at 21.99 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[2026.10.25-08.31.53:798][184]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: poise break 1, stance break for 2.5 s, hits are critical x2.5 (every hit: 0)
+[2026.10.25-08.31.54:980][223]LogRPGStagger: riposte accepted at 148 cm: the paired clips play, the critical hit (x2.5) lands once at the impact
+[2026.10.25-08.31.55:792][250]LogRPGStagger: riposte impact: 40 x 2.5 = 100 damage, health 1914 -> 1814 (impact 1)
+[2026.10.25-08.31.56:971][289]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: riposte execution over (completed, clips over, started 1, impacts 1)
+[2026.10.25-08.31.56:971][289]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: down for 3.18 s, 1 critical hits, getting up (clip, rate -0.60)
+[2026.10.25-08.31.57:949][321]LogRPGStagger: BP_ExampleGreatSwordBoss_C_3: stance break over (1 critical hits), resume behaviour 1
+[2026.10.25-08.31.58:354][334]LogRPGHitIntake: hit 6 at 26.55 s: weapon SwordCombatStyle, kind Light, posture 18, stamina -1, bleed 0, attack data DefaultMeleeAttackData (power 0, pack poise damage 20, from HitData), montage Attack_PrimaryA_Montage, grounded, bone None, target BP_ExampleGreatSwordBoss_C_3
+[P0Trace] START AM_Boss01_A3b
+[P0Trace] tick t=27.207 montage=AM_Boss01_A3b pos=0.000 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.31.59:043][356]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3b instance 4 begins (generation 2)
+[P0Trace] tick t=27.238 montage=AM_Boss01_A3b pos=0.031 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=27.271 montage=AM_Boss01_A3b pos=0.064 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=27.302 montage=AM_Boss01_A3b pos=0.094 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] tick t=27.333 montage=AM_Boss01_A3b pos=0.125 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[2026.10.25-08.31.59:171][360]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3b committed at 0.16 s, heading 121.0 deg
+[2026.10.25-08.31.59:172][360]LogRPGAttack: BP_ExampleGreatSwordBoss_C_3: attack A3b active window opens at 0.16 s
+[BuildFight] METRIC build = Starter (Saved/build_fight_build.txt); weapon style at the end SwordCombatStyle
+[BuildFight] METRIC run_id = 20261025T083130_6d5125be
+[BuildFight] METRIC policy = close-recovery-v3; source 4c3e4cfc912dc9a1275084771b1878f4c98b28a3e82348b065f4e68c2191db02
+[BuildFight] METRIC outcome = player_dead (player health -24.0)
+[BuildFight] METRIC fight_seconds = 15.6 of 420 allowed (world time from the wake)
+[BuildFight] METRIC balance_evidence = INCONCLUSIVE: no victory; less than 40 percent boss health removed; only 1 heavy swing(s); need at least 3 to exercise the heavy-opener policy; 3 dodge(s) pressed too late for the i-frames (close attacks are not reactively dodgeable: the run measures the bot); untracked boss moves dodged at a guessed time (AnimMontage_229, GS_EquipWeapon_Montage)
+[BuildFight] METRIC boss_health = 2000 -> 1798, lost 202.3 = 102.3 weapon hits + 0.0 bleed procs + 100.0 riposte impacts + 0.0 other
+[BuildFight] METRIC hits_landed = 6 (Light 5, Strong 1); 0 hit record(s) without a health drop, 0 health drop(s) without a record
+[BuildFight] METRIC boss_health_per_hit = 17.1 on average over all hits (weapon damage 102.3 / 6 hits); by kind: Light 16.0 (n=5), Strong 22.4 (n=1)
+[BuildFight] METRIC swings_thrown = 6 bot presses (Light 5, Strong 1), 7 swings seen by the swing tracker (Light 6, Strong 1), 0 whiffs, 0 ignored by the pack, 2 cut short by a dodge
+[BuildFight] METRIC swing_to_hit_delay = Light median 0.40 s (n=3, guess 0.34); Strong median 0.71 s (n=1, guess 0.69)
+[BuildFight] METRIC posture_breaks = 1
+[BuildFight] METRIC ripostes = 1 done (impacts), 1 presses, 1 accepted, 0 rejected by the press itself, 0 rejected requests counted by the boss
+[BuildFight] METRIC bleed_procs = 0 (last proc took 0.0 health)
+[BuildFight] METRIC dodges = 3 presses, 3 dodge montages (3 quick, 0 full), 0 wave jumps, 0 ignored by the pack, 3 late (the i-frames start after the hit was due), stamina cost samples 20, 15
+[BuildFight] METRIC hits_taken = 4 for 144 health (A1b/Active 1, A3a/Active 1, A3b/Active 2); player health 120.0 -> -24.0 (lowest -24.0)
+[BuildFight] METRIC attacks_seen = A1b 1 (hit me 1, not hit after a dodge 0 (NOT a dodge success rate: out of range counts too), missed on its own 0); A3a 1 (hit me 1, not hit after a dodge 0 (NOT a dodge success rate: out of range counts too), missed on its own 0); A3b 2 (hit me 2, not hit after a dodge 0 (NOT a dodge success rate: out of range counts too), missed on its own 0)
+[BuildFight] METRIC openings = 3 usable (>= 0.45 s) seen, 1 used (at least one hit), 2 tried; 0 too short; by kind (seen/used): rec:A1b 1/0; rec:A3b 1/0; stagger 1/1
+[BuildFight] METRIC stamina = start 100.0, lowest 5.0 at 7.6 s, below 15 for 3.5 s, 2 dips below 20
+[BuildFight] METRIC phase_two = not reached
+[BuildFight] METRIC untracked_boss_montages = AnimMontage_229 x1 (ignored); GS_EquipWeapon_Montage x1 (ignored)
+[BuildFight] METRIC walk_speed = 516 cm/s measured over 46 frames (the bot assumed 450)
+[BuildFight] METRIC strike_range = 125 cm at the end (started at 125)
+[BuildFight] RESULT 10/10 passed
+[P0Trace] tick t=27.363 montage=AM_Boss01_A3b pos=0.156 playing=True stopped=False current=AM_Boss01_A3b activated=['GA_GS_Boss_CloseAttack_C'] animating=GA_GS_Boss_CloseAttack_C behavior_state=SM_Behavior_C
+[P0Trace] done

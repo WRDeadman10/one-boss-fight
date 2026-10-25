@@ -1,0 +1,61 @@
+[P0Nat] observer registered
+[P0Nat] observer registered
+[P0Nat] armed: rpg.WakeClip=0.0 rpg.CloseTelegraph=0.0 rpg.Build='Starter'
+[P0Nat] MONTAGE AnimMontage_154 t=0.43 dist=1801 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_155 t=9.48 dist=1600 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] FPS over the last 10.0 s: 34.2 frames/s (tick count 343)
+[P0Nat] MONTAGE GS_EquipWeapon_Montage t=12.79 dist=416 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE GS_ChargedAttack_Montage t=13.74 dist=133 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE Mid01_Anim_Montage t=16.51 dist=129 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE GS_Attack04_Montage t=18.76 dist=147 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] FPS over the last 10.0 s: 33.0 frames/s (tick count 330)
+[P0Nat] MONTAGE GS_ChargedAttack_Montage t=20.91 dist=153 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_156 t=22.47 dist=157 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_157 t=23.14 dist=158 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_159 t=23.83 dist=152 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_161 t=25.81 dist=77 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE GS_ChargedAttack_Montage t=27.83 dist=172 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] FPS over the last 10.0 s: 33.1 frames/s (tick count 332)
+[P0Nat] MONTAGE AM_Boss01_A3a t=30.63 dist=116 tracker_phase=Recovery tracker_move=A2 phase_two=False transition=False
+[P0Nat] MONTAGE GS_Attack04_Montage t=31.44 dist=117 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AM_Boss01_A1 t=32.92 dist=164 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AM_Boss01_A3a t=33.96 dist=116 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AM_Boss01_A1 t=34.94 dist=120 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE GS_Attack04_Montage t=35.96 dist=117 tracker_phase=None tracker_move=None phase_two=False transition=False
+[BuildFight] METRIC build = Starter (Saved/build_fight_build.txt); weapon style at the end SwordCombatStyle
+[BuildFight] METRIC run_id = 20261025T054726_658f064d
+[BuildFight] METRIC policy = close-recovery-v3; source 4c3e4cfc912dc9a1275084771b1878f4c98b28a3e82348b065f4e68c2191db02
+[BuildFight] METRIC outcome = player_dead (player health -24.0)
+[BuildFight] METRIC fight_seconds = 24.4 of 420 allowed (world time from the wake)
+[BuildFight] METRIC balance_evidence = INCONCLUSIVE: no victory; less than 40 percent boss health removed; only 2 heavy swing(s); need at least 3 to exercise the heavy-opener policy; 2 dodge(s) pressed too late for the i-frames (close attacks are not reactively dodgeable: the run measures the bot); untracked boss moves dodged at a guessed time (AnimMontage_155, GS_EquipWeapon_Montage, Mid01_Anim_Montage)
+[BuildFight] METRIC boss_health = 2000 -> 1775, lost 224.7 = 124.7 weapon hits + 0.0 bleed procs + 100.0 riposte impacts + 0.0 other
+[BuildFight] METRIC hits_landed = 7 (Light 5, Strong 2); 0 hit record(s) without a health drop, 0 health drop(s) without a record
+[BuildFight] METRIC boss_health_per_hit = 17.8 on average over all hits (weapon damage 124.7 / 7 hits); by kind: Light 16.0 (n=5), Strong 22.4 (n=2)
+[BuildFight] METRIC swings_thrown = 7 bot presses (Light 5, Strong 2), 8 swings seen by the swing tracker (Light 6, Strong 2), 0 whiffs, 0 ignored by the pack, 2 cut short by a dodge
+[BuildFight] METRIC swing_to_hit_delay = Light median 0.39 s (n=4, guess 0.34); Strong median 0.68 s (n=1, guess 0.69)
+[BuildFight] METRIC posture_breaks = 1
+[BuildFight] METRIC ripostes = 1 done (impacts), 1 presses, 1 accepted, 0 rejected by the press itself, 0 rejected requests counted by the boss
+[BuildFight] METRIC bleed_procs = 0 (last proc took 0.0 health)
+[BuildFight] METRIC dodges = 7 presses, 7 dodge montages (7 quick, 0 full), 0 wave jumps, 0 ignored by the pack, 2 late (the i-frames start after the hit was due), stamina cost samples 15, 20, 20, 20, 20, 20, 15
+[BuildFight] METRIC hits_taken = 4 for 144 health (A1b/Active 3, A3a/Active 1); player health 120.0 -> -24.0 (lowest -24.0)
+[BuildFight] METRIC attacks_seen = A1 2 (hit me 0, not hit after a dodge 2 (NOT a dodge success rate: out of range counts too), missed on its own 0); A1b 3 (hit me 3, not hit after a dodge 0 (NOT a dodge success rate: out of range counts too), missed on its own 0); A2 3 (hit me 0, not hit after a dodge 1 (NOT a dodge success rate: out of range counts too), missed on its own 2); A3a 2 (hit me 1, not hit after a dodge 1 (NOT a dodge success rate: out of range counts too), missed on its own 0)
+[BuildFight] METRIC openings = 5 usable (>= 0.45 s) seen, 3 used (at least one hit), 3 tried; 0 too short; by kind (seen/used): rec:A1 2/0; rec:A1b 1/1; rec:A2 1/1; stagger 1/1
+[BuildFight] METRIC stamina = start 100.0, lowest 5.0 at 21.3 s, below 15 for 2.8 s, 2 dips below 20
+[BuildFight] METRIC phase_two = not reached
+[BuildFight] METRIC untracked_boss_montages = AnimMontage_155 x1 (ignored); GS_EquipWeapon_Montage x1 (ignored); Mid01_Anim_Montage x1 (attack-like: dodged)
+[BuildFight] METRIC walk_speed = 412 cm/s measured over 75 frames (the bot assumed 450)
+[BuildFight] METRIC strike_range = 125 cm at the end (started at 125)
+[BuildFight] RESULT 10/10 passed
+[P0Nat] COUNT GS_ChargedAttack_Montage x3
+[P0Nat] COUNT GS_Attack04_Montage x3
+[P0Nat] COUNT AM_Boss01_A3a x2
+[P0Nat] COUNT AM_Boss01_A1 x2
+[P0Nat] COUNT AnimMontage_154 x1
+[P0Nat] COUNT AnimMontage_155 x1
+[P0Nat] COUNT GS_EquipWeapon_Montage x1
+[P0Nat] COUNT Mid01_Anim_Montage x1
+[P0Nat] COUNT AnimMontage_156 x1
+[P0Nat] COUNT AnimMontage_157 x1
+[P0Nat] COUNT AnimMontage_159 x1
+[P0Nat] COUNT AnimMontage_161 x1
+[P0Nat] done

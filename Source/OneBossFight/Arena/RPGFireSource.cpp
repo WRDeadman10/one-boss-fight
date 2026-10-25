@@ -96,7 +96,22 @@ void ARPGFireSource::Tick(float DeltaSeconds)
 #if !UE_BUILD_SHIPPING
 	// performance experiments (rpg.Perf.*): see RPGPerfSwitches.h
 	Light->SetVisibility(RPGPerf::FireLights());
-	Light->SetCastShadows(bCastShadows && RPGPerf::FireShadows());
+	{
+		const int32 Mode = RPGPerf::FireShadows();
+		bool bShadow = bCastShadows;
+		if (Mode == 0)
+		{
+			bShadow = false;
+		}
+		else if (Mode > 0)
+		{
+			// the brazier number is the two digits after BrazierFire_ in the actor label; other lights keep nothing
+			const FString Name = GetActorNameOrLabel();
+			const int32 At = Name.Find(TEXT("BrazierFire_"));
+			bShadow = bShadow && At != INDEX_NONE && FCString::Atoi(*Name.Mid(At + 12, 2)) < Mode;
+		}
+		Light->SetCastShadows(bShadow);
+	}
 	for (UParticleSystemComponent* Component : {Fire.Get(), Smoke.Get(), Sparks.Get()})
 	{
 		if (Component)

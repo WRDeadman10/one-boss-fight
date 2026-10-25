@@ -1,0 +1,10 @@
+DecisionGate,PlayerContext,ProposedOutcome,RequiredCondition
+Neutral,Player distance > 650cm,A04 Procession Lunge,"Check LOS, cooldown, nav/wrap feasibility"
+Neutral,Player 120–380cm and side angle,A02 Crescent Sweep,Angle gate; weighted selection
+Neutral,Player behind within 220cm,A05 Backhook,Only if rear cooldown ready
+Neutral,Player is visibly healing at 350–800cm,A04 Procession Lunge,Reaction delay and LOS required
+Neutral,Player attacking in front within 210cm,A06 Crossguard Riposte,Not every attack; reaction cooldown and visible commitment
+A02.ComboGate,"Player close/front, phase 2",A07 Twin Toll Slash,Check max combo depth and cooldown
+A02.ComboGate,Player behind and close,A05 Backhook,Branch allowed only at after-active gate
+A02.ComboGate,No valid continuation,Recovery_Normal,Guaranteed fallback
+A03.End,Any,Recovery_Long,No instant counter; intentional punish

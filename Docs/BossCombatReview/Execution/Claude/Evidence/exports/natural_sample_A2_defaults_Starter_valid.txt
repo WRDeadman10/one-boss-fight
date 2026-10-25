@@ -1,0 +1,140 @@
+[P0Nat] observer registered
+[P0Nat] observer registered
+[P0Nat] armed: rpg.WakeClip=1.0 rpg.CloseTelegraph=0.4000000059604645 rpg.Build='Starter'
+[P0Nat] MONTAGE AnimMontage_89 t=0.43 dist=1801 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_90 t=9.44 dist=1600 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] FPS over the last 10.0 s: 34.2 frames/s (tick count 343)
+[P0Nat] MONTAGE AnimMontage_91 t=11.75 dist=800 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE GS_EquipWeapon_Montage t=16.22 dist=134 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE GS_ChargedAttack_Montage t=17.15 dist=134 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE GS_ChargedAttack_Montage t=20.29 dist=139 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] FPS over the last 10.0 s: 32.7 frames/s (tick count 328)
+[P0Nat] MONTAGE AM_Boss01_A3b t=23.11 dist=167 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_92 t=24.25 dist=118 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_93 t=24.94 dist=118 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_95 t=25.33 dist=151 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_97 t=27.34 dist=77 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] FPS over the last 10.0 s: 32.8 frames/s (tick count 329)
+[P0Nat] MONTAGE AnimMontage_98 t=36.94 dist=127 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_99 t=37.62 dist=127 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_101 t=38.18 dist=127 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_103 t=40.17 dist=77 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] FPS over the last 10.0 s: 33.2 frames/s (tick count 332)
+[P0Nat] FPS over the last 10.0 s: 33.2 frames/s (tick count 333)
+[P0Nat] MONTAGE AnimMontage_104 t=50.54 dist=128 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_105 t=51.22 dist=128 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_107 t=51.52 dist=128 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_109 t=53.50 dist=77 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] FPS over the last 10.0 s: 33.7 frames/s (tick count 338)
+[P0Nat] MONTAGE AnimMontage_110 t=63.10 dist=157 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_111 t=63.78 dist=157 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_113 t=64.31 dist=157 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_115 t=66.29 dist=77 tracker_phase=None tracker_move=None phase_two=False transition=False
+[P0Nat] MONTAGE AnimMontage_116 t=67.76 dist=141 tracker_phase=None tracker_move=None phase_two=True transition=True
+[P0Nat] FPS over the last 10.0 s: 33.4 frames/s (tick count 335)
+[P0Nat] MONTAGE AnimMontage_117 t=74.77 dist=124 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_118 t=75.46 dist=124 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_120 t=75.76 dist=124 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_122 t=77.75 dist=77 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] FPS over the last 10.0 s: 33.0 frames/s (tick count 331)
+[P0Nat] MONTAGE AnimMontage_123 t=87.95 dist=125 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_124 t=88.65 dist=125 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_126 t=89.16 dist=125 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] FPS over the last 10.0 s: 32.4 frames/s (tick count 324)
+[P0Nat] MONTAGE AnimMontage_128 t=91.16 dist=77 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] FPS over the last 10.0 s: 32.9 frames/s (tick count 329)
+[P0Nat] MONTAGE AnimMontage_129 t=101.34 dist=137 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_130 t=102.03 dist=137 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_132 t=102.57 dist=137 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_134 t=104.56 dist=77 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] FPS over the last 10.0 s: 33.1 frames/s (tick count 332)
+[P0Nat] MONTAGE AnimMontage_135 t=117.41 dist=121 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_136 t=118.10 dist=121 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_138 t=118.64 dist=121 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_140 t=120.62 dist=77 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] FPS over the last 10.0 s: 33.1 frames/s (tick count 332)
+[P0Nat] FPS over the last 10.0 s: 32.9 frames/s (tick count 330)
+[P0Nat] MONTAGE AnimMontage_141 t=131.02 dist=140 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_142 t=131.71 dist=140 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_144 t=132.22 dist=140 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_146 t=134.21 dist=77 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] FPS over the last 10.0 s: 33.2 frames/s (tick count 332)
+[P0Nat] MONTAGE AnimMontage_147 t=144.49 dist=116 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_148 t=145.18 dist=116 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_150 t=145.72 dist=116 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_152 t=147.70 dist=77 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] MONTAGE AnimMontage_153 t=150.61 dist=118 tracker_phase=None tracker_move=None phase_two=True transition=False
+[P0Nat] FPS over the last 10.0 s: 33.2 frames/s (tick count 332)
+[BuildFight] METRIC build = Starter (Saved/build_fight_build.txt); weapon style at the end SwordCombatStyle
+[BuildFight] METRIC run_id = 20261025T054422_b71de62b
+[BuildFight] METRIC policy = close-recovery-v3; source 4c3e4cfc912dc9a1275084771b1878f4c98b28a3e82348b065f4e68c2191db02
+[BuildFight] METRIC outcome = boss_dead (boss health -13.191963577747174, death state dying, HUD Fighting)
+[BuildFight] METRIC fight_seconds = 140.0 of 420 allowed (world time from the wake)
+[BuildFight] METRIC balance_evidence = INCONCLUSIVE: only 2 heavy swing(s); need at least 3 to exercise the heavy-opener policy; 1 dodge(s) pressed too late for the i-frames (close attacks are not reactively dodgeable: the run measures the bot); untracked boss moves dodged at a guessed time (AnimMontage_153, AnimMontage_91, GS_EquipWeapon_Montage)
+[BuildFight] METRIC boss_health = 2000 -> -13, lost 2013.2 = 1013.2 weapon hits + 0.0 bleed procs + 1000.0 riposte impacts + 0.0 other
+[BuildFight] METRIC hits_landed = 61 (Light 59, Strong 2); 0 hit record(s) without a health drop, 0 health drop(s) without a record
+[BuildFight] METRIC boss_health_per_hit = 16.6 on average over all hits (weapon damage 1013.2 / 61 hits); by kind: Light 16.4 (n=59), Strong 22.4 (n=2)
+[BuildFight] METRIC swings_thrown = 62 bot presses (Light 60, Strong 2), 72 swings seen by the swing tracker (Light 70, Strong 2), 1 whiffs, 0 ignored by the pack, 0 cut short by a dodge
+[BuildFight] METRIC swing_to_hit_delay = Light median 0.39 s (n=58, guess 0.34); Strong median 0.73 s (n=2, guess 0.69)
+[BuildFight] METRIC posture_breaks = 10
+[BuildFight] METRIC ripostes = 10 done (impacts), 10 presses, 10 accepted, 0 rejected by the press itself, 0 rejected requests counted by the boss
+[BuildFight] METRIC bleed_procs = 0 (last proc took 0.0 health)
+[BuildFight] METRIC dodges = 1 presses, 1 dodge montages (1 quick, 0 full), 0 wave jumps, 0 ignored by the pack, 1 late (the i-frames start after the hit was due), stamina cost samples 15
+[BuildFight] METRIC hits_taken = 1 for 36 health (A3b/Active 1); player health 120.0 -> 84.0 (lowest 84.0)
+[BuildFight] METRIC attacks_seen = A2 2 (hit me 0, not hit after a dodge 0 (NOT a dodge success rate: out of range counts too), missed on its own 2); A3b 1 (hit me 1, not hit after a dodge 0 (NOT a dodge success rate: out of range counts too), missed on its own 0)
+[BuildFight] METRIC openings = 12 usable (>= 0.45 s) seen, 11 used (at least one hit), 12 tried; 0 too short; by kind (seen/used): rec:A3b 1/0; roar 1/1; stagger 10/10
+[BuildFight] METRIC stamina = start 100.0, lowest 5.0 at 52.5 s, below 15 for 3.4 s, 2 dips below 20
+[BuildFight] METRIC phase_two = reached at 56.0 s (boss health 1193.854015278578)
+[BuildFight] METRIC untracked_boss_montages = AnimMontage_153 x1 (ignored); AnimMontage_91 x1 (ignored); GS_EquipWeapon_Montage x1 (ignored)
+[BuildFight] METRIC walk_speed = 307 cm/s measured over 294 frames (the bot assumed 450)
+[BuildFight] METRIC strike_range = 113 cm at the end (started at 125)
+[BuildFight] RESULT 10/10 passed
+[P0Nat] COUNT GS_ChargedAttack_Montage x2
+[P0Nat] COUNT AnimMontage_89 x1
+[P0Nat] COUNT AnimMontage_90 x1
+[P0Nat] COUNT AnimMontage_91 x1
+[P0Nat] COUNT GS_EquipWeapon_Montage x1
+[P0Nat] COUNT AM_Boss01_A3b x1
+[P0Nat] COUNT AnimMontage_92 x1
+[P0Nat] COUNT AnimMontage_93 x1
+[P0Nat] COUNT AnimMontage_95 x1
+[P0Nat] COUNT AnimMontage_97 x1
+[P0Nat] COUNT AnimMontage_98 x1
+[P0Nat] COUNT AnimMontage_99 x1
+[P0Nat] COUNT AnimMontage_101 x1
+[P0Nat] COUNT AnimMontage_103 x1
+[P0Nat] COUNT AnimMontage_104 x1
+[P0Nat] COUNT AnimMontage_105 x1
+[P0Nat] COUNT AnimMontage_107 x1
+[P0Nat] COUNT AnimMontage_109 x1
+[P0Nat] COUNT AnimMontage_110 x1
+[P0Nat] COUNT AnimMontage_111 x1
+[P0Nat] COUNT AnimMontage_113 x1
+[P0Nat] COUNT AnimMontage_115 x1
+[P0Nat] COUNT AnimMontage_116 x1
+[P0Nat] COUNT AnimMontage_117 x1
+[P0Nat] COUNT AnimMontage_118 x1
+[P0Nat] COUNT AnimMontage_120 x1
+[P0Nat] COUNT AnimMontage_122 x1
+[P0Nat] COUNT AnimMontage_123 x1
+[P0Nat] COUNT AnimMontage_124 x1
+[P0Nat] COUNT AnimMontage_126 x1
+[P0Nat] COUNT AnimMontage_128 x1
+[P0Nat] COUNT AnimMontage_129 x1
+[P0Nat] COUNT AnimMontage_130 x1
+[P0Nat] COUNT AnimMontage_132 x1
+[P0Nat] COUNT AnimMontage_134 x1
+[P0Nat] COUNT AnimMontage_135 x1
+[P0Nat] COUNT AnimMontage_136 x1
+[P0Nat] COUNT AnimMontage_138 x1
+[P0Nat] COUNT AnimMontage_140 x1
+[P0Nat] COUNT AnimMontage_141 x1
+[P0Nat] COUNT AnimMontage_142 x1
+[P0Nat] COUNT AnimMontage_144 x1
+[P0Nat] COUNT AnimMontage_146 x1
+[P0Nat] COUNT AnimMontage_147 x1
+[P0Nat] COUNT AnimMontage_148 x1
+[P0Nat] COUNT AnimMontage_150 x1
+[P0Nat] COUNT AnimMontage_152 x1
+[P0Nat] COUNT AnimMontage_153 x1
+[P0Nat] done

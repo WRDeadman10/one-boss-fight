@@ -1,0 +1,55 @@
+{
+  "contract_version": "1.0",
+  "clip_name": "AN_Boss01_A3b_Combo2",
+  "source_asset": {
+    "fbx_path": "Import/Boss01/Animations/AN_Boss01_A3b_Combo2.fbx",
+    "sha256": "a34cbc6c936ec5de470e3316f80f81774ebbb08c466f6afff515742bf9853af1",
+    "byte_size": 773900
+  },
+  "timing_and_framing": {
+    "fps": 30,
+    "samples": 41,
+    "elapsed_duration_s": 1.333,
+    "frame_conventions": {
+      "blender_1based_range": [
+        1,
+        41
+      ],
+      "metadata_0based_range": [
+        0,
+        40
+      ],
+      "offset_rule": "F_blender = F_metadata + 1"
+    }
+  },
+  "author_intent_markers": {
+    "commit_time_s": 0.13,
+    "windup_end_s": 0.15,
+    "active_start_s": 0.15,
+    "active_end_s": 0.4,
+    "recovery_end_s": 1.333,
+    "impact_time_s": null,
+    "is_looping": false,
+    "author_notes": "Two-Hit Branch Combo: Slash 2. Explosive rising reverse horizontal slash slicing from low-left up and across to the right flank. Starts seamlessly from A3a Frame 24 ready pose (0.00s); quick snap torque windup (0.00-0.15s); powerful reverse sweep whips across player (0.15-0.40s); deceleration and flourish recovery smoothly returns to combat ready idle (0.40-1.333s). Both hands maintain greatsword grip (wrist distance 9.8-13.6 cm). Feet grounded flat at Z \u2248 0."
+  },
+  "offline_kinematic_bounds": {
+    "root_sampling_mode": "armature_object(root)",
+    "max_root_excursion_cm": 0.0,
+    "end_start_displacement_cm": 0.0,
+    "pelvis_z_range_cm": [
+      95.9,
+      95.9
+    ],
+    "foot_z_range_cm": [
+      -0.01,
+      12.92
+    ],
+    "hand_r_max_reach_cm": 67.32
+  },
+  "contract_compliance": {
+    "fps_compliant": true,
+    "root_motion_category": "InPlace",
+    "root_motion_compliant": true,
+    "has_sidecar": true
+  }
+}

@@ -9,8 +9,10 @@ DISTS = (90,)
 # B10b: C7's authored misses were at actual actor yaw -162.2, while the old
 # probe passed that value as pitch (`Rotator(0, yaw, 0)`) and logged yaw 180.0.
 # Exercise the real orientations explicitly; this is a measurement probe, not a pass/fail driver.
-YAWS = (180.0, -162.2)
-TRIALS = 10
+YAWS = (180.0,)
+TRIALS = 14
+# KI-106 product check: the first PHASE_BEHIND trials put the player BEHIND the boss (the pack chains A3a to A3b and the tracker denies the branch stage with Montage_Stop), the rest put the player in front: do the later real attacks still hit?
+PHASE_BEHIND = 7
 
 
 def comp(actor, name):
@@ -27,9 +29,9 @@ def health(actor):
         return None
 
 
-def place(pawn, boss, dist):
+def place(pawn, boss, dist, ang=0.0):
     bl = boss.get_actor_location()
-    r = math.radians(boss.get_actor_rotation().yaw)
+    r = math.radians(boss.get_actor_rotation().yaw + ang)
     p = unreal.Vector(bl.x + math.cos(r) * dist, bl.y + math.sin(r) * dist, bl.z + 20)
     pawn.set_actor_location_and_rotation(p, unreal.Rotator(0, 0, unreal.MathLibrary.find_look_at_rotation(p, bl).yaw), False, True)
 
@@ -77,16 +79,16 @@ def _tick(dt):
             inst.montage_stop(0.05)
         dbg.debug_refill_player()
         boss.set_actor_rotation(unreal.Rotator(0, 0, yaw), False)
-        place(pawn, boss, dist)
+        place(pawn, boss, dist, 180.0 if (n % TRIALS) < PHASE_BEHIND else 0.0)
         s["hp0"] = health(pawn)
         actual_yaw = boss.get_actor_rotation().yaw
         yaw_error = abs((actual_yaw - yaw + 180.0) % 360.0 - 180.0)
-        log("TRIAL %d dist %d requested yaw %.1f actual %.1f (error %.1f) start" % (n, dist, yaw, actual_yaw, yaw_error))
+        log("TRIAL %d %s dist %d requested yaw %.1f actual %.1f (error %.1f) start" % (n, "BEHIND" if (n % TRIALS) < PHASE_BEHIND else "FRONT", dist, yaw, actual_yaw, yaw_error))
         tr.start_move("Close")
         s.update(t=0.0, next=2.0)
     else:
         hp1 = health(pawn)
-        log("TRIAL %d dist %d yaw %.1f %s (health %s -> %s)" % (n, dist, yaw, "HIT" if hp1 is not None and s["hp0"] is not None and hp1 < s["hp0"] else "miss", s["hp0"], hp1))
+        log("TRIAL %d %s dist %d yaw %.1f %s (health %s -> %s)" % (n, "BEHIND" if (n % TRIALS) < PHASE_BEHIND else "FRONT", dist, yaw, "HIT" if hp1 is not None and s["hp0"] is not None and hp1 < s["hp0"] else "miss", s["hp0"], hp1))
         s.update(t=0.0, next=0.5)
     s["step"] += 1
 

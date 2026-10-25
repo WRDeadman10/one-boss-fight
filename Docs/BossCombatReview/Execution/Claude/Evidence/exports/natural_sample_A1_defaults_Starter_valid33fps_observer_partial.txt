@@ -1,0 +1,91 @@
+[P0Nat] observer registered
+[P0Nat] observer registered
+[P0Nat] armed: rpg.WakeClip=1.0 rpg.CloseTelegraph=0.4000000059604645 rpg.Build='Starter'
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] FPS over the last 10.0 s: 34.5 frames/s (tick count 345)
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] FPS over the last 10.0 s: 32.3 frames/s (tick count 324)
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] FPS over the last 10.0 s: 33.0 frames/s (tick count 330)
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] FPS over the last 10.0 s: 33.2 frames/s (tick count 333)
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] FPS over the last 10.0 s: 32.9 frames/s (tick count 329)
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] FPS over the last 10.0 s: 33.6 frames/s (tick count 337)
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] FPS over the last 10.0 s: 33.9 frames/s (tick count 339)
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] FPS over the last 10.0 s: 33.3 frames/s (tick count 333)
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] FPS over the last 10.0 s: 33.5 frames/s (tick count 336)
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] FPS over the last 10.0 s: 33.8 frames/s (tick count 338)
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] FPS over the last 10.0 s: 33.4 frames/s (tick count 335)
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] FPS over the last 10.0 s: 33.9 frames/s (tick count 339)
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] FPS over the last 10.0 s: 33.4 frames/s (tick count 335)
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] FPS over the last 10.0 s: 33.1 frames/s (tick count 331)
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] tick error Traceback (most recent call last):
+[P0Nat] FPS over the last 10.0 s: 33.4 frames/s (tick count 334)
+[BuildFight] METRIC build = Starter (Saved/build_fight_build.txt); weapon style at the end SwordCombatStyle
+[BuildFight] METRIC run_id = 20261025T054058_20ddb487
+[BuildFight] METRIC policy = close-recovery-v3; source 4c3e4cfc912dc9a1275084771b1878f4c98b28a3e82348b065f4e68c2191db02
+[BuildFight] METRIC outcome = boss_dead (boss health -13.191963577747174, death state dying, HUD Fighting)
+[BuildFight] METRIC fight_seconds = 139.9 of 420 allowed (world time from the wake)
+[BuildFight] METRIC balance_evidence = INCONCLUSIVE: only 2 heavy swing(s); need at least 3 to exercise the heavy-opener policy; 1 dodge(s) pressed too late for the i-frames (close attacks are not reactively dodgeable: the run measures the bot); untracked boss moves dodged at a guessed time (AnimMontage_26, AnimMontage_88, GS_EquipWeapon_Montage)
+[BuildFight] METRIC boss_health = 2000 -> -13, lost 2013.2 = 1013.2 weapon hits + 0.0 bleed procs + 1000.0 riposte impacts + 0.0 other
+[BuildFight] METRIC hits_landed = 61 (Light 59, Strong 2); 0 hit record(s) without a health drop, 0 health drop(s) without a record
+[BuildFight] METRIC boss_health_per_hit = 16.6 on average over all hits (weapon damage 1013.2 / 61 hits); by kind: Light 16.4 (n=59), Strong 22.4 (n=2)
+[BuildFight] METRIC swings_thrown = 61 bot presses (Light 59, Strong 2), 71 swings seen by the swing tracker (Light 69, Strong 2), 0 whiffs, 0 ignored by the pack, 2 cut short by a dodge
+[BuildFight] METRIC swing_to_hit_delay = Light median 0.39 s (n=57, guess 0.34); Strong median 0.57 s (n=1, guess 0.69)
+[BuildFight] METRIC posture_breaks = 10
+[BuildFight] METRIC ripostes = 10 done (impacts), 10 presses, 10 accepted, 0 rejected by the press itself, 0 rejected requests counted by the boss
+[BuildFight] METRIC bleed_procs = 0 (last proc took 0.0 health)
+[BuildFight] METRIC dodges = 2 presses, 2 dodge montages (2 quick, 0 full), 0 wave jumps, 0 ignored by the pack, 1 late (the i-frames start after the hit was due), stamina cost samples 20, 20
+[BuildFight] METRIC hits_taken = 0 for 0 health (none); player health 120.0 -> 120.0 (lowest 120.0)
+[BuildFight] METRIC attacks_seen = A1 1 (hit me 0, not hit after a dodge 1 (NOT a dodge success rate: out of range counts too), missed on its own 0); A3b 1 (hit me 0, not hit after a dodge 1 (NOT a dodge success rate: out of range counts too), missed on its own 0)
+[BuildFight] METRIC openings = 12 usable (>= 0.45 s) seen, 10 used (at least one hit), 12 tried; 0 too short; by kind (seen/used): rec:A1 1/0; roar 1/0; stagger 10/10
+[BuildFight] METRIC stamina = start 100.0, lowest 0.0 at 6.7 s, below 15 for 1.8 s, 2 dips below 20
+[BuildFight] METRIC phase_two = reached at 57.0 s (boss health 1193.854015278578)
+[BuildFight] METRIC untracked_boss_montages = AnimMontage_26 x1 (ignored); AnimMontage_88 x1 (ignored); GS_EquipWeapon_Montage x1 (ignored)
+[BuildFight] METRIC walk_speed = 288 cm/s measured over 299 frames (the bot assumed 450)
+[BuildFight] METRIC strike_range = 125 cm at the end (started at 125)
+[BuildFight] RESULT 10/10 passed
+[P0Nat] done

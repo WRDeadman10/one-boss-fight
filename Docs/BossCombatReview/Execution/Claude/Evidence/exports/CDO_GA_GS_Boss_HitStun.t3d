@@ -1,0 +1,51 @@
+Begin Object Class=/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_HitStun.GA_GS_Boss_HitStun_C Name="Default__GA_GS_Boss_HitStun_C" ExportPath="/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_HitStun.GA_GS_Boss_HitStun_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_HitStun.Default__GA_GS_Boss_HitStun_C'"
+   BehaviorManagerComponent=None
+   bHitStunImmuneOnMaxHitCount?=False
+   Hit React Montages=((NewEnumerator43, (AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/HitReactions/HitReact_Front_Montage.HitReact_Front_Montage'",EndTimeMultiplier_25_4247AE084F3CB1DE868E22BC4C8A46AA=0.600000)),(NewEnumerator72, (AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/HitReactions/HitReact_Back_Montage.HitReact_Back_Montage'",EndTimeMultiplier_25_4247AE084F3CB1DE868E22BC4C8A46AA=0.600000)),(NewEnumerator49, (AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/HitReactions/HitReact_Right_Montage.HitReact_Right_Montage'",EndTimeMultiplier_25_4247AE084F3CB1DE868E22BC4C8A46AA=0.600000)),(NewEnumerator58, (AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/HitReactions/HitReact_Left_Montage.HitReact_Left_Montage'",EndTimeMultiplier_25_4247AE084F3CB1DE868E22BC4C8A46AA=0.600000)))
+   "Hit React Montages (in Air)"=()
+   State Manager Component=None
+   AttributesComponent=None
+   Hit Count Attribute Tag=(TagName="Attribute.HitCount")
+   Directional?=True
+   UseInAirMontages?=False
+   UseSwingDirection?=False
+   "SwingDirection(front)"=((NewEnumerator19, NewEnumerator43),(NewEnumerator0, NewEnumerator49),(NewEnumerator1, NewEnumerator58),(NewEnumerator2, NewEnumerator43),(NewEnumerator3, NewEnumerator43),(NewEnumerator8, NewEnumerator43))
+   "SwingDirection(back)"=((NewEnumerator19, NewEnumerator72),(NewEnumerator0, NewEnumerator58),(NewEnumerator1, NewEnumerator49),(NewEnumerator2, NewEnumerator72),(NewEnumerator3, NewEnumerator72),(NewEnumerator8, NewEnumerator72))
+   "SwingDirection(right)"=((NewEnumerator19, NewEnumerator49),(NewEnumerator0, NewEnumerator72),(NewEnumerator1, NewEnumerator43),(NewEnumerator2, NewEnumerator49),(NewEnumerator3, NewEnumerator49),(NewEnumerator8, NewEnumerator49))
+   "SwingDirection(left)"=((NewEnumerator19, NewEnumerator58),(NewEnumerator0, NewEnumerator43),(NewEnumerator1, NewEnumerator72),(NewEnumerator2, NewEnumerator58),(NewEnumerator3, NewEnumerator58),(NewEnumerator8, NewEnumerator58))
+   RotateToFaceApplier?=()
+   MaxRotation=180.000000
+   RotationPerSecond=720.000000
+   Hit Data=None
+   RotationTime=0.000000
+   TimePassed=0.000000
+   bEnableHitReactionRotation=False
+   bCanRecieveKnockback=True
+   Perfroming Character=None
+   KnockbackSpeed=0.000000
+   HitCount=0
+   RequiredSourceTags=(GameplayTags=((TagName="ImpactDecision.Hit")))
+   RequiredAttackTypeTags=(GameplayTags=)
+   bUsesPoise=True
+   ActiveAbilityMontage=None
+   AbilitySystemComponent=None
+   AbilityTags=(GameplayTags=((TagName="Ability.HitReaction")))
+   Performing Actor=None
+   ActivationOwnedTags=(GameplayTags=((TagName="Status.ActionCommitted")))
+   bPendingClearAbility?=False
+   ActivationRequiredTags=(GameplayTags=)
+   ActivationBlockedTags=(GameplayTags=((TagName="Status.HitStunImmune")))
+   CancelAbilitiesWithTags=(GameplayTags=)
+   Cooldown Time=0.000000
+   CooldownLoopInterval=0.000000
+   Current Cooldown Time=0.000000
+   bCooldownActive?=False
+   Cost Gameplay Effect Class=None
+   Level=1
+   BlockAbilitiesWithTags=(GameplayTags=)
+   GameplayEventTags=(GameplayTags=)
+   bCanBeCanceled=True
+   bWaitingForRuntimeEvent=False
+   Waiting Event Tag=(TagName="")
+   BlueprintHelperComponent=None
+End Object

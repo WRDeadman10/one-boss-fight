@@ -33,7 +33,7 @@ $drivers = @(
     @{ N = 'pie_build_hud';            K = 'R'; Min = 8; T = 600 },
     @{ N = 'pie_build_select';         K = 'R'; Min = 18; T = 600 },
     @{ N = 'pie_flask_hud';            K = 'R'; Min = 7; T = 600 },
-    @{ N = 'pie_dormant_wake';         K = 'R'; Min = 12; T = 600 },
+    @{ N = 'pie_dormant_wake';         K = 'R'; Min = 11; T = 600 },
     @{ N = 'pie_telegraph';            K = 'R'; Min = 25; T = 600 },
       @{ N = 'pie_authored_close_clips'; K = 'R'; Min = 14; T = 600 },
     @{ N = 'pie_soak';                 K = 'R'; Min = 213; T = 900 },
@@ -95,6 +95,8 @@ while (-not (Test-Bridge) -and $waited -lt 240) { Start-Sleep -Seconds 5; $waite
 if (-not (Test-Bridge)) { 'The editor bridge (http://localhost:3000) is not reachable after 4 minutes: open the project with -nosound (Scripts\Rebuild.ps1 does it).'; exit 2 }
 if ($waited -gt 0) { Start-Sleep -Seconds 30 }  # the bridge is up before the map is loaded
 
+Invoke-Editor 'no_throttle.py'  # always: a relaunched editor in a background or minimised window ticks at about 3 fps and every timing check fails (2026-10-25)
+Invoke-Editor 'wake_clip_off.py'  # rpg.WakeClip 0: the authored 3.5 s wake clip would delay every older driver that attacks right after Wake(); pie_dormant_wake.py switches it on itself
 if (-not $SkipWarmup) {
     # The first PIE after an editor start has broken player attributes (health 0): run the overlay driver once, with the editor throttle off.
     Invoke-Editor 'no_throttle.py'

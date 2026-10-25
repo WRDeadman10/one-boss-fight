@@ -1,0 +1,21 @@
+Begin Object Class=/Script/Engine.Blueprint Name="GA_GS_Boss_CloseRare" ExportPath="/Script/Engine.Blueprint'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_CloseRare.GA_GS_Boss_CloseRare'"
+   Begin Object Class=/Script/Engine.EdGraph Name="EventGraph" ExportPath="/Script/Engine.EdGraph'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_CloseRare.GA_GS_Boss_CloseRare:EventGraph'"
+   End Object
+   Begin Object Class=/Script/UnrealEd.SceneThumbnailInfo Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_CloseRare.GA_GS_Boss_CloseRare:SceneThumbnailInfo_0'"
+   End Object
+   Begin Object Name="EventGraph" ExportPath="/Script/Engine.EdGraph'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_CloseRare.GA_GS_Boss_CloseRare:EventGraph'"
+      Schema="/Script/CoreUObject.Class'/Script/BlueprintGraph.EdGraphSchema_K2'"
+      bAllowDeletion=False
+      GraphGuid=4C526E4747D0EF6B6050B181056419A1
+   End Object
+   Begin Object Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_CloseRare.GA_GS_Boss_CloseRare:SceneThumbnailInfo_0'"
+   End Object
+   ParentClass="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Abilities/AI/GA_EnemyMeleeAttack.GA_EnemyMeleeAttack_C'"
+   BlueprintSystemVersion=2
+   UbergraphPages(0)="/Script/Engine.EdGraph'EventGraph'"
+   LastEditedDocuments(0)=(EditedObjectPath="/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_CloseRare.GA_GS_Boss_CloseRare:EventGraph",SavedZoomAmount=1.000000)
+   ThumbnailInfo="/Script/UnrealEd.SceneThumbnailInfo'SceneThumbnailInfo_0'"
+   GeneratedClass="/Script/Engine.BlueprintGeneratedClass'GA_GS_Boss_CloseRare_C'"
+   bLegacyNeedToPurgeSkelRefs=False
+   BlueprintGuid=BCC611884F0DE978BF1285A39B85FF68
+End Object

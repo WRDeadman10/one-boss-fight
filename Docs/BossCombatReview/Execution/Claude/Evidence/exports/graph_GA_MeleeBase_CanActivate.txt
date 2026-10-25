@@ -1,0 +1,15 @@
+( -528,   80) FunctionEntry          Can Activate Ability?
+( -304,   64) Message                Has Matching Gameplay Tag / Target is BP Gameplay Tag Blueprint Interface  TagToCheck=(TagName="Status.ActionCommitted")
+( -272,    0) CallFunction           Get Performing Actor / Target is BP Advanced Gameplay Ability
+(  208,  176) CallFunction           Is Combat Enabled? / Target is BP Combat Component
+(  224,  144) VariableGet            Get CombatComponent
+(  608,   80) FunctionResult         Return Node
+(  256,  272) CallFunction           Enough Resources?
+(  256,  352) CallFunction           NOT Boolean
+(  464,  384) EnumEquality           Equal (Enum)  B=NewEnumerator8
+(  480,  240) CommutativeAssociativeBinaryOperator AND Boolean
+(  128,  400) CallFunction           Is State Equal To Any? / Target is State Manager Component  StatesToCompare=(GameplayTags=((TagName="Character.State.Attacking")))
+(  160,  544) VariableGet            Get StateManager
+(  496,  480) CallFunction           Get Current Combat Type / Target is BP Combat Component
+(  544,  560) VariableGet            Get CombatComponent
+(  160,  608) CallFunction           NOT Boolean

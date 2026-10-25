@@ -35,6 +35,25 @@ Shipping package of 2026-10-24 (before B10b, the shrine and the perf switches), 
 - The same PC and the same project settings (Lumen GI, Lumen reflections, virtual shadow maps, TSR) ran the old greybox fight at 84 fps (GPU 10.5 ms) on 2026-10-18 (section above): the dressed arena costs about 24 ms more GPU time. The 29.6 fps of the 2026-10-23 Remote Desktop run was therefore probably true, not a Remote Display artefact.
 - Next (2026-10-24): `Scripts/RunPerfExperiments.ps1` (about 26 one-minute fights with graphics settings and the `rpg.Perf.*` arena switches applied by `-RPGBenchmarkCvars`) and a `ProfileGPU` pass table from the Development build (`-RPGBenchmarkProfileGPUAt`), run on the same PC (kit round 2); the optimisation follows the data.
 
+## Round 2 experiments, 2026-10-25 (same PC, console, Development stage)
+
+`Scripts/RunPerfExperiments.ps1` (round 2 table, 25 one-minute fights, the game applies the variables itself with `-RPGBenchmarkCvars`) and two `ProfileGPU` frames (`-RPGBenchmarkProfileGPUAt`), results zip in `Saved/bench_return/r2`. The first run of E00 failed (empty `-ExtraArgs`, script bug, fixed); a rerun at the end gave 48.1 fps.
+
+| Experiment | Avg FPS | p99 ms | GPU avg ms |
+|---|---|---|---|
+| E00 baseline (rerun, last) | 48.1 | 23.9 | 20.0 |
+| E17 fire lights off (`rpg.Perf.FireLights=0`) | 77.7 | 14.2 | 12.0 |
+| E18 fire light shadows off | 71.6 | 15.3 | 13.1 |
+| E25 fire lights, fire fx, mists, embers off | 78.4 | 13.9 | 12.0 |
+| E19 fire fx off / E20 gate mist off / E21 dressing mist off / E22 dressing off / E23 dressing shadows off / E24 embers off | 46.0 to 46.8 | 23.2 to 24.2 | 20.5 to 20.9 |
+| E16 Lumen hardware ray tracing off | 49.2 | 22.6 | 19.5 |
+| E11 GI and reflections low / E12 view distance low | 44.3 / 46.1 | 24.7 / 24.0 | 21.7 / 20.9 |
+| E01 to E10 (resolution scale, Lumen off, VSM off, Nanite off, volumetric fog off, FXAA, post, effects, shadows low), E13, E14 (Lumen and VSM off) | 22.4 to 35.4 | 33.5 to 51.6 | 24.9 to 39.4 |
+
+- The 12 brazier lights (intensity 5000, radius 3200 cm, all casting shadows) are the main cost: shadows off gives +23 fps, lights off +30 fps. Everything else on the arena (fire particles, mist cards, dressing meshes, embers) is within noise.
+- `ProfileGPU` of one frame (22.4 ms of GPU): virtual shadow maps 8.2 ms (projection mask 4.1, non-Nanite raster 2.9, page allocation 0.7, Nanite 0.5), deferred lights 6.6 ms (unbatched lights 2.0), VOLUMETRIC CLOUDS 5.3 ms, post processing 4.1 ms (TSR 3.5 ms at 1400x788 to 1920x1080), base pass 0.4 ms, Nanite 0.3 ms: no Lumen pass shows.
+- NOT reliable: the first ten experiments ran at 22 to 35 fps and all later ones, including no-op experiments, at 44 to 49 fps, and the baseline rerun at the end gave 48.1 against the 29 fps of round 1: either the machine state changed during the suite or some setting persisted (suspected GameUserSettings.ini, not proven). Only comparisons inside the later block (E11 onward) are trusted. Round 3 repeats the baseline four times and logs the GPU clocks (`smi_*.csv`) to settle it.
+
 ## Method
 
 Packaged build, map `L_Benchmark` (greybox arena, no boss, no VFX yet), `ARPGBenchmarkRunner` orbits a camera 30 s per revolution; 5 s warmup discarded, 60 s recorded. Raw wall-clock frame times. Run with `Scripts/RunBenchmark.ps1 -Label <name>`. Raw summaries are in `Documentation/PerfCaptures/` (run 1 of baseline_defaults is missing: it was wiped when the build was re-staged; its numbers were copied from the console).

@@ -1,0 +1,3551 @@
+{
+  "date": "2026-10-25",
+  "scope": "read-only candidate scan; excludes Tests, Benchmark, retired Boss directory; candidate literals are not automatically data",
+  "rows": [
+    {
+      "File": "Source/OneBossFight/Arena/RPGArenaDressing.cpp",
+      "Line": 21,
+      "Text": "int32 Count = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGArenaDressing.cpp",
+      "Line": 125,
+      "Text": "const float Wave = 0.7f * FMath::Sin(Clock * 0.9f + Phase) + 0.3f * FMath::Sin(Clock * 2.3f + Phase * 1.7f);"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGArenaDressing.h",
+      "Line": 38,
+      "Text": "float SwayDegrees = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGArenaDressing.h",
+      "Line": 82,
+      "Text": "float Degrees = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGArenaDressing.h",
+      "Line": 86,
+      "Text": "float Clock = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.cpp",
+      "Line": 13,
+      "Text": "constexpr float BasicShapeSize = 100.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 40,
+      "Text": "int32 Count = 180;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 48,
+      "Text": "float FireShare = 0.8f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 51,
+      "Text": "float ArenaRadius = 2900.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 54,
+      "Text": "float RiseSpeedMin = 70.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 57,
+      "Text": "float RiseSpeedMax = 190.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 65,
+      "Text": "float Sway = 55.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 68,
+      "Text": "float LifeMin = 4.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 71,
+      "Text": "float LifeMax = 9.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 75,
+      "Text": "float SizeMin = 1.2f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 78,
+      "Text": "float SizeMax = 3.2f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 81,
+      "Text": "int32 Seed = 3;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 90,
+      "Text": "float RiseSpeed = 100.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 91,
+      "Text": "float Age = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 92,
+      "Text": "float Life = 5.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 93,
+      "Text": "float Size = 2.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 94,
+      "Text": "float Phase = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 95,
+      "Text": "float Frequency = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGEmberField.h",
+      "Line": 103,
+      "Text": "float Clock = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFireSource.cpp",
+      "Line": 126,
+      "Text": "const float Noise = 0.65f * FMath::PerlinNoise1D(T * 0.5f) + 0.35f * FMath::PerlinNoise1D(T * 2.7f + 11.f);"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFireSource.h",
+      "Line": 50,
+      "Text": "float CrackleVolume = 0.45f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFireSource.h",
+      "Line": 53,
+      "Text": "float CrackleRange = 1700.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFireSource.h",
+      "Line": 57,
+      "Text": "float FireScale = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFireSource.h",
+      "Line": 61,
+      "Text": "float LightHeight = 60.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFireSource.h",
+      "Line": 64,
+      "Text": "float BaseIntensity = 60.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFireSource.h",
+      "Line": 67,
+      "Text": "float AttenuationRadius = 1800.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFireSource.h",
+      "Line": 73,
+      "Text": "FLinearColor LightColor = FLinearColor(1.f, 0.42f, 0.12f);"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFireSource.h",
+      "Line": 77,
+      "Text": "float FlickerAmount = 0.3f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFireSource.h",
+      "Line": 80,
+      "Text": "float FlickerSpeed = 5.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFireSource.h",
+      "Line": 84,
+      "Text": "float WanderCm = 6.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFireSource.h",
+      "Line": 102,
+      "Text": "float Seed = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFireSource.h",
+      "Line": 103,
+      "Text": "float Clock = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFogGate.cpp",
+      "Line": 93,
+      "Text": "if (!URPGPlayerMovesSubsystem::IsPackBoss(*It))"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFogGate.cpp",
+      "Line": 97,
+      "Text": "double Health = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFogGate.h",
+      "Line": 39,
+      "Text": "int32 CardCount = 7;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFogGate.h",
+      "Line": 42,
+      "Text": "float CardSpacing = 230.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFogGate.h",
+      "Line": 45,
+      "Text": "float CardScale = 11.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFogGate.h",
+      "Line": 49,
+      "Text": "FVector BlockerHalfExtent = FVector(30.f, 900.f, 400.f);"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFogGate.h",
+      "Line": 53,
+      "Text": "float IdleAmount = 0.35f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFogGate.h",
+      "Line": 56,
+      "Text": "float FadeSeconds = 1.5f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFogGate.h",
+      "Line": 91,
+      "Text": "float Amount = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGFogGate.h",
+      "Line": 92,
+      "Text": "double NextRead = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.cpp",
+      "Line": 14,
+      "Text": "constexpr float BasicShapeSize = 100.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.cpp",
+      "Line": 88,
+      "Text": "const float Angle = 2.f * PI * static_cast<float>(Index) / static_cast<float>(FMath::Max(PillarCount, 1));"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.cpp",
+      "Line": 150,
+      "Text": "const float Angle = 360.f * static_cast<float>(Index) / static_cast<float>(FMath::Max(PillarCount, 1));"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.cpp",
+      "Line": 164,
+      "Text": "const float Circumference = 2.f * PI * WallCenterRadius;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.cpp",
+      "Line": 169,
+      "Text": "const float Angle = 2.f * PI * static_cast<float>(Index) / static_cast<float>(WallSegmentCount);"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.cpp",
+      "Line": 192,
+      "Text": "const float Angle = 2.f * PI * (static_cast<float>(Index) + 0.5f) / static_cast<float>(FMath::Max(PillarCount, 1));"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+      "Line": 43,
+      "Text": "float ArenaRadius = 3000.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+      "Line": 46,
+      "Text": "float FloorThickness = 100.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+      "Line": 49,
+      "Text": "int32 PillarCount = 12;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+      "Line": 53,
+      "Text": "float PillarRingFraction = 0.9f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+      "Line": 56,
+      "Text": "float PillarRadius = 120.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+      "Line": 59,
+      "Text": "float PillarHeight = 900.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+      "Line": 62,
+      "Text": "int32 WallSegmentCount = 48;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+      "Line": 65,
+      "Text": "float WallThickness = 80.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+      "Line": 68,
+      "Text": "float WallHeight = 300.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+      "Line": 72,
+      "Text": "int32 CrackedEvery = 3;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+      "Line": 75,
+      "Text": "int32 BrokenEvery = 5;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+      "Line": 79,
+      "Text": "int32 DamagedWallEvery = 4;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+      "Line": 103,
+      "Text": "float BrazierRingFraction = 0.78f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+      "Line": 110,
+      "Text": "int32 RubbleCount = 16;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+      "Line": 114,
+      "Text": "int32 ScatterSeed = 7;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+      "Line": 121,
+      "Text": "float ArchRadiusFraction = 0.96f;"
+    },
+    {
+      "File": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+      "Line": 124,
+      "Text": "float ArchAngleDegrees = 180.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGArenaAmbience.h",
+      "Line": 33,
+      "Text": "float WindVolume = 0.35f;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGBossMusic.cpp",
+      "Line": 155,
+      "Text": "double Health = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGBossMusic.h",
+      "Line": 41,
+      "Text": "float Volume = 0.55f;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGBossMusic.h",
+      "Line": 45,
+      "Text": "float PhaseTwoVolume = 0.40f;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGBossMusic.h",
+      "Line": 48,
+      "Text": "float FadeInSeconds = 2.5f;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGBossMusic.h",
+      "Line": 52,
+      "Text": "float FadeOutSeconds = 4.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGBossMusic.h",
+      "Line": 56,
+      "Text": "float VictoryFadeOutSeconds = 3.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGBossMusic.h",
+      "Line": 60,
+      "Text": "float CrossfadeSeconds = 2.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGBossMusic.h",
+      "Line": 64,
+      "Text": "float PhaseTwoStartOffsetSeconds = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGBossMusic.h",
+      "Line": 112,
+      "Text": "int32 StartCountPhase1 = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGBossMusic.h",
+      "Line": 113,
+      "Text": "int32 StartCountPhase2 = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGBossMusic.h",
+      "Line": 114,
+      "Text": "int32 SwapCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGBossMusic.h",
+      "Line": 115,
+      "Text": "int32 StopCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGFootsteps.h",
+      "Line": 43,
+      "Text": "FName LeftFootBone = TEXT(\"foot_l\");"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGFootsteps.h",
+      "Line": 46,
+      "Text": "FName RightFootBone = TEXT(\"foot_r\");"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGFootsteps.h",
+      "Line": 50,
+      "Text": "float JogSpeed = 280.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGFootsteps.h",
+      "Line": 53,
+      "Text": "float RunSpeed = 520.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGFootsteps.h",
+      "Line": 56,
+      "Text": "float VolumeScale = 0.8f;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGFootsteps.h",
+      "Line": 59,
+      "Text": "float PitchScale = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGFootsteps.h",
+      "Line": 63,
+      "Text": "float LiftHeight = 6.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGFootsteps.h",
+      "Line": 67,
+      "Text": "float TouchHeight = 3.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGFootsteps.h",
+      "Line": 71,
+      "Text": "float AudibleRange = 2600.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGFootsteps.h",
+      "Line": 81,
+      "Text": "float Cooldown = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGFootsteps.h",
+      "Line": 82,
+      "Text": "float LowestHeight = 0.f; // the bone's own height when planted (an ankle joint sits several cm above the floor)"
+    },
+    {
+      "File": "Source/OneBossFight/Audio/RPGFootsteps.h",
+      "Line": 94,
+      "Text": "int32 StepCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Combat/RPGInputTestUtils.cpp",
+      "Line": 18,
+      "Text": "float SavedFixedRate = 30.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Combat/RPGInputTestUtils.cpp",
+      "Line": 19,
+      "Text": "int32 SavedVSync = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Combat/RPGMontageUtils.cpp",
+      "Line": 15,
+      "Text": "int32 Changed = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Combat/RPGSkeletonUtils.cpp",
+      "Line": 18,
+      "Text": "int32 Copied = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Pack/RPGPackNotifies.cpp",
+      "Line": 57,
+      "Text": "float RemainingReal = 0.1f;"
+    },
+    {
+      "File": "Source/OneBossFight/Pack/RPGPackNotifies.h",
+      "Line": 31,
+      "Text": "float ForwardOffset = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Pack/RPGPackNotifies.h",
+      "Line": 35,
+      "Text": "float GroundDrop = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Pack/RPGPackNotifies.h",
+      "Line": 39,
+      "Text": "float Scale = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Pack/RPGPackNotifies.h",
+      "Line": 58,
+      "Text": "float StopDistance = 200.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Pack/RPGPackNotifies.h",
+      "Line": 62,
+      "Text": "float MaxSpeed = 2200.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Pack/RPGPackNotifies.h",
+      "Line": 66,
+      "Text": "float WindowEndTime = 0.3f;"
+    },
+    {
+      "File": "Source/OneBossFight/Pack/RPGPackTrace.cpp",
+      "Line": 360,
+      "Text": "const UClass* TargetClass = LoadClass<UObject>(nullptr, TEXT(\"/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Collision/BP_EnemyAbilitySweepingTraceTarget.BP_EnemyAbilitySweepingTraceTarget_C\"));"
+    },
+    {
+      "File": "Source/OneBossFight/Pack/RPGPackTrace.cpp",
+      "Line": 361,
+      "Text": "const UClass* CollisionClass = LoadClass<UObject>(nullptr, TEXT(\"/Game/AdvancedARPGCombat/AdvancedCombatFramework/CollisionSystem/BP_CollisionComponent.BP_CollisionComponent_C\"));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+      "Line": 60,
+      "Text": "AddClose(TEXT(\"A1\"), TEXT(\"AM_Boss01_A1\"), TEXT(\"GS_Attack03_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1\"), 0.33f, 0.35f, 0.50f, 1.20f, false, true);"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+      "Line": 62,
+      "Text": "AddClose(TEXT(\"A3a\"), TEXT(\"AM_Boss01_A3a\"), TEXT(\"GS_Attack01_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a\"), 0.38f, 0.40f, 0.60f, 0.80f, false, true);"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+      "Line": 63,
+      "Text": "AddClose(TEXT(\"A3b\"), TEXT(\"AM_Boss01_A3b\"), TEXT(\"GS_Attack02_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b\"), 0.13f, 0.15f, 0.40f, 1.3333f, true, true);"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+      "Line": 82,
+      "Text": "A4.MontageName = TEXT(\"AN_Boss01_A4_LowSweep\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+      "Line": 83,
+      "Text": "A4.ClipPath = TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_A4_LowSweep.AN_Boss01_A4_LowSweep\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+      "Line": 95,
+      "Text": "A5.MontageName = TEXT(\"AN_Boss01_A5_JavelinThrow\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+      "Line": 96,
+      "Text": "A5.ClipPath = TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_A5_JavelinThrow.AN_Boss01_A5_JavelinThrow\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+      "Line": 163,
+      "Text": "const UAnimMontage* Reference = LoadObject<UAnimMontage>(nullptr, TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/GreatswordBoss/GS_Attack01_Montage.GS_Attack01_Montage\"));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+      "Line": 206,
+      "Text": "? FString::Printf(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/GreatswordBoss/%s.%s\"), *Timing->MontageName, *Timing->MontageName)"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+      "Line": 345,
+      "Text": "double Health = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 42,
+      "Text": "float CommitTime = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 46,
+      "Text": "float ActiveStartTime = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 49,
+      "Text": "float ActiveEndTime = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 53,
+      "Text": "float RecoveryEndTime = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 57,
+      "Text": "float TrackTurnRate = 120.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 123,
+      "Text": "float BranchRange = 400.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 126,
+      "Text": "float BranchConeDegrees = 120.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 207,
+      "Text": "int32 AttackInstance = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 208,
+      "Text": "int32 CommitCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 209,
+      "Text": "int32 EndedBeforeCommitCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 210,
+      "Text": "int32 InterruptedCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 211,
+      "Text": "int32 IllegalStarts = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 212,
+      "Text": "int32 DoubleLaunches = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 213,
+      "Text": "int32 BranchAllowed = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 214,
+      "Text": "int32 BranchDenied = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 215,
+      "Text": "float CommittedYaw = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 216,
+      "Text": "float MaxYawDrift = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 217,
+      "Text": "float LastCommitPosition = -1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 218,
+      "Text": "float LastActiveStartPosition = -1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 219,
+      "Text": "float LastPosition = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 220,
+      "Text": "float TelegraphRate = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 221,
+      "Text": "float LastStageWindupSeconds = -1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 222,
+      "Text": "double StageWorldStart = -1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGAttackTracker.h",
+      "Line": 224,
+      "Text": "float DeathCheckTimer = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBleedRules.h",
+      "Line": 16,
+      "Text": "float InitialThreshold = 100.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBleedRules.h",
+      "Line": 17,
+      "Text": "float ThresholdIncrease = 20.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBleedRules.h",
+      "Line": 18,
+      "Text": "float ThresholdMax = 200.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBleedRules.h",
+      "Line": 20,
+      "Text": "float HpFraction = 0.03f; // 0.105 at 500 health (Freeze 20.2, a tunable custom rule); 0.03 of the 2000 maximum health of the 2 to 4 minute duel is 60 per proc"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBleedRules.h",
+      "Line": 25,
+      "Text": "float Buildup = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBleedRules.h",
+      "Line": 26,
+      "Text": "float Threshold = 100.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBleedRules.h",
+      "Line": 27,
+      "Text": "int32 Procs = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossBleed.cpp",
+      "Line": 27,
+      "Text": "ProcEffect = TSoftObjectPtr<UNiagaraSystem>(FSoftObjectPath(TEXT(\"/Game/BloodPack/Hit/Niagara/NS_BulletHit_Med.NS_BulletHit_Med\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossBleed.cpp",
+      "Line": 28,
+      "Text": "ProcSound = TSoftObjectPtr<USoundBase>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/A_Guardian_ImpactL_Cue.A_Guardian_ImpactL_Cue\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossBleed.cpp",
+      "Line": 57,
+      "Text": "double Health = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossBleed.cpp",
+      "Line": 94,
+      "Text": "double Health = 0.0, Max = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossBleed.h",
+      "Line": 30,
+      "Text": "float InitialThreshold = 100.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossBleed.h",
+      "Line": 34,
+      "Text": "float ThresholdIncrease = 20.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossBleed.h",
+      "Line": 38,
+      "Text": "float ThresholdMax = 200.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossBleed.h",
+      "Line": 42,
+      "Text": "float HpFraction = 0.03f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossBleed.h",
+      "Line": 50,
+      "Text": "float EffectHeight = 170.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossBleed.h",
+      "Line": 104,
+      "Text": "int32 Ignored = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossBleed.h",
+      "Line": 105,
+      "Text": "float LastProcDamage = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossClips.h",
+      "Line": 25,
+      "Text": "const UAnimMontage* Reference = LoadObject<UAnimMontage>(nullptr, TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/GreatswordBoss/GS_Attack01_Montage.GS_Attack01_Montage\"));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossCloseClipSwap.cpp",
+      "Line": 43,
+      "Text": "A1Montage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossCloseClipSwap.cpp",
+      "Line": 44,
+      "Text": "A3aMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossCloseClipSwap.cpp",
+      "Line": 45,
+      "Text": "A3bMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossCloseClipSwap.h",
+      "Line": 26,
+      "Text": "FName CloseAbilityClassName = TEXT(\"GA_GS_Boss_CloseAttack_C\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossCloseClipSwap.h",
+      "Line": 29,
+      "Text": "FName AttackMontagesName = TEXT(\"AttackMontages\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossCloseClipSwap.h",
+      "Line": 90,
+      "Text": "float RetrySeconds = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossCloseClipSwap.h",
+      "Line": 91,
+      "Text": "int32 ApplyCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossCloseClipSwap.h",
+      "Line": 92,
+      "Text": "int32 RestoreCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossCloseClipSwapRules.h",
+      "Line": 12,
+      "Text": "if (PackMontageName == TEXT(\"GS_Attack03_Montage\")) return TEXT(\"AM_Boss01_A1\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossCloseClipSwapRules.h",
+      "Line": 13,
+      "Text": "if (PackMontageName == TEXT(\"GS_Attack01_Montage\")) return TEXT(\"AM_Boss01_A3a\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossCloseClipSwapRules.h",
+      "Line": 14,
+      "Text": "if (PackMontageName == TEXT(\"GS_Attack02_Montage\")) return TEXT(\"AM_Boss01_A3b\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDamage.h",
+      "Line": 41,
+      "Text": "double Health = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.cpp",
+      "Line": 37,
+      "Text": "DeathClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_DeathLegend.AN_Boss01_DeathLegend\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.cpp",
+      "Line": 38,
+      "Text": "DeathMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.AM_Boss01_DeathLegend\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.cpp",
+      "Line": 330,
+      "Text": "double Health = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 23,
+      "Text": "/** The pack's own death ability (GA_EnemyRagdollDeath_C) plays AM_Boss01_DeathLegend: this component only fills the ability's DeathMontages array and watches. */"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 25,
+      "Text": "/** This component plays AN_Boss01_DeathLegend itself on the boss mesh, freezes its last pose and keeps the pack's ragdoll off the mesh. */"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 63,
+      "Text": "FName PackDeathAbilityClassName = TEXT(\"GA_EnemyRagdollDeath_C\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 66,
+      "Text": "FName PackDeathMontagesName = TEXT(\"DeathMontages\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 70,
+      "Text": "float PackPollSeconds = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 74,
+      "Text": "float PackEndTimeMultiplier = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 78,
+      "Text": "float HoldAtSeconds = 3.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 82,
+      "Text": "float DyingSeconds = 2.5f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 85,
+      "Text": "float BlendInSeconds = 0.1f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 89,
+      "Text": "int32 MaxClipRestarts = 8;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 190,
+      "Text": "double DeathTime = -1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 191,
+      "Text": "double NextPackPoll = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 192,
+      "Text": "int32 LastResetCount = -1;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 193,
+      "Text": "int32 DeathCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 194,
+      "Text": "int32 ClipPlayCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 195,
+      "Text": "int32 ClipRestartCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 196,
+      "Text": "int32 RestartsThisDeath = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 197,
+      "Text": "int32 PoseHoldCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 198,
+      "Text": "int32 PhysicsOffCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 199,
+      "Text": "int32 PackSetCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "Line": 200,
+      "Text": "int32 PackMissCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDormantWake.cpp",
+      "Line": 20,
+      "Text": "DormantClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.AN_Boss01_DormantIdle\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDormantWake.cpp",
+      "Line": 21,
+      "Text": "WakeClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_Wake.AN_Boss01_Wake\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDormantWake.h",
+      "Line": 67,
+      "Text": "double WakeStartedAt = -1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDormantWake.h",
+      "Line": 68,
+      "Text": "int32 DormantPlayCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossDormantWake.h",
+      "Line": 69,
+      "Text": "int32 WakePlayCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossEncounter.cpp",
+      "Line": 83,
+      "Text": "double Max = 0.0, Current = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossEncounter.cpp",
+      "Line": 93,
+      "Text": "double Max = 0.0, Current = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossEncounter.cpp",
+      "Line": 96,
+      "Text": "double NewMax = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossEncounter.cpp",
+      "Line": 150,
+      "Text": "double Health = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossEncounter.cpp",
+      "Line": 371,
+      "Text": "double Max = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossEncounter.h",
+      "Line": 28,
+      "Text": "float GateRadius = 1200.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossEncounter.h",
+      "Line": 40,
+      "Text": "float BossMaxHealth = 2000.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossEncounter.h",
+      "Line": 101,
+      "Text": "int32 ResetCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossEncounter.h",
+      "Line": 103,
+      "Text": "float StartupTime = 0.f; // seconds since BeginPlay: the pack finishes its own attribute set-up a moment after the first write (probe 2026-10-23: current health read 500 half a second after the write of 2000)"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossEncounter.h",
+      "Line": 104,
+      "Text": "static constexpr float StartupEnforceSeconds = 4.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossEncounter.h",
+      "Line": 105,
+      "Text": "int32 DeathResetRefusals = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossEncounter.h",
+      "Line": 106,
+      "Text": "int32 Generation = 1;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossEncounter.h",
+      "Line": 107,
+      "Text": "float DormantTime = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossEncounter.h",
+      "Line": 108,
+      "Text": "double HealthBaseline = -1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.cpp",
+      "Line": 23,
+      "Text": "constexpr float StartGraceSeconds = 0.5f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.cpp",
+      "Line": 76,
+      "Text": "int32 Ended = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.cpp",
+      "Line": 210,
+      "Text": "double Health = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.cpp",
+      "Line": 236,
+      "Text": "DrinkMontage = LoadObject<UAnimMontage>(nullptr, TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/DrinkingPotion_Montage.DrinkingPotion_Montage\"));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 37,
+      "Text": "float MinRange = 400.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 40,
+      "Text": "float MaxRange = 1000.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 44,
+      "Text": "float Cooldown = 4.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 48,
+      "Text": "float Damage = 12.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 54,
+      "Text": "float FlightTime = 1.2f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 57,
+      "Text": "float MinSpeed = 450.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 60,
+      "Text": "float MaxSpeed = 2500.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 65,
+      "Text": "float JavelinRadius = 25.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 68,
+      "Text": "float JavelinMaxRange = 3000.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 76,
+      "Text": "float AimHeight = 100.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 160,
+      "Text": "float DeathCheck = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 161,
+      "Text": "double PendingSince = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 162,
+      "Text": "double CooldownEnd = -1.0; // world time"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 163,
+      "Text": "int32 LastInstance = -1;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 164,
+      "Text": "int32 SeenGeneration = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 165,
+      "Text": "int32 HealEvents = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 166,
+      "Text": "int32 Accepted = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 167,
+      "Text": "int32 Released = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 168,
+      "Text": "int32 DiscardedBusy = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 169,
+      "Text": "int32 DiscardedRange = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 170,
+      "Text": "int32 DiscardedSight = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 171,
+      "Text": "int32 DiscardedCooldown = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 172,
+      "Text": "int32 DiscardedPending = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 173,
+      "Text": "int32 Cancelled = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 174,
+      "Text": "int32 JavelinHits = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 175,
+      "Text": "int32 JavelinDodged = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+      "Line": 176,
+      "Text": "int32 JavelinWorld = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossInterrupt.cpp",
+      "Line": 34,
+      "Text": "float Position = -1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossJavelin.cpp",
+      "Line": 25,
+      "Text": "constexpr float LeaveHandDistance = 150.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossJavelin.cpp",
+      "Line": 38,
+      "Text": "static ConstructorHelpers::FObjectFinder<UStaticMesh> Javelin(TEXT(\"/Game/OneBossFight/Boss01/Weapons/SM_Boss01_EmberJavelin.SM_Boss01_EmberJavelin\"));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossJavelin.cpp",
+      "Line": 110,
+      "Text": "double BossHealth = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossJavelin.h",
+      "Line": 58,
+      "Text": "float Speed = 1800.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossJavelin.h",
+      "Line": 59,
+      "Text": "float Radius = 25.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossJavelin.h",
+      "Line": 60,
+      "Text": "float Damage = 12.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossJavelin.h",
+      "Line": 61,
+      "Text": "float MaxRange = 3000.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossJavelin.h",
+      "Line": 62,
+      "Text": "float Travelled = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossJavelin.h",
+      "Line": 63,
+      "Text": "int32 Generation = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossJavelin.h",
+      "Line": 64,
+      "Text": "int32 AttackInstance = 0; // the tracker's attack instance of the throw (the damage resolver's duplicate key)"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLook.cpp",
+      "Line": 17,
+      "Text": "Body = TSoftObjectPtr<USkeletalMesh>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLook.cpp",
+      "Line": 19,
+      "Text": "TSoftObjectPtr<USkeletalMesh>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Body/SK_Boss01_Crown.SK_Boss01_Crown\"))),"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLook.cpp",
+      "Line": 20,
+      "Text": "TSoftObjectPtr<USkeletalMesh>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Body/SK_Boss01_Mantle.SK_Boss01_Mantle\"))),"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLook.cpp",
+      "Line": 21,
+      "Text": "TSoftObjectPtr<USkeletalMesh>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Body/SK_Boss01_BrazierGauntlet.SK_Boss01_BrazierGauntlet\"))),"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLook.cpp",
+      "Line": 23,
+      "Text": "Sword = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.SM_Boss01_Greatsword\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLook.h",
+      "Line": 44,
+      "Text": "FName SwordSocket = TEXT(\"HeavySwordSocket_R\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLook.h",
+      "Line": 79,
+      "Text": "int32 PieceCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.cpp",
+      "Line": 159,
+      "Text": "double Health = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.cpp",
+      "Line": 197,
+      "Text": "const FVector Direction = FRotator(0.f, ForwardYaw + BladeAngle, 0.f).Vector();"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 33,
+      "Text": "FName MoveId = TEXT(\"A4\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 37,
+      "Text": "float Damage = 20.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 41,
+      "Text": "float Reach = 380.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 44,
+      "Text": "float InnerRadius = 60.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 48,
+      "Text": "float BladeHeight = 40.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 52,
+      "Text": "float SweepFromDegrees = 90.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 55,
+      "Text": "float SweepToDegrees = -90.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 100,
+      "Text": "float BladeAngle = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 101,
+      "Text": "float PreviousAngle = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 102,
+      "Text": "float ForwardYaw = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 103,
+      "Text": "float GroundZ = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 104,
+      "Text": "int32 LastInstance = -1;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 105,
+      "Text": "int32 SweepGeneration = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 106,
+      "Text": "int32 SweepCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 107,
+      "Text": "int32 HitCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 108,
+      "Text": "int32 JumpedCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 109,
+      "Text": "int32 InvulnerableCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 110,
+      "Text": "int32 BlockedCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+      "Line": 112,
+      "Text": "float DeathCheck = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+      "Line": 56,
+      "Text": "RoarClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+      "Line": 57,
+      "Text": "TransitionMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+      "Line": 58,
+      "Text": "ImmunityEffect = TSoftClassPtr<UObject>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+      "Line": 59,
+      "Text": "FireballAbility = TSoftClassPtr<UObject>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+      "Line": 90,
+      "Text": "double Health = 0.0, Max = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+      "Line": 146,
+      "Text": "double Health = 0.0, Max = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+      "Line": 331,
+      "Text": "double Health = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+      "Line": 365,
+      "Text": "double Attack = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+      "Line": 389,
+      "Text": "double Attack = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+      "Line": 406,
+      "Text": "int32 Scaled = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 31,
+      "Text": "float PhaseTwoHealthFraction = 0.6f; // Master Design Freeze 30.1 and 36: phase two starts on the first crossing to 60 % of health or below"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 35,
+      "Text": "float TransitionSeconds = 1.8f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 37,
+      "Text": "/** The roar of the project: Antigravity's clip AN_Boss01_PhaseRoar (1.8 s, the boss leans back and howls). Played when it loads; the pack's montage below is the fallback. */"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 55,
+      "Text": "float MovementScale = 1.2f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 58,
+      "Text": "float AttackRateScale = 1.2f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 62,
+      "Text": "float DamageScale = 1.25f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 76,
+      "Text": "float FireballMinRange = 500.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 79,
+      "Text": "float FireballMaxRange = 1800.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 90,
+      "Text": "FName LeapAbilityTag = TEXT(\"Ability.Melee.LeapAttack\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 170,
+      "Text": "double LastTransitionStart = -1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 171,
+      "Text": "int32 QueuedStarts = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 172,
+      "Text": "double TransitionEnd = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 174,
+      "Text": "double NextFireball = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 175,
+      "Text": "double AppliedAttack = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 176,
+      "Text": "float BaseWalkSpeed = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 177,
+      "Text": "float LastSetSpeed = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 178,
+      "Text": "int32 FireballCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "Line": 179,
+      "Text": "int32 PhaseTwoCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPosture.cpp",
+      "Line": 70,
+      "Text": "double Health = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPosture.cpp",
+      "Line": 81,
+      "Text": "double Now = 0.0, Max = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPosture.h",
+      "Line": 31,
+      "Text": "float PostureMax = 100.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPosture.h",
+      "Line": 35,
+      "Text": "float RegenDelaySeconds = 6.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPosture.h",
+      "Line": 39,
+      "Text": "float RegenPerSecond = 13.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPosture.h",
+      "Line": 137,
+      "Text": "float HeldValue = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPosture.h",
+      "Line": 138,
+      "Text": "int32 SuppressedDrains = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPosture.h",
+      "Line": 139,
+      "Text": "int32 PackStunSuppressed = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPosture.h",
+      "Line": 140,
+      "Text": "float Posture = -1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPosture.h",
+      "Line": 141,
+      "Text": "int32 DrainCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPosture.h",
+      "Line": 142,
+      "Text": "int32 BreakRequests = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPosture.h",
+      "Line": 143,
+      "Text": "float LastDrainAmount = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossPosture.h",
+      "Line": 146,
+      "Text": "double LastDrainTime = -1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossRemains.cpp",
+      "Line": 16,
+      "Text": "const TCHAR* RemainsMeshPath = TEXT(\"/Game/OneBossFight/Boss01/Remains/SM_Boss01_CorpseStatue.SM_Boss01_CorpseStatue\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossRemains.cpp",
+      "Line": 17,
+      "Text": "const TCHAR* RemainsMaterialPath = TEXT(\"/Game/OneBossFight/Boss01/Remains/M_Boss01_Remains.M_Boss01_Remains\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossRemains.cpp",
+      "Line": 18,
+      "Text": "const TCHAR* BurstPath = TEXT(\"/Game/BloodPack/Hit/Niagara/NS_BulletHit_Med.NS_BulletHit_Med\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossRemains.cpp",
+      "Line": 28,
+      "Text": "if (SlotName == TEXT(\"M_Boss01_EmberCore\"))"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossRemains.cpp",
+      "Line": 32,
+      "Text": "if (SlotName == TEXT(\"M_Boss01_AncientSteel\"))"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossRemains.cpp",
+      "Line": 41,
+      "Text": "return SlotName == TEXT(\"M_Boss01_EmberCore\") ? 0.45f : 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossRemains.h",
+      "Line": 20,
+      "Text": "float Dissolve = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossRemains.h",
+      "Line": 77,
+      "Text": "float Elapsed = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossRemains.h",
+      "Line": 78,
+      "Text": "float Dissolve = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossRemains.h",
+      "Line": 79,
+      "Text": "int32 SlotCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.cpp",
+      "Line": 104,
+      "Text": "double Health = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.cpp",
+      "Line": 141,
+      "Text": "double Health = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 34,
+      "Text": "FName MoveId = TEXT(\"A6\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 39,
+      "Text": "float Damage = 48.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 42,
+      "Text": "float StartRadius = 200.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 45,
+      "Text": "float MaxRadius = 1100.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 49,
+      "Text": "float Speed = 1000.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 53,
+      "Text": "float Thickness = 180.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 57,
+      "Text": "float JumpClearance = 50.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 99,
+      "Text": "float Radius = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 101,
+      "Text": "float GroundZ = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 102,
+      "Text": "double HealthAtLaunch = -1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 103,
+      "Text": "int32 LastInstance = -1;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 104,
+      "Text": "int32 LaunchGeneration = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 105,
+      "Text": "int32 LaunchCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 106,
+      "Text": "int32 HitCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 107,
+      "Text": "int32 JumpedCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 108,
+      "Text": "int32 InvulnerableCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 109,
+      "Text": "int32 CentralPriorityCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossShockwave.h",
+      "Line": 111,
+      "Text": "float DeathCheck = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 58,
+      "Text": "FallMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 59,
+      "Text": "GetUpMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 60,
+      "Text": "ImmunityEffect = TSoftClassPtr<UObject>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 61,
+      "Text": "FallClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 62,
+      "Text": "DownClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 63,
+      "Text": "RipostePlayerClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.AN_Riposte_Player_Front\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 64,
+      "Text": "RiposteBossClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 324,
+      "Text": "double Health = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 427,
+      "Text": "double Health = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 469,
+      "Text": "double MaxPoise = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 517,
+      "Text": "double PlayerHealth = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 528,
+      "Text": "double Distance = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 534,
+      "Text": "double Distance = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 663,
+      "Text": "double PlayerHealth = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 709,
+      "Text": "double Health = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 747,
+      "Text": "double BossHealth = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 749,
+      "Text": "double PlayerHealth = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "Line": 859,
+      "Text": "double Health = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 36,
+      "Text": "float StaggerSeconds = 2.5f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 40,
+      "Text": "float FreezeAtPosition = 1.55f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 44,
+      "Text": "float CriticalMultiplier = 2.5f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 49,
+      "Text": "float RiposteRange = 150.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 52,
+      "Text": "float RiposteConeDegrees = 120.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 56,
+      "Text": "float RiposteFacingDegrees = 120.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 59,
+      "Text": "float RiposteArmSeconds = 1.2f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 80,
+      "Text": "float RipostePlayerStartGap = 150.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 83,
+      "Text": "float RiposteAlignSeconds = 0.3f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 87,
+      "Text": "float RiposteImpactSeconds = 0.8f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 91,
+      "Text": "float RiposteBaseDamage = 40.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 134,
+      "Text": "float CooldownSeconds = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 152,
+      "Text": "FName HitStunAbilityClassName = TEXT(\"GA_GS_Boss_HitStun_C\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 173,
+      "Text": "float GetUpRate = 0.6f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 274,
+      "Text": "float RiposteAlignDone = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 275,
+      "Text": "double RiposteExitStart = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 281,
+      "Text": "double RiposteStartTime = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 282,
+      "Text": "double RiposteEndTime = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 285,
+      "Text": "int32 RiposteImpacts = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 286,
+      "Text": "int32 RiposteAborts = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 306,
+      "Text": "double PhaseStart = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 307,
+      "Text": "double CooldownEnd = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 311,
+      "Text": "double LastHealth = -1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 312,
+      "Text": "double RiposteArmedUntil = -1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 314,
+      "Text": "int32 RiposteCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 315,
+      "Text": "int32 RiposteRejectCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 317,
+      "Text": "int32 StaggerCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 318,
+      "Text": "int32 CriticalHitCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 319,
+      "Text": "double LastEndTime = -1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 321,
+      "Text": "int32 DroppedTransition = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 322,
+      "Text": "int32 DroppedDead = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 323,
+      "Text": "int32 DroppedDormant = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 324,
+      "Text": "int32 DroppedStaggered = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "Line": 325,
+      "Text": "int32 DroppedCooldown = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.cpp",
+      "Line": 80,
+      "Text": "int32 GUpdateByte = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.cpp",
+      "Line": 81,
+      "Text": "int32 GReplaceByte = 1;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.cpp",
+      "Line": 187,
+      "Text": "int32 ActiveIndex = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.cpp",
+      "Line": 189,
+      "Text": "int32 WeaponIndex = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.cpp",
+      "Line": 190,
+      "Text": "int32 ItemCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.cpp",
+      "Line": 541,
+      "Text": "double Health = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.cpp",
+      "Line": 567,
+      "Text": "if (URPGPlayerMovesSubsystem::IsPackBoss(*It))"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 32,
+      "Text": "int32 MaxAttempts = 3;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 36,
+      "Text": "float VerifySeconds = 4.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 40,
+      "Text": "float StartupDelaySeconds = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 197,
+      "Text": "double NextBossSearch = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 198,
+      "Text": "double StartTime = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 207,
+      "Text": "int32 Attempts = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 208,
+      "Text": "double LastAttemptTime = -1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 209,
+      "Text": "int32 LastGeneration = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 212,
+      "Text": "int32 LockFailureStreak = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 214,
+      "Text": "int32 CallFailureStreak = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 215,
+      "Text": "static constexpr int32 CallFailureLimit = 20;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 219,
+      "Text": "int32 ApplyCallCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 220,
+      "Text": "int32 ApplySuccessCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 221,
+      "Text": "int32 ApplyFailureCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 222,
+      "Text": "int32 DeferredCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 223,
+      "Text": "int32 InvalidRequestCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 224,
+      "Text": "int32 LockCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 225,
+      "Text": "int32 UnlockCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+      "Line": 226,
+      "Text": "int32 LockBreachCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildRules.h",
+      "Line": 23,
+      "Text": "constexpr int32 BuildCount = 3;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildRules.h",
+      "Line": 26,
+      "Text": "constexpr int32 WeaponSlotEnumerator = 11;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildRules.h",
+      "Line": 50,
+      "Text": "{ERPGBuild::Starter, TEXT(\"Starter\"), TEXT(\"SwordCombatStyle\"), TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Items/Weapons/ToughSword.ToughSword\"), TEXT(\"BP_ToughSword_C\"), TEXT(\"GA_Sword_Melee_C\"), TEXT(\"Sword\")},"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildRules.h",
+      "Line": 51,
+      "Text": "{ERPGBuild::Strength, TEXT(\"Strength\"), TEXT(\"ClaymoreCombatStyle\"), TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Items/Weapons/KwangSword.KwangSword\"), TEXT(\"BP_KwangSword_C\"), TEXT(\"GA_Claymore_Melee_C\"), TEXT(\"Claymore\")},"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildRules.h",
+      "Line": 52,
+      "Text": "{ERPGBuild::Dex, TEXT(\"Dex\"), TEXT(\"DualSwordCombatStyle\"), TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Items/Weapons/DualSteelSwords.DualSteelSwords\"), TEXT(\"BP_DualSteelSwords_C\"), TEXT(\"GA_DuaSword_Melee_C\"), TEXT(\"Dual Swords\")},"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildRules.h",
+      "Line": 184,
+      "Text": "int32 Attempts = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildRules.h",
+      "Line": 185,
+      "Text": "int32 MaxAttempts = 3;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildRules.h",
+      "Line": 187,
+      "Text": "float SecondsSinceAttempt = -1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGBuildRules.h",
+      "Line": 189,
+      "Text": "float VerifySeconds = 4.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCameraRig.h",
+      "Line": 33,
+      "Text": "float ProbeSize = 34.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCameraRig.h",
+      "Line": 40,
+      "Text": "float PitchMin = -70.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCameraRig.h",
+      "Line": 43,
+      "Text": "float PitchMax = 32.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCameraRig.h",
+      "Line": 47,
+      "Text": "float LagSpeed = 10.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCameraRig.h",
+      "Line": 50,
+      "Text": "float LagMaxDistance = 60.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCameraShakes.h",
+      "Line": 22,
+      "Text": "float Duration = 0.55f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCameraShakes.h",
+      "Line": 25,
+      "Text": "float BlendIn = 0.02f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCameraShakes.h",
+      "Line": 28,
+      "Text": "float BlendOut = 0.45f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCameraShakes.h",
+      "Line": 32,
+      "Text": "FVector LocationAmplitude = FVector(0.0, 2.0, 5.0);"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCameraShakes.h",
+      "Line": 35,
+      "Text": "FVector LocationFrequency = FVector(0.0, 11.0, 14.0);"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCameraShakes.h",
+      "Line": 39,
+      "Text": "FRotator RotationAmplitude = FRotator(1.4, 0.6, 0.8);"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCameraShakes.h",
+      "Line": 42,
+      "Text": "FRotator RotationFrequency = FRotator(16.0, 12.0, 9.0);"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCameraShakes.h",
+      "Line": 46,
+      "Text": "float InnerRadius = 500.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCameraShakes.h",
+      "Line": 50,
+      "Text": "float OuterRadius = 2500.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCameraShakes.h",
+      "Line": 54,
+      "Text": "float Falloff = 1.5f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCombatDebug.cpp",
+      "Line": 57,
+      "Text": "double Now = 0.0, Max = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCombatDebug.cpp",
+      "Line": 91,
+      "Text": "double BossHealth = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCombatDebug.cpp",
+      "Line": 402,
+      "Text": "double Max = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCombatDebug.cpp",
+      "Line": 556,
+      "Text": "double Max = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGCombatDebug.h",
+      "Line": 114,
+      "Text": "double NextLog = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.cpp",
+      "Line": 120,
+      "Text": "double Before = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.cpp",
+      "Line": 136,
+      "Text": "double HealthBefore = 0.0, HealthAfter = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.h",
+      "Line": 37,
+      "Text": "int32 AttackInstance = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.h",
+      "Line": 41,
+      "Text": "int32 Generation = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.h",
+      "Line": 48,
+      "Text": "float HPDamage = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.h",
+      "Line": 60,
+      "Text": "float HPApplied = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.h",
+      "Line": 63,
+      "Text": "float HealthBefore = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.h",
+      "Line": 66,
+      "Text": "float HealthAfter = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.h",
+      "Line": 123,
+      "Text": "int32 MaxAuditEntries = 64;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.h",
+      "Line": 127,
+      "Text": "float OverlapEpisodeGapSeconds = 0.25f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.h",
+      "Line": 176,
+      "Text": "int32 Index = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.h",
+      "Line": 177,
+      "Text": "double Time = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.h",
+      "Line": 179,
+      "Text": "int32 Instance = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.h",
+      "Line": 180,
+      "Text": "int32 Generation = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.h",
+      "Line": 184,
+      "Text": "float HPRequested = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.h",
+      "Line": 185,
+      "Text": "float HealthBefore = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.h",
+      "Line": 186,
+      "Text": "float HealthAfter = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.h",
+      "Line": 199,
+      "Text": "int32 AuditTotal = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageResolver.h",
+      "Line": 200,
+      "Text": "int32 SeenGeneration = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageScale.h",
+      "Line": 15,
+      "Text": "static constexpr double Window = 0.35;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageScale.h",
+      "Line": 19,
+      "Text": "double Time = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageScale.h",
+      "Line": 20,
+      "Text": "double Amount = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageScale.h",
+      "Line": 25,
+      "Text": "double Time = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDamageScale.h",
+      "Line": 26,
+      "Text": "float Multiplier = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.cpp",
+      "Line": 27,
+      "Text": "DodgeAction = TSoftObjectPtr<UInputAction>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_Dodge.IA_Dodge\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.cpp",
+      "Line": 29,
+      "Text": "TEXT(\"/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Animations/Roll/Dodge_Small_Forward_Roll_Montage.Dodge_Small_Forward_Roll_Montage\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.cpp",
+      "Line": 31,
+      "Text": "TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.h",
+      "Line": 42,
+      "Text": "float DoubleTapWindow = 0.30f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.h",
+      "Line": 58,
+      "Text": "float QuickPlayRate = 1.3f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.h",
+      "Line": 61,
+      "Text": "float FullPlayRate = 1.0f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.h",
+      "Line": 65,
+      "Text": "FName DodgeAbilityClassName = TEXT(\"GA_Player_Dodge_C\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.h",
+      "Line": 68,
+      "Text": "FName MontageMapName = TEXT(\"DodgeMontage\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.h",
+      "Line": 72,
+      "Text": "FName DodgeInputTag = TEXT(\"InputTag.Dodge\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.h",
+      "Line": 82,
+      "Text": "float BackwardTurnRate = 1800.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.h",
+      "Line": 86,
+      "Text": "float NoInputThreshold = 0.1f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.h",
+      "Line": 135,
+      "Text": "double LastPressTime = -1.0e9;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.h",
+      "Line": 138,
+      "Text": "int32 PressCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.h",
+      "Line": 139,
+      "Text": "int32 ForcedRollCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.h",
+      "Line": 140,
+      "Text": "int32 IgnoredPressCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.h",
+      "Line": 141,
+      "Text": "double LastPressGap = -1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.h",
+      "Line": 142,
+      "Text": "int32 BackwardTurnCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGDodgeTiming.h",
+      "Line": 145,
+      "Text": "float TurnTargetYaw = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGFlipbookEffect.cpp",
+      "Line": 42,
+      "Text": "case ERPGEFlipbookKind::BloodBurst: return TEXT(\"/Game/OneBossFight/Effects/Flipbook/MI_Boss01_FB_BloodBurst.MI_Boss01_FB_BloodBurst\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGFlipbookEffect.cpp",
+      "Line": 43,
+      "Text": "case ERPGEFlipbookKind::HitSpark: return TEXT(\"/Game/OneBossFight/Effects/Flipbook/MI_Boss01_FB_HitSpark.MI_Boss01_FB_HitSpark\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGFlipbookEffect.cpp",
+      "Line": 44,
+      "Text": "case ERPGEFlipbookKind::DodgeDust: return TEXT(\"/Game/OneBossFight/Effects/Flipbook/MI_Boss01_FB_DodgeDust.MI_Boss01_FB_DodgeDust\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGFlipbookEffect.h",
+      "Line": 26,
+      "Text": "int32 Frame = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGFlipbookEffect.h",
+      "Line": 77,
+      "Text": "float PlaybackSeconds = 0.6f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGFlipbookEffect.h",
+      "Line": 78,
+      "Text": "float Elapsed = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGFlipbookEffect.h",
+      "Line": 79,
+      "Text": "int32 FrameIndex = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.cpp",
+      "Line": 106,
+      "Text": "const FString Base = TEXT(\"/Game/AdvancedARPGCombat/\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.cpp",
+      "Line": 132,
+      "Text": "int32 ParamCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.cpp",
+      "Line": 216,
+      "Text": "if (URPGPlayerMovesSubsystem::IsPackBoss(*It))"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.cpp",
+      "Line": 236,
+      "Text": "double Health = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.cpp",
+      "Line": 260,
+      "Text": "double Health = 0.0, MaxHealth = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.cpp",
+      "Line": 313,
+      "Text": "int32 ParamCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.cpp",
+      "Line": 400,
+      "Text": "if (!Target || !URPGPlayerMovesSubsystem::IsPackBoss(Target))"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 19,
+      "Text": "int32 Id = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 20,
+      "Text": "double Time = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 31,
+      "Text": "int32 AttackPower = -1;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 33,
+      "Text": "float PackPoiseDamage = -1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 46,
+      "Text": "float HealthMultiplier = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 170,
+      "Text": "float LastMontagePosition = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 172,
+      "Text": "float BindRetryTimer = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 175,
+      "Text": "float BleedOverride = -1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 178,
+      "Text": "int32 BossHitCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 179,
+      "Text": "int32 MergedHitCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 180,
+      "Text": "int32 SwingKindOverrideCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 181,
+      "Text": "int32 OtherHitCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 187,
+      "Text": "double PrevBossHealth = -1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 188,
+      "Text": "float BossSearchTimer = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 189,
+      "Text": "float HealthSampleTimer = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 190,
+      "Text": "double HotUntil = 0.0; // world time until which the boss's health is sampled every frame (a weapon hit's loss arrives in the frame of the pack's event or a few frames later)"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 191,
+      "Text": "int32 ScaledHitCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGHitIntake.h",
+      "Line": 192,
+      "Text": "double HealthAdjustTotal = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.cpp",
+      "Line": 178,
+      "Text": "float Position = 0.f, Rate = 1.f, WindowStart = -1.f, WindowEnd = -1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 34,
+      "Text": "float StaleGraceSeconds = 0.1f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 38,
+      "Text": "FName NotifyStateClassName = TEXT(\"ANS_iFrames_C\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 41,
+      "Text": "int32 MaxRecords = 64;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 96,
+      "Text": "float Rate = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 97,
+      "Text": "float ExpectedStart = -1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 98,
+      "Text": "float ExpectedEnd = -1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 99,
+      "Text": "float StartPos = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 100,
+      "Text": "float EndPos = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 101,
+      "Text": "double StartTime = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 102,
+      "Text": "double EndTime = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 103,
+      "Text": "float FrameStep = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 108,
+      "Text": "float EndExpectedEnd = -1.f; // that montage's window end in montage seconds"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 121,
+      "Text": "double TagSince = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 122,
+      "Text": "double MontageGoneSince = -1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 123,
+      "Text": "float LastPos = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 124,
+      "Text": "double LastPosTime = 0.0; // world time of LastPos: the montage position is extrapolated from it when the montage is gone (a blend-out)"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 125,
+      "Text": "float LastWindowEnd = -1.f; // window end of the last montage seen (the falling edge may be seen after the montage is gone)"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 126,
+      "Text": "float LastRate = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 127,
+      "Text": "float LastStep = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 129,
+      "Text": "int32 UnexpectedDrops = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 130,
+      "Text": "int32 StaleCleared = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 131,
+      "Text": "int32 DeathCleared = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+      "Line": 132,
+      "Text": "int32 ResetCleared = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.cpp",
+      "Line": 317,
+      "Text": "double Health = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.cpp",
+      "Line": 476,
+      "Text": "double Health = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 25,
+      "Text": "float Saved = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 26,
+      "Text": "float Applied = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 27,
+      "Text": "double DeadlineReal = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 104,
+      "Text": "float Saved = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 117,
+      "Text": "int32 RequestGeneration = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 119,
+      "Text": "int32 CancelCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 120,
+      "Text": "int32 RestoreCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 121,
+      "Text": "int32 SuppressedCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 122,
+      "Text": "int32 RefusedCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 152,
+      "Text": "float GlobalShakeScale = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 156,
+      "Text": "float MinShakeScale = 0.02f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 160,
+      "Text": "float HitStopSeconds = 0.08f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 164,
+      "Text": "float HitStopDilation = 0.05f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 168,
+      "Text": "float SlowMotionScale = 0.25f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 171,
+      "Text": "float SlowMotionSeconds = 1.2f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 225,
+      "Text": "int32 LastSlamInstance = -1;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 226,
+      "Text": "int32 LastRoarCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 227,
+      "Text": "int32 LastRiposteCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 228,
+      "Text": "int32 LastVictoryCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 229,
+      "Text": "int32 LastGeneration = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 234,
+      "Text": "int32 SlamShakeCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 235,
+      "Text": "int32 RoarShakeCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 236,
+      "Text": "int32 HitStopCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 237,
+      "Text": "int32 SlowMotionCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 238,
+      "Text": "int32 ShakeTooFarCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 239,
+      "Text": "int32 ShakeNotStartedCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 240,
+      "Text": "int32 SuppressedCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 241,
+      "Text": "float LastShakeScale = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGLegend.h",
+      "Line": 242,
+      "Text": "float LastShakeDistance = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 93,
+      "Text": "bool URPGPlayerMovesSubsystem::IsPackBoss(const AActor* Actor)"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 110,
+      "Text": "return LoadObject<USoundBase>(nullptr, *FString::Printf(TEXT(\"/Game/Essential_Foosteps_SK/CUE/Concrete/%s.%s\"), Name, Name));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 143,
+      "Text": "else if (IsPackBoss(Pawn))"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 150,
+      "Text": "Music->Music = LoadObject<USoundBase>(nullptr, TEXT(\"/Game/OneBossFight/Audio/MX_Boss01_Phase1.MX_Boss01_Phase1\"), nullptr, LOAD_NoWarn);"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 153,
+      "Text": "UE_LOG(LogTemp, Warning, TEXT(\"Boss music: /Game/OneBossFight/Audio/MX_Boss01_Phase1 is not imported, the starter cue plays instead (run Scripts/Editor/import_audio.py)\"));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 154,
+      "Text": "Music->Music = LoadObject<USoundBase>(nullptr, TEXT(\"/Game/StarterContent/Audio/Starter_Music_Cue.Starter_Music_Cue\"));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 156,
+      "Text": "Music->PhaseTwoMusic = LoadObject<USoundBase>(nullptr, TEXT(\"/Game/OneBossFight/Audio/MX_Boss01_Phase2.MX_Boss01_Phase2\"), nullptr, LOAD_NoWarn);"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 195,
+      "Text": "if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossStagger>())"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 200,
+      "Text": "if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossPhases>())"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 205,
+      "Text": "if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossEncounter>())"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 210,
+      "Text": "if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossDormantWake>())"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 212,
+      "Text": "NewObject<URPGBossDormantWake>(Pawn, TEXT(\"RPGBossDormantWake\"))->RegisterComponent(); // the authored idle loop and wake gate: behaviour resumes only after AN_Boss01_Wake ends"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 214,
+      "Text": "if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossPosture>())"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 219,
+      "Text": "if (IsPackBoss(Pawn))"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 221,
+      "Text": "URPGBossDeath::Attach(Pawn, ERPGBossDeathMode::OwnClip); // the death clip (G2-9): the component plays AN_Boss01_DeathLegend itself, holds the pose and keeps the pack's ragdoll off (the pack's ragdoll ability ignores DeathMontages: probe 2026-10-22, DEATH_CLIP_NOTES.md)"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 223,
+      "Text": "if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossLook>())"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 227,
+      "Text": "if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossBleed>())"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 231,
+      "Text": "if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGAttackTracker>())"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 236,
+      "Text": "if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossCloseClipSwap>())"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 240,
+      "Text": "if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossShockwave>())"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 245,
+      "Text": "if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossLowSweep>())"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 250,
+      "Text": "if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossHealPunish>())"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 255,
+      "Text": "if (IsPackBoss(Pawn))"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 267,
+      "Text": "if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossHud>())"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 272,
+      "Text": "if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGCombatDebug>())"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "Line": 278,
+      "Text": "if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossLegend>())"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.h",
+      "Line": 26,
+      "Text": "static bool IsPackBoss(const AActor* Actor);"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGRiposteInput.cpp",
+      "Line": 18,
+      "Text": "LightAttackAction = TSoftObjectPtr<UInputAction>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_NormalAttack.IA_NormalAttack\")));"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGRiposteInput.cpp",
+      "Line": 61,
+      "Text": "if (URPGPlayerMovesSubsystem::IsPackBoss(*It))"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGRiposteInput.h",
+      "Line": 45,
+      "Text": "int32 PressCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGRiposteInput.h",
+      "Line": 46,
+      "Text": "int32 AcceptedCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGSwingTracker.cpp",
+      "Line": 206,
+      "Text": "double Now = 0.0, Max = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGSwingTracker.cpp",
+      "Line": 258,
+      "Text": "double Now = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGSwingTracker.h",
+      "Line": 15,
+      "Text": "int32 Id = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGSwingTracker.h",
+      "Line": 16,
+      "Text": "double StartTime = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGSwingTracker.h",
+      "Line": 28,
+      "Text": "float HyperArmorStart = -1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGSwingTracker.h",
+      "Line": 29,
+      "Text": "float HyperArmorEnd = -1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGSwingTracker.h",
+      "Line": 31,
+      "Text": "float StaminaExtra = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGSwingTracker.h",
+      "Line": 55,
+      "Text": "float PackStaminaCost = 15.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGSwingTracker.h",
+      "Line": 117,
+      "Text": "float HyperArmorRefreshSeconds = 3.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGSwingTracker.h",
+      "Line": 164,
+      "Text": "float LastMontagePosition = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGSwingTracker.h",
+      "Line": 165,
+      "Text": "int32 SwingCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGSwingTracker.h",
+      "Line": 166,
+      "Text": "int32 AttackSwingCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGSwingTracker.h",
+      "Line": 167,
+      "Text": "float StaminaExtraTotal = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGSwingTracker.h",
+      "Line": 171,
+      "Text": "double HyperArmorAppliedAt = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGSwingTracker.h",
+      "Line": 173,
+      "Text": "int32 ApplyFailedSwing = -1;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGSwingTracker.h",
+      "Line": 174,
+      "Text": "int32 HyperArmorRefreshes = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGSwingTracker.h",
+      "Line": 175,
+      "Text": "int32 HyperArmorWindows = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceAudit.cpp",
+      "Line": 174,
+      "Text": "double PlayerHealth = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceAudit.cpp",
+      "Line": 388,
+      "Text": "double BossHealth = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceAudit.cpp",
+      "Line": 411,
+      "Text": "double BossHealth = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceAudit.h",
+      "Line": 29,
+      "Text": "FName TargetTypeTag = TEXT(\"TargetType.MainWeapon\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceAudit.h",
+      "Line": 33,
+      "Text": "float ResolveWindowSeconds = 0.25f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceAudit.h",
+      "Line": 37,
+      "Text": "float SuspectStepCm = 800.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceAudit.h",
+      "Line": 83,
+      "Text": "int32 Ordinal = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceAudit.h",
+      "Line": 84,
+      "Text": "int32 Instance = -1;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceAudit.h",
+      "Line": 86,
+      "Text": "int32 Generation = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceAudit.h",
+      "Line": 89,
+      "Text": "float OpenPos = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceAudit.h",
+      "Line": 90,
+      "Text": "float ClosePos = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceAudit.h",
+      "Line": 107,
+      "Text": "int32 OrdinalBase = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceAudit.h",
+      "Line": 110,
+      "Text": "double PendingTime = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceAudit.h",
+      "Line": 111,
+      "Text": "double PendingHealth = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceAudit.h",
+      "Line": 113,
+      "Text": "int32 PendingTicks = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceAudit.h",
+      "Line": 114,
+      "Text": "double LastPlayerHealth = -1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceAudit.h",
+      "Line": 119,
+      "Text": "int32 WindowGeneration = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceGuard.cpp",
+      "Line": 157,
+      "Text": "double Health = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceGuard.h",
+      "Line": 31,
+      "Text": "FName TargetTypeTag = TEXT(\"TargetType.MainWeapon\");"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceGuard.h",
+      "Line": 92,
+      "Text": "int32 SeedWindow = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceGuard.h",
+      "Line": 96,
+      "Text": "int32 WindowId = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceGuard.h",
+      "Line": 97,
+      "Text": "int32 LastWindowInstance = -1;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceGuard.h",
+      "Line": 98,
+      "Text": "int32 CloseCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceGuard.h",
+      "Line": 99,
+      "Text": "int32 OccludedSamples = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceGuard.h",
+      "Line": 100,
+      "Text": "int32 CarryCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGTraceGuard.h",
+      "Line": 101,
+      "Text": "float OpenRefreshError = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGWeaponAttackTable.h",
+      "Line": 28,
+      "Text": "float PostureDamage = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGWeaponAttackTable.h",
+      "Line": 32,
+      "Text": "float StaminaCost = -1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGWeaponAttackTable.h",
+      "Line": 36,
+      "Text": "float BleedBuildup = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGWeaponAttackTable.h",
+      "Line": 40,
+      "Text": "float HealthDamageMultiplier = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGWeaponAttackTable.h",
+      "Line": 44,
+      "Text": "float HyperArmorStart = -1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGWeaponAttackTable.h",
+      "Line": 47,
+      "Text": "float HyperArmorEnd = -1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/Player/RPGWeaponAttackTable.h",
+      "Line": 84,
+      "Text": "static const TCHAR* AssetPath() { return TEXT(\"/Game/OneBossFight/Data/DA_WeaponAttacks.DA_WeaponAttacks\"); }"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.cpp",
+      "Line": 33,
+      "Text": "Cached = LoadObject<UObject>(nullptr, TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/UI/Fonts/Cinzel/Cinzel.Cinzel\"));"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.cpp",
+      "Line": 167,
+      "Text": "const float FadeIn = 0.6f;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.cpp",
+      "Line": 168,
+      "Text": "const float FadeOut = 1.0f;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.cpp",
+      "Line": 412,
+      "Text": "double Health = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.cpp",
+      "Line": 413,
+      "Text": "double MaxHealth = 1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 24,
+      "Text": "float Health = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 25,
+      "Text": "float Posture = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 113,
+      "Text": "double BannerStart = -1.0;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 114,
+      "Text": "float BannerHold = 0.f;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 115,
+      "Text": "float Trail = 1.f;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 119,
+      "Text": "double RetryShowAt = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 142,
+      "Text": "FText BossName = NSLOCTEXT(\"RPG\", \"BossName\", \"Ember Warden\");"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 145,
+      "Text": "FText PhaseTwoSubtitle = NSLOCTEXT(\"RPG\", \"PhaseTwoSubtitle\", \"Embers Unbound\");"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 148,
+      "Text": "FText PromptText = NSLOCTEXT(\"RPG\", \"RipostePrompt\", \"LIGHT ATTACK  -  RIPOSTE\");"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 152,
+      "Text": "float NameBannerSeconds = 2.2f;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 155,
+      "Text": "float VictoryBannerSeconds = 4.f;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 162,
+      "Text": "float RetryDelaySeconds = 3.f;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 165,
+      "Text": "FText RetryText = NSLOCTEXT(\"RPG\", \"RetryText\", \"PRESS  R  OR  Y  TO FACE IT AGAIN\");"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 218,
+      "Text": "int32 LastGeneration = -1;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 219,
+      "Text": "int32 VictoryFiredGeneration = -1;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 220,
+      "Text": "int32 VictoryCount = 0;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 224,
+      "Text": "double FlashEnd = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBossHud.h",
+      "Line": 225,
+      "Text": "double NextPackBarCheck = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBuildSelect.cpp",
+      "Line": 195,
+      "Text": "TEXT(\"/Game/OneBossFight/UI/Art/T_Boss01_Icon_Starter.T_Boss01_Icon_Starter\"),"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBuildSelect.cpp",
+      "Line": 196,
+      "Text": "TEXT(\"/Game/OneBossFight/UI/Art/T_Boss01_Icon_Strength.T_Boss01_Icon_Strength\"),"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBuildSelect.cpp",
+      "Line": 197,
+      "Text": "TEXT(\"/Game/OneBossFight/UI/Art/T_Boss01_Icon_Dex.T_Boss01_Icon_Dex\")"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBuildSelect.cpp",
+      "Line": 297,
+      "Text": "double Health = 0.0;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGBuildSelect.cpp",
+      "Line": 307,
+      "Text": "if (URPGPlayerMovesSubsystem::IsPackBoss(*It))"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGFlaskHud.cpp",
+      "Line": 132,
+      "Text": "PlateTexture = Load(TEXT(\"/Game/OneBossFight/UI/Art/T_Boss01_FlaskPlate.T_Boss01_FlaskPlate\"));"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGFlaskHud.cpp",
+      "Line": 133,
+      "Text": "FullTexture = Load(TEXT(\"/Game/OneBossFight/UI/Art/T_Boss01_Flask_Full.T_Boss01_Flask_Full\"));"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGFlaskHud.cpp",
+      "Line": 134,
+      "Text": "HalfTexture = Load(TEXT(\"/Game/OneBossFight/UI/Art/T_Boss01_Flask_Half.T_Boss01_Flask_Half\"));"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGFlaskHud.cpp",
+      "Line": 135,
+      "Text": "EmptyTexture = Load(TEXT(\"/Game/OneBossFight/UI/Art/T_Boss01_Flask_Empty.T_Boss01_Flask_Empty\"));"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGFlaskHud.cpp",
+      "Line": 159,
+      "Text": "int32 Count = -1;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGFlaskHud.h",
+      "Line": 83,
+      "Text": "int32 FlaskCount = -1;"
+    },
+    {
+      "File": "Source/OneBossFight/UI/RPGFlaskHud.h",
+      "Line": 84,
+      "Text": "int32 StartingCount = 0;"
+    }
+  ]
+}

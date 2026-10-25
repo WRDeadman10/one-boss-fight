@@ -1,0 +1,35 @@
+Begin Object Class=/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_RetaliationAttack.GA_GS_Boss_RetaliationAttack_C Name="Default__GA_GS_Boss_RetaliationAttack_C" ExportPath="/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_RetaliationAttack.GA_GS_Boss_RetaliationAttack_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_RetaliationAttack.Default__GA_GS_Boss_RetaliationAttack_C'"
+   Behavior Manager Component=None
+   Master AI=None
+   AttackData="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_AttackData.BP_AttackData_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/DataAssets/AttackData/DefaultMeleeAttackData.DefaultMeleeAttackData'"
+   ResetAttackTime=0.000000
+   Attack Index=0
+   BlockGameplayCuesByImpactTags=(GameplayTags=((TagName="ImpactDecision.BlockedHit"),(TagName="ImpactDecision.DeflectedHit"),(TagName="ImpactDecision.ParriedHit")))
+   StateManager=None
+   CombatComponent=None
+   Performing Character=None
+   LastAttackIndex=0
+   Random Attack Index?=True
+   CurrentAttackIndex=0
+   ActiveAbilityMontage=None
+   AbilitySystemComponent=None
+   AbilityTags=(GameplayTags=((TagName="Ability.Melee.RetaliationAttack")))
+   Performing Actor=None
+   ActivationOwnedTags=(GameplayTags=)
+   bPendingClearAbility?=False
+   ActivationRequiredTags=(GameplayTags=)
+   ActivationBlockedTags=(GameplayTags=)
+   CancelAbilitiesWithTags=(GameplayTags=)
+   Cooldown Time=0.000000
+   CooldownLoopInterval=0.100000
+   Current Cooldown Time=0.000000
+   bCooldownActive?=False
+   Cost Gameplay Effect Class=None
+   Level=1
+   BlockAbilitiesWithTags=(GameplayTags=)
+   GameplayEventTags=(GameplayTags=)
+   bCanBeCanceled=True
+   bWaitingForRuntimeEvent=False
+   Waiting Event Tag=(TagName="")
+   BlueprintHelperComponent=None
+End Object
