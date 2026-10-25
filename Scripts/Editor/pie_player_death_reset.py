@@ -180,7 +180,7 @@ def _tick(dt):
         php = attr(pawn, "Attribute.Health")
         check("%s: encounter reset once (generation +1)" % name, enc.get_generation() == s["mem"]["gen"] + 1 and enc.get_reset_count() == s["mem"]["resets"] + 1, "generation %d -> %d" % (s["mem"]["gen"], enc.get_generation()))
         check("%s: boss back at its start, dormant" % name, away < 10.0 and enc.is_dormant(), "%.1f cm from home, dormant %s" % (away, enc.is_dormant()))
-        check("%s: boss not staggered, no montage left" % name, (not stg.is_staggered()) and montage is None, "staggered %s, montage %s" % (stg.is_staggered(), montage.get_name() if montage else None))
+        check("%s: boss not staggered, no montage left" % name, (not stg.is_staggered()) and (montage is None or (dbg.debug_boss_montage_anim_name() or "") == "AN_Boss01_DormantIdle"), "staggered %s, montage %s, anim %s" % (stg.is_staggered(), montage.get_name() if montage else None, dbg.debug_boss_montage_anim_name() if montage else None))  # since B11 a dormant boss plays its idle loop (2026-10-25)
         health, maximum = attr(boss, "Attribute.Health"), max_attr(boss, "Attribute.Health")
         check("%s: boss health and poise full" % name, health is not None and maximum is not None and abs(health - maximum) <= 0.5 and (attr(boss, "Attribute.Poise") or 0) >= 99.0 and comp(boss, "RPGBossPosture").get_posture() >= 99.0, "health %s/%s poise %s" % (health, maximum, attr(boss, "Attribute.Poise")))
         check("%s: no blade, no pending punish, no javelin" % name, (not p["sw"].is_blade_active()) and (not p["pu"].is_pending()) and len(javelins(w)) == 0, "blade %s pending %s javelins %d" % (p["sw"].is_blade_active(), p["pu"].is_pending(), len(javelins(w))))

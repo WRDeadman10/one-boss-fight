@@ -101,6 +101,18 @@ bool URPGBossDormantWake::BeginWake()
 #if !UE_BUILD_SHIPPING
 	if (CVarWakeClip.GetValueOnGameThread() == 0)
 	{
+		// Test switch: no wake clip, but the authored dormant loop must not outlive the sleep: a looping montage left on an awake boss keeps the tracker non-neutral (an unforced A5 punish is refused: pie_damage_path M2, 2026-10-25).
+		if (ACharacter* SleepingBoss = GetBoss())
+		{
+			if (UAnimInstance* Anim = SleepingBoss->GetMesh() ? SleepingBoss->GetMesh()->GetAnimInstance() : nullptr)
+			{
+				if (DormantMontage.IsValid())
+				{
+					Anim->Montage_Stop(0.1f, DormantMontage.Get());
+				}
+			}
+		}
+		DormantMontage = nullptr;
 		return false;
 	}
 #endif

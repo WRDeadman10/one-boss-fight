@@ -3,6 +3,7 @@
 #include "UI/RPGBuildSelect.h"
 #include "UI/RPGBuildSelectRules.h"
 #include "Blueprint/WidgetTree.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/Image.h"
@@ -120,6 +121,18 @@ void URPGBuildSelectWidget::SetSelector(URPGBuildSelect* InSelector)
 	}
 }
 
+void URPGBuildSelectWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+	if (!Selector) return;
+	for (int32 I = 0; I < Rows.Num(); ++I)
+	{
+		const bool bVisible = Selector->IsRowVisible(I, MyGeometry.GetLocalSize().Y);
+		Rows[I]->SetVisibility(bVisible ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+		if (Icons.IsValidIndex(I)) Icons[I]->SetVisibility(bVisible && Selector->GetRowIcon(I) ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+	}
+}
+
 TSharedRef<SWidget> URPGBuildSelectWidget::RebuildWidget()
 {
 	if (WidgetTree && !WidgetTree->RootWidget)
@@ -128,12 +141,13 @@ TSharedRef<SWidget> URPGBuildSelectWidget::RebuildWidget()
 		WidgetTree->RootWidget = Canvas;
 		TitleText = AddText(WidgetTree, Canvas, TEXT("BuildSelectTitle"), FVector2D(0.f, 0.f), 30);
 		TitleText->SetText(FText::FromString(TEXT("CHOOSE YOUR BUILD")));
-		for (int32 Row = 0; Row < 3; ++Row)
+		for (int32 Row = 0; Row < (Selector ? Selector->GetRowCount() : 0); ++Row)
 		{
 			UTextBlock* Text = AddText(WidgetTree, Canvas, *FString::Printf(TEXT("BuildRow%d"), Row), FVector2D(0.f, 52.f + Row * 42.f), 20);
 			Rows.Add(Text);
 			Icons.Add(AddIcon(WidgetTree, Canvas, *FString::Printf(TEXT("BuildIcon%d"), Row), FVector2D(-112.f, 68.f + Row * 42.f)));
 		}
+		if (Selector) SetSelector(Selector); // populate rows created by this rebuild, before first paint
 	}
 	return Super::RebuildWidget();
 }
@@ -145,7 +159,7 @@ FReply URPGBuildSelectWidget::NativeOnMouseButtonDown(const FGeometry& InGeometr
 		const float LocalY = InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition()).Y;
 		const float RowsTop = InGeometry.GetLocalSize().Y * 0.25f + 52.f;
 		const int32 Row = FMath::FloorToInt((LocalY - RowsTop) / 42.f);
-		if (Rows.IsValidIndex(Row))
+		if (Rows.IsValidIndex(Row) && Selector->IsRowVisible(Row, InGeometry.GetLocalSize().Y))
 		{
 			Selector->OnWidgetRowClicked(Row);
 			return FReply::Handled();
@@ -166,11 +180,8 @@ FReply URPGBuildSelectWidget::NativeOnKeyDown(const FGeometry& InGeometry, const
 		Selector->Close();
 		return FReply::Handled();
 	}
-	if (Key == EKeys::One || Key == EKeys::Two || Key == EKeys::Three)
-	{
-		Selector->OnWidgetRowClicked(Key == EKeys::One ? 0 : Key == EKeys::Two ? 1 : 2);
-		return FReply::Handled();
-	}
+	const FKey Keys[] = {EKeys::One, EKeys::Two, EKeys::Three, EKeys::Four, EKeys::Five, EKeys::Six, EKeys::Seven, EKeys::Eight, EKeys::Nine};
+	for (int32 I = 0; I < UE_ARRAY_COUNT(Keys); ++I) if (Key == Keys[I] && Selector->IsRowVisible(I, InGeometry.GetLocalSize().Y)) { Selector->OnWidgetRowClicked(I); return FReply::Handled(); }
 	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
 }
 
@@ -183,6 +194,7 @@ URPGBuildSelect::URPGBuildSelect()
 void URPGBuildSelect::BeginPlay()
 {
 	Super::BeginPlay();
+	Epoch = RPGCombatRegistry::ForWorld(GetWorld());
 	LoadRowIcons();
 	bBKeyPending.Store(false);
 	RegisterKeyListener();
@@ -190,16 +202,11 @@ void URPGBuildSelect::BeginPlay()
 
 void URPGBuildSelect::LoadRowIcons()
 {
-	static const TCHAR* Paths[] =
-	{
-		TEXT("/Game/OneBossFight/UI/Art/T_Boss01_Icon_Starter.T_Boss01_Icon_Starter"),
-		TEXT("/Game/OneBossFight/UI/Art/T_Boss01_Icon_Strength.T_Boss01_Icon_Strength"),
-		TEXT("/Game/OneBossFight/UI/Art/T_Boss01_Icon_Dex.T_Boss01_Icon_Dex")
-	};
 	RowIcons.Reset();
-	for (const TCHAR* Path : Paths)
+	if (!Epoch) return;
+	for (const auto& Build : Epoch->Builds)
 	{
-		RowIcons.Add(TSoftObjectPtr<UTexture2D>(FSoftObjectPath(Path)).LoadSynchronous());
+		RowIcons.Add(TSoftObjectPtr<UTexture2D>(Build.Icon).LoadSynchronous());
 	}
 }
 
@@ -292,6 +299,7 @@ URPGBuildLoadout* URPGBuildSelect::GetLoadout() const
 
 bool URPGBuildSelect::CanOpen(FString& OutWhy) const
 {
+	if (!Epoch) { OutWhy = TEXT("combat catalog unavailable"); return false; }
 	const ACharacter* Character = Cast<ACharacter>(GetOwner());
 	const UCharacterMovementComponent* Movement = Character ? Character->GetCharacterMovement() : nullptr;
 	double Health = 0.0;
@@ -333,8 +341,8 @@ void URPGBuildSelect::EnsureWidget()
 		Widget = CreateWidget<URPGBuildSelectWidget>(Controller, URPGBuildSelectWidget::StaticClass());
 		if (Widget)
 		{
-			Widget->AddToViewport(30);
 			Widget->SetSelector(this);
+			Widget->AddToViewport(30);
 		}
 	}
 }
@@ -400,11 +408,16 @@ void URPGBuildSelect::Close()
 
 FString URPGBuildSelect::Pick(FName Build)
 {
-	ERPGBuild Parsed = ERPGBuild::Starter;
-	if (!bOpen || !RPGBuildSelectRules::ParseBuild(Build, Parsed))
+	FName Parsed;
+	if (!bOpen || !Epoch || Epoch->Parse(Build.ToString(), Parsed) != RPGCombatRegistry::EResolve::Found)
 	{
 		LastPickResult = bOpen ? TEXT("invalid build") : TEXT("not open");
 		return LastPickResult;
+	}
+	const int32 ParsedRow = Epoch->Builds.IndexOfByPredicate([Parsed](const FRPGCatalogBuild& B) { return B.BuildId == Parsed; });
+	if (ParsedRow >= 3 && !IsRowVisible(ParsedRow, LayoutHeight()))
+	{
+		LastPickResult = TEXT("row not visible"); return LastPickResult;
 	}
 	URPGBuildLoadout* Loadout = GetLoadout();
 	if (!Loadout)
@@ -425,15 +438,28 @@ FString URPGBuildSelect::Pick(FName Build)
 
 FString URPGBuildSelect::GetRowText(int32 Row) const
 {
-	return RPGBuildSelectRules::RowText(Row);
+	if (!Epoch || !Epoch->Builds.IsValidIndex(Row)) return FString();
+	const auto& B = Epoch->Builds[Row]; const auto* W = Epoch->Weapon(B.WeaponId);
+	return W ? FString(TEXT("Build: ")) + Epoch->Describe(W->StyleName, B.BuildId) : FString();
+}
+
+int32 URPGBuildSelect::GetRowCount() const { return Epoch ? Epoch->Builds.Num() : 0; }
+bool URPGBuildSelect::IsRowVisible(int32 Row, float Height) const { return RPGCombatRegistry::RowVisible(Row, GetRowCount(), Height); }
+
+float URPGBuildSelect::LayoutHeight() const
+{
+	const float Cached = Widget ? Widget->GetCachedGeometry().GetLocalSize().Y : 0.f;
+	if (Cached > 0.f) return Cached;
+	int32 Width = 0, Height = 0;
+	if (const auto* PC = GetController()) PC->GetViewportSize(Width, Height);
+	return Height / FMath::Max(UWidgetLayoutLibrary::GetViewportScale(this), 0.01f);
 }
 
 void URPGBuildSelect::OnWidgetRowClicked(int32 Row)
 {
-	ERPGBuild Build = ERPGBuild::Starter;
-	if (RPGBuildSelectRules::BuildForRow(Row, Build))
+	if (Epoch && Epoch->Builds.IsValidIndex(Row) && (Row < 3 || IsRowVisible(Row, LayoutHeight())))
 	{
-		Pick(FName(RPGBuildRules::BuildName(Build)));
+		Pick(Epoch->Builds[Row].BuildId);
 	}
 }
 

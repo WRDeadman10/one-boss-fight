@@ -1,0 +1,36 @@
+ID,AssetName,EngineContentPath,AssetCategory,PurposeScope,AssetOwner,PhaseDependency,EffortSize,AcceptanceTest
+B-01,AM_Boss01_A2_OverheadSlam,/Game/OneBossFight/Boss01/Animations/AM_Boss01_A2_OverheadSlam,Montage,P0 Defect Fix (VIS-02),Claude (Editor),Phase P1 / P2,Small (Combines 3 clips),pie_a4_low_sweep.py / pie_look.py
+B-02,SFX_A2_ReleaseCue,/Game/OneBossFight/Boss01/Audio/SFX_A2_ReleaseCue,Sound Wave,Audit (ANM-003),Antigravity (WAV),Phase P1,Small (150ms snap),Audio waveform lead check
+B-03,NS_Boss01_Shockwave_Ring,/Game/OneBossFight/Boss01/VFX/NS_Boss01_Shockwave_Ring,Niagara System,P0 Defect Fix (RV-01),Antigravity / Claude,Phase P1,Medium (Dynamic torus ribbon),G4-3 Packaged Shipping capture
+B-04,NE_Shockwave_MeshRibbon,/Game/OneBossFight/Boss01/VFX/NE_Shockwave_MeshRibbon,Niagara Emitter,P0 Defect Fix (RV-01),Antigravity,Phase P1,Medium (Mesh ribbon emitter),Viewport height test <= 38cm
+B-05,M_Shockwave_Wavefront,/Game/OneBossFight/Boss01/Materials/M_Shockwave_Wavefront,Material,P0 Defect Fix (RV-01),Antigravity,Phase P1,Small (Unlit emissive),Visual contrast audit
+B-06,SFX_Shockwave_Impact,/Game/OneBossFight/Boss01/Audio/SFX_Shockwave_Impact,Sound Wave,P0 Defect Fix (RV-01),Antigravity (WAV),Phase P1,Small (Concussive impact),Audio playback sync at 0.754s
+B-07,SFX_Shockwave_Travel,/Game/OneBossFight/Boss01/Audio/SFX_Shockwave_Travel,Sound Wave,P0 Defect Fix (RV-01),Antigravity (WAV),Phase P1,Small (Spatialized rush loop),Continuous audio tracking radius
+B-08,SFX_Shockwave_JumpPass,/Game/OneBossFight/Boss01/Audio/SFX_Shockwave_JumpPass,Sound Wave,P0 Defect Fix (RV-01),Antigravity (WAV),Phase P1,Small (Confirmation whoosh),Driver assertion bClearedBand
+B-09,SOCKET_Riposte,Content/OneBossFight/Boss01/Body/SK_Boss01_Body,Mesh Socket,Audit (HIT-010/012),Claude (Editor),Phase P1,Small (Spine_03 chest socket),Socket readback probe
+B-10,T_Riposte_Reticle,/Game/OneBossFight/UI/Textures/T_Riposte_Reticle,Texture2D,Audit (HIT-010/012),Antigravity (PNG),Phase P1,Small (Targeting glyph),UI reticle rendering in Stagger
+B-11,SFX_PostureBreak_Shatter,/Game/OneBossFight/Boss01/Audio/SFX_PostureBreak_Shatter,Sound Wave,P1 Readability,Antigravity (WAV),Phase P1,Small (3kHz glass shatter),Audio cue audibility test
+B-12,NS_Boss01_FloorSparks,/Game/OneBossFight/Boss01/VFX/NS_Boss01_FloorSparks,Niagara System,P1 Readability (A3a),Antigravity,Phase P1,Small (Floor friction sparks),Ground contact particle test
+B-13,AN_Boss01_Grab_Attack,/Game/OneBossFight/Boss01/Animations/AN_Boss01_Grab_Attack,Anim Sequence,Audit (HIT-012),Antigravity (FBX),Phase P2 / P3,Large (Paired attacker suite),Bone alignment validator
+B-14,AN_Player_Grab_Victim,/Game/OneBossFight/Player/Animations/AN_Player_Grab_Victim,Anim Sequence,Audit (HIT-012),Antigravity (FBX),Phase P2 / P3,Large (Paired victim suite),Paired transform deviation test
+B-15,AM_Boss01_Grab_Attack,/Game/OneBossFight/Boss01/Animations/AM_Boss01_Grab_Attack,Montage,Audit (HIT-012),Claude (Editor),Phase P2 / P3,Medium (6-section montage),Automated grab driver
+B-16,SOCKET_Grab_Victim,Content/OneBossFight/Boss01/Body/SK_Boss01_Body,Mesh Socket,Audit (HIT-012),Claude (Editor),Phase P2 / P3,Small (Left palm socket),Paired alignment verification
+B-17,AN_Boss01_LungeTravel,/Game/OneBossFight/Boss01/Animations/AN_Boss01_LungeTravel,Anim Sequence,Audit (ANM-006),Antigravity (FBX),Phase P2 / P4,Medium-Large (450cm root motion),Root motion curve check
+B-18,AM_Boss01_LungeTravel,/Game/OneBossFight/Boss01/Animations/AM_Boss01_LungeTravel,Montage,Audit (ANM-006),Claude (Editor),Phase P2 / P4,Medium (Warp window montage),Motion warp clamp assertion
+B-19,AN_Boss01_Guard_Suite,/Game/OneBossFight/Boss01/Animations/AN_Boss01_Guard_*,Anim Sequence,Audit (DEF-005),Antigravity (FBX),Phase P3 / P5,Large (5 guard clips),Posture break duration test
+B-20,AN_Boss01_Parry_Suite,/Game/OneBossFight/Boss01/Animations/AN_Boss01_Parry_*,Anim Sequence,Audit (DEF-005),Antigravity (FBX),Phase P3 / P5,Medium (4 parry clips),Parry window timing test
+B-21,AN_Boss01_Dodge_Suite,/Game/OneBossFight/Boss01/Animations/AN_Boss01_Dodge_*,Anim Sequence,Audit (DEF-005),Antigravity (FBX),Phase P3 / P5,Medium (3 dodge clips),I-Frame window test
+B-22,AN_Boss01_Adapt_Tell,/Game/OneBossFight/Boss01/Animations/AN_Boss01_Adapt_Tell,Anim Sequence,Audit (AWR-008),Antigravity (FBX),Phase P6,Small (Additive tell pose),Additive layer evaluation test
+B-23,AN_Boss01_Fallback_Suite,/Game/OneBossFight/Boss01/Animations/AN_Boss01_Fallback_*,Anim Sequence,Audit (SEL-008),Antigravity (FBX),Phase P6,Small-Medium (Pacing walk and flourish),Bounded task duration test
+B-24,SKM_Canary_Alistair,/Game/OneBossFight/Canary/Meshes/SKM_Canary_Alistair,Skeletal Mesh,Canary (Second Boss),Antigravity (FBX),Phase P8,Medium (Knight on SK_CombatMannequin),Skeleton compatibility validator
+B-25,SM_Canary_Halberd,/Game/OneBossFight/Canary/Weapons/SM_Canary_Halberd,Static Mesh,Canary (Second Boss),Antigravity (FBX),Phase P8,Small (220cm polearm with sockets),Socket placement readback
+B-26,AN_Canary_Lifecycle,/Game/OneBossFight/Canary/Animations/AN_Canary_*,Anim Sequence,Canary (Second Boss),Antigravity (FBX),Phase P8,Medium (6 lifecycle clips),Canary lifecycle driver
+B-27,AN_Canary_M1_Cleave,/Game/OneBossFight/Canary/Animations/AN_Canary_M1_DoubleCleave,Anim Sequence,Canary (Move 1),Antigravity (FBX),Phase P8,Medium (Dual-window sweep),Dual-window damage test
+B-28,AN_Canary_M2_Soulfire,/Game/OneBossFight/Canary/Animations/AN_Canary_M2_SoulfireArc,Anim Sequence,Canary (Move 2),Antigravity (FBX),Phase P8,Small-Medium (Projectile release chop),Projectile release timing test
+B-29,NS_Canary_SoulfireArc,/Game/OneBossFight/Canary/VFX/NS_Canary_SoulfireArc,Niagara System,Canary (Move 2),Antigravity,Phase P8,Medium (Traveling crescent arc),Projectile hit registration test
+B-30,AN_Canary_M3_Quake,/Game/OneBossFight/Canary/Animations/AN_Canary_M3_RadialQuake,Anim Sequence,Canary (Move 3),Antigravity (FBX),Phase P8,Small-Medium (Pommel slam animation),Radial wave expansion test
+B-31,AN_Canary_M4_Branch,/Game/OneBossFight/Canary/Animations/AN_Canary_M4_*,Anim Sequence,Canary (Move 4),Antigravity (FBX),Phase P8,Medium (3-branch sequence),Branch gate decision test
+B-32,SM_Player_Halberd,/Game/OneBossFight/Weapons/SM_Player_SilversteelHalberd,Static Mesh,Canary (New Weapon),Antigravity (FBX),Phase P8,Small (190cm player polearm),Weapon equip & socket audit
+B-33,T_Icon_Halberd,/Game/OneBossFight/UI/Textures/T_Icon_SilversteelHalberd,Texture2D,Canary (New Weapon),Antigravity (PNG),Phase P8,Small (256x256 RGBA icon),Build picker icon display test
+B-34,AN_Player_Halberd_Suite,/Game/OneBossFight/Player/Animations/AN_Player_Halberd_*,Anim Sequence,Canary (New Weapon),Antigravity (FBX),Phase P8,Medium-Large (4 player clips),Attack table execution test
+B-35,DA_Build_Vanguard,/Game/OneBossFight/Builds/DA_Build_Vanguard,Data Asset,Canary (Fourth Build),Claude (Editor),Phase P8,Small (PrimaryDataAsset),Build loadout & PIE equip test

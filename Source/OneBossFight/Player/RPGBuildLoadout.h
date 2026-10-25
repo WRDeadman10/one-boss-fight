@@ -62,6 +62,10 @@ public:
 	/** The line of the HUD, for example "Build: Strength (Claymore)": the weapon really held, with a suffix while the loadout equips, waits for the next fight or has given up. */
 	UFUNCTION(BlueprintPure, Category = "Build")
 	FString GetBuildLine() const;
+	UFUNCTION(BlueprintPure, Category = "Build")
+	FString GetCatalogDiagnostic() const;
+	UFUNCTION(BlueprintPure, Category = "Build")
+	TArray<FString> GetCatalogCoverageLines() const;
 
 	/** The asset name of the combat style the player holds (SwordCombatStyle, ClaymoreCombatStyle, DualSwordCombatStyle, ...), None before the pack has answered. */
 	UFUNCTION(BlueprintPure, Category = "Build")
@@ -181,7 +185,8 @@ private:
 	/** Locks or unlocks the weapon slot by the boss's state. True when the lock state changed in this poll. */
 	bool SyncLock(bool bBossPresent, bool bBossDormant);
 	/** Calls the pack's equip function for the build. False (with a reason in OutResult) when the call could not be made. */
-	bool CallEquip(ERPGBuild Build, int32 UpdateType, FString& OutResult);
+	bool CallEquip(FName Build, int32 UpdateType, FString& OutResult);
+	const TCHAR* ChosenName() const;
 	bool CallSetSlotDisabled(bool bDisable);
 	/** The pack's combat style asset name of the player now, None when the pack has not answered. */
 	FName ReadStyle() const;
@@ -201,6 +206,9 @@ private:
 	bool bChoiceRead = false;
 	bool bExplicit = false;
 	ERPGBuild Chosen = ERPGBuild::Starter;
+	FName ChosenId = TEXT("Starter");
+	FName VerifiedBuildId;
+	TSharedPtr<const RPGCombatRegistry::FEpoch> Epoch;
 
 	FName ActualStyle;
 	RPGBuildRules::EDecision LastDecision = RPGBuildRules::EDecision::Done;
