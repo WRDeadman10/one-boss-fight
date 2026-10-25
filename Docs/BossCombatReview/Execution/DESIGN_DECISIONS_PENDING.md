@@ -34,3 +34,5 @@ The audit reference's utility scoring, adaptation memory, defensive moves, netwo
 ## Update 2026-10-25 (Claude): gate decisions
 
 D-10 SETTLED by the owner: no N/A; all 83 requirements must end IMPLEMENTED with evidence (including QA-008 server authority, HIT-012 boss grab, ANM-003 bounded variable hold, AWR-008 adaptive memory, SEL-004 utility scoring, ANM-006, DEF-005). D-09 architecture APPROVED (G-1). G-3 scratch asset test APPROVED; G-4 call-stack diagnostic and G-5 move test hook NOT approved. Open for the owner after costing: the size and order of the conditional rows (plan to be presented by Claude).
+
+D-10 re-confirmed by the owner after the costing (`Codex/D05_CONDITIONAL_ROWS_COSTING.md`): all 83 required including QA-008 networking, in parallel with each phase (not deferred to the end).

@@ -1,12 +1,25 @@
 {
-  "contract_version": "1.0",
-  "clip_name": "AN_Boss01_A3a_Combo1",
-  "source_asset": {
-    "fbx_path": "Import/Boss01/Animations/AN_Boss01_A3a_Combo1.fbx",
-    "sha256": "81f30a2907f526485607ff45df5d8618188d4cc02fcb4fe50415d169ce5c3a31",
-    "byte_size": 712652
+  "schema_version": "2.0",
+  "move_id": "AN_Boss01_A3a_Combo1",
+  "move_category": "ProjectAuthoredAnimation",
+  "declared_intent": {
+    "has_declared_intent": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_A3a_Combo1.txt",
+    "source_hash": "03871d0ee1e3cf3fda63cdfdb080b2bbf74c5fc427f4ca53004b7c959082a2c2",
+    "commit_time_s": 0.38,
+    "windup_end_s": 0.4,
+    "active_start_s": 0.4,
+    "active_end_s": 0.6,
+    "recovery_end_s": 0.8,
+    "impact_time_s": null,
+    "is_looping": false,
+    "notes": "Two-Hit Branch Combo: Slash 1. Descending diagonal cleave cutting from high-right across midline. Windup raises greatsword in high guard with arched torso and drops stance 9 cm (0.00-0.40s); active cleave strikes diagonally across player (0.40-0.60s); transition recovery checks blade at left hip in loaded ready pose (0.60-0.80s), matching exact initial pose of A3b. Both hands locked to grip (wrist distance 9.5-12.8 cm). Feet grounded flat at Z \u2248 0."
   },
-  "timing_and_framing": {
+  "measured_extraction": {
+    "has_measured_extraction": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_A3a_Combo1.fbx",
+    "source_hash": "81f30a2907f526485607ff45df5d8618188d4cc02fcb4fe50415d169ce5c3a31",
+    "byte_size": 712652,
     "fps": 30,
     "samples": 25,
     "elapsed_duration_s": 0.8,
@@ -20,19 +33,7 @@
         24
       ],
       "offset_rule": "F_blender = F_metadata + 1"
-    }
-  },
-  "author_intent_markers": {
-    "commit_time_s": 0.38,
-    "windup_end_s": 0.4,
-    "active_start_s": 0.4,
-    "active_end_s": 0.6,
-    "recovery_end_s": 0.8,
-    "impact_time_s": null,
-    "is_looping": false,
-    "author_notes": "Two-Hit Branch Combo: Slash 1. Descending diagonal cleave cutting from high-right across midline. Windup raises greatsword in high guard with arched torso and drops stance 9 cm (0.00-0.40s); active cleave strikes diagonally across player (0.40-0.60s); transition recovery checks blade at left hip in loaded ready pose (0.60-0.80s), matching exact initial pose of A3b. Both hands locked to grip (wrist distance 9.5-12.8 cm). Feet grounded flat at Z \u2248 0."
-  },
-  "offline_kinematic_bounds": {
+    },
     "root_sampling_mode": "armature_object(root)",
     "max_root_excursion_cm": 0.0,
     "end_start_displacement_cm": 0.0,
@@ -46,10 +47,79 @@
     ],
     "hand_r_max_reach_cm": 68.96
   },
-  "contract_compliance": {
-    "fps_compliant": true,
-    "root_motion_category": "InPlace",
-    "root_motion_compliant": true,
-    "has_sidecar": true
+  "engine_timeline": {
+    "has_engine_timeline": true,
+    "source_file": "Docs/BossCombatReview/Execution/Claude/Evidence/exports/montage_notifies_2026-10-25.txt",
+    "source_hash": "950c611ee5eae7bcdd7abca1ea56c051c3b42d988b427cf64452829142ab0b31",
+    "montage_name": "AM_Boss01_A3a",
+    "asset_type": "AnimMontage",
+    "length_s": 0.800000011920929,
+    "rate_scale": 1.0,
+    "blend_in_s": 0.25,
+    "blend_out_s": 0.25,
+    "damage_windows": [
+      {
+        "notify": "ANS_CollisionTrace_C",
+        "start_s": 0.4,
+        "duration_s": 0.2,
+        "end_s": 0.6
+      }
+    ],
+    "movement_disable_windows": [
+      {
+        "notify": "ANS_DisableMovement_C",
+        "start_s": 0.0,
+        "duration_s": 0.6,
+        "end_s": 0.6
+      }
+    ],
+    "rotation_windows": [
+      {
+        "notify": "ANS_SetDesiredRotation_C",
+        "start_s": 0.0,
+        "duration_s": 0.38,
+        "end_s": 0.38
+      }
+    ],
+    "hit_stun_immune_windows": [],
+    "notifies": [
+      {
+        "notify": "ANS_DisableMovement_C",
+        "start_s": 0.0,
+        "duration_s": 0.6,
+        "end_s": 0.6
+      },
+      {
+        "notify": "ANS_SetDesiredRotation_C",
+        "start_s": 0.0,
+        "duration_s": 0.38,
+        "end_s": 0.38
+      },
+      {
+        "notify": "AnimNotify_PlaySound",
+        "time_s": 0.38
+      },
+      {
+        "notify": "ANS_CollisionTrace_C",
+        "start_s": 0.4,
+        "duration_s": 0.2,
+        "end_s": 0.6
+      },
+      {
+        "notify": "AN_PerformFollowUp_C",
+        "time_s": 0.75
+      },
+      {
+        "notify": "AN_EndAnimatingAbility_C",
+        "time_s": 0.78
+      }
+    ]
+  },
+  "approved_runtime": {
+    "status": "PENDING_ARCHITECTURE_GATE_APPROVAL",
+    "approved_by": null,
+    "approval_date": null,
+    "source_hash": null,
+    "runtime_definition": {}
   }
 }

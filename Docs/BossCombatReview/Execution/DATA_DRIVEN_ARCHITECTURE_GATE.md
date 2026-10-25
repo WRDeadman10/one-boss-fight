@@ -8,9 +8,13 @@ Author: Claude (technical lead). 2026-10-25. Status: OWNER DECISIONS RECEIVED 20
 - **G-3 APPROVED:** the scratch-folder asset test (a project-owned `BP_EnemyInfo` and a minimal project BehaviorTree selected through the placed boss's `EnemyInfoRef`). Scope: new assets in a scratch folder only, no pack asset edit, no overwrite of any existing asset.
 - **G-4 NOT APPROVED:** no `Montage_Stop` call-stack instrumentation. **G-5 NOT APPROVED:** no test hook to start the pack moves on demand. The A2 canceller and CAP-03 stay open until evidence can be gathered without them.
 - **G-2 DECIDED: no N/A.** All 83 requirements must end IMPLEMENTED with evidence. Consequence, stated plainly: the conditional rows become real work, in particular BOSS-QA-008 (server authority: replicated attack identity, start time, section, target and phase and a two-client test at 80/150 ms latency), BOSS-HIT-012 (a boss grab), BOSS-ANM-003 (variable bounded hold), BOSS-AWR-008 (capped adaptive memory), BOSS-SEL-004 (comparable utility scoring on top of or instead of the ordered pack selector), and ANM-006/DEF-005. Claude will cost each of them in the P0 reconciliation and bring a sequenced plan (what is cheap, what needs a new mechanic, what needs networking tests) for the owner to re-confirm the size; nothing is dropped.
+- **Scope size RE-CONFIRMED (2026-10-25, after D05):** keep all 83 required, networking (QA-008) included, built in parallel with each phase following Codex's sequencing (authority seams from DD-1, P2 transaction first, cross-cutting verification, listen/dedicated two-client test at P8); nothing dropped, effort is large and not estimated in calendar time.
 - **G-6:** not asked; the performance protocol stays as written (60 FPS average, p99 16.67 ms, RTX 3060 proxy, real console session, measured at P8).
 
-## 1. What you are asked to decide (everything else is already settled)
+## 1. HISTORICAL (superseded by section 0): the decisions that were asked
+
+> The table below is the original request. Section 0 holds the owner's actual answers and governs: G-1 and G-3 approved, G-4 and G-5 NOT approved (do not re-request, do not treat as pending), no N/A rows (all 83 required). Nothing here may be used to remove or defer a required feature.
+
 
 | # | Decision | Recommendation |
 |---|---|---|
@@ -25,9 +29,9 @@ Author: Claude (technical lead). 2026-10-25. Status: OWNER DECISIONS RECEIVED 20
 
 1. **Boss, weapons, builds are not data today.** Tracker rows are constructed in C++ (`RPGAttackTracker.cpp:24-103`), A4, A5 and A6 each have their own component, the three builds are a fixed C++ table (`RPGBuildRules.h:50-52`), weapons are partly data (`URPGWeaponAttackTable`). Codex D01: 61 architectural entries, 191 editable properties, 252 anchors (60 of 60 spot-checked correct).
 2. **Three live damaging pack moves are outside the project's attack model** (Mid01, sprint follow-up, retaliation; E-002), with their own notify timings (E-002-10); Mid01 was seen once in five valid bot fights.
-3. **The A2 slam rarely reaches its damage window** (E-005): 10 of 11 observed instances stopped early (5 of 6 first slams at 0.03 to 0.06 s), and a cut slam leaves its ability active for over 1.4 s, which blocks the next attack and looks like the boss standing idle. The canceller is not identified; no project code and no player hit explains it.
-4. **A4 is only reachable from a test hook and its production query does not match the visible blade** (E-008): planar arc of 380 cm reach against a visible tip reach of at most 312 cm in the sampled run, and the angular path of the blade and the query differ by 50 to 194 degrees; the visible sword has no sockets at run time.
-5. **A5 releases 0.05 to 0.07 s after the authored release pose** (E-007), a feel question, not a defect.
+3. **The A2 slam rarely reaches its damage window** (E-005): 9 of 11 observed instances stopped before the tracked damage window (nine in Windup, one inside the open window at 1.99 s, one replaced by another attack in Recovery; 5 of 6 fights' first slam at 0.03 to 0.06 s: a sample count, not a frequency), and in the traced case a cut slam left its ability active for about 1.4 s, which blocks the next attack and looks like the boss standing idle. The canceller is not identified; no project code and no player hit explains it.
+4. **A4: no natural route found in the inspected native, BT and style evidence (a Blueprint caller of the public `StartMove` is not excluded), and in one forced run its production query does not match the visible blade** (E-008): planar arc of 380 cm reach against a largest sampled estimated tip reach of 312 cm, angular differences of about 51 to 174 degrees (shortest circular); none of six tested socket names exists on the visible sword component (a bounds-axis tip estimate was used).
+5. **A5 is released 0.05 s (nominal) or 0.07 s (observed) after the sidecar's intended 0.40 s release marker** (E-007; 1 to 1.4 frames at 20 fps; no pose capture), a feel question, not a defect.
 6. **Harness fact:** a minimized editor window makes PIE run at about 3 fps and invalidates every timing run (E-004).
 7. **Independence limit:** Codex independently reviewed my evidence (D04, six findings, all adopted); my own E-005 to E-008 await Codex review.
 
@@ -36,7 +40,7 @@ Author: Claude (technical lead). 2026-10-25. Status: OWNER DECISIONS RECEIVED 20
 - Six data definitions plus a catalog: `BossDefinition`, `BossMoveDefinition`, `WeaponDefinition`, `BuildDefinition`, `EncounterDefinition`, `PresentationDefinition`; stable IDs, no C++ enum for content; nested structs instead of an asset per number; `URPGWeaponAttackTable` is the pattern.
 - **One shared combat runtime**, no per-boss code: a request adapter that every pack and native attack start passes through before playback (accepted-action token, legal-request gates), a compiled timeline per animation variant evaluated with crossed intervals and a watchdog, shared effect executors (weapon sweep, planar sweep, projectile, radial wave, paired action) with data parameters, one damage/defense resolver. Per-instance mutable state never lives in a data asset or a singleton keyed by move name.
 - **Animation is data.** Active window and heading window already exist as notifies in the montages; the missing semantics (commit, recovery end, branch gate, telegraph cue, hyperarmor and i-frame windows) use two project notify types: `AN_CombatEvent` and `ANS_CombatWindow`. Pack montages stay unedited (project wrappers or manifests); only project-owned montages carry the new markers.
-- **Pack stays the execution backbone.** Adapter route (a): a project-owned `BP_EnemyInfo` and BehaviorTree selected per instance through `EnemyInfoRef` (E-006: the pack controller runs the tree named by the pawn's info), with generic C++ tasks that ask the shared runtime and then call the pack abilities; route (b), a pre-activation hook in the pack, was not found. G-3 proves (a).
+- **Pack stays the execution backbone.** Adapter route (a): a project-owned `BP_EnemyInfo` and BehaviorTree selected per instance through `EnemyInfoRef` (E-006: the pack controller runs the tree named by the pawn's info), with generic C++ tasks that ask the shared runtime and then call the pack abilities; route (b), a pre-activation hook in the pack, was not found. G-3 permits TESTING (a) in a scratch experiment (not yet run; it proves nothing until it does).
 - Existing per-move components (A4/A5/A6) stay as diagnostic facades during migration; exactly one path may damage, move or unlock at each step.
 
 ## 4. Order and gates
@@ -53,7 +57,10 @@ Every DD-1 step: current code and project asset manifest pinned, the user's dirt
 - AG's contract (Revision 02) is a proposal; its rules for permanent commitment, poise-break immunity, tip-socket snapping, default 20 cm radius, universal in-place motion and indefinite hold are NOT adopted (Codex D02 section "A-44 review"). Adopted: explicit motion ownership, bounded holds, the existing 50 cm trace radius, A5 release kept at 0.45 s until approved.
 - Add to D02: cancellation policy per accepted action (A2 evidence); the visible-blade/query relation as a validated data field with a stated offset (E-008); sockets must exist on the project mesh or be named as an offset (the greatsword has none at run time); the legacy-parity baseline lists the behaviours in section 2.
 
-## 6. N/A candidates (D03; owners decide, nobody else)
+## 6. HISTORICAL (superseded by section 0): N/A candidates
+
+> The owner decided no N/A: every row below is required and is costed in `Codex/D05_CONDITIONAL_ROWS_COSTING.md`. The original text is kept for provenance.
+
 
 QA-008 multiplayer authority (single-player duel; shared encounter IDs stay); HIT-012 boss grabs (none approved, the riposte stays tested); ANM-003 variable chosen hold (stable authored A2 apex stays the target; indefinite hold never accepted); AWR-008 adaptive pattern memory; SEL-004 comparable utility scoring (current ordered pack selector); SEL-008 empty-pool policy (recommend keep a bounded fallback). Also decide or confirm: ANM-006 conditional warping (a no-warp design needs a rationale), DEF-005 boss defensive actions. Everything else in the 83 must end IMPLEMENTED with evidence.
 
@@ -63,4 +70,4 @@ Dirty working tree (about 20 files) and a Blueprint-only pack that must not chan
 
 ## 8. If approved
 
-Claude writes the DD-1 step 0 baseline manifest (hashes, config, test table) and the step 1 specification for Codex review, claims the files in the mailbox, and starts step 1 only after Codex accepts the specification. If any decision is rejected, the affected step is removed and the dependent order is restated in the mailbox before anything is built.
+Claude writes the DD-1 step 0 baseline manifest (hashes, config, test table) and the step 1 specification for Codex review, claims the files in the mailbox, and starts step 1 only after Codex accepts the specification. If the owner later changes a decision, the dependent order is restated in the mailbox before anything is built; a required feature is never dropped by a rejected request.

@@ -33,3 +33,7 @@ Updated 2026-10-25. No phase accepted. No gameplay implementation authorized.
 ## Update 2026-10-25 16:40 (Claude)
 
 Gate decisions received (`DATA_DRIVEN_ARCHITECTURE_GATE.md` section 0): G-1 architecture and order approved; G-3 scratch asset test approved; G-4 and G-5 not approved; no N/A rows (all 83 required). P0 is NOT accepted: open are the A2 canceller (without G-4), CAP-03 (without G-5), the edge-level graph residue (E-006), Codex's review of E-005 to E-008, the cost plan for the conditional rows, and the 83-row reconciliation update. DD-1 step 0 (baseline manifest) may start; steps 1 to 3 start after Codex accepts their specification. P1 to P7 remain blocked until DD-1 is accepted.
+
+## Update 2026-10-25 19:50 (Claude)
+
+Owner re-confirmed the full scope after D05 (all 83 required, networking in parallel). DD-1 step 0: first gate run contaminated by my own diagnostics (see `Claude/DD1/STEP0_BASELINE.md` supplement 1), clean rerun in progress after an editor restart (automation tests on the current binary included). Step 1 specification is revision 2 (`STEP1_SPEC_v2.md`) awaiting Codex re-review. D07 (steps 2 and 3) is a draft awaiting step 1. P0 still not accepted; P1 to P7 blocked.

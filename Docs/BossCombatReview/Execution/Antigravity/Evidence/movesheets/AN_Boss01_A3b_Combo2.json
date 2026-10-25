@@ -1,12 +1,25 @@
 {
-  "contract_version": "1.0",
-  "clip_name": "AN_Boss01_A3b_Combo2",
-  "source_asset": {
-    "fbx_path": "Import/Boss01/Animations/AN_Boss01_A3b_Combo2.fbx",
-    "sha256": "a34cbc6c936ec5de470e3316f80f81774ebbb08c466f6afff515742bf9853af1",
-    "byte_size": 773900
+  "schema_version": "2.0",
+  "move_id": "AN_Boss01_A3b_Combo2",
+  "move_category": "ProjectAuthoredAnimation",
+  "declared_intent": {
+    "has_declared_intent": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_A3b_Combo2.txt",
+    "source_hash": "3ac34b62de47ffdba8e4560963b517030dea5ae9788927dc7279c531c82fac27",
+    "commit_time_s": 0.13,
+    "windup_end_s": 0.15,
+    "active_start_s": 0.15,
+    "active_end_s": 0.4,
+    "recovery_end_s": 1.333,
+    "impact_time_s": null,
+    "is_looping": false,
+    "notes": "Two-Hit Branch Combo: Slash 2. Explosive rising reverse horizontal slash slicing from low-left up and across to the right flank. Starts seamlessly from A3a Frame 24 ready pose (0.00s); quick snap torque windup (0.00-0.15s); powerful reverse sweep whips across player (0.15-0.40s); deceleration and flourish recovery smoothly returns to combat ready idle (0.40-1.333s). Both hands maintain greatsword grip (wrist distance 9.8-13.6 cm). Feet grounded flat at Z \u2248 0."
   },
-  "timing_and_framing": {
+  "measured_extraction": {
+    "has_measured_extraction": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_A3b_Combo2.fbx",
+    "source_hash": "a34cbc6c936ec5de470e3316f80f81774ebbb08c466f6afff515742bf9853af1",
+    "byte_size": 773900,
     "fps": 30,
     "samples": 41,
     "elapsed_duration_s": 1.333,
@@ -20,19 +33,7 @@
         40
       ],
       "offset_rule": "F_blender = F_metadata + 1"
-    }
-  },
-  "author_intent_markers": {
-    "commit_time_s": 0.13,
-    "windup_end_s": 0.15,
-    "active_start_s": 0.15,
-    "active_end_s": 0.4,
-    "recovery_end_s": 1.333,
-    "impact_time_s": null,
-    "is_looping": false,
-    "author_notes": "Two-Hit Branch Combo: Slash 2. Explosive rising reverse horizontal slash slicing from low-left up and across to the right flank. Starts seamlessly from A3a Frame 24 ready pose (0.00s); quick snap torque windup (0.00-0.15s); powerful reverse sweep whips across player (0.15-0.40s); deceleration and flourish recovery smoothly returns to combat ready idle (0.40-1.333s). Both hands maintain greatsword grip (wrist distance 9.8-13.6 cm). Feet grounded flat at Z \u2248 0."
-  },
-  "offline_kinematic_bounds": {
+    },
     "root_sampling_mode": "armature_object(root)",
     "max_root_excursion_cm": 0.0,
     "end_start_displacement_cm": 0.0,
@@ -46,10 +47,75 @@
     ],
     "hand_r_max_reach_cm": 67.32
   },
-  "contract_compliance": {
-    "fps_compliant": true,
-    "root_motion_category": "InPlace",
-    "root_motion_compliant": true,
-    "has_sidecar": true
+  "engine_timeline": {
+    "has_engine_timeline": true,
+    "source_file": "Docs/BossCombatReview/Execution/Claude/Evidence/exports/montage_notifies_2026-10-25.txt",
+    "source_hash": "950c611ee5eae7bcdd7abca1ea56c051c3b42d988b427cf64452829142ab0b31",
+    "montage_name": "AM_Boss01_A3b",
+    "asset_type": "AnimMontage",
+    "length_s": 1.3333333730697632,
+    "rate_scale": 1.0,
+    "blend_in_s": 0.25,
+    "blend_out_s": 0.25,
+    "damage_windows": [
+      {
+        "notify": "ANS_CollisionTrace_C",
+        "start_s": 0.15,
+        "duration_s": 0.25,
+        "end_s": 0.4
+      }
+    ],
+    "movement_disable_windows": [
+      {
+        "notify": "ANS_DisableMovement_C",
+        "start_s": 0.0,
+        "duration_s": 0.4,
+        "end_s": 0.4
+      }
+    ],
+    "rotation_windows": [
+      {
+        "notify": "ANS_SetDesiredRotation_C",
+        "start_s": 0.0,
+        "duration_s": 0.13,
+        "end_s": 0.13
+      }
+    ],
+    "hit_stun_immune_windows": [],
+    "notifies": [
+      {
+        "notify": "ANS_DisableMovement_C",
+        "start_s": 0.0,
+        "duration_s": 0.4,
+        "end_s": 0.4
+      },
+      {
+        "notify": "ANS_SetDesiredRotation_C",
+        "start_s": 0.0,
+        "duration_s": 0.13,
+        "end_s": 0.13
+      },
+      {
+        "notify": "AnimNotify_PlaySound",
+        "time_s": 0.13
+      },
+      {
+        "notify": "ANS_CollisionTrace_C",
+        "start_s": 0.15,
+        "duration_s": 0.25,
+        "end_s": 0.4
+      },
+      {
+        "notify": "AN_EndAnimatingAbility_C",
+        "time_s": 1.313
+      }
+    ]
+  },
+  "approved_runtime": {
+    "status": "PENDING_ARCHITECTURE_GATE_APPROVAL",
+    "approved_by": null,
+    "approval_date": null,
+    "source_hash": null,
+    "runtime_definition": {}
   }
 }

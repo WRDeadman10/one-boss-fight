@@ -153,6 +153,24 @@ Hoist to apex guard             Strained poise with 4 Hz flutter  Snap forward s
 
 ---
 
-## 9. Conclusion
+## 9. Machine-Readable Move Sheets & Validation Diagnostics Contract
 
-This proposal aligns technical animation authoring with Codex's data model (`D02_DATA_MODEL.md`) and the Owner Directive, providing a clear contract for the "Second Boss Canary" while respecting all single-editor and no-pack-edits boundaries.
+To ensure complete, automated traceability across authored intent, offline kinematics, and live engine execution, all boss and player combat moves are represented as machine-readable JSON move sheets under `Docs/BossCombatReview/Execution/Antigravity/Evidence/movesheets/` conforming to Schema 2.0 (Codex D02 / Claude C-98).
+
+### 9.1 The 4-Block Separation Schema
+1. **`declared_intent`**: Author intent markers parsed from `.txt` sidecars (commit, windup, active windows, recovery, notes) with sidecar SHA-256. For third-party pack clips without sidecars, `has_declared_intent` is `false` with explicit `null` fields (never defaulting to 0).
+2. **`measured_extraction`**: Headless Blender forward kinematics (FPS, samples, duration, root excursion, pelvis/foot Z ranges, reach) with FBX SHA-256. For unedited pack moves, `has_measured_extraction` is `false` with all kinematic bounds strictly `null` (never defaulting to 0, satisfying Codex D02).
+3. **`engine_timeline`**: Live Unreal engine montage notifies parsed from `Claude/Evidence/exports/montage_notifies_2026-10-25.txt` with SHA-256 digest, recording exact damage windows (`ANS_CollisionTrace_C`), movement disable windows, and rotation windows.
+4. **`approved_runtime`**: Retains status `"PENDING_ARCHITECTURE_GATE_APPROVAL"` with empty definition `{}` until approved by the technical lead and owner.
+
+### 9.2 Meaning of Validation Diagnostics for Reviewers
+- **Accountable Discrepancy Flag:** A validation diagnostic indicates a cross-block timing or parameter mismatch (e.g. between declared intent in sidecars and live engine montage notifies) exceeding the stated tolerance ($50\text{ ms}$).
+- **Non-Fatal Structural Status:** Diagnostics do **not** fail structural file validation. A sheet with diagnostics passes validation structurally while reporting the divergence for architectural review.
+- **Strict Prohibition on Silent Auto-Tuning:** Diagnostics **must NEVER be silently auto-corrected, normalized, or overwritten**. They serve as accountable evidence flags indicating either an intentional gameplay feel offset (e.g. A5 projectile release), an authored tuning difference, or a candidate defect for P1–P7 investigation.
+- **Parity Baseline Preservation:** In accordance with the DD-1 parity rule, legacy behavior is preserved as measured; corrections are deferred to subsequent approved phases.
+
+---
+
+## 10. Conclusion
+
+This proposal aligns technical animation authoring with Codex's data model (`D02_DATA_MODEL.md`), Claude's Architecture Gate (`DATA_DRIVEN_ARCHITECTURE_GATE.md`), and the Owner Directive, providing a clear contract for the "Second Boss Canary" while respecting all single-editor, parity, and no-pack-edits boundaries.

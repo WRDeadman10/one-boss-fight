@@ -1,12 +1,25 @@
 {
-  "contract_version": "1.0",
-  "clip_name": "AN_Boss01_A2_ApexHold",
-  "source_asset": {
-    "fbx_path": "Import/Boss01/Animations/AN_Boss01_A2_ApexHold.fbx",
-    "sha256": "5825a809b459f3b0ed7bd8112841ef6f228600660b93353a14fe1947d1dc87c2",
-    "byte_size": 741404
+  "schema_version": "2.0",
+  "move_id": "AN_Boss01_A2_ApexHold",
+  "move_category": "ProjectAuthoredAnimation",
+  "declared_intent": {
+    "has_declared_intent": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_A2_ApexHold.txt",
+    "source_hash": "f25f18d187aa0bc524903f2b6adfdba8f49ff2d563e54d6eb58644e0eed36d3e",
+    "commit_time_s": null,
+    "windup_end_s": null,
+    "active_start_s": null,
+    "active_end_s": null,
+    "recovery_end_s": null,
+    "impact_time_s": null,
+    "is_looping": true,
+    "notes": "Strained overhead poise with two-handed greatsword held at peak apex (hands at Z=2.1-2.2 m, hand separation 13.9 cm). Both feet stay firmly planted flat on the floor (foot Z=0.29m, pelvis Z=0.89m, knees braced, zero airborne leap). Subtle isometric tension flutter (4 Hz) and core respiration cycle conveying massive physical effort under the 184 cm iron blade. Blade angled forward/overhead, never resting behind the head. Exactly 36 frames (0 to 35) designed for seamless montage section looping without stutter."
   },
-  "timing_and_framing": {
+  "measured_extraction": {
+    "has_measured_extraction": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_A2_ApexHold.fbx",
+    "source_hash": "5825a809b459f3b0ed7bd8112841ef6f228600660b93353a14fe1947d1dc87c2",
+    "byte_size": 741404,
     "fps": 30,
     "samples": 36,
     "elapsed_duration_s": 1.167,
@@ -20,19 +33,7 @@
         35
       ],
       "offset_rule": "F_blender = F_metadata + 1"
-    }
-  },
-  "author_intent_markers": {
-    "commit_time_s": null,
-    "windup_end_s": null,
-    "active_start_s": null,
-    "active_end_s": null,
-    "recovery_end_s": null,
-    "impact_time_s": null,
-    "is_looping": true,
-    "author_notes": "Strained overhead poise with two-handed greatsword held at peak apex (hands at Z=2.1-2.2 m, hand separation 13.9 cm). Both feet stay firmly planted flat on the floor (foot Z=0.29m, pelvis Z=0.89m, knees braced, zero airborne leap). Subtle isometric tension flutter (4 Hz) and core respiration cycle conveying massive physical effort under the 184 cm iron blade. Blade angled forward/overhead, never resting behind the head. Exactly 36 frames (0 to 35) designed for seamless montage section looping without stutter."
-  },
-  "offline_kinematic_bounds": {
+    },
     "root_sampling_mode": "armature_object(root)",
     "max_root_excursion_cm": 0.0,
     "end_start_displacement_cm": 0.0,
@@ -46,10 +47,28 @@
     ],
     "hand_r_max_reach_cm": 18.45
   },
-  "contract_compliance": {
-    "fps_compliant": true,
-    "root_motion_category": "InPlace",
-    "root_motion_compliant": true,
-    "has_sidecar": true
+  "engine_timeline": {
+    "has_engine_timeline": false,
+    "reason": "No live montage notify export available for standalone clip; pending montage wrapper or non-attack utility",
+    "source_file": null,
+    "source_hash": null,
+    "montage_name": null,
+    "asset_type": null,
+    "length_s": null,
+    "rate_scale": null,
+    "blend_in_s": null,
+    "blend_out_s": null,
+    "damage_windows": [],
+    "movement_disable_windows": [],
+    "rotation_windows": [],
+    "hit_stun_immune_windows": [],
+    "notifies": []
+  },
+  "approved_runtime": {
+    "status": "PENDING_ARCHITECTURE_GATE_APPROVAL",
+    "approved_by": null,
+    "approval_date": null,
+    "source_hash": null,
+    "runtime_definition": {}
   }
 }

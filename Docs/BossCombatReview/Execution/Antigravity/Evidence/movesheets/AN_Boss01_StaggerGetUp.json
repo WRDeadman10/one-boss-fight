@@ -1,12 +1,25 @@
 {
-  "contract_version": "1.0",
-  "clip_name": "AN_Boss01_StaggerGetUp",
-  "source_asset": {
-    "fbx_path": "Import/Boss01/Animations/AN_Boss01_StaggerGetUp.fbx",
-    "sha256": "7d9aa124de9a3af139f92bbdb254979e0d8b9aade4000bdf2ba5e960c5af4665",
-    "byte_size": 792492
+  "schema_version": "2.0",
+  "move_id": "AN_Boss01_StaggerGetUp",
+  "move_category": "ProjectAuthoredAnimation",
+  "declared_intent": {
+    "has_declared_intent": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_StaggerGetUp.txt",
+    "source_hash": "79cca3e39aaf4a40fe60eddacdea0fbfeaef6a9a499ec42fe3f86115f69d6e45",
+    "commit_time_s": null,
+    "windup_end_s": 0.2,
+    "active_start_s": 0.2,
+    "active_end_s": 0.9,
+    "recovery_end_s": 1.4,
+    "impact_time_s": null,
+    "is_looping": false,
+    "notes": "Posture Break Stagger: Recovery Get-Up. Starts from exhausted kneeling pose matching StaggerDown Frame 30 (pelvis Z = 47.7 cm); boss tightens grip on greatsword and snaps head up (0.00-0.20s); drives forcefully up through legs and quads, right knee leaving floor and pelvis climbing rapidly to 76 cm (0.20-0.50s); sweeps upright, swinging greatsword off the floor and across body into high-mid guard (0.50-0.90s); re-centers balance and steps into wide grounded combat ready stance (0.90-1.40s, pelvis settles smoothly at 95.9 cm)."
   },
-  "timing_and_framing": {
+  "measured_extraction": {
+    "has_measured_extraction": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_StaggerGetUp.fbx",
+    "source_hash": "7d9aa124de9a3af139f92bbdb254979e0d8b9aade4000bdf2ba5e960c5af4665",
+    "byte_size": 792492,
     "fps": 30,
     "samples": 43,
     "elapsed_duration_s": 1.4,
@@ -20,19 +33,7 @@
         42
       ],
       "offset_rule": "F_blender = F_metadata + 1"
-    }
-  },
-  "author_intent_markers": {
-    "commit_time_s": null,
-    "windup_end_s": 0.2,
-    "active_start_s": 0.2,
-    "active_end_s": 0.9,
-    "recovery_end_s": 1.4,
-    "impact_time_s": null,
-    "is_looping": false,
-    "author_notes": "Posture Break Stagger: Recovery Get-Up. Starts from exhausted kneeling pose matching StaggerDown Frame 30 (pelvis Z = 47.7 cm); boss tightens grip on greatsword and snaps head up (0.00-0.20s); drives forcefully up through legs and quads, right knee leaving floor and pelvis climbing rapidly to 76 cm (0.20-0.50s); sweeps upright, swinging greatsword off the floor and across body into high-mid guard (0.50-0.90s); re-centers balance and steps into wide grounded combat ready stance (0.90-1.40s, pelvis settles smoothly at 95.9 cm)."
-  },
-  "offline_kinematic_bounds": {
+    },
     "root_sampling_mode": "armature_object(root)",
     "max_root_excursion_cm": 0.0,
     "end_start_displacement_cm": 0.0,
@@ -46,10 +47,28 @@
     ],
     "hand_r_max_reach_cm": 66.75
   },
-  "contract_compliance": {
-    "fps_compliant": true,
-    "root_motion_category": "InPlace",
-    "root_motion_compliant": true,
-    "has_sidecar": true
+  "engine_timeline": {
+    "has_engine_timeline": false,
+    "reason": "No live montage notify export available for standalone clip; pending montage wrapper or non-attack utility",
+    "source_file": null,
+    "source_hash": null,
+    "montage_name": null,
+    "asset_type": null,
+    "length_s": null,
+    "rate_scale": null,
+    "blend_in_s": null,
+    "blend_out_s": null,
+    "damage_windows": [],
+    "movement_disable_windows": [],
+    "rotation_windows": [],
+    "hit_stun_immune_windows": [],
+    "notifies": []
+  },
+  "approved_runtime": {
+    "status": "PENDING_ARCHITECTURE_GATE_APPROVAL",
+    "approved_by": null,
+    "approval_date": null,
+    "source_hash": null,
+    "runtime_definition": {}
   }
 }

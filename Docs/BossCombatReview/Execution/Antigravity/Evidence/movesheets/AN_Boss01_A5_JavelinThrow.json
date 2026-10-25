@@ -1,12 +1,25 @@
 {
-  "contract_version": "1.0",
-  "clip_name": "AN_Boss01_A5_JavelinThrow",
-  "source_asset": {
-    "fbx_path": "Import/Boss01/Animations/AN_Boss01_A5_JavelinThrow.fbx",
-    "sha256": "b84a1bf37b2e8cecaca52b0497d5be4527bd78dd47fc1b8930b1c690b80c44ca",
-    "byte_size": 761532
+  "schema_version": "2.0",
+  "move_id": "AN_Boss01_A5_JavelinThrow",
+  "move_category": "ProjectAuthoredAnimation",
+  "declared_intent": {
+    "has_declared_intent": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_A5_JavelinThrow.txt",
+    "source_hash": "7fa8400b6a8ef224694c5a7cef57a18a1be7e5fb61f0b7ca15c6daaa9e099092",
+    "commit_time_s": 0.35,
+    "windup_end_s": 0.4,
+    "active_start_s": 0.4,
+    "active_end_s": 0.43,
+    "recovery_end_s": 1.0,
+    "impact_time_s": null,
+    "is_looping": false,
+    "notes": "Telegraph and throw of the ember javelin from the left brazier gauntlet. Windup draws the left arm back high beside the cowl (0.00-0.40s) with glowing ember telegraph from the dorsal crucible; projectile release event occurs at 0.40s (Frame 12); overhand follow-through and recoil returns cleanly to combat idle (0.40-1.00s). Both feet stay grounded flat on the arena floor throughout (zero airborne lift)."
   },
-  "timing_and_framing": {
+  "measured_extraction": {
+    "has_measured_extraction": true,
+    "source_file": "Import/Boss01/Animations/AN_Boss01_A5_JavelinThrow.fbx",
+    "source_hash": "b84a1bf37b2e8cecaca52b0497d5be4527bd78dd47fc1b8930b1c690b80c44ca",
+    "byte_size": 761532,
     "fps": 30,
     "samples": 31,
     "elapsed_duration_s": 1.0,
@@ -20,19 +33,7 @@
         30
       ],
       "offset_rule": "F_blender = F_metadata + 1"
-    }
-  },
-  "author_intent_markers": {
-    "commit_time_s": 0.35,
-    "windup_end_s": 0.4,
-    "active_start_s": 0.4,
-    "active_end_s": 0.43,
-    "recovery_end_s": 1.0,
-    "impact_time_s": null,
-    "is_looping": false,
-    "author_notes": "Telegraph and throw of the ember javelin from the left brazier gauntlet. Windup draws the left arm back high beside the cowl (0.00-0.40s) with glowing ember telegraph from the dorsal crucible; projectile release event occurs at 0.40s (Frame 12); overhand follow-through and recoil returns cleanly to combat idle (0.40-1.00s). Both feet stay grounded flat on the arena floor throughout (zero airborne lift)."
-  },
-  "offline_kinematic_bounds": {
+    },
     "root_sampling_mode": "armature_object(root)",
     "max_root_excursion_cm": 0.0,
     "end_start_displacement_cm": 0.0,
@@ -46,10 +47,27 @@
     ],
     "hand_r_max_reach_cm": 52.28
   },
-  "contract_compliance": {
-    "fps_compliant": true,
-    "root_motion_category": "InPlace",
-    "root_motion_compliant": true,
-    "has_sidecar": true
+  "engine_timeline": {
+    "has_engine_timeline": true,
+    "source_file": "Docs/BossCombatReview/Execution/Claude/Evidence/exports/montage_notifies_2026-10-25.txt",
+    "source_hash": "950c611ee5eae7bcdd7abca1ea56c051c3b42d988b427cf64452829142ab0b31",
+    "montage_name": "AN_Boss01_A5_JavelinThrow",
+    "asset_type": "AnimSequence",
+    "length_s": 1.0,
+    "rate_scale": 1.0,
+    "blend_in_s": 0.25,
+    "blend_out_s": 0.25,
+    "damage_windows": [],
+    "movement_disable_windows": [],
+    "rotation_windows": [],
+    "hit_stun_immune_windows": [],
+    "notifies": []
+  },
+  "approved_runtime": {
+    "status": "PENDING_ARCHITECTURE_GATE_APPROVAL",
+    "approved_by": null,
+    "approval_date": null,
+    "source_hash": null,
+    "runtime_definition": {}
   }
 }
