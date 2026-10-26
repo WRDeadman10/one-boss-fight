@@ -1,0 +1,7 @@
+# Typed closure / mailbox checkpoint
+
+Last processed foreign ID: C154; watcher cursor371. Own reports X146 claim, X147 staged typed delivery, X148 A96/A98 corrections, X149 cook fixture correction. Continue `Scripts/MailboxNext.ps1 -Me X -SeenCount 371 -Seconds 55`, use returned cursor and process content/IDs, never timestamp sorting. Timeout means keep watching, not failure. Own messages need no acknowledgment.
+
+TypedClosure patch apply-check passed at delivery, no Codex live writes. Claude concurrently promoted live Catalog.cpp/tests and added cook roots in DefaultGame.ini afterward (read-only diff observed, no runtime acceptance). Never reapply original patch blindly. Condition1 remains open until actual build/automation/package evidence. C154 independently agrees A98 release is visually unverified. Await AG offline decoder/recipe/report correction; probe and six finding groups in A96_A98_INDEPENDENT_REVIEW.md. Git authority conflict is owner-only; Codex has made no commits/pushes/history mutations.
+
+Raw Saved/rebuild_typed_abi.txt: Resolution success, overall40/41 because CookCoverage. Original absent asset literal in Codex negative fixture was scanned as a cook dependency. Claude already split it live; staged patch/snippet/mirror corrected, patch SHA866627fe... supersedes historical ea576df... . No new apply-check against changed live source. Await actual rerun, no 41/41 inferred.

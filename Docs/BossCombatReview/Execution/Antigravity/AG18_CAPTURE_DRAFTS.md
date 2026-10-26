@@ -37,13 +37,28 @@ Under **Option B**:
 ### 2.1 CAP-01: A5 Javelin Throw Release Timing (`pie_capture_cap01_a5.py`)
 - **Primary Objective:** Measure the physical moment of javelin separation from the boss's hand against authored intent ($0.400\text{ s}$) vs nominal ($0.450\text{ s}$) vs first sampled ($0.470\text{ s}$) per `E-007`.
 - **Target Map:** `L_SevarogArena`
-- **Framing Vantage (Option B):** Player at `(-650, 150, 110)` facing boss upper body `(0, 0, 80)` (yaw $-13^\circ$, pitch $+10^\circ$), player mesh hidden.
-- **Two-Step Automated Recipe:**
+- **Framing Vantage (Option B Close-Up per C-154):** Player at $180\text{ cm}$ flank ($30^\circ$ toward boss left throwing arm, `TargetArmLength = 120.0\text{ cm}`, FOV $= 65.0^\circ$) targeting socket `hand_l` / left brazier gauntlet. Camera distance $\approx 250\text{ cm}$, rendering gauntlet + javelin $\approx 460\text{ px}$ high ($\gg 150\text{ px}$ target). Player mesh hidden in game.
+- **Standing-Editor Bridge Recipe (Claude C-158 Workflow):**
   ```powershell
-  # Step 1: Run driver in editor to capture telemetry & trigger Win32 PrintWindow loop
-  powershell -ExecutionPolicy Bypass -File Scripts/RunEditorScript.ps1 -Script Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_drafts/pie_capture_cap01_a5.py
-  # Step 2: Ingest captured frames and editor log to evaluate mathematical & visual verdict
-  python -I Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_analysis.py --frames-dir Saved/Screenshots/CAP01_A5 --log Saved/Logs/OneBossFight.log --cap-id CAP-01
+  # Step 1: Record initial line count of standing editor log
+  $logPath = "Saved/Logs/OneBossFight.log"
+  $initLines = if (Test-Path $logPath) { (Get-Content $logPath).Count } else { 0 }
+  # Step 2: Start screenshot loop in background watching flag file
+  $capJob = Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File Scripts/CaptureLoop.ps1 -OutDir Saved/Screenshots/CAP01_A5 -IntervalMs 50" -PassThru
+  # Step 3: Trigger driver inside standing editor via remote bridge
+  python -I Scripts/run_in_editor.py Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_drafts/pie_capture_cap01_a5.py
+  # Step 4: Wait for capture completion with bounded 90s cap (driver clears flag file upon finish)
+  $elapsed = 0
+  while (-not (Test-Path Saved/m7_flag.txt) -and $elapsed -lt 15) { Start-Sleep -Milliseconds 500; $elapsed += 0.5 }
+  while ((Test-Path Saved/m7_flag.txt) -and $elapsed -lt 90) { Start-Sleep -Milliseconds 250; $elapsed += 0.25 }
+  # Step 5: Terminate background capture loop
+  Stop-Process -Id $capJob.Id -Force -ErrorAction SilentlyContinue
+  # Step 6: Extract fresh telemetry lines emitted during run
+  $freshLog = "Saved/pie_capture_cap01_a5_fresh.log"
+  (Get-Content $logPath) | Select-Object -Skip $initLines | Out-File $freshLog -Encoding utf8
+  # Step 7: Run offline analyzer against fresh log and captured frames
+  python -I Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_analysis.py --image-dir Saved/Screenshots/CAP01_A5 --log $freshLog --cap-id CAP-01
+  if ($LASTEXITCODE -ne 0) { throw "CAP-01 capture analysis rejected" }
   ```
 
 ---
@@ -52,10 +67,27 @@ Under **Option B**:
 - **Primary Objective:** Capture the visible blade trajectory across the 12 active damage ticks, verifying planar query angle alignment ($51^\circ$ to $174^\circ$ per `E-008`) and floor Z clearance ($< 38\text{ cm}$).
 - **Target Map:** `L_SevarogArena`
 - **Framing Vantage (Option B):** Player at `(-350, 200, 110)` facing floor sweep arc `(0, 0, 30)` (yaw $-30^\circ$, pitch $-11^\circ$), player mesh hidden.
-- **Two-Step Automated Recipe:**
+- **Standing-Editor Bridge Recipe (Claude C-158 Workflow):**
   ```powershell
-  powershell -ExecutionPolicy Bypass -File Scripts/RunEditorScript.ps1 -Script Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_drafts/pie_capture_cap02_a4.py
-  python -I Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_analysis.py --frames-dir Saved/Screenshots/CAP02_A4 --log Saved/Logs/OneBossFight.log --cap-id CAP-02
+  # Step 1: Record initial line count of standing editor log
+  $logPath = "Saved/Logs/OneBossFight.log"
+  $initLines = if (Test-Path $logPath) { (Get-Content $logPath).Count } else { 0 }
+  # Step 2: Start screenshot loop in background watching flag file
+  $capJob = Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File Scripts/CaptureLoop.ps1 -OutDir Saved/Screenshots/CAP02_A4 -IntervalMs 50" -PassThru
+  # Step 3: Trigger driver inside standing editor via remote bridge
+  python -I Scripts/run_in_editor.py Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_drafts/pie_capture_cap02_a4.py
+  # Step 4: Wait for capture completion with bounded 90s cap (driver clears flag file upon finish)
+  $elapsed = 0
+  while (-not (Test-Path Saved/m7_flag.txt) -and $elapsed -lt 15) { Start-Sleep -Milliseconds 500; $elapsed += 0.5 }
+  while ((Test-Path Saved/m7_flag.txt) -and $elapsed -lt 90) { Start-Sleep -Milliseconds 250; $elapsed += 0.25 }
+  # Step 5: Terminate background capture loop
+  Stop-Process -Id $capJob.Id -Force -ErrorAction SilentlyContinue
+  # Step 6: Extract fresh telemetry lines emitted during run
+  $freshLog = "Saved/pie_capture_cap02_a4_fresh.log"
+  (Get-Content $logPath) | Select-Object -Skip $initLines | Out-File $freshLog -Encoding utf8
+  # Step 7: Run offline analyzer against fresh log and captured frames
+  python -I Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_analysis.py --image-dir Saved/Screenshots/CAP02_A4 --log $freshLog --cap-id CAP-02
+  if ($LASTEXITCODE -ne 0) { throw "CAP-02 capture analysis rejected" }
   ```
 
 ---
@@ -64,10 +96,27 @@ Under **Option B**:
 - **Primary Objective:** Verify that visual telegraphs (weapon glow emitter `NS_Boss01_ChargeUp`, sprint dust `NS_Boss01_Sprint_Runup`) ignite $\ge 150\text{ ms}$ before damage collision windows open.
 - **Target Map:** `L_SevarogArena`
 - **Framing Vantage (Option B):** Player at `(-500, 100, 110)` facing boss telegraph apex `(0, 0, 150)` (yaw $-11^\circ$, pitch $+5^\circ$), player mesh hidden.
-- **Two-Step Automated Recipe:**
+- **Standing-Editor Bridge Recipe (Claude C-158 Workflow):**
   ```powershell
-  powershell -ExecutionPolicy Bypass -File Scripts/RunEditorScript.ps1 -Script Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_drafts/pie_capture_cap05_telegraph.py
-  python -I Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_analysis.py --frames-dir Saved/Screenshots/CAP05_Telegraph --log Saved/Logs/OneBossFight.log --cap-id CAP-05
+  # Step 1: Record initial line count of standing editor log
+  $logPath = "Saved/Logs/OneBossFight.log"
+  $initLines = if (Test-Path $logPath) { (Get-Content $logPath).Count } else { 0 }
+  # Step 2: Start screenshot loop in background watching flag file
+  $capJob = Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File Scripts/CaptureLoop.ps1 -OutDir Saved/Screenshots/CAP05_Telegraph -IntervalMs 50" -PassThru
+  # Step 3: Trigger driver inside standing editor via remote bridge
+  python -I Scripts/run_in_editor.py Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_drafts/pie_capture_cap05_telegraph.py
+  # Step 4: Wait for capture completion with bounded 90s cap (driver clears flag file upon finish)
+  $elapsed = 0
+  while (-not (Test-Path Saved/m7_flag.txt) -and $elapsed -lt 15) { Start-Sleep -Milliseconds 500; $elapsed += 0.5 }
+  while ((Test-Path Saved/m7_flag.txt) -and $elapsed -lt 90) { Start-Sleep -Milliseconds 250; $elapsed += 0.25 }
+  # Step 5: Terminate background capture loop
+  Stop-Process -Id $capJob.Id -Force -ErrorAction SilentlyContinue
+  # Step 6: Extract fresh telemetry lines emitted during run
+  $freshLog = "Saved/pie_capture_cap05_telegraph_fresh.log"
+  (Get-Content $logPath) | Select-Object -Skip $initLines | Out-File $freshLog -Encoding utf8
+  # Step 7: Run offline analyzer against fresh log and captured frames
+  python -I Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_analysis.py --image-dir Saved/Screenshots/CAP05_Telegraph --log $freshLog --cap-id CAP-05
+  if ($LASTEXITCODE -ne 0) { throw "CAP-05 capture analysis rejected" }
   ```
 
 ---
@@ -76,10 +125,27 @@ Under **Option B**:
 - **Primary Objective:** Capture the $800\text{ ms}$ grounded blade recovery opening following heavy attacks (A2 Slam / Leap Attack) and verify player punish attack contact before boss returns to neutral.
 - **Target Map:** `L_SevarogArena`
 - **Framing Vantage (Option B):** Player at `(-300, 150, 110)` facing grounded blade rest `(0, 0, 40)` (yaw $-26^\circ$, pitch $-13^\circ$), player mesh hidden.
-- **Two-Step Automated Recipe:**
+- **Standing-Editor Bridge Recipe (Claude C-158 Workflow):**
   ```powershell
-  powershell -ExecutionPolicy Bypass -File Scripts/RunEditorScript.ps1 -Script Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_drafts/pie_capture_cap06_recovery.py
-  python -I Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_analysis.py --frames-dir Saved/Screenshots/CAP06_Recovery --log Saved/Logs/OneBossFight.log --cap-id CAP-06
+  # Step 1: Record initial line count of standing editor log
+  $logPath = "Saved/Logs/OneBossFight.log"
+  $initLines = if (Test-Path $logPath) { (Get-Content $logPath).Count } else { 0 }
+  # Step 2: Start screenshot loop in background watching flag file
+  $capJob = Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File Scripts/CaptureLoop.ps1 -OutDir Saved/Screenshots/CAP06_Recovery -IntervalMs 50" -PassThru
+  # Step 3: Trigger driver inside standing editor via remote bridge
+  python -I Scripts/run_in_editor.py Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_drafts/pie_capture_cap06_recovery.py
+  # Step 4: Wait for capture completion with bounded 90s cap (driver clears flag file upon finish)
+  $elapsed = 0
+  while (-not (Test-Path Saved/m7_flag.txt) -and $elapsed -lt 15) { Start-Sleep -Milliseconds 500; $elapsed += 0.5 }
+  while ((Test-Path Saved/m7_flag.txt) -and $elapsed -lt 90) { Start-Sleep -Milliseconds 250; $elapsed += 0.25 }
+  # Step 5: Terminate background capture loop
+  Stop-Process -Id $capJob.Id -Force -ErrorAction SilentlyContinue
+  # Step 6: Extract fresh telemetry lines emitted during run
+  $freshLog = "Saved/pie_capture_cap06_recovery_fresh.log"
+  (Get-Content $logPath) | Select-Object -Skip $initLines | Out-File $freshLog -Encoding utf8
+  # Step 7: Run offline analyzer against fresh log and captured frames
+  python -I Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_analysis.py --image-dir Saved/Screenshots/CAP06_Recovery --log $freshLog --cap-id CAP-06
+  if ($LASTEXITCODE -ne 0) { throw "CAP-06 capture analysis rejected" }
   ```
 
 ---
@@ -99,8 +165,8 @@ Under **Option B**:
 
 ## 4. Deliverable File Verification (SHA256 Digests)
 
-- `pie_capture_cap01_a5.py`: `3a5b43e21fb0d3c7d8ef738efc69f114c27f100ee8278936560e025a63ada477`
+- `pie_capture_cap01_a5.py`: `9d849d580d46ec594c303dcc973c5b553842ba700acd1d32951608dfbb3b3402`
 - `pie_capture_cap02_a4.py`: `05cf708166299728357e08692afd584543c2bf5792801ca459fc061fef06f720`
 - `pie_capture_cap05_telegraph.py`: `d393306847f7431e685eaf3e9fe0a2232e4bfcf11c44b8a703d790f5d6682400`
 - `pie_capture_cap06_recovery.py`: `4322284426dd7cb64b53c1c34791c384ee70481e9dfb4ce5a7df1cbe85b30c60`
-- `capture_analysis.py`: `f8668934c224ab559bfcefa1d738071a8b9d1e4cd176b1198ee3303ffe1afe22`
+- `capture_analysis.py`: `43decb9e43a8a3236a7b3c419a027e8a187efeb3f563e1c5e646b6673f8904ad`

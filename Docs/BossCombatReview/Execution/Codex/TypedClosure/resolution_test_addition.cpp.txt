@@ -1,0 +1,85 @@
+	// X-T10: direct typed reader tests use already-loaded real pack objects; production
+	// Compile remains the cook/whole-publication gate. No installed object is mutated.
+	FRPGCatalogWeapon Good = Weapons[0];
+	FWeaponReferences Refs;
+	Refs.Item = Good.ItemPath.TryLoad(); Refs.DeclaredItemBase = Cast<UClass>(Good.ItemBaseClass.TryLoad());
+	Refs.ActorClass = Cast<UClass>(Good.ActorClass.TryLoad()); Refs.AbilityClass = Cast<UClass>(Good.AbilityClass.TryLoad());
+	Refs.Style = Good.StyleAsset.TryLoad();
+	TArray<TStrongObjectPtr<UObject>> ABILeases;
+	auto CheckABI = [&](const TCHAR* Label, const FRPGCatalogWeapon& D, const FWeaponReferences& R, const TCHAR* Expected)
+	{
+		FString Why; const bool Valid = ValidateWeaponReferences(D, R, ABILeases, Why);
+		if (!Expected) { TestTrue(Label, Valid); if (!Valid) AddError(Why); }
+		else { TestFalse(Label, Valid); TestTrue(*FString(Label).Append(TEXT(" field")), Why.EndsWith(Expected)); }
+	};
+	CheckABI(TEXT("ABI-P01 typed installed Sword"), Good, Refs, nullptr);
+	// Root classes are natively pinned: setting a broad declared base cannot widen the contract.
+	FWeaponReferences BadRefs = Refs; FRPGCatalogWeapon Bad = Good;
+	BadRefs.DeclaredItemBase = UObject::StaticClass(); Bad.ItemBaseClass = FSoftObjectPath(UObject::StaticClass());
+	CheckABI(TEXT("ABI-N01 broad declared item ancestry"), Bad, BadRefs, TEXT("Item.DeclaredBaseExpectedABI"));
+	BadRefs = Refs; Bad = Good; BadRefs.ActorClass = AActor::StaticClass(); Bad.ActorClass = FSoftObjectPath(AActor::StaticClass());
+	CheckABI(TEXT("ABI-N02 non-weapon actor"), Bad, BadRefs, TEXT("Actor.ExpectedABI"));
+	BadRefs = Refs; Bad = Good; BadRefs.AbilityClass = UObject::StaticClass(); Bad.AbilityClass = FSoftObjectPath(UObject::StaticClass());
+	CheckABI(TEXT("ABI-N03 arbitrary UClass ability"), Bad, BadRefs, TEXT("Ability.ExpectedABI"));
+	BadRefs = Refs; Bad = Good; Bad.AbilityClass = Weapons[1].AbilityClass; BadRefs.AbilityClass = Cast<UClass>(Bad.AbilityClass.TryLoad());
+	CheckABI(TEXT("ABI-N04 compatible class not granted by this style"), Bad, BadRefs, TEXT("Style.AbilityGrant"));
+	BadRefs = Refs; Bad = Good; Bad.ActorClass = Weapons[1].ActorClass; BadRefs.ActorClass = Cast<UClass>(Bad.ActorClass.TryLoad());
+	CheckABI(TEXT("ABI-N05 wrong declared weapon actor"), Bad, BadRefs, TEXT("Item.ActorBinding"));
+	BadRefs = Refs; BadRefs.Style = GetTransientPackage(); Bad = Good; Bad.StyleAsset = FSoftObjectPath(GetTransientPackage());
+	CheckABI(TEXT("ABI-N07 non-style object"), Bad, BadRefs, TEXT("Style.ExpectedABI"));
+	BadRefs = Refs; BadRefs.Item = nullptr;
+	CheckABI(TEXT("ABI-N10 missing required item"), Good, BadRefs, TEXT("Item.Missing"));
+	Bad = Good; Bad.ActorClass = Weapons[1].ActorClass;
+	CheckABI(TEXT("full path identity not short-name membership"), Bad, Refs, TEXT("Actor.Identity"));
+
+	// Duplicate in memory only. Put the expected style identity in text but remove its
+	// real typed edge: the former exported-text union could be fooled by such a bundle.
+	TStrongObjectPtr<UObject> Copy(DuplicateObject<UObject>(Refs.Item, GetTransientPackage()));
+	if (TestNotNull(TEXT("transient item copy"), Copy.Get()))
+	{
+		const FObjectProperty* StyleEdge = FindFProperty<FObjectProperty>(Copy->GetClass(), TEXT("Combat Style"));
+		const FTextProperty* Description = FindFProperty<FTextProperty>(Copy->GetClass(), TEXT("ItemDescription"));
+		if (TestNotNull(TEXT("typed style property"), StyleEdge) && TestNotNull(TEXT("text decoy property"), Description))
+		{
+			StyleEdge->SetObjectPropertyValue_InContainer(Copy.Get(), Weapons[1].StyleAsset.TryLoad());
+			Description->SetPropertyValue_InContainer(Copy.Get(), FText::FromString(Good.StyleAsset.ToString()));
+			BadRefs = Refs; BadRefs.Item = Copy.Get(); Bad = Good; Bad.ItemPath = FSoftObjectPath(Copy.Get());
+			CheckABI(TEXT("ABI-N06 decoy text cannot satisfy style role"), Bad, BadRefs, TEXT("Item.StyleBinding"));
+			TestTrue(TEXT("original pack item still validates"), ValidateWeaponReferences(Good, Refs, ABILeases, Error));
+		}
+	}
+
+	// Nonlegacy fourth profile travels the full production Compile validation, not enum slots.
+	FRPGCatalogBuild Fourth = L->Builds[0]; Fourth.BuildId = TEXT("ABIFourth"); Fourth.ConsoleName = TEXT("ABIFourth");
+	Fourth.DisplayName = TEXT("ABI Fourth"); Fourth.Aliases.Reset(); Fourth.LegacySlot = INDEX_NONE; Fourth.UiOrder = 3; Fourth.Icon.Reset();
+	auto FourBuilds = L->Builds; FourBuilds.Add(Fourth);
+	auto Four = Compile(FourBuilds, Weapons, Error, true);
+	TestTrue(TEXT("ABI-P02 actual resolving fourth build"), Four.IsValid());
+	if (Four)
+	{
+		FName Identity; TestTrue(TEXT("shared weapon remains ambiguous"), Four->StyleToBuild(TEXT("SwordCombatStyle"), Identity) == EResolve::Ambiguous);
+		TestEqual(TEXT("verified fourth retains id"), Four->Describe(TEXT("SwordCombatStyle"), Fourth.BuildId), FString(TEXT("ABI Fourth (Sword)")));
+	}
+	// Additional stable weapon id with an already-claimed style is a negative, NOT P03 proof.
+	FRPGCatalogWeapon Other = Weapons[0]; Other.WeaponId = TEXT("ABIExtraWeapon");
+	// Distinct IDs may not alias the same style: this malformed profile must be rejected structurally (N08).
+	auto CollisionWeapons = Weapons; CollisionWeapons.Add(Other);
+	TestFalse(TEXT("ABI-N08 distinct weapon style alias collision"), Compile(FourBuilds, CollisionWeapons, Error, false).IsValid());
+	TestTrue(TEXT("ABI-N08 correct structural field"), Error.Contains(TEXT("StyleAliases")));
+	// N09: well-formed nonlegacy entry whose required dependency is outside cook policy.
+	FRPGCatalogWeapon Outside = Weapons[0]; Outside.WeaponId = TEXT("ABIOutside"); Outside.StyleName = TEXT("ABIOutsideStyle");
+	Outside.StyleAliases.Reset(); Outside.AliasHudWords.Reset(); Outside.ItemPath = FSoftObjectPath(FString(TEXT("/Game/")) + TEXT("UncookedABIFixture/Absent.Absent")); // Deliberately absent test input, not a cook dependency.
+	auto OutsideWeapons = Weapons; OutsideWeapons.Add(Outside);
+	auto OutsideBuilds = L->Builds; Fourth.WeaponId = Outside.WeaponId; OutsideBuilds.Add(Fourth);
+	TestTrue(TEXT("ABI-N09 prerequisite structural pass"), Compile(OutsideBuilds, OutsideWeapons, Error, false).IsValid());
+	TestFalse(TEXT("ABI-N09 production dependency/cook gate refuses"), Compile(OutsideBuilds, OutsideWeapons, Error, true).IsValid());
+	TestTrue(TEXT("ABI-N09 dependency field (not ancestry proof)"), Error.Contains(TEXT("ABIOutside.References")));
+	// Optional presentation failure cannot bypass or invalidate gameplay ABI.
+	auto IconBuilds = FourBuilds; IconBuilds.Last().Icon = Good.ItemPath;
+	TestTrue(TEXT("ABI-N11 wrong-type optional icon degrades, gameplay remains valid"), Compile(IconBuilds, Weapons, Error, true).IsValid());
+	TestTrue(TEXT("ABI-N11 absent optional icon allowed"), Four.IsValid());
+	// P04 bounded epoch ownership: GC with both resolved epochs held, not a two-GI travel proof.
+	CollectGarbage(RF_NoFlags);
+	TestTrue(TEXT("ABI-P04 resolved epoch keeps actual style alive after GC"), IsValid(Refs.Style) && Resolved.IsValid());
+	CheckABI(TEXT("ABI-P04 read again after GC"), Good, Refs, nullptr);
+	AddInfo(TEXT("ABI-P05 cold packaged proof and P03 genuinely distinct supported weapon fixture require Claude; no pass inferred from these unit assertions."));

@@ -1,0 +1,15 @@
+﻿
+Driver               Result Detail                                       
+------               ------ ------                                       
+pie_hit_intake       PASS   36/36 passed (expected at least 36 checks)   
+pie_posture_hits     PASS   25/25 passed (expected at least 25 checks)   
+pie_stamina_cost     PASS   17/17 passed (expected at least 17 checks)   
+pie_hyperarmor       PASS   23/23 passed (expected at least 23 checks)   
+pie_builds           PASS   103/103 passed (expected at least 103 checks)
+pie_build_hyperarmor PASS   20/20 passed (expected at least 20 checks)   
+pie_damage_path      PASS   17/17 passed (expected at least 17 checks)   
+
+
+
+7/7 drivers passed
+
