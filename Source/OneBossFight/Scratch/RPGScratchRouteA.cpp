@@ -2,6 +2,7 @@
 #include "Scratch/RPGScratchRouteA.h"
 
 #include "AIController.h"
+#include "Camera/CameraActor.h"
 #include "Animation/AnimInstance.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
@@ -14,6 +15,7 @@
 #include "GameFramework/Pawn.h"
 #include "Kismet/GameplayStatics.h"
 #include "Pack/RPGBlueprintCall.h"
+#include "UObject/UnrealType.h"
 
 #if WITH_EDITOR
 #include "AssetRegistry/AssetRegistryModule.h"
@@ -201,6 +203,80 @@ FString URPGScratchRouteALibrary::DescribeAI(AActor* Boss)
 		Controller ? *Controller->GetClass()->GetName() : TEXT("none"),
 		Brain ? *Brain->GetClass()->GetName() : TEXT("none"), Brain && Brain->IsRunning() ? 1 : 0,
 		Tree ? *Tree->GetPathName() : TEXT("none"), BoardAsset ? *BoardAsset->GetPathName() : TEXT("none"));
+}
+
+namespace
+{
+	// Declared constraint of a property as text: object/class/struct/inner types, so a typed edge can be told apart from a bare UObject reference.
+	FString DescribeConstraint(const FProperty* Property)
+	{
+		if (const FClassProperty* ClassProp = CastField<FClassProperty>(Property))
+		{
+			return FString::Printf(TEXT("Class(meta=%s)"), ClassProp->MetaClass ? *ClassProp->MetaClass->GetPathName() : TEXT("None"));
+		}
+		if (const FSoftClassProperty* SoftClassProp = CastField<FSoftClassProperty>(Property))
+		{
+			return FString::Printf(TEXT("SoftClass(meta=%s)"), SoftClassProp->MetaClass ? *SoftClassProp->MetaClass->GetPathName() : TEXT("None"));
+		}
+		if (const FObjectPropertyBase* ObjectProp = CastField<FObjectPropertyBase>(Property))
+		{
+			return FString::Printf(TEXT("%s(class=%s)"), *ObjectProp->GetClass()->GetName(), ObjectProp->PropertyClass ? *ObjectProp->PropertyClass->GetPathName() : TEXT("None"));
+		}
+		if (const FStructProperty* StructProp = CastField<FStructProperty>(Property))
+		{
+			return FString::Printf(TEXT("Struct(%s)"), StructProp->Struct ? *StructProp->Struct->GetPathName() : TEXT("None"));
+		}
+		if (const FArrayProperty* ArrayProp = CastField<FArrayProperty>(Property))
+		{
+			return FString::Printf(TEXT("Array<%s>"), *DescribeConstraint(ArrayProp->Inner));
+		}
+		if (const FSetProperty* SetProp = CastField<FSetProperty>(Property))
+		{
+			return FString::Printf(TEXT("Set<%s>"), *DescribeConstraint(SetProp->ElementProp));
+		}
+		if (const FMapProperty* MapProp = CastField<FMapProperty>(Property))
+		{
+			return FString::Printf(TEXT("Map<%s, %s>"), *DescribeConstraint(MapProp->KeyProp), *DescribeConstraint(MapProp->ValueProp));
+		}
+		return Property->GetClass()->GetName();
+	}
+}
+
+TArray<FString> URPGScratchRouteALibrary::DumpTypedProperties(UObject* Object)
+{
+	TArray<FString> Lines;
+	if (!Object)
+	{
+		return Lines;
+	}
+	Lines.Add(FString::Printf(TEXT("OBJECT %s class=%s"), *Object->GetPathName(), *Object->GetClass()->GetPathName()));
+	for (const UStruct* Chain = Object->GetClass(); Chain; Chain = Chain->GetSuperStruct())
+	{
+		Lines.Add(FString::Printf(TEXT("CHAIN %s"), *Chain->GetPathName()));
+	}
+	for (TFieldIterator<FProperty> It(Object->GetClass(), EFieldIterationFlags::IncludeSuper); It; ++It)
+	{
+		const FProperty* Property = *It;
+		FString Value;
+		Property->ExportText_InContainer(0, Value, Object, Object, nullptr, PPF_None);
+		Lines.Add(FString::Printf(TEXT("PROP owner=%s name=%s kind=%s constraint=%s edit=%d value=%s"),
+			*Property->GetOwnerStruct()->GetPathName(), *Property->GetName(), *Property->GetClass()->GetName(), *DescribeConstraint(Property),
+			Property->HasAnyPropertyFlags(CPF_Edit) ? 1 : 0, *Value.Left(600)));
+	}
+	return Lines;
+}
+
+AActor* URPGScratchRouteALibrary::SpawnCaptureCamera(UObject* WorldContext, FVector Location, FVector LookAt)
+{
+	UWorld* World = WorldContext ? WorldContext->GetWorld() : nullptr;
+	if (!World)
+	{
+		return nullptr;
+	}
+	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	const FRotator Rotation = (LookAt - Location).Rotation();
+	return World->SpawnActor<ACameraActor>(ACameraActor::StaticClass(), Location, Rotation, Params);
 }
 
 TArray<FString> URPGScratchRouteALibrary::GetRouteAReport()

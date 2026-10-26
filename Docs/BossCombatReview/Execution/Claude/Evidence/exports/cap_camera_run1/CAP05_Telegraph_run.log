@@ -1,0 +1,77 @@
+﻿[2026.10.26-07.49.15:402][480]LogPython: [CaptureCAP05] Saved existing console variables.
+[2026.10.26-07.49.15:402][480]LogPython: [CaptureCAP05] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[CaptureCAP05] Saved existing console variables.
+[CaptureCAP05] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[2026.10.26-07.49.16:722][484]LogPython: [CaptureCAP05] Initiating editor_request_begin_play()...
+[2026.10.26-07.49.18:093][485]LogPython: [CaptureCAP05] PIE active. Boss and components found. Setting up dedicated CameraActor for A2 telegraph observation...
+[2026.10.26-07.49.18:093][485]LogPython: [CaptureCAP05] Dedicated CameraActor spawned at <Struct 'Vector' (0x000002132662CE70) {x: -600.000000, y: 0.000000, z: 276.149992}>, rot <Struct 'Rotator' (0x0000021326644420) {pitch: -0.954841, yaw: 0.000000, roll: 0.000000}>. View target set.
+[2026.10.26-07.49.23:103][501]LogPython: [CaptureCAP05] Heartbeat [WAIT_BOSS_SETTLE]: 0.6s remaining. is_waking=False, is_transition=False
+[2026.10.26-07.49.24:777][506]LogPython: [CaptureCAP05] Boss settled. Applying slomo 0.20 before A2 trigger...
+[2026.10.26-07.49.25:438][508]LogPython: [CaptureCAP05] Triggering boss A2 move via RPGAttackTracker::StartMove('A2', True)...
+[2026.10.26-07.49.25:439][508]LogPython: [CaptureCAP05] StartMove('A2', True) returned: True
+[2026.10.26-07.49.25:441][508]LogPython: [CaptureCAP05] Armed external CaptureLoop via C:\UnrealProject\OneBossFight\Saved\m7_flag.txt ('CAP05_A2_Windup')
+[2026.10.26-07.49.25:772][509]LogPython: [CaptureCAP05] TELEMETRY wall=1074649.6534 sim=7.6000 phase=Windup active=False commit=False pos=0.080
+[2026.10.26-07.49.26:109][510]LogPython: [CaptureCAP05] TELEMETRY wall=1074649.9902 sim=7.6667 phase=Windup active=False commit=False pos=0.160
+[2026.10.26-07.49.26:439][511]LogPython: [CaptureCAP05] TELEMETRY wall=1074650.3202 sim=7.7333 phase=Windup active=False commit=False pos=0.240
+[2026.10.26-07.49.26:771][512]LogPython: [CaptureCAP05] TELEMETRY wall=1074650.6524 sim=7.8000 phase=Windup active=False commit=False pos=0.320
+[2026.10.26-07.49.27:107][513]LogPython: [CaptureCAP05] TELEMETRY wall=1074650.9885 sim=7.8667 phase=Windup active=False commit=False pos=0.400
+[2026.10.26-07.49.27:437][514]LogPython: [CaptureCAP05] TELEMETRY wall=1074651.3184 sim=7.9333 phase=Windup active=False commit=False pos=0.480
+[2026.10.26-07.49.27:772][515]LogPython: [CaptureCAP05] TELEMETRY wall=1074651.6534 sim=8.0000 phase=Windup active=False commit=False pos=0.560
+[2026.10.26-07.49.28:105][516]LogPython: [CaptureCAP05] TELEMETRY wall=1074651.9862 sim=8.0667 phase=Windup active=False commit=False pos=0.640
+[2026.10.26-07.49.28:440][517]LogPython: [CaptureCAP05] TELEMETRY wall=1074652.3217 sim=8.1333 phase=Windup active=False commit=False pos=0.720
+[2026.10.26-07.49.28:770][518]LogPython: [CaptureCAP05] TELEMETRY wall=1074652.6516 sim=8.2000 phase=Windup active=False commit=False pos=0.800
+[2026.10.26-07.49.29:104][519]LogPython: [CaptureCAP05] TELEMETRY wall=1074652.9862 sim=8.2667 phase=Windup active=False commit=False pos=0.880
+[2026.10.26-07.49.29:442][520]LogPython: [CaptureCAP05] TELEMETRY wall=1074653.3234 sim=8.3333 phase=Windup active=False commit=False pos=0.960
+[2026.10.26-07.49.29:772][521]LogPython: [CaptureCAP05] TELEMETRY wall=1074653.6538 sim=8.4000 phase=Windup active=False commit=False pos=1.040
+[2026.10.26-07.49.30:105][522]LogPython: [CaptureCAP05] TELEMETRY wall=1074653.9861 sim=8.4667 phase=Windup active=False commit=False pos=1.120
+[2026.10.26-07.49.30:437][523]LogPython: [CaptureCAP05] TELEMETRY wall=1074654.3185 sim=8.5333 phase=Windup active=False commit=False pos=1.200
+[2026.10.26-07.49.30:775][524]LogPython: [CaptureCAP05] TELEMETRY wall=1074654.6573 sim=8.6000 phase=Windup active=False commit=False pos=1.280
+[2026.10.26-07.49.31:104][525]LogPython: [CaptureCAP05] TELEMETRY wall=1074654.9859 sim=8.6667 phase=Windup active=False commit=False pos=1.360
+[2026.10.26-07.49.31:436][526]LogPython: [CaptureCAP05] TELEMETRY wall=1074655.3186 sim=8.7333 phase=Windup active=False commit=False pos=1.440
+[2026.10.26-07.49.31:777][527]LogPython: [CaptureCAP05] TELEMETRY wall=1074655.6585 sim=8.8000 phase=Windup active=False commit=False pos=1.520
+[2026.10.26-07.49.32:107][528]LogPython: [CaptureCAP05] TELEMETRY wall=1074655.9885 sim=8.8667 phase=Windup active=False commit=False pos=1.600
+[2026.10.26-07.49.32:438][529]LogPython: [CaptureCAP05] PHASE_CHANGE phase=Committed sim=8.9333 wall=1074656.3195
+[2026.10.26-07.49.32:439][529]LogPython: [CaptureCAP05] TELEMETRY wall=1074656.3195 sim=8.9333 phase=Committed active=False commit=True pos=1.680
+[2026.10.26-07.49.32:771][530]LogPython: [CaptureCAP05] TELEMETRY wall=1074656.6532 sim=9.0001 phase=Committed active=False commit=True pos=1.760
+[2026.10.26-07.49.33:107][531]LogPython: [CaptureCAP05] TELEMETRY wall=1074656.9887 sim=9.0668 phase=Committed active=False commit=True pos=1.840
+[2026.10.26-07.49.33:440][532]LogPython: [CaptureCAP05] TELEMETRY wall=1074657.3214 sim=9.1335 phase=Committed active=False commit=True pos=1.920
+[2026.10.26-07.49.33:773][533]LogPython: [CaptureCAP05] PHASE_CHANGE phase=Active sim=9.2001 wall=1074657.6543
+[2026.10.26-07.49.33:773][533]LogPython: [CaptureCAP05] TELEMETRY wall=1074657.6543 sim=9.2001 phase=Active active=True commit=True pos=2.000
+[2026.10.26-07.49.34:108][534]LogPython: [CaptureCAP05] TELEMETRY wall=1074657.9891 sim=9.2668 phase=Active active=True commit=True pos=2.080
+[2026.10.26-07.49.34:440][535]LogPython: [CaptureCAP05] PHASE_CHANGE phase=Recovery sim=9.3336 wall=1074658.3205
+[2026.10.26-07.49.34:440][535]LogPython: [CaptureCAP05] TELEMETRY wall=1074658.3205 sim=9.3336 phase=Recovery active=False commit=True pos=2.160
+[2026.10.26-07.49.34:771][536]LogPython: [CaptureCAP05] TELEMETRY wall=1074658.6524 sim=9.4002 phase=Recovery active=False commit=True pos=2.240
+[2026.10.26-07.49.35:108][537]LogPython: [CaptureCAP05] TELEMETRY wall=1074658.9886 sim=9.4670 phase=Recovery active=False commit=True pos=2.320
+[2026.10.26-07.49.35:445][538]LogPython: [CaptureCAP05] TELEMETRY wall=1074659.3258 sim=9.5337 phase=Recovery active=False commit=True pos=2.400
+[2026.10.26-07.49.35:772][539]LogPython: [CaptureCAP05] TELEMETRY wall=1074659.6534 sim=9.6003 phase=Recovery active=False commit=True pos=2.480
+[2026.10.26-07.49.36:109][540]LogPython: [CaptureCAP05] TELEMETRY wall=1074659.9897 sim=9.6670 phase=Recovery active=False commit=True pos=2.560
+[2026.10.26-07.49.36:440][541]LogPython: [CaptureCAP05] TELEMETRY wall=1074660.3213 sim=9.7337 phase=Recovery active=False commit=True pos=2.640
+[2026.10.26-07.49.36:775][542]LogPython: [CaptureCAP05] TELEMETRY wall=1074660.6557 sim=9.8003 phase=Recovery active=False commit=True pos=2.720
+[2026.10.26-07.49.37:104][543]LogPython: [CaptureCAP05] TELEMETRY wall=1074660.9862 sim=9.8670 phase=Recovery active=False commit=True pos=2.800
+[2026.10.26-07.49.37:439][544]LogPython: [CaptureCAP05] TELEMETRY wall=1074661.3205 sim=9.9337 phase=Recovery active=False commit=True pos=2.880
+[2026.10.26-07.49.37:775][545]LogPython: [CaptureCAP05] TELEMETRY wall=1074661.6568 sim=10.0003 phase=Recovery active=False commit=True pos=2.960
+[2026.10.26-07.49.38:105][546]LogPython: [CaptureCAP05] TELEMETRY wall=1074661.9860 sim=10.0670 phase=Recovery active=False commit=True pos=3.040
+[2026.10.26-07.49.38:444][547]LogPython: [CaptureCAP05] PHASE_CHANGE phase=None sim=10.1337 wall=1074662.3249
+[2026.10.26-07.49.38:444][547]LogPython: [CaptureCAP05] TELEMETRY wall=1074662.3249 sim=10.1337 phase=None active=False commit=False pos=3.040
+[2026.10.26-07.49.38:775][548]LogPython: [CaptureCAP05] TELEMETRY wall=1074662.6557 sim=10.2003 phase=None active=False commit=False pos=3.040
+[2026.10.26-07.49.39:105][549]LogPython: [CaptureCAP05] TELEMETRY wall=1074662.9877 sim=10.2670 phase=None active=False commit=False pos=3.040
+[2026.10.26-07.49.39:439][550]LogPython: [CaptureCAP05] TELEMETRY wall=1074663.3207 sim=10.3337 phase=None active=False commit=False pos=3.040
+[2026.10.26-07.49.39:773][551]LogPython: [CaptureCAP05] TELEMETRY wall=1074663.6551 sim=10.4003 phase=None active=False commit=False pos=3.040
+[2026.10.26-07.49.40:106][552]LogPython: [CaptureCAP05] TELEMETRY wall=1074663.9873 sim=10.4670 phase=None active=False commit=False pos=3.040
+[2026.10.26-07.49.40:443][553]LogPython: [CaptureCAP05] TELEMETRY wall=1074664.3243 sim=10.5337 phase=None active=False commit=False pos=3.040
+[2026.10.26-07.49.40:775][554]LogPython: [CaptureCAP05] TELEMETRY wall=1074664.6565 sim=10.6004 phase=None active=False commit=False pos=3.040
+[2026.10.26-07.49.41:109][555]LogPython: [CaptureCAP05] TELEMETRY wall=1074664.9907 sim=10.6671 phase=None active=False commit=False pos=3.040
+[2026.10.26-07.49.41:441][556]LogPython: [CaptureCAP05] TELEMETRY wall=1074665.3224 sim=10.7337 phase=None active=False commit=False pos=3.040
+[2026.10.26-07.49.41:773][557]LogPython: [CaptureCAP05] TELEMETRY wall=1074665.6549 sim=10.8004 phase=None active=False commit=False pos=3.040
+[2026.10.26-07.49.42:121][558]LogPython: [CaptureCAP05] TELEMETRY wall=1074666.0017 sim=10.8671 phase=None active=False commit=False pos=3.040
+[2026.10.26-07.49.42:442][559]LogPython: [CaptureCAP05] TELEMETRY wall=1074666.3236 sim=10.9337 phase=None active=False commit=False pos=3.040
+[2026.10.26-07.49.42:773][560]LogPython: [CaptureCAP05] TELEMETRY wall=1074666.6551 sim=11.0005 phase=None active=False commit=False pos=3.040
+[2026.10.26-07.49.43:113][561]LogPython: [CaptureCAP05] TELEMETRY wall=1074666.9941 sim=11.0672 phase=None active=False commit=False pos=3.040
+[2026.10.26-07.49.43:113][561]LogPython: [CaptureCAP05] A2 telegraph phase completed. Elapsed sim: 3.534s, wall: 17.68s, samples: 53.
+[2026.10.26-07.49.43:114][561]LogPython: [CaptureCAP05] Cleared flag file: C:\UnrealProject\OneBossFight\Saved\m7_flag.txt
+[2026.10.26-07.49.44:441][565]LogPython: [CaptureCAP05] Finishing run: OBSERVE_COMPLETE
+[2026.10.26-07.49.44:441][565]LogPython: [CaptureCAP05] Restored original view target.
+[2026.10.26-07.49.44:441][565]LogPython: [CaptureCAP05] Destroyed dedicated CameraActor.
+[2026.10.26-07.49.44:443][565]LogPython: [CaptureCAP05] Cvar restoration complete.
+[2026.10.26-07.49.44:443][565]LogPython: [CaptureCAP05] RESULT 5/5 (PASSED: All checks verified; telemetry captured)
+[2026.10.26-07.49.44:448][565]LogPython: [CaptureCAP05] Standing editor preserved. Runner complete.

@@ -52,6 +52,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "RPG|Scratch")
 	static FString DescribeAI(AActor* Boss);
 
+	/** READ-ONLY diagnostics (owner approval 2026-10-26, scratch only): one line per reflected property of the object's class chain: owner class, name, kind, declared constraint (object class, meta class, struct, array element, map key/value) and the current value text. Writes nothing, changes nothing. */
+	UFUNCTION(BlueprintCallable, Category = "RPG|Scratch")
+	static TArray<FString> DumpTypedProperties(UObject* Object);
+
+	/** Capture tooling (owner scratch approval): spawns a plain CameraActor in the given world at Location, looking at LookAt. Test runs only, destroyed by the caller. */
+	UFUNCTION(BlueprintCallable, Category = "RPG|Scratch")
+	static AActor* SpawnCaptureCamera(UObject* WorldContext, FVector Location, FVector LookAt);
+
 	UFUNCTION(BlueprintCallable, Category = "RPG|Scratch")
 	static TArray<FString> GetRouteAReport();
 

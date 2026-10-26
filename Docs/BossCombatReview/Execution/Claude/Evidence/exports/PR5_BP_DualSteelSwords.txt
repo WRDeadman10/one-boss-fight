@@ -1,0 +1,142 @@
+OBJECT /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/DualSwords/DualSwordInstances/BP_DualSteelSwords.Default__BP_DualSteelSwords_C class=/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/DualSwords/DualSwordInstances/BP_DualSteelSwords.BP_DualSteelSwords_C
+CHAIN /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/DualSwords/DualSwordInstances/BP_DualSteelSwords.BP_DualSteelSwords_C
+CHAIN /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseDualWeapon.BP_BaseDualWeapon_C
+CHAIN /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C
+CHAIN /Script/Engine.Actor
+CHAIN /Script/CoreUObject.Object
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseDualWeapon.BP_BaseDualWeapon_C name=UberGraphFrame kind=StructProperty constraint=Struct(/Script/Engine.PointerToUberGraphFrame) edit=0 value=()
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseDualWeapon.BP_BaseDualWeapon_C name=Second Weapon Hand Socket kind=NameProperty constraint=NameProperty edit=1 value=Second Weapon Hand Socket
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseDualWeapon.BP_BaseDualWeapon_C name=Second Weapon Disabled Socket kind=NameProperty constraint=NameProperty edit=1 value=Second Weapon Disabled Socket
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=UberGraphFrame kind=StructProperty constraint=Struct(/Script/Engine.PointerToUberGraphFrame) edit=0 value=()
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=WeaponSkeletalMesh kind=ObjectProperty constraint=ObjectProperty(class=/Script/Engine.SkeletalMeshComponent) edit=0 value=None
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=WeaponStaticMesh kind=ObjectProperty constraint=ObjectProperty(class=/Script/Engine.StaticMeshComponent) edit=0 value=None
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=CollisionBox kind=ObjectProperty constraint=ObjectProperty(class=/Script/Engine.BoxComponent) edit=0 value=None
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=WeaponRoot kind=ObjectProperty constraint=ObjectProperty(class=/Script/Engine.SceneComponent) edit=0 value=None
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=WeaponTrail kind=ObjectProperty constraint=ObjectProperty(class=/Script/Engine.ParticleSystem) edit=1 value=None
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=Equip Slot kind=ByteProperty constraint=ByteProperty edit=1 value=NewEnumerator2
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=WeaponHandSocket kind=NameProperty constraint=NameProperty edit=1 value=Weapon Hand Socket
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=DisabledSocket kind=NameProperty constraint=NameProperty edit=1 value=Disabled Socket
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=Weapon Item Data kind=ObjectProperty constraint=ObjectProperty(class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/WeaponItem.WeaponItem_C) edit=1 value=None
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=Combat Style kind=ObjectProperty constraint=ObjectProperty(class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_CombatStyle.BP_CombatStyle_C) edit=1 value=None
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=CollisionTraceClass kind=ClassProperty constraint=Class(meta=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CollisionSystem/BP_TraceTarget.BP_TraceTarget_C) edit=1 value=/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Collision/BP_WeaponTraceTarget.BP_WeaponTraceTarget_C'
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=WeaponStartSocket kind=NameProperty constraint=NameProperty edit=1 value=WeaponStart
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=WeaponEndSocket kind=NameProperty constraint=NameProperty edit=1 value=WeaponEnd
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=ParticleSystem kind=ObjectProperty constraint=ObjectProperty(class=/Script/Engine.ParticleSystemComponent) edit=1 value=None
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=OwnerCharacter kind=ObjectProperty constraint=ObjectProperty(class=/Script/Engine.Character) edit=1 value=None
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=SecondWeaponStaticMesh kind=ObjectProperty constraint=ObjectProperty(class=/Script/Engine.StaticMeshComponent) edit=1 value=None
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=SecondWeaponSkeletalMeshComponent kind=ObjectProperty constraint=ObjectProperty(class=/Script/Engine.SkeletalMeshComponent) edit=1 value=None
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=CombatComponent kind=ObjectProperty constraint=ObjectProperty(class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Components/BP_CombatComponent.BP_CombatComponent_C) edit=1 value=None
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=MergableWeapons kind=MapProperty constraint=Map<Class(meta=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C), ObjectProperty(class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_CombatStyle.BP_CombatStyle_C)> edit=1 value=()
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=OnEquippedTags kind=StructProperty constraint=Struct(/Script/GameplayTags.GameplayTagContainer) edit=1 value=(GameplayTags=)
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=GameplayTags kind=StructProperty constraint=Struct(/Script/GameplayTags.GameplayTagContainer) edit=1 value=(GameplayTags=)
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseWeapon.BP_BaseWeapon_C name=bWeaponDisabled kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=PrimaryActorTick kind=StructProperty constraint=Struct(/Script/Engine.ActorTickFunction) edit=1 value=(TickGroup=TG_PrePhysics,EndTickGroup=TG_PrePhysics,bTickEvenWhenPaused=False,bCanEverTick=False,bStartWithTickEnabled=True,bAllowTickOnDedicatedServer=True,TickInterval=0.000000)
+PROP owner=/Script/Engine.Actor name=bNetTemporary kind=BoolProperty constraint=BoolProperty edit=0 value=False
+PROP owner=/Script/Engine.Actor name=bOnlyRelevantToOwner kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=bAlwaysRelevant kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=bReplicateMovement kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=bCallPreReplication kind=BoolProperty constraint=BoolProperty edit=1 value=True
+PROP owner=/Script/Engine.Actor name=bCallPreReplicationForReplay kind=BoolProperty constraint=BoolProperty edit=1 value=True
+PROP owner=/Script/Engine.Actor name=bHidden kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=bTearOff kind=BoolProperty constraint=BoolProperty edit=0 value=False
+PROP owner=/Script/Engine.Actor name=bForceNetAddressable kind=BoolProperty constraint=BoolProperty edit=0 value=False
+PROP owner=/Script/Engine.Actor name=LevelInstanceType kind=EnumProperty constraint=EnumProperty edit=0 value=None
+PROP owner=/Script/Engine.Actor name=LevelInstanceFlags kind=EnumProperty constraint=EnumProperty edit=0 value=None
+PROP owner=/Script/Engine.Actor name=bIsMainWorldOnly kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=bExchangedRoles kind=BoolProperty constraint=BoolProperty edit=0 value=False
+PROP owner=/Script/Engine.Actor name=bNetLoadOnClient kind=BoolProperty constraint=BoolProperty edit=1 value=True
+PROP owner=/Script/Engine.Actor name=bNetUseOwnerRelevancy kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=bRelevantForNetworkReplays kind=BoolProperty constraint=BoolProperty edit=0 value=True
+PROP owner=/Script/Engine.Actor name=bRelevantForLevelBounds kind=BoolProperty constraint=BoolProperty edit=1 value=True
+PROP owner=/Script/Engine.Actor name=bReplayRewindable kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=bAllowTickBeforeBeginPlay kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=bAutoDestroyWhenFinished kind=BoolProperty constraint=BoolProperty edit=0 value=False
+PROP owner=/Script/Engine.Actor name=bCanBeDamaged kind=BoolProperty constraint=BoolProperty edit=1 value=True
+PROP owner=/Script/Engine.Actor name=bBlockInput kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=bCollideWhenPlacing kind=BoolProperty constraint=BoolProperty edit=0 value=False
+PROP owner=/Script/Engine.Actor name=bFindCameraComponentWhenViewTarget kind=BoolProperty constraint=BoolProperty edit=1 value=True
+PROP owner=/Script/Engine.Actor name=bGenerateOverlapEventsDuringLevelStreaming kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=bIgnoresOriginShifting kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=bEnableAutoLODGeneration kind=BoolProperty constraint=BoolProperty edit=1 value=True
+PROP owner=/Script/Engine.Actor name=bIsEditorOnlyActor kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=bReplicates kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=bCanBeInCluster kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=bAllowReceiveTickEventOnDedicatedServer kind=BoolProperty constraint=BoolProperty edit=0 value=True
+PROP owner=/Script/Engine.Actor name=bReplicateUsingRegisteredSubObjectList kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=bActorEnableCollision kind=BoolProperty constraint=BoolProperty edit=0 value=True
+PROP owner=/Script/Engine.Actor name=bActorIsBeingDestroyed kind=BoolProperty constraint=BoolProperty edit=0 value=False
+PROP owner=/Script/Engine.Actor name=bAsyncPhysicsTickEnabled kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=UpdateOverlapsMethodDuringLevelStreaming kind=EnumProperty constraint=EnumProperty edit=1 value=UseConfigDefault
+PROP owner=/Script/Engine.Actor name=DefaultUpdateOverlapsMethodDuringLevelStreaming kind=EnumProperty constraint=EnumProperty edit=1 value=OnlyUpdateMovable
+PROP owner=/Script/Engine.Actor name=RemoteRole kind=ByteProperty constraint=ByteProperty edit=1 value=ROLE_None
+PROP owner=/Script/Engine.Actor name=InitialLifeSpan kind=FloatProperty constraint=FloatProperty edit=1 value=0.000000
+PROP owner=/Script/Engine.Actor name=CustomTimeDilation kind=FloatProperty constraint=FloatProperty edit=0 value=1.000000
+PROP owner=/Script/Engine.Actor name=RayTracingGroupId kind=IntProperty constraint=IntProperty edit=0 value=-1
+PROP owner=/Script/Engine.Actor name=RuntimeGrid kind=NameProperty constraint=NameProperty edit=1 value=None
+PROP owner=/Script/Engine.Actor name=AttachmentReplication kind=StructProperty constraint=Struct(/Script/Engine.RepAttachment) edit=0 value=(AttachParent=None,LocationOffset=(X=0.000000,Y=0.000000,Z=0.000000),RelativeScale3D=(X=0.000000,Y=0.000000,Z=0.000000),RotationOffset=(Pitch=0.000000,Yaw=0.000000,Roll=0.000000),AttachSocket="",AttachComponent=None)
+PROP owner=/Script/Engine.Actor name=ReplicatedMovement kind=StructProperty constraint=Struct(/Script/Engine.RepMovement) edit=1 value=(LocationQuantizationLevel=RoundWholeNumber,VelocityQuantizationLevel=RoundWholeNumber,RotationQuantizationLevel=ByteComponents)
+PROP owner=/Script/Engine.Actor name=Owner kind=ObjectProperty constraint=ObjectProperty(class=/Script/Engine.Actor) edit=0 value=None
+PROP owner=/Script/Engine.Actor name=NetDriverName kind=NameProperty constraint=NameProperty edit=0 value=GameNetDriver
+PROP owner=/Script/Engine.Actor name=Role kind=ByteProperty constraint=ByteProperty edit=1 value=ROLE_Authority
+PROP owner=/Script/Engine.Actor name=NetDormancy kind=ByteProperty constraint=ByteProperty edit=1 value=DORM_Awake
+PROP owner=/Script/Engine.Actor name=SpawnCollisionHandlingMethod kind=EnumProperty constraint=EnumProperty edit=1 value=AlwaysSpawn
+PROP owner=/Script/Engine.Actor name=AutoReceiveInput kind=ByteProperty constraint=ByteProperty edit=1 value=Disabled
+PROP owner=/Script/Engine.Actor name=InputPriority kind=IntProperty constraint=IntProperty edit=1 value=0
+PROP owner=/Script/Engine.Actor name=InputComponent kind=ObjectProperty constraint=ObjectProperty(class=/Script/Engine.InputComponent) edit=0 value=None
+PROP owner=/Script/Engine.Actor name=NetTag kind=IntProperty constraint=IntProperty edit=0 value=0
+PROP owner=/Script/Engine.Actor name=NetCullDistanceSquared kind=FloatProperty constraint=FloatProperty edit=1 value=225000000.000000
+PROP owner=/Script/Engine.Actor name=NetUpdateFrequency kind=FloatProperty constraint=FloatProperty edit=1 value=100.000000
+PROP owner=/Script/Engine.Actor name=MinNetUpdateFrequency kind=FloatProperty constraint=FloatProperty edit=1 value=2.000000
+PROP owner=/Script/Engine.Actor name=NetPriority kind=FloatProperty constraint=FloatProperty edit=1 value=1.000000
+PROP owner=/Script/Engine.Actor name=PhysicsReplicationMode kind=EnumProperty constraint=EnumProperty edit=1 value=Default
+PROP owner=/Script/Engine.Actor name=Instigator kind=ObjectProperty constraint=ObjectProperty(class=/Script/Engine.Pawn) edit=0 value=None
+PROP owner=/Script/Engine.Actor name=Children kind=ArrayProperty constraint=Array<ObjectProperty(class=/Script/Engine.Actor)> edit=0 value=
+PROP owner=/Script/Engine.Actor name=RootComponent kind=ObjectProperty constraint=ObjectProperty(class=/Script/Engine.SceneComponent) edit=0 value=None
+PROP owner=/Script/Engine.Actor name=PivotOffset kind=StructProperty constraint=Struct(/Script/CoreUObject.Vector) edit=1 value=(X=0.000000,Y=0.000000,Z=0.000000)
+PROP owner=/Script/Engine.Actor name=HLODLayer kind=ObjectProperty constraint=ObjectProperty(class=/Script/Engine.HLODLayer) edit=1 value=None
+PROP owner=/Script/Engine.Actor name=Layers kind=ArrayProperty constraint=Array<NameProperty> edit=1 value=
+PROP owner=/Script/Engine.Actor name=ParentComponent kind=WeakObjectProperty constraint=WeakObjectProperty(class=/Script/Engine.ChildActorComponent) edit=0 value=None
+PROP owner=/Script/Engine.Actor name=ActorGuid kind=StructProperty constraint=Struct(/Script/CoreUObject.Guid) edit=0 value=00000000000000000000000000000000
+PROP owner=/Script/Engine.Actor name=ActorInstanceGuid kind=StructProperty constraint=Struct(/Script/CoreUObject.Guid) edit=0 value=00000000000000000000000000000000
+PROP owner=/Script/Engine.Actor name=ContentBundleGuid kind=StructProperty constraint=Struct(/Script/CoreUObject.Guid) edit=0 value=00000000000000000000000000000000
+PROP owner=/Script/Engine.Actor name=DataLayers kind=ArrayProperty constraint=Array<Struct(/Script/Engine.ActorDataLayer)> edit=1 value=
+PROP owner=/Script/Engine.Actor name=DataLayerAssets kind=ArrayProperty constraint=Array<SoftObjectProperty(class=/Script/Engine.DataLayerAsset)> edit=1 value=
+PROP owner=/Script/Engine.Actor name=ExternalDataLayerAsset kind=ObjectProperty constraint=ObjectProperty(class=/Script/Engine.ExternalDataLayerAsset) edit=1 value=None
+PROP owner=/Script/Engine.Actor name=GroupActor kind=ObjectProperty constraint=ObjectProperty(class=/Script/Engine.Actor) edit=0 value=None
+PROP owner=/Script/Engine.Actor name=SpriteScale kind=FloatProperty constraint=FloatProperty edit=1 value=1.000000
+PROP owner=/Script/Engine.Actor name=HiddenEditorViews kind=UInt64Property constraint=UInt64Property edit=0 value=0
+PROP owner=/Script/Engine.Actor name=ActorLabel kind=StrProperty constraint=StrProperty edit=0 value=WeaponParent-1
+PROP owner=/Script/Engine.Actor name=FolderPath kind=NameProperty constraint=NameProperty edit=0 value=None
+PROP owner=/Script/Engine.Actor name=FolderGuid kind=StructProperty constraint=Struct(/Script/CoreUObject.Guid) edit=0 value=00000000000000000000000000000000
+PROP owner=/Script/Engine.Actor name=bHiddenEd kind=BoolProperty constraint=BoolProperty edit=0 value=False
+PROP owner=/Script/Engine.Actor name=bIsEditorPreviewActor kind=BoolProperty constraint=BoolProperty edit=0 value=False
+PROP owner=/Script/Engine.Actor name=bHiddenEdLayer kind=BoolProperty constraint=BoolProperty edit=0 value=False
+PROP owner=/Script/Engine.Actor name=bHiddenEdLevel kind=BoolProperty constraint=BoolProperty edit=0 value=False
+PROP owner=/Script/Engine.Actor name=bLockLocation kind=BoolProperty constraint=BoolProperty edit=0 value=False
+PROP owner=/Script/Engine.Actor name=bActorLabelEditable kind=BoolProperty constraint=BoolProperty edit=0 value=True
+PROP owner=/Script/Engine.Actor name=bEditable kind=BoolProperty constraint=BoolProperty edit=0 value=True
+PROP owner=/Script/Engine.Actor name=bListedInSceneOutliner kind=BoolProperty constraint=BoolProperty edit=0 value=True
+PROP owner=/Script/Engine.Actor name=bOptimizeBPComponentData kind=BoolProperty constraint=BoolProperty edit=1 value=False
+PROP owner=/Script/Engine.Actor name=bCanPlayFromHere kind=BoolProperty constraint=BoolProperty edit=0 value=False
+PROP owner=/Script/Engine.Actor name=bIsSpatiallyLoaded kind=BoolProperty constraint=BoolProperty edit=1 value=True
+PROP owner=/Script/Engine.Actor name=bHiddenEdTemporary kind=BoolProperty constraint=BoolProperty edit=0 value=False
+PROP owner=/Script/Engine.Actor name=bForceExternalActorLevelReferenceForPIE kind=BoolProperty constraint=BoolProperty edit=0 value=False
+PROP owner=/Script/Engine.Actor name=Tags kind=ArrayProperty constraint=Array<NameProperty> edit=1 value=("Weapon")
+PROP owner=/Script/Engine.Actor name=OnTakeAnyDamage kind=MulticastSparseDelegateProperty constraint=MulticastSparseDelegateProperty edit=0 value=()
+PROP owner=/Script/Engine.Actor name=OnTakePointDamage kind=MulticastSparseDelegateProperty constraint=MulticastSparseDelegateProperty edit=0 value=()
+PROP owner=/Script/Engine.Actor name=OnTakeRadialDamage kind=MulticastSparseDelegateProperty constraint=MulticastSparseDelegateProperty edit=0 value=()
+PROP owner=/Script/Engine.Actor name=OnActorBeginOverlap kind=MulticastSparseDelegateProperty constraint=MulticastSparseDelegateProperty edit=0 value=()
+PROP owner=/Script/Engine.Actor name=OnActorEndOverlap kind=MulticastSparseDelegateProperty constraint=MulticastSparseDelegateProperty edit=0 value=()
+PROP owner=/Script/Engine.Actor name=OnBeginCursorOver kind=MulticastSparseDelegateProperty constraint=MulticastSparseDelegateProperty edit=0 value=()
+PROP owner=/Script/Engine.Actor name=OnEndCursorOver kind=MulticastSparseDelegateProperty constraint=MulticastSparseDelegateProperty edit=0 value=()
+PROP owner=/Script/Engine.Actor name=OnClicked kind=MulticastSparseDelegateProperty constraint=MulticastSparseDelegateProperty edit=0 value=()
+PROP owner=/Script/Engine.Actor name=OnReleased kind=MulticastSparseDelegateProperty constraint=MulticastSparseDelegateProperty edit=0 value=()
+PROP owner=/Script/Engine.Actor name=OnInputTouchBegin kind=MulticastSparseDelegateProperty constraint=MulticastSparseDelegateProperty edit=0 value=()
+PROP owner=/Script/Engine.Actor name=OnInputTouchEnd kind=MulticastSparseDelegateProperty constraint=MulticastSparseDelegateProperty edit=0 value=()
+PROP owner=/Script/Engine.Actor name=OnInputTouchEnter kind=MulticastSparseDelegateProperty constraint=MulticastSparseDelegateProperty edit=0 value=()
+PROP owner=/Script/Engine.Actor name=OnInputTouchLeave kind=MulticastSparseDelegateProperty constraint=MulticastSparseDelegateProperty edit=0 value=()
+PROP owner=/Script/Engine.Actor name=OnActorHit kind=MulticastSparseDelegateProperty constraint=MulticastSparseDelegateProperty edit=0 value=()
+PROP owner=/Script/Engine.Actor name=OnDestroyed kind=MulticastSparseDelegateProperty constraint=MulticastSparseDelegateProperty edit=0 value=()
+PROP owner=/Script/Engine.Actor name=OnEndPlay kind=MulticastSparseDelegateProperty constraint=MulticastSparseDelegateProperty edit=0 value=()
+PROP owner=/Script/Engine.Actor name=InstanceComponents kind=ArrayProperty constraint=Array<ObjectProperty(class=/Script/Engine.ActorComponent)> edit=0 value=
+PROP owner=/Script/Engine.Actor name=BlueprintCreatedComponents kind=ArrayProperty constraint=Array<ObjectProperty(class=/Script/Engine.ActorComponent)> edit=0 value=
