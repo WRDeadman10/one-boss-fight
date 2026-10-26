@@ -1,0 +1,57 @@
+Begin Object Class=/Script/Engine.AnimMontage Name="Dodge_To_Idle_Montage" ExportPath="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage'"
+   Begin Object Class=/Script/Engine.AnimDataModel Name="AnimDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage:AnimDataModel'"
+   End Object
+   Begin Object Class=/Script/UnrealEd.SceneThumbnailInfo Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage:SceneThumbnailInfo_0'"
+   End Object
+   Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_SetDesiredRotation.ANS_SetDesiredRotation_C Name="RotateCharacterNS_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_SetDesiredRotation.ANS_SetDesiredRotation_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage:RotateCharacterNS_C_1'"
+   End Object
+   Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_MovementCancel.ANS_MovementCancel_C Name="ANS_MovementCancel_C_0" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_MovementCancel.ANS_MovementCancel_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage:ANS_MovementCancel_C_0'"
+   End Object
+   Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/Input/AnimNotifies/ANS_InputBuffer.ANS_InputBuffer_C Name="InputBufferNS_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/Input/AnimNotifies/ANS_InputBuffer.ANS_InputBuffer_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage:InputBufferNS_C_1'"
+   End Object
+   Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_iFrames.ANS_iFrames_C Name="iFramesNS_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_iFrames.ANS_iFrames_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage:iFramesNS_C_1'"
+   End Object
+   Begin Object Class=/Script/Engine.AnimDataModel Name="AnimationDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage:AnimationDataModel'"
+   End Object
+   Begin Object Name="AnimDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage:AnimDataModel'"
+      NumberOfFrames=140000
+      NumberOfKeys=140001
+      bPopulated=True
+   End Object
+   Begin Object Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage:SceneThumbnailInfo_0'"
+   End Object
+   Begin Object Name="RotateCharacterNS_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_SetDesiredRotation.ANS_SetDesiredRotation_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage:RotateCharacterNS_C_1'"
+      RotationInterpSpeed=1440.000000
+      Desired Rotation Type=NewEnumerator0
+   End Object
+   Begin Object Name="ANS_MovementCancel_C_0" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_MovementCancel.ANS_MovementCancel_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage:ANS_MovementCancel_C_0'"
+   End Object
+   Begin Object Name="InputBufferNS_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/Input/AnimNotifies/ANS_InputBuffer.ANS_InputBuffer_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage:InputBufferNS_C_1'"
+   End Object
+   Begin Object Name="iFramesNS_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_iFrames.ANS_iFrames_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage:iFramesNS_C_1'"
+   End Object
+   Begin Object Name="AnimationDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage:AnimationDataModel'"
+      PlayLength=0.033333
+      FrameRate=(Numerator=30)
+      NumberOfFrames=1
+      NumberOfKeys=2
+   End Object
+   CompositeSections(0)=(SectionName="Default",LinkedMontage="/Script/Engine.AnimMontage'Dodge_To_Idle_Montage'",SegmentIndex=0,SegmentLength=2.333333,LinkedSequence="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle.Dodge_To_Idle'")
+   SlotAnimTracks(0)=(AnimTrack=(AnimSegments=((AnimReference="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle.Dodge_To_Idle'",AnimEndTime=2.333333))))
+   BranchingPointMarkers(0)=(NotifyIndex=2,TriggerTime=0.484609)
+   BranchingPointMarkers(1)=(NotifyIndex=2,TriggerTime=1.676765,NotifyEventType=End)
+   BranchingPointStateNotifyIndices(0)=2
+   CommonTargetFrameRate=(Numerator=30)
+   Notifies(0)=(TriggerTimeOffset=0.000100,NotifyName="RotateCharacterNS_C",NotifyStateClass="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_SetDesiredRotation.ANS_SetDesiredRotation_C'RotateCharacterNS_C_1'",Duration=0.250000,EndLink=(LinkedMontage="/Script/Engine.AnimMontage'Dodge_To_Idle_Montage'",SegmentIndex=0,SegmentLength=2.333333,LinkValue=0.250000,LinkedSequence="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle.Dodge_To_Idle'"),Guid=BC6649924ACF69E85CCAE6990E02974B,TrackIndex=1,LinkedMontage="/Script/Engine.AnimMontage'Dodge_To_Idle_Montage'",SegmentIndex=0,SegmentLength=2.333333,LinkedSequence="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle.Dodge_To_Idle'")
+   Notifies(1)=(TriggerTimeOffset=0.000100,NotifyName="iFramesNS_C",NotifyStateClass="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_iFrames.ANS_iFrames_C'iFramesNS_C_1'",Duration=0.699774,EndLink=(LinkedMontage="/Script/Engine.AnimMontage'Dodge_To_Idle_Montage'",SegmentIndex=0,SegmentLength=2.333333,LinkValue=0.699774,LinkedSequence="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle.Dodge_To_Idle'"),Guid=EAA428F24083A1A5E0C918BDC967C5BF,TrackIndex=2,LinkedMontage="/Script/Engine.AnimMontage'Dodge_To_Idle_Montage'",SegmentIndex=0,SegmentLength=2.333333,LinkedSequence="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle.Dodge_To_Idle'")
+   Notifies(2)=(NotifyName="InputBufferNS_C",NotifyStateClass="/Game/AdvancedARPGCombat/AdvancedCombatFramework/Input/AnimNotifies/ANS_InputBuffer.ANS_InputBuffer_C'InputBufferNS_C_1'",Duration=1.192157,EndLink=(LinkedMontage="/Script/Engine.AnimMontage'Dodge_To_Idle_Montage'",SegmentIndex=0,SegmentLength=2.333333,LinkValue=1.676765,LinkedSequence="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle.Dodge_To_Idle'"),MontageTickType=BranchingPoint,Guid=9C4B78C04F03042E0E6B419851C9D459,TrackIndex=1,LinkedMontage="/Script/Engine.AnimMontage'Dodge_To_Idle_Montage'",SegmentIndex=0,SegmentLength=2.333333,LinkValue=0.484609,LinkedSequence="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle.Dodge_To_Idle'")
+   Notifies(3)=(NotifyName="ANS_MovementCancel_C",NotifyStateClass="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_MovementCancel.ANS_MovementCancel_C'ANS_MovementCancel_C_0'",Duration=0.626710,EndLink=(LinkedMontage="/Script/Engine.AnimMontage'Dodge_To_Idle_Montage'",SegmentBeginTime=-1.000000,SegmentLength=-1.000000,LinkValue=2.333334),Guid=011DECB14DE5EDDEB41945A428D553CB,TrackIndex=1,LinkedMontage="/Script/Engine.AnimMontage'Dodge_To_Idle_Montage'",SegmentIndex=0,SegmentLength=2.333333,LinkValue=1.706624,LinkedSequence="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle.Dodge_To_Idle'")
+   SequenceLength=2.333333
+   RateScale=2.000000
+   AnimNotifyTracks(0)=(TrackName="1",TrackColor=(R=0.500000,G=0.500000,B=0.500000,A=1.000000))
+   AnimNotifyTracks(1)=(TrackName="2",TrackColor=(R=0.900000,G=0.900000,B=0.900000,A=0.900000))
+   AnimNotifyTracks(2)=(TrackName="3",TrackColor=(R=0.500000,G=0.500000,B=0.500000,A=1.000000))
+   DataModelInterface=AnimDataModel'Dodge_To_Idle_Montage:AnimDataModel'
+   Skeleton="/Script/Engine.Skeleton'/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin'"
+   ThumbnailInfo="/Script/UnrealEd.SceneThumbnailInfo'SceneThumbnailInfo_0'"
+End Object

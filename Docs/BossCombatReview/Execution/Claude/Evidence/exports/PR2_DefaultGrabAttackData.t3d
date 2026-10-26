@@ -1,0 +1,7 @@
+Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_AttackData.BP_AttackData_C Name="DefaultGrabAttackData" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_AttackData.BP_AttackData_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/DataAssets/AttackData/DefaultGrabAttackData.DefaultGrabAttackData'"
+   Damage Gampelay Effect="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_MeleeDamage_DamageOnly.GE_MeleeDamage_DamageOnly_C'"
+   IsUnblockableAttack?=True
+   Collision Particle Trail="/Script/Engine.ParticleSystem'/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/WeaponTrails/P_Greystone_Primary_Trails_R.P_Greystone_Primary_Trails_R'"
+   Attack Impact Effects(0)="/Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/DataAssets/BP_Cascade_ImpactEffect.BP_Cascade_ImpactEffect_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayCues/MeleeImpactEffect.MeleeImpactEffect'"
+   NativeClass="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_AttackData.BP_AttackData_C'"
+End Object

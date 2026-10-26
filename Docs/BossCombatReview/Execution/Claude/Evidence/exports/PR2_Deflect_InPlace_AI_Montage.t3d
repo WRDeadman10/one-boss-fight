@@ -1,0 +1,37 @@
+Begin Object Class=/Script/Engine.AnimMontage Name="Deflect_InPlace_AI_Montage" ExportPath="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Deflect_InPlace_AI_Montage.Deflect_InPlace_AI_Montage'"
+   Begin Object Class=/Script/Engine.AnimDataModel Name="AnimDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Deflect_InPlace_AI_Montage.Deflect_InPlace_AI_Montage:AnimDataModel'"
+   End Object
+   Begin Object Class=/Script/UnrealEd.SceneThumbnailInfo Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Deflect_InPlace_AI_Montage.Deflect_InPlace_AI_Montage:SceneThumbnailInfo_0'"
+   End Object
+   Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_DisableMovement.ANS_DisableMovement_C Name="DisableMovementNS_C_0" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_DisableMovement.ANS_DisableMovement_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Deflect_InPlace_AI_Montage.Deflect_InPlace_AI_Montage:DisableMovementNS_C_0'"
+   End Object
+   Begin Object Class=/Script/Engine.AnimDataModel Name="AnimationDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Deflect_InPlace_AI_Montage.Deflect_InPlace_AI_Montage:AnimationDataModel'"
+   End Object
+   Begin Object Name="AnimDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Deflect_InPlace_AI_Montage.Deflect_InPlace_AI_Montage:AnimDataModel'"
+      NumberOfFrames=68000
+      NumberOfKeys=68001
+      bPopulated=True
+   End Object
+   Begin Object Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Deflect_InPlace_AI_Montage.Deflect_InPlace_AI_Montage:SceneThumbnailInfo_0'"
+   End Object
+   Begin Object Name="DisableMovementNS_C_0" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_DisableMovement.ANS_DisableMovement_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Deflect_InPlace_AI_Montage.Deflect_InPlace_AI_Montage:DisableMovementNS_C_0'"
+   End Object
+   Begin Object Name="AnimationDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Deflect_InPlace_AI_Montage.Deflect_InPlace_AI_Montage:AnimationDataModel'"
+      PlayLength=0.033333
+      FrameRate=(Numerator=30)
+      NumberOfFrames=1
+      NumberOfKeys=2
+   End Object
+   BlendIn=(BlendTime=0.000000)
+   CompositeSections(0)=(SectionName="Default",LinkedMontage="/Script/Engine.AnimMontage'Deflect_InPlace_AI_Montage'",SegmentIndex=0,SegmentLength=1.133333,LinkedSequence="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/Defend/Deflect_InPlace_Anim.Deflect_InPlace_Anim'")
+   SlotAnimTracks(0)=(AnimTrack=(AnimSegments=((AnimReference="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/Defend/Deflect_InPlace_Anim.Deflect_InPlace_Anim'",AnimEndTime=1.133333))))
+   CommonTargetFrameRate=(Numerator=30)
+   Notifies(0)=(TriggerTimeOffset=0.000100,EndTriggerTimeOffset=-0.000100,NotifyName="DisableMovementNS_C",NotifyStateClass="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_DisableMovement.ANS_DisableMovement_C'DisableMovementNS_C_0'",Duration=1.133333,EndLink=(LinkedMontage="/Script/Engine.AnimMontage'Deflect_InPlace_AI_Montage'",SegmentIndex=0,SegmentLength=1.133333,LinkValue=1.133333,LinkedSequence="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/Defend/Deflect_InPlace_Anim.Deflect_InPlace_Anim'"),Guid=A7C0801C4AB174FF81AB3D9877F159E8,LinkedMontage="/Script/Engine.AnimMontage'Deflect_InPlace_AI_Montage'",SegmentIndex=0,SegmentLength=1.133333,LinkedSequence="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/Defend/Deflect_InPlace_Anim.Deflect_InPlace_Anim'")
+   SequenceLength=1.133333
+   AnimNotifyTracks(0)=(TrackName="2",TrackColor=(R=0.500000,G=0.500000,B=0.500000,A=1.000000))
+   AnimNotifyTracks(1)=(TrackName="1",TrackColor=(R=0.900000,G=0.900000,B=0.900000,A=0.900000))
+   DataModelInterface=AnimDataModel'Deflect_InPlace_AI_Montage:AnimDataModel'
+   Skeleton="/Script/Engine.Skeleton'/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin'"
+   ThumbnailInfo="/Script/UnrealEd.SceneThumbnailInfo'SceneThumbnailInfo_0'"
+   PreviewSkeletalMesh="/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SKM_CombatMannequin.SKM_CombatMannequin"
+End Object

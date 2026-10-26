@@ -1,0 +1,3216 @@
+{
+  "schema_version": "3.0",
+  "provenance": {
+    "compiler": "Antigravity Timeline Reference Compiler (AG-24 Rev 03)",
+    "description": "Offline reference implementation with verified traversal guards, out-of-bounds rejection, transparent text export scope, and whole-montage payload SHA-256 hashes.",
+    "input_hashes": {
+      "montage_notifies_2026-10-25.txt": "950c611ee5eae7bcdd7abca1ea56c051c3b42d988b427cf64452829142ab0b31",
+      "movesheets/AN_Boss01_A1_QuickSlash.json": "2029ad96fc79dc5935a358e05c3b16bd1270f43bf6617cfdd99c37abda05b637",
+      "movesheets/AN_Boss01_A2_ApexHold.json": "c380916c39b95436bad08b00ed1d0d02509202dbe994869370f3cfcad7a81b4f",
+      "movesheets/AN_Boss01_A2_Raise.json": "cd9f5491abc46c4f2e9d608b132c0ce64b081bfc9c7b39d9bde20e980b7c49b6",
+      "movesheets/AN_Boss01_A2_Slam.json": "88463177ef1a5df2983fc2b87911cbe125a155c3c499f40cd1afc3897af8bd0c",
+      "movesheets/AN_Boss01_A3a_Combo1.json": "df7d8730b3e98c658f4c0ac0a6a0267e9bac4ac914793324ff42b0c1fdb6358c",
+      "movesheets/AN_Boss01_A3b_Combo2.json": "8c9e93811bcab5f11590e4a9499add04b1d6869294d566fe852788332e1d92d5",
+      "movesheets/AN_Boss01_A4_LowSweep.json": "9f01c4604e215abe6c71abbd5f04095600e538c49c64a1957955e39d99987564",
+      "movesheets/AN_Boss01_A5_JavelinThrow.json": "538667fca1150a72df811b6b71a4fe32bdf5ad748375f2bd6ae181be842ae837",
+      "movesheets/AN_Boss01_DeathLegend.json": "c69451cf9c9e506ad4d094c255a2f741786fb286bbb38ee9b186580e79461b93",
+      "movesheets/AN_Boss01_DormantIdle.json": "3a2e85f12bd1a200e647af1b1f1ccb72d034002f0c88ba5230410ef2f94ba0a1",
+      "movesheets/AN_Boss01_PhaseRoar.json": "08ab6e51e78e685b18a4d6321bcf2279f83b53804ede6ea1929dc18b89345403",
+      "movesheets/AN_Boss01_StaggerDown.json": "996332635f792971368723346869865f11401501b5d3752e9583d88f0e38af77",
+      "movesheets/AN_Boss01_StaggerFall.json": "c4b6f7025a48e91c5885f25b9f181c50eae2758ff59360973a38c435063cc62c",
+      "movesheets/AN_Boss01_StaggerGetUp.json": "be331961a2b15fdb07638c339cd9f0f2abda6bc4ddf3ad5be4a58801ac565d33",
+      "movesheets/AN_Boss01_Wake.json": "2b0890bd6f0cec38d782d2aae95debf7551c731db8792166dcfe3efca8d340d9",
+      "movesheets/AN_Riposte_Boss_Reaction.json": "712cab9ed2ca8fb9c31c6db7b0c7adf69e2fa164af55d8f7cd404bb62fee1e57",
+      "movesheets/AN_Riposte_Player_Front.json": "788c3af5b19e55be0e16833a73bd1b2043d4fd95ccaf25b9f0ac754621e61909",
+      "movesheets/GS_Attack01.json": "4441e96394686a04d0d90ca8194cbcd7e99365f0441dedd3598988177454bf26",
+      "movesheets/GS_Attack02.json": "27885f72f1a660719f645488dd01bbf6fb0005f47206a9abcace38fe59e8dd9e",
+      "movesheets/GS_Attack03.json": "6fb268d78f42ef11b47f936dc18d8b1d292ba57762236dd38f73b9d069c833fd",
+      "movesheets/GS_Attack04.json": "8dec27aee3bc091a2aceb6cf86bdb779579e4d75517eac794d0bee52c8aa0ef4",
+      "movesheets/GS_ChargedAttack.json": "7945aabcd999ffec6e445842dfdc62c7b50663c6bfbe436d773b64d66edf1fe8",
+      "movesheets/GS_LeapAttack.json": "9700b3b752ec758f67f9e1fbbc19bf75b88e3dcc278784629dea2b0fcb69b43f",
+      "movesheets/GS_SprintAttackFollowUp.json": "5e6c5dd16ee8a31280595fcdf99783ea2005a1edc76f70645c4d3b06e998b09a",
+      "movesheets/Mid01.json": "2bb521972ebaf84a1a210c4f4ef0ac093b783df4a772d66ad877a7b2b00537bc",
+      "movesheets/RetaliationAttack.json": "bfeb018933808d13893d2550dfda3889b7ad2f2513d4d4b3ec3f746d5a58c459"
+    }
+  },
+  "montages": {
+    "GS_Attack01_Montage": {
+      "name": "GS_Attack01_Montage",
+      "length_s": 1.2000000476837158,
+      "rate_scale": 1.0,
+      "blend_in": 0.25,
+      "blend_out": 0.25,
+      "section_graph": {
+        "declared_sections_count": 1,
+        "topology": "UNVERIFIED_IN_TEXT_EXPORT",
+        "sections": [
+          {
+            "inferred_name": "Default",
+            "start_s": 0.0,
+            "end_s": 1.2000000476837158,
+            "next_section": null,
+            "note": "Section name 'Default' inferred; section track boundaries and linkages unexported in montage_notifies_2026-10-25.txt"
+          }
+        ],
+        "note": "Single section declared in export; full montage section track layout unexported"
+      },
+      "has_associated_movesheet": true,
+      "movesheet_declared_intent": {
+        "has_declared_intent": false,
+        "reason": "No authored sidecar exists for third-party pack clip; pack assets are unedited",
+        "source_file": null,
+        "source_hash": null,
+        "commit_time_s": null,
+        "windup_end_s": null,
+        "active_start_s": null,
+        "active_end_s": null,
+        "recovery_end_s": null,
+        "impact_time_s": null,
+        "is_looping": null,
+        "notes": null
+      },
+      "windows": [
+        {
+          "id": "W_00_ANS_DisableMovement_C",
+          "semantic": "MovementLock",
+          "source_class": "ANS_DisableMovement_C",
+          "begin_s": 0.0,
+          "end_s": 1.2,
+          "raw_end_s": 1.2,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.0,
+          "normalised_end": 1.0,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "17d9b402b25365c253554dc6e63636c007a41905f3ed682e0fff1c34cee2dee1"
+        },
+        {
+          "id": "W_01_ANS_SetDesiredRotation_C",
+          "semantic": "RotationTracking",
+          "source_class": "ANS_SetDesiredRotation_C",
+          "begin_s": 0.0,
+          "end_s": 0.317,
+          "raw_end_s": 0.317,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.0,
+          "normalised_end": 0.264167,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "3eb238078bfa85a4161bab030b31cdf09e28b6e48da25479ae503ae9f20bbb00"
+        },
+        {
+          "id": "W_02_ANS_CollisionTrace_C",
+          "semantic": "ActiveDamage",
+          "source_class": "ANS_CollisionTrace_C",
+          "begin_s": 0.166,
+          "end_s": 0.469,
+          "raw_end_s": 0.469,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.138333,
+          "normalised_end": 0.390833,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "b81b0dff36f594cc3e222a279584ff065d3d1e84481814c6f3e8bf2104213b46"
+        }
+      ],
+      "markers": [
+        {
+          "id": "M_00_AnimNotify_PlaySound",
+          "semantic": "AcousticCue",
+          "source_class": "AnimNotify_PlaySound",
+          "position_s": 0.164,
+          "normalised_position": 0.136667,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "40eeabe839caa37cbce619731dbb7bee848455ccc690fae7bb941802712dfa87",
+          "provenance": "montage_notifies_export"
+        },
+        {
+          "id": "M_01_AN_PerformFollowUp_C",
+          "semantic": "ComboBranchMarker",
+          "source_class": "AN_PerformFollowUp_C",
+          "position_s": 0.544,
+          "normalised_position": 0.453333,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "e764b45c23a810144d2ff97044b1c50dad2623478f3fc485841008773a6ba921",
+          "provenance": "montage_notifies_export"
+        },
+        {
+          "id": "M_02_AN_EndAnimatingAbility_C",
+          "semantic": "AbilityEndMarker",
+          "source_class": "AN_EndAnimatingAbility_C",
+          "position_s": 0.962,
+          "normalised_position": 0.801667,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "e02b59ff31153f85893aa6bf46129cbc9289e8b0b49780f0c2cca0fc8c3bde22",
+          "provenance": "montage_notifies_export"
+        }
+      ],
+      "payload_sha256": "a950e6e062649f6d06b2fbc2e878cbb3a3b4a5cfea1656a4a66117f4ed9e64c5"
+    },
+    "GS_Attack02_Montage": {
+      "name": "GS_Attack02_Montage",
+      "length_s": 1.2666666507720947,
+      "rate_scale": 1.0,
+      "blend_in": 0.25,
+      "blend_out": 0.25,
+      "section_graph": {
+        "declared_sections_count": 1,
+        "topology": "UNVERIFIED_IN_TEXT_EXPORT",
+        "sections": [
+          {
+            "inferred_name": "Default",
+            "start_s": 0.0,
+            "end_s": 1.2666666507720947,
+            "next_section": null,
+            "note": "Section name 'Default' inferred; section track boundaries and linkages unexported in montage_notifies_2026-10-25.txt"
+          }
+        ],
+        "note": "Single section declared in export; full montage section track layout unexported"
+      },
+      "has_associated_movesheet": true,
+      "movesheet_declared_intent": {
+        "has_declared_intent": false,
+        "reason": "No authored sidecar exists for third-party pack clip; pack assets are unedited",
+        "source_file": null,
+        "source_hash": null,
+        "commit_time_s": null,
+        "windup_end_s": null,
+        "active_start_s": null,
+        "active_end_s": null,
+        "recovery_end_s": null,
+        "impact_time_s": null,
+        "is_looping": null,
+        "notes": null
+      },
+      "windows": [
+        {
+          "id": "W_00_ANS_DisableMovement_C",
+          "semantic": "MovementLock",
+          "source_class": "ANS_DisableMovement_C",
+          "begin_s": 0.0,
+          "end_s": 1.2666666507720947,
+          "raw_end_s": 1.267,
+          "is_clipped_at_end": true,
+          "normalised_begin": 0.0,
+          "normalised_end": 1.0,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "e0bc55288f741e6c59f1a010e7f9cd3f85b20d1d03b7c8d2092e05b98998ab61"
+        },
+        {
+          "id": "W_01_ANS_SetDesiredRotation_C",
+          "semantic": "RotationTracking",
+          "source_class": "ANS_SetDesiredRotation_C",
+          "begin_s": 0.0,
+          "end_s": 0.236,
+          "raw_end_s": 0.236,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.0,
+          "normalised_end": 0.186316,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "116a4cef00e268c76e75fd7dfd5181ac92a465d462186fafbe5ec04b6ede0010"
+        },
+        {
+          "id": "W_02_ANS_CollisionTrace_C",
+          "semantic": "ActiveDamage",
+          "source_class": "ANS_CollisionTrace_C",
+          "begin_s": 0.141,
+          "end_s": 0.444,
+          "raw_end_s": 0.444,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.111316,
+          "normalised_end": 0.350526,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "86cf2aaa62ad7db43a8887095606f354f0efe5def4155225d728a2457f0627c8"
+        }
+      ],
+      "markers": [
+        {
+          "id": "M_00_AnimNotify_PlaySound",
+          "semantic": "AcousticCue",
+          "source_class": "AnimNotify_PlaySound",
+          "position_s": 0.141,
+          "normalised_position": 0.111316,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "a24f6a7550e69ce0edb89ced1d89a1dffeae9b0df0f267f71ffabb01808bed10",
+          "provenance": "montage_notifies_export"
+        },
+        {
+          "id": "M_01_AN_EndAnimatingAbility_C",
+          "semantic": "AbilityEndMarker",
+          "source_class": "AN_EndAnimatingAbility_C",
+          "position_s": 0.83,
+          "normalised_position": 0.655263,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "c0db85af904d51cdf9e0f1360988a25341d5f100e8b556965b61d45a63c7fef4",
+          "provenance": "montage_notifies_export"
+        }
+      ],
+      "payload_sha256": "7d55df0d97422823f97f56572289954cc3c378fc0ccefdfac57de49e1461687b"
+    },
+    "GS_Attack03_Montage": {
+      "name": "GS_Attack03_Montage",
+      "length_s": 1.2666666507720947,
+      "rate_scale": 1.0,
+      "blend_in": 0.25,
+      "blend_out": 0.25,
+      "section_graph": {
+        "declared_sections_count": 1,
+        "topology": "UNVERIFIED_IN_TEXT_EXPORT",
+        "sections": [
+          {
+            "inferred_name": "Default",
+            "start_s": 0.0,
+            "end_s": 1.2666666507720947,
+            "next_section": null,
+            "note": "Section name 'Default' inferred; section track boundaries and linkages unexported in montage_notifies_2026-10-25.txt"
+          }
+        ],
+        "note": "Single section declared in export; full montage section track layout unexported"
+      },
+      "has_associated_movesheet": true,
+      "movesheet_declared_intent": {
+        "has_declared_intent": false,
+        "reason": "No authored sidecar exists for third-party pack clip; pack assets are unedited",
+        "source_file": null,
+        "source_hash": null,
+        "commit_time_s": null,
+        "windup_end_s": null,
+        "active_start_s": null,
+        "active_end_s": null,
+        "recovery_end_s": null,
+        "impact_time_s": null,
+        "is_looping": null,
+        "notes": null
+      },
+      "windows": [
+        {
+          "id": "W_00_ANS_DisableMovement_C",
+          "semantic": "MovementLock",
+          "source_class": "ANS_DisableMovement_C",
+          "begin_s": 0.0,
+          "end_s": 1.2666666507720947,
+          "raw_end_s": 1.267,
+          "is_clipped_at_end": true,
+          "normalised_begin": 0.0,
+          "normalised_end": 1.0,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "e0bc55288f741e6c59f1a010e7f9cd3f85b20d1d03b7c8d2092e05b98998ab61"
+        },
+        {
+          "id": "W_01_ANS_SetDesiredRotation_C",
+          "semantic": "RotationTracking",
+          "source_class": "ANS_SetDesiredRotation_C",
+          "begin_s": 0.0,
+          "end_s": 0.279,
+          "raw_end_s": 0.279,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.0,
+          "normalised_end": 0.220263,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "674aa91473f0d0a1347e79ce36a4685733bccd0b44e7c62e5d293453788bc925"
+        },
+        {
+          "id": "W_02_ANS_CollisionTrace_C",
+          "semantic": "ActiveDamage",
+          "source_class": "ANS_CollisionTrace_C",
+          "begin_s": 0.115,
+          "end_s": 0.418,
+          "raw_end_s": 0.418,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.090789,
+          "normalised_end": 0.33,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "cb36e10e24273557781288062e6a60cdfccefed8aa481ee0706c0141582a371b"
+        }
+      ],
+      "markers": [
+        {
+          "id": "M_00_AnimNotify_PlaySound",
+          "semantic": "AcousticCue",
+          "source_class": "AnimNotify_PlaySound",
+          "position_s": 0.114,
+          "normalised_position": 0.09,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "82c8cb346fe80b7a9ee3fb8b4e03139d406c8025367ceea1cd4fd0ec87fceaa4",
+          "provenance": "montage_notifies_export"
+        }
+      ],
+      "payload_sha256": "f2cacee366aaaa2230e56238eaacbbea2824203a5bec36de8efceff1c1c77c5d"
+    },
+    "GS_Attack04_Montage": {
+      "name": "GS_Attack04_Montage",
+      "length_s": 1.4666666984558105,
+      "rate_scale": 1.0,
+      "blend_in": 0.25,
+      "blend_out": 0.25,
+      "section_graph": {
+        "declared_sections_count": 1,
+        "topology": "UNVERIFIED_IN_TEXT_EXPORT",
+        "sections": [
+          {
+            "inferred_name": "Default",
+            "start_s": 0.0,
+            "end_s": 1.4666666984558105,
+            "next_section": null,
+            "note": "Section name 'Default' inferred; section track boundaries and linkages unexported in montage_notifies_2026-10-25.txt"
+          }
+        ],
+        "note": "Single section declared in export; full montage section track layout unexported"
+      },
+      "has_associated_movesheet": true,
+      "movesheet_declared_intent": {
+        "has_declared_intent": false,
+        "reason": "No authored sidecar exists for third-party pack clip; pack assets are unedited",
+        "source_file": null,
+        "source_hash": null,
+        "commit_time_s": null,
+        "windup_end_s": null,
+        "active_start_s": null,
+        "active_end_s": null,
+        "recovery_end_s": null,
+        "impact_time_s": null,
+        "is_looping": null,
+        "notes": null
+      },
+      "windows": [
+        {
+          "id": "W_00_ANS_DisableMovement_C",
+          "semantic": "MovementLock",
+          "source_class": "ANS_DisableMovement_C",
+          "begin_s": 0.0,
+          "end_s": 1.4666666984558105,
+          "raw_end_s": 1.467,
+          "is_clipped_at_end": true,
+          "normalised_begin": 0.0,
+          "normalised_end": 1.0,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "22fe8c87387ef843672965d56ee95d2a9c876308e47ab971c14bbd86ceba4716"
+        },
+        {
+          "id": "W_01_ANS_SetDesiredRotation_C",
+          "semantic": "RotationTracking",
+          "source_class": "ANS_SetDesiredRotation_C",
+          "begin_s": 0.0,
+          "end_s": 0.279,
+          "raw_end_s": 0.279,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.0,
+          "normalised_end": 0.190227,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "674aa91473f0d0a1347e79ce36a4685733bccd0b44e7c62e5d293453788bc925"
+        },
+        {
+          "id": "W_02_ANS_CollisionTrace_C",
+          "semantic": "ActiveDamage",
+          "source_class": "ANS_CollisionTrace_C",
+          "begin_s": 0.162,
+          "end_s": 0.465,
+          "raw_end_s": 0.465,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.110455,
+          "normalised_end": 0.317045,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "b412a04a1df44f8dba07ad16598f9c3122f24a303a345d7f610713becb847755"
+        }
+      ],
+      "markers": [
+        {
+          "id": "M_00_AnimNotify_PlaySound",
+          "semantic": "AcousticCue",
+          "source_class": "AnimNotify_PlaySound",
+          "position_s": 0.159,
+          "normalised_position": 0.108409,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "9b4f0f13c412f0b0ebdf0a0052084406d248fdd5d667350f957c391525013d58",
+          "provenance": "montage_notifies_export"
+        }
+      ],
+      "payload_sha256": "02c9d88a50642a5f906ee7769bd0797ee1698d07aaf76472a62dbe26650af91f"
+    },
+    "GS_ChargedAttack_Montage": {
+      "name": "GS_ChargedAttack_Montage",
+      "length_s": 3.4000000953674316,
+      "rate_scale": 1.0,
+      "blend_in": 0.25,
+      "blend_out": 0.25,
+      "section_graph": {
+        "declared_sections_count": 1,
+        "topology": "UNVERIFIED_IN_TEXT_EXPORT",
+        "sections": [
+          {
+            "inferred_name": "Default",
+            "start_s": 0.0,
+            "end_s": 3.4000000953674316,
+            "next_section": null,
+            "note": "Section name 'Default' inferred; section track boundaries and linkages unexported in montage_notifies_2026-10-25.txt"
+          }
+        ],
+        "note": "Single section declared in export; full montage section track layout unexported"
+      },
+      "has_associated_movesheet": true,
+      "movesheet_declared_intent": {
+        "has_declared_intent": false,
+        "reason": "No authored sidecar exists for third-party pack clip; pack assets are unedited",
+        "source_file": null,
+        "source_hash": null,
+        "commit_time_s": null,
+        "windup_end_s": null,
+        "active_start_s": null,
+        "active_end_s": null,
+        "recovery_end_s": null,
+        "impact_time_s": null,
+        "is_looping": null,
+        "notes": null
+      },
+      "windows": [
+        {
+          "id": "W_00_ANS_DisableMovement_C",
+          "semantic": "MovementLock",
+          "source_class": "ANS_DisableMovement_C",
+          "begin_s": 0.0,
+          "end_s": 3.4000000953674316,
+          "raw_end_s": 4.933,
+          "is_clipped_at_end": true,
+          "normalised_begin": 0.0,
+          "normalised_end": 1.0,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "cc0c15572697ae1e519d150059af94498f7caa5e34ffc4ac7cb39cad0ef6e758"
+        },
+        {
+          "id": "W_01_ANS_CollisionTrace_C",
+          "semantic": "ActiveDamage",
+          "source_class": "ANS_CollisionTrace_C",
+          "begin_s": 1.567,
+          "end_s": 1.76,
+          "raw_end_s": 1.76,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.460882,
+          "normalised_end": 0.517647,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "c6e25f9fc8c1c2357d53f315650aa46a8a22e7f3d7010bc5ea64a0ee4cc6a375"
+        },
+        {
+          "id": "W_02_ANS_CollisionTrace_C",
+          "semantic": "ActiveDamage",
+          "source_class": "ANS_CollisionTrace_C",
+          "begin_s": 1.925,
+          "end_s": 2.104,
+          "raw_end_s": 2.104,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.566176,
+          "normalised_end": 0.618824,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "df596f6bb1fef1b43db24c0237c3871aefdd8a246a139c0935ffba352997366d"
+        }
+      ],
+      "markers": [
+        {
+          "id": "M_00_AnimNotify_PlaySound",
+          "semantic": "AcousticCue",
+          "source_class": "AnimNotify_PlaySound",
+          "position_s": 1.593,
+          "normalised_position": 0.468529,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "2da824d04d5b2cd2b1060ec89a606b3c3f659e666afe331753a040fa5c6fc134",
+          "provenance": "montage_notifies_export"
+        },
+        {
+          "id": "M_01_AnimNotify_PlaySound",
+          "semantic": "AcousticCue",
+          "source_class": "AnimNotify_PlaySound",
+          "position_s": 1.817,
+          "normalised_position": 0.534412,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "9138a2c88c0ee0e5214534d0c28ce47b9f5245535b47f93644bca880dc22b1b3",
+          "provenance": "montage_notifies_export"
+        }
+      ],
+      "payload_sha256": "406d4d96b638e9e0e0b749c5935aa6d5a27c371421d5e55b06749f1b71129ef9"
+    },
+    "GS_LeapAttack_Montage": {
+      "name": "GS_LeapAttack_Montage",
+      "length_s": 1.8666666746139526,
+      "rate_scale": 1.0,
+      "blend_in": 0.25,
+      "blend_out": 0.25,
+      "section_graph": {
+        "declared_sections_count": 1,
+        "topology": "UNVERIFIED_IN_TEXT_EXPORT",
+        "sections": [
+          {
+            "inferred_name": "Default",
+            "start_s": 0.0,
+            "end_s": 1.8666666746139526,
+            "next_section": null,
+            "note": "Section name 'Default' inferred; section track boundaries and linkages unexported in montage_notifies_2026-10-25.txt"
+          }
+        ],
+        "note": "Single section declared in export; full montage section track layout unexported"
+      },
+      "has_associated_movesheet": true,
+      "movesheet_declared_intent": {
+        "has_declared_intent": false,
+        "reason": "No authored sidecar exists for third-party pack clip; pack assets are unedited",
+        "source_file": null,
+        "source_hash": null,
+        "commit_time_s": null,
+        "windup_end_s": null,
+        "active_start_s": null,
+        "active_end_s": null,
+        "recovery_end_s": null,
+        "impact_time_s": null,
+        "is_looping": null,
+        "notes": null
+      },
+      "windows": [
+        {
+          "id": "W_00_ANS_SetDesiredRotation_C",
+          "semantic": "RotationTracking",
+          "source_class": "ANS_SetDesiredRotation_C",
+          "begin_s": 0.0,
+          "end_s": 0.157,
+          "raw_end_s": 0.157,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.0,
+          "normalised_end": 0.084107,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "3540a232f1dc638ee95cf67469f0f2698c59e1119c82dcd463463b384f28ede0"
+        },
+        {
+          "id": "W_01_ANS_SetDesiredRotation_C",
+          "semantic": "RotationTracking",
+          "source_class": "ANS_SetDesiredRotation_C",
+          "begin_s": 0.691,
+          "end_s": 0.832,
+          "raw_end_s": 0.832,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.370179,
+          "normalised_end": 0.445714,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "17fb28c5884d08636afe020dd7eeded270cfc75c43f4c313e862807ac8aebba8"
+        },
+        {
+          "id": "W_02_ANS_CollisionTrace_C",
+          "semantic": "ActiveDamage",
+          "source_class": "ANS_CollisionTrace_C",
+          "begin_s": 0.754,
+          "end_s": 1.175,
+          "raw_end_s": 1.175,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.403929,
+          "normalised_end": 0.629464,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "1f96ea5cb645fc4da645cac72cf535e788ed861d333ea38fe0fd0e40fbd7f1a4"
+        }
+      ],
+      "markers": [],
+      "payload_sha256": "29c7576c2648db50faf2c9e25ac977ad75034245438c412730b5fdce4b137f7c"
+    },
+    "GS_SprintAttackFollowUp_Montage": {
+      "name": "GS_SprintAttackFollowUp_Montage",
+      "length_s": 1.8666666746139526,
+      "rate_scale": 1.0,
+      "blend_in": 0.25,
+      "blend_out": 0.25,
+      "section_graph": {
+        "declared_sections_count": 1,
+        "topology": "UNVERIFIED_IN_TEXT_EXPORT",
+        "sections": [
+          {
+            "inferred_name": "Default",
+            "start_s": 0.0,
+            "end_s": 1.8666666746139526,
+            "next_section": null,
+            "note": "Section name 'Default' inferred; section track boundaries and linkages unexported in montage_notifies_2026-10-25.txt"
+          }
+        ],
+        "note": "Single section declared in export; full montage section track layout unexported"
+      },
+      "has_associated_movesheet": true,
+      "movesheet_declared_intent": {
+        "has_declared_intent": false,
+        "reason": "No authored sidecar exists for third-party pack clip; pack assets are unedited",
+        "source_file": null,
+        "source_hash": null,
+        "commit_time_s": null,
+        "windup_end_s": null,
+        "active_start_s": null,
+        "active_end_s": null,
+        "recovery_end_s": null,
+        "impact_time_s": null,
+        "is_looping": null,
+        "notes": null
+      },
+      "windows": [
+        {
+          "id": "W_00_ANS_DisableMovement_C",
+          "semantic": "MovementLock",
+          "source_class": "ANS_DisableMovement_C",
+          "begin_s": 0.0,
+          "end_s": 1.8666666746139526,
+          "raw_end_s": 3.4,
+          "is_clipped_at_end": true,
+          "normalised_begin": 0.0,
+          "normalised_end": 1.0,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "a785032a526efa43ecba59cbef2da76625cdf24b890d23433f65aca6359090c3"
+        },
+        {
+          "id": "W_01_ANS_CollisionTrace_C",
+          "semantic": "ActiveDamage",
+          "source_class": "ANS_CollisionTrace_C",
+          "begin_s": 0.037,
+          "end_s": 0.23,
+          "raw_end_s": 0.23,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.019821,
+          "normalised_end": 0.123214,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "95ad0d41ddb8c4dd74d2937626ea8c34362c71efc39fc496edfca3b2d9e1ab61"
+        },
+        {
+          "id": "W_02_ANS_CollisionTrace_C",
+          "semantic": "ActiveDamage",
+          "source_class": "ANS_CollisionTrace_C",
+          "begin_s": 0.364,
+          "end_s": 0.551,
+          "raw_end_s": 0.551,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.195,
+          "normalised_end": 0.295179,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "d3aef797e51241768bb56c9d9754befe43c0e4c35432976637f0b27c6de54ca4"
+        }
+      ],
+      "markers": [
+        {
+          "id": "M_00_AnimNotify_PlaySound",
+          "semantic": "AcousticCue",
+          "source_class": "AnimNotify_PlaySound",
+          "position_s": 0.037,
+          "normalised_position": 0.019821,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "1d01a1a815472c783bbfb31e1c134db4b2b3b6ac3e4692e51652acbd3d4eb762",
+          "provenance": "montage_notifies_export"
+        },
+        {
+          "id": "M_01_AnimNotify_PlaySound",
+          "semantic": "AcousticCue",
+          "source_class": "AnimNotify_PlaySound",
+          "position_s": 0.361,
+          "normalised_position": 0.193393,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "1a120528a03f3ff05fa35f7071f60657eb4610e54cd1af18fba87cbb4b1c7a76",
+          "provenance": "montage_notifies_export"
+        }
+      ],
+      "payload_sha256": "3d7ba8caff0dbded58b07c2d200e35c1459e464870b844d6bf2ef35a01f7bd88"
+    },
+    "Mid01_Anim_Montage": {
+      "name": "Mid01_Anim_Montage",
+      "length_s": 2.6666667461395264,
+      "rate_scale": 1.0,
+      "blend_in": 0.25,
+      "blend_out": 0.25,
+      "section_graph": {
+        "declared_sections_count": 1,
+        "topology": "UNVERIFIED_IN_TEXT_EXPORT",
+        "sections": [
+          {
+            "inferred_name": "Default",
+            "start_s": 0.0,
+            "end_s": 2.6666667461395264,
+            "next_section": null,
+            "note": "Section name 'Default' inferred; section track boundaries and linkages unexported in montage_notifies_2026-10-25.txt"
+          }
+        ],
+        "note": "Single section declared in export; full montage section track layout unexported"
+      },
+      "has_associated_movesheet": true,
+      "movesheet_declared_intent": {
+        "has_declared_intent": false,
+        "reason": "No authored sidecar exists for third-party pack clip; pack assets are unedited",
+        "source_file": null,
+        "source_hash": null,
+        "commit_time_s": null,
+        "windup_end_s": null,
+        "active_start_s": null,
+        "active_end_s": null,
+        "recovery_end_s": null,
+        "impact_time_s": null,
+        "is_looping": null,
+        "notes": null
+      },
+      "windows": [
+        {
+          "id": "W_00_ANS_SetDesiredRotation_C",
+          "semantic": "RotationTracking",
+          "source_class": "ANS_SetDesiredRotation_C",
+          "begin_s": 0.127,
+          "end_s": 0.615,
+          "raw_end_s": 0.615,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.047625,
+          "normalised_end": 0.230625,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "276006713c83480c483526e597e74a9eebfc420a1d4cfb01170074ba2779050f"
+        },
+        {
+          "id": "W_01_ANS_CollisionTrace_C",
+          "semantic": "ActiveDamage",
+          "source_class": "ANS_CollisionTrace_C",
+          "begin_s": 0.637,
+          "end_s": 0.884,
+          "raw_end_s": 0.884,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.238875,
+          "normalised_end": 0.3315,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "82a0a15af0c891ee5a8205cc4261dbe5c6943bab7290a3f4641ddc8c1c525ef5"
+        }
+      ],
+      "markers": [
+        {
+          "id": "M_00_AnimNotify_PlaySound",
+          "semantic": "AcousticCue",
+          "source_class": "AnimNotify_PlaySound",
+          "position_s": 0.627,
+          "normalised_position": 0.235125,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "021e8e9794096c4bf707245c5753542a0ee100205a17f6dd4ef15e2702000136",
+          "provenance": "montage_notifies_export"
+        }
+      ],
+      "payload_sha256": "ed42458a56470f2bfef5a1ea8d6478f55c3e5ff776e6aa2175ae24f2a8beefb2"
+    },
+    "RetaliationAttack_Montage": {
+      "name": "RetaliationAttack_Montage",
+      "length_s": 1.2666666507720947,
+      "rate_scale": 1.0,
+      "blend_in": 0.25,
+      "blend_out": 0.25,
+      "section_graph": {
+        "declared_sections_count": 1,
+        "topology": "UNVERIFIED_IN_TEXT_EXPORT",
+        "sections": [
+          {
+            "inferred_name": "Default",
+            "start_s": 0.0,
+            "end_s": 1.2666666507720947,
+            "next_section": null,
+            "note": "Section name 'Default' inferred; section track boundaries and linkages unexported in montage_notifies_2026-10-25.txt"
+          }
+        ],
+        "note": "Single section declared in export; full montage section track layout unexported"
+      },
+      "has_associated_movesheet": true,
+      "movesheet_declared_intent": {
+        "has_declared_intent": false,
+        "reason": "No authored sidecar exists for third-party pack clip; pack assets are unedited",
+        "source_file": null,
+        "source_hash": null,
+        "commit_time_s": null,
+        "windup_end_s": null,
+        "active_start_s": null,
+        "active_end_s": null,
+        "recovery_end_s": null,
+        "impact_time_s": null,
+        "is_looping": null,
+        "notes": null
+      },
+      "windows": [
+        {
+          "id": "W_00_ANS_DisableMovement_C",
+          "semantic": "MovementLock",
+          "source_class": "ANS_DisableMovement_C",
+          "begin_s": 0.0,
+          "end_s": 1.2666666507720947,
+          "raw_end_s": 1.267,
+          "is_clipped_at_end": true,
+          "normalised_begin": 0.0,
+          "normalised_end": 1.0,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "e0bc55288f741e6c59f1a010e7f9cd3f85b20d1d03b7c8d2092e05b98998ab61"
+        },
+        {
+          "id": "W_01_ANS_HitStunImmune_C",
+          "semantic": "Hyperarmor",
+          "source_class": "ANS_HitStunImmune_C",
+          "begin_s": 0.0,
+          "end_s": 1.2666666507720947,
+          "raw_end_s": 1.267,
+          "is_clipped_at_end": true,
+          "normalised_begin": 0.0,
+          "normalised_end": 1.0,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "8462230ea16d440737660fafe0a5d422cb8cedbf0a0619eba88c6470e4c14184"
+        },
+        {
+          "id": "W_02_ANS_SetDesiredRotation_C",
+          "semantic": "RotationTracking",
+          "source_class": "ANS_SetDesiredRotation_C",
+          "begin_s": 0.0,
+          "end_s": 0.257,
+          "raw_end_s": 0.257,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.0,
+          "normalised_end": 0.202895,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "bf05b612332d98ffa755f41aa4db7126ca5357ba4e479acf6995ddef87d210e7"
+        },
+        {
+          "id": "W_03_ANS_CollisionTrace_C",
+          "semantic": "ActiveDamage",
+          "source_class": "ANS_CollisionTrace_C",
+          "begin_s": 0.444,
+          "end_s": 0.63,
+          "raw_end_s": 0.63,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.350526,
+          "normalised_end": 0.497368,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "63d37ff1c73766b02d361a6f4bcfd619abe66af0b8db738bdaafe6131429c907"
+        },
+        {
+          "id": "W_04_AnimNotifyState_Trail",
+          "semantic": "WeaponVisualTrail",
+          "source_class": "AnimNotifyState_Trail",
+          "begin_s": 0.446,
+          "end_s": 0.636,
+          "raw_end_s": 0.636,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.352105,
+          "normalised_end": 0.502105,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "4bdd4a38a1e937125d267ee6a911d0894378c39210a3c2bf6b42c1f05874cfd0"
+        }
+      ],
+      "markers": [
+        {
+          "id": "M_00_AnimNotify_PlaySound",
+          "semantic": "AcousticCue",
+          "source_class": "AnimNotify_PlaySound",
+          "position_s": 0.446,
+          "normalised_position": 0.352105,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "7230a91f83d01d7fe153fd98f3f899ff7830c54bc41f49b285045a291d69cd47",
+          "provenance": "montage_notifies_export"
+        }
+      ],
+      "payload_sha256": "43f57fcb60bfcf06fe9b30d396788e621e01dd7e62ebf5c3f3a59be29352d817"
+    },
+    "AM_Boss01_A1": {
+      "name": "AM_Boss01_A1",
+      "length_s": 1.2000000476837158,
+      "rate_scale": 1.0,
+      "blend_in": 0.25,
+      "blend_out": 0.25,
+      "section_graph": {
+        "declared_sections_count": 1,
+        "topology": "UNVERIFIED_IN_TEXT_EXPORT",
+        "sections": [
+          {
+            "inferred_name": "Default",
+            "start_s": 0.0,
+            "end_s": 1.2000000476837158,
+            "next_section": null,
+            "note": "Section name 'Default' inferred; section track boundaries and linkages unexported in montage_notifies_2026-10-25.txt"
+          }
+        ],
+        "note": "Single section declared in export; full montage section track layout unexported"
+      },
+      "has_associated_movesheet": false,
+      "movesheet_declared_intent": null,
+      "windows": [
+        {
+          "id": "W_00_ANS_DisableMovement_C",
+          "semantic": "MovementLock",
+          "source_class": "ANS_DisableMovement_C",
+          "begin_s": 0.0,
+          "end_s": 0.5,
+          "raw_end_s": 0.5,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.0,
+          "normalised_end": 0.416667,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "e91832719d9cfa52caa6a6fe1095ae17494bda9737698236e9ff227e255ecc5d"
+        },
+        {
+          "id": "W_01_ANS_SetDesiredRotation_C",
+          "semantic": "RotationTracking",
+          "source_class": "ANS_SetDesiredRotation_C",
+          "begin_s": 0.0,
+          "end_s": 0.33,
+          "raw_end_s": 0.33,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.0,
+          "normalised_end": 0.275,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "3151305c545d4eca9cea48b0758894fd1acfd495f4c04b45ef5c4fa6cf8293ef"
+        },
+        {
+          "id": "W_02_ANS_CollisionTrace_C",
+          "semantic": "ActiveDamage",
+          "source_class": "ANS_CollisionTrace_C",
+          "begin_s": 0.35,
+          "end_s": 0.5,
+          "raw_end_s": 0.5,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.291667,
+          "normalised_end": 0.416667,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "2dc79ecfb75932754448e6067018f098f39006e9b88419a2b703d29681d2e958"
+        }
+      ],
+      "markers": [
+        {
+          "id": "M_00_AnimNotify_PlaySound",
+          "semantic": "AcousticCue",
+          "source_class": "AnimNotify_PlaySound",
+          "position_s": 0.33,
+          "normalised_position": 0.275,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "2bf36555cda46d0ce2586f2ca6839a993de8be27942ea2b5fed4050ec156a6b1",
+          "provenance": "montage_notifies_export"
+        }
+      ],
+      "payload_sha256": "3e12fd722b8e8cb9793dcaead3eeff4b4e8b00be895d7500c832e2c92af491a8"
+    },
+    "AM_Boss01_A3a": {
+      "name": "AM_Boss01_A3a",
+      "length_s": 0.800000011920929,
+      "rate_scale": 1.0,
+      "blend_in": 0.25,
+      "blend_out": 0.25,
+      "section_graph": {
+        "declared_sections_count": 1,
+        "topology": "UNVERIFIED_IN_TEXT_EXPORT",
+        "sections": [
+          {
+            "inferred_name": "Default",
+            "start_s": 0.0,
+            "end_s": 0.800000011920929,
+            "next_section": null,
+            "note": "Section name 'Default' inferred; section track boundaries and linkages unexported in montage_notifies_2026-10-25.txt"
+          }
+        ],
+        "note": "Single section declared in export; full montage section track layout unexported"
+      },
+      "has_associated_movesheet": false,
+      "movesheet_declared_intent": null,
+      "windows": [
+        {
+          "id": "W_00_ANS_DisableMovement_C",
+          "semantic": "MovementLock",
+          "source_class": "ANS_DisableMovement_C",
+          "begin_s": 0.0,
+          "end_s": 0.6,
+          "raw_end_s": 0.6,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.0,
+          "normalised_end": 0.75,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "0fcdfa6e21c14a57c8e4006ea917b511c07fcb0f9e44ca70942be9f7d94f087f"
+        },
+        {
+          "id": "W_01_ANS_SetDesiredRotation_C",
+          "semantic": "RotationTracking",
+          "source_class": "ANS_SetDesiredRotation_C",
+          "begin_s": 0.0,
+          "end_s": 0.38,
+          "raw_end_s": 0.38,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.0,
+          "normalised_end": 0.475,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "f0dffe229bc4d091bc999bdeceef0352ffef3c1d44e373fc9ade4f87d4d20f0f"
+        },
+        {
+          "id": "W_02_ANS_CollisionTrace_C",
+          "semantic": "ActiveDamage",
+          "source_class": "ANS_CollisionTrace_C",
+          "begin_s": 0.4,
+          "end_s": 0.6,
+          "raw_end_s": 0.6,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.5,
+          "normalised_end": 0.75,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "609d74e9b33d6bffebe87e0a5743309aad8c069d5017f177b3c6d051dfef503e"
+        }
+      ],
+      "markers": [
+        {
+          "id": "M_00_AnimNotify_PlaySound",
+          "semantic": "AcousticCue",
+          "source_class": "AnimNotify_PlaySound",
+          "position_s": 0.38,
+          "normalised_position": 0.475,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "d0a597ca34fa2a05e5a7c08172b9b260f9f219bcbf89294e9b58bcc86b58fb0b",
+          "provenance": "montage_notifies_export"
+        },
+        {
+          "id": "M_01_AN_PerformFollowUp_C",
+          "semantic": "ComboBranchMarker",
+          "source_class": "AN_PerformFollowUp_C",
+          "position_s": 0.75,
+          "normalised_position": 0.9375,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "d06dd67719c9c3b7cb00c75e1368f2871a630b0b72cde42a7465ac35cbf0cecb",
+          "provenance": "montage_notifies_export"
+        },
+        {
+          "id": "M_02_AN_EndAnimatingAbility_C",
+          "semantic": "AbilityEndMarker",
+          "source_class": "AN_EndAnimatingAbility_C",
+          "position_s": 0.78,
+          "normalised_position": 0.975,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "fd0f9844d9ce0fb4afd6d1a13b6eb098802748a1512f500422fd98fb542db345",
+          "provenance": "montage_notifies_export"
+        }
+      ],
+      "payload_sha256": "df81b57adebe2536d11852a7eae32e3ba2a78e5a1d88d94bf1a9233e7ca732e6"
+    },
+    "AM_Boss01_A3b": {
+      "name": "AM_Boss01_A3b",
+      "length_s": 1.3333333730697632,
+      "rate_scale": 1.0,
+      "blend_in": 0.25,
+      "blend_out": 0.25,
+      "section_graph": {
+        "declared_sections_count": 1,
+        "topology": "UNVERIFIED_IN_TEXT_EXPORT",
+        "sections": [
+          {
+            "inferred_name": "Default",
+            "start_s": 0.0,
+            "end_s": 1.3333333730697632,
+            "next_section": null,
+            "note": "Section name 'Default' inferred; section track boundaries and linkages unexported in montage_notifies_2026-10-25.txt"
+          }
+        ],
+        "note": "Single section declared in export; full montage section track layout unexported"
+      },
+      "has_associated_movesheet": false,
+      "movesheet_declared_intent": null,
+      "windows": [
+        {
+          "id": "W_00_ANS_DisableMovement_C",
+          "semantic": "MovementLock",
+          "source_class": "ANS_DisableMovement_C",
+          "begin_s": 0.0,
+          "end_s": 0.4,
+          "raw_end_s": 0.4,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.0,
+          "normalised_end": 0.3,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "ec3592037678a97de6ba613a697b042d9eda8acd8e21f7879ee2e11a07cca2c9"
+        },
+        {
+          "id": "W_01_ANS_SetDesiredRotation_C",
+          "semantic": "RotationTracking",
+          "source_class": "ANS_SetDesiredRotation_C",
+          "begin_s": 0.0,
+          "end_s": 0.13,
+          "raw_end_s": 0.13,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.0,
+          "normalised_end": 0.0975,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "d095942543ab5cd0bd95d8457a90006a510b61528bebe4f3feeb0469b0a0d127"
+        },
+        {
+          "id": "W_02_ANS_CollisionTrace_C",
+          "semantic": "ActiveDamage",
+          "source_class": "ANS_CollisionTrace_C",
+          "begin_s": 0.15,
+          "end_s": 0.4,
+          "raw_end_s": 0.4,
+          "is_clipped_at_end": false,
+          "normalised_begin": 0.1125,
+          "normalised_end": 0.3,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class, begin_s, and duration_s from montage_notifies_2026-10-25.txt; binary UObject properties and state pointers unexported",
+          "payload_hash": "ad54bb9b8175cba1231dc54599c182ef63d939de408c550a51d156bd934f2fd3"
+        }
+      ],
+      "markers": [
+        {
+          "id": "M_00_AnimNotify_PlaySound",
+          "semantic": "AcousticCue",
+          "source_class": "AnimNotify_PlaySound",
+          "position_s": 0.13,
+          "normalised_position": 0.0975,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "3fb7ee079a25541f21e116120a4b2c1cc6d5ddcf715600c227c9fed5288da82e",
+          "provenance": "montage_notifies_export"
+        },
+        {
+          "id": "M_01_AN_EndAnimatingAbility_C",
+          "semantic": "AbilityEndMarker",
+          "source_class": "AN_EndAnimatingAbility_C",
+          "position_s": 1.313,
+          "normalised_position": 0.98475,
+          "payload_scope": "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY",
+          "payload_scope_note": "Hash covers exported notify class and position_s from montage_notifies_2026-10-25.txt; binary UObject properties unexported",
+          "payload_hash": "f622b59ffb5a92959bc7b5b1033cc98bdf067927650fcd254373b0720c752133",
+          "provenance": "montage_notifies_export"
+        }
+      ],
+      "payload_sha256": "7c1ab9649d40af5b79daa0ae541df385b7781bb975223acd7273376807f196f2"
+    },
+    "AN_Boss01_A4_LowSweep": {
+      "name": "AN_Boss01_A4_LowSweep",
+      "length_s": 1.7666666507720947,
+      "rate_scale": 1.0,
+      "blend_in": 0.25,
+      "blend_out": 0.25,
+      "section_graph": {
+        "declared_sections_count": 1,
+        "topology": "UNVERIFIED_IN_TEXT_EXPORT",
+        "sections": [
+          {
+            "inferred_name": "Default",
+            "start_s": 0.0,
+            "end_s": 1.7666666507720947,
+            "next_section": null,
+            "note": "Section name 'Default' inferred; section track boundaries and linkages unexported in montage_notifies_2026-10-25.txt"
+          }
+        ],
+        "note": "Single section declared in export; full montage section track layout unexported"
+      },
+      "has_associated_movesheet": true,
+      "movesheet_declared_intent": {
+        "has_declared_intent": true,
+        "source_file": "Import/Boss01/Animations/AN_Boss01_A4_LowSweep.txt",
+        "source_hash": "277d40972528e68f9eccf71c7e2f8dbaefaf208d248588252e3e3d69695eae7f",
+        "commit_time_s": 0.5,
+        "windup_end_s": 0.6,
+        "active_start_s": 0.6,
+        "active_end_s": 0.9,
+        "recovery_end_s": 1.767,
+        "impact_time_s": null,
+        "is_looping": false,
+        "notes": "Authentic wide horizontal low sweep with greatsword held low across the arena floor (<40 cm above floor, below player knees for reliable jump counterplay). Windup coils torso and drops pelvis 16 cm (0.00-0.60s); active slash sweeps across 220 degree arc from right to left (0.60-0.90s); deceleration and recovery smoothly returns to combat idle (0.90-1.767s). Both feet stay grounded flat on the arena floor throughout (zero airborne lift)."
+      },
+      "windows": [],
+      "markers": [],
+      "payload_sha256": "7b0c215e36ecdde7e70d9ff511d9216811c728b9cf234378ef717434e1efbdbc"
+    },
+    "AN_Boss01_A5_JavelinThrow": {
+      "name": "AN_Boss01_A5_JavelinThrow",
+      "length_s": 1.0,
+      "rate_scale": 1.0,
+      "blend_in": 0.25,
+      "blend_out": 0.25,
+      "section_graph": {
+        "declared_sections_count": 1,
+        "topology": "UNVERIFIED_IN_TEXT_EXPORT",
+        "sections": [
+          {
+            "inferred_name": "Default",
+            "start_s": 0.0,
+            "end_s": 1.0,
+            "next_section": null,
+            "note": "Section name 'Default' inferred; section track boundaries and linkages unexported in montage_notifies_2026-10-25.txt"
+          }
+        ],
+        "note": "Single section declared in export; full montage section track layout unexported"
+      },
+      "has_associated_movesheet": true,
+      "movesheet_declared_intent": {
+        "has_declared_intent": true,
+        "source_file": "Import/Boss01/Animations/AN_Boss01_A5_JavelinThrow.txt",
+        "source_hash": "7fa8400b6a8ef224694c5a7cef57a18a1be7e5fb61f0b7ca15c6daaa9e099092",
+        "commit_time_s": 0.35,
+        "windup_end_s": 0.4,
+        "active_start_s": 0.4,
+        "active_end_s": 0.43,
+        "recovery_end_s": 1.0,
+        "impact_time_s": null,
+        "is_looping": false,
+        "notes": "Telegraph and throw of the ember javelin from the left brazier gauntlet. Windup draws the left arm back high beside the cowl (0.00-0.40s) with glowing ember telegraph from the dorsal crucible; projectile release event occurs at 0.40s (Frame 12); overhand follow-through and recoil returns cleanly to combat idle (0.40-1.00s). Both feet stay grounded flat on the arena floor throughout (zero airborne lift)."
+      },
+      "windows": [],
+      "markers": [],
+      "payload_sha256": "c22f0aa0167b0a69396dba579f39c5ca2b089f029886cbf0e0e1ceb2692380d3"
+    }
+  },
+  "interval_crossing_samples": {
+    "GS_Attack01_Montage": [
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.0,
+          0.1
+        ],
+        "crossings_count": 2,
+        "crossings": [
+          {
+            "id": "W_00_ANS_DisableMovement_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          },
+          {
+            "id": "W_01_ANS_SetDesiredRotation_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.1,
+          0.2
+        ],
+        "crossings_count": 2,
+        "crossings": [
+          {
+            "id": "M_00_AnimNotify_PlaySound",
+            "edge": "Marker",
+            "time_s": 0.164,
+            "loop": 0
+          },
+          {
+            "id": "W_02_ANS_CollisionTrace_C",
+            "edge": "Begin",
+            "time_s": 0.166,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.2,
+          0.3
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.3,
+          0.4
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_01_ANS_SetDesiredRotation_C",
+            "edge": "End",
+            "time_s": 0.317,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.4,
+          0.5
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_02_ANS_CollisionTrace_C",
+            "edge": "End",
+            "time_s": 0.469,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.5,
+          0.6
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "M_01_AN_PerformFollowUp_C",
+            "edge": "Marker",
+            "time_s": 0.544,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.6,
+          0.7
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.7,
+          0.8
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.8,
+          0.9
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.9,
+          1.0
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "M_02_AN_EndAnimatingAbility_C",
+            "edge": "Marker",
+            "time_s": 0.962,
+            "loop": 0
+          }
+        ]
+      }
+    ],
+    "GS_Attack02_Montage": [
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.0,
+          0.1
+        ],
+        "crossings_count": 2,
+        "crossings": [
+          {
+            "id": "W_00_ANS_DisableMovement_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          },
+          {
+            "id": "W_01_ANS_SetDesiredRotation_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.1,
+          0.2
+        ],
+        "crossings_count": 2,
+        "crossings": [
+          {
+            "id": "W_02_ANS_CollisionTrace_C",
+            "edge": "Begin",
+            "time_s": 0.141,
+            "loop": 0
+          },
+          {
+            "id": "M_00_AnimNotify_PlaySound",
+            "edge": "Marker",
+            "time_s": 0.141,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.2,
+          0.3
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_01_ANS_SetDesiredRotation_C",
+            "edge": "End",
+            "time_s": 0.236,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.3,
+          0.4
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.4,
+          0.5
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_02_ANS_CollisionTrace_C",
+            "edge": "End",
+            "time_s": 0.444,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.5,
+          0.6
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.6,
+          0.7
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.7,
+          0.8
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.8,
+          0.9
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "M_01_AN_EndAnimatingAbility_C",
+            "edge": "Marker",
+            "time_s": 0.83,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.9,
+          1.0
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      }
+    ],
+    "GS_Attack03_Montage": [
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.0,
+          0.1
+        ],
+        "crossings_count": 2,
+        "crossings": [
+          {
+            "id": "W_00_ANS_DisableMovement_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          },
+          {
+            "id": "W_01_ANS_SetDesiredRotation_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.1,
+          0.2
+        ],
+        "crossings_count": 2,
+        "crossings": [
+          {
+            "id": "M_00_AnimNotify_PlaySound",
+            "edge": "Marker",
+            "time_s": 0.114,
+            "loop": 0
+          },
+          {
+            "id": "W_02_ANS_CollisionTrace_C",
+            "edge": "Begin",
+            "time_s": 0.115,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.2,
+          0.3
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_01_ANS_SetDesiredRotation_C",
+            "edge": "End",
+            "time_s": 0.279,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.3,
+          0.4
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.4,
+          0.5
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_02_ANS_CollisionTrace_C",
+            "edge": "End",
+            "time_s": 0.418,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.5,
+          0.6
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.6,
+          0.7
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.7,
+          0.8
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.8,
+          0.9
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.9,
+          1.0
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      }
+    ],
+    "GS_Attack04_Montage": [
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.0,
+          0.1
+        ],
+        "crossings_count": 2,
+        "crossings": [
+          {
+            "id": "W_00_ANS_DisableMovement_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          },
+          {
+            "id": "W_01_ANS_SetDesiredRotation_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.1,
+          0.2
+        ],
+        "crossings_count": 2,
+        "crossings": [
+          {
+            "id": "M_00_AnimNotify_PlaySound",
+            "edge": "Marker",
+            "time_s": 0.159,
+            "loop": 0
+          },
+          {
+            "id": "W_02_ANS_CollisionTrace_C",
+            "edge": "Begin",
+            "time_s": 0.162,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.2,
+          0.3
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_01_ANS_SetDesiredRotation_C",
+            "edge": "End",
+            "time_s": 0.279,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.3,
+          0.4
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.4,
+          0.5
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_02_ANS_CollisionTrace_C",
+            "edge": "End",
+            "time_s": 0.465,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.5,
+          0.6
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.6,
+          0.7
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.7,
+          0.8
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.8,
+          0.9
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.9,
+          1.0
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      }
+    ],
+    "GS_ChargedAttack_Montage": [
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.0,
+          0.1
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_00_ANS_DisableMovement_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.1,
+          0.2
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.2,
+          0.3
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.3,
+          0.4
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.4,
+          0.5
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.5,
+          0.6
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.6,
+          0.7
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.7,
+          0.8
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.8,
+          0.9
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.9,
+          1.0
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      }
+    ],
+    "GS_LeapAttack_Montage": [
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.0,
+          0.1
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_00_ANS_SetDesiredRotation_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.1,
+          0.2
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_00_ANS_SetDesiredRotation_C",
+            "edge": "End",
+            "time_s": 0.157,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.2,
+          0.3
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.3,
+          0.4
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.4,
+          0.5
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.5,
+          0.6
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.6,
+          0.7
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_01_ANS_SetDesiredRotation_C",
+            "edge": "Begin",
+            "time_s": 0.691,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.7,
+          0.8
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_02_ANS_CollisionTrace_C",
+            "edge": "Begin",
+            "time_s": 0.754,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.8,
+          0.9
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_01_ANS_SetDesiredRotation_C",
+            "edge": "End",
+            "time_s": 0.832,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.9,
+          1.0
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      }
+    ],
+    "GS_SprintAttackFollowUp_Montage": [
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.0,
+          0.1
+        ],
+        "crossings_count": 3,
+        "crossings": [
+          {
+            "id": "W_00_ANS_DisableMovement_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          },
+          {
+            "id": "W_01_ANS_CollisionTrace_C",
+            "edge": "Begin",
+            "time_s": 0.037,
+            "loop": 0
+          },
+          {
+            "id": "M_00_AnimNotify_PlaySound",
+            "edge": "Marker",
+            "time_s": 0.037,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.1,
+          0.2
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.2,
+          0.3
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_01_ANS_CollisionTrace_C",
+            "edge": "End",
+            "time_s": 0.23,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.3,
+          0.4
+        ],
+        "crossings_count": 2,
+        "crossings": [
+          {
+            "id": "M_01_AnimNotify_PlaySound",
+            "edge": "Marker",
+            "time_s": 0.361,
+            "loop": 0
+          },
+          {
+            "id": "W_02_ANS_CollisionTrace_C",
+            "edge": "Begin",
+            "time_s": 0.364,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.4,
+          0.5
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.5,
+          0.6
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_02_ANS_CollisionTrace_C",
+            "edge": "End",
+            "time_s": 0.551,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.6,
+          0.7
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.7,
+          0.8
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.8,
+          0.9
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.9,
+          1.0
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      }
+    ],
+    "Mid01_Anim_Montage": [
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.0,
+          0.1
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.1,
+          0.2
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_00_ANS_SetDesiredRotation_C",
+            "edge": "Begin",
+            "time_s": 0.127,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.2,
+          0.3
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.3,
+          0.4
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.4,
+          0.5
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.5,
+          0.6
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.6,
+          0.7
+        ],
+        "crossings_count": 3,
+        "crossings": [
+          {
+            "id": "W_00_ANS_SetDesiredRotation_C",
+            "edge": "End",
+            "time_s": 0.615,
+            "loop": 0
+          },
+          {
+            "id": "M_00_AnimNotify_PlaySound",
+            "edge": "Marker",
+            "time_s": 0.627,
+            "loop": 0
+          },
+          {
+            "id": "W_01_ANS_CollisionTrace_C",
+            "edge": "Begin",
+            "time_s": 0.637,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.7,
+          0.8
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.8,
+          0.9
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_01_ANS_CollisionTrace_C",
+            "edge": "End",
+            "time_s": 0.884,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.9,
+          1.0
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      }
+    ],
+    "RetaliationAttack_Montage": [
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.0,
+          0.1
+        ],
+        "crossings_count": 3,
+        "crossings": [
+          {
+            "id": "W_00_ANS_DisableMovement_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          },
+          {
+            "id": "W_01_ANS_HitStunImmune_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          },
+          {
+            "id": "W_02_ANS_SetDesiredRotation_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.1,
+          0.2
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.2,
+          0.3
+        ],
+        "crossings_count": 1,
+        "crossings": [
+          {
+            "id": "W_02_ANS_SetDesiredRotation_C",
+            "edge": "End",
+            "time_s": 0.257,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.3,
+          0.4
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.4,
+          0.5
+        ],
+        "crossings_count": 3,
+        "crossings": [
+          {
+            "id": "W_03_ANS_CollisionTrace_C",
+            "edge": "Begin",
+            "time_s": 0.444,
+            "loop": 0
+          },
+          {
+            "id": "W_04_AnimNotifyState_Trail",
+            "edge": "Begin",
+            "time_s": 0.446,
+            "loop": 0
+          },
+          {
+            "id": "M_00_AnimNotify_PlaySound",
+            "edge": "Marker",
+            "time_s": 0.446,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.5,
+          0.6
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.6,
+          0.7
+        ],
+        "crossings_count": 2,
+        "crossings": [
+          {
+            "id": "W_03_ANS_CollisionTrace_C",
+            "edge": "End",
+            "time_s": 0.63,
+            "loop": 0
+          },
+          {
+            "id": "W_04_AnimNotifyState_Trail",
+            "edge": "End",
+            "time_s": 0.636,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.7,
+          0.8
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.8,
+          0.9
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.9,
+          1.0
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      }
+    ],
+    "AM_Boss01_A1": [
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.0,
+          0.1
+        ],
+        "crossings_count": 2,
+        "crossings": [
+          {
+            "id": "W_00_ANS_DisableMovement_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          },
+          {
+            "id": "W_01_ANS_SetDesiredRotation_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.1,
+          0.2
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.2,
+          0.3
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.3,
+          0.4
+        ],
+        "crossings_count": 3,
+        "crossings": [
+          {
+            "id": "W_01_ANS_SetDesiredRotation_C",
+            "edge": "End",
+            "time_s": 0.33,
+            "loop": 0
+          },
+          {
+            "id": "M_00_AnimNotify_PlaySound",
+            "edge": "Marker",
+            "time_s": 0.33,
+            "loop": 0
+          },
+          {
+            "id": "W_02_ANS_CollisionTrace_C",
+            "edge": "Begin",
+            "time_s": 0.35,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.4,
+          0.5
+        ],
+        "crossings_count": 2,
+        "crossings": [
+          {
+            "id": "W_00_ANS_DisableMovement_C",
+            "edge": "End",
+            "time_s": 0.5,
+            "loop": 0
+          },
+          {
+            "id": "W_02_ANS_CollisionTrace_C",
+            "edge": "End",
+            "time_s": 0.5,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.5,
+          0.6
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.6,
+          0.7
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.7,
+          0.8
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.8,
+          0.9
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.9,
+          1.0
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      }
+    ],
+    "AM_Boss01_A3a": [
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.0,
+          0.1
+        ],
+        "crossings_count": 2,
+        "crossings": [
+          {
+            "id": "W_00_ANS_DisableMovement_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          },
+          {
+            "id": "W_01_ANS_SetDesiredRotation_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.1,
+          0.2
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.2,
+          0.3
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.3,
+          0.4
+        ],
+        "crossings_count": 3,
+        "crossings": [
+          {
+            "id": "W_01_ANS_SetDesiredRotation_C",
+            "edge": "End",
+            "time_s": 0.38,
+            "loop": 0
+          },
+          {
+            "id": "M_00_AnimNotify_PlaySound",
+            "edge": "Marker",
+            "time_s": 0.38,
+            "loop": 0
+          },
+          {
+            "id": "W_02_ANS_CollisionTrace_C",
+            "edge": "Begin",
+            "time_s": 0.4,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.4,
+          0.5
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.5,
+          0.6
+        ],
+        "crossings_count": 2,
+        "crossings": [
+          {
+            "id": "W_00_ANS_DisableMovement_C",
+            "edge": "End",
+            "time_s": 0.6,
+            "loop": 0
+          },
+          {
+            "id": "W_02_ANS_CollisionTrace_C",
+            "edge": "End",
+            "time_s": 0.6,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.6,
+          0.7
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.7,
+          0.8
+        ],
+        "crossings_count": 2,
+        "crossings": [
+          {
+            "id": "M_01_AN_PerformFollowUp_C",
+            "edge": "Marker",
+            "time_s": 0.75,
+            "loop": 0
+          },
+          {
+            "id": "M_02_AN_EndAnimatingAbility_C",
+            "edge": "Marker",
+            "time_s": 0.78,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "INCONCLUSIVE",
+        "reason": "Position out of bounds: prev=0.8, curr=0.9, length=0.800000011920929",
+        "crossings": []
+      }
+    ],
+    "AM_Boss01_A3b": [
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.0,
+          0.1
+        ],
+        "crossings_count": 2,
+        "crossings": [
+          {
+            "id": "W_00_ANS_DisableMovement_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          },
+          {
+            "id": "W_01_ANS_SetDesiredRotation_C",
+            "edge": "Begin",
+            "time_s": 0.0,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.1,
+          0.2
+        ],
+        "crossings_count": 3,
+        "crossings": [
+          {
+            "id": "W_01_ANS_SetDesiredRotation_C",
+            "edge": "End",
+            "time_s": 0.13,
+            "loop": 0
+          },
+          {
+            "id": "M_00_AnimNotify_PlaySound",
+            "edge": "Marker",
+            "time_s": 0.13,
+            "loop": 0
+          },
+          {
+            "id": "W_02_ANS_CollisionTrace_C",
+            "edge": "Begin",
+            "time_s": 0.15,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.2,
+          0.3
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.3,
+          0.4
+        ],
+        "crossings_count": 2,
+        "crossings": [
+          {
+            "id": "W_00_ANS_DisableMovement_C",
+            "edge": "End",
+            "time_s": 0.4,
+            "loop": 0
+          },
+          {
+            "id": "W_02_ANS_CollisionTrace_C",
+            "edge": "End",
+            "time_s": 0.4,
+            "loop": 0
+          }
+        ]
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.4,
+          0.5
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.5,
+          0.6
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.6,
+          0.7
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.7,
+          0.8
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.8,
+          0.9
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.9,
+          1.0
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      }
+    ],
+    "AN_Boss01_A4_LowSweep": [
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.0,
+          0.1
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.1,
+          0.2
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.2,
+          0.3
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.3,
+          0.4
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.4,
+          0.5
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.5,
+          0.6
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.6,
+          0.7
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.7,
+          0.8
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.8,
+          0.9
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.9,
+          1.0
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      }
+    ],
+    "AN_Boss01_A5_JavelinThrow": [
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.0,
+          0.1
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.1,
+          0.2
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.2,
+          0.3
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.3,
+          0.4
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.4,
+          0.5
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.5,
+          0.6
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.6,
+          0.7
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.7,
+          0.8
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.8,
+          0.9
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      },
+      {
+        "status": "MATCH",
+        "traversal": "Forward",
+        "interval": [
+          0.9,
+          1.0
+        ],
+        "crossings_count": 0,
+        "crossings": []
+      }
+    ]
+  }
+}

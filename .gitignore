@@ -132,5 +132,5 @@ Content/__ExternalActors__/Free_Spells/
 Content/__ExternalObjects__/Free_Spells/
 *.pyc
 __pycache__/
-scratch/
+/scratch/
 Docs/BossCombatReview/Execution/Codex/WP6Support/

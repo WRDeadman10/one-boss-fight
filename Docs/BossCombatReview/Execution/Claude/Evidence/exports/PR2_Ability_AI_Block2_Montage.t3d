@@ -1,0 +1,31 @@
+Begin Object Class=/Script/Engine.AnimMontage Name="Ability_AI_Block2_Montage" ExportPath="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Ability_AI_Block2_Montage.Ability_AI_Block2_Montage'"
+   Begin Object Class=/Script/Engine.AnimDataModel Name="AnimDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Ability_AI_Block2_Montage.Ability_AI_Block2_Montage:AnimDataModel'"
+   End Object
+   Begin Object Class=/Script/UnrealEd.SceneThumbnailInfo Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Ability_AI_Block2_Montage.Ability_AI_Block2_Montage:SceneThumbnailInfo_0'"
+   End Object
+   Begin Object Class=/Script/Engine.AnimDataModel Name="AnimationDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Ability_AI_Block2_Montage.Ability_AI_Block2_Montage:AnimationDataModel'"
+   End Object
+   Begin Object Name="AnimDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Ability_AI_Block2_Montage.Ability_AI_Block2_Montage:AnimDataModel'"
+      NumberOfFrames=25679
+      NumberOfKeys=25680
+      bPopulated=True
+   End Object
+   Begin Object Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Ability_AI_Block2_Montage.Ability_AI_Block2_Montage:SceneThumbnailInfo_0'"
+   End Object
+   Begin Object Name="AnimationDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Ability_AI_Block2_Montage.Ability_AI_Block2_Montage:AnimationDataModel'"
+      PlayLength=0.033333
+      FrameRate=(Numerator=30)
+      NumberOfFrames=1
+      NumberOfKeys=2
+   End Object
+   BlendIn=(BlendTime=0.000000)
+   CompositeSections(0)=(SectionName="Default",LinkedMontage="/Script/Engine.AnimMontage'Ability_AI_Block2_Montage'",SegmentIndex=0,SegmentLength=0.427984,LinkedSequence="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Ability_Block2.Ability_Block2'")
+   SlotAnimTracks(0)=(AnimTrack=(AnimSegments=((AnimReference="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/Defend/Ability_Block2.Ability_Block2'",AnimEndTime=0.427984))))
+   CommonTargetFrameRate=(Numerator=28038458,Denominator=1000000)
+   SequenceLength=0.427983
+   AnimNotifyTracks(0)=(TrackName="1",TrackColor=(R=0.500000,G=0.500000,B=0.500000,A=1.000000))
+   DataModelInterface=AnimDataModel'Ability_AI_Block2_Montage:AnimDataModel'
+   Skeleton="/Script/Engine.Skeleton'/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin'"
+   ThumbnailInfo="/Script/UnrealEd.SceneThumbnailInfo'SceneThumbnailInfo_0'"
+   PreviewSkeletalMesh="/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SKM_CombatMannequin.SKM_CombatMannequin"
+End Object

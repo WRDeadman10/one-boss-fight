@@ -1,0 +1,34 @@
+Begin Object Class=/Script/Engine.AnimMontage Name="Idle_Turn_Left_90_Anim_Montage" ExportPath="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/TurnInPlace/Idle_Turn_Left_90_Anim_Montage.Idle_Turn_Left_90_Anim_Montage'"
+   Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/AnimNotifes/AN_EndAnimatingAbility.AN_EndAnimatingAbility_C Name="AN_EndAnimatingAbility_C_0" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/AnimNotifes/AN_EndAnimatingAbility.AN_EndAnimatingAbility_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/TurnInPlace/Idle_Turn_Left_90_Anim_Montage.Idle_Turn_Left_90_Anim_Montage:AN_EndAnimatingAbility_C_0'"
+   End Object
+   Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_AddActorRotation.ANS_AddActorRotation_C Name="ANS_AddActorRotation_C_0" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_AddActorRotation.ANS_AddActorRotation_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/TurnInPlace/Idle_Turn_Left_90_Anim_Montage.Idle_Turn_Left_90_Anim_Montage:ANS_AddActorRotation_C_0'"
+   End Object
+   Begin Object Class=/Script/UnrealEd.SceneThumbnailInfo Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/TurnInPlace/Idle_Turn_Left_90_Anim_Montage.Idle_Turn_Left_90_Anim_Montage:SceneThumbnailInfo_0'"
+   End Object
+   Begin Object Class=/Script/Engine.AnimDataModel Name="AnimDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/TurnInPlace/Idle_Turn_Left_90_Anim_Montage.Idle_Turn_Left_90_Anim_Montage:AnimDataModel'"
+   End Object
+   Begin Object Name="AN_EndAnimatingAbility_C_0" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/AnimNotifes/AN_EndAnimatingAbility.AN_EndAnimatingAbility_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/TurnInPlace/Idle_Turn_Left_90_Anim_Montage.Idle_Turn_Left_90_Anim_Montage:AN_EndAnimatingAbility_C_0'"
+   End Object
+   Begin Object Name="ANS_AddActorRotation_C_0" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_AddActorRotation.ANS_AddActorRotation_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/TurnInPlace/Idle_Turn_Left_90_Anim_Montage.Idle_Turn_Left_90_Anim_Montage:ANS_AddActorRotation_C_0'"
+      RotationCurve="/Script/Engine.CurveFloat'/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Animations/Curves/Turn_L90_Fast.Turn_L90_Fast'"
+   End Object
+   Begin Object Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/TurnInPlace/Idle_Turn_Left_90_Anim_Montage.Idle_Turn_Left_90_Anim_Montage:SceneThumbnailInfo_0'"
+   End Object
+   Begin Object Name="AnimDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/TurnInPlace/Idle_Turn_Left_90_Anim_Montage.Idle_Turn_Left_90_Anim_Montage:AnimDataModel'"
+      NumberOfFrames=80000
+      NumberOfKeys=80001
+      bPopulated=True
+   End Object
+   CompositeSections(0)=(SectionName="Default",LinkedMontage="/Script/Engine.AnimMontage'Idle_Turn_Left_90_Anim_Montage'",SegmentIndex=0,SegmentLength=1.333333,LinkedSequence="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/TurnInPlace/Idle_Turn_Left_90_Anim.Idle_Turn_Left_90_Anim'")
+   SlotAnimTracks(0)=(AnimTrack=(AnimSegments=((AnimReference="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/TurnInPlace/Idle_Turn_Left_90_Anim.Idle_Turn_Left_90_Anim'",AnimEndTime=1.333333))))
+   CommonTargetFrameRate=(Numerator=30)
+   Notifies(0)=(TriggerTimeOffset=0.000100,NotifyName="ANS_AddActorRotation_C",NotifyStateClass="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_AddActorRotation.ANS_AddActorRotation_C'ANS_AddActorRotation_C_0'",Duration=2.666667,EndLink=(LinkedMontage="/Script/Engine.AnimMontage'Idle_Turn_Left_90_Anim_Montage'",SegmentBeginTime=-1.000000,SegmentLength=-1.000000,LinkValue=2.666667),Guid=31B501D241B5FE271C34BEBA7614FA1E,LinkedMontage="/Script/Engine.AnimMontage'Idle_Turn_Left_90_Anim_Montage'",SegmentIndex=0,SegmentLength=1.333333,LinkedSequence="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/TurnInPlace/Idle_Turn_Left_90_Anim.Idle_Turn_Left_90_Anim'")
+   Notifies(1)=(NotifyName="AN_EndAnimatingAbility_C",Notify="/Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/AnimNotifes/AN_EndAnimatingAbility.AN_EndAnimatingAbility_C'AN_EndAnimatingAbility_C_0'",EndLink=(LinkValue=0.499013),Guid=037129A848B29443D1EBE99449E5D753,TrackIndex=1,LinkedMontage="/Script/Engine.AnimMontage'Idle_Turn_Left_90_Anim_Montage'",SegmentIndex=0,SegmentLength=1.333333,LinkValue=0.499013,LinkedSequence="/Script/Engine.AnimSequence'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/AI/TurnInPlace/Idle_Turn_Left_90_Anim.Idle_Turn_Left_90_Anim'")
+   SequenceLength=1.333333
+   AnimNotifyTracks(0)=(TrackName="1",TrackColor=(R=0.500000,G=0.500000,B=0.500000,A=1.000000))
+   AnimNotifyTracks(1)=(TrackName="2",TrackColor=(R=0.900000,G=0.900000,B=0.900000,A=0.900000))
+   DataModelInterface=AnimDataModel'Idle_Turn_Left_90_Anim_Montage:AnimDataModel'
+   Skeleton="/Script/Engine.Skeleton'/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin'"
+   ThumbnailInfo="/Script/UnrealEd.SceneThumbnailInfo'SceneThumbnailInfo_0'"
+   PreviewSkeletalMesh="/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SKM_CombatMannequin.SKM_CombatMannequin"
+End Object

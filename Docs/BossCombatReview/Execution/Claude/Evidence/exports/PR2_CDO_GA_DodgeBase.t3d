@@ -1,0 +1,29 @@
+Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Abilities/GA_DodgeBase.GA_DodgeBase_C Name="Default__GA_DodgeBase_C" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Abilities/GA_DodgeBase.GA_DodgeBase_C'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Abilities/GA_DodgeBase.Default__GA_DodgeBase_C'"
+   StateManager=None
+   DodgeMontage=()
+   DefaultDodgeDirection=NewEnumerator0
+   bIsDirectional?=False
+   PerformingCharacter=None
+   DesiredDodgeDirection=NewEnumerator8
+   ActiveAbilityMontage=None
+   AbilitySystemComponent=None
+   AbilityTags=(GameplayTags=((TagName="Ability.Dodge")))
+   Performing Actor=None
+   ActivationOwnedTags=(GameplayTags=((TagName="Status.ActionCommitted")))
+   bPendingClearAbility?=False
+   ActivationRequiredTags=(GameplayTags=)
+   ActivationBlockedTags=(GameplayTags=)
+   CancelAbilitiesWithTags=(GameplayTags=((TagName="Ability.Sprint")))
+   Cooldown Time=0.000000
+   CooldownLoopInterval=0.100000
+   Current Cooldown Time=0.000000
+   bCooldownActive?=False
+   Cost Gameplay Effect Class=None
+   Level=1
+   BlockAbilitiesWithTags=(GameplayTags=)
+   GameplayEventTags=(GameplayTags=)
+   bCanBeCanceled=True
+   bWaitingForRuntimeEvent=False
+   Waiting Event Tag=(TagName="")
+   BlueprintHelperComponent=None
+End Object

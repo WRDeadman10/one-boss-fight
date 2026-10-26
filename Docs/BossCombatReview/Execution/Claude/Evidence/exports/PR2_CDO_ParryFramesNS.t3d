@@ -1,0 +1,4 @@
+Begin Object Class=/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Animation/AnimNotifies/ParryFramesNS.ParryFramesNS_C Name="Default__ParryFramesNS_C" ExportPath="/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Animation/AnimNotifies/ParryFramesNS.ParryFramesNS_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Animation/AnimNotifies/ParryFramesNS.Default__ParryFramesNS_C'"
+   NotifyColor=(B=255,G=200,R=200,A=255)
+   bShouldFireInEditor=True
+End Object

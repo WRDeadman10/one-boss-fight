@@ -24,6 +24,7 @@ Nobody commits except U. A row is changed only by its owner; others write a note
 | Design source of truth | `Master_Design_Freeze_v1_2_AI_Implementation_Ready.md` |
 | Art spec and tracker (Antigravity) | `ASSET_REQUEST_BOSS01.md`, `AG/` (live brief and report only) |
 | Codex channel | `TEAM_MAILBOX.md`, `Codex/` (live brief, report, audit only) |
+| Boss combat improvement program (P0 to P8, data-driven combat; DD-1 step 1 built and gate 40/40 on 2026-10-26) | `Docs/BossCombatReview/Execution/PHASE_STATUS.md`, `MASTER_EXECUTION_PLAN.md`, `Claude/DD1/STEP0_BASELINE.md` |
 | Pack and asset reference | `ARPG_PACK_INSPECTION.md`, `ASSET_LICENSES.md`, `MILESTONE_GATE3_CODE.md` (M14 still open) |
 
 ### Progress (row counts of the tables below; a partly done row counts half; an estimate, not effort weighted)

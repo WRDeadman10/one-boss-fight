@@ -1,0 +1,14 @@
+﻿
+Driver               Result Detail                                       
+------               ------ ------                                       
+pie_builds           PASS   103/103 passed (expected at least 103 checks)
+pie_combat_catalog   PASS   91/91 passed (expected at least 91 checks)   
+pie_build_hyperarmor PASS   20/20 passed (expected at least 20 checks)   
+pie_build_hud        PASS   8/8 passed (expected at least 8 checks)      
+pie_build_select     PASS   18/18 passed (expected at least 18 checks)   
+pie_flask_hud        PASS   7/7 passed (expected at least 7 checks)      
+
+
+
+6/6 drivers passed
+

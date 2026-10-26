@@ -1,0 +1,4 @@
+Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_iFrames.ANS_iFrames_C Name="Default__ANS_iFrames_C" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_iFrames.ANS_iFrames_C'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_iFrames.Default__ANS_iFrames_C'"
+   NotifyColor=(B=255,G=200,R=200,A=255)
+   bShouldFireInEditor=True
+End Object

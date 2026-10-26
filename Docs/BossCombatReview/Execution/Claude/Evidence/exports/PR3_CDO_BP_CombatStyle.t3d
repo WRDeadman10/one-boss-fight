@@ -1,0 +1,8 @@
+Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_CombatStyle.BP_CombatStyle_C Name="Default__BP_CombatStyle_C" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_CombatStyle.BP_CombatStyle_C'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_CombatStyle.Default__BP_CombatStyle_C'"
+   CombatStyleType=NewEnumerator16
+   CombatType=NewEnumerator8
+   Camera Mode Class=None
+   Anim Layer Class=None
+   AssetBundleData=
+   NativeClass="/Script/CoreUObject.Class'/Script/Engine.PrimaryDataAsset'"
+End Object

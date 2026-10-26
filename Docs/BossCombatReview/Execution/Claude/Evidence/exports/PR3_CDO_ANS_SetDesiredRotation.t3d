@@ -1,0 +1,6 @@
+Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_SetDesiredRotation.ANS_SetDesiredRotation_C Name="Default__ANS_SetDesiredRotation_C" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_SetDesiredRotation.ANS_SetDesiredRotation_C'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_SetDesiredRotation.Default__ANS_SetDesiredRotation_C'"
+   RotationInterpSpeed=720.000000
+   Desired Rotation Type=NewEnumerator5
+   NotifyColor=(B=0,G=172,R=255,A=255)
+   bShouldFireInEditor=True
+End Object

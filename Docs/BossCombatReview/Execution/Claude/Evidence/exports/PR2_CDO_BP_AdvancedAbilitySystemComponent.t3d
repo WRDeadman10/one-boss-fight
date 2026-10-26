@@ -1,0 +1,25 @@
+Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C Name="Default__BP_AdvancedAbilitySystemComponent_C" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.BP_AdvancedAbilitySystemComponent_C'/Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AdvancedAbilitySystemComponent.Default__BP_AdvancedAbilitySystemComponent_C'"
+   OnAbilityActivated=()
+   OwnedAbilityTags=(GameplayTags=)
+   BlockedAbilityTags=(GameplayTags=)
+   OnAbilityEnd=()
+   OnGameplayEffectApplied=()
+   OnGameplayEffectRemoved=()
+   AnimatingAbility=None
+   GameplayEventRecieved=()
+   CurrentAbilityTargetIndicator=None
+   PrimaryComponentTick=(TickGroup=TG_DuringPhysics,EndTickGroup=TG_PrePhysics,bTickEvenWhenPaused=False,bCanEverTick=True,bStartWithTickEnabled=True,bAllowTickOnDedicatedServer=True,TickInterval=0.000000)
+   UCSSerializationIndex=-1
+   bNetAddressable=False
+   bReplicateUsingRegisteredSubObjectList=False
+   bReplicates=False
+   bAutoActivate=False
+   bEditableWhenInherited=True
+   bCanEverAffectNavigation=False
+   bIsEditorOnly=False
+   bIsVisualizationComponent=False
+   bNeedsUCSSerializationIndexEvaluted=False
+   CreationMethod=Native
+   OnComponentActivated=()
+   OnComponentDeactivated=()
+End Object
