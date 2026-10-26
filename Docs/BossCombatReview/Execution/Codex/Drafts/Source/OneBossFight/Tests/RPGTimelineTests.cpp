@@ -2,6 +2,7 @@
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Boss/RPGTimelineCompiler.h"
 #include "Boss/RPGShadowCompare.h"
+#include <limits>
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGTimelineDraftTest, "OneBossFight.Timeline.DraftCrossings",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
@@ -20,6 +21,12 @@ bool FRPGTimelineDraftTest::RunTest(const FString& Parameters)
 	FKey BadKey = Key; BadKey.AssetSHA256 = TEXT("bad");
 	TestFalse(TEXT("hash key rejected"), Compile(BadKey, 1., {W}, {}, true).Value.IsValid());
 	TestFalse(TEXT("zero samples not empty timeline pass"), Compile(Key, 1., {}, {}, true).Value.IsValid());
+	FWindow Malformed = W; Malformed.Begin = .5; Malformed.End = .2;
+	TestFalse(TEXT("inverted interval rejected"), Compile(Key, 1., {Malformed}, {}, true).Value.IsValid());
+	Malformed = W; Malformed.End = Malformed.Begin;
+	TestFalse(TEXT("degenerate interval rejected"), Compile(Key, 1., {Malformed}, {}, true).Value.IsValid());
+	Malformed = W; Malformed.Begin = std::numeric_limits<double>::quiet_NaN();
+	TestFalse(TEXT("NaN interval rejected"), Compile(Key, 1., {Malformed}, {}, true).Value.IsValid());
 	FWindow Overhang = W; Overhang.End = 2.;
 	TestFalse(TEXT("overhang needs explicit projection policy"), Compile(Key, 1., {Overhang}, {}, true).Value.IsValid());
 	auto Clipped = Compile(Key, 1., {Overhang}, {}, true, EOverhangPolicy::ClipDiagnosticToPlaybackEnd);
@@ -80,11 +87,11 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGTimelineA2GoldenDraftTest, "OneBossFight.Ti
 bool FRPGTimelineA2GoldenDraftTest::RunTest(const FString& Parameters)
 {
 	using namespace RPGTimeline;
-	// Independently checked scalar subset of AG16 Rev02 timeline_expected.json against
-	// montage_notifies_2026-10-25.txt SHA256 c72b2c938b8aa8cfbe5be089a8449079df9269d03c6218d3c50fe3fa752763fc.
+	// Independently checked scalar subset of AG16 Rev03 timeline_expected.json against
+	// current montage_notifies_2026-10-25.txt SHA256 950c611ee5eae7bcdd7abca1ea56c051c3b42d988b427cf64452829142ab0b31.
 	// This is a synthetic replay of rounded export metadata, NOT the live montage or a full-payload proof.
-	FKey Key = SyntheticKey(TEXT("AG16_A2_ScalarSubset"), TEXT("ExportRev02"));
-	Key.AssetSHA256 = TEXT("c72b2c938b8aa8cfbe5be089a8449079df9269d03c6218d3c50fe3fa752763fc");
+	FKey Key = SyntheticKey(TEXT("AG16_A2_ScalarSubset"), TEXT("ExportRev03"));
+	Key.AssetSHA256 = TEXT("950c611ee5eae7bcdd7abca1ea56c051c3b42d988b427cf64452829142ab0b31");
 	const double Length = 3.4000000953674316;
 	TArray<FWindow> Windows;
 	auto Add = [&](const TCHAR* Id, const TCHAR* Semantic, double Begin, double End, const TCHAR* Hash)
@@ -108,7 +115,42 @@ bool FRPGTimelineA2GoldenDraftTest::RunTest(const FString& Parameters)
 	FCursor Cursor; auto R = Cursor.Advance(*C.Value, O);
 	TestEqual(TEXT("full hitch:3 windows x2 edges +2 markers"), R.Crossings.Num(), 8);
 	TestTrue(TEXT("both collision intervals retained independently"), C.Value->Windows[1].Begin == 1.567 && C.Value->Windows[2].Begin == 1.925);
-	AddInfo(TEXT("AG16 jump/out-of-bounds/full-payload/section graph claims remain unaccepted; only independently checked scalar rows used here."));
+	// Independent scalar expected sequence, not obtained by asking the compiler to make its own oracle.
+	const double ExpectedTimes[] = {0., 1.567, 1.593, 1.760, 1.817, 1.925, 2.104, Length};
+	const FName ExpectedIds[] = {TEXT("MovementLock"), TEXT("Collision1"), TEXT("Sound1"), TEXT("Collision1"), TEXT("Sound2"), TEXT("Collision2"), TEXT("Collision2"), TEXT("MovementLock")};
+	const EEdge ExpectedEdges[] = {EEdge::Begin, EEdge::Begin, EEdge::Marker, EEdge::End, EEdge::Marker, EEdge::Begin, EEdge::End, EEdge::End};
+	FCursor Micro; TArray<FCrossing> Actual; TSet<FName> ActiveCollision;
+	FObservation Step = O; Step.Sample = 0; Step.Current = 0.;
+	for (int32 Frame = 1; Frame <= 205; ++Frame)
+	{
+		Step.Previous = Step.Current; Step.Current = FMath::Min(Length, Frame / 60.); ++Step.Sample;
+		const FAdvance Small = Micro.Advance(*C.Value, Step);
+		for (const auto& Edge : Small.Crossings)
+		{
+			Actual.Add(Edge);
+			if (Edge.Semantic == FName(TEXT("ActiveDamage")))
+			{
+				if (Edge.Edge == EEdge::Begin) ActiveCollision.Add(Edge.Id);
+				if (Edge.Edge == EEdge::End) ActiveCollision.Remove(Edge.Id);
+			}
+		}
+		const bool ExpectedActive = (Step.Current >= 1.567 && Step.Current < 1.760) || (Step.Current >= 1.925 && Step.Current < 2.104);
+		TestTrue(TEXT("60Hz collision state agrees with independent half-open intervals"), (ActiveCollision.Num() > 0) == ExpectedActive);
+		// Paused playback: a new sample at exactly the same position produces no repeat edges.
+		Step.Previous = Step.Current; Step.Rate = 0.f; ++Step.Sample;
+		TestEqual(TEXT("zero-rate pause emits no duplicate crossings"), Micro.Advance(*C.Value, Step).Crossings.Num(), 0);
+		Step.Rate = 1.f;
+	}
+	TestEqual(TEXT("micro-step count"), Actual.Num(), 8);
+	if (Actual.Num() == 8 && R.Crossings.Num() == 8)
+	{
+		for (int32 I = 0; I < 8; ++I)
+		{
+			TestTrue(TEXT("micro-step exact expected time/id/edge"), Actual[I].Position == ExpectedTimes[I] && Actual[I].Id == ExpectedIds[I] && Actual[I].Edge == ExpectedEdges[I]);
+			TestTrue(TEXT("hitch exact expected time/id/edge"), R.Crossings[I].Position == ExpectedTimes[I] && R.Crossings[I].Id == ExpectedIds[I] && R.Crossings[I].Edge == ExpectedEdges[I]);
+		}
+	}
+	AddInfo(TEXT("AG16 scalar export subset only; unknown section topology/full binary payload remain unproved. Synthetic replay, not live animation acceptance."));
 	return true;
 }
 #endif

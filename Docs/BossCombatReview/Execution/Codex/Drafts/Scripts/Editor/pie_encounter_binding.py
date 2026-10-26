@@ -23,12 +23,24 @@ def world():
 
 
 def command(text):
-    unreal.SystemLibrary.execute_console_command(world(), text)
+    # Explicit editor context survives teardown; do not guess how None resolves.
+    context = world() or unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
+    if context is None:
+        raise RuntimeError("No world context for console command: " + text)
+    unreal.SystemLibrary.execute_console_command(context, text)
 
 
 def check(name, ok, detail=""):
     RESULTS.append(bool(ok))
     unreal.log(TAG + ("PASS " if ok else "FAIL ") + name + " " + str(detail))
+
+
+def await_condition(predicate, seconds, label):
+    deadline = time.monotonic() + seconds
+    while not predicate():
+        if time.monotonic() >= deadline:
+            raise TimeoutError(label)
+        yield 0.1
 
 
 def script():
@@ -37,7 +49,7 @@ def script():
         command("rpg.CatalogSource " + mode)
         command("rpg.CatalogTestInvalid " + str(invalid))
         unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
-        yield 8.0
+        yield from await_condition(lambda: world() is not None, 20.0, "PIE world unavailable")
         w = world()
         check(mode + " PIE world", w is not None)
         if w is None:
@@ -67,7 +79,7 @@ def script():
         # Release Python UObject proxies before teardown; new PIE must have a new session.
         participants = actors = ctx = w = None
         unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
-        yield 2.0
+        yield from await_condition(lambda: world() is None, 10.0, "PIE teardown incomplete")
         check(mode + " teardown world gone", world() is None)
 
 

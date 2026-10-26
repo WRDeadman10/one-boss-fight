@@ -71,6 +71,8 @@ bool FRPGEncounterBindingDraftTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("reset generation notification"), CA->OnGenerationChanged(*BossA, 2));
 	TestFalse(TEXT("old handle invalid"), CA->IsCurrent(KA.GetValue()));
 	TestFalse(TEXT("repeat generation refused"), CA->OnGenerationChanged(*BossA, 2));
+	TestFalse(TEXT("decremented generation refused"), CA->OnGenerationChanged(*BossA, 1));
+	TestFalse(TEXT("zero generation refused"), CA->OnGenerationChanged(*BossA, 0));
 	TestTrue(TEXT("other world unaffected by reset"), CB->IsCurrent(KB.GetValue()));
 	CA->UnbindActor(*BossA);
 	TestEqual(TEXT("whole A encounter unbound"), CA->GetBoundCount(), 0);

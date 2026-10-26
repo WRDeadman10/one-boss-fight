@@ -1,0 +1,11 @@
+Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/DualWeaponItem.DualWeaponItem_C Name="DualSteelSwords" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/DualWeaponItem.DualWeaponItem_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Items/Weapons/DualSteelSwords.DualSteelSwords'"
+   Combat Style="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_CombatStyle.BP_CombatStyle_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/DualSwords/DualSwordCombatStyle.DualSwordCombatStyle'"
+   Equipable Actor Class="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/DualSwords/DualSwordInstances/BP_DualSteelSwords.BP_DualSteelSwords_C'"
+   ItemName=NSLOCTEXT("[7039FF5244FF3405B7A244B10A9B29DA]", "5D4E791E47A3DA1182A62C9EF6178665", "Dual Steel Swords")
+   ItemRarity=NewEnumerator3
+   ItemIcon=(ImageSize=(X=256.000000,Y=256.000000),ResourceObject="/Script/Engine.Texture2D'/Game/AdvancedARPGCombat/MeleeCombatSystem/UI/InventoryEquipmentUI/Icons/DualSteelSwordIcon.DualSteelSwordIcon'")
+   Price=400
+   DefaultAttachSocket="DualSwordSheath_R"
+   ActiveAttachSocket="WeaponSocket_R"
+   NativeClass="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/DualWeaponItem.DualWeaponItem_C'"
+End Object

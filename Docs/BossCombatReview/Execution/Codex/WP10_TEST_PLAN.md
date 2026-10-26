@@ -10,9 +10,9 @@
 
 `pie_encounter_binding.py`: guarded fixture diagnostics, fresh legacy/auto/data and strict-invalid PIE sessions, explicit >=4-participant/two-encounter fixture requirement, ready/unique keys, real GC, end-PIE world teardown and new session identity. Nominal36 assertions on the success path. Strict-invalid expects zero ready components, not legacy fallback. It does not author a fixture or assign component properties. Existing arena has no binding fixture yet: failure there is EXPECTED and must not be counted as a new product regression.
 
-`pie_timeline_shadow.py`: passive >=2-shadow fixture diagnostics, natural nonzero sample coverage, per-instance bounded records/no drops/GC/teardown. Nominal7 assertions. Does not wake/force an attack or invent natural coverage; zero samples fails coverage only. Does not prove off/on hit parity or write a fabricated run header.
+`pie_timeline_shadow.py`: passive >=2-shadow fixture diagnostics, natural nonzero sample coverage, per-instance bounded records/no drops/GC/teardown. After X-T7, nominal8 assertions include every buffered row's JSON identities/hash/null/finite/ordering/schema checks through a read-only Development getter. Does not wake/force an attack or invent natural coverage; zero samples fails coverage only. Does not prove off/on hit parity or write a fabricated run header.
 
-Both drivers have wall-clock deadlines (100/70s), heartbeat10s, exception -> failing assertion, cleanup/unregister/end-PIE, `RESULT n/m passed`. Binding restores each touched cvar independently. No component set_editor_property, map load or asset authoring. RunDrivers entries would use at least Min36/7 and timeout120/90 only **after actual count/readiness verification**; not added now.
+Both drivers have wall-clock deadlines (100/70s), heartbeat10s, exception -> failing assertion, cleanup/unregister/end-PIE, `RESULT n/m passed`. Binding restores each touched cvar independently via an explicit game/editor world context. X-T7 replaces PIE start/end sleeps with bounded state polls. No component set_editor_property, map load or asset authoring. Proposed RunDrivers minimum counts/timeouts must be measured after integration (older nominal36/7 is not authoritative); no rows added now.
 
 ## Still required — not authored/proved by these diagnostics
 

@@ -1,0 +1,648 @@
+diff --git a/Source/OneBossFight/Player/RPGEncounterBinding.h b/Source/OneBossFight/Player/RPGEncounterBinding.h
+new file mode 100644
+--- /dev/null
++++ b/Source/OneBossFight/Player/RPGEncounterBinding.h
+@@ -0,0 +1,201 @@
++// DRAFT ONLY. Promote with reviewed integration seams; not part of the live module.
++#pragma once
++#include "CoreMinimal.h"
++#include "Components/ActorComponent.h"
++#include "Engine/DataAsset.h"
++#include "GameFramework/Actor.h"
++#include "Subsystems/WorldSubsystem.h"
++#include "Player/RPGCombatCatalog.h"
++#include "RPGEncounterBinding.generated.h"
++
++class URPGBossEncounter;
++class URPGCombatContextSubsystem;
++class UAnimSequenceBase;
++class USkeleton;
++
++USTRUCT(BlueprintType)
++struct FRPGBossStatsConfig
++{
++	GENERATED_BODY()
++	UPROPERTY(EditAnywhere) float MaxHealth = 0.f;
++	UPROPERTY(EditAnywhere) float MaxPosture = 0.f;
++	UPROPERTY(EditAnywhere) float PostureRegenDelay = 0.f;
++	UPROPERTY(EditAnywhere) float PostureRegenRate = 0.f;
++};
++
++USTRUCT(BlueprintType)
++struct FRPGPhaseConfig
++{
++	GENERATED_BODY()
++	UPROPERTY(EditAnywhere) FName PhaseId;
++	UPROPERTY(EditAnywhere) float EntryHealthFraction = 0.f;
++	UPROPERTY(EditAnywhere) float SpeedMultiplier = 1.f;
++	UPROPERTY(EditAnywhere) float RateMultiplier = 1.f;
++	UPROPERTY(EditAnywhere) float AttackMultiplier = 1.f;
++};
++
++/** Transport record, not permission to apply arbitrary reflected properties at runtime. */
++USTRUCT(BlueprintType)
++struct FRPGParityField
++{
++	GENERATED_BODY()
++	UPROPERTY(EditAnywhere) FString FieldPath;
++	UPROPERTY(EditAnywhere) FString Value;
++	UPROPERTY(EditAnywhere) FString Type;
++	UPROPERTY(EditAnywhere) FString Units;
++	UPROPERTY(EditAnywhere) FString SourcePath;
++	UPROPERTY(EditAnywhere) FString SourceSHA256;
++	UPROPERTY(EditAnywhere) FString SourceSite;
++	UPROPERTY(EditAnywhere) FString Origin;
++	UPROPERTY(EditAnywhere) FString Precedence;
++	UPROPERTY(EditAnywhere) FString Destination;
++	UPROPERTY(EditAnywhere) FString FirstRead;
++	UPROPERTY(EditAnywhere) FString Witness;
++};
++
++UCLASS(BlueprintType)
++class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset
++{
++	GENERATED_BODY()
++public:
++	UPROPERTY(EditAnywhere) int32 Schema = 1;
++	UPROPERTY(EditAnywhere) FName DefinitionId;
++	UPROPERTY(EditAnywhere) FName PresentationId;
++	UPROPERTY(EditAnywhere) FRPGBossStatsConfig Stats;
++	UPROPERTY(EditAnywhere) TArray<FRPGPhaseConfig> Phases;
++	UPROPERTY(EditAnywhere) TSoftObjectPtr<USkeleton> Skeleton;
++	UPROPERTY(EditAnywhere) TArray<TSoftObjectPtr<UAnimSequenceBase>> Animations;
++	/** Must cover private/constructor/instance fields too before migration is accepted. */
++	UPROPERTY(EditAnywhere) TArray<FRPGParityField> Fields;
++};
++
++struct FRPGParticipantKey
++{
++	FGuid WorldSession, EncounterInstance;
++	FName Slot;
++	uint32 Generation = 0;
++	bool operator==(const FRPGParticipantKey& Other) const
++	{
++		return WorldSession == Other.WorldSession && EncounterInstance == Other.EncounterInstance
++			&& Slot == Other.Slot && Generation == Other.Generation;
++	}
++};
++
++struct FRPGHydrationResult
++{
++	TArray<FString> Errors;
++	bool IsReady() const { return Errors.IsEmpty(); }
++	void Fail(const FString& Message) { Errors.Add(Message); }
++};
++
++/** Value metadata plus a lease on the SAME game-instance content epoch, never a global copy. */
++struct FRPGParticipantConfig
++{
++	FName BossId, PresentationId;
++	FString StableManifestHash;
++	int32 Schema = 1;
++	FRPGBossStatsConfig Stats;
++	TArray<FRPGPhaseConfig> Phases;
++	TArray<FRPGParityField> Fields;
++	TSharedPtr<const RPGCombatRegistry::FEpoch> Content;
++	TStrongObjectPtr<USkeleton> Skeleton;
++	TArray<TStrongObjectPtr<UAnimSequenceBase>> Animations;
++	bool bSyntheticFixture = false; // only the automation factory sets this; never asset-authored
++};
++
++USTRUCT(BlueprintType)
++struct FRPGPlacedParticipantBinding
++{
++	GENERATED_BODY()
++	UPROPERTY(EditAnywhere) FName Slot;
++	UPROPERTY(EditAnywhere) FName TargetSlot;
++	UPROPERTY(EditInstanceOnly) TObjectPtr<AActor> Actor = nullptr;
++	UPROPERTY(EditAnywhere) TObjectPtr<URPGBossDefinition> Definition = nullptr;
++};
++
++UCLASS()
++class ONEBOSSFIGHT_API ARPGEncounterBinding : public AActor
++{
++	GENERATED_BODY()
++public:
++	/** Explicit identity; invalid/duplicate is rejected, not regenerated silently. */
++	UPROPERTY(EditInstanceOnly) FGuid EncounterInstance;
++	UPROPERTY(EditInstanceOnly) TArray<FRPGPlacedParticipantBinding> Participants;
++};
++
++UCLASS()
++class ONEBOSSFIGHT_API URPGCombatParticipant : public UActorComponent
++{
++	GENERATED_BODY()
++public:
++	bool ConfigureBeforeRegistration(TSharedPtr<const FRPGParticipantConfig> InConfig,
++		const FRPGParticipantKey& InKey, URPGCombatContextSubsystem& InContext);
++	UFUNCTION(BlueprintPure) bool IsReady() const;
++	UFUNCTION(BlueprintPure) FString GetKeyDiagnostic() const;
++	const FRPGParticipantKey& Key() const { return ParticipantKey; }
++	TSharedPtr<const FRPGParticipantConfig> Config() const { return Snapshot; }
++protected:
++	virtual void EndPlay(const EEndPlayReason::Type Reason) override;
++private:
++	friend class URPGCombatContextSubsystem;
++	FRPGParticipantKey ParticipantKey;
++	TSharedPtr<const FRPGParticipantConfig> Snapshot;
++	TWeakObjectPtr<URPGCombatContextSubsystem> Context;
++};
++
++/** Native adapter is deliberately typed code, not ImportText of author-controlled properties. */
++struct FRPGComponentPlan
++{
++	UClass* Class = nullptr;
++	FName InstanceName;
++	TArray<FString> RequiredFields;
++	TFunction<bool(UActorComponent&, const FRPGParticipantConfig&, FString&)> Configure;
++};
++
++UCLASS()
++class ONEBOSSFIGHT_API URPGCombatContextSubsystem : public UWorldSubsystem
++{
++	GENERATED_BODY()
++public:
++	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
++	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
++	virtual void Deinitialize() override;
++	FRPGHydrationResult BindEncounter(const ARPGEncounterBinding& Binding,
++		const TMap<FName, TSharedPtr<const FRPGParticipantConfig>>& Configs);
++	TOptional<FRPGParticipantKey> FindParticipant(const AActor& Actor) const;
++	AActor* ResolveTarget(const FRPGParticipantKey& Key, FName TargetSlot) const;
++	URPGBossEncounter* ResolveEncounter(const AActor& Requester) const;
++	bool IsCurrent(const FRPGParticipantKey& Key) const;
++	bool IsHydrated(const FRPGParticipantKey& Key) const;
++	bool OnGenerationChanged(AActor& Actor, uint32 NewGeneration);
++	void UnbindActor(AActor& Actor);
++	FRPGHydrationResult CreateConfigureRegister(AActor& Actor, const TArray<FRPGComponentPlan>& Plans);
++	UFUNCTION(BlueprintPure) int32 GetBoundCount() const;
++	UFUNCTION(BlueprintPure) int32 GetReadyCount() const;
++	UFUNCTION(BlueprintPure) FString GetSessionId() const { return Session.ToString(); }
++private:
++	struct FRecord
++	{
++		TWeakObjectPtr<AActor> Actor;
++		FRPGParticipantKey Key;
++		FName TargetSlot;
++		TSharedPtr<const FRPGParticipantConfig> Config;
++		bool bHydrated = false;
++		bool bPoisoned = false;
++	};
++	FGuid Session;
++	TArray<FRecord> Records;
++	bool bHydrationInProgress = false;
++};
++
++namespace RPGCombatHydration
++{
++	ONEBOSSFIGHT_API FRPGHydrationResult CompileParticipant(const URPGBossDefinition& Definition,
++		TSharedPtr<const RPGCombatRegistry::FEpoch> Content, const FString& ManifestHash,
++		TSharedPtr<const FRPGParticipantConfig>& Out);
++#if WITH_DEV_AUTOMATION_TESTS
++	ONEBOSSFIGHT_API FRPGHydrationResult CompileSyntheticParticipant(const URPGBossDefinition& Definition,
++		TSharedPtr<const RPGCombatRegistry::FEpoch> Content, const FString& ManifestHash,
++		TSharedPtr<const FRPGParticipantConfig>& Out);
++#endif
++}
+diff --git a/Source/OneBossFight/Player/RPGEncounterBinding.cpp b/Source/OneBossFight/Player/RPGEncounterBinding.cpp
+new file mode 100644
+--- /dev/null
++++ b/Source/OneBossFight/Player/RPGEncounterBinding.cpp
+@@ -0,0 +1,342 @@
++#include "Player/RPGEncounterBinding.h"
++#include "Player/RPGBossEncounter.h"
++#include "Engine/World.h"
++#include "Animation/AnimSequenceBase.h"
++#include "Animation/Skeleton.h"
++#include "Components/SkeletalMeshComponent.h"
++#include "Engine/SkeletalMesh.h"
++#include "GameFramework/Character.h"
++#include "UObject/StrongObjectPtr.h"
++
++namespace RPGCombatHydration
++{
++static bool IsSHA256(const FString& Text)
++{
++	if (Text.Len() != 64) { return false; }
++	for (TCHAR C : Text) { if (!FChar::IsHexDigit(C)) { return false; } }
++	return true;
++}
++static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
++	TSharedPtr<const RPGCombatRegistry::FEpoch> Content, const FString& Hash,
++	TSharedPtr<const FRPGParticipantConfig>& Out, bool bSynthetic)
++{
++	Out.Reset(); FRPGHydrationResult Result;
++	if (D.Schema != 1 || D.DefinitionId.IsNone() || D.PresentationId.IsNone()
++		|| !Content || !Content->Id.IsValid() || !IsSHA256(Hash))
++	{
++		Result.Fail(TEXT("definition/schema/content/manifest identity absent"));
++	}
++	if (!FMath::IsFinite(D.Stats.MaxHealth) || D.Stats.MaxHealth <= 0.f
++		|| !FMath::IsFinite(D.Stats.MaxPosture) || D.Stats.MaxPosture <= 0.f
++		|| !FMath::IsFinite(D.Stats.PostureRegenDelay) || D.Stats.PostureRegenDelay < 0.f
++		|| !FMath::IsFinite(D.Stats.PostureRegenRate) || D.Stats.PostureRegenRate < 0.f)
++	{
++		Result.Fail(TEXT("invalid stats (no constructor/Boss01 substitution)"));
++	}
++	TSet<FName> PhaseIds;
++	for (const FRPGPhaseConfig& Phase : D.Phases)
++	{
++		if (Phase.PhaseId.IsNone() || PhaseIds.Contains(Phase.PhaseId)
++			|| !FMath::IsFinite(Phase.EntryHealthFraction) || Phase.EntryHealthFraction <= 0.f || Phase.EntryHealthFraction > 1.f
++			|| !FMath::IsFinite(Phase.SpeedMultiplier) || Phase.SpeedMultiplier <= 0.f
++			|| !FMath::IsFinite(Phase.RateMultiplier) || Phase.RateMultiplier <= 0.f
++			|| !FMath::IsFinite(Phase.AttackMultiplier) || Phase.AttackMultiplier <= 0.f)
++		{
++			Result.Fail(TEXT("invalid/duplicate phase"));
++		}
++		PhaseIds.Add(Phase.PhaseId);
++	}
++	TSet<FString> Fields;
++	for (const FRPGParityField& F : D.Fields)
++	{
++		if (F.FieldPath.IsEmpty() || Fields.Contains(F.FieldPath) || F.Type.IsEmpty()
++			|| F.SourcePath.IsEmpty() || !IsSHA256(F.SourceSHA256) || F.SourceSite.IsEmpty()
++			|| F.Origin.IsEmpty() || F.Precedence.IsEmpty() || F.Destination.IsEmpty()
++			|| F.FirstRead.IsEmpty() || F.Witness.IsEmpty())
++		{
++			Result.Fail(TEXT("incomplete/duplicate field-source manifest"));
++		}
++		Fields.Add(F.FieldPath);
++	}
++	if (Fields.IsEmpty()) { Result.Fail(TEXT("field manifest required")); }
++	if (!Result.IsReady()) { return Result; }
++	auto Value = MakeShared<FRPGParticipantConfig>();
++	Value->BossId = D.DefinitionId; Value->PresentationId = D.PresentationId;
++	Value->Schema = D.Schema; Value->StableManifestHash = Hash;
++	Value->Stats = D.Stats; Value->Phases = D.Phases; Value->Fields = D.Fields;
++	Value->Content = MoveTemp(Content); Out = Value;
++	Value->bSyntheticFixture = bSynthetic;
++	if (!bSynthetic)
++	{
++		Value->Skeleton.Reset(D.Skeleton.LoadSynchronous());
++		if (!Value->Skeleton.IsValid() || D.Animations.IsEmpty()) { Result.Fail(TEXT("required skeleton/animation dependencies missing")); }
++		for (const auto& Ref : D.Animations)
++		{
++			UAnimSequenceBase* Animation = Ref.LoadSynchronous();
++			if (!Animation || Animation->GetSkeleton() != Value->Skeleton.Get()) { Result.Fail(TEXT("animation/skeleton identity mismatch; explicit retargeted dependency required")); }
++			else { Value->Animations.Emplace(Animation); }
++		}
++	}
++	if (!Result.IsReady()) { Out.Reset(); }
++	return Result;
++}
++
++FRPGHydrationResult CompileParticipant(const URPGBossDefinition& D, TSharedPtr<const RPGCombatRegistry::FEpoch> C,
++	const FString& H, TSharedPtr<const FRPGParticipantConfig>& Out)
++{
++	return CompileParticipantImpl(D, MoveTemp(C), H, Out, false);
++}
++#if WITH_DEV_AUTOMATION_TESTS
++FRPGHydrationResult CompileSyntheticParticipant(const URPGBossDefinition& D, TSharedPtr<const RPGCombatRegistry::FEpoch> C,
++	const FString& H, TSharedPtr<const FRPGParticipantConfig>& Out)
++{
++	return CompileParticipantImpl(D, MoveTemp(C), H, Out, true);
++}
++#endif
++}
++
++bool URPGCombatParticipant::ConfigureBeforeRegistration(TSharedPtr<const FRPGParticipantConfig> Config,
++	const FRPGParticipantKey& Key, URPGCombatContextSubsystem& OwnerContext)
++{
++	if (Snapshot || IsRegistered() || HasBegunPlay() || !Config || !OwnerContext.IsCurrent(Key)) { return false; }
++	Snapshot = MoveTemp(Config); ParticipantKey = Key; Context = &OwnerContext;
++	return true;
++}
++
++bool URPGCombatParticipant::IsReady() const
++{
++	return Snapshot && Context.IsValid() && Context->IsHydrated(ParticipantKey);
++}
++
++FString URPGCombatParticipant::GetKeyDiagnostic() const
++{
++	return ParticipantKey.WorldSession.ToString() + TEXT("/") + ParticipantKey.EncounterInstance.ToString()
++		+ TEXT("/") + ParticipantKey.Slot.ToString() + TEXT("/") + LexToString(ParticipantKey.Generation);
++}
++
++void URPGCombatParticipant::EndPlay(const EEndPlayReason::Type Reason)
++{
++	if (Context.IsValid() && GetOwner()) { Context->UnbindActor(*GetOwner()); }
++	Snapshot.Reset(); Context.Reset(); Super::EndPlay(Reason);
++}
++
++bool URPGCombatContextSubsystem::ShouldCreateSubsystem(UObject* Outer) const
++{
++	const UWorld* World = Cast<UWorld>(Outer); return World && World->IsGameWorld();
++}
++
++void URPGCombatContextSubsystem::Initialize(FSubsystemCollectionBase& Collection)
++{
++	Super::Initialize(Collection); Session = FGuid::NewGuid();
++}
++
++void URPGCombatContextSubsystem::Deinitialize()
++{
++	Records.Reset(); Session.Invalidate(); Super::Deinitialize();
++}
++
++FRPGHydrationResult URPGCombatContextSubsystem::BindEncounter(const ARPGEncounterBinding& Binding,
++	const TMap<FName, TSharedPtr<const FRPGParticipantConfig>>& Configs)
++{
++	FRPGHydrationResult Result;
++	if (bHydrationInProgress || Binding.GetWorld() != GetWorld() || !Session.IsValid() || !Binding.EncounterInstance.IsValid()
++		|| Binding.Participants.IsEmpty() || Configs.Num() != Binding.Participants.Num())
++	{
++		Result.Fail(TEXT("invalid world/encounter/config batch")); return Result;
++	}
++	TSet<FName> Slots; TSet<AActor*> Actors;
++	TArray<FRecord> Pending;
++	for (const FRecord& Old : Records)
++	{
++		if (Old.Key.EncounterInstance == Binding.EncounterInstance)
++		{
++			Result.Fail(TEXT("encounter already bound; no live rebinding")); return Result;
++		}
++	}
++	for (const FRPGPlacedParticipantBinding& B : Binding.Participants)
++	{
++		AActor* Actor = B.Actor.Get(); const auto* Config = Configs.Find(B.Slot);
++		if (B.Slot.IsNone() || Slots.Contains(B.Slot) || !IsValid(Actor) || Actors.Contains(Actor)
++			|| Actor->GetWorld() != GetWorld() || Actor->HasActorBegunPlay() || FindParticipant(*Actor).IsSet()
++			|| !Config || !*Config || !(*Config)->Content)
++		{
++			Result.Fail(TEXT("duplicate/unbound/foreign/already begun participant or missing config")); continue;
++		}
++		Slots.Add(B.Slot); Actors.Add(Actor);
++		if (!(*Config)->bSyntheticFixture)
++		{
++			if (!B.Definition || B.Definition->DefinitionId != (*Config)->BossId || B.Definition->Schema != (*Config)->Schema)
++			{
++				Result.Fail(TEXT("explicit definition/config mismatch")); continue;
++			}
++			const ACharacter* Character = Cast<ACharacter>(Actor);
++			const USkeletalMesh* Mesh = Character && Character->GetMesh() ? Character->GetMesh()->GetSkeletalMeshAsset() : nullptr;
++			const auto WorldContent = RPGCombatRegistry::ForWorld(GetWorld());
++			if (!Mesh || !(*Config)->Skeleton.IsValid() || !(*Config)->Skeleton->IsCompatibleMesh(Mesh)
++				|| !WorldContent || WorldContent->Id != (*Config)->Content->Id)
++			{
++				Result.Fail(TEXT("mesh/skeleton/world content mismatch")); continue;
++			}
++		}
++#if !WITH_DEV_AUTOMATION_TESTS
++		else { Result.Fail(TEXT("synthetic fixture unavailable in this target")); continue; }
++#endif
++		FRecord Record; Record.Actor = Actor; Record.Key = {Session, Binding.EncounterInstance, B.Slot, 1};
++		Record.TargetSlot = B.TargetSlot; Record.Config = *Config; Pending.Add(MoveTemp(Record));
++	}
++	for (const FRecord& R : Pending)
++	{
++		if (!Slots.Contains(R.TargetSlot)) { Result.Fail(TEXT("explicit target slot missing")); }
++	}
++	if (Result.IsReady()) { Records.Append(MoveTemp(Pending)); }
++	return Result;
++}
++
++TOptional<FRPGParticipantKey> URPGCombatContextSubsystem::FindParticipant(const AActor& Actor) const
++{
++	for (const FRecord& R : Records)
++	{
++		if (!R.bPoisoned && R.Actor.Get() == &Actor) { return R.Key; }
++	}
++	return {};
++}
++
++bool URPGCombatContextSubsystem::IsCurrent(const FRPGParticipantKey& Key) const
++{
++	return Records.ContainsByPredicate([&Key](const FRecord& R) { return !R.bPoisoned && R.Actor.IsValid() && R.Key == Key; });
++}
++
++bool URPGCombatContextSubsystem::IsHydrated(const FRPGParticipantKey& Key) const
++{
++	return Records.ContainsByPredicate([&Key](const FRecord& R) { return !R.bPoisoned && R.bHydrated && R.Actor.IsValid() && R.Key == Key; });
++}
++
++AActor* URPGCombatContextSubsystem::ResolveTarget(const FRPGParticipantKey& Key, FName TargetSlot) const
++{
++	if (!IsHydrated(Key)) { return nullptr; }
++	for (const FRecord& R : Records)
++	{
++		if (R.Key.WorldSession == Key.WorldSession && R.Key.EncounterInstance == Key.EncounterInstance
++			&& R.Key.Slot == TargetSlot && IsHydrated(R.Key)) { return R.Actor.Get(); }
++	}
++	return nullptr;
++}
++
++URPGBossEncounter* URPGCombatContextSubsystem::ResolveEncounter(const AActor& Requester) const
++{
++	for (const FRecord& R : Records)
++	{
++		if (R.Actor.Get() != &Requester || !IsHydrated(R.Key)) { continue; }
++		if (auto* Own = Requester.FindComponentByClass<URPGBossEncounter>()) { return Own; }
++		AActor* Target = ResolveTarget(R.Key, R.TargetSlot);
++		return Target ? Target->FindComponentByClass<URPGBossEncounter>() : nullptr;
++	}
++	return nullptr;
++}
++
++bool URPGCombatContextSubsystem::OnGenerationChanged(AActor& Actor, uint32 NewGeneration)
++{
++	FRecord* Origin = Records.FindByPredicate([&Actor](const FRecord& R) { return R.Actor.Get() == &Actor; });
++	if (bHydrationInProgress || !Origin || Origin->bPoisoned || NewGeneration <= Origin->Key.Generation) { return false; }
++	const FGuid Encounter = Origin->Key.EncounterInstance;
++	for (FRecord& R : Records)
++	{
++		if (R.Key.EncounterInstance != Encounter) { continue; }
++		R.Key.Generation = NewGeneration;
++		if (AActor* Bound = R.Actor.Get())
++		{
++			if (auto* P = Bound->FindComponentByClass<URPGCombatParticipant>()) { P->ParticipantKey = R.Key; }
++		}
++	}
++	return true;
++}
++
++void URPGCombatContextSubsystem::UnbindActor(AActor& Actor)
++{
++	const FRecord* Found = Records.FindByPredicate([&Actor](const FRecord& R) { return R.Actor.Get() == &Actor; });
++	if (!Found) { return; }
++	const FGuid Encounter = Found->Key.EncounterInstance;
++	// A missing member invalidates the whole encounter, not a half-live target relation.
++	Records.RemoveAll([Encounter](const FRecord& R) { return R.Key.EncounterInstance == Encounter; });
++}
++
++int32 URPGCombatContextSubsystem::GetBoundCount() const
++{
++	int32 Count = 0;
++	for (const FRecord& R : Records) { if (R.Actor.IsValid() && !R.bPoisoned) { ++Count; } }
++	return Count;
++}
++
++int32 URPGCombatContextSubsystem::GetReadyCount() const
++{
++	int32 Count = 0;
++	for (const FRecord& R : Records) { if (R.Actor.IsValid() && !R.bPoisoned && R.bHydrated) { ++Count; } }
++	return Count;
++}
++
++FRPGHydrationResult URPGCombatContextSubsystem::CreateConfigureRegister(AActor& Actor, const TArray<FRPGComponentPlan>& Plans)
++{
++	FRPGHydrationResult Result;
++	FRecord* Record = Records.FindByPredicate([&Actor](const FRecord& R) { return R.Actor.Get() == &Actor; });
++	if (bHydrationInProgress || !Record || Record->bPoisoned || Record->bHydrated || Actor.HasActorBegunPlay() || Plans.IsEmpty())
++	{
++		Result.Fail(TEXT("unbound/late/repeated/empty hydration")); return Result;
++	}
++	TSet<UClass*> Classes; TSet<FName> Names; TSet<FString> Manifest;
++	for (const FRPGParityField& Field : Record->Config->Fields) { Manifest.Add(Field.FieldPath); }
++	for (const FRPGComponentPlan& Plan : Plans)
++	{
++		if (!Plan.Class || !Plan.Class->IsChildOf(UActorComponent::StaticClass()) || Plan.Class->HasAnyClassFlags(CLASS_Abstract)
++			|| Plan.Class == URPGCombatParticipant::StaticClass() || Classes.Contains(Plan.Class) || Names.Contains(Plan.InstanceName)
++			|| Plan.InstanceName.IsNone() || !Plan.Configure || Actor.FindComponentByClass(Plan.Class))
++		{
++			Result.Fail(TEXT("invalid/duplicate/pre-existing consumer; defaults may already have been read"));
++		}
++		for (const FString& Field : Plan.RequiredFields)
++		{
++			if (!Manifest.Contains(Field)) { Result.Fail(TEXT("required parity field missing: ") + Field); }
++		}
++		Classes.Add(Plan.Class); Names.Add(Plan.InstanceName);
++	}
++	if (Actor.FindComponentByClass<URPGCombatParticipant>()) { Result.Fail(TEXT("pre-existing participant")); }
++	if (!Result.IsReady()) { return Result; }
++	TGuardValue<bool> HydrationGuard(bHydrationInProgress, true);
++	const FRPGParticipantKey OriginalKey = Record->Key;
++	const TSharedPtr<const FRPGParticipantConfig> Snapshot = Record->Config;
++	// Leases keep all unregistered components alive across configure callbacks/GC.
++	TArray<TStrongObjectPtr<UActorComponent>> Pending;
++	TArray<TStrongObjectPtr<UClass>> ClassLeases;
++	for (const auto& Plan : Plans) { ClassLeases.Emplace(Plan.Class); }
++	TStrongObjectPtr<URPGCombatParticipant> Participant(NewObject<URPGCombatParticipant>(&Actor));
++	if (!Participant->ConfigureBeforeRegistration(Snapshot, OriginalKey, *this))
++	{
++		Result.Fail(TEXT("participant configure failed")); return Result;
++	}
++	for (const FRPGComponentPlan& Plan : Plans)
++	{
++		UActorComponent* Component = NewObject<UActorComponent>(&Actor, Plan.Class, Plan.InstanceName);
++		Pending.Emplace(Component);
++		FString Error;
++		if (!Component || !Plan.Configure(*Component, *Snapshot, Error) || Component->IsRegistered() || Component->HasBegunPlay()
++			|| !IsCurrent(OriginalKey))
++		{
++			Result.Fail(TEXT("configure contract violated: ") + Error); break;
++		}
++	}
++	if (!Result.IsReady())
++	{
++		for (auto& Component : Pending) { if (Component.IsValid()) { Component->DestroyComponent(); } }
++		Participant->DestroyComponent(); return Result;
++	}
++	// This is NOT a rollback transaction once registration callbacks run.
++	// Caller must have validated the entire encounter and all typed adapters beforehand.
++	Participant->RegisterComponent();
++	for (auto& Component : Pending) { Component->RegisterComponent(); }
++	bool Ready = Participant->IsRegistered();
++	for (const auto& Component : Pending) { Ready &= Component->IsRegistered(); }
++	Record = Records.FindByPredicate([&OriginalKey](const FRecord& R) { return R.Key == OriginalKey; });
++	if (!Record) { Result.Fail(TEXT("binding invalidated during registration")); return Result; }
++	Record->bHydrated = Ready; Record->bPoisoned = !Ready;
++	if (!Ready) { Result.Fail(TEXT("registration failed; context poisoned; do not activate gameplay")); }
++	return Result;
++}
+diff --git a/Source/OneBossFight/Tests/RPGEncounterBindingTests.cpp b/Source/OneBossFight/Tests/RPGEncounterBindingTests.cpp
+new file mode 100644
+--- /dev/null
++++ b/Source/OneBossFight/Tests/RPGEncounterBindingTests.cpp
+@@ -0,0 +1,90 @@
++#include "Misc/AutomationTest.h"
++#if WITH_DEV_AUTOMATION_TESTS
++#include "Player/RPGEncounterBinding.h"
++#include "Player/RPGBossEncounter.h"
++#include "Engine/World.h"
++#include "Misc/ScopeExit.h"
++#include "UObject/GarbageCollection.h"
++#include "UObject/StrongObjectPtr.h"
++
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGEncounterBindingDraftTest, "OneBossFight.Binding.DraftWorldIsolation",
++	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
++bool FRPGEncounterBindingDraftTest::RunTest(const FString& Parameters)
++{
++	UWorld* A = UWorld::CreateWorld(EWorldType::Game, false);
++	UWorld* B = UWorld::CreateWorld(EWorldType::Game, false);
++	ON_SCOPE_EXIT { if (B) { B->DestroyWorld(false); } if (A) { A->DestroyWorld(false); } };
++	if (!TestNotNull(TEXT("world A"), A) || !TestNotNull(TEXT("world B"), B)) { return false; }
++	auto* CA = A->GetSubsystem<URPGCombatContextSubsystem>(); auto* CB = B->GetSubsystem<URPGCombatContextSubsystem>();
++	if (!TestNotNull(TEXT("context A"), CA) || !TestNotNull(TEXT("context B"), CB)) { return false; }
++	TestNotEqual(TEXT("world identities differ"), CA->GetSessionId(), CB->GetSessionId());
++	TStrongObjectPtr<URPGBossDefinition> Def(NewObject<URPGBossDefinition>());
++	Def->DefinitionId = TEXT("Synthetic"); Def->PresentationId = TEXT("SyntheticLook");
++	Def->Stats.MaxHealth = 2000.f; Def->Stats.MaxPosture = 100.f;
++	Def->Stats.PostureRegenDelay = 6.f; Def->Stats.PostureRegenRate = 13.f;
++	FRPGParityField Field; Field.FieldPath = TEXT("Stats.MaxHealth"); Field.Type = TEXT("float");
++	Field.Value = TEXT("2000"); Field.SourcePath = TEXT("synthetic fixture, not live provenance");
++	Field.SourceSHA256 = FString::ChrN(64, TEXT('a')); Field.SourceSite = TEXT("fixture");
++	Field.Origin = TEXT("harness"); Field.Precedence = TEXT("fixture"); Field.Destination = TEXT("BossMaxHealth");
++	Field.FirstRead = TEXT("BeginPlay"); Field.Witness = TEXT("synthetic only"); Def->Fields.Add(Field);
++	TSharedPtr<const FRPGParticipantConfig> Config;
++	auto Compiled = RPGCombatHydration::CompileSyntheticParticipant(*Def, RPGCombatRegistry::Legacy(), FString::ChrN(64, TEXT('b')), Config);
++	if (!TestTrue(TEXT("compile fixture"), Compiled.IsReady() && Config.IsValid())) { return false; }
++	Def->Stats.MaxHealth = 1.f; TestEqual(TEXT("value snapshot independent"), Config->Stats.MaxHealth, 2000.f);
++	TSharedPtr<const FRPGParticipantConfig> Invalid = Config;
++	TestFalse(TEXT("strict missing content rejects"), RPGCombatHydration::CompileParticipant(*Def, nullptr, TEXT(""), Invalid).IsReady());
++	TestFalse(TEXT("no legacy substitute on missing content"), Invalid.IsValid());
++	auto Bind = [&](UWorld* World, URPGCombatContextSubsystem* Context, FGuid Id, AActor*& Boss, AActor*& Target)
++	{
++		auto* Binding = World->SpawnActor<ARPGEncounterBinding>(); Boss = World->SpawnActor<AActor>(); Target = World->SpawnActor<AActor>();
++		if (!Binding || !Boss || !Target) { return false; }
++		Binding->EncounterInstance = Id;
++		FRPGPlacedParticipantBinding First; First.Slot = TEXT("Boss"); First.TargetSlot = TEXT("Player"); First.Actor = Boss;
++		FRPGPlacedParticipantBinding Second; Second.Slot = TEXT("Player"); Second.TargetSlot = TEXT("Boss"); Second.Actor = Target;
++		Binding->Participants = {First, Second};
++		TMap<FName, TSharedPtr<const FRPGParticipantConfig>> Configs; Configs.Add(TEXT("Boss"), Config); Configs.Add(TEXT("Player"), Config);
++		return Context->BindEncounter(*Binding, Configs).IsReady();
++	};
++	AActor *BossA = nullptr, *PlayerA = nullptr, *BossB = nullptr, *PlayerB = nullptr;
++	const FGuid Encounter = FGuid::NewGuid();
++	TestTrue(TEXT("bind A"), Bind(A, CA, Encounter, BossA, PlayerA));
++	TestTrue(TEXT("same content/id separate world"), Bind(B, CB, Encounter, BossB, PlayerB));
++	if (!BossA || !PlayerA || !BossB || !PlayerB) { return false; }
++	auto KA = CA->FindParticipant(*BossA); auto KB = CB->FindParticipant(*BossB);
++	if (!KA || !KB) { return false; }
++	TestFalse(TEXT("foreign key cannot resolve"), CB->IsCurrent(KA.GetValue()));
++	TestNull(TEXT("not hydrated target unavailable"), CA->ResolveTarget(KA.GetValue(), TEXT("Player")));
++	FRPGComponentPlan Plan; Plan.Class = URPGBossEncounter::StaticClass(); Plan.InstanceName = TEXT("FixtureEncounter");
++	Plan.RequiredFields = {TEXT("Stats.MaxHealth")};
++	Plan.Configure = [](UActorComponent& Component, const FRPGParticipantConfig& C, FString& Error)
++	{
++		auto* E = Cast<URPGBossEncounter>(&Component); if (!E) { Error = TEXT("wrong type"); return false; }
++		E->BossMaxHealth = C.Stats.MaxHealth; E->GateRadius = 0.f;
++		return !E->IsRegistered() && !E->HasBegunPlay();
++	};
++	const TArray<FRPGComponentPlan> Plans = {Plan};
++	TestTrue(TEXT("hydrate all A before play"), CA->CreateConfigureRegister(*BossA, Plans).IsReady() && CA->CreateConfigureRegister(*PlayerA, Plans).IsReady());
++	TestEqual(TEXT("own target only"), CA->ResolveTarget(KA.GetValue(), TEXT("Player")), PlayerA);
++	TestFalse(TEXT("repeat attach rejected"), CA->CreateConfigureRegister(*BossA, Plans).IsReady());
++	CollectGarbage(RF_NoFlags);
++	TestTrue(TEXT("real GC retains world-owned participant"), CA->IsCurrent(KA.GetValue()));
++	TestTrue(TEXT("reset generation notification"), CA->OnGenerationChanged(*BossA, 2));
++	TestFalse(TEXT("old handle invalid"), CA->IsCurrent(KA.GetValue()));
++	TestFalse(TEXT("repeat generation refused"), CA->OnGenerationChanged(*BossA, 2));
++	TestFalse(TEXT("decremented generation refused"), CA->OnGenerationChanged(*BossA, 1));
++	TestFalse(TEXT("zero generation refused"), CA->OnGenerationChanged(*BossA, 0));
++	TestTrue(TEXT("other world unaffected by reset"), CB->IsCurrent(KB.GetValue()));
++	CA->UnbindActor(*BossA);
++	TestEqual(TEXT("whole A encounter unbound"), CA->GetBoundCount(), 0);
++	TestEqual(TEXT("B retains two"), CB->GetBoundCount(), 2);
++	const FString OldSession = CA->GetSessionId();
++	A->DestroyWorld(false); A = nullptr; CollectGarbage(RF_NoFlags);
++	TestTrue(TEXT("B survives A teardown and GC"), CB->IsCurrent(KB.GetValue()));
++	A = UWorld::CreateWorld(EWorldType::Game, false);
++	if (!A || !A->GetSubsystem<URPGCombatContextSubsystem>()) { return false; }
++	TestNotEqual(TEXT("recreated world has new session"), A->GetSubsystem<URPGCombatContextSubsystem>()->GetSessionId(), OldSession);
++	TestFalse(TEXT("old key invalid after recreation"), A->GetSubsystem<URPGCombatContextSubsystem>()->IsCurrent(KA.GetValue()));
++	AddInfo(TEXT("Synthetic standalone worlds; NOT seamless travel or two real pack duels. Typed full-field hydration remains unproved."));
++	return true;
++}
++#endif

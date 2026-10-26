@@ -8,17 +8,19 @@ Prerequisite: step1 accepted, draft promotion reviewed, preimages and hashes tak
 ```cpp
 #if !UE_BUILD_SHIPPING
 RPGTimeline::FAfterTracker OnAfterObservation;
+bool bObservationBroadcastInProgress = false;
 #endif
 ```
 
-3. In `RPGAttackTracker.cpp` add `#include "Misc/ScopeExit.h"`. Immediately after its existing `Super::TickComponent(...)` call, BEFORE the first actor/anim lookup, insert:
+3. In `RPGAttackTracker.cpp` add `#include "Misc/ScopeExit.h"` and `#include "Templates/UnrealTemplate.h"`. Immediately after its existing `Super::TickComponent(...)` call, BEFORE the first actor/anim lookup, insert:
 
 ```cpp
 #if !UE_BUILD_SHIPPING
 ON_SCOPE_EXIT
 {
-    if (OnAfterObservation.IsBound())
+    if (IsValid(this) && !bObservationBroadcastInProgress && OnAfterObservation.IsBound())
     {
+        TGuardValue<bool> BroadcastGuard(bObservationBroadcastInProgress, true);
         const RPGTimeline::FPassiveSnapshot Sample = RPGTimeline::CaptureAfterTracker(*this);
         OnAfterObservation.Broadcast(Sample);
     }
@@ -27,6 +29,8 @@ ON_SCOPE_EXIT
 ```
 
 This covers the current disabled/no-anim, dead, INDEX_NONE/untracked, denied montage, priority-veto and branch-denial returns as well as the normal end. It copies after the tracker in the SAME tick; no second tick prerequisite or animation evaluation. It cannot identify the caller/cause of a stop. Listener must not mutate gameplay or destroy the tracker from its callback. Current only listener is the staged read-only shadow component.
+
+AG36 SS1 follow-up: the guard prevents recursive observation broadcasts, NOT a subscriber recursively invoking gameplay Tick. Keep delegate private behind a scoped read-only binding API before production integration; no untrusted/general Blueprint listener is authorized. Destroying the broadcaster during broadcast remains prohibited by contract, not made safe merely by this guard.
 
 4. During reviewed hydration, configure shadow with precompiled per-variant artifacts/content lease before registration; then BindTracker on the actual associated actor once the full batch is ready. Unsubscribe in EndPlay (implemented). No anonymous process-global bus. Do not call StartMove/PlayMoveMontageForTest to manufacture natural coverage. Passive adapter handles untracked active montage metadata without inventing a native move/action identity.
 

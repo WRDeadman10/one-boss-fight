@@ -1,31 +1,36 @@
-# AG-16: Offline Reference Implementation of the Timeline Compiler (Revision 03)
+# AG-16: Offline Reference Implementation of the Timeline Compiler (Revision 04)
 
 **Document ID:** `AG16_TIMELINE_REFERENCE`  
-**Revision:** Rev 03 (Updated per Claude `[C-123]` and Codex `[X-125]`)  
+**Revision:** Rev 04 (Updated per Claude `[C-147]` and Codex `[X-136]`)  
 **Author:** Antigravity (Visual & Technical Animation Investigator)  
 **Parent Work Order:** `ANTIGRAVITY_WORK_ORDER_04.md` (`AG-16`, `AG-20`, `AG-24`)  
 **Reference Implementations:**  
 - Script: [`Docs/BossCombatReview/Execution/Antigravity/Evidence/timeline_reference.py`](file:///c:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/Evidence/timeline_reference.py)  
 - Expected Output: [`Docs/BossCombatReview/Execution/Antigravity/Evidence/timeline_expected.json`](file:///c:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/Evidence/timeline_expected.json)  
-**Status:** DELIVERED (Rev 03)  
+**Status:** DELIVERED (Rev 04)  
 
 ---
 
-## 1. Executive Summary & Resolution of Codex [X-125] Critiques
+## 1. Executive Summary & Resolution of Codex [X-125] & [X-136] Critiques
 
 Task `AG-16` delivers an independent offline reference implementation of the timeline compiler to provide mathematical ground-truth expected values for Codex's Step 3 tests (`RPGTimelineCompiler`, `RPGShadowCompare`).
 
-In `[X-125]`, Codex Astra performed an independent review of Revision 02 and identified four concrete deficiencies. In accordance with Claude's directive `[C-123]`, Revision 03 reproduces each defect, remediates the implementation, and explicitly corrects prior inaccurate claims:
+### 1.1 Resolution of Codex [X-136] Critiques (Rev 04)
+In `[X-136]`, Codex Astra identified two boundary vulnerabilities in Revision 03's `evaluate_crossing`:
+1. **IEEE 754 Non-Finite Position Guard (`math.isfinite`):**  
+   In Python and C++, any relational comparison with `float('nan')` evaluates to `False` (`float('nan') < 0.0` is `False`, `float('nan') > length` is `False`). Consequently, a `NaN` position slipped through the bounds checks and returned `MATCH`.  
+   *Remediation in Rev 04:* Added an explicit `math.isfinite(prev_s) and math.isfinite(curr_s)` check at the very entry of `evaluate_crossing`. Non-finite values (`NaN`, `+Inf`, `-Inf`) immediately return `{"status": "INCONCLUSIVE", "reason": "Non-finite position detected (NaN or Inf): ...", "crossings": []}`.
+2. **Full Declared-Wrap Handling for `ForwardLoop`:**  
+   In Rev 03, the loop wrap branch required `loop_ordinal == prev_loop_ordinal + 1 and curr_s < prev_s`. When traversing a forward loop where `curr_s >= prev_s` (for example advancing from $0.1\text{ s}$ to $0.2\text{ s}$ across loop boundary $0 \to 1$), the condition failed, falling through and returning empty crossings.  
+   *Remediation in Rev 04:* Whenever `traversal == "ForwardLoop"` (or `loop_ordinal == prev_loop_ordinal + 1`), the compiler evaluates the full wrap across interval A $(prev\_s, Length]$ on loop $N$ and interval B $[0.0, curr\_s]$ on loop $N+1$, independent of whether `curr_s < prev_s` or `curr_s >= prev_s`.
+3. **Live Text Export Hash Pinning:**  
+   Corrected the live raw export digest in the provenance table from the historical Rev 02/03 hash (`c72b2c93...`) to the current repository hash `950c611ee5eae7bcdd7abca1ea56c051c3b42d988b427cf64452829142ab0b31`.
 
-### 1.1 Plain Correction of Prior Inaccurate Claims in Rev 02 (A-70)
-1. **Montage-Level Payload Digest:** `A-70` claimed that every compiled montage contained `payload_sha256`. In reality, Rev 02 only attached `payload_hash` to individual windows and markers; the top-level montage dictionary omitted `payload_sha256`.  
-   *Correction in Rev 03:* Every montage entry in `timeline_expected.json` now includes a verified 64-character hex `payload_sha256` computed over the full canonical JSON dictionary of the compiled montage.
-2. **SectionJump Traversal Leak:** Rev 02's `evaluate_crossing` only checked `if traversal == "Reverse"`. When called with `traversal="SectionJump"`, it fell through to forward monotone advance, returning `MATCH`.  
-   *Correction in Rev 03:* Traversal validation now strictly requires `traversal in ("Forward", "ForwardLoop")`. Any `SectionJump`, `Reverse`, `Teleport`, or `Gap` immediately returns `{"status": "INCONCLUSIVE", "reason": ...}`.
-3. **Out-of-Bounds Evaluation Leak:** Rev 02 lacked bounds checking on `prev_s` and `curr_s`. Evaluating an advance with `curr_s = 2.0` on a montage of length $1.2\text{ s}$ returned `MATCH`.  
-   *Correction in Rev 03:* `evaluate_crossing` pre-validates `0.0 <= prev_s <= length` and `0.0 <= curr_s <= length`. Any out-of-bounds query immediately returns `{"status": "INCONCLUSIVE", "reason": "Position out of bounds"}`.
-4. **Scope Transparency of Text Export Hashes & Section Topology:** Rev 02 labelled window hashes as "full payload" and assumed single-section `"Default"` topology without qualifying what the input text export actually provides. In reality, `montage_notifies_2026-10-25.txt` only provides notify class names, trigger offsets, and durations—it omits binary UObject properties, state object pointers, particle/sound parameters, and section track layouts.  
-   *Correction in Rev 03:* Windows and markers explicitly declare `payload_scope = "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY"`. The single-section topology is explicitly marked `topology = "UNVERIFIED_IN_TEXT_EXPORT"` with a note that the name `"Default"` is inferred and section track boundaries are unexported.
+### 1.2 Plain Correction of Prior Inaccurate Claims in Rev 02 (A-70 / X-125)
+1. **Montage-Level Payload Digest:** Rev 02 only attached `payload_hash` to individual windows and markers; montage dictionary omitted `payload_sha256`. Remediated in Rev 03 with verified 64-character hex `payload_sha256`.
+2. **SectionJump Traversal Leak:** Remediated in Rev 03; non-forward traversal strictly returns `INCONCLUSIVE`.
+3. **Out-of-Bounds Evaluation Leak:** Remediated in Rev 03; out-of-bounds positions strictly return `INCONCLUSIVE`.
+4. **Scope Transparency of Text Export Hashes:** Windows/markers explicitly declare `payload_scope = "TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY"`, and topology declares `UNVERIFIED_IN_TEXT_EXPORT`.
 
 ---
 
@@ -35,7 +40,8 @@ Every input file consumed by the reference compiler is verified and cryptographi
 
 | Input File | Category | SHA-256 Digest |
 | :--- | :--- | :--- |
-| `Claude/Evidence/exports/montage_notifies_2026-10-25.txt` | Live Engine Export | `c72b2c938b8aa8cfbe5be089a8449079df9269d03c6218d3c50fe3fa752763fc` |
+| `Claude/Evidence/exports/montage_notifies_2026-10-25.txt` | Live Engine Export (Current) | `950c611ee5eae7bcdd7abca1ea56c051c3b42d988b427cf64452829142ab0b31` |
+| *(Historical Rev 02/03 pre-normalization hash)* | *Historical Reference* | `c72b2c938b8aa8cfbe5be089a8449079df9269d03c6218d3c50fe3fa752763fc` |
 | `movesheets/AN_Boss01_A1_QuickSlash.json` | Project Movesheet | `86cae7502caee1ce9629194ec8fe7eaef566060c23985fe66b720b0c2794eb09` |
 | `movesheets/AN_Boss01_A2_ApexHold.json` | Project Movesheet | `76d9e030b6e3f458e0a811a2f647c0bc789f7142436d4df572886f69ae83fbb8` |
 | `movesheets/AN_Boss01_A2_Raise.json` | Project Movesheet | `b46c650fa4644eb987545939ca5a09b30c45aa7e6e584a20b0805562130ff387` |
@@ -65,13 +71,13 @@ Every input file consumed by the reference compiler is verified and cryptographi
 
 ---
 
-## 3. Deliberate Self-Test Verification Suite (9/9 Tests)
+## 3. Deliberate Self-Test Verification Suite (11/11 Tests)
 
-The reference implementation executes 9 deliberate failure and boundary cases to guarantee compiler robustness against corrupted asset metadata, Codex's reversed-interval counterexample, and all issues raised in `[X-125]`:
+The reference implementation executes 11 deliberate failure and boundary cases to guarantee compiler robustness against corrupted asset metadata, Codex's reversed-interval counterexample, and all issues raised in `[X-125]` and `[X-136]`:
 
 ```text
 [TimelineRef] Loaded inputs. 1 export + 26 movesheets parsed.
-[SelfTest] Running 9 deliberate rejection and boundary verification tests...
+[SelfTest] Running 11 deliberate rejection and boundary verification tests...
   Test 1 PASSED: Rejected window End <= Begin
   Test 2 PASSED: Rejected duplicate asset ID across windows
   Test 3 PASSED: Rejected negative montage length
@@ -81,17 +87,21 @@ The reference implementation executes 9 deliberate failure and boundary cases to
   Test 7 PASSED (Codex X-125 Critique 1): Reclassified SectionJump traversal as INCONCLUSIVE
   Test 8 PASSED (Codex X-125 Critique 2): Reclassified out-of-bounds evaluation position as INCONCLUSIVE
   Test 9 PASSED (Codex X-125 Critique 3): Verified whole-montage payload_sha256 generation (64-char hex)
-[SelfTest] All 9/9 deliberate verification tests PASSED successfully!
+  Test 10 PASSED (Codex X-136 Reproducer 1): NaN position rejected as INCONCLUSIVE
+  Test 11 PASSED (Codex X-136 Reproducer 2): ForwardLoop with curr >= prev evaluated as MATCH with crossings
+[SelfTest] All 11/11 deliberate verification tests PASSED successfully!
 
 [TimelineRef] Parsed 14 montages from montage_notifies_2026-10-25.txt.
 [TimelineRef] Successfully compiled 14 timelines to C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Antigravity\Evidence\timeline_expected.json
 ```
 
-### 3.1 Codex Counterexample & X-125 Additions
+### 3.1 Codex Counterexample, X-125, & X-136 Additions
 - **Test 6 (Codex Clamp Counterexample):** Rejects $Begin \ge Length$ before clamping can synthesize a backwards interval.
 - **Test 7 (Codex Critique 1 - SectionJump):** `evaluate_crossing(compiled, 0.0, 0.9, traversal="SectionJump")` yields `INCONCLUSIVE` (`"Unsupported traversal 'SectionJump'"`).
 - **Test 8 (Codex Critique 2 - Out of Bounds):** `evaluate_crossing(compiled, 0.0, 2.5, traversal="Forward")` on length $2.0\text{ s}$ yields `INCONCLUSIVE` (`"Position out of bounds: prev=0.0, curr=2.5, length=2.0"`).
 - **Test 9 (Codex Critique 3 - Montage Payload SHA-256):** Verifies that `compile_montage` injects a 64-character hex string into `payload_sha256` of every compiled montage object.
+- **Test 10 (Codex X-136 Reproducer 1 - NaN/Inf Finite Guard):** `evaluate_crossing(compiled, float('nan'), 0.5)` strictly yields `INCONCLUSIVE` (`"Non-finite position detected (NaN or Inf)"`).
+- **Test 11 (Codex X-136 Reproducer 2 - ForwardLoop Wrap):** `evaluate_crossing(compiled, 0.1, 0.2, traversal="ForwardLoop", prev_loop_ordinal=0, loop_ordinal=1)` strictly returns `MATCH` with crossings across both loop intervals $(0.1, Length]$ and $[0.0, 0.2]$.
 
 ---
 
@@ -132,5 +142,5 @@ The reference compiler processed all 14 distinct montages. Below are representat
 | **Section Topology** | `timeline_reference.py:249-264` | Honest `UNVERIFIED_IN_TEXT_EXPORT` | Text export omits section track names and composite links. |
 | **Payload Scope** | `timeline_reference.py:205-245` | Declares `TEXT_EXPORT_CLASS_AND_INTERVAL_ONLY` | Hashes text fields only; binary UObject data unexported. |
 | **Montage Payload SHA-256** | `timeline_reference.py:277-280` | Pinned across all 14 compiled montages | Deterministic canonical JSON dictionary hash. |
-| **Crossing Evaluation** | `timeline_reference.py:282-358` | Guards SectionJump, Reverse, and bounds $[0, Length]$ | Non-forward paths classified strictly as `INCONCLUSIVE`. |
-| **Self-Tests Passed** | `timeline_reference.py:363-448` | 9/9 verification tests passed | Verified in offline Python 3.10 runtime. |
+| **Crossing Evaluation** | `timeline_reference.py:295-410` | Guards SectionJump, Reverse, finite check (NaN/Inf), ForwardLoop wrap, and bounds $[0, Length]$ | Non-forward or non-finite paths classified strictly as `INCONCLUSIVE`. Full wrap spans emitted on ForwardLoop. |
+| **Self-Tests Passed** | `timeline_reference.py:412-520` | 11/11 verification tests passed | Verified in offline Python 3.10 runtime (incorporating Codex X-125 and X-136 reproducers). |

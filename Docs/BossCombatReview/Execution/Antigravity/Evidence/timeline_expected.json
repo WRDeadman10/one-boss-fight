@@ -1,8 +1,8 @@
 {
-  "schema_version": "3.0",
+  "schema_version": "4.0",
   "provenance": {
-    "compiler": "Antigravity Timeline Reference Compiler (AG-24 Rev 03)",
-    "description": "Offline reference implementation with verified traversal guards, out-of-bounds rejection, transparent text export scope, and whole-montage payload SHA-256 hashes.",
+    "compiler": "Antigravity Timeline Reference Compiler (AG-24 Rev 04)",
+    "description": "Offline reference implementation with verified traversal guards, NaN/finite check, out-of-bounds rejection, full ForwardLoop wrap handling, transparent text export scope, and whole-montage payload SHA-256 hashes.",
     "input_hashes": {
       "montage_notifies_2026-10-25.txt": "950c611ee5eae7bcdd7abca1ea56c051c3b42d988b427cf64452829142ab0b31",
       "movesheets/AN_Boss01_A1_QuickSlash.json": "2029ad96fc79dc5935a358e05c3b16bd1270f43bf6617cfdd99c37abda05b637",

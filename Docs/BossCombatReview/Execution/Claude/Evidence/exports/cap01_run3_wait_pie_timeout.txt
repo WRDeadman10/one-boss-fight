@@ -1,0 +1,8 @@
+﻿editor exit code: -1
+[2026.10.26-05.56.28:723][  0]LogPython: [CaptureCAP01] Pre-test cvars saved: {'rpg.WakeClip': 1.0, 'rpg.CloseTelegraph': 0.4000000059604645, 'rpg.Legend': 1.0, 'rpg.Debug': 0.0, 't.MaxFPS': 0.0}
+[2026.10.26-05.57.13:724][359]LogPython: Error: [CaptureCAP01] Hard wall-clock timeout exceeded. Aborting.
+[2026.10.26-05.57.13:725][359]LogPython: [CaptureCAP01] Finishing run: TIMEOUT
+[2026.10.26-05.57.13:725][359]LogPython: [CaptureCAP01] Restoring cvars and time dilation...
+[2026.10.26-05.57.13:725][359]LogPython: [CaptureCAP01] Cvar restoration complete.
+[2026.10.26-05.57.13:725][359]LogPython: [CaptureCAP01] RESULT 1/5 (FAILED: Wall-clock timeout; Incomplete Burst (0/15); File validation failed (0/15 valid); Empty time progression)
+

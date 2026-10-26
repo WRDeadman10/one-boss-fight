@@ -1,0 +1,31 @@
+Begin Object Class=/Script/Engine.Blueprint Name="DualWeaponItem" ExportPath="/Script/Engine.Blueprint'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/DualWeaponItem.DualWeaponItem'"
+   Begin Object Class=/Script/Engine.EdGraph Name="ExecuteUbergraph_DualWeaponItem" ExportPath="/Script/Engine.EdGraph'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/DualWeaponItem.DualWeaponItem:ExecuteUbergraph_DualWeaponItem'"
+   End Object
+   Begin Object Class=/Script/UnrealEd.SceneThumbnailInfo Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/DualWeaponItem.DualWeaponItem:SceneThumbnailInfo_0'"
+   End Object
+   Begin Object Class=/Script/Engine.EdGraph Name="EventGraph" ExportPath="/Script/Engine.EdGraph'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/DualWeaponItem.DualWeaponItem:EventGraph'"
+   End Object
+   Begin Object Name="ExecuteUbergraph_DualWeaponItem" ExportPath="/Script/Engine.EdGraph'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/DualWeaponItem.DualWeaponItem:ExecuteUbergraph_DualWeaponItem'"
+      Schema="/Script/CoreUObject.Class'/Script/BlueprintGraph.EdGraphSchema_K2'"
+      GraphGuid=7FEB366F4062360C150FF9A92B78B95A
+   End Object
+   Begin Object Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/DualWeaponItem.DualWeaponItem:SceneThumbnailInfo_0'"
+   End Object
+   Begin Object Name="EventGraph" ExportPath="/Script/Engine.EdGraph'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/DualWeaponItem.DualWeaponItem:EventGraph'"
+      Schema="/Script/CoreUObject.Class'/Script/BlueprintGraph.EdGraphSchema_K2'"
+      bAllowDeletion=False
+      GraphGuid=A2AC5D2F41F700652DB077944EF8049B
+   End Object
+   ParentClass="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/WeaponItem.WeaponItem_C'"
+   BlueprintSystemVersion=2
+   UbergraphPages(0)="/Script/Engine.EdGraph'EventGraph'"
+   NewVariables(0)=(VarName="SecondWeaponAttachSocket",VarGuid=40356A0547D70EB03A7C9AA5CB0A9B08,VarType=(PinCategory="name"),FriendlyName="Second Weapon Attach Socket",Category=NSLOCTEXT("", "A390E61D49218B5D5AEA51AEEFC8B82C", "Equipable Info"),PropertyFlags=65541,MetaDataArray=((DataKey="MultiLine",DataValue="true")))
+   NewVariables(1)=(VarName="SecondWeaponActiveSocket",VarGuid=6191A46647EFC2BF86AFD1A48C5DD440,VarType=(PinCategory="name"),FriendlyName="Second Weapon Active Socket",Category=NSLOCTEXT("", "AC4198604DE2D946378532B2E469C500", "Equipable Info"),PropertyFlags=65541,MetaDataArray=((DataKey="MultiLine",DataValue="true")))
+   CategorySorting(0)="Default"
+   CategorySorting(1)="Equipable Info"
+   LastEditedDocuments(0)=(EditedObjectPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/DualWeaponItem.DualWeaponItem:EventGraph",SavedZoomAmount=1.000000)
+   ThumbnailInfo="/Script/UnrealEd.SceneThumbnailInfo'SceneThumbnailInfo_0'"
+   GeneratedClass="/Script/Engine.BlueprintGeneratedClass'DualWeaponItem_C'"
+   bLegacyNeedToPurgeSkelRefs=False
+   BlueprintGuid=F2E81A174365811C95D645BB36BA0DA7
+End Object

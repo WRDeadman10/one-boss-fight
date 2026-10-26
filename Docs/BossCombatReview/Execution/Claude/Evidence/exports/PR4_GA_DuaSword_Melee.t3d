@@ -1,0 +1,21 @@
+Begin Object Class=/Script/Engine.Blueprint Name="GA_DuaSword_Melee" ExportPath="/Script/Engine.Blueprint'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/DualSwords/GA_DuaSword_Melee.GA_DuaSword_Melee'"
+   Begin Object Class=/Script/UnrealEd.SceneThumbnailInfo Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/DualSwords/GA_DuaSword_Melee.GA_DuaSword_Melee:SceneThumbnailInfo_0'"
+   End Object
+   Begin Object Class=/Script/Engine.EdGraph Name="EventGraph" ExportPath="/Script/Engine.EdGraph'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/DualSwords/GA_DuaSword_Melee.GA_DuaSword_Melee:EventGraph'"
+   End Object
+   Begin Object Name="SceneThumbnailInfo_0" ExportPath="/Script/UnrealEd.SceneThumbnailInfo'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/DualSwords/GA_DuaSword_Melee.GA_DuaSword_Melee:SceneThumbnailInfo_0'"
+   End Object
+   Begin Object Name="EventGraph" ExportPath="/Script/Engine.EdGraph'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/DualSwords/GA_DuaSword_Melee.GA_DuaSword_Melee:EventGraph'"
+      Schema="/Script/CoreUObject.Class'/Script/BlueprintGraph.EdGraphSchema_K2'"
+      bAllowDeletion=False
+      GraphGuid=901545524C2DCC0CAF404FA6DB20E9BB
+   End Object
+   ParentClass="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Abilities/Player/GA_Player_MeleeBase_Combined.GA_Player_MeleeBase_Combined_C'"
+   BlueprintSystemVersion=2
+   UbergraphPages(0)="/Script/Engine.EdGraph'EventGraph'"
+   LastEditedDocuments(0)=(EditedObjectPath="/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/DualSwords/GA_DuaSword_Melee.GA_DuaSword_Melee:EventGraph",SavedZoomAmount=1.000000)
+   ThumbnailInfo="/Script/UnrealEd.SceneThumbnailInfo'SceneThumbnailInfo_0'"
+   GeneratedClass="/Script/Engine.BlueprintGeneratedClass'GA_DuaSword_Melee_C'"
+   bLegacyNeedToPurgeSkelRefs=False
+   BlueprintGuid=12B46A56464E068BB96DC5B52EB2BEAC
+End Object

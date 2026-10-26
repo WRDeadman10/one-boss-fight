@@ -1,0 +1,14 @@
+Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/WeaponItem.WeaponItem_C Name="ToughSword" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/WeaponItem.WeaponItem_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Items/Weapons/ToughSword.ToughSword'"
+   Combat Style="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_CombatStyle.BP_CombatStyle_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Sword/SwordCombatStyle.SwordCombatStyle'"
+   MergableWeapons=(("/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons/BP_BaseShieldWeapon.BP_BaseShieldWeapon_C'", "/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_CombatStyle.BP_CombatStyle_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Sword/SwordAndShieldCombatStyle.SwordAndShieldCombatStyle'"))
+   Equipable Actor Class="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Sword/SwordInstances/BP_ToughSword.BP_ToughSword_C'"
+   ItemType=NewEnumerator1
+   ItemName=NSLOCTEXT("[2B37539642FC7A9249F61583B6607C9C]", "719D8AAA46DE0893A853D89DCBA31D99", "Tough Sword")
+   ItemRarity=NewEnumerator2
+   ItemIcon=(ImageSize=(X=256.000000,Y=256.000000),ResourceObject="/Script/Engine.Texture2D'/Game/AdvancedARPGCombat/MeleeCombatSystem/UI/InventoryEquipmentUI/Icons/Texture_ToughSword.Texture_ToughSword'")
+   Price=300
+   DefaultAttachSocket="HipSheath_L"
+   ActiveAttachSocket="WeaponSocket_R"
+   Granted Gameplay Effects(0)="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/ItemEffects/GE_ToughSwordAttributeModifiers.GE_ToughSwordAttributeModifiers_C'"
+   NativeClass="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/WeaponItem.WeaponItem_C'"
+End Object
