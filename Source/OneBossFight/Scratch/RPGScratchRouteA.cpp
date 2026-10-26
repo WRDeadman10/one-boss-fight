@@ -55,8 +55,11 @@ EBTNodeResult::Type URPGScratchRouteATask::ExecuteTask(UBehaviorTreeComponent& O
 {
 	AAIController* Controller = OwnerComp.GetAIOwner();
 	APawn* Pawn = Controller ? Controller->GetPawn() : nullptr;
-	Note(FString::Printf(TEXT("ENTRY task=%s deny=%d pawn=%s controller=%s"), *GetName(), bDenyReservation ? 1 : 0,
-		Pawn ? *Pawn->GetName() : TEXT("none"), Controller ? *Controller->GetClass()->GetName() : TEXT("none")));
+	const UBehaviorTree* Tree = OwnerComp.GetCurrentTree();
+	const UBlackboardData* BoardAsset = OwnerComp.GetBlackboardComponent() ? OwnerComp.GetBlackboardComponent()->GetBlackboardAsset() : nullptr;
+	Note(FString::Printf(TEXT("ENTRY task=%s class=%s deny=%d pawn=%s controller=%s tree=%s blackboard=%s"), *GetName(), *GetClass()->GetName(), bDenyReservation ? 1 : 0,
+		Pawn ? *Pawn->GetName() : TEXT("none"), Controller ? *Controller->GetClass()->GetName() : TEXT("none"),
+		Tree ? *Tree->GetPathName() : TEXT("none"), BoardAsset ? *BoardAsset->GetPathName() : TEXT("none")));
 	if (!Pawn)
 	{
 		return EBTNodeResult::Failed;
@@ -72,7 +75,7 @@ EBTNodeResult::Type URPGScratchRouteATask::ExecuteTask(UBehaviorTreeComponent& O
 
 	const FString BeforeMontage = CurrentMontageName(Pawn);
 	Note(FString::Printf(TEXT("PACK_CALL id=%d tag=%s montage before=%s"), Reservation, *AbilityTag.ToString(), *BeforeMontage));
-	const bool bActivated = RPGPack::TryActivateByTag(Pawn, *AbilityTag.ToString(), false);
+	const bool bActivated = RPGPack::TryActivateByTag(Pawn, *AbilityTag.ToString(), bForceActivate);
 	Note(FString::Printf(TEXT("PACK_RESULT id=%d activated=%d montage right after the call=%s"), Reservation, bActivated ? 1 : 0, *CurrentMontageName(Pawn)));
 	return bActivated ? EBTNodeResult::Succeeded : EBTNodeResult::Failed;
 }

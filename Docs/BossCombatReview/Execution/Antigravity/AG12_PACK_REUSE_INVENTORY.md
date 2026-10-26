@@ -1,116 +1,187 @@
-# AG-12: Pack Reuse Inventory for the Eight Former-N/A Rows (Revision 05)
+# AG-12: Pack Reuse Inventory for the Eight Former-N/A Rows (Revision 07)
 
 **Document ID:** `AG12_PACK_REUSE_INVENTORY`  
-**Revision:** Rev 05 (Updated per Claude `[C-130]` with exact heal stub qualification)  
+**Revision:** Rev 07 (Reconciled with Codex `[X-136]` Bounded Limits and Claude `[C-147]`)  
+**Date:** 2026-10-26  
 **Author:** Antigravity (Visual & Technical Animation Investigator)  
-**Parent Work Orders:** `ANTIGRAVITY_WORK_ORDER_03.md` (`AG-12`), `ANTIGRAVITY_WORK_ORDER_04.md` (`AG-20`), `[C-128]` (`AG-27`), `[C-129]` (`AG-28`), `[C-130]` (`AG-29`)  
-**Evidence Sources:**  
-- Live PR2 Text Exports: `Docs/BossCombatReview/Execution/Claude/Evidence/exports/PR2_*.t3d` (45 files, `PR2_SHA256.txt`)  
-- Live PR3 Closure Exports: `Docs/BossCombatReview/Execution/Claude/Evidence/exports/PR3_*.t3d` (32 files, `PR3_SHA256.txt`, `E-009` Rev 02)  
-**Status:** DELIVERED (Rev 04)  
+**Parent Work Orders:** `TASK_BOARD.md` (Task **A-T3**), `ANTIGRAVITY_WORK_ORDER_03.md`, `ANTIGRAVITY_WORK_ORDER_04.md`  
+**Governing Inputs:**  
+- [`Docs/BossCombatReview/Execution/Codex/D09_PACK_REUSE_DELTA.md`](file:///c:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Codex/D09_PACK_REUSE_DELTA.md) (WP16 / X-T5 deliverable)  
+- Codex Review & Bounded Limits: `[X-136]` (Verbatim bounded unknowns integrated)  
+- Live PR2 Text Exports: `Docs/BossCombatReview/Execution/Claude/Evidence/exports/PR2_*.t3d` (45 files)  
+- Live PR3 Closure Exports: `Docs/BossCombatReview/Execution/Claude/Evidence/exports/PR3_*.t3d` (32 files, `E-009` Rev 02)  
+- Graph Pin Analysis: `WP6Support/pack_graphs.json`  
+**Target Engine:** Unreal Engine 5.5.4 (`OneBossFight`, packaged 1080p / 60 FPS)
 
 ---
 
-## 1. Executive Summary & Objective
+## 1. Executive Summary & Bounded Unknowns Resolution (Codex [X-136])
 
-In `[C-128]` and `[C-129]`, Technical Lead Claude delivered two extensive batches of read-only text exports (`PR2_*.t3d` and `PR3_*.t3d`), providing complete graph text and CDO definitions across 59 distinct pack assets and boss-specialized classes.
+Revision 07 synthesizes Antigravity's visual and animation investigation with Codex's deep blueprint node-and-pin analysis from `D09_PACK_REUSE_DELTA.md` (WP16 / Task X-T5) and incorporates the bounded unknowns from Codex `[X-136]` verbatim as limits:
 
-Task `AG-28` incorporates the final closure evidence to settle the pack reuse inventory across rows `HIT-012`, `DEF-005`, `ANM-006`, and `SEL-008`:
-1. **Boss Style Grants (11 Abilities):** `ExampleGreatSwordBossCombatStyle` explicitly grants exactly 11 abilities (`HitStun`, `EnterCombat`, `ExitCombat`, `CloseAttack`, `CloseRare`, `MidRangeAttack`, `LeapAttack`, `SprintAttack`, `RetaliationAttack`, `TurnInPlace`, `RagdollDeath`). It grants **no guard, dodge, grab, or heal abilities**.
-2. **Turn-In-Place is Live on Boss (`SEL-008` Turn Part):** `GA_GS_Boss_TurnInPlace` has all four turn montages (L/R 90, L/R 180) bound on its CDO (`PR3_CDO_GA_GS_Boss_TurnInPlace.t3d:4-7`) and is actively called by `BT_ExampleBoss_tree.md:294` on tag `Ability.TurnInPlace`. The turn component of `SEL-008` is **100% pack-supplied and already live**.
-3. **Accurate Grab Status (`HIT-012`):** No grab montage is bound or granted for this boss. `DefaultGrabAttackData` names no montage, the victim CDO has empty defaults, and no asset matching `*grab*` exists on disk. Whether a generic pack melee montage could be repurposed is an open content question; for Ember Warden's Greatsword, custom paired animations remain required.
-4. **Defense Framework Status (`DEF-005`):** Pack guard and dodge scaffolding exists, but is ungranted on the boss's style. Proactive AI parry is absent from the pack (`GA_EnemyParried` is strictly victim stagger).
-
----
-
-## 2. Row-by-Row Deep Audit from Live T3D Exports (PR2 & PR3)
-
-### 2.1 HIT-012: Grab Attack & Victim Reaction
-*Target Requirement:* Boss grab move with active capture window, paired victim animation, escape/damage resolution, and interrupt/abort safety.
-
-#### Verified Live Facts:
-- **Style Grant:** `ExampleGreatSwordBossCombatStyle` grants 11 abilities; `GA_EnemyGrabAttack` is **NOT granted** to the boss.
-- **Attacker Ability:** `GA_EnemyGrabAttack` (`PR2_GA_EnemyGrabAttack.t3d`, `PR2_CDO_GA_EnemyGrabAttack.t3d`) defines tag `Ability.Grab.Attack`, binds `AttackData = DefaultGrabAttackData`, and delegates montage retrieval to `Get Ability Montage` on `GA_EnemyMeleeAttack`.
-- **Attack Data Asset:** `DefaultGrabAttackData` (`PR2_DefaultGrabAttackData.t3d`) sets `IsUnblockableAttack? = True`, damage GE `GE_MeleeDamage_DamageOnly_C`, trail particle `P_Greystone_Primary_Trails_R`, and impact cue `MeleeImpactEffect`. It contains **no montage reference**.
-- **Victim Ability:** `GA_GrabVictim` (`PR2_GA_GrabVictim.t3d`, `PR2_CDO_GA_GrabVictim.t3d`) provides actor synchronization scaffolding via `BP_ActorSyncTask`. CDO properties have default empty slots (`GrabMontages = ()`, `GrabMontage = (AnimMontage = None)`).
-- **Disk Search:** No asset with `*grab*` in its filename exists in `Content/AdvancedARPGCombat/`.
-
-#### Accurate Technical Classification:
-- **No Grab Montage is Bound or Granted for Boss01.** The pack provides the Gameplay Ability framework for grab routing, unblockable damage, and victim locking, but no grab montage is assigned in data assets or granted via the boss combat style.
-- Whether an existing pack melee montage could be adapted to trigger a grab is an unproven content question. For Ember Warden's greatsword moveset, **scratch-authored paired animations (`AN_Boss01_Grab_Attacker`, `AN_Player_Grab_Victim`)** remain required to ensure correct two-handed greatsword positioning, grip alignment, and fail-safe release on boss stagger/death.
+### 1.1 Codex [X-136] Bounded Unknowns Stated Verbatim as Limits
+Per Codex `[X-136]` and Claude `[C-147]`, static graph and CDO analysis establishes structural capabilities and bindings, but does **not** prove runtime behavioral frequencies or dynamic invariants. The following limits govern this inventory:
+1. **Kinematic Pin Default vs Runtime Teleportation:** In `BP_ActorSyncTask` (`PR3_BP_ActorSyncTask.t3d:1220-1231`), `bSweep = false` is a static pin default on a nonlinked pin of `K2_SetActorLocation`. It is not a reproduced through-wall runtime event. Custom swept movement remains a defensive architectural recommendation, not a confirmed runtime collision failure.
+2. **Guard Stamina Drain:** Static CDO analysis indicates Cost GE is None (`PR2_GA_AI_BlockGuard.t3d:2370`, CDO:26), but the static data did **not** prove zero per-hit drain at runtime across all gameplay effect execution paths.
+3. **Proactive AI Parry:** Static exports confirm `GA_EnemyParried` is victim stagger, and no dedicated proactive parry selector was identified in static graphs. However, this is an unlocated capability in static graphs, not a proved impossibility.
+4. **Motion Warping & Translation:** Static Blueprints lack references to Epic's Motion Warping plugin and provide Yaw rotation tracking via `ANS_SetDesiredRotation_C`. However, the static analysis did **not** prove that all translation warping is necessarily custom under every possible pack configuration.
+5. **Turn-In-Place CDO Binding vs Runtime Frequency:** All 4 turn montages are bound in `PR3_CDO_GA_GS_Boss_TurnInPlace.t3d:4-7` and wired in `BT_ExampleBoss_tree.md:294`. However, known capability and binding in CDO is **not** runtime frequency; actual live turn execution frequency remains unmeasured.
+6. **Behavior Tree Looping vs Controller Restart:** `AIController.cpp:1013` defaults to `EBTExecutionMode::Looped`, explaining why scratch tasks that finish synchronously cause immediate tree looping. This engine looping rule explains E-010 run 4 repeated execution without asserting an unproved controller restart cause.
+7. **Nominal Dodge I-Frame Window:** Nominal i-frame window of $0.349887\text{ s}$ (~350 ms) assumes **only `RateScale = 2.0`**; actual runtime playback modifiers remain unmeasured.
 
 ---
 
-### 2.2 DEF-005: Guard, Parry, and Dodge
-*Target Requirement:* Boss defensive capabilities: finite guard with posture damage, reactive/proactive parry, and evasive dodge.
+## 2. Row-by-Row Deep Graph & Kinematic Audit
 
-#### Verified Live Facts:
-- **Style Grant:** `ExampleGreatSwordBossCombatStyle` grants **neither guard (`GA_AI_BlockGuard`) nor dodge (`GA_EnemyDodge`)**.
-- **Pack Guard Ability:** `GA_AI_BlockGuard` (`PR2_GA_AI_BlockGuard.t3d`, `PR2_CDO_GA_AI_BlockGuard.t3d`) holds tag `Ability.Block`, owned tag `Status.Blocking`, `BlockingHeldTime = 2.0s`, `MaxBlockingDistance (Melee) = 350.0`, cancels `Ability.Sprint`.
-- **Pack Guard Montages:** `Ability_AI_Block2_Montage` ($0.428\text{ s}$, `SK_CombatMannequin`, references sequence `Ability_Block2`) and `Deflect_InPlace_AI_Montage` ($1.133\text{ s}$, notify `ANS_DisableMovement_C`, references 1-Handed sequence `Deflect_InPlace_Anim`).
-- **Pack Dodge Ability & Montage:** `GA_EnemyDodge` (`PR2_CDO_GA_EnemyDodge.t3d`) has `DodgeMontage = ()` (empty on CDO). However, `Dodge_To_Idle_Montage` ($2.333\text{ s}$, rate scale 2.0 -> $1.167\text{ s}$ effective) provides complete dodge mechanics: `ANS_SetDesiredRotation_C` ($0.25\text{ s}$, 1440 deg/s), `ANS_iFrames_C` ($0.700\text{ s}$, effective $0.35\text{ s}$ iframe), `ANS_MovementCancel_C` ($0.627\text{ s}$), and `InputBufferNS_C`.
-- **Pack Parry Deficit:** `ParryFramesNS` defines parry detection, but the pack contains **zero proactive AI parry abilities**. `GA_EnemyParried` is strictly the victim stagger reaction when the AI is parried by the player.
+### 2.1 HIT-012: Grab Attack, Spatial Alignment, and Victim Reaction
+*Target Requirement:* Soulslike boss grab with active capture window, paired victim lock, damage resolution, and interrupt cleanup.
 
-#### Accurate Technical Classification:
-- **Scaffolding Exists but is Ungranted:** Reusable guard and dodge abilities/montages exist in the pack, but must be granted via `BP_CombatStyle` and have montages bound to `GA_EnemyDodge`.
-- **Proactive AI Parry is 100% Custom:** The pack supplies no proactive parry behavior for AI; custom C++ / BT logic is required.
-- **2H Greatsword Adaptation:** The pack deflection animation is 1-Handed (`1Handed/Defend/Deflect_InPlace_Anim`); adapting it to Ember Warden's two-handed greatsword requires socket alignment or custom animation.
+```mermaid
+sequenceDiagram
+    participant Boss as Boss (GA_EnemyGrabAttack)
+    participant Task as BP_ActorSyncTask
+    participant Player as Player (GA_GrabVictim)
 
----
+    Boss->>Boss: Start Grab (AttackMontages)
+    Boss->>Player: SetGrabData & TryActivateAbility(GA_GrabVictim)
+    Player->>Task: CreateTask & StartSync()
+    Note over Task: SetActorLocation(bSweep=false)<br/>Static pin default on nonlinked pin
+    Task-->>Player: Interpolates transform to Boss grip
+    alt Normal Finish
+        Boss->>Player: Apply Melee Damage GE & Release
+    else Stagger / Interrupt / Death
+        Note over Boss,Player: Partial Cleanup Fragments Only<br/>Dual-actor atomic release unverified
+    end
+```
 
-### 2.3 ANM-006: Motion Warping / Target Alignment
-*Target Requirement:* Mid-telegraph rotation and bounded position warp toward player capsule.
+#### Verified Graph & Kinematic Facts:
+- **Attacker Montage Source (`PR2_GA_EnemyGrabAttack.t3d:933`):** Attacker montage does not originate from `DefaultGrabAttackData`. It delegates `Get Ability Montage` to parent class `GA_EnemyMeleeAttack` (`PR3_GA_EnemyMeleeAttack.t3d:722-732`), which indexes `AttackMontages`.
+- **Victim Montage Source (`PR2_GA_GrabVictim.t3d:4190-4274`):** Victim montage is selected from `GrabMontages` map keyed by the attacker's `BP_CombatStyle` enum. In `PR2_CDO_GA_GrabVictim.t3d:8-9`, `GrabMontages` is empty and `GrabMontage = None`.
+- **Kinematic Pin Default (`PR3_BP_ActorSyncTask.t3d:1220-1231`):** The alignment task updates victim location using `K2_SetActorLocation` with `bSweep = false` as a static pin default on a nonlinked pin. While this is not a reproduced through-wall runtime event, implementing swept movement with distance clamping is recommended defensively to avoid potential geometry penetration.
+- **Abort Safety Gaps (`PR2_GA_GrabVictim.t3d:4454-4865`):** While cleanup fragments exist on `OnAbilityEnd`, no atomic reservation token is present in static graphs.
 
-#### Verified Live Facts:
-- **Yaw Rotation Tracking:** `ANS_SetDesiredRotation_C` (`PR2_Dodge_To_Idle_Montage.t3d`, `PR3_ANS_SetDesiredRotation.t3d`, `GS_Attack01_Montage`) smoothly tracks target actor Yaw during telegraphs with configurable interpolation speed (e.g. 1440 deg/s in dodge, 720 deg/s in attacks).
-- **Motion Warping Plugin Absent:** String search across all 77 PR2 and PR3 export files confirms **zero references to Epic's Motion Warping plugin or `MotionWarpingComponent`**.
-
-#### Accurate Technical Classification:
-- The pack supplies **Yaw rotation alignment only**. Root-motion translation warping and distance scaling are completely absent from the pack and must be implemented via project C++ or custom notifies.
-
----
-
-### 2.4 SEL-008: Turn in Place, Repositioning, and Defensive Pacing
-*Target Requirement:* Turn-in-place alignment, measured defensive circling, repositioning when out of range, and tactical pauses.
-
-#### Verified Live Facts:
-- **Turn in Place is LIVE on Boss:**
-  * `GA_GS_Boss_TurnInPlace` (`PR3_GA_GS_Boss_TurnInPlace.t3d`, `PR3_CDO_GA_GS_Boss_TurnInPlace.t3d`) is granted by `ExampleGreatSwordBossCombatStyle:4`.
-  * All four turn montages are bound directly on its CDO:
-    - `Turn Left 90 = Idle_Turn_Left_90_Anim_Montage`
-    - `Turn Right 90 = Idle_Turn_Right_90_Anim_Montage`
-    - `Turn Left 180 = Idle_Turn_Left_180_Anim_Montage`
-    - `Turn Right 180 = Idle_Turn_Right_180_Anim_Montage`
-  * Active Execution: `BT_ExampleBoss_tree.md:294` activates `Ability.TurnInPlace` when target angle exceeds thresholds (-50 to +50 deg).
-- **Repositioning & Pacing:** Handled by `BT_ExampleBoss` (`MoveTo` and `Wait` nodes). Currently executes linear advance/retreat without tactical circling or pacing terms.
-- **Pack Heal Stub:** `GA_EnemyHeal` (`PR2_CDO_GA_EnemyHeal.t3d:2`) has `Heal Gameplay Effect = None`. The pack ability is an unconfigured stub lacking a gameplay effect; while the project implements `RPGBossHealPunish` (A5 heal punish), the pack's `GA_EnemyHeal` cannot supply healing behavior without authoring a valid heal gameplay effect.
-
-#### Accurate Technical Classification:
-- **Turn in Place:** **100% Pack-Supplied and Already Live** on Ember Warden via `GA_GS_Boss_TurnInPlace`.
-- **Tactical Repositioning:** Requires project-owned BT decorators for tactical circling and recovery pacing.
+#### Authoring Verdict:
+- **Pack Scaffolding Reusable:** Ability tags, damage GE execution, and target selection can be adapted via project wrapper.
+- **Mandatory Custom Content:** Paired greatsword grab animations (`AN_Boss01_Grab_Attacker`, `AN_Player_Grab_Victim`) and swept alignment wrapper. Effort remains **LARGE**.
 
 ---
 
-## 3. Revised Pack Reuse Summary Matrix
+### 2.2 DEF-005: Guard Stance, Parry Infrastructure, and Dodge Evade
+*Target Requirement:* Boss defensive suite: directional guard with posture depletion, reactive/proactive parry, and evasive roll/dodge.
 
-| Row ID | Mechanic | Pack Supply Status | Live Boss Status | Retained Custom Work Required | Effort Size |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **HIT-012** | Grab Attack | Tags, unblockable damage GE, victim lock scaffolding. No grab montage bound/granted. | Ungranted | Custom paired animations (`AN_Boss01_Grab_Attacker`, `AN_Player_Grab_Victim`), spatial alignment token, interrupt safety | **LARGE** |
-| **DEF-005** | Guard, Dodge, Parry | Guard ability (`GA_AI_BlockGuard`), block/deflect montages, dodge montage (`Dodge_To_Idle_Montage`). | Ungranted (0 of 3 granted in style) | Grant abilities in style, bind dodge montage, author proactive AI parry (0% in pack), adapt 1H deflect to 2H greatsword | **MEDIUM-LARGE** |
-| **ANM-006** | Motion Warping | Yaw rotation tracking notify (`ANS_SetDesiredRotation_C`). Zero Epic MotionWarping. | Live on attacks | Position/translation warping, distance scaling in C++ | **MEDIUM-LARGE** |
-| **SEL-008 (Turn)** | Turn in Place | Turn ability (`GA_GS_Boss_TurnInPlace`) with all 4 montages bound (L/R 90, L/R 180). | **LIVE ON BOSS** (`BT_ExampleBoss:294`) | None. Verified fully operational in live BT. | **DONE (0 effort)** |
-| **SEL-008 (Move)** | Repositioning | `MoveTo` and `Wait` nodes in `BT_ExampleBoss`. | Live in BT | Project-owned tactical circling decorators and pacing terms | **SMALL** |
+#### Verified Graph & Kinematic Facts:
+
+```
++----------------------------------------------------------------------------------------------------+
+| DEF-005 DEFENSIVE CAPABILITY AUDIT                                                                 |
++-------------+---------------------------+-----------------------------------+----------------------+
+| Sub-System  | Pack Graph Source         | Graph Implementation Finding      | Combat System Status |
++-------------+---------------------------+-----------------------------------+----------------------+
+| Guard Cone  | `PR2_SM_BlockStance:464`  | Reads `AngleToTarget` in [-45,+45]| Static 90 deg cone;  |
+|             | (Decision Graph: 464-485) | degrees forward arc               | forward arc check    |
++-------------+---------------------------+-----------------------------------+----------------------+
+| Guard Drain | `PR2_GA_AI_BlockGuard:2370`| Cost GE is None (CDO:26);         | Per-hit stamina drain|
+|             |                           | Stamina Regen set to 100% on end  | unproved in static   |
++-------------+---------------------------+-----------------------------------+----------------------+
+| Guard Break | `PR2_GA_EnemyBlockReaction:2515-2559` | Compares `HitCount >= MaxHitCount`| Tally-based break;   |
+|             |                           | and writes back increment         | not stamina-zero     |
++-------------+---------------------------+-----------------------------------+----------------------+
+| Dodge Frame | `PR2_Dodge_To_Idle_Montage:46,50` | `Duration = 0.699774`, `Scale = 2`| Nominal i-frame is   |
+|             |                           | Nominal i-frame = 0.349887s       | 350ms (modifiers un- |
+|             |                           |                                   | measured at runtime) |
++-------------+---------------------------+-----------------------------------+----------------------+
+| AI Parry    | `PR2_ParryFramesNS:654`   | Sets `bParryFrames` & ParryActive | Dedicated proactive  |
+|             | `PR2_GA_EnemyParried`     | Victim stagger reaction           | parry unlocated in   |
+|             |                           |                                   | static graphs        |
++-------------+---------------------------+-----------------------------------+----------------------+
+```
+
+1. **Guard Directionality Anchor (`PR2_SM_BlockStanceEnemyImpactDecision.t3d:464-485`):** The `WasAttackBlocked` sub-graph decision node evaluates `Blackboard.Key.AngleToTarget` within `[-45, +45]` degrees. This checks whether the target lies within a forward 90-degree arc rather than calculating the incoming weapon velocity vector.
+2. **Guard Resource Drain:** In `PR2_CDO_GA_AI_BlockGuard.t3d:26`, Cost GE is `None`. Guard break in `PR2_GA_EnemyBlockReaction.t3d:2515-2559` is triggered by a hit tally counter (`Attribute.HitCount >= MaxHitCount`). However, per-hit stamina drain across other runtime execution paths remains unmeasured.
+3. **Dodge Scaling Math:** In `PR2_Dodge_To_Idle_Montage.t3d:46, 50`, the raw notify track spans $[0.0, 0.699774]\text{ s}$. With `RateScale = 2.0`, the nominal elapsed i-frame window is:
+   $$\text{Nominal Elapsed I-Frames} = \frac{0.699774\text{ s}}{2.0} = 0.349887\text{ s} \approx 350\text{ ms}$$
+   Total animation length is $2.333333 / 2.0 = 1.166667\text{ s}$. This calculation assumes only `RateScale = 2.0`; actual runtime playback modifiers are unmeasured.
+4. **AI Parry Capability:** `GA_EnemyParried` provides the victim hit-stun reaction when parried. Dedicated proactive AI parry decision logic was unlocated in the examined static pack graphs.
+
+#### Authoring Verdict:
+- Guard and dodge scaffolding can be adapted via project combat style bindings.
+- Proactive parry and stamina-driven guard break warrant project C++ integration. Effort remains **MEDIUM-LARGE**.
 
 ---
 
-## 4. Evidence and Limits Table
+### 2.3 ANM-006: Motion Warping / Target Tracking
+*Target Requirement:* Mid-telegraph translation warping, root-motion distance scaling, and target tracking.
 
-| Topic / Asset | Live Export Evidence Inspected | Concrete Technical Finding | Limitation / Boundary |
-| :--- | :--- | :--- | :--- |
-| **Style Ability Grants** | `PR3_ExampleGreatSwordBossCombatStyle.t3d:4` | Grants 11 abilities (HitStun, Enter/ExitCombat, Close/Rare, Mid, Leap, Sprint, Retaliation, TurnInPlace, RagdollDeath). | Confirms NO guard, dodge, grab, or heal abilities are granted to Ember Warden. |
-| **Turn in Place Live** | `PR3_CDO_GA_GS_Boss_TurnInPlace.t3d:4-7`, `BT_ExampleBoss_tree.md:294` | All 4 turn montages bound on CDO; triggered in live BT on `Ability.TurnInPlace`. | SEL-008 turn component is 100% functional and live. |
-| **Grab Montage Status** | `PR2_DefaultGrabAttackData.t3d`, `PR2_CDO_GA_EnemyGrabAttack.t3d`, `PR2_CDO_GA_GrabVictim.t3d` | `DefaultGrabAttackData` names no montage; victim CDO defaults empty; no `*grab*` files on disk. | No grab montage is bound or granted for Boss01. Paired greatsword animations required. |
-| **Dodge Scaffolding** | `PR2_CDO_GA_EnemyDodge.t3d`, `PR2_Dodge_To_Idle_Montage.t3d` | `Dodge_To_Idle_Montage` has 0.700s iframes and rotation tracking. CDO `DodgeMontage=()` is empty. | Dodge is ungranted in style and requires montage binding. |
-| **Proactive AI Parry** | Search across all 77 PR2/PR3 exports | `GA_EnemyParried` is strictly victim stagger. Zero proactive AI parry abilities exist. | Proactive AI parry is 0% supplied by the pack. |
-| **Motion Warping** | Search across all 77 PR2/PR3 exports | Zero references to Epic Motion Warping or `MotionWarpingComponent`. `ANS_SetDesiredRotation_C` provides Yaw only. | Translation / distance warping requires custom project C++ logic. |
-| **Pack Heal Stub** | `PR2_CDO_GA_EnemyHeal.t3d:2` | `Heal Gameplay Effect = None`. Unconfigured pack stub lacking gameplay effect. | Project has `RPGBossHealPunish` (A5 punish); pack stub cannot function without authored GE. |
+#### Verified Graph & Kinematic Facts:
+- Search across all 77 PR2/PR3 exports confirms no references to Epic's `MotionWarpingComponent` or motion warping plugins in static graphs.
+- The pack provides Yaw rotation tracking via `ANS_SetDesiredRotation_C` (`PR3_ANS_SetDesiredRotation.t3d`).
+- Translation scaling (dynamic root motion compression/extension) is absent from static pack Blueprints.
+
+#### Authoring Verdict:
+- Pack provides Yaw rotation tracking.
+- Translation warping and dynamic root motion scaling warrant project C++ implementation (`URPGBossMovement`). Effort remains **MEDIUM-LARGE**.
+
+---
+
+### 2.4 SEL-008: Turn-In-Place, Repositioning, and Behavior Tree Looping
+*Target Requirement:* Turn-in-place alignment, measured defensive circling, and Behavior Tree pacing.
+
+#### Verified Graph & Kinematic Facts:
+- **Turn-In-Place CDO Binding:** `GA_GS_Boss_TurnInPlace` has all 4 montages bound (`Idle_Turn_Left/Right_90/180`) on its CDO (`PR3_CDO_GA_GS_Boss_TurnInPlace.t3d:4-7`) and is wired in `BT_ExampleBoss_tree.md:294`. However, known CDO binding is not runtime frequency; actual live turn execution frequency remains an unmeasured runtime parameter.
+- **Behavior Tree Looping (E-010 Run 4):**
+   - In `D09_PACK_REUSE_DELTA.md:128-133`, Codex verified against Unreal Engine source (`Engine/Source/Runtime/AIModule/Private/AIController.cpp:1013`) that `StartTree(...)` defaults to `EBTExecutionMode::Looped`.
+   - When scratch tasks complete synchronously on the game thread without latent waits, the Behavior Tree naturally loops. This engine looping rule explains E-010 run 4 repeated execution without asserting an unproved controller restart cause.
+
+#### Authoring Verdict:
+- Turn-in-place: Static montage binding is complete in CDO (0 authoring effort for montage wiring; runtime frequency unmeasured).
+- Repositioning terms and pacing: Handled via project BT decorators. Effort remains **SMALL**.
+
+---
+
+## 3. Revised Pack Reuse Decision Matrix
+
+```
++--------------------------------------------------------------------------------------------------------------------+
+| REVISED PACK REUSE DECISION MATRIX (Rev 07)                                                                        |
++----------+--------------------+---------------------+---------------------------------------+----------------------+
+| Row ID   | Feature / Mechanic | Pack Component Used | Retained Custom Engineering & Art     | Costing Verdict      |
++----------+--------------------+---------------------+---------------------------------------+----------------------+
+| HIT-012  | Grab Attack & Lock | Ability tags, GE    | Paired 2H Greatsword animations,      | LARGE (Retained)     |
+|          |                    | damage execution    | swept collision warp, abort safety    |                      |
++----------+--------------------+---------------------+---------------------------------------+----------------------+
+| DEF-005  | Guard, Dodge, Parry| `GA_AI_BlockGuard`, | Project style grant, stamina-zero     | MEDIUM-LARGE         |
+|          |                    | `Dodge_To_Idle` (no-| guard break, proactive AI parry C++,  | (Retained)           |
+|          |                    | minal 350ms iframe) | 2H greatsword deflect adaptation      |                      |
++----------+--------------------+---------------------+---------------------------------------+----------------------+
+| ANM-006  | Motion Warping     | `ANS_SetDesiredRot` | Custom C++ translation warping,       | MEDIUM-LARGE         |
+|          |                    | (Yaw tracking)      | distance scaling, bounds safety       | (Retained)           |
++----------+--------------------+---------------------+---------------------------------------+----------------------+
+| SEL-008  | Turn-In-Place      | `GA_GS_Boss_Turn`   | Montage binding complete in CDO       | Binding: DONE        |
+|          | Repositioning      | (4 CDO montages)    | Tactical circling & recovery pacing   | Pacing: SMALL        |
++----------+--------------------+---------------------+---------------------------------------+----------------------+
+```
+
+---
+
+## 4. Evidence Traceability & Source Citation Table
+
+| Topic / Requirement | Concrete Export & Graph Citation | Exact Discovered Value / Hook | Architectural Consequence / Bounded Limit |
+|---|---|---|---|
+| **Attacker Grab Source** | `PR2_GA_EnemyGrabAttack.t3d:933` | Delegates to `GA_EnemyMeleeAttack` | Grab montage comes from `AttackMontages`, not `DefaultGrabAttackData`. |
+| **Victim Grab Source** | `PR2_GA_GrabVictim.t3d:4190-4274` | Selected from `GrabMontages` map | Keyed by style enum; CDO:8 is empty. (Note: custom paired anim requirement remains bounded until actual populated pair/compatibility readback). |
+| **Victim Alignment Pin** | `PR3_BP_ActorSyncTask.t3d:1220` | `SetActorLocation(..., bSweep=false)` | Static pin default on nonlinked pin; not a reproduced through-wall runtime event. |
+| **Guard Angle Anchor** | `PR2_SM_BlockStanceEnemyImpactDecision.t3d:464-485` | `WasAttackBlocked` checking `AngleToTarget` in `[-45, +45]` | Forward 90 deg arc evaluation; checks blackboard target angle rather than blade vector. |
+| **Guard Break Mechanism** | `PR2_GA_EnemyBlockReaction.t3d:2515-2559` | `HitCount >= MaxHitCount` | Tally-based break in static graph; runtime per-hit stamina drain unmeasured. |
+| **Dodge I-Frame Duration** | `PR2_Dodge_To_Idle_Montage.t3d:46, 50` | `Duration = 0.699774`, `RateScale = 2` | Nominal elapsed i-frame is $0.349887\text{s}$ assuming only RateScale 2; runtime modifiers unmeasured. |
+| **Proactive AI Parry** | All 77 PR2/PR3 export files | Dedicated proactive parry unlocated | `GA_EnemyParried` is victim stagger; proactive AI parry unlocated in static graphs. |
+| **Motion Warping** | All 77 PR2/PR3 export files | Zero Epic MotionWarping refs | Pack provides Yaw rotation tracking (`ANS_SetDesiredRotation_C`). |
+| **Turn Montages Binding**| `PR3_CDO_GA_GS_Boss_TurnInPlace.t3d:4-7`| All 4 montages bound on CDO | CDO binding verified; live runtime execution frequency unmeasured. |
+| **BT Looped Execution** | `AIController.cpp:1013` | `StartTree(..., Looped)` default | E-010 run 4 repetition explained by engine tree looping default; controller restart unproved. |
+
+---
+
+## 5. Deliverable Summary & Task Completion
+
+| Deliverable Artifact | Assigned Task | Status | Authority |
+|---|---|---|---|
+| [`AG12_PACK_REUSE_INVENTORY.md`](file:///c:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/AG12_PACK_REUSE_INVENTORY.md) (Rev 07) | **A-T3** | **COMPLETE** | `TASK_BOARD.md` |

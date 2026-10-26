@@ -1,0 +1,32 @@
+﻿[2026.10.26-06.37.26:797][801]LogPython: [CaptureCAP01] Saved existing console variables.
+[2026.10.26-06.37.26:797][801]LogPython: [CaptureCAP01] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[CaptureCAP01] Saved existing console variables.
+[CaptureCAP01] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[2026.10.26-06.37.28:140][805]LogPython: [CaptureCAP01] Initiating editor_request_begin_play()...
+[2026.10.26-06.37.29:511][806]LogPython: [CaptureCAP01] PIE active. Boss and components found. Positioning player for A5 javelin observation...
+[2026.10.26-06.37.34:605][822]LogPython: [CaptureCAP01] Heartbeat [WAIT_BOSS_SETTLE]: 0.6s remaining. is_waking=False, is_transition=False
+[2026.10.26-06.37.36:309][827]LogPython: [CaptureCAP01] Boss settled. Applying slomo 0.20 before A5 trigger...
+[2026.10.26-06.37.36:981][829]LogPython: [CaptureCAP01] Triggering boss A5 move via RPGAttackTracker::StartMove('A5', True)...
+[2026.10.26-06.37.36:981][829]LogPython: [CaptureCAP01] StartMove('A5', True) returned: True
+[2026.10.26-06.37.36:983][829]LogPython: [CaptureCAP01] Armed external CaptureLoop via C:\UnrealProject\OneBossFight\Saved\m7_flag.txt ('CAP01_A5_Windup')
+[2026.10.26-06.37.37:330][830]LogPython: [CaptureCAP01] TELEMETRY wall=1070341.2109 sim=7.7242 phase=Windup active=False commit=False pos=0.069
+[2026.10.26-06.37.37:664][831]LogPython: [CaptureCAP01] TELEMETRY wall=1070341.5456 sim=7.7925 phase=Windup active=False commit=False pos=0.137
+[2026.10.26-06.37.38:006][832]LogPython: [CaptureCAP01] TELEMETRY wall=1070341.8876 sim=7.8607 phase=Windup active=False commit=False pos=0.205
+[2026.10.26-06.37.38:349][833]LogPython: [CaptureCAP01] TELEMETRY wall=1070342.2314 sim=7.9291 phase=Windup active=False commit=False pos=0.273
+[2026.10.26-06.37.38:691][834]LogPython: [CaptureCAP01] TELEMETRY wall=1070342.5721 sim=7.9974 phase=Windup active=False commit=False pos=0.342
+[2026.10.26-06.37.39:034][835]LogPython: [CaptureCAP01] TELEMETRY wall=1070342.9154 sim=8.0659 phase=Windup active=False commit=False pos=0.410
+[2026.10.26-06.37.39:379][837]LogPython: [CaptureCAP01] PHASE_CHANGE phase=Active sim=8.1344 wall=1070343.2591
+[2026.10.26-06.37.39:379][837]LogPython: [CaptureCAP01] TELEMETRY wall=1070343.2591 sim=8.1344 phase=Active active=True commit=True pos=0.479
+[2026.10.26-06.37.39:720][837]LogPython: [CaptureCAP01] PHASE_CHANGE phase=Recovery sim=8.2031 wall=1070343.6003
+[2026.10.26-06.37.39:720][837]LogPython: [CaptureCAP01] TELEMETRY wall=1070343.6003 sim=8.2031 phase=Recovery active=False commit=True pos=0.547
+[2026.10.26-06.37.40:057][838]LogPython: [CaptureCAP01] TELEMETRY wall=1070343.9390 sim=8.2713 phase=Recovery active=False commit=True pos=0.616
+[2026.10.26-06.37.40:404][839]LogPython: [CaptureCAP01] TELEMETRY wall=1070344.2853 sim=8.3399 phase=Recovery active=False commit=True pos=0.684
+[2026.10.26-06.37.40:742][840]LogPython: [CaptureCAP01] TELEMETRY wall=1070344.6231 sim=8.4075 phase=Recovery active=False commit=True pos=0.752
+[2026.10.26-06.37.41:081][841]LogPython: [CaptureCAP01] PHASE_CHANGE phase=None sim=8.4754 wall=1070344.9617
+[2026.10.26-06.37.41:081][841]LogPython: [CaptureCAP01] TELEMETRY wall=1070344.9617 sim=8.4754 phase=None active=False commit=False pos=0.752
+[2026.10.26-06.37.41:081][841]LogPython: [CaptureCAP01] A5 move completed. Elapsed sim: 0.820s, wall: 4.10s, samples: 12.
+[2026.10.26-06.37.41:082][841]LogPython: [CaptureCAP01] Cleared flag file: C:\UnrealProject\OneBossFight\Saved\m7_flag.txt
+[2026.10.26-06.37.42:447][845]LogPython: [CaptureCAP01] Finishing run: OBSERVE_COMPLETE
+[2026.10.26-06.37.42:448][845]LogPython: [CaptureCAP01] Cvar restoration complete.
+[2026.10.26-06.37.42:448][845]LogPython: [CaptureCAP01] RESULT 4/5 (FAILED: Insufficient telemetry samples (12/15))
+[2026.10.26-06.37.42:454][845]LogPython: [CaptureCAP01] Standing editor preserved. Runner complete.

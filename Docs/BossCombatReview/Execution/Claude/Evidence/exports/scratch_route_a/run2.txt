@@ -1,0 +1,27 @@
+﻿editor exit code: -1
+[2026.10.26-03.31.54:024][364]LogPython: [ScratchA] heartbeat 10.0s checks=0
+[2026.10.26-03.31.54:144][369]LogPython: [ScratchA] PASS placed boss exists 
+[2026.10.26-03.31.54:144][369]LogPython: [ScratchA] placed readback: actor=BP_ExampleGreatSwordBoss_C_3 class=BP_ExampleGreatSwordBoss_C EnemyInfoRef=/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/ExampleGreatSwordBoss.ExampleGreatSwordBoss controller=BP_BaseAIController_C brain=BehaviorTreeComponent running=0 tree=none blackboard=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base
+[2026.10.26-03.31.54:144][369]LogPython: [ScratchA] PASS placed boss reads the pack info, pack controller and pack blackboard actor=BP_ExampleGreatSwordBoss_C_3 class=BP_ExampleGreatSwordBoss_C EnemyInfoRef=/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/ExampleGreatSwordBoss.ExampleGreatSwordBoss controller=BP_BaseAIController_C brain=BehaviorTreeComponent running=0 tree=none blackboard=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base
+[2026.10.26-03.31.54:147][369]LogPython: [ScratchA] PASS scratch info and boss class load 
+[2026.10.26-03.31.54:151][369]LogPython: [ScratchA] PASS scratch boss spawned with the scratch info before BeginPlay 
+[2026.10.26-03.31.59:598][563]LogPython: [ScratchA] scratch readback: actor=BP_ExampleGreatSwordBoss_C_0 class=BP_ExampleGreatSwordBoss_C EnemyInfoRef=/Game/OneBossFight/Scratch/RouteA/DA_ScratchRouteAInfo.DA_ScratchRouteAInfo controller=BP_BaseAIController_C brain=BehaviorTreeComponent running=0 tree=none blackboard=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base
+[2026.10.26-03.31.59:599][563]LogPython: [ScratchA] PASS scratch boss EnemyInfoRef is the scratch info actor=BP_ExampleGreatSwordBoss_C_0 class=BP_ExampleGreatSwordBoss_C EnemyInfoRef=/Game/OneBossFight/Scratch/RouteA/DA_ScratchRouteAInfo.DA_ScratchRouteAInfo controller=BP_BaseAIController_C brain=BehaviorTreeComponent running=0 tree=none blackboard=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base
+[2026.10.26-03.31.59:599][563]LogPython: [ScratchA] PASS scratch boss has the pack controller class actor=BP_ExampleGreatSwordBoss_C_0 class=BP_ExampleGreatSwordBoss_C EnemyInfoRef=/Game/OneBossFight/Scratch/RouteA/DA_ScratchRouteAInfo.DA_ScratchRouteAInfo controller=BP_BaseAIController_C brain=BehaviorTreeComponent running=0 tree=none blackboard=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base
+[2026.10.26-03.31.59:599][563]LogPython: [ScratchA] PASS scratch boss uses the pack blackboard actor=BP_ExampleGreatSwordBoss_C_0 class=BP_ExampleGreatSwordBoss_C EnemyInfoRef=/Game/OneBossFight/Scratch/RouteA/DA_ScratchRouteAInfo.DA_ScratchRouteAInfo controller=BP_BaseAIController_C brain=BehaviorTreeComponent running=0 tree=none blackboard=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base
+[2026.10.26-03.31.59:599][563]LogPython: [ScratchA] FAIL report not empty: the project task ran 
+[2026.10.26-03.31.59:599][563]LogPython: [ScratchA] FAIL denied task entered under the pack controller None
+[2026.10.26-03.31.59:599][563]LogPython: [ScratchA] FAIL the running tree at task entry is the scratch tree on the pack blackboard None
+[2026.10.26-03.31.59:599][563]LogPython: [ScratchA] FAIL reservation allocated before the reject 
+[2026.10.26-03.31.59:599][563]LogPython: [ScratchA] FAIL reject did not call the pack 
+[2026.10.26-03.31.59:599][563]LogPython: [ScratchA] FAIL reject changed no montage (same montage before and after the reject) (None, None)
+[2026.10.26-03.31.59:599][563]LogPython: [ScratchA] FAIL allowed task entered after the rejection (selector fell through) 
+[2026.10.26-03.31.59:599][563]LogPython: [ScratchA] FAIL reservation 2 allocated BEFORE the pack call 
+[2026.10.26-03.31.59:599][563]LogPython: [ScratchA] FAIL pack call precedes its result 
+[2026.10.26-03.31.59:599][563]LogPython: [ScratchA] pack result line: 
+[2026.10.26-03.31.59:599][563]LogPython: [ScratchA] FAIL pack ability route answered (activated flag recorded) 
+[2026.10.26-03.31.59:599][563]LogPython: [ScratchA] FAIL the pack ability started (activated=1) 
+[2026.10.26-03.31.59:599][563]LogPython: [ScratchA] PASS placed boss readback unchanged by the scratch boss actor=BP_ExampleGreatSwordBoss_C_3 class=BP_ExampleGreatSwordBoss_C EnemyInfoRef=/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/ExampleGreatSwordBoss.ExampleGreatSwordBoss controller=BP_BaseAIController_C brain=BehaviorTreeComponent running=0 tree=none blackboard=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/BB_Base.BB_Base
+[2026.10.26-03.32.02:707][849]LogPython: [ScratchA] PASS pack assets, scratch assets and maps unchanged by the test []
+[2026.10.26-03.32.02:707][849]LogPython: [ScratchA] RESULT 9/20 passed
+

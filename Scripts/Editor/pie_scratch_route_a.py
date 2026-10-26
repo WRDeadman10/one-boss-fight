@@ -67,8 +67,8 @@ def script():
         return
     placed_before = str(lib.describe_ai(placed))
     log("placed readback: " + placed_before)
-    check("placed boss uses the pack info and tree", "ExampleGreatSwordBoss." in placed_before and "BT_ExampleBoss" in placed_before, placed_before)
-    check("placed boss tree is running", "running=1" in placed_before)
+    # The placed boss is dormant at the start (the project stops the pack behaviour until the wake), so no tree is running yet: that is not a defect.
+    check("placed boss reads the pack info, pack controller and pack blackboard", "ExampleGreatSwordBoss." in placed_before and "controller=BP_BaseAIController_C" in placed_before and "BB_Base" in placed_before, placed_before)
 
     info = unreal.load_asset(INFO)
     boss_class = unreal.load_class(None, BOSS_CLASS)
@@ -81,11 +81,16 @@ def script():
     check("scratch boss spawned with the scratch info before BeginPlay", scratch is not None, error)
     if scratch is None:
         return
-    yield 5.0
+    # Poll instead of a fixed wait: the pack controller starts its tree on its own schedule and a background editor window runs PIE slowly.
+    waited = 0.0
+    while waited < 60.0 and not any("PACK_RESULT" in str(x) or "REJECTED" in str(x) and False for x in lib.get_route_a_report()):
+        yield 1.0
+        waited += 1.0
+    log("waited %.0fs for the scratch task report" % waited)
     scratch_read = str(lib.describe_ai(scratch))
     log("scratch readback: " + scratch_read)
     check("scratch boss EnemyInfoRef is the scratch info", "DA_ScratchRouteAInfo" in scratch_read, scratch_read)
-    check("scratch boss runs the scratch tree under the pack controller", "BT_ScratchRouteA" in scratch_read and "controller=" in scratch_read and "controller=none" not in scratch_read, scratch_read)
+    check("scratch boss has the pack controller class", "controller=BP_BaseAIController_C" in scratch_read, scratch_read)
     check("scratch boss uses the pack blackboard", "BB_Base" in scratch_read, scratch_read)
 
     lines = [str(x) for x in lib.get_route_a_report()]
@@ -95,12 +100,16 @@ def script():
     check("report not empty: the project task ran", len(lines) > 0)
     denied_entry = next((l for l in lines if "ENTRY" in l and "deny=1" in l), None)
     allowed_entry = next((l for l in lines if "ENTRY" in l and "deny=0" in l), None)
-    check("denied task entered under the pack controller", denied_entry is not None and "controller=" in denied_entry and "none" not in denied_entry.split("controller=")[1], denied_entry)
+    check("denied task entered under the pack controller", denied_entry is not None and "controller=BP_BaseAIController_C" in denied_entry, denied_entry)
+    check("the running tree at task entry is the scratch tree on the pack blackboard", denied_entry is not None and "BT_ScratchRouteA" in denied_entry and "BB_Base" in denied_entry and "class=RPGScratchRouteATask" in denied_entry, denied_entry)
     reserve1 = seq_of(lines, "RESERVATION id=1")
     rejected = next((l for l in lines if "REJECTED id=1" in l), None)
     check("reservation allocated before the reject", reserve1 is not None and rejected is not None and reserve1 < seq_of(lines, "REJECTED id=1"))
     check("reject did not call the pack", rejected is not None and "pack was not called" in rejected and not any("PACK_CALL id=1" in l for l in lines))
-    check("reject changed no montage", rejected is not None and "montage now=none" in rejected and any("RESERVATION id=1" in l and "montage now=none" in l for l in lines))
+    reserve_line = next((l for l in lines if "RESERVATION id=1" in l), "")
+    montage_at_reserve = reserve_line.split("montage now=")[-1].rstrip(")") if reserve_line else None
+    montage_at_reject = rejected.split("montage now=")[-1].rstrip(")") if rejected else None
+    check("reject changed no montage (same montage before and after the reject)", montage_at_reserve is not None and montage_at_reserve == montage_at_reject, (montage_at_reserve, montage_at_reject))
     check("allowed task entered after the rejection (selector fell through)", allowed_entry is not None and seq_of(lines, "ENTRY") is not None and lines.index(allowed_entry) > lines.index(denied_entry) if denied_entry and allowed_entry else False)
     reserve2 = seq_of(lines, "RESERVATION id=2")
     call2 = seq_of(lines, "PACK_CALL id=2")
@@ -110,6 +119,7 @@ def script():
     result_line = next((l for l in lines if "PACK_RESULT id=2" in l), "")
     log("pack result line: " + result_line)
     check("pack ability route answered (activated flag recorded)", "activated=" in result_line, result_line)
+    check("the pack ability started (activated=1)", "activated=1" in result_line, result_line)
     placed_after = str(lib.describe_ai(placed))
     check("placed boss readback unchanged by the scratch boss", placed_after == placed_before or placed_after.replace("running=0", "running=1") == placed_before, placed_after)
 
@@ -137,7 +147,7 @@ def tick(delta):
         if S["time"] - S["heartbeat"] > 10.0:
             S["heartbeat"] = S["time"]
             log("heartbeat %.1fs checks=%d" % (S["time"], len(results)))
-        if S["time"] > 120.0:
+        if S["time"] > 150.0:
             raise TimeoutError("scratch driver deadline")
         if S["time"] < S["next"]:
             return

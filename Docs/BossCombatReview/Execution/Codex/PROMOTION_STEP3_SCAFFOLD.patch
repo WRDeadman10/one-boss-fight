@@ -1,0 +1,868 @@
+diff --git a/Source/OneBossFight/Boss/RPGTimelineCompiler.h b/Source/OneBossFight/Boss/RPGTimelineCompiler.h
+new file mode 100644
+--- /dev/null
++++ b/Source/OneBossFight/Boss/RPGTimelineCompiler.h
+@@ -0,0 +1,111 @@
++#pragma once
++#include "CoreMinimal.h"
++#include "Player/RPGEncounterBinding.h"
++
++namespace RPGTimeline
++{
++enum class ETraversal : uint8 { Forward, Reverse, Loop, SectionJump, Unknown };
++enum class EEdge : uint8 { Begin, End, Marker, Closed };
++enum class EStatus : uint8 { Match, Candidate, Untracked, Inconclusive, MissingMetadata, InvalidRun };
++enum class EOverhangPolicy : uint8 { Reject, ClipDiagnosticToPlaybackEnd };
++
++struct FKey
++{
++	FName Move, Variant, Slot, Section;
++	FString AssetPath, AssetSHA256, AdapterSHA256;
++	int32 Schema = 1;
++	bool bSyntheticFixture = false;
++	EOverhangPolicy ProjectionPolicy = EOverhangPolicy::Reject;
++	bool operator==(const FKey& B) const;
++};
++struct FWindow
++{
++	FName Id, Semantic;
++	double Begin = 0., End = 0.; // montage-local animation seconds, not wall seconds
++	TOptional<double> RawEnd; // retained when a diagnostic projection clips a notify overhang
++	FString SourceObject, PayloadHash;
++};
++struct FMarker
++{
++	FName Id, Semantic;
++	double Position = 0.;
++	FString Provenance;
++};
++struct FCompiled
++{
++	FKey Key;
++	double Length = 0.;
++	TArray<FWindow> Windows;
++	TArray<FMarker> Markers;
++	TArray<FString> Diagnostics;
++};
++struct FCompileResult
++{
++	TSharedPtr<const FCompiled> Value;
++	TArray<FString> Errors;
++};
++/** Inputs must ALREADY be mapped to montage-local seconds. Unsupported segment maps reject. */
++ONEBOSSFIGHT_API FCompileResult Compile(const FKey& Key, double Length,
++	const TArray<FWindow>& Windows, const TArray<FMarker>& Markers, bool bSegmentMappingVerified,
++	EOverhangPolicy Overhang = EOverhangPolicy::Reject);
++#if WITH_DEV_AUTOMATION_TESTS
++ONEBOSSFIGHT_API FKey SyntheticKey(FName Move, FName Variant);
++#endif
++
++struct FLegacySample
++{
++	bool bTracked = false;
++	FName Move;
++	FString Phase;
++	int32 Instance = 0, IllegalStarts = 0, DoubleLaunches = 0;
++	TOptional<double> ActiveBegin, ActiveEnd, Position;
++};
++struct FObservation
++{
++	FRPGParticipantKey Participant;
++	uint64 Sample = 0, PlaybackOrdinal = 0;
++	FKey Timeline;
++	FString ObservedSourceAsset, ObservedSegmentAsset;
++	double Previous = 0., Current = 0., GameTime = 0.;
++	float Rate = 1.f;
++	ETraversal Traversal = ETraversal::Unknown;
++	uint32 LoopOrdinal = 0;
++	/** Supplied only by a verified traversal source; a backwards position alone is insufficient. */
++	bool bLoopPathVerified = false;
++	TOptional<double> LoopBegin, LoopEnd;
++	TOptional<int32> EngineInstance;
++	// A diagnostic ordinal is NEVER an authoritative action identity.
++	TOptional<FString> AuthoritativeAction;
++	FLegacySample Legacy;
++	bool bStopped = false;
++};
++struct FCrossing
++{
++	FName Id, Semantic;
++	double Position = 0.;
++	EEdge Edge = EEdge::Marker;
++	uint32 LoopOrdinal = 0;
++};
++struct FAdvance
++{
++	TArray<FCrossing> Crossings;
++	EStatus Status = EStatus::Inconclusive;
++	FString Limitation;
++};
++class ONEBOSSFIGHT_API FCursor
++{
++public:
++	FAdvance Advance(const FCompiled& Timeline, const FObservation& Observation);
++	void Close();
++	bool IsOpen() const { return bOpen; }
++private:
++	bool bOpen = false, bSeen = false;
++	FObservation Last;
++};
++struct FExpectedDifference
++{
++	FName Id;
++	FString Boundary, Evidence;
++};
++ONEBOSSFIGHT_API const TArray<FExpectedDifference>& ExpectedDifferences();
++}
+diff --git a/Source/OneBossFight/Boss/RPGTimelineCompiler.cpp b/Source/OneBossFight/Boss/RPGTimelineCompiler.cpp
+new file mode 100644
+--- /dev/null
++++ b/Source/OneBossFight/Boss/RPGTimelineCompiler.cpp
+@@ -0,0 +1,175 @@
++#include "Boss/RPGTimelineCompiler.h"
++
++namespace RPGTimeline
++{
++namespace
++{
++bool IsDigest(const FString& Text)
++{
++	if (Text.Len() != 64) { return false; }
++	for (TCHAR C : Text) { if (!FChar::IsHexDigit(C)) { return false; } }
++	return true;
++}
++}
++bool FKey::operator==(const FKey& B) const
++{
++	return Move == B.Move && Variant == B.Variant && Slot == B.Slot && Section == B.Section
++		&& AssetPath == B.AssetPath && AssetSHA256 == B.AssetSHA256 && AdapterSHA256 == B.AdapterSHA256 && Schema == B.Schema
++		&& bSyntheticFixture == B.bSyntheticFixture && ProjectionPolicy == B.ProjectionPolicy;
++}
++#if WITH_DEV_AUTOMATION_TESTS
++FKey SyntheticKey(FName Move, FName Variant)
++{
++	FKey Key; Key.Move = Move; Key.Variant = Variant; Key.Slot = TEXT("DefaultSlot");
++	Key.AssetPath = TEXT("/__Synthetic__/") + Move.ToString();
++	Key.AssetSHA256 = FString::ChrN(64, TEXT('a')); Key.AdapterSHA256 = FString::ChrN(64, TEXT('b'));
++	Key.bSyntheticFixture = true; return Key; // synthetic tokens, never attested file hashes
++}
++#endif
++FCompileResult Compile(const FKey& Key, double Length, const TArray<FWindow>& Windows,
++	const TArray<FMarker>& Markers, bool bSegmentMappingVerified, EOverhangPolicy Overhang)
++{
++	FCompileResult Result;
++#if !WITH_DEV_AUTOMATION_TESTS
++	if (Key.bSyntheticFixture) { Result.Errors.Add(TEXT("synthetic keys unavailable in this target")); }
++#endif
++	if (Key.bSyntheticFixture && !Key.AssetPath.StartsWith(TEXT("/__Synthetic__/"))) { Result.Errors.Add(TEXT("synthetic key must use explicit synthetic domain")); }
++	if (Key.Schema != 1 || Key.Move.IsNone() || Key.Variant.IsNone() || Key.Slot.IsNone()
++		|| Key.AssetPath.IsEmpty() || !IsDigest(Key.AssetSHA256) || !IsDigest(Key.AdapterSHA256)
++		|| !FMath::IsFinite(Length) || Length <= 0. || !bSegmentMappingVerified)
++	{
++		Result.Errors.Add(TEXT("timeline identity/duration/segment mapping missing"));
++	}
++	TSet<FName> Ids;
++	for (const FWindow& W : Windows)
++	{
++		if (W.Id.IsNone() || Ids.Contains(W.Id) || W.Semantic.IsNone() || W.SourceObject.IsEmpty()
++			|| !IsDigest(W.PayloadHash) || !FMath::IsFinite(W.Begin) || !FMath::IsFinite(W.End)
++			|| W.Begin < 0. || W.Begin >= Length || W.End <= W.Begin
++			|| (W.End > Length && Overhang == EOverhangPolicy::Reject))
++		{
++			Result.Errors.Add(TEXT("invalid/duplicate window"));
++		}
++		Ids.Add(W.Id);
++	}
++	for (const FMarker& M : Markers)
++	{
++		if (M.Id.IsNone() || Ids.Contains(M.Id) || M.Semantic.IsNone() || M.Provenance.IsEmpty()
++			|| !FMath::IsFinite(M.Position) || M.Position < 0. || M.Position > Length)
++		{
++			Result.Errors.Add(TEXT("invalid/duplicate marker"));
++		}
++		Ids.Add(M.Id);
++	}
++	if (Ids.IsEmpty()) { Result.Errors.Add(TEXT("empty timeline is uncovered, not a match")); }
++	if (!Result.Errors.IsEmpty()) { return Result; }
++	auto Out = MakeShared<FCompiled>(); Out->Key = Key; Out->Length = Length;
++	Out->Key.ProjectionPolicy = Overhang;
++	Out->Windows = Windows; Out->Markers = Markers; Result.Value = Out;
++	for (FWindow& W : Out->Windows)
++	{
++		if (W.End > Length)
++		{
++			W.RawEnd = W.End; W.End = Length;
++			Out->Diagnostics.Add(TEXT("notify overhang clipped for playback-position diagnostics only; raw end retained, blend-out lifespan unproved: ") + W.Id.ToString());
++		}
++	}
++	return Result;
++}
++
++void FCursor::Close() { bOpen = false; }
++
++FAdvance FCursor::Advance(const FCompiled& Timeline, const FObservation& O)
++{
++	FAdvance R;
++	if (!(O.Timeline == Timeline.Key)) { R.Status = EStatus::MissingMetadata; R.Limitation = TEXT("artifact key mismatch"); return R; }
++	if (!O.Participant.WorldSession.IsValid() || !O.Participant.EncounterInstance.IsValid()
++		|| O.Participant.Slot.IsNone() || O.Participant.Generation == 0 || O.Sample == 0 || O.PlaybackOrdinal == 0
++		|| !FMath::IsFinite(O.Previous) || !FMath::IsFinite(O.Current) || !FMath::IsFinite(O.GameTime)
++		|| !FMath::IsFinite(O.Rate) || O.Previous < 0. || O.Current < 0. || O.Current > Timeline.Length || O.Previous > Timeline.Length)
++	{
++		R.Status = EStatus::InvalidRun; R.Limitation = TEXT("invalid participant/sample/time"); return R;
++	}
++	if (bSeen && O.Sample <= Last.Sample)
++	{
++		R.Limitation = TEXT("duplicate/out-of-order sample ignored"); return R;
++	}
++	const bool Same = bSeen && O.Participant == Last.Participant && O.PlaybackOrdinal == Last.PlaybackOrdinal
++		&& O.Timeline == Last.Timeline && O.EngineInstance == Last.EngineInstance;
++	if (bOpen && !Same)
++	{
++		R.Crossings.Add({NAME_None, TEXT("observed-replacement-or-generation"), Last.Current, EEdge::Closed}); Close();
++	}
++	if (O.bStopped)
++	{
++		if (bOpen) { R.Crossings.Add({NAME_None, TEXT("observed-stop-cause-unknown"), O.Current, EEdge::Closed}); }
++		Close(); Last = O; bSeen = true; R.Limitation = TEXT("stop observed; final crossed interval not inferred"); return R;
++	}
++	// A closed cursor cannot be resurrected by another sample of the same playback.
++	if (Same && !bOpen)
++	{
++		Last = O; R.Limitation = TEXT("closed playback requires new ordinal"); return R;
++	}
++	const bool Initial = !bOpen;
++	const bool Contiguous = !Same || FMath::Abs(O.Previous - Last.Current) <= 1.e-6;
++	const bool Forward = O.Traversal == ETraversal::Forward && O.Rate >= 0.f && O.Current >= O.Previous;
++	const bool KnownLoop = Same && O.Traversal == ETraversal::Loop && O.bLoopPathVerified
++		&& O.LoopBegin.IsSet() && O.LoopEnd.IsSet()
++		&& FMath::IsFinite(O.LoopBegin.GetValue()) && FMath::IsFinite(O.LoopEnd.GetValue())
++		&& O.LoopBegin.GetValue() >= 0. && O.LoopEnd.GetValue() <= Timeline.Length
++		&& O.LoopEnd.GetValue() > O.LoopBegin.GetValue() && O.Rate >= 0.f
++		&& O.LoopOrdinal > Last.LoopOrdinal && O.LoopOrdinal - Last.LoopOrdinal == 1
++		&& O.Previous >= O.LoopBegin.GetValue() && O.Previous <= O.LoopEnd.GetValue()
++		&& O.Current >= O.LoopBegin.GetValue() && O.Current <= O.LoopEnd.GetValue();
++	const bool SameLoopForward = Forward && (!Same || O.LoopOrdinal == Last.LoopOrdinal);
++	const bool StartsAtZero = Initial && O.Previous == 0.;
++	const uint32 PreviousLoop = bSeen ? Last.LoopOrdinal : O.LoopOrdinal;
++	bOpen = true; Last = O; bSeen = true;
++	if ((!SameLoopForward && !KnownLoop) || !Contiguous || (Initial && !StartsAtZero) || !O.EngineInstance.IsSet())
++	{
++		R.Limitation = TEXT("reverse/loop/jump/gap/midclip/uncertain instance; path not inferred"); return R;
++	}
++	auto AddSpan = [&](double Begin, double End, bool IncludeBegin, uint32 Loop)
++	{
++		auto Crossed = [&](double Time) { return (Time > Begin && Time <= End) || (IncludeBegin && Time == Begin); };
++		for (const FWindow& W : Timeline.Windows)
++		{
++			if (Crossed(W.Begin)) { R.Crossings.Add({W.Id, W.Semantic, W.Begin, EEdge::Begin, Loop}); }
++			if (Crossed(W.End)) { R.Crossings.Add({W.Id, W.Semantic, W.End, EEdge::End, Loop}); }
++		}
++		for (const FMarker& M : Timeline.Markers)
++		{
++			if (Crossed(M.Position)) { R.Crossings.Add({M.Id, M.Semantic, M.Position, EEdge::Marker, Loop}); }
++		}
++	};
++	if (KnownLoop)
++	{
++		AddSpan(O.Previous, O.LoopEnd.GetValue(), false, PreviousLoop);
++		AddSpan(O.LoopBegin.GetValue(), O.Current, true, O.LoopOrdinal);
++	}
++	else { AddSpan(O.Previous, O.Current, StartsAtZero, O.LoopOrdinal); }
++	R.Crossings.Sort([](const FCrossing& A, const FCrossing& B)
++	{
++		if (A.Edge == EEdge::Closed || B.Edge == EEdge::Closed) { return A.Edge == EEdge::Closed && B.Edge != EEdge::Closed; }
++		if (A.LoopOrdinal != B.LoopOrdinal) { return A.LoopOrdinal < B.LoopOrdinal; }
++		if (A.Position != B.Position) { return A.Position < B.Position; }
++		if (A.Edge != B.Edge) { return static_cast<uint8>(A.Edge) < static_cast<uint8>(B.Edge); }
++		return A.Id.LexicalLess(B.Id);
++	});
++	R.Status = EStatus::Match; // Traversal extraction valid only; NOT gameplay parity acceptance.
++	return R;
++}
++
++const TArray<FExpectedDifference>& ExpectedDifferences()
++{
++	static const TArray<FExpectedDifference> Rows = {
++		{TEXT("A2_ENGINE_VS_TRACKER_WINDOWS"), TEXT("two engine collision intervals vs legacy 1.93-2.11; retain both"), TEXT("E-005; E-002-10")},
++		{TEXT("A2_OBSERVED_EARLY_TERMINATION"), TEXT("frozen six-fight sample: 9 Windup,1 Active,1 Recovery replacement; T4 1.388s, cause unknown; not future frequencies"), TEXT("E-005")},
++		{TEXT("PACK_UNTRACKED"), TEXT("Mid01/sprint/retaliation lack native tracker identity; no natural-frequency inference"), TEXT("E-002; E-004")},
++		{TEXT("A4_QUERY_VS_BOUNDS_ENDPOINT"), TEXT("planar query vs estimated bounds endpoint; angle51..174; no physical socket/floor proof"), TEXT("E-008")},
++		{TEXT("A5_INTENT_VS_COMPAT_RELEASE"), TEXT("0.40 intent vs 0.45 nominal/0.47 first sampled; never retime"), TEXT("E-007")},
++		{TEXT("FALLBACK_ALIAS_TIMELINE"), TEXT("authored/fallback can alias legacy row; artifact remains per variant"), TEXT("E-002-10; RV-03")}
++	};
++	return Rows;
++}
++}
+diff --git a/Source/OneBossFight/Boss/RPGShadowCompare.h b/Source/OneBossFight/Boss/RPGShadowCompare.h
+new file mode 100644
+--- /dev/null
++++ b/Source/OneBossFight/Boss/RPGShadowCompare.h
+@@ -0,0 +1,70 @@
++#pragma once
++#include "CoreMinimal.h"
++#include "Components/ActorComponent.h"
++#include "Boss/RPGTimelineCompiler.h"
++#include "RPGShadowCompare.generated.h"
++
++class URPGAttackTracker;
++class FJsonObject;
++
++namespace RPGTimeline
++{
++/** One copied sample at the tracker hook, including otherwise untracked active playback. */
++struct FPassiveSnapshot
++{
++	FLegacySample Legacy;
++	FString SourceAsset, CurrentSegmentAsset;
++	FName Section;
++	FName Slot;
++	TOptional<int32> EngineInstance;
++	TOptional<double> Position;
++	TOptional<float> Rate;
++	double GameTime = 0.;
++};
++ONEBOSSFIGHT_API FPassiveSnapshot CaptureAfterTracker(const URPGAttackTracker& Tracker);
++DECLARE_MULTICAST_DELEGATE_OneParam(FAfterTracker, const FPassiveSnapshot&);
++
++/** Passive identity adapter. Source artifacts are precompiled/preloaded, never loaded on a hit tick. */
++class ONEBOSSFIGHT_API FPlaybackAdapter
++{
++public:
++	TOptional<FObservation> Observe(const FPassiveSnapshot& Sample, const FRPGParticipantKey& Key,
++		const TArray<TSharedPtr<const FCompiled>>& Artifacts);
++private:
++	uint64 Sequence = 0, Ordinal = 0;
++	TOptional<FObservation> Last;
++};
++}
++
++UCLASS()
++class ONEBOSSFIGHT_API URPGCombatTimelineShadow : public UActorComponent
++{
++	GENERATED_BODY()
++public:
++	URPGCombatTimelineShadow();
++	bool Configure(const TArray<TSharedPtr<const RPGTimeline::FCompiled>>& InTimelines, const FRPGParticipantKey& Key,
++		TSharedPtr<const RPGCombatRegistry::FEpoch> InLease);
++	bool BindTracker(URPGAttackTracker& Tracker, URPGCombatContextSubsystem& InContext);
++	/** Lifecycle/variant adapter supplies identity. No gameplay calls or animation writes. */
++	void ObserveAfterTracker(const RPGTimeline::FObservation& Observation);
++	bool FlushReport(const TSharedRef<FJsonObject>& RunHeader, FString& OutPath);
++	UFUNCTION(BlueprintPure) int32 GetRecordCount() const { return Records.Num(); }
++	UFUNCTION(BlueprintPure) int32 GetDroppedRecords() const { return Dropped; }
++	/** Development-only read-only payload witness; no gameplay or flush side effects. */
++	UFUNCTION(BlueprintPure) FString GetRecordJsonForTest(int32 Index) const;
++protected:
++	virtual void EndPlay(const EEndPlayReason::Type Reason) override;
++private:
++	void OnSnapshot(const RPGTimeline::FPassiveSnapshot& Sample);
++	TArray<TSharedPtr<const RPGTimeline::FCompiled>> Timelines;
++	TSharedPtr<const RPGCombatRegistry::FEpoch> ContentLease;
++	FRPGParticipantKey Participant;
++	RPGTimeline::FCursor Cursor;
++	RPGTimeline::FPlaybackAdapter Playback;
++	TWeakObjectPtr<URPGAttackTracker> BoundTracker;
++	TWeakObjectPtr<URPGCombatContextSubsystem> Context;
++	FDelegateHandle ObservationHandle;
++	TArray<TSharedPtr<FJsonObject>> Records;
++	int32 Dropped = 0;
++	static constexpr int32 MaxRecords = 4096;
++};
+diff --git a/Source/OneBossFight/Boss/RPGShadowCompare.cpp b/Source/OneBossFight/Boss/RPGShadowCompare.cpp
+new file mode 100644
+--- /dev/null
++++ b/Source/OneBossFight/Boss/RPGShadowCompare.cpp
+@@ -0,0 +1,279 @@
++#include "Boss/RPGShadowCompare.h"
++#include "Player/RPGAttackTracker.h"
++#include "Player/RPGBossEncounter.h"
++#include "Animation/AnimInstance.h"
++#include "Animation/AnimMontage.h"
++#include "Animation/AnimSequenceBase.h"
++#include "Components/SkeletalMeshComponent.h"
++#include "GameFramework/Character.h"
++#include "Engine/World.h"
++#include "Dom/JsonObject.h"
++#include "Dom/JsonValue.h"
++#include "Policies/CondensedJsonPrintPolicy.h"
++#include "Serialization/JsonSerializer.h"
++#include "Serialization/JsonWriter.h"
++#include "Misc/FileHelper.h"
++#include "Misc/Paths.h"
++#include "HAL/FileManager.h"
++
++namespace RPGTimeline
++{
++FPassiveSnapshot CaptureAfterTracker(const URPGAttackTracker& Tracker)
++{
++	FPassiveSnapshot S;
++	if (!IsValid(&Tracker) || !IsValid(Tracker.GetOwner())) { return S; }
++	S.Legacy.Move = Tracker.GetCurrentMove(); S.Legacy.bTracked = !S.Legacy.Move.IsNone();
++	S.Legacy.Phase = Tracker.GetPhaseName(); S.Legacy.Instance = Tracker.GetAttackInstance();
++	S.Legacy.IllegalStarts = Tracker.GetIllegalStartCount(); S.Legacy.DoubleLaunches = Tracker.GetDoubleLaunchCount();
++	if (S.Legacy.bTracked)
++	{
++		S.Legacy.Position = Tracker.GetPosition(); FRPGAttackTiming Timing;
++		if (Tracker.GetTiming(S.Legacy.Move, Timing)) { S.Legacy.ActiveBegin = Timing.ActiveStartTime; S.Legacy.ActiveEnd = Timing.ActiveEndTime; }
++	}
++	const ACharacter* Actor = Cast<ACharacter>(Tracker.GetOwner());
++	const UAnimInstance* Anim = IsValid(Actor) && IsValid(Actor->GetMesh()) ? Actor->GetMesh()->GetAnimInstance() : nullptr;
++	if (!IsValid(Anim)) { return S; }
++	const UAnimMontage* Montage = Anim ? Anim->GetCurrentActiveMontage() : nullptr;
++	if (IsValid(Montage))
++	{
++		S.SourceAsset = Montage->GetPathName(); S.Position = Anim->Montage_GetPosition(Montage);
++		S.Rate = Anim->Montage_GetPlayRate(Montage); S.Section = Anim->Montage_GetCurrentSection(Montage);
++		if (const FAnimMontageInstance* Instance = Anim->GetActiveInstanceForMontage(Montage)) { S.EngineInstance = Instance->GetInstanceID(); }
++		if (!Montage->SlotAnimTracks.IsEmpty())
++		{
++			S.Slot = Montage->SlotAnimTracks[0].SlotName;
++			// Metadata only. Positions remain MONTAGE-local; importer must map segment-local notifies.
++			if (const FAnimSegment* Segment = Montage->SlotAnimTracks[0].AnimTrack.GetSegmentAtTime(static_cast<float>(S.Position.GetValue())))
++			{
++				if (const UAnimSequenceBase* Clip = Segment->GetAnimReference()) { S.CurrentSegmentAsset = Clip->GetPathName(); }
++			}
++		}
++	}
++	S.GameTime = Tracker.GetWorld() ? Tracker.GetWorld()->GetTimeSeconds() : 0.;
++	return S;
++}
++
++TOptional<FObservation> FPlaybackAdapter::Observe(const FPassiveSnapshot& S, const FRPGParticipantKey& Key,
++	const TArray<TSharedPtr<const FCompiled>>& Artifacts)
++{
++	++Sequence;
++	if (!S.Position.IsSet())
++	{
++		if (!Last.IsSet() || Last->bStopped) { return {}; }
++		FObservation Stop = Last.GetValue(); Stop.Sample = Sequence; Stop.bStopped = true;
++		Stop.GameTime = S.GameTime; Stop.Legacy = S.Legacy; Last = Stop; return Stop;
++	}
++	const FCompiled* Match = nullptr;
++	for (const auto& Artifact : Artifacts)
++	{
++		if (!Artifact || (Artifact->Key.AssetPath != S.SourceAsset && Artifact->Key.AssetPath != S.CurrentSegmentAsset)
++			|| Artifact->Key.Slot != S.Slot || Artifact->Key.Section != S.Section) { continue; }
++		if (Match) { Last.Reset(); return {}; } // ambiguous metadata is uncovered, never first-variant fallback
++		Match = Artifact.Get();
++	}
++	if (!Match) { Last.Reset(); return {}; }
++	FObservation O; O.Participant = Key; O.Sample = Sequence; O.Timeline = Match->Key;
++	O.ObservedSourceAsset = S.SourceAsset; O.ObservedSegmentAsset = S.CurrentSegmentAsset;
++	O.Current = S.Position.GetValue(); O.Previous = O.Current; O.GameTime = S.GameTime;
++	O.Rate = S.Rate.Get(0.f); O.EngineInstance = S.EngineInstance; O.Legacy = S.Legacy;
++	const bool Same = Last.IsSet() && !Last->bStopped && Last->Participant == Key && Last->Timeline == O.Timeline
++		&& Last->EngineInstance == O.EngineInstance && O.EngineInstance.IsSet();
++	if (!Same) { ++Ordinal; }
++	else { O.Previous = Last->Current; }
++	O.PlaybackOrdinal = Ordinal;
++	O.Traversal = !S.Rate.IsSet() ? ETraversal::Unknown : O.Rate < 0.f ? ETraversal::Reverse
++		: (Same && O.Current < O.Previous ? ETraversal::Unknown : ETraversal::Forward);
++	Last = O; return O;
++}
++}
++
++URPGCombatTimelineShadow::URPGCombatTimelineShadow() { PrimaryComponentTick.bCanEverTick = false; }
++
++bool URPGCombatTimelineShadow::Configure(const TArray<TSharedPtr<const RPGTimeline::FCompiled>>& Values,
++	const FRPGParticipantKey& Key, TSharedPtr<const RPGCombatRegistry::FEpoch> Lease)
++{
++	if (!Timelines.IsEmpty() || IsRegistered() || Values.IsEmpty() || !Lease || !Key.WorldSession.IsValid() || !Key.EncounterInstance.IsValid()
++		|| Key.Slot.IsNone() || Key.Generation == 0) { return false; }
++	for (int32 I = 0; I < Values.Num(); ++I)
++	{
++		if (!Values[I]) { return false; }
++		for (int32 J = 0; J < I; ++J) { if (Values[J]->Key == Values[I]->Key) { return false; } }
++	}
++	Timelines = Values; Participant = Key; ContentLease = MoveTemp(Lease); return true;
++}
++
++bool URPGCombatTimelineShadow::BindTracker(URPGAttackTracker& Tracker, URPGCombatContextSubsystem& InContext)
++{
++#if UE_BUILD_SHIPPING
++	return false;
++#else
++	if (Timelines.IsEmpty() || BoundTracker.IsValid() || Tracker.GetOwner() != GetOwner()
++		|| !InContext.IsCurrent(Participant)) { return false; }
++	BoundTracker = &Tracker; Context = &InContext;
++	// Requires the staged tracker seam; never poll/tick the tracker a second time.
++	ObservationHandle = Tracker.OnAfterObservation.AddUObject(this, &URPGCombatTimelineShadow::OnSnapshot);
++	return true;
++#endif
++}
++
++void URPGCombatTimelineShadow::OnSnapshot(const RPGTimeline::FPassiveSnapshot& Sample)
++{
++	if (!Context.IsValid() || !GetOwner()) { Cursor.Close(); return; }
++	const auto CurrentKey = Context->FindParticipant(*GetOwner());
++	if (!CurrentKey.IsSet()) { Cursor.Close(); return; }
++	if (!(Participant == CurrentKey.GetValue())) { Cursor.Close(); Participant = CurrentKey.GetValue(); }
++	if (auto Observation = Playback.Observe(Sample, Participant, Timelines)) { ObserveAfterTracker(Observation.GetValue()); }
++	else if (Sample.Position.IsSet()) { ++Dropped; } // unmatched playback reduces coverage; idle isn't a dropped event
++}
++
++void URPGCombatTimelineShadow::ObserveAfterTracker(const RPGTimeline::FObservation& O)
++{
++#if !UE_BUILD_SHIPPING
++	if (!(Participant == O.Participant)) { return; }
++	const TSharedPtr<const RPGTimeline::FCompiled>* Found = Timelines.FindByPredicate([&O](const auto& A) { return A && A->Key == O.Timeline; });
++	if (!Found) { ++Dropped; return; }
++	const auto& Timeline = *Found;
++	// Keep cursor chronology even after report capacity is exhausted.
++	const RPGTimeline::FAdvance Advance = Cursor.Advance(*Timeline, O);
++	if (Records.Num() >= MaxRecords) { ++Dropped; return; }
++	auto Row = MakeShared<FJsonObject>();
++	Row->SetStringField(TEXT("world_session"), Participant.WorldSession.ToString());
++	Row->SetStringField(TEXT("encounter_instance"), Participant.EncounterInstance.ToString());
++	Row->SetStringField(TEXT("participant_slot"), Participant.Slot.ToString());
++	Row->SetNumberField(TEXT("generation"), Participant.Generation);
++	// uint64 cannot be represented losslessly by JSON numbers; serialize decimal strings.
++	Row->SetStringField(TEXT("observation_ordinal"), LexToString(O.Sample));
++	Row->SetStringField(TEXT("playback_ordinal"), LexToString(O.PlaybackOrdinal));
++	if (O.AuthoritativeAction.IsSet()) { Row->SetStringField(TEXT("authoritative_action"), O.AuthoritativeAction.GetValue()); }
++	else { Row->SetField(TEXT("authoritative_action"), MakeShared<FJsonValueNull>()); }
++	Row->SetStringField(TEXT("source_asset"), O.Timeline.AssetPath);
++	Row->SetStringField(TEXT("observed_source_asset"), O.ObservedSourceAsset);
++	Row->SetStringField(TEXT("observed_segment_asset"), O.ObservedSegmentAsset);
++	Row->SetStringField(TEXT("asset_sha256"), O.Timeline.AssetSHA256);
++	Row->SetStringField(TEXT("adapter_sha256"), O.Timeline.AdapterSHA256);
++	Row->SetBoolField(TEXT("synthetic_fixture"), O.Timeline.bSyntheticFixture);
++	Row->SetNumberField(TEXT("projection_policy"), static_cast<int32>(O.Timeline.ProjectionPolicy));
++	Row->SetStringField(TEXT("move"), O.Timeline.Move.ToString()); Row->SetStringField(TEXT("variant"), O.Timeline.Variant.ToString());
++	Row->SetStringField(TEXT("section"), O.Timeline.Section.ToString());
++	Row->SetStringField(TEXT("coverage_scope"), TEXT("GetCurrentActiveMontage result; first slot track/current segment only; other slots, additive sequences, inactive blend-outs UNCOVERED"));
++	Row->SetNumberField(TEXT("previous"), O.Previous); Row->SetNumberField(TEXT("current"), O.Current);
++	Row->SetNumberField(TEXT("game_time"), O.GameTime); Row->SetNumberField(TEXT("actual_rate"), O.Rate);
++	Row->SetNumberField(TEXT("traversal"), static_cast<int32>(O.Traversal)); Row->SetNumberField(TEXT("loop"), O.LoopOrdinal);
++	if (O.EngineInstance.IsSet()) { Row->SetNumberField(TEXT("engine_instance"), O.EngineInstance.GetValue()); }
++	else { Row->SetField(TEXT("engine_instance"), MakeShared<FJsonValueNull>()); }
++	auto Legacy = MakeShared<FJsonObject>();
++	Legacy->SetBoolField(TEXT("tracked"), O.Legacy.bTracked); Legacy->SetStringField(TEXT("move"), O.Legacy.Move.ToString());
++	Legacy->SetStringField(TEXT("phase"), O.Legacy.Phase); Legacy->SetNumberField(TEXT("instance"), O.Legacy.Instance);
++	Legacy->SetNumberField(TEXT("illegal_starts"), O.Legacy.IllegalStarts); Legacy->SetNumberField(TEXT("double_launches"), O.Legacy.DoubleLaunches);
++	Row->SetObjectField(TEXT("legacy_snapshot"), Legacy);
++	TArray<TSharedPtr<FJsonValue>> Crossings;
++	for (const RPGTimeline::FCrossing& C : Advance.Crossings)
++	{
++		auto Item = MakeShared<FJsonObject>(); Item->SetStringField(TEXT("id"), C.Id.ToString());
++		Item->SetStringField(TEXT("semantic"), C.Semantic.ToString()); Item->SetNumberField(TEXT("position"), C.Position);
++		Item->SetNumberField(TEXT("edge"), static_cast<int32>(C.Edge)); Crossings.Add(MakeShared<FJsonValueObject>(Item));
++		Item->SetNumberField(TEXT("loop_ordinal"), C.LoopOrdinal);
++	}
++	Row->SetArrayField(TEXT("compiled_crossings"), Crossings);
++	TArray<TSharedPtr<FJsonValue>> Projections;
++	for (const auto& W : Timeline->Windows)
++	{
++		if (!W.RawEnd.IsSet()) { continue; }
++		auto Projection = MakeShared<FJsonObject>(); Projection->SetStringField(TEXT("window_id"), W.Id.ToString());
++		Projection->SetNumberField(TEXT("ClampedFrom"), W.RawEnd.GetValue()); Projection->SetNumberField(TEXT("effective_end"), W.End);
++		Projection->SetStringField(TEXT("provenance_flag"), TEXT("DIAGNOSTIC_PLAYBACK_END_PROJECTION_NOT_OBSERVED_NOTIFY_CLEANUP"));
++		Projections.Add(MakeShared<FJsonValueObject>(Projection));
++	}
++	Row->SetArrayField(TEXT("window_projections"), Projections);
++	FString Status = TEXT("INCONCLUSIVE_SAMPLING");
++	if (Advance.Status == RPGTimeline::EStatus::InvalidRun) { Status = TEXT("INVALID_RUN"); }
++	else if (Advance.Status == RPGTimeline::EStatus::MissingMetadata) { Status = TEXT("MISSING_METADATA"); }
++	else if (Advance.Status == RPGTimeline::EStatus::Match)
++	{
++		if (!O.Legacy.bTracked) { Status = TEXT("UNTRACKED_PACK_PATH"); }
++		else if (!O.Legacy.ActiveBegin.IsSet() || !O.Legacy.ActiveEnd.IsSet()) { Status = TEXT("MISSING_METADATA"); }
++		else
++		{
++			bool EngineActive = false, HasActiveMetadata = false;
++			for (const auto& W : Timeline->Windows)
++			{
++				if (W.Semantic == FName(TEXT("Collision")) || W.Semantic == FName(TEXT("ActiveDamage")))
++				{
++					HasActiveMetadata = true;
++					if (O.Current >= W.Begin && O.Current < W.End) { EngineActive = true; }
++				}
++			}
++			const bool LegacyActive = O.Legacy.Phase == TEXT("Active");
++			Status = !HasActiveMetadata ? TEXT("MISSING_METADATA") : EngineActive == LegacyActive ? TEXT("MATCH") : TEXT("REGRESSION_CANDIDATE");
++		}
++	}
++	Row->SetStringField(TEXT("comparison_status"), Status);
++	Row->SetStringField(TEXT("limitation"), Advance.Limitation + TEXT("; MATCH covers sampled active state only, not hit/geometry/cause parity"));
++	// Registry entries annotate possible explanations; never whitelist an arbitrary discrepancy.
++	TArray<TSharedPtr<FJsonValue>> References;
++	for (const auto& Expected : RPGTimeline::ExpectedDifferences())
++	{
++		auto Ref = MakeShared<FJsonObject>(); Ref->SetStringField(TEXT("id"), Expected.Id.ToString());
++		Ref->SetStringField(TEXT("boundary"), Expected.Boundary); Ref->SetStringField(TEXT("evidence"), Expected.Evidence);
++		References.Add(MakeShared<FJsonValueObject>(Ref));
++	}
++	Row->SetArrayField(TEXT("possible_explanations_not_acceptance"), References);
++	Records.Add(Row);
++#endif
++}
++
++FString URPGCombatTimelineShadow::GetRecordJsonForTest(int32 Index) const
++{
++#if UE_BUILD_SHIPPING
++	return FString();
++#else
++	FString Text;
++	if (!Records.IsValidIndex(Index) || !Records[Index]) { return Text; }
++	FJsonSerializer::Serialize(Records[Index].ToSharedRef(), TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&Text));
++	return Text;
++#endif
++}
++
++bool URPGCombatTimelineShadow::FlushReport(const TSharedRef<FJsonObject>& RunHeader, FString& OutPath)
++{
++	OutPath.Reset();
++#if UE_BUILD_SHIPPING
++	return false;
++#else
++	// Reject incomplete provenance rather than inventing run validity or DLL identity.
++	const TCHAR* Required[] = {TEXT("run_id"), TEXT("dll_hash"), TEXT("source_manifest"), TEXT("map"),
++		TEXT("requested_source"), TEXT("published_source"), TEXT("content_hash"), TEXT("local_epoch"),
++		TEXT("validity"), TEXT("cvars_start"), TEXT("cvars_end"), TEXT("window_state"), TEXT("game_sample_dt"),
++		TEXT("slate_sample_dt"), TEXT("assets_before_after"), TEXT("scripts_before_after"), TEXT("net_mode_role")};
++	for (const TCHAR* Field : Required) { if (!RunHeader->HasField(Field)) { return false; } }
++	auto Header = MakeShared<FJsonObject>(); Header->Values = RunHeader->Values;
++	Header->SetNumberField(TEXT("schema"), 1); Header->SetNumberField(TEXT("dropped_records"), Dropped);
++	Header->SetNumberField(TEXT("record_count"), Records.Num());
++	if (Records.IsEmpty()) { Header->SetStringField(TEXT("coverage"), TEXT("UNCOVERED")); }
++	FString Text, Line;
++	if (!FJsonSerializer::Serialize(Header.ToSharedRef(), TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&Line))) { return false; }
++	Text = Line + TEXT("\n");
++	for (const auto& Row : Records)
++	{
++		Line.Reset();
++		if (!FJsonSerializer::Serialize(Row.ToSharedRef(), TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&Line))) { return false; }
++		Text += Line + TEXT("\n");
++	}
++	const FString Directory = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("BossCombatReview/Shadow"));
++	if (!IFileManager::Get().MakeDirectory(*Directory, true)) { return false; }
++	const FString Path = FPaths::Combine(Directory, FGuid::NewGuid().ToString(EGuidFormats::Digits) + TEXT(".jsonl"));
++	if (!FFileHelper::SaveStringToFile(Text, *Path, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM)) { return false; }
++	OutPath = Path; Records.Reset(); Dropped = 0; return true;
++#endif
++}
++
++void URPGCombatTimelineShadow::EndPlay(const EEndPlayReason::Type Reason)
++{
++	if (BoundTracker.IsValid())
++	{
++#if !UE_BUILD_SHIPPING
++		BoundTracker->OnAfterObservation.Remove(ObservationHandle);
++#endif
++	}
++	BoundTracker.Reset(); Context.Reset(); Cursor.Close(); Timelines.Reset(); ContentLease.Reset(); Records.Reset(); Super::EndPlay(Reason);
++}
+diff --git a/Source/OneBossFight/Tests/RPGTimelineTests.cpp b/Source/OneBossFight/Tests/RPGTimelineTests.cpp
+new file mode 100644
+--- /dev/null
++++ b/Source/OneBossFight/Tests/RPGTimelineTests.cpp
+@@ -0,0 +1,156 @@
++#include "Misc/AutomationTest.h"
++#if WITH_DEV_AUTOMATION_TESTS
++#include "Boss/RPGTimelineCompiler.h"
++#include "Boss/RPGShadowCompare.h"
++#include <limits>
++
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGTimelineDraftTest, "OneBossFight.Timeline.DraftCrossings",
++	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
++bool FRPGTimelineDraftTest::RunTest(const FString& Parameters)
++{
++	using namespace RPGTimeline;
++	FKey Key = SyntheticKey(TEXT("Synthetic"), TEXT("VariantA"));
++	FWindow W; W.Id = TEXT("trace1"); W.Semantic = TEXT("Collision"); W.Begin = .2; W.End = .4;
++	W.SourceObject = TEXT("synthetic notify"); W.PayloadHash = FString::ChrN(64, TEXT('c'));
++	FWindow W2 = W; W2.Id = TEXT("trace2"); W2.Begin = .6; W2.End = .8;
++	FMarker M; M.Id = TEXT("start"); M.Semantic = TEXT("Start"); M.Position = 0.; M.Provenance = TEXT("synthetic");
++	auto CompileResult = Compile(Key, 1., {W, W2}, {M}, true);
++	if (!TestTrue(TEXT("compile valid synthetic artifact"), CompileResult.Value.IsValid())) { return false; }
++	TestFalse(TEXT("segment map must be verified"), Compile(Key, 1., {W}, {M}, false).Value.IsValid());
++	TestFalse(TEXT("duplicate notify rejected"), Compile(Key, 1., {W, W}, {}, true).Value.IsValid());
++	FKey BadKey = Key; BadKey.AssetSHA256 = TEXT("bad");
++	TestFalse(TEXT("hash key rejected"), Compile(BadKey, 1., {W}, {}, true).Value.IsValid());
++	TestFalse(TEXT("zero samples not empty timeline pass"), Compile(Key, 1., {}, {}, true).Value.IsValid());
++	FWindow Malformed = W; Malformed.Begin = .5; Malformed.End = .2;
++	TestFalse(TEXT("inverted interval rejected"), Compile(Key, 1., {Malformed}, {}, true).Value.IsValid());
++	Malformed = W; Malformed.End = Malformed.Begin;
++	TestFalse(TEXT("degenerate interval rejected"), Compile(Key, 1., {Malformed}, {}, true).Value.IsValid());
++	Malformed = W; Malformed.Begin = std::numeric_limits<double>::quiet_NaN();
++	TestFalse(TEXT("NaN interval rejected"), Compile(Key, 1., {Malformed}, {}, true).Value.IsValid());
++	FWindow Overhang = W; Overhang.End = 2.;
++	TestFalse(TEXT("overhang needs explicit projection policy"), Compile(Key, 1., {Overhang}, {}, true).Value.IsValid());
++	auto Clipped = Compile(Key, 1., {Overhang}, {}, true, EOverhangPolicy::ClipDiagnosticToPlaybackEnd);
++	TestTrue(TEXT("projection retains raw end and diagnostic"), Clipped.Value && Clipped.Value->Windows[0].End == 1.
++		&& Clipped.Value->Windows[0].RawEnd.Get(0.) == 2. && !Clipped.Value->Diagnostics.IsEmpty());
++	Overhang.Begin = 1.2;
++	TestFalse(TEXT("begin beyond length cannot be clamped to backwards window"), Compile(Key, 1., {Overhang}, {}, true, EOverhangPolicy::ClipDiagnosticToPlaybackEnd).Value.IsValid());
++	FObservation O; O.Participant = {FGuid::NewGuid(), FGuid::NewGuid(), TEXT("Boss"), 1};
++	O.Timeline = Key; O.Sample = 1; O.PlaybackOrdinal = 1; O.EngineInstance = 12;
++	O.Previous = 0.; O.Current = .1; O.Traversal = ETraversal::Forward;
++	FCursor First, Second;
++	auto R = First.Advance(*CompileResult.Value, O);
++	TestEqual(TEXT("start0 once"), R.Crossings.Num(), 1);
++	TestEqual(TEXT("duplicate produces no edges"), First.Advance(*CompileResult.Value, O).Crossings.Num(), 0);
++	O.Sample = 2; O.Previous = .1; O.Current = .9;
++	R = First.Advance(*CompileResult.Value, O);
++	TestEqual(TEXT("hitch crosses both windows in/out"), R.Crossings.Num(), 4);
++	TestTrue(TEXT("chronological edges"), R.Crossings.Num() == 4 && R.Crossings[0].Position == .2 && R.Crossings[3].Position == .8);
++	O.Sample = 3; O.Previous = .9; O.Current = 1.;
++	TestEqual(TEXT("no repeated edges"), First.Advance(*CompileResult.Value, O).Crossings.Num(), 0);
++	O.Sample = 4; O.bStopped = true;
++	TestEqual(TEXT("stop closes once"), First.Advance(*CompileResult.Value, O).Crossings.Num(), 1);
++	O.Sample = 5;
++	TestEqual(TEXT("repeat stop not duplicated"), First.Advance(*CompileResult.Value, O).Crossings.Num(), 0);
++	O.bStopped = false; O.PlaybackOrdinal = 2; O.EngineInstance = 13; O.Sample = 6; O.Previous = 0.; O.Current = .2;
++	TestEqual(TEXT("same asset new instance starts fresh incl exact endpoint"), First.Advance(*CompileResult.Value, O).Crossings.Num(), 2);
++	O.Participant.Generation = 2; O.Sample = 7; O.PlaybackOrdinal = 3; O.EngineInstance = 14; O.Previous = 0.; O.Current = .1;
++	R = First.Advance(*CompileResult.Value, O);
++	TestTrue(TEXT("generation closes old and opens new"), R.Crossings.Num() == 2 && R.Crossings[0].Edge == EEdge::Closed);
++	O.Sample = 8; O.Traversal = ETraversal::Reverse; O.Rate = -1.f; O.Previous = .1; O.Current = 0.;
++	TestTrue(TEXT("reverse explicitly inconclusive"), First.Advance(*CompileResult.Value, O).Status == EStatus::Inconclusive);
++	O.Sample = 9; O.Traversal = ETraversal::SectionJump; O.Current = .7;
++	TestTrue(TEXT("jump doesn't infer skipped hits"), First.Advance(*CompileResult.Value, O).Crossings.IsEmpty());
++	O.Sample = 10; O.Traversal = ETraversal::Loop; O.Current = .1; O.LoopOrdinal = 1;
++	TestTrue(TEXT("loop explicit inconclusive"), First.Advance(*CompileResult.Value, O).Status == EStatus::Inconclusive);
++	FObservation Independent = O; Independent.Sample = 1; Independent.Previous = 0.; Independent.Current = .1;
++	Independent.Traversal = ETraversal::Forward; Independent.Rate = 1.f;
++	TestEqual(TEXT("second cursor independent"), Second.Advance(*CompileResult.Value, Independent).Crossings.Num(), 1);
++	First.Close(); TestTrue(TEXT("closing first leaves second open"), Second.IsOpen());
++	Independent.Sample = 2; Independent.EngineInstance.Reset();
++	TestTrue(TEXT("missing engine identity inconclusive"), Second.Advance(*CompileResult.Value, Independent).Status == EStatus::Inconclusive);
++	TestEqual(TEXT("six expected differences retained"), ExpectedDifferences().Num(), 6);
++	FCursor LoopCursor; FObservation Loop = O; Loop.Sample = 1; Loop.Previous = 0.; Loop.Current = .9;
++	Loop.Traversal = ETraversal::Forward; Loop.Rate = 1.f; Loop.LoopOrdinal = 0; Loop.EngineInstance = 99;
++	LoopCursor.Advance(*CompileResult.Value, Loop);
++	Loop.Sample = 2; Loop.Previous = .9; Loop.Current = .3; Loop.Traversal = ETraversal::Loop;
++	Loop.LoopOrdinal = 1; Loop.bLoopPathVerified = true; Loop.LoopBegin = 0.; Loop.LoopEnd = 1.;
++	auto Wrapped = LoopCursor.Advance(*CompileResult.Value, Loop);
++	TestTrue(TEXT("verified single loop emits marker0 and next begin"), Wrapped.Status == EStatus::Match && Wrapped.Crossings.Num() == 2
++		&& Wrapped.Crossings[0].LoopOrdinal == 1 && Wrapped.Crossings[1].LoopOrdinal == 1);
++	TestTrue(TEXT("duplicate loop no second crossings"), LoopCursor.Advance(*CompileResult.Value, Loop).Crossings.IsEmpty());
++	AddInfo(TEXT("Synthetic trace replay is not natural boss playback or engine off/on parity."));
++	return true;
++}
++
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGTimelineA2GoldenDraftTest, "OneBossFight.Timeline.DraftA2Golden",
++	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
++bool FRPGTimelineA2GoldenDraftTest::RunTest(const FString& Parameters)
++{
++	using namespace RPGTimeline;
++	// Independently checked scalar subset of AG16 Rev03 timeline_expected.json against
++	// current montage_notifies_2026-10-25.txt SHA256 950c611ee5eae7bcdd7abca1ea56c051c3b42d988b427cf64452829142ab0b31.
++	// This is a synthetic replay of rounded export metadata, NOT the live montage or a full-payload proof.
++	FKey Key = SyntheticKey(TEXT("AG16_A2_ScalarSubset"), TEXT("ExportRev03"));
++	Key.AssetSHA256 = TEXT("950c611ee5eae7bcdd7abca1ea56c051c3b42d988b427cf64452829142ab0b31");
++	const double Length = 3.4000000953674316;
++	TArray<FWindow> Windows;
++	auto Add = [&](const TCHAR* Id, const TCHAR* Semantic, double Begin, double End, const TCHAR* Hash)
++	{
++		FWindow W; W.Id = Id; W.Semantic = Semantic; W.Begin = Begin; W.End = End;
++		W.SourceObject = TEXT("montage_notifies_2026-10-25.txt / GS_ChargedAttack_Montage"); W.PayloadHash = Hash;
++		Windows.Add(W);
++	};
++	Add(TEXT("MovementLock"), TEXT("MovementLock"), 0., 4.933, TEXT("cc0c15572697ae1e519d150059af94498f7caa5e34ffc4ac7cb39cad0ef6e758"));
++	Add(TEXT("Collision1"), TEXT("ActiveDamage"), 1.567, 1.760, TEXT("c6e25f9fc8c1c2357d53f315650aa46a8a22e7f3d7010bc5ea64a0ee4cc6a375"));
++	Add(TEXT("Collision2"), TEXT("ActiveDamage"), 1.925, 2.104, TEXT("df596f6bb1fef1b43db24c0237c3871aefdd8a246a139c0935ffba352997366d"));
++	TArray<FMarker> Markers;
++	FMarker First; First.Id = TEXT("Sound1"); First.Semantic = TEXT("AcousticCue"); First.Position = 1.593; First.Provenance = Key.AssetSHA256;
++	FMarker Second = First; Second.Id = TEXT("Sound2"); Second.Position = 1.817; Markers = {First, Second};
++	auto C = Compile(Key, Length, Windows, Markers, true, EOverhangPolicy::ClipDiagnosticToPlaybackEnd);
++	if (!TestTrue(TEXT("scalar export subset compiles with explicit projection"), C.Value.IsValid())) { return false; }
++	TestTrue(TEXT("overhang retained, not normalized away"), C.Value->Windows[0].RawEnd.Get(0.) == 4.933 && C.Value->Windows[0].End == Length);
++	FObservation O; O.Participant = {FGuid::NewGuid(), FGuid::NewGuid(), TEXT("Boss"), 1};
++	O.Timeline = C.Value->Key; O.Sample = 1; O.PlaybackOrdinal = 1; O.EngineInstance = 11;
++	O.Current = Length; O.Previous = 0.; O.Traversal = ETraversal::Forward;
++	FCursor Cursor; auto R = Cursor.Advance(*C.Value, O);
++	TestEqual(TEXT("full hitch:3 windows x2 edges +2 markers"), R.Crossings.Num(), 8);
++	TestTrue(TEXT("both collision intervals retained independently"), C.Value->Windows[1].Begin == 1.567 && C.Value->Windows[2].Begin == 1.925);
++	// Independent scalar expected sequence, not obtained by asking the compiler to make its own oracle.
++	const double ExpectedTimes[] = {0., 1.567, 1.593, 1.760, 1.817, 1.925, 2.104, Length};
++	const FName ExpectedIds[] = {TEXT("MovementLock"), TEXT("Collision1"), TEXT("Sound1"), TEXT("Collision1"), TEXT("Sound2"), TEXT("Collision2"), TEXT("Collision2"), TEXT("MovementLock")};
++	const EEdge ExpectedEdges[] = {EEdge::Begin, EEdge::Begin, EEdge::Marker, EEdge::End, EEdge::Marker, EEdge::Begin, EEdge::End, EEdge::End};
++	FCursor Micro; TArray<FCrossing> Actual; TSet<FName> ActiveCollision;
++	FObservation Step = O; Step.Sample = 0; Step.Current = 0.;
++	for (int32 Frame = 1; Frame <= 205; ++Frame)
++	{
++		Step.Previous = Step.Current; Step.Current = FMath::Min(Length, Frame / 60.); ++Step.Sample;
++		const FAdvance Small = Micro.Advance(*C.Value, Step);
++		for (const auto& Edge : Small.Crossings)
++		{
++			Actual.Add(Edge);
++			if (Edge.Semantic == FName(TEXT("ActiveDamage")))
++			{
++				if (Edge.Edge == EEdge::Begin) ActiveCollision.Add(Edge.Id);
++				if (Edge.Edge == EEdge::End) ActiveCollision.Remove(Edge.Id);
++			}
++		}
++		const bool ExpectedActive = (Step.Current >= 1.567 && Step.Current < 1.760) || (Step.Current >= 1.925 && Step.Current < 2.104);
++		TestTrue(TEXT("60Hz collision state agrees with independent half-open intervals"), (ActiveCollision.Num() > 0) == ExpectedActive);
++		// Paused playback: a new sample at exactly the same position produces no repeat edges.
++		Step.Previous = Step.Current; Step.Rate = 0.f; ++Step.Sample;
++		TestEqual(TEXT("zero-rate pause emits no duplicate crossings"), Micro.Advance(*C.Value, Step).Crossings.Num(), 0);
++		Step.Rate = 1.f;
++	}
++	TestEqual(TEXT("micro-step count"), Actual.Num(), 8);
++	if (Actual.Num() == 8 && R.Crossings.Num() == 8)
++	{
++		for (int32 I = 0; I < 8; ++I)
++		{
++			TestTrue(TEXT("micro-step exact expected time/id/edge"), Actual[I].Position == ExpectedTimes[I] && Actual[I].Id == ExpectedIds[I] && Actual[I].Edge == ExpectedEdges[I]);
++			TestTrue(TEXT("hitch exact expected time/id/edge"), R.Crossings[I].Position == ExpectedTimes[I] && R.Crossings[I].Id == ExpectedIds[I] && R.Crossings[I].Edge == ExpectedEdges[I]);
++		}
++	}
++	AddInfo(TEXT("AG16 scalar export subset only; unknown section topology/full binary payload remain unproved. Synthetic replay, not live animation acceptance."));
++	return true;
++}
++#endif
+diff --git a/Source/OneBossFight/Player/RPGAttackTracker.h b/Source/OneBossFight/Player/RPGAttackTracker.h
+--- a/Source/OneBossFight/Player/RPGAttackTracker.h
++++ b/Source/OneBossFight/Player/RPGAttackTracker.h
+@@ -4,6 +4,7 @@
+ 
+ #include "CoreMinimal.h"
+ #include "Components/ActorComponent.h"
++#include "Boss/RPGShadowCompare.h"
+ #include "RPGAttackTracker.generated.h"
+ 
+ /**
+@@ -82,6 +83,10 @@
+ 
+ public:
+ 	URPGAttackTracker();
++#if !UE_BUILD_SHIPPING
++	RPGTimeline::FAfterTracker OnAfterObservation;
++	bool bObservationBroadcastInProgress = false;
++#endif
+ 
+ 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
+ 	TArray<FRPGAttackTiming> Attacks;
+diff --git a/Source/OneBossFight/Player/RPGAttackTracker.cpp b/Source/OneBossFight/Player/RPGAttackTracker.cpp
+--- a/Source/OneBossFight/Player/RPGAttackTracker.cpp
++++ b/Source/OneBossFight/Player/RPGAttackTracker.cpp
+@@ -1,6 +1,8 @@
+ // Copyright One Boss Fight. All Rights Reserved.
+ 
+ #include "Player/RPGAttackTracker.h"
++#include "Misc/ScopeExit.h"
++#include "Templates/UnrealTemplate.h"
+ #include "Player/RPGTelegraphRules.h"
+ #include "Player/RPGBossEncounter.h"
+ #include "Player/RPGBossPhases.h"
+@@ -327,6 +329,17 @@
+ void URPGAttackTracker::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+ {
+ 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
++#if !UE_BUILD_SHIPPING
++	ON_SCOPE_EXIT
++	{
++		if (IsValid(this) && !bObservationBroadcastInProgress && OnAfterObservation.IsBound())
++		{
++			TGuardValue<bool> BroadcastGuard(bObservationBroadcastInProgress, true);
++			const RPGTimeline::FPassiveSnapshot Sample = RPGTimeline::CaptureAfterTracker(*this);
++			OnAfterObservation.Broadcast(Sample);
++		}
++	};
++#endif
+ 	ACharacter* Boss = Cast<ACharacter>(GetOwner());
+ 	UAnimInstance* Anim = Boss && Boss->GetMesh() ? Boss->GetMesh()->GetAnimInstance() : nullptr;
+ 	if (!bEnabled || !Anim)

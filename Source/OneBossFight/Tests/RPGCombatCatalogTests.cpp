@@ -133,12 +133,23 @@ bool FRPGCatalogResolutionTest::RunTest(const FString& Parameters)
 	TestTrue(*FString::Printf(TEXT("three shipped weapons resolve against the pack (%s)"), *Error), Resolved.IsValid());
 	if (!Resolved) return false;
 	TestEqual(TEXT("resolved snapshot keeps all builds"), Resolved->Builds.Num(), 3);
-	// A wrong declared style asset must fail the resolving compile with a field path, never publish.
-	TArray<FRPGCatalogWeapon> Broken = Weapons;
-	Broken[0].StyleName = TEXT("ClaymoreCombatStyle");
-	FString BrokenError;
-	TestFalse(TEXT("style name that does not match the resolved style asset is rejected"), Compile(L->Builds, Broken, BrokenError, true).IsValid());
-	TestFalse(TEXT("rejection names the weapon"), BrokenError.IsEmpty());
+	// The three shipped weapons are pinned by the legacy contract, which rejects ANY change before resolution; so the resolving stage is
+	// probed with an extra, non-legacy weapon whose declared style name differs from the style asset it points at.
+	TArray<FRPGCatalogWeapon> ProbeWeapons = Weapons;
+	TArray<FRPGCatalogBuild> ProbeBuilds = L->Builds;
+	FRPGCatalogWeapon Probe = Weapons[0];
+	Probe.WeaponId = TEXT("ProbeWeapon"); Probe.StyleName = TEXT("ProbeCombatStyle"); Probe.StyleAliases.Reset(); Probe.AliasHudWords.Reset(); Probe.Icon.Reset();
+	ProbeWeapons.Add(Probe);
+	FRPGCatalogBuild ProbeBuild = L->Builds[0];
+	ProbeBuild.BuildId = TEXT("ProbeBuild"); ProbeBuild.ConsoleName = TEXT("ProbeBuild"); ProbeBuild.DisplayName = TEXT("Probe"); ProbeBuild.Aliases.Reset();
+	ProbeBuild.LegacySlot = INDEX_NONE; ProbeBuild.UiOrder = 3; ProbeBuild.WeaponId = Probe.WeaponId; ProbeBuild.Icon.Reset();
+	ProbeBuilds.Add(ProbeBuild);
+	FString ProbeError;
+	TestFalse(TEXT("a style name that does not match the resolved style asset is rejected"), Compile(ProbeBuilds, ProbeWeapons, ProbeError, true).IsValid());
+	TestTrue(*FString::Printf(TEXT("the rejection comes from the resolving stage and names the weapon (%s)"), *ProbeError), ProbeError.Contains(TEXT("ProbeWeapon")) && ProbeError.Contains(TEXT("References")));
+	// The same probe without resolution passes the structural checks, so the rejection above is not a structural one.
+	FString StructuralError;
+	TestTrue(TEXT("the probe is structurally valid without resolution"), Compile(ProbeBuilds, ProbeWeapons, StructuralError, false).IsValid());
 	return true;
 }
 #endif

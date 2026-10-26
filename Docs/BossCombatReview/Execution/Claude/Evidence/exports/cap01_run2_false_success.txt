@@ -1,0 +1,25 @@
+﻿editor exit code: -1
+[2026.10.26-05.37.54:847][  0]LogPython: [CaptureCAP01] Pre-test cvars saved: {'rpg.WakeClip': 1.0, 'rpg.CloseTelegraph': 0.4000000059604645, 'rpg.Legend': 1.0, 'rpg.Debug': 0.0, 't.MaxFPS': 0.0}
+[2026.10.26-05.37.57:371][  1]LogPython: [CaptureCAP01] PIE active and boss held. Positioning player for A5 javelin observation...
+[2026.10.26-05.37.59:860][ 40]LogPython: [CaptureCAP01] Triggering boss A5 move via RPGAttackTracker::StartMove...
+[2026.10.26-05.37.59:874][ 40]LogPython: [CaptureCAP01] StartMove('A5', True) returned: True
+[2026.10.26-05.37.59:897][ 41]LogPython: [CaptureCAP01] Captured frame 1/15 at sim_time=0.949s
+[2026.10.26-05.38.00:881][ 47]LogPython: [CaptureCAP01] Captured frame 2/15 at sim_time=0.953s
+[2026.10.26-05.38.01:287][ 53]LogPython: [CaptureCAP01] Captured frame 3/15 at sim_time=0.953s
+[2026.10.26-05.38.01:376][ 54]LogPython: [CaptureCAP01] Captured frame 4/15 at sim_time=0.953s
+[2026.10.26-05.38.01:473][ 55]LogPython: [CaptureCAP01] Captured frame 5/15 at sim_time=0.953s
+[2026.10.26-05.38.01:502][ 56]LogPython: [CaptureCAP01] Captured frame 6/15 at sim_time=0.953s
+[2026.10.26-05.38.01:520][ 57]LogPython: [CaptureCAP01] Captured frame 7/15 at sim_time=0.953s
+[2026.10.26-05.38.01:534][ 58]LogPython: [CaptureCAP01] Captured frame 8/15 at sim_time=0.953s
+[2026.10.26-05.38.01:548][ 59]LogPython: [CaptureCAP01] Captured frame 9/15 at sim_time=0.953s
+[2026.10.26-05.38.01:564][ 60]LogPython: [CaptureCAP01] Captured frame 10/15 at sim_time=0.953s
+[2026.10.26-05.38.01:576][ 61]LogPython: [CaptureCAP01] Captured frame 11/15 at sim_time=0.953s
+[2026.10.26-05.38.01:591][ 62]LogPython: [CaptureCAP01] Captured frame 12/15 at sim_time=0.953s
+[2026.10.26-05.38.01:605][ 63]LogPython: [CaptureCAP01] Captured frame 13/15 at sim_time=0.953s
+[2026.10.26-05.38.01:616][ 64]LogPython: [CaptureCAP01] Captured frame 14/15 at sim_time=0.953s
+[2026.10.26-05.38.01:628][ 65]LogPython: [CaptureCAP01] Captured frame 15/15 at sim_time=0.953s
+[2026.10.26-05.38.01:628][ 65]LogPython: [CaptureCAP01] Finishing run: CAPTURE_SUCCESS
+[2026.10.26-05.38.01:628][ 65]LogPython: [CaptureCAP01] Restoring cvars and time dilation...
+[2026.10.26-05.38.01:629][ 65]LogPython: [CaptureCAP01] Cvar restoration complete.
+[2026.10.26-05.38.01:629][ 65]LogPython: [CaptureCAP01] RESULT 4/4 (CAPTURE_SUCCESS)
+

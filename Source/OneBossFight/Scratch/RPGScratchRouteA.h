@@ -22,6 +22,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Scratch")
 	FName AbilityTag = TEXT("Ability.EnterCombat");
 
+	/** The project's own route (RPGAttackTracker, RPGBossStagger) forces the pack ability; the scratch task uses the same call. */
+	UPROPERTY(EditAnywhere, Category = "Scratch")
+	bool bForceActivate = true;
+
 	/** When true the diagnostic reservation is refused: the task must not call the pack and must change nothing. */
 	UPROPERTY(EditAnywhere, Category = "Scratch")
 	bool bDenyReservation = false;

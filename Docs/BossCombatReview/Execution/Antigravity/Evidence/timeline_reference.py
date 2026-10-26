@@ -1,11 +1,11 @@
 """
-timeline_reference.py - Offline Reference Implementation of the Timeline Compiler (Rev 03)
+timeline_reference.py - Offline Reference Implementation of the Timeline Compiler (Rev 04)
 
 Computes independent expected compiled timelines, crossing evaluations, section graphs,
 and loop handling from parsed montage notifies and movesheets.
 
 Author: Antigravity (Visual & Technical Animation Investigator)
-Work Order: ANTIGRAVITY_WORK_ORDER_04 (AG-16 / AG-20 / AG-24)
+Work Order: ANTIGRAVITY_WORK_ORDER_04 (AG-16 / AG-20 / AG-24 Rev 04)
 Location: Docs/BossCombatReview/Execution/Antigravity/Evidence/timeline_reference.py
 """
 
@@ -304,6 +304,14 @@ class TimelineCompilerReference:
         """
         length = compiled["length_s"]
 
+        # 0. Finite position check (resolves Codex X-136 critique #1: NaN / Inf guard)
+        if not math.isfinite(prev_s) or not math.isfinite(curr_s):
+            return {
+                "status": "INCONCLUSIVE",
+                "reason": f"Non-finite position detected (NaN or Inf): prev={prev_s}, curr={curr_s}",
+                "crossings": []
+            }
+
         # 1. Bounds check (resolves Codex X-125 critique #2)
         if prev_s < 0.0 or curr_s < 0.0 or prev_s > length or curr_s > length:
             return {
@@ -347,8 +355,8 @@ class TimelineCompilerReference:
         starts_at_zero = is_initial and prev_s == 0.0
         crossings = []
 
-        # 5. Forward loop wrap traversal (loop_ordinal == prev_loop_ordinal + 1 and curr_s < prev_s)
-        if loop_ordinal == prev_loop_ordinal + 1 and curr_s < prev_s:
+        # 5. Forward loop wrap traversal (resolves Codex X-136 critique #2: full declared-wrap handling)
+        if traversal == "ForwardLoop" or loop_ordinal == prev_loop_ordinal + 1:
             # Sub-interval A: (prev_s, length]
             for w in compiled["windows"]:
                 if w["begin_s"] > prev_s and w["begin_s"] <= length:
@@ -407,7 +415,7 @@ class TimelineCompilerReference:
 
 
 def run_self_tests(compiler):
-    print("[SelfTest] Running 9 deliberate rejection and boundary verification tests...")
+    print("[SelfTest] Running 11 deliberate rejection and boundary verification tests...")
     tests_passed = 0
 
     # 1. Malformed notify: End <= Begin
@@ -513,7 +521,21 @@ def run_self_tests(compiler):
     tests_passed += 1
     print("  Test 9 PASSED (Codex X-125 Critique 3): Verified whole-montage payload_sha256 generation (64-char hex)")
 
-    print(f"[SelfTest] All {tests_passed}/9 deliberate verification tests PASSED successfully!\n")
+    # 10. CODEX X-136 REPRODUCER 1: Non-finite position (NaN/Inf) -> INCONCLUSIVE
+    res_nan = compiler.evaluate_crossing(compiled_mock, float('nan'), 0.5)
+    assert res_nan["status"] == "INCONCLUSIVE" and "Non-finite" in res_nan["reason"]
+    tests_passed += 1
+    print("  Test 10 PASSED (Codex X-136 Reproducer 1): NaN position rejected as INCONCLUSIVE")
+
+    # 11. CODEX X-136 REPRODUCER 2: ForwardLoop wrap evaluation when curr_s >= prev_s
+    res_loop = compiler.evaluate_crossing(compiled_mock, prev_s=0.1, curr_s=0.2, traversal="ForwardLoop", prev_loop_ordinal=0, loop_ordinal=1)
+    assert res_loop["status"] == "MATCH" and res_loop["traversal"] == "ForwardLoop"
+    # compiled_mock length 2.0, window (0.5, 1.0) is in interval A (0.1, 2.0], crossings count == 2 (Begin and End)
+    assert len(res_loop["crossings"]) == 2
+    tests_passed += 1
+    print("  Test 11 PASSED (Codex X-136 Reproducer 2): ForwardLoop with curr >= prev evaluated as MATCH with crossings")
+
+    print(f"[SelfTest] All {tests_passed}/11 deliberate verification tests PASSED successfully!\n")
 
 
 def main():
@@ -527,10 +549,10 @@ def main():
     print(f"[TimelineRef] Parsed {len(parsed_montages)} montages from montage_notifies_2026-10-25.txt.")
 
     compiled_database = {
-        "schema_version": "3.0",
+        "schema_version": "4.0",
         "provenance": {
-            "compiler": "Antigravity Timeline Reference Compiler (AG-24 Rev 03)",
-            "description": "Offline reference implementation with verified traversal guards, out-of-bounds rejection, transparent text export scope, and whole-montage payload SHA-256 hashes.",
+            "compiler": "Antigravity Timeline Reference Compiler (AG-24 Rev 04)",
+            "description": "Offline reference implementation with verified traversal guards, NaN/finite check, out-of-bounds rejection, full ForwardLoop wrap handling, transparent text export scope, and whole-montage payload SHA-256 hashes.",
             "input_hashes": compiler.input_hashes
         },
         "montages": {},

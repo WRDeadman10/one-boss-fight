@@ -50,6 +50,8 @@ public:
 	bool FlushReport(const TSharedRef<FJsonObject>& RunHeader, FString& OutPath);
 	UFUNCTION(BlueprintPure) int32 GetRecordCount() const { return Records.Num(); }
 	UFUNCTION(BlueprintPure) int32 GetDroppedRecords() const { return Dropped; }
+	/** Development-only read-only payload witness; no gameplay or flush side effects. */
+	UFUNCTION(BlueprintPure) FString GetRecordJsonForTest(int32 Index) const;
 protected:
 	virtual void EndPlay(const EEndPlayReason::Type Reason) override;
 private:

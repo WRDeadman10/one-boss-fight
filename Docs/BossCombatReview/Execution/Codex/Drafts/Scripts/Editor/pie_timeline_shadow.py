@@ -4,6 +4,9 @@ Natural run may have no observed move: zero samples explicitly FAIL, not an impl
 """
 import time
 import traceback
+import json
+import math
+import re
 import unreal
 
 TAG = "[TimelineShadow] "
@@ -24,9 +27,48 @@ def check(name, ok, detail=""):
     unreal.log(TAG + ("PASS " if ok else "FAIL ") + name + " " + str(detail))
 
 
+def await_condition(predicate, seconds, label):
+    deadline = time.monotonic() + seconds
+    while not predicate():
+        if time.monotonic() >= deadline:
+            raise TimeoutError(label)
+        yield 0.1
+
+
+def validate_records(shadow):
+    count = shadow.get_record_count()
+    if count <= 0:
+        return False
+    previous_ordinal = 0
+    for index in range(count):
+        row = json.loads(str(shadow.get_record_json_for_test(index)))
+        for key in ("world_session", "encounter_instance", "participant_slot", "source_asset", "variant", "coverage_scope"):
+            if not isinstance(row.get(key), str) or not row[key] or row[key] == "None":
+                return False
+        if not all(re.fullmatch(r"[0-9a-fA-F]{64}", row.get(k, "")) for k in ("asset_sha256", "adapter_sha256")):
+            return False
+        for key in ("previous", "current", "game_time", "actual_rate"):
+            value = row.get(key)
+            if not isinstance(value, (int, float)) or not math.isfinite(value):
+                return False
+        ordinal = int(row["observation_ordinal"])
+        if ordinal <= previous_ordinal or row.get("generation", 0) <= 0:
+            return False
+        previous_ordinal = ordinal
+        if row.get("authoritative_action") is not None:
+            return False  # Passive fixture has no verified authoritative action producer.
+        if not isinstance(row.get("compiled_crossings"), list) or not isinstance(row.get("legacy_snapshot"), dict):
+            return False
+        if row.get("comparison_status") not in {"MATCH", "REGRESSION_CANDIDATE", "UNTRACKED_PACK_PATH", "INCONCLUSIVE_SAMPLING", "MISSING_METADATA", "INVALID_RUN"}:
+            return False
+        if row["comparison_status"] == "INVALID_RUN":
+            return False
+    return True
+
+
 def script():
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
-    yield 8.0
+    yield from await_condition(lambda: world() is not None, 20.0, "PIE world unavailable")
     w = world()
     if w is None:
         check("PIE world", False)
@@ -41,13 +83,14 @@ def script():
     check("record bound", all(0 <= s.get_record_count() <= 4096 for s in shadows))
     check("no dropped samples in fixture", bool(shadows) and all(s.get_dropped_records() == 0 for s in shadows))
     check("same actors, per-instance buffers", len(initial) == len(shadows))
+    check("nonempty semantic JSON per observer", len(shadows) >= 2 and all(validate_records(s) for s in shadows))
     unreal.SystemLibrary.collect_garbage()
     yield 1.0
     check("observers live after GC", bool(shadows) and all(s.get_owner() is not None for s in shadows))
     unreal.log(TAG + "INFO diagnostic coverage only; flush provenance and observer-off/on hit/state parity require separate reviewed harness")
     shadows = actors = w = None
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
-    yield 2.0
+    yield from await_condition(lambda: world() is None, 10.0, "PIE teardown incomplete")
     check("world teardown", world() is None)
 
 

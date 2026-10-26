@@ -1,0 +1,44 @@
+Begin Object Class=/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Sword/GA_Sword_Melee.GA_Sword_Melee_C Name="Default__GA_Sword_Melee_C" ExportPath="/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Sword/GA_Sword_Melee.GA_Sword_Melee_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Sword/GA_Sword_Melee.Default__GA_Sword_Melee_C'"
+   InputBufferComponent=None
+   LocomotionComponent=None
+   CollisionComponent=None
+   Fatality Hit Direction=NewEnumerator5
+   DesiredAttackAbilityTags=(GameplayTags=)
+   RandomMontageIndex=(GameplayTags=((TagName="Ability.Melee.BackStab"),(TagName="Ability.Melee.FatalityAttack")))
+   Fatality Max Distance=0.000000
+   FatalityMontage=(AnimMontage_40_397E50DE46C7E3901CAD948100EF8C56=(AnimMontage_5_2620D50C4D110CA156B1A28F49A30836=None,PlayRate_4_2531EA39496C020B25EC63ABDF2CF569=1.000000,InTimeToStartMontageAt_26_8DFCA1D24F0C2048F881AC9EB8D63FBF=0.000000,StartSectionName_29_9BCA17BD4966370004BAE781038F90F3="",AbilityEndType_32_951260D64E59D4A64784A3872E20F496=NewEnumerator0,EndTimeMultiplier_25_4247AE084F3CB1DE868E22BC4C8A46AA=0.800000),SyncTaskClass_55_81C29E9F4DCADC21267837BD35B6EFCB=None,Distance_41_407E434344E9D2B18A0B7EA446C2E15D=0.000000,MaxDistance_47_4F062C3044685A9F513FADB428105A60=0.000000,RotationOffset_44_46809838484F669CE1C393A8CFE77C1A=0.000000,TransitionSpeedMultiplier_28_FC96707C47D1BDDF8A1814B6EA8BEAF9=1.000000,bFacingActor?_54_3962F5144D0DFBCE936B5A897DF79F40=False)
+   FatalityTarget=None
+   FatalityFrontMinAngle=-110.000000
+   FatalityFrontMaxAngle=110.000000
+   AttackData="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_AttackData.BP_AttackData_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/DataAssets/AttackData/DefaultMeleeAttackData.DefaultMeleeAttackData'"
+   ResetAttackTime=0.250000
+   Attack Index=0
+   BlockGameplayCuesByImpactTags=(GameplayTags=((TagName="ImpactDecision.BlockedHit"),(TagName="ImpactDecision.DeflectedHit"),(TagName="ImpactDecision.ParriedHit")))
+   StateManager=None
+   CombatComponent=None
+   Performing Character=None
+   LastAttackIndex=0
+   Random Attack Index?=False
+   CurrentAttackIndex=0
+   ActiveAbilityMontage=None
+   AbilitySystemComponent=None
+   AbilityTags=(GameplayTags=((TagName="Ability.Melee")))
+   Performing Actor=None
+   ActivationOwnedTags=(GameplayTags=((TagName="Status.ActionCommitted")))
+   bPendingClearAbility?=False
+   ActivationRequiredTags=(GameplayTags=)
+   ActivationBlockedTags=(GameplayTags=)
+   CancelAbilitiesWithTags=(GameplayTags=)
+   Cooldown Time=0.000000
+   CooldownLoopInterval=0.100000
+   Current Cooldown Time=0.000000
+   bCooldownActive?=False
+   Cost Gameplay Effect Class="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_MeleeAttackCost.GE_MeleeAttackCost_C'"
+   Level=1
+   BlockAbilitiesWithTags=(GameplayTags=)
+   GameplayEventTags=(GameplayTags=)
+   bCanBeCanceled=True
+   bWaitingForRuntimeEvent=False
+   Waiting Event Tag=(TagName="")
+   BlueprintHelperComponent=None
+End Object

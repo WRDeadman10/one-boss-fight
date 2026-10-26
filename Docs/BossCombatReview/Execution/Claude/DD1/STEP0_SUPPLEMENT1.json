@@ -1,0 +1,70 @@
+{
+ "schema": "STEP0_SUPPLEMENT1 v1",
+ "written": "2026-10-26T11:08:48",
+ "author": "Claude",
+ "note": "Supplement to STEP0_MANIFEST.json (the pin, never overwritten). Records the raw artifacts and conditions of the baseline, step 1 and final gate runs. Values not recorded at the time are listed under not_recorded, never reconstructed.",
+ "git_head": "acf2e94aaaec69f20e4c5220cddbf7cf8a690387",
+ "editor_dll": {
+  "path": "Binaries/Win64/UnrealEditor-OneBossFight.dll",
+  "sha256": "f9ddc490f90e020b5f0f40890ad1e1658031ec59cd64f18d8b9ffc39fe13dbd1",
+  "note": "current binary includes step 1, WP-15 fixes and the scratch route (a) C++"
+ },
+ "raw_artifacts": {
+  "baseline_clean_gate": {
+   "path": "Saved/rundrivers_dd1_step0_baseline_clean.txt",
+   "sha256": "3223a633323929cc5beb364200c4c3c9827c64b0f2d00419a9eb36947290493b"
+  },
+  "step1_legacy_epoch_gate": {
+   "path": "Docs/BossCombatReview/Execution/Claude/Evidence/exports/gate_step1_legacy_epoch_2026-10-25.txt",
+   "sha256": "836c7bbb486973bae4dde9f42a116b1304882c29406ccbc7ea49a5ec22c497ee"
+  },
+  "step1_data_epoch_subset": {
+   "path": "Docs/BossCombatReview/Execution/Claude/Evidence/exports/gate_step1_data_epoch_2026-10-25.txt",
+   "sha256": "9fb3aaf8321c92f521e053507f23f51a0ee09b3550d3efff4b3bb9ad5c488af0"
+  },
+  "step1_final_gate": {
+   "path": "Docs/BossCombatReview/Execution/Claude/Evidence/exports/gate_step1_final_2026-10-26.txt",
+   "sha256": "d97d839d9f8a2f0cb05769b1abcb267825e4759724fdb2a8c1b6945c2aadbbde"
+  },
+  "automation_step0_37": {
+   "path": "Saved/rebuild_dd1_step0.txt",
+   "sha256": "ddd4f51f002584f856a447f6789718edfb2aecc4d78cf22af836d9f2e8725a73"
+  },
+  "automation_step1_build2_40": {
+   "path": "Saved/rebuild_step1_build2.txt",
+   "sha256": "d3a0adf5d3a8b14cf5caf0f4ed951fa5736677ef39095bcac2d0da2f4c8b0582"
+  },
+  "automation_step1_wp15_41": {
+   "path": "Saved/rebuild_step1_wp15.txt",
+   "sha256": "310550e6925196bbc64fd162877ef2c3684ea6bdc656c52d85f08446b2415161"
+  },
+  "automation_raw_log_with_assets": {
+   "path": "Saved/automation_step1_with_assets.log",
+   "sha256": "8317bcdfcad1ebe0c6b839309023a9f50e2b442fdccae106cac58970d4442909"
+  },
+  "pack_reuse_exports_pr2": {
+   "path": "Docs/BossCombatReview/Execution/Claude/Evidence/exports/PR2_SHA256.txt",
+   "sha256": "6092c1907dd05471b4b21ac1cf34f76c1d7001e096a76df21403a7b5cec726f2"
+  },
+  "pack_reuse_exports_pr3": {
+   "path": "Docs/BossCombatReview/Execution/Claude/Evidence/exports/PR3_SHA256.txt",
+   "sha256": "9c5f0262f46146292196e9f6ec1387dac7cc6e1d5d259f0e612be3c53c70c884"
+  },
+  "scratch_route_a_hashes": {
+   "path": "Docs/BossCombatReview/Execution/Claude/Evidence/exports/scratch_route_a/SHA256.txt",
+   "sha256": "8aee5c4292c12cb02d3bffac35613f35eac569ed97b73a3a4a8a03cdaeac719e"
+  }
+ },
+ "gate_invocation": "powershell -File Scripts/RunDrivers.ps1 (no arguments) from a freshly relaunched editor (UnrealEditor.exe -nosplash -nosound, window restored and not iconic, checked with IsIconic); RunDrivers warm-up applies no_throttle, wake_clip_off (rpg.WakeClip 0), legend_off, build_off, pie_debug_overlay by design (RunDrivers.ps1 lines 98-99)",
+ "gate_results": {
+  "baseline_clean": "36/39",
+  "step1_legacy_epoch": "39/40 (only the new pie_combat_catalog failed, no assets yet)",
+  "step1_final": "40/40 with the data epoch"
+ },
+ "pack_asset_hashes_before_after_scratch_test": "unchanged (E-010)",
+ "not_recorded": [
+  "effective log verbosity and console variable values at the START of each gate run (only the harness warm-up values above are known by design)",
+  "tick cadence at start and end of each run",
+  "pack dependency-closure hashes of all 5,000+ pack assets (only the assets named in E-009/E-010 are hashed)"
+ ]
+}

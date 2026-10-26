@@ -1,0 +1,11 @@
+﻿editor exit code: -1
+[2026.10.26-05.37.15:530][  0]LogPython: Error: Traceback (most recent call last):
+[2026.10.26-05.37.15:530][  0]LogPython: Error:   File "c:/unreal~1/onebos~1/docs/bossco~1/execut~1/antigr~1/evidence/captur~1/pie_ca~1.py", line 180, in <module>
+[2026.10.26-05.37.15:530][  0]LogPython: Error:     runner.start()
+[2026.10.26-05.37.15:530][  1]LogPython: Error:   File "c:/unreal~1/onebos~1/docs/bossco~1/execut~1/antigr~1/evidence/captur~1/pie_ca~1.py", line 73, in start
+[2026.10.26-05.37.15:530][  1]LogPython: Error:     self.save_and_prep_cvars()
+[2026.10.26-05.37.15:530][  1]LogPython: Error:   File "c:/unreal~1/onebos~1/docs/bossco~1/execut~1/antigr~1/evidence/captur~1/pie_ca~1.py", line 53, in save_and_prep_cvars
+[2026.10.26-05.37.15:530][  1]LogPython: Error:     val = unreal.ConsoleVariableLibrary.get_console_variable_float_value(cvar)
+[2026.10.26-05.37.15:530][  1]LogPython: Error:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2026.10.26-05.37.15:530][  1]LogPython: Error: AttributeError: module 'unreal' has no attribute 'ConsoleVariableLibrary'
+

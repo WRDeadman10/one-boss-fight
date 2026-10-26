@@ -21,6 +21,7 @@ namespace RPGTimeline
 FPassiveSnapshot CaptureAfterTracker(const URPGAttackTracker& Tracker)
 {
 	FPassiveSnapshot S;
+	if (!IsValid(&Tracker) || !IsValid(Tracker.GetOwner())) { return S; }
 	S.Legacy.Move = Tracker.GetCurrentMove(); S.Legacy.bTracked = !S.Legacy.Move.IsNone();
 	S.Legacy.Phase = Tracker.GetPhaseName(); S.Legacy.Instance = Tracker.GetAttackInstance();
 	S.Legacy.IllegalStarts = Tracker.GetIllegalStartCount(); S.Legacy.DoubleLaunches = Tracker.GetDoubleLaunchCount();
@@ -30,9 +31,10 @@ FPassiveSnapshot CaptureAfterTracker(const URPGAttackTracker& Tracker)
 		if (Tracker.GetTiming(S.Legacy.Move, Timing)) { S.Legacy.ActiveBegin = Timing.ActiveStartTime; S.Legacy.ActiveEnd = Timing.ActiveEndTime; }
 	}
 	const ACharacter* Actor = Cast<ACharacter>(Tracker.GetOwner());
-	const UAnimInstance* Anim = Actor && Actor->GetMesh() ? Actor->GetMesh()->GetAnimInstance() : nullptr;
+	const UAnimInstance* Anim = IsValid(Actor) && IsValid(Actor->GetMesh()) ? Actor->GetMesh()->GetAnimInstance() : nullptr;
+	if (!IsValid(Anim)) { return S; }
 	const UAnimMontage* Montage = Anim ? Anim->GetCurrentActiveMontage() : nullptr;
-	if (Montage)
+	if (IsValid(Montage))
 	{
 		S.SourceAsset = Montage->GetPathName(); S.Position = Anim->Montage_GetPosition(Montage);
 		S.Rate = Anim->Montage_GetPlayRate(Montage); S.Section = Anim->Montage_GetCurrentSection(Montage);
@@ -217,6 +219,18 @@ void URPGCombatTimelineShadow::ObserveAfterTracker(const RPGTimeline::FObservati
 	}
 	Row->SetArrayField(TEXT("possible_explanations_not_acceptance"), References);
 	Records.Add(Row);
+#endif
+}
+
+FString URPGCombatTimelineShadow::GetRecordJsonForTest(int32 Index) const
+{
+#if UE_BUILD_SHIPPING
+	return FString();
+#else
+	FString Text;
+	if (!Records.IsValidIndex(Index) || !Records[Index]) { return Text; }
+	FJsonSerializer::Serialize(Records[Index].ToSharedRef(), TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&Text));
+	return Text;
 #endif
 }
 

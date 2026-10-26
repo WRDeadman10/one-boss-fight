@@ -1,0 +1,12 @@
+Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/WeaponItem.WeaponItem_C Name="KwangSword" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/WeaponItem.WeaponItem_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Items/Weapons/KwangSword.KwangSword'"
+   Combat Style="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_CombatStyle.BP_CombatStyle_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Claymore/ClaymoreCombatStyle.ClaymoreCombatStyle'"
+   Equipable Actor Class="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Claymore/ClaymoreInstances/BP_KwangSword.BP_KwangSword_C'"
+   ItemType=NewEnumerator1
+   ItemName=NSLOCTEXT("[05198CDF40DCAC89C71828A214BF68AD]", "8EB606CE46745EC93DD7CE8BE9641AD4", "Heavy Sword")
+   ItemRarity=NewEnumerator4
+   ItemIcon=(ImageSize=(X=256.000000,Y=256.000000),ResourceObject="/Script/Engine.Texture2D'/Game/AdvancedARPGCombat/MeleeCombatSystem/UI/InventoryEquipmentUI/Icons/Texture_SM_GreatSword2.Texture_SM_GreatSword2'")
+   Price=500
+   DefaultAttachSocket="HeavySwordSheath_Back"
+   ActiveAttachSocket="HeavySwordSocket_R"
+   NativeClass="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/WeaponItem.WeaponItem_C'"
+End Object

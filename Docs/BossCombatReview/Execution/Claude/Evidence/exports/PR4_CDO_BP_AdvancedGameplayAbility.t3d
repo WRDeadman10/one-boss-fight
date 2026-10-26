@@ -1,0 +1,23 @@
+Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/Abilities/BP_AdvancedGameplayAbility.BP_AdvancedGameplayAbility_C Name="Default__BP_AdvancedGameplayAbility_C" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/Abilities/BP_AdvancedGameplayAbility.BP_AdvancedGameplayAbility_C'/Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/Abilities/BP_AdvancedGameplayAbility.Default__BP_AdvancedGameplayAbility_C'"
+   ActiveAbilityMontage=None
+   AbilitySystemComponent=None
+   AbilityTags=(GameplayTags=)
+   Performing Actor=None
+   ActivationOwnedTags=(GameplayTags=)
+   bPendingClearAbility?=False
+   ActivationRequiredTags=(GameplayTags=)
+   ActivationBlockedTags=(GameplayTags=)
+   CancelAbilitiesWithTags=(GameplayTags=)
+   Cooldown Time=0.000000
+   CooldownLoopInterval=0.100000
+   Current Cooldown Time=0.000000
+   bCooldownActive?=False
+   Cost Gameplay Effect Class=None
+   Level=1
+   BlockAbilitiesWithTags=(GameplayTags=)
+   GameplayEventTags=(GameplayTags=)
+   bCanBeCanceled=True
+   bWaitingForRuntimeEvent=False
+   Waiting Event Tag=(TagName="")
+   BlueprintHelperComponent=None
+End Object
