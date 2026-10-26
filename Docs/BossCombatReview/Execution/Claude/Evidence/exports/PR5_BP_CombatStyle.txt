@@ -1,0 +1,14 @@
+OBJECT /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_CombatStyle.Default__BP_CombatStyle_C class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_CombatStyle.BP_CombatStyle_C
+CHAIN /Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_CombatStyle.BP_CombatStyle_C
+CHAIN /Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AbilitySet.BP_AbilitySet_C
+CHAIN /Script/Engine.PrimaryDataAsset
+CHAIN /Script/Engine.DataAsset
+CHAIN /Script/CoreUObject.Object
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_CombatStyle.BP_CombatStyle_C name=CombatStyleType kind=ByteProperty constraint=ByteProperty edit=1 value=NewEnumerator16
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_CombatStyle.BP_CombatStyle_C name=CombatType kind=ByteProperty constraint=ByteProperty edit=1 value=NewEnumerator8
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_CombatStyle.BP_CombatStyle_C name=Camera Mode Class kind=ClassProperty constraint=Class(meta=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CameraSystem/BP_BaseCameraMode.BP_BaseCameraMode_C) edit=1 value=None
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_CombatStyle.BP_CombatStyle_C name=Anim Layer Class kind=ClassProperty constraint=Class(meta=/Script/Engine.AnimInstance) edit=1 value=None
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AbilitySet.BP_AbilitySet_C name=AbilitiesSet kind=ArrayProperty constraint=Array<Struct(/Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/Structs/F_AbilitySet.F_AbilitySet)> edit=1 value=
+PROP owner=/Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/BP_AbilitySet.BP_AbilitySet_C name=Granted Gameplay Effects kind=ArrayProperty constraint=Array<Class(meta=/Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/GameplayEffects/BP_GameplayEffect.BP_GameplayEffect_C)> edit=1 value=
+PROP owner=/Script/Engine.PrimaryDataAsset name=AssetBundleData kind=StructProperty constraint=Struct(/Script/CoreUObject.AssetBundleData) edit=0 value=
+PROP owner=/Script/Engine.DataAsset name=NativeClass kind=ClassProperty constraint=Class(meta=/Script/Engine.DataAsset) edit=0 value=/Script/CoreUObject.Class'/Script/Engine.PrimaryDataAsset'

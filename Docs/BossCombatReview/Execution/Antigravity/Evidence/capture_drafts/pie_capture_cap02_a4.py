@@ -91,49 +91,37 @@ class Cap02Runner:
             except OSError as e:
                 log_err(f"Failed to clear flag file: {e}")
 
-    def setup_camera(self, pc, boss_loc, cam_loc, target_loc):
+    def setup_camera(self, pc, pawn, player_loc, target_loc):
         self.pc = pc
-        self.orig_view_target = pc.get_view_target() if pc else None
-        rot = unreal.MathLibrary.find_look_at_rotation(cam_loc, target_loc)
-        cam = None
+        self.pawn = pawn
+        self.orig_player_loc = pawn.get_actor_location() if pawn else None
+        self.orig_player_rot = pawn.get_actor_rotation() if pawn else None
+        self.orig_control_rot = pc.get_control_rotation() if pc else None
+
+        rot = unreal.MathLibrary.find_look_at_rotation(player_loc, target_loc)
         try:
-            cam = unreal.EditorLevelLibrary.spawn_actor_from_class(unreal.CameraActor, cam_loc, rot)
-        except Exception as e:
-            log(f"EditorLevelLibrary spawn failed ({e}), attempting GameplayStatics...")
-
-        if not cam and self.world:
-            try:
-                t = unreal.Transform(rot, cam_loc, unreal.Vector(1.0, 1.0, 1.0))
-                cam = unreal.GameplayStatics.begin_spawning_actor_from_class(self.world, unreal.CameraActor, t)
-                if cam:
-                    unreal.GameplayStatics.finish_spawning_actor(cam, t)
-            except Exception as e:
-                log_err(f"GameplayStatics camera spawn failed: {e}")
-
-        if cam:
-            self.cam_actor = cam
-            cam.set_actor_location_and_rotation(cam_loc, rot, False, True)
+            # Option B (per C-151): Frame shot using player's own third-person camera.
+            # Reposition player to flank vantage point, orient control rotation, and hide mesh.
+            pawn.set_actor_location_and_rotation(player_loc, rot, False, False)
             if pc:
-                pc.set_view_target_with_blend(cam, 0.0)
-            log(f"Dedicated CameraActor spawned at {cam_loc}, rot {rot}. View target set.")
-        else:
-            log_err("Failed to spawn dedicated CameraActor; falling back to default camera.")
+                pc.set_control_rotation(rot)
+            pawn.set_actor_hidden_in_game(True)
+            log(f"Player camera framed at {player_loc}, facing {rot} (yaw={rot.yaw:.1f}, pitch={rot.pitch:.1f}). Player mesh hidden in game.")
+        except Exception as e:
+            log_err(f"Player camera framing failed: {e}")
+            self.failure_reasons.append(f"Camera framing failed: {e}")
 
     def cleanup_camera(self):
-        if self.pc and self.orig_view_target:
+        if self.pawn:
             try:
-                self.pc.set_view_target_with_blend(self.orig_view_target, 0.0)
-                log("Restored original view target.")
+                self.pawn.set_actor_hidden_in_game(False)
+                if self.orig_player_loc and self.orig_player_rot:
+                    self.pawn.set_actor_location_and_rotation(self.orig_player_loc, self.orig_player_rot, False, False)
+                if self.pc and self.orig_control_rot:
+                    self.pc.set_control_rotation(self.orig_control_rot)
+                log("Restored player pawn location, rotation, and visibility.")
             except Exception as e:
-                log_err(f"Failed to restore view target: {e}")
-            self.orig_view_target = None
-        if self.cam_actor:
-            try:
-                self.cam_actor.destroy_actor()
-                log("Destroyed dedicated CameraActor.")
-            except Exception as e:
-                log_err(f"Failed to destroy CameraActor: {e}")
-            self.cam_actor = None
+                log_err(f"Failed to restore player pawn state: {e}")
 
     def start(self):
         world_name = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world().get_name()
@@ -204,11 +192,11 @@ class Cap02Runner:
         else:
             self.failure_reasons.append("Flag file remained on disk after finish")
 
-        if self.passed_checks == self.total_checks:
-            print(f"{TAG} RESULT {self.passed_checks}/{self.total_checks} (PASSED: All checks verified; telemetry captured)")
+        if self.passed_checks == self.total_checks and not self.failure_reasons:
+            print(f"{TAG} TELEMETRY_CAPTURE_COMPLETE ({self.passed_checks}/{self.total_checks} driver steps verified; awaiting offline frame analysis)")
         else:
             reasons_str = "; ".join(self.failure_reasons)
-            print(f"{TAG} RESULT {self.passed_checks}/{self.total_checks} (FAILED: {reasons_str})")
+            print(f"{TAG} TELEMETRY_CAPTURE_FAILED ({self.passed_checks}/{self.total_checks}: {reasons_str})")
 
         # Conditional quit: only quit when running headless via RunEditorScript
         if "--quit" in sys.argv or os.environ.get("OBF_CAPTURE_QUIT", "0") == "1":
@@ -284,18 +272,11 @@ class Cap02Runner:
                 if self.tracker:
                     self.tracker.enter_combat()
 
-                log(f"PIE active. Boss and components found. Setting up dedicated CameraActor for A4 low sweep observation...")
+                log(f"PIE active. Boss and components found. Setting up player camera framing (Option B)...")
                 boss_loc = boss.get_actor_location()
-                cam_loc = unreal.Vector(boss_loc.x - 300.0, boss_loc.y + 180.0, boss_loc.z + 80.0)
+                player_loc = unreal.Vector(boss_loc.x - 350.0, boss_loc.y + 200.0, 110.0)
                 target_loc = unreal.Vector(boss_loc.x, boss_loc.y, boss_loc.z + 30.0)
-                self.setup_camera(pc, boss_loc, cam_loc, target_loc)
-
-                # Move player pawn clear of camera line of sight
-                pawn.set_actor_location_and_rotation(
-                    unreal.Vector(boss_loc.x - 600.0, boss_loc.y - 400.0, 110.0),
-                    unreal.Rotator(0.0, 0.0, 0.0),
-                    False, True
-                )
+                self.setup_camera(pc, pawn, player_loc, target_loc)
 
                 self.state = "WAIT_BOSS_SETTLE"
                 self.wait_timer = 2.5

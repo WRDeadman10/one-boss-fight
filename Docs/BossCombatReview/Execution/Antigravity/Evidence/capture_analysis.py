@@ -27,6 +27,7 @@ import json
 import math
 import zlib
 import struct
+import hashlib
 import argparse
 import tempfile
 from pathlib import Path
@@ -59,6 +60,10 @@ BENCHMARK_RULES = {
         "min_sim_step_s": 0.020,              # Minimum simulation time advancement between frames
         "min_image_bytes": 50000,             # Minimum valid screenshot file size
         "min_pixel_variance": 1.0,            # Rejects solid-color blank images
+        "min_viewport_luminance": 8.0,        # Inner 3D viewport mean luminance floor (rejects black viewports ~0.24)
+        "min_viewport_std_dev": 4.0,          # Inner 3D viewport std dev floor (rejects featureless viewports < 3.0)
+        "max_identical_frame_ratio": 0.50,    # Rejects bursts where >50% of frames share identical SHA256
+        "min_inter_phase_mad": 1.5,           # Minimum Mean Absolute Difference across animation phase transitions
         "description": "Visual projectile departure must synchronize with AN_CombatEvent(SpawnProjectile)"
     },
     "CAP-02": {
@@ -79,6 +84,10 @@ BENCHMARK_RULES = {
         "min_sim_step_s": 0.020,
         "min_image_bytes": 50000,
         "min_pixel_variance": 1.0,
+        "min_viewport_luminance": 8.0,
+        "min_viewport_std_dev": 4.0,
+        "max_identical_frame_ratio": 0.50,
+        "min_inter_phase_mad": 1.5,
         "description": "Damage query active window and geometric arc must envelope blade tip trajectory"
     },
     "CAP-05": {
@@ -93,6 +102,10 @@ BENCHMARK_RULES = {
         "min_sim_step_s": 0.020,
         "min_image_bytes": 50000,
         "min_pixel_variance": 1.0,
+        "min_viewport_luminance": 8.0,
+        "min_viewport_std_dev": 4.0,
+        "max_identical_frame_ratio": 0.50,
+        "min_inter_phase_mad": 1.5,
         "description": "Weapon raise visual cue / glow must lead active damage window by reactable margin"
     },
     "CAP-06": {
@@ -106,6 +119,10 @@ BENCHMARK_RULES = {
         "min_sim_step_s": 0.020,
         "min_image_bytes": 50000,
         "min_pixel_variance": 1.0,
+        "min_viewport_luminance": 8.0,
+        "min_viewport_std_dev": 4.0,
+        "max_identical_frame_ratio": 0.50,
+        "min_inter_phase_mad": 1.5,
         "description": "Blade grounded rest post-slam must provide vulnerable opening before recovery blend-out"
     }
 }
@@ -115,13 +132,15 @@ BENCHMARK_RULES = {
 # ZERO-DEPENDENCY OFFLINE IMAGE VALIDATION (PIXEL VARIANCE & INTEGRITY)
 # ==============================================================================
 
-def decode_png_variance_raw(data: bytes, min_variance: float = 1.0):
+def decode_png_variance_raw(data: bytes, min_variance: float = 4.0, min_luminance: float = 8.0):
     """
     Pure Python PNG parser using only standard library zlib and struct.
-    Decodes IDAT scanlines and computes pixel standard deviation without PIL.
+    Decodes IDAT scanlines and computes pixel mean luminance and standard deviation
+    on the central 3D viewport region (x: 20%-80%, y: 30%-80%), cropping away
+    editor window chrome and HUD/status strips.
     """
     if len(data) < 8 or data[:8] != b'\x89PNG\r\n\x1a\n':
-        return False, "Not a valid PNG header", 0.0
+        return False, "Not a valid PNG header", 0.0, 0.0
 
     pos = 8
     idat_chunks = []
@@ -142,62 +161,89 @@ def decode_png_variance_raw(data: bytes, min_variance: float = 1.0):
             break
 
     if not idat_chunks:
-        return False, "No IDAT chunk found in PNG", 0.0
+        return False, "No IDAT chunk found in PNG", 0.0, 0.0
 
     try:
         raw_decompressed = zlib.decompress(b''.join(idat_chunks))
     except Exception as e:
-        return False, f"Failed to decompress PNG IDAT data: {e}", 0.0
+        return False, f"Failed to decompress PNG IDAT data: {e}", 0.0, 0.0
 
-    # Sub-sample raw scanlines to compute fast variance
-    step = max(1, len(raw_decompressed) // 4096)
-    sample = raw_decompressed[::step]
-    if not sample:
-        return False, "Empty decompressed scanlines", 0.0
+    bpp = 4 if color_type == 6 else (3 if color_type == 2 else 1)
+    stride = 1 + width * bpp
+    y_min, y_max = int(height * 0.30), int(height * 0.80)
+    x_min, x_max = int(width * 0.20), int(width * 0.80)
 
-    mean = sum(sample) / len(sample)
-    variance = sum((x - mean) ** 2 for x in sample) / len(sample)
+    samples = []
+    step_y = max(1, (y_max - y_min) // 64)
+    step_x = max(1, (x_max - x_min) // 64)
+    for y in range(y_min, y_max, step_y):
+        line_start = y * stride + 1
+        if line_start >= len(raw_decompressed):
+            break
+        for x in range(x_min, x_max, step_x):
+            px = line_start + x * bpp
+            if px + bpp <= len(raw_decompressed):
+                if bpp >= 3:
+                    r, g, b = raw_decompressed[px], raw_decompressed[px+1], raw_decompressed[px+2]
+                    lum = 0.299 * r + 0.587 * g + 0.114 * b
+                else:
+                    lum = float(raw_decompressed[px])
+                samples.append(lum)
+
+    if not samples:
+        step = max(1, len(raw_decompressed) // 4096)
+        samples = [float(x) for x in raw_decompressed[::step]]
+
+    mean = sum(samples) / len(samples)
+    variance = sum((x - mean) ** 2 for x in samples) / len(samples)
     std_dev = math.sqrt(variance)
 
+    if mean < min_luminance:
+        return False, f"Blank/black viewport detected (inner 3D viewport mean luminance={mean:.2f} < {min_luminance:.1f})", mean, std_dev
+
     if std_dev < min_variance:
-        return False, f"Blank image detected (pixel std_dev={std_dev:.4f} < {min_variance:.1f})", std_dev
+        return False, f"Blank/featureless viewport detected (inner 3D viewport std_dev={std_dev:.4f} < {min_variance:.1f})", mean, std_dev
 
-    return True, f"Valid image (raw std_dev={std_dev:.2f})", std_dev
+    return True, f"Valid image (mean={mean:.2f}, std_dev={std_dev:.2f})", mean, std_dev
 
 
-def verify_image_file(image_path: str, min_bytes: int = 50000, min_variance: float = 1.0):
+def verify_image_file(image_path: str, min_bytes: int = 50000, min_variance: float = 4.0, min_luminance: float = 8.0):
     """
-    Verifies that an image file exists, meets minimum size, and contains non-blank pixels.
-    Rejects blank frames (e.g. 17KB solid black frames produced when render targets fail to resolve).
-    Returns (is_valid: bool, reason: str, variance: float).
+    Verifies that an image file exists, meets minimum size, and contains non-blank pixels
+    specifically within the inner 3D viewport crop (excluding window chrome and HUD strips).
+    Returns (is_valid: bool, reason: str, mean_luminance: float, std_dev: float).
     """
     p = Path(image_path)
     if not p.exists():
-        return False, f"File missing on disk: {p.name}", 0.0
+        return False, f"File missing on disk: {p.name}", 0.0, 0.0
 
     size = p.stat().st_size
     if size < min_bytes:
-        return False, f"File size too small ({size:,} bytes < {min_bytes:,} bytes): {p.name}", 0.0
+        return False, f"File size too small ({size:,} bytes < {min_bytes:,} bytes): {p.name}", 0.0, 0.0
 
-    # If Pillow is present, use it for complete color pipeline
+    # If Pillow is present, use it for complete color pipeline and inner crop
     if HAS_PIL:
         try:
             with Image.open(p) as img:
-                img_gray = img.convert("L")
-                img_small = img_gray.resize((64, 64), Image.Resampling.BOX)
-                pixels = list(img_small.tobytes())
+                w, h = img.size
+                crop_box = (int(w * 0.20), int(h * 0.30), int(w * 0.80), int(h * 0.80))
+                crop = img.crop(crop_box).convert("L")
+                pixels = list(crop.tobytes())
                 n = len(pixels)
                 if n == 0:
-                    return False, f"Empty pixel data: {p.name}", 0.0
+                    return False, f"Empty pixel data in viewport crop: {p.name}", 0.0, 0.0
 
                 mean = sum(pixels) / n
                 variance = sum((x - mean) ** 2 for x in pixels) / n
                 std_dev = math.sqrt(variance)
 
-                if std_dev < min_variance:
-                    return False, f"Blank image detected (pixel std_dev={std_dev:.4f} < {min_variance:.1f}): {p.name}", std_dev
+                if mean < min_luminance:
+                    return False, f"Blank/black viewport detected in {p.name}: inner 3D viewport mean luminance={mean:.2f} < {min_luminance:.1f} (solid black screen)", mean, std_dev
 
-                return True, "Valid non-blank image", std_dev
+                if std_dev < min_variance:
+                    return False, f"Blank/featureless viewport detected in {p.name}: inner 3D viewport std_dev={std_dev:.4f} < {min_variance:.1f}", mean, std_dev
+
+                return True, "Valid non-blank image", mean, std_dev
         except Exception:
             pass  # Fallback to pure zlib
 
@@ -205,12 +251,12 @@ def verify_image_file(image_path: str, min_bytes: int = 50000, min_variance: flo
     try:
         with open(p, "rb") as f:
             data = f.read()
-        ok, reason, std_dev = decode_png_variance_raw(data, min_variance)
+        ok, reason, mean, std_dev = decode_png_variance_raw(data, min_variance, min_luminance)
         if not ok:
-            return False, f"{reason}: {p.name}", std_dev
-        return True, "Valid non-blank image", std_dev
+            return False, f"{reason}: {p.name}", mean, std_dev
+        return True, "Valid non-blank image", mean, std_dev
     except Exception as e:
-        return False, f"Corrupted or unreadable image ({e}): {p.name}", 0.0
+        return False, f"Corrupted or unreadable image ({e}): {p.name}", 0.0, 0.0
 
 
 def create_raw_png(path: str, width: int = 64, height: int = 64, pattern: str = "solid"):
@@ -403,17 +449,87 @@ class CaptureEvaluator:
             verdict["rejections"].append(f"REJECTION: Missing files on disk: zero PNG frames found in image directory: {image_dir}")
             return
 
+        # 1. Per-frame verification (size, inner 3D viewport luminance & variance)
         valid_count = 0
+        min_lum = spec.get("min_viewport_luminance", 8.0)
+        min_std = spec.get("min_viewport_std_dev", 4.0)
+
+        hashes = {}
+        crops_by_phase = {}
+
         for img_path in image_paths:
-            ok, err, var = verify_image_file(str(img_path), min_bytes=spec["min_image_bytes"], min_variance=spec["min_pixel_variance"])
+            ok, err, mean_lum, std_dev = verify_image_file(
+                str(img_path),
+                min_bytes=spec["min_image_bytes"],
+                min_variance=min_std,
+                min_luminance=min_lum
+            )
             if not ok:
                 verdict["status"] = "FAIL"
                 verdict["rejections"].append(f"REJECTION: Image file failure on {img_path.name}: {err}")
                 break
             valid_count += 1
 
+            # Hash calculation for duplicate/freeze detection
+            with open(img_path, "rb") as f:
+                h = hashlib.sha256(f.read()).hexdigest()
+            hashes[h] = hashes.get(h, 0) + 1
+
+            # Extract phase from filename (e.g. 001_CAP01_A5_Windup.png -> Windup)
+            m_phase = re.search(r'_(Windup|Active|Recovery|None)\.png', img_path.name, re.IGNORECASE)
+            phase_tag = m_phase.group(1).capitalize() if m_phase else "Default"
+
+            # Store downsampled inner viewport crop for inter-phase delta
+            if HAS_PIL:
+                try:
+                    with Image.open(img_path) as im:
+                        w, h_img = im.size
+                        crop_box = (int(w * 0.20), int(h_img * 0.30), int(w * 0.80), int(h_img * 0.80))
+                        c = im.crop(crop_box).convert("L").resize((32, 32))
+                        if phase_tag not in crops_by_phase:
+                            crops_by_phase[phase_tag] = []
+                        crops_by_phase[phase_tag].append((img_path.name, list(c.tobytes())))
+                except Exception:
+                    pass
+
         verdict["metrics"]["frames_on_disk"] = len(image_paths)
         verdict["metrics"]["valid_rendered_frames"] = valid_count
+
+        if verdict["status"] == "FAIL":
+            return
+
+        # 2. Frame Hash Uniqueness / Freeze Detection (Check (a))
+        total_frames = len(image_paths)
+        if total_frames > 1 and len(hashes) == 1:
+            verdict["status"] = "FAIL"
+            verdict["rejections"].append(f"REJECTION: All {total_frames} frames are byte-identical (frozen capture; SHA256={list(hashes.keys())[0][:16]}...).")
+            return
+
+        max_dup = max(hashes.values()) if hashes else 0
+        dup_ratio = max_dup / total_frames if total_frames > 0 else 0.0
+        max_allowed_ratio = spec.get("max_identical_frame_ratio", 0.50)
+        if total_frames >= 4 and dup_ratio > max_allowed_ratio:
+            verdict["status"] = "FAIL"
+            verdict["rejections"].append(f"REJECTION: High frame freeze rate: {max_dup}/{total_frames} frames ({dup_ratio*100:.1f}% > {max_allowed_ratio*100:.0f}%) share identical SHA256 hash.")
+            return
+
+        # 3. Inter-Phase Visual Progression (Check (c))
+        distinct_phases = [p for p in ["Windup", "Active", "Recovery"] if p in crops_by_phase and len(crops_by_phase[p]) > 0]
+        if len(distinct_phases) >= 2:
+            min_mad = spec.get("min_inter_phase_mad", 1.5)
+            for i in range(len(distinct_phases) - 1):
+                p1 = distinct_phases[i]
+                p2 = distinct_phases[i+1]
+                f1_name, pix1 = crops_by_phase[p1][-1]
+                f2_name, pix2 = crops_by_phase[p2][0]
+                mad = sum(abs(a - b) for a, b in zip(pix1, pix2)) / len(pix1)
+                verdict["metrics"][f"mad_{p1.lower()}_to_{p2.lower()}"] = round(mad, 2)
+                if mad < min_mad:
+                    verdict["status"] = "FAIL"
+                    verdict["rejections"].append(
+                        f"REJECTION: Zero visual animation progression between phases '{p1}' ({f1_name}) and '{p2}' ({f2_name}): MAD={mad:.2f} < {min_mad:.1f} (static scene across phase change)."
+                    )
+                    return
 
     @classmethod
     def get_min_burst_frames(cls, data, spec):
@@ -706,21 +822,23 @@ class CaptureEvaluator:
 
 def run_self_test():
     """
-    Executes comprehensive self-test suite covering all edge cases required by Claude [C-137] and [C-138]:
+    Executes comprehensive self-test suite covering all edge cases required by Claude [C-137], [C-138], and [C-151]:
       1. Identical/compressed timestamps (rejects same-tick bursts).
-      2. Blank PNG (rejects unrendered 17KB solid-color frames without PIL dependency).
+      2. Blank/black PNG (rejects unrendered solid-black frames without PIL dependency).
       3. Missing files on disk (rejects missing screenshots).
       4. Engine runtime veto detection (rejects runs vetoed by phase transition).
       5. Nominal without source / unverified visual pose reporting.
-      6. Valid monotonic capture (asserts PASS).
+      6. Solid Black Viewport Rejection (Claude C-151 reproduction: inner viewport mean luminance < 8.0).
+      7. Byte-Identical Frame Burst / Freeze Rejection (Claude C-151 reproduction: frozen camera buffer).
+      8. Valid Monotonic Capture Run (asserts PASS with real inter-frame variation).
     """
     print("================================================================================")
-    print("RUNNING CAPTURE ANALYSIS SELF-TEST SUITE (Hardened for C-135 / C-137 / C-138)")
+    print("RUNNING CAPTURE ANALYSIS SELF-TEST SUITE (Hardened for C-135 / C-137 / C-138 / C-151)")
     print(f"PIL Accelerated: {HAS_PIL} (Zero-dependency raw PNG decoder active)")
     print("================================================================================")
 
     test_passed = 0
-    test_total = 6
+    test_total = 8
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         tmp_path = Path(tmp_dir)
@@ -754,9 +872,9 @@ def run_self_test():
         with open(blank_file, "ab") as f:
             f.write(b"\0" * 60000)
 
-        ok, reason, var = verify_image_file(str(blank_file), min_bytes=50000, min_variance=1.0)
-        if not ok and "blank image detected" in reason.lower():
-            print(f"  PASS: verify_image_file correctly REJECTED solid-color image (variance={var:.4f} < 1.0).")
+        ok, reason, mean_lum, var = verify_image_file(str(blank_file), min_bytes=50000, min_variance=4.0, min_luminance=8.0)
+        if not ok and ("blank" in reason.lower() or "black" in reason.lower()):
+            print(f"  PASS: verify_image_file correctly REJECTED solid-color image (mean={mean_lum:.2f}, std_dev={var:.4f}).")
             print(f"  Captured Reason: {reason}")
             test_passed += 1
         else:
@@ -818,22 +936,73 @@ def run_self_test():
             print(f"  FAIL: Expected NO SOURCE and Owner Question, got metric={res5['metrics'].get('nominal_recovery_opening_ms')}")
 
         # ----------------------------------------------------------------------
-        # Test Case 6: Fully Valid Capture Run
+        # Test Case 6: Claude C-151 Solid Black Viewport Rejection
         # ----------------------------------------------------------------------
-        print("\n--- Test Case 6: Valid Monotonic Capture Run ---")
+        print("\n--- Test Case 6: Black Viewport Rejection (Claude C-151 Reproduction) ---")
+        black_dir = tmp_path / "black_viewport_test"
+        black_dir.mkdir(parents=True, exist_ok=True)
+        for i in range(1, 12):
+            bf = black_dir / f"00{i:02d}_CAP01_A5_Windup.png"
+            create_raw_png(str(bf), width=64, height=64, pattern="solid")
+            with open(bf, "ab") as f:
+                f.write(bytes([i % 256]) * 60000)
+        data6 = {
+            "cap_id": "CAP-01",
+            "frames": [{"frame_idx": i, "sim_time": 1.0 + (i * 0.05)} for i in range(1, 12)],
+            "telemetry": [{"wall": 100.0 + i * 0.1, "sim": 1.0 + i * 0.05, "phase": "Windup", "active": False, "commit": False, "pos": i*0.05} for i in range(1, 12)]
+        }
+        res6 = CaptureEvaluator.evaluate_cap01(data6, image_dir=black_dir)
+        has_black_rej = any("blank/black viewport detected" in r.lower() for r in res6["rejections"])
+        if res6["status"] == "FAIL" and has_black_rej:
+            print("  PASS: Engine correctly REJECTED solid black viewport capture set.")
+            print(f"  Captured Rejection: {res6['rejections'][0]}")
+            test_passed += 1
+        else:
+            print(f"  FAIL: Expected black viewport rejection, got {res6['status']}, rejections: {res6['rejections']}")
+
+        # ----------------------------------------------------------------------
+        # Test Case 7: Byte-Identical Frozen Frame Burst Rejection
+        # ----------------------------------------------------------------------
+        print("\n--- Test Case 7: Byte-Identical Frozen Frame Burst Rejection ---")
+        frozen_dir = tmp_path / "frozen_test"
+        frozen_dir.mkdir(parents=True, exist_ok=True)
+        for i in range(1, 12):
+            ff = frozen_dir / f"00{i:02d}_CAP01_A5_Windup.png"
+            create_raw_png(str(ff), width=64, height=64, pattern="checker")
+            with open(ff, "ab") as f:
+                f.write(b"\x55" * 60000)  # exact same bytes in all frames
+        data7 = {
+            "cap_id": "CAP-01",
+            "frames": [{"frame_idx": i, "sim_time": 1.0 + (i * 0.05)} for i in range(1, 12)],
+            "telemetry": [{"wall": 100.0 + i * 0.1, "sim": 1.0 + i * 0.05, "phase": "Windup", "active": False, "commit": False, "pos": i*0.05} for i in range(1, 12)]
+        }
+        res7 = CaptureEvaluator.evaluate_cap01(data7, image_dir=frozen_dir)
+        has_frozen_rej = any("byte-identical" in r.lower() for r in res7["rejections"])
+        if res7["status"] == "FAIL" and has_frozen_rej:
+            print("  PASS: Engine correctly REJECTED 100% byte-identical frozen frame burst.")
+            print(f"  Captured Rejection: {res7['rejections'][0]}")
+            test_passed += 1
+        else:
+            print(f"  FAIL: Expected frozen frame rejection, got {res7['status']}, rejections: {res7['rejections']}")
+
+        # ----------------------------------------------------------------------
+        # Test Case 8: Valid Monotonic Capture Run with Multi-Phase Progression
+        # ----------------------------------------------------------------------
+        print("\n--- Test Case 8: Valid Monotonic Capture Run with Visual Phase Progression ---")
         valid_dir = tmp_path / "valid_test"
         valid_dir.mkdir(parents=True, exist_ok=True)
 
         valid_frames = []
-        for i in range(1, 16):
-            p = valid_dir / f"valid_frame_{i:02d}.png"
+        for i in range(1, 13):
+            phase = "Windup" if i <= 6 else "Active"
+            p = valid_dir / f"{i:03d}_CAP01_A5_{phase}.png"
             create_raw_png(str(p), width=64, height=64, pattern="checker")
             with open(p, "ab") as f:
-                f.write(b"\0" * 60000)
+                f.write(bytes([(i * 17) % 256]) * 60000)
             valid_frames.append({
                 "frame_idx": i,
-                "total_frames": 15,
-                "sim_time": 1.000 + ((i - 1) * 0.0333),
+                "total_frames": 12,
+                "sim_time": 1.000 + ((i - 1) * 0.050),
                 "path": str(p),
                 "size_bytes": p.stat().st_size
             })
@@ -841,15 +1010,16 @@ def run_self_test():
         valid_data = {
             "cap_id": "CAP-01",
             "frames": valid_frames,
+            "telemetry": [{"wall": 100.0 + i * 0.1, "sim": 1.0 + i * 0.05, "phase": "Windup" if i <= 6 else "Active", "active": (i > 6), "commit": (i > 6), "pos": i * 0.05} for i in range(1, 13)],
             "vetoed": False
         }
-        res6 = CaptureEvaluator.evaluate_cap01(valid_data, image_dir=valid_dir)
-        if res6["status"] == "PASS" and len(res6["rejections"]) == 0:
-            print(f"  PASS: Valid synthetic capture PASSED all checks. Status: {res6['status']}.")
-            print(f"  Frames: {res6['metrics']['frames_captured']}, Span: {res6['metrics']['sim_time_span_s']}s.")
+        res8 = CaptureEvaluator.evaluate_cap01(valid_data, image_dir=valid_dir)
+        if res8["status"] == "PASS" and len(res8["rejections"]) == 0:
+            print(f"  PASS: Valid synthetic capture PASSED all checks. Status: {res8['status']}.")
+            print(f"  Frames: {res8['metrics']['frames_captured']}, Span: {res8['metrics']['sim_time_span_s']}s.")
             test_passed += 1
         else:
-            print(f"  FAIL: Expected PASS, got {res6['status']}, rejections: {res6['rejections']}")
+            print(f"  FAIL: Expected PASS, got {res8['status']}, rejections: {res8['rejections']}")
 
     print("\n================================================================================")
     print(f"SELF-TEST SUMMARY: {test_passed}/{test_total} TESTS PASSED")
