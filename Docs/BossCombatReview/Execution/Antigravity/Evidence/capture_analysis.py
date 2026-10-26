@@ -64,6 +64,7 @@ BENCHMARK_RULES = {
         "min_viewport_std_dev": 4.0,          # Inner 3D viewport std dev floor (rejects featureless viewports < 3.0)
         "max_identical_frame_ratio": 0.50,    # Rejects bursts where >50% of frames share identical SHA256
         "min_inter_phase_mad": 1.5,           # Minimum Mean Absolute Difference across animation phase transitions
+        "required_phases": ["Windup", "Active"], # Mandatory phases that must appear in on-disk screenshots
         "description": "Visual projectile departure must synchronize with AN_CombatEvent(SpawnProjectile)"
     },
     "CAP-02": {
@@ -88,6 +89,7 @@ BENCHMARK_RULES = {
         "min_viewport_std_dev": 4.0,
         "max_identical_frame_ratio": 0.50,
         "min_inter_phase_mad": 1.5,
+        "required_phases": ["Windup", "Active"],
         "description": "Damage query active window and geometric arc must envelope blade tip trajectory"
     },
     "CAP-05": {
@@ -106,6 +108,7 @@ BENCHMARK_RULES = {
         "min_viewport_std_dev": 4.0,
         "max_identical_frame_ratio": 0.50,
         "min_inter_phase_mad": 1.5,
+        "required_phases": ["Windup", "Active"],
         "description": "Weapon raise visual cue / glow must lead active damage window by reactable margin"
     },
     "CAP-06": {
@@ -123,6 +126,7 @@ BENCHMARK_RULES = {
         "min_viewport_std_dev": 4.0,
         "max_identical_frame_ratio": 0.50,
         "min_inter_phase_mad": 1.5,
+        "required_phases": ["Active", "Recovery"],
         "description": "Blade grounded rest post-slam must provide vulnerable opening before recovery blend-out"
     }
 }
@@ -132,19 +136,23 @@ BENCHMARK_RULES = {
 # ZERO-DEPENDENCY OFFLINE IMAGE VALIDATION (PIXEL VARIANCE & INTEGRITY)
 # ==============================================================================
 
-def decode_png_variance_raw(data: bytes, min_variance: float = 4.0, min_luminance: float = 8.0):
+def decode_png_variance_raw(data: bytes, min_variance: float = 4.0, min_luminance: float = 8.0, return_thumbnail: bool = False):
     """
     Pure Python PNG parser using only standard library zlib and struct.
-    Decodes IDAT scanlines and computes pixel mean luminance and standard deviation
-    on the central 3D viewport region (x: 20%-80%, y: 30%-80%), cropping away
-    editor window chrome and HUD/status strips.
+    Properly reverses PNG scanline filter types 0-4 (None, Sub, Up, Average, Paeth)
+    for 8-bit RGB, RGBA, and Grayscale images.
+    Computes pixel mean luminance and standard deviation on the central 3D viewport
+    region (x: 20%-80%, y: 30%-80%), cropping away editor chrome and HUD status strips.
+    Optionally returns a 32x32 downsampled luminance thumbnail for inter-phase MAD analysis.
     """
     if len(data) < 8 or data[:8] != b'\x89PNG\r\n\x1a\n':
-        return False, "Not a valid PNG header", 0.0, 0.0
+        res = (False, "Not a valid PNG header", 0.0, 0.0)
+        return (*res, None) if return_thumbnail else res
 
     pos = 8
     idat_chunks = []
     width = height = bit_depth = color_type = 0
+    interlace_method = 0
     while pos < len(data):
         if pos + 8 > len(data):
             break
@@ -154,72 +162,158 @@ def decode_png_variance_raw(data: bytes, min_variance: float = 4.0, min_luminanc
         pos += 8 + length + 4  # length + type + data + crc
 
         if chunk_type == b'IHDR':
-            width, height, bit_depth, color_type = struct.unpack('>IIBB', chunk_data[:10])
+            width, height, bit_depth, color_type, comp_m, filt_m, interlace_method = struct.unpack('>IIBBBBB', chunk_data[:13])
         elif chunk_type == b'IDAT':
             idat_chunks.append(chunk_data)
         elif chunk_type == b'IEND':
             break
 
     if not idat_chunks:
-        return False, "No IDAT chunk found in PNG", 0.0, 0.0
+        res = (False, "No IDAT chunk found in PNG", 0.0, 0.0)
+        return (*res, None) if return_thumbnail else res
+
+    if interlace_method != 0:
+        res = (False, "Interlaced PNG not supported by raw fallback decoder", 0.0, 0.0)
+        return (*res, None) if return_thumbnail else res
+
+    if bit_depth != 8:
+        res = (False, f"Bit depth {bit_depth} not supported (requires 8-bit)", 0.0, 0.0)
+        return (*res, None) if return_thumbnail else res
+
+    if color_type not in (0, 2, 6):
+        res = (False, f"Color type {color_type} not supported (requires grayscale, RGB, or RGBA)", 0.0, 0.0)
+        return (*res, None) if return_thumbnail else res
 
     try:
         raw_decompressed = zlib.decompress(b''.join(idat_chunks))
     except Exception as e:
-        return False, f"Failed to decompress PNG IDAT data: {e}", 0.0, 0.0
+        res = (False, f"Failed to decompress PNG IDAT data: {e}", 0.0, 0.0)
+        return (*res, None) if return_thumbnail else res
 
     bpp = 4 if color_type == 6 else (3 if color_type == 2 else 1)
     stride = 1 + width * bpp
+    expected_len = height * stride
+    if len(raw_decompressed) < expected_len:
+        res = (False, f"Truncated IDAT scanlines ({len(raw_decompressed)} < {expected_len})", 0.0, 0.0)
+        return (*res, None) if return_thumbnail else res
+
     y_min, y_max = int(height * 0.30), int(height * 0.80)
     x_min, x_max = int(width * 0.20), int(width * 0.80)
 
     samples = []
     step_y = max(1, (y_max - y_min) // 64)
     step_x = max(1, (x_max - x_min) // 64)
-    for y in range(y_min, y_max, step_y):
-        line_start = y * stride + 1
-        if line_start >= len(raw_decompressed):
-            break
-        for x in range(x_min, x_max, step_x):
-            px = line_start + x * bpp
-            if px + bpp <= len(raw_decompressed):
-                if bpp >= 3:
-                    r, g, b = raw_decompressed[px], raw_decompressed[px+1], raw_decompressed[px+2]
-                    lum = 0.299 * r + 0.587 * g + 0.114 * b
-                else:
-                    lum = float(raw_decompressed[px])
-                samples.append(lum)
+
+    thumb_w, thumb_h = 32, 32
+    thumb_grid = [0.0] * (thumb_w * thumb_h) if return_thumbnail else None
+    thumb_counts = [0] * (thumb_w * thumb_h) if return_thumbnail else None
+
+    prior = bytearray(width * bpp)
+    row_bytes = width * bpp
+
+    for y in range(y_max):
+        offset = y * stride
+        ftype = raw_decompressed[offset]
+        raw_row = raw_decompressed[offset + 1 : offset + stride]
+        curr = bytearray(row_bytes)
+
+        if ftype == 0:  # None
+            curr[:] = raw_row
+        elif ftype == 1:  # Sub
+            curr[:bpp] = raw_row[:bpp]
+            for i in range(bpp, row_bytes):
+                curr[i] = (raw_row[i] + curr[i - bpp]) & 0xFF
+        elif ftype == 2:  # Up
+            for i in range(row_bytes):
+                curr[i] = (raw_row[i] + prior[i]) & 0xFF
+        elif ftype == 3:  # Average
+            for i in range(bpp):
+                curr[i] = (raw_row[i] + (prior[i] >> 1)) & 0xFF
+            for i in range(bpp, row_bytes):
+                curr[i] = (raw_row[i] + ((curr[i - bpp] + prior[i]) >> 1)) & 0xFF
+        elif ftype == 4:  # Paeth
+            for i in range(bpp):
+                curr[i] = (raw_row[i] + prior[i]) & 0xFF
+            for i in range(bpp, row_bytes):
+                a = curr[i - bpp]
+                b = prior[i]
+                c = prior[i - bpp]
+                p = a + b - c
+                pa = abs(p - a)
+                pb = abs(p - b)
+                pc = abs(p - c)
+                pr = a if (pa <= pb and pa <= pc) else (b if pb <= pc else c)
+                curr[i] = (raw_row[i] + pr) & 0xFF
+        else:
+            res = (False, f"Unsupported PNG filter type {ftype}", 0.0, 0.0)
+            return (*res, None) if return_thumbnail else res
+
+        if y >= y_min:
+            if (y - y_min) % step_y == 0:
+                for x in range(x_min, x_max, step_x):
+                    px = x * bpp
+                    if bpp >= 3:
+                        lum = 0.299 * curr[px] + 0.587 * curr[px + 1] + 0.114 * curr[px + 2]
+                    else:
+                        lum = float(curr[px])
+                    samples.append(lum)
+
+            if return_thumbnail:
+                ty = int((y - y_min) * thumb_h / max(1, y_max - y_min))
+                if 0 <= ty < thumb_h:
+                    for tx in range(thumb_w):
+                        x = x_min + int(tx * (x_max - x_min) / thumb_w)
+                        px = x * bpp
+                        if bpp >= 3:
+                            lum = 0.299 * curr[px] + 0.587 * curr[px + 1] + 0.114 * curr[px + 2]
+                        else:
+                            lum = float(curr[px])
+                        idx = ty * thumb_w + tx
+                        thumb_grid[idx] += lum
+                        thumb_counts[idx] += 1
+
+        prior = curr
 
     if not samples:
-        step = max(1, len(raw_decompressed) // 4096)
-        samples = [float(x) for x in raw_decompressed[::step]]
+        res = (False, "No pixels sampled in inner crop", 0.0, 0.0)
+        return (*res, None) if return_thumbnail else res
 
     mean = sum(samples) / len(samples)
     variance = sum((x - mean) ** 2 for x in samples) / len(samples)
     std_dev = math.sqrt(variance)
 
+    thumb_res = None
+    if return_thumbnail and thumb_grid:
+        thumb_res = [thumb_grid[i] / max(1, thumb_counts[i]) for i in range(len(thumb_grid))]
+
     if mean < min_luminance:
-        return False, f"Blank/black viewport detected (inner 3D viewport mean luminance={mean:.2f} < {min_luminance:.1f})", mean, std_dev
+        res = (False, f"Blank/black viewport detected (inner 3D viewport mean luminance={mean:.2f} < {min_luminance:.1f})", mean, std_dev)
+        return (*res, thumb_res) if return_thumbnail else res
 
     if std_dev < min_variance:
-        return False, f"Blank/featureless viewport detected (inner 3D viewport std_dev={std_dev:.4f} < {min_variance:.1f})", mean, std_dev
+        res = (False, f"Blank/featureless viewport detected (inner 3D viewport std_dev={std_dev:.4f} < {min_variance:.1f})", mean, std_dev)
+        return (*res, thumb_res) if return_thumbnail else res
 
-    return True, f"Valid image (mean={mean:.2f}, std_dev={std_dev:.2f})", mean, std_dev
+    res = (True, f"Valid image (mean={mean:.2f}, std_dev={std_dev:.2f})", mean, std_dev)
+    return (*res, thumb_res) if return_thumbnail else res
 
 
-def verify_image_file(image_path: str, min_bytes: int = 50000, min_variance: float = 4.0, min_luminance: float = 8.0):
+def verify_image_file(image_path: str, min_bytes: int = 50000, min_variance: float = 4.0, min_luminance: float = 8.0, return_thumbnail: bool = False):
     """
     Verifies that an image file exists, meets minimum size, and contains non-blank pixels
     specifically within the inner 3D viewport crop (excluding window chrome and HUD strips).
-    Returns (is_valid: bool, reason: str, mean_luminance: float, std_dev: float).
+    Returns (is_valid: bool, reason: str, mean_luminance: float, std_dev: float)
+    or 5-tuple with thumbnail if return_thumbnail=True.
     """
     p = Path(image_path)
     if not p.exists():
-        return False, f"File missing on disk: {p.name}", 0.0, 0.0
+        res = (False, f"File missing on disk: {p.name}", 0.0, 0.0)
+        return (*res, None) if return_thumbnail else res
 
     size = p.stat().st_size
     if size < min_bytes:
-        return False, f"File size too small ({size:,} bytes < {min_bytes:,} bytes): {p.name}", 0.0, 0.0
+        res = (False, f"File size too small ({size:,} bytes < {min_bytes:,} bytes): {p.name}", 0.0, 0.0)
+        return (*res, None) if return_thumbnail else res
 
     # If Pillow is present, use it for complete color pipeline and inner crop
     if HAS_PIL:
@@ -231,45 +325,88 @@ def verify_image_file(image_path: str, min_bytes: int = 50000, min_variance: flo
                 pixels = list(crop.tobytes())
                 n = len(pixels)
                 if n == 0:
-                    return False, f"Empty pixel data in viewport crop: {p.name}", 0.0, 0.0
+                    res = (False, f"Empty pixel data in viewport crop: {p.name}", 0.0, 0.0)
+                    return (*res, None) if return_thumbnail else res
 
                 mean = sum(pixels) / n
                 variance = sum((x - mean) ** 2 for x in pixels) / n
                 std_dev = math.sqrt(variance)
 
+                thumb_res = None
+                if return_thumbnail:
+                    thumb_res = list(crop.resize((32, 32)).tobytes())
+
                 if mean < min_luminance:
-                    return False, f"Blank/black viewport detected in {p.name}: inner 3D viewport mean luminance={mean:.2f} < {min_luminance:.1f} (solid black screen)", mean, std_dev
+                    res = (False, f"Blank/black viewport detected in {p.name}: inner 3D viewport mean luminance={mean:.2f} < {min_luminance:.1f} (solid black screen)", mean, std_dev)
+                    return (*res, thumb_res) if return_thumbnail else res
 
                 if std_dev < min_variance:
-                    return False, f"Blank/featureless viewport detected in {p.name}: inner 3D viewport std_dev={std_dev:.4f} < {min_variance:.1f}", mean, std_dev
+                    res = (False, f"Blank/featureless viewport detected in {p.name}: inner 3D viewport std_dev={std_dev:.4f} < {min_variance:.1f}", mean, std_dev)
+                    return (*res, thumb_res) if return_thumbnail else res
 
-                return True, "Valid non-blank image", mean, std_dev
+                res = (True, "Valid non-blank image", mean, std_dev)
+                return (*res, thumb_res) if return_thumbnail else res
         except Exception:
             pass  # Fallback to pure zlib
 
-    # Zero-dependency fallback: read raw bytes and decode scanlines
+    # Zero-dependency fallback: read raw bytes and decode scanlines with filter reconstruction
     try:
         with open(p, "rb") as f:
             data = f.read()
-        ok, reason, mean, std_dev = decode_png_variance_raw(data, min_variance, min_luminance)
+        raw_res = decode_png_variance_raw(data, min_variance, min_luminance, return_thumbnail=return_thumbnail)
+        ok, reason, mean, std_dev = raw_res[:4]
+        thumb = raw_res[4] if return_thumbnail else None
         if not ok:
-            return False, f"{reason}: {p.name}", mean, std_dev
-        return True, "Valid non-blank image", mean, std_dev
+            res = (False, f"{reason}: {p.name}", mean, std_dev)
+            return (*res, thumb) if return_thumbnail else res
+        res = (True, "Valid non-blank image", mean, std_dev)
+        return (*res, thumb) if return_thumbnail else res
     except Exception as e:
-        return False, f"Corrupted or unreadable image ({e}): {p.name}", 0.0, 0.0
+        res = (False, f"Corrupted or unreadable image ({e}): {p.name}", 0.0, 0.0)
+        return (*res, None) if return_thumbnail else res
 
 
-def create_raw_png(path: str, width: int = 64, height: int = 64, pattern: str = "solid"):
+def create_raw_png(path: str, width: int = 64, height: int = 64, pattern: str = "solid", filter_type: int = 0):
     """Creates a minimal valid PNG file using only built-in zlib/struct (zero dependencies)."""
     raw_lines = bytearray()
+    prior = bytearray(width * 3)
     for y in range(height):
-        raw_lines.append(0)  # filter type 0: None
+        curr = bytearray(width * 3)
         for x in range(width):
             if pattern == "solid":
-                raw_lines.extend(b"\x00\x00\x00")
+                c = 0
+            elif pattern == "solid_lit":
+                c = 128
+            elif pattern == "gradient":
+                c = int(255 * x / max(1, width - 1))
             elif pattern == "checker":
                 c = 255 if ((x // 8) + (y // 8)) % 2 == 0 else 0
-                raw_lines.extend(bytes([c, c, c]))
+            elif pattern == "checker_shifted":
+                c = 255 if ((x // 8) + (y // 8) + 1) % 2 == 0 else 0
+            else:
+                c = 0
+            curr[x * 3] = c
+            curr[x * 3 + 1] = c
+            curr[x * 3 + 2] = c
+
+        raw_lines.append(filter_type)
+        if filter_type == 0:  # None
+            raw_lines.extend(curr)
+        elif filter_type == 1:  # Sub
+            row = bytearray(width * 3)
+            row[:3] = curr[:3]
+            for i in range(3, width * 3):
+                row[i] = (curr[i] - curr[i - 3]) & 0xFF
+            raw_lines.extend(row)
+        elif filter_type == 2:  # Up
+            row = bytearray(width * 3)
+            for i in range(width * 3):
+                row[i] = (curr[i] - prior[i]) & 0xFF
+            raw_lines.extend(row)
+        else:
+            raw_lines.extend(curr)
+        prior = curr
+
     compressed = zlib.compress(bytes(raw_lines))
 
     def make_chunk(chunk_type: bytes, data: bytes):
@@ -344,6 +481,7 @@ class CaptureTelemetryParser:
                     "result_passed": None,
                     "result_total": None,
                     "result_reason": None,
+                    "run_id": None,
                     "errors": []
                 }
 
@@ -352,6 +490,10 @@ class CaptureTelemetryParser:
 
             if "ERROR" in payload.upper() or "EXCEPTION" in payload.upper() or "FAILED" in payload.upper():
                 entry["errors"].append(payload)
+
+            m_run = re.search(r'RUN_ID:\s*([A-Za-z0-9_]+)', payload)
+            if m_run:
+                entry["run_id"] = m_run.group(1)
 
             m_trig = cls.TRIGGER_REGEX.search(payload)
             if m_trig:
@@ -434,7 +576,7 @@ class CaptureEvaluator:
     """Evaluates capture telemetry against AG31 specification criteria."""
 
     @classmethod
-    def verify_capture_images(cls, image_dir, spec, verdict, min_expected=1):
+    def verify_capture_images(cls, image_dir, spec, verdict, min_expected=1, expected_run_id=None):
         if not image_dir:
             return
         p_dir = Path(image_dir)
@@ -449,6 +591,34 @@ class CaptureEvaluator:
             verdict["rejections"].append(f"REJECTION: Missing files on disk: zero PNG frames found in image directory: {image_dir}")
             return
 
+        # Run-ID / Manifest correlation check (Claude C-158 / Codex X-151)
+        if expected_run_id:
+            matching_paths = [p for p in image_paths if expected_run_id in p.name]
+            if not matching_paths:
+                verdict["status"] = "FAIL"
+                verdict["rejections"].append(f"REJECTION: Frame manifest mismatch: Zero frames match log run_id '{expected_run_id}'. (Stale frames from previous capture).")
+                return
+            image_paths = matching_paths
+            verdict["metrics"]["run_id_verified"] = expected_run_id
+
+        # Companion run_manifest.json verification if present
+        manifest_path = p_dir / "run_manifest.json"
+        if manifest_path.exists():
+            try:
+                manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
+                verdict["metrics"]["manifest_run_id"] = manifest_data.get("run_id")
+                if expected_run_id and manifest_data.get("run_id") != expected_run_id:
+                    verdict["status"] = "FAIL"
+                    verdict["rejections"].append(f"REJECTION: Manifest run_id mismatch: manifest has '{manifest_data.get('run_id')}' but log has '{expected_run_id}'.")
+                    return
+            except Exception as e:
+                verdict["findings"].append(f"Note: Could not parse run_manifest.json: {e}")
+
+        if len(image_paths) < min_expected:
+            verdict["status"] = "FAIL"
+            verdict["rejections"].append(f"REJECTION: Incomplete image burst on disk: found {len(image_paths)} frames < {min_expected} expected.")
+            return
+
         # 1. Per-frame verification (size, inner 3D viewport luminance & variance)
         valid_count = 0
         min_lum = spec.get("min_viewport_luminance", 8.0)
@@ -458,11 +628,12 @@ class CaptureEvaluator:
         crops_by_phase = {}
 
         for img_path in image_paths:
-            ok, err, mean_lum, std_dev = verify_image_file(
+            ok, err, mean_lum, std_dev, thumb = verify_image_file(
                 str(img_path),
                 min_bytes=spec["min_image_bytes"],
                 min_variance=min_std,
-                min_luminance=min_lum
+                min_luminance=min_lum,
+                return_thumbnail=True
             )
             if not ok:
                 verdict["status"] = "FAIL"
@@ -475,22 +646,15 @@ class CaptureEvaluator:
                 h = hashlib.sha256(f.read()).hexdigest()
             hashes[h] = hashes.get(h, 0) + 1
 
-            # Extract phase from filename (e.g. 001_CAP01_A5_Windup.png -> Windup)
-            m_phase = re.search(r'_(Windup|Active|Recovery|None)\.png', img_path.name, re.IGNORECASE)
+            # Extract phase from filename (e.g. 001_CAP01_A5_Windup.png -> Windup, 021_CAP05_A2_Committed.png -> Committed)
+            m_phase = re.search(r'_(Windup|Committed|Active|Recovery|None)\.png', img_path.name, re.IGNORECASE)
             phase_tag = m_phase.group(1).capitalize() if m_phase else "Default"
 
             # Store downsampled inner viewport crop for inter-phase delta
-            if HAS_PIL:
-                try:
-                    with Image.open(img_path) as im:
-                        w, h_img = im.size
-                        crop_box = (int(w * 0.20), int(h_img * 0.30), int(w * 0.80), int(h_img * 0.80))
-                        c = im.crop(crop_box).convert("L").resize((32, 32))
-                        if phase_tag not in crops_by_phase:
-                            crops_by_phase[phase_tag] = []
-                        crops_by_phase[phase_tag].append((img_path.name, list(c.tobytes())))
-                except Exception:
-                    pass
+            if thumb:
+                if phase_tag not in crops_by_phase:
+                    crops_by_phase[phase_tag] = []
+                crops_by_phase[phase_tag].append((img_path.name, thumb))
 
         verdict["metrics"]["frames_on_disk"] = len(image_paths)
         verdict["metrics"]["valid_rendered_frames"] = valid_count
@@ -513,8 +677,16 @@ class CaptureEvaluator:
             verdict["rejections"].append(f"REJECTION: High frame freeze rate: {max_dup}/{total_frames} frames ({dup_ratio*100:.1f}% > {max_allowed_ratio*100:.0f}%) share identical SHA256 hash.")
             return
 
-        # 3. Inter-Phase Visual Progression (Check (c))
-        distinct_phases = [p for p in ["Windup", "Active", "Recovery"] if p in crops_by_phase and len(crops_by_phase[p]) > 0]
+        # 3. Required phase coverage check
+        req_phases = spec.get("required_phases", [])
+        for rp in req_phases:
+            if rp not in crops_by_phase or len(crops_by_phase[rp]) == 0:
+                verdict["status"] = "FAIL"
+                verdict["rejections"].append(f"REJECTION: Missing required phase coverage on disk: '{rp}' phase frames not captured.")
+                return
+
+        # 4. Inter-Phase Visual Progression (Check (c))
+        distinct_phases = [p for p in ["Windup", "Committed", "Active", "Recovery"] if p in crops_by_phase and len(crops_by_phase[p]) > 0]
         if len(distinct_phases) >= 2:
             min_mad = spec.get("min_inter_phase_mad", 1.5)
             for i in range(len(distinct_phases) - 1):
@@ -565,6 +737,11 @@ class CaptureEvaluator:
             verdict["rejections"].append(f"ENGINE VETO: Attack execution was vetoed by engine runtime: '{reason}'. Run invalid.")
             return verdict
 
+        if not image_dir and not data.get("telemetry_only"):
+            verdict["status"] = "FAIL"
+            verdict["rejections"].append("REJECTION: Missing image directory (--image-dir / --frames-dir is mandatory for visual verification).")
+            return verdict
+
         frames = data.get("frames", [])
         if not frames:
             verdict["status"] = "FAIL"
@@ -599,14 +776,14 @@ class CaptureEvaluator:
                 verdict["status"] = "FAIL"
                 verdict["rejections"].append(f"REJECTION: Timestamp {t:.3f}s out of valid bounds [0.0, {spec['clip_duration_s']}s].")
 
-        cls.verify_capture_images(image_dir, spec, verdict)
+        cls.verify_capture_images(image_dir, spec, verdict, min_expected=min_frames, expected_run_id=data.get("run_id"))
 
         authored_intent_s = spec["nominal_authored_intent_s"]
         code_active_s = spec["nominal_code_active_s"]
         sampled_release_s = spec["sampled_code_release_s"]
         visual_release_observed = data.get("observed_visual_release_s", None)
 
-        verdict["metrics"] = {
+        verdict["metrics"].update({
             "authored_intent_marker_s": authored_intent_s,
             "code_active_window_s": code_active_s,
             "sampled_code_release_s": sampled_release_s,
@@ -617,7 +794,7 @@ class CaptureEvaluator:
             "tolerance_max_ms_PROPOSED": spec["tolerance_max_ms"],
             "frames_captured": len(frames),
             "sim_time_span_s": round(times[-1] - times[0], 4) if len(times) > 1 else 0.0
-        }
+        })
 
         verdict["findings"].append(f"Authored intent marker: {authored_intent_s:.3f}s (E-007:7, sidecar frame 12 @ 30fps).")
         verdict["findings"].append(f"Code active window: {code_active_s:.3f}s (E-007:5, URPGAttackTracker).")
@@ -648,6 +825,11 @@ class CaptureEvaluator:
             verdict["rejections"].append(f"ENGINE VETO: Attack execution was vetoed by engine runtime: '{reason}'. Run invalid.")
             return verdict
 
+        if not image_dir and not data.get("telemetry_only"):
+            verdict["status"] = "FAIL"
+            verdict["rejections"].append("REJECTION: Missing image directory (--image-dir / --frames-dir is mandatory for visual verification).")
+            return verdict
+
         frames = data.get("frames", [])
         min_frames, wall_dur, interval = cls.get_min_burst_frames(data, spec)
         if wall_dur is not None:
@@ -671,9 +853,9 @@ class CaptureEvaluator:
                 )
                 break
 
-        cls.verify_capture_images(image_dir, spec, verdict)
+        cls.verify_capture_images(image_dir, spec, verdict, min_expected=min_frames, expected_run_id=data.get("run_id"))
 
-        verdict["metrics"] = {
+        verdict["metrics"].update({
             "nominal_active_window_s": [spec["nominal_active_start_s"], spec["nominal_active_end_s"]],
             "nominal_query_reach_cm": spec["nominal_query_reach_cm"],
             "max_sampled_tip_reach_cm": spec["max_sampled_tip_reach_cm"],
@@ -682,7 +864,7 @@ class CaptureEvaluator:
             "floor_dip_intervals_s": spec["floor_dip_intervals"],
             "frames_captured": len(frames),
             "sim_time_span_s": round(times[-1] - times[0], 4) if len(times) > 1 else 0.0
-        }
+        })
 
         verdict["findings"].append(f"A4 Low Sweep query reach: {spec['nominal_query_reach_cm']:.1f}cm (E-008:7).")
         verdict["findings"].append(f"A4 Active Window: [{spec['nominal_active_start_s']:.3f}, {spec['nominal_active_end_s']:.3f}]s (E-008:10).")
@@ -714,6 +896,11 @@ class CaptureEvaluator:
             verdict["rejections"].append(f"ENGINE VETO: Attack execution was vetoed by engine runtime: '{reason}'. Run invalid.")
             return verdict
 
+        if not image_dir and not data.get("telemetry_only"):
+            verdict["status"] = "FAIL"
+            verdict["rejections"].append("REJECTION: Missing image directory (--image-dir / --frames-dir is mandatory for visual verification).")
+            return verdict
+
         frames = data.get("frames", [])
         min_frames, wall_dur, interval = cls.get_min_burst_frames(data, spec)
         if wall_dur is not None:
@@ -737,16 +924,16 @@ class CaptureEvaluator:
                 )
                 break
 
-        cls.verify_capture_images(image_dir, spec, verdict)
+        cls.verify_capture_images(image_dir, spec, verdict, min_expected=min_frames, expected_run_id=data.get("run_id"))
 
-        verdict["metrics"] = {
+        verdict["metrics"].update({
             "nominal_lead_a1_ms": spec["nominal_lead_a1_ms"],
             "nominal_lead_a2_ms": spec["nominal_lead_a2_ms"],
             "tolerance_strict_lead_ms_PROPOSED": spec["tolerance_strict_lead_ms"],
             "tolerance_reject_lead_ms_PROPOSED": spec["tolerance_reject_lead_ms"],
             "frames_captured": len(frames),
             "sim_time_span_s": round(times[-1] - times[0], 4) if len(times) > 1 else 0.0
-        }
+        })
 
         verdict["findings"].append(f"Nominal A1 telegraph lead: {spec['nominal_lead_a1_ms']:.1f}ms (AG3:68).")
         verdict["findings"].append(f"Nominal A2 telegraph lead: {spec['nominal_lead_a2_ms']:.1f}ms (AG3:90).")
@@ -776,6 +963,11 @@ class CaptureEvaluator:
             verdict["rejections"].append(f"ENGINE VETO: Attack execution was vetoed by engine runtime: '{reason}'. Run invalid.")
             return verdict
 
+        if not image_dir and not data.get("telemetry_only"):
+            verdict["status"] = "FAIL"
+            verdict["rejections"].append("REJECTION: Missing image directory (--image-dir / --frames-dir is mandatory for visual verification).")
+            return verdict
+
         frames = data.get("frames", [])
         min_frames, wall_dur, interval = cls.get_min_burst_frames(data, spec)
         if wall_dur is not None:
@@ -799,15 +991,15 @@ class CaptureEvaluator:
                 )
                 break
 
-        cls.verify_capture_images(image_dir, spec, verdict)
+        cls.verify_capture_images(image_dir, spec, verdict, min_expected=min_frames, expected_run_id=data.get("run_id"))
 
-        verdict["metrics"] = {
+        verdict["metrics"].update({
             "nominal_recovery_opening_ms": "NO SOURCE IN FREEZE (Owner decision required)",
             "tolerance_strict_opening_ms_PROPOSED": spec["tolerance_strict_opening_ms"],
             "tolerance_reject_opening_ms_PROPOSED": spec["tolerance_reject_opening_ms"],
             "frames_captured": len(frames),
             "sim_time_span_s": round(times[-1] - times[0], 4) if len(times) > 1 else 0.0
-        }
+        })
 
         verdict["owner_questions"].append(
             "OWNER QUESTION (Punish Window Feel): There is NO SOURCE in the master design freeze for slam recovery duration. Is an 800ms vulnerable opening desired for player punish windows?"
@@ -822,7 +1014,7 @@ class CaptureEvaluator:
 
 def run_self_test():
     """
-    Executes comprehensive self-test suite covering all edge cases required by Claude [C-137], [C-138], and [C-151]:
+    Executes comprehensive self-test suite covering all edge cases required by Claude [C-137], [C-138], [C-151], [C-158] and Codex [X-150], [X-151]:
       1. Identical/compressed timestamps (rejects same-tick bursts).
       2. Blank/black PNG (rejects unrendered solid-black frames without PIL dependency).
       3. Missing files on disk (rejects missing screenshots).
@@ -831,14 +1023,18 @@ def run_self_test():
       6. Solid Black Viewport Rejection (Claude C-151 reproduction: inner viewport mean luminance < 8.0).
       7. Byte-Identical Frame Burst / Freeze Rejection (Claude C-151 reproduction: frozen camera buffer).
       8. Valid Monotonic Capture Run (asserts PASS with real inter-frame variation).
+      9. Frozen Visual Progression Across Phases (Zero-MAD Rejection).
+      10. Incomplete image burst on disk underflow rejection (len(images) < min_expected).
+      11. Missing required phase coverage rejection (required phase missing on disk).
+      12. Mismatched Run-ID / Stale Frames Rejection (Claude C-158 / Codex X-151 manifest correlation).
     """
     print("================================================================================")
-    print("RUNNING CAPTURE ANALYSIS SELF-TEST SUITE (Hardened for C-135 / C-137 / C-138 / C-151)")
+    print("RUNNING CAPTURE ANALYSIS SELF-TEST SUITE (Hardened for C-135 / C-137 / C-138 / C-151 / C-158 / X-151)")
     print(f"PIL Accelerated: {HAS_PIL} (Zero-dependency raw PNG decoder active)")
     print("================================================================================")
 
     test_passed = 0
-    test_total = 8
+    test_total = 12
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         tmp_path = Path(tmp_dir)
@@ -848,6 +1044,7 @@ def run_self_test():
         # ----------------------------------------------------------------------
         print("\n--- Test Case 1: Identical/Compressed Timestamps (Same-Tick Burst) ---")
         compressed_data = {
+            "telemetry_only": True,
             "frames": [{"frame_idx": i, "sim_time": 0.949 if i == 1 else 0.953, "size_bytes": 17709} for i in range(1, 16)]
         }
         res1 = CaptureEvaluator.evaluate_cap01(compressed_data)
@@ -911,6 +1108,7 @@ def run_self_test():
         """
         parsed_veto = CaptureTelemetryParser.parse_log_text(veto_log_sample)
         cap01_parsed = parsed_veto.get("CAP-01", {})
+        cap01_parsed["telemetry_only"] = True
         res4 = CaptureEvaluator.evaluate_cap01(cap01_parsed)
         has_veto_rej = any("engine veto" in r.lower() for r in res4["rejections"])
         if res4["status"] == "FAIL" and has_veto_rej:
@@ -924,7 +1122,7 @@ def run_self_test():
         # Test Case 5: Nominal Source Citation & Owner Question Reporting
         # ----------------------------------------------------------------------
         print("\n--- Test Case 5: Source Citation & Owner Question Reporting ---")
-        res5 = CaptureEvaluator.evaluate_cap06({"frames": [{"frame_idx": i, "sim_time": 1.0 + (i * 0.0333)} for i in range(1, 17)]})
+        res5 = CaptureEvaluator.evaluate_cap06({"telemetry_only": True, "frames": [{"frame_idx": i, "sim_time": 1.0 + (i * 0.0333)} for i in range(1, 17)]})
         has_no_source = "NO SOURCE IN FREEZE" in str(res5["metrics"].get("nominal_recovery_opening_ms"))
         has_owner_q = len(res5["owner_questions"]) > 0
         if has_no_source and has_owner_q:
@@ -996,7 +1194,8 @@ def run_self_test():
         for i in range(1, 13):
             phase = "Windup" if i <= 6 else "Active"
             p = valid_dir / f"{i:03d}_CAP01_A5_{phase}.png"
-            create_raw_png(str(p), width=64, height=64, pattern="checker")
+            pat = "checker" if i <= 6 else "gradient"
+            create_raw_png(str(p), width=64, height=64, pattern=pat)
             with open(p, "ab") as f:
                 f.write(bytes([(i * 17) % 256]) * 60000)
             valid_frames.append({
@@ -1020,6 +1219,155 @@ def run_self_test():
             test_passed += 1
         else:
             print(f"  FAIL: Expected PASS, got {res8['status']}, rejections: {res8['rejections']}")
+
+        # ----------------------------------------------------------------------
+        # Test Case 9: Frozen Visual Progression Across Phases (Zero-MAD Rejection)
+        # ----------------------------------------------------------------------
+        print("\n--- Test Case 9: Frozen Visual Progression Across Phases (Zero-MAD Rejection) ---")
+        frozen_phase_dir = tmp_path / "frozen_phase_test"
+        frozen_phase_dir.mkdir(parents=True, exist_ok=True)
+
+        frozen_phase_frames = []
+        for i in range(1, 13):
+            phase = "Windup" if i <= 6 else "Active"
+            p = frozen_phase_dir / f"{i:03d}_CAP01_A5_{phase}.png"
+            # Identical pixel pattern across both Windup and Active (checker)
+            create_raw_png(str(p), width=64, height=64, pattern="checker")
+            # Vary metadata bytes after IEND to give distinct SHA256 hashes
+            with open(p, "ab") as f:
+                f.write(bytes([(i * 31) % 256]) * 60000)
+            frozen_phase_frames.append({
+                "frame_idx": i,
+                "total_frames": 12,
+                "sim_time": 1.000 + ((i - 1) * 0.050),
+                "path": str(p),
+                "size_bytes": p.stat().st_size
+            })
+
+        frozen_phase_data = {
+            "cap_id": "CAP-01",
+            "frames": frozen_phase_frames,
+            "telemetry": [{"wall": 100.0 + i * 0.1, "sim": 1.0 + i * 0.05, "phase": "Windup" if i <= 6 else "Active", "active": (i > 6), "commit": (i > 6), "pos": i * 0.05} for i in range(1, 13)],
+            "vetoed": False
+        }
+        res9 = CaptureEvaluator.evaluate_cap01(frozen_phase_data, image_dir=frozen_phase_dir)
+        has_mad_rej = any("zero visual animation progression" in r.lower() for r in res9["rejections"])
+        if res9["status"] == "FAIL" and has_mad_rej:
+            print("  PASS: Engine correctly REJECTED identical-pixel capture across phase boundary (frozen pixels).")
+            print(f"  Captured Rejection: {res9['rejections'][0]}")
+            test_passed += 1
+        else:
+            print(f"  FAIL: Expected MAD rejection on frozen phase pixels, got {res9['status']}, rejections: {res9['rejections']}")
+
+        # ----------------------------------------------------------------------
+        # Test Case 10: Incomplete Image Burst on Disk Underflow Rejection (X-150 / X-151)
+        # ----------------------------------------------------------------------
+        print("\n--- Test Case 10: Incomplete Image Burst on Disk Underflow Rejection ---")
+        underflow_dir = tmp_path / "underflow_test"
+        underflow_dir.mkdir(parents=True, exist_ok=True)
+        underflow_frames = []
+        for i in range(1, 6):  # Only 5 frames on disk, but telemetry expects 12
+            phase = "Windup" if i <= 3 else "Active"
+            p = underflow_dir / f"{i:03d}_CAP01_A5_{phase}.png"
+            create_raw_png(str(p), width=64, height=64, pattern="checker")
+            with open(p, "ab") as f:
+                f.write(bytes([(i * 41) % 256]) * 60000)
+            underflow_frames.append({
+                "frame_idx": i,
+                "total_frames": 12,
+                "sim_time": 1.000 + ((i - 1) * 0.050),
+                "path": str(p),
+                "size_bytes": p.stat().st_size
+            })
+
+        underflow_data = {
+            "cap_id": "CAP-01",
+            "frames": [{"frame_idx": i, "sim_time": 1.000 + ((i - 1) * 0.050)} for i in range(1, 13)],
+            "telemetry": [{"wall": 100.0 + i * 0.05, "sim": 1.0 + i * 0.05, "phase": "Windup" if i <= 6 else "Active", "active": (i > 6), "commit": (i > 6), "pos": i * 0.05} for i in range(1, 13)],
+            "vetoed": False
+        }
+        res10 = CaptureEvaluator.evaluate_cap01(underflow_data, image_dir=underflow_dir)
+        has_underflow_rej = any("incomplete image burst on disk" in r.lower() for r in res10["rejections"])
+        if res10["status"] == "FAIL" and has_underflow_rej:
+            print("  PASS: Engine correctly REJECTED capture when on-disk frame count < min_expected.")
+            print(f"  Captured Rejection: {res10['rejections'][0]}")
+            test_passed += 1
+        else:
+            print(f"  FAIL: Expected incomplete burst rejection, got {res10['status']}, rejections: {res10['rejections']}")
+
+        # ----------------------------------------------------------------------
+        # Test Case 11: Missing Required Phase Coverage Rejection (X-150 / X-151)
+        # ----------------------------------------------------------------------
+        print("\n--- Test Case 11: Missing Required Phase Coverage Rejection ---")
+        missing_phase_dir = tmp_path / "missing_phase_test"
+        missing_phase_dir.mkdir(parents=True, exist_ok=True)
+        missing_phase_frames = []
+        for i in range(1, 13):  # 12 frames, but all tagged Windup (missing required Active phase)
+            p = missing_phase_dir / f"{i:03d}_CAP01_A5_Windup.png"
+            pat = "checker" if (i % 2 == 0) else "gradient"
+            create_raw_png(str(p), width=64, height=64, pattern=pat)
+            with open(p, "ab") as f:
+                f.write(bytes([(i * 53) % 256]) * 60000)
+            missing_phase_frames.append({
+                "frame_idx": i,
+                "total_frames": 12,
+                "sim_time": 1.000 + ((i - 1) * 0.050),
+                "path": str(p),
+                "size_bytes": p.stat().st_size
+            })
+
+        missing_phase_data = {
+            "cap_id": "CAP-01",
+            "frames": missing_phase_frames,
+            "telemetry": [{"wall": 100.0 + i * 0.05, "sim": 1.0 + i * 0.05, "phase": "Windup", "active": False, "commit": False, "pos": i * 0.05} for i in range(1, 13)],
+            "vetoed": False
+        }
+        res11 = CaptureEvaluator.evaluate_cap01(missing_phase_data, image_dir=missing_phase_dir)
+        has_req_phase_rej = any("missing required phase coverage on disk" in r.lower() for r in res11["rejections"])
+        if res11["status"] == "FAIL" and has_req_phase_rej:
+            print("  PASS: Engine correctly REJECTED capture when required phase ('Active') is missing on disk.")
+            print(f"  Captured Rejection: {res11['rejections'][0]}")
+            test_passed += 1
+        else:
+            print(f"  FAIL: Expected missing required phase rejection, got {res11['status']}, rejections: {res11['rejections']}")
+
+        # ----------------------------------------------------------------------
+        # Test Case 12: Mismatched Run-ID / Stale Frames Rejection (C-158 / X-151)
+        # ----------------------------------------------------------------------
+        print("\n--- Test Case 12: Mismatched Run-ID / Stale Frames Rejection ---")
+        stale_dir = tmp_path / "stale_run_test"
+        stale_dir.mkdir(parents=True, exist_ok=True)
+        stale_frames = []
+        for i in range(1, 13):
+            phase = "Windup" if i <= 6 else "Active"
+            p = stale_dir / f"{i:03d}_CAP01_A5_RUN_20261026_090000_{phase}.png"
+            pat = "checker" if i <= 6 else "gradient"
+            create_raw_png(str(p), width=64, height=64, pattern=pat)
+            with open(p, "ab") as f:
+                f.write(bytes([(i * 61) % 256]) * 60000)
+            stale_frames.append({
+                "frame_idx": i,
+                "total_frames": 12,
+                "sim_time": 1.000 + ((i - 1) * 0.050),
+                "path": str(p),
+                "size_bytes": p.stat().st_size
+            })
+
+        stale_data = {
+            "cap_id": "CAP-01",
+            "run_id": "RUN_20261026_163500_9999",  # Different run_id than files on disk
+            "frames": stale_frames,
+            "telemetry": [{"wall": 100.0 + i * 0.05, "sim": 1.0 + i * 0.05, "phase": "Windup" if i <= 6 else "Active", "active": (i > 6), "commit": (i > 6), "pos": i * 0.05} for i in range(1, 13)],
+            "vetoed": False
+        }
+        res12 = CaptureEvaluator.evaluate_cap01(stale_data, image_dir=stale_dir)
+        has_run_id_rej = any("frame manifest mismatch" in r.lower() for r in res12["rejections"])
+        if res12["status"] == "FAIL" and has_run_id_rej:
+            print("  PASS: Engine correctly REJECTED capture when on-disk frames have mismatched run_id (stale frames).")
+            print(f"  Captured Rejection: {res12['rejections'][0]}")
+            test_passed += 1
+        else:
+            print(f"  FAIL: Expected run_id mismatch rejection, got {res12['status']}, rejections: {res12['rejections']}")
 
     print("\n================================================================================")
     print(f"SELF-TEST SUMMARY: {test_passed}/{test_total} TESTS PASSED")

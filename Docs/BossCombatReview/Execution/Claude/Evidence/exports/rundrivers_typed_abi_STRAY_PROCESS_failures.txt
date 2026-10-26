@@ -1,0 +1,21 @@
+﻿
+Driver               Result Detail                                                                                                                                                                                          
+------               ------ ------                                                                                                                                                                                          
+pie_builds           FAIL   92/103 passed (expected at least 103 checks) | [Builds] FAIL Dex Light: the hit landed (0 intake record(s)) hit 0 at 0.00 s: weapon None, kind Unknown, posture 0, stamina -1, bleed 0 (no row: 
+                            fallback), attack data None (power -1, pack poise damage -1, from  | [Builds] FAIL Dex Light: posture pool 100 -> 100.0 (expect -0 for 0 record(s)) hit 0 at 0.00 s: weapon None, kind Unknown, 
+                            posture 0, stamina -1, bleed 0 (no row: fallback), attack data None (power -1, pack poise damage -1, from  | [Builds] FAIL Dex Light: bleed buildup 0.0 (expect 0.0)                            
+pie_combat_catalog   PASS   91/91 passed (expected at least 91 checks)                                                                                                                                                      
+pie_build_hyperarmor FAIL   18/20 passed (expected at least 20 checks) | [BuildArmor] FAIL H2 strong: 1 swing(s), the tag and the flag are on for every sample inside 0.352 to 0.618 (2 samples) swings 1 [] | [BuildArmor] 
+                            FAIL H6 claymore light: a swing happened (0 swings, 0 montage samples) and the tag is never on (31 samples) []                                                                                  
+pie_build_hud        PASS   8/8 passed (expected at least 8 checks)                                                                                                                                                         
+pie_build_select     PASS   18/18 passed (expected at least 18 checks)                                                                                                                                                      
+pie_flask_hud        PASS   7/7 passed (expected at least 7 checks)                                                                                                                                                         
+pie_dormant_wake     PASS   11/11 passed (expected at least 11 checks)                                                                                                                                                      
+pie_damage_path      FAIL   15/17 passed (expected at least 17 checks) | [Dmg] FAIL M2a A5 javelin with the tag: passes through, no damage, dodged +1, rejected in the audit: 2/5 trials  | [Dmg] FAIL M2b A5 javelin       
+                            without the tag: one Accepted, -12.0: 1/5 trials                                                                                                                                                
+pie_boss_hud         PASS   29/29 passed (expected at least 29 checks)                                                                                                                                                      
+
+
+
+6/9 drivers passed
+

@@ -14,6 +14,7 @@ Run Recipe (Standing Editor):
   Terminal 3: python -I Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_analysis.py --frames-dir Saved/Screenshots/CAP01_A5 --log Saved/pie_capture_cap01_a5.log --cap-id CAP-01
 """
 
+import json
 import os
 import sys
 import time
@@ -54,9 +55,20 @@ class Cap01Runner:
         self.saved_cvars = {}
 
         self.pc = None
+        self.pawn = None
+        self.boom = None
+        self.cam = None
+        self.orig_player_loc = None
+        self.orig_player_rot = None
+        self.orig_control_rot = None
+        self.orig_pawn_hidden = None
+        self.orig_arm_length = None
+        self.orig_enable_lag = None
+        self.orig_cam_fov = None
         self.orig_view_target = None
         self.cam_actor = None
 
+        self.run_id = f"RUN_{time.strftime('%Y%m%d_%H%M%S')}_{int(time.perf_counter()*1000)%10000:04d}"
         self.telemetry_samples = []
         self.current_phase = "None"
         self.move_start_sim_t = 0.0
@@ -97,29 +109,121 @@ class Cap01Runner:
         self.orig_player_loc = pawn.get_actor_location() if pawn else None
         self.orig_player_rot = pawn.get_actor_rotation() if pawn else None
         self.orig_control_rot = pc.get_control_rotation() if pc else None
+        if pawn:
+            self.orig_pawn_hidden = pawn.is_hidden() if hasattr(pawn, "is_hidden") else (pawn.b_hidden if hasattr(pawn, "b_hidden") else False)
+
+        # Close-up Framing Parameters (per Claude C-154 for >= 150px hand/javelin height):
+        # Retrieve CameraBoom and FollowCamera from player pawn
+        self.boom = next((c for c in pawn.get_components_by_class(unreal.SpringArmComponent)), None) if pawn else None
+        self.cam = next((c for c in pawn.get_components_by_class(unreal.CameraComponent)), None) if pawn else None
+
+        if not self.boom:
+            msg = "Mandatory CameraBoom (SpringArmComponent) not found on player pawn"
+            log_err(msg)
+            self.failure_reasons.append(msg)
+            return False
+
+        if not self.cam:
+            msg = "Mandatory FollowCamera (CameraComponent) not found on player pawn"
+            log_err(msg)
+            self.failure_reasons.append(msg)
+            return False
+
+        try:
+            self.orig_arm_length = self.boom.target_arm_length
+            if hasattr(self.boom, "b_enable_camera_lag"):
+                self.orig_enable_lag = self.boom.b_enable_camera_lag
+                self.boom.b_enable_camera_lag = False
+            elif hasattr(self.boom, "enable_camera_lag"):
+                self.orig_enable_lag = self.boom.enable_camera_lag
+                self.boom.enable_camera_lag = False
+            else:
+                msg = "Neither b_enable_camera_lag nor enable_camera_lag found on CameraBoom"
+                log_err(msg)
+                self.failure_reasons.append(msg)
+                return False
+
+            self.boom.target_arm_length = 120.0
+        except Exception as e:
+            msg = f"Failed to tune CameraBoom: {e}"
+            log_err(msg)
+            self.failure_reasons.append(msg)
+            return False
+
+        try:
+            self.orig_cam_fov = self.cam.field_of_view
+            self.cam.field_of_view = 65.0
+        except Exception as e:
+            msg = f"Failed to tune CameraComponent FOV: {e}"
+            log_err(msg)
+            self.failure_reasons.append(msg)
+            return False
+
+        # Read back applied settings and assert tolerances
+        actual_arm = self.boom.target_arm_length
+        actual_fov = self.cam.field_of_view
+        actual_lag = getattr(self.boom, "b_enable_camera_lag", getattr(self.boom, "enable_camera_lag", None))
+        if actual_lag is not False:
+            msg = f"CameraBoom enable_lag readback mismatch: expected False, got {actual_lag}"
+            log_err(msg)
+            self.failure_reasons.append(msg)
+            return False
+
+        if abs(actual_arm - 120.0) > 1.0:
+            msg = f"CameraBoom arm length readback mismatch: {actual_arm:.1f} != 120.0"
+            log_err(msg)
+            self.failure_reasons.append(msg)
+            return False
+
+        if abs(actual_fov - 65.0) > 1.0:
+            msg = f"CameraComponent FOV readback mismatch: {actual_fov:.1f} != 65.0"
+            log_err(msg)
+            self.failure_reasons.append(msg)
+            return False
 
         rot = unreal.MathLibrary.find_look_at_rotation(player_loc, target_loc)
         try:
-            # Option B (per C-151): Frame shot using player's own third-person camera.
-            # Reposition player to flank vantage point, orient control rotation, and hide mesh.
             pawn.set_actor_location_and_rotation(player_loc, rot, False, False)
             if pc:
                 pc.set_control_rotation(rot)
             pawn.set_actor_hidden_in_game(True)
-            log(f"Player camera framed at {player_loc}, facing {rot} (yaw={rot.yaw:.1f}, pitch={rot.pitch:.1f}). Player mesh hidden in game.")
+            log(f"Player camera framed at {player_loc}, facing {rot} (yaw={rot.yaw:.1f}, pitch={rot.pitch:.1f}). Measured ArmLength={actual_arm:.1f}, Measured FOV={actual_fov:.1f}. Player mesh hidden in game.")
+            return True
         except Exception as e:
-            log_err(f"Player camera framing failed: {e}")
-            self.failure_reasons.append(f"Camera framing failed: {e}")
+            msg = f"Player camera repositioning failed: {e}"
+            log_err(msg)
+            self.failure_reasons.append(msg)
+            return False
 
     def cleanup_camera(self):
+        if self.boom and self.orig_arm_length is not None:
+            try:
+                self.boom.target_arm_length = self.orig_arm_length
+                if self.orig_enable_lag is not None:
+                    if hasattr(self.boom, "b_enable_camera_lag"):
+                        self.boom.b_enable_camera_lag = self.orig_enable_lag
+                    elif hasattr(self.boom, "enable_camera_lag"):
+                        self.boom.enable_camera_lag = self.orig_enable_lag
+                log(f"Restored camera boom arm length ({self.orig_arm_length:.1f}) and lag ({self.orig_enable_lag}).")
+            except Exception as e:
+                log_err(f"Failed to restore camera boom state: {e}")
+
+        if self.cam and self.orig_cam_fov is not None:
+            try:
+                self.cam.field_of_view = self.orig_cam_fov
+                log(f"Restored camera component FOV ({self.orig_cam_fov:.1f}).")
+            except Exception as e:
+                log_err(f"Failed to restore camera FOV: {e}")
+
         if self.pawn:
             try:
-                self.pawn.set_actor_hidden_in_game(False)
+                orig_hidden = self.orig_pawn_hidden if self.orig_pawn_hidden is not None else False
+                self.pawn.set_actor_hidden_in_game(orig_hidden)
                 if self.orig_player_loc and self.orig_player_rot:
                     self.pawn.set_actor_location_and_rotation(self.orig_player_loc, self.orig_player_rot, False, False)
                 if self.pc and self.orig_control_rot:
                     self.pc.set_control_rotation(self.orig_control_rot)
-                log("Restored player pawn location, rotation, and visibility.")
+                log(f"Restored player pawn transform and visibility (hidden={orig_hidden}).")
             except Exception as e:
                 log_err(f"Failed to restore player pawn state: {e}")
 
@@ -138,6 +242,7 @@ class Cap01Runner:
         self.start_wall_time = time.perf_counter()
         self.last_heartbeat_wall = self.start_wall_time
         self.tick_handle = unreal.register_slate_post_tick_callback(self.tick)
+        log(f"RUN_ID: {self.run_id}")
         log("Runner registered Slate post-tick callback. Initializing BeginPlay request...")
 
     def finish(self, reason):
@@ -191,6 +296,27 @@ class Cap01Runner:
             self.passed_checks += 1
         else:
             self.failure_reasons.append("Flag file remained on disk after finish")
+
+        # Write run manifest
+        try:
+            out_dir = Path("Saved/Screenshots/CAP01_A5")
+            out_dir.mkdir(parents=True, exist_ok=True)
+            manifest_file = out_dir / "run_manifest.json"
+            manifest_data = {
+                "run_id": self.run_id,
+                "cap_id": "CAP-01",
+                "timestamp": time.time(),
+                "reason": reason,
+                "telemetry_samples": len(self.telemetry_samples),
+                "camera": {
+                    "arm_length": getattr(self.boom, "target_arm_length", None) if self.boom else None,
+                    "field_of_view": getattr(self.cam, "field_of_view", None) if self.cam else None,
+                }
+            }
+            manifest_file.write_text(json.dumps(manifest_data, indent=2))
+            log(f"Wrote run manifest to {manifest_file}")
+        except Exception as e:
+            log_err(f"Failed to write run manifest: {e}")
 
         if self.passed_checks == self.total_checks and not self.failure_reasons:
             print(f"{TAG} TELEMETRY_CAPTURE_COMPLETE ({self.passed_checks}/{self.total_checks} driver steps verified; awaiting offline frame analysis)")
@@ -273,11 +399,30 @@ class Cap01Runner:
                 if self.tracker:
                     self.tracker.enter_combat()
 
-                log(f"PIE active. Boss and components found. Setting up player camera framing (Option B)...")
+                log(f"PIE active. Boss and components found. Setting up close-up player camera framing (Option B close-up)...")
                 boss_loc = boss.get_actor_location()
-                player_loc = unreal.Vector(boss_loc.x - 650.0, boss_loc.y + 150.0, 110.0)
-                target_loc = unreal.Vector(boss_loc.x, boss_loc.y, boss_loc.z + 80.0)
-                self.setup_camera(pc, pawn, player_loc, target_loc)
+                forward = boss.get_actor_forward_vector()
+                right = boss.get_actor_right_vector()
+
+                # Target boss left shoulder / brazier gauntlet (where javelin spawns)
+                mesh = boss.get_mesh() if hasattr(boss, "get_mesh") else None
+                target_loc = None
+                if mesh and hasattr(mesh, "does_socket_exist") and mesh.does_socket_exist("hand_l"):
+                    target_loc = mesh.get_socket_location("hand_l")
+                elif mesh and hasattr(mesh, "does_socket_exist") and mesh.does_socket_exist("JavelinSpawn"):
+                    target_loc = mesh.get_socket_location("JavelinSpawn")
+                if not target_loc:
+                    # In Unreal coords, left side is -right
+                    target_loc = unreal.Vector(boss_loc.x, boss_loc.y, boss_loc.z + 130.0) - right * 35.0
+
+                # Close-up vantage: place player 180cm away at a 30-deg flank toward throwing arm
+                flank_dir = forward * 0.866 - right * 0.500
+                player_loc = boss_loc + flank_dir * 180.0 + unreal.Vector(0.0, 0.0, 30.0)
+                cam_ok = self.setup_camera(pc, pawn, player_loc, target_loc)
+                if not cam_ok:
+                    log_err("Mandatory close-up camera setup failed. Aborting capture run.")
+                    self.finish("CAMERA_SETUP_FAILED")
+                    return
 
                 self.state = "WAIT_BOSS_SETTLE"
                 self.wait_timer = 2.5
@@ -324,8 +469,9 @@ class Cap01Runner:
 
                     # Arm external CaptureLoop by creating flag file
                     FLAG_FILE.parent.mkdir(parents=True, exist_ok=True)
-                    FLAG_FILE.write_text("CAP01_A5_Windup")
-                    log(f"Armed external CaptureLoop via {FLAG_FILE} ('CAP01_A5_Windup')")
+                    tag = f"CAP01_A5_{self.run_id}_Windup"
+                    FLAG_FILE.write_text(tag)
+                    log(f"Armed external CaptureLoop via {FLAG_FILE} ('{tag}')")
 
                     self.state = "OBSERVE_MOVE"
                     self.last_sample_sim_t = -1.0
@@ -352,7 +498,7 @@ class Cap01Runner:
 
                     if phase_name != self.current_phase:
                         self.current_phase = phase_name
-                        tag = f"CAP01_A5_{phase_name}"
+                        tag = f"CAP01_A5_{self.run_id}_{phase_name}"
                         FLAG_FILE.write_text(tag)
                         log(f"PHASE_CHANGE phase={phase_name} sim={sim_t:.4f} wall={now_wall:.4f}")
 

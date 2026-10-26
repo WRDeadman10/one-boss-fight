@@ -1,0 +1,7 @@
+{
+  "preimages": {
+    "Source/OneBossFight/Player/RPGCombatCatalog.cpp": "daf2c1fb722894b183f71a476ad29a6853c8868168512cec79fab898f94774c4",
+    "Source/OneBossFight/Tests/RPGCombatCatalogTests.cpp": "85608695b71f34cddb6eb99640fabf5a3103c4b1282089751ab113b1dc3c70a3"
+  },
+  "patch_sha256": "866627fe442883eac86f51203f6dff76cbf6a67febbb483b50be21c3d0e2ee61"
+}

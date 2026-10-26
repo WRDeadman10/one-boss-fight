@@ -1,5 +1,6 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Player/RPGCombatCatalog.h"
+#include "Player/RPGCombatCatalogABI.h"
 #include "Player/RPGBuildRules.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
@@ -182,15 +183,11 @@ namespace RPGCombatRegistry
 				UClass* ItemBase = Cast<UClass>(W.ItemBaseClass.TryLoad()); if (ItemBase) E->Leases.Emplace(ItemBase);
 				UClass* ActorClass = Cast<UClass>(Resolve(W.ActorClass)); UClass* AbilityClass = Cast<UClass>(Resolve(W.AbilityClass)); UObject* Style = Resolve(W.StyleAsset);
 				if (!Item || !ItemBase || !Item->IsA(ItemBase) || !ActorClass || !ActorClass->IsChildOf(AActor::StaticClass()) || !AbilityClass || !Style || Style->GetFName() != W.StyleName) return Fail(W.WeaponId.ToString() + TEXT(".References: unresolved/wrong type/cook policy"));
-				// Validate that the item actually references the declared actor/ability/style. Never find by base name.
-				FString Wiring;
-				for (UObject* Owner : {Item, ActorClass->GetDefaultObject(), Style})
-					for (TFieldIterator<FProperty> It(Owner->GetClass()); It; ++It)
-					{
-						FString Value; It->ExportText_InContainer(0, Value, Owner, nullptr, Owner, PPF_None); Wiring += Value;
-					}
-				if (!Wiring.Contains(W.ActorClass.ToString()) || !Wiring.Contains(W.AbilityClass.ToString()) || !Wiring.Contains(W.StyleAsset.ToString())) return Fail(W.WeaponId.ToString() + TEXT(".References: item/actor/ability/style wiring not established"));
-				if (auto* Resolved = E->Weapons.FindByPredicate([&W](const FRPGCatalogWeapon& Value) { return Value.WeaponId == W.WeaponId; })) Resolved->ReferenceProvenance = TEXT("loaded/type/wiring-text checked; live equip not yet observed");
+				FWeaponReferences References; References.Item = Item; References.DeclaredItemBase = ItemBase;
+				References.ActorClass = ActorClass; References.AbilityClass = AbilityClass; References.Style = Style;
+				FString ABIError;
+				if (!ValidateWeaponReferences(W, References, E->Leases, ABIError)) return Fail(ABIError);
+				if (auto* Resolved = E->Weapons.FindByPredicate([&W](const FRPGCatalogWeapon& Value) { return Value.WeaponId == W.WeaponId; })) Resolved->ReferenceProvenance = TEXT("typed ABI/item actor/style ability grant checked; live equip not yet observed");
 				for (ERPGAttackKind Kind : W.Actions)
 				{
 					FCoverage C; C.WeaponId = W.WeaponId; C.Kind = Kind; Table->Find(W.StyleName, Kind, C.Effective); C.Route = TEXT("fallback");

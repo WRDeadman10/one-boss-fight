@@ -1,0 +1,46 @@
+﻿[2026.10.26-08.45.29:426][528]LogPython: [CaptureCAP02] Saved existing console variables.
+[2026.10.26-08.45.29:426][528]LogPython: [CaptureCAP02] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[CaptureCAP02] Saved existing console variables.
+[CaptureCAP02] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[2026.10.26-08.45.30:784][532]LogPython: [CaptureCAP02] Initiating editor_request_begin_play()...
+[2026.10.26-08.45.32:122][533]LogPython: [CaptureCAP02] PIE active. Boss and components found. Setting up player camera framing (Option B)...
+[2026.10.26-08.45.32:122][533]LogPython: [CaptureCAP02] Player camera framed at <Struct 'Vector' (0x00000213266C6540) {x: -350.000000, y: 200.000000, z: 110.000000}>, facing <Struct 'Rotator' (0x00000213266C73F0) {pitch: 9.319063, yaw: -29.744881, roll: 0.000000}> (yaw=-29.7, pitch=9.3). Player mesh hidden in game.
+[2026.10.26-08.45.37:231][549]LogPython: [CaptureCAP02] Heartbeat [WAIT_BOSS_SETTLE]: 0.6s remaining. is_waking=False, is_transition=False
+[2026.10.26-08.45.38:936][554]LogPython: [CaptureCAP02] Boss settled. Applying slomo 0.20 before A4 trigger...
+[2026.10.26-08.45.39:613][556]LogPython: [CaptureCAP02] Triggering boss A4 move via RPGAttackTracker::StartMove('A4', True)...
+[2026.10.26-08.45.39:615][556]LogPython: [CaptureCAP02] StartMove('A4', True) returned: True
+[2026.10.26-08.45.39:616][556]LogPython: [CaptureCAP02] Armed external CaptureLoop via C:\UnrealProject\OneBossFight\Saved\m7_flag.txt ('CAP02_A4_Windup')
+[2026.10.26-08.45.39:959][557]LogPython: [CaptureCAP02] TELEMETRY wall=1078023.8401 sim=7.7475 phase=Windup active=False commit=False pos=0.069
+[2026.10.26-08.45.40:305][558]LogPython: [CaptureCAP02] TELEMETRY wall=1078024.1863 sim=7.8161 phase=Windup active=False commit=False pos=0.137
+[2026.10.26-08.45.40:645][559]LogPython: [CaptureCAP02] TELEMETRY wall=1078024.5267 sim=7.8845 phase=Windup active=False commit=False pos=0.206
+[2026.10.26-08.45.40:986][560]LogPython: [CaptureCAP02] TELEMETRY wall=1078024.8675 sim=7.9527 phase=Windup active=False commit=False pos=0.274
+[2026.10.26-08.45.41:327][561]LogPython: [CaptureCAP02] TELEMETRY wall=1078025.2089 sim=8.0208 phase=Windup active=False commit=False pos=0.342
+[2026.10.26-08.45.41:668][562]LogPython: [CaptureCAP02] PHASE_CHANGE phase=Committed sim=8.0892 wall=1078025.5478
+[2026.10.26-08.45.41:668][562]LogPython: [CaptureCAP02] TELEMETRY wall=1078025.5478 sim=8.0892 phase=Committed active=False commit=True pos=0.410
+[2026.10.26-08.45.42:007][563]LogPython: [CaptureCAP02] TELEMETRY wall=1078025.8891 sim=8.1573 phase=Committed active=False commit=True pos=0.478
+[2026.10.26-08.45.42:351][564]LogPython: [CaptureCAP02] TELEMETRY wall=1078026.2318 sim=8.2259 phase=Committed active=False commit=True pos=0.547
+[2026.10.26-08.45.42:692][565]LogPython: [CaptureCAP02] PHASE_CHANGE phase=Active sim=8.2941 wall=1078026.5729
+[2026.10.26-08.45.42:692][565]LogPython: [CaptureCAP02] TELEMETRY wall=1078026.5729 sim=8.2941 phase=Active active=True commit=True pos=0.615
+[2026.10.26-08.45.43:035][566]LogPython: [CaptureCAP02] TELEMETRY wall=1078026.9169 sim=8.3627 phase=Active active=True commit=True pos=0.684
+[2026.10.26-08.45.43:369][567]LogPython: [CaptureCAP02] TELEMETRY wall=1078027.2505 sim=8.4294 phase=Active active=True commit=True pos=0.750
+[2026.10.26-08.45.43:708][568]LogPython: [CaptureCAP02] TELEMETRY wall=1078027.5899 sim=8.4970 phase=Active active=True commit=True pos=0.818
+[2026.10.26-08.45.44:049][569]LogPython: [CaptureCAP02] TELEMETRY wall=1078027.9305 sim=8.5654 phase=Active active=True commit=True pos=0.887
+[2026.10.26-08.45.44:394][570]LogPython: [CaptureCAP02] PHASE_CHANGE phase=Recovery sim=8.6341 wall=1078028.2746
+[2026.10.26-08.45.44:394][570]LogPython: [CaptureCAP02] TELEMETRY wall=1078028.2746 sim=8.6341 phase=Recovery active=False commit=True pos=0.955
+[2026.10.26-08.45.44:737][571]LogPython: [CaptureCAP02] TELEMETRY wall=1078028.6175 sim=8.7028 phase=Recovery active=False commit=True pos=1.024
+[2026.10.26-08.45.45:076][572]LogPython: [CaptureCAP02] TELEMETRY wall=1078028.9576 sim=8.7709 phase=Recovery active=False commit=True pos=1.092
+[2026.10.26-08.45.45:419][573]LogPython: [CaptureCAP02] TELEMETRY wall=1078029.3009 sim=8.8393 phase=Recovery active=False commit=True pos=1.160
+[2026.10.26-08.45.45:759][574]LogPython: [CaptureCAP02] TELEMETRY wall=1078029.6405 sim=8.9076 phase=Recovery active=False commit=True pos=1.229
+[2026.10.26-08.45.46:099][575]LogPython: [CaptureCAP02] TELEMETRY wall=1078029.9801 sim=8.9756 phase=Recovery active=False commit=True pos=1.297
+[2026.10.26-08.45.46:441][576]LogPython: [CaptureCAP02] TELEMETRY wall=1078030.3221 sim=9.0439 phase=Recovery active=False commit=True pos=1.365
+[2026.10.26-08.45.46:775][577]LogPython: [CaptureCAP02] TELEMETRY wall=1078030.6562 sim=9.1106 phase=Recovery active=False commit=True pos=1.432
+[2026.10.26-08.45.47:111][578]LogPython: [CaptureCAP02] TELEMETRY wall=1078030.9921 sim=9.1782 phase=Recovery active=False commit=True pos=1.499
+[2026.10.26-08.45.47:452][579]LogPython: [CaptureCAP02] PHASE_CHANGE phase=None sim=9.2464 wall=1078031.3333
+[2026.10.26-08.45.47:453][579]LogPython: [CaptureCAP02] TELEMETRY wall=1078031.3333 sim=9.2464 phase=None active=False commit=False pos=1.499
+[2026.10.26-08.45.47:453][579]LogPython: [CaptureCAP02] A4 move completed. Elapsed sim: 1.567s, wall: 7.84s, samples: 23.
+[2026.10.26-08.45.47:453][579]LogPython: [CaptureCAP02] Cleared flag file: C:\UnrealProject\OneBossFight\Saved\m7_flag.txt
+[2026.10.26-08.45.48:821][583]LogPython: [CaptureCAP02] Finishing run: OBSERVE_COMPLETE
+[2026.10.26-08.45.48:821][583]LogPython: [CaptureCAP02] Restored player pawn location, rotation, and visibility.
+[2026.10.26-08.45.48:821][583]LogPython: [CaptureCAP02] Cvar restoration complete.
+[2026.10.26-08.45.48:823][583]LogPython: [CaptureCAP02] TELEMETRY_CAPTURE_COMPLETE (5/5 driver steps verified; awaiting offline frame analysis)
+[2026.10.26-08.45.48:830][583]LogPython: [CaptureCAP02] Standing editor preserved. Runner complete.
