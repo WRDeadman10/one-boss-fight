@@ -1,0 +1,17 @@
+# Work order 04 for Antigravity (from Claude, technical lead), 2026-10-25
+
+Same rules as work orders 01 to 03: continuous run, offline only (no editor, no pack or asset writes, no Source/Config/Scripts edits outside `Execution/Antigravity/`), no commit or push, G-4 and G-5 stay denied, all 83 requirements required. A-65 (AG-12 to AG-15) is received; I review it at the end of this run, not between packages. One A-n per package.
+
+## Packages
+
+**AG-16 (major): offline reference implementation of the timeline compiler** (this gives Codex's WP-9 tests independent expected values). Codex staged the step 3 draft under `Execution/Codex/Drafts/` (`RPGTimelineCompiler`, `RPGShadowCompare`, `TRACKER_OBSERVATION_SEAM.md`, `WP9_IMPLEMENTATION_REPORT.md`; read them, do NOT edit them). Write `Antigravity/Evidence/timeline_reference.py` (plain Python, no dependencies, with `-I` safe imports) that takes `Claude/Evidence/exports/montage_notifies_2026-10-25.txt` plus your 26 movesheets and produces, per montage, the expected compiled timeline: ordered notify and notify-state windows in seconds and in normalised position, the section graph, windows crossed by a given sample interval (forward only; include fully skipped windows and start-at-zero once, as Codex's report states), and the INCONCLUSIVE cases (reverse, loop, jump, gap, mid-clip start). Emit `Antigravity/Evidence/timeline_expected.json` and a markdown summary with sha256 of every input. Include a self-test with at least five deliberate rejection cases (malformed notify, overlapping states, negative length, unknown section, duplicate id). Then compare your expected output with the rules in Codex's WP9 report and list every disagreement with file and line. Output `AG16_TIMELINE_REFERENCE.md`.
+
+**AG-17: independent review of Codex WP8 and WP9 drafts for animation and content consequences**: what the binding manifest and compiler assume about montages, sections, notify names (`AN_CombatEvent`, `ANS_CombatWindow`), skeleton and play rates; what an animator must supply that the code cannot check; what happens to the A2 trio, A5 and the wake/roar clips under the compiler; at least five concrete findings with file and line and the check, or the list of clean checks. Output `AG17_STEP2_STEP3_CONTENT_REVIEW.md`.
+
+**AG-18: capture scripts, ready to run by Claude, never run by you.** From `AG11_CAPTURE_FEASIBILITY_PLAN.md` and `AG15_VISUAL_EVIDENCE_COLUMNS.csv`: write the editor-side Python capture drivers (house style of `Scripts/Editor/pie_*.py`: heartbeat, no `set_editor_property` on components in PIE, restore cvars, `RESULT n/m`) as DRAFTS under `Antigravity/Evidence/capture_drafts/` for CAP-01 (A5 release timing), CAP-02 (A4 query versus visible blade, using your trajectory analysis), CAP-05 and CAP-06 only (CAP-03 needs the denied G-5, CAP-04 needs a Shipping package). Each draft: purpose, exact console commands, expected outputs, how long, what it cannot prove, and the run command for `RunEditorScript.ps1`. Output `AG18_CAPTURE_DRAFTS.md`.
+
+**AG-19: respond to your own A-65 gaps** before reporting: the AG-14 finding 4 (D10 line 86 says P6; D09_DEF-005 and the program say P3 or P5) needs the exact D09 line numbers for the P3/P5 claim, and finding 1 needs the CDO file and line (`CDO_GA_EnemyDodge.t3d` line 7 shows `DodgeMontage=()`). Add both to `AG14_D09_D10_REVIEW.md` as a Revision 02 block.
+
+## Definition of done
+
+AG-16 to AG-19 delivered with hashes, self-tests run and their output pasted; I review at the end.

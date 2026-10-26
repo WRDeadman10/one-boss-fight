@@ -1,0 +1,33 @@
+Begin Object Class=/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Abilities/AI/GA_EnemyDodge.GA_EnemyDodge_C Name="Default__GA_EnemyDodge_C" ExportPath="/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Abilities/AI/GA_EnemyDodge.GA_EnemyDodge_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Abilities/AI/GA_EnemyDodge.Default__GA_EnemyDodge_C'"
+   Random Montage?=True
+   Behavior Manager Component=None
+   Last Montage Index=0
+   CombatComponent=None
+   StateManager=None
+   DodgeMontage=()
+   DefaultDodgeDirection=NewEnumerator0
+   bIsDirectional?=False
+   PerformingCharacter=None
+   DesiredDodgeDirection=NewEnumerator8
+   ActiveAbilityMontage=None
+   AbilitySystemComponent=None
+   AbilityTags=(GameplayTags=((TagName="Ability.Dodge")))
+   Performing Actor=None
+   ActivationOwnedTags=(GameplayTags=)
+   bPendingClearAbility?=False
+   ActivationRequiredTags=(GameplayTags=)
+   ActivationBlockedTags=(GameplayTags=)
+   CancelAbilitiesWithTags=(GameplayTags=((TagName="Ability.Sprint")))
+   Cooldown Time=10.000000
+   CooldownLoopInterval=0.100000
+   Current Cooldown Time=0.000000
+   bCooldownActive?=False
+   Cost Gameplay Effect Class=None
+   Level=1
+   BlockAbilitiesWithTags=(GameplayTags=)
+   GameplayEventTags=(GameplayTags=)
+   bCanBeCanceled=True
+   bWaitingForRuntimeEvent=False
+   Waiting Event Tag=(TagName="")
+   BlueprintHelperComponent=None
+End Object

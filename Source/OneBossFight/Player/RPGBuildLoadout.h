@@ -205,7 +205,6 @@ private:
 	FString ChoiceText;
 	bool bChoiceRead = false;
 	bool bExplicit = false;
-	ERPGBuild Chosen = ERPGBuild::Starter;
 	FName ChosenId = TEXT("Starter");
 	FName VerifiedBuildId;
 	TSharedPtr<const RPGCombatRegistry::FEpoch> Epoch;

@@ -1,0 +1,49 @@
+﻿
+Driver                   Result Detail                                                                                                                                                                                      
+------                   ------ ------                                                                                                                                                                                      
+pie_a4_low_sweep         PASS   14/14 passed (expected at least 14 checks)                                                                                                                                                  
+pie_hit_intake           PASS   36/36 passed (expected at least 36 checks)                                                                                                                                                  
+pie_posture_hits         PASS   25/25 passed (expected at least 25 checks)                                                                                                                                                  
+pie_stamina_cost         PASS   17/17 passed (expected at least 17 checks)                                                                                                                                                  
+pie_hyperarmor           PASS   23/23 passed (expected at least 23 checks)                                                                                                                                                  
+pie_bleed                PASS   19/19 passed (expected at least 19 checks)                                                                                                                                                  
+pie_boss_clips           PASS   14/14 passed (expected at least 14 checks)                                                                                                                                                  
+pie_riposte_exec         PASS   16/16 passed (expected at least 15 checks)                                                                                                                                                  
+pie_riposte_lethal       PASS   3/3 passed (expected at least 3 checks)                                                                                                                                                     
+pie_boss_look            PASS   14/14 passed (expected at least 14 checks)                                                                                                                                                  
+pie_boss_death           PASS   11/11 passed (expected at least 11 checks)                                                                                                                                                  
+pie_boss_death_states    PASS   28/28 passed (expected at least 28 checks)                                                                                                                                                  
+pie_remains              PASS   4/4 passed (expected at least 4 checks)                                                                                                                                                     
+pie_flipbooks            PASS   7/7 passed (expected at least 7 checks)                                                                                                                                                     
+pie_builds               PASS   103/103 passed (expected at least 103 checks)                                                                                                                                               
+pie_combat_catalog       FAIL   50/91 passed (expected at least 91 checks) | [CombatCatalog] FAIL data actual source unavailable:data required | [CombatCatalog] FAIL data coverage routes recorded  | [CombatCatalog] FAIL 
+                                data row count                                                                                                                                                                              
+pie_build_hyperarmor     PASS   20/20 passed (expected at least 20 checks)                                                                                                                                                  
+pie_build_hud            PASS   8/8 passed (expected at least 8 checks)                                                                                                                                                     
+pie_build_select         PASS   18/18 passed (expected at least 18 checks)                                                                                                                                                  
+pie_flask_hud            PASS   7/7 passed (expected at least 7 checks)                                                                                                                                                     
+pie_dormant_wake         PASS   11/11 passed (expected at least 11 checks)                                                                                                                                                  
+pie_telegraph            PASS   26/26 passed (expected at least 25 checks)                                                                                                                                                  
+pie_authored_close_clips PASS   20/20 passed (expected at least 14 checks)                                                                                                                                                  
+pie_soak                 PASS   213/213 passed (expected at least 213 checks)                                                                                                                                               
+pie_a5_heal_punish       PASS   31/31 passed (expected at least 31 checks)                                                                                                                                                  
+pie_player_death_reset   PASS   25/25 passed (expected at least 25 checks)                                                                                                                                                  
+pie_damage_path          PASS   17/17 passed (expected at least 17 checks)                                                                                                                                                  
+pie_iframes              PASS   19/19 passed (expected at least 19 checks)                                                                                                                                                  
+pie_trace_audit          PASS   30/30 passed (expected at least 30 checks)                                                                                                                                                  
+pie_legend               PASS   22/22 passed (expected at least 22 checks)                                                                                                                                                  
+pie_close_attacks        PASS   55/55 passed (expected at least 55 checks)                                                                                                                                                  
+pie_leap_wave            PASS   17/17 passed (expected at least 17 checks)                                                                                                                                                  
+pie_attack_rules         PASS   13/13 passed (expected at least 13 checks)                                                                                                                                                  
+pie_boss_hud             PASS   29/29 passed (expected at least 29 checks)                                                                                                                                                  
+pie_victory_lock         PASS   9/9 passed (expected at least 9 checks)                                                                                                                                                     
+pie_camera_scenarios     PASS   6/6 passed (expected at least 6 checks)                                                                                                                                                     
+pie_phase_reset          PASS   14/14 passed (expected at least 14 checks)                                                                                                                                                  
+pie_riposte              PASS   5/5 passed (expected at least 5 checks)                                                                                                                                                     
+pie_fog_gate             PASS   6/6 passed (expected at least 6 checks)                                                                                                                                                     
+pie_transition_rules     PASS   28/28 passed (expected at least 28 checks)                                                                                                                                                  
+
+
+
+39/40 drivers passed
+

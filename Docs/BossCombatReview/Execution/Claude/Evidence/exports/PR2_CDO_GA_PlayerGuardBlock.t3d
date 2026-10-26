@@ -1,0 +1,28 @@
+Begin Object Class=/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Abilities/Player/GA_PlayerGuardBlock.GA_PlayerGuardBlock_C Name="Default__GA_PlayerGuardBlock_C" ExportPath="/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Abilities/Player/GA_PlayerGuardBlock.GA_PlayerGuardBlock_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Abilities/Player/GA_PlayerGuardBlock.Default__GA_PlayerGuardBlock_C'"
+   StateManager=None
+   Performing Character=None
+   Input Buffer Component=None
+   AttributesComponent=None
+   CombatComponent=None
+   ActiveAbilityMontage=None
+   AbilitySystemComponent=None
+   AbilityTags=(GameplayTags=((TagName="Ability.Block")))
+   Performing Actor=None
+   ActivationOwnedTags=(GameplayTags=((TagName="Status.ActionCommitted")))
+   bPendingClearAbility?=False
+   ActivationRequiredTags=(GameplayTags=)
+   ActivationBlockedTags=(GameplayTags=)
+   CancelAbilitiesWithTags=(GameplayTags=((TagName="Ability.Sprint")))
+   Cooldown Time=0.000000
+   CooldownLoopInterval=0.100000
+   Current Cooldown Time=0.000000
+   bCooldownActive?=False
+   Cost Gameplay Effect Class=None
+   Level=1
+   BlockAbilitiesWithTags=(GameplayTags=)
+   GameplayEventTags=(GameplayTags=)
+   bCanBeCanceled=True
+   bWaitingForRuntimeEvent=False
+   Waiting Event Tag=(TagName="")
+   BlueprintHelperComponent=None
+End Object

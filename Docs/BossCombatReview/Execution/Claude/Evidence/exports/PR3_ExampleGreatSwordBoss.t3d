@@ -1,0 +1,16 @@
+Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/DataAssets/BP_EnemyInfo.BP_EnemyInfo_C Name="ExampleGreatSwordBoss" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/DataAssets/BP_EnemyInfo.BP_EnemyInfo_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/ExampleGreatSwordBoss.ExampleGreatSwordBoss'"
+   AI Pawn Class="/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C"
+   Anim Class="/Script/Engine.AnimBlueprintGeneratedClass'/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Animations/ABP_HumanoidEnemyCharacter.ABP_HumanoidEnemyCharacter_C'"
+   DefaultCombatStyle="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/BP_CombatStyle.BP_CombatStyle_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/ExampleGreatSwordBossCombatStyle.ExampleGreatSwordBossCombatStyle'"
+   BehaviorTree="/Script/AIModule.BehaviorTree'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/BT_ExampleBoss.BT_ExampleBoss'"
+   Behavior Classes(0)="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/States/SM_Humanoid_CombatBehavior.SM_Humanoid_CombatBehavior_C'"
+   Default Behavior State=(TagName="Behavior.Nothing")
+   DefaultHostileTags=(GameplayTags=((TagName="Player.Character")))
+   BB Key Names=(((TagName="Blackboard.Key.SelfActor"), "SelfActor"),((TagName="Blackboard.Key.Target"), "TargetActor"),((TagName="Blackboard.Key.TargetLocation"), "TargetLocation"),((TagName="Blackboard.Key.CombatEnabled"), "bCombatEnabled"),((TagName="Blackboard.Key.DistanceToTarget"), "DistanceToTarget"),((TagName="Blackboard.Key.AngleToTarget"), "AngleToTarget"),((TagName="Blackboard.Key.CurrentBehaviorTag"), "CurrentBehaviorTag"),((TagName="Blackboard.Key.OriginalLocation"), "OriginalLocation"))
+   Default Attributes=(((TagName="Attribute.Health"), (BaseValue_4_08750B954F0D45407F52468072426051=500.000000,MaxValue_6_00819188484A33806F911D8EFC2955BE=500.000000)),((TagName="Attribute.HitCount"), (MaxValue_6_00819188484A33806F911D8EFC2955BE=3.000000)),((TagName="Attribute.Attack"), (BaseValue_4_08750B954F0D45407F52468072426051=35.000000)),((TagName="Attribute.Souls"), (BaseValue_4_08750B954F0D45407F52468072426051=1000.000000,MaxValue_6_00819188484A33806F911D8EFC2955BE=2000.000000)),((TagName="Attribute.Poise"), (BaseValue_4_08750B954F0D45407F52468072426051=100.000000,MaxValue_6_00819188484A33806F911D8EFC2955BE=100.000000)))
+   EnemyName="Greystone Knight"
+   StateClasses(0)="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/States/BP_EnemyImpactDecision.BP_EnemyImpactDecision_C'"
+   ExtendedAttributes(0)="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Attributes/BP_HealthExtendedAttribute.BP_HealthExtendedAttribute_C'"
+   ExtendedAttributes(1)="/Script/Engine.BlueprintGeneratedClass'/Game/OneBossFight/Poise/BP_PoiseExtendedAttribute.BP_PoiseExtendedAttribute_C'"
+   NativeClass="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AI/DataAssets/BP_EnemyInfo.BP_EnemyInfo_C'"
+End Object

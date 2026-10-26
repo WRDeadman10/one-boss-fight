@@ -1,0 +1,30 @@
+Begin Object Class=/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Abilities/Player/GA_Player_Dodge.GA_Player_Dodge_C Name="Default__GA_Player_Dodge_C" ExportPath="/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Abilities/Player/GA_Player_Dodge.GA_Player_Dodge_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Abilities/Player/GA_Player_Dodge.Default__GA_Player_Dodge_C'"
+   CombatComponent=None
+   StateManager=None
+   DodgeMontage=((NewEnumerator0, (AnimMontage_5_2620D50C4D110CA156B1A28F49A30836="/Script/Engine.AnimMontage'/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage'")))
+   DefaultDodgeDirection=NewEnumerator0
+   bIsDirectional?=False
+   PerformingCharacter=None
+   DesiredDodgeDirection=NewEnumerator8
+   ActiveAbilityMontage=None
+   AbilitySystemComponent=None
+   AbilityTags=(GameplayTags=((TagName="Ability.Dodge.Forwards")))
+   Performing Actor=None
+   ActivationOwnedTags=(GameplayTags=((TagName="Status.ActionCommitted")))
+   bPendingClearAbility?=False
+   ActivationRequiredTags=(GameplayTags=)
+   ActivationBlockedTags=(GameplayTags=)
+   CancelAbilitiesWithTags=(GameplayTags=((TagName="Ability.Sprint"),(TagName="Ability.Aim"),(TagName="Ability.Block"),(TagName="Ability.Focus")))
+   Cooldown Time=0.000000
+   CooldownLoopInterval=0.100000
+   Current Cooldown Time=0.000000
+   bCooldownActive?=False
+   Cost Gameplay Effect Class="/Script/Engine.BlueprintGeneratedClass'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_DodgeCost.GE_DodgeCost_C'"
+   Level=1
+   BlockAbilitiesWithTags=(GameplayTags=)
+   GameplayEventTags=(GameplayTags=)
+   bCanBeCanceled=True
+   bWaitingForRuntimeEvent=False
+   Waiting Event Tag=(TagName="")
+   BlueprintHelperComponent=None
+End Object

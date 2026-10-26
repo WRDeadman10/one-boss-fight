@@ -56,7 +56,13 @@ namespace RPGCombatRegistry
 	{
 		if (Style.IsNone()) return TEXT("Unknown");
 		FName IdToDescribe = VerifiedBuild;
-		if (!Matches(Style, IdToDescribe) && StyleToBuild(Style, IdToDescribe) != EResolve::Found) return RPGBuildRules::DescribeStyle(Style);
+		if (!Matches(Style, IdToDescribe))
+		{
+			const EResolve Reverse = StyleToBuild(Style, IdToDescribe);
+			// Several builds share the style and no verified id names one (spec v3 C.4): never the legacy first-row answer.
+			if (Reverse == EResolve::Ambiguous) return FString::Printf(TEXT("Ambiguous (%s)"), *Style.ToString());
+			if (Reverse != EResolve::Found) return RPGBuildRules::DescribeStyle(Style);
+		}
 		const FRPGCatalogBuild* B = Find(IdToDescribe);
 		const FRPGCatalogWeapon* W = B ? Weapon(B->WeaponId) : nullptr;
 		if (!B || !W) return RPGBuildRules::DescribeStyle(Style);

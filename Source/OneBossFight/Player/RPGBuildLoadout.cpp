@@ -277,8 +277,18 @@ void URPGBuildLoadout::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 FString URPGBuildLoadout::GetBuildName() const
 {
 	FName Build = VerifiedBuildId;
-	if (Epoch && (Epoch->Matches(ActualStyle, Build) || Epoch->StyleToBuild(ActualStyle, Build) == RPGCombatRegistry::EResolve::Found))
-		if (const auto* B = Epoch->Find(Build)) return B->DisplayName;
+	if (Epoch)
+	{
+		const RPGCombatRegistry::EResolve Reverse = Epoch->Matches(ActualStyle, Build) ? RPGCombatRegistry::EResolve::Found : Epoch->StyleToBuild(ActualStyle, Build);
+		if (Reverse == RPGCombatRegistry::EResolve::Found)
+		{
+			if (const auto* B = Epoch->Find(Build)) return B->DisplayName;
+		}
+		else if (Reverse == RPGCombatRegistry::EResolve::Ambiguous)
+		{
+			return TEXT("Ambiguous"); // several builds share the style and no verified id names one: never the first row, never OffBuild
+		}
+	}
 	return ActualStyle.IsNone() ? FString(TEXT("Unknown")) : FString(TEXT("OffBuild"));
 }
 
@@ -542,7 +552,6 @@ void URPGBuildLoadout::ReadChoice()
 		}
 		bExplicit = true;
 		ChosenId = Build;
-		Rules::LegacySlotOf(*Epoch, ChosenId, Chosen); // derived compatibility view only
 		ResetRequest();
 		LastResult = FString::Printf(TEXT("build %s chosen"), ChosenName());
 		AddEvent(FString::Printf(TEXT("build %s chosen (rpg.Build '%s'%s)"), ChosenName(), *Text, bFirst ? TEXT(", the value at the start") : TEXT("")));

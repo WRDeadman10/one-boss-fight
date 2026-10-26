@@ -57,6 +57,7 @@ bool FRPGCatalogValidationTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("shared style ambiguous without verified context"), E->StyleToBuild(TEXT("SwordCombatStyle"), Found) == EResolve::Ambiguous && Found == FName(TEXT("unchanged")));
 	TestTrue(TEXT("shared style matches explicit fourth"), E->Matches(TEXT("SwordCombatStyle"), Fourth.BuildId));
 	TestEqual(TEXT("verified fourth display"), E->Describe(TEXT("SwordCombatStyle"), Fourth.BuildId), FString(TEXT("Fourth (Sword)")));
+	TestTrue(TEXT("shared style without verified id is described as ambiguous, never the first row"), E->Describe(TEXT("SwordCombatStyle")).StartsWith(TEXT("Ambiguous")));
 	ERPGBuild LegacyOut = ERPGBuild::Dex;
 	TestFalse(TEXT("fourth has no legacy slot"), RPGBuildRules::LegacySlotOf(*E, Fourth.BuildId, LegacyOut));
 	TestTrue(TEXT("failed slot lookup leaves previous output"), LegacyOut == ERPGBuild::Dex);
@@ -109,6 +110,35 @@ bool FRPGCatalogLegacyParityTest::RunTest(const FString& Parameters)
 	ERPGBuild Out = ERPGBuild::Strength;
 	TestTrue(TEXT("reserved off is empty, unchanged output"), Parse(TEXT(" off "), Out) == EParse::Empty && Out == ERPGBuild::Strength);
 	TestTrue(TEXT("invalid unchanged output"), Parse(TEXT("banana"), Out) == EParse::Invalid && Out == ERPGBuild::Strength);
+	return true;
+}
+
+// Step 1 review F8 (AG-22): the resolving compile path (item/actor/ability/style identities, ancestry, wiring, cook policy) had no automation coverage.
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGCatalogResolutionTest, "OneBossFight.Catalog.Resolution",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGCatalogResolutionTest::RunTest(const FString& Parameters)
+{
+	using namespace RPGCombatRegistry;
+	auto L = Legacy();
+	TArray<FRPGCatalogWeapon> Weapons = L->Weapons;
+	for (FRPGCatalogWeapon& W : Weapons)
+	{
+		// The built-in table carries no item ancestry; read it from the installed pack item, as the authoring script does.
+		UObject* Item = W.ItemPath.TryLoad();
+		if (!TestNotNull(*FString::Printf(TEXT("%s item loads from the installed pack"), *W.WeaponId.ToString()), Item)) return false;
+		W.ItemBaseClass = FSoftObjectPath(Item->GetClass());
+	}
+	FString Error;
+	auto Resolved = Compile(L->Builds, Weapons, Error, true);
+	TestTrue(*FString::Printf(TEXT("three shipped weapons resolve against the pack (%s)"), *Error), Resolved.IsValid());
+	if (!Resolved) return false;
+	TestEqual(TEXT("resolved snapshot keeps all builds"), Resolved->Builds.Num(), 3);
+	// A wrong declared style asset must fail the resolving compile with a field path, never publish.
+	TArray<FRPGCatalogWeapon> Broken = Weapons;
+	Broken[0].StyleName = TEXT("ClaymoreCombatStyle");
+	FString BrokenError;
+	TestFalse(TEXT("style name that does not match the resolved style asset is rejected"), Compile(L->Builds, Broken, BrokenError, true).IsValid());
+	TestFalse(TEXT("rejection names the weapon"), BrokenError.IsEmpty());
 	return true;
 }
 #endif

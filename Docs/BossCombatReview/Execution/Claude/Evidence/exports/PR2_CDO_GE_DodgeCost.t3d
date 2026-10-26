@@ -1,0 +1,31 @@
+Begin Object Class=/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_DodgeCost.GE_DodgeCost_C Name="Default__GE_DodgeCost_C" ExportPath="/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_DodgeCost.GE_DodgeCost_C'/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_DodgeCost.Default__GE_DodgeCost_C'"
+   Minimum Attribute Amount=(((TagName="Attribute.Stamina"), 5.000000))
+   Duration Policy=NewEnumerator0
+   Effect Tags=(GameplayTags=((TagName="Effect.Cost")))
+   AppliedTags=(GameplayTags=)
+   Duration=(ValueSourceType_6_7248C1604501FA84ED1EDE80B957AC05=NewEnumerator0,Value_7_3E03993943E112E525E2909FAD5A4D08=0.000000,CurveTable_9_40AC58F44A05966EBEBE0386B15E94CC=(ScalableFloat_11_A1B9CD07453E57E387C324BC61130CF1=1.000000,CurveTable_10_C3CCA9AB479A503EC258CE983B7AE9EB=(CurveTable=None,RowName="")))
+   MaxLevel=1
+   AttributesComponent=None
+   Effect Data=(SourceTags_43_3E79EEA04DD6782C4E4BBEAA171F0117=(GameplayTags=),HitLocation_15_2D96FCC146893C61E6BFEEB76A837CB2=(X=0.000000,Y=0.000000,Z=0.000000),Instigator_44_5CB5C81C49E267A02AF912ABFA51FB93=None,EffectCauser_7_AEA3D8DC47B60B3AC4D3789DB7370428=None,OptionalObject_10_4C27A523410A58112C714CB87611B651=None)
+   Level=1
+   ApplicationRequiredTags=(GameplayTags=)
+   ApplicationBlockedTags=(GameplayTags=)
+   RemoveEffectsWithTags=(GameplayTags=)
+   AbilitySystemComponent=None
+   Period=(ValueSourceType_6_7248C1604501FA84ED1EDE80B957AC05=NewEnumerator0,Value_7_3E03993943E112E525E2909FAD5A4D08=0.000000,CurveTable_9_40AC58F44A05966EBEBE0386B15E94CC=(ScalableFloat_11_A1B9CD07453E57E387C324BC61130CF1=1.000000,CurveTable_10_C3CCA9AB479A503EC258CE983B7AE9EB=(CurveTable=None,RowName="")))
+   ChanceToApply=(ValueSourceType_6_7248C1604501FA84ED1EDE80B957AC05=NewEnumerator0,Value_7_3E03993943E112E525E2909FAD5A4D08=1.000000,CurveTable_9_40AC58F44A05966EBEBE0386B15E94CC=(ScalableFloat_11_A1B9CD07453E57E387C324BC61130CF1=1.000000,CurveTable_10_C3CCA9AB479A503EC258CE983B7AE9EB=(CurveTable=None,RowName="")))
+   bExecutePeriodicEffectOnApplication=True
+   Period Timer Function Name="PeriodTimer"
+   Duration Timer Function Name="OnExpired"
+   StackLimitCount=0
+   StackCount=1
+   bSuppressStackingCues=False
+   bRunExecutionsEachStack=False
+   bApplyEffectsEachStack=False
+   StackDurationRefreshPolicy=NewEnumerator0
+   StackPeriodRefreshPolicy=NewEnumerator0
+   StackExpirationPolicy=NewEnumerator0
+   OnStackAdded=()
+   OnStackRemoved=()
+   UIData=(Name_5_F39AF5EF482AB6F79E8EB4816258D265="",Icon_6_DFBD5BF24782A0DBD4E3CCA80B925BC7=None,Description_7_63AEFAF042AB7EA5D82B6BBDF1EB1110="")
+End Object
