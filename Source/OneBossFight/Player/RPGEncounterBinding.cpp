@@ -1,5 +1,9 @@
 #include "Player/RPGEncounterBinding.h"
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGBossEncounterPolicyAdapters.h"
+#include "Player/RPGBossStaggerPolicyAdapters.h"
+#include "Player/RPGBossPhaseFlowAdapters.h"
+#include "Player/RPGBossPhasesClusterAdapters.h"
 #include "Engine/World.h"
 #include "Animation/AnimSequenceBase.h"
 #include "Animation/Skeleton.h"
@@ -33,6 +37,16 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
 	{
 		Result.Fail(TEXT("invalid stats (no constructor/Boss01 substitution)"));
 	}
+	FString PolicyError;
+	if (!RPGBossEncounterPolicyAdapters::ValidateEncounterPolicy(D.EncounterPolicy, PolicyError)) { Result.Fail(PolicyError); } // never replaced by the 1200/true authoring defaults
+	FString StaggerError;
+	if (!RPGBossStaggerPolicyAdapters::ValidateStaggerPolicy(D.StaggerPolicy, StaggerError)) { Result.Fail(StaggerError); } // never replaced by the authoring defaults, never clamped
+	FString PhaseFlowError;
+	if (!RPGBossPhaseFlowAdapters::ValidatePhaseFlow(D.PhaseFlow, PhaseFlowError)) { Result.Fail(PhaseFlowError); } // never replaced by the authoring defaults, never trimmed or normalized
+	FString FireballError;
+	if (!RPGBossPhasesClusterAdapters::ValidateFireball(D.Fireball, FireballError)) { Result.Fail(FireballError); } // never replaced by the authoring defaults, never reordered
+	FString DependencyError;
+	if (!RPGBossPhasesClusterAdapters::ValidatePhaseDependencies(D.PhaseDependencies, D.PhaseFlow.bUseRoarClip, DependencyError)) { Result.Fail(DependencyError); } // structure only, no registry query, no load
 	TSet<FName> PhaseIds;
 	for (const FRPGPhaseConfig& Phase : D.Phases)
 	{
@@ -64,6 +78,11 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
 	Value->BossId = D.DefinitionId; Value->PresentationId = D.PresentationId;
 	Value->Schema = D.Schema; Value->StableManifestHash = Hash;
 	Value->Stats = D.Stats; Value->Phases = D.Phases; Value->Fields = D.Fields;
+	Value->EncounterPolicy = D.EncounterPolicy;
+	Value->StaggerPolicy = D.StaggerPolicy;
+	Value->PhaseFlow = D.PhaseFlow;
+	Value->Fireball = D.Fireball;
+	Value->PhaseDependencies = D.PhaseDependencies;
 	Value->Content = MoveTemp(Content); Out = Value;
 	Value->bSyntheticFixture = bSynthetic;
 	if (!bSynthetic)
