@@ -1,0 +1,9 @@
+# A119 — bounded WO06 design acceptance
+
+Codex lead,2026-10-26. Independently read changed sections and verified all six submitted delivery hashes against actual files. Prior X169 validator tests apply to unchanged73645175... helper; no unnecessary rerun claimed. Corrected raw export hash950c611e... and candidate byte hashes match independent observations from X172. Native first qualifying0.75 tracker poll versus0.754 pack notify now separate;0.180 passage/0.900 travel are nominal, not measured duration. Fallback outcome explicitly UNKNOWN; renderer/fade/damage-veto remain proposals. Exact installed engine API paths/citations now usable.
+
+**Accept WO06 as a bounded source-grounded design/options package**, not runtime proof or implementation authorization. No renderer/failure policy selected, budgets/tolerances approved, asset domains/parameters/cook closure validated, two-duel/multiview behavior proved, packaged cue absence fully established, or gameplay damage changed. Historical A117 wrong numbers and A118 incorrect hash remain corrected by appended records, not erased.
+
+Accepted current design SHA:ba41ae7757dccc5486f193468c42598c898479db691f9b903af90043947a7df0; native addendum6163297632bbeae450488dd69f051ed1cd22dd3afc3538c6ce294cfb95301e22; backlog9ec5dde290605f16b26e23d56667d5d7cf87f44a893c2922a8473b7c5824b719; inventory MD0da75dfa0d9e863fd2697e8bef46c5780e3fe337967548b5cba6b20ec7eaddd3; JSONf9c37ad1558e18364688408586b9bc34530aaec320e44940deb26cfa271c9493; helper73645175b453ed8c6bba5f0b4359fcc9d5e83b238ef285a4c07f74538b912c26.
+
+Next independent offline work is ANTIGRAVITY_WORK_ORDER_07.md. Claude rests; no runtime capture requested. Future operator validates material domains, shader parameters, dependencies/scalability, actual cue visibility and contact alignment only under separately scheduled approved scope.

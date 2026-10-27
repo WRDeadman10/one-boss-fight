@@ -60,6 +60,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "RPG|Scratch")
 	static AActor* SpawnCaptureCamera(UObject* WorldContext, FVector Location, FVector LookAt);
 
+	/** Fixture tooling (owner approval 2026-10-26 'Yes' for the typed-ABI test assets): exports one property of an object as text (read-only), and imports text into one property of an object, ONLY when the object's path starts with /Game/OneBossFight/ReviewFixtures/ . Never touches a pack or shipped asset. */
+	UFUNCTION(BlueprintCallable, Category = "RPG|Scratch")
+	static FString ExportPropertyText(UObject* Object, FName PropertyName);
+
+	UFUNCTION(BlueprintCallable, Category = "RPG|Scratch")
+	static FString ImportPropertyTextToFixture(UObject* Object, FName PropertyName, const FString& Text); // returns the empty string on success, otherwise the error
+
 	UFUNCTION(BlueprintCallable, Category = "RPG|Scratch")
 	static TArray<FString> GetRouteAReport();
 

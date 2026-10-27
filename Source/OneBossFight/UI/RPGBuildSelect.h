@@ -75,6 +75,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Build Select")
 	bool IsRowVisible(int32 Row, float Height) const;
 	float LayoutHeight() const;
+	/** Diagnostics only (C172): asks the game instance's catalog subsystem to report once per epoch that rows do not fit; no layout, input or pick effect. */
+	void ReportLayoutOverflow() const;
 
 	/** Optional art for one build row. A missing texture leaves its existing text-only row intact. */
 	UTexture2D* GetRowIcon(int32 Row) const;

@@ -65,6 +65,7 @@ BENCHMARK_RULES = {
         "max_identical_frame_ratio": 0.50,    # Rejects bursts where >50% of frames share identical SHA256
         "min_inter_phase_mad": 1.5,           # Minimum Mean Absolute Difference across animation phase transitions
         "required_phases": ["Windup", "Active"], # Mandatory phases that must appear in on-disk screenshots
+        "require_manifest": True,             # Mandatory companion run_manifest.json per Codex WORK_ORDER_02
         "description": "Visual projectile departure must synchronize with AN_CombatEvent(SpawnProjectile)"
     },
     "CAP-02": {
@@ -482,11 +483,19 @@ class CaptureTelemetryParser:
                     "result_total": None,
                     "result_reason": None,
                     "run_id": None,
+                    "flag_armed": False,
+                    "timed_out": False,
                     "errors": []
                 }
 
             entry = captures[cap_id]
             entry["lines"].append(payload)
+
+            if "ARMED EXTERNAL CAPTURELOOP VIA" in payload.upper():
+                entry["flag_armed"] = True
+
+            if "MOVE OBSERVATION WALL TIMEOUT EXCEEDED" in payload.upper() or "RESULT 0/" in payload:
+                entry["timed_out"] = True
 
             if "ERROR" in payload.upper() or "EXCEPTION" in payload.upper() or "FAILED" in payload.upper():
                 entry["errors"].append(payload)
@@ -601,8 +610,14 @@ class CaptureEvaluator:
             image_paths = matching_paths
             verdict["metrics"]["run_id_verified"] = expected_run_id
 
-        # Companion run_manifest.json verification if present
+        # Companion run_manifest.json verification (Claude C-158 / Codex X-151 / X-152 / WORK_ORDER_02)
         manifest_path = p_dir / "run_manifest.json"
+        require_manifest = spec.get("require_manifest", False) or (expected_run_id is not None)
+        if require_manifest and not manifest_path.exists():
+            verdict["status"] = "FAIL"
+            verdict["rejections"].append(f"REJECTION: Missing required companion run_manifest.json in image directory: {image_dir}")
+            return
+
         if manifest_path.exists():
             try:
                 manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -611,8 +626,18 @@ class CaptureEvaluator:
                     verdict["status"] = "FAIL"
                     verdict["rejections"].append(f"REJECTION: Manifest run_id mismatch: manifest has '{manifest_data.get('run_id')}' but log has '{expected_run_id}'.")
                     return
+                if manifest_data.get("flag_armed") is False:
+                    verdict["status"] = "FAIL"
+                    verdict["rejections"].append("REJECTION: Flag arming was not observed in companion manifest.")
+                    return
+                if manifest_data.get("timed_out") or manifest_data.get("reason") in ("TIMEOUT", "EXCEPTION"):
+                    verdict["status"] = "FAIL"
+                    verdict["rejections"].append(f"REJECTION: Terminal capture failed or timed out per companion manifest: reason='{manifest_data.get('reason')}'.")
+                    return
             except Exception as e:
-                verdict["findings"].append(f"Note: Could not parse run_manifest.json: {e}")
+                verdict["status"] = "FAIL"
+                verdict["rejections"].append(f"REJECTION: Corrupt companion run_manifest.json: {e}")
+                return
 
         if len(image_paths) < min_expected:
             verdict["status"] = "FAIL"
@@ -737,6 +762,17 @@ class CaptureEvaluator:
             verdict["rejections"].append(f"ENGINE VETO: Attack execution was vetoed by engine runtime: '{reason}'. Run invalid.")
             return verdict
 
+        if data.get("timed_out"):
+            verdict["status"] = "FAIL"
+            verdict["rejections"].append("REJECTION: Capture run timed out before completion.")
+            return verdict
+
+        if data.get("result_passed") is not None and data.get("result_total") is not None:
+            if data.get("result_passed") < data.get("result_total"):
+                verdict["status"] = "FAIL"
+                verdict["rejections"].append(f"REJECTION: Terminal result failed ({data.get('result_passed')}/{data.get('result_total')}: {data.get('result_reason', 'Failed')}).")
+                return verdict
+
         if not image_dir and not data.get("telemetry_only"):
             verdict["status"] = "FAIL"
             verdict["rejections"].append("REJECTION: Missing image directory (--image-dir / --frames-dir is mandatory for visual verification).")
@@ -825,6 +861,17 @@ class CaptureEvaluator:
             verdict["rejections"].append(f"ENGINE VETO: Attack execution was vetoed by engine runtime: '{reason}'. Run invalid.")
             return verdict
 
+        if data.get("timed_out"):
+            verdict["status"] = "FAIL"
+            verdict["rejections"].append("REJECTION: Capture run timed out before completion.")
+            return verdict
+
+        if data.get("result_passed") is not None and data.get("result_total") is not None:
+            if data.get("result_passed") < data.get("result_total"):
+                verdict["status"] = "FAIL"
+                verdict["rejections"].append(f"REJECTION: Terminal result failed ({data.get('result_passed')}/{data.get('result_total')}: {data.get('result_reason', 'Failed')}).")
+                return verdict
+
         if not image_dir and not data.get("telemetry_only"):
             verdict["status"] = "FAIL"
             verdict["rejections"].append("REJECTION: Missing image directory (--image-dir / --frames-dir is mandatory for visual verification).")
@@ -896,6 +943,17 @@ class CaptureEvaluator:
             verdict["rejections"].append(f"ENGINE VETO: Attack execution was vetoed by engine runtime: '{reason}'. Run invalid.")
             return verdict
 
+        if data.get("timed_out"):
+            verdict["status"] = "FAIL"
+            verdict["rejections"].append("REJECTION: Capture run timed out before completion.")
+            return verdict
+
+        if data.get("result_passed") is not None and data.get("result_total") is not None:
+            if data.get("result_passed") < data.get("result_total"):
+                verdict["status"] = "FAIL"
+                verdict["rejections"].append(f"REJECTION: Terminal result failed ({data.get('result_passed')}/{data.get('result_total')}: {data.get('result_reason', 'Failed')}).")
+                return verdict
+
         if not image_dir and not data.get("telemetry_only"):
             verdict["status"] = "FAIL"
             verdict["rejections"].append("REJECTION: Missing image directory (--image-dir / --frames-dir is mandatory for visual verification).")
@@ -963,6 +1021,17 @@ class CaptureEvaluator:
             verdict["rejections"].append(f"ENGINE VETO: Attack execution was vetoed by engine runtime: '{reason}'. Run invalid.")
             return verdict
 
+        if data.get("timed_out"):
+            verdict["status"] = "FAIL"
+            verdict["rejections"].append("REJECTION: Capture run timed out before completion.")
+            return verdict
+
+        if data.get("result_passed") is not None and data.get("result_total") is not None:
+            if data.get("result_passed") < data.get("result_total"):
+                verdict["status"] = "FAIL"
+                verdict["rejections"].append(f"REJECTION: Terminal result failed ({data.get('result_passed')}/{data.get('result_total')}: {data.get('result_reason', 'Failed')}).")
+                return verdict
+
         if not image_dir and not data.get("telemetry_only"):
             verdict["status"] = "FAIL"
             verdict["rejections"].append("REJECTION: Missing image directory (--image-dir / --frames-dir is mandatory for visual verification).")
@@ -1027,17 +1096,31 @@ def run_self_test():
       10. Incomplete image burst on disk underflow rejection (len(images) < min_expected).
       11. Missing required phase coverage rejection (required phase missing on disk).
       12. Mismatched Run-ID / Stale Frames Rejection (Claude C-158 / Codex X-151 manifest correlation).
+      13. Corrupt Companion run_manifest.json Rejection (Codex X-152).
     """
     print("================================================================================")
-    print("RUNNING CAPTURE ANALYSIS SELF-TEST SUITE (Hardened for C-135 / C-137 / C-138 / C-151 / C-158 / X-151)")
+    print("RUNNING CAPTURE ANALYSIS SELF-TEST SUITE (Hardened for C-135 / C-137 / C-138 / C-151 / C-158 / X-151 / X-152)")
     print(f"PIL Accelerated: {HAS_PIL} (Zero-dependency raw PNG decoder active)")
     print("================================================================================")
 
     test_passed = 0
-    test_total = 12
+    test_total = 16
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         tmp_path = Path(tmp_dir)
+
+        def write_manifest(target_dir, run_id=None, flag_armed=True, timed_out=False, reason="OBSERVE_COMPLETE"):
+            m = {
+                "run_id": run_id or "RUN_VALID_TEST",
+                "cap_id": "CAP-01",
+                "timestamp": 123456.78,
+                "reason": reason,
+                "flag_armed": flag_armed,
+                "timed_out": timed_out,
+                "terminal_completion": (reason == "OBSERVE_COMPLETE" and not timed_out),
+                "camera": {"arm_length": 0.0, "field_of_view": 25.0}
+            }
+            (target_dir / "run_manifest.json").write_text(json.dumps(m, indent=2), encoding="utf-8")
 
         # ----------------------------------------------------------------------
         # Test Case 1: Identical / Compressed Timestamps (Claude C-135/C-137 reproduction)
@@ -1139,6 +1222,7 @@ def run_self_test():
         print("\n--- Test Case 6: Black Viewport Rejection (Claude C-151 Reproduction) ---")
         black_dir = tmp_path / "black_viewport_test"
         black_dir.mkdir(parents=True, exist_ok=True)
+        write_manifest(black_dir)
         for i in range(1, 12):
             bf = black_dir / f"00{i:02d}_CAP01_A5_Windup.png"
             create_raw_png(str(bf), width=64, height=64, pattern="solid")
@@ -1164,6 +1248,7 @@ def run_self_test():
         print("\n--- Test Case 7: Byte-Identical Frozen Frame Burst Rejection ---")
         frozen_dir = tmp_path / "frozen_test"
         frozen_dir.mkdir(parents=True, exist_ok=True)
+        write_manifest(frozen_dir)
         for i in range(1, 12):
             ff = frozen_dir / f"00{i:02d}_CAP01_A5_Windup.png"
             create_raw_png(str(ff), width=64, height=64, pattern="checker")
@@ -1189,6 +1274,7 @@ def run_self_test():
         print("\n--- Test Case 8: Valid Monotonic Capture Run with Visual Phase Progression ---")
         valid_dir = tmp_path / "valid_test"
         valid_dir.mkdir(parents=True, exist_ok=True)
+        write_manifest(valid_dir)
 
         valid_frames = []
         for i in range(1, 13):
@@ -1226,6 +1312,7 @@ def run_self_test():
         print("\n--- Test Case 9: Frozen Visual Progression Across Phases (Zero-MAD Rejection) ---")
         frozen_phase_dir = tmp_path / "frozen_phase_test"
         frozen_phase_dir.mkdir(parents=True, exist_ok=True)
+        write_manifest(frozen_phase_dir)
 
         frozen_phase_frames = []
         for i in range(1, 13):
@@ -1265,6 +1352,7 @@ def run_self_test():
         print("\n--- Test Case 10: Incomplete Image Burst on Disk Underflow Rejection ---")
         underflow_dir = tmp_path / "underflow_test"
         underflow_dir.mkdir(parents=True, exist_ok=True)
+        write_manifest(underflow_dir)
         underflow_frames = []
         for i in range(1, 6):  # Only 5 frames on disk, but telemetry expects 12
             phase = "Windup" if i <= 3 else "Active"
@@ -1301,6 +1389,7 @@ def run_self_test():
         print("\n--- Test Case 11: Missing Required Phase Coverage Rejection ---")
         missing_phase_dir = tmp_path / "missing_phase_test"
         missing_phase_dir.mkdir(parents=True, exist_ok=True)
+        write_manifest(missing_phase_dir)
         missing_phase_frames = []
         for i in range(1, 13):  # 12 frames, but all tagged Windup (missing required Active phase)
             p = missing_phase_dir / f"{i:03d}_CAP01_A5_Windup.png"
@@ -1337,6 +1426,7 @@ def run_self_test():
         print("\n--- Test Case 12: Mismatched Run-ID / Stale Frames Rejection ---")
         stale_dir = tmp_path / "stale_run_test"
         stale_dir.mkdir(parents=True, exist_ok=True)
+        write_manifest(stale_dir, run_id="RUN_20261026_090000")
         stale_frames = []
         for i in range(1, 13):
             phase = "Windup" if i <= 6 else "Active"
@@ -1368,6 +1458,160 @@ def run_self_test():
             test_passed += 1
         else:
             print(f"  FAIL: Expected run_id mismatch rejection, got {res12['status']}, rejections: {res12['rejections']}")
+
+        # ----------------------------------------------------------------------
+        # Test Case 13: Corrupt Companion run_manifest.json Rejection (Codex X-152)
+        # ----------------------------------------------------------------------
+        print("\n--- Test Case 13: Corrupt Companion run_manifest.json Rejection ---")
+        corrupt_manifest_dir = tmp_path / "corrupt_manifest_test"
+        corrupt_manifest_dir.mkdir(parents=True, exist_ok=True)
+        corrupt_frames = []
+        for i in range(1, 13):
+            phase = "Windup" if i <= 6 else "Active"
+            p = corrupt_manifest_dir / f"{i:03d}_CAP01_A5_{phase}.png"
+            pat = "checker" if i <= 6 else "gradient"
+            create_raw_png(str(p), width=64, height=64, pattern=pat)
+            with open(p, "ab") as f:
+                f.write(bytes([(i * 73) % 256]) * 60000)
+            corrupt_frames.append({
+                "frame_idx": i,
+                "total_frames": 12,
+                "sim_time": 1.000 + ((i - 1) * 0.050),
+                "path": str(p),
+                "size_bytes": p.stat().st_size
+            })
+
+        # Write corrupt JSON to run_manifest.json
+        (corrupt_manifest_dir / "run_manifest.json").write_text("{ this is corrupt json !!!", encoding="utf-8")
+
+        corrupt_manifest_data = {
+            "cap_id": "CAP-01",
+            "frames": corrupt_frames,
+            "telemetry": [{"wall": 100.0 + i * 0.05, "sim": 1.0 + i * 0.05, "phase": "Windup" if i <= 6 else "Active", "active": (i > 6), "commit": (i > 6), "pos": i * 0.05} for i in range(1, 13)],
+            "vetoed": False
+        }
+        res13 = CaptureEvaluator.evaluate_cap01(corrupt_manifest_data, image_dir=corrupt_manifest_dir)
+        has_corrupt_manifest_rej = any("corrupt companion run_manifest.json" in r.lower() for r in res13["rejections"])
+        if res13["status"] == "FAIL" and has_corrupt_manifest_rej:
+            print("  PASS: Engine correctly REJECTED capture when companion run_manifest.json is corrupt.")
+            print(f"  Captured Rejection: {res13['rejections'][0]}")
+            test_passed += 1
+        else:
+            print(f"  FAIL: Expected corrupt manifest rejection, got {res13['status']}, rejections: {res13['rejections']}")
+
+        # ----------------------------------------------------------------------
+        # Test Case 14: Missing Required Companion run_manifest.json Rejection (Codex WORK_ORDER_02)
+        # ----------------------------------------------------------------------
+        print("\n--- Test Case 14: Missing Required Companion run_manifest.json Rejection ---")
+        missing_manifest_dir = tmp_path / "missing_manifest_test"
+        missing_manifest_dir.mkdir(parents=True, exist_ok=True)
+        missing_m_frames = []
+        for i in range(1, 13):
+            phase = "Windup" if i <= 6 else "Active"
+            p = missing_manifest_dir / f"{i:03d}_CAP01_A5_{phase}.png"
+            pat = "checker" if i <= 6 else "gradient"
+            create_raw_png(str(p), width=64, height=64, pattern=pat)
+            with open(p, "ab") as f:
+                f.write(bytes([(i * 19) % 256]) * 60000)
+            missing_m_frames.append({
+                "frame_idx": i,
+                "total_frames": 12,
+                "sim_time": 1.000 + ((i - 1) * 0.050),
+                "path": str(p),
+                "size_bytes": p.stat().st_size
+            })
+
+        missing_m_data = {
+            "cap_id": "CAP-01",
+            "frames": missing_m_frames,
+            "telemetry": [{"wall": 100.0 + i * 0.05, "sim": 1.0 + i * 0.05, "phase": "Windup" if i <= 6 else "Active", "active": (i > 6), "commit": (i > 6), "pos": i * 0.05} for i in range(1, 13)],
+            "vetoed": False
+        }
+        res14 = CaptureEvaluator.evaluate_cap01(missing_m_data, image_dir=missing_manifest_dir)
+        has_missing_manifest_rej = any("missing required companion run_manifest.json" in r.lower() for r in res14["rejections"])
+        if res14["status"] == "FAIL" and has_missing_manifest_rej:
+            print("  PASS: Engine correctly REJECTED capture when companion run_manifest.json is missing.")
+            print(f"  Captured Rejection: {res14['rejections'][0]}")
+            test_passed += 1
+        else:
+            print(f"  FAIL: Expected missing manifest rejection, got {res14['status']}, rejections: {res14['rejections']}")
+
+        # ----------------------------------------------------------------------
+        # Test Case 15: Terminal Timeout / Abort Rejection (Codex WORK_ORDER_02)
+        # ----------------------------------------------------------------------
+        print("\n--- Test Case 15: Terminal Timeout / Abort Rejection ---")
+        timeout_dir = tmp_path / "timeout_test"
+        timeout_dir.mkdir(parents=True, exist_ok=True)
+        write_manifest(timeout_dir, reason="TIMEOUT", timed_out=True)
+        timeout_frames = []
+        for i in range(1, 13):
+            phase = "Windup" if i <= 6 else "Active"
+            p = timeout_dir / f"{i:03d}_CAP01_A5_{phase}.png"
+            pat = "checker" if i <= 6 else "gradient"
+            create_raw_png(str(p), width=64, height=64, pattern=pat)
+            with open(p, "ab") as f:
+                f.write(bytes([(i * 23) % 256]) * 60000)
+            timeout_frames.append({
+                "frame_idx": i,
+                "total_frames": 12,
+                "sim_time": 1.000 + ((i - 1) * 0.050),
+                "path": str(p),
+                "size_bytes": p.stat().st_size
+            })
+
+        timeout_data = {
+            "cap_id": "CAP-01",
+            "frames": timeout_frames,
+            "timed_out": True,
+            "telemetry": [{"wall": 100.0 + i * 0.05, "sim": 1.0 + i * 0.05, "phase": "Windup" if i <= 6 else "Active", "active": (i > 6), "commit": (i > 6), "pos": i * 0.05} for i in range(1, 13)],
+            "vetoed": False
+        }
+        res15 = CaptureEvaluator.evaluate_cap01(timeout_data, image_dir=timeout_dir)
+        has_timeout_rej = any("timed out" in r.lower() for r in res15["rejections"])
+        if res15["status"] == "FAIL" and has_timeout_rej:
+            print("  PASS: Engine correctly REJECTED capture when terminal execution timed out.")
+            print(f"  Captured Rejection: {res15['rejections'][0]}")
+            test_passed += 1
+        else:
+            print(f"  FAIL: Expected timeout rejection, got {res15['status']}, rejections: {res15['rejections']}")
+
+        # ----------------------------------------------------------------------
+        # Test Case 16: Flag Arm Not Observed Rejection (Codex WORK_ORDER_02)
+        # ----------------------------------------------------------------------
+        print("\n--- Test Case 16: Flag Arm Not Observed Rejection ---")
+        unarmed_dir = tmp_path / "unarmed_test"
+        unarmed_dir.mkdir(parents=True, exist_ok=True)
+        write_manifest(unarmed_dir, flag_armed=False)
+        unarmed_frames = []
+        for i in range(1, 13):
+            phase = "Windup" if i <= 6 else "Active"
+            p = unarmed_dir / f"{i:03d}_CAP01_A5_{phase}.png"
+            pat = "checker" if i <= 6 else "gradient"
+            create_raw_png(str(p), width=64, height=64, pattern=pat)
+            with open(p, "ab") as f:
+                f.write(bytes([(i * 29) % 256]) * 60000)
+            unarmed_frames.append({
+                "frame_idx": i,
+                "total_frames": 12,
+                "sim_time": 1.000 + ((i - 1) * 0.050),
+                "path": str(p),
+                "size_bytes": p.stat().st_size
+            })
+
+        unarmed_data = {
+            "cap_id": "CAP-01",
+            "frames": unarmed_frames,
+            "telemetry": [{"wall": 100.0 + i * 0.05, "sim": 1.0 + i * 0.05, "phase": "Windup" if i <= 6 else "Active", "active": (i > 6), "commit": (i > 6), "pos": i * 0.05} for i in range(1, 13)],
+            "vetoed": False
+        }
+        res16 = CaptureEvaluator.evaluate_cap01(unarmed_data, image_dir=unarmed_dir)
+        has_unarmed_rej = any("flag arming was not observed" in r.lower() for r in res16["rejections"])
+        if res16["status"] == "FAIL" and has_unarmed_rej:
+            print("  PASS: Engine correctly REJECTED capture when flag arming was not observed in manifest.")
+            print(f"  Captured Rejection: {res16['rejections'][0]}")
+            test_passed += 1
+        else:
+            print(f"  FAIL: Expected unobserved flag arm rejection, got {res16['status']}, rejections: {res16['rejections']}")
 
     print("\n================================================================================")
     print(f"SELF-TEST SUMMARY: {test_passed}/{test_total} TESTS PASSED")

@@ -115,7 +115,23 @@ namespace RPGCombatRegistry
 		bool bAttempted = false;
 		TSharedPtr<const FEpoch> Epoch;
 	};
+	/** Once-only diagnostics ledger (C172/X-156): keyed epoch + category + key. Owned by ONE game-instance subsystem (never a process static), separate from the immutable FEpoch metadata. */
+	class ONEBOSSFIGHT_API FDiagnosticLedger
+	{
+	public:
+		/** True the first time this exact key is reported; false for every repeat. A new epoch id is a new key space. */
+		bool TryReport(const FGuid& EpochId, FName Category, FName Key = NAME_None);
+		int32 Num() const { return Seen.Num(); }
+		void Reset() { Seen.Reset(); }
+	private:
+		TSet<FString> Seen;
+	};
 	ONEBOSSFIGHT_API TSharedPtr<const FEpoch> ForWorld(const UWorld* World);
+#if !UE_BUILD_SHIPPING
+	/** Test seam rpg.CatalogPath (C-170/X-156): the only folder a test catalog may live in, and the pure check of a path against it (case-sensitive, canonical object path, no sub-object). */
+	ONEBOSSFIGHT_API FString TestCatalogRoot();
+	ONEBOSSFIGHT_API bool ValidateTestCatalogPath(const FString& Path, FString& Error);
+#endif
 	/** Same geometry for paint, click, focus and keys; first three keep legacy geometry. */
 	ONEBOSSFIGHT_API bool RowVisible(int32 Row, int32 Count, float Height);
 	ONEBOSSFIGHT_API int32 VisibleRows(int32 Count, float Height);
@@ -132,8 +148,16 @@ public:
 	UFUNCTION(BlueprintPure, Category="Combat Catalog") FString GetDiagnostic() const;
 	UFUNCTION(BlueprintPure, Category="Combat Catalog") int32 GetBuildCount() const;
 	UFUNCTION(BlueprintPure, Category="Combat Catalog") TArray<FString> GetCoverageLines() const;
+	/** The startup source mode and the test catalog path this game instance latched ("auto"/"legacy"/"data"; empty path = the shipped catalog; always empty in Shipping). */
+	UFUNCTION(BlueprintPure, Category="Combat Catalog") FString GetLatchedSource() const { return LatchedSource; }
+	UFUNCTION(BlueprintPure, Category="Combat Catalog") FString GetLatchedPath() const { return LatchedPath; }
+	/** Selector layout diagnostic: one Warning per published epoch when the rows do not all fit at this measured layout height (hidden start index and height in the text). Returns true when it logged. */
+	bool ReportLayoutOverflow(const FGuid& EpochId, int32 RowCount, float LayoutHeight);
 private:
 	RPGCombatRegistry::FContext Context;
 	FString LatchedSource;
+	FString LatchedPath;
 	mutable bool bLateChangeReported = false;
+	mutable bool bLatePathReported = false;
+	RPGCombatRegistry::FDiagnosticLedger Ledger;
 };

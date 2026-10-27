@@ -1,0 +1,121 @@
+{
+  "scope": "lexical pre-extraction witness only",
+  "source": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+  "sha256": "1b036b03aec269e5b3e906d8adaedac709c33f6a3c15413d0454b9c354523712",
+  "bodyTokenSHA256": "60ce6e3604ebe09837ec7390ce230823b242efc9869831ca2ec5358c80fff3e8",
+  "triggerTokenSHA256": {
+    "spawn": "ca3f0ec43792654d245d762c64913034d455078dc93f91c2e7c9cc8fabdd8592",
+    "worldBegin": "0c6974fc8281e7955e1cc2014103868d5b4a4cae7812c04b1c2873b6dc511f37"
+  },
+  "bossEvents": [
+    {
+      "id": "Footsteps",
+      "line": 145
+    },
+    {
+      "id": "URPGBossMusic",
+      "line": 148
+    },
+    {
+      "id": "URPGBossStagger",
+      "line": 197
+    },
+    {
+      "id": "URPGBossPhases",
+      "line": 202
+    },
+    {
+      "id": "URPGBossEncounter",
+      "line": 207
+    },
+    {
+      "id": "URPGBossDormantWake",
+      "line": 212
+    },
+    {
+      "id": "URPGBossPosture",
+      "line": 216
+    },
+    {
+      "id": "Death.OwnClip",
+      "line": 221
+    },
+    {
+      "id": "URPGBossLook",
+      "line": 225
+    },
+    {
+      "id": "URPGBossBleed",
+      "line": 229
+    },
+    {
+      "id": "URPGAttackTracker",
+      "line": 233
+    },
+    {
+      "id": "URPGBossCloseClipSwap",
+      "line": 238
+    },
+    {
+      "id": "URPGBossShockwave",
+      "line": 242
+    },
+    {
+      "id": "URPGBossLowSweep",
+      "line": 247
+    },
+    {
+      "id": "URPGBossHealPunish",
+      "line": 252
+    },
+    {
+      "id": "DamageResolver",
+      "line": 257
+    },
+    {
+      "id": "URPGTraceGuard",
+      "line": 260
+    },
+    {
+      "id": "URPGTraceAudit",
+      "line": 264
+    },
+    {
+      "id": "URPGBossHud",
+      "line": 269
+    },
+    {
+      "id": "URPGCombatDebug",
+      "line": 275
+    },
+    {
+      "id": "URPGBossLegend",
+      "line": 281
+    }
+  ],
+  "expected": [
+    "Footsteps",
+    "URPGBossMusic",
+    "URPGBossStagger",
+    "URPGBossPhases",
+    "URPGBossEncounter",
+    "URPGBossDormantWake",
+    "URPGBossPosture",
+    "Death.OwnClip",
+    "URPGBossLook",
+    "URPGBossBleed",
+    "URPGAttackTracker",
+    "URPGBossCloseClipSwap",
+    "URPGBossShockwave",
+    "URPGBossLowSweep",
+    "URPGBossHealPunish",
+    "DamageResolver",
+    "URPGTraceGuard",
+    "URPGTraceAudit",
+    "URPGBossHud",
+    "URPGCombatDebug",
+    "URPGBossLegend"
+  ],
+  "playerPathRequiresManualDiff": true,
+  "creationGuardsAndDefaultsRequireManualDiff": true
+}

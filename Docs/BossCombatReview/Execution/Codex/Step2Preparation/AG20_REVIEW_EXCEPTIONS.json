@@ -1,0 +1,44 @@
+{
+  "artifactKind": "Codex documentary review overlay; not executable validation policy",
+  "syntheticOnly": true,
+  "corpusPath": "Docs/BossCombatReview/Execution/Antigravity/SYNTHETIC_EVIDENCE_CASE_CORPUS.json",
+  "corpusSHA256": "c0af06b942ffa62e51a44c6d3a93ad894bf84da11ed523f27b2775736bfa162a",
+  "reviewPath": "Docs/BossCombatReview/Execution/Codex/AG20_A153_REVIEW.md",
+  "useLimits": [
+    "Preserve the delivered corpus and candidate claims unchanged.",
+    "All seven cases are synthetic fixtures, not engine captures or all83 closure evidence.",
+    "Expected checker dispositions are proposals; neither JSON parsing nor this overlay executes a semantic checker.",
+    "These notes qualify interpretation rather than define production schema, enums, tolerances or runtime policy.",
+    "Antigravity has no new revision or follow-up assignment; further review is Codex-owned."
+  ],
+  "exceptions": [
+    {
+      "caseId": "SYNTH-03-STATIC-GUARD-VS-PERFORMED-OBSERVATION",
+      "qualifiedExpectedField": "nativeApplicationDisposition",
+      "deliveredExpectedLabel": "SKIPPED_OVERRIDE_GUARD",
+      "reason": "The premise supplies static guard analysis, not evidence that an actor was configured or the native application path executed.",
+      "reviewInterpretation": "Keep observed execution unknown. A predicted skip may be recorded separately as analysis, with its source and hypothetical scope, rather than promoted into a performed application fact.",
+      "requiredBeforeStrongerClaim": "An independently supplied application observation for the identified component/context/lifecycle; a candidate scalar or code inequality alone is insufficient."
+    },
+    {
+      "caseId": "SYNTH-04-MATCHING-NUMBERS-DIFFERENT-TARGET-OR-UNITS",
+      "qualifiedExpectedField": "runtimeDisposition",
+      "deliveredExpectedLabel": "AGREES_WITH_BASELINE",
+      "reason": "The case deliberately makes the baseline channel incomparable with the native target, so this label does not identify a valid comparison pair.",
+      "reviewInterpretation": "Preserve the incomparable-baseline fact. If the native assignment and native readback agree with each other, identify that narrower pair explicitly instead of calling it agreement with the unrelated pack baseline.",
+      "requiredBeforeStrongerClaim": "A reviewed semantic crosswalk with matching target identities, units and lifecycle. This one channel example is not separate coverage of different worlds, actors, generations or unit conversion."
+    },
+    {
+      "caseId": "SYNTH-05-STALE-OR-ABSENT-ARTIFACT-DIGEST",
+      "qualifiedExpectedField": "whyFullClosureUnsupported",
+      "reportedInterpretation": "Illustrates syntax-valid URI/digest with unverified artifact",
+      "reason": "The corpus uses conspicuous SYNTH_DIGEST labels and a fixture URI; it does not supply a 64-hex telemetry SHA256 payload or inspect an actual telemetry artifact.",
+      "reviewInterpretation": "Treat this as an illustrative unverified-reference case. It has not demonstrated a shape-valid cryptographic digest bypass, artifact absence or freshness rejection.",
+      "requiredBeforeStrongerClaim": "A future separately scoped synthetic syntax case and explicit checker observations, without representing invented digests or captures as real runtime evidence."
+    }
+  ],
+  "otherCaseLimits": {
+    "SYNTH-06-FALSE-PERFORMED-FULL-PARITY": "The described rejection is an expected design outcome, not an executed checker result.",
+    "allCases": "Hypothetical CONFIGURED/APPLIED/VERIFIED_READBACK candidate labels remain supplied synthetic assumptions unless the case explicitly challenges them; no real execution occurred."
+  }
+}

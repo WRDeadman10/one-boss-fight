@@ -1,0 +1,62 @@
+{
+  "scope": "Two synthetic offline candidate false-acceptance probes; no live candidate, engine, baseline regeneration or semantic parity test",
+  "helper_sha256": "995376c1f0ca8a2c81a4d6032a1cf00f8df730bd883f2ea48b66afab7e42fe01",
+  "results": [
+    {
+      "case": "changed_music_default",
+      "candidate_sha256": "b9e0817169b8f9f80d801da2ec93e7e001c82ac392160f9d9476c9f46035775d",
+      "exit_code": 0,
+      "report": {
+        "scope": "lexical order/hooks/config fingerprint only; NOT runtime idempotence or behavior proof",
+        "selftests": {
+          "passed": 11,
+          "total": 11
+        },
+        "method": "Attach",
+        "bossEvents": 21,
+        "orderMatches": true,
+        "hooks": {
+          "spawnCallsAttach": true,
+          "worldBeginCallsAttach": true
+        },
+        "sourceHashUnchanged": false,
+        "triggerTokensUnchanged": true,
+        "bodyTokenSHA256": "de3575a888c5ae9a4da80198b18b0043bb2261f050d5d3814e92140241319558",
+        "manualReview": [
+          "all guards/default values/player branch equivalence",
+          "actual register/BeginPlay callbacks",
+          "duplicate trigger idempotence",
+          "Shipping/disabled observer behavior"
+        ]
+      }
+    },
+    {
+      "case": "duplicate_spawn_attach",
+      "candidate_sha256": "35248be94890c3097d4d9280fcad9cbbaa5a12b1d2cac0747717c6c63cbdd615",
+      "exit_code": 0,
+      "report": {
+        "scope": "lexical order/hooks/config fingerprint only; NOT runtime idempotence or behavior proof",
+        "selftests": {
+          "passed": 11,
+          "total": 11
+        },
+        "method": "Attach",
+        "bossEvents": 21,
+        "orderMatches": true,
+        "hooks": {
+          "spawnCallsAttach": true,
+          "worldBeginCallsAttach": true
+        },
+        "sourceHashUnchanged": false,
+        "triggerTokensUnchanged": false,
+        "bodyTokenSHA256": "60ce6e3604ebe09837ec7390ce230823b242efc9869831ca2ec5358c80fff3e8",
+        "manualReview": [
+          "all guards/default values/player branch equivalence",
+          "actual register/BeginPlay callbacks",
+          "duplicate trigger idempotence",
+          "Shipping/disabled observer behavior"
+        ]
+      }
+    }
+  ]
+}

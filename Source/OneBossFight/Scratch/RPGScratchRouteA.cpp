@@ -279,6 +279,38 @@ AActor* URPGScratchRouteALibrary::SpawnCaptureCamera(UObject* WorldContext, FVec
 	return World->SpawnActor<ACameraActor>(ACameraActor::StaticClass(), Location, Rotation, Params);
 }
 
+FString URPGScratchRouteALibrary::ExportPropertyText(UObject* Object, FName PropertyName)
+{
+	const FProperty* Property = Object ? FindFProperty<FProperty>(Object->GetClass(), PropertyName) : nullptr;
+	FString Value;
+	if (Property)
+	{
+		Property->ExportText_InContainer(0, Value, Object, Object, nullptr, PPF_None);
+	}
+	return Value;
+}
+
+FString URPGScratchRouteALibrary::ImportPropertyTextToFixture(UObject* Object, FName PropertyName, const FString& Text)
+{
+	if (!Object || !(Object->GetPathName().StartsWith(TEXT("/Game/OneBossFight/ReviewFixtures/")) || Object->GetPathName().StartsWith(TEXT("/Game/OneBossFight/Data/TypedABIFixtures/"))))
+	{
+		return TEXT("refused: only objects under the two fixture roots may be written");
+	}
+	FProperty* Property = FindFProperty<FProperty>(Object->GetClass(), PropertyName);
+	if (!Property)
+	{
+		return TEXT("property not found: ") + PropertyName.ToString();
+	}
+	FStringOutputDevice Errors;
+	const TCHAR* End = Property->ImportText_InContainer(*Text, Object, Object, PPF_None, &Errors);
+	if (!End)
+	{
+		return FString::Printf(TEXT("import failed for %s: %s"), *PropertyName.ToString(), *Errors);
+	}
+	Object->MarkPackageDirty();
+	return FString();
+}
+
 TArray<FString> URPGScratchRouteALibrary::GetRouteAReport()
 {
 	return Report();

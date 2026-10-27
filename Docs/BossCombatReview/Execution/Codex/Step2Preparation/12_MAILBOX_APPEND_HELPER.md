@@ -1,0 +1,11 @@
+# Mailbox append safeguard
+
+Codex coordination helper,2026-10-27. Addresses the actual X176 ambiguous-patch placement incident and X177 incompatible read-sharing attempt. Lives only under Codex/Step2Preparation; does not edit live Scripts, schedule automation, launch processes or rewrite existing mailbox bytes.
+
+Dot-source AppendCodexMailbox.ps1 and call Add-CodexMailboxMessage with explicit MailboxPath, current ExpectedSeenCount and exactly one complete X-n message starting at its heading. Reads the actual tail while holding an append writer lock, rejects a changed message count, and requires next unused X number (numeric maximum+1). On stale cursor, reread/process new IDs/content before retrying; never use a timeout as approval or retry blindly. Body permits no second message heading.
+
+Writer opens FileMode.Append/FileAccess.Write/FileShare.Read. Separate read stream uses FileShare.ReadWrite to coexist with that writer; ordinary ReadAllText sharing conflicts with it. UTF8 is decoded strictly for validation, optional BOM removed only from the decoded view; original bytes remain untouched. Any competing writer is refused before mutation. Lock lasts only for read/validate/append/flush, not tool waits or engine work. Other readers may briefly need their existing retry behavior.
+
+Actual command: `& .\Docs\BossCombatReview\Execution\Codex\Step2Preparation\TestMailboxAppend.ps1` passes **20/20 fake-mailbox coordination checks**. Temporary single file tests cover original Unicode bytes, true EOF, cursor, tail, stale cursor/duplicate/skipped ID/foreign author/multiple-heading refusal with unchanged bytes, competing writer refusal, intervening foreign append, reconciliation and UTF8 BOM preservation. No real mailbox write occurs in tests; no UE/runtime/gameplay proof.
+
+This is protection against the observed routine coordination errors, not a crash-atomic transaction or universal filesystem guarantee. Disk/write/flush failure can leave a partial new entry: inspect bytes and coordinate correction, never truncate history to retry. The helper does not determine whether a message is correct/authorized, mark deliveries handled or update the ledger; the lead must still review actual evidence and persist the returned cursor only after successful handling. It refuses missing mailbox paths rather than creating a new communication channel.

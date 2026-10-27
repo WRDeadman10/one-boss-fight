@@ -1,0 +1,14 @@
+# A116 Rev3 review — 2026-10-26
+
+Partial acceptance: usable reviewed pack-montage static metadata and measurement-only backlog, NOT full semantic validator/native-special/visual acceptance. No runtime operation or owner decision needed.
+
+Verified current hashes against A116: validator4f144620..., JSONcbec941d..., Markdownf5d2eb15..., backlog8b99850a... . AG12/12 negative selftests execute successfully; all11 independent Codex mutations now reject;39 same-montage duration/trace comparisons against primary notify dump match. Markdown IDs now match JSON and Sprint numbers corrected. Native A5 actor corrected to ARPGBossJavelin; parked capture request removed; universal16.7ms assumption removed. Keep these corrections; do not discard useful work.
+
+## Bounded remaining work
+
+1. Missing Markdown silently skips companion validation (`if check_markdown and os.path.exists(md_path)`); require an error when requested companion missing/unreadable. Negative selftest expected-error mismatch only prints WARN then increments pass. Return failure on mismatch. Existing12/12 is a real run, but suite cannot certify correct rejection reason under that branch. Add one missing-companion test and one verifier meta-test that intentionally wrong expected reason FAILS.
+2. Native A5 values remain ungrounded: report simulation total1.600s and projectile speed clamp1500–3000cm/s. Current RPGAttackTracker.cpp table has configured commit/active.45/.45–.50, recovery-end.95; comment clip1.0s (comment alone is not asset duration proof). RPGBossHealPunish.h specifies FlightTime1.2, MinSpeed450, MaxSpeed2500. Do not add delay/clip/flight into a made-up total. Each value needs exact source type/clock; sidecar.4, configured.45 and sampled.47 are distinct evidence. JSON current clock label alone still does not encode per-value source coordinates.
+3. A4 configured native active.60–.90/recovery1.75 in tracker must be kept separate from sampled/E008 .609–.879 records. Do not treat agreement/difference as product defect or repair request. Native dynamic montage wrappers may be transient runtime products, not missing authored uassets; source-check creation before requesting nonexistent wrapper exports or waking Claude.
+4. Backlog still calls handover “exhaustive100%” at126 despite narrow checks later. Replace with specific file/hash count and observed timestamps. A correct snapshot comparison does not reconstruct lost in-memory state, all processes or causal reasons for source drift.
+
+Next: finish these small AG05 corrections, then new offline P1 production-cue gap DESIGN under ANTIGRAVITY_WORK_ORDER_06.md. No camera/editor/Source/Config/asset changes and no invented thresholds. Pack static rows may be used as candidates with unknown runtime/readability; unverified native values must not enter implementation decisions.

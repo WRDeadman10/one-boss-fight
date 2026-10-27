@@ -1,0 +1,391 @@
+{
+  "$schema": "fixture://synthetic/schema/combat_parity_evidence_corpus_v1.json",
+  "corpusMetadata": {
+    "corpusId": "AG20-SYNTHETIC-ADVERSARIAL-CORPUS-V1",
+    "description": "Offline synthetic adversarial evidence-case corpus for design evaluation of parity reconciliation. All identities, references, hashes, and observations are purely synthetic and illustrative. No real runtime telemetry or verification proof is implied.",
+    "creationDate": "2026-10-27",
+    "author": "Antigravity (Pair Programmer)",
+    "governingDirectives": "Docs/BossCombatReview/Execution/Codex/AG19_A152_ACCEPTANCE.md ([X-229])",
+    "caseCount": 7
+  },
+  "cases": [
+    {
+      "caseId": "SYNTH-01-DOC-MISMATCH-UNKNOWN-READBACK",
+      "category": "Documentary Mismatch with Unknown Runtime Telemetry",
+      "syntheticLabel": "PURELY_SYNTHETIC_ILLUSTRATIVE_CASE",
+      "candidateClaim": {
+        "recordId": "REC-SYNTH-01",
+        "targetFieldPath": "Boss.MaxHealth",
+        "context": {
+          "syntheticWorkingRef": "fixture://synthetic/branch_snapshot_01",
+          "isDirty": true,
+          "syntheticToolVersion": "SyntheticReconciler-0.1"
+        },
+        "statement1_declared": {
+          "status": "DECLARED",
+          "value": "9999.0",
+          "units": "HP",
+          "sourceRef": "fixture://synthetic/authoring/DA_BossDefinition_Synth.json",
+          "syntheticDigest": "SYNTH_DIGEST_DECLARED_9999"
+        },
+        "statement2_sourceBaseline": {
+          "status": "EXTRACTED",
+          "symbolOrProperty": "BossMaxHealth",
+          "numericValue": 2000.0,
+          "sourceRef": "fixture://synthetic/source/RPGBossEncounter_Synth.h",
+          "syntheticDigest": "SYNTH_DIGEST_BASELINE_2000"
+        },
+        "statement3_typedAssignment": {
+          "status": "CONFIGURED_ASSIGNED",
+          "structName": "FRPGBossStatsConfig",
+          "propertyName": "MaxHealth",
+          "assignedValue": 2000.0
+        },
+        "nativeApplicationDisposition": {
+          "status": "APPLIED",
+          "guardCondition": "BossMaxHealth > 1.f",
+          "details": "Synthetic native override applied 2000.0f."
+        },
+        "statement4_runtimeReadback": {
+          "status": "UNOBSERVED",
+          "targetSystem": null,
+          "observedValue": null,
+          "telemetryArtifactRef": null
+        },
+        "suppliedOverallAssessment": "DOCUMENTARY_DISCREPANCY"
+      },
+      "expectedCheckerDisposition": {
+        "evidenceCoverage": "INCOMPLETE_DOCUMENTARY_ONLY",
+        "metadataComparison": "MISMATCH",
+        "nativeApplicationDisposition": "APPLIED",
+        "runtimeDisposition": "UNOBSERVED",
+        "overallAssessment": "DOCUMENTARY_DISCREPANCY",
+        "whyFullClosureUnsupported": "Statement 1 (9999.0) and Statement 2 (2000.0) represent an uncoerced documentary mismatch. Runtime pack telemetry is completely unobserved. Full parity closure cannot be claimed without fabricating readbacks and ignoring metadata drift."
+      }
+    },
+    {
+      "caseId": "SYNTH-02-ASSIGNED-UNKNOWN-NATIVE-APPLY",
+      "category": "Typed Assignment Succeeded with Unexecuted Native Application",
+      "syntheticLabel": "PURELY_SYNTHETIC_ILLUSTRATIVE_CASE",
+      "candidateClaim": {
+        "recordId": "REC-SYNTH-02",
+        "targetFieldPath": "Boss.MaxHealth",
+        "context": {
+          "syntheticWorkingRef": "fixture://synthetic/branch_snapshot_02",
+          "isDirty": false,
+          "syntheticToolVersion": "SyntheticReconciler-0.1"
+        },
+        "statement1_declared": {
+          "status": "DECLARED",
+          "value": "0.5",
+          "units": "HP",
+          "sourceRef": "fixture://synthetic/authoring/DA_BossDefinition_Synth.json",
+          "syntheticDigest": "SYNTH_DIGEST_DECLARED_0_5"
+        },
+        "statement2_sourceBaseline": {
+          "status": "EXTRACTED",
+          "symbolOrProperty": "BossMaxHealth",
+          "numericValue": 2000.0,
+          "sourceRef": "fixture://synthetic/source/RPGBossEncounter_Synth.h",
+          "syntheticDigest": "SYNTH_DIGEST_BASELINE_2000"
+        },
+        "statement3_typedAssignment": {
+          "status": "CONFIGURED_ASSIGNED",
+          "structName": "FRPGBossStatsConfig",
+          "propertyName": "MaxHealth",
+          "assignedValue": 0.5
+        },
+        "nativeApplicationDisposition": {
+          "status": "UNKNOWN",
+          "guardCondition": null,
+          "details": "Typed struct property populated; native encounter registration not yet invoked."
+        },
+        "statement4_runtimeReadback": {
+          "status": "UNOBSERVED",
+          "targetSystem": null,
+          "observedValue": null,
+          "telemetryArtifactRef": null
+        },
+        "suppliedOverallAssessment": "UNVERIFIED_INCOMPLETE"
+      },
+      "expectedCheckerDisposition": {
+        "evidenceCoverage": "STAGED_PRE_EXECUTION",
+        "metadataComparison": "MISMATCH",
+        "nativeApplicationDisposition": "UNKNOWN",
+        "runtimeDisposition": "UNOBSERVED",
+        "overallAssessment": "UNVERIFIED_INCOMPLETE",
+        "whyFullClosureUnsupported": "Typed assignment (MaxHealth = 0.5f) succeeded in memory, but native adapter application was not performed or observed. Conflating struct assignment with native component execution or runtime health outcome is structurally invalid."
+      }
+    },
+    {
+      "caseId": "SYNTH-03-STATIC-GUARD-VS-PERFORMED-OBSERVATION",
+      "category": "Static Branch Analysis Falsely Labelled Performed Observation",
+      "syntheticLabel": "PURELY_SYNTHETIC_ILLUSTRATIVE_CASE",
+      "candidateClaim": {
+        "recordId": "REC-SYNTH-03",
+        "targetFieldPath": "Boss.MaxHealth",
+        "context": {
+          "syntheticWorkingRef": "fixture://synthetic/branch_snapshot_03",
+          "isDirty": true,
+          "syntheticToolVersion": "SyntheticReconciler-0.1"
+        },
+        "statement1_declared": {
+          "status": "DECLARED",
+          "value": "0.5",
+          "units": "HP",
+          "sourceRef": "fixture://synthetic/authoring/DA_BossDefinition_Synth.json",
+          "syntheticDigest": "SYNTH_DIGEST_DECLARED_0_5"
+        },
+        "statement2_sourceBaseline": {
+          "status": "EXTRACTED",
+          "symbolOrProperty": "BossMaxHealth",
+          "numericValue": 2000.0,
+          "sourceRef": "fixture://synthetic/source/RPGBossEncounter_Synth.h",
+          "syntheticDigest": "SYNTH_DIGEST_BASELINE_2000"
+        },
+        "statement3_typedAssignment": {
+          "status": "CONFIGURED_ASSIGNED",
+          "structName": "FRPGBossStatsConfig",
+          "propertyName": "MaxHealth",
+          "assignedValue": 0.5
+        },
+        "nativeApplicationDisposition": {
+          "status": "SKIPPED_OVERRIDE_GUARD",
+          "guardCondition": "BossMaxHealth > 1.f",
+          "details": "Candidate claims branch was bypassed based purely on static code review of 0.5 <= 1.f."
+        },
+        "statement4_runtimeReadback": {
+          "status": "UNOBSERVED",
+          "targetSystem": null,
+          "observedValue": null,
+          "telemetryArtifactRef": null
+        },
+        "suppliedOverallAssessment": "APPLICATION_GUARD_SKIPPED"
+      },
+      "expectedCheckerDisposition": {
+        "evidenceCoverage": "STAGED_HYPOTHETICAL_ONLY",
+        "metadataComparison": "MISMATCH",
+        "nativeApplicationDisposition": "SKIPPED_OVERRIDE_GUARD",
+        "runtimeDisposition": "SKIPPED_PRECONDITION",
+        "overallAssessment": "APPLICATION_GUARD_SKIPPED",
+        "whyFullClosureUnsupported": "Static guard analysis (deducing that 0.5f <= 1.f bypasses the override block) predicts code path behavior, but does not prove the actor was instantiated, hydrated, or executed. Telemetry remains unobserved; effective health is strictly unknown."
+      }
+    },
+    {
+      "caseId": "SYNTH-04-MATCHING-NUMBERS-DIFFERENT-TARGET-OR-UNITS",
+      "category": "Matching Numbers with Incomparable Target Channel or Units",
+      "syntheticLabel": "PURELY_SYNTHETIC_ILLUSTRATIVE_CASE",
+      "candidateClaim": {
+        "recordId": "REC-SYNTH-04",
+        "targetFieldPath": "Boss.PostureRegenDelay",
+        "context": {
+          "syntheticWorkingRef": "fixture://synthetic/branch_snapshot_04",
+          "isDirty": false,
+          "syntheticToolVersion": "SyntheticReconciler-0.1"
+        },
+        "statement1_declared": {
+          "status": "DECLARED",
+          "value": "6.0",
+          "units": "Seconds",
+          "sourceRef": "fixture://synthetic/authoring/DA_BossDefinition_Synth.json",
+          "syntheticDigest": "SYNTH_DIGEST_DECLARED_6_0"
+        },
+        "statement2_sourceBaseline": {
+          "status": "EXTRACTED",
+          "symbolOrProperty": "Attribute.PoiseRecoveryInterval",
+          "numericValue": 6.0,
+          "sourceRef": "fixture://synthetic/source/UnmappedPackAttribute_Synth.h",
+          "syntheticDigest": "SYNTH_DIGEST_PACK_POISE_6_0"
+        },
+        "statement3_typedAssignment": {
+          "status": "CONFIGURED_ASSIGNED",
+          "structName": "FRPGBossStatsConfig",
+          "propertyName": "PostureRegenDelay",
+          "assignedValue": 6.0
+        },
+        "nativeApplicationDisposition": {
+          "status": "APPLIED",
+          "guardCondition": null,
+          "details": "Native URPGBossPosture assigned RegenDelaySeconds = 6.0f."
+        },
+        "statement4_runtimeReadback": {
+          "status": "VERIFIED_READBACK",
+          "targetSystem": "NativeComponentProperty",
+          "observedValue": 6.0,
+          "telemetryArtifactRef": "fixture://synthetic/telemetry/posture_tick_trace_synth.json"
+        },
+        "suppliedOverallAssessment": "FULL_PARITY"
+      },
+      "expectedCheckerDisposition": {
+        "evidenceCoverage": "FULL_EVIDENCE_OBSERVED",
+        "metadataComparison": "INCOMPARABLE_TARGET_CHANNEL",
+        "nativeApplicationDisposition": "APPLIED",
+        "runtimeDisposition": "AGREES_WITH_BASELINE",
+        "overallAssessment": "TARGET_IDENTITY_DISCREPANCY",
+        "whyFullClosureUnsupported": "Numeric equality (6.0 == 6.0) does not constitute full parity because Statement 2 targeted an unmapped pack extended attribute ('Attribute.PoiseRecoveryInterval') while Statements 3 and 4 targeted native component property 'RegenDelaySeconds'. The properties belong to separate channels and are semantically incomparable without an approved crosswalk."
+      }
+    },
+    {
+      "caseId": "SYNTH-05-STALE-OR-ABSENT-ARTIFACT-DIGEST",
+      "category": "Valid Syntax with Stale or Absent Telemetry Artifact",
+      "syntheticLabel": "PURELY_SYNTHETIC_ILLUSTRATIVE_CASE",
+      "candidateClaim": {
+        "recordId": "REC-SYNTH-05",
+        "targetFieldPath": "Boss.Phase1.AttackRateScale",
+        "context": {
+          "syntheticWorkingRef": "fixture://synthetic/branch_snapshot_05_unverified",
+          "isDirty": true,
+          "syntheticToolVersion": "SyntheticReconciler-0.1"
+        },
+        "statement1_declared": {
+          "status": "DECLARED",
+          "value": "1.2",
+          "units": "Multiplier",
+          "sourceRef": "fixture://synthetic/authoring/DA_BossDefinition_Synth.json",
+          "syntheticDigest": "SYNTH_DIGEST_DECLARED_1_2"
+        },
+        "statement2_sourceBaseline": {
+          "status": "EXTRACTED",
+          "symbolOrProperty": "AttackRateScale",
+          "numericValue": 1.2,
+          "sourceRef": "fixture://synthetic/source/RPGBossPhases_Synth.h",
+          "syntheticDigest": "SYNTH_DIGEST_PHASE_1_2"
+        },
+        "statement3_typedAssignment": {
+          "status": "CONFIGURED_ASSIGNED",
+          "structName": "FRPGPhaseConfig",
+          "propertyName": "RateMultiplier",
+          "assignedValue": 1.2
+        },
+        "nativeApplicationDisposition": {
+          "status": "APPLIED",
+          "guardCondition": null,
+          "details": "Native ScaleAttackRates applied."
+        },
+        "statement4_runtimeReadback": {
+          "status": "VERIFIED_READBACK",
+          "targetSystem": "PackReflectedMontagePlayRate",
+          "observedValue": 1.2,
+          "telemetryArtifactRef": "fixture://synthetic/missing_or_stale_telemetry_digest.json"
+        },
+        "suppliedOverallAssessment": "FULL_PARITY"
+      },
+      "expectedCheckerDisposition": {
+        "evidenceCoverage": "ARTIFACT_UNVERIFIED_STALE",
+        "metadataComparison": "MATCH",
+        "nativeApplicationDisposition": "APPLIED",
+        "runtimeDisposition": "UNVERIFIED_ARTIFACT",
+        "overallAssessment": "UNVERIFIED_INCOMPLETE",
+        "whyFullClosureUnsupported": "The supplied artifact URI and digest have not been verified against a fresh binary run. A syntactically valid URI or SHA256 string is not evidence that the artifact exists or was captured from the current working tree. Telemetry remains unverified."
+      }
+    },
+    {
+      "caseId": "SYNTH-06-FALSE-PERFORMED-FULL-PARITY",
+      "category": "Falsely Asserted Full Parity with Unobserved Telemetry",
+      "syntheticLabel": "PURELY_SYNTHETIC_ILLUSTRATIVE_CASE",
+      "candidateClaim": {
+        "recordId": "REC-SYNTH-06",
+        "targetFieldPath": "Boss.Phase1.AttackRateScale",
+        "context": {
+          "syntheticWorkingRef": "fixture://synthetic/branch_snapshot_06",
+          "isDirty": false,
+          "syntheticToolVersion": "SyntheticReconciler-0.1"
+        },
+        "statement1_declared": {
+          "status": "DECLARED",
+          "value": "1.2",
+          "units": "Multiplier",
+          "sourceRef": "fixture://synthetic/authoring/DA_BossDefinition_Synth.json",
+          "syntheticDigest": "SYNTH_DIGEST_DECLARED_1_2"
+        },
+        "statement2_sourceBaseline": {
+          "status": "EXTRACTED",
+          "symbolOrProperty": "AttackRateScale",
+          "numericValue": 1.2,
+          "sourceRef": "fixture://synthetic/source/RPGBossPhases_Synth.h",
+          "syntheticDigest": "SYNTH_DIGEST_PHASE_1_2"
+        },
+        "statement3_typedAssignment": {
+          "status": "CONFIGURED_ASSIGNED",
+          "structName": "FRPGPhaseConfig",
+          "propertyName": "RateMultiplier",
+          "assignedValue": 1.2
+        },
+        "nativeApplicationDisposition": {
+          "status": "APPLIED",
+          "guardCondition": null,
+          "details": "Native phase entry scaled play rates."
+        },
+        "statement4_runtimeReadback": {
+          "status": "UNOBSERVED",
+          "targetSystem": null,
+          "observedValue": null,
+          "telemetryArtifactRef": null
+        },
+        "suppliedOverallAssessment": "FULL_PARITY"
+      },
+      "expectedCheckerDisposition": {
+        "evidenceCoverage": "STAGED_PRE_EXECUTION",
+        "metadataComparison": "MATCH",
+        "nativeApplicationDisposition": "APPLIED",
+        "runtimeDisposition": "UNOBSERVED",
+        "overallAssessment": "REJECTED_FALSE_CLOSURE_FORCED_UNVERIFIED",
+        "whyFullClosureUnsupported": "Candidate improperly claimed FULL_PARITY while statement4_runtimeReadback is UNOBSERVED. Violates Conceptual Rule 1. Checker rejects false closure and overrides overall assessment to UNVERIFIED_INCOMPLETE."
+      }
+    },
+    {
+      "caseId": "SYNTH-07-ALL-UNKNOWN-CONTROL",
+      "category": "Honest All-Unknown Control Baseline",
+      "syntheticLabel": "PURELY_SYNTHETIC_ILLUSTRATIVE_CASE",
+      "candidateClaim": {
+        "recordId": "REC-SYNTH-07",
+        "targetFieldPath": "Boss.UnmigratedCustomSpecial",
+        "context": {
+          "syntheticWorkingRef": "fixture://synthetic/branch_snapshot_07",
+          "isDirty": false,
+          "syntheticToolVersion": "SyntheticReconciler-0.1"
+        },
+        "statement1_declared": {
+          "status": "UNKNOWN",
+          "value": null,
+          "units": null,
+          "sourceRef": null,
+          "syntheticDigest": null
+        },
+        "statement2_sourceBaseline": {
+          "status": "UNKNOWN",
+          "symbolOrProperty": null,
+          "numericValue": null,
+          "sourceRef": null,
+          "syntheticDigest": null
+        },
+        "statement3_typedAssignment": {
+          "status": "UNKNOWN",
+          "structName": null,
+          "propertyName": null,
+          "assignedValue": null
+        },
+        "nativeApplicationDisposition": {
+          "status": "UNKNOWN",
+          "guardCondition": null,
+          "details": null
+        },
+        "statement4_runtimeReadback": {
+          "status": "UNKNOWN",
+          "targetSystem": null,
+          "observedValue": null,
+          "telemetryArtifactRef": null
+        },
+        "suppliedOverallAssessment": "UNVERIFIED_INCOMPLETE"
+      },
+      "expectedCheckerDisposition": {
+        "evidenceCoverage": "UNKNOWN_INCOMPLETE",
+        "metadataComparison": "UNCHECKED",
+        "nativeApplicationDisposition": "UNKNOWN",
+        "runtimeDisposition": "UNKNOWN",
+        "overallAssessment": "UNVERIFIED_INCOMPLETE",
+        "whyFullClosureUnsupported": "Control baseline. All stages are completely unknown without fabricated numbers, placeholder hashes, or inferred configuration success. Accurately reflects unaddressed backlog items."
+      }
+    }
+  ]
+}
