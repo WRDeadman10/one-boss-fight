@@ -1,0 +1,1240 @@
+﻿Packaging Development build -> C:\UnrealProject\OneBossFight\Saved\StagedBuilds
+Running AutomationTool...
+Using bundled DotNet SDK version: 8.0.300
+Starting AutomationTool...
+Parsing command line: BuildCookRun -project=C:\UnrealProject\OneBossFight\OneBossFight.uproject -platform=Win64 -clientconfig=Development -build -cook -stage -pak -map=/Game/OneBossFight/Levels/L_SevarogArena -stagingdirectory=C:\UnrealProject\OneBossFight\Saved\StagedBuilds -NoP4 -utf8output
+Initializing script modules...
+Total script module initialization time: 0.17 s.
+Using C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe
+Executing commands...
+Setting up ProjectParams for C:\UnrealProject\OneBossFight\OneBossFight.uproject
+********** BUILD COMMAND STARTED **********
+Running: C:\Program Files\Epic Games\UE_5.5\Engine\Binaries\ThirdParty\DotNet\8.0.300\win-x64\dotnet.exe "C:\Program Files\Epic Games\UE_5.5\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" -Target="OneBossFightEditor Win64 Development -Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject -Manifest=C:\UnrealProject\OneBossFight\Intermediate\Build\Manifest-1-OneBossFightEditor-Win64-Development.xml" -Target="OneBossFight Win64 Development -Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject -Manifest=C:\UnrealProject\OneBossFight\Intermediate\Build\Manifest-2-OneBossFight-Win64-Development.xml  -remoteini=\"C:\UnrealProject\OneBossFight\"  " -log="C:\Users\Rushit Vaghela\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.5\UBA-OneBossFightEditor-Win64-Development.txt"
+Log file: C:\Users\Rushit Vaghela\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.5\UBA-OneBossFightEditor-Win64-Development.txt
+Using 'git status' to determine working set for adaptive non-unity build (C:\UnrealProject\OneBossFight).
+Creating makefile for OneBossFightEditor (command line arguments changed)
+Available x64 toolchains (1):
+ * C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207
+    (Family=14.44.35207, FamilyRank=1, Version=14.44.35214, Is64Bit=True, ReleaseChannel=Latest, Architecture=x64)
+Visual Studio 2022 compiler version 14.44.35214 is not a preferred version. Please use the latest preferred version 14.38.33130
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'Niagara'.
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'NiagaraEditor'.
+Writing manifest to C:\UnrealProject\OneBossFight\Intermediate\Build\Manifest-1-OneBossFightEditor-Win64-Development.xml
+Creating makefile for OneBossFight (manifest 'C:\UnrealProject\OneBossFight\Intermediate\Build\Manifest-2-OneBossFight-Win64-Development.xml' not found)
+Parsing headers for OneBossFight
+  Running Internal UnrealHeaderTool C:\UnrealProject\OneBossFight\OneBossFight.uproject C:\UnrealProject\OneBossFight\Intermediate\Build\Win64\OneBossFight\Development\OneBossFight.uhtmanifest -WarningsAsErrors -installed
+Total of 3 written
+Reflection code generated for OneBossFight in 1.4124119 seconds
+Writing manifest to C:\UnrealProject\OneBossFight\Intermediate\Build\Manifest-2-OneBossFight-Win64-Development.xml
+Building OneBossFightEditor and OneBossFight...
+OneBossFightEditor: Using Visual Studio 2022 14.44.35214 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+OneBossFightEditor: Warning: Visual Studio 2022 compiler is not a preferred version
+OneBossFightEditor: [Adaptive Build] Excluded from OneBossFight unity file: RPGScratchRouteA.cpp, RPGCombatCatalogTests.cpp
+OneBossFight: Using Visual Studio 2022 14.44.35214 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+OneBossFight: Warning: Visual Studio 2022 compiler is not a preferred version
+OneBossFight: [Adaptive Build] Excluded from OneBossFight unity file: RPGScratchRouteA.cpp, RPGCombatCatalogTests.cpp
+Determining max actions to execute in parallel (8 physical cores, 16 logical cores)
+  Executing up to 8 processes, one per physical core
+Using Unreal Build Accelerator local executor to run 6 action(s)
+  Storage capacity 40Gb
+---- Starting trace: 261026_193626 ----
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+------ Building 6 action(s) started ------
+** For OneBossFight-Win64-Development **
+[1/6] Compile [x64] OneBossFight.init.gen.cpp
+[2/6] Compile [x64] RPGScratchRouteA.gen.cpp
+[3/6] Compile [x64] RPGCombatCatalogTests.cpp
+[4/6] Compile [x64] RPGScratchRouteA.cpp
+[5/6] Link [x64] OneBossFight.exe
+[6/6] WriteMetadata OneBossFight.target (UBA disabled)
+Trace file written to C:/Users/Rushit Vaghela/AppData/Roaming/Unreal Engine/AutomationTool/Logs/C+Program+Files+Epic+Games+UE_5.5/UBA-OneBossFightEditor-Win64-Development.uba with size 4.4kb
+Total time in Unreal Build Accelerator local executor: 17.22 seconds
+Total execution time: 23.81 seconds
+Took 23.93s to run dotnet.exe, ExitCode=0
+Build command time: 24.60 s
+********** BUILD COMMAND COMPLETED **********
+********** COOK COMMAND STARTED **********
+HasMapsToCook /Game/OneBossFight/Levels/L_SevarogArena
+Params.HasMapsToCook /Game/OneBossFight/Levels/L_SevarogArena
+Running UnrealEditor Cook for project C:\UnrealProject\OneBossFight\OneBossFight.uproject
+Commandlet log file is C:\Program Files\Epic Games\UE_5.5\Engine\Programs\AutomationTool\Saved\Cook-2026.10.26-19.36.44.txt
+Running: C:\Program Files\Epic Games\UE_5.5\Engine\Binaries\Win64\UnrealEditor-Cmd.exe "C:\UnrealProject\OneBossFight\OneBossFight.uproject" -run=Cook -Map=/Game/OneBossFight/Levels/L_SevarogArena -TargetPlatform=Windows  -unversioned -fileopenlog -abslog="C:\Program Files\Epic Games\UE_5.5\Engine\Programs\AutomationTool\Saved\Cook-2026.10.26-19.36.44.txt" -stdout -CrashForUAT -unattended -NoLogTimes  -UTF8Output
+LogInit: Display: Running engine for game: OneBossFight
+LogCore: Warning: UTS: Unreal Trace Server process returned an error (0x00006005)
+LogCore: Display: Requested channels: 'cpu,gpu,frame,log,bookmark,screenshot,region'
+LogTrace: Display: Display Control listening on port 1985
+LogCsvProfiler: Display: Metadata set : platform="Windows"
+LogCsvProfiler: Display: Metadata set : config="Development"
+LogCsvProfiler: Display: Metadata set : buildversion="++UE5+Release-5.5-CL-40574608"
+LogCsvProfiler: Display: Metadata set : engineversion="5.5.4-40574608+++UE5+Release-5.5"
+LogCsvProfiler: Display: Metadata set : os="Windows 11 (25H2) [10.0.26200.9711] "
+LogCsvProfiler: Display: Metadata set : cpu="AuthenticAMD|AMD Ryzen 7 5800X 8-Core Processor"
+LogCsvProfiler: Display: Metadata set : pgoenabled="0"
+LogCsvProfiler: Display: Metadata set : pgoprofilingenabled="0"
+LogCsvProfiler: Display: Metadata set : ltoenabled="0"
+LogCsvProfiler: Display: Metadata set : asan="0"
+LogCsvProfiler: Display: Metadata set : commandline="" C:\UnrealProject\OneBossFight\OneBossFight.uproject -run=Cook -Map=/Game/OneBossFight/Levels/L_SevarogArena -TargetPlatform=Windows -unversioned -fileopenlog -abslog="C:\Program Files\Epic Games\UE_5.5\Engine\Programs\AutomationTool\Saved\Cook-2026.10.26-19.36.44.txt" -stdout -CrashForUAT -unattended -NoLogTimes -UTF8Output""
+LogCsvProfiler: Display: Metadata set : loginid="fb5385754902687cfa6785a02143a4c9"
+LogCsvProfiler: Display: Metadata set : llm="0"
+LogConfig: Display: Loading Mac ini files took 0.07 seconds
+LogConfig: Display: Loading Android ini files took 0.07 seconds
+LogConfig: Display: Loading IOS ini files took 0.07 seconds
+LogConfig: Display: Loading VulkanPC ini files took 0.07 seconds
+LogConfig: Display: Loading Windows ini files took 0.09 seconds
+LogConfig: Display: Loading TVOS ini files took 0.09 seconds
+LogConfig: Display: Loading VisionOS ini files took 0.09 seconds
+LogConfig: Display: Loading Unix ini files took 0.09 seconds
+LogConfig: Display: Loading Linux ini files took 0.10 seconds
+LogConfig: Display: Loading LinuxArm64 ini files took 0.10 seconds
+LogAssetRegistry: Display: Asset registry cache read as 75.6 MiB from ../../../../../../UnrealProject/OneBossFight/Intermediate/CachedAssetRegistry_0.bin
+RenderDocPlugin: Display: RenderDoc plugin will not be loaded. Use '-AttachRenderDoc' on the cmd line or enable 'renderdoc.AutoAttach' in the plugin settings.
+LogStudioTelemetry: Display: Starting StudioTelemetry Module
+LogStreaming: Display: AsyncLoading2 - Created: Event Driven Loader: false, Async Loading Thread: false, Async Post Load: false
+LogStreaming: Display: AsyncLoading2 - Initialized
+LogHAL: Display: Platform has ~ 32 GB [34282242048 / 34359738368 / 32], which maps to Largest [LargestMinGB=32, LargerMinGB=12, DefaultMinGB=8, SmallerMinGB=6, SmallestMinGB=0)
+LogCsvProfiler: Display: Metadata set : extradevelopmentmemorymb="0"
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatASTC
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatDXT
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatETC2
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatIntelISPCTexComp
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatUncompressed
+LogTextureFormatOodle: Display: Oodle Texture TFO init; latest sdk version = 2.9.12
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.12.dll
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.5.dll
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatOodle
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ASTC'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_DXT'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ETC2'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'AndroidClient'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ASTCClient'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_DXTClient'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_ETC2Client'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_Multi'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'Android_MultiClient'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'IOS'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'IOSClient'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'Linux'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxEditor'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxServer'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxClient'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxArm64'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxArm64Server'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'LinuxArm64Client'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'Mac'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacEditor'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacServer'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'MacClient'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'TVOS'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'TVOSClient'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'Windows'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsEditor'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsServer'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsClient'
+LogTargetPlatformManager: Display: Building Assets For Windows
+LogAudioDebug: Display: Lib vorbis DLL was dynamically loaded.
+LogDerivedDataCache: Display: Memory: Max Cache Size: -1 MB
+LogDerivedDataCache: Display: ../../../Engine/DerivedDataCache/Compressed.ddp: Opened pak cache for reading. (1559 MiB)
+LogZenServiceInstance: Display: Launching executable 'C:/Users/Rushit Vaghela/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe', working dir 'C:/Users/Rushit Vaghela/AppData/Local/UnrealEngine/Common/Zen/Install', data dir 'C:/Users/Rushit Vaghela/AppData/Local/UnrealEngine/Common/Zen/Data', args '--port 8558 --data-dir "C:\Users\Rushit Vaghela\AppData\Local\UnrealEngine\Common\Zen\Data" --http asio --gc-cache-duration-seconds 1209600 --gc-interval-seconds 21600 --gc-low-diskspace-threshold 2147483648 --quiet --http-forceloopback --owner-pid 37628 --child-id Zen_37628_Startup'
+LogZenServiceInstance: Display: Unreal Zen Storage Server HTTP service at [::1]:8558 status: OK!.
+LogDerivedDataCache: Display: ZenLocal: Using ZenServer HTTP service at http://[::1]:8558/ with namespace ue.ddc status: OK!.
+LogDerivedDataCache: Display: C:/Users/Rushit Vaghela/AppData/Local/UnrealEngine/Common/DerivedDataCache: Performance: Latency=0.04ms. RandomReadSpeed=416.75MBs, RandomWriteSpeed=109.78MBs. Assigned SpeedClass 'Local'
+LogShaderCompilers: Display: Using Local Shader Compiler with 13 workers.
+LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../../UnrealProject/OneBossFight/Intermediate/ShaderAutogen/PCD3D_SM6/AutogenShaderHeaders.ush
+LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+LogEditorDomain: Display: EditorDomain is Disabled
+LogAssetRegistry: Display: AssetDataGatherer spent 0.001s loading caches ../../../../../../UnrealProject/OneBossFight/Intermediate/CachedAssetRegistry_*.bin.
+LogStreaming: Display: FlushAsyncLoading(1): 1 QueuedPackages, 0 AsyncPackages
+LogDeviceProfileManager: Display: Deviceprofile LinuxArm64Editor not found.
+LogDeviceProfileManager: Display: Deviceprofile LinuxArm64 not found.
+LogCsvProfiler: Display: Metadata set : deviceprofile="WindowsEditor"
+LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness has reached state ExportsDone > CreateLinkerLoadExports, releasing request 8 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness with requester package /Engine/EngineMaterials/DefaultTextMaterialOpaque
+LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: ExportsDone) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness has reached state ExportsDone > CreateLinkerLoadExports, releasing request 9 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness with requester package /Engine/EngineMaterials/DefaultTextMaterialOpaque
+LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec has reached state ExportsDone > CreateLinkerLoadExports, releasing request 10 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec with requester package /Engine/EngineMaterials/DefaultTextMaterialOpaque
+LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: ExportsDone) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec has reached state ExportsDone > CreateLinkerLoadExports, releasing request 11 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec with requester package /Engine/EngineMaterials/DefaultTextMaterialOpaque
+LogStreaming: Display: Flushing package /Engine/EngineMaterials/WorldGridMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: ExportsDone) recursively from another package /Engine/EngineMaterials/WorldGridMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness has reached state ExportsDone > CreateLinkerLoadExports, releasing request 13 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness with requester package /Engine/EngineMaterials/WorldGridMaterial
+LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: ExportsDone) recursively from another package /Engine/EngineMaterials/WorldGridMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec has reached state ExportsDone > CreateLinkerLoadExports, releasing request 14 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec with requester package /Engine/EngineMaterials/WorldGridMaterial
+LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/WorldGridMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: ExportsDone) recursively from another package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness has reached state ExportsDone > CreateLinkerLoadExports, releasing request 16 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness with requester package /Engine/EngineMaterials/DefaultDeferredDecalMaterial
+LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: ExportsDone) recursively from another package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec has reached state ExportsDone > CreateLinkerLoadExports, releasing request 17 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec with requester package /Engine/EngineMaterials/DefaultDeferredDecalMaterial
+LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: ExportsDone) recursively from another package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness has reached state ExportsDone > CreateLinkerLoadExports, releasing request 19 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness with requester package /Engine/EngineMaterials/DefaultLightFunctionMaterial
+LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: ExportsDone) recursively from another package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec has reached state ExportsDone > CreateLinkerLoadExports, releasing request 20 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec with requester package /Engine/EngineMaterials/DefaultLightFunctionMaterial
+LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultPostProcessMaterial (state: WaitingForIo) recursively from another package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Merging postload groups of package /Engine/EngineMaterials/DefaultDiffuse with requester package /Engine/EngineMaterials/DefaultLightFunctionMaterial
+LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness (state: ExportsDone) recursively from another package /Engine/EngineMaterials/DefaultPostProcessMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness has reached state ExportsDone > CreateLinkerLoadExports, releasing request 22 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/Functions/Engine_MaterialFunctions01/Shading/PowerToRoughness with requester package /Engine/EngineMaterials/DefaultPostProcessMaterial
+LogStreaming: Display: Flushing package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec (state: ExportsDone) recursively from another package /Engine/EngineMaterials/DefaultPostProcessMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec has reached state ExportsDone > CreateLinkerLoadExports, releasing request 23 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec with requester package /Engine/EngineMaterials/DefaultPostProcessMaterial
+LogStreaming: Display: Merging postload groups of package /Engine/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat2Components with requester package /Engine/EngineMaterials/DefaultLightFunctionMaterial
+LogStreaming: Display: Package /Engine/EngineMaterials/DefaultPostProcessMaterial has reached state ExportsDone > CreateLinkerLoadExports, releasing request 21 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/EngineMaterials/DefaultPostProcessMaterial with requester package /Engine/EngineMaterials/DefaultLightFunctionMaterial
+LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultPostProcessMaterial (state: ExportsDone) recursively from another package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Package /Engine/EngineMaterials/DefaultPostProcessMaterial has reached state ExportsDone > CreateLinkerLoadExports, releasing request 24 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/EngineMaterials/DefaultPostProcessMaterial with requester package /Engine/EngineMaterials/DefaultLightFunctionMaterial
+LogStreaming: Display: Package /Engine/EngineMaterials/DefaultLightFunctionMaterial has reached state ExportsDone > CreateLinkerLoadExports, releasing request 18 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/EngineMaterials/DefaultLightFunctionMaterial with requester package /Engine/EngineMaterials/DefaultDeferredDecalMaterial
+LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultLightFunctionMaterial (state: ExportsDone) recursively from another package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Package /Engine/EngineMaterials/DefaultLightFunctionMaterial has reached state ExportsDone > CreateLinkerLoadExports, releasing request 25 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/EngineMaterials/DefaultLightFunctionMaterial with requester package /Engine/EngineMaterials/DefaultDeferredDecalMaterial
+LogStreaming: Display: Package /Engine/EngineMaterials/DefaultDeferredDecalMaterial has reached state ExportsDone > CreateLinkerLoadExports, releasing request 15 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/EngineMaterials/DefaultDeferredDecalMaterial with requester package /Engine/EngineMaterials/WorldGridMaterial
+LogStreaming: Display: Flushing package /Engine/EngineMaterials/DefaultDeferredDecalMaterial (state: ExportsDone) recursively from another package /Engine/EngineMaterials/WorldGridMaterial (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Package /Engine/EngineMaterials/DefaultDeferredDecalMaterial has reached state ExportsDone > CreateLinkerLoadExports, releasing request 26 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/EngineMaterials/DefaultDeferredDecalMaterial with requester package /Engine/EngineMaterials/WorldGridMaterial
+LogStreaming: Display: Merging postload groups of package /Engine/Functions/Engine_MaterialFunctions01/Opacity/CameraDepthFade with requester package /Engine/EngineMaterials/DefaultTextMaterialOpaque
+LogStreaming: Display: Merging postload groups of package /Engine/EngineMaterials/T_Default_Material_Grid_M with requester package /Engine/EngineMaterials/DefaultTextMaterialOpaque
+LogStreaming: Display: Merging postload groups of package /Engine/EngineMaterials/T_Default_Material_Grid_N with requester package /Engine/EngineMaterials/DefaultTextMaterialOpaque
+LogStreaming: Display: Package /Engine/EngineMaterials/WorldGridMaterial has reached state ExportsDone > CreateLinkerLoadExports, releasing request 12 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/EngineMaterials/WorldGridMaterial with requester package /Engine/EngineMaterials/DefaultTextMaterialOpaque
+LogStreaming: Display: Flushing package /Engine/EngineMaterials/WorldGridMaterial (state: ExportsDone) recursively from another package /Engine/EngineMaterials/DefaultTextMaterialOpaque (state: CreateLinkerLoadExports) will result in a partially loaded package to avoid a deadlock.
+LogStreaming: Display: Package /Engine/EngineMaterials/WorldGridMaterial has reached state ExportsDone > CreateLinkerLoadExports, releasing request 27 to allow recursive sync load to finish
+LogStreaming: Display: Merging postload groups of package /Engine/EngineMaterials/WorldGridMaterial with requester package /Engine/EngineMaterials/DefaultTextMaterialOpaque
+LogTextureEncodingSettings: Display: Texture Encode Speed: Final (cook).
+LogTextureEncodingSettings: Display: Oodle Texture Encode Speed settings: Fast: RDO Off Lambda=0, Effort=Normal Final: RDO Off Lambda=0, Effort=Normal
+LogTextureEncodingSettings: Display: Shared linear texture encoding: Disabled
+LogMeshReduction: Display: Using QuadricMeshReduction for automatic static mesh reduction
+LogMeshReduction: Display: Using SkeletalMeshReduction for automatic skeletal mesh reduction
+LogMeshReduction: Display: Using ProxyLODMeshReduction for automatic mesh merging
+LogMeshReduction: Display: No distributed automatic mesh merging module available
+LogVirtualization: Display: VirtualizationSystem name found in ini file: None
+LogVirtualization: Display: FNullVirtualizationSystem mounted, virtualization will be disabled
+LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize started...
+LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize took 2.472 ms
+LogMetaSound: Display: MetaSound Page Target Initialized to 'Default'
+LogAudio: Display: Registering Engine Module Parameter Interfaces...
+LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+LogStreaming: Display: AsyncLoading2 - NotifyRegistrationComplete: Registered 37346 public script object entries (1008.86 KB)
+LogStreaming: Display: AsyncLoading2 - Thread Started: false, IsInitialLoad: false
+LogCsvProfiler: Display: Metadata set : largeworldcoordinates="1"
+LogPython: Display: No enabled plugins with python dependencies found, skipping
+LogUnrealClaude: Warning: === UnrealClaude BUILD 20260107-1450 THREAD_TESTS_DISABLED ===
+LogCook: Display: CookProcessCount=1. CookMultiprocess is disabled and the cooker is running as a single process.
+LogCook: Display: CookSettings for Memory:
+	MemoryMaxUsedVirtual 0MiB
+	MemoryMaxUsedPhysical 0MiB
+	MemoryMinFreeVirtual 2048MiB
+	MemoryMinFreePhysical 2048MiB
+	MemoryTriggerGCAtPressureLevel None
+	UseSoftGC true (5/10)
+LogCook: Display: SkipOnlyEditorOnly is enabled, unsolicited packages will not be cooked unless they are referenced from the cooked version of the instigator package.
+LogAssetRegistry: Display: Triggering cache save on discovery complete
+LogEditorDomain: Display: Cycle detected in parents of class /Script/RigVMDeveloper.RigVMUnitNode. Allow flags for editordomain and iterative cooking will be invalid.
+LogEditorDomain: Display: Cycle detected in parents of class /Script/LiveLinkGraphNode.K2Node_EvaluateLiveLinkFrameWithSpecificRole. Allow flags for editordomain and iterative cooking will be invalid.
+LogZenStore: Display: Establishing oplog 'OneBossFight.3745abd7/EditorDomain'
+LogZenStore: Display: Zen project 'OneBossFight.3745abd7' already exists
+LogZenStore: Display: Zen oplog 'OneBossFight.3745abd7/EditorDomain' already exists
+LogCook: Display: Waiting for Asset Registry
+LogAssetRegistry: Display: Asset registry cache written as 0.0 MiB to ../../../../../../UnrealProject/OneBossFight/Intermediate/CachedAssetRegistry_*.bin
+LogCook: Display: FULL COOK: Neither -iterative nor -cookincremental were specified. Deleting previously cooked packages for platform Windows and recooking all packages discovered in the current cook.
+LogCook: Display: Sandbox cleanup took 0.098 seconds for platforms Windows
+LogCook: Display: Compiling global changed shaders for platform 'Windows'
+LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../../UnrealProject/OneBossFight/Intermediate/ShaderAutogen/PCD3D_SM5/AutogenShaderHeaders.ush
+LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+LogShaderLibrary: Display:
+LogShaderLibrary: Display: Shader Library 'Global' (PCD3D_SM6-PCD3D_SM6) Stats:
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display: Assets: 1, Unique Shadermaps: 473 (47300.00%)
+LogShaderLibrary: Display: Total Shaders: 7584, Unique Shaders: 7584 (100.00%)
+LogShaderLibrary: Display: Total Shader Size: 83.60mb, Unique Shaders Size: 83.60mb (100.00%)
+LogShaderLibrary: Display: === Extended info:
+LogShaderLibrary: Display: Minimum number of shaders in shadermap: 1
+LogShaderLibrary: Display: Median number of shaders in shadermap: 3
+LogShaderLibrary: Display: Maximum number of shaders in shadermap: 583
+LogShaderLibrary: Display: Number of shadermaps referencing top 10 most shared shaders:
+LogShaderLibrary: Display:     1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+LogShaderLibrary: Display: Unique shaders itemization (sorted by compressed size):
+LogShaderLibrary: Display: SF_Compute: 5124 shaders (67.56%), compressed size: 55.08 MB (11.01 KB avg per shader), uncompressed size: 71.82 MB (14.35 KB avg per shader)
+LogShaderLibrary: Display: SF_Pixel: 1879 shaders (24.78%), compressed size: 20.43 MB (11.13 KB avg per shader), uncompressed size: 26.93 MB (14.68 KB avg per shader)
+LogShaderLibrary: Display: SF_RayGen: 427 shaders (5.63%), compressed size: 7.65 MB (18.35 KB avg per shader), uncompressed size: 9.94 MB (23.83 KB avg per shader)
+LogShaderLibrary: Display: SF_Vertex: 124 shaders (1.64%), compressed size: 0.32 MB (2.67 KB avg per shader), uncompressed size: 0.40 MB (3.31 KB avg per shader)
+LogShaderLibrary: Display: SF_RayHitGroup: 17 shaders (0.22%), compressed size: 0.05 MB (3.31 KB avg per shader), uncompressed size: 0.06 MB (3.87 KB avg per shader)
+LogShaderLibrary: Display: SF_RayMiss: 8 shaders (0.11%), compressed size: 0.04 MB (5.71 KB avg per shader), uncompressed size: 0.06 MB (7.72 KB avg per shader)
+LogShaderLibrary: Display: SF_Geometry: 3 shaders (0.04%), compressed size: 0.01 MB (2.15 KB avg per shader), uncompressed size: 0.01 MB (3.31 KB avg per shader)
+LogShaderLibrary: Display: SF_WorkGraphRoot: 1 shaders (0.01%), compressed size: 0.00 MB (2.73 KB avg per shader), uncompressed size: 0.00 MB (3.35 KB avg per shader)
+LogShaderLibrary: Display: SF_RayCallable: 1 shaders (0.01%), compressed size: 0.00 MB (1.40 KB avg per shader), uncompressed size: 0.00 MB (1.56 KB avg per shader)
+LogShaderLibrary: Display: Textual dump saved to '../../../../../../UnrealProject/OneBossFight/Saved/Shaders/PCD3D_SM6-PCD3D_SM6/ShaderDebug-Global-PCD3D_SM6-PCD3D_SM6/Dump.txt'
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display:
+LogShaderLibrary: Display: Shader Library 'Global' (PCD3D_SM5-PCD3D_SM5) Stats:
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display: Assets: 1, Unique Shadermaps: 320 (32000.00%)
+LogShaderLibrary: Display: Total Shaders: 3926, Unique Shaders: 3915 (99.72%)
+LogShaderLibrary: Display: Total Shader Size: 12.33mb, Unique Shaders Size: 12.32mb (99.97%)
+LogShaderLibrary: Display: === Extended info:
+LogShaderLibrary: Display: Minimum number of shaders in shadermap: 1
+LogShaderLibrary: Display: Median number of shaders in shadermap: 3
+LogShaderLibrary: Display: Maximum number of shaders in shadermap: 303
+LogShaderLibrary: Display: Number of shadermaps referencing top 10 most shared shaders:
+LogShaderLibrary: Display:     3, 3, 2, 2, 2, 2, 2, 2, 2, 1
+LogShaderLibrary: Display: Unique shaders itemization (sorted by compressed size):
+LogShaderLibrary: Display: SF_Pixel: 1636 shaders (41.79%), compressed size: 6.28 MB (3.93 KB avg per shader), uncompressed size: 30.53 MB (19.11 KB avg per shader)
+LogShaderLibrary: Display: SF_Compute: 2177 shaders (55.61%), compressed size: 5.98 MB (2.81 KB avg per shader), uncompressed size: 22.83 MB (10.74 KB avg per shader)
+LogShaderLibrary: Display: SF_Vertex: 100 shaders (2.55%), compressed size: 0.06 MB (0.58 KB avg per shader), uncompressed size: 0.12 MB (1.26 KB avg per shader)
+LogShaderLibrary: Display: SF_Geometry: 2 shaders (0.05%), compressed size: 0.00 MB (0.49 KB avg per shader), uncompressed size: 0.00 MB (1.55 KB avg per shader)
+LogShaderLibrary: Display: Textual dump saved to '../../../../../../UnrealProject/OneBossFight/Saved/Shaders/PCD3D_SM5-PCD3D_SM5/ShaderDebug-Global-PCD3D_SM5-PCD3D_SM5/Dump.txt'
+LogShaderLibrary: Display: =================
+LogCook: Display: Discovering localized assets for cultures: en
+LogCook: Display: Found 0 localized assets
+LogCook: Display: Cooked packages 0 Packages Remain 1256 Total 1256
+LogCook: Display: Cook Diagnostics: OpenFileHandles=279, VirtualMemory=1809MiB, VirtualMemoryAvailable=17360MiB
+LogCook: Display: Garbage collection triggered (Soft). Triggered by conditions:
+  CookSettings.bUseSoftGC: Available physical memory 13163MiB is less than the current target for SoftGC 16347MiB.
+LogCookCommandlet: Display: GarbageCollection... (Soft GC)
+LogCook: Display: GarbageCollection Results:
+	Type: Soft
+	NumObjects:
+		Capacity:           25231360
+		Before GC:             46814
+		After GC:              46806
+		Freed by GC:               8
+	Virtual Memory:
+		Before GC:              1897 MB
+		After GC:               1897 MB
+		Freed by GC:               0 MB
+
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.11.dll
+LogTexture: Display: /Engine/EngineMaterials/Black_1x1_EXR_Texture_VT.Black_1x1_EXR_Texture_VT is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Engine/EngineMaterials/Black_1x1_EXR_Texture_VT.Black_1x1_EXR_Texture_VT is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Engine/EngineMaterials/BaseFlattenNormalMap_VT.BaseFlattenNormalMap_VT is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Engine/EngineMaterials/BaseFlattenNormalMap_VT.BaseFlattenNormalMap_VT is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Engine/EngineMaterials/BaseFlattenLinearColor_VT.BaseFlattenLinearColor_VT is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Engine/EngineMaterials/BaseFlattenLinearColor_VT.BaseFlattenLinearColor_VT is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Engine/EngineMaterials/BaseFlattenGrayscaleMap_VT.BaseFlattenGrayscaleMap_VT is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Engine/EngineMaterials/BaseFlattenGrayscaleMap_VT.BaseFlattenGrayscaleMap_VT is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Engine/EngineMaterials/BaseFlattenEmissiveMap_VT.BaseFlattenEmissiveMap_VT is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Engine/EngineMaterials/BaseFlattenEmissiveMap_VT.BaseFlattenEmissiveMap_VT is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Engine/EngineMaterials/BaseFlattenDiffuseMap_VT.BaseFlattenDiffuseMap_VT is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Engine/EngineMaterials/BaseFlattenDiffuseMap_VT.BaseFlattenDiffuseMap_VT is marked for virtual streaming but virtual texture streaming is not available.
+LogCook: Display: Cooked packages 234 Packages Remain 3099 Total 3333
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.10.dll
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/HealthPotion/Materials/M_DustInvis (0xD236A696ED87A129) /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/HealthPotion/Materials/M_DustInvis (0xD236A696ED87A129) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/HealthPotion/Textures/T_WispySmoke_V2_OCC+Alpha (0xBD6AE419F20823C9)
+LogMaterial: Display: Missing cached shadermap for M_DustInvis in PCD3D_SM6, Default, SM6, Game (DDC key hash: 7216233b655f82f0c9fa3cf417e2e2379eaf54a2), compiling.
+LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Effects\HealthPotion\Materials\M_DustInvis.uasset: Failed to compile Material for platform PCD3D_SM6, Default Material will be used in game.
+	(Node ParticleSubUV) Missing ParticleSubUV input texture
+
+LogMaterial: Display: Missing cached shadermap for M_DustInvis in PCD3D_SM5, Default, SM5, Game (DDC key hash: 646ca32c796dfa6b01d026630f02a67a2696ba2a), compiling.
+LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Effects\HealthPotion\Materials\M_DustInvis.uasset: Failed to compile Material for platform PCD3D_SM5, Default Material will be used in game.
+	(Node ParticleSubUV) Missing ParticleSubUV input texture
+
+LogMaterial: Warning: Cooking a material resource (in M_DustInvis hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogMaterial: Warning: Cooking a material resource (in M_DustInvis hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Mesh/MaskedReaper (0xB84A83B5CFB9BFF2) /Game/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Mesh/MaskedReaper (0xB84A83B5CFB9BFF2) - Skipping non mounted imported package /Game/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Materials/MHammerTencentMask (0x483ADA706981A587)
+LogTexture: Display: /Game/MS/Surfaces/Gravel_Ground_vi0maebg/T_Gravel_Ground_vi0maebg_N.T_Gravel_Ground_vi0maebg_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Gravel_Ground_vi0maebg/T_Gravel_Ground_vi0maebg_N.T_Gravel_Ground_vi0maebg_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Roman_Stone_Floor_thsjdfxq/T_Roman_Stone_Floor_thsjdfxq_D.T_Roman_Stone_Floor_thsjdfxq_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Roman_Stone_Floor_thsjdfxq/T_Roman_Stone_Floor_thsjdfxq_D.T_Roman_Stone_Floor_thsjdfxq_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/Materials/FogCards/Textures/T_flowmap_02.T_flowmap_02 is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/Materials/FogCards/Textures/T_flowmap_02.T_flowmap_02 is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Roman_Stone_Floor_thsjdfxq/T_RomanStoneFloor_thsjdfxq_ORDp.T_RomanStoneFloor_thsjdfxq_ORDp is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Roman_Stone_Floor_thsjdfxq/T_RomanStoneFloor_thsjdfxq_ORDp.T_RomanStoneFloor_thsjdfxq_ORDp is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Roman_Stone_Floor_thsjdfxq/T_Roman_Stone_Floor_thsjdfxq_N.T_Roman_Stone_Floor_thsjdfxq_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Roman_Stone_Floor_thsjdfxq/T_Roman_Stone_Floor_thsjdfxq_N.T_Roman_Stone_Floor_thsjdfxq_N is marked for virtual streaming but virtual texture streaming is not available.
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/ReplenishmentCast/Materials/M_DustInvis (0x5798C5165D437866) /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/ReplenishmentCast/Materials/M_DustInvis (0x5798C5165D437866) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/ReplenishmentCast/Textures/T_WispySmoke_V2_OCC+Alpha (0xF47C8A66051C8C4D)
+LogMaterial: Display: Missing cached shadermap for M_DustInvis in PCD3D_SM6, Default, SM6, Game (DDC key hash: 7216233b655f82f0c9fa3cf417e2e2379eaf54a2), compiling.
+LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MagicCombatSystem\DemoAssets\ReplenishmentCast\Materials\M_DustInvis.uasset: Failed to compile Material for platform PCD3D_SM6, Default Material will be used in game.
+	(Node ParticleSubUV) Missing ParticleSubUV input texture
+
+LogMaterial: Display: Missing cached shadermap for M_DustInvis in PCD3D_SM5, Default, SM5, Game (DDC key hash: 646ca32c796dfa6b01d026630f02a67a2696ba2a), compiling.
+LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MagicCombatSystem\DemoAssets\ReplenishmentCast\Materials\M_DustInvis.uasset: Failed to compile Material for platform PCD3D_SM5, Default Material will be used in game.
+	(Node ParticleSubUV) Missing ParticleSubUV input texture
+
+LogMaterial: Warning: Cooking a material resource (in M_DustInvis hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogMaterial: Warning: Cooking a material resource (in M_DustInvis hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogCook: Display: Cooked packages 834 Packages Remain 2499 Total 3333
+LogCook: Display: Cooked packages 834 Packages Remain 2499 Total 3333
+LogTexture: Display: /Game/CustomAssets/BrassPlate_00/T_BrassPlate_00_Packed.T_BrassPlate_00_Packed is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/BrassPlate_00/T_BrassPlate_00_Packed.T_BrassPlate_00_Packed is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Churchruin_Slab_Stone_Fine_13_xjvtccc/T_Medieval_Slab_Stone_Fine_13_xjvtccc_N.T_Medieval_Slab_Stone_Fine_13_xjvtccc_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Churchruin_Slab_Stone_Fine_13_xjvtccc/T_Medieval_Slab_Stone_Fine_13_xjvtccc_N.T_Medieval_Slab_Stone_Fine_13_xjvtccc_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Dead_Tree_qlEtl/T_Dead_Tree_qlEtl_D.T_Dead_Tree_qlEtl_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Dead_Tree_qlEtl/T_Dead_Tree_qlEtl_D.T_Dead_Tree_qlEtl_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Candles/T_Candles_01_D.T_Candles_01_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Candles/T_Candles_01_D.T_Candles_01_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Worn_Wooden_Beam_tgnhcaafa/T_Worn_Wooden_Beam_tgnhcaafa_D.T_Worn_Wooden_Beam_tgnhcaafa_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Worn_Wooden_Beam_tgnhcaafa/T_Worn_Wooden_Beam_tgnhcaafa_D.T_Worn_Wooden_Beam_tgnhcaafa_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Worn_Wooden_Beam_tgnhcaafa/T_Worn_Wooden_Beam_tgnhcaafa_N.T_Worn_Wooden_Beam_tgnhcaafa_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Worn_Wooden_Beam_tgnhcaafa/T_Worn_Wooden_Beam_tgnhcaafa_N.T_Worn_Wooden_Beam_tgnhcaafa_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Roman_Column_wj3keakqx/T_Roman_Column_wj3keakqx_N.T_Roman_Column_wj3keakqx_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Roman_Column_wj3keakqx/T_Roman_Column_wj3keakqx_N.T_Roman_Column_wj3keakqx_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Rocks_ubordbyda/T_Limestone_Rocks_ubordbyda_N.T_Limestone_Rocks_ubordbyda_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Rocks_ubordbyda/T_Limestone_Rocks_ubordbyda_N.T_Limestone_Rocks_ubordbyda_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Rubble_ubxbejwda/T_Limestone_Rubble_ubxbejwda_N.T_Limestone_Rubble_ubxbejwda_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Rubble_ubxbejwda/T_Limestone_Rubble_ubxbejwda_N.T_Limestone_Rubble_ubxbejwda_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Brick_Ruins_Window_Kit_xjotbgviy/T_Modular_Brick_Ruins_Window_Kit_xjotbgviy_N.T_Modular_Brick_Ruins_Window_Kit_xjotbgviy_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Brick_Ruins_Window_Kit_xjotbgviy/T_Modular_Brick_Ruins_Window_Kit_xjotbgviy_N.T_Modular_Brick_Ruins_Window_Kit_xjotbgviy_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Old_Wooden_Crate_vkgrchzga/T_Old_Wooden_Crate_vkgrchzga_D.T_Old_Wooden_Crate_vkgrchzga_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Old_Wooden_Crate_vkgrchzga/T_Old_Wooden_Crate_vkgrchzga_D.T_Old_Wooden_Crate_vkgrchzga_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Old_Wooden_Crate_vkgrchzga/T_Old_Wooden_Crate_vkgrchzga_N.T_Old_Wooden_Crate_vkgrchzga_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Old_Wooden_Crate_vkgrchzga/T_Old_Wooden_Crate_vkgrchzga_N.T_Old_Wooden_Crate_vkgrchzga_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/Materials/FogCards/Textures/T_flowmap_01.T_flowmap_01 is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/Materials/FogCards/Textures/T_flowmap_01.T_flowmap_01 is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Gravel_Ground_vi0maebg/T_GravelGround_vi0maebg_ORDp.T_GravelGround_vi0maebg_ORDp is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Gravel_Ground_vi0maebg/T_GravelGround_vi0maebg_ORDp.T_GravelGround_vi0maebg_ORDp is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Gravel_Ground_vi0maebg/T_Gravel_Ground_vi0maebg_D.T_Gravel_Ground_vi0maebg_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Gravel_Ground_vi0maebg/T_Gravel_Ground_vi0maebg_D.T_Gravel_Ground_vi0maebg_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/Materials/FogCards/Textures/T_SD_PFog_Packed.T_SD_PFog_Packed is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/Materials/FogCards/Textures/T_SD_PFog_Packed.T_SD_PFog_Packed is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/Materials/FogCards/Textures/T_SD_ProceduralClouds_Normal_01.T_SD_ProceduralClouds_Normal_01 is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/Materials/FogCards/Textures/T_SD_ProceduralClouds_Normal_01.T_SD_ProceduralClouds_Normal_01 is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/Materials/FogCards/Textures/T_SD_ProceduralClouds_BaseColor.T_SD_ProceduralClouds_BaseColor is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/Materials/FogCards/Textures/T_SD_ProceduralClouds_BaseColor.T_SD_ProceduralClouds_BaseColor is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MSPresets/MSVTTextures/T_BlackPlaceholder.T_BlackPlaceholder is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MSPresets/MSVTTextures/T_BlackPlaceholder.T_BlackPlaceholder is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MSPresets/MSVTTextures/T_WhitePlaceholder.T_WhitePlaceholder is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MSPresets/MSVTTextures/T_WhitePlaceholder.T_WhitePlaceholder is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MSPresets/MSVTTextures/T_Placeholder_Normal.T_Placeholder_Normal is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MSPresets/MSVTTextures/T_Placeholder_Normal.T_Placeholder_Normal is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Rusty_Hanging_Chain_wcwsfgudw/T_RustyHangingChain_wcwsfhodw_DpR.T_RustyHangingChain_wcwsfhodw_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Rusty_Hanging_Chain_wcwsfgudw/T_RustyHangingChain_wcwsfhodw_DpR.T_RustyHangingChain_wcwsfhodw_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Rusty_Hanging_Chain_wcwsfgudw/T_Rusty_Hanging_Chain_wcwsfhodw_N.T_Rusty_Hanging_Chain_wcwsfhodw_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Rusty_Hanging_Chain_wcwsfgudw/T_Rusty_Hanging_Chain_wcwsfhodw_N.T_Rusty_Hanging_Chain_wcwsfhodw_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Concrete_Rubble_Pile_ujriaadga/T_ConcreteRubblePile_ujriaadga_DpR.T_ConcreteRubblePile_ujriaadga_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Concrete_Rubble_Pile_ujriaadga/T_ConcreteRubblePile_ujriaadga_DpR.T_ConcreteRubblePile_ujriaadga_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Concrete_Rubble_Pile_ujriaadga/T_Concrete_Rubble_Pile_ujriaadga_D.T_Concrete_Rubble_Pile_ujriaadga_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Concrete_Rubble_Pile_ujriaadga/T_Concrete_Rubble_Pile_ujriaadga_D.T_Concrete_Rubble_Pile_ujriaadga_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Concrete_Rubble_Pile_ujriaadga/T_Concrete_Rubble_Pile_ujriaadga_N.T_Concrete_Rubble_Pile_ujriaadga_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Concrete_Rubble_Pile_ujriaadga/T_Concrete_Rubble_Pile_ujriaadga_N.T_Concrete_Rubble_Pile_ujriaadga_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Broken_Brick_Walls_Kit_xjotaibiy/T_Modular_Broken_Brick_Walls_Kit_xjotaibiy_N.T_Modular_Broken_Brick_Walls_Kit_xjotaibiy_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Broken_Brick_Walls_Kit_xjotaibiy/T_Modular_Broken_Brick_Walls_Kit_xjotaibiy_N.T_Modular_Broken_Brick_Walls_Kit_xjotaibiy_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Broken_Brick_Walls_Kit_xjotaibiy/T_Modular_Broken_Brick_Walls_Kit_xjotaibiy_D.T_Modular_Broken_Brick_Walls_Kit_xjotaibiy_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Broken_Brick_Walls_Kit_xjotaibiy/T_Modular_Broken_Brick_Walls_Kit_xjotaibiy_D.T_Modular_Broken_Brick_Walls_Kit_xjotaibiy_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Candles/T_Candles_02_N.T_Candles_02_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Candles/T_Candles_02_N.T_Candles_02_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Candles/T_Candles_02_R.T_Candles_02_R is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Candles/T_Candles_02_R.T_Candles_02_R is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Candles/T_Candles_02_D.T_Candles_02_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Candles/T_Candles_02_D.T_Candles_02_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/White_Button_Mushroom_pdww2/T_White_Button_Mushroom_pdww2_D.T_White_Button_Mushroom_pdww2_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/White_Button_Mushroom_pdww2/T_White_Button_Mushroom_pdww2_D.T_White_Button_Mushroom_pdww2_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Rusty_Hanging_Chain_wcwsfgudw/T_Rusty_Hanging_Chain_wcwsfhodw_D.T_Rusty_Hanging_Chain_wcwsfhodw_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Rusty_Hanging_Chain_wcwsfgudw/T_Rusty_Hanging_Chain_wcwsfhodw_D.T_Rusty_Hanging_Chain_wcwsfhodw_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Limestone_ue2pfetc/T_Limestone_ue2pfetc_D.T_Limestone_ue2pfetc_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Limestone_ue2pfetc/T_Limestone_ue2pfetc_D.T_Limestone_ue2pfetc_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Limestone_ue2pfetc/T_Limestone_ue2pfetc_ORDp.T_Limestone_ue2pfetc_ORDp is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Limestone_ue2pfetc/T_Limestone_ue2pfetc_ORDp.T_Limestone_ue2pfetc_ORDp is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Soil_Ground_xdhhdhl/T_Soil_Ground_xdhhdhl_N.T_Soil_Ground_xdhhdhl_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Soil_Ground_xdhhdhl/T_Soil_Ground_xdhhdhl_N.T_Soil_Ground_xdhhdhl_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Brick_Ruins_Kit_xjotbhkiy/T_Modular_Brick_Ruins_Kit_xjotbhkiy_N.T_Modular_Brick_Ruins_Kit_xjotbhkiy_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Brick_Ruins_Kit_xjotbhkiy/T_Modular_Brick_Ruins_Kit_xjotbhkiy_N.T_Modular_Brick_Ruins_Kit_xjotbhkiy_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Brick_Ruins_Kit_xjotbhkiy/T_Modular_Brick_Ruins_Kit_xjotbhkiy_D.T_Modular_Brick_Ruins_Kit_xjotbhkiy_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Brick_Ruins_Kit_xjotbhkiy/T_Modular_Brick_Ruins_Kit_xjotbhkiy_D.T_Modular_Brick_Ruins_Kit_xjotbhkiy_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Brick_Ruins_Window_Kit_xjotbgviy/T_Modular_Brick_Ruins_Window_Kit_xjotbgviy_D.T_Modular_Brick_Ruins_Window_Kit_xjotbgviy_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Brick_Ruins_Window_Kit_xjotbgviy/T_Modular_Brick_Ruins_Window_Kit_xjotbgviy_D.T_Modular_Brick_Ruins_Window_Kit_xjotbgviy_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Beach_Cliff_xdhicfv/T_BeachCliff_xdhicfv_ORDp.T_BeachCliff_xdhicfv_ORDp is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Beach_Cliff_xdhicfv/T_BeachCliff_xdhicfv_ORDp.T_BeachCliff_xdhicfv_ORDp is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Beach_Cliff_xdhicfv/T_Beach_Cliff_xdhicfv_N.T_Beach_Cliff_xdhicfv_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Beach_Cliff_xdhicfv/T_Beach_Cliff_xdhicfv_N.T_Beach_Cliff_xdhicfv_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Beach_Cliff_xdhicfv/T_Beach_Cliff_xdhicfv_D.T_Beach_Cliff_xdhicfv_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/Surfaces/Beach_Cliff_xdhicfv/T_Beach_Cliff_xdhicfv_D.T_Beach_Cliff_xdhicfv_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Roman_Stone_Coffin_wj3kdjqqx/T_Roman_Stone_Coffin_wj3kdjqqx_D.T_Roman_Stone_Coffin_wj3kdjqqx_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Roman_Stone_Coffin_wj3kdjqqx/T_Roman_Stone_Coffin_wj3kdjqqx_D.T_Roman_Stone_Coffin_wj3kdjqqx_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Roman_Stone_Coffin_wj3kdjqqx/T_Roman_Stone_Coffin_wj3kdjqqx_N.T_Roman_Stone_Coffin_wj3kdjqqx_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Roman_Stone_Coffin_wj3kdjqqx/T_Roman_Stone_Coffin_wj3kdjqqx_N.T_Roman_Stone_Coffin_wj3kdjqqx_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Lantern_00/T_Lantern_00_D.T_Lantern_00_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Lantern_00/T_Lantern_00_D.T_Lantern_00_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Lantern_00/T_Lantern_00_N.T_Lantern_00_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Lantern_00/T_Lantern_00_N.T_Lantern_00_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Lantern_00/T_Lantern_00_Packed.T_Lantern_00_Packed is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Lantern_00/T_Lantern_00_Packed.T_Lantern_00_Packed is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/White_Button_Mushroom_pdww2/T_White_Button_Mushroom_pdww2_N.T_White_Button_Mushroom_pdww2_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/White_Button_Mushroom_pdww2/T_White_Button_Mushroom_pdww2_N.T_White_Button_Mushroom_pdww2_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/White_Button_Mushroom_pdww2/T_WhiteButtonMushroom_pdww2_DpR.T_WhiteButtonMushroom_pdww2_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/White_Button_Mushroom_pdww2/T_WhiteButtonMushroom_pdww2_DpR.T_WhiteButtonMushroom_pdww2_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Wooden_Table_ulzrcgoaw/T_WoodenTable_ulzrcgoaw_DpR.T_WoodenTable_ulzrcgoaw_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Wooden_Table_ulzrcgoaw/T_WoodenTable_ulzrcgoaw_DpR.T_WoodenTable_ulzrcgoaw_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Ruins_Wall_vdcjbgo/T_Modular_Ruins_Wall_vdcjbgo_D.T_Modular_Ruins_Wall_vdcjbgo_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Ruins_Wall_vdcjbgo/T_Modular_Ruins_Wall_vdcjbgo_D.T_Modular_Ruins_Wall_vdcjbgo_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Ruins_Wall_vdcjbgo/T_Modular_Ruins_Wall_vdcjbgo_N.T_Modular_Ruins_Wall_vdcjbgo_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Ruins_Wall_vdcjbgo/T_Modular_Ruins_Wall_vdcjbgo_N.T_Modular_Ruins_Wall_vdcjbgo_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Rubble_ubxbejwda/T_LimestoneRubble_ubxbejwda_DpR.T_LimestoneRubble_ubxbejwda_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Rubble_ubxbejwda/T_LimestoneRubble_ubxbejwda_DpR.T_LimestoneRubble_ubxbejwda_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Wooden_Table_ulzrcgoaw/T_Wooden_Table_ulzrcgoaw_N.T_Wooden_Table_ulzrcgoaw_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Wooden_Table_ulzrcgoaw/T_Wooden_Table_ulzrcgoaw_N.T_Wooden_Table_ulzrcgoaw_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Rubble_ubxbejwda/T_Limestone_Rubble_ubxbejwda_D.T_Limestone_Rubble_ubxbejwda_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Rubble_ubxbejwda/T_Limestone_Rubble_ubxbejwda_D.T_Limestone_Rubble_ubxbejwda_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Brick_Ruins_Kit_xjotbejiy/T_Modular_Brick_Ruins_Base_Enterance_Kit_xjotbejiy_D.T_Modular_Brick_Ruins_Base_Enterance_Kit_xjotbejiy_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Brick_Ruins_Kit_xjotbejiy/T_Modular_Brick_Ruins_Base_Enterance_Kit_xjotbejiy_D.T_Modular_Brick_Ruins_Base_Enterance_Kit_xjotbejiy_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Brick_Ruins_Kit_xjotbejiy/T_Modular_Brick_Ruins_Base_Enterance_Kit_xjotbejiy_N.T_Modular_Brick_Ruins_Base_Enterance_Kit_xjotbejiy_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Brick_Ruins_Kit_xjotbejiy/T_Modular_Brick_Ruins_Base_Enterance_Kit_xjotbejiy_N.T_Modular_Brick_Ruins_Base_Enterance_Kit_xjotbejiy_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Brick_Ruins_Base_Kit_xjotbfniy/T_Modular_Brick_Ruins_Base_Kit_xjotbfniy_N.T_Modular_Brick_Ruins_Base_Kit_xjotbfniy_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Brick_Ruins_Base_Kit_xjotbfniy/T_Modular_Brick_Ruins_Base_Kit_xjotbfniy_N.T_Modular_Brick_Ruins_Base_Kit_xjotbfniy_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Brick_Ruins_Base_Kit_xjotbfniy/T_Modular_Brick_Ruins_Base_Kit_xjotbfniy_D.T_Modular_Brick_Ruins_Base_Kit_xjotbfniy_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Modular_Brick_Ruins_Base_Kit_xjotbfniy/T_Modular_Brick_Ruins_Base_Kit_xjotbfniy_D.T_Modular_Brick_Ruins_Base_Kit_xjotbfniy_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Churchruin_Slab_Stone_Fine_09_xjvrcij/T_Medieval_Slab_Stone_Fine_09_xjvrcij_N.T_Medieval_Slab_Stone_Fine_09_xjvrcij_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Churchruin_Slab_Stone_Fine_09_xjvrcij/T_Medieval_Slab_Stone_Fine_09_xjvrcij_N.T_Medieval_Slab_Stone_Fine_09_xjvrcij_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Churchruin_Slab_Stone_Fine_09_xjvrcij/T_Medieval_Slab_Stone_Fine_09_xjvrcij_D.T_Medieval_Slab_Stone_Fine_09_xjvrcij_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Churchruin_Slab_Stone_Fine_09_xjvrcij/T_Medieval_Slab_Stone_Fine_09_xjvrcij_D.T_Medieval_Slab_Stone_Fine_09_xjvrcij_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Churchruin_Slab_Stone_Fine_10_xjvrcjc/T_Medieval_Slab_Stone_Fine_10_xjvrcjc_D.T_Medieval_Slab_Stone_Fine_10_xjvrcjc_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Churchruin_Slab_Stone_Fine_10_xjvrcjc/T_Medieval_Slab_Stone_Fine_10_xjvrcjc_D.T_Medieval_Slab_Stone_Fine_10_xjvrcjc_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Churchruin_Slab_Stone_Fine_10_xjvrcjc/T_Medieval_Slab_Stone_Fine_10_xjvrcjc_N.T_Medieval_Slab_Stone_Fine_10_xjvrcjc_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Churchruin_Slab_Stone_Fine_10_xjvrcjc/T_Medieval_Slab_Stone_Fine_10_xjvrcjc_N.T_Medieval_Slab_Stone_Fine_10_xjvrcjc_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Roman_Column_wj3keakqx/T_Roman_Column_wj3keakqx_D.T_Roman_Column_wj3keakqx_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Roman_Column_wj3keakqx/T_Roman_Column_wj3keakqx_D.T_Roman_Column_wj3keakqx_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Roman_Column_wj3keakqx/T_RomanColumn_wj3keakqx_DpR.T_RomanColumn_wj3keakqx_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Roman_Column_wj3keakqx/T_RomanColumn_wj3keakqx_DpR.T_RomanColumn_wj3keakqx_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Rocks_ubordbyda/T_LimestoneRocks_ubordbyda_DpR.T_LimestoneRocks_ubordbyda_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Rocks_ubordbyda/T_LimestoneRocks_ubordbyda_DpR.T_LimestoneRocks_ubordbyda_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Rocks_ubordbyda/T_Limestone_Rocks_ubordbyda_D.T_Limestone_Rocks_ubordbyda_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Rocks_ubordbyda/T_Limestone_Rocks_ubordbyda_D.T_Limestone_Rocks_ubordbyda_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Sword_uitlbiaga/T_Sword_uitlbiaga_N.T_Sword_uitlbiaga_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Sword_uitlbiaga/T_Sword_uitlbiaga_N.T_Sword_uitlbiaga_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Sword_uitlbiaga/T_Sword_uitlbiaga_D.T_Sword_uitlbiaga_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Sword_uitlbiaga/T_Sword_uitlbiaga_D.T_Sword_uitlbiaga_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Sword_uitlbiaga/T_Sword_uitlbiaga_DpR.T_Sword_uitlbiaga_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Sword_uitlbiaga/T_Sword_uitlbiaga_DpR.T_Sword_uitlbiaga_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Wooden_Table_ulzrcgoaw/T_Wooden_Table_ulzrcgoaw_D.T_Wooden_Table_ulzrcgoaw_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Wooden_Table_ulzrcgoaw/T_Wooden_Table_ulzrcgoaw_D.T_Wooden_Table_ulzrcgoaw_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Candles/T_Candles_01_R.T_Candles_01_R is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Candles/T_Candles_01_R.T_Candles_01_R is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Worn_Wooden_Beam_tgnhcaafa/T_WornWoodenBeam_tgnhcaafa_DpR.T_WornWoodenBeam_tgnhcaafa_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Worn_Wooden_Beam_tgnhcaafa/T_WornWoodenBeam_tgnhcaafa_DpR.T_WornWoodenBeam_tgnhcaafa_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Churchruin_Slab_Stone_Fine_16_xjvtdhu/T_Medieval_Slab_Stone_Fine_16_xjvtdhu_N.T_Medieval_Slab_Stone_Fine_16_xjvtdhu_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Churchruin_Slab_Stone_Fine_16_xjvtdhu/T_Medieval_Slab_Stone_Fine_16_xjvtdhu_N.T_Medieval_Slab_Stone_Fine_16_xjvtdhu_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Church_Ruin_Column_01_xjsofces/T_Medieval_Church_Ruin_External_Column_01_xjsofces_N.T_Medieval_Church_Ruin_External_Column_01_xjsofces_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Church_Ruin_Column_01_xjsofces/T_Medieval_Church_Ruin_External_Column_01_xjsofces_N.T_Medieval_Church_Ruin_External_Column_01_xjsofces_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Church_Ruin_Column_01_xjsofces/T_Medieval_Church_Ruin_External_Column_01_xjsofces_D.T_Medieval_Church_Ruin_External_Column_01_xjsofces_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Church_Ruin_Column_01_xjsofces/T_Medieval_Church_Ruin_External_Column_01_xjsofces_D.T_Medieval_Church_Ruin_External_Column_01_xjsofces_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Wooden_Barrel_tmgmfeefa/T_Wooden_Barrel_tmgmfeefa_N.T_Wooden_Barrel_tmgmfeefa_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Wooden_Barrel_tmgmfeefa/T_Wooden_Barrel_tmgmfeefa_N.T_Wooden_Barrel_tmgmfeefa_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Wooden_Barrel_tmgmfeefa/T_Wooden_Barrel_tmgmfeefa_D.T_Wooden_Barrel_tmgmfeefa_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Wooden_Barrel_tmgmfeefa/T_Wooden_Barrel_tmgmfeefa_D.T_Wooden_Barrel_tmgmfeefa_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_ChurchRuin_Floor_Slab_Stone_xjvkfbega/T_Medieval_Floor_Slab_Stone_xjvkfbega_N.T_Medieval_Floor_Slab_Stone_xjvkfbega_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_ChurchRuin_Floor_Slab_Stone_xjvkfbega/T_Medieval_Floor_Slab_Stone_xjvkfbega_N.T_Medieval_Floor_Slab_Stone_xjvkfbega_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_ChurchRuin_Floor_Slab_Stone_xjvkfbega/T_Medieval_Floor_SlabStone_xjvkfbega_D.T_Medieval_Floor_SlabStone_xjvkfbega_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_ChurchRuin_Floor_Slab_Stone_xjvkfbega/T_Medieval_Floor_SlabStone_xjvkfbega_D.T_Medieval_Floor_SlabStone_xjvkfbega_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Pile_Of_Chains_uc1ufamhx/T_Pile_Of_Chains_uc1ufamhx_N.T_Pile_Of_Chains_uc1ufamhx_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Pile_Of_Chains_uc1ufamhx/T_Pile_Of_Chains_uc1ufamhx_N.T_Pile_Of_Chains_uc1ufamhx_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Pile_Of_Chains_uc1ufamhx/T_Pile_Of_Chains_uc1ufamhx_D.T_Pile_Of_Chains_uc1ufamhx_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Pile_Of_Chains_uc1ufamhx/T_Pile_Of_Chains_uc1ufamhx_D.T_Pile_Of_Chains_uc1ufamhx_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Pile_Of_Chains_uc1ufamhx/T_PileOfChains_uc1ufamhx_DpR.T_PileOfChains_uc1ufamhx_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Pile_Of_Chains_uc1ufamhx/T_PileOfChains_uc1ufamhx_DpR.T_PileOfChains_uc1ufamhx_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Dead_Tree_qlEtl/T_Dead_Tree_qlEtl_N.T_Dead_Tree_qlEtl_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Dead_Tree_qlEtl/T_Dead_Tree_qlEtl_N.T_Dead_Tree_qlEtl_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Dead_Tree_qlEtl/T_DeadTree_qlEtl_DpR.T_DeadTree_qlEtl_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Dead_Tree_qlEtl/T_DeadTree_qlEtl_DpR.T_DeadTree_qlEtl_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Skull_wk5iect/T_Skull_wk5iect_N.T_Skull_wk5iect_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Skull_wk5iect/T_Skull_wk5iect_N.T_Skull_wk5iect_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Skull_wk5iect/T_Skull_wk5iect_D.T_Skull_wk5iect_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Skull_wk5iect/T_Skull_wk5iect_D.T_Skull_wk5iect_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Skull_wk5iect/T_Skull_wk5iect_DpR.T_Skull_wk5iect_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Skull_wk5iect/T_Skull_wk5iect_DpR.T_Skull_wk5iect_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Slab_ubxbadpda/T_Limestone_Slab_ubxbadpda_D.T_Limestone_Slab_ubxbadpda_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Slab_ubxbadpda/T_Limestone_Slab_ubxbadpda_D.T_Limestone_Slab_ubxbadpda_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Slab_ubxbadpda/T_LimestoneSlab_ubxbadpda_DpR.T_LimestoneSlab_ubxbadpda_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Slab_ubxbadpda/T_LimestoneSlab_ubxbadpda_DpR.T_LimestoneSlab_ubxbadpda_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Slab_ubxbadpda/T_Limestone_Slab_ubxbadpda_N.T_Limestone_Slab_ubxbadpda_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Limestone_Slab_ubxbadpda/T_Limestone_Slab_ubxbadpda_N.T_Limestone_Slab_ubxbadpda_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Candles/T_Candles_01_N.T_Candles_01_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/Candles/T_Candles_01_N.T_Candles_01_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Worn_Wooden_Beam_tgmsdc0fa/T_Worn_Wooden_Beam_tgmsdc0fa_N.T_Worn_Wooden_Beam_tgmsdc0fa_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Worn_Wooden_Beam_tgmsdc0fa/T_Worn_Wooden_Beam_tgmsdc0fa_N.T_Worn_Wooden_Beam_tgmsdc0fa_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Worn_Wooden_Beam_tgmsdc0fa/T_WornWoodenBeam_tgmsdc0fa_DpR.T_WornWoodenBeam_tgmsdc0fa_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Worn_Wooden_Beam_tgmsdc0fa/T_WornWoodenBeam_tgmsdc0fa_DpR.T_WornWoodenBeam_tgmsdc0fa_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Worn_Wooden_Beam_tgmsdc0fa/T_Worn_Wooden_Beam_tgmsdc0fa_D.T_Worn_Wooden_Beam_tgmsdc0fa_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Worn_Wooden_Beam_tgmsdc0fa/T_Worn_Wooden_Beam_tgmsdc0fa_D.T_Worn_Wooden_Beam_tgmsdc0fa_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Churchruin_Slab_Stone_Fine_13_xjvtccc/T_Medieval_Slab_Stone_Fine_13_xjvtccc_D.T_Medieval_Slab_Stone_Fine_13_xjvtccc_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Churchruin_Slab_Stone_Fine_13_xjvtccc/T_Medieval_Slab_Stone_Fine_13_xjvtccc_D.T_Medieval_Slab_Stone_Fine_13_xjvtccc_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Church_Ruin_Column_02_xjtrfc1s/T_Medieval_Church_Ruin_External_Column_02_xjtrfc1s_D.T_Medieval_Church_Ruin_External_Column_02_xjtrfc1s_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Church_Ruin_Column_02_xjtrfc1s/T_Medieval_Church_Ruin_External_Column_02_xjtrfc1s_D.T_Medieval_Church_Ruin_External_Column_02_xjtrfc1s_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Church_Ruin_Column_02_xjtrfc1s/T_Medieval_Church_Ruin_External_Column_02_xjtrfc1s_N.T_Medieval_Church_Ruin_External_Column_02_xjtrfc1s_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Medieval_Church_Ruin_Column_02_xjtrfc1s/T_Medieval_Church_Ruin_External_Column_02_xjtrfc1s_N.T_Medieval_Church_Ruin_External_Column_02_xjtrfc1s_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Wooden_Barrel_tmgmfeefa/T_WoodenBarrel_tmgmfeefa_DpR.T_WoodenBarrel_tmgmfeefa_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Wooden_Barrel_tmgmfeefa/T_WoodenBarrel_tmgmfeefa_DpR.T_WoodenBarrel_tmgmfeefa_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Cement_Rubble_rinet/T_Cement_Rubble_rinet_D.T_Cement_Rubble_rinet_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Cement_Rubble_rinet/T_Cement_Rubble_rinet_D.T_Cement_Rubble_rinet_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Cement_Rubble_rinet/T_Cement_Rubble_rinet_N.T_Cement_Rubble_rinet_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Cement_Rubble_rinet/T_Cement_Rubble_rinet_N.T_Cement_Rubble_rinet_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Cement_Rubble_rinet/T_CementRubble_rinet_DpR.T_CementRubble_rinet_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Cement_Rubble_rinet/T_CementRubble_rinet_DpR.T_CementRubble_rinet_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Dead_Tree_rlthg/T_DeadTree_rlthg_DpR.T_DeadTree_rlthg_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Dead_Tree_rlthg/T_DeadTree_rlthg_DpR.T_DeadTree_rlthg_DpR is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Dead_Tree_rlthg/T_Dead_Tree_rlthg_D.T_Dead_Tree_rlthg_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Dead_Tree_rlthg/T_Dead_Tree_rlthg_D.T_Dead_Tree_rlthg_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Dead_Tree_rlthg/T_Dead_Tree_rlthg_N.T_Dead_Tree_rlthg_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MS/3D/Dead_Tree_rlthg/T_Dead_Tree_rlthg_N.T_Dead_Tree_rlthg_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/BrassPlate_00/T_BrassPlate_00_N.T_BrassPlate_00_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/BrassPlate_00/T_BrassPlate_00_N.T_BrassPlate_00_N is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/BrassPlate_00/T_BrassPlate_00_D.T_BrassPlate_00_D is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/CustomAssets/BrassPlate_00/T_BrassPlate_00_D.T_BrassPlate_00_D is marked for virtual streaming but virtual texture streaming is not available.
+LogCook: Display: Cooked packages 1422 Packages Remain 1911 Total 3333
+LogTexture: Display: /Game/MSPresets/MSVTTextures/T_DefaultDiffuse.T_DefaultDiffuse is marked for virtual streaming but virtual texture streaming is not available.
+LogTexture: Display: /Game/MSPresets/MSVTTextures/T_DefaultDiffuse.T_DefaultDiffuse is marked for virtual streaming but virtual texture streaming is not available.
+LogCook: Display: Cooked packages 1502 Packages Remain 1831 Total 3333
+LogCook: Display: Cooked packages 1566 Packages Remain 1767 Total 3333
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/Bonfire/Materials/M_Greystone_Ultimate_SpeedLines (0x5E34C38FB2B6B63C) /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/Bonfire/Materials/M_Greystone_Ultimate_SpeedLines (0x5E34C38FB2B6B63C) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/Bonfire/Textures/T_Cave_Noise_14 (0x96F352E29B25F2FD)
+LogMaterial: Display: Missing cached shadermap for M_Greystone_Ultimate_SpeedLines in PCD3D_SM6, Default, SM6, Game (DDC key hash: 529df2db3dc070470f9d93b7fa365c309e5b0d73), compiling.
+LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Effects\Bonfire\Materials\M_Greystone_Ultimate_SpeedLines.uasset: Failed to compile Material for platform PCD3D_SM6, Default Material will be used in game.
+	(Node TextureSample) Texture Sample> Missing input texture
+	(Node TextureSample) Texture Sample> Missing input texture
+
+LogMaterial: Display: Missing cached shadermap for M_Greystone_Ultimate_SpeedLines in PCD3D_SM5, Default, SM5, Game (DDC key hash: 76f26fff5289e6b41d49f1662282ba04e036764d), compiling.
+LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Effects\Bonfire\Materials\M_Greystone_Ultimate_SpeedLines.uasset: Failed to compile Material for platform PCD3D_SM5, Default Material will be used in game.
+	(Node TextureSample) Texture Sample> Missing input texture
+	(Node TextureSample) Texture Sample> Missing input texture
+
+LogMaterial: Warning: Cooking a material resource (in M_Greystone_Ultimate_SpeedLines hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogMaterial: Warning: Cooking a material resource (in M_Greystone_Ultimate_SpeedLines hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogCook: Display: Cooked packages 1706 Packages Remain 1627 Total 3333
+LogCook: Display: Cook Diagnostics: OpenFileHandles=4886, VirtualMemory=3482MiB, VirtualMemoryAvailable=15573MiB
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/GideonVFX/Materials/Energy/M_Swirl_Plasma (0xA95298627DFDF041) /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/GideonVFX/Materials/Energy/M_Swirl_Plasma (0xA95298627DFDF041) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/GideonVFX/Textures/Energy/T_ElectricalBolt_3 (0xF4AA500013B44FC9)
+LogMaterial: Display: Missing cached shadermap for M_Swirl_Plasma in PCD3D_SM6, Default, SM6, Game (DDC key hash: cc05f0a4e4efbfe612cfe5a88ffa6b7e85097731), compiling.
+LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MagicCombatSystem\DemoAssets\GideonVFX\Materials\Energy\M_Swirl_Plasma.uasset: Failed to compile Material for platform PCD3D_SM6, Default Material will be used in game.
+	(Node TextureSample) Texture Sample> Missing input texture
+
+LogMaterial: Display: Missing cached shadermap for M_Swirl_Plasma in PCD3D_SM5, Default, SM5, Game (DDC key hash: a4c0f8c6d0426bd5cd53d3065c0821343b70df44), compiling.
+LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MagicCombatSystem\DemoAssets\GideonVFX\Materials\Energy\M_Swirl_Plasma.uasset: Failed to compile Material for platform PCD3D_SM5, Default Material will be used in game.
+	(Node TextureSample) Texture Sample> Missing input texture
+
+LogMaterial: Warning: Cooking a material resource (in M_Swirl_Plasma hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogMaterial: Warning: Cooking a material resource (in M_Swirl_Plasma hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogCook: Display: Cooked packages 2073 Packages Remain 1260 Total 3333
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/FX/SwordTrailExp (0xCA1D1C16198C864B) /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/FX/SwordTrailExp (0xCA1D1C16198C864B) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/FengMaoFX/VectorFields/VF_TurbulentNoise_1_55 (0xFA0048E682DB4F18)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/Bonfire/P_Greystone_HToKill_Trail_V2_Local (0x8E7EF961E58AC574) /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/Bonfire/P_Greystone_HToKill_Trail_V2_Local (0x8E7EF961E58AC574) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/Bonfire/VectorFields/VF_TurbulentNoise_1_55 (0x9401CF1A1C474C81)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/Bonfire/P_AngelGlowFallen (0x866D929E0E135322) /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/Bonfire/P_AngelGlowFallen (0x866D929E0E135322) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/Bonfire/VectorFields/VF_TurbulentNoise_1_55 (0x9401CF1A1C474C81)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/NovabornSparks/P_Greystone_Novaborn_Primary_Impact (0x9C08B022C7F9A813) /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/NovabornSparks/P_Greystone_Novaborn_Primary_Impact (0x9C08B022C7F9A813) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/NovabornSparks/VectorFields/VF_RandomNoise_01_90 (0xE52B52A1E96A9CC4)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Materials/Abilities/M_IggyScorch_Flame_Spit (0xBE2B945395284A87) /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Materials/Abilities/M_IggyScorch_Flame_Spit (0xBE2B945395284A87) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Textures/Water/T_Water_N_2 (0x37C34008C9E252DE)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Materials/Abilities/M_IggyScorch_Flame_Spit_GPU (0x5D1C80D18B9022E3) /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Materials/Abilities/M_IggyScorch_Flame_Spit_GPU (0x5D1C80D18B9022E3) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Textures/Water/T_Water_N_2 (0x37C34008C9E252DE)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/FengMaoFX/Materials/Environment/MM_Marble_Metal_Arch (0x12BE452A312D0229) /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/FengMaoFX/Materials/Environment/MM_Marble_Metal_Arch (0x12BE452A312D0229) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/FengMaoFX/Materials/Environment/ML_Dirt_Path_1 (0xCB36898A8D127009)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/FengMaoFX/Materials/Environment/MM_Marble_Metal_Arch (0x12BE452A312D0229) /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/FengMaoFX/Materials/Environment/MM_Marble_Metal_Arch (0x12BE452A312D0229) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/FengMaoFX/Materials/Environment/ML_Metal_Patina_2 (0x86B95B89FC1FE17F)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/FX/SwordTrail (0x98CD1E4280278E8B) /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/FX/SwordTrail (0x98CD1E4280278E8B) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/FengMaoFX/VectorFields/VF_TurbulentNoise_1_55 (0xFA0048E682DB4F18)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Particles/Recall/P_IggyScorch_Recall_FireBelch (0x277B0AECC5BB951A) /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Particles/Recall/P_IggyScorch_Recall_FireBelch (0x277B0AECC5BB951A) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/VectorFields/VF_Nuke_84 (0xC695AC20DEC42509)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/Particles/Freeze/P_Aurora_Freeze_Whrilwind (0x6F2185F44537B5A) /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/Particles/Freeze/P_Aurora_Freeze_Whrilwind (0x6F2185F44537B5A) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/VectorFields/VF_Vortex_6 (0x9AEEEEE3CAD9B138)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/Particles/Ultimate/P_Aurora_Ultimate_Explode_Cheap (0x6AA354F7DD9CAF2E) /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/Particles/Ultimate/P_Aurora_Ultimate_Explode_Cheap (0x6AA354F7DD9CAF2E) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/VectorFields/VF_RandomNoise_01_90 (0x6ACE5D6551AD030B)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/GideonVFX/Particles/ProjectileMeteor/P_Gideon_RMB_HitWorld (0x7178D954231B6F38) /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/GideonVFX/Particles/ProjectileMeteor/P_Gideon_RMB_HitWorld (0x7178D954231B6F38) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/GideonVFX/VectorFields/VF_RandomNoise_01_90 (0xE253FC7BF41BF92D)
+LogCook: Display: Cooked packages 2384 Packages Remain 949 Total 3333
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/Particles/Dash/P_Aurora_Dash_WarmUp (0x1808EDA64F1DA2E) /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/Particles/Dash/P_Aurora_Dash_WarmUp (0x1808EDA64F1DA2E) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/VectorFields/VF_Vortex_6 (0x9AEEEEE3CAD9B138)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/Bonfire/P_Fury_ActiveFallen (0x6B46D5B3A1A750D6) /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/Bonfire/P_Fury_ActiveFallen (0x6B46D5B3A1A750D6) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/Bonfire/VectorFields/VF_TurbulentNoise_1_55 (0x9401CF1A1C474C81)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/PickupActor/Particles/P_Greystone_Deflect_Looping (0x66D0E3F8B544BAC0) /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/PickupActor/Particles/P_Greystone_Deflect_Looping (0x66D0E3F8B544BAC0) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/PickupActor/VectorFields/VF_RandomNoise_01_90 (0x65F1914ACD4E196A)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Paragon/Materials/M_Greystone_shield (0x966703A42E5D4C43) /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Paragon/Materials/M_Greystone_shield (0x966703A42E5D4C43) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Paragon/MaterialLayers/Leather/ML_Dark_Leather02_Brown_3 (0xBB56F4F9618D07C7)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Paragon/Materials/M_Greystone_ToughSword (0xB063197D6B2B1889) /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Paragon/Materials/M_Greystone_ToughSword (0xB063197D6B2B1889) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Paragon/MaterialLayers/Leather/ML_Dark_Leather02_Brown_3 (0xBB56F4F9618D07C7)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/Particles/Ultimate/P_Aurora_Ultimate_Frozen (0xBB7B28AEADD5437C) /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/Particles/Ultimate/P_Aurora_Ultimate_Frozen (0xBB7B28AEADD5437C) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/VectorFields/VF_RandomNoise_01_90 (0x6ACE5D6551AD030B)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/Particles/Freeze/P_Aurora_Freeze_Segment (0xD5F98144D76CE763) /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/Particles/Freeze/P_Aurora_Freeze_Segment (0xD5F98144D76CE763) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/VectorFields/VF_RandomNoise_01_90 (0x6ACE5D6551AD030B)
+LogStreaming: Display: ImportPackages: SkipPackage: /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/Particles/Freeze/P_Aurora_Freeze_Rooted (0xCC7A08DF193FEF28) /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/Particles/Freeze/P_Aurora_Freeze_Rooted (0xCC7A08DF193FEF28) - Skipping non mounted imported package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/AuroraVFX/VectorFields/VF_RandomNoise_01_90 (0x6ACE5D6551AD030B)
+LogCook: Display: Cooked packages 2485 Packages Remain 848 Total 3333
+LogMaterial: Display: Missing cached shadermap for M_Greystone_shield in PCD3D_SM6, Low, SM6, Game (DDC key hash: e073f0b8547c5163b89761dad37f4a18c63a0811), compiling.
+LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Paragon\Materials\M_Greystone_shield.uasset: Failed to compile Material for platform PCD3D_SM6, Default Material will be used in game.
+	Missing Material Function
+
+LogMaterial: Display: Missing cached shadermap for M_Greystone_shield in PCD3D_SM6, Default, SM6, Game (DDC key hash: cfe5c511e7fa8405b0ef9698c4f88d2ffe1e4b0a), compiling.
+LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Paragon\Materials\M_Greystone_shield.uasset: Failed to compile Material for platform PCD3D_SM6, Default Material will be used in game.
+	Missing Material Function
+
+LogMaterial: Display: Missing cached shadermap for M_Greystone_shield in PCD3D_SM5, Low, SM5, Game (DDC key hash: 026d3aed44aa436d1b1dab7bba359674a4985cca), compiling.
+LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Paragon\Materials\M_Greystone_shield.uasset: Failed to compile Material for platform PCD3D_SM5, Default Material will be used in game.
+	Missing Material Function
+
+LogMaterial: Display: Missing cached shadermap for M_Greystone_shield in PCD3D_SM5, Default, SM5, Game (DDC key hash: 41a56590fc4096e602c2f495b8533b87014c60d5), compiling.
+LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Paragon\Materials\M_Greystone_shield.uasset: Failed to compile Material for platform PCD3D_SM5, Default Material will be used in game.
+	Missing Material Function
+
+LogMaterial: Display: Missing cached shadermap for M_Greystone_ToughSword in PCD3D_SM6, Low, SM6, Game (DDC key hash: 9ef615867382448e6ff3dfaf02da637e2c740107), compiling.
+LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Paragon\Materials\M_Greystone_ToughSword.uasset: Failed to compile Material for platform PCD3D_SM6, Default Material will be used in game.
+	Missing Material Function
+
+LogMaterial: Display: Missing cached shadermap for M_Greystone_ToughSword in PCD3D_SM6, Default, SM6, Game (DDC key hash: 75d5af1735501eb5c24f5f8f60d68c8eed96daa5), compiling.
+LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Paragon\Materials\M_Greystone_ToughSword.uasset: Failed to compile Material for platform PCD3D_SM6, Default Material will be used in game.
+	Missing Material Function
+
+LogMaterial: Display: Missing cached shadermap for M_Greystone_ToughSword in PCD3D_SM5, Low, SM5, Game (DDC key hash: fd61f6c2cb0535b1a6c59a1aa7ac5daac48ba53b), compiling.
+LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Paragon\Materials\M_Greystone_ToughSword.uasset: Failed to compile Material for platform PCD3D_SM5, Default Material will be used in game.
+	Missing Material Function
+
+LogMaterial: Display: Missing cached shadermap for M_Greystone_ToughSword in PCD3D_SM5, Default, SM5, Game (DDC key hash: c2965d30690aaba25707ab27eef9c0f51108c53a), compiling.
+LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Paragon\Materials\M_Greystone_ToughSword.uasset: Failed to compile Material for platform PCD3D_SM5, Default Material will be used in game.
+	Missing Material Function
+
+LogMaterial: Warning: Cooking a material resource (in M_Greystone_shield hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogMaterial: Warning: Cooking a material resource (in M_Greystone_shield hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogMaterial: Warning: Cooking a material resource (in M_Greystone_shield hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogMaterial: Warning: Cooking a material resource (in M_Greystone_shield hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogMaterial: Warning: Cooking a material resource (in M_Greystone_ToughSword hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogMaterial: Warning: Cooking a material resource (in M_Greystone_ToughSword hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogMaterial: Warning: Cooking a material resource (in M_Greystone_ToughSword hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogMaterial: Warning: Cooking a material resource (in M_Greystone_ToughSword hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogSkeletalMesh: Display: [AssetLog] C:\UnrealProject\OneBossFight\Content\ParagonSevarog\Characters\Heroes\Sevarog\Meshes\Sevarog.uasset: Find and fix some bad tangent! please re-import this skeletal mesh asset to fix the issue. The shading of the skeletal mesh will be bad and faceted.
+LogCook: Display: Cooked packages 2592 Packages Remain 741 Total 3333
+LogCook: Display: Cooked packages 2752 Packages Remain 581 Total 3333
+LogCook: Display: Cooked packages 2864 Packages Remain 469 Total 3333
+LogCook: Display: Cooked packages 3008 Packages Remain 325 Total 3333
+LogCook: Display: Cooked packages 3152 Packages Remain 181 Total 3333
+LogCook: Display: Cooked packages 3288 Packages Remain 46 Total 3334
+LogCook: Display: Cooked packages 3334 Packages Remain 0 Total 3334
+LogCook: Display: Cook Diagnostics: OpenFileHandles=6517, VirtualMemory=3752MiB, VirtualMemoryAvailable=15296MiB
+LogCook: Display: Finishing up...
+LogAssetRegistryGenerator: Display: Saving asset registry v17.
+LogAssetRegistryGenerator: Display: Generated development asset registry C:/UnrealProject/OneBossFight/Saved/Cooked/Windows/OneBossFight/Metadata/DevelopmentAssetRegistry.bin num assets 3902, size is 2567.58kb, XxHash64[LE] = 0x8CAF401EDC6A22D, waited on hash 0.00 seconds
+LogAssetRegistryGenerator: Display: Generated asset registry num assets 3895, size is 1215.15kb
+LogShaderLibrary: Display:
+LogShaderLibrary: Display: Shader Library 'OneBossFight' (PCD3D_SM6-PCD3D_SM6) Stats:
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display: Assets: 337, Unique Shadermaps: 309 (91.69%)
+LogShaderLibrary: Display: Total Shaders: 8243, Unique Shaders: 5803 (70.40%)
+LogShaderLibrary: Display: Total Shader Size: 62.14mb, Unique Shaders Size: 47.38mb (76.24%)
+LogShaderLibrary: Display: === Extended info:
+LogShaderLibrary: Display: Minimum number of shaders in shadermap: 1
+LogShaderLibrary: Display: Median number of shaders in shadermap: 20
+LogShaderLibrary: Display: Maximum number of shaders in shadermap: 645
+LogShaderLibrary: Display: Number of shadermaps referencing top 10 most shared shaders:
+LogShaderLibrary: Display:     180, 115, 61, 55, 48, 43, 38, 32, 30, 26
+LogShaderLibrary: Display: Unique shaders itemization (sorted by compressed size):
+LogShaderLibrary: Display: SF_Pixel: 2638 shaders (45.46%), compressed size: 15.87 MB (6.16 KB avg per shader), uncompressed size: 20.74 MB (8.05 KB avg per shader)
+LogShaderLibrary: Display: SF_Vertex: 1815 shaders (31.28%), compressed size: 14.31 MB (8.08 KB avg per shader), uncompressed size: 19.50 MB (11.00 KB avg per shader)
+LogShaderLibrary: Display: SF_RayHitGroup: 784 shaders (13.51%), compressed size: 9.57 MB (12.50 KB avg per shader), uncompressed size: 12.20 MB (15.94 KB avg per shader)
+LogShaderLibrary: Display: SF_Compute: 484 shaders (8.34%), compressed size: 6.82 MB (14.43 KB avg per shader), uncompressed size: 9.09 MB (19.23 KB avg per shader)
+LogShaderLibrary: Display: SF_Mesh: 75 shaders (1.29%), compressed size: 0.71 MB (9.75 KB avg per shader), uncompressed size: 0.87 MB (11.91 KB avg per shader)
+LogShaderLibrary: Display: SF_RayMiss: 4 shaders (0.07%), compressed size: 0.08 MB (19.31 KB avg per shader), uncompressed size: 0.11 MB (27.16 KB avg per shader)
+LogShaderLibrary: Display: SF_Geometry: 2 shaders (0.03%), compressed size: 0.01 MB (5.30 KB avg per shader), uncompressed size: 0.01 MB (7.49 KB avg per shader)
+LogShaderLibrary: Display: SF_RayCallable: 1 shaders (0.02%), compressed size: 0.00 MB (4.66 KB avg per shader), uncompressed size: 0.01 MB (5.90 KB avg per shader)
+LogShaderLibrary: Display: Textual dump saved to '../../../../../../UnrealProject/OneBossFight/Saved/Shaders/PCD3D_SM6-PCD3D_SM6/ShaderDebug-OneBossFight-PCD3D_SM6-PCD3D_SM6/Dump.txt'
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display:
+LogShaderLibrary: Display: Shader Library 'OneBossFight' (PCD3D_SM5-PCD3D_SM5) Stats:
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display: Assets: 337, Unique Shadermaps: 308 (91.39%)
+LogShaderLibrary: Display: Total Shaders: 5265, Unique Shaders: 3655 (69.42%)
+LogShaderLibrary: Display: Total Shader Size: 12.65mb, Unique Shaders Size: 9.28mb (73.37%)
+LogShaderLibrary: Display: === Extended info:
+LogShaderLibrary: Display: Minimum number of shaders in shadermap: 1
+LogShaderLibrary: Display: Median number of shaders in shadermap: 12
+LogShaderLibrary: Display: Maximum number of shaders in shadermap: 248
+LogShaderLibrary: Display: Number of shadermaps referencing top 10 most shared shaders:
+LogShaderLibrary: Display:     65, 51, 47, 40, 38, 34, 30, 24, 20, 20
+LogShaderLibrary: Display: Unique shaders itemization (sorted by compressed size):
+LogShaderLibrary: Display: SF_Vertex: 1514 shaders (41.42%), compressed size: 4.24 MB (2.87 KB avg per shader), uncompressed size: 13.42 MB (9.08 KB avg per shader)
+LogShaderLibrary: Display: SF_Pixel: 2025 shaders (55.40%), compressed size: 4.21 MB (2.13 KB avg per shader), uncompressed size: 12.57 MB (6.36 KB avg per shader)
+LogShaderLibrary: Display: SF_Compute: 114 shaders (3.12%), compressed size: 0.82 MB (7.39 KB avg per shader), uncompressed size: 3.65 MB (32.81 KB avg per shader)
+LogShaderLibrary: Display: SF_Geometry: 2 shaders (0.05%), compressed size: 0.00 MB (1.66 KB avg per shader), uncompressed size: 0.01 MB (5.37 KB avg per shader)
+LogShaderLibrary: Display: Textual dump saved to '../../../../../../UnrealProject/OneBossFight/Saved/Shaders/PCD3D_SM5-PCD3D_SM5/ShaderDebug-OneBossFight-PCD3D_SM5-PCD3D_SM5/Dump.txt'
+LogShaderLibrary: Display: =================
+LogCook: Display: Finalize package store(s)...
+LogCook: Display: Cook by the book total time in tick 50.184795s total time 55.921638
+LogCook: Display: Peak Used virtual 5783 MiB Peak Used physical 5547 MiB
+LogCook: Display: Packages Cooked: 3327, Packages Iteratively Skipped: 0, Packages Skipped by Platform: 7, Total Packages: 3334
+LogCookStats: Display: Hierarchy Timer Information:
+LogCookStats: Display:   Root: 0.000s (0)
+LogCookStats: Display:     CleanSandbox: 0.098s (1)
+LogCookStats: Display:     CollectFilesToCook: 0.032s (1)
+LogCookStats: Display:       CookModificationDelegate: 0.000s (1)
+LogCookStats: Display:     GenerateLongPackageName: 0.003s (1)
+LogCookStats: Display:     TickMainCookLoop: 50.185s (2)
+LogCookStats: Display:       PumpPollables: 0.000s (1)
+LogCookStats: Display:       PumpRequests: 0.083s (105)
+LogCookStats: Display:       LoadPackageForCooking: 36.818s (3334)
+LogCookStats: Display:       ValidateSourcePackage: 0.001s (3334)
+LogCookStats: Display:       SavingPackages: 13.129s (363)
+LogCookStats: Display:         PollPendingCookedPlatformDatas: 0.600s (41922)
+LogCookStats: Display:         PrepareSave: 0.664s (38923)
+LogCookStats: Display:         PrecachePlatformDataForNextPackage: 1.519s (3333)
+LogCookStats: Display:           PrepareSave: 1.517s (4054)
+LogCookStats: Display:         SaveCookedPackage: 9.533s (3334)
+LogCookStats: Display:           GEditorSavePackage: 9.304s (3334)
+LogCookStats: Display:             VerifyCanCookPackage: 0.019s (3327)
+LogCookStats: Display:         ClearAllCachedCookedPlatformData: 0.459s (3334)
+LogCookStats: Display:       PostLoadPackageFixup: 0.000s (2)
+LogCookStats: Display:     CookByTheBookFinished: 0.986s (1)
+LogCookStats: Display:       SavingCurrentIniSettings: 0.069s (1)
+LogCookStats: Display:         ProcessingAccessedStrings: 0.009s (1)
+LogCookStats: Display:       ChunkGeneration: 0.022s (1)
+LogCookStats: Display:       CalculateReferencedSet: 0.000s (1)
+LogCookStats: Display:       FinishPopulateShaderLibrary: 0.001s (1)
+LogCookStats: Display:       GeneratorPreSave: 0.001s (1)
+LogCookStats: Display:       BuildChunkManifest: 0.098s (1)
+LogCookStats: Display:         FixupPackageDependenciesForChunks: 0.011s (1)
+LogCookStats: Display:       SaveManifests: 0.000s (1)
+LogCookStats: Display:       SaveAssetRegistry: 0.210s (1)
+LogCookStats: Display:       WriteCookerOpenOrder: 0.187s (1)
+LogCookStats: Display:       WriteCookMetadata: 0.002s (1)
+LogCookStats: Display:       WriteReferencedSet: 0.007s (1)
+LogCookStats: Display:       FinalizePackageStore: 0.014s (1)
+LogCookStats: Display: Misc Cook Stats
+LogCookStats: Display: ===============
+LogCookStats: Display: Niagara
+LogCookStats: Display:     NiagaraScriptTranslationCount=0
+LogCookStats: Display:     NiagaraCpuScriptCompileCount=0
+LogCookStats: Display:     NiagaraCpuScriptDdcCacheHitCount=0
+LogCookStats: Display:     NiagaraCpuScriptDdcCacheMissCount=0
+LogCookStats: Display:     NiagaraGpuScriptCompileCount=0
+LogCookStats: Display:     NiagaraGpuScriptDdcCacheHitCount=0
+LogCookStats: Display:     NiagaraGpuScriptDdcCacheMissCount=0
+LogCookStats: Display:     NiagaraSystemWaitForCompilationCompleteTime=0.060526
+LogCookStats: Display: NiagaraShader.Misc
+LogCookStats: Display:     ShadersCompiled=0
+LogCookStats: Display: ComputeKernelShader.Misc
+LogCookStats: Display:     ShadersCompiled=0
+LogCookStats: Display: ShaderCompiler
+LogCookStats: Display:     BlockingTimeSec=0.000162
+LogCookStats: Display:     AsyncCompileTimeSec=0.000000
+LogCookStats: Display:     GlobalBeginCompileShaderTimeSec=0.000000
+LogCookStats: Display:     GlobalBeginCompileShaderCalls=0
+LogCookStats: Display:     ProcessAsyncResultsTimeSec=0.000325
+LogCookStats: Display: GlobalShader.Misc
+LogCookStats: Display:     ShadersCompiled=0
+LogCookStats: Display: Material
+LogCookStats: Display:     FinishCacheShadersSec=0.516529
+LogCookStats: Display: Package.Load
+LogCookStats: Display:     NumRequestedLoads=2859
+LogCookStats: Display:     NumPackagesLoaded=6238
+LogCookStats: Display:     NumInlineLoads=3379
+LogCookStats: Display:     LoadPackageTimeSec=37.324454
+LogCookStats: Display: Package.Save
+LogCookStats: Display:     NumPackagesIterativelySkipped=0
+LogCookStats: Display:     NumPackagesSaved=3334
+LogCookStats: Display:     SavePackageTimeSec=9.170531
+LogCookStats: Display:     TagPackageExportsPresaveTimeSec=0.000000
+LogCookStats: Display:     TagPackageExportsTimeSec=0.000000
+LogCookStats: Display:     FullyLoadLoadersTimeSec=0.000000
+LogCookStats: Display:     ResetLoadersTimeSec=0.000000
+LogCookStats: Display:     TagPackageExportsGetObjectsWithOuter=0.000000
+LogCookStats: Display:     TagPackageExportsGetObjectsWithMarks=0.000000
+LogCookStats: Display:     SerializeImportsTimeSec=0.000000
+LogCookStats: Display:     SortExportsSeekfreeInnerTimeSec=0.000000
+LogCookStats: Display:     SerializeExportsTimeSec=0.000000
+LogCookStats: Display:     SerializeBulkDataTimeSec=0.031256
+LogCookStats: Display:     AsyncWriteTimeSec=0.000000
+LogCookStats: Display:     MBWritten=0.000000
+LogCookStats: Display: CookOnTheFlyServer
+LogCookStats: Display:     PeakRequestQueueSize=3333
+LogCookStats: Display:     PeakLoadQueueSize=1116
+LogCookStats: Display:     PeakSaveQueueSize=596
+LogCookStats: Display: Package.DifferentPackagesSizeMBPerAsset
+LogCookStats: Display: Package.NumberOfDifferencesInPackagesPerAsset
+LogCookStats: Display: Package.PackageDifferencesSizeMBPerAsset
+LogCookStats: Display: Package.DiffTotal
+LogCookStats: Display:     NumberOfDifferentPackages=0
+LogCookStats: Display:     DifferentPackagesSizeMB=0.000000
+LogCookStats: Display:     NumberOfDifferencesInPackages=0
+LogCookStats: Display:     PackageDifferencesSizeMB=0.000000
+LogCookStats: Display: UnversionedProperties
+LogCookStats: Display:     SavedStructs=0
+LogCookStats: Display:     SavedMB=0
+LogCookStats: Display:     EquivalentTaggedMB=0
+LogCookStats: Display:     CompressionRatio=-nan(ind)
+LogCookStats: Display:     BitfieldWasteKB=0
+LogCookStats: Display:
+LogCookStats: Display: Cook Profile
+LogCookStats: Display: ============
+LogCookStats: Display:  0.CookWallTimeSec=65.014397
+LogCookStats: Display:  0. 0.StartupWallTimeSec=8.743554
+LogCookStats: Display:  0. 1.StartCookByTheBookTimeSec=5.046723
+LogCookStats: Display:  0. 1. 0.BlockOnAssetRegistryTimeSec=0.221834
+LogCookStats: Display:  0. 1. 1.GameCookModificationDelegateTimeSec=0.000198
+LogCookStats: Display:  0. 2.TickCookOnTheSideTimeSec=0.080533
+LogCookStats: Display:  0. 2. 0.TickCookOnTheSideLoadPackagesTimeSec=36.819098
+LogCookStats: Display:  0. 2. 1.TickCookOnTheSideSaveCookedPackageTimeSec=9.533149
+LogCookStats: Display:  0. 2. 1. 0.TickCookOnTheSideResolveRedirectorsTimeSec=0.000000
+LogCookStats: Display:  0. 2. 2.TickCookOnTheSidePrepareSaveTimeSec=2.183655
+LogCookStats: Display:  0. 3.TickLoopGCTimeSec=0.036269
+LogCookStats: Display:  0. 4.TickLoopRecompileShaderRequestsTimeSec=0.000000
+LogCookStats: Display:  0. 5.TickLoopShaderProcessAsyncResultsTimeSec=0.000004
+LogCookStats: Display:  0. 6.TickLoopProcessDeferredCommandsTimeSec=0.000002
+LogCookStats: Display:  0. 7.TickLoopTickCommandletStatsTimeSec=0.000001
+LogCookStats: Display:  0. 8.TickLoopFlushRenderingCommandsTimeSec=0.000102
+LogCookStats: Display:  0. 9.ShaderFlushTimeSec=0.000000
+LogCookStats: Display:  0. 10.ValidationTimeSec=0.001532
+LogCookStats: Display:  1.CookParameters=
+LogCookStats: Display:  1. 0.TargetPlatforms=Windows
+LogCookStats: Display:  1. 1.CookProject=OneBossFight
+LogCookStats: Display:  1. 2.CookCultures=
+LogCookStats: Display:  1. 3.IsCookAll=false
+LogCookStats: Display:  1. 4.IsCookOnTheFly=false
+LogCookStats: Display:  1. 5.IsIterativeCook=false
+LogCookStats: Display:  1. 6.IsUnversioned=true
+LogCookStats: Display:  1. 7.CookLabel=
+LogCookStats: Display:  1. 8.IsFastCook=false
+LogCookStats: Display:
+LogCookStats: Display: DDC Summary Stats
+LogCookStats: Display: =================
+LogCookStats: Display: BackEnd         =InstalledDerivedDataBackendGraph
+LogCookStats: Display: HasLocalCache   =      true
+LogCookStats: Display: HasSharedCache  =     false
+LogCookStats: Display: HasCloudCache   =     false
+LogCookStats: Display: HasZenCache     =      true
+LogCookStats: Display: TotalGetHits    =     11512
+LogCookStats: Display: TotalGetMisses  =        28
+LogCookStats: Display: TotalGets       =     11540
+LogCookStats: Display: TotalGetHitPct  =  0.997574
+LogCookStats: Display: GetMissPct      =  0.002426
+LogCookStats: Display: TotalPutHits    =        62
+LogCookStats: Display: TotalPutMisses  =         0
+LogCookStats: Display: TotalPuts       =        62
+LogCookStats: Display: TotalPutHitPct  =  1.000000
+LogCookStats: Display: PutMissPct      =  0.000000
+LogCookStats: Display: LocalGetHits    =     10602
+LogCookStats: Display: LocalGetMisses  =        28
+LogCookStats: Display: LocalGetTotal   =     10630
+LogCookStats: Display: LocalGetHitPct  =  0.997366
+LogCookStats: Display: SharedGetHits   =         0
+LogCookStats: Display: SharedGetTotal  =         0
+LogCookStats: Display: SharedGetHitPct =  0.000000
+LogCookStats: Display: ZenLocalGetHits =     10602
+LogCookStats: Display: ZenLocalGetTotal=     10630
+LogCookStats: Display: ZenLocalGetHitPct=  0.997366
+LogCookStats: Display: ZenRemoteGetHits=         0
+LogCookStats: Display: ZenRemoteGetTotal=         0
+LogCookStats: Display: ZenRemoteGetHitPct=  0.000000
+LogCookStats: Display: CloudGetHits    =         0
+LogCookStats: Display: CloudGetTotal   =         0
+LogCookStats: Display: CloudGetHitPct  =  0.000000
+LogCookStats: Display: LocalLatency    =  3.279455
+LogCookStats: Display: LocalReadSpeed  =397.891791
+LogCookStats: Display: LocalWriteSpeed =  0.108948
+LogCookStats: Display: SharedLatency   =  0.000000
+LogCookStats: Display: SharedReadSpeed =  0.000000
+LogCookStats: Display: SharedWriteSpeed=  0.000000
+LogCookStats: Display: CloudLatency    =  0.000000
+LogCookStats: Display: CloudReadSpeed  =  0.000000
+LogCookStats: Display: CloudWriteSpeed =  0.000000
+LogCookStats: Display:
+LogCookStats: Display: DDC Resource Stats
+LogCookStats: Display: =======================================================================================================
+LogCookStats: Display: Asset Type                          Total Time (Sec)  GameThread Time (Sec)  Assets Built  MB Processed
+LogCookStats: Display: ----------------------------------  ----------------  ---------------------  ------------  ------------
+LogCookStats: Display: GlobalShader                                    0.65                   0.62             0         98.22
+LogCookStats: Display: Texture                                         0.47                   0.00             0       2064.69
+LogCookStats: Display: StaticMesh                                      0.07                   0.01             0        998.77
+LogCookStats: Display: BulkDataList                                    0.06                   0.00             0          0.76
+LogCookStats: Display: STREAMEDAUDIO                                   0.04                   0.00             0         17.85
+LogCookStats: Display: CardRepresentation                              0.03                   0.00             0          0.06
+LogCookStats: Display: DistanceField                                   0.03                   0.00             0         12.07
+LogCookStats: Display: NavCollision                                    0.03                   0.00             0          0.22
+LogCookStats: Display: MaterialShader                                  0.02                   0.42             0         94.19
+LogCookStats: Display: SkeletalMesh                                    0.01                   0.00             0         19.70
+LogCookStats: Display: AnimationSequence                               0.01                   0.00             0          5.15
+LogCookStats: Display: GeometryCollection                              0.01                   0.01             1          0.00
+LogCookStats: Display: BulkDataPayloadId                               0.00                   0.00            61          0.02
+LogCookStats: Display: Audio                                           0.00                   0.00             0         17.77
+LogCookStats: Display: CKERSM                                          0.00                   0.00             0          0.17
+LogCookStats: Display: BodySetup                                       0.00                   0.00             0         19.21
+LogCookStats: Display: SubUV                                           0.00                   0.00             0          0.12
+LogCookStats: Display: NiagaraScript                                   0.00                   0.00             0          0.14
+LogCookStats: Display: MESHDATAKEY                                     0.00                   0.00             0          0.45
+LogCookStats: Display: MaterialTranslation                             0.00                   0.00             0          0.00
+LogPackageBuildDependencyTracker: Display: Package Accesses (2058 referencing packages with a total of 27144 unique accesses)
+LogConfigBuildDependencyTracker: Display: Config Accesses (1730 referencing packages with a total of 6194 unique accesses). 2592 unique accesses that were not associated with a package.
+LogCook: Display: Done!
+LogSavePackage: Display: Took 0.009335s to verify the EDL loading graph.
+LogInit: Display:
+LogInit: Display: Warning/Error Summary (Unique only)
+LogInit: Display: -----------------------------------
+LogInit: Display: LogUnrealClaude: Warning: === UnrealClaude BUILD 20260107-1450 THREAD_TESTS_DISABLED ===
+LogInit: Display: LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Effects\HealthPotion\Materials\M_DustInvis.uasset: Failed to compile Material for platform PCD3D_SM6, Default Material will be used in game.
+	(Node ParticleSubUV) Missing ParticleSubUV input texture
+
+LogInit: Display: LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Effects\HealthPotion\Materials\M_DustInvis.uasset: Failed to compile Material for platform PCD3D_SM5, Default Material will be used in game.
+	(Node ParticleSubUV) Missing ParticleSubUV input texture
+
+LogInit: Display: LogMaterial: Warning: Cooking a material resource (in M_DustInvis hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogInit: Display: LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MagicCombatSystem\DemoAssets\ReplenishmentCast\Materials\M_DustInvis.uasset: Failed to compile Material for platform PCD3D_SM6, Default Material will be used in game.
+	(Node ParticleSubUV) Missing ParticleSubUV input texture
+
+LogInit: Display: LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MagicCombatSystem\DemoAssets\ReplenishmentCast\Materials\M_DustInvis.uasset: Failed to compile Material for platform PCD3D_SM5, Default Material will be used in game.
+	(Node ParticleSubUV) Missing ParticleSubUV input texture
+
+LogInit: Display: LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Effects\Bonfire\Materials\M_Greystone_Ultimate_SpeedLines.uasset: Failed to compile Material for platform PCD3D_SM6, Default Material will be used in game.
+	(Node TextureSample) Texture Sample> Missing input texture
+	(Node TextureSample) Texture Sample> Missing input texture
+
+LogInit: Display: LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Effects\Bonfire\Materials\M_Greystone_Ultimate_SpeedLines.uasset: Failed to compile Material for platform PCD3D_SM5, Default Material will be used in game.
+	(Node TextureSample) Texture Sample> Missing input texture
+	(Node TextureSample) Texture Sample> Missing input texture
+
+LogInit: Display: LogMaterial: Warning: Cooking a material resource (in M_Greystone_Ultimate_SpeedLines hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogInit: Display: LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MagicCombatSystem\DemoAssets\GideonVFX\Materials\Energy\M_Swirl_Plasma.uasset: Failed to compile Material for platform PCD3D_SM6, Default Material will be used in game.
+	(Node TextureSample) Texture Sample> Missing input texture
+
+LogInit: Display: LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MagicCombatSystem\DemoAssets\GideonVFX\Materials\Energy\M_Swirl_Plasma.uasset: Failed to compile Material for platform PCD3D_SM5, Default Material will be used in game.
+	(Node TextureSample) Texture Sample> Missing input texture
+
+LogInit: Display: LogMaterial: Warning: Cooking a material resource (in M_Swirl_Plasma hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogInit: Display: LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Paragon\Materials\M_Greystone_shield.uasset: Failed to compile Material for platform PCD3D_SM6, Default Material will be used in game.
+	Missing Material Function
+
+LogInit: Display: LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Paragon\Materials\M_Greystone_shield.uasset: Failed to compile Material for platform PCD3D_SM5, Default Material will be used in game.
+	Missing Material Function
+
+LogInit: Display: LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Paragon\Materials\M_Greystone_ToughSword.uasset: Failed to compile Material for platform PCD3D_SM6, Default Material will be used in game.
+	Missing Material Function
+
+LogInit: Display: LogMaterial: Warning: [AssetLog] C:\UnrealProject\OneBossFight\Content\AdvancedARPGCombat\MeleeCombatSystem\DemoAssets\Paragon\Materials\M_Greystone_ToughSword.uasset: Failed to compile Material for platform PCD3D_SM5, Default Material will be used in game.
+	Missing Material Function
+
+LogInit: Display: LogMaterial: Warning: Cooking a material resource (in M_Greystone_shield hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogInit: Display: LogMaterial: Warning: Cooking a material resource (in M_Greystone_ToughSword hierarchy) that doesn't have a valid ShaderMap! Shadermap pointer is null.
+LogInit: Display:
+LogInit: Display: Success - 0 error(s), 33 warning(s)
+LogInit: Display:
+
+Execution of commandlet took:  56.29 seconds
+LogShaderCompilers: Display: Shaders left to compile 0
+LogStudioTelemetry: Display: Shutdown StudioTelemetry Module
+Script history saved: 100 entries
+Script history saved: 100 entries
+Took 69.32s to run UnrealEditor-Cmd.exe, ExitCode=0
+Cook command time: 69.43 s
+********** COOK COMMAND COMPLETED **********
+********** STAGE COMMAND STARTED **********
+Creating Staging Manifest...
+Patching bootstrap executable; C:\UnrealProject\OneBossFight\Intermediate\Staging\OneBossFight.exe
+Begin update resource 'C:\UnrealProject\OneBossFight\Intermediate\Staging\OneBossFight.exe' (0)
+Add resource 101, length 104 (True)
+Add resource 1, length 753 (True)
+Add resource 2, length 1583 (True)
+Add resource 3, length 2718 (True)
+Add resource 4, length 5806 (True)
+Add resource 5, length 9986 (True)
+Add resource 6, length 37479 (True)
+Add resource 7, length 143826 (True)
+Add resource 201, length 90 (True)
+Add resource 202, length 26 (True)
+End update resource (True/0)
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Base.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\BaseCompat.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\BaseDeviceProfiles.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\BaseEditor.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\BaseEditorKeyBindings.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\BaseEditorPerProjectUserSettings.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\BaseEditorSettings.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\BaseEngine.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\BaseGame.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\BaseGameUserSettings.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\BaseHardware.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\BaseInput.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\BaseInstallBundle.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\BaseLightmass.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\BasePakFileRules.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\BaseRuntimeOptions.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\BaseScalability.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\BaseSourceControlSettings.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\ConfigRedirects.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\ConsoleVariables.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\PluginBase.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Layouts\DefaultLayout.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Layouts\UE4ClassicLayout.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Localization\Category.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Localization\Editor.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Localization\EditorTutorials.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Localization\Engine.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Localization\Keywords.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Localization\PortableObjectExport.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Localization\PortableObjectImport.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Localization\PropertyNames.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Localization\RepairData.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Localization\ToolTips.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Localization\WordCount.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\VulkanPC\DataDrivenPlatformInfo.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Windows\BaseWindowsEngine.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Windows\BaseWindowsInput.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Windows\DataDrivenPlatformInfo.ini
+Excluding config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Windows\WindowsEditorPerProjectUserSettings.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Windows\WindowsEngine.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Windows\WindowsGame.ini
+Including config file C:\Program Files\Epic Games\UE_5.5\Engine\Config\Windows\WindowsInput.ini
+Excluding config file C:\UnrealProject\OneBossFight\Config\DefaultEditor.ini
+Including config file C:\UnrealProject\OneBossFight\Config\DefaultEngine.ini
+Including config file C:\UnrealProject\OneBossFight\Config\DefaultGame.ini
+Including config file C:\UnrealProject\OneBossFight\Config\DefaultGameplayTags.ini
+Including config file C:\UnrealProject\OneBossFight\Config\DefaultInput.ini
+Cleaning Stage Directory: C:\UnrealProject\OneBossFight\Saved\StagedBuilds\Windows
+Creating pak using staging manifest.
+DumpManifest: C:\Users\Rushit Vaghela\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.5\PrePak_Windows_NonUFSFiles.txt, NumItems: 40
+DumpManifest: C:\Users\Rushit Vaghela\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.5\PrePak_Windows_NonUFSFilesDebug.txt, NumItems: 8
+DumpManifest: C:\Users\Rushit Vaghela\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.5\PrePak_Windows_UFSFiles.txt, NumItems: 9190
+No matching platform for PakFileRules for Section ExcludeContentForMobile : Windows
+Using 0 pak order files:
+Running UnrealPak with arguments: "C:\UnrealProject\OneBossFight\OneBossFight.uproject"  -cryptokeys="C:\UnrealProject\OneBossFight\Saved\Cooked\Windows\OneBossFight\Metadata\Crypto.json" -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=4 -compressmethod=Kraken  -platform=Windows  -CreateMultiple="C:\Users\Rushit Vaghela\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.5\PakCommands.txt"
+Running: C:\Program Files\Epic Games\UE_5.5\Engine\Binaries\Win64\UnrealPak.exe "C:\UnrealProject\OneBossFight\OneBossFight.uproject"  -cryptokeys="C:\UnrealProject\OneBossFight\Saved\Cooked\Windows\OneBossFight\Metadata\Crypto.json" -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=4 -compressmethod=Kraken  -platform=Windows  -CreateMultiple="C:\Users\Rushit Vaghela\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.5\PakCommands.txt"
+LogPakFile: Display: ProjectDir: ../../../../../../UnrealProject/OneBossFight/
+LogPakFile: Display: Parsing crypto keys from a crypto key cache file
+LogPakFile: Display: CompressionFormats in priority order: Oodle, Zlib
+LogPakFile: Display: Oodle enabled on 'NoPluginCompression' files
+LogPakFile: Display: Loading response file C:\Program Files\Epic Games\UE_5.5\Engine\Programs\AutomationTool\Saved\ResponseFiles\PakList_OneBossFight-Windows.txt
+LogPakFile: Display: Added 1625 entries to add to pak file.
+LogPakFile: Display: Collecting files to add to pak file...
+LogPakFile: Display: Collected 1625 files in 0.01s.
+LogPakFile: Display: Creating pak C:\UnrealProject\OneBossFight\Saved\StagedBuilds\Windows\OneBossFight\Content\Paks\OneBossFight-Windows.pak.
+OodleDataCompression: Display: Oodle v2.9.12 format for pak/iostore with method=Kraken, level=4=Normal
+LogPakFile: Display: Created pak file: C:\UnrealProject\OneBossFight\Saved\StagedBuilds\Windows\OneBossFight\Content\Paks\OneBossFight-Windows.pak
+LogPakFile: Display: CompressionFormat 0 [Oodle] : 359 files, 26786903 -> 9344057 bytes
+LogPakFile: Display: CompressionFormat 2 [None] : 1266 files, 745361 -> 745361 bytes
+LogPakFile: Display: Added 1625 files, 10719833 bytes total
+LogPakFile: Display: PrimaryIndex size: 22614 bytes
+LogPakFile: Display: PathHashIndex size: 50292 bytes
+LogPakFile: Display: FullDirectoryIndex size: 53872 bytes
+LogPakFile: Display: Compression summary: 34.88% of original size. Compressed Size 9344057 bytes, Original Size 26786903 bytes.
+LogPakFile: Display: Encryption - DISABLED
+LogPakFile: Display:
+LogPakFile: Display: Writer and Compression Threads exited.
+LogPakFile: Display: UnrealPak executed in 0.498900 seconds
+Took 1.21s to run UnrealPak.exe, ExitCode=0
+Running UnrealPak with arguments: "C:\UnrealProject\OneBossFight\OneBossFight.uproject" -CreateGlobalContainer="C:\UnrealProject\OneBossFight\Saved\StagedBuilds\Windows\OneBossFight\Content\Paks\global.utoc" -PackageStoreManifest="C:\UnrealProject\OneBossFight\Saved\Cooked\Windows\OneBossFight\Metadata\packagestore.manifest" -CookedDirectory="C:\UnrealProject\OneBossFight\Saved\Cooked\Windows" -Commands="C:\Users\Rushit Vaghela\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.5\IoStoreCommands.txt" -ScriptObjects="C:\UnrealProject\OneBossFight\Saved\Cooked\Windows\OneBossFight\Metadata\scriptobjects.bin" -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=4 -compressmethod=Kraken   -cryptokeys="C:\UnrealProject\OneBossFight\Saved\Cooked\Windows\OneBossFight\Metadata\Crypto.json" -compressionMinBytesSaved=1024 -compressionMinPercentSaved=5 -WriteBackMetadataToAssetRegistry=Disabled 
+Running: C:\Program Files\Epic Games\UE_5.5\Engine\Binaries\Win64\UnrealPak.exe "C:\UnrealProject\OneBossFight\OneBossFight.uproject" -CreateGlobalContainer="C:\UnrealProject\OneBossFight\Saved\StagedBuilds\Windows\OneBossFight\Content\Paks\global.utoc" -PackageStoreManifest="C:\UnrealProject\OneBossFight\Saved\Cooked\Windows\OneBossFight\Metadata\packagestore.manifest" -CookedDirectory="C:\UnrealProject\OneBossFight\Saved\Cooked\Windows" -Commands="C:\Users\Rushit Vaghela\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.5\IoStoreCommands.txt" -ScriptObjects="C:\UnrealProject\OneBossFight\Saved\Cooked\Windows\OneBossFight\Metadata\scriptobjects.bin" -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=4 -compressmethod=Kraken   -cryptokeys="C:\UnrealProject\OneBossFight\Saved\Cooked\Windows\OneBossFight\Metadata\Crypto.json" -compressionMinBytesSaved=1024 -compressionMinPercentSaved=5 -WriteBackMetadataToAssetRegistry=Disabled
+LogPakFile: Display: ProjectDir: ../../../../../../UnrealProject/OneBossFight/
+LogIoStore: Display: ==================== IoStore Utils ====================
+LogIoStore: Display: Parsing crypto keys from a crypto key cache file 'C:\UnrealProject\OneBossFight\Saved\Cooked\Windows\OneBossFight\Metadata\Crypto.json'
+LogIoStore: Display: Container signing - DISABLED
+LogIoStore: Display: Directory index - ENABLED
+LogIoStore: Display: Using compression format 'Oodle'
+LogIoStore: Display: Using memory mapping alignment '16384'
+LogIoStore: Display: Using compression block size '65536'
+LogIoStore: Display: Using compression block alignment '2048'
+LogIoStore: Display: Using compression min bytes saved '1024'
+LogIoStore: Display: Using compression min percent saved '5'
+LogIoStore: Display: Using max partition size '0'
+LogIoStore: Display: Not using DDC for compression
+LogIoStore: Display: Using command list file: 'C:\Users\Rushit Vaghela\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.5\IoStoreCommands.txt'
+LogIoStore: Display: Selected Oodle level 4 (Normal) from command line for shaders
+LogIoStore: Display: Fetched 3334 oplog items from Manifest in 0.00 seconds
+LogIoStore: Display: Parsed 3334 oplog items 0.01 seconds, 4234 chunks
+LogIoStore: Display: Using input asset registry: C:/UnrealProject/OneBossFight/Saved/Cooked/Windows/OneBossFight/Metadata/DevelopmentAssetRegistry.bin
+LogIoStore: Display: Loaded 907 chunk hashes from AssetRegistry in 0.03 seconds, 907 hashes updated in 0.00 seconds
+LogIoStore: Display: Searching for cooked assets in folder 'C:\UnrealProject\OneBossFight\Saved\Cooked\Windows'
+LogIoStore: Display: Found '7569' files
+LogIoStore: Display: Creating container targets...
+OodleDataCompression: Display: Oodle v2.9.12 format for pak/iostore with method=Kraken, level=4=Normal
+LogIoStore: Display: Parsing packages...
+LogIoStore: Display: Reading package assets...
+LogIoStore: Display: Reading 1000/3327: 'C:/UnrealProject/OneBossFight/Saved/Cooked/Windows/Engine/Plugins/NNE/NNEDenoiser/Content/NNEDIM_ColorAlbedoNormal_Default.uasset'
+LogIoStore: Display: Reading 2000/3327: 'C:/UnrealProject/OneBossFight/Saved/Cooked/Windows/OneBossFight/Content/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/GideonVFX/Materials/PhysMats/PM_Water.uasset'
+LogIoStore: Display: Reading 3000/3327: 'C:/UnrealProject/OneBossFight/Saved/Cooked/Windows/Engine/Content/VREditor/TransformGizmo/RotationHandleIndicator.uasset'
+LogIoStore: Display: Packages read 3,327 files in 0.04 seconds, 8,933,216 total bytes, 231,736,045 bytes per second
+LogIoStore: Display: Processing shader libraries, compressing with Oodle Mermaid, level 4 (Normal)
+LogShaderLibrary: Display: Created IoStoreShaderArchive header: shaders grouped in 360 groups (135 of them didn't need new indices), average uncompressed size 155800 bytes, min 249 bytes, max 1047981 bytes (r.ShaderCodeLibrary.MaxShaderGroupSize=1048576)
+LogIoStore: Display: Global-PCD3D_SM5(PCD3D_SM5): Recompressed 3915 shaders as 360 groups. Library size changed from 12619 KB (4.34 : 1 ratio) to 5556 KB (9.86 : 1 ratio), 44.03% of previous.
+LogShaderLibrary: Display: Created IoStoreShaderArchive header: shaders grouped in 542 groups (183 of them didn't need new indices), average uncompressed size 211303 bytes, min 1249 bytes, max 1045875 bytes (r.ShaderCodeLibrary.MaxShaderGroupSize=1048576)
+LogIoStore: Display: Global-PCD3D_SM6(PCD3D_SM6): Recompressed 7584 shaders as 542 groups. Library size changed from 85603 KB (1.31 : 1 ratio) to 48196 KB (2.32 : 1 ratio), 56.30% of previous.
+LogShaderLibrary: Display: Created IoStoreShaderArchive header: shaders grouped in 496 groups (153 of them didn't need new indices), average uncompressed size 62686 bytes, min 249 bytes, max 965040 bytes (r.ShaderCodeLibrary.MaxShaderGroupSize=1048576)
+LogIoStore: Display: OneBossFight-PCD3D_SM5(PCD3D_SM5): Recompressed 3655 shaders as 496 groups. Library size changed from 9501 KB (3.20 : 1 ratio) to 4023 KB (7.55 : 1 ratio), 42.35% of previous.
+LogShaderLibrary: Display: Created IoStoreShaderArchive header: shaders grouped in 534 groups (145 of them didn't need new indices), average uncompressed size 122795 bytes, min 1517 bytes, max 932647 bytes (r.ShaderCodeLibrary.MaxShaderGroupSize=1048576)
+LogIoStore: Display: OneBossFight-PCD3D_SM6(PCD3D_SM6): Recompressed 5803 shaders as 534 groups. Library size changed from 48515 KB (1.32 : 1 ratio) to 30867 KB (2.07 : 1 ratio), 63.63% of previous.
+LogIoStore: Display: Shaders processed in 0.84 seconds
+LogIoStore: Display: Initialized WriteRequestManager with MaxConcurrentSourceReads=8 (16 cores), MaxSourceBufferMemory=3072MiB
+LogIoStore: Display: Processing redirects...
+LogIoStore: Display: Creating disk layout...
+LogIoStore: Display: Ordered 3327 packages using fallback bundle order
+LogIoStore: Display: Serializing container(s)...
+LogIoStore: Display: Writing chunks 3540/6169... [1896 compressed] [9096 compression tasks] [Physical: 2923 MiB, Virtual: 5607 MiB]
+LogIoStore: Display: Writing chunks 3869/6169... [2217 compressed] [9037 compression tasks] [Physical: 3632 MiB, Virtual: 5718 MiB]
+LogIoStore: Display: Writing chunks 5267/6169... [3546 compressed] [5007 compression tasks] [Physical: 3578 MiB, Virtual: 5177 MiB]
+LogIoStore: Display: Writing chunks 5478/6169... [3857 compressed] [3434 compression tasks] [Physical: 3486 MiB, Virtual: 4938 MiB]
+LogIoStore: Display: Writing chunks 5760/6169... [3997 compressed] [1830 compression tasks] [Physical: 2833 MiB, Virtual: 4053 MiB]
+LogIoStore: Display: Writing chunks 6041/6169... [4234 compressed] [Physical: 2526 MiB, Virtual: 3686 MiB]
+LogIoStore: Display: Writing and compressing took 12.10 seconds, writes to disk took 10.06 seconds for 2,989,492,272 bytes @ 297,146,667 bytes per second.
+LogIoStore: Display: global: Found perfect hashmap for 1 items.
+LogIoStore: Display: OneBossFight-Windows: Found perfect hashmap for 6168 items.
+LogIoStore: Display: Finalize took 0.0 seconds for 2 writers to write 1,485,896 bytes, 71,431,812 bytes per second
+LogIoStore: Display: Writing tocs... [Physical: 2526 MiB, Virtual: 3687 MiB]
+LogIoStore: Display: 907 / 6,169 hashes were loaded from the hash database, by type:
+LogIoStore: Display:     BulkData                   907
+LogIoStore: Display: 4,234 / 6,169 chunks attempted to compress, by type:
+LogIoStore: Display:     ExportBundleData           3,327 / 3,327
+LogIoStore: Display:     BulkData                   907 / 907
+LogIoStore: Display:     ScriptObjects              0 / 1
+LogIoStore: Display:     ContainerHeader            0 / 1
+LogIoStore: Display:     ShaderCodeLibrary          0 / 4
+LogIoStore: Display:     ShaderCode                 0 / 1,929
+LogIoStore: Display: Source bytes read:
+LogIoStore: Display:     Zen:                                  0
+LogIoStore: Display:     Loose File:               6,579,959,058
+LogIoStore: Display:         ExportBundleData       3,140,687,820 bytes over 6,654 reads
+LogIoStore: Display:         BulkData               3,439,271,238 bytes over 907 reads
+LogIoStore: Display:     Memory:                     183,261,464
+LogIoStore: Display:         ShaderCodeLibrary         1,723,088 bytes over 8 reads
+LogIoStore: Display:         ShaderCode              181,538,376 bytes over 3,858 reads
+LogIoStore: Display: Calculating stats...
+LogIoStore: Display:
+LogIoStore: Display: Container Summary
+LogIoStore: Display: ==================
+LogIoStore: Display:
+LogIoStore: Display: Container                                               Flags      Chunk(s) #       TOC (KiB)       Raw Size (MiB)           Size (MiB)
+LogIoStore: Display: ----------------------------------------------------------------------------------------------------------------------------------------------
+LogIoStore: Display: global                                              -/-/-/-/-               1            0.63                 2.36                 2.36 -
+LogIoStore: Display: OneBossFight-Windows                                C/-/-/I/-            6168         1450.44              4875.10              2848.65 (41.57% Oodle)
+LogIoStore: Display: ----------------------------------------------------------------------------------------------------------------------------------------------
+LogIoStore: Display: Total                                                                    6169         1451.07              4877.46              2851.00
+LogIoStore: Display:
+LogIoStore: Display: ** Flags: (C)ompressed / (E)ncrypted / (S)igned) / (I)ndexed) / (O)nDemand **
+LogIoStore: Display:
+LogIoStore: Display: Compression block padding:     4.36 MiB
+LogIoStore: Display:
+LogIoStore: Display: Container Directory Index
+LogIoStore: Display: ==========================
+LogIoStore: Display:
+LogIoStore: Display: Container                                          Size (KiB)
+LogIoStore: Display: ----------------------------------------------------------------------------------------------------------------------------------------------
+LogIoStore: Display: global                                                   0.00
+LogIoStore: Display: OneBossFight-Windows                                   191.52
+LogIoStore: Display:
+LogIoStore: Display: Container Patch Report
+LogIoStore: Display: ========================
+LogIoStore: Display:
+LogIoStore: Display: Container                                             Total #       Modified #          Added #   Modified (MiB)      Added (MiB)
+LogIoStore: Display: ----------------------------------------------------------------------------------------------------------------------------------------------
+LogIoStore: Display: global                                                      1                0                0             0.00             0.00
+LogIoStore: Display: OneBossFight-Windows                                     6168                0             6168             0.00          2844.29
+LogIoStore: Display:
+LogIoStore: Display: PackageStore
+LogIoStore: Display: =============
+LogIoStore: Display:
+LogIoStore: Display: Container                                          Size (KiB)      Packages #     Localized #
+LogIoStore: Display: ----------------------------------------------------------------------------------------------------------------------------------------------
+LogIoStore: Display: OneBossFight-Windows                                      134            3327               0
+LogIoStore: Display: ----------------------------------------------------------------------------------------------------------------------------------------------
+LogIoStore: Display: Total                                                     134            3327               0
+LogIoStore: Display:
+LogIoStore: Display:
+LogIoStore: Display: Input:      3327 Packages
+LogIoStore: Display: Input:      1.46 GB UExp
+LogIoStore: Display: Input:      0.01 GB UAsset
+LogIoStore: Display: Input:      3.20 GB UBulk
+LogIoStore: Display: Input:     52.49 MB for 902 Global shaders
+LogIoStore: Display: Input:      5.61 MB for 444 Shared shaders
+LogIoStore: Display: Input:      0.00 MB for 0 Unique shaders
+LogIoStore: Display: Input:     28.46 MB for 583 Inline shaders
+LogIoStore: Display:
+LogIoStore: Display: Output:    51748 Name map entries
+LogIoStore: Display: Output:     8659 Imported package entries
+LogIoStore: Display: Output:     1521 Packages without imports
+LogIoStore: Display: Output:        0 Public runtime script objects
+LogIoStore: Display: Output:     0.01 GB HeaderData
+LogIoStore: Display: Output:     2.36 MB InitialLoadData
+LogIoStore: Display:
+LogPakFile: Display: UnrealPak executed in 13.926960 seconds
+Took 14.43s to run UnrealPak.exe, ExitCode=0
+DumpManifest: C:\Users\Rushit Vaghela\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.5\FinalCopyWin64_UFSFiles.txt, NumItems: 9191
+DumpManifest: C:\Users\Rushit Vaghela\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.5\FinalCopyWin64_NonUFSFiles.txt, NumItems: 40
+DumpManifest: C:\Users\Rushit Vaghela\AppData\Roaming\Unreal Engine\AutomationTool\Logs\C+Program+Files+Epic+Games+UE_5.5\FinalCopyWin64_NonUFSFilesDebug.txt, NumItems: 8
+Copying NonUFSFiles to staging directory: C:\UnrealProject\OneBossFight\Saved\StagedBuilds\Windows
+Copying DebugFiles to staging directory: C:\UnrealProject\OneBossFight\Saved\StagedBuilds\Windows
+Stage command time: 17.57 s
+********** STAGE COMMAND COMPLETED **********
+BuildCookRun time: 112.50 s
+BUILD SUCCESSFUL
+AutomationTool executed for 0h 1m 53s
+AutomationTool exiting with ExitCode=0 (Success)
+Done. Run it with Scripts\RunBenchmark.ps1
+

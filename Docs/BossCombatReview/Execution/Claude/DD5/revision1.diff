@@ -1,0 +1,275 @@
+=== RPGBossHydrationPreflight.h (first delivery C-198 -> revision 1, line-ending differences ignored for display only)
+--- C-198/RPGBossHydrationPreflight.h
++++ rev1/RPGBossHydrationPreflight.h
+@@ -98,6 +98,14 @@
+ 	ONEBOSSFIGHT_API TArray<UClass*> ManagedCoreConsumerClasses();
+ 
+ 	/**
++	 * The compiled dependencies of a production config, checked on the leases the config already holds and never by loading, retargeting or falling back: a valid compiled skeleton, at least one compiled
++	 * animation, EVERY animation lease valid (a null or garbage entry is refused even when the array is not empty) and EVERY animation on exactly the compiled skeleton (the identity rule of the binding:
++	 * GetSkeleton() == Skeleton; an animation with no skeleton or another skeleton is refused, an explicit retargeted dependency would have to be compiled into the config). Returns false and one message that
++	 * names every problem found (by position in the animation list). This is a narrow predicate that is tested on its own; it says nothing about the actor's mesh.
++	 */
++	ONEBOSSFIGHT_API bool CheckCompiledDependencies(const FRPGParticipantConfig& Config, FString& OutError);
++
++	/**
+ 	 * Compiles the batch. OutPlan is cleared FIRST. On success OutPlan holds the plan and the result is ready; on any failure OutPlan stays null and the result lists every failure found,
+ 	 * with its slot. Game thread only.
+ 	 */
+=== RPGBossHydrationPreflight.cpp (first delivery C-198 -> revision 1, line-ending differences ignored for display only)
+--- C-198/RPGBossHydrationPreflight.cpp
++++ rev1/RPGBossHydrationPreflight.cpp
+@@ -1,6 +1,7 @@
+ // Copyright One Boss Fight. All Rights Reserved.
+ 
+ #include "Player/RPGBossHydrationPreflight.h"
++#include "Animation/AnimSequenceBase.h"
+ #include "Animation/Skeleton.h"
+ #include "Components/SkeletalMeshComponent.h"
+ #include "Engine/SkeletalMesh.h"
+@@ -67,6 +68,42 @@
+ 		return {URPGBossPhases::StaticClass(), URPGBossEncounter::StaticClass(), URPGBossPosture::StaticClass(), URPGCombatParticipant::StaticClass()};
+ 	}
+ 
++	bool CheckCompiledDependencies(const FRPGParticipantConfig& Config, FString& OutError)
++	{
++		OutError.Reset();
++		TArray<FString> Problems;
++		const USkeleton* Skeleton = Config.Skeleton.Get();
++		if (!Skeleton || !IsValid(Skeleton))
++		{
++			Problems.Add(TEXT("the compiled skeleton is missing or no longer valid"));
++		}
++		if (Config.Animations.IsEmpty())
++		{
++			Problems.Add(TEXT("the config holds no compiled animation"));
++		}
++		// Every entry, not only the first: a non-empty array can still hold a null lease or an animation of another skeleton. Nothing is loaded, retargeted or substituted.
++		for (int32 Index = 0; Index < Config.Animations.Num(); ++Index)
++		{
++			const UAnimSequenceBase* Animation = Config.Animations[Index].Get();
++			if (!Animation || !IsValid(Animation))
++			{
++				Problems.Add(FString::Printf(TEXT("animation lease #%d is not valid"), Index));
++			}
++			else if (Skeleton && Animation->GetSkeleton() != Skeleton)
++			{
++				const USkeleton* Own = Animation->GetSkeleton();
++				Problems.Add(FString::Printf(TEXT("animation #%d (%s) belongs to skeleton %s, not the compiled skeleton %s; an explicit retargeted dependency must be compiled into the config, none is loaded or substituted here"),
++					Index, *Animation->GetName(), Own ? *Own->GetName() : TEXT("none"), *Skeleton->GetName()));
++			}
++		}
++		if (!Problems.IsEmpty())
++		{
++			OutError = FString::Join(Problems, TEXT("; "));
++			return false;
++		}
++		return true;
++	}
++
+ 	FRPGHydrationResult CompilePreflight(const FRPGHydrationPreflightInput& Input, TSharedPtr<const FRPGHydrationPreflightPlan>& OutPlan)
+ 	{
+ 		// First: no earlier output may survive a compile that fails.
+@@ -223,11 +260,18 @@
+ 			}
+ 			else if (Actor)
+ 			{
++				// Two separate reasons, each reported on its own: the compiled dependencies held by the config (every animation lease and skeleton identity), and the actor's mesh.
++				FString DependencyError;
++				if (!CheckCompiledDependencies(*Config, DependencyError))
++				{
++					FailMember(Result, TEXT("Preflight.ProductionPrerequisite"), Label, DependencyError);
++				}
+ 				const ACharacter* Character = Cast<ACharacter>(Actor);
+ 				const USkeletalMesh* Mesh = Character && Character->GetMesh() ? Character->GetMesh()->GetSkeletalMeshAsset() : nullptr;
+-				if (!Config->Skeleton.IsValid() || Config->Animations.IsEmpty() || !Mesh || !Config->Skeleton->IsCompatibleMesh(Mesh))
++				USkeleton* CompiledSkeleton = Config->Skeleton.Get();
++				if (!Mesh || !CompiledSkeleton || !IsValid(CompiledSkeleton) || !CompiledSkeleton->IsCompatibleMesh(Mesh))
+ 				{
+-					FailMember(Result, TEXT("Preflight.ProductionPrerequisite"), Label, TEXT("a production member needs the compiled skeleton and animations and a character whose mesh is compatible with that skeleton"));
++					FailMember(Result, TEXT("Preflight.ProductionPrerequisite"), Label, TEXT("a production member must be a character whose mesh is compatible with the compiled skeleton"));
+ 				}
+ 			}
+ 
+=== RPGBossHydrationPreflightTests.cpp (first delivery C-198 -> revision 1, line-ending differences ignored for display only)
+--- C-198/RPGBossHydrationPreflightTests.cpp
++++ rev1/RPGBossHydrationPreflightTests.cpp
+@@ -4,6 +4,8 @@
+ 
+ #if WITH_DEV_AUTOMATION_TESTS
+ 
++#include "Animation/AnimSequence.h"
++#include "Animation/Skeleton.h"
+ #include "Engine/Engine.h"
+ #include "Engine/World.h"
+ #include "EngineUtils.h"
+@@ -22,6 +24,8 @@
+ // the plan order and leases of a success, clearing of earlier output, and that a failed or successful compile changes no actor, component or combat context.
+ // They do NOT prove a duel, PIE, a startup chronology, the real game-instance provenance of a content lease, a production skeleton/mesh pairing (no real pack mesh is used: a production member is only shown to FAIL CLOSED),
+ // or the not-game-thread rule (the tests run on the game thread) and the synthetic-fixture-unavailable rule of a non-test target (compiled out here).
++// The production dependency predicate (compiled skeleton, every animation lease, every animation skeleton identity) is tested on its own with transient native skeletons and animations and nothing is loaded;
++// that is NOT a positive production batch: no production-compatible character mesh is built, so a production member is only ever shown to fail closed.
+ 
+ namespace
+ {
+@@ -129,7 +133,7 @@
+ 		return Spec;
+ 	}
+ 
+-	FConfigPtr BuildConfig(const FConfigSpec& Spec)
++	FConfigPtr BuildConfigWith(const FConfigSpec& Spec, const TFunction<void(FRPGParticipantConfig&)>& Mutate)
+ 	{
+ 		TSharedRef<FRPGParticipantConfig> Value = MakeShared<FRPGParticipantConfig>();
+ 		Value->BossId = Spec.BossId;
+@@ -153,9 +157,18 @@
+ 		}
+ 		Value->Content = Spec.Content;
+ 		Value->bSyntheticFixture = Spec.bSynthetic;
++		if (Mutate)
++		{
++			Mutate(*Value);
++		}
+ 		return Value;
+ 	}
+ 
++	FConfigPtr BuildConfig(const FConfigSpec& Spec)
++	{
++		return BuildConfigWith(Spec, TFunction<void(FRPGParticipantConfig&)>());
++	}
++
+ 	/** The real dev-automation synthetic factory, the way the existing binding test uses it. */
+ 	FConfigPtr FactoryConfig(FEpochPtr Content)
+ 	{
+@@ -812,4 +825,132 @@
+ 	return true;
+ }
+ 
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGPreflightDependenciesTest, "OneBossFight.Binding.Preflight.Dependencies",
++	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
++bool FRPGPreflightDependenciesTest::RunTest(const FString& Parameters)
++{
++	// Transient native fixtures only: two skeletons and animations bound to them. Nothing is loaded, no pack asset, no retargeting.
++	TStrongObjectPtr<USkeleton> SkeletonA(NewObject<USkeleton>(GetTransientPackage(), TEXT("DepSkeletonA")));
++	TStrongObjectPtr<USkeleton> SkeletonB(NewObject<USkeleton>(GetTransientPackage(), TEXT("DepSkeletonB")));
++	TStrongObjectPtr<UAnimSequence> OnA(NewObject<UAnimSequence>(GetTransientPackage(), TEXT("DepAnimOnA")));
++	TStrongObjectPtr<UAnimSequence> OnA2(NewObject<UAnimSequence>(GetTransientPackage(), TEXT("DepAnimOnA2")));
++	TStrongObjectPtr<UAnimSequence> OnB(NewObject<UAnimSequence>(GetTransientPackage(), TEXT("DepAnimOnB")));
++	TStrongObjectPtr<UAnimSequence> NoSkeleton(NewObject<UAnimSequence>(GetTransientPackage(), TEXT("DepAnimNoSkeleton")));
++	TStrongObjectPtr<UAnimSequence> Dead(NewObject<UAnimSequence>(GetTransientPackage(), TEXT("DepAnimDead")));
++	if (!TestTrue(TEXT("dependency fixtures created"), SkeletonA.IsValid() && SkeletonB.IsValid() && OnA.IsValid() && OnA2.IsValid() && OnB.IsValid() && NoSkeleton.IsValid() && Dead.IsValid()))
++	{
++		AddError(TEXT("unsupported precondition: the transient skeletons and animations could not be created"));
++		return false;
++	}
++	OnA->SetSkeleton(SkeletonA.Get());
++	OnA2->SetSkeleton(SkeletonA.Get());
++	OnB->SetSkeleton(SkeletonB.Get());
++	Dead->SetSkeleton(SkeletonA.Get());
++	if (!TestTrue(TEXT("precondition: the animations hold the intended skeletons (and one holds none)"),
++		OnA->GetSkeleton() == SkeletonA.Get() && OnA2->GetSkeleton() == SkeletonA.Get() && OnB->GetSkeleton() == SkeletonB.Get() && NoSkeleton->GetSkeleton() == nullptr && Dead->GetSkeleton() == SkeletonA.Get()))
++	{
++		AddError(TEXT("unsupported precondition: SetSkeleton did not bind the fixture animations as expected"));
++		return false;
++	}
++
++	auto Fill = [](FRPGParticipantConfig& Config, USkeleton* Skeleton, const TArray<UAnimSequenceBase*>& Animations)
++	{
++		Config.Skeleton.Reset(Skeleton);
++		for (UAnimSequenceBase* Animation : Animations)
++		{
++			Config.Animations.Emplace(Animation); // a null pointer makes a null lease on purpose
++		}
++	};
++	struct FCase
++	{
++		const TCHAR* Name;
++		USkeleton* Skeleton;
++		TArray<UAnimSequenceBase*> Animations;
++		bool bExpectOk;
++		const TCHAR* Detail;
++		const TCHAR* Detail2;
++	};
++	TArray<FCase> Cases;
++	Cases.Add({TEXT("control: one animation on the compiled skeleton"), SkeletonA.Get(), {OnA.Get()}, true, nullptr, nullptr});
++	Cases.Add({TEXT("control: two animations on the compiled skeleton"), SkeletonA.Get(), {OnA.Get(), OnA2.Get()}, true, nullptr, nullptr});
++	Cases.Add({TEXT("no compiled skeleton"), nullptr, {OnA.Get()}, false, TEXT("compiled skeleton is missing"), nullptr});
++	Cases.Add({TEXT("no animation at all"), SkeletonA.Get(), {}, false, TEXT("no compiled animation"), nullptr});
++	Cases.Add({TEXT("a null lease as the only entry (the array is not empty)"), SkeletonA.Get(), {nullptr}, false, TEXT("animation lease #0 is not valid"), nullptr});
++	Cases.Add({TEXT("a null lease after a valid animation"), SkeletonA.Get(), {OnA.Get(), nullptr}, false, TEXT("animation lease #1 is not valid"), nullptr});
++	Cases.Add({TEXT("an animation of another skeleton"), SkeletonA.Get(), {OnB.Get()}, false, TEXT("belongs to skeleton"), TEXT("DepSkeletonB")});
++	Cases.Add({TEXT("an animation with no skeleton"), SkeletonA.Get(), {NoSkeleton.Get()}, false, TEXT("belongs to skeleton none"), nullptr});
++	Cases.Add({TEXT("a valid animation then a mismatched one"), SkeletonA.Get(), {OnA.Get(), OnB.Get()}, false, TEXT("animation #1 (DepAnimOnB)"), nullptr});
++	Cases.Add({TEXT("every problem is reported: null, valid, mismatched"), SkeletonA.Get(), {nullptr, OnA.Get(), OnB.Get()}, false, TEXT("animation lease #0 is not valid"), TEXT("animation #2 (DepAnimOnB)")});
++	for (const FCase& Case : Cases)
++	{
++		FRPGParticipantConfig Config;
++		Fill(Config, Case.Skeleton, Case.Animations);
++		FString Error;
++		const bool bOk = RPGBossHydrationPreflight::CheckCompiledDependencies(Config, Error);
++		if (Case.bExpectOk)
++		{
++			TestTrue(FString::Printf(TEXT("%s: accepted"), Case.Name), bOk && Error.IsEmpty());
++			continue;
++		}
++		TestFalse(FString::Printf(TEXT("%s: refused"), Case.Name), bOk);
++		TestTrue(FString::Printf(TEXT("%s: names the problem '%s' (got '%s')"), Case.Name, Case.Detail, *Error), Error.Contains(Case.Detail));
++		if (Case.Detail2)
++		{
++			TestTrue(FString::Printf(TEXT("%s: also names '%s'"), Case.Name, Case.Detail2), Error.Contains(Case.Detail2));
++		}
++	}
++	// A garbage-marked animation is an invalid lease too (the object is still allocated: the fixture holds it and no collection runs here).
++	{
++		Dead->MarkAsGarbage();
++		if (TestFalse(TEXT("precondition: the marked animation is no longer valid"), IsValid(Dead.Get())))
++		{
++			FRPGParticipantConfig Config;
++			Fill(Config, SkeletonA.Get(), {OnA.Get(), Dead.Get()});
++			FString Error;
++			TestFalse(TEXT("a garbage-marked animation lease is refused"), RPGBossHydrationPreflight::CheckCompiledDependencies(Config, Error));
++			TestTrue(TEXT("and named by its position"), Error.Contains(TEXT("animation lease #1 is not valid")));
++		}
++		else
++		{
++			AddError(TEXT("unsupported precondition: the animation could not be marked garbage"));
++		}
++	}
++
++	// In a batch: a production-style member is still refused on a plain actor (no character mesh), and the dependency reasons are reported separately from the mesh reason.
++	FFixture F;
++	if (!PreconditionOk(*this, F))
++	{
++		return false;
++	}
++	FConfigSpec Production = DefaultSpec(F.Content);
++	Production.bSynthetic = false;
++	auto BatchWith = [&](const TFunction<void(FRPGParticipantConfig&)>& Mutate)
++	{
++		FRPGHydrationPreflightInput In = F.Valid;
++		In.Requests[0].Config = BuildConfigWith(Production, Mutate);
++		return In;
++	};
++	{
++		// Valid dependencies: only the mesh reason remains. The dependency predicate accepts, the actor is not a production-compatible character: fail closed, and NOT a positive production batch.
++		FRPGHydrationPreflightInput In = BatchWith([&](FRPGParticipantConfig& C) { Fill(C, SkeletonA.Get(), {OnA.Get()}); });
++		FPlanPtr Out = F.PriorPlan;
++		const FRPGHydrationResult Result = RPGBossHydrationPreflight::CompilePreflight(In, Out);
++		TestTrue(TEXT("valid dependencies on a plain actor: refused for the mesh only"), !Result.IsReady() && !Out.IsValid() && AnyErrorContains(Result, TEXT("character whose mesh")) && !AnyErrorContains(Result, TEXT("animation")));
++	}
++	{
++		FRPGHydrationPreflightInput In = BatchWith([&](FRPGParticipantConfig& C) { Fill(C, SkeletonA.Get(), {nullptr}); });
++		FPlanPtr Out = F.PriorPlan;
++		const FRPGHydrationResult Result = RPGBossHydrationPreflight::CompilePreflight(In, Out);
++		TestTrue(TEXT("a null animation lease in a batch: refused with the animation reason AND the mesh reason, output cleared"),
++			!Result.IsReady() && !Out.IsValid() && AnyErrorStartsWith(Result, TEXT("Preflight.ProductionPrerequisite")) && AnyErrorContains(Result, TEXT("animation lease #0 is not valid")) && AnyErrorContains(Result, TEXT("character whose mesh")));
++	}
++	{
++		FRPGHydrationPreflightInput In = BatchWith([&](FRPGParticipantConfig& C) { Fill(C, SkeletonA.Get(), {OnB.Get()}); });
++		ExpectRejected(*this, F, TEXT("an animation of another skeleton in a batch"), In, TEXT("Preflight.ProductionPrerequisite"), TEXT("belongs to skeleton"));
++	}
++
++	AddInfo(TEXT("Dependency predicate on transient native fixtures; NO positive production batch (no production-compatible character mesh is built here)."));
++	return true;
++}
++
+ #endif // WITH_DEV_AUTOMATION_TESTS

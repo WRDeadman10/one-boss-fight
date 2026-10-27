@@ -1,0 +1,46 @@
+﻿[2026.10.26-12.18.57:398][207]LogPython: [CaptureCAP01] Saved existing console variables.
+[2026.10.26-12.18.57:398][207]LogPython: [CaptureCAP01] RUN_ID: RUN_20261026_174857_1279
+[2026.10.26-12.18.57:398][207]LogPython: [CaptureCAP01] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[CaptureCAP01] Saved existing console variables.
+[CaptureCAP01] RUN_ID: RUN_20261026_174857_1279
+[CaptureCAP01] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[2026.10.26-12.18.58:712][211]LogPython: [CaptureCAP01] Initiating editor_request_begin_play()...
+[2026.10.26-12.19.00:194][212]LogUIActionRouter: Error: Using CommonUI without a CommonGameViewportClient derived game viewport client. CommonUI Input routing will not function correctly.
+[2026.10.26-12.19.00:880][212]LogPython: [CaptureCAP01] PIE active. Boss and components found. Setting up front-facing camera framing (Claude C-160/C-161, 450cm front view)...
+[2026.10.26-12.19.01:148][212]LogPython: [CaptureCAP01] CAMERA_READBACK: target_arm_length=0.0, field_of_view=65.0, enable_camera_lag=False, pawn_hidden=True
+[2026.10.26-12.19.01:642][216]LogPython: [CaptureCAP01] Camera system enforced arm length 0.0cm; adjusted FOV to 25.0 deg to preserve close-up framing.
+[2026.10.26-12.19.01:642][216]LogPython: [CaptureCAP01] CAMERA_FRAMING_CHECK: IntendedCamPos=<Struct 'Vector' (0x000001AAA162C1F0) {x: -0.000000, y: 450.000000, z: 296.149992}>, MeasuredCamPos=<Struct 'Vector' (0x000001AAA160BF30) {x: 8.781390, y: 817.753118, z: 274.162222}>, PawnLoc=<Struct 'Vector' (0x000001AAA162C290) {x: 0.000000, y: 450.000000, z: 296.149992}>, SettledArm=0.0, BossActorYaw=180.0, BossMeshForward=<Struct 'Vector' (0x000001AAA160BFD0) {x: -0.000000, y: 1.000000, z: 0.000000}>, DistToTarget=817.8cm, AimDot=0.999, MeshFacingDot=0.988, Pitch=-3.2, Yaw=-90.5
+[2026.10.26-12.19.01:642][216]LogPython: [CaptureCAP01] Player camera framed and settled successfully in front of boss mesh. Measured ArmLength=0.0, Measured FOV=25.0, Dist=817.8cm, Pitch=-3.2, Yaw=-90.5. Player mesh hidden in game.
+[2026.10.26-12.19.06:950][232]LogPython: [CaptureCAP01] Heartbeat [WAIT_BOSS_SETTLE]: 0.5s remaining. is_waking=False, is_transition=False
+[2026.10.26-12.19.08:291][236]LogPython: [CaptureCAP01] Boss settled. Applying slomo 0.20 before A5 trigger...
+[2026.10.26-12.19.08:949][238]LogPython: [CaptureCAP01] Triggering boss A5 move via RPGAttackTracker::StartMove('A5', True)...
+[2026.10.26-12.19.08:955][238]LogPython: [CaptureCAP01] StartMove('A5', True) returned: True
+[2026.10.26-12.19.08:956][238]LogPython: [CaptureCAP01] Armed external CaptureLoop via C:\UnrealProject\OneBossFight\Saved\m7_flag.txt ('CAP01_A5_RUN_20261026_174857_1279_Windup')
+[2026.10.26-12.19.09:318][239]LogPython: [CaptureCAP01] TELEMETRY wall=1090833.1991 sim=8.0551 phase=Windup active=False commit=False pos=0.067
+[2026.10.26-12.19.09:630][240]LogPython: [CaptureCAP01] TELEMETRY wall=1090833.5121 sim=8.1217 phase=Windup active=False commit=False pos=0.133
+[2026.10.26-12.19.09:975][241]LogPython: [CaptureCAP01] TELEMETRY wall=1090833.8565 sim=8.1884 phase=Windup active=False commit=False pos=0.200
+[2026.10.26-12.19.10:288][242]LogPython: [CaptureCAP01] TELEMETRY wall=1090834.1694 sim=8.2551 phase=Windup active=False commit=False pos=0.267
+[2026.10.26-12.19.10:618][243]LogPython: [CaptureCAP01] TELEMETRY wall=1090834.4997 sim=8.3217 phase=Windup active=False commit=False pos=0.333
+[2026.10.26-12.19.10:964][244]LogPython: [CaptureCAP01] TELEMETRY wall=1090834.8454 sim=8.3884 phase=Windup active=False commit=False pos=0.400
+[2026.10.26-12.19.11:287][245]LogPython: [CaptureCAP01] PHASE_CHANGE phase=Active sim=8.4551 wall=1090835.1672
+[2026.10.26-12.19.11:287][245]LogPython: [CaptureCAP01] TELEMETRY wall=1090835.1672 sim=8.4551 phase=Active active=True commit=True pos=0.467
+[2026.10.26-12.19.11:620][246]LogPython: [CaptureCAP01] PHASE_CHANGE phase=Recovery sim=8.5217 wall=1090835.5005
+[2026.10.26-12.19.11:620][246]LogPython: [CaptureCAP01] TELEMETRY wall=1090835.5005 sim=8.5217 phase=Recovery active=False commit=True pos=0.533
+[2026.10.26-12.19.11:952][247]LogPython: [CaptureCAP01] TELEMETRY wall=1090835.8342 sim=8.5884 phase=Recovery active=False commit=True pos=0.600
+[2026.10.26-12.19.12:283][248]LogPython: [CaptureCAP01] TELEMETRY wall=1090836.1653 sim=8.6551 phase=Recovery active=False commit=True pos=0.667
+[2026.10.26-12.19.12:619][249]LogPython: [CaptureCAP01] TELEMETRY wall=1090836.4998 sim=8.7217 phase=Recovery active=False commit=True pos=0.733
+[2026.10.26-12.19.12:957][250]LogPython: [CaptureCAP01] PHASE_CHANGE phase=None sim=8.7884 wall=1090836.8370
+[2026.10.26-12.19.12:957][250]LogPython: [CaptureCAP01] TELEMETRY wall=1090836.8370 sim=8.7884 phase=None active=False commit=False pos=0.733
+[2026.10.26-12.19.12:957][250]LogPython: [CaptureCAP01] A5 move completed. Elapsed sim: 0.800s, wall: 4.01s, samples: 12.
+[2026.10.26-12.19.12:957][250]LogPython: [CaptureCAP01] Cleared flag file: C:\UnrealProject\OneBossFight\Saved\m7_flag.txt
+[2026.10.26-12.19.12:957][250]LogPython: [CaptureCAP01] Finishing run: OBSERVE_COMPLETE
+[2026.10.26-12.19.12:972][250]LogPython: [CaptureCAP01] Restored camera boom arm length (370.0) and lag (True).
+[2026.10.26-12.19.12:972][250]LogPython: [CaptureCAP01] Restored camera component FOV (90.0).
+[2026.10.26-12.19.12:973][250]LogPython: [CaptureCAP01] Restored player pawn transform and visibility (hidden=False).
+[2026.10.26-12.19.12:973][250]LogPython: [CaptureCAP01] Cvar restoration complete.
+[2026.10.26-12.19.12:974][250]LogPython: [CaptureCAP01] Wrote run manifest to Saved\Screenshots\CAP01_A5\run_manifest.json
+[2026.10.26-12.19.12:974][250]LogPython: [CaptureCAP01] RESULT 5/5 (TELEMETRY_CAPTURE_COMPLETE)
+[2026.10.26-12.19.12:974][250]LogPython: [CaptureCAP01] TELEMETRY_CAPTURE_COMPLETE (5/5 driver steps verified; awaiting offline frame analysis)
+[2026.10.26-12.19.12:974][250]LogPython: [CaptureCAP01] RESULT 5/5 (TELEMETRY_CAPTURE_COMPLETE)
+[2026.10.26-12.19.12:985][250]LogPython: [CaptureCAP01] TELEMETRY_CAPTURE_COMPLETE (5/5 driver steps verified; awaiting offline frame analysis)
+[2026.10.26-12.19.12:996][250]LogPython: [CaptureCAP01] Standing editor preserved. Runner complete.

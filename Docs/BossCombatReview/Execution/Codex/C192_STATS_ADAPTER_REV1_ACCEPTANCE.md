@@ -1,0 +1,11 @@
+# C192 stats adapter revision1: source accepted for verification
+
+Actual three live files equal current Review copies; revision1 receipts match. Reconstructed C191 originals independently match their historical hashes. All147 pre-package source files remain unchanged. Read actual revision diff and full added destruction block, against the prior complete source/test review.
+
+Accepted current hashes: header `cd1f6a0ce2c2a8806496b3c641d7d81b41db2a04df3ec0b7369780275d034a43`; cpp `b14a57efabad911f39fdea17df4bc8513850f269bee26a68b5150dead28441ee`; tests `46be817e37cb6286f73b4f2b59f2d01563b29b600e2cccd1f9420df9194f10d8`.
+
+The initial InvalidComponent guard precedes type/lifecycle checks and writes. New test uses DestroyComponent on retained allocation with a live owner, checks destruction and unregistered/not-begun preconditions and exercises own/wrong-class combinations through both adapters. Snapshot assertions and no-GC scope test the intended allocated-object case, not freed-memory safety. Header correctly distinguishes full Stats validation dependency from1/3 assigned manifest fields and per-callback failure from general rollback. Posture remains>0, without modifying metadata or generic compiler domain. Historical review copies were reconstructed after overwrite and hash-verified, not represented as untouched originals.
+
+**Release Claude fresh safety check, build/UHT, focused StatsAdapters automation then the full suite if focused tests pass.** Expected5 added names/52 total are comparison points; require actual discovery, all prior47 names retained and exact completion sets. Record command/job exits, source/dependency/full-manifest and binary hashes before/after, raw warnings/errors/failures. No PIE/full gate/package/pack/content, coordinator activation or unrelated source changes. No fallback from failing preconditions to quiet passes. Any compile/runtime failure is preserved and reviewed before modifying beyond the accepted code; routine mechanical compile fixes must be shown as an exact new delta, not hidden in the successful result.
+
+Source acceptance does not prove effective pack health, seeded posture, real encounter behavior or all83 completion. This adapter layer remains unwired. Codex performed no engine/build/process operation; AG remains resting with no new work.

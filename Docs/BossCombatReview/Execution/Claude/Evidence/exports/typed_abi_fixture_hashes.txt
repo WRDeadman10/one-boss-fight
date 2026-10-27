@@ -1,0 +1,6 @@
+5af9499d96f8902b *Data/TypedABIFixtures/BP_ABI_FourthWeaponActor.uasset
+e1446b9f6f999d89 *Data/TypedABIFixtures/DA_ABI_FourthCombatStyle.uasset
+4c6e6b7643f01d14 *Data/TypedABIFixtures/DA_ABI_FourthWeaponItem.uasset
+d673584d29345264 *Data/TypedABIFixtures/GA_ABI_FourthMelee.uasset
+ac3805c158cb71c2 *Data/TypedABIFixtures/DecoyPackage/BP_ToughSword.uasset
+9a5034d9552214c7 *ReviewFixtures/TypedABI/DA_ABI_UncookedWeaponItem.uasset

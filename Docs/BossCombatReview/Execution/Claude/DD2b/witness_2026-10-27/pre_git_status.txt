@@ -1,0 +1,71 @@
+ M Docs/BossCombatReview.zip
+ M Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_drafts/pie_capture_cap01_a5.py
+ M Docs/BossCombatReview/Execution/Claude/ACCOUNT_HANDOVER_CURRENT.md
+ M Docs/BossCombatReview/Execution/Codex/Drafts/Scripts/Editor/pie_timeline_shadow.py
+ M Docs/BossCombatReview/Execution/Codex/Step2Preparation/README.md
+ M Docs/BossCombatReview/Execution/MAILBOX_WATCH_STATE.md
+ M Docs/BossCombatReview/Execution/PHASE_STATUS.md
+ M Docs/BossCombatReview/Execution/TASK_BOARD.md
+ M Documentation/TEAM_MAILBOX.md
+ M Documentation/TEST_PLAN.md
+ M Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp
+ M Source/OneBossFight/Player/RPGPlayerMovesSubsystem.h
+ M Source/OneBossFight/Tests/RPGCombatCatalogTests.cpp
+?? Content/OneBossFight/Data/TypedABIFixtures/
+?? Content/OneBossFight/ReviewFixtures/
+?? Docs/BossCombatReview/Execution/Antigravity/test_mailbox_ui.py
+?? Docs/BossCombatReview/Execution/Antigravity/test_shadow_schema_challenges.py
+?? Docs/BossCombatReview/Execution/Antigravity/test_shadow_wire_oracle.py
+?? Docs/BossCombatReview/Execution/Claude/D2D/
+?? Docs/BossCombatReview/Execution/Claude/DD1/preimages_2a/
+?? Docs/BossCombatReview/Execution/Claude/DD2b/
+?? Docs/BossCombatReview/Execution/Claude/Evidence/E-012_typed_abi_fixtures.md
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/abi_fourth_equip_run2_13of14.log
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/abi_fourth_equip_run3.log
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/abitest_catalog_assets_sha256.txt
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/automation_catalogpath_run1_weapons_duplicate.log
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/automation_catalogpath_run2_invalid_outer.log
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/automation_catalogpath_run3.log
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/automation_diagnostics_run1.log
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/automation_step2a_scaffold.log
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/automation_typed_fixtures_42.log
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/automation_typed_fixtures_42_rev2.log
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/build_noneditor_development_2a.txt
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/cap01_front_run2/
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/cap01_front_run3_4/
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/cap01_front_run5_7/
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/cap01_front_run8_10/
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/gate_2026-10-27/
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/package_dev_fixtures_uat.txt
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/package_dev_typed_uat.txt
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/packaged_dev_choice_startup_no_travel_run.log
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/packaged_dev_fixtures_run.log
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/packaged_dev_seed_travel_run.log
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/packaged_dev_travel_run.log
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/packaged_dev_typed_data_run.log
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/selector_viewport/
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/selector_viewport_after_diagnostics.log
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/selector_viewport_large_run1_open_failed.log
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/typed_abi_fixture_hashes.txt
+?? Docs/BossCombatReview/Execution/Claude/Evidence/exports/utoc_list_fixtures_package.txt
+?? Docs/BossCombatReview/Execution/Codex/ALL83_EXECUTION_LEDGER_2026-10-27.json
+?? Docs/BossCombatReview/Execution/Codex/ALL83_IMPLEMENTATION_RESTART_2026-10-27.md
+?? Docs/BossCombatReview/Execution/Codex/C181_STANDARD_GATE_REVIEW_2026-10-27.md
+?? Docs/BossCombatReview/Execution/Codex/C185_2B_SOURCE_REVIEW.md
+?? Docs/BossCombatReview/Execution/Codex/C187_ATTACH_WITNESS_DRAFT_REVIEW.md
+?? Docs/BossCombatReview/Execution/Codex/DD2B_BUILD_AND_WITNESS_REVIEW.md
+?? Docs/BossCombatReview/Execution/Codex/DOCUMENT_INVENTORY_2026-10-27.json
+?? Docs/BossCombatReview/Execution/Codex/OWNER_PROGRESS_AND_AUTHORING_2026-10-27.md
+?? Docs/BossCombatReview/Execution/Codex/Step2Preparation/20_GATE_RESULT_ATTRIBUTION_REVIEW.md
+?? Docs/BossCombatReview/Execution/Codex/Step2Preparation/21_GATE_ERROR_TRIAGE.md
+?? Docs/BossCombatReview/Execution/Codex/Step2Preparation/GATE_ERROR_INVENTORY_2026-10-27.json
+?? Docs/BossCombatReview/Execution/Codex/Step2Preparation/GATE_SOURCE_CROSSWALK.json
+?? Docs/BossCombatReview/Execution/Codex/Step2Preparation/gate_error_inventory.py
+?? Docs/BossCombatReview/Execution/Codex/Step2Preparation/gate_source_crosswalk.py
+?? Docs/BossCombatReview/Execution/Codex/build_all83_owner_snapshot.py
+?? Scripts/Editor/make_abi_test_catalog.py
+?? Scripts/Editor/make_typed_abi_fixtures.py
+?? Scripts/Editor/make_typed_abi_uncooked_item.py
+?? Scripts/Editor/pie_abi_fourth_equip.py
+?? Scripts/Editor/pie_selector_viewport.py
+?? Source/OneBossFight/Tests/RPGEncounterBindingTests.cpp

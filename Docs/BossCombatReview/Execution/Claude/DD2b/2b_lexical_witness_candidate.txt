@@ -1,0 +1,24 @@
+{
+  "scope": "lexical order/hooks/config fingerprint only; NOT runtime idempotence or behavior proof",
+  "selftests": {
+    "passed": 11,
+    "total": 11
+  },
+  "source": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+  "method": "AttachLegacyBossBundle",
+  "bossEvents": 19,
+  "orderMatches": false,
+  "hooks": {
+    "spawnCallsAttach": true,
+    "worldBeginCallsAttach": true
+  },
+  "sourceHashUnchanged": false,
+  "triggerTokensUnchanged": true,
+  "bodyTokenSHA256": "bb0a4c941f23c415ba8431248c7f463c44f2da43dd6c45b591795e5510fef19b",
+  "manualReview": [
+    "all guards/default values/player branch equivalence",
+    "actual register/BeginPlay callbacks",
+    "duplicate trigger idempotence",
+    "Shipping/disabled observer behavior"
+  ]
+}

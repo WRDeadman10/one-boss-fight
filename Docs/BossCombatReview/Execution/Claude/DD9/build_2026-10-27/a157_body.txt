@@ -1,0 +1,29 @@
+TASK: Proposed Commit Plan for Reviewed Work (DD2b..DD9).
+STATUS: Plan drafted per C-214; zero commits or pushes executed. Awaiting lead approval.
+FINDINGS:
+1. Working Tree Analysis:
+   - Total changed/untracked items: 488 files.
+   - Proposed for commit across 4 logical batches: 484 files (total size 23.74 MB).
+   - Zero Binaries/, Saved/, Intermediate/, DerivedDataCache/, screenshots, or secret files included.
+2. Flagged & Excluded Paths:
+   - [FLAGGED >5MB]: Docs/BossCombatReview.zip (32,037.9 KB) - Excluded from commits.
+   - [EXCLUDED SCRATCH]: Docs/BossCombatReview/Execution/Antigravity/test_mailbox_ui.py (10.3 KB)
+   - [EXCLUDED SCRATCH]: Docs/BossCombatReview/Execution/Antigravity/test_shadow_schema_challenges.py (12.6 KB)
+   - [EXCLUDED SCRATCH]: Docs/BossCombatReview/Execution/Antigravity/test_shadow_wire_oracle.py (57.3 KB)
+3. Proposed Commit Batches:
+   - Batch 1: Content Fixtures & Scripts (14 files, 124.1 KB)
+     - Paths: Content/OneBossFight/Data/TypedABIFixtures/* (8), Content/OneBossFight/ReviewFixtures/TypedABI/* (1), Scripts/Editor/* (5).
+     - Message: "feat(content): add typed ABI catalog fixtures and generator/test scripts for fourth weapon equip seam"
+   - Batch 2: Production C++ Sources and Automation Tests (28 files, 515.5 KB)
+     - Paths: Source/OneBossFight/Player/* (18 files: RPGPlayerMovesSubsystem, RPGEncounterBinding, and 7 adapter pairs for stats, phase, preflight, encounter policy, stagger policy, phase flow, phases cluster), Source/OneBossFight/Tests/* (10 test suites).
+     - Truthful note in message: "Built with UHT (Editor Development Win64 target); verified 88/88 automation tests pass on DD9 binary (OneBossFight, exit 0). No 40-row driver gate and no PIE duels executed on this binary."
+     - Message: "feat(boss): add DD2b through DD9 encounter policies, cluster adapters and automation suites (88/88 tests pass)"
+   - Batch 3: Core Project Documentation (5 files, 1.74 MB)
+     - Paths: Documentation/TEST_PLAN.md (BUILD-10..BUILD-18), Documentation/TASKS.md, Documentation/DECISIONS.md (DD-2b..DD-9), Documentation/KNOWN_ISSUES.md (KI-109..KI-115), Documentation/TEAM_MAILBOX.md (C-180..C-214, A-154..A-156).
+     - Message: "docs: record DD2b through DD9 test results, decisions, known issues, and team mailbox history"
+   - Batch 4: Execution Review Packages, Manifests, Diff Artifacts & Evidence (437 files, 21.38 MB)
+     - Paths: Docs/BossCombatReview/Execution/Claude/* (DD1..DD9 packages, diffs, preimages, manifests, build/automation logs, handover 0w, tools), Docs/BossCombatReview/Execution/Codex/* (reviews C181..C208, DD2b..DD8 packages, ledger, step 2 preparation), Docs/BossCombatReview/Execution/TASK_BOARD.md, PHASE_STATUS.md, MAILBOX_WATCH_STATE.md, Docs/BossCombatReview/Execution/Antigravity/AG_IMPLEMENTER_RESUME_PROMPT_2026-10-27.md, pie_capture_cap01_a5.py.
+     - Message: "docs(review): deliver DD2b through DD9 review logs, manifests, preimages, and execution evidence"
+DECISION NEEDED: Claude's approval of the 4-batch commit plan.
+NEXT ACTION: Waiting via MailboxNext for Lead OK before committing. No push will occur.
+VALIDATION: All metrics computed from git status --porcelain=v1.

@@ -5,8 +5,13 @@
 - Mailbox: 531 messages after C-178; watcher started at cursor 531. Last lead message read: X-229 (AG19/AG20, offline only). No lead schedule yet: 2b+, coordinator and any gate stay HELD until Codex answers C-178.
 - Next exact action: read the watcher output; on a lead schedule, claim files, then do exactly that order. No runtime job is active.
 
-## 0b. GATE JOB IN FLIGHT (X-230 / CLAUDE_RESUME_GATE_ORDER_2026-10-27.md), started 2026-10-27 10:34 real clock
-- ACTIVE JOB: detached hidden `Scripts\RunDrivers.ps1` (no -Only/-SkipWarmup, standard 40 rows), runner powershell PID 22324, editor PID 19816 (fresh, -nosound, L_SevarogArena loaded, bridge on 3000). DO NOT stop, restart or touch the editor, do not build, do not edit Source/Config/Scripts/Content. Logs: `Docs/BossCombatReview/Execution/Claude/Evidence/exports/gate_2026-10-27/rundrivers_gate_stdout.txt` (table printed only at the end), `..._stderr.txt`, `gate_job_record.txt`; raw engine log `Saved/Logs/OneBossFight.log` (1404 lines before the runner started; slice by that count). Progress = count `RESULT`/`SUMMARY` lines after line 1404.
+## 0a. GATE FINISHED 2026-10-27 11:56 (supersedes 0b below): NO JOB ACTIVE
+- Result: `40/40 drivers passed` (quick transition mode), raw-log check: 40 distinct final lines, 0 FAIL, no duplicates; automation 45/45 before it. Evidence dir `Docs/BossCombatReview/Execution/Claude/Evidence/exports/gate_2026-10-27/` (hashes in `post_evidence_sha256.txt`). Post-run: DLL/EXE hashes unchanged, input manifest identical to pre_, pack size/mtime identical, `Saved/transition_mode.txt` DELETED (restored to absent), TEST_PLAN row BUILD-09 added. HEAD moved 54f46294 -> 04037c91 during the run (commits by another actor at 10:38, content already on disk; manifest proves no input drift).
+- PROCESSES NOW: the gate runner (22324) has exited; the EDITOR (PID 19816, -nosound, L_SevarogArena) is STILL OPEN and idle. It was not closed because closing it can raise a "Save Content" prompt and the order forbids accepting a save of shipped content. Next close: CloseMainWindow, look at the prompt, never press Enter blindly; or close via Rebuild.ps1 only after checking no shipped asset is dirty in memory. No Source/Config/Scripts/Content edits were made. C-181 posted with this result.
+- Next exact action: read Codex's review of C-181; do nothing runtime until the lead gives the next order (2b and later are still HELD).
+
+## 0b. (HISTORICAL) GATE JOB IN FLIGHT (X-230 / CLAUDE_RESUME_GATE_ORDER_2026-10-27.md), started 2026-10-27 10:34 real clock
+- WAS ACTIVE JOB: detached hidden `Scripts\RunDrivers.ps1` (no -Only/-SkipWarmup, standard 40 rows), runner powershell PID 22324, editor PID 19816 (fresh, -nosound, L_SevarogArena loaded, bridge on 3000). DO NOT stop, restart or touch the editor, do not build, do not edit Source/Config/Scripts/Content. Logs: `Docs/BossCombatReview/Execution/Claude/Evidence/exports/gate_2026-10-27/rundrivers_gate_stdout.txt` (table printed only at the end), `..._stderr.txt`, `gate_job_record.txt`; raw engine log `Saved/Logs/OneBossFight.log` (1404 lines before the runner started; slice by that count). Progress = count `RESULT`/`SUMMARY` lines after line 1404.
 - Before the gate: automation on the existing DLL, no rebuild: 45 unique tests all Success, exit 0, 58 s, `gate_2026-10-27/automation_gate_run1.log` sha256 7658a116cab41603bae6bfcf8ee5a7bb3d53093f7999fa8de8c9610db9d71143. Binary pins equal Codex's (DLL 118b3663...a255, EXE 5495fb88...b65). Input manifest `pre_input_manifest_sha256.txt` (1297 files) sha256 1d7534c5eec2a3b8...
 - HARNESS FILE TO RESTORE AT THE END: I created `Saved/transition_mode.txt` = `quick` (it did not exist before; original state = absent). After the gate: delete it. `Saved/build_fight_build.txt` pre-existed (7 bytes, sha 262b4ff6...), the balance rows are not in this gate.
 - AFTER THE GATE: read stdout table, then slice the engine log; re-hash DLL/EXE and the input manifest (diff against pre_), `git status` vs pre_git_status.txt, delete transition_mode.txt, close the editor safely only if it is idle (a "Save Content" prompt must NOT be accepted if shipped assets are dirty: check `git status -- Content` first), post the C-message. A timeout row = stop, restart the editor safely, report; no waiver of KI-106.
@@ -96,3 +101,96 @@ ab6e69b5a47c1519661d47ce681e761c94ff03765f3ef075f3cc30aafb7ac78c *Docs/BossComba
 f7a08bb07cfacea6b3f6ec1676191b39cbc618b0fa00745cd0342c1a0b1acfe8 *Docs/BossCombatReview/Execution/Claude/Evidence/exports/automation_catalogpath_run2_invalid_outer.log
 ```
 Shipped blobs after restoration: DA_Weapon_Sword.uasset 321520f535b77fe55eaebea04df37b5cb524865c, DA_Build_Starter.uasset c2860209d6885e6c5e628240701a807de10dc971 (git blob ids, equal to HEAD).
+
+
+## 0c. X-236 RECEIVED (13:52)
+Codex ACCEPTED the C181 standard 40-row gate (quick mode, DLL 118b3663...a255). Qualifications kept: 1181 raw Error lines unclassified; post_saved_harness.txt captured the transition selector BEFORE deletion, so it is not final restoration proof (file independently confirmed absent, build selector hash unchanged); HEAD moved 54f4629 -> 04037c9 during the run, gate bound to working-tree/binary hashes. Editor close attempted per order but blocked by the permission layer; editor PID 19816 still open and idle. STAND BY: no build/package/rerun/source/content change, no 2b+. Owner decision pending on closing the editor.
+
+
+## 0d. EDITOR CLOSED (14:04)
+Owner authorized the close in chat; editor PID 19816 exited normally with no save prompt. No engine/editor/build process running. Content status unchanged (two untracked fixture folders only), pack clean, transition_mode.txt absent. STAND BY for the next lead order; nothing runtime held by me.
+
+
+## 0e. 2b LEGACY EXTRACTION DIFF DELIVERED (15:42)
+X-237 order. Source edited (cpp 17bc29c9..., h 8bc1a655...), NOT built or run. Evidence and tables: Claude/DD2b/ (2B_DELIVERY.md first). Preimages in DD2b/preimages (cpp 1b036b03..., h ab75575c...). Awaiting Codex diff review. If rejected: restore from those preimages (copy, do not use git checkout) and re-pin. Editor closed, no engine job. Next on acceptance: UHT/build, automation (expect 45), planned order/idempotence witness; post concrete test-helper delta first if one is needed.
+
+
+## 0f. 2b BUILD + AUTOMATION DONE (15:49)
+X-238 accepted the source diff and released build verification. Editor build exit 0 (UHT ok), automation 45/45 on new DLL c23215a0... Evidence: Claude/DD2b/build_2026-10-27/ (evidence_sha256.txt). Pre-change DLL backup in prechange_binary_backup/. exe not rebuilt. No engine process running, editor closed. Witness plan (not implemented): DD2b/2B_WITNESS_PROPOSAL.md, awaiting Codex. TEST_PLAN BUILD-10 added.
+
+
+## 0g. WITNESS TEST DRAFT DELIVERED (15:57)
+X-239: draft only, in Claude/DD2b/Drafts/ (RPGPlayerMovesAttachWitnessTests.cpp + DRAFT_NOTES.md, hashes in draft_sha256.txt). Not in Source, not compiled, not run. Source at accepted 2b pins. After Codex accepts the draft: promote to Source, A/B (restore preimages from DD2b/preimages by copy, build+run, then accepted files build+run), re-verify pins at the end. Editor closed.
+
+
+## 0h. WITNESS PROBE + A/B DONE (16:08)
+X-240: test promoted (5694ab76...), probe 2/2, A/B (preimage vs accepted 2b) 47/47 each, 24 witness records identical. Source back at accepted 2b pins + the new test; binary 0c7f411e... (exe not rebuilt). Evidence: Claude/DD2b/witness_2026-10-27 and ab_2026-10-27 (evidence_sha256.txt in each). TEST_PLAN BUILD-11. Awaiting Codex acceptance and the next packet. TASKS/KNOWN_ISSUES/DECISIONS not yet updated for 2b. No engine process, editor closed.
+
+
+## 0i. DD3 STATS ADAPTERS DELIVERED FOR REVIEW (16:21)
+X-241: three NEW Source files (RPGBossStatsAdapters.h/.cpp, Tests/RPGBossStatsAdaptersTests.cpp), NOT built, NOT run. Hashes and write-up in Claude/DD3/ (3_DELIVERY.md, Review/, evidence_sha256.txt). 2b accepted bounded (X-241); owned docs updated (TASKS row, DECISIONS section, KNOWN_ISSUES KI-109). Source state: accepted 2b + attach witness test + the three new DD3 files; binary still 0c7f411e... (no build since the 2b B run). On Codex acceptance: build, run Binding.StatsAdapters then the full suite (expect 52), serialized, with manifests. Editor closed, no engine process.
+
+
+## 0j. DD3 REVISION 1 DELIVERED (16:29)
+X-242: InvalidComponent check added (first check, destroyed-but-retained component), test block in StatsAdapters.Rejections, precision notes; Claude/DD3/revision1.diff + 3_DELIVERY.md (revision section on top). Current hashes: h cd1f6a0c..., cpp b14a57ef..., tests 46be817e.... Still NOT built or run. First-delivery bytes reconstructed and hash-verified in DD3/Review/first_delivery_C191. Source = accepted 2b + attach witness test + 3 DD3 files; binary still 0c7f411e... Awaiting Codex acceptance, then focused build and run (expect 52 discovered).
+
+
+## 0k. DD3 STATS ADAPTERS BUILT AND VERIFIED (16:35)
+X-243: build ok; first focused run FAILED (my test used abstract UActorComponent, kept in DD3/build_2026-10-27/failed_run1); mechanical fix (fix1.diff, tests hash be029a3a...); focused 5/5, full suite 52/52, 0 errors. Source = accepted 2b + attach witness test + 3 DD3 files; editor DLL 97537baf..., exe 5495fb88... not rebuilt. TEST_PLAN BUILD-12, TASKS clause updated. No engine process. Awaiting Codex acceptance and the next package. Nothing wired, no gate run on this binary.
+
+
+## 0l. DD4 PHASE ADAPTER DELIVERED FOR REVIEW (16:49)
+X-244: three NEW Source files (RPGBossPhaseAdapters.h/.cpp, Tests/RPGBossPhaseAdaptersTests.cpp), NOT built, NOT run. Hashes and write-up in Claude/DD4/ (4_DELIVERY.md, Review/, evidence_sha256.txt). Key decision for Codex: AttackMultiplier below 1 is refused by name (native reset only reverses an increase). Source = accepted 2b + attach witness test + DD3 stats adapters + the three DD4 files; binary still 97537baf... (no build for DD4). On acceptance: build, run Binding.PhaseAdapters then the full suite (expect 57). Editor closed, no engine process.
+
+
+## 0m. DD4 PHASE ADAPTER BUILT AND VERIFIED (16:55)
+X-245: build ok, focused 5/5, full suite 57/57, 0 errors, no failure, no source change after acceptance. Sources h fab105d6..., cpp 8140cd20..., tests 5099aa04...; editor DLL 4e5d8694..., exe 5495fb88... not rebuilt. TEST_PLAN BUILD-13, TASKS clause, DECISIONS section, KI-110. Evidence Claude/DD4/build_2026-10-27. Nothing wired, no gate run on this binary. No engine process, editor closed. Awaiting Codex acceptance and the next package.
+
+
+## 0n. DD5 CORE PREFLIGHT KERNEL DELIVERED FOR REVIEW (17:15)
+X-246: three NEW Source files (RPGBossHydrationPreflight.h/.cpp, Tests/RPGBossHydrationPreflightTests.cpp), NOT built, NOT run. Hashes and write-up in Claude/DD5/ (5_DELIVERY.md, Review/, evidence_sha256.txt). Source = accepted 2b + attach witness test + DD3 stats adapters + DD4 phase adapters + the three DD5 files; editor DLL still 4e5d8694... (no build for DD5). On acceptance: build, run Binding.Preflight then the full suite (expect 62). Editor closed, no engine process.
+
+
+## 0o. DD5 REVISION 1 DELIVERED (17:26)
+X-247: production animation-dependency correction added inside the same three DD5 files (CheckCompiledDependencies: every animation lease valid, every animation on the compiled skeleton), new test Preflight.Dependencies (expected 63 discovered), no positive production batch. First delivery bytes preserved in Claude/DD5/Review/first_delivery_C198; diff in DD5/revision1.diff; current hashes h 23f527a4..., cpp 766d1f56..., tests bba654e5.... Still NOT built or run. Source = accepted 2b + attach witness test + DD3 + DD4 + the three DD5 files; editor DLL still 4e5d8694.... Awaiting Codex acceptance, then focused build and run. Editor closed, no engine process.
+
+
+## 0p. DD5 CORE PREFLIGHT KERNEL BUILT AND VERIFIED (17:32)
+X-248: build ok (no UHT claim, no UHT line in the log), focused Binding.Preflight 6/6, full suite 63/63, 0 errors, no failure, no source change after acceptance. Sources h 23f527a4..., cpp 766d1f56..., tests bba654e5...; editor DLL 2f536e34..., exe 5495fb88... not rebuilt. TEST_PLAN BUILD-14, TASKS clause, DECISIONS section, KI-111. Evidence Claude/DD5/build_2026-10-27. Core subset only: no reservation, hydration, activation or legacy suppression; no positive production batch; no gate run on this binary. No engine process, editor closed. Awaiting Codex acceptance and the next package.
+
+
+## 0q. DD6 ENCOUNTER POLICY DELIVERED FOR REVIEW (17:42)
+X-249: five files for review BEFORE UHT and build: NEW RPGBossEncounterPolicyAdapters.h/.cpp and Tests/RPGBossEncounterPolicyAdaptersTests.cpp; EDITED only RPGEncounterBinding.h (4330f8c4... -> 022e21d7...) and RPGEncounterBinding.cpp (2fe63bcb... -> 22219ce7...), preimages preserved in Claude/DD6/preimages, diff Claude/DD6/five_file.diff, manifests before (156) and after (159), write-up 6_DELIVERY.md. NOT built, NOT run (UHT must regenerate: a reflected struct and property are added). Warning-claim correction posted in C-201 and TEST_PLAN rows BUILD-10/12/13/14 reworded. Source = accepted 2b + attach witness test + DD3 + DD4 + DD5 + the DD6 files; editor DLL still 2f536e34.... Awaiting Codex acceptance, then scoped UHT/build/focused/full. Editor closed, no engine process.
+
+
+## 0r. DD6 ENCOUNTER POLICY BUILT AND VERIFIED (17:47)
+X-250: UHT ran (raw lines in the build log) and the build is ok, focused EncounterPolicy 6/6, full suite 69/69, 0 error-severity lines, no failure, no source change after acceptance. Five files at the accepted pins (adapter h fa562e4f..., cpp f4e6352f..., tests 6b4dbe68..., Binding h 022e21d7..., Binding cpp 22219ce7...); editor DLL e790252a..., exe 5495fb88... not rebuilt. Diagnostics reported exactly: 0 warning C, 3 UBT Warning: lines, 1 advisory; automation 60 Warning lines unchanged, 7 containing the text error (trace server plus 6 LoadErrors). TEST_PLAN BUILD-15, TASKS clause, DECISIONS section, KI-112. Evidence Claude/DD6/build_2026-10-27. Policy is an unwired fragment; defaults 1200/true are authoring defaults only; no serialized or Details proof; no gate run on this binary. No engine process, editor closed. Awaiting Codex acceptance and the next package.
+
+
+## 0s. DD7 STAGGER POLICY DELIVERED FOR REVIEW (17:57)
+X-251: five files for review BEFORE UHT and build: NEW RPGBossStaggerPolicyAdapters.h/.cpp and Tests/RPGBossStaggerPolicyAdaptersTests.cpp; EDITED only RPGEncounterBinding.h (022e21d7... -> dc43f3b8...) and RPGEncounterBinding.cpp (22219ce7... -> 247ef9c4...), preimages preserved in Claude/DD7/preimages, diff Claude/DD7/five_file.diff, manifests before (159) and after (162), write-up 7_DELIVERY.md. NOT built, NOT run (UHT must regenerate: a reflected struct and property are added). Also reported to Codex in C-205: a predicted unity-build name-ambiguity hazard in the four earlier test files with file-scope using-directives (source analysis, not reproduced, nothing edited). Source = accepted 2b + attach witness test + DD3 + DD4 + DD5 + DD6 + the DD7 files; editor DLL still e790252a.... Awaiting Codex acceptance, then scoped UHT/build/focused/full. Editor closed, no engine process.
+
+
+## 0t. DD7 STAGGER POLICY BUILT AND VERIFIED (18:03)
+X-252: UHT ran (raw lines in the build log) and the build is ok, focused StaggerPolicy 6/6, full suite 75/75, 0 error-severity lines, no failure, no source change after acceptance. Five files at the accepted pins (adapter h 63a38442..., cpp 42bb676b..., tests fbd82be2..., Binding h dc43f3b8..., Binding cpp 247ef9c4...); editor DLL 33f6325e..., exe 5495fb88... not rebuilt. Diagnostics reported exactly: 0 warning C, 3 UBT Warning: lines, 1 advisory; automation 60 Warning lines unchanged, 7 containing the text error (trace server plus 6 LoadErrors). TEST_PLAN BUILD-16, TASKS clause, DECISIONS section, KI-113. RETRACTED my C-205 unity-build prediction: OneBossFight.Build.cs line 12 is bUseUnity = false (read and verified), 7_DELIVERY.md corrected. Scalar policy only; unwired; no serialized or Details proof; no gate run on this binary. Evidence Claude/DD7/build_2026-10-27. No engine process, editor closed. Awaiting Codex acceptance and the next package.
+
+
+## 0u. DD8 PHASE FLOW SOURCE DELIVERED FOR REVIEW, NOT BUILT (18:13)
+X-253: three NEW files (RPGBossPhaseFlowAdapters.h 82c3eb4d..., .cpp 166b05c9..., Tests/RPGBossPhaseFlowAdaptersTests.cpp 2d75769f..., 6 tests) and ONLY RPGEncounterBinding.h (dc43f3b8... -> 6e2f3ae0...) and .cpp (247ef9c4... -> fafabe7b...) edited, 21 added lines. Manifest 162 -> 165, 22 of 24 pins unchanged. Delivery in Claude/DD8/ (8_DELIVERY.md, five_file.diff, Review/, evidence_sha256.txt). Posted as C-208. Waiting for Codex review; no UHT/build/test until accepted. On acceptance: fresh safety/pins/manifest, build_tag.ps1, focused OneBossFight.Binding.PhaseFlow (6), then full suite (expect 81, prior 75 present), exact diagnostics, docs (TEST_PLAN BUILD-17, TASKS, DECISIONS, KNOWN_ISSUES KI-114). Watcher: restart with -SeenCount = header count after C-208.
+
+
+## 0v. DD8 PHASE FLOW BUILT AND VERIFIED (18:17)
+X-254: UHT ran (raw lines in the build log), build ok (0 warning C, 3 UBT Warning lines), focused PhaseFlow 6/6, full suite 81/81 (prior 75 present), 0 error-severity lines, no failure, no source change after acceptance. Five files at the accepted pins (adapter h 82c3eb4d..., cpp 166b05c9..., tests 2d75769f..., Binding h 6e2f3ae0..., cpp fafabe7b...). Editor DLL e3addf3e74915d6382b0052c3f5693705c591928651f9bdc07b19ecea1584fa2; exe 5495fb88... not rebuilt; HEAD 04037c91. Evidence Claude/DD8/build_2026-10-27/. Docs: TEST_PLAN BUILD-17, TASKS clause, DECISIONS DD-8, KNOWN_ISSUES KI-114. Posted as C-209. Waiting for the next work order; watcher restarted at the new header count. Open items unchanged (combined plans, dependency/profile packages, wiring, activation, 40-row gate on the new binary, Details/serialized proof, Shipping).
+
+
+## 0v-bis. ROLE SWAP (owner chat, 2026-10-27)
+Codex and Antigravity ran out of limits; Claude covered both roles for DD9 source (C-210). The owner then said Antigravity is back and Claude is now LEAD REVIEWER (Codex's role) with Antigravity as IMPLEMENTER and sole engine/build operator. C-211 posts the work order AG-1 (DD9 verification after Claude's release); the AG resume prompt is Antigravity/AG_IMPLEMENTER_RESUME_PROMPT_2026-10-27.md. DD9 source (five files, 168-file manifest) is delivered and NOT built; an independent read-only sub-agent review of DD9/five_file.diff is pending; no engine process; Claude starts none while AG works. Next handover section for the DD9 result is 0w (written by AG).
+
+## 0w. DD9 PHASES CLUSTER BUILT AND VERIFIED (2026-10-27 19:42)
+AG-1/AG-1b (Implementer Antigravity, Lead Reviewer Claude):
+Build ok: build_dd9b_cookfix exit 0, 6 s, 0 warning C, 0 errors, 1 UBT Warning (VS compiler version advisory). Build log sha256 b7ccb7a24a0e6e02a03fdf62f8d6b08bb42ae86cc16f12f21790eb15c80ee361.
+Focused suite (OneBossFight.Binding.PhasesCluster): 7 found, 7 Success (Assign, Authoring, Compile, Isolation, Oracle, Rejections, Validation), exit 0, 22 s, 0 error lines (log sha256 cfb1b7ed5eee21d5a66d7abecf99797150030e3c58d266804cfd786bf16b8fc8).
+Full suite (OneBossFight): First run (full_dd9, log sha256 43246f4d916197aca3c24d7ba0c806a43ceeeb4e68daad46c431282a5ef0dfb9) 87 Success, 1 Fail (OneBossFight.Content.CookCoverage due to 17 synthetic /Game/ fixtures in test file); reported honestly in A-155; Lead Reviewer fixed test mount to /SyntheticMount/ (C-213); Rerun full suite (full_dd9b, log sha256 13b8226f19f8593838b9a7c20503493a9f2407845565caac8ed2833724db2b0f) 88 found, 88 completed, 88 Success, 0 failures, exit 0, 24 s. CookCoverage PASSED. All 81 earlier tests present + 7 new.
+Binaries: Editor DLL 62655d63ae05d3bd86f75523fe2bcd3fa95ae5236e4fee37261136fb19c6312d; Game EXE 5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65 (untouched).
+Manifests: Source manifest 168 files match post_write_source_manifest_sha256.txt; 24 dependency pins OK; evidence directory Docs/BossCombatReview/Execution/Claude/DD9/build_2026-10-27/ with evidence_sha256.txt (includes failed run evidence).
+Docs updated: TEST_PLAN.md BUILD-18, TASKS.md clause, DECISIONS.md DD-9, KNOWN_ISSUES.md KI-115, handover 0w. Reported to Claude in A-156. Awaiting lead review before commit.

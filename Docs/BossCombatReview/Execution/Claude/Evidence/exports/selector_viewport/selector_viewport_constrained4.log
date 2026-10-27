@@ -1,0 +1,18 @@
+﻿[2026.10.26-14.53.51:450][268]LogPython: [SelectorViewport] PASS selector component exists 
+[2026.10.26-14.54.18:151][350]LogPython: [SelectorViewport] epoch: data:FC1DC4F9492B6FAA2872768BDF38FC8B
+[2026.10.26-14.54.18:151][350]LogPython: [SelectorViewport] PASS fourth fixture row present (4 rows, data epoch) 4
+[2026.10.26-14.54.18:151][350]LogPython: [SelectorViewport] PASS debug hook for the refill exists 
+[2026.10.26-14.54.20:817][358]LogPython: [SelectorViewport] PASS selector opens reason when refused: opened
+[2026.10.26-14.54.23:490][366]LogPython: [SelectorViewport] viewport size (px): 785 x 336, viewport scale 0.444
+[2026.10.26-14.54.23:490][366]LogPython: [SelectorViewport] selector layout height (slate units, viewport height / scale): 756.8
+[2026.10.26-14.54.23:490][366]LogPython: [SelectorViewport] PASS layout height is a real positive number 756.7567470040611
+[2026.10.26-14.54.23:490][366]LogPython: [SelectorViewport] row visibility at that height (rows 0 to 3): [True, True, True, True]
+[2026.10.26-14.54.23:490][366]LogPython: [SelectorViewport] row texts: ['Build: Starter (Sword)', 'Build: Strength (Claymore)', 'Build: Dex (Dual Swords)', 'Build: Catalog Fourth (Sword)']
+[2026.10.26-14.54.23:490][366]LogPython: [SelectorViewport] PASS the first three rows are always visible [True, True, True, True]
+[2026.10.26-14.54.23:490][366]LogPython: [SelectorViewport] RECORD fourth row visible=True at layout height 756.8
+[2026.10.26-14.54.23:490][366]LogPython: [SelectorViewport] formula view: height 200 -> visible rows [True, True, False, False]
+[2026.10.26-14.54.23:490][366]LogPython: [SelectorViewport] formula view: height 400 -> visible rows [True, True, True, True]
+[2026.10.26-14.54.23:490][366]LogPython: [SelectorViewport] formula view: height 600 -> visible rows [True, True, True, True]
+[2026.10.26-14.54.23:491][366]LogPython: [SelectorViewport] formula view: height 800 -> visible rows [True, True, True, True]
+[2026.10.26-14.54.23:491][366]LogPython: [SelectorViewport] PASS a visible fourth row can be picked Accepted
+[2026.10.26-14.54.32:124][383]LogPython: [SelectorViewport] RESULT 7/7 passed

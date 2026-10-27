@@ -1,0 +1,43 @@
+Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" OneBossFightEditor Win64 Development "-Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject" -WaitMutex
+Log file: C:\Users\Rushit Vaghela\AppData\Local\UnrealBuildTool\Log.txt
+Using 'git status' to determine working set for adaptive non-unity build (C:\UnrealProject\OneBossFight).
+Invalidating makefile for OneBossFightEditor (working set of source files changed)
+Available x64 toolchains (1):
+ * C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207
+    (Family=14.44.35207, FamilyRank=1, Version=14.44.35214, Is64Bit=True, ReleaseChannel=Latest, Architecture=x64)
+Visual Studio 2022 compiler version 14.44.35214 is not a preferred version. Please use the latest preferred version 14.38.33130
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'Niagara'.
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'NiagaraEditor'.
+Parsing headers for OneBossFightEditor
+  Running Internal UnrealHeaderTool C:\UnrealProject\OneBossFight\OneBossFight.uproject C:\UnrealProject\OneBossFight\Intermediate\Build\Win64\OneBossFightEditor\Development\OneBossFightEditor.uhtmanifest -WarningsAsErrors -installed
+Total of 0 written
+Reflection code generated for OneBossFightEditor in 1.5941318 seconds
+Building OneBossFightEditor...
+Using Visual Studio 2022 14.44.35214 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+Warning: Visual Studio 2022 compiler is not a preferred version
+[Adaptive Build] Excluded from OneBossFight unity file: RPGCombatCatalogTests.cpp, RPGEncounterBindingTests.cpp, RPGPlayerMovesAttachWitnessTests.cpp
+Determining max actions to execute in parallel (8 physical cores, 16 logical cores)
+  Executing up to 8 processes, one per physical core
+Using Unreal Build Accelerator local executor to run 12 action(s)
+  Storage capacity 40Gb
+---- Starting trace: 261027_160453 ----
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+------ Building 12 action(s) started ------
+[1/12] Compile [x64] RPGPlayerMovesSubsystem.gen.cpp
+[2/12] Compile [x64] RPGPlayerMovesAttachWitnessTests.cpp
+[3/12] Compile [x64] RPGRiposteInput.cpp
+[4/12] Compile [x64] RPGBenchmarkRunner.cpp
+[5/12] Compile [x64] RPGFogGate.cpp
+[6/12] Compile [x64] RPGPlayerMovesSubsystem.cpp
+[7/12] Compile [x64] RPGHitIntake.cpp
+[8/12] Compile [x64] RPGBuildLoadout.cpp
+[9/12] Compile [x64] RPGBuildSelect.cpp
+C:\UnrealProject\OneBossFight\Source\OneBossFight\UI\RPGBuildSelect.cpp(101): warning C4996: 'UUserWidget::bIsFocusable': Direct access to bIsFocusable is deprecated. Please use the getter. Note that this property is only set at construction and is not modifiable at runtime. Please update your code to the new API before upgrading to the next release, otherwise your project will no longer compile.
+[10/12] Link [x64] UnrealEditor-OneBossFight.lib
+[11/12] Link [x64] UnrealEditor-OneBossFight.dll
+   Creating object C:\UnrealProject\OneBossFight\Binaries\Win64\UnrealEditor-OneBossFight.exp
+[12/12] WriteMetadata OneBossFightEditor.target (UBA disabled)
+Trace file written to C:/Users/Rushit Vaghela/AppData/Local/UnrealBuildTool/Log.uba with size 5.3kb
+Total time in Unreal Build Accelerator local executor: 7.93 seconds
+Total execution time: 12.31 seconds

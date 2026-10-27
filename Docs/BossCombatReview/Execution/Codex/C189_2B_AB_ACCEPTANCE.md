@@ -1,0 +1,11 @@
+# C189: bounded 2b A/B acceptance
+
+Codex independently read raw probe/A/B logs, all hash receipts in both evidence folders and current source/binary bytes. Accept 2b **source equivalence, build/automation and observed creation/final-state equivalence**. Do not claim arena registration/BeginPlay parity or a new full40 driver gate.
+
+Verified: probe2 unique Success paths; A/B47 unique Success paths each with identical path/result sets; engine test exit0; zero Error lines in these automation logs. Exactly24 distinct witness records, in identical order and content across probe,A,B. Boss21/player10 creation sequences match; W2 creates nothing; final states match. All world/actor begun flags remain0, consistent with bare-world limitation. No observation that the world-begin loop visited each pawn; that remains source reasoning.
+
+All evidence SHA receipts match. Final147 Source-file manifest independently rehashed against actual disk: exact match. Compared with pre-probe146 manifest, only the reviewed new test is added, all previous source bytes match. Production cpp17bc29c9... and header8bc1a655... remain restored; test5694ab76... matches draft. Actual final DLL `0c7f411efc081f307661c7e8cbaf002397ee139974a33ca0b2edc602cfa5299c`; EXE5495fb88... unchanged and not rebuilt. Identical source can yield different DLL bytes; build records/source manifests are required alongside binary hashes.
+
+A/B each has60 warnings. Independently inspected eight unmatched warning texts per side; only catalog `epoch=<32 hex>` values and Trace Server `--sponsor <PID>` vary. Normalizing precisely those values yields identical warning lists in order. Original warnings remain, including Trace Server access denied; no broad expected-error filter or error-free release claim. Different elapsed test times are observed but not explained as a performance improvement. Peer placeholder comparison note and later correction are retained.
+
+Old full40 gate belongs to the old binary, not this test-containing DLL. Non-editor target, arena, actual actor BeginPlay, deferred spawn, hybrid/null/world-begin-only cases, Shipping and gameplay behavior remain outside this acceptance. This does not block writing the next **unwired** typed stats adapter package; activation still needs the whole coordinator/cluster and appropriate real-world regression evidence.

@@ -1,0 +1,63 @@
+--- preimage/RPGEncounterBinding.h
++++ DD6/RPGEncounterBinding.h
+@@ -23,6 +23,18 @@
+ 	UPROPERTY(EditAnywhere) float PostureRegenRate = 0.f;
+ };
+ 
++/** Encounter flow policy of the boss (URPGBossEncounter): the typed authoring record. The defaults below are defaults of this NEW asset field (old schema 1 definitions receive them additively); they match the native
++ *  declarations of URPGBossEncounter, are not proof of any serialized or live actor value and are never a fallback for an invalid value. */
++USTRUCT(BlueprintType)
++struct FRPGEncounterPolicyConfig
++{
++	GENERATED_BODY()
++	/** The boss sleeps until the player is this close (cm, horizontal) or damages it. 0 = no gate (the native meaning). Finite and not negative; fractional values are valid. */
++	UPROPERTY(EditAnywhere) float GateRadius = 1200.f;
++	/** Move the boss back to its start and make it dormant when the player respawns. */
++	UPROPERTY(EditAnywhere) bool bResetOnPlayerRespawn = true;
++};
++
+ USTRUCT(BlueprintType)
+ struct FRPGPhaseConfig
+ {
+@@ -62,6 +74,7 @@
+ 	UPROPERTY(EditAnywhere) FName DefinitionId;
+ 	UPROPERTY(EditAnywhere) FName PresentationId;
+ 	UPROPERTY(EditAnywhere) FRPGBossStatsConfig Stats;
++	UPROPERTY(EditAnywhere) FRPGEncounterPolicyConfig EncounterPolicy;
+ 	UPROPERTY(EditAnywhere) TArray<FRPGPhaseConfig> Phases;
+ 	UPROPERTY(EditAnywhere) TSoftObjectPtr<USkeleton> Skeleton;
+ 	UPROPERTY(EditAnywhere) TArray<TSoftObjectPtr<UAnimSequenceBase>> Animations;
+@@ -95,6 +108,7 @@
+ 	FString StableManifestHash;
+ 	int32 Schema = 1;
+ 	FRPGBossStatsConfig Stats;
++	FRPGEncounterPolicyConfig EncounterPolicy;
+ 	TArray<FRPGPhaseConfig> Phases;
+ 	TArray<FRPGParityField> Fields;
+ 	TSharedPtr<const RPGCombatRegistry::FEpoch> Content;
+--- preimage/RPGEncounterBinding.cpp
++++ DD6/RPGEncounterBinding.cpp
+@@ -1,5 +1,6 @@
+ #include "Player/RPGEncounterBinding.h"
+ #include "Player/RPGBossEncounter.h"
++#include "Player/RPGBossEncounterPolicyAdapters.h"
+ #include "Engine/World.h"
+ #include "Animation/AnimSequenceBase.h"
+ #include "Animation/Skeleton.h"
+@@ -33,6 +34,8 @@
+ 	{
+ 		Result.Fail(TEXT("invalid stats (no constructor/Boss01 substitution)"));
+ 	}
++	FString PolicyError;
++	if (!RPGBossEncounterPolicyAdapters::ValidateEncounterPolicy(D.EncounterPolicy, PolicyError)) { Result.Fail(PolicyError); } // never replaced by the 1200/true authoring defaults
+ 	TSet<FName> PhaseIds;
+ 	for (const FRPGPhaseConfig& Phase : D.Phases)
+ 	{
+@@ -64,6 +67,7 @@
+ 	Value->BossId = D.DefinitionId; Value->PresentationId = D.PresentationId;
+ 	Value->Schema = D.Schema; Value->StableManifestHash = Hash;
+ 	Value->Stats = D.Stats; Value->Phases = D.Phases; Value->Fields = D.Fields;
++	Value->EncounterPolicy = D.EncounterPolicy;
+ 	Value->Content = MoveTemp(Content); Out = Value;
+ 	Value->bSyntheticFixture = bSynthetic;
+ 	if (!bSynthetic)

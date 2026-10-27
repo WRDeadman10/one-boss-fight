@@ -1,0 +1,5 @@
+
+GameDefaultMap=/Game/OneBossFight/Levels/L_SevarogArena.L_SevarogArena
+EditorStartupMap=/Game/OneBossFight/Levels/L_SevarogArena.L_SevarogArena
+
+

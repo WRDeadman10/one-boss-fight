@@ -1,0 +1,72 @@
+diff --git a/Docs/BossCombatReview/Execution/Claude/DD8/preimages/RPGEncounterBinding.h.preimage_dc43f3b8 b/Source/OneBossFight/Player/RPGEncounterBinding.h
+index 3f17eb2..f5588f2 100644
+--- a/Docs/BossCombatReview/Execution/Claude/DD8/preimages/RPGEncounterBinding.h.preimage_dc43f3b8
++++ b/Source/OneBossFight/Player/RPGEncounterBinding.h
+@@ -58,6 +58,22 @@ struct FRPGStaggerPolicyConfig
+ 	UPROPERTY(EditAnywhere) bool bHoldPostureAtZero = true;
+ };
+ 
++/** Phase flow policy of the boss (URPGBossPhases): the typed authoring record, six fields with the names of the native component. The defaults are defaults of this NEW asset field (old schema 1 definitions
++ *  receive them additively); they match the source declarations of URPGBossPhases, are not proof of any serialized or live actor value and are never a fallback for an invalid value. The selected phase record with its
++ *  threshold and multipliers, the fireball fields and every asset reference are NOT part of this record. AttackAbilityPrefix and LeapAbilityTag state an explicit identity only: that a matching ability or a registered
++ *  gameplay tag exists is a later integration check, not something a non-empty value proves. */
++USTRUCT(BlueprintType)
++struct FRPGPhaseFlowConfig
++{
++	GENERATED_BODY()
++	UPROPERTY(EditAnywhere) float TransitionSeconds = 1.8f;
++	UPROPERTY(EditAnywhere) bool bUseRoarClip = true;
++	UPROPERTY(EditAnywhere) bool bPausePostureInTransition = true;
++	UPROPERTY(EditAnywhere) bool bLockLeapUntilPhaseTwo = true;
++	UPROPERTY(EditAnywhere) FString AttackAbilityPrefix = TEXT("GA_GS_Boss_");
++	UPROPERTY(EditAnywhere) FName LeapAbilityTag = TEXT("Ability.Melee.LeapAttack");
++};
++
+ USTRUCT(BlueprintType)
+ struct FRPGPhaseConfig
+ {
+@@ -99,6 +115,7 @@ public:
+ 	UPROPERTY(EditAnywhere) FRPGBossStatsConfig Stats;
+ 	UPROPERTY(EditAnywhere) FRPGEncounterPolicyConfig EncounterPolicy;
+ 	UPROPERTY(EditAnywhere) FRPGStaggerPolicyConfig StaggerPolicy;
++	UPROPERTY(EditAnywhere) FRPGPhaseFlowConfig PhaseFlow;
+ 	UPROPERTY(EditAnywhere) TArray<FRPGPhaseConfig> Phases;
+ 	UPROPERTY(EditAnywhere) TSoftObjectPtr<USkeleton> Skeleton;
+ 	UPROPERTY(EditAnywhere) TArray<TSoftObjectPtr<UAnimSequenceBase>> Animations;
+@@ -134,6 +151,7 @@ struct FRPGParticipantConfig
+ 	FRPGBossStatsConfig Stats;
+ 	FRPGEncounterPolicyConfig EncounterPolicy;
+ 	FRPGStaggerPolicyConfig StaggerPolicy;
++	FRPGPhaseFlowConfig PhaseFlow;
+ 	TArray<FRPGPhaseConfig> Phases;
+ 	TArray<FRPGParityField> Fields;
+ 	TSharedPtr<const RPGCombatRegistry::FEpoch> Content;
+diff --git a/Docs/BossCombatReview/Execution/Claude/DD8/preimages/RPGEncounterBinding.cpp.preimage_247ef9c4 b/Source/OneBossFight/Player/RPGEncounterBinding.cpp
+index a0c9d10..723f6ca 100644
+--- a/Docs/BossCombatReview/Execution/Claude/DD8/preimages/RPGEncounterBinding.cpp.preimage_247ef9c4
++++ b/Source/OneBossFight/Player/RPGEncounterBinding.cpp
+@@ -2,6 +2,7 @@
+ #include "Player/RPGBossEncounter.h"
+ #include "Player/RPGBossEncounterPolicyAdapters.h"
+ #include "Player/RPGBossStaggerPolicyAdapters.h"
++#include "Player/RPGBossPhaseFlowAdapters.h"
+ #include "Engine/World.h"
+ #include "Animation/AnimSequenceBase.h"
+ #include "Animation/Skeleton.h"
+@@ -39,6 +40,8 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
+ 	if (!RPGBossEncounterPolicyAdapters::ValidateEncounterPolicy(D.EncounterPolicy, PolicyError)) { Result.Fail(PolicyError); } // never replaced by the 1200/true authoring defaults
+ 	FString StaggerError;
+ 	if (!RPGBossStaggerPolicyAdapters::ValidateStaggerPolicy(D.StaggerPolicy, StaggerError)) { Result.Fail(StaggerError); } // never replaced by the authoring defaults, never clamped
++	FString PhaseFlowError;
++	if (!RPGBossPhaseFlowAdapters::ValidatePhaseFlow(D.PhaseFlow, PhaseFlowError)) { Result.Fail(PhaseFlowError); } // never replaced by the authoring defaults, never trimmed or normalized
+ 	TSet<FName> PhaseIds;
+ 	for (const FRPGPhaseConfig& Phase : D.Phases)
+ 	{
+@@ -72,6 +75,7 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
+ 	Value->Stats = D.Stats; Value->Phases = D.Phases; Value->Fields = D.Fields;
+ 	Value->EncounterPolicy = D.EncounterPolicy;
+ 	Value->StaggerPolicy = D.StaggerPolicy;
++	Value->PhaseFlow = D.PhaseFlow;
+ 	Value->Content = MoveTemp(Content); Out = Value;
+ 	Value->bSyntheticFixture = bSynthetic;
+ 	if (!bSynthetic)

@@ -1,0 +1,655 @@
+// Copyright One Boss Fight. All Rights Reserved.
+
+#include "Misc/AutomationTest.h"
+
+#if WITH_DEV_AUTOMATION_TESTS
+
+#include "Components/SceneComponent.h"
+#include "Engine/Engine.h"
+#include "Engine/World.h"
+#include "GameFramework/Actor.h"
+#include "Player/RPGBossEncounter.h"
+#include "Player/RPGBossEncounterPolicyAdapters.h"
+#include "Player/RPGBossPosture.h"
+#include "UObject/Package.h"
+#include "UObject/StrongObjectPtr.h"
+#include "UObject/UnrealType.h"
+#include <limits>
+
+// These tests prove the typed encounter policy: its reflected authoring exposure, its copy into the immutable config by the real definition compiler (synthetic path, and the production path's early rejection),
+// the shared validator, and the typed, lifecycle-safe assignment on isolated native components. They do NOT prove a serialized asset value, anything seen in the Details panel, a production compile with a real
+// skeleton, a live gate or reset behavior, a duel or any wiring. The defaults 1200 and true are the documented defaults of the new asset field and are compared with the native declarations only as a baseline.
+
+namespace
+{
+namespace PolicyTests
+{
+	using FEpochPtr = TSharedPtr<const RPGCombatRegistry::FEpoch>;
+	using FConfigPtr = TSharedPtr<const FRPGParticipantConfig>;
+
+	constexpr float QuietNaN = std::numeric_limits<float>::quiet_NaN();
+	constexpr float PosInf = std::numeric_limits<float>::infinity();
+	constexpr float DefaultGate = 1200.f;
+
+	/** Test-local game world with the set-up the earlier headless tests used; destroyed with the scope. */
+	struct FPolicyTestWorld
+	{
+		UWorld* World = nullptr;
+
+		FPolicyTestWorld()
+		{
+			if (!GEngine)
+			{
+				return;
+			}
+			World = UWorld::CreateWorld(EWorldType::Game, /*bInformEngineOfWorld=*/false);
+			if (World)
+			{
+				FWorldContext& Context = GEngine->CreateNewWorldContext(EWorldType::Game);
+				Context.SetCurrentWorld(World);
+				World->InitializeActorsForPlay(FURL());
+			}
+		}
+
+		~FPolicyTestWorld()
+		{
+			if (World)
+			{
+				GEngine->DestroyWorldContext(World);
+				World->DestroyWorld(/*bInformEngineOfWorld=*/false);
+			}
+		}
+
+		FPolicyTestWorld(const FPolicyTestWorld&) = delete;
+		FPolicyTestWorld& operator=(const FPolicyTestWorld&) = delete;
+
+		AActor* SpawnOwner() const { return World ? World->SpawnActor<AActor>() : nullptr; }
+	};
+
+	/** Every public configuration field and runtime getter of the encounter component: a failed call must leave all of it equal, a successful one must change only the two policy fields. */
+	struct FEncounterState
+	{
+		float BossMaxHealth;
+		float GateRadius;
+		bool bTestFreeze, bResetOnPlayerRespawn, bDormant, bWaking;
+		int32 Generation, ResetCount, DeathResetRefusals;
+
+		explicit FEncounterState(const URPGBossEncounter& E)
+			: BossMaxHealth(E.BossMaxHealth), GateRadius(E.GateRadius), bTestFreeze(E.bTestFreeze), bResetOnPlayerRespawn(E.bResetOnPlayerRespawn)
+			, bDormant(E.IsDormant()), bWaking(E.IsWaking()), Generation(E.GetGeneration()), ResetCount(E.GetResetCount()), DeathResetRefusals(E.GetDeathResetRefusals())
+		{
+		}
+
+		bool operator==(const FEncounterState& O) const
+		{
+			return BossMaxHealth == O.BossMaxHealth && GateRadius == O.GateRadius && bTestFreeze == O.bTestFreeze && bResetOnPlayerRespawn == O.bResetOnPlayerRespawn
+				&& bDormant == O.bDormant && bWaking == O.bWaking && Generation == O.Generation && ResetCount == O.ResetCount && DeathResetRefusals == O.DeathResetRefusals;
+		}
+	};
+
+	/** Sentinels the policy must never touch: a health value and the test-freeze flag are given non-default values, so any stray write shows. */
+	void ArmSentinels(URPGBossEncounter& Encounter)
+	{
+		Encounter.BossMaxHealth = 777.f;
+		Encounter.bTestFreeze = true;
+	}
+
+	FRPGParticipantConfig MakeConfig(float Gate, bool bReset)
+	{
+		FRPGParticipantConfig Config;
+		Config.EncounterPolicy.GateRadius = Gate;
+		Config.EncounterPolicy.bResetOnPlayerRespawn = bReset;
+		return Config;
+	}
+
+	FRPGParityField MakeField(const FString& Path, const FString& ValueText)
+	{
+		FRPGParityField Field;
+		Field.FieldPath = Path;
+		Field.Type = TEXT("float");
+		Field.Value = ValueText;
+		Field.SourcePath = TEXT("synthetic fixture, not live provenance");
+		Field.SourceSHA256 = FString::ChrN(64, TEXT('a'));
+		Field.SourceSite = TEXT("fixture");
+		Field.Origin = TEXT("harness");
+		Field.Precedence = TEXT("fixture");
+		Field.Destination = TEXT("fixture");
+		Field.FirstRead = TEXT("BeginPlay");
+		Field.Witness = TEXT("synthetic only");
+		return Field;
+	}
+
+	/** A valid definition for the real synthetic compiler, with a typed policy. */
+	TStrongObjectPtr<URPGBossDefinition> MakeDefinition(float Gate, bool bReset)
+	{
+		TStrongObjectPtr<URPGBossDefinition> Definition(NewObject<URPGBossDefinition>());
+		Definition->DefinitionId = TEXT("Synthetic");
+		Definition->PresentationId = TEXT("SyntheticLook");
+		Definition->Stats.MaxHealth = 3500.f;
+		Definition->Stats.MaxPosture = 73.5f;
+		Definition->Stats.PostureRegenDelay = 4.25f;
+		Definition->Stats.PostureRegenRate = 9.75f;
+		FRPGPhaseConfig Phase;
+		Phase.PhaseId = TEXT("PhaseTwo");
+		Phase.EntryHealthFraction = 0.35f;
+		Phase.SpeedMultiplier = 1.5f;
+		Phase.RateMultiplier = 1.75f;
+		Phase.AttackMultiplier = 2.f;
+		Definition->Phases.Add(Phase);
+		Definition->EncounterPolicy.GateRadius = Gate;
+		Definition->EncounterPolicy.bResetOnPlayerRespawn = bReset;
+		Definition->Fields.Add(MakeField(RPGBossEncounterPolicyAdapters::FieldGateRadius, TEXT("synthetic")));
+		Definition->Fields.Add(MakeField(RPGBossEncounterPolicyAdapters::FieldResetOnPlayerRespawn, TEXT("synthetic")));
+		Definition->Fields.Add(MakeField(TEXT("Stats.MaxHealth"), TEXT("synthetic")));
+		return Definition;
+	}
+
+	FRPGHydrationResult CompileSynthetic(const URPGBossDefinition& Definition, FEpochPtr Content, FConfigPtr& Out, const FString& Hash = FString::ChrN(64, TEXT('b')))
+	{
+		return RPGCombatHydration::CompileSyntheticParticipant(Definition, Content, Hash, Out);
+	}
+
+	bool AnyErrorContains(const FRPGHydrationResult& Result, const TCHAR* Text)
+	{
+		return Result.Errors.ContainsByPredicate([Text](const FString& E) { return E.Contains(Text); });
+	}
+}
+}
+
+using namespace PolicyTests;
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGPolicyAssignTest, "OneBossFight.Binding.EncounterPolicy.Assign",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGPolicyAssignTest::RunTest(const FString& Parameters)
+{
+	FPolicyTestWorld Scope;
+	if (!TestNotNull(TEXT("test world"), Scope.World))
+	{
+		return false;
+	}
+	AActor* Owner = Scope.SpawnOwner();
+	if (!TestNotNull(TEXT("owner actor"), Owner))
+	{
+		return false;
+	}
+	TStrongObjectPtr<URPGBossEncounter> Encounter(NewObject<URPGBossEncounter>(Owner, TEXT("RPGBossEncounter")));
+	if (!TestTrue(TEXT("component created"), Encounter.IsValid()))
+	{
+		return false;
+	}
+	ArmSentinels(*Encounter);
+	const FEncounterState Before(*Encounter);
+	const int32 OwnedComponentsBefore = Owner->GetComponents().Num();
+	TestTrue(TEXT("baseline: the native declarations are 1200 and true (a comparison, not an authority)"), Before.GateRadius == DefaultGate && Before.bResetOnPlayerRespawn);
+
+	// The unwired plan fragment: the legacy instance name, the exact class and the two typed field paths.
+	const FRPGComponentPlan Plan = RPGBossEncounterPolicyAdapters::MakeEncounterPolicyPlan();
+	TestTrue(TEXT("plan class"), Plan.Class == URPGBossEncounter::StaticClass());
+	TestTrue(TEXT("plan instance name"), Plan.InstanceName == FName(TEXT("RPGBossEncounter")));
+	TestTrue(TEXT("plan required fields are the two typed paths"), Plan.RequiredFields == TArray<FString>{TEXT("EncounterPolicy.GateRadius"), TEXT("EncounterPolicy.bResetOnPlayerRespawn")});
+	if (!TestTrue(TEXT("plan callback is set"), static_cast<bool>(Plan.Configure)))
+	{
+		return false;
+	}
+
+	// Non-default typed values, with a manifest whose Value TEXT says something else: the callback must use the typed record only.
+	FRPGParticipantConfig Config = MakeConfig(731.25f, false);
+	Config.Fields.Add(MakeField(RPGBossEncounterPolicyAdapters::FieldGateRadius, TEXT("9999")));
+	Config.Fields.Add(MakeField(RPGBossEncounterPolicyAdapters::FieldResetOnPlayerRespawn, TEXT("true")));
+	FString Error = TEXT("a stale diagnostic from an earlier call");
+	TestTrue(TEXT("callback succeeds"), Plan.Configure(*Encounter, Config, Error));
+	TestTrue(TEXT("the diagnostic was cleared on success"), Error.IsEmpty());
+	TestTrue(TEXT("GateRadius is the typed 731.25, not the manifest text 9999"), Encounter->GateRadius == 731.25f);
+	TestTrue(TEXT("bResetOnPlayerRespawn is the typed false, not the manifest text true"), !Encounter->bResetOnPlayerRespawn);
+
+	// Only the two policy fields changed: the health and test-freeze sentinels and every other configuration and runtime value are equal.
+	FEncounterState Expected = Before;
+	Expected.GateRadius = 731.25f;
+	Expected.bResetOnPlayerRespawn = false;
+	TestTrue(TEXT("nothing but the two policy fields changed"), FEncounterState(*Encounter) == Expected);
+	TestTrue(TEXT("health sentinel untouched"), Encounter->BossMaxHealth == 777.f);
+	TestTrue(TEXT("test-freeze sentinel untouched"), Encounter->bTestFreeze);
+
+	// The callback created nothing, registered nothing and began nothing.
+	TestFalse(TEXT("component stays unregistered"), Encounter->IsRegistered());
+	TestFalse(TEXT("component did not begin play"), Encounter->HasBegunPlay());
+	TestFalse(TEXT("owner did not begin play"), Owner->HasActorBegunPlay());
+	TestTrue(TEXT("owner gained no component"), Owner->GetComponents().Num() == OwnedComponentsBefore);
+
+	// Both truth values are copied and zero (no gate) is a valid typed value, through the direct helper.
+	TestTrue(TEXT("zero gate and reset true"), RPGBossEncounterPolicyAdapters::ConfigureEncounterPolicy(*Encounter, MakeConfig(0.f, true), Error) && Encounter->GateRadius == 0.f && Encounter->bResetOnPlayerRespawn);
+	TestTrue(TEXT("fractional gate and reset false"), RPGBossEncounterPolicyAdapters::ConfigureEncounterPolicy(*Encounter, MakeConfig(0.5f, false), Error) && Encounter->GateRadius == 0.5f && !Encounter->bResetOnPlayerRespawn);
+	TestTrue(TEXT("the sentinels survived every assignment"), Encounter->BossMaxHealth == 777.f && Encounter->bTestFreeze);
+
+	AddInfo(TEXT("Typed policy assignment only; NOT a live gate or reset, NOT a serialized asset value, NOT a duel."));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGPolicyValidationTest, "OneBossFight.Binding.EncounterPolicy.Validation",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGPolicyValidationTest::RunTest(const FString& Parameters)
+{
+	struct FCase
+	{
+		const TCHAR* Name;
+		float Gate;
+		const TCHAR* ExpectedToken; // nullptr = valid
+	};
+	const FCase Cases[] = {
+		{TEXT("zero: no gate"), 0.f, nullptr},
+		{TEXT("negative zero is zero"), -0.f, nullptr},
+		{TEXT("tiny fractional"), 0.001f, nullptr},
+		{TEXT("fractional"), 731.25f, nullptr},
+		{TEXT("the authoring default"), 1200.f, nullptr},
+		{TEXT("large finite"), 1.0e9f, nullptr},
+		{TEXT("just below zero"), -0.0001f, TEXT("InvalidPolicy.Negative")},
+		{TEXT("negative"), -1.f, TEXT("InvalidPolicy.Negative")},
+		{TEXT("NaN"), QuietNaN, TEXT("InvalidPolicy.NotFinite")},
+		{TEXT("+Inf"), PosInf, TEXT("InvalidPolicy.NotFinite")},
+		{TEXT("-Inf"), -PosInf, TEXT("InvalidPolicy.NotFinite")},
+	};
+
+	FPolicyTestWorld Scope;
+	if (!TestNotNull(TEXT("test world"), Scope.World))
+	{
+		return false;
+	}
+	AActor* Owner = Scope.SpawnOwner();
+	if (!TestNotNull(TEXT("owner actor"), Owner))
+	{
+		return false;
+	}
+	TStrongObjectPtr<URPGBossEncounter> Encounter(NewObject<URPGBossEncounter>(Owner, TEXT("RPGBossEncounter")));
+	if (!TestTrue(TEXT("component created"), Encounter.IsValid()))
+	{
+		return false;
+	}
+	ArmSentinels(*Encounter);
+	const FEncounterState Before(*Encounter);
+	for (const FCase& Case : Cases)
+	{
+		FRPGEncounterPolicyConfig Policy;
+		Policy.GateRadius = Case.Gate;
+		FString Error = TEXT("a stale diagnostic");
+		const bool bOk = RPGBossEncounterPolicyAdapters::ValidateEncounterPolicy(Policy, Error);
+		if (!Case.ExpectedToken)
+		{
+			TestTrue(FString::Printf(TEXT("%s: valid, and the diagnostic was cleared"), Case.Name), bOk && Error.IsEmpty());
+			continue;
+		}
+		TestFalse(FString::Printf(TEXT("%s: rejected"), Case.Name), bOk);
+		TestTrue(FString::Printf(TEXT("%s: named %s (got '%s')"), Case.Name, Case.ExpectedToken, *Error), Error.StartsWith(Case.ExpectedToken));
+		// The assignment refuses the same value by the same name and writes nothing, whatever the other policy field says.
+		for (const bool bReset : {true, false})
+		{
+			const FRPGParticipantConfig Config = MakeConfig(Case.Gate, bReset);
+			FString ConfigureError = TEXT("a stale diagnostic");
+			TestFalse(FString::Printf(TEXT("%s (reset %d): the assignment refuses"), Case.Name, bReset ? 1 : 0), RPGBossEncounterPolicyAdapters::ConfigureEncounterPolicy(*Encounter, Config, ConfigureError));
+			TestTrue(FString::Printf(TEXT("%s (reset %d): the assignment names the same token"), Case.Name, bReset ? 1 : 0), ConfigureError.StartsWith(Case.ExpectedToken));
+			TestTrue(FString::Printf(TEXT("%s (reset %d): no write at all (policy fields, health and test-freeze sentinels, state)"), Case.Name, bReset ? 1 : 0), FEncounterState(*Encounter) == Before);
+		}
+	}
+	// The component refused every value above and is still configurable.
+	FString Error;
+	TestTrue(TEXT("after all refusals a valid policy still configures"), RPGBossEncounterPolicyAdapters::ConfigureEncounterPolicy(*Encounter, MakeConfig(42.5f, false), Error) && Encounter->GateRadius == 42.5f && !Encounter->bResetOnPlayerRespawn);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGPolicyIsolationTest, "OneBossFight.Binding.EncounterPolicy.Isolation",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGPolicyIsolationTest::RunTest(const FString& Parameters)
+{
+	FPolicyTestWorld Scope;
+	if (!TestNotNull(TEXT("test world"), Scope.World))
+	{
+		return false;
+	}
+	AActor* OwnerA = Scope.SpawnOwner();
+	AActor* OwnerB = Scope.SpawnOwner();
+	AActor* OwnerC = Scope.SpawnOwner();
+	if (!TestTrue(TEXT("three owners"), OwnerA && OwnerB && OwnerC))
+	{
+		return false;
+	}
+	TStrongObjectPtr<URPGBossEncounter> A(NewObject<URPGBossEncounter>(OwnerA, TEXT("RPGBossEncounter")));
+	TStrongObjectPtr<URPGBossEncounter> B(NewObject<URPGBossEncounter>(OwnerB, TEXT("RPGBossEncounter")));
+	TStrongObjectPtr<URPGBossEncounter> C(NewObject<URPGBossEncounter>(OwnerC, TEXT("RPGBossEncounter")));
+	if (!TestTrue(TEXT("three components"), A.IsValid() && B.IsValid() && C.IsValid()))
+	{
+		return false;
+	}
+	FRPGParticipantConfig ConfigA = MakeConfig(731.25f, false);
+	const FRPGParticipantConfig ConfigB = MakeConfig(0.f, true);
+	FString Error;
+	TestTrue(TEXT("A"), RPGBossEncounterPolicyAdapters::ConfigureEncounterPolicy(*A, ConfigA, Error));
+	const FEncounterState SnapshotA(*A);
+	TestTrue(TEXT("B"), RPGBossEncounterPolicyAdapters::ConfigureEncounterPolicy(*B, ConfigB, Error));
+	TestTrue(TEXT("configuring B did not change A"), FEncounterState(*A) == SnapshotA);
+	TestTrue(TEXT("B has its own values"), B->GateRadius == 0.f && B->bResetOnPlayerRespawn);
+
+	// The assignment copies values: changing the config afterwards changes nothing.
+	ConfigA.EncounterPolicy.GateRadius = 1.f;
+	ConfigA.EncounterPolicy.bResetOnPlayerRespawn = true;
+	TestTrue(TEXT("a later config change does not reach A"), FEncounterState(*A) == SnapshotA);
+
+	// A component that was never configured keeps the native declarations, and so does the class default object.
+	TestTrue(TEXT("untouched component keeps its defaults"), C->GateRadius == DefaultGate && C->bResetOnPlayerRespawn);
+	const URPGBossEncounter* Default = GetDefault<URPGBossEncounter>();
+	TestTrue(TEXT("CDO defaults unchanged"), Default->GateRadius == DefaultGate && Default->bResetOnPlayerRespawn);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGPolicyRejectionsTest, "OneBossFight.Binding.EncounterPolicy.Rejections",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGPolicyRejectionsTest::RunTest(const FString& Parameters)
+{
+	FPolicyTestWorld Scope;
+	if (!TestNotNull(TEXT("test world"), Scope.World))
+	{
+		return false;
+	}
+	const FRPGParticipantConfig Config = MakeConfig(731.25f, false); // valid: every failure below is about the component or the owner
+	FString Error;
+
+	// A rejected call changes nothing and names the reason. Wrong-class targets are concrete classes (UActorComponent itself is abstract).
+	auto ExpectRejected = [&](const TCHAR* Label, UActorComponent& Component, const TCHAR* Token)
+	{
+		const URPGBossEncounter* AsEncounter = Cast<URPGBossEncounter>(&Component);
+		const URPGBossPosture* AsPosture = Cast<URPGBossPosture>(&Component);
+		TOptional<FEncounterState> Before;
+		if (AsEncounter) { Before.Emplace(*AsEncounter); }
+		const float PostureMaxBefore = AsPosture ? AsPosture->PostureMax : 0.f;
+		const bool bOk = RPGBossEncounterPolicyAdapters::ConfigureEncounterPolicy(Component, Config, Error);
+		TestFalse(FString::Printf(TEXT("%s: rejected"), Label), bOk);
+		TestTrue(FString::Printf(TEXT("%s: named %s (got '%s')"), Label, Token, *Error), Error.StartsWith(Token));
+		if (Before.IsSet()) { TestTrue(FString::Printf(TEXT("%s: encounter unchanged (sentinels included)"), Label), FEncounterState(*AsEncounter) == Before.GetValue()); }
+		if (AsPosture) { TestTrue(FString::Printf(TEXT("%s: posture configuration untouched"), Label), AsPosture->PostureMax == PostureMaxBefore); }
+	};
+
+	AActor* Owner = Scope.SpawnOwner();
+	if (!TestNotNull(TEXT("owner actor"), Owner))
+	{
+		return false;
+	}
+
+	// Wrong class: another native component and a concrete engine component.
+	{
+		TStrongObjectPtr<URPGBossPosture> Posture(NewObject<URPGBossPosture>(Owner, TEXT("RPGBossPosture")));
+		TStrongObjectPtr<USceneComponent> Scene(NewObject<USceneComponent>(Owner, TEXT("UnrelatedScene")));
+		if (!TestTrue(TEXT("wrong-class components created"), Posture.IsValid() && Scene.IsValid()))
+		{
+			return false;
+		}
+		ExpectRejected(TEXT("policy on a posture"), *Posture, TEXT("WrongComponentClass"));
+		ExpectRejected(TEXT("policy on a scene component"), *Scene, TEXT("WrongComponentClass"));
+	}
+
+	// Already registered (the owner has not begun play, so registration alone does not begin play for the component).
+	{
+		TStrongObjectPtr<URPGBossEncounter> Encounter(NewObject<URPGBossEncounter>(Owner, TEXT("RegisteredEncounter")));
+		if (!TestTrue(TEXT("registered component created"), Encounter.IsValid()))
+		{
+			return false;
+		}
+		ArmSentinels(*Encounter);
+		Encounter->RegisterComponent();
+		if (!TestTrue(TEXT("precondition: registered and not begun"), Encounter->IsRegistered() && !Encounter->HasBegunPlay() && !Owner->HasActorBegunPlay()))
+		{
+			AddError(TEXT("unsupported precondition: the registered-but-not-begun state could not be built"));
+			return false;
+		}
+		ExpectRejected(TEXT("registered encounter"), *Encounter, TEXT("ComponentAlreadyRegistered"));
+	}
+
+	// Component already began play: its owner begins play with the component registered. The gate radius is 0 first, the way the existing fixture does it, so its BeginPlay does not try to sleep a pawn.
+	{
+		AActor* BegunOwner = Scope.SpawnOwner();
+		if (!TestNotNull(TEXT("begun owner actor"), BegunOwner))
+		{
+			return false;
+		}
+		TStrongObjectPtr<URPGBossEncounter> Encounter(NewObject<URPGBossEncounter>(BegunOwner, TEXT("BegunEncounter")));
+		if (!TestTrue(TEXT("begun component created"), Encounter.IsValid()))
+		{
+			return false;
+		}
+		ArmSentinels(*Encounter);
+		Encounter->GateRadius = 0.f;
+		Encounter->RegisterComponent();
+		BegunOwner->DispatchBeginPlay();
+		if (!TestTrue(TEXT("precondition: component and owner began play"), Encounter->HasBegunPlay() && BegunOwner->HasActorBegunPlay()))
+		{
+			AddError(TEXT("unsupported precondition: the begun-play state could not be built"));
+			return false;
+		}
+		ExpectRejected(TEXT("begun encounter"), *Encounter, TEXT("ComponentBegunPlay"));
+	}
+
+	// Owner already began play, the component itself is a fresh unregistered one.
+	{
+		AActor* LateOwner = Scope.SpawnOwner();
+		if (!TestNotNull(TEXT("late owner actor"), LateOwner))
+		{
+			return false;
+		}
+		LateOwner->DispatchBeginPlay();
+		if (!TestTrue(TEXT("precondition: owner began play"), LateOwner->HasActorBegunPlay()))
+		{
+			AddError(TEXT("unsupported precondition: the owner could not be put into the begun state"));
+			return false;
+		}
+		TStrongObjectPtr<URPGBossEncounter> Encounter(NewObject<URPGBossEncounter>(LateOwner, TEXT("LateEncounter")));
+		if (!TestTrue(TEXT("late component created"), Encounter.IsValid()))
+		{
+			return false;
+		}
+		ArmSentinels(*Encounter);
+		ExpectRejected(TEXT("encounter under a begun owner"), *Encounter, TEXT("OwnerBegunPlay"));
+	}
+
+	// Invalid owner: the component's outer is not an actor.
+	{
+		TStrongObjectPtr<URPGBossEncounter> Encounter(NewObject<URPGBossEncounter>(GetTransientPackage(), TEXT("OrphanEncounter")));
+		if (!TestTrue(TEXT("orphan component created"), Encounter.IsValid() && !Encounter->GetOwner()))
+		{
+			return false;
+		}
+		ArmSentinels(*Encounter);
+		ExpectRejected(TEXT("encounter without an owner"), *Encounter, TEXT("InvalidOwner"));
+	}
+
+	// Destroyed component: DestroyComponent already ran (flagged as being destroyed, unregistered, EndPlay cleared, removed from its owner, marked garbage) but the object is still allocated because the test holds it
+	// and no garbage collection runs here. The owner stays live, so this is the component check and not the owner check. This is not a freed-memory test.
+	{
+		AActor* LiveOwner = Scope.SpawnOwner();
+		if (!TestNotNull(TEXT("live owner actor"), LiveOwner))
+		{
+			return false;
+		}
+		TStrongObjectPtr<URPGBossEncounter> Encounter(NewObject<URPGBossEncounter>(LiveOwner, TEXT("DeadEncounter")));
+		TStrongObjectPtr<URPGBossPosture> Posture(NewObject<URPGBossPosture>(LiveOwner, TEXT("DeadPosture")));
+		if (!TestTrue(TEXT("dead components created"), Encounter.IsValid() && Posture.IsValid()))
+		{
+			return false;
+		}
+		ArmSentinels(*Encounter);
+		Encounter->DestroyComponent();
+		Posture->DestroyComponent();
+		const bool bRetained = Encounter.Get() != nullptr && Posture.Get() != nullptr && Encounter->GetOuter() == LiveOwner && Posture->GetOuter() == LiveOwner;
+		const bool bFlaggedDead = Encounter->IsBeingDestroyed() && Posture->IsBeingDestroyed();
+		const bool bOwnerLive = IsValid(LiveOwner) && !LiveOwner->IsActorBeingDestroyed() && !LiveOwner->HasActorBegunPlay();
+		if (!TestTrue(TEXT("precondition: destroyed components still allocated and linked to their owner, owner live"), bRetained && bFlaggedDead && bOwnerLive))
+		{
+			AddError(TEXT("unsupported precondition: the destroyed-but-retained state could not be built"));
+			return false;
+		}
+		TestTrue(TEXT("precondition: a destroyed component looks unregistered and not begun, which is why only the first check can refuse it"), !Encounter->IsRegistered() && !Encounter->HasBegunPlay());
+		ExpectRejected(TEXT("destroyed encounter"), *Encounter, TEXT("InvalidComponent"));
+		// The component check is first: a destroyed component of the WRONG class is reported as invalid, not as the wrong class.
+		ExpectRejected(TEXT("policy on a destroyed posture"), *Posture, TEXT("InvalidComponent"));
+		TestTrue(TEXT("the owner stayed live through both calls"), IsValid(LiveOwner) && !LiveOwner->IsActorBeingDestroyed());
+	}
+
+	AddInfo(TEXT("Rejection paths on isolated actors; an owner that is being destroyed is covered by the code (IsActorBeingDestroyed) but not exercised here."));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGPolicyCompileTest, "OneBossFight.Binding.EncounterPolicy.Compile",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGPolicyCompileTest::RunTest(const FString& Parameters)
+{
+	const FEpochPtr Content = RPGCombatRegistry::Legacy();
+	if (!TestTrue(TEXT("content epoch"), Content.IsValid() && Content->Id.IsValid()))
+	{
+		return false;
+	}
+
+	// The real synthetic compiler copies the typed policy into the immutable config; both truth values and zero.
+	{
+		const TStrongObjectPtr<URPGBossDefinition> Definition = MakeDefinition(731.25f, false);
+		FConfigPtr Out;
+		const FRPGHydrationResult Result = CompileSynthetic(*Definition, Content, Out);
+		if (!TestTrue(TEXT("a valid definition compiles"), Result.IsReady() && Out.IsValid()))
+		{
+			return false;
+		}
+		TestTrue(TEXT("policy copied: 731.25 and false"), Out->EncounterPolicy.GateRadius == 731.25f && !Out->EncounterPolicy.bResetOnPlayerRespawn);
+		TestTrue(TEXT("established Stats, phase and identity values retained"), Out->Stats.MaxHealth == 3500.f && Out->Stats.MaxPosture == 73.5f && Out->Phases.Num() == 1 && Out->BossId == FName(TEXT("Synthetic")) && Out->bSyntheticFixture);
+		// The config is a value snapshot: changing the definition afterwards changes nothing.
+		Definition->EncounterPolicy.GateRadius = 5.f;
+		Definition->EncounterPolicy.bResetOnPlayerRespawn = true;
+		TestTrue(TEXT("a later definition change does not reach the compiled config"), Out->EncounterPolicy.GateRadius == 731.25f && !Out->EncounterPolicy.bResetOnPlayerRespawn);
+	}
+	{
+		const TStrongObjectPtr<URPGBossDefinition> Definition = MakeDefinition(0.f, true);
+		FConfigPtr Out;
+		TestTrue(TEXT("zero gate compiles"), CompileSynthetic(*Definition, Content, Out).IsReady() && Out.IsValid() && Out->EncounterPolicy.GateRadius == 0.f && Out->EncounterPolicy.bResetOnPlayerRespawn);
+	}
+	// A definition whose policy was never authored receives the additive authoring defaults, and the compiled config carries them.
+	{
+		TStrongObjectPtr<URPGBossDefinition> Definition = MakeDefinition(0.f, false);
+		Definition->EncounterPolicy = FRPGEncounterPolicyConfig(); // what an old schema 1 definition holds: the field's own defaults
+		FConfigPtr Out;
+		TestTrue(TEXT("untouched policy: the authoring defaults 1200 and true are copied"), CompileSynthetic(*Definition, Content, Out).IsReady() && Out.IsValid() && Out->EncounterPolicy.GateRadius == DefaultGate && Out->EncounterPolicy.bResetOnPlayerRespawn);
+	}
+
+	// An invalid policy fails by name, is NEVER replaced by the defaults, and clears a previously valid output; the production compile refuses it before any asset is loaded.
+	struct FBad
+	{
+		const TCHAR* Name;
+		float Gate;
+		const TCHAR* Token;
+	};
+	const FBad Bad[] = {{TEXT("negative"), -1.f, TEXT("InvalidPolicy.Negative")}, {TEXT("NaN"), QuietNaN, TEXT("InvalidPolicy.NotFinite")}, {TEXT("+Inf"), PosInf, TEXT("InvalidPolicy.NotFinite")}, {TEXT("-Inf"), -PosInf, TEXT("InvalidPolicy.NotFinite")}};
+	for (const FBad& Case : Bad)
+	{
+		const TStrongObjectPtr<URPGBossDefinition> Good = MakeDefinition(731.25f, false);
+		FConfigPtr Out;
+		if (!TestTrue(FString::Printf(TEXT("%s: a valid output exists first"), Case.Name), CompileSynthetic(*Good, Content, Out).IsReady() && Out.IsValid()))
+		{
+			return false;
+		}
+		const TStrongObjectPtr<URPGBossDefinition> Definition = MakeDefinition(Case.Gate, true);
+		const FRPGHydrationResult Result = CompileSynthetic(*Definition, Content, Out); // the same output variable
+		TestFalse(FString::Printf(TEXT("%s (synthetic compile): refused"), Case.Name), Result.IsReady());
+		TestTrue(FString::Printf(TEXT("%s (synthetic compile): named %s"), Case.Name, Case.Token), AnyErrorContains(Result, Case.Token));
+		TestFalse(FString::Printf(TEXT("%s (synthetic compile): the earlier valid output was cleared, no default substituted"), Case.Name), Out.IsValid());
+		FConfigPtr ProductionOut = Out;
+		FConfigPtr Previous;
+		if (CompileSynthetic(*Good, Content, Previous).IsReady() && Previous.IsValid())
+		{
+			ProductionOut = Previous; // a valid previous output held by the variable the production compile is given
+			const FRPGHydrationResult Production = RPGCombatHydration::CompileParticipant(*Definition, Content, FString::ChrN(64, TEXT('b')), ProductionOut);
+			TestFalse(FString::Printf(TEXT("%s (production compile): refused"), Case.Name), Production.IsReady());
+			TestTrue(FString::Printf(TEXT("%s (production compile): named %s"), Case.Name, Case.Token), AnyErrorContains(Production, Case.Token));
+			TestFalse(FString::Printf(TEXT("%s (production compile): the earlier output was cleared"), Case.Name), ProductionOut.IsValid());
+		}
+		else
+		{
+			AddError(TEXT("unsupported precondition: a valid output for the production compile could not be built"));
+		}
+	}
+
+	// The established checks are retained, independent of a valid policy; each failure clears a previously valid output.
+	auto RunRetained = [&](const TCHAR* Name, const TCHAR* Text, const TFunction<void(URPGBossDefinition&)>& Break, int32 Schema, const FString& Hash, bool bNullContent)
+	{
+		const TStrongObjectPtr<URPGBossDefinition> Good = MakeDefinition(731.25f, false);
+		FConfigPtr Out;
+		if (!CompileSynthetic(*Good, Content, Out).IsReady() || !Out.IsValid())
+		{
+			AddError(TEXT("unsupported precondition: a valid output could not be built"));
+			return;
+		}
+		const TStrongObjectPtr<URPGBossDefinition> Definition = MakeDefinition(731.25f, false); // a valid policy
+		Definition->Schema = Schema;
+		Break(*Definition);
+		const FRPGHydrationResult Result = CompileSynthetic(*Definition, bNullContent ? FEpochPtr() : Content, Out, Hash);
+		TestFalse(FString::Printf(TEXT("%s: still refused with a valid policy"), Name), Result.IsReady());
+		TestTrue(FString::Printf(TEXT("%s: the established message '%s'"), Name, Text), AnyErrorContains(Result, Text));
+		TestFalse(FString::Printf(TEXT("%s: the earlier valid output was cleared"), Name), Out.IsValid());
+	};
+	const FString GoodHash = FString::ChrN(64, TEXT('b'));
+	RunRetained(TEXT("negative posture maximum"), TEXT("invalid stats"), [](URPGBossDefinition& D) { D.Stats.MaxPosture = -1.f; }, 1, GoodHash, false);
+	RunRetained(TEXT("phase threshold above 1"), TEXT("invalid/duplicate phase"), [](URPGBossDefinition& D) { D.Phases[0].EntryHealthFraction = 2.f; }, 1, GoodHash, false);
+	RunRetained(TEXT("schema 2"), TEXT("identity absent"), [](URPGBossDefinition&) {}, 2, GoodHash, false);
+	RunRetained(TEXT("manifest hash that is not 64 hex characters"), TEXT("identity absent"), [](URPGBossDefinition&) {}, 1, TEXT("short"), false);
+	RunRetained(TEXT("no content lease"), TEXT("identity absent"), [](URPGBossDefinition&) {}, 1, GoodHash, true);
+	RunRetained(TEXT("no field manifest"), TEXT("field manifest required"), [](URPGBossDefinition& D) { D.Fields.Reset(); }, 1, GoodHash, false);
+
+	// Several failures are all reported: an invalid policy together with invalid stats.
+	{
+		const TStrongObjectPtr<URPGBossDefinition> Definition = MakeDefinition(-5.f, false);
+		Definition->Stats.MaxPosture = -1.f;
+		FConfigPtr Out;
+		const FRPGHydrationResult Result = CompileSynthetic(*Definition, Content, Out);
+		TestTrue(TEXT("invalid policy and invalid stats are both reported"), !Result.IsReady() && AnyErrorContains(Result, TEXT("invalid stats")) && AnyErrorContains(Result, TEXT("InvalidPolicy.Negative")) && !Out.IsValid());
+	}
+
+	AddInfo(TEXT("Real synthetic compiler and the production compile's early rejection; NO production compile with a real skeleton, NO serialized asset."));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGPolicyAuthoringTest, "OneBossFight.Binding.EncounterPolicy.Authoring",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGPolicyAuthoringTest::RunTest(const FString& Parameters)
+{
+	// The reflected record: both fields exist and are editable.
+	const UScriptStruct* Struct = FRPGEncounterPolicyConfig::StaticStruct();
+	if (!TestNotNull(TEXT("the policy struct is reflected"), Struct))
+	{
+		return false;
+	}
+	const FProperty* Gate = Struct->FindPropertyByName(TEXT("GateRadius"));
+	const FProperty* Reset = Struct->FindPropertyByName(TEXT("bResetOnPlayerRespawn"));
+	if (!TestTrue(TEXT("both policy fields are reflected properties"), Gate != nullptr && Reset != nullptr))
+	{
+		return false;
+	}
+	TestTrue(TEXT("GateRadius is a float property"), CastField<FFloatProperty>(Gate) != nullptr);
+	TestTrue(TEXT("bResetOnPlayerRespawn is a bool property"), CastField<FBoolProperty>(Reset) != nullptr);
+	TestTrue(TEXT("both fields are editable (EditAnywhere)"), Gate->HasAnyPropertyFlags(CPF_Edit) && Reset->HasAnyPropertyFlags(CPF_Edit));
+
+	// The Data Asset field: the definition exposes the policy as an editable property of exactly that struct type.
+	const FProperty* Field = URPGBossDefinition::StaticClass()->FindPropertyByName(TEXT("EncounterPolicy"));
+	const FStructProperty* AsStruct = CastField<FStructProperty>(Field);
+	if (!TestTrue(TEXT("the definition has an EncounterPolicy struct property"), AsStruct != nullptr))
+	{
+		return false;
+	}
+	TestTrue(TEXT("it is editable (EditAnywhere)"), AsStruct->HasAnyPropertyFlags(CPF_Edit));
+	TestTrue(TEXT("and of the policy struct type"), AsStruct->Struct == Struct);
+
+	// The additive authoring defaults of the NEW field: a fresh struct and a fresh definition hold 1200 and true; the native declarations are only the baseline they match, not an authority.
+	const FRPGEncounterPolicyConfig Fresh;
+	TestTrue(TEXT("a fresh policy holds the authoring defaults"), Fresh.GateRadius == DefaultGate && Fresh.bResetOnPlayerRespawn);
+	TStrongObjectPtr<URPGBossDefinition> Definition(NewObject<URPGBossDefinition>());
+	TestTrue(TEXT("a fresh definition holds them (old schema 1 definitions receive them additively)"), Definition->EncounterPolicy.GateRadius == DefaultGate && Definition->EncounterPolicy.bResetOnPlayerRespawn);
+	const URPGBossEncounter* Native = GetDefault<URPGBossEncounter>();
+	TestTrue(TEXT("baseline: they match the native declarations of URPGBossEncounter"), Native->GateRadius == Fresh.GateRadius && Native->bResetOnPlayerRespawn == Fresh.bResetOnPlayerRespawn);
+	// The other authored records of the definition were not disturbed by the new field.
+	TestTrue(TEXT("the stats record keeps its own defaults (no substitution)"), Definition->Stats.MaxHealth == 0.f && Definition->Stats.MaxPosture == 0.f && Definition->Schema == 1);
+	AddInfo(TEXT("Reflection and defaults only; NOT a serialized asset and NOT seen in the Details panel."));
+	return true;
+}
+
+#endif // WITH_DEV_AUTOMATION_TESTS
