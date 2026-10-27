@@ -1,0 +1,1032 @@
+{
+  "scope": "source-pinned documentary classifications; NOT live acceptance, gameplay tests or completion percentage",
+  "reference_ids": 83,
+  "id_sets_equal": true,
+  "historical_counts": {
+    "PARTIAL": 58,
+    "IMPLEMENTED": 8,
+    "UNVERIFIED": 13,
+    "MISSING": 1,
+    "NOT APPLICABLE": 3
+  },
+  "provisional_D03_counts": {
+    "PARTIAL": 66,
+    "UNVERIFIED": 16,
+    "MISSING": 1
+  },
+  "owner_target": "ALL83 implemented with evidence; historical NOT APPLICABLE and pending-waiver text superseded",
+  "current_accepted_83_row_percentage": null,
+  "calendar_finish_date": null,
+  "sources": {
+    "reference": {
+      "path": "Docs/BossCombatReview/Reference/06_REFERENCE_REQUIREMENTS.md",
+      "sha256": "33087a54fcd823c7213c09c5afebaea10155232dcb79d3762e6ec0ff8ae37746"
+    },
+    "historical_audit": {
+      "path": "Docs/BossCombatReview/ExistingBossAudit/03_REFERENCE_COMPARISON_MATRIX.md",
+      "sha256": "99d0b82a73eadb91b3ac362d75f8cc395a344e63a618bf3760c3705f1268f361"
+    },
+    "provisional_D03": {
+      "path": "Docs/BossCombatReview/Execution/Codex/D03_RECONCILIATION_PROGRESS.md",
+      "sha256": "f053e30c24ba45f06b0894f2ba05283016db2435e2aa78e8f39298b349e2d1a5"
+    }
+  },
+  "rows": [
+    {
+      "id": "BOSS-ANM-001",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 62,
+        "historical_audit": 70,
+        "provisional_D03": 63
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-ANM-002",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 63,
+        "historical_audit": 71,
+        "provisional_D03": 64
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-ANM-003",
+      "historical_status": "NOT APPLICABLE",
+      "provisional_D03_status": "UNVERIFIED",
+      "source_lines": {
+        "reference": 64,
+        "historical_audit": 72,
+        "provisional_D03": 65
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-ANM-004",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 65,
+        "historical_audit": 73,
+        "provisional_D03": 66
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-ANM-005",
+      "historical_status": "UNVERIFIED",
+      "provisional_D03_status": "UNVERIFIED",
+      "source_lines": {
+        "reference": 66,
+        "historical_audit": 74,
+        "provisional_D03": 67
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-ANM-006",
+      "historical_status": "UNVERIFIED",
+      "provisional_D03_status": "UNVERIFIED",
+      "source_lines": {
+        "reference": 67,
+        "historical_audit": 75,
+        "provisional_D03": 68
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-ANM-007",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 68,
+        "historical_audit": 76,
+        "provisional_D03": 69
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-ANM-008",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 69,
+        "historical_audit": 77,
+        "provisional_D03": 70
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-AWR-001",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 9,
+        "historical_audit": 17,
+        "provisional_D03": 30
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-AWR-002",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 10,
+        "historical_audit": 18,
+        "provisional_D03": 31
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-AWR-003",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 11,
+        "historical_audit": 19,
+        "provisional_D03": 32
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-AWR-004",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 12,
+        "historical_audit": 20,
+        "provisional_D03": 33
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-AWR-005",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 13,
+        "historical_audit": 21,
+        "provisional_D03": 34
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-AWR-006",
+      "historical_status": "IMPLEMENTED",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 14,
+        "historical_audit": 22,
+        "provisional_D03": 35
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-AWR-007",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 15,
+        "historical_audit": 23,
+        "provisional_D03": 36
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-AWR-008",
+      "historical_status": "UNVERIFIED",
+      "provisional_D03_status": "UNVERIFIED",
+      "source_lines": {
+        "reference": 16,
+        "historical_audit": 24,
+        "provisional_D03": 37
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-COM-001",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 50,
+        "historical_audit": 58,
+        "provisional_D03": 56
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-COM-002",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 51,
+        "historical_audit": 59,
+        "provisional_D03": 57
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-COM-003",
+      "historical_status": "IMPLEMENTED",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 52,
+        "historical_audit": 60,
+        "provisional_D03": 58
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-COM-004",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 53,
+        "historical_audit": 61,
+        "provisional_D03": 59
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-COM-005",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 54,
+        "historical_audit": 62,
+        "provisional_D03": 60
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-COM-006",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 55,
+        "historical_audit": 63,
+        "provisional_D03": 61
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-COM-007",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 56,
+        "historical_audit": 64,
+        "provisional_D03": 62
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-DEF-001",
+      "historical_status": "IMPLEMENTED",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 114,
+        "historical_audit": 122,
+        "provisional_D03": 95
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-DEF-002",
+      "historical_status": "IMPLEMENTED",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 115,
+        "historical_audit": 123,
+        "provisional_D03": 96
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-DEF-003",
+      "historical_status": "IMPLEMENTED",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 116,
+        "historical_audit": 124,
+        "provisional_D03": 97
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-DEF-004",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 117,
+        "historical_audit": 125,
+        "provisional_D03": 98
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-DEF-005",
+      "historical_status": "UNVERIFIED",
+      "provisional_D03_status": "UNVERIFIED",
+      "source_lines": {
+        "reference": 118,
+        "historical_audit": 126,
+        "provisional_D03": 99
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-EXE-001",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 37,
+        "historical_audit": 45,
+        "provisional_D03": 48
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-EXE-002",
+      "historical_status": "MISSING",
+      "provisional_D03_status": "MISSING",
+      "source_lines": {
+        "reference": 38,
+        "historical_audit": 46,
+        "provisional_D03": 49
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-EXE-003",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 39,
+        "historical_audit": 47,
+        "provisional_D03": 50
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-EXE-004",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 40,
+        "historical_audit": 48,
+        "provisional_D03": 51
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-EXE-005",
+      "historical_status": "IMPLEMENTED",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 41,
+        "historical_audit": 49,
+        "provisional_D03": 52
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-EXE-006",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 42,
+        "historical_audit": 50,
+        "provisional_D03": 53
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-EXE-007",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 43,
+        "historical_audit": 51,
+        "provisional_D03": 54
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-EXE-008",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 44,
+        "historical_audit": 52,
+        "provisional_D03": 55
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-HIT-001",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 75,
+        "historical_audit": 83,
+        "provisional_D03": 71
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-HIT-002",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 76,
+        "historical_audit": 84,
+        "provisional_D03": 72
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-HIT-003",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 77,
+        "historical_audit": 85,
+        "provisional_D03": 73
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-HIT-004",
+      "historical_status": "UNVERIFIED",
+      "provisional_D03_status": "UNVERIFIED",
+      "source_lines": {
+        "reference": 78,
+        "historical_audit": 86,
+        "provisional_D03": 74
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-HIT-005",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 79,
+        "historical_audit": 87,
+        "provisional_D03": 75
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-HIT-006",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 80,
+        "historical_audit": 88,
+        "provisional_D03": 76
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-HIT-007",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 81,
+        "historical_audit": 89,
+        "provisional_D03": 77
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-HIT-008",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 82,
+        "historical_audit": 90,
+        "provisional_D03": 78
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-HIT-009",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 83,
+        "historical_audit": 91,
+        "provisional_D03": 79
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-HIT-010",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 84,
+        "historical_audit": 92,
+        "provisional_D03": 80
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-HIT-011",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 85,
+        "historical_audit": 93,
+        "provisional_D03": 81
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-HIT-012",
+      "historical_status": "NOT APPLICABLE",
+      "provisional_D03_status": "UNVERIFIED",
+      "source_lines": {
+        "reference": 86,
+        "historical_audit": 94,
+        "provisional_D03": 82
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-MOV-001",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 92,
+        "historical_audit": 100,
+        "provisional_D03": 83
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-MOV-002",
+      "historical_status": "UNVERIFIED",
+      "provisional_D03_status": "UNVERIFIED",
+      "source_lines": {
+        "reference": 93,
+        "historical_audit": 101,
+        "provisional_D03": 84
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-MOV-003",
+      "historical_status": "UNVERIFIED",
+      "provisional_D03_status": "UNVERIFIED",
+      "source_lines": {
+        "reference": 94,
+        "historical_audit": 102,
+        "provisional_D03": 85
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-MOV-004",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 95,
+        "historical_audit": 103,
+        "provisional_D03": 86
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-MOV-005",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 96,
+        "historical_audit": 104,
+        "provisional_D03": 87
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-MOV-006",
+      "historical_status": "UNVERIFIED",
+      "provisional_D03_status": "UNVERIFIED",
+      "source_lines": {
+        "reference": 97,
+        "historical_audit": 105,
+        "provisional_D03": 88
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-PAC-001",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 103,
+        "historical_audit": 111,
+        "provisional_D03": 89
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-PAC-002",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 104,
+        "historical_audit": 112,
+        "provisional_D03": 90
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-PAC-003",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 105,
+        "historical_audit": 113,
+        "provisional_D03": 91
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-PAC-004",
+      "historical_status": "UNVERIFIED",
+      "provisional_D03_status": "UNVERIFIED",
+      "source_lines": {
+        "reference": 106,
+        "historical_audit": 114,
+        "provisional_D03": 92
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-PAC-005",
+      "historical_status": "UNVERIFIED",
+      "provisional_D03_status": "UNVERIFIED",
+      "source_lines": {
+        "reference": 107,
+        "historical_audit": 115,
+        "provisional_D03": 93
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-PAC-006",
+      "historical_status": "UNVERIFIED",
+      "provisional_D03_status": "UNVERIFIED",
+      "source_lines": {
+        "reference": 108,
+        "historical_audit": 116,
+        "provisional_D03": 94
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-PHS-001",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 124,
+        "historical_audit": 127,
+        "provisional_D03": 100
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-PHS-002",
+      "historical_status": "IMPLEMENTED",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 125,
+        "historical_audit": 128,
+        "provisional_D03": 101
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-PHS-003",
+      "historical_status": "IMPLEMENTED",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 126,
+        "historical_audit": 129,
+        "provisional_D03": 102
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-PHS-004",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 127,
+        "historical_audit": 130,
+        "provisional_D03": 103
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-PHS-005",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 128,
+        "historical_audit": 131,
+        "provisional_D03": 104
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-QA-001",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 134,
+        "historical_audit": 137,
+        "provisional_D03": 105
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-QA-002",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 135,
+        "historical_audit": 138,
+        "provisional_D03": 106
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-QA-003",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 136,
+        "historical_audit": 139,
+        "provisional_D03": 107
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-QA-004",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 137,
+        "historical_audit": 140,
+        "provisional_D03": 108
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-QA-005",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 138,
+        "historical_audit": 141,
+        "provisional_D03": 109
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-QA-006",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 139,
+        "historical_audit": 142,
+        "provisional_D03": 110
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-QA-007",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 140,
+        "historical_audit": 143,
+        "provisional_D03": 111
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-QA-008",
+      "historical_status": "NOT APPLICABLE",
+      "provisional_D03_status": "UNVERIFIED",
+      "source_lines": {
+        "reference": 141,
+        "historical_audit": 144,
+        "provisional_D03": 112
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-SEL-001",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 22,
+        "historical_audit": 30,
+        "provisional_D03": 38
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-SEL-002",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 23,
+        "historical_audit": 31,
+        "provisional_D03": 39
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-SEL-003",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 24,
+        "historical_audit": 32,
+        "provisional_D03": 40
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-SEL-004",
+      "historical_status": "UNVERIFIED",
+      "provisional_D03_status": "UNVERIFIED",
+      "source_lines": {
+        "reference": 25,
+        "historical_audit": 33,
+        "provisional_D03": 41
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-SEL-005",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 26,
+        "historical_audit": 34,
+        "provisional_D03": 42
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-SEL-006",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 27,
+        "historical_audit": 35,
+        "provisional_D03": 43
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-SEL-007",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 28,
+        "historical_audit": 36,
+        "provisional_D03": 44
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-SEL-008",
+      "historical_status": "UNVERIFIED",
+      "provisional_D03_status": "UNVERIFIED",
+      "source_lines": {
+        "reference": 29,
+        "historical_audit": 37,
+        "provisional_D03": 45
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-SEL-009",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 30,
+        "historical_audit": 38,
+        "provisional_D03": 46
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    },
+    {
+      "id": "BOSS-SEL-010",
+      "historical_status": "PARTIAL",
+      "provisional_D03_status": "PARTIAL",
+      "source_lines": {
+        "reference": 31,
+        "historical_audit": 39,
+        "provisional_D03": 47
+      },
+      "required": true,
+      "current_final_acceptance": "NOT_ESTABLISHED_BY_THIS_RECOUNT"
+    }
+  ]
+}

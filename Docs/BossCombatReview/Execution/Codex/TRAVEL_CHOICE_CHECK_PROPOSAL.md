@@ -1,0 +1,11 @@
+# No-new-code explicit-choice travel check — Claude-only proposal
+
+Basis: RPGBuildLoadout.cpp SetBuild415–433 stores selection in process CVar rpg.Build; ReadChoice525–558 reads it for a new pawn; Poll logs successful build equip around840. Catalog is GI-owned; choice is NOT currently a GI-local store. Testing one process cannot prove concurrent GI isolation.
+
+Use the same approved packaged Development build and existing arena, -nosound -log. Do not launch beside another driver chain. Retain fresh raw log and exact launch command. Set `rpg.CatalogSource data` before GI initialization using the already proven source-selection mechanism. Seed `rpg.Build Strength` with existing ExecCmds/console mechanism BEFORE first loadout poll; do NOT queue open in that same startup batch, because equip must finish first.
+
+Wait for distinct first pawn log events: build Strength chosen; explicit equip call; `build Strength equipped (style ClaymoreCombatStyle) after N call(s)`. Record time, pawn name, epoch and style. If these never appear, FAIL/INCONCLUSIVE, not persistence success. Then issue only `open /Game/OneBossFight/Levels/L_SevarogArena` through the game's existing console (manual owner/Claude interaction is sufficient; no standalone driver/hook required). Do NOT reissue rpg.Build after travel.
+
+After travel, require new pawn name, started rpg.Build is Strength, build Strength chosen at start, and Strength equipped/Claymore style log for that new pawn. Count exactly one data epoch across both map loads. Record world/load timestamps and both equip successes. A constant command-line choice across startup/travel proves CVar-backed continuity, not UI-originated selection persistence; an owner console/UI choice after first pawn spawn before travel gives the stronger existing SetBuild path witness, but still remains process-global.
+
+Control: fresh separate process with rpg.Build empty must not inherit prior process Strength selection. Stop exact packaged process tree and confirm zero leftovers as Claude already does. Never broadly kill by guessed process name; retain actual launch PID. This proposal is NOT execution evidence and does not close UI diagnostics, two-GI teardown/equip or Shipping provenance.

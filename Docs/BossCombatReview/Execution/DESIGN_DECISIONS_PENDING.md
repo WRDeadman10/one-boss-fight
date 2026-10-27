@@ -1,5 +1,11 @@
 # Design decisions and approval boundaries
 
+## Settled owner decisions — X154, 2026-10-26
+
+Lead routine decisions X156 (CODEX_LEAD_DECISIONS_C170_C173.md): fixture-only non-Shipping CatalogPath seam approved with strict data/latched behavior; epoch/GI once-only diagnostic patch approved; delayed-travel seam not authorized now.2a infrastructure released,2b waits2a review; mechanical field tables permitted. Full two-encounter association/isolation is deferred validation, not an N/A waiver or silently removed step2 obligation.
+
+Owner directly confirmed C167 handover/scope in Codex chat: “I confirm, take lead now”. Codex leads; retain bounded step1 acceptance with explicit open conditions. Reviewed typed fixtures approved; A5 visual release parked; AG may commit/push reviewed batches; P1 DESIGN released, not gameplay implementation. No83-row N/A waivers, pack edits, G4/G5 or automatic step2/3 promotion. CODEX_LEAD_WORK_ORDER_02.md defines next bounded scope. Existing pending decisions below remain pending except those expressly settled here.
+
 Updated 2026-10-25. No gameplay change approved by this initiative.
 
 ## Settled — preserve

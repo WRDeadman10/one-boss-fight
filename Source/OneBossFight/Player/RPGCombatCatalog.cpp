@@ -8,6 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "HAL/IConsoleManager.h"
 #include "Misc/ConfigCacheIni.h"
+#include "Misc/PackageName.h"
 #include "Misc/Parse.h"
 #include "UObject/UnrealType.h"
 
@@ -15,6 +16,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogRPGCatalog, Log, All);
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<FString> CVarCatalogSource(TEXT("rpg.CatalogSource"), TEXT("auto"), TEXT("Startup only: auto, legacy, data. Changes affect NEXT session only."));
 static TAutoConsoleVariable<int32> CVarCatalogFourth(TEXT("rpg.CatalogTestFourth"), 0, TEXT("Development startup fixture: add a fourth build sharing the existing sword. No asset written."));
+static TAutoConsoleVariable<FString> CVarCatalogPath(TEXT("rpg.CatalogPath"), TEXT(""), TEXT("Startup only, non-Shipping test seam: full object path of an isolated test catalog under the TypedABIFixtures folder. Needs rpg.CatalogSource data; empty = the shipped catalog. Changes affect NEXT session only."));
 static TAutoConsoleVariable<int32> CVarCatalogInvalid(TEXT("rpg.CatalogTestInvalid"), 0, TEXT("Development startup-only isolated invalid-input fixture; no asset changed."));
 #endif
 
@@ -198,10 +200,33 @@ namespace RPGCombatRegistry
 					E->Coverage.Add(MoveTemp(C));
 				}
 			}
-			for (const auto& B : Builds) if (!B.Icon.IsNull())
+			// The single authoritative icon report (C172): this loop runs once per compiled epoch, so each BuildId is reported once per epoch. Absence is not a failure (Display);
+			// a set icon that cannot be used is a Warning that names the reason. The selector itself never logs icon problems.
+			for (const auto& B : Builds)
 			{
-				UTexture2D* Icon = CookedDependency(B.Icon) ? Cast<UTexture2D>(B.Icon.TryLoad()) : nullptr;
-				if (Icon) E->Leases.Emplace(Icon); else UE_LOG(LogRPGCatalog, Warning, TEXT("%s.Icon: broken/wrong-type/uncooked optional icon; text-only"), *B.BuildId.ToString());
+				if (B.Icon.IsNull())
+				{
+					UE_LOG(LogRPGCatalog, Display, TEXT("epoch=%s build=%s icon absent (optional): text-only row"), *E->Id.ToString(), *B.BuildId.ToString());
+					continue;
+				}
+				const TCHAR* Reason = nullptr;
+				UTexture2D* Icon = nullptr;
+				if (!CookedDependency(B.Icon)) Reason = TEXT("outside the cooked roots");
+				else
+				{
+					UObject* Loaded = B.Icon.TryLoad();
+					Icon = Cast<UTexture2D>(Loaded);
+					if (!Loaded) Reason = TEXT("unloadable (asset missing)");
+					else if (!Icon) Reason = TEXT("wrong type (not a Texture2D)");
+				}
+				if (Icon)
+				{
+					E->Leases.Emplace(Icon);
+				}
+				else
+				{
+					UE_LOG(LogRPGCatalog, Warning, TEXT("epoch=%s build=%s icon broken (%s): %s; text-only row"), *E->Id.ToString(), *B.BuildId.ToString(), Reason, *B.Icon.ToString());
+				}
 			}
 		}
 		E->Builds.Sort([](const FRPGCatalogBuild& A, const FRPGCatalogBuild& B) { return A.UiOrder != B.UiOrder ? A.UiOrder < B.UiOrder : A.BuildId.LexicalLess(B.BuildId); });
@@ -232,6 +257,34 @@ namespace RPGCombatRegistry
 		const auto* S = GI ? GI->GetSubsystem<URPGCombatCatalogSubsystem>() : nullptr;
 		return S ? S->GetEpoch() : nullptr;
 	}
+#if !UE_BUILD_SHIPPING
+	// Built from a prefix so the cook coverage scanner (KI-084) does not read the folder as an asset a packaged build must cook.
+	FString TestCatalogRoot() { return FString(TEXT("/Game/")) + TEXT("OneBossFight/Data/TypedABIFixtures/"); }
+	bool ValidateTestCatalogPath(const FString& Path, FString& Error)
+	{
+		const FString Root = TestCatalogRoot();
+		auto Reject = [&Error](const TCHAR* Why) { Error = FString(TEXT("CatalogPath: ")) + Why; return false; };
+		if (Path.IsEmpty()) return Reject(TEXT("empty"));
+		// Case-sensitive on purpose: the package string is used as given, never normalized.
+		if (!Path.StartsWith(Root, ESearchCase::CaseSensitive)) return Reject(TEXT("outside the approved TypedABIFixtures folder"));
+		for (const TCHAR Ch : Path)
+		{
+			if (!(FChar::IsAlnum(Ch) || Ch == TEXT('_') || Ch == TEXT('/') || Ch == TEXT('.') || Ch == TEXT('-'))) return Reject(TEXT("unsupported character"));
+		}
+		if (Path.Contains(TEXT(".."))) return Reject(TEXT("path traversal"));
+		if (Path.Contains(TEXT("//"))) return Reject(TEXT("empty folder name"));
+		const FSoftObjectPath Object(Path);
+		const FString Package = Object.GetLongPackageName();
+		if (!Object.IsAsset() || Package.Len() <= Root.Len() || Object.GetAssetName() != FPackageName::GetShortName(Package)) return Reject(TEXT("not a canonical object path (Package.Name)"));
+		return true;
+	}
+#endif
+	bool FDiagnosticLedger::TryReport(const FGuid& EpochId, FName Category, FName Key)
+	{
+		bool bAlreadySeen = false;
+		Seen.Add(FString::Printf(TEXT("%s|%s|%s"), *EpochId.ToString(), *Category.ToString(), *Key.ToString()), &bAlreadySeen);
+		return !bAlreadySeen;
+	}
 	bool RowVisible(int32 Row, int32 Count, float Height) { return Row >= 0 && Row < Count && Height > 0.f && Height * .25f + 52.f + Row * 42.f + 42.f <= Height; }
 	int32 VisibleRows(int32 Count, float Height) { int32 N = 0; while (RowVisible(N, Count, Height)) ++N; return N; }
 }
@@ -244,14 +297,30 @@ void URPGCombatCatalogSubsystem::Initialize(FSubsystemCollectionBase& Collection
 #if !UE_BUILD_SHIPPING
 	LatchedSource = Normalize(CVarCatalogSource.GetValueOnGameThread());
 #endif
+	LatchedPath.Reset();
+	FString PathError;
+#if !UE_BUILD_SHIPPING
+	LatchedPath = CVarCatalogPath.GetValueOnGameThread(); // as typed: package strings are case-sensitive here, never normalized
+	if (!LatchedPath.IsEmpty())
+	{
+		// A test catalog is data by definition: no quiet legacy/auto fallback, one startup fixture at a time.
+		if (LatchedSource != TEXT("data")) PathError = TEXT("CatalogPath: a test catalog needs rpg.CatalogSource data (no legacy/auto fallback)");
+		else if (CVarCatalogFourth.GetValueOnGameThread() != 0) PathError = TEXT("CatalogPath: conflicts with rpg.CatalogTestFourth (one startup fixture at a time)");
+		else ValidateTestCatalogPath(LatchedPath, PathError);
+	}
+#endif
 	ESource Mode = LatchedSource == TEXT("legacy") ? ESource::Legacy : LatchedSource == TEXT("data") ? ESource::Data : ESource::Auto;
 	TSharedPtr<const FEpoch> Candidate; FString Error;
 	if (LatchedSource != TEXT("auto") && LatchedSource != TEXT("legacy") && LatchedSource != TEXT("data")) { Error = TEXT("CatalogSource: unknown mode"); Mode = ESource::Data; }
+	else if (!PathError.IsEmpty()) { Error = PathError; Mode = ESource::Data; }
 	else if (Mode != ESource::Legacy)
 	{
-		const FSoftObjectPath Path(TEXT("/Game/OneBossFight/Data/Catalog/DA_CombatCatalog.DA_CombatCatalog"));
-		TStrongObjectPtr<URPGCombatCatalog> Catalog(Cast<URPGCombatCatalog>(Path.TryLoad()));
-		if (!Catalog.IsValid() || Catalog->SchemaVersion != 1) Error = TEXT("Catalog.SchemaVersion/path: absent or unsupported");
+		const FSoftObjectPath Path(LatchedPath.IsEmpty() ? TEXT("/Game/OneBossFight/Data/Catalog/DA_CombatCatalog.DA_CombatCatalog") : *LatchedPath);
+		UObject* Loaded = Path.TryLoad();
+		TStrongObjectPtr<URPGCombatCatalog> Catalog(Cast<URPGCombatCatalog>(Loaded));
+		if (!LatchedPath.IsEmpty() && !Loaded) Error = TEXT("CatalogPath: asset absent");
+		else if (!LatchedPath.IsEmpty() && !Catalog.IsValid()) Error = TEXT("CatalogPath: wrong asset type (not a URPGCombatCatalog)");
+		else if (!Catalog.IsValid() || Catalog->SchemaVersion != 1) Error = TEXT("Catalog.SchemaVersion/path: absent or unsupported");
 		else
 		{
 			TArray<FRPGCatalogBuild> Builds; TArray<FRPGCatalogWeapon> Weapons;
@@ -273,15 +342,33 @@ void URPGCombatCatalogSubsystem::Initialize(FSubsystemCollectionBase& Collection
 	}
 	else if (CVarCatalogFourth.GetValueOnGameThread() != 0) { Mode = ESource::Data; Error += TEXT("; fourth fixture requires a valid resolved data catalog"); }
 #endif
+	UE_LOG(LogRPGCatalog, Display, TEXT("latched source=%s path=%s"), *LatchedSource, LatchedPath.IsEmpty() ? TEXT("(shipped default)") : *LatchedPath);
 	Context.Publish(Mode, Candidate, Error);
 }
-void URPGCombatCatalogSubsystem::Deinitialize() { Context = RPGCombatRegistry::FContext(); Super::Deinitialize(); }
+void URPGCombatCatalogSubsystem::Deinitialize() { Context = RPGCombatRegistry::FContext(); Ledger.Reset(); Super::Deinitialize(); }
+bool URPGCombatCatalogSubsystem::ReportLayoutOverflow(const FGuid& EpochId, int32 RowCount, float LayoutHeight)
+{
+	const auto Published = Context.Get();
+	if (!Published || Published->Id != EpochId) return false; // a stale selector of another epoch reports nothing
+	const int32 Visible = RPGCombatRegistry::VisibleRows(RowCount, LayoutHeight);
+	if (Visible >= RowCount) return false;
+	if (!Ledger.TryReport(EpochId, TEXT("LayoutOverflow")))
+	{
+		return false;
+	}
+	UE_LOG(LogRPGCatalog, Warning, TEXT("epoch=%s selector layout overflow: %d of %d rows fit at measured layout height %.1f; rows from index %d are not drawn, hit-testable or pickable"), *EpochId.ToString(), Visible, RowCount, LayoutHeight, Visible);
+	return true;
+}
 TSharedPtr<const RPGCombatRegistry::FEpoch> URPGCombatCatalogSubsystem::GetEpoch() const
 {
 #if !UE_BUILD_SHIPPING
 	if (!bLateChangeReported && RPGCombatRegistry::Normalize(CVarCatalogSource.GetValueOnGameThread()) != LatchedSource)
 	{
 		bLateChangeReported = true; UE_LOG(LogRPGCatalog, Warning, TEXT("CatalogSource changed: next session only"));
+	}
+	if (!bLatePathReported && CVarCatalogPath.GetValueOnGameThread() != LatchedPath)
+	{
+		bLatePathReported = true; UE_LOG(LogRPGCatalog, Warning, TEXT("CatalogPath changed: next session only (this session keeps %s)"), LatchedPath.IsEmpty() ? TEXT("the shipped default") : *LatchedPath);
 	}
 #endif
 	return Context.Get();

@@ -1,0 +1,19 @@
+# A134 / AG11 Rev2 — ACCEPTED bounded evidence reconciliation
+
+2026-10-27. Accept source/disk/old-package reconciliation, not a new cook, Shipping binary result, asset-load proof or inclusion/exclusion decision.
+
+Actual report hash2b164ed4b88275e441e16774c826e35ba0a7cb07035966e119dbfcd1ddeeb8dd matches delivery; all24 current input hashes match, including two pinned manifests. Development manifest38c5aea0...c51d and inspected older Shipping manifest9c74f8f9...e943 independently match. Original five package headers versus three later source seam assets is correctly bounded; source counts/cook candidates are no longer future-output guarantees. Unknown memory/execution status, source-only CVar guard proof, weak static-export check and absence/history limits are now explicit. Existing raw failures are retained. Prior61/61 scanner and historical cold/equip observations retain their scope; no engine/new packaging run here.
+
+Two nonblocking documentary corrections for next AG update: raw `packaged_dev_fixtures_run.log` has **19 lines containing `LogMaterial: Error:`**, not14. This is a line count, not19 unique defects; preserve all shader/material problems without turning the number into a cleanliness gate. Narrative section3.4 omits Windows in one Shipping manifest path; exact inspected path is `Saved/StagedBuilds_Shipping/Windows/Manifest_UFSFiles_Win64.txt`, correctly pinned elsewhere. Do not rerun or rewrite evidence to repair wording.
+
+Gate/matrix labels remain future check mappings, not scheduled engine/package execution. No universal exactly8-file Shipping rule or decision to relocate/exclude fixtures. All83 active, A5 parked, P1 design-only,2b+ held. Latest actual Claude checkpoint remains outgoing/historical until RESUMED and current lead schedule.
+
+## AG12 — adversarial review of proposed native capability model
+
+Start next without acknowledgment wait. Read current Codex/Step2Preparation/18_NATIVE_CAPABILITY_PROPOSAL.md,09/14–16, actual participant/compiler/scaffold source and accepted AG10/11 boundaries. **Review the proposal as a proposal**; no schema, adapter, content, engine or runtime policy implementation.
+
+Challenge whether generic definition validity, adapter support, configured state, whole-batch publication and effective runtime evidence stay distinct. Trace explicit health intent, phase identity/mapping ambiguity, reversible multiplier range/dependency assumptions and generic target roles. Identify where Unsupported could silently become fallback/default, where one adapter restriction could accidentally waive a required83-row capability, or where provenance text/hash shape could be mistaken for a validated typed value/derived identity.
+
+Deliver an AG-owned concise review with source/hash anchors and concrete counterexample inputs/expected dispositions where useful. Separate confirmed source facts, proposed choices, unresolved alternatives and evidence needed. Check before-mutation language carefully: component allocation/configuration is distinct from resolving/loading asset dependencies during generic compilation. Do not claim zero allocations/side effects across Unreal asset loading from a pure-plan promise. Identify any unsupported full-batch readiness claim in current scaffold rather than designing around it silently.
+
+No arbitrary case quota, new thresholds, default/tuning change, capability clamp approval or extra broad audit. Clarify necessary decisions for eventual adapter review without interrupting owner now. Include the two AG11 documentary corrections in AG-owned report while updating it, preserve historical raw logs/posts. One A-n with exact artifacts/hashes and actual commands if run. AG-owned docs/offline helpers/mailbox only; no Codex/live/Source/Config/Scripts/assets/pack edits, engine/UnrealPak/package jobs or Claude wake. Existing owner reviewed-batch git authority unchanged.

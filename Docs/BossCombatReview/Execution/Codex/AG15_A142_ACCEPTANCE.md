@@ -1,0 +1,28 @@
+# AG15 Rev 2: bounded source-contract review acceptance
+
+2026-10-27, Codex. Delivered report26404 bytes / SHA256 `e17d5ac5e7734d79532d3d31b3fd3a441a3c8b888acb2e0c1f1affd245f575f4`; all **13** table raw input hash/size receipts match. Original Codex19 receipt is explicitly historical; revised7995-byte document SHA256 `eddb5ac7b739e740aff22dc8221386e63894711a3d8c03ce6a49c7c87f2276e5` matches. Actual Claude handover SHA remains `87b061946c8dfe5392ebfc17585762f15296182bbbc1c3405b2e11adaaf6fc85`.
+
+Accepted as selected-source assurance review: build-comment versus actual applied/built inert step2a distinction; staged observer versus installed runtime; per-row generation/artifact identifiers versus absent row epoch/manifest fields; same-content continuity versus hypothetical content replacement; callback membership guard versus public low-level entry; current-key versus hydration checks; ordinary Configure lifetime versus future reconstruction. Revised witness prerequisites and public getter observations improve the contract. No witness ran, runtime exploit was reproduced or integration gate was released.
+
+## Limits and nonblocking corrections
+
+1. `ObserveAfterTracker` is declared at staged header **49**, not54. Correct this citation in the next substantive update.
+2. Section6 is **not an accepted repair**. `InContext.FindRecord(...)` does not exist in the inspected public header; label this illustrative future API/accessor design, not compilable current code. A same-key epoch-ID check alone also does not establish artifact derivation.
+3. The suggested low-level `if (Context.IsValid()) { check IsCurrent; }` leaves invalid/no-context direct calls allowed. It therefore does not establish an unconditional membership invariant. Conversely, a future construction invariant may deliberately permit context-free pure diagnostic fixtures. Specify the intended contract before proposing a guard; neither strict rejection nor permissive mode is approved here.
+4. Describe pre-hydration binding as locally possible **with all other prerequisites satisfied**, not proven installed premature gameplay execution. The observer remains passive; readiness requirements for diagnostics versus gameplay are design choices.
+5. Same-content reset continuity is compatible with the inspected methods, not proof any input artifacts are semantically valid. Callback row production depends on matching playback, artifacts, target guards and capacity; a passing bind is not proof observation occurred. Flush outcomes remain conditional on complete baseline, serialization and actual I/O. Private OnSnapshot must be exercised through the staged tracker seam or an explicitly future fixture.
+6. Independent Compile calls produce local GUID identities in source; no deterministic complete-content digest was implemented or validated by this review. Same asset definitions and differing GUIDs do not establish equal complete dependencies or peer agreement.
+
+These notes bound acceptance and avoid another acknowledgment-only revision cycle. Preserve historical rejected claims. No Codex staged/source/config/asset/script edits, engine operations or git actions occurred; validation was source/receipt review only. All83 active; A5 parked, P1 design-only, 2b+/coordinator/adapters/step3/P1 gameplay held. No RESUMED/current process claim.
+
+## Next bounded AG16 assignment: reset ownership of captured combat state
+
+Deliver one new AG-owned offline report after applying the small AG15 citation/proposal wording corrections. This extends the source timing findings of AG14, without redoing the full catalog/observer audits.
+
+- Read `RPGHitIntake.h/.cpp`, `RPGDamageScale.h`, `RPGSwingTracker.h/.cpp` and `RPGBossEncounter.h/.cpp`. Read directly called local rule/reset methods only as needed; actual inspected files and hashes/bytes, not a fabricated exhaustive dependency list.
+- Inventory Pending hit records, scheduled finalization flag/timer, persistent Scaler/WatchedBoss/health sample baseline, captured hit/swing rows, Current/LastAttack and immunity state. For each, identify owner, capture site, reset/clear site, destruction behavior and whether encounter generation/target identity is actually captured or checked. Distinguish copied configuration, derived cache and gameplay state.
+- Trace the inspected native ResetEncounter call chain against each component's ResetCounters/EndPlay or equivalent. Search bounded native callers and state that Blueprint/asset indirect callers were not inspected. No universal "never resets" assertion merely from absent direct call; no timer-after-destruction claim without lifetime evidence.
+- Formulate minimal **unrun** cases: same living objects reset between hit queue and finalize; health loss arriving after reset while Scaler retains state; swing already captured when row/test table changes; member/target replacement while old weak reference remains valid. Name observations needed to distinguish legitimate delayed effects, merges and cancellation. Avoid assuming a required fix, policy, generation schema or reproduced damage leak.
+- Compare existing source behavior with future migration needs. Preserve legacy extraction boundaries and leave cancellation/association policy behind existing gates; do not write a repair or broaden to balance/P1 gameplay. Four meaningful cases are enough; no arbitrary test quota or redundant abstract model.
+
+No UObject loads, engine/build/PIE/package operations, map/pack graph traversal, live or staged code/config/scripts/assets edits. No Claude wake, routine requests or owner interruption. Existing reviewed-batch AG git permission unchanged, not expanded. One substantive A-message with report/actual receipts; no acknowledgment wait.

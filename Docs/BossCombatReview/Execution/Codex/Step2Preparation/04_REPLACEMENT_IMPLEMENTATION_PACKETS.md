@@ -1,0 +1,63 @@
+# S2P-4: replacement Claude implementation packets
+
+Read boot brief and latest ACCOUNT_HANDOVER_CURRENT first. This is decomposition/test design, NOT blanket authorization. X156/X159 and later lead decisions govern exact writes. Codex has taken preparation so replacement Claude need not re-derive178 fields or repeat failed experiments.
+
+## Current reviewed starting point
+
+C170/172 accepted bounded in S2P-1, not full gate/Shipping. C177 reports2a applied,45/45 and noneditor Development link. Codex independently recounts45 successes, compares all three live files to staged drafts after CRLF normalization, and checks empty-context Initialize only creates GUID. Inert scaffold accepted as infrastructure; actual paired hydration remains unimplemented. A new combined gate on C170+C172+2a remains unrun; exact schedule requires account replacement/reset, explicit RESUMED and current lead coordination on stable source/binary. This document schedules no operation. No2b yet. See17 for the X216 evidence/navigation snapshot and18/19 for unapproved capability/observer-association contracts; AG16 now audits captured-state reset ownership.
+
+## Packet B — legacy extraction (conditional release)
+
+Files only Player/RPGPlayerMovesSubsystem.cpp/.h. Snapshot hashes and exact preimage including dirty state. Extract boss registration statements preserving each conditional and statement order; avoid recomputing class tests in a way that changes hybrid/unsupported-actor behavior. Keep player branch, class-name ABI walk, existing footsteps/music defaults and both attach triggers unchanged. Use a mechanical before/after statement comparison plus runtime component order/idempotence witness. No coordinator, new context lookup, defaults change or data-driven branch yet. Build/tests + targeted witnesses and full stable gate. Failure classified rather than treated as known flake without evidence. Request Codex release/review before editing if account transition changed scope.
+
+## Packet C0 — pure plan compiler (proposal only)
+
+From03_COORDINATOR_LIFECYCLE, implement validation-only transaction plan with explicit disposition/result and all participants/adapters/deps, no UActorComponent creation/registration. Errors identify encounter/slot/field/role. Unit tests cover duplicate identity, wrong world/class/skeleton, missing target/required fields, invalid finite ranges and unknown profile. Preserve zero effects on empty records. No UHT asset authoring yet. Codex reviews before caller integration.
+
+## Packet C1 — startup rendezvous and reservation (proposal only)
+
+One coordinator called by PlayerMovesSubsystem spawned+world-begin paths; explicitly initialize context dependency. For placed actors use subsystem early hook, not world broadcast. For runtime spawns use explicit pre-spawn/deferred token contract; do not attach before configuration or late-adopt already begun actors. Test handler order and actor BeginPlay before live bundle suppression. Bindings absent -> legacy exactly; explicit bad binding -> named failure, no mixed fallback. Start default off, publish disposition test results. No actor map/arena edits without separately approved fixture scope.
+
+## Packet D0 — typed config schemas / independent parity fixture (proposal only)
+
+Use02_ADAPTER_FIELD_AUDIT, not old heuristic property table. Content/policy/presentation/capability/session/runtime-state separation. First thin adapters Encounter+Posture+Phases+Stagger as one dependency-reviewed cluster, not random alphabetical order. Constructor defaults may be replaced before registration, but derived BeginPlay state must be seeded from final values. Maintain Phase threshold.6, HP2000, Posture100/6/13, all explicit legacy sentinels and cvar precedence. Values here are sampled current source, re-pin before implementation; no tuning authority. Use independently pinned baseline fixture so changing common default helper cannot make both expected/actual change together.
+
+PacketD0 follow-up:14_PHASE_REVERSAL_PARITY_CONTRACT.md and15_HEALTH_APPLICATION_PARITY_CONTRACT.md pin native capability and readback boundaries. Registration success is structural, not proof of asynchronously applied pack health. Preserve default behavior; explicitly resolve unsupported typed multiplier/health domains before general adapter acceptance. No implicit new clamp, retry, activation delay or capability expansion.
+
+## Packet D1 — wake/death/presentation/audio/feedback (proposal only)
+
+Private WakeClip setter, clip preloads/tick prerequisites, DeathMode effective OwnClip, Death-before-Look and Legend-last; body/pieces/socket and all restores; music/footsteps Attach-assigned references; bleed implicit flipbook dependency. Validate typed asset/skeleton/cook profiles. Keep fallback behavior and disabled features exactly; separate optional art degradation from gameplay dependency failure. Tests wake0/authored, reset/death/riposte abort, previous visibility/audio/input/time-dilation restore and duplicate trigger. No generic ImportText loop.
+
+## Packet D2 — moves/specials and projectile launch (proposal only)
+
+Move definition nested timing records mapped to actual source variant; no sidecar-as-runtime truth. Hydrate configuration without changing event/notify ownership. Preserve A4 native query, A5 potion predicate/projectile launch and A6 current ring semantics; defects belong P2/P4/P5 scope, do not silently repair during data migration. Launch config is per projectile, not serialized current runtime state. Test old generation/attack instance cancellation. Player0 targeting must be explicitly gated until associated-context refactor complete; no two-duel claim yet.
+
+## Packet F — association facade (proposal only)
+
+Inventory consumers in C_L3 readiness; use actor-key and encounter-slot maps, O(1) conceptual lookup, weak actor refs and generation validation. Single unbound legacy boss preserves exact old resolution, multiple bound contexts NEVER fall back to first actor/player0. Test wrong-world/slot/generation, one context teardown, cached stale actor invalidation and performance instrumentation in HandlePackHit. Structural lookup is not a p99 benchmark; measure only after engine integration.
+
+## Packet G — reset, respawn and world teardown (proposal only)
+
+### Public API seam check, X218 preparation (source-only)
+
+Current binding header raw SHA256 `4330f8c416cd75284e829856b5d1cba7001c5ee62f40bdc7b1bf98a8dbf94a80` exposes participant `Key()`/`Config()` and context `FindParticipant`, `ResolveTarget`, `ResolveEncounter`, `IsCurrent`, `IsHydrated`, `OnGenerationChanged` and `UnbindActor`. Context FRecord/Records are private; no public FindRecord exists. Any new lookup/accessor in a proposal requires deliberate API design and review, not copy-pasting illustrative pseudocode. Participant Config access does not itself prove that another component's artifacts derive from that config.
+
+Generation domains differ: native `RPGBossEncounter.h` raw SHA256 `4f3ab203562ef2d3a2d18828feaf5f437a5a7eaff1054e9b6ce60e9150cae9d6` uses `int32 Generation=1`, returns int32 token and compares int32; context participant key and OnGenerationChanged use uint32, with nonzero structural keys and strict greater-than advance in the current implementation. No native-to-context bridge is installed by this document. Before wiring one generation owner, specify checked conversion, rejected zero/negative/stale inputs, exhaustion behavior and callback ordering; do not silently cast negative native values into large unsigned generations or rely on signed overflow. Exhaustion/retirement alternatives remain unapproved, not a new runtime failure claim or instruction to change existing behavior.
+
+Source inspection verifies only these declarations/guards. Proposed witnesses must distinguish native encounter tokens, context participant keys, content epoch GUID and artifact identity. Equal numeric generations alone do not associate worlds/encounters/slots/content. Model tests of a selected policy would not prove Unreal reset callback order, so none were added or run for this interface note. AG16's current reset-state audit remains separate; no duplicate assignment or operator wake.
+
+One generation owner and association transaction; copied old callback keys invalid; whole encounter invalidated on member loss; deferred spawned replacements configured before BeginPlay; no global state reset affecting other GI. Actual two-live-world teardown/equip and two-associated-encounter tests separate. Restore session cvars and actual runtime input/camera/time/audio state. Shipping excludes test overrides, not production configuration.
+
+### Mandatory QA008 identity boundary (2026-10-27 source/design cross-check)
+
+Owner no-N/A decision and D05 retain server authority/two-client proof. Current context Initialize allocates a fresh local Session GUID and participant keys use that local world session; catalog FEpoch.Id is a local GI epoch identity. Neither is a peer-shared content digest or proof that another machine refers to the same encounter. Do not compare local world/GI GUIDs across clients as a successful replication test. Future authority seam must map a server-assigned encounter/participant lifetime and authoritative generation/action identity onto each peer's local world/actor references, with disconnect/reset/relevance invalidation. The existing local key remains useful for local stale-reference checks; it is not replaced by an author-editable network identity field.
+
+StableManifestHash/schema describe intended content compatibility, not authorization or an already verified hash handshake: current scaffold accepts a caller-supplied SHA-shaped string. Future digest derivation and peer compatibility need independent evidence. Staged observation_ordinal/playback_ordinal are uint64 diagnostic counters (decimal-string wire format), NEVER authoritative action IDs. A client packet or data definition cannot grant decision/damage/posture/cooldown authority. D05's actual listen/dedicated two-client80/150ms tests remain later required proof; standalone model worlds, local GUID uniqueness and replicated-looking JSON do not satisfy them. This paragraph adds no RPC/replication implementation, lag-compensation policy, threshold or network test authorization; preserve step2b+/runtime gates.
+
+## Evidence / source drift / handoff
+
+2026-10-27 staged observer integration audit (no implementation release): RPGShadowCompare.cpp105–115 BindTracker currently checks IsCurrent, not IsHydrated/whole-encounter Ready; Configure92–102 accepts a nonnull content lease without comparing it to the bound participant/content epoch. OnSnapshot121–126 adopts any current key change while retaining Timelines/ContentLease. Before integration, distinguish ordinary generation advance from a different encounter/content association, require correct ready-state/lease/artifact identity, and stop observation on invalidation without silently adopting mismatched artifacts. Unsubscribe/release on explicit preparation abort as well as EndPlay; DestroyComponent before BeginPlay need not run EndPlay (08). These are static contract gaps in an unpromoted observer, not reproduced engine failures. Source pins: staged ShadowCompare.cpp f6a0274c3bad8d5221981fa10dc529a284aa3285eb1220ba3e4f991a07363924, .h95da9c0c6a72a302ed16cc1d9c3b0d5f7fd8e758f573dd65bda0bc4b13ca00ab. Future actual fixtures must cover pending binding, wrong epoch, reset-only generation advance, reassociation/content change and pre-BeginPlay destruction; none run here. Static APIs/weak references alone establish no safe cleanup or observer parity.
+
+Generated SOURCE_OBSERVATIONS.json contains38 current input hashes and exact lexical property references. Re-run scan_fields.mjs ONLY to produce a NEW reviewed observation version if source changes; do not overwrite a pin supporting an already accepted report silently. Model command: node .../coordinator_contract_model.mjs (latest41 abstract design checks; original31 historical). All proposed C++ packets remain NOT BUILT/NOT RUN until Claude explicitly implements and produces raw results; accepted inert2a is documented separately. No field table or model can substitute for serialized values/live pack data. Current replacement review navigation:17_REPLACEMENT_REVIEW_INDEX.md.
+
+Before leaving another account: update current checkpoint with last packet, exact diff/source hash, current binary hash, active job/PID/log, cvar restores and next command. Preserve failed attempts and incident; do not use reset/checkout/clean to force parity. AG commits reviewed durable batches only; model/source audit docs are not proof of complete product tests.

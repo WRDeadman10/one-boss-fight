@@ -10,6 +10,7 @@
 #include "Components/TextBlock.h"
 #include "Components/InputComponent.h"
 #include "CoreGlobals.h"
+#include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "Engine/Texture2D.h"
 #include "Framework/Application/IInputProcessor.h"
@@ -247,6 +248,10 @@ void URPGBuildSelect::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 			LastPickResult = Why;
 			Close();
 		}
+		else
+		{
+			ReportLayoutOverflow(); // the layout may change while open (a resize): the ledger makes this one report per epoch, not one per frame
+		}
 	}
 }
 
@@ -384,6 +389,7 @@ bool URPGBuildSelect::Open()
 		Controller->bShowMouseCursor = true;
 	}
 	LastPickResult = TEXT("opened");
+	ReportLayoutOverflow();
 	return true;
 }
 
@@ -453,6 +459,17 @@ float URPGBuildSelect::LayoutHeight() const
 	int32 Width = 0, Height = 0;
 	if (const auto* PC = GetController()) PC->GetViewportSize(Width, Height);
 	return Height / FMath::Max(UWidgetLayoutLibrary::GetViewportScale(this), 0.01f);
+}
+
+void URPGBuildSelect::ReportLayoutOverflow() const
+{
+	const UWorld* World = GetWorld();
+	const UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	URPGCombatCatalogSubsystem* Catalog = GameInstance ? GameInstance->GetSubsystem<URPGCombatCatalogSubsystem>() : nullptr;
+	if (Epoch && Catalog)
+	{
+		Catalog->ReportLayoutOverflow(Epoch->Id, Epoch->Builds.Num(), LayoutHeight());
+	}
 }
 
 void URPGBuildSelect::OnWidgetRowClicked(int32 Row)

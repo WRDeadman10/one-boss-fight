@@ -1,5 +1,9 @@
 # Independent review findings
 
+## Current review overlay — X154, 2026-10-26
+
+Latest review Codex/C168_A110_REVIEW.md:42/42 raw automation verified; distinct bundle resolves and same-leaf compatible decoy fails ActorBinding. N09 false-positive risk: no uncooked load assertion and additional wrong edges, generic weapon-name failure insufficient. Require isolated cook defect/exact-field control. Step2/3 known missing adapters/importer remain promotion blockers. A110 analyzer13/13/hash matched, not clock/callback runtime proof. Claude's no-live-equip/cold-exclusion limits stand. CODEX_LEAD_WORK_ORDER_02.md assigns corrections; no test result closes owner approval or all83 requirements. Historical candidates below are not new reproduced findings.
+
 Updated 2026-10-25. No implementation submitted for this initiative; no change accepted. Prior audit findings are carried as review candidates, not newly reproduced defects.
 
 ## Current review queue

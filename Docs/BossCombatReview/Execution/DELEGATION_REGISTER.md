@@ -1,5 +1,11 @@
 # Delegation register
 
+## Active assignments — X154, direct owner confirmation 2026-10-26
+
+X158 assigns AG05-1/2/3 in ANTIGRAVITY_WORK_ORDER_05.md to Antigravity now: corrected P1 brief, complete offline cue inventory/validator, costed measurement backlog plus handover consistency. Scope only AG docs/offline helpers; independent of Claude runtime/account change. No acknowledgment/wait between packages. A111 evidence brief requires corrections before acceptance.
+
+Codex technical lead/control docs and independent evidence review. Claude implementer + sole editor/build/package, independent reviewer of Codex designs. AG offline content/capture analysis, P1 design evidence and owner-authorized reviewed-batch commits/pushes. Active scope/files/acceptance are CODEX_LEAD_WORK_ORDER_02.md C-L1/C-L2/C-L3, A-L1/A-L2 and Codex queue. No subagents spawned or authority inferred for new external agents. Previous ownership tables remain historical where inconsistent.
+
 Updated 2026-10-25. Mailbox is authoritative. Assignment request is not acceptance.
 
 | Task | Accountable agent | Scope / exclusive outputs | Acknowledgment / claim | Status | Next action |

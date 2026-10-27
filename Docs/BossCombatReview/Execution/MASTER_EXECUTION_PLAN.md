@@ -1,5 +1,11 @@
 # Combat Intelligence Improvement Program
 
+## Current authority and execution overlay — 2026-10-26
+
+Latest exact scope is CODEX_LEAD_DECISIONS_C170_C173.md / X156: approve fixture-only CatalogPath and diagnostics patches, defer delayed-travel hook, release2a inert scaffold, condition2b on reviewed2a results, permit read-only2d field tables. No coordinator/adapter/assets/consumer/reset integration or full step2/step3 promotion yet. WO02 otherwise remains in force.
+
+Owner directly confirmed Codex lead in this chat (X154). Claude exclusively owns editor/build/package and implementation; AG owns offline/content and authorized commits/pushes. Execute CODEX_LEAD_WORK_ORDER_02.md before historical queues. Bounded step1 accepted with open gates; fixtures approved, A5 visuals parked, P1 DESIGN released only. Steps2/3 product promotion HOLD pending missing adapters/importer and specific integration review. All83 rows required; no pack edits/G4/G5. Current fixture automation42/42; last full gate39/40 is pre-fixture, not a new-binary pass. See Codex/C168_A110_REVIEW.md and OWNER_PACKAGE_DD1_STEP1_REV2.md for bounded evidence.
+
 Date: 2026-10-25. Owner authorizes coordination and read-only P0 only. Technical lead/reviewer: Codex (Astra role); gameplay/editor/build/runtime: Claude; animation/content: Antigravity; final design, feel, commits and release: owner.
 
 ## Authority and operating boundary
