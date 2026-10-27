@@ -1,0 +1,29 @@
+﻿[2026.10.26-12.16.06:730][149]LogPython: [CaptureCAP01] Saved existing console variables.
+[2026.10.26-12.16.06:730][149]LogPython: [CaptureCAP01] RUN_ID: RUN_20261026_174606_0611
+[2026.10.26-12.16.06:730][149]LogPython: [CaptureCAP01] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[CaptureCAP01] Saved existing console variables.
+[CaptureCAP01] RUN_ID: RUN_20261026_174606_0611
+[CaptureCAP01] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[2026.10.26-12.16.08:058][153]LogPython: [CaptureCAP01] Initiating editor_request_begin_play()...
+[2026.10.26-12.16.08:424][154]LogUIActionRouter: Error: Using CommonUI without a CommonGameViewportClient derived game viewport client. CommonUI Input routing will not function correctly.
+[2026.10.26-12.16.09:105][154]LogPython: [CaptureCAP01] PIE active. Boss and components found. Setting up front-facing camera framing (Claude C-160/C-161, 450cm front view)...
+[2026.10.26-12.16.09:327][154]PIE: Error: Blueprint Runtime Error: "Attempted to access TRASH_BP_CameraModeComponent_C_9 via property CameraModeComponent, but TRASH_BP_CameraModeComponent_C_9 is not valid (pending kill or garbage)". Node:  Clear Camera Mode Graph:  EventGraph Function:  Execute Ubergraph GA Aim Magic Blueprint:  GA_Aim_Magic
+[2026.10.26-12.16.09:330][154]LogPython: [CaptureCAP01] CAMERA_READBACK: target_arm_length=0.0, field_of_view=65.0, enable_camera_lag=False, pawn_hidden=True
+[2026.10.26-12.16.09:335][155]PIE: Error: Blueprint Runtime Error: "Attempted to access TRASH_BP_CameraModeComponent_C_9 via property CameraModeComponent, but TRASH_BP_CameraModeComponent_C_9 is not valid (pending kill or garbage)". Node:  Return Node Graph:  IsCurrentCameraMode? Function:  Is Current Camera Mode? Blueprint:  BP_BaseCameraMode
+[2026.10.26-12.16.09:667][156]PIE: Error: Blueprint Runtime Error: "Attempted to access TRASH_BP_CameraModeComponent_C_9 via property CameraModeComponent, but TRASH_BP_CameraModeComponent_C_9 is not valid (pending kill or garbage)". Node:  Return Node Graph:  IsCurrentCameraMode? Function:  Is Current Camera Mode? Blueprint:  BP_BaseCameraMode
+[2026.10.26-12.16.10:000][157]PIE: Error: Blueprint Runtime Error: "Attempted to access TRASH_BP_CameraModeComponent_C_9 via property CameraModeComponent, but TRASH_BP_CameraModeComponent_C_9 is not valid (pending kill or garbage)". Node:  Return Node Graph:  IsCurrentCameraMode? Function:  Is Current Camera Mode? Blueprint:  BP_BaseCameraMode
+[2026.10.26-12.16.10:009][157]LogPython: [CaptureCAP01] CAMERA_FRAMING_CHECK: IntendedCamPos=<Struct 'Vector' (0x0000023D26DBCD80) {x: -0.000000, y: 450.000000, z: 296.149992}>, MeasuredCamPos=<Struct 'Vector' (0x0000023D26DBCC90) {x: 8.515728, y: 817.136021, z: 276.921540}>, PawnLoc=<Struct 'Vector' (0x0000023D26DBD000) {x: 0.000000, y: 450.000000, z: 296.149992}>, SettledArm=0.0, BossActorYaw=180.0, BossMeshForward=<Struct 'Vector' (0x0000023D26DBC920) {x: -0.000000, y: 1.000000, z: 0.000000}>, DistToTarget=817.2cm, AimDot=0.999, MeshFacingDot=0.987, Pitch=-3.0, Yaw=-90.5
+[2026.10.26-12.16.10:009][157]LogPython: Error: [CaptureCAP01] Camera framing rejected: distance to boss out of bounds (817.2cm not in [400, 500])
+[2026.10.26-12.16.10:009][157]LogPython: Error: [CaptureCAP01] Mandatory camera framing verification failed after settle delay. Aborting capture run.
+[2026.10.26-12.16.10:009][157]LogPython: [CaptureCAP01] Finishing run: CAMERA_FRAMING_FAILED
+[2026.10.26-12.16.10:035][157]LogPython: [CaptureCAP01] Restored camera boom arm length (370.0) and lag (True).
+[2026.10.26-12.16.10:035][157]LogPython: [CaptureCAP01] Restored camera component FOV (90.0).
+[2026.10.26-12.16.10:035][157]LogPython: [CaptureCAP01] Restored player pawn transform and visibility (hidden=False).
+[2026.10.26-12.16.10:036][157]LogPython: [CaptureCAP01] Cvar restoration complete.
+[2026.10.26-12.16.10:037][157]LogPython: [CaptureCAP01] Wrote run manifest to Saved\Screenshots\CAP01_A5\run_manifest.json
+[2026.10.26-12.16.10:037][157]LogPython: [CaptureCAP01] RESULT 2/5 (TELEMETRY_CAPTURE_FAILED: Camera framing rejected: distance to boss out of bounds (817.2cm not in [400, 500]); Move trigger failed or aborted early (CAMERA_FRAMING_FAILED); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.16.10:037][157]LogPython: [CaptureCAP01] TELEMETRY_CAPTURE_FAILED (2/5: Camera framing rejected: distance to boss out of bounds (817.2cm not in [400, 500]); Move trigger failed or aborted early (CAMERA_FRAMING_FAILED); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.16.10:037][157]LogPython: [CaptureCAP01] RESULT 2/5 (TELEMETRY_CAPTURE_FAILED: Camera framing rejected: distance to boss out of bounds (817.2cm not in [400, 500]); Move trigger failed or aborted early (CAMERA_FRAMING_FAILED); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.16.10:039][157]LogPython: [CaptureCAP01] TELEMETRY_CAPTURE_FAILED (2/5: Camera framing rejected: distance to boss out of bounds (817.2cm not in [400, 500]); Move trigger failed or aborted early (CAMERA_FRAMING_FAILED); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.16.10:050][157]LogPython: [CaptureCAP01] Standing editor preserved. Runner complete.
+[2026.10.26-12.16.10:334][158]PIE: Error: Blueprint Runtime Error: "Attempted to access TRASH_BP_CameraModeComponent_C_9 via property CameraModeComponent, but TRASH_BP_CameraModeComponent_C_9 is not valid (pending kill or garbage)". Node:  Return Node Graph:  IsCurrentCameraMode? Function:  Is Current Camera Mode? Blueprint:  BP_BaseCameraMode

@@ -1,0 +1,806 @@
+{
+  "scope": "Static AST/registry extraction only; no driver execution, reachability, runtime attribution or acceptance proof.",
+  "runner_sha256": "640ebfa1f48f9da429f40179f7914292965ec1b507131e358e972ca6e751b633",
+  "rows": [
+    {
+      "driver": "pie_a4_low_sweep",
+      "kind": "R",
+      "minimum": 14,
+      "source": "Scripts/Editor/pie_a4_low_sweep.py",
+      "sha256": "b8da95787471bfd3d20ff0bbf53fc8a697adbe348c2dd6f2582b46856bbfbb23",
+      "log_assignment_prefixes": [
+        {
+          "line": 10,
+          "prefix": "[A4] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 141,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_hit_intake",
+      "kind": "R",
+      "minimum": 36,
+      "source": "Scripts/Editor/pie_hit_intake.py",
+      "sha256": "794fc6853c0ee69f2af6f91b40f0cfb94ccbf74325a1ab168eec1ed6c385ae40",
+      "log_assignment_prefixes": [
+        {
+          "line": 8,
+          "prefix": "[Intake] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 55,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_posture_hits",
+      "kind": "R",
+      "minimum": 25,
+      "source": "Scripts/Editor/pie_posture_hits.py",
+      "sha256": "e70e27c416b8ee0c6a9ed4462e1c21557dd546da919d8fdea51806540fa136f0",
+      "log_assignment_prefixes": [
+        {
+          "line": 11,
+          "prefix": "[Posture] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 273,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_stamina_cost",
+      "kind": "R",
+      "minimum": 17,
+      "source": "Scripts/Editor/pie_stamina_cost.py",
+      "sha256": "84b859dc085b480c82e9ad18ed3936c720c9bf7b764a2a32635151fdae28afa4",
+      "log_assignment_prefixes": [
+        {
+          "line": 10,
+          "prefix": "[Stamina] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 238,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_hyperarmor",
+      "kind": "R",
+      "minimum": 23,
+      "source": "Scripts/Editor/pie_hyperarmor.py",
+      "sha256": "333578c45542cd5286217711b8583543d436b75af73e6db19b5270eb08a65ab5",
+      "log_assignment_prefixes": [
+        {
+          "line": 16,
+          "prefix": "[HyperArmor] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 288,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_bleed",
+      "kind": "R",
+      "minimum": 19,
+      "source": "Scripts/Editor/pie_bleed.py",
+      "sha256": "0e54c1e291fd9e9d910372a4d15bbe7b47a886aa14ae5072190400e23a04b7be",
+      "log_assignment_prefixes": [
+        {
+          "line": 10,
+          "prefix": "[Bleed] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 279,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_boss_clips",
+      "kind": "R",
+      "minimum": 14,
+      "source": "Scripts/Editor/pie_boss_clips.py",
+      "sha256": "98f8d7c573d0ba1f5d50f9cc75c3df3688fbb40c6fcd6d565e3e5b83907e6c8d",
+      "log_assignment_prefixes": [
+        {
+          "line": 12,
+          "prefix": "[BossClips] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 169,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_riposte_exec",
+      "kind": "R",
+      "minimum": 15,
+      "source": "Scripts/Editor/pie_riposte_exec.py",
+      "sha256": "b63d4d9d06bc947dcdc03cd6b39ad876238946355d3fe591eec6597a2a002e82",
+      "log_assignment_prefixes": [
+        {
+          "line": 15,
+          "prefix": "[RipostExec] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 303,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_riposte_lethal",
+      "kind": "R",
+      "minimum": 3,
+      "source": "Scripts/Editor/pie_riposte_lethal.py",
+      "sha256": "1f5c834c13ef706c0b9cdcf84e45584d030de4a7301eb93b205c6466a46cda4c",
+      "log_assignment_prefixes": [
+        {
+          "line": 8,
+          "prefix": "[RipostLethal] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 175,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_boss_look",
+      "kind": "R",
+      "minimum": 14,
+      "source": "Scripts/Editor/pie_boss_look.py",
+      "sha256": "5ac0e1d1f950211a9257af2b9985dc531e269eadf3ca11d7dc893152e58bbb1d",
+      "log_assignment_prefixes": [
+        {
+          "line": 12,
+          "prefix": "[BossLook] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 168,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_boss_death",
+      "kind": "R",
+      "minimum": 11,
+      "source": "Scripts/Editor/pie_boss_death.py",
+      "sha256": "77d3faefce0a753d40259b4e551a63c45dddad144ed97c27a09b2aa514d33f18",
+      "log_assignment_prefixes": [
+        {
+          "line": 22,
+          "prefix": "[BossDeath] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 225,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_boss_death_states",
+      "kind": "R",
+      "minimum": 28,
+      "source": "Scripts/Editor/pie_boss_death_states.py",
+      "sha256": "796156d98c5ac2aea25937e7adc07fedd72178d33fdf4318da1510819a90a46d",
+      "log_assignment_prefixes": [
+        {
+          "line": 13,
+          "prefix": "[DeathStates] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 250,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_remains",
+      "kind": "R",
+      "minimum": 4,
+      "source": "Scripts/Editor/pie_remains.py",
+      "sha256": "fc05460b2796a1409baf7e7040684bb69312fec39fd48071bb9b2fd525d923ec",
+      "log_assignment_prefixes": [
+        {
+          "line": 4,
+          "prefix": "[Remains] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 42,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_flipbooks",
+      "kind": "R",
+      "minimum": 7,
+      "source": "Scripts/Editor/pie_flipbooks.py",
+      "sha256": "7bd30291e26ead27a2b55502b80efcc5bb4877328894c50ad87c7d2c2abe2e43",
+      "log_assignment_prefixes": [
+        {
+          "line": 6,
+          "prefix": "[Flipbook] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 61,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_builds",
+      "kind": "R",
+      "minimum": 103,
+      "source": "Scripts/Editor/pie_builds.py",
+      "sha256": "509ea27f90bb56576ac4c599ed67d3c1c7ff038bba0caa05b34979ef1d9323bd",
+      "log_assignment_prefixes": [
+        {
+          "line": 16,
+          "prefix": "[Builds] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 582,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_combat_catalog",
+      "kind": "R",
+      "minimum": 91,
+      "source": "Scripts/Editor/pie_combat_catalog.py",
+      "sha256": "d2031067618319295373dad41945ee0bae2ada5367e11c629b43227fc8d4942b",
+      "log_assignment_prefixes": [
+        {
+          "line": 7,
+          "prefix": "[CombatCatalog] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 156,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_build_hyperarmor",
+      "kind": "R",
+      "minimum": 20,
+      "source": "Scripts/Editor/pie_build_hyperarmor.py",
+      "sha256": "533b62954512a3fe9116131a75ba15e255015e2561be971fa72e2fe2ae9f3509",
+      "log_assignment_prefixes": [
+        {
+          "line": 15,
+          "prefix": "[BuildArmor] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 275,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_build_hud",
+      "kind": "R",
+      "minimum": 8,
+      "source": "Scripts/Editor/pie_build_hud.py",
+      "sha256": "2eb5d5d0d122228296672c13900d5f45763eb372acfb06d8ef21ee47c2d162e7",
+      "log_assignment_prefixes": [
+        {
+          "line": 14,
+          "prefix": "[BuildHud] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 153,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_build_select",
+      "kind": "R",
+      "minimum": 18,
+      "source": "Scripts/Editor/pie_build_select.py",
+      "sha256": "655d86f1fddb3416fcb065b1f8e87cbc854ec2a7df65dc8ae0c2d99cb6ff5892",
+      "log_assignment_prefixes": [
+        {
+          "line": 11,
+          "prefix": "[BuildSelect] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 145,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_flask_hud",
+      "kind": "R",
+      "minimum": 7,
+      "source": "Scripts/Editor/pie_flask_hud.py",
+      "sha256": "bb1fc800c74e1b6595681b09f197689e911d90f0dc74658da8fa4ba1ab346c16",
+      "log_assignment_prefixes": [
+        {
+          "line": 4,
+          "prefix": "[FlaskHud] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 34,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_dormant_wake",
+      "kind": "R",
+      "minimum": 11,
+      "source": "Scripts/Editor/pie_dormant_wake.py",
+      "sha256": "682e9358cfe9ab563d6e3c84cfb0796ae6f9bb841a8bebb0c0c179625c3b50ef",
+      "log_assignment_prefixes": [
+        {
+          "line": 4,
+          "prefix": "[DormantWake] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 39,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_telegraph",
+      "kind": "R",
+      "minimum": 25,
+      "source": "Scripts/Editor/pie_telegraph.py",
+      "sha256": "57eba53c77bb861079cd46681f2290f6f331a97f0c24745d615098a6757f7ea5",
+      "log_assignment_prefixes": [
+        {
+          "line": 4,
+          "prefix": "[Telegraph] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 153,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_authored_close_clips",
+      "kind": "R",
+      "minimum": 14,
+      "source": "Scripts/Editor/pie_authored_close_clips.py",
+      "sha256": "7757cda55f35810644053432487b8ee5822708567a1c26a3b837ed723f581400",
+      "log_assignment_prefixes": [
+        {
+          "line": 4,
+          "prefix": "[AuthoredClose] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 87,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_soak",
+      "kind": "R",
+      "minimum": 213,
+      "source": "Scripts/Editor/pie_soak.py",
+      "sha256": "70853e86b03a43797c1c35749fd77f2eeef9206a88c9f1e3d3a6922a5f27e07a",
+      "log_assignment_prefixes": [
+        {
+          "line": 10,
+          "prefix": "[Soak] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 351,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_a5_heal_punish",
+      "kind": "R",
+      "minimum": 31,
+      "source": "Scripts/Editor/pie_a5_heal_punish.py",
+      "sha256": "d3080fa20104f7dfcc18ee0c6c3645ddc86d6eebe2551985e828be1c83980a1a",
+      "log_assignment_prefixes": [
+        {
+          "line": 11,
+          "prefix": "[A5] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 461,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_player_death_reset",
+      "kind": "R",
+      "minimum": 25,
+      "source": "Scripts/Editor/pie_player_death_reset.py",
+      "sha256": "ca5ee27fb58f9ff514fd31320c6205c12095a261c3e1decb28078be47e59e729",
+      "log_assignment_prefixes": [
+        {
+          "line": 8,
+          "prefix": "[DeathReset] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 112,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_damage_path",
+      "kind": "R",
+      "minimum": 17,
+      "source": "Scripts/Editor/pie_damage_path.py",
+      "sha256": "08c58be4fe82b9147e03f8433292fd9f9089f367a1e6f8dae752044d0ad82b5a",
+      "log_assignment_prefixes": [
+        {
+          "line": 10,
+          "prefix": "[Dmg] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 351,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_iframes",
+      "kind": "R",
+      "minimum": 19,
+      "source": "Scripts/Editor/pie_iframes.py",
+      "sha256": "21e6b93fa23f88b9b18ccf2fe5cf267abeda0d08b32a17f9c70cf58fddfff1fd",
+      "log_assignment_prefixes": [
+        {
+          "line": 12,
+          "prefix": "[IFrame] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 450,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_trace_audit",
+      "kind": "R",
+      "minimum": 30,
+      "source": "Scripts/Editor/pie_trace_audit.py",
+      "sha256": "92df91561e8402be0b940a6caabfee6539f413cf0db6dc3ba714f7051015499f",
+      "log_assignment_prefixes": [
+        {
+          "line": 12,
+          "prefix": "[Trace] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 454,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_legend",
+      "kind": "R",
+      "minimum": 22,
+      "source": "Scripts/Editor/pie_legend.py",
+      "sha256": "173bfed07de31aa6db3f2968906e2a82b8cda6310a3e85f3e69fa3fb556e23b6",
+      "log_assignment_prefixes": [
+        {
+          "line": 12,
+          "prefix": "[Legend] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 625,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_close_attacks",
+      "kind": "R",
+      "minimum": 55,
+      "source": "Scripts/Editor/pie_close_attacks.py",
+      "sha256": "ca75dc6a2ac6cf77ad31b7939526e081cd7687aeedf69be62c987aac76731678",
+      "log_assignment_prefixes": [
+        {
+          "line": 7,
+          "prefix": "[Close] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 205,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_leap_wave",
+      "kind": "R",
+      "minimum": 17,
+      "source": "Scripts/Editor/pie_leap_wave.py",
+      "sha256": "1d26543b903ceabe884cb246bba6393811cf86a74163914d21bca1cf8e550f6d",
+      "log_assignment_prefixes": [
+        {
+          "line": 6,
+          "prefix": "[Leap] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 201,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_attack_rules",
+      "kind": "R",
+      "minimum": 13,
+      "source": "Scripts/Editor/pie_attack_rules.py",
+      "sha256": "e98105ccf56eb649f737a7c135fac5b65baec46cc5b5d3ad08ce471fc371fe13",
+      "log_assignment_prefixes": [
+        {
+          "line": 7,
+          "prefix": "[Rules] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 207,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_boss_hud",
+      "kind": "R",
+      "minimum": 29,
+      "source": "Scripts/Editor/pie_boss_hud.py",
+      "sha256": "0458d13d4e6c5f08ff07af1c9cb0fe9b23807791deb8821b114d29c1c52ed6b4",
+      "log_assignment_prefixes": [
+        {
+          "line": 5,
+          "prefix": "[BossHud] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 185,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_victory_lock",
+      "kind": "R",
+      "minimum": 9,
+      "source": "Scripts/Editor/pie_victory_lock.py",
+      "sha256": "6c3d16227410c7fa042454b5ef3ebbec335ee27cade68b6680f11817187d0b01",
+      "log_assignment_prefixes": [
+        {
+          "line": 6,
+          "prefix": "[VictoryLock] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 127,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_camera_scenarios",
+      "kind": "R",
+      "minimum": 6,
+      "source": "Scripts/Editor/pie_camera_scenarios.py",
+      "sha256": "22057ebd2ef2ffe5714b78726075670984d326355b5b44701f69c4d5fae27498",
+      "log_assignment_prefixes": [
+        {
+          "line": 6,
+          "prefix": "[CamScn] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 183,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_phase_reset",
+      "kind": "S",
+      "minimum": 14,
+      "source": "Scripts/Editor/pie_phase_reset.py",
+      "sha256": "6973854f23fb8951cc0abd968e617fb6d7112807b92ffaf47e722a128e468935",
+      "log_assignment_prefixes": [
+        {
+          "line": 11,
+          "prefix": "[PhaseReset] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 41,
+          "format_literal": "SUMMARY %d checks, %d failed %s"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_riposte",
+      "kind": "S",
+      "minimum": 5,
+      "source": "Scripts/Editor/pie_riposte.py",
+      "sha256": "7f2816996b97f8664680846d92df428a95e31dc4d3f45b2aa7a01398faa283a4",
+      "log_assignment_prefixes": [
+        {
+          "line": 12,
+          "prefix": "[Riposte] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 49,
+          "format_literal": "SUMMARY %d checks, %d failed %s"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_fog_gate",
+      "kind": "S",
+      "minimum": 6,
+      "source": "Scripts/Editor/pie_fog_gate.py",
+      "sha256": "be5425bd9c399169061c440e6b21e9a339cc6f8a4c4cccc3a6ed75c3e80b39ea",
+      "log_assignment_prefixes": [
+        {
+          "line": 5,
+          "prefix": "[FogGate] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 25,
+          "format_literal": "SUMMARY %d checks, %d failed %s"
+        }
+      ],
+      "needs_manual_mapping": false
+    },
+    {
+      "driver": "pie_transition_rules",
+      "kind": "R",
+      "minimum": 28,
+      "source": "Scripts/Editor/pie_transition_rules.py",
+      "sha256": "04acdff91af6e4e58f77841cd1818e626fd151486c470144ab11fbbe9e197575",
+      "log_assignment_prefixes": [
+        {
+          "line": 12,
+          "prefix": "[Transition] "
+        }
+      ],
+      "final_log_literals": [
+        {
+          "line": 589,
+          "format_literal": "RESULT %d/%d passed"
+        }
+      ],
+      "needs_manual_mapping": false
+    }
+  ]
+}

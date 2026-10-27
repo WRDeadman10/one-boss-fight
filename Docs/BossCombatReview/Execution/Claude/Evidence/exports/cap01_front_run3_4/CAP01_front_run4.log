@@ -1,0 +1,24 @@
+﻿[2026.10.26-12.01.40:416][281]LogPython: [CaptureCAP01] Saved existing console variables.
+[2026.10.26-12.01.40:417][281]LogPython: [CaptureCAP01] RUN_ID: RUN_20261026_173140_4297
+[2026.10.26-12.01.40:417][281]LogPython: [CaptureCAP01] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[CaptureCAP01] Saved existing console variables.
+[CaptureCAP01] RUN_ID: RUN_20261026_173140_4297
+[CaptureCAP01] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[2026.10.26-12.01.40:905][317]LogPython: [CaptureCAP01] Initiating editor_request_begin_play()...
+[2026.10.26-12.01.40:948][318]LogUIActionRouter: Error: Using CommonUI without a CommonGameViewportClient derived game viewport client. CommonUI Input routing will not function correctly.
+[2026.10.26-12.01.41:490][318]LogPython: [CaptureCAP01] PIE active. Boss and components found. Setting up front-facing camera framing (Claude C-160, 450cm front view)...
+[2026.10.26-12.01.41:491][318]LogPython: [CaptureCAP01] CAMERA_READBACK: target_arm_length=0.0, field_of_view=65.0, enable_camera_lag=False, pawn_hidden=True
+[2026.10.26-12.01.41:491][318]LogPython: [CaptureCAP01] CAMERA_FRAMING_CHECK: BossActorYaw=180.0, BossMeshForward=<Struct 'Vector' (0x000001BC086C01A0) {x: -0.000000, y: 1.000000, z: 0.000000}>, PawnLoc=<Struct 'Vector' (0x000001BC086C1280) {x: 0.000000, y: 450.000000, z: 296.149992}>, CamPos=<Struct 'Vector' (0x000001BC086C0740) {x: 10.000856, y: 816.895773, z: 374.213272}>, DistToTarget=822.8cm, AimDot=0.997, MeshFacingDot=0.963, Pitch=-2.5, Yaw=-90.0
+[2026.10.26-12.01.41:491][318]LogPython: Error: [CaptureCAP01] Camera framing rejected: distance to boss out of bounds (822.8cm not in [400, 500])
+[2026.10.26-12.01.41:491][318]LogPython: Error: [CaptureCAP01] Mandatory close-up camera setup failed. Aborting capture run.
+[2026.10.26-12.01.41:491][318]LogPython: [CaptureCAP01] Finishing run: CAMERA_SETUP_FAILED
+[2026.10.26-12.01.41:491][318]LogPython: [CaptureCAP01] Restored camera boom arm length (370.0) and lag (True).
+[2026.10.26-12.01.41:491][318]LogPython: [CaptureCAP01] Restored camera component FOV (90.0).
+[2026.10.26-12.01.41:491][318]LogPython: [CaptureCAP01] Restored player pawn transform and visibility (hidden=False).
+[2026.10.26-12.01.41:491][318]LogPython: [CaptureCAP01] Cvar restoration complete.
+[2026.10.26-12.01.41:492][318]LogPython: [CaptureCAP01] Wrote run manifest to Saved\Screenshots\CAP01_A5\run_manifest.json
+[2026.10.26-12.01.41:492][318]LogPython: [CaptureCAP01] RESULT 2/5 (TELEMETRY_CAPTURE_FAILED: Camera framing rejected: distance to boss out of bounds (822.8cm not in [400, 500]); Move trigger failed or aborted early (CAMERA_SETUP_FAILED); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.01.41:492][318]LogPython: [CaptureCAP01] TELEMETRY_CAPTURE_FAILED (2/5: Camera framing rejected: distance to boss out of bounds (822.8cm not in [400, 500]); Move trigger failed or aborted early (CAMERA_SETUP_FAILED); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.01.41:492][318]LogPython: [CaptureCAP01] RESULT 2/5 (TELEMETRY_CAPTURE_FAILED: Camera framing rejected: distance to boss out of bounds (822.8cm not in [400, 500]); Move trigger failed or aborted early (CAMERA_SETUP_FAILED); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.01.41:506][318]LogPython: [CaptureCAP01] TELEMETRY_CAPTURE_FAILED (2/5: Camera framing rejected: distance to boss out of bounds (822.8cm not in [400, 500]); Move trigger failed or aborted early (CAMERA_SETUP_FAILED); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.01.41:521][318]LogPython: [CaptureCAP01] Standing editor preserved. Runner complete.

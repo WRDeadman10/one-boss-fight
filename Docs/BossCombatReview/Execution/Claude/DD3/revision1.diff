@@ -1,0 +1,93 @@
+=== RPGBossStatsAdapters.h (first delivery C-191 -> revision 1, line-ending differences ignored for display only)
+--- C-191/RPGBossStatsAdapters.h
++++ rev1/RPGBossStatsAdapters.h
+@@ -21,8 +21,12 @@
+  * follow in later packages, and the order in which plans are run belongs to the future cluster planner, not to this subset.
+  *
+  * Failures are named: the message starts with one of the tokens below, so a caller or a test can tell the cases apart without parsing prose.
+- *   WrongComponentClass, ComponentBegunPlay, ComponentAlreadyRegistered, InvalidOwner, OwnerBegunPlay,
++ *   InvalidComponent, WrongComponentClass, ComponentBegunPlay, ComponentAlreadyRegistered, InvalidOwner, OwnerBegunPlay,
+  *   InvalidStats.NotFinite, InvalidStats.NotPositive, InvalidStats.Negative, UnsupportedNativeHealthOverride
++ *
++ * Validation dependency: every callback validates all four Stats fields, while a plan's RequiredFields names only the fields that plan assigns (one for the encounter, three for the posture). A cluster that
++ * uses these plans therefore has to require the union of the four Stats fields; the future full-cluster planner owns that. RequiredFields is manifest membership evidence for the assigned inputs, not provenance
++ * and not proof of a raw value. A callback that fails does not roll anything back by itself: what happens to components already created for a failed hydration is the business of the code that created them.
+  */
+ namespace RPGBossStatsAdapters
+ {
+=== RPGBossStatsAdapters.cpp (first delivery C-191 -> revision 1, line-ending differences ignored for display only)
+--- C-191/RPGBossStatsAdapters.cpp
++++ rev1/RPGBossStatsAdapters.cpp
+@@ -10,9 +10,17 @@
+ {
+ 	namespace
+ 	{
+-		/** The component is exactly the expected class and still a plain, unregistered configuration target of an owner that has not begun play. Writes nothing. */
++		/** The component is alive, exactly the expected class and still a plain, unregistered configuration target of an owner that has not begun play. Writes nothing. */
+ 		bool CheckConfigurable(const UActorComponent& Component, const UClass* Expected, FString& OutError)
+ 		{
++			// First, before any other state is trusted: DestroyComponent flags the component as being destroyed, ends its play, unregisters it, removes it from its owner and marks it garbage
++			// (ActorComponent.cpp), yet the object stays allocated until a garbage collection runs, and its owner can stay valid. Such a dead component passes every later check, so it is refused here.
++			// The reference is live (the caller holds it); only public state is read, no freed memory is touched.
++			if (!IsValid(&Component) || Component.IsBeingDestroyed())
++			{
++				OutError = FString::Printf(TEXT("InvalidComponent: %s is destroyed or being destroyed"), *Component.GetName());
++				return false;
++			}
+ 			if (Component.GetClass() != Expected)
+ 			{
+ 				OutError = FString::Printf(TEXT("WrongComponentClass: expected %s, got %s"), *Expected->GetName(), *Component.GetClass()->GetName());
+=== RPGBossStatsAdaptersTests.cpp (first delivery C-191 -> revision 1, line-ending differences ignored for display only)
+--- C-191/RPGBossStatsAdaptersTests.cpp
++++ rev1/RPGBossStatsAdaptersTests.cpp
+@@ -17,6 +17,7 @@
+ 
+ // These tests prove typed configuration assignment and rejection on isolated native components and actors: no pack asset, no arena, no engine save.
+ // They do NOT prove the asynchronous application of health to the pack, the first BeginPlay of Posture in a real duel, or any registration chronology.
++// The before/after snapshots cover the selected PUBLIC configuration and runtime state of the two components (every field and getter listed in the state structs below), not every private cache.
+ 
+ namespace
+ {
+@@ -529,7 +530,41 @@
+ 		ExpectRejected(TEXT("posture without an owner"), *Posture, TEXT("InvalidOwner"), false);
+ 	}
+ 
+-	AddInfo(TEXT("Rejection paths on isolated actors; an owner that is being destroyed is covered by the code (IsActorBeingDestroyed) but not exercised here."));
++	// Destroyed component: DestroyComponent already ran on it (flagged as being destroyed, unregistered, EndPlay cleared, removed from its owner, marked garbage) but the object is still allocated because the
++	// test holds it and no garbage collection runs in this test. The owner stays valid and is not being destroyed, so this exercises the component check and not the owner check.
++	{
++		AActor* LiveOwner = Scope.SpawnOwner();
++		if (!TestNotNull(TEXT("live owner actor"), LiveOwner))
++		{
++			return false;
++		}
++		TStrongObjectPtr<URPGBossEncounter> Encounter(NewObject<URPGBossEncounter>(LiveOwner, TEXT("DeadEncounter")));
++		TStrongObjectPtr<URPGBossPosture> Posture(NewObject<URPGBossPosture>(LiveOwner, TEXT("DeadPosture")));
++		if (!TestTrue(TEXT("dead components created"), Encounter.IsValid() && Posture.IsValid()))
++		{
++			return false;
++		}
++		Encounter->DestroyComponent();
++		Posture->DestroyComponent();
++		const bool bRetained = Encounter.Get() != nullptr && Posture.Get() != nullptr && Encounter->GetOuter() == LiveOwner && Posture->GetOuter() == LiveOwner;
++		const bool bFlaggedDead = Encounter->IsBeingDestroyed() && Posture->IsBeingDestroyed();
++		const bool bOwnerLive = IsValid(LiveOwner) && !LiveOwner->IsActorBeingDestroyed() && !LiveOwner->HasActorBegunPlay();
++		if (!TestTrue(TEXT("precondition: destroyed components still allocated and linked to their owner, owner live"), bRetained && bFlaggedDead && bOwnerLive))
++		{
++			AddError(TEXT("unsupported precondition: the destroyed-but-retained state could not be built"));
++			return false;
++		}
++		// What the old checks would have seen: not registered, not begun. Recorded so a reader sees that only the new check can refuse them.
++		TestTrue(TEXT("precondition: a destroyed component looks unregistered and not begun, which is why the earlier checks cannot refuse it"), !Encounter->IsRegistered() && !Encounter->HasBegunPlay() && !Posture->IsRegistered() && !Posture->HasBegunPlay());
++		ExpectRejected(TEXT("destroyed encounter"), *Encounter, TEXT("InvalidComponent"), true);
++		ExpectRejected(TEXT("destroyed posture"), *Posture, TEXT("InvalidComponent"), false);
++		// The component check is first: a destroyed component of the WRONG class is reported as invalid, not as the wrong class.
++		ExpectRejected(TEXT("encounter adapter on a destroyed posture"), *Posture, TEXT("InvalidComponent"), true);
++		ExpectRejected(TEXT("posture adapter on a destroyed encounter"), *Encounter, TEXT("InvalidComponent"), false);
++		TestTrue(TEXT("the owner stayed live through all four calls"), IsValid(LiveOwner) && !LiveOwner->IsActorBeingDestroyed());
++	}
++
++	AddInfo(TEXT("Rejection paths on isolated actors; an owner that is being destroyed is covered by the code (IsActorBeingDestroyed) but not exercised here. The destroyed-component case is built from the engine's DestroyComponent while the object is still retained: it is not a garbage-collection or freed-memory test."));
+ 	return true;
+ }
+ 

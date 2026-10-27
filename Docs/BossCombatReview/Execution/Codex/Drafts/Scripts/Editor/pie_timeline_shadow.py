@@ -37,22 +37,33 @@ def await_condition(predicate, seconds, label):
 
 def validate_records(shadow):
     count = shadow.get_record_count()
-    if count <= 0:
+    if type(count) is not int or not 0 < count <= 4096:
         return False
     previous_ordinal = 0
     for index in range(count):
-        row = json.loads(str(shadow.get_record_json_for_test(index)))
+        try:
+            row = json.loads(str(shadow.get_record_json_for_test(index)))
+        except (ValueError, TypeError):
+            return False
+        if not isinstance(row, dict):
+            return False
         for key in ("world_session", "encounter_instance", "participant_slot", "source_asset", "variant", "coverage_scope"):
             if not isinstance(row.get(key), str) or not row[key] or row[key] == "None":
                 return False
-        if not all(re.fullmatch(r"[0-9a-fA-F]{64}", row.get(k, "")) for k in ("asset_sha256", "adapter_sha256")):
+        if not all(isinstance(row.get(k), str) and re.fullmatch(r"[0-9a-fA-F]{64}", row[k]) for k in ("asset_sha256", "adapter_sha256")):
             return False
         for key in ("previous", "current", "game_time", "actual_rate"):
             value = row.get(key)
-            if not isinstance(value, (int, float)) or not math.isfinite(value):
+            if type(value) not in (int, float) or not math.isfinite(value):
                 return False
-        ordinal = int(row["observation_ordinal"])
-        if ordinal <= previous_ordinal or row.get("generation", 0) <= 0:
+        # C++ emits uint64 ordinals as decimal strings; JSON numbers lose precision.
+        ordinal_text = row.get("observation_ordinal")
+        if not isinstance(ordinal_text, str) or not re.fullmatch(r"[1-9][0-9]{0,19}", ordinal_text):
+            return False
+        ordinal = int(ordinal_text)
+        generation = row.get("generation")
+        if (ordinal > 0xffffffffffffffff or ordinal <= previous_ordinal
+                or type(generation) is not int or not 0 < generation <= 0xffffffff):
             return False
         previous_ordinal = ordinal
         if row.get("authoritative_action") is not None:
@@ -83,7 +94,7 @@ def script():
     check("record bound", all(0 <= s.get_record_count() <= 4096 for s in shadows))
     check("no dropped samples in fixture", bool(shadows) and all(s.get_dropped_records() == 0 for s in shadows))
     check("same actors, per-instance buffers", len(initial) == len(shadows))
-    check("nonempty semantic JSON per observer", len(shadows) >= 2 and all(validate_records(s) for s in shadows))
+    check("nonempty diagnostic record schema per observer (not parity)", len(shadows) >= 2 and all(validate_records(s) for s in shadows))
     unreal.SystemLibrary.collect_garbage()
     yield 1.0
     check("observers live after GC", bool(shadows) and all(s.get_owner() is not None for s in shadows))

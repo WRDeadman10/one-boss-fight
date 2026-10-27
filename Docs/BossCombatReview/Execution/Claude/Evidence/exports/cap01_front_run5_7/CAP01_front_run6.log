@@ -1,0 +1,24 @@
+﻿[2026.10.26-12.08.32:686][232]LogPython: [CaptureCAP01] Saved existing console variables.
+[2026.10.26-12.08.32:686][232]LogPython: [CaptureCAP01] RUN_ID: RUN_20261026_173832_6566
+[2026.10.26-12.08.32:686][232]LogPython: [CaptureCAP01] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[CaptureCAP01] Saved existing console variables.
+[CaptureCAP01] RUN_ID: RUN_20261026_173832_6566
+[CaptureCAP01] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[2026.10.26-12.08.34:007][236]LogPython: [CaptureCAP01] Initiating editor_request_begin_play()...
+[2026.10.26-12.08.35:555][237]LogUIActionRouter: Error: Using CommonUI without a CommonGameViewportClient derived game viewport client. CommonUI Input routing will not function correctly.
+[2026.10.26-12.08.36:274][237]LogPython: [CaptureCAP01] PIE active. Boss and components found. Setting up front-facing camera framing (Claude C-160/C-161, 450cm front view)...
+[2026.10.26-12.08.36:538][237]LogPython: [CaptureCAP01] CAMERA_READBACK: target_arm_length=0.0, field_of_view=65.0, enable_camera_lag=False, pawn_hidden=True
+[2026.10.26-12.08.37:224][240]LogPython: Error: [CaptureCAP01] Tick exception: Traceback (most recent call last):
+  File "<string>", line 500, in tick
+UnboundLocalError: cannot access local variable 'boss' where it is not associated with a value
+[2026.10.26-12.08.37:224][240]LogPython: [CaptureCAP01] Finishing run: EXCEPTION
+[2026.10.26-12.08.37:232][240]LogPython: [CaptureCAP01] Restored camera boom arm length (370.0) and lag (True).
+[2026.10.26-12.08.37:232][240]LogPython: [CaptureCAP01] Restored camera component FOV (90.0).
+[2026.10.26-12.08.37:232][240]LogPython: [CaptureCAP01] Restored player pawn transform and visibility (hidden=False).
+[2026.10.26-12.08.37:233][240]LogPython: [CaptureCAP01] Cvar restoration complete.
+[2026.10.26-12.08.37:234][240]LogPython: [CaptureCAP01] Wrote run manifest to Saved\Screenshots\CAP01_A5\run_manifest.json
+[2026.10.26-12.08.37:234][240]LogPython: [CaptureCAP01] RESULT 2/5 (TELEMETRY_CAPTURE_FAILED: Move trigger failed or aborted early (EXCEPTION); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.08.37:234][240]LogPython: [CaptureCAP01] TELEMETRY_CAPTURE_FAILED (2/5: Move trigger failed or aborted early (EXCEPTION); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.08.37:234][240]LogPython: [CaptureCAP01] RESULT 2/5 (TELEMETRY_CAPTURE_FAILED: Move trigger failed or aborted early (EXCEPTION); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.08.37:237][240]LogPython: [CaptureCAP01] TELEMETRY_CAPTURE_FAILED (2/5: Move trigger failed or aborted early (EXCEPTION); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.08.37:248][240]LogPython: [CaptureCAP01] Standing editor preserved. Runner complete.

@@ -1,0 +1,75 @@
+--- preimage/RPGEncounterBinding.h
++++ DD7/RPGEncounterBinding.h
+@@ -35,6 +35,29 @@
+ 	UPROPERTY(EditAnywhere) bool bResetOnPlayerRespawn = true;
+ };
+ 
++/** Stagger and riposte scalar policy of the boss (URPGBossStagger): the typed authoring record, thirteen floats and one bool with the names of the native component. The defaults are defaults of this NEW asset field
++ *  (old schema 1 definitions receive them additively); they match the native declarations, are not proof of any serialized or live actor value and are never a fallback for an invalid value. The domains are in
++ *  RPGBossStaggerPolicyAdapters (the native ClampMin and ClampMax metadata is editor metadata and is not copied here as a runtime rule). Clips, classes, effects and mode toggles are NOT part of this record. */
++USTRUCT(BlueprintType)
++struct FRPGStaggerPolicyConfig
++{
++	GENERATED_BODY()
++	UPROPERTY(EditAnywhere) float StaggerSeconds = 2.5f;
++	UPROPERTY(EditAnywhere) float FreezeAtPosition = 1.55f;
++	UPROPERTY(EditAnywhere) float CriticalMultiplier = 2.5f;
++	UPROPERTY(EditAnywhere) float RiposteRange = 150.f;
++	UPROPERTY(EditAnywhere) float RiposteConeDegrees = 120.f;
++	UPROPERTY(EditAnywhere) float RiposteFacingDegrees = 120.f;
++	UPROPERTY(EditAnywhere) float RiposteArmSeconds = 1.2f;
++	UPROPERTY(EditAnywhere) float RipostePlayerStartGap = 150.f;
++	UPROPERTY(EditAnywhere) float RiposteAlignSeconds = 0.3f;
++	UPROPERTY(EditAnywhere) float RiposteImpactSeconds = 0.8f;
++	UPROPERTY(EditAnywhere) float RiposteBaseDamage = 40.f;
++	UPROPERTY(EditAnywhere) float CooldownSeconds = 0.f;
++	UPROPERTY(EditAnywhere) float GetUpRate = 0.6f;
++	UPROPERTY(EditAnywhere) bool bHoldPostureAtZero = true;
++};
++
+ USTRUCT(BlueprintType)
+ struct FRPGPhaseConfig
+ {
+@@ -75,6 +98,7 @@
+ 	UPROPERTY(EditAnywhere) FName PresentationId;
+ 	UPROPERTY(EditAnywhere) FRPGBossStatsConfig Stats;
+ 	UPROPERTY(EditAnywhere) FRPGEncounterPolicyConfig EncounterPolicy;
++	UPROPERTY(EditAnywhere) FRPGStaggerPolicyConfig StaggerPolicy;
+ 	UPROPERTY(EditAnywhere) TArray<FRPGPhaseConfig> Phases;
+ 	UPROPERTY(EditAnywhere) TSoftObjectPtr<USkeleton> Skeleton;
+ 	UPROPERTY(EditAnywhere) TArray<TSoftObjectPtr<UAnimSequenceBase>> Animations;
+@@ -109,6 +133,7 @@
+ 	int32 Schema = 1;
+ 	FRPGBossStatsConfig Stats;
+ 	FRPGEncounterPolicyConfig EncounterPolicy;
++	FRPGStaggerPolicyConfig StaggerPolicy;
+ 	TArray<FRPGPhaseConfig> Phases;
+ 	TArray<FRPGParityField> Fields;
+ 	TSharedPtr<const RPGCombatRegistry::FEpoch> Content;
+--- preimage/RPGEncounterBinding.cpp
++++ DD7/RPGEncounterBinding.cpp
+@@ -1,6 +1,7 @@
+ #include "Player/RPGEncounterBinding.h"
+ #include "Player/RPGBossEncounter.h"
+ #include "Player/RPGBossEncounterPolicyAdapters.h"
++#include "Player/RPGBossStaggerPolicyAdapters.h"
+ #include "Engine/World.h"
+ #include "Animation/AnimSequenceBase.h"
+ #include "Animation/Skeleton.h"
+@@ -36,6 +37,8 @@
+ 	}
+ 	FString PolicyError;
+ 	if (!RPGBossEncounterPolicyAdapters::ValidateEncounterPolicy(D.EncounterPolicy, PolicyError)) { Result.Fail(PolicyError); } // never replaced by the 1200/true authoring defaults
++	FString StaggerError;
++	if (!RPGBossStaggerPolicyAdapters::ValidateStaggerPolicy(D.StaggerPolicy, StaggerError)) { Result.Fail(StaggerError); } // never replaced by the authoring defaults, never clamped
+ 	TSet<FName> PhaseIds;
+ 	for (const FRPGPhaseConfig& Phase : D.Phases)
+ 	{
+@@ -68,6 +71,7 @@
+ 	Value->Schema = D.Schema; Value->StableManifestHash = Hash;
+ 	Value->Stats = D.Stats; Value->Phases = D.Phases; Value->Fields = D.Fields;
+ 	Value->EncounterPolicy = D.EncounterPolicy;
++	Value->StaggerPolicy = D.StaggerPolicy;
+ 	Value->Content = MoveTemp(Content); Out = Value;
+ 	Value->bSyntheticFixture = bSynthetic;
+ 	if (!bSynthetic)

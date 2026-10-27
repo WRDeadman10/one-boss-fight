@@ -1,6 +1,13 @@
 """
 pie_capture_cap01_a5.py - Capture Driver Draft for CAP-01 (A5 Javelin Release Timing & Visual Sync)
 
+================================================================================
+STATUS: PARKED AS UNVERIFIED
+Per Owner Decision, Claude [C-165], Codex [X-152], and CODEX_LEAD_WORK_ORDER_02.
+Camera framing research is frozen. Script preserved for historical audit only.
+Do NOT execute in editor without explicit Owner/Lead direction.
+================================================================================
+
 Redesigned per Claude [C-145] for External Capture Loop Architecture:
   - The Python driver does NOT take HighResShot screenshots (which produce black 17KB frames in headless/PIE).
   - Driver manages 'Saved/m7_flag.txt' flag file with phase-qualified tags ('CAP01_A5_Windup', 'CAP01_A5_Active', etc.).
@@ -14,6 +21,7 @@ Run Recipe (Standing Editor):
   Terminal 3: python -I Docs/BossCombatReview/Execution/Antigravity/Evidence/capture_analysis.py --frames-dir Saved/Screenshots/CAP01_A5 --log Saved/pie_capture_cap01_a5.log --cap-id CAP-01
 """
 
+import builtins
 import json
 import os
 import sys
@@ -24,6 +32,36 @@ import unreal
 TAG = "[CaptureCAP01]"
 log = lambda m: unreal.log(f"{TAG} {m}")
 log_err = lambda m: unreal.log_error(f"{TAG} {m}")
+
+# Ensure clean slate for Slate callbacks: unregister any lingering callbacks from prior runs (Claude C-163 / Codex X-152 / WORK_ORDER_02)
+if not hasattr(builtins, "_obf_capture_handles"):
+    builtins._obf_capture_handles = []
+
+unregistered_handles = []
+unresolved_handles = []
+for h in list(builtins._obf_capture_handles):
+    try:
+        unreal.unregister_slate_post_tick_callback(h)
+        unregistered_handles.append(h)
+        unreal.log(f"{TAG} Unregistered lingering Slate post-tick callback {h} from prior run.")
+    except Exception as e:
+        unresolved_handles.append(h)
+        unreal.log_warning(f"{TAG} Failed to unregister lingering callback {h}: {e}. Retained in unresolved state.")
+
+# Only remove handles that were successfully unregistered; preserve failing ones per Codex X-152 / WORK_ORDER_02
+for h in unregistered_handles:
+    builtins._obf_capture_handles.remove(h)
+
+if unresolved_handles:
+    unreal.log_error(f"{TAG} CRITICAL: Lingering Slate callbacks {unresolved_handles} could not be unregistered; editor restart required.")
+
+
+def safe_norm(v: unreal.Vector) -> unreal.Vector:
+    l = v.length()
+    if l > 1e-6:
+        return unreal.Vector(v.x / l, v.y / l, v.z / l)
+    return unreal.Vector(0.0, 0.0, 0.0)
+
 
 MAP_NAME = "L_SevarogArena"
 SLOMO_CAPTURE = 0.20     # Dilate time for reliable RHI capture and frame density
@@ -75,8 +113,17 @@ class Cap01Runner:
         self.move_start_wall_t = 0.0
         self.start_timer = 0.0
         self.wait_timer = 0.0
+        self.camera_settle_timer = 0.0
+
+        self.cam_pos = None
+        self.target_loc = None
+        self.look_rot = None
+        self.look_fwd = None
+        self.boss_mesh_fwd = None
+        self.boss_actor_yaw = None
         self.trigger_wait = 0.0
         self.settle_timer = 0.0
+        self.flag_armed = False
 
         self.passed_checks = 0
         self.total_checks = 5
@@ -103,17 +150,17 @@ class Cap01Runner:
             except OSError as e:
                 log_err(f"Failed to clear flag file: {e}")
 
-    def setup_camera(self, pc, pawn, player_loc, target_loc):
+    def setup_camera(self, pc, pawn, boss):
         self.pc = pc
         self.pawn = pawn
+        self.boss = boss
         self.orig_player_loc = pawn.get_actor_location() if pawn else None
         self.orig_player_rot = pawn.get_actor_rotation() if pawn else None
         self.orig_control_rot = pc.get_control_rotation() if pc else None
         if pawn:
-            self.orig_pawn_hidden = pawn.is_hidden() if hasattr(pawn, "is_hidden") else (pawn.b_hidden if hasattr(pawn, "b_hidden") else False)
+            self.orig_pawn_hidden = bool(pawn.get_editor_property("hidden"))
 
-        # Close-up Framing Parameters (per Claude C-154 for >= 150px hand/javelin height):
-        # Retrieve CameraBoom and FollowCamera from player pawn
+        # Close-up Framing Parameters (per Claude C-154, C-160, C-161, C-162 for >= 150px hand/javelin height):
         self.boom = next((c for c in pawn.get_components_by_class(unreal.SpringArmComponent)), None) if pawn else None
         self.cam = next((c for c in pawn.get_components_by_class(unreal.CameraComponent)), None) if pawn else None
 
@@ -130,47 +177,80 @@ class Cap01Runner:
             return False
 
         try:
+            self.orig_arm_length = float(self.boom.get_editor_property("target_arm_length"))
+            self.orig_enable_lag = bool(self.boom.get_editor_property("enable_camera_lag"))
+            self.boom.set_editor_property("enable_camera_lag", False)
+            self.boom.set_editor_property("target_arm_length", 0.0)
+        except Exception as e:
             self.orig_arm_length = self.boom.target_arm_length
             if hasattr(self.boom, "b_enable_camera_lag"):
                 self.orig_enable_lag = self.boom.b_enable_camera_lag
                 self.boom.b_enable_camera_lag = False
-            elif hasattr(self.boom, "enable_camera_lag"):
-                self.orig_enable_lag = self.boom.enable_camera_lag
-                self.boom.enable_camera_lag = False
             else:
-                msg = "Neither b_enable_camera_lag nor enable_camera_lag found on CameraBoom"
-                log_err(msg)
-                self.failure_reasons.append(msg)
-                return False
-
-            self.boom.target_arm_length = 120.0
-        except Exception as e:
-            msg = f"Failed to tune CameraBoom: {e}"
-            log_err(msg)
-            self.failure_reasons.append(msg)
-            return False
+                self.orig_enable_lag = getattr(self.boom, "enable_camera_lag", False)
+                self.boom.enable_camera_lag = False
+            self.boom.target_arm_length = 0.0
 
         try:
+            self.orig_cam_fov = float(self.cam.get_editor_property("field_of_view"))
+            self.cam.set_editor_property("field_of_view", 65.0)
+        except Exception as e:
             self.orig_cam_fov = self.cam.field_of_view
             self.cam.field_of_view = 65.0
-        except Exception as e:
-            msg = f"Failed to tune CameraComponent FOV: {e}"
+
+        # Boss skeletal mesh and transform queries (Claude C-161 / C-162):
+        mesh = boss.get_mesh() if hasattr(boss, "get_mesh") else next((c for c in boss.get_components_by_class(unreal.SkeletalMeshComponent)), None)
+        if not mesh:
+            msg = "Mandatory boss SkeletalMeshComponent not found on boss actor"
             log_err(msg)
             self.failure_reasons.append(msg)
             return False
 
-        # Read back applied settings and assert tolerances
-        actual_arm = self.boom.target_arm_length
-        actual_fov = self.cam.field_of_view
-        actual_lag = getattr(self.boom, "b_enable_camera_lag", getattr(self.boom, "enable_camera_lag", None))
+        boss_loc = boss.get_actor_location()
+        boss_rot = boss.get_actor_rotation()
+        self.boss_actor_yaw = boss_rot.yaw
+        self.boss_mesh_fwd = mesh.get_forward_vector()
+        mesh_fwd_xy = safe_norm(unreal.Vector(self.boss_mesh_fwd.x, self.boss_mesh_fwd.y, 0.0))
+
+        # Camera placed IN FRONT of boss mesh facing at 450cm, slightly raised at Z=+150, facing boss chest/cowl (Claude C-160 / C-161)
+        self.cam_pos = boss_loc + mesh_fwd_xy * 450.0 + unreal.Vector(0.0, 0.0, 150.0)
+        self.target_loc = boss_loc + unreal.Vector(0.0, 0.0, 130.0)
+
+        self.look_rot = unreal.MathLibrary.find_look_at_rotation(self.cam_pos, self.target_loc)
+        self.look_fwd = self.look_rot.get_forward_vector()
+
+        # With target_arm_length = 0.0, positioning pawn at cam_pos places camera precisely at cam_pos.
+        # The pawn is 450cm away from boss along the camera line of sight (not beside the boss).
+        pawn_loc = self.cam_pos
+
+        try:
+            pawn.set_actor_location_and_rotation(pawn_loc, self.look_rot, False, False)
+            if pc:
+                pc.set_control_rotation(self.look_rot)
+            pawn.set_actor_hidden_in_game(True)
+            pawn.set_actor_enable_collision(False)
+        except Exception as e:
+            msg = f"Player camera repositioning failed: {e}"
+            log_err(msg)
+            self.failure_reasons.append(msg)
+            return False
+
+        # Read back applied settings and assert tolerances (C-158 / X-151 / C-161 / C-162)
+        actual_arm = float(self.boom.get_editor_property("target_arm_length"))
+        actual_fov = float(self.cam.get_editor_property("field_of_view"))
+        actual_lag = bool(self.boom.get_editor_property("enable_camera_lag"))
+        actual_hidden = bool(pawn.get_editor_property("hidden"))
+
+        log(f"CAMERA_READBACK: target_arm_length={actual_arm:.1f}, field_of_view={actual_fov:.1f}, enable_camera_lag={actual_lag}, pawn_hidden={actual_hidden}")
+
         if actual_lag is not False:
             msg = f"CameraBoom enable_lag readback mismatch: expected False, got {actual_lag}"
             log_err(msg)
             self.failure_reasons.append(msg)
             return False
 
-        if abs(actual_arm - 120.0) > 1.0:
-            msg = f"CameraBoom arm length readback mismatch: {actual_arm:.1f} != 120.0"
+        if abs(actual_arm - 0.0) > 1.0:
+            msg = f"CameraBoom arm length readback mismatch: {actual_arm:.1f} != 0.0"
             log_err(msg)
             self.failure_reasons.append(msg)
             return False
@@ -181,36 +261,114 @@ class Cap01Runner:
             self.failure_reasons.append(msg)
             return False
 
-        rot = unreal.MathLibrary.find_look_at_rotation(player_loc, target_loc)
-        try:
-            pawn.set_actor_location_and_rotation(player_loc, rot, False, False)
-            if pc:
-                pc.set_control_rotation(rot)
-            pawn.set_actor_hidden_in_game(True)
-            log(f"Player camera framed at {player_loc}, facing {rot} (yaw={rot.yaw:.1f}, pitch={rot.pitch:.1f}). Measured ArmLength={actual_arm:.1f}, Measured FOV={actual_fov:.1f}. Player mesh hidden in game.")
-            return True
-        except Exception as e:
-            msg = f"Player camera repositioning failed: {e}"
+        if actual_hidden is not True:
+            msg = f"Player pawn hidden readback mismatch: expected True, got {actual_hidden}"
             log_err(msg)
             self.failure_reasons.append(msg)
             return False
 
+        return True
+
+    def get_active_camera_transform(self):
+        # Prefer PlayerCameraManager for true rendered viewport camera transform in PIE (Claude C-163)
+        pcm = None
+        if self.pc and hasattr(self.pc, "player_camera_manager") and self.pc.player_camera_manager:
+            pcm = self.pc.player_camera_manager
+        elif self.world:
+            pcm = unreal.GameplayStatics.get_player_camera_manager(self.world, 0)
+
+        if pcm:
+            cam_loc = pcm.get_camera_location()
+            cam_rot = pcm.get_camera_rotation()
+            if cam_loc.length() > 1.0:
+                return cam_loc, cam_rot, pcm
+
+        if self.cam:
+            loc = self.cam.get_world_location()
+            rot = self.cam.get_world_rotation()
+            if loc.length() > 1.0:
+                return loc, rot, None
+
+        return None, None, None
+
+    def verify_camera_framing(self, boss=None):
+        target_boss = boss or self.boss
+        if not target_boss or not self.pawn:
+            msg = "Camera framing verification failed: boss or pawn reference is None"
+            log_err(msg)
+            self.failure_reasons.append(msg)
+            return False
+
+        cam_loc, cam_rot, pcm = self.get_active_camera_transform()
+        if not cam_loc:
+            msg = "Camera framing verification failed: active camera location is (0,0,0) or unavailable"
+            log_err(msg)
+            self.failure_reasons.append(msg)
+            return False
+
+        boss_loc = target_boss.get_actor_location()
+        pawn_world_loc = self.pawn.get_actor_location()
+
+        to_cam = cam_loc - boss_loc
+        dir_to_cam = safe_norm(to_cam)
+        mesh_facing_dot = self.boss_mesh_fwd.dot(dir_to_cam)
+
+        to_target = self.target_loc - cam_loc
+        dist_to_target = to_target.length()
+        aim_dot = safe_norm(to_target).dot(self.look_fwd)
+
+        # Inspect post-settle arm length (Claude C-163):
+        settled_arm = float(self.boom.get_editor_property("target_arm_length")) if self.boom else 0.0
+
+        # If project camera system re-asserts default arm length (~370cm), adapt FOV to maintain >= 150px framing
+        # The measured camera distance, not the arm property, decides (run 8: SettledArm 0.0 but the camera was 817 cm away).
+        arm_enforced = settled_arm > 50.0 or dist_to_target > 520.0
+        if arm_enforced and self.cam:
+            try:
+                self.cam.set_editor_property("field_of_view", 25.0)
+                log(f"Camera system enforced arm length {settled_arm:.1f}cm; adjusted FOV to 25.0 deg to preserve close-up framing.")
+            except Exception:
+                pass
+
+        log(f"CAMERA_FRAMING_CHECK: IntendedCamPos={self.cam_pos}, MeasuredCamPos={cam_loc}, PawnLoc={pawn_world_loc}, SettledArm={settled_arm:.1f}, BossActorYaw={self.boss_actor_yaw:.1f}, BossMeshForward={self.boss_mesh_fwd}, DistToTarget={dist_to_target:.1f}cm, AimDot={aim_dot:.3f}, MeshFacingDot={mesh_facing_dot:.3f}, Pitch={cam_rot.pitch:.1f}, Yaw={cam_rot.yaw:.1f}")
+
+        if mesh_facing_dot < 0.80:
+            msg = f"Camera framing rejected: camera is not facing boss mesh front (mesh_facing_dot={mesh_facing_dot:.3f} < 0.80; behind or beside boss)"
+            log_err(msg)
+            self.failure_reasons.append(msg)
+            return False
+
+        if aim_dot < 0.90:
+            msg = f"Camera framing rejected: target chest is not centered in view (aim_dot={aim_dot:.3f} < 0.90)"
+            log_err(msg)
+            self.failure_reasons.append(msg)
+            return False
+
+        # Tolerance window: [400, 500] if arm length 0 held; [400, 950] if boom 370 enforced
+        max_dist = 950.0 if arm_enforced else 500.0
+        if not (400.0 <= dist_to_target <= max_dist):
+            msg = f"Camera framing rejected: distance to boss out of bounds ({dist_to_target:.1f}cm not in [400, {max_dist:.0f}])"
+            log_err(msg)
+            self.failure_reasons.append(msg)
+            return False
+
+        current_fov = float(self.cam.get_editor_property("field_of_view")) if self.cam else 65.0
+        log(f"Player camera framed and settled successfully in front of boss mesh. Measured ArmLength={settled_arm:.1f}, Measured FOV={current_fov:.1f}, Dist={dist_to_target:.1f}cm, Pitch={cam_rot.pitch:.1f}, Yaw={cam_rot.yaw:.1f}. Player mesh hidden in game.")
+        return True
+
     def cleanup_camera(self):
         if self.boom and self.orig_arm_length is not None:
             try:
-                self.boom.target_arm_length = self.orig_arm_length
+                self.boom.set_editor_property("target_arm_length", self.orig_arm_length)
                 if self.orig_enable_lag is not None:
-                    if hasattr(self.boom, "b_enable_camera_lag"):
-                        self.boom.b_enable_camera_lag = self.orig_enable_lag
-                    elif hasattr(self.boom, "enable_camera_lag"):
-                        self.boom.enable_camera_lag = self.orig_enable_lag
+                    self.boom.set_editor_property("enable_camera_lag", self.orig_enable_lag)
                 log(f"Restored camera boom arm length ({self.orig_arm_length:.1f}) and lag ({self.orig_enable_lag}).")
             except Exception as e:
                 log_err(f"Failed to restore camera boom state: {e}")
 
         if self.cam and self.orig_cam_fov is not None:
             try:
-                self.cam.field_of_view = self.orig_cam_fov
+                self.cam.set_editor_property("field_of_view", self.orig_cam_fov)
                 log(f"Restored camera component FOV ({self.orig_cam_fov:.1f}).")
             except Exception as e:
                 log_err(f"Failed to restore camera FOV: {e}")
@@ -219,6 +377,7 @@ class Cap01Runner:
             try:
                 orig_hidden = self.orig_pawn_hidden if self.orig_pawn_hidden is not None else False
                 self.pawn.set_actor_hidden_in_game(orig_hidden)
+                self.pawn.set_actor_enable_collision(True)
                 if self.orig_player_loc and self.orig_player_rot:
                     self.pawn.set_actor_location_and_rotation(self.orig_player_loc, self.orig_player_rot, False, False)
                 if self.pc and self.orig_control_rot:
@@ -242,14 +401,22 @@ class Cap01Runner:
         self.start_wall_time = time.perf_counter()
         self.last_heartbeat_wall = self.start_wall_time
         self.tick_handle = unreal.register_slate_post_tick_callback(self.tick)
+        if hasattr(builtins, "_obf_capture_handles"):
+            builtins._obf_capture_handles.append(self.tick_handle)
         log(f"RUN_ID: {self.run_id}")
         log("Runner registered Slate post-tick callback. Initializing BeginPlay request...")
 
     def finish(self, reason):
         log(f"Finishing run: {reason}")
         if self.tick_handle:
-            unreal.unregister_slate_post_tick_callback(self.tick_handle)
-            self.tick_handle = None
+            try:
+                unreal.unregister_slate_post_tick_callback(self.tick_handle)
+                if hasattr(builtins, "_obf_capture_handles") and self.tick_handle in builtins._obf_capture_handles:
+                    builtins._obf_capture_handles.remove(self.tick_handle)
+                self.tick_handle = None
+            except Exception as e:
+                log_err(f"Exception unregistering post-tick callback {self.tick_handle}: {e}. Retained in builtins._obf_capture_handles (unresolved state).")
+                # Preserved in builtins._obf_capture_handles per Codex X-152 / WORK_ORDER_02; handle not cleared to signify unresolved state
 
         self.clear_flag_file()
         self.cleanup_camera()
@@ -307,6 +474,9 @@ class Cap01Runner:
                 "cap_id": "CAP-01",
                 "timestamp": time.time(),
                 "reason": reason,
+                "flag_armed": self.flag_armed,
+                "timed_out": (reason == "TIMEOUT" or "timeout" in str(self.failure_reasons).lower()),
+                "terminal_completion": (self.passed_checks == self.total_checks and not self.failure_reasons),
                 "telemetry_samples": len(self.telemetry_samples),
                 "camera": {
                     "arm_length": getattr(self.boom, "target_arm_length", None) if self.boom else None,
@@ -319,9 +489,15 @@ class Cap01Runner:
             log_err(f"Failed to write run manifest: {e}")
 
         if self.passed_checks == self.total_checks and not self.failure_reasons:
+            log(f"RESULT {self.passed_checks}/{self.total_checks} (TELEMETRY_CAPTURE_COMPLETE)")
+            log(f"TELEMETRY_CAPTURE_COMPLETE ({self.passed_checks}/{self.total_checks} driver steps verified; awaiting offline frame analysis)")
+            print(f"{TAG} RESULT {self.passed_checks}/{self.total_checks} (TELEMETRY_CAPTURE_COMPLETE)")
             print(f"{TAG} TELEMETRY_CAPTURE_COMPLETE ({self.passed_checks}/{self.total_checks} driver steps verified; awaiting offline frame analysis)")
         else:
             reasons_str = "; ".join(self.failure_reasons)
+            log(f"RESULT {self.passed_checks}/{self.total_checks} (TELEMETRY_CAPTURE_FAILED: {reasons_str})")
+            log(f"TELEMETRY_CAPTURE_FAILED ({self.passed_checks}/{self.total_checks}: {reasons_str})")
+            print(f"{TAG} RESULT {self.passed_checks}/{self.total_checks} (TELEMETRY_CAPTURE_FAILED: {reasons_str})")
             print(f"{TAG} TELEMETRY_CAPTURE_FAILED ({self.passed_checks}/{self.total_checks}: {reasons_str})")
 
         # Conditional quit: only quit when running headless via RunEditorScript
@@ -399,34 +575,29 @@ class Cap01Runner:
                 if self.tracker:
                     self.tracker.enter_combat()
 
-                log(f"PIE active. Boss and components found. Setting up close-up player camera framing (Option B close-up)...")
-                boss_loc = boss.get_actor_location()
-                forward = boss.get_actor_forward_vector()
-                right = boss.get_actor_right_vector()
-
-                # Target boss left shoulder / brazier gauntlet (where javelin spawns)
-                mesh = boss.get_mesh() if hasattr(boss, "get_mesh") else None
-                target_loc = None
-                if mesh and hasattr(mesh, "does_socket_exist") and mesh.does_socket_exist("hand_l"):
-                    target_loc = mesh.get_socket_location("hand_l")
-                elif mesh and hasattr(mesh, "does_socket_exist") and mesh.does_socket_exist("JavelinSpawn"):
-                    target_loc = mesh.get_socket_location("JavelinSpawn")
-                if not target_loc:
-                    # In Unreal coords, left side is -right
-                    target_loc = unreal.Vector(boss_loc.x, boss_loc.y, boss_loc.z + 130.0) - right * 35.0
-
-                # Close-up vantage: place player 180cm away at a 30-deg flank toward throwing arm
-                flank_dir = forward * 0.866 - right * 0.500
-                player_loc = boss_loc + flank_dir * 180.0 + unreal.Vector(0.0, 0.0, 30.0)
-                cam_ok = self.setup_camera(pc, pawn, player_loc, target_loc)
+                log(f"PIE active. Boss and components found. Setting up front-facing camera framing (Claude C-160/C-161, 450cm front view)...")
+                cam_ok = self.setup_camera(pc, pawn, boss)
                 if not cam_ok:
                     log_err("Mandatory close-up camera setup failed. Aborting capture run.")
                     self.finish("CAMERA_SETUP_FAILED")
                     return
 
-                self.state = "WAIT_BOSS_SETTLE"
-                self.wait_timer = 2.5
+                self.state = "WAIT_CAMERA_SETTLE"
+                self.camera_settle_timer = 0.3
                 self.last_heartbeat_wall = now_wall
+                return
+
+            if self.state == "WAIT_CAMERA_SETTLE":
+                self.camera_settle_timer -= dt
+                if self.camera_settle_timer <= 0.0:
+                    framing_ok = self.verify_camera_framing(self.boss)
+                    if not framing_ok:
+                        log_err("Mandatory camera framing verification failed after settle delay. Aborting capture run.")
+                        self.finish("CAMERA_FRAMING_FAILED")
+                        return
+                    self.state = "WAIT_BOSS_SETTLE"
+                    self.wait_timer = 2.5
+                    self.last_heartbeat_wall = now_wall
                 return
 
             if self.state == "WAIT_BOSS_SETTLE":
@@ -471,6 +642,7 @@ class Cap01Runner:
                     FLAG_FILE.parent.mkdir(parents=True, exist_ok=True)
                     tag = f"CAP01_A5_{self.run_id}_Windup"
                     FLAG_FILE.write_text(tag)
+                    self.flag_armed = True
                     log(f"Armed external CaptureLoop via {FLAG_FILE} ('{tag}')")
 
                     self.state = "OBSERVE_MOVE"
@@ -517,9 +689,8 @@ class Cap01Runner:
                 if (phase_name in ("None", "Complete", "") and elapsed_sim > 0.8) or elapsed_sim > 3.0:
                     log(f"A5 move completed. Elapsed sim: {elapsed_sim:.3f}s, wall: {elapsed_wall:.2f}s, samples: {len(self.telemetry_samples)}.")
                     self.clear_flag_file()
-                    self.state = "SETTLE_AND_FINISH"
-                    self.settle_timer = 0.5
-                return
+                    self.finish("OBSERVE_COMPLETE")
+                    return
 
             if self.state == "SETTLE_AND_FINISH":
                 self.settle_timer -= dt

@@ -1,0 +1,40 @@
+old lines 283 new lines 297
+old   1..136 -> new   1..136  verbatim: everything before Attach (includes, ShouldCreate/PostInit/WorldBeginPlay/Deinit/OnActorSpawned/IsPackPlayer/IsPackBoss, anon namespace + AddFootsteps)
+old 137..144 -> new 251..258  verbatim: Attach signature, player footsteps branch, else-if (IsPackBoss) header
+old 145..158 -> new 141..154  verbatim (dedent 1 tab): boss footsteps call + music block (prelude body, one tab dedent)
+old 159..160 -> new 260..261  verbatim: else-if closing brace + blank line
+old 161..194 -> new 262..295  verbatim: all nine IsPackPlayer component registrations
+old 195..282 -> new 161..248  verbatim: all 19 boss registrations Stagger..Legend (the witness baseline counts 21 because it also counts boss footsteps and music, now in the prelude), every IsPackBoss guard kept
+old 283..283 -> new 297..297  verbatim: Attach closing brace
+ALL BLOCKS FOUND EXACTLY ONCE: True
+
+new lines belonging to no original block (the complete list of additions):
+  new 137: '// The early part of the boss registration: footsteps and the music. It stays ahead of the player components and is reached only from the else-if of Attach, so a'
+  new 138: '// class that is both pack player and pack boss still gets neither (the player branch wins), exactly as before.'
+  new 139: 'void URPGPlayerMovesSubsystem::AttachLegacyBossPrelude(AActor* Pawn) const'
+  new 140: '{'
+  new 155: '}'
+  new 156: ''
+  new 157: '// The later part of the boss registration, every statement with its own IsPackBoss guard as before. It is called after the player components, so for a hybrid class'
+  new 158: '// the player statements still run first.'
+  new 159: 'void URPGPlayerMovesSubsystem::AttachLegacyBossBundle(AActor* Pawn) const'
+  new 160: '{'
+  new 249: '}'
+  new 250: ''
+  new 259: '\t\tAttachLegacyBossPrelude(Pawn);'
+  new 296: '\tAttachLegacyBossBundle(Pawn); // after the player components, as the boss statements always were'
+
+order of the three extracted call sites inside the new Attach:
+  new 253: if (IsPackPlayer(Pawn))
+  new 257: else if (IsPackBoss(Pawn))
+  new 259: AttachLegacyBossPrelude(Pawn);
+  new 262: if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGCameraRig>())
+  new 267: if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGRiposteInput>())
+  new 272: if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGDodgeTiming>())
+  new 277: if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGSwingTracker>())
+  new 281: if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGHitIntake>())
+  new 285: if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGBuildLoadout>())
+  new 289: if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGBuildSelect>()) NewObject<URPGBuildSelect>(Pawn, TEXT("RPGBuil
+  new 290: if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGFlaskHud>()) NewObject<URPGFlaskHud>(Pawn, TEXT("RPGFlaskHud")
+  new 291: if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGIFrameMonitor>())
+  new 296: AttachLegacyBossBundle(Pawn); // after the player components, as the boss statements always were

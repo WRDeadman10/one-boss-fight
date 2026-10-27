@@ -1,0 +1,30 @@
+﻿[2026.10.26-11.46.51:669][955]LogPython: [CaptureCAP01] Cvar restoration complete.
+[2026.10.26-11.46.51:670][955]LogPython: [CaptureCAP01] Wrote run manifest to Saved\Screenshots\CAP01_A5\run_manifest.json
+[2026.10.26-11.46.51:670][955]LogPython: [CaptureCAP01] RESULT 5/5 (TELEMETRY_CAPTURE_COMPLETE)
+[2026.10.26-11.46.51:670][955]LogPython: [CaptureCAP01] TELEMETRY_CAPTURE_COMPLETE (5/5 driver steps verified; awaiting offline frame analysis)
+[2026.10.26-11.46.51:670][955]LogPython: [CaptureCAP01] RESULT 5/5 (TELEMETRY_CAPTURE_COMPLETE)
+[2026.10.26-11.46.51:671][955]LogPython: [CaptureCAP01] TELEMETRY_CAPTURE_COMPLETE (5/5 driver steps verified; awaiting offline frame analysis)
+[2026.10.26-11.46.51:686][955]LogPython: [CaptureCAP01] Standing editor preserved. Runner complete.
+[2026.10.26-12.00.25:367][ 20]LogPython: [CaptureCAP01] Saved existing console variables.
+[2026.10.26-12.00.25:367][ 20]LogPython: [CaptureCAP01] RUN_ID: RUN_20261026_173025_9248
+[2026.10.26-12.00.25:367][ 20]LogPython: [CaptureCAP01] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[CaptureCAP01] Saved existing console variables.
+[CaptureCAP01] RUN_ID: RUN_20261026_173025_9248
+[CaptureCAP01] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[2026.10.26-12.00.25:869][ 57]LogPython: [CaptureCAP01] Initiating editor_request_begin_play()...
+[2026.10.26-12.00.25:906][ 58]LogUIActionRouter: Error: Using CommonUI without a CommonGameViewportClient derived game viewport client. CommonUI Input routing will not function correctly.
+[2026.10.26-12.00.26:444][ 58]LogPython: [CaptureCAP01] PIE active. Boss and components found. Setting up front-facing camera framing (Claude C-160, 450cm front view)...
+[2026.10.26-12.00.26:444][ 58]LogPython: [CaptureCAP01] CAMERA_READBACK: target_arm_length=0.0, field_of_view=65.0, enable_camera_lag=False, pawn_hidden=False
+[2026.10.26-12.00.26:444][ 58]LogPython: Error: [CaptureCAP01] Player pawn hidden readback mismatch: expected True, got False
+[2026.10.26-12.00.26:444][ 58]LogPython: Error: [CaptureCAP01] Mandatory close-up camera setup failed. Aborting capture run.
+[2026.10.26-12.00.26:444][ 58]LogPython: [CaptureCAP01] Finishing run: CAMERA_SETUP_FAILED
+[2026.10.26-12.00.26:444][ 58]LogPython: [CaptureCAP01] Restored camera boom arm length (370.0) and lag (True).
+[2026.10.26-12.00.26:445][ 58]LogPython: [CaptureCAP01] Restored camera component FOV (90.0).
+[2026.10.26-12.00.26:445][ 58]LogPython: [CaptureCAP01] Restored player pawn transform and visibility (hidden=False).
+[2026.10.26-12.00.26:445][ 58]LogPython: [CaptureCAP01] Cvar restoration complete.
+[2026.10.26-12.00.26:446][ 58]LogPython: [CaptureCAP01] Wrote run manifest to Saved\Screenshots\CAP01_A5\run_manifest.json
+[2026.10.26-12.00.26:446][ 58]LogPython: [CaptureCAP01] RESULT 2/5 (TELEMETRY_CAPTURE_FAILED: Player pawn hidden readback mismatch: expected True, got False; Move trigger failed or aborted early (CAMERA_SETUP_FAILED); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.00.26:446][ 58]LogPython: [CaptureCAP01] TELEMETRY_CAPTURE_FAILED (2/5: Player pawn hidden readback mismatch: expected True, got False; Move trigger failed or aborted early (CAMERA_SETUP_FAILED); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.00.26:446][ 58]LogPython: [CaptureCAP01] RESULT 2/5 (TELEMETRY_CAPTURE_FAILED: Player pawn hidden readback mismatch: expected True, got False; Move trigger failed or aborted early (CAMERA_SETUP_FAILED); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.00.26:458][ 58]LogPython: [CaptureCAP01] TELEMETRY_CAPTURE_FAILED (2/5: Player pawn hidden readback mismatch: expected True, got False; Move trigger failed or aborted early (CAMERA_SETUP_FAILED); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.00.26:473][ 58]LogPython: [CaptureCAP01] Standing editor preserved. Runner complete.

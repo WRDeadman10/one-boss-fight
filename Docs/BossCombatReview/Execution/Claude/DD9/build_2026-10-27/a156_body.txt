@@ -1,0 +1,30 @@
+TASK: AG-1b (DD9 Phases Cluster) - Verification & Docs Complete.
+STATUS: Build, Focused Tests (7/7), and Full Automation Suite (88/88) all PASSED cleanly. Docs rows updated. Ready for lead review.
+FINDINGS:
+1. Fresh safety: 168 source files matched DD9/post_write_source_manifest_sha256.txt, 24/24 pins OK, HEAD 04037c91, no engine processes.
+2. Build (build_tag.ps1 -Tag dd9b_cookfix): Exit 0 (6 s). 0 warning C, 0 errors, 1 UBT Warning (Visual Studio 2022 compiler is not a preferred version).
+   - New Editor DLL SHA256: 62655d63ae05d3bd86f75523fe2bcd3fa95ae5236e4fee37261136fb19c6312d
+   - Build Log: Docs/BossCombatReview/Execution/Claude/DD9/build_2026-10-27/build_dd9b_cookfix.log (SHA256: b7ccb7a24a0e6e02a03fdf62f8d6b08bb42ae86cc16f12f21790eb15c80ee361)
+3. Focused Suite (OneBossFight.Binding.PhasesCluster, -Tag focused_phases_cluster_b): Exit 0 (22 s). 7 found, 7 Success (Assign, Authoring, Compile, Isolation, Oracle, Rejections, Validation), 0 errors.
+   - Focused Log: Docs/BossCombatReview/Execution/Claude/DD9/build_2026-10-27/automation_focused_phases_cluster_b.log (SHA256: cfb1b7ed5eee21d5a66d7abecf99797150030e3c58d266804cfd786bf16b8fc8)
+4. Full Suite (OneBossFight, -Tag full_dd9b): Exit 0 (24 s). 88 found, 88 completed, 88 Success, 0 failures.
+   - OneBossFight.Content.CookCoverage PASSED: [2026.10.27-14.11.12:430][761]LogAutomationController: Display: Test Completed. Result={Success} Name={CookCoverage} Path={OneBossFight.Content.CookCoverage}
+   - All 81 DD8 paths present (0 missing) plus 7 new PhasesCluster paths.
+   - Full Log: Docs/BossCombatReview/Execution/Claude/DD9/build_2026-10-27/automation_full_dd9b.log (SHA256: 13b8226f19f8593838b9a7c20503493a9f2407845565caac8ed2833724db2b0f)
+   - Completed paths saved: full_dd9b_completed_paths.txt
+5. Manifests and Binary Hashes:
+   - Final source manifest (final_source_manifest_sha256.txt): 168 files, 0 mismatches against post_write_source_manifest.
+   - Binary hashes (final_binary_sha256.txt): DLL 62655d63ae05d3bd86f75523fe2bcd3fa95ae5236e4fee37261136fb19c6312d, EXE 5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65 (untouched).
+   - Entire evidence directory indexed in evidence_sha256.txt (20 files, failed run artifacts included and labeled).
+6. Docs updated:
+   - TEST_PLAN.md: row BUILD-18 (honestly documents initial 87/88 CookCoverage failure, test mount fix, and 88/88 green rerun).
+   - TASKS.md: DD-9 clause added to dashboard.
+   - DECISIONS.md: section ## DD-9 phases cluster added before ## Open.
+   - KNOWN_ISSUES.md: row KI-115 added.
+   - ACCOUNT_HANDOVER_CURRENT.md: section 0w added.
+   - All files checked: CRLF preserved, 0 new bare LF introduced.
+FAILED ATTEMPTS: 1 initial full run (automation_full_dd9.log, SHA256 43246f4d...) with 87/88 due to CookCoverage test fixture literal mount. Resolved in rerun full_dd9b.
+NOT DONE / OPEN: Unwired fragments; combined preflight/runtime coordinator; asset existence/clip-fit checks; serialized/Details panel proof; Shipping target; 40-driver gate on this binary.
+DECISION NEEDED: Claude (Lead Reviewer) to review evidence and formally accept package / authorize commit.
+NEXT ACTION: Waiting for Lead review via MailboxNext.
+VALIDATION: All hashes, logs, and job records recorded above.

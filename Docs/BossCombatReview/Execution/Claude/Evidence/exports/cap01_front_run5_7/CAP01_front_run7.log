@@ -1,0 +1,24 @@
+﻿[2026.10.26-12.10.54:800][255]LogPython: [CaptureCAP01] Saved existing console variables.
+[2026.10.26-12.10.54:801][255]LogPython: [CaptureCAP01] RUN_ID: RUN_20261026_174054_8682
+[2026.10.26-12.10.54:801][255]LogPython: [CaptureCAP01] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[CaptureCAP01] Saved existing console variables.
+[CaptureCAP01] RUN_ID: RUN_20261026_174054_8682
+[CaptureCAP01] Runner registered Slate post-tick callback. Initializing BeginPlay request...
+[2026.10.26-12.10.56:079][259]LogPython: [CaptureCAP01] Initiating editor_request_begin_play()...
+[2026.10.26-12.10.58:553][260]LogUIActionRouter: Error: Using CommonUI without a CommonGameViewportClient derived game viewport client. CommonUI Input routing will not function correctly.
+[2026.10.26-12.11.00:929][260]LogPython: [CaptureCAP01] PIE active. Boss and components found. Setting up front-facing camera framing (Claude C-160/C-161, 450cm front view)...
+[2026.10.26-12.11.01:168][260]LogPython: [CaptureCAP01] CAMERA_READBACK: target_arm_length=0.0, field_of_view=65.0, enable_camera_lag=False, pawn_hidden=True
+[2026.10.26-12.11.01:852][263]LogPython: [CaptureCAP01] CAMERA_FRAMING_CHECK: IntendedCamPos=<Struct 'Vector' (0x0000023D26DBC290) {x: -0.000000, y: 450.000000, z: 296.149992}>, MeasuredCamPos=<Struct 'Vector' (0x0000023D26DBC1A0) {x: 0.000000, y: 0.000000, z: 0.000000}>, PawnLoc=<Struct 'Vector' (0x0000023D26DBC0B0) {x: 0.000000, y: 450.000000, z: 296.149992}>, BossActorYaw=180.0, BossMeshForward=<Struct 'Vector' (0x0000023D26DBC100) {x: -0.000000, y: 1.000000, z: 0.000000}>, DistToTarget=276.1cm, AimDot=-0.044, MeshFacingDot=0.000, Pitch=-2.5, Yaw=-90.0
+[2026.10.26-12.11.01:852][263]LogPython: Error: [CaptureCAP01] Camera framing rejected: camera is not facing boss mesh front (mesh_facing_dot=0.000 < 0.80; behind or beside boss)
+[2026.10.26-12.11.01:852][263]LogPython: Error: [CaptureCAP01] Mandatory camera framing verification failed after settle delay. Aborting capture run.
+[2026.10.26-12.11.01:852][263]LogPython: [CaptureCAP01] Finishing run: CAMERA_FRAMING_FAILED
+[2026.10.26-12.11.01:863][263]LogPython: [CaptureCAP01] Restored camera boom arm length (370.0) and lag (True).
+[2026.10.26-12.11.01:863][263]LogPython: [CaptureCAP01] Restored camera component FOV (90.0).
+[2026.10.26-12.11.01:863][263]LogPython: [CaptureCAP01] Restored player pawn transform and visibility (hidden=False).
+[2026.10.26-12.11.01:864][263]LogPython: [CaptureCAP01] Cvar restoration complete.
+[2026.10.26-12.11.01:865][263]LogPython: [CaptureCAP01] Wrote run manifest to Saved\Screenshots\CAP01_A5\run_manifest.json
+[2026.10.26-12.11.01:865][263]LogPython: [CaptureCAP01] RESULT 2/5 (TELEMETRY_CAPTURE_FAILED: Camera framing rejected: camera is not facing boss mesh front (mesh_facing_dot=0.000 < 0.80; behind or beside boss); Move trigger failed or aborted early (CAMERA_FRAMING_FAILED); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.11.01:865][263]LogPython: [CaptureCAP01] TELEMETRY_CAPTURE_FAILED (2/5: Camera framing rejected: camera is not facing boss mesh front (mesh_facing_dot=0.000 < 0.80; behind or beside boss); Move trigger failed or aborted early (CAMERA_FRAMING_FAILED); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.11.01:865][263]LogPython: [CaptureCAP01] RESULT 2/5 (TELEMETRY_CAPTURE_FAILED: Camera framing rejected: camera is not facing boss mesh front (mesh_facing_dot=0.000 < 0.80; behind or beside boss); Move trigger failed or aborted early (CAMERA_FRAMING_FAILED); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.11.01:870][263]LogPython: [CaptureCAP01] TELEMETRY_CAPTURE_FAILED (2/5: Camera framing rejected: camera is not facing boss mesh front (mesh_facing_dot=0.000 < 0.80; behind or beside boss); Move trigger failed or aborted early (CAMERA_FRAMING_FAILED); Insufficient telemetry samples (0/8); Telemetry dataset empty)
+[2026.10.26-12.11.01:881][263]LogPython: [CaptureCAP01] Standing editor preserved. Runner complete.

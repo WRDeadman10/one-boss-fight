@@ -1,0 +1,24 @@
+# DD6 encounter policy: actual typed authoring and assignment package
+
+Owner all83/Data Assets and Details first direction; X249 releases actual SOURCE+TEST DIFF BEFORE BUILD. Complete missing encounter configuration fields before full-cluster reservation/startup activation. Implement, do not substitute another prose plan. No pack/assets or gameplay activation.
+
+## Exact source scope
+
+New ONLY: Player/RPGBossEncounterPolicyAdapters.h/.cpp and Tests/RPGBossEncounterPolicyAdaptersTests.cpp.
+Existing ONLY: Player/RPGEncounterBinding.h/.cpp. Preserve preimages and current complete Source manifest before edits. These two existing files have current accepted pins h4330f8c416cd75284e829856b5d1cba7001c5ee62f40bdc7b1bf98a8dbf94a80 / cpp2fe63bcb78261b9bdd15be33607ea3c696ae33227989facc5b67e15cd91110dc. No existing native Encounter/Stats/Phase/Preflight/PlayerMoves files or their tests changed. Any indispensable extra seam requires exact proposed delta before expansion.
+
+Add reflected FRPGEncounterPolicyConfig in RPGEncounterBinding.h, with two fields: float GateRadius (cm) and bool bResetOnPlayerRespawn. Expose EncounterPolicy on URPGBossDefinition via EditAnywhere UPROPERTY and copy the typed record into FRPGParticipantConfig during both production and dev-synthetic compilation. Authoring defaults1200cm/true match the native declarations; document these as defaults of the new asset field, not proof of serialized/live actor values or a fallback on invalid input. Existing schema1 definitions receive these additive defaults; no asset migration/save, no schema bump, no claim existing assets were authored or tested in Details. Invalid input must fail, never silently substitute1200/true.
+
+Validate finite GateRadius>=0 (native0 explicitly means no gate). Keep fractional positive values; no arbitrary max/floor from editor metadata. Reuse one typed policy validator from the new adapter for compiler and assignment validation, with named failures and cleared diagnostics. Compile failure clears prior output. Preserve all existing identity/Stats/Phase/manifest/skeleton validation and synthetic contract; no loosening or new toggles. Generic Stats/Phase domain stays unchanged.
+
+## Typed adapter
+
+ConfigureEncounterPolicy on exact URPGBossEncounter assigns ONLY GateRadius and bResetOnPlayerRespawn, after validating the entire policy and all lifecycle/owner/class preconditions. Reuse accepted lifecycle behavior (invalid or destroying component, wrong class, registered/begun component, invalid/destroying/beginning/begun owner) without editing accepted adapters. Failure makes no partial mutation. Do not assign BossMaxHealth (owned by Stats), bTestFreeze, tracked pawn, home transform, generation, dormant/held/waking state, counters, cached attributes or clocks.
+
+Provide factory with RequiredFields EncounterPolicy.GateRadius and EncounterPolicy.bResetOnPlayerRespawn; read typed values only, never FRPGParityField.Value/ImportText. It is an unwired assignment fragment. Do NOT insert another Encounter component into DD5: a future combined plan must apply Stats and policy to one component once, with complete validation before any write. No creation/registration/Configure execution during compile, no actor discovery, target/reset hooks, behavior change or Ready/legacy suppression claim.
+
+## Actual focused tests and delivery
+
+Use native isolated tests and explicit nondefault controls (e.g. GateRadius731.25/resetfalse); verify both true and false copied,0valid/fractional valid, negative/NaN/infinity reject without writes, diagnostics clear on success, class/lifecycle/destroyed-but-not-collected/owner failures with sentinel values unchanged, unrelated health/testfreeze/state untouched, separate configs/instances isolation, factory-required paths and callback uses typed policy despite conflicting manifest Value text. Exercise actual CompileSyntheticParticipant: policy copied, invalid policy fails and clears a previously valid output, established Stats/Phase/identity checks retained. No positive production asset/duel claim from these fixtures. No trivial mirror-only tests.
+
+Deliver actual five-file diff, exact preimages, new full Source manifest, raw hashes and preserved failed attempts. Lead reviews BEFORE UHT/build/tests. No engine work, PIE/fullgate/package/content/assets/scripts or unrelated Source authorized now. After source acceptance Claude alone receives scoped UHT/build/focused/full verification order. Next missing cluster fields include Stagger/phase presentation/wake; they are not silently completed by DD6. Reservation/startup waits for a concrete complete cluster contract. AG rests/no new work; no git operations by Claude/Codex.

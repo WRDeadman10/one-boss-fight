@@ -1,0 +1,41 @@
+== structured RPGATTACHWITNESS records (all kinds incl. FULL/STATE/flags), exact order ==
+A: 24 records, 24 distinct
+B: 24 records, 24 distinct
+P: 24 records, 24 distinct
+A == B exactly (count, order, content): True
+A == probe exactly: True
+B == probe exactly: True
+duplicate records inside A: 0; inside B: 0
+record kinds in A: {'WORLDBEGUN': 4, 'ACTORBEGUN': 4, 'RPG': 4, 'FULL': 4, 'STATE': 6, 'CREATED': 2}
+
+== discovered / completed test sets ==
+A: found=['47'] completed=47 distinct=47 success=47 non-success=[]
+B: found=['47'] completed=47 distinct=47 success=47 non-success=[]
+A and B completed (path,result) sets equal: True
+only in A: []
+only in B: []
+AttachWitness tests present in both: ['OneBossFight.Player.AttachWitness.Boss', 'OneBossFight.Player.AttachWitness.Player']
+
+== error / warning lines (unfiltered, timestamp prefix removed) ==
+A: Error lines=0 Warning lines=60 lines total=1794
+B: Error lines=0 Warning lines=60 lines total=1794
+Error line lists identical (order and content): True
+Error lines only in A: 0; only in B: 0
+Warning line lists identical: False; only in A: 8; only in B: 8
+  A only: LogCore: Warning: UTS: Unable to launch the Unreal Trace Server with '"../../../Engine/Binaries/Win64/UnrealTraceServer.exe" fork --sponsor 21976'. Access is denied. Error: 0x5 (5)
+  A only: LogRPGCatalog: Warning: epoch=3F2D7A114400F18011272A81D807A22D build=DiagWrongType icon broken (wrong type (not a Texture2D)): /Game/OneBossFight/Data/TypedABIFixtures/DA_ABI_FourthWeaponItem.DA_ABI_FourthWeaponItem; text-only row
+  A only: LogRPGCatalog: Warning: epoch=3F2D7A114400F18011272A81D807A22D build=DiagUncooked icon broken (outside the cooked roots): /Game/OneBossFight/ReviewFixtures/TypedABI/DA_ABI_UncookedWeaponItem.DA_ABI_UncookedWeaponItem; text-only row
+  A only: LogRPGCatalog: Warning: epoch=39654C9F4D748F308BB11280D85D7FB0 build=DiagWrongType icon broken (wrong type (not a Texture2D)): /Game/OneBossFight/Data/TypedABIFixtures/DA_ABI_FourthWeaponItem.DA_ABI_FourthWeaponItem; text-only row
+  A only: LogRPGCatalog: Warning: epoch=39654C9F4D748F308BB11280D85D7FB0 build=DiagUncooked icon broken (outside the cooked roots): /Game/OneBossFight/ReviewFixtures/TypedABI/DA_ABI_UncookedWeaponItem.DA_ABI_UncookedWeaponItem; text-only row
+  A only: LogRPGCatalog: Warning: epoch=8483E08848DBEFE0B935AE9BA0A96343 selector layout overflow: 2 of 4 rows fit at measured layout height 200.0; rows from index 2 are not drawn, hit-testable or pickable
+  B only: LogCore: Warning: UTS: Unable to launch the Unreal Trace Server with '"../../../Engine/Binaries/Win64/UnrealTraceServer.exe" fork --sponsor 9100'. Access is denied. Error: 0x5 (5)
+  B only: LogRPGCatalog: Warning: epoch=333D0F6747775B2232794CB947A73ADA build=DiagWrongType icon broken (wrong type (not a Texture2D)): /Game/OneBossFight/Data/TypedABIFixtures/DA_ABI_FourthWeaponItem.DA_ABI_FourthWeaponItem; text-only row
+  B only: LogRPGCatalog: Warning: epoch=333D0F6747775B2232794CB947A73ADA build=DiagUncooked icon broken (outside the cooked roots): /Game/OneBossFight/ReviewFixtures/TypedABI/DA_ABI_UncookedWeaponItem.DA_ABI_UncookedWeaponItem; text-only row
+  B only: LogRPGCatalog: Warning: epoch=9F3BD63E4C79BD125610DDB255DD70F0 build=DiagWrongType icon broken (wrong type (not a Texture2D)): /Game/OneBossFight/Data/TypedABIFixtures/DA_ABI_FourthWeaponItem.DA_ABI_FourthWeaponItem; text-only row
+  B only: LogRPGCatalog: Warning: epoch=9F3BD63E4C79BD125610DDB255DD70F0 build=DiagUncooked icon broken (outside the cooked roots): /Game/OneBossFight/ReviewFixtures/TypedABI/DA_ABI_UncookedWeaponItem.DA_ABI_UncookedWeaponItem; text-only row
+  B only: LogRPGCatalog: Warning: epoch=068C559D44A76E296FF7F6842FDE0AAF selector layout overflow: 2 of 4 rows fit at measured layout height 200.0; rows from index 2 are not drawn, hit-testable or pickable
+
+== masking check (added after the first comparison): per-run epoch GUIDs and the UTS sponsor PID replaced, nothing else ==
+see the command output in C-189; the 8 unmatched warning lines per side were exactly these two kinds
+
+NOTE: the placeholder paragraph that was appended below by mistake is superseded by warning_mask_check.py / warning_mask_check_result.txt.

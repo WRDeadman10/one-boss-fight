@@ -1,0 +1,17 @@
+﻿[2026.10.26-14.33.49:991][193]LogPython: [SelectorViewport] PASS selector component exists 
+[2026.10.26-14.34.00:132][226]LogPython: [SelectorViewport] epoch: data:48C9412F447D13AEF1A48E9A0F6602F5
+[2026.10.26-14.34.00:132][226]LogPython: [SelectorViewport] PASS fourth fixture row present (4 rows, data epoch) 4
+[2026.10.26-14.34.00:132][226]LogPython: [SelectorViewport] FAIL selector opens 
+[2026.10.26-14.34.02:789][234]LogPython: [SelectorViewport] viewport size (px): 1425 x 856, viewport scale 0.792
+[2026.10.26-14.34.02:790][234]LogPython: [SelectorViewport] selector layout height (slate units, viewport height / scale): 1080.6
+[2026.10.26-14.34.02:790][234]LogPython: [SelectorViewport] PASS layout height is a real positive number 1080.5655042707826
+[2026.10.26-14.34.02:790][234]LogPython: [SelectorViewport] row visibility at that height (rows 0 to 3): [True, True, True, True]
+[2026.10.26-14.34.02:790][234]LogPython: [SelectorViewport] row texts: ['Build: Starter (Sword)', 'Build: Strength (Claymore)', 'Build: Dex (Dual Swords)', 'Build: Catalog Fourth (Sword)']
+[2026.10.26-14.34.02:790][234]LogPython: [SelectorViewport] PASS the first three rows are always visible [True, True, True, True]
+[2026.10.26-14.34.02:790][234]LogPython: [SelectorViewport] RECORD fourth row visible=True at layout height 1080.6
+[2026.10.26-14.34.02:790][234]LogPython: [SelectorViewport] formula view: height 200 -> visible rows [True, True, False, False]
+[2026.10.26-14.34.02:790][234]LogPython: [SelectorViewport] formula view: height 400 -> visible rows [True, True, True, True]
+[2026.10.26-14.34.02:790][234]LogPython: [SelectorViewport] formula view: height 600 -> visible rows [True, True, True, True]
+[2026.10.26-14.34.02:790][234]LogPython: [SelectorViewport] formula view: height 800 -> visible rows [True, True, True, True]
+[2026.10.26-14.34.02:790][234]LogPython: [SelectorViewport] FAIL a visible fourth row can be picked not open
+[2026.10.26-14.34.19:176][251]LogPython: [SelectorViewport] RESULT 4/6 passed

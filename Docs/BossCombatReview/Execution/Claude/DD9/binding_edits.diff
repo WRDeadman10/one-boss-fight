@@ -1,0 +1,95 @@
+diff --git a/Docs/BossCombatReview/Execution/Claude/DD9/preimages/RPGEncounterBinding.h.preimage_6e2f3ae0 b/Source/OneBossFight/Player/RPGEncounterBinding.h
+index f5588f2..aef7c6e 100644
+--- a/Docs/BossCombatReview/Execution/Claude/DD9/preimages/RPGEncounterBinding.h.preimage_6e2f3ae0
++++ b/Source/OneBossFight/Player/RPGEncounterBinding.h
+@@ -10,6 +10,8 @@
+ 
+ class URPGBossEncounter;
+ class URPGCombatContextSubsystem;
++class UAnimMontage;
++class UAnimSequence;
+ class UAnimSequenceBase;
+ class USkeleton;
+ 
+@@ -74,6 +76,31 @@ struct FRPGPhaseFlowConfig
+ 	UPROPERTY(EditAnywhere) FName LeapAbilityTag = TEXT("Ability.Melee.LeapAttack");
+ };
+ 
++/** Fireball policy of the boss (URPGBossPhases): the typed authoring record, five fields with the names of the native component. The defaults are defaults of this NEW asset field (old schema 1 definitions
++ *  receive them additively); they match the native constructor and declarations, are not proof of any serialized or live actor value and are never a fallback for an invalid value. The ability is a soft class
++ *  path only: nothing is loaded and that the class exists, is cooked or is a gameplay ability is a later integration check. */
++USTRUCT(BlueprintType)
++struct FRPGFireballConfig
++{
++	GENERATED_BODY()
++	UPROPERTY(EditAnywhere) bool bFireballEnabled = false;
++	UPROPERTY(EditAnywhere) TSoftClassPtr<UObject> FireballAbility = TSoftClassPtr<UObject>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C")));
++	UPROPERTY(EditAnywhere) FVector2D FireballCooldown = FVector2D(6.f, 10.f);
++	UPROPERTY(EditAnywhere) float FireballMinRange = 500.f;
++	UPROPERTY(EditAnywhere) float FireballMaxRange = 1800.f;
++};
++
++/** Asset references of the phase change (URPGBossPhases): the typed authoring record, three soft references with the names of the native component. Defaults as for the fireball record (native constructor
++ *  values, additive authoring defaults, never a fallback). Soft references only: the record never loads anything and says nothing about existence, cooking, class kind or the fit of the clip to the transition. */
++USTRUCT(BlueprintType)
++struct FRPGPhaseDependencyConfig
++{
++	GENERATED_BODY()
++	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> RoarClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar")));
++	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimMontage> TransitionMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage")));
++	UPROPERTY(EditAnywhere) TSoftClassPtr<UObject> ImmunityEffect = TSoftClassPtr<UObject>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C")));
++};
++
+ USTRUCT(BlueprintType)
+ struct FRPGPhaseConfig
+ {
+@@ -116,6 +143,8 @@ public:
+ 	UPROPERTY(EditAnywhere) FRPGEncounterPolicyConfig EncounterPolicy;
+ 	UPROPERTY(EditAnywhere) FRPGStaggerPolicyConfig StaggerPolicy;
+ 	UPROPERTY(EditAnywhere) FRPGPhaseFlowConfig PhaseFlow;
++	UPROPERTY(EditAnywhere) FRPGFireballConfig Fireball;
++	UPROPERTY(EditAnywhere) FRPGPhaseDependencyConfig PhaseDependencies;
+ 	UPROPERTY(EditAnywhere) TArray<FRPGPhaseConfig> Phases;
+ 	UPROPERTY(EditAnywhere) TSoftObjectPtr<USkeleton> Skeleton;
+ 	UPROPERTY(EditAnywhere) TArray<TSoftObjectPtr<UAnimSequenceBase>> Animations;
+@@ -152,6 +181,8 @@ struct FRPGParticipantConfig
+ 	FRPGEncounterPolicyConfig EncounterPolicy;
+ 	FRPGStaggerPolicyConfig StaggerPolicy;
+ 	FRPGPhaseFlowConfig PhaseFlow;
++	FRPGFireballConfig Fireball;
++	FRPGPhaseDependencyConfig PhaseDependencies;
+ 	TArray<FRPGPhaseConfig> Phases;
+ 	TArray<FRPGParityField> Fields;
+ 	TSharedPtr<const RPGCombatRegistry::FEpoch> Content;
+diff --git a/Docs/BossCombatReview/Execution/Claude/DD9/preimages/RPGEncounterBinding.cpp.preimage_fafabe7b b/Source/OneBossFight/Player/RPGEncounterBinding.cpp
+index 723f6ca..b3f10f8 100644
+--- a/Docs/BossCombatReview/Execution/Claude/DD9/preimages/RPGEncounterBinding.cpp.preimage_fafabe7b
++++ b/Source/OneBossFight/Player/RPGEncounterBinding.cpp
+@@ -3,6 +3,7 @@
+ #include "Player/RPGBossEncounterPolicyAdapters.h"
+ #include "Player/RPGBossStaggerPolicyAdapters.h"
+ #include "Player/RPGBossPhaseFlowAdapters.h"
++#include "Player/RPGBossPhasesClusterAdapters.h"
+ #include "Engine/World.h"
+ #include "Animation/AnimSequenceBase.h"
+ #include "Animation/Skeleton.h"
+@@ -42,6 +43,10 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
+ 	if (!RPGBossStaggerPolicyAdapters::ValidateStaggerPolicy(D.StaggerPolicy, StaggerError)) { Result.Fail(StaggerError); } // never replaced by the authoring defaults, never clamped
+ 	FString PhaseFlowError;
+ 	if (!RPGBossPhaseFlowAdapters::ValidatePhaseFlow(D.PhaseFlow, PhaseFlowError)) { Result.Fail(PhaseFlowError); } // never replaced by the authoring defaults, never trimmed or normalized
++	FString FireballError;
++	if (!RPGBossPhasesClusterAdapters::ValidateFireball(D.Fireball, FireballError)) { Result.Fail(FireballError); } // never replaced by the authoring defaults, never reordered
++	FString DependencyError;
++	if (!RPGBossPhasesClusterAdapters::ValidatePhaseDependencies(D.PhaseDependencies, D.PhaseFlow.bUseRoarClip, DependencyError)) { Result.Fail(DependencyError); } // structure only, no registry query, no load
+ 	TSet<FName> PhaseIds;
+ 	for (const FRPGPhaseConfig& Phase : D.Phases)
+ 	{
+@@ -76,6 +81,8 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
+ 	Value->EncounterPolicy = D.EncounterPolicy;
+ 	Value->StaggerPolicy = D.StaggerPolicy;
+ 	Value->PhaseFlow = D.PhaseFlow;
++	Value->Fireball = D.Fireball;
++	Value->PhaseDependencies = D.PhaseDependencies;
+ 	Value->Content = MoveTemp(Content); Out = Value;
+ 	Value->bSyntheticFixture = bSynthetic;
+ 	if (!bSynthetic)
