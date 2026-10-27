@@ -8,6 +8,8 @@
 #include "UObject/GarbageCollection.h"
 #include "UObject/Package.h"
 #include "Player/RPGBuildRules.h"
+#include "HAL/IConsoleManager.h"
+#include "Subsystems/SubsystemCollection.h"
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGCatalogContextTest, "OneBossFight.Catalog.Context",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
@@ -243,4 +245,324 @@ bool FRPGCatalogResolutionTest::RunTest(const FString& Parameters)
 
 	return true;
 }
+
+// Typed ABI fixtures (owner approval "Yes" 2026-10-26, Codex C155_A100_REVIEW): a DISTINCT fourth weapon bundle, a same-leaf decoy package and an uncooked item,
+// all duplicated from shipped assets under a developer-only folder outside the always-cook roots (Scripts/Editor/make_typed_abi_fixtures.py).
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGCatalogTypedFixturesTest, "OneBossFight.Catalog.TypedABIFixtures",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGCatalogTypedFixturesTest::RunTest(const FString& Parameters)
+{
+	using namespace RPGCombatRegistry;
+	// Built from a prefix so the cook coverage scanner does not read these deliberate developer-only paths as assets a packaged build must cook.
+	const FString Fixtures = FString(TEXT("/Game/")) + TEXT("OneBossFight/Data/TypedABIFixtures/");
+	const FString Uncooked = FString(TEXT("/Game/")) + TEXT("OneBossFight/ReviewFixtures/TypedABI/");
+	auto Obj = [&](const TCHAR* Name) { return Fixtures + Name + TEXT(".") + FPackageName::GetShortName(Name); };
+	auto UncookedObj = [&](const TCHAR* Name) { return Uncooked + Name + TEXT(".") + FPackageName::GetShortName(Name); };
+	auto Cls = [&](const TCHAR* Name) { return Fixtures + Name + TEXT(".") + FPackageName::GetShortName(Name) + TEXT("_C"); };
+	auto L = Legacy();
+	TArray<FRPGCatalogWeapon> Weapons = L->Weapons;
+	for (FRPGCatalogWeapon& W : Weapons)
+	{
+		UObject* Item = W.ItemPath.TryLoad();
+		if (!TestNotNull(*FString::Printf(TEXT("%s item loads"), *W.WeaponId.ToString()), Item)) return false;
+		W.ItemBaseClass = FSoftObjectPath(Item->GetClass());
+	}
+	UObject* FourthItem = FSoftObjectPath(Obj(TEXT("DA_ABI_FourthWeaponItem"))).TryLoad();
+	if (!TestNotNull(TEXT("fourth weapon fixture item exists (run Scripts/Editor/make_typed_abi_fixtures.py)"), FourthItem)) return false;
+	auto MakeFourth = [&](const FString& ItemPath, const FString& ActorPath)
+	{
+		FRPGCatalogWeapon W = Weapons[0];
+		W.WeaponId = TEXT("ABIFourthWeapon"); W.StyleName = TEXT("DA_ABI_FourthCombatStyle");
+		W.StyleAliases.Reset(); W.AliasHudWords.Reset(); W.Icon.Reset();
+		W.ItemPath = FSoftObjectPath(ItemPath); W.ItemBaseClass = FSoftObjectPath(FourthItem->GetClass());
+		W.ActorClass = FSoftObjectPath(ActorPath); W.AbilityClass = FSoftObjectPath(Cls(TEXT("GA_ABI_FourthMelee")));
+		W.StyleAsset = FSoftObjectPath(Obj(TEXT("DA_ABI_FourthCombatStyle")));
+		return W;
+	};
+	FRPGCatalogBuild FourthBuild = L->Builds[0];
+	FourthBuild.BuildId = TEXT("ABIFourth"); FourthBuild.ConsoleName = TEXT("ABIFourth"); FourthBuild.DisplayName = TEXT("ABI Fourth"); FourthBuild.Aliases.Reset();
+	FourthBuild.LegacySlot = INDEX_NONE; FourthBuild.UiOrder = 3; FourthBuild.WeaponId = TEXT("ABIFourthWeapon"); FourthBuild.Icon.Reset();
+	TArray<FRPGCatalogBuild> Builds = L->Builds; Builds.Add(FourthBuild);
+	auto Try = [&](const FRPGCatalogWeapon& Fourth, FString& Error)
+	{
+		TArray<FRPGCatalogWeapon> All = Weapons; All.Add(Fourth);
+		return Compile(Builds, All, Error, true);
+	};
+
+	// Positive: a distinct fourth weapon bundle (own item, actor, style and granted ability) resolves and validates end to end.
+	FString PositiveError;
+	TestTrue(*FString::Printf(TEXT("the distinct fourth weapon bundle compiles with resolution (%s)"), *PositiveError),
+		Try(MakeFourth(Obj(TEXT("DA_ABI_FourthWeaponItem")), Cls(TEXT("BP_ABI_FourthWeaponActor"))), PositiveError).IsValid());
+
+	// Negative: a decoy actor with the SAME leaf name as the shipped one, a compatible weapon child, declared while the item binds the fixture actor: the item's own binding must reject it.
+	FString DecoyError;
+	TestFalse(TEXT("a same-leaf decoy actor in another package is rejected"),
+		Try(MakeFourth(Obj(TEXT("DA_ABI_FourthWeaponItem")), Cls(TEXT("DecoyPackage/BP_ToughSword"))), DecoyError).IsValid());
+	TestTrue(*FString::Printf(TEXT("the decoy is rejected by the item actor binding, not by ancestry (%s)"), *DecoyError), DecoyError.Contains(TEXT("ActorBinding")));
+
+	// Negative (single defect): the uncooked item is a copy of the REWIRED fourth item, so its typed edges are as valid as the positive bundle's and the ONLY difference is its location
+	// outside the always-cook roots. It must load in the editor (a missing asset would be a different failure), and the rejection must come from the resolving stage of this weapon.
+	UObject* UncookedItem = FSoftObjectPath(UncookedObj(TEXT("DA_ABI_UncookedWeaponItem"))).TryLoad();
+	TestNotNull(TEXT("the uncooked fixture item is a real loadable asset"), UncookedItem);
+	FString UncookedError;
+	TestFalse(TEXT("a weapon item outside the always-cook roots is rejected although every typed edge is valid"),
+		Try(MakeFourth(UncookedObj(TEXT("DA_ABI_UncookedWeaponItem")), Cls(TEXT("BP_ABI_FourthWeaponActor"))), UncookedError).IsValid());
+	TestTrue(*FString::Printf(TEXT("the rejection is the resolving stage of the fourth weapon (%s)"), *UncookedError), UncookedError.Contains(TEXT("ABIFourthWeapon.References")));
+
+	// Negative: the declared actor is the fixture actor but the actual UClass handed to the validator is the same-leaf decoy: identity, not name, must decide.
+	UClass* DecoyClass = Cast<UClass>(FSoftObjectPath(Cls(TEXT("DecoyPackage/BP_ToughSword"))).TryLoad());
+	TestNotNull(TEXT("the decoy actor class loads"), DecoyClass);
+	if (DecoyClass)
+	{
+		const FRPGCatalogWeapon Declared = MakeFourth(Obj(TEXT("DA_ABI_FourthWeaponItem")), Cls(TEXT("BP_ABI_FourthWeaponActor")));
+		FWeaponReferences References;
+		References.Item = FourthItem; References.DeclaredItemBase = FourthItem->GetClass(); References.ActorClass = DecoyClass;
+		References.AbilityClass = Cast<UClass>(FSoftObjectPath(Cls(TEXT("GA_ABI_FourthMelee"))).TryLoad());
+		References.Style = FSoftObjectPath(Obj(TEXT("DA_ABI_FourthCombatStyle"))).TryLoad();
+		TArray<TStrongObjectPtr<UObject>> Leases; FString IdentityError;
+		TestFalse(TEXT("a decoy UClass with the same leaf name is not the declared actor"), ValidateWeaponReferences(Declared, References, Leases, IdentityError));
+		TestTrue(*FString::Printf(TEXT("the direct decoy is rejected by actor identity (%s)"), *IdentityError), IdentityError.Contains(TEXT("Actor.Identity")));
+	}
+	return true;
+}
+
+// Test seam rpg.CatalogPath (Codex lead decision C170, X-156): a non-Shipping, per-game-instance latched, strict-data input restricted to the TypedABIFixtures folder.
+// The subsystem is started the way the engine does (Initialize with a collection) twice and independently, the console variables are restored in every exit path.
+namespace
+{
+	struct FCatalogCvarScope
+	{
+		TArray<TPair<FString, FString>> Saved;
+		bool Set(const TCHAR* Name, const FString& Value)
+		{
+			IConsoleVariable* Variable = IConsoleManager::Get().FindConsoleVariable(Name);
+			if (!Variable) return false;
+			Saved.Emplace(Name, Variable->GetString());
+			Variable->Set(*Value, ECVF_SetByCode);
+			return true;
+		}
+		~FCatalogCvarScope()
+		{
+			for (int32 I = Saved.Num() - 1; I >= 0; --I)
+			{
+				if (IConsoleVariable* Variable = IConsoleManager::Get().FindConsoleVariable(*Saved[I].Key)) Variable->Set(*Saved[I].Value, ECVF_SetByCode);
+			}
+		}
+	};
+
+	/** One independent game instance with its own catalog subsystem, started the way the engine does (the subsystem's ClassWithin is the game instance). */
+	struct FTestCatalogHost
+	{
+		TStrongObjectPtr<UGameInstance> GameInstance;
+		TStrongObjectPtr<URPGCombatCatalogSubsystem> Subsystem;
+		URPGCombatCatalogSubsystem* operator->() const { return Subsystem.Get(); }
+	};
+
+	FTestCatalogHost StartCatalogSubsystem()
+	{
+		FSubsystemCollection<UGameInstanceSubsystem> Collection;
+		FTestCatalogHost Host;
+		Host.GameInstance.Reset(NewObject<UGameInstance>(GetTransientPackage()));
+		Host.Subsystem.Reset(NewObject<URPGCombatCatalogSubsystem>(Host.GameInstance.Get()));
+		Host.Subsystem->Initialize(Collection);
+		return Host;
+	}
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGCatalogPathSeamTest, "OneBossFight.Catalog.TestPathSeam",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGCatalogPathSeamTest::RunTest(const FString& Parameters)
+{
+	using namespace RPGCombatRegistry;
+	const FString Root = TestCatalogRoot();
+	const FString TestPath = Root + TEXT("DA_ABITest_Catalog.DA_ABITest_Catalog");
+	FString Error;
+
+	// 1. The pure path check: only the exact fixture folder, case-sensitive, canonical object path.
+	TestTrue(TEXT("the fixture test catalog path is accepted"), ValidateTestCatalogPath(TestPath, Error));
+	const FString ShippedCatalog = FString(TEXT("/Game/")) + TEXT("OneBossFight/Data/Catalog/DA_CombatCatalog.DA_CombatCatalog");
+	const TArray<TPair<FString, FString>> Rejected = {
+		{TEXT("empty"), FString()},
+		{TEXT("the shipped catalog (outside the folder)"), ShippedCatalog},
+		{TEXT("a lowercase root (package strings are never normalized)"), Root.ToLower() + TEXT("DA_ABITest_Catalog.DA_ABITest_Catalog")},
+		{TEXT("a look-alike folder"), Root.LeftChop(1) + TEXT("X/DA_ABITest_Catalog.DA_ABITest_Catalog")},
+		{TEXT("path traversal"), Root + TEXT("../Catalog/DA_CombatCatalog.DA_CombatCatalog")},
+		{TEXT("a sub-object path"), TestPath + TEXT(":Sub")},
+		{TEXT("a package without an object part"), Root + TEXT("DA_ABITest_Catalog")},
+		{TEXT("an object name that is not the package name"), Root + TEXT("DA_ABITest_Catalog.DA_Other")},
+		{TEXT("an empty folder name"), Root + TEXT("/DA_ABITest_Catalog.DA_ABITest_Catalog")},
+	};
+	for (const auto& Case : Rejected)
+	{
+		FString Why;
+		TestFalse(*FString::Printf(TEXT("rejected: %s"), *Case.Key), ValidateTestCatalogPath(Case.Value, Why));
+		TestTrue(*FString::Printf(TEXT("the rejection is named (%s)"), *Why), Why.StartsWith(TEXT("CatalogPath:")));
+	}
+
+	// 2. Success, late change and two independent latches.
+	FCatalogCvarScope Scope;
+	if (!TestTrue(TEXT("the test cvars are registered (non-Shipping)"), Scope.Set(TEXT("rpg.CatalogSource"), TEXT("data")) && Scope.Set(TEXT("rpg.CatalogPath"), TestPath) && Scope.Set(TEXT("rpg.CatalogTestFourth"), TEXT("0")) && Scope.Set(TEXT("rpg.CatalogTestInvalid"), TEXT("0")))) return false;
+	FTestCatalogHost First = StartCatalogSubsystem();
+	const auto FirstEpoch = First->GetEpoch();
+	if (!TestTrue(TEXT("the isolated test catalog publishes an epoch (run Scripts/Editor/make_abi_test_catalog.py)"), FirstEpoch.IsValid())) return false;
+	TestEqual(TEXT("the epoch is data"), FirstEpoch->Source, FString(TEXT("data")));
+	TestEqual(TEXT("the latched path is the requested one, as typed"), First->GetLatchedPath(), TestPath);
+	TestEqual(TEXT("four builds: the three shipped ones plus the fourth"), FirstEpoch->Builds.Num(), 4);
+	const FRPGCatalogBuild* Fourth = FirstEpoch->Find(TEXT("ABIFourth"));
+	const FRPGCatalogWeapon* FourthWeapon = Fourth ? FirstEpoch->Weapon(Fourth->WeaponId) : nullptr;
+	if (TestTrue(TEXT("the fourth build and its own weapon exist"), Fourth && FourthWeapon))
+	{
+		TestEqual(TEXT("the fourth weapon item is the fixture item"), FourthWeapon->ItemPath.GetAssetName(), FString(TEXT("DA_ABI_FourthWeaponItem")));
+		TestEqual(TEXT("the fourth weapon style is the fixture style"), FourthWeapon->StyleName.ToString(), FString(TEXT("DA_ABI_FourthCombatStyle")));
+		TestTrue(TEXT("the fourth weapon passed the typed reference check"), FourthWeapon->ReferenceProvenance.Contains(TEXT("typed ABI")));
+	}
+
+	Scope.Set(TEXT("rpg.CatalogPath"), FString()); // a late change: this session keeps its epoch, the next one reads the new value
+	TestEqual(TEXT("a late path change does not replace the published epoch"), First->GetEpoch()->Id, FirstEpoch->Id);
+	TestEqual(TEXT("a late path change does not change the latched path"), First->GetLatchedPath(), TestPath);
+	FTestCatalogHost Second = StartCatalogSubsystem();
+	const auto SecondEpoch = Second->GetEpoch();
+	if (TestTrue(TEXT("the second game instance publishes the shipped catalog"), SecondEpoch.IsValid()))
+	{
+		TestEqual(TEXT("the second latch is independent: shipped three builds"), SecondEpoch->Builds.Num(), 3);
+		TestTrue(TEXT("the second latch is empty (shipped default)"), Second->GetLatchedPath().IsEmpty());
+		TestTrue(TEXT("a distinct epoch id"), SecondEpoch->Id != FirstEpoch->Id);
+	}
+	TestEqual(TEXT("the first game instance is untouched by the second"), First->GetEpoch()->Builds.Num(), 4);
+
+	// 3. Explicit failures: no quiet legacy fallback, every one ends in a null epoch and a named error.
+	struct FFailure { const TCHAR* Name; const TCHAR* Source; FString Path; const TCHAR* Fourth; const TCHAR* Expected; };
+	const FString Missing = Root + TEXT("DA_ABITest_Missing.DA_ABITest_Missing");
+	const FString WrongType = Root + TEXT("DA_ABI_FourthWeaponItem.DA_ABI_FourthWeaponItem");
+	const TArray<FFailure> Failures = {
+		{TEXT("source auto"), TEXT("auto"), TestPath, TEXT("0"), TEXT("needs rpg.CatalogSource data")},
+		{TEXT("source legacy"), TEXT("legacy"), TestPath, TEXT("0"), TEXT("needs rpg.CatalogSource data")},
+		{TEXT("contradictory fourth fixture flag"), TEXT("data"), TestPath, TEXT("1"), TEXT("conflicts with rpg.CatalogTestFourth")},
+		{TEXT("path outside the folder"), TEXT("data"), ShippedCatalog, TEXT("0"), TEXT("outside the approved TypedABIFixtures folder")},
+		{TEXT("absent asset"), TEXT("data"), Missing, TEXT("0"), TEXT("CatalogPath: asset absent")},
+		{TEXT("wrong asset type"), TEXT("data"), WrongType, TEXT("0"), TEXT("wrong asset type")},
+	};
+	AddExpectedError(TEXT("DA_ABITest_Missing"), EAutomationExpectedErrorFlags::Contains, 0); // the engine's own load diagnostics of a missing asset, any number
+	for (const FFailure& Case : Failures)
+	{
+		AddExpectedError(Case.Expected, EAutomationExpectedErrorFlags::Contains, 1);
+		Scope.Set(TEXT("rpg.CatalogSource"), Case.Source);
+		Scope.Set(TEXT("rpg.CatalogPath"), Case.Path);
+		Scope.Set(TEXT("rpg.CatalogTestFourth"), Case.Fourth);
+		FTestCatalogHost Failed = StartCatalogSubsystem();
+		TestFalse(*FString::Printf(TEXT("%s: no epoch is published (no legacy fallback)"), Case.Name), Failed->GetEpoch().IsValid());
+		TestTrue(*FString::Printf(TEXT("%s: the diagnostic says data is required"), Case.Name), Failed->GetDiagnostic().StartsWith(TEXT("unavailable")));
+		TestEqual(*FString::Printf(TEXT("%s: the latched path is still reported"), Case.Name), Failed->GetLatchedPath(), Case.Path);
+	}
+	return true;
+}
+
+// Once-only diagnostics (Codex lead decision C172, X-156): a GI-owned ledger keyed epoch + category + key, one authoritative icon report per compiled epoch, the selector overflow warning once per
+// published epoch. The counts are taken from the real log output (an output device), not from a helper's return value alone.
+namespace
+{
+	class FCatalogLogCounter : public FOutputDevice
+	{
+	public:
+		FCatalogLogCounter() { GLog->AddOutputDevice(this); }
+		virtual ~FCatalogLogCounter() override { GLog->RemoveOutputDevice(this); }
+		virtual void Serialize(const TCHAR* Text, ELogVerbosity::Type Verbosity, const FName& Category) override
+		{
+			if (Category == FName(TEXT("LogRPGCatalog"))) Lines.Add(FString(Text));
+		}
+		int32 Count(const FString& A, const FString& B = FString()) const
+		{
+			GLog->FlushThreadedLogs(); // a line logged a moment ago may still sit in the redirector's buffer
+			int32 N = 0;
+			for (const FString& Line : Lines) if (Line.Contains(A) && (B.IsEmpty() || Line.Contains(B))) ++N;
+			return N;
+		}
+		TArray<FString> Lines;
+	};
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGCatalogDiagnosticsTest, "OneBossFight.Catalog.Diagnostics",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGCatalogDiagnosticsTest::RunTest(const FString& Parameters)
+{
+	using namespace RPGCombatRegistry;
+	const FGuid EpochA = FGuid::NewGuid(), EpochB = FGuid::NewGuid();
+
+	// 1. The ledger: first report true, every repeat false; a new epoch, category or key is independent; two ledgers never share state.
+	FDiagnosticLedger One, Two;
+	TestTrue(TEXT("first report of a key"), One.TryReport(EpochA, TEXT("IconAbsent"), TEXT("Build1")));
+	TestFalse(TEXT("repeat of the same key"), One.TryReport(EpochA, TEXT("IconAbsent"), TEXT("Build1")));
+	TestTrue(TEXT("another build id is independent"), One.TryReport(EpochA, TEXT("IconAbsent"), TEXT("Build2")));
+	TestTrue(TEXT("another category is independent"), One.TryReport(EpochA, TEXT("IconBroken"), TEXT("Build1")));
+	TestTrue(TEXT("a fresh epoch reports again"), One.TryReport(EpochB, TEXT("IconAbsent"), TEXT("Build1")));
+	TestTrue(TEXT("a second ledger (another game instance) is not suppressed by the first"), Two.TryReport(EpochA, TEXT("IconAbsent"), TEXT("Build1")));
+	One.Reset();
+	TestTrue(TEXT("a reset ledger (teardown) reports again"), One.TryReport(EpochA, TEXT("IconAbsent"), TEXT("Build1")));
+
+	// 2. Icon reports from the one authoritative emitter (Compile), counted in the log: absence is Display, a set but unusable icon is a Warning with its reason, valid icons are silent.
+	const FString Fixtures = FString(TEXT("/Game/")) + TEXT("OneBossFight/Data/TypedABIFixtures/");
+	const FString Uncooked = FString(TEXT("/Game/")) + TEXT("OneBossFight/ReviewFixtures/TypedABI/");
+	const FString ArtRoot = FString(TEXT("/Game/")) + TEXT("OneBossFight/UI/Art/");
+	auto L = Legacy();
+	TArray<FRPGCatalogWeapon> Weapons = L->Weapons;
+	for (FRPGCatalogWeapon& W : Weapons)
+	{
+		UObject* Item = W.ItemPath.TryLoad();
+		if (!TestNotNull(*FString::Printf(TEXT("%s item loads"), *W.WeaponId.ToString()), Item)) return false;
+		W.ItemBaseClass = FSoftObjectPath(Item->GetClass());
+	}
+	auto IconBuild = [&](const TCHAR* Id, int32 Order, const FString& Icon)
+	{
+		FRPGCatalogBuild B = L->Builds[0];
+		B.BuildId = Id; B.ConsoleName = Id; B.DisplayName = Id; B.Aliases.Reset(); B.LegacySlot = INDEX_NONE; B.UiOrder = Order;
+		B.Icon = Icon.IsEmpty() ? FSoftObjectPath() : FSoftObjectPath(Icon);
+		return B;
+	};
+	TArray<FRPGCatalogBuild> Builds = L->Builds;
+	Builds.Add(IconBuild(TEXT("DiagAbsent"), 3, FString()));
+	Builds.Add(IconBuild(TEXT("DiagMissing"), 4, ArtRoot + TEXT("T_Missing_Icon_Diag.T_Missing_Icon_Diag")));
+	Builds.Add(IconBuild(TEXT("DiagWrongType"), 5, Fixtures + TEXT("DA_ABI_FourthWeaponItem.DA_ABI_FourthWeaponItem")));
+	Builds.Add(IconBuild(TEXT("DiagUncooked"), 6, Uncooked + TEXT("DA_ABI_UncookedWeaponItem.DA_ABI_UncookedWeaponItem")));
+	AddExpectedError(TEXT("T_Missing_Icon_Diag"), EAutomationExpectedErrorFlags::Contains, 0); // the engine's own load diagnostics of the missing asset, any number
+	FString Error;
+	{
+		FCatalogLogCounter Log;
+		auto First = Compile(Builds, Weapons, Error, true);
+		if (!TestTrue(*FString::Printf(TEXT("the epoch with four optional-icon cases compiles (%s)"), *Error), First.IsValid())) return false;
+		TestEqual(TEXT("absent icon: one Display line"), Log.Count(TEXT("build=DiagAbsent icon absent")), 1);
+		TestEqual(TEXT("missing icon: one Warning line naming the reason"), Log.Count(TEXT("build=DiagMissing icon broken"), TEXT("unloadable")), 1);
+		TestEqual(TEXT("wrong-type icon: one Warning line naming the reason"), Log.Count(TEXT("build=DiagWrongType icon broken"), TEXT("wrong type")), 1);
+		TestEqual(TEXT("uncooked icon: one Warning line naming the reason"), Log.Count(TEXT("build=DiagUncooked icon broken"), TEXT("outside the cooked roots")), 1);
+		TestEqual(TEXT("the shipped valid icons are silent"), Log.Count(TEXT("build=Starter icon")) + Log.Count(TEXT("build=Strength icon")) + Log.Count(TEXT("build=Dex icon")), 0);
+		TestEqual(TEXT("four icon lines in total"), Log.Count(TEXT("icon absent")) + Log.Count(TEXT("icon broken")), 4);
+		TestEqual(TEXT("every line carries the epoch id"), Log.Count(First->Id.ToString()), 4);
+		auto Second = Compile(Builds, Weapons, Error, true); // a fresh epoch: new reports, one per entry again
+		TestTrue(TEXT("the second epoch has another id"), Second.IsValid() && Second->Id != First->Id);
+		TestEqual(TEXT("a fresh epoch reports each entry once more"), Log.Count(TEXT("icon absent")) + Log.Count(TEXT("icon broken")), 8);
+	}
+
+	// 3. The selector overflow warning: once per published epoch however often it is asked or whatever the height; independent per game instance; a stale epoch id reports nothing.
+	FCatalogCvarScope Scope;
+	const FString TestPath = TestCatalogRoot() + TEXT("DA_ABITest_Catalog.DA_ABITest_Catalog");
+	if (!TestTrue(TEXT("the test cvars are registered"), Scope.Set(TEXT("rpg.CatalogSource"), TEXT("data")) && Scope.Set(TEXT("rpg.CatalogPath"), TestPath) && Scope.Set(TEXT("rpg.CatalogTestFourth"), TEXT("0")) && Scope.Set(TEXT("rpg.CatalogTestInvalid"), TEXT("0")))) return false;
+	FCatalogLogCounter Log;
+	FTestCatalogHost HostA = StartCatalogSubsystem();
+	FTestCatalogHost HostB = StartCatalogSubsystem();
+	const auto EA = HostA->GetEpoch();
+	const auto EB = HostB->GetEpoch();
+	if (!TestTrue(TEXT("two game instances with the four-row test catalog"), EA.IsValid() && EB.IsValid() && EA->Builds.Num() == 4 && EB->Builds.Num() == 4)) return false;
+	TestEqual(TEXT("the visible rows at height 200 are two (formula)"), VisibleRows(4, 200.f), 2);
+	TestFalse(TEXT("a height where every row fits reports nothing"), HostA->ReportLayoutOverflow(EA->Id, 4, 1080.f));
+	TestEqual(TEXT("no overflow line yet"), Log.Count(TEXT("selector layout overflow")), 0);
+	TestTrue(TEXT("first overflow of the epoch is reported"), HostA->ReportLayoutOverflow(EA->Id, 4, 200.f));
+	for (float Height : {200.f, 200.f, 180.f, 150.f, 90.f}) TestFalse(TEXT("repeats (open/close/resize) are not reported again"), HostA->ReportLayoutOverflow(EA->Id, 4, Height));
+	TestEqual(TEXT("exactly one overflow line for game instance A"), Log.Count(TEXT("selector layout overflow")), 1);
+	TestEqual(TEXT("the line names the epoch and the hidden start index"), Log.Count(EA->Id.ToString(), TEXT("rows from index 2")), 1);
+	TestEqual(TEXT("the line names the measured layout height"), Log.Count(TEXT("selector layout overflow"), TEXT("measured layout height 200.0")), 1);
+	TestFalse(TEXT("an epoch id that is not A's published epoch reports nothing"), HostA->ReportLayoutOverflow(EB->Id, 4, 200.f));
+	TestTrue(TEXT("game instance B is not suppressed by A"), HostB->ReportLayoutOverflow(EB->Id, 4, 200.f));
+	TestEqual(TEXT("two overflow lines in total, one per game instance"), Log.Count(TEXT("selector layout overflow")), 2);
+	return true;
+}
+
 #endif

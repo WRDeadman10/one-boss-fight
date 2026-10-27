@@ -28,6 +28,8 @@ public:
 private:
 	void OnActorSpawned(AActor* Actor);
 	void Attach(AActor* Pawn) const;
+	void AttachLegacyBossPrelude(AActor* Pawn) const; // boss footsteps and music, called from the boss branch ahead of the player components
+	void AttachLegacyBossBundle(AActor* Pawn) const; // the guarded boss component registrations, called after the player components
 
 	FDelegateHandle SpawnHandle;
 };

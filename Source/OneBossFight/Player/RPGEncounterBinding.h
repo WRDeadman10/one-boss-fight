@@ -10,6 +10,8 @@
 
 class URPGBossEncounter;
 class URPGCombatContextSubsystem;
+class UAnimMontage;
+class UAnimSequence;
 class UAnimSequenceBase;
 class USkeleton;
 
@@ -21,6 +23,82 @@ struct FRPGBossStatsConfig
 	UPROPERTY(EditAnywhere) float MaxPosture = 0.f;
 	UPROPERTY(EditAnywhere) float PostureRegenDelay = 0.f;
 	UPROPERTY(EditAnywhere) float PostureRegenRate = 0.f;
+};
+
+/** Encounter flow policy of the boss (URPGBossEncounter): the typed authoring record. The defaults below are defaults of this NEW asset field (old schema 1 definitions receive them additively); they match the native
+ *  declarations of URPGBossEncounter, are not proof of any serialized or live actor value and are never a fallback for an invalid value. */
+USTRUCT(BlueprintType)
+struct FRPGEncounterPolicyConfig
+{
+	GENERATED_BODY()
+	/** The boss sleeps until the player is this close (cm, horizontal) or damages it. 0 = no gate (the native meaning). Finite and not negative; fractional values are valid. */
+	UPROPERTY(EditAnywhere) float GateRadius = 1200.f;
+	/** Move the boss back to its start and make it dormant when the player respawns. */
+	UPROPERTY(EditAnywhere) bool bResetOnPlayerRespawn = true;
+};
+
+/** Stagger and riposte scalar policy of the boss (URPGBossStagger): the typed authoring record, thirteen floats and one bool with the names of the native component. The defaults are defaults of this NEW asset field
+ *  (old schema 1 definitions receive them additively); they match the native declarations, are not proof of any serialized or live actor value and are never a fallback for an invalid value. The domains are in
+ *  RPGBossStaggerPolicyAdapters (the native ClampMin and ClampMax metadata is editor metadata and is not copied here as a runtime rule). Clips, classes, effects and mode toggles are NOT part of this record. */
+USTRUCT(BlueprintType)
+struct FRPGStaggerPolicyConfig
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere) float StaggerSeconds = 2.5f;
+	UPROPERTY(EditAnywhere) float FreezeAtPosition = 1.55f;
+	UPROPERTY(EditAnywhere) float CriticalMultiplier = 2.5f;
+	UPROPERTY(EditAnywhere) float RiposteRange = 150.f;
+	UPROPERTY(EditAnywhere) float RiposteConeDegrees = 120.f;
+	UPROPERTY(EditAnywhere) float RiposteFacingDegrees = 120.f;
+	UPROPERTY(EditAnywhere) float RiposteArmSeconds = 1.2f;
+	UPROPERTY(EditAnywhere) float RipostePlayerStartGap = 150.f;
+	UPROPERTY(EditAnywhere) float RiposteAlignSeconds = 0.3f;
+	UPROPERTY(EditAnywhere) float RiposteImpactSeconds = 0.8f;
+	UPROPERTY(EditAnywhere) float RiposteBaseDamage = 40.f;
+	UPROPERTY(EditAnywhere) float CooldownSeconds = 0.f;
+	UPROPERTY(EditAnywhere) float GetUpRate = 0.6f;
+	UPROPERTY(EditAnywhere) bool bHoldPostureAtZero = true;
+};
+
+/** Phase flow policy of the boss (URPGBossPhases): the typed authoring record, six fields with the names of the native component. The defaults are defaults of this NEW asset field (old schema 1 definitions
+ *  receive them additively); they match the source declarations of URPGBossPhases, are not proof of any serialized or live actor value and are never a fallback for an invalid value. The selected phase record with its
+ *  threshold and multipliers, the fireball fields and every asset reference are NOT part of this record. AttackAbilityPrefix and LeapAbilityTag state an explicit identity only: that a matching ability or a registered
+ *  gameplay tag exists is a later integration check, not something a non-empty value proves. */
+USTRUCT(BlueprintType)
+struct FRPGPhaseFlowConfig
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere) float TransitionSeconds = 1.8f;
+	UPROPERTY(EditAnywhere) bool bUseRoarClip = true;
+	UPROPERTY(EditAnywhere) bool bPausePostureInTransition = true;
+	UPROPERTY(EditAnywhere) bool bLockLeapUntilPhaseTwo = true;
+	UPROPERTY(EditAnywhere) FString AttackAbilityPrefix = TEXT("GA_GS_Boss_");
+	UPROPERTY(EditAnywhere) FName LeapAbilityTag = TEXT("Ability.Melee.LeapAttack");
+};
+
+/** Fireball policy of the boss (URPGBossPhases): the typed authoring record, five fields with the names of the native component. The defaults are defaults of this NEW asset field (old schema 1 definitions
+ *  receive them additively); they match the native constructor and declarations, are not proof of any serialized or live actor value and are never a fallback for an invalid value. The ability is a soft class
+ *  path only: nothing is loaded and that the class exists, is cooked or is a gameplay ability is a later integration check. */
+USTRUCT(BlueprintType)
+struct FRPGFireballConfig
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere) bool bFireballEnabled = false;
+	UPROPERTY(EditAnywhere) TSoftClassPtr<UObject> FireballAbility = TSoftClassPtr<UObject>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C")));
+	UPROPERTY(EditAnywhere) FVector2D FireballCooldown = FVector2D(6.f, 10.f);
+	UPROPERTY(EditAnywhere) float FireballMinRange = 500.f;
+	UPROPERTY(EditAnywhere) float FireballMaxRange = 1800.f;
+};
+
+/** Asset references of the phase change (URPGBossPhases): the typed authoring record, three soft references with the names of the native component. Defaults as for the fireball record (native constructor
+ *  values, additive authoring defaults, never a fallback). Soft references only: the record never loads anything and says nothing about existence, cooking, class kind or the fit of the clip to the transition. */
+USTRUCT(BlueprintType)
+struct FRPGPhaseDependencyConfig
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> RoarClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar")));
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimMontage> TransitionMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage")));
+	UPROPERTY(EditAnywhere) TSoftClassPtr<UObject> ImmunityEffect = TSoftClassPtr<UObject>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C")));
 };
 
 USTRUCT(BlueprintType)
@@ -62,6 +140,11 @@ public:
 	UPROPERTY(EditAnywhere) FName DefinitionId;
 	UPROPERTY(EditAnywhere) FName PresentationId;
 	UPROPERTY(EditAnywhere) FRPGBossStatsConfig Stats;
+	UPROPERTY(EditAnywhere) FRPGEncounterPolicyConfig EncounterPolicy;
+	UPROPERTY(EditAnywhere) FRPGStaggerPolicyConfig StaggerPolicy;
+	UPROPERTY(EditAnywhere) FRPGPhaseFlowConfig PhaseFlow;
+	UPROPERTY(EditAnywhere) FRPGFireballConfig Fireball;
+	UPROPERTY(EditAnywhere) FRPGPhaseDependencyConfig PhaseDependencies;
 	UPROPERTY(EditAnywhere) TArray<FRPGPhaseConfig> Phases;
 	UPROPERTY(EditAnywhere) TSoftObjectPtr<USkeleton> Skeleton;
 	UPROPERTY(EditAnywhere) TArray<TSoftObjectPtr<UAnimSequenceBase>> Animations;
@@ -95,6 +178,11 @@ struct FRPGParticipantConfig
 	FString StableManifestHash;
 	int32 Schema = 1;
 	FRPGBossStatsConfig Stats;
+	FRPGEncounterPolicyConfig EncounterPolicy;
+	FRPGStaggerPolicyConfig StaggerPolicy;
+	FRPGPhaseFlowConfig PhaseFlow;
+	FRPGFireballConfig Fireball;
+	FRPGPhaseDependencyConfig PhaseDependencies;
 	TArray<FRPGPhaseConfig> Phases;
 	TArray<FRPGParityField> Fields;
 	TSharedPtr<const RPGCombatRegistry::FEpoch> Content;

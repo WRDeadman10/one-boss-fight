@@ -134,64 +134,30 @@ namespace
 	}
 }
 
-void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
+// The early part of the boss registration: footsteps and the music. It stays ahead of the player components and is reached only from the else-if of Attach, so a
+// class that is both pack player and pack boss still gets neither (the player branch wins), exactly as before.
+void URPGPlayerMovesSubsystem::AttachLegacyBossPrelude(AActor* Pawn) const
 {
-	if (IsPackPlayer(Pawn))
+	AddFootsteps(Pawn, true);
+	if (!Pawn->FindComponentByClass<URPGBossMusic>())
 	{
-		AddFootsteps(Pawn, false);
-	}
-	else if (IsPackBoss(Pawn))
-	{
-		AddFootsteps(Pawn, true);
-		if (!Pawn->FindComponentByClass<URPGBossMusic>())
+		URPGBossMusic* Music = NewObject<URPGBossMusic>(Pawn, TEXT("RPGBossMusic"));
+		// The two tracks of the fight (Scripts/Editor/import_audio.py imports them). A missing Phase 1 file falls back to the starter cue with a warning; a missing Phase 2 file means no swap.
+		Music->Music = LoadObject<USoundBase>(nullptr, TEXT("/Game/OneBossFight/Audio/MX_Boss01_Phase1.MX_Boss01_Phase1"), nullptr, LOAD_NoWarn);
+		if (!Music->Music)
 		{
-			URPGBossMusic* Music = NewObject<URPGBossMusic>(Pawn, TEXT("RPGBossMusic"));
-			// The two tracks of the fight (Scripts/Editor/import_audio.py imports them). A missing Phase 1 file falls back to the starter cue with a warning; a missing Phase 2 file means no swap.
-			Music->Music = LoadObject<USoundBase>(nullptr, TEXT("/Game/OneBossFight/Audio/MX_Boss01_Phase1.MX_Boss01_Phase1"), nullptr, LOAD_NoWarn);
-			if (!Music->Music)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Boss music: /Game/OneBossFight/Audio/MX_Boss01_Phase1 is not imported, the starter cue plays instead (run Scripts/Editor/import_audio.py)"));
-				Music->Music = LoadObject<USoundBase>(nullptr, TEXT("/Game/StarterContent/Audio/Starter_Music_Cue.Starter_Music_Cue"));
-			}
-			Music->PhaseTwoMusic = LoadObject<USoundBase>(nullptr, TEXT("/Game/OneBossFight/Audio/MX_Boss01_Phase2.MX_Boss01_Phase2"), nullptr, LOAD_NoWarn);
-			Music->RegisterComponent();
+			UE_LOG(LogTemp, Warning, TEXT("Boss music: /Game/OneBossFight/Audio/MX_Boss01_Phase1 is not imported, the starter cue plays instead (run Scripts/Editor/import_audio.py)"));
+			Music->Music = LoadObject<USoundBase>(nullptr, TEXT("/Game/StarterContent/Audio/Starter_Music_Cue.Starter_Music_Cue"));
 		}
+		Music->PhaseTwoMusic = LoadObject<USoundBase>(nullptr, TEXT("/Game/OneBossFight/Audio/MX_Boss01_Phase2.MX_Boss01_Phase2"), nullptr, LOAD_NoWarn);
+		Music->RegisterComponent();
 	}
+}
 
-	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGCameraRig>())
-	{
-		URPGCameraRig* Rig = NewObject<URPGCameraRig>(Pawn, TEXT("RPGCameraRig"));
-		Rig->RegisterComponent();
-	}
-	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGRiposteInput>())
-	{
-		URPGRiposteInput* Riposte = NewObject<URPGRiposteInput>(Pawn, TEXT("RPGRiposteInput"));
-		Riposte->RegisterComponent();
-	}
-	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGDodgeTiming>())
-	{
-		URPGDodgeTiming* Timing = NewObject<URPGDodgeTiming>(Pawn, TEXT("RPGDodgeTiming"));
-		Timing->RegisterComponent();
-	}
-	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGSwingTracker>())
-	{
-		NewObject<URPGSwingTracker>(Pawn, TEXT("RPGSwingTracker"))->RegisterComponent(); // the swing of the player: weapon, kind, stamina cost from the weapon table (Gate 3)
-	}
-	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGHitIntake>())
-	{
-		NewObject<URPGHitIntake>(Pawn, TEXT("RPGHitIntake"))->RegisterComponent(); // the record of every hit the player lands on the boss (Gate 3)
-	}
-	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGBuildLoadout>())
-	{
-		NewObject<URPGBuildLoadout>(Pawn, TEXT("RPGBuildLoadout"))->RegisterComponent(); // the weapon of the chosen build (rpg.Build) before the fight, the weapon slot locked in it; nothing is called while no build is chosen (Gate 3, M13)
-	}
-	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGBuildSelect>()) NewObject<URPGBuildSelect>(Pawn, TEXT("RPGBuildSelect"))->RegisterComponent(); // pre-fight B-key build selector (Gate 3, G3-5)
-	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGFlaskHud>()) NewObject<URPGFlaskHud>(Pawn, TEXT("RPGFlaskHud"))->RegisterComponent(); // own overlay for the pack HealthPotion stack (Gate 3, G3-5); the pack widget stays unmodified
-	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGIFrameMonitor>())
-	{
-		URPGIFrameMonitor* IFrames = NewObject<URPGIFrameMonitor>(Pawn, TEXT("RPGIFrameMonitor"));
-		IFrames->RegisterComponent();
-	}
+// The later part of the boss registration, every statement with its own IsPackBoss guard as before. It is called after the player components, so for a hybrid class
+// the player statements still run first.
+void URPGPlayerMovesSubsystem::AttachLegacyBossBundle(AActor* Pawn) const
+{
 	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossStagger>())
 	{
 		URPGBossStagger* Stagger = NewObject<URPGBossStagger>(Pawn, TEXT("RPGBossStagger"));
@@ -280,4 +246,52 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
 		// The presentation layer (camera shake, hit stop, slow motion): after the tracker, phases, stagger and HUD it polls. Inert while rpg.Legend is 0.
 		NewObject<URPGBossLegend>(Pawn, TEXT("RPGBossLegend"))->RegisterComponent();
 	}
+}
+
+void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
+{
+	if (IsPackPlayer(Pawn))
+	{
+		AddFootsteps(Pawn, false);
+	}
+	else if (IsPackBoss(Pawn))
+	{
+		AttachLegacyBossPrelude(Pawn);
+	}
+
+	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGCameraRig>())
+	{
+		URPGCameraRig* Rig = NewObject<URPGCameraRig>(Pawn, TEXT("RPGCameraRig"));
+		Rig->RegisterComponent();
+	}
+	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGRiposteInput>())
+	{
+		URPGRiposteInput* Riposte = NewObject<URPGRiposteInput>(Pawn, TEXT("RPGRiposteInput"));
+		Riposte->RegisterComponent();
+	}
+	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGDodgeTiming>())
+	{
+		URPGDodgeTiming* Timing = NewObject<URPGDodgeTiming>(Pawn, TEXT("RPGDodgeTiming"));
+		Timing->RegisterComponent();
+	}
+	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGSwingTracker>())
+	{
+		NewObject<URPGSwingTracker>(Pawn, TEXT("RPGSwingTracker"))->RegisterComponent(); // the swing of the player: weapon, kind, stamina cost from the weapon table (Gate 3)
+	}
+	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGHitIntake>())
+	{
+		NewObject<URPGHitIntake>(Pawn, TEXT("RPGHitIntake"))->RegisterComponent(); // the record of every hit the player lands on the boss (Gate 3)
+	}
+	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGBuildLoadout>())
+	{
+		NewObject<URPGBuildLoadout>(Pawn, TEXT("RPGBuildLoadout"))->RegisterComponent(); // the weapon of the chosen build (rpg.Build) before the fight, the weapon slot locked in it; nothing is called while no build is chosen (Gate 3, M13)
+	}
+	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGBuildSelect>()) NewObject<URPGBuildSelect>(Pawn, TEXT("RPGBuildSelect"))->RegisterComponent(); // pre-fight B-key build selector (Gate 3, G3-5)
+	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGFlaskHud>()) NewObject<URPGFlaskHud>(Pawn, TEXT("RPGFlaskHud"))->RegisterComponent(); // own overlay for the pack HealthPotion stack (Gate 3, G3-5); the pack widget stays unmodified
+	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGIFrameMonitor>())
+	{
+		URPGIFrameMonitor* IFrames = NewObject<URPGIFrameMonitor>(Pawn, TEXT("RPGIFrameMonitor"));
+		IFrames->RegisterComponent();
+	}
+	AttachLegacyBossBundle(Pawn); // after the player components, as the boss statements always were
 }
