@@ -1,0 +1,10 @@
+92a93,94
+> 253a47f47f3812d1c4754dea9c36620e59923347e3d359b807682c9fbe26792c *Source/OneBossFight/Player/RPGBossPreparationRegistry.cpp
+> d9d813c7711e5ccdeba1e8a063c1adc44d76ae4ad6986f5d4d826ffa62f4ddd2 *Source/OneBossFight/Player/RPGBossPreparationRegistry.h
+107a110,111
+> ce6a1b31dfb2e80f9439766d25f9ac77a5b6a2b8c05721264c30dcba3e0e417c *Source/OneBossFight/Player/RPGBossWorldPreparation.cpp
+> 8a71cdf98fe3063c9ac48e17cc02a295f06bf4ef719cc99d0875814c48898933 *Source/OneBossFight/Player/RPGBossWorldPreparation.h
+162a167
+> 38729988591eadbb313a79fc1d4f002a4c02dcc56553398d95777468cbc2368a *Source/OneBossFight/Tests/RPGBossPreparationRegistryTests.cpp
+168a174
+> fb867b159223253d756e6a07e0d44a45378ea99f0c6f8eb3e606b95b8eb1ec90 *Source/OneBossFight/Tests/RPGBossWorldPreparationTests.cpp

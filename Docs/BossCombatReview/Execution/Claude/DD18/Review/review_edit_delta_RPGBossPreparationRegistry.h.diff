@@ -1,0 +1,51 @@
+--- /dev/fd/63	2026-10-28 22:16:54.000000000 +0530
++++ /dev/fd/62	2026-10-28 22:16:54.000000000 +0530
+@@ -26,9 +26,10 @@
+  * safe and simply invalid. Tokens are validated by registry identity AND serial, never by encounter GUID alone: a stale, consumed, wrong-registry or repeated release can neither destroy a replacement reservation nor
+  * anything else. Release (explicit or by destroying the token on the game thread) aborts exactly its own unregistered artifact and frees the GUID and actor entries ONLY after a clean cleanup. A cleanup that is not clean
+  * (a component somebody registered, began or re-owned: DD15's contract violation) leaves a QUARANTINED reservation with diagnostics: its GUID and actors stay reserved, admission is not silently reopened and no
+- * rollback, unregistration, repair or deletion is attempted or claimed. Destroying the registry closes admission, aborts every owned artifact once (on the game thread) and invalidates every surviving token.
++ * rollback, unregistration, repair or deletion is attempted or claimed. A cleanup failure DURING admission (the identity checks after the preparation failed and the abort left components in place) quarantines the encounter the
++ * same way. Destroying the registry closes admission, aborts every owned artifact once (on the game thread; an abort that is not clean at that point is only logged, nothing is rolled back) and invalidates every surviving token.
+  *
+- * Threads: every operation is game-thread only and is refused WITHOUT touching any UObject otherwise (a violation result). Destroying a held token or the registry off the game thread is a contract violation that is flagged
++ * Threads: every operation is game-thread only: mutations are refused WITHOUT touching any UObject otherwise (a violation result) and the read accessors return neutral values (0, empty, not held, closed) off the game thread. Destroying a held token or the registry off the game thread is a contract violation that is flagged
+  * (ensure) and performs no UObject cleanup there: a held token destroyed off-thread leaves its reservation in the registry until the registry is destroyed on the game thread; the registry destroyed off-thread only closes
+  * admission and invalidates tokens, its artifacts being destroyed by their own destructors under the DD15 contract. No worker-destructor experiment exists.
+  *
+@@ -41,7 +42,7 @@
+ enum class EReservationFailure : uint8
+ {
+ 	None,
+-	/** The inputs are invalid: world, binding, selections, definitions, manifest hash, content, closed registry. */
++	/** The inputs are invalid: world (including a world that no longer exists), binding, selections, definitions, manifest hash, content, closed registry. */
+ 	InvalidInput,
+ 	/** The encounter GUID or an actor is already reserved by this registry. */
+ 	Conflict,
+@@ -62,7 +63,7 @@
+ 		Released,
+ 		/** Refused: not on the game thread, nothing was touched. */
+ 		Refused,
+-		/** The token holds nothing, or its serial is no longer reserved here (consumed, stale, registry gone). Nothing was touched. */
++		/** The token holds nothing, or its serial is no longer reserved here (consumed, stale, registry gone). Nothing was touched and the stale token was cleared. */
+ 		Stale,
+ 		/** The token belongs to another registry. Nothing was touched. */
+ 		WrongRegistry,
+@@ -97,7 +98,7 @@
+ 	const FGuid& GetRegistryId() const { return RegistryId; }
+ 	const FGuid& GetEncounter() const { return Encounter; }
+ 
+-	/** Releases through the token's own registry (same validation and effect as FRPGBossPreparationRegistry::Release). */
++	/** Releases through the token's own registry (same validation and effect as FRPGBossPreparationRegistry::Release: Released, Quarantined and Stale consume the token, Refused leaves it). */
+ 	FRPGReleaseReport Release();
+ 
+ #if WITH_DEV_AUTOMATION_TESTS
+@@ -142,7 +143,7 @@
+ 	/** Conflict pre-check, whole-batch preparation, final identity checks, then publication of the reservation. Game thread only. */
+ 	FRPGReservationResult TryPrepareAndReserve(const ARPGEncounterBinding* Binding, const TArray<RPGBossWorldInputCompiler::FSelection>& Selections, const FString& ManifestHash);
+ 
+-	/** Releases the reservation of the token (validated by registry identity and serial). On Released and Quarantined the token is consumed; on Refused, Stale and WrongRegistry it is left as it was. Game thread only. */
++	/** Releases the reservation of the token (validated by registry identity and serial). On Released, Quarantined and Stale the token is consumed (a stale token is worthless); on Refused and WrongRegistry it is left as it was. Game thread only. */
+ 	FRPGReleaseReport Release(FRPGPreparationLeaseToken& Token);
+ 
+ 	const FGuid& GetRegistryId() const;

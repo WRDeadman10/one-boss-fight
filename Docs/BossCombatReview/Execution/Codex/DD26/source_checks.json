@@ -1,0 +1,123 @@
+{
+  "scope": "SOURCE integrity/static review, NOT compiler or Unreal test",
+  "source_count": 212,
+  "changed": [
+    "Source/OneBossFight/Player/RPGBossHydrationPreflight.cpp",
+    "Source/OneBossFight/Player/RPGBossHydrationPreflight.h",
+    "Source/OneBossFight/Tests/RPGBossHydrationPreflightTests.cpp",
+    "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+    "Source/OneBossFight/Tests/RPGBossPreparationRegistryTests.cpp",
+    "Source/OneBossFight/Tests/RPGBossProductionPreflightTests.cpp",
+    "Source/OneBossFight/Tests/RPGBossProductionPreparationTests.cpp",
+    "Source/OneBossFight/Tests/RPGBossWorldInputCompilerTests.cpp",
+    "Source/OneBossFight/Tests/RPGBossWorldPreparationTests.cpp"
+  ],
+  "unchanged": 203,
+  "six_independent_literal_lists": [
+    {
+      "file": "Source/OneBossFight/Tests/RPGBossHydrationPreflightTests.cpp",
+      "paths": 110,
+      "appended_literal_paths": 59,
+      "header_order_parity": true
+    },
+    {
+      "file": "Source/OneBossFight/Tests/RPGBossProductionPreflightTests.cpp",
+      "paths": 110,
+      "appended_literal_paths": 59,
+      "header_order_parity": true
+    },
+    {
+      "file": "Source/OneBossFight/Tests/RPGBossProductionPreparationTests.cpp",
+      "paths": 110,
+      "appended_literal_paths": 59,
+      "header_order_parity": true
+    },
+    {
+      "file": "Source/OneBossFight/Tests/RPGBossWorldPreparationTests.cpp",
+      "paths": 110,
+      "appended_literal_paths": 59,
+      "header_order_parity": true
+    },
+    {
+      "file": "Source/OneBossFight/Tests/RPGBossWorldInputCompilerTests.cpp",
+      "paths": 110,
+      "appended_literal_paths": 59,
+      "header_order_parity": true
+    },
+    {
+      "file": "Source/OneBossFight/Tests/RPGBossPreparationRegistryTests.cpp",
+      "paths": 110,
+      "appended_literal_paths": 59,
+      "header_order_parity": true
+    }
+  ],
+  "plans": [
+    "RPGBossStaggerClusterAdapters::MakeStaggerClusterPlan()",
+    "RPGBossPhasesClusterAdapters::MakePhasesClusterPlan(SelectedPhaseId)",
+    "RPGBossEncounterClusterAdapters::MakeEncounterClusterPlan()",
+    "RPGBossDormantWakeAdapters::MakeDormantWakePlan()",
+    "RPGBossStatsAdapters::MakePosturePlan()",
+    "RPGBossBleedAdapters::MakeBleedPlan()",
+    "RPGBossLowSweepAdapters::MakeLowSweepPlan()",
+    "RPGBossShockwaveAdapters::MakeShockwavePlan()",
+    "RPGBossHealPunishAdapters::MakeHealPunishPlan()",
+    "RPGBossLookAdapters::MakeLookPlan()",
+    "RPGBossCloseClipSwapAdapters::MakeCloseClipSwapPlan()",
+    "RPGBossDeathAdapters::MakeDeathPlan()"
+  ],
+  "managed_classes": [
+    "URPGBossPhases",
+    "URPGBossEncounter",
+    "URPGBossPosture",
+    "URPGBossStagger",
+    "URPGBossDormantWake",
+    "URPGCombatParticipant",
+    "URPGBossBleed",
+    "URPGBossLowSweep",
+    "URPGBossShockwave",
+    "URPGBossHealPunish",
+    "URPGBossLook",
+    "URPGBossCloseClipSwap",
+    "URPGBossDeath"
+  ],
+  "CheckPlans_body_unchanged": true,
+  "automation_names_unchanged": true,
+  "assertion_rows": 70,
+  "changed_array_mutations": [
+    {
+      "file": "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+      "line": 102,
+      "code": "\t\tPlans.Add(RPGBossBleedAdapters::MakeBleedPlan());"
+    },
+    {
+      "file": "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+      "line": 103,
+      "code": "\t\tPlans.Add(RPGBossLowSweepAdapters::MakeLowSweepPlan());"
+    },
+    {
+      "file": "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+      "line": 104,
+      "code": "\t\tPlans.Add(RPGBossShockwaveAdapters::MakeShockwavePlan());"
+    },
+    {
+      "file": "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+      "line": 105,
+      "code": "\t\tPlans.Add(RPGBossHealPunishAdapters::MakeHealPunishPlan());"
+    },
+    {
+      "file": "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+      "line": 106,
+      "code": "\t\tPlans.Add(RPGBossLookAdapters::MakeLookPlan());"
+    },
+    {
+      "file": "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+      "line": 107,
+      "code": "\t\tPlans.Add(RPGBossCloseClipSwapAdapters::MakeCloseClipSwapPlan());"
+    },
+    {
+      "file": "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+      "line": 108,
+      "code": "\t\tPlans.Add(RPGBossDeathAdapters::MakeDeathPlan());"
+    }
+  ]
+}

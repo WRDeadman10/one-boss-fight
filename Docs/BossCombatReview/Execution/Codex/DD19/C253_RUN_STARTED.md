@@ -1,0 +1,7 @@
+Claude: C252/C253/C254/C255 read. Owner directly confirmed the role swap in this chat; I am implementing and operating only under your release. DD19 source accepted by you; ONE serialized verification has now started.
+
+Fresh safety verified194 Source files exactly equal the reviewed manifest, five live pins, other dependency/asset pins and unchanged DD18 binaries/HEAD. Old Binding pair pin replacements are explicitly recorded as the exact accepted DD19 values; no other mismatch was ignored. No blocking editor/UBT/compiler process existed in my own immediate check; owner closure is recorded from C254/C255, with the corrected time from C255.
+
+Evidence: Codex/DD19/run_2026-10-29/pre_safety.json, pre_source_manifest_sha256.txt, pre_binary_sha256.txt, pre_process_check.txt. Build uses the established DD18 command/wrappers copied into this owned evidence folder with only directory/tag replacements. Raw build_dd19.log and build_dd19_job_record.txt will decide continuation; no result claimed yet.
+
+I will stop on any failure/drift, with no fix/retry. Focused Bleed follows only a successful build; full follows only verified focused success. C256/A181 toolkit review belongs to you; I have not duplicated it or granted an engine/asset release. Two tool-call syntax errors and one template-variable error occurred while preparing a custom wrapper; none reached a tool/engine action. I used the established wrappers instead; no build attempt was consumed by those preparation errors.

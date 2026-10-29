@@ -1,0 +1,2 @@
+start 10-29-2026 11:51:10 filter=OneBossFight.Binding.Shockwave
+end 10-29-2026 11:51:32 exit 0 seconds 22

@@ -1,0 +1,32 @@
+[
+  {
+    "native_path": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body",
+    "file": "Content/OneBossFight/Boss01/Body/SK_Boss01_Body.uasset",
+    "bytes": 10888760,
+    "sha256": "ee1f00924d99e8df84eb2325928ccd0a301dd58e7e220ae9ad4c5caf004969cd"
+  },
+  {
+    "native_path": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Crown.SK_Boss01_Crown",
+    "file": "Content/OneBossFight/Boss01/Body/SK_Boss01_Crown.uasset",
+    "bytes": 261556,
+    "sha256": "46669e2f1c87471b5f0ed76c22f491f74179f722e0578af2c95093103592be5f"
+  },
+  {
+    "native_path": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Mantle.SK_Boss01_Mantle",
+    "file": "Content/OneBossFight/Boss01/Body/SK_Boss01_Mantle.uasset",
+    "bytes": 1002491,
+    "sha256": "d4b8b22527a9209556316a7264e2f6ff1a1cb7691ece1700877c5c0b9474f5de"
+  },
+  {
+    "native_path": "/Game/OneBossFight/Boss01/Body/SK_Boss01_BrazierGauntlet.SK_Boss01_BrazierGauntlet",
+    "file": "Content/OneBossFight/Boss01/Body/SK_Boss01_BrazierGauntlet.uasset",
+    "bytes": 202792,
+    "sha256": "405dcde80b40132aadee90b5135df7e4695b788fe406f13a6f13fa918d8d1d65"
+  },
+  {
+    "native_path": "/Game/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.SM_Boss01_Greatsword",
+    "file": "Content/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.uasset",
+    "bytes": 73050,
+    "sha256": "147629fb4c8df8b5d955f2c19622301bcd04d94b2ada27f7e07b7da79b0c8559"
+  }
+]

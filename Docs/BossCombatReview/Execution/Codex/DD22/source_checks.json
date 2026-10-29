@@ -1,0 +1,58 @@
+{
+  "scope": "Source-only integrity, NOT compilation or Unreal tests",
+  "baseline": 200,
+  "current": 203,
+  "old_files_unchanged": 198,
+  "delta": {
+    "added": [
+      "Source/OneBossFight/Player/RPGBossHealPunishAdapters.cpp",
+      "Source/OneBossFight/Player/RPGBossHealPunishAdapters.h",
+      "Source/OneBossFight/Tests/RPGBossHealPunishAdaptersTests.cpp"
+    ],
+    "removed": [],
+    "changed": [
+      "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "Source/OneBossFight/Player/RPGEncounterBinding.h"
+    ]
+  },
+  "files": [
+    {
+      "path": "Source/OneBossFight/Player/RPGBossHealPunishAdapters.h",
+      "sha256": "4ac6761dbde1495955d893e30a6055d2675642dc48ea934247710fa4a1a177fa",
+      "bytes": 3545,
+      "lines": 53
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossHealPunishAdapters.cpp",
+      "sha256": "e0742bdf27f16a78a5e9f42627342db427a6ff577d8af94efbe5183c9f91e06c",
+      "bytes": 7300,
+      "lines": 210
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "sha256": "ab123347085cbd0426af497ccacbbb3ba0b0d11164f58c71e8a83259e23fcee9",
+      "bytes": 21507,
+      "lines": 409
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "sha256": "84de89a8906aa1dcf363d072eb11891ed73b9739097e180e2ff45146fa5bdab7",
+      "bytes": 18121,
+      "lines": 389
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossHealPunishAdaptersTests.cpp",
+      "sha256": "f33888eee4540ef9002c65a0839a14102c8562a9f962d08d5fed904c39a07454",
+      "bytes": 37924,
+      "lines": 484
+    }
+  ],
+  "test_names": [
+    "OneBossFight.Binding.HealPunish.Assign",
+    "OneBossFight.Binding.HealPunish.Validation",
+    "OneBossFight.Binding.HealPunish.Isolation",
+    "OneBossFight.Binding.HealPunish.Rejections",
+    "OneBossFight.Binding.HealPunish.Compile",
+    "OneBossFight.Binding.HealPunish.Authoring"
+  ]
+}

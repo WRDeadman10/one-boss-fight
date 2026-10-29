@@ -1,0 +1,145 @@
+diff --git a/Docs/BossCombatReview/Execution/Claude/DD10/correction_X256/preimage/RPGBossStaggerClusterAdaptersTests.cpp.preimage_025245bc b/Source/OneBossFight/Tests/RPGBossStaggerClusterAdaptersTests.cpp
+index 79edc34..0abc303 100644
+--- a/Docs/BossCombatReview/Execution/Claude/DD10/correction_X256/preimage/RPGBossStaggerClusterAdaptersTests.cpp.preimage_025245bc
++++ b/Source/OneBossFight/Tests/RPGBossStaggerClusterAdaptersTests.cpp
+@@ -383,8 +383,6 @@ bool FRPGStaggerClusterAssignTest::RunTest(const FString& Parameters)
+ 	{
+ 		return false;
+ 	}
+-	const int32 OwnedComponentsBefore = Owner->GetComponents().Num();
+-
+ 	TStrongObjectPtr<URPGBossStagger> Stagger = NewStagger(Owner, TEXT("StaggerComp"));
+ 	if (!TestNotNull(TEXT("stagger component"), Stagger.Get()))
+ 	{
+@@ -393,6 +391,33 @@ bool FRPGStaggerClusterAssignTest::RunTest(const FString& Parameters)
+ 	ArmDistinctStart(*Stagger);
+ 	const FStaggerClusterState Before(*Stagger);
+ 
++	// Measurement boundary: NewStagger already added the stagger component to its outer actor (a component created with the actor as outer joins the actor's component set when it is initialized), so the
++	// owner's component set is captured only AFTER all setup and immediately BEFORE each configure call; identity (not only the count) is compared, so only what Configure itself does can be attributed to it.
++	const auto CaptureOwned = [Owner]()
++	{
++		TSet<const UActorComponent*> OwnedSet;
++		for (const UActorComponent* OwnedComponent : Owner->GetComponents())
++		{
++			OwnedSet.Add(OwnedComponent);
++		}
++		return OwnedSet;
++	};
++	const auto SameOwned = [](const TSet<const UActorComponent*>& Left, const TSet<const UActorComponent*>& Right)
++	{
++		if (Left.Num() != Right.Num())
++		{
++			return false;
++		}
++		for (const UActorComponent* LeftComponent : Left)
++		{
++			if (!Right.Contains(LeftComponent))
++			{
++				return false;
++			}
++		}
++		return true;
++	};
++
+ 	// Plan identity
+ 	const FRPGComponentPlan Plan = RPGBossStaggerClusterAdapters::MakeStaggerClusterPlan();
+ 	TestTrue(TEXT("plan target class is URPGBossStagger"), Plan.Class == URPGBossStagger::StaticClass());
+@@ -436,7 +461,10 @@ bool FRPGStaggerClusterAssignTest::RunTest(const FString& Parameters)
+ 	Config.Fields.Add(MakeField(RPGBossStaggerClusterAdapters::FieldHitStunAbilityClassName, TEXT("MisleadingClass_9999")));
+ 	Config.Fields.Add(MakeField(RPGBossStaggerClusterAdapters::FieldImmunityEffect, TEXT("/SyntheticMount/Misleading.Misleading_C")));
+ 	FString Error = TEXT("stale diagnostic");
++	const TSet<const UActorComponent*> OwnedBeforeA = CaptureOwned();
++	TestTrue(TEXT("fixture: the stagger component is already in the owner's component set before the callback (the measurement starts after the fixture)"), OwnedBeforeA.Contains(Stagger.Get()));
+ 	TestTrue(TEXT("callback succeeds"), Plan.Configure(*Stagger, Config, Error));
++	TestTrue(TEXT("callback A created no component: the owner's component set (identity and count) is unchanged by it"), SameOwned(OwnedBeforeA, CaptureOwned()));
+ 	TestTrue(TEXT("diagnostic cleared on success"), Error.IsEmpty());
+ 
+ 	const FStaggerClusterState After(*Stagger);
+@@ -503,11 +531,13 @@ bool FRPGStaggerClusterAssignTest::RunTest(const FString& Parameters)
+ 	TestFalse(TEXT("component stays unregistered"), Stagger->IsRegistered());
+ 	TestFalse(TEXT("component did not begin play"), Stagger->HasBegunPlay());
+ 	TestFalse(TEXT("owner did not begin play"), Owner->HasActorBegunPlay());
+-	TestTrue(TEXT("owner gained no component"), Owner->GetComponents().Num() == OwnedComponentsBefore);
++	// (The no-create assertion is made per callback, right after each configure call: see callback A above and config B below.)
+ 
+ 	// Config B directly: clip mode (bUseClips=true, bUseRiposteClips=true), montages null as authored, non-default policy
+ 	const FRPGParticipantConfig B = ConfigB();
++	const TSet<const UActorComponent*> OwnedBeforeB = CaptureOwned();
+ 	TestTrue(TEXT("config B succeeds"), RPGBossStaggerClusterAdapters::ConfigureStaggerCluster(*Stagger, B, Error) && Error.IsEmpty());
++	TestTrue(TEXT("direct config B created no component: the owner's component set (identity and count) is unchanged by it"), SameOwned(OwnedBeforeB, CaptureOwned()));
+ 	const FStaggerClusterState AfterB(*Stagger);
+ 	TestTrue(TEXT("B: StaggerSeconds"), AfterB.StaggerSeconds == 3.0f);
+ 	TestTrue(TEXT("B: bHoldPostureAtZero"), AfterB.bHoldPostureAtZero);
+@@ -1293,13 +1323,16 @@ bool FRPGStaggerClusterOracleTest::RunTest(const FString& Parameters)
+ 		return false;
+ 	}
+ 
++	// The authoring defaults of both records (the native values) are valid and equal to what the older adapter writes for the same policy defaults.
++	const auto DefaultsConfig = []() { FRPGParticipantConfig DefaultRecords; return DefaultRecords; };
+ 	const struct FCase
+ 	{
+ 		const TCHAR* Name;
+ 		FRPGParticipantConfig Config;
+ 	} Cases[] = {
+ 		{TEXT("ConfigA"), ConfigA()},
+-		{TEXT("ConfigB"), ConfigB()}
++		{TEXT("ConfigB"), ConfigB()},
++		{TEXT("authoring defaults (native values)"), DefaultsConfig()}
+ 	};
+ 
+ 	for (const FCase& Case : Cases)
+@@ -1346,6 +1379,53 @@ bool FRPGStaggerClusterOracleTest::RunTest(const FString& Parameters)
+ 			ClusterState.RuntimeEquals(OracleState) && ClusterState.RuntimeEquals(Start));
+ 	}
+ 
++	// No load: assigning the REAL native default asset paths loads no object and creates no package. The witness is presence before and after (ResolveObject, FindPackage): an asset that is already in memory
++	// proves nothing for its own path (stated limitation), but no path may gain an object or a package from the assignment. Nothing is loaded, unloaded or registered by this test.
++	{
++		AActor* WitnessOwner = Scope.SpawnOwner();
++		if (!TestNotNull(TEXT("no-load witness: owner actor"), WitnessOwner))
++		{
++			return false;
++		}
++		TStrongObjectPtr<URPGBossStagger> WitnessComp = NewStagger(WitnessOwner, TEXT("WitnessComp"));
++		if (!TestTrue(TEXT("no-load witness: component created"), WitnessComp.IsValid()))
++		{
++			return false;
++		}
++		ArmDistinctStart(*WitnessComp);
++		const FRPGParticipantConfig WitnessConfig = DefaultsConfig();
++		const FRPGStaggerProfileConfig& NativeProfile = WitnessConfig.StaggerProfile;
++		const FSoftObjectPath WitnessPaths[] = {
++			NativeProfile.FallMontage.ToSoftObjectPath(), NativeProfile.GetUpMontage.ToSoftObjectPath(), NativeProfile.FallClip.ToSoftObjectPath(), NativeProfile.DownClip.ToSoftObjectPath(),
++			NativeProfile.RipostePlayerClip.ToSoftObjectPath(), NativeProfile.RiposteBossClip.ToSoftObjectPath(), NativeProfile.ImmunityEffect.ToSoftObjectPath()};
++		TArray<bool> ObjectPresentBefore;
++		TArray<bool> PackagePresentBefore;
++		bool bAllPathsSet = true;
++		for (const FSoftObjectPath& WitnessPath : WitnessPaths)
++		{
++			bAllPathsSet = bAllPathsSet && !WitnessPath.IsNull();
++			ObjectPresentBefore.Add(WitnessPath.ResolveObject() != nullptr);
++			PackagePresentBefore.Add(FindPackage(nullptr, *WitnessPath.GetLongPackageName()) != nullptr);
++		}
++		TestTrue(TEXT("no-load witness: the seven native default references are set"), bAllPathsSet);
++		FString WitnessError;
++		TestTrue(TEXT("no-load witness: the native default profile is accepted"), RPGBossStaggerClusterAdapters::ConfigureStaggerCluster(*WitnessComp, WitnessConfig, WitnessError) && WitnessError.IsEmpty());
++		bool bNothingAppeared = true;
++		int32 WitnessIndex = 0;
++		for (const FSoftObjectPath& WitnessPath : WitnessPaths)
++		{
++			bNothingAppeared = bNothingAppeared && ((WitnessPath.ResolveObject() != nullptr) == ObjectPresentBefore[WitnessIndex])
++				&& ((FindPackage(nullptr, *WitnessPath.GetLongPackageName()) != nullptr) == PackagePresentBefore[WitnessIndex]);
++			++WitnessIndex;
++		}
++		TestTrue(TEXT("no-load witness: neither an object nor a package of the referenced assets appeared during the assignment"), bNothingAppeared);
++		const FStaggerClusterState WitnessState(*WitnessComp);
++		TestTrue(TEXT("no-load witness: the references were assigned as paths"), WitnessState.FallMontage == NativeProfile.FallMontage.ToSoftObjectPath() && WitnessState.GetUpMontage == NativeProfile.GetUpMontage.ToSoftObjectPath()
++			&& WitnessState.FallClip == NativeProfile.FallClip.ToSoftObjectPath() && WitnessState.DownClip == NativeProfile.DownClip.ToSoftObjectPath()
++			&& WitnessState.RipostePlayerClip == NativeProfile.RipostePlayerClip.ToSoftObjectPath() && WitnessState.RiposteBossClip == NativeProfile.RiposteBossClip.ToSoftObjectPath()
++			&& WitnessState.ImmunityEffect == NativeProfile.ImmunityEffect.ToSoftObjectPath());
++	}
++
+ 	return true;
+ }
+ 

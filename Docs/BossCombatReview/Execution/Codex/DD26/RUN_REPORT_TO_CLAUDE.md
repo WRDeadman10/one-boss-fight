@@ -1,0 +1,63 @@
+# DD26 C291 verification report — independent lead acceptance pending
+
+ONE serialized released sequence: fresh212 Source hashes, nine DD26 pins and frozen DD19-DD25 adapter/Binding/native pins; dependency/candidate/catalog pins and DD25 binaries, HEAD79d55906 all verified. Historical source pins superseded only by exact accepted C291 manifest bytes, explicitly recorded; no other mismatch ignored. Immediate process check found no editor/UBT/compiler. Source stayed frozen throughout.
+
+BUILD exit0/15s; raw SHA256 00ed41599c31963f5886ad9b00ecb78fd45652ce3471564d7cf7fcb41a548bde. UHT actual lines:[]. This incremental15-action build did NOT invoke UHT/reflection; one known compiler-advisory Warning. No forced clean/rebuild or extra build was run to manufacture UHT output.
+
+Focused gates below ran ONE AT A TIME in released order, and each raw gate passed before launching the next. Filters have a trailing dot: Preparation. cannot select PreparationRegistry. Every gate requires exact source-name membership, not only a count. The disjoint union is30 unique names, no duplicate or missed focused name; this is separate from the full171 run, not summed into it.
+
+preflight: discovered[['9', 'OneBossFight.Binding.Preflight.']]; 9/9unique Success; exit0/45s, Warning13/Error0; SHA256 cca9db6964c04deb8d3be355bb8bc254e5902a0d5ee8329e4967c9ff1e4ad06f.
+ - OneBossFight.Binding.Preflight.BatchAndActors
+ - OneBossFight.Binding.Preflight.Clusters
+ - OneBossFight.Binding.Preflight.ConfigAndFields
+ - OneBossFight.Binding.Preflight.Consumers
+ - OneBossFight.Binding.Preflight.Dependencies
+ - OneBossFight.Binding.Preflight.ExpandedSubset
+ - OneBossFight.Binding.Preflight.Independence
+ - OneBossFight.Binding.Preflight.Targets
+ - OneBossFight.Binding.Preflight.Valid
+
+preparation: discovered[['6', 'OneBossFight.Binding.Preparation.']]; 6/6unique Success; exit0/23s, Warning13/Error0; SHA256 7c480a8ce1910a1b4c6aff0001062f7a7c9408951d033cbf7f9d626a4e09b7d5.
+ - OneBossFight.Binding.Preparation.Abort
+ - OneBossFight.Binding.Preparation.Exclusive
+ - OneBossFight.Binding.Preparation.InjectedFaults
+ - OneBossFight.Binding.Preparation.Lifetime
+ - OneBossFight.Binding.Preparation.Success
+ - OneBossFight.Binding.Preparation.WholeBatchRejection
+
+registry: discovered[['3', 'OneBossFight.Binding.PreparationRegistry.']]; 3/3unique Success; exit0/24s, Warning19/Error0; SHA256 8ad2a32a483a45c67b70f33df3628ea4d860aef2a166793b2772aad18b8af5ce.
+ - OneBossFight.Binding.PreparationRegistry.AdmissionAndConflicts
+ - OneBossFight.Binding.PreparationRegistry.Lifetime
+ - OneBossFight.Binding.PreparationRegistry.ReleaseAndTokens
+
+production_preflight: discovered[['2', 'OneBossFight.Binding.ProductionPreflight.']]; 2/2unique Success; exit0/22s, Warning13/Error0; SHA256 3bde95f8afa88779f6cca3ba77888515f7630b848ea6143e49f282a57ab22fc0.
+ - OneBossFight.Binding.ProductionPreflight.DependencyRejections
+ - OneBossFight.Binding.ProductionPreflight.PositiveBatch
+
+production_preparation: discovered[['3', 'OneBossFight.Binding.ProductionPreparation.']]; 3/3unique Success; exit0/22s, Warning13/Error0; SHA256 7f2e1db812c5c942e7155c8ec76115308f9d7c6c8b488208123b69e84518c87c.
+ - OneBossFight.Binding.ProductionPreparation.LateRejection
+ - OneBossFight.Binding.ProductionPreparation.NameCollisionCleanup
+ - OneBossFight.Binding.ProductionPreparation.PositiveBatch
+
+world_input: discovered[['3', 'OneBossFight.Binding.WorldInput.']]; 3/3unique Success; exit0/23s, Warning19/Error0; SHA256 58139313a433acc0633073223bec93c9eb612084f3455107ca4744bf8d425e5e.
+ - OneBossFight.Binding.WorldInput.ContentRejections
+ - OneBossFight.Binding.WorldInput.InputRejections
+ - OneBossFight.Binding.WorldInput.PositiveGameInstance
+
+world_preparation: discovered[['4', 'OneBossFight.Binding.WorldPreparation.']]; 4/4unique Success; exit0/23s, Warning19/Error0; SHA256 af09d402f1ae4a2b016ba9b835cc9af77834b8eafd7ca7ee5564d7d8a927ca58.
+ - OneBossFight.Binding.WorldPreparation.LateInvalidAndCollision
+ - OneBossFight.Binding.WorldPreparation.PositiveAndAbort
+ - OneBossFight.Binding.WorldPreparation.Refusals
+ - OneBossFight.Binding.WorldPreparation.SecondPreparation
+
+FULL: discovered[['171', 'OneBossFight']]; 171/171unique Success; exit0/30s; Warning63/Error0; raw SHA256 bbc0be73be7cd4906c9c1f38a1b96cb258122a4785c1f1e624691542f9bdccc0. Exact171 prior DD25 paths retained, NO new automation name, no missing/duplicate/failure, CookCoverage Success. All gates show GIsCriticalError=0, no assertion/fatal/ensure/unsupported failure. Full launched ONLY after all seven focused gates passed.
+
+Warning multiset versus DD25: {"added": {}, "removed": {}, "current_count": 63, "prior_count": 63}. Only frame/timestamp prefix, epoch and sponsor PID normalized. All warnings preserved; embedded TraceServer Error text retains Warning severity.
+
+Final212 Source/frozen pins/dependencies/candidates/catalog/HEAD unchanged; DLL 5b98a5fc8505063b65234d7607e30136b36a6ac34d219d54e92eb8647d2d3303; EXE unchanged 5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65. No engine/build/compiler remains at post capture. Raw logs, commands, jobs/exits/times, complete pre/post manifests/pin checks/binary hashes included.
+
+No failed DD26 attempt, source fix, retry, asset/pack/git/history operation. Historical DD23 attempt1 remains failed/preserved. This proves the existing preflight/unregistered-preparation/cleanup/registry contract on TWELVE plans in transient isolated never-begun fixtures; PreexistingConsumer negative cases register disposable components, not an active prepared bundle. The six independent110path manifests and prefix/suffix/count expectations are now exercised. Fault injection is synthetic, not an organic configure-failure proof.
+
+Does NOT prove active gameplay/startup entrypoint, prepared-component registration or BeginPlay order, legacy suppression in play, authored/serialized/Details definitions, legacy behaviour parity (e.g. first real definition must retain OwnClip death mode), playable boss, runtime mesh/socket/timing fit, duel/networking/PIE gate/package/performance/all83 closure. KI-134 and earlier provenance/residuals remain. No runtime activation order or authoring asset change inferred.
+
+Please independently review/accept or return this exact run. No further engine/Source work is assumed without a scoped lead order.

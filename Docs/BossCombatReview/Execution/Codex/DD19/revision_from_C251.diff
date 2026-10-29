@@ -1,0 +1,56 @@
+--- received_C251/RPGBossBleedAdapters.h
++++ Source/OneBossFight/Player/RPGBossBleedAdapters.h
+@@ -25,7 +25,8 @@
+  *   - HpFraction within [0, 1] (zero is a proc that takes no health, one the whole maximum; the native proc never takes the last point);
+  *   - EffectHeight finite and SIGNED: no height floor is invented (a negative value places the burst below the origin);
+  *   - ProcEffect and ProcSound REQUIRED: a set top-level soft reference that starts with '/', has a package folder and a <package>.<asset> leaf, carries no whitespace, control character or sub-object (':'),
+- *     checked for path STRUCTURE only. Other malformed shapes the engine would not accept (an empty mount such as "//A.B", a leaf with several dots) are not screened here.
++ *     checked for path STRUCTURE only, including engine text-only package and object-name validation. Empty/repeated path segments, invalid package characters and object names with extra dots are refused.
++ *     A mount need not be registered: this is a lexical check, not a mounted-root, asset-registry, existence or class check.
+  * THAT A PATH NAMES AN EXISTING OR COOKED ASSET, THAT IT IS A NIAGARA SYSTEM OR A SOUND, THAT THE BURST IS VISIBLE OR AUDIBLE AND THAT THE NUMBERS FEEL RIGHT ARE UNRESOLVED INTEGRATION CHECKS, not something
+  * a well-formed record proves. Assigning an unwired record approves no tuning and enables nothing.
+  *
+--- received_C251/RPGBossBleedAdapters.cpp
++++ Source/OneBossFight/Player/RPGBossBleedAdapters.cpp
+@@ -3,6 +3,7 @@
+ #include "Player/RPGBossBleedAdapters.h"
+ #include "Components/ActorComponent.h"
+ #include "GameFramework/Actor.h"
++#include "Misc/PackageName.h"
+ #include "Player/RPGBossBleed.h"
+ #include "UObject/SoftObjectPath.h"
+ 
+@@ -81,6 +82,19 @@
+ 			if (LastSlash <= 0)
+ 			{
+ 				return TEXT("it has no package folder");
++			}
++			// Text-only engine checks deliberately do not require a mounted root or
++			// query the asset registry. Synthetic paths remain legal; malformed
++			// package segments or object names must not slip through as defaults.
++			FText Reason;
++			const FString Package = Text.Left(LastSlash + 1) + Leaf.Left(Dot);
++			if (!FPackageName::IsValidTextForLongPackageName(Package, &Reason))
++			{
++				return Reason.ToString();
++			}
++			if (!FName::IsValidXName(Leaf.Mid(Dot + 1), INVALID_OBJECTNAME_CHARACTERS, &Reason))
++			{
++				return Reason.ToString();
+ 			}
+ 			return FString();
+ 		}
+--- received_C251/RPGBossBleedAdaptersTests.cpp
++++ Source/OneBossFight/Tests/RPGBossBleedAdaptersTests.cpp
+@@ -508,6 +508,11 @@
+ 		{TEXT("a sub-object"), MakePath(TEXT("/SyntheticMount/A"), TEXT("NS_X"), TEXT("Sub"))},
+ 		{TEXT("no leading slash"), MakePath(TEXT("Relative/A"), TEXT("NS_X"))},
+ 		{TEXT("no package folder"), MakePath(TEXT("/Root"), TEXT("NS_X"))},
++		{TEXT("an empty mount segment"), MakePath(TEXT("//Bleed/A"), TEXT("NS_X"))},
++		{TEXT("a repeated package separator"), MakePath(TEXT("/SyntheticMount//A"), TEXT("NS_X"))},
++		{TEXT("an extra dot in the object name"), MakePath(TEXT("/SyntheticMount/A"), TEXT("NS.X"))},
++		{TEXT("an invalid object-name character"), MakePath(TEXT("/SyntheticMount/A"), TEXT("NS|X"))},
++		{TEXT("an invalid package character"), MakePath(TEXT("/SyntheticMount/A|B"), TEXT("NS_X"))},
+ 	};
+ 	for (const FMalformed& Case : Malformed)
+ 	{

@@ -1,0 +1,59 @@
+// Copyright One Boss Fight. All Rights Reserved.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Player/RPGBossHydrationPreflight.h"
+
+class ARPGEncounterBinding;
+class UWorld;
+
+/**
+ * World-bound encounter INPUT compiler (DD17 package 01): the first function that produces a FRPGHydrationPreflightInput from a placed encounter and the world's own published content, instead of a caller-built
+ * input. It is an explicitly called native function: nothing in the project calls it (no spawn, startup or level hook), no UCLASS, no process-static state.
+ *
+ * What the caller supplies, all explicit: the expected world, an existing ARPGEncounterBinding placed in that world (its Participants supply the actor, the slot, the explicit target slot and the explicit production
+ * definition of EVERY member, a target-only member included), one selection {Slot, Role, SelectedPhaseId} per participant (exact one-to-one coverage; a boss-core member has an explicit phase id, a target-only member
+ * has none) and the stable manifest hash. The function accepts NO content epoch, NO compiled config, NO component plan and NO callback, and has no legacy fallback, no player0 lookup, no role inference from a slot
+ * name, no first or last phase and no default of any kind.
+ *
+ * What it does, on the game thread only (refused before any UObject is touched otherwise; in that one case the output parameter is NOT touched either, because releasing its leases off the game thread would itself
+ * be unsafe). First the output is cleared at once. Then the explicit inputs are validated (world, binding in that world and not being destroyed, begun or beginning play, a valid encounter GUID, participants, selection
+ * coverage and phase semantics, every actor valid, in that world, not begun, unique, every explicit target present, not the member itself and in the batch, every definition present with schema 1 and ids). Only
+ * after that is the content acquired, and ONLY through RPGCombatRegistry::ForWorld(ExpectedWorld): the epoch the world's own UGameInstance catalog subsystem published (the game instance and that subsystem are looked up
+ * a second time only to hold their identities for the drift checks and to require that they report the same epoch pointer). A world without a game instance, without that
+ * subsystem or without a published epoch fails; there is no Legacy() fallback, injected epoch, replacement subsystem or process-cvar switch. Whatever mode that game instance latched stays its published authority
+ * and is never required to be data. The exact epoch lease, the world, the game instance (valid) and its subsystem (valid) are held, and the binding is held through a retained weak reference; one shared checkpoint rechecks all of it before and after
+ * EVERY production compile and at publication: the content identities (WorldInput.ContentDrift), then the binding resolves to the same object, is valid, not being destroyed, in the expected world, not begun or
+ * beginning play, has the same GUID and the same participant snapshot, and every member actor and definition is still valid, in the world and not begun (WorldInput.BindingDrift). The member checks use the very
+ * predicates of the initial validation. A change is reported as drift and nothing is published.
+ *
+ * Then the production compiler RPGCombatHydration::CompileParticipant runs for every definition against that acquired epoch and the explicit manifest hash, a production config (bSyntheticFixture false, holding the very
+ * epoch lease) is required, and the whole candidate input is built locally and handed to the accepted RPGBossHydrationPreflight::CompilePreflight for whole-batch validation. The output is published ONLY if every
+ * step succeeded; no partial usable output exists. Errors name the layer: WorldInput.* for the input itself, WorldInput.DefinitionRejected for the production compiler (the nested diagnostic is carried unchanged),
+ * WorldInput.PreflightRejected for the preflight (each nested diagnostic carried unchanged).
+ *
+ * An important distinction: the preflight is a load-free kernel; the PRODUCTION DEFINITION COMPILE IS NOT: CompileParticipant loads every skeleton and animation its definition declares (synchronously, on the game thread).
+ *
+ * What it does not do: no Configure callback runs, no managed consumer is created, nothing is registered, PrepareBatch is not called, BindEncounter is not called, the combat context is not touched, no reservation or
+ * Ready state exists, no legacy component is suppressed, no startup or level hook is installed, no target or reset wiring changes and no asset is written. The manifest hash and the manifest rows inside the definitions
+ * are still caller-supplied membership data: there is no derived manifest provenance and no deep-immutable authoring claim, and the old low-level APIs stay callable (this does not secure them).
+ */
+namespace RPGBossWorldInputCompiler
+{
+	/** One explicit selection: the role of the slot and, for a boss-core member only, the selected phase id. */
+	struct FSelection
+	{
+		FName Slot;
+		ERPGPreflightRole Role = ERPGPreflightRole::None;
+		/** Required for BossCore, must be None for TargetOnly. Never inferred. */
+		FName SelectedPhaseId;
+	};
+
+	/**
+	 * Compiles the preflight input of the placed encounter in the expected world (see above). Game thread only. On success OutInput is the complete validated input (world, encounter GUID, the very epoch lease,
+	 * one request per participant in the binding's order). On ANY failure on the game thread OutInput is cleared and the returned errors say why; an OFF-thread refusal (WorldInput.NotGameThread)
+	 * leaves OutInput untouched, because releasing its leases off the game thread would be unsafe. The result is only an input: not a plan, not a preparation, not a reservation, not Ready.
+	 */
+	ONEBOSSFIGHT_API FRPGHydrationResult CompileWorldInput(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding, const TArray<FSelection>& Selections, const FString& ManifestHash, FRPGHydrationPreflightInput& OutInput);
+}

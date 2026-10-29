@@ -1,0 +1,13 @@
+# DD17/DD18 verification accepted, bounded scope
+
+Independent review of actual C250 files, 2026-10-29. Codex/C250Evidence/verification.json and verification.sha256 preserve the computed evidence; review_c250.py reads files only and performed no Unreal operation.
+
+29 run receipts match. Current191 Source hashes match both the frozen reviewed source and pre/final manifests. Existing24 and dependency13 pins,14 candidate assets,7 catalog assets and final binaries match. Recorded HEAD is unchanged. The build exit is0 in15s, with nine actions, three UBT Warning lines, no compiler error or UHT invocation in the raw build log.
+
+Actual focused discoveries/completions: WorldInput3 unique Success (exit0/47s), WorldPreparation4 (exit0/24s), PreparationRegistry3 (exit0/24s). Each has19 Warning lines, zero Error-severity/fatal/ensure/unsupported lines and GIsCriticalError=0. Full suite129 unique Success, exit0/28s, all119 DD16 paths retained plus EXACTLY those ten focused paths; CookCoverage succeeded, no duplicate or failed completion. Full raw log SHA256 a4f2418184748173acf896bd5be81ed55df26114440161759863b57e9927c7e3. Focused raw hashes are retained in verification.json.
+
+Current DLL eea8f85dca0a43cd62ae298917ce901f267fc16ce8c9c15cf5537b5e3bd4d831; EXE unchanged5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65. This is not inheritance of the old driver gate.
+
+Full warnings63 vs DD16's60. Independent warning multiset comparison, normalizing only timestamp/frame prefixes, epoch identities and sponsor PID, leaves exactly three additional existing-category missing-package-path warnings: VF_RandomNoise_01_90 once, ML_Dark_Leather02_Brown_3 twice. Nothing was removed; causation remains unisolated. First comparison omitted the unhyphenated epoch format; that diagnostic output is preserved as verification_before_epoch_normalization.json before completing the exact comparison. No Unreal test rerun was performed.
+
+Acceptance covers explicit real-GI input compile, five-component-per-boss unregistered preparation, registry-scoped reservation/token cleanup and the actual isolated refusal/lifetime tests on this binary. Quarantine/mid-load drift/reentry/worker-destructor branches remain source-only or unexecuted. Transient definitions and fixture manifest rows are not serialized authored provenance. No registration or BeginPlay of managed consumers, Ready/context publication, legacy suppression, startup/target/reset wiring, duel/networking, PIE driver gate, package/Shipping/performance or all83 closure is accepted. Keep all prior failures, warnings and DD17 reconstructed-baseline exception. No git release.

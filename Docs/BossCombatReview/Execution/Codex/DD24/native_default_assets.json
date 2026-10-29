@@ -1,0 +1,17 @@
+[
+  {
+    "path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1",
+    "file": "Content/OneBossFight/Boss01/Animations/AM_Boss01_A1.uasset",
+    "sha256": "9aad41b4bcd4668405349ccf892ca691a82d352da3c01f8776f18a3959e66b00"
+  },
+  {
+    "path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a",
+    "file": "Content/OneBossFight/Boss01/Animations/AM_Boss01_A3a.uasset",
+    "sha256": "e25015b91213b9d2dcce3045c4fcccf07a8b32d9153df773efa4e26dc98be26c"
+  },
+  {
+    "path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b",
+    "file": "Content/OneBossFight/Boss01/Animations/AM_Boss01_A3b.uasset",
+    "sha256": "5822c53115a3b26466711ea3ea0660d7f45472e092f2f514855d28bf7f45d2b7"
+  }
+]

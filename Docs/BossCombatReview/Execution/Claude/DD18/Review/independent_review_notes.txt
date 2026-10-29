@@ -1,0 +1,21 @@
+DD18 independent read-only reviews (supplemental, performed by two read-only sub-agents; NOT an acceptance; nothing was built or run).
+Subjects: the six new files in the state before review (kept as *.before_independent_review in this folder; the edit deltas are review_edit_delta_*.diff).
+Reviewer 1 (production source: RPGBossWorldPreparation.h/.cpp, RPGBossPreparationRegistry.h/.cpp): no definite compile error; seven runtime/spec findings. Reviewer 2 (the two test files): no compile error and no expectation contradicting the production strings or outcomes; six findings.
+
+SOURCE findings and what was done:
+1. A cleanup that leaves components in place during admission (facade drift cleanup, registry drift path) published nothing and quarantined nothing (spec B: quarantine). FIXED: the registry publishes a QUARANTINED reservation (no artifact, the GUID and the actors stay reserved, diagnostics, a serial) when the drift cleanup leaves components in place and when the facade reports WorldPrep/Preparation.ContractViolation; the facade itself reserves nothing and says so. Not executable in a test (needs a registered or begun component): source-checked only.
+2. The header said every operation is game-thread only but reads were not guarded. FIXED: the read accessors and IsHeld return neutral values (0, empty, not held, closed) off the game thread; header text says so.
+3. A token of a dead registry destroyed off-thread hit a spurious ensure. FIXED: silent return when the registry state is gone.
+4. Move-assigning onto a held token off-thread dropped its reservation unflagged. FIXED: the same ensure as the destructor.
+5. Stale-token handling was inconsistent between Registry::Release and Token::Release. FIXED: one rule: Released, Quarantined and Stale consume (clear) the token, Refused and WrongRegistry leave it; header and report comments aligned.
+6. Failure classification: Contains("ContractViolation") on free text was fragile; WorldGone as InvalidInput versus Drift. FIXED: specific token prefixes; WorldGone stays InvalidInput on purpose (documented in the enum: it is deterministic for a registry bound to that world, whereas "does the dead world still resolve" is not).
+7. An unclean abort at registry destruction is only logged. DOCUMENTED in the header.
+TEST findings and what was done:
+1. A cross-registry check was vacuous (the token was cleared before it was given to the new registry). FIXED: the surviving token (registry id and serial intact) is given to a NEW registry first: WrongRegistry and unchanged; only then released for the Stale no-op.
+2. Registry destruction with several live artifacts was not exercised. FIXED: two encounters are reserved in one registry that dies first; both tokens survive; both are cleaned once and invalid.
+3. Misleading labels (a "held token" that the lambda had already released; "ONE error" not asserted). FIXED: the label and an exact error count in ExpectRefused.
+4. Actors-destroyed-first and world-first assertions could be stricter. FIXED: owners destroyed first = ten already gone, none destroyed; world first = destroyed + already gone == 10 (DD15's assertion); no violation in both.
+5. Spec gaps: InvalidInput on a live registry, cross-role overlaps, facade refusal paths. FIXED: no-binding and bad-manifest-hash cases, a target that is a reserved boss and a boss that is a reserved target, and a new WorldPreparation.Refusals test (no world, no binding, bad hash, missing selection, off-thread, control). Still source-only: quarantine, Drift, re-entry, Reservation.Closed.
+6. A half-built set stayed in the fixture list when a setup step failed (failure path only). FIXED: popped on every failure return.
+I also found (by my own re-read after the edits) that the bad-hash case initially sent a valid hash because the helper hard-coded it, and that the Lifetime set H was added after the start capture: both fixed before the final hashes.
+Verified fine by the reviewers: incomplete-type pimpl members, friend access including the dev-only ForgeForTest, move-only returns, the aggregate initialisation, the forged-token cases (none is a perfect duplicate of a live token), the name-collision pattern identical to the passing DD16 test, stale-weak-pointer ordering, GC assumptions as in DD16, the off-thread cases, every error string against the production strings.

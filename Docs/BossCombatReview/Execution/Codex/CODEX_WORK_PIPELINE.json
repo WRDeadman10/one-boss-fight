@@ -1,0 +1,235 @@
+{
+  "scope": "Codex ongoing work lane; input_cards are delivery/schema/evidence prerequisites, not automatic execution",
+  "review_interrupts_all_cards": true,
+  "implementation_cards": 43,
+  "codex_cards": 16,
+  "total_team_cards": 59,
+  "cards": [
+    {
+      "id": "XW00",
+      "owner": "Codex",
+      "product": "Immediate actual source/evidence review decisions",
+      "input_cards": [
+        "C00",
+        "C01",
+        "A00"
+      ],
+      "status": "ACTIVE",
+      "priority": 0,
+      "allowed_writes": "Owned Execution controls/new docs/offline helpers/staged drafts only",
+      "engine_execution_released": false,
+      "git_writes_released": false,
+      "auto_acceptance": false
+    },
+    {
+      "id": "XW01",
+      "owner": "Codex",
+      "product": "Native authoring contract and source schema",
+      "input_cards": [
+        "A00"
+      ],
+      "status": "BASELINE_DELIVERED",
+      "priority": 1,
+      "allowed_writes": "Owned Execution controls/new docs/offline helpers/staged drafts only",
+      "engine_execution_released": false,
+      "git_writes_released": false,
+      "auto_acceptance": false
+    },
+    {
+      "id": "XW02",
+      "owner": "Codex",
+      "product": "Read-only receipt/log/job evidence verifier",
+      "input_cards": [],
+      "status": "BASELINE_DELIVERED",
+      "priority": 1,
+      "allowed_writes": "Owned Execution controls/new docs/offline helpers/staged drafts only",
+      "engine_execution_released": false,
+      "git_writes_released": false,
+      "auto_acceptance": false
+    },
+    {
+      "id": "XW03",
+      "owner": "Codex",
+      "product": "Reservation/token/cleanup independent cases",
+      "input_cards": [
+        "C01"
+      ],
+      "status": "QUEUED",
+      "priority": 1,
+      "allowed_writes": "Owned Execution controls/new docs/offline helpers/staged drafts only",
+      "engine_execution_released": false,
+      "git_writes_released": false,
+      "auto_acceptance": false
+    },
+    {
+      "id": "XW04",
+      "owner": "Codex",
+      "product": "Native-domain authoring regression checks",
+      "input_cards": [
+        "A00"
+      ],
+      "status": "QUEUED",
+      "priority": 1,
+      "allowed_writes": "Owned Execution controls/new docs/offline helpers/staged drafts only",
+      "engine_execution_released": false,
+      "git_writes_released": false,
+      "auto_acceptance": false
+    },
+    {
+      "id": "XW05",
+      "owner": "Codex",
+      "product": "Canonical project dependency pin checker",
+      "input_cards": [
+        "C03"
+      ],
+      "status": "QUEUED",
+      "priority": 2,
+      "allowed_writes": "Owned Execution controls/new docs/offline helpers/staged drafts only",
+      "engine_execution_released": false,
+      "git_writes_released": false,
+      "auto_acceptance": false
+    },
+    {
+      "id": "XW06",
+      "owner": "Codex",
+      "product": "Action identity/failure cleanup fixtures",
+      "input_cards": [
+        "C09",
+        "C10"
+      ],
+      "status": "QUEUED",
+      "priority": 2,
+      "allowed_writes": "Owned Execution controls/new docs/offline helpers/staged drafts only",
+      "engine_execution_released": false,
+      "git_writes_released": false,
+      "auto_acceptance": false
+    },
+    {
+      "id": "XW07",
+      "owner": "Codex",
+      "product": "Timeline FPS/time-scale expected checks",
+      "input_cards": [
+        "C11"
+      ],
+      "status": "QUEUED",
+      "priority": 2,
+      "allowed_writes": "Owned Execution controls/new docs/offline helpers/staged drafts only",
+      "engine_execution_released": false,
+      "git_writes_released": false,
+      "auto_acceptance": false
+    },
+    {
+      "id": "XW08",
+      "owner": "Codex",
+      "product": "Damage/defense/geometry outcomes",
+      "input_cards": [
+        "C12"
+      ],
+      "status": "QUEUED",
+      "priority": 2,
+      "allowed_writes": "Owned Execution controls/new docs/offline helpers/staged drafts only",
+      "engine_execution_released": false,
+      "git_writes_released": false,
+      "auto_acceptance": false
+    },
+    {
+      "id": "XW09",
+      "owner": "Codex",
+      "product": "Context/utility/movement replay checker",
+      "input_cards": [
+        "C14",
+        "C15"
+      ],
+      "status": "QUEUED",
+      "priority": 2,
+      "allowed_writes": "Owned Execution controls/new docs/offline helpers/staged drafts only",
+      "engine_execution_released": false,
+      "git_writes_released": false,
+      "auto_acceptance": false
+    },
+    {
+      "id": "XW10",
+      "owner": "Codex",
+      "product": "Server/client authority evidence checker",
+      "input_cards": [
+        "C05",
+        "C09",
+        "C17"
+      ],
+      "status": "QUEUED",
+      "priority": 2,
+      "allowed_writes": "Owned Execution controls/new docs/offline helpers/staged drafts only",
+      "engine_execution_released": false,
+      "git_writes_released": false,
+      "auto_acceptance": false
+    },
+    {
+      "id": "XW11",
+      "owner": "Codex",
+      "product": "Performance provenance/importer tests",
+      "input_cards": [
+        "C19"
+      ],
+      "status": "QUEUED",
+      "priority": 2,
+      "allowed_writes": "Owned Execution controls/new docs/offline helpers/staged drafts only",
+      "engine_execution_released": false,
+      "git_writes_released": false,
+      "auto_acceptance": false
+    },
+    {
+      "id": "XW12",
+      "owner": "Codex",
+      "product": "83-row evidence closure candidate ledger",
+      "input_cards": [
+        "C19"
+      ],
+      "status": "QUEUED",
+      "priority": 2,
+      "allowed_writes": "Owned Execution controls/new docs/offline helpers/staged drafts only",
+      "engine_execution_released": false,
+      "git_writes_released": false,
+      "auto_acceptance": false
+    },
+    {
+      "id": "XW13",
+      "owner": "Codex",
+      "product": "Current-binary gate/cook/Shipping reconciliation",
+      "input_cards": [
+        "C19"
+      ],
+      "status": "QUEUED",
+      "priority": 2,
+      "allowed_writes": "Owned Execution controls/new docs/offline helpers/staged drafts only",
+      "engine_execution_released": false,
+      "git_writes_released": false,
+      "auto_acceptance": false
+    },
+    {
+      "id": "XW14",
+      "owner": "Codex",
+      "product": "Exact stable git-batch proposal without git writes",
+      "input_cards": [
+        "C20"
+      ],
+      "status": "QUEUED",
+      "priority": 2,
+      "allowed_writes": "Owned Execution controls/new docs/offline helpers/staged drafts only",
+      "engine_execution_released": false,
+      "git_writes_released": false,
+      "auto_acceptance": false
+    },
+    {
+      "id": "XW15",
+      "owner": "Codex",
+      "product": "Evidence-based owner milestone/artifact view",
+      "input_cards": [],
+      "status": "ACTIVE_ON_CHANGE",
+      "priority": 3,
+      "allowed_writes": "Owned Execution controls/new docs/offline helpers/staged drafts only",
+      "engine_execution_released": false,
+      "git_writes_released": false,
+      "auto_acceptance": false
+    }
+  ]
+}

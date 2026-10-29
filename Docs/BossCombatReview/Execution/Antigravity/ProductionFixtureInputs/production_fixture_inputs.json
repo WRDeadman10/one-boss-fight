@@ -1,0 +1,855 @@
+{
+  "scope": "OFFLINE_INPUT_PACKET_NOT_RUNTIME_PROOF",
+  "description": "Concrete offline production-fixture input packet for future positive production batch and animation-dependency tests. Prepared under AG-CONTENT-01 (X-258) and corrected under X-260.",
+  "notes": [
+    "No Data Asset, Level, or Encounter Binding was created, modified, or activated.",
+    "Zero engine, build, or automation processes were executed.",
+    "On-disk file presence and static cook configuration do NOT prove runtime class compatibility, skeleton hierarchy alignment, root motion behavior, gameplay tag registration, or package cookability.",
+    "Candidate assignments are drawn from documented pack mannequin and Ember Warden setup; retired Greystone and Sevarog assets are excluded.",
+    "Source dependencies (RPGEncounterBinding.h/.cpp) represent the observed snapshot while concurrently evolving under DD11 implementation (X-259). This packet makes no claim of frozen DD10 acceptance or source immutability."
+  ],
+  "dependency_pins_and_evidence": {
+    "RPGEncounterBinding.h": {
+      "rel_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "sha256": "ce0a7da73e833a22aef8ad69e3ed42984b39b04131997d78f055f4a4070d9c92",
+      "size_bytes": 17193
+    },
+    "RPGEncounterBinding.cpp": {
+      "rel_path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "sha256": "c7255051e5f6be46db5b5caa0351cf45e50c3c07c4c0a8085fd3d71b633df828",
+      "size_bytes": 17034
+    },
+    "RPGBossPhases.h": {
+      "rel_path": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+      "size_bytes": 8607
+    },
+    "RPGBossPhases.cpp": {
+      "rel_path": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+      "sha256": "c43615412e1f345d6ed75cc6d6a6b0d9ece6acaaac612e545b42cc24087f7a06",
+      "size_bytes": 21965
+    },
+    "RPGBossStagger.h": {
+      "rel_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+      "size_bytes": 17803
+    },
+    "RPGBossStagger.cpp": {
+      "rel_path": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "sha256": "c711d766b4fecb6999c638cf5d8720ca422ba758223f941ea437ebac5b474c98",
+      "size_bytes": 36358
+    },
+    "RPGBossLook.h": {
+      "rel_path": "Source/OneBossFight/Player/RPGBossLook.h",
+      "sha256": "a9176a475a77c24f6c521e4ad251e9b050955ad05d0925483c6468831c7d6a97",
+      "size_bytes": 4041
+    },
+    "RPGBossLook.cpp": {
+      "rel_path": "Source/OneBossFight/Player/RPGBossLook.cpp",
+      "sha256": "eb02ea8b1abe7ebc00039f3b5d265826064c6fe02d45e429ff02dc266ea6aa21",
+      "size_bytes": 7561
+    },
+    "DefaultGame.ini": {
+      "rel_path": "Config/DefaultGame.ini",
+      "sha256": "9827ff8e632354cb7d3013955f1c1891ca16eac037abf8cd64369e5aa8886be3",
+      "size_bytes": 3366
+    },
+    "REPORT_08.md": {
+      "rel_path": "Documentation/Archive/AG/REPORT_08.md",
+      "sha256": "71742a2ba6b3effdcce8cfb9bfe1acd70ae4d7023d5d59fe4def26240f3fdde9",
+      "size_bytes": 16785
+    },
+    "REPORT_12.md": {
+      "rel_path": "Documentation/Archive/AG/REPORT_12.md",
+      "sha256": "cadbecfa63c27117944ad9f1a0b7a955845096506aa4005d1a33f57271c913a7",
+      "size_bytes": 27859
+    },
+    "REPORT_13.md": {
+      "rel_path": "Documentation/AG/REPORT_13.md",
+      "sha256": "10d9b33895c227d141912cd9ef3807d4c1713a3a889c98058d346fc5f7a2464f",
+      "size_bytes": 14977
+    },
+    "set_riposte_root_motion.py": {
+      "rel_path": "Scripts/Editor/set_riposte_root_motion.py",
+      "sha256": "0e6be54f61e178e173217519136964362027f0e5bd0e1fb7356164a1dcb7cd45",
+      "size_bytes": 1044
+    }
+  },
+  "inputs": [
+    {
+      "id": "PhaseRoarClip",
+      "category": "DD9_PhaseAsset",
+      "role": "boss",
+      "soft_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar",
+      "package_file_rel": "Content/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.uasset",
+      "expected_class": "UAnimSequence",
+      "rule": "Primary phase-transition clip played when bUseRoarClip is true (default). Fallback is TransitionMontage.",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 99,
+        "struct": "FRPGPhaseDependencyConfig",
+        "member": "RoarClip",
+        "note": "Binding is concurrently evolving under DD11 (observed snapshot sha256: ce0a7da73e833a22aef8ad69e3ed42984b39b04131997d78f055f4a4070d9c92)"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "header_line": 42,
+        "cpp": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+        "cpp_line": 56
+      },
+      "supporting_evidence": [
+        "Documentation/Archive/AG/REPORT_12.md (cadbecfa63c27117944ad9f1a0b7a955845096506aa4005d1a33f57271c913a7, import verification of AN_Boss01_PhaseRoar 1.8s lean-back howl, dynamic montage playback)",
+        "Documentation/DECISIONS.md:526 (Phase two roar plays AN_Boss01_PhaseRoar 1.8s, blend in 0.15, blend out 0.25, frame 0 combat idle)",
+        "Documentation/PROJECT_STATE.md:93 (Plays project clip via RPGBossClips::Play dynamic montage in pack slot)"
+      ],
+      "legacy_live_evidence": "Validated in pie_boss_clips.py (14/14 pass) during A4 review (historical pass claim)",
+      "current_binary_proof": "Default path equality and no-package/no-load witness verified in DD9/DD10 test suite; NOT executed or played in current binary",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/OneBossFight/Boss01\")) [DefaultGame.ini sha256: 9827ff8e632354cb7d3013955f1c1891ca16eac037abf8cd64369e5aa8886be3]",
+      "limitations": "On-disk file presence and static cook entry prove configured coverage only; they do NOT prove current binary loading, runtime skeleton compatibility with active mesh, anim notify firing, or packaged cooking.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 306515,
+      "file_sha256": "0e19c86b2e68abd7b23b94f8b8d03ebb8059c762c11e9227a51d57c02b64479f"
+    },
+    {
+      "id": "PhaseTransitionMontage",
+      "category": "DD9_PhaseAsset",
+      "role": "boss",
+      "soft_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage",
+      "package_file_rel": "Content/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.uasset",
+      "expected_class": "UAnimMontage",
+      "rule": "Fallback phase-transition montage played when bUseRoarClip is false or RoarClip fails to load.",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 100,
+        "struct": "FRPGPhaseDependencyConfig",
+        "member": "TransitionMontage",
+        "note": "Binding is concurrently evolving under DD11"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "header_line": 45,
+        "cpp": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+        "cpp_line": 57
+      },
+      "supporting_evidence": [
+        "Source pack asset for 2-handed greatsword ability intro montage",
+        "Documentation/PROJECT_STATE.md:93"
+      ],
+      "legacy_live_evidence": "Pack standard montage for enemy ability intro",
+      "current_binary_proof": "Default path equality verified in DD9/DD10 test suite; fallback branch NOT executed in current binary tests",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations\"))",
+      "limitations": "On-disk presence does not verify montage section names, slot compatibility with current AnimBP, or packaged cooking.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 11604,
+      "file_sha256": "5e6a83e67d362b3dee896a78591e0e2056de96707e65189093fd87a8b2023356"
+    },
+    {
+      "id": "PhaseImmunityEffect",
+      "category": "DD9_PhaseAsset",
+      "role": "boss",
+      "soft_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C",
+      "package_file_rel": "Content/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.uasset",
+      "expected_class": "UClass (derived from UGameplayEffect)",
+      "rule": "Applied to boss during phase transition hold (bHeld) to prevent interruption by player attacks during roar.",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 101,
+        "struct": "FRPGPhaseDependencyConfig",
+        "member": "ImmunityEffect",
+        "note": "Binding is concurrently evolving under DD11"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "header_line": 52,
+        "cpp": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+        "cpp_line": 58
+      },
+      "supporting_evidence": [
+        "Source pack gameplay effect asset for hit stun immunity",
+        "Source/OneBossFight/Player/RPGBossPhases.cpp:271 (ImmunityEffect.LoadSynchronous applied via ASC)"
+      ],
+      "legacy_live_evidence": "Applied and verified during A4 boss phase tests (historical claim)",
+      "current_binary_proof": "Default path verified; no-load witness confirmed; NOT applied to live ASC in current binary tests",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints\"))",
+      "limitations": "Soft class path suffix '_C' denotes generated blueprint class. On-disk presence does not verify UGameplayEffect CDO tags or runtime application without ASC.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 23909,
+      "file_sha256": "f2fe720658b7503e1c7a75e43720e0117a3f8283338ae2ec15baa8198adf6fec"
+    },
+    {
+      "id": "PhaseFireballAbility",
+      "category": "DD9_PhaseAsset",
+      "role": "boss",
+      "soft_path": "/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C",
+      "package_file_rel": "Content/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.uasset",
+      "expected_class": "UClass (derived from UGameplayAbility)",
+      "rule": "Legacy ranged attack ability; disabled by default (bFireballEnabled = false per Freeze 16 A6 / Decision 30.1). Reference retained for backward compatibility.",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 87,
+        "struct": "FRPGFireballConfig",
+        "member": "FireballAbility",
+        "note": "Binding is concurrently evolving under DD11"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "header_line": 70,
+        "cpp": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+        "cpp_line": 59
+      },
+      "supporting_evidence": [
+        "Source pack magic enemy fireball blueprint class",
+        "Documentation/DECISIONS.md (Freeze 16 A6: legacy fireball off by default; moveset kept melee duel)"
+      ],
+      "legacy_live_evidence": "Tested in legacy magic enemy fight; disabled in boss duel",
+      "current_binary_proof": "Default path verified in DD9 tests; no live activation in current binary tests",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy\"))",
+      "limitations": "Disabled by default. On-disk presence does not prove ability grant or execution.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 58900,
+      "file_sha256": "444e154c67fd10aa00102b85021d14124e34c1294a7450116cb2e9b3f9bcca0e"
+    },
+    {
+      "id": "PhaseAttackAbilityPrefix",
+      "category": "DD9_PhaseFlowIdentity",
+      "role": "boss",
+      "soft_path": "GA_GS_Boss_",
+      "package_file_rel": null,
+      "expected_class": "FString (naming prefix)",
+      "rule": "Prefix filter for scaling boss attack montage play rates during Phase Two (e.g. GA_GS_Boss_MeleeAttack_Combo_01).",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 75,
+        "struct": "FRPGPhaseFlowConfig",
+        "member": "AttackAbilityPrefix",
+        "note": "Binding is concurrently evolving under DD11"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "header_line": 82,
+        "cpp": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+        "cpp_line": 34
+      },
+      "supporting_evidence": [
+        "Source pack abilities: GA_GS_Boss_CloseAttack, GA_GS_Boss_MeleeAttack_Combo_01..03, GA_GS_Boss_HitStun"
+      ],
+      "legacy_live_evidence": "Verified in A4 phase two rate scaling (historical claim)",
+      "current_binary_proof": "Identity verified in DD9 binding authoring/oracle tests",
+      "configured_cook_coverage": "N/A (string token)",
+      "limitations": "String token only. Does not guarantee that abilities with this prefix are currently granted or registered in the ASC.",
+      "file_exists_on_disk": null,
+      "file_size_bytes": null,
+      "file_sha256": null
+    },
+    {
+      "id": "PhaseLeapAbilityTag",
+      "category": "DD9_PhaseFlowIdentity",
+      "role": "boss",
+      "soft_path": "Ability.Melee.LeapAttack",
+      "package_file_rel": null,
+      "expected_class": "FName (FGameplayTag identity)",
+      "rule": "Tag locked during Phase 1 (bLockLeapUntilPhaseTwo = true), unlocked upon entering Phase 2 by clearing tag from ASC blocked list.",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 76,
+        "struct": "FRPGPhaseFlowConfig",
+        "member": "LeapAbilityTag",
+        "note": "Binding is concurrently evolving under DD11"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "header_line": 87,
+        "cpp": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+        "cpp_line": 35
+      },
+      "supporting_evidence": [
+        "Config/DefaultGameplayTags.ini tag declaration",
+        "Source/OneBossFight/Player/RPGBossPhases.cpp:35"
+      ],
+      "legacy_live_evidence": "Verified in A4 leap unlock test (historical claim)",
+      "current_binary_proof": "Identity verified in DD9 binding authoring/oracle tests",
+      "configured_cook_coverage": "N/A (tag identity token)",
+      "limitations": "Tag identity token only. Does not prove tag registration in gameplay tags manager at runtime.",
+      "file_exists_on_disk": null,
+      "file_size_bytes": null,
+      "file_sha256": null
+    },
+    {
+      "id": "StaggerFallMontage",
+      "category": "DD10_StaggerProfileAsset",
+      "role": "boss",
+      "soft_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage",
+      "package_file_rel": "Content/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.uasset",
+      "expected_class": "UAnimMontage",
+      "rule": "Fallback stance-break fall montage played when bUseClips is false or FallClip fails to load. Plays and freezes at FreezeAtPosition (1.55s).",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 117,
+        "struct": "FRPGStaggerProfileConfig",
+        "member": "FallMontage",
+        "note": "Binding is concurrently evolving under DD11"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "header_line": 38,
+        "cpp": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+        "cpp_line": 58
+      },
+      "supporting_evidence": [
+        "Source pack 2-handed greatsword knockdown start montage",
+        "Documentation/DECISIONS.md:356"
+      ],
+      "legacy_live_evidence": "Used in original pack stagger implementation before custom clips (historical claim)",
+      "current_binary_proof": "Default path verified in DD10 tests; fallback branch not executed in current binary",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations\"))",
+      "limitations": "Fallback only. Does not verify montage section timings or blend curves.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 13104,
+      "file_sha256": "564973bab4afe57e0c7742cfc00a52303784e6b042ff3f62f0fde53f5c584fca"
+    },
+    {
+      "id": "StaggerGetUpMontage",
+      "category": "DD10_StaggerProfileAsset",
+      "role": "boss",
+      "soft_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage",
+      "package_file_rel": "Content/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.uasset",
+      "expected_class": "UAnimMontage",
+      "rule": "Fallback stance-break get-up montage played when bUseClips is false or clip pipeline fails. Plays at the end of StaggerSeconds (2.5s).",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 118,
+        "struct": "FRPGStaggerProfileConfig",
+        "member": "GetUpMontage",
+        "note": "Binding is concurrently evolving under DD11"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "header_line": 54,
+        "cpp": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+        "cpp_line": 59
+      },
+      "supporting_evidence": [
+        "Source pack 2-handed greatsword knockdown get-up montage",
+        "Documentation/DECISIONS.md:356"
+      ],
+      "legacy_live_evidence": "Used in original pack stagger implementation (historical claim)",
+      "current_binary_proof": "Default path verified in DD10 tests; fallback branch not executed in current binary",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations\"))",
+      "limitations": "Fallback only.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 13294,
+      "file_sha256": "3156f085e06b80d518ad15db50aa61b63fbc83aa25502d84e800a031fa16b81b"
+    },
+    {
+      "id": "StaggerFallClip",
+      "category": "DD10_StaggerProfileAsset",
+      "role": "boss",
+      "soft_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall",
+      "package_file_rel": "Content/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.uasset",
+      "expected_class": "UAnimSequence",
+      "rule": "Primary stance-break fall clip (bUseClips = true). Duration 0.7s, blend in 0.1s, no blend out; transitions to DownClip when within 0.03s of end.",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 119,
+        "struct": "FRPGStaggerProfileConfig",
+        "member": "FallClip",
+        "note": "Binding is concurrently evolving under DD11"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "header_line": 11,
+        "cpp": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+        "cpp_line": 61
+      },
+      "supporting_evidence": [
+        "Documentation/Archive/AG/REPORT_12.md (cadbecfa63c27117944ad9f1a0b7a955845096506aa4005d1a33f57271c913a7, import of AN_Boss01_StaggerFall)",
+        "Documentation/DECISIONS.md:527 (Fall 0.7s, last frame pose equals kneel loop first frame to 0.0001, measured in Report 12 review)",
+        "Documentation/PROJECT_STATE.md:93"
+      ],
+      "legacy_live_evidence": "Validated in pie_boss_clips.py (14/14 pass, historical claim)",
+      "current_binary_proof": "Default path verified; no-load witness confirmed; NOT executed in current binary tests",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/OneBossFight/Boss01\"))",
+      "limitations": "On-disk presence does not verify bone track mapping or playability in current binary. Historical pose-matching at 0.0001 is uncorroborated in current binary without runtime animation inspection.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 273988,
+      "file_sha256": "46c550d8943ad84196cf42d7b51b33860c321d436c2da1eef87d15c4aee023e3"
+    },
+    {
+      "id": "StaggerDownClip",
+      "category": "DD10_StaggerProfileAsset",
+      "role": "boss",
+      "soft_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown",
+      "package_file_rel": "Content/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.uasset",
+      "expected_class": "UAnimSequence",
+      "rule": "Primary stance-break kneel loop clip (bUseClips = true). 40 loops of 1.0s while boss is vulnerable and riposte/critical window is open.",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 120,
+        "struct": "FRPGStaggerProfileConfig",
+        "member": "DownClip",
+        "note": "Binding is concurrently evolving under DD11"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "header_line": 11,
+        "cpp": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+        "cpp_line": 62
+      },
+      "supporting_evidence": [
+        "Documentation/Archive/AG/REPORT_12.md (cadbecfa63c27117944ad9f1a0b7a955845096506aa4005d1a33f57271c913a7, import of AN_Boss01_StaggerDown)",
+        "Documentation/DECISIONS.md:527",
+        "Documentation/PROJECT_STATE.md:93"
+      ],
+      "legacy_live_evidence": "Validated in pie_boss_clips.py (14/14 pass, historical claim)",
+      "current_binary_proof": "Default path verified; no-load witness confirmed; NOT executed in current binary tests",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/OneBossFight/Boss01\"))",
+      "limitations": "On-disk presence does not prove runtime looping or riposte trigger window.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 251673,
+      "file_sha256": "80702e46ccfe0556551169be8a14b805e7cdf88c60c60a72433998315187b7ae"
+    },
+    {
+      "id": "StaggerRipostePlayerClip",
+      "category": "DD10_StaggerProfileAsset",
+      "role": "player",
+      "soft_path": "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.AN_Riposte_Player_Front",
+      "package_file_rel": "Content/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.uasset",
+      "expected_class": "UAnimSequence",
+      "rule": "Synchronized riposte strike clip played on player character (bUseRiposteClips = true). Duration 1.6s, impact at 0.8s, root motion forward 90 cm.",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 121,
+        "struct": "FRPGStaggerProfileConfig",
+        "member": "RipostePlayerClip",
+        "note": "Binding is concurrently evolving under DD11"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "header_line": 73,
+        "cpp": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+        "cpp_line": 63
+      },
+      "supporting_evidence": [
+        "Documentation/Archive/AG/REPORT_12.md:22 (cadbecfa63c27117944ad9f1a0b7a955845096506aa4005d1a33f57271c913a7, player riposte articulation: root motion advances along +Y to (0,90,0) cm at 0.70s; impact frame 24 at 0.80s with hand_r 64.95 cm ahead)",
+        "Documentation/AG/REPORT_13.md:49 (10d9b33895c227d141912cd9ef3807d4c1713a3a889c98058d346fc5f7a2464f, paired top-down contact sheet brightness)",
+        "Scripts/Editor/set_riposte_root_motion.py (0e6be54f61e178e173217519136964362027f0e5bd0e1fb7356164a1dcb7cd45, root motion flag enabled on AN_Riposte_Player_Front)",
+        "Documentation/DECISIONS.md:65, 527"
+      ],
+      "legacy_live_evidence": "Validated in pie_riposte_exec.py (16/16 pass) and pie_riposte_lethal.py (3/3 pass) (historical claims)",
+      "current_binary_proof": "Default path verified; no-load witness confirmed; NOT executed in current binary tests",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/OneBossFight/Boss01\"))",
+      "limitations": "Requires paired alignment with boss reaction clip. Historical 90cm root motion and 0.80s impact frame are cited from Report 12 authoring records and are uncorroborated runtime claims in the current binary until live fixture verification.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 310317,
+      "file_sha256": "c31727ff55c00bb53860de4c36fa147f16a34846fe64f99b486b9a8527df56fe"
+    },
+    {
+      "id": "StaggerRiposteBossClip",
+      "category": "DD10_StaggerProfileAsset",
+      "role": "boss",
+      "soft_path": "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction",
+      "package_file_rel": "Content/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.uasset",
+      "expected_class": "UAnimSequence",
+      "rule": "Synchronized riposte reaction clip played on boss pawn (bUseRiposteClips = true). Duration 2.0s, impact at 0.8s.",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 122,
+        "struct": "FRPGStaggerProfileConfig",
+        "member": "RiposteBossClip",
+        "note": "Binding is concurrently evolving under DD11"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "header_line": 76,
+        "cpp": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+        "cpp_line": 64
+      },
+      "supporting_evidence": [
+        "Documentation/Archive/AG/REPORT_12.md:45 (cadbecfa63c27117944ad9f1a0b7a955845096506aa4005d1a33f57271c913a7, timing card documenting Impact frame 24 at 0.80s)",
+        "Documentation/AG/REPORT_13.md:49 (10d9b33895c227d141912cd9ef3807d4c1713a3a889c98058d346fc5f7a2464f)",
+        "Documentation/DECISIONS.md:65, 527"
+      ],
+      "legacy_live_evidence": "Validated in pie_riposte_exec.py (16/16 pass, historical claim)",
+      "current_binary_proof": "Default path verified; no-load witness confirmed; NOT executed in current binary tests",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/OneBossFight/Boss01\"))",
+      "limitations": "Requires synchronized impact timing with player clip. Historical 0.80s impact is uncorroborated in current binary without runtime test.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 291457,
+      "file_sha256": "767acccf1bd3414a3b46d9db7a37028cc72a8f9f5428f05289b7b89b2f0b8001"
+    },
+    {
+      "id": "StaggerImmunityEffect",
+      "category": "DD10_StaggerProfileAsset",
+      "role": "boss",
+      "soft_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C",
+      "package_file_rel": "Content/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.uasset",
+      "expected_class": "UClass (derived from UGameplayEffect)",
+      "rule": "Applied during stance break (duration 4.0s) so player hits during kneel do not replay flinch animations over knockdown pose.",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 123,
+        "struct": "FRPGStaggerProfileConfig",
+        "member": "ImmunityEffect",
+        "note": "Binding is concurrently evolving under DD11"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "header_line": 184,
+        "cpp": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+        "cpp_line": 60
+      },
+      "supporting_evidence": [
+        "Source pack hit stun immunity gameplay effect",
+        "Documentation/DECISIONS.md:356"
+      ],
+      "legacy_live_evidence": "Verified in A4 stagger test (historical claim)",
+      "current_binary_proof": "Default path verified; no-load witness confirmed; NOT applied in current binary tests",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints\"))",
+      "limitations": "Shares package with PhaseImmunityEffect. Does not verify CDO tags.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 23909,
+      "file_sha256": "f2fe720658b7503e1c7a75e43720e0117a3f8283338ae2ec15baa8198adf6fec"
+    },
+    {
+      "id": "StaggerHitStunAbilityClass",
+      "category": "DD10_StaggerProfileIdentity",
+      "role": "boss",
+      "binding_identity": "GA_GS_Boss_HitStun_C",
+      "soft_path": "GA_GS_Boss_HitStun_C",
+      "candidate_class_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_HitStun.GA_GS_Boss_HitStun_C",
+      "package_file_rel": "Content/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/GA_GS_Boss_HitStun.uasset",
+      "expected_class": "UClass (derived from UGameplayAbility)",
+      "rule": "Binding expects short FName token 'GA_GS_Boss_HitStun_C' for HitStunAbilityClassName. URPGBossStagger monitors ASC active abilities matching this name to detect poise break; when triggered, it intercepts and ends the flinch to begin stance break. The full generated-class path is the concrete on-disk asset candidate.",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 116,
+        "struct": "FRPGStaggerProfileConfig",
+        "member": "HitStunAbilityClassName",
+        "note": "Binding is concurrently evolving under DD11. Short FName token ONLY, never feed full soft path into this member."
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "header_line": 326,
+        "cpp": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+        "cpp_line": 259
+      },
+      "supporting_evidence": [
+        "Source pack boss hit stun ability class",
+        "Documentation/DECISIONS.md:356"
+      ],
+      "legacy_live_evidence": "Verified in A4 poise break interception (historical claim)",
+      "current_binary_proof": "Class name token 'GA_GS_Boss_HitStun_C' verified in DD10 tests",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints\"))",
+      "limitations": "Binding identity is the short FName token 'GA_GS_Boss_HitStun_C'. On-disk package presence of GA_GS_Boss_HitStun.uasset does not prove the ability is granted to the boss ASC or that poise depletion activates it.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 8572,
+      "file_sha256": "4ecf9d265995e2fcf9af8879477c8271abc08cedecb130fd403255125a897111"
+    },
+    {
+      "id": "PlayerActorBlueprint",
+      "category": "ProductionCandidate_Actor",
+      "role": "player",
+      "soft_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/BP_CombatPlayerCharacter.BP_CombatPlayerCharacter_C",
+      "package_file_rel": "Content/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/BP_CombatPlayerCharacter.uasset",
+      "expected_class": "UBlueprintGeneratedClass (derived from ACharacter)",
+      "rule": "Primary player character blueprint placed and spawned in L_SevarogArena.",
+      "source_declaration": {
+        "file": "Documentation/PROJECT_STATE.md",
+        "line": 70,
+        "struct": "N/A",
+        "member": "BP_CombatPlayerCharacter",
+        "note": "Project documentation reference"
+      },
+      "native_declaration": null,
+      "supporting_evidence": [
+        "Documentation/PROJECT_STATE.md:70 (BP_CombatPlayerCharacter player moves tuning)",
+        "Content/OneBossFight/Levels/L_SevarogArena.umap (placed player start / character)"
+      ],
+      "legacy_live_evidence": "All live PIE drivers use BP_CombatPlayerCharacter (historical claim)",
+      "current_binary_proof": "Not spawned in current DD10 unit tests",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints\"))",
+      "limitations": "Pack character blueprint. Verification requires live spawn or editor inspection.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 694194,
+      "file_sha256": "9662aaa364c56243180560b9121da7eadd8bfe43bfcd7f54bccd1752a07abc81"
+    },
+    {
+      "id": "BossActorBlueprint",
+      "category": "ProductionCandidate_Actor",
+      "role": "boss",
+      "soft_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C",
+      "package_file_rel": "Content/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.uasset",
+      "expected_class": "UBlueprintGeneratedClass (derived from ACharacter)",
+      "rule": "Current arena boss blueprint placed in L_SevarogArena (Ember Warden base actor).",
+      "source_declaration": {
+        "file": "Documentation/PROJECT_STATE.md",
+        "line": 20,
+        "struct": "N/A",
+        "member": "BP_ExampleGreatSwordBoss",
+        "note": "Project documentation reference"
+      },
+      "native_declaration": null,
+      "supporting_evidence": [
+        "Documentation/PROJECT_STATE.md:20 (The pack's BP_ExampleGreatSwordBoss placed in level with EnemyInfoRef = ExampleGreatSwordBoss)",
+        "Documentation/DECISIONS.md:297, 350 (Poise armor and boss identity)",
+        "Scripts/Editor/arena_use_pack_boss.py"
+      ],
+      "legacy_live_evidence": "Verified in live arena fight tests and benchmark baseline (historical claim)",
+      "current_binary_proof": "Not spawned in current DD10 unit tests",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints\"))",
+      "limitations": "Level instance requires EnemyInfoRef set to ExampleGreatSwordBoss to avoid defaulting to sword mob stats. On-disk presence does not verify instance overrides.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 161530,
+      "file_sha256": "a7dd5b156eb2bab555d16d12d9ef74ccecddd27990fd7c799873e24895f13217"
+    },
+    {
+      "id": "SharedSkeleton",
+      "category": "ProductionCandidate_Skeleton",
+      "role": "shared",
+      "soft_path": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin",
+      "package_file_rel": "Content/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.uasset",
+      "expected_class": "USkeleton",
+      "rule": "Authoring skeleton shared across player mannequin animations and project boss animations (AN_Boss01_*).",
+      "source_declaration": {
+        "file": "Documentation/PROJECT_STATE.md",
+        "line": 93,
+        "struct": "N/A",
+        "member": "SK_CombatMannequin",
+        "note": "Project documentation reference"
+      },
+      "native_declaration": null,
+      "supporting_evidence": [
+        "Documentation/Archive/AG/REPORT_12.md (cadbecfa63c27117944ad9f1a0b7a955845096506aa4005d1a33f57271c913a7, boss clips imported targeting SK_CombatMannequin skeleton)",
+        "Content/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.uasset"
+      ],
+      "legacy_live_evidence": "Used for all clip playback in PIE drivers (historical claim)",
+      "current_binary_proof": "Not loaded in current DD10 unit tests",
+      "configured_cook_coverage": "Referenced by cooked animations; package exists in pack directory",
+      "limitations": "On-disk presence does not verify bone hierarchy alignment with custom boss mesh attachments without editor inspection.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 218110,
+      "file_sha256": "52677edcbfa4d78b49126481f7e3087c62231bdd76021055bba520c7c9de7e95"
+    },
+    {
+      "id": "PlayerMesh",
+      "category": "ProductionCandidate_Mesh",
+      "role": "player",
+      "soft_path": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SKM_CombatMannequin.SKM_CombatMannequin",
+      "package_file_rel": "Content/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SKM_CombatMannequin.uasset",
+      "expected_class": "USkeletalMesh",
+      "rule": "Skeletal mesh used by BP_CombatPlayerCharacter.",
+      "source_declaration": {
+        "file": "Content/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/BP_CombatPlayerCharacter.uasset",
+        "line": null,
+        "struct": "N/A",
+        "member": "Mesh",
+        "note": "Pack blueprint asset configuration"
+      },
+      "native_declaration": null,
+      "supporting_evidence": [
+        "Pack standard character mannequin skeletal mesh"
+      ],
+      "legacy_live_evidence": "Rendered in all PIE sessions (historical claim)",
+      "current_binary_proof": "Not loaded in unit tests",
+      "configured_cook_coverage": "Referenced by BP_CombatPlayerCharacter",
+      "limitations": "Mesh asset on disk; requires engine load for socket and material validation.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 34535150,
+      "file_sha256": "95fc213e7832602363eb213fb0de9b6826dead2ad4ec5ed01ab0651b3150112d"
+    },
+    {
+      "id": "BossMeshBody",
+      "category": "ProductionCandidate_LeaderPoseFollower",
+      "role": "boss",
+      "soft_path": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body",
+      "package_file_rel": "Content/OneBossFight/Boss01/Body/SK_Boss01_Body.uasset",
+      "expected_class": "USkeletalMesh",
+      "rule": "Cosmetic skeletal mesh follower driven by URPGBossLook attached to leader pack mesh via SetLeaderPoseComponent.",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGBossLook.h",
+        "line": 33,
+        "struct": "URPGBossLook",
+        "member": "Body",
+        "note": "Constructor defaults in Source/OneBossFight/Player/RPGBossLook.cpp line 17 [RPGBossLook.cpp sha256: eb02ea8b1abe7ebc00039f3b5d265826064c6fe02d45e429ff02dc266ea6aa21]"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossLook.h",
+        "header_line": 33,
+        "cpp": "Source/OneBossFight/Player/RPGBossLook.cpp",
+        "cpp_line": 17
+      },
+      "supporting_evidence": [
+        "Documentation/Archive/AG/REPORT_08.md:44 (71742a2ba6b3effdcce8cfb9bfe1acd70ae4d7023d5d59fe4def26240f3fdde9, restoration of five material slots: 15056/26386/27664/11670/295 polygons)",
+        "Documentation/DECISIONS.md:536 (URPGBossLook attached to hidden pack mesh driven by SetLeaderPoseComponent)",
+        "Documentation/KNOWN_ISSUES.md:68 (KI-064 resolution)"
+      ],
+      "legacy_live_evidence": "Attached and rendered in pie_boss_look.py (historical claim; pending scale fix re-verification)",
+      "current_binary_proof": "Not loaded in current DD10 unit tests",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/OneBossFight/Boss01\"))",
+      "limitations": "Cosmetic follower mesh only; does not drive weapon collision or physics ragdoll.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 10888760,
+      "file_sha256": "ee1f00924d99e8df84eb2325928ccd0a301dd58e7e220ae9ad4c5caf004969cd"
+    },
+    {
+      "id": "BossFollowerCrown",
+      "category": "ProductionCandidate_LeaderPoseFollower",
+      "role": "boss",
+      "soft_path": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Crown.SK_Boss01_Crown",
+      "package_file_rel": "Content/OneBossFight/Boss01/Body/SK_Boss01_Crown.uasset",
+      "expected_class": "USkeletalMesh",
+      "rule": "Cosmetic skeletal mesh piece (index 0 of Pieces) for boss head attached via SetLeaderPoseComponent.",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGBossLook.h",
+        "line": 37,
+        "struct": "URPGBossLook",
+        "member": "Pieces",
+        "note": "Constructor defaults in Source/OneBossFight/Player/RPGBossLook.cpp line 19"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossLook.h",
+        "header_line": 37,
+        "cpp": "Source/OneBossFight/Player/RPGBossLook.cpp",
+        "cpp_line": 19
+      },
+      "supporting_evidence": [
+        "Documentation/Archive/AG/REPORT_08.md:44 (71742a2ba6b3effdcce8cfb9bfe1acd70ae4d7023d5d59fe4def26240f3fdde9, G3 customisation renders & pieces: crown towers to Z=232 cm)",
+        "Documentation/DECISIONS.md:536"
+      ],
+      "legacy_live_evidence": "Rendered in pie_boss_look.py (historical claim)",
+      "current_binary_proof": "Not loaded in current DD10 unit tests",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/OneBossFight/Boss01\"))",
+      "limitations": "Cosmetic follower only.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 261556,
+      "file_sha256": "46669e2f1c87471b5f0ed76c22f491f74179f722e0578af2c95093103592be5f"
+    },
+    {
+      "id": "BossFollowerMantle",
+      "category": "ProductionCandidate_LeaderPoseFollower",
+      "role": "boss",
+      "soft_path": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Mantle.SK_Boss01_Mantle",
+      "package_file_rel": "Content/OneBossFight/Boss01/Body/SK_Boss01_Mantle.uasset",
+      "expected_class": "USkeletalMesh",
+      "rule": "Cosmetic skeletal mesh piece (index 1 of Pieces) for boss mantle attached via SetLeaderPoseComponent.",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGBossLook.h",
+        "line": 37,
+        "struct": "URPGBossLook",
+        "member": "Pieces",
+        "note": "Constructor defaults in Source/OneBossFight/Player/RPGBossLook.cpp line 20"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossLook.h",
+        "header_line": 37,
+        "cpp": "Source/OneBossFight/Player/RPGBossLook.cpp",
+        "cpp_line": 20
+      },
+      "supporting_evidence": [
+        "Documentation/Archive/AG/REPORT_08.md:44 (71742a2ba6b3effdcce8cfb9bfe1acd70ae4d7023d5d59fe4def26240f3fdde9, mantle broadened to 68 cm with 1.2 cm thick velvet folds)",
+        "Documentation/DECISIONS.md:536"
+      ],
+      "legacy_live_evidence": "Rendered in pie_boss_look.py (historical claim)",
+      "current_binary_proof": "Not loaded in current DD10 unit tests",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/OneBossFight/Boss01\"))",
+      "limitations": "Cosmetic follower only.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 1002491,
+      "file_sha256": "d4b8b22527a9209556316a7264e2f6ff1a1cb7691ece1700877c5c0b9474f5de"
+    },
+    {
+      "id": "BossFollowerBrazierGauntlet",
+      "category": "ProductionCandidate_LeaderPoseFollower",
+      "role": "boss",
+      "soft_path": "/Game/OneBossFight/Boss01/Body/SK_Boss01_BrazierGauntlet.SK_Boss01_BrazierGauntlet",
+      "package_file_rel": "Content/OneBossFight/Boss01/Body/SK_Boss01_BrazierGauntlet.uasset",
+      "expected_class": "USkeletalMesh",
+      "rule": "Cosmetic skeletal mesh piece (index 2 of Pieces) for boss off-hand brazier gauntlet attached via SetLeaderPoseComponent.",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGBossLook.h",
+        "line": 37,
+        "struct": "URPGBossLook",
+        "member": "Pieces",
+        "note": "Constructor defaults in Source/OneBossFight/Player/RPGBossLook.cpp line 21"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossLook.h",
+        "header_line": 37,
+        "cpp": "Source/OneBossFight/Player/RPGBossLook.cpp",
+        "cpp_line": 21
+      },
+      "supporting_evidence": [
+        "Documentation/Archive/AG/REPORT_08.md:44 (71742a2ba6b3effdcce8cfb9bfe1acd70ae4d7023d5d59fe4def26240f3fdde9, gauntlet weighted cleanly to lowerarm_l)",
+        "Documentation/DECISIONS.md:536"
+      ],
+      "legacy_live_evidence": "Rendered in pie_boss_look.py (historical claim)",
+      "current_binary_proof": "Not loaded in current DD10 unit tests",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/OneBossFight/Boss01\"))",
+      "limitations": "Cosmetic follower only.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 202792,
+      "file_sha256": "405dcde80b40132aadee90b5135df7e4695b788fe406f13a6f13fa918d8d1d65"
+    },
+    {
+      "id": "BossFollowerGreatsword",
+      "category": "ProductionCandidate_StaticSocketAttachment",
+      "role": "boss",
+      "soft_path": "/Game/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.SM_Boss01_Greatsword",
+      "package_file_rel": "Content/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.uasset",
+      "expected_class": "UStaticMesh",
+      "rule": "Static mesh weapon attached to socket HeavySwordSocket_R on hand_r via UStaticMeshComponent AttachToComponent (NOT a skeletal leader-pose follower). Constructor default in RPGBossLook.cpp:23.",
+      "source_declaration": {
+        "file": "Source/OneBossFight/Player/RPGBossLook.h",
+        "line": 40,
+        "struct": "URPGBossLook",
+        "member": "Sword",
+        "note": "Constructor defaults in Source/OneBossFight/Player/RPGBossLook.cpp line 23; socket declared line 44 (SwordSocket = TEXT(\"HeavySwordSocket_R\"))"
+      },
+      "native_declaration": {
+        "header": "Source/OneBossFight/Player/RPGBossLook.h",
+        "header_line": 40,
+        "cpp": "Source/OneBossFight/Player/RPGBossLook.cpp",
+        "cpp_line": 23
+      },
+      "supporting_evidence": [
+        "Documentation/Archive/AG/REPORT_08.md:44 (71742a2ba6b3effdcce8cfb9bfe1acd70ae4d7023d5d59fe4def26240f3fdde9, G2 connected hero greatsword, 1 connected manifold mesh, 3 slots)",
+        "Documentation/DECISIONS.md:536 (SM_Boss01_Greatsword is a static mesh on body socket HeavySwordSocket_R)"
+      ],
+      "legacy_live_evidence": "Rendered in pie_boss_look.py (historical claim)",
+      "current_binary_proof": "Not loaded in current DD10 unit tests",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/OneBossFight/Boss01\"))",
+      "limitations": "Cosmetic weapon static mesh only. Attack collision traces remain driven by blade sockets on the hidden pack mesh.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 73050,
+      "file_sha256": "147629fb4c8df8b5d955f2c19622301bcd04d94b2ada27f7e07b7da79b0c8559"
+    },
+    {
+      "id": "ArenaLevel",
+      "category": "ProductionCandidate_Level",
+      "role": "shared",
+      "soft_path": "/Game/OneBossFight/Levels/L_SevarogArena.L_SevarogArena",
+      "package_file_rel": "Content/OneBossFight/Levels/L_SevarogArena.umap",
+      "expected_class": "UWorld",
+      "rule": "Encounter arena map holding boss and player instances.",
+      "source_declaration": {
+        "file": "Documentation/PROJECT_STATE.md",
+        "line": 20,
+        "struct": "N/A",
+        "member": "L_SevarogArena",
+        "note": "Project documentation reference"
+      },
+      "native_declaration": null,
+      "supporting_evidence": [
+        "Documentation/PROJECT_STATE.md:20",
+        "Content/OneBossFight/Levels/L_SevarogArena.umap"
+      ],
+      "legacy_live_evidence": "Target arena map for all duel gameplay (historical claim)",
+      "current_binary_proof": "Not loaded in current unit tests",
+      "configured_cook_coverage": "Config/DefaultGame.ini (+DirectoriesToAlwaysCook=(Path=\"/Game/OneBossFight/Levels\"))",
+      "limitations": "Full map asset. Testing requires level load fixture.",
+      "file_exists_on_disk": true,
+      "file_size_bytes": 521613,
+      "file_sha256": "095361fe5768accd59a0fe84a9f91ba3bfc8220dadea6d8c30f1ea3f1f3a77b5"
+    }
+  ]
+}

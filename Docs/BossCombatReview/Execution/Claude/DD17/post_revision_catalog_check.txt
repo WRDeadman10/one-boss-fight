@@ -1,0 +1,7 @@
+Content/OneBossFight/Data/Catalog/DA_Build_Dex.uasset: OK
+Content/OneBossFight/Data/Catalog/DA_Build_Starter.uasset: OK
+Content/OneBossFight/Data/Catalog/DA_Build_Strength.uasset: OK
+Content/OneBossFight/Data/Catalog/DA_CombatCatalog.uasset: OK
+Content/OneBossFight/Data/Catalog/DA_Weapon_Claymore.uasset: OK
+Content/OneBossFight/Data/Catalog/DA_Weapon_DualSwords.uasset: OK
+Content/OneBossFight/Data/Catalog/DA_Weapon_Sword.uasset: OK

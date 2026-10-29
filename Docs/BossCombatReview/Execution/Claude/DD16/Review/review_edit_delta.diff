@@ -1,0 +1,21 @@
+251,252c251,252
+< 	/** One single error that carries BOTH the token at its start and the slot text. */
+< 	bool AnyErrorHas(const TArray<FString>& Errors, const TCHAR* Token, const TCHAR* SlotText)
+---
+> 	/** One single error that carries the token at its start, the slot text and a further text (a component name or the detail). */
+> 	bool AnyErrorHasAll(const TArray<FString>& Errors, const TCHAR* Token, const TCHAR* SlotText, const TCHAR* FurtherText)
+254,260c254
+< 		return Errors.ContainsByPredicate([Token, SlotText](const FString& E) { return E.StartsWith(Token) && E.Contains(SlotText); });
+< 	}
+< 
+< 	/** One single error that carries the token at its start, the slot text and the component text. */
+< 	bool AnyErrorHasAll(const TArray<FString>& Errors, const TCHAR* Token, const TCHAR* SlotText, const TCHAR* ComponentText)
+< 	{
+< 		return Errors.ContainsByPredicate([Token, SlotText, ComponentText](const FString& E) { return E.StartsWith(Token) && E.Contains(SlotText) && E.Contains(ComponentText); });
+---
+> 		return Errors.ContainsByPredicate([Token, SlotText, FurtherText](const FString& E) { return E.StartsWith(Token) && E.Contains(SlotText) && E.Contains(FurtherText); });
+738,739c732
+< 		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: ONE error names %s and %s (got: %s)"), Label, Token, SlotText, *JoinErrors(Result.Errors)), AnyErrorHas(Result.Errors, Token, SlotText));
+< 		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: the failure carries '%s' (got: %s)"), Label, Detail, *JoinErrors(Result.Errors)), AnyErrorContains(Result.Errors, FString(Detail)));
+---
+> 		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: ONE error names %s, %s and carries '%s' (got: %s)"), Label, Token, SlotText, Detail, *JoinErrors(Result.Errors)), AnyErrorHasAll(Result.Errors, Token, SlotText, Detail));

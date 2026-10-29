@@ -1,0 +1,9 @@
+Source/OneBossFight/Player/RPGBossHydrationPreflight.cpp:184:	FRPGHydrationResult CompilePreflight(const FRPGHydrationPreflightInput& Input, TSharedPtr<const FRPGHydrationPreflightPlan>& OutPlan)
+Source/OneBossFight/Player/RPGBossHydrationPreflight.h:124:	ONEBOSSFIGHT_API FRPGHydrationResult CompilePreflight(const FRPGHydrationPreflightInput& Input, TSharedPtr<const FRPGHydrationPreflightPlan>& OutPlan);
+Source/OneBossFight/Player/RPGBossHydrationPreparation.cpp:246:	const FRPGHydrationResult Preflight = RPGBossHydrationPreflight::CompilePreflight(Input, Plan);
+Source/OneBossFight/Player/RPGBossHydrationPreparation.cpp:410:	FRPGPreparationResult PrepareBatch(const FRPGHydrationPreflightInput& Input)
+Source/OneBossFight/Player/RPGBossHydrationPreparation.h:141:	ONEBOSSFIGHT_API FRPGPreparationResult PrepareBatch(const FRPGHydrationPreflightInput& Input);
+Source/OneBossFight/Player/RPGBossPreparationRegistry.cpp:415:FRPGReservationResult FRPGBossPreparationRegistry::TryPrepareAndReserve(const ARPGEncounterBinding* Binding, const TArray<RPGBossWorldInputCompiler::FSelection>& Selections, const FString& ManifestHash)
+Source/OneBossFight/Player/RPGBossPreparationRegistry.h:144:	FRPGReservationResult TryPrepareAndReserve(const ARPGEncounterBinding* Binding, const TArray<RPGBossWorldInputCompiler::FSelection>& Selections, const FString& ManifestHash);
+Source/OneBossFight/Player/RPGBossWorldInputCompiler.cpp:593:		const FRPGHydrationResult Preflight = RPGBossHydrationPreflight::CompilePreflight(Candidate, Plan);
+Source/OneBossFight/Player/RPGBossWorldPreparation.cpp:168:		FRPGPreparationResult Prepared = RPGBossHydrationPreparation::PrepareBatch(Input);

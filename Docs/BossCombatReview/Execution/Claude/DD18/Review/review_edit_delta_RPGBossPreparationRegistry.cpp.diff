@@ -1,0 +1,167 @@
+--- /dev/fd/63	2026-10-28 22:16:54.000000000 +0530
++++ /dev/fd/62	2026-10-28 22:16:54.000000000 +0530
+@@ -54,7 +54,7 @@
+ 		bool bPreparation = false;
+ 		for (const FString& Error : Errors)
+ 		{
+-			if (Error.Contains(TEXT("ContractViolation")) || Error.StartsWith(TEXT("WorldPrep.NotGameThread")))
++			if (Error.StartsWith(TEXT("Reservation.ContractViolation")) || Error.StartsWith(TEXT("WorldPrep.ContractViolation")) || Error.StartsWith(TEXT("Preparation.ContractViolation")) || Error.StartsWith(TEXT("WorldPrep.NotGameThread")))
+ 			{
+ 				bViolation = true;
+ 			}
+@@ -106,6 +106,20 @@
+ 		return Report;
+ 	}
+ 
++	/** Publishes a QUARANTINED reservation (it has no artifact: a cleanup left components in place) so that its GUID and its actors stay reserved and admission is not silently reopened. Nothing is rolled back, repaired or deleted. */
++	void PublishQuarantine(FRPGPreparationRegistryState& State, const FGuid& Encounter, const TArray<TWeakObjectPtr<AActor>>& Actors, const TArray<FString>& Errors)
++	{
++		FRPGPreparationRegistryState::FEntry Entry;
++		Entry.Serial = State.NextSerial++;
++		Entry.Encounter = Encounter;
++		Entry.Actors = Actors;
++		Entry.State = FRPGPreparationRegistryState::EEntryState::Quarantined;
++		Entry.Diagnostics = Errors;
++		Entry.Diagnostics.Add(FString::Printf(TEXT("Reservation.Quarantined[serial=%llu][encounter=%s]: a cleanup during admission left components in place; the encounter stays reserved, nothing was rolled back"), Entry.Serial, *Encounter.ToString()));
++		UE_LOG(LogRPGPreparationRegistry, Error, TEXT("encounter %s is quarantined (serial %llu): %s"), *Encounter.ToString(), Entry.Serial, *FString::Join(Errors, TEXT(" | ")));
++		State.Entries.Add(MoveTemp(Entry));
++	}
++
+ 	/** RAII guard of the admission flag. */
+ 	struct FAdmissionScope
+ 	{
+@@ -122,9 +136,9 @@
+ 
+ FRPGPreparationLeaseToken::~FRPGPreparationLeaseToken()
+ {
+-	if (Serial == 0)
++	if (Serial == 0 || !State.IsValid())
+ 	{
+-		return;
++		return; // nothing held, or the registry is already gone (nothing to release, nothing to flag)
+ 	}
+ 	if (!IsInGameThread())
+ 	{
+@@ -149,9 +163,16 @@
+ 	if (this != &Other)
+ 	{
+ 		// The token being replaced is released first (game thread) like a destroyed token.
+-		if (Serial != 0 && IsInGameThread())
++		if (Serial != 0 && State.IsValid())
+ 		{
+-			Release();
++			if (IsInGameThread())
++			{
++				Release();
++			}
++			else
++			{
++				ensureMsgf(false, TEXT("a held preparation lease token was replaced off the game thread: its reservation stays until the registry is destroyed (contract violation)"));
++			}
+ 		}
+ 		State = MoveTemp(Other.State);
+ 		RegistryId = Other.RegistryId;
+@@ -172,9 +193,9 @@
+ 
+ bool FRPGPreparationLeaseToken::IsHeld() const
+ {
+-	if (Serial == 0)
++	if (Serial == 0 || !IsInGameThread())
+ 	{
+-		return false;
++		return false; // reads are game-thread only
+ 	}
+ 	const TSharedPtr<FRPGPreparationRegistryState> Pinned = State.Pin();
+ 	if (!Pinned.IsValid() || Pinned->bClosed || Pinned->RegistryId != RegistryId)
+@@ -272,11 +293,15 @@
+ 
+ bool FRPGBossPreparationRegistry::IsAdmissionClosed() const
+ {
+-	return State->bClosed;
++	return !IsInGameThread() || State->bClosed;
+ }
+ 
+ int32 FRPGBossPreparationRegistry::GetActiveReservationCount() const
+ {
++	if (!IsInGameThread())
++	{
++		return 0;
++	}
+ 	int32 Count = 0;
+ 	for (const FRPGPreparationRegistryState::FEntry& Entry : State->Entries)
+ 	{
+@@ -287,12 +312,16 @@
+ 
+ int32 FRPGBossPreparationRegistry::GetQuarantinedCount() const
+ {
+-	return State->Entries.Num() - GetActiveReservationCount();
++	return IsInGameThread() ? State->Entries.Num() - GetActiveReservationCount() : 0;
+ }
+ 
+ TArray<FGuid> FRPGBossPreparationRegistry::GetReservedEncounters() const
+ {
+ 	TArray<FGuid> Encounters;
++	if (!IsInGameThread())
++	{
++		return Encounters;
++	}
+ 	for (const FRPGPreparationRegistryState::FEntry& Entry : State->Entries)
+ 	{
+ 		Encounters.Add(Entry.Encounter);
+@@ -303,6 +332,10 @@
+ TArray<FString> FRPGBossPreparationRegistry::GetQuarantineDiagnostics() const
+ {
+ 	TArray<FString> Diagnostics;
++	if (!IsInGameThread())
++	{
++		return Diagnostics;
++	}
+ 	for (const FRPGPreparationRegistryState::FEntry& Entry : State->Entries)
+ 	{
+ 		if (Entry.State == FRPGPreparationRegistryState::EEntryState::Quarantined)
+@@ -338,7 +371,8 @@
+ 	if (State->bClosed || Index == INDEX_NONE || State->Entries[Index].Encounter != Token.Encounter)
+ 	{
+ 		Report.Outcome = FRPGReleaseReport::EOutcome::Stale;
+-		Report.Errors.Add(FString::Printf(TEXT("Reservation.TokenStale: serial %llu is not reserved for encounter %s in this registry (nothing was touched, the token is unchanged)"), Token.Serial, *Token.Encounter.ToString()));
++		Report.Errors.Add(FString::Printf(TEXT("Reservation.TokenStale: serial %llu is not reserved for encounter %s in this registry (nothing was touched, the stale token was cleared)"), Token.Serial, *Token.Encounter.ToString()));
++		Token.Clear();
+ 		return Report;
+ 	}
+ 	Report = ReleaseSerial(*State, Token.Serial);
+@@ -408,6 +442,15 @@
+ 		return Result;
+ 	}
+ 
++	TArray<TWeakObjectPtr<AActor>> BindingActors;
++	for (const FRPGPlacedParticipantBinding& Participant : Binding->Participants)
++	{
++		if (AActor* Actor = Participant.Actor.Get())
++		{
++			BindingActors.Add(Actor);
++		}
++	}
++
+ 	// The whole batch: input compile and owned preparation, with the facade's identity checks. A failure leaves every earlier reservation and artifact exactly as it was and no entry of this attempt.
+ 	FRPGWorldPreparationResult Prepared = RPGBossWorldPreparation::PrepareWorldBatch(World, Binding, Selections, ManifestHash);
+ 	if (!Prepared.Succeeded())
+@@ -418,6 +461,11 @@
+ 			Result.Errors.Add(TEXT("WorldPrep.PreparationRejected: the facade returned no artifact and no error"));
+ 		}
+ 		Result.Failure = Classify(Result.Errors);
++		if (Result.Errors.ContainsByPredicate([](const FString& Error) { return Error.StartsWith(TEXT("WorldPrep.ContractViolation")) || Error.StartsWith(TEXT("Preparation.ContractViolation")); }))
++		{
++			// A cleanup left components in place: the encounter is quarantined (reserved, never silently reopened).
++			PublishQuarantine(*State, Binding->EncounterInstance, BindingActors, Result.Errors);
++		}
+ 		return Result;
+ 	}
+ 
+@@ -455,6 +503,7 @@
+ 		{
+ 			Result.Failure = EReservationFailure::ContractViolation;
+ 			Result.Errors.Add(TEXT("Reservation.ContractViolation: the cleanup after drift left components in place or was refused"));
++			PublishQuarantine(*State, Binding->EncounterInstance, Actors, Result.Errors);
+ 		}
+ 		return Result;
+ 	}

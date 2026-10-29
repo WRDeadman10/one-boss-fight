@@ -1,0 +1,662 @@
+{
+  "meta": {
+    "scope": "OFFLINE_AUTHORING_EXAMPLE_REFERENCE_NOT_IMPORTABLE_ASSET",
+    "purpose": "Concrete field/value illustrative manual reference for the project owner to author custom weapons, builds, catalog wiring, and boss definitions in Unreal Editor Details panels.",
+    "task": "AG-CONTENT-02 (X-269)",
+    "rules_and_disclaimers": [
+      "Explicitly NOT an importable Unreal asset, live configuration, or engine activation command.",
+      "Pure offline manual reference for authoring native UPrimaryDataAsset assets via the Content Browser -> Miscellaneous -> Data Asset workflow.",
+      "Every value maps directly to declarations in Source/OneBossFight/Player/RPGCombatCatalog.h and Source/OneBossFight/Player/RPGEncounterBinding.h.",
+      "Candidate asset paths correspond to verified pack assets (Mannequin/Ember Warden setup) from AG-CONTENT-01 (A-165); Greystone/Sevarog assets are excluded.",
+      "Values marked 'PROPOSED_AUTHOR_CHOICE' are illustrative gameplay choices for demonstration and do not represent approved gameplay balance."
+    ]
+  },
+  "recipe_1_weapon_definition": {
+    "class_info": {
+      "native_class": "URPGWeaponDefinition",
+      "parent_class": "UPrimaryDataAsset",
+      "source_header": "Source/OneBossFight/Player/RPGCombatCatalog.h",
+      "source_line": 56,
+      "inner_struct": "FRPGCatalogWeapon",
+      "asset_category": "Combat / Weapon Data Asset"
+    },
+    "field_values": {
+      "Definition": {
+        "WeaponId": {
+          "type": "FName",
+          "value": "Weapon_Greatsword_Example",
+          "provenance": "PROPOSED_AUTHOR_CHOICE",
+          "required": true,
+          "validation_rule": "Must be unique across all weapons in URPGCombatCatalog. Alphanumeric FName identifier."
+        },
+        "StyleName": {
+          "type": "FName",
+          "value": "Greatsword",
+          "provenance": "PROPOSED_AUTHOR_CHOICE",
+          "required": true,
+          "validation_rule": "Matches weapon combat style name used by inventory and style-matching logic."
+        },
+        "StyleAsset": {
+          "type": "FSoftObjectPath",
+          "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/CombatStyles/CS_GreatSword.CS_GreatSword",
+          "provenance": "CANDIDATE_PACK_ASSET",
+          "required": true,
+          "validation_rule": "Must resolve to valid UPrimaryDataAsset or Blueprint combat style in cooked build."
+        },
+        "ItemPath": {
+          "type": "FSoftObjectPath",
+          "value": "/Game/AdvancedARPGCombat/Core/Items/Weapons/GreatSword/DA_Item_GreatSword.DA_Item_GreatSword",
+          "provenance": "CANDIDATE_PACK_ASSET",
+          "required": true,
+          "validation_rule": "Soft object path to weapon item data asset."
+        },
+        "ItemBaseClass": {
+          "type": "FSoftObjectPath",
+          "value": "/Game/AdvancedARPGCombat/Core/Blueprints/Items/B_Item_Weapon.B_Item_Weapon_C",
+          "provenance": "CANDIDATE_PACK_ASSET",
+          "required": true,
+          "validation_rule": "Must resolve to actor class or Blueprint generated class derived from pack item base."
+        },
+        "ActorClass": {
+          "type": "FSoftObjectPath",
+          "value": "/Game/AdvancedARPGCombat/Core/Blueprints/Items/Equipable/Weapons/BP_Equipable_Greatsword.BP_Equipable_Greatsword_C",
+          "provenance": "CANDIDATE_PACK_ASSET",
+          "required": true,
+          "validation_rule": "Equipable weapon actor spawned or attached to character mesh socket."
+        },
+        "AbilityClass": {
+          "type": "FSoftObjectPath",
+          "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/CombatStyles/CS_GreatSword.CS_GreatSword_C",
+          "provenance": "CANDIDATE_PACK_ASSET",
+          "required": true,
+          "validation_rule": "Primary combat style ability class."
+        },
+        "HudWeaponWord": {
+          "type": "FString",
+          "value": "GREATSWORD",
+          "provenance": "PROPOSED_AUTHOR_CHOICE",
+          "required": true,
+          "validation_rule": "Word rendered in player HUD weapon slot indicator."
+        },
+        "StyleAliases": {
+          "type": "TArray<FName>",
+          "value": [
+            "2H",
+            "HeavyBlade"
+          ],
+          "provenance": "PROPOSED_AUTHOR_CHOICE",
+          "required": false,
+          "validation_rule": "Optional alternate style names recognized by style-matching console commands or cheats."
+        },
+        "AliasHudWords": {
+          "type": "TMap<FName, FString>",
+          "value": {
+            "2H": "2-HANDED",
+            "HeavyBlade": "HEAVY BLADE"
+          },
+          "provenance": "PROPOSED_AUTHOR_CHOICE",
+          "required": false,
+          "validation_rule": "Optional HUD label overrides when an alias style is active."
+        },
+        "Icon": {
+          "type": "FSoftObjectPath",
+          "value": "/Game/AdvancedARPGCombat/UI/Textures/T_Weapon_Greatsword.T_Weapon_Greatsword",
+          "provenance": "CANDIDATE_PACK_ASSET_OR_PLACEHOLDER",
+          "required": false,
+          "validation_rule": "UI icon texture path; if unassigned, UI selector falls back to text word."
+        },
+        "Actions": {
+          "type": "TArray<ERPGAttackKind>",
+          "value": [
+            "LightAttack",
+            "HeavyAttack",
+            "SpecialAttack"
+          ],
+          "provenance": "PROPOSED_AUTHOR_CHOICE",
+          "required": true,
+          "validation_rule": "Must match valid ERPGAttackKind enum values (Source/OneBossFight/Player/RPGAttackKind.h)."
+        },
+        "bRequireExactRows": {
+          "type": "bool",
+          "value": true,
+          "provenance": "PRODUCTION_AUTHORING_RULE",
+          "required": true,
+          "validation_rule": "Must be set to true for authored production weapons to reject missing attack table rows."
+        },
+        "ReferenceProvenance": {
+          "type": "FString",
+          "value": "Authored production weapon definition for Greatsword Vanguard archetype",
+          "provenance": "AUTHOR_NOTE",
+          "required": false,
+          "validation_rule": "Descriptive provenance string for tracking authored origin."
+        }
+      }
+    }
+  },
+  "recipe_2_build_definition": {
+    "class_info": {
+      "native_class": "URPGBuildDefinition",
+      "parent_class": "UPrimaryDataAsset",
+      "source_header": "Source/OneBossFight/Player/RPGCombatCatalog.h",
+      "source_line": 64,
+      "inner_struct": "FRPGCatalogBuild",
+      "asset_category": "Combat / Build Data Asset"
+    },
+    "field_values": {
+      "Definition": {
+        "BuildId": {
+          "type": "FName",
+          "value": "Build_Greatsword_Vanguard",
+          "provenance": "PROPOSED_AUTHOR_CHOICE",
+          "required": true,
+          "validation_rule": "Unique FName identifier for player build."
+        },
+        "ConsoleName": {
+          "type": "FString",
+          "value": "vanguard_gs",
+          "provenance": "PROPOSED_AUTHOR_CHOICE",
+          "required": true,
+          "validation_rule": "Lowercase string token used for console command switching (e.g., rpg.Build vanguard_gs)."
+        },
+        "Aliases": {
+          "type": "TArray<FString>",
+          "value": [
+            "greatsword_heavy",
+            "gs_vanguard"
+          ],
+          "provenance": "PROPOSED_AUTHOR_CHOICE",
+          "required": false,
+          "validation_rule": "Console name aliases accepted by catalog parse functions."
+        },
+        "DisplayName": {
+          "type": "FString",
+          "value": "Vanguard Greatsword",
+          "provenance": "PROPOSED_AUTHOR_CHOICE",
+          "required": true,
+          "validation_rule": "Human-readable display name rendered in UI selection menu."
+        },
+        "UiOrder": {
+          "type": "int32",
+          "value": 1,
+          "provenance": "PROPOSED_AUTHOR_CHOICE",
+          "required": true,
+          "validation_rule": "Integer determining sorting order in UI catalog list."
+        },
+        "LegacySlot": {
+          "type": "int32",
+          "value": 0,
+          "provenance": "PROPOSED_AUTHOR_CHOICE",
+          "required": false,
+          "validation_rule": "Optional legacy slot index mapping for backwards compatibility (0-based, or INDEX_NONE = -1)."
+        },
+        "WeaponId": {
+          "type": "FName",
+          "value": "Weapon_Greatsword_Example",
+          "provenance": "MUST_MATCH_WEAPON_ID",
+          "required": true,
+          "validation_rule": "CRITICAL: Must match a WeaponId defined in the catalog's Weapons array."
+        },
+        "Icon": {
+          "type": "FSoftObjectPath",
+          "value": "/Game/AdvancedARPGCombat/UI/Textures/T_Build_Vanguard.T_Build_Vanguard",
+          "provenance": "CANDIDATE_PACK_ASSET_OR_PLACEHOLDER",
+          "required": false,
+          "validation_rule": "UI icon texture path; optional."
+        }
+      }
+    }
+  },
+  "recipe_2b_catalog_registration": {
+    "class_info": {
+      "native_class": "URPGCombatCatalog",
+      "parent_class": "UPrimaryDataAsset",
+      "source_header": "Source/OneBossFight/Player/RPGCombatCatalog.h",
+      "source_line": 72,
+      "asset_category": "Combat / Combat Catalog Data Asset"
+    },
+    "field_values": {
+      "SchemaVersion": {
+        "type": "int32",
+        "value": 1,
+        "provenance": "SOURCE_DEFAULT",
+        "required": true,
+        "validation_rule": "Catalog schema version (currently 1)."
+      },
+      "Weapons": {
+        "type": "TArray<TSoftObjectPtr<URPGWeaponDefinition>>",
+        "value": [
+          "/Game/OneBossFight/DataAssets/Weapons/DA_Weapon_Greatsword_Example.DA_Weapon_Greatsword_Example"
+        ],
+        "provenance": "AUTHOR_ASSET_ARRAY",
+        "required": true,
+        "validation_rule": "Array of soft references to URPGWeaponDefinition data assets."
+      },
+      "Builds": {
+        "type": "TArray<TSoftObjectPtr<URPGBuildDefinition>>",
+        "value": [
+          "/Game/OneBossFight/DataAssets/Builds/DA_Build_Greatsword_Vanguard.DA_Build_Greatsword_Vanguard"
+        ],
+        "provenance": "AUTHOR_ASSET_ARRAY",
+        "required": true,
+        "validation_rule": "Array of soft references to URPGBuildDefinition data assets."
+      }
+    }
+  },
+  "recipe_3_boss_definition": {
+    "class_info": {
+      "native_class": "URPGBossDefinition",
+      "parent_class": "UPrimaryDataAsset",
+      "source_header": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "source_line": 168,
+      "asset_category": "Encounter / Boss Definition Data Asset"
+    },
+    "field_values": {
+      "Schema": {
+        "type": "int32",
+        "value": 1,
+        "provenance": "SOURCE_DEFAULT",
+        "required": true,
+        "validation_rule": "Boss schema version (currently 1)."
+      },
+      "DefinitionId": {
+        "type": "FName",
+        "value": "Boss_EmberWarden_Example",
+        "provenance": "PROPOSED_AUTHOR_CHOICE",
+        "required": true,
+        "validation_rule": "Unique FName identifier for the boss archetype."
+      },
+      "PresentationId": {
+        "type": "FName",
+        "value": "EmberWarden",
+        "provenance": "PROPOSED_AUTHOR_CHOICE",
+        "required": true,
+        "validation_rule": "Presentation name used in UI and combat telemetry."
+      },
+      "Stats": {
+        "type": "FRPGBossStatsConfig",
+        "source_declaration": "RPGEncounterBinding.h:19",
+        "fields": {
+          "MaxHealth": {
+            "type": "float",
+            "value": 1200.0,
+            "provenance": "PROPOSED_AUTHOR_CHOICE",
+            "required": true
+          },
+          "MaxPosture": {
+            "type": "float",
+            "value": 200.0,
+            "provenance": "PROPOSED_AUTHOR_CHOICE",
+            "required": true
+          },
+          "PostureRegenDelay": {
+            "type": "float",
+            "value": 3.0,
+            "provenance": "PROPOSED_AUTHOR_CHOICE",
+            "required": true
+          },
+          "PostureRegenRate": {
+            "type": "float",
+            "value": 25.0,
+            "provenance": "PROPOSED_AUTHOR_CHOICE",
+            "required": true
+          }
+        }
+      },
+      "EncounterPolicy": {
+        "type": "FRPGEncounterPolicyConfig",
+        "source_declaration": "RPGEncounterBinding.h:31",
+        "fields": {
+          "GateRadius": {
+            "type": "float",
+            "value": 1200.0,
+            "provenance": "NATIVE_DEFAULT",
+            "required": true,
+            "note": "Radius in cm; 0 disables the proximity gate."
+          },
+          "bResetOnPlayerRespawn": {
+            "type": "bool",
+            "value": true,
+            "provenance": "NATIVE_DEFAULT",
+            "required": true
+          }
+        }
+      },
+      "StaggerPolicy": {
+        "type": "FRPGStaggerPolicyConfig",
+        "source_declaration": "RPGEncounterBinding.h:44",
+        "fields": {
+          "StaggerSeconds": {
+            "type": "float",
+            "value": 2.5,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "FreezeAtPosition": {
+            "type": "float",
+            "value": 1.55,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "CriticalMultiplier": {
+            "type": "float",
+            "value": 2.5,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "RiposteRange": {
+            "type": "float",
+            "value": 150.0,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "RiposteConeDegrees": {
+            "type": "float",
+            "value": 120.0,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "RiposteFacingDegrees": {
+            "type": "float",
+            "value": 120.0,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "RiposteArmSeconds": {
+            "type": "float",
+            "value": 1.2,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "RipostePlayerStartGap": {
+            "type": "float",
+            "value": 150.0,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "RiposteAlignSeconds": {
+            "type": "float",
+            "value": 0.3,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "RiposteImpactSeconds": {
+            "type": "float",
+            "value": 0.8,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "RiposteBaseDamage": {
+            "type": "float",
+            "value": 40.0,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "CooldownSeconds": {
+            "type": "float",
+            "value": 0.0,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "GetUpRate": {
+            "type": "float",
+            "value": 0.6,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "bHoldPostureAtZero": {
+            "type": "bool",
+            "value": true,
+            "provenance": "NATIVE_DEFAULT"
+          }
+        }
+      },
+      "PhaseFlow": {
+        "type": "FRPGPhaseFlowConfig",
+        "source_declaration": "RPGEncounterBinding.h:68",
+        "fields": {
+          "TransitionSeconds": {
+            "type": "float",
+            "value": 1.8,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "bUseRoarClip": {
+            "type": "bool",
+            "value": true,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "bPausePostureInTransition": {
+            "type": "bool",
+            "value": true,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "bLockLeapUntilPhaseTwo": {
+            "type": "bool",
+            "value": true,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "AttackAbilityPrefix": {
+            "type": "FString",
+            "value": "GA_GS_Boss_",
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "LeapAbilityTag": {
+            "type": "FName",
+            "value": "Ability.Melee.LeapAttack",
+            "provenance": "NATIVE_DEFAULT"
+          }
+        }
+      },
+      "Fireball": {
+        "type": "FRPGFireballConfig",
+        "source_declaration": "RPGEncounterBinding.h:83",
+        "fields": {
+          "bFireballEnabled": {
+            "type": "bool",
+            "value": true,
+            "provenance": "PROPOSED_AUTHOR_CHOICE"
+          },
+          "FireballAbility": {
+            "type": "TSoftClassPtr<UObject>",
+            "value": "/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C",
+            "provenance": "CANDIDATE_PACK_ASSET"
+          },
+          "FireballCooldown": {
+            "type": "FVector2D",
+            "value": {
+              "X": 6.0,
+              "Y": 10.0
+            },
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "FireballMinRange": {
+            "type": "float",
+            "value": 500.0,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "FireballMaxRange": {
+            "type": "float",
+            "value": 1800.0,
+            "provenance": "NATIVE_DEFAULT"
+          }
+        }
+      },
+      "PhaseDependencies": {
+        "type": "FRPGPhaseDependencyConfig",
+        "source_declaration": "RPGEncounterBinding.h:96",
+        "fields": {
+          "RoarClip": {
+            "type": "TSoftObjectPtr<UAnimSequence>",
+            "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "TransitionMontage": {
+            "type": "TSoftObjectPtr<UAnimMontage>",
+            "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "ImmunityEffect": {
+            "type": "TSoftClassPtr<UObject>",
+            "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          }
+        }
+      },
+      "StaggerProfile": {
+        "type": "FRPGStaggerProfileConfig",
+        "source_declaration": "RPGEncounterBinding.h:110",
+        "fields": {
+          "bUseClips": {
+            "type": "bool",
+            "value": true,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "bUseRiposteClips": {
+            "type": "bool",
+            "value": true,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "bCriticalOnEveryHit": {
+            "type": "bool",
+            "value": false,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "HitStunAbilityClassName": {
+            "type": "FName",
+            "value": "GA_GS_Boss_HitStun_C",
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "FallMontage": {
+            "type": "TSoftObjectPtr<UAnimMontage>",
+            "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "GetUpMontage": {
+            "type": "TSoftObjectPtr<UAnimMontage>",
+            "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "FallClip": {
+            "type": "TSoftObjectPtr<UAnimSequence>",
+            "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "DownClip": {
+            "type": "TSoftObjectPtr<UAnimSequence>",
+            "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "RipostePlayerClip": {
+            "type": "TSoftObjectPtr<UAnimSequence>",
+            "value": "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.AN_Riposte_Player_Front",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "RiposteBossClip": {
+            "type": "TSoftObjectPtr<UAnimSequence>",
+            "value": "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "ImmunityEffect": {
+            "type": "TSoftClassPtr<UObject>",
+            "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          }
+        }
+      },
+      "DormantWake": {
+        "type": "FRPGDormantWakeConfig",
+        "source_declaration": "RPGEncounterBinding.h:130",
+        "fields": {
+          "DormantClip": {
+            "type": "TSoftObjectPtr<UAnimSequence>",
+            "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.AN_Boss01_DormantIdle",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "WakeClip": {
+            "type": "TSoftObjectPtr<UAnimSequence>",
+            "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_Wake.AN_Boss01_Wake",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          }
+        }
+      },
+      "Phases": {
+        "type": "TArray<FRPGPhaseConfig>",
+        "source_declaration": "RPGEncounterBinding.h:138",
+        "value": [
+          {
+            "PhaseId": "PhaseOne",
+            "EntryHealthFraction": 1.0,
+            "SpeedMultiplier": 1.0,
+            "RateMultiplier": 1.0,
+            "AttackMultiplier": 1.0,
+            "provenance": "PROPOSED_AUTHOR_CHOICE"
+          },
+          {
+            "PhaseId": "PhaseTwo",
+            "EntryHealthFraction": 0.5,
+            "SpeedMultiplier": 1.15,
+            "RateMultiplier": 1.25,
+            "AttackMultiplier": 1.3,
+            "provenance": "PROPOSED_AUTHOR_CHOICE"
+          }
+        ]
+      },
+      "Skeleton": {
+        "type": "TSoftObjectPtr<USkeleton>",
+        "value": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin",
+        "provenance": "VERIFIED_CDO_SKELETON_C232",
+        "required": true,
+        "validation_rule": "CRITICAL: Must match skeleton reported by the observed CDO mesh (/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SKM_CombatMannequin_Simple)."
+      },
+      "Animations": {
+        "type": "TArray<TSoftObjectPtr<UAnimSequenceBase>>",
+        "value": [
+          "/Game/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.AN_Boss01_DormantIdle",
+          "/Game/OneBossFight/Boss01/Animations/AN_Boss01_Wake.AN_Boss01_Wake",
+          "/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar",
+          "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall",
+          "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown",
+          "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction",
+          "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage",
+          "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage",
+          "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage"
+        ],
+        "provenance": "VERIFIED_CANDIDATE_ANIMATIONS_C232",
+        "required": true,
+        "validation_rule": "Every animation must report compatibility with Skeleton. Verified clean in DD14 (0 missing, 0 incompatible)."
+      },
+      "Fields": {
+        "type": "TArray<FRPGParityField>",
+        "source_declaration": "RPGEncounterBinding.h:150",
+        "note": "51-row field parity manifest. Transport record required for migration parity verification.",
+        "sample_count": 51,
+        "status": "PARITY_CONTRACT_VERIFIED_IN_DD14"
+      }
+    }
+  },
+  "recipe_4_placed_binding": {
+    "struct_info": {
+      "native_struct": "FRPGPlacedParticipantBinding",
+      "source_header": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "source_line": 232,
+      "usage": "Placed in Level Actor component or World Subsystem binding slot"
+    },
+    "field_values": {
+      "Slot": {
+        "type": "FName",
+        "value": "BossCore",
+        "provenance": "CANONICAL_BINDING_SLOT",
+        "required": true,
+        "validation_rule": "Participant slot identifier (e.g. BossCore)."
+      },
+      "TargetSlot": {
+        "type": "FName",
+        "value": "TargetOnly",
+        "provenance": "CANONICAL_TARGET_SLOT",
+        "required": true,
+        "validation_rule": "Target participant slot identifier (e.g. TargetOnly)."
+      },
+      "Actor": {
+        "type": "TObjectPtr<AActor>",
+        "value": "UNRESOLVED_LEVEL_INSTANCE",
+        "provenance": "LEVEL_EDITOR_DETAILS_ASSIGNMENT",
+        "required": true,
+        "validation_rule": "Assigned in level editor details panel to point to placed boss character instance."
+      },
+      "Definition": {
+        "type": "TObjectPtr<URPGBossDefinition>",
+        "value": "/Game/OneBossFight/DataAssets/Boss/DA_Boss_EmberWarden_Example.DA_Boss_EmberWarden_Example",
+        "provenance": "DATA_ASSET_REFERENCE",
+        "required": true,
+        "validation_rule": "Pointer to authored URPGBossDefinition data asset."
+      }
+    },
+    "status_disclaimer": "CRITICAL: Boss binding and runtime startup activation are currently NOT released or complete. Preflight verification covers headless component compilation only."
+  }
+}

@@ -1,0 +1,1 @@
+python.exe processes present are uv-run MCP servers and MailboxViewer.py (--web-only); no UnrealEditor, UnrealEditor-Cmd, UnrealBuildTool, dotnet, cl, link or MSBuild process.

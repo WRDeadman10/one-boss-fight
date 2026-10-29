@@ -1,0 +1,64 @@
+[DRAFT_APPLY] FATAL: Missing required Unreal API: unreal.EditorAssetLibrary.does_asset_exist
+[DRAFT_APPLY] Creating draft asset at '/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft'...
+[DRAFT_APPLY] Initialized & verified all 15 typed properties on draft asset: 'DA_Boss_EmberWarden_Draft'
+
+[DRAFT_APPLY] SUCCESS: In-memory asset creation and complete readback verified.
+  NOTICE: --save flag was not provided. Output packages were NOT saved to disk.
+test_attack_multiplier_floor (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestBossProfileValidation) ... ok
+test_baseline_boss_profile_passes (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestBossProfileValidation) ... ok
+test_boss_multiple_phases_rejected (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestBossProfileValidation) ... ok
+test_entry_health_fraction_strict_domain (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestBossProfileValidation) ... ok
+test_health_and_posture_native_floors (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestBossProfileValidation) ... ok
+test_invalid_bool_type_rejected (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestBossProfileValidation) ... ok
+test_nan_numeric_value_rejected (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestBossProfileValidation) ... ok
+test_nan_phase_multiplier_rejected (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestBossProfileValidation) ... ok
+test_speed_and_rate_multipliers_positive (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestBossProfileValidation) ... ok
+test_unknown_invented_field_rejected (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestBossProfileValidation) ... ok
+test_double_slash_and_backslash_rejection (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestCanonicalPathValidation) ... ok
+test_subobject_colon_rejection (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestCanonicalPathValidation) ... ok
+test_traversal_rejection (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestCanonicalPathValidation) ... ok
+test_valid_paths (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestCanonicalPathValidation) ... ok
+test_whitespace_rejection (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestCanonicalPathValidation) ... ok
+test_wrong_root_rejection (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestCanonicalPathValidation) ... ok
+test_missing_new_build_fails (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestClonedCatalogReadback) ... ok
+test_order_permutation_fails (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestClonedCatalogReadback) ... ok
+test_valid_readback_passes (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestClonedCatalogReadback) ... ok
+test_case_insensitive_ascii_equality (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestExactFNameEquality) ... ok
+test_membership_helper (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestExactFNameEquality) ... ok
+test_whitespace_is_significant (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestExactFNameEquality) ... ok
+test_case_lowering (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestExactNativeNormalization) ... ok
+test_double_quote_trimming_parity (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestExactNativeNormalization) ... ok
+test_empty_and_whitespace (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestExactNativeNormalization) ... ok
+test_reserved_keywords (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestExactNativeNormalization) ... ok
+test_single_quotes_preserved (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestExactNativeNormalization) ... ok
+test_empty_unreal_namespace_rejected (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestFailClosedEditorGuard) ... ok
+test_is_editor_returning_false_rejected (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestFailClosedEditorGuard) ... ok
+test_missing_is_editor_rejected (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestFailClosedEditorGuard) ... ok
+test_missing_subsystem_api_rejected (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestFailClosedEditorGuard) ... ok
+test_offline_environment_rejected (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestFailClosedEditorGuard) ... ok
+test_pie_simulation_mode_rejected (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestFailClosedEditorGuard) ... ok
+test_subsystem_returning_none_rejected (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestFailClosedEditorGuard) ... ok
+test_valid_editor_surface_accepted (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestFailClosedEditorGuard) ... ok
+test_collision_with_existing_build (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestNamespaceCollisionValidation) ... ok
+test_reserved_keyword_rejection (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestNamespaceCollisionValidation) ... ok
+test_valid_custom_build_keys (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestNamespaceCollisionValidation) ... ok
+test_finite_floats (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestNumericDomainValidation) ... ok
+test_finite_integers (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestNumericDomainValidation) ... ok
+test_report_structure (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestPartialOperationReport) ... ok
+test_clean_contract_passes (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestPinnedLegacyContractValidation) ... ok
+test_duplicate_slot_fails (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestPinnedLegacyContractValidation) ... ok
+test_invented_sword_id_fails (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestPinnedLegacyContractValidation) ... ok
+test_missing_slot_fails (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestPinnedLegacyContractValidation) ... ok
+test_plural_dualswords_style_fails (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestPinnedLegacyContractValidation) ... ok
+test_apply_fails_closed_when_api_missing (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestRecordingFakeWriter) ... ok
+test_apply_writes_and_verifies_all_properties (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestRecordingFakeWriter)
+Uses Codex's recording fake pattern with complete surface to prove that ... ok
+test_identical_snapshots_pass (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestSourceSnapshotComparison) ... ok
+test_missing_package_in_snapshot_detected (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestSourceSnapshotComparison) ... ok
+test_mutation_after_snapshot_isolated (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestSourceSnapshotComparison) ... ok
+test_package_dirty_drift_detected (Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.test_authoring_core.TestSourceSnapshotComparison) ... ok
+
+----------------------------------------------------------------------
+Ran 52 tests in 0.006s
+
+OK

@@ -1,0 +1,161 @@
+{
+  "scope": "File integrity only, not source semantics/runtime acceptance",
+  "receipt_sha256": "82e3f6eb0c937e8939a904cb307d865e5acd170ff946d7eb4d248f4994b44379",
+  "entries": 17,
+  "all_verified": true,
+  "checks": [
+    {
+      "expected_sha256": "10ee199697c311c2d24cc83283f293fe9254c2eb7c2a0d1027788e595586c460",
+      "relative_path": "./19_HANDOFF_TO_CODEX_IMPLEMENTER.md",
+      "expected_size": null,
+      "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD19\\19_HANDOFF_TO_CODEX_IMPLEMENTER.md",
+      "actual_sha256": "10ee199697c311c2d24cc83283f293fe9254c2eb7c2a0d1027788e595586c460",
+      "actual_size": 3316,
+      "status": "verified"
+    },
+    {
+      "expected_sha256": "f4e5c94bff50f3774b1b9700db74bf52b7207bac8f605d4165a041ffe0a6cc26",
+      "relative_path": "./Review/RPGBossBleedAdapters.cpp.delivered_C251",
+      "expected_size": null,
+      "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD19\\Review\\RPGBossBleedAdapters.cpp.delivered_C251",
+      "actual_sha256": "f4e5c94bff50f3774b1b9700db74bf52b7207bac8f605d4165a041ffe0a6cc26",
+      "actual_size": 7841,
+      "status": "verified"
+    },
+    {
+      "expected_sha256": "84a899804e0952e716fe87cedfcf09760b5ad334f5081c5302c779ffb39c6375",
+      "relative_path": "./Review/RPGBossBleedAdapters.h.delivered_C251",
+      "expected_size": null,
+      "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD19\\Review\\RPGBossBleedAdapters.h.delivered_C251",
+      "actual_sha256": "84a899804e0952e716fe87cedfcf09760b5ad334f5081c5302c779ffb39c6375",
+      "actual_size": 5573,
+      "status": "verified"
+    },
+    {
+      "expected_sha256": "428d90bb4aad7520b9a59b679de774f3770895d19a907e2bafb045c447f27a32",
+      "relative_path": "./Review/RPGBossBleedAdaptersTests.cpp.before_independent_review",
+      "expected_size": null,
+      "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD19\\Review\\RPGBossBleedAdaptersTests.cpp.before_independent_review",
+      "actual_sha256": "428d90bb4aad7520b9a59b679de774f3770895d19a907e2bafb045c447f27a32",
+      "actual_size": 58640,
+      "status": "verified"
+    },
+    {
+      "expected_sha256": "53c42ce5418d5b926f0e9853fb30a7f82ee0a48964b82e00b85bf5e22c263455",
+      "relative_path": "./Review/RPGBossBleedAdaptersTests.cpp.delivered_C251",
+      "expected_size": null,
+      "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD19\\Review\\RPGBossBleedAdaptersTests.cpp.delivered_C251",
+      "actual_sha256": "53c42ce5418d5b926f0e9853fb30a7f82ee0a48964b82e00b85bf5e22c263455",
+      "actual_size": 58682,
+      "status": "verified"
+    },
+    {
+      "expected_sha256": "b4dc5c2654807131f18509949fba033661d2b52e8e197a5c90759f9a37520089",
+      "relative_path": "./Review/RPGEncounterBinding.cpp.delivered_C251",
+      "expected_size": null,
+      "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD19\\Review\\RPGEncounterBinding.cpp.delivered_C251",
+      "actual_sha256": "b4dc5c2654807131f18509949fba033661d2b52e8e197a5c90759f9a37520089",
+      "actual_size": 17296,
+      "status": "verified"
+    },
+    {
+      "expected_sha256": "c7255051e5f6be46db5b5caa0351cf45e50c3c07c4c0a8085fd3d71b633df828",
+      "relative_path": "./Review/RPGEncounterBinding.cpp.preimage",
+      "expected_size": null,
+      "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD19\\Review\\RPGEncounterBinding.cpp.preimage",
+      "actual_sha256": "c7255051e5f6be46db5b5caa0351cf45e50c3c07c4c0a8085fd3d71b633df828",
+      "actual_size": 17034,
+      "status": "verified"
+    },
+    {
+      "expected_sha256": "58c4e5758160abad1770aa6c04519a33648196d9d4676b4732d03adcbb948bbb",
+      "relative_path": "./Review/RPGEncounterBinding.h.delivered_C251",
+      "expected_size": null,
+      "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD19\\Review\\RPGEncounterBinding.h.delivered_C251",
+      "actual_sha256": "58c4e5758160abad1770aa6c04519a33648196d9d4676b4732d03adcbb948bbb",
+      "actual_size": 18914,
+      "status": "verified"
+    },
+    {
+      "expected_sha256": "ce0a7da73e833a22aef8ad69e3ed42984b39b04131997d78f055f4a4070d9c92",
+      "relative_path": "./Review/RPGEncounterBinding.h.preimage",
+      "expected_size": null,
+      "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD19\\Review\\RPGEncounterBinding.h.preimage",
+      "actual_sha256": "ce0a7da73e833a22aef8ad69e3ed42984b39b04131997d78f055f4a4070d9c92",
+      "actual_size": 17193,
+      "status": "verified"
+    },
+    {
+      "expected_sha256": "a87dc577f5bcc53f7d0328e1720ff3dae133c1bcdf15e676d92f003823f7f49a",
+      "relative_path": "./five_file.diff",
+      "expected_size": null,
+      "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD19\\five_file.diff",
+      "actual_sha256": "a87dc577f5bcc53f7d0328e1720ff3dae133c1bcdf15e676d92f003823f7f49a",
+      "actual_size": 77960,
+      "status": "verified"
+    },
+    {
+      "expected_sha256": "881639747e090db050ffcba2fe4b1ff2ff3c9e3ca7c377d29917538be2968fc4",
+      "relative_path": "./manifest_diff.txt",
+      "expected_size": null,
+      "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD19\\manifest_diff.txt",
+      "actual_sha256": "881639747e090db050ffcba2fe4b1ff2ff3c9e3ca7c377d29917538be2968fc4",
+      "actual_size": 871,
+      "status": "verified"
+    },
+    {
+      "expected_sha256": "52f96c26a39ed25108a6db43d6e11c6051eba8a498a5baab1891adfa7ac7c262",
+      "relative_path": "./post_pins_check_excluding_binding.txt",
+      "expected_size": null,
+      "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD19\\post_pins_check_excluding_binding.txt",
+      "actual_sha256": "52f96c26a39ed25108a6db43d6e11c6051eba8a498a5baab1891adfa7ac7c262",
+      "actual_size": 4,
+      "status": "verified"
+    },
+    {
+      "expected_sha256": "e1181e695a2dd6e09e34035a7e045893ade3d8288def2587cfa4fd8c1eecb00e",
+      "relative_path": "./post_write_source_manifest_sha256.txt",
+      "expected_size": null,
+      "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD19\\post_write_source_manifest_sha256.txt",
+      "actual_sha256": "e1181e695a2dd6e09e34035a7e045893ade3d8288def2587cfa4fd8c1eecb00e",
+      "actual_size": 22219,
+      "status": "verified"
+    },
+    {
+      "expected_sha256": "325076307b8d93cc6cae6ea55eaab25c71676647da96b54959de17c6ffd19d9b",
+      "relative_path": "./pre_binary_sha256.txt",
+      "expected_size": null,
+      "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD19\\pre_binary_sha256.txt",
+      "actual_sha256": "325076307b8d93cc6cae6ea55eaab25c71676647da96b54959de17c6ffd19d9b",
+      "actual_size": 209,
+      "status": "verified"
+    },
+    {
+      "expected_sha256": "a1e52ca3a8da7bc4dc6dc36d67463324ce59607207fa6cec148d8b185a6b08cf",
+      "relative_path": "./pre_git_head.txt",
+      "expected_size": null,
+      "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD19\\pre_git_head.txt",
+      "actual_sha256": "a1e52ca3a8da7bc4dc6dc36d67463324ce59607207fa6cec148d8b185a6b08cf",
+      "actual_size": 41,
+      "status": "verified"
+    },
+    {
+      "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "relative_path": "./pre_process_check.txt",
+      "expected_size": null,
+      "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD19\\pre_process_check.txt",
+      "actual_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "actual_size": 0,
+      "status": "verified"
+    },
+    {
+      "expected_sha256": "91add9f13bcb113fbd3221a1308a673929a92aa791a0fcac8fc7a050ad63524a",
+      "relative_path": "./pre_source_manifest_sha256.txt",
+      "expected_size": null,
+      "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD19\\pre_source_manifest_sha256.txt",
+      "actual_sha256": "91add9f13bcb113fbd3221a1308a673929a92aa791a0fcac8fc7a050ad63524a",
+      "actual_size": 21863,
+      "status": "verified"
+    }
+  ]
+}

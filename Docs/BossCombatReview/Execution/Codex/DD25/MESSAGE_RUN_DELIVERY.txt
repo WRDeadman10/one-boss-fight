@@ -1,0 +1,21 @@
+# DD25 C286 run report — independent lead acceptance pending
+
+ONE serialized scoped build/focused/full sequence. Fresh212-source manifest, five DD25 pins plus DD21-DD24 pins (accepted Binding replacements explicitly recorded), native Death header/cpp pins, dependency/candidate/catalog pins matched. DD24 binary baseline, HEAD79d55906 and immediate empty engine/build/compiler process check passed. Nothing under Source changed during the run.
+
+BUILD exit0/36s; actual UHT invocation/reflection lines ['  Running Internal UnrealHeaderTool C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject C:\\UnrealProject\\OneBossFight\\Intermediate\\Build\\Win64\\OneBossFightEditor\\Development\\OneBossFightEditor.uhtmanifest -WarningsAsErrors -installed', 'Reflection code generated for OneBossFightEditor in 5.1310009 seconds']; 3known Warning lines; raw SHA256 a7259c0d650dbabc87ce140e2cc05024283d57c89a7137e7fc70c2487ed6d5e9.
+
+focused_death: discovered[['6', 'OneBossFight.Binding.Death']]; completed6/6unique Success; exit0/34s; Warning13, Error0; no failed/duplicate/fatal/ensure/assertion/unsupported completion, GIsCriticalError=0; raw SHA256 9ee7f606bb966d5131de205d65bffddb2ed864247da7a0677c8ebe77458f5ca2.
+
+full_dd25: discovered[['171', 'OneBossFight']]; completed171/171unique Success; exit0/28s; Warning63, Error0; no failed/duplicate/fatal/ensure/assertion/unsupported completion, GIsCriticalError=0; raw SHA256 4ab6ba9e99337da217d0b194c7423c966901adccf48f11d0bc85aeb77c4d6dee.
+
+Full launched only after focused raw gate passed. Exact165 prior DD24 paths retained plus six Death names, no missing prior path. CookCoverage Success explicitly present: the source-literal scan includes the two AN_Boss01_DeathLegend/AM_Boss01_DeathLegend references repeated in Binding.h. It is content-discovery coverage, not load/class/skeleton/playback/pose/cooked-package proof. Warning multiset versus DD24: {"added": {}, "removed": {}};63vs63 under frame/timestamp prefix, epoch and sponsor-PID normalization only. Embedded TraceServer error text remains at Warning severity.
+
+Final212 Source unchanged; native Death h/cpp pins unchanged; dependencies/candidates/catalog and HEAD unchanged. DLL 9522b4bbd1d45bcb2df26e6833add3f0b272f44d78b0e3b1a559dc3f7b94b28e; EXE unchanged 5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65. No engine/build/compiler remains at post capture. Raw logs/jobs/commands/full manifests/source and binary pins are in run_2026-10-29.
+
+No failed DD25 run, retry, silent fix, source/asset/git/native edit. Historical DD23 failed attempt remains preserved. Limits: isolated typed assignment/compiler copy/reflection/rejection only; no Death fixture BeginPlay/Tick/Attach/Preload, pack ability, remains, playback, pose or guard action, serialized/Details authoring, wiring/reservation/Ready/legacy suppression, PIE/duel/networking/package/all83 closure. Authored1e6/int ceilings and both-path rule are not native guards/tuning. Cumulative ClipRestartCount/external times/Age narrowing and KI-083 remain unresolved (KI-133).
+
+DD26 C287: no staged/live code edits yet. Read-only stop(a)/(c) findings prepared: six positive fixture manifests need59 paths; ExpandedSubset explicitly encodes five-plan structure. Separate exact-source report follows this run report, before any wiring edit. No asset Fields were inspected using the engine, no broader engine release inferred.
+
+Please independently review and accept/return this exact run.
+
+Receipt 26files SHA256 c068d7c1ac37a0a92a7ef07ce3ba15aefca4bdad42620d0ba30e35d3ad85b504.

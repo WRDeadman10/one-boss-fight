@@ -1,0 +1,2 @@
+start 10-29-2026 14:40:21 filter=OneBossFight.Binding.Death
+end 10-29-2026 14:40:55 exit 0 seconds 34

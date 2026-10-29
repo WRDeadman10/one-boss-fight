@@ -1,0 +1,60 @@
+{
+  "scope": "Source-only integrity, NOT compilation or Unreal tests",
+  "baseline": 206,
+  "current": 209,
+  "old_files_unchanged": 204,
+  "delta": {
+    "added": [
+      "Source/OneBossFight/Player/RPGBossCloseClipSwapAdapters.cpp",
+      "Source/OneBossFight/Player/RPGBossCloseClipSwapAdapters.h",
+      "Source/OneBossFight/Tests/RPGBossCloseClipSwapAdaptersTests.cpp"
+    ],
+    "removed": [],
+    "changed": [
+      "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "Source/OneBossFight/Player/RPGEncounterBinding.h"
+    ]
+  },
+  "files": [
+    {
+      "path": "Source/OneBossFight/Player/RPGBossCloseClipSwapAdapters.h",
+      "sha256": "7a4d22c49b330ce14e0bc1bf24cb101f917f50ca3d606f26aaf2324a0b45cc90",
+      "bytes": 1825,
+      "lines": 28
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossCloseClipSwapAdapters.cpp",
+      "sha256": "555fe8b40801589b37ac5eff61f2fc6069ad09c127c1c926291c45f2c14962bc",
+      "bytes": 7012,
+      "lines": 187
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "sha256": "ac593fdc4697db22f71419957c661ecc33099b96e44ce31466f74f2c8578535b",
+      "bytes": 23760,
+      "lines": 443
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "sha256": "87637344136cc67788ac5f71417307740dde0745c2284d58ba9ec298ded82cbb",
+      "bytes": 18566,
+      "lines": 403
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossCloseClipSwapAdaptersTests.cpp",
+      "sha256": "f62a8319ad365bcb4c229473e9e895d7f6dad2978d4bee25a1d6f8fdb480ee1b",
+      "bytes": 27333,
+      "lines": 442
+    }
+  ],
+  "test_names": [
+    "OneBossFight.Binding.CloseClipSwap.Assign",
+    "OneBossFight.Binding.CloseClipSwap.Validation",
+    "OneBossFight.Binding.CloseClipSwap.Isolation",
+    "OneBossFight.Binding.CloseClipSwap.Rejections",
+    "OneBossFight.Binding.CloseClipSwap.Compile",
+    "OneBossFight.Binding.CloseClipSwap.Authoring"
+  ]
+}
+Source capture completed exit0. No build/UHT/engine/automation was executed.
+

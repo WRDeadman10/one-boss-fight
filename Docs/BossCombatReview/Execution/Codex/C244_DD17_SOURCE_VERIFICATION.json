@@ -1,0 +1,36 @@
+{
+  "evidence_sha256.txt": {
+    "count": 31,
+    "bad": []
+  },
+  "post_write_source_manifest_sha256.txt": {
+    "count": 185,
+    "bad": []
+  },
+  "pre_pins.txt": {
+    "count": 24,
+    "bad": []
+  },
+  "dependency_pins_sha256.txt": {
+    "count": 10,
+    "bad": []
+  },
+  "candidate_assets_sha256.txt": {
+    "count": 14,
+    "bad": []
+  },
+  "default_catalog_assets_sha256.txt": {
+    "count": 7,
+    "bad": []
+  },
+  "pre_binary_sha256.txt": {
+    "count": 2,
+    "bad": []
+  },
+  "old_changed": [],
+  "added": [
+    "Source/OneBossFight/Player/RPGBossWorldInputCompiler.cpp",
+    "Source/OneBossFight/Player/RPGBossWorldInputCompiler.h",
+    "Source/OneBossFight/Tests/RPGBossWorldInputCompilerTests.cpp"
+  ]
+}

@@ -1,14 +1,22 @@
+CURRENT PROTOCOL â€” owner 2026-10-28 / X274: EVENT-DRIVEN SOCKET. Five-minute automation PAUSED; no polling loops. Earlier scheduling/roles/checkpoints below are historical.
+
 # Mailbox watch state
 
-## Current owner-confirmed authority — 2026-10-26, X154
+WATCH RESUMED â€” direct owner 2026-10-28: existing one-boss-fight-mailbox-coordination heartbeat ACTIVE every5minutes. Quiet for unchanged/pending; notify meaningful completion/failure/conflict/required decision. Current cursor616, X257 Claude verification/X258 AG offline packet remain the work orders.
+
+DIRECT OWNER 2026-10-28 / X255: Codex technical lead and no engine operations; Claude implementer/sole engine operator after existing AG-2b reports; AG content/offline and sole reviewed-batch git operator. Existing AG DD10 conditional run C220 remains authorized with exact stop rules and then ends; no takeover mid-run. This supersedes older AG-rest/role/checkpoint instructions. Owner explicitly resumed five-minute automation; status ACTIVE.
+
+## Current owner-confirmed authority â€” 2026-10-26, X154
 
 ## Five-minute mailbox watch resumed by direct owner, 2026-10-27
 
-OWNER UPDATE — 2026-10-27 / X231: Antigravity receives NO NEW WORK. Let only existing in-progress work finish, then rest. AG20 was delivered A153 and reviewed X232; further refinement is Codex-owned. Do not assign AG21, new revisions/audits/helpers/corpora or routine acknowledgment/handover tasks to AG while resting. Claude is RESUMED and sole engine operator under X230; Codex leads/reviews. This supersedes older auto-assignment and Claude-resting instructions. The verification run ended C183. X237 now releases only the bounded Claude2b cpp/header diff package under renewed owner implementation direction; other runtime scopes still require concrete lead release.
+OWNER UPDATE â€” 2026-10-27 / X231: Antigravity receives NO NEW WORK. Let only existing in-progress work finish, then rest. AG20 was delivered A153 and reviewed X232; further refinement is Codex-owned. Do not assign AG21, new revisions/audits/helpers/corpora or routine acknowledgment/handover tasks to AG while resting. Claude is RESUMED and sole engine operator under X230; Codex leads/reviews. This supersedes older auto-assignment and Claude-resting instructions. The verification run ended C183. X237 now releases only the bounded Claude2b cpp/header diff package under renewed owner implementation direction; other runtime scopes still require concrete lead release.
 
-LAST POLL: 2026-10-27T12:43:21.321Z heartbeat; C208 processed X254, cursor587; no further messages after586 before append.
+LAST SOCKET RECEIVE: MailboxNextSocket -Me X -SeenCount654 -Seconds30 exited0 on C239, NEXT_SEEN_COUNT656. C239 confirms Claude implements under Codex lead; A171 acknowledgment read, no new work or role expansion inferred. No polling loop.
 
-LATEST CHECKPOINT: SeenCount587 after X254; C208 DD8 five-file source accepted,15receipts/165hashes/5Review-livepins/preimagesverified,160others unchanged. Claude freshsafety/UHT/build/focusedPhaseFlow thenfullIFfocusedpass released;6new/81total expectations, prior75membership/rawlogs/manifests/binarypins required. Identity not capability/zero duration not gameplaytell approval. Codex/C208_PHASE_FLOW_SOURCE_ACCEPTANCE.md; no wiring/activation/PIE/assets, AGrests.
+HANDLED A164 -> X260: original JSON63c65be9/READMEf9f8613e/receiptfe916218 independently verified; packet returned for bounded correction, not accepted. See Codex/A164_PRODUCTION_INPUT_PACKET_REVIEW_2026-10-28.md. Await revised delivery; do not repeat A164 review or request routine acknowledgment. Claude DD11 continues under X259.
+
+LATEST CHECKPOINT: SeenCount703 after X293. X292 independently accepts C250 DD17/DD18 actual focused3/4/3/full129 exact prior119+10 and CookCoverage;29 run receipts/current191 source/24+13pins/14+7assets/binarypins verified. DLL eea8f85dca0a43cd62ae298917ce901f267fc16ce8c9c15cf5537b5e3bd4d831 EXE unchanged. No UHT;3UBTwarnings/full63warnings retain exact3additionalpackagepathwarnings, no cause claim. Codex/C250Evidence raw summaries/hash and helper implemented. X293 Claude DD19 Bleed profile actualfivefile SOURCE ONLY (3new+Bindinghcpp),194 expectation; no build/wiring/preflight insertion/activation/git. AG X291 frozen toolkit correction continues, no revision received. MCP send reaches projectfile, reads/history still omit projectmessages; actual file reviewed. No repeated C250 review required.
 
 Owner explicitly resumed mailbox watching after X236. Existing automation one-boss-fight-mailbox-coordination is ACTIVE every five minutes; stay quiet for unchanged state and notify only meaningful completion/failure/conflict/required decision. Current direct owner updates take precedence over older prompts: Claude RESUMED/sole engine operator under X230; Antigravity finishes existing work only, then rests, NO NEW assignments. Codex continues own offline review/coordination and stays quiet on unchanged state. No Codex engine/process/live-input/git actions; current implementation gates remain.
 
@@ -16,9 +24,9 @@ Watcher cursor424 after receipt of A115 (pending substantive source/semantic rev
 
 2026-10-26 scheduled review update: persisted watcher cursor426 after X164 (MailboxNext returned426). A115 substantively reviewed in Codex/AG05_REV2_SOURCE_REVIEW.md; partial acceptance (six originals reject,39 same-montage raw numeric comparisons match JSON). Five new malformed inputs accepted; companion Markdown Sprint values/id schema disagree; native A5 actor/clock/parked-visual request and unsupported16.7ms precision remain corrections. X164 assigns AG bounded offline fixes; next wake review new delivery, otherwise extend source-pin/model consistency checks offline. No runtime job/user decision needed; keep quiet.
 
-Latest handled: C174–C177 and A112–A114. X159 claimed substantial Codex offload; X160 current source/runtime review; X161 AG revisions; X162 completes S2P-2/3/4 and accepts2a inert infrastructure. Last seen watcher count421 before X161/X162; use returned cursor on next call. Claude handover current checkpoint exists; account replacement must read current top section and actual file hashes/process state. No automation resumed, no runtime jobs launched by Codex. AG05 completion is NOT accepted until X161 corrections reviewed.
+Latest handled: C174â€“C177 and A112â€“A114. X159 claimed substantial Codex offload; X160 current source/runtime review; X161 AG revisions; X162 completes S2P-2/3/4 and accepts2a inert infrastructure. Last seen watcher count421 before X161/X162; use returned cursor on next call. Claude handover current checkpoint exists; account replacement must read current top section and actual file hashes/process state. No automation resumed, no runtime jobs launched by Codex. AG05 completion is NOT accepted until X161 corrections reviewed.
 
-Latest handled C170–C173 -> X156 with scoped approvals/deferrals in CODEX_LEAD_DECISIONS_C170_C173.md. Do not replay authority confirmation. C170 package inclusion/cold data and C171 weaker travel independently read; C172 real input/focus still open. Step2a now released,2b conditional on Codex review; all later integration held. Use current MailboxNext count returned after X156, not older cursor401 below.
+Latest handled C170â€“C173 -> X156 with scoped approvals/deferrals in CODEX_LEAD_DECISIONS_C170_C173.md. Do not replay authority confirmation. C170 package inclusion/cold data and C171 weaker travel independently read; C172 real input/focus still open. Step2a now released,2b conditional on Codex review; all later integration held. Use current MailboxNext count returned after X156, not older cursor401 below.
 
 Codex lead restored by direct owner chat confirmation; prior Claude-led/paused-handoff text below is historical, not current ownership. Claude sole runtime operator; AG offline/content + commits/pushes. CODEX_LEAD_WORK_ORDER_02.md active. App heartbeat remains paused; no scheduled automation resumed. Manual/in-turn MailboxNext watches only; never claim future replies without an active mechanism.
 
@@ -45,7 +53,7 @@ Prior history through X-93 is baseline context; do not replay old task assignmen
 | A-41 | Revision 03 fixes core offline classification/duration/authority issues | X-97 | Usable partial offline subset; remaining hash/scale/frame/rate-rule and saved-text corrections; runtime coverage pending |
 | C-87 | Current route/BT/ability inventory; natural observer proposal; raw cvar output | X-97 | Three native-untracked damaging montage assignments verified in exports; count corrected to 11 boss abilities; graph evidence/pack safeguards requested; two bounded existing-driver samples within P0 scope |
 
-Last outgoing: X-98 (final handoff). C-88 role transfer confirmed by owner; Claude inherits this ledger. A-42 was received but not reviewed by Codex; C-88 sample results remain Claude-reported. Reconciliation plan and remaining concerns: CODEX_HANDOFF.md. P1–P8 remain blocked on P0 reconciliation and owner scope approval. Automation PAUSED; no further scheduled Codex replies.
+Last outgoing: X-98 (final handoff). C-88 role transfer confirmed by owner; Claude inherits this ledger. A-42 was received but not reviewed by Codex; C-88 sample results remain Claude-reported. Reconciliation plan and remaining concerns: CODEX_HANDOFF.md. P1â€“P8 remain blocked on P0 reconciliation and owner scope approval. Automation PAUSED; no further scheduled Codex replies.
 
 ## Each check
 
@@ -60,3 +68,9 @@ If unchanged/non-actionable, produce no routine owner update. Notify only meanin
 ## Hand-over 2026-10-25 (Claude)
 
 Codex automation `one-boss-fight-mailbox-coordination` is PAUSED (X-98); no scheduled checker exists now. Claude checks the mailbox when the owner asks and at the start of each work cycle. Handled since X-97: A-42 (verdict in C-89, `P0_AG_REVIEW_04.md`), X-98 (read, `CODEX_HANDOFF.md` adopted). Last outgoing: C-89. Remaining: AG corrections 1 to 9, Claude evidence items listed in PHASE_STATUS.
+
+HANDLED C246/C247/A180 -> X288: bounded source corrections issued; C247 narrow fix accepted only; full DD18 acceptance withheld. Cursor694.
+
+HANDLED C248 -> X290 source acceptance/serialized verification release; AG continuation X291; MCP integration discrepancy X289. SeenCount700.
+
+HANDLED C249 routing report and C250 run -> X292 acceptance/X293 DD19 source package. Cursor703.

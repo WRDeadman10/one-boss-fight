@@ -1,0 +1,663 @@
+{
+  "meta": {
+    "scope": "OFFLINE_AUTHORING_EXAMPLE_REFERENCE_NOT_IMPORTABLE_ASSET",
+    "purpose": "Concrete field/value illustrative manual reference for the project owner to author custom weapons, builds, catalog wiring, and boss definitions in Unreal Editor Details panels.",
+    "task": "AG-CONTENT-02 REV2 (X-272 corrections applied)",
+    "rules_and_disclaimers": [
+      "Explicitly NOT an importable Unreal asset, live configuration, or engine activation command.",
+      "Pure offline manual reference for authoring native UPrimaryDataAsset assets via Content Browser -> Miscellaneous -> Data Asset.",
+      "Every value maps directly to declarations in Source/OneBossFight/Player/RPGCombatCatalog.h, RPGBuildRules.h, RPGAttackKind.h, and RPGEncounterBinding.h.",
+      "Candidate asset paths correspond to verified pack assets (Mannequin/Ember Warden setup) from AG-CONTENT-01 (A-165) and pinned legacy build rules; Greystone/Sevarog assets are excluded.",
+      "Values marked 'PROPOSED_AUTHOR_CHOICE' are illustrative gameplay choices for demonstration and do not represent approved gameplay balance.",
+      "Unresolved paths or dependencies that cannot be proven offline from existing packages are explicitly marked 'UNRESOLVED_PACK_PATH'."
+    ]
+  },
+  "recipe_1_weapon_definition": {
+    "class_info": {
+      "native_class": "URPGWeaponDefinition",
+      "parent_class": "UPrimaryDataAsset",
+      "source_header": "Source/OneBossFight/Player/RPGCombatCatalog.h",
+      "source_line": 48,
+      "inner_struct": "FRPGCatalogWeapon",
+      "asset_category": "Combat / Weapon Data Asset"
+    },
+    "field_values": {
+      "Definition.WeaponId": {
+        "type": "FName",
+        "value": "Weapon_CustomClaymore",
+        "provenance": "PROPOSED_AUTHOR_CHOICE",
+        "required": true,
+        "validation_rule": "Unique FName identifier. Must not collide with existing WeaponIds (Starter, Strength, Dex)."
+      },
+      "Definition.StyleName": {
+        "type": "FName",
+        "value": "ClaymoreCombatStyle",
+        "provenance": "PINNED_LEGACY_STYLE (RPGBuildRules.h:37)",
+        "required": true,
+        "validation_rule": "Combat style name used as primary lookup key in weapon attack table."
+      },
+      "Definition.StyleAsset": {
+        "type": "FSoftObjectPath",
+        "value": "UNRESOLVED_PACK_PATH",
+        "provenance": "UNRESOLVED_OFFLINE",
+        "required": true,
+        "validation_rule": "Soft object path to combat style asset. Distinct ABI identity from AbilityClass. If unverified offline, mark UNRESOLVED."
+      },
+      "Definition.ItemPath": {
+        "type": "FSoftObjectPath",
+        "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Items/Weapons/KwangSword.KwangSword",
+        "provenance": "PINNED_LEGACY_ITEM (RPGBuildRules.h:37)",
+        "required": true,
+        "validation_rule": "Soft object path to weapon item data asset."
+      },
+      "Definition.ItemBaseClass": {
+        "type": "FSoftObjectPath",
+        "value": "UNRESOLVED_PACK_PATH",
+        "provenance": "UNRESOLVED_OFFLINE",
+        "required": false,
+        "validation_rule": "Optional item base class path. Mark UNRESOLVED if not independently verified."
+      },
+      "Definition.ActorClass": {
+        "type": "FSoftObjectPath",
+        "value": "BP_KwangSword_C",
+        "provenance": "PINNED_LEGACY_ACTOR (RPGBuildRules.h:37)",
+        "required": true,
+        "validation_rule": "Weapon actor class spawned and attached to character mesh socket."
+      },
+      "Definition.AbilityClass": {
+        "type": "FSoftObjectPath",
+        "value": "GA_Claymore_Melee_C",
+        "provenance": "PINNED_LEGACY_ABILITY (RPGBuildRules.h:37)",
+        "required": true,
+        "validation_rule": "Gameplay ability class granted while weapon is equipped."
+      },
+      "Definition.HudWeaponWord": {
+        "type": "FString",
+        "value": "Claymore",
+        "provenance": "PINNED_LEGACY_WORD (RPGBuildRules.h:37)",
+        "required": true,
+        "validation_rule": "Short weapon name string displayed on player HUD."
+      },
+      "Definition.StyleAliases": {
+        "type": "TArray<FName>",
+        "value": [
+          "HeavyClaymore"
+        ],
+        "provenance": "PROPOSED_AUTHOR_CHOICE",
+        "required": false,
+        "validation_rule": "Optional alternate style names recognized by style-matching commands."
+      },
+      "Definition.AliasHudWords": {
+        "type": "TMap<FName, FString>",
+        "value": {
+          "HeavyClaymore": "HEAVY CLAYMORE"
+        },
+        "provenance": "PROPOSED_AUTHOR_CHOICE",
+        "required": false,
+        "validation_rule": "Optional HUD label overrides when an alias style is active."
+      },
+      "Definition.Icon": {
+        "type": "FSoftObjectPath",
+        "value": "/Game/OneBossFight/UI/Art/T_Boss01_Icon_Strength.T_Boss01_Icon_Strength",
+        "provenance": "RESOLVED_PACK_ICON (RPGCombatCatalog.cpp:211)",
+        "required": false,
+        "validation_rule": "UI icon texture path; if unassigned, UI selector falls back to text word."
+      },
+      "Definition.Actions": {
+        "type": "TArray<ERPGAttackKind>",
+        "value": [
+          "Light",
+          "Strong",
+          "Charged",
+          "JumpLight",
+          "JumpHeavy",
+          "Knockdown"
+        ],
+        "provenance": "CANONICAL_ENUM_VALUES (RPGAttackKind.h:11)",
+        "required": true,
+        "validation_rule": "Must match valid ERPGAttackKind enum values: Light, Strong, Charged, JumpLight, JumpHeavy, Knockdown. Unknown is rejected."
+      },
+      "Definition.bRequireExactRows": {
+        "type": "bool",
+        "value": true,
+        "provenance": "REQUESTED_AUTHORED_POLICY",
+        "required": true,
+        "validation_rule": "Requested authoring policy: set to true to strictly reject missing attack table rows at compilation."
+      },
+      "Definition.ReferenceProvenance": {
+        "type": "FString",
+        "value": "legacy placeholder, unresolved",
+        "provenance": "SYSTEM_READONLY (RPGCombatCatalog.h:43)",
+        "required": false,
+        "validation_rule": "READ-ONLY in Details panel (VisibleAnywhere, BlueprintReadOnly). Overwritten by compiler with resolved status."
+      }
+    }
+  },
+  "recipe_2_build_definition": {
+    "class_info": {
+      "native_class": "URPGBuildDefinition",
+      "parent_class": "UPrimaryDataAsset",
+      "source_header": "Source/OneBossFight/Player/RPGCombatCatalog.h",
+      "source_line": 56,
+      "inner_struct": "FRPGCatalogBuild",
+      "asset_category": "Combat / Build Data Asset"
+    },
+    "field_values": {
+      "Definition.BuildId": {
+        "type": "FName",
+        "value": "Build_Custom_Claymore",
+        "provenance": "PROPOSED_AUTHOR_CHOICE",
+        "required": true,
+        "validation_rule": "Unique FName identifier. Must not collide with Starter, Strength, Dex."
+      },
+      "Definition.ConsoleName": {
+        "type": "FString",
+        "value": "custom_claymore",
+        "provenance": "PROPOSED_AUTHOR_CHOICE",
+        "required": true,
+        "validation_rule": "Lowercase string token for console switching (rpg.Build custom_claymore)."
+      },
+      "Definition.Aliases": {
+        "type": "TArray<FString>",
+        "value": [
+          "claymore_alt"
+        ],
+        "provenance": "PROPOSED_AUTHOR_CHOICE",
+        "required": false,
+        "validation_rule": "Console name aliases accepted by catalog parse functions."
+      },
+      "Definition.DisplayName": {
+        "type": "FString",
+        "value": "Custom Claymore Build",
+        "provenance": "PROPOSED_AUTHOR_CHOICE",
+        "required": true,
+        "validation_rule": "Human-readable display name rendered in UI selection menu."
+      },
+      "Definition.UiOrder": {
+        "type": "int32",
+        "value": 3,
+        "provenance": "PROPOSED_AUTHOR_CHOICE",
+        "required": true,
+        "validation_rule": "Integer sorting order in UI catalog list (0, 1, 2 reserved for legacy builds; new builds start at 3+)."
+      },
+      "Definition.LegacySlot": {
+        "type": "int32",
+        "value": -1,
+        "provenance": "CRITICAL_COMPLIANCE_RULE",
+        "required": true,
+        "validation_rule": "MUST be -1 (INDEX_NONE) for new custom builds. Slots 0, 1, 2 are strictly reserved for pinned compatibility builds."
+      },
+      "Definition.WeaponId": {
+        "type": "FName",
+        "value": "Weapon_CustomClaymore",
+        "provenance": "MUST_MATCH_WEAPON_ID",
+        "required": true,
+        "validation_rule": "CRITICAL: Must match a WeaponId defined in the catalog's Weapons array."
+      },
+      "Definition.Icon": {
+        "type": "FSoftObjectPath",
+        "value": "/Game/OneBossFight/UI/Art/T_Boss01_Icon_Strength.T_Boss01_Icon_Strength",
+        "provenance": "RESOLVED_PACK_ICON",
+        "required": false,
+        "validation_rule": "UI icon texture path; optional."
+      }
+    }
+  },
+  "recipe_2b_catalog_registration": {
+    "class_info": {
+      "native_class": "URPGCombatCatalog",
+      "parent_class": "UPrimaryDataAsset",
+      "source_header": "Source/OneBossFight/Player/RPGCombatCatalog.h",
+      "source_line": 64,
+      "canonical_path": "/Game/OneBossFight/Data/Catalog/DA_CombatCatalog.DA_CombatCatalog",
+      "asset_category": "Combat / Combat Catalog Data Asset"
+    },
+    "contract_explanation": "Compilation strictly requires all 3 pinned compatibility builds in slots 0, 1, 2 matching RPGBuildRules::Entry (Starter, Strength, Dex). New builds are appended additively with LegacySlot = -1.",
+    "field_values": {
+      "SchemaVersion": {
+        "type": "int32",
+        "value": 1,
+        "provenance": "SOURCE_DEFAULT",
+        "required": true,
+        "validation_rule": "Catalog schema version (currently 1)."
+      },
+      "Weapons": {
+        "type": "TArray<TSoftObjectPtr<URPGWeaponDefinition>>",
+        "value": [
+          "/Game/OneBossFight/Data/Catalog/Weapons/DA_Weapon_Starter.DA_Weapon_Starter",
+          "/Game/OneBossFight/Data/Catalog/Weapons/DA_Weapon_Strength.DA_Weapon_Strength",
+          "/Game/OneBossFight/Data/Catalog/Weapons/DA_Weapon_Dex.DA_Weapon_Dex",
+          "/Game/OneBossFight/Data/Catalog/Weapons/DA_Weapon_CustomClaymore.DA_Weapon_CustomClaymore"
+        ],
+        "provenance": "PINNED_THREE_PLUS_CUSTOM",
+        "required": true,
+        "validation_rule": "Must include definitions for the 3 pinned legacy weapons plus any added custom weapons."
+      },
+      "Builds": {
+        "type": "TArray<TSoftObjectPtr<URPGBuildDefinition>>",
+        "value": [
+          "/Game/OneBossFight/Data/Catalog/Builds/DA_Build_Starter.DA_Build_Starter",
+          "/Game/OneBossFight/Data/Catalog/Builds/DA_Build_Strength.DA_Build_Strength",
+          "/Game/OneBossFight/Data/Catalog/Builds/DA_Build_Dex.DA_Build_Dex",
+          "/Game/OneBossFight/Data/Catalog/Builds/DA_Build_CustomClaymore.DA_Build_CustomClaymore"
+        ],
+        "provenance": "PINNED_THREE_PLUS_CUSTOM",
+        "required": true,
+        "validation_rule": "Must retain the 3 pinned builds in slots 0, 1, 2. Custom build appended with LegacySlot = -1."
+      }
+    }
+  },
+  "recipe_3_boss_definition": {
+    "class_info": {
+      "native_class": "URPGBossDefinition",
+      "parent_class": "UPrimaryDataAsset",
+      "source_header": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "source_line": 168,
+      "asset_category": "Encounter / Boss Definition Data Asset"
+    },
+    "field_values": {
+      "Schema": {
+        "type": "int32",
+        "value": 1,
+        "provenance": "SOURCE_DEFAULT",
+        "required": true,
+        "validation_rule": "Boss schema version (currently 1)."
+      },
+      "DefinitionId": {
+        "type": "FName",
+        "value": "Boss_EmberWarden_Example",
+        "provenance": "PROPOSED_AUTHOR_CHOICE",
+        "required": true,
+        "validation_rule": "Unique FName identifier for the boss archetype."
+      },
+      "PresentationId": {
+        "type": "FName",
+        "value": "EmberWarden",
+        "provenance": "METADATA_IDENTITY (Not verified UI name)",
+        "required": true,
+        "validation_rule": "Metadata identity token used for telemetry and tracking."
+      },
+      "Stats": {
+        "type": "FRPGBossStatsConfig",
+        "source_declaration": "RPGEncounterBinding.h:19",
+        "fields": {
+          "MaxHealth": {
+            "type": "float",
+            "value": 1200.0,
+            "provenance": "PROPOSED_AUTHOR_CHOICE",
+            "required": true
+          },
+          "MaxPosture": {
+            "type": "float",
+            "value": 200.0,
+            "provenance": "PROPOSED_AUTHOR_CHOICE",
+            "required": true
+          },
+          "PostureRegenDelay": {
+            "type": "float",
+            "value": 3.0,
+            "provenance": "PROPOSED_AUTHOR_CHOICE",
+            "required": true
+          },
+          "PostureRegenRate": {
+            "type": "float",
+            "value": 25.0,
+            "provenance": "PROPOSED_AUTHOR_CHOICE",
+            "required": true
+          }
+        }
+      },
+      "EncounterPolicy": {
+        "type": "FRPGEncounterPolicyConfig",
+        "source_declaration": "RPGEncounterBinding.h:31",
+        "fields": {
+          "GateRadius": {
+            "type": "float",
+            "value": 1200.0,
+            "provenance": "NATIVE_DEFAULT",
+            "required": true,
+            "note": "Radius in cm; 0 disables the proximity gate."
+          },
+          "bResetOnPlayerRespawn": {
+            "type": "bool",
+            "value": true,
+            "provenance": "NATIVE_DEFAULT",
+            "required": true
+          }
+        }
+      },
+      "StaggerPolicy": {
+        "type": "FRPGStaggerPolicyConfig",
+        "source_declaration": "RPGEncounterBinding.h:44",
+        "fields": {
+          "StaggerSeconds": {
+            "type": "float",
+            "value": 2.5,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "FreezeAtPosition": {
+            "type": "float",
+            "value": 1.55,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "CriticalMultiplier": {
+            "type": "float",
+            "value": 2.5,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "RiposteRange": {
+            "type": "float",
+            "value": 150.0,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "RiposteConeDegrees": {
+            "type": "float",
+            "value": 120.0,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "RiposteFacingDegrees": {
+            "type": "float",
+            "value": 120.0,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "RiposteArmSeconds": {
+            "type": "float",
+            "value": 1.2,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "RipostePlayerStartGap": {
+            "type": "float",
+            "value": 150.0,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "RiposteAlignSeconds": {
+            "type": "float",
+            "value": 0.3,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "RiposteImpactSeconds": {
+            "type": "float",
+            "value": 0.8,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "RiposteBaseDamage": {
+            "type": "float",
+            "value": 40.0,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "CooldownSeconds": {
+            "type": "float",
+            "value": 0.0,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "GetUpRate": {
+            "type": "float",
+            "value": 0.6,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "bHoldPostureAtZero": {
+            "type": "bool",
+            "value": true,
+            "provenance": "NATIVE_DEFAULT"
+          }
+        }
+      },
+      "PhaseFlow": {
+        "type": "FRPGPhaseFlowConfig",
+        "source_declaration": "RPGEncounterBinding.h:68",
+        "fields": {
+          "TransitionSeconds": {
+            "type": "float",
+            "value": 1.8,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "bUseRoarClip": {
+            "type": "bool",
+            "value": true,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "bPausePostureInTransition": {
+            "type": "bool",
+            "value": true,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "bLockLeapUntilPhaseTwo": {
+            "type": "bool",
+            "value": true,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "AttackAbilityPrefix": {
+            "type": "FString",
+            "value": "GA_GS_Boss_",
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "LeapAbilityTag": {
+            "type": "FName",
+            "value": "Ability.Melee.LeapAttack",
+            "provenance": "NATIVE_DEFAULT"
+          }
+        }
+      },
+      "Fireball": {
+        "type": "FRPGFireballConfig",
+        "source_declaration": "RPGEncounterBinding.h:83",
+        "fields": {
+          "bFireballEnabled": {
+            "type": "bool",
+            "value": true,
+            "provenance": "PROPOSED_AUTHOR_CHOICE"
+          },
+          "FireballAbility": {
+            "type": "TSoftClassPtr<UObject>",
+            "value": "/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C",
+            "provenance": "CANDIDATE_PACK_ASSET"
+          },
+          "FireballCooldown": {
+            "type": "FVector2D",
+            "value": {
+              "X": 6.0,
+              "Y": 10.0
+            },
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "FireballMinRange": {
+            "type": "float",
+            "value": 500.0,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "FireballMaxRange": {
+            "type": "float",
+            "value": 1800.0,
+            "provenance": "NATIVE_DEFAULT"
+          }
+        }
+      },
+      "PhaseDependencies": {
+        "type": "FRPGPhaseDependencyConfig",
+        "source_declaration": "RPGEncounterBinding.h:96",
+        "fields": {
+          "RoarClip": {
+            "type": "TSoftObjectPtr<UAnimSequence>",
+            "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "TransitionMontage": {
+            "type": "TSoftObjectPtr<UAnimMontage>",
+            "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "ImmunityEffect": {
+            "type": "TSoftClassPtr<UObject>",
+            "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          }
+        }
+      },
+      "StaggerProfile": {
+        "type": "FRPGStaggerProfileConfig",
+        "source_declaration": "RPGEncounterBinding.h:110",
+        "fields": {
+          "bUseClips": {
+            "type": "bool",
+            "value": true,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "bUseRiposteClips": {
+            "type": "bool",
+            "value": true,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "bCriticalOnEveryHit": {
+            "type": "bool",
+            "value": false,
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "HitStunAbilityClassName": {
+            "type": "FName",
+            "value": "GA_GS_Boss_HitStun_C",
+            "provenance": "NATIVE_DEFAULT"
+          },
+          "FallMontage": {
+            "type": "TSoftObjectPtr<UAnimMontage>",
+            "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "GetUpMontage": {
+            "type": "TSoftObjectPtr<UAnimMontage>",
+            "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "FallClip": {
+            "type": "TSoftObjectPtr<UAnimSequence>",
+            "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "DownClip": {
+            "type": "TSoftObjectPtr<UAnimSequence>",
+            "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "RipostePlayerClip": {
+            "type": "TSoftObjectPtr<UAnimSequence>",
+            "value": "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.AN_Riposte_Player_Front",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "RiposteBossClip": {
+            "type": "TSoftObjectPtr<UAnimSequence>",
+            "value": "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "ImmunityEffect": {
+            "type": "TSoftClassPtr<UObject>",
+            "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          }
+        }
+      },
+      "DormantWake": {
+        "type": "FRPGDormantWakeConfig",
+        "source_declaration": "RPGEncounterBinding.h:130",
+        "fields": {
+          "DormantClip": {
+            "type": "TSoftObjectPtr<UAnimSequence>",
+            "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.AN_Boss01_DormantIdle",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          },
+          "WakeClip": {
+            "type": "TSoftObjectPtr<UAnimSequence>",
+            "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_Wake.AN_Boss01_Wake",
+            "provenance": "VERIFIED_CANDIDATE_ASSET"
+          }
+        }
+      },
+      "Phases": {
+        "type": "TArray<FRPGPhaseConfig>",
+        "source_declaration": "RPGEncounterBinding.h:138",
+        "validation_rule": "CRITICAL: The native backend (ValidatePhases, RPGBossPhaseAdapters.cpp:21) supports exactly 1 transition record. An array with >1 records is strictly rejected as UnsupportedNativePhaseSet.",
+        "value": [
+          {
+            "PhaseId": "PhaseTwo",
+            "EntryHealthFraction": 0.5,
+            "SpeedMultiplier": 1.15,
+            "RateMultiplier": 1.25,
+            "AttackMultiplier": 1.3,
+            "provenance": "PROPOSED_AUTHOR_CHOICE (Demonstration multipliers only, not approved balance)"
+          }
+        ]
+      },
+      "Skeleton": {
+        "type": "TSoftObjectPtr<USkeleton>",
+        "value": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin",
+        "provenance": "VERIFIED_CDO_SKELETON_C232",
+        "required": true,
+        "validation_rule": "CRITICAL: Must match skeleton reported by the observed CDO mesh (/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SKM_CombatMannequin_Simple)."
+      },
+      "Animations": {
+        "type": "TArray<TSoftObjectPtr<UAnimSequenceBase>>",
+        "value": [
+          "/Game/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.AN_Boss01_DormantIdle",
+          "/Game/OneBossFight/Boss01/Animations/AN_Boss01_Wake.AN_Boss01_Wake",
+          "/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar",
+          "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall",
+          "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown",
+          "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction",
+          "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage",
+          "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage",
+          "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage"
+        ],
+        "provenance": "VERIFIED_CANDIDATE_ANIMATIONS_C232",
+        "required": true,
+        "validation_rule": "Compiler checks EVERY entry in Definition.Animations against its compiled skeleton. Verified clean in DD14 preflight."
+      },
+      "Fields": {
+        "type": "TArray<FRPGParityField>",
+        "source_declaration": "RPGEncounterBinding.h:150",
+        "note": "51-row field parity manifest. Current implementation validation contract required for migration parity verification. Not an automated wizard.",
+        "sample_count": 51,
+        "status": "PARITY_CONTRACT_VERIFIED_IN_DD14"
+      }
+    }
+  },
+  "recipe_4_placed_binding": {
+    "actor_info": {
+      "native_actor_class": "ARPGEncounterBinding",
+      "parent_class": "AActor",
+      "source_header": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "source_line": 242,
+      "usage": "Placed in the level map (e.g. L_SevarogArena) with instance-editable properties in Level Editor Details panel"
+    },
+    "field_values": {
+      "EncounterInstance": {
+        "type": "FGuid",
+        "value": "e2a3c741-5912-4f3a-967b-12d8a57e3c90",
+        "provenance": "INSTANCE_UNIQUE_GUID",
+        "required": true,
+        "validation_rule": "Explicit unique GUID for the encounter instance. Duplicate or empty GUID is rejected by world subsystem."
+      },
+      "Participants": {
+        "type": "TArray<FRPGPlacedParticipantBinding>",
+        "required": true,
+        "validation_rule": "Must contain explicit entries for BOTH combatants with reciprocal TargetSlot references.",
+        "entries": [
+          {
+            "Participant": "Boss",
+            "Slot": "Boss",
+            "TargetSlot": "Player",
+            "Actor": "UNRESOLVED_LEVEL_ACTOR_INSTANCE (Assigned in Level Editor Details to placed boss character)",
+            "Definition": "/Game/OneBossFight/Data/Boss/DA_Boss_EmberWarden_Example.DA_Boss_EmberWarden_Example",
+            "note": "Slot names 'Boss' and 'Player' are example participant tokens; 'BossCore' and 'TargetOnly' are separate C0 roles."
+          },
+          {
+            "Participant": "Player",
+            "Slot": "Player",
+            "TargetSlot": "Boss",
+            "Actor": "UNRESOLVED_LEVEL_ACTOR_INSTANCE (Assigned in Level Editor Details to placed player character)",
+            "Definition": "nullptr",
+            "note": "Player definition is nullptr here because player attributes are governed by player catalog epoch."
+          }
+        ]
+      }
+    },
+    "status_disclaimer": "CRITICAL: Placed binding workflow is proposed from source declarations. Runtime level hydration, boss spawning, and startup combat activation are currently NOT released or complete. Preflight verification covers headless component compilation only."
+  }
+}

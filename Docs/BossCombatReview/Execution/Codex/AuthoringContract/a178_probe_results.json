@@ -1,0 +1,105 @@
+{
+  "scope": "Independent targeted probes. Executes Python only, never imports Unreal.\n\nThe writer probe uses a tiny recording fake: proof of Python control flow/setter\ncalls only, NOT Unreal API validity, reflection, asset serialization or gameplay.\n",
+  "inputs": {
+    "Docs\\BossCombatReview\\Execution\\Antigravity\\AuthoringToolkit\\authoring_core.py": "3f8979314cd257adf863ea8bd700edab1ae6bba16f4877f639929f4bd35332a3",
+    "Docs\\BossCombatReview\\Execution\\Antigravity\\AuthoringToolkit\\draft_boss_profiles.py": "ec79dc8f0ce009ebff0085cf732893ae5a86ae1fc0bee95c969c2cd18f4b8c45",
+    "Docs\\BossCombatReview\\Execution\\Antigravity\\AuthoringToolkit\\examples\\boss_draft_profiles.json": "5d7afa4eceef8cad20a05d98b5d0cea074eeb66ccf1b875ccbb3889e8f8f4f3f"
+  },
+  "baseline_profile": [
+    true,
+    []
+  ],
+  "nan_phase_damage_accepted": true,
+  "invented_policy_invalid_type_accepted": true,
+  "quote_parity": {
+    "input": "\"\"off\"\"",
+    "ue_source_result": "\"off\"",
+    "ag_result": "off"
+  },
+  "nested_source_alias_drift_missed": true,
+  "actual_native_legacy_records": {
+    "builds": [
+      {
+        "BuildId": "Starter",
+        "ConsoleName": "Starter",
+        "DisplayName": "Starter",
+        "UiOrder": 0,
+        "LegacySlot": 0,
+        "WeaponId": "Starter"
+      },
+      {
+        "BuildId": "Strength",
+        "ConsoleName": "Strength",
+        "DisplayName": "Strength",
+        "UiOrder": 1,
+        "LegacySlot": 1,
+        "WeaponId": "Strength"
+      },
+      {
+        "BuildId": "Dex",
+        "ConsoleName": "Dex",
+        "DisplayName": "Dex",
+        "UiOrder": 2,
+        "LegacySlot": 2,
+        "WeaponId": "Dex"
+      }
+    ],
+    "weapons": [
+      {
+        "WeaponId": "Starter",
+        "StyleName": "SwordCombatStyle"
+      },
+      {
+        "WeaponId": "Strength",
+        "StyleName": "ClaymoreCombatStyle"
+      },
+      {
+        "WeaponId": "Dex",
+        "StyleName": "DualSwordCombatStyle"
+      }
+    ],
+    "ag_validation": [
+      false,
+      [
+        "Slot 0 WeaponId mismatch: 'Starter' != 'Sword'",
+        "Missing weapon for pinned slot 0 (WeaponId 'Sword')",
+        "Slot 2 weapon StyleName mismatch: 'DualSwordCombatStyle' != 'DualSwordsCombatStyle'"
+      ]
+    ]
+  },
+  "recording_fake_writer": {
+    "returned_success": true,
+    "written_fields": [
+      "definition_id",
+      "presentation_id",
+      "schema",
+      "skeleton"
+    ],
+    "typed_fields_omitted": [
+      "animations",
+      "dormant_wake",
+      "encounter_policy",
+      "fields",
+      "fireball",
+      "phase_dependencies",
+      "phase_flow",
+      "phases",
+      "stagger_policy",
+      "stagger_profile",
+      "stats"
+    ],
+    "is_unreal_execution": false
+  },
+  "native_stats_fields": [
+    "MaxHealth",
+    "MaxPosture",
+    "PostureRegenDelay",
+    "PostureRegenRate"
+  ],
+  "profile_stats_fields": [
+    "max_health",
+    "base_poise",
+    "poise_recovery_rate",
+    "poise_broken_recovery_delay"
+  ]
+}

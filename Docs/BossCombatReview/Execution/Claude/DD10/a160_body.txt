@@ -1,0 +1,28 @@
+TASK: DD10 Stagger Profile & Atomic Stagger Cluster - Implementation Delivery (WORK ORDER AG-2).
+STATUS: Source written, full delivery package assembled under Docs/BossCombatReview/Execution/Claude/DD10/. DIFF FIRST: ZERO UHT OR BUILD EXECUTED.
+FINDINGS:
+- Five files delivered:
+  - Source/OneBossFight/Player/RPGEncounterBinding.h (EDITED, 314 lines, sha256: 48d875f76efb0dd1319149f7a8359c6e5b215ec739616e72a3fe3f85e464578e)
+  - Source/OneBossFight/Player/RPGEncounterBinding.cpp (EDITED, 366 lines, sha256: 5f63241d635c52955151fae21d1a455bfdfcc263e33f1ece46c5712e6fe4bb24)
+  - Source/OneBossFight/Player/RPGBossStaggerClusterAdapters.h (NEW, 68 lines, sha256: a90ff21358fe7ca463a8d33700cef19d841e2969e5170efea2df85833feb38c1)
+  - Source/OneBossFight/Player/RPGBossStaggerClusterAdapters.cpp (NEW, 229 lines, sha256: b913f6fec7b7a47f7309293ff7e5f1ce5322f40c92c886beb46ccd02036bd2ed)
+  - Source/OneBossFight/Tests/RPGBossStaggerClusterAdaptersTests.cpp (NEW, 1134 lines, sha256: 6e2a74e8be18656156370db800912a84013c5ee4e71599f6bbb7d306f47a0f6d)
+- Diffs & Manifests under Docs/BossCombatReview/Execution/Claude/DD10/:
+  - five_file.diff (78794 bytes, sha256: bdd2640c739e80c72e43f2ed31a783a277355bde5dbe44e760d157b2eb9dcaef)
+  - binding_edits.diff (5364 bytes, sha256: c4aaa58b15f9213100736f67191f26309e14a15eb6e77045ab674fd27202d9ff)
+  - pre_source_manifest_sha256.txt (168 files, sha256: 39241837443387467565446b8040e24baba22b711b0a0052ad0dfa22a2f5461c)
+  - post_write_source_manifest_sha256.txt (171 files, sha256: ab1092eaf5b51ec7af469d5202e6d426610eaf26f298f74fb7ce4a1409ef3aa5)
+  - review_copies_sha256.txt (sha256: 47e3000dda2791a3ea4e7282d6798201a922a655084d42314f7977f223cf8465)
+  - pre_dependency_pins.txt (28 files, all verified matching HEAD)
+  - 10_DELIVERY.md (sha256: 51e1c5b2d119b1f8a936bafbd5f5a7901d53db1f0b4764e0a695798b0ca641bb)
+  - evidence_sha256.txt
+- Implementation & Compliance:
+  - All 5 files strictly CRLF, 0 bare LF, 0 bare CR.
+  - Zero quoted "/Game/" literals in test file (uses /SyntheticMount/...; CookCoverage static scan compliant).
+  - Malformed paths built using FSoftObjectPath(FTopLevelAssetPath, sub) directly without text parsing.
+  - Concrete wrong-class fixtures used (USceneComponent, URPGBossPosture, URPGBossEncounter).
+  - Begun-component fixture clears all 4 clip soft pointers before RegisterComponent + DispatchBeginPlay.
+  - 7 tests defined: OneBossFight.Binding.StaggerCluster.* (expected suite growth: 88 -> 95 tests).
+DECISION NEEDED: Claude lead review and release message for WORK ORDER AG-2b (build and run).
+NEXT ACTION: Launching MailboxNext.ps1 to await Claude's review and release. No build or engine process will run until release.
+VALIDATION: File hashes verified, manifests diff checked (exactly +3 files, +2 modified, 0 removed), git status checked.

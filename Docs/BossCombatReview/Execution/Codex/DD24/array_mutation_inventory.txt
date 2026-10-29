@@ -1,0 +1,19 @@
+124:		for (const UActorComponent* C : Owner->GetComponents()) { Result.Add(C); }
+148:		Cases.Add({TEXT("CloseAbilityClassName None"), [](FRPGCloseClipSwapConfig& R) { R.CloseAbilityClassName = NAME_None; }, TEXT("InvalidDependency.Missing"), TEXT("CloseClipSwap.CloseAbilityClassName")});
+149:		Cases.Add({TEXT("CloseAbilityClassName mixed-case None"), [](FRPGCloseClipSwapConfig& R) { R.CloseAbilityClassName = TEXT("nOnE"); }, TEXT("InvalidDependency.Missing"), TEXT("CloseClipSwap.CloseAbilityClassName")});
+150:		Cases.Add({TEXT("CloseAbilityClassName space"), [](FRPGCloseClipSwapConfig& R) { R.CloseAbilityClassName = TEXT("Ability A"); }, TEXT("InvalidDependency.Malformed"), TEXT("CloseClipSwap.CloseAbilityClassName")});
+151:		Cases.Add({TEXT("CloseAbilityClassName tab"), [](FRPGCloseClipSwapConfig& R) { R.CloseAbilityClassName = TEXT("Ability	A"); }, TEXT("InvalidDependency.Malformed"), TEXT("CloseClipSwap.CloseAbilityClassName")});
+152:		Cases.Add({TEXT("CloseAbilityClassName control"), [](FRPGCloseClipSwapConfig& R) { R.CloseAbilityClassName = FName(*FString::Printf(TEXT("Ability%cA"), static_cast<TCHAR>(0x7f))); }, TEXT("InvalidDependency.Malformed"), TEXT("CloseClipSwap.CloseAbilityClassName")});
+153:		Cases.Add({TEXT("AttackMontagesName None"), [](FRPGCloseClipSwapConfig& R) { R.AttackMontagesName = NAME_None; }, TEXT("InvalidDependency.Missing"), TEXT("CloseClipSwap.AttackMontagesName")});
+154:		Cases.Add({TEXT("AttackMontagesName mixed-case None"), [](FRPGCloseClipSwapConfig& R) { R.AttackMontagesName = TEXT("nOnE"); }, TEXT("InvalidDependency.Missing"), TEXT("CloseClipSwap.AttackMontagesName")});
+155:		Cases.Add({TEXT("AttackMontagesName space"), [](FRPGCloseClipSwapConfig& R) { R.AttackMontagesName = TEXT("Ability A"); }, TEXT("InvalidDependency.Malformed"), TEXT("CloseClipSwap.AttackMontagesName")});
+156:		Cases.Add({TEXT("AttackMontagesName tab"), [](FRPGCloseClipSwapConfig& R) { R.AttackMontagesName = TEXT("Ability	A"); }, TEXT("InvalidDependency.Malformed"), TEXT("CloseClipSwap.AttackMontagesName")});
+157:		Cases.Add({TEXT("AttackMontagesName control"), [](FRPGCloseClipSwapConfig& R) { R.AttackMontagesName = FName(*FString::Printf(TEXT("Ability%cA"), static_cast<TCHAR>(0x7f))); }, TEXT("InvalidDependency.Malformed"), TEXT("CloseClipSwap.AttackMontagesName")});
+158:		Cases.Add({TEXT("null A1Montage"), [](FRPGCloseClipSwapConfig& R) { R.A1Montage.Reset(); }, TEXT("InvalidDependency.Missing"), TEXT("CloseClipSwap.A1Montage")});
+159:		Cases.Add({TEXT("null A3aMontage"), [](FRPGCloseClipSwapConfig& R) { R.A3aMontage.Reset(); }, TEXT("InvalidDependency.Missing"), TEXT("CloseClipSwap.A3aMontage")});
+160:		Cases.Add({TEXT("null A3bMontage"), [](FRPGCloseClipSwapConfig& R) { R.A3bMontage.Reset(); }, TEXT("InvalidDependency.Missing"), TEXT("CloseClipSwap.A3bMontage")});
+178:			Cases.Add({FString(M.Name) + TEXT(" A1Montage"), [Path](FRPGCloseClipSwapConfig& R) { R.A1Montage = Montage(Path); }, TEXT("InvalidDependency.Malformed"), TEXT("CloseClipSwap.A1Montage")});
+179:			Cases.Add({FString(M.Name) + TEXT(" A3aMontage"), [Path](FRPGCloseClipSwapConfig& R) { R.A3aMontage = Montage(Path); }, TEXT("InvalidDependency.Malformed"), TEXT("CloseClipSwap.A3aMontage")});
+180:			Cases.Add({FString(M.Name) + TEXT(" A3bMontage"), [Path](FRPGCloseClipSwapConfig& R) { R.A3bMontage = Montage(Path); }, TEXT("InvalidDependency.Malformed"), TEXT("CloseClipSwap.A3bMontage")});
+202:			D->Fields.Add(Field);
+261:	Valid.Add(Repeated); // distinct scalar fields, no container self-alias

@@ -1,0 +1,30 @@
+# DD20 LowSweep source handoff under C257/C258
+
+Codex implemented the exact source-only continuation. No build, UHT, engine, automation, asset or git write was performed. Review requested before ANY execution release.
+
+Five-file delta: new Player/RPGBossLowSweepAdapters.h/.cpp and Tests/RPGBossLowSweepAdaptersTests.cpp, modified ONLY Player/RPGEncounterBinding.h/.cpp. Full pre194/post197 manifests, both Binding preimages, exact five_file.diff, five live pins and byte-identical Review copies are here. All192 other preexisting files match the accepted DD19 manifest, exceeding the189 unchanged-file minimum in C257; no native LowSweep, tracker, math, existing test, pack, asset, Config or Script edit. Current binaries still match accepted DD19; git HEAD captured read-only.
+
+The reflected FRPGLowSweepConfig has exactly the native eight authored fields and defaults. Definition/config both contain LowSweep, the compiler calls the same shared validator before publication and copies by value. No parser reads FRPGParityField.Value. Default declarations are additive authoring defaults, not fallback after invalid input.
+
+Validation follows C258 exactly: ALL SIX actual float fields finite first in field order (the order's "five scalars" was a counting slip; none is omitted). Damage>=0, Reach>0, InnerRadius>=0 and strictly<Reach, BladeHeight>0, both angles[-360,360], then non-None MoveId without whitespace/control. bEnabled accepts both states and disabled records still validate. Named tokens match C258. Shared ConfigureLowSweep checks exact class/live/unregistered/not-begun and live/not-begun owner before whole-record validation; every write follows every check. Eight configuration fields only, no runtime angle/state/counter/generation/tick-flag change.
+
+Header and docs explicitly distinguish authored contracts from native guards, refuse editor minimum1 as an unearned runtime floor, and retain MoveId as SYNTACTIC IDENTITY ONLY. Equal angles form a stationary band and reversed angles are valid; no wrapped/multi-turn capability is claimed. The plan uses the native RPGBossLowSweep instance/class and exact eight paths, and remains unwired: not inserted into existing preflight/preparation/registry.
+
+Six test sources: OneBossFight.Binding.LowSweep.{Assign,Validation,Isolation,Rejections,Compile,Authoring}.
+
+- Nondefault full assignments through plan callback, exact path list/class/name, value-copy isolation across owners and CDO, owner component-set preservation, unrelated native component values.
+-18 nonfinite mutations (NaN/+Inf/-Inf for each of six floats), all domain edges and invalid MoveId forms; shared validator and callback named failures plus whole-record no-write even for disabled records.
+-Valid zero damage/inner radius, fractional reach/height below1, both enabled states, equal/reversed angle endpoints and exact +/-360 bounds; precedence including a late nonfinite angle beating an earlier domain error.
+-Wrong-class concrete engine/native components, registered fixture, plain begun owner before attaching an unregistered sweep, orphan and destroyed retained component. No LowSweep BeginPlay/Tick/StartForTest/Cancel; ComponentBegunPlay guard stays SOURCE ONLY.
+-Synthetic compiler/copy with accepted dev-only epoch contract, immutable snapshots, every invalid case clearing a real valid sentinel, production early rejection before loads, retained Bleed/stats/manifest validation; reflection/defaults and absence of runtime state in the record.
+
+Self-review strengthened sentinel guards and native property-type assertions before this frozen delivery. No compile/test attempt, failure or retry occurred. All new sources contain zero quoted /Game/ literals; all five final sources are pure CRLF. prepare_source.py/source_capture_output.txt assert exact allowed file delta/hash/line endings only; exit0 is not C++ compilation or an Unreal test.
+
+Current five pins:
+- adapter.h 621972165e457c567b6df547399d9a03e60f609df3260717b55727d438583525
+- adapter.cpp bb47f286d207db96fb5f2d71bb57c58485d6fe680eed1068312ba35bee73dd65
+- Binding.h 321103edac006b8d1d3bd1bada4fded7438149b6a66e969236f6685b6e4453c9
+- Binding.cpp 67591344c805d85d19ce7c8aae0bf51586517c0accb2e547c284ddb6100f8124
+- tests 86b9d5d9dbec0b21dfba5516379e87442f2b27282cd29b00e42c7e581b5fa3dd
+
+TASKS, DECISIONS DD20, KNOWN_ISSUES and TEST_PLAN updated as REVIEW PENDING. No test pass or automatic new suite total is assumed. No tracker/move-table/ability schema, readiness/legacy suppression, wiring/startup/target/reset, damage/collision, real duel/networking, PIE/full driver gate, package/non-editor work or git release. All earlier warnings/failures/provenance limits remain.

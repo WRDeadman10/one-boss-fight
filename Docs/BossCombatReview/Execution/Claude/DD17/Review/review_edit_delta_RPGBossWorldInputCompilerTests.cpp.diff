@@ -1,0 +1,74 @@
+19a20
+> #include "HAL/IConsoleManager.h"
+436a438,458
+> 			if (Scope.Kind == EWorldKind::RealGameInstance)
+> 			{
+> 				// The real game instance latched these startup cvars when it initialized. They are only READ and logged here, never changed; a non-default startup fixture is not the default latch this file is about.
+> 				FString Latched;
+> 				bool bDefaultLatch = true;
+> 				const TCHAR* const CvarNames[4] = {TEXT("rpg.CatalogSource"), TEXT("rpg.CatalogPath"), TEXT("rpg.CatalogTestFourth"), TEXT("rpg.CatalogTestInvalid")};
+> 				const TCHAR* const CvarDefaults[4] = {TEXT("auto"), TEXT(""), TEXT("0"), TEXT("0")};
+> 				for (int32 CvarIndex = 0; CvarIndex < 4; ++CvarIndex)
+> 				{
+> 					const IConsoleVariable* Variable = IConsoleManager::Get().FindConsoleVariable(CvarNames[CvarIndex]);
+> 					const FString Value = Variable ? Variable->GetString() : FString(TEXT("(not registered)"));
+> 					Latched += FString::Printf(TEXT("%s='%s' "), CvarNames[CvarIndex], *Value);
+> 					bDefaultLatch = bDefaultLatch && (!Variable || Value.Equals(CvarDefaults[CvarIndex], ESearchCase::IgnoreCase));
+> 				}
+> 				Test.AddInfo(FString::Printf(TEXT("startup cvars at the real game instance: %s"), *Latched));
+> 				if (!bDefaultLatch)
+> 				{
+> 					Test.AddError(FString::Printf(TEXT("unsupported precondition: a catalog startup cvar is not at its default (%s); this fixture needs the default latch and never changes a cvar"), *Latched));
+> 					return false;
+> 				}
+> 			}
+684,685c706,707
+< 	AddInfo(FString::Printf(TEXT("the game instance %s latched source '%s' path '%s'; its published epoch id %s source '%s' (reason '%s'); is it the process Legacy() epoch: %s (logged, never required)"), *Describe(GameInstance), *Subsystem->GetLatchedSource(),
+< 		*Subsystem->GetLatchedPath(), *Epoch->Id.ToString(), *Epoch->Source, *Epoch->Reason, RPGCombatRegistry::Legacy().Get() == Epoch.Get() ? TEXT("yes") : TEXT("no")));
+---
+> 	AddInfo(FString::Printf(TEXT("the game instance %s latched source '%s' path '%s'; its published epoch id %s source '%s' (reason '%s'); the source is logged, never required"), *Describe(GameInstance), *Subsystem->GetLatchedSource(),
+> 		*Subsystem->GetLatchedPath(), *Epoch->Id.ToString(), *Epoch->Source, *Epoch->Reason));
+888a911,913
+> 		TArray<FSelection> BadRole = Valid;
+> 		BadRole[1].Role = static_cast<ERPGPreflightRole>(99);
+> 		ExpectRejected(*this, F, Good, TEXT("a selection with an out-of-range role value"), F.Scope.World, F.Binding, BadRole, Hash, TEXT("WorldInput.SelectionRole"), TEXT("[slot=BossTwo]"), TEXT("role is not set"));
+894a920,934
+> 	// NOTE for maintainers: nothing below may yield a frame or run a garbage collection between a Destroy() and the call that passes the destroyed object (a collection would null the participant's pointer and change the
+> 	// expected error from Stale to Missing).
+> 	{
+> 		TArray<FRPGPlacedParticipantBinding> DuplicateSlot = ValidParticipants;
+> 		DuplicateSlot[2].Slot = TEXT("BossOne");
+> 		ARPGEncounterBinding* CaseDuplicate = F.SpawnBinding(DuplicateSlot, FGuid::NewGuid());
+> 		TArray<FRPGPlacedParticipantBinding> EmptySlot = ValidParticipants;
+> 		EmptySlot[2].Slot = NAME_None;
+> 		ARPGEncounterBinding* CaseEmpty = F.SpawnBinding(EmptySlot, FGuid::NewGuid());
+> 		if (TestTrue(TEXT("the two slot cases were spawned"), CaseDuplicate && CaseEmpty))
+> 		{
+> 			ExpectRejected(*this, F, Good, TEXT("two participants with the same slot"), F.Scope.World, CaseDuplicate, Valid, Hash, TEXT("WorldInput.ParticipantDuplicateSlot"), TEXT("[slot=BossOne]"), TEXT("more than one participant"));
+> 			ExpectRejected(*this, F, Good, TEXT("a participant with an empty slot"), F.Scope.World, CaseEmpty, Valid, Hash, TEXT("WorldInput.ParticipantInvalid"), TEXT("[member=#2]"), TEXT("slot name is empty"));
+> 		}
+> 	}
+999a1040,1057
+> 	// 4b. The production compiler refuses a definition whose manifest rows are incomplete (an invalid manifest INSIDE the definition, not the hash): the nested diagnostic is carried unchanged.
+> 	{
+> 		TStrongObjectPtr<URPGBossDefinition> BadManifest(NewObject<URPGBossDefinition>());
+> 		if (!TestTrue(TEXT("the definition with an incomplete manifest row was created"), BadManifest.IsValid()))
+> 		{
+> 			return false;
+> 		}
+> 		FillDefinition(*BadManifest, BossTwoValues(), F.BossSkeleton, BossAnimationPaths());
+> 		BadManifest->Fields[0].SourcePath.Empty();
+> 		TArray<FRPGPlacedParticipantBinding> Mutated = ValidParticipants;
+> 		Mutated[1].Definition = BadManifest.Get();
+> 		ARPGEncounterBinding* Case = F.SpawnBinding(Mutated, FGuid::NewGuid());
+> 		if (TestNotNull(TEXT("a binding with the incomplete manifest definition was spawned"), Case))
+> 		{
+> 			ExpectRejected(*this, F, Good, TEXT("a later definition with an incomplete manifest row"), F.Scope.World, Case, Valid, Hash, TEXT("WorldInput.DefinitionRejected"), TEXT("[slot=BossTwo]"), TEXT("incomplete/duplicate field-source manifest"));
+> 		}
+> 	}
+> 
+1046c1104,1105
+< 		"(WorldInput.PreflightRejected with each nested diagnostic). NOT covered: epoch or binding drift DURING a call (not provokable without a callback, cvar or injection framework), a destroyed GAME INSTANCE mid-call, a content epoch whose subsystem published nothing."));
+---
+> 		"(WorldInput.PreflightRejected with each nested diagnostic). NOT covered: epoch or binding drift DURING a call (not provokable without a callback, cvar or injection framework), a destroyed GAME INSTANCE mid-call, a content epoch whose subsystem published nothing, ConfigInvalid (the production compiler cannot return a synthetic config or a foreign lease for a definition it accepted, and no mock is allowed), a definition whose skeleton does not fit its actor's mesh "
+> 		"(the two pack classes observed share one skeleton; only the mesh-less actor case is exercised)."));

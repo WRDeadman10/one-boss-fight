@@ -1,0 +1,52 @@
+{
+  "scope": "OFFLINE_SOURCE_REVIEW_NOT_ENGINE_TEST",
+  "receipts": {
+    "count": 19,
+    "failures": []
+  },
+  "source": {
+    "count": 177,
+    "failures": []
+  },
+  "dependencies": {
+    "count": 24,
+    "failures": []
+  },
+  "binaries": {
+    "count": 2,
+    "failures": []
+  },
+  "pre_matches_DD12": true,
+  "added": [],
+  "deleted": [],
+  "changed": [
+    "Source/OneBossFight/Player/RPGBossHydrationPreflight.cpp",
+    "Source/OneBossFight/Player/RPGBossHydrationPreflight.h",
+    "Source/OneBossFight/Tests/RPGBossHydrationPreflightTests.cpp"
+  ],
+  "review_pairs": {
+    "RPGBossHydrationPreflight.cpp": true,
+    "RPGBossHydrationPreflight.h": true,
+    "RPGBossHydrationPreflightTests.cpp": true
+  },
+  "preimages": {
+    "RPGBossHydrationPreflight.cpp": true,
+    "RPGBossHydrationPreflight.h": true,
+    "RPGBossHydrationPreflightTests.cpp": true
+  },
+  "retained_paths": [
+    "OneBossFight.Binding.Preflight.BatchAndActors",
+    "OneBossFight.Binding.Preflight.ConfigAndFields",
+    "OneBossFight.Binding.Preflight.Dependencies",
+    "OneBossFight.Binding.Preflight.Independence",
+    "OneBossFight.Binding.Preflight.Targets",
+    "OneBossFight.Binding.Preflight.Valid"
+  ],
+  "missing_old_paths": [],
+  "new_paths": [
+    "OneBossFight.Binding.Preflight.Clusters",
+    "OneBossFight.Binding.Preflight.Consumers",
+    "OneBossFight.Binding.Preflight.ExpandedSubset"
+  ],
+  "diff_sha256": "1bed8eccae682d03baf4624f7b27f831773923d7c2d4211728cf5fd7865fe1f8"
+}

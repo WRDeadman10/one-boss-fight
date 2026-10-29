@@ -1,0 +1,89 @@
+--- /dev/fd/63	2026-10-28 22:25:24.000000000 +0530
++++ /dev/fd/62	2026-10-28 22:25:24.000000000 +0530
+@@ -130,6 +130,39 @@
+ 		}
+ 	};
+ 
++	/** A plain game world without a game instance: it only hosts a binding of ANOTHER world. */
++	struct FPlainWorld
++	{
++		UWorld* World = nullptr;
++
++		FPlainWorld()
++		{
++			if (!GEngine)
++			{
++				return;
++			}
++			World = UWorld::CreateWorld(EWorldType::Game, /*bInformEngineOfWorld=*/false);
++			if (World)
++			{
++				FWorldContext& Context = GEngine->CreateNewWorldContext(EWorldType::Game);
++				Context.SetCurrentWorld(World);
++				World->InitializeActorsForPlay(FURL());
++			}
++		}
++
++		~FPlainWorld()
++		{
++			if (World)
++			{
++				GEngine->DestroyWorldContext(World);
++				World->DestroyWorld(/*bInformEngineOfWorld=*/false);
++			}
++		}
++
++		FPlainWorld(const FPlainWorld&) = delete;
++		FPlainWorld& operator=(const FPlainWorld&) = delete;
++	};
++
+ 	TArray<FString> AllRequiredPaths(FName PhaseId)
+ 	{
+ 		const FString Id = PhaseId.ToString();
+@@ -654,6 +687,26 @@
+ 			const FString BadHash = FString::ChrN(63, TEXT('b'));
+ 			ExpectRefused(*this, F, Registry, TEXT("a bad manifest hash"), I->Binding, EReservationFailure::InvalidInput, TEXT("WorldInput.InvalidManifestHash"), TEXT(""), &BadHash);
+ 		}
++		// The binding identity on a LIVE registry: a destroyed binding, a binding that began play and a binding of ANOTHER world are refused safely (InvalidInput), nothing is allocated and the earlier reservations are untouched.
++		{
++			ARPGEncounterBinding* Destroyed = F.SpawnBinding(F.MakeParticipants(*H), FGuid::NewGuid());
++			ARPGEncounterBinding* Late = F.SpawnBinding(F.MakeParticipants(*H), FGuid::NewGuid());
++			FPlainWorld OtherWorld;
++			ARPGEncounterBinding* Foreign = OtherWorld.World ? OtherWorld.World->SpawnActor<ARPGEncounterBinding>() : nullptr;
++			if (TestTrue(TEXT("the three binding-identity cases were spawned"), Destroyed && Late && Foreign))
++			{
++				Foreign->EncounterInstance = FGuid::NewGuid();
++				Foreign->Participants = F.MakeParticipants(*H);
++				Destroyed->Destroy();
++				Late->DispatchBeginPlay();
++				TestTrue(TEXT("precondition: the late binding has begun play"), Late->HasActorBegunPlay());
++				ExpectRefused(*this, F, Registry, TEXT("a destroyed binding"), Destroyed, EReservationFailure::InvalidInput, TEXT("Reservation.InvalidBinding"), TEXT(""));
++				ExpectRefused(*this, F, Registry, TEXT("a binding that began play"), Late, EReservationFailure::InvalidInput, TEXT("WorldInput.InvalidBinding"), TEXT("began or is beginning play"));
++				ExpectRefused(*this, F, Registry, TEXT("a binding of another world"), Foreign, EReservationFailure::InvalidInput, TEXT("Reservation.InvalidBinding"), TEXT("not in this registry's world"));
++				TestTrue(TEXT("binding identity: the actors of the refused encounters hold no consumer and no allocated name, and encounters A and B are intact"), NoManagedConsumer(H->BossOne) && NoManagedConsumer(H->BossTwo) && NoManagedConsumer(H->Target)
++					&& IsFullyPrepared(*A) && IsFullyPrepared(*B) && Registry.GetActiveReservationCount() == 2);
++			}
++		}
+ 	}
+ 
+ 	// A failed LATE preparation (a real name collision under the later owner) preserves every earlier reservation and publishes nothing.
+@@ -785,6 +838,19 @@
+ 		TestTrue(TEXT("the other registry also admits nothing it does not own: the same actors are refused by the PREFLIGHT there (the consumers exist) and the first reservation is intact"),
+ 			!Other.TryPrepareAndReserve(A->Binding, F.MakeSelections(), ManifestHash()).Succeeded() && TokenTwo.IsHeld() && IsFullyPrepared(*A));
+ 	}
++	// The reservation keeps its ORIGINAL attempted identity: mutating the binding's GUID after the admission neither changes the reservation nor lets the same actors in under the new GUID.
++	{
++		A->Binding->EncounterInstance = FGuid::NewGuid();
++		TestTrue(TEXT("after the binding's GUID was mutated the registry still lists the ORIGINAL encounter and the token still names it"), Registry.GetReservedEncounters() == TArray<FGuid>{A->Encounter} && TokenTwo.GetEncounter() == A->Encounter && TokenTwo.IsHeld());
++		int32 BoundBefore = -1;
++		int32 ReadyBefore = -1;
++		const TArray<FActorState> Before = F.CaptureAll(BoundBefore, ReadyBefore);
++		const FRPGReservationResult Mutated = Registry.TryPrepareAndReserve(A->Binding, F.MakeSelections(), ManifestHash());
++		TestTrue(FString::Printf(TEXT("the same actors under a mutated GUID: Conflict by ACTOR (not by GUID), nothing admitted (got: %s)"), *JoinErrors(Mutated.Errors)), !Mutated.Succeeded() && Mutated.Failure == EReservationFailure::Conflict
++			&& AnyErrorHasAll(Mutated.Errors, TEXT("Reservation.ActorConflict"), TEXT("[slot=BossOne]"), TEXT("")) && !AnyErrorHasAll(Mutated.Errors, TEXT("Reservation.DuplicateEncounter"), TEXT(""), TEXT("")));
++		TestTrue(TEXT("the mutated-GUID attempt changed nothing: the reservation, its components and every actor are as before"), TokenTwo.IsHeld() && IsFullyPrepared(*A) && Registry.GetActiveReservationCount() == 1 && Matches(F, Before, BoundBefore, ReadyBefore));
++		A->Binding->EncounterInstance = A->Encounter; // restored
++	}
+ 	// The token releases through itself.
+ 	const FRPGReleaseReport ByOwnToken = TokenTwo.Release();
+ 	TestTrue(FString::Printf(TEXT("the token releases through its own registry: Released, ten destroyed (errors: %s)"), *JoinErrors(ByOwnToken.Errors)), ByOwnToken.IsReleased() && ByOwnToken.Abort.Destroyed == 10 && !TokenTwo.IsHeld());

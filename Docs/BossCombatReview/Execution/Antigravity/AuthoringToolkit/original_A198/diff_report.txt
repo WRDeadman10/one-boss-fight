@@ -1,0 +1,51 @@
+================================================================================
+diff_against_cpp.py: Single-Purpose Review Aid Verification Report
+================================================================================
+Total Adapters Evaluated: 5
+
+COMPONENT: Bleed
+  C++ Source:       Source/OneBossFight/Player/RPGBossBleedAdapters.cpp
+  Python Validator: authoring_core.py::validate_bleed_domain
+  C++ Checks Extracted:    13
+  Python Checks Extracted: 13
+  RESULT: OK (all 13 checks match in exact source order)
+
+COMPONENT: LowSweep
+  C++ Source:       Source/OneBossFight/Player/RPGBossLowSweepAdapters.cpp
+  Python Validator: authoring_core.py::validate_low_sweep_domain
+  C++ Checks Extracted:    15
+  Python Checks Extracted: 15
+  RESULT: OK (all 15 checks match in exact source order)
+
+COMPONENT: Shockwave
+  C++ Source:       Source/OneBossFight/Player/RPGBossShockwaveAdapters.cpp
+  Python Validator: authoring_core.py::validate_shockwave_domain
+  C++ Checks Extracted:    20
+  Python Checks Extracted: 20
+  RESULT: OK (all 20 checks match in exact source order)
+
+COMPONENT: HealPunish
+  C++ Source:       Source/OneBossFight/Player/RPGBossHealPunishAdapters.cpp
+  Python Validator: authoring_core.py::validate_heal_punish_domain
+  C++ Checks Extracted:    33
+  Python Checks Extracted: 33
+  RESULT: OK (all 33 checks match in exact source order)
+
+COMPONENT: Look
+  C++ Source:       Source/OneBossFight/Player/RPGBossLookAdapters.cpp
+  Python Validator: authoring_core.py::validate_look_domain
+  C++ Checks Extracted:    9
+  Python Checks Extracted: 9
+  RESULT: OK (all 9 checks match in exact source order)
+
+================================================================================
+SUMMARY RESULTS:
+================================================================================
+  [OK]        Bleed        (13 checks verified)
+  [OK]        LowSweep     (15 checks verified)
+  [OK]        Shockwave    (20 checks verified)
+  [OK]        HealPunish   (33 checks verified)
+  [OK]        Look         (9 checks verified)
+--------------------------------------------------------------------------------
+OVERALL STATUS: ALL ADAPTERS OK
+================================================================================

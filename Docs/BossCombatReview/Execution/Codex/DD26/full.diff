@@ -1,0 +1,1252 @@
+--- Source/OneBossFight/Player/RPGBossHydrationPreflight.h
++++ Source/OneBossFight/Player/RPGBossHydrationPreflight.h
+@@ -16,12 +16,12 @@
+  * apparently usable plan behind, and no actor, component or combat context is touched. Failures are collected with the slot (and field) they concern, never by dereferencing an invalid actor.
+  *
+  * Output on success: weak actor identities, copied slot / target slot / encounter identity, the expected world, the SAME content lease and config leases that were validated, class leases, and for each boss-core member
+- * the plans of the five accepted combined native clusters, each exactly once, in this deterministic RELATIVE plan order: Stagger (policy and profile, 25 fields), Phases (the explicitly selected phase, flow, fireball and
+- * dependencies, 18 fields), Encounter (health, gate radius and reset, 3 fields), DormantWake (the two clip references) and Posture (the three posture stats). No separate scalar, profile, flow, policy or stats plan exists in
++ * the plans of the twelve accepted native component records, each exactly once, in this deterministic RELATIVE plan order: Stagger (policy and profile, 25 fields), Phases (the explicitly selected phase, flow, fireball and
++ * dependencies, 18 fields), Encounter (health, gate radius and reset, 3 fields), DormantWake (the two clip references) and Posture (the three posture stats), followed by Bleed, LowSweep, Shockwave, HealPunish, Look, CloseClipSwap and Death (59 additional paths). No separate scalar, profile, flow, policy or stats plan exists in
+  * the output and no native class or instance name appears twice. This order is a plan order only: it is NOT an observed registration or BeginPlay chronology. A target-only member gets no boss plan. Participants keep the
+  * order of the request list.
+  *
+- * WHAT THIS IS NOT. The result is an EXPANDED NATIVE SUBSET PREFLIGHT. It is still not a complete playable boss bundle (death, presentation, audio and the other legacy consumers are absent), not a reservation, not a
++ * WHAT THIS IS NOT. The result is an EXPANDED NATIVE SUBSET PREFLIGHT. It is still not a complete playable boss bundle (audio, attack tracking and other legacy consumers remain absent; the twelve plans alone are not a playable bundle), not a reservation, not a
+  * hydrated or ready context and not an authorization to suppress any legacy component. It has no activate, register or ready operation and the plan says so (IsCompletePlayableBundle, IsReservation and IsReady are
+  * false by construction). The kernel never calls a Configure callback (not even as a dry run), never creates or registers a component, never queries a pack attribute, never ticks, never loads an asset or animation
+  * playback, never binds a context.
+@@ -49,7 +49,7 @@
+ enum class ERPGPreflightRole : uint8
+ {
+ 	None,
+-	BossCore,   // receives the five combined native plans: Stagger, Phases, Encounter, DormantWake, Posture
++	BossCore,   // receives twelve plans: Stagger, Phases, Encounter, DormantWake, Posture, Bleed, LowSweep, Shockwave, HealPunish, Look, CloseClipSwap, Death
+ 	TargetOnly, // receives no boss component plan
+ };
+ 
+@@ -83,7 +83,7 @@
+ 	ERPGPreflightRole Role = ERPGPreflightRole::None;
+ 	/** The very config lease that was validated. */
+ 	TSharedPtr<const FRPGParticipantConfig> Config;
+-	/** Boss-core: Stagger, Phases, Encounter, DormantWake, Posture in this relative plan order. Target-only: empty. Plans were built, never run. */
++	/** Boss-core: Stagger, Phases, Encounter, DormantWake, Posture, Bleed, LowSweep, Shockwave, HealPunish, Look, CloseClipSwap, Death in this relative plan order. Target-only: empty. Plans were built, never run. */
+ 	TArray<FRPGComponentPlan> Plans;
+ 	/** One lease per plan class. */
+ 	TArray<TStrongObjectPtr<UClass>> ClassLeases;
+--- Source/OneBossFight/Player/RPGBossHydrationPreflight.cpp
++++ Source/OneBossFight/Player/RPGBossHydrationPreflight.cpp
+@@ -18,6 +18,20 @@
+ #include "Player/RPGBossStagger.h"
+ #include "Player/RPGBossStaggerClusterAdapters.h"
+ #include "Player/RPGBossStatsAdapters.h"
++#include "Player/RPGBossBleed.h"
++#include "Player/RPGBossBleedAdapters.h"
++#include "Player/RPGBossLowSweep.h"
++#include "Player/RPGBossLowSweepAdapters.h"
++#include "Player/RPGBossShockwave.h"
++#include "Player/RPGBossShockwaveAdapters.h"
++#include "Player/RPGBossHealPunish.h"
++#include "Player/RPGBossHealPunishAdapters.h"
++#include "Player/RPGBossLook.h"
++#include "Player/RPGBossLookAdapters.h"
++#include "Player/RPGBossCloseClipSwap.h"
++#include "Player/RPGBossCloseClipSwapAdapters.h"
++#include "Player/RPGBossDeath.h"
++#include "Player/RPGBossDeathAdapters.h"
+ #include "UObject/StrongObjectPtr.h"
+ 
+ namespace RPGBossHydrationPreflight
+@@ -57,11 +71,11 @@
+ 			Result.Fail(FString::Printf(TEXT("%s: %s"), Token, *Detail));
+ 		}
+ 
+-		/** The number of plans of one boss-core member: the five combined native clusters, each exactly once. */
+-		constexpr int32 BossCorePlanCount = 5;
+-
+-		/** The plans of one boss-core member, from the five accepted combined factories and no other (no separate scalar, profile, flow, policy or stats plan), in this deterministic RELATIVE plan order: Stagger, Phases
+-		 *  (with the explicit selected id, captured by value), Encounter, DormantWake, Posture. The order is a plan order, not an observed registration or BeginPlay chronology. Built, never run. */
++		/** The number of plans of one boss-core member: the twelve accepted native component plans, each exactly once. */
++		constexpr int32 BossCorePlanCount = 12;
++
++		/** The plans of one boss-core member, from the twelve accepted factories and no other (no separate scalar, profile, flow, policy or stats plan), in this deterministic RELATIVE plan order: Stagger, Phases
++		 *  (with the explicit selected id, captured by value), Encounter, DormantWake, Posture, Bleed, LowSweep, Shockwave, HealPunish, Look, CloseClipSwap, Death. The order is a plan order, not an observed registration or BeginPlay chronology. Built, never run. */
+ 		TArray<FRPGComponentPlan> MakeBossCorePlans(FName SelectedPhaseId)
+ 		{
+ 			TArray<FRPGComponentPlan> Plans;
+@@ -70,6 +84,13 @@
+ 			Plans.Add(RPGBossEncounterClusterAdapters::MakeEncounterClusterPlan());
+ 			Plans.Add(RPGBossDormantWakeAdapters::MakeDormantWakePlan());
+ 			Plans.Add(RPGBossStatsAdapters::MakePosturePlan());
++			Plans.Add(RPGBossBleedAdapters::MakeBleedPlan());
++			Plans.Add(RPGBossLowSweepAdapters::MakeLowSweepPlan());
++			Plans.Add(RPGBossShockwaveAdapters::MakeShockwavePlan());
++			Plans.Add(RPGBossHealPunishAdapters::MakeHealPunishPlan());
++			Plans.Add(RPGBossLookAdapters::MakeLookPlan());
++			Plans.Add(RPGBossCloseClipSwapAdapters::MakeCloseClipSwapPlan());
++			Plans.Add(RPGBossDeathAdapters::MakeDeathPlan());
+ 			return Plans;
+ 		}
+ 
+@@ -142,7 +163,7 @@
+ 
+ 	TArray<UClass*> ManagedCoreConsumerClasses()
+ 	{
+-		return {URPGBossPhases::StaticClass(), URPGBossEncounter::StaticClass(), URPGBossPosture::StaticClass(), URPGBossStagger::StaticClass(), URPGBossDormantWake::StaticClass(), URPGCombatParticipant::StaticClass()};
++		return {URPGBossPhases::StaticClass(), URPGBossEncounter::StaticClass(), URPGBossPosture::StaticClass(), URPGBossStagger::StaticClass(), URPGBossDormantWake::StaticClass(), URPGCombatParticipant::StaticClass(), URPGBossBleed::StaticClass(), URPGBossLowSweep::StaticClass(), URPGBossShockwave::StaticClass(), URPGBossHealPunish::StaticClass(), URPGBossLook::StaticClass(), URPGBossCloseClipSwap::StaticClass(), URPGBossDeath::StaticClass()};
+ 	}
+ 
+ 	bool CheckCompiledDependencies(const FRPGParticipantConfig& Config, FString& OutError)
+@@ -376,7 +397,7 @@
+ 				{
+ 					FailMember(Result, TEXT("Preflight.DormantWakeRejected"), Label, Error);
+ 				}
+-				// The plans of this member are built here only to be CHECKED (class, instance name, callback bound, no duplicate) and for the union of the typed inputs they read: 51 unique paths, the selected-phase
++				// The plans of this member are built here only to be CHECKED (class, instance name, callback bound, no duplicate) and for the union of the typed inputs they read: 110 unique paths, the selected-phase
+ 				// paths from the explicit selected id. Membership only; a Value text is never authority. No callback is invoked.
+ 				const TArray<FRPGComponentPlan> MemberPlans = MakeBossCorePlans(Request.SelectedPhaseId);
+ 				for (const FString& Problem : CheckPlans(MemberPlans))
+--- Source/OneBossFight/Tests/RPGBossHydrationPreflightTests.cpp
++++ Source/OneBossFight/Tests/RPGBossHydrationPreflightTests.cpp
+@@ -1,5 +1,12 @@
+ // Copyright One Boss Fight. All Rights Reserved.
+ 
++#include "Player/RPGBossBleed.h"
++#include "Player/RPGBossLowSweep.h"
++#include "Player/RPGBossShockwave.h"
++#include "Player/RPGBossHealPunish.h"
++#include "Player/RPGBossLook.h"
++#include "Player/RPGBossCloseClipSwap.h"
++#include "Player/RPGBossDeath.h"
+ #include "Misc/AutomationTest.h"
+ 
+ #if WITH_DEV_AUTOMATION_TESTS
+@@ -21,7 +28,7 @@
+ #include "UObject/StrongObjectPtr.h"
+ #include <limits>
+ 
+-// These tests prove the whole-batch expanded native subset preflight kernel (five combined plans per boss-core member) on real isolated UE objects (a headless game world, plain actors, the existing synthetic config factory): validation of the whole batch, named failures,
++// These tests prove the whole-batch expanded native subset preflight kernel (twelve combined plans per boss-core member) on real isolated UE objects (a headless game world, plain actors, the existing synthetic config factory): validation of the whole batch, named failures,
+ // the plan order and leases of a success, clearing of earlier output, and that a failed or successful compile changes no actor, component or combat context.
+ // They do NOT prove a duel, PIE, a startup chronology, the real game-instance provenance of a content lease, a production skeleton/mesh pairing (no real pack mesh is used: a production member is only shown to FAIL CLOSED),
+ // or the not-game-thread rule (the tests run on the game thread) and the synthetic-fixture-unavailable rule of a non-test target (compiled out here).
+@@ -73,7 +80,7 @@
+ 		AActor* SpawnActor() const { return World ? World->SpawnActor<AActor>() : nullptr; }
+ 	};
+ 
+-	/** The 51 unique manifest paths the five combined boss-core plans read, written out as INDEPENDENT literals (not derived from the factories under test): stagger 25 (14 policy + 11 profile), phases 18 (the 4 paths of
++	/** The 110 unique manifest paths the twelve combined boss-core plans read, written out as INDEPENDENT literals (not derived from the factories under test): stagger 25 (14 policy + 11 profile), phases 18 (the 4 paths of
+ 	 *  the selected phase + 6 flow + 5 fireball + 3 dependencies), encounter 3, dormant wake 2, posture 3. Membership only; the fixtures' manifests are built from this list and the plans' own required fields are what the
+ 	 *  implementation produces and is compared against it. */
+ 	TArray<FString> AllRequiredPaths(FName PhaseId)
+@@ -98,7 +105,15 @@
+ 			// encounter (3), dormant wake (2), posture (3)
+ 			TEXT("Stats.MaxHealth"), TEXT("EncounterPolicy.GateRadius"), TEXT("EncounterPolicy.bResetOnPlayerRespawn"),
+ 			TEXT("DormantWake.DormantClip"), TEXT("DormantWake.WakeClip"),
+-			TEXT("Stats.MaxPosture"), TEXT("Stats.PostureRegenDelay"), TEXT("Stats.PostureRegenRate")};
++			TEXT("Stats.MaxPosture"), TEXT("Stats.PostureRegenDelay"), TEXT("Stats.PostureRegenRate"),
++			// DD26 independent literal expectations, in native record header order.
++			TEXT("Bleed.InitialThreshold"), TEXT("Bleed.ThresholdIncrease"), TEXT("Bleed.ThresholdMax"), TEXT("Bleed.HpFraction"), TEXT("Bleed.EffectHeight"), TEXT("Bleed.ProcEffect"), TEXT("Bleed.ProcSound"),
++			TEXT("LowSweep.bEnabled"), TEXT("LowSweep.MoveId"), TEXT("LowSweep.Damage"), TEXT("LowSweep.Reach"), TEXT("LowSweep.InnerRadius"), TEXT("LowSweep.BladeHeight"), TEXT("LowSweep.SweepFromDegrees"), TEXT("LowSweep.SweepToDegrees"),
++			TEXT("Shockwave.bEnabled"), TEXT("Shockwave.MoveId"), TEXT("Shockwave.Damage"), TEXT("Shockwave.StartRadius"), TEXT("Shockwave.MaxRadius"), TEXT("Shockwave.Speed"), TEXT("Shockwave.Thickness"), TEXT("Shockwave.JumpClearance"),
++			TEXT("HealPunish.bEnabled"), TEXT("HealPunish.MinRange"), TEXT("HealPunish.MaxRange"), TEXT("HealPunish.Cooldown"), TEXT("HealPunish.Damage"), TEXT("HealPunish.FlightTime"), TEXT("HealPunish.MinSpeed"), TEXT("HealPunish.MaxSpeed"), TEXT("HealPunish.JavelinRadius"), TEXT("HealPunish.JavelinMaxRange"), TEXT("HealPunish.SpawnSockets"), TEXT("HealPunish.AimHeight"), TEXT("HealPunish.bRespondToHeal"), TEXT("HealPunish.bCancelJavelinsOnInterrupt"),
++			TEXT("Look.bEnabled"), TEXT("Look.Body"), TEXT("Look.Pieces"), TEXT("Look.Sword"), TEXT("Look.SwordSocket"),
++			TEXT("CloseClipSwap.CloseAbilityClassName"), TEXT("CloseClipSwap.AttackMontagesName"), TEXT("CloseClipSwap.A1Montage"), TEXT("CloseClipSwap.A3aMontage"), TEXT("CloseClipSwap.A3bMontage"),
++			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath")};
+ 	}
+ 
+ 	FRPGParityField MakeField(const FString& Path)
+@@ -371,18 +386,18 @@
+ 	TestTrue(TEXT("weak actor identities resolve to the input actors"), Plan->Participants[0].Actor.Get() == Extra && Plan->Participants[1].Actor.Get() == F.Boss && Plan->Participants[2].Actor.Get() == F.Player);
+ 	TestTrue(TEXT("config leases are the very leases validated"), Plan->Participants[1].Config.Get() == F.BossConfig.Get() && Plan->Participants[2].Config.Get() == F.PlayerConfig.Get());
+ 
+-	// Boss-core: Stagger, Phases, Encounter, DormantWake, Posture, built from the five accepted combined factories; target-only: no boss plan.
++	// Boss-core: Stagger, Phases, Encounter, DormantWake, Posture, built from the twelve accepted combined factories; target-only: no boss plan.
+ 	const FRPGPreflightParticipantPlan& Boss = Plan->Participants[1];
+-	if (!TestEqual(TEXT("boss-core has five plans"), Boss.Plans.Num(), 5))
++	if (!TestEqual(TEXT("boss-core has twelve plans"), Boss.Plans.Num(), 12))
+ 	{
+ 		return false;
+ 	}
+ 	TestTrue(TEXT("plan classes in the deterministic relative order Stagger, Phases, Encounter, DormantWake, Posture"), Boss.Plans[0].Class == URPGBossStagger::StaticClass() && Boss.Plans[1].Class == URPGBossPhases::StaticClass()
+-		&& Boss.Plans[2].Class == URPGBossEncounter::StaticClass() && Boss.Plans[3].Class == URPGBossDormantWake::StaticClass() && Boss.Plans[4].Class == URPGBossPosture::StaticClass());
++		&& Boss.Plans[2].Class == URPGBossEncounter::StaticClass() && Boss.Plans[3].Class == URPGBossDormantWake::StaticClass() && Boss.Plans[4].Class == URPGBossPosture::StaticClass() && Boss.Plans[5].Class == URPGBossBleed::StaticClass() && Boss.Plans[6].Class == URPGBossLowSweep::StaticClass() && Boss.Plans[7].Class == URPGBossShockwave::StaticClass() && Boss.Plans[8].Class == URPGBossHealPunish::StaticClass() && Boss.Plans[9].Class == URPGBossLook::StaticClass() && Boss.Plans[10].Class == URPGBossCloseClipSwap::StaticClass() && Boss.Plans[11].Class == URPGBossDeath::StaticClass());
+ 	TestTrue(TEXT("plan instance names are the legacy names"), Boss.Plans[0].InstanceName == FName(TEXT("RPGBossStagger")) && Boss.Plans[1].InstanceName == FName(TEXT("RPGBossPhases")) && Boss.Plans[2].InstanceName == FName(TEXT("RPGBossEncounter"))
+-		&& Boss.Plans[3].InstanceName == FName(TEXT("RPGBossDormantWake")) && Boss.Plans[4].InstanceName == FName(TEXT("RPGBossPosture")));
++		&& Boss.Plans[3].InstanceName == FName(TEXT("RPGBossDormantWake")) && Boss.Plans[4].InstanceName == FName(TEXT("RPGBossPosture")) && Boss.Plans[5].InstanceName == FName(TEXT("RPGBossBleed")) && Boss.Plans[6].InstanceName == FName(TEXT("RPGBossLowSweep")) && Boss.Plans[7].InstanceName == FName(TEXT("RPGBossShockwave")) && Boss.Plans[8].InstanceName == FName(TEXT("RPGBossHealPunish")) && Boss.Plans[9].InstanceName == FName(TEXT("RPGBossLook")) && Boss.Plans[10].InstanceName == FName(TEXT("RPGBossCloseClipSwap")) && Boss.Plans[11].InstanceName == FName(TEXT("RPGBossDeath")));
+ 	TestTrue(TEXT("the callbacks exist (they were built, never run)"), static_cast<bool>(Boss.Plans[0].Configure) && static_cast<bool>(Boss.Plans[1].Configure) && static_cast<bool>(Boss.Plans[2].Configure)
+-		&& static_cast<bool>(Boss.Plans[3].Configure) && static_cast<bool>(Boss.Plans[4].Configure));
++		&& static_cast<bool>(Boss.Plans[3].Configure) && static_cast<bool>(Boss.Plans[4].Configure) && static_cast<bool>(Boss.Plans[5].Configure) && static_cast<bool>(Boss.Plans[6].Configure) && static_cast<bool>(Boss.Plans[7].Configure) && static_cast<bool>(Boss.Plans[8].Configure) && static_cast<bool>(Boss.Plans[9].Configure) && static_cast<bool>(Boss.Plans[10].Configure) && static_cast<bool>(Boss.Plans[11].Configure));
+ 	TSet<FString> Required;
+ 	for (const FRPGComponentPlan& ComponentPlan : Boss.Plans)
+ 	{
+@@ -391,24 +406,24 @@
+ 			Required.Add(Path);
+ 		}
+ 	}
+-	TestEqual(TEXT("the union of required manifest paths is fifty-one"), Required.Num(), 51);
++	TestEqual(TEXT("the union of required manifest paths is one hundred ten"), Required.Num(), 110);
+ 	for (const FString& Path : AllRequiredPaths(PhaseTwo))
+ 	{
+ 		TestTrue(FString::Printf(TEXT("required path %s is named by a plan"), *Path), Required.Contains(Path));
+ 	}
+-	TestEqual(TEXT("one class lease per boss plan"), Boss.ClassLeases.Num(), 5);
+-	TestTrue(TEXT("the class leases are the plan classes"), Boss.ClassLeases.Num() == 5 && Boss.ClassLeases[0].Get() == Boss.Plans[0].Class && Boss.ClassLeases[1].Get() == Boss.Plans[1].Class && Boss.ClassLeases[2].Get() == Boss.Plans[2].Class
+-		&& Boss.ClassLeases[3].Get() == Boss.Plans[3].Class && Boss.ClassLeases[4].Get() == Boss.Plans[4].Class);
++	TestEqual(TEXT("one class lease per boss plan"), Boss.ClassLeases.Num(), 12);
++	TestTrue(TEXT("the class leases are the plan classes"), Boss.ClassLeases.Num() == 12 && Boss.ClassLeases[0].Get() == Boss.Plans[0].Class && Boss.ClassLeases[1].Get() == Boss.Plans[1].Class && Boss.ClassLeases[2].Get() == Boss.Plans[2].Class
++		&& Boss.ClassLeases[3].Get() == Boss.Plans[3].Class && Boss.ClassLeases[4].Get() == Boss.Plans[4].Class && Boss.ClassLeases[5].Get() == Boss.Plans[5].Class && Boss.ClassLeases[6].Get() == Boss.Plans[6].Class && Boss.ClassLeases[7].Get() == Boss.Plans[7].Class && Boss.ClassLeases[8].Get() == Boss.Plans[8].Class && Boss.ClassLeases[9].Get() == Boss.Plans[9].Class && Boss.ClassLeases[10].Get() == Boss.Plans[10].Class && Boss.ClassLeases[11].Get() == Boss.Plans[11].Class);
+ 	TestTrue(TEXT("target-only members get no boss plan and no class lease"), Plan->Participants[0].Plans.IsEmpty() && Plan->Participants[2].Plans.IsEmpty() && Plan->Participants[0].ClassLeases.IsEmpty() && Plan->Participants[2].ClassLeases.IsEmpty());
+ 
+ 	// Deterministic: a second compile of the same input gives the same plan names, classes and order, as a different object.
+ 	FPlanPtr Again;
+ 	TestTrue(TEXT("second compile"), RPGBossHydrationPreflight::CompilePreflight(Input, Again).IsReady() && Again.IsValid());
+-	if (Again.IsValid() && Again->Participants.Num() == 3 && Again->Participants[1].Plans.Num() == 5)
++	if (Again.IsValid() && Again->Participants.Num() == 3 && Again->Participants[1].Plans.Num() == 12)
+ 	{
+ 		TestTrue(TEXT("a different plan object"), Again.Get() != Plan.Get());
+ 		bool bSame = true;
+-		for (int32 Index = 0; Index < 5; ++Index)
++		for (int32 Index = 0; Index < 12; ++Index)
+ 		{
+ 			bSame = bSame && Again->Participants[1].Plans[Index].InstanceName == Boss.Plans[Index].InstanceName && Again->Participants[1].Plans[Index].Class == Boss.Plans[Index].Class;
+ 		}
+@@ -742,7 +757,7 @@
+ 		ExpectRejected(*this, F, TEXT("attack multiplier below 1 (unsupported by the native reset)"), WithBossConfig(Spec), TEXT("Preflight.PhaseRejected"), TEXT("UnsupportedNativeDamageScale"));
+ 	}
+ 
+-	// Each of the fifty-one required manifest paths of the five combined plans, one at a time.
++	// Each of the one hundred ten required manifest paths of the twelve combined plans, one at a time.
+ 	for (const FString& Path : AllRequiredPaths(PhaseTwo))
+ 	{
+ 		FConfigSpec Spec = Base;
+@@ -828,7 +843,7 @@
+ 		{
+ 			TestTrue(TEXT("the plan follows the request order, the player first"), Out->Participants[0].Slot == FName(TEXT("Player")) && Out->Participants[1].Slot == FName(TEXT("Boss")));
+ 			TestTrue(TEXT("the boss target slot is still the explicit one, not 'the first member'"), Out->Participants[1].TargetSlot == FName(TEXT("Player")) && Out->Participants[0].TargetSlot == FName(TEXT("Boss")));
+-			TestTrue(TEXT("only the boss has plans"), Out->Participants[0].Plans.IsEmpty() && Out->Participants[1].Plans.Num() == 5);
++			TestTrue(TEXT("only the boss has plans"), Out->Participants[0].Plans.IsEmpty() && Out->Participants[1].Plans.Num() == 12);
+ 		}
+ 	}
+ 	// A target that is a member but is itself invalid: the batch fails on that member, and no plan exists for the valid boss either.
+@@ -849,7 +864,7 @@
+ 		In.Requests[0].TargetSlot = FName(TEXT("Boss2"));
+ 		FPlanPtr Out;
+ 		const FRPGHydrationResult Result = RPGBossHydrationPreflight::CompilePreflight(In, Out);
+-		TestTrue(TEXT("two boss-core members targeting each other compile"), Result.IsReady() && Out.IsValid() && Out->Participants.Num() == 2 && Out->Participants[0].Plans.Num() == 5 && Out->Participants[1].Plans.Num() == 5);
++		TestTrue(TEXT("two boss-core members targeting each other compile"), Result.IsReady() && Out.IsValid() && Out->Participants.Num() == 2 && Out->Participants[0].Plans.Num() == 12 && Out->Participants[1].Plans.Num() == 12);
+ 	}
+ 	return true;
+ }
+@@ -983,7 +998,7 @@
+ }
+ 
+ // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-// DD13: the expanded native subset (five combined plans per boss-core member). The expected classes, names, counts and the 51-path union are written as independent literals in this file (AllRequiredPaths),
++// DD13: the expanded native subset (twelve combined plans per boss-core member). The expected classes, names, counts and the 110-path union are written as independent literals in this file (AllRequiredPaths),
+ // not derived from the factories under test; the manifest the fixtures carry comes from the same literal list, the plans' own required fields are what the implementation produces.
+ // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+@@ -1023,25 +1038,39 @@
+ 	TestTrue(TEXT("the scope marker names the expanded native subset and nothing more"), FString(FRPGHydrationPreflightPlan::ScopeName()) == TEXT("ExpandedNativeSubsetPreflight")
+ 		&& !Plan->IsCompletePlayableBundle() && !Plan->IsReservation() && !Plan->IsReady());
+ 
+-	// Independent expectations: the five classes and the legacy instance names, each exactly once, in the relative plan order.
+-	const TArray<UClass*> ExpectedClasses = {URPGBossStagger::StaticClass(), URPGBossPhases::StaticClass(), URPGBossEncounter::StaticClass(), URPGBossDormantWake::StaticClass(), URPGBossPosture::StaticClass()};
+-	const TArray<FName> ExpectedNames = {FName(TEXT("RPGBossStagger")), FName(TEXT("RPGBossPhases")), FName(TEXT("RPGBossEncounter")), FName(TEXT("RPGBossDormantWake")), FName(TEXT("RPGBossPosture"))};
++	// Independent expectations: the twelve classes and the legacy instance names, each exactly once, in the relative plan order.
++	const TArray<UClass*> ExpectedClasses = {URPGBossStagger::StaticClass(), URPGBossPhases::StaticClass(), URPGBossEncounter::StaticClass(), URPGBossDormantWake::StaticClass(), URPGBossPosture::StaticClass(), URPGBossBleed::StaticClass(), URPGBossLowSweep::StaticClass(), URPGBossShockwave::StaticClass(), URPGBossHealPunish::StaticClass(), URPGBossLook::StaticClass(), URPGBossCloseClipSwap::StaticClass(), URPGBossDeath::StaticClass()};
++	const TArray<FName> ExpectedNames = {FName(TEXT("RPGBossStagger")), FName(TEXT("RPGBossPhases")), FName(TEXT("RPGBossEncounter")), FName(TEXT("RPGBossDormantWake")), FName(TEXT("RPGBossPosture")), FName(TEXT("RPGBossBleed")), FName(TEXT("RPGBossLowSweep")), FName(TEXT("RPGBossShockwave")), FName(TEXT("RPGBossHealPunish")), FName(TEXT("RPGBossLook")), FName(TEXT("RPGBossCloseClipSwap")), FName(TEXT("RPGBossDeath"))};
+ 	for (int32 Member = 0; Member < 2; ++Member)
+ 	{
+ 		const FRPGPreflightParticipantPlan& BossPlan = Plan->Participants[Member];
+ 		const FName Selected = Member == 0 ? PhaseTwo : PhaseAlt;
+ 		const FName Other = Member == 0 ? PhaseAlt : PhaseTwo;
+ 		const FString Who = Member == 0 ? TEXT("boss with PhaseTwo") : TEXT("boss with PhaseAlt");
+-		if (!TestTrue(FString::Printf(TEXT("%s: exactly five plans, a boss-core role and five class leases"), *Who), BossPlan.Role == ERPGPreflightRole::BossCore && BossPlan.Plans.Num() == 5 && BossPlan.ClassLeases.Num() == 5))
++		if (!TestTrue(FString::Printf(TEXT("%s: exactly twelve plans, a boss-core role and twelve class leases"), *Who), BossPlan.Role == ERPGPreflightRole::BossCore && BossPlan.Plans.Num() == 12 && BossPlan.ClassLeases.Num() == 12))
+ 		{
+ 			return false;
+ 		}
++		TestTrue(FString::Printf(TEXT("%s: original five-plan prefix keeps its reviewed classes and names"), *Who),
++			BossPlan.Plans[0].Class == URPGBossStagger::StaticClass() && BossPlan.Plans[0].InstanceName == FName(TEXT("RPGBossStagger"))
++			&& BossPlan.Plans[1].Class == URPGBossPhases::StaticClass() && BossPlan.Plans[1].InstanceName == FName(TEXT("RPGBossPhases"))
++			&& BossPlan.Plans[2].Class == URPGBossEncounter::StaticClass() && BossPlan.Plans[2].InstanceName == FName(TEXT("RPGBossEncounter"))
++			&& BossPlan.Plans[3].Class == URPGBossDormantWake::StaticClass() && BossPlan.Plans[3].InstanceName == FName(TEXT("RPGBossDormantWake"))
++			&& BossPlan.Plans[4].Class == URPGBossPosture::StaticClass() && BossPlan.Plans[4].InstanceName == FName(TEXT("RPGBossPosture")));
++		TestTrue(FString::Printf(TEXT("%s: seven typed additions occupy exactly indexes5 through11 in DD order"), *Who),
++			BossPlan.Plans[5].Class == URPGBossBleed::StaticClass() && BossPlan.Plans[5].InstanceName == FName(TEXT("RPGBossBleed"))
++			&& BossPlan.Plans[6].Class == URPGBossLowSweep::StaticClass() && BossPlan.Plans[6].InstanceName == FName(TEXT("RPGBossLowSweep"))
++			&& BossPlan.Plans[7].Class == URPGBossShockwave::StaticClass() && BossPlan.Plans[7].InstanceName == FName(TEXT("RPGBossShockwave"))
++			&& BossPlan.Plans[8].Class == URPGBossHealPunish::StaticClass() && BossPlan.Plans[8].InstanceName == FName(TEXT("RPGBossHealPunish"))
++			&& BossPlan.Plans[9].Class == URPGBossLook::StaticClass() && BossPlan.Plans[9].InstanceName == FName(TEXT("RPGBossLook"))
++			&& BossPlan.Plans[10].Class == URPGBossCloseClipSwap::StaticClass() && BossPlan.Plans[10].InstanceName == FName(TEXT("RPGBossCloseClipSwap"))
++			&& BossPlan.Plans[11].Class == URPGBossDeath::StaticClass() && BossPlan.Plans[11].InstanceName == FName(TEXT("RPGBossDeath")));
+ 		bool bClasses = true, bNames = true, bCallbacks = true, bLeases = true;
+ 		TSet<const UClass*> DistinctClasses;
+ 		TSet<FName> DistinctNames;
+ 		int32 SumOfRequired = 0;
+ 		TSet<FString> Union;
+-		for (int32 Index = 0; Index < 5; ++Index)
++		for (int32 Index = 0; Index < 12; ++Index)
+ 		{
+ 			bClasses = bClasses && BossPlan.Plans[Index].Class == ExpectedClasses[Index];
+ 			bNames = bNames && BossPlan.Plans[Index].InstanceName == ExpectedNames[Index];
+@@ -1055,18 +1084,18 @@
+ 				Union.Add(Path);
+ 			}
+ 		}
+-		TestTrue(FString::Printf(TEXT("%s: the classes are Stagger, Phases, Encounter, DormantWake, Posture in this order"), *Who), bClasses);
++		TestTrue(FString::Printf(TEXT("%s: all twelve classes follow the reviewed prefix and DD-order suffix"), *Who), bClasses);
+ 		TestTrue(FString::Printf(TEXT("%s: the instance names are the legacy names in the same order"), *Who), bNames);
+ 		TestTrue(FString::Printf(TEXT("%s: every plan has its callback (built, never run) and the class leases are the plan classes"), *Who), bCallbacks && bLeases);
+-		TestTrue(FString::Printf(TEXT("%s: no native class and no instance name appears twice"), *Who), DistinctClasses.Num() == 5 && DistinctNames.Num() == 5);
+-		// The separate scalar, profile, flow and policy plans are gone: no plan names a class twice and the five plans together name each of the 51 paths exactly once.
++		TestTrue(FString::Printf(TEXT("%s: no native class and no instance name appears twice"), *Who), DistinctClasses.Num() == 12 && DistinctNames.Num() == 12);
++		// The separate scalar, profile, flow and policy plans are gone: no plan names a class twice and the twelve plans together name each of the 110 paths exactly once.
+ 		const TArray<FString> ExpectedPaths = AllRequiredPaths(Selected);
+-		bool bUnion = ExpectedPaths.Num() == 51 && Union.Num() == 51 && SumOfRequired == 51;
++		bool bUnion = ExpectedPaths.Num() == 110 && Union.Num() == 110 && SumOfRequired == 110;
+ 		for (const FString& Path : ExpectedPaths)
+ 		{
+ 			bUnion = bUnion && Union.Contains(Path);
+ 		}
+-		TestTrue(FString::Printf(TEXT("%s: the union of the plans' required paths is exactly the 51 independent literal paths, each named by exactly one plan"), *Who), bUnion);
++		TestTrue(FString::Printf(TEXT("%s: the union of the plans' required paths is exactly the 110 independent literal paths, each named by exactly one plan"), *Who), bUnion);
+ 		// The selected phase decides the phase paths: no default first or last phase.
+ 		TestTrue(FString::Printf(TEXT("%s: the selected phase paths are named and the other phase's are not"), *Who),
+ 			Union.Contains(FString::Printf(TEXT("Phases[%s].EntryHealthFraction"), *Selected.ToString())) && !Union.Contains(FString::Printf(TEXT("Phases[%s].EntryHealthFraction"), *Other.ToString())));
+@@ -1084,8 +1113,8 @@
+ 		bool bStable = true;
+ 		for (int32 Member = 0; Member < 2; ++Member)
+ 		{
+-			bStable = bStable && Again->Participants[Member].Plans.Num() == 5;
+-			for (int32 Index = 0; bStable && Index < 5; ++Index)
++			bStable = bStable && Again->Participants[Member].Plans.Num() == 12;
++			for (int32 Index = 0; bStable && Index < 12; ++Index)
+ 			{
+ 				bStable = bStable && Again->Participants[Member].Plans[Index].Class == Plan->Participants[Member].Plans[Index].Class
+ 					&& Again->Participants[Member].Plans[Index].InstanceName == Plan->Participants[Member].Plans[Index].InstanceName
+@@ -1102,8 +1131,8 @@
+ 	{
+ 		bNoConsumers = bNoConsumers && !F.Boss->FindComponentByClass(Class) && !Boss2->FindComponentByClass(Class) && !F.Player->FindComponentByClass(Class);
+ 	}
+-	TestTrue(TEXT("no managed consumer (no Stagger, DormantWake, Phases, Encounter, Posture or participant component) exists on any actor"), bNoConsumers);
+-	TestTrue(TEXT("the managed consumers are the six expected classes"), RPGBossHydrationPreflight::ManagedCoreConsumerClasses().Num() == 6);
++	TestTrue(TEXT("none of the thirteen managed consumer classes exists on any actor"), bNoConsumers);
++	TestTrue(TEXT("the managed consumers are the thirteen expected classes"), RPGBossHydrationPreflight::ManagedCoreConsumerClasses().Num() == 13);
+ 
+ 	AddInfo(TEXT("Expanded native subset: a plan order only (NOT a BeginPlay chronology), structural soft references (NOT production fit, load or cook proof), NOT a complete playable bundle, reservation or ready context."));
+ 	return true;
+@@ -1279,7 +1308,7 @@
+ 	FPlanPtr Plan;
+ 	const TArray<int32> Before = CaptureState(F.Scope.World);
+ 	const int32 BossComponentsBefore = F.Boss->GetComponents().Num();
+-	if (!TestTrue(TEXT("the batch compiles"), RPGBossHydrationPreflight::CompilePreflight(F.Valid, Plan).IsReady() && Plan.IsValid() && Plan->Participants.Num() == 2 && Plan->Participants[0].Plans.Num() == 5))
++	if (!TestTrue(TEXT("the batch compiles"), RPGBossHydrationPreflight::CompilePreflight(F.Valid, Plan).IsReady() && Plan.IsValid() && Plan->Participants.Num() == 2 && Plan->Participants[0].Plans.Num() == 12))
+ 	{
+ 		return false;
+ 	}
+@@ -1313,7 +1342,7 @@
+ 		FString WrongError;
+ 		TestTrue(FString::Printf(TEXT("%s: the callback refuses a component of the wrong class by name"), *Label), Wrong.IsValid() && !BossPlan.Plans[Index].Configure(*Wrong, *F.BossConfig, WrongError) && WrongError.StartsWith(TEXT("WrongComponentClass")));
+ 	}
+-	AddInfo(TEXT("The binding check observes one value per plan (stagger seconds, the phase threshold, the boss health, the posture maximum); the dormant wake fields are private, so only acceptance and the wrong-class refusal are observable. PlanInvalid cannot be provoked with the fixed factories and has no negative test."));
++	AddInfo(TEXT("This binding check observes values on four original plans (stagger seconds, phase threshold, health, posture maximum). DormantWake and the seven additions have callback acceptance/wrong-class rejection checked here; their value-copy proofs remain in the separate typed-adapter suites. PlanInvalid cannot be provoked with the fixed factories and has no negative test."));
+ 	return true;
+ }
+ 
+--- Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp
++++ Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp
+@@ -1,5 +1,19 @@
+ // Copyright One Boss Fight. All Rights Reserved.
+ 
++#include "Player/RPGBossBleed.h"
++#include "Player/RPGBossBleedAdapters.h"
++#include "Player/RPGBossLowSweep.h"
++#include "Player/RPGBossLowSweepAdapters.h"
++#include "Player/RPGBossShockwave.h"
++#include "Player/RPGBossShockwaveAdapters.h"
++#include "Player/RPGBossHealPunish.h"
++#include "Player/RPGBossHealPunishAdapters.h"
++#include "Player/RPGBossLook.h"
++#include "Player/RPGBossLookAdapters.h"
++#include "Player/RPGBossCloseClipSwap.h"
++#include "Player/RPGBossCloseClipSwapAdapters.h"
++#include "Player/RPGBossDeath.h"
++#include "Player/RPGBossDeathAdapters.h"
+ #include "Misc/AutomationTest.h"
+ 
+ #if WITH_DEV_AUTOMATION_TESTS
+@@ -23,7 +37,7 @@
+ #include "Player/RPGBossStatsAdapters.h"
+ #include "UObject/StrongObjectPtr.h"
+ 
+-// These tests prove the unregistered batch preparation primitive on real isolated UE objects (a headless game world, plain native actors, the accepted synthetic config shape): the success shape (ten real owned
++// These tests prove the unregistered batch preparation primitive on real isolated UE objects (a headless game world, plain native actors, the accepted synthetic config shape): the success shape (twenty-four real owned
+ // components, unregistered, never begun), whole-batch rejection before any allocation, explicit and scope-exit abort, exclusivity of the owned components, cleanup after an INJECTED failure after real allocations and
+ // configures (a dev-automation-only ordinal, never an organically reproduced native failure), and the lifetime branches (a component destroyed first, an actor destroyed first, the world torn down first, a component
+ // registered by someone else, the off-thread refusals).
+@@ -76,7 +90,7 @@
+ 		AActor* SpawnActor() const { return World ? World->SpawnActor<AActor>() : nullptr; }
+ 	};
+ 
+-	/** The manifest paths the five boss-core plans read for a selected phase id (the union of the five accepted factories). DD13 holds the independent literal list; this file does not test membership, it only needs a manifest the preflight accepts. */
++	/** The manifest paths the twelve boss-core plans read for a selected phase id (the union of the twelve accepted factories). DD13 holds the independent literal list; this file does not test membership, it only needs a manifest the preflight accepts. */
+ 	TArray<FString> RequiredPaths(FName PhaseId)
+ 	{
+ 		TArray<FRPGComponentPlan> Plans;
+@@ -85,6 +99,13 @@
+ 		Plans.Add(RPGBossEncounterClusterAdapters::MakeEncounterClusterPlan());
+ 		Plans.Add(RPGBossDormantWakeAdapters::MakeDormantWakePlan());
+ 		Plans.Add(RPGBossStatsAdapters::MakePosturePlan());
++		Plans.Add(RPGBossBleedAdapters::MakeBleedPlan());
++		Plans.Add(RPGBossLowSweepAdapters::MakeLowSweepPlan());
++		Plans.Add(RPGBossShockwaveAdapters::MakeShockwavePlan());
++		Plans.Add(RPGBossHealPunishAdapters::MakeHealPunishPlan());
++		Plans.Add(RPGBossLookAdapters::MakeLookPlan());
++		Plans.Add(RPGBossCloseClipSwapAdapters::MakeCloseClipSwapPlan());
++		Plans.Add(RPGBossDeathAdapters::MakeDeathPlan());
+ 		TArray<FString> Paths;
+ 		for (const FRPGComponentPlan& ComponentPlan : Plans)
+ 		{
+@@ -286,11 +307,12 @@
+ 		const TCHAR* Name;
+ 	};
+ 
+-	/** The five accepted native consumers with the reviewed instance names, written out independently of the preflight. */
++	/** The twelve accepted native consumers with the reviewed instance names, written out independently of the preflight. */
+ 	TArray<FExpectedComponent> ExpectedComponents()
+ 	{
+ 		return TArray<FExpectedComponent>{{URPGBossStagger::StaticClass(), TEXT("RPGBossStagger")}, {URPGBossPhases::StaticClass(), TEXT("RPGBossPhases")}, {URPGBossEncounter::StaticClass(), TEXT("RPGBossEncounter")},
+-			{URPGBossDormantWake::StaticClass(), TEXT("RPGBossDormantWake")}, {URPGBossPosture::StaticClass(), TEXT("RPGBossPosture")}};
++			{URPGBossDormantWake::StaticClass(), TEXT("RPGBossDormantWake")}, {URPGBossPosture::StaticClass(), TEXT("RPGBossPosture")},
++			{URPGBossBleed::StaticClass(), TEXT("RPGBossBleed")} , {URPGBossLowSweep::StaticClass(), TEXT("RPGBossLowSweep")} , {URPGBossShockwave::StaticClass(), TEXT("RPGBossShockwave")} , {URPGBossHealPunish::StaticClass(), TEXT("RPGBossHealPunish")} , {URPGBossLook::StaticClass(), TEXT("RPGBossLook")} , {URPGBossCloseClipSwap::StaticClass(), TEXT("RPGBossCloseClipSwap")} , {URPGBossDeath::StaticClass(), TEXT("RPGBossDeath")}};
+ 	}
+ 
+ 	bool NoManagedConsumer(const AActor* Actor)
+@@ -321,16 +343,16 @@
+ 		return Errors.ContainsByPredicate([Token, SlotText](const FString& E) { return E.StartsWith(Token) && E.Contains(SlotText); });
+ 	}
+ 
+-	/** The exact success shape: ten owned real components (five per boss-core actor, classes, names, owners, configured representative fields), unregistered, never begun, never ticking, nothing for the target, no participant,
++	/** The exact success shape: twenty-four owned real components (twelve per boss-core actor, classes, names, owners, configured representative fields), unregistered, never begun, never ticking, nothing for the target, no participant,
+ 	 *  no bound or ready context, the unrelated components untouched, the artifact's read-only summary and the retained plan identities. */
+ 	bool ExpectPrepared(FAutomationTestBase& Test, const FFixture& F, const FRPGPreparedBatch& Batch, const FWorldState& Before)
+ 	{
+ 		bool bOk = true;
+ 		bOk &= Test.TestTrue(TEXT("the artifact reports prepared"), Batch.IsPrepared());
+-		bOk &= Test.TestEqual(TEXT("ten components are leased"), Batch.GetOwnedComponentCount(), 10);
++		bOk &= Test.TestEqual(TEXT("twenty-four components are leased"), Batch.GetOwnedComponentCount(), 24);
+ 		const TArray<const UActorComponent*> OwnedList = Batch.OwnedComponentsForTest();
+ 		const TSet<const UActorComponent*> OwnedSet(OwnedList);
+-		bOk &= Test.TestTrue(TEXT("ten distinct owned component pointers"), OwnedList.Num() == 10 && OwnedSet.Num() == 10);
++		bOk &= Test.TestTrue(TEXT("twenty-four distinct owned component pointers"), OwnedList.Num() == 24 && OwnedSet.Num() == 24);
+ 
+ 		struct FBossCase
+ 		{
+@@ -359,12 +381,12 @@
+ 			}
+ 			const FActorState Now = CaptureActor(Case.Actor);
+ 			const FActorState& Prior = Before.Actors[Case.Index];
+-			bool bPriorKept = Now.Components.Num() == Prior.Components.Num() + 5 && !Now.bBegun;
++			bool bPriorKept = Now.Components.Num() == Prior.Components.Num() + 12 && !Now.bBegun;
+ 			for (const UActorComponent* PriorComponent : Prior.Components)
+ 			{
+ 				bPriorKept = bPriorKept && Now.Components.Contains(PriorComponent) && !OwnedSet.Contains(PriorComponent);
+ 			}
+-			bOk &= Test.TestTrue(FString::Printf(TEXT("%s: exactly five components were added and every unrelated component is still there"), *Label), bPriorKept);
++			bOk &= Test.TestTrue(FString::Printf(TEXT("%s: exactly twelve components were added and every unrelated component is still there"), *Label), bPriorKept);
+ 			bOk &= Test.TestFalse(FString::Printf(TEXT("%s has no participant component"), *Label), Case.Actor->FindComponentByClass<URPGCombatParticipant>() != nullptr);
+ 
+ 			// Representative configured fields: the typed records of this member's own config, never the other boss's.
+@@ -384,8 +406,8 @@
+ 		if (Test.TestEqual(TEXT("three participant summaries in the request order"), Infos.Num(), 3))
+ 		{
+ 			bOk &= Test.TestTrue(TEXT("summary: slots, targets, roles, explicit phase ids and owned counts"),
+-				Infos[0].Slot == FName(TEXT("Boss1")) && Infos[0].TargetSlot == FName(TEXT("Player")) && Infos[0].Role == ERPGPreflightRole::BossCore && Infos[0].SelectedPhaseId == PhaseTwo && Infos[0].OwnedComponentCount == 5
+-				&& Infos[1].Slot == FName(TEXT("Boss2")) && Infos[1].TargetSlot == FName(TEXT("Player")) && Infos[1].Role == ERPGPreflightRole::BossCore && Infos[1].SelectedPhaseId == PhaseAlt && Infos[1].OwnedComponentCount == 5
++				Infos[0].Slot == FName(TEXT("Boss1")) && Infos[0].TargetSlot == FName(TEXT("Player")) && Infos[0].Role == ERPGPreflightRole::BossCore && Infos[0].SelectedPhaseId == PhaseTwo && Infos[0].OwnedComponentCount == 12
++				&& Infos[1].Slot == FName(TEXT("Boss2")) && Infos[1].TargetSlot == FName(TEXT("Player")) && Infos[1].Role == ERPGPreflightRole::BossCore && Infos[1].SelectedPhaseId == PhaseAlt && Infos[1].OwnedComponentCount == 12
+ 				&& Infos[2].Slot == FName(TEXT("Player")) && Infos[2].TargetSlot == FName(TEXT("Boss1")) && Infos[2].Role == ERPGPreflightRole::TargetOnly && Infos[2].SelectedPhaseId.IsNone() && Infos[2].OwnedComponentCount == 0);
+ 		}
+ 		const TSharedPtr<const FRPGHydrationPreflightPlan> Plan = Batch.GetPreflightPlan();
+@@ -422,7 +444,7 @@
+ 				bCleanState = bCleanState && !Garbage->IsRegistered() && !Garbage->HasBegunPlay() && Garbage->IsBeingDestroyed();
+ 			}
+ 		}
+-		bool bOk = Test.TestTrue(FString::Printf(TEXT("%s: every owned component is destroyed (none resolves any more)"), Label), Weak.Num() == 10 && bGone);
++		bool bOk = Test.TestTrue(FString::Printf(TEXT("%s: every owned component is destroyed (none resolves any more)"), Label), Weak.Num() == 24 && bGone);
+ 		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: any destroyed object still awaiting collection is unregistered, not begun and marked destroyed"), Label), bCleanState);
+ 		return bOk;
+ 	}
+@@ -448,11 +470,11 @@
+ 	}
+ 	ExpectPrepared(*this, F, *Result.Batch, Before);
+ 
+-	// A second look: the world state is exactly the state before plus the ten components and nothing else; the abort returns every actor to its prior state.
++	// A second look: the world state is exactly the state before plus the twenty-four components and nothing else; the abort returns every actor to its prior state.
+ 	const FRPGPreparationAbortReport Report = Result.Batch->Abort();
+-	TestTrue(TEXT("the abort destroyed ten components and found nothing else"), Report.Destroyed == 10 && Report.AlreadyGone == 0 && Report.ContractViolations == 0 && Report.IsClean());
++	TestTrue(TEXT("the abort destroyed twenty-four components and found nothing else"), Report.Destroyed == 24 && Report.AlreadyGone == 0 && Report.ContractViolations == 0 && Report.IsClean());
+ 	TestTrue(TEXT("after the abort every actor is exactly as before"), SameWorld(F.Capture(), Before));
+-	AddInfo(TEXT("The prepared subset is five owned, unregistered, never begun components per boss-core actor; nothing registers, binds, reserves or activates them, and it is not a complete playable boss."));
++	AddInfo(TEXT("The prepared subset is twelve owned, unregistered, never begun components per boss-core actor; nothing registers, binds, reserves or activates them, and it is not a complete playable boss."));
+ 	return true;
+ }
+ 
+@@ -476,7 +498,7 @@
+ 		}
+ 		const TArray<TWeakObjectPtr<UActorComponent>> Weak = WeakOwned(*Result.Batch);
+ 		const FRPGPreparationAbortReport First = Result.Batch->Abort();
+-		TestTrue(TEXT("explicit abort: ten destroyed, none already gone, no violation, clean"), First.Destroyed == 10 && First.AlreadyGone == 0 && First.ContractViolations == 0 && First.IsClean() && !First.bRefused);
++		TestTrue(TEXT("explicit abort: twenty-four destroyed, none already gone, no violation, clean"), First.Destroyed == 24 && First.AlreadyGone == 0 && First.ContractViolations == 0 && First.IsClean() && !First.bRefused);
+ 		TestFalse(TEXT("the artifact is no longer prepared"), Result.Batch->IsPrepared());
+ 		TestEqual(TEXT("every lease is released"), Result.Batch->GetOwnedComponentCount(), 0);
+ 		TestTrue(TEXT("the summary reports no owned component"), Result.Batch->GetParticipants().Num() == 3 && Result.Batch->GetParticipants()[0].OwnedComponentCount == 0);
+@@ -535,13 +557,13 @@
+ 	TestFalse(TEXT("the second preparation fails"), Second.Succeeded());
+ 	TestFalse(TEXT("and returns no artifact"), Second.Batch.IsValid());
+ 	TestTrue(TEXT("named by the preflight for both boss-core members"), AnyErrorHas(Second.Errors, TEXT("Preflight.PreexistingConsumer"), TEXT("slot=Boss1")) && AnyErrorHas(Second.Errors, TEXT("Preflight.PreexistingConsumer"), TEXT("slot=Boss2")));
+-	TestTrue(TEXT("the first artifact is intact: prepared, the same ten components, still unregistered and not begun"), First.Batch->IsPrepared() && First.Batch->GetOwnedComponentCount() == 10 && First.Batch->OwnedComponentsForTest() == Snapshot);
++	TestTrue(TEXT("the first artifact is intact: prepared, the same twenty-four components, still unregistered and not begun"), First.Batch->IsPrepared() && First.Batch->GetOwnedComponentCount() == 24 && First.Batch->OwnedComponentsForTest() == Snapshot);
+ 	TestTrue(TEXT("no actor, component or context state changed by the refused attempt"), SameWorld(F.Capture(), AfterFirst));
+ 	TestTrue(TEXT("the first artifact still has the exact success shape"), ExpectPrepared(*this, F, *First.Batch, Before));
+ 
+ 	// Only after the first has aborted does a preparation succeed again.
+ 	const FRPGPreparationAbortReport Report = First.Batch->Abort();
+-	TestTrue(TEXT("the first artifact aborts cleanly"), Report.Destroyed == 10 && Report.IsClean());
++	TestTrue(TEXT("the first artifact aborts cleanly"), Report.Destroyed == 24 && Report.IsClean());
+ 	FRPGPreparationResult Third = RPGBossHydrationPreparation::PrepareBatch(F.Input);
+ 	TestTrue(TEXT("a preparation succeeds again after the abort"), Third.Succeeded());
+ 	if (Third.Batch.IsValid())
+@@ -613,9 +635,9 @@
+ 	}
+ 	const FWorldState Before = F.Capture();
+ 
+-	// The steps are counted from 1: allocations 1 to 5 are the first boss, 6 to 10 the second boss, configures 11 to 15 the first boss, 16 to 20 the second boss. The failure is injected right AFTER the step: a real
++	// The steps are counted from 1: allocations 1 to 12 are the first boss, 13 to 24 the second boss, configures 25 to 36 the first boss, 37 to 48 the second boss. The failure is injected right AFTER the step: a real
+ 	// allocation or a real configure had completed.
+-	const int32 Ordinals[] = {1, 3, 5, 6, 8, 10, 11, 13, 15, 16, 18, 20};
++	const int32 Ordinals[] = {1, 6, 12, 13, 18, 24, 25, 30, 36, 37, 42, 48};
+ 	for (const int32 Ordinal : Ordinals)
+ 	{
+ 		const FString Label = FString::Printf(TEXT("fault after step %d"), Ordinal);
+@@ -638,9 +660,9 @@
+ 		}
+ 		TestTrue(FString::Printf(TEXT("%s: and abort back to the prior state"), *Label), SameWorld(F.Capture(), Before));
+ 	}
+-	// The control: an ordinal beyond the twenty real steps never fires and the preparation succeeds.
+-	{
+-		RPGBossHydrationPreparation::FFaultInjectionScope Fault(21);
++	// The control: an ordinal beyond the forty-eight real steps never fires and the preparation succeeds.
++	{
++		RPGBossHydrationPreparation::FFaultInjectionScope Fault(49);
+ 		FRPGPreparationResult Result = RPGBossHydrationPreparation::PrepareBatch(F.Input);
+ 		TestTrue(TEXT("control: an ordinal past the last step does not fire and the preparation succeeds"), !Fault.Fired() && Result.Succeeded());
+ 		if (Result.Batch.IsValid())
+@@ -676,7 +698,7 @@
+ 			Posture->DestroyComponent();
+ 		}
+ 		const FRPGPreparationAbortReport Report = Result.Batch->Abort();
+-		TestTrue(TEXT("component destroyed first: nine destroyed by the abort, one already gone, no violation, clean"), Report.Destroyed == 9 && Report.AlreadyGone == 1 && Report.ContractViolations == 0 && Report.IsClean());
++		TestTrue(TEXT("component destroyed first: twenty-three destroyed by the abort, one already gone, no violation, clean"), Report.Destroyed == 23 && Report.AlreadyGone == 1 && Report.ContractViolations == 0 && Report.IsClean());
+ 		TestTrue(TEXT("every actor is back to its prior state"), SameWorld(F.Capture(), Before));
+ 	}
+ 	// 2. An owner actor destroyed before the abort: its components are released without being dereferenced as live objects; the other member is cleaned.
+@@ -695,7 +717,7 @@
+ 		}
+ 		F.Boss2->Destroy();
+ 		const FRPGPreparationAbortReport Report = Result.Batch->Abort();
+-		TestTrue(TEXT("owner destroyed first: the first boss's five are destroyed, the destroyed owner's five are already gone, no violation"), Report.Destroyed == 5 && Report.AlreadyGone == 5 && Report.ContractViolations == 0 && Report.IsClean());
++		TestTrue(TEXT("owner destroyed first: the first boss's twelve are destroyed, the destroyed owner's twelve are already gone, no violation"), Report.Destroyed == 12 && Report.AlreadyGone == 12 && Report.ContractViolations == 0 && Report.IsClean());
+ 		TestTrue(TEXT("the surviving actors are exactly as before"), SameActor(CaptureActor(F.Boss1), Boss1Before) && SameActor(CaptureActor(F.Player), PlayerBefore));
+ 	}
+ 	// 3. The whole world torn down before the abort (DestroyWorld does not itself mark the actors or components as garbage, so the abort may find them still valid): no crash and every owned component is accounted for,
+@@ -713,7 +735,7 @@
+ 		}
+ 		F.Reset(); // the world, its actors and the fixture are gone; the artifact still holds its leases
+ 		const FRPGPreparationAbortReport Report = Result.Batch->Abort();
+-		TestTrue(TEXT("world torn down first: every owned component is accounted for and nothing is reported as a registration violation"), Report.Destroyed + Report.AlreadyGone == 10 && Report.ContractViolations == 0 && Report.IsClean());
++		TestTrue(TEXT("world torn down first: every owned component is accounted for and nothing is reported as a registration violation"), Report.Destroyed + Report.AlreadyGone == 24 && Report.ContractViolations == 0 && Report.IsClean());
+ 		AddInfo(FString::Printf(TEXT("world torn down first: the abort destroyed %d and found %d already gone"), Report.Destroyed, Report.AlreadyGone));
+ 		TestFalse(TEXT("the artifact is no longer prepared"), Result.Batch->IsPrepared());
+ 	}
+@@ -744,7 +766,7 @@
+ 			return false;
+ 		}
+ 		const FRPGPreparationAbortReport Report = Result.Batch->Abort();
+-		TestTrue(TEXT("registered by somebody else: nine destroyed, one contract violation, not clean"), Report.Destroyed == 9 && Report.ContractViolations == 1 && !Report.IsClean() && AnyErrorStartsWith(Report.Errors, TEXT("Preparation.ContractViolation")) && AnyErrorContains(Report.Errors, TEXT("RPGBossEncounter")));
++		TestTrue(TEXT("registered by somebody else: twenty-three destroyed, one contract violation, not clean"), Report.Destroyed == 23 && Report.ContractViolations == 1 && !Report.IsClean() && AnyErrorStartsWith(Report.Errors, TEXT("Preparation.ContractViolation")) && AnyErrorContains(Report.Errors, TEXT("RPGBossEncounter")));
+ 		TestTrue(TEXT("the registered component was left in place and is still registered (no rollback was pretended)"), IsValid(Encounter) && Encounter->IsRegistered() && Encounter->GetOwner() == F.Boss1);
+ 		Encounter->DestroyComponent(); // the test, which registered it, undoes it
+ 		TestTrue(TEXT("after the test removed its own registered component every actor is back to its prior state"), SameWorld(F.Capture(), Before));
+@@ -775,9 +797,9 @@
+ 		TFuture<FRPGPreparationAbortReport> AbortFuture = Async(EAsyncExecution::ThreadPool, [Raw]() { return Raw->Abort(); });
+ 		const FRPGPreparationAbortReport Refused = AbortFuture.Get();
+ 		TestTrue(TEXT("an abort on a worker thread is refused by name and destroys nothing"), Refused.bRefused && Refused.Destroyed == 0 && AnyErrorStartsWith(Refused.Errors, TEXT("Preparation.NotGameThread")));
+-		TestTrue(TEXT("the artifact is still prepared with its ten components after the refused abort"), Result.Batch->IsPrepared() && Result.Batch->GetOwnedComponentCount() == 10);
++		TestTrue(TEXT("the artifact is still prepared with its twenty-four components after the refused abort"), Result.Batch->IsPrepared() && Result.Batch->GetOwnedComponentCount() == 24);
+ 		const FRPGPreparationAbortReport Report = Result.Batch->Abort();
+-		TestTrue(TEXT("the game-thread abort then succeeds"), Report.Destroyed == 10 && Report.IsClean());
++		TestTrue(TEXT("the game-thread abort then succeeds"), Report.Destroyed == 24 && Report.IsClean());
+ 		TestTrue(TEXT("final state is the state before"), SameWorld(F.Capture(), Before));
+ 	}
+ 	AddInfo(TEXT("Not exercised: destroying the artifact itself on a worker thread (it would be a flagged contract violation and cannot be exercised safely), and a component the engine collected during preparation (no collection is forced)."));
+--- Source/OneBossFight/Tests/RPGBossProductionPreflightTests.cpp
++++ Source/OneBossFight/Tests/RPGBossProductionPreflightTests.cpp
+@@ -1,5 +1,12 @@
+ // Copyright One Boss Fight. All Rights Reserved.
+ 
++#include "Player/RPGBossBleed.h"
++#include "Player/RPGBossLowSweep.h"
++#include "Player/RPGBossShockwave.h"
++#include "Player/RPGBossHealPunish.h"
++#include "Player/RPGBossLook.h"
++#include "Player/RPGBossCloseClipSwap.h"
++#include "Player/RPGBossDeath.h"
+ #include "Misc/AutomationTest.h"
+ 
+ #if WITH_DEV_AUTOMATION_TESTS
+@@ -28,7 +35,7 @@
+ // mesh and its skeleton are placed on two ISOLATED native ACharacter actors in a test-local headless game world that never begins play; the animation dependencies are the authoring-default cooked-directory candidates
+ // of the typed records; the definitions are transient; the content epoch is the existing legacy registry epoch.
+ // What it can establish: that, for these exact assets in this editor binary, the production compiler loads the skeleton and every listed animation, every animation is on the skeleton, the actor meshes are compatible with
+-// the skeleton, and the preflight then publishes five plans for the boss and none for the target. A mismatch is a real finding and fails the test with the observed names; nothing is retargeted, substituted or weakened.
++// the skeleton, and the preflight then publishes twelve plans for the boss and none for the target. A mismatch is a real finding and fails the test with the observed names; nothing is retargeted, substituted or weakened.
+ // What it does NOT establish: a cold load (the pack classes are loaded first and the assets may already be in memory; the state before the fixture is only logged), the packaged or cooked build, the arena level, the placed
+ // Blueprint boss, an ability or gameplay effect (class paths are structural only), animation playback or root motion, the real boss definition asset (the typed values, phase list and manifest rows are fixture values, not
+ // authority), a game-instance content epoch, BeginPlay, registration, context binding, activation or any wiring. The plans are built and never run.
+@@ -100,7 +107,7 @@
+ 		}
+ 	};
+ 
+-	/** The 51 unique manifest paths the five combined boss-core plans read, written out as independent literals. Membership only. */
++	/** The 110 unique manifest paths the twelve combined boss-core plans read, written out as independent literals. Membership only. */
+ 	TArray<FString> AllRequiredPaths(FName PhaseId)
+ 	{
+ 		const FString Id = PhaseId.ToString();
+@@ -116,7 +123,15 @@
+ 			TEXT("PhaseDependencies.RoarClip"), TEXT("PhaseDependencies.TransitionMontage"), TEXT("PhaseDependencies.ImmunityEffect"),
+ 			TEXT("Stats.MaxHealth"), TEXT("EncounterPolicy.GateRadius"), TEXT("EncounterPolicy.bResetOnPlayerRespawn"),
+ 			TEXT("DormantWake.DormantClip"), TEXT("DormantWake.WakeClip"),
+-			TEXT("Stats.MaxPosture"), TEXT("Stats.PostureRegenDelay"), TEXT("Stats.PostureRegenRate")};
++			TEXT("Stats.MaxPosture"), TEXT("Stats.PostureRegenDelay"), TEXT("Stats.PostureRegenRate"),
++			// Independent production-preflight fixture membership, not factory-derived.
++			TEXT("Bleed.InitialThreshold"), TEXT("Bleed.ThresholdIncrease"), TEXT("Bleed.ThresholdMax"), TEXT("Bleed.HpFraction"), TEXT("Bleed.EffectHeight"), TEXT("Bleed.ProcEffect"), TEXT("Bleed.ProcSound"),
++			TEXT("LowSweep.bEnabled"), TEXT("LowSweep.MoveId"), TEXT("LowSweep.Damage"), TEXT("LowSweep.Reach"), TEXT("LowSweep.InnerRadius"), TEXT("LowSweep.BladeHeight"), TEXT("LowSweep.SweepFromDegrees"), TEXT("LowSweep.SweepToDegrees"),
++			TEXT("Shockwave.bEnabled"), TEXT("Shockwave.MoveId"), TEXT("Shockwave.Damage"), TEXT("Shockwave.StartRadius"), TEXT("Shockwave.MaxRadius"), TEXT("Shockwave.Speed"), TEXT("Shockwave.Thickness"), TEXT("Shockwave.JumpClearance"),
++			TEXT("HealPunish.bEnabled"), TEXT("HealPunish.MinRange"), TEXT("HealPunish.MaxRange"), TEXT("HealPunish.Cooldown"), TEXT("HealPunish.Damage"), TEXT("HealPunish.FlightTime"), TEXT("HealPunish.MinSpeed"), TEXT("HealPunish.MaxSpeed"), TEXT("HealPunish.JavelinRadius"), TEXT("HealPunish.JavelinMaxRange"), TEXT("HealPunish.SpawnSockets"), TEXT("HealPunish.AimHeight"), TEXT("HealPunish.bRespondToHeal"), TEXT("HealPunish.bCancelJavelinsOnInterrupt"),
++			TEXT("Look.bEnabled"), TEXT("Look.Body"), TEXT("Look.Pieces"), TEXT("Look.Sword"), TEXT("Look.SwordSocket"),
++			TEXT("CloseClipSwap.CloseAbilityClassName"), TEXT("CloseClipSwap.AttackMontagesName"), TEXT("CloseClipSwap.A1Montage"), TEXT("CloseClipSwap.A3aMontage"), TEXT("CloseClipSwap.A3bMontage"),
++			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath")};
+ 	}
+ 
+ 	/** A manifest row supplied by this fixture: it satisfies the production compiler's row shape and the preflight's membership check; it is not derived from any asset and carries no authority. */
+@@ -137,7 +152,7 @@
+ 		return Field;
+ 	}
+ 
+-	/** The boss animation dependencies: the cooked-directory authoring-default candidates of the dormant wake, phase dependency and stagger profile records (nine paths: five sequences, three montages and the riposte reaction). */
++	/** The boss animation dependencies: the cooked-directory authoring-default candidates of the dormant wake, phase dependency and stagger profile records (twenty-three paths: twelve sequences, three montages and the riposte reaction). */
+ 	TArray<FSoftObjectPath> BossAnimationPaths()
+ 	{
+ 		FRPGDormantWakeConfig Wake;
+@@ -516,28 +531,28 @@
+ 	TestTrue(TEXT("slots, targets, roles and actors are as requested"), BossPlan.Slot == FName(TEXT("Boss")) && BossPlan.TargetSlot == FName(TEXT("Player")) && BossPlan.Role == ERPGPreflightRole::BossCore && BossPlan.Actor.Get() == F.BossActor
+ 		&& PlayerPlan.Slot == FName(TEXT("Player")) && PlayerPlan.TargetSlot == FName(TEXT("Boss")) && PlayerPlan.Role == ERPGPreflightRole::TargetOnly && PlayerPlan.Actor.Get() == F.PlayerActor);
+ 	TestTrue(TEXT("the plan holds the very production config leases"), BossPlan.Config.Get() == F.BossConfig.Get() && PlayerPlan.Config.Get() == F.PlayerConfig.Get());
+-	if (!TestEqual(TEXT("the boss has five plans"), BossPlan.Plans.Num(), 5))
++	if (!TestEqual(TEXT("the boss has twelve plans"), BossPlan.Plans.Num(), 12))
+ 	{
+ 		return false;
+ 	}
+ 	TestTrue(TEXT("plan classes in the relative order Stagger, Phases, Encounter, DormantWake, Posture"), BossPlan.Plans[0].Class == URPGBossStagger::StaticClass() && BossPlan.Plans[1].Class == URPGBossPhases::StaticClass()
+-		&& BossPlan.Plans[2].Class == URPGBossEncounter::StaticClass() && BossPlan.Plans[3].Class == URPGBossDormantWake::StaticClass() && BossPlan.Plans[4].Class == URPGBossPosture::StaticClass());
++		&& BossPlan.Plans[2].Class == URPGBossEncounter::StaticClass() && BossPlan.Plans[3].Class == URPGBossDormantWake::StaticClass() && BossPlan.Plans[4].Class == URPGBossPosture::StaticClass() && BossPlan.Plans[5].Class == URPGBossBleed::StaticClass() && BossPlan.Plans[6].Class == URPGBossLowSweep::StaticClass() && BossPlan.Plans[7].Class == URPGBossShockwave::StaticClass() && BossPlan.Plans[8].Class == URPGBossHealPunish::StaticClass() && BossPlan.Plans[9].Class == URPGBossLook::StaticClass() && BossPlan.Plans[10].Class == URPGBossCloseClipSwap::StaticClass() && BossPlan.Plans[11].Class == URPGBossDeath::StaticClass());
+ 	TestTrue(TEXT("plan instance names are the legacy names"), BossPlan.Plans[0].InstanceName == FName(TEXT("RPGBossStagger")) && BossPlan.Plans[1].InstanceName == FName(TEXT("RPGBossPhases")) && BossPlan.Plans[2].InstanceName == FName(TEXT("RPGBossEncounter"))
+-		&& BossPlan.Plans[3].InstanceName == FName(TEXT("RPGBossDormantWake")) && BossPlan.Plans[4].InstanceName == FName(TEXT("RPGBossPosture")));
++		&& BossPlan.Plans[3].InstanceName == FName(TEXT("RPGBossDormantWake")) && BossPlan.Plans[4].InstanceName == FName(TEXT("RPGBossPosture")) && BossPlan.Plans[5].InstanceName == FName(TEXT("RPGBossBleed")) && BossPlan.Plans[6].InstanceName == FName(TEXT("RPGBossLowSweep")) && BossPlan.Plans[7].InstanceName == FName(TEXT("RPGBossShockwave")) && BossPlan.Plans[8].InstanceName == FName(TEXT("RPGBossHealPunish")) && BossPlan.Plans[9].InstanceName == FName(TEXT("RPGBossLook")) && BossPlan.Plans[10].InstanceName == FName(TEXT("RPGBossCloseClipSwap")) && BossPlan.Plans[11].InstanceName == FName(TEXT("RPGBossDeath")));
+ 	TestTrue(TEXT("the callbacks exist (built, never run)"), static_cast<bool>(BossPlan.Plans[0].Configure) && static_cast<bool>(BossPlan.Plans[1].Configure) && static_cast<bool>(BossPlan.Plans[2].Configure)
+-		&& static_cast<bool>(BossPlan.Plans[3].Configure) && static_cast<bool>(BossPlan.Plans[4].Configure));
++		&& static_cast<bool>(BossPlan.Plans[3].Configure) && static_cast<bool>(BossPlan.Plans[4].Configure) && static_cast<bool>(BossPlan.Plans[5].Configure) && static_cast<bool>(BossPlan.Plans[6].Configure) && static_cast<bool>(BossPlan.Plans[7].Configure) && static_cast<bool>(BossPlan.Plans[8].Configure) && static_cast<bool>(BossPlan.Plans[9].Configure) && static_cast<bool>(BossPlan.Plans[10].Configure) && static_cast<bool>(BossPlan.Plans[11].Configure));
+ 	TSet<FString> Required;
+ 	for (const FRPGComponentPlan& ComponentPlan : BossPlan.Plans)
+ 	{
+ 		Required.Append(ComponentPlan.RequiredFields);
+ 	}
+ 	const TArray<FString> Expected = AllRequiredPaths(PhaseTwo);
+-	TestEqual(TEXT("the union of required manifest paths is fifty-one"), Required.Num(), 51);
++	TestEqual(TEXT("the union of required manifest paths is one hundred ten"), Required.Num(), 110);
+ 	for (const FString& Path : Expected)
+ 	{
+ 		TestTrue(FString::Printf(TEXT("required path %s is named by a plan"), *Path), Required.Contains(Path));
+ 	}
+-	TestEqual(TEXT("one class lease per boss plan"), BossPlan.ClassLeases.Num(), 5);
++	TestEqual(TEXT("one class lease per boss plan"), BossPlan.ClassLeases.Num(), 12);
+ 	TestTrue(TEXT("the target gets no plan and no class lease"), PlayerPlan.Plans.IsEmpty() && PlayerPlan.ClassLeases.IsEmpty());
+ 
+ 	// A stable repeat compile, and the world and the assets are exactly as before: nothing created, registered, bound, begun or ticked, and no touched package dirtied by the preflight.
+--- Source/OneBossFight/Tests/RPGBossProductionPreparationTests.cpp
++++ Source/OneBossFight/Tests/RPGBossProductionPreparationTests.cpp
+@@ -1,5 +1,12 @@
+ // Copyright One Boss Fight. All Rights Reserved.
+ 
++#include "Player/RPGBossBleed.h"
++#include "Player/RPGBossLowSweep.h"
++#include "Player/RPGBossShockwave.h"
++#include "Player/RPGBossHealPunish.h"
++#include "Player/RPGBossLook.h"
++#include "Player/RPGBossCloseClipSwap.h"
++#include "Player/RPGBossDeath.h"
+ #include "Misc/AutomationTest.h"
+ 
+ #if WITH_DEV_AUTOMATION_TESTS
+@@ -31,7 +38,7 @@
+ // mesh and its skeleton are placed on THREE isolated native ACharacter actors (two boss-core owners, one target) in a test-local headless game world that never begins play, every actor fully finished before any preparation;
+ // the animation dependencies are the authoring-default cooked-directory candidates of the typed records; the definitions are transient; the content epoch is the existing legacy registry epoch; the manifest rows are
+ // hand-authored membership rows. The setup is copied from DD14 into this file (no shared helper, no edit of the DD14 file).
+-// What it can establish, for these exact assets in this editor binary: PositiveBatch: ten real owned components (five exact native consumers per boss-core actor), unregistered, uninitialized, not begun, not ticking, each
++// What it can establish, for these exact assets in this editor binary: PositiveBatch: twenty-four real owned components (twelve exact native consumers per boss-core actor), unregistered, uninitialized, not begun, not ticking, each
+ // holding its own member's configured values, the exact production config, content, skeleton and animation leases retained by the plan, the unrelated component sets and mesh assets unchanged, explicit and scope-exit abort
+ // restoring the prior sets. LateRejection: which LAYER refused a batch whose later member is invalid (the preflight inside PrepareBatch for a dependency or a selected phase; CompileParticipant before PrepareBatch can be
+ // called for a bad definition, after which the missing config is refused by the preflight), with no allocation of any planned name on any actor, and an unmodified positive control. NameCollisionCleanup: a real live
+@@ -40,7 +47,7 @@
+ // What it does NOT establish: a cold load (the pack classes are loaded first and the assets may already be in memory; the state before the fixture is only logged), the packaged or cooked build, the arena level, the placed
+ // Blueprint boss, abilities or effects (class paths are structural only), animation playback, the real boss definition asset (typed values, phase lists and manifest rows are fixture values, not authority), serialized
+ // authoring or a game-instance content epoch, an organic native configure failure, garbage-name reuse after a real collection (no collection is forced; the retry after the collision reuses the names the failed attempt left as
+-// destroyed objects and its outcome is only observed), a registration, BeginPlay, context binding, reservation, readiness, legacy suppression or any wiring. The prepared subset is five components per boss-core member, not a
++// destroyed objects and its outcome is only observed), a registration, BeginPlay, context binding, reservation, readiness, legacy suppression or any wiring. The prepared subset is twelve components per boss-core member, not a
+ // complete playable boss.
+ 
+ namespace
+@@ -135,7 +142,7 @@
+ 		}
+ 	};
+ 
+-	/** The unique manifest paths the five combined boss-core plans read for a selected phase id, written out as independent literals (copied from DD14). Membership only. */
++	/** The unique manifest paths the twelve combined boss-core plans read for a selected phase id, written out as independent literals (copied from DD14). Membership only. */
+ 	TArray<FString> AllRequiredPaths(FName PhaseId)
+ 	{
+ 		const FString Id = PhaseId.ToString();
+@@ -151,7 +158,15 @@
+ 			TEXT("PhaseDependencies.RoarClip"), TEXT("PhaseDependencies.TransitionMontage"), TEXT("PhaseDependencies.ImmunityEffect"),
+ 			TEXT("Stats.MaxHealth"), TEXT("EncounterPolicy.GateRadius"), TEXT("EncounterPolicy.bResetOnPlayerRespawn"),
+ 			TEXT("DormantWake.DormantClip"), TEXT("DormantWake.WakeClip"),
+-			TEXT("Stats.MaxPosture"), TEXT("Stats.PostureRegenDelay"), TEXT("Stats.PostureRegenRate")};
++			TEXT("Stats.MaxPosture"), TEXT("Stats.PostureRegenDelay"), TEXT("Stats.PostureRegenRate"),
++			// Independent preparation fixture manifest literals.
++			TEXT("Bleed.InitialThreshold"), TEXT("Bleed.ThresholdIncrease"), TEXT("Bleed.ThresholdMax"), TEXT("Bleed.HpFraction"), TEXT("Bleed.EffectHeight"), TEXT("Bleed.ProcEffect"), TEXT("Bleed.ProcSound"),
++			TEXT("LowSweep.bEnabled"), TEXT("LowSweep.MoveId"), TEXT("LowSweep.Damage"), TEXT("LowSweep.Reach"), TEXT("LowSweep.InnerRadius"), TEXT("LowSweep.BladeHeight"), TEXT("LowSweep.SweepFromDegrees"), TEXT("LowSweep.SweepToDegrees"),
++			TEXT("Shockwave.bEnabled"), TEXT("Shockwave.MoveId"), TEXT("Shockwave.Damage"), TEXT("Shockwave.StartRadius"), TEXT("Shockwave.MaxRadius"), TEXT("Shockwave.Speed"), TEXT("Shockwave.Thickness"), TEXT("Shockwave.JumpClearance"),
++			TEXT("HealPunish.bEnabled"), TEXT("HealPunish.MinRange"), TEXT("HealPunish.MaxRange"), TEXT("HealPunish.Cooldown"), TEXT("HealPunish.Damage"), TEXT("HealPunish.FlightTime"), TEXT("HealPunish.MinSpeed"), TEXT("HealPunish.MaxSpeed"), TEXT("HealPunish.JavelinRadius"), TEXT("HealPunish.JavelinMaxRange"), TEXT("HealPunish.SpawnSockets"), TEXT("HealPunish.AimHeight"), TEXT("HealPunish.bRespondToHeal"), TEXT("HealPunish.bCancelJavelinsOnInterrupt"),
++			TEXT("Look.bEnabled"), TEXT("Look.Body"), TEXT("Look.Pieces"), TEXT("Look.Sword"), TEXT("Look.SwordSocket"),
++			TEXT("CloseClipSwap.CloseAbilityClassName"), TEXT("CloseClipSwap.AttackMontagesName"), TEXT("CloseClipSwap.A1Montage"), TEXT("CloseClipSwap.A3aMontage"), TEXT("CloseClipSwap.A3bMontage"),
++			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath")};
+ 	}
+ 
+ 	/** A manifest row supplied by this fixture: it satisfies the production compiler's row shape and the preflight's membership check; it is not derived from any asset and carries no authority. */
+@@ -172,7 +187,7 @@
+ 		return Field;
+ 	}
+ 
+-	/** The boss animation dependencies: the cooked-directory authoring-default candidates of the dormant wake, phase dependency and stagger profile records (nine paths). */
++	/** The boss animation dependencies: the cooked-directory authoring-default candidates of the dormant wake, phase dependency and stagger profile records (twenty-three paths). */
+ 	TArray<FSoftObjectPath> BossAnimationPaths()
+ 	{
+ 		FRPGDormantWakeConfig Wake;
+@@ -379,11 +394,12 @@
+ 		const TCHAR* Name;
+ 	};
+ 
+-	/** The five accepted native consumers with the reviewed instance names, written out independently of the preflight, in the relative plan order. */
++	/** The twelve accepted native consumers with the reviewed instance names, written out independently of the preflight, in the relative plan order. */
+ 	TArray<FExpectedComponent> ExpectedComponents()
+ 	{
+ 		return TArray<FExpectedComponent>{{URPGBossStagger::StaticClass(), TEXT("RPGBossStagger")}, {URPGBossPhases::StaticClass(), TEXT("RPGBossPhases")}, {URPGBossEncounter::StaticClass(), TEXT("RPGBossEncounter")},
+-			{URPGBossDormantWake::StaticClass(), TEXT("RPGBossDormantWake")}, {URPGBossPosture::StaticClass(), TEXT("RPGBossPosture")}};
++			{URPGBossDormantWake::StaticClass(), TEXT("RPGBossDormantWake")}, {URPGBossPosture::StaticClass(), TEXT("RPGBossPosture")},
++			{URPGBossBleed::StaticClass(), TEXT("RPGBossBleed")} , {URPGBossLowSweep::StaticClass(), TEXT("RPGBossLowSweep")} , {URPGBossShockwave::StaticClass(), TEXT("RPGBossShockwave")} , {URPGBossHealPunish::StaticClass(), TEXT("RPGBossHealPunish")} , {URPGBossLook::StaticClass(), TEXT("RPGBossLook")} , {URPGBossCloseClipSwap::StaticClass(), TEXT("RPGBossCloseClipSwap")} , {URPGBossDeath::StaticClass(), TEXT("RPGBossDeath")}};
+ 	}
+ 
+ 	bool NoManagedConsumer(const AActor* Actor)
+@@ -610,7 +626,7 @@
+ 				bCleanState = bCleanState && !Garbage->IsRegistered() && !Garbage->HasBegunPlay() && Garbage->IsBeingDestroyed();
+ 			}
+ 		}
+-		bool bOk = Test.TestTrue(FString::Printf(TEXT("%s: every owned component is destroyed (none resolves any more)"), Label), Weak.Num() == 10 && bGone);
++		bool bOk = Test.TestTrue(FString::Printf(TEXT("%s: every owned component is destroyed (none resolves any more)"), Label), Weak.Num() == 24 && bGone);
+ 		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: any destroyed object still awaiting collection is unregistered, not begun and marked destroyed"), Label), bCleanState);
+ 		return bOk;
+ 	}
+@@ -639,16 +655,16 @@
+ 		return Test.TestTrue(FString::Printf(TEXT("%s: no object, not even a destroyed one, carries a planned instance name under any actor (nothing was allocated)"), Label), bNone);
+ 	}
+ 
+-	/** The exact success shape on real assets: ten owned real components (five per boss-core actor, exact classes, reviewed names, owners, each holding its OWN member's configured values), unregistered, uninitialized, not
++	/** The exact success shape on real assets: twenty-four owned real components (twelve per boss-core actor, exact classes, reviewed names, owners, each holding its OWN member's configured values), unregistered, uninitialized, not
+ 	 *  begun, not ticking, nothing for the target, no participant, no bound or ready context, the unrelated components and mesh assets untouched, the artifact's read-only summary and the retained plan and lease identities. */
+ 	bool ExpectPrepared(FAutomationTestBase& Test, const FProductionFixture& F, const FRPGPreparedBatch& Batch, const FWorldState& Before)
+ 	{
+ 		bool bOk = true;
+ 		bOk &= Test.TestTrue(TEXT("the artifact reports prepared"), Batch.IsPrepared());
+-		bOk &= Test.TestEqual(TEXT("ten components are leased"), Batch.GetOwnedComponentCount(), 10);
++		bOk &= Test.TestEqual(TEXT("twenty-four components are leased"), Batch.GetOwnedComponentCount(), 24);
+ 		const TArray<const UActorComponent*> OwnedList = Batch.OwnedComponentsForTest();
+ 		const TSet<const UActorComponent*> OwnedSet(OwnedList);
+-		bOk &= Test.TestTrue(TEXT("ten distinct owned component pointers"), OwnedList.Num() == 10 && OwnedSet.Num() == 10);
++		bOk &= Test.TestTrue(TEXT("twenty-four distinct owned component pointers"), OwnedList.Num() == 24 && OwnedSet.Num() == 24);
+ 
+ 		struct FBossCase
+ 		{
+@@ -679,12 +695,12 @@
+ 			}
+ 			const FActorState Now = CaptureActor(Case.Actor);
+ 			const FActorState& Prior = Before.Actors[Case.Index];
+-			bool bPriorKept = Now.Components.Num() == Prior.Components.Num() + 5 && !Now.bBegun && Now.MeshAsset == Prior.MeshAsset;
++			bool bPriorKept = Now.Components.Num() == Prior.Components.Num() + 12 && !Now.bBegun && Now.MeshAsset == Prior.MeshAsset;
+ 			for (const UActorComponent* PriorComponent : Prior.Components)
+ 			{
+ 				bPriorKept = bPriorKept && Now.Components.Contains(PriorComponent) && !OwnedSet.Contains(PriorComponent);
+ 			}
+-			bOk &= Test.TestTrue(FString::Printf(TEXT("%s: exactly five components were added, every unrelated component is still there and the mesh asset is unchanged"), *Label), bPriorKept);
++			bOk &= Test.TestTrue(FString::Printf(TEXT("%s: exactly twelve components were added, every unrelated component is still there and the mesh asset is unchanged"), *Label), bPriorKept);
+ 			bOk &= Test.TestFalse(FString::Printf(TEXT("%s has no participant component"), *Label), Case.Actor->FindComponentByClass<URPGCombatParticipant>() != nullptr);
+ 
+ 			// Representative configured fields: the typed records of this member's own config, never the other boss's.
+@@ -704,8 +720,8 @@
+ 		if (Test.TestEqual(TEXT("three participant summaries in the request order"), Infos.Num(), 3))
+ 		{
+ 			bOk &= Test.TestTrue(TEXT("summary: slots, targets, roles, explicit phase ids and owned counts"),
+-				Infos[0].Slot == FName(TEXT("BossOne")) && Infos[0].TargetSlot == FName(TEXT("Player")) && Infos[0].Role == ERPGPreflightRole::BossCore && Infos[0].SelectedPhaseId == FName(One.Phase) && Infos[0].OwnedComponentCount == 5
+-				&& Infos[1].Slot == FName(TEXT("BossTwo")) && Infos[1].TargetSlot == FName(TEXT("Player")) && Infos[1].Role == ERPGPreflightRole::BossCore && Infos[1].SelectedPhaseId == FName(Two.Phase) && Infos[1].OwnedComponentCount == 5
++				Infos[0].Slot == FName(TEXT("BossOne")) && Infos[0].TargetSlot == FName(TEXT("Player")) && Infos[0].Role == ERPGPreflightRole::BossCore && Infos[0].SelectedPhaseId == FName(One.Phase) && Infos[0].OwnedComponentCount == 12
++				&& Infos[1].Slot == FName(TEXT("BossTwo")) && Infos[1].TargetSlot == FName(TEXT("Player")) && Infos[1].Role == ERPGPreflightRole::BossCore && Infos[1].SelectedPhaseId == FName(Two.Phase) && Infos[1].OwnedComponentCount == 12
+ 				&& Infos[2].Slot == FName(TEXT("Player")) && Infos[2].TargetSlot == FName(TEXT("BossOne")) && Infos[2].Role == ERPGPreflightRole::TargetOnly && Infos[2].SelectedPhaseId.IsNone() && Infos[2].OwnedComponentCount == 0);
+ 		}
+ 		const TSharedPtr<const FRPGHydrationPreflightPlan> Plan = Batch.GetPreflightPlan();
+@@ -785,7 +801,7 @@
+ 		TArray<TWeakObjectPtr<UActorComponent>> FirstWeak = WeakOwned(*First.Batch);
+ 		const FRPGPreparationAbortReport Report = First.Batch->Abort();
+ 		TestTrue(FString::Printf(TEXT("explicit abort: clean report (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsClean());
+-		TestTrue(TEXT("explicit abort destroyed ten components, found none already gone and no contract violation"), Report.Destroyed == 10 && Report.AlreadyGone == 0 && Report.ContractViolations == 0 && !Report.bRefused);
++		TestTrue(TEXT("explicit abort destroyed twenty-four components, found none already gone and no contract violation"), Report.Destroyed == 24 && Report.AlreadyGone == 0 && Report.ContractViolations == 0 && !Report.bRefused);
+ 		TestFalse(TEXT("the artifact is no longer prepared after the abort"), First.Batch->IsPrepared());
+ 		TestEqual(TEXT("the artifact owns nothing after the abort"), First.Batch->GetOwnedComponentCount(), 0);
+ 		// The weak identities of this generation are inspected NOW, before the names are created again (the engine replaces a destroyed object of the same name in place, so a stale pointer would alias the new one).
+@@ -896,7 +912,7 @@
+ 		}
+ 		ExpectPrepared(*this, F, *Control.Batch, Before);
+ 		const FRPGPreparationAbortReport Report = Control.Batch->Abort();
+-		TestTrue(FString::Printf(TEXT("control: abort is clean and destroyed ten components (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsClean() && Report.Destroyed == 10 && Report.AlreadyGone == 0 && Report.ContractViolations == 0);
++		TestTrue(FString::Printf(TEXT("control: abort is clean and destroyed twenty-four components (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsClean() && Report.Destroyed == 24 && Report.AlreadyGone == 0 && Report.ContractViolations == 0);
+ 	}
+ 	ExpectRestored(*this, F, Before, TEXT("control abort"));
+ 	TestTrue(TEXT("no touched package became dirty around the cases"), CaptureDirty(Touched) == DirtyBefore);
+@@ -973,7 +989,7 @@
+ 		TestTrue(TEXT("layer reached is the real allocation guard: only Preparation.* tokens, no Preflight.* token (the preflight passed)"), NoErrorStartsWith(Refused.Errors, TEXT("Preflight.")));
+ 	}
+ 
+-	// The cleanup. The allocation order is boss one's five, then boss two's first two, then the blocked third: seven earlier components were allocated and must now be destroyed (a destroyed object stays findable under its
++	// The cleanup. The allocation order is boss one's twelve, then boss two's first two, then the blocked third: seven earlier components were allocated and must now be destroyed (a destroyed object stays findable under its
+ 	// name until collection; no collection is forced). The later names were never allocated, the target never gets any, and the blocker is the very live object.
+ 	bool bBossOneAllocatedAndDestroyed = true;
+ 	for (const FExpectedComponent& Wanted : Expected)
+@@ -981,7 +997,7 @@
+ 		const UObject* Found = StaticFindObjectFast(UObject::StaticClass(), const_cast<AActor*>(Actors[0]), FName(Wanted.Name));
+ 		bBossOneAllocatedAndDestroyed = bBossOneAllocatedAndDestroyed && Found && !IsValid(Found) && Found->GetClass() == Wanted.Class;
+ 	}
+-	TestTrue(TEXT("all five of boss one's components (earlier owner) were allocated and are now destroyed"), bBossOneAllocatedAndDestroyed);
++	TestTrue(TEXT("all twelve of boss one's components (earlier owner) were allocated and are now destroyed"), bBossOneAllocatedAndDestroyed);
+ 	bool bBossTwoEarlierDestroyed = true;
+ 	for (int32 Index = 0; Index < 2; ++Index)
+ 	{
+@@ -990,8 +1006,12 @@
+ 	}
+ 	TestTrue(TEXT("boss two's two components allocated before the blocked name (stagger, phases) were allocated and are now destroyed"), bBossTwoEarlierDestroyed);
+ 	TestTrue(TEXT("the blocked name still resolves to the very blocker object, live and unchanged"), StaticFindObjectFast(UObject::StaticClass(), const_cast<AActor*>(Actors[1]), FName(Expected[2].Name)) == Blocker && IsValid(Blocker));
+-	TestTrue(TEXT("boss two's two names after the blocked one were never allocated"), StaticFindObjectFast(UObject::StaticClass(), const_cast<AActor*>(Actors[1]), FName(Expected[3].Name)) == nullptr
+-		&& StaticFindObjectFast(UObject::StaticClass(), const_cast<AActor*>(Actors[1]), FName(Expected[4].Name)) == nullptr);
++	bool bAllLaterNamesAbsent = true;
++	for (int32 Index = 3; Index < Expected.Num(); ++Index)
++	{
++		bAllLaterNamesAbsent = bAllLaterNamesAbsent && StaticFindObjectFast(UObject::StaticClass(), const_cast<AActor*>(Actors[1]), FName(Expected[Index].Name)) == nullptr;
++	}
++	TestTrue(TEXT("all nine names after the blocked third component were never allocated"), bAllLaterNamesAbsent);
+ 	bool bTargetNone = true;
+ 	for (const FExpectedComponent& Wanted : Expected)
+ 	{
+@@ -1049,7 +1069,7 @@
+ 		ExpectPrepared(*this, F, *Retry.Batch, AfterRemoval);
+ 		TArray<TWeakObjectPtr<UActorComponent>> RetryWeak = WeakOwned(*Retry.Batch);
+ 		const FRPGPreparationAbortReport Report = Retry.Batch->Abort();
+-		TestTrue(FString::Printf(TEXT("the retry's abort is clean and destroyed ten components (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsClean() && Report.Destroyed == 10 && Report.AlreadyGone == 0 && Report.ContractViolations == 0);
++		TestTrue(FString::Printf(TEXT("the retry's abort is clean and destroyed twenty-four components (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsClean() && Report.Destroyed == 24 && Report.AlreadyGone == 0 && Report.ContractViolations == 0);
+ 		ExpectAllDestroyed(*this, RetryWeak, TEXT("retry abort"));
+ 	}
+ 	ExpectRestored(*this, F, AfterRemoval, TEXT("retry abort"));
+--- Source/OneBossFight/Tests/RPGBossWorldPreparationTests.cpp
++++ Source/OneBossFight/Tests/RPGBossWorldPreparationTests.cpp
+@@ -1,5 +1,12 @@
+ // Copyright One Boss Fight. All Rights Reserved.
+ 
++#include "Player/RPGBossBleed.h"
++#include "Player/RPGBossLowSweep.h"
++#include "Player/RPGBossShockwave.h"
++#include "Player/RPGBossHealPunish.h"
++#include "Player/RPGBossLook.h"
++#include "Player/RPGBossCloseClipSwap.h"
++#include "Player/RPGBossDeath.h"
+ #include "Misc/AutomationTest.h"
+ 
+ #if WITH_DEV_AUTOMATION_TESTS
+@@ -37,7 +44,7 @@
+ // world context and a world and initializes every game-instance subsystem, the project's catalog subsystem included, with its actual default latch; cleanup Shutdown, DestroyWorldContext, DestroyWorld), real pack assets (the two
+ // pack classes are loaded only to READ the mesh their default object holds), three isolated native ACharacter actors finished before any call (two boss-core, one target), transient production-compatible definitions, one real
+ // ARPGEncounterBinding. No Legacy() epoch is injected, no cvar or asset is changed, nothing is mocked. The setup is copied from DD14, DD16 and DD17 into this file (no helper promoted, no earlier file edited).
+-// What it can establish, for these exact assets in this editor binary: the facade composes the accepted stages (the epoch is the very lease the game instance published), ten owned unregistered components with each owner's own
++// What it can establish, for these exact assets in this editor binary: the facade composes the accepted stages (the epoch is the very lease the game instance published), twenty-four owned unregistered components with each owner's own
+ // values, abort and scope-exit abort restore the prior component sets, the context and the mesh, an invalid later member allocates nothing, a REAL name collision under a later owner is refused by the allocation guard and
+ // cleans the earlier allocations, only the fixture-owned blocker is removed before the retry, and a second independent preparation of the same actors is refused without damaging the first.
+ // What it does NOT establish: epoch, game-instance or binding drift DURING a stage (not provokable without a callback, cvar or injection framework: source-checked only), re-entry, an organic native configure failure,
+@@ -148,7 +155,15 @@
+ 			TEXT("PhaseDependencies.RoarClip"), TEXT("PhaseDependencies.TransitionMontage"), TEXT("PhaseDependencies.ImmunityEffect"),
+ 			TEXT("Stats.MaxHealth"), TEXT("EncounterPolicy.GateRadius"), TEXT("EncounterPolicy.bResetOnPlayerRespawn"),
+ 			TEXT("DormantWake.DormantClip"), TEXT("DormantWake.WakeClip"),
+-			TEXT("Stats.MaxPosture"), TEXT("Stats.PostureRegenDelay"), TEXT("Stats.PostureRegenRate")};
++			TEXT("Stats.MaxPosture"), TEXT("Stats.PostureRegenDelay"), TEXT("Stats.PostureRegenRate"),
++			// Independent world-preparation membership expectations.
++			TEXT("Bleed.InitialThreshold"), TEXT("Bleed.ThresholdIncrease"), TEXT("Bleed.ThresholdMax"), TEXT("Bleed.HpFraction"), TEXT("Bleed.EffectHeight"), TEXT("Bleed.ProcEffect"), TEXT("Bleed.ProcSound"),
++			TEXT("LowSweep.bEnabled"), TEXT("LowSweep.MoveId"), TEXT("LowSweep.Damage"), TEXT("LowSweep.Reach"), TEXT("LowSweep.InnerRadius"), TEXT("LowSweep.BladeHeight"), TEXT("LowSweep.SweepFromDegrees"), TEXT("LowSweep.SweepToDegrees"),
++			TEXT("Shockwave.bEnabled"), TEXT("Shockwave.MoveId"), TEXT("Shockwave.Damage"), TEXT("Shockwave.StartRadius"), TEXT("Shockwave.MaxRadius"), TEXT("Shockwave.Speed"), TEXT("Shockwave.Thickness"), TEXT("Shockwave.JumpClearance"),
++			TEXT("HealPunish.bEnabled"), TEXT("HealPunish.MinRange"), TEXT("HealPunish.MaxRange"), TEXT("HealPunish.Cooldown"), TEXT("HealPunish.Damage"), TEXT("HealPunish.FlightTime"), TEXT("HealPunish.MinSpeed"), TEXT("HealPunish.MaxSpeed"), TEXT("HealPunish.JavelinRadius"), TEXT("HealPunish.JavelinMaxRange"), TEXT("HealPunish.SpawnSockets"), TEXT("HealPunish.AimHeight"), TEXT("HealPunish.bRespondToHeal"), TEXT("HealPunish.bCancelJavelinsOnInterrupt"),
++			TEXT("Look.bEnabled"), TEXT("Look.Body"), TEXT("Look.Pieces"), TEXT("Look.Sword"), TEXT("Look.SwordSocket"),
++			TEXT("CloseClipSwap.CloseAbilityClassName"), TEXT("CloseClipSwap.AttackMontagesName"), TEXT("CloseClipSwap.A1Montage"), TEXT("CloseClipSwap.A3aMontage"), TEXT("CloseClipSwap.A3bMontage"),
++			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath")};
+ 	}
+ 
+ 	FRPGParityField MakeProductionField(const FString& Path)
+@@ -307,11 +322,12 @@
+ 		const TCHAR* Name;
+ 	};
+ 
+-	/** The five accepted native consumers with the reviewed instance names, written out independently, in plan order. */
++	/** The twelve accepted native consumers with the reviewed instance names, written out independently, in plan order. */
+ 	TArray<FExpectedComponent> ExpectedComponents()
+ 	{
+ 		return TArray<FExpectedComponent>{{URPGBossStagger::StaticClass(), TEXT("RPGBossStagger")}, {URPGBossPhases::StaticClass(), TEXT("RPGBossPhases")}, {URPGBossEncounter::StaticClass(), TEXT("RPGBossEncounter")},
+-			{URPGBossDormantWake::StaticClass(), TEXT("RPGBossDormantWake")}, {URPGBossPosture::StaticClass(), TEXT("RPGBossPosture")}};
++			{URPGBossDormantWake::StaticClass(), TEXT("RPGBossDormantWake")}, {URPGBossPosture::StaticClass(), TEXT("RPGBossPosture")},
++			{URPGBossBleed::StaticClass(), TEXT("RPGBossBleed")} , {URPGBossLowSweep::StaticClass(), TEXT("RPGBossLowSweep")} , {URPGBossShockwave::StaticClass(), TEXT("RPGBossShockwave")} , {URPGBossHealPunish::StaticClass(), TEXT("RPGBossHealPunish")} , {URPGBossLook::StaticClass(), TEXT("RPGBossLook")} , {URPGBossCloseClipSwap::StaticClass(), TEXT("RPGBossCloseClipSwap")} , {URPGBossDeath::StaticClass(), TEXT("RPGBossDeath")}};
+ 	}
+ 
+ 	bool NoManagedConsumer(const AActor* Actor)
+@@ -538,7 +554,7 @@
+ 				bCleanState = bCleanState && !Garbage->IsRegistered() && !Garbage->HasBegunPlay() && Garbage->IsBeingDestroyed();
+ 			}
+ 		}
+-		bool bOk = Test.TestTrue(FString::Printf(TEXT("%s: every owned component is destroyed (none resolves any more)"), Label), Weak.Num() == 10 && bGone);
++		bool bOk = Test.TestTrue(FString::Printf(TEXT("%s: every owned component is destroyed (none resolves any more)"), Label), Weak.Num() == 24 && bGone);
+ 		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: any destroyed object still awaiting collection is unregistered, not begun and marked destroyed"), Label), bCleanState);
+ 		return bOk;
+ 	}
+@@ -551,13 +567,13 @@
+ 		return bOk;
+ 	}
+ 
+-	/** The exact success shape of a world preparation: ten owned components, the very GI epoch, per-owner values, unregistered/uninitialized/not begun/unticked, the target and the context untouched, summaries. */
++	/** The exact success shape of a world preparation: twenty-four owned components, the very GI epoch, per-owner values, unregistered/uninitialized/not begun/unticked, the target and the context untouched, summaries. */
+ 	bool ExpectPrepared(FAutomationTestBase& Test, const FFixture& F, const FRPGPreparedBatch& Batch, const FWorldState& Before, const FEpochPtr& Epoch)
+ 	{
+-		bool bOk = Test.TestTrue(TEXT("the artifact reports prepared and leases ten components"), Batch.IsPrepared() && Batch.GetOwnedComponentCount() == 10);
++		bool bOk = Test.TestTrue(TEXT("the artifact reports prepared and leases twenty-four components"), Batch.IsPrepared() && Batch.GetOwnedComponentCount() == 24);
+ 		const TArray<const UActorComponent*> OwnedList = Batch.OwnedComponentsForTest();
+ 		const TSet<const UActorComponent*> OwnedSet(OwnedList);
+-		bOk &= Test.TestTrue(TEXT("ten distinct owned component pointers"), OwnedList.Num() == 10 && OwnedSet.Num() == 10);
++		bOk &= Test.TestTrue(TEXT("twenty-four distinct owned component pointers"), OwnedList.Num() == 24 && OwnedSet.Num() == 24);
+ 
+ 		struct FBossCase
+ 		{
+@@ -585,12 +601,12 @@
+ 			}
+ 			const FActorState Now = CaptureActor(Case.Actor);
+ 			const FActorState& Prior = Before.Actors[Case.Index];
+-			bool bPriorKept = Now.Components.Num() == Prior.Components.Num() + 5 && !Now.bBegun && Now.MeshAsset == Prior.MeshAsset;
++			bool bPriorKept = Now.Components.Num() == Prior.Components.Num() + 12 && !Now.bBegun && Now.MeshAsset == Prior.MeshAsset;
+ 			for (const UActorComponent* PriorComponent : Prior.Components)
+ 			{
+ 				bPriorKept = bPriorKept && Now.Components.Contains(PriorComponent) && !OwnedSet.Contains(PriorComponent);
+ 			}
+-			bOk &= Test.TestTrue(FString::Printf(TEXT("%s: exactly five components were added, every unrelated component is still there, the mesh asset is unchanged and no participant component exists"), *Label), bPriorKept && !Case.Actor->FindComponentByClass<URPGCombatParticipant>());
++			bOk &= Test.TestTrue(FString::Printf(TEXT("%s: exactly twelve components were added, every unrelated component is still there, the mesh asset is unchanged and no participant component exists"), *Label), bPriorKept && !Case.Actor->FindComponentByClass<URPGCombatParticipant>());
+ 			const URPGBossStagger* Stagger = Case.Actor->FindComponentByClass<URPGBossStagger>();
+ 			const URPGBossPhases* Phases = Case.Actor->FindComponentByClass<URPGBossPhases>();
+ 			const URPGBossEncounter* Encounter = Case.Actor->FindComponentByClass<URPGBossEncounter>();
+@@ -615,7 +631,7 @@
+ 			bOk &= Test.TestTrue(TEXT("the plan is an incomplete subset: not a complete playable bundle, not a reservation, not ready"), !Plan->IsCompletePlayableBundle() && !Plan->IsReservation() && !Plan->IsReady());
+ 		}
+ 		const TArray<FRPGPreparedParticipantInfo> Infos = Batch.GetParticipants();
+-		bOk &= Test.TestTrue(TEXT("summaries: three participants, ten components, the explicit phase ids"), Infos.Num() == 3 && Infos[0].OwnedComponentCount == 5 && Infos[1].OwnedComponentCount == 5 && Infos[2].OwnedComponentCount == 0
++		bOk &= Test.TestTrue(TEXT("summaries: three participants, twenty-four components, the explicit phase ids"), Infos.Num() == 3 && Infos[0].OwnedComponentCount == 12 && Infos[1].OwnedComponentCount == 12 && Infos[2].OwnedComponentCount == 0
+ 			&& Infos[0].SelectedPhaseId == FName(One.Phase) && Infos[1].SelectedPhaseId == FName(Two.Phase) && Infos[2].SelectedPhaseId.IsNone());
+ 		return bOk;
+ 	}
+@@ -649,7 +665,7 @@
+ 			return false;
+ 		}
+ 		const FRPGPreparationAbortReport Report = Loading.Batch->Abort();
+-		TestTrue(TEXT("and its abort is clean, ten destroyed"), Report.IsClean() && Report.Destroyed == 10 && Report.ContractViolations == 0);
++		TestTrue(TEXT("and its abort is clean, twenty-four destroyed"), Report.IsClean() && Report.Destroyed == 24 && Report.ContractViolations == 0);
+ 	}
+ 	TArray<const UObject*> Touched{F.PlayerClass, F.BossClass, F.PlayerMesh, F.BossMesh, F.PlayerSkeleton, F.BossSkeleton};
+ 	const FWorldState Before = F.Capture();
+@@ -665,7 +681,7 @@
+ 		ExpectPrepared(*this, F, *First.Batch, Before, Epoch);
+ 		TArray<TWeakObjectPtr<UActorComponent>> FirstWeak = WeakOwned(*First.Batch);
+ 		const FRPGPreparationAbortReport Report = First.Batch->Abort();
+-		TestTrue(FString::Printf(TEXT("explicit abort: clean report and ten destroyed (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsClean() && Report.Destroyed == 10 && Report.AlreadyGone == 0 && Report.ContractViolations == 0 && !Report.bRefused);
++		TestTrue(FString::Printf(TEXT("explicit abort: clean report and twenty-four destroyed (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsClean() && Report.Destroyed == 24 && Report.AlreadyGone == 0 && Report.ContractViolations == 0 && !Report.bRefused);
+ 		ExpectAllDestroyed(*this, FirstWeak, TEXT("explicit abort")); // read BEFORE the names are created again (the engine replaces a destroyed object of the same name in place)
+ 		FirstWeak.Reset();
+ 		ExpectRestored(*this, F, Before, TEXT("explicit abort"));
+@@ -686,7 +702,7 @@
+ 	TestTrue(TEXT("no touched package became dirty around the preparations and aborts (after the legitimate loads)"), CaptureDirty(Touched) == DirtyBefore);
+ 	TestTrue(TEXT("the game instance and its published epoch are still the very ones used"), F.Scope.World->GetGameInstance() == F.Scope.GameInstance.Get() && F.PublishedEpoch().Get() == Epoch.Get());
+ 
+-	AddInfo(TEXT("World preparation on a real game-instance world: ten owned unregistered components with each owner's own values and the very GI epoch lease; abort and scope-exit abort restore the sets. NOT established: drift during a stage (source-checked only), "
++	AddInfo(TEXT("World preparation on a real game-instance world: twenty-four owned unregistered components with each owner's own values and the very GI epoch lease; abort and scope-exit abort restore the sets. NOT established: drift during a stage (source-checked only), "
+ 		"the latched source (logged), a cold load, authoritative manifest provenance, registration, BeginPlay, binding, reservation, Ready, activation or wiring."));
+ 	return true;
+ }
+@@ -758,7 +774,7 @@
+ 		TestTrue(FString::Printf(TEXT("name collision: ONE error carries Preparation.AllocationFailed, [slot=BossTwo] and [component=RPGBossEncounter], and nothing else (got: %s)"), *JoinErrors(Refused.Errors)),
+ 			Refused.Errors.Num() == 1 && AnyErrorHasAll(Refused.Errors, TEXT("Preparation.AllocationFailed"), TEXT("[slot=BossTwo]"), TEXT("[component=RPGBossEncounter]")));
+ 	}
+-	// Seven earlier allocations (boss one's five, boss two's stagger and phases) must now be destroyed objects; the later names were never allocated; the blocker is the very live object.
++	// Seven earlier allocations (boss one's twelve, boss two's stagger and phases) must now be destroyed objects; the later names were never allocated; the blocker is the very live object.
+ 	bool bBossOneDestroyed = true;
+ 	for (const FExpectedComponent& Wanted : Expected)
+ 	{
+@@ -771,10 +787,15 @@
+ 		const UObject* Found = StaticFindObjectFast(UObject::StaticClass(), F.BossTwoActor, FName(Expected[Index].Name));
+ 		bBossTwoEarlierDestroyed = bBossTwoEarlierDestroyed && Found && !IsValid(Found) && Found->GetClass() == Expected[Index].Class;
+ 	}
+-	TestTrue(TEXT("name collision: boss one's five and boss two's two earlier components were allocated and are now destroyed"), bBossOneDestroyed && bBossTwoEarlierDestroyed);
+-	TestTrue(TEXT("name collision: the blocked name is still the very blocker, live; boss two's later two names were never allocated; the target got none"),
+-		StaticFindObjectFast(UObject::StaticClass(), F.BossTwoActor, FName(Expected[2].Name)) == Blocker && IsValid(Blocker) && StaticFindObjectFast(UObject::StaticClass(), F.BossTwoActor, FName(Expected[3].Name)) == nullptr
+-		&& StaticFindObjectFast(UObject::StaticClass(), F.BossTwoActor, FName(Expected[4].Name)) == nullptr && StaticFindObjectFast(UObject::StaticClass(), F.TargetActor, FName(Expected[0].Name)) == nullptr);
++	TestTrue(TEXT("name collision: boss one's twelve and boss two's two earlier components were allocated and are now destroyed"), bBossOneDestroyed && bBossTwoEarlierDestroyed);
++	bool bAllLaterNamesAbsent = true;
++	for (int32 Index = 3; Index < Expected.Num(); ++Index)
++	{
++		bAllLaterNamesAbsent = bAllLaterNamesAbsent && StaticFindObjectFast(UObject::StaticClass(), F.BossTwoActor, FName(Expected[Index].Name)) == nullptr;
++	}
++	TestTrue(TEXT("name collision: blocked name keeps identity; all nine later names absent; target gets none"),
++		StaticFindObjectFast(UObject::StaticClass(), F.BossTwoActor, FName(Expected[2].Name)) == Blocker && IsValid(Blocker) && bAllLaterNamesAbsent
++		&& StaticFindObjectFast(UObject::StaticClass(), F.TargetActor, FName(Expected[0].Name)) == nullptr);
+ 	ExpectRestored(*this, F, BeforeCollision, TEXT("name collision"));
+ 	bool bPreexistingKept = true;
+ 	for (const UObject* Object : Preexisting)
+@@ -803,7 +824,7 @@
+ 		ExpectPrepared(*this, F, *Retry.Batch, AfterRemoval, Epoch);
+ 		TArray<TWeakObjectPtr<UActorComponent>> RetryWeak = WeakOwned(*Retry.Batch);
+ 		const FRPGPreparationAbortReport Report = Retry.Batch->Abort();
+-		TestTrue(TEXT("the retry's abort is clean and destroyed ten"), Report.IsClean() && Report.Destroyed == 10 && Report.ContractViolations == 0);
++		TestTrue(TEXT("the retry's abort is clean and destroyed twenty-four"), Report.IsClean() && Report.Destroyed == 24 && Report.ContractViolations == 0);
+ 		ExpectAllDestroyed(*this, RetryWeak, TEXT("retry abort"));
+ 	}
+ 	ExpectRestored(*this, F, AfterRemoval, TEXT("retry abort"));
+@@ -845,24 +866,24 @@
+ 		TestFalse(TEXT("second preparation: refused, no artifact"), Refused.Succeeded() || Refused.Batch.IsValid());
+ 		TestTrue(FString::Printf(TEXT("second preparation: the preflight layer names the preexisting consumer of the first boss (got: %s)"), *JoinErrors(Refused.Errors)),
+ 			AnyErrorHasAll(Refused.Errors, TEXT("WorldInput.PreflightRejected"), TEXT("Preflight.PreexistingConsumer[slot=BossOne]"), TEXT("already has a")));
+-		TestTrue(TEXT("second preparation: the first artifact is undamaged: still prepared, ten components, the very same objects, unregistered, and every actor is exactly as with the first"),
+-			First.Batch->IsPrepared() && First.Batch->GetOwnedComponentCount() == 10 && SameWorld(WithFirst, F.Capture()));
++		TestTrue(TEXT("second preparation: the first artifact is undamaged: still prepared, twenty-four components, the very same objects, unregistered, and every actor is exactly as with the first"),
++			First.Batch->IsPrepared() && First.Batch->GetOwnedComponentCount() == 24 && SameWorld(WithFirst, F.Capture()));
+ 		bool bAllLive = true;
+ 		for (const TWeakObjectPtr<UActorComponent>& Pointer : FirstWeak)
+ 		{
+ 			bAllLive = bAllLive && Pointer.IsValid() && !Pointer->IsRegistered();
+ 		}
+-		TestTrue(TEXT("second preparation: every component of the first artifact is still the same live unregistered object"), FirstWeak.Num() == 10 && bAllLive);
++		TestTrue(TEXT("second preparation: every component of the first artifact is still the same live unregistered object"), FirstWeak.Num() == 24 && bAllLive);
+ 	}
+ 	// The SAME binding again (the first artifact is still held): refused the same way.
+ 	{
+ 		const FRPGWorldPreparationResult Refused = RPGBossWorldPreparation::PrepareWorldBatch(F.Scope.World, F.Binding, Selections, ManifestHash());
+ 		TestFalse(TEXT("the same binding again: refused, no artifact"), Refused.Succeeded() || Refused.Batch.IsValid());
+-		TestTrue(TEXT("the same binding again: the first artifact is still undamaged"), First.Batch->IsPrepared() && First.Batch->GetOwnedComponentCount() == 10 && SameWorld(WithFirst, F.Capture()));
++		TestTrue(TEXT("the same binding again: the first artifact is still undamaged"), First.Batch->IsPrepared() && First.Batch->GetOwnedComponentCount() == 24 && SameWorld(WithFirst, F.Capture()));
+ 	}
+ 	// After the first artifact is aborted the same actors prepare again (a new artifact).
+ 	const FRPGPreparationAbortReport Report = First.Batch->Abort();
+-	TestTrue(TEXT("the first artifact's abort is clean and destroyed ten"), Report.IsClean() && Report.Destroyed == 10 && Report.ContractViolations == 0);
++	TestTrue(TEXT("the first artifact's abort is clean and destroyed twenty-four"), Report.IsClean() && Report.Destroyed == 24 && Report.ContractViolations == 0);
+ 	FirstWeak.Reset();
+ 	TestTrue(TEXT("after the abort the world is as before"), SameWorld(Before, F.Capture()) && F.NoConsumers());
+ 	{
+@@ -923,7 +944,7 @@
+ 	// The control: the unmodified call succeeds after all the refusals.
+ 	{
+ 		FRPGWorldPreparationResult Control = RPGBossWorldPreparation::PrepareWorldBatch(F.Scope.World, F.Binding, Valid, ManifestHash());
+-		TestTrue(FString::Printf(TEXT("control: the unmodified call succeeds after the refusals (errors: %s)"), *JoinErrors(Control.Errors)), Control.Succeeded() && Control.Batch->GetOwnedComponentCount() == 10);
++		TestTrue(FString::Printf(TEXT("control: the unmodified call succeeds after the refusals (errors: %s)"), *JoinErrors(Control.Errors)), Control.Succeeded() && Control.Batch->GetOwnedComponentCount() == 24);
+ 	}
+ 	TestTrue(TEXT("the control artifact was released by scope exit: the world is as before"), SameWorld(Before, F.Capture()) && F.NoConsumers());
+ 
+--- Source/OneBossFight/Tests/RPGBossWorldInputCompilerTests.cpp
++++ Source/OneBossFight/Tests/RPGBossWorldInputCompilerTests.cpp
+@@ -192,7 +192,7 @@
+ 		ARPGEncounterBinding* SpawnBindingActor() const { return World ? World->SpawnActor<ARPGEncounterBinding>() : nullptr; }
+ 	};
+ 
+-	/** The unique manifest paths the five combined boss-core plans read for a selected phase id, written out as independent literals (copied from DD14). Membership only. */
++	/** The unique manifest paths the twelve combined boss-core plans read for a selected phase id, written out as independent literals (copied from DD14). Membership only. */
+ 	TArray<FString> AllRequiredPaths(FName PhaseId)
+ 	{
+ 		const FString Id = PhaseId.ToString();
+@@ -208,7 +208,15 @@
+ 			TEXT("PhaseDependencies.RoarClip"), TEXT("PhaseDependencies.TransitionMontage"), TEXT("PhaseDependencies.ImmunityEffect"),
+ 			TEXT("Stats.MaxHealth"), TEXT("EncounterPolicy.GateRadius"), TEXT("EncounterPolicy.bResetOnPlayerRespawn"),
+ 			TEXT("DormantWake.DormantClip"), TEXT("DormantWake.WakeClip"),
+-			TEXT("Stats.MaxPosture"), TEXT("Stats.PostureRegenDelay"), TEXT("Stats.PostureRegenRate")};
++			TEXT("Stats.MaxPosture"), TEXT("Stats.PostureRegenDelay"), TEXT("Stats.PostureRegenRate"),
++			// Independent world-input compiler fixture manifest, no factory extraction.
++			TEXT("Bleed.InitialThreshold"), TEXT("Bleed.ThresholdIncrease"), TEXT("Bleed.ThresholdMax"), TEXT("Bleed.HpFraction"), TEXT("Bleed.EffectHeight"), TEXT("Bleed.ProcEffect"), TEXT("Bleed.ProcSound"),
++			TEXT("LowSweep.bEnabled"), TEXT("LowSweep.MoveId"), TEXT("LowSweep.Damage"), TEXT("LowSweep.Reach"), TEXT("LowSweep.InnerRadius"), TEXT("LowSweep.BladeHeight"), TEXT("LowSweep.SweepFromDegrees"), TEXT("LowSweep.SweepToDegrees"),
++			TEXT("Shockwave.bEnabled"), TEXT("Shockwave.MoveId"), TEXT("Shockwave.Damage"), TEXT("Shockwave.StartRadius"), TEXT("Shockwave.MaxRadius"), TEXT("Shockwave.Speed"), TEXT("Shockwave.Thickness"), TEXT("Shockwave.JumpClearance"),
++			TEXT("HealPunish.bEnabled"), TEXT("HealPunish.MinRange"), TEXT("HealPunish.MaxRange"), TEXT("HealPunish.Cooldown"), TEXT("HealPunish.Damage"), TEXT("HealPunish.FlightTime"), TEXT("HealPunish.MinSpeed"), TEXT("HealPunish.MaxSpeed"), TEXT("HealPunish.JavelinRadius"), TEXT("HealPunish.JavelinMaxRange"), TEXT("HealPunish.SpawnSockets"), TEXT("HealPunish.AimHeight"), TEXT("HealPunish.bRespondToHeal"), TEXT("HealPunish.bCancelJavelinsOnInterrupt"),
++			TEXT("Look.bEnabled"), TEXT("Look.Body"), TEXT("Look.Pieces"), TEXT("Look.Sword"), TEXT("Look.SwordSocket"),
++			TEXT("CloseClipSwap.CloseAbilityClassName"), TEXT("CloseClipSwap.AttackMontagesName"), TEXT("CloseClipSwap.A1Montage"), TEXT("CloseClipSwap.A3aMontage"), TEXT("CloseClipSwap.A3bMontage"),
++			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath")};
+ 	}
+ 
+ 	/** A manifest row supplied by this fixture: it satisfies the production compiler's row shape and the preflight's membership check; it is not derived from any asset and carries no authority. */
+@@ -229,7 +237,7 @@
+ 		return Field;
+ 	}
+ 
+-	/** The boss animation dependencies: the cooked-directory authoring-default candidates of the dormant wake, phase dependency and stagger profile records (nine paths). */
++	/** The boss animation dependencies: the cooked-directory authoring-default candidates of the dormant wake, phase dependency and stagger profile records (twenty-three paths). */
+ 	TArray<FSoftObjectPath> BossAnimationPaths()
+ 	{
+ 		FRPGDormantWakeConfig Wake;
+@@ -380,8 +388,8 @@
+ 		return true;
+ 	}
+ 
+-	/** The reviewed instance names of the five managed consumers, written out independently. */
+-	const TCHAR* const PlannedNames[5] = {TEXT("RPGBossStagger"), TEXT("RPGBossPhases"), TEXT("RPGBossEncounter"), TEXT("RPGBossDormantWake"), TEXT("RPGBossPosture")};
++	/** The reviewed instance names of the twelve managed consumers, written out independently. */
++	const TCHAR* const PlannedNames[12] = {TEXT("RPGBossStagger"), TEXT("RPGBossPhases"), TEXT("RPGBossEncounter"), TEXT("RPGBossDormantWake"), TEXT("RPGBossPosture"), TEXT("RPGBossBleed"), TEXT("RPGBossLowSweep"), TEXT("RPGBossShockwave"), TEXT("RPGBossHealPunish"), TEXT("RPGBossLook"), TEXT("RPGBossCloseClipSwap"), TEXT("RPGBossDeath")};
+ 
+ 	/** A populated output whose every part must be gone after a failure: the leases of a good output, a new encounter GUID and the LIVE world of the case (the good output may come from a world that no longer exists). */
+ 	FRPGHydrationPreflightInput MakeSentinel(const FRPGHydrationPreflightInput& Good, UWorld* LiveWorld)
+--- Source/OneBossFight/Tests/RPGBossPreparationRegistryTests.cpp
++++ Source/OneBossFight/Tests/RPGBossPreparationRegistryTests.cpp
+@@ -1,5 +1,12 @@
+ // Copyright One Boss Fight. All Rights Reserved.
+ 
++#include "Player/RPGBossBleed.h"
++#include "Player/RPGBossLowSweep.h"
++#include "Player/RPGBossShockwave.h"
++#include "Player/RPGBossHealPunish.h"
++#include "Player/RPGBossLook.h"
++#include "Player/RPGBossCloseClipSwap.h"
++#include "Player/RPGBossDeath.h"
+ #include "Misc/AutomationTest.h"
+ 
+ #if WITH_DEV_AUTOMATION_TESTS
+@@ -178,7 +185,15 @@
+ 			TEXT("PhaseDependencies.RoarClip"), TEXT("PhaseDependencies.TransitionMontage"), TEXT("PhaseDependencies.ImmunityEffect"),
+ 			TEXT("Stats.MaxHealth"), TEXT("EncounterPolicy.GateRadius"), TEXT("EncounterPolicy.bResetOnPlayerRespawn"),
+ 			TEXT("DormantWake.DormantClip"), TEXT("DormantWake.WakeClip"),
+-			TEXT("Stats.MaxPosture"), TEXT("Stats.PostureRegenDelay"), TEXT("Stats.PostureRegenRate")};
++			TEXT("Stats.MaxPosture"), TEXT("Stats.PostureRegenDelay"), TEXT("Stats.PostureRegenRate"),
++			// Independent registry fixture field membership in each record's header order.
++			TEXT("Bleed.InitialThreshold"), TEXT("Bleed.ThresholdIncrease"), TEXT("Bleed.ThresholdMax"), TEXT("Bleed.HpFraction"), TEXT("Bleed.EffectHeight"), TEXT("Bleed.ProcEffect"), TEXT("Bleed.ProcSound"),
++			TEXT("LowSweep.bEnabled"), TEXT("LowSweep.MoveId"), TEXT("LowSweep.Damage"), TEXT("LowSweep.Reach"), TEXT("LowSweep.InnerRadius"), TEXT("LowSweep.BladeHeight"), TEXT("LowSweep.SweepFromDegrees"), TEXT("LowSweep.SweepToDegrees"),
++			TEXT("Shockwave.bEnabled"), TEXT("Shockwave.MoveId"), TEXT("Shockwave.Damage"), TEXT("Shockwave.StartRadius"), TEXT("Shockwave.MaxRadius"), TEXT("Shockwave.Speed"), TEXT("Shockwave.Thickness"), TEXT("Shockwave.JumpClearance"),
++			TEXT("HealPunish.bEnabled"), TEXT("HealPunish.MinRange"), TEXT("HealPunish.MaxRange"), TEXT("HealPunish.Cooldown"), TEXT("HealPunish.Damage"), TEXT("HealPunish.FlightTime"), TEXT("HealPunish.MinSpeed"), TEXT("HealPunish.MaxSpeed"), TEXT("HealPunish.JavelinRadius"), TEXT("HealPunish.JavelinMaxRange"), TEXT("HealPunish.SpawnSockets"), TEXT("HealPunish.AimHeight"), TEXT("HealPunish.bRespondToHeal"), TEXT("HealPunish.bCancelJavelinsOnInterrupt"),
++			TEXT("Look.bEnabled"), TEXT("Look.Body"), TEXT("Look.Pieces"), TEXT("Look.Sword"), TEXT("Look.SwordSocket"),
++			TEXT("CloseClipSwap.CloseAbilityClassName"), TEXT("CloseClipSwap.AttackMontagesName"), TEXT("CloseClipSwap.A1Montage"), TEXT("CloseClipSwap.A3aMontage"), TEXT("CloseClipSwap.A3bMontage"),
++			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath")};
+ 	}
+ 
+ 	FRPGParityField MakeProductionField(const FString& Path)
+@@ -272,7 +287,8 @@
+ 	TArray<FExpectedComponent> ExpectedComponents()
+ 	{
+ 		return TArray<FExpectedComponent>{{URPGBossStagger::StaticClass(), TEXT("RPGBossStagger")}, {URPGBossPhases::StaticClass(), TEXT("RPGBossPhases")}, {URPGBossEncounter::StaticClass(), TEXT("RPGBossEncounter")},
+-			{URPGBossDormantWake::StaticClass(), TEXT("RPGBossDormantWake")}, {URPGBossPosture::StaticClass(), TEXT("RPGBossPosture")}};
++			{URPGBossDormantWake::StaticClass(), TEXT("RPGBossDormantWake")}, {URPGBossPosture::StaticClass(), TEXT("RPGBossPosture")},
++			{URPGBossBleed::StaticClass(), TEXT("RPGBossBleed")} , {URPGBossLowSweep::StaticClass(), TEXT("RPGBossLowSweep")} , {URPGBossShockwave::StaticClass(), TEXT("RPGBossShockwave")} , {URPGBossHealPunish::StaticClass(), TEXT("RPGBossHealPunish")} , {URPGBossLook::StaticClass(), TEXT("RPGBossLook")} , {URPGBossCloseClipSwap::StaticClass(), TEXT("RPGBossCloseClipSwap")} , {URPGBossDeath::StaticClass(), TEXT("RPGBossDeath")}};
+ 	}
+ 
+ 	bool NoManagedConsumer(const AActor* Actor)
+@@ -515,7 +531,7 @@
+ 		return SameStates(States, Now, Bound, Ready, NowBound, NowReady);
+ 	}
+ 
+-	/** The five consumers of both bosses, none on the target, all unregistered, uninitialized, not begun and unticked. */
++	/** The twelve consumers of both bosses, none on the target, all unregistered, uninitialized, not begun and unticked. */
+ 	bool IsFullyPrepared(const FEncounterSet& Set)
+ 	{
+ 		for (const AActor* Boss : {static_cast<const AActor*>(Set.BossOne), static_cast<const AActor*>(Set.BossTwo)})
+@@ -617,7 +633,7 @@
+ 	TestTrue(TEXT("the tokens carry the registry identity, distinct serials and their own encounter GUIDs, and are held"), ResultA.Token.IsHeld() && ResultB.Token.IsHeld() && ResultA.Token.GetRegistryId() == Registry.GetRegistryId()
+ 		&& ResultB.Token.GetRegistryId() == Registry.GetRegistryId() && ResultA.Token.GetSerial() != ResultB.Token.GetSerial() && ResultA.Token.GetSerial() != 0 && ResultB.Token.GetSerial() != 0
+ 		&& ResultA.Token.GetEncounter() == A->Encounter && ResultB.Token.GetEncounter() == B->Encounter);
+-	TestTrue(TEXT("both encounters hold ten unregistered components each (five per boss, none on the target) and the unrelated markers are untouched"), IsFullyPrepared(*A) && IsFullyPrepared(*B) && MarkersIntact(*A) && MarkersIntact(*B));
++	TestTrue(TEXT("both encounters hold twenty-four unregistered components each (twelve per boss, none on the target) and the unrelated markers are untouched"), IsFullyPrepared(*A) && IsFullyPrepared(*B) && MarkersIntact(*A) && MarkersIntact(*B));
+ 
+ 	// A duplicate encounter GUID with fully disjoint actors: refused before anything is allocated for the new actors.
+ 	FEncounterSet* C = F.AddSet(*this, 2);
+@@ -791,7 +807,7 @@
+ 
+ 	// A clean release frees the GUID and the actors, restores the actors exactly and consumes the token.
+ 	const FRPGReleaseReport Released = Registry.Release(TokenOne);
+-	TestTrue(FString::Printf(TEXT("clean release: Released, ten destroyed, no violation (errors: %s)"), *JoinErrors(Released.Errors)), Released.IsReleased() && Released.Abort.IsClean() && Released.Abort.Destroyed == 10 && Released.Abort.ContractViolations == 0);
++	TestTrue(FString::Printf(TEXT("clean release: Released, twenty-four destroyed, no violation (errors: %s)"), *JoinErrors(Released.Errors)), Released.IsReleased() && Released.Abort.IsClean() && Released.Abort.Destroyed == 24 && Released.Abort.ContractViolations == 0);
+ 	TestTrue(TEXT("after the release the actors are exactly as at the start, the registry is empty and the token is consumed"), Matches(F, Start, BoundStart, ReadyStart)
+ 		&& Registry.GetActiveReservationCount() == 0 && Registry.GetReservedEncounters().IsEmpty() && !TokenOne.IsHeld() && TokenOne.GetSerial() == 0 && HasNoConsumers(*A) && MarkersIntact(*A));
+ 
+@@ -853,7 +869,7 @@
+ 	}
+ 	// The token releases through itself.
+ 	const FRPGReleaseReport ByOwnToken = TokenTwo.Release();
+-	TestTrue(FString::Printf(TEXT("the token releases through its own registry: Released, ten destroyed (errors: %s)"), *JoinErrors(ByOwnToken.Errors)), ByOwnToken.IsReleased() && ByOwnToken.Abort.Destroyed == 10 && !TokenTwo.IsHeld());
++	TestTrue(FString::Printf(TEXT("the token releases through its own registry: Released, twenty-four destroyed (errors: %s)"), *JoinErrors(ByOwnToken.Errors)), ByOwnToken.IsReleased() && ByOwnToken.Abort.Destroyed == 24 && !TokenTwo.IsHeld());
+ 	TestTrue(TEXT("the registry is empty and the actors are exactly as at the start"), Registry.GetActiveReservationCount() == 0 && Matches(F, Start, BoundStart, ReadyStart) && HasNoConsumers(*A));
+ 
+ 	AddInfo(TEXT("Release on a real game-instance world: a clean release frees the GUID and the actors, re-admission gets a new larger serial, and a consumed, forged-serial (same registry and GUID), forged-GUID or wrong-registry token releases nothing and never "
+@@ -891,7 +907,7 @@
+ 	{
+ 		const FRPGReleaseReport Report = OuterRegistry->Release(OuterToken);
+ 		AddInfo(FString::Printf(TEXT("world torn down first: release outcome %d, destroyed %d, already gone %d, violations %d (split logged, not assumed)"), static_cast<int32>(Report.Outcome), Report.Abort.Destroyed, Report.Abort.AlreadyGone, Report.Abort.ContractViolations));
+-		TestTrue(FString::Printf(TEXT("world dies first: the release is clean without a crash, every owned component accounted for (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsReleased() && Report.Abort.Destroyed + Report.Abort.AlreadyGone == 10 && Report.Abort.ContractViolations == 0);
++		TestTrue(FString::Printf(TEXT("world dies first: the release is clean without a crash, every owned component accounted for (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsReleased() && Report.Abort.Destroyed + Report.Abort.AlreadyGone == 24 && Report.Abort.ContractViolations == 0);
+ 		TestTrue(TEXT("world dies first: the registry is empty and the token is consumed"), OuterRegistry->GetActiveReservationCount() == 0 && !OuterToken.IsHeld());
+ 		const FRPGReservationResult Refused = OuterRegistry->TryPrepareAndReserve(nullptr, TArray<FSelection>(), ManifestHash());
+ 		TestTrue(TEXT("world dies first: a later admission through that registry is refused as invalid input (the world is gone)"), !Refused.Succeeded() && Refused.Failure == EReservationFailure::InvalidInput);
+@@ -983,8 +999,8 @@
+ 		TestTrue(TEXT("actors die first: the reservation still lists and the token is still held (the registry never dereferences a stale actor)"), Token.IsHeld() && Registry.GetActiveReservationCount() == 1);
+ 		const FRPGReleaseReport Report = Registry.Release(Token);
+ 		AddInfo(FString::Printf(TEXT("owners destroyed first: release outcome %d, destroyed %d, already gone %d, violations %d (split logged, not assumed)"), static_cast<int32>(Report.Outcome), Report.Abort.Destroyed, Report.Abort.AlreadyGone, Report.Abort.ContractViolations));
+-		TestTrue(FString::Printf(TEXT("actors die first: the release is clean, every component was destroyed with its owner (ten already gone, none destroyed by the abort), no violation (errors: %s)"), *JoinErrors(Report.Errors)),
+-			Report.IsReleased() && Report.Abort.AlreadyGone == 10 && Report.Abort.Destroyed == 0 && Report.Abort.ContractViolations == 0 && Registry.GetActiveReservationCount() == 0 && !Token.IsHeld());
++		TestTrue(FString::Printf(TEXT("actors die first: the release is clean, every component was destroyed with its owner (twenty-four already gone, none destroyed by the abort), no violation (errors: %s)"), *JoinErrors(Report.Errors)),
++			Report.IsReleased() && Report.Abort.AlreadyGone == 24 && Report.Abort.Destroyed == 0 && Report.Abort.ContractViolations == 0 && Registry.GetActiveReservationCount() == 0 && !Token.IsHeld());
+ 	}
+ 
+ 	// Off the game thread: admission and release are refused without touching anything; the token and the registry are unchanged. (Destroying a held token or the registry off the game thread is NOT run: an unsafe experiment.)
+@@ -1023,7 +1039,7 @@
+ 		TestTrue(FString::Printf(TEXT("off-thread release through the registry: Refused (got: %s)"), *JoinErrors(OffRelease.Value)), OffRelease.Key == FRelease::Refused);
+ 		TFuture<FRelease> TokenReleaseFuture = Async(EAsyncExecution::ThreadPool, [PoolToken]() { return PoolToken->Release().Outcome; });
+ 		TestTrue(TEXT("off-thread release through the token: Refused"), TokenReleaseFuture.Get() == FRelease::Refused);
+-		TestTrue(TEXT("after the off-thread refusals the token is still held, the reservation and its ten components are intact and the registry is unchanged"), Token.IsHeld() && IsFullyPrepared(*D) && Registry.GetActiveReservationCount() == 1
++		TestTrue(TEXT("after the off-thread refusals the token is still held, the reservation and its twenty-four components are intact and the registry is unchanged"), Token.IsHeld() && IsFullyPrepared(*D) && Registry.GetActiveReservationCount() == 1
+ 			&& Registry.GetReservedEncounters() == TArray<FGuid>{D->Encounter});
+ 	}
+ 

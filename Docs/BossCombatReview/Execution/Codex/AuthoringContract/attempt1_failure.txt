@@ -1,0 +1,1 @@
+Offline unittest exit1; Ran0 tests. setUpClass failed: ValueError No properties extracted: FRPGParticipantConfig. Cause: extractor included non-reflected transport config. Exact correction: skip record bodies without UPROPERTY; only reflected-property-bearing records belong in this contract. No Unreal operation.

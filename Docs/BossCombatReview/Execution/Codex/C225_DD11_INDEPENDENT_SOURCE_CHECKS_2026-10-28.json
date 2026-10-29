@@ -1,0 +1,57 @@
+{
+  "scope": "OFFLINE_SOURCE_REVIEW_NOT_ENGINE_TEST",
+  "receipts": {
+    "count": 21,
+    "failures": []
+  },
+  "current_source": {
+    "count": 174,
+    "failures": []
+  },
+  "dependencies": {
+    "count": 33,
+    "failures": []
+  },
+  "review_copies": {
+    "count": 6,
+    "failures": []
+  },
+  "pre_equal_accepted_DD10": true,
+  "added": [
+    "Source/OneBossFight/Player/RPGBossDormantWakeAdapters.cpp",
+    "Source/OneBossFight/Player/RPGBossDormantWakeAdapters.h",
+    "Source/OneBossFight/Tests/RPGBossDormantWakeAdaptersTests.cpp"
+  ],
+  "deleted": [],
+  "changed": [
+    "Source/OneBossFight/Player/RPGBossDormantWake.h",
+    "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+    "Source/OneBossFight/Player/RPGEncounterBinding.h"
+  ],
+  "review_live": {
+    "RPGBossDormantWake.h": true,
+    "RPGBossDormantWakeAdapters.cpp": true,
+    "RPGBossDormantWakeAdapters.h": true,
+    "RPGBossDormantWakeAdaptersTests.cpp": true,
+    "RPGEncounterBinding.cpp": true,
+    "RPGEncounterBinding.h": true
+  },
+  "preimages": {
+    "RPGBossDormantWake.h": true,
+    "RPGEncounterBinding.cpp": true,
+    "RPGEncounterBinding.h": true
+  },
+  "binary_pins": {
+    "Binaries\\Win64\\UnrealEditor-OneBossFight.dll": "837ce607790f5b55de52214969d86a0dd9dd3c9824960f29c6cc1788c4b7438b",
+    "Binaries\\Win64\\OneBossFight.exe": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65"
+  },
+  "test_paths": [
+    "OneBossFight.Binding.DormantWake.Assign",
+    "OneBossFight.Binding.DormantWake.Validation",
+    "OneBossFight.Binding.DormantWake.Isolation",
+    "OneBossFight.Binding.DormantWake.Rejections",
+    "OneBossFight.Binding.DormantWake.Compile",
+    "OneBossFight.Binding.DormantWake.Authoring"
+  ],
+  "diff_sha256": "908071006b25ae57aef0e7cce0a7d58bec13454b592daebba3bc080e4541da27"
+}

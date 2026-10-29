@@ -1,0 +1,9 @@
+{
+  "added": [],
+  "removed": [],
+  "changed": [
+    "Source/OneBossFight/Player/RPGBossBleedAdapters.cpp",
+    "Source/OneBossFight/Player/RPGBossBleedAdapters.h",
+    "Source/OneBossFight/Tests/RPGBossBleedAdaptersTests.cpp"
+  ]
+}

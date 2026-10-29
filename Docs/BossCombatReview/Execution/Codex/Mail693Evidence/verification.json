@@ -1,0 +1,2953 @@
+{
+  "DD17": {
+    "scope": "File integrity only, not source semantics/runtime acceptance",
+    "receipt_sha256": "3a44b3dbcbc92e641a25f15553f2612749add116b2fcf9c79189bf8a53147781",
+    "entries": 55,
+    "all_verified": true,
+    "checks": [
+      {
+        "expected_sha256": "4b45f2dc16375b5752c869b2f66ca9de1f1d7ab0298c89d685051be618a05ade",
+        "relative_path": "./17_DELIVERY.md",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\17_DELIVERY.md",
+        "actual_sha256": "4b45f2dc16375b5752c869b2f66ca9de1f1d7ab0298c89d685051be618a05ade",
+        "actual_size": 9652,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "fd070743b3e40420c52e6a5422c434e2d200d49934a622123dd41b0c8d47d8bb",
+        "relative_path": "./17_REVISION_C245_FOLLOWUP.md",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\17_REVISION_C245_FOLLOWUP.md",
+        "actual_sha256": "fd070743b3e40420c52e6a5422c434e2d200d49934a622123dd41b0c8d47d8bb",
+        "actual_size": 3004,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "951b752ce6aa8c4c2498c3bd71b6f1512cf7b9390b890526e505139969162117",
+        "relative_path": "./17_REVISION_X284.md",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\17_REVISION_X284.md",
+        "actual_sha256": "951b752ce6aa8c4c2498c3bd71b6f1512cf7b9390b890526e505139969162117",
+        "actual_size": 4506,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "1a99ba054dc606c6514973e6423723bd3a3701ce40ea8c87f2c432d30e457f58",
+        "relative_path": "./Review/RPGBossWorldInputCompiler.cpp",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\Review\\RPGBossWorldInputCompiler.cpp",
+        "actual_sha256": "1a99ba054dc606c6514973e6423723bd3a3701ce40ea8c87f2c432d30e457f58",
+        "actual_size": 23947,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "8f792eefe0971f7dd5ae298443f83fd5c97a5a843b8df5951e9cbaa2a2cea941",
+        "relative_path": "./Review/RPGBossWorldInputCompiler.cpp.before_independent_review",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\Review\\RPGBossWorldInputCompiler.cpp.before_independent_review",
+        "actual_sha256": "8f792eefe0971f7dd5ae298443f83fd5c97a5a843b8df5951e9cbaa2a2cea941",
+        "actual_size": 18505,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "9451d166f24d4c49119ed2dc767dfc00c9b1e90ad1505acac71cf9696ad560e7",
+        "relative_path": "./Review/RPGBossWorldInputCompiler.cpp.delivered_C245",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\Review\\RPGBossWorldInputCompiler.cpp.delivered_C245",
+        "actual_sha256": "9451d166f24d4c49119ed2dc767dfc00c9b1e90ad1505acac71cf9696ad560e7",
+        "actual_size": 22849,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "b9fff21e72b628f1628f8c85fef7bd90d393c2744894a8d7a33569a9f9fde36d",
+        "relative_path": "./Review/RPGBossWorldInputCompiler.cpp.reviewed_by_codex_X284",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\Review\\RPGBossWorldInputCompiler.cpp.reviewed_by_codex_X284",
+        "actual_sha256": "b9fff21e72b628f1628f8c85fef7bd90d393c2744894a8d7a33569a9f9fde36d",
+        "actual_size": 19352,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "343d74db59c3f8fa6f28a16fbeb7bf58fab4193580c25fea4960b77d67141c0e",
+        "relative_path": "./Review/RPGBossWorldInputCompiler.h",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\Review\\RPGBossWorldInputCompiler.h",
+        "actual_sha256": "343d74db59c3f8fa6f28a16fbeb7bf58fab4193580c25fea4960b77d67141c0e",
+        "actual_size": 6115,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "968dff4d631f433763cba6db8a61ce1cd3a4e3ef329f2772e9c332b7b3436d1f",
+        "relative_path": "./Review/RPGBossWorldInputCompiler.h.before_independent_review",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\Review\\RPGBossWorldInputCompiler.h.before_independent_review",
+        "actual_sha256": "968dff4d631f433763cba6db8a61ce1cd3a4e3ef329f2772e9c332b7b3436d1f",
+        "actual_size": 5280,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "343d74db59c3f8fa6f28a16fbeb7bf58fab4193580c25fea4960b77d67141c0e",
+        "relative_path": "./Review/RPGBossWorldInputCompiler.h.delivered_C245",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\Review\\RPGBossWorldInputCompiler.h.delivered_C245",
+        "actual_sha256": "343d74db59c3f8fa6f28a16fbeb7bf58fab4193580c25fea4960b77d67141c0e",
+        "actual_size": 6115,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "4c07c8c95aff34c1954c5fc5f11eb7ffa37f37ae2c1d9618a2a45ddb0c0d824e",
+        "relative_path": "./Review/RPGBossWorldInputCompiler.h.reviewed_by_codex_X284",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\Review\\RPGBossWorldInputCompiler.h.reviewed_by_codex_X284",
+        "actual_sha256": "4c07c8c95aff34c1954c5fc5f11eb7ffa37f37ae2c1d9618a2a45ddb0c0d824e",
+        "actual_size": 5457,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "c606437268c80824cec95a376b999a8f903421035dd1919f4cfac4c7df8f7f02",
+        "relative_path": "./Review/RPGBossWorldInputCompilerTests.cpp",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\Review\\RPGBossWorldInputCompilerTests.cpp",
+        "actual_sha256": "c606437268c80824cec95a376b999a8f903421035dd1919f4cfac4c7df8f7f02",
+        "actual_size": 64703,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "dca7662a0f4ac6fa599e5dbbd5a63b4d9d1fb0003aaa801914513f47b96f2616",
+        "relative_path": "./Review/RPGBossWorldInputCompilerTests.cpp.before_independent_review",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\Review\\RPGBossWorldInputCompilerTests.cpp.before_independent_review",
+        "actual_sha256": "dca7662a0f4ac6fa599e5dbbd5a63b4d9d1fb0003aaa801914513f47b96f2616",
+        "actual_size": 60458,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "c606437268c80824cec95a376b999a8f903421035dd1919f4cfac4c7df8f7f02",
+        "relative_path": "./Review/RPGBossWorldInputCompilerTests.cpp.delivered_C245",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\Review\\RPGBossWorldInputCompilerTests.cpp.delivered_C245",
+        "actual_sha256": "c606437268c80824cec95a376b999a8f903421035dd1919f4cfac4c7df8f7f02",
+        "actual_size": 64703,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "c606437268c80824cec95a376b999a8f903421035dd1919f4cfac4c7df8f7f02",
+        "relative_path": "./Review/RPGBossWorldInputCompilerTests.cpp.reviewed_by_codex_X284",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\Review\\RPGBossWorldInputCompilerTests.cpp.reviewed_by_codex_X284",
+        "actual_sha256": "c606437268c80824cec95a376b999a8f903421035dd1919f4cfac4c7df8f7f02",
+        "actual_size": 64703,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "64bac766da95d3167a5e7e113c574d1b62bc71edf9fba70facd552d582506e8e",
+        "relative_path": "./Review/independent_review_notes.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\Review\\independent_review_notes.txt",
+        "actual_sha256": "64bac766da95d3167a5e7e113c574d1b62bc71edf9fba70facd552d582506e8e",
+        "actual_size": 3410,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "ce1bed5c29863ae6dabff57cb74a16874a2406d9f46abaf946313898004d89be",
+        "relative_path": "./Review/review_edit_delta_RPGBossWorldInputCompiler.cpp.diff",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\Review\\review_edit_delta_RPGBossWorldInputCompiler.cpp.diff",
+        "actual_sha256": "ce1bed5c29863ae6dabff57cb74a16874a2406d9f46abaf946313898004d89be",
+        "actual_size": 1163,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "5b35ecb6854a088b251dd873532d5d6a7894b063c4d95363c75c8f0ecee85244",
+        "relative_path": "./Review/review_edit_delta_RPGBossWorldInputCompiler.h.diff",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\Review\\review_edit_delta_RPGBossWorldInputCompiler.h.diff",
+        "actual_sha256": "5b35ecb6854a088b251dd873532d5d6a7894b063c4d95363c75c8f0ecee85244",
+        "actual_size": 625,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "de65d60017cc5a01ae0c7d52f07dfc706caabec120ba2350336fac6414190808",
+        "relative_path": "./Review/review_edit_delta_RPGBossWorldInputCompilerTests.cpp.diff",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\Review\\review_edit_delta_RPGBossWorldInputCompilerTests.cpp.diff",
+        "actual_sha256": "de65d60017cc5a01ae0c7d52f07dfc706caabec120ba2350336fac6414190808",
+        "actual_size": 5799,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "46cf1a450e29e4420a480b3562794ce9e5dbceb31ddf84b4be4067682f18a77c",
+        "relative_path": "./candidate_assets_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\candidate_assets_check.txt",
+        "actual_sha256": "46cf1a450e29e4420a480b3562794ce9e5dbceb31ddf84b4be4067682f18a77c",
+        "actual_size": 1222,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "34485c430df80e7e1ab7d9c3c7a57a37499e5f9d1b5bce902f3d506c5d4cd1de",
+        "relative_path": "./candidate_assets_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\candidate_assets_sha256.txt",
+        "actual_sha256": "34485c430df80e7e1ab7d9c3c7a57a37499e5f9d1b5bce902f3d506c5d4cd1de",
+        "actual_size": 2090,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "5ba61dae073d49a19f830d0c31b6c5f10c65e9d260ebcaac19bdb8c4eb4a7450",
+        "relative_path": "./default_catalog_assets_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\default_catalog_assets_sha256.txt",
+        "actual_sha256": "5ba61dae073d49a19f830d0c31b6c5f10c65e9d260ebcaac19bdb8c4eb4a7450",
+        "actual_size": 870,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "961d66c600ce819db6662ed58cb7ec35cf9bc3d0292d5d105a421d9c0ffd8aca",
+        "relative_path": "./dependency_pins_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\dependency_pins_sha256.txt",
+        "actual_sha256": "961d66c600ce819db6662ed58cb7ec35cf9bc3d0292d5d105a421d9c0ffd8aca",
+        "actual_size": 1208,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "842f72eed00eb1d3920072a12666f7a15c6c372b85626609a5d9c0a2b7ca3c94",
+        "relative_path": "./forworld_initialize_pins.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\forworld_initialize_pins.txt",
+        "actual_sha256": "842f72eed00eb1d3920072a12666f7a15c6c372b85626609a5d9c0a2b7ca3c94",
+        "actual_size": 525,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "bbbf37e234a298226f335fb4b3b027f0d2f560836c6eb9c77dab93a8f9a15193",
+        "relative_path": "./live_source_manifest_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\live_source_manifest_sha256.txt",
+        "actual_sha256": "bbbf37e234a298226f335fb4b3b027f0d2f560836c6eb9c77dab93a8f9a15193",
+        "actual_size": 21124,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "03d8bd0eb9830676d48241f7f02610c9184bf460d9c3454e449dc292bc1d01cf",
+        "relative_path": "./manifest_c245_followup_diff.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\manifest_c245_followup_diff.txt",
+        "actual_sha256": "03d8bd0eb9830676d48241f7f02610c9184bf460d9c3454e449dc292bc1d01cf",
+        "actual_size": 262,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "4020adf29ffd128f363d1554f69419795cd65456c3152193b1617ef928d8b0a9",
+        "relative_path": "./manifest_diff.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\manifest_diff.txt",
+        "actual_sha256": "4020adf29ffd128f363d1554f69419795cd65456c3152193b1617ef928d8b0a9",
+        "actual_size": 397,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "9e8f183cb22666374509421c2a61a61d7fda08d07e42d7dbb6dfec09d72a681a",
+        "relative_path": "./manifest_revision_diff.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\manifest_revision_diff.txt",
+        "actual_sha256": "9e8f183cb22666374509421c2a61a61d7fda08d07e42d7dbb6dfec09d72a681a",
+        "actual_size": 516,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "46cf1a450e29e4420a480b3562794ce9e5dbceb31ddf84b4be4067682f18a77c",
+        "relative_path": "./post_c245_followup_candidates_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\post_c245_followup_candidates_check.txt",
+        "actual_sha256": "46cf1a450e29e4420a480b3562794ce9e5dbceb31ddf84b4be4067682f18a77c",
+        "actual_size": 1222,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "fde3e51b87614ddd5da24b1b9f6074d369658d0ed305e907ef804f2c4fbd5188",
+        "relative_path": "./post_c245_followup_full_tree_manifest_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\post_c245_followup_full_tree_manifest_sha256.txt",
+        "actual_sha256": "fde3e51b87614ddd5da24b1b9f6074d369658d0ed305e907ef804f2c4fbd5188",
+        "actual_size": 21863,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d020539f6914aa8ef9e7c548af6c5c84356b2f249d6b6055a4f51f3e5defc27e",
+        "relative_path": "./post_c245_followup_pins_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\post_c245_followup_pins_check.txt",
+        "actual_sha256": "d020539f6914aa8ef9e7c548af6c5c84356b2f249d6b6055a4f51f3e5defc27e",
+        "actual_size": 1336,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "09adb6b5c2158fd636859cbce1ba71ac335b48cba486cea05bdcf4362edcf906",
+        "relative_path": "./post_c245_followup_source_manifest_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\post_c245_followup_source_manifest_sha256.txt",
+        "actual_sha256": "09adb6b5c2158fd636859cbce1ba71ac335b48cba486cea05bdcf4362edcf906",
+        "actual_size": 21124,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "46cf1a450e29e4420a480b3562794ce9e5dbceb31ddf84b4be4067682f18a77c",
+        "relative_path": "./post_candidate_assets_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\post_candidate_assets_check.txt",
+        "actual_sha256": "46cf1a450e29e4420a480b3562794ce9e5dbceb31ddf84b4be4067682f18a77c",
+        "actual_size": 1222,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "3a8891ab73c6594c0de06413ef9a7f474133eab0401c6d2782f83b1ba906e12d",
+        "relative_path": "./post_default_catalog_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\post_default_catalog_check.txt",
+        "actual_sha256": "3a8891ab73c6594c0de06413ef9a7f474133eab0401c6d2782f83b1ba906e12d",
+        "actual_size": 436,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "dd1008f0253c65a8072a62a50e8cb10832003671c2115292af7bc00a4ddb56c5",
+        "relative_path": "./post_dependency_pins_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\post_dependency_pins_check.txt",
+        "actual_sha256": "dd1008f0253c65a8072a62a50e8cb10832003671c2115292af7bc00a4ddb56c5",
+        "actual_size": 588,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d020539f6914aa8ef9e7c548af6c5c84356b2f249d6b6055a4f51f3e5defc27e",
+        "relative_path": "./post_pins_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\post_pins_check.txt",
+        "actual_sha256": "d020539f6914aa8ef9e7c548af6c5c84356b2f249d6b6055a4f51f3e5defc27e",
+        "actual_size": 1336,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "46cf1a450e29e4420a480b3562794ce9e5dbceb31ddf84b4be4067682f18a77c",
+        "relative_path": "./post_revision_candidates_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\post_revision_candidates_check.txt",
+        "actual_sha256": "46cf1a450e29e4420a480b3562794ce9e5dbceb31ddf84b4be4067682f18a77c",
+        "actual_size": 1222,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "3a8891ab73c6594c0de06413ef9a7f474133eab0401c6d2782f83b1ba906e12d",
+        "relative_path": "./post_revision_catalog_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\post_revision_catalog_check.txt",
+        "actual_sha256": "3a8891ab73c6594c0de06413ef9a7f474133eab0401c6d2782f83b1ba906e12d",
+        "actual_size": 436,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "dd1008f0253c65a8072a62a50e8cb10832003671c2115292af7bc00a4ddb56c5",
+        "relative_path": "./post_revision_dependency_pins_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\post_revision_dependency_pins_check.txt",
+        "actual_sha256": "dd1008f0253c65a8072a62a50e8cb10832003671c2115292af7bc00a4ddb56c5",
+        "actual_size": 588,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d020539f6914aa8ef9e7c548af6c5c84356b2f249d6b6055a4f51f3e5defc27e",
+        "relative_path": "./post_revision_pins_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\post_revision_pins_check.txt",
+        "actual_sha256": "d020539f6914aa8ef9e7c548af6c5c84356b2f249d6b6055a4f51f3e5defc27e",
+        "actual_size": 1336,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "2a6eb218f3a1125a08e6299b5c0ee661a23c80abbb8de520f3faed911a59b8da",
+        "relative_path": "./post_revision_source_manifest_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\post_revision_source_manifest_sha256.txt",
+        "actual_sha256": "2a6eb218f3a1125a08e6299b5c0ee661a23c80abbb8de520f3faed911a59b8da",
+        "actual_size": 21124,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "4da557f922056869010cb716aae5c29ce6654f5e23f1e2466968e797c4c3ccdd",
+        "relative_path": "./post_write_source_manifest_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\post_write_source_manifest_sha256.txt",
+        "actual_sha256": "4da557f922056869010cb716aae5c29ce6654f5e23f1e2466968e797c4c3ccdd",
+        "actual_size": 21124,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "bf6b20d84e3bd399d0fa22c3a6ddb46abde3a7ccd60eb4ee2107468e31c91945",
+        "relative_path": "./pre_binary_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\pre_binary_sha256.txt",
+        "actual_sha256": "bf6b20d84e3bd399d0fa22c3a6ddb46abde3a7ccd60eb4ee2107468e31c91945",
+        "actual_size": 209,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "a1e52ca3a8da7bc4dc6dc36d67463324ce59607207fa6cec148d8b185a6b08cf",
+        "relative_path": "./pre_git_head.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\pre_git_head.txt",
+        "actual_sha256": "a1e52ca3a8da7bc4dc6dc36d67463324ce59607207fa6cec148d8b185a6b08cf",
+        "actual_size": 41,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "6ebec72f85dcfd6af06372f2909f8a862684f98343be747d783158c2ede9e9ce",
+        "relative_path": "./pre_pins.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\pre_pins.txt",
+        "actual_sha256": "6ebec72f85dcfd6af06372f2909f8a862684f98343be747d783158c2ede9e9ce",
+        "actual_size": 2824,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d020539f6914aa8ef9e7c548af6c5c84356b2f249d6b6055a4f51f3e5defc27e",
+        "relative_path": "./pre_pins_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\pre_pins_check.txt",
+        "actual_sha256": "d020539f6914aa8ef9e7c548af6c5c84356b2f249d6b6055a4f51f3e5defc27e",
+        "actual_size": 1336,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+        "relative_path": "./pre_process_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\pre_process_check.txt",
+        "actual_sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+        "actual_size": 3,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "4fba7e57b7169234f5b9277b54558258c722a21613f204a3d92810cd239e2f88",
+        "relative_path": "./pre_source_manifest_reconstructed_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\pre_source_manifest_reconstructed_sha256.txt",
+        "actual_sha256": "4fba7e57b7169234f5b9277b54558258c722a21613f204a3d92810cd239e2f88",
+        "actual_size": 20753,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "relative_path": "./pre_vs_dd16_final_diff.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\pre_vs_dd16_final_diff.txt",
+        "actual_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "actual_size": 0,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "37833802f2e6c93781d5437e6823717e7aa47628a9a7b5469973ae24b7331437",
+        "relative_path": "./revision_C245_followup_cpp.diff",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\revision_C245_followup_cpp.diff",
+        "actual_sha256": "37833802f2e6c93781d5437e6823717e7aa47628a9a7b5469973ae24b7331437",
+        "actual_size": 2080,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "03fb6841c53429359443e5418c8718e7bbf2f1c5ed23deeabe104e28bb7597e3",
+        "relative_path": "./revision_X284_RPGBossWorldInputCompiler.cpp.diff",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\revision_X284_RPGBossWorldInputCompiler.cpp.diff",
+        "actual_sha256": "03fb6841c53429359443e5418c8718e7bbf2f1c5ed23deeabe104e28bb7597e3",
+        "actual_size": 11712,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "904c3647acb0d0fdc4c3093b6bf398b68677515fe976278f78303ad679792c35",
+        "relative_path": "./revision_X284_RPGBossWorldInputCompiler.h.diff",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\revision_X284_RPGBossWorldInputCompiler.h.diff",
+        "actual_sha256": "904c3647acb0d0fdc4c3093b6bf398b68677515fe976278f78303ad679792c35",
+        "actual_size": 3287,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "a544933defa210738d2e9408be3c21bd1939315ad03cd0641a4089fefd59c927",
+        "relative_path": "./three_file.diff",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\three_file.diff",
+        "actual_sha256": "a544933defa210738d2e9408be3c21bd1939315ad03cd0641a4089fefd59c927",
+        "actual_size": 90322,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "3246d42bae7fb1e447cd14544c932d5648b91e355e7b5fffbfdb55c177fc5d19",
+        "relative_path": "./three_file_c245_followup.diff",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\three_file_c245_followup.diff",
+        "actual_sha256": "3246d42bae7fb1e447cd14544c932d5648b91e355e7b5fffbfdb55c177fc5d19",
+        "actual_size": 95575,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "18a2674d9d6830b2f4fb42f75363bbb1911676179b66a47c3cb487ba16270650",
+        "relative_path": "./three_file_revised.diff",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD17\\three_file_revised.diff",
+        "actual_sha256": "18a2674d9d6830b2f4fb42f75363bbb1911676179b66a47c3cb487ba16270650",
+        "actual_size": 94477,
+        "status": "verified"
+      }
+    ]
+  },
+  "DD18": {
+    "scope": "File integrity only, not source semantics/runtime acceptance",
+    "receipt_sha256": "e3f96737e5b029aeb21bcd1c25e90025a23130f5a3eafaacdeb6503c164a2649",
+    "entries": 43,
+    "all_verified": true,
+    "checks": [
+      {
+        "expected_sha256": "bab89bf9fb3837276350e9f8579d4c74bfa3430a3cea2427c8ae47a8aecb22f7",
+        "relative_path": "./18_ADDENDUM_C245_FOLLOWUP.md",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\18_ADDENDUM_C245_FOLLOWUP.md",
+        "actual_sha256": "bab89bf9fb3837276350e9f8579d4c74bfa3430a3cea2427c8ae47a8aecb22f7",
+        "actual_size": 1502,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "e41d7842a38a202570ff67436c843a653fe41ecd2fb59ebaa94865ce2bc8a0b3",
+        "relative_path": "./18_DELIVERY.md",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\18_DELIVERY.md",
+        "actual_sha256": "e41d7842a38a202570ff67436c843a653fe41ecd2fb59ebaa94865ce2bc8a0b3",
+        "actual_size": 12120,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "253a47f47f3812d1c4754dea9c36620e59923347e3d359b807682c9fbe26792c",
+        "relative_path": "./Review/RPGBossPreparationRegistry.cpp",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\RPGBossPreparationRegistry.cpp",
+        "actual_sha256": "253a47f47f3812d1c4754dea9c36620e59923347e3d359b807682c9fbe26792c",
+        "actual_size": 21276,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "0c8bcdd5c85ba6ef9c1fc872cca5bb6ec05cd7553395a6712dd81144e6df7f27",
+        "relative_path": "./Review/RPGBossPreparationRegistry.cpp.before_independent_review",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\RPGBossPreparationRegistry.cpp.before_independent_review",
+        "actual_sha256": "0c8bcdd5c85ba6ef9c1fc872cca5bb6ec05cd7553395a6712dd81144e6df7f27",
+        "actual_size": 18709,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d9d813c7711e5ccdeba1e8a063c1adc44d76ae4ad6986f5d4d826ffa62f4ddd2",
+        "relative_path": "./Review/RPGBossPreparationRegistry.h",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\RPGBossPreparationRegistry.h",
+        "actual_sha256": "d9d813c7711e5ccdeba1e8a063c1adc44d76ae4ad6986f5d4d826ffa62f4ddd2",
+        "actual_size": 9965,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "316ac2921e6ae7c984570563f7c98cc1f505b26511e1b597ceec967d9c7eb7b3",
+        "relative_path": "./Review/RPGBossPreparationRegistry.h.before_independent_review",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\RPGBossPreparationRegistry.h.before_independent_review",
+        "actual_sha256": "316ac2921e6ae7c984570563f7c98cc1f505b26511e1b597ceec967d9c7eb7b3",
+        "actual_size": 9440,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "38729988591eadbb313a79fc1d4f002a4c02dcc56553398d95777468cbc2368a",
+        "relative_path": "./Review/RPGBossPreparationRegistryTests.cpp",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\RPGBossPreparationRegistryTests.cpp",
+        "actual_sha256": "38729988591eadbb313a79fc1d4f002a4c02dcc56553398d95777468cbc2368a",
+        "actual_size": 58439,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "0ec9d09ba41ec93e465e45d8a9c6d6f35b485fb78239d10e0f15f3fe27b625d4",
+        "relative_path": "./Review/RPGBossPreparationRegistryTests.cpp.before_independent_review",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\RPGBossPreparationRegistryTests.cpp.before_independent_review",
+        "actual_sha256": "0ec9d09ba41ec93e465e45d8a9c6d6f35b485fb78239d10e0f15f3fe27b625d4",
+        "actual_size": 54059,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "ce6a1b31dfb2e80f9439766d25f9ac77a5b6a2b8c05721264c30dcba3e0e417c",
+        "relative_path": "./Review/RPGBossWorldPreparation.cpp",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\RPGBossWorldPreparation.cpp",
+        "actual_sha256": "ce6a1b31dfb2e80f9439766d25f9ac77a5b6a2b8c05721264c30dcba3e0e417c",
+        "actual_size": 8497,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "ce6a1b31dfb2e80f9439766d25f9ac77a5b6a2b8c05721264c30dcba3e0e417c",
+        "relative_path": "./Review/RPGBossWorldPreparation.cpp.before_independent_review",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\RPGBossWorldPreparation.cpp.before_independent_review",
+        "actual_sha256": "ce6a1b31dfb2e80f9439766d25f9ac77a5b6a2b8c05721264c30dcba3e0e417c",
+        "actual_size": 8497,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "8a71cdf98fe3063c9ac48e17cc02a295f06bf4ef719cc99d0875814c48898933",
+        "relative_path": "./Review/RPGBossWorldPreparation.h",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\RPGBossWorldPreparation.h",
+        "actual_sha256": "8a71cdf98fe3063c9ac48e17cc02a295f06bf4ef719cc99d0875814c48898933",
+        "actual_size": 4337,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "fdb746686ef60cd18e359bfb4fc47cacb9d7a7b68d906a46a4bf669f3379f8b8",
+        "relative_path": "./Review/RPGBossWorldPreparation.h.before_independent_review",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\RPGBossWorldPreparation.h.before_independent_review",
+        "actual_sha256": "fdb746686ef60cd18e359bfb4fc47cacb9d7a7b68d906a46a4bf669f3379f8b8",
+        "actual_size": 4118,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "fb867b159223253d756e6a07e0d44a45378ea99f0c6f8eb3e606b95b8eb1ec90",
+        "relative_path": "./Review/RPGBossWorldPreparationTests.cpp",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\RPGBossWorldPreparationTests.cpp",
+        "actual_sha256": "fb867b159223253d756e6a07e0d44a45378ea99f0c6f8eb3e606b95b8eb1ec90",
+        "actual_size": 52832,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "0c99abfaee71b5ea13839ad77472f81c08f31d8d3bd14f2fb48da6f37b7ef0a2",
+        "relative_path": "./Review/RPGBossWorldPreparationTests.cpp.before_independent_review",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\RPGBossWorldPreparationTests.cpp.before_independent_review",
+        "actual_sha256": "0c99abfaee71b5ea13839ad77472f81c08f31d8d3bd14f2fb48da6f37b7ef0a2",
+        "actual_size": 48893,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "92102540558afa75fc83960f2f1faa7c20b236e16522c79085ba3e178ce8417e",
+        "relative_path": "./Review/independent_review_notes.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\independent_review_notes.txt",
+        "actual_sha256": "92102540558afa75fc83960f2f1faa7c20b236e16522c79085ba3e178ce8417e",
+        "actual_size": 4346,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "b8992e1f4a25f0e98331dbb5f57b4b8da3b0b98098d840c07c79febf83e4bbf1",
+        "relative_path": "./Review/review_edit_delta_RPGBossPreparationRegistry.cpp.diff",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\review_edit_delta_RPGBossPreparationRegistry.cpp.diff",
+        "actual_sha256": "b8992e1f4a25f0e98331dbb5f57b4b8da3b0b98098d840c07c79febf83e4bbf1",
+        "actual_size": 6506,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "ae2d25a688c665bfcc59e67d68862058022d5d7ad36a8e01f52536f444ac6422",
+        "relative_path": "./Review/review_edit_delta_RPGBossPreparationRegistry.h.diff",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\review_edit_delta_RPGBossPreparationRegistry.h.diff",
+        "actual_sha256": "ae2d25a688c665bfcc59e67d68862058022d5d7ad36a8e01f52536f444ac6422",
+        "actual_size": 4743,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "463568588e2bfb1ab96031b7b942d5d77a5b2f29073488f3ab10dd51df8a451c",
+        "relative_path": "./Review/review_edit_delta_RPGBossPreparationRegistryTests.cpp.diff",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\review_edit_delta_RPGBossPreparationRegistryTests.cpp.diff",
+        "actual_sha256": "463568588e2bfb1ab96031b7b942d5d77a5b2f29073488f3ab10dd51df8a451c",
+        "actual_size": 16970,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "relative_path": "./Review/review_edit_delta_RPGBossWorldPreparation.cpp.diff",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\review_edit_delta_RPGBossWorldPreparation.cpp.diff",
+        "actual_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "actual_size": 0,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "732d2255e5fac9bcfeb6b0f87d776d37fc0e9bef8db646f0741eeb2218d58e12",
+        "relative_path": "./Review/review_edit_delta_RPGBossWorldPreparation.h.diff",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\review_edit_delta_RPGBossWorldPreparation.h.diff",
+        "actual_sha256": "732d2255e5fac9bcfeb6b0f87d776d37fc0e9bef8db646f0741eeb2218d58e12",
+        "actual_size": 1678,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "67e1fdd71344756916bd925dbae6aaa4e9e6e1ef656c5bc3340748bd4b39c40a",
+        "relative_path": "./Review/review_edit_delta_RPGBossWorldPreparationTests.cpp.diff",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\Review\\review_edit_delta_RPGBossWorldPreparationTests.cpp.diff",
+        "actual_sha256": "67e1fdd71344756916bd925dbae6aaa4e9e6e1ef656c5bc3340748bd4b39c40a",
+        "actual_size": 4373,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "34485c430df80e7e1ab7d9c3c7a57a37499e5f9d1b5bce902f3d506c5d4cd1de",
+        "relative_path": "./candidate_assets_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\candidate_assets_sha256.txt",
+        "actual_sha256": "34485c430df80e7e1ab7d9c3c7a57a37499e5f9d1b5bce902f3d506c5d4cd1de",
+        "actual_size": 2090,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "5ba61dae073d49a19f830d0c31b6c5f10c65e9d260ebcaac19bdb8c4eb4a7450",
+        "relative_path": "./default_catalog_assets_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\default_catalog_assets_sha256.txt",
+        "actual_sha256": "5ba61dae073d49a19f830d0c31b6c5f10c65e9d260ebcaac19bdb8c4eb4a7450",
+        "actual_size": 870,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "c429f2878ad9f1f7bceacb54f1e0bd7acc09bd0f7a0f3600c01243c2c984978b",
+        "relative_path": "./dependency_pins_after_c245_followup_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\dependency_pins_after_c245_followup_sha256.txt",
+        "actual_sha256": "c429f2878ad9f1f7bceacb54f1e0bd7acc09bd0f7a0f3600c01243c2c984978b",
+        "actual_size": 1580,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "960dc652fc33489ced0c18f19243b8e51be3b639313d5d568830fd54e2c2889a",
+        "relative_path": "./dependency_pins_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\dependency_pins_sha256.txt",
+        "actual_sha256": "960dc652fc33489ced0c18f19243b8e51be3b639313d5d568830fd54e2c2889a",
+        "actual_size": 1580,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "842f72eed00eb1d3920072a12666f7a15c6c372b85626609a5d9c0a2b7ca3c94",
+        "relative_path": "./forworld_initialize_pins.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\forworld_initialize_pins.txt",
+        "actual_sha256": "842f72eed00eb1d3920072a12666f7a15c6c372b85626609a5d9c0a2b7ca3c94",
+        "actual_size": 525,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "b17c1630212725b2d1c37eead0b2ac942d00eae1bd7c91c6d4616c9f93e414ad",
+        "relative_path": "./manifest_c245_followup_diff.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\manifest_c245_followup_diff.txt",
+        "actual_sha256": "b17c1630212725b2d1c37eead0b2ac942d00eae1bd7c91c6d4616c9f93e414ad",
+        "actual_size": 262,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "2e39a7c451654a83abd0aa8c14c6bd3632e967495c7b9cf85014f8e46efea4b8",
+        "relative_path": "./manifest_diff.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\manifest_diff.txt",
+        "actual_sha256": "2e39a7c451654a83abd0aa8c14c6bd3632e967495c7b9cf85014f8e46efea4b8",
+        "actual_size": 788,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "fde3e51b87614ddd5da24b1b9f6074d369658d0ed305e907ef804f2c4fbd5188",
+        "relative_path": "./post_c245_followup_full_tree_manifest_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\post_c245_followup_full_tree_manifest_sha256.txt",
+        "actual_sha256": "fde3e51b87614ddd5da24b1b9f6074d369658d0ed305e907ef804f2c4fbd5188",
+        "actual_size": 21863,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "46cf1a450e29e4420a480b3562794ce9e5dbceb31ddf84b4be4067682f18a77c",
+        "relative_path": "./post_candidates_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\post_candidates_check.txt",
+        "actual_sha256": "46cf1a450e29e4420a480b3562794ce9e5dbceb31ddf84b4be4067682f18a77c",
+        "actual_size": 1222,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "3a8891ab73c6594c0de06413ef9a7f474133eab0401c6d2782f83b1ba906e12d",
+        "relative_path": "./post_catalog_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\post_catalog_check.txt",
+        "actual_sha256": "3a8891ab73c6594c0de06413ef9a7f474133eab0401c6d2782f83b1ba906e12d",
+        "actual_size": 436,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "eb4780b44c871016a1a0a5af5c7ed1b535786bdbb204fc3e5a19f8217f32d6aa",
+        "relative_path": "./post_dependency_pins_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\post_dependency_pins_check.txt",
+        "actual_sha256": "eb4780b44c871016a1a0a5af5c7ed1b535786bdbb204fc3e5a19f8217f32d6aa",
+        "actual_size": 774,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d020539f6914aa8ef9e7c548af6c5c84356b2f249d6b6055a4f51f3e5defc27e",
+        "relative_path": "./post_pins_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\post_pins_check.txt",
+        "actual_sha256": "d020539f6914aa8ef9e7c548af6c5c84356b2f249d6b6055a4f51f3e5defc27e",
+        "actual_size": 1336,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "17e04d5a63aa27aa75317dbeb6f04ab51e6d2dfebddac3032cb67b743aaa1f1a",
+        "relative_path": "./post_write_source_manifest_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\post_write_source_manifest_sha256.txt",
+        "actual_sha256": "17e04d5a63aa27aa75317dbeb6f04ab51e6d2dfebddac3032cb67b743aaa1f1a",
+        "actual_size": 21863,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "bf6b20d84e3bd399d0fa22c3a6ddb46abde3a7ccd60eb4ee2107468e31c91945",
+        "relative_path": "./pre_binary_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\pre_binary_sha256.txt",
+        "actual_sha256": "bf6b20d84e3bd399d0fa22c3a6ddb46abde3a7ccd60eb4ee2107468e31c91945",
+        "actual_size": 209,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "46cf1a450e29e4420a480b3562794ce9e5dbceb31ddf84b4be4067682f18a77c",
+        "relative_path": "./pre_candidates_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\pre_candidates_check.txt",
+        "actual_sha256": "46cf1a450e29e4420a480b3562794ce9e5dbceb31ddf84b4be4067682f18a77c",
+        "actual_size": 1222,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "3a8891ab73c6594c0de06413ef9a7f474133eab0401c6d2782f83b1ba906e12d",
+        "relative_path": "./pre_catalog_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\pre_catalog_check.txt",
+        "actual_sha256": "3a8891ab73c6594c0de06413ef9a7f474133eab0401c6d2782f83b1ba906e12d",
+        "actual_size": 436,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "a1e52ca3a8da7bc4dc6dc36d67463324ce59607207fa6cec148d8b185a6b08cf",
+        "relative_path": "./pre_git_head.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\pre_git_head.txt",
+        "actual_sha256": "a1e52ca3a8da7bc4dc6dc36d67463324ce59607207fa6cec148d8b185a6b08cf",
+        "actual_size": 41,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "6ebec72f85dcfd6af06372f2909f8a862684f98343be747d783158c2ede9e9ce",
+        "relative_path": "./pre_pins.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\pre_pins.txt",
+        "actual_sha256": "6ebec72f85dcfd6af06372f2909f8a862684f98343be747d783158c2ede9e9ce",
+        "actual_size": 2824,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d020539f6914aa8ef9e7c548af6c5c84356b2f249d6b6055a4f51f3e5defc27e",
+        "relative_path": "./pre_pins_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\pre_pins_check.txt",
+        "actual_sha256": "d020539f6914aa8ef9e7c548af6c5c84356b2f249d6b6055a4f51f3e5defc27e",
+        "actual_size": 1336,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+        "relative_path": "./pre_process_check.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\pre_process_check.txt",
+        "actual_sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+        "actual_size": 3,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "2a6eb218f3a1125a08e6299b5c0ee661a23c80abbb8de520f3faed911a59b8da",
+        "relative_path": "./pre_source_manifest_sha256.txt",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\pre_source_manifest_sha256.txt",
+        "actual_sha256": "2a6eb218f3a1125a08e6299b5c0ee661a23c80abbb8de520f3faed911a59b8da",
+        "actual_size": 21124,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d12f305ad75f599ee44b5d5b6ad909e3b1890441c6a97da0c6badc2f109762b0",
+        "relative_path": "./six_file.diff",
+        "expected_size": null,
+        "path": "Docs\\BossCombatReview\\Execution\\Claude\\DD18\\six_file.diff",
+        "actual_sha256": "d12f305ad75f599ee44b5d5b6ad909e3b1890441c6a97da0c6badc2f109762b0",
+        "actual_size": 156956,
+        "status": "verified"
+      }
+    ]
+  },
+  "AGToolkit": {
+    "scope": "File integrity only, not source semantics/runtime acceptance",
+    "receipt_sha256": "32a4b588426dc46fe16bc3338d6cfe217e2e272bfd3f01e77dd948c067f460de",
+    "entries": 19,
+    "all_verified": true,
+    "checks": [
+      {
+        "expected_sha256": "0378285cd2b7207688552ca5c350a5c6ae237b1055f1bd858639d46d95eff03b",
+        "relative_path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/authoring_core.py",
+        "expected_size": 23677,
+        "path": "Docs\\BossCombatReview\\Execution\\Antigravity\\AuthoringToolkit\\authoring_core.py",
+        "actual_sha256": "0378285cd2b7207688552ca5c350a5c6ae237b1055f1bd858639d46d95eff03b",
+        "actual_size": 23677,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "c84408d099e05338ce9b63174eb79f04600fd175f87d68c3c31cac58c90f2e95",
+        "relative_path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/draft_boss_profiles.py",
+        "expected_size": 32709,
+        "path": "Docs\\BossCombatReview\\Execution\\Antigravity\\AuthoringToolkit\\draft_boss_profiles.py",
+        "actual_sha256": "c84408d099e05338ce9b63174eb79f04600fd175f87d68c3c31cac58c90f2e95",
+        "actual_size": 32709,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "1c00aadfc3f5cc7198fdaefa9b785ed9bf2d4eff3566cf232b683c62c065a5d4",
+        "relative_path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/inspect_authored_assets.py",
+        "expected_size": 22627,
+        "path": "Docs\\BossCombatReview\\Execution\\Antigravity\\AuthoringToolkit\\inspect_authored_assets.py",
+        "actual_sha256": "1c00aadfc3f5cc7198fdaefa9b785ed9bf2d4eff3566cf232b683c62c065a5d4",
+        "actual_size": 22627,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "2a0fd758016625c583ad9030fcc98343790e3a79e2fb332ad651a85eda8959fa",
+        "relative_path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_authoring_core.py",
+        "expected_size": 31203,
+        "path": "Docs\\BossCombatReview\\Execution\\Antigravity\\AuthoringToolkit\\test_authoring_core.py",
+        "actual_sha256": "2a0fd758016625c583ad9030fcc98343790e3a79e2fb332ad651a85eda8959fa",
+        "actual_size": 31203,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "66b18876880c26679e7235024c6651d8b5f20a400aeeb1c0124e50e217bb5cbb",
+        "relative_path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_run_output.txt",
+        "expected_size": 8506,
+        "path": "Docs\\BossCombatReview\\Execution\\Antigravity\\AuthoringToolkit\\test_run_output.txt",
+        "actual_sha256": "66b18876880c26679e7235024c6651d8b5f20a400aeeb1c0124e50e217bb5cbb",
+        "actual_size": 8506,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "f8d3ae595792aea6373f5d11062389ea7ed081d214dcaa4f7041673e5e33c23d",
+        "relative_path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json",
+        "expected_size": 11896,
+        "path": "Docs\\BossCombatReview\\Execution\\Antigravity\\AuthoringToolkit\\examples\\boss_draft_profiles.json",
+        "actual_sha256": "f8d3ae595792aea6373f5d11062389ea7ed081d214dcaa4f7041673e5e33c23d",
+        "actual_size": 11896,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "40a8a66363cf825ae7ba7e0bf5b1d78b6bf331b9dbb96e4ac6a436269e0e114a",
+        "relative_path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/README.md",
+        "expected_size": 14970,
+        "path": "Docs\\BossCombatReview\\Execution\\Antigravity\\AuthoringToolkit\\README.md",
+        "actual_sha256": "40a8a66363cf825ae7ba7e0bf5b1d78b6bf331b9dbb96e4ac6a436269e0e114a",
+        "actual_size": 14970,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "c586634ebd5d2f86b9d97ca4a7ac45819d756c620b5851b27aa19e88f4152e52",
+        "relative_path": "Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/author_custom_build.py",
+        "expected_size": 39287,
+        "path": "Docs\\BossCombatReview\\Execution\\Antigravity\\BuildAuthoringHelper\\author_custom_build.py",
+        "actual_sha256": "c586634ebd5d2f86b9d97ca4a7ac45819d756c620b5851b27aa19e88f4152e52",
+        "actual_size": 39287,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "e7d5296833cfa5bec4101e608a98ab336a5b8c7a5c476e0d3b17eae57279dbb5",
+        "relative_path": "Source/OneBossFight/Player/RPGCombatCatalog.h",
+        "expected_size": 7427,
+        "path": "Source\\OneBossFight\\Player\\RPGCombatCatalog.h",
+        "actual_sha256": "e7d5296833cfa5bec4101e608a98ab336a5b8c7a5c476e0d3b17eae57279dbb5",
+        "actual_size": 7427,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "f6f71036804f60f0e4c8b3cf455f2a04a7bc4cf379760334903a2d9d613de59d",
+        "relative_path": "Source/OneBossFight/Player/RPGCombatCatalog.cpp",
+        "expected_size": 23675,
+        "path": "Source\\OneBossFight\\Player\\RPGCombatCatalog.cpp",
+        "actual_sha256": "f6f71036804f60f0e4c8b3cf455f2a04a7bc4cf379760334903a2d9d613de59d",
+        "actual_size": 23675,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "ce0a7da73e833a22aef8ad69e3ed42984b39b04131997d78f055f4a4070d9c92",
+        "relative_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "expected_size": 17193,
+        "path": "Source\\OneBossFight\\Player\\RPGEncounterBinding.h",
+        "actual_sha256": "ce0a7da73e833a22aef8ad69e3ed42984b39b04131997d78f055f4a4070d9c92",
+        "actual_size": 17193,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "c7255051e5f6be46db5b5caa0351cf45e50c3c07c4c0a8085fd3d71b633df828",
+        "relative_path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+        "expected_size": 17034,
+        "path": "Source\\OneBossFight\\Player\\RPGEncounterBinding.cpp",
+        "actual_sha256": "c7255051e5f6be46db5b5caa0351cf45e50c3c07c4c0a8085fd3d71b633df828",
+        "actual_size": 17034,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "be49c7f4f3551fa8a45eb33d067711bb5bed526f90fd2cf7f4aa39cfd232b315",
+        "relative_path": "Content/OneBossFight/Data/Catalog/DA_CombatCatalog.uasset",
+        "expected_size": 2390,
+        "path": "Content\\OneBossFight\\Data\\Catalog\\DA_CombatCatalog.uasset",
+        "actual_sha256": "be49c7f4f3551fa8a45eb33d067711bb5bed526f90fd2cf7f4aa39cfd232b315",
+        "actual_size": 2390,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "e3c0d6c86aca343fac8307d1b95209a0ce3a693920493ee5211e6fa6bce80682",
+        "relative_path": "Content/OneBossFight/Data/Catalog/DA_Build_Starter.uasset",
+        "expected_size": 2303,
+        "path": "Content\\OneBossFight\\Data\\Catalog\\DA_Build_Starter.uasset",
+        "actual_sha256": "e3c0d6c86aca343fac8307d1b95209a0ce3a693920493ee5211e6fa6bce80682",
+        "actual_size": 2303,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "24b6ad77dbaf8db5f64db5edad035471d2e8ea05487d02864c51e8e27da02033",
+        "relative_path": "Content/OneBossFight/Data/Catalog/DA_Build_Strength.uasset",
+        "expected_size": 2357,
+        "path": "Content\\OneBossFight\\Data\\Catalog\\DA_Build_Strength.uasset",
+        "actual_sha256": "24b6ad77dbaf8db5f64db5edad035471d2e8ea05487d02864c51e8e27da02033",
+        "actual_size": 2357,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "8ec63be096a1f43de82baceb30cb36a373bf018f59812db06184220c0c4d520b",
+        "relative_path": "Content/OneBossFight/Data/Catalog/DA_Build_Dex.uasset",
+        "expected_size": 2308,
+        "path": "Content\\OneBossFight\\Data\\Catalog\\DA_Build_Dex.uasset",
+        "actual_sha256": "8ec63be096a1f43de82baceb30cb36a373bf018f59812db06184220c0c4d520b",
+        "actual_size": 2308,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "b7702e2af28db57442dbe9ca20195ac23c02bc57941e760d57280e2bcb68d3c2",
+        "relative_path": "Content/OneBossFight/Data/Catalog/DA_Weapon_Sword.uasset",
+        "expected_size": 3841,
+        "path": "Content\\OneBossFight\\Data\\Catalog\\DA_Weapon_Sword.uasset",
+        "actual_sha256": "b7702e2af28db57442dbe9ca20195ac23c02bc57941e760d57280e2bcb68d3c2",
+        "actual_size": 3841,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d203bb0555b1e6239218fd180611a6fc14017544c7ac55ace0086b308f35da8c",
+        "relative_path": "Content/OneBossFight/Data/Catalog/DA_Weapon_Claymore.uasset",
+        "expected_size": 3657,
+        "path": "Content\\OneBossFight\\Data\\Catalog\\DA_Weapon_Claymore.uasset",
+        "actual_sha256": "d203bb0555b1e6239218fd180611a6fc14017544c7ac55ace0086b308f35da8c",
+        "actual_size": 3657,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "31680000e80764945d9483a3286f0075fd839244797ce7f2277b9f34b3770128",
+        "relative_path": "Content/OneBossFight/Data/Catalog/DA_Weapon_DualSwords.uasset",
+        "expected_size": 3915,
+        "path": "Content\\OneBossFight\\Data\\Catalog\\DA_Weapon_DualSwords.uasset",
+        "actual_sha256": "31680000e80764945d9483a3286f0075fd839244797ce7f2277b9f34b3770128",
+        "actual_size": 3915,
+        "status": "verified"
+      }
+    ]
+  },
+  "AGBuild": {
+    "scope": "File integrity only, not source semantics/runtime acceptance",
+    "receipt_sha256": "c757fa51adbc9be7158b7619cf7def4531684690363a007967e0c4ab287af96b",
+    "entries": 13,
+    "all_verified": true,
+    "checks": [
+      {
+        "expected_sha256": "c586634ebd5d2f86b9d97ca4a7ac45819d756c620b5851b27aa19e88f4152e52",
+        "relative_path": "Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/author_custom_build.py",
+        "expected_size": 39287,
+        "path": "Docs\\BossCombatReview\\Execution\\Antigravity\\BuildAuthoringHelper\\author_custom_build.py",
+        "actual_sha256": "c586634ebd5d2f86b9d97ca4a7ac45819d756c620b5851b27aa19e88f4152e52",
+        "actual_size": 39287,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "3bf2b96fecd1d8619c6b5298ed4a088ea02b86c8470b1e99ba7e2595b453670c",
+        "relative_path": "Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/README.md",
+        "expected_size": 7939,
+        "path": "Docs\\BossCombatReview\\Execution\\Antigravity\\BuildAuthoringHelper\\README.md",
+        "actual_sha256": "3bf2b96fecd1d8619c6b5298ed4a088ea02b86c8470b1e99ba7e2595b453670c",
+        "actual_size": 7939,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "e7d5296833cfa5bec4101e608a98ab336a5b8c7a5c476e0d3b17eae57279dbb5",
+        "relative_path": "Source/OneBossFight/Player/RPGCombatCatalog.h",
+        "expected_size": 7427,
+        "path": "Source\\OneBossFight\\Player\\RPGCombatCatalog.h",
+        "actual_sha256": "e7d5296833cfa5bec4101e608a98ab336a5b8c7a5c476e0d3b17eae57279dbb5",
+        "actual_size": 7427,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "f6f71036804f60f0e4c8b3cf455f2a04a7bc4cf379760334903a2d9d613de59d",
+        "relative_path": "Source/OneBossFight/Player/RPGCombatCatalog.cpp",
+        "expected_size": 23675,
+        "path": "Source\\OneBossFight\\Player\\RPGCombatCatalog.cpp",
+        "actual_sha256": "f6f71036804f60f0e4c8b3cf455f2a04a7bc4cf379760334903a2d9d613de59d",
+        "actual_size": 23675,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "ce0a7da73e833a22aef8ad69e3ed42984b39b04131997d78f055f4a4070d9c92",
+        "relative_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "expected_size": 17193,
+        "path": "Source\\OneBossFight\\Player\\RPGEncounterBinding.h",
+        "actual_sha256": "ce0a7da73e833a22aef8ad69e3ed42984b39b04131997d78f055f4a4070d9c92",
+        "actual_size": 17193,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "c7255051e5f6be46db5b5caa0351cf45e50c3c07c4c0a8085fd3d71b633df828",
+        "relative_path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+        "expected_size": 17034,
+        "path": "Source\\OneBossFight\\Player\\RPGEncounterBinding.cpp",
+        "actual_sha256": "c7255051e5f6be46db5b5caa0351cf45e50c3c07c4c0a8085fd3d71b633df828",
+        "actual_size": 17034,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "be49c7f4f3551fa8a45eb33d067711bb5bed526f90fd2cf7f4aa39cfd232b315",
+        "relative_path": "Content/OneBossFight/Data/Catalog/DA_CombatCatalog.uasset",
+        "expected_size": 2390,
+        "path": "Content\\OneBossFight\\Data\\Catalog\\DA_CombatCatalog.uasset",
+        "actual_sha256": "be49c7f4f3551fa8a45eb33d067711bb5bed526f90fd2cf7f4aa39cfd232b315",
+        "actual_size": 2390,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "e3c0d6c86aca343fac8307d1b95209a0ce3a693920493ee5211e6fa6bce80682",
+        "relative_path": "Content/OneBossFight/Data/Catalog/DA_Build_Starter.uasset",
+        "expected_size": 2303,
+        "path": "Content\\OneBossFight\\Data\\Catalog\\DA_Build_Starter.uasset",
+        "actual_sha256": "e3c0d6c86aca343fac8307d1b95209a0ce3a693920493ee5211e6fa6bce80682",
+        "actual_size": 2303,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "24b6ad77dbaf8db5f64db5edad035471d2e8ea05487d02864c51e8e27da02033",
+        "relative_path": "Content/OneBossFight/Data/Catalog/DA_Build_Strength.uasset",
+        "expected_size": 2357,
+        "path": "Content\\OneBossFight\\Data\\Catalog\\DA_Build_Strength.uasset",
+        "actual_sha256": "24b6ad77dbaf8db5f64db5edad035471d2e8ea05487d02864c51e8e27da02033",
+        "actual_size": 2357,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "8ec63be096a1f43de82baceb30cb36a373bf018f59812db06184220c0c4d520b",
+        "relative_path": "Content/OneBossFight/Data/Catalog/DA_Build_Dex.uasset",
+        "expected_size": 2308,
+        "path": "Content\\OneBossFight\\Data\\Catalog\\DA_Build_Dex.uasset",
+        "actual_sha256": "8ec63be096a1f43de82baceb30cb36a373bf018f59812db06184220c0c4d520b",
+        "actual_size": 2308,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "b7702e2af28db57442dbe9ca20195ac23c02bc57941e760d57280e2bcb68d3c2",
+        "relative_path": "Content/OneBossFight/Data/Catalog/DA_Weapon_Sword.uasset",
+        "expected_size": 3841,
+        "path": "Content\\OneBossFight\\Data\\Catalog\\DA_Weapon_Sword.uasset",
+        "actual_sha256": "b7702e2af28db57442dbe9ca20195ac23c02bc57941e760d57280e2bcb68d3c2",
+        "actual_size": 3841,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d203bb0555b1e6239218fd180611a6fc14017544c7ac55ace0086b308f35da8c",
+        "relative_path": "Content/OneBossFight/Data/Catalog/DA_Weapon_Claymore.uasset",
+        "expected_size": 3657,
+        "path": "Content\\OneBossFight\\Data\\Catalog\\DA_Weapon_Claymore.uasset",
+        "actual_sha256": "d203bb0555b1e6239218fd180611a6fc14017544c7ac55ace0086b308f35da8c",
+        "actual_size": 3657,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "31680000e80764945d9483a3286f0075fd839244797ce7f2277b9f34b3770128",
+        "relative_path": "Content/OneBossFight/Data/Catalog/DA_Weapon_DualSwords.uasset",
+        "expected_size": 3915,
+        "path": "Content\\OneBossFight\\Data\\Catalog\\DA_Weapon_DualSwords.uasset",
+        "actual_sha256": "31680000e80764945d9483a3286f0075fd839244797ce7f2277b9f34b3770128",
+        "actual_size": 3915,
+        "status": "verified"
+      }
+    ]
+  },
+  "current_source_manifest": {
+    "scope": "File integrity only, not source semantics/runtime acceptance",
+    "receipt_sha256": "fde3e51b87614ddd5da24b1b9f6074d369658d0ed305e907ef804f2c4fbd5188",
+    "entries": 191,
+    "all_verified": true,
+    "checks": [
+      {
+        "expected_sha256": "bd6f7278685b15364091f78d0e8661df56aade1da24778b3855f05e3540001cf",
+        "relative_path": "Source/OneBossFight.Target.cs",
+        "expected_size": null,
+        "path": "Source\\OneBossFight.Target.cs",
+        "actual_sha256": "bd6f7278685b15364091f78d0e8661df56aade1da24778b3855f05e3540001cf",
+        "actual_size": 403,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "559e00fe8a24cc321f735408446c24e2aad5ddd7aea61f1d1486e3b46e69c3ae",
+        "relative_path": "Source/OneBossFight/Arena/RPGArenaDressing.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Arena\\RPGArenaDressing.cpp",
+        "actual_sha256": "559e00fe8a24cc321f735408446c24e2aad5ddd7aea61f1d1486e3b46e69c3ae",
+        "actual_size": 4266,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "a61962aea6dc902052288e201abbf50cdfc71e3d638e2bd9ed51f0de0d1ddc31",
+        "relative_path": "Source/OneBossFight/Arena/RPGArenaDressing.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Arena\\RPGArenaDressing.h",
+        "actual_sha256": "a61962aea6dc902052288e201abbf50cdfc71e3d638e2bd9ed51f0de0d1ddc31",
+        "actual_size": 3060,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "08fae6a1ff045e4ae5ac21d161c3a242eaec7b7027e920864980406cd2649cea",
+        "relative_path": "Source/OneBossFight/Arena/RPGEmberField.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Arena\\RPGEmberField.cpp",
+        "actual_sha256": "08fae6a1ff045e4ae5ac21d161c3a242eaec7b7027e920864980406cd2649cea",
+        "actual_size": 4544,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "dd914c6cbcdc6bc7dc53b17c2a51b3a6ee1d1a3f97802f65688a6004ca97938b",
+        "relative_path": "Source/OneBossFight/Arena/RPGEmberField.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Arena\\RPGEmberField.h",
+        "actual_sha256": "dd914c6cbcdc6bc7dc53b17c2a51b3a6ee1d1a3f97802f65688a6004ca97938b",
+        "actual_size": 3321,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "0b78534e9fe3be55406832d1ec379f86088bfa43e7b82d51d2f23092033ad9bc",
+        "relative_path": "Source/OneBossFight/Arena/RPGFireSource.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Arena\\RPGFireSource.cpp",
+        "actual_sha256": "0b78534e9fe3be55406832d1ec379f86088bfa43e7b82d51d2f23092033ad9bc",
+        "actual_size": 4836,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "956eed9e97b2a764c7d4281954ae5bdeb46e0388dc37d5a88b9485535c86d39f",
+        "relative_path": "Source/OneBossFight/Arena/RPGFireSource.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Arena\\RPGFireSource.h",
+        "actual_sha256": "956eed9e97b2a764c7d4281954ae5bdeb46e0388dc37d5a88b9485535c86d39f",
+        "actual_size": 3296,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "68e70859b29682f2d89b37946759001e8e1b58125262eaf190e69c776dda6a47",
+        "relative_path": "Source/OneBossFight/Arena/RPGFogGate.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Arena\\RPGFogGate.cpp",
+        "actual_sha256": "68e70859b29682f2d89b37946759001e8e1b58125262eaf190e69c776dda6a47",
+        "actual_size": 5066,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "030c110b77061354f2c400ea81cbf84acce92891408f6486a2c33947bbae19c2",
+        "relative_path": "Source/OneBossFight/Arena/RPGFogGate.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Arena\\RPGFogGate.h",
+        "actual_sha256": "030c110b77061354f2c400ea81cbf84acce92891408f6486a2c33947bbae19c2",
+        "actual_size": 3640,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "9eb1b90f9df36cad9361ab20ec99c057e767caa5e6af7553ac274613b97d863f",
+        "relative_path": "Source/OneBossFight/Arena/RPGGreyboxArena.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Arena\\RPGGreyboxArena.cpp",
+        "actual_sha256": "9eb1b90f9df36cad9361ab20ec99c057e767caa5e6af7553ac274613b97d863f",
+        "actual_size": 9912,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "b4ef7354b7005bdb45dcfc235e7ce0f97286c78520823c49b8ad130a190b26e9",
+        "relative_path": "Source/OneBossFight/Arena/RPGGreyboxArena.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Arena\\RPGGreyboxArena.h",
+        "actual_sha256": "b4ef7354b7005bdb45dcfc235e7ce0f97286c78520823c49b8ad130a190b26e9",
+        "actual_size": 7063,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "9465bee5a288c1a52c0e3c80822435d50a5ee9925fd6895269be23e461bfc8b0",
+        "relative_path": "Source/OneBossFight/Arena/RPGPerfSwitches.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Arena\\RPGPerfSwitches.cpp",
+        "actual_sha256": "9465bee5a288c1a52c0e3c80822435d50a5ee9925fd6895269be23e461bfc8b0",
+        "actual_size": 1686,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "418b27a2fdd4295989854d530d10706ab3ec70567cf8ebb7e6317c7344e4854a",
+        "relative_path": "Source/OneBossFight/Arena/RPGPerfSwitches.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Arena\\RPGPerfSwitches.h",
+        "actual_sha256": "418b27a2fdd4295989854d530d10706ab3ec70567cf8ebb7e6317c7344e4854a",
+        "actual_size": 1374,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "93b89708efcac23e064eedd81f7cf3c5b206509d48df7502c3d9c04cde4d0ba0",
+        "relative_path": "Source/OneBossFight/Audio/RPGArenaAmbience.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Audio\\RPGArenaAmbience.cpp",
+        "actual_sha256": "93b89708efcac23e064eedd81f7cf3c5b206509d48df7502c3d9c04cde4d0ba0",
+        "actual_size": 1195,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "98d313e38d77295d8ee2eb8167f2f1f2275cf82dd243b874f86eb41c722c5986",
+        "relative_path": "Source/OneBossFight/Audio/RPGArenaAmbience.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Audio\\RPGArenaAmbience.h",
+        "actual_sha256": "98d313e38d77295d8ee2eb8167f2f1f2275cf82dd243b874f86eb41c722c5986",
+        "actual_size": 1043,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d69950f2f2868ac89b4b810d21fe8fbcb41790a0b5836a4e541b01a59c2c9f57",
+        "relative_path": "Source/OneBossFight/Audio/RPGBossMusic.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Audio\\RPGBossMusic.cpp",
+        "actual_sha256": "d69950f2f2868ac89b4b810d21fe8fbcb41790a0b5836a4e541b01a59c2c9f57",
+        "actual_size": 5411,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "88c962dad7a0025a76ed50c5f414f3748f133b470a75b00080fb090967f70e41",
+        "relative_path": "Source/OneBossFight/Audio/RPGBossMusic.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Audio\\RPGBossMusic.h",
+        "actual_sha256": "88c962dad7a0025a76ed50c5f414f3748f133b470a75b00080fb090967f70e41",
+        "actual_size": 5173,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "e8f911dc593b2feac8c0d8f1763f6eee8f681d1f7d71ad1e23011bee26a72a85",
+        "relative_path": "Source/OneBossFight/Audio/RPGFootsteps.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Audio\\RPGFootsteps.cpp",
+        "actual_sha256": "e8f911dc593b2feac8c0d8f1763f6eee8f681d1f7d71ad1e23011bee26a72a85",
+        "actual_size": 4549,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "4d41567811e98dfceefc1293cb836dc97e167f447cf74895f7634b71d3a5b5f3",
+        "relative_path": "Source/OneBossFight/Audio/RPGFootsteps.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Audio\\RPGFootsteps.h",
+        "actual_sha256": "4d41567811e98dfceefc1293cb836dc97e167f447cf74895f7634b71d3a5b5f3",
+        "actual_size": 3637,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "118e7b5ac9309a2b7b078cc9ee5c42d86eebdaf663148e1eabdcb9624fe1851e",
+        "relative_path": "Source/OneBossFight/Benchmark/RPGBenchmarkRunner.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Benchmark\\RPGBenchmarkRunner.cpp",
+        "actual_sha256": "118e7b5ac9309a2b7b078cc9ee5c42d86eebdaf663148e1eabdcb9624fe1851e",
+        "actual_size": 16586,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "2253701cedd9b5767d2fe7d3604e27d404b19ac21a57f923667a2fea57714b41",
+        "relative_path": "Source/OneBossFight/Benchmark/RPGBenchmarkRunner.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Benchmark\\RPGBenchmarkRunner.h",
+        "actual_sha256": "2253701cedd9b5767d2fe7d3604e27d404b19ac21a57f923667a2fea57714b41",
+        "actual_size": 5220,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "5d4a9825714ec49258c0690f9dd0bf4fcb0d7f0ad0cf3c8cdb1c3c9abf738365",
+        "relative_path": "Source/OneBossFight/Benchmark/RPGFrameStats.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Benchmark\\RPGFrameStats.cpp",
+        "actual_sha256": "5d4a9825714ec49258c0690f9dd0bf4fcb0d7f0ad0cf3c8cdb1c3c9abf738365",
+        "actual_size": 1851,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "47f86fc9ecc9c9674c46f2c6f9de7261db065cb61e63b91b492edc14dc250ddb",
+        "relative_path": "Source/OneBossFight/Benchmark/RPGFrameStats.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Benchmark\\RPGFrameStats.h",
+        "actual_sha256": "47f86fc9ecc9c9674c46f2c6f9de7261db065cb61e63b91b492edc14dc250ddb",
+        "actual_size": 1494,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "7432c04747358aa1158d74b9626ea2146b4c29b1bf02d034066ac81318366e35",
+        "relative_path": "Source/OneBossFight/Boss/RPGSevarogDirector.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Boss\\RPGSevarogDirector.cpp",
+        "actual_sha256": "7432c04747358aa1158d74b9626ea2146b4c29b1bf02d034066ac81318366e35",
+        "actual_size": 16254,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "f26fd27fa083de13f254853bf4922a90973564a7cab0180ab0b81dd43caec772",
+        "relative_path": "Source/OneBossFight/Boss/RPGSevarogDirector.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Boss\\RPGSevarogDirector.h",
+        "actual_sha256": "f26fd27fa083de13f254853bf4922a90973564a7cab0180ab0b81dd43caec772",
+        "actual_size": 6228,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "2d8882a83ef5d44bfade6b9d54514fa23b0bbdc5ed5fb407a0570259da03ec03",
+        "relative_path": "Source/OneBossFight/Combat/RPGInputTestUtils.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Combat\\RPGInputTestUtils.cpp",
+        "actual_sha256": "2d8882a83ef5d44bfade6b9d54514fa23b0bbdc5ed5fb407a0570259da03ec03",
+        "actual_size": 2977,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "4c5629aa1a81cba301bc10058798b175eff835a74862d7686f5e7fdef38475c6",
+        "relative_path": "Source/OneBossFight/Combat/RPGInputTestUtils.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Combat\\RPGInputTestUtils.h",
+        "actual_sha256": "4c5629aa1a81cba301bc10058798b175eff835a74862d7686f5e7fdef38475c6",
+        "actual_size": 2284,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "4298471899e935af6af2eea90b75c9c06c4ac37b46af6b957adc3a9ee2f44894",
+        "relative_path": "Source/OneBossFight/Combat/RPGMontageUtils.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Combat\\RPGMontageUtils.cpp",
+        "actual_sha256": "4298471899e935af6af2eea90b75c9c06c4ac37b46af6b957adc3a9ee2f44894",
+        "actual_size": 1660,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "e345abec775ba6407cd9da2748ed5ae4cb9a7450ed229180d93e76ba1bdfa5af",
+        "relative_path": "Source/OneBossFight/Combat/RPGMontageUtils.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Combat\\RPGMontageUtils.h",
+        "actual_sha256": "e345abec775ba6407cd9da2748ed5ae4cb9a7450ed229180d93e76ba1bdfa5af",
+        "actual_size": 1414,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "29719f093b14565193eb12ee65b1dc89c36b8e605e44e8726e6e3318cd0f32c1",
+        "relative_path": "Source/OneBossFight/Combat/RPGSkeletonUtils.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Combat\\RPGSkeletonUtils.cpp",
+        "actual_sha256": "29719f093b14565193eb12ee65b1dc89c36b8e605e44e8726e6e3318cd0f32c1",
+        "actual_size": 1750,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "93160d7e03aa220ed7e55d2ab8b1342dd5fc49ab03c91ed550b94be2684c0014",
+        "relative_path": "Source/OneBossFight/Combat/RPGSkeletonUtils.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Combat\\RPGSkeletonUtils.h",
+        "actual_sha256": "93160d7e03aa220ed7e55d2ab8b1342dd5fc49ab03c91ed550b94be2684c0014",
+        "actual_size": 1030,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "eb7fa95d18cee29ff9d3598081be448c2a7edd35d06f27bdccdd1396d8e1bd79",
+        "relative_path": "Source/OneBossFight/OneBossFight.Build.cs",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\OneBossFight.Build.cs",
+        "actual_sha256": "eb7fa95d18cee29ff9d3598081be448c2a7edd35d06f27bdccdd1396d8e1bd79",
+        "actual_size": 1481,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "a4bcb1f8f60966f2ac63e380e41dc14fef9da9f42e75f14573da9f5a8dea6ec9",
+        "relative_path": "Source/OneBossFight/OneBossFight.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\OneBossFight.cpp",
+        "actual_sha256": "a4bcb1f8f60966f2ac63e380e41dc14fef9da9f42e75f14573da9f5a8dea6ec9",
+        "actual_size": 237,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "90f64622e15095d1199b84b332124e8a50d29383579c0fc4a9c6db72e3afd37e",
+        "relative_path": "Source/OneBossFight/OneBossFight.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\OneBossFight.h",
+        "actual_sha256": "90f64622e15095d1199b84b332124e8a50d29383579c0fc4a9c6db72e3afd37e",
+        "actual_size": 147,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "f4e128448eb04e9117e3947190a9319fe6f61398ef2494800dcae70b524924ee",
+        "relative_path": "Source/OneBossFight/Pack/RPGBlueprintCall.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Pack\\RPGBlueprintCall.cpp",
+        "actual_sha256": "f4e128448eb04e9117e3947190a9319fe6f61398ef2494800dcae70b524924ee",
+        "actual_size": 125,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "08ca6403cb85eef36ed15c755a2163fb17f8bcfdb81043b640765d5145b8e19c",
+        "relative_path": "Source/OneBossFight/Pack/RPGBlueprintCall.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Pack\\RPGBlueprintCall.h",
+        "actual_sha256": "08ca6403cb85eef36ed15c755a2163fb17f8bcfdb81043b640765d5145b8e19c",
+        "actual_size": 10962,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "e8f6ca0b8047afa122c9d20899b97bc0d8552ca7917a67821dbe4e404d552d12",
+        "relative_path": "Source/OneBossFight/Pack/RPGHideBones.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Pack\\RPGHideBones.cpp",
+        "actual_sha256": "e8f6ca0b8047afa122c9d20899b97bc0d8552ca7917a67821dbe4e404d552d12",
+        "actual_size": 472,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "9aec16d64a80fb5911c876ae5730d1181cf99eda1aa286121258b075105ec353",
+        "relative_path": "Source/OneBossFight/Pack/RPGHideBones.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Pack\\RPGHideBones.h",
+        "actual_sha256": "9aec16d64a80fb5911c876ae5730d1181cf99eda1aa286121258b075105ec353",
+        "actual_size": 807,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "18515dcf7350221ec6e9ee8dc67d8a548fdd25674ce8086921e48adafad0635c",
+        "relative_path": "Source/OneBossFight/Pack/RPGPackNotifies.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Pack\\RPGPackNotifies.cpp",
+        "actual_sha256": "18515dcf7350221ec6e9ee8dc67d8a548fdd25674ce8086921e48adafad0635c",
+        "actual_size": 2642,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "ec4526b6fdc3983583f3146f4808f98bdd778e6d16c52c7a0da42179da7976e8",
+        "relative_path": "Source/OneBossFight/Pack/RPGPackNotifies.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Pack\\RPGPackNotifies.h",
+        "actual_sha256": "ec4526b6fdc3983583f3146f4808f98bdd778e6d16c52c7a0da42179da7976e8",
+        "actual_size": 2959,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "998798e26377c84ac30a1afc09cd17b09f8891d50d649e2b3004be4d6a996058",
+        "relative_path": "Source/OneBossFight/Pack/RPGPackReflect.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Pack\\RPGPackReflect.h",
+        "actual_sha256": "998798e26377c84ac30a1afc09cd17b09f8891d50d649e2b3004be4d6a996058",
+        "actual_size": 2857,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d97baf38148095906875d065c86cc5d398ebc6e1a7f610b71b76342e4f4ecb6a",
+        "relative_path": "Source/OneBossFight/Pack/RPGPackTrace.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Pack\\RPGPackTrace.cpp",
+        "actual_sha256": "d97baf38148095906875d065c86cc5d398ebc6e1a7f610b71b76342e4f4ecb6a",
+        "actual_size": 12642,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "79090dc3fd2f435bf0c1233dd62216f6ab67d3655f3c305f5d066b576778d463",
+        "relative_path": "Source/OneBossFight/Pack/RPGPackTrace.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Pack\\RPGPackTrace.h",
+        "actual_sha256": "79090dc3fd2f435bf0c1233dd62216f6ab67d3655f3c305f5d066b576778d463",
+        "actual_size": 3057,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "8f1b1adcf77d1f19010fe2124aeb3158f63ca313d01527867c7eed56838bb224",
+        "relative_path": "Source/OneBossFight/Player/RPGAttackKind.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGAttackKind.h",
+        "actual_sha256": "8f1b1adcf77d1f19010fe2124aeb3158f63ca313d01527867c7eed56838bb224",
+        "actual_size": 2024,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "f2d2615f1b938aa8bf1f4ad9d7574b1876446823d83b87cd69521ca9d1153f0c",
+        "relative_path": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGAttackTracker.cpp",
+        "actual_sha256": "f2d2615f1b938aa8bf1f4ad9d7574b1876446823d83b87cd69521ca9d1153f0c",
+        "actual_size": 21615,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "df74131faeb6a0c2d19dac19b66509a366353beb6437ec03f9490d52bcd8ca48",
+        "relative_path": "Source/OneBossFight/Player/RPGAttackTracker.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGAttackTracker.h",
+        "actual_sha256": "df74131faeb6a0c2d19dac19b66509a366353beb6437ec03f9490d52bcd8ca48",
+        "actual_size": 11520,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "e906dba709033cfecc1166db3ef1b1a0174a74626ede46961dd7c50288bcd79b",
+        "relative_path": "Source/OneBossFight/Player/RPGBleedRules.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBleedRules.h",
+        "actual_sha256": "e906dba709033cfecc1166db3ef1b1a0174a74626ede46961dd7c50288bcd79b",
+        "actual_size": 2981,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "62c50acede53b8c9e742d0695685230a2224fe31d00fa663206108beaad758e4",
+        "relative_path": "Source/OneBossFight/Player/RPGBossBleed.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossBleed.cpp",
+        "actual_sha256": "62c50acede53b8c9e742d0695685230a2224fe31d00fa663206108beaad758e4",
+        "actual_size": 4592,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "28c0e6e091cb82f40a35229e69760b6aab026e4f76308159095d9cdc5780fe32",
+        "relative_path": "Source/OneBossFight/Player/RPGBossBleed.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossBleed.h",
+        "actual_sha256": "28c0e6e091cb82f40a35229e69760b6aab026e4f76308159095d9cdc5780fe32",
+        "actual_size": 4416,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d372922674851c1d17e601c0ebb2cd92e8023a53ae08dff243135c354d89ca19",
+        "relative_path": "Source/OneBossFight/Player/RPGBossClips.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossClips.h",
+        "actual_sha256": "d372922674851c1d17e601c0ebb2cd92e8023a53ae08dff243135c354d89ca19",
+        "actual_size": 2500,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "712a512b23414df5f79570f767a178291bc5f877193af68e9dacbe47db5da902",
+        "relative_path": "Source/OneBossFight/Player/RPGBossCloseClipSwap.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossCloseClipSwap.cpp",
+        "actual_sha256": "712a512b23414df5f79570f767a178291bc5f877193af68e9dacbe47db5da902",
+        "actual_size": 8632,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "19b6e6203e6571352e32a388bab3c7e58d2cea0a29c80fe7effeae05330c67bb",
+        "relative_path": "Source/OneBossFight/Player/RPGBossCloseClipSwap.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossCloseClipSwap.h",
+        "actual_sha256": "19b6e6203e6571352e32a388bab3c7e58d2cea0a29c80fe7effeae05330c67bb",
+        "actual_size": 3194,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "fdce61811796cf9c1aa6ea24ba49e3badc314d06f6bb394116ca652b9653da08",
+        "relative_path": "Source/OneBossFight/Player/RPGBossCloseClipSwapRules.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossCloseClipSwapRules.h",
+        "actual_sha256": "fdce61811796cf9c1aa6ea24ba49e3badc314d06f6bb394116ca652b9653da08",
+        "actual_size": 842,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d7ff4e3397ac969250081e35e3d2bfdbfcaee4575a3e51457c2d130ea98c372b",
+        "relative_path": "Source/OneBossFight/Player/RPGBossDamage.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossDamage.h",
+        "actual_sha256": "d7ff4e3397ac969250081e35e3d2bfdbfcaee4575a3e51457c2d130ea98c372b",
+        "actual_size": 2686,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "a6f73587473d31c11136c7c1ebeac65f1f9b95b1503089d1c3816e553bdd60c4",
+        "relative_path": "Source/OneBossFight/Player/RPGBossDeath.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossDeath.cpp",
+        "actual_sha256": "a6f73587473d31c11136c7c1ebeac65f1f9b95b1503089d1c3816e553bdd60c4",
+        "actual_size": 18250,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "1fe249f97b707921c16ca5061b78acb5845e1b85745982076683df025fb4c64d",
+        "relative_path": "Source/OneBossFight/Player/RPGBossDeath.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossDeath.h",
+        "actual_sha256": "1fe249f97b707921c16ca5061b78acb5845e1b85745982076683df025fb4c64d",
+        "actual_size": 11784,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "fd3df15b1530a227750548b4e7241f16d2f3e946e3b04e49bc28ce4ae9524788",
+        "relative_path": "Source/OneBossFight/Player/RPGBossDormantWake.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossDormantWake.cpp",
+        "actual_sha256": "fd3df15b1530a227750548b4e7241f16d2f3e946e3b04e49bc28ce4ae9524788",
+        "actual_size": 5698,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "ff450db792f59af3bab6ff73464d1dfe360f27003b268c0f574b58124f05f83c",
+        "relative_path": "Source/OneBossFight/Player/RPGBossDormantWake.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossDormantWake.h",
+        "actual_sha256": "ff450db792f59af3bab6ff73464d1dfe360f27003b268c0f574b58124f05f83c",
+        "actual_size": 2957,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "80e6f9f4797c5bfea3f6fc4dc2c6ec074f998efec3cb495e554c8b5cd9a6ee55",
+        "relative_path": "Source/OneBossFight/Player/RPGBossDormantWakeAdapters.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossDormantWakeAdapters.cpp",
+        "actual_sha256": "80e6f9f4797c5bfea3f6fc4dc2c6ec074f998efec3cb495e554c8b5cd9a6ee55",
+        "actual_size": 5623,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d350a4c62c65300c32c4395f2869b78b8187f562a82581a51dccaedcdbcaccfa",
+        "relative_path": "Source/OneBossFight/Player/RPGBossDormantWakeAdapters.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossDormantWakeAdapters.h",
+        "actual_sha256": "d350a4c62c65300c32c4395f2869b78b8187f562a82581a51dccaedcdbcaccfa",
+        "actual_size": 4202,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "f474e94ab18b9125895933c53c2510d264c41af7ad117376a0c9c46e26c2061c",
+        "relative_path": "Source/OneBossFight/Player/RPGBossDormantWakeRules.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossDormantWakeRules.h",
+        "actual_sha256": "f474e94ab18b9125895933c53c2510d264c41af7ad117376a0c9c46e26c2061c",
+        "actual_size": 439,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "dc149393f2fff1788ea22daf42db0b14f85ac36f58ad59c459b44ee94600c96d",
+        "relative_path": "Source/OneBossFight/Player/RPGBossEncounter.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossEncounter.cpp",
+        "actual_sha256": "dc149393f2fff1788ea22daf42db0b14f85ac36f58ad59c459b44ee94600c96d",
+        "actual_size": 12526,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "4f3ab203562ef2d3a2d18828feaf5f437a5a7eaff1054e9b6ce60e9150cae9d6",
+        "relative_path": "Source/OneBossFight/Player/RPGBossEncounter.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossEncounter.h",
+        "actual_sha256": "4f3ab203562ef2d3a2d18828feaf5f437a5a7eaff1054e9b6ce60e9150cae9d6",
+        "actual_size": 5359,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "8e83c527e24a49c531b8a8317e5ac8f64f2d667274f872eec0bdc59a8bc57a1e",
+        "relative_path": "Source/OneBossFight/Player/RPGBossEncounterClusterAdapters.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossEncounterClusterAdapters.cpp",
+        "actual_sha256": "8e83c527e24a49c531b8a8317e5ac8f64f2d667274f872eec0bdc59a8bc57a1e",
+        "actual_size": 4125,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "2b0b9a2813d79707e150717d28990903771399ed8a6a654b6137927a1f92b7fd",
+        "relative_path": "Source/OneBossFight/Player/RPGBossEncounterClusterAdapters.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossEncounterClusterAdapters.h",
+        "actual_sha256": "2b0b9a2813d79707e150717d28990903771399ed8a6a654b6137927a1f92b7fd",
+        "actual_size": 3632,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "f4e6352f210fe84e163bd1ef83fafd89b1a4f33e92ad840919e614779934ec38",
+        "relative_path": "Source/OneBossFight/Player/RPGBossEncounterPolicyAdapters.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossEncounterPolicyAdapters.cpp",
+        "actual_sha256": "f4e6352f210fe84e163bd1ef83fafd89b1a4f33e92ad840919e614779934ec38",
+        "actual_size": 4064,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "fa562e4f6b546b5015a8713e3d649de32a7d64f988f9a550b596e2d7dfc31bba",
+        "relative_path": "Source/OneBossFight/Player/RPGBossEncounterPolicyAdapters.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossEncounterPolicyAdapters.h",
+        "actual_sha256": "fa562e4f6b546b5015a8713e3d649de32a7d64f988f9a550b596e2d7dfc31bba",
+        "actual_size": 3844,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "1e63046d9c215fd0d7a5f894ee1b4539d64ddbefd9c80812cecbbae89c476906",
+        "relative_path": "Source/OneBossFight/Player/RPGBossHealPunish.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossHealPunish.cpp",
+        "actual_sha256": "1e63046d9c215fd0d7a5f894ee1b4539d64ddbefd9c80812cecbbae89c476906",
+        "actual_size": 9849,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "fea3f2755835a25f4bc047fe2aad77c9965d009c51fc47ef319c2d70ee8d4a64",
+        "relative_path": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossHealPunish.h",
+        "actual_sha256": "fea3f2755835a25f4bc047fe2aad77c9965d009c51fc47ef319c2d70ee8d4a64",
+        "actual_size": 8834,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "b1742b5c94107b1a93927f8e62d0e2967596bdae60ecce36cac62294fe4de6c5",
+        "relative_path": "Source/OneBossFight/Player/RPGBossHydrationPreflight.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossHydrationPreflight.cpp",
+        "actual_sha256": "b1742b5c94107b1a93927f8e62d0e2967596bdae60ecce36cac62294fe4de6c5",
+        "actual_size": 19074,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "ba91b5a79e685bd2afaa85f97796f8d6565851f5a60129e60779de332d562185",
+        "relative_path": "Source/OneBossFight/Player/RPGBossHydrationPreflight.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossHydrationPreflight.h",
+        "actual_sha256": "ba91b5a79e685bd2afaa85f97796f8d6565851f5a60129e60779de332d562185",
+        "actual_size": 9481,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "7a4b7d819d84c5f431df879d7b6ed341f9ad17e4ad2812d085660bca33535a83",
+        "relative_path": "Source/OneBossFight/Player/RPGBossHydrationPreparation.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossHydrationPreparation.cpp",
+        "actual_sha256": "7a4b7d819d84c5f431df879d7b6ed341f9ad17e4ad2812d085660bca33535a83",
+        "actual_size": 17245,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "9eb65528dba9d0f2100f6b7c3a07b3295eddc8dfbae030ed41a5f0a2840d72f0",
+        "relative_path": "Source/OneBossFight/Player/RPGBossHydrationPreparation.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossHydrationPreparation.h",
+        "actual_sha256": "9eb65528dba9d0f2100f6b7c3a07b3295eddc8dfbae030ed41a5f0a2840d72f0",
+        "actual_size": 10041,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "7e66890161c430eaa1e796c40c18224a6f7e5bcb5a7be0882d67cef5bc358999",
+        "relative_path": "Source/OneBossFight/Player/RPGBossInterrupt.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossInterrupt.cpp",
+        "actual_sha256": "7e66890161c430eaa1e796c40c18224a6f7e5bcb5a7be0882d67cef5bc358999",
+        "actual_size": 2407,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "da805be8fc4703a1517595cf14d3ca21b8b17241af1e1f92f982978afab1a02a",
+        "relative_path": "Source/OneBossFight/Player/RPGBossInterrupt.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossInterrupt.h",
+        "actual_sha256": "da805be8fc4703a1517595cf14d3ca21b8b17241af1e1f92f982978afab1a02a",
+        "actual_size": 739,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "6438e6bb76122fae5193bff9a1d55c88211dfb1edf90c4704236c1500a744bdb",
+        "relative_path": "Source/OneBossFight/Player/RPGBossJavelin.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossJavelin.cpp",
+        "actual_sha256": "6438e6bb76122fae5193bff9a1d55c88211dfb1edf90c4704236c1500a744bdb",
+        "actual_size": 7196,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "28674b1c5e9b06dff9b5a595a9b6c9c571aee02870fc6d32c9e75b1c0033fbd5",
+        "relative_path": "Source/OneBossFight/Player/RPGBossJavelin.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossJavelin.h",
+        "actual_sha256": "28674b1c5e9b06dff9b5a595a9b6c9c571aee02870fc6d32c9e75b1c0033fbd5",
+        "actual_size": 2661,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "eb02ea8b1abe7ebc00039f3b5d265826064c6fe02d45e429ff02dc266ea6aa21",
+        "relative_path": "Source/OneBossFight/Player/RPGBossLook.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossLook.cpp",
+        "actual_sha256": "eb02ea8b1abe7ebc00039f3b5d265826064c6fe02d45e429ff02dc266ea6aa21",
+        "actual_size": 7561,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "a9176a475a77c24f6c521e4ad251e9b050955ad05d0925483c6468831c7d6a97",
+        "relative_path": "Source/OneBossFight/Player/RPGBossLook.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossLook.h",
+        "actual_sha256": "a9176a475a77c24f6c521e4ad251e9b050955ad05d0925483c6468831c7d6a97",
+        "actual_size": 4041,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "bea63c889b32af847d69a65f0b144fe4219eca7c55e15877a6695681976c0e81",
+        "relative_path": "Source/OneBossFight/Player/RPGBossLowSweep.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossLowSweep.cpp",
+        "actual_sha256": "bea63c889b32af847d69a65f0b144fe4219eca7c55e15877a6695681976c0e81",
+        "actual_size": 7923,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "48630dcb71e7569567452e514f74196a881dd09ec5524a695345d6d69e6289ba",
+        "relative_path": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossLowSweep.h",
+        "actual_sha256": "48630dcb71e7569567452e514f74196a881dd09ec5524a695345d6d69e6289ba",
+        "actual_size": 5483,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "89ff1aa3c367da2fe84de1583da889dd623bddd11787c416d43792f15cc2ebf0",
+        "relative_path": "Source/OneBossFight/Player/RPGBossMath.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossMath.h",
+        "actual_sha256": "89ff1aa3c367da2fe84de1583da889dd623bddd11787c416d43792f15cc2ebf0",
+        "actual_size": 4032,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "8140cd203feff0c3c72a3b0c3672c9d19761d9b3b88e617dd6949f75978edacf",
+        "relative_path": "Source/OneBossFight/Player/RPGBossPhaseAdapters.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossPhaseAdapters.cpp",
+        "actual_sha256": "8140cd203feff0c3c72a3b0c3672c9d19761d9b3b88e617dd6949f75978edacf",
+        "actual_size": 9237,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "fab105d67f8d99c891e30b72a04a3404b2488c1d766efd148510037eff0cf4a6",
+        "relative_path": "Source/OneBossFight/Player/RPGBossPhaseAdapters.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossPhaseAdapters.h",
+        "actual_sha256": "fab105d67f8d99c891e30b72a04a3404b2488c1d766efd148510037eff0cf4a6",
+        "actual_size": 5173,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "166b05c969cbc78072cc689ac3cd611ecb29a0add42c215ea22a4579e1b445b4",
+        "relative_path": "Source/OneBossFight/Player/RPGBossPhaseFlowAdapters.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossPhaseFlowAdapters.cpp",
+        "actual_sha256": "166b05c969cbc78072cc689ac3cd611ecb29a0add42c215ea22a4579e1b445b4",
+        "actual_size": 5148,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "82c3eb4da7ade214a0e2daae078d8cc95a0fcd9809e17a30207f076cbf16d2f5",
+        "relative_path": "Source/OneBossFight/Player/RPGBossPhaseFlowAdapters.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossPhaseFlowAdapters.h",
+        "actual_sha256": "82c3eb4da7ade214a0e2daae078d8cc95a0fcd9809e17a30207f076cbf16d2f5",
+        "actual_size": 4941,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "c43615412e1f345d6ed75cc6d6a6b0d9ece6acaaac612e545b42cc24087f7a06",
+        "relative_path": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossPhases.cpp",
+        "actual_sha256": "c43615412e1f345d6ed75cc6d6a6b0d9ece6acaaac612e545b42cc24087f7a06",
+        "actual_size": 21965,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+        "relative_path": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossPhases.h",
+        "actual_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+        "actual_size": 8607,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "bc418dc3f01e0fd5db749629fbec52bf2421d254c86ee0b8d6e819f478b2c609",
+        "relative_path": "Source/OneBossFight/Player/RPGBossPhasesClusterAdapters.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossPhasesClusterAdapters.cpp",
+        "actual_sha256": "bc418dc3f01e0fd5db749629fbec52bf2421d254c86ee0b8d6e819f478b2c609",
+        "actual_size": 12639,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "6e8bbd7c070cfdd98de9f74174b2e527b16dc80cd981720e2d178fdb949396de",
+        "relative_path": "Source/OneBossFight/Player/RPGBossPhasesClusterAdapters.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossPhasesClusterAdapters.h",
+        "actual_sha256": "6e8bbd7c070cfdd98de9f74174b2e527b16dc80cd981720e2d178fdb949396de",
+        "actual_size": 7332,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "b26e184b0410e858d1c504e0b374dbc9e8f4c6b6399b05617559bb6909e88e41",
+        "relative_path": "Source/OneBossFight/Player/RPGBossPosture.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossPosture.cpp",
+        "actual_sha256": "b26e184b0410e858d1c504e0b374dbc9e8f4c6b6399b05617559bb6909e88e41",
+        "actual_size": 7435,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "bca70f5816a45733f0ea2d5550651da7192ba179a5e31d736eab90fd46cd3ff8",
+        "relative_path": "Source/OneBossFight/Player/RPGBossPosture.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossPosture.h",
+        "actual_sha256": "bca70f5816a45733f0ea2d5550651da7192ba179a5e31d736eab90fd46cd3ff8",
+        "actual_size": 7551,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "253a47f47f3812d1c4754dea9c36620e59923347e3d359b807682c9fbe26792c",
+        "relative_path": "Source/OneBossFight/Player/RPGBossPreparationRegistry.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossPreparationRegistry.cpp",
+        "actual_sha256": "253a47f47f3812d1c4754dea9c36620e59923347e3d359b807682c9fbe26792c",
+        "actual_size": 21276,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d9d813c7711e5ccdeba1e8a063c1adc44d76ae4ad6986f5d4d826ffa62f4ddd2",
+        "relative_path": "Source/OneBossFight/Player/RPGBossPreparationRegistry.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossPreparationRegistry.h",
+        "actual_sha256": "d9d813c7711e5ccdeba1e8a063c1adc44d76ae4ad6986f5d4d826ffa62f4ddd2",
+        "actual_size": 9965,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "a40c0fd07d859c486dceb146ac9e64746480c744660846272ae80211d7b4d890",
+        "relative_path": "Source/OneBossFight/Player/RPGBossRemains.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossRemains.cpp",
+        "actual_sha256": "a40c0fd07d859c486dceb146ac9e64746480c744660846272ae80211d7b4d890",
+        "actual_size": 4537,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "2fea38b875b8c662a385881eb2eabc5137b42c260a056ec71ddf36ee1c179786",
+        "relative_path": "Source/OneBossFight/Player/RPGBossRemains.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossRemains.h",
+        "actual_sha256": "2fea38b875b8c662a385881eb2eabc5137b42c260a056ec71ddf36ee1c179786",
+        "actual_size": 2195,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "e16744219deffffab4de69ddd62e5333c1b59ac43cc670c9e777aee3fd397395",
+        "relative_path": "Source/OneBossFight/Player/RPGBossRules.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossRules.h",
+        "actual_sha256": "e16744219deffffab4de69ddd62e5333c1b59ac43cc670c9e777aee3fd397395",
+        "actual_size": 3692,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "9632381f60e92d3f2d7cc7362883cbc03c3b258191abbbb4755a4bc9591cf3a4",
+        "relative_path": "Source/OneBossFight/Player/RPGBossShockwave.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossShockwave.cpp",
+        "actual_sha256": "9632381f60e92d3f2d7cc7362883cbc03c3b258191abbbb4755a4bc9591cf3a4",
+        "actual_size": 5913,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "4d1973ffe41672e8db4d52029d584f98c9b6df2f8a61cff63b2e3eee39c4d7cd",
+        "relative_path": "Source/OneBossFight/Player/RPGBossShockwave.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossShockwave.h",
+        "actual_sha256": "4d1973ffe41672e8db4d52029d584f98c9b6df2f8a61cff63b2e3eee39c4d7cd",
+        "actual_size": 4978,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "c711d766b4fecb6999c638cf5d8720ca422ba758223f941ea437ebac5b474c98",
+        "relative_path": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossStagger.cpp",
+        "actual_sha256": "c711d766b4fecb6999c638cf5d8720ca422ba758223f941ea437ebac5b474c98",
+        "actual_size": 36358,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+        "relative_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossStagger.h",
+        "actual_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+        "actual_size": 17803,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "b913f6fec7b7a47f7309293ff7e5f1ce5322f40c92c886beb46ccd02036bd2ed",
+        "relative_path": "Source/OneBossFight/Player/RPGBossStaggerClusterAdapters.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossStaggerClusterAdapters.cpp",
+        "actual_sha256": "b913f6fec7b7a47f7309293ff7e5f1ce5322f40c92c886beb46ccd02036bd2ed",
+        "actual_size": 10407,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "a90ff21358fe7ca463a8d33700cef19d841e2969e5170efea2df85833feb38c1",
+        "relative_path": "Source/OneBossFight/Player/RPGBossStaggerClusterAdapters.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossStaggerClusterAdapters.h",
+        "actual_sha256": "a90ff21358fe7ca463a8d33700cef19d841e2969e5170efea2df85833feb38c1",
+        "actual_size": 5927,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "42bb676bdd6df8945e67199f0784b109aaf059bfd4901b1f04c42d32ca70f968",
+        "relative_path": "Source/OneBossFight/Player/RPGBossStaggerPolicyAdapters.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossStaggerPolicyAdapters.cpp",
+        "actual_sha256": "42bb676bdd6df8945e67199f0784b109aaf059bfd4901b1f04c42d32ca70f968",
+        "actual_size": 7965,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "63a38442ade1080ae825746e274e30c647cad4dded061f68ba737c0dc1db86b6",
+        "relative_path": "Source/OneBossFight/Player/RPGBossStaggerPolicyAdapters.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossStaggerPolicyAdapters.h",
+        "actual_sha256": "63a38442ade1080ae825746e274e30c647cad4dded061f68ba737c0dc1db86b6",
+        "actual_size": 6254,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "b14a57efabad911f39fdea17df4bc8513850f269bee26a68b5150dead28441ee",
+        "relative_path": "Source/OneBossFight/Player/RPGBossStatsAdapters.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossStatsAdapters.cpp",
+        "actual_sha256": "b14a57efabad911f39fdea17df4bc8513850f269bee26a68b5150dead28441ee",
+        "actual_size": 6364,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "cd1f6a0ce2c2a8806496b3c641d7d81b41db2a04df3ec0b7369780275d034a43",
+        "relative_path": "Source/OneBossFight/Player/RPGBossStatsAdapters.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossStatsAdapters.h",
+        "actual_sha256": "cd1f6a0ce2c2a8806496b3c641d7d81b41db2a04df3ec0b7369780275d034a43",
+        "actual_size": 4793,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "1a99ba054dc606c6514973e6423723bd3a3701ce40ea8c87f2c432d30e457f58",
+        "relative_path": "Source/OneBossFight/Player/RPGBossWorldInputCompiler.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossWorldInputCompiler.cpp",
+        "actual_sha256": "1a99ba054dc606c6514973e6423723bd3a3701ce40ea8c87f2c432d30e457f58",
+        "actual_size": 23947,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "343d74db59c3f8fa6f28a16fbeb7bf58fab4193580c25fea4960b77d67141c0e",
+        "relative_path": "Source/OneBossFight/Player/RPGBossWorldInputCompiler.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossWorldInputCompiler.h",
+        "actual_sha256": "343d74db59c3f8fa6f28a16fbeb7bf58fab4193580c25fea4960b77d67141c0e",
+        "actual_size": 6115,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "ce6a1b31dfb2e80f9439766d25f9ac77a5b6a2b8c05721264c30dcba3e0e417c",
+        "relative_path": "Source/OneBossFight/Player/RPGBossWorldPreparation.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossWorldPreparation.cpp",
+        "actual_sha256": "ce6a1b31dfb2e80f9439766d25f9ac77a5b6a2b8c05721264c30dcba3e0e417c",
+        "actual_size": 8497,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "8a71cdf98fe3063c9ac48e17cc02a295f06bf4ef719cc99d0875814c48898933",
+        "relative_path": "Source/OneBossFight/Player/RPGBossWorldPreparation.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBossWorldPreparation.h",
+        "actual_sha256": "8a71cdf98fe3063c9ac48e17cc02a295f06bf4ef719cc99d0875814c48898933",
+        "actual_size": 4337,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "7d1f5e70fe19dd8eeb05844e5514c1c3f1dd4c6c97d29819a415820d696e93e2",
+        "relative_path": "Source/OneBossFight/Player/RPGBuildLoadout.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBuildLoadout.cpp",
+        "actual_sha256": "7d1f5e70fe19dd8eeb05844e5514c1c3f1dd4c6c97d29819a415820d696e93e2",
+        "actual_size": 37628,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "095c385d2403c1b22d7ca00eafe99e9b4202902d826a47ca5422a91fe10c64af",
+        "relative_path": "Source/OneBossFight/Player/RPGBuildLoadout.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBuildLoadout.h",
+        "actual_sha256": "095c385d2403c1b22d7ca00eafe99e9b4202902d826a47ca5422a91fe10c64af",
+        "actual_size": 13126,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "cd6b2a8006a33b90fdc19e8a55d3112b0f60692aac0dbe8988a1b87e7ed84fc6",
+        "relative_path": "Source/OneBossFight/Player/RPGBuildRules.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGBuildRules.h",
+        "actual_sha256": "cd6b2a8006a33b90fdc19e8a55d3112b0f60692aac0dbe8988a1b87e7ed84fc6",
+        "actual_size": 13229,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "ce4df206c0a0aa2fc07d20267372627cbe5f59ac1954915c41c89708a1c6adca",
+        "relative_path": "Source/OneBossFight/Player/RPGCameraRig.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGCameraRig.cpp",
+        "actual_sha256": "ce4df206c0a0aa2fc07d20267372627cbe5f59ac1954915c41c89708a1c6adca",
+        "actual_size": 6065,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "9a2270b788ef4f4a824e6fa460384e8af367be1799667f094f6b5a3742577842",
+        "relative_path": "Source/OneBossFight/Player/RPGCameraRig.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGCameraRig.h",
+        "actual_sha256": "9a2270b788ef4f4a824e6fa460384e8af367be1799667f094f6b5a3742577842",
+        "actual_size": 3992,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "03d70dea1d51c0ddfb3c8319362a81ade9d3084fb82dc84654af1b4032d7700e",
+        "relative_path": "Source/OneBossFight/Player/RPGCameraShakes.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGCameraShakes.cpp",
+        "actual_sha256": "03d70dea1d51c0ddfb3c8319362a81ade9d3084fb82dc84654af1b4032d7700e",
+        "actual_size": 2548,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d59689942d20dd14bcb074f2df92caaaa89ed091c6a9aa8c55ce9b643541a831",
+        "relative_path": "Source/OneBossFight/Player/RPGCameraShakes.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGCameraShakes.h",
+        "actual_sha256": "d59689942d20dd14bcb074f2df92caaaa89ed091c6a9aa8c55ce9b643541a831",
+        "actual_size": 3608,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "f6f71036804f60f0e4c8b3cf455f2a04a7bc4cf379760334903a2d9d613de59d",
+        "relative_path": "Source/OneBossFight/Player/RPGCombatCatalog.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGCombatCatalog.cpp",
+        "actual_sha256": "f6f71036804f60f0e4c8b3cf455f2a04a7bc4cf379760334903a2d9d613de59d",
+        "actual_size": 23675,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "e7d5296833cfa5bec4101e608a98ab336a5b8c7a5c476e0d3b17eae57279dbb5",
+        "relative_path": "Source/OneBossFight/Player/RPGCombatCatalog.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGCombatCatalog.h",
+        "actual_sha256": "e7d5296833cfa5bec4101e608a98ab336a5b8c7a5c476e0d3b17eae57279dbb5",
+        "actual_size": 7427,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "e07221bdb8d2d3495c32b58ca7d47a1727bee0dfc2d8e514760b3792cfe8a72e",
+        "relative_path": "Source/OneBossFight/Player/RPGCombatCatalogABI.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGCombatCatalogABI.cpp",
+        "actual_sha256": "e07221bdb8d2d3495c32b58ca7d47a1727bee0dfc2d8e514760b3792cfe8a72e",
+        "actual_size": 6162,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "2db8ded455d160311bbe3a6c3262bc25bf7d00b05bec89b82cf6b130722d1792",
+        "relative_path": "Source/OneBossFight/Player/RPGCombatCatalogABI.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGCombatCatalogABI.h",
+        "actual_sha256": "2db8ded455d160311bbe3a6c3262bc25bf7d00b05bec89b82cf6b130722d1792",
+        "actual_size": 842,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "dfe4a7ed43581a955776bac3c3ef2f57c301c14cb3812c03d1fbacef71521fa0",
+        "relative_path": "Source/OneBossFight/Player/RPGCombatDebug.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGCombatDebug.cpp",
+        "actual_sha256": "dfe4a7ed43581a955776bac3c3ef2f57c301c14cb3812c03d1fbacef71521fa0",
+        "actual_size": 23626,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "4956e5c050fe5582131f5eb36ea149713ad4c16878ec26d0fd72cded972774fd",
+        "relative_path": "Source/OneBossFight/Player/RPGCombatDebug.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGCombatDebug.h",
+        "actual_sha256": "4956e5c050fe5582131f5eb36ea149713ad4c16878ec26d0fd72cded972774fd",
+        "actual_size": 6210,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "82da0dd3400a049d92bd96409f90db58a319fd7db73e44f7b46b766e938a6bca",
+        "relative_path": "Source/OneBossFight/Player/RPGDamageResolver.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGDamageResolver.cpp",
+        "actual_sha256": "82da0dd3400a049d92bd96409f90db58a319fd7db73e44f7b46b766e938a6bca",
+        "actual_size": 8234,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "a5dd7de41aec0224bc6de96c55d64897db5529a2f5da90caf515060c83eebd30",
+        "relative_path": "Source/OneBossFight/Player/RPGDamageResolver.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGDamageResolver.h",
+        "actual_sha256": "a5dd7de41aec0224bc6de96c55d64897db5529a2f5da90caf515060c83eebd30",
+        "actual_size": 8874,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d8c8f882225d5a4ecfdddf9ff7d010f12e09314932daf2cad4c3c72e86fb36e6",
+        "relative_path": "Source/OneBossFight/Player/RPGDamageScale.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGDamageScale.h",
+        "actual_sha256": "d8c8f882225d5a4ecfdddf9ff7d010f12e09314932daf2cad4c3c72e86fb36e6",
+        "actual_size": 2947,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "e6a95113d14aeba1e58d8573f97d8409bcaeaa3c19d52e43526ed307165be737",
+        "relative_path": "Source/OneBossFight/Player/RPGDodgeTiming.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGDodgeTiming.cpp",
+        "actual_sha256": "e6a95113d14aeba1e58d8573f97d8409bcaeaa3c19d52e43526ed307165be737",
+        "actual_size": 11280,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "294f0827854a31db2c66d6af3f9d0ecdba6f4e241f08565e1e65916f6443207c",
+        "relative_path": "Source/OneBossFight/Player/RPGDodgeTiming.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGDodgeTiming.h",
+        "actual_sha256": "294f0827854a31db2c66d6af3f9d0ecdba6f4e241f08565e1e65916f6443207c",
+        "actual_size": 7607,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "c7255051e5f6be46db5b5caa0351cf45e50c3c07c4c0a8085fd3d71b633df828",
+        "relative_path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGEncounterBinding.cpp",
+        "actual_sha256": "c7255051e5f6be46db5b5caa0351cf45e50c3c07c4c0a8085fd3d71b633df828",
+        "actual_size": 17034,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "ce0a7da73e833a22aef8ad69e3ed42984b39b04131997d78f055f4a4070d9c92",
+        "relative_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGEncounterBinding.h",
+        "actual_sha256": "ce0a7da73e833a22aef8ad69e3ed42984b39b04131997d78f055f4a4070d9c92",
+        "actual_size": 17193,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "41b2af693462bf5d61517e9ba1ef9d6c28dd93baff714527c48ee59ba62744e3",
+        "relative_path": "Source/OneBossFight/Player/RPGFlipbookEffect.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGFlipbookEffect.cpp",
+        "actual_sha256": "41b2af693462bf5d61517e9ba1ef9d6c28dd93baff714527c48ee59ba62744e3",
+        "actual_size": 4761,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "e96aeaf6b0cafc1378737c50412edd8715912c8d07357c5bccddfba4050052dc",
+        "relative_path": "Source/OneBossFight/Player/RPGFlipbookEffect.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGFlipbookEffect.h",
+        "actual_sha256": "e96aeaf6b0cafc1378737c50412edd8715912c8d07357c5bccddfba4050052dc",
+        "actual_size": 2218,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "f2d0bd281924c4d29509214c1344234e1a8b2f476a77e51e00a045e73ae4a3db",
+        "relative_path": "Source/OneBossFight/Player/RPGHitIntake.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGHitIntake.cpp",
+        "actual_sha256": "f2d0bd281924c4d29509214c1344234e1a8b2f476a77e51e00a045e73ae4a3db",
+        "actual_size": 20867,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "9cc7604a0cda61f3c8e5e94c84526019eccb28ea0e04852307d027206340121c",
+        "relative_path": "Source/OneBossFight/Player/RPGHitIntake.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGHitIntake.h",
+        "actual_sha256": "9cc7604a0cda61f3c8e5e94c84526019eccb28ea0e04852307d027206340121c",
+        "actual_size": 9431,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "46c694c8841dbcfca3f85239e6a356d418a3ff08e3966edee431c7b669ce6c11",
+        "relative_path": "Source/OneBossFight/Player/RPGIFrameMonitor.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGIFrameMonitor.cpp",
+        "actual_sha256": "46c694c8841dbcfca3f85239e6a356d418a3ff08e3966edee431c7b669ce6c11",
+        "actual_size": 10087,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "eeb7d15832488722971db5f8e2a6990b981c1fe5ea731d96fb4fc221af0c1c63",
+        "relative_path": "Source/OneBossFight/Player/RPGIFrameMonitor.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGIFrameMonitor.h",
+        "actual_sha256": "eeb7d15832488722971db5f8e2a6990b981c1fe5ea731d96fb4fc221af0c1c63",
+        "actual_size": 6417,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "a22c13b78bb13c5fe7aa9f1d59e34d494c96725bdbc39384c1755c8154c79df3",
+        "relative_path": "Source/OneBossFight/Player/RPGLegend.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGLegend.cpp",
+        "actual_sha256": "a22c13b78bb13c5fe7aa9f1d59e34d494c96725bdbc39384c1755c8154c79df3",
+        "actual_size": 17280,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "67ec500a9b5efaa1b006cf12c9e99c70f20a60465b48eced770f446ddddcbca0",
+        "relative_path": "Source/OneBossFight/Player/RPGLegend.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGLegend.h",
+        "actual_sha256": "67ec500a9b5efaa1b006cf12c9e99c70f20a60465b48eced770f446ddddcbca0",
+        "actual_size": 10792,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "17bc29c9d9e033de98cf9956c8d0d8e8bd2f7516a80295d96b4c2ff7ef822834",
+        "relative_path": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGPlayerMovesSubsystem.cpp",
+        "actual_sha256": "17bc29c9d9e033de98cf9956c8d0d8e8bd2f7516a80295d96b4c2ff7ef822834",
+        "actual_size": 12416,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "8bc1a655f4e529b2dc4d1e96c098dc2c6c0ec5902529767298f31ac965c97d06",
+        "relative_path": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGPlayerMovesSubsystem.h",
+        "actual_sha256": "8bc1a655f4e529b2dc4d1e96c098dc2c6c0ec5902529767298f31ac965c97d06",
+        "actual_size": 1403,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "8443ebb9380a25c349f40e7e635d0eb8cade3656cbee1e3fc83dc2f3d50ab277",
+        "relative_path": "Source/OneBossFight/Player/RPGRiposteInput.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGRiposteInput.cpp",
+        "actual_sha256": "8443ebb9380a25c349f40e7e635d0eb8cade3656cbee1e3fc83dc2f3d50ab277",
+        "actual_size": 2017,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "878e60bcd7f4cc8bb8d2c29279ff3c34a167a5d9b4dcc339458d304a3e0557dc",
+        "relative_path": "Source/OneBossFight/Player/RPGRiposteInput.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGRiposteInput.h",
+        "actual_sha256": "878e60bcd7f4cc8bb8d2c29279ff3c34a167a5d9b4dcc339458d304a3e0557dc",
+        "actual_size": 1715,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "cafda8dc235079bdda9ee9f9123575f81b7f7b03151a3d9bb59a9277541ec0c2",
+        "relative_path": "Source/OneBossFight/Player/RPGSwingRules.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGSwingRules.h",
+        "actual_sha256": "cafda8dc235079bdda9ee9f9123575f81b7f7b03151a3d9bb59a9277541ec0c2",
+        "actual_size": 2286,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "ae1f6e0727cfd3c6ad7c9890ececd8880938247e504de179ace799e960088e51",
+        "relative_path": "Source/OneBossFight/Player/RPGSwingTracker.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGSwingTracker.cpp",
+        "actual_sha256": "ae1f6e0727cfd3c6ad7c9890ececd8880938247e504de179ace799e960088e51",
+        "actual_size": 12848,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "98efb272ddcdc6c7cc76840ead6e70e1030132071e9dd931e86c5118d5f0ae79",
+        "relative_path": "Source/OneBossFight/Player/RPGSwingTracker.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGSwingTracker.h",
+        "actual_sha256": "98efb272ddcdc6c7cc76840ead6e70e1030132071e9dd931e86c5118d5f0ae79",
+        "actual_size": 9165,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "5dc929d28335c209848a574bdf42712a876ce685a36e1f61d12fb2b08f6af13d",
+        "relative_path": "Source/OneBossFight/Player/RPGTelegraphRules.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGTelegraphRules.h",
+        "actual_sha256": "5dc929d28335c209848a574bdf42712a876ce685a36e1f61d12fb2b08f6af13d",
+        "actual_size": 1207,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "845daf8d291e5c8872e29bec0e4afdbaf9392402213a696e8bbe1830393d2402",
+        "relative_path": "Source/OneBossFight/Player/RPGTraceAudit.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGTraceAudit.cpp",
+        "actual_sha256": "845daf8d291e5c8872e29bec0e4afdbaf9392402213a696e8bbe1830393d2402",
+        "actual_size": 15789,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "56eb500fd80935b866e9463a3d9be1b411972db443841ba43aa3c6e352f136d3",
+        "relative_path": "Source/OneBossFight/Player/RPGTraceAudit.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGTraceAudit.h",
+        "actual_sha256": "56eb500fd80935b866e9463a3d9be1b411972db443841ba43aa3c6e352f136d3",
+        "actual_size": 5366,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "24db190a15fafda4f4dd266506b199f2cc609d17cbd7c3fc3b638ca915bea472",
+        "relative_path": "Source/OneBossFight/Player/RPGTraceGuard.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGTraceGuard.cpp",
+        "actual_sha256": "24db190a15fafda4f4dd266506b199f2cc609d17cbd7c3fc3b638ca915bea472",
+        "actual_size": 5258,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "564453d7022532319716ac7e913bf54f3e1f44220678a87af0efa9b78dc9ef96",
+        "relative_path": "Source/OneBossFight/Player/RPGTraceGuard.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGTraceGuard.h",
+        "actual_sha256": "564453d7022532319716ac7e913bf54f3e1f44220678a87af0efa9b78dc9ef96",
+        "actual_size": 5053,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "f6cdd38ff4957b2831b16c74814bfd28e3499ae2ece50ad06c07be3b88d93ce7",
+        "relative_path": "Source/OneBossFight/Player/RPGWeaponAttackTable.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGWeaponAttackTable.cpp",
+        "actual_sha256": "f6cdd38ff4957b2831b16c74814bfd28e3499ae2ece50ad06c07be3b88d93ce7",
+        "actual_size": 5503,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "3140b087c97f888ce5e1aa262fcbeeb7a16f57e646aa86dfedacf162b8eddfa1",
+        "relative_path": "Source/OneBossFight/Player/RPGWeaponAttackTable.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Player\\RPGWeaponAttackTable.h",
+        "actual_sha256": "3140b087c97f888ce5e1aa262fcbeeb7a16f57e646aa86dfedacf162b8eddfa1",
+        "actual_size": 4079,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "c2e5119aa5ef2ff35aa468f89f1162d356fad937225d5c068e0ed49f77ccc48d",
+        "relative_path": "Source/OneBossFight/Scratch/RPGScratchRouteA.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Scratch\\RPGScratchRouteA.cpp",
+        "actual_sha256": "c2e5119aa5ef2ff35aa468f89f1162d356fad937225d5c068e0ed49f77ccc48d",
+        "actual_size": 13322,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "c0352fb9ce8f10a43ded444bcc33febfd2010e7d1448bafd4dd72fa3c6fdf348",
+        "relative_path": "Source/OneBossFight/Scratch/RPGScratchRouteA.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Scratch\\RPGScratchRouteA.h",
+        "actual_sha256": "c0352fb9ce8f10a43ded444bcc33febfd2010e7d1448bafd4dd72fa3c6fdf348",
+        "actual_size": 4303,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "22299a447cb207b618825981c001cced3b24d661399cf40ecc8bdc85141101f8",
+        "relative_path": "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGAutomationTests.cpp",
+        "actual_sha256": "22299a447cb207b618825981c001cced3b24d661399cf40ecc8bdc85141101f8",
+        "actual_size": 79242,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "7131ff6041ee27ef63cdcdb1bd0c846bb69a6f6dc2bb79e23547f3ee184f01ce",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossCloseClipSwapTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossCloseClipSwapTests.cpp",
+        "actual_sha256": "7131ff6041ee27ef63cdcdb1bd0c846bb69a6f6dc2bb79e23547f3ee184f01ce",
+        "actual_size": 1524,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "df8463259f9d8da3d7f393777fa2a0766d021fe662729c3af0a6e5b67cf5e0ed",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossDormantWakeAdaptersTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossDormantWakeAdaptersTests.cpp",
+        "actual_sha256": "df8463259f9d8da3d7f393777fa2a0766d021fe662729c3af0a6e5b67cf5e0ed",
+        "actual_size": 53047,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "627aed899ea546a16ebc0d47b61f7f3728150d3c4f9748bc410564d62a723bc5",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossDormantWakeTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossDormantWakeTests.cpp",
+        "actual_sha256": "627aed899ea546a16ebc0d47b61f7f3728150d3c4f9748bc410564d62a723bc5",
+        "actual_size": 848,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "c2d3a3fbdbba6375f654967c1ead19f689c8918cb99907ffb54a00410b20feb1",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossEncounterClusterAdaptersTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossEncounterClusterAdaptersTests.cpp",
+        "actual_sha256": "c2d3a3fbdbba6375f654967c1ead19f689c8918cb99907ffb54a00410b20feb1",
+        "actual_size": 35435,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "6b4dbe68ba150e2c6ebedefa45c1915920f57d28f124a7f1d00a6354973477dd",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossEncounterPolicyAdaptersTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossEncounterPolicyAdaptersTests.cpp",
+        "actual_sha256": "6b4dbe68ba150e2c6ebedefa45c1915920f57d28f124a7f1d00a6354973477dd",
+        "actual_size": 34705,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "37dac0a5bf66d538c5051972008d7b7d63a9427e95fcca7297ca883490727756",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossHydrationPreflightTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossHydrationPreflightTests.cpp",
+        "actual_sha256": "37dac0a5bf66d538c5051972008d7b7d63a9427e95fcca7297ca883490727756",
+        "actual_size": 74451,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "75b348e5d13cbff403c1d39d1c13a4ddf3b71d29da019167fd04802ab8ca72e9",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossHydrationPreparationTests.cpp",
+        "actual_sha256": "75b348e5d13cbff403c1d39d1c13a4ddf3b71d29da019167fd04802ab8ca72e9",
+        "actual_size": 40555,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "5099aa04ea22d28f11eb8eb05abc07c46a2a02a124f51339747661ffa8b0432a",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossPhaseAdaptersTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossPhaseAdaptersTests.cpp",
+        "actual_sha256": "5099aa04ea22d28f11eb8eb05abc07c46a2a02a124f51339747661ffa8b0432a",
+        "actual_size": 31530,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "2d75769f9d08a9936c53f958c68e7ad60d69ab0474ed4b987762fd288abc1eee",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossPhaseFlowAdaptersTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossPhaseFlowAdaptersTests.cpp",
+        "actual_sha256": "2d75769f9d08a9936c53f958c68e7ad60d69ab0474ed4b987762fd288abc1eee",
+        "actual_size": 48587,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "c5aae60bde990fa711eeb6f62892ff591a233f4b0b9cf9b9c992325201fdcb3a",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossPhasesClusterAdaptersTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossPhasesClusterAdaptersTests.cpp",
+        "actual_sha256": "c5aae60bde990fa711eeb6f62892ff591a233f4b0b9cf9b9c992325201fdcb3a",
+        "actual_size": 74051,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "38729988591eadbb313a79fc1d4f002a4c02dcc56553398d95777468cbc2368a",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossPreparationRegistryTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossPreparationRegistryTests.cpp",
+        "actual_sha256": "38729988591eadbb313a79fc1d4f002a4c02dcc56553398d95777468cbc2368a",
+        "actual_size": 58439,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "a418076bee99b76553fd61f3346917d499d7685ce8c26463b85752c35897e170",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossProductionPreflightTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossProductionPreflightTests.cpp",
+        "actual_sha256": "a418076bee99b76553fd61f3346917d499d7685ce8c26463b85752c35897e170",
+        "actual_size": 40610,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "3cca0eb475ae6bbc1b10559f2e9f48e7a332f98b6130b35d3429b40e821fd956",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossProductionPreparationTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossProductionPreparationTests.cpp",
+        "actual_sha256": "3cca0eb475ae6bbc1b10559f2e9f48e7a332f98b6130b35d3429b40e821fd956",
+        "actual_size": 65777,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "b95c14744fa200addaab9977bcf749ac9aabf307077579857dc1da5aa6c5ec17",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossStaggerClusterAdaptersTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossStaggerClusterAdaptersTests.cpp",
+        "actual_sha256": "b95c14744fa200addaab9977bcf749ac9aabf307077579857dc1da5aa6c5ec17",
+        "actual_size": 81808,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "fbd82be2c86315e274bb7d57adacc0688df1fd1366ff8c3d748056d917020f7f",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossStaggerPolicyAdaptersTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossStaggerPolicyAdaptersTests.cpp",
+        "actual_sha256": "fbd82be2c86315e274bb7d57adacc0688df1fd1366ff8c3d748056d917020f7f",
+        "actual_size": 49827,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "be029a3a1f4fe0c7a30ba56c2962397775e9dcbde7be9e4927bb96a51c0d3745",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossStatsAdaptersTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossStatsAdaptersTests.cpp",
+        "actual_sha256": "be029a3a1f4fe0c7a30ba56c2962397775e9dcbde7be9e4927bb96a51c0d3745",
+        "actual_size": 32816,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "c606437268c80824cec95a376b999a8f903421035dd1919f4cfac4c7df8f7f02",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossWorldInputCompilerTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossWorldInputCompilerTests.cpp",
+        "actual_sha256": "c606437268c80824cec95a376b999a8f903421035dd1919f4cfac4c7df8f7f02",
+        "actual_size": 64703,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "fb867b159223253d756e6a07e0d44a45378ea99f0c6f8eb3e606b95b8eb1ec90",
+        "relative_path": "Source/OneBossFight/Tests/RPGBossWorldPreparationTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBossWorldPreparationTests.cpp",
+        "actual_sha256": "fb867b159223253d756e6a07e0d44a45378ea99f0c6f8eb3e606b95b8eb1ec90",
+        "actual_size": 52832,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "33babe57d4030b11af4f98d34f39965f467aa8a2e4c48c3ea7981ac3070272a2",
+        "relative_path": "Source/OneBossFight/Tests/RPGBuildTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGBuildTests.cpp",
+        "actual_sha256": "33babe57d4030b11af4f98d34f39965f467aa8a2e4c48c3ea7981ac3070272a2",
+        "actual_size": 26554,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "dbfc00afdf4d73617782badfc828221997ce0a7ea27f9a52195e8dd6afc4ec38",
+        "relative_path": "Source/OneBossFight/Tests/RPGCodexTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGCodexTests.cpp",
+        "actual_sha256": "dbfc00afdf4d73617782badfc828221997ce0a7ea27f9a52195e8dd6afc4ec38",
+        "actual_size": 16530,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "fba473041e76c9f8d4bee7f1bba5111c00764e3186809376284d792ab2743639",
+        "relative_path": "Source/OneBossFight/Tests/RPGCombatCatalogTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGCombatCatalogTests.cpp",
+        "actual_sha256": "fba473041e76c9f8d4bee7f1bba5111c00764e3186809376284d792ab2743639",
+        "actual_size": 41486,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "bcdb3b2f40f1795bfd6187523cf98fc8ab2567cae46949065dd3a6908f2d66da",
+        "relative_path": "Source/OneBossFight/Tests/RPGEncounterBindingTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGEncounterBindingTests.cpp",
+        "actual_sha256": "bcdb3b2f40f1795bfd6187523cf98fc8ab2567cae46949065dd3a6908f2d66da",
+        "actual_size": 6549,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "23446244700c9577fa826a2ada5da9e090575be57941bb834ea5422323983956",
+        "relative_path": "Source/OneBossFight/Tests/RPGFlaskHudTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGFlaskHudTests.cpp",
+        "actual_sha256": "23446244700c9577fa826a2ada5da9e090575be57941bb834ea5422323983956",
+        "actual_size": 987,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "8d70bc254d4e643c7830178847e60f4f5523379d8e3de2a12def3ad9bc05ae83",
+        "relative_path": "Source/OneBossFight/Tests/RPGFlipbookEffectTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGFlipbookEffectTests.cpp",
+        "actual_sha256": "8d70bc254d4e643c7830178847e60f4f5523379d8e3de2a12def3ad9bc05ae83",
+        "actual_size": 1255,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "5694ab76168741ce0b352c342bf2f41c4ce91fb96ec613b429b64bc7bfffe919",
+        "relative_path": "Source/OneBossFight/Tests/RPGPlayerMovesAttachWitnessTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGPlayerMovesAttachWitnessTests.cpp",
+        "actual_sha256": "5694ab76168741ce0b352c342bf2f41c4ce91fb96ec613b429b64bc7bfffe919",
+        "actual_size": 17855,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "12b7c069401d5b4df434d5bcdea56cdcf1222dbad58c9ea93d3bb7b6ec148ec5",
+        "relative_path": "Source/OneBossFight/Tests/RPGRemainsTests.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\Tests\\RPGRemainsTests.cpp",
+        "actual_sha256": "12b7c069401d5b4df434d5bcdea56cdcf1222dbad58c9ea93d3bb7b6ec148ec5",
+        "actual_size": 1252,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "120218b7461430b04c3c71388ba5a181e7863be0b5737a5bb5a3d535cd505b8b",
+        "relative_path": "Source/OneBossFight/UI/RPGBossHud.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\UI\\RPGBossHud.cpp",
+        "actual_sha256": "120218b7461430b04c3c71388ba5a181e7863be0b5737a5bb5a3d535cd505b8b",
+        "actual_size": 18127,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "8b70e1b0d109f6a20a694c048cb078c377bbe8dd1f83ae18046c91ccc8d24f63",
+        "relative_path": "Source/OneBossFight/UI/RPGBossHud.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\UI\\RPGBossHud.h",
+        "actual_sha256": "8b70e1b0d109f6a20a694c048cb078c377bbe8dd1f83ae18046c91ccc8d24f63",
+        "actual_size": 8434,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "2f01d8c24ab5853cffd43d234be87f368b2152567df9496806d9cfeb63ab2427",
+        "relative_path": "Source/OneBossFight/UI/RPGBuildSelect.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\UI\\RPGBuildSelect.cpp",
+        "actual_sha256": "2f01d8c24ab5853cffd43d234be87f368b2152567df9496806d9cfeb63ab2427",
+        "actual_size": 14977,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "8ddbb7f82bcec53e171b5ee6916356027fdc90e60ac471aabf6c4d81fd9482fe",
+        "relative_path": "Source/OneBossFight/UI/RPGBuildSelect.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\UI\\RPGBuildSelect.h",
+        "actual_sha256": "8ddbb7f82bcec53e171b5ee6916356027fdc90e60ac471aabf6c4d81fd9482fe",
+        "actual_size": 3569,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "e91e8b16023700a227013c7cb9eda0eb1708a4a47596b241cc1e1f5ff2b138a3",
+        "relative_path": "Source/OneBossFight/UI/RPGBuildSelectRules.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\UI\\RPGBuildSelectRules.h",
+        "actual_sha256": "e91e8b16023700a227013c7cb9eda0eb1708a4a47596b241cc1e1f5ff2b138a3",
+        "actual_size": 1259,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "81cc96b66590f2866e7c5bc252f96f6796d1102d4490091af0551d6355337523",
+        "relative_path": "Source/OneBossFight/UI/RPGFlaskHud.cpp",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\UI\\RPGFlaskHud.cpp",
+        "actual_sha256": "81cc96b66590f2866e7c5bc252f96f6796d1102d4490091af0551d6355337523",
+        "actual_size": 7378,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "d8d8178ba7c7526e3359c6c04d1dbb3f68dd893417c999f5f56f77a7939b3504",
+        "relative_path": "Source/OneBossFight/UI/RPGFlaskHud.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\UI\\RPGFlaskHud.h",
+        "actual_sha256": "d8d8178ba7c7526e3359c6c04d1dbb3f68dd893417c999f5f56f77a7939b3504",
+        "actual_size": 2537,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "5bcdfd38dc4feb8b69356b79873666f2c074077187df8536e19587d8432665fd",
+        "relative_path": "Source/OneBossFight/UI/RPGFlaskHudRules.h",
+        "expected_size": null,
+        "path": "Source\\OneBossFight\\UI\\RPGFlaskHudRules.h",
+        "actual_sha256": "5bcdfd38dc4feb8b69356b79873666f2c074077187df8536e19587d8432665fd",
+        "actual_size": 821,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "27a3b4f9caae5c1b3c1e0eee7adffd5c26fd9f397339e4a5495a21594084db09",
+        "relative_path": "Source/OneBossFightEditor.Target.cs",
+        "expected_size": null,
+        "path": "Source\\OneBossFightEditor.Target.cs",
+        "actual_sha256": "27a3b4f9caae5c1b3c1e0eee7adffd5c26fd9f397339e4a5495a21594084db09",
+        "actual_size": 417,
+        "status": "verified"
+      }
+    ]
+  },
+  "reviewed_snapshots": [
+    {
+      "path": "Source\\OneBossFight\\Player\\RPGBossPreparationRegistry.cpp",
+      "sha256": "253a47f47f3812d1c4754dea9c36620e59923347e3d359b807682c9fbe26792c"
+    },
+    {
+      "path": "Source\\OneBossFight\\Player\\RPGBossWorldPreparation.cpp",
+      "sha256": "ce6a1b31dfb2e80f9439766d25f9ac77a5b6a2b8c05721264c30dcba3e0e417c"
+    },
+    {
+      "path": "Source\\OneBossFight\\Player\\RPGBossWorldInputCompiler.cpp",
+      "sha256": "1a99ba054dc606c6514973e6423723bd3a3701ce40ea8c87f2c432d30e457f58"
+    },
+    {
+      "path": "Docs\\BossCombatReview\\Execution\\Antigravity\\AuthoringToolkit\\draft_boss_profiles.py",
+      "sha256": "c84408d099e05338ce9b63174eb79f04600fd175f87d68c3c31cac58c90f2e95"
+    },
+    {
+      "path": "Docs\\BossCombatReview\\Execution\\Antigravity\\AuthoringToolkit\\evidence_sha256.txt",
+      "sha256": "32a4b588426dc46fe16bc3338d6cfe217e2e272bfd3f01e77dd948c067f460de"
+    }
+  ]
+}

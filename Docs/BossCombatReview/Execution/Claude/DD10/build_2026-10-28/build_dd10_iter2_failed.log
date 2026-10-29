@@ -1,0 +1,177 @@
+Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" OneBossFightEditor Win64 Development "-Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject" -WaitMutex
+Log file: C:\Users\Rushit Vaghela\AppData\Local\UnrealBuildTool\Log.txt
+Using 'git status' to determine working set for adaptive non-unity build (C:\UnrealProject\OneBossFight).
+Building OneBossFightEditor...
+Using Visual Studio 2022 14.44.35214 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+Warning: Visual Studio 2022 compiler is not a preferred version
+[Adaptive Build] Excluded from OneBossFight unity file: RPGBossStaggerClusterAdapters.cpp, RPGEncounterBinding.cpp, RPGBossStaggerClusterAdaptersTests.cpp
+Determining max actions to execute in parallel (8 physical cores, 16 logical cores)
+  Executing up to 8 processes, one per physical core
+Using Unreal Build Accelerator local executor to run 4 action(s)
+  Storage capacity 40Gb
+---- Starting trace: 261028_095408 ----
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+------ Building 4 action(s) started ------
+[1/4] Compile [x64] RPGBossStaggerClusterAdaptersTests.cpp
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(49): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(49): error C2146: syntax error: missing ';' before identifier 'MakeField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(49): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(51): error C2146: syntax error: missing ';' before identifier 'E'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(51): error C2065: 'E': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(52): error C2065: 'E': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(53): error C2065: 'E': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(54): error C2065: 'E': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(55): error C2065: 'E': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(56): error C2065: 'E': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(57): error C2065: 'E': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(58): error C2065: 'E': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(59): error C2065: 'E': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(60): error C2065: 'E': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(61): error C2065: 'E': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(62): error C2065: 'E': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(63): error C2065: 'E': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): error C2665: 'TArray<FRPGParityField,FDefaultAllocator>::Add': no overloaded function could convert all the argument types
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(2333): note: could be 'int TArray<FRPGParityField,FDefaultAllocator>::Add(const FRPGParityField &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: 'int TArray<FRPGParityField,FDefaultAllocator>::Add(const FRPGParityField &)': cannot convert argument 1 from 'int' to 'const FRPGParityField &'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: Reason: cannot convert from 'int' to 'const FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: 'FRPGParityField::FRPGParityField': no overloaded function could convert all the argument types
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGEncounterBinding.h(154): note: could be 'FRPGParityField::FRPGParityField(FRPGParityField &&)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: 'FRPGParityField::FRPGParityField(FRPGParityField &&)': cannot convert argument 1 from 'int' to 'FRPGParityField &&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: Reason: cannot convert from 'int' to 'FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: Conversion requires a second user-defined-conversion operator or constructor
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGEncounterBinding.h(154): note: or       'FRPGParityField::FRPGParityField(const FRPGParityField &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: 'FRPGParityField::FRPGParityField(const FRPGParityField &)': cannot convert argument 1 from 'int' to 'const FRPGParityField &'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: Reason: cannot convert from 'int' to 'const FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: Conversion requires a second user-defined-conversion operator or constructor
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: while trying to match the argument list '(int)'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(2320): note: or       'int TArray<FRPGParityField,FDefaultAllocator>::Add(FRPGParityField &&)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: 'int TArray<FRPGParityField,FDefaultAllocator>::Add(FRPGParityField &&)': cannot convert argument 1 from 'int' to 'FRPGParityField &&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: Reason: cannot convert from 'int' to 'FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: 'FRPGParityField::FRPGParityField': no overloaded function could convert all the argument types
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGEncounterBinding.h(154): note: could be 'FRPGParityField::FRPGParityField(FRPGParityField &&)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: 'FRPGParityField::FRPGParityField(FRPGParityField &&)': cannot convert argument 1 from 'int' to 'FRPGParityField &&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: Reason: cannot convert from 'int' to 'FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: Conversion requires a second user-defined-conversion operator or constructor
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGEncounterBinding.h(154): note: or       'FRPGParityField::FRPGParityField(const FRPGParityField &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: 'FRPGParityField::FRPGParityField(const FRPGParityField &)': cannot convert argument 1 from 'int' to 'const FRPGParityField &'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: Reason: cannot convert from 'int' to 'const FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: Conversion requires a second user-defined-conversion operator or constructor
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: while trying to match the argument list '(int)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(334): note: while trying to match the argument list '(int)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): error C2665: 'TArray<FRPGParityField,FDefaultAllocator>::Add': no overloaded function could convert all the argument types
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(2333): note: could be 'int TArray<FRPGParityField,FDefaultAllocator>::Add(const FRPGParityField &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: 'int TArray<FRPGParityField,FDefaultAllocator>::Add(const FRPGParityField &)': cannot convert argument 1 from 'int' to 'const FRPGParityField &'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: Reason: cannot convert from 'int' to 'const FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: 'FRPGParityField::FRPGParityField': no overloaded function could convert all the argument types
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGEncounterBinding.h(154): note: could be 'FRPGParityField::FRPGParityField(FRPGParityField &&)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: 'FRPGParityField::FRPGParityField(FRPGParityField &&)': cannot convert argument 1 from 'int' to 'FRPGParityField &&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: Reason: cannot convert from 'int' to 'FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: Conversion requires a second user-defined-conversion operator or constructor
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGEncounterBinding.h(154): note: or       'FRPGParityField::FRPGParityField(const FRPGParityField &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: 'FRPGParityField::FRPGParityField(const FRPGParityField &)': cannot convert argument 1 from 'int' to 'const FRPGParityField &'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: Reason: cannot convert from 'int' to 'const FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: Conversion requires a second user-defined-conversion operator or constructor
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: while trying to match the argument list '(int)'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(2320): note: or       'int TArray<FRPGParityField,FDefaultAllocator>::Add(FRPGParityField &&)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: 'int TArray<FRPGParityField,FDefaultAllocator>::Add(FRPGParityField &&)': cannot convert argument 1 from 'int' to 'FRPGParityField &&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: Reason: cannot convert from 'int' to 'FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: 'FRPGParityField::FRPGParityField': no overloaded function could convert all the argument types
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGEncounterBinding.h(154): note: could be 'FRPGParityField::FRPGParityField(FRPGParityField &&)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: 'FRPGParityField::FRPGParityField(FRPGParityField &&)': cannot convert argument 1 from 'int' to 'FRPGParityField &&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: Reason: cannot convert from 'int' to 'FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: Conversion requires a second user-defined-conversion operator or constructor
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGEncounterBinding.h(154): note: or       'FRPGParityField::FRPGParityField(const FRPGParityField &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: 'FRPGParityField::FRPGParityField(const FRPGParityField &)': cannot convert argument 1 from 'int' to 'const FRPGParityField &'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: Reason: cannot convert from 'int' to 'const FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: Conversion requires a second user-defined-conversion operator or constructor
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: while trying to match the argument list '(int)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(335): note: while trying to match the argument list '(int)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(354): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(354): error C2143: syntax error: missing ',' before '&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(360): error C2065: 'Content': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(361): error C2065: 'ExpectedManifestHash': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(362): error C2065: 'OutConfig': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(396): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(396): error C2146: syntax error: missing ';' before identifier 'Plan'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(396): error C2065: 'Plan': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(397): error C2065: 'Plan': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(397): error C2661: 'FAutomationTestBase::TestTrue': no overloaded function takes 1 arguments
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(397): note: while trying to match the argument list '(const wchar_t [37])'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(398): error C2065: 'Plan': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(398): error C2661: 'FAutomationTestBase::TestTrue': no overloaded function takes 1 arguments
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(398): note: while trying to match the argument list '(const wchar_t [34])'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(399): error C2065: 'Plan': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(399): error C2661: 'FAutomationTestBase::TestTrue': no overloaded function takes 1 arguments
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(399): note: while trying to match the argument list '(const wchar_t [28])'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(400): error C2065: 'Plan': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(400): error C2661: 'FAutomationTestBase::TestTrue': no overloaded function takes 1 arguments
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(400): note: while trying to match the argument list '(const wchar_t [18])'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): error C2665: 'TArray<FRPGParityField,FDefaultAllocator>::Add': no overloaded function could convert all the argument types
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(2333): note: could be 'int TArray<FRPGParityField,FDefaultAllocator>::Add(const FRPGParityField &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: 'int TArray<FRPGParityField,FDefaultAllocator>::Add(const FRPGParityField &)': cannot convert argument 1 from 'int' to 'const FRPGParityField &'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: Reason: cannot convert from 'int' to 'const FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: 'FRPGParityField::FRPGParityField': no overloaded function could convert all the argument types
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGEncounterBinding.h(154): note: could be 'FRPGParityField::FRPGParityField(FRPGParityField &&)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: 'FRPGParityField::FRPGParityField(FRPGParityField &&)': cannot convert argument 1 from 'int' to 'FRPGParityField &&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: Reason: cannot convert from 'int' to 'FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: Conversion requires a second user-defined-conversion operator or constructor
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGEncounterBinding.h(154): note: or       'FRPGParityField::FRPGParityField(const FRPGParityField &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: 'FRPGParityField::FRPGParityField(const FRPGParityField &)': cannot convert argument 1 from 'int' to 'const FRPGParityField &'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: Reason: cannot convert from 'int' to 'const FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: Conversion requires a second user-defined-conversion operator or constructor
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: while trying to match the argument list '(int)'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(2320): note: or       'int TArray<FRPGParityField,FDefaultAllocator>::Add(FRPGParityField &&)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: 'int TArray<FRPGParityField,FDefaultAllocator>::Add(FRPGParityField &&)': cannot convert argument 1 from 'int' to 'FRPGParityField &&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: Reason: cannot convert from 'int' to 'FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: 'FRPGParityField::FRPGParityField': no overloaded function could convert all the argument types
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGEncounterBinding.h(154): note: could be 'FRPGParityField::FRPGParityField(FRPGParityField &&)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: 'FRPGParityField::FRPGParityField(FRPGParityField &&)': cannot convert argument 1 from 'int' to 'FRPGParityField &&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: Reason: cannot convert from 'int' to 'FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: Conversion requires a second user-defined-conversion operator or constructor
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGEncounterBinding.h(154): note: or       'FRPGParityField::FRPGParityField(const FRPGParityField &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: 'FRPGParityField::FRPGParityField(const FRPGParityField &)': cannot convert argument 1 from 'int' to 'const FRPGParityField &'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: Reason: cannot convert from 'int' to 'const FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: Conversion requires a second user-defined-conversion operator or constructor
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: while trying to match the argument list '(int)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(435): note: while trying to match the argument list '(int)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): error C2665: 'TArray<FRPGParityField,FDefaultAllocator>::Add': no overloaded function could convert all the argument types
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(2333): note: could be 'int TArray<FRPGParityField,FDefaultAllocator>::Add(const FRPGParityField &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: 'int TArray<FRPGParityField,FDefaultAllocator>::Add(const FRPGParityField &)': cannot convert argument 1 from 'int' to 'const FRPGParityField &'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: Reason: cannot convert from 'int' to 'const FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: 'FRPGParityField::FRPGParityField': no overloaded function could convert all the argument types
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGEncounterBinding.h(154): note: could be 'FRPGParityField::FRPGParityField(FRPGParityField &&)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: 'FRPGParityField::FRPGParityField(FRPGParityField &&)': cannot convert argument 1 from 'int' to 'FRPGParityField &&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: Reason: cannot convert from 'int' to 'FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: Conversion requires a second user-defined-conversion operator or constructor
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGEncounterBinding.h(154): note: or       'FRPGParityField::FRPGParityField(const FRPGParityField &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: 'FRPGParityField::FRPGParityField(const FRPGParityField &)': cannot convert argument 1 from 'int' to 'const FRPGParityField &'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: Reason: cannot convert from 'int' to 'const FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: Conversion requires a second user-defined-conversion operator or constructor
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: while trying to match the argument list '(int)'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(2320): note: or       'int TArray<FRPGParityField,FDefaultAllocator>::Add(FRPGParityField &&)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: 'int TArray<FRPGParityField,FDefaultAllocator>::Add(FRPGParityField &&)': cannot convert argument 1 from 'int' to 'FRPGParityField &&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: Reason: cannot convert from 'int' to 'FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: 'FRPGParityField::FRPGParityField': no overloaded function could convert all the argument types
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGEncounterBinding.h(154): note: could be 'FRPGParityField::FRPGParityField(FRPGParityField &&)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: 'FRPGParityField::FRPGParityField(FRPGParityField &&)': cannot convert argument 1 from 'int' to 'FRPGParityField &&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: Reason: cannot convert from 'int' to 'FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: Conversion requires a second user-defined-conversion operator or constructor
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGEncounterBinding.h(154): note: or       'FRPGParityField::FRPGParityField(const FRPGParityField &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: 'FRPGParityField::FRPGParityField(const FRPGParityField &)': cannot convert argument 1 from 'int' to 'const FRPGParityField &'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: Reason: cannot convert from 'int' to 'const FRPGParityField'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: Conversion requires a second user-defined-conversion operator or constructor
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: while trying to match the argument list '(int)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(436): note: while trying to match the argument list '(int)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(438): error C2065: 'Plan': undeclared identifier
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(438): error C2661: 'FAutomationTestBase::TestTrue': no overloaded function takes 1 arguments
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(438): note: while trying to match the argument list '(const wchar_t [18])'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(734): error C2001: newline in constant
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(735): error C2001: newline in constant
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(734): error C4002: too many arguments for function-like macro invocation 'TEXT'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(1348): warning C5101: use of preprocessor directive in function-like macro argument list is undefined behavior
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(734): error C2816: invocation of function-like macro 'TEXT' is missing terminating ')'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(734): fatal error C1903: unable to recover from previous error(s); stopping compilation
+Trace file written to C:/Users/Rushit Vaghela/AppData/Local/UnrealBuildTool/Log.uba with size 19.9kb
+Total time in Unreal Build Accelerator local executor: 1.91 seconds
+Total execution time: 2.53 seconds

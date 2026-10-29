@@ -1,0 +1,67 @@
+--- /dev/fd/63	2026-10-28 22:16:55.000000000 +0530
++++ /dev/fd/62	2026-10-28 22:16:55.000000000 +0530
+@@ -7,6 +7,7 @@
+ #include "Animation/AnimSequence.h"
+ #include "Animation/AnimSequenceBase.h"
+ #include "Animation/Skeleton.h"
++#include "Async/Async.h"
+ #include "Components/ActorComponent.h"
+ #include "Components/SceneComponent.h"
+ #include "Components/SkeletalMeshComponent.h"
+@@ -879,4 +880,56 @@
+ 	return true;
+ }
+ 
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGWorldPreparationRefusalsTest, "OneBossFight.Binding.WorldPreparation.Refusals",
++	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
++bool FRPGWorldPreparationRefusalsTest::RunTest(const FString& Parameters)
++{
++	FFixture F;
++	if (!F.Prepare(*this))
++	{
++		return false;
++	}
++	const TArray<FSelection> Valid = F.MakeSelections();
++	const FWorldState Before = F.Capture();
++	auto ExpectRefusal = [this, &F, &Before](const TCHAR* Label, const FRPGWorldPreparationResult& Result, const TCHAR* Token, const TCHAR* Where)
++	{
++		TestFalse(FString::Printf(TEXT("%s: refused, no artifact"), Label), Result.Succeeded() || Result.Batch.IsValid());
++		TestTrue(FString::Printf(TEXT("%s: the nested input-stage diagnostic %s %s is carried unchanged (got: %s)"), Label, Token, Where, *JoinErrors(Result.Errors)), AnyErrorHasAll(Result.Errors, Token, Where, TEXT("")));
++		TestTrue(FString::Printf(TEXT("%s: no Preparation.* token (the preparation stage never ran) and nothing was allocated or changed"), Label),
++			!Result.Errors.ContainsByPredicate([](const FString& E) { return E.StartsWith(TEXT("Preparation.")); }) && F.NothingAllocated() && SameWorld(Before, F.Capture()) && F.NoConsumers());
++	};
++	// The input stage refuses these; the facade carries its diagnostics and creates nothing.
++	ExpectRefusal(TEXT("no world"), RPGBossWorldPreparation::PrepareWorldBatch(nullptr, F.Binding, Valid, ManifestHash()), TEXT("WorldInput.InvalidWorld"), TEXT(""));
++	ExpectRefusal(TEXT("no binding"), RPGBossWorldPreparation::PrepareWorldBatch(F.Scope.World, nullptr, Valid, ManifestHash()), TEXT("WorldInput.InvalidBinding"), TEXT(""));
++	ExpectRefusal(TEXT("a bad manifest hash"), RPGBossWorldPreparation::PrepareWorldBatch(F.Scope.World, F.Binding, Valid, FString::ChrN(63, TEXT('b'))), TEXT("WorldInput.InvalidManifestHash"), TEXT(""));
++	{
++		TArray<FSelection> Missing = Valid;
++		Missing.RemoveAt(2);
++		ExpectRefusal(TEXT("a missing selection"), RPGBossWorldPreparation::PrepareWorldBatch(F.Scope.World, F.Binding, Missing, ManifestHash()), TEXT("WorldInput.SelectionMissing"), TEXT("[slot=Player]"));
++	}
++	// Off the game thread: refused before any UObject is touched.
++	{
++		UWorld* PoolWorld = F.Scope.World;
++		const ARPGEncounterBinding* PoolBinding = F.Binding;
++		TFuture<TArray<FString>> Future = Async(EAsyncExecution::ThreadPool, [PoolWorld, PoolBinding, &Valid]()
++			{
++				const FRPGWorldPreparationResult Result = RPGBossWorldPreparation::PrepareWorldBatch(PoolWorld, PoolBinding, Valid, ManifestHash());
++				return Result.Errors;
++			});
++		const TArray<FString> PoolErrors = Future.Get();
++		TestTrue(FString::Printf(TEXT("off the game thread: WorldPrep.NotGameThread, nothing touched (got: %s)"), *JoinErrors(PoolErrors)), AnyErrorHasAll(PoolErrors, TEXT("WorldPrep.NotGameThread"), TEXT(""), TEXT("nothing was touched")));
++		TestTrue(TEXT("off the game thread: nothing was allocated or changed"), F.NothingAllocated() && SameWorld(Before, F.Capture()));
++	}
++	// The control: the unmodified call succeeds after all the refusals.
++	{
++		FRPGWorldPreparationResult Control = RPGBossWorldPreparation::PrepareWorldBatch(F.Scope.World, F.Binding, Valid, ManifestHash());
++		TestTrue(FString::Printf(TEXT("control: the unmodified call succeeds after the refusals (errors: %s)"), *JoinErrors(Control.Errors)), Control.Succeeded() && Control.Batch->GetOwnedComponentCount() == 10);
++	}
++	TestTrue(TEXT("the control artifact was released by scope exit: the world is as before"), SameWorld(Before, F.Capture()) && F.NoConsumers());
++
++	AddInfo(TEXT("Facade refusal paths on a real game-instance world: the input stage's named diagnostics are carried unchanged and nothing is allocated; off the game thread the call is refused before any UObject is touched. NOT covered: drift between the stages "
++		"(source-checked only)."));
++	return true;
++}
++
+ #endif // WITH_DEV_AUTOMATION_TESTS

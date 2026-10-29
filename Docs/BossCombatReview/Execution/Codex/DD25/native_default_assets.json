@@ -1,0 +1,12 @@
+[
+  {
+    "path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_DeathLegend.AN_Boss01_DeathLegend",
+    "file": "Content/OneBossFight/Boss01/Animations/AN_Boss01_DeathLegend.uasset",
+    "sha256": "4dd39b6919956bd16857ac43332f8ee23dec5c9491eac415284100ae714aa418"
+  },
+  {
+    "path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.AM_Boss01_DeathLegend",
+    "file": "Content/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.uasset",
+    "sha256": "ee7fdc034f25945bc180f17db667d117a024e47f745df084dafb959ec0d2f958"
+  }
+]

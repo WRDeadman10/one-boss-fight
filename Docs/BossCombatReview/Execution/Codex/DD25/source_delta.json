@@ -1,0 +1,12 @@
+{
+  "added": [
+    "Source/OneBossFight/Player/RPGBossDeathAdapters.cpp",
+    "Source/OneBossFight/Player/RPGBossDeathAdapters.h",
+    "Source/OneBossFight/Tests/RPGBossDeathAdaptersTests.cpp"
+  ],
+  "removed": [],
+  "changed": [
+    "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+    "Source/OneBossFight/Player/RPGEncounterBinding.h"
+  ]
+}

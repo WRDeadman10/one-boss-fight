@@ -1,0 +1,12 @@
+{
+  "added": [
+    "Source/OneBossFight/Player/RPGBossHealPunishAdapters.cpp",
+    "Source/OneBossFight/Player/RPGBossHealPunishAdapters.h",
+    "Source/OneBossFight/Tests/RPGBossHealPunishAdaptersTests.cpp"
+  ],
+  "removed": [],
+  "changed": [
+    "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+    "Source/OneBossFight/Player/RPGEncounterBinding.h"
+  ]
+}

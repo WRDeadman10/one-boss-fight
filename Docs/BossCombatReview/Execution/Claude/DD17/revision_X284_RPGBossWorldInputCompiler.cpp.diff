@@ -1,0 +1,295 @@
+--- /dev/fd/63	2026-10-28 21:51:40.000000000 +0530
++++ /dev/fd/62	2026-10-28 21:51:40.000000000 +0530
+@@ -62,12 +62,22 @@
+ 			Why = TEXT("the world has no game instance");
+ 			return false;
+ 		}
++		if (!IsValid(GameInstance))
++		{
++			Why = TEXT("the world's game instance is not valid (destroyed or collected)");
++			return false;
++		}
+ 		const URPGCombatCatalogSubsystem* Subsystem = GameInstance->GetSubsystem<URPGCombatCatalogSubsystem>();
+ 		if (!Subsystem)
+ 		{
+ 			Why = TEXT("the world's game instance has no catalog subsystem");
+ 			return false;
+ 		}
++		if (!IsValid(Subsystem))
++		{
++			Why = TEXT("the world's game instance catalog subsystem is not valid (destroyed or collected)");
++			return false;
++		}
+ 		const TSharedPtr<const RPGCombatRegistry::FEpoch> Epoch = RPGCombatRegistry::ForWorld(World);
+ 		if (!Epoch.IsValid() || !Epoch->Id.IsValid())
+ 		{
+@@ -100,11 +110,21 @@
+ 			Why = TEXT("the world's game instance changed");
+ 			return false;
+ 		}
++		if (!IsValid(GameInstance))
++		{
++			Why = TEXT("the world's game instance is no longer valid");
++			return false;
++		}
+ 		if (GameInstance->GetSubsystem<URPGCombatCatalogSubsystem>() != Acquired.Subsystem)
+ 		{
+ 			Why = TEXT("the game instance's catalog subsystem changed");
+ 			return false;
+ 		}
++		if (!IsValid(Acquired.Subsystem))
++		{
++			Why = TEXT("the game instance's catalog subsystem is no longer valid");
++			return false;
++		}
+ 		if (RPGCombatRegistry::ForWorld(World).Get() != Acquired.Content.Get())
+ 		{
+ 			Why = TEXT("the published epoch changed");
+@@ -165,6 +185,115 @@
+ 		}
+ 		return true;
+ 	}
++
++	/** The lifecycle and identity of the binding itself. Used by the initial validation AND by every checkpoint, with the same messages. */
++	bool BindingProblem(const ARPGEncounterBinding* Binding, const UWorld* World, FString& Why)
++	{
++		if (!Binding || !IsValid(Binding))
++		{
++			Why = TEXT("no encounter binding was given or it was destroyed or collected");
++			return true;
++		}
++		if (Binding->IsActorBeingDestroyed())
++		{
++			Why = TEXT("the encounter binding is being destroyed");
++			return true;
++		}
++		if (Binding->GetWorld() != World)
++		{
++			Why = TEXT("the encounter binding is not in the expected world");
++			return true;
++		}
++		if (Binding->HasActorBegunPlay() || Binding->IsActorBeginningPlay())
++		{
++			Why = TEXT("the encounter binding began or is beginning play: the input is compiled before BeginPlay");
++			return true;
++		}
++		return false;
++	}
++
++	// The problems an actor can have, as bits: used by the initial validation (each bit has its own diagnostic) AND by every checkpoint (any bit is drift).
++	constexpr uint32 ActorMissing = 1u;
++	constexpr uint32 ActorStale = 2u;
++	constexpr uint32 ActorDestroying = 4u;
++	constexpr uint32 ActorForeign = 8u;
++	constexpr uint32 ActorBegun = 16u;
++
++	uint32 ActorProblems(const AActor* Actor, const UWorld* World)
++	{
++		if (!Actor)
++		{
++			return ActorMissing;
++		}
++		if (!IsValid(Actor))
++		{
++			return ActorStale;
++		}
++		uint32 Problems = 0u;
++		if (Actor->IsActorBeingDestroyed())
++		{
++			Problems |= ActorDestroying;
++		}
++		if (Actor->GetWorld() != World)
++		{
++			Problems |= ActorForeign;
++		}
++		if (Actor->HasActorBegunPlay() || Actor->IsActorBeginningPlay())
++		{
++			Problems |= ActorBegun;
++		}
++		return Problems;
++	}
++
++	enum class ECheckpoint : uint8
++	{
++		Ok,
++		ContentDrift,
++		BindingDrift,
++	};
++
++	const TCHAR* DriftToken(ECheckpoint Kind)
++	{
++		return Kind == ECheckpoint::ContentDrift ? TEXT("WorldInput.ContentDrift") : TEXT("WorldInput.BindingDrift");
++	}
++
++	/**
++	 * The ONE checkpoint, run before and after every production compile and at publication: the content identities (world, game instance, subsystem, epoch pointer), then the retained binding reference resolves and
++	 * passes the binding predicate, its GUID and participant snapshot are unchanged, and every member actor and definition is still valid, in the expected world and not begun. Nothing here can be provoked by a
++	 * callback, a cvar or an injection: these are source claims, and the initial validation uses the same predicates so the existing negative tests exercise the same guards.
++	 */
++	ECheckpoint Checkpoint(UWorld* World, const FAcquisition& Acquired, const TWeakObjectPtr<const ARPGEncounterBinding>& BindingRef, const FGuid& Encounter, const TArray<FMemberSnapshot>& Snapshot,
++		const TArray<FMember>& Members, FString& Why)
++	{
++		if (!StillSame(World, Acquired, Why))
++		{
++			return ECheckpoint::ContentDrift;
++		}
++		const ARPGEncounterBinding* Live = BindingRef.Get();
++		if (!Live)
++		{
++			Why = TEXT("the retained reference to the encounter binding no longer resolves (destroyed or collected)");
++			return ECheckpoint::BindingDrift;
++		}
++		if (BindingProblem(Live, World, Why))
++		{
++			return ECheckpoint::BindingDrift;
++		}
++		if (!SameSnapshot(*Live, Encounter, Snapshot))
++		{
++			Why = TEXT("the encounter GUID or a participant (actor, slot, target or definition) of the binding changed");
++			return ECheckpoint::BindingDrift;
++		}
++		for (const FMember& Member : Members)
++		{
++			if (ActorProblems(Member.Actor, World) != 0u || !IsValid(Member.Definition))
++			{
++				Why = FString::Printf(TEXT("%s: the actor or the definition is no longer valid, in the expected world and not begun"), *MemberText(Member.Slot, Member.Index));
++				return ECheckpoint::BindingDrift;
++			}
++		}
++		return ECheckpoint::Ok;
++	}
+ }
+ 
+ namespace RPGBossWorldInputCompiler
+@@ -187,24 +316,10 @@
+ 			FailBatch(Result, TEXT("WorldInput.InvalidWorld"), TEXT("no expected world was given or it is no longer valid"));
+ 			return Result;
+ 		}
+-		if (!Binding || !IsValid(Binding))
++		FString BindingWhy;
++		if (BindingProblem(Binding, ExpectedWorld, BindingWhy))
+ 		{
+-			FailBatch(Result, TEXT("WorldInput.InvalidBinding"), TEXT("no encounter binding was given or it was destroyed or collected"));
+-			return Result;
+-		}
+-		if (Binding->IsActorBeingDestroyed())
+-		{
+-			FailBatch(Result, TEXT("WorldInput.InvalidBinding"), TEXT("the encounter binding is being destroyed"));
+-			return Result;
+-		}
+-		if (Binding->GetWorld() != ExpectedWorld)
+-		{
+-			FailBatch(Result, TEXT("WorldInput.InvalidBinding"), TEXT("the encounter binding is not in the expected world"));
+-			return Result;
+-		}
+-		if (Binding->HasActorBegunPlay() || Binding->IsActorBeginningPlay())
+-		{
+-			FailBatch(Result, TEXT("WorldInput.InvalidBinding"), TEXT("the encounter binding began or is beginning play: the input is compiled before BeginPlay"));
++			FailBatch(Result, TEXT("WorldInput.InvalidBinding"), BindingWhy);
+ 			return Result;
+ 		}
+ 		if (!Binding->EncounterInstance.IsValid())
+@@ -224,6 +339,8 @@
+ 		}
+ 		const FGuid Encounter = Binding->EncounterInstance;
+ 		const TArray<FMemberSnapshot> Snapshot = TakeSnapshot(*Binding);
++		// The retained reference every checkpoint resolves again.
++		const TWeakObjectPtr<const ARPGEncounterBinding> BindingRef(Binding);
+ 
+ 		// The slots of the participants (the batch), then the selections against them: exact one-to-one coverage, no duplicate, empty or extraneous selection, explicit role and phase semantics.
+ 		TSet<FName> BatchSlots;
+@@ -298,29 +415,30 @@
+ 			bool bUsable = !Participant.Slot.IsNone();
+ 
+ 			AActor* Actor = Participant.Actor.Get();
+-			if (!Actor)
++			const uint32 Problems = ActorProblems(Actor, ExpectedWorld);
++			if (Problems & ActorMissing)
+ 			{
+ 				FailMember(Result, TEXT("WorldInput.ParticipantActorMissing"), Where, TEXT("no actor was given"));
+ 				bUsable = false;
+ 			}
+-			else if (!IsValid(Actor))
++			else if (Problems & ActorStale)
+ 			{
+ 				FailMember(Result, TEXT("WorldInput.ParticipantActorStale"), Where, TEXT("the actor was destroyed or collected"));
+ 				bUsable = false;
+ 			}
+ 			else
+ 			{
+-				if (Actor->IsActorBeingDestroyed())
++				if (Problems & ActorDestroying)
+ 				{
+ 					FailMember(Result, TEXT("WorldInput.ParticipantActorDestroying"), Where, TEXT("the actor is being destroyed"));
+ 					bUsable = false;
+ 				}
+-				if (Actor->GetWorld() != ExpectedWorld)
++				if (Problems & ActorForeign)
+ 				{
+ 					FailMember(Result, TEXT("WorldInput.ParticipantForeign"), Where, TEXT("the actor is not in the expected world"));
+ 					bUsable = false;
+ 				}
+-				if (Actor->HasActorBegunPlay() || Actor->IsActorBeginningPlay())
++				if (Problems & ActorBegun)
+ 				{
+ 					FailMember(Result, TEXT("WorldInput.ParticipantActorBegun"), Where, TEXT("the actor began or is beginning play: the input is compiled before BeginPlay"));
+ 					bUsable = false;
+@@ -413,17 +531,20 @@
+ 		for (const FMember& Member : Members)
+ 		{
+ 			const FString Where = MemberText(Member.Slot, Member.Index);
+-			FString DriftError;
+-			if (!StillSame(ExpectedWorld, Acquired, DriftError))
++			FString LoopDrift;
++			const ECheckpoint BeforeCompile = Checkpoint(ExpectedWorld, Acquired, BindingRef, Encounter, Snapshot, Members, LoopDrift);
++			if (BeforeCompile != ECheckpoint::Ok)
+ 			{
+-				FailBatch(Result, TEXT("WorldInput.ContentDrift"), FString::Printf(TEXT("before compiling %s: %s"), *Where, *DriftError));
++				FailBatch(Result, DriftToken(BeforeCompile), FString::Printf(TEXT("before compiling %s: %s"), *Where, *LoopDrift));
+ 				return Result;
+ 			}
+ 			TSharedPtr<const FRPGParticipantConfig> Config;
+ 			const FRPGHydrationResult Compiled = RPGCombatHydration::CompileParticipant(*Member.Definition, Content, ManifestHash, Config);
+-			if (!StillSame(ExpectedWorld, Acquired, DriftError))
++			// After the loads: before the candidate reuses the raw actor of this member, everything is checked again.
++			const ECheckpoint AfterCompile = Checkpoint(ExpectedWorld, Acquired, BindingRef, Encounter, Snapshot, Members, LoopDrift);
++			if (AfterCompile != ECheckpoint::Ok)
+ 			{
+-				FailBatch(Result, TEXT("WorldInput.ContentDrift"), FString::Printf(TEXT("while compiling %s: %s"), *Where, *DriftError));
++				FailBatch(Result, DriftToken(AfterCompile), FString::Printf(TEXT("while compiling %s: %s"), *Where, *LoopDrift));
+ 				return Result;
+ 			}
+ 			if (!Compiled.IsReady())
+@@ -469,28 +590,14 @@
+ 			return Result;
+ 		}
+ 
+-		// Publication gate: nothing changed while the compile ran.
++		// Publication gate: the same checkpoint as around every compile (content identities, binding lifecycle, GUID, snapshot, member identities).
+ 		FString DriftError;
+-		if (!StillSame(ExpectedWorld, Acquired, DriftError))
++		const ECheckpoint Final = Checkpoint(ExpectedWorld, Acquired, BindingRef, Encounter, Snapshot, Members, DriftError);
++		if (Final != ECheckpoint::Ok)
+ 		{
+-			FailBatch(Result, TEXT("WorldInput.ContentDrift"), FString::Printf(TEXT("before publication: %s"), *DriftError));
++			FailBatch(Result, DriftToken(Final), FString::Printf(TEXT("before publication: %s"), *DriftError));
+ 			return Result;
+ 		}
+-		if (!IsValid(Binding) || !SameSnapshot(*Binding, Encounter, Snapshot))
+-		{
+-			FailBatch(Result, TEXT("WorldInput.BindingDrift"), TEXT("the encounter binding or one of its participants changed while the input was compiled"));
+-			return Result;
+-		}
+-		// The members are still exactly what was validated: valid, in the world, not begun (one more look, the compile may have loaded assets).
+-		for (const FMember& Member : Members)
+-		{
+-			if (!IsValid(Member.Actor) || Member.Actor->IsActorBeingDestroyed() || Member.Actor->GetWorld() != ExpectedWorld || Member.Actor->HasActorBegunPlay() || Member.Actor->IsActorBeginningPlay()
+-				|| !IsValid(Member.Definition))
+-			{
+-				FailMember(Result, TEXT("WorldInput.BindingDrift"), MemberText(Member.Slot, Member.Index), TEXT("the actor or the definition is no longer valid, in the expected world and not begun"));
+-				return Result;
+-			}
+-		}
+ 		OutInput = MoveTemp(Candidate);
+ 		return Result;
+ 	}

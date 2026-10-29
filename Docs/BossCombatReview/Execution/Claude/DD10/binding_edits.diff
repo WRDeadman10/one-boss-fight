@@ -1,0 +1,78 @@
+diff --git a/Source/OneBossFight/Player/RPGEncounterBinding.cpp b/Source/OneBossFight/Player/RPGEncounterBinding.cpp
+index b3f10f8..17aebc5 100644
+--- a/Source/OneBossFight/Player/RPGEncounterBinding.cpp
++++ b/Source/OneBossFight/Player/RPGEncounterBinding.cpp
+@@ -4,6 +4,7 @@
+ #include "Player/RPGBossStaggerPolicyAdapters.h"
+ #include "Player/RPGBossPhaseFlowAdapters.h"
+ #include "Player/RPGBossPhasesClusterAdapters.h"
++#include "Player/RPGBossStaggerClusterAdapters.h"
+ #include "Engine/World.h"
+ #include "Animation/AnimSequenceBase.h"
+ #include "Animation/Skeleton.h"
+@@ -47,6 +48,8 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
+ 	if (!RPGBossPhasesClusterAdapters::ValidateFireball(D.Fireball, FireballError)) { Result.Fail(FireballError); } // never replaced by the authoring defaults, never reordered
+ 	FString DependencyError;
+ 	if (!RPGBossPhasesClusterAdapters::ValidatePhaseDependencies(D.PhaseDependencies, D.PhaseFlow.bUseRoarClip, DependencyError)) { Result.Fail(DependencyError); } // structure only, no registry query, no load
++	FString StaggerProfileError;
++	if (!RPGBossStaggerClusterAdapters::ValidateStaggerProfile(D.StaggerProfile, StaggerProfileError)) { Result.Fail(StaggerProfileError); } // structure only, no registry query, no load
+ 	TSet<FName> PhaseIds;
+ 	for (const FRPGPhaseConfig& Phase : D.Phases)
+ 	{
+@@ -83,6 +86,7 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
+ 	Value->PhaseFlow = D.PhaseFlow;
+ 	Value->Fireball = D.Fireball;
+ 	Value->PhaseDependencies = D.PhaseDependencies;
++	Value->StaggerProfile = D.StaggerProfile;
+ 	Value->Content = MoveTemp(Content); Out = Value;
+ 	Value->bSyntheticFixture = bSynthetic;
+ 	if (!bSynthetic)
+diff --git a/Source/OneBossFight/Player/RPGEncounterBinding.h b/Source/OneBossFight/Player/RPGEncounterBinding.h
+index aef7c6e..5736883 100644
+--- a/Source/OneBossFight/Player/RPGEncounterBinding.h
++++ b/Source/OneBossFight/Player/RPGEncounterBinding.h
+@@ -101,6 +101,28 @@ struct FRPGPhaseDependencyConfig
+ 	UPROPERTY(EditAnywhere) TSoftClassPtr<UObject> ImmunityEffect = TSoftClassPtr<UObject>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C")));
+ };
+ 
++/**
++ * Stagger profile authoring configuration for URPGBossStagger.
++ * Additive authoring defaults match the native URPGBossStagger constructor declarations,
++ * never a fallback. Soft references only; does not load or resolve assets at compile time.
++ */
++USTRUCT(BlueprintType)
++struct FRPGStaggerProfileConfig
++{
++	GENERATED_BODY()
++	UPROPERTY(EditAnywhere) bool bUseClips = true;
++	UPROPERTY(EditAnywhere) bool bUseRiposteClips = true;
++	UPROPERTY(EditAnywhere) bool bCriticalOnEveryHit = false;
++	UPROPERTY(EditAnywhere) FName HitStunAbilityClassName = TEXT("GA_GS_Boss_HitStun_C");
++	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimMontage> FallMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage")));
++	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimMontage> GetUpMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage")));
++	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> FallClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall")));
++	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> DownClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown")));
++	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> RipostePlayerClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.AN_Riposte_Player_Front")));
++	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> RiposteBossClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction")));
++	UPROPERTY(EditAnywhere) TSoftClassPtr<UObject> ImmunityEffect = TSoftClassPtr<UObject>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C")));
++};
++
+ USTRUCT(BlueprintType)
+ struct FRPGPhaseConfig
+ {
+@@ -145,6 +167,7 @@ public:
+ 	UPROPERTY(EditAnywhere) FRPGPhaseFlowConfig PhaseFlow;
+ 	UPROPERTY(EditAnywhere) FRPGFireballConfig Fireball;
+ 	UPROPERTY(EditAnywhere) FRPGPhaseDependencyConfig PhaseDependencies;
++	UPROPERTY(EditAnywhere) FRPGStaggerProfileConfig StaggerProfile;
+ 	UPROPERTY(EditAnywhere) TArray<FRPGPhaseConfig> Phases;
+ 	UPROPERTY(EditAnywhere) TSoftObjectPtr<USkeleton> Skeleton;
+ 	UPROPERTY(EditAnywhere) TArray<TSoftObjectPtr<UAnimSequenceBase>> Animations;
+@@ -183,6 +206,7 @@ struct FRPGParticipantConfig
+ 	FRPGPhaseFlowConfig PhaseFlow;
+ 	FRPGFireballConfig Fireball;
+ 	FRPGPhaseDependencyConfig PhaseDependencies;
++	FRPGStaggerProfileConfig StaggerProfile;
+ 	TArray<FRPGPhaseConfig> Phases;
+ 	TArray<FRPGParityField> Fields;
+ 	TSharedPtr<const RPGCombatRegistry::FEpoch> Content;

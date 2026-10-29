@@ -1,0 +1,26 @@
+# DD25 typed Death SOURCE handoff — C281/C284/C285
+
+Exactly THREE new adapter/test files and existing ONLY Binding.h/.cpp.209->212 Source,207 prior files byte-equal, exact preimages/five-file diff/five pins/Review copies. Binding promoted from accepted ac593fdc/87637344; native Death header/cpp still match X310 pins. Binding includes the native Death header so FRPGDeathConfig uses actual ERPGBossDeathMode, no duplicate enum. No build/UHT/engine, native/otherconsumer/planner/asset/script/git edit.
+
+FRPGDeathConfig has all12 native fields/defaults in header order. Two default paths match native constructor:37-38 (AN_Boss01_DeathLegend and AM_Boss01_DeathLegend), repeated ONLY in Binding.h; native_default_assets.json confirms corresponding Content/OneBossFight/Boss01/Animations uasset files/hashes. Presence/hash is not class/skeleton/load/cook proof. Other new Source files have no quoted production-mount path.
+
+Validator order EXACT amended contract: FIVE floats finite first in header order; DeathMode two-enumerator check; numeric domains in header order, five float ceiling1e6, C284 int32 MaxClipRestarts0..1000000; two required well-formed FNames; DeathClip then DeathMontage required/well-formed regardless of mode. Zero multiplier OFF, zero Blend legal, zero restarts OFF; poll/hold/dying strictly positive; both guard values legal. No editor floors/repair/parse/default substitution, class/registry/mount/existence query/load. Private accepted Bleed/Look PathProblem restated unchanged. BadMode/NotFinite/NotPositive/Negative/AboveCeiling and Missing/Malformed tokens, first failure only.
+
+Exact-class/live/destruction/registration/BeginPlay/owner checks then full validation BEFORE12writes. No transient/runtime fields, loaded clips or test knobs assigned. Native instance RPGBossDeath from Attach:51, exact12required paths, plan UNWIRED. No Ready/legacy suppression/reservation/activation claim.
+
+SIX test sources Death.{Assign,Validation,Isolation,Rejections,Compile,Authoring}, all UNRUN.65bad records:15nonfinite,2bad enums,13float domain cases,3bad restart values(-1/1000001/INT32_MAX),10name cases,2null references and10Bleed malformed paths at each reference. Valid1e6float/int ceilings,0restart/off multiplier/Blend, sub-editor-floor positive values, both modes/guards; test finite-before-enum/domain/name/path order and both paths required in either mode. Full no-write/runtime getter snapshots, independent input/owners/CDO/compiler-copy snapshots, populated-output clearing on rejection, retained prior compiler checks, exact native reflection/types/defaults. No Death BeginPlay/Tick/Attach/Preload, pack ability, remains, playback/pose/guard/test knob operation. ComponentBegunPlay source-only.
+
+ARRAY_MUTATION_AUDIT.md/inventory trace every collection mutation: Result.Add reads a distinct owner set, Cases.Add constructs new records/captures copied external Path, Fields.Add copies independent stack Field, seven Valid.Add copy separate local configs before iteration; runtime counters initializer uses getter values. No same-array element/reference/MoveTemp argument or Insert/Append/Emplace/SetNum in test source.
+
+NATIVE_ARITHMETIC_AUDIT.md carries C284 decisions and field-by-field source reasoning: per-death counter bounded locally by authored1e6 limit (NOT native guard/tuning); cumulative ClipRestartCount and external time/Age narrowing remain separate. Attach at47-49 reuses Existing WITHOUT Mode assignment: typed mode authoritative on reuse; earlier second-instance claim withdrawn. Uniform both-path authoring differs from native first-Tick mode-specific load. KI-083/ability reflection/pack-death/remains/ragdoll/timing remain UNRESOLVED, not executed.
+
+Docs source REVIEW PENDING with KI-133 and C284 decision. Source-only capture exit0 is file integrity, NOT C++/UE success. Expected focused6/full171 not assumed. Please independently review actual diff/tests/pins before any run release. DD24 accepted165 and DD23 attempt1 failure retain their separate provenance/limits.
+
+Five Source pins:
+Source/OneBossFight/Player/RPGBossDeathAdapters.h SHA256 03cd0537872f884c20f481722ec349644423921d197359e3c0f000526257f0ba
+Source/OneBossFight/Player/RPGBossDeathAdapters.cpp SHA256 2ee980ebfd148e4d6f1ae9d7e36606bff147c21ba9a303215a5a8a38200ff6da
+Source/OneBossFight/Player/RPGEncounterBinding.h SHA256 588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6
+Source/OneBossFight/Player/RPGEncounterBinding.cpp SHA256 a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb
+Source/OneBossFight/Tests/RPGBossDeathAdaptersTests.cpp SHA256 f680c85825575281d7713bc05aa3bfafc599a9ae78168d4068bbce147daf8a76
+
+Receipt Codex/DD25/evidence_sha256.txt: 34files SHA256 4404f7ec4795d5dfdbe22c403b1a4147c55ff79c2d9aa52731d9edb2326b03b5.

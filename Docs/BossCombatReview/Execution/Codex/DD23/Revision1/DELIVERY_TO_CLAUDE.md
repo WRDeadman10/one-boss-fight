@@ -1,0 +1,40 @@
+# DD23 C276 bounded fixture correction — SOURCE ONLY
+
+Applied exactly the three approved fixture corrections; no additional Source change. At original test:165/290/292, selected TSoftObjectPtr<USkeletalMesh> is copied into an independent LOCAL VALUE, then Add(local). Same duplicate identity, indexed error expectations and validation order. Generator has the corresponding three substitutions. Review Revision1/one_file.diff and generator.diff.
+
+Source206 total,205 unchanged against frozen accepted DD23 manifest. ONLY Tests/RPGBossLookAdaptersTests.cpp changed. New test SHA25664fc3399928fb20ddf39d8b6207daa7c98a9077537da3db308eef0b2385f9711. Four adapter/Binding pins remain ca3bfb39/e99af51e/1cbc444b/c12fe14a (full pins in Revision1/live_pins_sha256.txt). No validator/domain/default/control/array-identity-rule change.
+
+Array audit (Revision1/ARRAY_MUTATION_AUDIT.md, exhaustive array_mutation_inventory.txt): original166 Add(Mesh(MakePath(...))) creates an independent temporary; original190 Add(Mesh(Path)) uses an external by-value captured Path; original317 assignment and318 Add(new constructed pointer) are independent. Other Cases.Add, Fields.Add, Result.Add and Valid.Add use local/new values from other containers. No further same-array source-reference mutation found. DD24 currently FOUR staging files only, NO tests yet; audited all staged collection mutations, no new self-alias found. Tests will receive this check before DD24 freeze; no DD24 test audit/completion claim now.
+
+Preservation: failed test and generator bytes under Revision1/Preimages; complete ORIGINAL20-file DD23 source bundle and byte-identical receipt24c61c96... under Revision1/Original_DD23_Source, independently verified20/20. Root historical source receipt is not re-frozen to hide the generator revision; use its archived original bundle for that receipt. Failed run23-file receipt55658b44... still verifies unchanged, with raw focused bd5c3dcc... exit3/assertion/2completions and build40224a10... exit0. No log overwritten or failure erased. Docs TASKS/TEST_PLAN/DECISIONS/KI-131 now say correction SOURCE REVIEW PENDING, not measured success.
+
+NO BUILD, UHT, engine, retry, asset/git operation, or DD24 Source promotion. Current failed-attempt DLL f6eebc6071f2f0c31dbcd96e2d45695743063cd0f694c3ef123d6b1ad317e9c2 remains the proposed attempt2 binary baseline; EXE5495fb88.../HEAD79d55906 unchanged by this source correction. No engine liveness inferred from earlier capture. Please independently review exact one-file diff and release a NEW attempt2 only if accepted. Focused6/full159 remain expectations, NOT results.
+
+Exact Source diff:
+--- Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp
++++ Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp
+@@ -162,7 +162,7 @@
+ 		Cases.Add({TEXT("null body"), [](FRPGLookConfig& R) { R.Body.Reset(); }, TEXT("InvalidDependency.Missing"), TEXT("Look.Body")});
+ 		Cases.Add({TEXT("null sword"), [](FRPGLookConfig& R) { R.Sword.Reset(); }, TEXT("InvalidDependency.Missing"), TEXT("Look.Sword")});
+ 		Cases.Add({TEXT("late null piece"), [](FRPGLookConfig& R) { R.Pieces.Add(TSoftObjectPtr<USkeletalMesh>()); }, TEXT("InvalidDependency.Missing"), TEXT("Look.Pieces[2]")});
+-		Cases.Add({TEXT("duplicate piece"), [](FRPGLookConfig& R) { R.Pieces.Add(R.Pieces[0]); }, TEXT("InvalidDependency.Duplicate"), TEXT("Look.Pieces[2]")});
++		Cases.Add({TEXT("duplicate piece"), [](FRPGLookConfig& R) { const TSoftObjectPtr<USkeletalMesh> Duplicate = R.Pieces[0]; R.Pieces.Add(Duplicate); }, TEXT("InvalidDependency.Duplicate"), TEXT("Look.Pieces[2]")});
+ 		Cases.Add({TEXT("case-insensitive asset identity duplicate"), [](FRPGLookConfig& R) { R.Pieces.Add(Mesh(MakePath(TEXT("/syntheticmount/look/a"), TEXT("crown")))); }, TEXT("InvalidDependency.Duplicate"), TEXT("Look.Pieces[2]")});
+ 		Cases.Add({TEXT("None socket"), [](FRPGLookConfig& R) { R.SwordSocket = NAME_None; }, TEXT("InvalidDependency.Missing"), TEXT("Look.SwordSocket")});
+ 		Cases.Add({TEXT("mixed-case None socket"), [](FRPGLookConfig& R) { R.SwordSocket = TEXT("nOnE"); }, TEXT("InvalidDependency.Missing"), TEXT("Look.SwordSocket")});
+@@ -287,9 +287,13 @@
+ 	auto R = RecordA();
+ 	R.Body.Reset(); R.Pieces[0].Reset(); R.Sword.Reset(); R.SwordSocket = NAME_None;
+ 	First(R, TEXT("InvalidDependency.Missing"), TEXT("Look.Body"));
+-	R = RecordA(); R.Pieces[0].Reset(); R.Pieces.Add(R.Pieces[1]); R.Sword.Reset();
++	R = RecordA(); R.Pieces[0].Reset();
++	const TSoftObjectPtr<USkeletalMesh> LaterDuplicate = R.Pieces[1];
++	R.Pieces.Add(LaterDuplicate); R.Sword.Reset();
+ 	First(R, TEXT("InvalidDependency.Missing"), TEXT("Look.Pieces[0]"));
+-	R = RecordA(); R.Pieces.Add(R.Pieces[0]); R.Sword.Reset();
++	R = RecordA();
++	const TSoftObjectPtr<USkeletalMesh> FirstDuplicate = R.Pieces[0];
++	R.Pieces.Add(FirstDuplicate); R.Sword.Reset();
+ 	First(R, TEXT("InvalidDependency.Duplicate"), TEXT("Look.Pieces[2]"));
+ 	R = RecordA(); R.Sword.Reset(); R.SwordSocket = NAME_None;
+ 	First(R, TEXT("InvalidDependency.Missing"), TEXT("Look.Sword"));

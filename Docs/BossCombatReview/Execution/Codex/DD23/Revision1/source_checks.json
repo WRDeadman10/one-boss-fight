@@ -1,0 +1,12 @@
+{
+  "scope": "C276 source-only correction, NOT compilation/UE test",
+  "source_count": 206,
+  "changed": [
+    "Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp"
+  ],
+  "unchanged": 205,
+  "tests_sha256": "64fc3399928fb20ddf39d8b6207daa7c98a9077537da3db308eef0b2385f9711",
+  "four_other_pins_unchanged": true,
+  "original_source_receipt_sha256": "24c61c965fa7da25ec793fd090ccac25600b3b3d0683c96be448b02f969c0654",
+  "failed_run_receipt_sha256": "55658b44527e011ea0a38f5bad6fbd6b8e9ada16d5d4daf6a287c85fae96bdfe"
+}

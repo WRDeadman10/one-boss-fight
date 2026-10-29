@@ -1,0 +1,2 @@
+start 10-28-2026 23:47:37 filter=OneBossFight.Binding.WorldInput
+end 10-28-2026 23:48:25 exit 0 seconds 47

@@ -1,0 +1,4 @@
+180c180
+< 		State.Components.Sort([](const UActorComponent* A, const UActorComponent* B) { return A < B; });
+---
+> 		State.Components.Sort([](const UActorComponent& A, const UActorComponent& B) { return &A < &B; }); // a pointer array is sorted through dereferenced references

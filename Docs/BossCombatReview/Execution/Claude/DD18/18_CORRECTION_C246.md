@@ -1,0 +1,24 @@
+# DD18 correction for X-288 (C246 returned): retained binding identity and complete quarantine actor set. SOURCE ONLY (Claude, 2026-10-28)
+
+Nothing was built, no UHT, no automation, no engine process, no git operation, no asset load. Scope: the existing six DD18 files only; two changed (the registry cpp and the registry tests), four are byte-identical to the bytes delivered in C-246 (`cmp` equal): `RPGBossWorldPreparation.h/.cpp`, `RPGBossPreparationRegistry.h`, `RPGBossWorldPreparationTests.cpp`. No public API change, no other Source file touched.
+
+## Preserved
+`Review/*.delivered_C246` are the six files exactly as delivered in C-246 (header 8a71cdf9..., cpp ce6a1b31..., registry header d9d813c7..., registry cpp 253a47f4..., world-preparation tests fb867b15..., registry tests 38729988...). The earlier `*.before_independent_review` states stay.
+
+## New bytes
+- `Player/RPGBossPreparationRegistry.cpp` 567 lines sha256 `b6bfc4a8888d397ec8c58d35d3b8d6f7ada7229692ecb37de9c3297ac7b9078d` (was 253a47f4...)
+- `Tests/RPGBossPreparationRegistryTests.cpp` 1035 lines sha256 `f469b19aa285905d2fc260a348923fff04f9b2f06b6c9617dae5c6ec387ce574` (was 38729988...)
+Both CRLF, 0 bare LF/CR. Exact deltas: `revision_C246_RPGBossPreparationRegistry.cpp.diff` (151 lines, sha256 `f724e2873e7500d7af2fad439e82abd4ab5388de1de51c6d45359dbce944fc29`) and `revision_C246_RPGBossPreparationRegistryTests.cpp.diff` (89 lines, `0fbb4571f4c4242b12c78b7e34d9cac23f8386ed3fcf29de45a6616ea649a647`); the full six-file diff is `six_file_c246_correction.diff` (`fa020394da5aa6914534f4da1c57f18c4e29b718fe066d1eaa5e8a675105b1a8`). Refreshed full 191-file manifest `post_c246_correction_full_tree_manifest_sha256.txt`: against the manifest after the C-247 follow-up exactly two changed lines (the two files above); against the 185-file baseline exactly seven lines differ (the six new files and the DD17 cpp changed by C-247). 24/24 pins, 13/13 dependency pins (`dependency_pins_after_c245_followup_sha256.txt` still holds), 14/14 candidates; HEAD 79d55906 and both binaries unchanged; no engine/build process.
+
+## The correction (registry cpp, `TryPrepareAndReserve`)
+1. BEFORE the pre-check and the facade, the attempted identity is captured once and made immutable: `BindingRef` (a retained weak `TWeakObjectPtr<const ARPGEncounterBinding>`), `OriginalEncounter` (the GUID read once) and `OriginalActors` (the complete original actor set of every role). After `PrepareWorldBatch` returns, the saved raw `Binding` is never dereferenced again (a build-time assertion of my edit script checks that the text after the facade call contains no `Binding->`).
+2. The final gate first resolves the retained binding through the new `BindingStillAdmissible(BindingRef, World, OriginalEncounter, Why)`: it must resolve, be valid, not being destroyed, in the registry's world, not begun or beginning, and still carry the ORIGINAL GUID; a missing, replaced, destroying, late, wrong-world or GUID-mutated binding fails the gate (`Reservation.Drift` plus `Reservation.Drift[binding]: <why>`), its components are aborted. The plan's encounter, the registry conflict loop and the published entry use `OriginalEncounter`, never a newly mutated GUID.
+3. The quarantine paths (failed preparation with a violating cleanup, and a violating cleanup in the final-gate drift) use `OriginalEncounter` and an actor set that is the immutable `OriginalActors` UNITED with the prepared plan's actors, built even when the gate already failed before the plan loop (it was empty then): surviving components can no longer reopen an actor through a differently named encounter.
+
+## Tests added (reachable ones; nothing injected, nothing registered to force a case)
+- `AdmissionAndConflicts`: a destroyed binding, a binding that began play and a binding of ANOTHER world (a plain test-local world) on a LIVE registry are refused safely as InvalidInput (`Reservation.InvalidBinding`, `WorldInput.InvalidBinding ... began or is beginning play`, `Reservation.InvalidBinding ... not in this registry's world`), ONE error each, nothing allocated, the earlier reservations untouched.
+- `ReleaseAndTokens`: after the binding's GUID is MUTATED following the admission, the registry still lists the ORIGINAL encounter and the token still names it; admitting the same actors under the new GUID is a Conflict by ACTOR (not by GUID), nothing changes; the GUID is then restored.
+Source-only (stated, unchanged): the mid-load clearing/mutation of the binding or its GUID, the final-gate drift and the quarantine paths (they need a callback, a cvar, an injection or a registered component); they are a source-confirmed fix, not a reproduced crash and not an executed quarantine.
+
+## Open
+Not compiled, not run. The test-file and remainder review of DD18 stays pending (not implicitly accepted). Nothing committed. Every limit of `18_DELIVERY.md` and `18_ADDENDUM_C245_FOLLOWUP.md` still applies.

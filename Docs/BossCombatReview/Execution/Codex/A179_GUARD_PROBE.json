@@ -1,0 +1,8 @@
+{
+  "source_sha256": "d12e1519be960576fd00992674be076ecef5af6a7470c3899b27902f97dc8b8a",
+  "scope": "Python function AST only, no Unreal import or execution",
+  "all_required_editor_apis_absent_result": [
+    true,
+    ""
+  ]
+}

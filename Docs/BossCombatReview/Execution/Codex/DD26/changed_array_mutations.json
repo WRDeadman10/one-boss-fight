@@ -1,0 +1,37 @@
+[
+  {
+    "file": "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+    "line": 102,
+    "code": "\t\tPlans.Add(RPGBossBleedAdapters::MakeBleedPlan());"
+  },
+  {
+    "file": "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+    "line": 103,
+    "code": "\t\tPlans.Add(RPGBossLowSweepAdapters::MakeLowSweepPlan());"
+  },
+  {
+    "file": "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+    "line": 104,
+    "code": "\t\tPlans.Add(RPGBossShockwaveAdapters::MakeShockwavePlan());"
+  },
+  {
+    "file": "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+    "line": 105,
+    "code": "\t\tPlans.Add(RPGBossHealPunishAdapters::MakeHealPunishPlan());"
+  },
+  {
+    "file": "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+    "line": 106,
+    "code": "\t\tPlans.Add(RPGBossLookAdapters::MakeLookPlan());"
+  },
+  {
+    "file": "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+    "line": 107,
+    "code": "\t\tPlans.Add(RPGBossCloseClipSwapAdapters::MakeCloseClipSwapPlan());"
+  },
+  {
+    "file": "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+    "line": 108,
+    "code": "\t\tPlans.Add(RPGBossDeathAdapters::MakeDeathPlan());"
+  }
+]

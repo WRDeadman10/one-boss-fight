@@ -1,0 +1,21 @@
+# C275 DD23 verification FAILED — STOPPED, no fix or retry
+
+Fresh safety passed:206 Source files matched accepted DD23 manifest, DD23/DD21/DD22 pins with explicitly accepted Binding replacements, dependencies/candidates/catalog, DD22 binary baseline, HEAD79d55906 and no engine/build process. ONE editor Development build/UHT succeeded. No Source changed during this run.
+
+Focused OneBossFight.Binding.Look discovered6, but engine crashed during Compile after ONLY Assign and Authoring completed Success. Engine/job exit3; outer command tool reported nonzero1. Completed2, not a passing focused suite.23 Error-severity lines,14 Warning lines; assertion/critical error and StaticShutdownAfterError present; no clean GIsCriticalError=0 completion. Full suite NOT RUN, CookCoverage NOT RUN. No warning-multiset comparison/full159 result exists for this binary.
+
+Cause confirmed by raw callstack and source: RPGBossLookAdaptersTests.cpp:165 constructs the duplicate-piece negative fixture with R.Pieces.Add(R.Pieces[0]). UE TArray::CheckAddress (Array.h:1661) rejects an Add argument referencing an element in the same array, even before this fixture reaches ValidateLook. Callstack points to BadCases lambda at:165 from CompileTest:398. This is my regression-fixture bug, not a demonstrated production-adapter failure. The same self-alias pattern also exists in unexecuted validation-order cases at:290 and:292.
+
+Proposed bounded correction, NOT applied: at all THREE fixture sites copy the selected TSoftObjectPtr<USkeletalMesh> into a local value first, then Add that independent local. Preserve identical duplicate identity and indexed Duplicate expectations/order. Update generator correspondingly, preserve original failed source bytes and this attempt. No validator/domain/default/control change. Please review/release exact source-only correction before any build/retry; this report does not assume retry authority.
+
+DD24: four staged files (adapter.h/.cpp plus Binding.h/.cpp drafts) prepared ONLY under Codex/DD24/Staging while focused run was in progress. No staged tests yet, no live Source promotion or handoff. Staging paused on this failure; no DD24 source completion/acceptance claim.
+
+Post-failure206 Source manifest/five pins/dependencies/HEAD unchanged, no engine/build/compiler process remains at capture. Current DLL is the DD23-built binary, NOT the last accepted DD22 binary; prior153 driver/automation acceptance is not inherited. No fix, retry, other engine action, asset edit, git or history write. Failed raw logs, jobs and commands preserved in Codex/DD23/run_2026-10-29.
+
+BUILD exit0/26s; UHT ['  Running Internal UnrealHeaderTool C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject C:\\UnrealProject\\OneBossFight\\Intermediate\\Build\\Win64\\OneBossFightEditor\\Development\\OneBossFightEditor.uhtmanifest -WarningsAsErrors -installed', 'Reflection code generated for OneBossFightEditor in 1.8355017 seconds']; 3 known Warning lines; raw SHA256 40224a1092a74e0c4ef1652b3349b2866e1214a842f78a0ecd190106c5e03d5f.
+
+FOCUSED exit3/30s; raw SHA256 bd5c3dcc2948a7167fcc88f0b17787e655331c277009fa18aabc313238bbf624.
+
+Current binaries: {"Binaries/Win64/UnrealEditor-OneBossFight.dll": "f6eebc6071f2f0c31dbcd96e2d45695743063cd0f694c3ef123d6b1ad317e9c2", "Binaries/Win64/OneBossFight.exe": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65"}.
+
+Receipt Codex/DD23/run_2026-10-29/evidence_sha256.txt: 23 files; SHA256 55658b44527e011ea0a38f5bad6fbd6b8e9ada16d5d4daf6a287c85fae96bdfe.

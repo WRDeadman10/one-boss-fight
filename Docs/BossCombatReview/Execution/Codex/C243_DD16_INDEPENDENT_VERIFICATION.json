@@ -1,0 +1,66 @@
+{
+  "evidence_sha256.txt": {
+    "count": 28,
+    "bad": []
+  },
+  "final_source_manifest_sha256.txt": {
+    "count": 182,
+    "bad": []
+  },
+  "final_binary_sha256.txt": {
+    "count": 2,
+    "bad": []
+  },
+  "pre_source_manifest_sha256.txt": {
+    "count": 182,
+    "bad": []
+  },
+  "pre_pins.txt": {
+    "count": 24,
+    "bad": []
+  },
+  "dd15_dd14_pins_sha256.txt": {
+    "count": 4,
+    "bad": []
+  },
+  "candidate_assets_sha256.txt": {
+    "count": 14,
+    "bad": []
+  },
+  "source_equal": true,
+  "automation_focused_production_preparation.log": {
+    "sha256": "42126c0e3d7c9097dcc0d489dff4c633da40b48c18b986842b8d24aa98858dda",
+    "completions": 3,
+    "unique": 3,
+    "fail": [],
+    "warning_severity": 13,
+    "error_severity": 0
+  },
+  "automation_full_dd16.log": {
+    "sha256": "7659d2494ad7dd69a38297b40296162ecb3a2b0b7196e53e631b21889960f616",
+    "completions": 119,
+    "unique": 119,
+    "fail": [],
+    "warning_severity": 60,
+    "error_severity": 0,
+    "prior_missing": [],
+    "added": [
+      "OneBossFight.Binding.ProductionPreparation.LateRejection",
+      "OneBossFight.Binding.ProductionPreparation.NameCollisionCleanup",
+      "OneBossFight.Binding.ProductionPreparation.PositiveBatch"
+    ]
+  },
+  "full_warnings_equal_dd15": true,
+  "build_dd16.log": {
+    "sha256": "ea57119856cdbeaacc9433a5e541c15eb0d3beea261773642747be47fef4e7bb",
+    "completions": 0,
+    "unique": 0,
+    "fail": [],
+    "warning_severity": 0,
+    "error_severity": 0
+  },
+  "automation_focused_production_preparation_job_record.txt": "start 10/28/2026 21:04:19 filter=OneBossFight.Binding.ProductionPreparation\nend 10/28/2026 21:05:03 exit 0 seconds 44",
+  "automation_full_dd16_job_record.txt": "start 10/28/2026 21:05:14 filter=OneBossFight\nend 10/28/2026 21:05:44 exit 0 seconds 29",
+  "build_dd16_job_record.txt": "start 10/28/2026 21:03:54\nend 10/28/2026 21:04:09 exit 0 seconds 15",
+  "binaries": "3009ff5fb38cf9d4f5f08cbfc6ed930c8d4718f636ce7bf036f5e835571aa585 *Binaries/Win64/UnrealEditor-OneBossFight.dll\n5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65 *Binaries/Win64/OneBossFight.exe\n"
+}

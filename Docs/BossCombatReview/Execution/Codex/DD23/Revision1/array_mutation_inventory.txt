@@ -1,0 +1,31 @@
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:138:		for (const UActorComponent* C : Owner->GetComponents()) { Result.Add(C); }
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:162:		Cases.Add({TEXT("null body"), [](FRPGLookConfig& R) { R.Body.Reset(); }, TEXT("InvalidDependency.Missing"), TEXT("Look.Body")});
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:163:		Cases.Add({TEXT("null sword"), [](FRPGLookConfig& R) { R.Sword.Reset(); }, TEXT("InvalidDependency.Missing"), TEXT("Look.Sword")});
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:164:		Cases.Add({TEXT("late null piece"), [](FRPGLookConfig& R) { R.Pieces.Add(TSoftObjectPtr<USkeletalMesh>()); }, TEXT("InvalidDependency.Missing"), TEXT("Look.Pieces[2]")});
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:165:		Cases.Add({TEXT("duplicate piece"), [](FRPGLookConfig& R) { const TSoftObjectPtr<USkeletalMesh> Duplicate = R.Pieces[0]; R.Pieces.Add(Duplicate); }, TEXT("InvalidDependency.Duplicate"), TEXT("Look.Pieces[2]")});
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:166:		Cases.Add({TEXT("case-insensitive asset identity duplicate"), [](FRPGLookConfig& R) { R.Pieces.Add(Mesh(MakePath(TEXT("/syntheticmount/look/a"), TEXT("crown")))); }, TEXT("InvalidDependency.Duplicate"), TEXT("Look.Pieces[2]")});
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:167:		Cases.Add({TEXT("None socket"), [](FRPGLookConfig& R) { R.SwordSocket = NAME_None; }, TEXT("InvalidDependency.Missing"), TEXT("Look.SwordSocket")});
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:168:		Cases.Add({TEXT("mixed-case None socket"), [](FRPGLookConfig& R) { R.SwordSocket = TEXT("nOnE"); }, TEXT("InvalidDependency.Missing"), TEXT("Look.SwordSocket")});
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:169:		Cases.Add({TEXT("space socket"), [](FRPGLookConfig& R) { R.SwordSocket = TEXT("Grip A"); }, TEXT("InvalidDependency.Malformed"), TEXT("Look.SwordSocket")});
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:170:		Cases.Add({TEXT("tab socket"), [](FRPGLookConfig& R) { R.SwordSocket = TEXT("Grip\tA"); }, TEXT("InvalidDependency.Malformed"), TEXT("Look.SwordSocket")});
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:171:		Cases.Add({TEXT("control socket"), [](FRPGLookConfig& R) { R.SwordSocket = FName(*FString::Printf(TEXT("Grip%cA"), static_cast<TCHAR>(0x7f))); }, TEXT("InvalidDependency.Malformed"), TEXT("Look.SwordSocket")});
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:189:			Cases.Add({FString(M.Name) + TEXT(" body"), [Path](FRPGLookConfig& R) { R.Body = Mesh(Path); }, TEXT("InvalidDependency.Malformed"), TEXT("Look.Body")});
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:190:			Cases.Add({FString(M.Name) + TEXT(" piece"), [Path](FRPGLookConfig& R) { R.Pieces.Add(Mesh(Path)); }, TEXT("InvalidDependency.Malformed"), TEXT("Look.Pieces[2]")});
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:191:			Cases.Add({FString(M.Name) + TEXT(" sword"), [Path](FRPGLookConfig& R) { R.Sword = Weapon(Path); }, TEXT("InvalidDependency.Malformed"), TEXT("Look.Sword")});
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:213:			D->Fields.Add(Field);
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:271:	Valid.Add(Empty);
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:274:	Valid.Add(LongSocket); // long representable FName; no new record length cap
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:292:	R.Pieces.Add(LaterDuplicate); R.Sword.Reset();
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:296:	R.Pieces.Add(FirstDuplicate); R.Sword.Reset();
+Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp:322:	Input.Look.Pieces.Add(Mesh(MakePath(TEXT("/SyntheticMount/Changed"), TEXT("Extra"))));
+Docs/BossCombatReview/Execution/Codex/DD24/Staging/RPGEncounterBinding.cpp:95:		PhaseIds.Add(Phase.PhaseId);
+Docs/BossCombatReview/Execution/Codex/DD24/Staging/RPGEncounterBinding.cpp:107:		Fields.Add(F.FieldPath);
+Docs/BossCombatReview/Execution/Codex/DD24/Staging/RPGEncounterBinding.cpp:138:			else { Value->Animations.Emplace(Animation); }
+Docs/BossCombatReview/Execution/Codex/DD24/Staging/RPGEncounterBinding.cpp:226:		Slots.Add(B.Slot); Actors.Add(Actor);
+Docs/BossCombatReview/Execution/Codex/DD24/Staging/RPGEncounterBinding.cpp:246:		Record.TargetSlot = B.TargetSlot; Record.Config = *Config; Pending.Add(MoveTemp(Record));
+Docs/BossCombatReview/Execution/Codex/DD24/Staging/RPGEncounterBinding.cpp:252:	if (Result.IsReady()) { Records.Append(MoveTemp(Pending)); }
+Docs/BossCombatReview/Execution/Codex/DD24/Staging/RPGEncounterBinding.cpp:347:	for (const FRPGParityField& Field : Record->Config->Fields) { Manifest.Add(Field.FieldPath); }
+Docs/BossCombatReview/Execution/Codex/DD24/Staging/RPGEncounterBinding.cpp:360:		Classes.Add(Plan.Class); Names.Add(Plan.InstanceName);
+Docs/BossCombatReview/Execution/Codex/DD24/Staging/RPGEncounterBinding.cpp:370:	for (const auto& Plan : Plans) { ClassLeases.Emplace(Plan.Class); }
+Docs/BossCombatReview/Execution/Codex/DD24/Staging/RPGEncounterBinding.cpp:379:		Pending.Emplace(Component);
+Docs/BossCombatReview/Execution/Codex/DD24/Staging/RPGEncounterBinding.h:317:	void Fail(const FString& Message) { Errors.Add(Message); }

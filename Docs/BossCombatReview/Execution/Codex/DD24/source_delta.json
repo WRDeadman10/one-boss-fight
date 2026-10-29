@@ -1,0 +1,12 @@
+{
+  "added": [
+    "Source/OneBossFight/Player/RPGBossCloseClipSwapAdapters.cpp",
+    "Source/OneBossFight/Player/RPGBossCloseClipSwapAdapters.h",
+    "Source/OneBossFight/Tests/RPGBossCloseClipSwapAdaptersTests.cpp"
+  ],
+  "removed": [],
+  "changed": [
+    "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+    "Source/OneBossFight/Player/RPGEncounterBinding.h"
+  ]
+}

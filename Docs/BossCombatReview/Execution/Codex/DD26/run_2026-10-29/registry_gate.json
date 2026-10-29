@@ -1,0 +1,31 @@
+{
+  "scope": "Raw log summary; requires separate job exit/source/binary review",
+  "sha256": "8ad2a32a483a45c67b70f33df3628ea4d860aef2a166793b2772aad18b8af5ce",
+  "completed": 3,
+  "unique": 3,
+  "failures": [],
+  "duplicate_completions": [],
+  "warning_severity_lines": 19,
+  "error_severity_lines": 0,
+  "paths": [
+    "OneBossFight.Binding.PreparationRegistry.AdmissionAndConflicts",
+    "OneBossFight.Binding.PreparationRegistry.Lifetime",
+    "OneBossFight.Binding.PreparationRegistry.ReleaseAndTokens"
+  ],
+  "job": {
+    "scope": "Recorded exit only, not live liveness",
+    "sha256": "091421ee89ac0c879be5d218c406da46a125ea2b6b705b10abc56ac2e1f6a5e6",
+    "exit_code": 0,
+    "seconds": 24
+  },
+  "discovered": [
+    [
+      "3",
+      "OneBossFight.Binding.PreparationRegistry."
+    ]
+  ],
+  "fatal_ensure_assertion_unsupported": [],
+  "membership_exact": true,
+  "filter_note": "Trailing dot separates Preparation. from PreparationRegistry.; each gate requires its own exact source-name set.",
+  "pass": true
+}

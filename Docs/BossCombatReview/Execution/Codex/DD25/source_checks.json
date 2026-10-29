@@ -1,0 +1,58 @@
+{
+  "scope": "Source-only integrity, NOT compilation or Unreal tests",
+  "baseline": 209,
+  "current": 212,
+  "old_files_unchanged": 207,
+  "delta": {
+    "added": [
+      "Source/OneBossFight/Player/RPGBossDeathAdapters.cpp",
+      "Source/OneBossFight/Player/RPGBossDeathAdapters.h",
+      "Source/OneBossFight/Tests/RPGBossDeathAdaptersTests.cpp"
+    ],
+    "removed": [],
+    "changed": [
+      "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "Source/OneBossFight/Player/RPGEncounterBinding.h"
+    ]
+  },
+  "files": [
+    {
+      "path": "Source/OneBossFight/Player/RPGBossDeathAdapters.h",
+      "sha256": "03cd0537872f884c20f481722ec349644423921d197359e3c0f000526257f0ba",
+      "bytes": 2879,
+      "lines": 42
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossDeathAdapters.cpp",
+      "sha256": "2ee980ebfd148e4d6f1ae9d7e36606bff147c21ba9a303215a5a8a38200ff6da",
+      "bytes": 9688,
+      "lines": 262
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+      "bytes": 25087,
+      "lines": 465
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb",
+      "bytes": 18757,
+      "lines": 410
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossDeathAdaptersTests.cpp",
+      "sha256": "f680c85825575281d7713bc05aa3bfafc599a9ae78168d4068bbce147daf8a76",
+      "bytes": 36004,
+      "lines": 519
+    }
+  ],
+  "test_names": [
+    "OneBossFight.Binding.Death.Assign",
+    "OneBossFight.Binding.Death.Validation",
+    "OneBossFight.Binding.Death.Isolation",
+    "OneBossFight.Binding.Death.Rejections",
+    "OneBossFight.Binding.Death.Compile",
+    "OneBossFight.Binding.Death.Authoring"
+  ]
+}

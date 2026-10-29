@@ -1,0 +1,2 @@
+start 10-29-2026 14:20:31 filter=OneBossFight.Binding.CloseClipSwap
+end 10-29-2026 14:20:55 exit 0 seconds 23

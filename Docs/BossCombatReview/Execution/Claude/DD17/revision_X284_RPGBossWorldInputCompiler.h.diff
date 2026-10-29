@@ -1,0 +1,25 @@
+--- /dev/fd/63	2026-10-28 21:51:39.000000000 +0530
++++ /dev/fd/62	2026-10-28 21:51:39.000000000 +0530
+@@ -23,8 +23,10 @@
+  * after that is the content acquired, and ONLY through RPGCombatRegistry::ForWorld(ExpectedWorld): the epoch the world's own UGameInstance catalog subsystem published (the game instance and that subsystem are looked up
+  * a second time only to hold their identities for the drift checks and to require that they report the same epoch pointer). A world without a game instance, without that
+  * subsystem or without a published epoch fails; there is no Legacy() fallback, injected epoch, replacement subsystem or process-cvar switch. Whatever mode that game instance latched stays its published authority
+- * and is never required to be data. The exact epoch lease, the world, the game instance, the subsystem and the participant snapshot are held and rechecked before and after every production compile and before
+- * publication; a change is reported as drift and nothing is published.
++ * and is never required to be data. The exact epoch lease, the world, the game instance (valid) and its subsystem (valid) are held, and the binding is held through a retained weak reference; one shared checkpoint rechecks all of it before and after
++ * EVERY production compile and at publication: the content identities (WorldInput.ContentDrift), then the binding resolves to the same object, is valid, not being destroyed, in the expected world, not begun or
++ * beginning play, has the same GUID and the same participant snapshot, and every member actor and definition is still valid, in the world and not begun (WorldInput.BindingDrift). The member checks use the very
++ * predicates of the initial validation. A change is reported as drift and nothing is published.
+  *
+  * Then the production compiler RPGCombatHydration::CompileParticipant runs for every definition against that acquired epoch and the explicit manifest hash, a production config (bSyntheticFixture false, holding the very
+  * epoch lease) is required, and the whole candidate input is built locally and handed to the accepted RPGBossHydrationPreflight::CompilePreflight for whole-batch validation. The output is published ONLY if every
+@@ -50,7 +52,8 @@
+ 
+ 	/**
+ 	 * Compiles the preflight input of the placed encounter in the expected world (see above). Game thread only. On success OutInput is the complete validated input (world, encounter GUID, the very epoch lease,
+-	 * one request per participant in the binding's order); on any failure OutInput is empty and the returned errors say why. The result is only an input: not a plan, not a preparation, not a reservation, not Ready.
++	 * one request per participant in the binding's order). On ANY failure on the game thread OutInput is cleared and the returned errors say why; an OFF-thread refusal (WorldInput.NotGameThread)
++	 * leaves OutInput untouched, because releasing its leases off the game thread would be unsafe. The result is only an input: not a plan, not a preparation, not a reservation, not Ready.
+ 	 */
+ 	ONEBOSSFIGHT_API FRPGHydrationResult CompileWorldInput(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding, const TArray<FSelection>& Selections, const FString& ManifestHash, FRPGHydrationPreflightInput& OutInput);
+ }

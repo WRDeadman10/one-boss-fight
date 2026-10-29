@@ -1,0 +1,1 @@
+72580f60ee5d77f9c34d20c38272ce03dae8059102279dda38ed4ab8879ada81      41187  Docs/BossCombatReview/Execution/Antigravity/Manifest/FIELD_MANIFEST_CONTRACT_ANALYSIS.md
