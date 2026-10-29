@@ -1,5 +1,13 @@
 # Phase status
 
+X259/C224: correctedDD10 focused7/full95 acceptedconfigurationonly, DLL837ce607; failures/provenance preserved. ClaudeDD11 DormantWakeprofile6file actualdiff BEFOREBUILD, narrowfriendheaderseam/nativecppunchanged. AGofflinepacket continues; DD10gitstaging held untilstableacceptedbatch. Cursor618, watchACTIVE.
+
+X257/C223: correctedtestsourceb95c1474 accepted; Claude freshsafety/build/focused7 then conditionalfull95 released, prior88+7 actualproof required.9receipts/171hashes/28pins verified; allfailures/provenance/capoverrun retained. No pass yet/no wiring/activation/git, automationPAUSED. Cursor615.
+
+X256 / A163 / C222: DD10 completion rejected, focused6/7 Assignfixtureboundaryfailure, fullnotrun;40receipts/171sourcehashes/currentpinsverified. AG reportsceasedengine, Claude tests-only repair/diff BEFOREBUILD per Codex/DD10_TEST_REPAIR_ORDER_2026-10-28.md. Adddefault/no-load Oracle and provenance reconciliation; C220capoverrun recorded. No newengine/git/wiringapproval. Cursor613; Codexlead, automationPAUSED.
+
+X255 / owner2026-10-28: Codex lead/no engine; Claude implementer after existingAG-2bDD10 reports; AG sole accepted-batch git/content/offline. C220 release stands only existingunit with stops, no futureblindbuild; no takeover. DD9 historical acceptance ratified subject to explicit limits, DD10 rawreview pending. Cursor610; automationPAUSED retained.
+
 C208/X254: DD8 source accepted; Claude fresh safety/UHT/build/focused6 then conditional full81 released. Actual prior75+6/rawpins required, identity not resolvedcapability/timing approval. Codex/C208_PHASE_FLOW_SOURCE_ACCEPTANCE.md; no wiring/activation/fullprofile. Cursor587, AGrests.
 
 C206/X253: DD7 UHT/build/focused6/full75 accepted scalarpolicy only, DLL33f6325e. Next DD8 actual6fieldPhaseFlow5-file implementation diff BEFOREBUILD, Codex/DD8_PHASE_FLOW_POLICY_PACKAGE_01.md. Asset/profile and combinedcluster integration remain, no activation. Cursor584; AGrests.

@@ -1,0 +1,50 @@
+# DD25 C281 pre-write source findings
+
+Read-only native review, no runtime reproduction, Source edit, engine operation or
+changed authored domain. DD24 source handoff is X-309; DD25 has not been promoted
+or implemented under Source. This report seeks the lead's exact continuation on
+the numeric contract instead of silently inventing a bound or native guard.
+
+1. `RPGBossDeath.cpp:508-512`: `RestartsThisDeath >= MaxClipRestarts`, then equality
+   at510, then `++RestartsThisDeath` at512. The counter is `int32` in the header.
+   The C281 no-ceiling reason "it is only compared" is not true for the equality
+   path. With an authored MaxClipRestarts of INT32_MAX and a counter that reaches
+   that value, the warning-once increment attempts INT32_MAX+1, which cannot be
+   represented as signed int32. The normal restart path also increments the
+   counter at517, and cumulative ClipRestartCount at518.
+
+   This is a CONDITIONAL source-level overflow path requiring about2.147billion
+   restart events in a death, not a reproduced engine failure or a claim it occurs
+   in the current duel. The usual pack destruction window is not a typed-record
+   bound and must not be silently assumed to prove unrestricted arithmetic safety.
+   An authored upper bound INT32_MAX-1 would prevent this specific per-death
+   warning increment overflow without a gameplay/tuning ceiling, but that would
+   change C281's explicit no-ceiling domain and therefore is NOT applied here.
+   Cumulative counters and arbitrary external time/age remain separate hazards;
+   no bound on this field alone certifies them.
+
+   Lead continuation needed: retain finite int32>=0/no extra ceiling with this
+   native arithmetic residual explicitly accepted, or issue the exact revised
+   domain/native scope. No native edit or silent domain restriction made.
+
+2. `RPGBossDeath.cpp:41-54`: Attach checks Boss then calls
+   `Boss->FindComponentByClass<URPGBossDeath>()` at47, returning Existing at49.
+   The caller in PlayerMoves lacks its own class check, but Attach itself is
+   idempotent for an already discoverable Death component. The C281 assertion that
+   this call alone might allocate a second instance is not supported by that path.
+   It also returns the existing component WITHOUT assigning the supplied Mode;
+   typed configuration must remain authoritative on that reuse path. No assertion
+   of global reservation, race/thread safety or future activation correctness.
+
+Other numeric uses reviewed read-only: poll deadline adds float PackPollSeconds
+to double Now at223; multiplier is written only when >0 at296/303 (zero, negative
+or NaN skip injection natively); DyingSeconds is compared with double Age at419;
+BlendInSeconds is passed to RPGBossClips::Play at439; HoldAtSeconds controls pause
+at446/494 and bounds Clamp(float(Age),0,HoldAtSeconds) at519. The authored1e6
+ceilings/positivity do not constrain external world times, duration/skeleton/load
+fit or the prior double-to-float Age narrowing. No numeric runtime proof claimed.
+
+Constructor at31-39 sets tick defaults and two soft paths only. First Tick calls
+Preload at343; Preload160-173 selects one path by mode. Both-path requirement is
+the lead's uniform authored contract, not native mode-dependent necessity.
+Remaining lifecycle, runtime ability reflection and KI-083 remain unexecuted.

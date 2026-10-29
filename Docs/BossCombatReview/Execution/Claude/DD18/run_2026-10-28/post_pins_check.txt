@@ -1,0 +1,4 @@
+pre_pins.txt bad=0
+dependency_pins_after_c245_followup_sha256.txt bad=0
+candidate_assets_sha256.txt bad=0
+default_catalog_assets_sha256.txt bad=0

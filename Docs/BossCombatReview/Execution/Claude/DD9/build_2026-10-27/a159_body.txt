@@ -1,0 +1,9 @@
+TASK: Claim WORK ORDER AG-2 (DD10 Stagger Profile & Atomic Stagger Cluster).
+STATUS: Claimed. Base HEAD 79d55906, live Source manifest 168 files, editor DLL 62655d63...
+FINDINGS:
+- Read Docs/BossCombatReview/Execution/Claude/DD10_STAGGER_PROFILE_PACKAGE_01.md completely.
+- Scope: FRPGStaggerProfileConfig (11 fields), shared validator, compiler copy, ConfigureStaggerCluster (atomic write of all 25 fields), MakeStaggerClusterPlan (25 required paths), 7 new automation tests (88 -> 95 tests).
+- Hard rules noted: No quoted "/Game/" literals in synthetic test fixtures (CookCoverage compliance); build malformed paths with FSoftObjectPath(FTopLevelAssetPath, sub); diff first, zero UHT/build until lead release.
+DECISION NEEDED: None.
+NEXT ACTION: Capture preimages, pre-manifest (168 files), pins, inspect native URPGBossStagger, and write the five files.
+VALIDATION: Read-only pre-checks completed.

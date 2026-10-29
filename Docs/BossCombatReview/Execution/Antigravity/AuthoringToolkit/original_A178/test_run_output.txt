@@ -1,0 +1,38 @@
+test_boss_multiple_phases_rejected (__main__.TestBossProfileValidation) ... ok
+test_player_participant_phases_rejected (__main__.TestBossProfileValidation) ... ok
+test_valid_boss_profile (__main__.TestBossProfileValidation) ... ok
+test_double_slash_and_backslash_rejection (__main__.TestCanonicalPathValidation) ... ok
+test_subobject_colon_rejection (__main__.TestCanonicalPathValidation) ... ok
+test_traversal_rejection (__main__.TestCanonicalPathValidation) ... ok
+test_valid_paths (__main__.TestCanonicalPathValidation) ... ok
+test_whitespace_rejection (__main__.TestCanonicalPathValidation) ... ok
+test_wrong_root_rejection (__main__.TestCanonicalPathValidation) ... ok
+test_missing_new_build_fails (__main__.TestClonedCatalogReadback) ... ok
+test_order_permutation_fails (__main__.TestClonedCatalogReadback) ... ok
+test_valid_readback_passes (__main__.TestClonedCatalogReadback) ... ok
+test_case_insensitive_ascii_equality (__main__.TestExactFNameEquality) ... ok
+test_membership_helper (__main__.TestExactFNameEquality) ... ok
+test_whitespace_is_significant (__main__.TestExactFNameEquality) ... ok
+test_case_lowering (__main__.TestExactNativeNormalization) ... ok
+test_double_quote_trimming_parity (__main__.TestExactNativeNormalization) ... ok
+test_empty_and_whitespace (__main__.TestExactNativeNormalization) ... ok
+test_reserved_keywords (__main__.TestExactNativeNormalization) ... ok
+test_single_quotes_preserved (__main__.TestExactNativeNormalization) ... ok
+test_collision_with_existing_build (__main__.TestNamespaceCollisionValidation) ... ok
+test_reserved_keyword_rejection (__main__.TestNamespaceCollisionValidation) ... ok
+test_valid_custom_build_keys (__main__.TestNamespaceCollisionValidation) ... ok
+test_finite_floats (__main__.TestNumericDomainValidation) ... ok
+test_finite_integers (__main__.TestNumericDomainValidation) ... ok
+test_report_structure (__main__.TestPartialOperationReport) ... ok
+test_clean_contract_passes (__main__.TestPinnedLegacyContractValidation) ... ok
+test_duplicate_slot_fails (__main__.TestPinnedLegacyContractValidation) ... ok
+test_missing_slot_fails (__main__.TestPinnedLegacyContractValidation) ... ok
+test_wrong_style_fails (__main__.TestPinnedLegacyContractValidation) ... ok
+test_field_drift_detected (__main__.TestSourceSnapshotComparison) ... ok
+test_identical_snapshots_pass (__main__.TestSourceSnapshotComparison) ... ok
+test_package_dirty_drift_detected (__main__.TestSourceSnapshotComparison) ... ok
+
+----------------------------------------------------------------------
+Ran 33 tests in 0.001s
+
+OK

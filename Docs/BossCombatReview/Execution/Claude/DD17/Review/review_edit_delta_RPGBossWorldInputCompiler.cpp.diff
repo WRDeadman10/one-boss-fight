@@ -1,0 +1,16 @@
+55c55,56
+< 	/** The epoch comes ONLY from the world's own game instance catalog subsystem (RPGCombatRegistry::ForWorld). No fallback of any kind. */
+---
+> 	/** The epoch comes ONLY from the world's own game instance catalog subsystem, read through RPGCombatRegistry::ForWorld. No fallback of any kind. The subsystem is looked up directly only to hold its identity for the drift checks
+> 	 *  and to require that it reports the very epoch pointer ForWorld returned; it is never a second source. */
+481a483,492
+> 		}
+> 		// The members are still exactly what was validated: valid, in the world, not begun (one more look, the compile may have loaded assets).
+> 		for (const FMember& Member : Members)
+> 		{
+> 			if (!IsValid(Member.Actor) || Member.Actor->IsActorBeingDestroyed() || Member.Actor->GetWorld() != ExpectedWorld || Member.Actor->HasActorBegunPlay() || Member.Actor->IsActorBeginningPlay()
+> 				|| !IsValid(Member.Definition))
+> 			{
+> 				FailMember(Result, TEXT("WorldInput.BindingDrift"), MemberText(Member.Slot, Member.Index), TEXT("the actor or the definition is no longer valid, in the expected world and not begun"));
+> 				return Result;
+> 			}

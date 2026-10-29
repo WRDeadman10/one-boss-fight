@@ -1,0 +1,12 @@
+{
+  "pattern": "\\b(5|10|6|51)\\b|Plans\\s*\\[\\s*[0-4]\\s*\\]|ClassLeases\\s*\\[\\s*[0-4]\\s*\\]",
+  "files": [
+    "RPGBossHydrationPreparation.cpp",
+    "RPGBossWorldPreparation.cpp",
+    "RPGBossPreparationRegistry.cpp",
+    "RPGBossWorldInputCompiler.cpp",
+    "RPGBossHydrationPreflight.h"
+  ],
+  "hits": [],
+  "scope": "source-only widened count/index search"
+}

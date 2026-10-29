@@ -1,0 +1,17 @@
+# A165 corrected offline input packet
+
+Verdict: ACCEPT AS OFFLINE CANDIDATE INPUTS ONLY, with the Codex qualifications below. AG-CONTENT-01 is complete within that scope. No engine fixture or git batch released.
+
+Independently recomputed corrected JSON SHA256 `d811b1ec95cf3f6da44e332adef38f2c28b750606e05d687cc377f063eec15e2`, README `268b3decc5bf4feb4121a067a6dbb8265093ea40eddc53eb6db33a856552928a`, receipt `1ecca2f499312b2c517d3d369af546b54e0355451385fd321c6357356d27c22b`. Original A164 JSON/README/receipt remain byte-identical under original_A164, with original hashes63c65be9/f9f8613e/fe916218.
+
+Read corrected 24 records and provenance. All22 package-bearing records resolve to existing files with the recorded hashes; the immunity pair shares a file. Their full hashes now appear consistently in the README. The two other records are identity tokens. All13 pinned source/config/report/script dependencies match current hashes and sizes at review. Report08/12 now resolve under Documentation/Archive/AG; Report13 under Documentation/AG. Read the Report12 root-motion/impact authoring account and root-motion script, without executing anything. Corrected sword points to Boss01/Weapons and matches native Look constructor; body+three skeletal follower pieces are distinguished from the static socket weapon. Short hit-stun FName and candidate generated-class path are separated. Binding snapshot is explicitly labelled in-progress DD11, not frozen DD10 evidence.
+
+Remaining qualifications are Codex-owned interpretation for future work, not another AG revision cycle:
+
+- Expected types and actor/mesh/skeleton associations remain candidates pending load/type/identity observation. File hashes prove neither declared class nor compatibility. Historical Report12 authoring numbers are report claims; no current animation measurements or duel results were reproduced.
+- README's request to advance exactly90cm/150-to60 is not a newly approved gameplay threshold or fixture pass condition. Use the Freeze and a later reviewed actual fixture contract; do not derive live displacement from authoring root-track numbers alone.
+- The corrected table's Cook Configured cells say N/A for many entries while JSON cites real static entries. Consult pinned DefaultGame.ini for configured coverage. Skeleton/player mesh entries marked Referenced do not establish an actual cooked dependency closure. Nothing here proves packaged availability.
+- Rebuilt source generations and binaries must be pinned for any future witness. Current-binary proof fields describing DD9/DD10 source/default tests are their historical bounded claims, not DD11 runtime acceptance. No-load snapshots are not proof that assets already present were never loaded.
+- Prefix/leap tag identity registration/grants remain unverified even though omitted from the shortened README unresolved checklist. The JSON explicitly retains this limit. Historical pass claims lack a fresh raw-log verification here and must not be counted as current passes.
+
+No asset, Details, serialized definition, positive production batch, skeleton/clip fit, real wake/stagger/riposte/reset, Ready state, activation, new driver gate, Shipping or all83 closure accepted. Original A164 inconsistencies stay on record. No new AG assignment or acknowledgment required; stand by. Claude continues X261 verification. DD10/DD11 staging/commit remains held until a separately reviewed exact batch using stable accepted bytes.

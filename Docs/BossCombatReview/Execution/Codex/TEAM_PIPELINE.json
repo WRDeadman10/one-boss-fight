@@ -1,0 +1,1396 @@
+{
+  "vision": "Data Assets/Details authored reusable boss combat with all83 and server authority; packaged fair/readable duel",
+  "authority": "Planning queue only; exact source/operator/activation/git work orders gate execution",
+  "current_mailbox": "X292 accepts C250 DD17/DD18 129 actual suite; X293 DD19 Bleed source-only parallel fragment; X291 AG toolkit correction active. Preview and full-cluster integration gates remain queued.",
+  "source_ledger": "ALL83_EXECUTION_LEDGER_2026-10-27.json",
+  "source_sha256": "17469404ad355f30fe818234a2f2fd332f2f5768324b662e0bc8e7877d20725b",
+  "current_accepted_ue_suite": 129,
+  "overall_completion_percentage": null,
+  "cards": [
+    {
+      "id": "C00",
+      "owner": "Claude",
+      "stage": "M00",
+      "product": "DD17 corrected world-input compiler and real-GI tests",
+      "depends_on": [],
+      "acceptance": "Actual lifecycle checkpoint/source review; no manufactured epoch",
+      "status": "ACCEPTED_BOUNDED_X292",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "C01",
+      "owner": "Claude",
+      "stage": "M00",
+      "product": "DD18 world preparation facade, owned registry, tokens and tests",
+      "depends_on": [
+        "C00"
+      ],
+      "acceptance": "Whole-batch ownership, stale-token and cleanup source review",
+      "status": "ACCEPTED_BOUNDED_X292",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "C02",
+      "owner": "Claude",
+      "stage": "M00",
+      "product": "Frozen reviewed foundation build/focused/full raw evidence",
+      "depends_on": [
+        "C00",
+        "C01"
+      ],
+      "acceptance": "Actual exits/unique membership/log SHA/source and binary pins; stop on failure",
+      "status": "ACCEPTED_BOUNDED_X292",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "A00",
+      "owner": "Antigravity",
+      "stage": "M00",
+      "product": "Correct toolkit code, native-domain guards and independent regression inputs",
+      "depends_on": [],
+      "acceptance": "No bypassed editor guard, omitted record, fake legacy constant or shallow snapshot",
+      "status": "CHANGES_REQUIRED_REVIEW_PENDING",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "A01",
+      "owner": "Antigravity",
+      "stage": "M00",
+      "product": "Exact UE5.5 API/readback cases and dry-run support packet",
+      "depends_on": [
+        "A00"
+      ],
+      "acceptance": "Source-reviewed unsupported API handling; engine branches explicitly unexecuted",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "C03",
+      "owner": "Claude",
+      "stage": "M01",
+      "product": "Serialized read-only preview then separately released new-asset application",
+      "depends_on": [
+        "C02",
+        "A01",
+        "A02"
+      ],
+      "acceptance": "Actual Details/serialization/negative results on exact outputs; original assets unchanged",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "A02",
+      "owner": "Antigravity",
+      "stage": "M01",
+      "product": "Two boss/player draft inputs and additive build preview content",
+      "depends_on": [
+        "A00"
+      ],
+      "acceptance": "Exact native schema, truthful dependency/manifest gaps, no fake Ready",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "A03",
+      "owner": "Antigravity",
+      "stage": "M01",
+      "product": "Owner-run authoring walkthrough tied to observed preview outputs",
+      "depends_on": [
+        "C03"
+      ],
+      "acceptance": "Build/weapon/boss distinctions and demonstrated versus unresolved steps explicit",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "C04",
+      "owner": "Claude",
+      "stage": "M02",
+      "product": "Typed configuration/adapters for remaining actual legacy consumers",
+      "depends_on": [
+        "C03",
+        "A04"
+      ],
+      "acceptance": "All required consumer reads accounted for without default/order drift",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "C05",
+      "owner": "Claude",
+      "stage": "M02",
+      "product": "Complete-bundle capability/authority validation and tests",
+      "depends_on": [
+        "C04",
+        "A05"
+      ],
+      "acceptance": "Reject incomplete bundles; server ownership contract and publication preconditions explicit",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "A04",
+      "owner": "Antigravity",
+      "stage": "M02",
+      "product": "Actual remaining consumer profile/source dependency packets",
+      "depends_on": [
+        "C03"
+      ],
+      "acceptance": "Project-owned content, pinned source defaults versus authored values; no invented fields",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "A05",
+      "owner": "Antigravity",
+      "stage": "M02",
+      "product": "Complete-bundle negative compatibility inputs",
+      "depends_on": [
+        "A04",
+        "C04"
+      ],
+      "acceptance": "Missing/wrong-class/skeleton/phase/capability examples fail for the right reasons",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "C06",
+      "owner": "Claude",
+      "stage": "M03",
+      "product": "Single-owner startup coordinator and controlled publication",
+      "depends_on": [
+        "C05",
+        "C01",
+        "A06"
+      ],
+      "acceptance": "No incomplete Ready/duplicate consumers/legacy suppression; partial effects quarantined",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "C07",
+      "owner": "Claude",
+      "stage": "M03",
+      "product": "Explicit target, reset and generation lifecycle integration",
+      "depends_on": [
+        "C06",
+        "A07"
+      ],
+      "acceptance": "Stale event/timer/actor replacement rejection and cleanup before reuse",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "A06",
+      "owner": "Antigravity",
+      "stage": "M03",
+      "product": "Explicit encounter placement inputs with stable identities",
+      "depends_on": [
+        "C05"
+      ],
+      "acceptance": "No player0/slot-name role inference or silently regenerated encounter identity",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "A07",
+      "owner": "Antigravity",
+      "stage": "M03",
+      "product": "Multi-encounter reset/lifetime input scenarios",
+      "depends_on": [
+        "A06",
+        "C06"
+      ],
+      "acceptance": "Repeatable destruction/respawn/overlap/conflict expectations",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "C08",
+      "owner": "Claude",
+      "stage": "M04",
+      "product": "Data-only canary integration and Boss01-canary-Boss01 replay",
+      "depends_on": [
+        "C07",
+        "A08",
+        "A09"
+      ],
+      "acceptance": "Meaningfully different authored moves/phases; no bespoke second-boss C++",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "A08",
+      "owner": "Antigravity",
+      "stage": "M04",
+      "product": "Actual distinct canary profile/move/phase content",
+      "depends_on": [
+        "C07",
+        "A03"
+      ],
+      "acceptance": "Compatible content changes with exact authored delta and no pack edits",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "A09",
+      "owner": "Antigravity",
+      "stage": "M04",
+      "product": "Canary isolation/replay acceptance scenarios",
+      "depends_on": [
+        "A08"
+      ],
+      "acceptance": "Independent encounter diagnostics; no cosmetic-only success",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "C09",
+      "owner": "Claude",
+      "stage": "M05",
+      "product": "Authoritative pre-montage action identity and execution request",
+      "depends_on": [
+        "C08",
+        "A10"
+      ],
+      "acceptance": "Single executor, allocated instance before playback, server-safe correlation",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": [
+        "BOSS-EXE-001",
+        "BOSS-EXE-002",
+        "BOSS-EXE-003",
+        "BOSS-EXE-004",
+        "BOSS-EXE-005",
+        "BOSS-EXE-006",
+        "BOSS-EXE-007",
+        "BOSS-EXE-008"
+      ]
+    },
+    {
+      "id": "C10",
+      "owner": "Claude",
+      "stage": "M05",
+      "product": "Start rollback, explicit priority, idempotent abort/watchdog",
+      "depends_on": [
+        "C09",
+        "A11"
+      ],
+      "acceptance": "No stale callback/duplicate hit/unlock-before-cleanup across failures",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "A10",
+      "owner": "Antigravity",
+      "stage": "M05",
+      "product": "Actual authored move/event/commit/recovery inputs",
+      "depends_on": [
+        "C08"
+      ],
+      "acceptance": "Exact clip/rate/event identities; unknown observations explicitly unresolved",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "A11",
+      "owner": "Antigravity",
+      "stage": "M05",
+      "product": "Abort/priority/watchdog adversarial input cases",
+      "depends_on": [
+        "A10"
+      ],
+      "acceptance": "Real intended competing events/cleanup expectations, no simulated runtime claims",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "C11",
+      "owner": "Claude",
+      "stage": "M06",
+      "product": "Reliable timelines, bounded motion and honest hit geometry",
+      "depends_on": [
+        "C10",
+        "A12"
+      ],
+      "acceptance": "ANM/HIT row-specific outcomes at FPS/time-scale/interrupt boundaries",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": [
+        "BOSS-ANM-001",
+        "BOSS-ANM-002",
+        "BOSS-ANM-003",
+        "BOSS-ANM-004",
+        "BOSS-ANM-005",
+        "BOSS-ANM-006",
+        "BOSS-ANM-007",
+        "BOSS-ANM-008",
+        "BOSS-HIT-001",
+        "BOSS-HIT-002",
+        "BOSS-HIT-003",
+        "BOSS-HIT-004",
+        "BOSS-HIT-005",
+        "BOSS-HIT-006",
+        "BOSS-HIT-007",
+        "BOSS-HIT-008",
+        "BOSS-HIT-009",
+        "BOSS-HIT-010",
+        "BOSS-HIT-011",
+        "BOSS-HIT-012"
+      ]
+    },
+    {
+      "id": "A12",
+      "owner": "Antigravity",
+      "stage": "M06",
+      "product": "Project-owned contact/timing/motion sources and review captures",
+      "depends_on": [
+        "C10"
+      ],
+      "acceptance": "Visible geometry/contact matches declared timings; A5 visuals stay parked",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "C12",
+      "owner": "Claude",
+      "stage": "M07",
+      "product": "Defense outcomes and legal conditional combo runtime",
+      "depends_on": [
+        "C11",
+        "A13"
+      ],
+      "acceptance": "Guard/parry/dodge/posture/riposte and branches match explicit per-move outcomes",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": [
+        "BOSS-COM-001",
+        "BOSS-COM-002",
+        "BOSS-COM-003",
+        "BOSS-COM-004",
+        "BOSS-COM-005",
+        "BOSS-COM-006",
+        "BOSS-COM-007",
+        "BOSS-DEF-001",
+        "BOSS-DEF-002",
+        "BOSS-DEF-003",
+        "BOSS-DEF-004",
+        "BOSS-DEF-005"
+      ]
+    },
+    {
+      "id": "C13",
+      "owner": "Claude",
+      "stage": "M07",
+      "product": "Commitment, openings and pressure/pacing runtime",
+      "depends_on": [
+        "C12",
+        "A14"
+      ],
+      "acceptance": "Measurable intended punish windows without artificial fairness metrics",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": [
+        "BOSS-PAC-001",
+        "BOSS-PAC-002",
+        "BOSS-PAC-003",
+        "BOSS-PAC-004",
+        "BOSS-PAC-005",
+        "BOSS-PAC-006"
+      ]
+    },
+    {
+      "id": "A13",
+      "owner": "Antigravity",
+      "stage": "M07",
+      "product": "Defense and conditional-combo content scenarios",
+      "depends_on": [
+        "C11"
+      ],
+      "acceptance": "Explicit legal/illegal branch and hit-defense expected outcomes",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "A14",
+      "owner": "Antigravity",
+      "stage": "M07",
+      "product": "Authored opening/recovery/pacing variants",
+      "depends_on": [
+        "A13",
+        "C12"
+      ],
+      "acceptance": "Intended openings are visible and measurable, no hidden fallback tuning",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "C14",
+      "owner": "Claude",
+      "stage": "M08",
+      "product": "Explicit awareness/eligibility/utility selection runtime",
+      "depends_on": [
+        "C13",
+        "A15"
+      ],
+      "acceptance": "Target validity and context-linked choices without omniscience/rival planner",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": [
+        "BOSS-AWR-001",
+        "BOSS-AWR-002",
+        "BOSS-AWR-003",
+        "BOSS-AWR-004",
+        "BOSS-AWR-005",
+        "BOSS-AWR-006",
+        "BOSS-AWR-007",
+        "BOSS-AWR-008",
+        "BOSS-SEL-001",
+        "BOSS-SEL-002",
+        "BOSS-SEL-003",
+        "BOSS-SEL-004",
+        "BOSS-SEL-005",
+        "BOSS-SEL-006",
+        "BOSS-SEL-007",
+        "BOSS-SEL-008",
+        "BOSS-SEL-009",
+        "BOSS-SEL-010"
+      ]
+    },
+    {
+      "id": "C15",
+      "owner": "Claude",
+      "stage": "M08",
+      "product": "Movement and bounded decaying adaptation runtime",
+      "depends_on": [
+        "C14",
+        "A16"
+      ],
+      "acceptance": "No stuck oscillation or stale-target motion; only legal observed inputs",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": [
+        "BOSS-MOV-001",
+        "BOSS-MOV-002",
+        "BOSS-MOV-003",
+        "BOSS-MOV-004",
+        "BOSS-MOV-005",
+        "BOSS-MOV-006"
+      ]
+    },
+    {
+      "id": "A15",
+      "owner": "Antigravity",
+      "stage": "M08",
+      "product": "Awareness/selection datasets with lawful context inputs",
+      "depends_on": [
+        "C13"
+      ],
+      "acceptance": "Reproducible observations, eligibility reasons and adversarial target cases",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "A16",
+      "owner": "Antigravity",
+      "stage": "M08",
+      "product": "Arena/movement/adaptation scenario inputs",
+      "depends_on": [
+        "C14",
+        "A15"
+      ],
+      "acceptance": "Geometry/reach/reset boundaries explicit and no new unapproved arena writes",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "C16",
+      "owner": "Claude",
+      "stage": "M09",
+      "product": "Phase intelligence/priority/anti-cheese integration",
+      "depends_on": [
+        "C15",
+        "A17"
+      ],
+      "acceptance": "Death/break/transition precedence, monotonic phases and fair counterplay",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": [
+        "BOSS-PHS-001",
+        "BOSS-PHS-002",
+        "BOSS-PHS-003",
+        "BOSS-PHS-004",
+        "BOSS-PHS-005"
+      ]
+    },
+    {
+      "id": "C17",
+      "owner": "Claude",
+      "stage": "M09",
+      "product": "Server-authoritative listen/dedicated two-client validation",
+      "depends_on": [
+        "C16",
+        "A18"
+      ],
+      "acceptance": "Real replication/latency/disconnect/reset/stale-instance proof",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": [
+        "BOSS-QA-008"
+      ]
+    },
+    {
+      "id": "A17",
+      "owner": "Antigravity",
+      "stage": "M09",
+      "product": "Meaningful phase variants and anti-cheese scenarios",
+      "depends_on": [
+        "C15"
+      ],
+      "acceptance": "Authored pressure changes with counterplay; no state-reset exploit",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "A18",
+      "owner": "Antigravity",
+      "stage": "M09",
+      "product": "Network scene inputs and mismatch/recovery scenarios",
+      "depends_on": [
+        "C16",
+        "A17"
+      ],
+      "acceptance": "Two distinct clients, authority roles and observable outcomes specified",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "C18",
+      "owner": "Claude",
+      "stage": "M10",
+      "product": "Physical input/focus/camera/HUD/audio/readability integration",
+      "depends_on": [
+        "C17",
+        "A19",
+        "A20"
+      ],
+      "acceptance": "QA006/007, owner feel and input feedback across supported conditions",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": [
+        "BOSS-QA-006",
+        "BOSS-QA-007"
+      ]
+    },
+    {
+      "id": "A19",
+      "owner": "Antigravity",
+      "stage": "M10",
+      "product": "Readability/accessibility presentation deliverables",
+      "depends_on": [
+        "C17"
+      ],
+      "acceptance": "Concrete visible/audio feedback from approved scenarios; no A5 visuals",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "A20",
+      "owner": "Antigravity",
+      "stage": "M10",
+      "product": "Project-owned source audio/presentation and capture assets",
+      "depends_on": [
+        "C17"
+      ],
+      "acceptance": "Exact compatibility/provenance/license/import scope; no pack mutation",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "C19",
+      "owner": "Claude",
+      "stage": "M11",
+      "product": "Current stable-binary all83/gameplay/network/Shipping/performance proofs",
+      "depends_on": [
+        "C18"
+      ],
+      "acceptance": "Per-row evidence plus current cook/debug/soak/FPS/p99 and no inherited old gate",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": [
+        "BOSS-QA-001",
+        "BOSS-QA-002",
+        "BOSS-QA-003",
+        "BOSS-QA-004",
+        "BOSS-QA-005"
+      ]
+    },
+    {
+      "id": "C20",
+      "owner": "Claude",
+      "stage": "M11",
+      "product": "Frozen release candidate and exact batch handoff",
+      "depends_on": [
+        "C19",
+        "A21"
+      ],
+      "acceptance": "Owner feel acceptance, immutable artifacts/include-exclude pins, no secret/dirty loss",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    },
+    {
+      "id": "A21",
+      "owner": "Antigravity",
+      "stage": "M11",
+      "product": "Final owner guide/capture/provenance and released batch execution",
+      "depends_on": [
+        "C19"
+      ],
+      "acceptance": "Docs match demonstrated product; git only after separate exact accepted batch order",
+      "status": "QUEUED",
+      "execution_released": false,
+      "git_released": false,
+      "primary_requirement_ids": []
+    }
+  ],
+  "requirements": [
+    {
+      "id": "BOSS-AWR-001",
+      "feature": "Target validity",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Destroy/kill/leave arena at a decision gate.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-AWR-002",
+      "feature": "Gate-time snapshot",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Mutate distance/action around a gate and inspect the trace.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-AWR-003",
+      "feature": "Distance convention",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Place targets at measured surface/root distances.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-AWR-004",
+      "feature": "Signed angle and hysteresis",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Sample 0/45/100/170 degrees and cross boundaries slowly.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-AWR-005",
+      "feature": "Vertical separation",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Place player above/below the boss.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-AWR-006",
+      "feature": "Observable player activity",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Press/cancel before commitment versus commit visibly.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-AWR-007",
+      "feature": "LOS and memory",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Heal behind occluder and move after sight loss.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-AWR-008",
+      "feature": "Soft adaptation memory",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Script repeated behavior, then stop and graph scores over time.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-SEL-001",
+      "feature": "Legal decision gates",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Move/heal/dodge after commit and inspect starts.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-SEL-002",
+      "feature": "Hard-filter precedence",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Table-test each gate independently.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-SEL-003",
+      "feature": "Executable asset gate",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Remove/invalidate each prerequisite in a test asset.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-SEL-004",
+      "feature": "Normalized utility",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Unit-test score monotonicity and bounds.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-SEL-005",
+      "feature": "Bounded randomness",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Replay same context/seeds and histogram selections.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-SEL-006",
+      "feature": "Cooldown semantics",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Attempt invalid/failed start then query cooldown.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-SEL-007",
+      "feature": "Anti-repeat memory",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Force equivalent context across repeated gates.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-SEL-008",
+      "feature": "No-candidate fallback",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Put all moves on cooldown/out of range.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-SEL-009",
+      "feature": "Reaction latency and budget",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Vary action time, range and cooldown edges.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-SEL-010",
+      "feature": "Decision trace",
+      "required": true,
+      "primary_card": "C14",
+      "verification_method": "Schema-check logs for forced contexts.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-EXE-001",
+      "feature": "Single execution authority",
+      "required": true,
+      "primary_card": "C09",
+      "verification_method": "Instrument all attack-start/hit-window writers.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-EXE-002",
+      "feature": "Instance before montage",
+      "required": true,
+      "primary_card": "C09",
+      "verification_method": "Trigger an early notify at montage start.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-EXE-003",
+      "feature": "Start rollback",
+      "required": true,
+      "primary_card": "C09",
+      "verification_method": "Force an invalid montage.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-EXE-004",
+      "feature": "Stale event rejection",
+      "required": true,
+      "primary_card": "C09",
+      "verification_method": "Inject duplicate/delayed notify events.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-EXE-005",
+      "feature": "Explicit priority",
+      "required": true,
+      "primary_card": "C09",
+      "verification_method": "Trigger paired events in both call orders.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-EXE-006",
+      "feature": "Idempotent abort",
+      "required": true,
+      "primary_card": "C09",
+      "verification_method": "Abort during every stage twice.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-EXE-007",
+      "feature": "Watchdog",
+      "required": true,
+      "primary_card": "C09",
+      "verification_method": "Suppress completion callback.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-EXE-008",
+      "feature": "Cleanup-before-unlock",
+      "required": true,
+      "primary_card": "C09",
+      "verification_method": "Frame-log normal end and interrupt.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-COM-001",
+      "feature": "Authored graph",
+      "required": true,
+      "primary_card": "C12",
+      "verification_method": "Enumerate outputs across contexts.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-COM-002",
+      "feature": "Gate after damage",
+      "required": true,
+      "primary_card": "C12",
+      "verification_method": "Log gate and window timestamps.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-COM-003",
+      "feature": "Fresh branch context",
+      "required": true,
+      "primary_card": "C12",
+      "verification_method": "Move player between start and gate.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-COM-004",
+      "feature": "Explicit hit-confirm policy",
+      "required": true,
+      "primary_card": "C12",
+      "verification_method": "Test every outcome for each branch edge.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-COM-005",
+      "feature": "Single-use gate",
+      "required": true,
+      "primary_card": "C12",
+      "verification_method": "Fire the same gate event twice.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-COM-006",
+      "feature": "Finite pressure",
+      "required": true,
+      "primary_card": "C12",
+      "verification_method": "Graph analysis plus long forced-branch run.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-COM-007",
+      "feature": "Default recovery",
+      "required": true,
+      "primary_card": "C12",
+      "verification_method": "Invalidate each continuation at gate time.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-ANM-001",
+      "feature": "Montage timeline authority",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Test 0.75x/1.25x play rates.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-ANM-002",
+      "feature": "Telegraph phases",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Frame review from gameplay camera.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-ANM-003",
+      "feature": "Bounded holds",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Script dodge inputs across the hold.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-ANM-004",
+      "feature": "Staged rotation cap",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Cross behind and graph yaw per frame.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-ANM-005",
+      "feature": "Exclusive motion authority",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Instrument MoveTo, velocity, root motion and actor sets.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-ANM-006",
+      "feature": "Bounded Motion Warping",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Strafe, move behind, stand near walls/stairs/ledge.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-ANM-007",
+      "feature": "Notify-end independence",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Interrupt at every notify-state boundary.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-ANM-008",
+      "feature": "MoveCard handoff",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Audit card against engine measurements.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-HIT-001",
+      "feature": "Geometry fidelity",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Capture before/contact/end frames with overlays.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-HIT-002",
+      "feature": "Swept temporal sampling",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Force high tip speed at 30 FPS.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-HIT-003",
+      "feature": "Blade interior samples",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Put target between stationary-ish endpoints.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-HIT-004",
+      "feature": "Adaptive substeps",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Sweep across a thin target with varied FPS/rate.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-HIT-005",
+      "feature": "Query filtering",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Place owner, ally, scenery and target in path.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-HIT-006",
+      "feature": "Logical-victim dedupe",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Overlap several skeletal bodies simultaneously.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-HIT-007",
+      "feature": "Explicit hit policy",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Table-test each policy and reset boundary.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-HIT-008",
+      "feature": "Central defense order",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Activate overlapping defenses and inspect precedence.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-HIT-009",
+      "feature": "Iframe completeness",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Test early/mid/late iframe edges.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-HIT-010",
+      "feature": "Direct/splash precedence",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Stand in both volumes on one impact.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-HIT-011",
+      "feature": "Swept annulus",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Plot radius at varied FPS and positions.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-HIT-012",
+      "feature": "Grab fail-safe",
+      "required": true,
+      "primary_card": "C11",
+      "verification_method": "Interrupt at capture/alignment/damage/release.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-MOV-001",
+      "feature": "Range-band policy",
+      "required": true,
+      "primary_card": "C15",
+      "verification_method": "Sweep target distance through each boundary.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-MOV-002",
+      "feature": "Combat positioning",
+      "required": true,
+      "primary_card": "C15",
+      "verification_method": "Visualize candidates and score reasons.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-MOV-003",
+      "feature": "Movement commitment",
+      "required": true,
+      "primary_card": "C15",
+      "verification_method": "Log goal changes during a fixed scenario.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-MOV-004",
+      "feature": "Wall-safe attacks",
+      "required": true,
+      "primary_card": "C15",
+      "verification_method": "Start every travel attack near walls/corners.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-MOV-005",
+      "feature": "Arena-valid responses",
+      "required": true,
+      "primary_card": "C15",
+      "verification_method": "Stand on ledge/outside boundary.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-MOV-006",
+      "feature": "Arena/attack fit",
+      "required": true,
+      "primary_card": "C15",
+      "verification_method": "Sample boundary, pillars, stairs and camera extremes.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-PAC-001",
+      "feature": "Explicit attack segments",
+      "required": true,
+      "primary_card": "C13",
+      "verification_method": "Compare data, montage and runtime events.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-PAC-002",
+      "feature": "Pressure variation",
+      "required": true,
+      "primary_card": "C13",
+      "verification_method": "Plot pressure and attack starts over time.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-PAC-003",
+      "feature": "Guaranteed openings",
+      "required": true,
+      "primary_card": "C13",
+      "verification_method": "Script punish from specified distances/builds.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-PAC-004",
+      "feature": "Conditional opening cues",
+      "required": true,
+      "primary_card": "C13",
+      "verification_method": "Blind review plus branch timing capture.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-PAC-005",
+      "feature": "Punish-margin calculation",
+      "required": true,
+      "primary_card": "C13",
+      "verification_method": "Instrument fast/slow attacks at 0/1/2 m.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-PAC-006",
+      "feature": "Neutral is purposeful",
+      "required": true,
+      "primary_card": "C13",
+      "verification_method": "Long-run state timeline and player review.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-DEF-001",
+      "feature": "Separate health/reaction/posture",
+      "required": true,
+      "primary_card": "C12",
+      "verification_method": "Table-test damage classes/states.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-DEF-002",
+      "feature": "Posture regeneration",
+      "required": true,
+      "primary_card": "C12",
+      "verification_method": "Drain, wait around boundary, drain again.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-DEF-003",
+      "feature": "Single stance break",
+      "required": true,
+      "primary_card": "C12",
+      "verification_method": "Apply simultaneous/multi-component threshold hits.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-DEF-004",
+      "feature": "Windowed hyperarmor",
+      "required": true,
+      "primary_card": "C12",
+      "verification_method": "Test each hit class at both boundaries.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-DEF-005",
+      "feature": "Fair boss defense",
+      "required": true,
+      "primary_card": "C12",
+      "verification_method": "Repeated attacks from varied angles/times.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-PHS-001",
+      "feature": "Phase rule set",
+      "required": true,
+      "primary_card": "C16",
+      "verification_method": "Snapshot configuration before/after.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-PHS-002",
+      "feature": "Safe transition policy",
+      "required": true,
+      "primary_card": "C16",
+      "verification_method": "Cross threshold during wind-up/active/recovery/stagger/grab.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-PHS-003",
+      "feature": "Phase monotonicity",
+      "required": true,
+      "primary_card": "C16",
+      "verification_method": "Cross, heal above, cross again.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-PHS-004",
+      "feature": "Fair heal punish",
+      "required": true,
+      "primary_card": "C16",
+      "verification_method": "Vary one gate at a time including post-commit heal.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-PHS-005",
+      "feature": "Anti-cheese with counterplay",
+      "required": true,
+      "primary_card": "C16",
+      "verification_method": "Script each exploit for a long run.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-QA-001",
+      "feature": "Runtime overlay",
+      "required": true,
+      "primary_card": "C19",
+      "verification_method": "Force one move through every stage.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-QA-002",
+      "feature": "Structured event log",
+      "required": true,
+      "primary_card": "C19",
+      "verification_method": "Validate schema and ordering.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-QA-003",
+      "feature": "Reproducible scenarios",
+      "required": true,
+      "primary_card": "C19",
+      "verification_method": "Execute identical scenario repeatedly.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-QA-004",
+      "feature": "FPS and time-scale parity",
+      "required": true,
+      "primary_card": "C19",
+      "verification_method": "Run timing matrix and compare event logs.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-QA-005",
+      "feature": "Performance bounds",
+      "required": true,
+      "primary_card": "C19",
+      "verification_method": "Unreal Insights/Animation Insights/profile captures.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-QA-006",
+      "feature": "Camera/readability",
+      "required": true,
+      "primary_card": "C18",
+      "verification_method": "Capture QA20-style scenarios.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-QA-007",
+      "feature": "Accessible feedback",
+      "required": true,
+      "primary_card": "C18",
+      "verification_method": "Review every attack under accessible settings.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    },
+    {
+      "id": "BOSS-QA-008",
+      "feature": "Network authority if enabled",
+      "required": true,
+      "primary_card": "C17",
+      "verification_method": "Dedicated/listen tests with two clients and packet simulation.",
+      "final_acceptance": "OPEN_NOT_RECOUNTED"
+    }
+  ]
+}

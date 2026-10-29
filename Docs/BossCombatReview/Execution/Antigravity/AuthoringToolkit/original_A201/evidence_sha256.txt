@@ -1,0 +1,9 @@
+03afb13689fe091f91bad73ae541af6c73afcb84f00c9756309ea85dc4ca4b73      30666  README.md
+bd82fd39ea28b338003cdf63695895162b167375d9549dc4a63933cbaaa74481      88717  authoring_core.py
+2a8d80842d9936043d1273a63efb1874357f30ce4b0e588bfded2cb21afe3d5e      21198  diff_against_cpp.py
+9c68977538205191e049d233f744a056684444c369615987ff195ff911fc8c4e      2968  diff_report.txt
+c8d3edf1747b46e453f181d074250980f719091a5d6a2ec03313cfc536a8ed14      40203  draft_boss_profiles.py
+e9a2250b84542aae7cd208845cb54b6cc37ed5434a254e59153b1b2ff21ed5ef      21146  examples/boss_draft_profiles.json
+29cfc17c991f6f46deb30ba790230ba0bd4c4a74b53462e79f5031b377c29ce9      25916  inspect_authored_assets.py
+854b9f8ccc458dfd4261cddedc6eac744c2de523fe00c4e16844f623a65cab4e      132224  test_authoring_core.py
+b192807e9df1c608fee77bea8d31acbcd4042c7d47aab6f514d6bdafd5ad19b5      788  test_run_output.txt

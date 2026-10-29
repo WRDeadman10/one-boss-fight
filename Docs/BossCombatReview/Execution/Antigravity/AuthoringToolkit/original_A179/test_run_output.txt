@@ -1,0 +1,51 @@
+[DRAFT_APPLY] Creating draft asset at '/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft'...
+[DRAFT_APPLY] Initialized & verified all 15 typed properties on draft asset: 'DA_Boss_EmberWarden_Draft'
+
+[DRAFT_APPLY] SUCCESS: In-memory asset creation and complete readback verified.
+  NOTICE: --save flag was not provided. Output packages were NOT saved to disk.
+test_baseline_boss_profile_passes (test_authoring_core.TestBossProfileValidation) ... ok
+test_boss_multiple_phases_rejected (test_authoring_core.TestBossProfileValidation) ... ok
+test_entry_health_fraction_domain (test_authoring_core.TestBossProfileValidation) ... ok
+test_invalid_bool_type_rejected (test_authoring_core.TestBossProfileValidation) ... ok
+test_nan_numeric_value_rejected (test_authoring_core.TestBossProfileValidation) ... ok
+test_nan_phase_multiplier_rejected (test_authoring_core.TestBossProfileValidation) ... ok
+test_unknown_invented_field_rejected (test_authoring_core.TestBossProfileValidation) ... ok
+test_double_slash_and_backslash_rejection (test_authoring_core.TestCanonicalPathValidation) ... ok
+test_subobject_colon_rejection (test_authoring_core.TestCanonicalPathValidation) ... ok
+test_traversal_rejection (test_authoring_core.TestCanonicalPathValidation) ... ok
+test_valid_paths (test_authoring_core.TestCanonicalPathValidation) ... ok
+test_whitespace_rejection (test_authoring_core.TestCanonicalPathValidation) ... ok
+test_wrong_root_rejection (test_authoring_core.TestCanonicalPathValidation) ... ok
+test_missing_new_build_fails (test_authoring_core.TestClonedCatalogReadback) ... ok
+test_order_permutation_fails (test_authoring_core.TestClonedCatalogReadback) ... ok
+test_valid_readback_passes (test_authoring_core.TestClonedCatalogReadback) ... ok
+test_case_insensitive_ascii_equality (test_authoring_core.TestExactFNameEquality) ... ok
+test_membership_helper (test_authoring_core.TestExactFNameEquality) ... ok
+test_whitespace_is_significant (test_authoring_core.TestExactFNameEquality) ... ok
+test_case_lowering (test_authoring_core.TestExactNativeNormalization) ... ok
+test_double_quote_trimming_parity (test_authoring_core.TestExactNativeNormalization) ... ok
+test_empty_and_whitespace (test_authoring_core.TestExactNativeNormalization) ... ok
+test_reserved_keywords (test_authoring_core.TestExactNativeNormalization) ... ok
+test_single_quotes_preserved (test_authoring_core.TestExactNativeNormalization) ... ok
+test_collision_with_existing_build (test_authoring_core.TestNamespaceCollisionValidation) ... ok
+test_reserved_keyword_rejection (test_authoring_core.TestNamespaceCollisionValidation) ... ok
+test_valid_custom_build_keys (test_authoring_core.TestNamespaceCollisionValidation) ... ok
+test_finite_floats (test_authoring_core.TestNumericDomainValidation) ... ok
+test_finite_integers (test_authoring_core.TestNumericDomainValidation) ... ok
+test_report_structure (test_authoring_core.TestPartialOperationReport) ... ok
+test_clean_contract_passes (test_authoring_core.TestPinnedLegacyContractValidation) ... ok
+test_duplicate_slot_fails (test_authoring_core.TestPinnedLegacyContractValidation) ... ok
+test_invented_sword_id_fails (test_authoring_core.TestPinnedLegacyContractValidation) ... ok
+test_missing_slot_fails (test_authoring_core.TestPinnedLegacyContractValidation) ... ok
+test_plural_dualswords_style_fails (test_authoring_core.TestPinnedLegacyContractValidation) ... ok
+test_apply_writes_and_verifies_all_properties (test_authoring_core.TestRecordingFakeWriter)
+Uses Codex's recording fake pattern to prove that execute_draft_apply writes ... ok
+test_identical_snapshots_pass (test_authoring_core.TestSourceSnapshotComparison) ... ok
+test_missing_package_in_snapshot_detected (test_authoring_core.TestSourceSnapshotComparison) ... ok
+test_mutation_after_snapshot_isolated (test_authoring_core.TestSourceSnapshotComparison) ... ok
+test_package_dirty_drift_detected (test_authoring_core.TestSourceSnapshotComparison) ... ok
+
+----------------------------------------------------------------------
+Ran 40 tests in 0.004s
+
+OK

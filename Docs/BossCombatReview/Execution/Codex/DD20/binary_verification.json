@@ -1,0 +1,26 @@
+{
+  "scope": "File integrity only, not source semantics/runtime acceptance",
+  "receipt_sha256": "04205d2e433cf5f119285f46a65155eccff39427d1479294ca41fbfd8521127d",
+  "entries": 2,
+  "all_verified": true,
+  "checks": [
+    {
+      "expected_sha256": "81cefa879e53a52d097373bfbe3571365610f14867dd5cbe14086cd9518d8850",
+      "relative_path": "Binaries/Win64/UnrealEditor-OneBossFight.dll",
+      "expected_size": null,
+      "path": "Binaries\\Win64\\UnrealEditor-OneBossFight.dll",
+      "actual_sha256": "81cefa879e53a52d097373bfbe3571365610f14867dd5cbe14086cd9518d8850",
+      "actual_size": 4961280,
+      "status": "verified"
+    },
+    {
+      "expected_sha256": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65",
+      "relative_path": "Binaries/Win64/OneBossFight.exe",
+      "expected_size": null,
+      "path": "Binaries\\Win64\\OneBossFight.exe",
+      "actual_sha256": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65",
+      "actual_size": 301501952,
+      "status": "verified"
+    }
+  ]
+}

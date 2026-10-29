@@ -1,0 +1,82 @@
+test_attack_multiplier_floor (__main__.TestBossProfileValidation) ... ok
+test_baseline_boss_profile_passes (__main__.TestBossProfileValidation) ... ok
+test_boss_multiple_phases_rejected (__main__.TestBossProfileValidation) ... ok
+test_entry_health_fraction_strict_domain (__main__.TestBossProfileValidation) ... ok
+test_health_and_posture_native_floors (__main__.TestBossProfileValidation) ... ok
+test_invalid_bool_type_rejected (__main__.TestBossProfileValidation) ... ok
+test_nan_numeric_value_rejected (__main__.TestBossProfileValidation) ... ok
+test_nan_phase_multiplier_rejected (__main__.TestBossProfileValidation) ... ok
+test_speed_and_rate_multipliers_positive (__main__.TestBossProfileValidation) ... ok
+test_unknown_invented_field_rejected (__main__.TestBossProfileValidation) ... ok
+test_double_slash_and_backslash_rejection (__main__.TestCanonicalPathValidation) ... ok
+test_subobject_colon_rejection (__main__.TestCanonicalPathValidation) ... ok
+test_traversal_rejection (__main__.TestCanonicalPathValidation) ... ok
+test_valid_paths (__main__.TestCanonicalPathValidation) ... ok
+test_whitespace_rejection (__main__.TestCanonicalPathValidation) ... ok
+test_wrong_root_rejection (__main__.TestCanonicalPathValidation) ... ok
+test_missing_new_build_fails (__main__.TestClonedCatalogReadback) ... ok
+test_order_permutation_fails (__main__.TestClonedCatalogReadback) ... ok
+test_valid_readback_passes (__main__.TestClonedCatalogReadback) ... ok
+test_all_64_native_fields_parity (__main__.TestEnginePropertyNameRules) ... ok
+test_non_bool_b_prefix (__main__.TestEnginePropertyNameRules) ... ok
+test_pinned_source_sha256 (__main__.TestEnginePropertyNameRules) ... ok
+test_repeated_prefix_stripping (__main__.TestEnginePropertyNameRules) ... ok
+test_reserved_keyword_self (__main__.TestEnginePropertyNameRules) ... ok
+test_case_insensitive_ascii_equality (__main__.TestExactFNameEquality) ... ok
+test_membership_helper (__main__.TestExactFNameEquality) ... ok
+test_whitespace_is_significant (__main__.TestExactFNameEquality) ... ok
+test_case_lowering (__main__.TestExactNativeNormalization) ... ok
+test_double_quote_trimming_parity (__main__.TestExactNativeNormalization) ... ok
+test_empty_and_whitespace (__main__.TestExactNativeNormalization) ... ok
+test_reserved_keywords (__main__.TestExactNativeNormalization) ... ok
+test_single_quotes_preserved (__main__.TestExactNativeNormalization) ... ok
+test_empty_unreal_namespace_rejected (__main__.TestFailClosedEditorGuard) ... ok
+test_is_editor_returning_false_rejected (__main__.TestFailClosedEditorGuard) ... ok
+test_missing_is_editor_rejected (__main__.TestFailClosedEditorGuard) ... ok
+test_missing_subsystem_api_rejected (__main__.TestFailClosedEditorGuard) ... ok
+test_offline_environment_rejected (__main__.TestFailClosedEditorGuard) ... ok
+test_pie_simulation_mode_rejected (__main__.TestFailClosedEditorGuard) ... ok
+test_subsystem_returning_none_rejected (__main__.TestFailClosedEditorGuard) ... ok
+test_valid_editor_surface_accepted (__main__.TestFailClosedEditorGuard) ... ok
+test_float32_overflow_rejection (__main__.TestFloat32RoundTripAndStorage) ... ok
+test_float32_precision_round_trip (__main__.TestFloat32RoundTripAndStorage) ... ok
+test_normalize_native_expected_for_readback (__main__.TestFloat32RoundTripAndStorage) ... ok
+test_regression_old_float64_comparison_fails_against_float32_store (__main__.TestFloat32RoundTripAndStorage) ... ok
+test_collision_with_existing_build (__main__.TestNamespaceCollisionValidation) ... ok
+test_reserved_keyword_rejection (__main__.TestNamespaceCollisionValidation) ... ok
+test_valid_custom_build_keys (__main__.TestNamespaceCollisionValidation) ... ok
+test_camelcase_dict_raises_key_error (__main__.TestNoReadbackFallback) ... ok
+test_camelcase_wrapper_raises_attribute_error (__main__.TestNoReadbackFallback) ... ok
+test_finite_floats (__main__.TestNumericDomainValidation) ... ok
+test_finite_integers (__main__.TestNumericDomainValidation) ... ok
+test_report_structure (__main__.TestPartialOperationReport) ... ok
+test_clean_contract_passes (__main__.TestPinnedLegacyContractValidation) ... ok
+test_duplicate_slot_fails (__main__.TestPinnedLegacyContractValidation) ... ok
+test_invented_sword_id_fails (__main__.TestPinnedLegacyContractValidation) ... ok
+test_missing_slot_fails (__main__.TestPinnedLegacyContractValidation) ... ok
+test_plural_dualswords_style_fails (__main__.TestPinnedLegacyContractValidation) ... ok
+test_extract_canonical_primitives_roundtrip (__main__.TestPythonPropertyMapping) ... ok
+test_map_native_dict_to_python_keys (__main__.TestPythonPropertyMapping) ... ok
+test_pythonize_property_names (__main__.TestPythonPropertyMapping) ... ok
+test_apply_fails_closed_when_api_missing (__main__.TestRecordingFakeWriter) ... ok
+test_apply_writes_and_verifies_all_properties_with_python_mapping (__main__.TestRecordingFakeWriter)
+Enforces that execute_draft_apply sets and reads back all 15 properties using generated ... ok
+test_encounter_policy_domain (__main__.TestScalarDomainTable) ... ok
+test_fireball_domain (__main__.TestScalarDomainTable) ... ok
+test_phase_flow_domain (__main__.TestScalarDomainTable) ... ok
+test_stagger_policy_domain (__main__.TestScalarDomainTable) ... ok
+test_identical_snapshots_pass (__main__.TestSourceSnapshotComparison) ... ok
+test_missing_package_in_snapshot_detected (__main__.TestSourceSnapshotComparison) ... ok
+test_mutation_after_snapshot_isolated (__main__.TestSourceSnapshotComparison) ... ok
+test_package_dirty_drift_detected (__main__.TestSourceSnapshotComparison) ... ok
+
+----------------------------------------------------------------------
+Ran 70 tests in 0.008s
+
+OK
+[DRAFT_APPLY] FATAL: Missing required Unreal API: unreal.EditorAssetLibrary.does_asset_exist
+[DRAFT_APPLY] Creating draft asset at '/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft'...
+[DRAFT_APPLY] Initialized & verified all 15 typed properties on draft asset: 'DA_Boss_EmberWarden_Draft'
+
+[DRAFT_APPLY] SUCCESS: In-memory asset creation and complete readback verified.
+  NOTICE: --save flag was not provided. Output packages were NOT saved to disk.

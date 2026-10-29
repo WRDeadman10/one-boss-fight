@@ -1,0 +1,10 @@
+test_blanket_execution_rejected (test_team_pipeline.PipelineContractTests) ... ok
+test_current_queue (test_team_pipeline.PipelineContractTests) ... ok
+test_cycle_rejected (test_team_pipeline.PipelineContractTests) ... ok
+test_unknown_dependency_rejected (test_team_pipeline.PipelineContractTests) ... ok
+test_waiver_and_missing_row_rejected (test_team_pipeline.PipelineContractTests) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.005s
+
+OK

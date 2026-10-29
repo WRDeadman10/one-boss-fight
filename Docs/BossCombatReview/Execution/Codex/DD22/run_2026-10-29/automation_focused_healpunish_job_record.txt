@@ -1,0 +1,2 @@
+start 10-29-2026 11:51:45 filter=OneBossFight.Binding.HealPunish
+end 10-29-2026 11:52:06 exit 0 seconds 21

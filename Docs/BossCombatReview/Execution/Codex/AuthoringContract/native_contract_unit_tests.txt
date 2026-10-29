@@ -1,0 +1,13 @@
+test_actual_stats_names (test_native_profile_contract.NativeProfileContractTests) ... ok
+test_array_shape_and_softref_types (test_native_profile_contract.NativeProfileContractTests) ... ok
+test_bool_and_nonfinite_reject (test_native_profile_contract.NativeProfileContractTests) ... ok
+test_explicit_good_values (test_native_profile_contract.NativeProfileContractTests) ... ok
+test_invented_nested_fields_reject (test_native_profile_contract.NativeProfileContractTests) ... ok
+test_missing_is_not_defaulted (test_native_profile_contract.NativeProfileContractTests) ... ok
+test_no_input_mutation_or_manifest_fabrication (test_native_profile_contract.NativeProfileContractTests) ... ok
+test_recursive_phase_fields (test_native_profile_contract.NativeProfileContractTests) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.002s
+
+OK

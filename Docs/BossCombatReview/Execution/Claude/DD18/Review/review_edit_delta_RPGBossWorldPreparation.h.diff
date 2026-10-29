@@ -1,0 +1,12 @@
+--- /dev/fd/63	2026-10-28 22:16:53.000000000 +0530
++++ /dev/fd/62	2026-10-28 22:16:53.000000000 +0530
+@@ -20,7 +20,8 @@
+  * result. The identities are checked around BOTH stages by one facade-local checkpoint (the input compiler's own checkpoints are private to it and are not duplicated here): the world valid and the same, the world's game
+  * instance valid and the same, the published epoch pointer the very lease the input holds, the binding resolved through a retained weak reference (valid, not being destroyed, in the world, not begun or beginning, same
+  * GUID), the binding's participants unchanged and matching the compiled input request by request, and every member actor and definition still valid, in the world and not begun. A failed check (WorldPrep.Drift) after
+- * the preparation aborts precisely the components THIS call allocated, appends the cleanup errors and returns no artifact; a failed check before the preparation allocates nothing. An earlier independent artifact is
++ * the preparation aborts precisely the components THIS call allocated, appends the cleanup errors and returns no artifact (a cleanup that leaves components in place is reported as WorldPrep.ContractViolation: this facade reserves nothing, so a caller that
++ * needs such an encounter to stay blocked uses the registry, which quarantines it); a failed check before the preparation allocates nothing. An earlier independent artifact is
+  * never touched.
+  *
+  * Inherited limits, not removed: the components keep the native default bAutoRegister (an engine path that registers all owner components would register them), a destroyed uncollected component name is replaced in place

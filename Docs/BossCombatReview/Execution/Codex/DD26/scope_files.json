@@ -1,0 +1,11 @@
+[
+  "Source/OneBossFight/Player/RPGBossHydrationPreflight.h",
+  "Source/OneBossFight/Player/RPGBossHydrationPreflight.cpp",
+  "Source/OneBossFight/Tests/RPGBossHydrationPreflightTests.cpp",
+  "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+  "Source/OneBossFight/Tests/RPGBossProductionPreflightTests.cpp",
+  "Source/OneBossFight/Tests/RPGBossProductionPreparationTests.cpp",
+  "Source/OneBossFight/Tests/RPGBossWorldPreparationTests.cpp",
+  "Source/OneBossFight/Tests/RPGBossWorldInputCompilerTests.cpp",
+  "Source/OneBossFight/Tests/RPGBossPreparationRegistryTests.cpp"
+]

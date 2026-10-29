@@ -1,0 +1,58 @@
+{
+  "scope": "Source-only integrity, NOT compilation or Unreal tests",
+  "baseline": 197,
+  "current": 200,
+  "old_files_unchanged": 195,
+  "delta": {
+    "added": [
+      "Source/OneBossFight/Player/RPGBossShockwaveAdapters.cpp",
+      "Source/OneBossFight/Player/RPGBossShockwaveAdapters.h",
+      "Source/OneBossFight/Tests/RPGBossShockwaveAdaptersTests.cpp"
+    ],
+    "removed": [],
+    "changed": [
+      "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "Source/OneBossFight/Player/RPGEncounterBinding.h"
+    ]
+  },
+  "files": [
+    {
+      "path": "Source/OneBossFight/Player/RPGBossShockwaveAdapters.h",
+      "sha256": "a661e0c33cc13ac318588bec8943e1897b5959a7d4a5068568f1b0e06c3aba9c",
+      "bytes": 2834,
+      "lines": 45
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossShockwaveAdapters.cpp",
+      "sha256": "1e75f36340b4f5fdba483b8dba095cd1a00efc02c690ac3ab2ec9876da550c6a",
+      "bytes": 5012,
+      "lines": 115
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "sha256": "a9022dd2321f1b13cb4096d98e8deafd0a11dee6c182c47735943424b86c6028",
+      "bytes": 20487,
+      "lines": 385
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "sha256": "6d81a71ad74928fc3bada0cf0bcc76a2d8b87713b820864053fa0d26feff76d8",
+      "bytes": 17840,
+      "lines": 381
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossShockwaveAdaptersTests.cpp",
+      "sha256": "e030034f2f62dd2812d9c24585fe00391281e3e4544dfbfa0e48de7eef1d4926",
+      "bytes": 28854,
+      "lines": 444
+    }
+  ],
+  "test_names": [
+    "OneBossFight.Binding.Shockwave.Assign",
+    "OneBossFight.Binding.Shockwave.Validation",
+    "OneBossFight.Binding.Shockwave.Isolation",
+    "OneBossFight.Binding.Shockwave.Rejections",
+    "OneBossFight.Binding.Shockwave.Compile",
+    "OneBossFight.Binding.Shockwave.Authoring"
+  ]
+}

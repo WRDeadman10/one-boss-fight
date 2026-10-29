@@ -1,0 +1,345 @@
+{
+  "scope": "Native declaration names/types only; not Python API, runtime domain, ABI, cook or gameplay proof",
+  "source": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+  "source_sha256": "ce0a7da73e833a22aef8ad69e3ed42984b39b04131997d78f055f4a4070d9c92",
+  "records": {
+    "FRPGBossStatsConfig": {
+      "MaxHealth": {
+        "cpp_type": "float",
+        "initializer_source": "0.f"
+      },
+      "MaxPosture": {
+        "cpp_type": "float",
+        "initializer_source": "0.f"
+      },
+      "PostureRegenDelay": {
+        "cpp_type": "float",
+        "initializer_source": "0.f"
+      },
+      "PostureRegenRate": {
+        "cpp_type": "float",
+        "initializer_source": "0.f"
+      }
+    },
+    "FRPGEncounterPolicyConfig": {
+      "GateRadius": {
+        "cpp_type": "float",
+        "initializer_source": "1200.f"
+      },
+      "bResetOnPlayerRespawn": {
+        "cpp_type": "bool",
+        "initializer_source": "true"
+      }
+    },
+    "FRPGStaggerPolicyConfig": {
+      "StaggerSeconds": {
+        "cpp_type": "float",
+        "initializer_source": "2.5f"
+      },
+      "FreezeAtPosition": {
+        "cpp_type": "float",
+        "initializer_source": "1.55f"
+      },
+      "CriticalMultiplier": {
+        "cpp_type": "float",
+        "initializer_source": "2.5f"
+      },
+      "RiposteRange": {
+        "cpp_type": "float",
+        "initializer_source": "150.f"
+      },
+      "RiposteConeDegrees": {
+        "cpp_type": "float",
+        "initializer_source": "120.f"
+      },
+      "RiposteFacingDegrees": {
+        "cpp_type": "float",
+        "initializer_source": "120.f"
+      },
+      "RiposteArmSeconds": {
+        "cpp_type": "float",
+        "initializer_source": "1.2f"
+      },
+      "RipostePlayerStartGap": {
+        "cpp_type": "float",
+        "initializer_source": "150.f"
+      },
+      "RiposteAlignSeconds": {
+        "cpp_type": "float",
+        "initializer_source": "0.3f"
+      },
+      "RiposteImpactSeconds": {
+        "cpp_type": "float",
+        "initializer_source": "0.8f"
+      },
+      "RiposteBaseDamage": {
+        "cpp_type": "float",
+        "initializer_source": "40.f"
+      },
+      "CooldownSeconds": {
+        "cpp_type": "float",
+        "initializer_source": "0.f"
+      },
+      "GetUpRate": {
+        "cpp_type": "float",
+        "initializer_source": "0.6f"
+      },
+      "bHoldPostureAtZero": {
+        "cpp_type": "bool",
+        "initializer_source": "true"
+      }
+    },
+    "FRPGPhaseFlowConfig": {
+      "TransitionSeconds": {
+        "cpp_type": "float",
+        "initializer_source": "1.8f"
+      },
+      "bUseRoarClip": {
+        "cpp_type": "bool",
+        "initializer_source": "true"
+      },
+      "bPausePostureInTransition": {
+        "cpp_type": "bool",
+        "initializer_source": "true"
+      },
+      "bLockLeapUntilPhaseTwo": {
+        "cpp_type": "bool",
+        "initializer_source": "true"
+      },
+      "AttackAbilityPrefix": {
+        "cpp_type": "FString",
+        "initializer_source": "TEXT(\"GA_GS_Boss_\")"
+      },
+      "LeapAbilityTag": {
+        "cpp_type": "FName",
+        "initializer_source": "TEXT(\"Ability.Melee.LeapAttack\")"
+      }
+    },
+    "FRPGFireballConfig": {
+      "bFireballEnabled": {
+        "cpp_type": "bool",
+        "initializer_source": "false"
+      },
+      "FireballAbility": {
+        "cpp_type": "TSoftClassPtr<UObject>",
+        "initializer_source": "TSoftClassPtr<UObject>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C\")))"
+      },
+      "FireballCooldown": {
+        "cpp_type": "FVector2D",
+        "initializer_source": "FVector2D(6.f, 10.f)"
+      },
+      "FireballMinRange": {
+        "cpp_type": "float",
+        "initializer_source": "500.f"
+      },
+      "FireballMaxRange": {
+        "cpp_type": "float",
+        "initializer_source": "1800.f"
+      }
+    },
+    "FRPGPhaseDependencyConfig": {
+      "RoarClip": {
+        "cpp_type": "TSoftObjectPtr<UAnimSequence>",
+        "initializer_source": "TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar\")))"
+      },
+      "TransitionMontage": {
+        "cpp_type": "TSoftObjectPtr<UAnimMontage>",
+        "initializer_source": "TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage\")))"
+      },
+      "ImmunityEffect": {
+        "cpp_type": "TSoftClassPtr<UObject>",
+        "initializer_source": "TSoftClassPtr<UObject>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C\")))"
+      }
+    },
+    "FRPGStaggerProfileConfig": {
+      "bUseClips": {
+        "cpp_type": "bool",
+        "initializer_source": "true"
+      },
+      "bUseRiposteClips": {
+        "cpp_type": "bool",
+        "initializer_source": "true"
+      },
+      "bCriticalOnEveryHit": {
+        "cpp_type": "bool",
+        "initializer_source": "false"
+      },
+      "HitStunAbilityClassName": {
+        "cpp_type": "FName",
+        "initializer_source": "TEXT(\"GA_GS_Boss_HitStun_C\")"
+      },
+      "FallMontage": {
+        "cpp_type": "TSoftObjectPtr<UAnimMontage>",
+        "initializer_source": "TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage\")))"
+      },
+      "GetUpMontage": {
+        "cpp_type": "TSoftObjectPtr<UAnimMontage>",
+        "initializer_source": "TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage\")))"
+      },
+      "FallClip": {
+        "cpp_type": "TSoftObjectPtr<UAnimSequence>",
+        "initializer_source": "TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall\")))"
+      },
+      "DownClip": {
+        "cpp_type": "TSoftObjectPtr<UAnimSequence>",
+        "initializer_source": "TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown\")))"
+      },
+      "RipostePlayerClip": {
+        "cpp_type": "TSoftObjectPtr<UAnimSequence>",
+        "initializer_source": "TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.AN_Riposte_Player_Front\")))"
+      },
+      "RiposteBossClip": {
+        "cpp_type": "TSoftObjectPtr<UAnimSequence>",
+        "initializer_source": "TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction\")))"
+      },
+      "ImmunityEffect": {
+        "cpp_type": "TSoftClassPtr<UObject>",
+        "initializer_source": "TSoftClassPtr<UObject>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C\")))"
+      }
+    },
+    "FRPGDormantWakeConfig": {
+      "DormantClip": {
+        "cpp_type": "TSoftObjectPtr<UAnimSequence>",
+        "initializer_source": "TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.AN_Boss01_DormantIdle\")))"
+      },
+      "WakeClip": {
+        "cpp_type": "TSoftObjectPtr<UAnimSequence>",
+        "initializer_source": "TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_Wake.AN_Boss01_Wake\")))"
+      }
+    },
+    "FRPGPhaseConfig": {
+      "PhaseId": {
+        "cpp_type": "FName",
+        "initializer_source": null
+      },
+      "EntryHealthFraction": {
+        "cpp_type": "float",
+        "initializer_source": "0.f"
+      },
+      "SpeedMultiplier": {
+        "cpp_type": "float",
+        "initializer_source": "1.f"
+      },
+      "RateMultiplier": {
+        "cpp_type": "float",
+        "initializer_source": "1.f"
+      },
+      "AttackMultiplier": {
+        "cpp_type": "float",
+        "initializer_source": "1.f"
+      }
+    },
+    "FRPGParityField": {
+      "FieldPath": {
+        "cpp_type": "FString",
+        "initializer_source": null
+      },
+      "Value": {
+        "cpp_type": "FString",
+        "initializer_source": null
+      },
+      "Type": {
+        "cpp_type": "FString",
+        "initializer_source": null
+      },
+      "Units": {
+        "cpp_type": "FString",
+        "initializer_source": null
+      },
+      "SourcePath": {
+        "cpp_type": "FString",
+        "initializer_source": null
+      },
+      "SourceSHA256": {
+        "cpp_type": "FString",
+        "initializer_source": null
+      },
+      "SourceSite": {
+        "cpp_type": "FString",
+        "initializer_source": null
+      },
+      "Origin": {
+        "cpp_type": "FString",
+        "initializer_source": null
+      },
+      "Precedence": {
+        "cpp_type": "FString",
+        "initializer_source": null
+      },
+      "Destination": {
+        "cpp_type": "FString",
+        "initializer_source": null
+      },
+      "FirstRead": {
+        "cpp_type": "FString",
+        "initializer_source": null
+      },
+      "Witness": {
+        "cpp_type": "FString",
+        "initializer_source": null
+      }
+    },
+    "URPGBossDefinition": {
+      "Schema": {
+        "cpp_type": "int32",
+        "initializer_source": "1"
+      },
+      "DefinitionId": {
+        "cpp_type": "FName",
+        "initializer_source": null
+      },
+      "PresentationId": {
+        "cpp_type": "FName",
+        "initializer_source": null
+      },
+      "Stats": {
+        "cpp_type": "FRPGBossStatsConfig",
+        "initializer_source": null
+      },
+      "EncounterPolicy": {
+        "cpp_type": "FRPGEncounterPolicyConfig",
+        "initializer_source": null
+      },
+      "StaggerPolicy": {
+        "cpp_type": "FRPGStaggerPolicyConfig",
+        "initializer_source": null
+      },
+      "PhaseFlow": {
+        "cpp_type": "FRPGPhaseFlowConfig",
+        "initializer_source": null
+      },
+      "Fireball": {
+        "cpp_type": "FRPGFireballConfig",
+        "initializer_source": null
+      },
+      "PhaseDependencies": {
+        "cpp_type": "FRPGPhaseDependencyConfig",
+        "initializer_source": null
+      },
+      "StaggerProfile": {
+        "cpp_type": "FRPGStaggerProfileConfig",
+        "initializer_source": null
+      },
+      "DormantWake": {
+        "cpp_type": "FRPGDormantWakeConfig",
+        "initializer_source": null
+      },
+      "Phases": {
+        "cpp_type": "TArray<FRPGPhaseConfig>",
+        "initializer_source": null
+      },
+      "Skeleton": {
+        "cpp_type": "TSoftObjectPtr<USkeleton>",
+        "initializer_source": null
+      },
+      "Animations": {
+        "cpp_type": "TArray<TSoftObjectPtr<UAnimSequenceBase>>",
+        "initializer_source": null
+      },
+      "Fields": {
+        "cpp_type": "TArray<FRPGParityField>",
+        "initializer_source": null
+      }
+    }
+  }
+}

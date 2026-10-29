@@ -1,0 +1,14 @@
+Content/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/BP_CombatPlayerCharacter.uasset: OK
+Content/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.uasset: OK
+Content/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SKM_CombatMannequin_Simple.uasset: OK
+Content/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.uasset: OK
+Content/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.uasset: OK
+Content/OneBossFight/Boss01/Animations/AN_Boss01_Wake.uasset: OK
+Content/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.uasset: OK
+Content/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.uasset: OK
+Content/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.uasset: OK
+Content/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.uasset: OK
+Content/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.uasset: OK
+Content/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.uasset: OK
+Content/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.uasset: OK
+Content/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.uasset: OK

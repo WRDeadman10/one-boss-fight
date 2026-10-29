@@ -1,0 +1,12 @@
+{
+  "added": [
+    "Source/OneBossFight/Player/RPGBossLowSweepAdapters.cpp",
+    "Source/OneBossFight/Player/RPGBossLowSweepAdapters.h",
+    "Source/OneBossFight/Tests/RPGBossLowSweepAdaptersTests.cpp"
+  ],
+  "removed": [],
+  "changed": [
+    "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+    "Source/OneBossFight/Player/RPGEncounterBinding.h"
+  ]
+}

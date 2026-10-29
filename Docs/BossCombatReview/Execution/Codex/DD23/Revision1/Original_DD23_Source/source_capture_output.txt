@@ -1,0 +1,60 @@
+{
+  "scope": "Source-only integrity, NOT compilation or Unreal tests",
+  "baseline": 203,
+  "current": 206,
+  "old_files_unchanged": 201,
+  "delta": {
+    "added": [
+      "Source/OneBossFight/Player/RPGBossLookAdapters.cpp",
+      "Source/OneBossFight/Player/RPGBossLookAdapters.h",
+      "Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp"
+    ],
+    "removed": [],
+    "changed": [
+      "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "Source/OneBossFight/Player/RPGEncounterBinding.h"
+    ]
+  },
+  "files": [
+    {
+      "path": "Source/OneBossFight/Player/RPGBossLookAdapters.h",
+      "sha256": "ca3bfb395dfdf9791b771a0139b706751113a2ffe2d55b8972188141642e886d",
+      "bytes": 1765,
+      "lines": 29
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossLookAdapters.cpp",
+      "sha256": "e99af51eeb4310a0e31d1f063cd8e15445be7b417d94137f9ccea4d88e3ce5ce",
+      "bytes": 6570,
+      "lines": 186
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "sha256": "1cbc444b2dd126375ec0a798bdf557b6d31b45df09936bdd70bd8136188d7090",
+      "bytes": 22750,
+      "lines": 429
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "sha256": "c12fe14a5f17827d80c11238d2965e0db16a8cb6378dc483263683960fd5a71d",
+      "bytes": 18303,
+      "lines": 396
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp",
+      "sha256": "436a413e300344cab0ed10538d6f37457278e57d101c89a8e6999c5afb33d983",
+      "bytes": 25885,
+      "lines": 460
+    }
+  ],
+  "test_names": [
+    "OneBossFight.Binding.Look.Assign",
+    "OneBossFight.Binding.Look.Validation",
+    "OneBossFight.Binding.Look.Isolation",
+    "OneBossFight.Binding.Look.Rejections",
+    "OneBossFight.Binding.Look.Compile",
+    "OneBossFight.Binding.Look.Authoring"
+  ]
+}
+Source capture completed exit0. No build/UHT/engine/automation was executed.
+

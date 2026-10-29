@@ -1,0 +1,2 @@
+start 10-29-2026 13:18:29 filter=OneBossFight.Binding.Look
+end 10-29-2026 13:19:00 exit 3 seconds 30

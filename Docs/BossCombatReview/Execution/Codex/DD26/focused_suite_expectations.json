@@ -1,0 +1,46 @@
+{
+  "OneBossFight.Binding.Preflight": [
+    "OneBossFight.Binding.Preflight.BatchAndActors",
+    "OneBossFight.Binding.Preflight.Clusters",
+    "OneBossFight.Binding.Preflight.ConfigAndFields",
+    "OneBossFight.Binding.Preflight.Consumers",
+    "OneBossFight.Binding.Preflight.Dependencies",
+    "OneBossFight.Binding.Preflight.ExpandedSubset",
+    "OneBossFight.Binding.Preflight.Independence",
+    "OneBossFight.Binding.Preflight.Targets",
+    "OneBossFight.Binding.Preflight.Valid"
+  ],
+  "OneBossFight.Binding.Preparation": [
+    "OneBossFight.Binding.Preparation.Abort",
+    "OneBossFight.Binding.Preparation.Exclusive",
+    "OneBossFight.Binding.Preparation.InjectedFaults",
+    "OneBossFight.Binding.Preparation.Lifetime",
+    "OneBossFight.Binding.Preparation.Success",
+    "OneBossFight.Binding.Preparation.WholeBatchRejection"
+  ],
+  "OneBossFight.Binding.PreparationRegistry": [
+    "OneBossFight.Binding.PreparationRegistry.AdmissionAndConflicts",
+    "OneBossFight.Binding.PreparationRegistry.Lifetime",
+    "OneBossFight.Binding.PreparationRegistry.ReleaseAndTokens"
+  ],
+  "OneBossFight.Binding.ProductionPreflight": [
+    "OneBossFight.Binding.ProductionPreflight.DependencyRejections",
+    "OneBossFight.Binding.ProductionPreflight.PositiveBatch"
+  ],
+  "OneBossFight.Binding.ProductionPreparation": [
+    "OneBossFight.Binding.ProductionPreparation.LateRejection",
+    "OneBossFight.Binding.ProductionPreparation.NameCollisionCleanup",
+    "OneBossFight.Binding.ProductionPreparation.PositiveBatch"
+  ],
+  "OneBossFight.Binding.WorldInput": [
+    "OneBossFight.Binding.WorldInput.ContentRejections",
+    "OneBossFight.Binding.WorldInput.InputRejections",
+    "OneBossFight.Binding.WorldInput.PositiveGameInstance"
+  ],
+  "OneBossFight.Binding.WorldPreparation": [
+    "OneBossFight.Binding.WorldPreparation.LateInvalidAndCollision",
+    "OneBossFight.Binding.WorldPreparation.PositiveAndAbort",
+    "OneBossFight.Binding.WorldPreparation.Refusals",
+    "OneBossFight.Binding.WorldPreparation.SecondPreparation"
+  ]
+}

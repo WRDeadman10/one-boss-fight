@@ -1,0 +1,12 @@
+38bfed6fbfcfb20ddbb9568f7fb302485621c5f8201cbbd651eaaf4961860a2f     18107  Docs/BossCombatReview/Execution/Antigravity/AuthoringQuickstart/DATA_ASSET_QUICKSTART.md
+10622816d9e7bbf47ae40c02b6e420192ab576ad3aa31ed8cba9b48345a53220     27883  Docs/BossCombatReview/Execution/Antigravity/AuthoringQuickstart/authoring_examples.json
+8f1b1adcf77d1f19010fe2124aeb3158f63ca313d01527867c7eed56838bb224      2024  Source/OneBossFight/Player/RPGAttackKind.h
+cd6b2a8006a33b90fdc19e8a55d3112b0f60692aac0dbe8988a1b87e7ed84fc6     13229  Source/OneBossFight/Player/RPGBuildRules.h
+e7d5296833cfa5bec4101e608a98ab336a5b8c7a5c476e0d3b17eae57279dbb5      7427  Source/OneBossFight/Player/RPGCombatCatalog.h
+f6f71036804f60f0e4c8b3cf455f2a04a7bc4cf379760334903a2d9d613de59d     23675  Source/OneBossFight/Player/RPGCombatCatalog.cpp
+ce0a7da73e833a22aef8ad69e3ed42984b39b04131997d78f055f4a4070d9c92     17193  Source/OneBossFight/Player/RPGEncounterBinding.h
+fab105d67f8d99c891e30b72a04a3404b2488c1d766efd148510037eff0cf4a6      5173  Source/OneBossFight/Player/RPGBossPhaseAdapters.h
+8140cd203feff0c3c72a3b0c3672c9d19761d9b3b88e617dd6949f75978edacf      9237  Source/OneBossFight/Player/RPGBossPhaseAdapters.cpp
+0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a      8607  Source/OneBossFight/Player/RPGBossPhases.h
+7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b     17803  Source/OneBossFight/Player/RPGBossStagger.h
+ff450db792f59af3bab6ff73464d1dfe360f27003b268c0f574b58124f05f83c      2957  Source/OneBossFight/Player/RPGBossDormantWake.h

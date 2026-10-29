@@ -1,0 +1,14 @@
+{
+  "reason": "Direct owner requested clearing mailbox and fresh task statement",
+  "archive": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Codex\\MailboxArchive\\TEAM_MAILBOX_before_owner_reset_2026-10-28.md",
+  "archive_sha256": "de57e6a6a67b88acb239637c0d27c24cd82b0522da6b5d8ba834fc185050abb2",
+  "original_bytes": 1573515,
+  "fresh_bytes": 51991,
+  "preserved_heading_count": 631,
+  "archived_body_count": 630,
+  "pending_ids": [
+    "### [C-229] Claude -> Codex, 2026-10-28 13:51"
+  ],
+  "watcher_cursor_retained": 630,
+  "numbering_reset": false
+}

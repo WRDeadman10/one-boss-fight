@@ -1,0 +1,31 @@
+{
+  "scope": "IEEE-float32 source arithmetic illustration only; no Unreal execution",
+  "source_sha256": "9632381f60e92d3f2d7cc7362883cbc03c3b258191abbbb4755a4bc9591cf3a4",
+  "float_max": 3.4028234663852886e+38,
+  "radius_case": {
+    "Damage": 0,
+    "StartRadius": 3.36879526214505e+38,
+    "MaxRadius": 3.4028234663852886e+38,
+    "Speed": 3.36879526214505e+38,
+    "Thickness": 1,
+    "JumpClearance": 0.5,
+    "bEnabled": true,
+    "MoveId": "A6",
+    "DeltaTime": 0.01666666753590107,
+    "step": 5.61465902377187e+36,
+    "sum_overflows_float32": true
+  },
+  "band_case": {
+    "Damage": 0,
+    "StartRadius": 2.5521175490829424e+38,
+    "MaxRadius": 3.4028234663852886e+38,
+    "Speed": 1,
+    "Thickness": 3.4028234663852886e+38,
+    "JumpClearance": 0.5,
+    "bEnabled": true,
+    "MoveId": "A6",
+    "Radius": 2.5521175490829424e+38,
+    "half_thickness": 1.7014117331926443e+38,
+    "outer_overflows_float32": true
+  }
+}

@@ -1,0 +1,37 @@
+--- /dev/fd/63	2026-10-28 22:18:52.000000000 +0530
++++ /dev/fd/62	2026-10-28 22:18:52.000000000 +0530
+@@ -286,9 +286,23 @@
+ 		}
+ 		for (const FMember& Member : Members)
+ 		{
+-			if (ActorProblems(Member.Actor, World) != 0u || !IsValid(Member.Definition))
++			// The retained WEAK identities of this member are resolved first (bounds-checked by the member's index): a cleared weak actor or definition, or one that is not exactly the original, is drift. The saved raw pointers are
++			// never dereferenced before this: IsValid on a raw pointer is not a GC-safe identity resolution.
++			if (!Snapshot.IsValidIndex(Member.Index))
+ 			{
+-				Why = FString::Printf(TEXT("%s: the actor or the definition is no longer valid, in the expected world and not begun"), *MemberText(Member.Slot, Member.Index));
++				Why = FString::Printf(TEXT("%s: the member has no retained snapshot entry"), *MemberText(Member.Slot, Member.Index));
++				return ECheckpoint::BindingDrift;
++			}
++			AActor* const ResolvedActor = Snapshot[Member.Index].Actor.Get();
++			URPGBossDefinition* const ResolvedDefinition = Snapshot[Member.Index].Definition.Get();
++			if (!ResolvedActor || ResolvedActor != Member.Actor || !ResolvedDefinition || ResolvedDefinition != Member.Definition)
++			{
++				Why = FString::Printf(TEXT("%s: the retained actor or definition no longer resolves to the original (destroyed, collected or replaced)"), *MemberText(Member.Slot, Member.Index));
++				return ECheckpoint::BindingDrift;
++			}
++			if (ActorProblems(ResolvedActor, World) != 0u)
++			{
++				Why = FString::Printf(TEXT("%s: the actor is no longer valid, in the expected world and not begun"), *MemberText(Member.Slot, Member.Index));
+ 				return ECheckpoint::BindingDrift;
+ 			}
+ 		}
+@@ -561,7 +575,7 @@
+ 				continue;
+ 			}
+ 			FRPGHydrationPreflightRequest Request;
+-			Request.Actor = Member.Actor;
++			Request.Actor = Snapshot[Member.Index].Actor; // the retained weak identity, verified by the checkpoint above
+ 			Request.Slot = Member.Slot;
+ 			Request.TargetSlot = Member.TargetSlot;
+ 			Request.Role = Member.Role;

@@ -1,0 +1,4 @@
+RPGCombatCatalog.cpp ForWorld lines 254-259 sha256: 7df845e41180be7cb2a979d40ad90990f312464935e7319614a70e490b509ad3
+RPGCombatCatalog.cpp URPGCombatCatalogSubsystem::Initialize lines 292-347 sha256: d7894c0da3a0aed5b0b04412149d931f231866dc346283c2e04e25f4a34f7661
+RPGCombatCatalog.cpp GetEpoch lines 362-375 sha256: a856be0e5db13f62714002e8e9ebaa4bedb46b9eb59f7bf55f921f41f1beff61
+RPGEncounterBinding.cpp CompileParticipant implementation lines 25-148 sha256: 372eb9560b05569f9c79c4bda2e1c666203100df04e5d94f2779e3c0105c3293

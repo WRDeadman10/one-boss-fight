@@ -1,0 +1,12 @@
+{
+  "added": [
+    "Source/OneBossFight/Player/RPGBossShockwaveAdapters.cpp",
+    "Source/OneBossFight/Player/RPGBossShockwaveAdapters.h",
+    "Source/OneBossFight/Tests/RPGBossShockwaveAdaptersTests.cpp"
+  ],
+  "removed": [],
+  "changed": [
+    "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+    "Source/OneBossFight/Player/RPGEncounterBinding.h"
+  ]
+}

@@ -1,0 +1,9 @@
+Historical C251 receipts: 17 verified
+Current Source files: 194 changed from C251: ['Source/OneBossFight/Player/RPGBossBleedAdapters.cpp', 'Source/OneBossFight/Player/RPGBossBleedAdapters.h', 'Source/OneBossFight/Tests/RPGBossBleedAdaptersTests.cpp']
+Own delivery receipts: 20 verified
+RPGBossBleedAdapters.h e3a55ee39c1f980edda57b7397d93ebb0861fc0f75d5a0ea748c48089fe3c1d3
+RPGBossBleedAdapters.cpp 3799e43a190d93b8bf0347e9f568eb7204e7b00150ea3515b62612fa26527afe
+RPGEncounterBinding.h 58c4e5758160abad1770aa6c04519a33648196d9d4676b4732d03adcbb948bbb
+RPGEncounterBinding.cpp b4dc5c2654807131f18509949fba033661d2b52e8e197a5c90759f9a37520089
+RPGBossBleedAdaptersTests.cpp 99d5b68dcbe4358e78181e738a55242d09888f353336483bb4dfa3f269a309a4
+Source-only preparation exit0; no compilation, Unreal test or runtime pass claimed.

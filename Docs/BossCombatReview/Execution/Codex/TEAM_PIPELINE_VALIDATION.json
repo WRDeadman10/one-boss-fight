@@ -1,0 +1,9 @@
+{
+  "scope": "Planning structure only, NOT project completion/UE proof",
+  "work_cards": 43,
+  "claude_cards": 21,
+  "antigravity_cards": 22,
+  "required_rows": 83,
+  "dag_acyclic": true,
+  "future_execution_blanket_released": false
+}

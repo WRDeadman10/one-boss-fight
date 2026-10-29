@@ -1,0 +1,209 @@
+--- /dev/fd/63	2026-10-28 22:16:55.000000000 +0530
++++ /dev/fd/62	2026-10-28 22:16:55.000000000 +0530
+@@ -347,7 +347,7 @@
+ 				Test.AddError(TEXT("unsupported precondition: a pack character default object holds no skeletal mesh or the mesh has no skeleton"));
+ 				return false;
+ 			}
+-			Sets.Reserve(8); // the pointers AddSet returns stay valid
++			Sets.Reserve(12); // the pointers AddSet returns stay valid
+ 			return true;
+ 		}
+ 
+@@ -397,6 +397,7 @@
+ 			if (!Set.BossOne || !Set.BossTwo || !Set.Target)
+ 			{
+ 				Test.AddError(TEXT("unsupported precondition: the native character actors of an encounter could not be spawned"));
++				Sets.Pop();
+ 				return nullptr;
+ 			}
+ 			const TArray<AActor*> Actors = Set.Actors();
+@@ -407,6 +408,7 @@
+ 				if (!Set.Markers[Index] || !Set.Definitions[Index].IsValid())
+ 				{
+ 					Test.AddError(TEXT("unsupported precondition: a marker component or a transient definition could not be created"));
++					Sets.Pop();
+ 					return nullptr;
+ 				}
+ 			}
+@@ -418,6 +420,7 @@
+ 			if (!Set.Binding)
+ 			{
+ 				Test.AddError(TEXT("unsupported precondition: an encounter binding actor could not be spawned"));
++				Sets.Pop();
+ 				return nullptr;
+ 			}
+ 			return &Set;
+@@ -523,17 +526,19 @@
+ 	}
+ 
+ 	/** A refused reservation: not succeeded, no held token, the failure family, ONE error with the token and where text, nothing changed anywhere. */
+-	bool ExpectRefused(FAutomationTestBase& Test, const FMultiFixture& F, FRPGBossPreparationRegistry& Registry, const TCHAR* Label, const ARPGEncounterBinding* Binding, EReservationFailure Failure, const TCHAR* Token, const TCHAR* Where)
++	bool ExpectRefused(FAutomationTestBase& Test, const FMultiFixture& F, FRPGBossPreparationRegistry& Registry, const TCHAR* Label, const ARPGEncounterBinding* Binding, EReservationFailure Failure, const TCHAR* Token, const TCHAR* Where, const FString* HashOverride = nullptr)
+ 	{
+-		int32 BoundBefore, ReadyBefore;
++		int32 BoundBefore = -1;
++		int32 ReadyBefore = -1;
+ 		const TArray<FActorState> Before = F.CaptureAll(BoundBefore, ReadyBefore);
+ 		const int32 ActiveBefore = Registry.GetActiveReservationCount();
+ 		const TArray<FGuid> ReservedBefore = Registry.GetReservedEncounters();
+-		const FRPGReservationResult Result = Registry.TryPrepareAndReserve(Binding, F.MakeSelections(), ManifestHash());
++		const FRPGReservationResult Result = Registry.TryPrepareAndReserve(Binding, F.MakeSelections(), HashOverride ? *HashOverride : ManifestHash());
+ 		bool bOk = Test.TestFalse(FString::Printf(TEXT("%s: refused, no held token"), Label), Result.Succeeded() || Result.Token.IsHeld());
+ 		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: the failure family is the expected one"), Label), Result.Failure == Failure);
+-		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: ONE error carries %s and %s (got: %s)"), Label, Token, Where, *JoinErrors(Result.Errors)), AnyErrorHasAll(Result.Errors, Token, Where, TEXT("")));
+-		int32 BoundAfter, ReadyAfter;
++		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: ONE error carries %s and %s (got: %s)"), Label, Token, Where, *JoinErrors(Result.Errors)), AnyErrorHasAll(Result.Errors, Token, Where, TEXT("")) && Result.Errors.Num() == 1);
++		int32 BoundAfter = -1;
++		int32 ReadyAfter = -1;
+ 		const TArray<FActorState> After = F.CaptureAll(BoundAfter, ReadyAfter);
+ 		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: every actor of every encounter, every component set and the combat context are exactly as before"), Label), SameStates(Before, After, BoundBefore, ReadyBefore, BoundAfter, ReadyAfter));
+ 		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: the registry is unchanged: same active count and same reserved encounters in the same order"), Label), Registry.GetActiveReservationCount() == ActiveBefore && Registry.GetReservedEncounters() == ReservedBefore);
+@@ -619,6 +624,38 @@
+ 		}
+ 	}
+ 
++	// Overlap ACROSS roles: a new target that is a reserved BOSS, and a new boss that is a reserved TARGET.
++	{
++		FEncounterSet* H = F.AddSet(*this, 6);
++		FEncounterSet* I = F.AddSet(*this, 7);
++		if (!H || !I)
++		{
++			return false;
++		}
++		TArray<FRPGPlacedParticipantBinding> TargetIsBoss = F.MakeParticipants(*H);
++		TargetIsBoss[2].Actor = A->BossOne;
++		TargetIsBoss[2].Definition = A->Definitions[0].Get();
++		ARPGEncounterBinding* CaseTargetIsBoss = F.SpawnBinding(TargetIsBoss, FGuid::NewGuid());
++		TArray<FRPGPlacedParticipantBinding> BossIsTarget = F.MakeParticipants(*I);
++		BossIsTarget[0].Actor = B->Target;
++		BossIsTarget[0].Definition = B->Definitions[2].Get();
++		ARPGEncounterBinding* CaseBossIsTarget = F.SpawnBinding(BossIsTarget, FGuid::NewGuid());
++		if (TestTrue(TEXT("the two cross-role overlap bindings were spawned"), CaseTargetIsBoss && CaseBossIsTarget))
++		{
++			ExpectRefused(*this, F, Registry, TEXT("a new target that is a reserved boss"), CaseTargetIsBoss, EReservationFailure::Conflict, TEXT("Reservation.ActorConflict"), TEXT("[slot=Player]"));
++			ExpectRefused(*this, F, Registry, TEXT("a new boss that is a reserved target"), CaseBossIsTarget, EReservationFailure::Conflict, TEXT("Reservation.ActorConflict"), TEXT("[slot=BossOne]"));
++			TestTrue(TEXT("the other actors of both refused encounters hold no consumer and no allocated name"), NoManagedConsumer(H->BossOne) && NoManagedConsumer(H->BossTwo) && NoManagedConsumer(I->Target) && NoManagedConsumer(I->BossTwo));
++		}
++		// The InvalidInput family on a LIVE registry: no binding, a bad manifest hash (the input stage names it), nothing allocated.
++		{
++			const FRPGReservationResult NoBinding = Registry.TryPrepareAndReserve(nullptr, F.MakeSelections(), ManifestHash());
++			TestTrue(FString::Printf(TEXT("no binding: InvalidInput with Reservation.InvalidBinding (got: %s)"), *JoinErrors(NoBinding.Errors)), !NoBinding.Succeeded() && NoBinding.Failure == EReservationFailure::InvalidInput
++				&& AnyErrorHasAll(NoBinding.Errors, TEXT("Reservation.InvalidBinding"), TEXT(""), TEXT("")));
++			const FString BadHash = FString::ChrN(63, TEXT('b'));
++			ExpectRefused(*this, F, Registry, TEXT("a bad manifest hash"), I->Binding, EReservationFailure::InvalidInput, TEXT("WorldInput.InvalidManifestHash"), TEXT(""), &BadHash);
++		}
++	}
++
+ 	// A failed LATE preparation (a real name collision under the later owner) preserves every earlier reservation and publishes nothing.
+ 	const FExpectedComponent EncounterComponent = ExpectedComponents()[2];
+ 	USceneComponent* Blocker = NewObject<USceneComponent>(G->BossTwo, USceneComponent::StaticClass(), FName(EncounterComponent.Name));
+@@ -628,14 +665,16 @@
+ 	}
+ 	TStrongObjectPtr<USceneComponent> BlockerLease(Blocker);
+ 	{
+-		int32 BoundBefore, ReadyBefore;
++		int32 BoundBefore = -1;
++		int32 ReadyBefore = -1;
+ 		const TArray<FActorState> Before = F.CaptureAll(BoundBefore, ReadyBefore);
+ 		const FRPGReservationResult Refused = Registry.TryPrepareAndReserve(G->Binding, F.MakeSelections(), ManifestHash());
+ 		TestFalse(TEXT("late failure: refused, no held token"), Refused.Succeeded() || Refused.Token.IsHeld());
+ 		TestTrue(TEXT("late failure: the preparation family"), Refused.Failure == EReservationFailure::PreparationFailed);
+ 		TestTrue(FString::Printf(TEXT("late failure: ONE error, the real allocation guard with the slot and the component (got: %s)"), *JoinErrors(Refused.Errors)),
+ 			Refused.Errors.Num() == 1 && AnyErrorHasAll(Refused.Errors, TEXT("Preparation.AllocationFailed"), TEXT("[slot=BossTwo]"), TEXT("[component=RPGBossEncounter]")));
+-		int32 BoundAfter, ReadyAfter;
++		int32 BoundAfter = -1;
++		int32 ReadyAfter = -1;
+ 		const TArray<FActorState> After = F.CaptureAll(BoundAfter, ReadyAfter);
+ 		TestTrue(TEXT("late failure: encounters A and B are exactly as they were (their components are the same objects) and the registry still holds exactly them"),
+ 			Registry.GetActiveReservationCount() == 2 && Registry.GetReservedEncounters() == TArray<FGuid>{A->Encounter, B->Encounter} && IsFullyPrepared(*A) && IsFullyPrepared(*B));
+@@ -786,7 +825,7 @@
+ 	{
+ 		const FRPGReleaseReport Report = OuterRegistry->Release(OuterToken);
+ 		AddInfo(FString::Printf(TEXT("world torn down first: release outcome %d, destroyed %d, already gone %d, violations %d (split logged, not assumed)"), static_cast<int32>(Report.Outcome), Report.Abort.Destroyed, Report.Abort.AlreadyGone, Report.Abort.ContractViolations));
+-		TestTrue(FString::Printf(TEXT("world dies first: the release is clean without a crash (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsReleased() && Report.Abort.ContractViolations == 0);
++		TestTrue(FString::Printf(TEXT("world dies first: the release is clean without a crash, every owned component accounted for (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsReleased() && Report.Abort.Destroyed + Report.Abort.AlreadyGone == 10 && Report.Abort.ContractViolations == 0);
+ 		TestTrue(TEXT("world dies first: the registry is empty and the token is consumed"), OuterRegistry->GetActiveReservationCount() == 0 && !OuterToken.IsHeld());
+ 		const FRPGReservationResult Refused = OuterRegistry->TryPrepareAndReserve(nullptr, TArray<FSelection>(), ManifestHash());
+ 		TestTrue(TEXT("world dies first: a later admission through that registry is refused as invalid input (the world is gone)"), !Refused.Succeeded() && Refused.Failure == EReservationFailure::InvalidInput);
+@@ -800,7 +839,8 @@
+ 	FEncounterSet* A = F.AddSet(*this, 1);
+ 	FEncounterSet* B = F.AddSet(*this, 2);
+ 	FEncounterSet* C = F.AddSet(*this, 3);
+-	if (!A || !B || !C)
++	FEncounterSet* H = F.AddSet(*this, 4);
++	if (!A || !B || !C || !H)
+ 	{
+ 		return false;
+ 	}
+@@ -824,30 +864,43 @@
+ 			&& Matches(F, Start, BoundStart, ReadyStart) && HasNoConsumers(*A));
+ 		TestTrue(TEXT("lease dies first: the same encounter is admitted again"), [&]() { FRPGReservationResult Re = Registry.TryPrepareAndReserve(A->Binding, F.MakeSelections(), ManifestHash()); return Re.Succeeded() && IsFullyPrepared(*A); }());
+ 	}
+-	TestTrue(TEXT("the registry went out of scope with a held token released by its own destruction: the actors are exactly as at the start"), Matches(F, Start, BoundStart, ReadyStart) && HasNoConsumers(*A));
++	TestTrue(TEXT("the registry went out of scope (the re-admitted reservation of the temporary was released at the end of the lambda): the actors are exactly as at the start"), Matches(F, Start, BoundStart, ReadyStart) && HasNoConsumers(*A));
+ 
+ 	// The registry dies first: the artifacts are cleaned once, the surviving token is invalid and every later use is a safe no-op.
+ 	FRPGPreparationLeaseToken Survivor;
++	FRPGPreparationLeaseToken SurvivorTwo;
++	FGuid ShortRegistryId;
+ 	{
+ 		FRPGBossPreparationRegistry Short(F.Scope.World);
+-		FRPGReservationResult Reserved = Short.TryPrepareAndReserve(B->Binding, F.MakeSelections(), ManifestHash());
+-		if (!TestTrue(FString::Printf(TEXT("registry dies first: encounter B is reserved (errors: %s)"), *JoinErrors(Reserved.Errors)), Reserved.Succeeded()))
++		ShortRegistryId = Short.GetRegistryId();
++		FRPGReservationResult ReservedB = Short.TryPrepareAndReserve(B->Binding, F.MakeSelections(), ManifestHash());
++		FRPGReservationResult ReservedH = Short.TryPrepareAndReserve(H->Binding, F.MakeSelections(), ManifestHash());
++		if (!TestTrue(FString::Printf(TEXT("registry dies first: encounters B and H are both reserved (errors: %s | %s)"), *JoinErrors(ReservedB.Errors), *JoinErrors(ReservedH.Errors)), ReservedB.Succeeded() && ReservedH.Succeeded()))
+ 		{
+ 			return false;
+ 		}
+-		Survivor = MoveTemp(Reserved.Token);
+-		TestTrue(TEXT("registry dies first: the token is held and B is prepared"), Survivor.IsHeld() && IsFullyPrepared(*B));
+-	} // the registry is destroyed here, the token survives
+-	TestTrue(TEXT("registry dies first: B's components were cleaned once and the surviving token is no longer held"), !Survivor.IsHeld() && HasNoConsumers(*B) && MarkersIntact(*B) && Survivor.GetSerial() != 0);
++		Survivor = MoveTemp(ReservedB.Token);
++		SurvivorTwo = MoveTemp(ReservedH.Token);
++		TestTrue(TEXT("registry dies first: both tokens are held, both encounters are prepared and the registry lists two reservations"), Survivor.IsHeld() && SurvivorTwo.IsHeld() && IsFullyPrepared(*B) && IsFullyPrepared(*H) && Short.GetActiveReservationCount() == 2);
++	} // the registry is destroyed here with TWO live artifacts, both tokens survive
++	TestTrue(TEXT("registry dies first: every artifact was cleaned once (B and H hold no consumer, their markers are intact) and both surviving tokens are no longer held"), !Survivor.IsHeld() && !SurvivorTwo.IsHeld()
++		&& HasNoConsumers(*B) && HasNoConsumers(*H) && MarkersIntact(*B) && MarkersIntact(*H) && Survivor.GetSerial() != 0 && SurvivorTwo.GetSerial() != 0);
+ 	{
+-		const FRPGReleaseReport ByToken = Survivor.Release();
+-		TestTrue(FString::Printf(TEXT("registry dies first: releasing the surviving token is a Stale no-op (got: %s)"), *JoinErrors(ByToken.Errors)), ByToken.Outcome == FRelease::Stale);
++		// A surviving token (registry identity and serial still set) handed to a NEW registry is WrongRegistry and is left unchanged; only then is it released for the Stale no-op.
+ 		FRPGBossPreparationRegistry Fresh(F.Scope.World);
++		const uint64 SurvivorSerial = Survivor.GetSerial();
++		TestTrue(TEXT("the surviving token still carries the dead registry's identity and serial"), Survivor.GetRegistryId() == ShortRegistryId && ShortRegistryId != Fresh.GetRegistryId() && SurvivorSerial != 0);
++		const FRPGReleaseReport CrossRegistry = Fresh.Release(Survivor);
++		TestTrue(FString::Printf(TEXT("a surviving token given to a NEW registry: WrongRegistry, nothing touched (got: %s)"), *JoinErrors(CrossRegistry.Errors)), CrossRegistry.Outcome == FRelease::WrongRegistry);
++		TestTrue(TEXT("the token is left as it was"), Survivor.GetSerial() == SurvivorSerial && Survivor.GetRegistryId() == ShortRegistryId);
++		const FRPGReleaseReport ByToken = Survivor.Release();
++		TestTrue(FString::Printf(TEXT("releasing the surviving token through itself is a Stale no-op (got: %s)"), *JoinErrors(ByToken.Errors)), ByToken.Outcome == FRelease::Stale && Survivor.GetSerial() == 0);
+ 		FRPGPreparationLeaseToken Forged = FRPGPreparationLeaseToken::ForgeForTest(Fresh, 99, B->Encounter);
+-		TestTrue(TEXT("a surviving token cannot release anything in a NEW registry, and the new registry admits B afresh with its own identity"), Fresh.Release(Survivor).Outcome == FRelease::Stale && Fresh.GetRegistryId() != Survivor.GetRegistryId()
+-			&& Fresh.Release(Forged).Outcome == FRelease::Stale && Fresh.TryPrepareAndReserve(B->Binding, F.MakeSelections(), ManifestHash()).Succeeded());
++		TestTrue(TEXT("a forged token with an unreserved serial is Stale in the new registry, which admits B afresh with its own identity"), Fresh.Release(Forged).Outcome == FRelease::Stale
++			&& Fresh.TryPrepareAndReserve(B->Binding, F.MakeSelections(), ManifestHash()).Succeeded());
++		SurvivorTwo.Release();
+ 	}
+-	TestTrue(TEXT("after the fresh registry also went out of scope the actors are exactly as at the start"), Matches(F, Start, BoundStart, ReadyStart) && HasNoConsumers(*B));
++	TestTrue(TEXT("after the fresh registry also went out of scope the actors are exactly as at the start"), Matches(F, Start, BoundStart, ReadyStart) && HasNoConsumers(*B) && HasNoConsumers(*H));
+ 
+ 	// The actors die first: destroying the owners of a reservation, then releasing it, never dereferences a stale identity.
+ 	{
+@@ -864,12 +917,13 @@
+ 		TestTrue(TEXT("actors die first: the reservation still lists and the token is still held (the registry never dereferences a stale actor)"), Token.IsHeld() && Registry.GetActiveReservationCount() == 1);
+ 		const FRPGReleaseReport Report = Registry.Release(Token);
+ 		AddInfo(FString::Printf(TEXT("owners destroyed first: release outcome %d, destroyed %d, already gone %d, violations %d (split logged, not assumed)"), static_cast<int32>(Report.Outcome), Report.Abort.Destroyed, Report.Abort.AlreadyGone, Report.Abort.ContractViolations));
+-		TestTrue(FString::Printf(TEXT("actors die first: the release is clean without a crash (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsReleased() && Report.Abort.ContractViolations == 0 && Registry.GetActiveReservationCount() == 0 && !Token.IsHeld());
++		TestTrue(FString::Printf(TEXT("actors die first: the release is clean, every component was destroyed with its owner (ten already gone, none destroyed by the abort), no violation (errors: %s)"), *JoinErrors(Report.Errors)),
++			Report.IsReleased() && Report.Abort.AlreadyGone == 10 && Report.Abort.Destroyed == 0 && Report.Abort.ContractViolations == 0 && Registry.GetActiveReservationCount() == 0 && !Token.IsHeld());
+ 	}
+ 
+ 	// Off the game thread: admission and release are refused without touching anything; the token and the registry are unchanged. (Destroying a held token or the registry off the game thread is NOT run: an unsafe experiment.)
+ 	{
+-		FEncounterSet* D = F.AddSet(*this, 4);
++		FEncounterSet* D = F.AddSet(*this, 5);
+ 		if (!D)
+ 		{
+ 			return false;

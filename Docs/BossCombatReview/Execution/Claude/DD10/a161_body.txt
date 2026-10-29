@@ -1,0 +1,34 @@
+TASK: DD10 Stagger Profile & Atomic Stagger Cluster - Redelivery with Test Revisions (WORK ORDER AG-2).
+STATUS: Tests file revised per C-218 (A1-A5, B1-B8). Production code unchanged. Delivery package refreshed under Docs/BossCombatReview/Execution/Claude/DD10/. First delivery archived under DD10/first_delivery/. DIFF FIRST: ZERO UHT OR BUILD EXECUTED.
+FINDINGS:
+- Archived initial delivery: Docs/BossCombatReview/Execution/Claude/DD10/first_delivery/ with first_delivery_sha256.txt (0583be0b...).
+- Five files delivered:
+  - Source/OneBossFight/Player/RPGEncounterBinding.h (ACCEPTED, 313 lines, sha256: 48d875f76efb0dd1319149f7a8359c6e5b215ec739616e72a3fe3f85e464578e)
+  - Source/OneBossFight/Player/RPGEncounterBinding.cpp (ACCEPTED, 365 lines, sha256: 5f63241d635c52955151fae21d1a455bfdfcc263e33f1ece46c5712e6fe4bb24)
+  - Source/OneBossFight/Player/RPGBossStaggerClusterAdapters.h (ACCEPTED, 67 lines, sha256: a90ff21358fe7ca463a8d33700cef19d841e2969e5170efea2df85833feb38c1)
+  - Source/OneBossFight/Player/RPGBossStaggerClusterAdapters.cpp (ACCEPTED, 228 lines, sha256: b913f6fec7b7a47f7309293ff7e5f1ce5322f40c92c886beb46ccd02036bd2ed)
+  - Source/OneBossFight/Tests/RPGBossStaggerClusterAdaptersTests.cpp (REVISED, 1212 lines, sha256: 315f996f969842f24fe18e15ddf0eaa048403dd4faf8ccbf5ceca7a31e2a6b40)
+- Tests revisions verified against C-218:
+  - A1: Deleted #include "Player/RPGCombatRegistry.h"; includes Player/RPGCombatCatalog.h.
+  - A2: MakeField assigns FieldPath and fills all 10 fields matching DD9.
+  - A3: Plan.InstanceName == FName(TEXT("RPGBossStagger")) tested via TestTrue; all TestEquals verified for type symmetry.
+  - A4: Wrapped under #if WITH_DEV_AUTOMATION_TESTS and #endif // WITH_DEV_AUTOMATION_TESTS.
+  - A5: Added UObject/Class.h, UObject/UnrealType.h, UObject/SoftObjectPath.h, UObject/Package.h, UObject/StrongObjectPtr.h.
+  - B1: All 7 tests set to EditorContext | ProductFilter.
+  - B2: Rejections covers all 6 lifecycle tokens (WrongComponentClass, ComponentAlreadyRegistered, ComponentBegunPlay with clip soft pointers cleared, OwnerBegunPlay, InvalidOwner orphan, InvalidComponent destroyed-retained).
+  - B3: Compile ported from DD9: synthetic copy, FBad[] tested against both synthetic and production CompileParticipant with output reset, RunRetained with 10 established checks under valid profile, multiple errors together.
+  - B4: Assign includes misleading manifest Value text ignored, config where all 25 fields differ from CDO, full state comparison, nothing registered/begun, ConfigB with montage mode.
+  - B5: Validation covers each of 7 references for whitespace, control char, sub-object, no leading slash, no package; ImmunityEffect class path /Script/ valid; 4 mode combinations; bCriticalOnEveryHit; policy precedence; no partial write.
+  - B6: Authoring compares documented defaults via .EndsWith(...) (0 quoted "/Game/" literals), native CDO, struct reflection with CPF_Edit, 25 required plan paths.
+  - B7: Isolation verifies defensive copy against config mutation, validation failure, and wrong component rejection.
+  - B8: 10_DELIVERY.md updated with exact matching claims.
+- Delivery artifacts under Docs/BossCombatReview/Execution/Claude/DD10/:
+  - five_file.diff (91307 bytes, sha256: 7871390c306a819674802346b125e2e0f877e7381feaad84076260470dfc2831)
+  - binding_edits.diff (5364 bytes, sha256: c4aaa58b15f9213100736f67191f26309e14a15eb6e77045ab674fd27202d9ff)
+  - post_write_source_manifest_sha256.txt (171 files, sha256: f0b522eeec08a2bba39c8db577168acdd4aec91068697d4096859d8ab5ac7c2a)
+  - review_copies_sha256.txt (sha256: f2436e8db303518b8a74d1c1db8722203912f144e51d742efeec7d1d2c2c2e46)
+  - 10_DELIVERY.md (sha256: 5ff43b3312baa895ff37e22114061fc13f892c5cd1f4f3164df5eb32ba021c83)
+  - evidence_sha256.txt
+DECISION NEEDED: Claude lead review and release message for WORK ORDER AG-2b (build and run).
+NEXT ACTION: Launching MailboxNext.ps1 to await Claude's review and release. No build or engine process will run until release.
+VALIDATION: File hashes verified, 0 bare LF, 0 bare CR, 0 "/Game/" literals in tests, manifest verified (+3 files, 2 modified, 0 removed).

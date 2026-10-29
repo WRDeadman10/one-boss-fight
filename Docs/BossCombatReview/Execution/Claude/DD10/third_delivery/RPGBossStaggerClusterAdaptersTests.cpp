@@ -1,0 +1,1287 @@
+// Copyright One Boss Fight. All Rights Reserved.
+
+#include "Misc/AutomationTest.h"
+
+#if WITH_DEV_AUTOMATION_TESTS
+
+#include "Animation/AnimMontage.h"
+#include "Animation/AnimSequence.h"
+#include "Components/SceneComponent.h"
+#include "Engine/Engine.h"
+#include "Engine/World.h"
+#include "GameFramework/Actor.h"
+#include "Player/RPGBossEncounter.h"
+#include "Player/RPGBossPosture.h"
+#include "Player/RPGBossStagger.h"
+#include "Player/RPGBossStaggerClusterAdapters.h"
+#include "Player/RPGBossStaggerPolicyAdapters.h"
+#include "Player/RPGCombatCatalog.h"
+#include "Player/RPGEncounterBinding.h"
+#include "UObject/Class.h"
+#include "UObject/Package.h"
+#include "UObject/SoftObjectPath.h"
+#include "UObject/StrongObjectPtr.h"
+#include "UObject/UnrealType.h"
+
+namespace
+{
+namespace StaggerClusterTests
+{
+	using FEpochPtr = TSharedPtr<const RPGCombatRegistry::FEpoch>;
+	using FConfigPtr = TSharedPtr<const FRPGParticipantConfig>;
+
+	/** Test-local game world with the set-up the earlier headless tests used; destroyed with the scope. */
+	struct FClusterTestWorld
+	{
+		UWorld* World = nullptr;
+
+		FClusterTestWorld()
+		{
+			if (!GEngine)
+			{
+				return;
+			}
+			World = UWorld::CreateWorld(EWorldType::Game, /*bInformEngineOfWorld=*/false);
+			if (World)
+			{
+				FWorldContext& Context = GEngine->CreateNewWorldContext(EWorldType::Game);
+				Context.SetCurrentWorld(World);
+				World->InitializeActorsForPlay(FURL());
+			}
+		}
+
+		~FClusterTestWorld()
+		{
+			if (World)
+			{
+				GEngine->DestroyWorldContext(World);
+				World->DestroyWorld(/*bInformEngineOfWorld=*/false);
+			}
+		}
+
+		FClusterTestWorld(const FClusterTestWorld&) = delete;
+		FClusterTestWorld& operator=(const FClusterTestWorld&) = delete;
+
+		AActor* SpawnOwner() const { return World ? World->SpawnActor<AActor>() : nullptr; }
+	};
+
+	/** A soft path built from its parts, so that deliberately malformed forms are never parsed from text (no engine log, no repair). */
+	FSoftObjectPath MakePath(const TCHAR* Package, const TCHAR* Asset, const TCHAR* Sub = TEXT(""))
+	{
+		return FSoftObjectPath(FTopLevelAssetPath(FName(Package), FName(Asset)), FString(Sub));
+	}
+
+	TSoftObjectPtr<UAnimSequence> SequencePtr(const FSoftObjectPath& P) { return TSoftObjectPtr<UAnimSequence>(P); }
+	TSoftObjectPtr<UAnimMontage> MontagePtr(const FSoftObjectPath& P) { return TSoftObjectPtr<UAnimMontage>(P); }
+	TSoftClassPtr<UObject> ClassPtr(const FSoftObjectPath& P) { return TSoftClassPtr<UObject>(P); }
+
+	/** All twenty-five authoring fields and the public runtime state of a stagger component, with an exact comparison. */
+	struct FStaggerClusterState
+	{
+		// 14 Stagger Policy fields
+		float StaggerSeconds, FreezeAtPosition, CriticalMultiplier, RiposteRange, RiposteConeDegrees;
+		float RiposteFacingDegrees, RiposteArmSeconds, RipostePlayerStartGap, RiposteAlignSeconds;
+		float RiposteImpactSeconds, RiposteBaseDamage, CooldownSeconds, GetUpRate;
+		bool bHoldPostureAtZero;
+
+		// 11 Stagger Profile fields
+		bool bUseClips, bUseRiposteClips, bCriticalOnEveryHit;
+		FName HitStunAbilityClassName;
+		FSoftObjectPath FallMontage, GetUpMontage, FallClip, DownClip;
+		FSoftObjectPath RipostePlayerClip, RiposteBossClip, ImmunityEffect;
+
+		// Public runtime state getters (URPGBossStagger members)
+		bool bIsStaggered, bCriticalWindowOpen, bRiposteExecuting;
+
+		explicit FStaggerClusterState(const URPGBossStagger& S)
+			: StaggerSeconds(S.StaggerSeconds), FreezeAtPosition(S.FreezeAtPosition), CriticalMultiplier(S.CriticalMultiplier)
+			, RiposteRange(S.RiposteRange), RiposteConeDegrees(S.RiposteConeDegrees), RiposteFacingDegrees(S.RiposteFacingDegrees)
+			, RiposteArmSeconds(S.RiposteArmSeconds), RipostePlayerStartGap(S.RipostePlayerStartGap), RiposteAlignSeconds(S.RiposteAlignSeconds)
+			, RiposteImpactSeconds(S.RiposteImpactSeconds), RiposteBaseDamage(S.RiposteBaseDamage), CooldownSeconds(S.CooldownSeconds)
+			, GetUpRate(S.GetUpRate), bHoldPostureAtZero(S.bHoldPostureAtZero)
+			, bUseClips(S.bUseClips), bUseRiposteClips(S.bUseRiposteClips), bCriticalOnEveryHit(S.bCriticalOnEveryHit)
+			, HitStunAbilityClassName(S.HitStunAbilityClassName)
+			, FallMontage(S.FallMontage.ToSoftObjectPath()), GetUpMontage(S.GetUpMontage.ToSoftObjectPath())
+			, FallClip(S.FallClip.ToSoftObjectPath()), DownClip(S.DownClip.ToSoftObjectPath())
+			, RipostePlayerClip(S.RipostePlayerClip.ToSoftObjectPath()), RiposteBossClip(S.RiposteBossClip.ToSoftObjectPath())
+			, ImmunityEffect(S.ImmunityEffect.ToSoftObjectPath())
+			, bIsStaggered(S.IsStaggered()), bCriticalWindowOpen(S.IsCriticalWindowOpen()), bRiposteExecuting(S.IsRiposteExecuting())
+		{
+		}
+
+		bool PolicyEquals(const FStaggerClusterState& O) const
+		{
+			return StaggerSeconds == O.StaggerSeconds && FreezeAtPosition == O.FreezeAtPosition && CriticalMultiplier == O.CriticalMultiplier
+				&& RiposteRange == O.RiposteRange && RiposteConeDegrees == O.RiposteConeDegrees && RiposteFacingDegrees == O.RiposteFacingDegrees
+				&& RiposteArmSeconds == O.RiposteArmSeconds && RipostePlayerStartGap == O.RipostePlayerStartGap && RiposteAlignSeconds == O.RiposteAlignSeconds
+				&& RiposteImpactSeconds == O.RiposteImpactSeconds && RiposteBaseDamage == O.RiposteBaseDamage && CooldownSeconds == O.CooldownSeconds
+				&& GetUpRate == O.GetUpRate && bHoldPostureAtZero == O.bHoldPostureAtZero;
+		}
+
+		bool ProfileEquals(const FStaggerClusterState& O) const
+		{
+			return bUseClips == O.bUseClips && bUseRiposteClips == O.bUseRiposteClips && bCriticalOnEveryHit == O.bCriticalOnEveryHit
+				&& HitStunAbilityClassName == O.HitStunAbilityClassName
+				&& FallMontage == O.FallMontage && GetUpMontage == O.GetUpMontage
+				&& FallClip == O.FallClip && DownClip == O.DownClip
+				&& RipostePlayerClip == O.RipostePlayerClip && RiposteBossClip == O.RiposteBossClip
+				&& ImmunityEffect == O.ImmunityEffect;
+		}
+
+		bool RuntimeEquals(const FStaggerClusterState& O) const
+		{
+			return bIsStaggered == O.bIsStaggered && bCriticalWindowOpen == O.bCriticalWindowOpen && bRiposteExecuting == O.bRiposteExecuting;
+		}
+
+		bool operator==(const FStaggerClusterState& O) const
+		{
+			return PolicyEquals(O) && ProfileEquals(O) && RuntimeEquals(O);
+		}
+	};
+
+	/** Config A: all 25 fields differ from native defaults; bUseClips=false, bUseRiposteClips=false, bCriticalOnEveryHit=true. */
+	FRPGParticipantConfig ConfigA()
+	{
+		FRPGParticipantConfig C;
+		// 14 Policy fields (all differ from native defaults)
+		C.StaggerPolicy.StaggerSeconds = 4.25f;
+		C.StaggerPolicy.FreezeAtPosition = 2.1f;
+		C.StaggerPolicy.CriticalMultiplier = 3.5f;
+		C.StaggerPolicy.RiposteRange = 220.f;
+		C.StaggerPolicy.RiposteConeDegrees = 90.f;
+		C.StaggerPolicy.RiposteFacingDegrees = 85.f;
+		C.StaggerPolicy.RiposteArmSeconds = 1.75f;
+		C.StaggerPolicy.RipostePlayerStartGap = 175.f;
+		C.StaggerPolicy.RiposteAlignSeconds = 0.45f;
+		C.StaggerPolicy.RiposteImpactSeconds = 1.15f;
+		C.StaggerPolicy.RiposteBaseDamage = 65.f;
+		C.StaggerPolicy.CooldownSeconds = 5.f;
+		C.StaggerPolicy.GetUpRate = 0.85f;
+		C.StaggerPolicy.bHoldPostureAtZero = false;
+
+		// 11 Profile fields (all differ from native defaults)
+		C.StaggerProfile.bUseClips = false;
+		C.StaggerProfile.bUseRiposteClips = false;
+		C.StaggerProfile.bCriticalOnEveryHit = true;
+		C.StaggerProfile.HitStunAbilityClassName = TEXT("GA_Custom_HitStun_C");
+		C.StaggerProfile.FallMontage = MontagePtr(MakePath(TEXT("/SyntheticMount/Stagger/AM_CustomFall"), TEXT("AM_CustomFall")));
+		C.StaggerProfile.GetUpMontage = MontagePtr(MakePath(TEXT("/SyntheticMount/Stagger/AM_CustomGetUp"), TEXT("AM_CustomGetUp")));
+		C.StaggerProfile.FallClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Stagger/AN_CustomFall"), TEXT("AN_CustomFall")));
+		C.StaggerProfile.DownClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Stagger/AN_CustomDown"), TEXT("AN_CustomDown")));
+		C.StaggerProfile.RipostePlayerClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Stagger/AN_CustomRiposteP"), TEXT("AN_CustomRiposteP")));
+		C.StaggerProfile.RiposteBossClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Stagger/AN_CustomRiposteB"), TEXT("AN_CustomRiposteB")));
+		C.StaggerProfile.ImmunityEffect = ClassPtr(MakePath(TEXT("/SyntheticMount/Stagger/GE_CustomImmune"), TEXT("GE_CustomImmune_C")));
+		return C;
+	}
+
+	/** Config B: clip mode (bUseClips=true, bUseRiposteClips=true), montages null (optional), bCriticalOnEveryHit=false. */
+	FRPGParticipantConfig ConfigB()
+	{
+		FRPGParticipantConfig C;
+		// 14 Policy fields
+		C.StaggerPolicy.StaggerSeconds = 3.0f;
+		C.StaggerPolicy.FreezeAtPosition = 1.0f;
+		C.StaggerPolicy.CriticalMultiplier = 2.0f;
+		C.StaggerPolicy.RiposteRange = 180.f;
+		C.StaggerPolicy.RiposteConeDegrees = 100.f;
+		C.StaggerPolicy.RiposteFacingDegrees = 110.f;
+		C.StaggerPolicy.RiposteArmSeconds = 1.0f;
+		C.StaggerPolicy.RipostePlayerStartGap = 140.f;
+		C.StaggerPolicy.RiposteAlignSeconds = 0.25f;
+		C.StaggerPolicy.RiposteImpactSeconds = 0.7f;
+		C.StaggerPolicy.RiposteBaseDamage = 50.f;
+		C.StaggerPolicy.CooldownSeconds = 0.f;
+		C.StaggerPolicy.GetUpRate = 1.0f;
+		C.StaggerPolicy.bHoldPostureAtZero = true;
+
+		// 11 Profile fields
+		C.StaggerProfile.bUseClips = true;
+		C.StaggerProfile.bUseRiposteClips = true;
+		C.StaggerProfile.bCriticalOnEveryHit = false;
+		C.StaggerProfile.HitStunAbilityClassName = TEXT("GA_Clip_HitStun_C");
+		C.StaggerProfile.FallMontage = MontagePtr(FSoftObjectPath()); // optional when bUseClips is true
+		C.StaggerProfile.GetUpMontage = MontagePtr(FSoftObjectPath()); // optional when bUseClips is true
+		C.StaggerProfile.FallClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Stagger/AN_ClipFall"), TEXT("AN_ClipFall")));
+		C.StaggerProfile.DownClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Stagger/AN_ClipDown"), TEXT("AN_ClipDown")));
+		C.StaggerProfile.RipostePlayerClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Stagger/AN_ClipRipP"), TEXT("AN_ClipRipP")));
+		C.StaggerProfile.RiposteBossClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Stagger/AN_ClipRipB"), TEXT("AN_ClipRipB")));
+		C.StaggerProfile.ImmunityEffect = ClassPtr(MakePath(TEXT("/SyntheticMount/Stagger/GE_ClipImmune"), TEXT("GE_ClipImmune_C")));
+		return C;
+	}
+
+	FRPGParityField MakeField(const FString& Path, const FString& ValueText)
+	{
+		FRPGParityField Field;
+		Field.FieldPath = Path;
+		Field.Type = TEXT("float");
+		Field.Value = ValueText;
+		Field.SourcePath = TEXT("synthetic fixture, not live provenance");
+		Field.SourceSHA256 = FString::ChrN(64, TEXT('a'));
+		Field.SourceSite = TEXT("fixture");
+		Field.Origin = TEXT("harness");
+		Field.Precedence = TEXT("fixture");
+		Field.Destination = TEXT("fixture");
+		Field.FirstRead = TEXT("BeginPlay");
+		Field.Witness = TEXT("synthetic only");
+		return Field;
+	}
+
+	TStrongObjectPtr<URPGBossDefinition> MakeDefinition(const FRPGParticipantConfig& C)
+	{
+		TStrongObjectPtr<URPGBossDefinition> Definition(NewObject<URPGBossDefinition>());
+		Definition->DefinitionId = TEXT("Synthetic");
+		Definition->PresentationId = TEXT("SyntheticLook");
+		Definition->Stats.MaxHealth = 3500.f;
+		Definition->Stats.MaxPosture = 73.5f;
+		Definition->Stats.PostureRegenDelay = 4.25f;
+		Definition->Stats.PostureRegenRate = 9.75f;
+		Definition->EncounterPolicy.ArenaRadius = 1500.f;
+		Definition->EncounterPolicy.GateRadius = 200.f;
+		Definition->StaggerPolicy = C.StaggerPolicy;
+		Definition->PhaseFlow = C.PhaseFlow;
+		Definition->Fireball = C.Fireball;
+		Definition->PhaseDependencies = C.PhaseDependencies;
+		Definition->StaggerProfile = C.StaggerProfile;
+
+		if (C.Phases.Num() > 0)
+		{
+			Definition->Phases = C.Phases;
+		}
+		else
+		{
+			FRPGPhaseConfig P1;
+			P1.PhaseId = TEXT("PhaseOne");
+			P1.EntryHealthFraction = 1.0f;
+			P1.SpeedMultiplier = 1.0f;
+			P1.RateMultiplier = 1.0f;
+			P1.AttackMultiplier = 1.0f;
+			Definition->Phases.Add(P1);
+		}
+
+		Definition->Fields.Add(MakeField(RPGBossStaggerClusterAdapters::FieldHitStunAbilityClassName, TEXT("synthetic")));
+		Definition->Fields.Add(MakeField(RPGBossStaggerClusterAdapters::FieldImmunityEffect, TEXT("synthetic")));
+		Definition->Fields.Add(MakeField(TEXT("Stats.MaxHealth"), TEXT("synthetic")));
+		return Definition;
+	}
+
+	FRPGHydrationResult CompileSynthetic(const URPGBossDefinition& Definition, FEpochPtr Content, FConfigPtr& Out, const FString& Hash = FString::ChrN(64, TEXT('b')))
+	{
+		return RPGCombatHydration::CompileSyntheticParticipant(Definition, Content, Hash, Out);
+	}
+
+	bool AnyErrorContains(const FRPGHydrationResult& Result, const TCHAR* Text)
+	{
+		return Result.Errors.ContainsByPredicate([Text](const FString& E) { return E.Contains(Text); });
+	}
+
+	TStrongObjectPtr<URPGBossStagger> NewStagger(AActor* Owner, const TCHAR* Name)
+	{
+		return TStrongObjectPtr<URPGBossStagger>(NewObject<URPGBossStagger>(Owner, Name));
+	}
+
+	void ArmDistinctStart(URPGBossStagger& S)
+	{
+		S.StaggerSeconds = 12.f;
+		S.FreezeAtPosition = 6.f;
+		S.CriticalMultiplier = 9.f;
+		S.RiposteRange = 500.f;
+		S.RiposteConeDegrees = 45.f;
+		S.RiposteFacingDegrees = 45.f;
+		S.RiposteArmSeconds = 3.f;
+		S.RipostePlayerStartGap = 300.f;
+		S.RiposteAlignSeconds = 1.f;
+		S.RiposteImpactSeconds = 2.f;
+		S.RiposteBaseDamage = 100.f;
+		S.CooldownSeconds = 15.f;
+		S.GetUpRate = 2.5f;
+		S.bHoldPostureAtZero = true; // inverted from ConfigA (false)
+		S.bUseClips = true;          // inverted from ConfigA (false)
+		S.bUseRiposteClips = true;   // inverted from ConfigA (false)
+		S.bCriticalOnEveryHit = false; // inverted from ConfigA (true);
+		S.HitStunAbilityClassName = TEXT("GA_Start_HitStun_C");
+		S.FallMontage = MontagePtr(MakePath(TEXT("/SyntheticMount/Start/AM_StartFall"), TEXT("AM_StartFall")));
+		S.GetUpMontage = MontagePtr(MakePath(TEXT("/SyntheticMount/Start/AM_StartGetUp"), TEXT("AM_StartGetUp")));
+		S.FallClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Start/AN_StartFall"), TEXT("AN_StartFall")));
+		S.DownClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Start/AN_StartDown"), TEXT("AN_StartDown")));
+		S.RipostePlayerClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Start/AN_StartRipP"), TEXT("AN_StartRipP")));
+		S.RiposteBossClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Start/AN_StartRipB"), TEXT("AN_StartRipB")));
+		S.ImmunityEffect = ClassPtr(MakePath(TEXT("/SyntheticMount/Start/GE_StartImmune"), TEXT("GE_StartImmune_C")));
+	}
+}
+}
+
+// --------------------------------------------------------------------------------------------------
+// 1. Assign Test
+// --------------------------------------------------------------------------------------------------
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGStaggerClusterAssignTest, "OneBossFight.Binding.StaggerCluster.Assign",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGStaggerClusterAssignTest::RunTest(const FString& Parameters)
+{
+	using namespace StaggerClusterTests;
+	FClusterTestWorld Scope;
+	if (!TestNotNull(TEXT("test world"), Scope.World))
+	{
+		return false;
+	}
+	AActor* Owner = Scope.SpawnOwner();
+	if (!TestNotNull(TEXT("owner actor"), Owner))
+	{
+		return false;
+	}
+	TStrongObjectPtr<URPGBossStagger> Stagger = NewStagger(Owner, TEXT("RPGBossStagger"));
+	if (!TestTrue(TEXT("component created"), Stagger.IsValid()))
+	{
+		return false;
+	}
+	ArmDistinctStart(*Stagger);
+	const FStaggerClusterState Before(*Stagger);
+	const int32 OwnedComponentsBefore = Owner->GetComponents().Num();
+
+	// Unwired plan fragment verification
+	const FRPGComponentPlan Plan = RPGBossStaggerClusterAdapters::MakeStaggerClusterPlan();
+	TestTrue(TEXT("plan class"), Plan.Class == URPGBossStagger::StaticClass());
+	TestTrue(TEXT("plan instance name"), Plan.InstanceName == FName(TEXT("RPGBossStagger")));
+
+	const TArray<FString> ExpectedFields = {
+		TEXT("StaggerPolicy.StaggerSeconds"), TEXT("StaggerPolicy.FreezeAtPosition"), TEXT("StaggerPolicy.CriticalMultiplier"),
+		TEXT("StaggerPolicy.RiposteRange"), TEXT("StaggerPolicy.RiposteConeDegrees"), TEXT("StaggerPolicy.RiposteFacingDegrees"),
+		TEXT("StaggerPolicy.RiposteArmSeconds"), TEXT("StaggerPolicy.RipostePlayerStartGap"), TEXT("StaggerPolicy.RiposteAlignSeconds"),
+		TEXT("StaggerPolicy.RiposteImpactSeconds"), TEXT("StaggerPolicy.RiposteBaseDamage"), TEXT("StaggerPolicy.CooldownSeconds"),
+		TEXT("StaggerPolicy.GetUpRate"), TEXT("StaggerPolicy.bHoldPostureAtZero"),
+		TEXT("StaggerProfile.bUseClips"), TEXT("StaggerProfile.bUseRiposteClips"), TEXT("StaggerProfile.bCriticalOnEveryHit"),
+		TEXT("StaggerProfile.HitStunAbilityClassName"), TEXT("StaggerProfile.FallMontage"), TEXT("StaggerProfile.GetUpMontage"),
+		TEXT("StaggerProfile.FallClip"), TEXT("StaggerProfile.DownClip"), TEXT("StaggerProfile.RipostePlayerClip"),
+		TEXT("StaggerProfile.RiposteBossClip"), TEXT("StaggerProfile.ImmunityEffect")
+	};
+	TestTrue(TEXT("plan required fields are exactly 25 paths in order"), Plan.RequiredFields == ExpectedFields);
+	if (!TestTrue(TEXT("plan callback is set"), static_cast<bool>(Plan.Configure)))
+	{
+		return false;
+	}
+
+	// Verify all 25 fields of ConfigA differ from native defaults
+	{
+		const URPGBossStagger* CDO = GetDefault<URPGBossStagger>();
+		const FRPGParticipantConfig CA = ConfigA();
+		TestTrue(TEXT("CA StaggerSeconds differs"), CA.StaggerPolicy.StaggerSeconds != CDO->StaggerSeconds);
+		TestTrue(TEXT("CA FreezeAtPosition differs"), CA.StaggerPolicy.FreezeAtPosition != CDO->FreezeAtPosition);
+		TestTrue(TEXT("CA CriticalMultiplier differs"), CA.StaggerPolicy.CriticalMultiplier != CDO->CriticalMultiplier);
+		TestTrue(TEXT("CA RiposteRange differs"), CA.StaggerPolicy.RiposteRange != CDO->RiposteRange);
+		TestTrue(TEXT("CA RiposteConeDegrees differs"), CA.StaggerPolicy.RiposteConeDegrees != CDO->RiposteConeDegrees);
+		TestTrue(TEXT("CA RiposteFacingDegrees differs"), CA.StaggerPolicy.RiposteFacingDegrees != CDO->RiposteFacingDegrees);
+		TestTrue(TEXT("CA RiposteArmSeconds differs"), CA.StaggerPolicy.RiposteArmSeconds != CDO->RiposteArmSeconds);
+		TestTrue(TEXT("CA RipostePlayerStartGap differs"), CA.StaggerPolicy.RipostePlayerStartGap != CDO->RipostePlayerStartGap);
+		TestTrue(TEXT("CA RiposteAlignSeconds differs"), CA.StaggerPolicy.RiposteAlignSeconds != CDO->RiposteAlignSeconds);
+		TestTrue(TEXT("CA RiposteImpactSeconds differs"), CA.StaggerPolicy.RiposteImpactSeconds != CDO->RiposteImpactSeconds);
+		TestTrue(TEXT("CA RiposteBaseDamage differs"), CA.StaggerPolicy.RiposteBaseDamage != CDO->RiposteBaseDamage);
+		TestTrue(TEXT("CA CooldownSeconds differs"), CA.StaggerPolicy.CooldownSeconds != CDO->CooldownSeconds);
+		TestTrue(TEXT("CA GetUpRate differs"), CA.StaggerPolicy.GetUpRate != CDO->GetUpRate);
+		TestTrue(TEXT("CA bHoldPostureAtZero differs"), CA.StaggerPolicy.bHoldPostureAtZero != CDO->bHoldPostureAtZero);
+		TestTrue(TEXT("CA bUseClips differs"), CA.StaggerProfile.bUseClips != CDO->bUseClips);
+		TestTrue(TEXT("CA bUseRiposteClips differs"), CA.StaggerProfile.bUseRiposteClips != CDO->bUseRiposteClips);
+		TestTrue(TEXT("CA bCriticalOnEveryHit differs"), CA.StaggerProfile.bCriticalOnEveryHit != CDO->bCriticalOnEveryHit);
+		TestTrue(TEXT("CA HitStunAbilityClassName differs"), CA.StaggerProfile.HitStunAbilityClassName != CDO->HitStunAbilityClassName);
+		TestTrue(TEXT("CA FallMontage differs"), CA.StaggerProfile.FallMontage.ToSoftObjectPath() != CDO->FallMontage.ToSoftObjectPath());
+		TestTrue(TEXT("CA GetUpMontage differs"), CA.StaggerProfile.GetUpMontage.ToSoftObjectPath() != CDO->GetUpMontage.ToSoftObjectPath());
+		TestTrue(TEXT("CA FallClip differs"), CA.StaggerProfile.FallClip.ToSoftObjectPath() != CDO->FallClip.ToSoftObjectPath());
+		TestTrue(TEXT("CA DownClip differs"), CA.StaggerProfile.DownClip.ToSoftObjectPath() != CDO->DownClip.ToSoftObjectPath());
+		TestTrue(TEXT("CA RipostePlayerClip differs"), CA.StaggerProfile.RipostePlayerClip.ToSoftObjectPath() != CDO->RipostePlayerClip.ToSoftObjectPath());
+		TestTrue(TEXT("CA RiposteBossClip differs"), CA.StaggerProfile.RiposteBossClip.ToSoftObjectPath() != CDO->RiposteBossClip.ToSoftObjectPath());
+		TestTrue(TEXT("CA ImmunityEffect differs"), CA.StaggerProfile.ImmunityEffect.ToSoftObjectPath() != CDO->ImmunityEffect.ToSoftObjectPath());
+	}
+
+	// Config A through the plan callback, with misleading manifest Value text: only the typed records count.
+	FRPGParticipantConfig Config = ConfigA();
+	Config.Fields.Add(MakeField(RPGBossStaggerClusterAdapters::FieldHitStunAbilityClassName, TEXT("MisleadingClass_9999")));
+	Config.Fields.Add(MakeField(RPGBossStaggerClusterAdapters::FieldImmunityEffect, TEXT("/SyntheticMount/Misleading.Misleading_C")));
+	FString Error = TEXT("stale diagnostic");
+	TestTrue(TEXT("callback succeeds"), Plan.Configure(*Stagger, Config, Error));
+	TestTrue(TEXT("diagnostic cleared on success"), Error.IsEmpty());
+
+	const FStaggerClusterState After(*Stagger);
+	// Verify 14 policy fields
+	TestTrue(TEXT("StaggerSeconds assigned"), After.StaggerSeconds == 4.25f);
+	TestTrue(TEXT("FreezeAtPosition assigned"), After.FreezeAtPosition == 2.1f);
+	TestTrue(TEXT("CriticalMultiplier assigned"), After.CriticalMultiplier == 3.5f);
+	TestTrue(TEXT("RiposteRange assigned"), After.RiposteRange == 220.f);
+	TestTrue(TEXT("RiposteConeDegrees assigned"), After.RiposteConeDegrees == 90.f);
+	TestTrue(TEXT("RiposteFacingDegrees assigned"), After.RiposteFacingDegrees == 85.f);
+	TestTrue(TEXT("RiposteArmSeconds assigned"), After.RiposteArmSeconds == 1.75f);
+	TestTrue(TEXT("RipostePlayerStartGap assigned"), After.RipostePlayerStartGap == 175.f);
+	TestTrue(TEXT("RiposteAlignSeconds assigned"), After.RiposteAlignSeconds == 0.45f);
+	TestTrue(TEXT("RiposteImpactSeconds assigned"), After.RiposteImpactSeconds == 1.15f);
+	TestTrue(TEXT("RiposteBaseDamage assigned"), After.RiposteBaseDamage == 65.f);
+	TestTrue(TEXT("CooldownSeconds assigned"), After.CooldownSeconds == 5.f);
+	TestTrue(TEXT("GetUpRate assigned"), After.GetUpRate == 0.85f);
+	TestTrue(TEXT("bHoldPostureAtZero assigned"), !After.bHoldPostureAtZero);
+
+	// Verify 11 profile fields
+	TestTrue(TEXT("bUseClips assigned"), !After.bUseClips);
+	TestTrue(TEXT("bUseRiposteClips assigned"), !After.bUseRiposteClips);
+	TestTrue(TEXT("bCriticalOnEveryHit assigned"), After.bCriticalOnEveryHit);
+	TestTrue(TEXT("HitStunAbilityClassName assigned, manifest ignored"), After.HitStunAbilityClassName == FName(TEXT("GA_Custom_HitStun_C")));
+	TestTrue(TEXT("FallMontage assigned"), After.FallMontage == Config.StaggerProfile.FallMontage.ToSoftObjectPath());
+	TestTrue(TEXT("GetUpMontage assigned"), After.GetUpMontage == Config.StaggerProfile.GetUpMontage.ToSoftObjectPath());
+	TestTrue(TEXT("FallClip assigned"), After.FallClip == Config.StaggerProfile.FallClip.ToSoftObjectPath());
+	TestTrue(TEXT("DownClip assigned"), After.DownClip == Config.StaggerProfile.DownClip.ToSoftObjectPath());
+	TestTrue(TEXT("RipostePlayerClip assigned"), After.RipostePlayerClip == Config.StaggerProfile.RipostePlayerClip.ToSoftObjectPath());
+	TestTrue(TEXT("RiposteBossClip assigned"), After.RiposteBossClip == Config.StaggerProfile.RiposteBossClip.ToSoftObjectPath());
+	TestTrue(TEXT("ImmunityEffect assigned, manifest ignored"), After.ImmunityEffect == Config.StaggerProfile.ImmunityEffect.ToSoftObjectPath());
+
+	// Per-field assertion that all 25 fields differ from start state
+	TestTrue(TEXT("StaggerSeconds differs from Before"), After.StaggerSeconds != Before.StaggerSeconds);
+	TestTrue(TEXT("FreezeAtPosition differs from Before"), After.FreezeAtPosition != Before.FreezeAtPosition);
+	TestTrue(TEXT("CriticalMultiplier differs from Before"), After.CriticalMultiplier != Before.CriticalMultiplier);
+	TestTrue(TEXT("RiposteRange differs from Before"), After.RiposteRange != Before.RiposteRange);
+	TestTrue(TEXT("RiposteConeDegrees differs from Before"), After.RiposteConeDegrees != Before.RiposteConeDegrees);
+	TestTrue(TEXT("RiposteFacingDegrees differs from Before"), After.RiposteFacingDegrees != Before.RiposteFacingDegrees);
+	TestTrue(TEXT("RiposteArmSeconds differs from Before"), After.RiposteArmSeconds != Before.RiposteArmSeconds);
+	TestTrue(TEXT("RipostePlayerStartGap differs from Before"), After.RipostePlayerStartGap != Before.RipostePlayerStartGap);
+	TestTrue(TEXT("RiposteAlignSeconds differs from Before"), After.RiposteAlignSeconds != Before.RiposteAlignSeconds);
+	TestTrue(TEXT("RiposteImpactSeconds differs from Before"), After.RiposteImpactSeconds != Before.RiposteImpactSeconds);
+	TestTrue(TEXT("RiposteBaseDamage differs from Before"), After.RiposteBaseDamage != Before.RiposteBaseDamage);
+	TestTrue(TEXT("CooldownSeconds differs from Before"), After.CooldownSeconds != Before.CooldownSeconds);
+	TestTrue(TEXT("GetUpRate differs from Before"), After.GetUpRate != Before.GetUpRate);
+	TestTrue(TEXT("bHoldPostureAtZero differs from Before"), After.bHoldPostureAtZero != Before.bHoldPostureAtZero);
+	TestTrue(TEXT("bUseClips differs from Before"), After.bUseClips != Before.bUseClips);
+	TestTrue(TEXT("bUseRiposteClips differs from Before"), After.bUseRiposteClips != Before.bUseRiposteClips);
+	TestTrue(TEXT("bCriticalOnEveryHit differs from Before"), After.bCriticalOnEveryHit != Before.bCriticalOnEveryHit);
+	TestTrue(TEXT("HitStunAbilityClassName differs from Before"), After.HitStunAbilityClassName != Before.HitStunAbilityClassName);
+	TestTrue(TEXT("FallMontage differs from Before"), After.FallMontage != Before.FallMontage);
+	TestTrue(TEXT("GetUpMontage differs from Before"), After.GetUpMontage != Before.GetUpMontage);
+	TestTrue(TEXT("FallClip differs from Before"), After.FallClip != Before.FallClip);
+	TestTrue(TEXT("DownClip differs from Before"), After.DownClip != Before.DownClip);
+	TestTrue(TEXT("RipostePlayerClip differs from Before"), After.RipostePlayerClip != Before.RipostePlayerClip);
+	TestTrue(TEXT("RiposteBossClip differs from Before"), After.RiposteBossClip != Before.RiposteBossClip);
+	TestTrue(TEXT("ImmunityEffect differs from Before"), After.ImmunityEffect != Before.ImmunityEffect);
+
+	TestTrue(TEXT("runtime state untouched"), After.RuntimeEquals(Before));
+	TestFalse(TEXT("no stagger trigger"), Stagger->IsStaggered() || Stagger->IsCriticalWindowOpen() || Stagger->IsRiposteExecuting());
+
+	// Nothing created, registered or begun
+	TestFalse(TEXT("component stays unregistered"), Stagger->IsRegistered());
+	TestFalse(TEXT("component did not begin play"), Stagger->HasBegunPlay());
+	TestFalse(TEXT("owner did not begin play"), Owner->HasActorBegunPlay());
+	TestTrue(TEXT("owner gained no component"), Owner->GetComponents().Num() == OwnedComponentsBefore);
+
+	// Config B directly: clip mode (bUseClips=true, bUseRiposteClips=true), montages null as authored, non-default policy
+	const FRPGParticipantConfig B = ConfigB();
+	TestTrue(TEXT("config B succeeds"), RPGBossStaggerClusterAdapters::ConfigureStaggerCluster(*Stagger, B, Error) && Error.IsEmpty());
+	const FStaggerClusterState AfterB(*Stagger);
+	TestTrue(TEXT("B: StaggerSeconds"), AfterB.StaggerSeconds == 3.0f);
+	TestTrue(TEXT("B: bHoldPostureAtZero"), AfterB.bHoldPostureAtZero);
+	TestTrue(TEXT("B: bUseClips true"), AfterB.bUseClips);
+	TestTrue(TEXT("B: bUseRiposteClips true"), AfterB.bUseRiposteClips);
+	TestTrue(TEXT("B: bCriticalOnEveryHit false"), !AfterB.bCriticalOnEveryHit);
+	TestTrue(TEXT("B: HitStunAbilityClassName"), AfterB.HitStunAbilityClassName == FName(TEXT("GA_Clip_HitStun_C")));
+	TestTrue(TEXT("B: montages null as authored"), AfterB.FallMontage.IsNull() && AfterB.GetUpMontage.IsNull());
+	TestTrue(TEXT("B: FallClip assigned"), AfterB.FallClip == B.StaggerProfile.FallClip.ToSoftObjectPath());
+	TestTrue(TEXT("B: DownClip assigned"), AfterB.DownClip == B.StaggerProfile.DownClip.ToSoftObjectPath());
+	TestTrue(TEXT("B: RipostePlayerClip assigned"), AfterB.RipostePlayerClip == B.StaggerProfile.RipostePlayerClip.ToSoftObjectPath());
+	TestTrue(TEXT("B: RiposteBossClip assigned"), AfterB.RiposteBossClip == B.StaggerProfile.RiposteBossClip.ToSoftObjectPath());
+	TestTrue(TEXT("B: ImmunityEffect assigned"), AfterB.ImmunityEffect == B.StaggerProfile.ImmunityEffect.ToSoftObjectPath());
+	TestTrue(TEXT("B: runtime state untouched"), AfterB.RuntimeEquals(Before));
+
+	return true;
+}
+
+// --------------------------------------------------------------------------------------------------
+// 2. Validation Test
+// --------------------------------------------------------------------------------------------------
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGStaggerClusterValidationTest, "OneBossFight.Binding.StaggerCluster.Validation",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGStaggerClusterValidationTest::RunTest(const FString& Parameters)
+{
+	using namespace StaggerClusterTests;
+	FClusterTestWorld Scope;
+	if (!TestNotNull(TEXT("test world"), Scope.World))
+	{
+		return false;
+	}
+	AActor* Owner = Scope.SpawnOwner();
+	if (!TestNotNull(TEXT("owner actor"), Owner))
+	{
+		return false;
+	}
+	TStrongObjectPtr<URPGBossStagger> Stagger = NewStagger(Owner, TEXT("RPGBossStagger"));
+	if (!TestTrue(TEXT("component created"), Stagger.IsValid()))
+	{
+		return false;
+	}
+	ArmDistinctStart(*Stagger);
+	const FStaggerClusterState Before(*Stagger);
+
+	auto Check = [&](const FString& Label, const FRPGParticipantConfig& Config, const TCHAR* ExpectedToken, const FString& ExpectedPath)
+	{
+		FString Error = TEXT("stale diagnostic");
+		const bool bOk = RPGBossStaggerClusterAdapters::ValidateStaggerCluster(Config, Error);
+		if (!ExpectedToken)
+		{
+			TestTrue(FString::Printf(TEXT("%s: valid, diagnostic cleared"), *Label), bOk && Error.IsEmpty());
+			return;
+		}
+		TestFalse(FString::Printf(TEXT("%s: rejected"), *Label), bOk);
+		TestTrue(FString::Printf(TEXT("%s: named %s (got '%s')"), *Label, ExpectedToken, *Error), Error.StartsWith(ExpectedToken));
+		if (!ExpectedPath.IsEmpty())
+		{
+			TestTrue(FString::Printf(TEXT("%s: names field %s"), *Label, *ExpectedPath), Error.Contains(ExpectedPath));
+		}
+		FString ConfigureError = TEXT("stale diagnostic");
+		TestFalse(FString::Printf(TEXT("%s: assignment refuses"), *Label), RPGBossStaggerClusterAdapters::ConfigureStaggerCluster(*Stagger, Config, ConfigureError));
+		TestTrue(FString::Printf(TEXT("%s: assignment names same token"), *Label), ConfigureError.StartsWith(ExpectedToken));
+		TestTrue(FString::Printf(TEXT("%s: zero partial write (all 25 fields untouched)"), *Label), FStaggerClusterState(*Stagger) == Before);
+	};
+
+	Check(TEXT("config A"), ConfigA(), nullptr, FString());
+	Check(TEXT("config B"), ConfigB(), nullptr, FString());
+
+	// Authoring defaults record: valid
+	{
+		FRPGParticipantConfig Defaults;
+		Defaults.StaggerPolicy = ConfigA().StaggerPolicy;
+		Check(TEXT("authoring defaults of stagger profile"), Defaults, nullptr, FString());
+	}
+
+	// 1. HitStunAbilityClassName None
+	{
+		FRPGParticipantConfig C = ConfigA();
+		C.StaggerProfile.HitStunAbilityClassName = NAME_None;
+		Check(TEXT("HitStun class None"), C, TEXT("InvalidStaggerProfile.NoHitStunClass"), RPGBossStaggerClusterAdapters::FieldHitStunAbilityClassName);
+	}
+
+	// 2. Both values of bCriticalOnEveryHit valid
+	{
+		FRPGParticipantConfig C1 = ConfigA();
+		C1.StaggerProfile.bCriticalOnEveryHit = true;
+		Check(TEXT("bCriticalOnEveryHit true"), C1, nullptr, FString());
+		FRPGParticipantConfig C2 = ConfigA();
+		C2.StaggerProfile.bCriticalOnEveryHit = false;
+		Check(TEXT("bCriticalOnEveryHit false"), C2, nullptr, FString());
+	}
+
+	// 3. Mode combinations: bUseClips x bUseRiposteClips
+	{
+		// True x True: all clips required, montages optional
+		FRPGParticipantConfig C = ConfigA();
+		C.StaggerProfile.bUseClips = true;
+		C.StaggerProfile.bUseRiposteClips = true;
+		C.StaggerProfile.FallClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Stagger/AN_FC"), TEXT("AN_FC")));
+		C.StaggerProfile.DownClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Stagger/AN_DC"), TEXT("AN_DC")));
+		C.StaggerProfile.RipostePlayerClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Stagger/AN_RP"), TEXT("AN_RP")));
+		C.StaggerProfile.RiposteBossClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Stagger/AN_RB"), TEXT("AN_RB")));
+		C.StaggerProfile.FallMontage = MontagePtr(FSoftObjectPath()); // optional
+		C.StaggerProfile.GetUpMontage = MontagePtr(FSoftObjectPath()); // optional
+		Check(TEXT("True x True: montages optional"), C, nullptr, FString());
+
+		FRPGParticipantConfig CMissingClip = C;
+		CMissingClip.StaggerProfile.FallClip = SequencePtr(FSoftObjectPath()); // required
+		Check(TEXT("True x True: FallClip missing"), CMissingClip, TEXT("InvalidDependency.Missing"), RPGBossStaggerClusterAdapters::FieldFallClip);
+	}
+	{
+		// True x False: fall/down clip required, riposte clips optional
+		FRPGParticipantConfig C = ConfigA();
+		C.StaggerProfile.bUseClips = true;
+		C.StaggerProfile.bUseRiposteClips = false;
+		C.StaggerProfile.FallClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Stagger/AN_FC"), TEXT("AN_FC")));
+		C.StaggerProfile.DownClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Stagger/AN_DC"), TEXT("AN_DC")));
+		C.StaggerProfile.RipostePlayerClip = SequencePtr(FSoftObjectPath()); // optional
+		C.StaggerProfile.RiposteBossClip = SequencePtr(FSoftObjectPath());   // optional
+		Check(TEXT("True x False: riposte clips optional"), C, nullptr, FString());
+
+		FRPGParticipantConfig CMissingDown = C;
+		CMissingDown.StaggerProfile.DownClip = SequencePtr(FSoftObjectPath()); // required
+		Check(TEXT("True x False: DownClip missing"), CMissingDown, TEXT("InvalidDependency.Missing"), RPGBossStaggerClusterAdapters::FieldDownClip);
+	}
+	{
+		// False x True: montages required, fall/down clips optional, riposte clips required
+		FRPGParticipantConfig C = ConfigA();
+		C.StaggerProfile.bUseClips = false;
+		C.StaggerProfile.bUseRiposteClips = true;
+		C.StaggerProfile.FallClip = SequencePtr(FSoftObjectPath()); // optional
+		C.StaggerProfile.DownClip = SequencePtr(FSoftObjectPath()); // optional
+		C.StaggerProfile.RipostePlayerClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Stagger/AN_RP"), TEXT("AN_RP")));
+		C.StaggerProfile.RiposteBossClip = SequencePtr(MakePath(TEXT("/SyntheticMount/Stagger/AN_RB"), TEXT("AN_RB")));
+		Check(TEXT("False x True: fall/down clips optional"), C, nullptr, FString());
+
+		FRPGParticipantConfig CMissingMontage = C;
+		CMissingMontage.StaggerProfile.FallMontage = MontagePtr(FSoftObjectPath()); // required
+		Check(TEXT("False x True: FallMontage missing"), CMissingMontage, TEXT("InvalidDependency.Missing"), RPGBossStaggerClusterAdapters::FieldFallMontage);
+
+		FRPGParticipantConfig CMissingRiposte = C;
+		CMissingRiposte.StaggerProfile.RipostePlayerClip = SequencePtr(FSoftObjectPath()); // required
+		Check(TEXT("False x True: RipostePlayerClip missing"), CMissingRiposte, TEXT("InvalidDependency.Missing"), RPGBossStaggerClusterAdapters::FieldRipostePlayerClip);
+	}
+	{
+		// False x False: montages required, all clips optional
+		FRPGParticipantConfig C = ConfigA();
+		C.StaggerProfile.bUseClips = false;
+		C.StaggerProfile.bUseRiposteClips = false;
+		C.StaggerProfile.FallClip = SequencePtr(FSoftObjectPath());
+		C.StaggerProfile.DownClip = SequencePtr(FSoftObjectPath());
+		C.StaggerProfile.RipostePlayerClip = SequencePtr(FSoftObjectPath());
+		C.StaggerProfile.RiposteBossClip = SequencePtr(FSoftObjectPath());
+		Check(TEXT("False x False: all clips optional"), C, nullptr, FString());
+
+		FRPGParticipantConfig CMissingGetUp = C;
+		CMissingGetUp.StaggerProfile.GetUpMontage = MontagePtr(FSoftObjectPath()); // required
+		Check(TEXT("False x False: GetUpMontage missing"), CMissingGetUp, TEXT("InvalidDependency.Missing"), RPGBossStaggerClusterAdapters::FieldGetUpMontage);
+	}
+
+	// 4. ImmunityEffect always required
+	{
+		FRPGParticipantConfig C = ConfigA();
+		C.StaggerProfile.ImmunityEffect = ClassPtr(FSoftObjectPath());
+		Check(TEXT("ImmunityEffect missing"), C, TEXT("InvalidDependency.Missing"), RPGBossStaggerClusterAdapters::FieldImmunityEffect);
+	}
+
+	// 5. Structural path validation for EACH of the 7 references (malformed: whitespace, control, sub-object, no leading slash, no package)
+	const struct FRefTest
+	{
+		const TCHAR* FieldName;
+		TFunction<void(FRPGParticipantConfig&, const FSoftObjectPath&)> SetPath;
+	} RefTests[] = {
+		{RPGBossStaggerClusterAdapters::FieldFallMontage, [](FRPGParticipantConfig& C, const FSoftObjectPath& P) { C.StaggerProfile.bUseClips = false; C.StaggerProfile.FallMontage = MontagePtr(P); }},
+		{RPGBossStaggerClusterAdapters::FieldGetUpMontage, [](FRPGParticipantConfig& C, const FSoftObjectPath& P) { C.StaggerProfile.bUseClips = false; C.StaggerProfile.GetUpMontage = MontagePtr(P); }},
+		{RPGBossStaggerClusterAdapters::FieldFallClip, [](FRPGParticipantConfig& C, const FSoftObjectPath& P) { C.StaggerProfile.bUseClips = true; C.StaggerProfile.FallClip = SequencePtr(P); }},
+		{RPGBossStaggerClusterAdapters::FieldDownClip, [](FRPGParticipantConfig& C, const FSoftObjectPath& P) { C.StaggerProfile.bUseClips = true; C.StaggerProfile.DownClip = SequencePtr(P); }},
+		{RPGBossStaggerClusterAdapters::FieldRipostePlayerClip, [](FRPGParticipantConfig& C, const FSoftObjectPath& P) { C.StaggerProfile.bUseRiposteClips = true; C.StaggerProfile.RipostePlayerClip = SequencePtr(P); }},
+		{RPGBossStaggerClusterAdapters::FieldRiposteBossClip, [](FRPGParticipantConfig& C, const FSoftObjectPath& P) { C.StaggerProfile.bUseRiposteClips = true; C.StaggerProfile.RiposteBossClip = SequencePtr(P); }},
+		{RPGBossStaggerClusterAdapters::FieldImmunityEffect, [](FRPGParticipantConfig& C, const FSoftObjectPath& P) { C.StaggerProfile.ImmunityEffect = ClassPtr(P); }},
+	};
+
+	for (const FRefTest& RT : RefTests)
+	{
+		// Malformed: whitespace
+		{
+			FRPGParticipantConfig C = ConfigA();
+			RT.SetPath(C, MakePath(TEXT("/SyntheticMount/A B"), TEXT("Asset")));
+			Check(FString::Printf(TEXT("%s: whitespace"), RT.FieldName), C, TEXT("InvalidDependency.Malformed"), RT.FieldName);
+		}
+		// Malformed: control character
+		{
+			FRPGParticipantConfig C = ConfigA();
+			RT.SetPath(C, MakePath(TEXT("/SyntheticMount/A\nB"), TEXT("Asset")));
+			Check(FString::Printf(TEXT("%s: control character"), RT.FieldName), C, TEXT("InvalidDependency.Malformed"), RT.FieldName);
+		}
+		// Malformed: sub-object
+		{
+			FRPGParticipantConfig C = ConfigA();
+			RT.SetPath(C, MakePath(TEXT("/SyntheticMount/Pkg"), TEXT("Asset"), TEXT("SubObj")));
+			Check(FString::Printf(TEXT("%s: sub-object"), RT.FieldName), C, TEXT("InvalidDependency.Malformed"), RT.FieldName);
+		}
+		// Malformed: no leading slash
+		{
+			FRPGParticipantConfig C = ConfigA();
+			RT.SetPath(C, MakePath(TEXT("RelativePkg"), TEXT("Asset")));
+			Check(FString::Printf(TEXT("%s: no leading slash"), RT.FieldName), C, TEXT("InvalidDependency.Malformed"), RT.FieldName);
+		}
+		// Malformed: no package folder
+		{
+			FRPGParticipantConfig C = ConfigA();
+			RT.SetPath(C, MakePath(TEXT("/AssetOnly"), TEXT("AssetOnly")));
+			Check(FString::Printf(TEXT("%s: no package folder"), RT.FieldName), C, TEXT("InvalidDependency.Malformed"), RT.FieldName);
+		}
+	}
+
+	// 6. ImmunityEffect class path checks: not a class path (ends with no _C), and /Script/ native class valid
+	{
+		FRPGParticipantConfig C = ConfigA();
+		C.StaggerProfile.ImmunityEffect = ClassPtr(MakePath(TEXT("/SyntheticMount/Effects"), TEXT("GE_HitStunImmune")));
+		Check(TEXT("ImmunityEffect not a class path"), C, TEXT("InvalidDependency.NotClassPath"), RPGBossStaggerClusterAdapters::FieldImmunityEffect);
+
+		// /Script/ native class path: valid
+		FRPGParticipantConfig CNative = ConfigA();
+		CNative.StaggerProfile.ImmunityEffect = ClassPtr(MakePath(TEXT("/Script/GameplayAbilities"), TEXT("GameplayEffect")));
+		Check(TEXT("ImmunityEffect native /Script/ class valid"), CNative, nullptr, FString());
+	}
+
+	// 7. Whole-cluster precedence: policy first (StaggerSeconds < 0 produces InvalidStagger.Negative per DD7)
+	{
+		FRPGParticipantConfig C = ConfigA();
+		C.StaggerPolicy.StaggerSeconds = -1.f; // policy invalid
+		C.StaggerProfile.HitStunAbilityClassName = NAME_None; // profile invalid
+		Check(TEXT("precedence: policy first"), C, TEXT("InvalidStagger.Negative"), TEXT("StaggerPolicy.StaggerSeconds"));
+	}
+
+	// 8. No partial write when FIRST (policy) and LAST (profile reference) are invalid
+	{
+		FRPGParticipantConfig C = ConfigA();
+		C.StaggerPolicy.StaggerSeconds = -5.f;
+		Check(TEXT("policy first invalid: no partial write"), C, TEXT("InvalidStagger.Negative"), TEXT("StaggerPolicy.StaggerSeconds"));
+
+		FRPGParticipantConfig CLast = ConfigA();
+		CLast.StaggerProfile.ImmunityEffect = ClassPtr(FSoftObjectPath());
+		Check(TEXT("profile last invalid: no partial write"), CLast, TEXT("InvalidDependency.Missing"), RPGBossStaggerClusterAdapters::FieldImmunityEffect);
+	}
+
+	return true;
+}
+
+// --------------------------------------------------------------------------------------------------
+// 3. Isolation Test
+// --------------------------------------------------------------------------------------------------
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGStaggerClusterIsolationTest, "OneBossFight.Binding.StaggerCluster.Isolation",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGStaggerClusterIsolationTest::RunTest(const FString& Parameters)
+{
+	using namespace StaggerClusterTests;
+	FClusterTestWorld Scope;
+	if (!TestNotNull(TEXT("test world"), Scope.World))
+	{
+		return false;
+	}
+	AActor* OwnerA = Scope.SpawnOwner();
+	AActor* OwnerB = Scope.SpawnOwner();
+	if (!TestTrue(TEXT("owners created"), OwnerA && OwnerB))
+	{
+		return false;
+	}
+	TStrongObjectPtr<URPGBossStagger> StaggerA = NewStagger(OwnerA, TEXT("StaggerA"));
+	TStrongObjectPtr<URPGBossStagger> StaggerB = NewStagger(OwnerB, TEXT("StaggerB"));
+	if (!TestTrue(TEXT("stagger components created"), StaggerA.IsValid() && StaggerB.IsValid()))
+	{
+		return false;
+	}
+	ArmDistinctStart(*StaggerA);
+	ArmDistinctStart(*StaggerB);
+	const FStaggerClusterState StartA(*StaggerA);
+	const FStaggerClusterState StartB(*StaggerB);
+	const FStaggerClusterState CDOState(*GetDefault<URPGBossStagger>());
+
+	// Configure StaggerA with ConfigA
+	FString Error;
+	TestTrue(TEXT("configure A"), RPGBossStaggerClusterAdapters::ConfigureStaggerCluster(*StaggerA, ConfigA(), Error));
+	const FStaggerClusterState ConfiguredA(*StaggerA);
+	TestFalse(TEXT("StaggerA changed"), ConfiguredA == StartA);
+
+	// Untouched component keeps its initial values
+	TestTrue(TEXT("StaggerB untouched"), FStaggerClusterState(*StaggerB) == StartB);
+
+	// CDO keeps the native constructor values
+	TestTrue(TEXT("CDO untouched"), FStaggerClusterState(*GetDefault<URPGBossStagger>()) == CDOState);
+
+	// Failed validation on StaggerA does not mutate StaggerA
+	FRPGParticipantConfig Broken = ConfigA();
+	Broken.StaggerPolicy.StaggerSeconds = -10.f;
+	TestFalse(TEXT("configure broken fails"), RPGBossStaggerClusterAdapters::ConfigureStaggerCluster(*StaggerA, Broken, Error));
+	TestTrue(TEXT("StaggerA still holds ConfiguredA values"), FStaggerClusterState(*StaggerA) == ConfiguredA);
+
+	// Lifecycle failure on wrong component does not mutate either component or the CDO
+	TStrongObjectPtr<URPGBossPosture> Posture(NewObject<URPGBossPosture>(OwnerA, TEXT("Posture")));
+	TestFalse(TEXT("wrong component rejected"), RPGBossStaggerClusterAdapters::ConfigureStaggerCluster(*Posture, ConfigA(), Error));
+	TestTrue(TEXT("StaggerA still holds ConfiguredA"), FStaggerClusterState(*StaggerA) == ConfiguredA);
+	TestTrue(TEXT("StaggerB still holds StartB"), FStaggerClusterState(*StaggerB) == StartB);
+	TestTrue(TEXT("CDO still untouched"), FStaggerClusterState(*GetDefault<URPGBossStagger>()) == CDOState);
+
+	return true;
+}
+
+// --------------------------------------------------------------------------------------------------
+// 4. Rejections Test
+// --------------------------------------------------------------------------------------------------
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGStaggerClusterRejectionsTest, "OneBossFight.Binding.StaggerCluster.Rejections",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGStaggerClusterRejectionsTest::RunTest(const FString& Parameters)
+{
+	using namespace StaggerClusterTests;
+	FClusterTestWorld Scope;
+	if (!TestNotNull(TEXT("test world"), Scope.World))
+	{
+		return false;
+	}
+	AActor* Owner = Scope.SpawnOwner();
+	if (!TestNotNull(TEXT("owner actor"), Owner))
+	{
+		return false;
+	}
+
+	auto ExpectRejected = [&](const FString& Label, UActorComponent& Comp, const TCHAR* ExpectedToken)
+	{
+		FString Error = TEXT("stale");
+		TestFalse(FString::Printf(TEXT("%s: rejected"), *Label), RPGBossStaggerClusterAdapters::ConfigureStaggerCluster(Comp, ConfigA(), Error));
+		TestTrue(FString::Printf(TEXT("%s: named %s (got '%s')"), *Label, ExpectedToken, *Error), Error.StartsWith(ExpectedToken));
+	};
+
+	// 1. Wrong component class: concrete fixtures
+	{
+		TStrongObjectPtr<USceneComponent> SceneComp(NewObject<USceneComponent>(Owner, TEXT("SceneComp")));
+		TStrongObjectPtr<URPGBossPosture> PostureComp(NewObject<URPGBossPosture>(Owner, TEXT("PostureComp")));
+		TStrongObjectPtr<URPGBossEncounter> EncounterComp(NewObject<URPGBossEncounter>(Owner, TEXT("EncounterComp")));
+		ExpectRejected(TEXT("USceneComponent"), *SceneComp, TEXT("WrongComponentClass"));
+		ExpectRejected(TEXT("URPGBossPosture"), *PostureComp, TEXT("WrongComponentClass"));
+		ExpectRejected(TEXT("URPGBossEncounter"), *EncounterComp, TEXT("WrongComponentClass"));
+	}
+
+	// 2. Component already registered
+	{
+		TStrongObjectPtr<URPGBossStagger> Stagger = NewStagger(Owner, TEXT("RegStagger"));
+		ArmDistinctStart(*Stagger);
+		Stagger->RegisterComponent();
+		TestTrue(TEXT("component registered"), Stagger->IsRegistered());
+		ExpectRejected(TEXT("registered component"), *Stagger, TEXT("ComponentAlreadyRegistered"));
+	}
+
+	// 3. Component begun play under begun owner (clearing all 4 clip soft pointers before Register + DispatchBeginPlay)
+	{
+		AActor* BegunOwner = Scope.SpawnOwner();
+		if (!TestNotNull(TEXT("begun owner actor"), BegunOwner))
+		{
+			return false;
+		}
+		TStrongObjectPtr<URPGBossStagger> Stagger = NewStagger(BegunOwner, TEXT("BegunStagger"));
+		ArmDistinctStart(*Stagger);
+		Stagger->FallClip.Reset();
+		Stagger->DownClip.Reset();
+		Stagger->RipostePlayerClip.Reset();
+		Stagger->RiposteBossClip.Reset();
+		Stagger->RegisterComponent();
+		BegunOwner->DispatchBeginPlay();
+		TestTrue(TEXT("component and owner began play"), Stagger->HasBegunPlay() && BegunOwner->HasActorBegunPlay());
+		ExpectRejected(TEXT("begun stagger"), *Stagger, TEXT("ComponentBegunPlay"));
+	}
+
+	// 4. Owner already begun play, component fresh unregistered
+	{
+		AActor* LateOwner = Scope.SpawnOwner();
+		if (!TestNotNull(TEXT("late owner"), LateOwner))
+		{
+			return false;
+		}
+		LateOwner->DispatchBeginPlay();
+		TestTrue(TEXT("owner began play"), LateOwner->HasActorBegunPlay());
+		TStrongObjectPtr<URPGBossStagger> Stagger = NewStagger(LateOwner, TEXT("LateStagger"));
+		ArmDistinctStart(*Stagger);
+		ExpectRejected(TEXT("stagger under begun owner"), *Stagger, TEXT("OwnerBegunPlay"));
+	}
+
+	// 5. Invalid owner: orphan component without an actor outer
+	{
+		TStrongObjectPtr<URPGBossStagger> Orphan(NewObject<URPGBossStagger>(GetTransientPackage(), TEXT("OrphanStagger")));
+		TestTrue(TEXT("orphan created"), Orphan.IsValid() && !Orphan->GetOwner());
+		ArmDistinctStart(*Orphan);
+		ExpectRejected(TEXT("orphan stagger without owner"), *Orphan, TEXT("InvalidOwner"));
+	}
+
+	// 6. Destroyed component: DestroyComponent ran, object retained in memory
+	{
+		AActor* LiveOwner = Scope.SpawnOwner();
+		if (!TestNotNull(TEXT("live owner"), LiveOwner))
+		{
+			return false;
+		}
+		TStrongObjectPtr<URPGBossStagger> DeadStagger = NewStagger(LiveOwner, TEXT("DeadStagger"));
+		TStrongObjectPtr<URPGBossPosture> DeadPosture(NewObject<URPGBossPosture>(LiveOwner, TEXT("DeadPosture")));
+		ArmDistinctStart(*DeadStagger);
+		DeadStagger->DestroyComponent();
+		DeadPosture->DestroyComponent();
+
+		TestTrue(TEXT("destroyed but retained"), DeadStagger->IsBeingDestroyed() && DeadPosture->IsBeingDestroyed());
+		ExpectRejected(TEXT("destroyed stagger"), *DeadStagger, TEXT("InvalidComponent"));
+		ExpectRejected(TEXT("destroyed posture of wrong class reported as InvalidComponent"), *DeadPosture, TEXT("InvalidComponent"));
+		TestTrue(TEXT("owner stayed live"), IsValid(LiveOwner) && !LiveOwner->IsActorBeingDestroyed());
+	}
+
+	return true;
+}
+
+// --------------------------------------------------------------------------------------------------
+// 5. Compile Test
+// --------------------------------------------------------------------------------------------------
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGStaggerClusterCompileTest, "OneBossFight.Binding.StaggerCluster.Compile",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGStaggerClusterCompileTest::RunTest(const FString& Parameters)
+{
+	using namespace StaggerClusterTests;
+	const FEpochPtr Content = RPGCombatRegistry::Legacy();
+	if (!TestTrue(TEXT("content epoch"), Content.IsValid() && Content->Id.IsValid()))
+	{
+		return false;
+	}
+
+	// 1. Real synthetic compiler copies the new record and retains established values
+	{
+		const FRPGParticipantConfig CA = ConfigA();
+		const TStrongObjectPtr<URPGBossDefinition> DefinitionA = MakeDefinition(CA);
+		FConfigPtr Out;
+		const FRPGHydrationResult ResultA = CompileSynthetic(*DefinitionA, Content, Out);
+		TestTrue(TEXT("synthetic compile succeeds for ConfigA"), ResultA.IsReady() && Out.IsValid());
+		if (Out.IsValid())
+		{
+			// Positive established values check (DD9 pattern line ~767)
+			TestTrue(TEXT("stats MaxHealth retained"), Out->Stats.MaxHealth == 3500.f);
+			TestTrue(TEXT("stats MaxPosture retained"), Out->Stats.MaxPosture == 73.5f);
+			TestTrue(TEXT("encounter policy ArenaRadius retained"), Out->EncounterPolicy.ArenaRadius == 1500.f);
+			TestTrue(TEXT("stagger policy StaggerSeconds retained"), Out->StaggerPolicy.StaggerSeconds == CA.StaggerPolicy.StaggerSeconds);
+			TestTrue(TEXT("phase count retained"), Out->Phases.Num() == 1);
+			TestTrue(TEXT("identity retained"), Out->DefinitionId.Equals(TEXT("Synthetic"), ESearchCase::CaseSensitive));
+			const FRPGPhaseFlowConfig DefaultFlow;
+			const FRPGFireballConfig DefaultFireball;
+			const FRPGPhaseDependencyConfig DefaultDeps;
+			TestTrue(TEXT("PhaseFlow defaults carried"), Out->PhaseFlow.TransitionSeconds == DefaultFlow.TransitionSeconds && Out->PhaseFlow.AttackAbilityPrefix.Equals(DefaultFlow.AttackAbilityPrefix, ESearchCase::CaseSensitive));
+			TestTrue(TEXT("Fireball defaults carried"), Out->Fireball.bFireballEnabled == DefaultFireball.bFireballEnabled && Out->Fireball.FireballCooldown == DefaultFireball.FireballCooldown);
+			TestTrue(TEXT("PhaseDependencies defaults carried"), Out->PhaseDependencies.RoarClip.ToSoftObjectPath() == DefaultDeps.RoarClip.ToSoftObjectPath());
+
+			// Stagger profile fields carried
+			TestTrue(TEXT("Out bUseClips"), Out->StaggerProfile.bUseClips == CA.StaggerProfile.bUseClips);
+			TestTrue(TEXT("Out bUseRiposteClips"), Out->StaggerProfile.bUseRiposteClips == CA.StaggerProfile.bUseRiposteClips);
+			TestTrue(TEXT("Out bCriticalOnEveryHit"), Out->StaggerProfile.bCriticalOnEveryHit == CA.StaggerProfile.bCriticalOnEveryHit);
+			TestTrue(TEXT("Out HitStunAbilityClassName"), Out->StaggerProfile.HitStunAbilityClassName == CA.StaggerProfile.HitStunAbilityClassName);
+			TestTrue(TEXT("Out FallMontage"), Out->StaggerProfile.FallMontage.ToSoftObjectPath() == CA.StaggerProfile.FallMontage.ToSoftObjectPath());
+			TestTrue(TEXT("Out GetUpMontage"), Out->StaggerProfile.GetUpMontage.ToSoftObjectPath() == CA.StaggerProfile.GetUpMontage.ToSoftObjectPath());
+			TestTrue(TEXT("Out FallClip"), Out->StaggerProfile.FallClip.ToSoftObjectPath() == CA.StaggerProfile.FallClip.ToSoftObjectPath());
+			TestTrue(TEXT("Out DownClip"), Out->StaggerProfile.DownClip.ToSoftObjectPath() == CA.StaggerProfile.DownClip.ToSoftObjectPath());
+			TestTrue(TEXT("Out RipostePlayerClip"), Out->StaggerProfile.RipostePlayerClip.ToSoftObjectPath() == CA.StaggerProfile.RipostePlayerClip.ToSoftObjectPath());
+			TestTrue(TEXT("Out RiposteBossClip"), Out->StaggerProfile.RiposteBossClip.ToSoftObjectPath() == CA.StaggerProfile.RiposteBossClip.ToSoftObjectPath());
+			TestTrue(TEXT("Out ImmunityEffect"), Out->StaggerProfile.ImmunityEffect.ToSoftObjectPath() == CA.StaggerProfile.ImmunityEffect.ToSoftObjectPath());
+		}
+
+		// ConfigB
+		const FRPGParticipantConfig CB = ConfigB();
+		const TStrongObjectPtr<URPGBossDefinition> DefinitionB = MakeDefinition(CB);
+		FConfigPtr OutB;
+		const FRPGHydrationResult ResultB = CompileSynthetic(*DefinitionB, Content, OutB);
+		TestTrue(TEXT("synthetic compile succeeds for ConfigB"), ResultB.IsReady() && OutB.IsValid());
+		if (OutB.IsValid())
+		{
+			TestTrue(TEXT("OutB bUseClips true"), OutB->StaggerProfile.bUseClips);
+			TestTrue(TEXT("OutB montages null"), OutB->StaggerProfile.FallMontage.IsNull() && OutB->StaggerProfile.GetUpMontage.IsNull());
+		}
+
+		// Default definition without explicit profile: authoring defaults copied
+		const TStrongObjectPtr<URPGBossDefinition> DefDefault = MakeDefinition(ConfigA());
+		DefDefault->StaggerProfile = FRPGStaggerProfileConfig();
+		FConfigPtr OutDef;
+		TestTrue(TEXT("default profile copied"), CompileSynthetic(*DefDefault, Content, OutDef).IsReady() && OutDef.IsValid());
+		if (OutDef.IsValid())
+		{
+			const FRPGStaggerProfileConfig DocumentedDefaults;
+			TestTrue(TEXT("default bUseClips"), OutDef->StaggerProfile.bUseClips == DocumentedDefaults.bUseClips);
+			TestTrue(TEXT("default HitStun"), OutDef->StaggerProfile.HitStunAbilityClassName == DocumentedDefaults.HitStunAbilityClassName);
+			TestTrue(TEXT("default Immunity"), OutDef->StaggerProfile.ImmunityEffect.ToSoftObjectPath() == DocumentedDefaults.ImmunityEffect.ToSoftObjectPath());
+		}
+	}
+
+	// 2. FBad[] invalid cases on BOTH synthetic and production CompileParticipant
+	struct FBad
+	{
+		const TCHAR* Name;
+		TFunction<void(FRPGParticipantConfig&)> Break;
+		const TCHAR* Token;
+	};
+	const FBad Bad[] = {
+		{TEXT("HitStun None"), [](FRPGParticipantConfig& C) { C.StaggerProfile.HitStunAbilityClassName = NAME_None; }, TEXT("InvalidStaggerProfile.NoHitStunClass")},
+		{TEXT("FallClip missing when bUseClips true"), [](FRPGParticipantConfig& C) { C.StaggerProfile.bUseClips = true; C.StaggerProfile.FallClip = SequencePtr(FSoftObjectPath()); }, TEXT("InvalidDependency.Missing")},
+		{TEXT("FallMontage missing when bUseClips false"), [](FRPGParticipantConfig& C) { C.StaggerProfile.bUseClips = false; C.StaggerProfile.FallMontage = MontagePtr(FSoftObjectPath()); }, TEXT("InvalidDependency.Missing")},
+		{TEXT("Riposte clip missing when bUseRiposteClips true"), [](FRPGParticipantConfig& C) { C.StaggerProfile.bUseRiposteClips = true; C.StaggerProfile.RipostePlayerClip = SequencePtr(FSoftObjectPath()); }, TEXT("InvalidDependency.Missing")},
+		{TEXT("ImmunityEffect missing"), [](FRPGParticipantConfig& C) { C.StaggerProfile.ImmunityEffect = ClassPtr(FSoftObjectPath()); }, TEXT("InvalidDependency.Missing")},
+		{TEXT("Malformed path with whitespace"), [](FRPGParticipantConfig& C) { C.StaggerProfile.FallMontage = MontagePtr(MakePath(TEXT("/SyntheticMount/Bad Path"), TEXT("AM_Fall"))); }, TEXT("InvalidDependency.Malformed")},
+		{TEXT("Immunity not a class path"), [](FRPGParticipantConfig& C) { C.StaggerProfile.ImmunityEffect = ClassPtr(MakePath(TEXT("/SyntheticMount/Effects"), TEXT("GE_HitStunImmune"))); }, TEXT("InvalidDependency.NotClassPath")},
+	};
+
+	for (const FBad& Case : Bad)
+	{
+		FRPGParticipantConfig Broken = ConfigA();
+		Case.Break(Broken);
+		const TStrongObjectPtr<URPGBossDefinition> Definition = MakeDefinition(Broken);
+
+		// Synthetic compile
+		FConfigPtr Out;
+		if (!TestTrue(FString::Printf(TEXT("%s: valid output exists first"), Case.Name), CompileSynthetic(*MakeDefinition(ConfigA()), Content, Out).IsReady() && Out.IsValid()))
+		{
+			return false;
+		}
+		const FRPGHydrationResult Result = CompileSynthetic(*Definition, Content, Out);
+		TestFalse(FString::Printf(TEXT("%s (synthetic): refused"), Case.Name), Result.IsReady());
+		TestTrue(FString::Printf(TEXT("%s (synthetic): named %s"), Case.Name, Case.Token), AnyErrorContains(Result, Case.Token));
+		TestFalse(FString::Printf(TEXT("%s (synthetic): earlier output cleared"), Case.Name), Out.IsValid());
+
+		// Production compile
+		FConfigPtr ProductionOut;
+		if (CompileSynthetic(*MakeDefinition(ConfigA()), Content, ProductionOut).IsReady() && ProductionOut.IsValid())
+		{
+			const FRPGHydrationResult Production = RPGCombatHydration::CompileParticipant(*Definition, Content, FString::ChrN(64, TEXT('b')), ProductionOut);
+			TestFalse(FString::Printf(TEXT("%s (production): refused"), Case.Name), Production.IsReady());
+			TestTrue(FString::Printf(TEXT("%s (production): named %s"), Case.Name, Case.Token), AnyErrorContains(Production, Case.Token));
+			TestFalse(FString::Printf(TEXT("%s (production): earlier output cleared"), Case.Name), ProductionOut.IsValid());
+		}
+	}
+
+	// 3. RunRetained for established checks with valid stagger profile (11 cases)
+	auto RunRetained = [&](const TCHAR* Name, const TCHAR* Text, const TFunction<void(URPGBossDefinition&)>& Break, int32 Schema, const FString& Hash, bool bNullContent)
+	{
+		FConfigPtr Out;
+		if (!CompileSynthetic(*MakeDefinition(ConfigA()), Content, Out).IsReady() || !Out.IsValid())
+		{
+			AddError(TEXT("unsupported precondition: valid output could not be built"));
+			return;
+		}
+		const TStrongObjectPtr<URPGBossDefinition> Definition = MakeDefinition(ConfigA());
+		Definition->Schema = Schema;
+		Break(*Definition);
+		const FRPGHydrationResult Result = CompileSynthetic(*Definition, bNullContent ? FEpochPtr() : Content, Out, Hash);
+		TestFalse(FString::Printf(TEXT("%s: refused"), Name), Result.IsReady());
+		TestTrue(FString::Printf(TEXT("%s: established message '%s'"), Name, Text), AnyErrorContains(Result, Text));
+		TestFalse(FString::Printf(TEXT("%s: earlier output cleared"), Name), Out.IsValid());
+	};
+
+	const FString GoodHash = FString::ChrN(64, TEXT('b'));
+	RunRetained(TEXT("invalid phase flow"), TEXT("InvalidPhaseFlow.NoLeapTag"), [](URPGBossDefinition& D) { D.PhaseFlow.LeapAbilityTag = NAME_None; }, 1, GoodHash, false);
+	RunRetained(TEXT("invalid fireball cooldown"), TEXT("InvalidFireball.CooldownOrder"), [](URPGBossDefinition& D) { D.Fireball.bFireballEnabled = true; D.Fireball.FireballCooldown = FVector2D(5.0, 4.0); }, 1, GoodHash, false);
+	RunRetained(TEXT("invalid phase dependencies"), TEXT("InvalidDependency.Missing"), [](URPGBossDefinition& D) { D.PhaseFlow.bUseRoarClip = true; D.PhaseDependencies.RoarClip = SequencePtr(FSoftObjectPath()); }, 1, GoodHash, false);
+	RunRetained(TEXT("invalid stagger policy"), TEXT("InvalidStagger.NotPositive"), [](URPGBossDefinition& D) { D.StaggerPolicy.GetUpRate = 0.f; }, 1, GoodHash, false);
+	RunRetained(TEXT("invalid encounter policy"), TEXT("InvalidPolicy.Negative"), [](URPGBossDefinition& D) { D.EncounterPolicy.GateRadius = -1.f; }, 1, GoodHash, false);
+	RunRetained(TEXT("negative posture maximum"), TEXT("invalid stats"), [](URPGBossDefinition& D) { D.Stats.MaxPosture = -1.f; }, 1, GoodHash, false);
+	RunRetained(TEXT("phase threshold above 1"), TEXT("invalid/duplicate phase"), [](URPGBossDefinition& D) { D.Phases[0].EntryHealthFraction = 2.f; }, 1, GoodHash, false);
+	RunRetained(TEXT("schema 2"), TEXT("identity absent"), [](URPGBossDefinition&) {}, 2, GoodHash, false);
+	RunRetained(TEXT("manifest hash not 64 hex"), TEXT("identity absent"), [](URPGBossDefinition&) {}, 1, TEXT("short"), false);
+	RunRetained(TEXT("no content lease"), TEXT("identity absent"), [](URPGBossDefinition&) {}, 1, GoodHash, true);
+	RunRetained(TEXT("no field manifest"), TEXT("field manifest required"), [](URPGBossDefinition& D) { D.Fields.Reset(); }, 1, GoodHash, false);
+
+	// 4. Several failures together
+	{
+		const TStrongObjectPtr<URPGBossDefinition> Definition = MakeDefinition(ConfigA());
+		Definition->StaggerProfile.HitStunAbilityClassName = NAME_None;
+		Definition->StaggerProfile.ImmunityEffect = ClassPtr(FSoftObjectPath());
+		Definition->PhaseFlow.LeapAbilityTag = NAME_None;
+		Definition->StaggerPolicy.GetUpRate = -1.f;
+		Definition->Stats.MaxPosture = -1.f;
+
+		FConfigPtr Out;
+		const FRPGHydrationResult Result = CompileSynthetic(*Definition, Content, Out);
+		TestTrue(TEXT("multiple errors reported"),
+			!Result.IsReady() && AnyErrorContains(Result, TEXT("InvalidStaggerProfile.NoHitStunClass"))
+			&& AnyErrorContains(Result, TEXT("InvalidPhaseFlow.NoLeapTag"))
+			&& AnyErrorContains(Result, TEXT("InvalidStagger.NotPositive"))
+			&& AnyErrorContains(Result, TEXT("invalid stats"))
+			&& !Out.IsValid());
+	}
+
+	return true;
+}
+
+// --------------------------------------------------------------------------------------------------
+// 6. Authoring Test
+// --------------------------------------------------------------------------------------------------
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGStaggerClusterAuthoringTest, "OneBossFight.Binding.StaggerCluster.Authoring",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGStaggerClusterAuthoringTest::RunTest(const FString& Parameters)
+{
+	using namespace StaggerClusterTests;
+	const UClass* Native = URPGBossStagger::StaticClass();
+
+	// Struct reflection verification
+	const UScriptStruct* ProfileStruct = FRPGStaggerProfileConfig::StaticStruct();
+	if (!TestNotNull(TEXT("FRPGStaggerProfileConfig reflected"), ProfileStruct))
+	{
+		return false;
+	}
+
+	// 1. Check three bools
+	for (const TCHAR* Name : {TEXT("bUseClips"), TEXT("bUseRiposteClips"), TEXT("bCriticalOnEveryHit")})
+	{
+		const FProperty* Prop = ProfileStruct->FindPropertyByName(Name);
+		TestTrue(FString::Printf(TEXT("%s: reflected editable bool in struct"), Name), Prop && CastField<FBoolProperty>(Prop) && Prop->HasAnyPropertyFlags(CPF_Edit));
+		const FProperty* NativeProp = Native->FindPropertyByName(Name);
+		TestTrue(FString::Printf(TEXT("%s: also a bool of URPGBossStagger"), Name), NativeProp && CastField<FBoolProperty>(NativeProp));
+	}
+
+	// 2. Check HitStunAbilityClassName
+	{
+		const FProperty* Prop = ProfileStruct->FindPropertyByName(TEXT("HitStunAbilityClassName"));
+		TestTrue(TEXT("HitStunAbilityClassName: reflected editable FName in struct"), Prop && CastField<FNameProperty>(Prop) && Prop->HasAnyPropertyFlags(CPF_Edit));
+		const FProperty* NativeProp = Native->FindPropertyByName(TEXT("HitStunAbilityClassName"));
+		TestTrue(TEXT("HitStunAbilityClassName: also an FName of URPGBossStagger"), NativeProp && CastField<FNameProperty>(NativeProp));
+	}
+
+	// 3. Check 6 soft object references (not soft class)
+	for (const TCHAR* Name : {TEXT("FallMontage"), TEXT("GetUpMontage"), TEXT("FallClip"), TEXT("DownClip"), TEXT("RipostePlayerClip"), TEXT("RiposteBossClip")})
+	{
+		const FProperty* Prop = ProfileStruct->FindPropertyByName(Name);
+		TestTrue(FString::Printf(TEXT("%s: reflected editable soft object (not class) in struct"), Name), Prop && CastField<FSoftObjectProperty>(Prop) && !CastField<FSoftClassProperty>(Prop) && Prop->HasAnyPropertyFlags(CPF_Edit));
+		const FProperty* NativeProp = Native->FindPropertyByName(Name);
+		TestTrue(FString::Printf(TEXT("%s: also a soft object (not class) of URPGBossStagger"), Name), NativeProp && CastField<FSoftObjectProperty>(NativeProp) && !CastField<FSoftClassProperty>(NativeProp));
+	}
+
+	// 4. Check ImmunityEffect soft class
+	{
+		const FProperty* Prop = ProfileStruct->FindPropertyByName(TEXT("ImmunityEffect"));
+		TestTrue(TEXT("ImmunityEffect: reflected editable soft class in struct"), Prop && CastField<FSoftClassProperty>(Prop) && Prop->HasAnyPropertyFlags(CPF_Edit));
+		const FProperty* NativeProp = Native->FindPropertyByName(TEXT("ImmunityEffect"));
+		TestTrue(TEXT("ImmunityEffect: also a soft class of URPGBossStagger"), NativeProp && CastField<FSoftClassProperty>(NativeProp));
+	}
+
+	// Definition member verification
+	const FStructProperty* DefProp = CastField<FStructProperty>(URPGBossDefinition::StaticClass()->FindPropertyByName(TEXT("StaggerProfile")));
+	if (!TestNotNull(TEXT("URPGBossDefinition has StaggerProfile"), DefProp))
+	{
+		return false;
+	}
+	TestTrue(TEXT("StaggerProfile is editable"), DefProp->HasAnyPropertyFlags(CPF_Edit) && DefProp->Struct == ProfileStruct);
+
+	// Fresh definition holds authoring defaults
+	const FRPGStaggerProfileConfig DocDefaults;
+	TStrongObjectPtr<URPGBossDefinition> FreshDef(NewObject<URPGBossDefinition>());
+	TestTrue(TEXT("fresh definition holds authoring defaults"), FreshDef->StaggerProfile.HitStunAbilityClassName == DocDefaults.HitStunAbilityClassName
+		&& FreshDef->StaggerProfile.bUseClips == DocDefaults.bUseClips
+		&& FreshDef->StaggerProfile.bUseRiposteClips == DocDefaults.bUseRiposteClips
+		&& FreshDef->StaggerProfile.FallMontage.ToSoftObjectPath() == DocDefaults.FallMontage.ToSoftObjectPath()
+		&& FreshDef->StaggerProfile.ImmunityEffect.ToSoftObjectPath() == DocDefaults.ImmunityEffect.ToSoftObjectPath());
+
+	// Compare defaults with documented literals without any quoted content mount string
+	TestTrue(TEXT("literal bUseClips == true"), DocDefaults.bUseClips == true);
+	TestTrue(TEXT("literal bUseRiposteClips == true"), DocDefaults.bUseRiposteClips == true);
+	TestTrue(TEXT("literal bCriticalOnEveryHit == false"), DocDefaults.bCriticalOnEveryHit == false);
+	TestTrue(TEXT("literal HitStunAbilityClassName == GA_GS_Boss_HitStun_C"), DocDefaults.HitStunAbilityClassName == FName(TEXT("GA_GS_Boss_HitStun_C")));
+	TestTrue(TEXT("literal FallMontage path"), DocDefaults.FallMontage.ToSoftObjectPath().ToString().EndsWith(TEXT("/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage"), ESearchCase::CaseSensitive));
+	TestTrue(TEXT("literal GetUpMontage path"), DocDefaults.GetUpMontage.ToSoftObjectPath().ToString().EndsWith(TEXT("/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage"), ESearchCase::CaseSensitive));
+	TestTrue(TEXT("literal FallClip path"), DocDefaults.FallClip.ToSoftObjectPath().ToString().EndsWith(TEXT("/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall"), ESearchCase::CaseSensitive));
+	TestTrue(TEXT("literal DownClip path"), DocDefaults.DownClip.ToSoftObjectPath().ToString().EndsWith(TEXT("/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown"), ESearchCase::CaseSensitive));
+	TestTrue(TEXT("literal RipostePlayerClip path"), DocDefaults.RipostePlayerClip.ToSoftObjectPath().ToString().EndsWith(TEXT("/AN_Riposte_Player_Front.AN_Riposte_Player_Front"), ESearchCase::CaseSensitive));
+	TestTrue(TEXT("literal RiposteBossClip path"), DocDefaults.RiposteBossClip.ToSoftObjectPath().ToString().EndsWith(TEXT("/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction"), ESearchCase::CaseSensitive));
+	TestTrue(TEXT("literal ImmunityEffect path"), DocDefaults.ImmunityEffect.ToSoftObjectPath().ToString().EndsWith(TEXT("/GE_HitStunImmune.GE_HitStunImmune_C"), ESearchCase::CaseSensitive));
+
+	// Compare defaults with native CDO
+	const URPGBossStagger* CDO = GetDefault<URPGBossStagger>();
+	if (TestNotNull(TEXT("URPGBossStagger CDO"), CDO))
+	{
+		TestTrue(TEXT("CDO bUseClips"), DocDefaults.bUseClips == CDO->bUseClips);
+		TestTrue(TEXT("CDO bUseRiposteClips"), DocDefaults.bUseRiposteClips == CDO->bUseRiposteClips);
+		TestTrue(TEXT("CDO bCriticalOnEveryHit"), DocDefaults.bCriticalOnEveryHit == CDO->bCriticalOnEveryHit);
+		TestTrue(TEXT("CDO HitStunAbilityClassName"), DocDefaults.HitStunAbilityClassName == CDO->HitStunAbilityClassName);
+		TestTrue(TEXT("CDO FallMontage"), DocDefaults.FallMontage.ToSoftObjectPath() == CDO->FallMontage.ToSoftObjectPath());
+		TestTrue(TEXT("CDO GetUpMontage"), DocDefaults.GetUpMontage.ToSoftObjectPath() == CDO->GetUpMontage.ToSoftObjectPath());
+		TestTrue(TEXT("CDO FallClip"), DocDefaults.FallClip.ToSoftObjectPath() == CDO->FallClip.ToSoftObjectPath());
+		TestTrue(TEXT("CDO DownClip"), DocDefaults.DownClip.ToSoftObjectPath() == CDO->DownClip.ToSoftObjectPath());
+		TestTrue(TEXT("CDO RipostePlayerClip"), DocDefaults.RipostePlayerClip.ToSoftObjectPath() == CDO->RipostePlayerClip.ToSoftObjectPath());
+		TestTrue(TEXT("CDO RiposteBossClip"), DocDefaults.RiposteBossClip.ToSoftObjectPath() == CDO->RiposteBossClip.ToSoftObjectPath());
+		TestTrue(TEXT("CDO ImmunityEffect"), DocDefaults.ImmunityEffect.ToSoftObjectPath() == CDO->ImmunityEffect.ToSoftObjectPath());
+	}
+
+	// Verify defaults pass the shared validator
+	FString Error;
+	TestTrue(TEXT("authoring defaults pass shared validator"), RPGBossStaggerClusterAdapters::ValidateStaggerProfile(DocDefaults, Error) && Error.IsEmpty());
+
+	// Verify MakeStaggerClusterPlan definition
+	const FRPGComponentPlan Plan = RPGBossStaggerClusterAdapters::MakeStaggerClusterPlan();
+	TestTrue(TEXT("plan class is URPGBossStagger"), Plan.Class == URPGBossStagger::StaticClass());
+	TestTrue(TEXT("plan instance name is RPGBossStagger"), Plan.InstanceName == FName(TEXT("RPGBossStagger")));
+	TestTrue(TEXT("plan has 25 required paths"), Plan.RequiredFields.Num() == 25);
+	TestTrue(TEXT("plan first path is StaggerPolicy.StaggerSeconds"), Plan.RequiredFields[0].Equals(TEXT("StaggerPolicy.StaggerSeconds"), ESearchCase::CaseSensitive));
+	TestTrue(TEXT("plan last path is StaggerProfile.ImmunityEffect"), Plan.RequiredFields[24].Equals(TEXT("StaggerProfile.ImmunityEffect"), ESearchCase::CaseSensitive));
+
+	return true;
+}
+
+// --------------------------------------------------------------------------------------------------
+// 7. Oracle Test
+// --------------------------------------------------------------------------------------------------
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGStaggerClusterOracleTest, "OneBossFight.Binding.StaggerCluster.Oracle",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGStaggerClusterOracleTest::RunTest(const FString& Parameters)
+{
+	using namespace StaggerClusterTests;
+	FClusterTestWorld Scope;
+	if (!TestNotNull(TEXT("test world"), Scope.World))
+	{
+		return false;
+	}
+
+	struct FCase { const TCHAR* Name; FRPGParticipantConfig Config; };
+	const FCase Cases[] = {
+		{TEXT("config A"), ConfigA()},
+		{TEXT("config B"), ConfigB()},
+		{TEXT("default profile with config A policy"), []() { FRPGParticipantConfig D; D.StaggerPolicy = ConfigA().StaggerPolicy; return D; }()}
+	};
+
+	for (const FCase& Case : Cases)
+	{
+		AActor* OwnerOracle = Scope.SpawnOwner();
+		AActor* OwnerCluster = Scope.SpawnOwner();
+		if (!TestTrue(TEXT("two owners created"), OwnerOracle && OwnerCluster))
+		{
+			return false;
+		}
+		TStrongObjectPtr<URPGBossStagger> Oracle = NewStagger(OwnerOracle, TEXT("OracleStagger"));
+		TStrongObjectPtr<URPGBossStagger> Cluster = NewStagger(OwnerCluster, TEXT("ClusterStagger"));
+		if (!TestTrue(TEXT("two components created"), Oracle.IsValid() && Cluster.IsValid()))
+		{
+			return false;
+		}
+		ArmDistinctStart(*Oracle);
+		ArmDistinctStart(*Cluster);
+		const FStaggerClusterState Start(*Cluster);
+
+		FString OracleError;
+		FString ClusterError;
+		const bool bOracle = RPGBossStaggerPolicyAdapters::ConfigureStaggerPolicy(*Oracle, Case.Config, OracleError);
+		const bool bCluster = RPGBossStaggerClusterAdapters::ConfigureStaggerCluster(*Cluster, Case.Config, ClusterError);
+		TestTrue(FString::Printf(TEXT("%s: oracle and cluster both succeed"), Case.Name), bOracle && bCluster);
+
+		const FStaggerClusterState OracleState(*Oracle);
+		const FStaggerClusterState ClusterState(*Cluster);
+
+		// 14 policy fields must be identical
+		TestTrue(FString::Printf(TEXT("%s: 14 policy fields identical between oracle and cluster"), Case.Name), ClusterState.PolicyEquals(OracleState));
+
+		// Oracle leaves profile fields at start state; cluster writes authored config
+		TestTrue(FString::Printf(TEXT("%s: oracle leaves profile fields at start"), Case.Name), OracleState.ProfileEquals(Start));
+		TestTrue(FString::Printf(TEXT("%s: cluster wrote authored profile fields"), Case.Name),
+			ClusterState.bUseClips == Case.Config.StaggerProfile.bUseClips
+			&& ClusterState.bUseRiposteClips == Case.Config.StaggerProfile.bUseRiposteClips
+			&& ClusterState.bCriticalOnEveryHit == Case.Config.StaggerProfile.bCriticalOnEveryHit
+			&& ClusterState.HitStunAbilityClassName == Case.Config.StaggerProfile.HitStunAbilityClassName
+			&& ClusterState.FallMontage == Case.Config.StaggerProfile.FallMontage.ToSoftObjectPath()
+			&& ClusterState.GetUpMontage == Case.Config.StaggerProfile.GetUpMontage.ToSoftObjectPath()
+			&& ClusterState.FallClip == Case.Config.StaggerProfile.FallClip.ToSoftObjectPath()
+			&& ClusterState.DownClip == Case.Config.StaggerProfile.DownClip.ToSoftObjectPath()
+			&& ClusterState.RipostePlayerClip == Case.Config.StaggerProfile.RipostePlayerClip.ToSoftObjectPath()
+			&& ClusterState.RiposteBossClip == Case.Config.StaggerProfile.RiposteBossClip.ToSoftObjectPath()
+			&& ClusterState.ImmunityEffect == Case.Config.StaggerProfile.ImmunityEffect.ToSoftObjectPath());
+
+		TestTrue(FString::Printf(TEXT("%s: runtime state equal and untouched"), Case.Name),
+			ClusterState.RuntimeEquals(OracleState) && ClusterState.RuntimeEquals(Start));
+	}
+
+	// Nothing loaded: assigning default asset paths loads zero objects
+	{
+		AActor* Owner = Scope.SpawnOwner();
+		if (!TestNotNull(TEXT("owner actor"), Owner))
+		{
+			return false;
+		}
+		TStrongObjectPtr<URPGBossStagger> Stagger = NewStagger(Owner, TEXT("LoadTestStagger"));
+		ArmDistinctStart(*Stagger);
+		const FRPGStaggerProfileConfig RealDefaults;
+		const FSoftObjectPath RealPaths[] = {
+			RealDefaults.FallMontage.ToSoftObjectPath(),
+			RealDefaults.GetUpMontage.ToSoftObjectPath(),
+			RealDefaults.FallClip.ToSoftObjectPath(),
+			RealDefaults.DownClip.ToSoftObjectPath(),
+			RealDefaults.RipostePlayerClip.ToSoftObjectPath(),
+			RealDefaults.RiposteBossClip.ToSoftObjectPath(),
+			RealDefaults.ImmunityEffect.ToSoftObjectPath()
+		};
+		bool bLoadedBefore[7];
+		bool bPackageBefore[7];
+		for (int32 Index = 0; Index < 7; ++Index)
+		{
+			bLoadedBefore[Index] = RealPaths[Index].ResolveObject() != nullptr;
+			bPackageBefore[Index] = FindPackage(nullptr, *RealPaths[Index].GetLongPackageName()) != nullptr;
+		}
+		FRPGParticipantConfig Config = ConfigA();
+		Config.StaggerProfile = RealDefaults;
+		FString Error;
+		TestTrue(TEXT("default asset paths accepted"), RPGBossStaggerClusterAdapters::ConfigureStaggerCluster(*Stagger, Config, Error));
+		bool bSame = true;
+		for (int32 Index = 0; Index < 7; ++Index)
+		{
+			bSame = bSame && ((RealPaths[Index].ResolveObject() != nullptr) == bLoadedBefore[Index])
+				&& ((FindPackage(nullptr, *RealPaths[Index].GetLongPackageName()) != nullptr) == bPackageBefore[Index]);
+		}
+		TestTrue(TEXT("no object or package loaded during assignment"), bSame);
+	}
+
+	return true;
+}
+
+#endif // WITH_DEV_AUTOMATION_TESTS

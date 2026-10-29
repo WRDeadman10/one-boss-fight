@@ -1,0 +1,21 @@
+# DD19 C253 verification report: lead review pending
+
+Codex executed the ONE released serialized run after C254/C255 and a fresh process check confirmed no editor/build/compiler process. Owner closed their GUI editor per the lead's recorded confirmation; Codex killed nothing and accepted no save dialog.
+
+Fresh safety194 Source files exactly matched the accepted manifest and five pins; HEAD79d55906d155574a0c308b33d4442f4a7acbf8b9. Existing24/13 pin checks explicitly retained the TWO reviewed Binding.h/.cpp replacements and accepted no other mismatch;14 candidate and7 catalog assets and both pre-run binaries matched.
+
+One editor Development build: exit0,27s,39 actions, actual Internal UnrealHeaderTool invocation with -WarningsAsErrors and reflection generation5.2630516s. Three actual Warning lines (two UnrealClaude/Niagara dependency declarations plus compiler-version advisory), no compiler error. Raw build SHA256 3ee9e24619de24fe3393c2c0338a5a58338dd1f599b43c403caa577d6c1b3893.
+
+Focused OneBossFight.Binding.Bleed: actual discovery6, six unique Success, exit0,22s; Assign/Authoring/Compile/Isolation/Rejections/Validation. Warning13, Error0, no fatal/ensure/unsupported; GIsCriticalError=0. Raw SHA256 3f4b234983a90eefb2cc2ebbf1150c7bda50da9048b5c89c21cc72d4778ab233.
+
+Only after checking that focused gate, full OneBossFight ran: actual discovery135,135 unique Success, exit0,28s. Every129 DD18 path retained, exact six new Bleed names, CookCoverage Success, no duplicate/missing/failed completion. Warning63, Error0, no fatal/ensure/unsupported; GIsCriticalError=0. Raw SHA256 0d2c811f3111d55cfa9248f04eb557dd6890460aa988b635600a0a48e4fc801a. Warning multiset compared to DD18 after only timestamp/frame-prefix, epoch and sponsor-PID normalization: no added or removed warning. All previous63 warnings remain.
+
+Final194 Source files unchanged from pre-run, dependency/candidate/catalog pins and HEAD unchanged. New DLL81cefa879e53a52d097373bfbe3571365610f14867dd5cbe14086cd9518d8850. EXE unchanged5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65. No git operation except read-only HEAD/status capture. All raw logs, job records, commands, pre/post input reports and hashes are in Codex/DD19/run_2026-10-29; evidence_sha256.txt freezes the evidence and verifier/operator scripts.
+
+Failed attempts: no compiler/test failure and no retry or fix round. Preparation had two tool syntax errors and one template-variable ReferenceError before any tool action (recorded X295). Those did not launch a build or mutate Source. An evidence summary initially counted the UHT command's -WarningsAsErrors token as a fourth warning-matching line; the final report classifies actual warning lines correctly, without hiding or altering the raw log.
+
+Limits: isolated typed configuration/reflection/copy/rejection proof only. ComponentBegunPlay guard remains source-only; no native Bleed BeginPlay, buildup/proc/health change, real VFX/sound/skeleton/cook proof, authored serialized/Details value, preflight insertion, complete bundle, Ready, legacy suppression, startup/target/reset wiring, duel/networking, PIE/full driver gate, package/Shipping or all83 closure. All older failures/provenance exceptions remain. Nothing committed.
+
+TASKS, TEST_PLAN BUILD27, DECISIONS DD19 and KNOWN_ISSUES KI124 updated as REVIEW PENDING. Please independently review the actual raw evidence and accept/return the run. No DD20 or further engine action started.
+
+Frozen run evidence receipt:25 entries independently verified, SHA256857f9817d5200020f6702f075ed9d1438255656420bf8f9ffc5b8a168d833501. Post-run check: zero relevant engine/build/compiler processes. Please review; no DD20 started.

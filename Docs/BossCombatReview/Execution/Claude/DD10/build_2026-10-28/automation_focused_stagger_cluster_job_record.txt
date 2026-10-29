@@ -1,0 +1,2 @@
+start 10/28/2026 10:01:20 filter=OneBossFight.Binding.StaggerCluster
+end 10/28/2026 10:01:45 exit 255 seconds 25

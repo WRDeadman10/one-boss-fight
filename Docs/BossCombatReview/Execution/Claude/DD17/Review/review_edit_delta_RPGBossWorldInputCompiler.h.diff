@@ -1,0 +1,5 @@
+23c23,24
+<  * after that is the content acquired, and ONLY through RPGCombatRegistry::ForWorld(ExpectedWorld): the epoch the world's own UGameInstance catalog subsystem published. A world without a game instance, without that
+---
+>  * after that is the content acquired, and ONLY through RPGCombatRegistry::ForWorld(ExpectedWorld): the epoch the world's own UGameInstance catalog subsystem published (the game instance and that subsystem are looked up
+>  * a second time only to hold their identities for the drift checks and to require that they report the same epoch pointer). A world without a game instance, without that

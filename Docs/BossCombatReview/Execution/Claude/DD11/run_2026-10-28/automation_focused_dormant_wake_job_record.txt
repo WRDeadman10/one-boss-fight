@@ -1,0 +1,2 @@
+start 10/28/2026 13:03:07 filter=OneBossFight.Binding.DormantWake
+end 10/28/2026 13:03:34 exit 0 seconds 27

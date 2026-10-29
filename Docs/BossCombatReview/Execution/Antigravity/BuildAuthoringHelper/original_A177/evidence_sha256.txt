@@ -1,0 +1,11 @@
+d155977dbd6504085dfa98951721ae0f9fd9ea13a731471a4ed03007a3fe2425     43376  Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/author_custom_build.py
+7896cc1f5e44242a9b2bb5f2dc279464e286e285638b6a95793209a4a23f6760     10568  Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/README.md
+e7d5296833cfa5bec4101e608a98ab336a5b8c7a5c476e0d3b17eae57279dbb5      7427  Source/OneBossFight/Player/RPGCombatCatalog.h
+f6f71036804f60f0e4c8b3cf455f2a04a7bc4cf379760334903a2d9d613de59d     23675  Source/OneBossFight/Player/RPGCombatCatalog.cpp
+be49c7f4f3551fa8a45eb33d067711bb5bed526f90fd2cf7f4aa39cfd232b315      2390  Content/OneBossFight/Data/Catalog/DA_CombatCatalog.uasset
+e3c0d6c86aca343fac8307d1b95209a0ce3a693920493ee5211e6fa6bce80682      2303  Content/OneBossFight/Data/Catalog/DA_Build_Starter.uasset
+24b6ad77dbaf8db5f64db5edad035471d2e8ea05487d02864c51e8e27da02033      2357  Content/OneBossFight/Data/Catalog/DA_Build_Strength.uasset
+8ec63be096a1f43de82baceb30cb36a373bf018f59812db06184220c0c4d520b      2308  Content/OneBossFight/Data/Catalog/DA_Build_Dex.uasset
+b7702e2af28db57442dbe9ca20195ac23c02bc57941e760d57280e2bcb68d3c2      3841  Content/OneBossFight/Data/Catalog/DA_Weapon_Sword.uasset
+d203bb0555b1e6239218fd180611a6fc14017544c7ac55ace0086b308f35da8c      3657  Content/OneBossFight/Data/Catalog/DA_Weapon_Claymore.uasset
+31680000e80764945d9483a3286f0075fd839244797ce7f2277b9f34b3770128      3915  Content/OneBossFight/Data/Catalog/DA_Weapon_DualSwords.uasset

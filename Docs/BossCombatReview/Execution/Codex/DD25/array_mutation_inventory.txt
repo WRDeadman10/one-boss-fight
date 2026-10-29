@@ -1,0 +1,56 @@
+155:		for (const UActorComponent* C : Owner->GetComponents()) { Result.Add(C); }
+179:		Cases.Add({TEXT("PackPollSeconds NaN"), [](FRPGDeathConfig& R) { R.PackPollSeconds = std::numeric_limits<float>::quiet_NaN(); }, TEXT("InvalidDeath.NotFinite"), TEXT("Death.PackPollSeconds")});
+180:		Cases.Add({TEXT("PackPollSeconds +Inf"), [](FRPGDeathConfig& R) { R.PackPollSeconds = std::numeric_limits<float>::infinity(); }, TEXT("InvalidDeath.NotFinite"), TEXT("Death.PackPollSeconds")});
+181:		Cases.Add({TEXT("PackPollSeconds -Inf"), [](FRPGDeathConfig& R) { R.PackPollSeconds = -std::numeric_limits<float>::infinity(); }, TEXT("InvalidDeath.NotFinite"), TEXT("Death.PackPollSeconds")});
+182:		Cases.Add({TEXT("PackEndTimeMultiplier NaN"), [](FRPGDeathConfig& R) { R.PackEndTimeMultiplier = std::numeric_limits<float>::quiet_NaN(); }, TEXT("InvalidDeath.NotFinite"), TEXT("Death.PackEndTimeMultiplier")});
+183:		Cases.Add({TEXT("PackEndTimeMultiplier +Inf"), [](FRPGDeathConfig& R) { R.PackEndTimeMultiplier = std::numeric_limits<float>::infinity(); }, TEXT("InvalidDeath.NotFinite"), TEXT("Death.PackEndTimeMultiplier")});
+184:		Cases.Add({TEXT("PackEndTimeMultiplier -Inf"), [](FRPGDeathConfig& R) { R.PackEndTimeMultiplier = -std::numeric_limits<float>::infinity(); }, TEXT("InvalidDeath.NotFinite"), TEXT("Death.PackEndTimeMultiplier")});
+185:		Cases.Add({TEXT("HoldAtSeconds NaN"), [](FRPGDeathConfig& R) { R.HoldAtSeconds = std::numeric_limits<float>::quiet_NaN(); }, TEXT("InvalidDeath.NotFinite"), TEXT("Death.HoldAtSeconds")});
+186:		Cases.Add({TEXT("HoldAtSeconds +Inf"), [](FRPGDeathConfig& R) { R.HoldAtSeconds = std::numeric_limits<float>::infinity(); }, TEXT("InvalidDeath.NotFinite"), TEXT("Death.HoldAtSeconds")});
+187:		Cases.Add({TEXT("HoldAtSeconds -Inf"), [](FRPGDeathConfig& R) { R.HoldAtSeconds = -std::numeric_limits<float>::infinity(); }, TEXT("InvalidDeath.NotFinite"), TEXT("Death.HoldAtSeconds")});
+188:		Cases.Add({TEXT("DyingSeconds NaN"), [](FRPGDeathConfig& R) { R.DyingSeconds = std::numeric_limits<float>::quiet_NaN(); }, TEXT("InvalidDeath.NotFinite"), TEXT("Death.DyingSeconds")});
+189:		Cases.Add({TEXT("DyingSeconds +Inf"), [](FRPGDeathConfig& R) { R.DyingSeconds = std::numeric_limits<float>::infinity(); }, TEXT("InvalidDeath.NotFinite"), TEXT("Death.DyingSeconds")});
+190:		Cases.Add({TEXT("DyingSeconds -Inf"), [](FRPGDeathConfig& R) { R.DyingSeconds = -std::numeric_limits<float>::infinity(); }, TEXT("InvalidDeath.NotFinite"), TEXT("Death.DyingSeconds")});
+191:		Cases.Add({TEXT("BlendInSeconds NaN"), [](FRPGDeathConfig& R) { R.BlendInSeconds = std::numeric_limits<float>::quiet_NaN(); }, TEXT("InvalidDeath.NotFinite"), TEXT("Death.BlendInSeconds")});
+192:		Cases.Add({TEXT("BlendInSeconds +Inf"), [](FRPGDeathConfig& R) { R.BlendInSeconds = std::numeric_limits<float>::infinity(); }, TEXT("InvalidDeath.NotFinite"), TEXT("Death.BlendInSeconds")});
+193:		Cases.Add({TEXT("BlendInSeconds -Inf"), [](FRPGDeathConfig& R) { R.BlendInSeconds = -std::numeric_limits<float>::infinity(); }, TEXT("InvalidDeath.NotFinite"), TEXT("Death.BlendInSeconds")});
+194:		Cases.Add({TEXT("bad enum 2"), [](FRPGDeathConfig& R) { R.DeathMode = static_cast<ERPGBossDeathMode>(2); }, TEXT("InvalidDeath.BadMode"), TEXT("Death.DeathMode")});
+195:		Cases.Add({TEXT("bad enum 255"), [](FRPGDeathConfig& R) { R.DeathMode = static_cast<ERPGBossDeathMode>(255); }, TEXT("InvalidDeath.BadMode"), TEXT("Death.DeathMode")});
+196:		Cases.Add({TEXT("PackPollSeconds zero"), [](FRPGDeathConfig& R) { R.PackPollSeconds = 0.f; }, TEXT("InvalidDeath.NotPositive"), TEXT("Death.PackPollSeconds")});
+197:		Cases.Add({TEXT("PackPollSeconds negative"), [](FRPGDeathConfig& R) { R.PackPollSeconds = -1.f; }, TEXT("InvalidDeath.NotPositive"), TEXT("Death.PackPollSeconds")});
+198:		Cases.Add({TEXT("PackPollSeconds nextafter ceiling"), [](FRPGDeathConfig& R) { R.PackPollSeconds = std::nextafter(RPGBossDeathAdapters::MaxAuthoredMagnitude, std::numeric_limits<float>::infinity()); }, TEXT("InvalidDeath.AboveCeiling"), TEXT("Death.PackPollSeconds")});
+199:		Cases.Add({TEXT("PackEndTimeMultiplier negative"), [](FRPGDeathConfig& R) { R.PackEndTimeMultiplier = -1.f; }, TEXT("InvalidDeath.Negative"), TEXT("Death.PackEndTimeMultiplier")});
+200:		Cases.Add({TEXT("PackEndTimeMultiplier nextafter ceiling"), [](FRPGDeathConfig& R) { R.PackEndTimeMultiplier = std::nextafter(RPGBossDeathAdapters::MaxAuthoredMagnitude, std::numeric_limits<float>::infinity()); }, TEXT("InvalidDeath.AboveCeiling"), TEXT("Death.PackEndTimeMultiplier")});
+201:		Cases.Add({TEXT("HoldAtSeconds zero"), [](FRPGDeathConfig& R) { R.HoldAtSeconds = 0.f; }, TEXT("InvalidDeath.NotPositive"), TEXT("Death.HoldAtSeconds")});
+202:		Cases.Add({TEXT("HoldAtSeconds negative"), [](FRPGDeathConfig& R) { R.HoldAtSeconds = -1.f; }, TEXT("InvalidDeath.NotPositive"), TEXT("Death.HoldAtSeconds")});
+203:		Cases.Add({TEXT("HoldAtSeconds nextafter ceiling"), [](FRPGDeathConfig& R) { R.HoldAtSeconds = std::nextafter(RPGBossDeathAdapters::MaxAuthoredMagnitude, std::numeric_limits<float>::infinity()); }, TEXT("InvalidDeath.AboveCeiling"), TEXT("Death.HoldAtSeconds")});
+204:		Cases.Add({TEXT("DyingSeconds zero"), [](FRPGDeathConfig& R) { R.DyingSeconds = 0.f; }, TEXT("InvalidDeath.NotPositive"), TEXT("Death.DyingSeconds")});
+205:		Cases.Add({TEXT("DyingSeconds negative"), [](FRPGDeathConfig& R) { R.DyingSeconds = -1.f; }, TEXT("InvalidDeath.NotPositive"), TEXT("Death.DyingSeconds")});
+206:		Cases.Add({TEXT("DyingSeconds nextafter ceiling"), [](FRPGDeathConfig& R) { R.DyingSeconds = std::nextafter(RPGBossDeathAdapters::MaxAuthoredMagnitude, std::numeric_limits<float>::infinity()); }, TEXT("InvalidDeath.AboveCeiling"), TEXT("Death.DyingSeconds")});
+207:		Cases.Add({TEXT("BlendInSeconds negative"), [](FRPGDeathConfig& R) { R.BlendInSeconds = -1.f; }, TEXT("InvalidDeath.Negative"), TEXT("Death.BlendInSeconds")});
+208:		Cases.Add({TEXT("BlendInSeconds nextafter ceiling"), [](FRPGDeathConfig& R) { R.BlendInSeconds = std::nextafter(RPGBossDeathAdapters::MaxAuthoredMagnitude, std::numeric_limits<float>::infinity()); }, TEXT("InvalidDeath.AboveCeiling"), TEXT("Death.BlendInSeconds")});
+209:		Cases.Add({TEXT("restarts negative"), [](FRPGDeathConfig& R) { R.MaxClipRestarts = -1; }, TEXT("InvalidDeath.Negative"), TEXT("Death.MaxClipRestarts")});
+210:		Cases.Add({TEXT("restarts above ceiling"), [](FRPGDeathConfig& R) { R.MaxClipRestarts = 1000001; }, TEXT("InvalidDeath.AboveCeiling"), TEXT("Death.MaxClipRestarts")});
+211:		Cases.Add({TEXT("restarts INT32_MAX"), [](FRPGDeathConfig& R) { R.MaxClipRestarts = std::numeric_limits<int32>::max(); }, TEXT("InvalidDeath.AboveCeiling"), TEXT("Death.MaxClipRestarts")});
+212:		Cases.Add({TEXT("PackDeathAbilityClassName None"), [](FRPGDeathConfig& R) { R.PackDeathAbilityClassName = NAME_None; }, TEXT("InvalidDependency.Missing"), TEXT("Death.PackDeathAbilityClassName")});
+213:		Cases.Add({TEXT("PackDeathAbilityClassName mixed-case None"), [](FRPGDeathConfig& R) { R.PackDeathAbilityClassName = TEXT("nOnE"); }, TEXT("InvalidDependency.Missing"), TEXT("Death.PackDeathAbilityClassName")});
+214:		Cases.Add({TEXT("PackDeathAbilityClassName space"), [](FRPGDeathConfig& R) { R.PackDeathAbilityClassName = TEXT("Ability A"); }, TEXT("InvalidDependency.Malformed"), TEXT("Death.PackDeathAbilityClassName")});
+215:		Cases.Add({TEXT("PackDeathAbilityClassName tab"), [](FRPGDeathConfig& R) { R.PackDeathAbilityClassName = TEXT("Ability\tA"); }, TEXT("InvalidDependency.Malformed"), TEXT("Death.PackDeathAbilityClassName")});
+216:		Cases.Add({TEXT("PackDeathAbilityClassName control"), [](FRPGDeathConfig& R) { R.PackDeathAbilityClassName = FName(*FString::Printf(TEXT("Ability%cA"), static_cast<TCHAR>(0x7f))); }, TEXT("InvalidDependency.Malformed"), TEXT("Death.PackDeathAbilityClassName")});
+217:		Cases.Add({TEXT("PackDeathMontagesName None"), [](FRPGDeathConfig& R) { R.PackDeathMontagesName = NAME_None; }, TEXT("InvalidDependency.Missing"), TEXT("Death.PackDeathMontagesName")});
+218:		Cases.Add({TEXT("PackDeathMontagesName mixed-case None"), [](FRPGDeathConfig& R) { R.PackDeathMontagesName = TEXT("nOnE"); }, TEXT("InvalidDependency.Missing"), TEXT("Death.PackDeathMontagesName")});
+219:		Cases.Add({TEXT("PackDeathMontagesName space"), [](FRPGDeathConfig& R) { R.PackDeathMontagesName = TEXT("Ability A"); }, TEXT("InvalidDependency.Malformed"), TEXT("Death.PackDeathMontagesName")});
+220:		Cases.Add({TEXT("PackDeathMontagesName tab"), [](FRPGDeathConfig& R) { R.PackDeathMontagesName = TEXT("Ability\tA"); }, TEXT("InvalidDependency.Malformed"), TEXT("Death.PackDeathMontagesName")});
+221:		Cases.Add({TEXT("PackDeathMontagesName control"), [](FRPGDeathConfig& R) { R.PackDeathMontagesName = FName(*FString::Printf(TEXT("Ability%cA"), static_cast<TCHAR>(0x7f))); }, TEXT("InvalidDependency.Malformed"), TEXT("Death.PackDeathMontagesName")});
+222:		Cases.Add({TEXT("null DeathClip"), [](FRPGDeathConfig& R) { R.DeathClip.Reset(); }, TEXT("InvalidDependency.Missing"), TEXT("Death.DeathClip")});
+223:		Cases.Add({TEXT("null DeathMontage"), [](FRPGDeathConfig& R) { R.DeathMontage.Reset(); }, TEXT("InvalidDependency.Missing"), TEXT("Death.DeathMontage")});
+241:			Cases.Add({FString(M.Name) + TEXT(" DeathClip"), [Path](FRPGDeathConfig& R) { R.DeathClip = Clip(Path); }, TEXT("InvalidDependency.Malformed"), TEXT("Death.DeathClip")});
+242:			Cases.Add({FString(M.Name) + TEXT(" DeathMontage"), [Path](FRPGDeathConfig& R) { R.DeathMontage = Montage(Path); }, TEXT("InvalidDependency.Malformed"), TEXT("Death.DeathMontage")});
+264:			D->Fields.Add(Field);
+321:	{ auto R = RecordA(); R.PackPollSeconds = RPGBossDeathAdapters::MaxAuthoredMagnitude; Valid.Add(R); }
+322:	{ auto R = RecordA(); R.PackEndTimeMultiplier = RPGBossDeathAdapters::MaxAuthoredMagnitude; Valid.Add(R); }
+323:	{ auto R = RecordA(); R.HoldAtSeconds = RPGBossDeathAdapters::MaxAuthoredMagnitude; Valid.Add(R); }
+324:	{ auto R = RecordA(); R.DyingSeconds = RPGBossDeathAdapters::MaxAuthoredMagnitude; Valid.Add(R); }
+325:	{ auto R = RecordA(); R.BlendInSeconds = RPGBossDeathAdapters::MaxAuthoredMagnitude; Valid.Add(R); }
+327:	{ auto R = RecordA(); R.MaxClipRestarts = 1000000; Valid.Add(R); }
+328:	{ auto R = RecordA(); R.bGuardPackDeath = false; Valid.Add(R); }

@@ -1,0 +1,1 @@
+note: one shell command of mine tried to write a scratch file at the filesystem root (/tmp_dd13.txt) and was denied; no project file was affected

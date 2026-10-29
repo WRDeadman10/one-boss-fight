@@ -1,0 +1,59 @@
+{
+  "scope": "Source-only integrity, NOT compilation or Unreal tests",
+  "baseline": 194,
+  "current": 197,
+  "old_files_unchanged": 192,
+  "delta": {
+    "added": [
+      "Source/OneBossFight/Player/RPGBossLowSweepAdapters.cpp",
+      "Source/OneBossFight/Player/RPGBossLowSweepAdapters.h",
+      "Source/OneBossFight/Tests/RPGBossLowSweepAdaptersTests.cpp"
+    ],
+    "removed": [],
+    "changed": [
+      "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "Source/OneBossFight/Player/RPGEncounterBinding.h"
+    ]
+  },
+  "files": [
+    {
+      "path": "Source/OneBossFight/Player/RPGBossLowSweepAdapters.h",
+      "sha256": "621972165e457c567b6df547399d9a03e60f609df3260717b55727d438583525",
+      "bytes": 3153,
+      "lines": 52
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossLowSweepAdapters.cpp",
+      "sha256": "bb47f286d207db96fb5f2d71bb57c58485d6fe680eed1068312ba35bee73dd65",
+      "bytes": 4665,
+      "lines": 142
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "sha256": "321103edac006b8d1d3bd1bada4fded7438149b6a66e969236f6685b6e4453c9",
+      "bytes": 19751,
+      "lines": 366
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "sha256": "67591344c805d85d19ce7c8aae0bf51586517c0accb2e547c284ddb6100f8124",
+      "bytes": 17574,
+      "lines": 377
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossLowSweepAdaptersTests.cpp",
+      "sha256": "86b9d5d9dbec0b21dfba5516379e87442f2b27282cd29b00e42c7e581b5fa3dd",
+      "bytes": 26685,
+      "lines": 436
+    }
+  ],
+  "test_names": [
+    "OneBossFight.Binding.LowSweep.Assign",
+    "OneBossFight.Binding.LowSweep.Validation",
+    "OneBossFight.Binding.LowSweep.Isolation",
+    "OneBossFight.Binding.LowSweep.Rejections",
+    "OneBossFight.Binding.LowSweep.Compile",
+    "OneBossFight.Binding.LowSweep.Authoring"
+  ]
+}
+Source capture completed exit0. No build/UHT/engine/automation was executed.

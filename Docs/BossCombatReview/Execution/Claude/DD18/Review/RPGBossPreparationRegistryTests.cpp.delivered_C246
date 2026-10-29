@@ -1,0 +1,969 @@
+// Copyright One Boss Fight. All Rights Reserved.
+
+#include "Misc/AutomationTest.h"
+
+#if WITH_DEV_AUTOMATION_TESTS
+
+#include "Animation/AnimSequence.h"
+#include "Animation/AnimSequenceBase.h"
+#include "Animation/Skeleton.h"
+#include "Async/Async.h"
+#include "Components/ActorComponent.h"
+#include "Components/SceneComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Engine/Engine.h"
+#include "Engine/GameInstance.h"
+#include "Engine/SkeletalMesh.h"
+#include "Engine/World.h"
+#include "GameFramework/Actor.h"
+#include "GameFramework/Character.h"
+#include "HAL/IConsoleManager.h"
+#include "Player/RPGBossDormantWake.h"
+#include "Player/RPGBossEncounter.h"
+#include "Player/RPGBossHydrationPreflight.h"
+#include "Player/RPGBossHydrationPreparation.h"
+#include "Player/RPGBossPhases.h"
+#include "Player/RPGBossPosture.h"
+#include "Player/RPGBossPreparationRegistry.h"
+#include "Player/RPGBossStagger.h"
+#include "Player/RPGBossWorldInputCompiler.h"
+#include "Player/RPGCombatCatalog.h"
+#include "Player/RPGEncounterBinding.h"
+#include "UObject/Package.h"
+#include "UObject/StrongObjectPtr.h"
+#include "UObject/UObjectHash.h"
+
+// DD18 part C (preparation registry): FRPGBossPreparationRegistry::TryPrepareAndReserve driven in a REAL game-instance world (the engine's own standalone lifecycle, see RPGBossWorldPreparationTests.cpp), real pack assets, native
+// ACharacter actors finished before any call, transient production-compatible definitions and real ARPGEncounterBinding actors. SEVERAL disjoint encounters are built in one world. The setup is copied from the DD14, DD16,
+// DD17 and world preparation files into this file (no helper promoted, no earlier file edited). No Legacy() epoch, no cvar, no asset change, no mock, no author callback.
+// What it can establish, for these exact assets in this editor binary: two disjoint encounters coexist (same slot strings, 20 components); a duplicate encounter GUID with disjoint actors, a target-only actor overlap and a boss
+// actor overlap are refused BEFORE any allocation; a failed late preparation (a real name collision) leaves the existing reservations and their components exactly as they were and publishes nothing, after which the
+// same encounter reserves once the fixture-owned blocker is removed; a clean release frees the GUID and the actors, re-admission gets a NEW serial, and a consumed, repeated, forged-serial (same registry and GUID),
+// forged-GUID or wrong-registry token can never release the replacement; a lease token destroyed first, a registry destroyed first (tokens invalidated), actors destroyed first, the world torn down first and the
+// off-thread refusals all behave as documented without a crash.
+// What it does NOT establish: quarantine of a reservation whose cleanup is not clean (producing it needs a registered or begun component, which would begin the engine's registration path; the production code fails
+// closed and the test-owned isolated registration delta is NOT part of this package: source-checked only), epoch, game-instance or binding drift and same-registry re-entry (not provokable without an author callback,
+// cvar or injection framework: source-checked only), destroying a held token or the registry off the game thread (an unsafe worker-destructor experiment, deliberately not run), a cold load, the real boss definition,
+// registration, BeginPlay, a published combat context, Ready, activation or any wiring. A reservation is an incomplete unregistered subset, per registry: not a global uniqueness claim.
+
+namespace
+{
+namespace PreparationRegistryTests
+{
+	using FSelection = RPGBossWorldInputCompiler::FSelection;
+	using FRelease = FRPGReleaseReport::EOutcome;
+
+	const TCHAR* const PlayerClassPath = TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/BP_CombatPlayerCharacter.BP_CombatPlayerCharacter_C");
+	const TCHAR* const BossClassPath = TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C");
+
+	struct FMemberValues
+	{
+		FString Id;
+		FString Look;
+		const TCHAR* Phase;
+		float Threshold;
+		float Health;
+		float Posture;
+		float StaggerSeconds;
+	};
+
+	FString ManifestHash() { return FString::ChrN(64, TEXT('b')); } // a fixture hash, not a real manifest hash
+
+	/** A real game-instance world started the engine's way, with game-thread cleanup. */
+	struct FGameWorld
+	{
+		UWorld* World = nullptr;
+		TStrongObjectPtr<UGameInstance> GameInstance;
+
+		FGameWorld()
+		{
+			if (!GEngine)
+			{
+				return;
+			}
+			GameInstance.Reset(NewObject<UGameInstance>(GEngine));
+			if (!GameInstance.IsValid())
+			{
+				return;
+			}
+			GameInstance->InitializeStandalone();
+			World = GameInstance->GetWorld();
+			if (World)
+			{
+				World->InitializeActorsForPlay(FURL());
+			}
+		}
+
+		~FGameWorld()
+		{
+			if (GameInstance.IsValid())
+			{
+				GameInstance->Shutdown();
+			}
+			if (World)
+			{
+				GEngine->DestroyWorldContext(World);
+				World->DestroyWorld(/*bInformEngineOfWorld=*/false);
+			}
+		}
+
+		FGameWorld(const FGameWorld&) = delete;
+		FGameWorld& operator=(const FGameWorld&) = delete;
+
+		ACharacter* SpawnCharacter(USkeletalMesh* Mesh, const FVector& Location) const
+		{
+			if (!World)
+			{
+				return nullptr;
+			}
+			ACharacter* Character = World->SpawnActorDeferred<ACharacter>(ACharacter::StaticClass(), FTransform(Location));
+			if (!Character)
+			{
+				return nullptr;
+			}
+			if (Mesh && Character->GetMesh())
+			{
+				Character->GetMesh()->SetSkeletalMeshAsset(Mesh);
+			}
+			Character->FinishSpawning(FTransform(Location));
+			return Character;
+		}
+	};
+
+	TArray<FString> AllRequiredPaths(FName PhaseId)
+	{
+		const FString Id = PhaseId.ToString();
+		return TArray<FString>{
+			TEXT("StaggerPolicy.StaggerSeconds"), TEXT("StaggerPolicy.FreezeAtPosition"), TEXT("StaggerPolicy.CriticalMultiplier"), TEXT("StaggerPolicy.RiposteRange"), TEXT("StaggerPolicy.RiposteConeDegrees"),
+			TEXT("StaggerPolicy.RiposteFacingDegrees"), TEXT("StaggerPolicy.RiposteArmSeconds"), TEXT("StaggerPolicy.RipostePlayerStartGap"), TEXT("StaggerPolicy.RiposteAlignSeconds"), TEXT("StaggerPolicy.RiposteImpactSeconds"),
+			TEXT("StaggerPolicy.RiposteBaseDamage"), TEXT("StaggerPolicy.CooldownSeconds"), TEXT("StaggerPolicy.GetUpRate"), TEXT("StaggerPolicy.bHoldPostureAtZero"),
+			TEXT("StaggerProfile.bUseClips"), TEXT("StaggerProfile.bUseRiposteClips"), TEXT("StaggerProfile.bCriticalOnEveryHit"), TEXT("StaggerProfile.HitStunAbilityClassName"), TEXT("StaggerProfile.FallMontage"),
+			TEXT("StaggerProfile.GetUpMontage"), TEXT("StaggerProfile.FallClip"), TEXT("StaggerProfile.DownClip"), TEXT("StaggerProfile.RipostePlayerClip"), TEXT("StaggerProfile.RiposteBossClip"), TEXT("StaggerProfile.ImmunityEffect"),
+			FString::Printf(TEXT("Phases[%s].EntryHealthFraction"), *Id), FString::Printf(TEXT("Phases[%s].SpeedMultiplier"), *Id), FString::Printf(TEXT("Phases[%s].RateMultiplier"), *Id), FString::Printf(TEXT("Phases[%s].AttackMultiplier"), *Id),
+			TEXT("PhaseFlow.TransitionSeconds"), TEXT("PhaseFlow.bUseRoarClip"), TEXT("PhaseFlow.bPausePostureInTransition"), TEXT("PhaseFlow.bLockLeapUntilPhaseTwo"), TEXT("PhaseFlow.AttackAbilityPrefix"), TEXT("PhaseFlow.LeapAbilityTag"),
+			TEXT("Fireball.bFireballEnabled"), TEXT("Fireball.FireballAbility"), TEXT("Fireball.FireballCooldown"), TEXT("Fireball.FireballMinRange"), TEXT("Fireball.FireballMaxRange"),
+			TEXT("PhaseDependencies.RoarClip"), TEXT("PhaseDependencies.TransitionMontage"), TEXT("PhaseDependencies.ImmunityEffect"),
+			TEXT("Stats.MaxHealth"), TEXT("EncounterPolicy.GateRadius"), TEXT("EncounterPolicy.bResetOnPlayerRespawn"),
+			TEXT("DormantWake.DormantClip"), TEXT("DormantWake.WakeClip"),
+			TEXT("Stats.MaxPosture"), TEXT("Stats.PostureRegenDelay"), TEXT("Stats.PostureRegenRate")};
+	}
+
+	FRPGParityField MakeProductionField(const FString& Path)
+	{
+		FRPGParityField Field;
+		Field.FieldPath = Path;
+		Field.Type = TEXT("fixture");
+		Field.Value = TEXT("production fixture row: membership only, not derived from an asset");
+		Field.SourcePath = TEXT("DD18 registry fixture, not live provenance");
+		Field.SourceSHA256 = FString::ChrN(64, TEXT('c'));
+		Field.SourceSite = TEXT("fixture");
+		Field.Origin = TEXT("harness");
+		Field.Precedence = TEXT("fixture");
+		Field.Destination = TEXT("fixture");
+		Field.FirstRead = TEXT("not read");
+		Field.Witness = TEXT("none: structural membership only");
+		return Field;
+	}
+
+	TArray<FSoftObjectPath> BossAnimationPaths()
+	{
+		FRPGDormantWakeConfig Wake;
+		FRPGPhaseDependencyConfig Dependencies;
+		FRPGStaggerProfileConfig Profile;
+		return TArray<FSoftObjectPath>{Wake.DormantClip.ToSoftObjectPath(), Wake.WakeClip.ToSoftObjectPath(), Dependencies.RoarClip.ToSoftObjectPath(), Dependencies.TransitionMontage.ToSoftObjectPath(),
+			Profile.FallMontage.ToSoftObjectPath(), Profile.GetUpMontage.ToSoftObjectPath(), Profile.FallClip.ToSoftObjectPath(), Profile.DownClip.ToSoftObjectPath(), Profile.RiposteBossClip.ToSoftObjectPath()};
+	}
+
+	TArray<FSoftObjectPath> TargetAnimationPaths()
+	{
+		FRPGStaggerProfileConfig Profile;
+		return TArray<FSoftObjectPath>{Profile.RipostePlayerClip.ToSoftObjectPath()};
+	}
+
+	void FillDefinition(URPGBossDefinition& Definition, const FMemberValues& Values, USkeleton* Skeleton, const TArray<FSoftObjectPath>& AnimationPaths)
+	{
+		Definition.Schema = 1;
+		Definition.DefinitionId = FName(*Values.Id);
+		Definition.PresentationId = FName(*Values.Look);
+		Definition.Stats.MaxHealth = Values.Health;
+		Definition.Stats.MaxPosture = Values.Posture;
+		Definition.Stats.PostureRegenDelay = 4.25f;
+		Definition.Stats.PostureRegenRate = 9.75f;
+		Definition.EncounterPolicy = FRPGEncounterPolicyConfig();
+		Definition.StaggerPolicy = FRPGStaggerPolicyConfig();
+		Definition.StaggerPolicy.StaggerSeconds = Values.StaggerSeconds;
+		Definition.PhaseFlow = FRPGPhaseFlowConfig();
+		Definition.Fireball = FRPGFireballConfig();
+		Definition.PhaseDependencies = FRPGPhaseDependencyConfig();
+		Definition.StaggerProfile = FRPGStaggerProfileConfig();
+		Definition.DormantWake = FRPGDormantWakeConfig();
+		FRPGPhaseConfig Phase;
+		Phase.PhaseId = FName(Values.Phase);
+		Phase.EntryHealthFraction = Values.Threshold;
+		Phase.SpeedMultiplier = 1.5f;
+		Phase.RateMultiplier = 1.75f;
+		Phase.AttackMultiplier = 2.f;
+		Definition.Phases.Reset();
+		Definition.Phases.Add(Phase);
+		Definition.Skeleton = TSoftObjectPtr<USkeleton>(Skeleton);
+		Definition.Animations.Reset();
+		for (const FSoftObjectPath& Path : AnimationPaths)
+		{
+			Definition.Animations.Add(TSoftObjectPtr<UAnimSequenceBase>(Path));
+		}
+		Definition.Fields.Reset();
+		for (const FString& Path : AllRequiredPaths(FName(Values.Phase)))
+		{
+			Definition.Fields.Add(MakeProductionField(Path));
+		}
+	}
+
+	FString Describe(const UObject* Object)
+	{
+		return Object ? FString::Printf(TEXT("%s (%s)"), *Object->GetPathName(), *Object->GetClass()->GetName()) : FString(TEXT("none"));
+	}
+
+	FString JoinErrors(const TArray<FString>& Errors) { return FString::Join(Errors, TEXT(" | ")); }
+
+	bool AnyErrorHasAll(const TArray<FString>& Errors, const TCHAR* Token, const TCHAR* WhereText, const TCHAR* FurtherText)
+	{
+		return Errors.ContainsByPredicate([Token, WhereText, FurtherText](const FString& E) { return E.Contains(Token) && E.Contains(WhereText) && E.Contains(FurtherText); });
+	}
+
+	struct FExpectedComponent
+	{
+		UClass* Class;
+		const TCHAR* Name;
+	};
+
+	TArray<FExpectedComponent> ExpectedComponents()
+	{
+		return TArray<FExpectedComponent>{{URPGBossStagger::StaticClass(), TEXT("RPGBossStagger")}, {URPGBossPhases::StaticClass(), TEXT("RPGBossPhases")}, {URPGBossEncounter::StaticClass(), TEXT("RPGBossEncounter")},
+			{URPGBossDormantWake::StaticClass(), TEXT("RPGBossDormantWake")}, {URPGBossPosture::StaticClass(), TEXT("RPGBossPosture")}};
+	}
+
+	bool NoManagedConsumer(const AActor* Actor)
+	{
+		for (UClass* Class : RPGBossHydrationPreflight::ManagedCoreConsumerClasses())
+		{
+			if (Actor->FindComponentByClass(Class))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	struct FActorState
+	{
+		TArray<const UActorComponent*> Components;
+		TArray<int32> Flags;
+		bool bBegun = false;
+	};
+
+	FActorState CaptureActor(const AActor* Actor)
+	{
+		FActorState State;
+		State.bBegun = Actor->HasActorBegunPlay();
+		for (const UActorComponent* Component : Actor->GetComponents())
+		{
+			State.Components.Add(Component);
+		}
+		State.Components.Sort([](const UActorComponent& A, const UActorComponent& B) { return &A < &B; }); // a pointer array is sorted through dereferenced references
+		for (const UActorComponent* Component : State.Components)
+		{
+			State.Flags.Add(Component->IsRegistered() ? 1 : 0);
+			State.Flags.Add(Component->HasBegunPlay() ? 1 : 0);
+		}
+		return State;
+	}
+
+	/** One encounter: three native actors, a marker on each, three transient definitions and a real binding with explicit participants. The slot names are the SAME for every encounter on purpose. */
+	struct FEncounterSet
+	{
+		ACharacter* BossOne = nullptr;
+		ACharacter* BossTwo = nullptr;
+		ACharacter* Target = nullptr;
+		USceneComponent* Markers[3] = {nullptr, nullptr, nullptr};
+		TStrongObjectPtr<URPGBossDefinition> Definitions[3];
+		ARPGEncounterBinding* Binding = nullptr;
+		FGuid Encounter;
+
+		TArray<AActor*> Actors() const { return TArray<AActor*>{BossOne, BossTwo, Target}; }
+	};
+
+	struct FMultiFixture
+	{
+		FGameWorld Scope;
+		UClass* PlayerClass = nullptr;
+		UClass* BossClass = nullptr;
+		USkeletalMesh* PlayerMesh = nullptr;
+		USkeletalMesh* BossMesh = nullptr;
+		USkeleton* PlayerSkeleton = nullptr;
+		USkeleton* BossSkeleton = nullptr;
+		TArray<FEncounterSet> Sets;
+
+		bool Load(FAutomationTestBase& Test)
+		{
+			if (!Scope.World)
+			{
+				Test.AddError(TEXT("unsupported precondition: the game-instance world could not be created"));
+				return false;
+			}
+			FString Latched;
+			bool bDefaultLatch = true;
+			const TCHAR* const CvarNames[4] = {TEXT("rpg.CatalogSource"), TEXT("rpg.CatalogPath"), TEXT("rpg.CatalogTestFourth"), TEXT("rpg.CatalogTestInvalid")};
+			const TCHAR* const CvarDefaults[4] = {TEXT("auto"), TEXT(""), TEXT("0"), TEXT("0")};
+			for (int32 CvarIndex = 0; CvarIndex < 4; ++CvarIndex)
+			{
+				const IConsoleVariable* Variable = IConsoleManager::Get().FindConsoleVariable(CvarNames[CvarIndex]);
+				const FString Value = Variable ? Variable->GetString() : FString(TEXT("(not registered)"));
+				Latched += FString::Printf(TEXT("%s='%s' "), CvarNames[CvarIndex], *Value);
+				bDefaultLatch = bDefaultLatch && (!Variable || Value.Equals(CvarDefaults[CvarIndex], ESearchCase::IgnoreCase));
+			}
+			Test.AddInfo(FString::Printf(TEXT("startup cvars at the real game instance: %s"), *Latched));
+			if (!bDefaultLatch)
+			{
+				Test.AddError(FString::Printf(TEXT("unsupported precondition: a catalog startup cvar is not at its default (%s); this fixture needs the default latch and never changes a cvar"), *Latched));
+				return false;
+			}
+			PlayerClass = LoadClass<ACharacter>(nullptr, PlayerClassPath);
+			BossClass = LoadClass<ACharacter>(nullptr, BossClassPath);
+			if (!PlayerClass || !BossClass)
+			{
+				Test.AddError(FString::Printf(TEXT("unsupported precondition: a pack character class did not load (player %s, boss %s)"), *Describe(PlayerClass), *Describe(BossClass)));
+				return false;
+			}
+			const ACharacter* PlayerDefault = Cast<ACharacter>(PlayerClass->GetDefaultObject());
+			const ACharacter* BossDefault = Cast<ACharacter>(BossClass->GetDefaultObject());
+			PlayerMesh = PlayerDefault && PlayerDefault->GetMesh() ? PlayerDefault->GetMesh()->GetSkeletalMeshAsset() : nullptr;
+			BossMesh = BossDefault && BossDefault->GetMesh() ? BossDefault->GetMesh()->GetSkeletalMeshAsset() : nullptr;
+			PlayerSkeleton = PlayerMesh ? PlayerMesh->GetSkeleton() : nullptr;
+			BossSkeleton = BossMesh ? BossMesh->GetSkeleton() : nullptr;
+			Test.AddInfo(FString::Printf(TEXT("player class %s | default object mesh %s | skeleton %s"), *Describe(PlayerClass), *Describe(PlayerMesh), *Describe(PlayerSkeleton)));
+			Test.AddInfo(FString::Printf(TEXT("boss class %s | default object mesh %s | skeleton %s"), *Describe(BossClass), *Describe(BossMesh), *Describe(BossSkeleton)));
+			if (!PlayerMesh || !BossMesh || !PlayerSkeleton || !BossSkeleton)
+			{
+				Test.AddError(TEXT("unsupported precondition: a pack character default object holds no skeletal mesh or the mesh has no skeleton"));
+				return false;
+			}
+			Sets.Reserve(12); // the pointers AddSet returns stay valid
+			return true;
+		}
+
+		TArray<FRPGPlacedParticipantBinding> MakeParticipants(const FEncounterSet& Set) const
+		{
+			TArray<FRPGPlacedParticipantBinding> Participants;
+			FRPGPlacedParticipantBinding One;
+			One.Slot = TEXT("BossOne");
+			One.TargetSlot = TEXT("Player");
+			One.Actor = Set.BossOne;
+			One.Definition = Set.Definitions[0].Get();
+			Participants.Add(One);
+			FRPGPlacedParticipantBinding Two;
+			Two.Slot = TEXT("BossTwo");
+			Two.TargetSlot = TEXT("Player");
+			Two.Actor = Set.BossTwo;
+			Two.Definition = Set.Definitions[1].Get();
+			Participants.Add(Two);
+			FRPGPlacedParticipantBinding Target;
+			Target.Slot = TEXT("Player");
+			Target.TargetSlot = TEXT("BossOne");
+			Target.Actor = Set.Target;
+			Target.Definition = Set.Definitions[2].Get();
+			Participants.Add(Target);
+			return Participants;
+		}
+
+		ARPGEncounterBinding* SpawnBinding(const TArray<FRPGPlacedParticipantBinding>& Participants, const FGuid& Guid) const
+		{
+			ARPGEncounterBinding* Created = Scope.World ? Scope.World->SpawnActor<ARPGEncounterBinding>() : nullptr;
+			if (Created)
+			{
+				Created->EncounterInstance = Guid;
+				Created->Participants = Participants;
+			}
+			return Created;
+		}
+
+		/** A new disjoint encounter (new actors, markers, definitions, binding and GUID). */
+		FEncounterSet* AddSet(FAutomationTestBase& Test, int32 Tag)
+		{
+			FEncounterSet& Set = Sets.AddDefaulted_GetRef();
+			const float Offset = 3000.f * static_cast<float>(Tag + 1);
+			Set.BossOne = Scope.SpawnCharacter(BossMesh, FVector(Offset, 0.f, 0.f));
+			Set.BossTwo = Scope.SpawnCharacter(BossMesh, FVector(Offset + 500.f, 0.f, 0.f));
+			Set.Target = Scope.SpawnCharacter(PlayerMesh, FVector(Offset + 1000.f, 0.f, 0.f));
+			if (!Set.BossOne || !Set.BossTwo || !Set.Target)
+			{
+				Test.AddError(TEXT("unsupported precondition: the native character actors of an encounter could not be spawned"));
+				Sets.Pop();
+				return nullptr;
+			}
+			const TArray<AActor*> Actors = Set.Actors();
+			for (int32 Index = 0; Index < 3; ++Index)
+			{
+				Set.Markers[Index] = NewObject<USceneComponent>(Actors[Index], TEXT("UnrelatedMarker"));
+				Set.Definitions[Index].Reset(NewObject<URPGBossDefinition>());
+				if (!Set.Markers[Index] || !Set.Definitions[Index].IsValid())
+				{
+					Test.AddError(TEXT("unsupported precondition: a marker component or a transient definition could not be created"));
+					Sets.Pop();
+					return nullptr;
+				}
+			}
+			FillDefinition(*Set.Definitions[0], FMemberValues{FString::Printf(TEXT("RegBossOne%d"), Tag), FString::Printf(TEXT("RegBossOneLook%d"), Tag), TEXT("PhaseTwo"), 0.35f, 3500.f, 73.5f, 3.25f}, BossSkeleton, BossAnimationPaths());
+			FillDefinition(*Set.Definitions[1], FMemberValues{FString::Printf(TEXT("RegBossTwo%d"), Tag), FString::Printf(TEXT("RegBossTwoLook%d"), Tag), TEXT("PhaseAlt"), 0.5f, 4100.f, 88.f, 4.5f}, BossSkeleton, BossAnimationPaths());
+			FillDefinition(*Set.Definitions[2], FMemberValues{FString::Printf(TEXT("RegTarget%d"), Tag), FString::Printf(TEXT("RegTargetLook%d"), Tag), TEXT("PhaseTwo"), 0.35f, 3500.f, 73.5f, 3.25f}, PlayerSkeleton, TargetAnimationPaths());
+			Set.Encounter = FGuid::NewGuid();
+			Set.Binding = SpawnBinding(MakeParticipants(Set), Set.Encounter);
+			if (!Set.Binding)
+			{
+				Test.AddError(TEXT("unsupported precondition: an encounter binding actor could not be spawned"));
+				Sets.Pop();
+				return nullptr;
+			}
+			return &Set;
+		}
+
+		TArray<FSelection> MakeSelections() const
+		{
+			TArray<FSelection> Selections;
+			Selections.Add(FSelection{TEXT("BossOne"), ERPGPreflightRole::BossCore, TEXT("PhaseTwo")});
+			Selections.Add(FSelection{TEXT("BossTwo"), ERPGPreflightRole::BossCore, TEXT("PhaseAlt")});
+			Selections.Add(FSelection{TEXT("Player"), ERPGPreflightRole::TargetOnly, NAME_None});
+			return Selections;
+		}
+
+		/** Every actor of every encounter built so far, plus the combat context counts. */
+		TArray<FActorState> CaptureAll(int32& OutBound, int32& OutReady) const
+		{
+			TArray<FActorState> States;
+			for (const FEncounterSet& Set : Sets)
+			{
+				for (const AActor* Actor : Set.Actors())
+				{
+					States.Add(CaptureActor(Actor));
+				}
+			}
+			OutBound = -1;
+			OutReady = -1;
+			if (const URPGCombatContextSubsystem* Context = Scope.World->GetSubsystem<URPGCombatContextSubsystem>())
+			{
+				OutBound = Context->GetBoundCount();
+				OutReady = Context->GetReadyCount();
+			}
+			return States;
+		}
+	};
+
+	bool SameStates(const TArray<FActorState>& A, const TArray<FActorState>& B, int32 BoundA, int32 ReadyA, int32 BoundB, int32 ReadyB)
+	{
+		if (A.Num() != B.Num() || BoundA != BoundB || ReadyA != ReadyB)
+		{
+			return false;
+		}
+		for (int32 Index = 0; Index < A.Num(); ++Index)
+		{
+			if (A[Index].bBegun != B[Index].bBegun || A[Index].Components != B[Index].Components || A[Index].Flags != B[Index].Flags)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/** The actors of every encounter built so far and the combat context are exactly as in the given capture (the new capture is taken inside, so no argument depends on the evaluation order of another). */
+	bool Matches(const FMultiFixture& F, const TArray<FActorState>& States, int32 Bound, int32 Ready)
+	{
+		int32 NowBound = -1;
+		int32 NowReady = -1;
+		const TArray<FActorState> Now = F.CaptureAll(NowBound, NowReady);
+		return SameStates(States, Now, Bound, Ready, NowBound, NowReady);
+	}
+
+	/** The five consumers of both bosses, none on the target, all unregistered, uninitialized, not begun and unticked. */
+	bool IsFullyPrepared(const FEncounterSet& Set)
+	{
+		for (const AActor* Boss : {static_cast<const AActor*>(Set.BossOne), static_cast<const AActor*>(Set.BossTwo)})
+		{
+			for (const FExpectedComponent& Wanted : ExpectedComponents())
+			{
+				const UActorComponent* Component = Boss->FindComponentByClass(Wanted.Class);
+				if (!Component || Component->GetFName() != FName(Wanted.Name) || Component->GetOwner() != Boss || Component->IsRegistered() || Component->HasBegunPlay() || Component->HasBeenInitialized()
+					|| Component->PrimaryComponentTick.IsTickFunctionRegistered())
+				{
+					return false;
+				}
+			}
+		}
+		return NoManagedConsumer(Set.Target);
+	}
+
+	bool HasNoConsumers(const FEncounterSet& Set) { return NoManagedConsumer(Set.BossOne) && NoManagedConsumer(Set.BossTwo) && NoManagedConsumer(Set.Target); }
+
+	/** No object, not even a destroyed one, carries a planned name under any actor of the set: nothing was allocated. */
+	bool NothingAllocated(const FEncounterSet& Set)
+	{
+		for (const AActor* Actor : Set.Actors())
+		{
+			for (const FExpectedComponent& Wanted : ExpectedComponents())
+			{
+				if (StaticFindObjectFast(UObject::StaticClass(), const_cast<AActor*>(Actor), FName(Wanted.Name)) != nullptr)
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	/** The markers are still the same live unregistered objects. */
+	bool MarkersIntact(const FEncounterSet& Set)
+	{
+		return Set.Markers[0] && Set.Markers[1] && Set.Markers[2] && IsValid(Set.Markers[0]) && IsValid(Set.Markers[1]) && IsValid(Set.Markers[2]) && !Set.Markers[0]->IsRegistered() && !Set.Markers[1]->IsRegistered()
+			&& !Set.Markers[2]->IsRegistered();
+	}
+
+	/** A refused reservation: not succeeded, no held token, the failure family, ONE error with the token and where text, nothing changed anywhere. */
+	bool ExpectRefused(FAutomationTestBase& Test, const FMultiFixture& F, FRPGBossPreparationRegistry& Registry, const TCHAR* Label, const ARPGEncounterBinding* Binding, EReservationFailure Failure, const TCHAR* Token, const TCHAR* Where, const FString* HashOverride = nullptr)
+	{
+		int32 BoundBefore = -1;
+		int32 ReadyBefore = -1;
+		const TArray<FActorState> Before = F.CaptureAll(BoundBefore, ReadyBefore);
+		const int32 ActiveBefore = Registry.GetActiveReservationCount();
+		const TArray<FGuid> ReservedBefore = Registry.GetReservedEncounters();
+		const FRPGReservationResult Result = Registry.TryPrepareAndReserve(Binding, F.MakeSelections(), HashOverride ? *HashOverride : ManifestHash());
+		bool bOk = Test.TestFalse(FString::Printf(TEXT("%s: refused, no held token"), Label), Result.Succeeded() || Result.Token.IsHeld());
+		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: the failure family is the expected one"), Label), Result.Failure == Failure);
+		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: ONE error carries %s and %s (got: %s)"), Label, Token, Where, *JoinErrors(Result.Errors)), AnyErrorHasAll(Result.Errors, Token, Where, TEXT("")) && Result.Errors.Num() == 1);
+		int32 BoundAfter = -1;
+		int32 ReadyAfter = -1;
+		const TArray<FActorState> After = F.CaptureAll(BoundAfter, ReadyAfter);
+		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: every actor of every encounter, every component set and the combat context are exactly as before"), Label), SameStates(Before, After, BoundBefore, ReadyBefore, BoundAfter, ReadyAfter));
+		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: the registry is unchanged: same active count and same reserved encounters in the same order"), Label), Registry.GetActiveReservationCount() == ActiveBefore && Registry.GetReservedEncounters() == ReservedBefore);
+		return bOk;
+	}
+}
+}
+
+using namespace PreparationRegistryTests;
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGPreparationRegistryAdmissionTest, "OneBossFight.Binding.PreparationRegistry.AdmissionAndConflicts",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGPreparationRegistryAdmissionTest::RunTest(const FString& Parameters)
+{
+	FMultiFixture F;
+	if (!F.Load(*this))
+	{
+		return false;
+	}
+	FEncounterSet* A = F.AddSet(*this, 0);
+	FEncounterSet* B = F.AddSet(*this, 1);
+	if (!A || !B)
+	{
+		return false;
+	}
+	FRPGBossPreparationRegistry Registry(F.Scope.World);
+	TestTrue(TEXT("a new registry is open, empty and has its own identity"), !Registry.IsAdmissionClosed() && Registry.GetActiveReservationCount() == 0 && Registry.GetQuarantinedCount() == 0 && Registry.GetRegistryId().IsValid());
+
+	// Two disjoint encounters coexist; the slot strings are identical across them (legal); each batch is two bosses and a target.
+	FRPGReservationResult ResultA = Registry.TryPrepareAndReserve(A->Binding, F.MakeSelections(), ManifestHash());
+	if (!TestTrue(FString::Printf(TEXT("encounter A is prepared and reserved (errors: %s)"), *JoinErrors(ResultA.Errors)), ResultA.Succeeded()))
+	{
+		return false;
+	}
+	FRPGReservationResult ResultB = Registry.TryPrepareAndReserve(B->Binding, F.MakeSelections(), ManifestHash());
+	if (!TestTrue(FString::Printf(TEXT("the disjoint encounter B is prepared and reserved too (errors: %s)"), *JoinErrors(ResultB.Errors)), ResultB.Succeeded()))
+	{
+		return false;
+	}
+	TestTrue(TEXT("the two encounters use identical slot strings"), A->Binding->Participants[0].Slot == B->Binding->Participants[0].Slot && A->Binding->Participants[1].Slot == B->Binding->Participants[1].Slot
+		&& A->Binding->Participants[2].Slot == B->Binding->Participants[2].Slot && A->Binding->Participants[0].Slot == FName(TEXT("BossOne")));
+	TestTrue(TEXT("two active reservations, no quarantine, both GUIDs reserved in admission order"), Registry.GetActiveReservationCount() == 2 && Registry.GetQuarantinedCount() == 0 && Registry.GetReservedEncounters() == TArray<FGuid>{A->Encounter, B->Encounter});
+	TestTrue(TEXT("the tokens carry the registry identity, distinct serials and their own encounter GUIDs, and are held"), ResultA.Token.IsHeld() && ResultB.Token.IsHeld() && ResultA.Token.GetRegistryId() == Registry.GetRegistryId()
+		&& ResultB.Token.GetRegistryId() == Registry.GetRegistryId() && ResultA.Token.GetSerial() != ResultB.Token.GetSerial() && ResultA.Token.GetSerial() != 0 && ResultB.Token.GetSerial() != 0
+		&& ResultA.Token.GetEncounter() == A->Encounter && ResultB.Token.GetEncounter() == B->Encounter);
+	TestTrue(TEXT("both encounters hold ten unregistered components each (five per boss, none on the target) and the unrelated markers are untouched"), IsFullyPrepared(*A) && IsFullyPrepared(*B) && MarkersIntact(*A) && MarkersIntact(*B));
+
+	// A duplicate encounter GUID with fully disjoint actors: refused before anything is allocated for the new actors.
+	FEncounterSet* C = F.AddSet(*this, 2);
+	FEncounterSet* D = F.AddSet(*this, 3);
+	FEncounterSet* E = F.AddSet(*this, 4);
+	FEncounterSet* G = F.AddSet(*this, 5);
+	if (!C || !D || !E || !G)
+	{
+		return false;
+	}
+	C->Binding->EncounterInstance = A->Encounter;
+	ExpectRefused(*this, F, Registry, TEXT("a duplicate encounter GUID with disjoint actors"), C->Binding, EReservationFailure::Conflict, TEXT("Reservation.DuplicateEncounter"), TEXT("[encounter="));
+	TestTrue(TEXT("a duplicate GUID: the disjoint actors of the refused encounter hold no consumer and no allocated name"), HasNoConsumers(*C) && NothingAllocated(*C));
+
+	// Overlap of a TARGET-ONLY actor: encounter D's third member is encounter A's target actor.
+	{
+		TArray<FRPGPlacedParticipantBinding> Overlap = F.MakeParticipants(*D);
+		Overlap[2].Actor = A->Target;
+		Overlap[2].Definition = A->Definitions[2].Get();
+		ARPGEncounterBinding* Case = F.SpawnBinding(Overlap, FGuid::NewGuid());
+		if (TestNotNull(TEXT("a binding overlapping a reserved target actor was spawned"), Case))
+		{
+			ExpectRefused(*this, F, Registry, TEXT("a target-only actor overlap"), Case, EReservationFailure::Conflict, TEXT("Reservation.ActorConflict"), TEXT("[slot=Player]"));
+			TestTrue(TEXT("a target overlap: the other actors of the refused encounter hold no consumer and no allocated name"), NoManagedConsumer(D->BossOne) && NoManagedConsumer(D->BossTwo) && NothingAllocated(*D));
+		}
+	}
+	// Overlap of a BOSS actor: encounter E's second member is encounter B's first boss.
+	{
+		TArray<FRPGPlacedParticipantBinding> Overlap = F.MakeParticipants(*E);
+		Overlap[1].Actor = B->BossOne;
+		Overlap[1].Definition = B->Definitions[0].Get();
+		ARPGEncounterBinding* Case = F.SpawnBinding(Overlap, FGuid::NewGuid());
+		if (TestNotNull(TEXT("a binding overlapping a reserved boss actor was spawned"), Case))
+		{
+			ExpectRefused(*this, F, Registry, TEXT("a boss actor overlap"), Case, EReservationFailure::Conflict, TEXT("Reservation.ActorConflict"), TEXT("[slot=BossTwo]"));
+			TestTrue(TEXT("a boss overlap: the other actors of the refused encounter hold no consumer and no allocated name"), NoManagedConsumer(E->BossOne) && NoManagedConsumer(E->Target));
+		}
+	}
+
+	// Overlap ACROSS roles: a new target that is a reserved BOSS, and a new boss that is a reserved TARGET.
+	{
+		FEncounterSet* H = F.AddSet(*this, 6);
+		FEncounterSet* I = F.AddSet(*this, 7);
+		if (!H || !I)
+		{
+			return false;
+		}
+		TArray<FRPGPlacedParticipantBinding> TargetIsBoss = F.MakeParticipants(*H);
+		TargetIsBoss[2].Actor = A->BossOne;
+		TargetIsBoss[2].Definition = A->Definitions[0].Get();
+		ARPGEncounterBinding* CaseTargetIsBoss = F.SpawnBinding(TargetIsBoss, FGuid::NewGuid());
+		TArray<FRPGPlacedParticipantBinding> BossIsTarget = F.MakeParticipants(*I);
+		BossIsTarget[0].Actor = B->Target;
+		BossIsTarget[0].Definition = B->Definitions[2].Get();
+		ARPGEncounterBinding* CaseBossIsTarget = F.SpawnBinding(BossIsTarget, FGuid::NewGuid());
+		if (TestTrue(TEXT("the two cross-role overlap bindings were spawned"), CaseTargetIsBoss && CaseBossIsTarget))
+		{
+			ExpectRefused(*this, F, Registry, TEXT("a new target that is a reserved boss"), CaseTargetIsBoss, EReservationFailure::Conflict, TEXT("Reservation.ActorConflict"), TEXT("[slot=Player]"));
+			ExpectRefused(*this, F, Registry, TEXT("a new boss that is a reserved target"), CaseBossIsTarget, EReservationFailure::Conflict, TEXT("Reservation.ActorConflict"), TEXT("[slot=BossOne]"));
+			TestTrue(TEXT("the other actors of both refused encounters hold no consumer and no allocated name"), NoManagedConsumer(H->BossOne) && NoManagedConsumer(H->BossTwo) && NoManagedConsumer(I->Target) && NoManagedConsumer(I->BossTwo));
+		}
+		// The InvalidInput family on a LIVE registry: no binding, a bad manifest hash (the input stage names it), nothing allocated.
+		{
+			const FRPGReservationResult NoBinding = Registry.TryPrepareAndReserve(nullptr, F.MakeSelections(), ManifestHash());
+			TestTrue(FString::Printf(TEXT("no binding: InvalidInput with Reservation.InvalidBinding (got: %s)"), *JoinErrors(NoBinding.Errors)), !NoBinding.Succeeded() && NoBinding.Failure == EReservationFailure::InvalidInput
+				&& AnyErrorHasAll(NoBinding.Errors, TEXT("Reservation.InvalidBinding"), TEXT(""), TEXT("")));
+			const FString BadHash = FString::ChrN(63, TEXT('b'));
+			ExpectRefused(*this, F, Registry, TEXT("a bad manifest hash"), I->Binding, EReservationFailure::InvalidInput, TEXT("WorldInput.InvalidManifestHash"), TEXT(""), &BadHash);
+		}
+	}
+
+	// A failed LATE preparation (a real name collision under the later owner) preserves every earlier reservation and publishes nothing.
+	const FExpectedComponent EncounterComponent = ExpectedComponents()[2];
+	USceneComponent* Blocker = NewObject<USceneComponent>(G->BossTwo, USceneComponent::StaticClass(), FName(EncounterComponent.Name));
+	if (!TestNotNull(TEXT("the blocker was created under the later owner of encounter G"), Blocker))
+	{
+		return false;
+	}
+	TStrongObjectPtr<USceneComponent> BlockerLease(Blocker);
+	{
+		int32 BoundBefore = -1;
+		int32 ReadyBefore = -1;
+		const TArray<FActorState> Before = F.CaptureAll(BoundBefore, ReadyBefore);
+		const FRPGReservationResult Refused = Registry.TryPrepareAndReserve(G->Binding, F.MakeSelections(), ManifestHash());
+		TestFalse(TEXT("late failure: refused, no held token"), Refused.Succeeded() || Refused.Token.IsHeld());
+		TestTrue(TEXT("late failure: the preparation family"), Refused.Failure == EReservationFailure::PreparationFailed);
+		TestTrue(FString::Printf(TEXT("late failure: ONE error, the real allocation guard with the slot and the component (got: %s)"), *JoinErrors(Refused.Errors)),
+			Refused.Errors.Num() == 1 && AnyErrorHasAll(Refused.Errors, TEXT("Preparation.AllocationFailed"), TEXT("[slot=BossTwo]"), TEXT("[component=RPGBossEncounter]")));
+		int32 BoundAfter = -1;
+		int32 ReadyAfter = -1;
+		const TArray<FActorState> After = F.CaptureAll(BoundAfter, ReadyAfter);
+		TestTrue(TEXT("late failure: encounters A and B are exactly as they were (their components are the same objects) and the registry still holds exactly them"),
+			Registry.GetActiveReservationCount() == 2 && Registry.GetReservedEncounters() == TArray<FGuid>{A->Encounter, B->Encounter} && IsFullyPrepared(*A) && IsFullyPrepared(*B));
+		// Encounter G: the earlier allocations were cleaned (destroyed objects), the blocker is the very live object, nothing is reserved for it.
+		bool bGDestroyed = true;
+		for (const FExpectedComponent& Wanted : ExpectedComponents())
+		{
+			const UObject* Found = StaticFindObjectFast(UObject::StaticClass(), G->BossOne, FName(Wanted.Name));
+			bGDestroyed = bGDestroyed && Found && !IsValid(Found);
+		}
+		TestTrue(TEXT("late failure: encounter G's earlier allocations were cleaned (destroyed), the blocked name is the very live blocker and G holds no live consumer"), bGDestroyed && IsValid(Blocker)
+			&& StaticFindObjectFast(UObject::StaticClass(), G->BossTwo, FName(EncounterComponent.Name)) == Blocker && NoManagedConsumer(G->BossOne) && NoManagedConsumer(G->BossTwo) && NoManagedConsumer(G->Target));
+		// Everything except G's cleaned allocations is as before: compare the actor sets of A..F (G's actors may differ only by the destroyed objects, which are not owned components any more).
+		TestTrue(TEXT("late failure: every actor of every encounter has the same component set and flags as before"), SameStates(Before, After, BoundBefore, ReadyBefore, BoundAfter, ReadyAfter));
+	}
+	// Remove ONLY the fixture-owned blocker (renamed away first, as in the world preparation tests) and encounter G is admitted: nothing provisional was left by the failure.
+	{
+		const FName RemovedName = MakeUniqueObjectName(G->BossTwo, USceneComponent::StaticClass(), TEXT("DD18RemovedBlocker"));
+		Blocker->Rename(*RemovedName.ToString(), G->BossTwo, REN_DontCreateRedirectors | REN_NonTransactional);
+		Blocker->DestroyComponent();
+		BlockerLease.Reset();
+		Blocker = nullptr;
+		FRPGReservationResult ResultG = Registry.TryPrepareAndReserve(G->Binding, F.MakeSelections(), ManifestHash());
+		TestTrue(FString::Printf(TEXT("after only the blocker was removed encounter G is admitted (errors: %s)"), *JoinErrors(ResultG.Errors)), ResultG.Succeeded() && IsFullyPrepared(*G));
+		TestTrue(TEXT("three active reservations in admission order A, B, G"), Registry.GetActiveReservationCount() == 3 && Registry.GetReservedEncounters() == TArray<FGuid>{A->Encounter, B->Encounter, G->Encounter});
+		TestTrue(TEXT("encounters A and B were never disturbed by any refused or later admission"), IsFullyPrepared(*A) && IsFullyPrepared(*B) && ResultA.Token.IsHeld() && ResultB.Token.IsHeld());
+	}
+
+	AddInfo(TEXT("Admission on a real game-instance world: two disjoint encounters coexist with identical slot strings; a duplicate GUID, a target-only overlap and a boss overlap are refused before any allocation; a failed late preparation (real name collision) leaves the "
+		"reservations intact and publishes nothing. NOT covered: quarantine, drift and re-entry (source-checked only), a global uniqueness claim across registries."));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGPreparationRegistryReleaseTest, "OneBossFight.Binding.PreparationRegistry.ReleaseAndTokens",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGPreparationRegistryReleaseTest::RunTest(const FString& Parameters)
+{
+	FMultiFixture F;
+	if (!F.Load(*this))
+	{
+		return false;
+	}
+	FEncounterSet* A = F.AddSet(*this, 0);
+	if (!A)
+	{
+		return false;
+	}
+	FRPGBossPreparationRegistry Registry(F.Scope.World);
+	int32 BoundStart = -1;
+	int32 ReadyStart = -1;
+	const TArray<FActorState> Start = F.CaptureAll(BoundStart, ReadyStart);
+
+	FRPGReservationResult First = Registry.TryPrepareAndReserve(A->Binding, F.MakeSelections(), ManifestHash());
+	if (!TestTrue(FString::Printf(TEXT("encounter A is reserved (errors: %s)"), *JoinErrors(First.Errors)), First.Succeeded()))
+	{
+		return false;
+	}
+	FRPGPreparationLeaseToken TokenOne = MoveTemp(First.Token);
+	const uint64 SerialOne = TokenOne.GetSerial();
+	TestTrue(TEXT("the first token is held, has a serial and the encounter's GUID"), TokenOne.IsHeld() && SerialOne != 0 && TokenOne.GetEncounter() == A->Encounter && !First.Token.IsHeld());
+
+	// A clean release frees the GUID and the actors, restores the actors exactly and consumes the token.
+	const FRPGReleaseReport Released = Registry.Release(TokenOne);
+	TestTrue(FString::Printf(TEXT("clean release: Released, ten destroyed, no violation (errors: %s)"), *JoinErrors(Released.Errors)), Released.IsReleased() && Released.Abort.IsClean() && Released.Abort.Destroyed == 10 && Released.Abort.ContractViolations == 0);
+	TestTrue(TEXT("after the release the actors are exactly as at the start, the registry is empty and the token is consumed"), Matches(F, Start, BoundStart, ReadyStart)
+		&& Registry.GetActiveReservationCount() == 0 && Registry.GetReservedEncounters().IsEmpty() && !TokenOne.IsHeld() && TokenOne.GetSerial() == 0 && HasNoConsumers(*A) && MarkersIntact(*A));
+
+	// The same actors and GUID are admitted again with a NEW serial.
+	FRPGReservationResult Again = Registry.TryPrepareAndReserve(A->Binding, F.MakeSelections(), ManifestHash());
+	if (!TestTrue(FString::Printf(TEXT("the same actors and GUID are admitted again after the clean release (errors: %s)"), *JoinErrors(Again.Errors)), Again.Succeeded()))
+	{
+		return false;
+	}
+	FRPGPreparationLeaseToken TokenTwo = MoveTemp(Again.Token);
+	const uint64 SerialTwo = TokenTwo.GetSerial();
+	TestTrue(TEXT("the replacement has a NEW, larger serial, the same GUID and is fully prepared"), SerialTwo > SerialOne && TokenTwo.GetEncounter() == A->Encounter && TokenTwo.IsHeld() && IsFullyPrepared(*A) && Registry.GetActiveReservationCount() == 1);
+
+	// A repeated release with the consumed token cannot touch the replacement.
+	{
+		const FRPGReleaseReport Repeated = Registry.Release(TokenOne);
+		TestTrue(FString::Printf(TEXT("repeated release of the consumed token: Stale, nothing touched (got: %s)"), *JoinErrors(Repeated.Errors)), Repeated.Outcome == FRelease::Stale);
+		TestTrue(TEXT("the replacement is intact after the repeated release"), TokenTwo.IsHeld() && IsFullyPrepared(*A) && Registry.GetActiveReservationCount() == 1);
+	}
+	// Validation is by registry identity AND serial, never by GUID alone: a forged token with the OLD serial and the very same registry and GUID, and one with the NEW serial and a wrong GUID, release nothing.
+	{
+		FRPGPreparationLeaseToken OldSerial = FRPGPreparationLeaseToken::ForgeForTest(Registry, SerialOne, A->Encounter);
+		TestTrue(TEXT("the forged token carries the same registry identity, the same GUID and the OLD serial, and is not held"), !OldSerial.IsHeld() && OldSerial.GetEncounter() == A->Encounter && OldSerial.GetRegistryId() == Registry.GetRegistryId());
+		const FRPGReleaseReport ByRegistry = Registry.Release(OldSerial);
+		TestTrue(FString::Printf(TEXT("old-serial forged token released through the registry: Stale (got: %s)"), *JoinErrors(ByRegistry.Errors)), ByRegistry.Outcome == FRelease::Stale);
+		const FRPGReleaseReport ByToken = OldSerial.Release();
+		TestTrue(TEXT("the same token released through itself: Stale"), ByToken.Outcome == FRelease::Stale);
+		FRPGPreparationLeaseToken WrongGuid = FRPGPreparationLeaseToken::ForgeForTest(Registry, SerialTwo, FGuid::NewGuid());
+		const FRPGReleaseReport WrongGuidReport = Registry.Release(WrongGuid);
+		TestTrue(FString::Printf(TEXT("new-serial token with a wrong GUID: Stale (got: %s)"), *JoinErrors(WrongGuidReport.Errors)), WrongGuidReport.Outcome == FRelease::Stale && !WrongGuid.IsHeld());
+		TestTrue(TEXT("the replacement is still reserved and prepared after every forged release (the forged tokens' destruction below releases nothing either)"), TokenTwo.IsHeld() && IsFullyPrepared(*A) && Registry.GetActiveReservationCount() == 1);
+	}
+	TestTrue(TEXT("the forged tokens were destroyed: the replacement is still reserved and prepared"), TokenTwo.IsHeld() && IsFullyPrepared(*A) && Registry.GetActiveReservationCount() == 1);
+
+	// A token of ANOTHER registry (same world) cannot release it, and the token is left as it was.
+	{
+		FRPGBossPreparationRegistry Other(F.Scope.World);
+		const FRPGReleaseReport WrongRegistry = Other.Release(TokenTwo);
+		TestTrue(FString::Printf(TEXT("a token released through another registry: WrongRegistry (got: %s)"), *JoinErrors(WrongRegistry.Errors)), WrongRegistry.Outcome == FRelease::WrongRegistry);
+		TestTrue(TEXT("the token is unchanged and the reservation is intact"), TokenTwo.IsHeld() && TokenTwo.GetSerial() == SerialTwo && IsFullyPrepared(*A) && Registry.GetActiveReservationCount() == 1 && Other.GetActiveReservationCount() == 0);
+		FRPGPreparationLeaseToken ForgedOfOther = FRPGPreparationLeaseToken::ForgeForTest(Other, SerialTwo, A->Encounter);
+		TestTrue(TEXT("a token forged with the OTHER registry's identity, the same serial and GUID is WrongRegistry for the first registry (its own destruction releases nothing: the other registry holds nothing)"),
+			Registry.Release(ForgedOfOther).Outcome == FRelease::WrongRegistry && TokenTwo.IsHeld() && IsFullyPrepared(*A));
+		TestTrue(TEXT("the other registry also admits nothing it does not own: the same actors are refused by the PREFLIGHT there (the consumers exist) and the first reservation is intact"),
+			!Other.TryPrepareAndReserve(A->Binding, F.MakeSelections(), ManifestHash()).Succeeded() && TokenTwo.IsHeld() && IsFullyPrepared(*A));
+	}
+	// The token releases through itself.
+	const FRPGReleaseReport ByOwnToken = TokenTwo.Release();
+	TestTrue(FString::Printf(TEXT("the token releases through its own registry: Released, ten destroyed (errors: %s)"), *JoinErrors(ByOwnToken.Errors)), ByOwnToken.IsReleased() && ByOwnToken.Abort.Destroyed == 10 && !TokenTwo.IsHeld());
+	TestTrue(TEXT("the registry is empty and the actors are exactly as at the start"), Registry.GetActiveReservationCount() == 0 && Matches(F, Start, BoundStart, ReadyStart) && HasNoConsumers(*A));
+
+	AddInfo(TEXT("Release on a real game-instance world: a clean release frees the GUID and the actors, re-admission gets a new larger serial, and a consumed, forged-serial (same registry and GUID), forged-GUID or wrong-registry token releases nothing and never "
+		"harms the replacement. NOT covered: a release whose cleanup is not clean (quarantine: source-checked only), drift, re-entry."));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGPreparationRegistryLifetimeTest, "OneBossFight.Binding.PreparationRegistry.Lifetime",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGPreparationRegistryLifetimeTest::RunTest(const FString& Parameters)
+{
+	// The world-dies-first case is built FIRST: its registry and token are declared before the fixture they live in, so the fixture (the world) is destroyed before them.
+	TUniquePtr<FRPGBossPreparationRegistry> OuterRegistry;
+	FRPGPreparationLeaseToken OuterToken;
+	{
+		FMultiFixture W;
+		if (!W.Load(*this))
+		{
+			return false;
+		}
+		FEncounterSet* Set = W.AddSet(*this, 0);
+		if (!Set)
+		{
+			return false;
+		}
+		OuterRegistry = MakeUnique<FRPGBossPreparationRegistry>(W.Scope.World);
+		FRPGReservationResult Reserved = OuterRegistry->TryPrepareAndReserve(Set->Binding, W.MakeSelections(), ManifestHash());
+		if (!TestTrue(FString::Printf(TEXT("the world-dies-first encounter is reserved (errors: %s)"), *JoinErrors(Reserved.Errors)), Reserved.Succeeded()))
+		{
+			return false;
+		}
+		OuterToken = MoveTemp(Reserved.Token);
+	} // the fixture, its actors, its game instance and its world are gone here
+	TestTrue(TEXT("world dies first: the registry still lists the reservation and the token is still held (nothing was dereferenced when the world went away)"), OuterToken.IsHeld() && OuterRegistry->GetActiveReservationCount() == 1);
+	{
+		const FRPGReleaseReport Report = OuterRegistry->Release(OuterToken);
+		AddInfo(FString::Printf(TEXT("world torn down first: release outcome %d, destroyed %d, already gone %d, violations %d (split logged, not assumed)"), static_cast<int32>(Report.Outcome), Report.Abort.Destroyed, Report.Abort.AlreadyGone, Report.Abort.ContractViolations));
+		TestTrue(FString::Printf(TEXT("world dies first: the release is clean without a crash, every owned component accounted for (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsReleased() && Report.Abort.Destroyed + Report.Abort.AlreadyGone == 10 && Report.Abort.ContractViolations == 0);
+		TestTrue(TEXT("world dies first: the registry is empty and the token is consumed"), OuterRegistry->GetActiveReservationCount() == 0 && !OuterToken.IsHeld());
+		const FRPGReservationResult Refused = OuterRegistry->TryPrepareAndReserve(nullptr, TArray<FSelection>(), ManifestHash());
+		TestTrue(TEXT("world dies first: a later admission through that registry is refused as invalid input (the world is gone)"), !Refused.Succeeded() && Refused.Failure == EReservationFailure::InvalidInput);
+	}
+
+	FMultiFixture F;
+	if (!F.Load(*this))
+	{
+		return false;
+	}
+	FEncounterSet* A = F.AddSet(*this, 1);
+	FEncounterSet* B = F.AddSet(*this, 2);
+	FEncounterSet* C = F.AddSet(*this, 3);
+	FEncounterSet* H = F.AddSet(*this, 4);
+	if (!A || !B || !C || !H)
+	{
+		return false;
+	}
+	int32 BoundStart = -1;
+	int32 ReadyStart = -1;
+	const TArray<FActorState> Start = F.CaptureAll(BoundStart, ReadyStart);
+
+	// The lease dies first: destroying the token on the game thread releases the reservation.
+	{
+		FRPGBossPreparationRegistry Registry(F.Scope.World);
+		{
+			FRPGReservationResult Reserved = Registry.TryPrepareAndReserve(A->Binding, F.MakeSelections(), ManifestHash());
+			if (!TestTrue(FString::Printf(TEXT("lease dies first: encounter A is reserved (errors: %s)"), *JoinErrors(Reserved.Errors)), Reserved.Succeeded()))
+			{
+				return false;
+			}
+			FRPGPreparationLeaseToken Token = MoveTemp(Reserved.Token);
+			TestTrue(TEXT("lease dies first: held, prepared, one reservation"), Token.IsHeld() && IsFullyPrepared(*A) && Registry.GetActiveReservationCount() == 1);
+		} // the token is destroyed here
+		TestTrue(TEXT("lease dies first: the reservation was released: empty registry, the actors exactly as at the start, GUID and actors free"), Registry.GetActiveReservationCount() == 0 && Registry.GetReservedEncounters().IsEmpty()
+			&& Matches(F, Start, BoundStart, ReadyStart) && HasNoConsumers(*A));
+		TestTrue(TEXT("lease dies first: the same encounter is admitted again"), [&]() { FRPGReservationResult Re = Registry.TryPrepareAndReserve(A->Binding, F.MakeSelections(), ManifestHash()); return Re.Succeeded() && IsFullyPrepared(*A); }());
+	}
+	TestTrue(TEXT("the registry went out of scope (the re-admitted reservation of the temporary was released at the end of the lambda): the actors are exactly as at the start"), Matches(F, Start, BoundStart, ReadyStart) && HasNoConsumers(*A));
+
+	// The registry dies first: the artifacts are cleaned once, the surviving token is invalid and every later use is a safe no-op.
+	FRPGPreparationLeaseToken Survivor;
+	FRPGPreparationLeaseToken SurvivorTwo;
+	FGuid ShortRegistryId;
+	{
+		FRPGBossPreparationRegistry Short(F.Scope.World);
+		ShortRegistryId = Short.GetRegistryId();
+		FRPGReservationResult ReservedB = Short.TryPrepareAndReserve(B->Binding, F.MakeSelections(), ManifestHash());
+		FRPGReservationResult ReservedH = Short.TryPrepareAndReserve(H->Binding, F.MakeSelections(), ManifestHash());
+		if (!TestTrue(FString::Printf(TEXT("registry dies first: encounters B and H are both reserved (errors: %s | %s)"), *JoinErrors(ReservedB.Errors), *JoinErrors(ReservedH.Errors)), ReservedB.Succeeded() && ReservedH.Succeeded()))
+		{
+			return false;
+		}
+		Survivor = MoveTemp(ReservedB.Token);
+		SurvivorTwo = MoveTemp(ReservedH.Token);
+		TestTrue(TEXT("registry dies first: both tokens are held, both encounters are prepared and the registry lists two reservations"), Survivor.IsHeld() && SurvivorTwo.IsHeld() && IsFullyPrepared(*B) && IsFullyPrepared(*H) && Short.GetActiveReservationCount() == 2);
+	} // the registry is destroyed here with TWO live artifacts, both tokens survive
+	TestTrue(TEXT("registry dies first: every artifact was cleaned once (B and H hold no consumer, their markers are intact) and both surviving tokens are no longer held"), !Survivor.IsHeld() && !SurvivorTwo.IsHeld()
+		&& HasNoConsumers(*B) && HasNoConsumers(*H) && MarkersIntact(*B) && MarkersIntact(*H) && Survivor.GetSerial() != 0 && SurvivorTwo.GetSerial() != 0);
+	{
+		// A surviving token (registry identity and serial still set) handed to a NEW registry is WrongRegistry and is left unchanged; only then is it released for the Stale no-op.
+		FRPGBossPreparationRegistry Fresh(F.Scope.World);
+		const uint64 SurvivorSerial = Survivor.GetSerial();
+		TestTrue(TEXT("the surviving token still carries the dead registry's identity and serial"), Survivor.GetRegistryId() == ShortRegistryId && ShortRegistryId != Fresh.GetRegistryId() && SurvivorSerial != 0);
+		const FRPGReleaseReport CrossRegistry = Fresh.Release(Survivor);
+		TestTrue(FString::Printf(TEXT("a surviving token given to a NEW registry: WrongRegistry, nothing touched (got: %s)"), *JoinErrors(CrossRegistry.Errors)), CrossRegistry.Outcome == FRelease::WrongRegistry);
+		TestTrue(TEXT("the token is left as it was"), Survivor.GetSerial() == SurvivorSerial && Survivor.GetRegistryId() == ShortRegistryId);
+		const FRPGReleaseReport ByToken = Survivor.Release();
+		TestTrue(FString::Printf(TEXT("releasing the surviving token through itself is a Stale no-op (got: %s)"), *JoinErrors(ByToken.Errors)), ByToken.Outcome == FRelease::Stale && Survivor.GetSerial() == 0);
+		FRPGPreparationLeaseToken Forged = FRPGPreparationLeaseToken::ForgeForTest(Fresh, 99, B->Encounter);
+		TestTrue(TEXT("a forged token with an unreserved serial is Stale in the new registry, which admits B afresh with its own identity"), Fresh.Release(Forged).Outcome == FRelease::Stale
+			&& Fresh.TryPrepareAndReserve(B->Binding, F.MakeSelections(), ManifestHash()).Succeeded());
+		SurvivorTwo.Release();
+	}
+	TestTrue(TEXT("after the fresh registry also went out of scope the actors are exactly as at the start"), Matches(F, Start, BoundStart, ReadyStart) && HasNoConsumers(*B) && HasNoConsumers(*H));
+
+	// The actors die first: destroying the owners of a reservation, then releasing it, never dereferences a stale identity.
+	{
+		FRPGBossPreparationRegistry Registry(F.Scope.World);
+		FRPGReservationResult Reserved = Registry.TryPrepareAndReserve(C->Binding, F.MakeSelections(), ManifestHash());
+		if (!TestTrue(FString::Printf(TEXT("actors die first: encounter C is reserved (errors: %s)"), *JoinErrors(Reserved.Errors)), Reserved.Succeeded()))
+		{
+			return false;
+		}
+		FRPGPreparationLeaseToken Token = MoveTemp(Reserved.Token);
+		C->BossOne->Destroy();
+		C->BossTwo->Destroy();
+		C->Target->Destroy();
+		TestTrue(TEXT("actors die first: the reservation still lists and the token is still held (the registry never dereferences a stale actor)"), Token.IsHeld() && Registry.GetActiveReservationCount() == 1);
+		const FRPGReleaseReport Report = Registry.Release(Token);
+		AddInfo(FString::Printf(TEXT("owners destroyed first: release outcome %d, destroyed %d, already gone %d, violations %d (split logged, not assumed)"), static_cast<int32>(Report.Outcome), Report.Abort.Destroyed, Report.Abort.AlreadyGone, Report.Abort.ContractViolations));
+		TestTrue(FString::Printf(TEXT("actors die first: the release is clean, every component was destroyed with its owner (ten already gone, none destroyed by the abort), no violation (errors: %s)"), *JoinErrors(Report.Errors)),
+			Report.IsReleased() && Report.Abort.AlreadyGone == 10 && Report.Abort.Destroyed == 0 && Report.Abort.ContractViolations == 0 && Registry.GetActiveReservationCount() == 0 && !Token.IsHeld());
+	}
+
+	// Off the game thread: admission and release are refused without touching anything; the token and the registry are unchanged. (Destroying a held token or the registry off the game thread is NOT run: an unsafe experiment.)
+	{
+		FEncounterSet* D = F.AddSet(*this, 5);
+		if (!D)
+		{
+			return false;
+		}
+		FRPGBossPreparationRegistry Registry(F.Scope.World);
+		FRPGReservationResult Reserved = Registry.TryPrepareAndReserve(D->Binding, F.MakeSelections(), ManifestHash());
+		if (!TestTrue(FString::Printf(TEXT("off-thread case: encounter D is reserved (errors: %s)"), *JoinErrors(Reserved.Errors)), Reserved.Succeeded()))
+		{
+			return false;
+		}
+		FRPGPreparationLeaseToken Token = MoveTemp(Reserved.Token);
+		const ARPGEncounterBinding* PoolBinding = D->Binding;
+		const TArray<FSelection> PoolSelections = F.MakeSelections();
+		const FString PoolHash = ManifestHash();
+		FRPGBossPreparationRegistry* PoolRegistry = &Registry;
+		FRPGPreparationLeaseToken* PoolToken = &Token;
+		TFuture<TPair<EReservationFailure, TArray<FString>>> AdmitFuture = Async(EAsyncExecution::ThreadPool, [PoolRegistry, PoolBinding, &PoolSelections, &PoolHash]()
+			{
+				FRPGReservationResult Result = PoolRegistry->TryPrepareAndReserve(PoolBinding, PoolSelections, PoolHash);
+				return TPair<EReservationFailure, TArray<FString>>(Result.Failure, Result.Errors);
+			});
+		const TPair<EReservationFailure, TArray<FString>> Admitted = AdmitFuture.Get();
+		TestTrue(FString::Printf(TEXT("off-thread admission: refused as a contract violation without touching anything (got: %s)"), *JoinErrors(Admitted.Value)),
+			Admitted.Key == EReservationFailure::ContractViolation && AnyErrorHasAll(Admitted.Value, TEXT("Reservation.NotGameThread"), TEXT(""), TEXT("nothing was touched")));
+		TFuture<TPair<FRelease, TArray<FString>>> ReleaseFuture = Async(EAsyncExecution::ThreadPool, [PoolRegistry, PoolToken]()
+			{
+				const FRPGReleaseReport Report = PoolRegistry->Release(*PoolToken);
+				return TPair<FRelease, TArray<FString>>(Report.Outcome, Report.Errors);
+			});
+		const TPair<FRelease, TArray<FString>> OffRelease = ReleaseFuture.Get();
+		TestTrue(FString::Printf(TEXT("off-thread release through the registry: Refused (got: %s)"), *JoinErrors(OffRelease.Value)), OffRelease.Key == FRelease::Refused);
+		TFuture<FRelease> TokenReleaseFuture = Async(EAsyncExecution::ThreadPool, [PoolToken]() { return PoolToken->Release().Outcome; });
+		TestTrue(TEXT("off-thread release through the token: Refused"), TokenReleaseFuture.Get() == FRelease::Refused);
+		TestTrue(TEXT("after the off-thread refusals the token is still held, the reservation and its ten components are intact and the registry is unchanged"), Token.IsHeld() && IsFullyPrepared(*D) && Registry.GetActiveReservationCount() == 1
+			&& Registry.GetReservedEncounters() == TArray<FGuid>{D->Encounter});
+	}
+
+	AddInfo(TEXT("Lifetime orders on a real game-instance world: the world torn down first, the lease first, the registry first (surviving token invalid, no cross-registry effect), the owners destroyed first, and the off-thread refusals. NOT covered: a held token or the "
+		"registry destroyed off the game thread (unsafe experiment), quarantine, drift and re-entry (source-checked only)."));
+	return true;
+}
+
+#endif // WITH_DEV_AUTOMATION_TESTS

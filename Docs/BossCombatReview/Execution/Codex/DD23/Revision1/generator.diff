@@ -1,0 +1,27 @@
+--- generate_tests.py
++++ generate_tests.py
+@@ -110,7 +110,7 @@
+ 		Cases.Add({TEXT("null body"), [](FRPGLookConfig& R) { R.Body.Reset(); }, TEXT("InvalidDependency.Missing"), TEXT("Look.Body")});
+ 		Cases.Add({TEXT("null sword"), [](FRPGLookConfig& R) { R.Sword.Reset(); }, TEXT("InvalidDependency.Missing"), TEXT("Look.Sword")});
+ 		Cases.Add({TEXT("late null piece"), [](FRPGLookConfig& R) { R.Pieces.Add(TSoftObjectPtr<USkeletalMesh>()); }, TEXT("InvalidDependency.Missing"), TEXT("Look.Pieces[2]")});
+-		Cases.Add({TEXT("duplicate piece"), [](FRPGLookConfig& R) { R.Pieces.Add(R.Pieces[0]); }, TEXT("InvalidDependency.Duplicate"), TEXT("Look.Pieces[2]")});
++		Cases.Add({TEXT("duplicate piece"), [](FRPGLookConfig& R) { const TSoftObjectPtr<USkeletalMesh> Duplicate = R.Pieces[0]; R.Pieces.Add(Duplicate); }, TEXT("InvalidDependency.Duplicate"), TEXT("Look.Pieces[2]")});
+ 		Cases.Add({TEXT("case-insensitive asset identity duplicate"), [](FRPGLookConfig& R) { R.Pieces.Add(Mesh(MakePath(TEXT("/syntheticmount/look/a"), TEXT("crown")))); }, TEXT("InvalidDependency.Duplicate"), TEXT("Look.Pieces[2]")});
+ 		Cases.Add({TEXT("None socket"), [](FRPGLookConfig& R) { R.SwordSocket = NAME_None; }, TEXT("InvalidDependency.Missing"), TEXT("Look.SwordSocket")});
+ 		Cases.Add({TEXT("mixed-case None socket"), [](FRPGLookConfig& R) { R.SwordSocket = TEXT("nOnE"); }, TEXT("InvalidDependency.Missing"), TEXT("Look.SwordSocket")});
+@@ -193,9 +193,13 @@
+ 	auto R = RecordA();
+ 	R.Body.Reset(); R.Pieces[0].Reset(); R.Sword.Reset(); R.SwordSocket = NAME_None;
+ 	First(R, TEXT("InvalidDependency.Missing"), TEXT("Look.Body"));
+-	R = RecordA(); R.Pieces[0].Reset(); R.Pieces.Add(R.Pieces[1]); R.Sword.Reset();
++	R = RecordA(); R.Pieces[0].Reset();
++	const TSoftObjectPtr<USkeletalMesh> LaterDuplicate = R.Pieces[1];
++	R.Pieces.Add(LaterDuplicate); R.Sword.Reset();
+ 	First(R, TEXT("InvalidDependency.Missing"), TEXT("Look.Pieces[0]"));
+-	R = RecordA(); R.Pieces.Add(R.Pieces[0]); R.Sword.Reset();
++	R = RecordA();
++	const TSoftObjectPtr<USkeletalMesh> FirstDuplicate = R.Pieces[0];
++	R.Pieces.Add(FirstDuplicate); R.Sword.Reset();
+ 	First(R, TEXT("InvalidDependency.Duplicate"), TEXT("Look.Pieces[2]"));
+ 	R = RecordA(); R.Sword.Reset(); R.SwordSocket = NAME_None;
+ 	First(R, TEXT("InvalidDependency.Missing"), TEXT("Look.Sword"));

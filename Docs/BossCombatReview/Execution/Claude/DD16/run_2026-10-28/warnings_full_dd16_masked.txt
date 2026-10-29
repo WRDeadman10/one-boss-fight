@@ -1,0 +1,60 @@
+LogCore: Warning: UTS: Unable to launch the Unreal Trace Server with '"../../../Engine/Binaries/Win64/UnrealTraceServer.exe" fork --sponsor N'. Access is denied. Error: 0x5 (5)
+LogUnrealClaude: Warning: === UnrealClaude BUILD 20260107-1450 THREAD_TESTS_DISABLED ===
+LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring InstancedStaticMeshComponent /Game/OneBossFight/Levels/L_SevarogArena.L_SevarogArena:PersistentLevel.RPGArenaDressing_0.InstancedStaticMeshComponent_22.
+LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring InstancedStaticMeshComponent /Game/OneBossFight/Levels/L_SevarogArena.L_SevarogArena:PersistentLevel.RPGArenaDressing_0.InstancedStaticMeshComponent_20.
+LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring InstancedStaticMeshComponent /Game/OneBossFight/Levels/L_SevarogArena.L_SevarogArena:PersistentLevel.RPGArenaDressing_0.InstancedStaticMeshComponent_38.
+LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring InstancedStaticMeshComponent /Game/OneBossFight/Levels/L_SevarogArena.L_SevarogArena:PersistentLevel.RPGArenaDressing_0.InstancedStaticMeshComponent_37.
+LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring InstancedStaticMeshComponent /Game/OneBossFight/Levels/L_SevarogArena.L_SevarogArena:PersistentLevel.RPGArenaDressing_0.InstancedStaticMeshComponent_25.
+LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring InstancedStaticMeshComponent /Game/OneBossFight/Levels/L_SevarogArena.L_SevarogArena:PersistentLevel.RPGArenaDressing_0.InstancedStaticMeshComponent_23.
+LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring InstancedStaticMeshComponent /Game/OneBossFight/Levels/L_SevarogArena.L_SevarogArena:PersistentLevel.RPGArenaDressing_0.InstancedStaticMeshComponent_26.
+LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring InstancedStaticMeshComponent /Game/OneBossFight/Levels/L_SevarogArena.L_SevarogArena:PersistentLevel.RPGArenaDressing_0.InstancedStaticMeshComponent_24.
+LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring InstancedStaticMeshComponent /Game/OneBossFight/Levels/L_SevarogArena.L_SevarogArena:PersistentLevel.RPGArenaDressing_0.InstancedStaticMeshComponent_35.
+LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring InstancedStaticMeshComponent /Game/OneBossFight/Levels/L_SevarogArena.L_SevarogArena:PersistentLevel.RPGArenaDressing_0.InstancedStaticMeshComponent_36.
+LogNavigation: Warning: FNavigationOctree::AddNode: Empty bounds, ignoring InstancedStaticMeshComponent /Game/OneBossFight/Levels/L_SevarogArena.L_SevarogArena:PersistentLevel.RPGArenaDressing_0.InstancedStaticMeshComponent_39.
+PIE: Warning: Mobility of /Temp/Untitled_1.Untitled:PersistentLevel.RPGGreyboxArena_0 : Floor has to be 'Movable' if you'd like to move. 
+PIE: Warning: Mobility of /Temp/Untitled_1.Untitled:PersistentLevel.RPGGreyboxArena_0 : Arch has to be 'Movable' if you'd like to move. 
+LogRPGCatalog: Warning: epoch=<HEX32> build=DiagWrongType icon broken (wrong type (not a Texture2D)): /Game/OneBossFight/Data/TypedABIFixtures/DA_ABI_FourthWeaponItem.DA_ABI_FourthWeaponItem; text-only row
+LogRPGCatalog: Warning: epoch=<HEX32> build=DiagUncooked icon broken (outside the cooked roots): /Game/OneBossFight/ReviewFixtures/TypedABI/DA_ABI_UncookedWeaponItem.DA_ABI_UncookedWeaponItem; text-only row
+LogRPGCatalog: Warning: epoch=<HEX32> build=DiagWrongType icon broken (wrong type (not a Texture2D)): /Game/OneBossFight/Data/TypedABIFixtures/DA_ABI_FourthWeaponItem.DA_ABI_FourthWeaponItem; text-only row
+LogRPGCatalog: Warning: epoch=<HEX32> build=DiagUncooked icon broken (outside the cooked roots): /Game/OneBossFight/ReviewFixtures/TypedABI/DA_ABI_UncookedWeaponItem.DA_ABI_UncookedWeaponItem; text-only row
+LogRPGCatalog: Warning: ABIFourthWeapon/Light coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/Strong coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/Charged coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/JumpLight coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/JumpHeavy coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/Knockdown coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/Light coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/Strong coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/Charged coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/JumpLight coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/JumpHeavy coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/Knockdown coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: epoch=<HEX32> selector layout overflow: 2 of 4 rows fit at measured layout height 200.0; rows from index 2 are not drawn, hit-testable or pickable
+LogRPGCatalog: Warning: epoch=<HEX32> selector layout overflow: 2 of 4 rows fit at measured layout height 200.0; rows from index 2 are not drawn, hit-testable or pickable
+LogPackageName: Warning: GetLocalFullPath called on FPackagePath ../../../../../../UnrealProject/OneBossFight/Content/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Paragon/MaterialLayers/Leather/ML_Dark_Leather02_Brown_3 which has an unspecified header extension, and the path does not exist on disk. Assuming EPackageExtension::Asset.
+LoadErrors: Warning: While trying to load package /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Paragon/Materials/M_Greystone_ToughSword, a dependent package /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Paragon/MaterialLayers/Leather/ML_Dark_Leather02_Brown_3 was not available. Additional explanatory information follows:
+LogPackageName: Warning: GetLocalFullPath called on FPackagePath ../../../../../../UnrealProject/OneBossFight/Content/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/NovabornSparks/VectorFields/VF_RandomNoise_01_90 which has an unspecified header extension, and the path does not exist on disk. Assuming EPackageExtension::Asset.
+LoadErrors: Warning: While trying to load package /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/NovabornSparks/P_Greystone_Novaborn_Primary_Impact, a dependent package /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/NovabornSparks/VectorFields/VF_RandomNoise_01_90 was not available. Additional explanatory information follows:
+LogPackageName: Warning: GetLocalFullPath called on FPackagePath ../../../../../../UnrealProject/OneBossFight/Content/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Paragon/MaterialLayers/Leather/ML_Dark_Leather02_Brown_3 which has an unspecified header extension, and the path does not exist on disk. Assuming EPackageExtension::Asset.
+LoadErrors: Warning: While trying to load package /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Paragon/Materials/M_Greystone_shield, a dependent package /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Paragon/MaterialLayers/Leather/ML_Dark_Leather02_Brown_3 was not available. Additional explanatory information follows:
+LogRPGCatalog: Warning: epoch=<HEX32> build=ABIFourth icon broken (wrong type (not a Texture2D)): /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Items/Weapons/ToughSword.ToughSword; text-only row
+LogRPGCatalog: Warning: ABIFourthWeapon/Light coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/Strong coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/Charged coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/JumpLight coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/JumpHeavy coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/Knockdown coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: CatalogPath changed: next session only (this session keeps /Game/OneBossFight/Data/TypedABIFixtures/DA_ABITest_Catalog.DA_ABITest_Catalog)
+LogRPGCatalog: Warning: ABIFourthWeapon/Light coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/Strong coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/Charged coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/JumpLight coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/JumpHeavy coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: ABIFourthWeapon/Knockdown coverage=fallback posture=20 stamina=-1 bleed=0 health=1
+LogRPGCatalog: Warning: catalog unavailable; COMPLETE legacy compatibility fallback: malformed fixture
+LogPackageName: Warning: GetLocalFullPath called on FPackagePath ../../../../../../UnrealProject/OneBossFight/Content/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Textures/Water/T_Water_N_2 which has an unspecified header extension, and the path does not exist on disk. Assuming EPackageExtension::Asset.
+LoadErrors: Warning: While trying to load package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Materials/Abilities/M_IggyScorch_Flame_Spit, a dependent package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Textures/Water/T_Water_N_2 was not available. Additional explanatory information follows:
+LogPackageName: Warning: GetLocalFullPath called on FPackagePath ../../../../../../UnrealProject/OneBossFight/Content/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Textures/Water/T_Water_N_2 which has an unspecified header extension, and the path does not exist on disk. Assuming EPackageExtension::Asset.
+LoadErrors: Warning: While trying to load package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Materials/Abilities/M_IggyScorch_Flame_Spit_GPU, a dependent package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Textures/Water/T_Water_N_2 was not available. Additional explanatory information follows:
+LogPackageName: Warning: GetLocalFullPath called on FPackagePath ../../../../../../UnrealProject/OneBossFight/Content/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/HealthPotion/Textures/T_WispySmoke_V2_OCC+Alpha which has an unspecified header extension, and the path does not exist on disk. Assuming EPackageExtension::Asset.
+LoadErrors: Warning: While trying to load package /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/HealthPotion/Materials/M_DustInvis, a dependent package /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/Effects/HealthPotion/Textures/T_WispySmoke_V2_OCC+Alpha was not available. Additional explanatory information follows:

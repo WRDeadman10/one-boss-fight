@@ -1,0 +1,7 @@
+b95e5b7964395198f5a4a8e6bdca968e3599f38d696b4ac453c633156458c85e     14416  Docs/BossCombatReview/Execution/Antigravity/AuthoringQuickstart/DATA_ASSET_QUICKSTART.md
+ba61724aa3331c223145e8d26ea6f997707eec16091cedc78fa4c0266f12790c     26354  Docs/BossCombatReview/Execution/Antigravity/AuthoringQuickstart/authoring_examples.json
+e7d5296833cfa5bec4101e608a98ab336a5b8c7a5c476e0d3b17eae57279dbb5      7427  Source/OneBossFight/Player/RPGCombatCatalog.h
+ce0a7da73e833a22aef8ad69e3ed42984b39b04131997d78f055f4a4070d9c92     17193  Source/OneBossFight/Player/RPGEncounterBinding.h
+0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a      8607  Source/OneBossFight/Player/RPGBossPhases.h
+7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b     17803  Source/OneBossFight/Player/RPGBossStagger.h
+ff450db792f59af3bab6ff73464d1dfe360f27003b268c0f574b58124f05f83c      2957  Source/OneBossFight/Player/RPGBossDormantWake.h

@@ -1,0 +1,38 @@
+{
+  "scope": "OFFLINE_SOURCE_REVIEW_NOT_ENGINE_TEST",
+  "receipts": {
+    "count": 13,
+    "failures": []
+  },
+  "source": {
+    "count": 177,
+    "failures": []
+  },
+  "dependencies": {
+    "count": 11,
+    "failures": []
+  },
+  "binaries": {
+    "count": 2,
+    "failures": []
+  },
+  "pre_matches_DD11": true,
+  "added": [
+    "Source/OneBossFight/Player/RPGBossEncounterClusterAdapters.cpp",
+    "Source/OneBossFight/Player/RPGBossEncounterClusterAdapters.h",
+    "Source/OneBossFight/Tests/RPGBossEncounterClusterAdaptersTests.cpp"
+  ],
+  "deleted": [],
+  "changed": [],
+  "review_pairs": {
+    "RPGBossEncounterClusterAdapters.cpp": true,
+    "RPGBossEncounterClusterAdapters.h": true,
+    "RPGBossEncounterClusterAdaptersTests.cpp": true
+  },
+  "paths": [
+    "OneBossFight.Binding.EncounterCluster.Assign",
+    "OneBossFight.Binding.EncounterCluster.Validation",
+    "OneBossFight.Binding.EncounterCluster.Isolation",
+    "OneBossFight.Binding.EncounterCluster.Rejections"
+  ]
+}

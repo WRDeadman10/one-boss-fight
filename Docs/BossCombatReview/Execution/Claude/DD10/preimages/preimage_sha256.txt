@@ -1,0 +1,2 @@
+5463b8f7959fe332a317b8fc02f412390bbbcbbc9ffb7460072d68d4a8aab78d  RPGEncounterBinding.h
+1a9bd0bd6a47298333df329105f3a33a4d10f4aa7f8146fa6e40d83edbaa1048  RPGEncounterBinding.cpp

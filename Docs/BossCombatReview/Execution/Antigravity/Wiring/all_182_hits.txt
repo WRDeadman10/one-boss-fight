@@ -1,0 +1,182 @@
+RPGAutomationTests.cpp:106 | P4 | TestEqual(TEXT("average ms"), Stats.AverageMs, 6.5);
+RPGAutomationTests.cpp:257 | P4 | TestEqual(TEXT("regeneration delay 6 s"), Defaults->RegenDelaySeconds, 6.f);
+RPGAutomationTests.cpp:260 | P4 | TestEqual(TEXT("5.99 s after the drain: nothing"), RegenStep(40.f, 100.f, 5.99, 0.0, 6.f, 13.f, 1.f), 40.f);
+RPGAutomationTests.cpp:261 | P4 | TestEqual(TEXT("exactly 6.00 s after the drain: starts"), RegenStep(40.f, 100.f, 6.0, 0.0, 6.f, 13.f, 1.f), 53.f);
+RPGAutomationTests.cpp:262 | P4 | TestEqual(TEXT("one second of regeneration adds 13"), RegenStep(40.f, 100.f, 20.0, 0.0, 6.f, 13.f, 1.f), 53.f);
+RPGAutomationTests.cpp:263 | P4 | TestEqual(TEXT("0.05 s tick adds 0.65"), RegenStep(40.f, 100.f, 20.0, 0.0, 6.f, 13.f, 0.05f), 40.65f);
+RPGAutomationTests.cpp:264 | P4 | TestEqual(TEXT("never above the maximum"), RegenStep(95.f, 100.f, 20.0, 0.0, 6.f, 13.f, 1.f), 100.f);
+RPGAutomationTests.cpp:265 | P4 | TestEqual(TEXT("at the maximum nothing changes"), RegenStep(100.f, 100.f, 20.0, 0.0, 6.f, 13.f, 1.f), 100.f);
+RPGAutomationTests.cpp:266 | P4 | TestEqual(TEXT("at zero (a stance break holds it) nothing regenerates"), RegenStep(0.f, 100.f, 20.0, 0.0, 6.f, 13.f, 1.f), 0.f);
+RPGAutomationTests.cpp:267 | P4 | TestEqual(TEXT("at zero with nothing holding it (a dropped break) it comes back after the delay"), RegenStep(0.f, 100.f, 20.0, 0.0, 6.f, 13.f, 1.f, true), 13.f);
+RPGAutomationTests.cpp:268 | P4 | TestEqual(TEXT("at zero with nothing holding it, still inside the delay: nothing"), RegenStep(0.f, 100.f, 5.99, 0.0, 6.f, 13.f, 1.f, true), 0.f);
+RPGAutomationTests.cpp:269 | P4 | TestEqual(TEXT("never drained (-1) regenerates at once"), RegenStep(40.f, 100.f, 0.5, -1.0, 6.f, 13.f, 1.f), 53.f);
+RPGAutomationTests.cpp:438 | P4 | TestEqual(TEXT("dex light posture 6"), Row.PostureDamage, 6.f);
+RPGAutomationTests.cpp:497 | P4 | TestEqual(TEXT("six strength lights break the pool"), HitsToBreak(TEXT("ClaymoreCombatStyle"), ERPGAttackKind::Light), 6);
+RPGAutomationTests.cpp:498 | P4 | TestEqual(TEXT("a dex light needs 17 hits (6 x 17 = 102, 16 x 6 = 96)"), HitsToBreak(TEXT("DualSwordCombatStyle"), ERPGAttackKind::Light), 17);
+RPGBossBleedAdaptersTests.cpp:332 | P4 | TestTrue(TEXT("all five scalars are the typed record (150, 0, 150, 0 and the NEGATIVE height), not the manifest text"),
+RPGBossBleedAdaptersTests.cpp:349 | P4 | TestTrue(TEXT("B: the five scalars (the fraction at its upper bound 1) and both references assigned"),
+RPGBossBleedAdaptersTests.cpp:776 | P2 | TestTrue(TEXT("established Stats, phase and identity values retained"), Out->Stats.MaxHealth == 3500.f && Out->Phases.Num() == 1 && Out->BossId == FName(TEXT("Synthetic")) && Out->bSyntheticFixture);
+RPGBossCloseClipSwapAdaptersTests.cpp:222 | P4 | TestTrue(TEXT("exact class/name and five exact paths, without duplicates"), Plan.Class == URPGBossCloseClipSwap::StaticClass()
+RPGBossCloseClipSwapAdaptersTests.cpp:226 | P4 | TestTrue(TEXT("callback copies all five nondefault fields"), Plan.Configure(*CloseClipSwap, Config(RecordA()), Error) && Error.IsEmpty() && Same(Read(*CloseClipSwap), RecordA()));
+RPGBossCloseClipSwapAdaptersTests.cpp:375 | P4 | TestTrue(TEXT("all five typed values copied, dev-only flag, same epoch; manifest Value not parsed"), Same(Out->CloseClipSwap, RecordA()) && Out->bSyntheticFixture && Out->Content.Get() == Content.Get());
+RPGBossCloseClipSwapAdaptersTests.cpp:417 | P4 | TestEqual(TEXT("five fields"), Count, 5);
+RPGBossDormantWakeAdaptersTests.cpp:724 | P2 | TestTrue(TEXT("established Stats, phase and identity values retained"), Out->Stats.MaxHealth == 3500.f && Out->Phases.Num() == 1 && Out->BossId == FName(TEXT("Synthetic")) && Out->bSyntheticFixture);
+RPGBossEncounterPolicyAdaptersTests.cpp:517 | P2 | TestTrue(TEXT("established Stats, phase and identity values retained"), Out->Stats.MaxHealth == 3500.f && Out->Stats.MaxPosture == 73.5f && Out->Phases.Num() == 1 && Out->BossId == FName(TEXT("Synthetic")) && Out->bSyntheticFixture);
+RPGBossHydrationPreflightTests.cpp:376 | P4 | if (!TestEqual(TEXT("boss-core has five plans"), Boss.Plans.Num(), 5))
+RPGBossHydrationPreflightTests.cpp:394 | P4 | TestEqual(TEXT("the union of required manifest paths is fifty-one"), Required.Num(), 51);
+RPGBossHydrationPreflightTests.cpp:400 | P2 | TestTrue(TEXT("the class leases are the plan classes"), Boss.ClassLeases.Num() == 5 && Boss.ClassLeases[0].Get() == Boss.Plans[0].Class && Boss.ClassLeases[1].Get() == Boss.Plans[1].Class && Boss.ClassLeases[2].Get() == Boss.Plans[2].Class
+RPGBossHydrationPreflightTests.cpp:407 | P2 | if (Again.IsValid() && Again->Participants.Num() == 3 && Again->Participants[1].Plans.Num() == 5)
+RPGBossHydrationPreflightTests.cpp:467 | P2 | TestTrue(TEXT("compiling B did not touch the plan of A"), PlanA->Participants.Num() == 2 && PlanA->Participants[0].Actor.Get() == F.Boss && PlanA->Participants[1].Actor.Get() == F.Player);
+RPGBossHydrationPreflightTests.cpp:826 | P2 | TestTrue(TEXT("members in the other order compile"), Result.IsReady() && Out.IsValid() && Out->Participants.Num() == 2);
+RPGBossHydrationPreflightTests.cpp:827 | P2 | if (Out.IsValid() && Out->Participants.Num() == 2)
+RPGBossHydrationPreflightTests.cpp:831 | P2 | TestTrue(TEXT("only the boss has plans"), Out->Participants[0].Plans.IsEmpty() && Out->Participants[1].Plans.Num() == 5);
+RPGBossHydrationPreflightTests.cpp:852 | P2 | TestTrue(TEXT("two boss-core members targeting each other compile"), Result.IsReady() && Out.IsValid() && Out->Participants.Num() == 2 && Out->Participants[0].Plans.Num() == 5 && Out->Participants[1].Plans.Num() == 5);
+RPGBossHydrationPreflightTests.cpp:1019 | P2 | if (!TestTrue(TEXT("a batch of two boss-core members and a target compiles"), Result.IsReady() && Result.Errors.IsEmpty() && Plan.IsValid() && Plan->Participants.Num() == 3))
+RPGBossHydrationPreflightTests.cpp:1035 | P2+P4 | if (!TestTrue(FString::Printf(TEXT("%s: exactly five plans, a boss-core role and five class leases"), *Who), BossPlan.Role == ERPGPreflightRole::BossCore && BossPlan.Plans.Num() == 5 && BossPlan.ClassLeases.Num() == 5))
+RPGBossHydrationPreflightTests.cpp:1061 | P2 | TestTrue(FString::Printf(TEXT("%s: no native class and no instance name appears twice"), *Who), DistinctClasses.Num() == 5 && DistinctNames.Num() == 5);
+RPGBossHydrationPreflightTests.cpp:1064 | P2 | bool bUnion = ExpectedPaths.Num() == 51 && Union.Num() == 51 && SumOfRequired == 51;
+RPGBossHydrationPreflightTests.cpp:1069 | P4 | TestTrue(FString::Printf(TEXT("%s: the union of the plans' required paths is exactly the 51 independent literal paths, each named by exactly one plan"), *Who), bUnion);
+RPGBossHydrationPreflightTests.cpp:1075 | P2 | && Plan->Participants[0].Config->Phases.Num() == 1 && Plan->Participants[0].Config->Phases[0].PhaseId == PhaseTwo && Plan->Participants[1].Config->Phases.Num() == 1 && Plan->Participants[1].Config->Phases[0].PhaseId == PhaseAlt
+RPGBossHydrationPreflightTests.cpp:1081 | P2 | TestTrue(TEXT("second compile"), RPGBossHydrationPreflight::CompilePreflight(Input, Again).IsReady() && Again.IsValid() && Again.Get() != Plan.Get() && Again->Participants.Num() == 3);
+RPGBossHydrationPreflightTests.cpp:1082 | P2 | if (Again.IsValid() && Again->Participants.Num() == 3)
+RPGBossHydrationPreflightTests.cpp:1087 | P2 | bStable = bStable && Again->Participants[Member].Plans.Num() == 5;
+RPGBossHydrationPreflightTests.cpp:1106 | P2+P4 | TestTrue(TEXT("the managed consumers are the six expected classes"), RPGBossHydrationPreflight::ManagedCoreConsumerClasses().Num() == 6);
+RPGBossHydrationPreflightTests.cpp:1273 | P2 | TestTrue(TEXT("a Stagger on the target-only member does not stop the batch; the target gets no boss plan"), Result.IsReady() && Out.IsValid() && Out->Participants.Num() == 2 && Out->Participants[1].Plans.IsEmpty());
+RPGBossHydrationPreflightTests.cpp:1282 | P2 | if (!TestTrue(TEXT("the batch compiles"), RPGBossHydrationPreflight::CompilePreflight(F.Valid, Plan).IsReady() && Plan.IsValid() && Plan->Participants.Num() == 2 && Plan->Participants[0].Plans.Num() == 5))
+RPGBossHydrationPreparationTests.cpp:283 | P3 | struct FExpectedComponent
+RPGBossHydrationPreparationTests.cpp:290 | P3 | TArray<FExpectedComponent> ExpectedComponents()
+RPGBossHydrationPreparationTests.cpp:292 | P3 | return TArray<FExpectedComponent>{{URPGBossStagger::StaticClass(), TEXT("RPGBossStagger")}, {URPGBossPhases::StaticClass(), TEXT("RPGBossPhases")}, {URPGBossEncounter::StaticClass(), TEXT("RPGBossEncounter")},
+RPGBossHydrationPreparationTests.cpp:330 | P4 | bOk &= Test.TestEqual(TEXT("ten components are leased"), Batch.GetOwnedComponentCount(), 10);
+RPGBossHydrationPreparationTests.cpp:333 | P2+P4 | bOk &= Test.TestTrue(TEXT("ten distinct owned component pointers"), OwnedList.Num() == 10 && OwnedSet.Num() == 10);
+RPGBossHydrationPreparationTests.cpp:342 | P3 | const TArray<FExpectedComponent> Expected = ExpectedComponents();
+RPGBossHydrationPreparationTests.cpp:346 | P3 | for (const FExpectedComponent& Wanted : Expected)
+RPGBossHydrationPreparationTests.cpp:362 | P1 | bool bPriorKept = Now.Components.Num() == Prior.Components.Num() + 5 && !Now.bBegun;
+RPGBossHydrationPreparationTests.cpp:367 | P4 | bOk &= Test.TestTrue(FString::Printf(TEXT("%s: exactly five components were added and every unrelated component is still there"), *Label), bPriorKept);
+RPGBossHydrationPreparationTests.cpp:387 | P2 | Infos[0].Slot == FName(TEXT("Boss1")) && Infos[0].TargetSlot == FName(TEXT("Player")) && Infos[0].Role == ERPGPreflightRole::BossCore && Infos[0].SelectedPhaseId == PhaseTwo && Infos[0].OwnedComponentCount == 5
+RPGBossHydrationPreparationTests.cpp:388 | P2 | && Infos[1].Slot == FName(TEXT("Boss2")) && Infos[1].TargetSlot == FName(TEXT("Player")) && Infos[1].Role == ERPGPreflightRole::BossCore && Infos[1].SelectedPhaseId == PhaseAlt && Infos[1].OwnedComponentCount == 5
+RPGBossHydrationPreparationTests.cpp:389 | P2 | && Infos[2].Slot == FName(TEXT("Player")) && Infos[2].TargetSlot == FName(TEXT("Boss1")) && Infos[2].Role == ERPGPreflightRole::TargetOnly && Infos[2].SelectedPhaseId.IsNone() && Infos[2].OwnedComponentCount == 0);
+RPGBossHydrationPreparationTests.cpp:392 | P2 | if (Test.TestTrue(TEXT("the validated preflight plan is retained"), Plan.IsValid() && Plan->Participants.Num() == 3))
+RPGBossHydrationPreparationTests.cpp:425 | P2 | bool bOk = Test.TestTrue(FString::Printf(TEXT("%s: every owned component is destroyed (none resolves any more)"), Label), Weak.Num() == 10 && bGone);
+RPGBossHydrationPreparationTests.cpp:453 | P2+P4 | TestTrue(TEXT("the abort destroyed ten components and found nothing else"), Report.Destroyed == 10 && Report.AlreadyGone == 0 && Report.ContractViolations == 0 && Report.IsClean());
+RPGBossHydrationPreparationTests.cpp:479 | P2+P4 | TestTrue(TEXT("explicit abort: ten destroyed, none already gone, no violation, clean"), First.Destroyed == 10 && First.AlreadyGone == 0 && First.ContractViolations == 0 && First.IsClean() && !First.bRefused);
+RPGBossHydrationPreparationTests.cpp:482 | P2 | TestTrue(TEXT("the summary reports no owned component"), Result.Batch->GetParticipants().Num() == 3 && Result.Batch->GetParticipants()[0].OwnedComponentCount == 0);
+RPGBossHydrationPreparationTests.cpp:486 | P2 | TestTrue(TEXT("a repeated abort is harmless: nothing destroyed, nothing reported"), Second.Destroyed == 0 && Second.AlreadyGone == 0 && Second.ContractViolations == 0 && Second.IsClean());
+RPGBossHydrationPreparationTests.cpp:538 | P2+P4 | TestTrue(TEXT("the first artifact is intact: prepared, the same ten components, still unregistered and not begun"), First.Batch->IsPrepared() && First.Batch->GetOwnedComponentCount() == 10 && First.Batch->OwnedComponentsForTest() == Snapshot);
+RPGBossHydrationPreparationTests.cpp:544 | P2 | TestTrue(TEXT("the first artifact aborts cleanly"), Report.Destroyed == 10 && Report.IsClean());
+RPGBossHydrationPreparationTests.cpp:628 | P2 | TestTrue(FString::Printf(TEXT("%s: named as an injected fault, not an organic failure (got: %s)"), *Label, *FString::Join(Result.Errors, TEXT(" | "))), AnyErrorStartsWith(Result.Errors, TEXT("Preparation.InjectedFault")) && Result.Errors.Num() == 1);
+RPGBossHydrationPreparationTests.cpp:679 | P2+P4 | TestTrue(TEXT("component destroyed first: nine destroyed by the abort, one already gone, no violation, clean"), Report.Destroyed == 9 && Report.AlreadyGone == 1 && Report.ContractViolations == 0 && Report.IsClean());
+RPGBossHydrationPreparationTests.cpp:698 | P2+P4 | TestTrue(TEXT("owner destroyed first: the first boss's five are destroyed, the destroyed owner's five are already gone, no violation"), Report.Destroyed == 5 && Report.AlreadyGone == 5 && Report.ContractViolations == 0 && Report.IsClean());
+RPGBossHydrationPreparationTests.cpp:716 | P2 | TestTrue(TEXT("world torn down first: every owned component is accounted for and nothing is reported as a registration violation"), Report.Destroyed + Report.AlreadyGone == 10 && Report.ContractViolations == 0 && Report.IsClean());
+RPGBossHydrationPreparationTests.cpp:747 | P2+P4 | TestTrue(TEXT("registered by somebody else: nine destroyed, one contract violation, not clean"), Report.Destroyed == 9 && Report.ContractViolations == 1 && !Report.IsClean() && AnyErrorStartsWith(Report.Errors, TEXT("Preparation.ContractViolation")) && AnyErrorContains(Report.Errors, TEXT("RPGBossEncounter")));
+RPGBossHydrationPreparationTests.cpp:767 | P2 | TestTrue(TEXT("a preparation on a worker thread is refused by name, before anything else"), PrepareErrors.Num() == 1 && PrepareErrors[0].StartsWith(TEXT("Preparation.NotGameThread")));
+RPGBossHydrationPreparationTests.cpp:777 | P2 | TestTrue(TEXT("an abort on a worker thread is refused by name and destroys nothing"), Refused.bRefused && Refused.Destroyed == 0 && AnyErrorStartsWith(Refused.Errors, TEXT("Preparation.NotGameThread")));
+RPGBossHydrationPreparationTests.cpp:778 | P2+P4 | TestTrue(TEXT("the artifact is still prepared with its ten components after the refused abort"), Result.Batch->IsPrepared() && Result.Batch->GetOwnedComponentCount() == 10);
+RPGBossHydrationPreparationTests.cpp:780 | P2 | TestTrue(TEXT("the game-thread abort then succeeds"), Report.Destroyed == 10 && Report.IsClean());
+RPGBossLookAdaptersTests.cpp:233 | P4 | TestTrue(TEXT("exact class/name and five exact paths, without duplicates"), Plan.Class == URPGBossLook::StaticClass()
+RPGBossLookAdaptersTests.cpp:237 | P4 | TestTrue(TEXT("callback copies all five nondefault fields"), Plan.Configure(*Look, Config(RecordA()), Error) && Error.IsEmpty() && Same(Read(*Look), RecordA()));
+RPGBossLookAdaptersTests.cpp:393 | P4 | TestTrue(TEXT("all five typed values copied, dev-only flag, same epoch; manifest Value not parsed"), Same(Out->Look, RecordA()) && Out->bSyntheticFixture && Out->Content.Get() == Content.Get());
+RPGBossLookAdaptersTests.cpp:441 | P4 | TestEqual(TEXT("exact five authored properties"), Count, 5);
+RPGBossLookAdaptersTests.cpp:453 | P4 | TestTrue(TEXT("all five native defaults including constructor soft paths"), Same(Default, Read(*GetDefault<URPGBossLook>())));
+RPGBossLookAdaptersTests.cpp:454 | P2 | TestTrue(TEXT("explicit declared baseline"), Default.bEnabled && Default.SwordSocket == FName(TEXT("HeavySwordSocket_R")) && Default.Pieces.Num() == 3
+RPGBossPhaseFlowAdaptersTests.cpp:269 | P4 | TestTrue(TEXT("plan required fields are the six typed paths"), Plan.RequiredFields == TArray<FString>{
+RPGBossPhaseFlowAdaptersTests.cpp:285 | P4 | TestTrue(TEXT("all six fields are the typed record, not the manifest text"), FlowEquals(ReadFlow(*Phases), A));
+RPGBossPhaseFlowAdaptersTests.cpp:290 | P4 | TestTrue(TEXT("nothing but the six flow fields changed"), FPhaseState(*Phases) == Expected);
+RPGBossPhaseFlowAdaptersTests.cpp:317 | P4 | TestTrue(TEXT("still nothing but the six fields changed after all combinations"), FPhaseState(*Phases) == ExpectedLast);
+RPGBossPhaseFlowAdaptersTests.cpp:363 | P4 | TestTrue(FString::Printf(TEXT("%s: no write at all (six fields, sentinels, state)"), *Label), FPhaseState(*Phases) == Before);
+RPGBossPhaseFlowAdaptersTests.cpp:463 | P4 | TestTrue(TEXT("B has its own six values"), FlowEquals(ReadFlow(*B), NondefaultFlowB()));
+RPGBossPhaseFlowAdaptersTests.cpp:663 | P4 | TestTrue(TEXT("all six fields copied (record A)"), FlowEquals(Out->PhaseFlow, NondefaultFlowA()));
+RPGBossPhaseFlowAdaptersTests.cpp:664 | P2 | TestTrue(TEXT("established Stats, phase and identity values retained"), Out->Stats.MaxHealth == 3500.f && Out->Phases.Num() == 1 && Out->BossId == FName(TEXT("Synthetic")) && Out->bSyntheticFixture);
+RPGBossPhasesClusterAdaptersTests.cpp:312 | P2 | TestTrue(TEXT("no selection: the 14 independent paths only"), NoSelectionPlan.RequiredFields.Num() == 14 && NoSelectionPlan.RequiredFields[0] == TEXT("PhaseFlow.TransitionSeconds"));
+RPGBossPhasesClusterAdaptersTests.cpp:767 | P2 | TestTrue(TEXT("established Stats, phase, flow and identity values retained"), Out->Stats.MaxHealth == 3500.f && Out->Phases.Num() == 1 && Out->PhaseFlow.TransitionSeconds == 2.75f
+RPGBossPhasesClusterAdaptersTests.cpp:968 | P4 | TestTrue(TEXT("the fireball defaults are the documented ones"), !Fireball.bFireballEnabled && Fireball.FireballCooldown == FVector2D(6.0, 10.0) && Fireball.FireballMinRange == 500.f && Fireball.FireballMaxRange == 1800.f
+RPGBossPhasesClusterAdaptersTests.cpp:1020 | P4 | TestTrue(FString::Printf(TEXT("%s: the ten phase and flow fields equal the sequential use of the older adapters"), Case.Name), ClusterState.PhaseAndFlowEquals(OracleState));
+RPGBossPreparationRegistryTests.cpp:266 | P3 | struct FExpectedComponent
+RPGBossPreparationRegistryTests.cpp:272 | P3 | TArray<FExpectedComponent> ExpectedComponents()
+RPGBossPreparationRegistryTests.cpp:274 | P3 | return TArray<FExpectedComponent>{{URPGBossStagger::StaticClass(), TEXT("RPGBossStagger")}, {URPGBossPhases::StaticClass(), TEXT("RPGBossPhases")}, {URPGBossEncounter::StaticClass(), TEXT("RPGBossEncounter")},
+RPGBossPreparationRegistryTests.cpp:523 | P3 | for (const FExpectedComponent& Wanted : ExpectedComponents())
+RPGBossPreparationRegistryTests.cpp:543 | P3 | for (const FExpectedComponent& Wanted : ExpectedComponents())
+RPGBossPreparationRegistryTests.cpp:572 | P2 | bOk &= Test.TestTrue(FString::Printf(TEXT("%s: ONE error carries %s and %s (got: %s)"), Label, Token, Where, *JoinErrors(Result.Errors)), AnyErrorHasAll(Result.Errors, Token, Where, TEXT("")) && Result.Errors.Num() == 1);
+RPGBossPreparationRegistryTests.cpp:620 | P4 | TestTrue(TEXT("both encounters hold ten unregistered components each (five per boss, none on the target) and the unrelated markers are untouched"), IsFullyPrepared(*A) && IsFullyPrepared(*B) && MarkersIntact(*A) && MarkersIntact(*B));
+RPGBossPreparationRegistryTests.cpp:713 | P3 | const FExpectedComponent EncounterComponent = ExpectedComponents()[2];
+RPGBossPreparationRegistryTests.cpp:728 | P2 | Refused.Errors.Num() == 1 && AnyErrorHasAll(Refused.Errors, TEXT("Preparation.AllocationFailed"), TEXT("[slot=BossTwo]"), TEXT("[component=RPGBossEncounter]")));
+RPGBossPreparationRegistryTests.cpp:736 | P3 | for (const FExpectedComponent& Wanted : ExpectedComponents())
+RPGBossPreparationRegistryTests.cpp:794 | P2+P4 | TestTrue(FString::Printf(TEXT("clean release: Released, ten destroyed, no violation (errors: %s)"), *JoinErrors(Released.Errors)), Released.IsReleased() && Released.Abort.IsClean() && Released.Abort.Destroyed == 10 && Released.Abort.ContractViolations == 0);
+RPGBossPreparationRegistryTests.cpp:856 | P2+P4 | TestTrue(FString::Printf(TEXT("the token releases through its own registry: Released, ten destroyed (errors: %s)"), *JoinErrors(ByOwnToken.Errors)), ByOwnToken.IsReleased() && ByOwnToken.Abort.Destroyed == 10 && !TokenTwo.IsHeld());
+RPGBossPreparationRegistryTests.cpp:894 | P2 | TestTrue(FString::Printf(TEXT("world dies first: the release is clean without a crash, every owned component accounted for (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsReleased() && Report.Abort.Destroyed + Report.Abort.AlreadyGone == 10 && Report.Abort.ContractViolations == 0);
+RPGBossPreparationRegistryTests.cpp:986 | P4 | TestTrue(FString::Printf(TEXT("actors die first: the release is clean, every component was destroyed with its owner (ten already gone, none destroyed by the abort), no violation (errors: %s)"), *JoinErrors(Report.Errors)),
+RPGBossPreparationRegistryTests.cpp:987 | P2 | Report.IsReleased() && Report.Abort.AlreadyGone == 10 && Report.Abort.Destroyed == 0 && Report.Abort.ContractViolations == 0 && Registry.GetActiveReservationCount() == 0 && !Token.IsHeld());
+RPGBossPreparationRegistryTests.cpp:1026 | P4 | TestTrue(TEXT("after the off-thread refusals the token is still held, the reservation and its ten components are intact and the registry is unchanged"), Token.IsHeld() && IsFullyPrepared(*D) && Registry.GetActiveReservationCount() == 1
+RPGBossProductionPreflightTests.cpp:519 | P4 | if (!TestEqual(TEXT("the boss has five plans"), BossPlan.Plans.Num(), 5))
+RPGBossProductionPreflightTests.cpp:535 | P4 | TestEqual(TEXT("the union of required manifest paths is fifty-one"), Required.Num(), 51);
+RPGBossProductionPreflightTests.cpp:666 | P2 | TestTrue(TEXT("the successful production configs and the earlier plan are untouched by the negative cases"), F.BossConfig.IsValid() && F.BossConfig->Animations.Num() == BossAnimationPaths().Num() && Prior.IsValid() && Prior->Participants.Num() == 2);
+RPGBossProductionPreparationTests.cpp:376 | P3 | struct FExpectedComponent
+RPGBossProductionPreparationTests.cpp:383 | P3 | TArray<FExpectedComponent> ExpectedComponents()
+RPGBossProductionPreparationTests.cpp:385 | P3 | return TArray<FExpectedComponent>{{URPGBossStagger::StaticClass(), TEXT("RPGBossStagger")}, {URPGBossPhases::StaticClass(), TEXT("RPGBossPhases")}, {URPGBossEncounter::StaticClass(), TEXT("RPGBossEncounter")},
+RPGBossProductionPreparationTests.cpp:613 | P2 | bool bOk = Test.TestTrue(FString::Printf(TEXT("%s: every owned component is destroyed (none resolves any more)"), Label), Weak.Num() == 10 && bGone);
+RPGBossProductionPreparationTests.cpp:634 | P3 | for (const FExpectedComponent& Wanted : ExpectedComponents())
+RPGBossProductionPreparationTests.cpp:648 | P4 | bOk &= Test.TestEqual(TEXT("ten components are leased"), Batch.GetOwnedComponentCount(), 10);
+RPGBossProductionPreparationTests.cpp:651 | P2+P4 | bOk &= Test.TestTrue(TEXT("ten distinct owned component pointers"), OwnedList.Num() == 10 && OwnedSet.Num() == 10);
+RPGBossProductionPreparationTests.cpp:662 | P3 | const TArray<FExpectedComponent> Expected = ExpectedComponents();
+RPGBossProductionPreparationTests.cpp:666 | P3 | for (const FExpectedComponent& Wanted : Expected)
+RPGBossProductionPreparationTests.cpp:682 | P1 | bool bPriorKept = Now.Components.Num() == Prior.Components.Num() + 5 && !Now.bBegun && Now.MeshAsset == Prior.MeshAsset;
+RPGBossProductionPreparationTests.cpp:687 | P4 | bOk &= Test.TestTrue(FString::Printf(TEXT("%s: exactly five components were added, every unrelated component is still there and the mesh asset is unchanged"), *Label), bPriorKept);
+RPGBossProductionPreparationTests.cpp:707 | P2 | Infos[0].Slot == FName(TEXT("BossOne")) && Infos[0].TargetSlot == FName(TEXT("Player")) && Infos[0].Role == ERPGPreflightRole::BossCore && Infos[0].SelectedPhaseId == FName(One.Phase) && Infos[0].OwnedComponentCount == 5
+RPGBossProductionPreparationTests.cpp:708 | P2 | && Infos[1].Slot == FName(TEXT("BossTwo")) && Infos[1].TargetSlot == FName(TEXT("Player")) && Infos[1].Role == ERPGPreflightRole::BossCore && Infos[1].SelectedPhaseId == FName(Two.Phase) && Infos[1].OwnedComponentCount == 5
+RPGBossProductionPreparationTests.cpp:709 | P2 | && Infos[2].Slot == FName(TEXT("Player")) && Infos[2].TargetSlot == FName(TEXT("BossOne")) && Infos[2].Role == ERPGPreflightRole::TargetOnly && Infos[2].SelectedPhaseId.IsNone() && Infos[2].OwnedComponentCount == 0);
+RPGBossProductionPreparationTests.cpp:712 | P2 | if (Test.TestTrue(TEXT("the validated preflight plan is retained"), Plan.IsValid() && Plan->Participants.Num() == 3))
+RPGBossProductionPreparationTests.cpp:788 | P2+P4 | TestTrue(TEXT("explicit abort destroyed ten components, found none already gone and no contract violation"), Report.Destroyed == 10 && Report.AlreadyGone == 0 && Report.ContractViolations == 0 && !Report.bRefused);
+RPGBossProductionPreparationTests.cpp:796 | P2 | TestTrue(TEXT("a second abort is idempotent: clean and nothing more destroyed"), Again.IsClean() && Again.Destroyed == 0 && Again.AlreadyGone == 0 && Again.ContractViolations == 0);
+RPGBossProductionPreparationTests.cpp:849 | P2 | TestTrue(FString::Printf(TEXT("control: the unmodified production batch passes the preflight (errors: %s)"), *JoinErrors(Preflight.Errors)), Preflight.IsReady() && Plan.IsValid() && Plan->Participants.Num() == 3);
+RPGBossProductionPreparationTests.cpp:899 | P2+P4 | TestTrue(FString::Printf(TEXT("control: abort is clean and destroyed ten components (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsClean() && Report.Destroyed == 10 && Report.AlreadyGone == 0 && Report.ContractViolations == 0);
+RPGBossProductionPreparationTests.cpp:924 | P3 | const TArray<FExpectedComponent> Expected = ExpectedComponents();
+RPGBossProductionPreparationTests.cpp:936 | P3 | for (const FExpectedComponent& Wanted : Expected)
+RPGBossProductionPreparationTests.cpp:972 | P2 | TestTrue(FString::Printf(TEXT("exactly one error: the refusal itself, and the cleanup reported nothing (got: %s)"), *JoinErrors(Refused.Errors)), Refused.Errors.Num() == 1);
+RPGBossProductionPreparationTests.cpp:979 | P3 | for (const FExpectedComponent& Wanted : Expected)
+RPGBossProductionPreparationTests.cpp:984 | P4 | TestTrue(TEXT("all five of boss one's components (earlier owner) were allocated and are now destroyed"), bBossOneAllocatedAndDestroyed);
+RPGBossProductionPreparationTests.cpp:996 | P3 | for (const FExpectedComponent& Wanted : Expected)
+RPGBossProductionPreparationTests.cpp:1037 | P1 | TestTrue(TEXT("boss two lost exactly the blocker; boss one and the target are as before"), AfterRemoval.Actors[1].Components.Num() == Before.Actors[1].Components.Num() - 1 && SameActor(AfterRemoval.Actors[0], Before.Actors[0])
+RPGBossProductionPreparationTests.cpp:1052 | P2+P4 | TestTrue(FString::Printf(TEXT("the retry's abort is clean and destroyed ten components (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsClean() && Report.Destroyed == 10 && Report.AlreadyGone == 0 && Report.ContractViolations == 0);
+RPGBossStaggerClusterAdaptersTests.cpp:425 | P2 | TestTrue(TEXT("plan has 25 required fields"), Plan.RequiredFields.Num() == 25);
+RPGBossStaggerClusterAdaptersTests.cpp:1053 | P2 | TestTrue(TEXT("phase count retained"), Out->Phases.Num() == 1);
+RPGBossStaggerClusterAdaptersTests.cpp:1293 | P2 | TestTrue(TEXT("plan has 25 required paths in exact order"), Plan.RequiredFields.Num() == 25);
+RPGBossStaggerPolicyAdaptersTests.cpp:742 | P2 | TestTrue(TEXT("established Stats, phase and identity values retained"), Out->Stats.MaxHealth == 3500.f && Out->Phases.Num() == 1 && Out->BossId == FName(TEXT("Synthetic")) && Out->bSyntheticFixture);
+RPGBossStatsAdaptersTests.cpp:230 | P4 | if (!TestTrue(TEXT("six components"), EncounterA.IsValid() && PostureA.IsValid() && EncounterB.IsValid() && PostureB.IsValid() && EncounterC.IsValid() && PostureC.IsValid()))
+RPGBossStatsAdaptersTests.cpp:333 | P4 | TestFalse(TEXT("encounter refuses a record with bad posture stats"), RPGBossStatsAdapters::ConfigureEncounter(*Encounter, MakeStatsConfig(3500.f, -1.f, 6.f, 13.f), Error));
+RPGBossWorldInputCompilerTests.cpp:384 | P3 | const TCHAR* const PlannedNames[5] = {TEXT("RPGBossStagger"), TEXT("RPGBossPhases"), TEXT("RPGBossEncounter"), TEXT("RPGBossDormantWake"), TEXT("RPGBossPosture")};
+RPGBossWorldInputCompilerTests.cpp:397 | P2 | return Input.Requests.Num() == 3 && Input.EncounterInstance.IsValid() && Input.ExpectedWorld.IsValid() && Input.ExpectedContent.IsValid();
+RPGBossWorldInputCompilerTests.cpp:599 | P3 | for (const TCHAR* Name : PlannedNames)
+RPGBossWorldInputCompilerTests.cpp:731 | P2 | TestTrue(FString::Printf(TEXT("the output passes the accepted preflight as published (errors: %s)"), *JoinErrors(Preflight.Errors)), Preflight.IsReady() && Plan.IsValid() && Plan->Participants.Num() == 3);
+RPGBossWorldInputCompilerTests.cpp:755 | P2 | TestTrue(TEXT("the binding and its participants are unchanged by the calls"), F.Binding->EncounterInstance == F.Encounter && F.Binding->Participants.Num() == 3 && F.Binding->Participants[0].Actor.Get() == F.BossOneActor
+RPGBossWorldPreparationTests.cpp:304 | P3 | struct FExpectedComponent
+RPGBossWorldPreparationTests.cpp:311 | P3 | TArray<FExpectedComponent> ExpectedComponents()
+RPGBossWorldPreparationTests.cpp:313 | P3 | return TArray<FExpectedComponent>{{URPGBossStagger::StaticClass(), TEXT("RPGBossStagger")}, {URPGBossPhases::StaticClass(), TEXT("RPGBossPhases")}, {URPGBossEncounter::StaticClass(), TEXT("RPGBossEncounter")},
+RPGBossWorldPreparationTests.cpp:504 | P3 | for (const FExpectedComponent& Wanted : ExpectedComponents())
+RPGBossWorldPreparationTests.cpp:541 | P2 | bool bOk = Test.TestTrue(FString::Printf(TEXT("%s: every owned component is destroyed (none resolves any more)"), Label), Weak.Num() == 10 && bGone);
+RPGBossWorldPreparationTests.cpp:557 | P2+P4 | bool bOk = Test.TestTrue(TEXT("the artifact reports prepared and leases ten components"), Batch.IsPrepared() && Batch.GetOwnedComponentCount() == 10);
+RPGBossWorldPreparationTests.cpp:560 | P2+P4 | bOk &= Test.TestTrue(TEXT("ten distinct owned component pointers"), OwnedList.Num() == 10 && OwnedSet.Num() == 10);
+RPGBossWorldPreparationTests.cpp:574 | P3 | for (const FExpectedComponent& Wanted : ExpectedComponents())
+RPGBossWorldPreparationTests.cpp:588 | P1 | bool bPriorKept = Now.Components.Num() == Prior.Components.Num() + 5 && !Now.bBegun && Now.MeshAsset == Prior.MeshAsset;
+RPGBossWorldPreparationTests.cpp:593 | P4 | bOk &= Test.TestTrue(FString::Printf(TEXT("%s: exactly five components were added, every unrelated component is still there, the mesh asset is unchanged and no participant component exists"), *Label), bPriorKept && !Case.Actor->FindComponentByClass<URPGCombatParticipant>());
+RPGBossWorldPreparationTests.cpp:605 | P2 | if (Test.TestTrue(TEXT("the retained plan has three participants"), Plan.IsValid() && Plan->Participants.Num() == 3))
+RPGBossWorldPreparationTests.cpp:618 | P2+P4 | bOk &= Test.TestTrue(TEXT("summaries: three participants, ten components, the explicit phase ids"), Infos.Num() == 3 && Infos[0].OwnedComponentCount == 5 && Infos[1].OwnedComponentCount == 5 && Infos[2].OwnedComponentCount == 0
+RPGBossWorldPreparationTests.cpp:652 | P2+P4 | TestTrue(TEXT("and its abort is clean, ten destroyed"), Report.IsClean() && Report.Destroyed == 10 && Report.ContractViolations == 0);
+RPGBossWorldPreparationTests.cpp:668 | P2+P4 | TestTrue(FString::Printf(TEXT("explicit abort: clean report and ten destroyed (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsClean() && Report.Destroyed == 10 && Report.AlreadyGone == 0 && Report.ContractViolations == 0 && !Report.bRefused);
+RPGBossWorldPreparationTests.cpp:706 | P3 | const TArray<FExpectedComponent> Expected = ExpectedComponents();
+RPGBossWorldPreparationTests.cpp:759 | P2 | Refused.Errors.Num() == 1 && AnyErrorHasAll(Refused.Errors, TEXT("Preparation.AllocationFailed"), TEXT("[slot=BossTwo]"), TEXT("[component=RPGBossEncounter]")));
+RPGBossWorldPreparationTests.cpp:763 | P3 | for (const FExpectedComponent& Wanted : Expected)
+RPGBossWorldPreparationTests.cpp:774 | P4 | TestTrue(TEXT("name collision: boss one's five and boss two's two earlier components were allocated and are now destroyed"), bBossOneDestroyed && bBossTwoEarlierDestroyed);
+RPGBossWorldPreparationTests.cpp:794 | P1 | TestTrue(TEXT("only the blocker was removed: boss two lost exactly it, boss one and the target are as before"), AfterRemoval.Actors[1].Components.Num() == BeforeCollision.Actors[1].Components.Num() - 1 && SameActorState(AfterRemoval.Actors[0], BeforeCollision.Actors[0])
+RPGBossWorldPreparationTests.cpp:806 | P2+P4 | TestTrue(TEXT("the retry's abort is clean and destroyed ten"), Report.IsClean() && Report.Destroyed == 10 && Report.ContractViolations == 0);
+RPGBossWorldPreparationTests.cpp:848 | P4 | TestTrue(TEXT("second preparation: the first artifact is undamaged: still prepared, ten components, the very same objects, unregistered, and every actor is exactly as with the first"),
+RPGBossWorldPreparationTests.cpp:849 | P2 | First.Batch->IsPrepared() && First.Batch->GetOwnedComponentCount() == 10 && SameWorld(WithFirst, F.Capture()));
+RPGBossWorldPreparationTests.cpp:855 | P2 | TestTrue(TEXT("second preparation: every component of the first artifact is still the same live unregistered object"), FirstWeak.Num() == 10 && bAllLive);
+RPGBossWorldPreparationTests.cpp:861 | P2 | TestTrue(TEXT("the same binding again: the first artifact is still undamaged"), First.Batch->IsPrepared() && First.Batch->GetOwnedComponentCount() == 10 && SameWorld(WithFirst, F.Capture()));
+RPGBossWorldPreparationTests.cpp:865 | P2+P4 | TestTrue(TEXT("the first artifact's abort is clean and destroyed ten"), Report.IsClean() && Report.Destroyed == 10 && Report.ContractViolations == 0);
+RPGBossWorldPreparationTests.cpp:926 | P2 | TestTrue(FString::Printf(TEXT("control: the unmodified call succeeds after the refusals (errors: %s)"), *JoinErrors(Control.Errors)), Control.Succeeded() && Control.Batch->GetOwnedComponentCount() == 10);
+RPGCodexTests.cpp:39 | P4 | TestEqual(TEXT("held zero remains zero"), RegenStep(0.f, 100.f, 10.0, 0.0, 6.f, 13.f, 1.f), 0.f);
+RPGCodexTests.cpp:40 | P4 | TestEqual(TEXT("unheld zero regenerates after delay"), RegenStep(0.f, 100.f, 6.0, 0.0, 6.f, 13.f, 1.f, true), 13.f);
+RPGCodexTests.cpp:41 | P4 | TestEqual(TEXT("delay boundary regenerates"), RegenStep(50.f, 100.f, 6.0, 0.0, 6.f, 13.f, 1.f), 63.f);
+RPGCodexTests.cpp:42 | P4 | TestEqual(TEXT("regen caps at maximum"), RegenStep(95.f, 100.f, 9.0, 0.0, 6.f, 13.f, 1.f), 100.f);
+RPGCombatCatalogTests.cpp:553 | P2 | if (!TestTrue(TEXT("two game instances with the four-row test catalog"), EA.IsValid() && EB.IsValid() && EA->Builds.Num() == 4 && EB->Builds.Num() == 4)) return false;
+RPGFlaskHudTests.cpp:15 | P4 | TestEqual(TEXT("exactly two thirds is half"), DecideFill(6, 9), EFill::Half);
+RPGPlayerMovesAttachWitnessTests.cpp:381 | P2 | if (W1.Num() == 0 || S1.Identities.Num() == 0)

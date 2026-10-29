@@ -1,0 +1,1309 @@
+--- /dev/null
++++ Source/OneBossFight/Player/RPGBossBleedAdapters.h
+@@ -0,0 +1,61 @@
++// Copyright One Boss Fight. All Rights Reserved.
++
++#pragma once
++
++#include "CoreMinimal.h"
++#include "Player/RPGEncounterBinding.h"
++
++/**
++ * Typed native adapter for the bleed status policy (DD19 package 01): FRPGBleedConfig -> exactly seven public fields of URPGBossBleed, five floats and two soft object references, with the names of the native
++ * component:
++ *
++ *   InitialThreshold, ThresholdIncrease, ThresholdMax, HpFraction, EffectHeight, ProcEffect, ProcSound
++ *
++ * Nothing else is assigned. The runtime state (the buildup, the threshold in force, the proc counter, the proc frame, the ignored counter, the last proc damage and the last result), the loaded effect, sound and
++ * blood flipbook, the owner's health and posture and every other component are never touched: no threshold is seeded (the native BeginPlay and ResetBleed do that from InitialThreshold), no buildup is added,
++ * no timer starts and no proc happens. Nothing is loaded, resolved or queried (no asset registry) by the validation or the assignment: the two references are assigned as PATHS.
++ *
++ * One validator, two users: ValidateBleed is called by the definition compiler (RPGCombatHydration::CompileParticipantImpl) and by ConfigureBleed, so at the record level a record that the compiler accepts is
++ * exactly a record the assignment accepts (the assignment adds the lifecycle checks of the component and its owner). The contract is structural and authored, not a balance retune; an invalid value is refused by
++ * name and never clamped, defaulted or repaired. The native ClampMin and ClampMax values are editor metadata and are NOT runtime minimums here. Checks run in this order: (1) EVERY scalar finite, in field order;
++ * (2) the domains, in field order; (3) the two references, ProcEffect first.
++ *   - InitialThreshold strictly positive (the first proc needs a buildup above zero);
++ *   - ThresholdIncrease not negative (zero keeps a constant threshold);
++ *   - ThresholdMax at least InitialThreshold (the native proc takes Min(Threshold + Increase, Max), so a maximum below the start would lower the threshold after the first proc); equal is valid;
++ *   - HpFraction within [0, 1] (zero is a proc that takes no health, one the whole maximum; the native proc never takes the last point);
++ *   - EffectHeight finite and SIGNED: no height floor is invented (a negative value places the burst below the origin);
++ *   - ProcEffect and ProcSound REQUIRED: a set top-level soft reference that starts with '/', has a package folder and a <package>.<asset> leaf, carries no whitespace, control character or sub-object (':'),
++ *     checked for path STRUCTURE only, including engine text-only package and object-name validation. Empty/repeated path segments, invalid package characters and object names with extra dots are refused.
++ *     A mount need not be registered: this is a lexical check, not a mounted-root, asset-registry, existence or class check.
++ * THAT A PATH NAMES AN EXISTING OR COOKED ASSET, THAT IT IS A NIAGARA SYSTEM OR A SOUND, THAT THE BURST IS VISIBLE OR AUDIBLE AND THAT THE NUMBERS FEEL RIGHT ARE UNRESOLVED INTEGRATION CHECKS, not something
++ * a well-formed record proves. Assigning an unwired record approves no tuning and enables nothing.
++ *
++ * ConfigureBleed checks the component (exact class, live, not begun, not registered) and its owner (live, not begun, not beginning play) and the whole record first, and writes only afterwards: a failure leaves
++ * every field as it was. It creates no object, registers nothing, begins nothing, ticks nothing, loads nothing and looks up no actor. The plan is an UNWIRED fragment with the legacy instance name; it is NOT
++ * added to the DD5 preflight, the preparation or the reservation registry, claims no readiness, makes the participant no complete bundle and suppresses no legacy component.
++ *
++ * Failures are named: the message starts with one of these tokens.
++ *   InvalidComponent, WrongComponentClass, ComponentBegunPlay, ComponentAlreadyRegistered, InvalidOwner, OwnerBegunPlay,
++ *   InvalidBleed.NotFinite, InvalidBleed.NotPositive, InvalidBleed.Negative, InvalidBleed.ThresholdMaxBelowInitial, InvalidBleed.FractionOutOfRange,
++ *   InvalidDependency.Missing, InvalidDependency.Malformed
++ */
++namespace RPGBossBleedAdapters
++{
++	/** The manifest paths of the seven typed inputs, "Bleed.<native field name>" (metadata membership only, not provenance and not proof of a value). */
++	inline constexpr const TCHAR* FieldInitialThreshold = TEXT("Bleed.InitialThreshold");
++	inline constexpr const TCHAR* FieldThresholdIncrease = TEXT("Bleed.ThresholdIncrease");
++	inline constexpr const TCHAR* FieldThresholdMax = TEXT("Bleed.ThresholdMax");
++	inline constexpr const TCHAR* FieldHpFraction = TEXT("Bleed.HpFraction");
++	inline constexpr const TCHAR* FieldEffectHeight = TEXT("Bleed.EffectHeight");
++	inline constexpr const TCHAR* FieldProcEffect = TEXT("Bleed.ProcEffect");
++	inline constexpr const TCHAR* FieldProcSound = TEXT("Bleed.ProcSound");
++
++	/** Checks the typed record without touching any component; OutError is cleared first and carries a named failure on false. */
++	ONEBOSSFIGHT_API bool ValidateBleed(const FRPGBleedConfig& Bleed, FString& OutError);
++
++	/** Assigns the seven fields of Config.Bleed to a URPGBossBleed (exact class). Writes nothing unless every check passed. */
++	ONEBOSSFIGHT_API bool ConfigureBleed(UActorComponent& Component, const FRPGParticipantConfig& Config, FString& OutError);
++
++	/** Unwired plan fragment: class URPGBossBleed, the legacy instance name "RPGBossBleed", the seven typed field paths as required fields (in record field order). */
++	ONEBOSSFIGHT_API FRPGComponentPlan MakeBleedPlan();
++}
+--- /dev/null
++++ Source/OneBossFight/Player/RPGBossBleedAdapters.cpp
+@@ -0,0 +1,203 @@
++// Copyright One Boss Fight. All Rights Reserved.
++
++#include "Player/RPGBossBleedAdapters.h"
++#include "Components/ActorComponent.h"
++#include "GameFramework/Actor.h"
++#include "Misc/PackageName.h"
++#include "Player/RPGBossBleed.h"
++#include "UObject/SoftObjectPath.h"
++
++namespace RPGBossBleedAdapters
++{
++	namespace
++	{
++		/** The same lifecycle boundary as the accepted typed adapters (restated here because those files must not change): a live component of exactly the expected class, unregistered and not begun, under a live
++		 *  owner that has not begun play. Writes nothing. */
++		bool CheckConfigurable(const UActorComponent& Component, const UClass* Expected, FString& OutError)
++		{
++			// First, before any other state is trusted: DestroyComponent flags the component as being destroyed, ends its play, unregisters it, removes it from its owner and marks it garbage, yet the object
++			// stays allocated until a garbage collection runs and its owner can stay valid. Such a dead component passes every later check. Only public state of a live reference is read.
++			if (!IsValid(&Component) || Component.IsBeingDestroyed())
++			{
++				OutError = FString::Printf(TEXT("InvalidComponent: %s is destroyed or being destroyed"), *Component.GetName());
++				return false;
++			}
++			if (Component.GetClass() != Expected)
++			{
++				OutError = FString::Printf(TEXT("WrongComponentClass: expected %s, got %s"), *Expected->GetName(), *Component.GetClass()->GetName());
++				return false;
++			}
++			if (Component.HasBegunPlay())
++			{
++				OutError = FString::Printf(TEXT("ComponentBegunPlay: %s already began play, its configuration was already read"), *Component.GetName());
++				return false;
++			}
++			if (Component.IsRegistered())
++			{
++				OutError = FString::Printf(TEXT("ComponentAlreadyRegistered: %s is registered, configuration must be assigned before registration"), *Component.GetName());
++				return false;
++			}
++			const AActor* Owner = Component.GetOwner();
++			if (!Owner || !IsValid(Owner) || Owner->IsActorBeingDestroyed())
++			{
++				OutError = FString::Printf(TEXT("InvalidOwner: %s has no valid owner actor"), *Component.GetName());
++				return false;
++			}
++			if (Owner->HasActorBegunPlay() || Owner->IsActorBeginningPlay())
++			{
++				OutError = FString::Printf(TEXT("OwnerBegunPlay: owner %s already began play"), *Owner->GetName());
++				return false;
++			}
++			return true;
++		}
++
++		/** Structure of a soft path as text; no registry query and no load. Returns an empty string when well-formed, else the reason. (The same structural policy as the dormant wake and the phases and stagger
++		 *  clusters, without a class-path rule: the Niagara system and the sound are plain assets.) */
++		FString PathProblem(const FSoftObjectPath& Path)
++		{
++			const FString Text = Path.ToString();
++			if (Text.IsEmpty() || Text[0] != TEXT('/'))
++			{
++				return TEXT("it must start with '/'");
++			}
++			for (const TCHAR C : Text)
++			{
++				if (FChar::IsWhitespace(C) || C < 32)
++				{
++					return TEXT("it contains whitespace or a control character");
++				}
++				if (C == TEXT(':'))
++				{
++					return TEXT("it names a sub-object");
++				}
++			}
++			int32 LastSlash = INDEX_NONE;
++			Text.FindLastChar(TEXT('/'), LastSlash);
++			const FString Leaf = Text.Mid(LastSlash + 1);
++			int32 Dot = INDEX_NONE;
++			if (!Leaf.FindChar(TEXT('.'), Dot) || Dot <= 0 || Dot >= Leaf.Len() - 1)
++			{
++				return TEXT("it must end in <package>.<asset>");
++			}
++			if (LastSlash <= 0)
++			{
++				return TEXT("it has no package folder");
++			}
++			// Text-only engine checks deliberately do not require a mounted root or
++			// query the asset registry. Synthetic paths remain legal; malformed
++			// package segments or object names must not slip through as defaults.
++			FText Reason;
++			const FString Package = Text.Left(LastSlash + 1) + Leaf.Left(Dot);
++			if (!FPackageName::IsValidTextForLongPackageName(Package, &Reason))
++			{
++				return Reason.ToString();
++			}
++			if (!FName::IsValidXName(Leaf.Mid(Dot + 1), INVALID_OBJECTNAME_CHARACTERS, &Reason))
++			{
++				return Reason.ToString();
++			}
++			return FString();
++		}
++
++		/** One required reference: null is Missing, a set path must be well-formed (Malformed). Returns false and fills OutError. */
++		bool CheckRequiredReference(const TCHAR* Field, const FSoftObjectPath& Path, FString& OutError)
++		{
++			if (Path.IsNull())
++			{
++				OutError = FString::Printf(TEXT("InvalidDependency.Missing: %s is required and is not set"), Field);
++				return false;
++			}
++			const FString Problem = PathProblem(Path);
++			if (!Problem.IsEmpty())
++			{
++				OutError = FString::Printf(TEXT("InvalidDependency.Malformed: %s=%s, %s"), Field, *Path.ToString(), *Problem);
++				return false;
++			}
++			return true;
++		}
++
++		struct FScalar
++		{
++			const TCHAR* Path;
++			float Value;
++		};
++	}
++
++	bool ValidateBleed(const FRPGBleedConfig& Bleed, FString& OutError)
++	{
++		OutError.Reset();
++		// The five scalars in field order.
++		const FScalar Scalars[] = {
++			{FieldInitialThreshold, Bleed.InitialThreshold},
++			{FieldThresholdIncrease, Bleed.ThresholdIncrease},
++			{FieldThresholdMax, Bleed.ThresholdMax},
++			{FieldHpFraction, Bleed.HpFraction},
++			{FieldEffectHeight, Bleed.EffectHeight},
++		};
++		// (1) Every scalar finite first: a NaN compares false with everything and must never reach a sign or range test.
++		for (const FScalar& Scalar : Scalars)
++		{
++			if (!FMath::IsFinite(Scalar.Value))
++			{
++				OutError = FString::Printf(TEXT("InvalidBleed.NotFinite: %s=%s"), Scalar.Path, *LexToString(Scalar.Value));
++				return false;
++			}
++		}
++		// (2) The domains, in field order. Nothing is clamped. EffectHeight has no domain beyond being finite: it is signed.
++		if (Bleed.InitialThreshold <= 0.f)
++		{
++			OutError = FString::Printf(TEXT("InvalidBleed.NotPositive: %s=%s, the first proc needs a buildup above zero"), FieldInitialThreshold, *LexToString(Bleed.InitialThreshold));
++			return false;
++		}
++		if (Bleed.ThresholdIncrease < 0.f)
++		{
++			OutError = FString::Printf(TEXT("InvalidBleed.Negative: %s=%s, expected 0 or more"), FieldThresholdIncrease, *LexToString(Bleed.ThresholdIncrease));
++			return false;
++		}
++		if (Bleed.ThresholdMax < Bleed.InitialThreshold)
++		{
++			OutError = FString::Printf(TEXT("InvalidBleed.ThresholdMaxBelowInitial: %s=%s is below %s=%s, the native proc would lower the threshold"),
++				FieldThresholdMax, *LexToString(Bleed.ThresholdMax), FieldInitialThreshold, *LexToString(Bleed.InitialThreshold));
++			return false;
++		}
++		if (Bleed.HpFraction < 0.f || Bleed.HpFraction > 1.f)
++		{
++			OutError = FString::Printf(TEXT("InvalidBleed.FractionOutOfRange: %s=%s, expected a fraction within 0 and 1"), FieldHpFraction, *LexToString(Bleed.HpFraction));
++			return false;
++		}
++		// (3) The two references, the effect first. Structure only: no registry query and no load.
++		return CheckRequiredReference(FieldProcEffect, Bleed.ProcEffect.ToSoftObjectPath(), OutError)
++			&& CheckRequiredReference(FieldProcSound, Bleed.ProcSound.ToSoftObjectPath(), OutError);
++	}
++
++	bool ConfigureBleed(UActorComponent& Component, const FRPGParticipantConfig& Config, FString& OutError)
++	{
++		OutError.Reset();
++		// Every check, lifecycle first, then the whole record, happens before the one write block.
++		if (!CheckConfigurable(Component, URPGBossBleed::StaticClass(), OutError) || !ValidateBleed(Config.Bleed, OutError))
++		{
++			return false;
++		}
++		URPGBossBleed* Bleed = CastChecked<URPGBossBleed>(&Component);
++		const FRPGBleedConfig& Record = Config.Bleed;
++		// The seven public fields only; soft paths are assigned, nothing is loaded. No state, no loaded object, no threshold seed.
++		Bleed->InitialThreshold = Record.InitialThreshold;
++		Bleed->ThresholdIncrease = Record.ThresholdIncrease;
++		Bleed->ThresholdMax = Record.ThresholdMax;
++		Bleed->HpFraction = Record.HpFraction;
++		Bleed->EffectHeight = Record.EffectHeight;
++		Bleed->ProcEffect = Record.ProcEffect;
++		Bleed->ProcSound = Record.ProcSound;
++		return true;
++	}
++
++	FRPGComponentPlan MakeBleedPlan()
++	{
++		FRPGComponentPlan Plan;
++		Plan.Class = URPGBossBleed::StaticClass();
++		Plan.InstanceName = TEXT("RPGBossBleed");
++		Plan.RequiredFields = {FieldInitialThreshold, FieldThresholdIncrease, FieldThresholdMax, FieldHpFraction, FieldEffectHeight, FieldProcEffect, FieldProcSound};
++		Plan.Configure = &ConfigureBleed;
++		return Plan;
++	}
++}
+--- Source/OneBossFight/Player/RPGEncounterBinding.h
++++ Source/OneBossFight/Player/RPGEncounterBinding.h
+@@ -14,6 +14,8 @@
+ class UAnimSequence;
+ class UAnimSequenceBase;
+ class USkeleton;
++class UNiagaraSystem;
++class USoundBase;
+ 
+ USTRUCT(BlueprintType)
+ struct FRPGBossStatsConfig
+@@ -134,6 +136,23 @@
+ 	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> WakeClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Boss01_Wake.AN_Boss01_Wake")));
+ };
+ 
++/** Bleed status policy of the boss (URPGBossBleed): the typed authoring record, five scalars and two soft references with the names of the native component. The defaults are defaults of this NEW asset field
++ *  (old schema 1 definitions receive them additively); they equal the native constructor and declaration values, are not proof of any serialized or live actor value and are never a fallback for an invalid value.
++ *  The domains are in RPGBossBleedAdapters (the native ClampMin and ClampMax metadata is editor metadata and is not copied here as a runtime rule). Soft references only: the record never loads anything and says
++ *  nothing about existence, cooking, class kind, visibility or audibility. The runtime state (buildup, threshold in force, proc counters, the loaded effect and sound) is NOT part of this record. */
++USTRUCT(BlueprintType)
++struct FRPGBleedConfig
++{
++	GENERATED_BODY()
++	UPROPERTY(EditAnywhere) float InitialThreshold = 100.f;
++	UPROPERTY(EditAnywhere) float ThresholdIncrease = 20.f;
++	UPROPERTY(EditAnywhere) float ThresholdMax = 200.f;
++	UPROPERTY(EditAnywhere) float HpFraction = 0.03f;
++	UPROPERTY(EditAnywhere) float EffectHeight = 170.f;
++	UPROPERTY(EditAnywhere) TSoftObjectPtr<UNiagaraSystem> ProcEffect = TSoftObjectPtr<UNiagaraSystem>(FSoftObjectPath(TEXT("/Game/BloodPack/Hit/Niagara/NS_BulletHit_Med.NS_BulletHit_Med")));
++	UPROPERTY(EditAnywhere) TSoftObjectPtr<USoundBase> ProcSound = TSoftObjectPtr<USoundBase>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/A_Guardian_ImpactL_Cue.A_Guardian_ImpactL_Cue")));
++};
++
+ USTRUCT(BlueprintType)
+ struct FRPGPhaseConfig
+ {
+@@ -180,6 +199,7 @@
+ 	UPROPERTY(EditAnywhere) FRPGPhaseDependencyConfig PhaseDependencies;
+ 	UPROPERTY(EditAnywhere) FRPGStaggerProfileConfig StaggerProfile;
+ 	UPROPERTY(EditAnywhere) FRPGDormantWakeConfig DormantWake;
++	UPROPERTY(EditAnywhere) FRPGBleedConfig Bleed;
+ 	UPROPERTY(EditAnywhere) TArray<FRPGPhaseConfig> Phases;
+ 	UPROPERTY(EditAnywhere) TSoftObjectPtr<USkeleton> Skeleton;
+ 	UPROPERTY(EditAnywhere) TArray<TSoftObjectPtr<UAnimSequenceBase>> Animations;
+@@ -220,6 +240,7 @@
+ 	FRPGPhaseDependencyConfig PhaseDependencies;
+ 	FRPGStaggerProfileConfig StaggerProfile;
+ 	FRPGDormantWakeConfig DormantWake;
++	FRPGBleedConfig Bleed;
+ 	TArray<FRPGPhaseConfig> Phases;
+ 	TArray<FRPGParityField> Fields;
+ 	TSharedPtr<const RPGCombatRegistry::FEpoch> Content;
+--- Source/OneBossFight/Player/RPGEncounterBinding.cpp
++++ Source/OneBossFight/Player/RPGEncounterBinding.cpp
+@@ -6,6 +6,7 @@
+ #include "Player/RPGBossPhasesClusterAdapters.h"
+ #include "Player/RPGBossStaggerClusterAdapters.h"
+ #include "Player/RPGBossDormantWakeAdapters.h"
++#include "Player/RPGBossBleedAdapters.h"
+ #include "Engine/World.h"
+ #include "Animation/AnimSequenceBase.h"
+ #include "Animation/Skeleton.h"
+@@ -53,6 +54,8 @@
+ 	if (!RPGBossStaggerClusterAdapters::ValidateStaggerProfile(D.StaggerProfile, StaggerProfileError)) { Result.Fail(StaggerProfileError); } // structure only, no registry query, no load
+ 	FString DormantWakeError;
+ 	if (!RPGBossDormantWakeAdapters::ValidateDormantWake(D.DormantWake, DormantWakeError)) { Result.Fail(DormantWakeError); } // structure only, no registry query, no load, never defaulted
++	FString BleedError;
++	if (!RPGBossBleedAdapters::ValidateBleed(D.Bleed, BleedError)) { Result.Fail(BleedError); } // structure only, no registry query, no load, never defaulted, never clamped
+ 	TSet<FName> PhaseIds;
+ 	for (const FRPGPhaseConfig& Phase : D.Phases)
+ 	{
+@@ -91,6 +94,7 @@
+ 	Value->PhaseDependencies = D.PhaseDependencies;
+ 	Value->StaggerProfile = D.StaggerProfile;
+ 	Value->DormantWake = D.DormantWake;
++	Value->Bleed = D.Bleed;
+ 	Value->Content = MoveTemp(Content); Out = Value;
+ 	Value->bSyntheticFixture = bSynthetic;
+ 	if (!bSynthetic)
+--- /dev/null
++++ Source/OneBossFight/Tests/RPGBossBleedAdaptersTests.cpp
+@@ -0,0 +1,958 @@
++// Copyright One Boss Fight. All Rights Reserved.
++
++#include "Misc/AutomationTest.h"
++
++#if WITH_DEV_AUTOMATION_TESTS
++
++#include "Animation/AnimSequence.h"
++#include "Components/SceneComponent.h"
++#include "Engine/Engine.h"
++#include "Engine/World.h"
++#include "GameFramework/Actor.h"
++#include "Materials/MaterialInterface.h"
++#include "NiagaraSystem.h"
++#include "Player/RPGBossBleed.h"
++#include "Player/RPGBossBleedAdapters.h"
++#include "Player/RPGBossEncounter.h"
++#include "Player/RPGBossPosture.h"
++#include "Sound/SoundBase.h"
++#include "UObject/Class.h"
++#include "UObject/Package.h"
++#include "UObject/SoftObjectPath.h"
++#include "UObject/StrongObjectPtr.h"
++#include "UObject/UnrealType.h"
++#include <limits>
++
++// These tests prove the typed bleed policy: the reflected record and its authoring defaults, its copy into the immutable config by the real definition compiler (synthetic path, and the production path's early
++// rejection), the shared validator with every scalar boundary and both references, and the typed, lifecycle-safe assignment of exactly seven public fields on isolated native components. They do NOT prove a
++// serialized asset value, anything seen in the Details panel, a production compile with a real skeleton, that either path names an existing, cooked or correctly typed asset, that a burst is visible or a sound
++// audible, a real buildup, proc or duel, or any wiring. No BeginPlay runs on a bleed component (the native BeginPlay loads the effect, the sound and a blood flipbook material, and the order forbids it), no
++// AddBuildup, no proc and no console variable is used; the only BeginPlay is the one of a plain fixture owner that carries no bleed component yet. The component-already-began-play guard is therefore NOT executed
++// by these tests (a begun bleed component cannot be built without loading assets): it is a source claim. The runtime state of the component (buildup, threshold in force, procs, ignored counter, last proc damage,
++// last result, loaded effect, sound and flipbook) is read through its public API and public properties and must never change.
++
++namespace
++{
++namespace BleedTests
++{
++	using FEpochPtr = TSharedPtr<const RPGCombatRegistry::FEpoch>;
++	using FConfigPtr = TSharedPtr<const FRPGParticipantConfig>;
++
++	constexpr float QuietNaN = std::numeric_limits<float>::quiet_NaN();
++	constexpr float PosInf = std::numeric_limits<float>::infinity();
++	constexpr float NegInf = -std::numeric_limits<float>::infinity();
++
++	/** Test-local game world with the set-up the earlier headless tests used; destroyed with the scope. */
++	struct FBleedTestWorld
++	{
++		UWorld* World = nullptr;
++
++		FBleedTestWorld()
++		{
++			if (!GEngine)
++			{
++				return;
++			}
++			World = UWorld::CreateWorld(EWorldType::Game, /*bInformEngineOfWorld=*/false);
++			if (World)
++			{
++				FWorldContext& Context = GEngine->CreateNewWorldContext(EWorldType::Game);
++				Context.SetCurrentWorld(World);
++				World->InitializeActorsForPlay(FURL());
++			}
++		}
++
++		~FBleedTestWorld()
++		{
++			if (World)
++			{
++				GEngine->DestroyWorldContext(World);
++				World->DestroyWorld(/*bInformEngineOfWorld=*/false);
++			}
++		}
++
++		FBleedTestWorld(const FBleedTestWorld&) = delete;
++		FBleedTestWorld& operator=(const FBleedTestWorld&) = delete;
++
++		AActor* SpawnOwner() const { return World ? World->SpawnActor<AActor>() : nullptr; }
++	};
++
++	/** A soft path built from its parts, so that deliberately malformed forms are never parsed from text (no engine log, no repair). */
++	FSoftObjectPath MakePath(const TCHAR* Package, const TCHAR* Asset, const TCHAR* Sub = TEXT(""))
++	{
++		return FSoftObjectPath(FTopLevelAssetPath(FName(Package), FName(Asset)), FString(Sub));
++	}
++
++	TSoftObjectPtr<UNiagaraSystem> EffectPtr(const FSoftObjectPath& Path) { return TSoftObjectPtr<UNiagaraSystem>(Path); }
++	TSoftObjectPtr<USoundBase> SoundPtr(const FSoftObjectPath& Path) { return TSoftObjectPtr<USoundBase>(Path); }
++
++	/** The seven configured fields, the runtime state and the loaded objects of a bleed component, with an exact comparison. All of it is public API or a public property: no reflection is needed. */
++	struct FBleedState
++	{
++		float InitialThreshold, ThresholdIncrease, ThresholdMax, HpFraction, EffectHeight;
++		FSoftObjectPath ProcEffect, ProcSound;
++		float Buildup, Threshold, LastProcDamage;
++		int32 Procs, Ignored;
++		FString LastResult;
++		bool bNothingLoaded;
++
++		explicit FBleedState(const URPGBossBleed& C)
++			: InitialThreshold(C.InitialThreshold), ThresholdIncrease(C.ThresholdIncrease), ThresholdMax(C.ThresholdMax), HpFraction(C.HpFraction), EffectHeight(C.EffectHeight)
++			, ProcEffect(C.ProcEffect.ToSoftObjectPath()), ProcSound(C.ProcSound.ToSoftObjectPath())
++			, Buildup(C.GetBuildup()), Threshold(C.GetThreshold()), LastProcDamage(C.GetLastProcDamage()), Procs(C.GetProcCount()), Ignored(C.GetIgnoredCount()), LastResult(C.GetLastResult())
++			, bNothingLoaded(C.LoadedEffect == nullptr && C.LoadedSound == nullptr && C.LoadedBloodFlipbook == nullptr)
++		{
++		}
++
++		bool ConfigEquals(const FBleedState& O) const
++		{
++			return InitialThreshold == O.InitialThreshold && ThresholdIncrease == O.ThresholdIncrease && ThresholdMax == O.ThresholdMax && HpFraction == O.HpFraction && EffectHeight == O.EffectHeight
++				&& ProcEffect == O.ProcEffect && ProcSound == O.ProcSound;
++		}
++
++		bool RuntimeEquals(const FBleedState& O) const
++		{
++			return bNothingLoaded == O.bNothingLoaded && Buildup == O.Buildup && Threshold == O.Threshold && LastProcDamage == O.LastProcDamage && Procs == O.Procs && Ignored == O.Ignored
++				&& LastResult.Equals(O.LastResult, ESearchCase::CaseSensitive);
++		}
++
++		bool operator==(const FBleedState& O) const { return ConfigEquals(O) && RuntimeEquals(O); }
++
++		/** The runtime state of a component that never began play: no buildup, the native struct default threshold (NOT seeded from InitialThreshold), no proc, nothing ignored, nothing loaded. */
++		bool IsUntouchedRuntime() const
++		{
++			return bNothingLoaded && Buildup == 0.f && Threshold == 100.f && LastProcDamage == 0.f && Procs == 0 && Ignored == 0 && LastResult == TEXT("none");
++		}
++	};
++
++	/** Record A: the zero-valid and signed boundaries (zero increase, maximum equal to the start, zero fraction, negative height). */
++	FRPGParticipantConfig ConfigA()
++	{
++		FRPGParticipantConfig C;
++		C.Bleed.InitialThreshold = 150.f;
++		C.Bleed.ThresholdIncrease = 0.f;
++		C.Bleed.ThresholdMax = 150.f;
++		C.Bleed.HpFraction = 0.f;
++		C.Bleed.EffectHeight = -35.f;
++		C.Bleed.ProcEffect = EffectPtr(MakePath(TEXT("/SyntheticMount/Bleed/A"), TEXT("NS_TestBurstA")));
++		C.Bleed.ProcSound = SoundPtr(MakePath(TEXT("/SyntheticMount/Bleed/A"), TEXT("SC_TestImpactA")));
++		return C;
++	}
++
++	/** Record B: ordinary non-default values, the fraction at its upper bound. */
++	FRPGParticipantConfig ConfigB()
++	{
++		FRPGParticipantConfig C;
++		C.Bleed.InitialThreshold = 40.5f;
++		C.Bleed.ThresholdIncrease = 7.25f;
++		C.Bleed.ThresholdMax = 333.5f;
++		C.Bleed.HpFraction = 1.f;
++		C.Bleed.EffectHeight = 12.75f;
++		C.Bleed.ProcEffect = EffectPtr(MakePath(TEXT("/SyntheticMount/Bleed/B"), TEXT("NS_TestBurstB")));
++		C.Bleed.ProcSound = SoundPtr(MakePath(TEXT("/SyntheticMount/Bleed/B"), TEXT("SC_TestImpactB")));
++		return C;
++	}
++
++	/** Record A with one change applied. */
++	FRPGParticipantConfig WithBleed(const TFunction<void(FRPGBleedConfig&)>& Change)
++	{
++		FRPGParticipantConfig C = ConfigA();
++		Change(C.Bleed);
++		return C;
++	}
++
++	/** A distinct starting state, different from both configs and from the native defaults (written through the public fields, as the native component allows). */
++	void ArmDistinctStart(URPGBossBleed& C)
++	{
++		C.InitialThreshold = 11.f;
++		C.ThresholdIncrease = 12.f;
++		C.ThresholdMax = 13.f;
++		C.HpFraction = 0.5f;
++		C.EffectHeight = 14.f;
++		C.ProcEffect = EffectPtr(MakePath(TEXT("/SyntheticMount/Start/Bleed"), TEXT("NS_StartBurst")));
++		C.ProcSound = SoundPtr(MakePath(TEXT("/SyntheticMount/Start/Bleed"), TEXT("SC_StartImpact")));
++	}
++
++	FRPGParityField MakeField(const FString& Path, const FString& ValueText)
++	{
++		FRPGParityField Field;
++		Field.FieldPath = Path;
++		Field.Type = TEXT("float");
++		Field.Value = ValueText;
++		Field.SourcePath = TEXT("synthetic fixture, not live provenance");
++		Field.SourceSHA256 = FString::ChrN(64, TEXT('a'));
++		Field.SourceSite = TEXT("fixture");
++		Field.Origin = TEXT("harness");
++		Field.Precedence = TEXT("fixture");
++		Field.Destination = TEXT("fixture");
++		Field.FirstRead = TEXT("BeginPlay");
++		Field.Witness = TEXT("synthetic only");
++		return Field;
++	}
++
++	/** A valid definition for the real synthetic compiler with the given bleed record (every other record is the authoring default or a valid fixture value). */
++	TStrongObjectPtr<URPGBossDefinition> MakeDefinition(const FRPGBleedConfig& Bleed)
++	{
++		TStrongObjectPtr<URPGBossDefinition> Definition(NewObject<URPGBossDefinition>());
++		Definition->DefinitionId = TEXT("Synthetic");
++		Definition->PresentationId = TEXT("SyntheticLook");
++		Definition->Stats.MaxHealth = 3500.f;
++		Definition->Stats.MaxPosture = 73.5f;
++		Definition->Stats.PostureRegenDelay = 4.25f;
++		Definition->Stats.PostureRegenRate = 9.75f;
++		FRPGPhaseConfig Phase;
++		Phase.PhaseId = TEXT("PhaseTwo");
++		Phase.EntryHealthFraction = 0.35f;
++		Phase.SpeedMultiplier = 1.5f;
++		Phase.RateMultiplier = 1.75f;
++		Phase.AttackMultiplier = 2.f;
++		Definition->Phases.Add(Phase);
++		Definition->Bleed = Bleed;
++		for (const FString& Path : TArray<FString>{RPGBossBleedAdapters::FieldInitialThreshold, RPGBossBleedAdapters::FieldThresholdIncrease, RPGBossBleedAdapters::FieldThresholdMax,
++			RPGBossBleedAdapters::FieldHpFraction, RPGBossBleedAdapters::FieldEffectHeight, RPGBossBleedAdapters::FieldProcEffect, RPGBossBleedAdapters::FieldProcSound})
++		{
++			Definition->Fields.Add(MakeField(Path, TEXT("synthetic")));
++		}
++		Definition->Fields.Add(MakeField(TEXT("Stats.MaxHealth"), TEXT("synthetic")));
++		return Definition;
++	}
++
++	FRPGHydrationResult CompileSynthetic(const URPGBossDefinition& Definition, FEpochPtr Content, FConfigPtr& Out, const FString& Hash = FString::ChrN(64, TEXT('b')))
++	{
++		return RPGCombatHydration::CompileSyntheticParticipant(Definition, Content, Hash, Out);
++	}
++
++	bool AnyErrorContains(const FRPGHydrationResult& Result, const TCHAR* Text)
++	{
++		return Result.Errors.ContainsByPredicate([Text](const FString& E) { return E.Contains(Text); });
++	}
++
++	/** One single error message that carries both the token and the field path. */
++	bool AnyErrorContainsBoth(const FRPGHydrationResult& Result, const TCHAR* Token, const TCHAR* FieldPath)
++	{
++		return Result.Errors.ContainsByPredicate([Token, FieldPath](const FString& E) { return E.Contains(Token) && E.Contains(FieldPath); });
++	}
++
++	TStrongObjectPtr<URPGBossBleed> NewBleed(AActor* Owner, const TCHAR* Name)
++	{
++		return TStrongObjectPtr<URPGBossBleed>(NewObject<URPGBossBleed>(Owner, Name));
++	}
++
++	bool SameRecordPaths(const FRPGBleedConfig& L, const FRPGBleedConfig& R)
++	{
++		return L.InitialThreshold == R.InitialThreshold && L.ThresholdIncrease == R.ThresholdIncrease && L.ThresholdMax == R.ThresholdMax && L.HpFraction == R.HpFraction && L.EffectHeight == R.EffectHeight
++			&& L.ProcEffect.ToSoftObjectPath() == R.ProcEffect.ToSoftObjectPath() && L.ProcSound.ToSoftObjectPath() == R.ProcSound.ToSoftObjectPath();
++	}
++}
++}
++
++// No file-scope using-directive on purpose: each test body names its namespace itself.
++
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGBleedAssignTest, "OneBossFight.Binding.Bleed.Assign",
++	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
++bool FRPGBleedAssignTest::RunTest(const FString& Parameters)
++{
++	using namespace BleedTests;
++	FBleedTestWorld Scope;
++	if (!TestNotNull(TEXT("test world"), Scope.World))
++	{
++		return false;
++	}
++	AActor* Owner = Scope.SpawnOwner();
++	if (!TestNotNull(TEXT("owner actor"), Owner))
++	{
++		return false;
++	}
++	TStrongObjectPtr<URPGBossBleed> Component = NewBleed(Owner, TEXT("RPGBossBleed"));
++	// Unrelated native components on the same owner: their configuration must stay untouched.
++	TStrongObjectPtr<URPGBossEncounter> Encounter(NewObject<URPGBossEncounter>(Owner, TEXT("RPGBossEncounter")));
++	TStrongObjectPtr<URPGBossPosture> Posture(NewObject<URPGBossPosture>(Owner, TEXT("RPGBossPosture")));
++	if (!TestTrue(TEXT("components created"), Component.IsValid() && Encounter.IsValid() && Posture.IsValid()))
++	{
++		return false;
++	}
++	ArmDistinctStart(*Component);
++	const FBleedState Before(*Component);
++	if (!TestTrue(TEXT("precondition: the distinct start values are set, the references are set and the runtime state is untouched"),
++		Before.IsUntouchedRuntime() && !Before.ProcEffect.IsNull() && !Before.ProcSound.IsNull() && Before.InitialThreshold == 11.f))
++	{
++		return false;
++	}
++	const float GateBefore = Encounter->GateRadius;
++	const float PostureMaxBefore = Posture->PostureMax;
++
++	// Measurement boundary: the owner's component set (identity and count) is captured AFTER the fixture and immediately BEFORE each configure call.
++	const auto CaptureOwned = [Owner]()
++	{
++		TSet<const UActorComponent*> OwnedSet;
++		for (const UActorComponent* OwnedComponent : Owner->GetComponents())
++		{
++			OwnedSet.Add(OwnedComponent);
++		}
++		return OwnedSet;
++	};
++	const auto SameOwned = [](const TSet<const UActorComponent*>& Left, const TSet<const UActorComponent*>& Right)
++	{
++		if (Left.Num() != Right.Num())
++		{
++			return false;
++		}
++		for (const UActorComponent* LeftComponent : Left)
++		{
++			if (!Right.Contains(LeftComponent))
++			{
++				return false;
++			}
++		}
++		return true;
++	};
++
++	// The unwired plan fragment: the legacy instance name, the exact class and the seven typed paths in record field order (an exact set, no more and no fewer).
++	const FRPGComponentPlan Plan = RPGBossBleedAdapters::MakeBleedPlan();
++	TestTrue(TEXT("plan class"), Plan.Class == URPGBossBleed::StaticClass());
++	TestTrue(TEXT("plan instance name is the legacy attachment name"), Plan.InstanceName == FName(TEXT("RPGBossBleed")));
++	TestTrue(TEXT("plan required fields are exactly the seven typed paths in order"), Plan.RequiredFields == TArray<FString>{TEXT("Bleed.InitialThreshold"), TEXT("Bleed.ThresholdIncrease"), TEXT("Bleed.ThresholdMax"),
++		TEXT("Bleed.HpFraction"), TEXT("Bleed.EffectHeight"), TEXT("Bleed.ProcEffect"), TEXT("Bleed.ProcSound")});
++	if (!TestTrue(TEXT("plan callback is set"), static_cast<bool>(Plan.Configure)))
++	{
++		return false;
++	}
++
++	// Config A through the plan callback, with manifest Value text that says something else: only the typed record counts.
++	FRPGParticipantConfig Config = ConfigA();
++	Config.Fields.Add(MakeField(RPGBossBleedAdapters::FieldInitialThreshold, TEXT("9999")));
++	Config.Fields.Add(MakeField(RPGBossBleedAdapters::FieldProcEffect, TEXT("/SyntheticMount/FromTheManifest/NS_Manifest.NS_Manifest")));
++	FString Error = TEXT("a stale diagnostic from an earlier call");
++	const TSet<const UActorComponent*> OwnedBeforeA = CaptureOwned();
++	TestTrue(TEXT("fixture: the component is already in the owner's component set before the callback"), OwnedBeforeA.Contains(Component.Get()));
++	TestTrue(TEXT("callback succeeds"), Plan.Configure(*Component, Config, Error));
++	TestTrue(TEXT("callback created no component: the owner's component set (identity and count) is unchanged by it"), SameOwned(OwnedBeforeA, CaptureOwned()));
++	TestTrue(TEXT("the diagnostic was cleared on success"), Error.IsEmpty());
++	const FBleedState After(*Component);
++	TestTrue(TEXT("all five scalars are the typed record (150, 0, 150, 0 and the NEGATIVE height), not the manifest text"),
++		After.InitialThreshold == 150.f && After.ThresholdIncrease == 0.f && After.ThresholdMax == 150.f && After.HpFraction == 0.f && After.EffectHeight == -35.f);
++	TestTrue(TEXT("both references are the typed record paths"), After.ProcEffect == Config.Bleed.ProcEffect.ToSoftObjectPath() && After.ProcSound == Config.Bleed.ProcSound.ToSoftObjectPath());
++	TestFalse(TEXT("the configuration differs from the distinct start state"), After.ConfigEquals(Before));
++	TestTrue(TEXT("the runtime state is unchanged and untouched: no buildup, the threshold in force NOT seeded from the new InitialThreshold, no proc, nothing ignored, nothing loaded"),
++		After.RuntimeEquals(Before) && After.IsUntouchedRuntime());
++	TestFalse(TEXT("component stays unregistered"), Component->IsRegistered());
++	TestFalse(TEXT("component did not begin play"), Component->HasBegunPlay());
++	TestFalse(TEXT("owner did not begin play"), Owner->HasActorBegunPlay());
++	TestTrue(TEXT("the unrelated encounter and posture configuration is untouched"), Encounter->GateRadius == GateBefore && Posture->PostureMax == PostureMaxBefore);
++
++	// Config B directly: a second record, again with no component created.
++	const FRPGParticipantConfig B = ConfigB();
++	const TSet<const UActorComponent*> OwnedBeforeB = CaptureOwned();
++	TestTrue(TEXT("config B succeeds"), RPGBossBleedAdapters::ConfigureBleed(*Component, B, Error) && Error.IsEmpty());
++	TestTrue(TEXT("direct config B created no component: the owner's component set (identity and count) is unchanged by it"), SameOwned(OwnedBeforeB, CaptureOwned()));
++	const FBleedState AfterB(*Component);
++	TestTrue(TEXT("B: the five scalars (the fraction at its upper bound 1) and both references assigned"),
++		AfterB.InitialThreshold == 40.5f && AfterB.ThresholdIncrease == 7.25f && AfterB.ThresholdMax == 333.5f && AfterB.HpFraction == 1.f && AfterB.EffectHeight == 12.75f
++		&& AfterB.ProcEffect == B.Bleed.ProcEffect.ToSoftObjectPath() && AfterB.ProcSound == B.Bleed.ProcSound.ToSoftObjectPath());
++	TestTrue(TEXT("B: the runtime state is still untouched, nothing was loaded through either assignment"), AfterB.RuntimeEquals(Before) && AfterB.IsUntouchedRuntime() && After.bNothingLoaded);
++
++	// No load: assigning the REAL native default paths loads no object and creates no package. The witness is presence before and after (ResolveObject, FindPackage): an asset already in memory proves nothing for
++	// its own path (stated limitation), but no path may gain an object or a package from the assignment. Nothing is loaded, unloaded or registered here.
++	{
++		AActor* WitnessOwner = Scope.SpawnOwner();
++		if (!TestNotNull(TEXT("no-load witness: owner actor"), WitnessOwner))
++		{
++			return false;
++		}
++		TStrongObjectPtr<URPGBossBleed> Witness = NewBleed(WitnessOwner, TEXT("WitnessBleed"));
++		if (!TestTrue(TEXT("no-load witness: component created"), Witness.IsValid()))
++		{
++			return false;
++		}
++		ArmDistinctStart(*Witness);
++		const FRPGParticipantConfig WitnessConfig; // the authoring defaults: the real native default paths
++		const FSoftObjectPath WitnessPaths[] = {WitnessConfig.Bleed.ProcEffect.ToSoftObjectPath(), WitnessConfig.Bleed.ProcSound.ToSoftObjectPath()};
++		bool ObjectPresentBefore[2];
++		bool PackagePresentBefore[2];
++		bool bAllPathsSet = true;
++		for (int32 PathIndex = 0; PathIndex < 2; ++PathIndex)
++		{
++			bAllPathsSet = bAllPathsSet && !WitnessPaths[PathIndex].IsNull();
++			ObjectPresentBefore[PathIndex] = WitnessPaths[PathIndex].ResolveObject() != nullptr;
++			PackagePresentBefore[PathIndex] = FindPackage(nullptr, *WitnessPaths[PathIndex].GetLongPackageName()) != nullptr;
++		}
++		TestTrue(TEXT("no-load witness: the two native default references are set"), bAllPathsSet);
++		FString WitnessError;
++		TestTrue(TEXT("no-load witness: the native default record is accepted"), RPGBossBleedAdapters::ConfigureBleed(*Witness, WitnessConfig, WitnessError) && WitnessError.IsEmpty());
++		bool bNothingAppeared = true;
++		for (int32 PathIndex = 0; PathIndex < 2; ++PathIndex)
++		{
++			bNothingAppeared = bNothingAppeared && ((WitnessPaths[PathIndex].ResolveObject() != nullptr) == ObjectPresentBefore[PathIndex])
++				&& ((FindPackage(nullptr, *WitnessPaths[PathIndex].GetLongPackageName()) != nullptr) == PackagePresentBefore[PathIndex]);
++		}
++		TestTrue(TEXT("no-load witness: neither an object nor a package of the referenced assets appeared during the assignment"), bNothingAppeared);
++		const FBleedState WitnessState(*Witness);
++		TestTrue(TEXT("no-load witness: the references were assigned as paths and nothing is loaded"), WitnessState.ProcEffect == WitnessPaths[0] && WitnessState.ProcSound == WitnessPaths[1] && WitnessState.bNothingLoaded);
++	}
++
++	AddInfo(TEXT("Typed assignment of seven public fields only; NOT a buildup, proc or blood burst, NOT asset existence, type or cooking, NOT a serialized asset value."));
++	return true;
++}
++
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGBleedValidationTest, "OneBossFight.Binding.Bleed.Validation",
++	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
++bool FRPGBleedValidationTest::RunTest(const FString& Parameters)
++{
++	using namespace BleedTests;
++	FBleedTestWorld Scope;
++	if (!TestNotNull(TEXT("test world"), Scope.World))
++	{
++		return false;
++	}
++	AActor* Owner = Scope.SpawnOwner();
++	if (!TestNotNull(TEXT("owner actor"), Owner))
++	{
++		return false;
++	}
++	TStrongObjectPtr<URPGBossBleed> Component = NewBleed(Owner, TEXT("RPGBossBleed"));
++	if (!TestTrue(TEXT("component created"), Component.IsValid()))
++	{
++		return false;
++	}
++	ArmDistinctStart(*Component);
++	const FBleedState Before(*Component);
++	if (!TestTrue(TEXT("precondition: distinct start state, untouched runtime"), Before.IsUntouchedRuntime() && Before.InitialThreshold == 11.f))
++	{
++		return false;
++	}
++
++	// One whole-record check: the validator and the assignment both refuse (or accept) with the same token and field path, and a refusal writes NOTHING (all seven fields and the runtime state equal the start state).
++	auto Check = [&](const FString& Label, const FRPGParticipantConfig& Config, const TCHAR* ExpectedToken, const TCHAR* ExpectedPath)
++	{
++		FString Error = TEXT("a stale diagnostic");
++		const bool bOk = RPGBossBleedAdapters::ValidateBleed(Config.Bleed, Error);
++		if (!ExpectedToken)
++		{
++			TestTrue(FString::Printf(TEXT("%s: valid, and the diagnostic was cleared"), *Label), bOk && Error.IsEmpty());
++			return;
++		}
++		TestFalse(FString::Printf(TEXT("%s: rejected"), *Label), bOk);
++		TestTrue(FString::Printf(TEXT("%s: named %s (got '%s')"), *Label, ExpectedToken, *Error), Error.StartsWith(ExpectedToken));
++		TestTrue(FString::Printf(TEXT("%s: names the field %s"), *Label, ExpectedPath), Error.Contains(ExpectedPath));
++		FString ConfigureError = TEXT("a stale diagnostic");
++		TestFalse(FString::Printf(TEXT("%s: the assignment refuses"), *Label), RPGBossBleedAdapters::ConfigureBleed(*Component, Config, ConfigureError));
++		TestTrue(FString::Printf(TEXT("%s: the assignment names the same token"), *Label), ConfigureError.StartsWith(ExpectedToken));
++		TestTrue(FString::Printf(TEXT("%s: no write at all (all seven fields and the state)"), *Label), FBleedState(*Component) == Before);
++	};
++
++	// Valid records, including every boundary the contract allows.
++	Check(TEXT("config A (zero increase, maximum equal to the start, zero fraction, negative height)"), ConfigA(), nullptr, nullptr);
++	Check(TEXT("config B (fraction 1)"), ConfigB(), nullptr, nullptr);
++	{
++		const FRPGParticipantConfig Defaults; // the authoring defaults of the record
++		Check(TEXT("the authoring defaults"), Defaults, nullptr, nullptr);
++	}
++	Check(TEXT("a tiny positive start with an equal maximum"), WithBleed([](FRPGBleedConfig& R) { R.InitialThreshold = 0.001f; R.ThresholdMax = 0.001f; }), nullptr, nullptr);
++	Check(TEXT("zero height"), WithBleed([](FRPGBleedConfig& R) { R.EffectHeight = 0.f; }), nullptr, nullptr);
++	Check(TEXT("a large negative height (signed, no floor invented)"), WithBleed([](FRPGBleedConfig& R) { R.EffectHeight = -1000000.f; }), nullptr, nullptr);
++	Check(TEXT("a large finite threshold pair"), WithBleed([](FRPGBleedConfig& R) { R.InitialThreshold = 1.0e9f; R.ThresholdMax = 2.0e9f; R.ThresholdIncrease = 1.0e9f; }), nullptr, nullptr);
++	Check(TEXT("well-formed paths of assets that exist nowhere (valid: structure only)"), WithBleed([](FRPGBleedConfig& R)
++	{
++		R.ProcEffect = EffectPtr(MakePath(TEXT("/SyntheticMount/Nowhere/At/All"), TEXT("NS_Nope")));
++		R.ProcSound = SoundPtr(MakePath(TEXT("/SyntheticMount/Nowhere/Sound"), TEXT("SC_Nope")));
++	}), nullptr, nullptr);
++
++	// Not finite: every scalar field with NaN, +Inf and -Inf (the finite check runs before any sign or range test).
++	struct FScalarField
++	{
++		const TCHAR* Path;
++		TFunction<void(FRPGBleedConfig&, float)> Set;
++	};
++	const FScalarField ScalarFields[] = {
++		{RPGBossBleedAdapters::FieldInitialThreshold, [](FRPGBleedConfig& R, float V) { R.InitialThreshold = V; }},
++		{RPGBossBleedAdapters::FieldThresholdIncrease, [](FRPGBleedConfig& R, float V) { R.ThresholdIncrease = V; }},
++		{RPGBossBleedAdapters::FieldThresholdMax, [](FRPGBleedConfig& R, float V) { R.ThresholdMax = V; }},
++		{RPGBossBleedAdapters::FieldHpFraction, [](FRPGBleedConfig& R, float V) { R.HpFraction = V; }},
++		{RPGBossBleedAdapters::FieldEffectHeight, [](FRPGBleedConfig& R, float V) { R.EffectHeight = V; }},
++	};
++	for (const FScalarField& Field : ScalarFields)
++	{
++		Check(FString::Printf(TEXT("%s NaN"), Field.Path), WithBleed([&Field](FRPGBleedConfig& R) { Field.Set(R, QuietNaN); }), TEXT("InvalidBleed.NotFinite"), Field.Path);
++		Check(FString::Printf(TEXT("%s +Inf"), Field.Path), WithBleed([&Field](FRPGBleedConfig& R) { Field.Set(R, PosInf); }), TEXT("InvalidBleed.NotFinite"), Field.Path);
++		Check(FString::Printf(TEXT("%s -Inf"), Field.Path), WithBleed([&Field](FRPGBleedConfig& R) { Field.Set(R, NegInf); }), TEXT("InvalidBleed.NotFinite"), Field.Path);
++	}
++
++	// Domains.
++	const TCHAR* InitialPath = RPGBossBleedAdapters::FieldInitialThreshold;
++	const TCHAR* IncreasePath = RPGBossBleedAdapters::FieldThresholdIncrease;
++	const TCHAR* MaxPath = RPGBossBleedAdapters::FieldThresholdMax;
++	const TCHAR* FractionPath = RPGBossBleedAdapters::FieldHpFraction;
++	Check(TEXT("initial threshold zero"), WithBleed([](FRPGBleedConfig& R) { R.InitialThreshold = 0.f; R.ThresholdMax = 10.f; }), TEXT("InvalidBleed.NotPositive"), InitialPath);
++	Check(TEXT("initial threshold negative"), WithBleed([](FRPGBleedConfig& R) { R.InitialThreshold = -1.f; R.ThresholdMax = 10.f; }), TEXT("InvalidBleed.NotPositive"), InitialPath);
++	Check(TEXT("threshold increase just below zero"), WithBleed([](FRPGBleedConfig& R) { R.ThresholdIncrease = -0.001f; }), TEXT("InvalidBleed.Negative"), IncreasePath);
++	Check(TEXT("threshold increase negative"), WithBleed([](FRPGBleedConfig& R) { R.ThresholdIncrease = -20.f; }), TEXT("InvalidBleed.Negative"), IncreasePath);
++	Check(TEXT("maximum just below the start"), WithBleed([](FRPGBleedConfig& R) { R.InitialThreshold = 100.f; R.ThresholdMax = 99.99f; }), TEXT("InvalidBleed.ThresholdMaxBelowInitial"), MaxPath);
++	Check(TEXT("maximum negative"), WithBleed([](FRPGBleedConfig& R) { R.ThresholdMax = -5.f; }), TEXT("InvalidBleed.ThresholdMaxBelowInitial"), MaxPath);
++	Check(TEXT("fraction just below zero"), WithBleed([](FRPGBleedConfig& R) { R.HpFraction = -0.01f; }), TEXT("InvalidBleed.FractionOutOfRange"), FractionPath);
++	Check(TEXT("fraction just above one"), WithBleed([](FRPGBleedConfig& R) { R.HpFraction = 1.01f; }), TEXT("InvalidBleed.FractionOutOfRange"), FractionPath);
++	Check(TEXT("fraction far above one"), WithBleed([](FRPGBleedConfig& R) { R.HpFraction = 2.f; }), TEXT("InvalidBleed.FractionOutOfRange"), FractionPath);
++
++	// References: missing and malformed, for each field, built from parts (never parsed from text).
++	const TCHAR* EffectPath = RPGBossBleedAdapters::FieldProcEffect;
++	const TCHAR* SoundPath = RPGBossBleedAdapters::FieldProcSound;
++	Check(TEXT("proc effect null"), WithBleed([](FRPGBleedConfig& R) { R.ProcEffect = EffectPtr(FSoftObjectPath()); }), TEXT("InvalidDependency.Missing"), EffectPath);
++	Check(TEXT("proc sound null"), WithBleed([](FRPGBleedConfig& R) { R.ProcSound = SoundPtr(FSoftObjectPath()); }), TEXT("InvalidDependency.Missing"), SoundPath);
++	struct FMalformed
++	{
++		const TCHAR* Name;
++		FSoftObjectPath Path;
++	};
++	const FMalformed Malformed[] = {
++		{TEXT("whitespace in the package"), MakePath(TEXT("/SyntheticMount/A B"), TEXT("NS_X"))},
++		{TEXT("a control character in the asset"), MakePath(TEXT("/SyntheticMount/A"), TEXT("NS\tX"))},
++		{TEXT("a sub-object"), MakePath(TEXT("/SyntheticMount/A"), TEXT("NS_X"), TEXT("Sub"))},
++		{TEXT("no leading slash"), MakePath(TEXT("Relative/A"), TEXT("NS_X"))},
++		{TEXT("no package folder"), MakePath(TEXT("/Root"), TEXT("NS_X"))},
++		{TEXT("an empty mount segment"), MakePath(TEXT("//Bleed/A"), TEXT("NS_X"))},
++		{TEXT("a repeated package separator"), MakePath(TEXT("/SyntheticMount//A"), TEXT("NS_X"))},
++		{TEXT("an extra dot in the object name"), MakePath(TEXT("/SyntheticMount/A"), TEXT("NS.X"))},
++		{TEXT("an invalid object-name character"), MakePath(TEXT("/SyntheticMount/A"), TEXT("NS|X"))},
++		{TEXT("an invalid package character"), MakePath(TEXT("/SyntheticMount/A|B"), TEXT("NS_X"))},
++	};
++	for (const FMalformed& Case : Malformed)
++	{
++		Check(FString::Printf(TEXT("proc effect with %s"), Case.Name), WithBleed([&Case](FRPGBleedConfig& R) { R.ProcEffect = EffectPtr(Case.Path); }), TEXT("InvalidDependency.Malformed"), EffectPath);
++		Check(FString::Printf(TEXT("proc sound with %s"), Case.Name), WithBleed([&Case](FRPGBleedConfig& R) { R.ProcSound = SoundPtr(Case.Path); }), TEXT("InvalidDependency.Malformed"), SoundPath);
++	}
++
++	// Whole-record no partial write: a LATE invalid field while every earlier field is valid and non-default (Check already proves that nothing was written).
++	Check(TEXT("only the LAST field (the sound) invalid, all six others valid and non-default"), WithBleed([](FRPGBleedConfig& R) { R.ProcSound = SoundPtr(FSoftObjectPath()); }), TEXT("InvalidDependency.Missing"), SoundPath);
++	Check(TEXT("only the fraction invalid, the other six valid and non-default"), [] { FRPGParticipantConfig C = ConfigB(); C.Bleed.HpFraction = 1.5f; return C; }(), TEXT("InvalidBleed.FractionOutOfRange"), FractionPath);
++	Check(TEXT("only the FIRST field invalid, the others valid and non-default"), [] { FRPGParticipantConfig C = ConfigB(); C.Bleed.InitialThreshold = 0.f; C.Bleed.ThresholdMax = 5.f; return C; }(), TEXT("InvalidBleed.NotPositive"), InitialPath);
++
++	// Precedence: the finite check first (field order), then the domains (field order), then the references (the effect first). The first failure wins.
++	Check(TEXT("a NaN height and a zero start: NotFinite wins over the domain"), WithBleed([](FRPGBleedConfig& R) { R.EffectHeight = QuietNaN; R.InitialThreshold = 0.f; }), TEXT("InvalidBleed.NotFinite"), RPGBossBleedAdapters::FieldEffectHeight);
++	Check(TEXT("a NaN fraction and a NaN increase: the earlier field is reported"), WithBleed([](FRPGBleedConfig& R) { R.HpFraction = QuietNaN; R.ThresholdIncrease = QuietNaN; }), TEXT("InvalidBleed.NotFinite"), IncreasePath);
++	Check(TEXT("a zero start and a negative increase: the start is reported"), WithBleed([](FRPGBleedConfig& R) { R.InitialThreshold = 0.f; R.ThresholdMax = 5.f; R.ThresholdIncrease = -1.f; }), TEXT("InvalidBleed.NotPositive"), InitialPath);
++	Check(TEXT("a negative increase and a low maximum: the increase is reported"), WithBleed([](FRPGBleedConfig& R) { R.ThresholdIncrease = -1.f; R.ThresholdMax = 1.f; }), TEXT("InvalidBleed.Negative"), IncreasePath);
++	Check(TEXT("a low maximum and a bad fraction: the maximum is reported"), WithBleed([](FRPGBleedConfig& R) { R.ThresholdMax = 1.f; R.HpFraction = 5.f; }), TEXT("InvalidBleed.ThresholdMaxBelowInitial"), MaxPath);
++	Check(TEXT("a bad fraction and a null effect: the fraction is reported"), WithBleed([](FRPGBleedConfig& R) { R.HpFraction = 5.f; R.ProcEffect = EffectPtr(FSoftObjectPath()); }), TEXT("InvalidBleed.FractionOutOfRange"), FractionPath);
++	Check(TEXT("a malformed effect and a null sound: the effect is reported"), WithBleed([](FRPGBleedConfig& R)
++	{
++		R.ProcEffect = EffectPtr(MakePath(TEXT("/SyntheticMount/A B"), TEXT("NS_X")));
++		R.ProcSound = SoundPtr(FSoftObjectPath());
++	}), TEXT("InvalidDependency.Malformed"), EffectPath);
++
++	// The component refused every record above and is still configurable.
++	FString Error;
++	TestTrue(TEXT("after all refusals a valid record still configures"), RPGBossBleedAdapters::ConfigureBleed(*Component, ConfigA(), Error)
++		&& FBleedState(*Component).InitialThreshold == 150.f && FBleedState(*Component).EffectHeight == -35.f && FBleedState(*Component).RuntimeEquals(Before));
++	return true;
++}
++
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGBleedIsolationTest, "OneBossFight.Binding.Bleed.Isolation",
++	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
++bool FRPGBleedIsolationTest::RunTest(const FString& Parameters)
++{
++	using namespace BleedTests;
++	FBleedTestWorld Scope;
++	if (!TestNotNull(TEXT("test world"), Scope.World))
++	{
++		return false;
++	}
++	AActor* OwnerA = Scope.SpawnOwner();
++	AActor* OwnerB = Scope.SpawnOwner();
++	AActor* OwnerC = Scope.SpawnOwner();
++	if (!TestTrue(TEXT("three owners"), OwnerA && OwnerB && OwnerC))
++	{
++		return false;
++	}
++	TStrongObjectPtr<URPGBossBleed> A = NewBleed(OwnerA, TEXT("RPGBossBleed"));
++	TStrongObjectPtr<URPGBossBleed> B = NewBleed(OwnerB, TEXT("RPGBossBleed"));
++	TStrongObjectPtr<URPGBossBleed> C = NewBleed(OwnerC, TEXT("RPGBossBleed"));
++	if (!TestTrue(TEXT("three components"), A.IsValid() && B.IsValid() && C.IsValid()))
++	{
++		return false;
++	}
++	const FBleedState UntouchedC(*C);
++	FRPGParticipantConfig ConfigForA = ConfigA();
++	const FRPGParticipantConfig ConfigForB = ConfigB();
++	FString Error;
++	TestTrue(TEXT("A"), RPGBossBleedAdapters::ConfigureBleed(*A, ConfigForA, Error));
++	const FBleedState SnapshotA(*A);
++	TestTrue(TEXT("B"), RPGBossBleedAdapters::ConfigureBleed(*B, ConfigForB, Error));
++	TestTrue(TEXT("configuring B did not change A"), FBleedState(*A) == SnapshotA);
++	TestFalse(TEXT("B really differs from A"), FBleedState(*B).ConfigEquals(SnapshotA));
++
++	// The assignment copies values: changing the config afterwards changes nothing.
++	ConfigForA.Bleed.InitialThreshold = 999.f;
++	ConfigForA.Bleed.ThresholdMax = 9999.f;
++	ConfigForA.Bleed.EffectHeight = 77.f;
++	ConfigForA.Bleed.ProcEffect = EffectPtr(MakePath(TEXT("/SyntheticMount/Changed"), TEXT("NS_Afterwards")));
++	ConfigForA.Bleed.ProcSound = SoundPtr(MakePath(TEXT("/SyntheticMount/Changed"), TEXT("SC_Afterwards")));
++	TestTrue(TEXT("a later config change does not reach A"), FBleedState(*A) == SnapshotA);
++
++	// A refused call leaves an otherwise configured component alone (no partial write, no state change).
++	FRPGParticipantConfig Refused = ConfigB();
++	Refused.Bleed.ProcSound = SoundPtr(FSoftObjectPath());
++	TestFalse(TEXT("a refused record is refused"), RPGBossBleedAdapters::ConfigureBleed(*A, Refused, Error));
++	TestTrue(TEXT("and leaves A exactly as it was"), FBleedState(*A) == SnapshotA);
++
++	// A component that was never configured keeps the native values, and so does the class default object.
++	TestTrue(TEXT("untouched component unchanged"), FBleedState(*C) == UntouchedC);
++	TestTrue(TEXT("the class default object holds the same native values as the untouched one"), FBleedState(*GetDefault<URPGBossBleed>()) == UntouchedC);
++	return true;
++}
++
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGBleedRejectionsTest, "OneBossFight.Binding.Bleed.Rejections",
++	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
++bool FRPGBleedRejectionsTest::RunTest(const FString& Parameters)
++{
++	using namespace BleedTests;
++	FBleedTestWorld Scope;
++	if (!TestNotNull(TEXT("test world"), Scope.World))
++	{
++		return false;
++	}
++	const FRPGParticipantConfig Config = ConfigA(); // valid: every failure below is about the component or the owner
++	FString Error;
++
++	// A rejected call changes nothing and names the reason. Wrong-class targets are concrete classes (UActorComponent itself is abstract).
++	auto ExpectRejected = [&](const TCHAR* Label, UActorComponent& Component, const TCHAR* Token)
++	{
++		const URPGBossBleed* AsBleed = Cast<URPGBossBleed>(&Component);
++		const URPGBossEncounter* AsEncounter = Cast<URPGBossEncounter>(&Component);
++		const URPGBossPosture* AsPosture = Cast<URPGBossPosture>(&Component);
++		TOptional<FBleedState> Before;
++		if (AsBleed) { Before.Emplace(*AsBleed); }
++		const float EncounterGateBefore = AsEncounter ? AsEncounter->GateRadius : 0.f;
++		const float PostureMaxBefore = AsPosture ? AsPosture->PostureMax : 0.f;
++		const bool bOk = RPGBossBleedAdapters::ConfigureBleed(Component, Config, Error);
++		TestFalse(FString::Printf(TEXT("%s: rejected"), Label), bOk);
++		TestTrue(FString::Printf(TEXT("%s: named %s (got '%s')"), Label, Token, *Error), Error.StartsWith(Token));
++		if (Before.IsSet()) { TestTrue(FString::Printf(TEXT("%s: bleed unchanged (all seven fields and the state)"), Label), FBleedState(*AsBleed) == Before.GetValue()); }
++		if (AsEncounter) { TestTrue(FString::Printf(TEXT("%s: encounter configuration untouched"), Label), AsEncounter->GateRadius == EncounterGateBefore); }
++		if (AsPosture) { TestTrue(FString::Printf(TEXT("%s: posture configuration untouched"), Label), AsPosture->PostureMax == PostureMaxBefore); }
++	};
++
++	AActor* Owner = Scope.SpawnOwner();
++	if (!TestNotNull(TEXT("owner actor"), Owner))
++	{
++		return false;
++	}
++
++	// An untargeted bleed component on another owner: its whole state must survive every refusal below.
++	AActor* SentinelOwner = Scope.SpawnOwner();
++	if (!TestNotNull(TEXT("sentinel owner actor"), SentinelOwner))
++	{
++		return false;
++	}
++	TStrongObjectPtr<URPGBossBleed> Sentinel = NewBleed(SentinelOwner, TEXT("SentinelBleed"));
++	if (!TestTrue(TEXT("sentinel created"), Sentinel.IsValid()))
++	{
++		return false;
++	}
++	ArmDistinctStart(*Sentinel);
++	const FBleedState SentinelBefore(*Sentinel);
++
++	// Wrong class: two other native components and a concrete engine component.
++	{
++		TStrongObjectPtr<URPGBossPosture> Posture(NewObject<URPGBossPosture>(Owner, TEXT("RPGBossPosture")));
++		TStrongObjectPtr<URPGBossEncounter> Encounter(NewObject<URPGBossEncounter>(Owner, TEXT("RPGBossEncounter")));
++		TStrongObjectPtr<USceneComponent> Scene(NewObject<USceneComponent>(Owner, TEXT("UnrelatedScene")));
++		if (!TestTrue(TEXT("wrong-class components created"), Posture.IsValid() && Encounter.IsValid() && Scene.IsValid()))
++		{
++			return false;
++		}
++		ExpectRejected(TEXT("bleed on a posture"), *Posture, TEXT("WrongComponentClass"));
++		ExpectRejected(TEXT("bleed on an encounter"), *Encounter, TEXT("WrongComponentClass"));
++		ExpectRejected(TEXT("bleed on a scene component"), *Scene, TEXT("WrongComponentClass"));
++	}
++
++	// Already registered (the owner has not begun play, so registration alone does not begin play for the component; the native bleed has no registration override and loads nothing before BeginPlay).
++	{
++		TStrongObjectPtr<URPGBossBleed> Registered = NewBleed(Owner, TEXT("RegisteredBleed"));
++		if (!TestTrue(TEXT("registered component created"), Registered.IsValid()))
++		{
++			return false;
++		}
++		ArmDistinctStart(*Registered);
++		Registered->RegisterComponent();
++		if (!TestTrue(TEXT("precondition: registered and not begun"), Registered->IsRegistered() && !Registered->HasBegunPlay() && !Owner->HasActorBegunPlay()))
++		{
++			AddError(TEXT("unsupported precondition: the registered-but-not-begun state could not be built"));
++			return false;
++		}
++		ExpectRejected(TEXT("registered bleed"), *Registered, TEXT("ComponentAlreadyRegistered"));
++	}
++
++	// Owner already began play, the component itself is a fresh unregistered one. The owner is a plain actor without any bleed component, so no bleed BeginPlay (and no asset load) happens.
++	{
++		AActor* LateOwner = Scope.SpawnOwner();
++		if (!TestNotNull(TEXT("late owner actor"), LateOwner))
++		{
++			return false;
++		}
++		LateOwner->DispatchBeginPlay();
++		if (!TestTrue(TEXT("precondition: owner began play"), LateOwner->HasActorBegunPlay()))
++		{
++			AddError(TEXT("unsupported precondition: the owner could not be put into the begun state"));
++			return false;
++		}
++		TStrongObjectPtr<URPGBossBleed> Late = NewBleed(LateOwner, TEXT("LateBleed"));
++		if (!TestTrue(TEXT("late component created"), Late.IsValid()))
++		{
++			return false;
++		}
++		ArmDistinctStart(*Late);
++		ExpectRejected(TEXT("bleed under a begun owner"), *Late, TEXT("OwnerBegunPlay"));
++	}
++
++	// Invalid owner: the component's outer is not an actor.
++	{
++		TStrongObjectPtr<URPGBossBleed> Orphan(NewObject<URPGBossBleed>(GetTransientPackage(), TEXT("OrphanBleed")));
++		if (!TestTrue(TEXT("orphan component created"), Orphan.IsValid() && !Orphan->GetOwner()))
++		{
++			return false;
++		}
++		ArmDistinctStart(*Orphan);
++		ExpectRejected(TEXT("bleed without an owner"), *Orphan, TEXT("InvalidOwner"));
++	}
++
++	// Destroyed component: DestroyComponent already ran (flagged as being destroyed, unregistered, removed from its owner, marked garbage) but the object is still allocated because the test holds it and no garbage
++	// collection runs here. The owner stays live, so this is the component check and not the owner check. This is not a freed-memory test.
++	{
++		AActor* LiveOwner = Scope.SpawnOwner();
++		if (!TestNotNull(TEXT("live owner actor"), LiveOwner))
++		{
++			return false;
++		}
++		TStrongObjectPtr<URPGBossBleed> Dead = NewBleed(LiveOwner, TEXT("DeadBleed"));
++		TStrongObjectPtr<URPGBossPosture> DeadPosture(NewObject<URPGBossPosture>(LiveOwner, TEXT("DeadPosture")));
++		if (!TestTrue(TEXT("dead components created"), Dead.IsValid() && DeadPosture.IsValid()))
++		{
++			return false;
++		}
++		ArmDistinctStart(*Dead);
++		Dead->DestroyComponent();
++		DeadPosture->DestroyComponent();
++		const bool bRetained = Dead.Get() != nullptr && DeadPosture.Get() != nullptr && Dead->GetOuter() == LiveOwner && DeadPosture->GetOuter() == LiveOwner;
++		const bool bFlaggedDead = Dead->IsBeingDestroyed() && DeadPosture->IsBeingDestroyed();
++		const bool bOwnerLive = IsValid(LiveOwner) && !LiveOwner->IsActorBeingDestroyed() && !LiveOwner->HasActorBegunPlay();
++		if (!TestTrue(TEXT("precondition: destroyed components still allocated and linked to their owner, owner live"), bRetained && bFlaggedDead && bOwnerLive))
++		{
++			AddError(TEXT("unsupported precondition: the destroyed-but-retained state could not be built"));
++			return false;
++		}
++		TestTrue(TEXT("precondition: a destroyed component looks unregistered and not begun, which is why only the first check can refuse it"), !Dead->IsRegistered() && !Dead->HasBegunPlay());
++		ExpectRejected(TEXT("destroyed bleed"), *Dead, TEXT("InvalidComponent"));
++		// The component check is first: a destroyed component of the WRONG class is reported as invalid, not as the wrong class.
++		ExpectRejected(TEXT("bleed on a destroyed posture"), *DeadPosture, TEXT("InvalidComponent"));
++		TestTrue(TEXT("the owner stayed live through both calls"), IsValid(LiveOwner) && !LiveOwner->IsActorBeingDestroyed());
++	}
++
++	TestTrue(TEXT("the untargeted sentinel bleed component is exactly as it was after every refusal"), FBleedState(*Sentinel) == SentinelBefore);
++	AddInfo(TEXT("Rejection paths on isolated actors. NOT executed: a component that already began play (a begun bleed component needs the native BeginPlay, which loads assets) and an owner that is being destroyed; both are source claims (HasBegunPlay, IsActorBeingDestroyed in the guard)."));
++	return true;
++}
++
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGBleedCompileTest, "OneBossFight.Binding.Bleed.Compile",
++	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
++bool FRPGBleedCompileTest::RunTest(const FString& Parameters)
++{
++	using namespace BleedTests;
++	const FEpochPtr Content = RPGCombatRegistry::Legacy();
++	if (!TestTrue(TEXT("content epoch"), Content.IsValid() && Content->Id.IsValid()))
++	{
++		return false;
++	}
++
++	// The real synthetic compiler copies the record into the immutable config (all seven fields, exactly).
++	{
++		const FRPGParticipantConfig A = ConfigA();
++		const TStrongObjectPtr<URPGBossDefinition> Definition = MakeDefinition(A.Bleed);
++		FConfigPtr Out;
++		const FRPGHydrationResult Result = CompileSynthetic(*Definition, Content, Out);
++		if (!TestTrue(TEXT("a valid definition compiles"), Result.IsReady() && Out.IsValid()))
++		{
++			return false;
++		}
++		TestTrue(TEXT("all seven fields copied (record A: zero increase, zero fraction, negative height)"), SameRecordPaths(Out->Bleed, A.Bleed));
++		TestTrue(TEXT("established Stats, phase and identity values retained"), Out->Stats.MaxHealth == 3500.f && Out->Phases.Num() == 1 && Out->BossId == FName(TEXT("Synthetic")) && Out->bSyntheticFixture);
++		TestTrue(TEXT("the other typed records still carry their authoring defaults next to it"),
++			Out->EncounterPolicy.GateRadius == 1200.f && Out->StaggerPolicy.StaggerSeconds == 2.5f && Out->PhaseFlow.TransitionSeconds == 1.8f && !Out->Fireball.bFireballEnabled && Out->StaggerProfile.bUseClips
++			&& Out->DormantWake.DormantClip.ToSoftObjectPath() == FRPGDormantWakeConfig().DormantClip.ToSoftObjectPath());
++		// The config is a value snapshot: changing the definition afterwards changes nothing.
++		Definition->Bleed.InitialThreshold = 999.f;
++		Definition->Bleed.ProcEffect = EffectPtr(MakePath(TEXT("/SyntheticMount/Changed"), TEXT("NS_Afterwards")));
++		TestTrue(TEXT("a later definition change does not reach the compiled config"), SameRecordPaths(Out->Bleed, A.Bleed));
++	}
++	{
++		const FRPGParticipantConfig B = ConfigB();
++		const TStrongObjectPtr<URPGBossDefinition> Definition = MakeDefinition(B.Bleed);
++		FConfigPtr Out;
++		TestTrue(TEXT("record B compiles and is copied"), CompileSynthetic(*Definition, Content, Out).IsReady() && Out.IsValid() && SameRecordPaths(Out->Bleed, B.Bleed));
++	}
++	// A definition whose record was never authored receives the additive authoring defaults, and the compiled config carries them.
++	{
++		const TStrongObjectPtr<URPGBossDefinition> Definition = MakeDefinition(FRPGBleedConfig()); // what an old schema 1 definition holds: the field's own defaults
++		FConfigPtr Out;
++		TestTrue(TEXT("untouched record: the authoring defaults are copied"), CompileSynthetic(*Definition, Content, Out).IsReady() && Out.IsValid() && SameRecordPaths(Out->Bleed, FRPGBleedConfig()));
++	}
++
++	// An invalid record fails by name (with its field path), is NEVER replaced by the defaults or clamped, and clears a previously valid output; the production compile refuses it before any asset is loaded.
++	struct FBad
++	{
++		const TCHAR* Name;
++		TFunction<void(FRPGBleedConfig&)> Break;
++		const TCHAR* Token;
++		const TCHAR* FieldPath;
++	};
++	const FBad Bad[] = {
++		{TEXT("zero initial threshold"), [](FRPGBleedConfig& R) { R.InitialThreshold = 0.f; R.ThresholdMax = 5.f; }, TEXT("InvalidBleed.NotPositive"), TEXT("Bleed.InitialThreshold")},
++		{TEXT("negative threshold increase"), [](FRPGBleedConfig& R) { R.ThresholdIncrease = -1.f; }, TEXT("InvalidBleed.Negative"), TEXT("Bleed.ThresholdIncrease")},
++		{TEXT("maximum below the start"), [](FRPGBleedConfig& R) { R.ThresholdMax = 1.f; }, TEXT("InvalidBleed.ThresholdMaxBelowInitial"), TEXT("Bleed.ThresholdMax")},
++		{TEXT("fraction above one"), [](FRPGBleedConfig& R) { R.HpFraction = 1.5f; }, TEXT("InvalidBleed.FractionOutOfRange"), TEXT("Bleed.HpFraction")},
++		{TEXT("NaN height"), [](FRPGBleedConfig& R) { R.EffectHeight = QuietNaN; }, TEXT("InvalidBleed.NotFinite"), TEXT("Bleed.EffectHeight")},
++		{TEXT("null proc effect"), [](FRPGBleedConfig& R) { R.ProcEffect = EffectPtr(FSoftObjectPath()); }, TEXT("InvalidDependency.Missing"), TEXT("Bleed.ProcEffect")},
++		{TEXT("proc sound with whitespace"), [](FRPGBleedConfig& R) { R.ProcSound = SoundPtr(MakePath(TEXT("/SyntheticMount/A B"), TEXT("SC_X"))); }, TEXT("InvalidDependency.Malformed"), TEXT("Bleed.ProcSound")},
++		{TEXT("proc effect naming a sub-object"), [](FRPGBleedConfig& R) { R.ProcEffect = EffectPtr(MakePath(TEXT("/SyntheticMount/A"), TEXT("NS_X"), TEXT("Sub"))); }, TEXT("InvalidDependency.Malformed"), TEXT("Bleed.ProcEffect")},
++	};
++	for (const FBad& Case : Bad)
++	{
++		FRPGBleedConfig Broken = ConfigA().Bleed;
++		Case.Break(Broken);
++		const TStrongObjectPtr<URPGBossDefinition> Definition = MakeDefinition(Broken);
++
++		FConfigPtr Out;
++		if (!TestTrue(FString::Printf(TEXT("%s: a valid output exists first"), Case.Name), CompileSynthetic(*MakeDefinition(ConfigA().Bleed), Content, Out).IsReady() && Out.IsValid()))
++		{
++			return false;
++		}
++		const FRPGHydrationResult Result = CompileSynthetic(*Definition, Content, Out); // the same output variable
++		TestFalse(FString::Printf(TEXT("%s (synthetic compile): refused"), Case.Name), Result.IsReady());
++		TestTrue(FString::Printf(TEXT("%s (synthetic compile): named %s with the path %s in one error"), Case.Name, Case.Token, Case.FieldPath), AnyErrorContainsBoth(Result, Case.Token, Case.FieldPath));
++		TestFalse(FString::Printf(TEXT("%s (synthetic compile): the earlier valid output was cleared, nothing defaulted"), Case.Name), Out.IsValid());
++
++		FConfigPtr ProductionOut;
++		if (!TestTrue(FString::Printf(TEXT("%s (production compile): a valid output exists first"), Case.Name), CompileSynthetic(*MakeDefinition(ConfigA().Bleed), Content, ProductionOut).IsReady() && ProductionOut.IsValid()))
++		{
++			return false;
++		}
++		const FRPGHydrationResult Production = RPGCombatHydration::CompileParticipant(*Definition, Content, FString::ChrN(64, TEXT('b')), ProductionOut);
++		TestFalse(FString::Printf(TEXT("%s (production compile): refused"), Case.Name), Production.IsReady());
++		TestTrue(FString::Printf(TEXT("%s (production compile): named %s with the path %s in one error"), Case.Name, Case.Token, Case.FieldPath), AnyErrorContainsBoth(Production, Case.Token, Case.FieldPath));
++		TestFalse(FString::Printf(TEXT("%s (production compile): the earlier output was cleared"), Case.Name), ProductionOut.IsValid());
++	}
++
++	// The established checks are retained, with a valid bleed record; each failure clears a previously valid output.
++	auto RunRetained = [&](const TCHAR* Name, const TCHAR* Text, const TFunction<void(URPGBossDefinition&)>& Break, int32 Schema, const FString& Hash, bool bNullContent)
++	{
++		FConfigPtr Out;
++		if (!CompileSynthetic(*MakeDefinition(ConfigA().Bleed), Content, Out).IsReady() || !Out.IsValid())
++		{
++			AddError(TEXT("unsupported precondition: a valid output could not be built"));
++			return;
++		}
++		const TStrongObjectPtr<URPGBossDefinition> Definition = MakeDefinition(ConfigA().Bleed); // a valid bleed record
++		Definition->Schema = Schema;
++		Break(*Definition);
++		const FRPGHydrationResult Result = CompileSynthetic(*Definition, bNullContent ? FEpochPtr() : Content, Out, Hash);
++		TestFalse(FString::Printf(TEXT("%s: still refused with a valid bleed record"), Name), Result.IsReady());
++		TestTrue(FString::Printf(TEXT("%s: the established message '%s'"), Name, Text), AnyErrorContains(Result, Text));
++		TestFalse(FString::Printf(TEXT("%s: the earlier valid output was cleared"), Name), Out.IsValid());
++	};
++	const FString GoodHash = FString::ChrN(64, TEXT('b'));
++	RunRetained(TEXT("invalid dormant wake"), TEXT("InvalidDependency.Missing"), [](URPGBossDefinition& D) { D.DormantWake.WakeClip = TSoftObjectPtr<UAnimSequence>(); }, 1, GoodHash, false);
++	RunRetained(TEXT("invalid stagger policy"), TEXT("InvalidStagger.NotPositive"), [](URPGBossDefinition& D) { D.StaggerPolicy.GetUpRate = 0.f; }, 1, GoodHash, false);
++	RunRetained(TEXT("invalid encounter policy"), TEXT("InvalidPolicy.Negative"), [](URPGBossDefinition& D) { D.EncounterPolicy.GateRadius = -1.f; }, 1, GoodHash, false);
++	RunRetained(TEXT("negative posture maximum"), TEXT("invalid stats"), [](URPGBossDefinition& D) { D.Stats.MaxPosture = -1.f; }, 1, GoodHash, false);
++	RunRetained(TEXT("phase threshold above 1"), TEXT("invalid/duplicate phase"), [](URPGBossDefinition& D) { D.Phases[0].EntryHealthFraction = 2.f; }, 1, GoodHash, false);
++	RunRetained(TEXT("schema 2"), TEXT("identity absent"), [](URPGBossDefinition&) {}, 2, GoodHash, false);
++	RunRetained(TEXT("manifest hash that is not 64 hex characters"), TEXT("identity absent"), [](URPGBossDefinition&) {}, 1, TEXT("short"), false);
++	RunRetained(TEXT("no content lease"), TEXT("identity absent"), [](URPGBossDefinition&) {}, 1, GoodHash, true);
++	RunRetained(TEXT("no field manifest"), TEXT("field manifest required"), [](URPGBossDefinition& D) { D.Fields.Reset(); }, 1, GoodHash, false);
++
++	// Several failures are all reported: an invalid bleed record together with an invalid stagger policy, encounter policy and stats.
++	{
++		FRPGBleedConfig Broken = ConfigA().Bleed;
++		Broken.ProcSound = SoundPtr(FSoftObjectPath());
++		const TStrongObjectPtr<URPGBossDefinition> Definition = MakeDefinition(Broken);
++		Definition->StaggerPolicy.GetUpRate = -2.f;
++		Definition->EncounterPolicy.GateRadius = -5.f;
++		Definition->Stats.MaxPosture = -1.f;
++		FConfigPtr Out;
++		const FRPGHydrationResult Result = CompileSynthetic(*Definition, Content, Out);
++		TestTrue(TEXT("invalid bleed record, stagger policy, encounter policy and stats are all reported"),
++			!Result.IsReady() && AnyErrorContains(Result, TEXT("Bleed.ProcSound")) && AnyErrorContains(Result, TEXT("InvalidStagger.NotPositive")) && AnyErrorContains(Result, TEXT("InvalidPolicy.Negative"))
++			&& AnyErrorContains(Result, TEXT("invalid stats")) && !Out.IsValid());
++	}
++
++	AddInfo(TEXT("Real synthetic compiler and the production compile's early rejection; NO production compile with a real skeleton, NO serialized asset."));
++	return true;
++}
++
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGBleedAuthoringTest, "OneBossFight.Binding.Bleed.Authoring",
++	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
++bool FRPGBleedAuthoringTest::RunTest(const FString& Parameters)
++{
++	using namespace BleedTests;
++	const UScriptStruct* Struct = FRPGBleedConfig::StaticStruct();
++	if (!TestNotNull(TEXT("the bleed struct is reflected"), Struct))
++	{
++		return false;
++	}
++	const UClass* Native = URPGBossBleed::StaticClass();
++
++	// The record: exactly seven editable properties, five floats and two soft OBJECT references (not soft class references), each with the name and kind of the native public property, which is editable too.
++	int32 PropertyCount = 0;
++	for (TFieldIterator<FProperty> It(Struct); It; ++It)
++	{
++		++PropertyCount;
++	}
++	TestEqual(TEXT("the record has exactly seven reflected properties"), PropertyCount, 7);
++	for (const TCHAR* Name : {TEXT("InitialThreshold"), TEXT("ThresholdIncrease"), TEXT("ThresholdMax"), TEXT("HpFraction"), TEXT("EffectHeight")})
++	{
++		const FProperty* Property = Struct->FindPropertyByName(Name);
++		TestTrue(FString::Printf(TEXT("%s: a reflected, editable float of the record"), Name), Property && CastField<FFloatProperty>(Property) && Property->HasAnyPropertyFlags(CPF_Edit));
++		const FProperty* NativeProperty = Native->FindPropertyByName(Name);
++		TestTrue(FString::Printf(TEXT("%s: the same name and kind (editable float) on URPGBossBleed"), Name), NativeProperty && CastField<FFloatProperty>(NativeProperty) && NativeProperty->HasAnyPropertyFlags(CPF_Edit));
++	}
++	for (const TCHAR* Name : {TEXT("ProcEffect"), TEXT("ProcSound")})
++	{
++		const FProperty* Property = Struct->FindPropertyByName(Name);
++		TestTrue(FString::Printf(TEXT("%s: a reflected, editable soft object reference of the record"), Name), Property && CastField<FSoftObjectProperty>(Property) && !CastField<FSoftClassProperty>(Property) && Property->HasAnyPropertyFlags(CPF_Edit));
++		const FProperty* NativeProperty = Native->FindPropertyByName(Name);
++		TestTrue(FString::Printf(TEXT("%s: the same name and kind (soft object reference, editable) on URPGBossBleed"), Name), NativeProperty && CastField<FSoftObjectProperty>(NativeProperty) && !CastField<FSoftClassProperty>(NativeProperty) && NativeProperty->HasAnyPropertyFlags(CPF_Edit));
++	}
++	// The record is only authoring data: the runtime state and the loaded objects of the native component are not part of it.
++	for (const TCHAR* Name : {TEXT("LoadedEffect"), TEXT("LoadedSound"), TEXT("LoadedBloodFlipbook"), TEXT("State"), TEXT("Buildup"), TEXT("Procs")})
++	{
++		TestNull(FString::Printf(TEXT("%s is not a property of the record"), Name), Struct->FindPropertyByName(Name));
++	}
++
++	// The Data Asset field: the definition exposes the record as an editable property of exactly that struct type.
++	const FStructProperty* Field = CastField<FStructProperty>(URPGBossDefinition::StaticClass()->FindPropertyByName(TEXT("Bleed")));
++	if (!TestTrue(TEXT("the definition has a Bleed struct property"), Field != nullptr))
++	{
++		return false;
++	}
++	TestTrue(TEXT("it is editable (EditAnywhere) and of the bleed struct type"), Field->HasAnyPropertyFlags(CPF_Edit) && Field->Struct == Struct);
++
++	// The additive authoring defaults of the NEW field: a fresh struct and a fresh definition hold them; the native constructor and declaration values are only the baseline they match, not an authority.
++	const FRPGBleedConfig Fresh;
++	TStrongObjectPtr<URPGBossDefinition> Definition(NewObject<URPGBossDefinition>());
++	TestTrue(TEXT("a fresh definition holds the authoring defaults (old schema 1 definitions receive them additively)"), SameRecordPaths(Definition->Bleed, Fresh));
++	const URPGBossBleed* NativeDefaults = GetDefault<URPGBossBleed>();
++	TestTrue(TEXT("baseline: the defaults equal the native declarations and constructor values of URPGBossBleed, field by field"),
++		Fresh.InitialThreshold == NativeDefaults->InitialThreshold && Fresh.ThresholdIncrease == NativeDefaults->ThresholdIncrease && Fresh.ThresholdMax == NativeDefaults->ThresholdMax
++		&& Fresh.HpFraction == NativeDefaults->HpFraction && Fresh.EffectHeight == NativeDefaults->EffectHeight
++		&& Fresh.ProcEffect.ToSoftObjectPath() == NativeDefaults->ProcEffect.ToSoftObjectPath() && Fresh.ProcSound.ToSoftObjectPath() == NativeDefaults->ProcSound.ToSoftObjectPath());
++	// The documented values, so a silent change of the declared defaults is noticed (suffix compares: the sources keep no quoted /Game/ literal in this file).
++	TestTrue(TEXT("the scalar defaults are the documented ones: 100, 20, 200, 0.03 and 170"),
++		Fresh.InitialThreshold == 100.f && Fresh.ThresholdIncrease == 20.f && Fresh.ThresholdMax == 200.f && Fresh.HpFraction == 0.03f && Fresh.EffectHeight == 170.f);
++	TestTrue(TEXT("the reference defaults are the documented ones"), Fresh.ProcEffect.ToSoftObjectPath().ToString().EndsWith(TEXT("/BloodPack/Hit/Niagara/NS_BulletHit_Med.NS_BulletHit_Med"), ESearchCase::CaseSensitive)
++		&& Fresh.ProcSound.ToSoftObjectPath().ToString().EndsWith(TEXT("/SoundFX/A_Guardian_ImpactL_Cue.A_Guardian_ImpactL_Cue"), ESearchCase::CaseSensitive));
++	// The defaults pass their own validator (they are valid, not a fallback for invalid input).
++	FString Error;
++	TestTrue(TEXT("the authoring defaults pass the shared validator"), RPGBossBleedAdapters::ValidateBleed(Fresh, Error) && Error.IsEmpty());
++	AddInfo(TEXT("Reflection and defaults only; NOT a serialized asset and NOT seen in the Details panel."));
++	return true;
++}
++
++#endif // WITH_DEV_AUTOMATION_TESTS

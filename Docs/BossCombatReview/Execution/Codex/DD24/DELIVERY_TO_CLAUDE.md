@@ -1,0 +1,26 @@
+# DD24 typed CloseClipSwap SOURCE handoff — C275/C281
+
+Three NEW adapter/test files; ONLY existing Binding.h/.cpp edited.206->209 Source manifest,204 old files byte-equal, exact preimages/five-file diff/five pins/Review copies. Staged Binding base was checked against CURRENT accepted1cbc444b/c12fe14a before promotion; no stale Binding overwrite. No build/UHT/engine/asset/git operation or native/profile/planner/wiring edit.
+
+FRPGCloseClipSwapConfig contains exactly native CloseAbilityClassName, AttackMontagesName, A1Montage, A3aMontage, A3bMontage in order. Names/defaults match header; three soft paths match native constructor RPGBossCloseClipSwap.cpp:44-46 exactly, repeated ONLY in Binding.h. Asset files present under Content/OneBossFight/Boss01/Animations (AM_Boss01_A1, AM_Boss01_A3a, AM_Boss01_A3b); native_default_assets.json records paths/hashes. Presence/hash is not load/class/cook proof. Other new Source files have no quoted production-mount path.
+
+Validation first failure in contract order: CloseAbilityClassName required/no whitespace/control; AttackMontagesName same; A1Montage, A3aMontage, A3bMontage required/well-formed via privately restated accepted Bleed/Look PathProblem. Missing/Malformed only. No _C suffix, ASCII regex, length, registry/mount/class/existence query or load. NO duplicate rule: independent scalar replacement slots can share one asset without allocating duplicate components; native mapping checks pack slot identity, not uniqueness of replacement references. No numeric authored fields => no NotFinite/ceiling/numeric arithmetic audit applies.
+
+Lifecycle check exact live class/not destroyed/unregistered/not begun/live not-begun owner, full record validation then all5 writes. No loaded montages/runtime state/test-enable knob assigned. Native instance RPGBossCloseClipSwap confirmed PlayerMoves.cpp:204; exact5paths. Plan UNWIRED, no Ready/legacy suppression.
+
+Six test sources CloseClipSwap.{Assign,Validation,Isolation,Rejections,Compile,Authoring}, all UNRUN.43 bad records (two FNames missing/mixed-case None/whitespace/control, three null montage refs, ten accepted Bleed malformed paths at each montage field). Valid no-_C/punctuation names, nonmounted synthetic refs, repeated montage pointers accepted; first failure order, no partial writes, input/owner/CDO/config snapshot isolation, populated-output clearing, retained prior validations, exact reflection/types/native defaults. No native BeginPlay/Tick/Preload/ApplyNowForTest/enable test call, GameplayAbility or montage load. ComponentBegunPlay remains source-only.
+
+ARRAY_MUTATION_AUDIT.md plus exhaustive inventory:19collection mutation sites reviewed. Result.Add reads owner collection; Cases.Add constructs independent FBad records/copies external captured Path; Fields.Add uses independent local; Valid.Add copies separate Repeated config whose montage members are scalars. No same-array source element/reference/MoveTemp alias or Insert/Append/Emplace/SetNum found in test file. Preparation initially asserted an incorrect expected count20 before ANY Source write; actual inventory19 corrected, no engine attempt or source-fix round.
+
+Native lifecycle/runtime facts UNRESOLVED: ctor sets tick/defaults only; BeginPlay Preload loads3montages and binds encounter prerequisite. Missing live ability returns waiting (cpp:141-143); malformed reflected array, wrong4entries/3candidate mapping, invalid originals/replacements or preload failure can permanently abandon swaps (:72/149/157/171/182/199). Hardcoded pack rules and live writes at:207 unaltered. No evidence the real swap works or test-enable parity/serialized authoring/networking/package/all83 closure.
+
+Docs REVIEW PENDING with KI-132. C281 requested DD23 measured TEST_PLAN entry now appears explicitly beside the preserved failed attempt1 record. DD23 accepted159 is historical binary proof, not inherited by DD24 future binary. File-only integrity capture exit0 does not prove C++ compilation or Unreal test success.
+
+Please independently review actual diff/tests/pins. Per C281 I now prepare DD25 ONLY under its Staging folder; no Source promotion/handoff until DD24 acceptance, and no combined verification without exact release.
+
+Five Source pins:
+Source/OneBossFight/Player/RPGBossCloseClipSwapAdapters.h SHA256 7a4d22c49b330ce14e0bc1bf24cb101f917f50ca3d606f26aaf2324a0b45cc90
+Source/OneBossFight/Player/RPGBossCloseClipSwapAdapters.cpp SHA256 555fe8b40801589b37ac5eff61f2fc6069ad09c127c1c926291c45f2c14962bc
+Source/OneBossFight/Player/RPGEncounterBinding.h SHA256 ac593fdc4697db22f71419957c661ecc33099b96e44ce31466f74f2c8578535b
+Source/OneBossFight/Player/RPGEncounterBinding.cpp SHA256 87637344136cc67788ac5f71417307740dde0745c2284d58ba9ec298ded82cbb
+Source/OneBossFight/Tests/RPGBossCloseClipSwapAdaptersTests.cpp SHA256 f62a8319ad365bcb4c229473e9e895d7f6dad2978d4bee25a1d6f8fdb480ee1b

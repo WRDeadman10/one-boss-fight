@@ -1,0 +1,171 @@
+{
+  "$schema_description": "OneBossFight Draft Boss & Player Participant Authoring Profiles (AG-CONTENT04 / Part B)",
+  "metadata": {
+    "status": "DRAFT",
+    "note": "Draft definitions for staged authoring preview. Fields array is intentionally empty. A complete 51-row field parity manifest with truthful source paths and SHA256 hashes is strictly required before native production compilation.",
+    "is_playable": false,
+    "production_compilation_ready": false,
+    "approved_output_root": "/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/"
+  },
+  "profiles": [
+    {
+      "asset_name": "DA_Boss_EmberWarden_Draft",
+      "definition_id": "Boss_EmberWarden",
+      "presentation_id": "Presentation_EmberWarden",
+      "schema_version": 1,
+      "participant_kind": "Boss",
+      "skeleton_candidate": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin",
+      "animation_candidates": [
+        "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Animations/Combat/Combat_Sword_Light_Attack_01"
+      ],
+      "stats": {
+        "max_health": 1500.0,
+        "base_poise": 120.0,
+        "poise_recovery_rate": 15.0,
+        "poise_broken_recovery_delay": 3.0
+      },
+      "encounter_policy": {
+        "enable_intro_cutscene": false,
+        "arena_lockdown_on_engage": true,
+        "auto_target_player": true
+      },
+      "stagger_policy": {
+        "stagger_threshold": 100.0,
+        "stagger_decay_rate": 8.0,
+        "recovery_duration": 4.0
+      },
+      "phase_flow": {
+        "total_phases": 2,
+        "initial_phase_index": 0
+      },
+      "fireball": {
+        "cooldown": 7.5,
+        "damage": 85.0,
+        "speed": 1600.0
+      },
+      "phase_dependencies": {
+        "required_prior_phases": ["PhaseOne"]
+      },
+      "stagger_profile": {
+        "max_stagger": 100.0,
+        "decay_delay": 2.5
+      },
+      "dormant_wake": {
+        "wake_radius": 2000.0,
+        "bStartDormant": true
+      },
+      "phases": [
+        {
+          "phase_id": "PhaseTwo",
+          "health_threshold_percent": 0.5,
+          "damage_scale": 1.25,
+          "speed_scale": 1.15
+        }
+      ],
+      "fields": []
+    },
+    {
+      "asset_name": "DA_Boss_AbyssalRevenant_Draft",
+      "definition_id": "Boss_AbyssalRevenant",
+      "presentation_id": "Presentation_AbyssalRevenant",
+      "schema_version": 1,
+      "participant_kind": "Boss",
+      "skeleton_candidate": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin",
+      "animation_candidates": [
+        "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Animations/Combat/Combat_Sword_Light_Attack_02"
+      ],
+      "stats": {
+        "max_health": 2200.0,
+        "base_poise": 160.0,
+        "poise_recovery_rate": 18.0,
+        "poise_broken_recovery_delay": 3.5
+      },
+      "encounter_policy": {
+        "enable_intro_cutscene": false,
+        "arena_lockdown_on_engage": true,
+        "auto_target_player": true
+      },
+      "stagger_policy": {
+        "stagger_threshold": 140.0,
+        "stagger_decay_rate": 10.0,
+        "recovery_duration": 4.5
+      },
+      "phase_flow": {
+        "total_phases": 2,
+        "initial_phase_index": 0
+      },
+      "fireball": {
+        "cooldown": 6.0,
+        "damage": 110.0,
+        "speed": 1800.0
+      },
+      "phase_dependencies": {
+        "required_prior_phases": ["PhaseOne"]
+      },
+      "stagger_profile": {
+        "max_stagger": 140.0,
+        "decay_delay": 2.0
+      },
+      "dormant_wake": {
+        "wake_radius": 2500.0,
+        "bStartDormant": true
+      },
+      "phases": [
+        {
+          "phase_id": "PhaseTwo_Abyssal",
+          "health_threshold_percent": 0.4,
+          "damage_scale": 1.35,
+          "speed_scale": 1.20
+        }
+      ],
+      "fields": []
+    },
+    {
+      "asset_name": "DA_Player_Hero_Draft",
+      "definition_id": "Player_Hero",
+      "presentation_id": "Presentation_Player_Hero",
+      "schema_version": 1,
+      "participant_kind": "Player",
+      "skeleton_candidate": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin",
+      "animation_candidates": [],
+      "stats": {
+        "max_health": 800.0,
+        "base_poise": 60.0,
+        "poise_recovery_rate": 25.0,
+        "poise_broken_recovery_delay": 1.5
+      },
+      "encounter_policy": {
+        "enable_intro_cutscene": false,
+        "arena_lockdown_on_engage": false,
+        "auto_target_player": false
+      },
+      "stagger_policy": {
+        "stagger_threshold": 50.0,
+        "stagger_decay_rate": 20.0,
+        "recovery_duration": 2.0
+      },
+      "phase_flow": {
+        "total_phases": 1,
+        "initial_phase_index": 0
+      },
+      "fireball": {
+        "cooldown": 0.0,
+        "damage": 0.0,
+        "speed": 0.0
+      },
+      "phase_dependencies": {
+        "required_prior_phases": []
+      },
+      "stagger_profile": {
+        "max_stagger": 50.0,
+        "decay_delay": 1.0
+      },
+      "dormant_wake": {
+        "wake_radius": 0.0,
+        "bStartDormant": false
+      },
+      "phases": [],
+      "fields": []
+    }
+  ]
+}

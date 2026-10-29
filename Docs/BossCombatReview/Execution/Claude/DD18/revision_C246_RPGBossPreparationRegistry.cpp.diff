@@ -1,0 +1,151 @@
+--- /dev/fd/63	2026-10-28 22:25:24.000000000 +0530
++++ /dev/fd/62	2026-10-28 22:25:24.000000000 +0530
+@@ -120,6 +120,38 @@
+ 		State.Entries.Add(MoveTemp(Entry));
+ 	}
+ 
++	/** After the facade (which loads assets) the binding is resolved through the retained WEAK reference before any live field is read; the saved raw pointer is never dereferenced again. */
++	bool BindingStillAdmissible(const TWeakObjectPtr<const ARPGEncounterBinding>& Ref, const UWorld* World, const FGuid& OriginalEncounter, FString& Why)
++	{
++		const ARPGEncounterBinding* Live = Ref.Get();
++		if (!Live)
++		{
++			Why = TEXT("the retained binding no longer resolves (destroyed or collected)");
++			return false;
++		}
++		if (!IsValid(Live) || Live->IsActorBeingDestroyed())
++		{
++			Why = TEXT("the binding is being destroyed or is no longer valid");
++			return false;
++		}
++		if (Live->GetWorld() != World)
++		{
++			Why = TEXT("the binding is no longer in the registry's world");
++			return false;
++		}
++		if (Live->HasActorBegunPlay() || Live->IsActorBeginningPlay())
++		{
++			Why = TEXT("the binding began or is beginning play");
++			return false;
++		}
++		if (Live->EncounterInstance != OriginalEncounter)
++		{
++			Why = TEXT("the binding's encounter GUID is no longer the attempted one");
++			return false;
++		}
++		return true;
++	}
++
+ 	/** RAII guard of the admission flag. */
+ 	struct FAdmissionScope
+ 	{
+@@ -418,11 +450,24 @@
+ 		return Result;
+ 	}
+ 
++	// The attempted identity, captured ONCE before anything can load or change it: a retained weak binding, the original encounter GUID and the complete original actor set. After the facade returns (it can load assets) the
++	// saved raw Binding is never dereferenced again: the retained reference is resolved and checked before any live field is read, and the quarantine and the diagnostics use the ORIGINAL identity, never a changed GUID.
++	const TWeakObjectPtr<const ARPGEncounterBinding> BindingRef(Binding);
++	const FGuid OriginalEncounter = Binding->EncounterInstance;
++	TArray<TWeakObjectPtr<AActor>> OriginalActors;
++	for (const FRPGPlacedParticipantBinding& Participant : Binding->Participants)
++	{
++		if (AActor* Actor = Participant.Actor.Get())
++		{
++			OriginalActors.AddUnique(Actor);
++		}
++	}
++
+ 	// The conflict pre-check, BEFORE anything is allocated: the encounter GUID and every actor of every role. Quarantined reservations still reserve. A null or stale actor is not a conflict here (the stages report it).
+ 	TArray<FString> Conflicts;
+ 	for (const FRPGPreparationRegistryState::FEntry& Entry : State->Entries)
+ 	{
+-		if (Binding->EncounterInstance.IsValid() && Entry.Encounter == Binding->EncounterInstance)
++		if (OriginalEncounter.IsValid() && Entry.Encounter == OriginalEncounter)
+ 		{
+ 			Conflicts.Add(FString::Printf(TEXT("Reservation.DuplicateEncounter[encounter=%s]: already reserved by serial %llu"), *Entry.Encounter.ToString(), Entry.Serial));
+ 		}
+@@ -442,15 +487,6 @@
+ 		return Result;
+ 	}
+ 
+-	TArray<TWeakObjectPtr<AActor>> BindingActors;
+-	for (const FRPGPlacedParticipantBinding& Participant : Binding->Participants)
+-	{
+-		if (AActor* Actor = Participant.Actor.Get())
+-		{
+-			BindingActors.Add(Actor);
+-		}
+-	}
+-
+ 	// The whole batch: input compile and owned preparation, with the facade's identity checks. A failure leaves every earlier reservation and artifact exactly as it was and no entry of this attempt.
+ 	FRPGWorldPreparationResult Prepared = RPGBossWorldPreparation::PrepareWorldBatch(World, Binding, Selections, ManifestHash);
+ 	if (!Prepared.Succeeded())
+@@ -464,27 +500,30 @@
+ 		if (Result.Errors.ContainsByPredicate([](const FString& Error) { return Error.StartsWith(TEXT("WorldPrep.ContractViolation")) || Error.StartsWith(TEXT("Preparation.ContractViolation")); }))
+ 		{
+ 			// A cleanup left components in place: the encounter is quarantined (reserved, never silently reopened).
+-			PublishQuarantine(*State, Binding->EncounterInstance, BindingActors, Result.Errors);
++			PublishQuarantine(*State, OriginalEncounter, OriginalActors, Result.Errors);
+ 		}
+ 		return Result;
+ 	}
+ 
+ 	// The final gate before publication: the registry is still open and in the same world, and the artifact still matches the encounter and has no conflict (the admission guard makes a change impossible here; the check is a defence).
+ 	const TSharedPtr<const FRPGHydrationPreflightPlan> Plan = Prepared.Batch->GetPreflightPlan();
+-	bool bFinalOk = !State->bClosed && State->World.Get() == World && Plan.IsValid() && Plan->EncounterInstance == Binding->EncounterInstance;
+-	TArray<TWeakObjectPtr<AActor>> Actors;
+-	if (bFinalOk)
++	FString BindingWhy;
++	const bool bBindingOk = BindingStillAdmissible(BindingRef, World, OriginalEncounter, BindingWhy);
++	bool bFinalOk = bBindingOk && !State->bClosed && State->World.Get() == World && Plan.IsValid() && Plan->EncounterInstance == OriginalEncounter;
++	// The attempted actors: the immutable original set united with the prepared plan's actors, built even when the gate already failed, so that surviving components can never reopen an actor through another encounter.
++	TArray<TWeakObjectPtr<AActor>> Actors = OriginalActors;
++	if (Plan.IsValid())
+ 	{
+ 		for (const FRPGPreflightParticipantPlan& Participant : Plan->Participants)
+ 		{
+ 			AActor* Actor = Participant.Actor.Get();
+ 			bFinalOk = bFinalOk && Actor && IsValid(Actor) && Actor->GetWorld() == World;
+-			Actors.Add(Participant.Actor);
++			Actors.AddUnique(Participant.Actor);
+ 		}
+ 	}
+ 	for (const FRPGPreparationRegistryState::FEntry& Entry : State->Entries)
+ 	{
+-		bFinalOk = bFinalOk && Entry.Encounter != Binding->EncounterInstance;
++		bFinalOk = bFinalOk && Entry.Encounter != OriginalEncounter;
+ 		for (const TWeakObjectPtr<AActor>& Actor : Actors)
+ 		{
+ 			bFinalOk = bFinalOk && !Entry.Actors.Contains(Actor);
+@@ -493,7 +532,11 @@
+ 	if (!bFinalOk)
+ 	{
+ 		Result.Failure = EReservationFailure::Drift;
+-		Result.Errors.Add(TEXT("Reservation.Drift: the registry, the world or the artifact changed before publication (this call's components were aborted)"));
++		Result.Errors.Add(TEXT("Reservation.Drift: the registry, the world, the binding or the artifact changed before publication (this call's components were aborted)"));
++		if (!bBindingOk)
++		{
++			Result.Errors.Add(FString::Printf(TEXT("Reservation.Drift[binding]: %s"), *BindingWhy));
++		}
+ 		const FRPGPreparationAbortReport Cleanup = Prepared.Batch->Abort();
+ 		for (const FString& CleanupError : Cleanup.Errors)
+ 		{
+@@ -503,7 +546,7 @@
+ 		{
+ 			Result.Failure = EReservationFailure::ContractViolation;
+ 			Result.Errors.Add(TEXT("Reservation.ContractViolation: the cleanup after drift left components in place or was refused"));
+-			PublishQuarantine(*State, Binding->EncounterInstance, Actors, Result.Errors);
++			PublishQuarantine(*State, OriginalEncounter, Actors, Result.Errors);
+ 		}
+ 		return Result;
+ 	}
+@@ -511,7 +554,7 @@
+ 	// Publication: entries become visible only now.
+ 	FRPGPreparationRegistryState::FEntry Entry;
+ 	Entry.Serial = State->NextSerial++;
+-	Entry.Encounter = Plan->EncounterInstance;
++	Entry.Encounter = OriginalEncounter; // verified equal to the plan's encounter by the gate above
+ 	Entry.Actors = MoveTemp(Actors);
+ 	Entry.Batch = MoveTemp(Prepared.Batch);
+ 	Entry.State = FRPGPreparationRegistryState::EEntryState::Active;

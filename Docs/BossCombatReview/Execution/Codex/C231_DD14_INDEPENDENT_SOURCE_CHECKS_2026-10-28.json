@@ -1,0 +1,32 @@
+{
+  "scope": "OFFLINE_SOURCE_REVIEW_NOT_ENGINE_TEST",
+  "receipts": {
+    "count": 11,
+    "failures": []
+  },
+  "source": {
+    "count": 178,
+    "failures": []
+  },
+  "dependencies": {
+    "count": 24,
+    "failures": []
+  },
+  "candidate_assets": {
+    "count": 14,
+    "failures": []
+  },
+  "binaries": {
+    "count": 2,
+    "failures": []
+  },
+  "pre_matches_DD13": true,
+  "added": [
+    "Source/OneBossFight/Tests/RPGBossProductionPreflightTests.cpp"
+  ],
+  "deleted": [],
+  "changed": [],
+  "newtest_sha": "a418076bee99b76553fd61f3346917d499d7685ce8c26463b85752c35897e170",
+  "review_equal": true,
+  "diff_sha": "3c260f6e7e3d5566f76132652efd4f9423f03951b2fb5bfb7ee0cf749bfb7cfa"
+}
