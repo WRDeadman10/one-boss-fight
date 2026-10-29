@@ -4,6 +4,15 @@
 #include "Player/RPGBossStaggerPolicyAdapters.h"
 #include "Player/RPGBossPhaseFlowAdapters.h"
 #include "Player/RPGBossPhasesClusterAdapters.h"
+#include "Player/RPGBossStaggerClusterAdapters.h"
+#include "Player/RPGBossDormantWakeAdapters.h"
+#include "Player/RPGBossBleedAdapters.h"
+#include "Player/RPGBossLowSweepAdapters.h"
+#include "Player/RPGBossShockwaveAdapters.h"
+#include "Player/RPGBossHealPunishAdapters.h"
+#include "Player/RPGBossLookAdapters.h"
+#include "Player/RPGBossCloseClipSwapAdapters.h"
+#include "Player/RPGBossDeathAdapters.h"
 #include "Engine/World.h"
 #include "Animation/AnimSequenceBase.h"
 #include "Animation/Skeleton.h"
@@ -47,6 +56,37 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
 	if (!RPGBossPhasesClusterAdapters::ValidateFireball(D.Fireball, FireballError)) { Result.Fail(FireballError); } // never replaced by the authoring defaults, never reordered
 	FString DependencyError;
 	if (!RPGBossPhasesClusterAdapters::ValidatePhaseDependencies(D.PhaseDependencies, D.PhaseFlow.bUseRoarClip, DependencyError)) { Result.Fail(DependencyError); } // structure only, no registry query, no load
+	FString StaggerProfileError;
+	if (!RPGBossStaggerClusterAdapters::ValidateStaggerProfile(D.StaggerProfile, StaggerProfileError)) { Result.Fail(StaggerProfileError); } // structure only, no registry query, no load
+	FString DormantWakeError;
+	if (!RPGBossDormantWakeAdapters::ValidateDormantWake(D.DormantWake, DormantWakeError)) { Result.Fail(DormantWakeError); } // structure only, no registry query, no load, never defaulted
+	FString BleedError;
+	if (!RPGBossBleedAdapters::ValidateBleed(D.Bleed, BleedError)) { Result.Fail(BleedError); } // structure only, no registry query, no load, never defaulted, never clamped
+	FString LowSweepError;
+	if (!RPGBossLowSweepAdapters::ValidateLowSweep(D.LowSweep, LowSweepError)) { Result.Fail(LowSweepError); } // C258 authored structure; MoveId is not tracker-table resolution
+	FString ShockwaveError;
+	if (!RPGBossShockwaveAdapters::ValidateShockwave(D.Shockwave,ShockwaveError)) { Result.Fail(ShockwaveError); } // authored record only, no tracker resolution
+	FString PunishError;
+	// C265 authored structure; no move/socket resolution.
+	if (!RPGBossHealPunishAdapters::ValidateHealPunish(D.HealPunish, PunishError))
+	{
+		Result.Fail(PunishError);
+	}
+	FString LookError;
+	if (!RPGBossLookAdapters::ValidateLook(D.Look, LookError))
+	{
+		Result.Fail(LookError);
+	}
+	FString CloseClipSwapError;
+	if (!RPGBossCloseClipSwapAdapters::ValidateCloseClipSwap(D.CloseClipSwap, CloseClipSwapError))
+	{
+		Result.Fail(CloseClipSwapError);
+	}
+	FString DeathError;
+	if (!RPGBossDeathAdapters::ValidateDeath(D.Death, DeathError))
+	{
+		Result.Fail(DeathError);
+	}
 	TSet<FName> PhaseIds;
 	for (const FRPGPhaseConfig& Phase : D.Phases)
 	{
@@ -83,6 +123,15 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
 	Value->PhaseFlow = D.PhaseFlow;
 	Value->Fireball = D.Fireball;
 	Value->PhaseDependencies = D.PhaseDependencies;
+	Value->StaggerProfile = D.StaggerProfile;
+	Value->DormantWake = D.DormantWake;
+	Value->Bleed = D.Bleed;
+	Value->LowSweep = D.LowSweep;
+	Value->Shockwave = D.Shockwave;
+	Value->HealPunish = D.HealPunish;
+	Value->Look = D.Look;
+	Value->CloseClipSwap = D.CloseClipSwap;
+	Value->Death = D.Death;
 	Value->Content = MoveTemp(Content); Out = Value;
 	Value->bSyntheticFixture = bSynthetic;
 	if (!bSynthetic)

@@ -1,26 +1,34 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
+#include "Player/RPGBossBleed.h"
+#include "Player/RPGBossLowSweep.h"
+#include "Player/RPGBossShockwave.h"
+#include "Player/RPGBossHealPunish.h"
+#include "Player/RPGBossLook.h"
+#include "Player/RPGBossCloseClipSwap.h"
+#include "Player/RPGBossDeath.h"
 #include "Misc/AutomationTest.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 
 #include "Animation/AnimSequence.h"
 #include "Animation/Skeleton.h"
+#include "Components/SceneComponent.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
 #include "GameFramework/Actor.h"
+#include "Player/RPGBossDormantWake.h"
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGBossHydrationPreflight.h"
-#include "Player/RPGBossPhaseAdapters.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossPosture.h"
-#include "Player/RPGBossStatsAdapters.h"
+#include "Player/RPGBossStagger.h"
 #include "UObject/Package.h"
 #include "UObject/StrongObjectPtr.h"
 #include <limits>
 
-// These tests prove the whole-batch core preflight kernel on real isolated UE objects (a headless game world, plain actors, the existing synthetic config factory): validation of the whole batch, named failures,
+// These tests prove the whole-batch expanded native subset preflight kernel (twelve combined plans per boss-core member) on real isolated UE objects (a headless game world, plain actors, the existing synthetic config factory): validation of the whole batch, named failures,
 // the plan order and leases of a success, clearing of earlier output, and that a failed or successful compile changes no actor, component or combat context.
 // They do NOT prove a duel, PIE, a startup chronology, the real game-instance provenance of a content lease, a production skeleton/mesh pairing (no real pack mesh is used: a production member is only shown to FAIL CLOSED),
 // or the not-game-thread rule (the tests run on the game thread) and the synthetic-fixture-unavailable rule of a non-test target (compiled out here).
@@ -72,13 +80,40 @@ namespace PreflightTests
 		AActor* SpawnActor() const { return World ? World->SpawnActor<AActor>() : nullptr; }
 	};
 
-	/** The 4 stats paths and the 4 paths of the selected phase: the union the boss-core plans read. */
+	/** The 110 unique manifest paths the twelve combined boss-core plans read, written out as INDEPENDENT literals (not derived from the factories under test): stagger 25 (14 policy + 11 profile), phases 18 (the 4 paths of
+	 *  the selected phase + 6 flow + 5 fireball + 3 dependencies), encounter 3, dormant wake 2, posture 3. Membership only; the fixtures' manifests are built from this list and the plans' own required fields are what the
+	 *  implementation produces and is compared against it. */
 	TArray<FString> AllRequiredPaths(FName PhaseId)
 	{
+		const FString Id = PhaseId.ToString();
 		return TArray<FString>{
-			RPGBossStatsAdapters::FieldMaxHealth, RPGBossStatsAdapters::FieldMaxPosture, RPGBossStatsAdapters::FieldPostureRegenDelay, RPGBossStatsAdapters::FieldPostureRegenRate,
-			RPGBossPhaseAdapters::PhaseFieldPath(PhaseId, RPGBossPhaseAdapters::FieldEntryHealthFraction), RPGBossPhaseAdapters::PhaseFieldPath(PhaseId, RPGBossPhaseAdapters::FieldSpeedMultiplier),
-			RPGBossPhaseAdapters::PhaseFieldPath(PhaseId, RPGBossPhaseAdapters::FieldRateMultiplier), RPGBossPhaseAdapters::PhaseFieldPath(PhaseId, RPGBossPhaseAdapters::FieldAttackMultiplier)};
+			// stagger policy (14)
+			TEXT("StaggerPolicy.StaggerSeconds"), TEXT("StaggerPolicy.FreezeAtPosition"), TEXT("StaggerPolicy.CriticalMultiplier"), TEXT("StaggerPolicy.RiposteRange"), TEXT("StaggerPolicy.RiposteConeDegrees"),
+			TEXT("StaggerPolicy.RiposteFacingDegrees"), TEXT("StaggerPolicy.RiposteArmSeconds"), TEXT("StaggerPolicy.RipostePlayerStartGap"), TEXT("StaggerPolicy.RiposteAlignSeconds"), TEXT("StaggerPolicy.RiposteImpactSeconds"),
+			TEXT("StaggerPolicy.RiposteBaseDamage"), TEXT("StaggerPolicy.CooldownSeconds"), TEXT("StaggerPolicy.GetUpRate"), TEXT("StaggerPolicy.bHoldPostureAtZero"),
+			// stagger profile (11)
+			TEXT("StaggerProfile.bUseClips"), TEXT("StaggerProfile.bUseRiposteClips"), TEXT("StaggerProfile.bCriticalOnEveryHit"), TEXT("StaggerProfile.HitStunAbilityClassName"), TEXT("StaggerProfile.FallMontage"),
+			TEXT("StaggerProfile.GetUpMontage"), TEXT("StaggerProfile.FallClip"), TEXT("StaggerProfile.DownClip"), TEXT("StaggerProfile.RipostePlayerClip"), TEXT("StaggerProfile.RiposteBossClip"), TEXT("StaggerProfile.ImmunityEffect"),
+			// selected phase (4)
+			FString::Printf(TEXT("Phases[%s].EntryHealthFraction"), *Id), FString::Printf(TEXT("Phases[%s].SpeedMultiplier"), *Id), FString::Printf(TEXT("Phases[%s].RateMultiplier"), *Id), FString::Printf(TEXT("Phases[%s].AttackMultiplier"), *Id),
+			// phase flow (6)
+			TEXT("PhaseFlow.TransitionSeconds"), TEXT("PhaseFlow.bUseRoarClip"), TEXT("PhaseFlow.bPausePostureInTransition"), TEXT("PhaseFlow.bLockLeapUntilPhaseTwo"), TEXT("PhaseFlow.AttackAbilityPrefix"), TEXT("PhaseFlow.LeapAbilityTag"),
+			// fireball (5)
+			TEXT("Fireball.bFireballEnabled"), TEXT("Fireball.FireballAbility"), TEXT("Fireball.FireballCooldown"), TEXT("Fireball.FireballMinRange"), TEXT("Fireball.FireballMaxRange"),
+			// phase dependencies (3)
+			TEXT("PhaseDependencies.RoarClip"), TEXT("PhaseDependencies.TransitionMontage"), TEXT("PhaseDependencies.ImmunityEffect"),
+			// encounter (3), dormant wake (2), posture (3)
+			TEXT("Stats.MaxHealth"), TEXT("EncounterPolicy.GateRadius"), TEXT("EncounterPolicy.bResetOnPlayerRespawn"),
+			TEXT("DormantWake.DormantClip"), TEXT("DormantWake.WakeClip"),
+			TEXT("Stats.MaxPosture"), TEXT("Stats.PostureRegenDelay"), TEXT("Stats.PostureRegenRate"),
+			// DD26 independent literal expectations, in native record header order.
+			TEXT("Bleed.InitialThreshold"), TEXT("Bleed.ThresholdIncrease"), TEXT("Bleed.ThresholdMax"), TEXT("Bleed.HpFraction"), TEXT("Bleed.EffectHeight"), TEXT("Bleed.ProcEffect"), TEXT("Bleed.ProcSound"),
+			TEXT("LowSweep.bEnabled"), TEXT("LowSweep.MoveId"), TEXT("LowSweep.Damage"), TEXT("LowSweep.Reach"), TEXT("LowSweep.InnerRadius"), TEXT("LowSweep.BladeHeight"), TEXT("LowSweep.SweepFromDegrees"), TEXT("LowSweep.SweepToDegrees"),
+			TEXT("Shockwave.bEnabled"), TEXT("Shockwave.MoveId"), TEXT("Shockwave.Damage"), TEXT("Shockwave.StartRadius"), TEXT("Shockwave.MaxRadius"), TEXT("Shockwave.Speed"), TEXT("Shockwave.Thickness"), TEXT("Shockwave.JumpClearance"),
+			TEXT("HealPunish.bEnabled"), TEXT("HealPunish.MinRange"), TEXT("HealPunish.MaxRange"), TEXT("HealPunish.Cooldown"), TEXT("HealPunish.Damage"), TEXT("HealPunish.FlightTime"), TEXT("HealPunish.MinSpeed"), TEXT("HealPunish.MaxSpeed"), TEXT("HealPunish.JavelinRadius"), TEXT("HealPunish.JavelinMaxRange"), TEXT("HealPunish.SpawnSockets"), TEXT("HealPunish.AimHeight"), TEXT("HealPunish.bRespondToHeal"), TEXT("HealPunish.bCancelJavelinsOnInterrupt"),
+			TEXT("Look.bEnabled"), TEXT("Look.Body"), TEXT("Look.Pieces"), TEXT("Look.Sword"), TEXT("Look.SwordSocket"),
+			TEXT("CloseClipSwap.CloseAbilityClassName"), TEXT("CloseClipSwap.AttackMontagesName"), TEXT("CloseClipSwap.A1Montage"), TEXT("CloseClipSwap.A3aMontage"), TEXT("CloseClipSwap.A3bMontage"),
+			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath")};
 	}
 
 	FRPGParityField MakeField(const FString& Path)
@@ -331,8 +366,8 @@ bool FRPGPreflightValidTest::RunTest(const FString& Parameters)
 		return false;
 	}
 
-	// Explicit scope: a core subset preflight, nothing more.
-	TestTrue(TEXT("scope name"), FString(FRPGHydrationPreflightPlan::ScopeName()) == TEXT("CoreSubsetPreflight"));
+	// Explicit scope: an expanded native subset preflight, nothing more.
+	TestTrue(TEXT("scope name"), FString(FRPGHydrationPreflightPlan::ScopeName()) == TEXT("ExpandedNativeSubsetPreflight"));
 	TestFalse(TEXT("not a complete playable bundle"), Plan->IsCompletePlayableBundle());
 	TestFalse(TEXT("not a reservation"), Plan->IsReservation());
 	TestFalse(TEXT("not ready"), Plan->IsReady());
@@ -351,15 +386,18 @@ bool FRPGPreflightValidTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("weak actor identities resolve to the input actors"), Plan->Participants[0].Actor.Get() == Extra && Plan->Participants[1].Actor.Get() == F.Boss && Plan->Participants[2].Actor.Get() == F.Player);
 	TestTrue(TEXT("config leases are the very leases validated"), Plan->Participants[1].Config.Get() == F.BossConfig.Get() && Plan->Participants[2].Config.Get() == F.PlayerConfig.Get());
 
-	// Boss-core: Phases, Encounter, Posture, built from the accepted factories; target-only: no boss plan.
+	// Boss-core: Stagger, Phases, Encounter, DormantWake, Posture, built from the twelve accepted combined factories; target-only: no boss plan.
 	const FRPGPreflightParticipantPlan& Boss = Plan->Participants[1];
-	if (!TestEqual(TEXT("boss-core has three plans"), Boss.Plans.Num(), 3))
+	if (!TestEqual(TEXT("boss-core has twelve plans"), Boss.Plans.Num(), 12))
 	{
 		return false;
 	}
-	TestTrue(TEXT("plan classes in the deterministic order Phases, Encounter, Posture"), Boss.Plans[0].Class == URPGBossPhases::StaticClass() && Boss.Plans[1].Class == URPGBossEncounter::StaticClass() && Boss.Plans[2].Class == URPGBossPosture::StaticClass());
-	TestTrue(TEXT("plan instance names are the legacy names"), Boss.Plans[0].InstanceName == FName(TEXT("RPGBossPhases")) && Boss.Plans[1].InstanceName == FName(TEXT("RPGBossEncounter")) && Boss.Plans[2].InstanceName == FName(TEXT("RPGBossPosture")));
-	TestTrue(TEXT("the callbacks exist (they were built, never run)"), static_cast<bool>(Boss.Plans[0].Configure) && static_cast<bool>(Boss.Plans[1].Configure) && static_cast<bool>(Boss.Plans[2].Configure));
+	TestTrue(TEXT("plan classes in the deterministic relative order Stagger, Phases, Encounter, DormantWake, Posture"), Boss.Plans[0].Class == URPGBossStagger::StaticClass() && Boss.Plans[1].Class == URPGBossPhases::StaticClass()
+		&& Boss.Plans[2].Class == URPGBossEncounter::StaticClass() && Boss.Plans[3].Class == URPGBossDormantWake::StaticClass() && Boss.Plans[4].Class == URPGBossPosture::StaticClass() && Boss.Plans[5].Class == URPGBossBleed::StaticClass() && Boss.Plans[6].Class == URPGBossLowSweep::StaticClass() && Boss.Plans[7].Class == URPGBossShockwave::StaticClass() && Boss.Plans[8].Class == URPGBossHealPunish::StaticClass() && Boss.Plans[9].Class == URPGBossLook::StaticClass() && Boss.Plans[10].Class == URPGBossCloseClipSwap::StaticClass() && Boss.Plans[11].Class == URPGBossDeath::StaticClass());
+	TestTrue(TEXT("plan instance names are the legacy names"), Boss.Plans[0].InstanceName == FName(TEXT("RPGBossStagger")) && Boss.Plans[1].InstanceName == FName(TEXT("RPGBossPhases")) && Boss.Plans[2].InstanceName == FName(TEXT("RPGBossEncounter"))
+		&& Boss.Plans[3].InstanceName == FName(TEXT("RPGBossDormantWake")) && Boss.Plans[4].InstanceName == FName(TEXT("RPGBossPosture")) && Boss.Plans[5].InstanceName == FName(TEXT("RPGBossBleed")) && Boss.Plans[6].InstanceName == FName(TEXT("RPGBossLowSweep")) && Boss.Plans[7].InstanceName == FName(TEXT("RPGBossShockwave")) && Boss.Plans[8].InstanceName == FName(TEXT("RPGBossHealPunish")) && Boss.Plans[9].InstanceName == FName(TEXT("RPGBossLook")) && Boss.Plans[10].InstanceName == FName(TEXT("RPGBossCloseClipSwap")) && Boss.Plans[11].InstanceName == FName(TEXT("RPGBossDeath")));
+	TestTrue(TEXT("the callbacks exist (they were built, never run)"), static_cast<bool>(Boss.Plans[0].Configure) && static_cast<bool>(Boss.Plans[1].Configure) && static_cast<bool>(Boss.Plans[2].Configure)
+		&& static_cast<bool>(Boss.Plans[3].Configure) && static_cast<bool>(Boss.Plans[4].Configure) && static_cast<bool>(Boss.Plans[5].Configure) && static_cast<bool>(Boss.Plans[6].Configure) && static_cast<bool>(Boss.Plans[7].Configure) && static_cast<bool>(Boss.Plans[8].Configure) && static_cast<bool>(Boss.Plans[9].Configure) && static_cast<bool>(Boss.Plans[10].Configure) && static_cast<bool>(Boss.Plans[11].Configure));
 	TSet<FString> Required;
 	for (const FRPGComponentPlan& ComponentPlan : Boss.Plans)
 	{
@@ -368,32 +406,38 @@ bool FRPGPreflightValidTest::RunTest(const FString& Parameters)
 			Required.Add(Path);
 		}
 	}
-	TestEqual(TEXT("the union of required manifest paths is eight"), Required.Num(), 8);
+	TestEqual(TEXT("the union of required manifest paths is one hundred ten"), Required.Num(), 110);
 	for (const FString& Path : AllRequiredPaths(PhaseTwo))
 	{
 		TestTrue(FString::Printf(TEXT("required path %s is named by a plan"), *Path), Required.Contains(Path));
 	}
-	TestEqual(TEXT("one class lease per boss plan"), Boss.ClassLeases.Num(), 3);
-	TestTrue(TEXT("the class leases are the plan classes"), Boss.ClassLeases.Num() == 3 && Boss.ClassLeases[0].Get() == Boss.Plans[0].Class && Boss.ClassLeases[1].Get() == Boss.Plans[1].Class && Boss.ClassLeases[2].Get() == Boss.Plans[2].Class);
+	TestEqual(TEXT("one class lease per boss plan"), Boss.ClassLeases.Num(), 12);
+	TestTrue(TEXT("the class leases are the plan classes"), Boss.ClassLeases.Num() == 12 && Boss.ClassLeases[0].Get() == Boss.Plans[0].Class && Boss.ClassLeases[1].Get() == Boss.Plans[1].Class && Boss.ClassLeases[2].Get() == Boss.Plans[2].Class
+		&& Boss.ClassLeases[3].Get() == Boss.Plans[3].Class && Boss.ClassLeases[4].Get() == Boss.Plans[4].Class && Boss.ClassLeases[5].Get() == Boss.Plans[5].Class && Boss.ClassLeases[6].Get() == Boss.Plans[6].Class && Boss.ClassLeases[7].Get() == Boss.Plans[7].Class && Boss.ClassLeases[8].Get() == Boss.Plans[8].Class && Boss.ClassLeases[9].Get() == Boss.Plans[9].Class && Boss.ClassLeases[10].Get() == Boss.Plans[10].Class && Boss.ClassLeases[11].Get() == Boss.Plans[11].Class);
 	TestTrue(TEXT("target-only members get no boss plan and no class lease"), Plan->Participants[0].Plans.IsEmpty() && Plan->Participants[2].Plans.IsEmpty() && Plan->Participants[0].ClassLeases.IsEmpty() && Plan->Participants[2].ClassLeases.IsEmpty());
 
 	// Deterministic: a second compile of the same input gives the same plan names, classes and order, as a different object.
 	FPlanPtr Again;
 	TestTrue(TEXT("second compile"), RPGBossHydrationPreflight::CompilePreflight(Input, Again).IsReady() && Again.IsValid());
-	if (Again.IsValid() && Again->Participants.Num() == 3 && Again->Participants[1].Plans.Num() == 3)
+	if (Again.IsValid() && Again->Participants.Num() == 3 && Again->Participants[1].Plans.Num() == 12)
 	{
 		TestTrue(TEXT("a different plan object"), Again.Get() != Plan.Get());
-		TestTrue(TEXT("same order and names"), Again->Participants[1].Plans[0].InstanceName == Boss.Plans[0].InstanceName && Again->Participants[1].Plans[1].InstanceName == Boss.Plans[1].InstanceName
-			&& Again->Participants[1].Plans[2].InstanceName == Boss.Plans[2].InstanceName && Again->Participants[1].Plans[0].Class == Boss.Plans[0].Class && Again->Participants[1].Plans[2].Class == Boss.Plans[2].Class);
+		bool bSame = true;
+		for (int32 Index = 0; Index < 12; ++Index)
+		{
+			bSame = bSame && Again->Participants[1].Plans[Index].InstanceName == Boss.Plans[Index].InstanceName && Again->Participants[1].Plans[Index].Class == Boss.Plans[Index].Class;
+		}
+		TestTrue(TEXT("same order and names"), bSame);
 	}
 
 	// A success touches nothing either: no component, no begun actor, no bound or ready context. The kernel ran no Configure callback and created no component.
 	TestTrue(TEXT("compiling changed no actor, component or combat context"), CaptureState(F.Scope.World) == Before);
-	TestTrue(TEXT("no managed consumer exists on any actor"), !F.Boss->FindComponentByClass<URPGBossPhases>() && !F.Boss->FindComponentByClass<URPGBossEncounter>() && !F.Boss->FindComponentByClass<URPGBossPosture>() && !F.Boss->FindComponentByClass<URPGCombatParticipant>());
+	TestTrue(TEXT("no managed consumer exists on any actor"), !F.Boss->FindComponentByClass<URPGBossPhases>() && !F.Boss->FindComponentByClass<URPGBossEncounter>() && !F.Boss->FindComponentByClass<URPGBossPosture>()
+		&& !F.Boss->FindComponentByClass<URPGBossStagger>() && !F.Boss->FindComponentByClass<URPGBossDormantWake>() && !F.Boss->FindComponentByClass<URPGCombatParticipant>());
 	const URPGCombatContextSubsystem* Context = F.Scope.World->GetSubsystem<URPGCombatContextSubsystem>();
 	TestTrue(TEXT("the context exists and stays empty"), Context && Context->GetBoundCount() == 0 && Context->GetReadyCount() == 0);
 
-	AddInfo(TEXT("Core subset preflight only: NOT a complete playable bundle, a reservation, a hydrated context or a duel; the expected content lease is not game-instance provenance."));
+	AddInfo(TEXT("Expanded native subset preflight only: NOT a complete playable bundle, a reservation, a hydrated context or a duel; the expected content lease is not game-instance provenance."));
 	return true;
 }
 
@@ -713,7 +757,7 @@ bool FRPGPreflightConfigTest::RunTest(const FString& Parameters)
 		ExpectRejected(*this, F, TEXT("attack multiplier below 1 (unsupported by the native reset)"), WithBossConfig(Spec), TEXT("Preflight.PhaseRejected"), TEXT("UnsupportedNativeDamageScale"));
 	}
 
-	// Each of the eight required manifest paths, one at a time.
+	// Each of the one hundred ten required manifest paths of the twelve combined plans, one at a time.
 	for (const FString& Path : AllRequiredPaths(PhaseTwo))
 	{
 		FConfigSpec Spec = Base;
@@ -799,7 +843,7 @@ bool FRPGPreflightTargetsTest::RunTest(const FString& Parameters)
 		{
 			TestTrue(TEXT("the plan follows the request order, the player first"), Out->Participants[0].Slot == FName(TEXT("Player")) && Out->Participants[1].Slot == FName(TEXT("Boss")));
 			TestTrue(TEXT("the boss target slot is still the explicit one, not 'the first member'"), Out->Participants[1].TargetSlot == FName(TEXT("Player")) && Out->Participants[0].TargetSlot == FName(TEXT("Boss")));
-			TestTrue(TEXT("only the boss has plans"), Out->Participants[0].Plans.IsEmpty() && Out->Participants[1].Plans.Num() == 3);
+			TestTrue(TEXT("only the boss has plans"), Out->Participants[0].Plans.IsEmpty() && Out->Participants[1].Plans.Num() == 12);
 		}
 	}
 	// A target that is a member but is itself invalid: the batch fails on that member, and no plan exists for the valid boss either.
@@ -820,7 +864,7 @@ bool FRPGPreflightTargetsTest::RunTest(const FString& Parameters)
 		In.Requests[0].TargetSlot = FName(TEXT("Boss2"));
 		FPlanPtr Out;
 		const FRPGHydrationResult Result = RPGBossHydrationPreflight::CompilePreflight(In, Out);
-		TestTrue(TEXT("two boss-core members targeting each other compile"), Result.IsReady() && Out.IsValid() && Out->Participants.Num() == 2 && Out->Participants[0].Plans.Num() == 3 && Out->Participants[1].Plans.Num() == 3);
+		TestTrue(TEXT("two boss-core members targeting each other compile"), Result.IsReady() && Out.IsValid() && Out->Participants.Num() == 2 && Out->Participants[0].Plans.Num() == 12 && Out->Participants[1].Plans.Num() == 12);
 	}
 	return true;
 }
@@ -950,6 +994,355 @@ bool FRPGPreflightDependenciesTest::RunTest(const FString& Parameters)
 	}
 
 	AddInfo(TEXT("Dependency predicate on transient native fixtures; NO positive production batch (no production-compatible character mesh is built here)."));
+	return true;
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// DD13: the expanded native subset (twelve combined plans per boss-core member). The expected classes, names, counts and the 110-path union are written as independent literals in this file (AllRequiredPaths),
+// not derived from the factories under test; the manifest the fixtures carry comes from the same literal list, the plans' own required fields are what the implementation produces.
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGPreflightExpandedTest, "OneBossFight.Binding.Preflight.ExpandedSubset",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGPreflightExpandedTest::RunTest(const FString& Parameters)
+{
+	FFixture F;
+	if (!PreconditionOk(*this, F))
+	{
+		return false;
+	}
+	// Two boss-core members with DIFFERENT selected phase ids and different configs, and one target-only member: the request order is Boss, Boss2, Player.
+	const FName PhaseAlt(TEXT("PhaseAlt"));
+	AActor* Boss2 = F.Scope.SpawnActor();
+	FConfigSpec SpecB = DefaultSpec(F.Content);
+	SpecB.Phases.Reset();
+	SpecB.Phases.Add(MakePhase(PhaseAlt, 0.5f, 2.f, 2.5f, 3.f));
+	SpecB.FieldPhaseId = PhaseAlt;
+	SpecB.Health = 4100.f;
+	SpecB.Posture = 88.f;
+	const FConfigPtr Boss2Config = BuildConfig(SpecB);
+	if (!TestTrue(TEXT("second boss actor and config"), Boss2 && Boss2Config.IsValid()))
+	{
+		return false;
+	}
+	FRPGHydrationPreflightInput Input = F.Valid;
+	Input.Requests.Insert(MakeRequest(Boss2, TEXT("Boss2"), TEXT("Boss"), ERPGPreflightRole::BossCore, Boss2Config, PhaseAlt), 1);
+	const TArray<int32> Before = CaptureState(F.Scope.World);
+
+	FPlanPtr Plan;
+	const FRPGHydrationResult Result = RPGBossHydrationPreflight::CompilePreflight(Input, Plan);
+	if (!TestTrue(TEXT("a batch of two boss-core members and a target compiles"), Result.IsReady() && Result.Errors.IsEmpty() && Plan.IsValid() && Plan->Participants.Num() == 3))
+	{
+		return false;
+	}
+	TestTrue(TEXT("the scope marker names the expanded native subset and nothing more"), FString(FRPGHydrationPreflightPlan::ScopeName()) == TEXT("ExpandedNativeSubsetPreflight")
+		&& !Plan->IsCompletePlayableBundle() && !Plan->IsReservation() && !Plan->IsReady());
+
+	// Independent expectations: the twelve classes and the legacy instance names, each exactly once, in the relative plan order.
+	const TArray<UClass*> ExpectedClasses = {URPGBossStagger::StaticClass(), URPGBossPhases::StaticClass(), URPGBossEncounter::StaticClass(), URPGBossDormantWake::StaticClass(), URPGBossPosture::StaticClass(), URPGBossBleed::StaticClass(), URPGBossLowSweep::StaticClass(), URPGBossShockwave::StaticClass(), URPGBossHealPunish::StaticClass(), URPGBossLook::StaticClass(), URPGBossCloseClipSwap::StaticClass(), URPGBossDeath::StaticClass()};
+	const TArray<FName> ExpectedNames = {FName(TEXT("RPGBossStagger")), FName(TEXT("RPGBossPhases")), FName(TEXT("RPGBossEncounter")), FName(TEXT("RPGBossDormantWake")), FName(TEXT("RPGBossPosture")), FName(TEXT("RPGBossBleed")), FName(TEXT("RPGBossLowSweep")), FName(TEXT("RPGBossShockwave")), FName(TEXT("RPGBossHealPunish")), FName(TEXT("RPGBossLook")), FName(TEXT("RPGBossCloseClipSwap")), FName(TEXT("RPGBossDeath"))};
+	for (int32 Member = 0; Member < 2; ++Member)
+	{
+		const FRPGPreflightParticipantPlan& BossPlan = Plan->Participants[Member];
+		const FName Selected = Member == 0 ? PhaseTwo : PhaseAlt;
+		const FName Other = Member == 0 ? PhaseAlt : PhaseTwo;
+		const FString Who = Member == 0 ? TEXT("boss with PhaseTwo") : TEXT("boss with PhaseAlt");
+		if (!TestTrue(FString::Printf(TEXT("%s: exactly twelve plans, a boss-core role and twelve class leases"), *Who), BossPlan.Role == ERPGPreflightRole::BossCore && BossPlan.Plans.Num() == 12 && BossPlan.ClassLeases.Num() == 12))
+		{
+			return false;
+		}
+		TestTrue(FString::Printf(TEXT("%s: original five-plan prefix keeps its reviewed classes and names"), *Who),
+			BossPlan.Plans[0].Class == URPGBossStagger::StaticClass() && BossPlan.Plans[0].InstanceName == FName(TEXT("RPGBossStagger"))
+			&& BossPlan.Plans[1].Class == URPGBossPhases::StaticClass() && BossPlan.Plans[1].InstanceName == FName(TEXT("RPGBossPhases"))
+			&& BossPlan.Plans[2].Class == URPGBossEncounter::StaticClass() && BossPlan.Plans[2].InstanceName == FName(TEXT("RPGBossEncounter"))
+			&& BossPlan.Plans[3].Class == URPGBossDormantWake::StaticClass() && BossPlan.Plans[3].InstanceName == FName(TEXT("RPGBossDormantWake"))
+			&& BossPlan.Plans[4].Class == URPGBossPosture::StaticClass() && BossPlan.Plans[4].InstanceName == FName(TEXT("RPGBossPosture")));
+		TestTrue(FString::Printf(TEXT("%s: seven typed additions occupy exactly indexes5 through11 in DD order"), *Who),
+			BossPlan.Plans[5].Class == URPGBossBleed::StaticClass() && BossPlan.Plans[5].InstanceName == FName(TEXT("RPGBossBleed"))
+			&& BossPlan.Plans[6].Class == URPGBossLowSweep::StaticClass() && BossPlan.Plans[6].InstanceName == FName(TEXT("RPGBossLowSweep"))
+			&& BossPlan.Plans[7].Class == URPGBossShockwave::StaticClass() && BossPlan.Plans[7].InstanceName == FName(TEXT("RPGBossShockwave"))
+			&& BossPlan.Plans[8].Class == URPGBossHealPunish::StaticClass() && BossPlan.Plans[8].InstanceName == FName(TEXT("RPGBossHealPunish"))
+			&& BossPlan.Plans[9].Class == URPGBossLook::StaticClass() && BossPlan.Plans[9].InstanceName == FName(TEXT("RPGBossLook"))
+			&& BossPlan.Plans[10].Class == URPGBossCloseClipSwap::StaticClass() && BossPlan.Plans[10].InstanceName == FName(TEXT("RPGBossCloseClipSwap"))
+			&& BossPlan.Plans[11].Class == URPGBossDeath::StaticClass() && BossPlan.Plans[11].InstanceName == FName(TEXT("RPGBossDeath")));
+		bool bClasses = true, bNames = true, bCallbacks = true, bLeases = true;
+		TSet<const UClass*> DistinctClasses;
+		TSet<FName> DistinctNames;
+		int32 SumOfRequired = 0;
+		TSet<FString> Union;
+		for (int32 Index = 0; Index < 12; ++Index)
+		{
+			bClasses = bClasses && BossPlan.Plans[Index].Class == ExpectedClasses[Index];
+			bNames = bNames && BossPlan.Plans[Index].InstanceName == ExpectedNames[Index];
+			bCallbacks = bCallbacks && static_cast<bool>(BossPlan.Plans[Index].Configure);
+			bLeases = bLeases && BossPlan.ClassLeases[Index].Get() == BossPlan.Plans[Index].Class;
+			DistinctClasses.Add(BossPlan.Plans[Index].Class);
+			DistinctNames.Add(BossPlan.Plans[Index].InstanceName);
+			SumOfRequired += BossPlan.Plans[Index].RequiredFields.Num();
+			for (const FString& Path : BossPlan.Plans[Index].RequiredFields)
+			{
+				Union.Add(Path);
+			}
+		}
+		TestTrue(FString::Printf(TEXT("%s: all twelve classes follow the reviewed prefix and DD-order suffix"), *Who), bClasses);
+		TestTrue(FString::Printf(TEXT("%s: the instance names are the legacy names in the same order"), *Who), bNames);
+		TestTrue(FString::Printf(TEXT("%s: every plan has its callback (built, never run) and the class leases are the plan classes"), *Who), bCallbacks && bLeases);
+		TestTrue(FString::Printf(TEXT("%s: no native class and no instance name appears twice"), *Who), DistinctClasses.Num() == 12 && DistinctNames.Num() == 12);
+		// The separate scalar, profile, flow and policy plans are gone: no plan names a class twice and the twelve plans together name each of the 110 paths exactly once.
+		const TArray<FString> ExpectedPaths = AllRequiredPaths(Selected);
+		bool bUnion = ExpectedPaths.Num() == 110 && Union.Num() == 110 && SumOfRequired == 110;
+		for (const FString& Path : ExpectedPaths)
+		{
+			bUnion = bUnion && Union.Contains(Path);
+		}
+		TestTrue(FString::Printf(TEXT("%s: the union of the plans' required paths is exactly the 110 independent literal paths, each named by exactly one plan"), *Who), bUnion);
+		// The selected phase decides the phase paths: no default first or last phase.
+		TestTrue(FString::Printf(TEXT("%s: the selected phase paths are named and the other phase's are not"), *Who),
+			Union.Contains(FString::Printf(TEXT("Phases[%s].EntryHealthFraction"), *Selected.ToString())) && !Union.Contains(FString::Printf(TEXT("Phases[%s].EntryHealthFraction"), *Other.ToString())));
+	}
+	TestTrue(TEXT("each boss keeps its own config lease and phase: the configs are retained independently"), Plan->Participants[0].Config.Get() == F.BossConfig.Get() && Plan->Participants[1].Config.Get() == Boss2Config.Get()
+		&& Plan->Participants[0].Config->Phases.Num() == 1 && Plan->Participants[0].Config->Phases[0].PhaseId == PhaseTwo && Plan->Participants[1].Config->Phases.Num() == 1 && Plan->Participants[1].Config->Phases[0].PhaseId == PhaseAlt
+		&& Plan->Participants[0].Config->Stats.MaxHealth != Plan->Participants[1].Config->Stats.MaxHealth);
+	TestTrue(TEXT("the target-only member has no plan and no class lease"), Plan->Participants[2].Role == ERPGPreflightRole::TargetOnly && Plan->Participants[2].Plans.IsEmpty() && Plan->Participants[2].ClassLeases.IsEmpty());
+
+	// A second compile of the same input gives the same classes, names, order and required fields, as a different object.
+	FPlanPtr Again;
+	TestTrue(TEXT("second compile"), RPGBossHydrationPreflight::CompilePreflight(Input, Again).IsReady() && Again.IsValid() && Again.Get() != Plan.Get() && Again->Participants.Num() == 3);
+	if (Again.IsValid() && Again->Participants.Num() == 3)
+	{
+		bool bStable = true;
+		for (int32 Member = 0; Member < 2; ++Member)
+		{
+			bStable = bStable && Again->Participants[Member].Plans.Num() == 12;
+			for (int32 Index = 0; bStable && Index < 12; ++Index)
+			{
+				bStable = bStable && Again->Participants[Member].Plans[Index].Class == Plan->Participants[Member].Plans[Index].Class
+					&& Again->Participants[Member].Plans[Index].InstanceName == Plan->Participants[Member].Plans[Index].InstanceName
+					&& Again->Participants[Member].Plans[Index].RequiredFields == Plan->Participants[Member].Plans[Index].RequiredFields;
+			}
+		}
+		TestTrue(TEXT("the second compile has the same order, classes, names and required fields"), bStable);
+	}
+
+	// A success touches nothing: no component (no Stagger or DormantWake either), no begun actor, no bound or ready context.
+	TestTrue(TEXT("compiling changed no actor, component or combat context"), CaptureState(F.Scope.World) == Before);
+	bool bNoConsumers = true;
+	for (UClass* Class : RPGBossHydrationPreflight::ManagedCoreConsumerClasses())
+	{
+		bNoConsumers = bNoConsumers && !F.Boss->FindComponentByClass(Class) && !Boss2->FindComponentByClass(Class) && !F.Player->FindComponentByClass(Class);
+	}
+	TestTrue(TEXT("none of the thirteen managed consumer classes exists on any actor"), bNoConsumers);
+	TestTrue(TEXT("the managed consumers are the thirteen expected classes"), RPGBossHydrationPreflight::ManagedCoreConsumerClasses().Num() == 13);
+
+	AddInfo(TEXT("Expanded native subset: a plan order only (NOT a BeginPlay chronology), structural soft references (NOT production fit, load or cook proof), NOT a complete playable bundle, reservation or ready context."));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGPreflightClustersTest, "OneBossFight.Binding.Preflight.Clusters",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGPreflightClustersTest::RunTest(const FString& Parameters)
+{
+	FFixture F;
+	if (!PreconditionOk(*this, F))
+	{
+		return false;
+	}
+	const FConfigSpec Base = DefaultSpec(F.Content);
+	const auto WithMutation = [&](const TFunction<void(FRPGParticipantConfig&)>& Mutate)
+	{
+		FRPGHydrationPreflightInput In = F.Valid;
+		In.Requests[0].Config = BuildConfigWith(Base, Mutate);
+		return In;
+	};
+	{
+		FPlanPtr Out;
+		TestTrue(TEXT("control: the hand-built boss config with every new record at its authoring default is accepted"), RPGBossHydrationPreflight::CompilePreflight(WithMutation(TFunction<void(FRPGParticipantConfig&)>()), Out).IsReady() && Out.IsValid());
+	}
+	const auto MissingPath = []() { return FSoftObjectPath(); };
+	const auto BadPath = []() { return FSoftObjectPath(FTopLevelAssetPath(FName(TEXT("/SyntheticMount/A B")), FName(TEXT("AN_X"))), FString()); };
+
+	// Each newly integrated cluster, with every other record valid: the accepted validator's own named failure is carried, the earlier good output is cleared and nothing in the world changes.
+	ExpectRejected(*this, F, TEXT("stagger policy: a divisor field at 0"), WithMutation([](FRPGParticipantConfig& C) { C.StaggerPolicy.GetUpRate = 0.f; }), TEXT("Preflight.StaggerRejected"), TEXT("InvalidStagger.NotPositive"));
+	ExpectRejected(*this, F, TEXT("stagger policy: a backend capability the generic compiler accepts (critical multiplier below 1)"), WithMutation([](FRPGParticipantConfig& C) { C.StaggerPolicy.CriticalMultiplier = 0.5f; }), TEXT("Preflight.StaggerRejected"), TEXT("UnsupportedNativeCritical"));
+	ExpectRejected(*this, F, TEXT("stagger profile: no hit stun class"), WithMutation([](FRPGParticipantConfig& C) { C.StaggerProfile.HitStunAbilityClassName = NAME_None; }), TEXT("Preflight.StaggerRejected"), TEXT("InvalidStaggerProfile.NoHitStunClass"));
+	ExpectRejected(*this, F, TEXT("stagger profile: a required clip missing while clips are used"), WithMutation([](FRPGParticipantConfig& C) { C.StaggerProfile.FallClip = TSoftObjectPtr<UAnimSequence>(); }), TEXT("Preflight.StaggerRejected"), TEXT("StaggerProfile.FallClip"));
+	ExpectRejected(*this, F, TEXT("phase flow: no leap tag"), WithMutation([](FRPGParticipantConfig& C) { C.PhaseFlow.LeapAbilityTag = NAME_None; }), TEXT("Preflight.PhaseRejected"), TEXT("InvalidPhaseFlow.NoLeapTag"));
+	ExpectRejected(*this, F, TEXT("fireball: an inverted cooldown"), WithMutation([](FRPGParticipantConfig& C) { C.Fireball.FireballCooldown = FVector2D(5.0, 4.0); }), TEXT("Preflight.PhaseRejected"), TEXT("InvalidFireball.CooldownOrder"));
+	ExpectRejected(*this, F, TEXT("phase dependencies: no immunity effect"), WithMutation([](FRPGParticipantConfig& C) { C.PhaseDependencies.ImmunityEffect = TSoftClassPtr<UObject>(); }), TEXT("Preflight.PhaseRejected"), TEXT("PhaseDependencies.ImmunityEffect"));
+	// The encounter cluster: a VALID stats record with an invalid policy, and an invalid stats record with a valid policy, each caught (so a premature or one-sided check would be found).
+	ExpectRejected(*this, F, TEXT("valid stats with a NaN gate radius"), WithMutation([](FRPGParticipantConfig& C) { C.EncounterPolicy.GateRadius = std::numeric_limits<float>::quiet_NaN(); }), TEXT("Preflight.EncounterPolicyRejected"), TEXT("InvalidPolicy.NotFinite"));
+	ExpectRejected(*this, F, TEXT("valid stats with a negative gate radius"), WithMutation([](FRPGParticipantConfig& C) { C.EncounterPolicy.GateRadius = -1.f; }), TEXT("Preflight.EncounterPolicyRejected"), TEXT("InvalidPolicy.Negative"));
+	{
+		FConfigSpec Spec = Base;
+		Spec.Health = 0.5f; // a native capability the generic compiler accepts; the policy of this config is valid
+		FRPGHydrationPreflightInput In = F.Valid;
+		In.Requests[0].Config = BuildConfig(Spec);
+		ExpectRejected(*this, F, TEXT("invalid stats (native health capability) with a valid policy"), In, TEXT("Preflight.StatsRejected"), TEXT("UnsupportedNativeHealthOverride"));
+		FConfigSpec Spec2 = Base;
+		Spec2.Delay = -1.f; // a posture stat: the complete stats record is validated, not only the health
+		In.Requests[0].Config = BuildConfig(Spec2);
+		ExpectRejected(*this, F, TEXT("a posture stat invalid (the whole stats record is validated)"), In, TEXT("Preflight.StatsRejected"), TEXT("InvalidStats.Negative"));
+	}
+	// The dormant wake references.
+	ExpectRejected(*this, F, TEXT("dormant wake: no dormant clip"), WithMutation([&](FRPGParticipantConfig& C) { C.DormantWake.DormantClip = TSoftObjectPtr<UAnimSequence>(MissingPath()); }), TEXT("Preflight.DormantWakeRejected"), TEXT("DormantWake.DormantClip"));
+	ExpectRejected(*this, F, TEXT("dormant wake: a malformed wake clip path"), WithMutation([&](FRPGParticipantConfig& C) { C.DormantWake.WakeClip = TSoftObjectPtr<UAnimSequence>(BadPath()); }), TEXT("Preflight.DormantWakeRejected"), TEXT("InvalidDependency.Malformed"));
+
+	// Several clusters invalid in one member: all are reported with the member's slot, none is hidden by another.
+	{
+		FPlanPtr Out = F.PriorPlan;
+		const FRPGHydrationResult Several = RPGBossHydrationPreflight::CompilePreflight(WithMutation([&](FRPGParticipantConfig& C)
+			{
+				C.StaggerProfile.HitStunAbilityClassName = NAME_None;
+				C.DormantWake.WakeClip = TSoftObjectPtr<UAnimSequence>(MissingPath());
+				C.EncounterPolicy.GateRadius = -2.f;
+			}), Out);
+		TestTrue(TEXT("a stagger, an encounter policy and a dormant wake failure in one member are all reported with the slot, and nothing is published"),
+			!Several.IsReady() && !Out.IsValid() && AnyErrorStartsWith(Several, TEXT("Preflight.StaggerRejected[slot=Boss]")) && AnyErrorStartsWith(Several, TEXT("Preflight.EncounterPolicyRejected[slot=Boss]"))
+			&& AnyErrorStartsWith(Several, TEXT("Preflight.DormantWakeRejected[slot=Boss]")));
+	}
+
+	// A late invalid last participant: the first boss is completely valid, the second (last boss) has one invalid cluster: the earlier good output is cleared and NOTHING is published, not even for the valid boss.
+	{
+		AActor* Boss2 = F.Scope.SpawnActor();
+		const FName PhaseAlt(TEXT("PhaseAlt"));
+		FConfigSpec SpecB = Base;
+		SpecB.Phases.Reset();
+		SpecB.Phases.Add(MakePhase(PhaseAlt, 0.5f, 2.f, 2.5f, 3.f));
+		SpecB.FieldPhaseId = PhaseAlt;
+		const FConfigPtr LateConfig = BuildConfigWith(SpecB, [&](FRPGParticipantConfig& C) { C.DormantWake.WakeClip = TSoftObjectPtr<UAnimSequence>(MissingPath()); });
+		if (!TestTrue(TEXT("late participant built"), Boss2 && LateConfig.IsValid()))
+		{
+			return false;
+		}
+		FRPGHydrationPreflightInput In = F.Valid;
+		In.Requests.Insert(MakeRequest(Boss2, TEXT("Boss2"), TEXT("Boss"), ERPGPreflightRole::BossCore, LateConfig, PhaseAlt), 1); // Boss, Boss2 (invalid), Player
+		ExpectRejected(*this, F, TEXT("valid first boss, invalid second boss"), In, TEXT("Preflight.DormantWakeRejected"), TEXT("[slot=Boss2]"));
+		FPlanPtr Out = F.PriorPlan;
+		const FRPGHydrationResult Late = RPGBossHydrationPreflight::CompilePreflight(In, Out);
+		TestTrue(TEXT("only the invalid member is named: nothing is reported for the valid first boss and no plan exists for it"), !Late.IsReady() && !Out.IsValid() && !AnyErrorContains(Late, TEXT("[slot=Boss]")) && AnyErrorContains(Late, TEXT("[slot=Boss2]")));
+	}
+
+	// Manifest membership: the first and the last path of EACH combined cluster, one at a time (the message names the slot and the path).
+	struct FClusterEdge
+	{
+		const TCHAR* Name;
+		const TCHAR* First;
+		const TCHAR* Last;
+	};
+	const FClusterEdge Edges[] = {
+		{TEXT("stagger"), TEXT("StaggerPolicy.StaggerSeconds"), TEXT("StaggerProfile.ImmunityEffect")},
+		{TEXT("phases"), TEXT("Phases[PhaseTwo].EntryHealthFraction"), TEXT("PhaseDependencies.ImmunityEffect")},
+		{TEXT("encounter"), TEXT("Stats.MaxHealth"), TEXT("EncounterPolicy.bResetOnPlayerRespawn")},
+		{TEXT("dormant wake"), TEXT("DormantWake.DormantClip"), TEXT("DormantWake.WakeClip")},
+		{TEXT("posture"), TEXT("Stats.MaxPosture"), TEXT("Stats.PostureRegenRate")},
+	};
+	for (const FClusterEdge& Edge : Edges)
+	{
+		for (const TCHAR* Path : {Edge.First, Edge.Last})
+		{
+			FConfigSpec Spec = Base;
+			Spec.OmitFields.Add(Path);
+			FRPGHydrationPreflightInput In = F.Valid;
+			In.Requests[0].Config = BuildConfig(Spec);
+			ExpectRejected(*this, F, *FString::Printf(TEXT("manifest without the %s path %s"), Edge.Name, Path), In, TEXT("Preflight.MissingRequiredField"), Path);
+		}
+	}
+	// A whole new group missing: every required path of the dormant wake group at once is reported, one failure per path.
+	{
+		FConfigSpec Spec = Base;
+		Spec.OmitFields.Add(TEXT("DormantWake.DormantClip"));
+		Spec.OmitFields.Add(TEXT("DormantWake.WakeClip"));
+		FRPGHydrationPreflightInput In = F.Valid;
+		In.Requests[0].Config = BuildConfig(Spec);
+		FPlanPtr Out = F.PriorPlan;
+		const FRPGHydrationResult Result = RPGBossHydrationPreflight::CompilePreflight(In, Out);
+		TestTrue(TEXT("both dormant wake paths missing: both are named with the slot, nothing published"), !Result.IsReady() && !Out.IsValid() && AnyErrorContains(Result, TEXT("[slot=Boss]: required manifest path DormantWake.DormantClip"))
+			&& AnyErrorContains(Result, TEXT("[slot=Boss]: required manifest path DormantWake.WakeClip")));
+	}
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGPreflightConsumersTest, "OneBossFight.Binding.Preflight.Consumers",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGPreflightConsumersTest::RunTest(const FString& Parameters)
+{
+	FFixture F;
+	if (!PreconditionOk(*this, F))
+	{
+		return false;
+	}
+	// An ALREADY OWNED Stagger or DormantWake (created on the actor, NOT registered and NOT begun) is refused by name for a boss-core actor, and no member is mutated.
+	for (UClass* Class : {URPGBossStagger::StaticClass(), URPGBossDormantWake::StaticClass()})
+	{
+		AActor* Host = F.Scope.SpawnActor();
+		if (!Host)
+		{
+			AddError(TEXT("unsupported precondition: a host actor could not be spawned"));
+			continue;
+		}
+		UActorComponent* Existing = NewObject<UActorComponent>(Host, Class);
+		if (!TestTrue(FString::Printf(TEXT("precondition: %s is owned by the actor, unregistered and not begun"), *Class->GetName()),
+			Existing && Host->FindComponentByClass(Class) == Existing && !Existing->IsRegistered() && !Existing->HasBegunPlay() && !Host->HasActorBegunPlay()))
+		{
+			AddError(TEXT("unsupported precondition: the preexisting consumer could not be attached unregistered"));
+			continue;
+		}
+		const int32 ComponentCount = Host->GetComponents().Num();
+		FRPGHydrationPreflightInput In = F.Valid;
+		In.Requests[0].Actor = Host;
+		ExpectRejected(*this, F, *FString::Printf(TEXT("preexisting unregistered %s on a boss-core actor"), *Class->GetName()), In, TEXT("Preflight.PreexistingConsumer"), *Class->GetName());
+		TestTrue(FString::Printf(TEXT("the refused %s is untouched: still owned, still unregistered, still not begun, no component added or removed"), *Class->GetName()),
+			Host->FindComponentByClass(Class) == Existing && !Existing->IsRegistered() && !Existing->HasBegunPlay() && Host->GetComponents().Num() == ComponentCount);
+	}
+	// A boss consumer on a TARGET-ONLY member is not this kernel's business (no boss plan is ever assigned to a target): the batch still compiles, and the component is left alone.
+	{
+		UActorComponent* OnTarget = NewObject<UActorComponent>(F.Player, URPGBossStagger::StaticClass());
+		FPlanPtr Out;
+		const FRPGHydrationResult Result = RPGBossHydrationPreflight::CompilePreflight(F.Valid, Out);
+		TestTrue(TEXT("a Stagger on the target-only member does not stop the batch; the target gets no boss plan"), Result.IsReady() && Out.IsValid() && Out->Participants.Num() == 2 && Out->Participants[1].Plans.IsEmpty());
+		TestTrue(TEXT("and that component is untouched (unregistered, not begun)"), OnTarget && F.Player->FindComponentByClass(URPGBossStagger::StaticClass()) == OnTarget && !OnTarget->IsRegistered() && !OnTarget->HasBegunPlay());
+	}
+
+	// Callback binding, confirmed OUTSIDE CompilePreflight and explicitly separate from it: the compile invokes no callback (nothing on the boss actor changes), and afterwards each plan's callback, applied by this test to a
+	// fresh isolated component of that plan's class, writes the typed record and refuses a component of the wrong class.
+	FPlanPtr Plan;
+	const TArray<int32> Before = CaptureState(F.Scope.World);
+	const int32 BossComponentsBefore = F.Boss->GetComponents().Num();
+	if (!TestTrue(TEXT("the batch compiles"), RPGBossHydrationPreflight::CompilePreflight(F.Valid, Plan).IsReady() && Plan.IsValid() && Plan->Participants.Num() == 2 && Plan->Participants[0].Plans.Num() == 12))
+	{
+		return false;
+	}
+	TestTrue(TEXT("no component was added to the boss actor and nothing in the world changed by the compile (a state check: the kernel holds no component to hand to a callback, so this is not an instrumentation of the callbacks)"), CaptureState(F.Scope.World) == Before && F.Boss->GetComponents().Num() == BossComponentsBefore);
+	const FRPGPreflightParticipantPlan& BossPlan = Plan->Participants[0];
+	for (int32 Index = 0; Index < BossPlan.Plans.Num(); ++Index)
+	{
+		AActor* Host = F.Scope.SpawnActor();
+		if (!Host)
+		{
+			AddError(TEXT("unsupported precondition: a host actor could not be spawned"));
+			continue;
+		}
+		UActorComponent* Fresh = NewObject<UActorComponent>(Host, BossPlan.Plans[Index].Class);
+		URPGBossStagger* AsStagger = Cast<URPGBossStagger>(Fresh);
+		URPGBossPhases* AsPhases = Cast<URPGBossPhases>(Fresh);
+		URPGBossEncounter* AsEncounter = Cast<URPGBossEncounter>(Fresh);
+		URPGBossPosture* AsPosture = Cast<URPGBossPosture>(Fresh);
+		if (AsStagger) { AsStagger->StaggerSeconds = 99.f; }
+		if (AsPhases) { AsPhases->PhaseTwoHealthFraction = 0.9f; }
+		if (AsEncounter) { AsEncounter->BossMaxHealth = 111.f; }
+		if (AsPosture) { AsPosture->PostureMax = 222.f; }
+		FString Error = TEXT("a stale diagnostic");
+		const FString Label = BossPlan.Plans[Index].Class->GetName();
+		TestTrue(FString::Printf(TEXT("%s: the plan's callback (applied outside the compile) accepts a fresh isolated component of its class and clears the diagnostic"), *Label), Fresh && BossPlan.Plans[Index].Configure(*Fresh, *F.BossConfig, Error) && Error.IsEmpty());
+		TestTrue(FString::Printf(TEXT("%s: the typed record of the config was written (and the component is still unregistered and not begun)"), *Label),
+			Fresh && !Fresh->IsRegistered() && !Fresh->HasBegunPlay()
+			&& (!AsStagger || AsStagger->StaggerSeconds == F.BossConfig->StaggerPolicy.StaggerSeconds) && (!AsPhases || AsPhases->PhaseTwoHealthFraction == 0.35f)
+			&& (!AsEncounter || AsEncounter->BossMaxHealth == 3500.f) && (!AsPosture || AsPosture->PostureMax == 73.5f));
+		TStrongObjectPtr<USceneComponent> Wrong(NewObject<USceneComponent>(Host, TEXT("WrongClass")));
+		FString WrongError;
+		TestTrue(FString::Printf(TEXT("%s: the callback refuses a component of the wrong class by name"), *Label), Wrong.IsValid() && !BossPlan.Plans[Index].Configure(*Wrong, *F.BossConfig, WrongError) && WrongError.StartsWith(TEXT("WrongComponentClass")));
+	}
+	AddInfo(TEXT("This binding check observes values on four original plans (stagger seconds, phase threshold, health, posture maximum). DormantWake and the seven additions have callback acceptance/wrong-class rejection checked here; their value-copy proofs remain in the separate typed-adapter suites. PlanInvalid cannot be provoked with the fixed factories and has no negative test."));
 	return true;
 }
 
