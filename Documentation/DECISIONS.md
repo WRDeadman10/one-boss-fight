@@ -926,3 +926,9 @@ DD26 C291 measured: build exit0 (incremental15actions, no UHT invocation), seven
 - Generated 106 known FRPGParityField rows across 15 clusters for Ember Warden draft profile. Gaps (4 phase-dependent paths) explicitly identified and withheld from emission pending phase specifications.
 - Validated manifest rows in draft_boss_profiles.py matching CompileParticipantImpl rules. Preserved historical baseline original_A201/ with self-receipts in evidence_sha256.txt.
 
+2026-10-29 Antigravity A-204 parity manifest generator corrections per Lead C-297:
+- Replaced manual SourceSite lines with dynamic C++ declaration line parsing; verified destination member presence on cited lines.
+- Bound all manifest Witness fields to verified, passing automation test suites in Source/OneBossFight/Tests/ (StatsAdapters.Assign for Posture, PhasesCluster.Assign for Fireball/Dependencies).
+- Parsed C++ default values from live headers for NativeDefault rows.
+- Added --selected-phase <id> producing 110 DD26 preflight paths from authored profile JSON. Preserved original_A202/ baseline.
+
