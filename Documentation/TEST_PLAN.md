@@ -241,3 +241,8 @@ BUILD-45-AG (2026-10-29, Antigravity, Order A-202 / Lead C-294):
 - Verified full agreement between generated 106 manifest field paths and DD26 preflight required path set (RPGBossHydrationPreflightTests.cpp AllRequiredPaths and adapter Field* constants).
 - Standard-library unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit: 189 tests run in 0.458s, 189/189 PASS, OK. Exit code 0, 0 warnings, 0 __pycache__, zero engine processes.
 
+BUILD-46-AG (2026-10-29, Antigravity, Order A-204 / Lead C-297):
+- Authoring Toolkit corrected per Lead C-297: dynamic declaration line discovery, verified test witnesses, parsed C++ defaults, selected-phase CLI argument.
+- Direct execution verified: python -B Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_emit_fields_manifest.py (8/8 PASS).
+- Full suite discovery: python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit: 188 tests run in 0.645s, 188/188 PASS, OK. Exit code 0, 0 warnings, 0 __pycache__, zero engine processes.
+
