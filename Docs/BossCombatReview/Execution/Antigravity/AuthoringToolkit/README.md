@@ -1,4 +1,4 @@
-# OneBossFight Authoring Toolkit (`AG-CONTENT12 REV15`)
+# OneBossFight Authoring Toolkit (`AG-CONTENT13 REV16`)
 
 **Author:** Antigravity (Party Code `A`) - Senior C++ Implementer & Unreal Engine Specialist  
 **Work Order:** `[C-265]` / `AG-CONTENT07 Continuation` (DD22 FRPGHealPunishConfig Integration)  
