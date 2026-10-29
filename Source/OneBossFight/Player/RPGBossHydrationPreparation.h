@@ -71,6 +71,43 @@ struct FRPGPreparedParticipantInfo
 	int32 OwnedComponentCount = 0;
 };
 
+/** DD28: one successful registration, in actual member/plan call order. */
+struct FRPGRegisteredComponentInfo
+{
+	int32 MemberIndex = INDEX_NONE;
+	int32 PlanIndex = INDEX_NONE;
+	FName Slot;
+	FName ClassName;
+	FName InstanceName;
+};
+
+struct FRPGRegistrationReport
+{
+	bool bSucceeded = false;
+	int32 FailedMemberIndex = INDEX_NONE;
+	int32 FailedPlanIndex = INDEX_NONE;
+	FName FailedClassName;
+	TArray<FString> Errors;
+	TArray<FRPGRegisteredComponentInfo> Registered;
+	FRPGPreparationAbortReport Cleanup;
+};
+
+namespace RPGBossActivation
+{
+#if WITH_DEV_AUTOMATION_TESTS
+	/** Independent registration-only hook. Fails after a real successful registration; no callbacks, nesting or production controls. */
+	class ONEBOSSFIGHT_API FRegistrationFaultScope
+	{
+	public:
+		explicit FRegistrationFaultScope(int32 InFailAfterRegistration);
+		~FRegistrationFaultScope();
+		bool Fired() const;
+		FRegistrationFaultScope(const FRegistrationFaultScope&) = delete;
+		FRegistrationFaultScope& operator=(const FRegistrationFaultScope&) = delete;
+	};
+#endif
+}
+
 /** The owned, unregistered prepared subset. Game thread only; keep it and release it on the game thread. */
 class ONEBOSSFIGHT_API FRPGPreparedBatch
 {
@@ -84,6 +121,12 @@ public:
 
 	/** True from a successful PrepareBatch until Abort. Not a gameplay or context readiness. */
 	bool IsPrepared() const { return bPrepared && !bAborted; }
+
+	/** DD28 additive step: game-thread only, never-begun owners/world only. No binding, Ready or suppression.
+	 *  Own registrations are undone by Abort (and thus by the existing destructor's Abort). External registrations retain the old contract-violation behaviour.
+	 *  Thread/state refusals do not touch an earlier success; execution/prevalidation failure unregisters this call in reverse, then Abort. */
+	bool RegisterOwnedComponents(FRPGRegistrationReport& OutReport);
+	bool IsRegistered() const { return bRegisteredByBatch; }
 
 	/** Destroys exactly the components this artifact allocated and releases every lease. Idempotent. Game thread only. */
 	FRPGPreparationAbortReport Abort();
@@ -124,6 +167,7 @@ private:
 	TArray<FMember> Members;
 	bool bPrepared = false;
 	bool bAborted = false;
+	bool bRegisteredByBatch = false;
 };
 
 /** The result of PrepareBatch: move-only. The artifact is set only when Errors is empty. */
