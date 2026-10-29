@@ -633,6 +633,55 @@ Code: `Player/RPGBossClips.h`, `URPGBossStagger` (clip stages and the execution)
 - ConfigurePhasesCluster assigns all 18 fields in ONE atomic block after complete validation (phase 4, flow 6, fireball 5, dependencies 3); unwired plan MakePhasesClusterPlan with legacy name RPGBossPhases and 18 required paths.
 - CookCoverage test integrity: Synthetic fixture paths in test files must avoid /Game/ mount (use /SyntheticMount/) so static cook scanners in Content.CookCoverage do not flag uncookable test literals. Discovered and resolved in AG-1b.
 
+## DD-10 stagger profile and atomic stagger cluster (2026-10-28, spec Claude C-216, Codex X-255 to X-257, accepted after correction)
+
+- The eleven stagger authoring fields that DD7 left untyped are a reflected record `FRPGStaggerProfileConfig` (`bUseClips`, `bUseRiposteClips`, `bCriticalOnEveryHit`, `HitStunAbilityClassName`, `FallMontage`, `GetUpMontage`, `FallClip`, `DownClip`, `RipostePlayerClip`, `RiposteBossClip`, `ImmunityEffect`) exposed as `StaggerProfile` on `URPGBossDefinition` and copied into the immutable config by the one shared `CompileParticipantImpl`; defaults equal the native constructor values (additive authoring defaults, never a fallback).
+- Validation is structural: the hit stun class name must not be None (identity only); references are checked for path structure only (no registry query, no load; native `/Script/` class paths accepted); required by mode: montages when `bUseClips` is false, clips when it is true, riposte clips when `bUseRiposteClips` is true, the immunity effect always; a set but malformed reference is refused even when optional. `bCriticalOnEveryHit` true is representable by this generic unwired schema but is NOT approved for the current Freeze duel (Codex X-255): the default stays false and enabling the legacy every-hit-critical rule needs an explicit gameplay decision.
+- `ConfigureStaggerCluster` writes exactly 25 fields (14 scalar policy of DD7 + 11 profile) in one block after the lifecycle check and the whole cluster passed; the plan `MakeStaggerClusterPlan` is an unwired fragment with the legacy instance name and 25 required paths, not combinable with the DD7 plan.
+- Process decisions recorded: a conditional blind-build release (C-220, ratified only for that unit by X-255) is NOT a precedent: future packages need an actual code and test review before scoped engine verification (X-255, X-256). The first built tests file was an undisclosed rewrite of the reviewed one and three compile rounds exceeded the two-round cap; both are open historical exceptions (`KNOWN_ISSUES.md` KI-116, `TEST_PLAN.md` BUILD-19).
+
+## DD-11 typed dormant and wake clip references (2026-10-28, Codex lead X-259 to X-261, accepted)
+
+- The two private dormant and wake clip references of `URPGBossDormantWake` are a typed authoring record: reflected `FRPGDormantWakeConfig` with `DormantClip` and `WakeClip` (`TSoftObjectPtr<UAnimSequence>`, named exactly as the native private properties, defaults equal to the native constructor values `AN_Boss01_DormantIdle` and `AN_Boss01_Wake`), exposed as `DormantWake` on `URPGBossDefinition` and copied into the immutable config by the one shared `CompileParticipantImpl`. The defaults are authoring defaults of the new field, never a fallback; an invalid record fails the compile by name with its field path and clears the previous output.
+- Both references are REQUIRED (null is `InvalidDependency.Missing`) and checked for path structure only (no registry query, no load; a set path must be well-formed, `InvalidDependency.Malformed`; no class-path rule, they are animations); the DD9 and DD10 tokens are reused. Structure is not existence, type, cook, skeleton fit or timing; an empty mount and a leaf with several dots are structurally accepted.
+- The native fields stay private. The only access that was opened is a forward declaration plus ONE friend line in `RPGBossDormantWake.h` for the exported function `RPGBossDormantWakeAdapters::ConfigureDormantWake`; no field was made public, no setter, no reflection-based adapter, no native logic, playback or default change, and the existing test console variable `rpg.WakeClip` is neither read nor written by the adapter. The native header keeps its own LF line endings. The friend-struct and export-removal fallbacks were not needed (UHT and the compiler accepted the exact seam).
+- The plan `MakeDormantWakePlan` is an UNWIRED fragment with the legacy instance name `RPGBossDormantWake`; no readiness claim, no legacy suppression. The remaining dependency and combined-plan work stays for separately reviewed integration orders (`KNOWN_ISSUES.md` KI-117, `TEST_PLAN.md` BUILD-20).
+
+## DD-12 one encounter cluster plan (2026-10-28, Codex lead X-263 to X-264, accepted)
+
+- The stats plan and the encounter policy plan each describe the SAME native class and legacy instance (`URPGBossEncounter`, `RPGBossEncounter`); the preflight refuses two plans for one class and two sequential partial writes would not be atomic. `RPGBossEncounterClusterAdapters` is the ONE encounter plan: one call validates and assigns `BossMaxHealth` (from `Stats.MaxHealth`), `GateRadius` and `bResetOnPlayerRespawn` (from `EncounterPolicy`). The three posture writes stay with the posture plan; the older encounter factories stay what they are and are not changed.
+- Validation reuses the accepted validators without any change of domain: `ValidateStats` on the COMPLETE four-stat record (so the native health override capability, health above 1, and the posture rules still apply) and then `ValidateEncounterPolicy`; each reports its exact existing token and path. The lifecycle check comes first, then the whole cluster, then one write block; no older mutating callback is invoked before the policy is validated, so no partial write exists. No new schema, compiler API, domain, tuning or fallback; the native public fields were the seam, so no existing Source file was edited.
+- The plan is an UNWIRED fragment. It proves authoring assignment on an isolated component only: not an effective gate, reset or pack health, not a startup order, not readiness. Composing the accepted subset in the preflight is a separately reviewed next order, still incomplete until every native consumer and dependency is covered (`KNOWN_ISSUES.md` KI-118, `TEST_PLAN.md` BUILD-21).
+
+## DD-13 combined preflight subset (2026-10-28, Codex lead X-265 to X-267, accepted)
+
+- The existing pure whole-batch kernel (`RPGBossHydrationPreflight`) replaces its three limited plans with the FIVE accepted combined native plans per boss-core member, each exactly once, built only from the accepted factories (`MakeStaggerClusterPlan`, `MakePhasesClusterPlan` with the explicit selected id captured by value, `MakeEncounterClusterPlan`, `MakeDormantWakePlan`, `MakePosturePlan`) in a deterministic RELATIVE plan order (not a registration or BeginPlay chronology). No separate scalar, profile, flow, policy or stats plan and no duplicate native class or instance name appears in the output; a target-only member still gets no plan and still rejects a selected phase id. The scope marker is `ExpandedNativeSubsetPreflight`; `IsCompletePlayableBundle`, `IsReservation` and `IsReady` stay false.
+- Before anything is published every boss-core config is validated with the full accepted cluster validators (stagger policy and profile, the selected phase with flow, fireball and dependencies, the complete stats record with the encounter policy, the dormant wake references); every failure is collected with its slot and carries the validator's own named failure after the colon. The existing tokens are kept (`Preflight.PhaseRejected`, `Preflight.StatsRejected`); `Preflight.StaggerRejected`, `Preflight.DormantWakeRejected`, `Preflight.EncounterPolicyRejected` (chosen by the accepted validators' `InvalidPolicy.` diagnostic prefix, so the accepted stats expectations are unchanged) and `Preflight.PlanInvalid` are new. The required manifest paths are the union of the five factories (51 unique paths); membership is not value derivation or provenance. The managed consumer collision guard now includes Stagger and DormantWake for boss-core actors.
+- Nothing is invoked or created while compiling: no Configure callback, no component, registration, context mutation, lookup, attribute access, load or suppression. The production prerequisite checks still fail closed and the new profile soft references are structural only (not loaded, not certified against the compiled animations, mesh, skeleton or class); a passing production request would still not be a complete playable bundle. Wording qualification (Codex): a critical multiplier below 1 is already refused by the shared stagger validator in the generic compiler, so the related preflight test shows re-validation only; health at or below 1 is the case that still shows a generic-versus-native capability difference. The runtime coordinator, the positive production dependencies and the remaining legacy consumers need separately reviewed packages (`KNOWN_ISSUES.md` KI-119, `TEST_PLAN.md` BUILD-22).
+
+## DD-14 production preflight fixture (2026-10-28, Codex lead X-268 to X-270, source accepted, verified)
+
+- One new test file, no production source change: it drives the genuine production compiler (`RPGCombatHydration::CompileParticipant`, bSyntheticFixture false) and the expanded native subset preflight with REAL assets. The two pack character Blueprint classes are loaded only to READ the mesh of their default object (no Blueprint actor is spawned, no default object is written, nothing is saved); the observed meshes are placed on two isolated native ACharacter actors in a test-local headless world that never begins play; the skeletons are the ones the meshes report. The pairing is observed, not assumed: both classes hold `SKM_CombatMannequin_Simple` on `SK_CombatMannequin`, and all nine boss animations (including three pack montages) and the player riposte clip are on that skeleton, so the positive batch compiles with five boss plans and none for the target.
+- The definitions are transient fixtures: the typed records are the authoring defaults (the cooked-directory candidates), the phase id, stats and the 51 manifest rows are fixture values that say so (membership only, not derived from an asset, no authority), the content epoch is the existing legacy registry epoch. A transient skeleton and animation exist only as negative controls. Nothing is retargeted, substituted, dropped or weakened; a real mismatch would fail the test with the observed names (none occurred).
+- The dependency rejections start from the successful real-asset result and change one thing at a time (null, missing or foreign animation, missing or foreign skeleton, a character without a mesh) at both the preflight prerequisite and the production compiler, with the earlier output cleared and the world and the touched packages unchanged. Limits and open items are in `KNOWN_ISSUES.md` KI-120 and `TEST_PLAN.md` BUILD-23.
+
+## DD-15 unregistered batch preparation (2026-10-28, Codex lead X-271; verified by Claude as interim lead, Codex review pending)
+
+- Three new files add the first primitive that creates real components, and it only creates and configures them: `RPGBossHydrationPreparation::PrepareBatch` runs the accepted preflight over the ENTIRE input, then allocates the five accepted native consumers (Stagger, Phases, Encounter, DormantWake, Posture, with the reviewed names) for every boss-core member, owned by the member's actor and leased from creation, then configures every one with its accepted plan callback. Nothing registers, begins, ticks, loads, binds a context or calls the old per-actor `CreateConfigureRegister`; a target-only member gets none. The caller gets a move-only, privately constructed artifact (`IsPrepared`, never a Ready claim) with no register, commit, activate, ready or legacy-suppression operation and no production access to a component pointer; it is not wired to any startup or spawn hook.
+- Allocation happens for all members before any configure; before and immediately after each step the weak actor, world, role, encounter identity and the component (valid, exact class, reviewed name, owner and owned set, not registered, not begun) are rechecked. Any failure destroys everything created for every member through the same `Abort` the artifact uses. `Abort` is idempotent and game-thread only, destroys exactly the artifact's own unregistered components once each, releases the leases, tolerates an already destroyed component or owner without dereferencing it, and never rolls back or destroys a component somebody else registered or began: it reports that as a contract violation. A live other object carrying an instance name is refused; a dev-automation-only step ordinal (no cvar, no callback) injects a failure after a real allocation or configure so the cleanup is exercised, and is labelled injected, not an organic failure.
+- Accepted limits: the engine replaces a same-name garbage object in place when a name is created again before collection (no reference to a destroyed component may be kept), `bAutoRegister` stays at the native default so an engine path that registers all owner components would register these, a second preparation is refused by the preflight (a preexisting consumer) rather than by a lock, and the preparation is not a reservation or a playable boss (`KNOWN_ISSUES.md` KI-121, `TEST_PLAN.md` BUILD-24). The verification was run by Claude as interim lead on the owner's instruction; Codex has not yet reviewed the source or the one-line test fix after the first failed build.
+
+## DD-16 production preparation fixture (2026-10-28, Codex lead X-278)
+
+- One new test file drives the accepted DD-15 `PrepareBatch` with REAL pack assets and the REAL production compiler (`CompileParticipant`, bSyntheticFixture false), the way DD-14 drove the preflight: the two pack classes are loaded only to read the default object mesh, the observed mesh and skeleton go on three isolated native `ACharacter` actors (two boss-core, one target) finished before any preparation, three transient definitions carry per-boss values and selected phase ids, and ten owned unregistered components are inspected, aborted and prepared again. No helper was promoted and no existing file edited: the DD-14 set-up is copied into the file.
+- The late-rejection test names the LAYER that refused: a null animation lease, a selected phase the config lacks and a missing config are refused by the preflight inside `PrepareBatch`; a definition the production compiler refuses never yields a config, so that refusal is `CompileParticipant`'s, and the missing config is then refused by the preflight (`Preflight.NoConfig`). `CloneProduction` manufactures an invalid production-shaped config only as a negative control. The name-collision test puts a real live `USceneComponent` under a planned name of the later owner, so only the allocation guard can refuse; the cleanup of seven earlier real allocations is observed through destroyed-but-uncollected objects (no collection is forced). Only the test-owned blocker is renamed away and destroyed before the retry: fixture cleanup, not permission to rename production objects.
+- Accepted limits: transient definitions, the caller's legacy content epoch and a hand-authored manifest (not authoritative game-instance or serialized authoring proof); only the first test of a run sees the animations unloaded; the retry after the collision reuses destroyed, uncollected same-class objects and is observed, not claimed as garbage-collected name reuse; no organic configure failure; nothing registered, reserved, bound or Ready (`KNOWN_ISSUES.md` KI-122, `TEST_PLAN.md` BUILD-25).
+
+## DD-17 world-input compiler and DD-18 world preparation and reservation registry (2026-10-28, Codex lead X-290)
+
+- DD-17 `CompileWorldInput` builds the preparation input from an explicit world, binding and selections (epoch only through `ForWorld`), with retained weak actor/definition identities re-checked at the checkpoint (C245/C247: no raw dereference of a cleared identity). DD-18 adds `PrepareWorldBatch` (a facade composing it with the DD-15 `PrepareBatch`, own identity checkpoint, late failure aborts only its own components) and `FRPGBossPreparationRegistry` (per-world, non-global, move-only lease token validated by registry GUID plus never-reused serial plus encounter GUID, conflicts refused before any allocation, a not-clean abort quarantines instead of reopening). C248: the registry captures the binding identity, the original encounter GUID and the complete attempted actor set BEFORE the facade and never dereferences the raw binding afterwards.
+- Verified in one serialized run (build exit 0 first attempt; focused 3/4/3 green; full 129/129; `TEST_PLAN.md` BUILD-26). Accepted limits are in `KNOWN_ISSUES.md` KI-123: quarantine, drift and re-entry are source-only, definitions transient, no registration, reservation on a live encounter, Ready, legacy suppression or wiring.
+
 ## Open
 
 Settled: player and boss are the pack's mannequin player and great-sword boss (2026-10-19). Greystone (Paragon) and Sevarog (Paragon) come back only on a pack that has been fixed for them.
@@ -640,3 +689,240 @@ Settled: player and boss are the pack's mannequin player and great-sword boss (2
 - Lighting strategy: baked first; Lumen benchmarked separately (decide at the packaged performance milestone, `TASKS.md` G4-1).
 - Whether pack crafting, dialogue and inventory screens stay reachable (KI-030).
 - Boss music: needs an asset from the user (a placeholder plays until then).
+DD-19 verification 2026-10-29: under Claude C253, Codex ran the typed Bleed configuration tests (focused6/full135) with actual UHT/editor build. Existing five-plan preparation and legacy runtime behavior were not changed. Raw evidence/pins in Codex/DD19/run_2026-10-29; lead acceptance pending; no serialized asset, proc/VFX/audio, wiring or new driver gate claim.
+DD-20 source 2026-10-29 (C258 authored contract; lead REVIEW PENDING): LowSweep remains an unwired profile. MoveId is syntactic identity only, not tracker-table/timing resolution or sweep execution. Damage>=0, Reach>0, 0<=InnerRadius<Reach, BladeHeight>0, angles each[-360,360] finite; equal/reversed endpoints allowed. These are authored record choices, not native guards or editor minimum1 floors; no wrapped/multi-turn coverage claim. Native component/tracker/math unchanged; no preflight insertion or activation.
+DD-19 authoring toolkit integration (2026-10-29, Antigravity, Claude C-257/C-258): Toolkit Revision A-183 completed offline. FRPGBleedConfig integrated into authoring core, draft generator, and asset inspector. Native validation parity verified (RPGBossBleedAdapters.cpp): non-finite scalar check first (InvalidBleed.NotFinite), domain bounds (InitialThreshold > 0, ThresholdIncrease >= 0, ThresholdMax >= InitialThreshold, 0 <= HpFraction <= 1, signed EffectHeight), and soft-path syntax validation (InvalidDependency.Missing / Malformed). PyGenUtil snake_case property name mapping verified for all 7 bleed fields (71 fields total across 11 native structs). Draft asset verification sets and reads back 16 typed properties with IEEE 754 float32 round-trip normalization. 82/82 tests PASS. DD20 LowSweep remains unreviewed future scope and is strictly excluded.
+DD-20 authoring toolkit integration & soft path macro correction (2026-10-29, Antigravity, Claude C-260): Toolkit Revision A-184 completed offline. Corrected soft path lexical pre-check with exact UE 5.5 Core/Public/UObject/NameTypes.h:168 and :174 macros (INVALID_OBJECTNAME_CHARACTERS and INVALID_LONGPACKAGE_CHARACTERS). Staged DD20 FRPGLowSweepConfig integration: 8 fields, domain rules from RPGBossLowSweepAdapters.cpp:ValidateLowSweep (finite scalars first across all 6 floats, Damage >= 0, Reach > 0, 0 <= InnerRadius < Reach, BladeHeight > 0, [-360, 360] angles, equal/reversed endpoints accepted, MoveId syntactic check). Qualification: pending DD20 live verification run by Codex. MoveId is syntactic identity only. Draft asset verification sets and reads back 17 typed properties with IEEE 754 float32 normalization. 100/100 tests PASS.
+DD-20 measured update (2026-10-29,C259): isolated LowSweep tests completed focused6/full141, actual UHT/editor build. The authored-domain choice, syntactic MoveId qualification and unwired plan remain unchanged. Native tracker/math/LowSweep implementation unchanged; no gameplay/collision or asset authoring proof. Review pending; evidence Codex/DD20/run_2026-10-29.
+AG-CONTENT06 Native Derivation Dossier (2026-10-29, Antigravity, Claude C-261/C-262): Delivered complete offline native derivation for all 5 boss components lacking typed profiles (RPGBossShockwave, RPGBossHealPunish, RPGBossDeath, RPGBossLook, RPGBossCloseClipSwap) in Docs/BossCombatReview/Execution/Antigravity/NativeDerivation/. Extracted exact authored fields with header line citations, analyzed .cpp reads and extreme value behaviors (zero, negative, NaN/Inf, huge, equal/inverted bounds) stated as read from code. Identified external dependencies (URPGAttackTracker moves A5/A6, URPGDamageResolver, ARPGBossJavelin, ARPGBossRemains, hardcoded DrinkingPotion_Montage and RPGBossCloseClipSwapRules.h), categorized domains (NATIVE-DERIVED vs AUTHORED CHOICE), documented lifecycle guards, and synthesized recommended DD21-DD25 delivery sequence with 1-line risks. Validated 100% pure CRLF across all 6 markdown files and evidence_sha256.txt (bare_lf=False, bare_cr=False); 0 __pycache__ created. Delivered Revision A-185.
+AG-CONTENT07 DD21 Shockwave Toolkit Integration & HealPunish Domain Proposal (2026-10-29, Antigravity, Claude C-263/C-264): Part 1 completed: integrated 13th native struct FRPGShockwaveConfig into AuthoringToolkit with explicit pending DD21 run qualification and syntactic MoveId check. Implemented exact C-262, C-263, and C-264 domain rules: all 6 scalar floats finite first (Damage, StartRadius, MaxRadius, Speed, Thickness, JumpClearance); Damage >= 0 (no ceiling); 0 <= StartRadius <= 1.0e6; 0 < MaxRadius <= 1.0e6 and MaxRadius > StartRadius; 0 < Speed <= 1.0e6; 0 < Thickness <= 1.0e6; 0 < JumpClearance <= 1.0e6 (C-263 strictly positive amendment); 1.0e6 magnitude ceiling rejects X-301 float accumulation counterexamples. PyGenUtil name parity verified across 8 fields (87 native fields total in 13 structs). Draft boss profiles and asset inspector updated; 114/114 tests PASS. Part 2 completed: authored HealPunish_domain_proposal.md in NativeDerivation/ with all 14 fields analyzed and categorized, non-finite division/clamp edge cases evaluated, unresolved items noted, and proposed failure tokens structured. Pure CRLF across all active files; 0 __pycache__ created. Delivered Revision A-186.
+DD-21 C264 authored contract (2026-10-29,source REVIEW PENDING): magnitude ceiling1e6 on StartRadius/MaxRadius/Speed/Thickness/JumpClearance, no Damage ceiling, JumpClearance strictly positive; defaults unchanged. Ceiling screens float-extreme profile inputs and is not a native guard or tuned arena limit. Finite arithmetic reasoning assumes finite nonnegative frame DeltaTime below about1e30s; no unrestricted timestep guarantee. MoveId syntactic only; no runtime/tracker change. DD19/DD20 audit delivered separately without edits.
+AG-CONTENT07 HealPunish Proposal Correction & FRPGHealPunishConfig Integration (2026-10-29, Antigravity, Claude C-265): Delivered Revision A-187 offline. Part a: Corrected HealPunish_domain_proposal.md for all 7 items identified in C-265 lead review (exact line citations at RPGBossHealPunish.cpp:42, :81, :101, :170, :181; header ClampMin re-labelled editor metadata / authored choice; FMath::Clamp template behavior clarified; Damage ceiling removed; socket regex removed; 10 float fields count; MinRange==MaxRange window semantics clarified; marked SUPERSEDED BY CLAUDE LEAD CONTRACT [C-265]; original A-186 proposal text preserved verbatim in Section 5). Part b: Integrated 14th native struct FRPGHealPunishConfig into authoring_core.py, draft_boss_profiles.py, and inspect_authored_assets.py matching Claude\'s C-265 definitive lead contract (all 10 floats finite first in header order; domains in header order with 1.0e6 magnitude ceiling on MinRange/MaxRange/Cooldown/FlightTime/MinSpeed/MaxSpeed/JavelinRadius/JavelinMaxRange/AimHeight; Damage finite >= 0 no ceiling; FlightTime >= 0.05 authored floor; MinSpeed <= MaxSpeed coherent window; SpawnSockets non-empty array validation with Missing/Malformed tokens; AimHeight signed bounded [-1e6, 1e6]; three bools accept both values; unresolved MoveId A5 and player drink montage). Added array handling in apply/readback/inspector/example JSON and float32 readback. Expanded unit test suite with TestHealPunishPolicyDomain (14 new unit tests), test_all_101_native_fields_parity (101 fields across 14 structs), and test_apply_writes_and_verifies_all_properties_with_python_mapping (19 typed properties). 128/128 tests PASS in 0.022s (exit code 0). 113/113 files pure CRLF; zero __pycache__ directories. original_A186 preserved byte-for-byte in both AuthoringToolkit and BuildAuthoringHelper. Delivered Revision A-187.
+
+
+DD22 source-only handoff (C265/C266/C267,2026-10-29): typed HealPunish14-field profile, compiler validation/copy and isolated adapter with six UNRUN regression sources. Five-file delta200->203 Source,198 prior files unchanged. Codex/DD22/DELIVERY_TO_CLAUDE.md; Claude SOURCE REVIEW PENDING. No build/UHT/engine run. Combined DD21+DD22 execution needs Claude exact release.
+
+
+DD21+DD22 measured C268 (2026-10-29): one build/UHT exit0, focused Shockwave6 then HealPunish6, conditional full153 unique Success with exact prior141+12/CookCoverage,203 Source unchanged. RUN_REPORT_TO_CLAUDE.md awaits independent lead acceptance. No DD23 source or further engine operation released.
+
+## AG-CONTENT08 Boss Component Coverage Matrix & Look Domain Proposal v2 (2026-10-29, Antigravity, Claude C-267/C-268)
+
+- **Coverage Matrix Established:** Produced authoritative matrix for all 12 native boss components declared under `Source/OneBossFight/Player/RPGBoss*.h` in `Docs/BossCombatReview/Execution/Antigravity/Coverage/TYPED_PROFILE_COVERAGE.md`. Audited 108 total authored fields across headers. Classified wiring into 5 wired in preflight/batch preparation (`URPGBossStagger`, `URPGBossPhases`, `URPGBossEncounter`, `URPGBossDormantWake`, `URPGBossPosture`), 4 typed but unwired (`URPGBossBleed` DD19, `URPGBossLowSweep` DD20, `URPGBossShockwave` DD21, `URPGBossHealPunish` DD22), and 3 without typed profiles (`URPGBossCloseClipSwap`, `URPGBossDeath`, `URPGBossLook`). Catalogued 2 typed but unmeasured components (`URPGBossShockwave`, `URPGBossHealPunish`). Zero percentage calculations and zero global completeness claims made.
+- **Look Domain Proposal v2:** Formulated `Docs/BossCombatReview/Execution/Antigravity/NativeDerivation/RPGBossLook_domain_proposal.md` for `URPGBossLook` (5 authored fields: `bEnabled`, `Body`, `Pieces`, `Sword`, `SwordSocket`). Every citation verified from source. Clarified that `ClampMin` is editor metadata not present in the header; labeled `NATIVE-DERIVED` only where `.cpp` semantics require; eliminated invented regexes/ceilings. Detailed synchronous game-thread loading in `Apply()` (`Body.LoadSynchronous()`, loop `Piece.LoadSynchronous()`, `Sword.LoadSynchronous()`) and explicit non-silent warning logging (`UE_LOG` Warning at `:67`, `:115`, `:137`). Detailed fallback bone `hand_r` (`:131`) when socket is missing. Catalogued unresolved architectural items (synchronous loading, hardcoded component names, fallback bone, hardcoded static mesh filter `Candidate->GetName().Contains(TEXT("Weapon"))`). Proposed validation order and diagnostic tokens in DD19-DD22 style using soft-path syntax only (no disk IO, no load, no registry).
+
+## AG-CONTENT08 Coverage Matrix Refresh & FRPGLookConfig Integration (2026-10-29, Antigravity, Claude C-269/C-270)
+
+- **Coverage Matrix Refreshed:** Updated `Docs/BossCombatReview/Execution/Antigravity/Coverage/TYPED_PROFILE_COVERAGE.md` following C-269 acceptance of the combined DD21+DD22 run (Codex X-304, full 153 unique Success). Reflected that DD21 (`URPGBossShockwave`) and DD22 (`URPGBossHealPunish`) are now fully measured; updated all five wired components' latest suite run to 153 unique Success; corrected authored property count sum to 112 fields across all 12 headers; gap list updated to 0 unmeasured typed components. Baseline preserved under `original_A188/`.
+- **FRPGLookConfig 15th Struct Integrated:** Integrated `FRPGLookConfig` (5 authored fields) into `AuthoringToolkit` matching C-269 contract: `b_enabled` (bool), `body` (soft path, default `/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body`), `pieces` (array of soft paths, defaults `Crown`, `Mantle`, `BrazierGauntlet`), `sword` (soft path, default `SM_Boss01_Greatsword`), and `sword_socket` (FName, default `HeavySwordSocket_R`).
+- **Validation Contract & Tokens:** Enforced C-269 validation order and tokens: (1) `Body` required (`InvalidDependency.Missing`) and well-formed (`InvalidDependency.Malformed`); (2) `Pieces` array validated in index order (empty valid, missing/malformed carry index `Look.Pieces[i]`, duplicates refused via `InvalidDependency.Duplicate`); (3) `Sword` required and well-formed; (4) `SwordSocket` required and no whitespace/control characters; `b_enabled` free, disabled records validate completely. All 106 native fields across 15 structs validated for PyGenUtil property name parity. Draft apply and canonical primitive readback verified for 20 properties. 142/142 tests PASS in 0.019s.
+
+## AG-CONTENT09 Single-Purpose Review Aid diff_against_cpp.py (2026-10-29, Antigravity, Claude C-271)
+
+- **Mechanical Parity Verification:** Implemented `Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/diff_against_cpp.py` to replace manual code inspection with deterministic, offline mechanical check of C++ adapter refusal sequences against Python domain validators. Pure standard library, zero engine processes, pure CRLF.
+- **Source-Order Token & Field Extraction:** Resolves header `Field*` constants (e.g. `FieldDamage` -> `LowSweep.Damage`), unrolls `FScalar Scalars[]` loops for `NotFinite` checks in header declaration order, and extracts domain refusal checks from `Refuse(...)`, `OutError = FString::Printf(...)`, and `CheckRequiredReference(...)`.
+- **All Four Accepted Adapters Verified:** Verified complete check parity across:
+  - Bleed (`RPGBossBleedAdapters.cpp` vs `validate_bleed_domain`): 13/13 checks OK.
+  - LowSweep (`RPGBossLowSweepAdapters.cpp` vs `validate_low_sweep_domain`): 15/15 checks OK.
+  - Shockwave (`RPGBossShockwaveAdapters.cpp` vs `validate_shockwave_domain`): 20/20 checks OK.
+  - HealPunish (`RPGBossHealPunishAdapters.cpp` vs `validate_heal_punish_domain`): 33/33 checks OK.
+  - Total: 81 checks verified in exact source line order with zero discrepancies (`diff_report.txt`).
+- **Four Alignment Points Staged for DD23 Look:** Staged four review points from C-271 awaiting Codex's DD23 source handoff: (1) first-failure vs error accumulation; (2) FSoftObjectPath duplicate detection equality; (3) 1024-char SwordSocket cap and list check labeling; (4) FName::IsNone treating "None" as Missing.
+
+## AG-CONTENT09 Review Aid Defect Corrections & Reproducibility (2026-10-29, Antigravity, Claude C-272)
+
+- **Read-Only by Default:** Refined `Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/diff_against_cpp.py` so running without `--report` or `--output` writes no file to disk. Disk output requires explicit `--report` or `--output <path>`.
+- **Repo-Relative Path Normalization:** Standardized all source paths in `diff_against_cpp.py` outputs to repo-relative forward-slash posix paths (`Source/OneBossFight/...`) resolved deterministically from the script location. Eliminates checkout-dependent absolute paths, making `diff_report.txt` byte-identical across all machines, clones, and working directories.
+- **Fail-Closed Header Error Handling:** When evaluating an explicit `.cpp` path without a corresponding `.h` next to it, `diff_against_cpp.py` raises `HeaderNotFoundError` and terminates with exit code 2 with the named error `"<Header>.h not found next to the .cpp"`, preventing false parity differences.
+- **Preserved Archive:** Baseline A-190 preserved byte-for-byte under `original_A190/` in both `AuthoringToolkit/` and `BuildAuthoringHelper/`.
+
+## AG-CONTENT09 CloseClipSwap & Death Domain Proposals (2026-10-29, Antigravity, Claude C-273)
+
+- **RPGBossCloseClipSwap Domain Analysis (DD24 Proposal):**
+  - Component has 5 authored fields: `CloseAbilityClassName` (FName, default `GA_GS_Boss_CloseAttack_C`), `AttackMontagesName` (FName, default `AttackMontages`), `A1Montage` (SoftObjectPtr, default `AM_Boss01_A1`), `A3aMontage` (SoftObjectPtr, default `AM_Boss01_A3a`), `A3bMontage` (SoftObjectPtr, default `AM_Boss01_A3b`).
+  - **Zero Numeric Fields:** No float or int fields exist in the component. Therefore, editor `ClampMin`/`ClampMax` does not exist, `NotFinite` checks do not apply, and no numeric ceiling (`1.0e6f`) is needed.
+  - **Permanent Failure Guard:** `bPermanentFailure` is set permanently true if preload fails (`PreloadMontages()` at `:72`), if reflection fails to find the live ability (`:149`, `:157`), if `AttackMontages` array size != 4 (`:171`), or if existing entries fail pack identity rules (`:182`, `:199`). Once set, component permanently stops ticking and never swaps clips.
+  - **In-Memory Ability Mutation:** Mutation modifies the live `UAnimMontage*` property of the `F_AbilityMontage` struct array inside the active ability instance (`:207`). Slot 0 (A1) -> `A1Montage`, Slot 1 (A2/A3a) -> `A3aMontage`, Slot 2 (A3/A3b) -> `A3bMontage`. Slot 3 (A4/A1b) remains untouched as the pack fallback.
+  - **Structural Validation:** FNames validated for non-empty and no whitespace/control characters. Soft paths validated via A-184 engine macro syntax (valid package and object characters). No asset loading occurs offline.
+  - **Tokens:** `InvalidDependency.Missing` and `InvalidDependency.Malformed`.
+
+- **RPGBossDeath Domain Analysis (DD25 Proposal):**
+  - Component has 12 authored fields: `DeathMode` (enum, 0=`PackMontage`, 1=`OwnClip`), `DeathClip` (Soft sequence), `DeathMontage` (Soft montage), `PackDeathAbilityClassName` (FName), `PackDeathMontagesName` (FName), `PackPollSeconds` (float, def 1.0), `PackEndTimeMultiplier` (float, def 0.0), `HoldAtSeconds` (float, def 3.0), `DyingSeconds` (float, def 2.5), `BlendInSeconds` (float, def 0.1), `MaxClipRestarts` (int32, def 8), `bGuardPackDeath` (bool, def false).
+  - **Editor Metadata Audit:** `ClampMin` is declared on 6 fields (`PackPollSeconds` 0.1, `PackEndTimeMultiplier` 0.0, `HoldAtSeconds` 0.1, `DyingSeconds` 0.1, `BlendInSeconds` 0.0, `MaxClipRestarts` 0) in the header, but `RPGBossDeath.cpp` performs zero runtime clamping.
+  - **Dual Mode & KI-083 Lifecycle:**
+    - `PackMontage`: Injects montage and multiplier into live pack ability `GA_EnemyRagdollDeath_C`. Pack handles montage and ragdoll.
+    - `OwnClip`: Component handles animation directly. Suppresses ragdoll physics simulation every tick (`KeepPhysicsOff` `:458-482`) to prevent mesh deformation, and pauses pose at `HoldAtSeconds` (`KeepClip` `:484-523`).
+    - KI-083 pack destruction timing: Pack destroys boss actor ~4.35s after death. Component marks `bEnding = true` and stops mesh manipulation. In `EndPlay`, component spawns static remains actor (`ARPGBossRemains::Spawn`) to persist the defeated boss pose in the arena.
+  - **Non-Finite Arithmetic Analysis:**
+    - `PackPollSeconds`: Poll interval arithmetic `NextPackPoll = Now + PackPollSeconds` (`:223`). `<= 0.0` or NaN polls every tick.
+    - `PackEndTimeMultiplier`: Assigned directly to pack ability (`:307`). Negative or NaN yields undefined montage early-out.
+    - `HoldAtSeconds`: Pose pause check `Position >= HoldAtSeconds` (`:492`). NaN comparison is always false (never pauses); `<= 0.0` pauses on first frame.
+    - `DyingSeconds`: State transition check `Age >= DyingSeconds` (`:420`). NaN comparison is always false (never transitions to Dead); `<= 0.0` transitions on first tick.
+    - `BlendInSeconds`: Blend duration in `RPGBossClips::Play` (`:440`). Negative or NaN yields invalid montage blending.
+    - `MaxClipRestarts`: Bound on sequence loop restarts `RestartsThisDeath >= MaxClipRestarts` (`:508`). Negative disables restarts; unbounded allows infinite restart loops.
+  - **Magnitude Ceiling:** Recommended standard `1.0e6f` ceiling on all 5 float fields to prevent float overflow in elapsed time/poll arithmetic, and an integer ceiling of `1000` on `MaxClipRestarts`.
+  - **Tokens:** `InvalidDeath.NotFinite`, `InvalidDeath.NotPositive`, `InvalidDeath.Negative`, `InvalidDeath.AboveCeiling`, `InvalidDependency.Missing`, `InvalidDependency.Malformed`.
+
+
+DD23 C269 source-only (2026-10-29): typed Look five-field profile/defaults, compiler shared validation/copy and unwired lifecycle-safe adapter, six test sources UNRUN. Source203->206,201 prior unchanged; Codex/DD23/DELIVERY_TO_CLAUDE.md. Claude SOURCE REVIEW PENDING; no build/UHT/engine run. C269 independently accepted DD21/DD22 scoped run; its limits remain.
+
+## AG-CONTENT09 Death Domain Corrections & Look Parity Settlement (2026-10-29, Antigravity, Claude C-274/C-275)
+
+- **Death Domain Proposal Corrections (DD25 Proposal):**
+  - `PackEndTimeMultiplier`: In `RPGBossDeath.cpp:296`, runtime guard `if (PackEndTimeMultiplier > 0.f)` skips injection when `<= 0.0f` or `NaN`. Negative/NaN values are natively ignored (0.0f default is OFF state), not undefined behavior. Domain requirement: finite, non-negative (`>= 0.0f`), magnitude ceiling `1.0e6f`.
+  - `HoldAtSeconds` Inversion Mechanics: In `RPGBossDeath.cpp:519`, `FMath::Clamp(Age, 0.f, HoldAtSeconds)` inverts bounds when `HoldAtSeconds < 0.f`, returning negative values that feed `RPGBossClips::Play(..., StartTime)`. Frame 0 pause checks (:446, :494) also freeze immediately when `<= 0.f`. This native behavior is the real reason for strictly positive floor (`> 0.0f`), not editor metadata.
+  - `MaxClipRestarts` Warning & Ceiling: In `RPGBossDeath.cpp:508-510`, `RestartsThisDeath >= MaxClipRestarts` with `==` warning. Negative value disables restarts from frame 1 but never logs warning (silent failure). Integer ceiling of 1000 designated as AUTHORED CHOICE.
+  - Mode-Dependent Loading vs Uniform Contract: Runtime only loads `DeathClip` in `OwnClip` or `DeathMontage` in `PackMontage` (:164-171). Authoring contract recommends requiring both paths uniformly to prevent dormant broken references if mode is toggled, avoiding schema branching.
+
+- **Look Review Aid Parity & Four Alignment Points Settled (DD23 Parity):**
+  - Point 1 (First Error): `validate_look_domain` updated to return first failure token immediately, matching `RPGBossLookAdapters.cpp:ValidateLook`.
+  - Point 2 (Case-Insensitive Duplicate): Set equality uses case-insensitive lowercased paths matching `FSoftObjectPath` / `FName` engine equality.
+  - Point 3 (Removed Extraneous Bounds): Dropped 1024 cap on `SwordSocket` and list-shape rule on `Pieces` (missing/None treated as valid empty array).
+  - Point 4 (SwordSocket None): `SwordSocket` "None" or empty string treated as `InvalidDependency.Missing` matching `FName::IsNone`.
+  - Mechanical Parity: `diff_against_cpp.py` verified 90/90 checks across all 5 adapters (Bleed 13, LowSweep 15, Shockwave 20, HealPunish 33, Look 9) with zero differences.
+
+
+DD23 C275 failed attempt (2026-10-29): ONE build/UHT exit0; focusedLook exit3 assertion in duplicate negative fixture self-alias TArray::Add at test:165,2completed/6discovered. Full/CookCoverage NOT RUN. Source206 unchanged, no fix/retry. Codex/DD23/RUN_REPORT_TO_CLAUDE.md; await exact lead correction/retry order. DD24 four files staged only, paused.
+
+
+DD23 C276 source-only revision1: three self-alias fixture Add sites now copy selected soft-pointer into independent local before Add. Only Look tests Source changed,206total/205unchanged; four adapter/Binding pins unchanged. Generator updated, original source20-receipt bundle and failed attempt23-receipt/logs preserved. Array mutation audit includes DD24 four staged files (tests not yet written). NO build/retry; Claude diff review pending. Codex/DD23/Revision1/one_file.diff.
+
+
+## AG-CONTENT09 Look Case-Insensitive Fix & CloseClipSwap 16th Struct Integration (2026-10-29, Antigravity, Claude C-276)
+
+- **Look Domain Case-Insensitive "none" Fix:**
+  - In Unreal Engine, `FName` is case-insensitive, so `FName("none").IsNone()`, `FName("None").IsNone()`, and `FName("NONE").IsNone()` all evaluate to `true`.
+  - Updated `authoring_core.py:validate_look_domain` to check `str(socket_val).lower() == "none"`, returning `InvalidDependency.Missing: Look.SwordSocket is required`.
+  - Added unit test cases covering `["none", "None", "NONE", "nOnE"]` in `TestLookPolicyDomain`.
+
+- **FRPGCloseClipSwapConfig (16th Toolkit Struct) Offline Integration (DD24 Qualified Pending):**
+  - Integrated `FRPGCloseClipSwapConfig` into `AuthoringToolkit` strictly according to Tech Lead Claude's contract from `[C-275]` and `[C-276]`:
+    - 5 Authored fields: `CloseAbilityClassName` (FName), `AttackMontagesName` (FName), `A1Montage` (SoftObjectPtr), `A3aMontage` (SoftObjectPtr), `A3bMontage` (SoftObjectPtr).
+    - Zero numeric fields: no `NotFinite` float checks, no magnitude ceilings, no arithmetic audits.
+    - No duplicate rule: three identical replacement montages are valid (unlike mesh pieces, identical montages do not create extra components and safely point at the same replacement).
+    - Validation order returning first failure immediately:
+      (1) `CloseAbilityClassName`: not None/empty/case-insensitive 'none' (`InvalidDependency.Missing`), no whitespace or control characters (`InvalidDependency.Malformed`).
+      (2) `AttackMontagesName`: not None/empty/case-insensitive 'none' (`InvalidDependency.Missing`), no whitespace or control characters (`InvalidDependency.Malformed`).
+      (3) `A1Montage`: required (`InvalidDependency.Missing`) then well-formed (`InvalidDependency.Malformed`) with engine macros.
+      (4) `A3aMontage`: required (`InvalidDependency.Missing`) then well-formed (`InvalidDependency.Malformed`) with engine macros.
+      (5) `A3bMontage`: required (`InvalidDependency.Missing`) then well-formed (`InvalidDependency.Malformed`) with engine macros.
+    - Property name pythonization via PyGenUtil engine rules:
+      - `CloseAbilityClassName` -> `close_ability_class_name`
+      - `AttackMontagesName` -> `attack_montages_name`
+      - `A1Montage` -> `a1_montage`
+      - `A3aMontage` -> `a3a_montage`
+      - `A3bMontage` -> `a3b_montage`
+  - Integrated across `authoring_core.py`, `draft_boss_profiles.py`, `inspect_authored_assets.py`, and `examples/boss_draft_profiles.json`. Draft assets now write and canonically read back 21 top-level properties; all 111 native fields across 16 structs verified.
+  - Review aid `diff_against_cpp.py` extended with `CloseClipSwap` adapter mapping (10/10 checks match in staged source order).
+
+- **Preserved Archive:** Baseline A-193 preserved byte-for-byte under `original_A193/` in both `AuthoringToolkit/` and `BuildAuthoringHelper/` with cryptographic self-receipts.
+
+
+## AG-CONTENT09 Boss Component Hydration & Wiring Pipeline Analysis (2026-10-29, Antigravity, Claude C-278)
+
+- **Comprehensive Pipeline Analysis (`WIRING_ANALYSIS.md`):**
+  - Completed offline read-only architectural investigation into the wiring mechanics of `OneBossFight`.
+  - Detailed the 5 currently wired components (`Stagger`, `Phases`, `Encounter`, `DormantWake`, `Posture`) and mapped the exact insertion path for the 5 typed but unwired plans (`Bleed`, `LowSweep`, `Shockwave`, `HealPunish`, `Look`).
+  - Proved that `CompileParticipantImpl` in `RPGEncounterBinding.cpp` already validates all 5 unwired structs and populates them into `FRPGParticipantConfig`, and that `RPGBossHydrationPreparation` executes generic allocation/configuration loops over `Participant.Plans`.
+  - Calculated exact expansion metrics: plan count expands from 5 to 10 per boss-core member; required manifest path union expands from 51 to 92 paths; managed consumer classes expand from 6 to 11; owned components in 2-boss test fixtures expand from 10 to 20.
+  - Documented concrete lifecycle hazards: `RPGBossLook` next-tick mesh swap race against socket lookups in `HealPunish`; `LowSweep`/`Shockwave` dependency on un-modeled `URPGAttackTracker`; unconditional allocation of disabled components; and legacy attachment suppression via `!Pawn->FindComponentByClass<T>()` in `RPGPlayerMovesSubsystem.cpp:159-250`.
+  - Explicitly separated demonstrable code facts from architectural inferences regarding coordinator hooks, registration triggers, and definition variant plan sets.
+- **Toolkit README Documentation Hardening:**
+  - Updated `Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/README.md` to note that generated Python property names for CloseClipSwap (`close_ability_class_name`, `attack_montages_name`, `a1_montage`, `a3a_montage`, `a3b_montage`) implement the digit handling rule from A-181, with definitive proof reserved for live engine readback by Codex.
+
+
+## AG-CONTENT09 Boss Component Hydration & Wiring Analysis Revision 2 (2026-10-29, Antigravity, Claude C-279)
+
+- **Wiring Analysis Revision 2 (`WIRING_ANALYSIS.md`):**
+  - Staged original A-195 analysis byte-for-byte under `original_A195/` with cryptographic self-receipt.
+  - Corrected adapter line citations to reference adapter implementation files rather than test files (`RPGBossBleedAdapters.cpp:194`, `LowSweepAdapters.cpp:132`, `ShockwaveAdapters.cpp:105`, `HealPunishAdapters.cpp:201`, `LookAdapters.cpp:177`).
+  - Corrected Shockwave required field count to 8 fields (`FieldEnabled`, `FieldMoveId`, `FieldDamage`, `FieldStartRadius`, `FieldMaxRadius`, `FieldSpeed`, `FieldThickness`, `FieldJumpClearance`), establishing the exact 42 added unwired paths and 93 total manifest union paths.
+  - Corrected `AllRequiredPaths` declaration citation to `RPGBossHydrationPreflightTests.cpp:79`.
+  - Demarcated `RPGBossLook.cpp:31` timer deferral as a code fact while identifying execution timing before tick 1 as an inference.
+  - Enumerated all 18 legacy components in `RPGPlayerMovesSubsystem.cpp:139-250`, demonstrating that the 5 unwired plans replace exactly 5 components (`Bleed` :195, `LowSweep` :213, `Shockwave` :208, `HealPunish` :218, `Look` :191).
+  - Derived 2-boss test fixture owned component arithmetic ($2 	imes 5 = 10 	o 2 	imes 10 = 20$).
+  - Proved that expanding `ManagedCoreConsumerClasses` from 6 to 11 is mandatory to prevent dual-component split-brain bugs, and proved via codebase audit that zero existing test fixtures attach unwired components to preflight actors.
+
+
+## AG-CONTENT09 Wiring Analysis Addendum & DD26 Work Order (2026-10-29, Antigravity, Claude C-280)
+
+- **Wiring Analysis Revision 3 Addendum (`WIRING_ANALYSIS.md`):**
+  - Staged Revision 2 baseline byte-for-byte under `original_A196/` (`b107072846753a57aed8385421fe63f28729cd7700b9948781513a39c2e061b3`, 41234 bytes) with self-receipt.
+  - Added Section 7 providing an exhaustive audit of all test assertions and production callers affected by wiring the 5 typed components into `MakeBossCorePlans` ($5 \to 10$) and `ManagedCoreConsumerClasses` ($6 \to 11$).
+  - Provided exact regex search patterns and PowerShell command lines (`Plans\.Num\(\)`, `ClassLeases`, `GetOwnedComponentCount\(\)`, `AllRequiredPaths`, `ManagedCoreConsumerClasses`, `PlannedNames`, `SumOfRequired`, `ExpectedPaths`, `BossCorePlanCount`) so Lead Claude and Reviewer Codex can independently verify and reproduce all query results.
+  - Enumerated all 42 assertion sites across 7 test suites:
+    1. `RPGBossHydrationPreflightTests.cpp` (14 sites): plan count $5 \to 10$, class lease count $5 \to 10$, required path union $51 \to 93$, consumer classes $6 \to 11$, `AllRequiredPaths` definition.
+    2. `RPGBossHydrationPreparationTests.cpp` (12 sites): 2-boss batch leased components $10 \to 20$, abort destruction and already-gone counts $10 \to 20$, per-participant counts $5 \to 10$.
+    3. `RPGBossWorldPreparationTests.cpp` (13 sites): `AllRequiredPaths` $51 \to 93$, batch components $10 \to 20$, abort destruction $10 \to 20$, per-participant $5 \to 10$.
+    4. `RPGBossPreparationRegistryTests.cpp` (5 sites): `AllRequiredPaths` $51 \to 93$, release teardown $10 \to 20$.
+    5. `RPGBossProductionPreflightTests.cpp` (4 sites): `AllRequiredPaths` $51 \to 93$, plan count $5 \to 10$, union $51 \to 93$, lease count $5 \to 10$.
+    6. `RPGBossProductionPreparationTests.cpp` (8 sites): `AllRequiredPaths` $51 \to 93$, leased components $10 \to 20$, abort destruction $10 \to 20$, per-participant $5 \to 10$.
+    7. `RPGBossWorldInputCompilerTests.cpp` (3 sites): `AllRequiredPaths` $51 \to 93$, `NoManagedConsumer` iteration over 11 classes, `PlannedNames` array expansion from 5 to 10 component instance names.
+  - Documented production callers: verified that only `RPGBossHydrationPreflight.cpp` hardcodes counts (`:61` `BossCorePlanCount = 5` $\to 10$, `:65-74` `MakeBossCorePlans`, `:143-146` `ManagedCoreConsumerClasses`). Zero other production files hardcode plan counts.
+  - Separated 45 mechanical arithmetic updates from 4 lead architectural decisions (relative plan ordering in array, component instance naming convention in `PlannedNames[10]`, unconditional preflight compilation of disabled components, and unprofiled status of `URPGAttackTracker`).
+  - Replaced the Section 4.2 conclusion sentence to clarify that while existing test actors carry no unwired components (preventing preexisting-consumer refusal regressions), wiring the 5 new plans directly requires updating the 42 tabulated assertions as the DD26 work order.
+
+
+## AG-CONTENT09 Wiring Analysis Multi-Pattern Audit & DD26 Work Order (2026-10-29, Antigravity, Claude C-282)
+
+- **Wiring Analysis Revision 4 Addendum (`WIRING_ANALYSIS.md`):**
+  - Staged Revision 3 baseline byte-for-byte under `original_A197/` (`fac012a270a1202fba44a8045695d327abcfc9414fea0cecc41e8f62065aa8c8`, 62369 bytes) with self-receipt.
+  - Replaced single-regex scan with an exhaustive 5-pattern shape-based audit across all 33 test files in `Source/OneBossFight/Tests/`:
+    1. Pattern A: `Components.*[+-]\s*\d+|[+-]\s*\d+.*Components`
+    2. Pattern B: `(Destroyed|AlreadyGone|ContractViolations|OwnedComponentCount|Num\(\)).*==\s*\d+`
+    3. Pattern C: `TestEqual\s*\(.*(Destroyed|AlreadyGone|ContractViolations|OwnedComponentCount|Num\(\)|Plans|ClassLeases|Required).*,.*[0-9]+`
+    4. Pattern D: `(ExpectedComponents|FExpectedComponent|PlannedNames)`
+    5. Pattern E: `(Test(True|Equal|False)|//).*(five|ten|nine|fifty-one|51|six)`
+  - Produced complete census of all 205 hits across 21 test files:
+    - 78 test sites that CHANGE (62 mechanical arithmetic updates, 15 prose/string updates, 1 architectural decision).
+    - 127 test sites proved invariant (non-hydration suites, participant counts, phase counts, error counts, zero baselines).
+    - 6 `AllRequiredPaths` manifest parity generator definitions expanding from 51 to 93 paths (+42 paths).
+    - 4 production caller sites in `RPGBossHydrationPreflight.cpp/.h`.
+  - Added specific missing assertions cited in C-282:
+    - Teardown partition with 1 component destroyed first (`Report.Destroyed == 9 && Report.AlreadyGone == 1` $	o 19$ and $1$).
+    - Teardown partition with 1 component registered externally (`Report.Destroyed == 9 && Report.ContractViolations == 1` $	o 19$ and $1$).
+    - Added components arithmetic (`Now.Components.Num() == Prior.Components.Num() + 5` $	o + 10$) and prose ("exactly five components were added" $	o$ "exactly ten components were added") across `RPGBossHydrationPreparationTests.cpp:362`, `RPGBossWorldPreparationTests.cpp:588`, and `RPGBossProductionPreparationTests.cpp:682`.
+    - `ExpectedComponents()` helper definitions expanding from 5 to 10 entries across all 4 preparation test suites.
+    - All prose strings in assertions and test docstrings updated to match numeric values.
+
+
+DD23 C277 ATTEMPT2 measured: build exit0 (incremental4actions, no UHT invocation), focusedLook6/full159 unique Success, exact prior153+6 and CookCoverage,206 Source unchanged,63warning multiset equal DD22. Attempt1 failed exit3 retained. ATTEMPT2_REPORT_TO_CLAUDE.md awaits independent lead acceptance; DD24 five drafts staging-only, no Source promotion.
+
+
+DD24 C275/C281 source-only promotion: typed CloseClipSwap5fields, shared compiler validation/copy and lifecycle-safe unwired plan. Three new+Binding.h/.cpp only,206->209 Source/204 prior unchanged.19collection mutations audited, no same-array alias. Six test sources UNRUN; lead SOURCE REVIEW PENDING. Codex/DD24/DELIVERY_TO_CLAUDE.md. No build/UHT/engine/git/asset operation. DD25 staging next only.
+
+
+DD24 C283 measured: ONE editor build/UHT exit0, focusedCloseClipSwap6/full165 unique Success, exact159+6/CookCoverage,209 Source unchanged;63warning multiset equals DD23attempt2. Codex/DD24/RUN_REPORT_TO_CLAUDE.md independent lead acceptance pending. No live swap/activation proof. DD25 findings resolved C284; amended staging-only contract, no Source promotion.
+
+
+DD25 C281/C284/C285 source-only: typed Death12fields including native enum, five floats, int restarts0..1000000. Three new+Binding.h/.cpp only,209->212Source/207prior unchanged. Six test sources UNRUN; array audit and arithmetic residuals included. Codex/DD25/DELIVERY_TO_CLAUDE.md, lead SOURCE REVIEW PENDING; NO build/UHT/engine/native/asset/git operation.
+
+C284 DD25 amended policy: MaxClipRestarts authored int32 ceiling1000000 closes per-death equality-increment overflow reasoning; not native guard/tuning. Cumulative ClipRestartCount and external time/Age narrowing remain separate. Attach internally reuses Existing without Mode overwrite; possible-second-instance assertion retracted, no reservation/activation guarantee.
+
+
+DD25 C286 measured: ONE editor build/UHT exit0, focusedDeath6/full171unique Success, exact165+6/CookCoverage,212Source unchanged,63warning multiset matches DD24. Codex/DD25/RUN_REPORT_TO_CLAUDE.md awaits independent lead acceptance. No native Death flow/activation proof. DD26 read-only stop(a)/(c) findings, no wiring code written.
+
+
+DD26 C287/C289 SOURCE ONLY: twelve-plan preflight and13managed classes; seven hydration suites updated for12/24/110 and independent prefix/suffix.9existing files changed,212total/203unchanged; adapters/native/Binding/compiler/preparation/registry frozen. Six independent literal lists verified statically, fault ordinals re-derived48steps, test names unchanged. Lead SOURCE REVIEW PENDING; NO build/UE run. Codex/DD26/DELIVERY_TO_CLAUDE.md.
+
+
+2026-10-29 Antigravity A-200 activation analysis delivered per Lead C-292:
+- Documented live path in RPGPlayerMovesSubsystem.cpp:40-297 (UWorldSubsystem): components attached on OnActorSpawned prior to actor BeginPlay(), or during OnWorldBeginPlay for placed actors.
+- Confirmed that all 12 typed components are guarded by !FindComponentByClass<T>() or URPGBossDeath::Attach internal check, allowing natural NO-OP suppression if typed components exist prior to legacy bundle execution.
+- Established that 7 non-typed boss components (Footsteps, BossMusic, AttackTracker, DamageResolver, TraceGuard, BossHud, BossLegend) are not in the 12 plans and must remain attached during any activation.
+- Confirmed that draft_boss_profiles.py emits empty fields: [], causing production compile failure in CompileParticipantImpl until a 110-path manifest generator is authored.
+- Staged offline analysis Docs/BossCombatReview/Execution/Antigravity/Activation/ACTIVATION_ANALYSIS.md (SHA256: df87587ec6a26e03808b613dcd2f45e432fce2e2588bd55f70a68aab71025e3b, 42,785 bytes) and evidence_sha256.txt. Zero engine processes, zero source edits, zero asset writes.
+
+2026-10-29 Antigravity A-201 field manifest contract analysis delivered per Lead C-293:
+- Documented exact validation of all 12 columns of FRPGParityField: only FieldPath is read for a decision; 8 columns checked strictly for non-emptiness; SourceSHA256 checked strictly for 64-char hex format; Value and Units completely unvalidated and unread.
+- Confirmed that component configure callbacks read from typed structs, never from FRPGParityField::Value.
+- Provided exhaustive 110-path draft table with truthful C++ types, units, values, sources, and destinations, demarcating items requiring Lead/Owner decision (SourceSHA256 derivation, Origin taxonomy, Precedence, FirstRead, Witness).
+- Staged offline analysis Docs/BossCombatReview/Execution/Antigravity/Manifest/FIELD_MANIFEST_CONTRACT_ANALYSIS.md (SHA256: 72580f60ee5d77f9c34d20c38272ce03dae8059102279dda38ed4ab8879ada81, 41,187 bytes) and evidence_sha256.txt. Zero engine processes, zero source edits, zero asset writes.
+
+
+DD26 C291 measured: build exit0 (incremental15actions, no UHT invocation), seven focused gates9/6/3/2/3/3/4 allSuccess with disjoint30names, conditional full171uniqueSuccess exactprior171/CookCoverage.212Source unchanged,63warning multiset equals DD25. Codex/DD26/RUN_REPORT_TO_CLAUDE.md independent lead review pending. Twelve-plan transient contract only, no active gameplay/registration/BeginPlay/serialized-authoring/Ready/activation proof.
+
+2026-10-29 Antigravity A-202 parity manifest generator & draft profile integration delivered per Lead C-294:
+- Adopted Tech Lead Claude C-294 manifest conventions: Precedence fixed to 'typed-record'; FirstRead set to 'PrepareBatch.Configure'; Witness bound to measured AutomationTest suites; SourceSHA256 derived from live working tree sources.
+- Generated 106 known FRPGParityField rows across 15 clusters for Ember Warden draft profile. Gaps (4 phase-dependent paths) explicitly identified and withheld from emission pending phase specifications.
+- Validated manifest rows in draft_boss_profiles.py matching CompileParticipantImpl rules. Preserved historical baseline original_A201/ with self-receipts in evidence_sha256.txt.
+

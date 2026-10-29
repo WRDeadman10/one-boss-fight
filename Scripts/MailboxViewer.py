@@ -120,36 +120,9 @@ class MailboxParser:
         }
 
     @classmethod
-    def parse_file(cls, filepath=MAILBOX_PATH):
-        if not os.path.exists(filepath):
-            return {
-                "exists": False,
-                "error": f"Mailbox not found at: {filepath}",
-                "messages": [],
-                "latest": None,
-                "count": 0,
-                "mtime": 0
-            }
-
-        mtime = os.path.getmtime(filepath)
-        size = os.path.getsize(filepath)
-
-        try:
-            with open(filepath, "r", encoding="utf-8", errors="replace") as f:
-                text = f.read()
-        except Exception as e:
-            return {
-                "exists": False,
-                "error": str(e),
-                "messages": [],
-                "latest": None,
-                "count": 0,
-                "mtime": mtime
-            }
-
+    def parse_text_blocks(cls, text):
         matches = list(cls.HEADER_REGEX.finditer(text))
         messages = []
-
         for i, match in enumerate(matches):
             start = match.start()
             end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
@@ -189,6 +162,73 @@ class MailboxParser:
                 "action_points": action_points,
                 "has_actions": has_actions
             })
+        return messages
+
+    @classmethod
+    def parse_file(cls, filepath=MAILBOX_PATH):
+        """Parses the mailbox markdown file into a full structured report, resolving archive links seamlessly."""
+        if not os.path.isfile(filepath):
+            return {
+                "exists": False,
+                "error": f"Mailbox not found at: {filepath}",
+                "messages": [],
+                "latest": None,
+                "count": 0,
+                "mtime": 0
+            }
+
+        mtime = os.path.getmtime(filepath)
+        size = os.path.getsize(filepath)
+
+        try:
+            with open(filepath, "r", encoding="utf-8", errors="replace") as f:
+                text = f.read()
+        except Exception as e:
+            return {
+                "exists": False,
+                "error": str(e),
+                "messages": [],
+                "latest": None,
+                "count": 0,
+                "mtime": mtime
+            }
+
+        # Check for archive reference
+        archive_match = re.search(r'\[(?:TEAM_MAILBOX_before[^\]]*|MailboxArchive[^\]]*)\]\(([^)]+)\)', text)
+        messages = []
+        if archive_match:
+            arch_raw_path = archive_match.group(1).replace('/', os.sep)
+            if not os.path.isabs(arch_raw_path):
+                arch_path = os.path.normpath(os.path.join(os.path.dirname(filepath), arch_raw_path))
+            else:
+                arch_path = os.path.normpath(arch_raw_path)
+
+            if os.path.isfile(arch_path):
+                try:
+                    with open(arch_path, "r", encoding="utf-8", errors="replace") as af:
+                        messages = cls.parse_text_blocks(af.read())
+                except Exception:
+                    pass
+
+        # Parse active messages
+        end_idx = text.find("END ARCHIVED MESSAGE HEADING INDEX")
+        active_chunk = text[end_idx:] if end_idx != -1 else text
+        active_msgs = cls.parse_text_blocks(active_chunk)
+
+        if not messages:
+            messages = cls.parse_text_blocks(text)
+        else:
+            arch_ids = {m["id"] for m in messages}
+            for am in active_msgs:
+                if am["id"] not in arch_ids:
+                    messages.append(am)
+                else:
+                    idx = next((i for i, x in enumerate(messages) if x["id"] == am["id"]), None)
+                    if idx is not None and am["char_count"] > messages[idx]["char_count"]:
+                        messages[idx] = am
+
+        for i, msg in enumerate(messages):
+            msg["index"] = i + 1
 
         latest = messages[-1] if messages else None
 
@@ -262,198 +302,176 @@ class MailboxParser:
 
     @classmethod
     def _extract_ai_tasks(cls, messages):
-        """Builds structured live task profiles for Codex, Claude, Antigravity, and Owner."""
-        latest_by_agent = {}
-        for m in reversed(messages):
-            sender = m.get("sender_norm")
-            if sender and sender not in latest_by_agent:
-                latest_by_agent[sender] = m
-            if len(latest_by_agent) >= 4:
-                break
+        """Builds structured live task profiles dynamically from real messages for Claude, Antigravity, Owner, and Codex."""
+        keys_pattern = r'(?:TASK|STATUS|STATUS OF MY REVIEW|EVIDENCE|NEXT ACTION|NEXT CLAUDE ACTUALSOURCE|NEXT|BOUNDARIES|STATE|FINDINGS|RE|WORK ORDER|OBJECTIVE)'
 
-        tasks_data = {
-            "Codex": {
-                "name": "Codex",
-                "avatar": "🟣",
-                "role": "Technical Lead & Architecture",
-                "status": "Reviewing / Staged Preparation",
-                "status_color": "purple",
-                "active_directive": "Step 2 Preparation & AG05 Review",
-                "source_msg_id": "X-163",
-                "tasks": [
-                    {
-                        "id": "AG05-REV",
-                        "title": "Review AG05 REV2 Package [A-115]",
-                        "status": "in_progress",
-                        "status_icon": "🔄",
-                        "detail": "Probes pass confirmed; substantive source-linked inventory/backlog review pending.",
-                        "source": "X-163"
-                    },
-                    {
-                        "id": "S2P-DELIV",
-                        "title": "Step 2 Preparation (S2P-2/3/4)",
-                        "status": "completed",
-                        "status_icon": "✅",
-                        "detail": "Delivered in Codex/Step2Preparation/ (Adapter audit, lifecycle spec, 31/31 model tests).",
-                        "source": "X-162"
-                    },
-                    {
-                        "id": "HO-REV",
-                        "title": "Review Claude Handover [C-174/177]",
-                        "status": "completed",
-                        "status_icon": "✅",
-                        "detail": "Accepted inert Step 2a infrastructure (45/45 green); 2b conditionally held.",
-                        "source": "X-162"
-                    },
-                    {
-                        "id": "CTRL-DOCS",
-                        "title": "Maintain Control Documents",
-                        "status": "in_progress",
-                        "status_icon": "📋",
-                        "detail": "Owns MASTER_EXECUTION_PLAN, PHASE_STATUS, TASK_BOARD, DELEGATION_REGISTER.",
-                        "source": "C-167"
-                    }
-                ]
-            },
+        def extract_field(body, key_list):
+            if not body:
+                return None
+            for k in key_list:
+                m = re.search(rf'(?im)\b{re.escape(k)}\s*:\s*(.*?)(?=\b{keys_pattern}\s*:|$)', body)
+                if m:
+                    val = m.group(1).strip()
+                    val = re.sub(r'[\r\n]+', ' ', val).strip()
+                    if val:
+                        return val[:140]
+            return None
+
+        def parse_relative_time(ts_str):
+            if not ts_str:
+                return "Unknown", 999999
+            try:
+                m = re.search(r'(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})', ts_str)
+                if m:
+                    dt = datetime.strptime(m.group(1), "%Y-%m-%d %H:%M")
+                    now = datetime.now()
+                    diff = (now - dt).total_seconds()
+                    diff_m = int(diff // 60)
+                    if diff_m < 0: diff_m = 0
+                    if diff_m < 1: rel = "just now"
+                    elif diff_m < 60: rel = f"{diff_m}m ago"
+                    elif diff_m < 1440: rel = f"{diff_m//60}h ago"
+                    else: rel = f"{diff_m//1440}d ago"
+                    return rel, diff_m
+            except Exception:
+                pass
+            return ts_str, 999999
+
+        agents_meta = {
             "Claude": {
                 "name": "Claude",
                 "avatar": "🟢",
-                "role": "Implementer & Editor Operator",
-                "status": "Resting / Handover Ready",
-                "status_color": "emerald",
-                "active_directive": "Account Transition / Standby",
-                "source_msg_id": "X-163",
-                "tasks": [
-                    {
-                        "id": "HO-FILE",
-                        "title": "Account Handover Checkpoint",
-                        "status": "completed",
-                        "status_icon": "✅",
-                        "detail": "ACCOUNT_HANDOVER_CURRENT.md posted with sha256 87b06194... under X-157.",
-                        "source": "C-177"
-                    },
-                    {
-                        "id": "C170-1",
-                        "title": "CatalogPath Seam Rebuild (43/43)",
-                        "status": "completed",
-                        "status_icon": "✅",
-                        "detail": "CatalogPath GameInstance outer fix verified green (c62ab549...).",
-                        "source": "C-175"
-                    },
-                    {
-                        "id": "STEP-2A",
-                        "title": "Step 2a Inert Scaffold Build",
-                        "status": "completed",
-                        "status_icon": "✅",
-                        "detail": "RPGEncounterBinding scaffold compiled; 45/45 unit tests PASS (6704ec5c...).",
-                        "source": "C-177"
-                    },
-                    {
-                        "id": "REST",
-                        "title": "Operator Rest Period",
-                        "status": "in_progress",
-                        "status_icon": "💤",
-                        "detail": "Resting while Codex & AG advance offline tasks; no routine pings.",
-                        "source": "X-163"
-                    }
-                ]
+                "role": "Technical Lead & Reviewer",
+                "default_directive": "Lead Review & Verification",
+                "border_color": "emerald"
             },
             "Antigravity": {
                 "name": "Antigravity",
                 "avatar": "🔵",
-                "role": "Visuals, Analysis & Batch Committer",
-                "status": "WO-05 REV2 Delivered / Standby",
-                "status_color": "sky",
-                "active_directive": "Standby for Codex Review / Mailbox Watch",
-                "source_msg_id": "A-115",
-                "tasks": [
-                    {
-                        "id": "AG05-1",
-                        "title": "Deliver Evidence Brief Rev 2",
-                        "status": "completed",
-                        "status_icon": "✅",
-                        "detail": "P1_DESIGN_EVIDENCE_BRIEF_REV2.md + 10-point ledger (SHA256: a0a0dc0a...).",
-                        "source": "A-112"
-                    },
-                    {
-                        "id": "AG05-2",
-                        "title": "Cue & Source Inventory REV2",
-                        "status": "completed",
-                        "status_icon": "✅",
-                        "detail": "14-variant inventory + hardened validator passing all 6 probes & 8/8 self-tests.",
-                        "source": "A-115"
-                    },
-                    {
-                        "id": "AG05-3",
-                        "title": "Measurement Proposals REV2",
-                        "status": "completed",
-                        "status_icon": "✅",
-                        "detail": "Part A empirical proposals + Owner feel checks; Part B full 64-char hash table.",
-                        "source": "A-115"
-                    },
-                    {
-                        "id": "WATCH",
-                        "title": "Reactive Mailbox Watch",
-                        "status": "in_progress",
-                        "status_icon": "🔄",
-                        "detail": "Running MailboxNext.ps1 -Me A -Seen 424 to immediately react to team messages.",
-                        "source": "A-115"
-                    }
-                ]
+                "role": "Implementer & Build Operator",
+                "default_directive": "Content Delivery & Build Operations",
+                "border_color": "sky"
             },
             "Owner": {
                 "name": "Owner",
                 "avatar": "🟡",
                 "role": "Project Owner & Steering",
-                "status": "Active Steering & Review",
-                "status_color": "amber",
-                "active_directive": "Review Proposals & Send Directives",
-                "source_msg_id": "X-163",
-                "tasks": [
-                    {
-                        "id": "OWN-FEEL",
-                        "title": "Boss Feel Proposals Review",
-                        "status": "in_progress",
-                        "status_icon": "⏳",
-                        "detail": "Check 1 sprint run-up, Check 2 Mid01 anticipation, Check 3 counter cue, Check 4 contrast.",
-                        "source": "A-115"
-                    },
-                    {
-                        "id": "OWN-DIR",
-                        "title": "Direct Team Messaging",
-                        "status": "completed",
-                        "status_icon": "✅",
-                        "detail": "Send messages to mailbox via Web UI / Mobile View for Codex & Antigravity.",
-                        "source": "A-115"
-                    },
-                    {
-                        "id": "OWN-GATE",
-                        "title": "Step 2 Promotion Gate Decisions",
-                        "status": "queued",
-                        "status_icon": "📋",
-                        "detail": "Awaiting Step 2b gate schedule after Claude account resumption.",
-                        "source": "X-162"
-                    }
-                ]
+                "default_directive": "Steering & Directives",
+                "border_color": "amber"
+            },
+            "Codex": {
+                "name": "Codex",
+                "avatar": "🟣",
+                "role": "Architecture Advisor",
+                "default_directive": "Directives & Oversight",
+                "border_color": "purple"
             }
         }
 
-        # Check latest messages for dynamic status updates
-        for m in messages[-10:]:
-            mid = m["id"]
-            sender = m.get("sender_norm")
-            body = m.get("body", "")
+        tasks_data = {}
+        for agent_key, meta in agents_meta.items():
+            agent_msgs = [msg for msg in messages if msg.get("sender_norm") == agent_key]
+            if not agent_msgs:
+                tasks_data[agent_key] = {
+                    "name": meta["name"],
+                    "avatar": meta["avatar"],
+                    "role": meta["role"],
+                    "status": "No messages logged",
+                    "status_color": "slate",
+                    "is_active": False,
+                    "activity_state": "idle",
+                    "last_seen": "None",
+                    "active_directive": meta["default_directive"],
+                    "current_status": "Idle",
+                    "next_action": "",
+                    "source_msg_id": "",
+                    "latest_sent_id": "",
+                    "tasks": []
+                }
+                continue
 
-            if sender == "Owner":
-                tasks_data["Owner"]["status"] = "Message Sent"
-                tasks_data["Owner"]["source_msg_id"] = mid
+            latest_m = agent_msgs[-1]
+            rel_time, diff_m = parse_relative_time(latest_m.get("timestamp", ""))
 
-        for agent, prof in tasks_data.items():
-            if agent in latest_by_agent:
-                prof["latest_sent_id"] = latest_by_agent[agent]["id"]
+            directive = extract_field(latest_m.get("body", ""), ["TASK", "WORK ORDER", "RE", "OBJECTIVE"])
+            if not directive:
+                lines = [l.strip() for l in latest_m.get("body", "").splitlines() if l.strip()]
+                directive = lines[0][:100] if lines else meta["default_directive"]
+
+            status_text = extract_field(latest_m.get("body", ""), ["STATUS", "STATUS OF MY REVIEW", "REPORT", "FINDINGS", "STATE"]) or "Message Dispatched"
+            next_action = extract_field(latest_m.get("body", ""), ["NEXT CLAUDE ACTUALSOURCE", "NEXT ACTION", "NEXT", "WHAT I NEED FROM YOU"]) or ""
+
+            if agent_key == "Codex":
+                is_active = (diff_m <= 120)
+                activity_state = "active" if is_active else "inactive"
+                status_label = f"Active ({rel_time})" if is_active else "Inactive (Retired)"
+                status_color = "purple" if is_active else "slate"
+            elif diff_m <= 60 or "waiting" in status_text.lower() or "mailboxnext" in next_action.lower():
+                is_active = True
+                status_color = "emerald" if diff_m <= 60 else "amber"
+                if "waiting" in status_text.lower() or "mailboxnext" in next_action.lower():
+                    activity_state = "waiting"
+                    status_label = f"Waiting ({rel_time})"
+                else:
+                    activity_state = "active"
+                    status_label = f"Active ({rel_time})"
+            elif diff_m <= 240:
+                is_active = True
+                activity_state = "standby"
+                status_label = f"Standby ({rel_time})"
+                status_color = "sky"
+            else:
+                is_active = False
+                activity_state = "idle"
+                status_label = f"Idle ({rel_time})"
+                status_color = "slate"
+
+            tasks_list = []
+            for m in reversed(agent_msgs[-4:]):
+                m_task = extract_field(m.get("body", ""), ["TASK", "WORK ORDER", "RE", "OBJECTIVE"])
+                if not m_task:
+                    m_lines = [l.strip() for l in m.get("body", "").splitlines() if l.strip()]
+                    m_task = m_lines[0][:60] if m_lines else f"Message {m.get('id', '')}"
+
+                m_status = extract_field(m.get("body", ""), ["STATUS", "STATUS OF MY REVIEW", "REPORT", "STATE"]) or "Dispatched"
+                icon = "🔄"
+                m_full = (m_status + " " + m.get("body", "")[:300]).lower()
+                m_full_sanitized = re.sub(r'\b(no\s+failures?|0\s+fails?|0\s+failed|0\s+errors?)\b', 'clean', m_full)
+                if any(w in m_full_sanitized for w in ["accepted", "pass", "completed", "pushed", "exit 0"]):
+                    icon = "✅"
+                elif any(w in m_full_sanitized for w in ["rejected", "fail", "error"]):
+                    icon = "❌"
+                elif any(w in m_full_sanitized for w in ["waiting", "awaiting", "standby"]):
+                    icon = "⏳"
+
+                tasks_list.append({
+                    "id": m.get("id", ""),
+                    "title": m_task[:55],
+                    "status": "completed" if icon == "✅" else ("failed" if icon == "❌" else "in_progress"),
+                    "status_icon": icon,
+                    "detail": m_status[:100],
+                    "source": m.get("id", ""),
+                    "timestamp": m.get("timestamp", "")
+                })
+
+            tasks_data[agent_key] = {
+                "name": meta["name"],
+                "avatar": meta["avatar"],
+                "role": meta["role"],
+                "status": status_label,
+                "status_color": status_color,
+                "is_active": is_active,
+                "activity_state": activity_state,
+                "last_seen": rel_time,
+                "active_directive": directive,
+                "current_status": status_text,
+                "next_action": next_action,
+                "source_msg_id": latest_m.get("id", ""),
+                "latest_sent_id": latest_m.get("id", ""),
+                "tasks": tasks_list
+            }
 
         return tasks_data
-
 
 # ==============================================================================
 # 2. MAILBOX WRITER (COMPOSE MESSAGE)
@@ -642,31 +660,31 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   <div id="ai-task-compact-bar" class="hidden lg:hidden bg-slate-950 border-b border-slate-800 px-6 py-2 grid grid-cols-4 gap-3 text-xs shrink-0">
     <div class="bg-slate-900/80 p-2 rounded border border-slate-800 cursor-pointer hover:bg-slate-800/80 transition" onclick="toggleTaskBoard()">
       <div class="flex justify-between items-center mb-0.5">
-        <span class="font-semibold text-purple-400">🟣 Codex (Lead)</span>
-        <span id="compact-codex-src" class="text-[10px] text-slate-500 font-mono"></span>
-      </div>
-      <p id="compact-codex" class="text-slate-300 truncate">Supervising</p>
-    </div>
-    <div class="bg-slate-900/80 p-2 rounded border border-slate-800 cursor-pointer hover:bg-slate-800/80 transition" onclick="toggleTaskBoard()">
-      <div class="flex justify-between items-center mb-0.5">
-        <span class="font-semibold text-emerald-400">🟢 Claude (Implementer)</span>
+        <span class="font-semibold text-emerald-400">🟢 Claude (Lead Reviewer)</span>
         <span id="compact-claude-src" class="text-[10px] text-slate-500 font-mono"></span>
       </div>
-      <p id="compact-claude" class="text-slate-300 truncate">Handover / Standby</p>
+      <p id="compact-claude" class="text-slate-300 truncate">Lead Review</p>
     </div>
     <div class="bg-slate-900/80 p-2 rounded border border-slate-800 cursor-pointer hover:bg-slate-800/80 transition" onclick="toggleTaskBoard()">
       <div class="flex justify-between items-center mb-0.5">
-        <span class="font-semibold text-sky-400">🔵 Antigravity (Visuals)</span>
+        <span class="font-semibold text-sky-400">🔵 Antigravity (Implementer)</span>
         <span id="compact-ag-src" class="text-[10px] text-slate-500 font-mono"></span>
       </div>
-      <p id="compact-ag" class="text-slate-300 truncate">WO-05 REV2 Delivered</p>
+      <p id="compact-ag" class="text-slate-300 truncate">Implementation</p>
     </div>
     <div class="bg-slate-900/80 p-2 rounded border border-slate-800 cursor-pointer hover:bg-slate-800/80 transition" onclick="toggleTaskBoard()">
       <div class="flex justify-between items-center mb-0.5">
-        <span class="font-semibold text-amber-400">🟡 Owner (Decisions)</span>
+        <span class="font-semibold text-amber-400">🟡 Owner (Steering)</span>
         <span id="compact-owner-src" class="text-[10px] text-slate-500 font-mono"></span>
       </div>
-      <p id="compact-owner" class="text-slate-300 truncate">Directives Ready</p>
+      <p id="compact-owner" class="text-slate-300 truncate">Steering & Directives</p>
+    </div>
+    <div class="bg-slate-900/80 p-2 rounded border border-slate-800 cursor-pointer hover:bg-slate-800/80 transition" onclick="toggleTaskBoard()">
+      <div class="flex justify-between items-center mb-0.5">
+        <span class="font-semibold text-purple-400">🟣 Codex (Retired)</span>
+        <span id="compact-codex-src" class="text-[10px] text-slate-500 font-mono"></span>
+      </div>
+      <p id="compact-codex" class="text-slate-300 truncate">Budget Exhausted</p>
     </div>
   </div>
 
@@ -1081,61 +1099,94 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       let html = '';
 
       const borderColors = {
-        'Codex': 'border-purple-800/80 bg-purple-950/20',
         'Claude': 'border-emerald-800/80 bg-emerald-950/20',
         'Antigravity': 'border-sky-800/80 bg-sky-950/20',
-        'Owner': 'border-amber-800/80 bg-amber-950/20'
+        'Owner': 'border-amber-800/80 bg-amber-950/20',
+        'Codex': 'border-purple-800/80 bg-purple-950/20'
       };
 
       const titleColors = {
-        'Codex': 'text-purple-300',
         'Claude': 'text-emerald-300',
         'Antigravity': 'text-sky-300',
-        'Owner': 'text-amber-300'
+        'Owner': 'text-amber-300',
+        'Codex': 'text-purple-300'
       };
 
       for (const [key, prof] of Object.entries(aiTasks)) {
         const borderCls = borderColors[key] || 'border-slate-800 bg-slate-900/40';
         const titleCls = titleColors[key] || 'text-slate-200';
-        const srcBadge = prof.source_msg_id ? `<span class="font-mono text-[10px] text-cyan-400 bg-cyan-950/70 border border-cyan-800/80 px-1 py-0.2 rounded hover:underline cursor-pointer" onclick="jumpToMessage('${prof.source_msg_id}')">[${prof.source_msg_id}]</span>` : '';
+        const srcBadge = prof.source_msg_id ? `<span class="font-mono text-[10px] text-cyan-400 bg-cyan-950/70 border border-cyan-800/80 px-1.5 py-0.5 rounded hover:underline cursor-pointer" onclick="jumpToMessage('${prof.source_msg_id}')">[${prof.source_msg_id}]</span>` : '';
+
+        // Status pill indicator
+        let statusBadge = '';
+        if (prof.activity_state === 'active') {
+          statusBadge = `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-950/90 text-emerald-400 border border-emerald-700/80"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>ACTIVE (${prof.last_seen})</span>`;
+        } else if (prof.activity_state === 'waiting') {
+          statusBadge = `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-950/90 text-amber-400 border border-amber-700/80"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>WAITING (${prof.last_seen})</span>`;
+        } else if (prof.activity_state === 'standby') {
+          statusBadge = `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-sky-950/90 text-sky-400 border border-sky-800/80">STANDBY (${prof.last_seen})</span>`;
+        } else {
+          statusBadge = `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-slate-900 text-slate-500 border border-slate-800">INACTIVE</span>`;
+        }
 
         let taskListHtml = '';
         if (prof.tasks && prof.tasks.length > 0) {
           taskListHtml = prof.tasks.map(t => {
             const taskSrc = t.source ? `<span class="font-mono text-[9px] text-slate-500 hover:text-cyan-400 cursor-pointer" onclick="jumpToMessage('${t.source}')">[${t.source}]</span>` : '';
             return `
-              <li class="flex items-start gap-1.5 text-[11px] leading-tight text-slate-300">
+              <li class="flex items-start gap-1.5 text-[11px] leading-tight text-slate-300 bg-slate-900/40 p-1.5 rounded border border-slate-800/60">
                 <span class="shrink-0 mt-0.5 text-xs">${t.status_icon}</span>
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between gap-1">
                     <span class="font-medium text-slate-200 truncate">${escapeHtml(t.title)}</span>
                     ${taskSrc}
                   </div>
-                  <p class="text-[10px] text-slate-400 leading-snug line-clamp-2">${escapeHtml(t.detail)}</p>
+                  <p class="text-[10px] text-slate-400 leading-snug line-clamp-2 mt-0.5">${escapeHtml(t.detail)}</p>
                 </div>
               </li>
             `;
           }).join('');
         } else {
-          taskListHtml = '<li class="text-[11px] text-slate-500 italic">No assigned tasks logged</li>';
+          taskListHtml = '<li class="text-[11px] text-slate-500 italic p-1">No assigned tasks logged</li>';
         }
+
+        const nextActionBlock = prof.next_action ? `
+          <div class="text-[10px] text-slate-400 border-t border-slate-800/80 pt-1 mt-1 truncate">
+            <span class="text-cyan-400 font-mono">Next:</span> ${escapeHtml(prof.next_action)}
+          </div>
+        ` : '';
 
         html += `
           <div class="border rounded-lg p-2.5 flex flex-col justify-between ${borderCls} shadow-sm">
             <div>
-              <div class="flex items-center justify-between mb-1">
+              <div class="flex items-center justify-between mb-1.5">
                 <div class="flex items-center gap-1.5">
                   <span class="text-sm">${prof.avatar}</span>
-                  <span class="font-bold text-xs ${titleCls}">${escapeHtml(prof.name)}</span>
+                  <div>
+                    <span class="font-bold text-xs ${titleCls}">${escapeHtml(prof.name)}</span>
+                    <p class="text-[9px] text-slate-400 font-medium">${escapeHtml(prof.role)}</p>
+                  </div>
                 </div>
-                ${srcBadge}
+                <div class="flex flex-col items-end gap-1">
+                  ${statusBadge}
+                  ${srcBadge}
+                </div>
               </div>
-              <p class="text-[10px] text-slate-400 font-medium mb-1.5">${escapeHtml(prof.role)}</p>
-              <div class="bg-slate-900/90 border border-slate-800/90 rounded px-2 py-1 mb-2">
-                <span class="text-[10px] text-slate-500 uppercase font-mono block">Active Directive:</span>
-                <span class="text-xs font-semibold text-slate-200 leading-tight block">${escapeHtml(prof.active_directive || 'Idle')}</span>
+              
+              <div class="bg-slate-900/90 border border-slate-800/90 rounded px-2 py-1.5 mb-2">
+                <div class="flex items-center justify-between text-[10px] text-slate-500 uppercase font-mono mb-0.5">
+                  <span>Current Task:</span>
+                  <span class="text-slate-400 lowercase font-sans">${prof.last_seen}</span>
+                </div>
+                <span class="text-xs font-semibold text-slate-200 leading-tight block truncate">${escapeHtml(prof.active_directive || 'Idle')}</span>
+                ${nextActionBlock}
               </div>
-              <ul class="space-y-1.5 max-h-36 overflow-y-auto custom-scroll pr-1">
+
+              <div class="text-[10px] text-slate-400 font-semibold uppercase font-mono px-0.5 mb-1 flex items-center justify-between">
+                <span>Recent History</span>
+                <span class="text-[9px] lowercase font-sans text-slate-500">${prof.tasks.length} tasks</span>
+              </div>
+              <ul class="space-y-1 max-h-36 overflow-y-auto custom-scroll pr-1">
                 ${taskListHtml}
               </ul>
             </div>
@@ -1147,21 +1198,21 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       if (containerMobile) containerMobile.innerHTML = html;
 
       // Update compact bar summaries
-      if (aiTasks.Codex) {
-        document.getElementById('compact-codex').textContent = aiTasks.Codex.active_directive || 'Supervising';
-        document.getElementById('compact-codex-src').textContent = aiTasks.Codex.source_msg_id ? `[${aiTasks.Codex.source_msg_id}]` : '';
-      }
       if (aiTasks.Claude) {
-        document.getElementById('compact-claude').textContent = aiTasks.Claude.active_directive || 'Handover';
+        document.getElementById('compact-claude').textContent = aiTasks.Claude.active_directive || 'Reviewing';
         document.getElementById('compact-claude-src').textContent = aiTasks.Claude.source_msg_id ? `[${aiTasks.Claude.source_msg_id}]` : '';
       }
       if (aiTasks.Antigravity) {
-        document.getElementById('compact-ag').textContent = aiTasks.Antigravity.active_directive || 'WO-05';
+        document.getElementById('compact-ag').textContent = aiTasks.Antigravity.active_directive || 'Operating';
         document.getElementById('compact-ag-src').textContent = aiTasks.Antigravity.source_msg_id ? `[${aiTasks.Antigravity.source_msg_id}]` : '';
       }
       if (aiTasks.Owner) {
         document.getElementById('compact-owner').textContent = aiTasks.Owner.active_directive || 'Directives Ready';
         document.getElementById('compact-owner-src').textContent = aiTasks.Owner.source_msg_id ? `[${aiTasks.Owner.source_msg_id}]` : '';
+      }
+      if (aiTasks.Codex) {
+        document.getElementById('compact-codex').textContent = aiTasks.Codex.active_directive || 'Retired';
+        document.getElementById('compact-codex-src').textContent = aiTasks.Codex.source_msg_id ? `[${aiTasks.Codex.source_msg_id}]` : '';
       }
     }
 
@@ -1610,10 +1661,10 @@ def run_tkinter_gui(port=DEFAULT_PORT):
 
             self.agent_cards = {}
             col_configs = [
-                ("Codex", "🟣 Codex (Technical Lead)", "#c084fc", "#1e1430"),
-                ("Claude", "🟢 Claude (Implementer / Operator)", "#34d399", "#0e2920"),
-                ("Antigravity", "🔵 Antigravity (Visuals / Commits)", "#38bdf8", "#0e2338"),
-                ("Owner", "🟡 Owner (Project Steering)", "#fbbf24", "#2c1f0a")
+                ("Claude", "🟢 Claude (Lead Reviewer)", "#34d399", "#0e2920"),
+                ("Antigravity", "🔵 Antigravity (Implementer & Operator)", "#38bdf8", "#0e2338"),
+                ("Owner", "🟡 Owner (Project Steering)", "#fbbf24", "#2c1f0a"),
+                ("Codex", "🟣 Codex (Retired)", "#c084fc", "#1e1430")
             ]
 
             for key, title, fg_color, bg_card in col_configs:
@@ -1788,10 +1839,10 @@ def run_tkinter_gui(port=DEFAULT_PORT):
             for key, prof in ai_tasks.items():
                 if key in self.agent_cards:
                     c = self.agent_cards[key]
-                    c["lbl_status"].config(text=f"Status: {prof.get('status', 'Active')}")
+                    c["lbl_status"].config(text=f"Status: {prof.get('status', 'Active')} | {prof.get('active_directive', '')[:40]}")
                     tasks = prof.get("tasks", [])
                     if tasks:
-                        task_lines = [f"{t['status_icon']} {t['title']}" for t in tasks[:3]]
+                        task_lines = [f"{t['status_icon']} [{t.get('source', '')}] {t['title'][:32]}" for t in tasks[:3]]
                         c["lbl_tasks"].config(text="\n".join(task_lines))
                     else:
                         c["lbl_tasks"].config(text="No active tasks logged")
