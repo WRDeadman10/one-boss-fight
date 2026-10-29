@@ -329,6 +329,25 @@ FRPGPreparationAbortReport FRPGPreparedBatch::Abort()
 	{
 		return Report; // idempotent: nothing is owned any more
 	}
+	// DD28: unregister only registrations owned by a successful call of this batch.
+	// With this flag false, the historical Abort branch below is unchanged.
+	if (bRegisteredByBatch)
+	{
+		for (int32 MemberIndex = Members.Num() - 1; MemberIndex >= 0; --MemberIndex)
+		{
+			AActor* Owner = Plan->Participants[MemberIndex].Actor.Get();
+			for (int32 Index = Members[MemberIndex].Owned.Num() - 1; Index >= 0; --Index)
+			{
+				UActorComponent* Component = Members[MemberIndex].Owned[Index].Component.Get();
+				if (IsValid(Owner) && IsValid(Component) && !Component->IsBeingDestroyed()
+					&& Component->GetOwner() == Owner && !Component->HasBegunPlay() && Component->IsRegistered())
+				{
+					Component->UnregisterComponent();
+				}
+			}
+		}
+		bRegisteredByBatch = false;
+	}
 	bAborted = true;
 
 	for (int32 MemberIndex = Members.Num() - 1; MemberIndex >= 0; --MemberIndex)
@@ -435,3 +454,151 @@ namespace RPGBossHydrationPreparation
 	}
 #endif
 }
+
+namespace
+{
+#if WITH_DEV_AUTOMATION_TESTS
+	int32 GRegistrationFailAfter = 0;
+	bool GRegistrationFaultActive = false;
+	bool GRegistrationFaultFired = false;
+#endif
+}
+
+bool FRPGPreparedBatch::RegisterOwnedComponents(FRPGRegistrationReport& OutReport)
+{
+	OutReport = FRPGRegistrationReport();
+	// Refusals for thread/state do not consume a valid earlier registration.
+	if (!IsInGameThread())
+	{
+		OutReport.Errors.Add(TEXT("Activation.NotGameThread: registration requires the game thread"));
+		return false;
+	}
+	if (!IsPrepared() || bRegisteredByBatch)
+	{
+		OutReport.Errors.Add(bRegisteredByBatch ? TEXT("Activation.AlreadyRegistered: this batch already registered its components")
+			: TEXT("Activation.NotPrepared: this batch is not prepared or has been aborted"));
+		return false;
+	}
+	TArray<TWeakObjectPtr<UActorComponent>> RegisteredThisCall;
+	int32 MemberIndex = INDEX_NONE;
+	int32 PlanIndex = INDEX_NONE;
+	UClass* CurrentClass = nullptr;
+	auto Fail = [&](const FString& Reason)
+	{
+		OutReport.FailedMemberIndex = MemberIndex;
+		OutReport.FailedPlanIndex = PlanIndex;
+		OutReport.FailedClassName = CurrentClass ? CurrentClass->GetFName() : NAME_None;
+		OutReport.Errors.Add(Reason);
+		for (int32 Index = RegisteredThisCall.Num() - 1; Index >= 0; --Index)
+		{
+			UActorComponent* Component = RegisteredThisCall[Index].Get();
+			if (IsValid(Component) && !Component->IsBeingDestroyed() && Component->IsRegistered())
+			{
+				Component->UnregisterComponent();
+			}
+		}
+		OutReport.Cleanup = Abort();
+		OutReport.Errors.Append(OutReport.Cleanup.Errors);
+		return false;
+	};
+	auto CheckMember = [&]() -> bool
+	{
+		if (!Plan.IsValid() || !Plan->Participants.IsValidIndex(MemberIndex) || !Members.IsValidIndex(MemberIndex))
+		{
+			return false;
+		}
+		UWorld* World = Plan->World.Get();
+		AActor* Actor = Plan->Participants[MemberIndex].Actor.Get();
+		return IsValid(World) && !World->HasBegunPlay() && Plan->EncounterInstance.IsValid()
+			&& IsValid(Actor) && !Actor->IsActorBeingDestroyed() && Actor->GetWorld() == World
+			&& !Actor->HasActorBegunPlay() && !Actor->IsActorBeginningPlay();
+	};
+	auto CheckComponent = [&]() -> bool
+	{
+		if (!CheckMember()) { return false; }
+		const FRPGPreflightParticipantPlan& Participant = Plan->Participants[MemberIndex];
+		if (Participant.Role != ERPGPreflightRole::BossCore || !Participant.Plans.IsValidIndex(PlanIndex)
+			|| !Members[MemberIndex].Owned.IsValidIndex(PlanIndex)) { return false; }
+		const FRPGComponentPlan& Wanted = Participant.Plans[PlanIndex];
+		UActorComponent* Component = Members[MemberIndex].Owned[PlanIndex].Component.Get();
+		AActor* Actor = Participant.Actor.Get();
+		return IsValid(Component) && !Component->IsBeingDestroyed() && Component->GetClass() == Wanted.Class
+			&& Component->GetFName() == Wanted.InstanceName && Members[MemberIndex].Owned[PlanIndex].Name == Wanted.InstanceName
+			&& Component->GetOwner() == Actor && Actor->GetComponents().Contains(Component)
+			&& !Component->IsRegistered() && !Component->HasBegunPlay();
+	};
+	if (!Plan.IsValid() || Plan->Participants.Num() != Members.Num())
+	{
+		return Fail(TEXT("Activation.PlanMismatch: member shape changed"));
+	}
+	// Validate the WHOLE batch, including target-only actors, before the first registration.
+	for (MemberIndex = 0; MemberIndex < Members.Num(); ++MemberIndex)
+	{
+		PlanIndex = INDEX_NONE;
+		CurrentClass = nullptr;
+		if (!CheckMember()) { return Fail(TEXT("Activation.MemberInvalid: owner/world invalid, begun or beginning play")); }
+		const FRPGPreflightParticipantPlan& Participant = Plan->Participants[MemberIndex];
+		if (Participant.Role == ERPGPreflightRole::TargetOnly)
+		{
+			if (!Members[MemberIndex].Owned.IsEmpty() || !Participant.Plans.IsEmpty())
+			{ return Fail(TEXT("Activation.PlanMismatch: target-only member owns plans/components")); }
+			continue;
+		}
+		if (Participant.Role != ERPGPreflightRole::BossCore || Participant.Plans.Num() != Members[MemberIndex].Owned.Num())
+		{ return Fail(TEXT("Activation.PlanMismatch: role or component count changed")); }
+		for (PlanIndex = 0; PlanIndex < Participant.Plans.Num(); ++PlanIndex)
+		{
+			CurrentClass = Participant.Plans[PlanIndex].Class;
+			if (!CheckComponent()) { return Fail(TEXT("Activation.ComponentInvalid: owned component failed whole-batch validation")); }
+		}
+	}
+	for (MemberIndex = 0; MemberIndex < Members.Num(); ++MemberIndex)
+	{
+		const FRPGPreflightParticipantPlan& Participant = Plan->Participants[MemberIndex];
+		for (PlanIndex = 0; PlanIndex < Members[MemberIndex].Owned.Num(); ++PlanIndex)
+		{
+			CurrentClass = Participant.Plans[PlanIndex].Class;
+			if (!CheckComponent()) { return Fail(TEXT("Activation.ComponentInvalid: state changed before registration")); }
+			UActorComponent* Component = Members[MemberIndex].Owned[PlanIndex].Component.Get();
+			Component->RegisterComponent();
+			if (IsValid(Component) && Component->IsRegistered()) { RegisteredThisCall.Add(Component); }
+			if (!IsValid(Component) || Component->IsBeingDestroyed() || !Component->IsRegistered() || Component->HasBegunPlay()
+				|| !CheckMember() || Component->GetOwner() != Participant.Actor.Get())
+			{ return Fail(TEXT("Activation.RegistrationFailed: component did not remain registered and never begun")); }
+			FRPGRegisteredComponentInfo Info;
+			Info.MemberIndex = MemberIndex;
+			Info.PlanIndex = PlanIndex;
+			Info.Slot = Participant.Slot;
+			Info.ClassName = Component->GetClass()->GetFName();
+			Info.InstanceName = Component->GetFName();
+			OutReport.Registered.Add(Info);
+#if WITH_DEV_AUTOMATION_TESTS
+			if (GRegistrationFaultActive && GRegistrationFailAfter > 0 && RegisteredThisCall.Num() == GRegistrationFailAfter)
+			{
+				GRegistrationFaultFired = true;
+				return Fail(TEXT("Activation.InjectedFault: test-only failure after real registration"));
+			}
+#endif
+		}
+	}
+	bRegisteredByBatch = true;
+	OutReport.bSucceeded = true;
+	return true;
+}
+
+#if WITH_DEV_AUTOMATION_TESTS
+RPGBossActivation::FRegistrationFaultScope::FRegistrationFaultScope(int32 InFailAfterRegistration)
+{
+	check(IsInGameThread() && !GRegistrationFaultActive && InFailAfterRegistration > 0);
+	GRegistrationFaultActive = true;
+	GRegistrationFailAfter = InFailAfterRegistration;
+	GRegistrationFaultFired = false;
+}
+RPGBossActivation::FRegistrationFaultScope::~FRegistrationFaultScope()
+{
+	check(IsInGameThread() && GRegistrationFaultActive);
+	GRegistrationFaultActive = false;
+	GRegistrationFailAfter = 0;
+}
+bool RPGBossActivation::FRegistrationFaultScope::Fired() const { return GRegistrationFaultFired; }
+#endif

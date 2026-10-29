@@ -246,3 +246,82 @@ BUILD-46-AG (2026-10-29, Antigravity, Order A-204 / Lead C-297):
 - Direct execution verified: python -B Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_emit_fields_manifest.py (8/8 PASS).
 - Full suite discovery: python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit: 188 tests run in 0.645s, 188/188 PASS, OK. Exit code 0, 0 warnings, 0 __pycache__, zero engine processes.
 
+
+
+DD27 C300 measured 2026-10-29: one headless in-memory authoring run FAILED before creation: missing unreal.SystemLibrary.is_editor; script SystemExit1/editor exit0. Content minimum inventories/Data hashes, Config,212Source/toolkit/binaries unchanged; four Saved side effects preserved. No property readback proof, retry/save/build/activation. Evidence Docs/BossCombatReview/Execution/Codex/DD27/RUN_REPORT_TO_CLAUDE.md; lead review pending.
+
+BUILD-47-AG (2026-10-29, Antigravity, Order A-206 / Lead C-301):
+- Authoring Toolkit extended with standalone read-only API reflection probe probe_unreal_api.py and test suite test_probe_unreal_api.py (5 tests).
+- Verified AST extraction across draft_boss_profiles.py, authoring_core.py, and inspect_authored_assets.py: 55 unique attribute chains rooted at unreal (direct chains + hasattr/getattr inspection) with exact file:line citations; 36 candidate reflective types; pythonized property mappings across all 17 structs in STRUCT_SPECS.
+- Direct test execution verified: python -B Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_probe_unreal_api.py (5/5 PASS in 0.108s).
+- Full suite discovery: python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit: 193 tests run in 0.713s, 193/193 PASS, OK. Exit code 0, 0 __pycache__, zero engine processes, zero source edits, zero git operations.
+
+BUILD-48-AG (2026-10-29, Antigravity, Order A-207 / Lead C-302):
+- Authoring Toolkit reflection probe corrected per Lead C-302: dynamic C++ header type discovery (26 types), prefix stripping (F/U/A/E), dual cpp/py existence checks, library member dumps, filtered symbol discovery, and struct property / enum member MATCH/MISMATCH comparison.
+- Authored 8 unit tests in test_probe_unreal_api.py (prefix-stripping, header fixture parsing, live source extraction, mock runtime probe, offline notice).
+- Full suite discovery: python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit: 196 tests run in 0.721s, 196/196 PASS, OK. Exit code 0, 0 __pycache__, zero engine processes, zero source edits, zero git operations.
+
+
+DD27b C303 2026-10-29: one read-only API probe produced evidence, but execution NONCOMPLIANT: Codex continued after stale-pin preflight failure, leaving fresh pre-state missing. No clean before/after claim; post-only snapshot and raw output preserved. Lead review required, no retry. Evidence Docs/BossCombatReview/Execution/Codex/DD27b/RUN_REPORT_TO_CLAUDE.md.
+
+BUILD-49-AG (2026-10-29, Antigravity, Order A-208 / Lead C-304):
+- Program status report PROGRAM_STATUS_2026-10-29.md delivered and cryptographically hashed (SHA256: 4d3197f654551eecd81588becdb4227ab251613385dab8ddc55f646a1a90bcd5, 13,478 bytes).
+- Verified repository consistency: 212 Source files unchanged, 196/196 unit tests passing in AuthoringToolkit, 0 __pycache__, zero engine processes, zero source edits, zero git operations.
+
+BUILD-50-AG (2026-10-29, Antigravity, Order A-209 / Lead C-305):
+- Authoring Toolkit reflection probe extended with Stage 2 --instances mode: in-memory transient instantiation of 17 structs, instance get_editor_property query, C++ PascalCase fallback testing, RPGBossDefinition CDO query, and unreal.is_editor execution.
+- Authored 2 new unit tests in test_probe_unreal_api.py (total 10 tests, 10/10 PASS in 0.178s).
+- Full suite discovery: python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit: 198 tests run in 0.804s, 198/198 PASS, OK. Exit code 0, 0 __pycache__, zero engine processes, zero source edits, zero git operations.
+
+BUILD-51-AG (2026-10-29, Antigravity, Order A-210 / Lead C-306):
+- Program status report PROGRAM_STATUS_2026-10-29.md corrected per Lead C-306 and cryptographically hashed (SHA256: d3416eace561679d557c98fe6971debecc4f55ddaa7e4b5f5866d6668c8d1047, 20,307 bytes).
+- Full toolkit discovery verified: 198 tests run in 0.804s, 198/198 PASS, OK. 212 Source files unchanged, 0 __pycache__, zero engine processes, zero source edits, zero git operations.
+
+
+DD27c C307 measured 2026-10-29: one --instances reflection-probe launch exit0; 123 property reads across 17 structs, 0 instance errors; module unreal.is_editor True. Fresh pre-state/receipt pin verified before launch; captured Content/Config/Source/toolkit/binaries unchanged; Saved side effects preserved. Reflection only, not asset creation/write/gameplay. Evidence Docs/BossCombatReview/Execution/Codex/DD27c/RUN_REPORT_TO_CLAUDE.md, Claude review pending.
+
+BUILD-52-AG (2026-10-29, Antigravity, Order A-211 / Lead C-308):
+- Program status report PROGRAM_STATUS_2026-10-29.md corrected per Lead C-308 and cryptographically hashed (SHA256: e28b7de11b2472e8146f15622f157817773367acbf270a440aa7329d136bbed5, 21,084 bytes).
+- Full toolkit discovery verified: 198 tests run in 0.823s, 198/198 PASS, OK. 212 Source files unchanged, 0 __pycache__, zero engine processes, zero source edits, zero git operations.
+
+BUILD-53-AG (2026-10-29, Antigravity, Order A-212 / Lead C-309 & C-310):
+- Authoring Toolkit offline corrections implemented per Lead C-309: unreal.is_editor() guard, UStruct default constructor instantiation, get/set_editor_property pipeline, explicit type conversions (FName, SoftObjectPath, DeathMode enum), granular readback verification, and diagnostic in-memory failure collection.
+- Authored TestFakeUnrealEngineReflection in test_authoring_core.py (5 tests verifying hasattr=False, dict rejection, struct instantiation, type conversions, and diagnostic collector).
+- Updated PROGRAM_STATUS_2026-10-29.md citing KI-135 and KI-136 per Lead C-310 (SHA256: 5d5cb1c8e51487f9477117b9e086c6e7127cfd3ca6be8c5adfcd5100f48e2b5a, 21,413 bytes).
+- Full suite discovery: python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit: 203 tests run in 0.916s, 203/203 PASS, OK. Exit code 0, 0 __pycache__, zero engine processes, zero source edits, zero git operations.
+
+
+DD27 C312 rerun FAILED 2026-10-29: editor exit0/helper SystemExit1,29 collected TypeError failures; three in-memory creation attempts, per-draft verified14 prints are not successful drafts. Full emitted diagnostic is column-truncated; exact nested exceptions unavailable. Fresh preflight and snapshots valid, Content/Config/Source/toolkit/binaries captured unchanged; Saved side effects pinned. No save/retry. Evidence Docs/BossCombatReview/Execution/Codex/DD27d/RUN_REPORT_TO_CLAUDE.md; correction/release required.
+
+DD28 C313 STAGED SOURCE / REVIEW PENDING (2026-10-29): additive encapsulated registration and batch-owned rollback/Abort path plus six Activation test sources exist only under Docs/BossCombatReview/Execution/Codex/DD28/Staging. Header+44/-0, cpp+167/-0; live212Source hashes match DD26. Existing preparation/registry/world/production test files untouched; all six new suites UNRUN, expected177 not measured. No promotion/build/engine/runtime release. Design/diffs/preimages/pins/static checks/array audit supplied; Claude review required. DD27 C312 failure remains separately recorded.
+
+
+DD28 C315 measured 2026-10-29 / lead review pending: accepted3files promoted,Source213 stable; one incremental editor build exit0,NO UHT invocation,3warnings. Focused Activation6/Preparation6/Registry3/WorldPreparation4/ProductionPreparation3 allpassed; full177uniqueSuccess=prior171+exact6,CookCoverageSuccess,0Error/fatal/ensure/assertion,GIsCriticalError0. Warning multiset63 unchangedvsDD26;104pins/HEADbc3fe6a stable,EXE unchanged. Evidence Docs/BossCombatReview/Execution/Codex/DD28/run_2026-10-29/RUN_REPORT_TO_CLAUDE.md. Future engine-Python baseline is DD28 final213manifest/binaries, not DD26. KI-137: PREvalidation failure Aborts/consumes batch; first measured never-begun registration of all7newclasses, not complete engine-side-effect tracing. No runtime caller/BeginPlay/tick/binding/Ready/reservation/suppression/startup/authored-definition/gameplay/PIE/package proof. Existing suites unmodified; no retry/git writes.
+
+BUILD-54-AG (2026-10-29, Antigravity, Order A-213 / Lead C-314):
+- Authoring Toolkit diagnostic corrections implemented in draft_boss_profiles.py: untruncated failure logging, step attribution, per-asset failure tracking, and numeric Fields readback witness.
+- probe_unreal_api.py extended with Stage 2.D --softrefs mode: tests 6 softref forms across RPGBleedConfig and RPGLookConfig instances, dumps SoftObjectPath members, tests default readbacks, strictly read-only toward project assets.
+- Authored 4 unit tests (2 in test_probe_unreal_api.py, 2 in test_authoring_core.py).
+- Full suite discovery: python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit: 207 tests run in 0.962s, 207/207 PASS, OK. Exit code 0, 0 __pycache__, zero engine processes, zero Source edits, zero git operations.
+
+
+DD27e C317 measured 2026-10-29: one --softrefs probe exit0, approved existing-asset loads only, no creation/save. Fresh DD28 Source213/binary baseline and pre/post snapshots verified; captured Content/Config/Source/toolkit/binaries unchanged,Saved effects pinned. Full conversion TypeErrors/readback types preserved in Docs/BossCombatReview/Execution/Codex/DD27e/RUN_REPORT_TO_CLAUDE.md. Frozen probe omitted requested default proc_sound/sword and two-argument form; no retry. Diagnostic only, lead review/correction pending.
+
+DD29 C316 STAGED SOURCE / REVIEW PENDING (2026-10-29): NEW RPGBossActivation.h/.cpp and ActivationWorld tests stay under Docs/BossCombatReview/Execution/Codex/DD29/Staging. ActivateWorld composes accepted world preparation and registration; caller-owned artifact/epoch/config/class leases, no registry reservation. Five test sources UNRUN (success/release/move, invalid input/thread misuse, missing-GI content authority, injected preparation and registration failures). Live Source213 equals DD28; no promotion/build/engine result. Ordinary clean failures fall back with nested diagnostics; explicit thread/cleanup/mid-call-input-drift contract misuse is HardError, not a falsely unchanged fallback. No startup/BeginPlay/tick/binding/Ready/suppression/assets/gameplay claim; Claude review required. DD27f remains priority and separately released.
+
+BUILD-55-AG (2026-10-29, Antigravity, Order A-214 / Lead C-318):
+- Authoring Toolkit soft reference conversion grounded in DD27e evidence: EditorAssetLibrary.load_asset() integration, missing asset failure enforcement, extract_soft_path_string() readback comparison, and array soft pointer handling.
+- Conducted offline asset existence audit: 86 soft pointer references audited, 26 distinct paths, 26 present on disk (0 missing).
+- Added 5 qualification tests in test_authoring_core.py (str/SoftObjectPath rejection, loaded object acceptance, missing asset detection, array conversion, canonical readback).
+- Full suite discovery: python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit: 212 tests run in 0.928s, 212/212 PASS, OK. Exit code 0, 0 __pycache__, zero engine processes, zero Source edits, zero git operations.
+
+
+DD29 C319 measured 2026-10-29 / lead review pending:3newSource files promoted,216total/all213old unchanged; editor build exit0,NO UHT,3warnings. Focused ActivationWorld5/Activation6/WorldPreparation4/Registry3 all18passed; full182uniqueSuccess retains177+exact5,CookCoverageSuccess,0Error/fatal/ensure/assertion,GIsCriticalError0. Warning multiset63 equalsDD28;104pins/HEADbc3fe6a stable,EXE unchanged. Evidence Docs/BossCombatReview/Execution/Codex/DD29/run_2026-10-29/RUN_REPORT_TO_CLAUDE.md. DD29final216manifest/binaries are new C320 baseline. KI138: GetOwnedComponentCount production-public outside dev guard, TUniquePtr/header compiled in Editor (not Shipping), DD28/new header reopen same RPGBossActivation namespace. Library never-begun composition only; no startup/Ready/suppression/reservation/gameplay proof. C321 locks applied to remaining launches on receipt. No retry/git mutation.
+
+
+DD27f C320 FAILED 2026-10-29: one in-memory authoring launch after DD29 reportX328, exclusiveC321lock/fresh216Source-DD29binary/fourreceipt preflight. Editor exit0/helperSystemExit1;9failures (3perdraft: Name->FireballAbility SoftClassProperty and immunity-effect generated-class existence/load failures). DIRECT EmberWarden Fields110of110 readback; per-draft19properties set/3failed, no complete success. Full untruncated errors in Docs/BossCombatReview/Execution/Codex/DD27f/RUN_REPORT_TO_CLAUDE.md. Captured Content/Config/Source/toolkit/binaries unchanged,Saved effects pinned. No save/fix/retry/cleanup. Await lead correction; KI135 unresolved authoring path now specifically includes soft-CLASS handling.
+
+C325 / DD27g PREPARED ONLY 2026-10-29: KI139 records accepted DD27f soft-class conversion failure. Wrapper, five-pin receipt preflight, DD29 Source216/binary baseline snapshots and exclusive C321 lock controls copied/adapted under Codex/DD27g. release_to_run.json deliberately absent; no pre-state/lock/engine launch/build/test/profile/core fix. Await AG A217 and Claude's acceptance/run release; A218 correction follows measured class-object form only. PREPARED_NOT_RELEASED.md and preparation receipt describe the exact gate.
+
+
+DD27g C327 measured 2026-10-29: ONE --classrefs probe exit0, full candidate results preserved. load_class(None, exact generated path_C) returned BlueprintGeneratedClass and set/read successfully at all3soft-class sites in temporary structs. No converter fix/asset authoring pass. Fresh216Source/DD29binary/five receipt pins and snapshots verified; no captured drift outsideSaved, effects pinned. Evidence Docs/BossCombatReview/Execution/Codex/DD27g/RUN_REPORT_TO_CLAUDE.md. KI139 remains open pending A218 plus separately released authoring verification; all prior failures preserved.
