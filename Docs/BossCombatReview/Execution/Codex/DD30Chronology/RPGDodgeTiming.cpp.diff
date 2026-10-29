@@ -1,0 +1,17 @@
+--- Source/OneBossFight/Player/RPGDodgeTiming.cpp
++++ Staging/RPGDodgeTiming.cpp
+@@ -1,5 +1,6 @@
+ // Copyright One Boss Fight. All Rights Reserved.
+ 
++#include "Player/RPGStartupChronology.h"
+ #include "Player/RPGDodgeTiming.h"
+ #include "Player/RPGFlipbookEffect.h"
+ #include "Pack/RPGBlueprintCall.h"
+@@ -33,6 +34,7 @@
+ 
+ void URPGDodgeTiming::BeginPlay()
+ {
++	RPGStartupChronology::AtComponentBeginPlay(*this);
+ 	Super::BeginPlay();
+ 	LoadedDodgeDustFlipbook = ARPGFlipbookEffect::LoadMaterial(ERPGEFlipbookKind::DodgeDust);
+ 	TryBind();

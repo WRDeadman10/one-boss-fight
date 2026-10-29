@@ -1,0 +1,14 @@
+{
+  "verdict": "NONCOMPLIANT EXECUTION; lead review required",
+  "editor_exit": 0,
+  "summary": [
+    "[PROBE] SUMMARY missing=2 present=53"
+  ],
+  "error_lines": 0,
+  "warning_lines": 2,
+  "probe_lines": 1500,
+  "source_current_matches_DD26": true,
+  "fresh_before_after_verdict": "UNAVAILABLE; no fresh pre-state captured",
+  "processes_after": [],
+  "probe_current_sha256": "ccfb50326a17a82dc3c47412f75fe8acad5322070443e5dba27566370601d9df"
+}

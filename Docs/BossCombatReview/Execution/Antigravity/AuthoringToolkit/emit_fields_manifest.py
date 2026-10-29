@@ -379,6 +379,48 @@ def generate_manifest_rows(
 
     return rows, withheld_paths, file_hashes
 
+def generate_hero_target_manifest_rows(
+    hero_source_path: str = "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/hero_target_source.json"
+) -> Tuple[List[Dict[str, str]], str]:
+    """Generates the 4 minimal truthful manifest rows for the Player Hero target-only participant (Order A-225)."""
+    full_path = os.path.join(REPO_ROOT, hero_source_path)
+    if not os.path.exists(full_path):
+        raise FileNotFoundError(f"Hero target source not found: {hero_source_path}")
+    source_sha = compute_file_sha256(hero_source_path)
+    with open(full_path, "r", encoding="utf-8") as f:
+        src_data = json.load(f)
+    stats = src_data.get("stats", {})
+
+    target_specs = [
+        ("Stats.MaxHealth", str(stats["MaxHealth"]), "float", "hp", "/stats/MaxHealth"),
+        ("Stats.MaxPosture", str(stats["MaxPosture"]), "float", "hp", "/stats/MaxPosture"),
+        ("Stats.PostureRegenDelay", str(stats["PostureRegenDelay"]), "float", "seconds", "/stats/PostureRegenDelay"),
+        ("Stats.PostureRegenRate", str(stats["PostureRegenRate"]), "float", "hp/s", "/stats/PostureRegenRate"),
+    ]
+
+    witness = "AutomationTest:OneBossFight.Binding.StatsAdapters.Assign (proves FRPGPostureConfig parsing only)"
+    dest = "FRPGParticipantConfig.Stats (compile copy only)"
+    first_read = "none after compile: TargetOnly has no consumer plan (X-341, Preflight.cpp:449-455)"
+
+    rows = []
+    for (f_path, f_val, f_type, f_units, f_site) in target_specs:
+        row = {
+            "FieldPath": f_path,
+            "Value": f_val,
+            "Type": f_type,
+            "Units": f_units,
+            "SourcePath": hero_source_path.replace("\\", "/"),
+            "SourceSHA256": source_sha,
+            "SourceSite": f_site,
+            "Origin": "AuthoredAsset",
+            "Precedence": "typed-record",
+            "Destination": dest,
+            "FirstRead": first_read,
+            "Witness": witness
+        }
+        rows.append(row)
+    return rows, source_sha
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Deterministic generator for FRPGParityField manifest rows.")
     parser.add_argument("--output", "-o", help="Optional output JSON path for the emitted rows.")
@@ -388,7 +430,30 @@ def main() -> None:
                         help="Selected PhaseId for which to emit phase rows (default: PhaseTwo).")
     parser.add_argument("--no-selected-phase", action="store_true",
                         help="Withhold selected-phase rows (emits 106 rows instead of 110).")
+    parser.add_argument("--hero-target", action="store_true",
+                        help="Generate the minimal 4-row truthful manifest for the Player Hero target definition (Order A-225).")
+    parser.add_argument("--hero-source", default="Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/hero_target_source.json",
+                        help="Path to frozen hero target source JSON.")
     args = parser.parse_args()
+
+    if args.hero_target:
+        rows, src_sha = generate_hero_target_manifest_rows(args.hero_source)
+        print("=== LIVE SOURCE HASHES ===")
+        print(f"  {src_sha}  {args.hero_source}")
+        print("\n=== GENERATION SUMMARY ===")
+        print(f"{len(rows)} generated (Player Hero TargetOnly manifest), 0 withheld, 0 invented")
+        if args.output:
+            out_full = os.path.join(REPO_ROOT, args.output) if not os.path.isabs(args.output) else args.output
+            os.makedirs(os.path.dirname(out_full), exist_ok=True)
+            out_data = {
+                "$schema_description": "FRPGParityField Manifest Output (TargetOnly Hero)",
+                "count": len(rows),
+                "fields": rows
+            }
+            with open(out_full, "wb") as f:
+                f.write(json.dumps(out_data, indent=2).encode("utf-8").replace(b"\n", b"\r\n"))
+            print(f"Wrote {len(rows)} rows to {args.output}")
+        return
 
     include_phase = not args.no_selected_phase
     try:

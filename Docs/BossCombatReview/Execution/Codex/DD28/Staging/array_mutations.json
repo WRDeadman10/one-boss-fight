@@ -1,0 +1,212 @@
+[
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 169,
+    "text": "Batch.Members[MemberIndex].Owned.Emplace(ComponentPlan.InstanceName, Created);"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 236,
+    "text": "Result.Errors.Add(TEXT(\"Preparation.NotGameThread: a batch is prepared on the game thread only\"));"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 252,
+    "text": "Result.Errors.Add(TEXT(\"Preparation.PlanMismatch: the preflight produced no plan and no error\"));"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 258,
+    "text": "Result.Errors.Add(TEXT(\"Preparation.PlanMismatch: the plan and the request list differ in length\"));"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 266,
+    "text": "Result.Errors.Add(FString::Printf(TEXT(\"Preparation.PlanMismatch: participant #%d of the plan is not request #%d\"), Index, Index));"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 269,
+    "text": "SelectedPhaseIds.Add(Input.Requests[Index].SelectedPhaseId);"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 277,
+    "text": "Result.Errors.Add(Error);"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 279,
+    "text": "Result.Errors.Append(Cleanup.Errors);"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 325,
+    "text": "Report.Errors.Add(TEXT(\"Preparation.NotGameThread: a prepared batch is aborted on the game thread only\"));"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 370,
+    "text": "Report.Errors.Add(FString::Printf(TEXT(\"Preparation.ContractViolation%s: the component was registered, begun or moved outside the artifact; it was left in place and is no longer owned\"), *Label));"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 378,
+    "text": "Owned.Reset(); // releases every lease"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 404,
+    "text": "Infos.Add(Info);"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 419,
+    "text": "Components.Add(Component);"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 473,
+    "text": "OutReport.Errors.Add(TEXT(\"Activation.NotGameThread: registration requires the game thread\"));"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 478,
+    "text": "OutReport.Errors.Add(bRegisteredByBatch ? TEXT(\"Activation.AlreadyRegistered: this batch already registered its components\")"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 491,
+    "text": "OutReport.Errors.Add(Reason);"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 501,
+    "text": "OutReport.Errors.Append(OutReport.Cleanup.Errors);"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 564,
+    "text": "if (IsValid(Component) && Component->IsRegistered()) { RegisteredThisCall.Add(Component); }"
+  },
+  {
+    "file": "RPGBossHydrationPreparation.cpp",
+    "line": 574,
+    "text": "OutReport.Registered.Add(Info);"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 90,
+    "text": "Plans.Add(RPGBossStaggerClusterAdapters::MakeStaggerClusterPlan());"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 91,
+    "text": "Plans.Add(RPGBossPhasesClusterAdapters::MakePhasesClusterPlan(PhaseId));"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 92,
+    "text": "Plans.Add(RPGBossEncounterClusterAdapters::MakeEncounterClusterPlan());"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 93,
+    "text": "Plans.Add(RPGBossDormantWakeAdapters::MakeDormantWakePlan());"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 94,
+    "text": "Plans.Add(RPGBossStatsAdapters::MakePosturePlan());"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 95,
+    "text": "Plans.Add(RPGBossBleedAdapters::MakeBleedPlan());"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 96,
+    "text": "Plans.Add(RPGBossLowSweepAdapters::MakeLowSweepPlan());"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 97,
+    "text": "Plans.Add(RPGBossShockwaveAdapters::MakeShockwavePlan());"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 98,
+    "text": "Plans.Add(RPGBossHealPunishAdapters::MakeHealPunishPlan());"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 99,
+    "text": "Plans.Add(RPGBossLookAdapters::MakeLookPlan());"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 100,
+    "text": "Plans.Add(RPGBossCloseClipSwapAdapters::MakeCloseClipSwapPlan());"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 101,
+    "text": "Plans.Add(RPGBossDeathAdapters::MakeDeathPlan());"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 107,
+    "text": "Paths.AddUnique(Path);"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 149,
+    "text": "Value->Phases.Add(Phase);"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 152,
+    "text": "Value->Fields.Add(MakeField(Path));"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 192,
+    "text": "State.Components.Add(Component);"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 194,
+    "text": "State.Components.Sort([](const UActorComponent& A, const UActorComponent& B) { return &A < &B; }); // a pointer array is sorted through dereferenced references"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 197,
+    "text": "State.Flags.Add(Component->IsRegistered() ? 1 : 0);"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 198,
+    "text": "State.Flags.Add(Component->HasBegunPlay() ? 1 : 0);"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 266,
+    "text": "Input.Requests.Add(MakeRequest(Boss1, TEXT(\"Boss1\"), TEXT(\"Player\"), ERPGPreflightRole::BossCore, Config1, PhaseTwo));"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 267,
+    "text": "Input.Requests.Add(MakeRequest(Boss2, TEXT(\"Boss2\"), TEXT(\"Player\"), ERPGPreflightRole::BossCore, Config2, PhaseAlt));"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 268,
+    "text": "Input.Requests.Add(MakeRequest(Player, TEXT(\"Player\"), TEXT(\"Boss1\"), ERPGPreflightRole::TargetOnly, PlayerConfig));"
+  },
+  {
+    "file": "RPGBossActivationTests.cpp",
+    "line": 277,
+    "text": "State.Actors.Add(CaptureActor(Actor));"
+  }
+]

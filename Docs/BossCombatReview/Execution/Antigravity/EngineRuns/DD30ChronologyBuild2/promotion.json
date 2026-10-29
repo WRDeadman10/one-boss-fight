@@ -1,0 +1,17 @@
+[
+  {
+    "path": "Source/OneBossFight/Player/RPGBossEncounter.cpp",
+    "before": "3f3b62d834486c375ec9c2de1ef3423ad719fa81a81477149450d3ae542ee3be",
+    "after": "bce27a9dd7c280423301eca600edb29263250c807b3d9bc3f4be962b7bede080"
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGDodgeTiming.cpp",
+    "before": "367bb788df0ab17eefd194aef0d1296cf62ad33f8befe91d60b9dcb50c634f36",
+    "after": "acafc4a8ceb4f7dbe297e3688fe88722186311c863c29073c2dcac1ec9aedbee"
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+    "before": "5d0f0be233e6bb6f054c47c96d07244758227b46c9739a04bf1d6236d3a0c703",
+    "after": "dd279aa717633b3f5f523df62de72ca5d8af0e0ad18c57fe3f646fe855bd6f67"
+  }
+]

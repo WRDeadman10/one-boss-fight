@@ -1,0 +1,2 @@
+[2026.10.29-15.21.09:730][  2]LogEditorAssetSubsystem: Error: LoadBlueprintClass failed: The AssetData '/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C' could not be found in the Asset Registry.
+[2026.10.29-15.21.09:731][  2]LogEditorAssetSubsystem: Error: LoadBlueprintClass failed: The AssetData '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' could not be found in the Asset Registry.

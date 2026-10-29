@@ -130,6 +130,7 @@ from draft_boss_profiles import (
     validate_boss_profile_data,
     execute_draft_apply,
     verify_editor_environment,
+    generate_offline_plan,
 )
 
 
@@ -466,6 +467,17 @@ class TestBossProfileValidation(unittest.TestCase):
         self.assertTrue(ok)
         self.assertEqual(len(errs), 0)
 
+    def test_hero_draft_v2_profile_passes_validation(self):
+        json_path = os.path.join(_SCRIPT_DIR, "examples", "boss_draft_profiles.json")
+        with open(json_path, "r", encoding="utf-8") as f:
+            profiles = json.load(f)["profiles"]
+        hero_v2 = next((p for p in profiles if p.get("asset_name") == "DA_Player_Hero_Draft_V2"), None)
+        self.assertIsNotNone(hero_v2, "DA_Player_Hero_Draft_V2 must exist in boss_draft_profiles.json")
+        ok, errs = validate_boss_profile_data(copy.deepcopy(hero_v2), [], [])
+        self.assertTrue(ok, f"Validation errors: {errs}")
+        self.assertEqual(len(errs), 0)
+        self.assertEqual(len(hero_v2["fields"]), 4)
+
     def test_nan_numeric_value_rejected(self):
         changed = copy.deepcopy(self.baseline_boss)
         changed["stats"]["MaxHealth"] = float("nan")
@@ -577,6 +589,7 @@ class TestFailClosedEditorGuard(unittest.TestCase):
     """
     Dedicated adversarial test suite verifying that verify_editor_environment fails closed
     upon absence of ANY required Unreal API or when PIE world is active.
+    Updated for Order A-212 / DD27c: verifies module-level unreal.is_editor().
     """
     def setUp(self):
         import draft_boss_profiles
@@ -600,25 +613,25 @@ class TestFailClosedEditorGuard(unittest.TestCase):
         self.module.unreal = SimpleNamespace()
         ok, err = self.module.verify_editor_environment()
         self.assertFalse(ok)
-        self.assertIn("Missing required Unreal API: unreal.SystemLibrary", err)
+        self.assertIn("Missing required Unreal API: unreal.is_editor", err)
 
     def test_missing_is_editor_rejected(self):
         self.module.HAS_UNREAL = True
-        self.module.unreal = SimpleNamespace(SystemLibrary=SimpleNamespace())
+        self.module.unreal = SimpleNamespace(SomeOtherLib=SimpleNamespace())
         ok, err = self.module.verify_editor_environment()
         self.assertFalse(ok)
-        self.assertIn("Missing required Unreal API: unreal.SystemLibrary.is_editor", err)
+        self.assertIn("Missing required Unreal API: unreal.is_editor", err)
 
     def test_is_editor_returning_false_rejected(self):
         self.module.HAS_UNREAL = True
-        self.module.unreal = SimpleNamespace(SystemLibrary=SimpleNamespace(is_editor=lambda: False))
+        self.module.unreal = SimpleNamespace(is_editor=lambda: False)
         ok, err = self.module.verify_editor_environment()
         self.assertFalse(ok)
         self.assertIn("Not running in Unreal Editor", err)
 
     def test_missing_subsystem_api_rejected(self):
         self.module.HAS_UNREAL = True
-        self.module.unreal = SimpleNamespace(SystemLibrary=SimpleNamespace(is_editor=lambda: True))
+        self.module.unreal = SimpleNamespace(is_editor=lambda: True)
         ok, err = self.module.verify_editor_environment()
         self.assertFalse(ok)
         self.assertIn("Missing required Unreal API: unreal.get_editor_subsystem", err)
@@ -626,7 +639,7 @@ class TestFailClosedEditorGuard(unittest.TestCase):
     def test_subsystem_returning_none_rejected(self):
         self.module.HAS_UNREAL = True
         self.module.unreal = SimpleNamespace(
-            SystemLibrary=SimpleNamespace(is_editor=lambda: True),
+            is_editor=lambda: True,
             get_editor_subsystem=lambda cls: None,
             UnrealEditorSubsystem="SubsystemClass"
         )
@@ -637,7 +650,7 @@ class TestFailClosedEditorGuard(unittest.TestCase):
     def test_pie_simulation_mode_rejected(self):
         self.module.HAS_UNREAL = True
         self.module.unreal = SimpleNamespace(
-            SystemLibrary=SimpleNamespace(is_editor=lambda: True),
+            is_editor=lambda: True,
             get_editor_subsystem=lambda cls: SimpleNamespace(get_game_world=lambda: "SimWorldObject"),
             UnrealEditorSubsystem="SubsystemClass"
         )
@@ -648,7 +661,7 @@ class TestFailClosedEditorGuard(unittest.TestCase):
     def test_valid_editor_surface_accepted(self):
         self.module.HAS_UNREAL = True
         self.module.unreal = SimpleNamespace(
-            SystemLibrary=SimpleNamespace(is_editor=lambda: True),
+            is_editor=lambda: True,
             get_editor_subsystem=lambda cls: SimpleNamespace(get_game_world=lambda: None),
             UnrealEditorSubsystem="SubsystemClass"
         )
@@ -775,7 +788,7 @@ class TestRecordingFakeWriter(unittest.TestCase):
 
     def test_apply_fails_closed_when_api_missing(self):
         incomplete_fake = SimpleNamespace(
-            SystemLibrary=SimpleNamespace(is_editor=lambda: True),
+            is_editor=lambda: True,
             get_editor_subsystem=lambda cls: SimpleNamespace(get_game_world=lambda: None),
             UnrealEditorSubsystem="SubsystemClass",
             AssetToolsHelpers=SimpleNamespace(get_asset_tools=lambda: SimpleNamespace(create_asset=lambda *a: None))
@@ -830,11 +843,11 @@ class TestRecordingFakeWriter(unittest.TestCase):
                 return val
 
         valid_fake = SimpleNamespace(
-            SystemLibrary=SimpleNamespace(is_editor=lambda: True),
+            is_editor=lambda: True,
             get_editor_subsystem=lambda cls: SimpleNamespace(get_game_world=lambda: None),
             UnrealEditorSubsystem="SubsystemClass",
             AssetToolsHelpers=SimpleNamespace(get_asset_tools=lambda: Tools()),
-            load_class=lambda *args: "RecordingFakeClass",
+            load_class=lambda outer, path: SimpleNamespace(get_path_name=lambda p=path: str(p), to_string=lambda p=path: str(p)),
             EditorAssetLibrary=SimpleNamespace(does_asset_exist=lambda _: False),
             DataAssetFactory=RecordedAsset,
             Name=lambda v: SimpleNamespace(to_string=lambda: str(v)),
@@ -861,6 +874,67 @@ class TestRecordingFakeWriter(unittest.TestCase):
         written = set(created[0].values.keys())
         self.assertEqual(expected_fields - written, set())
         self.assertEqual(len(written), 22)
+
+    def test_hero_draft_v2_fake_apply_verifies_4_fields(self):
+        json_path = os.path.join(_SCRIPT_DIR, "examples", "boss_draft_profiles.json")
+        with open(json_path, "r", encoding="utf-8") as f:
+            profiles = json.load(f)["profiles"]
+        hero_v2 = next((p for p in profiles if p.get("asset_name") == "DA_Player_Hero_Draft_V2"), None)
+        self.assertIsNotNone(hero_v2, "DA_Player_Hero_Draft_V2 must exist in boss_draft_profiles.json")
+
+        created = []
+        class RecordedAsset:
+            def __init__(self, *args, **kwargs):
+                self.values = {}
+            def set_editor_property(self, name, val):
+                self.values[name] = val
+            def get_editor_property(self, name):
+                return self.values.get(name)
+
+        class Tools:
+            def create_asset(self, *args):
+                val = RecordedAsset()
+                created.append(val)
+                return val
+
+        valid_fake = SimpleNamespace(
+            is_editor=lambda: True,
+            get_editor_subsystem=lambda cls: SimpleNamespace(get_game_world=lambda: None),
+            UnrealEditorSubsystem="SubsystemClass",
+            AssetToolsHelpers=SimpleNamespace(get_asset_tools=lambda: Tools()),
+            load_class=lambda outer, path: SimpleNamespace(get_path_name=lambda p=path: str(p), to_string=lambda p=path: str(p)),
+            load_object=lambda outer, path: SimpleNamespace(get_path_name=lambda p=path: str(p), to_string=lambda p=path: str(p)),
+            EditorAssetLibrary=SimpleNamespace(does_asset_exist=lambda _: False),
+            DataAssetFactory=RecordedAsset,
+            Name=lambda v: SimpleNamespace(to_string=lambda: str(v)),
+            SoftObjectPath=lambda v: SimpleNamespace(to_string=lambda: str(v)),
+            RPGBossStatsConfig=RecordedAsset,
+            RPGEncounterPolicyConfig=RecordedAsset,
+            RPGStaggerPolicyConfig=RecordedAsset,
+            RPGPhaseFlowConfig=RecordedAsset,
+            RPGFireballConfig=RecordedAsset,
+            RPGPhaseDependencyConfig=RecordedAsset,
+            RPGStaggerProfileConfig=RecordedAsset,
+            RPGDormantWakeConfig=RecordedAsset,
+            RPGBleedConfig=RecordedAsset,
+            RPGLowSweepConfig=RecordedAsset,
+            RPGShockwaveConfig=RecordedAsset,
+            RPGHealPunishConfig=RecordedAsset,
+            RPGLookConfig=RecordedAsset,
+            RPGCloseClipSwapConfig=RecordedAsset,
+            RPGDeathConfig=RecordedAsset,
+            RPGPhaseConfig=RecordedAsset,
+            RPGParityField=RecordedAsset,
+        )
+
+        self.module.unreal = valid_fake
+        self.module.HAS_UNREAL = True
+
+        plan = {"profiles": [copy.deepcopy(hero_v2)]}
+        success = execute_draft_apply(plan, save_requested=False)
+        self.assertTrue(success)
+        self.assertEqual(len(created), 1)
+        self.assertEqual(len(created[0].values["fields"]), 4)
 
 
 class TestPartialOperationReport(unittest.TestCase):
@@ -2710,6 +2784,594 @@ class TestDeathPolicyDomain(unittest.TestCase):
 
         rec["bGuardPackDeath"] = False
         self.assertEqual(validate_death_domain(rec), [])
+
+
+
+# ---------------------------------------------------------------------------
+# Test Fake Unreal Module Qualification Suite (Order A-212 / Item 7)
+# ---------------------------------------------------------------------------
+class TestFakeUnrealEngineReflection(unittest.TestCase):
+    """
+    Adversarial qualification suite using a Fake Unreal Module reproducing verified engine reflection:
+    - Struct instances store properties via set_editor_property(name, val).
+    - Properties are reachable ONLY via get_editor_property(name).
+    - hasattr(struct_instance, name) returns False for all struct properties.
+    - Setting a dict for a struct property on a DataAsset raises TypeError.
+    - Proves new code (constructing struct instances) passes against it.
+    - Proves old code (passing dict for struct property) fails with TypeError.
+    """
+    def setUp(self):
+        class FakeLoadedObject:
+            def __init__(self, path):
+                self.path = str(path)
+            def get_path_name(self):
+                return self.path
+            def to_string(self):
+                return self.path
+            def __repr__(self):
+                return f"<Object '{self.path}' (0x12345) Class 'UObject'>"
+
+        class FakeClass:
+            def __init__(self, path):
+                self.path = str(path)
+            def get_path_name(self):
+                return self.path
+            def to_string(self):
+                return self.path
+            def __repr__(self):
+                return f"<Class '{self.path}'>" 
+
+        SOFT_PROP_NAMES = {
+            "proc_effect", "proc_sound", "body", "sword", "pieces",
+            "projectile_class", "roar_clip", "transition_montage",
+            "down_clip", "fall_clip", "fall_montage", "get_up_montage",
+            "riposte_boss_clip", "riposte_player_clip", "dormant_clip", "wake_clip",
+            "a1_montage", "a3a_montage", "a3b_montage", "death_clip", "death_montage",
+            "skeleton", "animations"
+        }
+
+        SOFT_CLASS_PROP_NAMES = {
+            "fireball_ability", "immunity_effect"
+        }
+
+        class FakeStructBase:
+            def __init__(self):
+                self._props = {}
+            def get_editor_property(self, name):
+                if name not in self._props:
+                    raise KeyError(f"Property '{name}' not set on struct")
+                return self._props[name]
+            def set_editor_property(self, name, val):
+                if name in SOFT_PROP_NAMES:
+                    if isinstance(val, str):
+                        raise TypeError(f"Failed to convert type 'str' to property '{name}' (SoftObjectProperty)")
+                    if hasattr(val, "asset_path_name") and not hasattr(val, "get_path_name"):
+                        raise TypeError(f"Cannot nativize 'SoftObjectPath' as 'Object'")
+                    if name == "pieces" and isinstance(val, list):
+                        for item in val:
+                            if isinstance(item, str) or (hasattr(item, "asset_path_name") and not hasattr(item, "get_path_name")):
+                                raise TypeError(f"Cannot nativize '{type(item).__name__}' as 'Object'")
+                if name in SOFT_CLASS_PROP_NAMES:
+                    if isinstance(val, str) and not isinstance(val, FakeClass):
+                        raise TypeError(f"Failed to convert type 'str' to property '{name}' (SoftClassProperty)")
+                    if hasattr(val, "is_name") or type(val).__name__ == "FakeName":
+                        raise TypeError(f"Failed to convert type 'Name' to property '{name}' (SoftClassProperty)")
+                    if hasattr(val, "asset_path_name") and not hasattr(val, "get_path_name"):
+                        raise TypeError(f"Cannot nativize 'SoftClassPath' as 'Class'")
+                self._props[name] = val
+            def __getattr__(self, name):
+                raise AttributeError(f"Struct properties are not attributes: {name}")
+
+        class FakeEditorAssetLibrary:
+            def __init__(self):
+                self.known = {
+                    "/Game/BloodPack/Hit/Niagara/NS_BulletHit_Med.NS_BulletHit_Med",
+                    "/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/A_Guardian_ImpactL_Cue.A_Guardian_ImpactL_Cue",
+                    "/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body",
+                    "/Game/OneBossFight/Boss01/Body/SK_Boss01_Crown.SK_Boss01_Crown",
+                    "/Game/OneBossFight/Boss01/Body/SK_Boss01_Mantle.SK_Boss01_Mantle",
+                    "/Game/OneBossFight/Boss01/Body/SK_Boss01_BrazierGauntlet.SK_Boss01_BrazierGauntlet",
+                    "/Game/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.SM_Boss01_Greatsword",
+                    "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin",
+                    "/Game/Mesh.Mesh"
+                }
+            def does_asset_exist(self, path):
+                return path in self.known
+            def load_asset(self, path):
+                if path in self.known:
+                    return FakeLoadedObject(path)
+                return None
+
+        class FakeDeathModeEnum:
+            class PACK_MONTAGE:
+                name = "PACK_MONTAGE"
+            class OWN_CLIP:
+                name = "OWN_CLIP"
+
+        class FakeName:
+            def __init__(self, val=""):
+                self.val = str(val)
+            def to_string(self):
+                return self.val
+            def __str__(self):
+                return self.val
+            def __repr__(self):
+                return f"Name('{self.val}')"
+
+        class FakeSoftObjectPath:
+            def __init__(self, val=""):
+                self.asset_path_name = str(val)
+            def to_string(self):
+                return self.asset_path_name
+            def __str__(self):
+                return self.asset_path_name
+            def __repr__(self):
+                return f"SoftObjectPath('{self.asset_path_name}')"
+
+        class FakeDataAsset:
+            STRUCT_PROPERTY_NAMES = {
+                "stats", "encounter_policy", "stagger_policy", "phase_flow",
+                "fireball", "phase_dependencies", "stagger_profile", "dormant_wake",
+                "bleed", "low_sweep", "shockwave", "heal_punish", "look",
+                "close_clip_swap", "death"
+            }
+            ARRAY_STRUCT_PROPERTY_NAMES = {"phases", "fields"}
+
+            def __init__(self):
+                self._props = {}
+
+            def get_editor_property(self, name):
+                return self._props.get(name)
+
+            def set_editor_property(self, name, val):
+                # REJECT DICT FOR STRUCT PROPERTY (Verified Engine Behavior)
+                if name in self.STRUCT_PROPERTY_NAMES and isinstance(val, dict):
+                    raise TypeError(
+                        f"Cannot set struct property '{name}' from a Python dict. "
+                        f"Unreal Engine requires an instance of the corresponding UStruct wrapper."
+                    )
+                # REJECT DICT IN ARRAY OF STRUCTS
+                if name in self.ARRAY_STRUCT_PROPERTY_NAMES and isinstance(val, list):
+                    for item in val:
+                        if isinstance(item, dict):
+                            raise TypeError(
+                                f"Array property '{name}' contains a dict. "
+                                f"Unreal Engine requires instances of UStruct wrapper."
+                            )
+                self._props[name] = val
+
+        self.fake_unreal = SimpleNamespace(
+            is_editor=lambda: True,
+            RPGBossStatsConfig=type("RPGBossStatsConfig", (FakeStructBase,), {}),
+            RPGEncounterPolicyConfig=type("RPGEncounterPolicyConfig", (FakeStructBase,), {}),
+            RPGStaggerPolicyConfig=type("RPGStaggerPolicyConfig", (FakeStructBase,), {}),
+            RPGPhaseFlowConfig=type("RPGPhaseFlowConfig", (FakeStructBase,), {}),
+            RPGFireballConfig=type("RPGFireballConfig", (FakeStructBase,), {}),
+            RPGPhaseDependencyConfig=type("RPGPhaseDependencyConfig", (FakeStructBase,), {}),
+            RPGStaggerProfileConfig=type("RPGStaggerProfileConfig", (FakeStructBase,), {}),
+            RPGDormantWakeConfig=type("RPGDormantWakeConfig", (FakeStructBase,), {}),
+            RPGBleedConfig=type("RPGBleedConfig", (FakeStructBase,), {}),
+            RPGLowSweepConfig=type("RPGLowSweepConfig", (FakeStructBase,), {}),
+            RPGShockwaveConfig=type("RPGShockwaveConfig", (FakeStructBase,), {}),
+            RPGHealPunishConfig=type("RPGHealPunishConfig", (FakeStructBase,), {}),
+            RPGLookConfig=type("RPGLookConfig", (FakeStructBase,), {}),
+            RPGCloseClipSwapConfig=type("RPGCloseClipSwapConfig", (FakeStructBase,), {}),
+            RPGDeathConfig=type("RPGDeathConfig", (FakeStructBase,), {}),
+            RPGPhaseConfig=type("RPGPhaseConfig", (FakeStructBase,), {}),
+            RPGParityField=type("RPGParityField", (FakeStructBase,), {}),
+            RPGBossDeathMode=FakeDeathModeEnum,
+            Name=FakeName,
+            SoftObjectPath=FakeSoftObjectPath,
+            EditorAssetLibrary=FakeEditorAssetLibrary(),
+            FakeLoadedObject=FakeLoadedObject,
+            FakeDataAsset=FakeDataAsset,
+            load_class=lambda outer, path: FakeClass(path) if path in {
+                "/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C",
+                "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C"
+            } else None
+        )
+
+    def test_hasattr_is_false_on_struct_instances(self):
+        bleed_inst = self.fake_unreal.RPGBleedConfig()
+        self.assertFalse(hasattr(bleed_inst, "effect_height"))
+        bleed_inst.set_editor_property("effect_height", 170.0)
+        self.assertFalse(hasattr(bleed_inst, "effect_height"))
+        self.assertEqual(bleed_inst.get_editor_property("effect_height"), 170.0)
+
+    def test_old_code_dict_assignment_raises_type_error(self):
+        asset = self.fake_unreal.FakeDataAsset()
+        # Old code passed plain dict from map_native_dict_to_python_keys
+        dict_payload = {"max_health": 1500.0, "max_posture": 200.0}
+        with self.assertRaises(TypeError) as ctx:
+            asset.set_editor_property("stats", dict_payload)
+        self.assertIn("Cannot set struct property 'stats' from a Python dict", str(ctx.exception))
+
+    def test_new_code_struct_instance_assignment_succeeds(self):
+        asset = self.fake_unreal.FakeDataAsset()
+        native_stats = {
+            "MaxHealth": 1500.0,
+            "MaxPosture": 200.0,
+            "PostureRegenDelay": 3.0,
+            "PostureRegenRate": 15.0
+        }
+        # New code creates real struct instance via create_struct_instance
+        from authoring_core import create_struct_instance, extract_canonical_primitives, NATIVE_BOSS_STATS_FIELDS
+        struct_inst = create_struct_instance("stats", native_stats, self.fake_unreal)
+        self.assertNotIsInstance(struct_inst, dict)
+        asset.set_editor_property("stats", struct_inst)
+
+        readback = asset.get_editor_property("stats")
+        canonical = extract_canonical_primitives(readback, NATIVE_BOSS_STATS_FIELDS)
+        self.assertEqual(canonical["MaxHealth"], 1500.0)
+        self.assertEqual(canonical["MaxPosture"], 200.0)
+        self.assertEqual(canonical["PostureRegenDelay"], 3.0)
+        self.assertEqual(canonical["PostureRegenRate"], 15.0)
+
+    def test_explicit_conversion_helpers(self):
+        from authoring_core import to_soft_ref, to_fname, to_death_mode, convert_property_for_engine
+
+        # Soft ref with EditorAssetLibrary loads real object
+        soft_val, form = to_soft_ref("/Game/Mesh.Mesh", self.fake_unreal)
+        self.assertEqual(form, "loaded_object")
+        self.assertEqual(soft_val.get_path_name(), "/Game/Mesh.Mesh")
+
+        # FName
+        fname_val, form = to_fname("HeavySwordSocket_R", self.fake_unreal)
+        self.assertEqual(form, "unreal.Name")
+        self.assertEqual(str(fname_val), "HeavySwordSocket_R")
+
+        # Death mode
+        death_val, form = to_death_mode("PackMontage", self.fake_unreal)
+        self.assertEqual(form, "unreal.RPGBossDeathMode.PACK_MONTAGE")
+        self.assertEqual(death_val.name, "PACK_MONTAGE")
+
+        death_val2, form2 = to_death_mode("OwnClip", self.fake_unreal)
+        self.assertEqual(form2, "unreal.RPGBossDeathMode.OWN_CLIP")
+        self.assertEqual(death_val2.name, "OWN_CLIP")
+
+    def test_diagnostic_failure_collector_collects_without_stopping(self):
+        import draft_boss_profiles
+        collector = draft_boss_profiles.DiagnosticFailureCollector(fail_fast=False)
+        self.assertFalse(collector.has_failures)
+
+        collector.record_failure("Asset1", "stats", "max_health", 1500.0, 1000.0, mismatch_msg="Value mismatch")
+        collector.record_failure("Asset1", "bleed", "proc_effect", "/Game/VFX.VFX", None, error_ex=RuntimeError("Soft path not found"))
+        self.assertTrue(collector.has_failures)
+        self.assertEqual(len(collector.failures), 2)
+        self.assertEqual(collector.failures[0]["property"], "max_health")
+        self.assertEqual(collector.failures[1]["error_class"], "RuntimeError")
+
+        # In fail_fast mode, it raises immediately
+        fail_fast_collector = draft_boss_profiles.DiagnosticFailureCollector(fail_fast=True)
+        with self.assertRaises(RuntimeError) as ctx:
+            fail_fast_collector.record_failure("Asset1", "stats", "max_health", 1500.0, 1000.0, mismatch_msg="Value mismatch")
+        self.assertIn("Fail-fast failure on 'Asset1.stats.max_health'", str(ctx.exception))
+
+    def test_create_empty_struct_instance(self):
+        from authoring_core import create_empty_struct_instance
+        # With fake unreal: returns struct wrapper instance
+        empty_inst = create_empty_struct_instance("bleed", self.fake_unreal)
+        self.assertNotIsInstance(empty_inst, dict)
+        self.assertTrue(hasattr(empty_inst, "set_editor_property"))
+
+        # Offline without unreal: returns empty dict
+        offline_inst = create_empty_struct_instance("bleed", None)
+        self.assertEqual(offline_inst, {})
+
+    def test_soft_ref_rejects_str_and_softobjectpath_with_type_error(self):
+        bleed_inst = self.fake_unreal.RPGBleedConfig()
+        with self.assertRaises(TypeError):
+            bleed_inst.set_editor_property("proc_effect", "/Game/Mesh.Mesh")
+        with self.assertRaises(TypeError):
+            bleed_inst.set_editor_property("proc_effect", self.fake_unreal.SoftObjectPath("/Game/Mesh.Mesh"))
+
+    def test_new_to_soft_ref_with_editor_asset_library_succeeds(self):
+        from authoring_core import to_soft_ref
+        loaded_obj, form = to_soft_ref("/Game/Mesh.Mesh", self.fake_unreal)
+        self.assertEqual(form, "loaded_object")
+        bleed_inst = self.fake_unreal.RPGBleedConfig()
+        bleed_inst.set_editor_property("proc_effect", loaded_obj)
+        self.assertEqual(bleed_inst.get_editor_property("proc_effect").get_path_name(), "/Game/Mesh.Mesh")
+
+    def test_missing_asset_raises_runtime_error(self):
+        from authoring_core import to_soft_ref
+        with self.assertRaises(RuntimeError) as ctx:
+            to_soft_ref("/Game/NonExistentAsset.NonExistentAsset", self.fake_unreal)
+        self.assertIn("asset does not exist or did not load", str(ctx.exception))
+
+    def test_soft_ref_arrays_as_lists_of_loaded_objects(self):
+        from authoring_core import convert_property_for_engine
+        pieces_paths = [
+            "/Game/OneBossFight/Boss01/Body/SK_Boss01_Crown.SK_Boss01_Crown",
+            "/Game/OneBossFight/Boss01/Body/SK_Boss01_Mantle.SK_Boss01_Mantle"
+        ]
+        converted, form = convert_property_for_engine("Pieces", pieces_paths, list, self.fake_unreal)
+        self.assertEqual(form, "list[loaded_object]")
+        look_inst = self.fake_unreal.RPGLookConfig()
+        look_inst.set_editor_property("pieces", converted)
+        rb_pieces = look_inst.get_editor_property("pieces")
+        self.assertEqual(len(rb_pieces), 2)
+        self.assertEqual(rb_pieces[0].get_path_name(), pieces_paths[0])
+
+    def test_soft_ref_readback_canonicalization(self):
+        from authoring_core import to_soft_ref, extract_canonical_primitives, NATIVE_LOOK_FIELDS
+        look_inst = self.fake_unreal.RPGLookConfig()
+        body_obj, _ = to_soft_ref("/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body", self.fake_unreal)
+        look_inst.set_editor_property("body", body_obj)
+        look_inst.set_editor_property("enabled", True)
+        look_inst.set_editor_property("pieces", [])
+        look_inst.set_editor_property("sword", None)
+        look_inst.set_editor_property("sword_socket", self.fake_unreal.Name("HeavySwordSocket_R"))
+        canonical = extract_canonical_primitives(look_inst, NATIVE_LOOK_FIELDS)
+        self.assertEqual(canonical["Body"], "/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body")
+        self.assertEqual(canonical["Sword"], "")
+
+    def test_diagnostic_collector_untruncated_and_step_attribution(self):
+        import io
+        from contextlib import redirect_stdout
+        import draft_boss_profiles
+
+        collector = draft_boss_profiles.DiagnosticFailureCollector(fail_fast=False)
+        long_err = "TypeError: RPGBossDefinition: cannot assign SoftObjectPath to field of type TSoftObjectPtr<USkeletalMesh>"
+        collector.record_failure(
+            "DA_Boss_EmberWarden_Draft", "look", "body",
+            "/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body",
+            None,
+            error_ex=TypeError(long_err),
+            step="set_editor_property"
+        )
+        self.assertEqual(collector.failure_count_for_asset("DA_Boss_EmberWarden_Draft"), 1)
+        self.assertEqual(collector.failure_count_for_asset("OtherAsset"), 0)
+
+        # Step attribution: property label is body, step is set_editor_property
+        self.assertEqual(collector.failures[0]["property"], "body")
+        self.assertEqual(collector.failures[0]["step"], "set_editor_property")
+
+        # Constructor failure step attribution
+        collector.record_failure(
+            "DA_Boss_EmberWarden_Draft", "fireball", "(constructor)",
+            "struct instance", None,
+            error_ex=RuntimeError("Constructor failed"),
+            step="construct"
+        )
+        self.assertEqual(collector.failures[1]["property"], "construct")
+
+        # Verify untruncated printing
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            collector.print_summary_table()
+        out = buf.getvalue()
+
+        self.assertIn("[DIAGNOSTIC SUMMARY DETAILS (UNTRUNCATED)]", out)
+        self.assertIn(f"[DRAFT_APPLY][FAILURE] DA_Boss_EmberWarden_Draft look body expected='/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body' actual_type=NoneType actual_repr=None exception=TypeError: {long_err}", out)
+
+
+
+    def test_to_class_ref_empty_returns_none(self):
+        from authoring_core import to_class_ref
+        val, form = to_class_ref("", self.fake_unreal)
+        self.assertIsNone(val)
+        self.assertEqual(form, "None")
+        val_none, form_none = to_class_ref(None, self.fake_unreal)
+        self.assertIsNone(val_none)
+        self.assertEqual(form_none, "None")
+
+    def test_to_class_ref_offline_keeps_string(self):
+        from authoring_core import to_class_ref
+        path = "/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C"
+        val, form = to_class_ref(path, unreal_module=None)
+        self.assertEqual(val, path)
+        self.assertEqual(form, "str")
+
+    def test_to_class_ref_none_result_raises_runtime_error(self):
+        from authoring_core import to_class_ref
+        bad_path = "/Game/NonExistent/BP_Bad.BP_Bad_C"
+        with self.assertRaises(RuntimeError) as ctx:
+            to_class_ref(bad_path, self.fake_unreal)
+        self.assertIn("class did not load", str(ctx.exception))
+        self.assertIn(bad_path, str(ctx.exception))
+
+    def test_fireball_ability_regression_not_converted_to_name(self):
+        from authoring_core import convert_property_for_engine, FNAME_PROPERTIES
+        ga_path = "/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C"
+        self.assertNotIn("FireballAbility", FNAME_PROPERTIES)
+        converted, form = convert_property_for_engine("FireballAbility", ga_path, str, self.fake_unreal)
+        self.assertNotEqual(form, "unreal.Name")
+        self.assertEqual(form, "loaded_class")
+        self.assertEqual(converted.get_path_name(), ga_path)
+
+    def test_three_field_sites_conversion_and_struct_set(self):
+        from authoring_core import convert_property_for_engine, extract_canonical_primitives, NATIVE_FIREBALL_FIELDS, NATIVE_PHASE_DEPENDENCY_FIELDS, NATIVE_STAGGER_PROFILE_FIELDS
+        ga_path = "/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C"
+        ge_path = "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C"
+
+        # Site 1: fireball.FireballAbility on RPGFireballConfig
+        fb_conv, fb_form = convert_property_for_engine("FireballAbility", ga_path, str, self.fake_unreal)
+        self.assertEqual(fb_form, "loaded_class")
+        fb_inst = self.fake_unreal.RPGFireballConfig()
+        fb_inst.set_editor_property("fireball_ability", fb_conv)
+        self.assertEqual(fb_inst.get_editor_property("fireball_ability").get_path_name(), ga_path)
+
+        # Site 2: phase_dependencies.ImmunityEffect on RPGPhaseDependencyConfig
+        pd_conv, pd_form = convert_property_for_engine("ImmunityEffect", ge_path, str, self.fake_unreal)
+        self.assertEqual(pd_form, "loaded_class")
+        pd_inst = self.fake_unreal.RPGPhaseDependencyConfig()
+        pd_inst.set_editor_property("immunity_effect", pd_conv)
+        self.assertEqual(pd_inst.get_editor_property("immunity_effect").get_path_name(), ge_path)
+
+        # Site 3: stagger_profile.ImmunityEffect on RPGStaggerProfileConfig
+        sp_conv, sp_form = convert_property_for_engine("ImmunityEffect", ge_path, str, self.fake_unreal)
+        self.assertEqual(sp_form, "loaded_class")
+        sp_inst = self.fake_unreal.RPGStaggerProfileConfig()
+        sp_inst.set_editor_property("immunity_effect", sp_conv)
+        self.assertEqual(sp_inst.get_editor_property("immunity_effect").get_path_name(), ge_path)
+
+class TestCandidateClassRefConverters(unittest.TestCase):
+    """
+    Preparation for Order A-218 (Lead C-327):
+    Parameterized unit tests evaluating candidate class-reference conversion forms
+    for TSoftClassPtr<UObject> fields (FireballAbility, ImmunityEffect) against fake unreal.
+    Enables instant one-line selection once Codex's DD27g measurement identifies the winning form.
+    """
+    def setUp(self):
+        class MockUClass:
+            def __init__(self, name):
+                self.name = name
+            def get_path_name(self):
+                return self.name
+            def __repr__(self):
+                return f"<Class '{self.name}'>"
+
+        class MockBPAsset:
+            def __init__(self, path):
+                self.path = path
+            def generated_class(self):
+                return MockUClass(self.path + "_C")
+
+        class MockStruct:
+            def __init__(self):
+                self.props = {}
+            def set_editor_property(self, name, val):
+                if isinstance(val, str) and not isinstance(val, MockUClass):
+                    raise TypeError(f"Failed to convert type 'str' to property '{name}' (SoftClassProperty)")
+                if hasattr(val, "is_name") or type(val).__name__ == "MockName":
+                    raise TypeError(f"Failed to convert type 'Name' to property '{name}' (SoftClassProperty)")
+                self.props[name] = val
+            def get_editor_property(self, name):
+                return self.props.get(name)
+
+        class MockName:
+            def __init__(self, s):
+                self.val = str(s)
+                self.is_name = True
+
+        class FakeEngineForClassRefs:
+            Name = MockName
+            RPGFireballConfig = MockStruct
+            RPGPhaseDependencyConfig = MockStruct
+            RPGStaggerProfileConfig = MockStruct
+
+            @staticmethod
+            def load_class(outer, path):
+                if path.endswith("_C"):
+                    return MockUClass(path)
+                raise RuntimeError(f"load_class failed for {path}")
+
+            class EditorAssetLibrary:
+                @staticmethod
+                def load_blueprint_class(path):
+                    clean = path[:-2] if path.endswith("_C") else path
+                    return MockUClass(clean + "_C")
+
+                @staticmethod
+                def load_asset(path):
+                    clean = path[:-2] if path.endswith("_C") else path
+                    return MockBPAsset(clean)
+
+                @staticmethod
+                def does_asset_exist(path):
+                    return not path.endswith("_C")
+
+        self.engine = FakeEngineForClassRefs
+
+    def _convert_candidate(self, form_name, path):
+        if form_name == "load_class":
+            path_c = path if path.endswith("_C") else (path + "_C")
+            return self.engine.load_class(None, path_c)
+        elif form_name == "load_blueprint_class":
+            path_base = path[:-2] if path.endswith("_C") else path
+            return self.engine.EditorAssetLibrary.load_blueprint_class(path_base)
+        elif form_name == "load_asset_generated_class":
+            path_base = path[:-2] if path.endswith("_C") else path
+            asset = self.engine.EditorAssetLibrary.load_asset(path_base)
+            return asset.generated_class()
+        raise ValueError(f"Unknown form: {form_name}")
+
+    def test_parameterized_classref_candidates(self):
+        forms = ["load_class", "load_blueprint_class", "load_asset_generated_class"]
+        test_paths = [
+            "/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C",
+            "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C"
+        ]
+        for form in forms:
+            for path in test_paths:
+                class_obj = self._convert_candidate(form, path)
+                self.assertIsNotNone(class_obj)
+                self.assertTrue(class_obj.get_path_name().endswith("_C"))
+
+                fb = self.engine.RPGFireballConfig()
+                fb.set_editor_property("fireball_ability", class_obj)
+                self.assertEqual(fb.get_editor_property("fireball_ability"), class_obj)
+
+                pd = self.engine.RPGPhaseDependencyConfig()
+                pd.set_editor_property("immunity_effect", class_obj)
+                self.assertEqual(pd.get_editor_property("immunity_effect"), class_obj)
+
+    def test_rejection_of_raw_string_and_name_for_soft_class(self):
+        fb = self.engine.RPGFireballConfig()
+        with self.assertRaises(TypeError):
+            fb.set_editor_property("fireball_ability", "GA_Fireball_Enemy_C")
+        with self.assertRaises(TypeError):
+            fb.set_editor_property("fireball_ability", self.engine.Name("GA_Fireball_Enemy_C"))
+
+class TestDraftBossProfilesOnlySelector(unittest.TestCase):
+    """Unit tests for --only asset selector in draft_boss_profiles.py (Order A-226 / Lead C-343)."""
+
+    def setUp(self):
+        self.json_path = os.path.join(_SCRIPT_DIR, "examples", "boss_draft_profiles.json")
+
+    def test_no_only_flag_returns_all_four_profiles(self):
+        ok, plan, errs = generate_offline_plan(self.json_path, only_assets=None)
+        self.assertTrue(ok)
+        self.assertEqual(len(errs), 0)
+        self.assertEqual(plan["profile_count"], 4)
+        names = [p["asset_name"] for p in plan["profiles"]]
+        self.assertEqual(len(names), 4)
+        self.assertIn("DA_Player_Hero_Draft_V2", names)
+        self.assertIn("DA_Boss_EmberWarden_Draft", names)
+        self.assertIn("DA_Boss_AbyssalRevenant_Draft", names)
+        self.assertIn("DA_Player_Hero_Draft", names)
+
+    def test_only_v2_processes_exactly_one_asset(self):
+        ok, plan, errs = generate_offline_plan(self.json_path, only_assets=["DA_Player_Hero_Draft_V2"])
+        self.assertTrue(ok)
+        self.assertEqual(len(errs), 0)
+        self.assertEqual(plan["profile_count"], 1)
+        self.assertEqual(plan["profiles"][0]["asset_name"], "DA_Player_Hero_Draft_V2")
+
+    def test_only_unknown_name_fails(self):
+        ok, plan, errs = generate_offline_plan(self.json_path, only_assets=["NonExistent_Asset"])
+        self.assertFalse(ok)
+        self.assertTrue(any("Unknown asset name(s)" in e for e in errs))
+        self.assertIn("NonExistent_Asset", str(errs))
+
+    def test_only_with_already_saved_name_refuses_overwrite(self):
+        ok, plan, errs = generate_offline_plan(self.json_path, only_assets=["DA_Boss_EmberWarden_Draft"])
+        self.assertTrue(ok)
+        self.assertEqual(plan["profile_count"], 1)
+
+        import draft_boss_profiles
+        fake_unreal_existing = SimpleNamespace(
+            is_editor=lambda: True,
+            get_editor_subsystem=lambda cls: SimpleNamespace(get_game_world=lambda: None),
+            UnrealEditorSubsystem="SubsystemClass",
+            AssetToolsHelpers=SimpleNamespace(get_asset_tools=lambda: None),
+            load_class=lambda outer, path: SimpleNamespace(get_path_name=lambda p=path: str(p)),
+            EditorAssetLibrary=SimpleNamespace(does_asset_exist=lambda path: True),
+            Name=lambda v: SimpleNamespace(to_string=lambda: str(v)),
+            SoftObjectPath=lambda v: SimpleNamespace(to_string=lambda: str(v)),
+        )
+
+        old_unreal = draft_boss_profiles.unreal
+        old_has = draft_boss_profiles.HAS_UNREAL
+        try:
+            draft_boss_profiles.unreal = fake_unreal_existing
+            draft_boss_profiles.HAS_UNREAL = True
+            success = execute_draft_apply(plan, save_requested=True)
+            self.assertFalse(success, "execute_draft_apply must refuse when asset already exists")
+        finally:
+            draft_boss_profiles.unreal = old_unreal
+            draft_boss_profiles.HAS_UNREAL = old_has
 
 
 if __name__ == "__main__":

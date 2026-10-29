@@ -1,0 +1,33 @@
+{
+  "release": "C-339",
+  "source_count": 217,
+  "old216unchanged": true,
+  "build_exit": 0,
+  "build_seconds": 8.318352599999999,
+  "focused_engine_exit": 255,
+  "wrapper_shell_exit": 1,
+  "focused_seconds": 24.225321899999997,
+  "finished": 1,
+  "passed": 0,
+  "failed": 1,
+  "BossCompile": "ready=1 output=1",
+  "HeroCompile": "ready=0 output=0 fields=0; field manifest required",
+  "preflight_ran": false,
+  "error_lines": 3,
+  "warning_lines": 13,
+  "raw_sha256": "09337ea95fbffa6178b2ddcfeadf9538984e70780cec33cbb9003115802fcad6",
+  "build_sha256": "8a0f7a3b5ff5678dfc276919e043850cca5e67ba553238b6fd2f8b2e49014e6f",
+  "manifest": {
+    "path": "Docs/BossCombatReview/Execution/Codex/DD27j/run_C339/EmberWarden_PhaseTwo_fields_manifest.json",
+    "sha256": "cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec",
+    "rows": 110,
+    "selected_phase": "PhaseTwo",
+    "source": "actual emit_fields_manifest.py output, no fabricated hash"
+  },
+  "binary": {
+    "Binaries/Win64/UnrealEditor-OneBossFight.dll": "8ad7a32e469a8dc4eb276f17f609ff8674712faa92ae3418b9caae8eea5c8809",
+    "Binaries/Win64/UnrealEditor-OneBossFight.pdb": "54cf0063bfc89f77eaba05574bf7d2a27c31fab6d5601ad6b6b9ab527c0f0996",
+    "Binaries/Win64/OneBossFight.exe": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65"
+  },
+  "no_fix_or_retry": true
+}

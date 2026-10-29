@@ -1,0 +1,30 @@
+[
+  {
+    "path": "Documentation/PROJECT_STATE.md",
+    "sha256": "d313ae56523be8f1e8b8ea808f6272f4e1bd4d3c75fdb287a5169dde12d96bc6"
+  },
+  {
+    "path": "Scripts/Editor/arena_use_pack_boss.py",
+    "sha256": "4a6bf482235adf99801150013100619a88b2ffbe825e8a24d1184ed128efd0eb"
+  },
+  {
+    "path": "Scripts/Editor/pie_scratch_route_a.py",
+    "sha256": "d571da4f689ad45eba8c25964f88ed779b0592f6c60988cde60b35a389f746ee"
+  },
+  {
+    "path": "Source/OneBossFight/Scratch/RPGScratchRouteA.cpp",
+    "sha256": "c2e5119aa5ef2ff35aa468f89f1162d356fad937225d5c068e0ed49f77ccc48d"
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+    "sha256": "17bc29c9d9e033de98cf9956c8d0d8e8bd2f7516a80295d96b4c2ff7ef822834"
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossHydrationPreparation.cpp",
+    "sha256": "642332410dad5127d2970daf550e1c6dd051d722a68b3f1751c97f2bdbdbedfd"
+  },
+  {
+    "path": "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
+    "sha256": "22299a447cb207b618825981c001cced3b24d661399cf40ecc8bdc85141101f8"
+  }
+]

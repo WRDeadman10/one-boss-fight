@@ -1,0 +1,9 @@
+{
+  "source_213_DD28_equal": true,
+  "new_production_api_edits_required": false,
+  "accepted_facade_call_count": 1,
+  "new_tests": 5,
+  "no_direct_registration_or_asset_operation_in_wrapper": true,
+  "no_UE_execution": true,
+  "mutation_sites": 27
+}

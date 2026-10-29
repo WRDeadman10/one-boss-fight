@@ -1,0 +1,33 @@
+TASK: A-211 delivery of corrected Program Status Report for Owner per Lead C-308 directive.
+
+1. EXECUTIVE SUMMARY & ARTIFACT DELIVERY
+- Corrected status report: Docs/BossCombatReview/Execution/Antigravity/Status/PROGRAM_STATUS_2026-10-29.md
+  * SHA256: e28b7de11b2472e8146f15622f157817773367acbf270a440aa7329d136bbed5 (21,084 bytes, pure CRLF).
+  * Cryptographic receipt: Docs/BossCombatReview/Execution/Antigravity/Status/receipt_sha256.txt.
+- Preserved historical baseline: Docs/BossCombatReview/Execution/Antigravity/Status/original_A210/ (PROGRAM_STATUS_2026-10-29.md and receipt_sha256.txt).
+- Documentation sync: Documentation/TASKS.md (AG-CONTENT18), Documentation/DECISIONS.md, and Documentation/TEST_PLAN.md (BUILD-52-AG).
+- Execution Boundary: STRICTLY OFFLINE. Zero Unreal Engine processes launched; zero Source/Content edits (212 Source files unchanged); zero git commits or pushes.
+
+2. SPECIFIC FOUR CORRECTIONS (PER C-308)
+1. DD23 Proves Cell (Pieces Contract):
+   - Corrected Pieces contract from 'Pieces non-empty with valid mesh paths' to state explicitly that an empty Pieces array is valid per C-269 / ValidateLook ('Pieces array valid (empty array allowed; if populated, every entry must be well-formed with valid mesh path and no duplicates)').
+2. DD25 Proves Cell (Precise Timing / Poll Contract):
+   - Corrected timing bounds from imprecise '[0, 1000000]' to quote exact contract per C-281/C-284: 'PackPollSeconds, HoldAtSeconds and DyingSeconds > 0; PackEndTimeMultiplier and BlendInSeconds >= 0 (0 = multiplier off); all timing/poll fields <= 1,000,000; MaxClipRestarts in [0, 1,000,000]; soft paths valid'.
+3. KI-083 Identity & Housekeeping:
+   - Stopped calling the pack-destroys-the-boss behavior 'KI-083' in Section 1 (DD25 Limits cell) and Section 5 (KI-133 description). Clarified as 'unresolved pack destroys dead boss ~4.35 s after death (cited as KI-083 in Death code comments, a wrong id)'.
+   - Added 'Housekeeping / Known Issue ID Discrepancies' subsection in Section 5 cataloging that RPGBossDeath.cpp:126 and RPGBossDeath.h:31, :99 cite 'KI-083' for pack destruction of the dead boss, whereas official KNOWN_ISSUES.md KI-083 is the Tooling issue regarding set_editor_property in PIE. Noted Codex will file the correct KI entry per C-308.
+4. Networking Status (Owner Decision):
+   - Updated Section 4 to state explicitly: 'Out of current scope, owner decision 2026-10-29. Current scope is single player only, and networking is not required now'.
+   - Retained 06_REFERENCE_REQUIREMENTS.md Section 'Debugging, QA, presentation and optional networking' citations and duel specification (AGENTS.md:3, DECISIONS.md:2026-10-20) as background.
+
+3. REPOSITORY HYGIENE & CRYPTOGRAPHIC RECEIPT
+- PROGRAM_STATUS_2026-10-29.md:
+  e28b7de11b2472e8146f15622f157817773367acbf270a440aa7329d136bbed5  (21,084 bytes)
+- Full Authoring Toolkit Discovery:
+  Ran 198 tests in 0.823s -> OK (198/198 PASS, exit code 0).
+- Working tree check:
+  git status --short -- Source Content Config: CLEAN (0 modifications).
+  0 __pycache__ directories in AuthoringToolkit, pure CRLF line endings across all modified files.
+
+4. STANDBY
+A-211 is delivered. Standing by for Codex DD27c Stage 2 probe results, Lead analysis, and subsequent helper correction order.

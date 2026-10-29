@@ -1,0 +1,58 @@
+[2026.10.29-15.04.17:922][  2]LogPython: [DIAGNOSTIC SUMMARY] Collected 9 failure(s) during in-memory apply:
+
+[2026.10.29-15.04.17:932][  2]LogPython: ==========================================================================================
+
+[2026.10.29-15.04.17:943][  2]LogPython: Asset                      Section          Property           Expected       Actual Type  Actual Repr              Error                     
+
+[2026.10.29-15.04.17:953][  2]LogPython: ----------------------------------------------------------------------------------------------------------------------------------------
+
+[2026.10.29-15.04.17:965][  2]LogPython: DA_Boss_EmberWarden_Draft  fireball         fireball_ability   /Game/Advance  NoneType     None                     TypeError: RPGFireballCon 
+
+[2026.10.29-15.04.17:976][  2]LogPython: DA_Boss_EmberWarden_Draft  phase_dependenc  immunity_effect    /Game/Advance  NoneType     None                     RuntimeError: asset does  
+
+[2026.10.29-15.04.17:986][  2]LogPython: DA_Boss_EmberWarden_Draft  stagger_profile  immunity_effect    /Game/Advance  NoneType     None                     RuntimeError: asset does  
+
+[2026.10.29-15.04.17:998][  2]LogPython: DA_Boss_AbyssalRevenant_D  fireball         fireball_ability   /Game/Advance  NoneType     None                     TypeError: RPGFireballCon 
+
+[2026.10.29-15.04.18:009][  2]LogPython: DA_Boss_AbyssalRevenant_D  phase_dependenc  immunity_effect    /Game/Advance  NoneType     None                     RuntimeError: asset does  
+
+[2026.10.29-15.04.18:020][  2]LogPython: DA_Boss_AbyssalRevenant_D  stagger_profile  immunity_effect    /Game/Advance  NoneType     None                     RuntimeError: asset does  
+
+[2026.10.29-15.04.18:031][  2]LogPython: DA_Player_Hero_Draft       fireball         fireball_ability   /Game/Advance  NoneType     None                     TypeError: RPGFireballCon 
+
+[2026.10.29-15.04.18:042][  2]LogPython: DA_Player_Hero_Draft       phase_dependenc  immunity_effect    /Game/Advance  NoneType     None                     RuntimeError: asset does  
+
+[2026.10.29-15.04.18:053][  2]LogPython: DA_Player_Hero_Draft       stagger_profile  immunity_effect    /Game/Advance  NoneType     None                     RuntimeError: asset does  
+
+[2026.10.29-15.04.18:064][  2]LogPython: ==========================================================================================
+
+[2026.10.29-15.04.18:075][  2]LogPython: 
+[DIAGNOSTIC SUMMARY DETAILS (UNTRUNCATED)]
+[2026.10.29-15.04.18:097][  2]LogPython: [DRAFT_APPLY][FAILURE] DA_Boss_EmberWarden_Draft fireball fireball_ability expected='/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C' actual_type=NoneType actual_repr=None exception=TypeError: RPGFireballConfig: Failed to convert type 'Name' to property 'FireballAbility' (SoftClassProperty) for attribute 'fireball_ability' on 'RPGFireballConfig'
+  TypeError: NativizeProperty: Cannot nativize 'Name' as 'FireballAbility' (SoftClassProperty)
+    TypeError: NativizeClass: Cannot nativize 'Name' as 'Class' (allowed Class type: 'Object')
+      TypeError: NativizeObject: Cannot nativize 'Name' as 'Object' (allowed Class type: 'Class')
+[2026.10.29-15.04.18:117][  2]LogPython: [DRAFT_APPLY][FAILURE] DA_Boss_EmberWarden_Draft phase_dependencies immunity_effect expected='/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' actual_type=NoneType actual_repr=None exception=RuntimeError: asset does not exist or did not load: '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C'
+
+[2026.10.29-15.04.18:128][  2]LogPython: [DRAFT_APPLY][FAILURE] DA_Boss_EmberWarden_Draft stagger_profile immunity_effect expected='/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' actual_type=NoneType actual_repr=None exception=RuntimeError: asset does not exist or did not load: '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C'
+
+[2026.10.29-15.04.18:139][  2]LogPython: [DRAFT_APPLY][FAILURE] DA_Boss_AbyssalRevenant_Draft fireball fireball_ability expected='/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C' actual_type=NoneType actual_repr=None exception=TypeError: RPGFireballConfig: Failed to convert type 'Name' to property 'FireballAbility' (SoftClassProperty) for attribute 'fireball_ability' on 'RPGFireballConfig'
+  TypeError: NativizeProperty: Cannot nativize 'Name' as 'FireballAbility' (SoftClassProperty)
+    TypeError: NativizeClass: Cannot nativize 'Name' as 'Class' (allowed Class type: 'Object')
+      TypeError: NativizeObject: Cannot nativize 'Name' as 'Object' (allowed Class type: 'Class')
+[2026.10.29-15.04.18:161][  2]LogPython: [DRAFT_APPLY][FAILURE] DA_Boss_AbyssalRevenant_Draft phase_dependencies immunity_effect expected='/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' actual_type=NoneType actual_repr=None exception=RuntimeError: asset does not exist or did not load: '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C'
+
+[2026.10.29-15.04.18:171][  2]LogPython: [DRAFT_APPLY][FAILURE] DA_Boss_AbyssalRevenant_Draft stagger_profile immunity_effect expected='/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' actual_type=NoneType actual_repr=None exception=RuntimeError: asset does not exist or did not load: '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C'
+
+[2026.10.29-15.04.18:182][  2]LogPython: [DRAFT_APPLY][FAILURE] DA_Player_Hero_Draft fireball fireball_ability expected='/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C' actual_type=NoneType actual_repr=None exception=TypeError: RPGFireballConfig: Failed to convert type 'Name' to property 'FireballAbility' (SoftClassProperty) for attribute 'fireball_ability' on 'RPGFireballConfig'
+  TypeError: NativizeProperty: Cannot nativize 'Name' as 'FireballAbility' (SoftClassProperty)
+    TypeError: NativizeClass: Cannot nativize 'Name' as 'Class' (allowed Class type: 'Object')
+      TypeError: NativizeObject: Cannot nativize 'Name' as 'Object' (allowed Class type: 'Class')
+[2026.10.29-15.04.18:204][  2]LogPython: [DRAFT_APPLY][FAILURE] DA_Player_Hero_Draft phase_dependencies immunity_effect expected='/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' actual_type=NoneType actual_repr=None exception=RuntimeError: asset does not exist or did not load: '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C'
+
+[2026.10.29-15.04.18:215][  2]LogPython: [DRAFT_APPLY][FAILURE] DA_Player_Hero_Draft stagger_profile immunity_effect expected='/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' actual_type=NoneType actual_repr=None exception=RuntimeError: asset does not exist or did not load: '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C'
+
+[2026.10.29-15.04.18:225][  2]LogPython: ==========================================================================================
+
+[2026.10.29-15.04.18:248][  2]LogPython: 
+[DRAFT_APPLY] FATAL: 9 property failure(s) detected during in-memory authoring.

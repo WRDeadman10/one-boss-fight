@@ -1,0 +1,10 @@
+[2026.10.29-15.47.31:984][  2]LogPython: [DRAFT_APPLY] Creating draft asset at '/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft'...
+[2026.10.29-15.47.33:143][  2]LogPython: [DRAFT_APPLY] fields rows read back: 110 of 110 expected
+[2026.10.29-15.47.33:169][  2]LogPython: [DRAFT_APPLY] Initialized & verified all 22 typed properties on draft asset: 'DA_Boss_EmberWarden_Draft'
+[2026.10.29-15.47.33:178][  2]LogPython: [DRAFT_APPLY] Creating draft asset at '/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_AbyssalRevenant_Draft'...
+[2026.10.29-15.47.33:203][  2]LogPython: [DRAFT_APPLY] fields rows read back: 0 of 0 expected
+[2026.10.29-15.47.33:211][  2]LogPython: [DRAFT_APPLY] Initialized & verified all 22 typed properties on draft asset: 'DA_Boss_AbyssalRevenant_Draft'
+[2026.10.29-15.47.33:222][  2]LogPython: [DRAFT_APPLY] Creating draft asset at '/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft'...
+[2026.10.29-15.47.33:240][  2]LogPython: [DRAFT_APPLY] fields rows read back: 0 of 0 expected
+[2026.10.29-15.47.33:243][  2]LogPython: [DRAFT_APPLY] Initialized & verified all 22 typed properties on draft asset: 'DA_Player_Hero_Draft'
+[DRAFT_APPLY] SUCCESS: In-memory asset creation and complete readback verified.

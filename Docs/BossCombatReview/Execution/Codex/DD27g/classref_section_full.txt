@@ -1,0 +1,115 @@
+[CLASSREF] SoftClassPath members: ['assign', 'cast', 'copy', 'export_text', 'get_editor_property', 'import_text', 'set_editor_properties', 'set_editor_property', 'static_struct', 'to_tuple']
+
+--- Probing Candidate Class Forms for GA_Fireball_Enemy ---
+[CLASSREF] load_class_c /Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C type=BlueprintGeneratedClass repr=<Object '/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C' (0x000004CB4EFE7E00) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF] load_class_base /Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy type=NoneType repr=None exception=none
+[CLASSREF] load_blueprint_class_base /Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy type=BlueprintGeneratedClass repr=<Object '/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C' (0x000004CB4EFE7E00) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF] load_blueprint_class_c /Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C type=NoneType repr=None exception=none
+[CLASSREF] load_asset_generated_class /Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy type=BlueprintGeneratedClass repr=<Object '/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C' (0x000004CB4EFE7E00) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF] load_object_c /Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C type=BlueprintGeneratedClass repr=<Object '/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C' (0x000004CB4EFE7E00) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF] SoftClassPath_ctor_c /Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C type=SoftClassPath repr=<Struct 'SoftClassPath' (0x000004CB76CF6000) {}> exception=none
+[CLASSREF] SoftClassPath_ctor_base /Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy type=SoftClassPath repr=<Struct 'SoftClassPath' (0x000004CB76CF5F10) {}> exception=none
+[CLASSREF] str_c /Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C type=str repr='/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C' exception=none
+[CLASSREF] str_base /Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy type=str repr='/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy' exception=none
+[CLASSREF] none None type=NoneType repr=None exception=none
+[CLASSREF][SET] load_class_c RPGFireballConfig.fireball_ability result=ok readback_type=BlueprintGeneratedClass readback_repr=<Object '/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C' (0x000004CB4EFE7E00) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF][SET] load_blueprint_class_base RPGFireballConfig.fireball_ability result=ok readback_type=BlueprintGeneratedClass readback_repr=<Object '/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C' (0x000004CB4EFE7E00) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF][SET] load_asset_generated_class RPGFireballConfig.fireball_ability result=ok readback_type=BlueprintGeneratedClass readback_repr=<Object '/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C' (0x000004CB4EFE7E00) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF][SET] load_object_c RPGFireballConfig.fireball_ability result=ok readback_type=BlueprintGeneratedClass readback_repr=<Object '/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C' (0x000004CB4EFE7E00) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF][SET] SoftClassPath_ctor_c RPGFireballConfig.fireball_ability result=failed readback_type=NoneType readback_repr=None exception=TypeError: RPGFireballConfig: Failed to convert type 'SoftClassPath' to property 'FireballAbility' (SoftClassProperty) for attribute 'fireball_ability' on 'RPGFireballConfig'
+  TypeError: NativizeProperty: Cannot nativize 'SoftClassPath' as 'FireballAbility' (SoftClassProperty)
+    TypeError: NativizeClass: Cannot nativize 'SoftClassPath' as 'Class' (allowed Class type: 'Object')
+      TypeError: NativizeObject: Cannot nativize 'SoftClassPath' as 'Object' (allowed Class type: 'Class')
+[CLASSREF][SET] SoftClassPath_ctor_base RPGFireballConfig.fireball_ability result=failed readback_type=NoneType readback_repr=None exception=TypeError: RPGFireballConfig: Failed to convert type 'SoftClassPath' to property 'FireballAbility' (SoftClassProperty) for attribute 'fireball_ability' on 'RPGFireballConfig'
+  TypeError: NativizeProperty: Cannot nativize 'SoftClassPath' as 'FireballAbility' (SoftClassProperty)
+    TypeError: NativizeClass: Cannot nativize 'SoftClassPath' as 'Class' (allowed Class type: 'Object')
+      TypeError: NativizeObject: Cannot nativize 'SoftClassPath' as 'Object' (allowed Class type: 'Class')
+[CLASSREF][SET] str_c RPGFireballConfig.fireball_ability result=failed readback_type=NoneType readback_repr=None exception=TypeError: RPGFireballConfig: Failed to convert type 'str' to property 'FireballAbility' (SoftClassProperty) for attribute 'fireball_ability' on 'RPGFireballConfig'
+  TypeError: NativizeProperty: Cannot nativize 'str' as 'FireballAbility' (SoftClassProperty)
+    TypeError: NativizeClass: Cannot nativize 'str' as 'Class' (allowed Class type: 'Object')
+      TypeError: NativizeObject: Cannot nativize 'str' as 'Object' (allowed Class type: 'Class')
+[CLASSREF][SET] str_base RPGFireballConfig.fireball_ability result=failed readback_type=NoneType readback_repr=None exception=TypeError: RPGFireballConfig: Failed to convert type 'str' to property 'FireballAbility' (SoftClassProperty) for attribute 'fireball_ability' on 'RPGFireballConfig'
+  TypeError: NativizeProperty: Cannot nativize 'str' as 'FireballAbility' (SoftClassProperty)
+    TypeError: NativizeClass: Cannot nativize 'str' as 'Class' (allowed Class type: 'Object')
+      TypeError: NativizeObject: Cannot nativize 'str' as 'Object' (allowed Class type: 'Class')
+[CLASSREF][SET] none RPGFireballConfig.fireball_ability result=ok readback_type=NoneType readback_repr=None exception=none
+
+--- Probing Candidate Class Forms for GE_HitStunImmune ---
+[CLASSREF] load_class_c /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C type=BlueprintGeneratedClass repr=<Object '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' (0x000004CB557F9300) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF] load_class_base /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune type=NoneType repr=None exception=none
+[CLASSREF] load_blueprint_class_base /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune type=BlueprintGeneratedClass repr=<Object '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' (0x000004CB557F9300) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF] load_blueprint_class_c /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C type=NoneType repr=None exception=none
+[CLASSREF] load_asset_generated_class /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune type=BlueprintGeneratedClass repr=<Object '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' (0x000004CB557F9300) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF] load_object_c /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C type=BlueprintGeneratedClass repr=<Object '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' (0x000004CB557F9300) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF] SoftClassPath_ctor_c /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C type=SoftClassPath repr=<Struct 'SoftClassPath' (0x000004CB76CFAB30) {}> exception=none
+[CLASSREF] SoftClassPath_ctor_base /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune type=SoftClassPath repr=<Struct 'SoftClassPath' (0x000004CB76CFAB90) {}> exception=none
+[CLASSREF] str_c /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C type=str repr='/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' exception=none
+[CLASSREF] str_base /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune type=str repr='/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune' exception=none
+[CLASSREF] none None type=NoneType repr=None exception=none
+[CLASSREF][SET] load_class_c RPGPhaseDependencyConfig.immunity_effect result=ok readback_type=BlueprintGeneratedClass readback_repr=<Object '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' (0x000004CB557F9300) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF][SET] load_class_c RPGStaggerProfileConfig.immunity_effect result=ok readback_type=BlueprintGeneratedClass readback_repr=<Object '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' (0x000004CB557F9300) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF][SET] load_blueprint_class_base RPGPhaseDependencyConfig.immunity_effect result=ok readback_type=BlueprintGeneratedClass readback_repr=<Object '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' (0x000004CB557F9300) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF][SET] load_blueprint_class_base RPGStaggerProfileConfig.immunity_effect result=ok readback_type=BlueprintGeneratedClass readback_repr=<Object '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' (0x000004CB557F9300) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF][SET] load_asset_generated_class RPGPhaseDependencyConfig.immunity_effect result=ok readback_type=BlueprintGeneratedClass readback_repr=<Object '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' (0x000004CB557F9300) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF][SET] load_asset_generated_class RPGStaggerProfileConfig.immunity_effect result=ok readback_type=BlueprintGeneratedClass readback_repr=<Object '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' (0x000004CB557F9300) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF][SET] load_object_c RPGPhaseDependencyConfig.immunity_effect result=ok readback_type=BlueprintGeneratedClass readback_repr=<Object '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' (0x000004CB557F9300) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF][SET] load_object_c RPGStaggerProfileConfig.immunity_effect result=ok readback_type=BlueprintGeneratedClass readback_repr=<Object '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' (0x000004CB557F9300) Class 'BlueprintGeneratedClass'> exception=none
+[CLASSREF][SET] SoftClassPath_ctor_c RPGPhaseDependencyConfig.immunity_effect result=failed readback_type=NoneType readback_repr=None exception=TypeError: RPGPhaseDependencyConfig: Failed to convert type 'SoftClassPath' to property 'ImmunityEffect' (SoftClassProperty) for attribute 'immunity_effect' on 'RPGPhaseDependencyConfig'
+  TypeError: NativizeProperty: Cannot nativize 'SoftClassPath' as 'ImmunityEffect' (SoftClassProperty)
+    TypeError: NativizeClass: Cannot nativize 'SoftClassPath' as 'Class' (allowed Class type: 'Object')
+      TypeError: NativizeObject: Cannot nativize 'SoftClassPath' as 'Object' (allowed Class type: 'Class')
+[CLASSREF][SET] SoftClassPath_ctor_c RPGStaggerProfileConfig.immunity_effect result=failed readback_type=NoneType readback_repr=None exception=TypeError: RPGStaggerProfileConfig: Failed to convert type 'SoftClassPath' to property 'ImmunityEffect' (SoftClassProperty) for attribute 'immunity_effect' on 'RPGStaggerProfileConfig'
+  TypeError: NativizeProperty: Cannot nativize 'SoftClassPath' as 'ImmunityEffect' (SoftClassProperty)
+    TypeError: NativizeClass: Cannot nativize 'SoftClassPath' as 'Class' (allowed Class type: 'Object')
+      TypeError: NativizeObject: Cannot nativize 'SoftClassPath' as 'Object' (allowed Class type: 'Class')
+[CLASSREF][SET] SoftClassPath_ctor_base RPGPhaseDependencyConfig.immunity_effect result=failed readback_type=NoneType readback_repr=None exception=TypeError: RPGPhaseDependencyConfig: Failed to convert type 'SoftClassPath' to property 'ImmunityEffect' (SoftClassProperty) for attribute 'immunity_effect' on 'RPGPhaseDependencyConfig'
+  TypeError: NativizeProperty: Cannot nativize 'SoftClassPath' as 'ImmunityEffect' (SoftClassProperty)
+    TypeError: NativizeClass: Cannot nativize 'SoftClassPath' as 'Class' (allowed Class type: 'Object')
+      TypeError: NativizeObject: Cannot nativize 'SoftClassPath' as 'Object' (allowed Class type: 'Class')
+[CLASSREF][SET] SoftClassPath_ctor_base RPGStaggerProfileConfig.immunity_effect result=failed readback_type=NoneType readback_repr=None exception=TypeError: RPGStaggerProfileConfig: Failed to convert type 'SoftClassPath' to property 'ImmunityEffect' (SoftClassProperty) for attribute 'immunity_effect' on 'RPGStaggerProfileConfig'
+  TypeError: NativizeProperty: Cannot nativize 'SoftClassPath' as 'ImmunityEffect' (SoftClassProperty)
+    TypeError: NativizeClass: Cannot nativize 'SoftClassPath' as 'Class' (allowed Class type: 'Object')
+      TypeError: NativizeObject: Cannot nativize 'SoftClassPath' as 'Object' (allowed Class type: 'Class')
+[CLASSREF][SET] str_c RPGPhaseDependencyConfig.immunity_effect result=failed readback_type=NoneType readback_repr=None exception=TypeError: RPGPhaseDependencyConfig: Failed to convert type 'str' to property 'ImmunityEffect' (SoftClassProperty) for attribute 'immunity_effect' on 'RPGPhaseDependencyConfig'
+  TypeError: NativizeProperty: Cannot nativize 'str' as 'ImmunityEffect' (SoftClassProperty)
+    TypeError: NativizeClass: Cannot nativize 'str' as 'Class' (allowed Class type: 'Object')
+      TypeError: NativizeObject: Cannot nativize 'str' as 'Object' (allowed Class type: 'Class')
+[CLASSREF][SET] str_c RPGStaggerProfileConfig.immunity_effect result=failed readback_type=NoneType readback_repr=None exception=TypeError: RPGStaggerProfileConfig: Failed to convert type 'str' to property 'ImmunityEffect' (SoftClassProperty) for attribute 'immunity_effect' on 'RPGStaggerProfileConfig'
+  TypeError: NativizeProperty: Cannot nativize 'str' as 'ImmunityEffect' (SoftClassProperty)
+    TypeError: NativizeClass: Cannot nativize 'str' as 'Class' (allowed Class type: 'Object')
+      TypeError: NativizeObject: Cannot nativize 'str' as 'Object' (allowed Class type: 'Class')
+[CLASSREF][SET] str_base RPGPhaseDependencyConfig.immunity_effect result=failed readback_type=NoneType readback_repr=None exception=TypeError: RPGPhaseDependencyConfig: Failed to convert type 'str' to property 'ImmunityEffect' (SoftClassProperty) for attribute 'immunity_effect' on 'RPGPhaseDependencyConfig'
+  TypeError: NativizeProperty: Cannot nativize 'str' as 'ImmunityEffect' (SoftClassProperty)
+    TypeError: NativizeClass: Cannot nativize 'str' as 'Class' (allowed Class type: 'Object')
+      TypeError: NativizeObject: Cannot nativize 'str' as 'Object' (allowed Class type: 'Class')
+[CLASSREF][SET] str_base RPGStaggerProfileConfig.immunity_effect result=failed readback_type=NoneType readback_repr=None exception=TypeError: RPGStaggerProfileConfig: Failed to convert type 'str' to property 'ImmunityEffect' (SoftClassProperty) for attribute 'immunity_effect' on 'RPGStaggerProfileConfig'
+  TypeError: NativizeProperty: Cannot nativize 'str' as 'ImmunityEffect' (SoftClassProperty)
+    TypeError: NativizeClass: Cannot nativize 'str' as 'Class' (allowed Class type: 'Object')
+      TypeError: NativizeObject: Cannot nativize 'str' as 'Object' (allowed Class type: 'Class')
+[CLASSREF][SET] none RPGPhaseDependencyConfig.immunity_effect result=ok readback_type=NoneType readback_repr=None exception=none
+[CLASSREF][SET] none RPGStaggerProfileConfig.immunity_effect result=ok readback_type=NoneType readback_repr=None exception=none
+[2026.10.29-15.21.09:768][  2]LogPackageName: Warning: GetLocalFullPath called on FPackagePath ../../../../../../UnrealProject/OneBossFight/Content/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Textures/Water/T_Water_N_2 which has an unspecified header extension, and the path does not exist on disk. Assuming EPackageExtension::Asset.
+[2026.10.29-15.21.09:768][  2]LoadErrors: Warning: While trying to load package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Materials/Abilities/M_IggyScorch_Flame_Spit, a dependent package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Textures/Water/T_Water_N_2 was not available. Additional explanatory information follows:
+FPackageName: Skipped package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Textures/Water/T_Water_N_2 has a valid, mounted, mount point but does not exist either on disk or in iostore. The uncooked file would be expected on disk at 'C:/UnrealProject/OneBossFight/Content/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Textures/Water/T_Water_N_2.uasset'. Perhaps it has been deleted or was not synced?
+
+[2026.10.29-15.21.09:770][  2]LogPackageName: Warning: GetLocalFullPath called on FPackagePath ../../../../../../UnrealProject/OneBossFight/Content/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Textures/Water/T_Water_N_2 which has an unspecified header extension, and the path does not exist on disk. Assuming EPackageExtension::Asset.
+[2026.10.29-15.21.09:770][  2]LoadErrors: Warning: While trying to load package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Materials/Abilities/M_IggyScorch_Flame_Spit_GPU, a dependent package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Textures/Water/T_Water_N_2 was not available. Additional explanatory information follows:
+FPackageName: Skipped package /Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Textures/Water/T_Water_N_2 has a valid, mounted, mount point but does not exist either on disk or in iostore. The uncooked file would be expected on disk at 'C:/UnrealProject/OneBossFight/Content/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/IggyVFX/Textures/Water/T_Water_N_2.uasset'. Perhaps it has been deleted or was not synced?
+
+[2026.10.29-15.21.09:771][  3]LogEOSSDK: LogEOS: SDK Config Platform Update Request Successful, Time: 9.400371
+[2026.10.29-15.21.09:772][  3]LogEOSSDK: LogEOSAnalytics: EOS SDK Analytics disabled for route [1].
+[2026.10.29-15.21.09:774][  3]LogEOSSDK: LogEOS: Updating Product SDK Config, Time: 9.402838
+[2026.10.29-15.21.09:797][  3]Cmd: QUIT_EDITOR
+[2026.10.29-15.21.09:797][  4]LogCore: Engine exit requested (reason: UUnrealEdEngine::CloseEditor())
+[2026.10.29-15.21.09:797][  4]LogSourceControl: Uncontrolled asset enumeration finished in 0.692876 seconds (Found 6260 uncontrolled assets)
+[2026.10.29-15.21.09:805][  4]LogCore: Engine exit requested (reason: EngineExit() was called; note: exit was already requested)
+[2026.10.29-15.21.09:805][  4]LogStaticMesh: Abandoning remaining async distance field tasks for shutdown
+[2026.10.29-15.21.09:805][  4]LogStaticMesh: Abandoning remaining async card representation tasks for shutdown
+[2026.10.29-15.21.09:805][  4]LogWorld: UWorld::CleanupWorld for L_SevarogArena, bSessionEnded=true, bCleanupResources=true
+[2026.10.29-15.21.09:805][  4]LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+[2026.10.29-15.21.09:822][  4]LogStylusInput: Shutting down StylusInput subsystem.
+[2026.10.29-15.21.09:823][  4]LogLevelSequenceEditor: LevelSequenceEditor subsystem deinitialized.
+[2026.10.29-15.21.09:826][  4]LogStudioTelemetry: Ended StudioTelemetry Session
+[2026.10.29-15.21.09:829][  4]LogAnalytics: Display: [UEEditor.Rocket.Release] Destroying ET Analytics provider
+[2026.10.29-15.21.09:829][  4]LogAnalytics: Display: [UEEditor.Rocket.Release] Ended ET Analytics provider session
+[2026.10.29-15.21.09:829][  4]LogAnalytics: Display: [UEEditor.Rocket.Release] Destroyed ET Analytics provider

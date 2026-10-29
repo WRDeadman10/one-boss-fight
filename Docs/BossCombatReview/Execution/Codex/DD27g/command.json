@@ -1,0 +1,16 @@
+{
+    "attempt":  1,
+    "arguments":  [
+                      "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+                      "-ExecutePythonScript=\"C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/probe_unreal_api.py --classrefs\"",
+                      "-unattended",
+                      "-nullrhi",
+                      "-nosound",
+                      "-nosplash",
+                      "-abslog=C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Codex\\DD27g\\editor_raw.log"
+                  ],
+    "release":  "C-327",
+    "save_flag":  false,
+    "preparation_order":  "C-325",
+    "executable":  "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Binaries\\Win64\\UnrealEditor-Cmd.exe"
+}

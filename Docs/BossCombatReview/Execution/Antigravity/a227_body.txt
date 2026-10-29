@@ -1,0 +1,36 @@
+
+### [A-227] Antigravity -> Claude,Codex,Owner, 2026-10-29 22:45
+TASK: A-227 Delivery of 83-Point Combat Ledger Data-Driven Gap Analysis (C-338 / C-344) & V2 Definition ID Clarification (C-344). To Lead Claude, Codex, and Owner.
+STATUS: Complete offline architectural audit delivered in DATA_DRIVEN_LEDGER_GAPS.md. Clarification on definition_id provided. Zero Source/Content/Config edits, zero Unreal processes, pure CRLF, 0 __pycache__.
+
+1. REASON WHY V2 RECEIVED definition_id: 'Player_Hero_V2' (C-344):
+- In draft_boss_profiles.py:validate_boss_profile_data() lines 233-234, the authoring helper strictly enforces unique definition_id across the input profile set:
+  elif exact_fname_in(def_id, seen_def_ids):
+      errors.append(f"Duplicate definition_id in profile set: '{def_id}'")
+- Because DA_Player_Hero_Draft already claims definition_id: 'Player_Hero', keeping 'Player_Hero' on DA_Player_Hero_Draft_V2 would fail profile set validation with 'Duplicate definition_id in profile set: Player_Hero'.
+- Assigning definition_id: 'Player_Hero_V2' and presentation_id: 'Presentation_Player_Hero_V2' allowed both draft profiles to coexist simultaneously in boss_draft_profiles.json without violating uniqueness constraints or requiring an overwrite of the original draft.
+
+2. DELIVERABLES & EXACT CRYPTOGRAPHIC FILE HASHES:
+- Report: Docs/BossCombatReview/Execution/Antigravity/Ledger/DATA_DRIVEN_LEDGER_GAPS.md
+  * SHA256: b52f1d0012750543d7d29c8a3d0714ddaa25e885bc7de1c137dcfb13d485d170 (18,425 bytes)
+- Evidence Receipt: Docs/BossCombatReview/Execution/Antigravity/Ledger/evidence_sha256.txt
+  * SHA256: 32e1377f0a25026527029c3097e884c5bfdb1448c951c6d8928b20478122d393 (155 bytes)
+- Repository Hygiene: 0 __pycache__ directories, 100% pure CRLF across all created and updated files.
+
+3. SUMMARY OF THE 3 LEDGER CATEGORIES (83 REQUIREMENTS CROSS-EXAMINED):
+- Category 1: 16 Requirements 100% Closed Offline (Gated STRICTLY by Runtime Call Site DD30):
+  * Requirements: BOSS-DEF-001..004, BOSS-PHS-001..005, BOSS-HIT-001, BOSS-HIT-011, BOSS-COM-001, BOSS-EXE-005, BOSS-AWR-004, BOSS-MOV-001, BOSS-ANM-002.
+  * For all 16 items, all 6 stages of the typed data-driven chain (Record, Validator, Adapter, Authoring Field, Manifest Row, Unit Test) are fully implemented and verified in engine memory (DD27h).
+  * These 16 items require ZERO new schema or authoring work. They will advance from PARTIAL to live verified the moment DD30 connects ActivateWorld into URPGPlayerMovesSubsystem.
+- Category 2: 11 Requirements Represent Real Data-Driven Gaps (Missing ABI Records):
+  * Requirements: BOSS-AWR-001 (target validity timeout), BOSS-AWR-003 (distance convention enum), BOSS-SEL-004 (utility weighting table), BOSS-SEL-006 (per-move cooldown table MoveCooldowns), BOSS-SEL-007 (anti-repeat history depth), BOSS-EXE-001 (execution lock timeout), BOSS-EXE-007 (attack watchdog duration), BOSS-COM-006 (pressure chain limits), BOSS-COM-007 (post-whiff recovery montage/timing), BOSS-PAC-001 (explicit attack timing window table), BOSS-PAC-003 (post-heavy attack opening duration).
+  * Recommendation: Defer introducing Category 2 schema extensions to URPGBossDefinition until AFTER the baseline 12 plans are connected and operating in live gameplay via DD30.
+- Category 3: 56 Requirements Belong to Engine Systems & Physics Queries (Non-ABI Scope):
+  * Requirements: Swept traces (URPGTraceGuard), hit confirmation priority (URPGDamageResolver), defense / iframe state machines (URPGDodgeTiming), Motion Warping, and QA debug overlays (URPGCombatDebug, URPGBossLegend). Outside data asset configuration scope.
+
+4. SYNCHRONIZED DOCUMENTATION:
+- Synced Documentation/TASKS.md (AG-CONTENT27) and Documentation/DECISIONS.md.
+
+5. HANDOFF:
+- Order A-227 is complete. Ready for Tech Lead Claude review.
+- Also acknowledged Codex report X-345 confirming measured in-memory success of DD27l (--only DA_Player_Hero_Draft_V2, 22/22 properties, 4/4 fields read back, 0 errors, no save). Standing by.

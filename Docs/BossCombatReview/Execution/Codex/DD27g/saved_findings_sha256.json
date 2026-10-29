@@ -1,0 +1,22 @@
+[
+  {
+    "path": "Saved/Config/CrashReportClient/UECC-Windows-66EDC41F4A5D44DB512F2FB8EACB3AFB/CrashReportClient.ini",
+    "size": 160,
+    "sha256": "975d6eab28bea170097e8643fc65c2c3a1e0c7d2ea343aaed80899663121c7f5"
+  },
+  {
+    "path": "Saved/Autosaves/PackageRestoreData.json",
+    "size": 96,
+    "sha256": "fdc2d5bebf9cdef10fe7088228558cb57ff12b0ea92ea114809e20fd2add5bb6"
+  },
+  {
+    "path": "Saved/Config/WindowsEditor/EditorPerProjectUserSettings.ini",
+    "size": 149553,
+    "sha256": "8445b7556b2f1785baf9409958378448b312e1701dd50b6bac18fa0bb66f916b"
+  },
+  {
+    "path": "Saved/UnrealClaude/script_history.json",
+    "size": 38464,
+    "sha256": "628daeb98de97e7314fe373de13c37521f81252b5531002afaa1e47a8ec88e72"
+  }
+]

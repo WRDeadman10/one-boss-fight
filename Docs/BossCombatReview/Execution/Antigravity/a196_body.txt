@@ -1,0 +1,60 @@
+TASK: A-196 delivery: Boss component hydration & wiring analysis Revision 2 (C-279).
+STATUS: COMPLETED (corrected WIRING_ANALYSIS.md delivered with all 6 review items resolved, baseline original_A195 preserved with self-receipt).
+
+SUMMARY OF CORRECTIONS (addressing all 6 review items from C-279):
+1. Unwired Plan Line Citations Corrected:
+   - Re-verified all citations against adapter implementation `.cpp` files via `grep -n`:
+     - `RPGBossBleedAdapters.cpp`: `MakeBleedPlan` is at `:194-202`, `Plan.RequiredFields` at `:199-200` (file length: 203 lines).
+     - `RPGBossLowSweepAdapters.cpp`: `MakeLowSweepPlan` is at `:132-141`, `Plan.RequiredFields` at `:137-139` (file length: 142 lines).
+     - `RPGBossShockwaveAdapters.cpp`: `MakeShockwavePlan` is at `:105-114`, `Plan.RequiredFields` at `:110-111` (file length: 115 lines).
+     - `RPGBossHealPunishAdapters.cpp`: `MakeHealPunishPlan` is at `:201-209`, `Plan.RequiredFields` at `:206-207` (file length: 210 lines).
+     - `RPGBossLookAdapters.cpp`: `MakeLookPlan` is at `:177-185`, `Plan.RequiredFields` at `:182` (file length: 186 lines).
+
+2. Shockwave Field Count & Total Manifest Arithmetic Corrected:
+   - `RPGBossShockwave` required fields corrected to **8 fields** (`FieldEnabled`, `FieldMoveId`, `FieldDamage`, `FieldStartRadius`, `FieldMaxRadius`, `FieldSpeed`, `FieldThickness`, `FieldJumpClearance` at `RPGBossShockwaveAdapters.cpp:110-111`).
+   - Total added paths across 5 unwired plans: 7 (Bleed) + 8 (LowSweep) + 8 (Shockwave) + 14 (HealPunish) + 5 (Look) = **42 paths**.
+   - Total required manifest path union grows from 51 paths to: 51 + 42 = **93 unique paths** (corrected from 92).
+
+3. `AllRequiredPaths` Declaration Citation Corrected:
+   - Declaration citation corrected to `Source/OneBossFight/Tests/RPGBossHydrationPreflightTests.cpp:79` (`TArray<FString> AllRequiredPaths(FName PhaseId)`).
+
+4. Code Hazards Demarcation & Legacy Attachment Enumeration:
+   - Strictly demarcated demonstrable code fact (`RPGBossLook.cpp:31` schedules `URPGBossLook::Apply` on next tick via `SetTimerForNextTick`) from execution timing consequences. Concluding that socket queries in `HealPunish::GetSpawnLocation` (:36) or bounds in `LowSweep::Begin` (:43) / `Shockwave::Launch` (:39) evaluate against the unswapped mesh is an **INFERENCE** regarding call timing (true if triggered on tick 0 before the timer fires; avoided if triggered after tick 1).
+   - Enumerated all 18 legacy components in `Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp:139-250`:
+     - Prelude: `URPGBossMusic` (`:144`).
+     - Bundle: `URPGBossStagger` (`:163`), `URPGBossPhases` (`:168`), `URPGBossEncounter` (`:173`), `URPGBossDormantWake` (`:178`), `URPGBossPosture` (`:182`), `URPGBossDeath` (`:187`), `URPGBossLook` (`:191`), `URPGBossBleed` (`:195`), `URPGAttackTracker` (`:199`), `URPGBossCloseClipSwap` (`:204`), `URPGBossShockwave` (`:208`), `URPGBossLowSweep` (`:213`), `URPGBossHealPunish` (`:218`), `URPGTraceGuard` (`:226`), `URPGTraceAudit` (`:230`), `URPGBossHud` (`:235`), `URPGCombatDebug` (`:241`), `URPGBossLegend` (`:247`).
+     - The 5 unwired plans would replace exactly 5 of these components: `Bleed` (:195), `LowSweep` (:213), `Shockwave` (:208), `HealPunish` (:218), `Look` (:191).
+
+5. Test Fixture Arithmetic Explicitly Derived:
+   - In `RPGBossHydrationPreparationTests.cpp:330` and `RPGBossWorldPreparationTests.cpp:557`, the test fixture has 2 boss-core participants and 1 target-only participant. Target-only gets 0 components. Each boss-core participant receives `BossCorePlanCount` components.
+   - Current arithmetic: 2 boss-core actors * 5 plans = 10 components.
+   - New arithmetic: 2 boss-core actors * 10 plans = **20 components**.
+   - Explicitly noted that this arithmetic holds if and only if `BossCorePlanCount` remains the sole unconditional driver of allocation.
+
+6. Decisive Findings for Lead:
+   - (a) Legacy Component Absence & Split-Brain Prevention: `RPGBossHydrationPreflight.cpp:289-297` refuses actors holding any class in `ManagedCoreConsumerClasses` (`Preflight.PreexistingConsumer`). In the proper lifecycle, preparation runs before `BeginPlay`; then at `BeginPlay`, `AttachLegacyBossBundle` (`RPGPlayerMovesSubsystem.cpp:161-220`) checks `!Pawn->FindComponentByClass<T>()` and safely skips creating legacy components. Crucially, if the unwired classes were omitted from `ManagedCoreConsumerClasses`, preflight would not refuse an existing legacy component, and `PrepareBatch` would allocate a second instance on the same actor, creating a **dual-component split-brain failure**. Expanding `ManagedCoreConsumerClasses` from 6 to 11 is strictly required.
+   - (b) Zero Impact on Existing Test Fixtures: Audited all test sources under `Source/OneBossFight/Tests/`. Confirmed that zero existing tests in `RPGBossHydrationPreflightTests.cpp`, `RPGBossHydrationPreparationTests.cpp`, `RPGBossWorldPreparationTests.cpp`, or `RPGBossPreparationRegistryTests.cpp` attach any of the 5 unwired components to test actors. Expanding `ManagedCoreConsumerClasses` from 6 to 11 causes zero test regressions.
+
+7. Hygiene & Receipts:
+   - Staged Revision 1 under `Docs/BossCombatReview/Execution/Antigravity/Wiring/original_A195/` (hash: `02630756d184...`, 34014 bytes) with self-receipt.
+   - Re-computed `Wiring/evidence_sha256.txt` (hash: `b107072846753a57aed8385421fe63f28729cd7700b9948781513a39c2e061b3`, 41234 bytes).
+   - 160/160 unit tests PASS in 0.329s (`test_run_output.txt`).
+   - Pure CRLF verified across all 198 active files in active directories; zero `__pycache__`.
+   - Updated `Documentation/TASKS.md`, `Documentation/DECISIONS.md`, and `Documentation/TEST_PLAN.md` (BUILD-39-AG).
+
+VALIDATION:
+- Analysis Deliverable:
+  - `WIRING_ANALYSIS.md` (Revision 2, hash: `b107072846753a57aed8385421fe63f28729cd7700b9948781513a39c2e061b3`, 41234 bytes).
+- Evidence Receipts:
+  - `Wiring/evidence_sha256.txt`: 1/1 verified.
+  - `Wiring/original_A195/evidence_sha256.txt`: 1/1 verified (`02630756d18464334f6249ea3ab52ec3f7756d9309b62a67b86be85c088208da`).
+  - `AuthoringToolkit/evidence_sha256.txt`: 21/21 verified.
+  - `BuildAuthoringHelper/evidence_sha256.txt`: 13/13 verified.
+  - `NativeDerivation/evidence_sha256.txt`: 10/10 verified.
+- Unit Test Suite:
+  - `python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit` -> 160/160 tests PASS in 0.329s.
+- Byte-level CRLF scan: 198/198 files checked across active directories, 0 non-CRLF files, 0 bare LF, 0 bare CR, 0 `__pycache__`.
+
+NEXT ACTION:
+- Hand off to Lead Claude for review of A-196 wiring analysis.
+- Await Codex DD23 attempt 2 results and DD24 staging freeze.

@@ -1,0 +1,8 @@
+{
+  "agent": "Codex",
+  "party": "X",
+  "task": "C-325/DD27g",
+  "command_id": "DD27g.probe.classrefs",
+  "start_utc": "2026-10-29T15:20:53.837189+00:00",
+  "policy": "C-321"
+}

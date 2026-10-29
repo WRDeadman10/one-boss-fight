@@ -1,0 +1,113 @@
+TASK: A-207 delivery of corrected read-only Unreal Engine API reflection probe (probe_unreal_api.py) and test suite (test_probe_unreal_api.py) per Lead C-302 directive.
+
+1. EXECUTIVE SUMMARY & DELIVERABLE STATUS
+- Corrected diagnostic probe: Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/probe_unreal_api.py.
+- Expanded standard-library unit test suite: Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_probe_unreal_api.py (8 tests).
+- Preserved historical baselines: original_A206/ in AuthoringToolkit/ (13 files) and BuildAuthoringHelper/ (3 files) with self-receipts.
+- Updated documentation and receipts: AuthoringToolkit/README.md (Section 8 updated with offline disclaimer, Section 9 updated), evidence_sha256.txt (25 entries), Documentation/TASKS.md, Documentation/DECISIONS.md, and Documentation/TEST_PLAN.md (BUILD-48-AG).
+- Execution Invariants: STRICTLY OFFLINE. Zero Unreal Engine processes launched; zero Source/ files modified (212 files unchanged); zero Content/ or Config/ modifications; zero git commits or pushes.
+
+2. OFFLINE TEST & VERIFICATION WITNESSES
+- Direct Probe Execution (test_probe_unreal_api.py):
+  Command: python -B Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_probe_unreal_api.py
+  Result: Ran 8 tests in 0.119s -> OK (8/8 PASS, exit code 0).
+  Verified: (1) prefix stripping logic across F, U, A, E prefixes; (2) candidate extraction from header fixture; (3) live C++ source header scanning; (4) static AST chain extraction; (5) pythonized struct property mapping extraction (17 structs); (6) offline probe format with required disclaimer ('An offline run proves nothing about the engine'); (7) mock runtime probe verifying dual cpp/py checks, library member lists, filtered symbols, struct property matches, enum member matches, and summary formatting; (8) stepwise chain resolution.
+- Full Authoring Toolkit Discovery:
+  Command: python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit
+  Result: Ran 196 tests in 0.721s -> OK (196/196 PASS, exit code 0).
+  Composition: test_authoring_core.py (180 tests) + test_emit_fields_manifest.py (8 tests) + test_probe_unreal_api.py (8 tests).
+  Artifact: test_run_output.txt updated and verified.
+
+3. DYNAMIC C++ CANDIDATE TYPE DERIVATION (26 TYPES DISCOVERED)
+The candidate types are parsed dynamically from Source/OneBossFight/Player/RPGEncounterBinding.h and native component headers (RPGBoss*.h). Unreal Engine Python prefix stripping is applied:
+- 'F' stripped for USTRUCT (e.g. FRPGBleedConfig -> RPGBleedConfig, FRPGDeathConfig -> RPGDeathConfig)
+- 'U' / 'A' stripped for UCLASS (e.g. URPGBossDefinition -> RPGBossDefinition, ARPGEncounterBinding -> RPGEncounterBinding)
+- 'E' stripped for UENUM (e.g. ERPGBossDeathMode -> RPGBossDeathMode)
+
+Discovered candidate types (tested BOTH as cpp=<Name> and py=<Name>):
+  USTRUCT  cpp=FRPGBleedConfig                py=RPGBleedConfig                 (RPGEncounterBinding.h)
+  USTRUCT  cpp=FRPGBossStatsConfig            py=RPGBossStatsConfig             (RPGEncounterBinding.h)
+  USTRUCT  cpp=FRPGCloseClipSwapConfig        py=RPGCloseClipSwapConfig         (RPGEncounterBinding.h)
+  USTRUCT  cpp=FRPGDeathConfig                py=RPGDeathConfig                 (RPGEncounterBinding.h)
+  USTRUCT  cpp=FRPGDormantWakeConfig          py=RPGDormantWakeConfig           (RPGEncounterBinding.h)
+  USTRUCT  cpp=FRPGEncounterPolicyConfig      py=RPGEncounterPolicyConfig       (RPGEncounterBinding.h)
+  USTRUCT  cpp=FRPGFireballConfig             py=RPGFireballConfig              (RPGEncounterBinding.h)
+  USTRUCT  cpp=FRPGHealPunishConfig           py=RPGHealPunishConfig            (RPGEncounterBinding.h)
+  USTRUCT  cpp=FRPGLookConfig                 py=RPGLookConfig                  (RPGEncounterBinding.h)
+  USTRUCT  cpp=FRPGLowSweepConfig             py=RPGLowSweepConfig              (RPGEncounterBinding.h)
+  USTRUCT  cpp=FRPGParityField                py=RPGParityField                 (RPGEncounterBinding.h)
+  USTRUCT  cpp=FRPGPhaseConfig                py=RPGPhaseConfig                 (RPGEncounterBinding.h)
+  USTRUCT  cpp=FRPGPhaseDependencyConfig      py=RPGPhaseDependencyConfig       (RPGEncounterBinding.h)
+  USTRUCT  cpp=FRPGPhaseFlowConfig            py=RPGPhaseFlowConfig             (RPGEncounterBinding.h)
+  USTRUCT  cpp=FRPGPlacedParticipantBinding   py=RPGPlacedParticipantBinding    (RPGEncounterBinding.h)
+  USTRUCT  cpp=FRPGShockwaveConfig            py=RPGShockwaveConfig             (RPGEncounterBinding.h)
+  USTRUCT  cpp=FRPGStaggerPolicyConfig        py=RPGStaggerPolicyConfig         (RPGEncounterBinding.h)
+  USTRUCT  cpp=FRPGStaggerProfileConfig       py=RPGStaggerProfileConfig        (RPGEncounterBinding.h)
+  UCLASS   cpp=URPGBossDefinition             py=RPGBossDefinition              (RPGEncounterBinding.h)
+  UCLASS   cpp=ARPGEncounterBinding           py=RPGEncounterBinding            (RPGEncounterBinding.h)
+  UCLASS   cpp=URPGCombatParticipant          py=RPGCombatParticipant           (RPGEncounterBinding.h)
+  UCLASS   cpp=URPGCombatContextSubsystem     py=RPGCombatContextSubsystem      (RPGEncounterBinding.h)
+  UCLASS   cpp=ARPGBossJavelin                py=RPGBossJavelin                 (RPGBossJavelin.h)
+  UCLASS   cpp=ARPGBossRemains                py=RPGBossRemains                 (RPGBossRemains.h)
+  UENUM    cpp=ERPGBossDeathMode              py=RPGBossDeathMode               (RPGBossDeath.h)
+  UENUM    cpp=ERPGJavelinResult              py=RPGJavelinResult               (RPGBossJavelin.h)
+
+In runtime probe, each reports:
+[PROBE] type cpp=<cpp_name> py=<py_name> exists_cpp=<bool> exists_py=<bool>
+
+4. LIBRARY PUBLIC MEMBER DUMP SPECIFICATION
+The probe inspects the 5 libraries used by the helper:
+- unreal.SystemLibrary
+- unreal.EditorAssetLibrary
+- unreal.AssetToolsHelpers
+- unreal.UnrealEditorSubsystem
+- AssetTools instance (via unreal.AssetToolsHelpers.get_asset_tools() or unreal.AssetTools class)
+For each library, it dumps all public members without leading underscores (dir() without '_'):
+[PROBE] LIBRARY <lib_name> member_count=<count>:
+  [PROBE] <lib_name>.<member_name>
+This directly provides the evidence to choose the truthful replacement for SystemLibrary.is_editor without guessing.
+
+5. FILTERED dir(unreal) SYMBOL INVENTORY
+Scans dir(unreal) for all symbols containing any of the keywords:
+['Editor', 'Subsystem', 'AssetTools', 'DataAsset', 'Factory', 'Load', 'Save', 'RPG']
+Emits one sorted line per symbol:
+[PROBE] UNREAL_MATCHED_SYMBOLS count=<count>:
+[PROBE] UNREAL_SYMBOL <symbol_name>
+
+6. STRUCT PROPERTY & ENUM MATCH/MISMATCH COMPARISON
+- For each of the 17 structs written by the helper (SPEC_TO_STRUCT_MAP), the probe inspects the Python wrapper class dir() properties and compares each against authoring_core.py pythonized names:
+  [PROBE] STRUCT <py_struct> property_count=<count>:
+    [PROBE] STRUCT_PROP <py_struct> prop=<name> toolkit=<name> status=MATCH
+  Any extra or missing properties emit status=MISMATCH.
+- For RPGBossDeathMode, enumerators from dir() are compared against toolkit death modes (PackMontage, OwnClip):
+  [PROBE] ENUM RPGBossDeathMode enumerator_count=<count>:
+    [PROBE] ENUM_MEMBER RPGBossDeathMode member=<name> toolkit=<name> status=MATCH
+
+7. DOCUMENTATION PARAGRAPH & OFFLINE DISCLAIMER (README.MD SECTION 8)
+- What It Proves:
+  * Exact presence or absence of Unreal Engine Python module attributes and subsystem methods in UE 5.5.4.
+  * Exact pythonized property name alignment on native C++ USTRUCT and UCLASS wrappers.
+  * Availability and member naming of UENUM wrappers.
+  * Static inventory of all external engine surface touch points across the authoring toolkit.
+- What It Does NOT Prove:
+  * An offline run proves nothing about the engine: all runtime presence checks, type reflection, library members, and property matches require live execution inside Unreal Engine Python.
+  * Does not prove runtime execution correctness of subsystem methods.
+  * Does not prove PIE (Play-in-Editor), animation montage playback, or networking replication.
+  * Does not verify serialization to disk or native package asset integrity.
+  * Does not execute gameplay logic or component configuration.
+
+8. CRYPTOGRAPHIC EVIDENCE & RECEIPT
+Hashes of key delivery artifacts (from AuthoringToolkit/evidence_sha256.txt):
+- probe_unreal_api.py:
+  e9714aa431c9bf9ef0079c6d3df36371c19b02bc38e078b4ca3bf501bf00d54f  (18,229 bytes)
+- test_probe_unreal_api.py:
+  3080ff982f814b7e9a8f4c20fe1bc0093863ba9899e3ca151c7263539828d098  (8,607 bytes)
+- test_run_output.txt:
+  88bcbb1ec6d4f6c4ff92723795552ea74ef1e92d774f323c2807a9b0c2cbfa86  (806 bytes)
+- README.md:
+  dd3f6ebec3ddc111bc64c63261a8685122f476a6cfdb007e9d722ef2db152ee9  (39,944 bytes)
+- evidence_sha256.txt:
+  406ff3bb29c8e1ba3d623b03f0b2f5b66d8ba6065511b93f2f81216b5e1b2122  (2,709 bytes)
+
+9. STANDBY
+A-207 is complete, offline-verified, and hygiene-certified (0 __pycache__, pure CRLF). Ready for Lead Claude review and subsequent release of ONE Codex probe run in the editor. Zero git commits performed pending Lead instruction.

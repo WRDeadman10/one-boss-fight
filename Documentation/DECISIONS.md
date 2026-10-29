@@ -1034,3 +1034,189 @@ C325 / DD27g PREPARED ONLY 2026-10-29: KI139 records accepted DD27f soft-class c
 
 
 DD27g C327 measured 2026-10-29: ONE --classrefs probe exit0, full candidate results preserved. load_class(None, exact generated path_C) returned BlueprintGeneratedClass and set/read successfully at all3soft-class sites in temporary structs. No converter fix/asset authoring pass. Fresh216Source/DD29binary/five receipt pins and snapshots verified; no captured drift outsideSaved, effects pinned. Evidence Docs/BossCombatReview/Execution/Codex/DD27g/RUN_REPORT_TO_CLAUDE.md. KI139 remains open pending A218 plus separately released authoring verification; all prior failures preserved.
+
+
+C328 / DD27h preparation (2026-10-29): KI139 updated with accepted DD27g class-reference measurements. DD27h wrapper/preflight/state/lock copied from DD27f, runtime receipt pins preserved, explicit release file deliberately absent pending A218 acceptance and lead run release. Python AST/PowerShell syntax and offline Source216 equality only; no engine/build/test/run. A216 timing/count/Abort discrepancies recorded at Codex/DD27h/A216_DISCREPANCIES_C328.md; no hook approval. All prior authoring failures retained.
+
+2026-10-29 Antigravity A-218 soft-class pointer grounded conversion delivered per Lead C-325 / C-327 / C-328:
+- Grounded soft class reference conversion strictly in DD27g live probe evidence (classref_lines_verbatim.txt): proved TSoftClassPtr<UObject> properties strictly reject str, Name, and SoftClassPath wrappers with TypeError, and accept loaded UClass / UBlueprintGeneratedClass instances (unreal.load_class, EditorAssetLibrary.load_blueprint_class, load_asset().generated_class(), load_object).
+- Removed FireballAbility from FNAME_PROPERTIES in authoring_core.py, eliminating historical TypeError on SoftClassProperty.
+- Implemented to_class_ref(path, unreal_module): converts empty paths to None; offline mode preserves string; live engine mode executes unreal.load_class(None, path) using canonical _C path as authored. Non-empty path returning None strictly raises RuntimeError('class did not load: <path>') protecting against silent-None data loss. Applied to FireballAbility and ImmunityEffect only.
+- Enhanced TestFakeUnrealEngineReflection with SoftClassProperty constraints; added unit tests verifying empty->None, offline string preservation, None-result exception raising, FireballAbility Name regression prevention, and all 3 field sites conversion and struct set/readback. Full suite discovery: 221/221 PASS in 1.108s. Staged original_A218/ baselines with self-receipts.
+
+
+2026-10-29 Antigravity A-219 Boss Combat Activation Hook Specification correction delivered per Lead C-329:
+- Addressed 4 discrepancies identified in Codex cross-check (X-332 / A216_DISCREPANCIES_C328.md):
+  1. Reclassified URPGPlayerMovesSubsystem::Attach pre-BeginPlay timing as [UNMEASURED / Unproven for runtime spawns]: Attach is invoked from both OnWorldBeginPlay and runtime OnActorSpawned. In UE 5.5 LevelActor.cpp:733 invokes PostSpawnInitialize before OnActorSpawned.Broadcast:750, and Actor.cpp:4050-4070 can dispatch BeginPlay() immediately if the world has begun, violating HydrationPreparation.cpp:512-514 (!World->HasBegunPlay() and !Actor->HasActorBegunPlay()).
+  2. Reclassified AttackTracker timing harmlessness as [UNMEASURED / Integration Hypothesis]: Registering the 12 typed components ahead of AttachLegacyBossBundle alters relative registration order against URPGAttackTracker (created before CloseClipSwap, Shockwave, LowSweep, HealPunish). Dynamic lookup inspection does not prove callback, tick, or lifecycle parity.
+  3. Corrected component inventory arithmetic from 19 to 21 potential classes (12 typed + 9 non-typed: Footsteps, Music, AttackTracker, DamageResolver, TraceGuard, TraceAudit, BossHud, CombatDebug, BossLegend).
+  4. Corrected stale Abort() citations to RPGBossHydrationPreparation.cpp:319-381 (unregister condition: lines 334-350, line 343; contract violation: lines 353-380, lines 366-371). Explicitly documented that begun components are skipped during unregister (line 343) and trigger ContractViolation (lines 366-371). Reclassified releasing Abort at EndPlay as [UNMEASURED Proposed Policy].
+- Preserved original_A219 baseline at Docs/BossCombatReview/Execution/Antigravity/Activation/original_A219/ACTIVATION_HOOK_SPEC.md (SHA256: 6505ce81e445ff760d716cdbf1f6120c8c03b97fc84d582ebc9be215d744b666).
+- Updated Docs/BossCombatReview/Execution/Antigravity/Activation/ACTIVATION_HOOK_SPEC.md (SHA256: 46c9c62895aead4397bc2fc2a72dc9ba834935d483ad375a0add580eb5eb5966, 40,984 bytes) and evidence_sha256.txt (SHA256: f00fb01e4aa88feac77729c3752a2c8f4b7d32f2685242a6a080b35194635773).
+
+2026-10-29 Antigravity A-220 Performance Gap Analysis for KI-108 delivered per Lead C-332:
+- Analyzed existing measured data from PERFORMANCE_LOG.md, Saved/bench_return/r1/ and r2/, and ProfileGPU tree dumps in game1_OneBossFight.log.
+- Key measured findings:
+  1. The game is 100% GPU-bound: Game thread p99 is 3.68 ms, Render thread p99 is 3.88 ms in valid Shipping runs, leaving >12 ms CPU headroom against 16.67 ms.
+  2. The arena environment alone costs 34.13 ms GPU p99 (33.47 FPS empty arena smoke test); the active boss fight adds only ~5.8 ms GPU.
+  3. Primary GPU bottlenecks: 12 brazier point lights casting Virtual Shadow Maps (8.27 ms ProfileGPU, disabling shadows in E18 yields +23.5 FPS to 71.6 FPS, crossing 60 FPS gate) and VolumetricCloud ray marching (5.30 ms ProfileGPU).
+  4. Proven harmless: Niagara/Cascade particles (0.03 ms ProfileGPU, E19 within 1 FPS), translucent mist cards (E20/E21 within 1 FPS), embers (E24 within 1 FPS), and dressing static meshes (BasePass 0.36 ms, Nanite 0.39 ms, E22/E23 within 1 FPS).
+- Delivered 7-stage single-variable measurement plan to systematically evaluate fire shadows, volumetric clouds, TAA vs TSR, and shadow architecture on physical console.
+- Documented hardware gaps: RTX 3060 12GB proxy vs RTX 2060 Super 8GB target (requiring >=75 FPS / <=13.3 ms target on 3060) and 8GB VRAM paging limit.
+- Delivered Docs/BossCombatReview/Execution/Antigravity/Performance/PERF_GAP_ANALYSIS.md (SHA256: 91d2f08b2e7e9c91dbc4fb024dd17dd6e1cdd5f65cca84bf262d234dab0fe52c, 20,941 bytes) and evidence_sha256.txt (SHA256: 42c6999a7b6b34e902af2a4ec32b52b244bde75c6db9fd0a27fa2a997419babb).
+
+2026-10-29 Antigravity A-221 Performance Gap Analysis corrections delivered per Lead C-334:
+- Addressed 2 review corrections from Lead Claude:
+  1. Corrected texture streaming pool citation: changed from Saved/bench_return/r1/system_info.txt to Saved/bench_return/r2/game1_OneBossFight.log:817 (and backup logs :817), where LogRHI records 'Texture pool is 7147 MB (70% of 10210 MB)'.
+  2. Reclassified the proposed >=75 FPS target and 20-25% margin on the RTX 3060 proxy as [UNMEASURED / heuristic], proposed to absorb Turing vs Ampere throughput disparities until physical RTX 2060 Super hardware is tested.
+  3. Explicitly stated that the 5.30 ms VolumetricCloud figure is measured on a single ProfileGPU frame of the Development build, while its 60s packaged benchmark impact remains [UNMEASURED in 60s benchmark].
+- Staged original_A221 baseline at Docs/BossCombatReview/Execution/Antigravity/Performance/original_A221/ (PERF_GAP_ANALYSIS.md SHA256: 91d2f08b2e7e9c91dbc4fb024dd17dd6e1cdd5f65cca84bf262d234dab0fe52c).
+- Updated Docs/BossCombatReview/Execution/Antigravity/Performance/PERF_GAP_ANALYSIS.md (SHA256: 5507fe9968181ef7d829cbf4dd174958da7ecfbde9316054c4d92c9ea0e430ec, 21,565 bytes) and evidence_sha256.txt (SHA256: 5c4d55e1e95df3557f92fd9254cabf50eee724ed2e530f46dab0a3e2779b9a21).
+
+2026-10-29 Antigravity A-222 Program Status Report synthesis delivered per Lead C-335:
+- Synthesized full technical state following DD27h in-memory authoring measured success (0 failures, 22/22 properties x 3 drafts, 110 fields on Ember Warden), Authoring Toolkit expansion (221 offline tests PASS), Activation Hook Specification correction (A-219, 21 potential classes, Attach runtime spawn timing unproven), and Performance Gap Analysis (KI-108, 100% GPU-bound, fire shadows and clouds primary bottlenecks).
+- Documented clear boundary between grounded facts and unmeasured claims; highlighted active owner gates (DD27i save approval, DD27j compile, physical console performance validation).
+- Staged original_A222 baseline at Docs/BossCombatReview/Execution/Antigravity/Status/original_A222/ (PROGRAM_STATUS_2026-10-29.md SHA256: 5d5cb1c8e51487f9477117b9e086c6e7127cfd3ca6be8c5adfcd5100f48e2b5a).
+- Updated Docs/BossCombatReview/Execution/Antigravity/Status/PROGRAM_STATUS_2026-10-29.md (SHA256: 4b31ea0b7ea5c005b49715dd3656cb8944336c2f9ec1eb8fd25b0984451a9f60, 14,475 bytes) and receipt_sha256.txt (SHA256: b4a47c22c42d007fe32aa6480aa2ee80e3f748a79544900bffb857c6eac9fae3).
+
+2026-10-29 Antigravity A-222 ProfileGPU Citation Corrections & Program Status Synthesis delivered per Lead C-335 / C-336:
+- Corrected line citations in PERF_GAP_ANALYSIS.md against Saved/bench_return/r2/game1_OneBossFight.log:
+  * Trigger: line 1392 ('[2026.10.24-18.57.52:267][ 44]LogOneBossFight: Benchmark: ProfileGPU at 45.0 s')
+  * Frame 2045: line 1402 ('[2026.10.24-18.57.52:786][ 48]LogRHI:  5.3%23.16ms   Frame 2045 936 draws 323872 prims 347505 verts 269 dispatches')
+  * VolumetricCloud: line 1862 ('[2026.10.24-18.57.52:818][ 48]LogRHI:        1.2% 5.30ms   VolumetricCloud 1 dispatch')
+- Corrected UE5 AA enum mapping: 0=None, 1=FXAA, 2=TAA, 3=MSAA, 4=TSR.
+- Documented Development-only limitation of rpg.Perf.* cvars (RPGPerfSwitches.cpp:6-27).
+- Updated Docs/BossCombatReview/Execution/Antigravity/Performance/PERF_GAP_ANALYSIS.md (SHA256: ec3b639e0fa88a70326380ad15cf690b976b1d3701423c32c51214170fbdff2c, 22,831 bytes) and evidence_sha256.txt (SHA256: ea83e1f38f3e21a008b8b8885192beaa63edccc1491f6f8703a65862bdfb501f).
+- Updated Docs/BossCombatReview/Execution/Antigravity/Status/PROGRAM_STATUS_2026-10-29.md (SHA256: 1a34b821fa0026c707a5204de5e10b049b48cf72d294cbe36dd23d16baeb68c0, 14,467 bytes) and receipt_sha256.txt (SHA256: 177f72042a3a5e33924d9091aa92ee49f109bb88542f68ce3cc0aa39653929a4). Staged original_A222 baseline.
+
+2026-10-29 Antigravity A-223 Performance Lead Wording & Status Reflection delivered per Lead C-337:
+- Replaced unreserved 'proven primary bottleneck' phrasing with 'strongest measured lead, clean repeat required' in PERF_GAP_ANALYSIS.md and PROGRAM_STATUS_2026-10-29.md, acknowledging that Round 2 absolute baselines exhibited machine state drift (48.1 FPS rerun vs 29.0 FPS in Round 1).
+- Updated Docs/BossCombatReview/Execution/Antigravity/Performance/PERF_GAP_ANALYSIS.md (SHA256: 88fe5d4ec41b0e1f154ba41af7885a0f8233fb901b6d828988ac653786931614, 23,369 bytes) and evidence_sha256.txt.
+- Updated Docs/BossCombatReview/Execution/Antigravity/Status/PROGRAM_STATUS_2026-10-29.md (SHA256: 080cd43197142a98ef663bb50a88767f899fd91244fe4a8cd8e33e2fa3ebcad9, 14,919 bytes) and receipt_sha256.txt (SHA256: 1307bb36173cc605c5044c987a8a7fa5f147f423845a0067ad7a439f20661fd2).
+
+
+
+DD27h C331 measured 2026-10-29: one engine launch exit0/helperSUCCESS, three in-memory drafts each22typedproperties verified; Fields110/110,0/0,0/0. No save. Fresh four actual receipt pins/Source216/DD29binary/HEAD605c2dd8 baseline delta verified; no captured drift outsideSaved1new+3changed. C330 failed HEAD preflight preserved; no silent retry (C331 explicit re-release). Raw and report Codex/DD27h/RUN_REPORT_TO_CLAUDE.md. In-memory only, no serialized/Details/gameplay approval.
+
+
+DD27i C338 measured 2026-10-29: owner-approved ONE --apply --save launch exit0/helperSUCCESS, exactly3NEWdraft.uasset saved/pinned; Content11752->11755/Data16->19hashes; no pre-existing captured Content/Config/Source/toolkit/binary drift. Source216/DD29binary/HEAD605c2dd8 unchanged; Saved1new+4changed pinned. Raw/report/new asset SHA256 Codex/DD27i/RUN_REPORT_TO_CLAUDE.md and new_assets_sha256.json. No fresh serialized reload/production compile/preflight/Details/gameplay proof; DD27j requires separate release. No performance run/pack edit/git mutation.
+
+
+DD27j C339 measured FAILED focused test 2026-10-29: new reviewed test promoted byte-for-byte, Source217/all216old unchanged; ONE editor build exit0/no observedUHT; ONE focused AuthoredDraft1finished0passed1failed, engineexit255. Fresh saved EmberWarden productioncompile ready1/output1; savedHero ready0/output0/Fields0, verbatim field manifest required. Twelve-plan preflight NOT REACHED. No fix/retry/fullsuite. Actual110rowgeneratedmanifest cd088e39... pinned. Three savedassets/Content11755/Data19/Config/Source217/toolkit unchanged; newDLL/PDB pinned; HEAD605c2dd8 stable. Raw/errors/report Codex/DD27j/run_C339/RUN_REPORT_TO_CLAUDE.md. Await exact lead correction.
+
+
+2026-10-29 Antigravity A-224 Target-Only Manifest Options Analysis delivered per Lead C-340:
+- Delivered Docs/BossCombatReview/Execution/Antigravity/Manifest/HERO_TARGET_MANIFEST_OPTIONS.md (SHA256: 929bba22d64ef4eac0b251a03ed5e14c9219a177cebb289ed2ea836da55e7fad, 15,776 bytes) and evidence_sha256.txt.
+- Documented that RPGCombatHydration::CompileParticipant (RPGEncounterBinding.cpp:115) fails because Fields.IsEmpty() checks all participants indiscriminately.
+- Audited TargetOnly architecture: RPGBossHydrationPreflight.cpp:449-456 produces 0 component plans for TargetOnly; player pawn components attach via hardcoded C++ in RPGPlayerMovesSubsystem.cpp:253-295 without data-driven adapters.
+- Designed Candidate Set 1 (4 Stats rows: MaxHealth, MaxPosture, PostureRegenDelay, PostureRegenRate) from boss_draft_profiles.json:1894-1899 as the minimal truthful authoring manifest satisfying CompileParticipant:115 without modifying C++ source.
+- Documented that from a strict hydration perspective, zero rows are 100% truthful because TargetOnly participants invoke no Configure callbacks and have no downstream component destinations.
+- Updated AuthoringToolkit/README.md and Docs/BossCombatReview/Execution/Antigravity/Status/PROGRAM_STATUS_2026-10-29.md recording DD27i save acceptance ('3 drafts saved (sha256 as above), reload/compile unverified') per C-339.
+
+
+2026-10-29 Antigravity A-225 Hero Target-Only Manifest V2 Implementation delivered per Lead C-342:
+- Implemented Option A conditions 1-2 without C++ compiler edits.
+- Created frozen hero_target_source.json (SHA256: 25e50a332009da8ddec783ce7e6f2c992f94a50d8f8c6a14427fcfa47240cc41) to eliminate circular provenance hashing.
+- Added DA_Player_Hero_Draft_V2 profile in boss_draft_profiles.json with 4 truthful rows citing hero_target_source.json, Destination 'FRPGParticipantConfig.Stats (compile copy only)', and FirstRead 'none after compile: TargetOnly has no consumer plan (X-341, Preflight.cpp:449-455)'.
+- Extended emit_fields_manifest.py (--hero-target). Added 4 unit tests (suite now 225/225 PASS in 1.014s). Staged original_A225/.
+
+
+2026-10-29 Antigravity A-226 Witness Grounding & Repeatable --only Asset Selector delivered per Lead C-343:
+- Grounded witness in DA_Player_Hero_Draft_V2 and emit_fields_manifest.py strictly to 'AutomationTest:OneBossFight.Binding.StatsAdapters.Assign (proves FRPGPostureConfig parsing only)'.
+- Added repeatable --only <asset_name> flag to draft_boss_profiles.py to enable isolated authoring of DA_Player_Hero_Draft_V2 without triggering overwrite refusal on existing 3 saved assets.
+- Resolved unique definition_id in profile set by assigning 'Player_Hero_V2'.
+- Added 4 tests in TestDraftBossProfilesOnlySelector. Entire test suite expanded to 229 unit tests (229/229 PASS in 1.016s).
+- Staged original_A226/. Updated README.md and evidence_sha256.txt.
+
+2026-10-29 Antigravity A-227 Data-Driven Combat Mechanism Gap Analysis delivered per Lead C-338 / C-344:
+- Cross-examined all 83 items from Docs/BossCombatReview/Execution/Codex/ALL83_EXECUTION_LEDGER_2026-10-27.json against the 6-stage data-driven authoring and hydration chain.
+- Key findings delivered in Docs/BossCombatReview/Execution/Antigravity/Ledger/DATA_DRIVEN_LEDGER_GAPS.md (SHA256: b52f1d0012750543d7d29c8a3d0714ddaa25e885bc7de1c137dcfb13d485d170, 18,425 bytes) and evidence_sha256.txt (SHA256: 32e1377f0a25026527029c3097e884c5bfdb1448c951c6d8928b20478122d393):
+  1. 16 requirements across defense, phases, attacks, geometry, and presentation are 100% complete in the offline authoring chain (Record, Validator, Adapter, Authoring Field, Manifest Row, Unit Test) and verified in DD27h. These 16 items require zero new schema and are blocked strictly on the DD30 runtime seam (ActivateWorld inside URPGPlayerMovesSubsystem).
+  2. 11 requirements represent real schema gaps in URPGBossDefinition (e.g. MoveCooldowns, utility weights, anti-repeat history depth, watchdog timeouts). Recommended deferring schema extensions until baseline 12 plans are connected at runtime via DD30.
+  3. 56 requirements govern native C++ physics queries, trace deduplication (URPGTraceGuard), damage resolution (URPGDamageResolver), iframes, root motion, and QA debug telemetry outside ABI data asset scope.
+- Clarified reason for Player_Hero_V2: draft_boss_profiles.py:validate_boss_profile_data strictly enforces unique definition_id across profile sets (lines 233-234). Assigning Player_Hero_V2 prevented duplicate ID collision while leaving DA_Player_Hero_Draft untouched.
+- Staged baseline, pure CRLF, 0 __pycache__, zero engine processes, zero Source/Content edits, zero save.
+
+
+DD27l C344 measured 2026-10-29: ONE V2-only in-memory authoring exit0/helperSUCCESS,22properties and4of4Fields readback,0failures,no save. Source217/DD27jDLL/HEAD605c2dd8/Content11755/Data19/original3asset hashes/Config/toolkit unchanged. Saved1new+3changed+3REMOVED oldUnrealPakbackup logs; originUNKNOWN,noCodexdelete; premetadata preserved/rawbytes unavailable for removedlogs. Raw/report Codex/DD27l/RUN_REPORT_TO_CLAUDE.md. DD27m remains pending ownerYES+leadrelease.
+
+2026-10-29 Antigravity A-228 83-Row Combat Ledger Audit Table & Grounded Citations delivered per Lead C-345:
+- Re-examined all 83 requirements from Docs/BossCombatReview/Execution/Codex/ALL83_EXECUTION_LEDGER_2026-10-27.json against the 6-stage typed data-driven authoring and hydration chain.
+- Key findings delivered in Docs/BossCombatReview/Execution/Antigravity/Ledger/DATA_DRIVEN_LEDGER_GAPS.md (SHA256: 6f4208cd44b9e22bed7bb5613cc0e0c4dc8794558b47a58f9fa93bc6ab73a925, 38,125 bytes) and evidence_sha256.txt (SHA256: 2ab55eecabd290bc39b92a670d95ef8f8662627b50cd152e8bdcfaf3acf4091b):
+  1. Zero 'closed' claims: all 83 rows are acknowledged as NOT_RECOUNTED and PLANNED; existing partial behavior retained. None is closed until its observable_result is witnessed in live play.
+  2. 15 items in Category A have in-memory typed ABI coverage (BOSS-AWR-004, BOSS-EXE-005, BOSS-COM-001, BOSS-ANM-002, BOSS-HIT-011, BOSS-MOV-005, BOSS-DEF-001..004, BOSS-PHS-001..005) with passing records, validators, adapters, authored draft properties, and DD27h readback; blocked strictly on the DD30 runtime call site.
+  3. 11 items in Category B represent true data-driven schema gaps in URPGBossDefinition (BOSS-AWR-001, BOSS-AWR-003, BOSS-SEL-004, BOSS-SEL-006, BOSS-SEL-007, BOSS-EXE-001, BOSS-EXE-007, BOSS-COM-006, BOSS-COM-007, BOSS-PAC-001, BOSS-PAC-003); recommended deferred until baseline 12 plans are connected via DD30.
+  4. 57 items in Category C belong to pure non-ABI runtime engine, physics, AI, and QA mechanics (URPGTraceGuard, URPGDamageResolver, URPGDodgeTiming, Motion Warping, AnimNotifies, BT tasks, QA overlays).
+- Re-verified file:line citations directly by opening files and quoting 50+ chars.
+- Staged baseline in original_A227/. Pure CRLF, 0 __pycache__, zero engine processes, zero Source/Content edits, zero save.
+
+
+DD30Chronology C346 STOP 2026-10-29: promoted accepted2new+3edited cppfiles, Source219; ONE build exit0 and newDLL, BUT3header-order error diagnostics (helper include precedes each ownheader). No fix/retry/PIE/engine launch; mixed exit0/error output is NOT clean acceptance. Warnings3 unchanged. Source219/3savedassets/Content11755/Data19/Config/toolkit/Saved unchanged duringbuild, EXEunchanged, HEAD605c2dd8,postprocess empty. Raw/report Codex/DD30Chronology/run_C346/RUN_REPORT_TO_CLAUDE.md; await exact lead correction.
+
+2026-10-29 Antigravity A-229 Exhaustive 83-Row Audit Table with Verified Grounding & COVERAGE Column delivered per Lead C-346:
+- Re-examined all 83 requirements from Docs/BossCombatReview/Execution/Codex/ALL83_EXECUTION_LEDGER_2026-10-27.json against the 6-stage typed data-driven authoring and hydration chain.
+- Key findings delivered in Docs/BossCombatReview/Execution/Antigravity/Ledger/DATA_DRIVEN_LEDGER_GAPS.md (SHA256: 54fabc06ae019f3b71ea3b2938f20295b42ad7c4571e44dd7b5f490fc3533f77, 42,545 bytes) and evidence_sha256.txt (SHA256: 05b42bc67e2d266458b0e6992a04ad50e03ccadc70587d564da60529122b2278):
+  1. Citation Grounding: Programmatically opened and asserted all 66 cited master line numbers against disk before generation. Corrected citations: LowSweep at RPGBossLowSweepAdapters.cpp:54 (ValidateLowSweep) and :112 (ConfigureLowSweep), CloseClipSwap at RPGBossCloseClipSwapAdapters.cpp:118 and :162, profile keys at boss_draft_profiles.json:1647 (low_sweep) and :1697 (close_clip_swap), and tracker check at RPGPlayerMovesSubsystem.cpp:199.
+  2. Per-Row COVERAGE Column: Evaluated every requirement with exactly one of FULL (0), PARTIAL (13), TOUCHES-ONLY (5), or NONE (65). Reclassified BOSS-COM-001 as TOUCHES-ONLY (CloseClipSwap swaps montages, combo graph topology is absent from ABI), BOSS-AWR-004 as TOUCHES-ONLY (LowSweep configures attack arc, signed yaw and hysteresis are runtime AI), and BOSS-HIT-001 as TOUCHES-ONLY (Look swaps cosmetic meshes, collision geometry is absent).
+  3. Renamed Category A: Categorized as 'Requirements with Direct Typed ABI Config Fields' (13 items, all with PARTIAL coverage). Category B contains 11 true schema gaps; Category C contains 59 pure non-ABI runtime systems.
+  4. Staged baseline in original_A228/. Pure CRLF, 0 __pycache__, zero engine processes, zero Source/Content edits, zero save.
+
+2026-10-29 Antigravity A-230 Move Cooldowns Schema Extension Specification delivered per Lead C-347:
+- Specified FRPGMoveCooldownsConfig to close ledger gap BOSS-SEL-006 (Cooldown semantics) as the smallest, self-contained schema extension.
+- Key specification delivered in Docs/BossCombatReview/Execution/Antigravity/Schema/MOVE_COOLDOWNS_SPEC.md (SHA256: 59b3c4e658b2dd6a22a4d11fa89983a6acbb3271440f1ffb08ef7967ee289e90, 12,347 bytes) and evidence_sha256.txt (SHA256: cac9297c97c995f45ea0d25e78ce16958f38c41330ac64691ad6707b56b2962f):
+  1. 7 scalar fields: bEnabled, A1Cooldown (3.0s), A2Cooldown (6.0s), A3Cooldown (5.0s), LowSweepCooldown (8.0s), ShockwaveCooldown (10.0s), GlobalRecoveryCooldown (1.0s).
+  2. Range & Issue Tokens: Finite floats, non-negative range [0.0f, 1.0e6f], zero-rule valid (0.0s = no cooldown), tokens InvalidCooldown.Negative, InvalidCooldown.NotFinite, InvalidCooldown.AboveCeiling.
+  3. Grounded Citations: Verified against disk via assertion script: RPGAttackTracker.h:22 (MoveId), RPGAttackTracker.h:87 (Attacks array), RPGAttackTracker.cpp:31 (A2), RPGAttackTracker.cpp:60 (A1), RPGBossHealPunish.h:44 (Cooldown 4.0s), RPGBossPhases.h:73 (FireballCooldown), RPGBossStagger.h:134 (CooldownSeconds), RPGSevarogDirector.h:84 (LightningCooldown).
+  4. Target Component & Manifest: Target component is URPGAttackTracker (RPGAttackTracker.h:79). Expands parity manifest from 110 to 117 rows. Designed 14 offline unit tests. Independent of DD30 runtime seam.
+- Spec only, zero code, zero Source/Content edits, pure CRLF, 0 __pycache__.
+
+2026-10-29 Antigravity A-232 Staged DD30 Chronology Include-Order Fix delivered per Lead C-349:
+- Reassigned from Codex X-348 to unblock the engine lane. Resolved 3 UnrealBuildTool include-order compilation diagnostics by staging corrected revisions offline in Docs/BossCombatReview/Execution/Antigravity/DD30ChronologyFix/:
+  1. Preimages: Saved exact bit-for-bit copies of live promoted files (preimages/RPGBossEncounter.cpp, preimages/RPGDodgeTiming.cpp, preimages/RPGPlayerMovesSubsystem.cpp) with SHA256 hashes.
+  2. Staged Fix: Swapped line 3 and line 4 in all 3 files so each compilation unit's own header is the first non-comment #include, followed immediately by #include "Player/RPGStartupChronology.h".
+  3. Diffs: Provided verbatim minimal unified diffs (exactly 1 line removed, 1 line added per file).
+  4. Verification: Scripted check (verify_staged_chronology.py) confirms own header is first #include in each file, call sites remain before Super::, and 100% pure CRLF is preserved.
+  5. Offline Safety: Zero files under Source/ modified by Antigravity, zero engine processes launched, zero git commits. Staged for Claude's promotion release.
+
+2026-10-29 Antigravity A-231 Grounded Boss Move Cooldown & Recovery Delay Inventory delivered per Lead C-348:
+- Executed exhaustive, read-only audit of boss cooldowns, recovery delays, and pacing mechanisms across C++ and Content .uasset binary disk artifacts.
+- Findings delivered in Docs/BossCombatReview/Execution/Antigravity/Schema/COOLDOWN_DELAY_INVENTORY.md (SHA256: a6152291fa4e5254072895f8b769d518761ef34b99cb80dfd4365e1a70ec06ff, 10,252 bytes) and evidence_sha256.txt (SHA256: 7eb2ccaabb6c7a0fc51cceb3885223dd96bb1d2c2a0c2bbe88bb8b4032ee915f):
+  1. Part (a) C++ Findings: All existing boss cooldowns and delays are already typed in ABI plans (HealPunish.Cooldown 4.0s at RPGBossHealPunish.h:44; Phases.FireballCooldown 6-10s at RPGBossPhases.h:73; Stagger.CooldownSeconds 0.0s at RPGBossStagger.h:134; Stats.PostureRegenDelay 6.0s at RPGBossMath.h:15). Standard melee moves (A1, A2, A3) have zero C++ cooldowns. RecoveryEndTime (RPGAttackTracker.h:53) is an animation window used for interrupt checks (:255), not move selection.
+  2. Part (a) Content .uasset Findings: In BT_ExampleBoss.uasset, inter-attack cadence is governed by animation completion (T_WaitAnimatingAbilityEnd) and idle wait (BTTask_Wait WaitTime Vector2D), with zero BTDecorator_Cooldown nodes. In GAS abilities, BP_AdvancedGameplayAbility defines Blueprint variables (Cooldown Time, etc.), but derived assets (GA_GS_Boss_LeapAttack, GA_Sev_LeapAttack) have no serialized property overrides on disk. Exactly zero GE_*Cooldown* assets exist.
+  3. Part (b) Conclusion: No new candidate qualifies for schema authoring today without live PIE measurements. Proposing non-zero values violates parity laws (defaults must equal runtime values). Outlined required live measurements (ability CDO reflection, BT execution logging) and design alignment.
+- Read-only analysis, zero code, zero Source/Content edits, pure CRLF, 0 __pycache__.
+
+2026-10-29 Antigravity DD30 Chronology Build 2 executed cleanly per Lead C-350:
+- Executed reassigned engine task to unblock the engine lane following Codex absence.
+- Promoted 3 include-order fixed .cpp files (RPGBossEncounter.cpp, RPGDodgeTiming.cpp, RPGPlayerMovesSubsystem.cpp) into Source/OneBossFight/Player/. Source count maintained at 219 files with zero drift.
+- Acquired exclusive C-321 lock (ENGINE_LOCK.json).
+- Executed ONE editor Development build via run_build.ps1 / build_once.cmd:
+  * Exit code: 0
+  * Build duration: 8.84 s
+  * Compiler errors: EXACTLY ZERO (3 include-order diagnostics completely resolved)
+  * Compiler warnings: EXACTLY ONE known MSVC warning (VS2022 compiler version)
+  * New binary produced: UnrealEditor-OneBossFight.dll (SHA256: 332afd497b68c01b556be9fd73682574e97c31ed868f46a382ee0cb301bdaacf)
+- Verified zero unwanted drift across Content (11,755), Config, Saved, Toolkit, and 3 saved draft assets.
+- Lock released after evidence freeze. Full report and receipt in Docs/BossCombatReview/Execution/Antigravity/EngineRuns/DD30ChronologyBuild2/RUN_REPORT_TO_CLAUDE.md.
+
+2026-10-29 Antigravity A-234 DD30 Chronology PIE Run Packet prepared per Lead C-352:
+- Offline preparation only (run NOT released, zero engine launches, zero lock acquisition):
+- Staged execution packet in Docs/BossCombatReview/Execution/Antigravity/EngineRuns/DD30ChronologyRun1/:
+  1. Driver Shutdown: Preserved original Codex driver (dd30_chronology_pie_original.py, SHA256: 24b7a39e...). Adapted dd30_chronology_pie.py (SHA256: 0dd61141...) adding bounded quit in finish() via unreal.SystemLibrary.execute_console_command(None, "QUIT_EDITOR") scheduled after slate teardown ticks (proven pattern from Scripts/Editor/rpg_content_lib.py). Verified via mock unit test test_dd30_chronology_driver.py (2/2 PASS).
+  2. Wrapper Hard Timeout: Authored run_chronology.ps1 enforcing hard 180s timeout; captures editor PID, kills ONLY that specific PID if hung, and logs TIMEOUT_KILL outcome.
+  3. Headless Launch & Limitations: Configured UnrealEditor.exe with -nosound -nosplash -unattended -nullrhi -DD30Chronology. Documented that PIE under -nullrhi is UNMEASURED; driver "FAIL wrong editor map" or missing PIE_WORLD constitutes INCOMPLETE run, not a pass.
+  4. Success Criteria Checklist: Transcribed Section 3 criteria from PROPOSAL_AND_RUN_PLAN.md into CHECKLIST_AND_CRITERIA.md. Generated evidence_sha256.txt (SHA256: 651b041d...). Pure CRLF, 0 __pycache__. Staged for Claude's review.
+
+2026-10-30 Antigravity DD30 Chronology PIE Run 1 completed per Lead C-353:
+- Successfully executed released headless PIE run (-nullrhi) under C-321 exclusive lock.
+- Duration: 43.66s. Editor PID 20100 cleanly terminated via bounded QUIT_EDITOR after PIE capture (killed_due_to_timeout: false).
+- Key Chronological Observations:
+  1. Subsystem Precedence: PlayerMoves.OnWorldBeginPlay was invoked when world_begun=0. Both pawns already exist in world iterator (BP_ExampleGreatSwordBoss_C_3, BP_CombatPlayerCharacter_C_0), both in unbegun state (actor_begun=0, actor_beginning=0).
+  2. Input State: Published catalog is valid (epoch 87AE2CE6...). Placed bindings=0, context bound=0/ready=0, selection_store=NOT_DEFINED.
+  3. Component Route Timing: Boss component RPGBossEncounter BeginPlay executed at seq=3 (seconds=18149575.4918, +48ms after subsystem entry) with actor_beginning=1. Player component RPGDodgeTiming BeginPlay executed at seq=4 (seconds=18149576.5420, +1.05s after Boss) with actor_beginning=1.
+- Zero drift on Content, Config, Source (219), Toolkit, DLL (332afd49...). Full evidence frozen and lock released.
+
+
+
+
+

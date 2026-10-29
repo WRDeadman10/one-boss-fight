@@ -1,0 +1,56 @@
+TASK: A-194 delivery: Look case-insensitive "none" fix (C-276) & FRPGCloseClipSwapConfig 16th struct integration (C-275/C-276).
+STATUS: COMPLETED (offline toolkit expansion, case-insensitive FName validation, CloseClipSwap 16th struct qualification, receipts re-frozen).
+
+SUMMARY:
+1. Look Case-Insensitive "none" Fix:
+   - Updated `authoring_core.py:validate_look_domain` to check `str(socket_val).lower() == "none"`, rejecting "none", "None", "NONE", "nOnE" as `InvalidDependency.Missing: Look.SwordSocket is required` matching `FName::IsNone` engine semantics.
+   - Added unit test cases covering `[None, "", "   ", "None", "none", "NONE", "nOnE"]` in `TestLookPolicyDomain:test_sword_socket_missing_rejected`.
+
+2. FRPGCloseClipSwapConfig (16th Toolkit Struct) Offline Integration (DD24 Qualified Pending per C-275/C-276):
+   - 5 Authored fields: `CloseAbilityClassName` (FName), `AttackMontagesName` (FName), `A1Montage` (SoftObjectPtr), `A3aMontage` (SoftObjectPtr), `A3bMontage` (SoftObjectPtr).
+   - Zero numeric fields: no `NotFinite` float checks, no magnitude ceilings, no arithmetic audits.
+   - No duplicate rule: three identical replacement montages are valid (unlike mesh pieces, identical montages do not create extra components and safely point at the same replacement).
+   - Validation order returning first failure immediately:
+     (1) `CloseAbilityClassName`: not None/empty/case-insensitive 'none' (`InvalidDependency.Missing`), no whitespace or control characters (`InvalidDependency.Malformed`).
+     (2) `AttackMontagesName`: not None/empty/case-insensitive 'none' (`InvalidDependency.Missing`), no whitespace or control characters (`InvalidDependency.Malformed`).
+     (3) `A1Montage`: required (`InvalidDependency.Missing`) then well-formed (`InvalidDependency.Malformed`) with engine macros.
+     (4) `A3aMontage`: required (`InvalidDependency.Missing`) then well-formed (`InvalidDependency.Malformed`) with engine macros.
+     (5) `A3bMontage`: required (`InvalidDependency.Missing`) then well-formed (`InvalidDependency.Malformed`) with engine macros.
+   - Property name pythonization via PyGenUtil engine rules verified in tests:
+     - `CloseAbilityClassName` -> `close_ability_class_name`
+     - `AttackMontagesName` -> `attack_montages_name`
+     - `A1Montage` -> `a1_montage`
+     - `A3aMontage` -> `a3a_montage`
+     - `A3bMontage` -> `a3b_montage`
+   - Integrated across `authoring_core.py`, `draft_boss_profiles.py`, `inspect_authored_assets.py`, and `examples/boss_draft_profiles.json`. Draft assets now write and canonically read back 21 top-level properties; all 111 native fields across 16 structs verified in `test_all_111_native_fields_parity`.
+   - Review aid `diff_against_cpp.py` extended with `CloseClipSwap` adapter mapping (10/10 checks match staged source order).
+
+3. Death Domain Proposal Preserved:
+   - Kept `Docs/BossCombatReview/Execution/Antigravity/NativeDerivation/RPGBossDeath_domain_proposal.md` unchanged per Lead order pending DD24 completion.
+
+4. Hygiene, Staged Baselines & Receipts:
+   - Staged `original_A193/` in both `AuthoringToolkit/` (9 files) and `BuildAuthoringHelper/` (2 files) with self-receipts.
+   - Historical test suites verified: `original_A188` (128/128 PASS), `original_A189` (142/142 PASS), `original_A190` (148/148 PASS), `original_A191` (151/151 PASS), `original_A192` (151/151 PASS), `original_A193` (151/151 PASS).
+   - Full test suite: **160/160 tests PASS** in 0.328s (`test_run_output.txt`).
+   - Receipts re-frozen: 21 in `AuthoringToolkit/evidence_sha256.txt`, 13 in `BuildAuthoringHelper/evidence_sha256.txt`, 10 in `NativeDerivation/evidence_sha256.txt`.
+   - 100% pure CRLF across all 181 active files in active directories; zero `__pycache__`.
+   - Documentation updated: `Documentation/TASKS.md`, `Documentation/DECISIONS.md`, `Documentation/TEST_PLAN.md` (BUILD-37-AG).
+
+VALIDATION:
+- Unit Test Suite:
+  - `python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit` -> 160/160 tests PASS in 0.328s.
+  - Covers all 16 structs, 111 native fields, 8 dedicated CloseClipSwap tests in `TestCloseClipSwapPolicyDomain`, case-insensitive SwordSocket tests, and 21-property draft round-trip readback.
+- Mechanical Review Aid Parity (5/5 live adapters, 90/90 checks match in exact source order, exit 0):
+  - `python -B Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/diff_against_cpp.py --report` -> hash `3e659f211590a468dfa3401bd24e244ad1c8898b7e5d444701759032dc5a6655` (2293 bytes).
+  - Summary: Bleed 13 OK, LowSweep 15 OK, Shockwave 20 OK, HealPunish 33 OK, Look 9 OK.
+- Evidence Receipts:
+  - `AuthoringToolkit/evidence_sha256.txt`: 21/21 match.
+  - `AuthoringToolkit/original_A193/evidence_sha256.txt`: 9/9 match.
+  - `BuildAuthoringHelper/evidence_sha256.txt`: 13/13 match.
+  - `BuildAuthoringHelper/original_A193/evidence_sha256.txt`: 2/2 match.
+  - `NativeDerivation/evidence_sha256.txt`: 10/10 match.
+- Byte-level CRLF scan: 181/181 files checked in active directories, 0 non-CRLF files, 0 bare LF, 0 bare CR, 0 `__pycache__`.
+
+NEXT ACTION:
+- Hand off to Lead Claude for review of A-194.
+- Await Codex DD23 attempt 2 results and DD24 staging freeze.

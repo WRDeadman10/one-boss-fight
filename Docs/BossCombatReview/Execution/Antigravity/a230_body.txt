@@ -1,0 +1,62 @@
+
+### [A-230] Antigravity -> Claude,Codex,Owner, 2026-10-29 23:15
+TASK: A-230 Delivery of Move Cooldowns Schema Extension Specification (C-347). To Lead Claude, Codex, and Owner.
+STATUS: Complete offline architectural specification delivered in MOVE_COOLDOWNS_SPEC.md. Spec only, zero code, zero Source/Content edits, pure CRLF, 0 __pycache__.
+
+1. CANDIDATE SELECTION & ARCHITECTURAL JUSTIFICATION:
+- Candidate: FRPGMoveCooldownsConfig (resolving ledger gap BOSS-SEL-006: Cooldown semantics).
+- Why Smallest & Best First Step:
+  * Minimalist & self-contained: 7 scalar properties (1 bool, 6 floats), zero arrays, zero soft object references.
+  * 100% testable offline via existing validator and FakeUnreal reflection test harnesses.
+  * Completely independent of DD30 runtime seam: schema, validator, adapter, authoring profile, and manifest can be qualified offline in memory.
+
+2. C++ STRUCT SPECIFICATION (FRPGMoveCooldownsConfig):
+- bEnabled (bool, default true): Master enable switch for cooldown enforcement.
+- A1Cooldown (float, default 3.0s): Close attack slash cooldown.
+- A2Cooldown (float, default 6.0s): Overhead charged slam cooldown.
+- A3Cooldown (float, default 5.0s): Combo attack chain cooldown.
+- LowSweepCooldown (float, default 8.0s): Low sweep spin attack cooldown.
+- ShockwaveCooldown (float, default 10.0s): Radial ground slam shockwave cooldown.
+- GlobalRecoveryCooldown (float, default 1.0s): Minimum recovery buffer between any two consecutive attacks.
+
+3. VALIDATION RULES, RANGES, & ISSUE TOKENS:
+- Follows standard project discipline (MaxAuthoredMagnitude = 1.0e6f):
+  * Finite float check: !FMath::IsFinite(V) -> Refuse(OutError, TEXT("InvalidCooldown.NotFinite"), Field)
+  * Non-negative range: V < 0.0f -> Refuse(OutError, TEXT("InvalidCooldown.Negative"), Field)
+  * Zero-rule: 0.0s is strictly valid (represents no cooldown / immediate availability).
+  * Magnitude ceiling: V > 1.0e6f -> Refuse(OutError, TEXT("InvalidCooldown.AboveCeiling"), Field)
+- Deterministic validation order: A1 -> A2 -> A3 -> LowSweep -> Shockwave -> GlobalRecovery.
+
+4. RE-VERIFIED CITATIONS (WHERE LEGACY VALUES LIVE TODAY):
+- Standard moves A1/A2/A3 currently have ZERO cooldown parameters in C++:
+  * Source/OneBossFight/Player/RPGAttackTracker.h:22 -> 'FName MoveId;'
+  * Source/OneBossFight/Player/RPGAttackTracker.h:87 -> 'TArray<FRPGAttackTiming> Attacks;'
+  * Source/OneBossFight/Player/RPGAttackTracker.cpp:31 -> 'A2.MoveId = TEXT("A2");'
+  * Source/OneBossFight/Player/RPGAttackTracker.cpp:60 -> 'AddClose(TEXT("A1"), TEXT("AM_Boss01_A1")'
+- Cooldowns currently isolated in other components:
+  * HealPunish: Source/OneBossFight/Player/RPGBossHealPunish.h:44 -> 'float Cooldown = 4.f;'
+  * Fireball: Source/OneBossFight/Player/RPGBossPhases.h:73 -> 'FVector2D FireballCooldown = FVector2D(6.f, 10.f);'
+  * Stagger: Source/OneBossFight/Player/RPGBossStagger.h:134 -> 'float CooldownSeconds = 0.f;'
+  * Lightning: Source/OneBossFight/Boss/RPGSevarogDirector.h:84 -> 'FVector2D LightningCooldown = FVector2D(6.f, 10.f);'
+
+5. TARGET ADAPTER COMPONENT & PARITY MANIFEST:
+- Target Component: URPGAttackTracker (RPGAttackTracker.h:79), the single execution authority tracking attack instances, active windows, and start requests (StartMove line 96). Adding cooldown tracking directly preserves single-component lifecycle without introducing an extra component.
+- Parity Manifest: 7 rows (MoveCooldowns.bEnabled, MoveCooldowns.A1Cooldown, MoveCooldowns.A2Cooldown, MoveCooldowns.A3Cooldown, MoveCooldowns.LowSweepCooldown, MoveCooldowns.ShockwaveCooldown, MoveCooldowns.GlobalRecoveryCooldown) expanding manifest from 110 to 117 rows. Destination: URPGAttackTracker, FirstRead: PrepareBatch.Configure.
+
+6. OFFLINE UNIT TEST PLAN (14 TESTS):
+- Layer 1 (C++ Validator): 6 tests (default valid, negative refused, NaN refused, inf refused, above ceiling refused, zero valid).
+- Layer 2 (C++ Adapter): 4 tests (applies all scalars, null component fails, wrong class fails, idempotent re-configuration).
+- Layer 3 (Authoring Toolkit): 4 tests (manifest emitter 7 rows, JSON validation valid/negative, Python readback equality).
+
+7. DELIVERABLES & EXACT CRYPTOGRAPHIC FILE HASHES:
+- Specification: Docs/BossCombatReview/Execution/Antigravity/Schema/MOVE_COOLDOWNS_SPEC.md
+  * SHA256: 59b3c4e658b2dd6a22a4d11fa89983a6acbb3271440f1ffb08ef7967ee289e90 (12,347 bytes)
+- Evidence Receipt: Docs/BossCombatReview/Execution/Antigravity/Schema/evidence_sha256.txt
+  * SHA256: cac9297c97c995f45ea0d25e78ce16958f38c41330ac64691ad6707b56b2962f (90 bytes)
+- Repository Hygiene: 0 __pycache__ directories, 100% pure CRLF across all files.
+
+8. SYNCHRONIZED DOCUMENTATION:
+- Synced Documentation/TASKS.md (AG-CONTENT30) and Documentation/DECISIONS.md.
+
+9. HANDOFF:
+- Order A-230 is complete. Specification delivered for Tech Lead Claude review. Standing by.

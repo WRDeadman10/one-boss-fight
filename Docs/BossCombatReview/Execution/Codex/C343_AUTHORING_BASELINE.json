@@ -1,0 +1,16 @@
+{
+  "release": "C-343 preparation",
+  "source_count": 217,
+  "source_manifest": "Docs/BossCombatReview/Execution/Codex/DD27j/run_C339/promoted_source_manifest_sha256.txt",
+  "source_manifest_sha256": "bc4e96ee723097a19dee7bf31b18cbd4f9e2a218b52306e85abbf1e78aff0a46",
+  "binary_manifest": "Docs/BossCombatReview/Execution/Codex/DD27j/run_C339/final_binary_sha256.json",
+  "binary_manifest_sha256": "ecdaff35690c1502b793c06c17400c08016708b07626ea9fe450bc7761a393c1",
+  "binary": {
+    "Binaries/Win64/UnrealEditor-OneBossFight.dll": "8ad7a32e469a8dc4eb276f17f609ff8674712faa92ae3418b9caae8eea5c8809",
+    "Binaries/Win64/UnrealEditor-OneBossFight.pdb": "54cf0063bfc89f77eaba05574bf7d2a27c31fab6d5601ad6b6b9ab527c0f0996",
+    "Binaries/Win64/OneBossFight.exe": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65"
+  },
+  "provenance": "C339 successful build, accepted C340 as failed Hero compile measurement; NOT test pass",
+  "head_delta": "C331_HEAD_BASELINE_DELTA.json",
+  "content_reference": "DD27j/run_C339/post_state.json"
+}

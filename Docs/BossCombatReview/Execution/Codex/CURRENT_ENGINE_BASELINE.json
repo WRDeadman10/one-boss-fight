@@ -1,0 +1,14 @@
+{
+  "release": "C-319 item6",
+  "source_manifest": "Docs/BossCombatReview/Execution/Codex/DD29/run_2026-10-29/final_source_manifest_sha256.txt",
+  "source_manifest_sha256": "3df0ccbba7f39c323df7163720daa589fa5a45d81dc8fc60398278c514d00067",
+  "source_count": 216,
+  "binary_manifest": "Docs/BossCombatReview/Execution/Codex/DD29/run_2026-10-29/final_binary_sha256.txt",
+  "binary_manifest_sha256": "05a97f40b4a29b4a459a1d50854529b0fd390f97d62cb869b98968c2ba15c158",
+  "binary": {
+    "Binaries/Win64/UnrealEditor-OneBossFight.dll": "4e3580fde866e5cdb4c46a8e794a1b4b321e111fdc6b92e37f0dd67e42690466",
+    "Binaries/Win64/OneBossFight.exe": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65"
+  },
+  "head": "bc3fe6a49335f0a68bf5df9d895b8a46f6633aeb",
+  "scope": "Measured DD29 baseline for C320 DD27f preflight; not a separate execution permission or gameplay acceptance"
+}

@@ -1,0 +1,53 @@
+TASK: A-210 delivery of corrected Program Status Report for Owner per Lead C-306 directive.
+
+1. EXECUTIVE SUMMARY & ARTIFACT DELIVERY
+- Corrected status report: Docs/BossCombatReview/Execution/Antigravity/Status/PROGRAM_STATUS_2026-10-29.md
+  * SHA256: d3416eace561679d557c98fe6971debecc4f55ddaa7e4b5f5866d6668c8d1047 (20,307 bytes, pure CRLF).
+  * Cryptographic receipt: Docs/BossCombatReview/Execution/Antigravity/Status/receipt_sha256.txt.
+- Preserved historical baseline: Docs/BossCombatReview/Execution/Antigravity/Status/original_A208/ (PROGRAM_STATUS_2026-10-29.md and receipt_sha256.txt).
+- Documentation sync: Documentation/TASKS.md (AG-CONTENT17), Documentation/DECISIONS.md, and Documentation/TEST_PLAN.md (BUILD-51-AG).
+- Execution Boundary: STRICTLY OFFLINE. Zero Unreal Engine processes launched; zero Source/Content edits (212 Source files unchanged); zero git commits or pushes.
+
+2. SPECIFIC DEFECT CORRECTIONS (PER C-306)
+1. Section 1 'Proves' Ground Truth:
+   - Purged all invented claims ('collision geometry limits, radius math', 'ring expansion math and javelin intercept velocity', 'bone rotation limits, socket bindings', 'poll clamps, timing validation', 'close-range montage soft-path resolution').
+   - Replaced each with exact measured truths: native field names & defaults; valid record copied into unregistered native component by adapter with record pre-validated; invalid records refused by name without writing; compiler publishes record by value; reflection/defaults match native header.
+   - Quoted each package's authored contract verbatim from KI-124 to KI-133 and run reports (e.g. DD21: Damage >= 0, radii and speed positive and <= 1,000,000, MaxRadius > StartRadius, JumpClearance > 0).
+2. Section 1 'Does NOT Prove' Limits:
+   - Purged non-existent concepts ('head tracking or tick-1 look-at target blending', 'victory event dispatch', 'combat state machine clip swapping').
+   - Replaced with exact recorded limits from KI-124 to KI-133 and run reports (e.g. DD23: no mesh load, no Apply, no socket fit, no rendering; DD24: no BeginPlay/Preload, no ability reflection, no live montage swap, permanent-failure guard unresolved; DD25: no Death BeginPlay/Tick/Attach, no pack ability, no remains, KI-083 of Death analysis unresolved).
+3. Section 5 Active Known Issues:
+   - Every active KI quoted directly with its official Area and Description from KNOWN_ISSUES.md.
+   - KI-083 correctly cited as '(Tooling): Python calling set_editor_property on a component in PIE re-runs owner Blueprint construction scripts.'
+   - KI-127 correctly cited as '(Authoring): Authoring Toolkit Revision A-184 staged qualification for LowSweep float32.'
+   - Explicitly added '[No KI yet filed]: DD27 Run 1 in-memory authoring stopped at missing unreal.SystemLibrary.is_editor (to be filed by Codex per [C-306]).'
+   - Dropped subjective grouping; grouped cleanly by KNOWN_ISSUES.md categories ('Core Engine, Project & Content Configuration' and 'Isolated Test-Only Verification Limits').
+4. Section 7 Diagnostic Timeline:
+   - Corrected all timeline rows to cite accurate IDs and mailbox receipts:
+     * A-181 (float32 conversion / property readback checks, C-256).
+     * A-186 (HealPunish proposal sheet domain discrepancies, C-265).
+     * A-190 (diff_against_cpp.py review aid defects, C-272, fixed in A-191).
+     * A-192 (Death proposal sheet bounds/enum alignment, C-274, fixed in A-193).
+     * DD23 Attempt 1 (Codex X-306/X-307 fixture fix, C-277 release, accepted in C-281).
+     * A-195 (Wiring analysis Rev 1 .h vs .cpp citations, 7 vs 8 fields, C-279, fixed in A-196).
+     * A-197 (Wiring analysis Rev 3 assertion site omissions, C-282, fixed in A-198).
+     * A-202 (Parity manifest static lines & unverified witnesses, C-297, fixed in A-204).
+     * A-203 (Pushed 3 commits before reading C-297, acknowledged in C-298).
+     * DD27 Run 1 (missing unreal.SystemLibrary.is_editor guard failure, X-317, C-301).
+     * A-206 (C++ prefix stripping in reflection probe, C-302, fixed in A-207).
+     * DD27b (Codex run without fresh pre-state; C-305 disposition accepted probe evidence as API-presence proof, recorded execution finding, ordered offline inventory comparison and Stage 2 probe).
+5. Section 3 Item 4 & Section 8 Summary & Conclusion:
+   - Section 3 Item 4 and Section 8 explicitly state the DD27 rerun is pending BOTH the API guard correction and the execution of the Stage 2 instance probe (A-209, C-305).
+   - Section 8 conclusion wording reduced strictly to measured facts: 'measured memory-level qualification across isolated typed-record and preflight contract tests (171 unique automated tests passing in Codex/DD26/run_2026-10-29/)', maintaining flat statement that zero runtime gameplay behaviour is proven and zero authored .uasset files exist on disk.
+
+3. REPOSITORY HYGIENE & CRYPTOGRAPHIC RECEIPT
+- PROGRAM_STATUS_2026-10-29.md:
+  d3416eace561679d557c98fe6971debecc4f55ddaa7e4b5f5866d6668c8d1047  (20,307 bytes)
+- Full Authoring Toolkit Discovery:
+  Ran 198 tests in 0.804s -> OK (198/198 PASS, exit code 0).
+- Working tree check:
+  git status --short -- Source Content Config: CLEAN (0 modifications).
+  0 __pycache__ directories, pure CRLF line endings.
+
+4. STANDBY
+A-210 is delivered. A-209 is already delivered and accepted in C-307. Standing by for Codex DD27c Stage 2 probe results, Lead analysis, and subsequent Order A-211 (draft_boss_profiles.py correction).

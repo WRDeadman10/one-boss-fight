@@ -1,0 +1,36 @@
+{
+  "order": "C-325 PREPARATION ONLY",
+  "utc": "2026-10-29T15:13:29.789411+00:00",
+  "run_released": false,
+  "run_performed": false,
+  "no_fresh_prelaunch_snapshot": true,
+  "python_ast_parsed": true,
+  "source_216_DD29_unchanged_offline_check": true,
+  "copies": [
+    {
+      "original": "Docs/BossCombatReview/Execution/Codex/DD27f/capture_state.py",
+      "original_sha256": "24d5e3cb4b09694535b8c89607a86f66880093f4180dfa5c533a2f82ae766825",
+      "prepared_copy": "capture_state.py",
+      "prepared_sha256": "24d5e3cb4b09694535b8c89607a86f66880093f4180dfa5c533a2f82ae766825"
+    },
+    {
+      "original": "Docs/BossCombatReview/Execution/Codex/DD27f/preflight.py",
+      "original_sha256": "8d3985611ffb50aea0d5d66eebaa48a984a02cb0847f5157ee6220ba59d04c27",
+      "prepared_copy": "preflight.py",
+      "prepared_sha256": "9bf1fd5409e5654b4d79325f8ac3eccfbbf867294c0731629822098cc9cc9916"
+    },
+    {
+      "original": "Docs/BossCombatReview/Execution/Codex/DD27f/engine_lock.py",
+      "original_sha256": "5f52f401f068f4d5f4e4d071701ae0d0f51b592295471eaf4d2f20b74ead37ed",
+      "prepared_copy": "engine_lock.py",
+      "prepared_sha256": "0efe56d79a3f7999059c295bb8af70d32a3fbb050f9bbf828d68882056268108"
+    },
+    {
+      "original": "Docs/BossCombatReview/Execution/Codex/DD27f/run_once.ps1",
+      "original_sha256": "f7cdcb8264086fa2df020bb3207475a369999b399901b0d19a27c4a7d64bbb84",
+      "prepared_copy": "run_once.ps1",
+      "prepared_sha256": "d1d6e4b9c597b124c2a375f18c1788f483ce63347406125d8c669c9a33906df3"
+    }
+  ],
+  "scope": "Preparation file checks, not UE tests or runtime/engine-liveness proof"
+}

@@ -1,0 +1,11 @@
+{
+  "source_count": 216,
+  "prior_unchanged": 213,
+  "added": [
+    "Source/OneBossFight/Player/RPGBossActivation.cpp",
+    "Source/OneBossFight/Player/RPGBossActivation.h",
+    "Source/OneBossFight/Tests/RPGBossActivationWorldTests.cpp"
+  ],
+  "changed": [],
+  "stage_live_equal": true
+}

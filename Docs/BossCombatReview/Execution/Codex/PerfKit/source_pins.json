@@ -1,0 +1,26 @@
+[
+  {
+    "path": "Scripts/RunPerfExperiments.ps1",
+    "sha256": "f00da5fd6c6a1f2c28e5488458fe661c8b57d1c3b97d6fb8976cb6dc7e68ffea"
+  },
+  {
+    "path": "Scripts/RunBenchmark.ps1",
+    "sha256": "3c71df706c901c3b7d0d1b765b291b7c16c2f51c7233065d22b48ed071be943c"
+  },
+  {
+    "path": "Source/OneBossFight/Benchmark/RPGBenchmarkRunner.cpp",
+    "sha256": "118e7b5ac9309a2b7b078cc9ee5c42d86eebdaf663148e1eabdcb9624fe1851e"
+  },
+  {
+    "path": "Source/OneBossFight/Benchmark/RPGBenchmarkRunner.h",
+    "sha256": "2253701cedd9b5767d2fe7d3604e27d404b19ac21a57f923667a2fea57714b41"
+  },
+  {
+    "path": "Source/OneBossFight/Arena/RPGPerfSwitches.cpp",
+    "sha256": "9465bee5a288c1a52c0e3c80822435d50a5ee9925fd6895269be23e461bfc8b0"
+  },
+  {
+    "path": "Source/OneBossFight/Arena/RPGFireSource.cpp",
+    "sha256": "0b78534e9fe3be55406832d1ec379f86088bfa43e7b82d51d2f23092033ad9bc"
+  }
+]

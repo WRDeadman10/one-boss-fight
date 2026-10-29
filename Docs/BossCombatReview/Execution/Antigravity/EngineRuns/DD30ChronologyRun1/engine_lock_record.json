@@ -1,0 +1,8 @@
+{
+  "agent": "Antigravity",
+  "party": "A",
+  "task": "C-352/DD30ChronologyRun1",
+  "command_id": "DD30Chronology.pie-run",
+  "start_utc": "2026-10-29T18:30:37.105481+00:00",
+  "policy": "C-321"
+}

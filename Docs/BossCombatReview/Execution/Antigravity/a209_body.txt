@@ -1,0 +1,74 @@
+TASK: A-209 delivery of Stage 2 in-memory instance and CDO reflection probe (--instances mode) per Lead C-305 directive.
+
+1. EXECUTIVE SUMMARY & ARTIFACT DELIVERY
+- Extended diagnostic probe: Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/probe_unreal_api.py
+  * Added opt-in --instances CLI flag (default False; when omitted, Stage 1 output remains 100% byte-identical).
+  * Executes transient in-memory struct instantiation, instance get_editor_property queries, C++ PascalCase fallback testing, RPGBossDefinition CDO inspection, and module-level unreal.is_editor execution.
+- Expanded standard-library unit test suite: Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_probe_unreal_api.py (10 tests).
+- Preserved historical baselines: original_A207/ in AuthoringToolkit/ (13 files) and BuildAuthoringHelper/ (3 files) with self-receipts.
+- Updated documentation and receipts: AuthoringToolkit/README.md (Section 8 updated with Stage 2 architecture and full call list, Section 9 updated), evidence_sha256.txt (25 entries), Documentation/TASKS.md, Documentation/DECISIONS.md, and Documentation/TEST_PLAN.md (BUILD-50-AG).
+- Execution Boundary: STRICTLY OFFLINE. Zero Unreal Engine processes launched; zero Source/Content edits (212 Source files unchanged); zero git commits or pushes.
+
+2. FULL LIST OF CALLS PERFORMED IN STAGE 2 (--instances MODE)
+Every call performed by Stage 2 is explicitly enumerated below with its harmlessness justification:
+1-17. Default constructors for all 17 authored structs:
+      unreal.RPGBossStatsConfig()
+      unreal.RPGEncounterPolicyConfig()
+      unreal.RPGStaggerPolicyConfig()
+      unreal.RPGPhaseFlowConfig()
+      unreal.RPGFireballConfig()
+      unreal.RPGPhaseDependencyConfig()
+      unreal.RPGStaggerProfileConfig()
+      unreal.RPGDormantWakeConfig()
+      unreal.RPGBleedConfig()
+      unreal.RPGLowSweepConfig()
+      unreal.RPGShockwaveConfig()
+      unreal.RPGHealPunishConfig()
+      unreal.RPGLookConfig()
+      unreal.RPGCloseClipSwapConfig()
+      unreal.RPGDeathConfig()
+      unreal.RPGPhaseConfig()
+      unreal.RPGParityField()
+      -> Harmlessness: instantiates a plain transient UStruct wrapper in Python process memory; does not create a UObject, does not touch package manager, does not register with any subsystem, zero disk writes.
+18. inst.get_editor_property(prop_name):
+      -> Harmlessness: strictly read-only property inspection on transient in-memory struct instance.
+19. hasattr(inst, prop_name):
+      -> Harmlessness: standard Python reflection attribute presence check.
+20. inst.get_editor_property(cpp_prop_name) [executed only upon first failure of a struct to test native PascalCase spelling]:
+      -> Harmlessness: strictly read-only fallback query on in-memory instance.
+21. hasattr(inst, cpp_prop_name):
+      -> Harmlessness: read-only attribute check.
+22. unreal.RPGBossDefinition.get_default_object():
+      -> Harmlessness: retrieves the Class Default Object singleton; read-only query.
+23. cdo.get_editor_property(top_prop) [across schema, definition_id, presentation_id, skeleton, animations, phases, fields, and 15 typed sub-structs]:
+      -> Harmlessness: strictly read-only property inspection on CDO; zero mutations, zero set_editor_property.
+24. unreal.is_editor() [executed only if callable]:
+      -> Harmlessness: queries engine editor mode boolean state; read-only.
+INVARIANTS: ZERO set_editor_property calls; ZERO create_asset calls; ZERO load_asset calls; ZERO save_loaded_asset calls.
+
+3. OFFLINE TEST & VERIFICATION WITNESSES
+- Direct Probe Execution (test_probe_unreal_api.py):
+  Command: python -B Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_probe_unreal_api.py
+  Result: Ran 10 tests in 0.178s -> OK (10/10 PASS, exit code 0).
+  Verified: (1) prefix-stripping logic; (2) candidate extraction from header fixture; (3) live C++ source scanning; (4) static AST chain extraction; (5) pythonized struct property mapping extraction; (6) offline probe format; (7) mock runtime probe Stage 1; (8) mock runtime probe Stage 2 --instances verifying instance get_editor_property, float values, CDO top properties, and is_editor; (9) offline Stage 2 skipped handling; (10) stepwise chain resolution.
+- Full Authoring Toolkit Discovery:
+  Command: python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit
+  Result: Ran 198 tests in 0.804s -> OK (198/198 PASS, exit code 0).
+  Composition: test_authoring_core.py (180 tests) + test_emit_fields_manifest.py (8 tests) + test_probe_unreal_api.py (10 tests).
+  Artifact: test_run_output.txt updated and verified.
+
+4. CRYPTOGRAPHIC EVIDENCE & RECEIPT
+Hashes of key delivery artifacts (from AuthoringToolkit/evidence_sha256.txt):
+- probe_unreal_api.py:
+  e9cb72b38f8cf62562624bbda8d7ecfc97931653ff9dcfb505963fdbbe7f7302  (23,892 bytes)
+- test_probe_unreal_api.py:
+  0be4bc6ca14f1f51fe30e5f52f8fe292439c2980598b965c71db067a964fc5f9  (11,707 bytes)
+- test_run_output.txt:
+  ae3885d9cf80e30d7b22a5789fcf5c556b63ca0d4949a6feff060b213b28b58a  (808 bytes)
+- README.md:
+  a77db74384a6549c7199ec6b0101c51e06fa53ec1197c8a42b102c019fc5754f  (43,893 bytes)
+- evidence_sha256.txt:
+  b591b151a5dd7d8258dc76d8b02e64673da63428d0eb5f4eb9725890df628f8f  (2,709 bytes)
+
+5. STANDBY & NEXT ACTION
+A-209 is delivered, offline-verified, and hygiene-certified (0 __pycache__, pure CRLF). Ready for Lead Claude review and subsequent release of ONE Codex probe run with --instances. Per C-306 instruction, proceeding immediately to deliver corrected Program Status Report as A-210.

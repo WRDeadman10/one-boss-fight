@@ -1,0 +1,57 @@
+TASK: Delivery of Order A-204 (C-297) - Corrections to Parity Manifest Generator (emit_fields_manifest.py) and Test Suite.
+STATUS: READY FOR LEAD REVIEW. 100% pure offline implementation; zero engine processes, zero source edits, zero asset writes; zero git commits pending Lead review; 188/188 unit tests PASS.
+
+1. DEFECT 1 RESOLUTION (REAL, MEASURED WITNESS NAMES):
+- Audited all 171 automation test names declared in Source/OneBossFight/Tests/*.cpp against the DD26 run report (automation_full_dd26.log).
+- Replaced synthetic/unverified witness names with measured test suites:
+  * Posture: AutomationTest:OneBossFight.Binding.StatsAdapters.Assign (proves PostureMax, RegenDelaySeconds, RegenPerSecond assignment)
+  * Fireball & PhaseDependencies: AutomationTest:OneBossFight.Binding.PhasesCluster.Assign (proves fireball policy and phase asset dependencies)
+  * PhaseFlow & Selected Phase: AutomationTest:OneBossFight.Binding.PhaseFlow.Assign
+  * StaggerPolicy: AutomationTest:OneBossFight.Binding.StaggerPolicy.Assign
+  * StaggerProfile: AutomationTest:OneBossFight.Binding.StaggerCluster.Assign
+  * Encounter: AutomationTest:OneBossFight.Binding.EncounterCluster.Assign
+  * DormantWake: AutomationTest:OneBossFight.Binding.DormantWake.Assign
+  * Bleed: AutomationTest:OneBossFight.Binding.Bleed.Assign
+  * LowSweep: AutomationTest:OneBossFight.Binding.LowSweep.Assign
+  * Shockwave: AutomationTest:OneBossFight.Binding.Shockwave.Assign
+  * HealPunish: AutomationTest:OneBossFight.Binding.HealPunish.Assign
+  * Look: AutomationTest:OneBossFight.Binding.Look.Assign
+  * CloseClipSwap: AutomationTest:OneBossFight.Binding.CloseClipSwap.Assign
+  * Death: AutomationTest:OneBossFight.Binding.Death.Assign
+- Unit test test_witness_names_exist_in_cplusplus_test_suites verifies that every emitted witness maps to a declared test in the test sources.
+
+2. DEFECT 2 RESOLUTION (DYNAMIC, TRUTHFUL DECLARATION LINES):
+- Implemented find_member_decl scanning C++ header/struct AST and declaration syntax dynamically.
+- Line numbers are computed at runtime from the live working tree, eliminating hardcoded estimates.
+- Unit test test_sourcesite_lines_contain_destination_member_name re-reads each cited line from disk and asserts that the destination member name is physically present on that line.
+
+3. DEFECT 3 RESOLUTION (PARSED NATIVE DEFAULT VALUES):
+- find_member_decl parses the default value expression (Type Name = default;) directly from the source declaration line.
+- For pointer types without initializers, empty string is truthfully emitted (C++ nullptr).
+- Unit test test_value_column_matches_parsed_header_defaults compares every NativeDefault row's Value against the parsed source default.
+
+4. DEFECT 4 RESOLUTION (TRUTHFUL SUMMARY TEXT):
+- Replaced misleading percentage claims with explicit factual counts:
+  * In 110-row mode: '110 generated, 0 withheld, 0 invented'
+  * In 106-row mode: '106 generated, 4 withheld (PhaseFlow selected-phase paths), 0 invented'
+
+5. DEFECT 5 RESOLUTION (SELECTED-PHASE EMISSION & PROFILE INTEGRATION):
+- Added --selected-phase <id> argument (default: 'PhaseTwo').
+- Reads phase configuration (EntryHealthFraction, SpeedMultiplier, RateMultiplier, AttackMultiplier) from authored profile JSON:
+  * Origin: AuthoredAsset
+  * SourcePath: repo-relative path of boss_draft_profiles.json
+  * SourceSite: JSON pointer (e.g. /profiles/0/phases/0/EntryHealthFraction)
+  * SourceSHA256: live hash of the JSON file
+  * Destination: FRPGPhaseConfig::<Member>
+  * Witness: AutomationTest:OneBossFight.Binding.PhaseFlow.Assign
+- Added PhaseNotFoundError: generator cleanly refuses with a named error if the requested phase id is not present in the profile.
+- Updated examples/boss_draft_profiles.json: DA_Boss_EmberWarden_Draft now carries all 110 compliant rows.
+- Unit test test_full_110_row_emission_and_preflight_parity verifies 100% agreement between the 110 emitted paths and the preflight test literals (RPGBossHydrationPreflightTests.cpp AllRequiredPaths).
+
+6. HYGIENE & TEST VERIFICATION:
+- Staged Preserved Baselines: original_A202/ under AuthoringToolkit/ (11 files) and BuildAuthoringHelper/ (3 files) with self-receipts.
+- Evidence Receipts Refreshed: Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/evidence_sha256.txt (23 items).
+- Path-Independent Execution: test_emit_fields_manifest.py auto-discovers repo root; passes both directly (python -B .../test_emit_fields_manifest.py, 8/8 PASS) and via discovery.
+- Full Suite Discovery: python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit: 188 tests run in 0.645s: 188/188 PASS, OK (0 errors, 0 warnings).
+- Project Documentation Updated: TASKS.md (AG-CONTENT13), DECISIONS.md, TEST_PLAN.md (BUILD-46-AG).
+- Commit Policy: Zero git commits performed; waiting for Lead review per C-298.

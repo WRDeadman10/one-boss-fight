@@ -1,0 +1,62 @@
+TASK: AG-CONTENT04 authoring toolkit safety corrections (A179 -> A180) per Technical Lead Codex review [X-286] / A179_REMAINING_SAFETY_CORRECTIONS.md.
+STATUS: All blocking safety items and domain corrections resolved. 52/52 unit tests PASS (exit code 0). Byte-exact A-179 archives preserved. Zero engine processes launched; zero assets created, mutated, or deleted; zero git operations.
+
+PRESERVED ARCHIVES:
+- BuildAuthoringHelper/original_A179/ (author_custom_build.py, README.md, evidence_sha256.txt preserved byte-for-byte)
+- AuthoringToolkit/original_A179/ (all 8 toolkit files preserved byte-for-byte before A-180 edits)
+- Historical archives preserved: original_A176/, original_A177/, original_A178/.
+
+SAFETY CORRECTIONS IMPLEMENTED:
+
+1. Fail-Closed Editor Guard (verify_editor_environment):
+   - Resolved AST leak identified in [X-286] / A179_GUARD_PROBE.json.
+   - Guard in draft_boss_profiles.py, inspect_authored_assets.py, and author_custom_build.py now mandates all required APIs:
+     * unreal module must be present and importable.
+     * unreal.SystemLibrary must exist and have callable is_editor().
+     * unreal.SystemLibrary.is_editor() must evaluate to True.
+     * unreal.get_editor_subsystem must exist and resolve unreal.UnrealEditorSubsystem to a non-null instance.
+     * unreal.get_game_world() must return None (strictly prohibiting PIE / simulation mode).
+     * Any missing API, false return, None subsystem, or active game world fails closed immediately with (False, "Missing required Unreal API: ...").
+   - AST execution with HAS_UNREAL=True and an empty SimpleNamespace() now cleanly returns (False, 'Missing required Unreal API: unreal.SystemLibrary'). No fallback representation can turn an unsupported environment into success.
+
+2. Fail-Closed Pre-Write API Guard (execute_draft_apply):
+   - Before any creation, duplication, or write operation, execute_draft_apply verifies the full required Unreal authoring surface:
+     * unreal.AssetToolsHelpers, unreal.EditorAssetLibrary, unreal.DataAssetFactory, unreal.load_class, unreal.Name, unreal.SoftObjectPath.
+     * Missing any API halts execution immediately with non-zero failure report before any asset mutation is attempted.
+   - Pre-write anti-overwrite check via EditorAssetLibrary.does_asset_exist is mandatory. Existing outputs halt execution fail-closed.
+
+3. Native Capability Domain Boundary Alignment:
+   - Aligned profile data validation with native backend adapter invariants from Source/OneBossFight/Boss/RPGBossPhaseAdapters.cpp and RPGBossStatsAdapters.cpp:
+     * EntryHealthFraction: domain strictly 0.0 < EntryHealthFraction <= 1.0 per RPGBossPhaseAdapters.cpp:122 (Record->EntryHealthFraction <= 0.f || Record->EntryHealthFraction > 1.f rejected). Threshold 0.0 is strictly illegal; native phase transitions require strictly positive health fraction.
+     * AttackMultiplier: strictly >= 1.0 per RPGBossPhaseAdapters.cpp:149 (Record->AttackMultiplier < NativeDamageScaleFloor where floor = 1.0f). Multipliers below 1.0 cannot be reversed to baseline by native adapters. Defined NATIVE_DAMAGE_SCALE_FLOOR = 1.0 in authoring_core.py.
+     * SpeedMultiplier & RateMultiplier: strictly > 0.0 with finite float inverses per RPGBossPhaseAdapters.cpp:131, 138, 143.
+     * MaxHealth: strictly > 1.0 per RPGBossStatsAdapters.cpp:95 (Stats.MaxHealth <= NativeHealthOverrideFloor where floor = 1.0f). Defined NATIVE_HEALTH_OVERRIDE_FLOOR = 1.0 in authoring_core.py.
+     * MaxPosture: strictly > 0.0 per RPGBossStatsAdapters.cpp:79 (Stats.MaxPosture <= 0.f rejected).
+   - Removed all assertions and comments blessing 0.0 threshold or sub-1.0 attack multipliers; domain boundaries reflect the native capability layer without clamping or default substitution.
+
+4. Clarification on Diagnostic Probes & Lead Reference Files:
+   - Acknowledged Lead Codex's guidance that diagnostic probes (probe_a178.py, test_native_profile_contract.py) validate probe harness completion and recording fake contracts, not full Unreal engine acceptance.
+   - Zero Codex reference files were modified or reinterpreted.
+
+OFFLINE TEST SUITE VERIFICATION:
+- test_authoring_core.py: 52/52 tests PASS (exit code 0).
+  * TestFailClosedEditorGuard: 8 distinct permutations covering offline environment, empty unreal namespace, missing is_editor, is_editor() == False, missing get_editor_subsystem, subsystem returning None, PIE mode active, and valid editor surface.
+  * TestRecordingFakeWriter: added test_apply_fails_closed_when_api_missing proving execute_draft_apply fails closed before writing when required authoring APIs are missing.
+  * TestBossProfileValidation: added test_entry_health_fraction_strict_domain, test_attack_multiplier_floor, test_speed_and_rate_multipliers_positive, and test_health_and_posture_native_floors.
+- test_run_output.txt: regenerated and verified (52/52 PASS, exit code 0).
+
+LINE ENDING & HYGIENE VERIFICATION:
+- Pure CRLF line endings enforced across all 39 files in AuthoringToolkit/ and BuildAuthoringHelper/ (0 bare LF, 0 bare CR verified by byte scanner).
+- Zero asset creation/mutation on disk; zero engine processes; zero git commits or pushes.
+
+EVIDENCE RECEIPTS:
+- BuildAuthoringHelper/evidence_sha256.txt (13 entries)
+- AuthoringToolkit/evidence_sha256.txt (19 entries)
+  * authoring_core.py: 7a57c2a76f272a8c08ec131c77f0a1ea3ef3cb8d2345d6dd8b956a908078971f (23547 bytes)
+  * draft_boss_profiles.py: bdb622f96cfb74a004eb7614e5910faeebfe2c293675d04845579d4692797e88 (27690 bytes)
+  * inspect_authored_assets.py: b2785d1175e114fa9449f8eb946f33d719541caad55c27f31be4d8f804791523 (20668 bytes)
+  * test_authoring_core.py: d7a1bb5b822d95e0c5d5d6768341ae6450689b9f3fe2b947a17726487ff690b6 (28823 bytes)
+  * test_run_output.txt: 34d1933aa9725f778a2e79607559e355c7a4ec290072c4ce0a232230a1bfb5a7 (8506 bytes)
+  * author_custom_build.py: 3b190f890538f7a83dffaaebf4a62fc1d0f5ce40212f7a9ddc67cf77000e3f05 (38166 bytes)
+
+Awaiting Technical Lead Codex review on A-180. Standing by with active socket listener.

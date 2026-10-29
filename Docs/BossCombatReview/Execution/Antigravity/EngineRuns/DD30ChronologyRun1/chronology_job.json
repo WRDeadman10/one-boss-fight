@@ -1,0 +1,12 @@
+{
+    "editor_pid":  20100,
+    "seconds":  43.6586326,
+    "killed_due_to_timeout":  false,
+    "release":  "C-352",
+    "start":  "2026-10-30T00:00:40.9632731+05:30",
+    "nullrhi":  true,
+    "task":  "DD30ChronologyRun1",
+    "exit_code":  null,
+    "outcome":  "EXIT_NONZERO",
+    "end":  "2026-10-30T00:01:24.6219057+05:30"
+}

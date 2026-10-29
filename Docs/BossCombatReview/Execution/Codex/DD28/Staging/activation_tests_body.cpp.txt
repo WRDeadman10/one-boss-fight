@@ -1,0 +1,126 @@
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGActivationSuccessTest, "OneBossFight.Binding.Activation.Success", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGActivationSuccessTest::RunTest(const FString& Parameters)
+{
+	FFixture F; if (!PreconditionOk(*this, F)) { return false; }
+	const FWorldState Before = F.Capture();
+	auto Result = RPGBossHydrationPreparation::PrepareBatch(F.Input);
+	if (!TestTrue(TEXT("prepared"), Result.Succeeded())) { return false; }
+	FRPGRegistrationReport Report;
+	if (!TestTrue(TEXT("registration succeeded"), Result.Batch->RegisterOwnedComponents(Report))) { return false; }
+	TestTrue(TEXT("state remains prepared and registered"), Result.Batch->IsPrepared() && Result.Batch->IsRegistered() && Report.bSucceeded && Report.Errors.IsEmpty());
+	const TCHAR* Expected[] = {TEXT("RPGBossStagger"), TEXT("RPGBossPhases"), TEXT("RPGBossEncounter"), TEXT("RPGBossDormantWake"), TEXT("RPGBossPosture"), TEXT("RPGBossBleed"), TEXT("RPGBossLowSweep"), TEXT("RPGBossShockwave"), TEXT("RPGBossHealPunish"), TEXT("RPGBossLook"), TEXT("RPGBossCloseClipSwap"), TEXT("RPGBossDeath")};
+	if (TestEqual(TEXT("two bosses times twelve"), Report.Registered.Num(), 24))
+	{
+		for (int32 Index = 0; Index < 24; ++Index)
+		{
+			const FRPGRegisteredComponentInfo& Entry = Report.Registered[Index];
+			TestTrue(TEXT("actual registered order matches independent legacy-relative list"), Entry.MemberIndex == Index / 12 && Entry.PlanIndex == Index % 12 && Entry.ClassName == FName(Expected[Index % 12]));
+		}
+	}
+	for (const UActorComponent* C : Result.Batch->OwnedComponentsForTest())
+	{ TestTrue(TEXT("registered and never begun"), C && C->IsRegistered() && !C->HasBegunPlay()); }
+	TestTrue(TEXT("target and context untouched"), SameActor(CaptureActor(F.Player), Before.Actors[2]) && F.Capture().Bound == Before.Bound && F.Capture().Ready == Before.Ready);
+	const auto Cleanup = Result.Batch->Abort();
+	TestTrue(TEXT("clean cleanup restores actors"), Cleanup.IsClean() && Cleanup.Destroyed == 24 && SameWorld(F.Capture(), Before));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGActivationThreadTest, "OneBossFight.Binding.Activation.NotGameThread", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGActivationThreadTest::RunTest(const FString& Parameters)
+{
+	FFixture F; if (!PreconditionOk(*this, F)) { return false; }
+	auto Result = RPGBossHydrationPreparation::PrepareBatch(F.Input);
+	if (!TestTrue(TEXT("prepared"), Result.Succeeded())) { return false; }
+	const FWorldState Before = F.Capture();
+	FRPGRegistrationReport Report;
+	const bool bAccepted = Async(EAsyncExecution::ThreadPool, [&]() { return Result.Batch->RegisterOwnedComponents(Report); }).Get();
+	TestTrue(TEXT("named refusal and no UObject mutation"), !bAccepted && Report.Errors.Num() == 1 && Report.Errors[0].StartsWith(TEXT("Activation.NotGameThread")) && SameWorld(F.Capture(), Before) && Result.Batch->IsPrepared() && !Result.Batch->IsRegistered());
+	Result.Batch->Abort();
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGActivationBegunTest, "OneBossFight.Binding.Activation.OwnerBegun", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGActivationBegunTest::RunTest(const FString& Parameters)
+{
+	FFixture F; if (!PreconditionOk(*this, F)) { return false; }
+	auto Result = RPGBossHydrationPreparation::PrepareBatch(F.Input);
+	if (!TestTrue(TEXT("prepared"), Result.Succeeded())) { return false; }
+	// The components are still unregistered: actor BeginPlay cannot begin them.
+	F.Boss2->DispatchBeginPlay();
+	if (!TestTrue(TEXT("late boss actually begun"), F.Boss2->HasActorBegunPlay())) { return false; }
+	FRPGRegistrationReport Report;
+	TestFalse(TEXT("begun owner refused"), Result.Batch->RegisterOwnedComponents(Report));
+	TestTrue(TEXT("whole-batch refusal before first registration"), Report.Registered.IsEmpty() && Report.FailedMemberIndex == 1 && Report.Errors.Num() > 0 && Report.Errors[0].StartsWith(TEXT("Activation.MemberInvalid")));
+	TestTrue(TEXT("failure abort destroyed all twenty-four unregistered consumers"), Report.Cleanup.IsClean() && Report.Cleanup.Destroyed == 24 && !Result.Batch->IsPrepared());
+	TestEqual(TEXT("all owned leases gone"), Result.Batch->GetOwnedComponentCount(), 0);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGActivationStateTest, "OneBossFight.Binding.Activation.StateRefusals", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGActivationStateTest::RunTest(const FString& Parameters)
+{
+	FFixture F; if (!PreconditionOk(*this, F)) { return false; }
+	const FWorldState Before = F.Capture();
+	auto Result = RPGBossHydrationPreparation::PrepareBatch(F.Input);
+	if (!TestTrue(TEXT("prepared"), Result.Succeeded())) { return false; }
+	FRPGRegistrationReport Report;
+	if (!TestTrue(TEXT("first succeeds"), Result.Batch->RegisterOwnedComponents(Report))) { return false; }
+	const FWorldState Registered = F.Capture();
+	TestFalse(TEXT("second refused"), Result.Batch->RegisterOwnedComponents(Report));
+	TestTrue(TEXT("existing registration preserved, stale report cleared"), Report.Registered.IsEmpty() && Report.Errors.Num() == 1 && Report.Errors[0].StartsWith(TEXT("Activation.AlreadyRegistered")) && Result.Batch->IsRegistered() && SameWorld(F.Capture(), Registered));
+	Result.Batch->Abort();
+	TestFalse(TEXT("aborted refused"), Result.Batch->RegisterOwnedComponents(Report));
+	TestTrue(TEXT("named aborted refusal"), Report.Errors.Num() == 1 && Report.Errors[0].StartsWith(TEXT("Activation.NotPrepared")) && SameWorld(F.Capture(), Before));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGActivationFaultTest, "OneBossFight.Binding.Activation.InjectedFaults", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGActivationFaultTest::RunTest(const FString& Parameters)
+{
+	FFixture F; if (!PreconditionOk(*this, F)) { return false; }
+	const FWorldState Before = F.Capture();
+	for (int32 Ordinal = 1; Ordinal <= 24; ++Ordinal)
+	{
+		auto Result = RPGBossHydrationPreparation::PrepareBatch(F.Input);
+		if (!TestTrue(TEXT("fresh preparation for ordinal"), Result.Succeeded())) { return false; }
+		RPGBossActivation::FRegistrationFaultScope Fault(Ordinal);
+		FRPGRegistrationReport Report;
+		TestFalse(TEXT("injected registration failure"), Result.Batch->RegisterOwnedComponents(Report));
+		TestTrue(TEXT("failure fired at exact member and plan"), Fault.Fired() && Report.FailedMemberIndex == (Ordinal - 1) / 12 && Report.FailedPlanIndex == (Ordinal - 1) % 12 && Report.Registered.Num() == Ordinal);
+		TestTrue(TEXT("reverse unregister then clean full abort"), Report.Cleanup.Destroyed == 24 && Report.Cleanup.IsClean() && !Result.Batch->IsPrepared() && !Result.Batch->IsRegistered() && SameWorld(F.Capture(), Before));
+		for (const AActor* Actor : {F.Boss1, F.Boss2, F.Player})
+		{
+			for (UClass* Class : RPGBossHydrationPreflight::ManagedCoreConsumerClasses())
+			{ TestTrue(TEXT("no managed consumer left on any actor"), Actor->FindComponentByClass(Class) == nullptr); }
+		}
+	}
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGActivationLifetimeTest, "OneBossFight.Binding.Activation.Lifetime", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGActivationLifetimeTest::RunTest(const FString& Parameters)
+{
+	FFixture F; if (!PreconditionOk(*this, F)) { return false; }
+	const FWorldState Before = F.Capture();
+	{
+		auto Result = RPGBossHydrationPreparation::PrepareBatch(F.Input);
+		if (!TestTrue(TEXT("prepared"), Result.Succeeded())) { return false; }
+		FRPGRegistrationReport Report;
+		if (!TestTrue(TEXT("registered"), Result.Batch->RegisterOwnedComponents(Report))) { return false; }
+		const auto Abort = Result.Batch->Abort();
+		TestTrue(TEXT("owned registration abort is clean"), Abort.Destroyed == 24 && Abort.ContractViolations == 0 && Abort.IsClean() && !Result.Batch->IsRegistered() && SameWorld(F.Capture(), Before));
+		const auto Again = Result.Batch->Abort();
+		TestTrue(TEXT("repeated abort empty"), Again.Destroyed == 0 && Again.AlreadyGone == 0 && Again.ContractViolations == 0 && Again.IsClean());
+	}
+	{
+		auto Result = RPGBossHydrationPreparation::PrepareBatch(F.Input);
+		if (!TestTrue(TEXT("prepared for scope exit"), Result.Succeeded())) { return false; }
+		FRPGRegistrationReport Report;
+		if (!TestTrue(TEXT("registered for scope exit"), Result.Batch->RegisterOwnedComponents(Report))) { return false; }
+	}
+	TestTrue(TEXT("existing destructor Abort now cleans its own registrations"), SameWorld(F.Capture(), Before));
+	return true;
+}
+
+#endif

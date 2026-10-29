@@ -1,1 +1,1 @@
-72580f60ee5d77f9c34d20c38272ce03dae8059102279dda38ed4ab8879ada81      41187  Docs/BossCombatReview/Execution/Antigravity/Manifest/FIELD_MANIFEST_CONTRACT_ANALYSIS.md
+929bba22d64ef4eac0b251a03ed5e14c9219a177cebb289ed2ea836da55e7fad     15776  Docs/BossCombatReview/Execution/Antigravity/Manifest/HERO_TARGET_MANIFEST_OPTIONS.md

@@ -1,0 +1,58 @@
+TASK: A-193 delivery: RPGBossDeath proposal corrections (C-274) & DD23 Look review aid parity settlement (C-275).
+STATUS: COMPLETED (offline proposal sheet revisions, Look parity settlement, diff_against_cpp 90/90 verified, receipts re-frozen).
+
+SUMMARY:
+1. RPGBossDeath Domain Proposal Sheet Corrections (addressing all 6 items from C-274):
+   - Authored file: `Docs/BossCombatReview/Execution/Antigravity/NativeDerivation/RPGBossDeath_domain_proposal.md` (hash: `85d35c941524...`, 24594 bytes CRLF).
+   - Defect 1 (Substantive - `PackEndTimeMultiplier` Semantics): Verified in `RPGBossDeath.cpp:296` the guard is `if (PackEndTimeMultiplier > 0.f)` and write is at `:303`. Values `<= 0.0f` and `NaN` are natively skipped/ignored (0.0f default is documented OFF state), not undefined behavior. Authored contract requires finite, non-negative (`>= 0.0f`), with 0.0f = OFF, and magnitude ceiling `1.0e6f`.
+   - Defect 2 (Re-verified Line Citations via `grep -n`):
+     - `DyingSeconds`: transition check at `RPGBossDeath.cpp:419` (`if (State == EState::Dying && Age >= DyingSeconds)`).
+     - `BlendInSeconds`: evaluated at `RPGBossDeath.cpp:439` passed to `RPGBossClips::Play` declared at `Source/OneBossFight/Player/RPGBossClips.h:52`.
+     - `HoldAtSeconds`: evaluated at `RPGBossDeath.cpp:446` (`if (StartAt >= HoldAtSeconds)`), `:494` (`Anim->Montage_GetPosition(Montage) >= HoldAtSeconds`), and `:519` (`const float StartAt = FMath::Clamp(static_cast<float>(Age), 0.f, HoldAtSeconds);`).
+     - `PackPollSeconds`: evaluated at `RPGBossDeath.cpp:223` (`NextPackPoll = Now + PackPollSeconds;`).
+     - `MaxClipRestarts`: evaluated at `RPGBossDeath.cpp:508` (`if (RestartsThisDeath >= MaxClipRestarts)`) and `:510` (`if (RestartsThisDeath == MaxClipRestarts)`).
+     - `ARPGBossRemains::Spawn`: invoked at `RPGBossDeath.cpp:123`.
+     - `KeepPhysicsOff`: defined at `RPGBossDeath.cpp:458`.
+     - `KeepClip`: defined at `RPGBossDeath.cpp:484`.
+     - `Preload`: defined at `RPGBossDeath.cpp:160` (mode check at `:164-171`).
+     - `PollPack`: defined at `RPGBossDeath.cpp:210`.
+     - `BeginDeath`: defined at `RPGBossDeath.cpp:360` (mode branches at `:377`, `:386`).
+   - Defect 3 (`HoldAtSeconds` Clamp Inversion Mechanics): Demonstrated that in `:519`, `FMath::Clamp(Age, 0.f, HoldAtSeconds)` with negative `HoldAtSeconds` inverts bounds (`Min > Max`), returning negative `StartAt` which feeds `RPGBossClips::Play(..., StartTime = StartAt)` at `RPGBossClips.h:59` (`InTimeToStartMontageAt`), corrupting engine montage playback. Frame 0 pause checks (:446, :494) also freeze immediately when `<= 0.f`. This native behavior provides mathematical proof for strictly positive floor (`> 0.0f`), not editor metadata.
+   - Defect 4 (`MaxClipRestarts` Warning & Ceiling): In `:508-510`, `RestartsThisDeath >= MaxClipRestarts` with `==` check. A negative value disables restarts immediately from frame 1 but never satisfies equality (starts at 0), silencing the warning log entirely. Domain requires non-negative (`>= 0`). Integer ceiling of 1000 designated explicitly as AUTHORED CHOICE.
+   - Defect 5 (Terminology): Word "tuned" is completely absent from sheet text.
+   - Defect 6 (Mode-Dependent Paths vs Uniform Contract): Confirmed from `:164-171` that runtime loads only `DeathClip` in `OwnClip` or `DeathMontage` in `PackMontage` (empty other path produces zero warnings). Proposed uniform requirement of both paths as the simpler, safer authoring contract to prevent broken references upon mode toggle, and documented mode-dependent alternative.
+   - Audit Preservation: Preserved original A-192 proposal text in Section 10 and staged `original_A192/RPGBossDeath_domain_proposal_v1.md` under `NativeDerivation/original_A192/` with self-receipt.
+
+2. Look Review Aid Parity & Four Alignment Points Settled (DD23 Parity per C-271 & C-275):
+   - Evaluated Codex's accepted DD23 source (`RPGBossLookAdapters.cpp` and `RPGBossLookAdapters.h`).
+   - Settled Point 1 (First Error): Updated `validate_look_domain` to return first failure token immediately, matching `RPGBossLookAdapters.cpp:ValidateLook`.
+   - Settled Point 2 (Case-Insensitive Duplicate): Set equality uses case-insensitive lowercased paths matching `FSoftObjectPath` / `FName` engine equality.
+   - Settled Point 3 (Removed Extraneous Bounds): Dropped 1024 cap on `SwordSocket` and list-shape rule on `Pieces` (missing/None treated as valid empty array matching `Record.Pieces.Num() == 0`).
+   - Settled Point 4 (SwordSocket None): `SwordSocket` "None" or empty string treated as `InvalidDependency.Missing` matching `FName::IsNone`.
+   - Review Aid Extension: Extended `diff_against_cpp.py` with dynamic loop field extraction (`*Field` -> `Look.Pieces`).
+   - Executed `diff_against_cpp.py --report`: verified **90/90 checks across ALL FIVE adapters** (Bleed 13, LowSweep 15, Shockwave 20, HealPunish 33, Look 9) match in exact C++ source order (`diff_report.txt`, hash: `3e659f211590...`).
+
+3. Hygiene, Staged Baselines & Receipts:
+   - Staged `original_A192/` in both `AuthoringToolkit/` (9 files) and `BuildAuthoringHelper/` (2 files) with self-receipts.
+   - Historical test suites verified: `original_A188` (128/128 PASS), `original_A189` (142/142 PASS), `original_A190` (148/148 PASS), `original_A191` (151/151 PASS), `original_A192` (151/151 PASS).
+   - Full test suite: **151/151 tests PASS** in 0.323s (`test_run_output.txt`).
+   - Receipts re-frozen: 21 in `AuthoringToolkit/evidence_sha256.txt`, 13 in `BuildAuthoringHelper/evidence_sha256.txt`, 10 in `NativeDerivation/evidence_sha256.txt`.
+   - 100% pure CRLF across all 181 active files in active directories; zero `__pycache__`.
+   - Documentation updated: `Documentation/TASKS.md`, `Documentation/DECISIONS.md`, `Documentation/TEST_PLAN.md` (BUILD-36-AG).
+
+VALIDATION:
+- Mechanical Review Aid Parity (5/5 adapters, 90/90 checks match in exact source order, exit 0):
+  - `python -B Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/diff_against_cpp.py --report` -> hash `3e659f211590a468dfa3401bd24e244ad1c8898b7e5d444701759032dc5a6655` (2293 bytes).
+  - Summary: Bleed 13 OK, LowSweep 15 OK, Shockwave 20 OK, HealPunish 33 OK, Look 9 OK.
+- Unit Test Suite:
+  - `python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit` -> 151/151 tests PASS in 0.323s.
+- Evidence Receipts:
+  - `NativeDerivation/evidence_sha256.txt`: 10/10 match (`RPGBossDeath_domain_proposal.md` = `85d35c941524ad681a53e8dba55decec9101842ee251de44ba7322e9dbba64f5`).
+  - `NativeDerivation/original_A192/evidence_sha256.txt`: 1/1 match (`RPGBossDeath_domain_proposal_v1.md` = `6df8526b80afd1b8e9ebea83e289b168532aa477995ec33765bde5aa0f5204dd`).
+  - `AuthoringToolkit/evidence_sha256.txt`: 21/21 match.
+  - `BuildAuthoringHelper/evidence_sha256.txt`: 13/13 match.
+- Byte-level CRLF scan: 181/181 files checked in active directories, 0 non-CRLF files, 0 bare LF, 0 bare CR, 0 `__pycache__`.
+
+NEXT ACTION:
+- Hand off to Lead Claude for review of A-193.
+- Await Codex completion of DD23 run and posting of DD24 staging.

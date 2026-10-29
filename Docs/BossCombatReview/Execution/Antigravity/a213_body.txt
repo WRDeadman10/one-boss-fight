@@ -1,0 +1,75 @@
+TASK: A-213 delivery of Authoring Helper Diagnostic Fixes & Softref Probe Extension per Lead C-314 directive.
+
+1. EXECUTIVE SUMMARY & ARTIFACT DELIVERY
+- Authoring Toolkit corrections delivered across draft_boss_profiles.py, probe_unreal_api.py, authoring_core.py, test_authoring_core.py, test_probe_unreal_api.py, test_run_output.txt, README.md, and evidence_sha256.txt.
+- Preserved historical baselines:
+  * Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/original_A212/ (13 files + receipt_sha256.txt)
+  * Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/original_A212/ (3 files + receipt_sha256.txt)
+- Documentation sync: Documentation/TASKS.md (AG-CONTENT20), Documentation/DECISIONS.md, and Documentation/TEST_PLAN.md (BUILD-54-AG).
+- Execution Boundary: STRICTLY OFFLINE. Zero Unreal Engine processes launched; zero Content/Config edits; zero git commits or pushes.
+
+2. HELPER DEFECT CORRECTIONS IN draft_boss_profiles.py (PER C-314 ITEM 1)
+(a) Untruncated Failure Reporting:
+    - DiagnosticFailureCollector records full exception messages and values without length clipping.
+    - After the diagnostic summary table, prints one untruncated line per failure:
+      `[DRAFT_APPLY][FAILURE] <asset> <section> <property> expected=<full> actual_type=<..> actual_repr=<full> exception=<class>: <full message>`
+(b) Reworded Per-Asset Status Lines:
+    - Replaced unconditional success prints. For each draft asset:
+      * Zero failures: `[DRAFT_APPLY] Initialized & verified all <total> typed properties on draft asset: '<name>'`
+      * One or more failures: `[DRAFT_APPLY] Draft asset '<name>': <total> properties set, <failed_count> failed`
+(c) Numeric Readback Witness for Fields Array:
+    - Added direct numeric witness upon reading back `fields` array from asset:
+      `[DRAFT_APPLY] fields rows read back: <actual_count> of <expected_count> expected`
+      Directly confirms whether all 110 parity field rows were read back.
+(d) Granular Step Attribution & Property Isolation:
+    - Replaced coarse `(constructor)` whole-struct aborts with step-attributed labels on specific property names:
+      * `construct`: default constructor instantiation of empty struct wrapper via `create_empty_struct_instance`
+      * `convert`: type normalization via `convert_property_for_engine`
+      * `set_editor_property`: property assignment on struct instance or asset
+      * `readback`: retrieval via `get_editor_property` and primitive comparison
+    - Struct properties are populated individually; a failure on one property records an error and continues testing all remaining properties in the struct.
+
+3. STAGE 2.D SOFT OBJECT PATH PROBE (--softrefs) IN probe_unreal_api.py (PER C-314 ITEM 2)
+- Added opt-in `--softrefs` CLI argument (strictly read-only toward project assets: creates zero assets, zero saves).
+- Complete List of Calls Made by `--softrefs` Mode:
+  1. `dir(unreal.SoftObjectPath)` public member reflection: dumps sorted non-underscore members.
+  2. Default Instance Reflection:
+     - `inst = unreal.RPGBleedConfig(); inst.get_editor_property("proc_effect")` -> prints default readback type & repr (`form=default`)
+     - `inst = unreal.RPGLookConfig(); inst.get_editor_property("body")` -> prints default readback type & repr (`form=default`)
+     - `inst = unreal.RPGLookConfig(); inst.get_editor_property("pieces")` -> prints default readback type & repr (`form=default`)
+  3. Scalar Softref Candidate Tests (`RPGBleedConfig.proc_effect` and `RPGLookConfig.body`):
+     - `form=str`: `inst.set_editor_property(prop, path_str)`
+     - `form=SoftObjectPath_ctor`: `inst.set_editor_property(prop, unreal.SoftObjectPath(path_str))`
+     - `form=SoftObjectPath_set_path`: `sop = unreal.SoftObjectPath(); sop.set_path(path_str); inst.set_editor_property(prop, sop)`
+     - `form=SoftObjectPath_asset_path_name`: `sop = unreal.SoftObjectPath(); sop.asset_path_name = unreal.Name(path_str); inst.set_editor_property(prop, sop)`
+     - `form=SoftObjectPath_two_arg`: `sop = unreal.SoftObjectPath(pkg, asset); inst.set_editor_property(prop, sop)`
+     - `form=none`: `inst.set_editor_property(prop, None)`
+     - `form=load_asset`: queries `unreal.EditorAssetLibrary.does_asset_exist(path)`. If True, calls `unreal.EditorAssetLibrary.load_asset(path)` (read-only load into memory) and tests `inst.set_editor_property(prop, loaded_obj)`. If False, reports skipped.
+  4. Array Softref Candidate Tests (`RPGLookConfig.pieces`):
+     - `form=list_str`: `inst.set_editor_property("pieces", [p1, p2, p3])`
+     - `form=list_SoftObjectPath`: `inst.set_editor_property("pieces", [unreal.SoftObjectPath(p) for p in paths])`
+     - `form=list_none`: `inst.set_editor_property("pieces", [None, None])`
+     - `form=empty_list`: `inst.set_editor_property("pieces", [])`
+     - `form=list_load_asset`: verifies existence via `does_asset_exist` before loading and setting.
+- Output Syntax: Each candidate emits strictly formatted untruncated line:
+  `[PROBE] SOFTREF <struct>.<prop> form=<name> result=<ok|error:<class>: <msg>> readback_type=<type> readback_repr=<repr>`
+
+4. AUTHORING CORE STABILITY & TYPE CONVERTER (PER C-314 ITEM 3)
+- `to_soft_ref` in `authoring_core.py` is intentionally preserved UNCHANGED pending live engine probe evidence from `--softrefs`.
+- Added `create_empty_struct_instance(struct_key, unreal_module)` to construct clean default UStruct wrapper instances.
+
+5. CRYPTOGRAPHIC EVIDENCE & REPOSITORY HYGIENE
+- File SHA256 Hashes:
+  * authoring_core.py: 35013defce7dcc2446b0b4be2f07c03e56a7ba7c4b8affff25e9456a9f77a13f (99,107 bytes)
+  * draft_boss_profiles.py: 88c733cea9c54725c2b20c97bfa3b401591bb5b13a265749212a95760c013f0c (53,121 bytes)
+  * probe_unreal_api.py: 5feae7df31e08f8ec4eea6768854ebf52c863aa0a1449ebfe55a52f774cad880 (44,008 bytes)
+  * test_authoring_core.py: d8fe2ba6eb8b0559e5d245b2d55b2074ae74a105904d00c6cf4690680e8fcf60 (144,225 bytes)
+  * test_probe_unreal_api.py: 2a9d544f6a61aeb8acc00b1c7ef093f55fc0fea4070a503f3846ff16eeb030cb (16,631 bytes)
+  * test_run_output.txt: 749c334021747a639f7bbb87468a9028d3ee42910917814dad6b42e291cd7e15 (1,109 bytes)
+  * README.md: 5bce50c303aff592ec867c918ca600e2b5669b1f9180382be1c505d20c0a72f3 (46,086 bytes)
+  * evidence_sha256.txt (Toolkit): e14edd8d8f0a527b476c636a93857d2244fb35b6550a3f5a8cc25939d12d052a (3,747 bytes)
+- Test Suite Discovery: 207 tests run in 0.962s -> OK (207/207 PASS, exit code 0).
+- Repository Hygiene: 0 `__pycache__` directories, pure CRLF line endings across all modified files, 0 engine processes, zero git operations.
+
+6. HANDOFF & READINESS
+Order A-213 is complete. The reflection probe with `--softrefs` mode is ready for Lead Claude's release to Codex.

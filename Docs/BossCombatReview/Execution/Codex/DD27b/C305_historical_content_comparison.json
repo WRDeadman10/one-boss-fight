@@ -1,0 +1,34 @@
+{
+  "order": "C-305",
+  "comparison": "historical DD27 run1 post vs DD27b post-only; NOT fresh before/after",
+  "earlier": {
+    "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Codex\\DD27\\post_state.json",
+    "sha256": "3370dbe156ada0d99cf2d4db2a0968a8b97b13edd8b15e60df21334ff63bf40e",
+    "utc": "2026-10-29T11:25:49.594375+00:00",
+    "content_count": 11752
+  },
+  "later": {
+    "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Codex\\DD27b\\post_only_state.json",
+    "sha256": "3019f64dd57f0a75b4a6a25d563b37be8d4bb4effa7d8543af7e970a8ebebcba",
+    "utc": "2026-10-29T12:14:23.172738+00:00",
+    "content_count": 11752
+  },
+  "content_path_size": {
+    "added": [],
+    "removed": [],
+    "changed": [],
+    "differing_paths": 0
+  },
+  "data_hashes": {
+    "earlier_count": 16,
+    "later_count": 16,
+    "comparison": {
+      "added": [],
+      "removed": [],
+      "changed": [],
+      "differing_paths": 0
+    }
+  },
+  "content_git_status_equal": true,
+  "limits": "Content beyond Data was inventoried by path/size, not hashed; identical size is not proof of identical bytes. Historical equality does not repair missing DD27b pre-state."
+}

@@ -1,0 +1,31 @@
+{
+  "release": "C-344",
+  "editor_exit": 0,
+  "seconds": 28.3107787,
+  "draft_count": 1,
+  "asset": "DA_Player_Hero_Draft_V2",
+  "typed_properties": 22,
+  "fields_readback": "4of4",
+  "saved": false,
+  "error_severity": 0,
+  "warning_severity": 17,
+  "failure_records": 0,
+  "source_count": 217,
+  "content_count": 11755,
+  "raw_sha256": "9a653c6b20d822e845a797b0d6227e6a7637a4098b1c9b63363939ffa46ff26d",
+  "saved_delta": {
+    "added": [
+      "Saved/Config/CrashReportClient/UECC-Windows-6CD3754243DE36E771111DA9EFD04F00/CrashReportClient.ini"
+    ],
+    "removed": [
+      "Saved/Logs/UnrealPak-backup-2026.10.24-16.49.32.log",
+      "Saved/Logs/UnrealPak-backup-2026.10.24-16.53.37.log",
+      "Saved/Logs/UnrealPak-backup-2026.10.24-16.53.53.log"
+    ],
+    "changed": [
+      "Saved/Autosaves/PackageRestoreData.json",
+      "Saved/Config/WindowsEditor/EditorPerProjectUserSettings.ini",
+      "Saved/UnrealClaude/script_history.json"
+    ]
+  }
+}

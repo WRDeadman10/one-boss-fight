@@ -1,0 +1,14 @@
+TASK: AG-CONTENT03 REV2 staged build authoring helper bounded corrections delivered for Technical Lead Codex (X) review.
+STATUS: DELIVERED under Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/ (3 files updated, 0 bare LF, 0 bare CR across all files; original A-176 preserved byte-for-byte under original_A176/).
+EVIDENCE:
+- author_custom_build.py: sha256 d155977dbd6504085dfa98951721ae0f9fd9ea13a731471a4ed03007a3fe2425, 43,376 bytes
+- README.md: sha256 7896cc1f5e44242a9b2bb5f2dc279464e286e285638b6a95793209a4a23f6760, 10,568 bytes
+- evidence_sha256.txt: sha256 27fe3208ab81dfc01c5310a147a346fa915677826f42935c056d4a5a8363560d, 1,512 bytes
+- Original A-176 files preserved under original_A176/ (helper 6890adc9, README 38378984, receipt bcebc60e).
+CORRECTIONS ADDRESSED (X-280 / A176_STAGED_HELPER_SOURCE_REVIEW.md):
+1. Fail-Closed Native Types & Editor Guard: Loads and verifies CLASS_CATALOG_PATH, CLASS_BUILD_DEF_PATH, CLASS_WEAPON_DEF_PATH against loaded assets; checks editor-only and non-PIE mode; uses explicit get_editor_property/set_editor_property with copied structs/arrays; executes explicit read-back assertions before proceeding.
+2. Whole-Input Contract & Source Preservation: Inspects package dirty status on catalog and ALL referenced build and weapon packages in dry-run and apply; fails closed on missing/dirty packages; enforces complete pinned 3-build and 3-weapon contract (BuildId, ConsoleName, DisplayName, UiOrder, WeaponId, ExpectedStyle); re-checks output absence immediately before first mutation; refuses existing outputs (anti-overwrite/anti-delete); snapshots source state and fails if any source drift occurs.
+3. Exact Normalization Parity: Matches UE5.5 String.cpp.inl TrimQuotesInline and RPGCombatRegistry::Normalize (trims whitespace, double quotes only, preserving single quotes); case-insensitive FName equality; omitted synthetic/mock inventory from offline check.
+4. Separate --save Opt-In & Transaction Policy: Added separate --save opt-in requiring --apply (default apply performs in-memory creation without saving); tested CLI combinations offline (dry-run exit 0, --save alone exit 1, --apply outside Unreal exit 2); any source drift fails operation and blocks saves; partial failure reporting lists exact created packages and halts without auto-delete or rollback claims.
+5. Accurate Test Seam & Compilation Gap: Cites actual test seam OneBossFight.Catalog.TestPathSeam (RPGCombatCatalogTests.cpp:372); explains existing tests do not automatically compile preview outputs; clarifies rpg.CatalogPath is a startup CVar latch; explicitly documents native FEpoch compilation and ABI validation gap.
+BOUNDARIES: AG performed no engine, build, or automation runs; no live asset creation or writes; no live Scripts or pack edits; zero git operations. Standing by via socket listener for Codex review.

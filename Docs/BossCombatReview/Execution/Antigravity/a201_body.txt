@@ -1,0 +1,53 @@
+TASK: A-201 delivery per Lead Order [C-293]: Offline read-only Field Manifest Contract Analysis (Docs/BossCombatReview/Execution/Antigravity/Manifest/FIELD_MANIFEST_CONTRACT_ANALYSIS.md).
+STATUS: COMPLETED (Offline Analysis delivered, SHA256: 72580f60ee5d77f9c34d20c38272ce03dae8059102279dda38ed4ab8879ada81, 41,187 bytes, receipt in evidence_sha256.txt).
+
+NOTE CORRECTION (C-293 Note 1):
+- Corrected component count in ACTIVATION_ANALYSIS.md (:15, :74, :76, :93): Exactly 21 components total are attached to the boss actor: 2 prelude components (URPGFootsteps, URPGBossMusic) + 19 bundle components across 19 bundle statements (Stagger, Phases, Encounter, DormantWake, Posture, Death, Look, Bleed, AttackTracker, CloseClipSwap, Shockwave, LowSweep, HealPunish, DamageResolver, TraceGuard, TraceAudit, BossHud, CombatDebug, BossLegend). Receipt refreshed: 78e8bed9bc168bae8c00f3a2138247bfb0c0317f8f80577f8d62aa6ee7bbde90 (42,808 bytes, 539 lines pure CRLF).
+
+1. TOPIC 1: COLUMN-BY-COLUMN VALIDATION AUDIT (RPGEncounterBinding.h:275-290)
+- FieldPath (FString): ACTIVE DECISION COLUMN. Validated by CompileParticipantImpl (RPGEncounterBinding.cpp:106: non-empty, unique across Fields), CompilePreflight (RPGBossHydrationPreflight.cpp:408-423: must contain every path across the 12 component plans, fails Preflight.MissingRequiredField), and BindEncounter (RPGEncounterBinding.cpp:354). Only column read for a logical execution decision.
+- Value (FString): AUDIT METADATA ONLY. Completely omitted from validation in CompileParticipantImpl (:104-115); zero C++ compilers, preflight, or adapters parse, convert, or read it. Component configuration reads exclusively from typed structs (RPGBossStatsAdapters.h:16, RPGBossEncounterPolicyAdapters.h:15: 'The values are read from the typed Stats record only, never from FRPGParityField::Value and never through ImportText'). Confirmed in RPGBossBleedAdaptersTests.cpp:218-220: setting manifest value to '9999' is ignored, component receives 150.f from typed struct.
+- Type (FString): AUDIT METADATA. Validated strictly for non-emptiness in CompileParticipantImpl (:106). No reflection type verification.
+- Units (FString): AUDIT METADATA. Completely unvalidated (omitted from validation if statement). Can be empty string.
+- SourcePath (FString): AUDIT METADATA. Validated strictly for non-emptiness in CompileParticipantImpl (:107). No filesystem check.
+- SourceSHA256 (FString): AUDIT METADATA. Validated strictly for format: IsSHA256 (RPGEncounterBinding.cpp:27-31) enforces exactly 64 hex characters (0-9, a-f, A-F). Not verified against bytes of SourcePath.
+- SourceSite, Origin, Precedence, Destination, FirstRead, Witness (FString): AUDIT METADATA. All validated strictly for non-emptiness in CompileParticipantImpl (:107-109). None read downstream.
+
+2. TOPIC 2: TRUTHFULNESS VS INVENTED METADATA
+- Definable Today with 100% Truthfulness:
+  * FieldPath: The 110 paths required by DD26 preflight contract.
+  * Type: Exact C++ UPROPERTY reflection types (float, bool, FName, FVector2D, TSoftObjectPtr<...>, etc.).
+  * Units: Accurate physical domains (seconds, degrees, cm, cm/s, hp, fraction 0..1, dimensionless).
+  * Value: Truthful string representation of native C++ constructor defaults or Lead contract values (informational snapshot).
+  * SourcePath & SourceSite: Exact C++ headers/constructors for the 11 defaults, RPGPlayerMovesSubsystem.cpp:187 for DeathMode=OwnClip, and Lead directives C-258..C-281 for the 5 authored clusters.
+  * Destination: Target C++ component members (e.g. URPGBossStagger::StaggerSeconds, URPGBossDeath::DeathMode).
+- Requiring Lead / Owner Policy (Would Be Invented if Authored Without Decision):
+  * SourceSHA256: Should this hash the live source C++ file on disk (creating fragility on code edits) or use a frozen catalog token?
+  * Origin: Taxonomy standard (NativeDefault, SubsystemOverride, LeadContract, AuthoredAsset).
+  * Precedence: Formal ordering hierarchy definition.
+  * FirstRead: Deep callgraph instrumentation vs standardized lifecycle convention ('BeginPlay', 'OnSpawn', 'OnDemand').
+  * Witness: Verification authority standard ('AuthoringToolkit-REV10', 'AutomationTest', 'LeadReview').
+
+3. TOPIC 3: DD-SERIES TEST FIXTURE SHAPES
+- Audited fixture helpers across all test suites: MakeProductionField in RPGBossProductionPreflightTests.cpp:138-154, MakeField in RPGBossBleedAdaptersTests.cpp:176-189, and RPGBossShockwaveAdaptersTests.cpp:199-203.
+- Confirmed: All existing test fixtures construct synthetic rows with placeholder strings ('fixture', 'synthetic', 'harness', 'test') and repetitive 64-character hex tokens (FString::ChrN(64, 'c') or 'a') solely to satisfy format checks.
+
+4. TOPIC 4: EXHAUSTIVE 110-PATH DRAFT TABLE
+- Section 4 provides the full 110-row Markdown table covering all 16 clusters: StaggerPolicy (14), StaggerProfile (11), SelectedPhase (4), PhaseFlow (6), Fireball (5), PhaseDependencies (3), Encounter (3), DormantWake (2), Posture (3), Bleed (7), LowSweep (8), Shockwave (8), HealPunish (14), Look (5), CloseClipSwap (5), Death (12).
+- Every row details Index, Path, Type, Units, Default Value, Source Site, Destination Member, and Status (Known Native Default, Lead Contract, Subsystem Override, or Needs Phase Spec).
+
+5. TOPIC 5: CONSUMER BREAKAGE LIST
+- 5 native system layers fail closed if manifest is omitted, incomplete, or malformed:
+  (1) CompileParticipantImpl (RPGEncounterBinding.cpp:104-115): fails 'field manifest required' (if empty) or 'incomplete/duplicate field-source manifest' (if any format check fails).
+  (2) RPGBossHydrationPreflight::CompilePreflight (RPGBossHydrationPreflight.cpp:347, :420): fails Preflight.InvalidManifestIdentity or Preflight.MissingRequiredField if any of the 110 paths is absent.
+  (3) RPGBossWorldInputCompiler::CompileWorldInput (RPGBossWorldInputCompiler.cpp:58): fails WorldInput.DefinitionRejected or WorldInput.PreflightRejected.
+  (4) RPGBossWorldPreparation::PrepareWorldBatch (RPGBossWorldPreparation.cpp:46): fails with nested diagnostics and aborts batch allocations.
+  (5) FRPGBossPreparationRegistry::TryPrepareAndReserve (RPGBossPreparationRegistry.cpp:144): fails EReservationFailure::InvalidInput or PreparationFailed.
+  (6) URPGCombatContextSubsystem::BindEncounter (RPGEncounterBinding.cpp:354): checks participant manifest paths during combat registration.
+
+EVIDENCE & HYGIENE:
+- Field Manifest Contract Analysis Staged: Docs/BossCombatReview/Execution/Antigravity/Manifest/FIELD_MANIFEST_CONTRACT_ANALYSIS.md (SHA256: 72580f60ee5d77f9c34d20c38272ce03dae8059102279dda38ed4ab8879ada81, 41,187 bytes, 436 lines pure CRLF).
+- Receipt Staged: Docs/BossCombatReview/Execution/Antigravity/Manifest/evidence_sha256.txt (167 bytes, pure CRLF).
+- Activation Analysis Receipt Refreshed: Docs/BossCombatReview/Execution/Antigravity/Activation/evidence_sha256.txt (156 bytes, pure CRLF).
+- Unit Tests: 180/180 PASS in 0.359s; 0 __pycache__; zero engine processes, zero source edits, zero asset writes.
+- Project Docs Updated: TASKS.md (AG-CONTENT11), DECISIONS.md, TEST_PLAN.md (BUILD-44-AG).

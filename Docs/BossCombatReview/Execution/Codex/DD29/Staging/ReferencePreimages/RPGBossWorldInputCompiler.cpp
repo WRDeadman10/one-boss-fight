@@ -1,0 +1,618 @@
+// Copyright One Boss Fight. All Rights Reserved.
+
+#include "Player/RPGBossWorldInputCompiler.h"
+
+#include "Engine/GameInstance.h"
+#include "Engine/World.h"
+#include "GameFramework/Actor.h"
+#include "Player/RPGCombatCatalog.h"
+#include "Player/RPGEncounterBinding.h"
+#include "UObject/StrongObjectPtr.h"
+
+namespace
+{
+	/** The shape the production compiler and the preflight accept for a manifest hash: 64 hexadecimal digits. */
+	bool IsManifestHashShape(const FString& Text)
+	{
+		if (Text.Len() != 64)
+		{
+			return false;
+		}
+		for (const TCHAR Ch : Text)
+		{
+			if (!FChar::IsHexDigit(Ch))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	FString MemberText(FName Slot, int32 Index)
+	{
+		return Slot.IsNone() ? FString::Printf(TEXT("[member=#%d]"), Index) : FString::Printf(TEXT("[slot=%s]"), *Slot.ToString());
+	}
+
+	void FailBatch(FRPGHydrationResult& Result, const TCHAR* Token, const FString& Detail)
+	{
+		Result.Fail(FString::Printf(TEXT("%s: %s"), Token, *Detail));
+	}
+
+	void FailMember(FRPGHydrationResult& Result, const TCHAR* Token, const FString& Where, const FString& Detail)
+	{
+		Result.Fail(FString::Printf(TEXT("%s%s: %s"), Token, *Where, *Detail));
+	}
+
+	/** The identities acquired from the world: the world, its game instance, that game instance's catalog subsystem and the epoch lease it published. */
+	struct FAcquisition
+	{
+		TWeakObjectPtr<UWorld> World;
+		TWeakObjectPtr<UGameInstance> GameInstance;
+		const URPGCombatCatalogSubsystem* Subsystem = nullptr;
+		TSharedPtr<const RPGCombatRegistry::FEpoch> Content;
+	};
+
+	/** The epoch comes ONLY from the world's own game instance catalog subsystem, read through RPGCombatRegistry::ForWorld. No fallback of any kind. The subsystem is looked up directly only to hold its identity for the drift checks
+	 *  and to require that it reports the very epoch pointer ForWorld returned; it is never a second source. */
+	bool Acquire(UWorld* World, FAcquisition& Out, FString& Why)
+	{
+		UGameInstance* GameInstance = World->GetGameInstance();
+		if (!GameInstance)
+		{
+			Why = TEXT("the world has no game instance");
+			return false;
+		}
+		if (!IsValid(GameInstance))
+		{
+			Why = TEXT("the world's game instance is not valid (destroyed or collected)");
+			return false;
+		}
+		const URPGCombatCatalogSubsystem* Subsystem = GameInstance->GetSubsystem<URPGCombatCatalogSubsystem>();
+		if (!Subsystem)
+		{
+			Why = TEXT("the world's game instance has no catalog subsystem");
+			return false;
+		}
+		if (!IsValid(Subsystem))
+		{
+			Why = TEXT("the world's game instance catalog subsystem is not valid (destroyed or collected)");
+			return false;
+		}
+		const TSharedPtr<const RPGCombatRegistry::FEpoch> Epoch = RPGCombatRegistry::ForWorld(World);
+		if (!Epoch.IsValid() || !Epoch->Id.IsValid())
+		{
+			Why = TEXT("the world's game instance catalog subsystem published no valid epoch");
+			return false;
+		}
+		if (Subsystem->GetEpoch().Get() != Epoch.Get())
+		{
+			Why = TEXT("ForWorld and the catalog subsystem do not report the same epoch");
+			return false;
+		}
+		Out.World = World;
+		Out.GameInstance = GameInstance;
+		Out.Subsystem = Subsystem;
+		Out.Content = Epoch;
+		return true;
+	}
+
+	/** The world, the game instance, its subsystem and the published epoch pointer are still exactly the acquired ones. */
+	bool StillSame(UWorld* World, const FAcquisition& Acquired, FString& Why)
+	{
+		if (!Acquired.World.IsValid() || Acquired.World.Get() != World || !IsValid(World))
+		{
+			Why = TEXT("the world changed or is no longer valid");
+			return false;
+		}
+		UGameInstance* GameInstance = World->GetGameInstance();
+		if (!GameInstance || GameInstance != Acquired.GameInstance.Get())
+		{
+			Why = TEXT("the world's game instance changed");
+			return false;
+		}
+		if (!IsValid(GameInstance))
+		{
+			Why = TEXT("the world's game instance is no longer valid");
+			return false;
+		}
+		if (GameInstance->GetSubsystem<URPGCombatCatalogSubsystem>() != Acquired.Subsystem)
+		{
+			Why = TEXT("the game instance's catalog subsystem changed");
+			return false;
+		}
+		if (!IsValid(Acquired.Subsystem))
+		{
+			Why = TEXT("the game instance's catalog subsystem is no longer valid");
+			return false;
+		}
+		if (RPGCombatRegistry::ForWorld(World).Get() != Acquired.Content.Get())
+		{
+			Why = TEXT("the published epoch changed");
+			return false;
+		}
+		return true;
+	}
+
+	/** A participant as validated: the explicit actor, slot, target and definition, plus the explicit role and phase of its selection. */
+	struct FMember
+	{
+		int32 Index = 0;
+		FName Slot;
+		FName TargetSlot;
+		AActor* Actor = nullptr;
+		URPGBossDefinition* Definition = nullptr;
+		ERPGPreflightRole Role = ERPGPreflightRole::None;
+		FName SelectedPhaseId;
+	};
+
+	/** The participant identities at the start, compared with the live binding before publication. */
+	struct FMemberSnapshot
+	{
+		TWeakObjectPtr<AActor> Actor;
+		FName Slot;
+		FName TargetSlot;
+		TWeakObjectPtr<URPGBossDefinition> Definition;
+	};
+
+	TArray<FMemberSnapshot> TakeSnapshot(const ARPGEncounterBinding& Binding)
+	{
+		TArray<FMemberSnapshot> Snapshot;
+		for (const FRPGPlacedParticipantBinding& Participant : Binding.Participants)
+		{
+			FMemberSnapshot Member;
+			Member.Actor = Participant.Actor.Get();
+			Member.Slot = Participant.Slot;
+			Member.TargetSlot = Participant.TargetSlot;
+			Member.Definition = Participant.Definition.Get();
+			Snapshot.Add(Member);
+		}
+		return Snapshot;
+	}
+
+	bool SameSnapshot(const ARPGEncounterBinding& Binding, const FGuid& Encounter, const TArray<FMemberSnapshot>& Taken)
+	{
+		if (!Binding.EncounterInstance.IsValid() || Binding.EncounterInstance != Encounter || Binding.Participants.Num() != Taken.Num())
+		{
+			return false;
+		}
+		for (int32 Index = 0; Index < Taken.Num(); ++Index)
+		{
+			const FRPGPlacedParticipantBinding& Live = Binding.Participants[Index];
+			if (Live.Slot != Taken[Index].Slot || Live.TargetSlot != Taken[Index].TargetSlot || Live.Actor.Get() != Taken[Index].Actor.Get() || Live.Definition.Get() != Taken[Index].Definition.Get())
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/** The lifecycle and identity of the binding itself. Used by the initial validation AND by every checkpoint, with the same messages. */
+	bool BindingProblem(const ARPGEncounterBinding* Binding, const UWorld* World, FString& Why)
+	{
+		if (!Binding || !IsValid(Binding))
+		{
+			Why = TEXT("no encounter binding was given or it was destroyed or collected");
+			return true;
+		}
+		if (Binding->IsActorBeingDestroyed())
+		{
+			Why = TEXT("the encounter binding is being destroyed");
+			return true;
+		}
+		if (Binding->GetWorld() != World)
+		{
+			Why = TEXT("the encounter binding is not in the expected world");
+			return true;
+		}
+		if (Binding->HasActorBegunPlay() || Binding->IsActorBeginningPlay())
+		{
+			Why = TEXT("the encounter binding began or is beginning play: the input is compiled before BeginPlay");
+			return true;
+		}
+		return false;
+	}
+
+	// The problems an actor can have, as bits: used by the initial validation (each bit has its own diagnostic) AND by every checkpoint (any bit is drift).
+	constexpr uint32 ActorMissing = 1u;
+	constexpr uint32 ActorStale = 2u;
+	constexpr uint32 ActorDestroying = 4u;
+	constexpr uint32 ActorForeign = 8u;
+	constexpr uint32 ActorBegun = 16u;
+
+	uint32 ActorProblems(const AActor* Actor, const UWorld* World)
+	{
+		if (!Actor)
+		{
+			return ActorMissing;
+		}
+		if (!IsValid(Actor))
+		{
+			return ActorStale;
+		}
+		uint32 Problems = 0u;
+		if (Actor->IsActorBeingDestroyed())
+		{
+			Problems |= ActorDestroying;
+		}
+		if (Actor->GetWorld() != World)
+		{
+			Problems |= ActorForeign;
+		}
+		if (Actor->HasActorBegunPlay() || Actor->IsActorBeginningPlay())
+		{
+			Problems |= ActorBegun;
+		}
+		return Problems;
+	}
+
+	enum class ECheckpoint : uint8
+	{
+		Ok,
+		ContentDrift,
+		BindingDrift,
+	};
+
+	const TCHAR* DriftToken(ECheckpoint Kind)
+	{
+		return Kind == ECheckpoint::ContentDrift ? TEXT("WorldInput.ContentDrift") : TEXT("WorldInput.BindingDrift");
+	}
+
+	/**
+	 * The ONE checkpoint, run before and after every production compile and at publication: the content identities (world, game instance, subsystem, epoch pointer), then the retained binding reference resolves and
+	 * passes the binding predicate, its GUID and participant snapshot are unchanged, and every member actor and definition is still valid, in the expected world and not begun. Nothing here can be provoked by a
+	 * callback, a cvar or an injection: these are source claims, and the initial validation uses the same predicates so the existing negative tests exercise the same guards.
+	 */
+	ECheckpoint Checkpoint(UWorld* World, const FAcquisition& Acquired, const TWeakObjectPtr<const ARPGEncounterBinding>& BindingRef, const FGuid& Encounter, const TArray<FMemberSnapshot>& Snapshot,
+		const TArray<FMember>& Members, FString& Why)
+	{
+		if (!StillSame(World, Acquired, Why))
+		{
+			return ECheckpoint::ContentDrift;
+		}
+		const ARPGEncounterBinding* Live = BindingRef.Get();
+		if (!Live)
+		{
+			Why = TEXT("the retained reference to the encounter binding no longer resolves (destroyed or collected)");
+			return ECheckpoint::BindingDrift;
+		}
+		if (BindingProblem(Live, World, Why))
+		{
+			return ECheckpoint::BindingDrift;
+		}
+		if (!SameSnapshot(*Live, Encounter, Snapshot))
+		{
+			Why = TEXT("the encounter GUID or a participant (actor, slot, target or definition) of the binding changed");
+			return ECheckpoint::BindingDrift;
+		}
+		for (const FMember& Member : Members)
+		{
+			// The retained WEAK identities of this member are resolved first (bounds-checked by the member's index): a cleared weak actor or definition, or one that is not exactly the original, is drift. The saved raw pointers are
+			// never dereferenced before this: IsValid on a raw pointer is not a GC-safe identity resolution.
+			if (!Snapshot.IsValidIndex(Member.Index))
+			{
+				Why = FString::Printf(TEXT("%s: the member has no retained snapshot entry"), *MemberText(Member.Slot, Member.Index));
+				return ECheckpoint::BindingDrift;
+			}
+			AActor* const ResolvedActor = Snapshot[Member.Index].Actor.Get();
+			URPGBossDefinition* const ResolvedDefinition = Snapshot[Member.Index].Definition.Get();
+			if (!ResolvedActor || ResolvedActor != Member.Actor || !ResolvedDefinition || ResolvedDefinition != Member.Definition)
+			{
+				Why = FString::Printf(TEXT("%s: the retained actor or definition no longer resolves to the original (destroyed, collected or replaced)"), *MemberText(Member.Slot, Member.Index));
+				return ECheckpoint::BindingDrift;
+			}
+			if (ActorProblems(ResolvedActor, World) != 0u)
+			{
+				Why = FString::Printf(TEXT("%s: the actor is no longer valid, in the expected world and not begun"), *MemberText(Member.Slot, Member.Index));
+				return ECheckpoint::BindingDrift;
+			}
+		}
+		return ECheckpoint::Ok;
+	}
+}
+
+namespace RPGBossWorldInputCompiler
+{
+	FRPGHydrationResult CompileWorldInput(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding, const TArray<FSelection>& Selections, const FString& ManifestHash, FRPGHydrationPreflightInput& OutInput)
+	{
+		FRPGHydrationResult Result;
+		// Before any UObject (the world, the binding, the output's leases) is touched.
+		if (!IsInGameThread())
+		{
+			FailBatch(Result, TEXT("WorldInput.NotGameThread"), TEXT("the world input is compiled on the game thread only (the output was not touched)"));
+			return Result;
+		}
+		// A failure never leaves an earlier usable output behind.
+		OutInput = FRPGHydrationPreflightInput();
+
+		// The world and the binding. These are the explicit inputs everything else hangs on, so a failure here ends the call.
+		if (!ExpectedWorld || !IsValid(ExpectedWorld))
+		{
+			FailBatch(Result, TEXT("WorldInput.InvalidWorld"), TEXT("no expected world was given or it is no longer valid"));
+			return Result;
+		}
+		FString BindingWhy;
+		if (BindingProblem(Binding, ExpectedWorld, BindingWhy))
+		{
+			FailBatch(Result, TEXT("WorldInput.InvalidBinding"), BindingWhy);
+			return Result;
+		}
+		if (!Binding->EncounterInstance.IsValid())
+		{
+			FailBatch(Result, TEXT("WorldInput.InvalidEncounter"), TEXT("the binding has no explicit valid encounter GUID (none is generated)"));
+			return Result;
+		}
+		if (Binding->Participants.IsEmpty())
+		{
+			FailBatch(Result, TEXT("WorldInput.NoParticipants"), TEXT("the binding has no participant"));
+			return Result;
+		}
+		if (!IsManifestHashShape(ManifestHash))
+		{
+			FailBatch(Result, TEXT("WorldInput.InvalidManifestHash"), TEXT("the explicit stable manifest hash is not 64 hexadecimal digits"));
+			return Result;
+		}
+		const FGuid Encounter = Binding->EncounterInstance;
+		const TArray<FMemberSnapshot> Snapshot = TakeSnapshot(*Binding);
+		// The retained reference every checkpoint resolves again.
+		const TWeakObjectPtr<const ARPGEncounterBinding> BindingRef(Binding);
+
+		// The slots of the participants (the batch), then the selections against them: exact one-to-one coverage, no duplicate, empty or extraneous selection, explicit role and phase semantics.
+		TSet<FName> BatchSlots;
+		for (int32 Index = 0; Index < Binding->Participants.Num(); ++Index)
+		{
+			const FName Slot = Binding->Participants[Index].Slot;
+			if (Slot.IsNone())
+			{
+				FailMember(Result, TEXT("WorldInput.ParticipantInvalid"), MemberText(Slot, Index), TEXT("the participant slot name is empty"));
+			}
+			else if (BatchSlots.Contains(Slot))
+			{
+				FailMember(Result, TEXT("WorldInput.ParticipantDuplicateSlot"), MemberText(Slot, Index), TEXT("the slot is used by more than one participant"));
+			}
+			else
+			{
+				BatchSlots.Add(Slot);
+			}
+		}
+		TMap<FName, const FSelection*> SelectionBySlot;
+		for (int32 Index = 0; Index < Selections.Num(); ++Index)
+		{
+			const FSelection& Selection = Selections[Index];
+			const FString Where = Selection.Slot.IsNone() ? FString::Printf(TEXT("[selection=#%d]"), Index) : FString::Printf(TEXT("[slot=%s]"), *Selection.Slot.ToString());
+			if (Selection.Slot.IsNone())
+			{
+				FailMember(Result, TEXT("WorldInput.SelectionInvalid"), Where, TEXT("the selection slot name is empty"));
+				continue;
+			}
+			if (SelectionBySlot.Contains(Selection.Slot))
+			{
+				FailMember(Result, TEXT("WorldInput.SelectionDuplicate"), Where, TEXT("more than one selection names the slot"));
+				continue;
+			}
+			SelectionBySlot.Add(Selection.Slot, &Selection);
+			if (!BatchSlots.Contains(Selection.Slot))
+			{
+				FailMember(Result, TEXT("WorldInput.SelectionExtraneous"), Where, TEXT("the selection names a slot that is not a participant of the binding"));
+			}
+			if (Selection.Role != ERPGPreflightRole::BossCore && Selection.Role != ERPGPreflightRole::TargetOnly)
+			{
+				FailMember(Result, TEXT("WorldInput.SelectionRole"), Where, TEXT("the role is not set (boss-core or target-only is required, never inferred from the slot name)"));
+			}
+			else if (Selection.Role == ERPGPreflightRole::BossCore && Selection.SelectedPhaseId.IsNone())
+			{
+				FailMember(Result, TEXT("WorldInput.SelectionPhaseMissing"), Where, TEXT("a boss-core member needs an explicit selected phase id (never the first, the last or index 0)"));
+			}
+			else if (Selection.Role == ERPGPreflightRole::TargetOnly && !Selection.SelectedPhaseId.IsNone())
+			{
+				FailMember(Result, TEXT("WorldInput.SelectionPhaseUnexpected"), Where, TEXT("a target-only member has no phase to select"));
+			}
+		}
+		for (const FName& Slot : BatchSlots)
+		{
+			if (!SelectionBySlot.Contains(Slot))
+			{
+				FailMember(Result, TEXT("WorldInput.SelectionMissing"), FString::Printf(TEXT("[slot=%s]"), *Slot.ToString()), TEXT("the participant has no selection"));
+			}
+		}
+
+		// The members: actor, target and definition, each explicit.
+		TArray<FMember> Members;
+		TSet<const AActor*> SeenActors;
+		for (int32 Index = 0; Index < Binding->Participants.Num(); ++Index)
+		{
+			const FRPGPlacedParticipantBinding& Participant = Binding->Participants[Index];
+			const FString Where = MemberText(Participant.Slot, Index);
+			FMember Member;
+			Member.Index = Index;
+			Member.Slot = Participant.Slot;
+			Member.TargetSlot = Participant.TargetSlot;
+			bool bUsable = !Participant.Slot.IsNone();
+
+			AActor* Actor = Participant.Actor.Get();
+			const uint32 Problems = ActorProblems(Actor, ExpectedWorld);
+			if (Problems & ActorMissing)
+			{
+				FailMember(Result, TEXT("WorldInput.ParticipantActorMissing"), Where, TEXT("no actor was given"));
+				bUsable = false;
+			}
+			else if (Problems & ActorStale)
+			{
+				FailMember(Result, TEXT("WorldInput.ParticipantActorStale"), Where, TEXT("the actor was destroyed or collected"));
+				bUsable = false;
+			}
+			else
+			{
+				if (Problems & ActorDestroying)
+				{
+					FailMember(Result, TEXT("WorldInput.ParticipantActorDestroying"), Where, TEXT("the actor is being destroyed"));
+					bUsable = false;
+				}
+				if (Problems & ActorForeign)
+				{
+					FailMember(Result, TEXT("WorldInput.ParticipantForeign"), Where, TEXT("the actor is not in the expected world"));
+					bUsable = false;
+				}
+				if (Problems & ActorBegun)
+				{
+					FailMember(Result, TEXT("WorldInput.ParticipantActorBegun"), Where, TEXT("the actor began or is beginning play: the input is compiled before BeginPlay"));
+					bUsable = false;
+				}
+				if (SeenActors.Contains(Actor))
+				{
+					FailMember(Result, TEXT("WorldInput.ParticipantDuplicateActor"), Where, TEXT("the actor appears in more than one participant"));
+					bUsable = false;
+				}
+				SeenActors.Add(Actor);
+				Member.Actor = Actor;
+			}
+
+			if (Participant.TargetSlot.IsNone())
+			{
+				FailMember(Result, TEXT("WorldInput.ParticipantTargetMissing"), Where, TEXT("no explicit target slot was given (no first-actor or player0 default exists)"));
+				bUsable = false;
+			}
+			else if (Participant.TargetSlot == Participant.Slot)
+			{
+				FailMember(Result, TEXT("WorldInput.ParticipantTargetSelf"), Where, TEXT("the target slot is the member's own slot"));
+				bUsable = false;
+			}
+			else if (!BatchSlots.Contains(Participant.TargetSlot))
+			{
+				FailMember(Result, TEXT("WorldInput.ParticipantTargetNotInBatch"), Where, FString::Printf(TEXT("the target slot '%s' is not a participant of this binding"), *Participant.TargetSlot.ToString()));
+				bUsable = false;
+			}
+
+			URPGBossDefinition* Definition = Participant.Definition.Get();
+			if (!Definition)
+			{
+				FailMember(Result, TEXT("WorldInput.DefinitionMissing"), Where, TEXT("no explicit production definition was given (every member, a target-only one included, needs its own)"));
+				bUsable = false;
+			}
+			else if (!IsValid(Definition))
+			{
+				FailMember(Result, TEXT("WorldInput.DefinitionStale"), Where, TEXT("the definition was destroyed or collected"));
+				bUsable = false;
+			}
+			else if (Definition->Schema != 1 || Definition->DefinitionId.IsNone() || Definition->PresentationId.IsNone())
+			{
+				FailMember(Result, TEXT("WorldInput.DefinitionInvalid"), Where, TEXT("the definition schema is not 1 or its definition id or presentation id is empty"));
+				bUsable = false;
+			}
+			else
+			{
+				Member.Definition = Definition;
+			}
+
+			if (const FSelection* const* Selected = SelectionBySlot.Find(Participant.Slot))
+			{
+				Member.Role = (*Selected)->Role;
+				Member.SelectedPhaseId = (*Selected)->SelectedPhaseId;
+			}
+			else
+			{
+				bUsable = false; // the missing selection is reported above
+			}
+			if (bUsable)
+			{
+				Members.Add(Member);
+			}
+		}
+		if (!Result.IsReady())
+		{
+			return Result; // whole batch: one failing input publishes nothing and compiles nothing
+		}
+
+		// The content: ONLY what the world's own game instance published. The definitions below are leased for the whole call.
+		FAcquisition Acquired;
+		FString AcquireError;
+		if (!Acquire(ExpectedWorld, Acquired, AcquireError))
+		{
+			FailBatch(Result, TEXT("WorldInput.NoContent"), AcquireError);
+			return Result;
+		}
+		const TSharedPtr<const RPGCombatRegistry::FEpoch> Content = Acquired.Content;
+		TArray<TStrongObjectPtr<URPGBossDefinition>> DefinitionLeases;
+		for (const FMember& Member : Members)
+		{
+			DefinitionLeases.Emplace(Member.Definition);
+		}
+
+		// The production compile of every definition (this one DOES load the declared skeleton and animations), the identities rechecked around each.
+		FRPGHydrationPreflightInput Candidate;
+		Candidate.ExpectedWorld = ExpectedWorld;
+		Candidate.EncounterInstance = Encounter;
+		Candidate.ExpectedContent = Content;
+		for (const FMember& Member : Members)
+		{
+			const FString Where = MemberText(Member.Slot, Member.Index);
+			FString LoopDrift;
+			const ECheckpoint BeforeCompile = Checkpoint(ExpectedWorld, Acquired, BindingRef, Encounter, Snapshot, Members, LoopDrift);
+			if (BeforeCompile != ECheckpoint::Ok)
+			{
+				FailBatch(Result, DriftToken(BeforeCompile), FString::Printf(TEXT("before compiling %s: %s"), *Where, *LoopDrift));
+				return Result;
+			}
+			TSharedPtr<const FRPGParticipantConfig> Config;
+			const FRPGHydrationResult Compiled = RPGCombatHydration::CompileParticipant(*Member.Definition, Content, ManifestHash, Config);
+			// After the loads: before the candidate reuses the raw actor of this member, everything is checked again.
+			const ECheckpoint AfterCompile = Checkpoint(ExpectedWorld, Acquired, BindingRef, Encounter, Snapshot, Members, LoopDrift);
+			if (AfterCompile != ECheckpoint::Ok)
+			{
+				FailBatch(Result, DriftToken(AfterCompile), FString::Printf(TEXT("while compiling %s: %s"), *Where, *LoopDrift));
+				return Result;
+			}
+			if (!Compiled.IsReady())
+			{
+				for (const FString& Nested : Compiled.Errors)
+				{
+					FailMember(Result, TEXT("WorldInput.DefinitionRejected"), Where, Nested);
+				}
+				continue;
+			}
+			if (!Config.IsValid() || Config->bSyntheticFixture || Config->Content.Get() != Content.Get())
+			{
+				FailMember(Result, TEXT("WorldInput.ConfigInvalid"), Where, TEXT("the production compile returned no config, a synthetic config or a config that does not hold the acquired epoch lease"));
+				continue;
+			}
+			FRPGHydrationPreflightRequest Request;
+			Request.Actor = Snapshot[Member.Index].Actor; // the retained weak identity, verified by the checkpoint above
+			Request.Slot = Member.Slot;
+			Request.TargetSlot = Member.TargetSlot;
+			Request.Role = Member.Role;
+			Request.Config = Config;
+			Request.SelectedPhaseId = Member.SelectedPhaseId;
+			Candidate.Requests.Add(Request);
+		}
+		if (!Result.IsReady())
+		{
+			return Result;
+		}
+
+		// The whole candidate through the accepted preflight (load-free). Its diagnostics are carried unchanged.
+		TSharedPtr<const FRPGHydrationPreflightPlan> Plan;
+		const FRPGHydrationResult Preflight = RPGBossHydrationPreflight::CompilePreflight(Candidate, Plan);
+		if (!Preflight.IsReady() || !Plan.IsValid())
+		{
+			for (const FString& Nested : Preflight.Errors)
+			{
+				FailBatch(Result, TEXT("WorldInput.PreflightRejected"), Nested);
+			}
+			if (Result.IsReady())
+			{
+				FailBatch(Result, TEXT("WorldInput.PreflightRejected"), TEXT("the preflight produced no plan and no error"));
+			}
+			return Result;
+		}
+
+		// Publication gate: the same checkpoint as around every compile (content identities, binding lifecycle, GUID, snapshot, member identities).
+		FString DriftError;
+		const ECheckpoint Final = Checkpoint(ExpectedWorld, Acquired, BindingRef, Encounter, Snapshot, Members, DriftError);
+		if (Final != ECheckpoint::Ok)
+		{
+			FailBatch(Result, DriftToken(Final), FString::Printf(TEXT("before publication: %s"), *DriftError));
+			return Result;
+		}
+		OutInput = MoveTemp(Candidate);
+		return Result;
+	}
+}

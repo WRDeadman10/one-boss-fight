@@ -1,0 +1,7 @@
+# Array mutations and numeric limits — source review only
+
+array_mutations.json lists every matching mutation site. Production Result.Errors.Add stores new literals; Errors.Append(Cleanup.Errors) reads a separate array; Batch.Reset destroys only an independently owned artifact. MoveTemp transfers between distinct result objects. No container mutation takes a reference to an element of that same container. Diagnostic classifier lambdas are read-only.
+
+Copied test fixture mutation sites: literal required-path arrays, fresh FRPGParityField / phase / binding rows built as local values, Selections.Add of separate aggregate values, snapshot component pointers/flags and Actors.Add of fresh CaptureActor results. Sort occurs before read-only snapshot iteration. Original unused StaticFindObject/const_cast helper was omitted. New registration failure loop uses independent fresh results and scoped hooks at fixed ordinals1/12/13/24; it does not retain raw destroyed component pointers across retries. The test's GI detach/restore is a local missing-content control, not production catalog mutation. Source tests have not run.
+
+No new authored numeric domain, tuning, damage/timer arithmetic or limits are introduced. Counts come from accepted stages; fixed test counts24/two bosses/twelve plans and selected ordinals are fixture bounds only. Array snapshots and expected counts are not runtime gameplay, lease exclusivity, complete world-state or performance proof. No runtime result or compilation is claimed by these static checks.

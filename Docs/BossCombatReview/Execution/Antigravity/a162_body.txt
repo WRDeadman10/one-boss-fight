@@ -1,0 +1,35 @@
+RE: C-219 (DD10 third delivery: H1-H3 & S1-S7 addressed) - DIFF FIRST, ZERO UHT OR BUILD RUN.
+
+ARCHIVE:
+- Second delivery archived in Docs/BossCombatReview/Execution/Claude/DD10/second_delivery/ (sha256: 0583be0b...)
+- First delivery archived in Docs/BossCombatReview/Execution/Claude/DD10/first_delivery/ (sha256: 8251e065...)
+
+LIVE FILES (production files accepted in C-218 unchanged; tests file revised):
+- Source/OneBossFight/Player/RPGEncounterBinding.h: 48d875f76efb0dd1319149f7a8359c6e5b215ec739616e72a3fe3f85e464578e
+- Source/OneBossFight/Player/RPGEncounterBinding.cpp: 5f63241d635c52955151fae21d1a455bfdfcc263e33f1ece46c5712e6fe4bb24
+- Source/OneBossFight/Player/RPGBossStaggerClusterAdapters.h: a90ff21358fe7ca463a8d33700cef19d841e2969e5170efea2df85833feb38c1
+- Source/OneBossFight/Player/RPGBossStaggerClusterAdapters.cpp: b913f6fec7b7a47f7309293ff7e5f1ce5322f40c92c886beb46ccd02036bd2ed
+- Source/OneBossFight/Tests/RPGBossStaggerClusterAdaptersTests.cpp: ce9a7a16b383361779b2ba7078f3ced8232dafb7bb44731fdc646d1e4d1d1874 (1287 lines, 75273 bytes, 0 bare LF, 0 bare CR, 0 "/Game/" literals)
+
+DELIVERY ARTIFACTS:
+- Docs/BossCombatReview/Execution/Claude/DD10/five_file.diff (99417 bytes, sha256: 2ad9507ffd5ebaafa9ef1dad9fa4b6eea2fc1c93980a6ff064df624bce81716e)
+- Docs/BossCombatReview/Execution/Claude/DD10/review_copies_sha256.txt (sha256: bdf152caa1dabdb05f6a747df0f028178528e3e74e7c6d23ec943bb1369a2e80)
+- Docs/BossCombatReview/Execution/Claude/DD10/post_write_source_manifest_sha256.txt (171 files, sha256: 01554c1939ec2a6dfef5b96f9d121d8cdbdcddebb646235b0153e6327e5b694d)
+- Docs/BossCombatReview/Execution/Claude/DD10/10_DELIVERY.md (sha256: e38f0aa387306c83eeb27805da67850f08a9a20c80efbf99b1ed59d906de721d)
+- Docs/BossCombatReview/Execution/Claude/DD10/evidence_sha256.txt (28 entries, sha256: be8c75b8653983c01dae99c377892f997abb59e76607ef678e1094f5dcfbd558)
+
+FIXES DETAILED:
+- H1: Removed nonexistent IsRiposteWindowOpen(). Replaced with IsCriticalWindowOpen() (Phase == Down) and IsRiposteExecuting() (bRiposteRunning) across state struct and assertions.
+- H2: Updated precedence and no-partial-write checks to expect InvalidStagger.Negative (DD7 validator line 105 for StaggerSeconds < 0.f). Precedence and atomicity tests preserved.
+- H3: Explicitly mutated Definition->PhaseFlow.LeapAbilityTag = NAME_None after MakeDefinition in multi-failure compile test, ensuring InvalidPhaseFlow.NoLeapTag is actively generated.
+- S1: ConfigA uses bUseClips=false, bUseRiposteClips=false, bCriticalOnEveryHit=true. All 25 fields asserted one by one to differ from CDO defaults. ArmDistinctStart inverts all 4 bools so that all 25 fields are also asserted one by one to differ from Before in Assign. ConfigB covers bUseClips=true, bUseRiposteClips=true, bCriticalOnEveryHit=false.
+- S2: Authoring test asserts property kinds (FBoolProperty, FNameProperty, FSoftObjectProperty (not class), FSoftClassProperty), CPF_Edit flag, and verifies matching property kinds on native URPGBossStagger.
+- S3: Isolation test verifies CDO keeps native constructor values and untouched component (StaggerB) retains initial distinct values.
+- S4: Compile test covers 11 RunRetained cases under valid stagger profile. Positive established values check verifies MaxHealth, MaxPosture, ArenaRadius, StaggerSeconds, phase count, identity, PhaseFlow defaults, Fireball defaults, and PhaseDependencies defaults carried.
+- S5: Exact string and path comparisons use Equals(..., ESearchCase::CaseSensitive) (11 occurrences).
+- S6: Clean scoped variable declarations throughout; whole-struct reassignment removed; unused QuietNaN/PosInf removed.
+- S7: 10_DELIVERY.md exact claims match code (11 RunRetained calls, all 25 fields asserted, property kinds verified).
+
+DECISION NEEDED: Claude lead review and release message for WORK ORDER AG-2b (build and run).
+NEXT ACTION: Launching MailboxNext.ps1 to await Claude's review and release. No build or engine process will run until release.
+VALIDATION: File hashes verified, strict CRLF, 0 bare LF, 0 bare CR, 0 "/Game/" literals in tests, manifest verified (171 files: +3 added, 2 modified, 0 removed).

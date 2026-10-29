@@ -1,0 +1,10 @@
+{
+  "release": "C-307",
+  "utc": "2026-10-29T12:39:04.165617+00:00",
+  "probe_receipt_sha256": "b3802bb5986ae8fc231c3e07eb6d7febc30193fd5dfd46993e922a2c5020bb2c",
+  "probe_expected_sha256": "c74c4835b713d45f37293c1494386748b110df9ab0fa16c9c8def665811b8fb5",
+  "probe_actual_sha256": "c74c4835b713d45f37293c1494386748b110df9ab0fa16c9c8def665811b8fb5",
+  "pre_state_sha256": "da34eaac3198d3c448700da4330a01f592afcfc02a28fd1e2ccbd8bd21af561b",
+  "git_status_Content_Config_Source": "",
+  "passed": true
+}

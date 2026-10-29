@@ -1,0 +1,30 @@
+{
+  "release": "C-312",
+  "utc": "2026-10-29T13:12:32.574874+00:00",
+  "receipt_sha256": "3b134beef655762f9ea1ed7ab79c370e7447fd6047f1283295e721851a1129ce",
+  "pins": [
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/draft_boss_profiles.py",
+      "expected_sha256": "e18db00dcff8f37426c7e798b36b01134372a0d2aebed5758ded3cfae5685255",
+      "actual_sha256": "e18db00dcff8f37426c7e798b36b01134372a0d2aebed5758ded3cfae5685255"
+    },
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/authoring_core.py",
+      "expected_sha256": "5fd66fe75fd688b6d47977362b825ef7d48670e07fce0d7cf27d88239c757244",
+      "actual_sha256": "5fd66fe75fd688b6d47977362b825ef7d48670e07fce0d7cf27d88239c757244"
+    },
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/inspect_authored_assets.py",
+      "expected_sha256": "b3330da60b2098803a5a8a632d2ade144f669f0a40862ef8a3e306659de3fc47",
+      "actual_sha256": "b3330da60b2098803a5a8a632d2ade144f669f0a40862ef8a3e306659de3fc47"
+    },
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json",
+      "expected_sha256": "ee04c8b7175642a4fdf27ccb430af6e35e15092254b36064d5b3a4a0a11a8ed4",
+      "actual_sha256": "ee04c8b7175642a4fdf27ccb430af6e35e15092254b36064d5b3a4a0a11a8ed4"
+    }
+  ],
+  "pre_state_sha256": "caca0b011bc586021ad24b55164f4c5de51f690d3369c01b8e07ca3bdd178dff",
+  "git_status_Content_Config_Source": "",
+  "passed": true
+}

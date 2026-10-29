@@ -1,0 +1,2 @@
+12: LogCore: Warning: UTS: Unable to launch the Unreal Trace Server with '"../../../Engine/Binaries/Win64/UnrealTraceServer.exe" fork --sponsor 1496'. Access is denied. Error: 0x5 (5)
+1124: [2026.10.29-11.25.27:966][  0]LogUnrealClaude: Warning: === UnrealClaude BUILD 20260107-1450 THREAD_TESTS_DISABLED ===

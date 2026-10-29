@@ -1,0 +1,14 @@
+[
+  {
+    "path": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+    "sha256": "17bc29c9d9e033de98cf9956c8d0d8e8bd2f7516a80295d96b4c2ff7ef822834"
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossEncounter.cpp",
+    "sha256": "dc149393f2fff1788ea22daf42db0b14f85ac36f58ad59c459b44ee94600c96d"
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGDodgeTiming.cpp",
+    "sha256": "e6a95113d14aeba1e58d8573f97d8409bcaeaa3c19d52e43526ed307165be737"
+  }
+]

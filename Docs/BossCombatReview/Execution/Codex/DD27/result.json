@@ -1,0 +1,71 @@
+{
+  "verdict": "FAILED; stop, no retry",
+  "editor_exit": 0,
+  "helper_exit": "SystemExit: 1 in raw log",
+  "warnings": 2,
+  "error_severity": 7,
+  "draft_success_lines": [],
+  "source_count": 212,
+  "content_files": 11752,
+  "data_hashes": 16,
+  "diff": {
+    "content": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "config": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "saved": {
+      "added": [
+        "Saved/Config/CrashReportClient/UECC-Windows-0A0581444CA46E9ABBF0C7AC2BEFAA97/CrashReportClient.ini"
+      ],
+      "removed": [],
+      "changed": [
+        "Saved/Autosaves/PackageRestoreData.json",
+        "Saved/Config/WindowsEditor/EditorPerProjectUserSettings.ini",
+        "Saved/UnrealClaude/script_history.json"
+      ]
+    },
+    "source": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "toolkit": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "binary": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    }
+  },
+  "saved_findings": [
+    {
+      "path": "Saved/Config/CrashReportClient/UECC-Windows-0A0581444CA46E9ABBF0C7AC2BEFAA97/CrashReportClient.ini",
+      "sha256": "975d6eab28bea170097e8643fc65c2c3a1e0c7d2ea343aaed80899663121c7f5",
+      "size": 160
+    },
+    {
+      "path": "Saved/Autosaves/PackageRestoreData.json",
+      "sha256": "fdc2d5bebf9cdef10fe7088228558cb57ff12b0ea92ea114809e20fd2add5bb6",
+      "size": 96
+    },
+    {
+      "path": "Saved/Config/WindowsEditor/EditorPerProjectUserSettings.ini",
+      "sha256": "f0d4fd27edae22a4597db5fdf3c9f51d1397927cebb7a22c26cc28bdd257f90b",
+      "size": 149520
+    },
+    {
+      "path": "Saved/UnrealClaude/script_history.json",
+      "sha256": "36809010bcf646fe24b922ca9a088bac96ea4fe8e0c513edc09ed09915c60fea",
+      "size": 38464
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+TASK: A-191 delivery: diff_against_cpp.py review aid bounded corrections (C-272).
+STATUS: COMPLETED (offline review aid hardening and re-frozen receipts).
+
+SUMMARY:
+1. Addressed all three defects identified in C-272 lead review:
+   - **Defect 1 (Read-Only by Default):** Removed `len(args.paths) == 0` check from report writing logic (`diff_against_cpp.py:442-446`). Running `python -B diff_against_cpp.py` with no flags executes purely in-memory, writes nothing to disk, and only prints to standard output. Disk report generation strictly requires explicit `--report` or `--output <path>`.
+   - **Defect 2 (Reproducibility & Repo-Relative Paths):** Added `find_repo_root()` (resolving repository root deterministically from script location) and `to_repo_rel()`. All source file paths in `diff_report.txt` are normalized as repo-relative forward-slash posix paths (`Source/OneBossFight/...`), eliminating checkout-dependent absolute paths. Added native CRLF emission guarantee so report output is 100% byte-identical across checkouts, runs, and current working directories (`48f9b9a3f457f6a28d57ad4d8127c60d08f20e1948b2992607123ed99ae36c31`, 1976 bytes).
+   - **Defect 3 (Missing Header Error Handling):** Added `HeaderNotFoundError` in `extract_cpp_checks()`. If the matching `.h` is not found next to the evaluated `.cpp`, the tool reports named error `"<Header>.h not found next to the .cpp"` and terminates with exit code 2 (not a false difference or exit code 1).
+2. Unit Test Suite Expansion:
+   - Added 3 new unit tests to `TestDiffAgainstCpp` in `test_authoring_core.py`:
+     - `test_no_flag_run_writes_nothing`: verifies that a no-flag run leaves `diff_report.txt` mtime untouched and stdout clean.
+     - `test_report_reproducibility_across_working_dirs`: verifies that running from repository root vs from `AuthoringToolkit/` produces byte-identical report files with repo-relative paths and zero absolute path leakage.
+     - `test_missing_header_exit_code_and_named_message`: verifies that missing header raises `HeaderNotFoundError`, outputs the exact named error string, and exits with code 2.
+   - Full test suite: **151/151 tests PASS** in 0.312s (`test_run_output.txt`).
+3. Historical Baselines & Receipts:
+   - Staged `original_A190/` byte-for-byte in both `AuthoringToolkit/` and `BuildAuthoringHelper/` with self-receipts.
+   - Historical test suites verified: `original_A188` (128/128 PASS), `original_A189` (142/142 PASS), `original_A190` (148/148 PASS).
+   - Re-generated `diff_report.txt` and re-froze evidence receipts: 21 receipts in `AuthoringToolkit/evidence_sha256.txt`, 13 in `BuildAuthoringHelper/evidence_sha256.txt`.
+   - 100% pure CRLF across all 155 active files in the 4 active directories; zero `__pycache__`.
+4. DD23 Look Tracking:
+   - Confirmed no DD23 source posted yet under `Codex/DD23/` or `Source/OneBossFight/Player/RPGBossLookAdapters.cpp`. Four alignment points remain staged for immediate execution once Codex lands DD23.
+
+VALIDATION:
+- Deterministic review aid: `python -B Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/diff_against_cpp.py --report` -> exit 0, ALL ADAPTERS OK (81 checks matched, hash `48f9b9a3...`).
+- Read-only verification: `python -B Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/diff_against_cpp.py` -> exit 0, prints to stdout, 0 bytes written to disk.
+- Missing header error verification: mock adapter missing header -> exit 2, named error `"<Header>.h not found next to the .cpp"`.
+- Unit test suite: `python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit` -> 151/151 tests PASS in 0.312s.
+- Byte-level CRLF and receipt verification: 155/155 files verified pure CRLF; all receipts match.
+- Documentation updated: `Documentation/TASKS.md`, `Documentation/DECISIONS.md`, `Documentation/TEST_PLAN.md`.
+
+NEXT ACTION:
+- Hand off to Lead Claude for review of A-191.
+- Await Codex posting of DD23 source handoff; upon landing, execute `diff_against_cpp.py` on `RPGBossLookAdapters.cpp` and settle the 4 alignment points.

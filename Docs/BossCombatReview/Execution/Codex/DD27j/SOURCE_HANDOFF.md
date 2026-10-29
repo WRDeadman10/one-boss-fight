@@ -1,0 +1,7 @@
+# DD27j / C335 source STAGED ONLY
+
+One new test proposed, not live Source: Staging/Source/OneBossFight/Tests/RPGBossAuthoredDraftPreflightTests.cpp. No existing file edited, no build/promotion/engine run. Live216Source equals DD29 manifest (offline hash check).
+
+Test loads saved Ember Warden AND Hero definitions verbatim, takes explicit -DD27jManifestHash=<64hex> operator input (actual manifest source/hash must be pinned by later release), production-compiles in sequence, stops/reports exact errors, then if BOTH compile invokes twelve-plan preflight with explicit PhaseTwo and isolated native actors/observed pack CDO meshes. Target zero rows are answered by real compiler. No fallback/transient definition, synthesis, mutation or save. Expected test-path OneBossFight.Binding.AuthoredDraft.SavedProductionPreflight.
+
+Source review required before promotion/build. No C++ compilation or Unreal-test pass is claimed. Missing owner save approval still blocks DD27i and execution of this saved-asset test. Later release must pin saved asset bytes, manifest input provenance, all dependencies/Source/binaries and fresh state/exclusive lock. If compile fails, preflight did not run; no automatic fix/retry. Snapshot covers identities/lifecycle/context counts, not arbitrary pack state or immutable aliases. Legacy epoch is explicit test authority, not GI provenance. No BeginPlay, Configure, consumer registration, suppression, gameplay or packaged proof.

@@ -1,0 +1,12 @@
+{
+  "args": [
+    "python",
+    "-B",
+    "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Antigravity\\AuthoringToolkit\\emit_fields_manifest.py",
+    "--selected-phase",
+    "PhaseTwo",
+    "--output",
+    "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Codex\\DD27j\\run_C339\\EmberWarden_PhaseTwo_fields_manifest.json"
+  ],
+  "exit": 0
+}

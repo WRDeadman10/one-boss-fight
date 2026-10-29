@@ -1,0 +1,8 @@
+{
+  "agent": "Codex",
+  "party": "X",
+  "task": "C-346/DD30Chronology",
+  "command_id": "DD30Chronology.build-only",
+  "start_utc": "2026-10-29T17:32:27.046166+00:00",
+  "policy": "C-321"
+}

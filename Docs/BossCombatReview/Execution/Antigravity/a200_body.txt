@@ -1,0 +1,89 @@
+TASK: A-200 delivery per Lead Order [C-292]: Offline read-only activation analysis (Docs/BossCombatReview/Execution/Antigravity/Activation/ACTIVATION_ANALYSIS.md).
+STATUS: COMPLETED (Offline Analysis delivered, SHA256: df87587ec6a26e03808b613dcd2f45e432fce2e2588bd55f70a68aab71025e3b, 42,785 bytes, receipt in evidence_sha256.txt).
+
+1. TOPIC 1: THE CURRENT LIVE PATH (RPGPlayerMovesSubsystem.cpp:40-297)
+- Subsystem & Lifecycle Hook: UWorldSubsystem (RPGPlayerMovesSubsystem.h:14). ShouldCreateSubsystem requires World->IsGameWorld() (:40-44). PostInitialize() (:46-53) registers AddOnActorSpawnedHandler -> OnActorSpawned (:75-78) -> Attach(Actor). Level-placed pawns attached in OnWorldBeginPlay (:55-63) via TActorIterator<APawn>.
+- Lifecycle Moment Relative to BeginPlay: OnActorSpawned fires from UWorld::SpawnActor immediately after actor construction, BEFORE AActor::BeginPlay() is invoked. Thus, live attachments occur while Actor->HasBegunPlay() == false.
+- Identification: IsPackBoss(Actor) (:93-103) walks class hierarchy matching BP_ExampleGreatSwordBoss_C.
+- Exact Chronological Attachment Order (19 Total Components across 2 Prelude + 18 Bundle statements):
+  * Prelude Phase (:139-155, called from :257-260 ahead of player components):
+    (1) URPGFootsteps (:113-135, via AddFootsteps at :141): guarded by !FindComponentByClass<URPGFootsteps>() (:115). Code explicitly overrides 4 sound cues (:120-123) and giant scaling: PitchScale = 0.62f, VolumeScale = 1.5f, AudibleRange = 4500.f, JogSpeed = 200.f, RunSpeed = 420.f (:127-131). Calls RegisterComponent() (:133).
+    (2) URPGBossMusic (:142-155): guarded by !FindComponentByClass<URPGBossMusic>() (:142). Code explicitly loads MX_Boss01_Phase1 (with Starter_Music_Cue fallback) and MX_Boss01_Phase2 (:146-152). Calls RegisterComponent() (:153).
+  * Bundle Phase (AttachLegacyBossBundle, :159-249):
+    (1) URPGBossStagger (:161-165): guarded by !FindComponentByClass<URPGBossStagger>(). Constructor defaults. Calls RegisterComponent().
+    (2) URPGBossPhases (:166-170): guarded by !FindComponentByClass<URPGBossPhases>(). Constructor defaults. Calls RegisterComponent().
+    (3) URPGBossEncounter (:171-175): guarded by !FindComponentByClass<URPGBossEncounter>(). Constructor defaults. Calls RegisterComponent().
+    (4) URPGBossDormantWake (:176-179): guarded by !FindComponentByClass<URPGBossDormantWake>(). Constructor defaults. Calls RegisterComponent().
+    (5) URPGBossPosture (:180-184): guarded by !FindComponentByClass<URPGBossPosture>(). Constructor defaults. Calls RegisterComponent().
+    (6) URPGBossDeath (:185-188): calls URPGBossDeath::Attach(Pawn, ERPGBossDeathMode::OwnClip). Internal guard in RPGBossDeath.cpp:47-50 checks if (URPGBossDeath* Existing = Boss->FindComponentByClass<URPGBossDeath>()) return Existing;. Code explicitly overrides DeathMode = ERPGBossDeathMode::OwnClip (:52) (constructor default in RPGBossDeath.h:51 is ERPGBossDeathMode::PackMontage!). Calls RegisterComponent().
+    (7) URPGBossLook (:189-192): guarded by !FindComponentByClass<URPGBossLook>(). Constructor defaults (body, crown, mantle, gauntlet, greatsword socket). Calls RegisterComponent().
+    (8) URPGBossBleed (:193-196): guarded by !FindComponentByClass<URPGBossBleed>(). Constructor defaults. Calls RegisterComponent().
+    (9) URPGAttackTracker (:197-201): guarded by !FindComponentByClass<URPGAttackTracker>(). Constructor defaults. Calls RegisterComponent(). (Non-typed helper).
+    (10) URPGBossCloseClipSwap (:202-205): guarded by !FindComponentByClass<URPGBossCloseClipSwap>(). Constructor defaults. Calls RegisterComponent().
+    (11) URPGBossShockwave (:206-210): guarded by !FindComponentByClass<URPGBossShockwave>(). Constructor defaults. Calls RegisterComponent().
+    (12) URPGBossLowSweep (:211-215): guarded by !FindComponentByClass<URPGBossLowSweep>(). Constructor defaults. Calls RegisterComponent().
+    (13) URPGBossHealPunish (:216-220): guarded by !FindComponentByClass<URPGBossHealPunish>(). Constructor defaults. Calls RegisterComponent().
+    (14) URPGDamageResolver (:221-223): calls FindOrAdd(Pawn). Internal guard in RPGDamageResolver.cpp:26-29 checks Boss->FindComponentByClass<URPGDamageResolver>(). Constructor defaults. Calls RegisterComponent(). (Non-typed combat resolver).
+    (15) URPGTraceGuard (:224-227): guarded by !FindComponentByClass<URPGTraceGuard>(). Constructor defaults. Calls RegisterComponent(). (Non-typed helper).
+    (16) URPGTraceAudit (:228-231): guarded by !FindComponentByClass<URPGTraceAudit>(). Constructor defaults. Calls RegisterComponent(). (Non-typed observer).
+    (17) URPGBossHud (:233-237): guarded by !FindComponentByClass<URPGBossHud>(). Constructor defaults. Calls RegisterComponent(). (Non-typed UI).
+    (18) URPGCombatDebug (:238-243): guarded by !FindComponentByClass<URPGCombatDebug>(). Constructor defaults. Calls RegisterComponent(). (Non-typed debug).
+    (19) URPGBossLegend (:244-248): guarded by !FindComponentByClass<URPGBossLegend>(). Constructor defaults. Calls RegisterComponent(). (Non-typed presentation layer).
+- Legacy-Versus-Typed Differences:
+  * In legacy bundle, 11 of the 12 typed components receive pure constructor defaults. Only URPGBossDeath::DeathMode is actively overridden by code to OwnClip.
+  * In typed path, all 12 components receive domain-validated values from authored definition properties via Configure callbacks.
+  * Retention requirement: The 7 non-typed boss components (Footsteps, BossMusic, AttackTracker, DamageResolver, TraceGuard, BossHud, BossLegend) are NOT part of the 12 typed plans and must remain attached during activation.
+
+2. TOPIC 2: THE TYPED PATH TODAY (Guarantees & Gaps)
+- Public Entry Points Evaluated:
+  * CompilePreflight (RPGBossHydrationPreflight.h:124): game-thread only, validates batch atomically, clears OutPlan first, returns immutable plan with class leases. Checks ManagedCoreConsumerClasses (6->13 classes) and skeleton/animation prerequisites.
+  * PrepareBatch (RPGBossHydrationPreparation.h:141): runs CompilePreflight, allocates components (NewObject), strongly leases them (TStrongObjectPtr), configures via callbacks. Pre- and post-validates !IsRegistered() and !HasBegunPlay(). Rollback via Abort() on any failure.
+  * CompileWorldInput (RPGBossWorldInputCompiler.h:58): resolves epoch strictly from game instance catalog subsystem, compiles definitions synchronously, validates against preflight.
+  * PrepareWorldBatch (RPGBossWorldPreparation.h:46): composes input compilation and preparation with drift checkpoints.
+  * TryPrepareAndReserve (RPGBossPreparationRegistry.h:144): registry-scoped reservation with monotonic serial tokens (FRPGPreparationLeaseToken) and quarantine handling.
+- Absolute Gaps (What None of Them Does):
+  (1) None calls RegisterComponent() (guaranteed unregistered).
+  (2) None manages or triggers BeginPlay() (all fail if Owner->HasBegunPlay() == true).
+  (3) None binds to URPGCombatContextSubsystem (GetBoundCount() remains 0).
+  (4) None authorizes readiness (IsCompletePlayableBundle, IsReservation, and IsReady are false by construction).
+  (5) None suppresses or intercepts AttachLegacyBossBundle.
+
+3. TOPIC 3: DEFINITION PROVENANCE & TOOLKIT AUDIT
+- Definition Asset: URPGBossDefinition (UPrimaryDataAsset, RPGEncounterBinding.h:293-320). Selected in world via placed ARPGEncounterBinding actor (FRPGPlacedParticipantBinding, :329-335) and explicit RPGBossWorldInputCompiler::FSelection records (:44-51).
+- Toolkit Reality Check:
+  * draft_boss_profiles.py populates 16 typed structs, phases, skeleton, and animations.
+  * Crucial Gap: fields array is explicitly EMPTY (boss_draft_profiles.json:96, :263, :420: "fields": []). The file header (:35-37) explicitly acknowledges no parity manifest is fabricated.
+  * Production Barrier: CompileParticipantImpl (RPGEncounterBinding.cpp:115) enforces if (Fields.IsEmpty()) { Result.Fail(TEXT("field manifest required")); }. Preflight (RPGBossHydrationPreflight.cpp:420) enforces that all 110 DD26 required paths exist in Config->Fields. Any draft asset compiled today fails immediately.
+- Missing for First Authored Definition: (1) Canonical package path (/Game/OneBossFight/Boss01/DA_Boss01_Sevarog), (2) Manifest authoring tooling to emit 110-row FRPGParityField with valid SHA256 hashes, (3) Placed ARPGEncounterBinding actor and selection trigger in L_SevarogArena.
+
+4. TOPIC 4: ACTIVATION OPTIONS EVALUATION
+- Option A (Subsystem Hook before Legacy Bundle):
+  * Mechanism: Intercept Attach(AActor* Pawn) before AttachLegacyBossBundle; prepare and register typed components.
+  * Guard Behavior: Every single one of the 12 typed components has a !FindComponentByClass guard (or internal check in Death::Attach), causing AttachLegacyBossBundle to naturally NO-OP on all 12 typed components while attaching all 7 non-typed components normally.
+  * Lifecycle: Executes during OnActorSpawned (before actor BeginPlay), satisfying preparation prerequisites.
+  * Fallback: If preparation fails, roll back via Abort() and proceed with legacy bundle (graceful fallback).
+  * Lease Retention: Subsystem holds prepared batch. (Note: registering components causes Abort to report ContractViolation).
+  * Networking: WorldSubsystem runs on both client and server; requires HasAuthority() check to prevent duplicate client-side allocation.
+- Option B (Dedicated Encounter Coordinator Object):
+  * Mechanism: ARPGEncounterCoordinator actor or URPGEncounterCoordinatorSubsystem owning FRPGBossPreparationRegistry, executing TryPrepareAndReserve, registering components, and calling BindEncounter.
+  * Pros/Cons: Cleanest lease ownership (FRPGPreparationLeaseToken) and server authority; requires new coordinator class and explicit coordination with legacy bundle.
+- Option C (Side-by-Side Coexistence for Measured Comparison):
+  * Fatal Flaw: Having two components of the exact same C++ class on the same actor causes catastrophic ambiguity for FindComponentByClass<T>() across all pack and project systems [Inference]. Impractical without shadow actors or wrapper classes.
+- Comparison Matrix provided in Section 4.1 covering complexity, BeginPlay ordering, failure fallback, lease lifecycle, networking, and production risk.
+
+5. TOPIC 5: TECHNICAL UNKNOWNS THE CODE DOES NOT ANSWER
+- Enumerated 8 open technical questions for Lead determination:
+  (1) Component registration ownership and sequencing primitive.
+  (2) Component BeginPlay dispatch ordering relative to actor BeginPlay.
+  (3) Combat context subsystem binding trigger and timing.
+  (4) Runtime failure policy in shipping builds (silent fallback vs abort).
+  (5) Shipping overhead of 110-path manifest verification (compiled unconditionally).
+  (6) Multiplayer network authority (server-only vs client-simulated components).
+  (7) Pack Blueprint notify and state machine compatibility.
+  (8) Level teardown and encounter reset semantics.
+
+EVIDENCE & HYGIENE:
+- Activation Analysis Staged: Docs/BossCombatReview/Execution/Antigravity/Activation/ACTIVATION_ANALYSIS.md (SHA256: df87587ec6a26e03808b613dcd2f45e432fce2e2588bd55f70a68aab71025e3b, 42,785 bytes, 539 lines pure CRLF).
+- Receipt: Docs/BossCombatReview/Execution/Antigravity/Activation/evidence_sha256.txt (156 bytes, pure CRLF).
+- Unit Tests: 180/180 PASS in 0.344s; 0 __pycache__; zero engine processes, zero source edits, zero asset writes.
+- Project Docs Updated: TASKS.md, DECISIONS.md, TEST_PLAN.md (BUILD-43-AG).

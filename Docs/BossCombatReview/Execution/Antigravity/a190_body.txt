@@ -1,0 +1,51 @@
+TASK: A-190 delivery: Single-Purpose Review Aid diff_against_cpp.py (C-271) and DD23 Look tracking.
+STATUS: COMPLETED (offline review aid and validator parity verification).
+
+SUMMARY:
+1. Implemented single-purpose review aid `diff_against_cpp.py`:
+   - Path: `Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/diff_against_cpp.py`
+   - Purpose: Deterministic, read-only offline tool that extracts the ordered sequence of refusal checks (`Refuse(...)`, `OutError = FString::Printf(...)`, `CheckRequiredReference(...)`) and resolved field constants from any `RPGBoss*Adapters.cpp` and mechanically verifies parity against the corresponding Python domain validator in `authoring_core.py`.
+   - Negative constraints: Pure Python standard library, ZERO `unreal` import, ZERO engine processes, ZERO file writes outside its own report (`diff_report.txt`), pure CRLF line endings, strictly executed with `python -B`.
+2. Mechanical Parity Verification across all 4 accepted adapters:
+   - **Bleed** (`RPGBossBleedAdapters.cpp` vs `validate_bleed_domain`): **13/13 checks OK** in exact source order.
+     - 5 finite checks: `Bleed.InitialThreshold`, `Bleed.ThresholdIncrease`, `Bleed.ThresholdMax`, `Bleed.HpFraction`, `Bleed.EffectHeight`
+     - 4 domain checks: `InvalidBleed.NotPositive` (InitialThreshold), `InvalidBleed.Negative` (ThresholdIncrease), `InvalidBleed.ThresholdMaxBelowInitial` (ThresholdMax), `InvalidBleed.FractionOutOfRange` (HpFraction)
+     - 4 dependency checks: `InvalidDependency.Missing` & `Malformed` (ProcEffect), `InvalidDependency.Missing` & `Malformed` (ProcSound)
+   - **LowSweep** (`RPGBossLowSweepAdapters.cpp` vs `validate_low_sweep_domain`): **15/15 checks OK** in exact source order.
+     - 6 finite checks: `Damage`, `Reach`, `InnerRadius`, `BladeHeight`, `SweepFromDegrees`, `SweepToDegrees`
+     - 7 domain checks: `Negative` (Damage), `NotPositive` (Reach), `Negative` (InnerRadius), `InnerNotBelowReach` (InnerRadius), `NotPositive` (BladeHeight), `AngleOutOfRange` (SweepFromDegrees), `AngleOutOfRange` (SweepToDegrees)
+     - 2 dependency checks: `InvalidDependency.Missing` & `Malformed` (MoveId)
+   - **Shockwave** (`RPGBossShockwaveAdapters.cpp` vs `validate_shockwave_domain`): **20/20 checks OK** in exact source order.
+     - 6 finite checks: `Damage`, `StartRadius`, `MaxRadius`, `Speed`, `Thickness`, `JumpClearance`
+     - 12 domain checks: `Negative` (Damage), `Negative` & `AboveCeiling` (StartRadius), `NotPositive` & `AboveCeiling` & `MaxNotAboveStart` (MaxRadius), `NotPositive` & `AboveCeiling` (Speed), `NotPositive` & `AboveCeiling` (Thickness), `NotPositive` & `AboveCeiling` (JumpClearance)
+     - 2 dependency checks: `InvalidDependency.Missing` & `Malformed` (MoveId)
+   - **HealPunish** (`RPGBossHealPunishAdapters.cpp` vs `validate_heal_punish_domain`): **33/33 checks OK** in exact source order.
+     - 10 finite checks: `MinRange`, `MaxRange`, `Cooldown`, `Damage`, `FlightTime`, `MinSpeed`, `MaxSpeed`, `JavelinRadius`, `JavelinMaxRange`, `AimHeight`
+     - 19 domain checks: `Negative` & `AboveCeiling` (MinRange), `NotPositive` & `AboveCeiling` & `MaxNotAboveMin` (MaxRange), `Negative` & `AboveCeiling` (Cooldown), `Negative` (Damage), `BelowFlightTimeFloor` & `AboveCeiling` (FlightTime), `NotPositive` & `AboveCeiling` (MinSpeed), `NotPositive` & `AboveCeiling` (MaxSpeed), `MinSpeedAboveMax` (MinSpeed), `NotPositive` & `AboveCeiling` (JavelinRadius), `NotPositive` & `AboveCeiling` (JavelinMaxRange)
+     - 2 dependency checks: `InvalidDependency.Missing` & `Malformed` (SpawnSockets)
+     - 2 signed height checks: `InvalidPunish.BelowFloor` & `AboveCeiling` (AimHeight)
+   - **Total:** **81/81 checks matched in exact source declaration order** with zero discrepancies. Full report saved to `diff_report.txt`.
+3. Four Points on Look against Codex DD23 Source (C-271 Tracking):
+   - Checked disk: neither `Codex/DD23/` nor `Source/OneBossFight/Player/RPGBossLookAdapters.cpp` has been posted yet. As instructed, no modifications have been made to `validate_look_domain` prior to Codex landing the source.
+   - Citation & settlement plan once Codex lands DD23:
+     (1) Error accumulation vs first-failure: `authoring_core.py:910` (`errors: List[str] = []`) currently accumulates; we will convert `validate_look_domain` to return on first failure (`return [err]`) once Codex's adapter confirms first-failure `Refuse(...)` convention.
+     (2) Duplicate detection: `authoring_core.py:958` (`if piece_str in seen_pieces:`) uses case-sensitive raw strings. We will inspect DD23's `FSoftObjectPath` comparison logic and match its normalization.
+     (3) 1024-char cap and list check: `authoring_core.py:943` (`Look.Pieces must be a list`) and `:981` (`Look.SwordSocket exceeds maximum length of 1024 characters`) are not in C-269 contract; if absent in C++, they will be explicitly labeled toolkit-only input checks.
+     (4) `SwordSocket == "None"`: `authoring_core.py:975` (`str(socket_val) == "None"`) maps to `InvalidDependency.Missing`, aligning with `FName::IsNone`. We will confirm against DD23 source and retain.
+4. Historical Archives & Hygiene:
+   - Preserved `original_A189/` snapshots byte-for-byte in both `AuthoringToolkit/` and `BuildAuthoringHelper/` with self-receipts.
+   - Expanded unit test suite: added `TestDiffAgainstCpp` (6 new unit tests) verifying C++ extraction, check order, and synthetic mismatch detection. Total: **148/148 tests PASS** in 0.028s (`test_run_output.txt`).
+   - 100% pure CRLF across all 142 files in the 4 active directories (`Coverage/`, `NativeDerivation/`, `AuthoringToolkit/`, `BuildAuthoringHelper/`); 0 bare LF, 0 bare CR.
+   - Zero `__pycache__` directories in Antigravity workspace.
+   - Receipts updated: 21 receipts in `AuthoringToolkit/evidence_sha256.txt`, 13 in `BuildAuthoringHelper/evidence_sha256.txt`.
+
+VALIDATION:
+- Deterministic review aid: `python -B Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/diff_against_cpp.py --report` -> exit 0, ALL ADAPTERS OK (81 checks matched).
+- Unit test suite: `python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit` -> 148/148 tests PASS in 0.028s.
+- Preserved historical suites: `original_A188` runs 128/128 PASS; `original_A189` runs 142/142 PASS.
+- Byte-level CRLF and receipt verification: 142/142 files verified pure CRLF; all receipts match.
+- Documentation updated: `Documentation/TASKS.md`, `Documentation/DECISIONS.md`, `Documentation/TEST_PLAN.md`.
+
+NEXT ACTION:
+- Hand off to Lead Claude for review of A-190.
+- Await Codex posting of DD23 source handoff; upon landing, execute `diff_against_cpp.py` on `RPGBossLookAdapters.cpp` and settle the 4 alignment points.

@@ -1,0 +1,8 @@
+{
+  "agent": "Antigravity",
+  "party": "A",
+  "task": "C-350/DD30ChronologyBuild2",
+  "command_id": "DD30Chronology.build-only",
+  "start_utc": "2026-10-29T18:15:06.414461+00:00",
+  "policy": "C-321"
+}

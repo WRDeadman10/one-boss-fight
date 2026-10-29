@@ -1,0 +1,127 @@
+TASK: Delivery of Wiring Analysis Revision 3 Addendum & DD26 Work Order (Order A-197 per [C-280]).
+STATUS: COMPLETED
+FINDINGS:
+1. Revision 2 Baseline Preserved:
+   - Preserved Revision 2 byte-for-byte under `Docs/BossCombatReview/Execution/Antigravity/Wiring/original_A196/WIRING_ANALYSIS.md` (hash: `b107072846753a57aed8385421fe63f28729cd7700b9948781513a39c2e061b3`, 41234 bytes) with self-receipt.
+   - Retained original Revision 1 baseline under `original_A195/` (hash: `02630756d184...`, 34014 bytes).
+
+2. Addendum Section 7 (Comprehensive Test & Production Impact Audit):
+   - Formulated Section 7 in `WIRING_ANALYSIS.md` as the definitive, exhaustive work order for the Lead's DD26 implementation.
+   - Audit Regex Patterns (provided for Lead verification):
+     - Plan count: `Plans\.Num\(\)` and `BossCorePlanCount`
+     - Class lease count: `ClassLeases`
+     - Owned component batch counts: `GetOwnedComponentCount\(\)`, `OwnedComponentCount`, `OwnedList`, `OwnedSet`, `Weak\.Num\(\)`, `Report\.Destroyed`, `Report\.AlreadyGone`
+     - Required manifest paths union: `AllRequiredPaths`, `SumOfRequired`, `ExpectedPaths`, `Required\.Num\(\)`, `Union\.Num\(\)`
+     - Preexisting consumer classes: `ManagedCoreConsumerClasses`
+     - Planned instance names: `PlannedNames`
+   - Reproduction Command:
+     `Get-ChildItem -Recurse Source\OneBossFight\Tests -Filter *.cpp | Select-String -Pattern "Plans\.Num\(\)|ClassLeases|GetOwnedComponentCount\(\)|AllRequiredPaths|ManagedCoreConsumerClasses|PlannedNames|SumOfRequired|ExpectedPaths"`
+
+3. Exhaustive Tabulation of 42 Test Assertion Sites Across 7 Test Suites:
+   - `RPGBossHydrationPreflightTests.cpp` (14 sites):
+     - `:79-102`: `AllRequiredPaths` literal definition expanded from 51 to 93 paths (+42 paths).
+     - `:376`: `Boss.Plans.Num() == 5` -> `10`.
+     - `:394`: `Required.Num() == 51` -> `93`.
+     - `:399`: `Boss.ClassLeases.Num() == 5` -> `10`.
+     - `:400-401`: `Boss.ClassLeases` indices 0..4 check -> indices 0..9 check against `Boss.Plans[0..9].Class`.
+     - `:407`: `Again->Participants[1].Plans.Num() == 5` -> `10`.
+     - `:831`: `Out->Participants[1].Plans.Num() == 5` -> `10`.
+     - `:852`: `Participants[0].Plans.Num() == 5 && Participants[1].Plans.Num() == 5` -> `10 && 10`.
+     - `:1035`: `BossPlan.Plans.Num() == 5 && BossPlan.ClassLeases.Num() == 5` -> `10 && 10`.
+     - `:1061`: `DistinctClasses.Num() == 5 && DistinctNames.Num() == 5` -> `10 && 10`.
+     - `:1064`: `ExpectedPaths.Num() == 51 && Union.Num() == 51 && SumOfRequired == 51` -> `93 && 93 && 93`.
+     - `:1087`: `Again->Participants[Member].Plans.Num() == 5` -> `10`.
+     - `:1106`: `ManagedCoreConsumerClasses().Num() == 6` -> `11`.
+     - `:1282`: `Plan->Participants[0].Plans.Num() == 5` -> `10`.
+   - `RPGBossHydrationPreparationTests.cpp` (12 sites, 2-boss fixture $2 \times 5 = 10 \to 2 \times 10 = 20$):
+     - `:330`: `Batch.GetOwnedComponentCount() == 10` -> `20`.
+     - `:333`: `OwnedList.Num() == 10 && OwnedSet.Num() == 10` -> `20 && 20`.
+     - `:387-388`: `Infos[0].OwnedComponentCount == 5 && Infos[1].OwnedComponentCount == 5` -> `10 && 10`.
+     - `:425`: `Weak.Num() == 10` -> `20`.
+     - `:453`: `Report.Destroyed == 10` -> `20`.
+     - `:479`: `First.Destroyed == 10` -> `20`.
+     - `:538`: `First.Batch->GetOwnedComponentCount() == 10` -> `20`.
+     - `:544`: `Report.Destroyed == 10` -> `20`.
+     - `:698`: `Report.Destroyed == 5 && Report.AlreadyGone == 5` -> `10 && 10`.
+     - `:716`: `Report.Destroyed + Report.AlreadyGone == 10` -> `20`.
+     - `:778`: `Result.Batch->GetOwnedComponentCount() == 10` -> `20`.
+     - `:780`: `Report.Destroyed == 10` -> `20`.
+   - `RPGBossWorldPreparationTests.cpp` (13 sites):
+     - `:136-152`: `AllRequiredPaths` literal definition expanded from 51 to 93 paths.
+     - `:541`: `Weak.Num() == 10` -> `20`.
+     - `:557`: `Batch.GetOwnedComponentCount() == 10` -> `20`.
+     - `:560`: `OwnedList.Num() == 10 && OwnedSet.Num() == 10` -> `20 && 20`.
+     - `:618`: `Infos[0].OwnedComponentCount == 5 && Infos[1].OwnedComponentCount == 5` -> `10 && 10`.
+     - `:652`: `Report.Destroyed == 10` -> `20`.
+     - `:668`: `Report.Destroyed == 10` -> `20`.
+     - `:806`: `Report.Destroyed == 10` -> `20`.
+     - `:849`: `First.Batch->GetOwnedComponentCount() == 10` -> `20`.
+     - `:855`: `FirstWeak.Num() == 10` -> `20`.
+     - `:861`: `First.Batch->GetOwnedComponentCount() == 10` -> `20`.
+     - `:865`: `Report.Destroyed == 10` -> `20`.
+     - `:926`: `Control.Batch->GetOwnedComponentCount() == 10` -> `20`.
+   - `RPGBossPreparationRegistryTests.cpp` (5 sites):
+     - `:166-182`: `AllRequiredPaths` literal definition expanded from 51 to 93 paths.
+     - `:794`: `Released.Abort.Destroyed == 10` -> `20`.
+     - `:856`: `ByOwnToken.Abort.Destroyed == 10` -> `20`.
+     - `:894`: `Report.Abort.Destroyed + Report.Abort.AlreadyGone == 10` -> `20`.
+     - `:987`: `Report.Abort.AlreadyGone == 10` -> `20`.
+   - `RPGBossProductionPreflightTests.cpp` (4 sites):
+     - `:104-120`: `AllRequiredPaths` literal definition expanded from 51 to 93 paths.
+     - `:519`: `BossPlan.Plans.Num() == 5` -> `10`.
+     - `:535`: `Required.Num() == 51` -> `93`.
+     - `:540`: `BossPlan.ClassLeases.Num() == 5` -> `10`.
+   - `RPGBossProductionPreparationTests.cpp` (8 sites):
+     - `:139-155`: `AllRequiredPaths` literal definition expanded from 51 to 93 paths.
+     - `:613`: `Weak.Num() == 10` -> `20`.
+     - `:648`: `Batch.GetOwnedComponentCount() == 10` -> `20`.
+     - `:651`: `OwnedList.Num() == 10 && OwnedSet.Num() == 10` -> `20 && 20`.
+     - `:707-708`: `Infos[0].OwnedComponentCount == 5 && Infos[1].OwnedComponentCount == 5` -> `10 && 10`.
+     - `:788`: `Report.Destroyed == 10` -> `20`.
+     - `:899`: `Report.Destroyed == 10` -> `20`.
+     - `:1052`: `Report.Destroyed == 10` -> `20`.
+   - `RPGBossWorldInputCompilerTests.cpp` (3 sites):
+     - `:196-212`: `AllRequiredPaths` literal definition expanded from 51 to 93 paths.
+     - `:373`: `NoManagedConsumer` iterates `ManagedCoreConsumerClasses` (cleanly tests all 11 classes).
+     - `:384`: `PlannedNames[5]` expanded to `PlannedNames[10]` with 5 new component instance names.
+     - `:599`: `NothingAllocated()` iterates `PlannedNames` (automatically covers 10 names).
+
+4. Production Code Audit (Non-Test Callers):
+   - Confirmed only ONE production file (`Source/OneBossFight/Player/RPGBossHydrationPreflight.cpp`) hardcodes counts:
+     - `:61`: `constexpr int32 BossCorePlanCount = 5;` -> `10`.
+     - `:65-74`: `MakeBossCorePlans` adding 5 new plans via accepted adapters.
+     - `:81-83`: `CheckPlans` validates `Plans.Num() != BossCorePlanCount` (automatically evaluates 10).
+     - `:143-146`: `ManagedCoreConsumerClasses()` expands from 6 to 11 classes.
+     - `RPGBossHydrationPreflight.h:18, :51, :87`: Informational comments updated from 5 to 10.
+   - Zero other production files hardcode plan counts or consumer class lists.
+
+5. Mechanical vs Decision Breakdown:
+   - 45 Mechanical Changes: Deterministic arithmetic updates ($5 \to 10$, $10 \to 20$, $51 \to 93$, $6 \to 11$).
+   - 4 Lead Architectural Decisions:
+     1. Plan order in array (`MakeBossCorePlans`).
+     2. Component instance naming in `PlannedNames[10]`.
+     3. Handling of disabled components (`bEnabled = false` compiled unconditionally into 10 plans).
+     4. `URPGAttackTracker` unprofiled status outside the 10 typed plans.
+
+6. Replacement of "Zero Regressions" Phrasing:
+   - Replaced Section 4.2 conclusion to explicitly demarcate that while no test actor carries unwired components (zero preexisting-consumer refusal failures), wiring the 5 new plans into preflight directly requires updating all 42 tabulated assertions as the DD26 work order.
+
+VALIDATION:
+- Analysis Deliverable:
+  - `WIRING_ANALYSIS.md` (Revision 3, hash: `fac012a270a1202fba44a8045695d327abcfc9414fea0cecc41e8f62065aa8c8`, 62369 bytes).
+- Evidence Receipts:
+  - `Wiring/evidence_sha256.txt`: 1/1 verified (`fac012a2...`, 62369 bytes).
+  - `Wiring/original_A195/evidence_sha256.txt`: 1/1 verified (`02630756...`, 34014 bytes).
+  - `Wiring/original_A196/evidence_sha256.txt`: 1/1 verified (`b1070728...`, 41234 bytes).
+  - `AuthoringToolkit/evidence_sha256.txt`: 21/21 verified.
+  - `BuildAuthoringHelper/evidence_sha256.txt`: 13/13 verified.
+  - `NativeDerivation/evidence_sha256.txt`: 10/10 verified.
+  - Total: 47/47 verified across active suites.
+- Unit Test Suite:
+  - `python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit` -> 160/160 tests PASS in 0.341s (`test_run_output.txt`).
+- Byte-level CRLF scan: 201/201 files checked across active directories, 0 non-CRLF files, 0 bare LF, 0 bare CR, 0 `__pycache__`.
+- Documentation updated: `Documentation/TASKS.md`, `Documentation/DECISIONS.md`, and `Documentation/TEST_PLAN.md` (BUILD-40-AG).
+
+NEXT ACTION:
+- Hand off to Lead Claude for review of A-197 wiring addendum and DD26 work order.
+- Stand ready for lead instructions on DD24 CloseClipSwap qualification or DD26 plan wiring.

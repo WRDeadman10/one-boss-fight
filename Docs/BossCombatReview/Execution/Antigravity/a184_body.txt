@@ -1,0 +1,67 @@
+TASK: AG-CONTENT05 Revision A-184 delivery under [C-260] (soft path lexical pre-check engine macros defect fix + DD20 FRPGLowSweepConfig staged integration).
+STATUS: COMPLETED. Frozen revision A-184 delivered. 100/100 unit tests PASS (exit code 0). Pure CRLF enforced across all 83 active files (0 bare LF, 0 bare CR). Zero __pycache__ directories. Zero engine processes launched; zero assets created, mutated, or deleted; zero pack edits; zero git operations.
+
+PRESERVED ARCHIVES:
+- BuildAuthoringHelper/original_A183/ (author_custom_build.py, README.md, evidence_sha256.txt preserved byte-for-byte matching A-183 receipts)
+- AuthoringToolkit/original_A183/ (authoring_core.py, draft_boss_profiles.py, inspect_authored_assets.py, test_authoring_core.py, test_run_output.txt, README.md, evidence_sha256.txt, examples/ preserved byte-for-byte matching A-183 receipts)
+- Historical archives original_A176/, original_A177/, original_A178/, original_A179/, original_A180/, original_A181/, original_A182/ preserved byte-for-byte in both directories.
+
+DEFECT CORRECTION (C-260 Soft Object Path Engine Macros):
+1. Copied exact engine macros from Core/Public/UObject/NameTypes.h with line numbers cited in authoring_core.py:
+   - Line 168: INVALID_OBJECTNAME_CHARACTERS = "\"' ,/.:|&!~\n\r\t@#(){}[]=;^%$`"
+   - Line 174: INVALID_LONGPACKAGE_CHARACTERS = "\\:*?\"<>|' ,.&!~\n\r\t@#"
+2. Replaced hand-written sets in validate_soft_path_structure, retaining empty-segment and '.'/'..' traversal rules.
+3. Added test_soft_path_all_invalid_longpackage_characters: exhaustively verifies path rejection for every one of the 20 characters in INVALID_LONGPACKAGE_CHARACTERS.
+4. Added test_soft_path_all_invalid_objectname_characters: exhaustively verifies object name rejection for every one of the 28 characters in INVALID_OBJECTNAME_CHARACTERS.
+5. Added test_soft_path_accept_cases: verifies acceptance of plain /Game/FX/NS_Hit.NS_Hit and synthetic non-/Game mounts (/Engine, /MyPlugin, /SyntheticMount).
+6. Documented in README.md that this is a lexical pre-check that mirrors, not replaces, the engine validators, and agreement beyond these two macros (package length, reserved names) is not claimed.
+
+DD20 FRPGLOWSWEEPCONFIG STAGED INTEGRATION:
+1. Documented explicit qualification in README.md, module docstrings, and tests: pending DD20 live verification run by Codex. MoveId is SYNTACTIC IDENTITY ONLY (does not prove tracker resolution, timing or ability execution).
+2. authoring_core.py: Added NATIVE_LOW_SWEEP_FIELDS with exact 8 authored fields and defaults: bEnabled (bool, true), MoveId (FName, "A4"), Damage (float, 20.0), Reach (float, 380.0), InnerRadius (float, 60.0), BladeHeight (float, 40.0), SweepFromDegrees (float, 90.0), SweepToDegrees (float, -90.0).
+3. Engine property name mapping: bEnabled -> enabled, MoveId -> move_id, etc. Added low_sweep to STRUCT_SPECS (12 structs total, 79 total native fields; verified by test_all_79_native_fields_parity).
+4. Added validate_low_sweep_domain matching RPGBossLowSweepAdapters.cpp:ValidateLowSweep:
+   - Finite scalars first across ALL SIX floats in declaration order (Damage, Reach, InnerRadius, BladeHeight, SweepFromDegrees, SweepToDegrees) with token InvalidLowSweep.NotFinite: LowSweep.<Field>. Late nonfinite float beats earlier domain failure.
+   - Domain checks in declaration order: Damage >= 0.0 (Negative), Reach > 0.0 (NotPositive), InnerRadius >= 0.0 (Negative), InnerRadius < Reach (InnerNotBelowReach), BladeHeight > 0.0 (NotPositive), angles in [-360.0, 360.0] (AngleOutOfRange).
+   - Equal angles (stationary band) and reversed angles accepted. Sub-1 reach/height accepted (no editor min-1 floor).
+   - MoveId syntactic check: not None, not empty, not "None" (InvalidDependency.Missing: LowSweep.MoveId); no whitespace/control characters (InvalidDependency.Malformed: LowSweep.MoveId).
+   - bEnabled accepts both states; disabled records still validate completely.
+5. draft_boss_profiles.py: Added low_sweep to allowed_top_keys, section validation, apply mapping, and float32 normalized readback. Enforces and verifies all 17 typed properties on draft asset creation.
+6. inspect_authored_assets.py: Extracted low_sweep struct snapshot for boss definitions.
+7. examples/boss_draft_profiles.json: Added valid low_sweep blocks across all 3 profiles.
+8. test_authoring_core.py: Added TestLowSweepPolicyDomain with 15 tests covering all domains, ordering, precedence, float32 overflow refusal, float32 readback normalization, and PyGenUtil name mapping.
+9. Test suite: expanded from 82 to 100 tests (Ran 100 tests in 0.012s -> OK).
+
+VERIFICATION DETAILS:
+- Command: python -B Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_authoring_core.py -v
+- Result: Ran 100 tests in 0.012s -> OK (0 failures, 0 errors, exit code 0).
+- Receipts: AuthoringToolkit/evidence_sha256.txt (19/19 OK), BuildAuthoringHelper/evidence_sha256.txt (13/13 OK).
+- Line endings: 83/83 active files pure CRLF (0 bare LF, 0 bare CR).
+- Zero __pycache__ directories.
+
+EXACT SHA256 EVIDENCE RECEIPTS:
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/authoring_core.py:
+  74feb8d1c3e69282efa29359f01b9d5b6e97dd7d952a188f9c18d851829b4885 (54,744 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/draft_boss_profiles.py:
+  bf19d257620115bf4981533f18edc27ebe9b0f942b878365c9c5e0c376ba585f (36,244 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/inspect_authored_assets.py:
+  851162ff82f02e0b12898bd68eace99f5833fa6dd7ec35f27fceea7717697a2d (24,095 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_authoring_core.py:
+  541101fab0eda3b19ece9e017b08afd1270f3cd6f13344767ce7ec8fe971a920 (70,703 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_run_output.txt:
+  3d811b36fde9ee83fa5a51f5f76a67db1c0c9fd128211d624c5bdeb933ba926f (8,536 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json:
+  8a510e2eb02cbcca1d852f4557ebe9b262fadb22f2421854c47474eba0866efa (14,035 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/README.md:
+  909c88ca744580b1e2552efabb18c0921d425001b16964cedf1ba5cb372a7f17 (27,186 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/evidence_sha256.txt:
+  e4326327e82b8f2ca2f84d9b6da28b296f757bf40f4b95514bb7534a64be9ff1 (2,735 bytes)
+Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/author_custom_build.py:
+  c586634ebd5d2f86b9d97ca4a7ac45819d756c620b5851b27aa19e88f4152e52 (39,287 bytes)
+Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/README.md:
+  4d0f2c4be58083d6e05753d4a617fd3ed897d61fbf77b36faed6f38a1c57f55f (8,528 bytes)
+Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/evidence_sha256.txt:
+  f13abaa3cf5deae932c35b30d485c0d944d64cd7ef57fde327614ce29de56f1e (1,766 bytes)
+
+NEXT ACTION:
+Handing off to Lead Reviewer Claude (C) for lead review and verification under C-260; Codex (X) CC'd.

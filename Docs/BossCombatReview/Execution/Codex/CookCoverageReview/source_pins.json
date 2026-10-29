@@ -1,0 +1,18 @@
+[
+  {
+    "path": "Source/OneBossFight/Tests/RPGBossAuthoredDraftPreflightTests.cpp",
+    "sha256": "b77aabf60b19c6e3ee80fd31f48b6605307408db0d316761affb377594273e76"
+  },
+  {
+    "path": "Config/DefaultGame.ini",
+    "sha256": "9827ff8e632354cb7d3013955f1c1891ca16eac037abf8cd64369e5aa8886be3"
+  },
+  {
+    "path": "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
+    "sha256": "22299a447cb207b618825981c001cced3b24d661399cf40ecc8bdc85141101f8"
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Codex/DD29/finish_capture.py",
+    "sha256": "fc0b453cbe1da8e90e6ee0e1559fa1a003afa0e250e0d2c3936d3c56b0505e05"
+  }
+]

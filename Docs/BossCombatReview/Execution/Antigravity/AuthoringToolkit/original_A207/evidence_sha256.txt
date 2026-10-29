@@ -1,0 +1,13 @@
+ce99eb97ab97b1ccb1fb469bb8a15c9dab6cf7cc14f47ae35e89db938b1f39f4       37211  README.md
+bd82fd39ea28b338003cdf63695895162b167375d9549dc4a63933cbaaa74481       88717  authoring_core.py
+2a8d80842d9936043d1273a63efb1874357f30ce4b0e588bfded2cb21afe3d5e       21198  diff_against_cpp.py
+9c68977538205191e049d233f744a056684444c369615987ff195ff911fc8c4e        2968  diff_report.txt
+c8d3edf1747b46e453f181d074250980f719091a5d6a2ec03313cfc536a8ed14       40203  draft_boss_profiles.py
+20293311bff577909f9a5c6ec707b09f92e9f866afdb28c0589875ebc93c8e2b       34755  emit_fields_manifest.py
+855d9f4f5e364d2f8fdbf5e216c95f9dfdfc38ff210b3c02f97b252a7d8450f5        3747  evidence_sha256.txt
+29cfc17c991f6f46deb30ba790230ba0bd4c4a74b53462e79f5031b377c29ce9       25916  inspect_authored_assets.py
+ccfb50326a17a82dc3c47412f75fe8acad5322070443e5dba27566370601d9df       20871  probe_unreal_api.py
+854b9f8ccc458dfd4261cddedc6eac744c2de523fe00c4e16844f623a65cab4e      132224  test_authoring_core.py
+07b5a675c98550bdd87a21b2d05221c5b3681bc9f98b021d0360100ae7e2ae09       10217  test_emit_fields_manifest.py
+2503f59e8abb9849888c836dd71ba62f7fcdedeeb16f2f18c5ba1d3b4f5e5282       11141  test_probe_unreal_api.py
+88aad06f22d7fbae291e5d6b3ae24acfc227c1ad0a9f4d1dab363b9210fda8b8         806  test_run_output.txt

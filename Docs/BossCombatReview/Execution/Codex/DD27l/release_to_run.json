@@ -1,0 +1,7 @@
+{
+  "message_id": "C-344",
+  "task": "DD27l",
+  "mode": "--apply --only DA_Player_Hero_Draft_V2",
+  "operator": "Codex",
+  "scope": "ONE in-memory V2-only launch, no save; A226 accepted; stop/preserve/report mismatch"
+}

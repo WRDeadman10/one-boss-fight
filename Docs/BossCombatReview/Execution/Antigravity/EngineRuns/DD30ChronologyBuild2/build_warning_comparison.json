@@ -1,0 +1,12 @@
+{
+  "baseline_warnings_count": 3,
+  "current_warnings_count": 1,
+  "new_warnings": [],
+  "eliminated_warnings": [
+    "Warning: Plugin UnrealClaude does not list plugin Niagara as a dependency, but module UnrealClaude depends on module Niagara.",
+    "Warning: Plugin UnrealClaude does not list plugin Niagara as a dependency, but module UnrealClaude depends on module NiagaraEditor."
+  ],
+  "retained_warnings": [
+    "Warning: Visual Studio 2022 compiler is not a preferred version"
+  ]
+}

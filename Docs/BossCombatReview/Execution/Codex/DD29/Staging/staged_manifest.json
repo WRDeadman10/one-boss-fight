@@ -1,0 +1,32 @@
+{
+  "release": "C-316",
+  "review": "PENDING",
+  "source_frozen_count": 213,
+  "accepted_source_edits": 0,
+  "new_test_names": [
+    "OneBossFight.Binding.ActivationWorld.SuccessAndRelease",
+    "OneBossFight.Binding.ActivationWorld.InvalidInputAndMisuse",
+    "OneBossFight.Binding.ActivationWorld.ContentEpochRejection",
+    "OneBossFight.Binding.ActivationWorld.PreparationFailure",
+    "OneBossFight.Binding.ActivationWorld.RegistrationFailure"
+  ],
+  "tests_run": false,
+  "files": [
+    {
+      "path": "RPGBossActivation.h",
+      "size": 2302,
+      "sha256": "916fc533f62f09817dd8d3a1e58049917ebb0cff4b14dd23eaafa79377b2295e"
+    },
+    {
+      "path": "RPGBossActivation.cpp",
+      "size": 3908,
+      "sha256": "04a11fed558cd4c01f0df40b1e4e570bc904bc4ec600b90926a8dd8d161a73da"
+    },
+    {
+      "path": "RPGBossActivationWorldTests.cpp",
+      "size": 31144,
+      "sha256": "0430a03b79cd9a9bb84956565dce51d8ffd79291c5d319d0bc729525490353a2"
+    }
+  ],
+  "hard_error_policy": "Explicit thread/cleanup and mid-call stable-input drift tokens; lead review pending, no runtime drift test"
+}

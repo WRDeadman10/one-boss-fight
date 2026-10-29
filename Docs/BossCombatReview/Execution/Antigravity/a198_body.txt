@@ -1,0 +1,61 @@
+TASK: Delivery of Wiring Analysis Revision 4 Multi-Pattern Audit & DD26 Work Order (Order A-198 per [C-282]).
+STATUS: COMPLETED
+FINDINGS:
+1. Baselines Preserved:
+   - Staged Revision 3 baseline under `Docs/BossCombatReview/Execution/Antigravity/Wiring/original_A197/WIRING_ANALYSIS.md` (hash: `fac012a270a1202fba44a8045695d327abcfc9414fea0cecc41e8f62065aa8c8`, 62369 bytes) with self-receipt.
+   - Retained prior baselines `original_A195/` (`02630756...`, 34014 bytes) and `original_A196/` (`b1070728...`, 41234 bytes).
+
+2. Stated Multi-Pattern Audit Methodology (Section 7.1):
+   - Replaced prior single regex with 5 stated shape-based patterns executed across ALL 33 test files in `Source/OneBossFight/Tests/`:
+     - Pattern A (Components delta): `Components.*[+-]\s*\d+|[+-]\s*\d+.*Components`
+       Command: `Get-ChildItem -Recurse Source\OneBossFight\Tests -Filter *.cpp | Select-String -Pattern "Components.*[+-]\s*\d+|[+-]\s*\d+.*Components"`
+     - Pattern B (Lifecycle / Count equality): `(Destroyed|AlreadyGone|ContractViolations|OwnedComponentCount|Num\(\)).*==\s*\d+`
+       Command: `Get-ChildItem -Recurse Source\OneBossFight\Tests -Filter *.cpp | Select-String -Pattern "(Destroyed|AlreadyGone|ContractViolations|OwnedComponentCount|Num\(\)).*==\s*\d+"`
+     - Pattern C (TestEqual count asserts): `TestEqual\s*\(.*(Destroyed|AlreadyGone|ContractViolations|OwnedComponentCount|Num\(\)|Plans|ClassLeases|Required).*,.*[0-9]+`
+       Command: `Get-ChildItem -Recurse Source\OneBossFight\Tests -Filter *.cpp | Select-String -Pattern "TestEqual\s*\(.*(Destroyed|AlreadyGone|ContractViolations|OwnedComponentCount|Num\(\)|Plans|ClassLeases|Required).*,.*[0-9]+"`
+     - Pattern D (ExpectedComponents / PlannedNames helpers): `\b(ExpectedComponents|FExpectedComponent|PlannedNames)\b`
+       Command: `Get-ChildItem -Recurse Source\OneBossFight\Tests -Filter *.cpp | Select-String -Pattern "\b(ExpectedComponents|FExpectedComponent|PlannedNames)\b"`
+     - Pattern E (Prose numbers in assertions and docstrings): `(Test(True|Equal|False)|//).*\b(five|ten|nine|fifty-one|51|six)\b`
+       Command: `Get-ChildItem -Recurse Source\OneBossFight\Tests -Filter *.cpp | Select-String -Pattern "(Test(True|Equal|False)|//).*\b(five|ten|nine|fifty-one|51|six)\b"`
+
+3. Complete Census of All 205 Matched Hits Across 21 Test Files:
+   - Evaluated every hit across all files; full table included in `WIRING_ANALYSIS.md` Section 7.4.
+   - 78 sites that CHANGE:
+     - 62 Mechanical updates: plan counts ($5 \to 10$), lease counts ($5 \to 10$), batch components ($10 \to 20$), unique pointers ($10 \to 20$), weak tracking arrays ($10 \to 20$), full batch destruction ($10 \to 20$), teardown split ($10 \to 20$), already gone ($10 \to 20$), teardown accounting sum ($10 \to 20$), teardown partition with 1 component destroyed first ($9 \to 19$ destroyed, 1 gone), teardown partition with 1 component registered ($9 \to 19$ destroyed, 1 violation), components added arithmetic ($+5 \to +10$), path union ($51 \to 93$), consumer classes ($6 \to 11$), distinct classes/names ($5 \to 10$), and 4 `ExpectedComponents()` helper definitions expanding from 5 to 10 entries across all 4 preparation suites.
+     - 15 Documentation/Prose updates: assertion message strings and test docstrings updated to keep numbers in prose in sync with numeric assertions ("five plans" -> "ten plans", "ten components" -> "twenty components", "nine destroyed" -> "nineteen destroyed", "fifty-one" -> "ninety-three", "five components were added" -> "ten components were added", etc.).
+     - 1 Lead Architectural Decision: `PlannedNames[10]` array in `RPGBossWorldInputCompilerTests.cpp:384` (plus relative plan order in `MakeBossCorePlans`).
+   - 127 sites proved INVARIANT (DOES NOT CHANGE):
+     - Non-hydration test files (14 files): domain-specific field checks, style balance, posture regen math, and catalog builds.
+     - Hydration invariant checks: participant counts (`Participants.Num() == 2` or `3`), selected phase counts (`Phases.Num() == 1`), error counts (`Errors.Num() == 1`), zero baselines (`Destroyed == 0`, `AlreadyGone == 0`, `ContractViolations == 0`), target player zero-plan checks (`OwnedComponentCount == 0`, `Plans.IsEmpty()`), and active reservation token counts.
+
+4. The 6 Manifest Parity Generator Definitions (`AllRequiredPaths`):
+   - Mapped explicitly across all 6 files: `RPGBossHydrationPreflightTests.cpp:79`, `RPGBossPreparationRegistryTests.cpp:166`, `RPGBossProductionPreflightTests.cpp:104`, `RPGBossProductionPreparationTests.cpp:139`, `RPGBossWorldInputCompilerTests.cpp:196`, `RPGBossWorldPreparationTests.cpp:136` (expanding from 51 to 93 manifest paths).
+
+5. Production Code Audit (Non-Test Callers):
+   - Re-verified only ONE production file (`RPGBossHydrationPreflight.cpp`) hardcodes counts: `:61` (`BossCorePlanCount = 5` -> 10), `:65-74` (`MakeBossCorePlans`), `:81-83` (`CheckPlans`), `:143-146` (`ManagedCoreConsumerClasses` returning 11 classes), and header doc comments `:18, :51, :87`.
+
+6. Recomputed Totals:
+   - Grand Total Audited Hits: 205.
+   - Total Changing Test Sites: 78 (or 84 including the 6 `AllRequiredPaths` definitions).
+   - Total Invariant Test Sites: 127.
+   - Total Production Caller Sites: 4.
+
+VALIDATION:
+- Analysis Deliverable:
+  - `WIRING_ANALYSIS.md` (Revision 4, hash: `24e7845e163367c697a2b3a559514ad4f8fc8c737d2b853bf8c05c445e56b799`, 106529 bytes).
+- Evidence Receipts:
+  - `Wiring/evidence_sha256.txt`: 1/1 verified (`24e7845e...`, 106529 bytes).
+  - `Wiring/original_A195/evidence_sha256.txt`: 1/1 verified (`02630756...`, 34014 bytes).
+  - `Wiring/original_A196/evidence_sha256.txt`: 1/1 verified (`b1070728...`, 41234 bytes).
+  - `Wiring/original_A197/evidence_sha256.txt`: 1/1 verified (`fac012a2...`, 62369 bytes).
+  - `AuthoringToolkit/evidence_sha256.txt`: 21/21 verified.
+  - `BuildAuthoringHelper/evidence_sha256.txt`: 13/13 verified.
+  - `NativeDerivation/evidence_sha256.txt`: 10/10 verified.
+- Unit Test Suite:
+  - `python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit` -> 160/160 tests PASS in 0.350s (`test_run_output.txt`).
+- Byte-level CRLF scan: 206/206 files checked across active directories, 0 non-CRLF files, 0 bare LF, 0 bare CR, 0 `__pycache__`.
+- Documentation updated: `Documentation/TASKS.md`, `Documentation/DECISIONS.md`, and `Documentation/TEST_PLAN.md` (BUILD-41-AG).
+
+NEXT ACTION:
+- Hand off to Lead Claude for review of A-198 Revision 4 wiring addendum and DD26 work order.
+- Stand ready for lead instructions on DD25 Death toolkit integration when DD25 lands.

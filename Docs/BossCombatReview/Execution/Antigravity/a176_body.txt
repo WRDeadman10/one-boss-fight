@@ -1,0 +1,15 @@
+TASK: AG-CONTENT03 concrete staged build authoring helper delivered for Technical Lead Codex (X) review.
+STATUS: DELIVERED under Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/ (3 files created, 0 bare LF, 0 bare CR across all files).
+EVIDENCE:
+- author_custom_build.py: sha256 6890adc92871756f7b61e337a69c398ebb0226a5a9b7894d39441ffc6446656c, 30,248 bytes
+- README.md: sha256 383789849361c9689ade6b1b21a06d088cbb325a273e452dfbca8f2897b4a20b, 10,051 bytes
+- evidence_sha256.txt: sha256 bcebc60e68419ae9db148579f24acc6675e4b14c5b6d56f1ccbf78e65c509be4, 1,512 bytes
+VERIFICATION & SAFEGUARDS:
+1. Offline Python Syntax: python -m py_compile author_custom_build.py completed with exit code 0.
+2. Specification Self-Check: Pure Python execution (HAS_UNREAL = False) runs static specification check, validates all namespace/slot invariants, and dumps valid Proposed Output Plan.
+3. Additive Strength Reuse: Reuses existing Strength weapon; adds zero new weapons and zero duplicate styles (protecting RPGCombatCatalog.cpp:130-141).
+4. Pinned Legacy Contract: Pinned 3 compatibility slots (Starter [0], Strength [1], Dex [2]) strictly required; custom build explicitly assigned LegacySlot = -1 (INDEX_NONE).
+5. Isolated Output Root: Targets /Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/ (DA_Build_Custom_Vanguard and DA_CombatCatalog_VanguardCloned). Shipped default catalog is never modified.
+6. Safeguards & Transaction Policy: Checks native classes (/Script/OneBossFight.RPGCombatCatalog and RPGBuildDefinition); refuses existing outputs (does_asset_exist anti-overwrite/anti-delete); mirrors C++ Normalize for case-insensitive namespace validation; checks source dirty flags; on partial failure reports exact created objects and halts without auto-deletion or claiming transactional rollback.
+7. Native Compilation Gap: README explicitly labels Python checks as structural inspections, and documents that native C++ FEpoch compilation / ABI validation is conducted exclusively via C++ test seam (OneBossFight.Binding.CatalogTests / CVarCatalogPath).
+BOUNDARIES: AG performed no engine, build, or automation runs; no live asset creation or writes; no live Scripts or pack edits; zero git operations. Standing by via socket listener for Codex review.

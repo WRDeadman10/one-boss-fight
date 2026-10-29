@@ -1,0 +1,84 @@
+TASK: AG-CONTENT05 authoring toolkit extension for DD19 accepted FRPGBleedConfig (A182 -> A183) under [C-258], [C-257], and [H-9].
+STATUS: COMPLETED. Revision A-183 delivered. 82/82 unit tests PASS (exit code 0). Pure CRLF enforced across all 72 active files (0 bare LF, 0 bare CR). Zero __pycache__ directories. Zero engine processes launched; zero assets created, mutated, or deleted; zero pack edits; zero git operations.
+
+PRESERVED ARCHIVES:
+- BuildAuthoringHelper/original_A182/ (author_custom_build.py, README.md, evidence_sha256.txt preserved byte-for-byte)
+- AuthoringToolkit/original_A182/ (authoring_core.py, draft_boss_profiles.py, inspect_authored_assets.py, test_authoring_core.py, test_run_output.txt, README.md, evidence_sha256.txt, examples/ preserved byte-for-byte)
+- Historical archives original_A176/, original_A177/, original_A178/, original_A179/, original_A180/, original_A181/ preserved byte-for-byte in both directories.
+
+IMPLEMENTED EXTENSIONS (C-258 / DD19 FRPGBleedConfig Integration):
+1. BLEED DOMAIN & POLICY VALIDATION (authoring_core.py):
+   - Added validate_bleed_domain(bleed_data) and validate_soft_path_structure(path_str) matching RPGBossBleedAdapters.cpp:ValidateBleed and PathProblem.
+   - Enforces 7 native fields: InitialThreshold, ThresholdIncrease, ThresholdMax, HpFraction, EffectHeight, ProcEffect, ProcSound.
+   - Strict native error precedence and exact diagnostic tokens:
+     * Finite scalars checked first: InvalidBleed.NotFinite: Bleed.<field>=<val>
+     * Domain ordering:
+       - InitialThreshold > 0.0 (InvalidBleed.NotPositive)
+       - ThresholdIncrease >= 0.0 (InvalidBleed.Negative)
+       - ThresholdMax >= InitialThreshold (InvalidBleed.ThresholdMaxBelowInitial)
+       - 0.0 <= HpFraction <= 1.0 (InvalidBleed.FractionOutOfRange)
+       - EffectHeight is signed (no floor)
+     * Structural soft object path validity:
+       - Missing/empty yields InvalidDependency.Missing
+       - Structural errors (leading slash, no whitespace/control chars, no ':' sub-objects, package folder, ends in '<pkg>.<asset>', legal characters) yield InvalidDependency.Malformed: Bleed.<field>=<path>, <problem>
+2. ENGINE PROPERTY NAME MAPPING (authoring_core.py):
+   - Added BLEED_NATIVE_TO_PY and BLEED_PY_TO_NATIVE dictionaries matching PyGenUtil::PythonizePropertyName:
+     InitialThreshold -> initial_threshold
+     ThresholdIncrease -> threshold_increase
+     ThresholdMax -> threshold_max
+     HpFraction -> hp_fraction
+     EffectHeight -> effect_height
+     ProcEffect -> proc_effect
+     ProcSound -> proc_sound
+   - Added "bleed" to STRUCT_SPECS (now 11 native structs total, 71 total fields).
+3. DRAFT BOSS PROFILES INTEGRATION (draft_boss_profiles.py):
+   - Added "bleed" to allowed_top_keys in validate_boss_profile_data.
+   - Integrated validate_bleed_domain during profile validation.
+   - execute_draft_apply sets and reads back "bleed" struct property with float32 round-trip normalization.
+   - Enforces and verifies all 16 typed properties on draft asset creation.
+   - Updated examples/boss_draft_profiles.json with valid DD19 bleed blocks across all profiles.
+4. READ-ONLY INSPECTOR EXTENSION (inspect_authored_assets.py):
+   - Added extract_bleed_snapshot to boss definition inspector.
+5. COMPREHENSIVE UNIT TEST COVERAGE (test_authoring_core.py):
+   - Added TestBleedPolicyDomain with 12 targeted unit tests covering baseline validity, non-finite scalar rejections, initial threshold floor, threshold increase non-negativity, threshold max bounds, hp fraction range, signed effect height, required soft path enforcement, structural path syntax, float32 overflow refusal, float32 readback normalization, and python property name mapping.
+   - Updated TestRecordingFakeWriter to verify all 16 typed properties.
+   - Updated TestEnginePropertyNameRules: test_all_71_native_fields_parity asserts 100% parity across all 71 native fields in 11 structs.
+   - Test suite increased from 70 to 82 tests: Ran 82 tests in 0.011s -> OK (0 failures, 0 errors, exit 0).
+6. SCOPE BOUNDARIES & HYGIENE:
+   - DD20 LowSweep is unreviewed future scope and strictly excluded.
+   - Purged all __pycache__ directories and excluded them from evidence receipts.
+   - Preserved original_A182 byte-for-byte in both directories.
+
+VERIFICATION DETAILS:
+- Command: python -B Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_authoring_core.py -v
+- Result: Ran 82 tests in 0.011s -> OK (0 failures, 0 errors, exit code 0).
+- Receipts: AuthoringToolkit/evidence_sha256.txt (19/19 OK), BuildAuthoringHelper/evidence_sha256.txt (13/13 OK).
+- Line endings: 72/72 active files pure CRLF (0 bare LF, 0 bare CR).
+- Zero __pycache__ directories.
+
+EXACT SHA256 EVIDENCE RECEIPTS:
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/authoring_core.py:
+  1dc41f1c06a5fa5de9f33afd6f63b0a99e6985e3fc34929339856969659a1a63 (49,414 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/draft_boss_profiles.py:
+  5d140a60fdb4e3a20851f93d6310d8d6ef730bc4d4b95ed404bdef2f277aa34f (35,460 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/inspect_authored_assets.py:
+  453801eaf9620a588c4de7ac7c8c5992e9bf8133aa4617102bf4fc81cccb6459 (23,751 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_authoring_core.py:
+  eee183e6b32e30f74867aeecfcea8b5cd5ab2fc566ee154560f82e479e8608a6 (58,502 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_run_output.txt:
+  2376e01f48659f53112ebd5a1151e5d5df2dccc108560cdbeee64d9b9f233c17 (7,094 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json:
+  522b53f611c4d17adcf570e47fbc702c059c7a86e40aecd558920a060b62f194 (13,234 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/README.md:
+  f56dfac5d1b510671374787ac0c8dd8f89022439a5735babff067b8a699fd923 (23,491 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/evidence_sha256.txt:
+  a176d999eea67c210adb318ccf52714efe0cb26ecb2c7ac1de9931c178d6ab2c (2,735 bytes)
+Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/author_custom_build.py:
+  c586634ebd5d2f86b9d97ca4a7ac45819d756c620b5851b27aa19e88f4152e52 (39,287 bytes)
+Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/README.md:
+  fe3b4f27d61db5bd9e8ec548185b078c6e4b7129c5c955c0e3418b4df734ed44 (8,519 bytes)
+Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/evidence_sha256.txt:
+  6b1802e82984239d358656bf7453641c0ed10543ae5cfe9a4f7ce79c515e9062 (1,766 bytes)
+
+NEXT ACTION:
+Handing off to Lead Reviewer Claude (C) for lead review and verification under C-258; Codex (X) CC'd. Ready for DD20 LowSweep review once Lead and Codex release specs.

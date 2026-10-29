@@ -1,0 +1,92 @@
+### [A-232] Antigravity -> Claude,Codex,Owner, 2026-10-29 23:28
+ORDER A-232 DELIVERED (DD30 Chronology Include-Order Fix Staged Offline, Zero Source/ Edits).
+
+1. PREIMAGES (LIVE PROMOTED REVISIONS FROM SOURCE/):
+- Docs/BossCombatReview/Execution/Antigravity/DD30ChronologyFix/preimages/RPGBossEncounter.cpp
+  * SHA256: 3f3b62d834486c375ec9c2de1ef3423ad719fa81a81477149450d3ae542ee3be (12,621 bytes, CRLF)
+- Docs/BossCombatReview/Execution/Antigravity/DD30ChronologyFix/preimages/RPGDodgeTiming.cpp
+  * SHA256: 367bb788df0ab17eefd194aef0d1296cf62ad33f8befe91d60b9dcb50c634f36 (11,709 bytes, CRLF)
+- Docs/BossCombatReview/Execution/Antigravity/DD30ChronologyFix/preimages/RPGPlayerMovesSubsystem.cpp
+  * SHA256: 5d0f0be233e6bb6f054c47c96d07244758227b46c9739a04bf1d6236d3a0c703 (12,509 bytes, CRLF)
+
+2. STAGED REVISIONS (CORRECTED INCLUDE ORDER):
+- Docs/BossCombatReview/Execution/Antigravity/DD30ChronologyFix/staged/RPGBossEncounter.cpp
+  * SHA256: bce27a9dd7c280423301eca600edb29263250c807b3d9bc3f4be962b7bede080 (12,621 bytes, CRLF)
+- Docs/BossCombatReview/Execution/Antigravity/DD30ChronologyFix/staged/RPGDodgeTiming.cpp
+  * SHA256: acafc4a8ceb4f7dbe297e3688fe88722186311c863c29073c2dcac1ec9aedbee (11,709 bytes, CRLF)
+- Docs/BossCombatReview/Execution/Antigravity/DD30ChronologyFix/staged/RPGPlayerMovesSubsystem.cpp
+  * SHA256: dd279aa717633b3f5f523df62de72ca5d8af0e0ad18c57fe3f646fe855bd6f67 (12,509 bytes, CRLF)
+
+3. VERBATIM UNIFIED DIFFS (EXACTLY 1 REMOVED, 1 ADDED LINE PER FILE):
+
+--- DIFF FOR RPGBossEncounter.cpp ---
+```diff
+--- a/Source/OneBossFight/Player/RPGBossEncounter.cpp
++++ b/Source/OneBossFight/Player/RPGBossEncounter.cpp
+@@ -1,7 +1,7 @@
+ // Copyright One Boss Fight. All Rights Reserved.
+ 
++#include "Player/RPGBossEncounter.h"
+ #include "Player/RPGStartupChronology.h"
+-#include "Player/RPGBossEncounter.h"
+ #include "Player/RPGBossBleed.h"
+ #include "Player/RPGBossDeath.h"
+ #include "Player/RPGBossDormantWake.h"
+```
+
+--- DIFF FOR RPGDodgeTiming.cpp ---
+```diff
+--- a/Source/OneBossFight/Player/RPGDodgeTiming.cpp
++++ b/Source/OneBossFight/Player/RPGDodgeTiming.cpp
+@@ -1,7 +1,7 @@
+ // Copyright One Boss Fight. All Rights Reserved.
+ 
++#include "Player/RPGDodgeTiming.h"
+ #include "Player/RPGStartupChronology.h"
+-#include "Player/RPGDodgeTiming.h"
+ #include "Player/RPGFlipbookEffect.h"
+ #include "Pack/RPGBlueprintCall.h"
+ #include "Animation/AnimMontage.h"
+```
+
+--- DIFF FOR RPGPlayerMovesSubsystem.cpp ---
+```diff
+--- a/Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp
++++ b/Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp
+@@ -1,7 +1,7 @@
+ // Copyright One Boss Fight. All Rights Reserved.
+ 
++#include "Player/RPGPlayerMovesSubsystem.h"
+ #include "Player/RPGStartupChronology.h"
+-#include "Player/RPGPlayerMovesSubsystem.h"
+ #include "Combat/RPGInputTestUtils.h"
+ #include "Player/RPGDodgeTiming.h"
+ #include "Player/RPGIFrameMonitor.h"
+```
+
+4. CALL SITES VERIFICATION:
+- Call sites remain intact and untouched immediately before Super:::
+  * RPGBossEncounter.cpp:69: `RPGStartupChronology::AtComponentBeginPlay(*this);`
+  * RPGDodgeTiming.cpp:37: `RPGStartupChronology::AtComponentBeginPlay(*this);`
+  * RPGPlayerMovesSubsystem.cpp:58: `RPGStartupChronology::AtWorldBeginPlay(InWorld);`
+
+5. SCRIPTED VERIFICATION:
+- Script: Docs/BossCombatReview/Execution/Antigravity/DD30ChronologyFix/verify_staged_chronology.py
+- Results:
+  * PASS: RPGBossEncounter.cpp line 3 is #include "Player/RPGBossEncounter.h", line 4 is #include "Player/RPGStartupChronology.h"
+  * PASS: RPGDodgeTiming.cpp line 3 is #include "Player/RPGDodgeTiming.h", line 4 is #include "Player/RPGStartupChronology.h"
+  * PASS: RPGPlayerMovesSubsystem.cpp line 3 is #include "Player/RPGPlayerMovesSubsystem.h", line 4 is #include "Player/RPGStartupChronology.h"
+  * ALL 3 STAGED REVISIONS FULLY VERIFIED. Pure CRLF confirmed on all files.
+
+6. REPOSITORY HYGIENE & EVIDENCE:
+- Evidence Manifest: Docs/BossCombatReview/Execution/Antigravity/DD30ChronologyFix/evidence_sha256.txt
+  * SHA256: de95e4eb6872a579bedf2251be426439201322382f3a3661d2d75cb4298791b4 (785 bytes)
+- Report: Docs/BossCombatReview/Execution/Antigravity/DD30ChronologyFix/DD30_INCLUDE_ORDER_FIX.md
+  * SHA256: 102946a142a6946a8269f19290c2535da31f53314a4c13e5d390418349c9cdb2 (2,875 bytes)
+- Zero edits made into Source/ by Antigravity; zero engine processes; zero git commits; 0 __pycache__.
+- Authoring Toolkit Unit Tests: 229/229 PASS in 1.042s.
+- Synchronized Documentation/TASKS.md (AG-CONTENT31) and Documentation/DECISIONS.md.
+
+7. HANDOFF:
+- Order A-232 is complete and staged. Ready for Tech Lead Claude review and promotion release.
+- Proceeding immediately to Order A-231 (Cooldown/Delay Inventory per C-348).

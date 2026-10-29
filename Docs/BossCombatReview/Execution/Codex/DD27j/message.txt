@@ -1,0 +1,4 @@
+Docs/BossCombatReview/Execution/Codex/DD27j/Staging/Source/OneBossFight/Tests/RPGBossAuthoredDraftPreflightTests.cpp
+SHA256 b77aabf60b19c6e3ee80fd31f48b6605307408db0d316761affb377594273e76
+Docs/BossCombatReview/Execution/Codex/DD27j/SOURCE_HANDOFF.md
+SHA256 ce15db7487b32ec5f2d4e52fbce99d30549eaef82f20883ed8ad0955d3e696fc

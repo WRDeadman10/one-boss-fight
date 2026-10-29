@@ -1,0 +1,326 @@
+{
+  "all_distinct_JSON_Game_strings": 28,
+  "A214_asset_table_distinct": 26,
+  "JSON_only": [
+    "/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C",
+    "/Game/OneBossFight/Boss01/Animations/AN_Boss01_A1_QuickSlash.AN_Boss01_A1_QuickSlash",
+    "/Game/OneBossFight/Boss01/Animations/AN_Boss01_A3a_Combo1.AN_Boss01_A3a_Combo1",
+    "/Game/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.AN_Boss01_DormantIdle",
+    "/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar",
+    "/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/"
+  ],
+  "A214_only": [
+    "/Game/OneBossFight/Boss01/Animations/AN_Boss01_Dormant.AN_Boss01_Dormant",
+    "/Game/OneBossFight/Boss01/Animations/AN_Boss01_Roar.AN_Boss01_Roar",
+    "/Game/OneBossFight/Content/Animations/Boss01/AM_Boss01_A1.AM_Boss01_A1",
+    "/Game/OneBossFight/Content/Animations/Boss01/AM_Boss01_A3a.AM_Boss01_A3a"
+  ],
+  "rows": [
+    {
+      "value": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin",
+      "json_locations": [
+        "$.profiles[0].skeleton",
+        "$.profiles[1].skeleton",
+        "$.profiles[2].skeleton"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C",
+      "json_locations": [
+        "$.profiles[0].fireball.FireballAbility",
+        "$.profiles[1].fireball.FireballAbility",
+        "$.profiles[2].fireball.FireballAbility"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage",
+      "json_locations": [
+        "$.profiles[0].phase_dependencies.TransitionMontage",
+        "$.profiles[1].phase_dependencies.TransitionMontage",
+        "$.profiles[2].phase_dependencies.TransitionMontage"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage",
+      "json_locations": [
+        "$.profiles[0].stagger_profile.FallMontage",
+        "$.profiles[1].stagger_profile.FallMontage",
+        "$.profiles[2].stagger_profile.FallMontage"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage",
+      "json_locations": [
+        "$.profiles[0].stagger_profile.GetUpMontage",
+        "$.profiles[1].stagger_profile.GetUpMontage",
+        "$.profiles[2].stagger_profile.GetUpMontage"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C",
+      "json_locations": [
+        "$.profiles[0].phase_dependencies.ImmunityEffect",
+        "$.profiles[0].stagger_profile.ImmunityEffect",
+        "$.profiles[1].phase_dependencies.ImmunityEffect",
+        "$.profiles[1].stagger_profile.ImmunityEffect",
+        "$.profiles[2].phase_dependencies.ImmunityEffect",
+        "$.profiles[2].stagger_profile.ImmunityEffect"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/A_Guardian_ImpactL_Cue.A_Guardian_ImpactL_Cue",
+      "json_locations": [
+        "$.profiles[0].bleed.ProcSound",
+        "$.profiles[1].bleed.ProcSound",
+        "$.profiles[2].bleed.ProcSound"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/BloodPack/Hit/Niagara/NS_BulletHit_Med.NS_BulletHit_Med",
+      "json_locations": [
+        "$.profiles[0].bleed.ProcEffect",
+        "$.profiles[1].bleed.ProcEffect",
+        "$.profiles[2].bleed.ProcEffect"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1",
+      "json_locations": [
+        "$.profiles[0].close_clip_swap.A1Montage",
+        "$.profiles[1].close_clip_swap.A1Montage",
+        "$.profiles[2].close_clip_swap.A1Montage"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a",
+      "json_locations": [
+        "$.profiles[0].close_clip_swap.A3aMontage",
+        "$.profiles[1].close_clip_swap.A3aMontage",
+        "$.profiles[2].close_clip_swap.A3aMontage"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b",
+      "json_locations": [
+        "$.profiles[0].close_clip_swap.A3bMontage",
+        "$.profiles[1].close_clip_swap.A3bMontage",
+        "$.profiles[2].close_clip_swap.A3bMontage"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.AM_Boss01_DeathLegend",
+      "json_locations": [
+        "$.profiles[0].death.DeathMontage",
+        "$.profiles[1].death.DeathMontage",
+        "$.profiles[2].death.DeathMontage"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_A1_QuickSlash.AN_Boss01_A1_QuickSlash",
+      "json_locations": [
+        "$.profiles[0].animations[0]"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_A3a_Combo1.AN_Boss01_A3a_Combo1",
+      "json_locations": [
+        "$.profiles[1].animations[0]"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_DeathLegend.AN_Boss01_DeathLegend",
+      "json_locations": [
+        "$.profiles[0].death.DeathClip",
+        "$.profiles[1].death.DeathClip",
+        "$.profiles[2].death.DeathClip"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.AN_Boss01_DormantIdle",
+      "json_locations": [
+        "$.profiles[0].dormant_wake.DormantClip",
+        "$.profiles[1].dormant_wake.DormantClip",
+        "$.profiles[2].dormant_wake.DormantClip"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar",
+      "json_locations": [
+        "$.profiles[0].phase_dependencies.RoarClip",
+        "$.profiles[1].phase_dependencies.RoarClip",
+        "$.profiles[2].phase_dependencies.RoarClip"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown",
+      "json_locations": [
+        "$.profiles[0].stagger_profile.DownClip",
+        "$.profiles[1].stagger_profile.DownClip",
+        "$.profiles[2].stagger_profile.DownClip"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall",
+      "json_locations": [
+        "$.profiles[0].stagger_profile.FallClip",
+        "$.profiles[1].stagger_profile.FallClip",
+        "$.profiles[2].stagger_profile.FallClip"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_Wake.AN_Boss01_Wake",
+      "json_locations": [
+        "$.profiles[0].dormant_wake.WakeClip",
+        "$.profiles[1].dormant_wake.WakeClip",
+        "$.profiles[2].dormant_wake.WakeClip"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction",
+      "json_locations": [
+        "$.profiles[0].stagger_profile.RiposteBossClip",
+        "$.profiles[1].stagger_profile.RiposteBossClip",
+        "$.profiles[2].stagger_profile.RiposteBossClip"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.AN_Riposte_Player_Front",
+      "json_locations": [
+        "$.profiles[0].stagger_profile.RipostePlayerClip",
+        "$.profiles[1].stagger_profile.RipostePlayerClip",
+        "$.profiles[2].stagger_profile.RipostePlayerClip"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body",
+      "json_locations": [
+        "$.profiles[0].look.Body",
+        "$.profiles[1].look.Body",
+        "$.profiles[2].look.Body"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Body/SK_Boss01_BrazierGauntlet.SK_Boss01_BrazierGauntlet",
+      "json_locations": [
+        "$.profiles[0].look.Pieces[2]",
+        "$.profiles[1].look.Pieces[2]",
+        "$.profiles[2].look.Pieces[2]"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Crown.SK_Boss01_Crown",
+      "json_locations": [
+        "$.profiles[0].look.Pieces[0]",
+        "$.profiles[1].look.Pieces[0]",
+        "$.profiles[2].look.Pieces[0]"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Mantle.SK_Boss01_Mantle",
+      "json_locations": [
+        "$.profiles[0].look.Pieces[1]",
+        "$.profiles[1].look.Pieces[1]",
+        "$.profiles[2].look.Pieces[1]"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.SM_Boss01_Greatsword",
+      "json_locations": [
+        "$.profiles[0].look.Sword",
+        "$.profiles[1].look.Sword",
+        "$.profiles[2].look.Sword"
+      ],
+      "has_object_suffix": true,
+      "asset_file_exists": true,
+      "directory_exists": null
+    },
+    {
+      "value": "/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/",
+      "json_locations": [
+        "$.metadata.approved_output_root"
+      ],
+      "has_object_suffix": false,
+      "asset_file_exists": null,
+      "directory_exists": false
+    }
+  ],
+  "scope": "Disk path presence and count categories only, not class/skeleton/engine load/cook/authoring proof"
+}

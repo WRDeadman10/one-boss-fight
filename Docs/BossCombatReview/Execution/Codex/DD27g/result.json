@@ -1,0 +1,23 @@
+{
+  "release": "C-327",
+  "verdict": "Measured diagnostic; lead review pending, no toolkit correction",
+  "editor_exit": 0,
+  "error_severity": 2,
+  "warning_severity": 8,
+  "stage1_summary": [
+    "[PROBE] SUMMARY missing=1 present=53"
+  ],
+  "classref_lines": 50,
+  "set_records": 27,
+  "set_ok": 15,
+  "set_failed": 12,
+  "load_class_c_successful_sites": [
+    "[CLASSREF][SET] load_class_c RPGFireballConfig.fireball_ability result=ok readback_type=BlueprintGeneratedClass readback_repr=<Object '/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C' (0x000004CB4EFE7E00) Class 'BlueprintGeneratedClass'> exception=none",
+    "[CLASSREF][SET] load_class_c RPGPhaseDependencyConfig.immunity_effect result=ok readback_type=BlueprintGeneratedClass readback_repr=<Object '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' (0x000004CB557F9300) Class 'BlueprintGeneratedClass'> exception=none",
+    "[CLASSREF][SET] load_class_c RPGStaggerProfileConfig.immunity_effect result=ok readback_type=BlueprintGeneratedClass readback_repr=<Object '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C' (0x000004CB557F9300) Class 'BlueprintGeneratedClass'> exception=none"
+  ],
+  "outside_saved_drift": {},
+  "source_count": 216,
+  "processes_before": [],
+  "processes_after": []
+}

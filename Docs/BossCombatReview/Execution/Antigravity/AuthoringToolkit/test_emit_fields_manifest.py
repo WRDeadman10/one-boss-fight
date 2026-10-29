@@ -37,6 +37,7 @@ REPO_ROOT = setup_path()
 
 from Docs.BossCombatReview.Execution.Antigravity.AuthoringToolkit.emit_fields_manifest import (
     generate_manifest_rows,
+    generate_hero_target_manifest_rows,
     find_member_decl,
     BASE_FIELDS_SPEC,
     PhaseNotFoundError
@@ -188,6 +189,44 @@ class TestEmitFieldsManifest(unittest.TestCase):
         self.assertEqual(len(field_paths), 110, "All 110 fields must be unique")
         diff = self.preflight_phase_two_paths.symmetric_difference(field_paths)
         self.assertEqual(len(diff), 0, f"Ember Warden fields differ from preflight literals: {diff}")
+
+    def test_hero_target_manifest_emission_and_truthfulness(self):
+        """Verify that generate_hero_target_manifest_rows emits exactly 4 truthful rows citing hero_target_source.json."""
+        rows, src_sha = generate_hero_target_manifest_rows()
+        self.assertEqual(len(rows), 4, "Hero target manifest must contain exactly 4 rows")
+        expected_paths = {
+            "Stats.MaxHealth",
+            "Stats.MaxPosture",
+            "Stats.PostureRegenDelay",
+            "Stats.PostureRegenRate"
+        }
+        actual_paths = set(r["FieldPath"] for r in rows)
+        self.assertEqual(actual_paths, expected_paths)
+
+        sha_pat = re.compile(r"^[0-9a-f]{64}$")
+        self.assertTrue(sha_pat.match(src_sha), f"Hero source SHA-256 must be 64-hex: {src_sha}")
+
+        for r in rows:
+            self.assertEqual(r["SourcePath"], "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/hero_target_source.json")
+            self.assertEqual(r["SourceSHA256"], src_sha)
+            self.assertEqual(r["Origin"], "AuthoredAsset")
+            self.assertEqual(r["Precedence"], "typed-record")
+            self.assertEqual(r["Destination"], "FRPGParticipantConfig.Stats (compile copy only)")
+            self.assertEqual(r["FirstRead"], "none after compile: TargetOnly has no consumer plan (X-341, Preflight.cpp:449-455)")
+            self.assertEqual(r["Witness"], "AutomationTest:OneBossFight.Binding.StatsAdapters.Assign (proves FRPGPostureConfig parsing only)")
+
+    def test_hero_target_v2_profile_carries_4_truthful_rows(self):
+        """Verify that DA_Player_Hero_Draft_V2 in boss_draft_profiles.json carries the 4 truthful rows matching generator."""
+        json_path = os.path.join(self.repo_root, "Docs", "BossCombatReview", "Execution", "Antigravity", "AuthoringToolkit", "examples", "boss_draft_profiles.json")
+        with open(json_path, "r", encoding="utf-8") as fp:
+            data = json.load(fp)
+
+        hero_v2 = next((p for p in data["profiles"] if p["asset_name"] == "DA_Player_Hero_Draft_V2"), None)
+        self.assertIsNotNone(hero_v2, "DA_Player_Hero_Draft_V2 must exist in boss_draft_profiles.json")
+        self.assertEqual(len(hero_v2["fields"]), 4, "DA_Player_Hero_Draft_V2 must carry exactly 4 manifest rows")
+
+        rows, src_sha = generate_hero_target_manifest_rows()
+        self.assertEqual(hero_v2["fields"], rows, "Authored profile fields must match generated truthful rows exactly")
 
 if __name__ == "__main__":
     unittest.main()

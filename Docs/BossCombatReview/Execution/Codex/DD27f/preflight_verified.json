@@ -1,0 +1,36 @@
+{
+  "release": "C-320",
+  "utc": "2026-10-29T15:04:02.682098+00:00",
+  "DD29_report_id": "X-328",
+  "receipt_sha256": "142cc19649f3f046bc2beb98e35a89eb7243e2b573d6d90df9cd942c5fb77cc7",
+  "pins": [
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/draft_boss_profiles.py",
+      "expected_sha256": "857f3ba606d8fd16b3b8c87106b8806c9cfd1fa61597f57a3144d3e07e644ff9",
+      "actual_sha256": "857f3ba606d8fd16b3b8c87106b8806c9cfd1fa61597f57a3144d3e07e644ff9"
+    },
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/authoring_core.py",
+      "expected_sha256": "a296dc41b3b4d6c12ac3bb939a94514a27f6347586f5d25f6337ecca793cef13",
+      "actual_sha256": "a296dc41b3b4d6c12ac3bb939a94514a27f6347586f5d25f6337ecca793cef13"
+    },
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/inspect_authored_assets.py",
+      "expected_sha256": "b3330da60b2098803a5a8a632d2ade144f669f0a40862ef8a3e306659de3fc47",
+      "actual_sha256": "b3330da60b2098803a5a8a632d2ade144f669f0a40862ef8a3e306659de3fc47"
+    },
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json",
+      "expected_sha256": "ee04c8b7175642a4fdf27ccb430af6e35e15092254b36064d5b3a4a0a11a8ed4",
+      "actual_sha256": "ee04c8b7175642a4fdf27ccb430af6e35e15092254b36064d5b3a4a0a11a8ed4"
+    }
+  ],
+  "binary": {
+    "Binaries/Win64/UnrealEditor-OneBossFight.dll": "4e3580fde866e5cdb4c46a8e794a1b4b321e111fdc6b92e37f0dd67e42690466",
+    "Binaries/Win64/OneBossFight.exe": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65"
+  },
+  "baseline_sha256": "35f421b74028c30117cd6ae50efe2c349048f11810b4afca5a48165990b0475b",
+  "pre_state_sha256": "418c0bcdf3459f0c42fec4ca04daa284e937d0e7e8ac9455e7a3945b80ceb8a2",
+  "git_status_Content_Config_Source": " M Source/OneBossFight/Player/RPGBossHydrationPreparation.cpp\n M Source/OneBossFight/Player/RPGBossHydrationPreparation.h\n?? Source/OneBossFight/Player/RPGBossActivation.cpp\n?? Source/OneBossFight/Player/RPGBossActivation.h\n?? Source/OneBossFight/Tests/RPGBossActivationTests.cpp\n?? Source/OneBossFight/Tests/RPGBossActivationWorldTests.cpp\n",
+  "passed": true
+}

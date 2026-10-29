@@ -1,0 +1,61 @@
+TASK: AG-2b (DD10 Stagger Profile & Atomic Stagger Cluster) - Build & Focused Test Execution Report.
+STATUS: Build SUCCEEDED (Exit 0); Focused Tests 6/7 PASSED, 1 FAILED (Assign); STOPPED per C-220 & X-255 hard rules (full suite not started; zero test weakening; zero commits).
+
+SAFETY & BASELINE:
+- HEAD: 79d55906d155574a0c308b33d4442f4a7acbf8b9 (matches origin/main).
+- Competing engine processes: 0.
+- Source manifest: 171 files (eeffd22512bf4c963d9a47cc3b536808c5119afa1dce78bd72a988e1a8a8e0d6).
+
+C-220 MANDATORY FIXES (F1-F8) APPLIED:
+- F1: Deleted nonexistent ArenaRadius from MakeDefinition; asserted retained GateRadius == 200.f and bResetOnPlayerRespawn in Compile.
+- F2: Replaced invalid Out->DefinitionId.Equals(...) with Out->BossId.ToString().Equals(TEXT("Synthetic"), ESearchCase::CaseSensitive).
+- F3: Eliminated all lvalue copies of FRPGParticipantConfig (lines 576, 591, 606, 610, 625) by constructing each variant freshly from ConfigA(). Added #include "Animation/Skeleton.h".
+- F4: In Rejections, ExpectRejected snapshots FStaggerClusterState before each rejected call and asserts it remains equal after rejection.
+- F5: In Isolation, verified that mutating ConfigForA after configuring StaggerA does not mutate StaggerA; configuring StaggerB with ConfigB leaves StaggerA unchanged; mutating ConfigForB afterwards leaves both StaggerA and StaggerB unchanged.
+- F6: Added FieldSubstr to FBad[] and asserted with Contains in both synthetic and production compiles. Asserted valid output exists first as a test condition (TestTrue) in production compile. Removed dead ImmunityEffect null mutation from multi-failure compile test.
+- F7: All path comparisons in Authoring (EndsWith) and plan field checks (Equals) use ESearchCase::CaseSensitive (11 occurrences).
+- F8: 10_DELIVERY.md updated with exact claims and counts matching code.
+
+COMPILER CORRECTIONS DURING BUILD (failures intact):
+- Iteration 1:
+  - Error: C1083: Cannot open include file: 'Boss/RPGBossStagger.h'.
+  - Edit: Changed Boss/RPGBoss* includes to Player/RPGBoss*.
+  - Log: Docs/BossCombatReview/Execution/Claude/DD10/build_2026-10-28/build_dd10_iter1_failed.log (sha256: 397fd9e23edb002c2801f93add2b5fa71d2baf399ecf93e56f3bdf69fc1e2ac7).
+- Iteration 2:
+  - Error: FRPGClusterPlan undeclared; FRPGParityField Precedence type mismatch; control char newline in literal.
+  - Edit: Changed FRPGClusterPlan to FRPGComponentPlan; Plan.TargetClass to Plan.Class; E.Precedence = TEXT("100"); escaped control char with \t.
+  - Log: Docs/BossCombatReview/Execution/Claude/DD10/build_2026-10-28/build_dd10_iter2_failed.log (sha256: fb005f5df784c16f52184c80175fc314d13010fd57a244fa114e72feb60e4e42).
+- Iteration 3:
+  - Error: FRPGFieldManifestEntry undeclared in MakeField; missing FEpochPtr / FConfigPtr typedefs; CompileParticipant takes 4 args not 5.
+  - Edit: Added typedefs FEpochPtr and FConfigPtr to StaggerClusterTests namespace; changed FRPGFieldManifestEntry E; to FRPGParityField E;; updated CompileSynthetic to call RPGCombatHydration::CompileSyntheticParticipant (4 args); initialized Content via RPGCombatRegistry::Legacy().
+  - Log: Docs/BossCombatReview/Execution/Claude/DD10/build_2026-10-28/build_dd10_iter3_failed.log (sha256: 5d68940f3239a5ad8351e9ea80c135d9f068256c1c9129fd71d0e996248592ec).
+
+BUILD EXECUTION:
+- Command: build_tag.ps1 -OutDir Docs/BossCombatReview/Execution/Claude/DD10/build_2026-10-28 -Tag dd10
+- Result: Exit 0 (8 s). 0 compiler warnings, 0 error lines.
+- Build Log: Docs/BossCombatReview/Execution/Claude/DD10/build_2026-10-28/build_dd10.log (sha256: f47413c241e704c48ad4d16da8da960921ec4775a0412bff013b6714ec5a286a)
+- Build Record: Docs/BossCombatReview/Execution/Claude/DD10/build_2026-10-28/build_dd10_job_record.txt (sha256: fa77c0085e710a159e8310833841d6c8456b5ad9ae9fb5d50662cc953844b4b5)
+- Editor DLL: Binaries/Win64/UnrealEditor-OneBossFight.dll (sha256: 873e5e6dc72a48123df3fee972374d5e16f2f798fea4c80cde6f4e4ad6f71102, 3848192 bytes)
+
+FOCUSED AUTOMATION EXECUTION:
+- Command: automation_tag.ps1 -OutDir C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Claude\DD10\build_2026-10-28 -Tag focused_stagger_cluster -Filter OneBossFight.Binding.StaggerCluster
+- Result: Exit 255 (25 s).
+- Automation Log: Docs/BossCombatReview/Execution/Claude/DD10/build_2026-10-28/automation_focused_stagger_cluster.log (sha256: 7c14e54e507c5e631530b79bb73e0453d371485a2c2dcb0c3199111b35e4a5ba)
+- Automation Record: Docs/BossCombatReview/Execution/Claude/DD10/build_2026-10-28/automation_focused_stagger_cluster_job_record.txt (sha256: 87c799fcad9ac7e25f10ca97785857c21739f33e1c32b7da61487079e6204801)
+- Test Breakdown (7 discovered / completed):
+  - Authoring: SUCCESS
+  - Compile: SUCCESS (11/11 RunRetained cases pass, positive established defaults pass, FieldSubstr checks pass)
+  - Isolation: SUCCESS (CDO, untouched component, config immutability pass)
+  - Oracle: SUCCESS (14 policy fields identical, profile fields unchanged by policy adapter)
+  - Rejections: SUCCESS (all 6 lifecycle tokens pass, state unchanged after rejection)
+  - Validation: SUCCESS (all mode combinations, 7 malformed reference checks, precedence pass)
+  - Assign: FAIL
+- Assign Failure Diagnostic:
+  "Error: Expected 'owner gained no component' to be true. [C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossStaggerClusterAdaptersTests.cpp(509)]"
+  Diagnosis: In Assign, line 386 captured `const int32 OwnedComponentsBefore = Owner->GetComponents().Num();` BEFORE creating `Stagger = NewStagger(Owner, ...)` at line 388, instead of AFTER `NewStagger` (compare DD9 line ~388). Consequently, the count at line 506 differed by 1 (the Stagger component itself).
+
+STOP & STATUS:
+- Per hard rules, I have stopped immediately upon test failure.
+- Full suite was NOT run. Zero test weakening, zero filter changes, zero commits.
+- All evidence indexed in Docs/BossCombatReview/Execution/Claude/DD10/evidence_sha256.txt (sha256: 38ed8d3db7819fb59ce1ccde9b85da15ada6d09f674b466a74c70317620f90db).
+- Per X-255, AG engine operations cease. Awaiting Codex review and direction.

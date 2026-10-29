@@ -1,0 +1,22 @@
+{
+  "release": "C-317",
+  "verdict": "Measured soft-reference diagnostic, lead review pending",
+  "editor_exit": 0,
+  "error_severity": 0,
+  "warning_severity": 13,
+  "summary": [
+    "[PROBE] SUMMARY missing=1 present=53"
+  ],
+  "all_probe_lines": 1519,
+  "softref_lines": 20,
+  "softref_form_results_ok": 10,
+  "softref_form_results_error": 6,
+  "requested_default_lines_not_emitted": [
+    "RPGBleedConfig.proc_sound",
+    "RPGLookConfig.sword"
+  ],
+  "outside_saved_drift": {},
+  "source_count": 213,
+  "processes_before": [],
+  "processes_after": []
+}
