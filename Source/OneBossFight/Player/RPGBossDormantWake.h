@@ -11,12 +11,22 @@ class AActor;
 class ACharacter;
 class UAnimMontage;
 class UAnimSequence;
+struct FRPGParticipantConfig;
+
+namespace RPGBossDormantWakeAdapters
+{
+	/** The only writer of the two private clip references (DD11); defined in RPGBossDormantWakeAdapters.cpp and named as a friend below. */
+	ONEBOSSFIGHT_API bool ConfigureDormantWake(UActorComponent& Component, const FRPGParticipantConfig& Config, FString& OutError);
+}
 
 /** Project-owned dormant loop and wake gate. The encounter owns whether the pack behaviour resumes; this component owns only the dynamic clips. */
 UCLASS(ClassGroup = (Boss))
 class ONEBOSSFIGHT_API URPGBossDormantWake : public UActorComponent
 {
 	GENERATED_BODY()
+
+	// Typed authoring (DD11): the one function that may assign the two private clip soft references. Nothing else is opened.
+	friend bool RPGBossDormantWakeAdapters::ConfigureDormantWake(UActorComponent& Component, const FRPGParticipantConfig& Config, FString& OutError);
 
 public:
 	URPGBossDormantWake();

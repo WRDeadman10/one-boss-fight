@@ -8,11 +8,30 @@
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/Character.h"
+#include "Player/RPGBossDormantWake.h"
+#include "Player/RPGBossDormantWakeAdapters.h"
 #include "Player/RPGBossEncounter.h"
-#include "Player/RPGBossPhaseAdapters.h"
+#include "Player/RPGBossEncounterClusterAdapters.h"
 #include "Player/RPGBossPhases.h"
+#include "Player/RPGBossPhasesClusterAdapters.h"
 #include "Player/RPGBossPosture.h"
+#include "Player/RPGBossStagger.h"
+#include "Player/RPGBossStaggerClusterAdapters.h"
 #include "Player/RPGBossStatsAdapters.h"
+#include "Player/RPGBossBleed.h"
+#include "Player/RPGBossBleedAdapters.h"
+#include "Player/RPGBossLowSweep.h"
+#include "Player/RPGBossLowSweepAdapters.h"
+#include "Player/RPGBossShockwave.h"
+#include "Player/RPGBossShockwaveAdapters.h"
+#include "Player/RPGBossHealPunish.h"
+#include "Player/RPGBossHealPunishAdapters.h"
+#include "Player/RPGBossLook.h"
+#include "Player/RPGBossLookAdapters.h"
+#include "Player/RPGBossCloseClipSwap.h"
+#include "Player/RPGBossCloseClipSwapAdapters.h"
+#include "Player/RPGBossDeath.h"
+#include "Player/RPGBossDeathAdapters.h"
 #include "UObject/StrongObjectPtr.h"
 
 namespace RPGBossHydrationPreflight
@@ -52,20 +71,99 @@ namespace RPGBossHydrationPreflight
 			Result.Fail(FString::Printf(TEXT("%s: %s"), Token, *Detail));
 		}
 
-		/** The plans of one boss-core member in the deterministic legacy order of the selected subset: Phases, Encounter, Posture. Built, never run. */
+		/** The number of plans of one boss-core member: the twelve accepted native component plans, each exactly once. */
+		constexpr int32 BossCorePlanCount = 12;
+
+		/** The plans of one boss-core member, from the twelve accepted factories and no other (no separate scalar, profile, flow, policy or stats plan), in this deterministic RELATIVE plan order: Stagger, Phases
+		 *  (with the explicit selected id, captured by value), Encounter, DormantWake, Posture, Bleed, LowSweep, Shockwave, HealPunish, Look, CloseClipSwap, Death. The order is a plan order, not an observed registration or BeginPlay chronology. Built, never run. */
 		TArray<FRPGComponentPlan> MakeBossCorePlans(FName SelectedPhaseId)
 		{
 			TArray<FRPGComponentPlan> Plans;
-			Plans.Add(RPGBossPhaseAdapters::MakePhasePlan(SelectedPhaseId));
-			Plans.Add(RPGBossStatsAdapters::MakeEncounterPlan());
+			Plans.Add(RPGBossStaggerClusterAdapters::MakeStaggerClusterPlan());
+			Plans.Add(RPGBossPhasesClusterAdapters::MakePhasesClusterPlan(SelectedPhaseId));
+			Plans.Add(RPGBossEncounterClusterAdapters::MakeEncounterClusterPlan());
+			Plans.Add(RPGBossDormantWakeAdapters::MakeDormantWakePlan());
 			Plans.Add(RPGBossStatsAdapters::MakePosturePlan());
+			Plans.Add(RPGBossBleedAdapters::MakeBleedPlan());
+			Plans.Add(RPGBossLowSweepAdapters::MakeLowSweepPlan());
+			Plans.Add(RPGBossShockwaveAdapters::MakeShockwavePlan());
+			Plans.Add(RPGBossHealPunishAdapters::MakeHealPunishPlan());
+			Plans.Add(RPGBossLookAdapters::MakeLookPlan());
+			Plans.Add(RPGBossCloseClipSwapAdapters::MakeCloseClipSwapPlan());
+			Plans.Add(RPGBossDeathAdapters::MakeDeathPlan());
 			return Plans;
+		}
+
+		/** Every plan is checked before anything is published; nothing invalid or duplicate is silently discarded: the count, a class, an instance name and a bound callback for each plan, no duplicate class or instance
+		 *  name, no empty or repeated required path WITHIN a plan (a path named by two different plans is not an error: the union is a set). Pure data checks, no callback is invoked. Returns one message per problem. */
+		TArray<FString> CheckPlans(const TArray<FRPGComponentPlan>& Plans)
+		{
+			TArray<FString> Problems;
+			if (Plans.Num() != BossCorePlanCount)
+			{
+				Problems.Add(FString::Printf(TEXT("%d plans were built, %d are expected"), Plans.Num(), BossCorePlanCount));
+			}
+			TSet<const UClass*> Classes;
+			TSet<FName> Names;
+			for (int32 Index = 0; Index < Plans.Num(); ++Index)
+			{
+				const FRPGComponentPlan& Plan = Plans[Index];
+				if (!Plan.Class)
+				{
+					Problems.Add(FString::Printf(TEXT("plan #%d has no component class"), Index));
+				}
+				else if (Classes.Contains(Plan.Class))
+				{
+					Problems.Add(FString::Printf(TEXT("plan #%d repeats the component class %s"), Index, *Plan.Class->GetName()));
+				}
+				else
+				{
+					Classes.Add(Plan.Class);
+				}
+				if (Plan.InstanceName.IsNone())
+				{
+					Problems.Add(FString::Printf(TEXT("plan #%d has no instance name"), Index));
+				}
+				else if (Names.Contains(Plan.InstanceName))
+				{
+					Problems.Add(FString::Printf(TEXT("plan #%d repeats the instance name %s"), Index, *Plan.InstanceName.ToString()));
+				}
+				else
+				{
+					Names.Add(Plan.InstanceName);
+				}
+				if (!Plan.Configure)
+				{
+					Problems.Add(FString::Printf(TEXT("plan #%d has no configure callback"), Index));
+				}
+				if (Plan.RequiredFields.IsEmpty())
+				{
+					Problems.Add(FString::Printf(TEXT("plan #%d names no required field"), Index));
+				}
+				TSet<FString> Paths;
+				for (const FString& Path : Plan.RequiredFields)
+				{
+					if (Path.IsEmpty())
+					{
+						Problems.Add(FString::Printf(TEXT("plan #%d names an empty required path"), Index));
+					}
+					else if (Paths.Contains(Path))
+					{
+						Problems.Add(FString::Printf(TEXT("plan #%d names the required path %s twice"), Index, *Path));
+					}
+					else
+					{
+						Paths.Add(Path);
+					}
+				}
+			}
+			return Problems;
 		}
 	}
 
 	TArray<UClass*> ManagedCoreConsumerClasses()
 	{
-		return {URPGBossPhases::StaticClass(), URPGBossEncounter::StaticClass(), URPGBossPosture::StaticClass(), URPGCombatParticipant::StaticClass()};
+		return {URPGBossPhases::StaticClass(), URPGBossEncounter::StaticClass(), URPGBossPosture::StaticClass(), URPGBossStagger::StaticClass(), URPGBossDormantWake::StaticClass(), URPGCombatParticipant::StaticClass(), URPGBossBleed::StaticClass(), URPGBossLowSweep::StaticClass(), URPGBossShockwave::StaticClass(), URPGBossHealPunish::StaticClass(), URPGBossLook::StaticClass(), URPGBossCloseClipSwap::StaticClass(), URPGBossDeath::StaticClass()};
 	}
 
 	bool CheckCompiledDependencies(const FRPGParticipantConfig& Config, FString& OutError)
@@ -208,7 +306,7 @@ namespace RPGBossHydrationPreflight
 					FailMember(Result, TEXT("Preflight.DuplicateActor"), Label, TEXT("the actor appears in more than one request"));
 				}
 				SeenActors.Add(Actor);
-				// An already attached or configured consumer is never adopted silently: the participant component for every member, the three boss-core consumers for a boss-core member.
+				// An already attached or configured consumer is never adopted silently: the participant component for every member, the five boss-core consumers for a boss-core member (a target-only member gets no boss plan and is not checked for them).
 				const TArray<UClass*> Managed = ManagedCoreConsumerClasses();
 				for (int32 ClassIndex = 0; ClassIndex < Managed.Num(); ++ClassIndex)
 				{
@@ -278,27 +376,47 @@ namespace RPGBossHydrationPreflight
 			// The role specifics.
 			if (bBossCore)
 			{
+				// Every cluster is validated with its full accepted validator, in the relative plan order, and EVERY failure is collected with this member's slot (no early return): a backend capability that the generic
+				// definition compiler accepts fails here. Nothing is clamped, defaulted, parsed from a manifest Value text or substituted, and the validators are the shared ones, unchanged.
 				FString Error;
-				if (!RPGBossStatsAdapters::ValidateStats(Config->Stats, Error))
+				if (!RPGBossStaggerClusterAdapters::ValidateStaggerCluster(*Config, Error))
 				{
-					FailMember(Result, TEXT("Preflight.StatsRejected"), Label, Error);
+					FailMember(Result, TEXT("Preflight.StaggerRejected"), Label, Error);
 				}
-				if (!RPGBossPhaseAdapters::ValidatePhases(Config->Phases, Request.SelectedPhaseId, Error))
+				if (!RPGBossPhasesClusterAdapters::ValidatePhasesCluster(*Config, Request.SelectedPhaseId, Error))
 				{
 					FailMember(Result, TEXT("Preflight.PhaseRejected"), Label, Error);
 				}
-				// The union of the typed inputs the three plans read: 4 stats paths and the 4 paths of the selected phase. Membership only; a Value text is never authority.
+				// The encounter cluster validates the COMPLETE stats record (so the posture stats are covered too) and then the encounter policy; the token names which record failed, by the accepted
+				// validators' own diagnostic prefix (the policy tokens start with InvalidPolicy.).
+				if (!RPGBossEncounterClusterAdapters::ValidateEncounterCluster(*Config, Error))
+				{
+					FailMember(Result, Error.StartsWith(TEXT("InvalidPolicy.")) ? TEXT("Preflight.EncounterPolicyRejected") : TEXT("Preflight.StatsRejected"), Label, Error);
+				}
+				if (!RPGBossDormantWakeAdapters::ValidateDormantWake(Config->DormantWake, Error))
+				{
+					FailMember(Result, TEXT("Preflight.DormantWakeRejected"), Label, Error);
+				}
+				// The plans of this member are built here only to be CHECKED (class, instance name, callback bound, no duplicate) and for the union of the typed inputs they read: 110 unique paths, the selected-phase
+				// paths from the explicit selected id. Membership only; a Value text is never authority. No callback is invoked.
+				const TArray<FRPGComponentPlan> MemberPlans = MakeBossCorePlans(Request.SelectedPhaseId);
+				for (const FString& Problem : CheckPlans(MemberPlans))
+				{
+					FailMember(Result, TEXT("Preflight.PlanInvalid"), Label, Problem);
+				}
 				TSet<FString> Manifest;
 				for (const FRPGParityField& Field : Config->Fields)
 				{
 					Manifest.Add(Field.FieldPath);
 				}
-				for (const FRPGComponentPlan& Plan : MakeBossCorePlans(Request.SelectedPhaseId))
+				TSet<FString> Reported;
+				for (const FRPGComponentPlan& Plan : MemberPlans)
 				{
 					for (const FString& Required : Plan.RequiredFields)
 					{
-						if (!Manifest.Contains(Required))
+						if (!Manifest.Contains(Required) && !Reported.Contains(Required))
 						{
+							Reported.Add(Required);
 							FailMember(Result, TEXT("Preflight.MissingRequiredField"), Label, FString::Printf(TEXT("required manifest path %s is not in the config"), *Required));
 						}
 					}

@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "Player/RPGCombatCatalog.h"
+#include "Player/RPGBossDeath.h"
 #include "RPGEncounterBinding.generated.h"
 
 class URPGBossEncounter;
@@ -14,6 +15,10 @@ class UAnimMontage;
 class UAnimSequence;
 class UAnimSequenceBase;
 class USkeleton;
+class UNiagaraSystem;
+class USoundBase;
+class USkeletalMesh;
+class UStaticMesh;
 
 USTRUCT(BlueprintType)
 struct FRPGBossStatsConfig
@@ -101,6 +106,159 @@ struct FRPGPhaseDependencyConfig
 	UPROPERTY(EditAnywhere) TSoftClassPtr<UObject> ImmunityEffect = TSoftClassPtr<UObject>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C")));
 };
 
+/**
+ * Stagger profile authoring configuration for URPGBossStagger.
+ * Additive authoring defaults match the native URPGBossStagger constructor declarations,
+ * never a fallback. Soft references only; does not load or resolve assets at compile time.
+ */
+USTRUCT(BlueprintType)
+struct FRPGStaggerProfileConfig
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere) bool bUseClips = true;
+	UPROPERTY(EditAnywhere) bool bUseRiposteClips = true;
+	UPROPERTY(EditAnywhere) bool bCriticalOnEveryHit = false;
+	UPROPERTY(EditAnywhere) FName HitStunAbilityClassName = TEXT("GA_GS_Boss_HitStun_C");
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimMontage> FallMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage")));
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimMontage> GetUpMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage")));
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> FallClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall")));
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> DownClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown")));
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> RipostePlayerClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.AN_Riposte_Player_Front")));
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> RiposteBossClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction")));
+	UPROPERTY(EditAnywhere) TSoftClassPtr<UObject> ImmunityEffect = TSoftClassPtr<UObject>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C")));
+};
+
+/** Dormant and wake clip references of the boss (URPGBossDormantWake): the typed authoring record, two soft references with the names of the native private fields. The defaults are defaults of this NEW asset
+ *  field (old schema 1 definitions receive them additively); they equal the native constructor values, are not proof of any serialized or live actor value and are never a fallback for an invalid value.
+ *  Soft references only: the record never loads or resolves anything and says nothing about existence, cooking, type or the fit of the clip to the skeleton or the timing. */
+USTRUCT(BlueprintType)
+struct FRPGDormantWakeConfig
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> DormantClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.AN_Boss01_DormantIdle")));
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> WakeClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Boss01_Wake.AN_Boss01_Wake")));
+};
+
+/** Bleed status policy of the boss (URPGBossBleed): the typed authoring record, five scalars and two soft references with the names of the native component. The defaults are defaults of this NEW asset field
+ *  (old schema 1 definitions receive them additively); they equal the native constructor and declaration values, are not proof of any serialized or live actor value and are never a fallback for an invalid value.
+ *  The domains are in RPGBossBleedAdapters (the native ClampMin and ClampMax metadata is editor metadata and is not copied here as a runtime rule). Soft references only: the record never loads anything and says
+ *  nothing about existence, cooking, class kind, visibility or audibility. The runtime state (buildup, threshold in force, proc counters, the loaded effect and sound) is NOT part of this record. */
+USTRUCT(BlueprintType)
+struct FRPGBleedConfig
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere) float InitialThreshold = 100.f;
+	UPROPERTY(EditAnywhere) float ThresholdIncrease = 20.f;
+	UPROPERTY(EditAnywhere) float ThresholdMax = 200.f;
+	UPROPERTY(EditAnywhere) float HpFraction = 0.03f;
+	UPROPERTY(EditAnywhere) float EffectHeight = 170.f;
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<UNiagaraSystem> ProcEffect = TSoftObjectPtr<UNiagaraSystem>(FSoftObjectPath(TEXT("/Game/BloodPack/Hit/Niagara/NS_BulletHit_Med.NS_BulletHit_Med")));
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<USoundBase> ProcSound = TSoftObjectPtr<USoundBase>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/A_Guardian_ImpactL_Cue.A_Guardian_ImpactL_Cue")));
+};
+
+/** C258 authored LowSweep record, not a native guard or a resolved tracker move.
+ * Defaults match the existing native declarations; never invalid-input fallbacks.
+ * MoveId proves only syntactic identity; runtime angles/counters/generation are absent. */
+USTRUCT(BlueprintType)
+struct FRPGLowSweepConfig
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere) bool bEnabled = true;
+	UPROPERTY(EditAnywhere) FName MoveId = TEXT("A4");
+	UPROPERTY(EditAnywhere) float Damage = 20.f;
+	UPROPERTY(EditAnywhere) float Reach = 380.f;
+	UPROPERTY(EditAnywhere) float InnerRadius = 60.f;
+	UPROPERTY(EditAnywhere) float BladeHeight = 40.f;
+	UPROPERTY(EditAnywhere) float SweepFromDegrees = 90.f;
+	UPROPERTY(EditAnywhere) float SweepToDegrees = -90.f;
+};
+
+
+/** C262/C263/C264 authored Shockwave configuration, NOT a resolved tracker move.
+ * Defaults match the native declarations; no runtime state or invalid-input fallback. */
+USTRUCT(BlueprintType)
+struct FRPGShockwaveConfig
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere) bool bEnabled=true;
+	UPROPERTY(EditAnywhere) FName MoveId=TEXT("A6");
+	UPROPERTY(EditAnywhere) float Damage=48.f;
+	UPROPERTY(EditAnywhere) float StartRadius=200.f;
+	UPROPERTY(EditAnywhere) float MaxRadius=1100.f;
+	UPROPERTY(EditAnywhere) float Speed=1000.f;
+	UPROPERTY(EditAnywhere) float Thickness=180.f;
+	UPROPERTY(EditAnywhere) float JumpClearance=50.f;
+};
+
+
+/** C265 authored HealPunish profile; not tracker/ability/socket resolution or runtime state. */
+USTRUCT(BlueprintType)
+struct FRPGHealPunishConfig
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere) bool bEnabled=true;
+	UPROPERTY(EditAnywhere) float MinRange=400.f;
+	UPROPERTY(EditAnywhere) float MaxRange=1000.f;
+	UPROPERTY(EditAnywhere) float Cooldown=4.f;
+	UPROPERTY(EditAnywhere) float Damage=12.f;
+	UPROPERTY(EditAnywhere) float FlightTime=1.2f;
+	UPROPERTY(EditAnywhere) float MinSpeed=450.f;
+	UPROPERTY(EditAnywhere) float MaxSpeed=2500.f;
+	UPROPERTY(EditAnywhere) float JavelinRadius=25.f;
+	UPROPERTY(EditAnywhere) float JavelinMaxRange=3000.f;
+	UPROPERTY(EditAnywhere) TArray<FName> SpawnSockets={TEXT("JavelinSpawn"),TEXT("hand_l")};
+	UPROPERTY(EditAnywhere) float AimHeight=100.f;
+	UPROPERTY(EditAnywhere) bool bRespondToHeal=true;
+	UPROPERTY(EditAnywhere) bool bCancelJavelinsOnInterrupt=true;
+};
+
+/** C269 authored structure only; no asset class/load, socket fit or gameplay proof. */
+USTRUCT(BlueprintType)
+struct FRPGLookConfig
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere) bool bEnabled = true;
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<USkeletalMesh> Body = TSoftObjectPtr<USkeletalMesh>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body")));
+	UPROPERTY(EditAnywhere) TArray<TSoftObjectPtr<USkeletalMesh>> Pieces = {
+		TSoftObjectPtr<USkeletalMesh>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Body/SK_Boss01_Crown.SK_Boss01_Crown"))),
+		TSoftObjectPtr<USkeletalMesh>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Body/SK_Boss01_Mantle.SK_Boss01_Mantle"))),
+		TSoftObjectPtr<USkeletalMesh>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Body/SK_Boss01_BrazierGauntlet.SK_Boss01_BrazierGauntlet"))),
+	};
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<UStaticMesh> Sword = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.SM_Boss01_Greatsword")));
+	UPROPERTY(EditAnywhere) FName SwordSocket = TEXT("HeavySwordSocket_R");
+};
+
+/** C275 staged authored structure only; runtime reflection/swap remains unresolved. */
+USTRUCT(BlueprintType)
+struct FRPGCloseClipSwapConfig
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere) FName CloseAbilityClassName = TEXT("GA_GS_Boss_CloseAttack_C");
+	UPROPERTY(EditAnywhere) FName AttackMontagesName = TEXT("AttackMontages");
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimMontage> A1Montage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1")));
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimMontage> A3aMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a")));
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimMontage> A3bMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b")));
+};
+
+/** C281/C284 authored record; both paths required, no native runtime guarantee. */
+USTRUCT(BlueprintType)
+struct FRPGDeathConfig
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere) ERPGBossDeathMode DeathMode = ERPGBossDeathMode::PackMontage;
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> DeathClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AN_Boss01_DeathLegend.AN_Boss01_DeathLegend")));
+	UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimMontage> DeathMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.AM_Boss01_DeathLegend")));
+	UPROPERTY(EditAnywhere) FName PackDeathAbilityClassName = TEXT("GA_EnemyRagdollDeath_C");
+	UPROPERTY(EditAnywhere) FName PackDeathMontagesName = TEXT("DeathMontages");
+	UPROPERTY(EditAnywhere) float PackPollSeconds = 1.f;
+	UPROPERTY(EditAnywhere) float PackEndTimeMultiplier = 0.f;
+	UPROPERTY(EditAnywhere) float HoldAtSeconds = 3.f;
+	UPROPERTY(EditAnywhere) float DyingSeconds = 2.5f;
+	UPROPERTY(EditAnywhere) float BlendInSeconds = 0.1f;
+	UPROPERTY(EditAnywhere) int32 MaxClipRestarts = 8;
+	UPROPERTY(EditAnywhere) bool bGuardPackDeath = false;
+};
+
 USTRUCT(BlueprintType)
 struct FRPGPhaseConfig
 {
@@ -145,6 +303,15 @@ public:
 	UPROPERTY(EditAnywhere) FRPGPhaseFlowConfig PhaseFlow;
 	UPROPERTY(EditAnywhere) FRPGFireballConfig Fireball;
 	UPROPERTY(EditAnywhere) FRPGPhaseDependencyConfig PhaseDependencies;
+	UPROPERTY(EditAnywhere) FRPGStaggerProfileConfig StaggerProfile;
+	UPROPERTY(EditAnywhere) FRPGDormantWakeConfig DormantWake;
+	UPROPERTY(EditAnywhere) FRPGBleedConfig Bleed;
+	UPROPERTY(EditAnywhere) FRPGLowSweepConfig LowSweep;
+	UPROPERTY(EditAnywhere) FRPGShockwaveConfig Shockwave;
+	UPROPERTY(EditAnywhere) FRPGHealPunishConfig HealPunish;
+	UPROPERTY(EditAnywhere) FRPGLookConfig Look;
+	UPROPERTY(EditAnywhere) FRPGCloseClipSwapConfig CloseClipSwap;
+	UPROPERTY(EditAnywhere) FRPGDeathConfig Death;
 	UPROPERTY(EditAnywhere) TArray<FRPGPhaseConfig> Phases;
 	UPROPERTY(EditAnywhere) TSoftObjectPtr<USkeleton> Skeleton;
 	UPROPERTY(EditAnywhere) TArray<TSoftObjectPtr<UAnimSequenceBase>> Animations;
@@ -183,6 +350,15 @@ struct FRPGParticipantConfig
 	FRPGPhaseFlowConfig PhaseFlow;
 	FRPGFireballConfig Fireball;
 	FRPGPhaseDependencyConfig PhaseDependencies;
+	FRPGStaggerProfileConfig StaggerProfile;
+	FRPGDormantWakeConfig DormantWake;
+	FRPGBleedConfig Bleed;
+	FRPGLowSweepConfig LowSweep;
+	FRPGShockwaveConfig Shockwave;
+	FRPGHealPunishConfig HealPunish;
+	FRPGLookConfig Look;
+	FRPGCloseClipSwapConfig CloseClipSwap;
+	FRPGDeathConfig Death;
 	TArray<FRPGPhaseConfig> Phases;
 	TArray<FRPGParityField> Fields;
 	TSharedPtr<const RPGCombatRegistry::FEpoch> Content;
