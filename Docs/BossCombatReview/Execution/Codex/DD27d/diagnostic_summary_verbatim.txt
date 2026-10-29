@@ -1,0 +1,70 @@
+[2026.10.29-13.12.48:158][  2]LogPython: [DIAGNOSTIC SUMMARY] Collected 29 failure(s) during in-memory apply:
+
+[2026.10.29-13.12.48:169][  2]LogPython: ==========================================================================================
+
+[2026.10.29-13.12.48:179][  2]LogPython: Asset                      Section          Property           Expected       Actual Type  Actual Repr              Error                     
+
+[2026.10.29-13.12.48:190][  2]LogPython: ----------------------------------------------------------------------------------------------------------------------------------------
+
+[2026.10.29-13.12.48:201][  2]LogPython: DA_Boss_EmberWarden_Draft  top              skeleton           /Game/Advance  NoneType     None                     TypeError: RPGBossDefinit 
+
+[2026.10.29-13.12.48:212][  2]LogPython: DA_Boss_EmberWarden_Draft  top              animations         ['/Game/OneBo  NoneType     None                     TypeError: RPGBossDefinit 
+
+[2026.10.29-13.12.48:223][  2]LogPython: DA_Boss_EmberWarden_Draft  fireball         (constructor)      struct instan  NoneType     None                     TypeError: RPGFireballCon 
+
+[2026.10.29-13.12.48:234][  2]LogPython: DA_Boss_EmberWarden_Draft  phase_dependenc  (constructor)      struct instan  NoneType     None                     TypeError: RPGPhaseDepend 
+
+[2026.10.29-13.12.48:246][  2]LogPython: DA_Boss_EmberWarden_Draft  stagger_profile  (constructor)      struct instan  NoneType     None                     TypeError: RPGStaggerProf 
+
+[2026.10.29-13.12.48:257][  2]LogPython: DA_Boss_EmberWarden_Draft  dormant_wake     (constructor)      struct instan  NoneType     None                     TypeError: RPGDormantWake 
+
+[2026.10.29-13.12.48:268][  2]LogPython: DA_Boss_EmberWarden_Draft  bleed            (constructor)      struct instan  NoneType     None                     TypeError: RPGBleedConfig 
+
+[2026.10.29-13.12.48:279][  2]LogPython: DA_Boss_EmberWarden_Draft  look             (constructor)      struct instan  NoneType     None                     TypeError: RPGLookConfig: 
+
+[2026.10.29-13.12.48:290][  2]LogPython: DA_Boss_EmberWarden_Draft  close_clip_swap  (constructor)      struct instan  NoneType     None                     TypeError: RPGCloseClipSw 
+
+[2026.10.29-13.12.48:301][  2]LogPython: DA_Boss_EmberWarden_Draft  death            (constructor)      struct instan  NoneType     None                     TypeError: RPGDeathConfig 
+
+[2026.10.29-13.12.48:312][  2]LogPython: DA_Boss_AbyssalRevenant_D  top              skeleton           /Game/Advance  NoneType     None                     TypeError: RPGBossDefinit 
+
+[2026.10.29-13.12.48:323][  2]LogPython: DA_Boss_AbyssalRevenant_D  top              animations         ['/Game/OneBo  NoneType     None                     TypeError: RPGBossDefinit 
+
+[2026.10.29-13.12.48:334][  2]LogPython: DA_Boss_AbyssalRevenant_D  fireball         (constructor)      struct instan  NoneType     None                     TypeError: RPGFireballCon 
+
+[2026.10.29-13.12.48:346][  2]LogPython: DA_Boss_AbyssalRevenant_D  phase_dependenc  (constructor)      struct instan  NoneType     None                     TypeError: RPGPhaseDepend 
+
+[2026.10.29-13.12.48:357][  2]LogPython: DA_Boss_AbyssalRevenant_D  stagger_profile  (constructor)      struct instan  NoneType     None                     TypeError: RPGStaggerProf 
+
+[2026.10.29-13.12.48:368][  2]LogPython: DA_Boss_AbyssalRevenant_D  dormant_wake     (constructor)      struct instan  NoneType     None                     TypeError: RPGDormantWake 
+
+[2026.10.29-13.12.48:379][  2]LogPython: DA_Boss_AbyssalRevenant_D  bleed            (constructor)      struct instan  NoneType     None                     TypeError: RPGBleedConfig 
+
+[2026.10.29-13.12.48:389][  2]LogPython: DA_Boss_AbyssalRevenant_D  look             (constructor)      struct instan  NoneType     None                     TypeError: RPGLookConfig: 
+
+[2026.10.29-13.12.48:400][  2]LogPython: DA_Boss_AbyssalRevenant_D  close_clip_swap  (constructor)      struct instan  NoneType     None                     TypeError: RPGCloseClipSw 
+
+[2026.10.29-13.12.48:411][  2]LogPython: DA_Boss_AbyssalRevenant_D  death            (constructor)      struct instan  NoneType     None                     TypeError: RPGDeathConfig 
+
+[2026.10.29-13.12.48:422][  2]LogPython: DA_Player_Hero_Draft       top              skeleton           /Game/Advance  NoneType     None                     TypeError: RPGBossDefinit 
+
+[2026.10.29-13.12.48:432][  2]LogPython: DA_Player_Hero_Draft       fireball         (constructor)      struct instan  NoneType     None                     TypeError: RPGFireballCon 
+
+[2026.10.29-13.12.48:443][  2]LogPython: DA_Player_Hero_Draft       phase_dependenc  (constructor)      struct instan  NoneType     None                     TypeError: RPGPhaseDepend 
+
+[2026.10.29-13.12.48:453][  2]LogPython: DA_Player_Hero_Draft       stagger_profile  (constructor)      struct instan  NoneType     None                     TypeError: RPGStaggerProf 
+
+[2026.10.29-13.12.48:464][  2]LogPython: DA_Player_Hero_Draft       dormant_wake     (constructor)      struct instan  NoneType     None                     TypeError: RPGDormantWake 
+
+[2026.10.29-13.12.48:476][  2]LogPython: DA_Player_Hero_Draft       bleed            (constructor)      struct instan  NoneType     None                     TypeError: RPGBleedConfig 
+
+[2026.10.29-13.12.48:487][  2]LogPython: DA_Player_Hero_Draft       look             (constructor)      struct instan  NoneType     None                     TypeError: RPGLookConfig: 
+
+[2026.10.29-13.12.48:498][  2]LogPython: DA_Player_Hero_Draft       close_clip_swap  (constructor)      struct instan  NoneType     None                     TypeError: RPGCloseClipSw 
+
+[2026.10.29-13.12.48:509][  2]LogPython: DA_Player_Hero_Draft       death            (constructor)      struct instan  NoneType     None                     TypeError: RPGDeathConfig 
+
+[2026.10.29-13.12.48:520][  2]LogPython: ==========================================================================================
+
+[2026.10.29-13.12.48:541][  2]LogPython: 
+[DRAFT_APPLY] FATAL: 29 property failure(s) detected during in-memory authoring.

@@ -1,0 +1,3 @@
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGBossEncounter.cpp(1): error: Expected RPGBossEncounter.h to be first header included.
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGDodgeTiming.cpp(1): error: Expected RPGDodgeTiming.h to be first header included.
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGPlayerMovesSubsystem.cpp(1): error: Expected RPGPlayerMovesSubsystem.h to be first header included.

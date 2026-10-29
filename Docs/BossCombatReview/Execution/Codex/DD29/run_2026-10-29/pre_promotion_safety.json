@@ -1,0 +1,557 @@
+{
+  "utc": "2026-10-29T14:51:11.211715+00:00",
+  "processes": [],
+  "head": "bc3fe6a49335f0a68bf5df9d895b8a46f6633aeb",
+  "tracked_status": "M Source/OneBossFight/Player/RPGBossHydrationPreparation.cpp\n M Source/OneBossFight/Player/RPGBossHydrationPreparation.h\n?? Source/OneBossFight/Tests/RPGBossActivationTests.cpp",
+  "source_count": 213,
+  "pins": [
+    {
+      "path": "Source/OneBossFight/Player/RPGBossDormantWake.cpp",
+      "actual_sha256": "fd3df15b1530a227750548b4e7241f16d2f3e946e3b04e49bc28ce4ae9524788",
+      "accepted_DD28_final_sha256": "fd3df15b1530a227750548b4e7241f16d2f3e946e3b04e49bc28ce4ae9524788"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossDormantWake.h",
+      "actual_sha256": "ff450db792f59af3bab6ff73464d1dfe360f27003b268c0f574b58124f05f83c",
+      "accepted_DD28_final_sha256": "ff450db792f59af3bab6ff73464d1dfe360f27003b268c0f574b58124f05f83c"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossDormantWakeAdapters.cpp",
+      "actual_sha256": "80e6f9f4797c5bfea3f6fc4dc2c6ec074f998efec3cb495e554c8b5cd9a6ee55",
+      "accepted_DD28_final_sha256": "80e6f9f4797c5bfea3f6fc4dc2c6ec074f998efec3cb495e554c8b5cd9a6ee55"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossDormantWakeAdapters.h",
+      "actual_sha256": "d350a4c62c65300c32c4395f2869b78b8187f562a82581a51dccaedcdbcaccfa",
+      "accepted_DD28_final_sha256": "d350a4c62c65300c32c4395f2869b78b8187f562a82581a51dccaedcdbcaccfa"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossEncounter.cpp",
+      "actual_sha256": "dc149393f2fff1788ea22daf42db0b14f85ac36f58ad59c459b44ee94600c96d",
+      "accepted_DD28_final_sha256": "dc149393f2fff1788ea22daf42db0b14f85ac36f58ad59c459b44ee94600c96d"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossEncounter.h",
+      "actual_sha256": "4f3ab203562ef2d3a2d18828feaf5f437a5a7eaff1054e9b6ce60e9150cae9d6",
+      "accepted_DD28_final_sha256": "4f3ab203562ef2d3a2d18828feaf5f437a5a7eaff1054e9b6ce60e9150cae9d6"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossEncounterClusterAdapters.cpp",
+      "actual_sha256": "8e83c527e24a49c531b8a8317e5ac8f64f2d667274f872eec0bdc59a8bc57a1e",
+      "accepted_DD28_final_sha256": "8e83c527e24a49c531b8a8317e5ac8f64f2d667274f872eec0bdc59a8bc57a1e"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossEncounterClusterAdapters.h",
+      "actual_sha256": "2b0b9a2813d79707e150717d28990903771399ed8a6a654b6137927a1f92b7fd",
+      "accepted_DD28_final_sha256": "2b0b9a2813d79707e150717d28990903771399ed8a6a654b6137927a1f92b7fd"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossPhaseAdapters.cpp",
+      "actual_sha256": "8140cd203feff0c3c72a3b0c3672c9d19761d9b3b88e617dd6949f75978edacf",
+      "accepted_DD28_final_sha256": "8140cd203feff0c3c72a3b0c3672c9d19761d9b3b88e617dd6949f75978edacf"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossPhaseAdapters.h",
+      "actual_sha256": "fab105d67f8d99c891e30b72a04a3404b2488c1d766efd148510037eff0cf4a6",
+      "accepted_DD28_final_sha256": "fab105d67f8d99c891e30b72a04a3404b2488c1d766efd148510037eff0cf4a6"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+      "actual_sha256": "c43615412e1f345d6ed75cc6d6a6b0d9ece6acaaac612e545b42cc24087f7a06",
+      "accepted_DD28_final_sha256": "c43615412e1f345d6ed75cc6d6a6b0d9ece6acaaac612e545b42cc24087f7a06"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossPhases.h",
+      "actual_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+      "accepted_DD28_final_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossPhasesClusterAdapters.cpp",
+      "actual_sha256": "bc418dc3f01e0fd5db749629fbec52bf2421d254c86ee0b8d6e819f478b2c609",
+      "accepted_DD28_final_sha256": "bc418dc3f01e0fd5db749629fbec52bf2421d254c86ee0b8d6e819f478b2c609"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossPhasesClusterAdapters.h",
+      "actual_sha256": "6e8bbd7c070cfdd98de9f74174b2e527b16dc80cd981720e2d178fdb949396de",
+      "accepted_DD28_final_sha256": "6e8bbd7c070cfdd98de9f74174b2e527b16dc80cd981720e2d178fdb949396de"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossPosture.cpp",
+      "actual_sha256": "b26e184b0410e858d1c504e0b374dbc9e8f4c6b6399b05617559bb6909e88e41",
+      "accepted_DD28_final_sha256": "b26e184b0410e858d1c504e0b374dbc9e8f4c6b6399b05617559bb6909e88e41"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossPosture.h",
+      "actual_sha256": "bca70f5816a45733f0ea2d5550651da7192ba179a5e31d736eab90fd46cd3ff8",
+      "accepted_DD28_final_sha256": "bca70f5816a45733f0ea2d5550651da7192ba179a5e31d736eab90fd46cd3ff8"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+      "actual_sha256": "c711d766b4fecb6999c638cf5d8720ca422ba758223f941ea437ebac5b474c98",
+      "accepted_DD28_final_sha256": "c711d766b4fecb6999c638cf5d8720ca422ba758223f941ea437ebac5b474c98"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossStagger.h",
+      "actual_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+      "accepted_DD28_final_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossStaggerClusterAdapters.cpp",
+      "actual_sha256": "b913f6fec7b7a47f7309293ff7e5f1ce5322f40c92c886beb46ccd02036bd2ed",
+      "accepted_DD28_final_sha256": "b913f6fec7b7a47f7309293ff7e5f1ce5322f40c92c886beb46ccd02036bd2ed"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossStaggerClusterAdapters.h",
+      "actual_sha256": "a90ff21358fe7ca463a8d33700cef19d841e2969e5170efea2df85833feb38c1",
+      "accepted_DD28_final_sha256": "a90ff21358fe7ca463a8d33700cef19d841e2969e5170efea2df85833feb38c1"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossStatsAdapters.cpp",
+      "actual_sha256": "b14a57efabad911f39fdea17df4bc8513850f269bee26a68b5150dead28441ee",
+      "accepted_DD28_final_sha256": "b14a57efabad911f39fdea17df4bc8513850f269bee26a68b5150dead28441ee"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossStatsAdapters.h",
+      "actual_sha256": "cd1f6a0ce2c2a8806496b3c641d7d81b41db2a04df3ec0b7369780275d034a43",
+      "accepted_DD28_final_sha256": "cd1f6a0ce2c2a8806496b3c641d7d81b41db2a04df3ec0b7369780275d034a43"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "actual_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb",
+      "accepted_DD28_final_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "actual_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+      "accepted_DD28_final_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossHydrationPreparation.h",
+      "actual_sha256": "7e8c031a082b2229b7a013ad91f678a8b76948c11fdeaa2c0e5001eed9deb1fe",
+      "accepted_DD28_final_sha256": "7e8c031a082b2229b7a013ad91f678a8b76948c11fdeaa2c0e5001eed9deb1fe"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossHydrationPreparation.cpp",
+      "actual_sha256": "642332410dad5127d2970daf550e1c6dd051d722a68b3f1751c97f2bdbdbedfd",
+      "accepted_DD28_final_sha256": "642332410dad5127d2970daf550e1c6dd051d722a68b3f1751c97f2bdbdbedfd"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossWorldInputCompiler.h",
+      "actual_sha256": "343d74db59c3f8fa6f28a16fbeb7bf58fab4193580c25fea4960b77d67141c0e",
+      "accepted_DD28_final_sha256": "343d74db59c3f8fa6f28a16fbeb7bf58fab4193580c25fea4960b77d67141c0e"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossWorldInputCompiler.cpp",
+      "actual_sha256": "1a99ba054dc606c6514973e6423723bd3a3701ce40ea8c87f2c432d30e457f58",
+      "accepted_DD28_final_sha256": "1a99ba054dc606c6514973e6423723bd3a3701ce40ea8c87f2c432d30e457f58"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossHydrationPreflight.h",
+      "actual_sha256": "726352623e1ea48125f4d1032c5dc533fd059527dd61c355b5f458551cae2b65",
+      "accepted_DD28_final_sha256": "726352623e1ea48125f4d1032c5dc533fd059527dd61c355b5f458551cae2b65"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossHydrationPreflight.cpp",
+      "actual_sha256": "07261ce364ae0daa68d80075ea42d5a41ef2414a86457a3014648b1165e34897",
+      "accepted_DD28_final_sha256": "07261ce364ae0daa68d80075ea42d5a41ef2414a86457a3014648b1165e34897"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "actual_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+      "accepted_DD28_final_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "actual_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb",
+      "accepted_DD28_final_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGCombatCatalog.h",
+      "actual_sha256": "e7d5296833cfa5bec4101e608a98ab336a5b8c7a5c476e0d3b17eae57279dbb5",
+      "accepted_DD28_final_sha256": "e7d5296833cfa5bec4101e608a98ab336a5b8c7a5c476e0d3b17eae57279dbb5"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGCombatCatalog.cpp",
+      "actual_sha256": "f6f71036804f60f0e4c8b3cf455f2a04a7bc4cf379760334903a2d9d613de59d",
+      "accepted_DD28_final_sha256": "f6f71036804f60f0e4c8b3cf455f2a04a7bc4cf379760334903a2d9d613de59d"
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossWorldInputCompilerTests.cpp",
+      "actual_sha256": "6434822df937243b6c377c339977de76c9f0f43503e9250cd94c95fd0b76555d",
+      "accepted_DD28_final_sha256": "6434822df937243b6c377c339977de76c9f0f43503e9250cd94c95fd0b76555d"
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossProductionPreparationTests.cpp",
+      "actual_sha256": "d250411b51a72375a45e57920d1e7ed5bdfbe3c09224e0fb96227a4747e32620",
+      "accepted_DD28_final_sha256": "d250411b51a72375a45e57920d1e7ed5bdfbe3c09224e0fb96227a4747e32620"
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+      "actual_sha256": "19fd79952adf35211508c794c89753bb0b09335f55bdb02fc0ef7751a99147d7",
+      "accepted_DD28_final_sha256": "19fd79952adf35211508c794c89753bb0b09335f55bdb02fc0ef7751a99147d7"
+    },
+    {
+      "path": "Content/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/BP_CombatPlayerCharacter.uasset",
+      "actual_sha256": "9662aaa364c56243180560b9121da7eadd8bfe43bfcd7f54bccd1752a07abc81",
+      "accepted_DD28_final_sha256": "9662aaa364c56243180560b9121da7eadd8bfe43bfcd7f54bccd1752a07abc81"
+    },
+    {
+      "path": "Content/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.uasset",
+      "actual_sha256": "a7dd5b156eb2bab555d16d12d9ef74ccecddd27990fd7c799873e24895f13217",
+      "accepted_DD28_final_sha256": "a7dd5b156eb2bab555d16d12d9ef74ccecddd27990fd7c799873e24895f13217"
+    },
+    {
+      "path": "Content/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SKM_CombatMannequin_Simple.uasset",
+      "actual_sha256": "9e0ee81d1a117ac2470c8a4102b185c5b05a4b359fe27ca196625e114c22b78c",
+      "accepted_DD28_final_sha256": "9e0ee81d1a117ac2470c8a4102b185c5b05a4b359fe27ca196625e114c22b78c"
+    },
+    {
+      "path": "Content/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.uasset",
+      "actual_sha256": "52677edcbfa4d78b49126481f7e3087c62231bdd76021055bba520c7c9de7e95",
+      "accepted_DD28_final_sha256": "52677edcbfa4d78b49126481f7e3087c62231bdd76021055bba520c7c9de7e95"
+    },
+    {
+      "path": "Content/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.uasset",
+      "actual_sha256": "df7cd628003fc132f73ad74b1b7f0feb42d81e7dd1841ca8e5a6695eed7fa8f5",
+      "accepted_DD28_final_sha256": "df7cd628003fc132f73ad74b1b7f0feb42d81e7dd1841ca8e5a6695eed7fa8f5"
+    },
+    {
+      "path": "Content/OneBossFight/Boss01/Animations/AN_Boss01_Wake.uasset",
+      "actual_sha256": "3334a4963991b8eff02d8c9ebd4b82d940e2f70fe95ccc2367da6ed87b4c557c",
+      "accepted_DD28_final_sha256": "3334a4963991b8eff02d8c9ebd4b82d940e2f70fe95ccc2367da6ed87b4c557c"
+    },
+    {
+      "path": "Content/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.uasset",
+      "actual_sha256": "0e19c86b2e68abd7b23b94f8b8d03ebb8059c762c11e9227a51d57c02b64479f",
+      "accepted_DD28_final_sha256": "0e19c86b2e68abd7b23b94f8b8d03ebb8059c762c11e9227a51d57c02b64479f"
+    },
+    {
+      "path": "Content/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.uasset",
+      "actual_sha256": "46c550d8943ad84196cf42d7b51b33860c321d436c2da1eef87d15c4aee023e3",
+      "accepted_DD28_final_sha256": "46c550d8943ad84196cf42d7b51b33860c321d436c2da1eef87d15c4aee023e3"
+    },
+    {
+      "path": "Content/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.uasset",
+      "actual_sha256": "80702e46ccfe0556551169be8a14b805e7cdf88c60c60a72433998315187b7ae",
+      "accepted_DD28_final_sha256": "80702e46ccfe0556551169be8a14b805e7cdf88c60c60a72433998315187b7ae"
+    },
+    {
+      "path": "Content/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.uasset",
+      "actual_sha256": "767acccf1bd3414a3b46d9db7a37028cc72a8f9f5428f05289b7b89b2f0b8001",
+      "accepted_DD28_final_sha256": "767acccf1bd3414a3b46d9db7a37028cc72a8f9f5428f05289b7b89b2f0b8001"
+    },
+    {
+      "path": "Content/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.uasset",
+      "actual_sha256": "c31727ff55c00bb53860de4c36fa147f16a34846fe64f99b486b9a8527df56fe",
+      "accepted_DD28_final_sha256": "c31727ff55c00bb53860de4c36fa147f16a34846fe64f99b486b9a8527df56fe"
+    },
+    {
+      "path": "Content/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.uasset",
+      "actual_sha256": "5e6a83e67d362b3dee896a78591e0e2056de96707e65189093fd87a8b2023356",
+      "accepted_DD28_final_sha256": "5e6a83e67d362b3dee896a78591e0e2056de96707e65189093fd87a8b2023356"
+    },
+    {
+      "path": "Content/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.uasset",
+      "actual_sha256": "564973bab4afe57e0c7742cfc00a52303784e6b042ff3f62f0fde53f5c584fca",
+      "accepted_DD28_final_sha256": "564973bab4afe57e0c7742cfc00a52303784e6b042ff3f62f0fde53f5c584fca"
+    },
+    {
+      "path": "Content/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.uasset",
+      "actual_sha256": "3156f085e06b80d518ad15db50aa61b63fbc83aa25502d84e800a031fa16b81b",
+      "accepted_DD28_final_sha256": "3156f085e06b80d518ad15db50aa61b63fbc83aa25502d84e800a031fa16b81b"
+    },
+    {
+      "path": "Content/OneBossFight/Data/Catalog/DA_Build_Dex.uasset",
+      "actual_sha256": "8ec63be096a1f43de82baceb30cb36a373bf018f59812db06184220c0c4d520b",
+      "accepted_DD28_final_sha256": "8ec63be096a1f43de82baceb30cb36a373bf018f59812db06184220c0c4d520b"
+    },
+    {
+      "path": "Content/OneBossFight/Data/Catalog/DA_Build_Starter.uasset",
+      "actual_sha256": "e3c0d6c86aca343fac8307d1b95209a0ce3a693920493ee5211e6fa6bce80682",
+      "accepted_DD28_final_sha256": "e3c0d6c86aca343fac8307d1b95209a0ce3a693920493ee5211e6fa6bce80682"
+    },
+    {
+      "path": "Content/OneBossFight/Data/Catalog/DA_Build_Strength.uasset",
+      "actual_sha256": "24b6ad77dbaf8db5f64db5edad035471d2e8ea05487d02864c51e8e27da02033",
+      "accepted_DD28_final_sha256": "24b6ad77dbaf8db5f64db5edad035471d2e8ea05487d02864c51e8e27da02033"
+    },
+    {
+      "path": "Content/OneBossFight/Data/Catalog/DA_CombatCatalog.uasset",
+      "actual_sha256": "be49c7f4f3551fa8a45eb33d067711bb5bed526f90fd2cf7f4aa39cfd232b315",
+      "accepted_DD28_final_sha256": "be49c7f4f3551fa8a45eb33d067711bb5bed526f90fd2cf7f4aa39cfd232b315"
+    },
+    {
+      "path": "Content/OneBossFight/Data/Catalog/DA_Weapon_Claymore.uasset",
+      "actual_sha256": "d203bb0555b1e6239218fd180611a6fc14017544c7ac55ace0086b308f35da8c",
+      "accepted_DD28_final_sha256": "d203bb0555b1e6239218fd180611a6fc14017544c7ac55ace0086b308f35da8c"
+    },
+    {
+      "path": "Content/OneBossFight/Data/Catalog/DA_Weapon_DualSwords.uasset",
+      "actual_sha256": "31680000e80764945d9483a3286f0075fd839244797ce7f2277b9f34b3770128",
+      "accepted_DD28_final_sha256": "31680000e80764945d9483a3286f0075fd839244797ce7f2277b9f34b3770128"
+    },
+    {
+      "path": "Content/OneBossFight/Data/Catalog/DA_Weapon_Sword.uasset",
+      "actual_sha256": "b7702e2af28db57442dbe9ca20195ac23c02bc57941e760d57280e2bcb68d3c2",
+      "accepted_DD28_final_sha256": "b7702e2af28db57442dbe9ca20195ac23c02bc57941e760d57280e2bcb68d3c2"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossHydrationPreflight.h",
+      "actual_sha256": "726352623e1ea48125f4d1032c5dc533fd059527dd61c355b5f458551cae2b65",
+      "accepted_DD28_final_sha256": "726352623e1ea48125f4d1032c5dc533fd059527dd61c355b5f458551cae2b65"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossHydrationPreflight.cpp",
+      "actual_sha256": "07261ce364ae0daa68d80075ea42d5a41ef2414a86457a3014648b1165e34897",
+      "accepted_DD28_final_sha256": "07261ce364ae0daa68d80075ea42d5a41ef2414a86457a3014648b1165e34897"
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossHydrationPreflightTests.cpp",
+      "actual_sha256": "4ee141e7067207aea2240f5fffc01d27602e7bd4fb1f880879ac09da06491f19",
+      "accepted_DD28_final_sha256": "4ee141e7067207aea2240f5fffc01d27602e7bd4fb1f880879ac09da06491f19"
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossHydrationPreparationTests.cpp",
+      "actual_sha256": "19fd79952adf35211508c794c89753bb0b09335f55bdb02fc0ef7751a99147d7",
+      "accepted_DD28_final_sha256": "19fd79952adf35211508c794c89753bb0b09335f55bdb02fc0ef7751a99147d7"
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossProductionPreflightTests.cpp",
+      "actual_sha256": "b1375f2c3dab51ca537b2cd5c55aebfc14fdce844dfa586e52a8cc0e082a8acf",
+      "accepted_DD28_final_sha256": "b1375f2c3dab51ca537b2cd5c55aebfc14fdce844dfa586e52a8cc0e082a8acf"
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossProductionPreparationTests.cpp",
+      "actual_sha256": "d250411b51a72375a45e57920d1e7ed5bdfbe3c09224e0fb96227a4747e32620",
+      "accepted_DD28_final_sha256": "d250411b51a72375a45e57920d1e7ed5bdfbe3c09224e0fb96227a4747e32620"
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossWorldPreparationTests.cpp",
+      "actual_sha256": "7c3190a28cadda19ad8afc82c5d0d8ef5c5476c52e24266d45b211d8526c0dc1",
+      "accepted_DD28_final_sha256": "7c3190a28cadda19ad8afc82c5d0d8ef5c5476c52e24266d45b211d8526c0dc1"
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossWorldInputCompilerTests.cpp",
+      "actual_sha256": "6434822df937243b6c377c339977de76c9f0f43503e9250cd94c95fd0b76555d",
+      "accepted_DD28_final_sha256": "6434822df937243b6c377c339977de76c9f0f43503e9250cd94c95fd0b76555d"
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossPreparationRegistryTests.cpp",
+      "actual_sha256": "31eed73b81dd2d8dc1e9306f86405516428e2bdd22c076c78a2921bbc84e691e",
+      "accepted_DD28_final_sha256": "31eed73b81dd2d8dc1e9306f86405516428e2bdd22c076c78a2921bbc84e691e"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossShockwaveAdapters.h",
+      "actual_sha256": "a661e0c33cc13ac318588bec8943e1897b5959a7d4a5068568f1b0e06c3aba9c",
+      "accepted_DD28_final_sha256": "a661e0c33cc13ac318588bec8943e1897b5959a7d4a5068568f1b0e06c3aba9c"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossShockwaveAdapters.cpp",
+      "actual_sha256": "1e75f36340b4f5fdba483b8dba095cd1a00efc02c690ac3ab2ec9876da550c6a",
+      "accepted_DD28_final_sha256": "1e75f36340b4f5fdba483b8dba095cd1a00efc02c690ac3ab2ec9876da550c6a"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "actual_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+      "accepted_DD28_final_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "actual_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb",
+      "accepted_DD28_final_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb"
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossShockwaveAdaptersTests.cpp",
+      "actual_sha256": "e030034f2f62dd2812d9c24585fe00391281e3e4544dfbfa0e48de7eef1d4926",
+      "accepted_DD28_final_sha256": "e030034f2f62dd2812d9c24585fe00391281e3e4544dfbfa0e48de7eef1d4926"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossHealPunishAdapters.h",
+      "actual_sha256": "4ac6761dbde1495955d893e30a6055d2675642dc48ea934247710fa4a1a177fa",
+      "accepted_DD28_final_sha256": "4ac6761dbde1495955d893e30a6055d2675642dc48ea934247710fa4a1a177fa"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossHealPunishAdapters.cpp",
+      "actual_sha256": "e0742bdf27f16a78a5e9f42627342db427a6ff577d8af94efbe5183c9f91e06c",
+      "accepted_DD28_final_sha256": "e0742bdf27f16a78a5e9f42627342db427a6ff577d8af94efbe5183c9f91e06c"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "actual_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+      "accepted_DD28_final_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "actual_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb",
+      "accepted_DD28_final_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb"
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossHealPunishAdaptersTests.cpp",
+      "actual_sha256": "f33888eee4540ef9002c65a0839a14102c8562a9f962d08d5fed904c39a07454",
+      "accepted_DD28_final_sha256": "f33888eee4540ef9002c65a0839a14102c8562a9f962d08d5fed904c39a07454"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossLookAdapters.h",
+      "actual_sha256": "ca3bfb395dfdf9791b771a0139b706751113a2ffe2d55b8972188141642e886d",
+      "accepted_DD28_final_sha256": "ca3bfb395dfdf9791b771a0139b706751113a2ffe2d55b8972188141642e886d"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossLookAdapters.cpp",
+      "actual_sha256": "e99af51eeb4310a0e31d1f063cd8e15445be7b417d94137f9ccea4d88e3ce5ce",
+      "accepted_DD28_final_sha256": "e99af51eeb4310a0e31d1f063cd8e15445be7b417d94137f9ccea4d88e3ce5ce"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "actual_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+      "accepted_DD28_final_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "actual_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb",
+      "accepted_DD28_final_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb"
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossLookAdaptersTests.cpp",
+      "actual_sha256": "64fc3399928fb20ddf39d8b6207daa7c98a9077537da3db308eef0b2385f9711",
+      "accepted_DD28_final_sha256": "64fc3399928fb20ddf39d8b6207daa7c98a9077537da3db308eef0b2385f9711"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossCloseClipSwapAdapters.h",
+      "actual_sha256": "7a4d22c49b330ce14e0bc1bf24cb101f917f50ca3d606f26aaf2324a0b45cc90",
+      "accepted_DD28_final_sha256": "7a4d22c49b330ce14e0bc1bf24cb101f917f50ca3d606f26aaf2324a0b45cc90"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossCloseClipSwapAdapters.cpp",
+      "actual_sha256": "555fe8b40801589b37ac5eff61f2fc6069ad09c127c1c926291c45f2c14962bc",
+      "accepted_DD28_final_sha256": "555fe8b40801589b37ac5eff61f2fc6069ad09c127c1c926291c45f2c14962bc"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "actual_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+      "accepted_DD28_final_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "actual_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb",
+      "accepted_DD28_final_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb"
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossCloseClipSwapAdaptersTests.cpp",
+      "actual_sha256": "f62a8319ad365bcb4c229473e9e895d7f6dad2978d4bee25a1d6f8fdb480ee1b",
+      "accepted_DD28_final_sha256": "f62a8319ad365bcb4c229473e9e895d7f6dad2978d4bee25a1d6f8fdb480ee1b"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossDeath.h",
+      "actual_sha256": "1fe249f97b707921c16ca5061b78acb5845e1b85745982076683df025fb4c64d",
+      "accepted_DD28_final_sha256": "1fe249f97b707921c16ca5061b78acb5845e1b85745982076683df025fb4c64d"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossDeath.cpp",
+      "actual_sha256": "a6f73587473d31c11136c7c1ebeac65f1f9b95b1503089d1c3816e553bdd60c4",
+      "accepted_DD28_final_sha256": "a6f73587473d31c11136c7c1ebeac65f1f9b95b1503089d1c3816e553bdd60c4"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossBleedAdapters.h",
+      "actual_sha256": "e3a55ee39c1f980edda57b7397d93ebb0861fc0f75d5a0ea748c48089fe3c1d3",
+      "accepted_DD28_final_sha256": "e3a55ee39c1f980edda57b7397d93ebb0861fc0f75d5a0ea748c48089fe3c1d3"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossBleedAdapters.cpp",
+      "actual_sha256": "3799e43a190d93b8bf0347e9f568eb7204e7b00150ea3515b62612fa26527afe",
+      "accepted_DD28_final_sha256": "3799e43a190d93b8bf0347e9f568eb7204e7b00150ea3515b62612fa26527afe"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "actual_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+      "accepted_DD28_final_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "actual_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb",
+      "accepted_DD28_final_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb"
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossBleedAdaptersTests.cpp",
+      "actual_sha256": "99d5b68dcbe4358e78181e738a55242d09888f353336483bb4dfa3f269a309a4",
+      "accepted_DD28_final_sha256": "99d5b68dcbe4358e78181e738a55242d09888f353336483bb4dfa3f269a309a4"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossLowSweepAdapters.h",
+      "actual_sha256": "621972165e457c567b6df547399d9a03e60f609df3260717b55727d438583525",
+      "accepted_DD28_final_sha256": "621972165e457c567b6df547399d9a03e60f609df3260717b55727d438583525"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossLowSweepAdapters.cpp",
+      "actual_sha256": "bb47f286d207db96fb5f2d71bb57c58485d6fe680eed1068312ba35bee73dd65",
+      "accepted_DD28_final_sha256": "bb47f286d207db96fb5f2d71bb57c58485d6fe680eed1068312ba35bee73dd65"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "actual_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+      "accepted_DD28_final_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "actual_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb",
+      "accepted_DD28_final_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb"
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossLowSweepAdaptersTests.cpp",
+      "actual_sha256": "86b9d5d9dbec0b21dfba5516379e87442f2b27282cd29b00e42c7e581b5fa3dd",
+      "accepted_DD28_final_sha256": "86b9d5d9dbec0b21dfba5516379e87442f2b27282cd29b00e42c7e581b5fa3dd"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossDeathAdapters.h",
+      "actual_sha256": "03cd0537872f884c20f481722ec349644423921d197359e3c0f000526257f0ba",
+      "accepted_DD28_final_sha256": "03cd0537872f884c20f481722ec349644423921d197359e3c0f000526257f0ba"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossDeathAdapters.cpp",
+      "actual_sha256": "2ee980ebfd148e4d6f1ae9d7e36606bff147c21ba9a303215a5a8a38200ff6da",
+      "accepted_DD28_final_sha256": "2ee980ebfd148e4d6f1ae9d7e36606bff147c21ba9a303215a5a8a38200ff6da"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+      "actual_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+      "accepted_DD28_final_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+      "actual_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb",
+      "accepted_DD28_final_sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb"
+    },
+    {
+      "path": "Source/OneBossFight/Tests/RPGBossDeathAdaptersTests.cpp",
+      "actual_sha256": "f680c85825575281d7713bc05aa3bfafc599a9ae78168d4068bbce147daf8a76",
+      "accepted_DD28_final_sha256": "f680c85825575281d7713bc05aa3bfafc599a9ae78168d4068bbce147daf8a76"
+    }
+  ],
+  "binaries": {
+    "scope": "File integrity only, not source semantics/runtime acceptance",
+    "receipt_sha256": "898aa3418e5eb14936db0d73ffeacafb5e4c544714055567798fcb48f1c0e400",
+    "entries": 2,
+    "all_verified": true,
+    "checks": [
+      {
+        "expected_sha256": "82c2903228c084799453ebc87ce3d92b2b929b028827ea3ba251ff61a68ce72a",
+        "relative_path": "Binaries/Win64/UnrealEditor-OneBossFight.dll",
+        "expected_size": null,
+        "path": "Binaries\\Win64\\UnrealEditor-OneBossFight.dll",
+        "actual_sha256": "82c2903228c084799453ebc87ce3d92b2b929b028827ea3ba251ff61a68ce72a",
+        "actual_size": 5618688,
+        "status": "verified"
+      },
+      {
+        "expected_sha256": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65",
+        "relative_path": "Binaries/Win64/OneBossFight.exe",
+        "expected_size": null,
+        "path": "Binaries\\Win64\\OneBossFight.exe",
+        "actual_sha256": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65",
+        "actual_size": 301501952,
+        "status": "verified"
+      }
+    ]
+  },
+  "stage_manifest_sha256": "92ac4db4fe0677353c2e994a8b201a85d1a48952a2daddbed159db90464cd726",
+  "passed": true
+}

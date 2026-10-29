@@ -1,0 +1,65 @@
+### [A-233] Antigravity -> Claude,Codex,Owner, 2026-10-29 23:48
+TASK: C-350 DD30 CHRONOLOGY BUILD 2 COMPLETED CLEANLY (Exit Code 0, Zero Errors, New DLL Produced).
+
+1. WRAPPER SCRIPTS & AUDIT (build_once.cmd & capture_state.py):
+- Copied run_C346 wrappers into Docs/BossCombatReview/Execution/Antigravity/EngineRuns/DD30ChronologyBuild2/:
+  * build_once.cmd (f0df1ad4... -> aa5df021...): Changed run path to DD30ChronologyBuild2. Command line executed: `"C:\Program Files\Epic Games\UE_5.5\Engine\Build\BatchFiles\Build.bat" OneBossFightEditor Win64 Development "-Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject" -WaitMutex > "...\build_raw.log" 2>&1`. Executes single Win64 Development editor build with mutex gating.
+  * capture_state.py (e146ecc6... identical): Verifies active processes (refuses any UnrealEditor/UBT/cl/link), checks git HEAD (605c2dd81d4092e8...), validates Source parity (exactly 219 files against promoted_source_manifest_sha256.txt), checks toolkit pins (AuthoringToolkit *.py, boss_draft_profiles.json, hero_target_source.json), snapshots Content/Config/Saved/binaries, computes state diff.
+  * run_build.ps1 (2005ae5b... -> b973e9a8...): Changed run path and release id (`C-350`).
+  * engine_lock.py (de2de8f4... -> 6239465a...): Configured for Antigravity (party A, task C-350/DD30ChronologyBuild2).
+  * Original and adapted diffs recorded in wrapper_diffs.txt (0016ae1c...).
+
+2. PRE-RUN SAFETY QUALIFICATION (ALL PASSED):
+- Zero active engine/compiler processes (Get-Process check returned empty).
+- ENGINE_LOCK.json absent; created atomically before promotion, removed after evidence freeze.
+- Git HEAD verified: 605c2dd81d4092e8f84aa7608651ed19d566423a.
+- Live Source files verified: exactly 219 files, 3 targets byte-identical to preimages.
+- Saved drafts & V2 pins verified unchanged (AbyssalRevenant 90ee817f..., EmberWarden ba05a8aa..., Hero 8d187115...).
+- DLL baseline verified: 99baecdb4fb324e07f4ad488a34f76c798ec991c47f5cd73d05a66b0bdd5e875.
+
+3. PROMOTION (3 STAGED .CPP FILES):
+- Promoted byte-for-byte into Source/OneBossFight/Player/:
+  * RPGBossEncounter.cpp: 3f3b62d83448... -> bce27a9dd7c280423301eca600edb29263250c807b3d9bc3f4be962b7bede080
+  * RPGDodgeTiming.cpp: 367bb788df0a... -> acafc4a8ceb4f7dbe297e3688fe88722186311c863c29073c2dcac1ec9aedbee
+  * RPGPlayerMovesSubsystem.cpp: 5d0f0be233e6... -> dd279aa717633b3f5f523df62de72ca5d8af0e0ad18c57fe3f646fe855bd6f67
+- Generated promoted_source_manifest_sha256.txt (219 files, SHA256: cbe2bfc65cae...). Promotion recorded in promotion.json (13913258...).
+
+4. BUILD RESULTS & DIAGNOSTICS:
+- Exit Code: 0 (Success)
+- Elapsed Time: 8.84 seconds (Start: 2026-10-29T23:45:11.170, End: 2026-10-29T23:45:20.010)
+- Actions Executed (6): Compile RPGDodgeTiming.cpp, RPGPlayerMovesSubsystem.cpp, RPGBossEncounter.cpp; Link UnrealEditor-OneBossFight.lib, UnrealEditor-OneBossFight.dll; WriteMetadata.
+- Compiler / UBT Errors: EXACTLY ZERO (0). (The 3 header-order compilation errors from C-346 are completely resolved).
+- Compiler Warnings (1 verbatim):
+  * `Warning: Visual Studio 2022 compiler is not a preferred version`
+  (Niagara plugin warnings did not re-trigger as plugin cache was intact).
+
+5. BINARY OUTPUTS:
+- Binaries/Win64/UnrealEditor-OneBossFight.dll (738,304 bytes):
+  * SHA256: 332afd497b68c01b556be9fd73682574e97c31ed868f46a382ee0cb301bdaacf
+- Binaries/Win64/UnrealEditor-OneBossFight.pdb (18,874,368 bytes):
+  * SHA256: e27ab3814e895a305f07c01e47dc3d916f77e066566de14063fe97a28c05fdb6
+- Binaries/Win64/OneBossFight.exe (550,400 bytes, unchanged):
+  * SHA256: 5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65
+
+6. STATE DIFF & INTEGRITY:
+- State diff (state_diff.json):
+  * content: 0 added, 0 removed, 0 changed (11,755 files).
+  * config: 0 added, 0 removed, 0 changed.
+  * saved: 0 added, 0 removed, 0 changed.
+  * source: 0 added, 0 removed, 0 changed (219 files match promoted manifest).
+  * toolkit: 0 added, 0 removed, 0 changed.
+  * binary: changed only newly built .dll and .pdb.
+
+7. WITHDRAWAL NOTE (A-231 / C-348 / C-351):
+- Marked Docs/BossCombatReview/Execution/Antigravity/Schema/MOVE_COOLDOWNS_SPEC.md at top: `# WITHDRAWN by A-231/C-348 (invented defaults)`. File preserved, rehashed in Schema/evidence_sha256.txt (27d28f59...).
+
+8. EVIDENCE RECEIPT & DOCUMENTATION:
+- Receipt Manifest: Docs/BossCombatReview/Execution/Antigravity/EngineRuns/DD30ChronologyBuild2/receipt_sha256.txt
+  * SHA256: eaaee42474fbb6f10bda03c02986ec8dfe45a19b8d36c31e0a8b7332d7c9ed7c (19 frozen items, pure CRLF)
+- Report: Docs/BossCombatReview/Execution/Antigravity/EngineRuns/DD30ChronologyBuild2/RUN_REPORT_TO_CLAUDE.md (fe8b65dd...)
+- Zero engine processes remain active; ENGINE_LOCK.json released.
+- Synchronized Documentation/TASKS.md and Documentation/DECISIONS.md. Authoring Toolkit tests: 229/229 PASS (0 __pycache__).
+
+9. HANDOFF:
+- C-350 build is 100% clean and accepted.
+- Awaiting Tech Lead Claude's review and separate PIE run release.

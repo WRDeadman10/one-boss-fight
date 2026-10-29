@@ -1,0 +1,43 @@
+{
+  "content": {
+    "added": [
+      "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_AbyssalRevenant_Draft.uasset",
+      "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft.uasset",
+      "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft.uasset"
+    ],
+    "removed": [],
+    "changed": []
+  },
+  "config": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "saved": {
+    "added": [
+      "Saved/Config/CrashReportClient/UECC-Windows-07845BDB479AD236797D75879DD78F1E/CrashReportClient.ini"
+    ],
+    "removed": [],
+    "changed": [
+      "Saved/Autosaves/PackageRestoreData.json",
+      "Saved/Config/WindowsEditor/EditorPerProjectUserSettings.ini",
+      "Saved/SourceControl/UncontrolledChangelists.json",
+      "Saved/UnrealClaude/script_history.json"
+    ]
+  },
+  "source": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "toolkit": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "binary": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  }
+}

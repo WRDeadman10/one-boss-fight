@@ -1,0 +1,7 @@
+C330 DD27h run_once.ps1 exit_code=1, 2026-10-29.
+Observed capture_state.py:30 assertion:
+assert head=='bc3fe6a49335f0a68bf5df9d895b8a46f6633aeb',head
+AssertionError: 605c2dd81d4092e8f84aa7608651ed19d566423a
+preflight.py:27 subprocess.run(capture_state.py pre, check=True) raised CalledProcessError (exit1).
+run_once.ps1:6 threw 'Preflight failed; STOP BEFORE LAUNCH'.
+No engine launch. No retry/fix or expected-HEAD change. This is an observed diagnostic transcript, not a raw Unreal log (none exists because launch was blocked).

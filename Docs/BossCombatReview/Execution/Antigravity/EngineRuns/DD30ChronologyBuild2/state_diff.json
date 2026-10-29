@@ -1,0 +1,35 @@
+{
+  "content": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "config": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "saved": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "source": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "toolkit": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "binary": {
+    "added": [],
+    "removed": [],
+    "changed": [
+      "Binaries/Win64/UnrealEditor-OneBossFight.dll",
+      "Binaries/Win64/UnrealEditor-OneBossFight.pdb"
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "release": "C-312",
+  "verdict": "FAILED: helper diagnostic 29 failures / SystemExit1",
+  "editor_exit": 0,
+  "helper_SystemExit1": true,
+  "error_severity": 7,
+  "warning_severity": 2,
+  "diagnostic_failures": 29,
+  "per_draft_printed_count": 14,
+  "per_draft_lines_are_not_success": true,
+  "full_success_line_present": false,
+  "fresh_preflight": true,
+  "outside_saved_drift": {},
+  "saved_added": 1,
+  "saved_changed": 3,
+  "source_count": 212,
+  "raw_sha256": "bf7735a30c9104538a8d2c9115b3118ff77ebad065d65d7876d4eb8677b17b68"
+}

@@ -1,0 +1,18 @@
+{
+  "job": {
+    "scope": "Recorded exit only, not live liveness",
+    "sha256": "7e91789f0792c72c6f9b39ad0fbb155ff8d84a15b377cc666b667e75e419846a",
+    "exit_code": 0,
+    "seconds": 13
+  },
+  "raw_sha256": "2729516421aafba74e0f8b96bdc4d01b4961dc991ce4fe5b276d98a1353919a8",
+  "errors": [],
+  "uht_lines": [],
+  "warnings": [
+    "Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'Niagara'.",
+    "Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'NiagaraEditor'.",
+    "Warning: Visual Studio 2022 compiler is not a preferred version"
+  ],
+  "source_unchanged": true,
+  "pass": true
+}

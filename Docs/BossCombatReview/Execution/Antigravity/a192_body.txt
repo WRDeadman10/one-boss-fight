@@ -1,0 +1,59 @@
+TASK: A-192 delivery: RPGBossCloseClipSwap and RPGBossDeath domain proposals (C-273).
+STATUS: COMPLETED (offline domain proposal sheets, evidence receipts re-frozen, original_A191 preserved).
+
+SUMMARY:
+1. RPGBossCloseClipSwap Domain Proposal Sheet (DD24 Proposal):
+   - Authored file: `Docs/BossCombatReview/Execution/Antigravity/NativeDerivation/RPGBossCloseClipSwap_domain_proposal.md` (hash: `49af1e11a7b5...`, 12298 bytes CRLF).
+   - Audited all 5 authored fields declared in `RPGBossCloseClipSwap.h`: `CloseAbilityClassName` (FName, default `GA_GS_Boss_CloseAttack_C`), `AttackMontagesName` (FName, default `AttackMontages`), `A1Montage` (SoftObjectPtr, default `AM_Boss01_A1`), `A3aMontage` (SoftObjectPtr, default `AM_Boss01_A3a`), `A3bMontage` (SoftObjectPtr, default `AM_Boss01_A3b`). Every citation verified via `grep -n` against `RPGBossCloseClipSwap.h/.cpp` and `RPGBossCloseClipSwapRules.h`.
+   - Zero Numeric Fields: Confirmed component contains zero float or int properties. Editor `ClampMin`/`ClampMax` does not exist, `NotFinite` checks do not apply, and no magnitude ceiling (`1.0e6f`) is needed.
+   - Permanent Failure Guard: Verified `bPermanentFailure` semantics (`:72`, `:149`, `:157`, `:171`, `:182`, `:199`). If preload fails, if live ability is missing, if `AttackMontages` size != 4, or if entries fail pack rules, component sets `bPermanentFailure = true`, permanently stopping ticks and abandoning all future swaps.
+   - Live Ability Mutation: Component discovers active `GA_GS_Boss_CloseAttack_C` via reflection and directly mutates the live `UAnimMontage*` pointers in the `F_AbilityMontage` array (`:207`) for Slots 0, 1, and 2, preserving Slot 3 (`GS_Attack04_Montage` / A1b) as the unmodified pack fallback.
+   - Structural Validation & Tokens: Soft paths checked via A-184 engine macro lexical rules without asset loading; FNames checked for non-empty and no whitespace/control characters. Proposed tokens: `InvalidDependency.Missing` and `InvalidDependency.Malformed`.
+   - Lifecycle: Safe to assign before registration/BeginPlay; constructor provides default FNames and soft asset paths.
+
+2. RPGBossDeath Domain Proposal Sheet (DD25 Proposal):
+   - Authored file: `Docs/BossCombatReview/Execution/Antigravity/NativeDerivation/RPGBossDeath_domain_proposal.md` (hash: `6df8526b80af...`, 18265 bytes CRLF).
+   - Audited all 12 authored fields declared in `RPGBossDeath.h`: `DeathMode` (enum, 0=`PackMontage`, 1=`OwnClip`), `DeathClip` (Soft sequence), `DeathMontage` (Soft montage), `PackDeathAbilityClassName` (FName), `PackDeathMontagesName` (FName), `PackPollSeconds` (float, def 1.0), `PackEndTimeMultiplier` (float, def 0.0), `HoldAtSeconds` (float, def 3.0), `DyingSeconds` (float, def 2.5), `BlendInSeconds` (float, def 0.1), `MaxClipRestarts` (int32, def 8), `bGuardPackDeath` (bool, def false). Every citation verified via `grep -n` against `RPGBossDeath.h/.cpp`.
+   - Editor Metadata Audit: `ClampMin` is declared on 6 fields (`PackPollSeconds` 0.1, `PackEndTimeMultiplier` 0.0, `HoldAtSeconds` 0.1, `DyingSeconds` 0.1, `BlendInSeconds` 0.0, `MaxClipRestarts` 0) in the header, but `RPGBossDeath.cpp` performs zero runtime clamping.
+   - Dual Mode & KI-083 Mechanics:
+     - `PackMontage`: Injects montage and multiplier into live pack ability `GA_EnemyRagdollDeath_C`. Pack handles montage and ragdoll.
+     - `OwnClip`: Sequence playback, suppresses ragdoll physics each tick (`KeepPhysicsOff` `:458-482`), and pauses pose at `HoldAtSeconds` (`KeepClip` `:484-523`).
+     - KI-083 pack destruction timing: Pack destroys boss actor ~4.35s after death. Component marks `bEnding = true` and halts mesh manipulation. In `EndPlay`, component spawns static remains actor (`ARPGBossRemains::Spawn` `:123`) to persist the defeated boss pose in the arena.
+   - Non-Finite Arithmetic & Degenerate Timing Analysis across all 6 timing fields:
+     - `PackPollSeconds`: Poll interval arithmetic `NextPackPoll = Now + PackPollSeconds` (`:223`). `<= 0.0` or NaN polls every tick.
+     - `PackEndTimeMultiplier`: Assigned directly to pack ability (`:307`). Negative or NaN yields undefined montage early-out.
+     - `HoldAtSeconds`: Pose pause check `Position >= HoldAtSeconds` (`:492`). NaN comparison is always false (never pauses); `<= 0.0` pauses on first frame.
+     - `DyingSeconds`: State transition check `Age >= DyingSeconds` (`:420`). NaN comparison is always false (never transitions to Dead); `<= 0.0` transitions on first tick.
+     - `BlendInSeconds`: Blend duration in `RPGBossClips::Play` (`:440`). Negative or NaN yields invalid montage blending.
+     - `MaxClipRestarts`: Bound on sequence loop restarts `RestartsThisDeath >= MaxClipRestarts` (`:508`). Negative disables restarts; unbounded allows infinite restart loops.
+   - Magnitude Ceilings: Recommended standard `1.0e6f` ceiling on all 5 float fields to prevent float overflow in elapsed time and poll interval calculations, and an integer ceiling of `1000` on `MaxClipRestarts`.
+   - Structural Validation & Tokens: Mode-dependent soft path requirements (`OwnClip` requires `DeathClip`; `PackMontage` requires `DeathMontage`), FNames checked for syntax, float fields finite-first then bounded. Proposed tokens: `InvalidDeath.NotFinite`, `InvalidDeath.NotPositive`, `InvalidDeath.Negative`, `InvalidDeath.AboveCeiling`, `InvalidDependency.Missing`, `InvalidDependency.Malformed`. Zero values designated as "tuned".
+   - Lifecycle: Safe to assign before registration/BeginPlay; constructor initializes defaults.
+
+3. Hygiene, Staged Baselines & Receipts:
+   - Staged `original_A191/` byte-for-byte in both `AuthoringToolkit/` (9 files) and `BuildAuthoringHelper/` (2 files) with self-receipts.
+   - Updated `NativeDerivation/INDEX.md` documenting all 10 dossier markdown files.
+   - Recomputed `NativeDerivation/evidence_sha256.txt` (10 markdown dossier receipts).
+   - 100% pure CRLF across all 166 active files in the 4 active directories (0 bare LF, 0 bare CR); zero `__pycache__`.
+   - Unit test suite: 151/151 tests PASS in 0.318s (`test_authoring_core.py`), `original_A191` suite runs 151/151 PASS.
+
+VALIDATION:
+- NativeDerivation evidence receipts (10/10 match exactly):
+  - `HealPunish_domain_proposal.md`: `11b65f123d7e1cf3189be1cd827eb9e336e4ec4868f70e700474e5424b7ab2ce`
+  - `INDEX.md`: `c719e51defb39e593d31f2321d6e75811b29dd20e38f9202c53f34a4aa26a514`
+  - `RPGBossCloseClipSwap.md`: `32e56b3efe05165d75b495f72ea59b169c0d6dc287b8511ed9bcea01fd108df8`
+  - `RPGBossCloseClipSwap_domain_proposal.md`: `49af1e11a7b5b1863fabe1b846f1c36193b61d147801e24caa8d4077485f281c`
+  - `RPGBossDeath.md`: `cced8e5ffca35352928782281f36a87dbc6e21c8b43dada3e7a7d1de5e7c9898`
+  - `RPGBossDeath_domain_proposal.md`: `6df8526b80afd1b8e9ebea83e289b168532aa477995ec33765bde5aa0f5204dd`
+  - `RPGBossHealPunish.md`: `1091583afe82a6822409062128717c737dd0b885cff4645f7ad9ba1b2b718489`
+  - `RPGBossLook.md`: `e004c00f66c057bbcbc1aa03e7e806a52eacd3e50493c140ba15c2a7fac2c905`
+  - `RPGBossLook_domain_proposal.md`: `2271d9044025a061e67949ac12f80f08f5491efbfd07b979c12449d79bb43b60`
+  - `RPGBossShockwave.md`: `7393eb257879e4a8ec486485c7a50299f7d57222cf03ff530eee439ed0746f56`
+- Staged baseline receipts: 9/9 match in `AuthoringToolkit/original_A191/`, 2/2 match in `BuildAuthoringHelper/original_A191/`.
+- Byte-level CRLF scan: 166/166 files checked in active directories, 0 non-CRLF files, 0 bare LF, 0 bare CR.
+- Unit test suite: `python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit` -> 151/151 tests PASS in 0.318s.
+- Documentation updated: `Documentation/TASKS.md`, `Documentation/DECISIONS.md`, `Documentation/TEST_PLAN.md` (BUILD-35-AG).
+
+NEXT ACTION:
+- Hand off to Lead Claude for review of A-192 domain proposals.
+- Await Codex posting of DD23 source handoff; upon landing, execute `diff_against_cpp.py` on `RPGBossLookAdapters.cpp` and settle the 4 alignment points.

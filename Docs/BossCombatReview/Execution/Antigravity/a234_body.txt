@@ -1,0 +1,46 @@
+### [A-234] Antigravity -> Claude,Codex,Owner, 2026-10-29 23:59
+ORDER A-234 DELIVERED (DD30 Chronology PIE Run Packet Prepared Offline per C-352; RUN NOT RELEASED).
+
+1. EXECUTION PACKET & CRYPTOGRAPHIC HASHES:
+Packet Directory: Docs/BossCombatReview/Execution/Antigravity/EngineRuns/DD30ChronologyRun1/
+- Original Driver Preimage: dd30_chronology_pie_original.py
+  * SHA256: 24b7a39e3502d90067f422b0b9280cb9ea2de2e892de704088b926daa759f955 (1,629 bytes, CRLF)
+- Adapted PIE Driver: dd30_chronology_pie.py
+  * SHA256: 0dd6114153b1a88c7cee8f8e74a4ba69160ea46d1da9e5c5ed4a65a25ae5a848 (3,174 bytes, CRLF)
+- Offline Mock Unit Tests: test_dd30_chronology_driver.py
+  * SHA256: 715cc1b7e6d730829e70f6a4fda43aeaba74d5cf8ef47dcbf5d5bea80ff26920 (4,734 bytes, CRLF)
+  * Verification Result: 2/2 tests PASS in 0.006s (validates full lifecycle, QUIT_EDITOR execution, and wrong map fail-closed).
+- Hard Timeout Wrapper: run_chronology.ps1
+  * SHA256: 2033d3762c175ac03f6f9ea822a5cb44d330921b1679f4a10b265af76659c3c3 (2,326 bytes, CRLF)
+- State & Safety Helpers:
+  * capture_state.py (SHA256: e146ecc6..., identical to C-350)
+  * engine_lock.py (SHA256: 77d898f0..., configured for Antigravity, C-352/DD30ChronologyRun1)
+  * promoted_source_manifest_sha256.txt (SHA256: cbe2bfc6..., 219 files baseline)
+- Checklist & Criteria: CHECKLIST_AND_CRITERIA.md
+  * SHA256: 9d690033c894d4aa6aaca5c8b7995f33a7c4b490d10da4db9249443aa3587b50 (4,111 bytes, CRLF)
+- Evidence Manifest: evidence_sha256.txt
+  * SHA256: 651b041dbbee1810e9d4810025f08371f4a8bec15cb77e899f22cd31cecd6955 (743 bytes, CRLF)
+
+2. BOUNDED QUIT_EDITOR SHUTDOWN (API VERIFICATION):
+- Grounded API Proof: Verified against existing project scripts (Scripts/Editor/rpg_content_lib.py:quit_editor_soon and pie_m7_check.py:quit_tick). Calling `unreal.SystemLibrary.execute_console_command(None, "QUIT_EDITOR")` after 60 slate ticks (~1.0s at 60Hz) grants LevelEditorSubsystem time to tear down PIE cleanly before exiting. Fallback repeat at tick 120 ensures editor does not hang.
+- Enforced hard timeout in run_chronology.ps1: tracks `$proc.Id`, waits up to 180s. If exceeded, stops ONLY `$proc.Id` (`Stop-Process -Id $editorPid -Force`) and records outcome `TIMEOUT_KILL` in chronology_job.json.
+
+3. LAUNCH COMMAND & TECHNICAL LIMITATION:
+- Launch Command:
+  `& 'C:\Program Files\Epic Games\UE_5.5\Engine\Binaries\Win64\UnrealEditor.exe' 'C:\UnrealProject\OneBossFight\OneBossFight.uproject' '/Game/OneBossFight/Levels/L_SevarogArena' -nosound -nosplash -unattended -nullrhi -DD30Chronology "-ExecutePythonScript=C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Antigravity\EngineRuns\DD30ChronologyRun1\dd30_chronology_pie.py" "-abslog=C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Antigravity\EngineRuns\DD30ChronologyRun1\chronology_raw.log"`
+- Limitation Statement: PIE execution under `-nullrhi` is UNMEASURED in this project. A driver line `FAIL wrong editor map` or absence of `PIE_WORLD` means the run is INCOMPLETE, not a pass.
+
+4. SUCCESS CRITERIA CHECKLIST (PROPOSAL_AND_RUN_PLAN.MD SECTION 3):
+- Transcribed in full into CHECKLIST_AND_CRITERIA.md:
+  * Driver lines: `[DD30_CHRONO_DRIVER] REQUEST freshPIE`, `PIE_WORLD`, `CAPTURE_END`, `REQUEST QUIT_EDITOR`.
+  * Native chronology lines: `[DD30_CHRONO] callback=PlayerMoves.OnWorldBeginPlay`, pawn census (role/class/path/world/begun flags, separate boss/player counts), catalog epoch, placed ARPGEncounterBinding enumeration, selection_store=NOT_DEFINED, and first-observed component routes for BossEncounter and DodgeTiming with IsActorBeginningPlay flags.
+  * Same world path/object identities link events; seq + monotonic seconds establish order.
+  * Missing logger, wrong map, or no boss/player route within window => INCOMPLETE.
+  * Zero player/binding count is a valid finding, not a failure.
+
+5. SAFETY & REPOSITORY HYGIENE:
+- Offline preparation only; zero engine launches; ENGINE_LOCK.json absent; HEAD 605c2dd8...; Source 219; DLL 332afd49...; saved drafts unchanged; 0 __pycache__; 229 toolkit unit tests pass.
+- Synchronized Documentation/TASKS.md (AG-CONTENT33) and Documentation/DECISIONS.md.
+
+6. HANDOFF:
+- Order A-234 packet assembled and qualified. Ready for Tech Lead Claude review and run release.

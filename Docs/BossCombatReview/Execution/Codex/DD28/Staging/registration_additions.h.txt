@@ -1,0 +1,37 @@
+/** DD28: one successful registration, in actual member/plan call order. */
+struct FRPGRegisteredComponentInfo
+{
+	int32 MemberIndex = INDEX_NONE;
+	int32 PlanIndex = INDEX_NONE;
+	FName Slot;
+	FName ClassName;
+	FName InstanceName;
+};
+
+struct FRPGRegistrationReport
+{
+	bool bSucceeded = false;
+	int32 FailedMemberIndex = INDEX_NONE;
+	int32 FailedPlanIndex = INDEX_NONE;
+	FName FailedClassName;
+	TArray<FString> Errors;
+	TArray<FRPGRegisteredComponentInfo> Registered;
+	FRPGPreparationAbortReport Cleanup;
+};
+
+namespace RPGBossActivation
+{
+#if WITH_DEV_AUTOMATION_TESTS
+	/** Independent registration-only hook. Fails after a real successful registration; no callbacks, nesting or production controls. */
+	class ONEBOSSFIGHT_API FRegistrationFaultScope
+	{
+	public:
+		explicit FRegistrationFaultScope(int32 InFailAfterRegistration);
+		~FRegistrationFaultScope();
+		bool Fired() const;
+		FRegistrationFaultScope(const FRegistrationFaultScope&) = delete;
+		FRegistrationFaultScope& operator=(const FRegistrationFaultScope&) = delete;
+	};
+#endif
+}
+

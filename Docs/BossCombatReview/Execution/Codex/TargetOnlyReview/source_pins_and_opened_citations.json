@@ -1,0 +1,232 @@
+[
+  {
+    "path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+    "sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb",
+    "opened_line_excerpts": [
+      {
+        "line": 32,
+        "text": "static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,"
+      },
+      {
+        "line": 104,
+        "text": "for (const FRPGParityField& F : D.Fields)"
+      },
+      {
+        "line": 115,
+        "text": "if (Fields.IsEmpty()) { Result.Fail(TEXT(\"field manifest required\")); }"
+      },
+      {
+        "line": 120,
+        "text": "Value->Stats = D.Stats; Value->Phases = D.Phases; Value->Fields = D.Fields;"
+      },
+      {
+        "line": 137,
+        "text": "if (!bSynthetic)"
+      },
+      {
+        "line": 152,
+        "text": "FRPGHydrationResult CompileParticipant(const URPGBossDefinition& D, TSharedPtr<c"
+      },
+      {
+        "line": 225,
+        "text": "{"
+      },
+      {
+        "line": 236,
+        "text": "if (!B.Definition || B.Definition->DefinitionId != (*Config)->BossId || B.Defini"
+      },
+      {
+        "line": 253,
+        "text": "Record.TargetSlot = B.TargetSlot; Record.Config = *Config; Pending.Add(MoveTemp("
+      },
+      {
+        "line": 257,
+        "text": "if (!Slots.Contains(R.TargetSlot)) { Result.Fail(TEXT(\"explicit target slot miss"
+      },
+      {
+        "line": 282,
+        "text": "AActor* URPGCombatContextSubsystem::ResolveTarget(const FRPGParticipantKey& Key,"
+      },
+      {
+        "line": 354,
+        "text": "for (const FRPGParityField& Field : Record->Config->Fields) { Manifest.Add(Field"
+      },
+      {
+        "line": 363,
+        "text": "for (const FString& Field : Plan.RequiredFields)"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossHydrationPreflight.cpp",
+    "sha256": "07261ce364ae0daa68d80075ea42d5a41ef2414a86457a3014648b1165e34897",
+    "opened_line_excerpts": [
+      {
+        "line": 322,
+        "text": "if (Request.TargetSlot.IsNone())"
+      },
+      {
+        "line": 330,
+        "text": "else if (!FirstIndexOfSlot.Contains(Request.TargetSlot))"
+      },
+      {
+        "line": 336,
+        "text": "const FRPGParticipantConfig* Config = Request.Config.Get();"
+      },
+      {
+        "line": 347,
+        "text": "if (Config->Schema != 1 || Config->BossId.IsNone() || Config->PresentationId.IsN"
+      },
+      {
+        "line": 353,
+        "text": "if (Config->bSyntheticFixture)"
+      },
+      {
+        "line": 377,
+        "text": "if (bBossCore)"
+      },
+      {
+        "line": 408,
+        "text": "for (const FRPGParityField& Field : Config->Fields)"
+      },
+      {
+        "line": 425,
+        "text": "else if (Request.Role == ERPGPreflightRole::TargetOnly && !Request.SelectedPhase"
+      },
+      {
+        "line": 449,
+        "text": "if (Request.Role == ERPGPreflightRole::BossCore)"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossHydrationPreparation.cpp",
+    "sha256": "642332410dad5127d2970daf550e1c6dd051d722a68b3f1751c97f2bdbdbedfd",
+    "opened_line_excerpts": [
+      {
+        "line": 142,
+        "text": "if (Participant.Role != ERPGPreflightRole::BossCore)"
+      },
+      {
+        "line": 194,
+        "text": "{"
+      },
+      {
+        "line": 246,
+        "text": "const FRPGHydrationResult Preflight = RPGBossHydrationPreflight::CompilePrefligh"
+      },
+      {
+        "line": 541,
+        "text": "if (Participant.Role == ERPGPreflightRole::TargetOnly)"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossWorldInputCompiler.cpp",
+    "sha256": "1a99ba054dc606c6514973e6423723bd3a3701ce40ea8c87f2c432d30e457f58",
+    "opened_line_excerpts": [
+      {
+        "line": 414,
+        "text": "FailMember(Result, TEXT(\"WorldInput.SelectionMissing\"), FString::Printf(TEXT(\"[s"
+      },
+      {
+        "line": 469,
+        "text": "if (Participant.TargetSlot.IsNone())"
+      },
+      {
+        "line": 479,
+        "text": "else if (!BatchSlots.Contains(Participant.TargetSlot))"
+      },
+      {
+        "line": 485,
+        "text": "URPGBossDefinition* Definition = Participant.Definition.Get();"
+      },
+      {
+        "line": 488,
+        "text": "FailMember(Result, TEXT(\"WorldInput.DefinitionMissing\"), Where, TEXT(\"no explici"
+      },
+      {
+        "line": 556,
+        "text": "const FRPGHydrationResult Compiled = RPGCombatHydration::CompileParticipant(*Mem"
+      },
+      {
+        "line": 572,
+        "text": "if (!Config.IsValid() || Config->bSyntheticFixture || Config->Content.Get() != C"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossPreparationRegistry.cpp",
+    "sha256": "b6bfc4a8888d397ec8c58d35d3b8d6f7ada7229692ecb37de9c3297ac7b9078d",
+    "opened_line_excerpts": [
+      {
+        "line": 491,
+        "text": "FRPGWorldPreparationResult Prepared = RPGBossWorldPreparation::PrepareWorldBatch"
+      },
+      {
+        "line": 517,
+        "text": "for (const FRPGPreflightParticipantPlan& Participant : Plan->Participants)"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossActivation.cpp",
+    "sha256": "04a11fed558cd4c01f0df40b1e4e570bc904bc4ec600b90926a8dd8d161a73da",
+    "opened_line_excerpts": [
+      {
+        "line": 46,
+        "text": "FRPGWorldPreparationResult Prepared = RPGBossWorldPreparation::PrepareWorldBatch"
+      },
+      {
+        "line": 65,
+        "text": "if (!Prepared.Batch->RegisterOwnedComponents(Result.Registration))"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Tests/RPGBossProductionPreflightTests.cpp",
+    "sha256": "b1375f2c3dab51ca537b2cd5c55aebfc14fdce844dfa586e52a8cc0e082a8acf",
+    "opened_line_excerpts": [
+      {
+        "line": 138,
+        "text": "FRPGParityField MakeProductionField(const FString& Path)"
+      },
+      {
+        "line": 143,
+        "text": "Field.Value = TEXT(\"production fixture row: membership only, not derived from an"
+      },
+      {
+        "line": 144,
+        "text": "Field.SourcePath = TEXT(\"DD14 production preflight fixture, not live provenance\""
+      },
+      {
+        "line": 145,
+        "text": "Field.SourceSHA256 = FString::ChrN(64, TEXT('c'));"
+      },
+      {
+        "line": 204,
+        "text": "for (const FString& Path : AllRequiredPaths(PhaseTwo))"
+      },
+      {
+        "line": 385,
+        "text": "Test.AddError(TEXT(\"unsupported precondition: the transient definitions could no"
+      },
+      {
+        "line": 388,
+        "text": "FillDefinition(*BossDefinition, TEXT(\"ProductionBoss\"), TEXT(\"ProductionBossLook"
+      },
+      {
+        "line": 397,
+        "text": "PlayerCompile = RPGCombatHydration::CompileParticipant(*PlayerDefinition, Conten"
+      },
+      {
+        "line": 407,
+        "text": "Input.Requests.Add(MakeRequest(PlayerActor, TEXT(\"Player\"), TEXT(\"Boss\"), ERPGPr"
+      },
+      {
+        "line": 486,
+        "text": "const FRPGParticipantConfig& PlayerConfig = *F.PlayerConfig;"
+      }
+    ]
+  }
+]

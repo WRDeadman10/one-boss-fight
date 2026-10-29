@@ -1,0 +1,12 @@
+[DRAFT_APPLY] FATAL: Missing required Unreal API: unreal.EditorAssetLibrary.does_asset_exist
+[DRAFT_APPLY] Creating draft asset at '/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft'...
+[DRAFT_APPLY] Initialized & verified all 22 typed properties on draft asset: 'DA_Boss_EmberWarden_Draft'
+
+[DRAFT_APPLY] SUCCESS: In-memory asset creation and complete readback verified.
+  NOTICE: --save flag was not provided. Output packages were NOT saved to disk.
+
+.................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 193 tests in 0.713s
+
+OK

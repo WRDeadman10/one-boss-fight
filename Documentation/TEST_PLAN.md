@@ -325,3 +325,23 @@ C325 / DD27g PREPARED ONLY 2026-10-29: KI139 records accepted DD27f soft-class c
 
 
 DD27g C327 measured 2026-10-29: ONE --classrefs probe exit0, full candidate results preserved. load_class(None, exact generated path_C) returned BlueprintGeneratedClass and set/read successfully at all3soft-class sites in temporary structs. No converter fix/asset authoring pass. Fresh216Source/DD29binary/five receipt pins and snapshots verified; no captured drift outsideSaved, effects pinned. Evidence Docs/BossCombatReview/Execution/Codex/DD27g/RUN_REPORT_TO_CLAUDE.md. KI139 remains open pending A218 plus separately released authoring verification; all prior failures preserved.
+
+
+C328 / DD27h preparation (2026-10-29): KI139 updated with accepted DD27g class-reference measurements. DD27h wrapper/preflight/state/lock copied from DD27f, runtime receipt pins preserved, explicit release file deliberately absent pending A218 acceptance and lead run release. Python AST/PowerShell syntax and offline Source216 equality only; no engine/build/test/run. A216 timing/count/Abort discrepancies recorded at Codex/DD27h/A216_DISCREPANCIES_C328.md; no hook approval. All prior authoring failures retained.
+
+- [x] BUILD-56-AG: AuthoringToolkit Soft-Class Conversion & Reflection Probe (A-217 / A-218) (2026-10-29). Offline qualification verifying TSoftClassPtr<UObject> conversion via to_class_ref(load_class), removal of FireballAbility from FNAME_PROPERTIES, None-result exception raising, empty->None, offline string preservation, and all 3 field sites conversion and struct set/readback against fake unreal engine simulation. Full test discovery: 221/221 unit tests PASS in 1.108s. Pure CRLF, 0 __pycache__.
+
+
+DD27h C331 measured 2026-10-29: one engine launch exit0/helperSUCCESS, three in-memory drafts each22typedproperties verified; Fields110/110,0/0,0/0. No save. Fresh four actual receipt pins/Source216/DD29binary/HEAD605c2dd8 baseline delta verified; no captured drift outsideSaved1new+3changed. C330 failed HEAD preflight preserved; no silent retry (C331 explicit re-release). Raw and report Codex/DD27h/RUN_REPORT_TO_CLAUDE.md. In-memory only, no serialized/Details/gameplay approval.
+
+
+DD27i C338 measured 2026-10-29: owner-approved ONE --apply --save launch exit0/helperSUCCESS, exactly3NEWdraft.uasset saved/pinned; Content11752->11755/Data16->19hashes; no pre-existing captured Content/Config/Source/toolkit/binary drift. Source216/DD29binary/HEAD605c2dd8 unchanged; Saved1new+4changed pinned. Raw/report/new asset SHA256 Codex/DD27i/RUN_REPORT_TO_CLAUDE.md and new_assets_sha256.json. No fresh serialized reload/production compile/preflight/Details/gameplay proof; DD27j requires separate release. No performance run/pack edit/git mutation.
+
+
+DD27j C339 measured FAILED focused test 2026-10-29: new reviewed test promoted byte-for-byte, Source217/all216old unchanged; ONE editor build exit0/no observedUHT; ONE focused AuthoredDraft1finished0passed1failed, engineexit255. Fresh saved EmberWarden productioncompile ready1/output1; savedHero ready0/output0/Fields0, verbatim field manifest required. Twelve-plan preflight NOT REACHED. No fix/retry/fullsuite. Actual110rowgeneratedmanifest cd088e39... pinned. Three savedassets/Content11755/Data19/Config/Source217/toolkit unchanged; newDLL/PDB pinned; HEAD605c2dd8 stable. Raw/errors/report Codex/DD27j/run_C339/RUN_REPORT_TO_CLAUDE.md. Await exact lead correction.
+
+
+DD27l C344 measured 2026-10-29: ONE V2-only in-memory authoring exit0/helperSUCCESS,22properties and4of4Fields readback,0failures,no save. Source217/DD27jDLL/HEAD605c2dd8/Content11755/Data19/original3asset hashes/Config/toolkit unchanged. Saved1new+3changed+3REMOVED oldUnrealPakbackup logs; originUNKNOWN,noCodexdelete; premetadata preserved/rawbytes unavailable for removedlogs. Raw/report Codex/DD27l/RUN_REPORT_TO_CLAUDE.md. DD27m remains pending ownerYES+leadrelease.
+
+
+DD30Chronology C346 STOP 2026-10-29: promoted accepted2new+3edited cppfiles, Source219; ONE build exit0 and newDLL, BUT3header-order error diagnostics (helper include precedes each ownheader). No fix/retry/PIE/engine launch; mixed exit0/error output is NOT clean acceptance. Warnings3 unchanged. Source219/3savedassets/Content11755/Data19/Config/toolkit/Saved unchanged duringbuild, EXEunchanged, HEAD605c2dd8,postprocess empty. Raw/report Codex/DD30Chronology/run_C346/RUN_REPORT_TO_CLAUDE.md; await exact lead correction.

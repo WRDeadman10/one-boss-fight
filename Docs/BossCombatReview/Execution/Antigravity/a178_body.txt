@@ -1,0 +1,21 @@
+TASK: AG-CONTENT04 practical authoring toolkit delivered (Parts A, B, C, D complete) for Technical Lead Codex (X) review.
+STATUS: DELIVERED under Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/ and BuildAuthoringHelper/ (11 files updated/created, 0 bare LF, 0 bare CR across all files; original A-176 and A-177 preserved byte-for-byte).
+EVIDENCE (Toolkit & Helper):
+- AuthoringToolkit/authoring_core.py: sha256 3f8979314cd257adf863ea8bd700edab1ae6bba16f4877f639929f4bd35332a3, 19,831 bytes
+- AuthoringToolkit/draft_boss_profiles.py: sha256 ec79dc8f0ce009ebff0085cf732893ae5a86ae1fc0bee95c969c2cd18f4b8c45, 17,542 bytes
+- AuthoringToolkit/inspect_authored_assets.py: sha256 9a38a1a98a742d92d69d738e1bd644b3e45fd96091b3ea4f932fcff6c5eb1db2, 11,778 bytes
+- AuthoringToolkit/test_authoring_core.py: sha256 7cb884d9adc1f18d8ca736a87b3588c0f9f099d1e80bea5b320dcaeb9ef5a6e8, 18,813 bytes
+- AuthoringToolkit/test_run_output.txt: sha256 49394eed9df845b1b658a66634c100469ef7581f68fd52e5921a5a5cc5af888b, 2,599 bytes (33/33 tests PASS, exit 0)
+- AuthoringToolkit/examples/boss_draft_profiles.json: sha256 5d7afa4eceef8cad20a05d98b5d0cea074eeb66ccf1b875ccbb3889e8f8f4f3f, 5,310 bytes
+- AuthoringToolkit/README.md: sha256 753feec081335ba8e5b6043a81542e0953bc63eb6cacf8898d4623a8a6445a23, 10,490 bytes
+- AuthoringToolkit/evidence_sha256.txt: sha256 0db22b4400cd9f5322e569843cdd25b54f895eade435efbcd14e11fa0669e28b, 2,735 bytes
+- BuildAuthoringHelper/author_custom_build.py: sha256 71992a2d69ef5d897d7d0879a92c1da28f68568e1bbf49492457680973651241, 37,608 bytes
+- BuildAuthoringHelper/README.md: sha256 7896cc1f5e44242a9b2bb5f2dc279464e286e285638b6a95793209a4a23f6760, 10,568 bytes
+- BuildAuthoringHelper/evidence_sha256.txt: sha256 721e7cf379407bf236f1e8eec6edc671b891d0e07a179b715e156a3562047715, 1,512 bytes
+- Preserved historical archives: original_A176/ and original_A177/ verified byte-exact.
+SUBSTANTIVE DELIVERABLES COVERED (AG-CONTENT04 / X-282):
+1. Part A (Shared Core & Build Helper Correction): authoring_core.py created with zero Unreal imports; exact native TrimQuotesInline double-quote parity (single quotes preserved); FName equality without whitespace stripping; finite integer/float validation (anti-NaN/Inf/bool); canonical path and anti-traversal checks; immutable deep source snapshotting (SourceInventorySnapshot); cloned catalog readback verification (verify_cloned_catalog_readback). Updated author_custom_build.py deterministically importing authoring_core, comparing full source snapshots before mutation and before save, asserting all original builds preserved in exact same order plus custom build, with explicit --save opt-in and anti-overwrite refusal.
+2. Part B (Draft Boss & Player Profile Creator): draft_boss_profiles.py and boss_draft_profiles.json implementing two distinct boss profiles (DA_Boss_EmberWarden_Draft, DA_Boss_AbyssalRevenant_Draft) each with exactly 1 transition phase record, and one player participant profile (DA_Player_Hero_Draft). Fields manifests truthfully kept empty (blocking production compile until real manifest authority). Output paths strictly under TypedABIFixtures/AuthoringPreview/BossDrafts/.
+3. Part C (Read-Only Asset Inspector): inspect_authored_assets.py strictly read-only (zero setters, zero mutations, zero CVar modifications); inspects project-owned assets under Catalog/ and TypedABIFixtures/; identifies typed classes (URPGCombatCatalog, URPGBuildDefinition, URPGWeaponDefinition, URPGBossDefinition); opt-in read-only dependency inspection; bounded export path inside AuthoringToolkit.
+4. Part D (Adversarial Unit Test Suite & Integrated README): test_authoring_core.py implementing 33 comprehensive standard-library unit tests covering normalization, quotes, FName whitespace, path traversal, numeric domains, namespace collisions, pinned legacy contracts, snapshot drift, readback ordering, boss/player profile validation, and partial operation reporting. All 33 tests pass (test_run_output.txt, exit 0). Integrated README.md connecting all components, documenting staged workflow, anti-overwrite rules, and native C++ compilation gaps.
+BOUNDARIES: AG performed no engine, build, or automation runs; no live asset creation or writes; no live Scripts or pack edits; zero git operations. Standing by via socket listener for Codex review.

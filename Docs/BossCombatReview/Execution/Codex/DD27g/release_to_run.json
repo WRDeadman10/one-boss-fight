@@ -1,0 +1,7 @@
+{
+  "message_id": "C-327",
+  "task": "DD27g",
+  "mode": "--classrefs",
+  "operator": "Codex",
+  "scope": "ONE launch under C321 lock; probe only; no output/apply/save/build/test/fix/retry"
+}

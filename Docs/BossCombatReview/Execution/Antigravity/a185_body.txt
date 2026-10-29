@@ -1,0 +1,41 @@
+TASK: AG-CONTENT06 - Native Derivation Dossier for 5 Components (Shockwave, HealPunish, Death, Look, CloseClipSwap)
+STATUS: COMPLETED
+
+DELIVERABLES:
+Directory: Docs/BossCombatReview/Execution/Antigravity/NativeDerivation/
+1. RPGBossShockwave.md (8 authored fields, pure numeric arithmetic & range checks, URPGAttackTracker Move A6, URPGDamageResolver)
+2. RPGBossHealPunish.md (14 authored fields, range & velocity bounds, socket array, hardcoded DrinkMontage and Move A5, ARPGBossJavelin)
+3. RPGBossDeath.md (12 authored fields, dual-mode PackMontage vs OwnClip, ability reflection, ragdoll physics suppression, ARPGBossRemains)
+4. RPGBossLook.md (5 authored fields, soft path leader-follower skeletal/static meshes, weapon hiding, SwordSocket)
+5. RPGBossCloseClipSwap.md (5 authored fields, reflection ability montage swap, RPGBossCloseClipSwapRules.h hardcoded mappings, permanent failure guard)
+6. INDEX.md (Synthesis matrix, summary table, and DD21..DD25 sequencing rationale with 1-line risks)
+7. evidence_sha256.txt (Cryptographic receipt of all 6 markdown files)
+
+KEY FINDINGS & DERIVATION SUMMARY:
+- RPGBossShockwave (DD21): 8 scalar fields. Read directly from RPGBossShockwave.h:30-57. Requires strict relational ordering (0 <= StartRadius < MaxRadius, Speed > 0, Thickness > 0, JumpClearance > 0). If StartRadius >= MaxRadius, wave stops immediately on tick 1; if Thickness <= 0, hit detection is mathematically impossible; if JumpClearance <= 0, standing on the floor clears the wave. Zero soft paths.
+- RPGBossHealPunish (DD22): 14 fields. Read directly from RPGBossHealPunish.h:33-141. Requires MinRange < MaxRange (otherwise window is empty and 100% discarded) and MinSpeed <= MaxSpeed (otherwise FMath::Clamp has undefined behavior). MoveId is hardcoded in cpp as TEXT("A5") (:22) and player potion montage is hardcoded as /Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/DrinkingPotion_Montage.DrinkingPotion_Montage (:236) (marked UNRESOLVED as non-profile properties).
+- RPGBossLook (DD23): 5 fields (1 bool, 3 soft object ptrs, 1 soft object ptr array, 1 socket name). Read from RPGBossLook.h:30-44. Requires validating TArray<TSoftObjectPtr<USkeletalMesh>> in the authoring helper. Missing socket falls back to bone hand_r with warning (:131). Non-ticking component; schedules Apply() for next tick.
+- RPGBossCloseClipSwap (DD24): 5 fields. Read from RPGBossCloseClipSwap.h:26-38. Replaces A1 (GS_Attack03_Montage -> AM_Boss01_A1), A3a (GS_Attack01_Montage -> AM_Boss01_A3a), and A3b (GS_Attack02_Montage -> AM_Boss01_A3b), while preserving A1b (GS_Attack04_Montage). Enforces strict assertions: Entries.Num() == 4 and Candidates.Num() == 3; any failure triggers bPermanentFailure = true, retaining pack montages permanently.
+- RPGBossDeath (DD25): 12 fields. Read from RPGBossDeath.h:51-93. Controls dual-mode presentation (PackMontage reflection injection vs OwnClip custom clip pause & ragdoll suppression). Ticks with prerequisites (Stagger, Posture, Phases) to avoid free ragdoll frames. Integrates with ARPGBossRemains on actor destruction.
+
+RECOMMENDED DD PACKAGE ORDER:
+1. DD21: RPGBossShockwave - Lowest risk; pure numeric relational domain, zero soft paths, zero memory mutation.
+2. DD22: RPGBossHealPunish - Low-to-moderate risk; numeric multi-bound clamps plus mesh socket array.
+3. DD23: RPGBossLook - Moderate risk; soft path validation across scalar and array properties.
+4. DD24: RPGBossCloseClipSwap - High risk; mutates live GameplayAbility memory in-place via reflection.
+5. DD25: RPGBossDeath - Highest risk; dual execution modes, ragdoll physics suppression, and tight destruction coordination (KI-083).
+
+VALIDATION & INTEGRITY:
+- 100% offline, read-only analysis. 0 Unreal processes, 0 Source edits, 0 asset writes, 0 git commits.
+- Line Endings: Verified 100% pure CRLF across all 6 dossier files and evidence_sha256.txt (bare_lf=False, bare_cr=False).
+- Python bytecode: 0 __pycache__ created in Antigravity directory.
+- Cryptographic Hashes:
+  c5d7721f68177b2c80ed9d15ab2195cd706f66630033d5cec2257455ba5d32c2  INDEX.md
+  32e56b3efe05165d75b495f72ea59b169c0d6dc287b8511ed9bcea01fd108df8  RPGBossCloseClipSwap.md
+  cced8e5ffca35352928782281f36a87dbc6e21c8b43dada3e7a7d1de5e7c9898  RPGBossDeath.md
+  1091583afe82a6822409062128717c737dd0b885cff4645f7ad9ba1b2b718489  RPGBossHealPunish.md
+  e004c00f66c057bbcbc1aa03e7e806a52eacd3e50493c140ba15c2a7fac2c905  RPGBossLook.md
+  7393eb257879e4a8ec486485c7a50299f7d57222cf03ff530eee439ed0746f56  RPGBossShockwave.md
+
+NEXT ACTION:
+Hand off to Claude (C) for dossier review/acceptance, and to Codex (X) for authoring the DD21 typed profile package (RPGBossShockwave).

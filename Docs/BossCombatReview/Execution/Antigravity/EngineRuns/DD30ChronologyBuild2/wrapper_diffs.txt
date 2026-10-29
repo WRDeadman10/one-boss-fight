@@ -1,0 +1,56 @@
+=== run_build.ps1 ===
+--- a/run_build.ps1
++++ b/run_build.ps1
+@@ -1,10 +1,10 @@
+ $ErrorActionPreference='Stop'
+-$r='C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Codex\DD30Chronology\run_C346'
++$r='C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Antigravity\EngineRuns\DD30ChronologyBuild2'
+ if(Test-Path "$r\build_job.json"){throw 'Already built; STOP'}
+ python -I "$r\capture_state.py" pre
+ if($LASTEXITCODE -ne 0){throw 'Pre-state failed; STOP BEFORE BUILD'}
+ $s=Get-Date
+ cmd /c "$r\build_once.cmd"
+ $ec=$LASTEXITCODE;$e=Get-Date
+-@{release='C-346';start=$s.ToString('o');end=$e.ToString('o');seconds=($e-$s).TotalSeconds;exit_code=$ec} | ConvertTo-Json | Set-Content "$r\build_job.json"
++@{release='C-350';start=$s.ToString('o');end=$e.ToString('o');seconds=($e-$s).TotalSeconds;exit_code=$ec} | ConvertTo-Json | Set-Content "$r\build_job.json"
+ exit $ec
+
+
+=== build_once.cmd ===
+--- a/build_once.cmd
++++ b/build_once.cmd
+@@ -1,6 +1,6 @@
+ @echo off
+ 
+-"C:\Program Files\Epic Games\UE_5.5\Engine\Build\BatchFiles\Build.bat" OneBossFightEditor Win64 Development "-Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject" -WaitMutex > "C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Codex\DD30Chronology\run_C346\build_raw.log" 2>&1
++"C:\Program Files\Epic Games\UE_5.5\Engine\Build\BatchFiles\Build.bat" OneBossFightEditor Win64 Development "-Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject" -WaitMutex > "C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Antigravity\EngineRuns\DD30ChronologyBuild2\build_raw.log" 2>&1
+ 
+ exit /b %ERRORLEVEL%
+ 
+
+
+=== capture_state.py ===
+
+
+=== engine_lock.py ===
+--- a/engine_lock.py
++++ b/engine_lock.py
+@@ -3,7 +3,7 @@
+ R=Path(__file__).resolve().parent
+ p=R.parents[2]/'ENGINE_LOCK.json'
+ if sys.argv[1]=='acquire':
+- record={'agent':'Codex','party':'X','task':'C-346/DD30Chronology','command_id':'DD30Chronology.build-only','start_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'policy':'C-321'}
++ record={'agent':'Antigravity','party':'A','task':'C-350/DD30ChronologyBuild2','command_id':'DD30Chronology.build-only','start_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'policy':'C-321'}
+  try:
+   with p.open('x',encoding='utf-8') as f:json.dump(record,f,indent=2);f.write('\n');f.flush();os.fsync(f.fileno())
+  except FileExistsError:
+@@ -11,6 +11,6 @@
+  (R/'engine_lock_record.json').write_text(json.dumps(record,indent=2)+'\n',encoding='utf-8')
+  print('C321 exclusive DD30Chronology lock acquired')
+ elif sys.argv[1]=='release':
+- v=json.loads(p.read_text());assert v['agent']=='Codex' and v['task']=='C-346/DD30Chronology' and v['command_id']=='DD30Chronology.build-only'
++ v=json.loads(p.read_text());assert v['agent']=='Antigravity' and v['task']=='C-350/DD30ChronologyBuild2' and v['command_id']=='DD30Chronology.build-only'
+  p.unlink();print('Own DD30Chronology lock released after evidence freeze')
+ else:raise SystemExit(2)
+
+

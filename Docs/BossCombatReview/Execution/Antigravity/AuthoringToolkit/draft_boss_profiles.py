@@ -60,6 +60,8 @@ if _SCRIPT_DIR not in sys.path:
     sys.path.insert(0, _SCRIPT_DIR)
 
 from authoring_core import (
+    create_empty_struct_instance,
+    extract_soft_path_string,
     APPROVED_BOSS_DRAFTS_ROOT,
     CLASS_BOSS_DEF_PATH,
     NATIVE_HEALTH_OVERRIDE_FLOOR,
@@ -112,6 +114,13 @@ from authoring_core import (
     validate_finite_integer,
     validate_finite_float,
     PartialOperationReport,
+    SPEC_TO_STRUCT_MAP,
+    FNAME_PROPERTIES,
+    to_soft_ref,
+    to_fname,
+    to_death_mode,
+    convert_property_for_engine,
+    create_struct_instance,
 )
 
 # ---------------------------------------------------------------------------
@@ -135,7 +144,7 @@ def verify_editor_environment() -> Tuple[bool, str]:
     Strict fail-closed editor environment guard.
     Requires:
     1. HAS_UNREAL is True.
-    2. unreal.SystemLibrary exists and has callable is_editor, and is_editor() is True.
+    2. unreal.is_editor exists, is callable, and unreal.is_editor() is True (verified in DD27c).
     3. unreal.get_editor_subsystem exists and is callable.
     4. unreal.UnrealEditorSubsystem exists.
     5. unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem) returns non-null subsystem.
@@ -145,17 +154,14 @@ def verify_editor_environment() -> Tuple[bool, str]:
     if not HAS_UNREAL or unreal is None:
         return False, "Unreal module not available (running in pure offline Python)"
 
-    # 1. SystemLibrary.is_editor check
-    if not hasattr(unreal, "SystemLibrary"):
-        return False, "Missing required Unreal API: unreal.SystemLibrary"
-    system_lib = getattr(unreal, "SystemLibrary")
-    if not hasattr(system_lib, "is_editor") or not callable(getattr(system_lib, "is_editor")):
-        return False, "Missing required Unreal API: unreal.SystemLibrary.is_editor"
+    # 1. Module-level unreal.is_editor check (callable, verified in DD27c)
+    if not hasattr(unreal, "is_editor") or not callable(getattr(unreal, "is_editor")):
+        return False, "Missing required Unreal API: unreal.is_editor"
     try:
-        if not system_lib.is_editor():
+        if not unreal.is_editor():
             return False, "Not running in Unreal Editor environment (is_editor() == False)"
     except Exception as ex:
-        return False, f"Failed executing unreal.SystemLibrary.is_editor(): {str(ex)}"
+        return False, f"Failed executing unreal.is_editor(): {str(ex)}"
 
     # 2. UnrealEditorSubsystem and non-PIE check
     if not hasattr(unreal, "get_editor_subsystem") or not callable(getattr(unreal, "get_editor_subsystem")):
@@ -417,9 +423,14 @@ def validate_boss_profile_data(profile: Dict[str, Any], seen_asset_names: List[s
 # ---------------------------------------------------------------------------
 # Offline Plan Generation (Pure Python)
 # ---------------------------------------------------------------------------
-def generate_offline_plan(input_json_path: str) -> Tuple[bool, Dict[str, Any], List[str]]:
+def generate_offline_plan(
+    input_json_path: str,
+    only_assets: Optional[List[str]] = None
+) -> Tuple[bool, Dict[str, Any], List[str]]:
     """
     Loads and validates draft profile JSON file offline.
+    If only_assets is provided, filters the execution plan to only include matching assets.
+    Raises error if any requested asset name is unknown.
     """
     errors: List[str] = []
     if not os.path.isfile(input_json_path):
@@ -435,6 +446,14 @@ def generate_offline_plan(input_json_path: str) -> Tuple[bool, Dict[str, Any], L
     if not isinstance(profiles, list) or len(profiles) == 0:
         return False, {}, ["JSON must contain a non-empty 'profiles' list"]
 
+    if only_assets:
+        requested_set = set(only_assets)
+        available_names = set(p.get("asset_name") for p in profiles if isinstance(p, dict) and "asset_name" in p)
+        unknown = requested_set - available_names
+        if unknown:
+            errors.append(f"Unknown asset name(s) specified in --only: {sorted(list(unknown))}")
+            return False, {}, errors
+
     seen_asset_names: List[str] = []
     seen_def_ids: List[str] = []
     validated_profiles: List[Dict[str, Any]] = []
@@ -447,7 +466,8 @@ def generate_offline_plan(input_json_path: str) -> Tuple[bool, Dict[str, Any], L
         else:
             seen_asset_names.append(p["asset_name"])
             seen_def_ids.append(p["definition_id"])
-            validated_profiles.append(p)
+            if not only_assets or p["asset_name"] in only_assets:
+                validated_profiles.append(p)
 
     plan = {
         "input_json_path": input_json_path,
@@ -463,6 +483,97 @@ def generate_offline_plan(input_json_path: str) -> Tuple[bool, Dict[str, Any], L
 
 
 # ---------------------------------------------------------------------------
+# Diagnostic Failure Collector (Order A-212 / Diagnostic In-Memory Mode)
+# ---------------------------------------------------------------------------
+def _extract_prop_val(struct_obj: Any, py_key: str) -> Any:
+    """Extracts property value supporting real Unreal struct wrapper, dict, or test mock."""
+    if hasattr(struct_obj, "get_editor_property") and callable(getattr(struct_obj, "get_editor_property")):
+        return struct_obj.get_editor_property(py_key)
+    if isinstance(struct_obj, dict):
+        return struct_obj.get(py_key)
+    if hasattr(struct_obj, py_key):
+        return getattr(struct_obj, py_key)
+    return None
+
+
+class DiagnosticFailureCollector:
+    """
+    Collects all property assignment and readback failures during in-memory apply mode.
+    In diagnostic mode (--apply without --save), does not stop at the first failure;
+    records every failure, prints a complete summary table, and prints an untruncated
+    diagnostic failure line for each failure before exiting nonzero.
+    In save mode (--apply with --save), fails fast immediately upon the first failure.
+    """
+    def __init__(self, fail_fast: bool = False):
+        self.fail_fast = fail_fast
+        self.failures: List[Dict[str, Any]] = []
+
+    def record_failure(self, asset: str, struct_or_section: str, property_name: str,
+                       expected: Any, actual: Any, error_ex: Optional[Exception] = None,
+                       mismatch_msg: str = "", step: str = ""):
+        prop_label = property_name
+        if prop_label in ("(constructor)", "constructor"):
+            prop_label = step if step else "construct"
+        elif step and prop_label in ("(set_editor_property)", "(get_editor_property)", "(array_set)"):
+            prop_label = step
+
+        entry = {
+            "asset": asset,
+            "section": struct_or_section,
+            "property": prop_label,
+            "step": step,
+            "expected": expected,
+            "actual_type": type(actual).__name__ if actual is not None else "NoneType",
+            "actual_repr": repr(actual) if actual is not None else "None",
+            "error_class": error_ex.__class__.__name__ if error_ex else "ReadbackMismatch",
+            "error_message": str(error_ex) if error_ex else mismatch_msg,
+        }
+        self.failures.append(entry)
+        if self.fail_fast:
+            raise RuntimeError(
+                f"Fail-fast failure on '{asset}.{struct_or_section}.{prop_label}': "
+                f"{entry['error_class']}: {entry['error_message']} "
+                f"(expected={expected!r}, actual={actual!r})"
+            )
+
+    @property
+    def has_failures(self) -> bool:
+        return len(self.failures) > 0
+
+    def failure_count_for_asset(self, asset_name: str) -> int:
+        return sum(1 for f in self.failures if f.get("asset") == asset_name)
+
+    def print_summary_table(self):
+        if not self.failures:
+            return
+        print("\n" + "=" * 90)
+        print(f"[DIAGNOSTIC SUMMARY] Collected {len(self.failures)} failure(s) during in-memory apply:")
+        print("=" * 90)
+        fmt = "{:<26} {:<16} {:<18} {:<14} {:<12} {:<24} {:<26}"
+        print(fmt.format("Asset", "Section", "Property", "Expected", "Actual Type", "Actual Repr", "Error"))
+        print("-" * 136)
+        for f in self.failures:
+            print(fmt.format(
+                str(f["asset"])[:25],
+                str(f["section"])[:15],
+                str(f["property"])[:17],
+                str(f["expected"])[:13],
+                str(f["actual_type"])[:11],
+                str(f["actual_repr"])[:23],
+                f"{f['error_class']}: {f['error_message']}"[:25]
+            ))
+        print("=" * 90)
+        print("\n[DIAGNOSTIC SUMMARY DETAILS (UNTRUNCATED)]")
+        for f in self.failures:
+            print(
+                f"[DRAFT_APPLY][FAILURE] {f['asset']} {f['section']} {f['property']} "
+                f"expected={f['expected']!r} actual_type={f['actual_type']} "
+                f"actual_repr={f['actual_repr']} exception={f['error_class']}: {f['error_message']}"
+            )
+        print("=" * 90 + "\n")
+
+
+# ---------------------------------------------------------------------------
 # Live Unreal Editor Staged Apply & Readback Verification
 # ---------------------------------------------------------------------------
 def execute_draft_apply(plan: Dict[str, Any], save_requested: bool = False) -> bool:
@@ -470,6 +581,8 @@ def execute_draft_apply(plan: Dict[str, Any], save_requested: bool = False) -> b
     Executes staged creation of URPGBossDefinition draft assets inside Unreal Editor.
     Fails closed before ANY write if any required Unreal API is missing or if in PIE mode.
     Sets and reads back EVERY struct, phase, animation, and manifest property.
+    In in-memory diagnostic mode (--apply without --save), collects ALL failures across
+    properties/structs/assets and displays a diagnostic summary table before exiting nonzero.
     """
     if not HAS_UNREAL or unreal is None:
         raise RuntimeError("Apply mode requires live Unreal Editor Python environment.")
@@ -524,6 +637,12 @@ def execute_draft_apply(plan: Dict[str, Any], save_requested: bool = False) -> b
             report.record_error(err_msg)
             return False
 
+    collector = DiagnosticFailureCollector(fail_fast=save_requested)
+    ALWAYS_PRESENT_STRUCTS = {
+        "stats", "encounter_policy", "stagger_policy", "phase_flow",
+        "fireball", "phase_dependencies", "stagger_profile", "dormant_wake"
+    }
+
     try:
         created_assets: List[Tuple[Any, str]] = []
 
@@ -543,173 +662,285 @@ def execute_draft_apply(plan: Dict[str, Any], save_requested: bool = False) -> b
             report.record_created(pkg_path)
             created_assets.append((new_asset, pkg_path))
 
-            # 1. Schema & Identifiers
+            # ---------------------------------------------------------------
+            # 1. Schema & Identifiers (Top-Level)
+            # ---------------------------------------------------------------
             schema_val = p.get("schema_version", 1)
-            def_id_val = unreal.Name(p["definition_id"])
-            pres_id_val = unreal.Name(p["presentation_id"])
+            try:
+                new_asset.set_editor_property("schema", schema_val)
+                actual_schema = new_asset.get_editor_property("schema")
+                if int(actual_schema) != schema_val:
+                    collector.record_failure(asset_name, "top", "schema", schema_val, actual_schema, mismatch_msg=f"got {actual_schema} != {schema_val}")
+            except Exception as ex:
+                collector.record_failure(asset_name, "top", "schema", schema_val, None, error_ex=ex)
 
-            new_asset.set_editor_property("schema", schema_val)
-            new_asset.set_editor_property("definition_id", def_id_val)
-            new_asset.set_editor_property("presentation_id", pres_id_val)
+            try:
+                def_id_val, _ = to_fname(p["definition_id"], unreal)
+                new_asset.set_editor_property("definition_id", def_id_val)
+                actual_def = new_asset.get_editor_property("definition_id")
+                actual_def_str = str(actual_def.to_string()) if hasattr(actual_def, "to_string") else str(actual_def)
+                if actual_def_str != p["definition_id"]:
+                    collector.record_failure(asset_name, "top", "definition_id", p["definition_id"], actual_def, mismatch_msg=f"got '{actual_def_str}' != '{p['definition_id']}'")
+            except Exception as ex:
+                collector.record_failure(asset_name, "top", "definition_id", p["definition_id"], None, error_ex=ex)
 
-            # 2. Skeleton
+            try:
+                pres_id_val, _ = to_fname(p["presentation_id"], unreal)
+                new_asset.set_editor_property("presentation_id", pres_id_val)
+                actual_pres = new_asset.get_editor_property("presentation_id")
+                actual_pres_str = str(actual_pres.to_string()) if hasattr(actual_pres, "to_string") else str(actual_pres)
+                if actual_pres_str != p["presentation_id"]:
+                    collector.record_failure(asset_name, "top", "presentation_id", p["presentation_id"], actual_pres, mismatch_msg=f"got '{actual_pres_str}' != '{p['presentation_id']}'")
+            except Exception as ex:
+                collector.record_failure(asset_name, "top", "presentation_id", p["presentation_id"], None, error_ex=ex)
+
+            # ---------------------------------------------------------------
+            # 2. Skeleton & Animations (Top-Level Soft Object References)
+            # ---------------------------------------------------------------
             skel_raw = p.get("skeleton") or p.get("skeleton_candidate", "")
-            skel_val = unreal.SoftObjectPath(skel_raw) if skel_raw else unreal.SoftObjectPath("")
-            new_asset.set_editor_property("skeleton", skel_val)
+            try:
+                skel_val, _ = to_soft_ref(skel_raw, unreal)
+                new_asset.set_editor_property("skeleton", skel_val)
+                actual_skel = new_asset.get_editor_property("skeleton")
+                actual_skel_str = extract_soft_path_string(actual_skel)
+                if actual_skel_str != (skel_raw or ""):
+                    collector.record_failure(asset_name, "top", "skeleton", skel_raw or "", actual_skel, mismatch_msg=f"got '{actual_skel_str}' != '{skel_raw}'", step="readback")
+            except Exception as ex:
+                collector.record_failure(asset_name, "top", "skeleton", skel_raw or "", None, error_ex=ex, step="convert" if "did not load" in str(ex) else "set_editor_property")
 
-            # 3. Animations
             anims_raw = p.get("animations") if "animations" in p else p.get("animation_candidates", [])
-            anims_val = [unreal.SoftObjectPath(a) for a in anims_raw] if anims_raw else []
-            new_asset.set_editor_property("animations", anims_val)
-
-            # 4. Typed Struct Properties (Mapped to Generated Python Property Keys per UE5.5 PyGenUtil)
-            stats_raw = p.get("stats", {})
-            enc_policy_raw = p.get("encounter_policy", {})
-            stg_policy_raw = p.get("stagger_policy", {})
-            flow_raw = p.get("phase_flow", {})
-            fire_raw = p.get("fireball", {})
-            phase_dep_raw = p.get("phase_dependencies", {})
-            stg_prof_raw = p.get("stagger_profile", {})
-            wake_raw = p.get("dormant_wake", {})
-            bleed_raw = p.get("bleed", {})
-            low_sweep_raw = p.get("low_sweep", {})
-            shockwave_raw = p.get("shockwave", {})
-            heal_punish_raw = p.get("heal_punish", {})
-            look_raw = p.get("look", {})
-            close_raw = p.get("close_clip_swap", {})
-            death_raw = p.get("death", {})
-            phases_raw = p.get("phases", [])
-            fields_raw = p.get("fields", [])
-
-            stats_py = map_native_dict_to_python_keys(stats_raw, NATIVE_BOSS_STATS_FIELDS)
-            enc_policy_py = map_native_dict_to_python_keys(enc_policy_raw, NATIVE_ENCOUNTER_POLICY_FIELDS)
-            stg_policy_py = map_native_dict_to_python_keys(stg_policy_raw, NATIVE_STAGGER_POLICY_FIELDS)
-            flow_py = map_native_dict_to_python_keys(flow_raw, NATIVE_PHASE_FLOW_FIELDS)
-            fire_py = map_native_dict_to_python_keys(fire_raw, NATIVE_FIREBALL_FIELDS)
-            phase_dep_py = map_native_dict_to_python_keys(phase_dep_raw, NATIVE_PHASE_DEPENDENCY_FIELDS)
-            stg_prof_py = map_native_dict_to_python_keys(stg_prof_raw, NATIVE_STAGGER_PROFILE_FIELDS)
-            wake_py = map_native_dict_to_python_keys(wake_raw, NATIVE_DORMANT_WAKE_FIELDS)
-            phases_py = [map_native_dict_to_python_keys(ph, NATIVE_PHASE_CONFIG_FIELDS) for ph in phases_raw]
-            fields_py = [map_native_dict_to_python_keys(fd, NATIVE_PARITY_FIELD_FIELDS) for fd in fields_raw]
-
-            new_asset.set_editor_property("stats", stats_py)
-            new_asset.set_editor_property("encounter_policy", enc_policy_py)
-            new_asset.set_editor_property("stagger_policy", stg_policy_py)
-            new_asset.set_editor_property("phase_flow", flow_py)
-            new_asset.set_editor_property("fireball", fire_py)
-            new_asset.set_editor_property("phase_dependencies", phase_dep_py)
-            new_asset.set_editor_property("stagger_profile", stg_prof_py)
-            new_asset.set_editor_property("dormant_wake", wake_py)
-            if bleed_raw:
-                bleed_py = map_native_dict_to_python_keys(bleed_raw, NATIVE_BLEED_FIELDS)
-                new_asset.set_editor_property("bleed", bleed_py)
-
-            if low_sweep_raw:
-                low_sweep_py = map_native_dict_to_python_keys(low_sweep_raw, NATIVE_LOW_SWEEP_FIELDS)
-                new_asset.set_editor_property("low_sweep", low_sweep_py)
-
-            if shockwave_raw:
-                shockwave_py = map_native_dict_to_python_keys(shockwave_raw, NATIVE_SHOCKWAVE_FIELDS)
-                new_asset.set_editor_property("shockwave", shockwave_py)
-
-            if heal_punish_raw:
-                heal_punish_py = map_native_dict_to_python_keys(heal_punish_raw, NATIVE_HEAL_PUNISH_FIELDS)
-                new_asset.set_editor_property("heal_punish", heal_punish_py)
-            if look_raw:
-                look_py = map_native_dict_to_python_keys(look_raw, NATIVE_LOOK_FIELDS)
-                new_asset.set_editor_property("look", look_py)
-            if close_raw:
-                close_py = map_native_dict_to_python_keys(close_raw, NATIVE_CLOSE_CLIP_SWAP_FIELDS)
-                new_asset.set_editor_property("close_clip_swap", close_py)
-            if death_raw:
-                death_py = map_native_dict_to_python_keys(death_raw, NATIVE_DEATH_FIELDS)
-                new_asset.set_editor_property("death", death_py)
-            new_asset.set_editor_property("phases", phases_py)
-            new_asset.set_editor_property("fields", fields_py)
+            try:
+                anims_val = [to_soft_ref(a, unreal)[0] for a in anims_raw] if anims_raw else []
+                new_asset.set_editor_property("animations", anims_val)
+                actual_anims = new_asset.get_editor_property("animations")
+                actual_anims_list = [extract_soft_path_string(a) for a in (actual_anims or [])]
+                expected_anims_list = [a or "" for a in (anims_raw or [])]
+                if actual_anims_list != expected_anims_list:
+                    collector.record_failure(asset_name, "top", "animations", expected_anims_list, actual_anims, mismatch_msg=f"got {actual_anims_list} != {expected_anims_list}", step="readback")
+            except Exception as ex:
+                collector.record_failure(asset_name, "top", "animations", anims_raw or [], None, error_ex=ex, step="convert" if "did not load" in str(ex) else "set_editor_property")
 
             # ---------------------------------------------------------------
-            # Canonical Primitive Readback Verification of ALL 15 Properties
+            # 3. Typed Struct Properties (Real UStruct Instances per A-212)
             # ---------------------------------------------------------------
-            # 1. Scalar / Identifier / Soft Object Path Readbacks
-            actual_schema = new_asset.get_editor_property("schema")
-            if int(actual_schema) != schema_val:
-                raise RuntimeError(f"Readback mismatch on '{asset_name}.schema': got {actual_schema} != {schema_val}")
-
-            actual_def_id = new_asset.get_editor_property("definition_id")
-            actual_def_str = str(actual_def_id.to_string()) if hasattr(actual_def_id, "to_string") else str(actual_def_id)
-            if actual_def_str != p["definition_id"]:
-                raise RuntimeError(f"Readback mismatch on '{asset_name}.definition_id': got '{actual_def_str}' != '{p['definition_id']}'")
-
-            actual_pres_id = new_asset.get_editor_property("presentation_id")
-            actual_pres_str = str(actual_pres_id.to_string()) if hasattr(actual_pres_id, "to_string") else str(actual_pres_id)
-            if actual_pres_str != p["presentation_id"]:
-                raise RuntimeError(f"Readback mismatch on '{asset_name}.presentation_id': got '{actual_pres_str}' != '{p['presentation_id']}'")
-
-            actual_skel = new_asset.get_editor_property("skeleton")
-            actual_skel_str = str(actual_skel.to_string()) if hasattr(actual_skel, "to_string") else str(actual_skel)
-            if actual_skel_str != skel_raw:
-                raise RuntimeError(f"Readback mismatch on '{asset_name}.skeleton': got '{actual_skel_str}' != '{skel_raw}'")
-
-            actual_anims = new_asset.get_editor_property("animations")
-            actual_anims_list = [str(a.to_string()) if hasattr(a, "to_string") else str(a) for a in (actual_anims or [])]
-            if actual_anims_list != anims_raw:
-                raise RuntimeError(f"Readback mismatch on '{asset_name}.animations': got {actual_anims_list} != {anims_raw}")
-
-            # 2. Typed Struct Canonical Primitive Readbacks (ensuring non-default values survive round trip)
-            struct_readback_specs = [
-                ("stats", NATIVE_BOSS_STATS_FIELDS, stats_raw),
-                ("encounter_policy", NATIVE_ENCOUNTER_POLICY_FIELDS, enc_policy_raw),
-                ("stagger_policy", NATIVE_STAGGER_POLICY_FIELDS, stg_policy_raw),
-                ("phase_flow", NATIVE_PHASE_FLOW_FIELDS, flow_raw),
-                ("fireball", NATIVE_FIREBALL_FIELDS, fire_raw),
-                ("phase_dependencies", NATIVE_PHASE_DEPENDENCY_FIELDS, phase_dep_raw),
-                ("stagger_profile", NATIVE_STAGGER_PROFILE_FIELDS, stg_prof_raw),
-                ("dormant_wake", NATIVE_DORMANT_WAKE_FIELDS, wake_raw),
+            struct_specs = [
+                ("stats", NATIVE_BOSS_STATS_FIELDS, p.get("stats", {})),
+                ("encounter_policy", NATIVE_ENCOUNTER_POLICY_FIELDS, p.get("encounter_policy", {})),
+                ("stagger_policy", NATIVE_STAGGER_POLICY_FIELDS, p.get("stagger_policy", {})),
+                ("phase_flow", NATIVE_PHASE_FLOW_FIELDS, p.get("phase_flow", {})),
+                ("fireball", NATIVE_FIREBALL_FIELDS, p.get("fireball", {})),
+                ("phase_dependencies", NATIVE_PHASE_DEPENDENCY_FIELDS, p.get("phase_dependencies", {})),
+                ("stagger_profile", NATIVE_STAGGER_PROFILE_FIELDS, p.get("stagger_profile", {})),
+                ("dormant_wake", NATIVE_DORMANT_WAKE_FIELDS, p.get("dormant_wake", {})),
+                ("bleed", NATIVE_BLEED_FIELDS, p.get("bleed", {})),
+                ("low_sweep", NATIVE_LOW_SWEEP_FIELDS, p.get("low_sweep", {})),
+                ("shockwave", NATIVE_SHOCKWAVE_FIELDS, p.get("shockwave", {})),
+                ("heal_punish", NATIVE_HEAL_PUNISH_FIELDS, p.get("heal_punish", {})),
+                ("look", NATIVE_LOOK_FIELDS, p.get("look", {})),
+                ("close_clip_swap", NATIVE_CLOSE_CLIP_SWAP_FIELDS, p.get("close_clip_swap", {})),
+                ("death", NATIVE_DEATH_FIELDS, p.get("death", {})),
             ]
-            if bleed_raw:
-                struct_readback_specs.append(("bleed", NATIVE_BLEED_FIELDS, bleed_raw))
 
-            if low_sweep_raw:
-                struct_readback_specs.append(("low_sweep", NATIVE_LOW_SWEEP_FIELDS, low_sweep_raw))
+            verified_struct_count = 0
+            for section_name, field_spec, raw_data in struct_specs:
+                if not raw_data and section_name not in ALWAYS_PRESENT_STRUCTS:
+                    continue
 
-            if shockwave_raw:
-                struct_readback_specs.append(("shockwave", NATIVE_SHOCKWAVE_FIELDS, shockwave_raw))
+                struct_had_property_failure = False
 
-            if heal_punish_raw:
-                struct_readback_specs.append(("heal_punish", NATIVE_HEAL_PUNISH_FIELDS, heal_punish_raw))
-            if look_raw:
-                struct_readback_specs.append(("look", NATIVE_LOOK_FIELDS, look_raw))
-            if close_raw:
-                struct_readback_specs.append(("close_clip_swap", NATIVE_CLOSE_CLIP_SWAP_FIELDS, close_raw))
-            if death_raw:
-                struct_readback_specs.append(("death", NATIVE_DEATH_FIELDS, death_raw))
+                # 1. Step: construct empty UStruct wrapper via default constructor
+                try:
+                    struct_inst = create_empty_struct_instance(section_name, unreal)
+                except Exception as ex:
+                    collector.record_failure(asset_name, section_name, "construct", "struct instance", None, error_ex=ex, step="construct")
+                    continue
 
-            for section_name, field_spec, expected_native_dict in struct_readback_specs:
-                actual_struct = new_asset.get_editor_property(section_name)
-                canonical_dict = extract_canonical_primitives(actual_struct, field_spec)
-                expected_float32_dict = normalize_native_expected_for_readback(expected_native_dict, field_spec)
-                if canonical_dict != expected_float32_dict:
-                    raise RuntimeError(
-                        f"Canonical primitive readback mismatch on '{asset_name}.{section_name}':\n"
-                        f"  Actual:   {canonical_dict}\n"
-                        f"  Expected: {expected_float32_dict}"
-                    )
+                # 2. Step: convert & set_editor_property per property on struct instance
+                for native_k, expected_type in field_spec.items():
+                    py_k = pythonize_property_name(native_k)
+                    if native_k in raw_data:
+                        raw_val = raw_data[native_k]
+                        try:
+                            converted_val, _ = convert_property_for_engine(native_k, raw_val, expected_type, unreal)
+                        except Exception as ex:
+                            collector.record_failure(asset_name, section_name, py_k, raw_val, None, error_ex=ex, step="convert")
+                            struct_had_property_failure = True
+                            continue
 
-            # 3. Phase and Field Array Canonical Readbacks
-            actual_phases_raw = new_asset.get_editor_property("phases") or []
-            actual_phases_canonical = [extract_canonical_primitives(ph, NATIVE_PHASE_CONFIG_FIELDS) for ph in actual_phases_raw]
-            expected_phases_float32 = [normalize_native_expected_for_readback(ph, NATIVE_PHASE_CONFIG_FIELDS) for ph in phases_raw]
-            if actual_phases_canonical != expected_phases_float32:
-                raise RuntimeError(f"Readback mismatch on '{asset_name}.phases': {actual_phases_canonical} != {expected_phases_float32}")
+                        try:
+                            if hasattr(struct_inst, "set_editor_property") and callable(getattr(struct_inst, "set_editor_property")):
+                                struct_inst.set_editor_property(py_k, converted_val)
+                            elif isinstance(struct_inst, dict):
+                                struct_inst[py_k] = converted_val
+                            else:
+                                setattr(struct_inst, py_k, converted_val)
+                        except Exception as ex:
+                            collector.record_failure(asset_name, section_name, py_k, raw_val, None, error_ex=ex, step="set_editor_property")
+                            struct_had_property_failure = True
+                            continue
 
-            actual_fields_raw = new_asset.get_editor_property("fields") or []
-            actual_fields_canonical = [extract_canonical_primitives(fd, NATIVE_PARITY_FIELD_FIELDS) for fd in actual_fields_raw]
-            expected_fields_float32 = [normalize_native_expected_for_readback(fd, NATIVE_PARITY_FIELD_FIELDS) for fd in fields_raw]
-            if actual_fields_canonical != expected_fields_float32:
-                raise RuntimeError(f"Readback mismatch on '{asset_name}.fields': {actual_fields_canonical} != {expected_fields_float32}")
+                # 3. Step: set_editor_property on top-level asset
+                try:
+                    new_asset.set_editor_property(section_name, struct_inst)
+                except Exception as ex:
+                    collector.record_failure(asset_name, section_name, "set_editor_property", "assigned", None, error_ex=ex, step="set_editor_property")
+                    continue
 
-            total_prop_count = len(struct_readback_specs) + 7
-            print(f"[DRAFT_APPLY] Initialized & verified all {total_prop_count} typed properties on draft asset: '{asset_name}'")
+                # 4. Step: get_editor_property (readback) from top-level asset
+                try:
+                    actual_struct = new_asset.get_editor_property(section_name)
+                except Exception as ex:
+                    collector.record_failure(asset_name, section_name, "readback", "readback", None, error_ex=ex, step="readback")
+                    continue
+
+                # 5. Step: readback verification per property
+                expected_norm = normalize_native_expected_for_readback(raw_data, field_spec)
+                for native_k, expected_type in field_spec.items():
+                    py_k = pythonize_property_name(native_k)
+                    expected_v = expected_norm.get(native_k)
+                    try:
+                        actual_v = _extract_prop_val(actual_struct, py_k)
+
+                        single_canonical = extract_canonical_primitives(
+                            {py_k: actual_v} if isinstance(actual_struct, dict) else actual_struct,
+                            {native_k: expected_type}
+                        )
+                        actual_canon = single_canonical.get(native_k)
+
+                        if actual_canon != expected_v:
+                            collector.record_failure(
+                                asset_name, section_name, py_k, expected_v, actual_v,
+                                mismatch_msg=f"got {actual_canon!r} != {expected_v!r} (type={type(actual_v).__name__})",
+                                step="readback"
+                            )
+                            struct_had_property_failure = True
+                    except Exception as ex:
+                        collector.record_failure(asset_name, section_name, py_k, expected_v, None, error_ex=ex, step="readback")
+                        struct_had_property_failure = True
+
+                if not struct_had_property_failure:
+                    verified_struct_count += 1
+
+            # ---------------------------------------------------------------
+            # 4. Phase Array (List of RPGPhaseConfig Instances)
+            # ---------------------------------------------------------------
+            phases_raw = p.get("phases", [])
+            try:
+                phase_instances = []
+                for idx, ph in enumerate(phases_raw):
+                    ph_inst = create_empty_struct_instance("phases", unreal)
+                    for native_k, expected_type in NATIVE_PHASE_CONFIG_FIELDS.items():
+                        py_k = pythonize_property_name(native_k)
+                        if native_k in ph:
+                            raw_val = ph[native_k]
+                            try:
+                                converted_val, _ = convert_property_for_engine(native_k, raw_val, expected_type, unreal)
+                            except Exception as ex:
+                                collector.record_failure(asset_name, f"phases[{idx}]", py_k, raw_val, None, error_ex=ex, step="convert")
+                                continue
+                            try:
+                                if hasattr(ph_inst, "set_editor_property") and callable(getattr(ph_inst, "set_editor_property")):
+                                    ph_inst.set_editor_property(py_k, converted_val)
+                                elif isinstance(ph_inst, dict):
+                                    ph_inst[py_k] = converted_val
+                                else:
+                                    setattr(ph_inst, py_k, converted_val)
+                            except Exception as ex:
+                                collector.record_failure(asset_name, f"phases[{idx}]", py_k, raw_val, None, error_ex=ex, step="set_editor_property")
+                    phase_instances.append(ph_inst)
+
+                new_asset.set_editor_property("phases", phase_instances)
+                actual_phases_raw = new_asset.get_editor_property("phases") or []
+                if len(actual_phases_raw) != len(phases_raw):
+                    collector.record_failure(asset_name, "phases", "count", len(phases_raw), len(actual_phases_raw), mismatch_msg=f"Count mismatch {len(actual_phases_raw)} != {len(phases_raw)}", step="readback")
+                else:
+                    for idx, (ph_expected_raw, ph_actual) in enumerate(zip(phases_raw, actual_phases_raw)):
+                        expected_ph_norm = normalize_native_expected_for_readback(ph_expected_raw, NATIVE_PHASE_CONFIG_FIELDS)
+                        for native_k, expected_type in NATIVE_PHASE_CONFIG_FIELDS.items():
+                            py_k = pythonize_property_name(native_k)
+                            expected_v = expected_ph_norm.get(native_k)
+                            try:
+                                actual_v = _extract_prop_val(ph_actual, py_k)
+                                single_canonical = extract_canonical_primitives(
+                                    {py_k: actual_v} if isinstance(ph_actual, dict) else ph_actual,
+                                    {native_k: expected_type}
+                                )
+                                actual_canon = single_canonical.get(native_k)
+                                if actual_canon != expected_v:
+                                    collector.record_failure(asset_name, f"phases[{idx}]", py_k, expected_v, actual_v, mismatch_msg=f"got {actual_canon!r} != {expected_v!r}", step="readback")
+                            except Exception as ex:
+                                collector.record_failure(asset_name, f"phases[{idx}]", py_k, expected_v, None, error_ex=ex, step="readback")
+            except Exception as ex:
+                collector.record_failure(asset_name, "phases", "set_editor_property", "phase instances", None, error_ex=ex, step="set_editor_property")
+
+            # ---------------------------------------------------------------
+            # 5. Field Array (List of RPGParityField Instances)
+            # ---------------------------------------------------------------
+            fields_raw = p.get("fields", [])
+            try:
+                field_instances = []
+                for idx, fd in enumerate(fields_raw):
+                    fd_inst = create_empty_struct_instance("fields", unreal)
+                    for native_k, expected_type in NATIVE_PARITY_FIELD_FIELDS.items():
+                        py_k = pythonize_property_name(native_k)
+                        if native_k in fd:
+                            raw_val = fd[native_k]
+                            try:
+                                converted_val, _ = convert_property_for_engine(native_k, raw_val, expected_type, unreal)
+                            except Exception as ex:
+                                collector.record_failure(asset_name, f"fields[{idx}]", py_k, raw_val, None, error_ex=ex, step="convert")
+                                continue
+                            try:
+                                if hasattr(fd_inst, "set_editor_property") and callable(getattr(fd_inst, "set_editor_property")):
+                                    fd_inst.set_editor_property(py_k, converted_val)
+                                elif isinstance(fd_inst, dict):
+                                    fd_inst[py_k] = converted_val
+                                else:
+                                    setattr(fd_inst, py_k, converted_val)
+                            except Exception as ex:
+                                collector.record_failure(asset_name, f"fields[{idx}]", py_k, raw_val, None, error_ex=ex, step="set_editor_property")
+                    field_instances.append(fd_inst)
+
+                new_asset.set_editor_property("fields", field_instances)
+                actual_fields_raw = new_asset.get_editor_property("fields") or []
+                actual_count = len(actual_fields_raw)
+                expected_count = len(fields_raw)
+                print(f"[DRAFT_APPLY] fields rows read back: {actual_count} of {expected_count} expected")
+
+                if actual_count != expected_count:
+                    collector.record_failure(asset_name, "fields", "count", expected_count, actual_count, mismatch_msg=f"Count mismatch {actual_count} != {expected_count}", step="readback")
+                else:
+                    for idx, (fd_expected_raw, fd_actual) in enumerate(zip(fields_raw, actual_fields_raw)):
+                        expected_fd_norm = normalize_native_expected_for_readback(fd_expected_raw, NATIVE_PARITY_FIELD_FIELDS)
+                        for native_k, expected_type in NATIVE_PARITY_FIELD_FIELDS.items():
+                            py_k = pythonize_property_name(native_k)
+                            expected_v = expected_fd_norm.get(native_k)
+                            try:
+                                actual_v = _extract_prop_val(fd_actual, py_k)
+                                single_canonical = extract_canonical_primitives(
+                                    {py_k: actual_v} if isinstance(fd_actual, dict) else fd_actual,
+                                    {native_k: expected_type}
+                                )
+                                actual_canon = single_canonical.get(native_k)
+                                if actual_canon != expected_v:
+                                    collector.record_failure(asset_name, f"fields[{idx}]", py_k, expected_v, actual_v, mismatch_msg=f"got {actual_canon!r} != {expected_v!r}", step="readback")
+                            except Exception as ex:
+                                collector.record_failure(asset_name, f"fields[{idx}]", py_k, expected_v, None, error_ex=ex, step="readback")
+            except Exception as ex:
+                collector.record_failure(asset_name, "fields", "set_editor_property", "field instances", None, error_ex=ex, step="set_editor_property")
+
+            total_prop_count = verified_struct_count + 7
+            asset_fails = collector.failure_count_for_asset(asset_name)
+            if asset_fails == 0:
+                print(f"[DRAFT_APPLY] Initialized & verified all {total_prop_count} typed properties on draft asset: '{asset_name}'")
+            else:
+                print(f"[DRAFT_APPLY] Draft asset '{asset_name}': {total_prop_count} properties set, {asset_fails} failed")
+
+        if collector.has_failures:
+            collector.print_summary_table()
+            print(f"\n[DRAFT_APPLY] FATAL: {len(collector.failures)} property failure(s) detected during in-memory authoring.")
+            report.success = False
+            return False
 
         if not save_requested:
             print("\n[DRAFT_APPLY] SUCCESS: In-memory asset creation and complete readback verified.")
@@ -763,6 +994,13 @@ def main():
         action="store_true",
         help="Save opt-in flag. MUST be combined with --apply. Saves output packages."
     )
+    parser.add_argument(
+        "--only",
+        action="append",
+        type=str,
+        default=[],
+        help="Optional repeatable asset name selector (e.g. --only DA_Player_Hero_Draft_V2). Unknown names raise error."
+    )
 
     args = parser.parse_args()
 
@@ -776,7 +1014,7 @@ def main():
         sys.exit(1)
 
     # 1. Offline Plan Generation & Structural Validation
-    plan_ok, plan, errors = generate_offline_plan(args.input_json)
+    plan_ok, plan, errors = generate_offline_plan(args.input_json, only_assets=args.only if args.only else None)
     if not plan_ok:
         print("\n[ERROR] Draft Profile Plan Validation Failed:")
         for e in errors:

@@ -1,0 +1,15 @@
+{
+  "release": "C-317",
+  "utc": "2026-10-29T13:40:57.308309+00:00",
+  "probe_receipt_sha256": "e14edd8d8f0a527b476c636a93857d2244fb35b6550a3f5a8cc25939d12d052a",
+  "probe_expected_sha256": "5feae7df31e08f8ec4eea6768854ebf52c863aa0a1449ebfe55a52f774cad880",
+  "probe_actual_sha256": "5feae7df31e08f8ec4eea6768854ebf52c863aa0a1449ebfe55a52f774cad880",
+  "pre_state_sha256": "ec6d1b865070e7e194eba475afcff62e92ad56b303e1124d4d86e10a1e5823cf",
+  "current_engine_baseline_sha256": "73d9605c3404b69f6350c366bc07e873e3b061a6d7e7e9f66e6efd6981a4d595",
+  "binary": {
+    "Binaries/Win64/UnrealEditor-OneBossFight.dll": "82c2903228c084799453ebc87ce3d92b2b929b028827ea3ba251ff61a68ce72a",
+    "Binaries/Win64/OneBossFight.exe": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65"
+  },
+  "git_status_Content_Config_Source": " M Source/OneBossFight/Player/RPGBossHydrationPreparation.cpp\n M Source/OneBossFight/Player/RPGBossHydrationPreparation.h\n?? Source/OneBossFight/Tests/RPGBossActivationTests.cpp\n",
+  "passed": true
+}

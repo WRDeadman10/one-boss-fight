@@ -1,0 +1,82 @@
+TASK: A-199 Antigravity delivery per Lead Orders [C-286] and [C-287]:
+(1) Death 17th struct toolkit integration;
+(2) Re-derive WIRING_ANALYSIS Section 7 totals for SEVEN plans and synthesize Claude's 4 structural groups;
+(3) Relevant-asset audit under Content/ (DA_Boss_* assets and Fields analysis).
+
+STATUS: COMPLETED (Offline Toolkit REV10 & Wiring Analysis Revision 5 delivered).
+
+1. PART 1: DEATH 17TH STRUCT INTEGRATION (C-286 / C-281 / C-284)
+- Native Struct Specification:
+  - Added `NATIVE_DEATH_FIELDS` (12 fields: `DeathMode`, `DeathClip`, `DeathMontage`, `PackDeathAbilityClassName`, `PackDeathMontagesName`, `PackPollSeconds`, `PackEndTimeMultiplier`, `HoldAtSeconds`, `DyingSeconds`, `BlendInSeconds`, `MaxClipRestarts`, `bGuardPackDeath`).
+  - Added `DEATH_NATIVE_TO_PY`, `DEATH_PY_TO_NATIVE = _make_spec_mappings(NATIVE_DEATH_FIELDS)`.
+  - Registered `"death": (NATIVE_DEATH_FIELDS, DEATH_NATIVE_TO_PY, DEATH_PY_TO_NATIVE)` in `STRUCT_SPECS` as the 17th native struct (bringing total fields to 123 across 17 structs).
+- Domain Validator (`validate_death_domain`):
+  - Strictly mirrors C++ `ValidateDeath` in `Source/OneBossFight/Player/RPGBossDeathAdapters.cpp`:
+    (1) Five scalars finite first in header declaration order: `PackPollSeconds`, `PackEndTimeMultiplier`, `HoldAtSeconds`, `DyingSeconds`, `BlendInSeconds` (`InvalidDeath.NotFinite: Death.<Field>`).
+    (2) Mode check: `InvalidDeath.BadMode: Death.DeathMode` (`PackMontage` / 0 or `OwnClip` / 1).
+    (3) Float ranges: `PackPollSeconds` (> 0, <= 1e6), `PackEndTimeMultiplier` (>= 0 legal OFF, <= 1e6), `HoldAtSeconds` (> 0, <= 1e6), `DyingSeconds` (> 0, <= 1e6), `BlendInSeconds` (>= 0 legal, <= 1e6).
+    (4) `MaxClipRestarts`: >= 0 (`Negative`), <= 1,000,000 (`AboveCeiling`) per Lead amendment [C-284].
+    (5) FNames: `PackDeathAbilityClassName` and `PackDeathMontagesName` checked for not None/empty/case-insensitive 'none' (`Missing`) and whitespace/control characters (`Malformed`).
+    (6) Soft paths: `DeathClip` and `DeathMontage` required and structurally well-formed in BOTH modes (`Missing`, `Malformed`).
+- Companion Scripts Updated:
+  - `diff_against_cpp.py`: Mapped `"Death": "validate_death_domain"` and added `RPGBossCloseClipSwapAdapters.cpp` + `RPGBossDeathAdapters.cpp` to `DEFAULT_ADAPTER_REL_PATHS`. Verified all 7 adapters report OK with 126/126 checks matching in exact C++ source order (Bleed 13, LowSweep 15, Shockwave 20, HealPunish 33, Look 9, CloseClipSwap 10, Death 26).
+  - `draft_boss_profiles.py`: Updated `allowed_top_keys` (22 keys -> 23 keys with `"death"`), added validation block `_validate_dict_section("death", ...)`, and readback verification of all 22 typed properties (`DA_Boss_EmberWarden_Draft`).
+  - `examples/boss_draft_profiles.json`: Populated canonical `"death"` defaults on both draft profiles.
+  - `inspect_authored_assets.py`: Added `death` property extraction for offline inspection.
+  - Baselines preserved: `AuthoringToolkit/original_A198/` (9 files) and `BuildAuthoringHelper/original_A198/` (2 files) staged with self-receipts.
+  - Refreshed input pins in `evidence_sha256.txt` for `RPGEncounterBinding.h` (`58858370...`, 25,087 bytes) and `RPGEncounterBinding.cpp` (`a6ffc47c...`, 18,757 bytes) matching accepted DD25 source.
+  - Unit Tests: 180/180 tests PASS in 0.365s (`TestDeathPolicyDomain` 20 new tests).
+
+2. PART 2: 7-PLAN WIRING ANALYSIS RE-DERIVATION & CLAUDE 4-GROUP SYNTHESIS (C-287)
+- Delivered Revision 5 of `Docs/BossCombatReview/Execution/Antigravity/Wiring/WIRING_ANALYSIS.md` (hash: `3b27d8e2a8ceb81319151a9f751dc5a6c594aa13c83841d8906e75ab0b3a9aa1`, 117,019 bytes).
+- Staged Revision 4 baseline byte-for-byte under `original_A198/` (`24e7845e163367c697a2b3a559514ad4f8fc8c737d2b853bf8c05c445e56b799`, 106,529 bytes) with self-receipt.
+- Re-derived Section 7 Totals for SEVEN Plans:
+  - Plans per boss: 5 -> 12 (+7 plans in DD order: Bleed, LowSweep, Shockwave, HealPunish, Look, CloseClipSwap, Death).
+  - Class leases per boss: 5 -> 12.
+  - Components per two-boss batch: 10 -> 24.
+  - Manifest path union: 51 -> 110 (+59 new paths: 7 Bleed + 8 LowSweep + 8 Shockwave + 14 HealPunish + 5 Look + 5 CloseClipSwap + 12 Death).
+  - `ManagedCoreConsumerClasses`: 6 -> 13 classes.
+  - Teardown partitions: 9 + 1 -> 23 + 1 (24 components total).
+  - Added components arithmetic: +5 -> +12 per boss (and +10 -> +24 for two-boss batch).
+- Synthesized Claude's 4 Structural Groups in Section 7.6:
+  - Group 1 (Per-Index Structure Checks [0]..[4] -> [0]..[11]): `RPGBossHydrationPreflightTests.cpp:381-385, :401` and `RPGBossProductionPreflightTests.cpp:524-528` extended to check all 12 indices with the 7 new adapter plans.
+  - Group 2 (Loops Running to Literal 5 -> 12): `RPGBossHydrationPreflightTests.cpp:411, :1044, :1088` loop bounds updated from `Index < 5` to `Index < 12`, with `:1056` distinct counts expanding from 5 to 12.
+  - Group 3 (Blocker Collision Assertions Extending to [3..11]): `RPGBossWorldPreparationTests.cpp:777` and `RPGBossProductionPreparationTests.cpp:994` extended to verify all 9 subsequent components `Expected[3..11].Name` are unallocated (nullptr).
+  - Group 4 (Allocation / Batch Sequence Checks):
+    - `RPGBossHydrationPreparationTests.cpp:618`: Re-derived 48-step fault-injection table for 24-component batch (Boss1 alloc 1..12, Boss2 alloc 13..24, Boss1 cfg 25..36, Boss2 cfg 37..48):
+      `const int32 Ordinals[] = {1, 6, 12, 13, 18, 24, 25, 30, 36, 37, 42, 48};` (12 sampled points preserving exact first/mid/last step coverage).
+    - `RPGBossWorldInputCompilerTests.cpp:633-634`: Confirmed literal 9 in boss rows is `int32 Animations` tracking `BossAnimationPaths().Num()` (the 9 candidate animation soft paths in DormantWake, PhaseDependency, StaggerProfile). It counts animation leases, not component plans, and remains invariant at 9 unless animations are added to the helper.
+
+3. PART 3: RELEVANT-ASSET AUDIT (CONTENT DEFINITION ASSETS)
+- Complete recursive search across `Content/` confirmed: **ZERO** authored production boss definition assets (`DA_Boss_*`) exist on disk.
+- Current DataAsset inventory under `Content/OneBossFight/Data/` contains only catalog, build definitions, weapon definitions, ABI test fixtures, and scratch route info; no `URPGBossDefinition` assets exist.
+- All 7 hydration suites use transient in-memory definitions created via `NewObject<URPGBossDefinition>()` populated directly from test fixtures (`AllRequiredPaths`).
+- **Stop Condition (a) is SATISFIED:** Wiring in DD26 will NOT fail any disk assets because no authored boss definition assets exist today.
+- Future authoring requirement (KI advisory): When `DA_Boss_Sevarog` (or similar) is created on disk, its `Fields` array must carry all 110 paths (51 base + 59 typed) to pass `CompileParticipant`.
+- Offline inspector qualification: `inspect_authored_assets.py` fails closed offline as designed; Codex can run it in editor Python when disk assets are authored.
+
+VALIDATION:
+- Deliverables & Receipts:
+  - `WIRING_ANALYSIS.md` (Revision 5, hash: `3b27d8e2a8ceb81319151a9f751dc5a6c594aa13c83841d8906e75ab0b3a9aa1`, 117,019 bytes).
+  - `Wiring/evidence_sha256.txt`: 1/1 verified (`3b27d8e2...`).
+  - `Wiring/original_A198/evidence_sha256.txt`: 3/3 verified (`24e7845e...`, 106,529 bytes).
+  - `AuthoringToolkit/evidence_sha256.txt`: 21/21 verified (Binding inputs refreshed).
+  - `AuthoringToolkit/original_A198/evidence_sha256.txt`: 9/9 verified.
+  - `BuildAuthoringHelper/evidence_sha256.txt`: 13/13 verified (Binding inputs refreshed).
+  - `BuildAuthoringHelper/original_A198/evidence_sha256.txt`: 2/2 verified.
+  - `NativeDerivation/evidence_sha256.txt`: 10/10 verified.
+  - `Wiring/original_A195/`, `A196/`, `A197/`: all verified.
+- C++ / Python Validator Parity:
+  - `diff_against_cpp.py --report`: All 7 adapters OK, 126/126 checks verified in exact source order (`diff_report.txt`).
+- Unit Test Suite:
+  - `python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit` -> 180/180 tests PASS in 0.365s (`test_run_output.txt`).
+- Hygiene:
+  - Byte-level CRLF scan: 223/223 files checked across active directories, 0 non-CRLF files, 0 bare LF, 0 bare CR, 0 `__pycache__`.
+  - Zero Unreal Engine processes, zero Source edits, zero asset writes, zero git operations.
+- Documentation:
+  - `Documentation/TASKS.md`, `Documentation/DECISIONS.md`, and `Documentation/TEST_PLAN.md` (`BUILD-42-AG`) updated.
+
+NEXT ACTION:
+- Order A-199 completed.
+- Hand off to Lead Claude and Codex for DD26 implementation.
+- Stand ready for lead review and further instructions.

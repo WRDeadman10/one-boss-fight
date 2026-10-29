@@ -1,0 +1,22 @@
+{
+  "release": "C-307",
+  "verdict": "Measured read-only reflection diagnostic; lead review pending",
+  "editor_exit": 0,
+  "error_severity": 0,
+  "warning_severity": 17,
+  "summary": [
+    "[PROBE] SUMMARY missing=2 present=53"
+  ],
+  "probe_lines": 1666,
+  "instance_lines": 123,
+  "instance_property_reads_ok": 123,
+  "instance_errors": 0,
+  "successful_structs": 17,
+  "float_value_lines": 57,
+  "instance_type_lines": 3,
+  "cdo_lines": 22,
+  "outside_saved_drift": {},
+  "post_git_status_Content_Config_Source": "",
+  "processes_before": [],
+  "processes_after": []
+}

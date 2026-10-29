@@ -1,0 +1,100 @@
+TASK: AG-CONTENT04 authoring toolkit implementation review corrections (A178 -> A179).
+STATUS: All six review findings from [X-283] / A178_TOOLKIT_IMPLEMENTATION_REVIEW.md resolved with exact native C++ reflection parity. 40/40 toolkit unit tests PASS (exit 0). Independent Codex probe_a178.py and test_native_profile_contract.py (8/8) both PASS with zero omitted fields and zero unhandled drift.
+
+PRESERVED ARCHIVES:
+- BuildAuthoringHelper/original_A178/ (author_custom_build.py, README.md, evidence_sha256.txt)
+- AuthoringToolkit/original_A178/ (all 8 toolkit files preserved byte-for-byte before edits)
+
+RESOLVED DEFECTS & EXACT NATIVE CONTRACT IMPLEMENTATIONS:
+1. Exact Native Normalization Parity (authoring_core.py):
+   - Aligned with UE5.5 String.cpp.inl:971-974 TrimQuotesInline: trims at most ONE leading and ONE trailing double quote (").
+   - Test vector '""off""' yields '"off"' (exact parity with local UE source; was 'off').
+   - Single quotes (') preserved; ASCII lowercase conversion scope explicitly documented.
+2. Exact Pinned 3-Build Legacy Compatibility Contract (authoring_core.py):
+   - Aligned with RPGBuildRules.h:50-57 table and RPGCombatCatalog.cpp:158-172:
+     * Slot 0: BuildId = "Starter", WeaponId = "Starter" (matches L.Name; was incorrectly "Sword"), ExpectedStyle = "SwordCombatStyle".
+     * Slot 1: BuildId = "Strength", WeaponId = "Strength", ExpectedStyle = "ClaymoreCombatStyle".
+     * Slot 2: BuildId = "Dex", WeaponId = "Dex", ExpectedStyle = "DualSwordCombatStyle" (singular "Sword"; was "DualSwordsCombatStyle").
+   - ag_validation against independently derived RPGBuildRules table rows now returns (True, []).
+3. Immutable Deep Source Snapshotting (authoring_core.py):
+   - SourceInventorySnapshot uses copy.deepcopy upon construction; mutating source builds or aliases after snapshotting does not alter the baseline.
+   - Deep comparison covers catalog path, schema version, weapons, builds, package set membership, and dirty flags.
+   - Missing or newly appeared packages fail closed immediately.
+   - Regression unit test added: nested_source_alias_drift_missed is now FALSE.
+4. Exact Native Reflected Schema Alignment (draft_boss_profiles.py & boss_draft_profiles.json):
+   - Schema strictly reflects native URPGBossDefinition and nested USTRUCTs from RPGEncounterBinding.h / native_profile_schema.json:
+     * Stats: MaxHealth, MaxPosture, PostureRegenDelay, PostureRegenRate (finite floats >= 0.0; rejected BasePoise/recovery fields).
+     * EncounterPolicy: GateRadius (float), bResetOnPlayerRespawn (bool; rejected cutscene/target booleans).
+     * StaggerPolicy: StaggerSeconds, FreezeAtPosition, CriticalMultiplier, RiposteRange, RiposteConeDegrees, RiposteFacingDegrees, RiposteArmSeconds, RipostePlayerStartGap, RiposteAlignSeconds, RiposteImpactSeconds, RiposteBaseDamage, CooldownSeconds, GetUpRate, bHoldPostureAtZero.
+     * PhaseFlow: TransitionSeconds, bUseRoarClip, bPausePostureInTransition, bLockLeapUntilPhaseTwo, AttackAbilityPrefix, LeapAbilityTag.
+     * Fireball: bFireballEnabled, FireballAbility, FireballCooldown (FVector2D 2-float array), FireballMinRange, FireballMaxRange.
+     * PhaseDependencies: RoarClip, TransitionMontage, ImmunityEffect.
+     * StaggerProfile: bUseClips, bUseRiposteClips, bCriticalOnEveryHit, HitStunAbilityClassName, FallMontage, GetUpMontage, FallClip, DownClip, RipostePlayerClip, RiposteBossClip, ImmunityEffect.
+     * DormantWake: DormantClip, WakeClip.
+     * Phases: PhaseId, EntryHealthFraction (domain 0.0 <= x <= 1.0; 0.0 and 1.0 legal boundaries), SpeedMultiplier, RateMultiplier, AttackMultiplier.
+     * Fields: Explicit empty array [] for draft status (no fabricated 51-row manifest; truthful provenance preserved).
+   - Replaced non-existent test animation paths with existing pinned disk assets:
+     * Skeleton: /Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin
+     * Animations: /Game/OneBossFight/Boss01/Animations/AN_Boss01_A1_QuickSlash.AN_Boss01_A1_QuickSlash and AN_Boss01_A3a_Combo1.AN_Boss01_A3a_Combo1
+     * Pinned clips: AN_Boss01_PhaseRoar, AN_Boss01_StaggerFall, AN_Boss01_StaggerDown, AN_Boss01_DormantIdle, AN_Boss01_Wake, AN_Riposte_Boss_Reaction, AN_Riposte_Player_Front.
+   - Unknown and invented fields are rejected fail-closed; nan_phase_damage_accepted = false, invented_policy_invalid_type_accepted = false.
+5. Complete Staged Apply Readback Verification (draft_boss_profiles.py):
+   - execute_draft_apply assigns and reads back ALL 15 typed properties:
+     schema, definition_id, presentation_id, skeleton, animations, stats, encounter_policy, stagger_policy, phase_flow, fireball, phase_dependencies, stagger_profile, dormant_wake, phases, fields.
+   - Recording fake probe verifies: returned_success = true, typed_fields_omitted = [].
+6. Complete Typed Inspector & Safety Guard (inspect_authored_assets.py):
+   - Added Editor Environment and non-PIE guard (verify_editor_environment).
+   - Added package dirty state snapshot comparison before and after inspection to guarantee zero dirtiness.
+   - Exports full reflected properties for all asset classes, including all 10 boss sub-structs, phases array, and fields manifest.
+   - Missing or unloadable packages fail closed; CLI returns non-zero exit code (1) on any inspection error or drift.
+
+OFFLINE TEST SUITE VERIFICATION:
+- test_authoring_core.py: 40/40 tests PASS (exit code 0).
+  * test_run_output.txt updated and verified.
+- Codex probe_a178.py: PASS with quote_parity matching '"off"', nested_source_alias_drift_missed = false, nan_phase_damage_accepted = false, invented_policy_invalid_type_accepted = false, ag_validation = [true, []], typed_fields_omitted = [].
+- Codex test_native_profile_contract.py: 8/8 tests PASS.
+
+LINE ENDING VERIFICATION:
+- All modified files enforce strictly pure CRLF line endings (0 bare LF, 0 bare CR verified by byte scanner).
+
+EVIDENCE RECEIPTS (AuthoringToolkit/evidence_sha256.txt - 19 entries):
+fe68fda3cb420921c0a5bcb2b71fda3770df3d5adff551d7beb4a83b5f4e8a8f     23149  Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/authoring_core.py
+d12e1519be960576fd00992674be076ecef5af6a7470c3899b27902f97dc8b8a     26555  Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/draft_boss_profiles.py
+4e869548f50fcbbc661f45b58dd7e18ee1b938ab4f08a32619f2e0bb3162d56a     20210  Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/inspect_authored_assets.py
+fbb62b7bfeddb92e53ef5435c9d53c7b859b00981727caefda1ac30f309e68c8     23816  Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_authoring_core.py
+32abbe9082862110539096848c3fc62f82d07d6c15a7612361bc55f6bf96a000      4132  Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_run_output.txt
+f8d3ae595792aea6373f5d11062389ea7ed081d214dcaa4f7041673e5e33c23d     11896  Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json
+171ea43e3c7f31d67ca6ee47303cf6022bc4910059ab10dfdd7a14acd03dbbee     12843  Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/README.md
+f6ebe901675291fe4965270e0c5428ed3b81b9531ca2a8c2c21c0564d50de9b8     37708  Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/author_custom_build.py
+e7d5296833cfa5bec4101e608a98ab336a5b8c7a5c476e0d3b17eae57279dbb5      7427  Source/OneBossFight/Player/RPGCombatCatalog.h
+f6f71036804f60f0e4c8b3cf455f2a04a7bc4cf379760334903a2d9d613de59d     23675  Source/OneBossFight/Player/RPGCombatCatalog.cpp
+ce0a7da73e833a22aef8ad69e3ed42984b39b04131997d78f055f4a4070d9c92     17193  Source/OneBossFight/Player/RPGEncounterBinding.h
+c7255051e5f6be46db5b5caa0351cf45e50c3c07c4c0a8085fd3d71b633df828     17034  Source/OneBossFight/Player/RPGEncounterBinding.cpp
+be49c7f4f3551fa8a45eb33d067711bb5bed526f90fd2cf7f4aa39cfd232b315      2390  Content/OneBossFight/Data/Catalog/DA_CombatCatalog.uasset
+e3c0d6c86aca343fac8307d1b95209a0ce3a693920493ee5211e6fa6bce80682      2303  Content/OneBossFight/Data/Catalog/DA_Build_Starter.uasset
+24b6ad77dbaf8db5f64db5edad035471d2e8ea05487d02864c51e8e27da02033      2357  Content/OneBossFight/Data/Catalog/DA_Build_Strength.uasset
+8ec63be096a1f43de82baceb30cb36a373bf018f59812db06184220c0c4d520b      2308  Content/OneBossFight/Data/Catalog/DA_Build_Dex.uasset
+b7702e2af28db57442dbe9ca20195ac23c02bc57941e760d57280e2bcb68d3c2      3841  Content/OneBossFight/Data/Catalog/DA_Weapon_Sword.uasset
+d203bb0555b1e6239218fd180611a6fc14017544c7ac55ace0086b308f35da8c      3657  Content/OneBossFight/Data/Catalog/DA_Weapon_Claymore.uasset
+31680000e80764945d9483a3286f0075fd839244797ce7f2277b9f34b3770128      3915  Content/OneBossFight/Data/Catalog/DA_Weapon_DualSwords.uasset
+
+EVIDENCE RECEIPTS (BuildAuthoringHelper/evidence_sha256.txt - 13 entries):
+f6ebe901675291fe4965270e0c5428ed3b81b9531ca2a8c2c21c0564d50de9b8     37708  Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/author_custom_build.py
+46a409604ff4ee0c9ddea179ec51a1835d7f8a6cf2089ea0f07f360900881438      7647  Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/README.md
+e7d5296833cfa5bec4101e608a98ab336a5b8c7a5c476e0d3b17eae57279dbb5      7427  Source/OneBossFight/Player/RPGCombatCatalog.h
+f6f71036804f60f0e4c8b3cf455f2a04a7bc4cf379760334903a2d9d613de59d     23675  Source/OneBossFight/Player/RPGCombatCatalog.cpp
+ce0a7da73e833a22aef8ad69e3ed42984b39b04131997d78f055f4a4070d9c92     17193  Source/OneBossFight/Player/RPGEncounterBinding.h
+c7255051e5f6be46db5b5caa0351cf45e50c3c07c4c0a8085fd3d71b633df828     17034  Source/OneBossFight/Player/RPGEncounterBinding.cpp
+be49c7f4f3551fa8a45eb33d067711bb5bed526f90fd2cf7f4aa39cfd232b315      2390  Content/OneBossFight/Data/Catalog/DA_CombatCatalog.uasset
+e3c0d6c86aca343fac8307d1b95209a0ce3a693920493ee5211e6fa6bce80682      2303  Content/OneBossFight/Data/Catalog/DA_Build_Starter.uasset
+24b6ad77dbaf8db5f64db5edad035471d2e8ea05487d02864c51e8e27da02033      2357  Content/OneBossFight/Data/Catalog/DA_Build_Strength.uasset
+8ec63be096a1f43de82baceb30cb36a373bf018f59812db06184220c0c4d520b      2308  Content/OneBossFight/Data/Catalog/DA_Build_Dex.uasset
+b7702e2af28db57442dbe9ca20195ac23c02bc57941e760d57280e2bcb68d3c2      3841  Content/OneBossFight/Data/Catalog/DA_Weapon_Sword.uasset
+d203bb0555b1e6239218fd180611a6fc14017544c7ac55ace0086b308f35da8c      3657  Content/OneBossFight/Data/Catalog/DA_Weapon_Claymore.uasset
+31680000e80764945d9483a3286f0075fd839244797ce7f2277b9f34b3770128      3915  Content/OneBossFight/Data/Catalog/DA_Weapon_DualSwords.uasset
+
+BOUNDARIES MAINTAINED:
+- Pure offline implementation; zero engine, editor, cook, or automation runs.
+- Zero asset creation, mutation, or deletion on disk.
+- Zero git commits or pushes.
+- Pure CRLF line endings on all modified files.

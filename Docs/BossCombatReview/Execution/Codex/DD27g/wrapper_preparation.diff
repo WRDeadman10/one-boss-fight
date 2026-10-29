@@ -1,0 +1,87 @@
+--- DD27f/preflight.py
++++ DD27g/preflight.py
+@@ -2,17 +2,22 @@
+ import hashlib,json,subprocess,sys,datetime
+ R=Path(__file__).resolve().parent;ROOT=R.parents[4]
+ def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
++release_path=R/'release_to_run.json'
++assert release_path.exists(),'C325 prepares only: explicit Claude acceptance/run release of A217 is REQUIRED; STOP BEFORE LAUNCH'
++release=json.loads(release_path.read_text(encoding='utf-8'))
++assert release['task']=='DD27g' and release['mode']=='--classrefs' and release['operator']=='Codex','Wrong release scope'
+ posted=R.parent/'DD29/run_2026-10-29/report_posted.json'
+ marker=json.loads(posted.read_text(encoding='utf-8-sig'))
+ mail=(ROOT/'Documentation/TEAM_MAILBOX.md').read_text(encoding='utf-8',errors='replace')
+ assert marker['release']=='C-319' and '### ['+marker['message_id']+']' in mail,'DD29 report must be posted BEFORE DD27f'
++assert '### ['+release['message_id']+'] Claude ->' in mail,'Recorded run-release message absent'
+ baseline=R.parent/'CURRENT_ENGINE_BASELINE.json';base=json.loads(baseline.read_text(encoding='utf-8'))
+ assert base['source_count']==216 and base['release']=='C-319 item6','Wrong engine baseline'
+ for kind in ('source','binary'):assert sha(ROOT/base[kind+'_manifest'])==base[kind+'_manifest_sha256'],'DD29 baseline manifest drift'
+ for rel,want in base['binary'].items():assert sha(ROOT/rel)==want,'DD29 binary drift; STOP'
+ receipt=ROOT/'Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/evidence_sha256.txt'
+ pins=[]
+-for name in ('draft_boss_profiles.py','authoring_core.py','inspect_authored_assets.py','examples/boss_draft_profiles.json'):
++for name in ('probe_unreal_api.py','draft_boss_profiles.py','authoring_core.py','inspect_authored_assets.py','examples/boss_draft_profiles.json'):
+     p=receipt.parent/name;rel=p.relative_to(ROOT).as_posix()
+     rows=[s for s in receipt.read_text(encoding='utf-8').splitlines() if s.split()[-1].replace('\\','/')==rel]
+     assert len(rows)==1,f'Receipt entry missing/ambiguous {name}'
+@@ -23,6 +28,6 @@
+ state=json.loads((R/'pre_state.json').read_text());assert len(state['content'])==11752 and sum('sha256' in x for x in state['content'])==16
+ status=subprocess.check_output(['git','status','--short','--','Content','Config','Source'],cwd=ROOT,text=True)
+ assert not subprocess.check_output(['git','status','--short','--','Content','Config'],cwd=ROOT,text=True).strip(),'Tracked Content/Config drift'
+-v={'release':'C-320','utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'DD29_report_id':marker['message_id'],'receipt_sha256':sha(receipt),'pins':pins,'binary':base['binary'],'baseline_sha256':sha(baseline),'pre_state_sha256':sha(R/'pre_state.json'),'git_status_Content_Config_Source':status,'passed':True}
++v={'release':release['message_id'],'preparation_order':'C-325','utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'DD29_report_id':marker['message_id'],'receipt_sha256':sha(receipt),'pins':pins,'binary':base['binary'],'baseline_sha256':sha(baseline),'pre_state_sha256':sha(R/'pre_state.json'),'git_status_Content_Config_Source':status,'passed':True}
+ (R/'preflight_verified.json').write_text(json.dumps(v,indent=2)+'\n',encoding='utf-8')
+-print('C320 fresh216Source/DD29binary/four receipt pins/content/process checks passed AFTER posted DD29 report')
++print('DD27g fresh216Source/DD29binary/five receipt pins/content/process checks passed AFTER explicit probe run release')
+--- DD27f/engine_lock.py
++++ DD27g/engine_lock.py
+@@ -2,14 +2,14 @@
+ import json,sys,datetime,os
+ R=Path(__file__).resolve().parent;lock=R.parents[1]/'ENGINE_LOCK.json';mode=sys.argv[1]
+ if mode=='acquire':
+-    record={'agent':'Codex','party':'X','task':'C-320/DD27f','command_id':'DD27f.apply.no-save','start_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'policy':'C-321'}
++    record={'agent':'Codex','party':'X','task':'C-325/DD27g','command_id':'DD27g.probe.classrefs','start_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'policy':'C-321'}
+     try:
+         with lock.open('x',encoding='utf-8') as f:json.dump(record,f,indent=2);f.write('\n');f.flush();os.fsync(f.fileno())
+     except FileExistsError:
+         print('STOP existing engine lock: '+lock.read_text(encoding='utf-8',errors='replace'));raise SystemExit(2)
+     (R/'engine_lock_record.json').write_text(json.dumps(record,indent=2)+'\n',encoding='utf-8')
+-    print('C321 exclusive DD27f engine lock acquired')
++    print('C321 exclusive DD27g engine lock acquired')
+ elif mode=='release':
+-    v=json.loads(lock.read_text(encoding='utf-8'));assert v['agent']=='Codex' and v['task']=='C-320/DD27f' and v['command_id']=='DD27f.apply.no-save'
+-    lock.unlink();print('C321 own DD27f lock released after evidence frozen / STOP')
++    v=json.loads(lock.read_text(encoding='utf-8'));assert v['agent']=='Codex' and v['task']=='C-325/DD27g' and v['command_id']=='DD27g.probe.classrefs'
++    lock.unlink();print('C321 own DD27g lock released after evidence frozen / STOP')
+ else:raise SystemExit('Unknown mode')
+--- DD27f/run_once.ps1
++++ DD27g/run_once.ps1
+@@ -1,7 +1,7 @@
+ $ErrorActionPreference='Stop'
+ $root='C:\UnrealProject\OneBossFight'
+-$r="$root\Docs\BossCombatReview\Execution\Codex\DD27f"
+-if(Test-Path "$r\command.json"){throw 'DD27f already attempted; STOP'}
++$r="$root\Docs\BossCombatReview\Execution\Codex\DD27g"
++if(Test-Path "$r\command.json"){throw 'DD27g already attempted; STOP'}
+ python -I "$r\preflight.py"
+ if($LASTEXITCODE -ne 0){throw 'Preflight failed; STOP BEFORE LAUNCH'}
+ if(!(Test-Path "$r\preflight_verified.json")){throw 'Missing preflight; STOP'}
+@@ -15,14 +15,13 @@
+ python -I "$r\engine_lock.py" acquire
+ if($LASTEXITCODE -ne 0){throw 'C321 engine lock unavailable; STOP BEFORE LAUNCH'}
+ $engine='C:\Program Files\Epic Games\UE_5.5\Engine\Binaries\Win64\UnrealEditor-Cmd.exe'
+-$script='C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/draft_boss_profiles.py'
+-$inputFile='C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json'
+-$argsList=@("$root\OneBossFight.uproject","-ExecutePythonScript=`"$script --input-json $inputFile --apply`"",'-unattended','-nullrhi','-nosound','-nosplash',"-abslog=$r\editor_raw.log")
+-@{executable=$engine;arguments=$argsList;release='C-320';attempt=1;save_flag=$false} | ConvertTo-Json -Depth 5 | Set-Content "$r\command.json"
++$script='C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/probe_unreal_api.py'
++$argsList=@("$root\OneBossFight.uproject","-ExecutePythonScript=`"$script --classrefs`"",'-unattended','-nullrhi','-nosound','-nosplash',"-abslog=$r\editor_raw.log")
++@{executable=$engine;arguments=$argsList;release=$v.release;preparation_order='C-325';attempt=1;save_flag=$false} | ConvertTo-Json -Depth 5 | Set-Content "$r\command.json"
+ $env:PYTHONDONTWRITEBYTECODE='1'
+ $start=Get-Date
+ $p=Start-Process -FilePath $engine -ArgumentList $argsList -PassThru -Wait -NoNewWindow -RedirectStandardOutput "$r\stdout.log" -RedirectStandardError "$r\stderr.log"
+ $end=Get-Date
+ @{start=$start.ToString('o');end=$end.ToString('o');seconds=($end-$start).TotalSeconds;exit_code=$p.ExitCode;process_id=$p.Id} | ConvertTo-Json | Set-Content "$r\job_record.json"
+-Write-Output "DD27f_EXIT=$($p.ExitCode)"
++Write-Output "DD27g_EXIT=$($p.ExitCode)"
+ exit $p.ExitCode

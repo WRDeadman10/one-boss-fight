@@ -1,0 +1,7 @@
+{
+  "message_id": "C-338",
+  "task": "DD27i",
+  "mode": "--apply --save",
+  "operator": "Codex",
+  "scope": "ONE launch; exactly three new draft files, no overwrite; stop/preserve/report mismatch"
+}

@@ -1,0 +1,14 @@
+{
+    "attempt":  1,
+    "save_flag":  false,
+    "arguments":  [
+                      "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+                      "-ExecutePythonScript=\"C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/draft_boss_profiles.py --input-json C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json --apply\"",
+                      "-unattended",
+                      "-nullrhi",
+                      "-nosound",
+                      "-nosplash",
+                      "-abslog=C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Codex\\DD27\\editor_raw.log"
+                  ],
+    "executable":  "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Binaries\\Win64\\UnrealEditor-Cmd.exe"
+}

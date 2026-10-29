@@ -1,0 +1,37 @@
+{
+  "preparation_order": "C-328",
+  "release": "C-331",
+  "utc": "2026-10-29T15:47:13.832944+00:00",
+  "DD29_report_id": "X-328",
+  "receipt_sha256": "13416f5204cc4c21731ded31d516b2ce1e1925f91e059b66467afe441de239a6",
+  "pins": [
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/draft_boss_profiles.py",
+      "expected_sha256": "857f3ba606d8fd16b3b8c87106b8806c9cfd1fa61597f57a3144d3e07e644ff9",
+      "actual_sha256": "857f3ba606d8fd16b3b8c87106b8806c9cfd1fa61597f57a3144d3e07e644ff9"
+    },
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/authoring_core.py",
+      "expected_sha256": "74101436cc433863dc1829a0528c789ea7490fbda7d25aa29d6f36c4eb458cf1",
+      "actual_sha256": "74101436cc433863dc1829a0528c789ea7490fbda7d25aa29d6f36c4eb458cf1"
+    },
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/inspect_authored_assets.py",
+      "expected_sha256": "b3330da60b2098803a5a8a632d2ade144f669f0a40862ef8a3e306659de3fc47",
+      "actual_sha256": "b3330da60b2098803a5a8a632d2ade144f669f0a40862ef8a3e306659de3fc47"
+    },
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json",
+      "expected_sha256": "ee04c8b7175642a4fdf27ccb430af6e35e15092254b36064d5b3a4a0a11a8ed4",
+      "actual_sha256": "ee04c8b7175642a4fdf27ccb430af6e35e15092254b36064d5b3a4a0a11a8ed4"
+    }
+  ],
+  "binary": {
+    "Binaries/Win64/UnrealEditor-OneBossFight.dll": "4e3580fde866e5cdb4c46a8e794a1b4b321e111fdc6b92e37f0dd67e42690466",
+    "Binaries/Win64/OneBossFight.exe": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65"
+  },
+  "baseline_sha256": "35f421b74028c30117cd6ae50efe2c349048f11810b4afca5a48165990b0475b",
+  "pre_state_sha256": "d01ea233f534fe5762f46beea5938d908263e21b3b5079cadc8f34ce651618ce",
+  "git_status_Content_Config_Source": "",
+  "passed": true
+}

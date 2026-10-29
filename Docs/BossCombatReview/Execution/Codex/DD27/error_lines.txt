@@ -1,0 +1,7 @@
+1265: [2026.10.29-11.25.34:623][  2]LogPython: Error: Traceback (most recent call last):
+1266: [2026.10.29-11.25.34:623][  2]LogPython: Error:   File "C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/draft_boss_profiles.py", line 808, in <module>
+1267: [2026.10.29-11.25.34:623][  2]LogPython: Error:     main()
+1268: [2026.10.29-11.25.34:623][  2]LogPython: Error:   File "C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/draft_boss_profiles.py", line 804, in main
+1269: [2026.10.29-11.25.34:623][  2]LogPython: Error:     sys.exit(0 if success else 1)
+1270: [2026.10.29-11.25.34:623][  2]LogPython: Error: SystemExit: 1
+1271: [2026.10.29-11.25.34:623][  2]LogEditorPythonExecuter: Error: Python script executed with errors

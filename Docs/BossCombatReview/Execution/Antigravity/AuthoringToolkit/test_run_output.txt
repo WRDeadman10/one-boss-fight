@@ -1,12 +1,19 @@
-............................................................................................................................................................................................
+.....................................................................................................................................................................................................................................
 ----------------------------------------------------------------------
-Ran 188 tests in 0.613s
+Ran 229 tests in 1.009s
 
 OK
-
+[DRAFT_APPLY] FATAL: AssetTools is not available or missing create_asset
 [DRAFT_APPLY] FATAL: Missing required Unreal API: unreal.EditorAssetLibrary.does_asset_exist
 [DRAFT_APPLY] Creating draft asset at '/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft'...
+[DRAFT_APPLY] fields rows read back: 110 of 110 expected
 [DRAFT_APPLY] Initialized & verified all 22 typed properties on draft asset: 'DA_Boss_EmberWarden_Draft'
+
+[DRAFT_APPLY] SUCCESS: In-memory asset creation and complete readback verified.
+  NOTICE: --save flag was not provided. Output packages were NOT saved to disk.
+[DRAFT_APPLY] Creating draft asset at '/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V2'...
+[DRAFT_APPLY] fields rows read back: 4 of 4 expected
+[DRAFT_APPLY] Initialized & verified all 22 typed properties on draft asset: 'DA_Player_Hero_Draft_V2'
 
 [DRAFT_APPLY] SUCCESS: In-memory asset creation and complete readback verified.
   NOTICE: --save flag was not provided. Output packages were NOT saved to disk.

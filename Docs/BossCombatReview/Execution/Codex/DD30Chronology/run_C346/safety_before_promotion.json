@@ -1,0 +1,38 @@
+{
+  "release": "C-346",
+  "processes": [],
+  "source_count": 217,
+  "preimages": [
+    {
+      "path": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+      "sha256": "17bc29c9d9e033de98cf9956c8d0d8e8bd2f7516a80295d96b4c2ff7ef822834"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGBossEncounter.cpp",
+      "sha256": "dc149393f2fff1788ea22daf42db0b14f85ac36f58ad59c459b44ee94600c96d"
+    },
+    {
+      "path": "Source/OneBossFight/Player/RPGDodgeTiming.cpp",
+      "sha256": "e6a95113d14aeba1e58d8573f97d8409bcaeaa3c19d52e43526ed307165be737"
+    }
+  ],
+  "assets": [
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_AbyssalRevenant_Draft.uasset",
+      "size": 6101,
+      "sha256": "90ee817f380aac486cecfa86d474078af98005190da1d8f370a62762af975ac5"
+    },
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft.uasset",
+      "size": 79966,
+      "sha256": "ba05a8aa93fec66526c59bf12f51bb824103f67860bdee16efcdd5217d6a3e2b"
+    },
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft.uasset",
+      "size": 4552,
+      "sha256": "8d18711526b7a746e1bb95546db984708984fccbc6cda3546eea39cd72edc822"
+    }
+  ],
+  "head": "605c2dd81d4092e8f84aa7608651ed19d566423a",
+  "stage_receipt_sha256": "c0b7c8b90b4ba851686c8abdc10a6525f41fe087824b858b562646e621736c8a"
+}

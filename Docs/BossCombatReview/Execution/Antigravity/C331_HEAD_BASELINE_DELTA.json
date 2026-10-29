@@ -1,0 +1,20 @@
+{
+  "release": "C-331",
+  "old_head": "bc3fe6a49335f0a68bf5df9d895b8a46f6633aeb",
+  "expected_head": "605c2dd81d4092e8f84aa7608651ed19d566423a",
+  "changed_files": [
+    ".gitignore",
+    "Documentation/DECISIONS.md",
+    "Documentation/KNOWN_ISSUES.md",
+    "Documentation/TASKS.md",
+    "Documentation/TEST_PLAN.md",
+    "Source/OneBossFight/Player/RPGBossActivation.cpp",
+    "Source/OneBossFight/Player/RPGBossActivation.h",
+    "Source/OneBossFight/Player/RPGBossHydrationPreparation.cpp",
+    "Source/OneBossFight/Player/RPGBossHydrationPreparation.h",
+    "Source/OneBossFight/Tests/RPGBossActivationTests.cpp",
+    "Source/OneBossFight/Tests/RPGBossActivationWorldTests.cpp"
+  ],
+  "source_diff_HEAD_empty": true,
+  "scope": "HEAD-only delta; DD29 Source/binary manifests remain authoritative"
+}

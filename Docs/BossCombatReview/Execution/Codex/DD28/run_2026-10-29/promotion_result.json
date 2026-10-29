@@ -1,0 +1,12 @@
+{
+  "source_count": 213,
+  "changed": [
+    "Source/OneBossFight/Player/RPGBossHydrationPreparation.cpp",
+    "Source/OneBossFight/Player/RPGBossHydrationPreparation.h"
+  ],
+  "added": [
+    "Source/OneBossFight/Tests/RPGBossActivationTests.cpp"
+  ],
+  "prior_unchanged": 210,
+  "stage_live_equal": true
+}

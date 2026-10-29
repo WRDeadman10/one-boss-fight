@@ -1,0 +1,60 @@
+TASK: A-195 delivery: Boss component hydration & wiring pipeline analysis (C-278).
+STATUS: COMPLETED (offline read-only analysis delivered in WIRING_ANALYSIS.md + receipt, README digit note updated).
+
+SUMMARY:
+1. Current 5 Wired Components Pipeline Analysis:
+   - C++ Sources: `Source/OneBossFight/Player/RPGBossHydrationPreflight.cpp/.h`, `RPGBossWorldPreparation.cpp/.h`, `RPGBossPreparationRegistry.cpp/.h`, and `RPGEncounterBinding.cpp`.
+   - Plan List & Order: `BossCorePlanCount = 5` (`RPGBossHydrationPreflight.cpp:61`). `MakeBossCorePlans(SelectedPhaseId)` (`:65-74`) defines deterministic relative plan order: (1) Stagger (25 fields), (2) Phases (18 fields), (3) Encounter (3 fields), (4) DormantWake (2 fields), (5) Posture (3 fields).
+   - Plan Verification: `CheckPlans` (`:78-140`) verifies count, non-null unique classes, non-empty unique instance names, non-null callbacks, and non-empty non-duplicate required paths.
+   - Consumer Classes & Preexisting Guard: `ManagedCoreConsumerClasses` (`:143-146`) returns 6 classes (`URPGBossPhases`, `URPGBossEncounter`, `URPGBossPosture`, `URPGBossStagger`, `URPGBossDormantWake`, `URPGCombatParticipant`). `CompilePreflight` (`:289-297`) refuses actors already having any of these classes (`Preflight.PreexistingConsumer`).
+   - Required-Field Manifest: Mathematical union across the 5 plans is exactly 51 unique paths. Preflight checks every path exists in `Config->Fields` (`:386-402`), reporting `Preflight.MissingRequiredField`.
+   - Compiler (`CompileParticipantImpl` at `RPGEncounterBinding.cpp:30-136`): Validates stats and 12 component adapters; populates `FRPGParticipantConfig`. Distinguishes dev synthetic fixtures (`bSyntheticFixture`) from production synchronous skeleton/animation dependency loading. In preflight, synthetic configs are barred in shipping (`Preflight.SyntheticUnavailable` at `:334-336`); production configs check compiled skeleton compatibility against actor mesh (`:338-353`).
+   - World Preparation & Registry: `RPGBossWorldPreparation::PrepareWorldBatch` (`:138-196`) enforces game-thread execution and zero drift around input and preparation stages; aborts newly created components on drift. `FRPGBossPreparationRegistry::TryPrepareAndReserve` (`:415-566`) performs conflict pre-check on Encounter GUID and all member actors BEFORE allocating anything, returns serial-backed `FRPGPreparationLeaseToken`, and quarantines on failed cleanup.
+   - Test Assertions on Counts:
+     - `RPGBossHydrationPreflightTests.cpp`: `AllRequiredPaths` literal list (:76, 51 paths); asserts 5 plans and 5 class leases (`FRPGPreflightValidTest:376, :399`, `FRPGPreflightTargetsTest:831, :852`, `FRPGPreflightExpandedTest:1035, :1087`, `FRPGPreflightConsumersTest:1282`); asserts 51-path union (`:394, :1064`).
+     - `RPGBossHydrationPreparationTests.cpp`: asserts 10 components leased for 2-boss batch (`:330, :538, :778`).
+     - `RPGBossWorldPreparationTests.cpp`: asserts 10 components leased for 2-boss batch (`:557, :849, :861, :926`).
+
+2. Unwired Plans Integration Path (Bleed, LowSweep, Shockwave, HealPunish, Look):
+   - Unwired Specifications: Bleed (7 fields, `RPGBossBleedAdapters.cpp:331`), LowSweep (8 fields, `RPGBossLowSweepAdapters.cpp:241`), Shockwave (7 fields, `RPGBossShockwaveAdapters.cpp:241`), HealPunish (14 fields, `RPGBossHealPunishAdapters.cpp:240`), Look (5 fields, `RPGBossLookAdapters.cpp:244`).
+   - Exact Insertion Points: In `RPGBossHydrationPreflight.cpp`, increment `BossCorePlanCount` from 5 to 10; append factories in `MakeBossCorePlans`; add 5 classes to `ManagedCoreConsumerClasses` (6 to 11); add 5 cluster validation calls in `CompilePreflight`.
+   - Test Impacts: `Boss.Plans.Num()` becomes 10 (was 5); `AllRequiredPaths` union expands from 51 to 92 paths (+41 paths); 2-boss preparation owned component counts expand from 10 to 20.
+   - What Does NOT Change: `CompileParticipantImpl` in `RPGEncounterBinding.cpp` already validates all 5 structs and populates them into `FRPGParticipantConfig`; `RPGBossHydrationPreparation.cpp` allocation/configuration loops are generic over `Participant.Plans`; `RPGBossWorldPreparation` and `RPGBossPreparationRegistry` require zero code changes.
+
+3. Proven Code Hazards:
+   - Look Next-Tick Mesh Swap Race: `RPGBossLook.cpp:31` defers mesh application to next tick via `SetTimerForNextTick`. Socket queries in `RPGBossHealPunish.cpp:36` and bounds in `LowSweep.cpp:43` / `Shockwave.cpp:39` at BeginPlay will evaluate against the unswapped mesh.
+   - Tick Prerequisite: `RPGBossDormantWake.cpp:42` requires `URPGBossEncounter` to establish tick prerequisites and enter dormant state.
+   - Legacy AttackTracker Dependency: `LowSweep.cpp:30` and `Shockwave.cpp:34` rely on `URPGAttackTracker` (which is not in the plans and is created only by legacy attachment).
+   - Inactive Component Allocation: If plans are built unconditionally, actors receive allocated components for `LowSweep`, `Shockwave`, `HealPunish`, `Look` even when `bEnabled == false`.
+   - Legacy Suppression Mechanics: `RPGPlayerMovesSubsystem.cpp:159-250` (`AttachLegacyBossBundle`) attaches 18 legacy components using constructor defaults unless `Pawn->FindComponentByClass<T>()` finds an existing component. Preparation must occur strictly prior to `BeginPlay`.
+
+4. Unresolved Items (Inferences):
+   - Invocation site for future gameplay coordinator (no project code currently invokes preparation or registry).
+   - Component registration trigger (deferred spawn completion vs future manual registration).
+   - AttackTracker typed status.
+   - Variable plan sets for boss variants.
+   - Sequencing of DD24 (CloseClipSwap) and DD25 (Death) wiring.
+
+5. Hygiene & Receipts:
+   - Updated `AuthoringToolkit/README.md` with digit handling provenance note per C-278.
+   - Delivered `Docs/BossCombatReview/Execution/Antigravity/Wiring/WIRING_ANALYSIS.md` (34014 bytes, hash: `02630756d18464334f6249ea3ab52ec3f7756d9309b62a67b86be85c088208da`).
+   - Generated `Docs/BossCombatReview/Execution/Antigravity/Wiring/evidence_sha256.txt`.
+   - Re-frozen `AuthoringToolkit/evidence_sha256.txt` (21/21 verified).
+   - 160/160 unit tests PASS in 0.326s.
+   - Pure CRLF across all 196 active files in active directories; zero `__pycache__`.
+
+VALIDATION:
+- Analysis Deliverable:
+  - `WIRING_ANALYSIS.md` (hash: `02630756d18464334f6249ea3ab52ec3f7756d9309b62a67b86be85c088208da`, 34014 bytes).
+- Evidence Receipts:
+  - `Wiring/evidence_sha256.txt`: 1/1 verified.
+  - `AuthoringToolkit/evidence_sha256.txt`: 21/21 verified.
+  - `BuildAuthoringHelper/evidence_sha256.txt`: 13/13 verified.
+  - `NativeDerivation/evidence_sha256.txt`: 10/10 verified.
+- Unit Test Suite:
+  - `python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit` -> 160/160 tests PASS in 0.326s.
+- Byte-level CRLF scan: 196/196 files checked across active directories, 0 non-CRLF files, 0 bare LF, 0 bare CR, 0 `__pycache__`.
+
+NEXT ACTION:
+- Hand off to Lead Claude for review of A-195 wiring analysis.
+- Await Codex DD23 attempt 2 results and DD24 staging freeze.

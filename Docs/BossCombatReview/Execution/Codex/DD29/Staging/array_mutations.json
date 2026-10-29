@@ -1,0 +1,137 @@
+[
+  {
+    "file": "RPGBossActivation.cpp",
+    "line": 12,
+    "text": "Report.Errors.Add(TEXT(\"ActivationWorld.ReleaseNotGameThread: release on the game thread only; artifact retained\"));"
+  },
+  {
+    "file": "RPGBossActivation.cpp",
+    "line": 18,
+    "text": "if (!Report.bRefused) { Batch.Reset(); }"
+  },
+  {
+    "file": "RPGBossActivation.cpp",
+    "line": 40,
+    "text": "Result.Errors.Add(TEXT(\"ActivationWorld.NotGameThread: no UObject touched\"));"
+  },
+  {
+    "file": "RPGBossActivation.cpp",
+    "line": 71,
+    "text": "Result.Errors.Append(Cleanup.Errors);"
+  },
+  {
+    "file": "RPGBossActivation.cpp",
+    "line": 74,
+    "text": "Prepared.Batch.Reset();"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 85,
+    "text": "GameInstance.Reset(NewObject<UGameInstance>(GEngine));"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 216,
+    "text": "Definition.Phases.Reset();"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 217,
+    "text": "Definition.Phases.Add(Phase);"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 219,
+    "text": "Definition.Animations.Reset();"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 222,
+    "text": "Definition.Animations.Add(TSoftObjectPtr<UAnimSequenceBase>(Path));"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 224,
+    "text": "Definition.Fields.Reset();"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 227,
+    "text": "Definition.Fields.Add(MakeProductionField(Path));"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 249,
+    "text": "Flags.Add(Package ? (Package->IsDirty() ? 1 : 0) : -1);"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 279,
+    "text": "State.Components.Add(Component);"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 281,
+    "text": "State.Components.Sort([](const UActorComponent& A, const UActorComponent& B) { return &A < &B; }); // a pointer array is sorted through dereferenced references"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 284,
+    "text": "State.Flags.Add(Component->IsRegistered() ? 1 : 0);"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 285,
+    "text": "State.Flags.Add(Component->HasBegunPlay() ? 1 : 0);"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 420,
+    "text": "BossOneDefinition.Reset(NewObject<URPGBossDefinition>());"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 421,
+    "text": "BossTwoDefinition.Reset(NewObject<URPGBossDefinition>());"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 422,
+    "text": "TargetDefinition.Reset(NewObject<URPGBossDefinition>());"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 449,
+    "text": "Participants.Add(One);"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 455,
+    "text": "Participants.Add(Two);"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 461,
+    "text": "Participants.Add(Target);"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 479,
+    "text": "Selections.Add(FSelection{TEXT(\"BossOne\"), ERPGPreflightRole::BossCore, TEXT(\"PhaseTwo\")});"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 480,
+    "text": "Selections.Add(FSelection{TEXT(\"BossTwo\"), ERPGPreflightRole::BossCore, TEXT(\"PhaseAlt\")});"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 481,
+    "text": "Selections.Add(FSelection{TEXT(\"Player\"), ERPGPreflightRole::TargetOnly, NAME_None});"
+  },
+  {
+    "file": "RPGBossActivationWorldTests.cpp",
+    "line": 490,
+    "text": "State.Actors.Add(CaptureActor(Actor));"
+  }
+]

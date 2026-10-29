@@ -1,0 +1,38 @@
+{
+  "content": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "config": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "saved": {
+    "added": [
+      "Saved/Config/CrashReportClient/UECC-Windows-07E1087C4D719DBF32E3DF9EF50B0CF1/CrashReportClient.ini"
+    ],
+    "removed": [],
+    "changed": [
+      "Saved/Autosaves/PackageRestoreData.json",
+      "Saved/Config/WindowsEditor/EditorPerProjectUserSettings.ini",
+      "Saved/UnrealClaude/script_history.json"
+    ]
+  },
+  "source": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "toolkit": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "binary": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  }
+}

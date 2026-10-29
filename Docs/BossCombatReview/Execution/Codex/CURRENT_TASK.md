@@ -61,3 +61,60 @@ LATEST X283: Codex implemented AuthoringContract nativefieldchecker+8offlineunit
 **Progress limits:** no all83 final-closure recount or defensible new overall %. Historical authoring7/15 checkpoint remains46.7%, not effort %. Legacy Boss01 works; full reusable hydration/startup/reservation/reset/activation/data-onlycanary/networking/Shipping/performance acceptance still open. All83 required,A5visualsparked.
 
 **Coordination:** event-driven socket, scheduled automation paused. Save pending IDs/cursor; background listener alone cannot wake model after turn. No git batch released; only AG eligible for a later exact accepted batch. No gameplay activation or packaging release.
+
+
+DD27 C300 measured 2026-10-29: one headless in-memory authoring run FAILED before creation: missing unreal.SystemLibrary.is_editor; script SystemExit1/editor exit0. Content minimum inventories/Data hashes, Config,212Source/toolkit/binaries unchanged; four Saved side effects preserved. No property readback proof, retry/save/build/activation. Evidence Docs/BossCombatReview/Execution/Codex/DD27/RUN_REPORT_TO_CLAUDE.md; lead review pending.
+
+
+DD27b C303 2026-10-29: one read-only API probe produced evidence, but execution NONCOMPLIANT: Codex continued after stale-pin preflight failure, leaving fresh pre-state missing. No clean before/after claim; post-only snapshot and raw output preserved. Lead review required, no retry. Evidence Docs/BossCombatReview/Execution/Codex/DD27b/RUN_REPORT_TO_CLAUDE.md.
+
+
+C305 offline comparison completed: DD27 post vs DD27b post-only Content inventories11752 each,0 path/size differences,16Data0SHA differences. Historical comparison only; DD27b fresh pre-state remains missing. Probe accepted API-presence only; no engine release pending AG A209 instance-probe review.
+
+
+DD27c C307 measured 2026-10-29: one --instances reflection-probe launch exit0; 123 property reads across 17 structs, 0 instance errors; module unreal.is_editor True. Fresh pre-state/receipt pin verified before launch; captured Content/Config/Source/toolkit/binaries unchanged; Saved side effects preserved. Reflection only, not asset creation/write/gameplay. Evidence Docs/BossCombatReview/Execution/Codex/DD27c/RUN_REPORT_TO_CLAUDE.md, Claude review pending.
+
+
+DD27 C312 rerun FAILED 2026-10-29: editor exit0/helper SystemExit1,29 collected TypeError failures; three in-memory creation attempts, per-draft verified14 prints are not successful drafts. Full emitted diagnostic is column-truncated; exact nested exceptions unavailable. Fresh preflight and snapshots valid, Content/Config/Source/toolkit/binaries captured unchanged; Saved side effects pinned. No save/retry. Evidence Docs/BossCombatReview/Execution/Codex/DD27d/RUN_REPORT_TO_CLAUDE.md; correction/release required.
+
+DD28 C313 STAGED SOURCE / REVIEW PENDING (2026-10-29): additive encapsulated registration and batch-owned rollback/Abort path plus six Activation test sources exist only under Docs/BossCombatReview/Execution/Codex/DD28/Staging. Header+44/-0, cpp+167/-0; live212Source hashes match DD26. Existing preparation/registry/world/production test files untouched; all six new suites UNRUN, expected177 not measured. No promotion/build/engine/runtime release. Design/diffs/preimages/pins/static checks/array audit supplied; Claude review required. DD27 C312 failure remains separately recorded.
+
+
+DD28 C315 measured 2026-10-29 / lead review pending: accepted3files promoted,Source213 stable; one incremental editor build exit0,NO UHT invocation,3warnings. Focused Activation6/Preparation6/Registry3/WorldPreparation4/ProductionPreparation3 allpassed; full177uniqueSuccess=prior171+exact6,CookCoverageSuccess,0Error/fatal/ensure/assertion,GIsCriticalError0. Warning multiset63 unchangedvsDD26;104pins/HEADbc3fe6a stable,EXE unchanged. Evidence Docs/BossCombatReview/Execution/Codex/DD28/run_2026-10-29/RUN_REPORT_TO_CLAUDE.md. Future engine-Python baseline is DD28 final213manifest/binaries, not DD26. KI-137: PREvalidation failure Aborts/consumes batch; first measured never-begun registration of all7newclasses, not complete engine-side-effect tracing. No runtime caller/BeginPlay/tick/binding/Ready/reservation/suppression/startup/authored-definition/gameplay/PIE/package proof. Existing suites unmodified; no retry/git writes.
+
+
+DD27e C317 measured 2026-10-29: one --softrefs probe exit0, approved existing-asset loads only, no creation/save. Fresh DD28 Source213/binary baseline and pre/post snapshots verified; captured Content/Config/Source/toolkit/binaries unchanged,Saved effects pinned. Full conversion TypeErrors/readback types preserved in Docs/BossCombatReview/Execution/Codex/DD27e/RUN_REPORT_TO_CLAUDE.md. Frozen probe omitted requested default proc_sound/sword and two-argument form; no retry. Diagnostic only, lead review/correction pending.
+
+DD29 C316 STAGED SOURCE / REVIEW PENDING (2026-10-29): NEW RPGBossActivation.h/.cpp and ActivationWorld tests stay under Docs/BossCombatReview/Execution/Codex/DD29/Staging. ActivateWorld composes accepted world preparation and registration; caller-owned artifact/epoch/config/class leases, no registry reservation. Five test sources UNRUN (success/release/move, invalid input/thread misuse, missing-GI content authority, injected preparation and registration failures). Live Source213 equals DD28; no promotion/build/engine result. Ordinary clean failures fall back with nested diagnostics; explicit thread/cleanup/mid-call-input-drift contract misuse is HardError, not a falsely unchanged fallback. No startup/BeginPlay/tick/binding/Ready/suppression/assets/gameplay claim; Claude review required. DD27f remains priority and separately released.
+
+
+DD29 C319 measured 2026-10-29 / lead review pending:3newSource files promoted,216total/all213old unchanged; editor build exit0,NO UHT,3warnings. Focused ActivationWorld5/Activation6/WorldPreparation4/Registry3 all18passed; full182uniqueSuccess retains177+exact5,CookCoverageSuccess,0Error/fatal/ensure/assertion,GIsCriticalError0. Warning multiset63 equalsDD28;104pins/HEADbc3fe6a stable,EXE unchanged. Evidence Docs/BossCombatReview/Execution/Codex/DD29/run_2026-10-29/RUN_REPORT_TO_CLAUDE.md. DD29final216manifest/binaries are new C320 baseline. KI138: GetOwnedComponentCount production-public outside dev guard, TUniquePtr/header compiled in Editor (not Shipping), DD28/new header reopen same RPGBossActivation namespace. Library never-begun composition only; no startup/Ready/suppression/reservation/gameplay proof. C321 locks applied to remaining launches on receipt. No retry/git mutation.
+
+
+DD27f C320 FAILED 2026-10-29: one in-memory authoring launch after DD29 reportX328, exclusiveC321lock/fresh216Source-DD29binary/fourreceipt preflight. Editor exit0/helperSystemExit1;9failures (3perdraft: Name->FireballAbility SoftClassProperty and immunity-effect generated-class existence/load failures). DIRECT EmberWarden Fields110of110 readback; per-draft19properties set/3failed, no complete success. Full untruncated errors in Docs/BossCombatReview/Execution/Codex/DD27f/RUN_REPORT_TO_CLAUDE.md. Captured Content/Config/Source/toolkit/binaries unchanged,Saved effects pinned. No save/fix/retry/cleanup. Await lead correction; KI135 unresolved authoring path now specifically includes soft-CLASS handling.
+
+C325 / DD27g PREPARED ONLY 2026-10-29: KI139 records accepted DD27f soft-class conversion failure. Wrapper, five-pin receipt preflight, DD29 Source216/binary baseline snapshots and exclusive C321 lock controls copied/adapted under Codex/DD27g. release_to_run.json deliberately absent; no pre-state/lock/engine launch/build/test/profile/core fix. Await AG A217 and Claude's acceptance/run release; A218 correction follows measured class-object form only. PREPARED_NOT_RELEASED.md and preparation receipt describe the exact gate.
+
+
+DD27g C327 measured 2026-10-29: ONE --classrefs probe exit0, full candidate results preserved. load_class(None, exact generated path_C) returned BlueprintGeneratedClass and set/read successfully at all3soft-class sites in temporary structs. No converter fix/asset authoring pass. Fresh216Source/DD29binary/five receipt pins and snapshots verified; no captured drift outsideSaved, effects pinned. Evidence Docs/BossCombatReview/Execution/Codex/DD27g/RUN_REPORT_TO_CLAUDE.md. KI139 remains open pending A218 plus separately released authoring verification; all prior failures preserved.
+
+
+C328 / DD27h preparation (2026-10-29): KI139 updated with accepted DD27g class-reference measurements. DD27h wrapper/preflight/state/lock copied from DD27f, runtime receipt pins preserved, explicit release file deliberately absent pending A218 acceptance and lead run release. Python AST/PowerShell syntax and offline Source216 equality only; no engine/build/test/run. A216 timing/count/Abort discrepancies recorded at Codex/DD27h/A216_DISCREPANCIES_C328.md; no hook approval. All prior authoring failures retained.
+
+
+DD27h C330 STOP before engine: preflight HEAD assertion expected bc3fe6a49335f0a68bf5df9d895b8a46f6633aeb, actual605c2dd81d4092e8f84aa7608651ed19d566423a. Wrapper exit1; no fresh state/command/job/engine/own lock. Source216 offline assertion passed before HEAD mismatch. No fix/retry; lead baseline review required. Evidence Codex/DD27h/STOP_REPORT.json.
+
+
+DD27h C331 measured 2026-10-29: one engine launch exit0/helperSUCCESS, three in-memory drafts each22typedproperties verified; Fields110/110,0/0,0/0. No save. Fresh four actual receipt pins/Source216/DD29binary/HEAD605c2dd8 baseline delta verified; no captured drift outsideSaved1new+3changed. C330 failed HEAD preflight preserved; no silent retry (C331 explicit re-release). Raw and report Codex/DD27h/RUN_REPORT_TO_CLAUDE.md. In-memory only, no serialized/Details/gameplay approval.
+
+
+DD27i C338 measured 2026-10-29: owner-approved ONE --apply --save launch exit0/helperSUCCESS, exactly3NEWdraft.uasset saved/pinned; Content11752->11755/Data16->19hashes; no pre-existing captured Content/Config/Source/toolkit/binary drift. Source216/DD29binary/HEAD605c2dd8 unchanged; Saved1new+4changed pinned. Raw/report/new asset SHA256 Codex/DD27i/RUN_REPORT_TO_CLAUDE.md and new_assets_sha256.json. No fresh serialized reload/production compile/preflight/Details/gameplay proof; DD27j requires separate release. No performance run/pack edit/git mutation.
+
+
+DD27j C339 measured FAILED focused test 2026-10-29: new reviewed test promoted byte-for-byte, Source217/all216old unchanged; ONE editor build exit0/no observedUHT; ONE focused AuthoredDraft1finished0passed1failed, engineexit255. Fresh saved EmberWarden productioncompile ready1/output1; savedHero ready0/output0/Fields0, verbatim field manifest required. Twelve-plan preflight NOT REACHED. No fix/retry/fullsuite. Actual110rowgeneratedmanifest cd088e39... pinned. Three savedassets/Content11755/Data19/Config/Source217/toolkit unchanged; newDLL/PDB pinned; HEAD605c2dd8 stable. Raw/errors/report Codex/DD27j/run_C339/RUN_REPORT_TO_CLAUDE.md. Await exact lead correction.
+
+
+DD27l C344 measured 2026-10-29: ONE V2-only in-memory authoring exit0/helperSUCCESS,22properties and4of4Fields readback,0failures,no save. Source217/DD27jDLL/HEAD605c2dd8/Content11755/Data19/original3asset hashes/Config/toolkit unchanged. Saved1new+3changed+3REMOVED oldUnrealPakbackup logs; originUNKNOWN,noCodexdelete; premetadata preserved/rawbytes unavailable for removedlogs. Raw/report Codex/DD27l/RUN_REPORT_TO_CLAUDE.md. DD27m remains pending ownerYES+leadrelease.
+
+
+DD30Chronology C346 STOP 2026-10-29: promoted accepted2new+3edited cppfiles, Source219; ONE build exit0 and newDLL, BUT3header-order error diagnostics (helper include precedes each ownheader). No fix/retry/PIE/engine launch; mixed exit0/error output is NOT clean acceptance. Warnings3 unchanged. Source219/3savedassets/Content11755/Data19/Config/toolkit/Saved unchanged duringbuild, EXEunchanged, HEAD605c2dd8,postprocess empty. Raw/report Codex/DD30Chronology/run_C346/RUN_REPORT_TO_CLAUDE.md; await exact lead correction.

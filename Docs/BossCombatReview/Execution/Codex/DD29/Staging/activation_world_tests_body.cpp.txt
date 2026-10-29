@@ -1,0 +1,97 @@
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGActivationWorldSuccessTest, "OneBossFight.Binding.ActivationWorld.SuccessAndRelease", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGActivationWorldSuccessTest::RunTest(const FString& Parameters)
+{
+	FFixture F; if (!F.Prepare(*this)) { return false; }
+	const FWorldState Before = F.Capture();
+	const FEpochPtr Epoch = F.PublishedEpoch();
+	{
+		auto Result = RPGBossActivation::ActivateWorld(F.Scope.World, F.Binding, F.MakeSelections(), ManifestHash());
+		if (!TestTrue(TEXT("world composition holds registered subset"), Result.Succeeded())) { return false; }
+		TestTrue(TEXT("caller owns artifact/content lease, not a registry token"), Result.IsHeld() && Result.Batch->GetOwnedComponentCount() == 24 && Result.Batch->GetPreflightPlan()->Content.Get() == Epoch.Get());
+		TestTrue(TEXT("exact ordered registrations"), Result.Registration.bSucceeded && Result.Registration.Registered.Num() == 24);
+		for (const UActorComponent* Component : Result.Batch->OwnedComponentsForTest())
+		{ TestTrue(TEXT("owned registered components never begun"), Component && Component->IsRegistered() && !Component->HasBegunPlay()); }
+		TestTrue(TEXT("target/context unchanged"), SameActorState(CaptureActor(F.TargetActor), Before.Actors[2]) && F.Capture().Bound == Before.Bound && F.Capture().Ready == Before.Ready);
+		const auto Release = Result.Release();
+		TestTrue(TEXT("explicit release clean, all24 destroyed, lease gone, world restored"), Release.IsClean() && Release.Destroyed == 24 && !Result.IsHeld() && !Result.Batch.IsValid() && SameWorld(F.Capture(), Before) && F.NoConsumers());
+		const auto Again = Result.Release();
+		TestTrue(TEXT("repeat release empty"), Again.IsClean() && Again.Destroyed == 0);
+	}
+	{
+		auto Result = RPGBossActivation::ActivateWorld(F.Scope.World, F.Binding, F.MakeSelections(), ManifestHash());
+		if (!TestTrue(TEXT("scope-release control succeeds"), Result.Succeeded())) { return false; }
+		FRPGWorldActivationResult Moved = MoveTemp(Result);
+		TestTrue(TEXT("move transfers the sole artifact lease"), Moved.IsHeld() && !Result.IsHeld());
+	}
+	TestTrue(TEXT("result destruction invokes accepted batch cleanup"), SameWorld(F.Capture(), Before) && F.NoConsumers());
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGActivationWorldInvalidTest, "OneBossFight.Binding.ActivationWorld.InvalidInputAndMisuse", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGActivationWorldInvalidTest::RunTest(const FString& Parameters)
+{
+	FFixture F; if (!F.Prepare(*this)) { return false; }
+	const FWorldState Before = F.Capture();
+	const auto Selections = F.MakeSelections();
+	{
+		auto Result = RPGBossActivation::ActivateWorld(F.Scope.World, F.Binding, Selections, FString::ChrN(63, TEXT('b')));
+		TestTrue(TEXT("invalid manifest falls back with original diagnostic"), Result.Outcome == ERPGWorldActivationOutcome::FallBackToLegacy && Result.Reason == FName(TEXT("ActivationWorld.PrepareRejected")) && Result.Errors.ContainsByPredicate([](const FString& S) { return S.StartsWith(TEXT("WorldInput.InvalidManifestHash")); }));
+		TestTrue(TEXT("no lease, registrations or state drift"), !Result.Batch.IsValid() && Result.Registration.Registered.IsEmpty() && SameWorld(F.Capture(), Before) && F.NoConsumers());
+	}
+	{
+		const auto Errors = Async(EAsyncExecution::ThreadPool, [&]()
+		{
+			auto Result = RPGBossActivation::ActivateWorld(F.Scope.World, F.Binding, Selections, ManifestHash());
+			return Result.Outcome == ERPGWorldActivationOutcome::HardError && Result.Reason == FName(TEXT("ActivationWorld.NotGameThread")) && !Result.Batch.IsValid();
+		}).Get();
+		TestTrue(TEXT("programmer thread misuse hard-errors without UObject work"), Errors && SameWorld(F.Capture(), Before));
+	}
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGActivationWorldEpochTest, "OneBossFight.Binding.ActivationWorld.ContentEpochRejection", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGActivationWorldEpochTest::RunTest(const FString& Parameters)
+{
+	FFixture F; if (!F.Prepare(*this)) { return false; }
+	const FWorldState Before = F.Capture();
+	// Test-local missing world-GI content authority, not an injected/mismatched epoch parameter.
+	UGameInstance* const OriginalGI = F.Scope.World->GetGameInstance();
+	F.Scope.World->SetGameInstance(nullptr);
+	auto Result = RPGBossActivation::ActivateWorld(F.Scope.World, F.Binding, F.MakeSelections(), ManifestHash());
+	const bool bNoManufacturedGI = F.Scope.World->GetGameInstance() == nullptr;
+	F.Scope.World->SetGameInstance(OriginalGI);
+	TestTrue(TEXT("no authoritative content epoch means named fallback"), Result.Outcome == ERPGWorldActivationOutcome::FallBackToLegacy && Result.Errors.ContainsByPredicate([](const FString& S) { return S.StartsWith(TEXT("WorldInput.NoContent")); }));
+	TestTrue(TEXT("no artifact/component left; fixture restored its own GI control"), bNoManufacturedGI && !Result.Batch.IsValid() && Result.Registration.Registered.IsEmpty() && F.NoConsumers() && SameWorld(F.Capture(), Before) && F.PublishedEpoch().Get() == RPGCombatRegistry::ForWorld(F.Scope.World).Get());
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGActivationWorldPreparationFailureTest, "OneBossFight.Binding.ActivationWorld.PreparationFailure", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGActivationWorldPreparationFailureTest::RunTest(const FString& Parameters)
+{
+	FFixture F; if (!F.Prepare(*this)) { return false; }
+	const FWorldState Before = F.Capture();
+	RPGBossHydrationPreparation::FFaultInjectionScope Fault(1);
+	auto Result = RPGBossActivation::ActivateWorld(F.Scope.World, F.Binding, F.MakeSelections(), ManifestHash());
+	TestTrue(TEXT("real allocation then injected preparation failure falls back"), Fault.Fired() && Result.Outcome == ERPGWorldActivationOutcome::FallBackToLegacy && Result.Reason == FName(TEXT("ActivationWorld.PrepareRejected")) && Result.Errors.ContainsByPredicate([](const FString& S) { return S.StartsWith(TEXT("Preparation.InjectedFault")); }));
+	TestTrue(TEXT("whole world restored, nothing registered/held"), !Result.Batch.IsValid() && Result.Registration.Registered.IsEmpty() && F.NoConsumers() && SameWorld(F.Capture(), Before));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGActivationWorldRegistrationFailureTest, "OneBossFight.Binding.ActivationWorld.RegistrationFailure", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGActivationWorldRegistrationFailureTest::RunTest(const FString& Parameters)
+{
+	FFixture F; if (!F.Prepare(*this)) { return false; }
+	const FWorldState Before = F.Capture();
+	for (int32 Ordinal : {1, 12, 13, 24})
+	{
+		RPGBossActivation::FRegistrationFaultScope Fault(Ordinal);
+		auto Result = RPGBossActivation::ActivateWorld(F.Scope.World, F.Binding, F.MakeSelections(), ManifestHash());
+		TestTrue(TEXT("registration failure reports fallback and nested reason"), Fault.Fired() && Result.Outcome == ERPGWorldActivationOutcome::FallBackToLegacy && Result.Reason == FName(TEXT("ActivationWorld.RegistrationRejected")) && Result.Errors.ContainsByPredicate([](const FString& S) { return S.StartsWith(TEXT("Activation.InjectedFault")); }));
+		TestTrue(TEXT("actual ordinal and clean rollback result retained"), Result.Registration.Registered.Num() == Ordinal && Result.Registration.Cleanup.Destroyed == 24 && Result.Registration.Cleanup.IsClean());
+		TestTrue(TEXT("no partial registered subset or artifact lease"), !Result.Batch.IsValid() && F.NoConsumers() && SameWorld(F.Capture(), Before));
+	}
+	return true;
+}
+
+#endif

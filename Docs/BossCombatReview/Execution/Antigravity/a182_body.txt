@@ -1,0 +1,55 @@
+TASK: AG-CONTENT04 staged authoring toolkit corrections (A181 -> A182) under [C-256], [X-291], and [X-288].
+STATUS: COMPLETED. Frozen revision A-182 delivered. 70/70 unit tests PASS (exit code 0). Pure CRLF enforced across all 61 files (0 bare LF, 0 bare CR). Zero engine processes launched; zero assets created, mutated, or deleted; zero pack edits; zero git operations.
+
+PRESERVED ARCHIVES:
+- BuildAuthoringHelper/original_A181/ (author_custom_build.py, README.md, evidence_sha256.txt preserved byte-for-byte)
+- AuthoringToolkit/original_A181/ (authoring_core.py, draft_boss_profiles.py, inspect_authored_assets.py, test_authoring_core.py, test_run_output.txt, README.md, evidence_sha256.txt, examples/ preserved byte-for-byte)
+- Historical archives original_A176/, original_A177/, original_A178/, original_A179/, original_A180/ preserved byte-for-byte in both directories.
+
+DEFECT CORRECTIONS (C-256):
+1. FLOAT32 (Precision, Overflow & Fake Parity):
+   - authoring_core.py: Added to_float32(val) converting scalar numerical values to IEEE 754 32-bit single-precision float (struct.pack('f') / struct.unpack('f')). Defined FLOAT32_MAX = 3.4028234663852886e+38 and FLOAT32_MIN.
+   - Refusal of float64 overflow: validate_finite_float and to_float32 strictly refuse requested values exceeding float32 range with ValueError / diagnostic error.
+   - Added normalize_native_expected_for_readback(native_dict, fields_spec): normalizes expected scalar floats and list cooldowns through float32 round-trip for canonical comparison.
+   - draft_boss_profiles.py: execute_draft_apply normalizes expected native struct dictionaries, phases, and fields via normalize_native_expected_for_readback before equality comparison.
+   - test_authoring_core.py: PyWrapperStructFake stores float properties as float32. Added TestFloat32RoundTripAndStorage with 4 tests, including test_regression_old_float64_comparison_fails_against_float32_store proving direct float64 comparison fails against float32 storage (0.35 != 0.3499999940395355, 0.03 != 0.029999999329447746), while normalized readback succeeds.
+   - Offline Float64 Qualification: Explicitly documented in README.md, module docstrings, and tests that offline float64 checks do NOT certify native float32 conversion or input-mode parity.
+2. PROPERTY-NAME RULE (PyGenUtil.cpp:1833-1855 Parity):
+   - authoring_core.py: pythonize_property_name updated to match UE 5.5 PyGenUtil::PythonizePropertyName: repeatedly strips leading 'b' + uppercase and 'In' + uppercase for ANY property type; maps reserved identifier 'self' to '_self'. Added pinned test for SourceSHA256 -> source_sha256. Documented that regex approximates CamelCaseBreakIterator beyond the 64 checked native field names.
+   - test_authoring_core.py: Added TestEnginePropertyNameRules with 5 tests covering repeated prefix stripping (bMultiplier, InDamage, bInDamage, bInInTest), pinned SourceSHA256, self -> _self, type-independent non-bool prefix stripping, and 64-field parity across all 10 structs.
+3. READBACK FALLBACK REMOVAL:
+   - authoring_core.py: Removed CamelCase fallback in extract_canonical_primitives. Struct wrapper objects are read ONLY by generated Python property names (getattr(struct_obj, py_k)), raising AttributeError if missing (no CamelCase fallback!). Dictionaries only read generated keys (struct_obj[py_k]), raising KeyError if missing.
+   - test_authoring_core.py: Added TestNoReadbackFallback with 2 tests verifying that CamelCase-only wrappers raise AttributeError and CamelCase-only dicts raise KeyError, proving default-loss cannot be hidden.
+4. DD19 SCOPE ISOLATION:
+   - Maintained strict qualification: DD19's upcoming FRPGBleedConfig is unreviewed future scope and explicitly excluded from this frozen toolkit release.
+
+VERIFICATION DETAILS:
+- Command: python -B Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_authoring_core.py -v
+- Result: Ran 70 tests in 0.008s -> OK (0 failures, 0 errors, exit code 0).
+- Receipts: AuthoringToolkit/evidence_sha256.txt (19/19 OK), BuildAuthoringHelper/evidence_sha256.txt (13/13 OK).
+- Line endings: 61/61 files pure CRLF (0 bare LF, 0 bare CR).
+
+EXACT SHA256 EVIDENCE RECEIPTS:
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/authoring_core.py:
+  7fafa9535abd2f991f3010a9299b406374d667564e99b16691deb8082d492eef (43,383 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/draft_boss_profiles.py:
+  b13b31ce0ff99c2c61fb72e6de90b9ea4c14a836a7c128f9f987ae206a006a8d (34,687 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/inspect_authored_assets.py:
+  37d94933e315a5667c9900d27a38a210157b3993ee74a64f255becda7349a56c (23,416 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_authoring_core.py:
+  d03ed1333fd7655cd7cd16ba3ae8533109eb6f2c694c8b1571781b12678db091 (48,751 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_run_output.txt:
+  434af022a8fd1a987f3c0ac7cd793672e19f3dc5891e77c58ee98bcdfb92d0cd (6,226 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/README.md:
+  3dfc0b398dcc1563a8f39a2110ef33ef5cd4845730ba955a7c3a82c3483039ce (19,341 bytes)
+Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/evidence_sha256.txt:
+  ef01c8cce9050eb1c681301d7215b79eda02c3b3a0bfcd4418b6139df27abc8d (2,735 bytes)
+Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/author_custom_build.py:
+  c586634ebd5d2f86b9d97ca4a7ac45819d756c620b5851b27aa19e88f4152e52 (39,287 bytes)
+Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/README.md:
+  50562824195d6aa44e889543e30c046498e179b9aec896e2a8d1e4d87fe26f0d (8,550 bytes)
+Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/evidence_sha256.txt:
+  c9822f356ef6cc3f7bc060fb8ca6c6517dce803709253b1a1f074cb9f159aec4 (1,766 bytes)
+
+NEXT ACTION:
+Handing off to Lead Reviewer Claude (C) for lead review and verification under C-256; Codex (X) CC'd. Ready for subsequent pipeline card release (A01) upon lead acceptance.

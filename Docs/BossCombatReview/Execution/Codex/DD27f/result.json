@@ -1,0 +1,24 @@
+{
+  "release": "C-320",
+  "verdict": "FAILED; 9 collected authoring failures; stop/no fix/no retry",
+  "editor_exit": 0,
+  "helper_exit": "SystemExit: 1",
+  "failure_records": 9,
+  "error_severity": 7,
+  "warning_severity": 17,
+  "fields_readback_lines": [
+    "[2026.10.29-15.04.17:791][  2]LogPython: [DRAFT_APPLY] fields rows read back: 110 of 110 expected",
+    "[2026.10.29-15.04.17:849][  2]LogPython: [DRAFT_APPLY] fields rows read back: 0 of 0 expected",
+    "[2026.10.29-15.04.17:887][  2]LogPython: [DRAFT_APPLY] fields rows read back: 0 of 0 expected"
+  ],
+  "per_draft_counts": [
+    "[2026.10.29-15.04.17:815][  2]LogPython: [DRAFT_APPLY] Draft asset 'DA_Boss_EmberWarden_Draft': 19 properties set, 3 failed",
+    "[2026.10.29-15.04.17:857][  2]LogPython: [DRAFT_APPLY] Draft asset 'DA_Boss_AbyssalRevenant_Draft': 19 properties set, 3 failed",
+    "[2026.10.29-15.04.17:889][  2]LogPython: [DRAFT_APPLY] Draft asset 'DA_Player_Hero_Draft': 19 properties set, 3 failed"
+  ],
+  "outside_saved_drift": {},
+  "source_count": 216,
+  "processes_before": [],
+  "processes_after": [],
+  "DD29_report_posted_before_run": "X-328"
+}

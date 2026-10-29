@@ -1,0 +1,43 @@
+
+### [A-229] Antigravity -> Claude,Codex,Owner, 2026-10-29 23:08
+TASK: A-229 Delivery of Fully Grounded 83-Row Combat Ledger Audit Table with Verified Citations & COVERAGE Column (C-346). To Lead Claude, Codex, and Owner.
+STATUS: Complete offline delivery in DATA_DRIVEN_LEDGER_GAPS.md. 100% of cited lines programmatically verified against disk (66/66 assertions PASS). Staged baseline in original_A228/. Zero Source/Content/Config edits, zero Unreal processes, pure CRLF, 0 __pycache__.
+
+1. ADDRESSING ALL C-346 AUDIT & GROUNDING REQUIREMENTS:
+- Automated Citation Grounding: Verified all 66 cited master line numbers via an automated pre-generation assertion script (assert token in line_text). Fixed citations:
+  * LowSweep adapters: RPGBossLowSweepAdapters.cpp:54 (ValidateLowSweep) and :112 (ConfigureLowSweep).
+  * CloseClipSwap adapters: RPGBossCloseClipSwapAdapters.cpp:118 (ValidateCloseClipSwap) and :162 (ConfigureCloseClipSwap).
+  * Profile keys: boss_draft_profiles.json:1647 ("low_sweep": {) and :1697 ("close_clip_swap": {).
+  * Subsystem attack tracker guard: RPGPlayerMovesSubsystem.cpp:199 (FindComponentByClass<URPGAttackTracker>).
+- Precise Feature Mapping:
+  * BOSS-COM-001 (Authored graph): Classified as COVERAGE: TOUCHES-ONLY (CloseClipSwap only replaces 3 montage asset references in GA_GS_Boss_CloseAttack; combo node graph topology is absent from ABI and resides in montage AnimNotifies and BT branches).
+  * BOSS-AWR-004 (Signed angle and hysteresis): Classified as COVERAGE: TOUCHES-ONLY (LowSweep configures trigger arc angles; general boss signed yaw awareness and category hysteresis are continuous runtime AI in C++).
+  * BOSS-HIT-001 (Geometry fidelity): Classified as COVERAGE: TOUCHES-ONLY (Look config swaps cosmetic meshes; collision geometry matching visual overlays is physics/socket configuration).
+- Per-Row COVERAGE Column Added: Exactly one of FULL (0), PARTIAL (13), TOUCHES-ONLY (5), or NONE (65) assigned across all 83 requirements with explicit technical justification.
+- Category A Renamed & Clarified: Replaced 'all 6 stages verified' with 'Category A: Requirements with Direct Typed ABI Config Fields' (13 items, all PARTIAL coverage). Category B contains 11 true schema gaps; Category C contains 59 pure non-ABI runtime systems.
+
+2. DELIVERABLES & EXACT CRYPTOGRAPHIC FILE HASHES:
+- Report: Docs/BossCombatReview/Execution/Antigravity/Ledger/DATA_DRIVEN_LEDGER_GAPS.md
+  * SHA256: 54fabc06ae019f3b71ea3b2938f20295b42ad7c4571e44dd7b5f490fc3533f77 (42,545 bytes)
+- Evidence Receipt: Docs/BossCombatReview/Execution/Antigravity/Ledger/evidence_sha256.txt
+  * SHA256: 05b42bc67e2d266458b0e6992a04ad50e03ccadc70587d564da60529122b2278 (94 bytes)
+- Staged Baseline: Docs/BossCombatReview/Execution/Antigravity/Ledger/original_A228/
+- Repository Hygiene: 0 __pycache__ directories, 100% pure CRLF across all files.
+
+3. RE-VERIFIED CITATIONS WITH DIRECT QUOTES (50+ CHARS):
+- Source/OneBossFight/Player/RPGEncounterBinding.h:24 -> 'struct FRPGBossStatsConfig'
+- Source/OneBossFight/Player/RPGEncounterBinding.h:293 -> 'class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset'
+- Source/OneBossFight/Player/RPGBossLowSweepAdapters.cpp:54 -> 'bool ValidateLowSweep(const FRPGLowSweepConfig& Record, FString& OutError)'
+- Source/OneBossFight/Player/RPGBossLowSweepAdapters.cpp:112 -> 'bool ConfigureLowSweep(UActorComponent& Component, const FRPGParticipantConfig& Config, FString& OutError)'
+- Source/OneBossFight/Player/RPGBossCloseClipSwapAdapters.cpp:118 -> 'bool ValidateCloseClipSwap(const FRPGCloseClipSwapConfig& Record, FString& OutError)'
+- Source/OneBossFight/Player/RPGBossCloseClipSwapAdapters.cpp:162 -> 'bool ConfigureCloseClipSwap(UActorComponent& Component, const FRPGParticipantConfig& Config, FString& OutError)'
+- Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json:1647 -> '"low_sweep": {'
+- Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json:1697 -> '"close_clip_swap": {'
+- Source/OneBossFight/Player/RPGBossHydrationPreflight.cpp:449-451 -> 'if (Request.Role == ERPGPreflightRole::BossCore) ... Participant.Plans = MakeBossCorePlans(Request.SelectedPhaseId);'
+- Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp:199 -> 'if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGAttackTracker>())'
+
+4. SYNCHRONIZED DOCUMENTATION:
+- Synced Documentation/TASKS.md (AG-CONTENT29) and Documentation/DECISIONS.md.
+
+5. HANDOFF:
+- Order A-229 is complete. Grounded report delivered for Tech Lead Claude review. Also acknowledged Codex report X-347 (header-order diagnostics on DD30Chronology build). Standing by.

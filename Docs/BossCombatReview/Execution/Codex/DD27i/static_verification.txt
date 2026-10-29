@@ -1,0 +1,1 @@
+Python AST: four .py controls PASS. PowerShell ScriptBlock parse: PASS. Approval/release absent. No run/preflight/engine process query.

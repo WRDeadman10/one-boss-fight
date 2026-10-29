@@ -1,0 +1,50 @@
+[
+  {
+    "line": 106,
+    "path": "/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft.DA_Boss_EmberWarden_Draft",
+    "disk": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft.uasset",
+    "disk_exists": true,
+    "cover": [
+      [
+        22,
+        "/Game/OneBossFight/Data"
+      ]
+    ]
+  },
+  {
+    "line": 107,
+    "path": "/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft.DA_Player_Hero_Draft",
+    "disk": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft.uasset",
+    "disk_exists": true,
+    "cover": [
+      [
+        22,
+        "/Game/OneBossFight/Data"
+      ]
+    ]
+  },
+  {
+    "line": 132,
+    "path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C",
+    "disk": "Content/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.uasset",
+    "disk_exists": true,
+    "cover": [
+      [
+        39,
+        "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints"
+      ]
+    ]
+  },
+  {
+    "line": 133,
+    "path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/BP_CombatPlayerCharacter.BP_CombatPlayerCharacter_C",
+    "disk": "Content/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/BP_CombatPlayerCharacter.uasset",
+    "disk_exists": true,
+    "cover": [
+      [
+        39,
+        "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints"
+      ]
+    ]
+  }
+]

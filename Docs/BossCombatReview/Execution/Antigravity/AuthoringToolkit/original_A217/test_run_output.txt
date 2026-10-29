@@ -1,0 +1,28 @@
+test_run: 2026-10-29T19:21:43+05:30
+discovery_path: Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit
+tests_total: 212
+tests_passed: 212
+tests_failed: 0
+tests_errors: 0
+tests_skipped: 0
+duration_seconds: 0.913
+status: OK
+python_flags: -B
+pycache_count: 0
+engine_processes: 0
+source_edits: 0
+content_edits: 0
+git_operations: 0
+git_head: bc3fe6a
+suite_breakdown:
+  - test_authoring_core.py: 200 tests (200 PASS)
+  - test_probe_unreal_api.py: 12 tests (12 PASS)
+raw_summary: |
+  Ran 212 tests in 0.913s
+  OK
+  [DRAFT_APPLY] FATAL: Missing required Unreal API: unreal.EditorAssetLibrary.does_asset_exist
+  [DRAFT_APPLY] Creating draft asset at '/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft'...
+  [DRAFT_APPLY] fields rows read back: 110 of 110 expected
+  [DRAFT_APPLY] Initialized & verified all 22 typed properties on draft asset: 'DA_Boss_EmberWarden_Draft'
+  [DRAFT_APPLY] SUCCESS: In-memory asset creation and complete readback verified.
+    NOTICE: --save flag was not provided. Output packages were NOT saved to disk.

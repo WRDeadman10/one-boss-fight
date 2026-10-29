@@ -1,0 +1,135 @@
+TASK: A-206 delivery of read-only Unreal Engine API reflection probe (probe_unreal_api.py) and test suite (test_probe_unreal_api.py) per Lead C-301 directive.
+
+1. EXECUTIVE SUMMARY & DELIVERABLE STATUS
+- Authored standalone diagnostic probe: Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/probe_unreal_api.py.
+- Authored standard-library unit test suite: Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_probe_unreal_api.py.
+- Preserved historical baselines: original_A205/ in AuthoringToolkit/ (11 files) and BuildAuthoringHelper/ (3 files).
+- Updated documentation and receipts: AuthoringToolkit/README.md (Section 8 added, Section 9 updated), evidence_sha256.txt (25 entries), Documentation/TASKS.md, Documentation/DECISIONS.md, and Documentation/TEST_PLAN.md (BUILD-47-AG).
+- Execution Invariants: STRICTLY OFFLINE. Zero Unreal Engine processes launched; zero Source/ files modified (212 files unchanged); zero Content/ or Config/ modifications; zero git commits or pushes.
+
+2. OFFLINE TEST & VERIFICATION WITNESSES
+- Direct Probe Execution (test_probe_unreal_api.py):
+  Command: python -B Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_probe_unreal_api.py
+  Result: Ran 5 tests in 0.108s -> OK (5/5 PASS, exit code 0).
+  Verified: (1) static extraction of unreal chains across all 3 toolkit scripts; (2) candidate reflective USTRUCT/UCLASS/UENUM discovery; (3) mock runtime probe with mock unreal module verifying [PROBE] lines, struct properties, enum enumerators, and summary line; (4) summary output string formatting; (5) offline fallback handling when unreal cannot be imported (exit code 0).
+- Full Authoring Toolkit Discovery:
+  Command: python -B -m unittest discover Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit
+  Result: Ran 193 tests in 0.713s -> OK (193/193 PASS, exit code 0).
+  Composition: test_authoring_core.py (180 tests) + test_emit_fields_manifest.py (8 tests) + test_probe_unreal_api.py (5 tests).
+  Artifact: test_run_output.txt updated and verified.
+
+3. FULL STATIC UNREAL API CHAIN AUDIT (55 CHAINS WITH FILE:LINE CITATIONS)
+The static AST analyzer inspects draft_boss_profiles.py, authoring_core.py, and inspect_authored_assets.py. It resolves both direct AST attribute chains rooted at unreal and reflective string invocations (hasattr/getattr) on unreal and subsystem local handles:
+
+[STATIC CHAINS]
+- unreal.AssetTools.create_asset                         draft_boss_profiles.py:488
+- unreal.AssetToolsHelpers                               draft_boss_profiles.py:484, 487
+- unreal.AssetToolsHelpers.get_asset_tools               draft_boss_profiles.py:484, 487
+- unreal.DataAssetFactory                                draft_boss_profiles.py:496, 535
+- unreal.EditorAssetLibrary                              draft_boss_profiles.py:492, 521
+- unreal.EditorAssetLibrary.does_asset_exist             draft_boss_profiles.py:492, 521; inspect_authored_assets.py:208
+- unreal.EditorAssetLibrary.load_asset                   inspect_authored_assets.py:229, 233
+- unreal.EditorAssetLibrary.save_loaded_asset            draft_boss_profiles.py:721, 726
+- unreal.Name                                            draft_boss_profiles.py:504, 548, 549
+- unreal.SoftObjectPath                                  draft_boss_profiles.py:508, 557
+- unreal.SystemLibrary                                   draft_boss_profiles.py:149, 151; inspect_authored_assets.py:90
+- unreal.SystemLibrary.is_editor                         draft_boss_profiles.py:152; inspect_authored_assets.py:91
+- unreal.UnrealEditorSubsystem                           draft_boss_profiles.py:163, 167; inspect_authored_assets.py:102
+- unreal.UnrealEditorSubsystem.get_game_world            draft_boss_profiles.py:171; inspect_authored_assets.py:110
+- unreal.get_editor_subsystem                            draft_boss_profiles.py:161, 168
+- unreal.load_class                                      draft_boss_profiles.py:500, 513
+- unreal.load_package                                    inspect_authored_assets.py:217, 221, 523
+
+[REFLECTIVE CANDIDATE SYMBOLS: 36 USTRUCT / UCLASS / UENUM]
+Prefix variants checked (both Unreal Python wrapper conventions: with and without 'F'/'U' prefix):
+- UCLASS: unreal.RPGBossDefinition
+- UENUM: unreal.ERPGBossDeathMode, unreal.RPGBossDeathMode
+- USTRUCT (17 structs):
+  * Bleed:              unreal.FRPGBleedConfig, unreal.RPGBleedConfig
+  * Death:              unreal.FRPGBossDeathConfig, unreal.RPGBossDeathConfig
+  * DormantWake:        unreal.FRPGBossDormantWakeConfig, unreal.RPGBossDormantWakeConfig
+  * EncounterPolicy:    unreal.FRPGBossEncounterPolicy, unreal.RPGBossEncounterPolicy
+  * Fields:             unreal.FRPGParityField, unreal.RPGParityField
+  * Fireball:           unreal.FRPGFireballConfig, unreal.RPGFireballConfig
+  * HealPunish:         unreal.FRPGHealPunishConfig, unreal.RPGHealPunishConfig
+  * Look:               unreal.FRPGLookConfig, unreal.RPGLookConfig
+  * LowSweep:           unreal.FRPGLowSweepConfig, unreal.RPGLowSweepConfig
+  * PhaseDependencies:  unreal.FRPGPhaseDependencyConfig, unreal.RPGPhaseDependencyConfig
+  * PhaseFlow:          unreal.FRPGBossPhaseFlow, unreal.RPGBossPhaseFlow
+  * Phases:             unreal.FRPGPhaseConfig, unreal.RPGPhaseConfig
+  * Shockwave:          unreal.FRPGShockwaveConfig, unreal.RPGShockwaveConfig
+  * StaggerPolicy:      unreal.FRPGBossStaggerPolicy, unreal.RPGBossStaggerPolicy
+  * StaggerProfile:     unreal.FRPGBossStaggerProfile, unreal.RPGBossStaggerProfile
+  * Stats:              unreal.FRPGBossStatsConfig, unreal.RPGBossStatsConfig
+  * CloseClipSwap:      unreal.FRPGCloseClipSwapConfig, unreal.RPGCloseClipSwapConfig
+
+4. PYTHONIZED STRUCT PROPERTY MAPPINGS (FROM STRUCT_SPECS)
+The probe extracts the exact pythonized member names mapped across all 17 structs in authoring_core.py, ready for comparison against runtime dir() output:
+- bleed:              [effect_height, hp_fraction, initial_threshold, proc_effect, proc_sound, threshold_increase, threshold_max]
+- close_clip_swap:    [a1_montage, a3a_montage, a3b_montage, attack_montages_name, close_ability_class_name]
+- death:              [blend_in_seconds, death_clip, death_mode, death_montage, dying_seconds, guard_pack_death, hold_at_seconds, max_clip_restarts, pack_death_ability_class_name, pack_death_montages_name, pack_end_time_multiplier, pack_poll_seconds]
+- dormant_wake:       [dormant_clip, wake_clip]
+- encounter_policy:   [gate_radius, reset_on_player_respawn]
+- fields:             [destination, field_path, first_read, origin, precedence, source_path, source_sha256, source_site, type, units, value, witness]
+- fireball:           [fireball_ability, fireball_cooldown, fireball_enabled, fireball_max_range, fireball_min_range]
+- heal_punish:        [aim_height, cancel_javelins_on_interrupt, cooldown, damage, enabled, flight_time, javelin_max_range, javelin_radius, max_range, max_speed, min_range, min_speed, respond_to_heal, spawn_sockets]
+- look:               [body, enabled, pieces, sword, sword_socket]
+- low_sweep:          [blade_height, damage, enabled, inner_radius, move_id, reach, sweep_from_degrees, sweep_to_degrees]
+- phase_dependencies: [immunity_effect, roar_clip, transition_montage]
+- phase_flow:         [attack_ability_prefix, leap_ability_tag, lock_leap_until_phase_two, pause_posture_in_transition, transition_seconds, use_roar_clip]
+- phases:             [attack_multiplier, entry_health_fraction, phase_id, rate_multiplier, speed_multiplier]
+- shockwave:          [damage, enabled, jump_clearance, max_radius, move_id, speed, start_radius, thickness]
+- stagger_policy:     [cooldown_seconds, critical_multiplier, freeze_at_position, get_up_rate, hold_posture_at_zero, riposte_align_seconds, riposte_arm_seconds, riposte_base_damage, riposte_cone_degrees, riposte_facing_degrees, riposte_impact_seconds, riposte_player_start_gap, riposte_range, stagger_seconds]
+- stagger_profile:    [critical_on_every_hit, down_clip, fall_clip, fall_montage, get_up_montage, hit_stun_ability_class_name, immunity_effect, riposte_boss_clip, riposte_player_clip, use_clips, use_riposte_clips]
+- stats:              [max_health, max_posture, posture_regen_delay, posture_regen_rate]
+
+5. RUNTIME REFLECTION DESIGN & SAFETY INVARIANTS
+- Probe Execution Model:
+  * When executed in headless Unreal Python (UnrealEditor-Cmd with -ExecutePythonScript):
+    Checks each attribute chain using hasattr/getattr.
+    Emits: [PROBE] <chain> exists=<True|False> callable=<True|False> type=<typename>
+    For candidate structs: [PROBE] STRUCT <symbol> properties=[sorted public properties via dir()]
+    For candidate enums:  [PROBE] ENUM <symbol> enumerators=[sorted enumerators via dir()]
+    Emits final summary: [PROBE] SUMMARY missing=<n> present=<n>
+  * When executed offline in CPython (unreal missing):
+    Outputs static chains and pythonized mappings, then prints:
+    [PROBE] unreal not importable: runtime part skipped
+    [PROBE] SUMMARY missing=0 present=0
+  * Exit code: ALWAYS 0. It is a diagnostic reporting tool, never an exit-code gate.
+  * Output: stdout by default; writes to disk only when optional --output <path> flag is explicitly passed.
+- Safety Guarantees:
+  * STRICTLY READ-ONLY.
+  * Zero asset creation (never calls AssetTools.create_asset).
+  * Zero asset loading (never calls EditorAssetLibrary.load_asset or load_package).
+  * Zero asset saving (never calls EditorAssetLibrary.save_loaded_asset).
+  * Zero editor property writes (never assigns to any UObject or UStruct instance).
+  * Zero package registry scans.
+  * Zero struct instantiation (strictly inspects class definitions and module attributes via getattr/hasattr/dir).
+
+6. DOCUMENTATION PARAGRAPH: WHAT IT PROVES VS WHAT IT DOES NOT (README.MD SECTION 8)
+- What It Proves:
+  * Exact presence or absence of Unreal Engine Python module attributes and subsystem methods in UE 5.5.4.
+  * Exact pythonized property name alignment on native C++ USTRUCT and UCLASS wrappers (e.g. verifying a1_montage vs A1Montage).
+  * Availability and member naming of UENUM wrappers.
+  * Static inventory of all external engine surface touch points across the authoring toolkit.
+- What It Does NOT Prove:
+  * Does not prove runtime execution correctness of subsystem methods (e.g. whether does_asset_exist returns true or false for a specific path).
+  * Does not prove PIE (Play-in-Editor), animation montage playback, or networking replication.
+  * Does not verify serialization to disk or native package asset integrity.
+  * Does not execute gameplay logic or component configuration.
+
+7. CRYPTOGRAPHIC EVIDENCE & RECEIPT
+Hashes of key delivery artifacts (from AuthoringToolkit/evidence_sha256.txt):
+- probe_unreal_api.py:
+  f08f10ee4de451c243c2c1a40306cbcfb57519ffea432657d25e0e1eb84ef0c9  (17,801 bytes)
+- test_probe_unreal_api.py:
+  bbfd1fa68c2ee0aaeb70054817a0209df32ab2a5dd18eb64b0f9f3020aa3fc47  (6,577 bytes)
+- test_run_output.txt:
+  3251e3c837597ea3eb28ec4b96f1d9774dc2c9e782626e245a4b7f87ff452bb1  (803 bytes)
+- README.md:
+  b8c7c9ff5aa0e37286dbdf71bfa2b3a9e7da104b7bc60fa50b69116c4f346914  (38,197 bytes)
+- evidence_sha256.txt:
+  bb011400e9cf97323ea5876fe66b7a2d4e8c1488c9df40d51381b1bafe1bfcb9  (2,709 bytes)
+
+8. STANDBY
+A-206 is complete and offline-verified. Ready for Lead Claude review and subsequent release of ONE Codex probe run in the editor. Zero git commits performed pending Lead instruction.

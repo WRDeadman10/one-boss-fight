@@ -1,0 +1,72 @@
+TASK: A-212 delivery of Authoring Helper Offline Corrections & Status Update per Lead C-309 and C-310 directives.
+
+1. EXECUTIVE SUMMARY & ARTIFACT DELIVERY
+- Authoring Toolkit corrections delivered across authoring_core.py, draft_boss_profiles.py, inspect_authored_assets.py, test_authoring_core.py, test_probe_unreal_api.py, test_run_output.txt, README.md, and evidence_sha256.txt.
+- Bundled Status Report update delivered to Docs/BossCombatReview/Execution/Antigravity/Status/PROGRAM_STATUS_2026-10-29.md per Lead C-310 (incorporating Codex KI-135 and KI-136, withdrawing 'wrong id' claim).
+- Preserved historical baselines:
+  * Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/original_A211/ (13 files + receipt_sha256.txt)
+  * Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/original_A211/ (3 files + receipt_sha256.txt)
+- Documentation sync: Documentation/TASKS.md (AG-CONTENT19), Documentation/DECISIONS.md, and Documentation/TEST_PLAN.md (BUILD-53-AG).
+- Execution Boundary: STRICTLY OFFLINE. Zero Unreal Engine processes launched; zero Source/Content edits (212 Source files unchanged); zero git commits or pushes.
+
+2. ORDER A-212 IMPLEMENTATION DETAILS (PER C-309)
+1. Editor Guard:
+   - Replaced SystemLibrary.is_editor with module-level unreal.is_editor() callable verification in verify_editor_environment() across draft_boss_profiles.py and inspect_authored_assets.py.
+   - Retained PIE check (get_game_world() is None). Verified in DD27c that unreal.is_editor is a callable root function returning True.
+2. Struct Construction via Default Constructors:
+   - Exported SPEC_TO_STRUCT_MAP mapping all 17 structs to (cpp_class, py_class).
+   - Implemented create_struct_instance(unreal_mod, py_class_name, field_dict) in authoring_core.py: instantiates engine UStruct wrapper via default constructor (e.g. unreal.RPGBleedConfig()), populates properties via inst.set_editor_property(py_k, converted_v). Prohibited direct dict passing and Python attribute access (hasattr/getattr/setattr) on structs.
+   - Top-level asset receives struct instances via set_editor_property('bleed', inst). Array properties (phases, fields) constructed as lists of instances.
+3. Explicit Engine Type Conversions:
+   - Implemented convert_property_for_engine() and dedicated helpers (to_soft_ref, to_fname, to_death_mode) in authoring_core.py:
+     * float / int / bool: direct conversion with IEEE 754 float32 normalization.
+     * FName: wrapped via unreal.Name(str_val).
+     * RPGBossDeathMode: resolved to unreal.RPGBossDeathMode.PACK_MONTAGE or OWN_CLIP enumerators by Python attribute name.
+     * TSoftObjectPtr: converted via to_soft_ref(path) attempting unreal.SoftObjectPath(path) with string fallback.
+     * Arrays of FNames (SpawnSockets) and SoftObjectPaths (Pieces): converted element-wise.
+4. Granular Readback Verification:
+   - Updated execute_draft_apply() in draft_boss_profiles.py to read back properties on struct instances via get_editor_property(py_name) and compare against normalized native expectations.
+   - String representations compared for soft object paths and FNames; emits expected value, actual value, actual type, and repr on mismatch.
+5. Diagnostic In-Memory Mode:
+   - Added DiagnosticFailureCollector in draft_boss_profiles.py.
+   - In --apply without --save, catches every property assignment and readback failure across all 15 structs and 2 arrays across all drafted assets, records failure details (asset, struct, property, expected, actual type/repr, exception class/message), outputs a formatted diagnostic table, and exits nonzero if any failure occurred.
+   - In --save mode, retains strict fail-fast policy on first failure.
+6. API Inventory & Verification Status:
+   - Cataloged all engine API chains in README.md Section 9, cross-referenced with probe_lines.txt from DD27c.
+   - Identified unreal.Vector2D as UNVERIFIED in probe evidence; guarded in authoring_core.py with hasattr(unreal, 'Vector2D') check and fallback to [float, float] list.
+7. Offline Qualification Suite:
+   - Added TestFakeUnrealEngineReflection in test_authoring_core.py featuring PyWrapperStructFake:
+     * Reproduces engine behavior where hasattr(inst, prop) is False.
+     * Proves passing a dict for a struct property raises TypeError.
+     * Proves struct instantiation via default constructor and set_editor_property succeeds.
+     * Tests all explicit conversion helpers and DiagnosticFailureCollector aggregation.
+   - Updated test_probe_unreal_api.py and TestFailClosedEditorGuard for module-level unreal.is_editor().
+   - Full suite discovery: 203/203 tests PASS in 0.916s (-B compliant, 0 __pycache__, zero engine processes, zero source edits).
+8. README Evidence & Residual Limits:
+   - Updated README.md (REV24 metadata, Section 9 Engine Reflection Evidence & Residual Limits, Section 10 Artifacts table).
+
+3. BUNDLED PROGRAM STATUS REPORT UPDATE (PER C-310)
+- Docs/BossCombatReview/Execution/Antigravity/Status/PROGRAM_STATUS_2026-10-29.md:
+  * Cited Codex KI-135 (DD27 run-1 editor API failure) in Section 1 (DD27 limits), Section 3, Section 5 (Category A blocking), and Section 7 (Diagnostic Timeline).
+  * Cited Codex KI-136 (Death lifecycle issue traceability) in Section 1 (DD25 limits), Section 5 (Category B), and Section 7.
+  * Withdrew 'wrong id' claim regarding KI-083 in Section 5 per Lead C-310 directive.
+  * SHA256: 5d5cb1c8e51487f9477117b9e086c6e7127cfd3ca6be8c5adfcd5100f48e2b5a (21,413 bytes, pure CRLF).
+
+4. CRYPTOGRAPHIC EVIDENCE & REPOSITORY HYGIENE
+- File SHA256 Hashes:
+  * authoring_core.py: 5fd66fe75fd688b6d47977362b825ef7d48670e07fce0d7cf27d88239c757244 (98,294 bytes)
+  * draft_boss_profiles.py: e18db00dcff8f37426c7e798b36b01134372a0d2aebed5758ded3cfae5685255 (46,671 bytes)
+  * inspect_authored_assets.py: b3330da60b2098803a5a8a632d2ade144f669f0a40862ef8a3e306659de3fc47 (25,749 bytes)
+  * test_authoring_core.py: b7bab70485a25e9bb882d66bb967d4647e18ad60116cbdb1caa38413e0238d0d (141,742 bytes)
+  * test_probe_unreal_api.py: b75ea075b0ac7be0cb1106bbeede99fb97625df4e892a35cbd19152c08244d91 (13,717 bytes)
+  * README.md: 2a727e3d3694c4be5570ef38bceed7a71daba9b884a7a27cdfac22e44583d480 (43,631 bytes)
+  * evidence_sha256.txt (Toolkit): 3b134beef655762f9ea1ed7ab79c370e7447fd6047f1283295e721851a1129ce (3,747 bytes)
+  * evidence_sha256.txt (Helper): 5e4e82fc6d2dc090b1821566098c33987e570f81e563b852b94e52c5189158c7 (321 bytes)
+  * PROGRAM_STATUS_2026-10-29.md: 5d5cb1c8e51487f9477117b9e086c6e7127cfd3ca6be8c5adfcd5100f48e2b5a (21,413 bytes)
+- Test Suite Discovery: 203 tests run in 0.916s -> OK (203/203 PASS, exit code 0).
+- Working tree check:
+  git status --short -- Source Content Config: CLEAN (0 modifications).
+  0 __pycache__ directories, pure CRLF line endings across all modified files.
+
+5. HANDOFF & READINESS
+A-212 offline helper corrections and status updates are complete and verified. The Authoring Toolkit is ready for the headless in-memory DD27 rerun (--apply without --save) whenever Lead Claude releases it to Codex.

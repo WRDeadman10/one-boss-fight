@@ -1,0 +1,27 @@
+--- DD27h/run_once.ps1
++++ DD27l/run_once.ps1
+@@ -1,7 +1,7 @@
+ $ErrorActionPreference='Stop'
+ $root='C:\UnrealProject\OneBossFight'
+-$r="$root\Docs\BossCombatReview\Execution\Codex\DD27h"
+-if(Test-Path "$r\command.json"){throw 'DD27h already attempted; STOP'}
++$r="$root\Docs\BossCombatReview\Execution\Codex\DD27l"
++if(Test-Path "$r\command.json"){throw 'DD27l already attempted; STOP'}
+ python -I "$r\preflight.py"
+ if($LASTEXITCODE -ne 0){throw 'Preflight failed; STOP BEFORE LAUNCH'}
+ if(!(Test-Path "$r\preflight_verified.json")){throw 'Missing preflight; STOP'}
+@@ -17,12 +17,12 @@
+ $engine='C:\Program Files\Epic Games\UE_5.5\Engine\Binaries\Win64\UnrealEditor-Cmd.exe'
+ $script='C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/draft_boss_profiles.py'
+ $inputFile='C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json'
+-$argsList=@("$root\OneBossFight.uproject","-ExecutePythonScript=`"$script --input-json $inputFile --apply`"",'-unattended','-nullrhi','-nosound','-nosplash',"-abslog=$r\editor_raw.log")
++$argsList=@("$root\OneBossFight.uproject","-ExecutePythonScript=`"$script --input-json $inputFile --apply --only DA_Player_Hero_Draft_V2`"",'-unattended','-nullrhi','-nosound','-nosplash',"-abslog=$r\editor_raw.log")
+ @{executable=$engine;arguments=$argsList;release=$v.release;attempt=1;save_flag=$false} | ConvertTo-Json -Depth 5 | Set-Content "$r\command.json"
+ $env:PYTHONDONTWRITEBYTECODE='1'
+ $start=Get-Date
+ $p=Start-Process -FilePath $engine -ArgumentList $argsList -PassThru -Wait -NoNewWindow -RedirectStandardOutput "$r\stdout.log" -RedirectStandardError "$r\stderr.log"
+ $end=Get-Date
+ @{start=$start.ToString('o');end=$end.ToString('o');seconds=($end-$start).TotalSeconds;exit_code=$p.ExitCode;process_id=$p.Id} | ConvertTo-Json | Set-Content "$r\job_record.json"
+-Write-Output "DD27h_EXIT=$($p.ExitCode)"
++Write-Output "DD27l_EXIT=$($p.ExitCode)"
+ exit $p.ExitCode

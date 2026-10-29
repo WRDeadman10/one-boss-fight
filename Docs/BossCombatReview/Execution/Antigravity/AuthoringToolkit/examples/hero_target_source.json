@@ -1,0 +1,12 @@
+{
+  "$schema_description": "Frozen Truthful Source for Player Hero Target-Only Manifest Fields (Order A-225 / Lead C-342)",
+  "participant_kind": "Player",
+  "definition_id": "Player_Hero",
+  "stats": {
+    "MaxHealth": 800.0,
+    "MaxPosture": 60.0,
+    "PostureRegenDelay": 1.5,
+    "PostureRegenRate": 25.0
+  }
+}
+

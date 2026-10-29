@@ -1,0 +1,57 @@
+TASK: AG-CONTENT04 staged authoring toolkit corrections (A180 -> A181) under [X-288], [X-291], and [X-293].
+STATUS: COMPLETED. Frozen revision A-181 delivered via MCP. 59/59 unit tests PASS (exit code 0). Pure CRLF enforced across all 50 files. Zero engine processes launched; zero assets created, mutated, or deleted; zero git operations.
+
+PRESERVED ARCHIVES:
+- BuildAuthoringHelper/original_A180/ (author_custom_build.py, README.md, evidence_sha256.txt preserved byte-for-byte)
+- AuthoringToolkit/original_A180/ (all toolkit files preserved byte-for-byte before A-181 edits)
+- Historical archives preserved: original_A176/, original_A177/, original_A178/, original_A179/.
+
+IMPLEMENTED CORRECTIONS & EXACT NATIVE CONTRACTS:
+
+1. Native JSON to Generated Python Property Mapping (PyGenUtil Parity):
+   - Implemented pythonize_property_name mirroring UE5.5 PyGenUtil::PythonizePropertyName:
+     * Converts PascalCase to snake_case (MaxHealth -> max_health, RiposteAlignSeconds -> riposte_align_seconds).
+     * Strips boolean 'b' prefixes (bResetOnPlayerRespawn -> reset_on_player_respawn, bHoldPostureAtZero -> hold_posture_at_zero, bFireballEnabled -> fireball_enabled).
+   - Implemented map_native_dict_to_python_keys: converts native CamelCase JSON profile dictionaries into pythonized parameter dictionaries for all 10 struct types. Converts FireballCooldown into explicit 2-float elements.
+   - Guarantees that PyWrapperStruct.cpp:CastPyObject finds generated InitParam.ParamName keys and eliminates silent fallback to defaults.
+
+2. Canonical Primitive Readback Verification (extract_canonical_primitives):
+   - Implemented extract_canonical_primitives: inspects actual struct attributes, FVector2D, and soft paths from Unreal Python wrappers, translating them back to canonical primitive JSON dictionaries keyed by native CamelCase names.
+   - In execute_draft_apply, every written struct, scalar, vector, and phase array is read back, converted to primitives, and compared against the requested non-default values, asserting exact equality.
+
+3. Complete Scalar-Domain Table & Backend Capability Enforcement:
+   - Aligned directly with accepted native validators in Source/OneBossFight:
+     * StaggerPolicy: CriticalMultiplier >= 1.0 (NATIVE_CRITICAL_MULTIPLIER_FLOOR = 1.0; below 1 would add health per RPGBossStaggerPolicyAdapters.h:26). Nonnegative scalars (StaggerSeconds, FreezeAtPosition, RiposteRange, RiposteArmSeconds, RipostePlayerStartGap, RiposteImpactSeconds, RiposteBaseDamage, CooldownSeconds >= 0.0; legal 0.0 boundary preserved). Strictly positive division fields (RiposteAlignSeconds > 0.0, GetUpRate > 0.0 with finite float inverses). Angular ranges [0.0, 360.0] for RiposteConeDegrees and RiposteFacingDegrees.
+     * EncounterPolicy: GateRadius >= 0.0 (cm horizontal; 0 = no gate per RPGBossEncounterPolicyAdapters.h:11).
+     * PhaseFlow: TransitionSeconds >= 0.0.
+     * Fireball: Cooldown [min, max] with min >= 0.0 and max >= min; ranges min >= 0.0 and max >= min.
+     * Stats: MaxHealth > 1.0 (NATIVE_HEALTH_OVERRIDE_FLOOR = 1.0 per RPGBossStatsAdapters.cpp:95), MaxPosture > 0.0, PostureRegenDelay/Rate >= 0.0.
+     * Phases: 0.0 < EntryHealthFraction <= 1.0, SpeedMultiplier/RateMultiplier > 0.0 with finite inverse, AttackMultiplier >= 1.0 (NATIVE_DAMAGE_SCALE_FLOOR = 1.0).
+
+4. Extended Recording Fake Writer & Adversarial Tests:
+   - Extended PyWrapperStructFake in test_authoring_core.py to populate attributes exclusively for pythonized property names. Proves that passing unmapped CamelCase dicts causes default-loss and is caught by canonical readback verification.
+   - Added TestPythonPropertyMapping (property name pythonization, dict mapping, canonical extraction round-trip, default-loss detection).
+   - Added TestScalarDomainTable (stagger policy non-negatives, strictly positive division fields, angular ranges, critical multiplier floor, encounter/flow/fireball domains).
+
+5. Future Unreviewed Profile Scope Boundary (DD19 Qualification):
+   - In accordance with [X-293], DD19's upcoming reflected Bleed profile (FRPGBleedConfig) is recognized as future scope and is deliberately excluded from this frozen toolkit release pending formal native schema acceptance.
+
+VALIDATION EVIDENCE:
+- test_authoring_core.py: 59/59 tests PASS in 0.007s (exit code 0).
+- test_run_output.txt: updated with complete verbose test output (9555 bytes, 59/59 PASS, exit code 0).
+- CRLF compliance: 100% pure CRLF verified across all 50 files in AuthoringToolkit/ and BuildAuthoringHelper/ (0 bare LF, 0 bare CR).
+- Standing constraints maintained: zero engine processes, zero asset writes on disk, zero git commits or pushes.
+
+EVIDENCE RECEIPTS:
+- BuildAuthoringHelper/evidence_sha256.txt (13 entries)
+  * author_custom_build.py: c586634ebd5d2f86b9d97ca4a7ac45819d756c620b5851b27aa19e88f4152e52 (39287 bytes)
+  * README.md: 89da36d1b8a762173474fb427b2b21a2bbc7f23f6e08904683d441997cc71a4d (7972 bytes)
+- AuthoringToolkit/evidence_sha256.txt (19 entries)
+  * authoring_core.py: d406d77a72590287b0f6d9bb4a66161d2514657618de0722130189fadd2f41d1 (39139 bytes)
+  * draft_boss_profiles.py: 3fef389f10c7745d70f4568a1521c46ad59b4fa8858c52c77030d12fab30f213 (33724 bytes)
+  * inspect_authored_assets.py: cd30120459086fce4fc9895c69b583d301a1be692661628b7604386e8e65cf19 (22937 bytes)
+  * test_authoring_core.py: 6e2d6217e7828e7542f10d5c32998e84e049c32ba5111ce0c913828e8919c6e4 (39612 bytes)
+  * test_run_output.txt: 69b07cbb5fe4d2ea94befb475de63f34fb34b660e276a20f8206a646999244fc (9555 bytes)
+  * README.md: 815e5dd2c233dd1cfae26af617abca5afd0f4f9a7d405628ecec82dad0af573b (18082 bytes)
+
+Awaiting Technical Lead Codex review on frozen revision A-181. Standing by via MCP.

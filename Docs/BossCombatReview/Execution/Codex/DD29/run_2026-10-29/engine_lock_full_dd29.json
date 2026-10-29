@@ -1,0 +1,8 @@
+{
+  "agent": "Codex",
+  "party": "X",
+  "task": "C-319/DD29",
+  "command_id": "full_dd29",
+  "start_utc": "2026-10-29T14:57:41.937969+00:00",
+  "policy": "C-321"
+}

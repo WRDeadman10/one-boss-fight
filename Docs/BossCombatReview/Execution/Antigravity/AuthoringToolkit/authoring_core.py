@@ -385,6 +385,304 @@ STRUCT_SPECS = {
     "fields": (NATIVE_PARITY_FIELD_FIELDS, PARITY_FIELD_NATIVE_TO_PY, PARITY_FIELD_PY_TO_NATIVE),
 }
 
+# ---------------------------------------------------------------------------
+# C++ Struct to Unreal Python Wrapper Class Mapping (Verified in DD27c Stage 2)
+# ---------------------------------------------------------------------------
+SPEC_TO_STRUCT_MAP: Dict[str, Tuple[str, str]] = {
+    "stats": ("FRPGBossStatsConfig", "RPGBossStatsConfig"),
+    "encounter_policy": ("FRPGEncounterPolicyConfig", "RPGEncounterPolicyConfig"),
+    "stagger_policy": ("FRPGStaggerPolicyConfig", "RPGStaggerPolicyConfig"),
+    "phase_flow": ("FRPGPhaseFlowConfig", "RPGPhaseFlowConfig"),
+    "fireball": ("FRPGFireballConfig", "RPGFireballConfig"),
+    "phase_dependencies": ("FRPGPhaseDependencyConfig", "RPGPhaseDependencyConfig"),
+    "stagger_profile": ("FRPGStaggerProfileConfig", "RPGStaggerProfileConfig"),
+    "dormant_wake": ("FRPGDormantWakeConfig", "RPGDormantWakeConfig"),
+    "bleed": ("FRPGBleedConfig", "RPGBleedConfig"),
+    "low_sweep": ("FRPGLowSweepConfig", "RPGLowSweepConfig"),
+    "shockwave": ("FRPGShockwaveConfig", "RPGShockwaveConfig"),
+    "heal_punish": ("FRPGHealPunishConfig", "RPGHealPunishConfig"),
+    "look": ("FRPGLookConfig", "RPGLookConfig"),
+    "close_clip_swap": ("FRPGCloseClipSwapConfig", "RPGCloseClipSwapConfig"),
+    "death": ("FRPGDeathConfig", "RPGDeathConfig"),
+    "phases": ("FRPGPhaseConfig", "RPGPhaseConfig"),
+    "fields": ("FRPGParityField", "RPGParityField"),
+}
+
+# C++ FName property names requiring unreal.Name wrapper
+FNAME_PROPERTIES = {
+    "MoveId", "SwordSocket", "CloseAbilityClassName", "AttackMontagesName",
+    "PackDeathAbilityClassName", "PackDeathMontagesName", "HitStunAbilityClassName",
+    "PhaseId", "AttackAbilityPrefix", "LeapAbilityTag"
+}
+
+# C++ TSoftClassPtr<UObject> property names requiring loaded UClass object
+SOFT_CLASS_PROPERTIES = {
+    "FireballAbility", "ImmunityEffect"
+}
+
+
+# ---------------------------------------------------------------------------
+# Explicit Conversion Helpers (Order A-212 / DD27c Evidence Grounded)
+# ---------------------------------------------------------------------------
+def extract_soft_path_string(obj: Any) -> str:
+    """
+    Extracts package/asset path string from a loaded UObject, SoftObjectPath, or string.
+    Works with:
+    - UObject: obj.get_path_name() or repr parsing '<Object '/Game/...' ...>'
+    - SoftObjectPath: obj.to_string() or obj.asset_path_name
+    - str: str(obj)
+    - None: ''
+    """
+    if obj is None:
+        return ""
+    if isinstance(obj, str):
+        return obj
+    if hasattr(obj, "get_path_name") and callable(getattr(obj, "get_path_name")):
+        try:
+            return str(obj.get_path_name())
+        except Exception:
+            pass
+    if hasattr(obj, "to_string") and callable(getattr(obj, "to_string")):
+        try:
+            return str(obj.to_string())
+        except Exception:
+            pass
+    if hasattr(obj, "asset_path_name"):
+        return str(obj.asset_path_name)
+    r = repr(obj)
+    if "'" in r and "/Game/" in r:
+        parts = r.split("'")
+        if len(parts) >= 2 and parts[1].startswith("/Game/"):
+            return parts[1]
+    return str(obj)
+
+
+def to_soft_ref(path_str: Any, unreal_module: Any = None) -> Tuple[Any, str]:
+    """
+    Converts path string to soft object reference representation for Unreal Engine.
+    Grounded in DD27e live engine probe evidence (softref_lines_verbatim.txt):
+    Unreal Engine 5.5.4 Python REJECTS str and SoftObjectPath for TSoftObjectPtr<T> properties.
+    It requires the loaded UObject instance (via EditorAssetLibrary.load_asset).
+    If path is empty or None, returns (None, "None").
+    If unreal_module is None (pure offline mode), returns (str(path_str), "str").
+    In live engine mode:
+    - Checks unreal_module.EditorAssetLibrary.does_asset_exist(clean_path).
+    - If True, calls unreal_module.EditorAssetLibrary.load_asset(clean_path).
+    - If asset does not exist or load fails, raises RuntimeError("asset does not exist or did not load: <path>").
+    """
+    if not path_str:
+        return None, "None"
+
+    raw_path = str(path_str).strip()
+    if not raw_path:
+        return None, "None"
+
+    if unreal_module is None:
+        return raw_path, "str"
+
+    # Check for EditorAssetLibrary in live engine
+    if hasattr(unreal_module, "EditorAssetLibrary"):
+        eal = getattr(unreal_module, "EditorAssetLibrary")
+        if hasattr(eal, "does_asset_exist") and hasattr(eal, "load_asset"):
+            if not eal.does_asset_exist(raw_path):
+                raise RuntimeError(f"asset does not exist or did not load: '{raw_path}'")
+            loaded_obj = eal.load_asset(raw_path)
+            if loaded_obj is None:
+                raise RuntimeError(f"asset does not exist or did not load: '{raw_path}'")
+            return loaded_obj, "loaded_object"
+
+    return raw_path, "str"
+
+
+
+
+def to_class_ref(path_str: Any, unreal_module: Any = None) -> Tuple[Any, str]:
+    """
+    Converts path string to soft class reference representation for Unreal Engine.
+    Grounded in DD27g live engine probe evidence (classref_lines_verbatim.txt):
+    Unreal Engine 5.5.4 Python REJECTS str, FName, and SoftClassPath for TSoftClassPtr<UObject> properties with TypeError.
+    It requires a loaded UClass / UBlueprintGeneratedClass instance.
+    - If path is empty or None, returns (None, "None").
+    - If unreal_module is None (pure offline mode), returns (str(path_str), "str").
+    - In live engine mode:
+      Calls unreal_module.load_class(None, raw_path) with the exact path string (which already ends in '_C').
+      If load_class returns None for a non-empty path, raises RuntimeError(f"class did not load: '{raw_path}'").
+      (Silent None would author an empty/null reference causing silent data loss).
+      Returns (loaded_class, "loaded_class").
+    """
+    if not path_str:
+        return None, "None"
+
+    raw_path = str(path_str).strip()
+    if not raw_path:
+        return None, "None"
+
+    if unreal_module is None:
+        return raw_path, "str"
+
+    if hasattr(unreal_module, "load_class") and callable(getattr(unreal_module, "load_class")):
+        loaded_class = unreal_module.load_class(None, raw_path)
+        if loaded_class is None:
+            raise RuntimeError(f"class did not load: '{raw_path}'")
+        return loaded_class, "loaded_class"
+
+    return raw_path, "str"
+
+
+def to_fname(name_str: Any, unreal_module: Any = None) -> Tuple[Any, str]:
+    """
+    Converts name string to FName representation.
+    Tries unreal.Name(name_str) if unreal_module has Name.
+    Falls back to str.
+    Returns: (converted_value, form_name_used)
+    """
+    if unreal_module is not None and hasattr(unreal_module, "Name") and callable(getattr(unreal_module, "Name")):
+        try:
+            return unreal_module.Name(str(name_str) if name_str else ""), "unreal.Name"
+        except Exception:
+            pass
+    return str(name_str) if name_str is not None else "", "str"
+
+
+def to_death_mode(mode_val: Any, unreal_module: Any = None) -> Tuple[Any, str]:
+    """
+    Converts death mode string to ERPGBossDeathMode enumerator.
+    Maps:
+      'PackMontage' / 'PACK_MONTAGE' -> unreal.RPGBossDeathMode.PACK_MONTAGE
+      'OwnClip' / 'OWN_CLIP' -> unreal.RPGBossDeathMode.OWN_CLIP
+    Returns: (converted_value, form_name_used)
+    """
+    s = str(mode_val).upper().replace("ERPGBOSSDEATHMODE::", "").replace(" ", "_")
+    attr_name = "OWN_CLIP" if ("OWN_CLIP" in s or "OWNCLIP" in s) else "PACK_MONTAGE"
+
+    if unreal_module is not None and hasattr(unreal_module, "RPGBossDeathMode"):
+        enum_cls = getattr(unreal_module, "RPGBossDeathMode")
+        if hasattr(enum_cls, attr_name):
+            return getattr(enum_cls, attr_name), f"unreal.RPGBossDeathMode.{attr_name}"
+    return attr_name, f"str({attr_name})"
+
+
+def convert_property_for_engine(native_key: str, val: Any, expected_type: Any, unreal_module: Any = None) -> Tuple[Any, str]:
+    """
+    Explicit, documented property value conversion for Unreal Engine 5.5 Python API:
+    - float: to_float32(val)
+    - int: int(val)
+    - bool: bool(val)
+    - DeathMode: to_death_mode(val, unreal_module)
+    - FName properties: to_fname(val, unreal_module)
+    - TSoftObjectPtr (mesh/anim/vfx/sound soft paths): to_soft_ref(val, unreal_module)
+    - FString (in parity fields): str(val)
+    - FVector2D (FireballCooldown): unreal.Vector2D or [float, float]
+    - TArray<FName> (SpawnSockets): list of to_fname
+    - TArray<TSoftObjectPtr> (Pieces): list of to_soft_ref
+    """
+    if expected_type is float and val is not None:
+        return to_float32(val), "to_float32"
+    if expected_type is int and val is not None:
+        return int(val), "int"
+    if expected_type is bool and val is not None:
+        return bool(val), "bool"
+
+    if native_key == "DeathMode":
+        return to_death_mode(val, unreal_module)
+
+    if native_key in SOFT_CLASS_PROPERTIES:
+        return to_class_ref(val, unreal_module)
+
+    if native_key in FNAME_PROPERTIES:
+        return to_fname(val, unreal_module)
+
+    if expected_type is list:
+        if native_key == "FireballCooldown":
+            x = float(val[0]) if len(val) > 0 else 0.0
+            y = float(val[1]) if len(val) > 1 else 0.0
+            if unreal_module is not None and hasattr(unreal_module, "Vector2D") and callable(getattr(unreal_module, "Vector2D")):
+                try:
+                    return unreal_module.Vector2D(x, y), "unreal.Vector2D"
+                except Exception:
+                    pass
+            return [to_float32(x), to_float32(y)], "list[float32]"
+        elif native_key == "SpawnSockets":
+            items = []
+            for item in (val or []):
+                cv, _ = to_fname(item, unreal_module)
+                items.append(cv)
+            return items, "list[unreal.Name]"
+        elif native_key == "Pieces":
+            items = []
+            for item in (val or []):
+                if item:
+                    cv, _ = to_soft_ref(item, unreal_module)
+                    items.append(cv)
+                else:
+                    items.append(None)
+            return items, "list[loaded_object]"
+        else:
+            return list(val or []), "list"
+
+    if expected_type is str:
+        is_soft_path = any(kw in native_key for kw in [
+            "Clip", "Montage", "Effect", "Sound", "Body", "Sword", "Skeleton", "Animation"
+        ])
+        if is_soft_path:
+            return to_soft_ref(val, unreal_module)
+        return str(val if val is not None else ""), "str"
+
+    return copy.deepcopy(val), "deepcopy"
+
+
+def create_empty_struct_instance(struct_key: str, unreal_module: Any = None) -> Any:
+    """
+    Instantiates an empty Unreal Engine UStruct wrapper via its default constructor
+    (e.g. unreal.RPGBleedConfig()).
+    If unreal_module is None or struct class is not in unreal_module, returns an empty dict {}.
+    """
+    if struct_key not in STRUCT_SPECS:
+        raise KeyError(f"Unknown struct key '{struct_key}'")
+
+    if unreal_module is not None:
+        cpp_name, py_class_name = SPEC_TO_STRUCT_MAP[struct_key]
+        if hasattr(unreal_module, py_class_name):
+            cls = getattr(unreal_module, py_class_name)
+            return cls()
+
+    return {}
+
+
+def create_struct_instance(struct_key: str, native_dict: Dict[str, Any], unreal_module: Any = None) -> Any:
+    """
+    Instantiates an Unreal Engine UStruct wrapper via its default constructor
+    (e.g. unreal.RPGBleedConfig()), and populates each property via inst.set_editor_property(py_name, converted_value).
+    NEVER passes dictionaries as struct properties; NEVER uses setattr/getattr/hasattr attribute style.
+    If unreal_module is None or struct class unavailable (pure offline fallback), returns dict with pythonized keys.
+    """
+    if struct_key not in STRUCT_SPECS:
+        raise KeyError(f"Unknown struct key '{struct_key}'")
+
+    fields_spec, _, _ = STRUCT_SPECS[struct_key]
+    inst = create_empty_struct_instance(struct_key, unreal_module)
+
+    if hasattr(inst, "set_editor_property") and callable(getattr(inst, "set_editor_property")):
+        for native_k, expected_type in fields_spec.items():
+            py_k = pythonize_property_name(native_k)
+            if native_k in native_dict:
+                raw_val = native_dict[native_k]
+                converted_val, _ = convert_property_for_engine(native_k, raw_val, expected_type, unreal_module)
+                inst.set_editor_property(py_k, converted_val)
+        return inst
+    elif isinstance(inst, dict):
+        for native_k, expected_type in fields_spec.items():
+            py_k = pythonize_property_name(native_k)
+            if native_k in native_dict:
+                inst[py_k] = native_dict[native_k]
+        return inst
+    else:
+        for native_k, expected_type in fields_spec.items():
+            py_k = pythonize_property_name(native_k)
+            if native_k in native_dict:
+                setattr(inst, py_k, native_dict[native_k])
+        return inst
+
 
 def map_native_dict_to_python_keys(native_dict: Dict[str, Any], fields_spec: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -417,14 +715,15 @@ def extract_canonical_primitives(struct_obj: Any, fields_spec: Dict[str, Any]) -
     wrapper or dictionary, converting them to canonical JSON primitives keyed by the native
     C++ CamelCase property names.
 
-    CRITICAL INVARIANTS:
-    - Wrapper objects expose ONLY generated Python property names (e.g. 'max_health').
-      There is NO fallback to native CamelCase names (e.g. 'MaxHealth') on wrapper objects;
-      a real Unreal wrapper does not expose native C++ CamelCase property attributes,
-      and fallback would hide default-loss.
+    CRITICAL INVARIANTS (PER ORDER A-212 / DD27c EVIDENCE):
+    - In Unreal Engine 5.5, struct wrappers expose properties ONLY via inst.get_editor_property(py_name).
+      hasattr(struct_obj, py_name) is FALSE for all struct properties.
+    - If struct_obj has get_editor_property, properties MUST be read via get_editor_property.
     - Dictionaries are read ONLY by generated Python keys.
     """
     canonical = {}
+    has_get_editor_prop = hasattr(struct_obj, "get_editor_property") and callable(getattr(struct_obj, "get_editor_property"))
+
     for native_k, expected_type in fields_spec.items():
         py_k = pythonize_property_name(native_k)
 
@@ -434,6 +733,14 @@ def extract_canonical_primitives(struct_obj: Any, fields_spec: Dict[str, Any]) -
                 raw_val = struct_obj[py_k]
             else:
                 raise KeyError(f"Missing generated property '{py_k}' in struct dictionary (native name '{native_k}')")
+        elif has_get_editor_prop:
+            try:
+                raw_val = struct_obj.get_editor_property(py_k)
+            except Exception as ex:
+                raise AttributeError(
+                    f"Struct wrapper get_editor_property failed for '{py_k}' "
+                    f"(native CamelCase name '{native_k}'): {str(ex)}"
+                )
         elif hasattr(struct_obj, py_k):
             raw_val = getattr(struct_obj, py_k)
         else:
@@ -448,13 +755,17 @@ def extract_canonical_primitives(struct_obj: Any, fields_spec: Dict[str, Any]) -
             canonical[native_k] = int(raw_val)
         elif expected_type is bool:
             canonical[native_k] = bool(raw_val)
-        elif expected_type is str:
-            if hasattr(raw_val, "to_string") and callable(getattr(raw_val, "to_string")):
-                canonical[native_k] = str(raw_val.to_string())
-            elif hasattr(raw_val, "asset_path_name"):
-                canonical[native_k] = str(raw_val.asset_path_name)
+        elif native_k == "DeathMode":
+            if hasattr(raw_val, "name"):
+                canonical[native_k] = str(raw_val.name)
             else:
-                canonical[native_k] = str(raw_val)
+                s = str(raw_val).upper().replace("ERPGBOSSDEATHMODE::", "").replace(" ", "_")
+                canonical[native_k] = "PACK_MONTAGE" if "PACK" in s else "OWN_CLIP"
+        elif expected_type is str:
+            if raw_val is None:
+                canonical[native_k] = ""
+            else:
+                canonical[native_k] = extract_soft_path_string(raw_val)
         elif expected_type is list:
             if native_k == "FireballCooldown":
                 if hasattr(raw_val, "x") and hasattr(raw_val, "y"):
@@ -463,10 +774,18 @@ def extract_canonical_primitives(struct_obj: Any, fields_spec: Dict[str, Any]) -
                     canonical[native_k] = [float(x) for x in raw_val]
                 else:
                     raise TypeError(f"Cannot extract Vector2D from {type(raw_val)}")
-            elif native_k in ("SpawnSockets", "Pieces"):
-                canonical[native_k] = [str(x.to_string()) if hasattr(x, "to_string") else (str(x.asset_path_name) if hasattr(x, "asset_path_name") else str(x)) for x in raw_val]
+            elif native_k == "SpawnSockets":
+                canonical[native_k] = [
+                    str(x.to_string()) if hasattr(x, "to_string") else str(x)
+                    for x in (raw_val or [])
+                ]
+            elif native_k == "Pieces":
+                canonical[native_k] = [
+                    extract_soft_path_string(x) if x is not None else ""
+                    for x in (raw_val or [])
+                ]
             else:
-                canonical[native_k] = list(raw_val)
+                canonical[native_k] = list(raw_val or [])
         else:
             canonical[native_k] = copy.deepcopy(raw_val)
 
@@ -485,6 +804,9 @@ def normalize_native_expected_for_readback(native_dict: Dict[str, Any], fields_s
         expected_type = fields_spec.get(k)
         if expected_type is float and v is not None:
             normalized[k] = to_float32(v)
+        elif k == "DeathMode" and isinstance(v, str):
+            s = str(v).upper().replace("ERPGBOSSDEATHMODE::", "").replace(" ", "_")
+            normalized[k] = "PACK_MONTAGE" if "PACK" in s else "OWN_CLIP"
         elif expected_type is list and k == "FireballCooldown" and isinstance(v, (list, tuple)):
             normalized[k] = [to_float32(x) for x in v]
         elif expected_type is list and k in ("SpawnSockets", "Pieces") and isinstance(v, (list, tuple)):

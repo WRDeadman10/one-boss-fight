@@ -74,7 +74,7 @@ def verify_editor_environment() -> Tuple[bool, str]:
     Strict fail-closed editor environment guard.
     Requires:
     1. HAS_UNREAL is True.
-    2. unreal.SystemLibrary exists and has callable is_editor, and is_editor() is True.
+    2. unreal.is_editor exists, is callable, and unreal.is_editor() is True (verified in DD27c).
     3. unreal.get_editor_subsystem exists and is callable.
     4. unreal.UnrealEditorSubsystem exists.
     5. unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem) returns non-null subsystem.
@@ -84,17 +84,14 @@ def verify_editor_environment() -> Tuple[bool, str]:
     if not HAS_UNREAL or unreal is None:
         return False, "Unreal module not available (running in pure offline Python)"
 
-    # 1. SystemLibrary.is_editor check
-    if not hasattr(unreal, "SystemLibrary"):
-        return False, "Missing required Unreal API: unreal.SystemLibrary"
-    system_lib = getattr(unreal, "SystemLibrary")
-    if not hasattr(system_lib, "is_editor") or not callable(getattr(system_lib, "is_editor")):
-        return False, "Missing required Unreal API: unreal.SystemLibrary.is_editor"
+    # 1. Module-level unreal.is_editor check (callable, verified in DD27c)
+    if not hasattr(unreal, "is_editor") or not callable(getattr(unreal, "is_editor")):
+        return False, "Missing required Unreal API: unreal.is_editor"
     try:
-        if not system_lib.is_editor():
+        if not unreal.is_editor():
             return False, "Not running in Unreal Editor environment (is_editor() == False)"
     except Exception as ex:
-        return False, f"Failed executing unreal.SystemLibrary.is_editor(): {str(ex)}"
+        return False, f"Failed executing unreal.is_editor(): {str(ex)}"
 
     # 2. UnrealEditorSubsystem and non-PIE check
     if not hasattr(unreal, "get_editor_subsystem") or not callable(getattr(unreal, "get_editor_subsystem")):

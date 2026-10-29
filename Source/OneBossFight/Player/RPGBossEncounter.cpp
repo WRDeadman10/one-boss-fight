@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGStartupChronology.h"
 #include "Player/RPGBossBleed.h"
 #include "Player/RPGBossDeath.h"
 #include "Player/RPGBossDormantWake.h"
@@ -65,6 +66,7 @@ URPGBossEncounter::URPGBossEncounter()
 
 void URPGBossEncounter::BeginPlay()
 {
+	RPGStartupChronology::AtComponentBeginPlay(*this);
 	Super::BeginPlay();
 	HomeTransform = GetOwner()->GetActorTransform();
 	if (GateRadius > 0.f)

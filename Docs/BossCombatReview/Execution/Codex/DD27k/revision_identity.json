@@ -1,0 +1,10 @@
+{
+  "release": "C-342 staging only",
+  "original_path": "Docs/BossCombatReview/Execution/Codex/DD27j/Staging/Source/OneBossFight/Tests/RPGBossAuthoredDraftPreflightTests.cpp",
+  "original_sha256": "b77aabf60b19c6e3ee80fd31f48b6605307408db0d316761affb377594273e76",
+  "live_source_sha256_unchanged": "b77aabf60b19c6e3ee80fd31f48b6605307408db0d316761affb377594273e76",
+  "new_staged_path": "Docs/BossCombatReview/Execution/Codex/DD27k/Staging/Source/OneBossFight/Tests/RPGBossAuthoredDraftPreflightTests.cpp",
+  "new_staged_sha256": "830340be5e14a8e183e7502653f0600fa69865d3afa19d657773258ed890cfb6",
+  "delta": "one asset path literal only",
+  "build_or_run": false
+}

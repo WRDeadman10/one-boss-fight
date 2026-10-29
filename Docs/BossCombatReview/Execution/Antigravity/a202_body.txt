@@ -1,0 +1,80 @@
+TASK: Delivery of Order A-202 (C-294) - Parity Manifest Generator (emit_fields_manifest.py), Ember Warden Draft Profile Integration, and Unit Test Suite.
+STATUS: READY FOR LEAD REVIEW. 100% pure offline implementation; zero engine processes, zero source edits, zero asset mutations; 189/189 unit tests PASS.
+
+1. DELIVERED GENERATOR TOOL (emit_fields_manifest.py):
+- Path: Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/emit_fields_manifest.py
+- Architecture: Pure Python standard library, -B compliant, deterministic, auto-discovers repo root, repo-relative paths, no writes unless --output.
+- Live Working-Tree Source Hashing: Computes live SHA256 hashes directly from working-tree source files:
+  * Source/OneBossFight/Player/RPGBossStagger.h
+  * Source/OneBossFight/Player/RPGBossPostures.h
+  * Source/OneBossFight/Player/RPGBossPlayerPhaseState.h
+  * Source/OneBossFight/Player/RPGBossDormantWake.h
+  * Source/OneBossFight/Player/RPGBossEncounterPolicyAdapters.h
+  * Source/OneBossFight/Player/RPGBossBleedAdapters.h
+  * Source/OneBossFight/Player/RPGBossLowSweepAdapters.h
+  * Source/OneBossFight/Player/RPGBossShockwaveAdapters.h
+  * Source/OneBossFight/Player/RPGBossHealPunishAdapters.h
+  * Source/OneBossFight/Player/RPGBossLookAdapters.h
+  * Source/OneBossFight/Player/RPGBossCloseClipSwapAdapters.h
+  * Source/OneBossFight/Player/RPGBossDeathAdapters.h
+  * Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp
+- Generates 106 FRPGParityField rows conforming strictly to Lead C-294 conventions:
+  * FieldPath: 106 paths matching DD26 preflight literals.
+  * Value: Truthful string representations of native C++ constructor defaults or Lead contract values (informational audit snapshot).
+  * Type: Declared C++ UPROPERTY reflection types.
+  * Units: Exact physical domain units (seconds, degrees, cm, cm/s, hp, fraction 0..1, dimensionless).
+  * SourcePath & SourceSite: Defining source files and symbols/lines.
+  * SourceSHA256: 64-hex SHA-256 computed live from working-tree files.
+  * Origin: Taxonomy standard (NativeDefault, SubsystemOverride, LeadContract, AuthoredAsset).
+  * Precedence: Fixed literal 'typed-record'.
+  * Destination: Target native component members (Class::Member).
+  * FirstRead: Standardized lifecycle token 'PrepareBatch.Configure'.
+  * Witness: Measured suite authority (AutomationTest:OneBossFight.Binding.<Suite>.Assign).
+
+2. CLUSTER GENERATION BREAKDOWN:
+- Generated Clusters (15 clusters, 106 paths):
+  * StaggerPolicy: 14 paths (NativeDefault / LeadContract)
+  * StaggerProfile: 11 paths (NativeDefault / LeadContract)
+  * SelectedPhase: 4 paths (NativeDefault)
+  * Fireball: 5 paths (NativeDefault / LeadContract)
+  * PhaseDependencies: 3 paths (NativeDefault)
+  * Encounter: 3 paths (NativeDefault)
+  * DormantWake: 2 paths (NativeDefault)
+  * Posture: 3 paths (NativeDefault)
+  * Bleed: 7 paths (LeadContract)
+  * LowSweep: 8 paths (LeadContract)
+  * Shockwave: 8 paths (LeadContract)
+  * HealPunish: 14 paths (LeadContract)
+  * Look: 5 paths (LeadContract)
+  * CloseClipSwap: 5 paths (LeadContract)
+  * Death: 12 paths (SubsystemOverride / LeadContract)
+- Withheld Gaps (1 cluster, 4 paths - Reason: Needs Phase Spec):
+  * PhaseFlow.Phases[<PhaseId>].EntryHealthFraction
+  * PhaseFlow.Phases[<PhaseId>].SpeedMultiplier
+  * PhaseFlow.Phases[<PhaseId>].RateMultiplier
+  * PhaseFlow.Phases[<PhaseId>].AttackMultiplier
+  (These 4 phase paths are listed as 'Needs Phase Spec' and intentionally excluded from emission per C-294 order).
+
+3. DRAFT PROFILE & COMPILER VALIDATION:
+- File: Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json
+- Populated DA_Boss_EmberWarden_Draft with all 106 generated manifest rows in the fields: [] array.
+- Updated draft_boss_profiles.py to validate manifest fields against CompileParticipantImpl rules (unique FieldPath, non-empty required fields, 64-hex SHA256).
+
+4. UNIT TEST SUITE (test_emit_fields_manifest.py):
+- 9 comprehensive unit tests:
+  * test_row_counts_and_gaps: 106 generated + 4 gaps = 110 total DD26 paths.
+  * test_preflight_paths_exact_match: compares generated FieldPath set directly against RPGBossHydrationPreflightTests.cpp AllRequiredPaths and adapter Field* constants.
+  * test_required_columns_non_empty: validates all 8 mandatory columns.
+  * test_sha256_format_and_live_files: verifies 64-hex format and live file hash agreement.
+  * test_origin_allowed_taxonomy: checks origin values.
+  * test_precedence_literal: verifies 'typed-record'.
+  * test_witness_formatting: verifies 'AutomationTest:OneBossFight.Binding.<Suite>.Assign'.
+  * test_ember_warden_example_loads: verifies boss_draft_profiles.json integration.
+  * test_deterministic_no_invented_values: verifies deterministic generation.
+- Suite Execution: 189/189 PASS in 0.458s (0 errors, 0 warnings).
+
+5. ARTIFACTS & EVIDENCE HYGIENE:
+- Baselines Preserved: original_A201/ staged under AuthoringToolkit/ (9 items) and BuildAuthoringHelper/ (2 items) with self-receipts.
+- Evidence Receipt Updated: Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/evidence_sha256.txt (23 items).
+- Toolkit README Updated: Section 7 added detailing generator architecture and operational limits (provenance stamp not runtime check, stale hash risk, uncovered clusters, zero activation).
+- Project Documentation Updated: TASKS.md (AG-CONTENT12), DECISIONS.md, TEST_PLAN.md (BUILD-45-AG).

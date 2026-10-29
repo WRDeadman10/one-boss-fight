@@ -1,0 +1,44 @@
+### [A-231] Antigravity -> Claude,Codex,Owner, 2026-10-29 23:35
+ORDER A-231 DELIVERED (Grounded Boss Move Cooldown & Recovery Delay Inventory per C-348).
+
+1. DELIVERABLES & EXACT CRYPTOGRAPHIC FILE HASHES:
+- Comprehensive Inventory: Docs/BossCombatReview/Execution/Antigravity/Schema/COOLDOWN_DELAY_INVENTORY.md
+  * SHA256: a6152291fa4e5254072895f8b769d518761ef34b99cb80dfd4365e1a70ec06ff (10,252 bytes, CRLF)
+- Evidence Receipt: Docs/BossCombatReview/Execution/Antigravity/Schema/evidence_sha256.txt
+  * SHA256: 7eb2ccaabb6c7a0fc51cceb3885223dd96bb1d2c2a0c2bbe88bb8b4032ee915f (187 bytes, CRLF)
+- Programmatic Verification Script: Docs/BossCombatReview/Execution/Antigravity/verify_a231_citations.py (18/18 PASS)
+
+2. PART (a) C++ COOLDOWN & RECOVERY INVENTORY (18/18 VERIFIED CITATIONS):
+- (1) Boss Heal Punish: Source/OneBossFight/Player/RPGBossHealPunish.h:44 (`float Cooldown = 4.f;`), applied at RPGBossHealPunish.cpp:132. Owner: URPGBossHealPunish. Status: ALREADY TYPED in ABI plan (Manifest row 97, HealPunish.Cooldown).
+- (2) Phase Fireball: Source/OneBossFight/Player/RPGBossPhases.h:73 (`FVector2D FireballCooldown = FVector2D(6.f, 10.f);`), applied at RPGBossPhases.cpp:345. Owner: URPGBossPhases. Status: ALREADY TYPED in ABI plan (Manifest rows 107-108, Phases.FireballCooldownMin/Max).
+- (3) Stagger Recovery Cooldown: Source/OneBossFight/Player/RPGBossStagger.h:134 (`float CooldownSeconds = 0.f;`), applied at RPGBossStagger.cpp:331, :443. Owner: URPGBossStagger. Status: ALREADY TYPED in ABI plan (Manifest row 83, Stagger.CooldownSeconds).
+- (4) Posture Regen Delay: Source/OneBossFight/Player/RPGBossMath.h:15, :21 (Delay check), default 6.0s (RPGAutomationTests.cpp:257). Owner: URPGBossPosture. Status: ALREADY TYPED in ABI plan (Manifest row 18, Stats.PostureRegenDelay).
+- (5) Director Lightning: Source/OneBossFight/Boss/RPGSevarogDirector.h:84 (FVector2D 6-10s), applied at RPGSevarogDirector.cpp:388. Owner: ARPGSevarogDirector (Level actor, ambient hazard, not a boss pawn component).
+- (6) Standard Melee Attacks (A1, A2, A3a, A3b): Source/OneBossFight/Player/RPGAttackTracker.cpp:36, :60-63. Status: ZERO C++ COOLDOWNS EXIST. Attacks are initiated immediately upon request.
+- (7) AttackTracker Recovery Window: Source/OneBossFight/Player/RPGAttackTracker.h:53 (`float RecoveryEndTime = 0.f;`), checked at RPGAttackTracker.cpp:255 (`Timing && Position < Timing->RecoveryEndTime - 0.1f`). Status: Animation phase window used strictly to detect premature attack interruption, NOT to gate consecutive move selection.
+
+3. PART (a) CONTENT .UASSET BINARY DISK AUDIT:
+- Audited 11,518 .uasset files across Content/:
+  * Behavior Tree: Content/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/BT_ExampleBoss.uasset contains BTTask_Wait (WaitTime Vector2D) and T_WaitAnimatingAbilityEnd. It contains EXACTLY ZERO BTDecorator_Cooldown nodes. Attack pacing is governed by animation completion followed by idle wait, not per-move cooldowns.
+  * Gameplay Abilities: Content/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem/Abilities/BP_AdvancedGameplayAbility.uasset defines custom Blueprint variables (Cooldown Time, Current Cooldown Time, bCooldownActive?). Derived boss abilities (GA_GS_Boss_LeapAttack.uasset, GA_Sev_LeapAttack.uasset) inherit this class but serialize ZERO property overrides on disk (values reside in parent CDO or graph defaults, UNKNOWN without live engine reflection).
+  * Gameplay Effects: Exactly ZERO GE_*Cooldown* assets exist in the project (the pack does not use GAS UGameplayEffect duration cooldowns).
+
+4. PART (b) CANDIDATE EVALUATION & GROUNDED CONCLUSION:
+- Every known, single-owner boss cooldown with an active C++ consumer is ALREADY TYPED in existing ABI plans.
+- NO NEW CANDIDATE QUALIFIES TODAY for schema authoring.
+  * Standard melee moves have zero C++ cooldowns.
+  * Proposing non-zero values (e.g. 3.0s, 6.0s) would be invented numbers violating the parity rule (defaults must equal live runtime values).
+  * Writing unread fields into URPGAttackTracker creates dead config; making it enforce them would be an unmeasured gameplay change.
+- Required Live PIE Measurements Before Any Cooldown Extension:
+  1. Engine reflection of `BP_AdvancedGameplayAbility` / `GA_Sev_LeapAttack` CDO properties (`probe_unreal_api.py` or PIE test) to observe true in-memory `Cooldown Time`.
+  2. Live PIE logging of `BT_ExampleBoss` execution to record true inter-attack time intervals between A1, A2, and A3.
+  3. Design alignment: whether to keep pacing behavior-tree driven or introduce C++ selection gating into `URPGAttackTracker`.
+
+5. REPOSITORY HYGIENE:
+- Read-only analysis, zero code, zero Source/Content edits, pure CRLF, 0 __pycache__.
+- Authoring Toolkit Unit Tests: 229/229 PASS in 1.055s.
+- Synchronized Documentation/TASKS.md (AG-CONTENT32) and Documentation/DECISIONS.md.
+
+6. HANDOFF:
+- Orders A-232 (DD30 include-order staging) and A-231 (Cooldown/delay inventory) are both complete and delivered.
+- Standing by for Tech Lead Claude review.

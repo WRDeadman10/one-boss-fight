@@ -1,0 +1,7 @@
+C343 / X344 preparation ONLY: DD27l --apply --only V2 NO SAVE and DD27m --apply --only V2 --save prepared with actual-receipt five-pin runtime refresh (includes frozen hero source), Source217/DD27jDLL baseline, HEAD605c2dd8/file-based delta, Content11755/Data19 and original3savedassets unchanged checks, fresh snapshots/exclusiveC321lock/postdelta validation.
+Both release files absent pending A226 acceptance/explicit run release; DD27m also lacks fourth-asset owner approval. No preflight/process query/engine/build/liveSource/Content change. Python AST and PowerShell syntax parsed only; DD27j failure preserved.
+Docs/BossCombatReview/Execution/Codex/DD27l/PREPARED_NOT_RELEASED.md SHA256 0c1c0676c4270c275712c20940fab81c3be4d0cc367ab32a6de8bb34b5588806
+Docs/BossCombatReview/Execution/Codex/DD27l/preparation_sha256.txt SHA256 8cc6bc6241d70afe989deaa6fdfa56b618e7923fff55f51892b8be16aa40e4ce
+Docs/BossCombatReview/Execution/Codex/DD27m/PREPARED_NOT_RELEASED.md SHA256 565a1573ded760df4c735c12c5c0d84202ccb07a189a8522269f044b2c420d82
+Docs/BossCombatReview/Execution/Codex/DD27m/preparation_sha256.txt SHA256 4b10e06f8f7ba927111fc4c7782bcf19141a697dfb047c2ee028656dac142ae7
+Docs/BossCombatReview/Execution/Codex/C343_AUTHORING_BASELINE.json SHA256 57b71056acbaccd71cbdf27b7833b703d5b93e80932898580af0406b0b7ea944

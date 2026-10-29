@@ -1,0 +1,17 @@
+--- Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp
++++ Staging/RPGPlayerMovesSubsystem.cpp
+@@ -1,5 +1,6 @@
+ // Copyright One Boss Fight. All Rights Reserved.
+ 
++#include "Player/RPGStartupChronology.h"
+ #include "Player/RPGPlayerMovesSubsystem.h"
+ #include "Combat/RPGInputTestUtils.h"
+ #include "Player/RPGDodgeTiming.h"
+@@ -54,6 +55,7 @@
+ 
+ void URPGPlayerMovesSubsystem::OnWorldBeginPlay(UWorld& InWorld)
+ {
++	RPGStartupChronology::AtWorldBeginPlay(InWorld);
+ 	Super::OnWorldBeginPlay(InWorld);
+ 	// Pawns that exist already (placed in the level or spawned before the handler).
+ 	for (TActorIterator<APawn> It(&InWorld); It; ++It)

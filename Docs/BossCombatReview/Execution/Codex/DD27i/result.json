@@ -1,0 +1,39 @@
+{
+  "release": "C-338",
+  "editor_exit": 0,
+  "seconds": 22.24785,
+  "drafts_saved": 3,
+  "typed_properties_each": 22,
+  "fields_readback": [
+    110,
+    0,
+    0
+  ],
+  "failure_records": 0,
+  "error_severity": 0,
+  "warning_severity": 17,
+  "content_pre": 11752,
+  "content_post": 11755,
+  "data_hashes_pre": 16,
+  "data_hashes_post": 19,
+  "source_count": 216,
+  "head": "605c2dd81d4092e8f84aa7608651ed19d566423a",
+  "raw_sha256": "a9fc5ddd278400b1d2e968a0fe0347b9cc47574a277c298acdfae7a318f0a0ac",
+  "new_assets": [
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_AbyssalRevenant_Draft.uasset",
+      "size": 6101,
+      "sha256": "90ee817f380aac486cecfa86d474078af98005190da1d8f370a62762af975ac5"
+    },
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft.uasset",
+      "size": 79966,
+      "sha256": "ba05a8aa93fec66526c59bf12f51bb824103f67860bdee16efcdd5217d6a3e2b"
+    },
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft.uasset",
+      "size": 4552,
+      "sha256": "8d18711526b7a746e1bb95546db984708984fccbc6cda3546eea39cd72edc822"
+    }
+  ]
+}

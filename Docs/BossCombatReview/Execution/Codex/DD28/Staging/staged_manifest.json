@@ -1,0 +1,43 @@
+{
+  "release": "C-313",
+  "review": "PENDING",
+  "source_count": 212,
+  "source_matches_DD26": true,
+  "diff_line_counts": {
+    "RPGBossHydrationPreparation.h": {
+      "added": 44,
+      "removed": 0
+    },
+    "RPGBossHydrationPreparation.cpp": {
+      "added": 167,
+      "removed": 0
+    }
+  },
+  "new_test_names": [
+    "OneBossFight.Binding.Activation.Success",
+    "OneBossFight.Binding.Activation.NotGameThread",
+    "OneBossFight.Binding.Activation.OwnerBegun",
+    "OneBossFight.Binding.Activation.StateRefusals",
+    "OneBossFight.Binding.Activation.InjectedFaults",
+    "OneBossFight.Binding.Activation.Lifetime"
+  ],
+  "tests_run": false,
+  "mutation_sites": 42,
+  "files": [
+    {
+      "path": "RPGBossHydrationPreparation.h",
+      "size": 11691,
+      "sha256": "7e8c031a082b2229b7a013ad91f678a8b76948c11fdeaa2c0e5001eed9deb1fe"
+    },
+    {
+      "path": "RPGBossHydrationPreparation.cpp",
+      "size": 24683,
+      "sha256": "642332410dad5127d2970daf550e1c6dd051d722a68b3f1751c97f2bdbdbedfd"
+    },
+    {
+      "path": "RPGBossActivationTests.cpp",
+      "size": 19157,
+      "sha256": "287746d682ea6eab3804c8db3ff7bf3611a6d907256b53b4aaa4b2e72d5d0ceb"
+    }
+  ]
+}

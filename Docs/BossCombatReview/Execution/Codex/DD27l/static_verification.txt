@@ -1,0 +1,1 @@
+Python AST all4 controls PASS; PowerShell ScriptBlock parse PASS. No preflight, process query, lock, command/job or engine. Run release absent; fourth-asset owner approval absent.

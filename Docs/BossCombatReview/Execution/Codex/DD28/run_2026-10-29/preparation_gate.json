@@ -1,0 +1,33 @@
+{
+  "scope": "Raw log summary; requires separate job exit/source/binary review",
+  "sha256": "1f102d03c2cca6d9944aa718a7a53f52f4e81295dd722b533fafa75641489a8b",
+  "completed": 6,
+  "unique": 6,
+  "failures": [],
+  "duplicate_completions": [],
+  "warning_severity_lines": 13,
+  "error_severity_lines": 0,
+  "paths": [
+    "OneBossFight.Binding.Preparation.Abort",
+    "OneBossFight.Binding.Preparation.Exclusive",
+    "OneBossFight.Binding.Preparation.InjectedFaults",
+    "OneBossFight.Binding.Preparation.Lifetime",
+    "OneBossFight.Binding.Preparation.Success",
+    "OneBossFight.Binding.Preparation.WholeBatchRejection"
+  ],
+  "job": {
+    "scope": "Recorded exit only, not live liveness",
+    "sha256": "47d7952a5f7bd328757fadc5e0df78b590320f7fc8d3ac770a38f79b4467742a",
+    "exit_code": 0,
+    "seconds": 21
+  },
+  "discovered": [
+    [
+      "6",
+      "OneBossFight.Binding.Preparation."
+    ]
+  ],
+  "fatal_ensure_assertion_unsupported": [],
+  "membership_exact": true,
+  "pass": true
+}

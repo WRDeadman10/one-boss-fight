@@ -1,1 +1,4 @@
 78e8bed9bc168bae8c00f3a2138247bfb0c0317f8f80577f8d62aa6ee7bbde90      42808  Docs/BossCombatReview/Execution/Antigravity/Activation/ACTIVATION_ANALYSIS.md
+46c9c62895aead4397bc2fc2a72dc9ba834935d483ad375a0add580eb5eb5966      40984  Docs/BossCombatReview/Execution/Antigravity/Activation/ACTIVATION_HOOK_SPEC.md
+336e8ee621a6f1631807c1195fb1e140d697aef581515d87c598af9fcaaa95d0      17581  Docs/BossCombatReview/Execution/Antigravity/Activation/DD30_DESIGN_OPTIONS.md
+f2578473d254708e2e0a7d9807089053f9cd2dbe7fab1f4e0121e708bf31d900       2541  Docs/BossCombatReview/Execution/Antigravity/Activation/verify_dd30_options_citations.py

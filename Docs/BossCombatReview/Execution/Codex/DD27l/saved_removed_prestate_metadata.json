@@ -1,0 +1,20 @@
+{
+  "removed": [
+    {
+      "path": "Saved/Logs/UnrealPak-backup-2026.10.24-16.49.32.log",
+      "size": 24837,
+      "mtime_ns": 1792860572000000000
+    },
+    {
+      "path": "Saved/Logs/UnrealPak-backup-2026.10.24-16.53.37.log",
+      "size": 10943,
+      "mtime_ns": 1792860817000000000
+    },
+    {
+      "path": "Saved/Logs/UnrealPak-backup-2026.10.24-16.53.53.log",
+      "size": 24841,
+      "mtime_ns": 1792860833000000000
+    }
+  ],
+  "limit": "prestate captured path/size/mtime only; raw bytes of now-absent old log backups were not frozen by this run; origin unknown, no Codex deletion command"
+}

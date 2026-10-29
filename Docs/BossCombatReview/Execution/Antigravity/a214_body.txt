@@ -1,0 +1,95 @@
+TASK: A-214 delivery of Grounded Soft-Reference Authoring & Offline Asset Existence Audit per Lead C-318 directive.
+
+1. EXECUTIVE SUMMARY & ARTIFACT DELIVERY
+- Authoring Toolkit corrections delivered across authoring_core.py, draft_boss_profiles.py, test_authoring_core.py, test_run_output.txt, README.md, and evidence_sha256.txt.
+- Offline Asset Existence Audit completed: all 86 soft pointer property references across 26 distinct asset paths exist on disk under Content/ (0 missing).
+- Preserved historical baselines:
+  * Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/original_A213/ (13 files + receipt_sha256.txt)
+  * Docs/BossCombatReview/Execution/Antigravity/BuildAuthoringHelper/original_A213/ (3 files + receipt_sha256.txt)
+- Documentation sync: Documentation/TASKS.md (AG-CONTENT21), Documentation/DECISIONS.md, and Documentation/TEST_PLAN.md (BUILD-55-AG).
+- Execution Boundary: STRICTLY OFFLINE. Zero Unreal Engine processes launched; zero Source/Content edits; zero git commits or pushes.
+
+2. GROUNDED SOFT-REFERENCE CONVERSION (PER C-318 ITEM 1 & ITEM 2)
+1. Grounded Conversion in authoring_core.py:
+   - Grounded strictly in DD27e live probe evidence (softref_lines_verbatim.txt): Unreal Engine 5.5.4 Python rejects str and SoftObjectPath for TSoftObjectPtr<T> properties with TypeError, and requires the loaded UObject instance.
+   - to_soft_ref() checks unreal.EditorAssetLibrary.does_asset_exist(path). If True, loads via unreal.EditorAssetLibrary.load_asset(path) and assigns the loaded UObject.
+   - Strict failure policy: if an asset is missing or fails to load, raises RuntimeError("asset does not exist or did not load: '<path>'"). Never silently assigns None.
+   - In draft_boss_profiles.py diagnostic mode, missing assets are recorded as a failure with step 'convert'. In --save mode, causes immediate fail-fast termination.
+   - Array properties (Pieces, animations) convert element-wise into lists of loaded UObject instances.
+2. Granular Readback Verification:
+   - Added extract_soft_path_string() in authoring_core.py: extracts path from get_editor_property() return value using obj.get_path_name() or string parsing of repr ('<Object '/Game/...' ...>').
+   - Compares against normalized expected path string. For empty expectations, requires None or empty string.
+   - Arrays compare element-by-element.
+3. Evidenced Engine API Calls Used:
+   - unreal.EditorAssetLibrary.does_asset_exist(path) [evidenced DD27c / DD27e]
+   - unreal.EditorAssetLibrary.load_asset(path) [evidenced DD27e]
+   - obj.get_path_name() [evidenced DD27c]
+
+3. OFFLINE ASSET EXISTENCE AUDIT (PER C-318 ITEM 3)
+A complete read-only disk existence audit was conducted for every soft pointer path in examples/boss_draft_profiles.json, emit_fields_manifest.py (110-row manifest), and typed defaults against the working tree (Content/**/*.uasset):
+- Total Soft Pointer References Audited: 86
+- Distinct Asset Paths: 26
+- Assets Present on Disk: 26 / 26 (100% present)
+- Missing Assets: 0 (Zero missing assets)
+
+Audit Table (26 Distinct Paths across 86 References):
+| Package Path | Exists | Referenced By Profiles & Properties |
+| :--- | :--- | :--- |
+| /Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin | True | EmberWarden, AbyssalRevenant, Hero (top.skeleton) |
+| /Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage | True | EmberWarden, AbyssalRevenant, Hero (phase_dependencies.TransitionMontage) |
+| /Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage | True | EmberWarden, AbyssalRevenant, Hero (stagger_profile.FallMontage) |
+| /Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage | True | EmberWarden, AbyssalRevenant, Hero (stagger_profile.GetUpMontage) |
+| /Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C | True | EmberWarden, AbyssalRevenant, Hero (phase_dependencies/stagger_profile.ImmunityEffect) |
+| /Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/A_Guardian_ImpactL_Cue.A_Guardian_ImpactL_Cue | True | EmberWarden, AbyssalRevenant, Hero, 110-Row Manifest (bleed.ProcSound) |
+| /Game/BloodPack/Hit/Niagara/NS_BulletHit_Med.NS_BulletHit_Med | True | EmberWarden, AbyssalRevenant, Hero, 110-Row Manifest (bleed.ProcEffect) |
+| /Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1 | True | EmberWarden, AbyssalRevenant, Hero, 110-Row Manifest (close_clip_swap.A1Montage) |
+| /Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a | True | EmberWarden, AbyssalRevenant, Hero, 110-Row Manifest (close_clip_swap.A3aMontage) |
+| /Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b | True | EmberWarden, AbyssalRevenant, Hero, 110-Row Manifest (close_clip_swap.A3bMontage) |
+| /Game/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.AM_Boss01_DeathLegend | True | EmberWarden, AbyssalRevenant, Hero, 110-Row Manifest (death.DeathMontage) |
+| /Game/OneBossFight/Boss01/Animations/AN_Boss01_DeathLegend.AN_Boss01_DeathLegend | True | EmberWarden, AbyssalRevenant, Hero, 110-Row Manifest (death.DeathClip) |
+| /Game/OneBossFight/Boss01/Animations/AN_Boss01_Dormant.AN_Boss01_Dormant | True | EmberWarden, AbyssalRevenant, Hero (dormant_wake.DormantClip) |
+| /Game/OneBossFight/Boss01/Animations/AN_Boss01_Roar.AN_Boss01_Roar | True | EmberWarden, AbyssalRevenant, Hero (phase_dependencies.RoarClip) |
+| /Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown | True | EmberWarden, AbyssalRevenant, Hero (stagger_profile.DownClip) |
+| /Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall | True | EmberWarden, AbyssalRevenant, Hero (stagger_profile.FallClip) |
+| /Game/OneBossFight/Boss01/Animations/AN_Boss01_Wake.AN_Boss01_Wake | True | EmberWarden, AbyssalRevenant, Hero (dormant_wake.WakeClip) |
+| /Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction | True | EmberWarden, AbyssalRevenant, Hero (stagger_profile.RiposteBossClip) |
+| /Game/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.AN_Riposte_Player_Front | True | EmberWarden, AbyssalRevenant, Hero (stagger_profile.RipostePlayerClip) |
+| /Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body | True | EmberWarden, AbyssalRevenant, Hero, 110-Row Manifest (look.Body) |
+| /Game/OneBossFight/Boss01/Body/SK_Boss01_BrazierGauntlet.SK_Boss01_BrazierGauntlet | True | EmberWarden, AbyssalRevenant, Hero (look.Pieces[2]) |
+| /Game/OneBossFight/Boss01/Body/SK_Boss01_Crown.SK_Boss01_Crown | True | EmberWarden, AbyssalRevenant, Hero (look.Pieces[0]) |
+| /Game/OneBossFight/Boss01/Body/SK_Boss01_Mantle.SK_Boss01_Mantle | True | EmberWarden, AbyssalRevenant, Hero (look.Pieces[1]) |
+| /Game/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.SM_Boss01_Greatsword | True | EmberWarden, AbyssalRevenant, Hero, 110-Row Manifest (look.Sword) |
+| /Game/OneBossFight/Content/Animations/Boss01/AM_Boss01_A1.AM_Boss01_A1 | True | EmberWarden, AbyssalRevenant, Hero (top.animations[0]) |
+| /Game/OneBossFight/Content/Animations/Boss01/AM_Boss01_A3a.AM_Boss01_A3a | True | EmberWarden, AbyssalRevenant, Hero (top.animations[1]) |
+
+4. OFFLINE QUALIFICATION & UNIT TEST SUITE (PER C-318 ITEM 4)
+- Updated TestFakeUnrealEngineReflection in test_authoring_core.py with exact UE 5.5.4 soft reference behavior:
+  * Soft reference properties reject str and SoftObjectPath with TypeError.
+  * Accept loaded UObject instances and None.
+  * EditorAssetLibrary.does_asset_exist() and load_asset() simulated.
+- Added 5 qualification unit tests:
+  * test_soft_ref_rejects_str_and_softobjectpath_with_type_error (proves old code fails with TypeError)
+  * test_new_to_soft_ref_with_editor_asset_library_succeeds (proves new code loads UObject and assigns cleanly)
+  * test_missing_asset_raises_runtime_error (proves missing asset raises RuntimeError recorded as convert failure)
+  * test_soft_ref_arrays_as_lists_of_loaded_objects (proves Pieces converts as list of loaded UObjects)
+  * test_soft_ref_readback_canonicalization (proves extract_canonical_primitives extracts path name via get_path_name)
+- Full suite discovery: 212 tests run in 0.928s -> OK (212/212 PASS, exit code 0).
+
+5. DOCUMENTATION & RESIDUAL LIMITS (PER C-318 ITEM 5)
+- Updated README.md Section 9 documenting:
+  * DD27e probe ground truth quoting softref_lines_verbatim.txt line numbers (lines 3, 4, 7, 8, 9, 12, 13, 14, 15, 16, 17).
+  * Open question residual limit: probe proves valid existing assets load into memory and nativize cleanly, but does not answer whether a failed load or path to a not-yet-existing asset can be authored by any other API.
+  * Summary of offline existence audit (100% of referenced assets exist on disk).
+
+6. CRYPTOGRAPHIC EVIDENCE & REPOSITORY HYGIENE
+- File SHA256 Hashes:
+  * authoring_core.py: a296dc41b3b4d6c12ac3bb939a94514a27f6347586f5d25f6337ecca793cef13 (101,268 bytes)
+  * draft_boss_profiles.py: 857f3ba606d8fd16b3b8c87106b8806c9cfd1fa61597f57a3144d3e07e644ff9 (53,342 bytes)
+  * test_authoring_core.py: 9822cbcb97266a302cef1042354d138131b9028c011bd9f09e6c4afa42db2414 (150,068 bytes)
+  * test_run_output.txt: 6537d2b77f39cdac2b6e15e66e338feacf3bea6d57966273d5e6d80640f50716 (1,109 bytes)
+  * README.md: fab88ac0642bb1066b2d0b00e00be2b105a62b83e3eb1e5c14e36a2d0b75582e (49,819 bytes)
+  * evidence_sha256.txt (Toolkit): 142cc19649f3f046bc2beb98e35a89eb7243e2b573d6d90df9cd942c5fb77cc7 (3,747 bytes)
+- Repository Hygiene: 0 __pycache__ directories, pure CRLF line endings across all modified files, 0 engine processes, zero Source/Content edits, zero git operations.
+
+7. HANDOFF & READINESS
+Order A-214 is complete. The Authoring Toolkit is ready for Lead Claude's release of the DD27 in-memory rerun (DD27f) to Codex.

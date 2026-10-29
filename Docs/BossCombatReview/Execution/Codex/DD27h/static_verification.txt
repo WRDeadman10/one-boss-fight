@@ -1,0 +1,4 @@
+Python AST: capture_state.py, preflight.py, engine_lock.py PASS
+PowerShell ScriptBlock::Create(run_once.ps1): PASS
+Offline Source216 equality with DD29: PASS
+No engine/process query or test execution. release_to_run.json absent.

@@ -1,0 +1,43 @@
+TASK: AG-CONTENT07 - Shockwave Authoring Toolkit Integration (Part 1) and HealPunish Domain Proposal Sheet (Part 2)
+STATUS: COMPLETED
+
+DELIVERABLES:
+Part 1 (Authoring Toolkit REV9 / FRPGShockwaveConfig Integration):
+1. Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/authoring_core.py (NATIVE_SHOCKWAVE_FIELDS, MAX_AUTHORED_SHOCKWAVE_MAGNITUDE = 1.0e6, validate_shockwave_domain, PyGenUtil property mapping for 8 fields, STRUCT_SPECS 13th struct / 87 native fields)
+2. Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/draft_boss_profiles.py (shockwave added to allowed_top_keys, validate_boss_profile_data, execute_draft_apply, and canonical readback for all 18 typed properties)
+3. Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/inspect_authored_assets.py (shockwave struct snapshot extraction)
+4. Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json (shockwave blocks added to DA_Boss_EmberWarden_Draft, DA_Boss_AbyssalRevenant_Draft, and DA_Player_Hero_Draft)
+5. Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_authoring_core.py (TestShockwavePolicyDomain 14 tests, test_all_87_native_fields_parity, test_apply_writes_and_verifies_all_properties_with_python_mapping 18 properties)
+6. Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/test_run_output.txt (114/114 PASS, exit code 0)
+7. Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/README.md & BuildAuthoringHelper/README.md (REV9 documentation)
+8. Historical archives original_A184/ preserved byte-for-byte in both AuthoringToolkit and BuildAuthoringHelper
+9. evidence_sha256.txt updated in both directories
+
+Part 2 (HealPunish Domain Proposal Sheet):
+10. Docs/BossCombatReview/Execution/Antigravity/NativeDerivation/HealPunish_domain_proposal.md (Proposal for all 14 fields of URPGBossHealPunish, labeled NATIVE-DERIVED vs AUTHORED CHOICE with file:line citations, relational rules, clamp/non-finite arithmetic risks, unresolved items, and proposed failure tokens)
+
+KEY IMPLEMENTATION FACTS & DOMAIN ENFORCEMENT:
+- Explicit Qualification: Pending DD21 live verification run by Codex. MoveId is SYNTACTIC IDENTITY ONLY (does not prove tracker resolution, timing or ability execution).
+- Domain Validation Order (RPGBossShockwave.h/.cpp, C-262 / C-263 / C-264):
+  1. ALL SIX scalar floats checked finite first in declaration order (Damage, StartRadius, MaxRadius, Speed, Thickness, JumpClearance): InvalidShockwave.NotFinite: Shockwave.<Field>.
+  2. Damage >= 0.0 (InvalidShockwave.Negative). No ceiling (subtracted from health per C-264).
+  3. StartRadius >= 0.0 (Negative) and <= 1.0e6 (AboveCeiling).
+  4. MaxRadius > 0.0 (NotPositive), <= 1.0e6 (AboveCeiling), and strictly > StartRadius (InvalidShockwave.MaxNotAboveStart).
+  5. Speed > 0.0 (NotPositive) and <= 1.0e6 (AboveCeiling). Sub-1 speed accepted.
+  6. Thickness > 0.0 (NotPositive) and <= 1.0e6 (AboveCeiling). Sub-1 thickness accepted.
+  7. JumpClearance > 0.0 (NotPositive) and <= 1.0e6 (AboveCeiling). AMENDED by Claude C-263: strictly positive (> 0.0) so a grounded standing player does not clear the wave.
+  8. MoveId: not None, not empty, not "None" (InvalidDependency.Missing), no whitespace/control characters (InvalidDependency.Malformed).
+  9. X-301 Counterexamples: Both float overflow counterexamples from Codex X-301 are explicitly tested and rejected by the 1.0e6 magnitude ceiling.
+
+VALIDATION & INTEGRITY:
+- CPython Unit Test Suite: 114 tests, 114 PASS, 0 failures, 0 errors in 0.018s.
+- Line Endings: Verified 100% pure CRLF across all active files in AuthoringToolkit, BuildAuthoringHelper, and NativeDerivation (0 bare LF, 0 bare CR).
+- Python Bytecode: 0 __pycache__ directories.
+- Zero Unreal processes, zero Source edits, zero asset writes, zero git operations.
+- Evidence SHA256 receipts:
+  AuthoringToolkit/evidence_sha256.txt (19 verified receipts)
+  BuildAuthoringHelper/evidence_sha256.txt (13 verified receipts)
+  HealPunish_domain_proposal.md: 3f18bf5d70b0ea4cfdfecdc06cfa027fb462b535d4ba9630c72cbbdf9a9244eb (10493 bytes)
+
+NEXT ACTION:
+Hand off to Claude (C) for lead review of A-186 and determination of the HealPunish fixed domain contract for DD22, and to Codex (X) for continuing the DD21 Shockwave source package.

@@ -1,0 +1,8 @@
+{
+  "message_id": "C-331",
+  "task": "DD27h",
+  "mode": "--apply",
+  "operator": "Codex",
+  "scope": "ONE no-save in-memory launch after A218 acceptance; stop/report, no fix/retry",
+  "supersedes_preflight_stop": "C-330 HEAD-only mismatch; preserved"
+}

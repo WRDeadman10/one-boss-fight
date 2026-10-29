@@ -1,0 +1,18 @@
+[
+  {
+    "path": "Docs\\BossCombatReview\\Execution\\Codex\\DD27h\\capture_state.py",
+    "sha256": "61699aa8e77cf701a36b71d9cdb7bd0bbe41aa11b9dd9cfeb29c5bd41900b554"
+  },
+  {
+    "path": "Docs\\BossCombatReview\\Execution\\Codex\\DD27h\\preflight.py",
+    "sha256": "a395e1e28c62032d99a713292adc31512d6bd9872126df93f791d7c0808c871a"
+  },
+  {
+    "path": "Docs\\BossCombatReview\\Execution\\Codex\\DD27h\\engine_lock.py",
+    "sha256": "3e6719333e05d8ca299af2e565ec3ddbd47adb2d8b109c8175e3001e7723ccc2"
+  },
+  {
+    "path": "Docs\\BossCombatReview\\Execution\\Codex\\DD27h\\run_once.ps1",
+    "sha256": "a72f912260597228c629f43023f8504d52009143ac0424d32af815a31df89490"
+  }
+]

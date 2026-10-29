@@ -1,0 +1,1 @@
+Python driver AST PASS; preserves foreign existing PIE (does not request end unless own request produced world). All3live preimages and fullSource217 match DD27j. No C++ compile or engine/process query; proposal only.

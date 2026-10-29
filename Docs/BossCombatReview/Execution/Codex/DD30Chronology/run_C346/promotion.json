@@ -1,0 +1,27 @@
+[
+  {
+    "path": "Source/OneBossFight/Player/RPGBossEncounter.cpp",
+    "before": "dc149393f2fff1788ea22daf42db0b14f85ac36f58ad59c459b44ee94600c96d",
+    "after": "3f3b62d834486c375ec9c2de1ef3423ad719fa81a81477149450d3ae542ee3be"
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGDodgeTiming.cpp",
+    "before": "e6a95113d14aeba1e58d8573f97d8409bcaeaa3c19d52e43526ed307165be737",
+    "after": "367bb788df0ab17eefd194aef0d1296cf62ad33f8befe91d60b9dcb50c634f36"
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+    "before": "17bc29c9d9e033de98cf9956c8d0d8e8bd2f7516a80295d96b4c2ff7ef822834",
+    "after": "5d0f0be233e6bb6f054c47c96d07244758227b46c9739a04bf1d6236d3a0c703"
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGStartupChronology.cpp",
+    "before": "ABSENT",
+    "after": "4e9ea8ebb03d116dfc5a636acadc39d9a0454f38b446385f816c616f55d44306"
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGStartupChronology.h",
+    "before": "ABSENT",
+    "after": "7f8317290a61cd5498944ae74a9e007ca968ade3c844980e22f85fab69b229b5"
+  }
+]

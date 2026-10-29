@@ -1,0 +1,8 @@
+{
+  "agent": "Codex",
+  "party": "X",
+  "task": "C-333/DD27i",
+  "command_id": "DD27i.apply.save-three-new",
+  "start_utc": "2026-10-29T16:17:02.143517+00:00",
+  "policy": "C-321"
+}

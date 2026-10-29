@@ -1,0 +1,20 @@
+{
+  "release": "C-331",
+  "editor_exit": 0,
+  "seconds": 25.283227399999998,
+  "helper_success_observed": true,
+  "drafts": 3,
+  "verified_typed_properties_each": 22,
+  "fields_readback": [
+    110,
+    0,
+    0
+  ],
+  "failures": 0,
+  "error_severity": 0,
+  "warning_severity": 17,
+  "source_count": 216,
+  "outside_saved_drift": false,
+  "head": "605c2dd81d4092e8f84aa7608651ed19d566423a",
+  "raw_sha256": "4db9ea8ca03c9ecbfa7d7962758b8045fa2c1207a689c61a715fed5ade55a5dd"
+}
