@@ -1,0 +1,8 @@
+[
+    "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+    "-ExecutePythonScript=\"C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/create_f4_content.py\"",
+    "-unattended",
+    "-nosound",
+    "-nosplash",
+    "-abslog=C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\F4\\run1_content\\editor_raw.log"
+]

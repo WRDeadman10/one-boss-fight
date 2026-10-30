@@ -78,6 +78,11 @@ Per `[C-380]`, all timing fields (`CommitSeconds`, `ActiveStartSeconds`, `Active
 
 ## 3. Swept Hit-Window Specifications (`FRPGBossMoveWindow`)
 
+> [!NOTE]
+> **Weapon Track Verification (C-396 / F3b run1)**:  
+> Live inspection via `get_animation_track_names` in Claude F3b `run1` confirms that both `weapon_r` and `root_weapon_end_r` possess dedicated animation tracks (155 total sequence tracks). Weapon trajectory evaluates direct bone keyframe animation in addition to arm hierarchy kinematics.
+
+
 Each damaging card defines exactly one primary swept capsule segment:
 
 ### MC-01: `DA_Card_SwingSlow`

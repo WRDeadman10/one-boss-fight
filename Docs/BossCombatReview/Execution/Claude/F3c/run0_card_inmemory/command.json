@@ -1,0 +1,9 @@
+[
+    "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+    "-ExecutePythonScript=\"C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/MoveCards/author_move_cards.py --input-json C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/MoveCards/move_cards_f3_telemetry.json --apply --only Move_Sevarog_SwingSlow\"",
+    "-unattended",
+    "-nosound",
+    "-nosplash",
+    "-abslog=C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\F3c\\run0_card_inmemory\\editor_raw.log",
+    "-nullrhi"
+]

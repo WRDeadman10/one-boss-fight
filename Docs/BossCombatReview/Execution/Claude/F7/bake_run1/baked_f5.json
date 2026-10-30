@@ -1,0 +1,766 @@
+{
+  "cards": [
+    {
+      "Schema": 1,
+      "MoveId": "Move_Sevarog_SwingSlow_F5",
+      "FamilyId": "Family_01_DelayedOverhead",
+      "PhaseId": "Phase_1",
+      "Skeleton": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.Sevarog_Skeleton",
+      "Sequence": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Slow.Swing1_Slow",
+      "Montage": null,
+      "SlotName": "FullBody",
+      "SectionName": "None",
+      "PlayRate": 1.0,
+      "ClipLengthSeconds": 1.7,
+      "CommitSeconds": 0.3,
+      "ActiveStartSeconds": 0.35,
+      "ActiveEndSeconds": 0.4917,
+      "RecoveryEndSeconds": 1.65,
+      "TrackDegreesPerSecond": 90.0,
+      "MinRangeCm": 100.0,
+      "MaxRangeCm": 200.0,
+      "FrontConeDegrees": 90.0,
+      "HPDamage": 35.0,
+      "bUsesRootMotion": false,
+      "Windows": [
+        {
+          "WindowId": "Window_SwingSlow_Primary",
+          "HitGroup": "HitGroup_ScytheBlade",
+          "StartSeconds": 0.35,
+          "EndSeconds": 0.4917,
+          "SocketA": "weapon_r",
+          "SocketB": "root_weapon_end_r",
+          "RadiusCm": 15.0,
+          "BakedClipLengthSeconds": 1.7,
+          "BakedSamples": [
+            {
+              "TimeSeconds": 0.35,
+              "BaseCS": [
+                -59.0,
+                -11.5604,
+                267.0089
+              ],
+              "TipCS": [
+                -60.8843,
+                55.0066,
+                259.6283
+              ]
+            },
+            {
+              "TimeSeconds": 0.358333,
+              "BaseCS": [
+                -61.4132,
+                -4.1636,
+                266.4048
+              ],
+              "TipCS": [
+                -60.1388,
+                61.8486,
+                255.062
+              ]
+            },
+            {
+              "TimeSeconds": 0.366667,
+              "BaseCS": [
+                -63.3678,
+                3.594,
+                265.0047
+              ],
+              "TipCS": [
+                -58.7777,
+                68.7653,
+                250.1449
+              ]
+            },
+            {
+              "TimeSeconds": 0.375,
+              "BaseCS": [
+                -63.8411,
+                11.9331,
+                263.2354
+              ],
+              "TipCS": [
+                -56.3208,
+                76.0113,
+                245.2161
+              ]
+            },
+            {
+              "TimeSeconds": 0.383333,
+              "BaseCS": [
+                -62.8781,
+                20.7363,
+                261.3981
+              ],
+              "TipCS": [
+                -52.9421,
+                83.5212,
+                240.2198
+              ]
+            },
+            {
+              "TimeSeconds": 0.391667,
+              "BaseCS": [
+                -61.9997,
+                29.6845,
+                259.0568
+              ],
+              "TipCS": [
+                -49.1744,
+                90.7315,
+                234.6434
+              ]
+            },
+            {
+              "TimeSeconds": 0.4,
+              "BaseCS": [
+                -62.3959,
+                38.5884,
+                255.7437
+              ],
+              "TipCS": [
+                -45.5777,
+                97.2284,
+                228.0365
+              ]
+            },
+            {
+              "TimeSeconds": 0.408333,
+              "BaseCS": [
+                -62.5992,
+                47.5172,
+                250.7632
+              ],
+              "TipCS": [
+                -41.5495,
+                102.9828,
+                219.6561
+              ]
+            },
+            {
+              "TimeSeconds": 0.416667,
+              "BaseCS": [
+                -62.0828,
+                56.7446,
+                244.6046
+              ],
+              "TipCS": [
+                -36.9611,
+                108.3408,
+                210.0229
+              ]
+            },
+            {
+              "TimeSeconds": 0.425,
+              "BaseCS": [
+                -63.6922,
+                67.6292,
+                238.0776
+              ],
+              "TipCS": [
+                -32.7974,
+                113.4612,
+                200.1709
+              ]
+            },
+            {
+              "TimeSeconds": 0.433333,
+              "BaseCS": [
+                -68.3105,
+                82.2844,
+                231.5421
+              ],
+              "TipCS": [
+                -29.5462,
+                118.9273,
+                190.9983
+              ]
+            },
+            {
+              "TimeSeconds": 0.441667,
+              "BaseCS": [
+                -73.9478,
+                100.3341,
+                222.5053
+              ],
+              "TipCS": [
+                -25.4693,
+                120.8481,
+                181.1886
+              ]
+            },
+            {
+              "TimeSeconds": 0.45,
+              "BaseCS": [
+                -73.3649,
+                118.7716,
+                207.9038
+              ],
+              "TipCS": [
+                -18.4869,
+                117.655,
+                169.4807
+              ]
+            },
+            {
+              "TimeSeconds": 0.458333,
+              "BaseCS": [
+                -63.7808,
+                134.1126,
+                190.8147
+              ],
+              "TipCS": [
+                -9.803,
+                111.4932,
+                158.3828
+              ]
+            },
+            {
+              "TimeSeconds": 0.466667,
+              "BaseCS": [
+                -50.6454,
+                144.4724,
+                177.4161
+              ],
+              "TipCS": [
+                -3.03,
+                105.3949,
+                151.0552
+              ]
+            },
+            {
+              "TimeSeconds": 0.475,
+              "BaseCS": [
+                -38.1226,
+                150.2316,
+                167.1991
+              ],
+              "TipCS": [
+                0.2729,
+                99.325,
+                146.8916
+              ]
+            },
+            {
+              "TimeSeconds": 0.483333,
+              "BaseCS": [
+                -23.6746,
+                151.8591,
+                155.4874
+              ],
+              "TipCS": [
+                3.1741,
+                91.84,
+                142.6023
+              ]
+            },
+            {
+              "TimeSeconds": 0.491667,
+              "BaseCS": [
+                -6.4521,
+                150.9617,
+                143.4082
+              ],
+              "TipCS": [
+                6.49,
+                85.4566,
+                138.4575
+              ]
+            },
+            {
+              "TimeSeconds": 0.4917,
+              "BaseCS": [
+                -6.3791,
+                150.955,
+                143.3613
+              ],
+              "TipCS": [
+                6.5048,
+                85.4361,
+                138.4417
+              ]
+            }
+          ]
+        }
+      ],
+      "DamageStatus": "design value, proposed",
+      "CooldownSeconds": 1.5,
+      "CooldownStatus": "design value, proposed",
+      "BaseUtility": 1.0
+    },
+    {
+      "Schema": 1,
+      "MoveId": "Move_Sevarog_SwingMedium_F5",
+      "FamilyId": "Family_08_ComboSweep",
+      "PhaseId": "Phase_1",
+      "Skeleton": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.Sevarog_Skeleton",
+      "Sequence": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing2_Medium.Swing2_Medium",
+      "Montage": null,
+      "SlotName": "FullBody",
+      "SectionName": "None",
+      "PlayRate": 1.0,
+      "ClipLengthSeconds": 1.1333,
+      "CommitSeconds": 0.15,
+      "ActiveStartSeconds": 0.1917,
+      "ActiveEndSeconds": 0.2667,
+      "RecoveryEndSeconds": 1.1,
+      "TrackDegreesPerSecond": 120.0,
+      "MinRangeCm": 90.0,
+      "MaxRangeCm": 180.0,
+      "FrontConeDegrees": 90.0,
+      "HPDamage": 25.0,
+      "bUsesRootMotion": false,
+      "Windows": [
+        {
+          "WindowId": "Window_SwingMedium_Sweep",
+          "HitGroup": "HitGroup_ScytheBlade",
+          "StartSeconds": 0.1917,
+          "EndSeconds": 0.2667,
+          "SocketA": "weapon_r",
+          "SocketB": "root_weapon_end_r",
+          "RadiusCm": 15.0,
+          "BakedClipLengthSeconds": 1.1333,
+          "BakedSamples": [
+            {
+              "TimeSeconds": 0.1917,
+              "BaseCS": [
+                20.9,
+                21.198,
+                246.929
+              ],
+              "TipCS": [
+                -17.7546,
+                57.8485,
+                206.2679
+              ]
+            },
+            {
+              "TimeSeconds": 0.2,
+              "BaseCS": [
+                22.1098,
+                44.0827,
+                236.2407
+              ],
+              "TipCS": [
+                -25.8498,
+                65.6859,
+                194.7393
+              ]
+            },
+            {
+              "TimeSeconds": 0.208333,
+              "BaseCS": [
+                15.1236,
+                69.9136,
+                220.013
+              ],
+              "TipCS": [
+                -39.7597,
+                68.0184,
+                181.7825
+              ]
+            },
+            {
+              "TimeSeconds": 0.216667,
+              "BaseCS": [
+                -10.1543,
+                93.1933,
+                195.7719
+              ],
+              "TipCS": [
+                -61.9674,
+                62.5346,
+                166.3673
+              ]
+            },
+            {
+              "TimeSeconds": 0.225,
+              "BaseCS": [
+                -49.767,
+                103.1952,
+                171.3507
+              ],
+              "TipCS": [
+                -86.1456,
+                50.0761,
+                152.9486
+              ]
+            },
+            {
+              "TimeSeconds": 0.233333,
+              "BaseCS": [
+                -84.6803,
+                99.0833,
+                155.0387
+              ],
+              "TipCS": [
+                -101.906,
+                35.0532,
+                145.4158
+              ]
+            },
+            {
+              "TimeSeconds": 0.241667,
+              "BaseCS": [
+                -108.2543,
+                84.6668,
+                143.8366
+              ],
+              "TipCS": [
+                -107.4314,
+                17.7743,
+                143.9316
+              ]
+            },
+            {
+              "TimeSeconds": 0.25,
+              "BaseCS": [
+                -131.7255,
+                58.4127,
+                130.5638
+              ],
+              "TipCS": [
+                -111.371,
+                -3.9544,
+                144.1737
+              ]
+            },
+            {
+              "TimeSeconds": 0.258333,
+              "BaseCS": [
+                -153.2321,
+                21.6018,
+                119.2725
+              ],
+              "TipCS": [
+                -114.2271,
+                -26.1163,
+                145.6148
+              ]
+            },
+            {
+              "TimeSeconds": 0.266667,
+              "BaseCS": [
+                -165.5419,
+                -10.8458,
+                115.8106
+              ],
+              "TipCS": [
+                -115.4471,
+                -41.2944,
+                148.2539
+              ]
+            },
+            {
+              "TimeSeconds": 0.2667,
+              "BaseCS": [
+                -165.5725,
+                -10.9267,
+                115.8144
+              ],
+              "TipCS": [
+                -115.4508,
+                -41.3235,
+                148.2639
+              ]
+            }
+          ]
+        }
+      ],
+      "DamageStatus": "design value, proposed",
+      "CooldownSeconds": 1.0,
+      "CooldownStatus": "design value, proposed",
+      "BaseUtility": 1.2
+    },
+    {
+      "Schema": 1,
+      "MoveId": "Move_Sevarog_AntiGreed_F5",
+      "FamilyId": "Family_02_AntiGreed",
+      "PhaseId": "Phase_1",
+      "Skeleton": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.Sevarog_Skeleton",
+      "Sequence": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_FAST_v2.Swing1_FAST_v2",
+      "Montage": null,
+      "SlotName": "FullBody",
+      "SectionName": "None",
+      "PlayRate": 1.0,
+      "ClipLengthSeconds": 0.5333,
+      "CommitSeconds": 0.2,
+      "ActiveStartSeconds": 0.25,
+      "ActiveEndSeconds": 0.3083,
+      "RecoveryEndSeconds": 0.4833,
+      "TrackDegreesPerSecond": 180.0,
+      "MinRangeCm": 90.0,
+      "MaxRangeCm": 185.0,
+      "FrontConeDegrees": 100.0,
+      "HPDamage": 20.0,
+      "bUsesRootMotion": false,
+      "Windows": [
+        {
+          "WindowId": "Window_AntiGreed_FastJab",
+          "HitGroup": "HitGroup_ScytheBlade",
+          "StartSeconds": 0.25,
+          "EndSeconds": 0.3083,
+          "SocketA": "weapon_r",
+          "SocketB": "root_weapon_end_r",
+          "RadiusCm": 15.0,
+          "BakedClipLengthSeconds": 0.5333,
+          "BakedSamples": [
+            {
+              "TimeSeconds": 0.25,
+              "BaseCS": [
+                -56.609,
+                101.3561,
+                200.455
+              ],
+              "TipCS": [
+                -4.7361,
+                81.7836,
+                162.8345
+              ]
+            },
+            {
+              "TimeSeconds": 0.258333,
+              "BaseCS": [
+                -24.4658,
+                122.3697,
+                174.4009
+              ],
+              "TipCS": [
+                15.9459,
+                74.7935,
+                149.5048
+              ]
+            },
+            {
+              "TimeSeconds": 0.266667,
+              "BaseCS": [
+                10.5461,
+                134.6122,
+                155.3518
+              ],
+              "TipCS": [
+                31.7841,
+                72.6428,
+                141.2844
+              ]
+            },
+            {
+              "TimeSeconds": 0.275,
+              "BaseCS": [
+                71.5197,
+                138.5223,
+                111.6581
+              ],
+              "TipCS": [
+                31.904,
+                90.0064,
+                135.4326
+              ]
+            },
+            {
+              "TimeSeconds": 0.283333,
+              "BaseCS": [
+                85.9606,
+                79.3978,
+                102.5393
+              ],
+              "TipCS": [
+                27.6255,
+                74.6147,
+                135.1479
+              ]
+            },
+            {
+              "TimeSeconds": 0.291667,
+              "BaseCS": [
+                88.5519,
+                35.4707,
+                114.7767
+              ],
+              "TipCS": [
+                27.3108,
+                52.9225,
+                135.9656
+              ]
+            },
+            {
+              "TimeSeconds": 0.3,
+              "BaseCS": [
+                84.1335,
+                -0.7862,
+                127.1453
+              ],
+              "TipCS": [
+                25.8754,
+                30.4397,
+                138.1052
+              ]
+            },
+            {
+              "TimeSeconds": 0.3083,
+              "BaseCS": [
+                76.5163,
+                -26.8857,
+                140.3955
+              ],
+              "TipCS": [
+                24.2419,
+                15.0233,
+                142.0584
+              ]
+            }
+          ]
+        }
+      ],
+      "DamageStatus": "design value, proposed",
+      "CooldownSeconds": 2.5,
+      "CooldownStatus": "design value, proposed",
+      "BaseUtility": 1.5
+    },
+    {
+      "Schema": 1,
+      "MoveId": "Move_Sevarog_HeavySlam_F5",
+      "FamilyId": "Family_06_HeavySlam",
+      "PhaseId": "Phase_1",
+      "Skeleton": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.Sevarog_Skeleton",
+      "Sequence": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing3_Slow.Swing3_Slow",
+      "Montage": null,
+      "SlotName": "FullBody",
+      "SectionName": "None",
+      "PlayRate": 1.0,
+      "ClipLengthSeconds": 1.7,
+      "CommitSeconds": 0.4,
+      "ActiveStartSeconds": 0.475,
+      "ActiveEndSeconds": 0.5333,
+      "RecoveryEndSeconds": 1.65,
+      "TrackDegreesPerSecond": 45.0,
+      "MinRangeCm": 90.0,
+      "MaxRangeCm": 180.0,
+      "FrontConeDegrees": 60.0,
+      "HPDamage": 55.0,
+      "bUsesRootMotion": false,
+      "Windows": [
+        {
+          "WindowId": "Window_HeavySlam_Terminal",
+          "HitGroup": "HitGroup_ScytheBlade",
+          "StartSeconds": 0.475,
+          "EndSeconds": 0.5333,
+          "SocketA": "weapon_r",
+          "SocketB": "root_weapon_end_r",
+          "RadiusCm": 25.0,
+          "BakedClipLengthSeconds": 1.7,
+          "BakedSamples": [
+            {
+              "TimeSeconds": 0.475,
+              "BaseCS": [
+                -78.6622,
+                28.8287,
+                248.3297
+              ],
+              "TipCS": [
+                -65.6228,
+                75.941,
+                202.6833
+              ]
+            },
+            {
+              "TimeSeconds": 0.483333,
+              "BaseCS": [
+                -89.2141,
+                46.6139,
+                230.0318
+              ],
+              "TipCS": [
+                -69.9684,
+                81.9296,
+                176.4448
+              ]
+            },
+            {
+              "TimeSeconds": 0.491667,
+              "BaseCS": [
+                -96.5823,
+                69.4063,
+                208.0724
+              ],
+              "TipCS": [
+                -73.0096,
+                89.3844,
+                148.6206
+              ]
+            },
+            {
+              "TimeSeconds": 0.5,
+              "BaseCS": [
+                -99.4878,
+                95.3717,
+                186.3225
+              ],
+              "TipCS": [
+                -74.2517,
+                97.9128,
+                124.3075
+              ]
+            },
+            {
+              "TimeSeconds": 0.508333,
+              "BaseCS": [
+                -94.7974,
+                117.6931,
+                162.9667
+              ],
+              "TipCS": [
+                -70.6176,
+                99.2476,
+                103.4206
+              ]
+            },
+            {
+              "TimeSeconds": 0.516667,
+              "BaseCS": [
+                -88.9085,
+                130.3012,
+                128.2552
+              ],
+              "TipCS": [
+                -64.3593,
+                90.1438,
+                80.5699
+              ]
+            },
+            {
+              "TimeSeconds": 0.525,
+              "BaseCS": [
+                -88.0392,
+                129.0066,
+                84.9637
+              ],
+              "TipCS": [
+                -59.2044,
+                74.7691,
+                58.2127
+              ]
+            },
+            {
+              "TimeSeconds": 0.5333,
+              "BaseCS": [
+                -86.4298,
+                119.973,
+                50.4978
+              ],
+              "TipCS": [
+                -55.5726,
+                61.0373,
+                42.5221
+              ]
+            }
+          ]
+        }
+      ],
+      "DamageStatus": "design value, proposed",
+      "CooldownSeconds": 3.5,
+      "CooldownStatus": "design value, proposed",
+      "BaseUtility": 1.3
+    }
+  ]
+}

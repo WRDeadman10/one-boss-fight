@@ -377,8 +377,18 @@ class FakeUnrealModule:
                 cls._tools = FakeUnrealModule.AssetTools()
             return cls._tools
 
+    class Vector:
+        def __init__(self, x: float = 0.0, y: float = 0.0, z: float = 0.0):
+            self.x = float(x)
+            self.y = float(y)
+            self.z = float(z)
+
+    class FakeRPGBakedBladeSample(FakeEditorPropertyObject):
+        pass
+
     RPGBossMoveCard = FakeRPGBossMoveCard
     RPGBossMoveWindow = FakeRPGBossMoveWindow
+    RPGBakedBladeSample = FakeRPGBakedBladeSample
 
     class DataAssetFactory:
         pass
@@ -440,6 +450,73 @@ class TestAuthorMoveCardsExecution(unittest.TestCase):
         self.assertEqual(len(tools.created), 1)
         self.assertEqual(tools.created[0][0], "Move_Two")
 
+    def test_apply_with_baked_samples_succeeds_and_verifies_readback(self):
+        card = make_valid_spec()
+        dt = 1.0 / 120.0
+        times = [0.4 + i * dt for i in range(48)] + [0.8]
+        times = sorted(list(set([round(t, 6) for t in times])))
+        samples = [
+            {"TimeSeconds": t, "BaseCS": [100.0, 0.0, 100.0], "TipCS": [50.0, 100.0, 120.0]}
+            for t in times
+        ]
+        card["Windows"][0]["BakedSamples"] = samples
+        card["Windows"][0]["BakedClipLengthSeconds"] = 1.5
+
+        rc = execute_authoring([card], apply_mode=True, save_mode=False)
+        self.assertEqual(rc, 0)
+
+        tools = FakeUnrealModule.AssetToolsHelpers.get_asset_tools()
+        self.assertEqual(len(tools.created), 1)
+        asset = tools.created[0][2]
+        spec = asset.get_editor_property("spec")
+        windows = spec.get_editor_property("windows")
+        baked = windows[0].get_editor_property("baked_samples")
+        self.assertEqual(len(baked), len(samples))
+        self.assertAlmostEqual(baked[0].get_editor_property("time_seconds"), 0.4, places=4)
+        self.assertAlmostEqual(baked[-1].get_editor_property("time_seconds"), 0.8, places=4)
+
+    def test_apply_fails_closed_when_rpg_baked_blade_sample_missing(self):
+        card = make_valid_spec()
+        dt = 1.0 / 120.0
+        times = [0.4 + i * dt for i in range(48)] + [0.8]
+        times = sorted(list(set([round(t, 6) for t in times])))
+        card["Windows"][0]["BakedSamples"] = [
+            {"TimeSeconds": t, "BaseCS": [100.0, 0.0, 100.0], "TipCS": [50.0, 100.0, 120.0]}
+            for t in times
+        ]
+        card["Windows"][0]["BakedClipLengthSeconds"] = 1.5
+        orig_cls = FakeUnrealModule.RPGBakedBladeSample
+        try:
+            delattr(FakeUnrealModule, "RPGBakedBladeSample")
+            rc = execute_authoring([card], apply_mode=True, save_mode=False)
+            self.assertEqual(rc, 1, "Must fail closed (exit code 1) when RPGBakedBladeSample is missing in unreal module")
+        finally:
+            FakeUnrealModule.RPGBakedBladeSample = orig_cls
+
+    def test_apply_fails_closed_when_sample_property_missing(self):
+        card = make_valid_spec()
+        dt = 1.0 / 120.0
+        times = [0.4 + i * dt for i in range(48)] + [0.8]
+        times = sorted(list(set([round(t, 6) for t in times])))
+        card["Windows"][0]["BakedSamples"] = [
+            {"TimeSeconds": t, "BaseCS": [100.0, 0.0, 100.0], "TipCS": [50.0, 100.0, 120.0]}
+            for t in times
+        ]
+        card["Windows"][0]["BakedClipLengthSeconds"] = 1.5
+        class BrokenSample(FakeEditorPropertyObject):
+            def set_editor_property(self, name: str, value: Any):
+                if name == "time_seconds":
+                    raise AttributeError("Missing time_seconds property on native reflection")
+                super().set_editor_property(name, value)
+
+        orig_cls = FakeUnrealModule.RPGBakedBladeSample
+        try:
+            FakeUnrealModule.RPGBakedBladeSample = BrokenSample
+            rc = execute_authoring([card], apply_mode=True, save_mode=False)
+            self.assertEqual(rc, 1, "Must fail closed (exit code 1) when property setting fails")
+        finally:
+            FakeUnrealModule.RPGBakedBladeSample = orig_cls
+
     def test_selector_nonexistent_card_returns_error(self):
         card = make_valid_spec()
         rc = execute_authoring([card], apply_mode=False, only_move_id="NonExistent")
@@ -499,6 +576,154 @@ class TestCppTokenParity(unittest.TestCase):
 
         for token in expected_tokens:
             self.assertIn(token, cpp_text, f"Expected token '{token}' in C++ source {cpp_path}")
+
+
+class TestBakedBladeSamplesValidation(unittest.TestCase):
+    def test_opt_in_fallback_no_baked_samples(self):
+        spec = make_valid_spec()
+        self.assertNotIn("BakedSamples", spec["Windows"][0])
+        errors = validate_move_card_spec(spec)
+        self.assertEqual(errors, [])
+
+    def test_valid_baked_samples_accepted(self):
+        spec = make_valid_spec()
+        # Window span is [0.4, 0.8]
+        dt = 1.0 / 120.0
+        times = [0.4 + i * dt for i in range(48)] + [0.8]
+        times = sorted(list(set([round(t, 6) for t in times])))
+        samples = [
+            {
+                "TimeSeconds": t,
+                "BaseCS": [100.0, 0.0, 100.0],
+                "TipCS": [50.0, 100.0, 120.0]
+            }
+            for t in times
+        ]
+        spec["Windows"][0]["BakedSamples"] = samples
+        spec["Windows"][0]["BakedClipLengthSeconds"] = 1.5
+        errors = validate_move_card_spec(spec)
+        self.assertEqual(errors, [])
+
+    def test_baked_samples_not_list(self):
+        spec = make_valid_spec()
+        spec["Windows"][0]["BakedSamples"] = "not_a_list"
+        errors = validate_move_card_spec(spec)
+        self.assertTrue(any("MoveCard.BakedSamples[Windows[0].BakedSamples: must be list]" in e for e in errors))
+
+    def test_baked_samples_empty_array(self):
+        spec = make_valid_spec()
+        spec["Windows"][0]["BakedSamples"] = []
+        errors = validate_move_card_spec(spec)
+        self.assertTrue(any("MoveCard.BakedSamples[Windows[0].BakedSamples: empty array]" in e for e in errors))
+
+    def test_baked_clip_length_mismatch(self):
+        spec = make_valid_spec()
+        spec["Windows"][0]["BakedClipLengthSeconds"] = 2.5  # card is 1.5
+        spec["Windows"][0]["BakedSamples"] = [
+            {"TimeSeconds": 0.4, "BaseCS": [0, 0, 0], "TipCS": [10, 0, 0]}
+        ]
+        errors = validate_move_card_spec(spec)
+        self.assertTrue(any("clip length mismatch" in e for e in errors))
+
+    def test_sample_time_non_monotonic(self):
+        spec = make_valid_spec()
+        spec["Windows"][0]["BakedSamples"] = [
+            {"TimeSeconds": 0.4, "BaseCS": [0, 0, 0], "TipCS": [10, 0, 0]},
+            {"TimeSeconds": 0.39, "BaseCS": [0, 0, 0], "TipCS": [10, 0, 0]}
+        ]
+        errors = validate_move_card_spec(spec)
+        self.assertTrue(any("non-monotonic" in e for e in errors))
+
+    def test_sample_step_delta_exceeded(self):
+        spec = make_valid_spec()
+        spec["Windows"][0]["BakedSamples"] = [
+            {"TimeSeconds": 0.4, "BaseCS": [0, 0, 0], "TipCS": [10, 0, 0]},
+            {"TimeSeconds": 0.45, "BaseCS": [0, 0, 0], "TipCS": [10, 0, 0]}
+        ]
+        errors = validate_move_card_spec(spec)
+        self.assertTrue(any("exceeds max step" in e for e in errors))
+
+    def test_sample_outside_window_span(self):
+        spec = make_valid_spec()
+        # Window is [0.4, 0.8]
+        spec["Windows"][0]["BakedSamples"] = [
+            {"TimeSeconds": 0.2, "BaseCS": [0, 0, 0], "TipCS": [10, 0, 0]}
+        ]
+        errors = validate_move_card_spec(spec)
+        self.assertTrue(any("outside window span" in e for e in errors))
+
+    def test_sample_exceeds_clip_length(self):
+        spec = make_valid_spec()
+        spec["ActiveStartSeconds"] = 0.4
+        spec["ActiveEndSeconds"] = 1.6
+        spec["RecoveryEndSeconds"] = 1.7
+        spec["ClipLengthSeconds"] = 1.5
+        spec["Windows"][0]["StartSeconds"] = 0.4
+        spec["Windows"][0]["EndSeconds"] = 1.6
+        spec["Windows"][0]["BakedSamples"] = [
+            {"TimeSeconds": 0.4, "BaseCS": [0, 0, 0], "TipCS": [10, 0, 0]},
+            {"TimeSeconds": 1.6, "BaseCS": [0, 0, 0], "TipCS": [10, 0, 0]}
+        ]
+        errors = validate_move_card_spec(spec)
+        self.assertTrue(any("exceeds clip length" in e for e in errors))
+
+    def test_sample_invalid_vector_and_coincident(self):
+        spec = make_valid_spec()
+        spec["Windows"][0]["BakedSamples"] = [
+            {"TimeSeconds": 0.4, "BaseCS": [10.0, 20.0, 30.0], "TipCS": [10.0, 20.0, 30.0]}
+        ]
+        errors = validate_move_card_spec(spec)
+        self.assertTrue(any("BaseCS and TipCS coincident" in e for e in errors))
+
+        spec["Windows"][0]["BakedSamples"] = [
+            {"TimeSeconds": 0.4, "BaseCS": [float("nan"), 0.0, 0.0], "TipCS": [10.0, 0.0, 0.0]}
+        ]
+        errors = validate_move_card_spec(spec)
+        self.assertTrue(any("out of bounds or non-finite" in e for e in errors))
+
+        spec["Windows"][0]["BakedSamples"] = [
+            {"TimeSeconds": 0.4, "BaseCS": [2.0e5, 0.0, 0.0], "TipCS": [10.0, 0.0, 0.0]}
+        ]
+        errors = validate_move_card_spec(spec)
+        self.assertTrue(any("out of bounds or non-finite" in e for e in errors))
+
+    def test_window_coverage_gap(self):
+        spec = make_valid_spec()
+        dt = 1.0 / 120.0
+        times = [0.5 + i * dt for i in range(36)] + [0.8]
+        times = sorted(list(set([round(t, 6) for t in times])))
+        spec["Windows"][0]["BakedSamples"] = [
+            {"TimeSeconds": t, "BaseCS": [0, 0, 0], "TipCS": [10, 0, 0]}
+            for t in times
+        ]
+        errors = validate_move_card_spec(spec)
+        self.assertTrue(any("window start not covered" in e for e in errors))
+
+    def test_exact_coverage_boundary_rules(self):
+        spec = make_valid_spec()
+        # Window is [0.4, 0.8]
+        # Start late by 0.001s: must fail
+        spec["Windows"][0]["BakedSamples"] = [
+            {"TimeSeconds": 0.4001, "BaseCS": [0, 0, 0], "TipCS": [10, 0, 0]},
+            {"TimeSeconds": 0.8000, "BaseCS": [0, 0, 0], "TipCS": [10, 0, 0]}
+        ]
+        errors = validate_move_card_spec(spec)
+        self.assertTrue(any("window start not covered" in e for e in errors), f"Expected start coverage refusal: {errors}")
+
+        # End early by 0.001s: must fail
+        spec["Windows"][0]["BakedSamples"] = [
+            {"TimeSeconds": 0.4000, "BaseCS": [0, 0, 0], "TipCS": [10, 0, 0]},
+            {"TimeSeconds": 0.7999, "BaseCS": [0, 0, 0], "TipCS": [10, 0, 0]}
+        ]
+        errors = validate_move_card_spec(spec)
+        self.assertTrue(any("window end not covered" in e for e in errors), f"Expected end coverage refusal: {errors}")
+
+        # Single sample: must fail (Num >= 2)
+        spec["Windows"][0]["BakedSamples"] = [
+            {"TimeSeconds": 0.4000, "BaseCS": [0, 0, 0], "TipCS": [10, 0, 0]}
+        ]
+        errors = validate_move_card_spec(spec)
+        self.assertTrue(any("requires at least 2 samples" in e for e in errors), f"Expected >= 2 refusal: {errors}")
 
 
 class TestReceiptIntegrity(unittest.TestCase):

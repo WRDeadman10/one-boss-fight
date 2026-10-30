@@ -1,0 +1,9 @@
+[
+    "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+    "-ExecutePythonScript=\"C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/MoveCards/verify_baked_cards.py --require-baked Move_Sevarog_SwingSlow_F7,Move_Sevarog_SwingMedium_F7,Move_Sevarog_AntiGreed_F7,Move_Sevarog_HeavySlam_F7 --test-tamper-apex 5.0\"",
+    "-unattended",
+    "-nosound",
+    "-nosplash",
+    "-abslog=C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\F7\\gate_tamper\\editor_raw.log",
+    "-nullrhi"
+]

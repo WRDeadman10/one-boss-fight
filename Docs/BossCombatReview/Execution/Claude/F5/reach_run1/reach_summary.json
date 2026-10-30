@@ -1,0 +1,241 @@
+{
+  "status": "SUCCESS",
+  "probe_target": "Sevarog Weapon Reach",
+  "coordinate_convention": "Component space: +Y forward, X lateral, +Z vertical",
+  "measured_sequences": [
+    {
+      "sequence_name": "Swing1_Slow",
+      "sequence_path": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Slow",
+      "length_seconds": 1.7,
+      "sample_count": 206,
+      "max_tip_forward": {
+        "time": 0.4417,
+        "forward_y": 120.85,
+        "lateral_x": -25.47,
+        "vertical_z": 181.19
+      },
+      "max_base_forward": {
+        "time": 0.4833,
+        "forward_y": 151.86,
+        "lateral_x": -23.67,
+        "vertical_z": 155.49
+      },
+      "active_window_swept_envelope": {
+        "window": [
+          0.35,
+          0.4917
+        ],
+        "sample_count": 18,
+        "forward_y_range": [
+          -11.56,
+          151.86
+        ],
+        "lateral_x_range": [
+          -73.95,
+          6.49
+        ],
+        "vertical_z_range": [
+          138.46,
+          267.01
+        ],
+        "peak_forward_in_window": 151.86,
+        "lateral_half_width": 73.95
+      }
+    },
+    {
+      "sequence_name": "Swing1_Medium",
+      "sequence_path": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Medium",
+      "length_seconds": 1.1333,
+      "sample_count": 137,
+      "max_tip_forward": {
+        "time": 0.2917,
+        "forward_y": 89.86,
+        "lateral_x": 30.48,
+        "vertical_z": 135.41
+      },
+      "max_base_forward": {
+        "time": 0.2833,
+        "forward_y": 149.93,
+        "lateral_x": 57.3,
+        "vertical_z": 123.03
+      },
+      "active_window_swept_envelope": {
+        "window": [
+          0.15,
+          0.2667
+        ],
+        "sample_count": 15,
+        "forward_y_range": [
+          -48.95,
+          133.92
+        ],
+        "lateral_x_range": [
+          -67.03,
+          31.32
+        ],
+        "vertical_z_range": [
+          141.5,
+          265.19
+        ],
+        "peak_forward_in_window": 133.92,
+        "lateral_half_width": 67.03
+      }
+    },
+    {
+      "sequence_name": "Swing2_Medium",
+      "sequence_path": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing2_Medium",
+      "length_seconds": 1.1333,
+      "sample_count": 137,
+      "max_tip_forward": {
+        "time": 0.2083,
+        "forward_y": 68.02,
+        "lateral_x": -39.76,
+        "vertical_z": 181.78
+      },
+      "max_base_forward": {
+        "time": 0.225,
+        "forward_y": 103.2,
+        "lateral_x": -49.77,
+        "vertical_z": 171.35
+      },
+      "active_window_swept_envelope": {
+        "window": [
+          0.1917,
+          0.2667
+        ],
+        "sample_count": 9,
+        "forward_y_range": [
+          -41.29,
+          103.2
+        ],
+        "lateral_x_range": [
+          -165.54,
+          22.11
+        ],
+        "vertical_z_range": [
+          115.81,
+          236.24
+        ],
+        "peak_forward_in_window": 103.2,
+        "lateral_half_width": 165.54
+      }
+    },
+    {
+      "sequence_name": "Swing3_Slow",
+      "sequence_path": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing3_Slow",
+      "length_seconds": 1.7,
+      "sample_count": 206,
+      "max_tip_forward": {
+        "time": 0.5083,
+        "forward_y": 99.25,
+        "lateral_x": -70.62,
+        "vertical_z": 103.42
+      },
+      "max_base_forward": {
+        "time": 0.5167,
+        "forward_y": 130.3,
+        "lateral_x": -88.91,
+        "vertical_z": 128.26
+      },
+      "active_window_swept_envelope": {
+        "window": [
+          0.475,
+          0.5333
+        ],
+        "sample_count": 7,
+        "forward_y_range": [
+          28.83,
+          130.3
+        ],
+        "lateral_x_range": [
+          -99.49,
+          -59.2
+        ],
+        "vertical_z_range": [
+          58.21,
+          248.33
+        ],
+        "peak_forward_in_window": 130.3,
+        "lateral_half_width": 99.49
+      }
+    },
+    {
+      "sequence_name": "Swing1_FAST_v2",
+      "sequence_path": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_FAST_v2",
+      "length_seconds": 0.5333,
+      "sample_count": 66,
+      "max_tip_forward": {
+        "time": 0.275,
+        "forward_y": 90.01,
+        "lateral_x": 31.9,
+        "vertical_z": 135.43
+      },
+      "max_base_forward": {
+        "time": 0.275,
+        "forward_y": 138.52,
+        "lateral_x": 71.52,
+        "vertical_z": 111.66
+      },
+      "active_window_swept_envelope": {
+        "window": [
+          0.15,
+          0.3
+        ],
+        "sample_count": 19,
+        "forward_y_range": [
+          -48.95,
+          138.52
+        ],
+        "lateral_x_range": [
+          -67.02,
+          88.55
+        ],
+        "vertical_z_range": [
+          102.54,
+          265.18
+        ],
+        "peak_forward_in_window": 138.52,
+        "lateral_half_width": 88.55
+      }
+    },
+    {
+      "sequence_name": "Speedburst",
+      "sequence_path": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Speedburst",
+      "length_seconds": 1.2667,
+      "sample_count": 153,
+      "max_tip_forward": {
+        "time": 1.0917,
+        "forward_y": 122.19,
+        "lateral_x": 52.36,
+        "vertical_z": 121.87
+      },
+      "max_base_forward": {
+        "time": 1.1,
+        "forward_y": 94.55,
+        "lateral_x": -25.82,
+        "vertical_z": 136.69
+      },
+      "active_window_swept_envelope": {
+        "window": [
+          0.3,
+          0.6
+        ],
+        "sample_count": 37,
+        "forward_y_range": [
+          34.59,
+          77.41
+        ],
+        "lateral_x_range": [
+          -67.64,
+          34.27
+        ],
+        "vertical_z_range": [
+          58.81,
+          135.75
+        ],
+        "peak_forward_in_window": 77.41,
+        "lateral_half_width": 67.64
+      }
+    }
+  ]
+}

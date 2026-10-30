@@ -1,0 +1,21 @@
+## Dashboard (updated 2026-10-30; this file is the master tracker: every task, its status and the remaining work)
+
+### Current Backlog & Framework Status (Verified 2026-10-30)
+- **Track A (Data-Driven Boss Platform - 7 tasks):** 2 DONE (`A1` released, `A2` staged); `A3` options doc in progress; `A4` owner policy given; `A5..A7` todo (`Docs/BossCombatReview/Execution/Claude/ROADMAP_AND_BACKLOG_2026-10-30.md:16-25`).
+- **Track B (83 Requirements - 82 Framework Rows):** 16 of 82 rows WITNESSED on raw proof logs (19.5%): `BOSS-AWR-003`, `BOSS-SEL-001..004`, `BOSS-SEL-006`, `BOSS-SEL-007`, `BOSS-SEL-010`, `BOSS-EXE-001..003`, `BOSS-ANM-001`, `BOSS-HIT-001`, `BOSS-HIT-002`, `BOSS-HIT-006`, `BOSS-PAC-001`; 22 PARTIAL (26.8%); 44 NOT YET (53.7%) (`Docs/BossCombatReview/Execution/Claude/ROADMAP_AND_BACKLOG_2026-10-30.md:27-31` and `Docs/BossCombatReview/Execution/Antigravity/Ledger/WITNESS_STATUS_F3_F4.md:1-120`).
+- **Tracks C & D (Editor Tools & Reference Boss - 10 tasks):** 0 of 10 done (`ROADMAP_AND_BACKLOG_2026-10-30.md:33-54`).
+- **Framework Delivery Slices Proved (F1 to F6a):**
+  * `F1` (Framework Contract & Scaffold): `Source/OneBossFight/Boss/RPGFrameworkMoveExecutor.h/.cpp`
+  * `F2` (Move Executor Runtime & Unit Tests): `Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp`
+  * `F3a` (Lifecycle Review): `Docs/BossCombatReview/Execution/Claude/F3a/cycle2_attempt1/`
+  * `F3b-d` (Card Resolution & Headless Level Proof): `Docs/BossCombatReview/Execution/Claude/F3b/run1/`, `F3c/run1_save/` through `run5_amend2/`, `F3d/final_run1/` through `final_run3/`
+  * `F4a` (Damage Resolution & Dodge Invariant): `Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/` through `final_f4_run3/`, `dodge_run1/`
+  * `F5a/b` (Move Selector & Multi-Attack Proof): `Docs/BossCombatReview/Execution/Claude/F5/final_f5_run1/` through `final_f5_run3/`, `amend_run1/`
+  * `F6a` (Boss Target, Life Provider & Death Authority): `Docs/BossCombatReview/Execution/Claude/F6/final_f6_run1/` through `final_f6_run3/`
+- **Automation Test Suite Health:** 203 of 203 tests passing (100% green) across all modules (`Docs/BossCombatReview/Execution/Claude/F6/c1_full_raw.log:1286-1300`).
+- **Open Owner Decisions:**
+  * Decision 1: Commit and push of the staged F3b-F6a framework batch (working tree unstaged).
+  * Decision 2: Cook scope for ParagonSevarog (`Documentation/KNOWN_ISSUES.md:254`, `KI-143`).
+  * Decision 3: Live player dodge i-frame rejection proof (`Documentation/KNOWN_ISSUES.md:257`, `KI-146`).
+
+### Documents (everything else is in `Archive/`)

@@ -1,0 +1,120 @@
+== run3
+Verdict : FAIL
+Summary : F3d Grader FAIL: 0/11 checks passed.
+
+Individual Checks:
+  [FAIL] no_error_tokens
+  [FAIL] dependencies_resolved
+  [FAIL] slot_graph_verified
+  [FAIL] nav_path_valid
+  [FAIL] walk_arrival_band
+  [FAIL] playback_start
+  [FAIL] playback_frames_observed
+  [FAIL] events_sequence
+  [FAIL] cleanup_exact_once
+  [FAIL] invariant_zero_damage
+  [FAIL] result_outcome_telemetry
+
+Errors / Invariant Violations:
+  - Encountered error log line: [FrameworkProof] ERROR token=Framework.Profile.CardBandOrBlendTail bossInactive=1
+  - Encountered error log line: [FrameworkProof] ERROR token=Framework.Profile.CardBandOrBlendTail fixtureInactive=1
+  - Missing '[FrameworkProof] dependencies' line
+  - Missing '[FrameworkProof] slot_graph' line
+  - Missing '[FrameworkProof] nav request' line
+  - Missing '[FrameworkProof] walk start' line
+  - Missing '[FrameworkProof] playback_start' line
+  - Expected at least 3 playback observation frames, got 0
+  - Missing required event kinds. Observed: []
+== run4
+Verdict : PASS
+Summary : F3d Grader PASS: 11/11 checks passed.
+
+Individual Checks:
+  [OK]   no_error_tokens
+  [OK]   dependencies_resolved
+  [OK]   slot_graph_verified
+  [OK]   nav_path_valid
+  [OK]   walk_arrival_band
+  [OK]   playback_start
+  [OK]   playback_frames_observed
+  [OK]   events_sequence
+  [OK]   cleanup_exact_once
+  [OK]   invariant_zero_damage
+  [OK]   result_outcome_telemetry
+================================================================================
+== run5
+Verdict : FAIL
+Summary : F3d Grader FAIL: 6/11 checks passed.
+
+Individual Checks:
+  [FAIL] no_error_tokens
+  [OK]   dependencies_resolved
+  [OK]   slot_graph_verified
+  [OK]   nav_path_valid
+  [OK]   walk_arrival_band
+  [OK]   playback_start
+  [OK]   playback_frames_observed
+  [FAIL] events_sequence
+  [FAIL] cleanup_exact_once
+  [FAIL] invariant_zero_damage
+  [FAIL] result_outcome_telemetry
+
+Errors / Invariant Violations:
+  - Encountered error log line: [FrameworkProof] ERROR token=Framework.Playback.EarlyStop bossInactive=1
+  - Encountered error log line: [FrameworkProof] ERROR token=Framework.Fixture.PossessionChanged fixtureInactive=1
+  - Missing required event kinds. Observed: ['Open', 'Close', 'Recovery', 'Aborted']
+  - Expected exactly 1 clean finish cleanup line, got 0 of 1
+  - Missing '[FrameworkProof] invariant' line
+  - Expected exactly one RESULT line with outcome=CompletedTelemetryOnly, got 0
+================================================================================
+== final_run1
+Verdict : PASS
+Summary : F3d Grader PASS: 11/11 checks passed.
+
+Individual Checks:
+  [OK]   no_error_tokens
+  [OK]   dependencies_resolved
+  [OK]   slot_graph_verified
+  [OK]   nav_path_valid
+  [OK]   walk_arrival_band
+  [OK]   playback_start
+  [OK]   playback_frames_observed
+  [OK]   events_sequence
+  [OK]   cleanup_exact_once
+  [OK]   invariant_zero_damage
+  [OK]   result_outcome_telemetry
+================================================================================
+== final_run2
+Verdict : PASS
+Summary : F3d Grader PASS: 11/11 checks passed.
+
+Individual Checks:
+  [OK]   no_error_tokens
+  [OK]   dependencies_resolved
+  [OK]   slot_graph_verified
+  [OK]   nav_path_valid
+  [OK]   walk_arrival_band
+  [OK]   playback_start
+  [OK]   playback_frames_observed
+  [OK]   events_sequence
+  [OK]   cleanup_exact_once
+  [OK]   invariant_zero_damage
+  [OK]   result_outcome_telemetry
+================================================================================
+== final_run3
+Verdict : PASS
+Summary : F3d Grader PASS: 11/11 checks passed.
+
+Individual Checks:
+  [OK]   no_error_tokens
+  [OK]   dependencies_resolved
+  [OK]   slot_graph_verified
+  [OK]   nav_path_valid
+  [OK]   walk_arrival_band
+  [OK]   playback_start
+  [OK]   playback_frames_observed
+  [OK]   events_sequence
+  [OK]   cleanup_exact_once
+  [OK]   invariant_zero_damage
+  [OK]   result_outcome_telemetry
+================================================================================

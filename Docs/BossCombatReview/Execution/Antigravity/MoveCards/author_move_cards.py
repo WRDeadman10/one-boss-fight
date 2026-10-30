@@ -229,6 +229,96 @@ def validate_move_card_spec(
                 if sock_a not in valid_bones or sock_b not in valid_bones:
                     errors.append(f"MoveCard.Socket[{field_prefix}]")
 
+            # 10. Optional Baked Blade Path Samples (VR-CARD-008 / A-308)
+            baked_samples = w.get("BakedSamples")
+            if baked_samples is not None:
+                if not isinstance(baked_samples, list):
+                    errors.append(f"MoveCard.BakedSamples[{field_prefix}.BakedSamples: must be list]")
+                elif len(baked_samples) == 0:
+                    errors.append(f"MoveCard.BakedSamples[{field_prefix}.BakedSamples: empty array]")
+                else:
+                    dt_nom = 1.0 / 120.0
+                    dt_tol = dt_nom * 1.5
+                    prev_t = None
+                    w_start_val = float(w["StartSeconds"]) if has_w_s else None
+                    w_end_val = float(w["EndSeconds"]) if has_w_e else None
+
+                    baked_clip_len = w.get("BakedClipLengthSeconds")
+                    if baked_clip_len is not None:
+                        if check_number(errors, f"{field_prefix}.BakedClipLengthSeconds", baked_clip_len, positive=True):
+                            if clip_len is not None and abs(float(baked_clip_len) - float(clip_len)) > 1e-3:
+                                errors.append(f"MoveCard.BakedSamples[{field_prefix}.BakedClipLengthSeconds: clip length mismatch ({baked_clip_len} vs {clip_len})]")
+
+                    for j, s in enumerate(baked_samples):
+                        sample_prefix = f"{field_prefix}.BakedSamples[{j}]"
+                        if not isinstance(s, dict):
+                            errors.append(f"MoveCard.BakedSamples[{sample_prefix}: must be dict]")
+                            continue
+
+                        t_val = s.get("TimeSeconds")
+                        has_t = check_number(errors, f"{sample_prefix}.TimeSeconds", t_val)
+                        if has_t:
+                            t_float = float(t_val)
+                            if clip_len is not None and t_float > float(clip_len) + 1e-4:
+                                errors.append(f"MoveCard.BakedSamples[{sample_prefix}.TimeSeconds: exceeds clip length ({t_float:.4f} > {clip_len})]")
+
+                            if prev_t is not None:
+                                if t_float <= prev_t:
+                                    errors.append(f"MoveCard.BakedSamples[{sample_prefix}.TimeSeconds: non-monotonic ({t_float:.5f} <= {prev_t:.5f})]")
+                                elif (t_float - prev_t) > dt_tol:
+                                    errors.append(f"MoveCard.BakedSamples[{sample_prefix}.TimeSeconds: step delta {t_float - prev_t:.5f}s exceeds max step]")
+                            prev_t = t_float
+
+                            if w_start_val is not None and w_end_val is not None:
+                                if t_float < (w_start_val - dt_tol) or t_float > (w_end_val + dt_tol):
+                                    errors.append(f"MoveCard.BakedSamples[{sample_prefix}.TimeSeconds: outside window span [{w_start_val:.4f}..{w_end_val:.4f}]]")
+
+                        def check_cs_vector(vec_name: str, vec_val: Any) -> Optional[List[float]]:
+                            if not isinstance(vec_val, (list, tuple)) or len(vec_val) != 3:
+                                errors.append(f"MoveCard.BakedSamples[{sample_prefix}.{vec_name}: must be 3-element list]")
+                                return None
+                            coords = []
+                            for c_idx, c_name in enumerate(["X", "Y", "Z"]):
+                                c = vec_val[c_idx]
+                                try:
+                                    fc = float(c)
+                                    if math.isnan(fc) or math.isinf(fc) or abs(fc) > 1.0e5:
+                                        errors.append(f"MoveCard.BakedSamples[{sample_prefix}.{vec_name}.{c_name}: out of bounds or non-finite]")
+                                        return None
+                                    coords.append(fc)
+                                except (ValueError, TypeError):
+                                    errors.append(f"MoveCard.BakedSamples[{sample_prefix}.{vec_name}.{c_name}: non-numeric]")
+                                    return None
+                            return coords
+
+                        base_coords = check_cs_vector("BaseCS", s.get("BaseCS"))
+                        tip_coords = check_cs_vector("TipCS", s.get("TipCS"))
+
+                        if base_coords and tip_coords:
+                            dist = math.sqrt(sum((b - t) ** 2 for b, t in zip(base_coords, tip_coords)))
+                            if dist < 0.1:
+                                errors.append(f"MoveCard.BakedSamples[{sample_prefix}: BaseCS and TipCS coincident]")
+
+                    if baked_samples and w_start_val is not None and w_end_val is not None:
+                        if len(baked_samples) < 2:
+                            errors.append(f"MoveCard.BakedSamples[{field_prefix}.BakedSamples: requires at least 2 samples]")
+                        first_sample = baked_samples[0]
+                        last_sample = baked_samples[-1]
+                        if isinstance(first_sample, dict) and "TimeSeconds" in first_sample:
+                            try:
+                                first_t = float(first_sample["TimeSeconds"])
+                                if first_t > w_start_val + 1e-6:
+                                    errors.append(f"MoveCard.BakedSamples[{field_prefix}.BakedSamples: window start not covered (first sample {first_t:.6f} > {w_start_val:.6f})]")
+                            except (ValueError, TypeError):
+                                pass
+                        if isinstance(last_sample, dict) and "TimeSeconds" in last_sample:
+                            try:
+                                last_t = float(last_sample["TimeSeconds"])
+                                if last_t < w_end_val - 1e-6:
+                                    errors.append(f"MoveCard.BakedSamples[{field_prefix}.BakedSamples: window end not covered (last sample {last_t:.6f} < {w_end_val:.6f})]")
+                            except (ValueError, TypeError):
+                                pass
+
     return errors
 
 
@@ -392,7 +482,11 @@ def execute_authoring(
         spec.set_editor_property("max_range_cm", float(card["MaxRangeCm"]))
         spec.set_editor_property("front_cone_degrees", float(card["FrontConeDegrees"]))
         spec.set_editor_property("hp_damage", float(card["HPDamage"]))
-        spec.set_editor_property("b_uses_root_motion", bool(card["bUsesRootMotion"]))
+        # UE Python drops the "b" prefix of bool properties (bUsesRootMotion -> uses_root_motion); keep the old spelling as a fallback.
+        try:
+            spec.set_editor_property("uses_root_motion", bool(card["bUsesRootMotion"]))
+        except Exception:
+            spec.set_editor_property("b_uses_root_motion", bool(card["bUsesRootMotion"]))
 
         # Populate Windows array
         win_array = []
@@ -405,17 +499,80 @@ def execute_authoring(
             win_struct.set_editor_property("socket_a", unreal.Name(w["SocketA"]))
             win_struct.set_editor_property("socket_b", unreal.Name(w["SocketB"]))
             win_struct.set_editor_property("radius_cm", float(w["RadiusCm"]))
+
+            if "BakedSamples" in w and w["BakedSamples"]:
+                if not hasattr(unreal, "RPGBakedBladeSample"):
+                    print("[CARD_FATAL] unreal.RPGBakedBladeSample class missing in editor reflection. Refusing to author.")
+                    return 1
+
+                baked_samples_list = []
+                for s in w["BakedSamples"]:
+                    b = unreal.RPGBakedBladeSample()
+                    try:
+                        b.set_editor_property("time_seconds", float(s["TimeSeconds"]))
+                        base_vals = [float(v) for v in s["BaseCS"]]
+                        tip_vals = [float(v) for v in s["TipCS"]]
+                        b.set_editor_property("base_cs", unreal.Vector(base_vals[0], base_vals[1], base_vals[2]))
+                        b.set_editor_property("tip_cs", unreal.Vector(tip_vals[0], tip_vals[1], tip_vals[2]))
+                    except Exception as e:
+                        print(f"[CARD_FATAL] Failed setting property on unreal.RPGBakedBladeSample: {e}")
+                        return 1
+                    baked_samples_list.append(b)
+
+                try:
+                    win_struct.set_editor_property("baked_samples", baked_samples_list)
+                except Exception as e:
+                    print(f"[CARD_FATAL] Failed setting baked_samples on RPGBossMoveWindow: {e}")
+                    return 1
+
             win_array.append(win_struct)
         spec.set_editor_property("windows", win_array)
 
         new_asset.set_editor_property("spec", spec)
 
-        # Full Read-back Verification
+        # Full Read-back Verification (fail-closed on any mismatch or exception)
         read_spec = new_asset.get_editor_property("spec")
         assert int(read_spec.get_editor_property("schema")) == card["Schema"], "Schema readback failed"
         assert str(read_spec.get_editor_property("move_id")) == card["MoveId"], "MoveId readback failed"
-        assert len(read_spec.get_editor_property("windows")) == len(card["Windows"]), "Windows readback failed"
-        print(f"[CARD_VERIFY] Readback OK: 21 typed fields & {len(card['Windows'])} window(s) verified.")
+        read_wins = list(read_spec.get_editor_property("windows"))
+        assert len(read_wins) == len(card["Windows"]), "Windows readback failed"
+
+        for k, jw in enumerate(card.get("Windows", [])):
+            if "BakedSamples" in jw and jw["BakedSamples"]:
+                want_samples = jw["BakedSamples"]
+                read_win = read_wins[k]
+                try:
+                    back_samples = list(read_win.get_editor_property("baked_samples"))
+                except Exception as e:
+                    print(f"[CARD_FATAL] Failed to read back baked_samples property on window {k}: {e}")
+                    return 1
+
+                if len(back_samples) != len(want_samples):
+                    print(f"[CARD_FATAL] BakedSamples count readback mismatch on window {k}: got {len(back_samples)}, expected {len(want_samples)}")
+                    return 1
+
+                first_t_back = float(back_samples[0].get_editor_property("time_seconds"))
+                first_t_want = float(want_samples[0]["TimeSeconds"])
+                if abs(first_t_back - first_t_want) > 1e-4:
+                    print(f"[CARD_FATAL] BakedSamples first time readback mismatch on window {k}: got {first_t_back:.6f}, expected {first_t_want:.6f}")
+                    return 1
+
+                last_t_back = float(back_samples[-1].get_editor_property("time_seconds"))
+                last_t_want = float(want_samples[-1]["TimeSeconds"])
+                if abs(last_t_back - last_t_want) > 1e-4:
+                    print(f"[CARD_FATAL] BakedSamples last time readback mismatch on window {k}: got {last_t_back:.6f}, expected {last_t_want:.6f}")
+                    return 1
+
+                last_tip_back = back_samples[-1].get_editor_property("tip_cs")
+                last_tip_want = want_samples[-1]["TipCS"]
+                dx = abs(float(last_tip_back.x) - float(last_tip_want[0]))
+                dy = abs(float(last_tip_back.y) - float(last_tip_want[1]))
+                dz = abs(float(last_tip_back.z) - float(last_tip_want[2]))
+                if max(dx, dy, dz) > 1e-3:
+                    print(f"[CARD_FATAL] BakedSamples last tip_cs readback mismatch on window {k}: got ({last_tip_back.x:.4f}, {last_tip_back.y:.4f}, {last_tip_back.z:.4f}), expected {last_tip_want}")
+                    return 1
+
+        print(f"[CARD_VERIFY] Readback OK: 21 typed fields & {len(card['Windows'])} window(s) (including baked samples verification) verified.")
 
         created_assets.append((new_asset, package_path))
 

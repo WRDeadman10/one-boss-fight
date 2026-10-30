@@ -39,7 +39,8 @@ Six Sevarog attack sequences were evaluated at 120 Hz sampling ($dt = 0.008333\t
 | **`Ultimate_Swing_120fps`** | `.../Sevarog/Animations/Ultimate_Swing_120fps` | 2.6333s | 318 | False / False | 2,664.93 cm/s | 0.7083s | #1: `[0.6583s -> 0.7833s]`<br>#2: `[0.8333s -> 0.9167s]` | 0.1250s<br>0.0833s | 16<br>11 |
 
 > [!NOTE]
-> `base_bone_has_track` and `tip_bone_has_track` are both `False` across all 6 assets. Neither bone possesses an isolated keyframe curve; their motion is fully evaluated through forward kinematics (FK) hierarchy evaluation of the parent spine, clavicle, and arm chain down to the weapon sockets.
+> **Track Availability Resolution (C-396 / F3b run1)**:
+> While the HitWindowProbe `run_C379` summary initially reported `base_bone_has_track: false` and `tip_bone_has_track: false` due to an engine API introspection artifact, empirical live reflection via `get_animation_track_names` in `run1` (raw log sha `3cd6d0fa...`) confirmed that all 155 animation tracks—**including `weapon_r` and `root_weapon_end_r`**—are present and animated in the sequence asset. Bone $t_0$ world positions: `weapon_r` $(43, -70, 247)$, tip $(-22, -55, 252)$.
 
 ---
 
