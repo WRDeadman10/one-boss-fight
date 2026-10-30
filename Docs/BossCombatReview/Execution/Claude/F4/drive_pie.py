@@ -19,7 +19,10 @@ INJECT_PIE = [float(x) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCom
 INJECTED_PIE = []
 INJECT_ROW = [(float(x.split(':')[0]), x.split(':')[1], x.split(':')[2], (x.split(':')[3] if len(x.split(':'))>3 else '')) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_inject_row.txt').read().strip().split(',') if x] if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_inject_row.txt') else []  # C-457 (F10): "seconds:WeaponStyle:AttackKind,..." after playback_start: hits carrying the DA_WeaponAttacks row
 INJECTED_ROW = []
-REAL_SWING = [float(x) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_real_swing.txt').read().strip().split(',') if x] if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_real_swing.txt') else []  # C-466 (KI-151): seconds after the boss's first `walk start=` (arrival): a REAL pack light attack (EnterCombat once, IA_NormalAttack held 0.12 s)
+REAL_SWING = [(float(x.split(':')[0]), (x.split(':')[1] if ':' in x else 'Light')) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_real_swing.txt').read().strip().split(',') if x] if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_real_swing.txt') else []  # C-467 (KI-151): "seconds[:Light|Strong|Charged],..." after the arrival (and after the build switch): REAL pack attacks (EnterCombat once, the action held as pie_builds.py does)
+REAL_BUILD = open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_real_build.txt').read().strip() if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_real_build.txt') else ''  # Starter | Strength | Dex: switched through RPGBuildLoadout.set_build once the pack style is known
+REAL_STYLE = {'Starter': 'SwordCombatStyle', 'Strength': 'ClaymoreCombatStyle', 'Dex': 'DualSwordCombatStyle'}
+REAL_ACTION = {'Light': ('IA_NormalAttack', 0.12), 'Strong': ('IA_StrongAttack', 0.12), 'Charged': ('IA_ChargedAttack', 1.6)}
 REAL = {'t0': None, 'n': 0, 'hold_until': -1.0, 'combat': False}
 IA_PATH = '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/'
 DIAG_LONG = os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_diag_long.txt')  # C-449 (KI-150 follow-up): DIAG every second until 20 s of PIE and do not stop on a FrameworkProof ERROR
@@ -133,23 +136,37 @@ def tick(dt):
                 w = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
                 pc = unreal.GameplayStatics.get_player_controller(w, 0) if w else None
                 pawn = pc.get_controlled_pawn() if pc else None
-                if pawn is not None and REAL['t0'] is None and log_has('[FrameworkProof] walk start='):
-                    REAL['t0'] = S['pie_t']
-                    tc = unreal.GameplayTagContainer()
-                    tc.import_text('(GameplayTags=((TagName="Ability.EnterCombat")))')
-                    asc = comp(pawn, 'BP_AdvancedAbilitySystemComponent_C')
-                    log('REAL enter combat: asc=%s' % (asc is not None))
-                    if asc is not None:
-                        asc.call_method('Try Activate Abilities By Tag', args=(tc,))
-                    log('REAL player stamina=%s max=%s health=%s' % (attr(pawn, 'Attribute.Stamina'), attr(pawn, 'Attribute.Stamina', False), attr(pawn, 'Attribute.Health')))
+                if pawn is not None and REAL.get('build_set') is None and log_has('[FrameworkProof] pack_style_known'):
+                    REAL['build_set'] = S['pie_t']
+                    ld = pawn.get_component_by_class(unreal.RPGBuildLoadout)
+                    if REAL_BUILD and ld is not None:
+                        unreal.SystemLibrary.execute_console_command(w, 'rpg.Build "%s"' % REAL_BUILD)   # as Scripts/Editor/pie_builds.py console(): the pack's loadout switch
+                        log('REAL set_build(%s) requested' % REAL_BUILD)
+                if pawn is not None and REAL['t0'] is None and REAL.get('build_set') is not None and log_has('[FrameworkProof] walk start='):
+                    ld = pawn.get_component_by_class(unreal.RPGBuildLoadout)
+                    want = REAL_STYLE.get(REAL_BUILD or 'Starter')
+                    ready = True
+                    if REAL_BUILD and ld is not None:
+                        ready = str(ld.get_actual_style_name()) == want and str(ld.get_state_name()) == 'Idle'
+                    if ready and S['pie_t'] - REAL['build_set'] > 0.5:
+                        tc = unreal.GameplayTagContainer()
+                        tc.import_text('(GameplayTags=((TagName="Ability.EnterCombat")))')
+                        asc = comp(pawn, 'BP_AdvancedAbilitySystemComponent_C')
+                        if asc is not None:
+                            asc.call_method('Try Activate Abilities By Tag', args=(tc,))
+                        REAL['t0'] = S['pie_t'] + 1.0   # the draw montage needs a moment
+                        log('REAL enter combat (build=%s style=%s) asc=%s; swings count from t0' % (REAL_BUILD or 'Starter', want, asc is not None))
+                        log('REAL player stamina=%s max=%s health=%s' % (attr(pawn, 'Attribute.Stamina'), attr(pawn, 'Attribute.Stamina', False), attr(pawn, 'Attribute.Health')))
                 if pawn is not None and REAL['t0'] is not None:
                     since = S['pie_t'] - REAL['t0']
-                    if REAL['n'] < len(REAL_SWING) and since >= REAL_SWING[REAL['n']] and S['pie_t'] > REAL['hold_until']:
-                        REAL['hold_until'] = S['pie_t'] + 0.12
+                    if REAL['n'] < len(REAL_SWING) and since >= REAL_SWING[REAL['n']][0] and S['pie_t'] > REAL['hold_until']:
+                        action, hold = REAL_ACTION[REAL_SWING[REAL['n']][1]]
+                        REAL['action'] = action
+                        REAL['hold_until'] = S['pie_t'] + hold
                         REAL['n'] += 1
-                        log('REAL swing %d pressed at %.3f s after arrival, player=%s boss yaw check' % (REAL['n'], since, pawn.get_actor_location()))
+                        log('REAL swing %d (%s) pressed at %.3f s after t0, hold %.2f s' % (REAL['n'], action, since, hold))
                     if S['pie_t'] < REAL['hold_until']:
-                        unreal.RPGInputTestUtils.inject_action(pc, unreal.load_asset(IA_PATH + 'IA_NormalAttack'), unreal.Vector(1, 0, 0))
+                        unreal.RPGInputTestUtils.inject_action(pc, unreal.load_asset(IA_PATH + REAL['action']), unreal.Vector(1, 0, 0))
             if INJECT_ROW:
                 if S['dodge_t'] is None and log_has('[FrameworkProof] playback_start'):
                     S['dodge_t'] = S['pie_t']
@@ -223,6 +240,8 @@ def tick(dt):
                 stop_now = S['pie_t'] > 20.0
             else:
                 stop_now = S['pie_t'] > 3.0 and ((log_count('[FrameworkProof] RESULT') >= need) or log_has('[FrameworkProof] ERROR') or S['pie_t'] > PIE_TIMEOUT)
+                if stop_now and REAL_SWING and S['pie_t'] <= PIE_TIMEOUT and not log_has('[FrameworkProof] ERROR'):
+                    stop_now = REAL['n'] >= len(REAL_SWING) and S['pie_t'] > REAL['hold_until'] + 1.5
             if stop_now:
                 log('stopping PIE after %.1f s (timeout=%s)' % (S['pie_t'], S['pie_t'] > PIE_TIMEOUT))
                 unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
