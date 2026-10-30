@@ -9,25 +9,30 @@ the in-editor content work listed in section 3). U = the project owner (decision
 **Status:** Todo, Doing, Built (code done, not proved), Verified (tests or a run passed, noted), Blocked (reason given).
 Nobody commits except U. A row is changed only by its owner; others write a note under "Notes".
 
-## Dashboard (updated 2026-10-30; this file is the master tracker: every task, its status and the remaining work)
+## Dashboard (updated 2026-10-31; this file is the master tracker: every task, its status and the remaining work)
 
-### Current Backlog & Framework Status (Verified 2026-10-30)
+### Current Backlog & Framework Status (Verified 2026-10-31)
 - **Track A (Data-Driven Boss Platform - 7 tasks):** 2 DONE (`A1` released per `Documentation/TEAM_MAILBOX.md` `[C-382]`, `A2` DONE with `SavedProductionPreflight` per `Documentation/TEAM_MAILBOX.md` `[C-392]`); `A3` options doc in progress; `A4` owner policy given; `A5..A7` todo (`Docs/BossCombatReview/Execution/Claude/ROADMAP_AND_BACKLOG_2026-10-30.md:16-25`).
-- **Track B (83 Requirements - 82 Framework Rows):** 16 of 82 rows WITNESSED on raw proof logs (19.5%): `BOSS-AWR-003`, `BOSS-SEL-001..004`, `BOSS-SEL-006`, `BOSS-SEL-007`, `BOSS-SEL-010`, `BOSS-EXE-001..003`, `BOSS-ANM-001`, `BOSS-HIT-001`, `BOSS-HIT-002`, `BOSS-HIT-006`, `BOSS-PAC-001`; 22 PARTIAL (26.8%); 44 NOT YET (53.7%) (`Docs/BossCombatReview/Execution/Claude/ROADMAP_AND_BACKLOG_2026-10-30.md:27-31` and `Docs/BossCombatReview/Execution/Antigravity/Ledger/WITNESS_STATUS_F3_F4.md:1-120`).
+- **Track B (83 Requirements - 82 Framework Rows):** 16 of 82 rows WITNESSED on raw proof logs (19.5%): `BOSS-AWR-003`, `BOSS-SEL-001..004`, `BOSS-SEL-006`, `BOSS-SEL-007`, `BOSS-SEL-010`, `BOSS-EXE-001..003`, `BOSS-ANM-001`, `BOSS-HIT-001`, `BOSS-HIT-002`, `BOSS-HIT-006`, `BOSS-PAC-001`; 22 PARTIAL (26.8%); 44 NOT YET (53.7%) (`Docs/BossCombatReview/Execution/Claude/ROADMAP_AND_BACKLOG_2026-10-30.md:27-31`). Updated in ledger v2.6.0 (`Docs/BossCombatReview/Execution/Antigravity/Ledger/WITNESS_STATUS_F3_F4.md:1-120`): 21 WITNESSED framework requirements + F6c slice 7/2/1 matrix.
 - **Tracks C & D (Editor Tools & Reference Boss - 10 tasks):** 0 of 10 done (`Docs/BossCombatReview/Execution/Claude/ROADMAP_AND_BACKLOG_2026-10-30.md:33-54`).
-- **Framework Delivery Slices Proved (F1 to F6a):**
+- **Framework Delivery Slices Proved (F1 to F10):**
   * `F1` (MoveCard Data Asset & Validator): `Source/OneBossFight/Player/RPGBossMoveCard.h`, `Source/OneBossFight/Player/RPGBossMoveCard.cpp`, `Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp`
   * `F2` (MoveModel State Machine & Tests): `Source/OneBossFight/Player/RPGBossMoveModel.h`, `Source/OneBossFight/Player/RPGBossMoveModel.cpp`, `Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp`
   * `F3a` (Promoted Runtime Source & Build): `Docs/BossCombatReview/Execution/Claude/F3a/full2_raw.log`
-  * `F3b-d` (Card Resolution & Headless Level Proof): `Docs/BossCombatReview/Execution/Claude/F3b/run1/`, `Docs/BossCombatReview/Execution/Claude/F3c/run1_save/` through `run5_amend2/`, `Docs/BossCombatReview/Execution/Claude/F3d/final_run1/` through `final_run3/` (graded 11/11 PASS via `Docs/BossCombatReview/Execution/Antigravity/Ledger/grade_f3d_log.py`)
-  * `F4a` (Swept Hit Window & Damage Sink; Dodge unproven per `Documentation/KNOWN_ISSUES.md:257` `KI-146`): `Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/` through `final_f4_run3/` (PIE 3 of 3, lead-read raw lines per `Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1..3`)
-  * `F5a/b` (Move Selector & Multi-Attack Proof): `Docs/BossCombatReview/Execution/Claude/F5/pie_run1/` through `pie_run3/`, `amend_run1/` (graded 8/8 PASS via `Docs/BossCombatReview/Execution/Antigravity/Ledger/grade_f5_log.py`)
-  * `F6a` (Boss Target, Life Provider & Death Authority with INJECTED hits): `Docs/BossCombatReview/Execution/Claude/F6/final_f6_run1/` through `final_f6_run3/` (graded hits=3 reads=3 dead=YES PASS via `Docs/BossCombatReview/Execution/Antigravity/Ledger/grade_f6a_log.py`)
-- **Automation Test Suite Health:** 203 of 203 tests passing (100% green across all modules; 203 `Test Completed. Result={Success}` lines, cited from `Docs/BossCombatReview/Execution/Claude/F6/c1_full_raw.log:3956` `Display: **** TEST COMPLETE. EXIT CODE: 0 ****`).
+  * `F3b-d` (Card Resolution & Headless Level Proof): `Docs/BossCombatReview/Execution/Claude/F3b/`, `F3c/`, `F3d/` (graded PASS via `Docs/BossCombatReview/Execution/Antigravity/Ledger/grade_f3d_log.py`)
+  * `F4a` (Swept Hit Window & Damage Sink; Dodge unproven per `Documentation/KNOWN_ISSUES.md:257` `KI-146`): `Docs/BossCombatReview/Execution/Claude/F4/`
+  * `F5a/b` (Move Selector & Multi-Attack Proof): `Docs/BossCombatReview/Execution/Claude/F5/` (graded PASS via `Docs/BossCombatReview/Execution/Antigravity/Ledger/grade_f5_log.py`)
+  * `F6a` (Boss Target, Life Provider & Death Authority with INJECTED hits): `Docs/BossCombatReview/Execution/Claude/F6/` (graded PASS via `Docs/BossCombatReview/Execution/Antigravity/Ledger/grade_f6a_log.py`)
+  * `F6c` (Two-Phase Combat Flow, Health Fraction Phase Authority, Deterministic Reset): `Docs/BossCombatReview/Execution/Claude/F6c/` (graded PASS via `Docs/BossCombatReview/Execution/Antigravity/Ledger/grade_f6c_log.py`)
+  * `F7` (Phase 2 Moveset Expansion & Baked Combat Cards): `Docs/BossCombatReview/Execution/Claude/F7/` (gated PASS via `Docs/BossCombatReview/Execution/Claude/F7/verify_baked_cards.py`)
+  * `F8` (Boss Stance / Posture System, Drain, Break, Reset; Regen-to-full unexercised): `Docs/BossCombatReview/Execution/Claude/F8/` and `Claude/F8/ki150b/` (graded PASS via `Docs/BossCombatReview/Execution/Antigravity/Reviews/grade_f8_log.py`)
+  * `F9` (Boss Bleed / Ailment System, Threshold Scaling, Non-Lethal Proc, Reset): `Docs/BossCombatReview/Execution/Claude/F9/` (graded PASS via `Docs/BossCombatReview/Execution/Antigravity/Reviews/grade_f9_log.py`)
+  * `F10` (Weapon Attack Row Hit Intake Authority, Health Mult, Posture Drain, Bleed Buildup from `DA_WeaponAttacks`): `Docs/BossCombatReview/Execution/Claude/F10/` (graded PASS via `Docs/BossCombatReview/Execution/Antigravity/Reviews/grade_f10_log.py`)
+- **Automation Test Suite Health:** 209 of 209 tests passing (100% green across all modules; cited from `Docs/BossCombatReview/Execution/Claude/F10/full_raw.log:3999` `Display: **** TEST COMPLETE. EXIT CODE: 0 ****`, DLL `0628127b`).
 - **Open Owner Decisions:**
-  * Decision 1: Commit and push of the staged F3b-F6a framework batch (working tree unstaged).
-  * Decision 2: Cook scope for ParagonSevarog (`Documentation/KNOWN_ISSUES.md:254`, `KI-143`).
-  * Decision 3: Live player dodge i-frame rejection proof (`Documentation/KNOWN_ISSUES.md:257`, `KI-146`).
+  * Decision 0: PUSH of the local commits (F3a..F10, HEAD 8cea049) to the remote: Antigravity commits locally and never pushes without the owner's word.
+  * Decision 1: Cook scope for ParagonSevarog (`Documentation/KNOWN_ISSUES.md:254`, `KI-143`, owner decision).
+  * Decision 2: Live player dodge i-frame rejection proof (`Documentation/KNOWN_ISSUES.md:257`, `KI-146`).
 
 ### Documents (everything else is in `Archive/`)
 | Need | File |

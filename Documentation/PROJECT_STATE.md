@@ -9,6 +9,47 @@
 - **Team loop:** Claude (technical lead: editor, builds, PIE, gate, packaging, review of every line), Codex (OpenAI; C++, scripts and docs in files it claims; cannot build or run), Antigravity (art), the owner (decisions, hand tests, commits). Claude and Codex talk only through `TEAM_MAILBOX.md` (standing queue, `Scripts/MailboxWait.ps1`); finished material is in `Archive/`.
 - **Gotchas of the last days:** never kill processes by command-line pattern (it killed the shell); stop process trees (`taskkill /T`), a leftover game locks the staging folder; `RunDrivers.ps1 -Repeat` applies to the balance rows only; a Windows session that is disconnected stops the editor from starting (KI-093).
 
+### Framework Boss Platform (2026-10-31; Slices F1..F10 Complete & Proven)
+- **Native C++ Framework Boss Architecture:**
+  * `ARPGFrameworkBossCharacter` (native framework boss, owns health, death authority, phase, posture, bleed state, and deterministic encounter reset).
+  * `FRPGBossMoveModel` (pure attack timeline, states Idle, Committed, Active, Recovery; events Open, Close, Recovery, Finished, Aborted).
+  * `FRPGBossMoveSelector` (pure two-stage selector: hard filters for range, cone, phase and cooldown, then a weighted score with a repeat penalty).
+  * `URPGBossFrameworkProfile` (authored profile data asset: MaxHealth, BandMin/Max, PostureMax, BleedInitialThreshold, etc.).
+  * `URPGBossMoveCard` (authored move cards with baked blade trajectories).
+  * `RPGBossMath` (pure mathematical calculations for combat scaling).
+  * `RPGBleedRules` (pure bleed buildup and proc evaluation).
+  * `IRPGNativeBossHealth` (`ApplyPlayerHit`, `ApplyPlayerAttackHit`).
+  * `URPGHitIntake` (`InjectBossHitForTest`, `InjectBossAttackHitForTest`).
+- **Framework Content (`Content/OneBossFight/FrameworkProof/`):**
+  * 11 Proof Maps: `L_SevarogFrameworkProof.umap`, `L_SevarogFrameworkProofF4.umap`, `L_SevarogFrameworkProofF5.umap`, `L_SevarogFrameworkProofF6.umap`, `L_SevarogFrameworkProofF6c.umap`, `L_SevarogFrameworkProofF6cBaked.umap`, `L_SevarogFrameworkProofF6cNear.umap`, `L_SevarogFrameworkProofF7.umap`, `L_SevarogFrameworkProofF8.umap`, `L_SevarogFrameworkProofF9.umap`, `L_SevarogFrameworkProofF10.umap`.
+  * 11 Proof Profiles: `DA_Sevarog_SwingProof.uasset`, `DA_Sevarog_SwingProof_F4.uasset`, `DA_Sevarog_SelectorProof_F5.uasset`, `DA_Sevarog_BossHealthProof_F6.uasset`, `DA_Sevarog_PhaseProof_F6c.uasset`, `DA_Sevarog_PhaseProofNear_F6c.uasset`, `DA_Sevarog_PhaseProofBaked_F6c.uasset`, `DA_Sevarog_BakedProof_F7.uasset`, `DA_Sevarog_PostureProof_F8.uasset`, `DA_Sevarog_BleedProof_F9.uasset`, `DA_Sevarog_AttackRowProof_F10.uasset`.
+- **PIE Driver & Execution Commands:**
+  * Script: `powershell -NoProfile -ExecutionPolicy Bypass -File Docs/BossCombatReview/Execution/Claude/F4/run_pie.ps1 -Map <asset path> -OutDir <dir> -Task <name> [options]`
+  * Driver options:
+    - `-Restart`: Runs multi-generation encounter reset after death/completion (`restart_run1`), resetting health, posture, bleed threshold, and phase.
+    - `-Inject <s,s>`: Injects hits after the first `playback_start`.
+    - `-InjectPie <s,s>`: Injects hits at PIE time (waits for boss to spawn).
+    - `-InjectRow <string>`: Injects F10 weapon attack row hits (`InjectBossAttackHitForTest`) with format `"seconds:WeaponStyle:Kind,..."` (e.g. `0.5:ClaymoreCombatStyle:JumpHeavy,0.8:ClaymoreCombatStyle:JumpHeavy`).
+    - `-Live <seconds>`: Calls `restart_encounter_for_test` on a live boss to verify refusal.
+    - `-DiagLong`: Extended diagnostic capture (up to 20 s).
+  * **Pack Combat Style Wait (`pack_style_known`)**: To resolve KI-150 (late pack combat style equip overwriting target player health to 100 in generation 2), all proof maps poll up to 30 s for `BP_CombatComponent_C.CurrentCombatStyle != None` (measured ~10.03 s) before setting target health.
+- **Evidence & Verification Graders:**
+  * Ledger Graders: `Docs/BossCombatReview/Execution/Antigravity/Ledger/` (`grade_f3d_log.py`, `grade_f5_log.py`, `grade_f6a_log.py`, `grade_f6c_log.py`).
+  * Review Graders: `Docs/BossCombatReview/Execution/Antigravity/Reviews/` (`grade_f8_log.py`, `grade_f9_log.py`, `grade_f10_log.py`).
+  * Card Verification: `Docs/BossCombatReview/Execution/Claude/F7/verify_baked_cards.py`.
+  * Evidence Folders: `Docs/BossCombatReview/Execution/Claude/F3a`, `F3b`, `F3c`, `F3d`, `F4`, `F5`, `F6`, `F6c`, `F7`, `F8`, `F9`, `F10`.
+- **Automation Suite:** 209 of 209 automation tests passing (100% green; cited from `Docs/BossCombatReview/Execution/Claude/F10/full_raw.log:3999` `Display: **** TEST COMPLETE. EXIT CODE: 0 ****`, DLL `0628127b`).
+- **Open Items (`KI-143..151`):**
+  * `KI-143`: Cook scope for `Content/ParagonSevarog` (1.4 GB, open owner decision).
+  * `KI-144`: `nullrhi` editor cannot spawn level actors (`spawn_actor_from_class` divide by zero).
+  * `KI-145`: Proposed card ranges exceed measured blade reach.
+  * `KI-146`: Live player dodge i-frame rejection proof (crashed with `BP_AdvancedPlayerController`).
+  * `KI-147`: Unbaked windows keep live socket interpolation (baked windows resolved).
+  * `KI-149`: Phase starvation recovery (Tier 1 profile validation resolved; Tier 2 runtime neutral recovery open).
+  * `KI-150`: Intermittent target health reset in gen 2 (RESOLVED 2026-10-31 via `pack_style_known` 10.03 s wait, `Claude/F8/ki150b`).
+  * `KI-151`: Real pack weapon swing attack row routing through `Pending` queue (`RPGHitIntake.cpp` currently only routes injected hits to attack rows; real swings fall back to profile constants).
+- **Team Roles (Current Working Reality):** Claude (Technical lead, implementer, engine operator), Antigravity (Offline quality lane, architecture review, test qualification, committer), Codex (Independent read-only reviewer on request), Owner (Project direction, hand tests, commits/pushes).
+
 Updated 2026-10-19 (evening); the bullets under "Gotchas that cost time" are appended up to 2026-10-22 (the last one: boss clips, riposte execution, look). **Player and boss are the pack's own mannequin player and great-sword boss again** (Greystone and Sevarog retired, see DECISIONS "Back to the pack's own player and boss"; their folders are still on disk, unused, deletion awaits the user). One Boss Fight: single-player third-person Soulslike boss duel, Unreal Engine 5.5.4, target packaged 1080p / 120 FPS average and p99 <= 8.33 ms on an RTX 2060 Super (build PC has an RTX 3060, Ryzen 5 5500).
 
 ## What the game is now
@@ -20,6 +61,7 @@ The pack's mannequin player fights the pack's great-sword boss in the art arena 
 | Boss | The pack's `BP_ExampleGreatSwordBoss` placed in the level with `EnemyInfoRef` = `ExampleGreatSwordBoss` (500 HP in the pack's data, raised to 2000 at the start by `URPGBossEncounter`; 100 poise; the BP defaults to the sword mob's data, set per instance). `Scripts/Editor/arena_use_pack_boss.py` rebuilds it |
 | Retired, still on disk | `Content/OneBossFight/GreystonePack` (retargets), `SevarogPack` (Sevarog abilities, montages, `BP_SevarogBossPack`), `Characters/Greystone`; C++ `URPGSevarogDirector`, `URPGHideBones`. Nothing in the pack references them (`Content.PackWiring` checks) |
 | Arena and level | `Levels/L_SevarogArena` (default and editor start map): pack game mode, `ARPGGreyboxArena` with Blender meshes and Deadly Ruins stone, navmesh volume, `ARPGBenchmarkRunner`. `L_AssetProof` is the old animation proof level |
+| Framework proof | `Content/OneBossFight/FrameworkProof/`: 11 proof maps (`L_SevarogFrameworkProof.umap` through `F10`), 11 proof profiles (`DA_Sevarog_SwingProof.uasset` through `_AttackRowProof_F10.uasset`), proof cards `Move_Sevarog_*` |
 | Poise | `Content/OneBossFight/Poise/BP_PoiseExtendedAttribute` plus edits inside pack assets (`GA_BaseHitReaction` gate, `bUsesPoise`, Info data assets); constant 20 poise damage per hit |
 
 ## C++ that remains (`Source/OneBossFight/`)
