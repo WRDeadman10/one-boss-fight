@@ -2,6 +2,7 @@
 #pragma once
 #include "GameFramework/Character.h"
 #include "Player/RPGBossFrameworkProfile.h"
+#include "Player/RPGBleedRules.h"
 #include "Player/RPGBossMoveSelector.h"
 #include "Player/RPGNativeBossHealth.h"
 #include "RPGFrameworkBossCharacter.generated.h"
@@ -54,6 +55,11 @@ private:
     /** F8 posture: pool, break state, and the time of the last drain (regeneration delay). */
     double Posture=0., LastPostureDrain=-1., StaggerEndsAt=0.; bool bStaggered=false, bStaggerAbortedAttack=false;
     bool PostureEnabled() const;
+    /** F9 bleed: buildup state of the legacy rules and the frame of the last proc (two hits in one frame do not proc twice). */
+    RPGBleedRules::FState BleedState; uint64 BleedProcFrame=MAX_uint64;
+    bool BleedEnabled() const;
+    void ResetBleed();
+    void ApplyBleed(double Multiplier);
     void StartStagger();
     void EndStagger();
 };

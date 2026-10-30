@@ -43,7 +43,7 @@ bool ARPGFrameworkBossCharacter::InitializeProof(ARPGFrameworkProofFixture* Fixt
         if (!Selector.Initialize(Config,List,Error)) {Fail(Error);return false;}
     }
     const auto& P=*Dependencies->Profile.Get();
-    CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId;bPhaseTwoLatched=false;Posture=double(Dependencies->Profile->PostureMax);LastPostureDrain=-1.;bStaggered=bStaggerAbortedAttack=false;
+    ResetBleed();CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId;bPhaseTwoLatched=false;Posture=double(Dependencies->Profile->PostureMax);LastPostureDrain=-1.;bStaggered=bStaggerAbortedAttack=false;
     if (Dependencies->Profile->BossMaxHealth>0.f)
     {
         bHittable=true; MaxHealth=Health=Dependencies->Profile->BossMaxHealth;
@@ -179,7 +179,28 @@ double ARPGFrameworkBossCharacter::ApplyPlayerHit(double Multiplier)
             if (Posture<=0. && RPGBossRules::ResolveBreak(Flags,false)==RPGBossRules::EBreakResult::Started) StartStagger();
         }
     }
+    if (BleedEnabled()) ApplyBleed(Multiplier);
     return Loss;
+}
+bool ARPGFrameworkBossCharacter::BleedEnabled() const {return bInitialized&&bHittable&&Dependencies&&Dependencies->Profile->BleedBuildupPerHit>0.f;}
+void ARPGFrameworkBossCharacter::ResetBleed()
+{
+    BleedState=RPGBleedRules::FState(); BleedProcFrame=MAX_uint64;
+    if (Dependencies) BleedState.Threshold=Dependencies->Profile->BleedInitialThreshold;
+}
+void ARPGFrameworkBossCharacter::ApplyBleed(double Multiplier)
+{
+    // The legacy pure rules, unchanged: no buildup on a dead boss or in the same frame as a proc; a proc takes a fraction of the maximum health, never the last point.
+    const auto& P=*Dependencies->Profile.Get();
+    RPGBleedRules::FConfig Config; Config.InitialThreshold=P.BleedInitialThreshold; Config.ThresholdIncrease=P.BleedThresholdIncrease; Config.ThresholdMax=P.BleedThresholdMax; Config.HpFraction=P.BleedHpFraction;
+    const float Amount=float(double(P.BleedBuildupPerHit)*Multiplier);
+    const RPGBleedRules::EResult Result=RPGBleedRules::Apply(BleedState,Config,Amount,bDead,false,false,BleedProcFrame==GFrameCounter);
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] bleed_buildup amount=%g buildup=%g threshold=%g result=%s"),double(Amount),double(BleedState.Buildup),double(BleedState.Threshold),RPGBleedRules::Name(Result));
+    if (Result!=RPGBleedRules::EResult::Proc) return;
+    BleedProcFrame=GFrameCounter;
+    const double Before=Health, Damage=double(RPGBleedRules::ProcDamage(float(MaxHealth),float(Health),Config));
+    Health-=Damage;
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] bleed_proc procs=%d damage=%g healthBefore=%g healthAfter=%g nextThreshold=%g"),BleedState.Procs,Damage,Before,Health,double(BleedState.Threshold));
 }
 bool ARPGFrameworkBossCharacter::PostureEnabled() const {return bInitialized&&bHittable&&Dependencies&&Dependencies->Profile->PostureMax>0.f;}
 void ARPGFrameworkBossCharacter::StartStagger()
@@ -216,7 +237,7 @@ bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& 
     const TCHAR* OldState=bDead?TEXT("Dead"):TEXT("Finished");
     GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;
     if (bHittable) Health=MaxHealth;
-    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bStaggered=bStaggerAbortedAttack=false;
+    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bStaggered=bStaggerAbortedAttack=false; ResetBleed();
     Selector.Reset(); CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId; bPhaseTwoLatched=false;
     SetActorLocation(WalkStart,false,nullptr,ETeleportType::TeleportPhysics);
     FVector Face=Target->GetActorLocation()-WalkStart; Face.Z=0.f; if (!Face.IsNearlyZero()) SetActorRotation(FRotator(0.f,Face.Rotation().Yaw,0.f));

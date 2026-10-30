@@ -45,6 +45,17 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
             if (!bOk) return Fail(TEXT("Framework.Profile.Posture"));
         }
     }
+    // F9: bleed needs the selector lane (F5) and a hittable boss; BleedBuildupPerHit 0 = off (the other four then 0 too), else a coherent set (token Framework.Profile.Bleed).
+    {
+        const float Values[]={P.BleedBuildupPerHit,P.BleedInitialThreshold,P.BleedThresholdIncrease,P.BleedThresholdMax,P.BleedHpFraction};
+        bool bAnyBleed=false; for (float V:Values) bAnyBleed|=(V!=0.f);
+        if (bAnyBleed)
+        {
+            bool bOk=bF5&&P.BossMaxHealth>0.f; for (float V:Values) bOk&=(FMath::IsFinite(V)&&V>=0.f&&V<=1.e6f);
+            bOk=bOk&&P.BleedBuildupPerHit>0.f&&P.BleedInitialThreshold>=1.f&&P.BleedThresholdMax>=P.BleedInitialThreshold&&P.BleedHpFraction>0.f&&P.BleedHpFraction<=1.f;
+            if (!bOk) return Fail(TEXT("Framework.Profile.Bleed"));
+        }
+    }
     if (bF5)
     {
         if (!FMath::IsFinite(P.RepeatPenalty) || P.RepeatPenalty<=0.f || P.RepeatPenalty>1.f || P.RepeatMemory<1 || P.RepeatMemory>8 || P.AttackCount<1 || P.AttackCount>8)

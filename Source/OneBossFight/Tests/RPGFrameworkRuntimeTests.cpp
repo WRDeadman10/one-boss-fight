@@ -184,6 +184,29 @@ bool FFrameworkPostureProfile::RunTest(const FString&)
     Fill(*P);P->Cards.Reset();P->bDamageEnabled=false;P->BossMaxHealth=100.f;P->PlayerHitDamage=10.f;P->PostureMax=100.f;P->PlayerPostureHitAmount=60.f;P->StaggerSeconds=1.f;Refused(TEXT("posture needs the selector lane"));
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkBleedProfile,"OneBossFight.Framework.Runtime.BleedProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkBleedProfile::RunTest(const FString&)
+{
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    auto Bleeding=[&P](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);
+        P->BossMaxHealth=100.f;P->PlayerHitDamage=10.f;P->BleedBuildupPerHit=60.f;P->BleedInitialThreshold=100.f;P->BleedThresholdIncrease=20.f;P->BleedThresholdMax=200.f;P->BleedHpFraction=.2f;};
+    auto Refused=[&](const TCHAR* Why){TestFalse(Why,RPGFramework::ValidateProfile(*P,Error));TestEqual(*FString::Printf(TEXT("%s: token"),Why),Error,FString(TEXT("Framework.Profile.Bleed")));};
+    Bleeding();TestTrue(TEXT("explicit bleed profile valid"),RPGFramework::ValidateProfile(*P,Error));
+    Bleeding();P->BleedBuildupPerHit=0.f;P->BleedInitialThreshold=0.f;P->BleedThresholdIncrease=0.f;P->BleedThresholdMax=0.f;P->BleedHpFraction=0.f;TestTrue(TEXT("all zero = bleed off"),RPGFramework::ValidateProfile(*P,Error));
+    using Field=float URPGBossFrameworkProfile::*;
+    const Field Fields[]={&URPGBossFrameworkProfile::BleedBuildupPerHit,&URPGBossFrameworkProfile::BleedInitialThreshold,&URPGBossFrameworkProfile::BleedThresholdIncrease,&URPGBossFrameworkProfile::BleedThresholdMax,&URPGBossFrameworkProfile::BleedHpFraction};
+    for(Field F:Fields)for(float V:{-1.f,2.e6f,std::numeric_limits<float>::infinity(),std::numeric_limits<float>::quiet_NaN()}){Bleeding();P.Get()->*F=V;Refused(TEXT("value domain"));}
+    Bleeding();P->BleedBuildupPerHit=0.f;Refused(TEXT("bleed set without a buildup"));
+    Bleeding();P->BleedInitialThreshold=0.f;Refused(TEXT("threshold below one"));
+    Bleeding();P->BleedThresholdMax=50.f;Refused(TEXT("maximum below the first threshold"));
+    Bleeding();P->BleedHpFraction=0.f;Refused(TEXT("no health fraction"));
+    Bleeding();P->BleedHpFraction=1.5f;Refused(TEXT("fraction above one"));
+    Bleeding();P->BossMaxHealth=0.f;P->PlayerHitDamage=0.f;Refused(TEXT("bleed needs a hittable boss"));
+    Fill(*P);P->Cards.Reset();P->bDamageEnabled=false;P->BossMaxHealth=100.f;P->PlayerHitDamage=10.f;P->BleedBuildupPerHit=60.f;P->BleedInitialThreshold=100.f;P->BleedThresholdMax=200.f;P->BleedHpFraction=.2f;Refused(TEXT("bleed needs the selector lane"));
+    return true;
+}
 namespace FrameworkSweepFixture
 {
 // Synthetic out-and-back thrust, forward distance of the base from the target (component X): windup 115 cm, apex 13.67 cm at 0.267 s, retract 146 cm at 0.308 s.
