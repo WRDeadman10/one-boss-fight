@@ -1,0 +1,52 @@
+[
+  {
+    "path": "Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp",
+    "sha256": "b7ac654e5ad4c9beb8d128eb219a408f7e5235444a6041b36f3d4eb8c0ca5793",
+    "lines": 201
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossFrameworkProfile.cpp",
+    "sha256": "f414ac1bd186adac562da34fa2b659850745ab8267f707e53fa5d34a417231b4",
+    "lines": 125
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossFrameworkProfile.h",
+    "sha256": "613e52b2209fc951fda02a6811db40491339a9f93b0ec68af0726211fa59684f",
+    "lines": 76
+  },
+  {
+    "path": "Source/OneBossFight/Boss/RPGFrameworkProofFixture.cpp",
+    "sha256": "2529b9ff1655bcddb9eb2e05e8d4e55c65da22767aea8dc97025f7aa11328651",
+    "lines": 140
+  },
+  {
+    "path": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+    "sha256": "13c58a25a75ab79556aebfb58883aae9c2d8dc14050e2940d2c570c628a72cf5",
+    "lines": 221
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossMoveSelector.cpp",
+    "sha256": "0d428b10132927dab58edab0131ac0b73eb9a8a320eb9ef8ebee411afe61e844",
+    "lines": 66
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossMoveModel.cpp",
+    "sha256": "01ce37952a7f39f30870fe372e3dea9b3c9d17a619d646cf67f33a94268bf7cb",
+    "lines": 144
+  },
+  {
+    "path": "Source/OneBossFight/Boss/RPGFrameworkMoveExecutor.cpp",
+    "sha256": "15dfc46e760d9d310a1440494314c8ae3b1006c50081c3c015fa291c91973abc",
+    "lines": 219
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossRules.h",
+    "sha256": "e16744219deffffab4de69ddd62e5333c1b59ac43cc670c9e777aee3fd397395",
+    "lines": 82
+  },
+  {
+    "path": "Source/OneBossFight/Pack/RPGBlueprintCall.h",
+    "sha256": "5e65fee0d2f841e95694649cc964ec5007bccf333d5ed253c3b4889816238d15",
+    "lines": 318
+  }
+]
