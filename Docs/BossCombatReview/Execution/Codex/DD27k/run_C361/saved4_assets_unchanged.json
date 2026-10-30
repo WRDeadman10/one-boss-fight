@@ -1,0 +1,22 @@
+[
+  {
+    "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_AbyssalRevenant_Draft.uasset",
+    "size": 6101,
+    "sha256": "90ee817f380aac486cecfa86d474078af98005190da1d8f370a62762af975ac5"
+  },
+  {
+    "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft.uasset",
+    "size": 79966,
+    "sha256": "ba05a8aa93fec66526c59bf12f51bb824103f67860bdee16efcdd5217d6a3e2b"
+  },
+  {
+    "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft.uasset",
+    "size": 4552,
+    "sha256": "8d18711526b7a746e1bb95546db984708984fccbc6cda3546eea39cd72edc822"
+  },
+  {
+    "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V2.uasset",
+    "sha256": "ca4feaa671bbef352c88e9186fe64a3cad1400bd53e9bdf14b77edc687b4e848",
+    "size": 8214
+  }
+]

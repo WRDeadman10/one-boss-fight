@@ -1,0 +1,3 @@
+[2026.10.30-05.53.52:590][601]LogAutomationController: [DD27j] loaded boss=/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft.DA_Boss_EmberWarden_Draft player=/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V2.DA_Player_Hero_Draft_V2 manifest=cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec phase=PhaseTwo
+[2026.10.30-05.53.52:590][601]LogAutomationController: [DD27j] stage=BossCompile ready=1 output=1
+[2026.10.30-05.53.52:590][601]LogAutomationController: [DD27j] stage=HeroCompile ready=0 output=0 fields=4

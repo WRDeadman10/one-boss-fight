@@ -345,3 +345,20 @@ DD27l C344 measured 2026-10-29: ONE V2-only in-memory authoring exit0/helperSUCC
 
 
 DD30Chronology C346 STOP 2026-10-29: promoted accepted2new+3edited cppfiles, Source219; ONE build exit0 and newDLL, BUT3header-order error diagnostics (helper include precedes each ownheader). No fix/retry/PIE/engine launch; mixed exit0/error output is NOT clean acceptance. Warnings3 unchanged. Source219/3savedassets/Content11755/Data19/Config/toolkit/Saved unchanged duringbuild, EXEunchanged, HEAD605c2dd8,postprocess empty. Raw/report Codex/DD30Chronology/run_C346/RUN_REPORT_TO_CLAUDE.md; await exact lead correction.
+
+
+DD27m C359 measured 2026-10-30: ownerYes/fresh219Source/DLL332afd49/HEAD6ef433e reviewedfiledelta,6actualreceiptpins; ONEV2onlySAVEexit0/helperSUCCESS,22properties/4of4Fields. Exactly1NEWV2asset, original3bit-identical; Content11756/Data20,Config/Source/toolkit/binary unchanged. Saved1new+4changed+16removed oldfiles, originUNKNOWN/noCodexdelete,metadata retained. Raw/hash/newasset/report Codex/DD27m/RUN_REPORT_TO_CLAUDE.md. Not freshreload/compile/preflight; DD27k awaits separate leadrelease. HEADstop preserved/no silentretry/gitmutation.
+
+
+DD27k C361.1 FAILED 2026-10-30: accepted onepath-onlyV2revision promoted, Source219; ONEbuildexit0/noUHT/3warnings, ONEfocusedtest1finished0passed1failed/exit255. BossCompile ready1; HeroV2 Fields4 ready0: required skeleton/animation dependencies missing (which member UNKNOWN). Twelve-plan preflight notrun. Fourassets unchanged,Content11756/Data20/Config/toolkit/source stable;newDLL frozen;no fix/retry/fullsuite. Evidence Codex/DD27k/run_C361/RUN_REPORT_TO_CLAUDE.md.
+
+
+C365 design-only proposal 2026-10-30: Codex/Framework/FRAMEWORK_DESIGN_V1.md maps Morgott/Mohg ownership patterns to currentSource and proposes minimalSevarogwalk/select/oneMoveCard/authoredsweptwindow+singleHPbridge+abort path. Allnewcontracts/unmeasuredassumptions/testgates marked, no code/build/run/activation approval. SOURCE_CITATIONS_V1.json reopens/pins21primaryfiles. V3 authoring packets alreadyprepared X355; no save/runrelease inferred from design.
+
+- [x] BUILD-57: AuthoredDraft Hero V3 asset and profile parity (C-364 / C-366 / A-238) (2026-10-30). `DA_Player_Hero_Draft_V3` targets `SK_CombatMannequin` with 3 truthful animations (`Dodge_Small_Forward_Roll`, `MM_Idle`, `Attack_PrimaryA_Anim`). The 232/232 figure is the PYTHON authoring-toolkit suite (not the C++ automation count). C++ side: `OneBossFight.Binding.AuthoredDraft.SavedProductionPreflight` passes with the manifest hash (C-392).
+
+- [x] BUILD-58: MoveCard validator (F1) (C-373): `OneBossFight.Framework.MoveCard.{Numbers,Positive,Rejections,SnapshotAndFailure}` 4/4 PASS. Source 219 -> 222.
+
+- [x] BUILD-59: MoveModel (F2) (C-375): `OneBossFight.Framework.MoveModel.{Eligibility,Crossing,PauseAndBoundaries,Abort,GenerationAndDoubleStart}` 5/5 PASS. Source 222 -> 225.
+
+- [x] BUILD-60: F3a source (C-392, 2026-10-30): 15 destinations promoted (Source 236), ONE editor build exit 0 (no UHT/compiler warnings from project files), focused `OneBossFight.Framework` 15/15 (MoveCard 4, MoveModel 8, Runtime 3), full suite 198/198 exit 0 with `-DD27jManifestHash` (first full run 196/198: AuthoredDraft needs the hash argument; CookCoverage flagged the F3 test fixture paths, fixed by an explicit EditorProofOnly list in `RPGAutomationTests.cpp`). Warnings 71 vs 63 baseline: +8 `SevarogPlayerCharacter` input-binding warnings from loading the Paragon Sevarog Blueprint in `Runtime.ResolvedDependencies` (accepted, Paragon asset, not project code). Evidence `Docs/BossCombatReview/Execution/Claude/F3a/`. Not covered: PIE, navigation, montage playback, slot weight (F3b-F3d).

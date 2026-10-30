@@ -1,0 +1,57 @@
+{
+  "release": "C-375",
+  "build": {
+    "seconds": 6.8090098999999995,
+    "end": "2026-10-30T12:35:10.4685286+05:30",
+    "exit_code": 0,
+    "release": "C-375",
+    "start": "2026-10-30T12:35:03.6595187+05:30"
+  },
+  "focused": {
+    "process_id": 50340,
+    "cached_handle": 1812,
+    "exit_code": 0,
+    "outcome": "SUCCESS",
+    "timed_out": false,
+    "seconds": 20.759392599999998,
+    "start": "2026-10-30T12:35:24.2367544+05:30",
+    "end": "2026-10-30T12:35:45.0011524+05:30"
+  },
+  "paths": [
+    "OneBossFight.Framework.MoveModel.Abort",
+    "OneBossFight.Framework.MoveModel.Crossing",
+    "OneBossFight.Framework.MoveModel.Eligibility",
+    "OneBossFight.Framework.MoveModel.GenerationAndDoubleStart",
+    "OneBossFight.Framework.MoveModel.PauseAndBoundaries"
+  ],
+  "raw_sha256": "9446c92c6073e5abb709c1dfe9c9db488573ca39bca281f1e81b7bbe667716f8",
+  "build_raw_sha256": "62bef3667bd1b8a315cd5eb998b807f1abee331788b78157e502fe7291e62ebb",
+  "errors": 0,
+  "warnings": 13,
+  "build_warnings": [
+    "Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'Niagara'.",
+    "Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'NiagaraEditor'.",
+    "Warning: Visual Studio 2022 compiler is not a preferred version"
+  ],
+  "build_warnings_equal_known3": true,
+  "UHT_invocation_visible": false,
+  "source_count": 225,
+  "binary": [
+    {
+      "path": "Binaries/Win64/UnrealEditor-OneBossFight.dll",
+      "sha256": "4a2f07b3b0eaffc541beda08007e3e2f65428235414812ceb257782e16470d5b",
+      "size": 5833728
+    },
+    {
+      "path": "Binaries/Win64/UnrealEditor-OneBossFight.pdb",
+      "sha256": "798d2dc8e1b419c62e9c3a0d96d670df18c6f12fe47147b718ed82ccf4cb2753",
+      "size": 98488320
+    },
+    {
+      "path": "Binaries/Win64/OneBossFight.exe",
+      "sha256": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65",
+      "size": 301501952
+    }
+  ],
+  "scope": "Pure selector/timeline/abort model only; metadata-only card is NOT playback capability"
+}

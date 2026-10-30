@@ -1,0 +1,11 @@
+--- live/RPGBossAuthoredDraftPreflightTests.cpp
++++ staged/RPGBossAuthoredDraftPreflightTests.cpp
+@@ -104,7 +104,7 @@
+     if (!TestTrue(TEXT("explicit DD27jManifestHash must be 64 hexadecimal digits; operator pins its actual source"), bHashValid)) return false;
+     const FName SelectedPhase(TEXT("PhaseTwo"));
+     const TCHAR* BossPath = TEXT("/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft.DA_Boss_EmberWarden_Draft");
+-    const TCHAR* PlayerPath = TEXT("/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V2.DA_Player_Hero_Draft_V2");
++    const TCHAR* PlayerPath = TEXT("/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V3.DA_Player_Hero_Draft_V3");
+     TStrongObjectPtr<URPGBossDefinition> BossDefinition(LoadObject<URPGBossDefinition>(nullptr, BossPath));
+     TStrongObjectPtr<URPGBossDefinition> PlayerDefinition(LoadObject<URPGBossDefinition>(nullptr, PlayerPath));
+     AddInfo(FString::Printf(TEXT("[DD27j] loaded boss=%s player=%s manifest=%s phase=%s"),

@@ -1,0 +1,71 @@
+[2026.10.30-07.38.35:057][  2]LogPython: [PROBE_ENUM] {"enum_repr": "<AnimPoseSpaces.WORLD: 1>", "enum_type": "AnimPoseSpaces", "integer_fallback": false, "measurement_certification": "reflected WORLD enum observed"}
+[PROBE_START] sequence='Swing1_Slow' path='/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Slow'
+[2026.10.30-07.38.35:277][  2]LogPython: [PROBE_API] pose_method='AnimPoseExtensions.get_anim_pose_at_time' bone_method='AnimPose.get_bone_pose(WORLD)'
+[2026.10.30-07.38.35:284][  2]LogPython: [PROBE_TRACKS] base_track(weapon_r)=False tip_track(root_weapon_end_r)=False
+[2026.10.30-07.38.35:295][  2]LogPython: [PROBE_METRICS] length=1.7s samples=206 peak_tip_speed=1845.66 cm/s at t=0.4583s
+[2026.10.30-07.38.35:306][  2]LogPython: [PROBE_WINDOW] #1: [0.35s -> 0.4917s] (duration=0.1417s, peak=1845.66 cm/s at t=0.4583s)
+[2026.10.30-07.38.35:317][  2]LogPython:   [TOP_SAMPLE] t=0.4583s tip_spd=  1845.7 cm/s base_spd=  2986.3 cm/s tip_pos=(-9.802683881744592, 111.49289551908582, 158.3823615082024)
+[2026.10.30-07.38.35:328][  2]LogPython:   [TOP_SAMPLE] t=0.4500s tip_spd=  1680.2 cm/s base_spd=  2823.2 cm/s tip_pos=(-18.48690324342701, 117.65495735665493, 169.48067811468786)
+[2026.10.30-07.38.35:339][  2]LogPython:   [TOP_SAMPLE] t=0.4167s tip_spd=  1432.7 cm/s base_spd=  1332.6 cm/s tip_pos=(-36.96127565093319, 108.34063290642781, 210.0232382781949)
+[2026.10.30-07.38.35:350][  2]LogPython:   [TOP_SAMPLE] t=0.4250s tip_spd=  1423.0 cm/s base_spd=  1535.2 cm/s tip_pos=(-32.797364477826385, 113.46116661268275, 200.17091820928115)
+[2026.10.30-07.38.35:361][  2]LogPython:   [TOP_SAMPLE] t=0.4667s tip_spd=  1403.2 cm/s base_spd=  2571.8 cm/s tip_pos=(-3.030089784463353, 105.3951166182793, 151.05534010623325)
+[2026.10.30-07.38.35:372][  2]LogPython: [PROBE_END] sequence='Swing1_Slow' status=SUCCESS
+[PROBE_START] sequence='Swing1_Medium' path='/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Medium'
+[2026.10.30-07.38.35:482][  2]LogPython: [PROBE_API] pose_method='AnimPoseExtensions.get_anim_pose_at_time' bone_method='AnimPose.get_bone_pose(WORLD)'
+[2026.10.30-07.38.35:487][  2]LogPython: [PROBE_TRACKS] base_track(weapon_r)=False tip_track(root_weapon_end_r)=False
+[2026.10.30-07.38.35:498][  2]LogPython: [PROBE_METRICS] length=1.1333s samples=137 peak_tip_speed=3057.06 cm/s at t=0.2583s
+[2026.10.30-07.38.35:509][  2]LogPython: [PROBE_WINDOW] #1: [0.25s -> 0.2667s] (duration=0.0167s, peak=3057.06 cm/s at t=0.2583s)
+[2026.10.30-07.38.35:520][  2]LogPython: [PROBE_WINDOW] #2: [0.15s -> 0.1667s] (duration=0.0167s, peak=1929.83 cm/s at t=0.1583s)
+[2026.10.30-07.38.35:531][  2]LogPython:   [TOP_SAMPLE] t=0.2583s tip_spd=  3057.1 cm/s base_spd=  5539.1 cm/s tip_pos=(15.645032697442904, 74.88910302114854, 149.6765586059433)
+[2026.10.30-07.38.35:541][  2]LogPython:   [TOP_SAMPLE] t=0.2500s tip_spd=  2526.2 cm/s base_spd=  4340.8 cm/s tip_pos=(-4.9334971799393905, 81.85227952192051, 162.9821590896898)
+[2026.10.30-07.38.35:552][  2]LogPython:   [TOP_SAMPLE] t=0.2667s tip_spd=  2142.2 cm/s base_spd=  4878.2 cm/s tip_pos=(31.3166612070169, 72.40261374473002, 141.4980504715673)
+[2026.10.30-07.38.35:563][  2]LogPython:   [TOP_SAMPLE] t=0.1583s tip_spd=  1929.8 cm/s base_spd=  1993.1 cm/s tip_pos=(-59.163808757314044, 27.56514829521314, 262.066749945325)
+[2026.10.30-07.38.35:574][  2]LogPython:   [TOP_SAMPLE] t=0.2167s tip_spd=  1735.0 cm/s base_spd=  1067.0 cm/s tip_pos=(-36.390493267948045, 82.3931432203697, 211.3806170452158)
+[2026.10.30-07.38.35:584][  2]LogPython: [PROBE_END] sequence='Swing1_Medium' status=SUCCESS
+[PROBE_START] sequence='Swing2_Medium' path='/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing2_Medium'
+[2026.10.30-07.38.35:691][  2]LogPython: [PROBE_API] pose_method='AnimPoseExtensions.get_anim_pose_at_time' bone_method='AnimPose.get_bone_pose(WORLD)'
+[2026.10.30-07.38.35:701][  2]LogPython: [PROBE_TRACKS] base_track(weapon_r)=False tip_track(root_weapon_end_r)=False
+[2026.10.30-07.38.35:712][  2]LogPython: [PROBE_METRICS] length=1.1333s samples=137 peak_tip_speed=3639.65 cm/s at t=0.225s
+[2026.10.30-07.38.35:722][  2]LogPython: [PROBE_WINDOW] #1: [0.1917s -> 0.2667s] (duration=0.075s, peak=3639.65 cm/s at t=0.225s)
+[2026.10.30-07.38.35:733][  2]LogPython:   [TOP_SAMPLE] t=0.2250s tip_spd=  3639.7 cm/s base_spd=  5712.0 cm/s tip_pos=(-86.14561590827232, 50.07610149375754, 152.94863326183543)
+[2026.10.30-07.38.35:745][  2]LogPython:   [TOP_SAMPLE] t=0.2167s tip_spd=  3309.8 cm/s base_spd=  5046.1 cm/s tip_pos=(-61.96639877395702, 62.535001387488286, 166.36791625955996)
+[2026.10.30-07.38.35:756][  2]LogPython:   [TOP_SAMPLE] t=0.2333s tip_spd=  2764.8 cm/s base_spd=  4650.7 cm/s tip_pos=(-101.90641781416059, 35.0526246818619, 145.41558718910693)
+[2026.10.30-07.38.35:768][  2]LogPython:   [TOP_SAMPLE] t=0.2583s tip_spd=  2687.1 cm/s base_spd=  5292.6 cm/s tip_pos=(-114.22713067375057, -26.117124824102042, 145.614890795684)
+[2026.10.30-07.38.35:778][  2]LogPython:   [TOP_SAMPLE] t=0.2500s tip_spd=  2650.2 cm/s base_spd=  4516.3 cm/s tip_pos=(-111.37102212811904, -3.9543883248243716, 144.17372615606882)
+[2026.10.30-07.38.35:789][  2]LogPython: [PROBE_END] sequence='Swing2_Medium' status=SUCCESS
+[PROBE_START] sequence='Swing3_Slow' path='/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing3_Slow'
+[2026.10.30-07.38.35:927][  2]LogPython: [PROBE_API] pose_method='AnimPoseExtensions.get_anim_pose_at_time' bone_method='AnimPose.get_bone_pose(WORLD)'
+[2026.10.30-07.38.35:928][  2]LogPython: [PROBE_TRACKS] base_track(weapon_r)=False tip_track(root_weapon_end_r)=False
+[2026.10.30-07.38.35:939][  2]LogPython: [PROBE_METRICS] length=1.7s samples=206 peak_tip_speed=3475.59 cm/s at t=0.4917s
+[2026.10.30-07.38.35:950][  2]LogPython: [PROBE_WINDOW] #1: [0.475s -> 0.5333s] (duration=0.0583s, peak=3475.59 cm/s at t=0.4917s)
+[2026.10.30-07.38.35:961][  2]LogPython:   [TOP_SAMPLE] t=0.4917s tip_spd=  3475.6 cm/s base_spd=  3899.2 cm/s tip_pos=(-73.00952020735035, 89.38406301038482, 148.62168899062902)
+[2026.10.30-07.38.35:972][  2]LogPython:   [TOP_SAMPLE] t=0.5250s tip_spd=  3314.4 cm/s base_spd=  5198.5 cm/s tip_pos=(-59.20443324809343, 74.76913459423375, 58.21274146928679)
+[2026.10.30-07.38.35:983][  2]LogPython:   [TOP_SAMPLE] t=0.4833s tip_spd=  3271.6 cm/s base_spd=  3313.7 cm/s tip_pos=(-69.96854942461665, 81.92991779513022, 176.4436097677347)
+[2026.10.30-07.38.35:993][  2]LogPython:   [TOP_SAMPLE] t=0.5000s tip_spd=  3095.6 cm/s base_spd=  4079.6 cm/s tip_pos=(-74.25168762450814, 97.9127723298689, 124.30751699442567)
+[2026.10.30-07.38.36:004][  2]LogPython:   [TOP_SAMPLE] t=0.5167s tip_spd=  3045.5 cm/s base_spd=  4487.3 cm/s tip_pos=(-64.35954260531965, 90.1443273664616, 80.57076604570753)
+[2026.10.30-07.38.36:015][  2]LogPython: [PROBE_END] sequence='Swing3_Slow' status=SUCCESS
+[PROBE_START] sequence='Subjugation' path='/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Subjugation'
+[2026.10.30-07.38.36:171][  2]LogPython: [PROBE_API] pose_method='AnimPoseExtensions.get_anim_pose_at_time' bone_method='AnimPose.get_bone_pose(WORLD)'
+[2026.10.30-07.38.36:174][  2]LogPython: [PROBE_TRACKS] base_track(weapon_r)=False tip_track(root_weapon_end_r)=False
+[2026.10.30-07.38.36:185][  2]LogPython: [PROBE_METRICS] length=2.8667s samples=345 peak_tip_speed=1781.88 cm/s at t=0.925s
+[2026.10.30-07.38.36:197][  2]LogPython: [PROBE_WINDOW] #1: [0.8833s -> 0.9417s] (duration=0.0583s, peak=1781.88 cm/s at t=0.925s)
+[2026.10.30-07.38.36:207][  2]LogPython:   [TOP_SAMPLE] t=0.9250s tip_spd=  1781.9 cm/s base_spd=  1633.9 cm/s tip_pos=(-49.2834418527338, -30.300970482577355, 91.93966349937682)
+[2026.10.30-07.38.36:218][  2]LogPython:   [TOP_SAMPLE] t=0.9333s tip_spd=  1695.4 cm/s base_spd=  1650.2 cm/s tip_pos=(-38.87939642608457, -32.620238929160706, 82.66624550069575)
+[2026.10.30-07.38.36:228][  2]LogPython:   [TOP_SAMPLE] t=0.9167s tip_spd=  1692.8 cm/s base_spd=  1465.6 cm/s tip_pos=(-59.97518743311601, -27.966311145327467, 101.97601033479278)
+[2026.10.30-07.38.36:239][  2]LogPython:   [TOP_SAMPLE] t=0.9417s tip_spd=  1604.1 cm/s base_spd=  1638.0 cm/s tip_pos=(-28.86624988532259, -34.884068433608945, 74.10497801762054)
+[2026.10.30-07.38.36:250][  2]LogPython:   [TOP_SAMPLE] t=0.8917s tip_spd=  1359.3 cm/s base_spd=  1008.7 cm/s tip_pos=(-85.30799536196754, -25.458464230088907, 127.3123672915245)
+[2026.10.30-07.38.36:260][  2]LogPython: [PROBE_END] sequence='Subjugation' status=SUCCESS
+[PROBE_START] sequence='Ultimate_Swing_120fps' path='/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Ultimate_Swing_120fps'
+[2026.10.30-07.38.36:440][  2]LogPython: [PROBE_API] pose_method='AnimPoseExtensions.get_anim_pose_at_time' bone_method='AnimPose.get_bone_pose(WORLD)'
+[2026.10.30-07.38.36:441][  2]LogPython: [PROBE_TRACKS] base_track(weapon_r)=False tip_track(root_weapon_end_r)=False
+[2026.10.30-07.38.36:452][  2]LogPython: [PROBE_METRICS] length=2.6333s samples=318 peak_tip_speed=2664.93 cm/s at t=0.7083s
+[2026.10.30-07.38.36:463][  2]LogPython: [PROBE_WINDOW] #1: [0.6583s -> 0.7833s] (duration=0.125s, peak=2664.93 cm/s at t=0.7083s)
+[2026.10.30-07.38.36:474][  2]LogPython: [PROBE_WINDOW] #2: [0.8333s -> 0.9167s] (duration=0.0833s, peak=2080.99 cm/s at t=0.8667s)
+[2026.10.30-07.38.36:484][  2]LogPython:   [TOP_SAMPLE] t=0.7083s tip_spd=  2664.9 cm/s base_spd=  3817.5 cm/s tip_pos=(-125.3357008647558, 75.25108987783888, 145.84347350726102)
+[2026.10.30-07.38.36:496][  2]LogPython:   [TOP_SAMPLE] t=0.7000s tip_spd=  2649.5 cm/s base_spd=  3554.1 cm/s tip_pos=(-129.47295483423915, 55.96823761026608, 156.05321151289306)
+[2026.10.30-07.38.36:507][  2]LogPython:   [TOP_SAMPLE] t=0.6750s tip_spd=  2649.5 cm/s base_spd=  3897.8 cm/s tip_pos=(-127.74101867973526, 1.4519810030340583, 186.32709455664346)
+[2026.10.30-07.38.36:518][  2]LogPython:   [TOP_SAMPLE] t=0.6833s tip_spd=  2494.2 cm/s base_spd=  3303.2 cm/s tip_pos=(-131.78576425240382, 18.908660181803533, 175.79563314284087)
+[2026.10.30-07.38.36:529][  2]LogPython:   [TOP_SAMPLE] t=0.6917s tip_spd=  2405.4 cm/s base_spd=  3011.6 cm/s tip_pos=(-131.898143344222, 36.64809573127518, 166.46233482405603)
+[2026.10.30-07.38.36:539][  2]LogPython: [PROBE_END] sequence='Ultimate_Swing_120fps' status=SUCCESS
+[PROBE_OUTPUT] Summary written to 'C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Codex\HitWindowProbe\run_C379\probe_summary.json'
+[2026.10.30-07.38.36:617][  2]LogPython: [PROBE_RUNNER_EXIT] 0

@@ -1,0 +1,6 @@
+{
+  "enum_repr": "<AnimPoseSpaces.WORLD: 1>",
+  "enum_type": "AnimPoseSpaces",
+  "integer_fallback": false,
+  "measurement_certification": "reflected WORLD enum observed"
+}

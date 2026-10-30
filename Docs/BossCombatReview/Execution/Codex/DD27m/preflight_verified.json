@@ -1,0 +1,48 @@
+{
+  "preparation_order": "C-343",
+  "release": "C-359",
+  "utc": "2026-10-30T05:38:19.341385+00:00",
+  "DD29_report_id": "X-328",
+  "receipt_sha256": "c49b37b8c32e10e2cfed1737af7944d568c6e33052aa7c8875cfc74401632731",
+  "pins": [
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/draft_boss_profiles.py",
+      "expected_sha256": "3727871bd071af777cba8ddcb78d9804728ba6f67588ffa37a6db3b498f614b9",
+      "actual_sha256": "3727871bd071af777cba8ddcb78d9804728ba6f67588ffa37a6db3b498f614b9"
+    },
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/authoring_core.py",
+      "expected_sha256": "74101436cc433863dc1829a0528c789ea7490fbda7d25aa29d6f36c4eb458cf1",
+      "actual_sha256": "74101436cc433863dc1829a0528c789ea7490fbda7d25aa29d6f36c4eb458cf1"
+    },
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/inspect_authored_assets.py",
+      "expected_sha256": "b3330da60b2098803a5a8a632d2ade144f669f0a40862ef8a3e306659de3fc47",
+      "actual_sha256": "b3330da60b2098803a5a8a632d2ade144f669f0a40862ef8a3e306659de3fc47"
+    },
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json",
+      "expected_sha256": "63c45ef097426c66ac970286a842a71b38f0bcf879889b7f2ad3d4a873d7b6ce",
+      "actual_sha256": "63c45ef097426c66ac970286a842a71b38f0bcf879889b7f2ad3d4a873d7b6ce"
+    },
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/hero_target_source.json",
+      "expected_sha256": "25e50a332009da8ddec783ce7e6f2c992f94a50d8f8c6a14427fcfa47240cc41",
+      "actual_sha256": "25e50a332009da8ddec783ce7e6f2c992f94a50d8f8c6a14427fcfa47240cc41"
+    },
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/emit_fields_manifest.py",
+      "expected_sha256": "d38be19bca776dab57521f6a5f41d47d1614451c455cc49dc55682e38423de32",
+      "actual_sha256": "d38be19bca776dab57521f6a5f41d47d1614451c455cc49dc55682e38423de32"
+    }
+  ],
+  "binary": {
+    "Binaries/Win64/UnrealEditor-OneBossFight.dll": "332afd497b68c01b556be9fd73682574e97c31ed868f46a382ee0cb301bdaacf",
+    "Binaries/Win64/UnrealEditor-OneBossFight.pdb": "e27ab3814e895a305f07c01e47dc3d916f77e066566de14063fe97a28c05fdb6",
+    "Binaries/Win64/OneBossFight.exe": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65"
+  },
+  "baseline_sha256": "9a5aeed8866077a5c6393055131e9932db0a8bc7336b946c2b3f052e5a265c2a",
+  "pre_state_sha256": "13262ccc03e06071ccaf6f7fdf815bfa7a06de23627c8c3e2fc5e6ca3d7d4ff7",
+  "git_status_Content_Config_Source": "",
+  "passed": true
+}

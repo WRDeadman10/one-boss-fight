@@ -1,0 +1,63 @@
+{
+  "release": "C-369",
+  "job": {
+    "process_id": 15436,
+    "cached_handle": 2472,
+    "exit_code": 0,
+    "outcome": "SUCCESS",
+    "timed_out": false,
+    "seconds": 21.5521791,
+    "start": "2026-10-30T12:00:39.8387771+05:30",
+    "end": "2026-10-30T12:01:01.3971466+05:30"
+  },
+  "raw_sha256": "b27e8ea0db1bd78bc4703bfb95e5f02d6a613ec2f0c43604ce8c9b49844efa60",
+  "error_lines": 0,
+  "warning_lines": 15,
+  "asset": {
+    "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V3.uasset",
+    "bytes": 8729,
+    "sha256": "30cdd6b0864ca3e23ddaf500bb7e31f2cc6942c5c18cf94147388cf885f4f8b3"
+  },
+  "state_diff": {
+    "content": {
+      "added": [
+        "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V3.uasset"
+      ],
+      "removed": [],
+      "changed": []
+    },
+    "config": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "saved": {
+      "added": [
+        "Saved/Config/CrashReportClient/UECC-Windows-58C4C8A44B2219A5ECE82C90ACA7F67A/CrashReportClient.ini"
+      ],
+      "removed": [],
+      "changed": [
+        "Saved/Autosaves/PackageRestoreData.json",
+        "Saved/Config/WindowsEditor/EditorPerProjectUserSettings.ini",
+        "Saved/SourceControl/UncontrolledChangelists.json",
+        "Saved/UnrealClaude/script_history.json"
+      ]
+    },
+    "source": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "toolkit": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "binary": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    }
+  },
+  "scope": "saved creation/readback only; fresh reload/compile/preflight NOT performed"
+}

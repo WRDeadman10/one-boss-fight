@@ -1,0 +1,127 @@
+[2026.10.30-06.40.05:741][604]LogAutomationController: [DD27j] loaded boss=/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft.DA_Boss_EmberWarden_Draft player=/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V3.DA_Player_Hero_Draft_V3 manifest=cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec phase=PhaseTwo
+[2026.10.30-06.40.05:741][604]LogAutomationController: [DD27j] stage=BossCompile ready=1 output=1
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] stage=HeroCompile ready=1 output=1 fields=4
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] stage=Preflight ready=1 output=1
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] plan[0] class=/Script/OneBossFight.RPGBossStagger name=RPGBossStagger
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerPolicy.StaggerSeconds
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerPolicy.FreezeAtPosition
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerPolicy.CriticalMultiplier
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerPolicy.RiposteRange
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerPolicy.RiposteConeDegrees
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerPolicy.RiposteFacingDegrees
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerPolicy.RiposteArmSeconds
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerPolicy.RipostePlayerStartGap
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerPolicy.RiposteAlignSeconds
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerPolicy.RiposteImpactSeconds
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerPolicy.RiposteBaseDamage
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerPolicy.CooldownSeconds
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerPolicy.GetUpRate
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerPolicy.bHoldPostureAtZero
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerProfile.bUseClips
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerProfile.bUseRiposteClips
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerProfile.bCriticalOnEveryHit
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerProfile.HitStunAbilityClassName
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerProfile.FallMontage
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerProfile.GetUpMontage
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerProfile.FallClip
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerProfile.DownClip
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerProfile.RipostePlayerClip
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerProfile.RiposteBossClip
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=StaggerProfile.ImmunityEffect
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] plan[1] class=/Script/OneBossFight.RPGBossPhases name=RPGBossPhases
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Phases[PhaseTwo].EntryHealthFraction
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Phases[PhaseTwo].SpeedMultiplier
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Phases[PhaseTwo].RateMultiplier
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Phases[PhaseTwo].AttackMultiplier
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=PhaseFlow.TransitionSeconds
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=PhaseFlow.bUseRoarClip
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=PhaseFlow.bPausePostureInTransition
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=PhaseFlow.bLockLeapUntilPhaseTwo
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=PhaseFlow.AttackAbilityPrefix
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=PhaseFlow.LeapAbilityTag
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Fireball.bFireballEnabled
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Fireball.FireballAbility
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Fireball.FireballCooldown
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Fireball.FireballMinRange
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Fireball.FireballMaxRange
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=PhaseDependencies.RoarClip
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=PhaseDependencies.TransitionMontage
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=PhaseDependencies.ImmunityEffect
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] plan[2] class=/Script/OneBossFight.RPGBossEncounter name=RPGBossEncounter
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Stats.MaxHealth
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=EncounterPolicy.GateRadius
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=EncounterPolicy.bResetOnPlayerRespawn
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] plan[3] class=/Script/OneBossFight.RPGBossDormantWake name=RPGBossDormantWake
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=DormantWake.DormantClip
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=DormantWake.WakeClip
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] plan[4] class=/Script/OneBossFight.RPGBossPosture name=RPGBossPosture
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Stats.MaxPosture
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Stats.PostureRegenDelay
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Stats.PostureRegenRate
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] plan[5] class=/Script/OneBossFight.RPGBossBleed name=RPGBossBleed
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Bleed.InitialThreshold
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Bleed.ThresholdIncrease
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Bleed.ThresholdMax
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Bleed.HpFraction
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Bleed.EffectHeight
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Bleed.ProcEffect
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Bleed.ProcSound
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] plan[6] class=/Script/OneBossFight.RPGBossLowSweep name=RPGBossLowSweep
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=LowSweep.bEnabled
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=LowSweep.MoveId
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=LowSweep.Damage
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=LowSweep.Reach
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=LowSweep.InnerRadius
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=LowSweep.BladeHeight
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=LowSweep.SweepFromDegrees
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=LowSweep.SweepToDegrees
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] plan[7] class=/Script/OneBossFight.RPGBossShockwave name=RPGBossShockwave
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Shockwave.bEnabled
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Shockwave.MoveId
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Shockwave.Damage
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Shockwave.StartRadius
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Shockwave.MaxRadius
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Shockwave.Speed
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Shockwave.Thickness
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Shockwave.JumpClearance
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] plan[8] class=/Script/OneBossFight.RPGBossHealPunish name=RPGBossHealPunish
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=HealPunish.bEnabled
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=HealPunish.MinRange
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=HealPunish.MaxRange
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=HealPunish.Cooldown
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=HealPunish.Damage
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=HealPunish.FlightTime
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=HealPunish.MinSpeed
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=HealPunish.MaxSpeed
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=HealPunish.JavelinRadius
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=HealPunish.JavelinMaxRange
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=HealPunish.SpawnSockets
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=HealPunish.AimHeight
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=HealPunish.bRespondToHeal
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=HealPunish.bCancelJavelinsOnInterrupt
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] plan[9] class=/Script/OneBossFight.RPGBossLook name=RPGBossLook
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Look.bEnabled
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Look.Body
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Look.Pieces
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Look.Sword
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Look.SwordSocket
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] plan[10] class=/Script/OneBossFight.RPGBossCloseClipSwap name=RPGBossCloseClipSwap
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=CloseClipSwap.CloseAbilityClassName
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=CloseClipSwap.AttackMontagesName
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=CloseClipSwap.A1Montage
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=CloseClipSwap.A3aMontage
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=CloseClipSwap.A3bMontage
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] plan[11] class=/Script/OneBossFight.RPGBossDeath name=RPGBossDeath
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Death.DeathMode
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Death.DeathClip
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Death.DeathMontage
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Death.PackDeathAbilityClassName
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Death.PackDeathMontagesName
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Death.PackPollSeconds
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Death.PackEndTimeMultiplier
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Death.HoldAtSeconds
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Death.DyingSeconds
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Death.BlendInSeconds
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Death.MaxClipRestarts
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] required=Death.bGuardPackDeath
+[2026.10.30-06.40.05:742][604]LogAutomationController: [DD27j] scope=ExpandedNativeSubsetPreflight; no Configure, registration, activation, save or gameplay claim

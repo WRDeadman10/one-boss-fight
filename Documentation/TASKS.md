@@ -621,8 +621,27 @@ DD30ChronologyRun1 C353 COMPLETED 2026-10-30: Executed released headless PIE run
 1. Subsystem Entry: PlayerMoves.OnWorldBeginPlay witnessed before world_begun (world_begun=0). Both pawns already exist in world iterator (census: pawns=2, bosses=1, players=1), neither begun yet (actor_begun=0, actor_beginning=0). Published GameInstance catalog valid (epoch 87AE2CE6...). Placed bindings=0, context bound=0/ready=0, selection_store=NOT_DEFINED.
 2. First-Observed Component Routes: Boss component RPGBossEncounter reached BeginPlay route at seconds=18149575.4918 (+48ms after subsystem entry) with actor_beginning=1; Player component RPGDodgeTiming reached BeginPlay route at seconds=18149576.5420 (+1.05s after Boss) with actor_beginning=1. Both component BeginPlay calls occurred before component Super::BeginPlay.
 3. Invariant Preservation: Content (11,755), Config, Source (219), Toolkit, DLL (332afd49...) and 3 saved draft assets 100% unchanged. Only Saved logs updated. Lock released after evidence freeze. Raw log (d3db7c73...), receipt (20 items) and report in Docs/BossCombatReview/Execution/Antigravity/EngineRuns/DD30ChronologyRun1/.
+
 AG-CONTENT34 DD30 Activation Options & Wrapper Diagnostics (A-236, Offline Only) (2026-10-30, Antigravity, Claude C-354):
 Completed 3 offline requirements ordered in C-354:
 1. Wrapper Exit-Code Fix: Resolved null exit-code capture in run_chronology.ps1 by caching .Handle immediately following Start-Process and adding .Refresh() prior to reading .ExitCode. Qualified offline via test_wrapper_exit_code.ps1 (ba346be2...) verifying exit codes 0, 42, and 1 across simulated processes.
 2. Driver Early Exit Root Cause Analysis: Explained early Cmd: QUIT_EDITOR (+0s) and CAPTURE_END absence. Documented proven engine behavior where -ExecutePythonScript triggers automatic editor shutdown upon top-level script return (Scripts/RunEditorScript.ps1:3-5). Driver top-level script returned immediately upon registering Slate post-tick callback, causing engine to process QUIT_EDITOR on Frame 3 before 10s elapsed.
 3. DD30 Design Options Specification: Authored Docs/BossCombatReview/Execution/Antigravity/Activation/DD30_DESIGN_OPTIONS.md (336e8ee6..., 17,581 bytes) evaluating Option P (placed ARPGEncounterBinding actor in map; content change; fragile on player respawn), Option R (runtime dynamic binding builder from encounter data asset; zero map edits; respawn safe), and Option S (subsystem-native decoupled registration). Re-opened and verified 17/17 citations via verify_dd30_options_citations.py (f2578473...). Updated Activation evidence receipt.
+
+
+
+DD27m C359 measured 2026-10-30: ownerYes/fresh219Source/DLL332afd49/HEAD6ef433e reviewedfiledelta,6actualreceiptpins; ONEV2onlySAVEexit0/helperSUCCESS,22properties/4of4Fields. Exactly1NEWV2asset, original3bit-identical; Content11756/Data20,Config/Source/toolkit/binary unchanged. Saved1new+4changed+16removed oldfiles, originUNKNOWN/noCodexdelete,metadata retained. Raw/hash/newasset/report Codex/DD27m/RUN_REPORT_TO_CLAUDE.md. Not freshreload/compile/preflight; DD27k awaits separate leadrelease. HEADstop preserved/no silentretry/gitmutation.
+
+
+DD27k C361.1 FAILED 2026-10-30: accepted onepath-onlyV2revision promoted, Source219; ONEbuildexit0/noUHT/3warnings, ONEfocusedtest1finished0passed1failed/exit255. BossCompile ready1; HeroV2 Fields4 ready0: required skeleton/animation dependencies missing (which member UNKNOWN). Twelve-plan preflight notrun. Fourassets unchanged,Content11756/Data20/Config/toolkit/source stable;newDLL frozen;no fix/retry/fullsuite. Evidence Codex/DD27k/run_C361/RUN_REPORT_TO_CLAUDE.md.
+
+
+C365 design-only proposal 2026-10-30: Codex/Framework/FRAMEWORK_DESIGN_V1.md maps Morgott/Mohg ownership patterns to currentSource and proposes minimalSevarogwalk/select/oneMoveCard/authoredsweptwindow+singleHPbridge+abort path. Allnewcontracts/unmeasuredassumptions/testgates marked, no code/build/run/activation approval. SOURCE_CITATIONS_V1.json reopens/pins21primaryfiles. V3 authoring packets alreadyprepared X355; no save/runrelease inferred from design.
+
+### Sevarog & Greystone Framework Progression (2026-10-30)
+
+- [x] Backlog A1 (Save Hero V2 draft): done 2026-10-30 (C-361, X-350). Note: AG A-258 mislabelled A1/A2; the backlog IDs are those of ROADMAP_AND_BACKLOG_2026-10-30.md.
+- [x] Backlog A2 (12-plan preflight on the saved Ember Warden): DONE 2026-10-30 (C-392): `OneBossFight.Binding.AuthoredDraft.SavedProductionPreflight` passes with `-DD27jManifestHash` (BossCompile, HeroCompile V3, Preflight ready=1), raw log `Docs/BossCombatReview/Execution/Claude/F3a/full2_raw.log`.
+- [x] Hit-window probe run_C379 (Codex, accepted C-391): reflected `AnimPoseSpaces.WORLD`, no integer fallback, 6 sequences; 50%-of-peak speed windows are candidates, not validated hit windows; weapon bones have no own track (tip follows the hand chain).
+- [x] Framework F1 MoveCard (4 tests) and F2 MoveModel live; F3a promoted 2026-10-30 (C-392): 15 destinations, Source 225 -> 236 files, MoveModel 8 tests (ObservedClock, ClockMode, ReserveBeforePlayback added), Runtime 3 tests (ProfileDomains, ResolvedDependencies, PlaybackGuards), focused 15/15; full suite 198/198 incl. CookCoverage and AuthoredDraft with the manifest hash (DLL 040e669d...). F3a is source + unit tests only: no PIE proof yet (F3b-F3d).
+- [ ] F3b-F3d (probe/new-only content/one PIE proof), F4 (damage window), F5+ per Claude/HANDOFF_2026-10-30.md.

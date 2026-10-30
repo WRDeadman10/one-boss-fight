@@ -1,0 +1,15 @@
+{
+  "release": "C-356.A",
+  "status": "STOP BEFORE PREFLIGHT/LAUNCH: HEAD differs from required605c2dd8",
+  "expected_head": "605c2dd81d4092e8f84aa7608651ed19d566423a",
+  "actual_head": "6ef433edf6cbf4813ff9db666fff6bc1bad9ddac",
+  "head_delta_file_count": 885,
+  "head_delta_list_sha256": "3558eae8338b3cf9e907c9998b90a3c51e8719bf0f3f79e1d8cf31e30e46ee1b",
+  "Source219_equals_AG_C350": true,
+  "binary_equals_AG_C350": true,
+  "saved3assets_unchanged": true,
+  "V2_exists": false,
+  "engine_or_process_query": false,
+  "lock_acquired": false,
+  "fix_retry": false
+}

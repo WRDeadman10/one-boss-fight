@@ -1,0 +1,38 @@
+--- reviewed/tests.cpp
++++ C371/tests.cpp
+@@ -34,7 +34,7 @@
+     return false;
+ }
+ }
+-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveCardPositive, "OneBossFight.Framework.MoveCard.Positive", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveCardPositive, "OneBossFight.Framework.MoveCard.Positive", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+ bool FBossMoveCardPositive::RunTest(const FString&)
+ {
+     using namespace BossMoveCardFixture;
+@@ -53,7 +53,7 @@
+     TestTrue(TEXT("inclusive domain and timeline endpoints"), RPGBossMoveCards::Validate(F.S,F.M).IsValid());
+     return true;
+ }
+-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveCardNumbers, "OneBossFight.Framework.MoveCard.Numbers", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveCardNumbers, "OneBossFight.Framework.MoveCard.Numbers", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+ bool FBossMoveCardNumbers::RunTest(const FString&)
+ {
+     using namespace BossMoveCardFixture;
+@@ -83,7 +83,7 @@
+     TestTrue(TEXT("inclusive ceiling without clamp"),RPGBossMoveCards::Validate(Z.S,Z.M).IsValid());
+     return true;
+ }
+-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveCardRejections, "OneBossFight.Framework.MoveCard.Rejections", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveCardRejections, "OneBossFight.Framework.MoveCard.Rejections", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+ bool FBossMoveCardRejections::RunTest(const FString&)
+ {
+     using namespace BossMoveCardFixture;
+@@ -120,7 +120,7 @@
+     Reject([](FInput& F){F.M.SocketOrBoneNames.Remove(F.S.Windows[1].SocketB);},TEXT("MoveCard.Socket"));
+     return true;
+ }
+-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveCardSnapshot, "OneBossFight.Framework.MoveCard.SnapshotAndFailure", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveCardSnapshot, "OneBossFight.Framework.MoveCard.SnapshotAndFailure", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+ bool FBossMoveCardSnapshot::RunTest(const FString&)
+ {
+     using namespace BossMoveCardFixture;

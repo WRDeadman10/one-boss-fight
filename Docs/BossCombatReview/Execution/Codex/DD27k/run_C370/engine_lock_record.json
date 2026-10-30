@@ -1,0 +1,8 @@
+{
+  "agent": "Codex",
+  "party": "X",
+  "task": "C-370/DD27k",
+  "command_id": "DD27k.build-and-one-focused",
+  "start_utc": "2026-10-30T06:39:14.543641+00:00",
+  "policy": "C-321"
+}

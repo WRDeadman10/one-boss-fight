@@ -1,0 +1,23 @@
+{
+  "release": "C-359 following C356OwnerYes",
+  "editor_exit": 0,
+  "seconds": 60.533730299999995,
+  "drafts_saved": 1,
+  "asset": {
+    "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V2.uasset",
+    "sha256": "ca4feaa671bbef352c88e9186fe64a3cad1400bd53e9bdf14b77edc687b4e848",
+    "size": 8214
+  },
+  "typed_properties": 22,
+  "fields": "4of4",
+  "error_severity": 0,
+  "warning_severity": 17,
+  "source_count": 219,
+  "head": "6ef433edf6cbf4813ff9db666fff6bc1bad9ddac",
+  "content_files": 11756,
+  "data_hashes": 20,
+  "raw_sha256": "20444ccbad680c621d4820c75b23523a8d19761687e38e2099f97dbb539b6353",
+  "Saved_added": 1,
+  "Saved_changed": 4,
+  "Saved_removed": 16
+}

@@ -1,0 +1,7 @@
+{
+  "path": "Source/OneBossFight/Tests/RPGBossAuthoredDraftPreflightTests.cpp",
+  "before": "b77aabf60b19c6e3ee80fd31f48b6605307408db0d316761affb377594273e76",
+  "after": "830340be5e14a8e183e7502653f0600fa69865d3afa19d657773258ed890cfb6",
+  "delta": "one player-path literal only",
+  "source_count": 219
+}

@@ -1,0 +1,38 @@
+{
+  "release": "C-364 preparation",
+  "source_count": 219,
+  "source_manifest": "Docs/BossCombatReview/Execution/Codex/DD27k/run_C361/promoted_source_manifest_sha256.txt",
+  "source_manifest_sha256": "6aa30c5ac31cf14a15f6f17d710e82e91c5555e6398de3ffcf1f3d290161de9e",
+  "binary_manifest": "Docs/BossCombatReview/Execution/Codex/DD27k/run_C361/final_binary_sha256.json",
+  "binary_manifest_sha256": "8bb5c23ba68c66b5fc4429ca77d8ed9d8d25d0cd0b6a797a3b06cdc1617b0379",
+  "binary": {
+    "Binaries/Win64/UnrealEditor-OneBossFight.dll": "432fb1f8d5c54fde9f0f39bf0bc1c41c73828c5a4df7db37146fdf5e72d082c9",
+    "Binaries/Win64/UnrealEditor-OneBossFight.pdb": "416115dab32d6e320e41b9009926417f7cf153ea88d1b79b0ea29ab6f892a0a6",
+    "Binaries/Win64/OneBossFight.exe": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65"
+  },
+  "assets": [
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_AbyssalRevenant_Draft.uasset",
+      "size": 6101,
+      "sha256": "90ee817f380aac486cecfa86d474078af98005190da1d8f370a62762af975ac5"
+    },
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft.uasset",
+      "size": 79966,
+      "sha256": "ba05a8aa93fec66526c59bf12f51bb824103f67860bdee16efcdd5217d6a3e2b"
+    },
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft.uasset",
+      "size": 4552,
+      "sha256": "8d18711526b7a746e1bb95546db984708984fccbc6cda3546eea39cd72edc822"
+    },
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V2.uasset",
+      "sha256": "ca4feaa671bbef352c88e9186fe64a3cad1400bd53e9bdf14b77edc687b4e848",
+      "size": 8214
+    }
+  ],
+  "head_base": "6ef433edf6cbf4813ff9db666fff6bc1bad9ddac",
+  "allowed_extra_delta": "C360 one commit deleting Docs/BossCombatReview.zip only",
+  "provenance": "C361 DD27k build succeeded, focusedHeroV2 dependency failure; not a passing authored preflight"
+}

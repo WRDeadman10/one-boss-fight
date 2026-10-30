@@ -1,0 +1,8 @@
+{
+  "agent": "Codex",
+  "party": "X",
+  "task": "SevarogInventory",
+  "command_id": "SevarogInventory.probe-one",
+  "start_utc": "2026-10-30T05:55:58.763067+00:00",
+  "policy": "C-321"
+}

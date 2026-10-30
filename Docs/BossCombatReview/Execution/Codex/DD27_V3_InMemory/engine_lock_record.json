@@ -1,0 +1,8 @@
+{
+  "agent": "Codex",
+  "party": "X",
+  "task": "C-364/DD27_V3_InMemory",
+  "command_id": "DD27_V3_InMemory.V3.in-memory",
+  "start_utc": "2026-10-30T06:26:53.802551+00:00",
+  "policy": "C-321"
+}

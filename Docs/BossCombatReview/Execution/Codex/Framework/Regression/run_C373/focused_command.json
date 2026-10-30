@@ -1,0 +1,17 @@
+{
+    "manifest_sha256":  "cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec",
+    "attempt":  1,
+    "manifest_path":  "Docs/BossCombatReview/Execution/Codex/DD27j/run_C339/EmberWarden_PhaseTwo_fields_manifest.json",
+    "arguments":  [
+                      "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+                      "-ExecCmds=\"Automation RunTests OneBossFight; Quit\"",
+                      "-DD27jManifestHash=cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec",
+                      "-unattended",
+                      "-nullrhi",
+                      "-nosound",
+                      "-nosplash",
+                      "-abslog=C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Codex\\Framework\\Regression\\run_C373\\focused_raw.log"
+                  ],
+    "release":  "C-373",
+    "executable":  "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Binaries\\Win64\\UnrealEditor-Cmd.exe"
+}

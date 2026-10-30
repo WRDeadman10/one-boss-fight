@@ -1,0 +1,6 @@
+[2026.10.30-06.30.55:697][  2]LogPython: [DRAFT_APPLY] Creating draft asset at '/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V3'...
+[2026.10.30-06.30.56:980][  2]LogPython: [DRAFT_APPLY] fields rows read back: 4 of 4 expected
+[2026.10.30-06.30.56:988][  2]LogPython: [DRAFT_APPLY] Initialized & verified all 22 typed properties on draft asset: 'DA_Player_Hero_Draft_V3'
+[DRAFT_APPLY] Executing explicit save opt-in for created draft packages...
+[2026.10.30-06.30.57:034][  2]LogPython: [DRAFT_APPLY] Saved package to disk: '/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V3'
+[DRAFT_APPLY] SUCCESS: Staged draft boss assets successfully authored and saved.

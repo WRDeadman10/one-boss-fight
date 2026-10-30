@@ -1,0 +1,5 @@
+{
+  "checks": "three absent destinations; own production header FIRST in both cpp; liveSource219 snapshot",
+  "result": "passed",
+  "unrun": "UHT/build/Unreal automation; static checks do not prove C++ compiles or real asset fitness"
+}

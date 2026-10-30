@@ -2253,6 +2253,224 @@
         "MaxClipRestarts": 0,
         "bGuardPackDeath": true
       }
+    },
+    {
+      "asset_name": "DA_Player_Hero_Draft_V3",
+      "definition_id": "Player_Hero_V3",
+      "presentation_id": "Presentation_Player_Hero_V3",
+      "schema_version": 1,
+      "participant_kind": "Player",
+      "skeleton": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin",
+      "animations": [
+        "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Animations/Roll/Dodge_Small_Forward_Roll.Dodge_Small_Forward_Roll",
+        "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Animations/Manny/MM_Idle.MM_Idle",
+        "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/Attack_PrimaryA_Anim.Attack_PrimaryA_Anim"
+      ],
+      "stats": {
+        "MaxHealth": 800.0,
+        "MaxPosture": 60.0,
+        "PostureRegenDelay": 1.5,
+        "PostureRegenRate": 25.0
+      },
+      "encounter_policy": {
+        "GateRadius": 1200.0,
+        "bResetOnPlayerRespawn": true
+      },
+      "stagger_policy": {
+        "StaggerSeconds": 2.5,
+        "FreezeAtPosition": 1.55,
+        "CriticalMultiplier": 2.5,
+        "RiposteRange": 150.0,
+        "RiposteConeDegrees": 120.0,
+        "RiposteFacingDegrees": 120.0,
+        "RiposteArmSeconds": 1.2,
+        "RipostePlayerStartGap": 150.0,
+        "RiposteAlignSeconds": 0.3,
+        "RiposteImpactSeconds": 0.8,
+        "RiposteBaseDamage": 40.0,
+        "CooldownSeconds": 0.0,
+        "GetUpRate": 0.6,
+        "bHoldPostureAtZero": true
+      },
+      "phase_flow": {
+        "TransitionSeconds": 1.8,
+        "bUseRoarClip": false,
+        "bPausePostureInTransition": true,
+        "bLockLeapUntilPhaseTwo": false,
+        "AttackAbilityPrefix": "GA_Hero_",
+        "LeapAbilityTag": "Ability.Melee.Hero"
+      },
+      "fireball": {
+        "bFireballEnabled": false,
+        "FireballAbility": "/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C",
+        "FireballCooldown": [
+          6.0,
+          10.0
+        ],
+        "FireballMinRange": 500.0,
+        "FireballMaxRange": 1800.0
+      },
+      "phase_dependencies": {
+        "RoarClip": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar",
+        "TransitionMontage": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage",
+        "ImmunityEffect": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C"
+      },
+      "stagger_profile": {
+        "bUseClips": false,
+        "bUseRiposteClips": false,
+        "bCriticalOnEveryHit": false,
+        "HitStunAbilityClassName": "GA_Hero_HitStun_C",
+        "FallMontage": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage",
+        "GetUpMontage": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage",
+        "FallClip": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall",
+        "DownClip": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown",
+        "RipostePlayerClip": "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.AN_Riposte_Player_Front",
+        "RiposteBossClip": "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction",
+        "ImmunityEffect": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C"
+      },
+      "dormant_wake": {
+        "DormantClip": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.AN_Boss01_DormantIdle",
+        "WakeClip": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_Wake.AN_Boss01_Wake"
+      },
+      "phases": [],
+      "fields": [
+        {
+          "FieldPath": "Stats.MaxHealth",
+          "Value": "800.0",
+          "Type": "float",
+          "Units": "hp",
+          "SourcePath": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/hero_target_source.json",
+          "SourceSHA256": "25e50a332009da8ddec783ce7e6f2c992f94a50d8f8c6a14427fcfa47240cc41",
+          "SourceSite": "/stats/MaxHealth",
+          "Origin": "AuthoredAsset",
+          "Precedence": "typed-record",
+          "Destination": "FRPGParticipantConfig.Stats (compile copy only)",
+          "FirstRead": "none after compile: TargetOnly has no consumer plan (X-341, Preflight.cpp:449-455)",
+          "Witness": "AutomationTest:OneBossFight.Binding.StatsAdapters.Assign (proves FRPGPostureConfig parsing only)"
+        },
+        {
+          "FieldPath": "Stats.MaxPosture",
+          "Value": "60.0",
+          "Type": "float",
+          "Units": "hp",
+          "SourcePath": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/hero_target_source.json",
+          "SourceSHA256": "25e50a332009da8ddec783ce7e6f2c992f94a50d8f8c6a14427fcfa47240cc41",
+          "SourceSite": "/stats/MaxPosture",
+          "Origin": "AuthoredAsset",
+          "Precedence": "typed-record",
+          "Destination": "FRPGParticipantConfig.Stats (compile copy only)",
+          "FirstRead": "none after compile: TargetOnly has no consumer plan (X-341, Preflight.cpp:449-455)",
+          "Witness": "AutomationTest:OneBossFight.Binding.StatsAdapters.Assign (proves FRPGPostureConfig parsing only)"
+        },
+        {
+          "FieldPath": "Stats.PostureRegenDelay",
+          "Value": "1.5",
+          "Type": "float",
+          "Units": "seconds",
+          "SourcePath": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/hero_target_source.json",
+          "SourceSHA256": "25e50a332009da8ddec783ce7e6f2c992f94a50d8f8c6a14427fcfa47240cc41",
+          "SourceSite": "/stats/PostureRegenDelay",
+          "Origin": "AuthoredAsset",
+          "Precedence": "typed-record",
+          "Destination": "FRPGParticipantConfig.Stats (compile copy only)",
+          "FirstRead": "none after compile: TargetOnly has no consumer plan (X-341, Preflight.cpp:449-455)",
+          "Witness": "AutomationTest:OneBossFight.Binding.StatsAdapters.Assign (proves FRPGPostureConfig parsing only)"
+        },
+        {
+          "FieldPath": "Stats.PostureRegenRate",
+          "Value": "25.0",
+          "Type": "float",
+          "Units": "hp/s",
+          "SourcePath": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/hero_target_source.json",
+          "SourceSHA256": "25e50a332009da8ddec783ce7e6f2c992f94a50d8f8c6a14427fcfa47240cc41",
+          "SourceSite": "/stats/PostureRegenRate",
+          "Origin": "AuthoredAsset",
+          "Precedence": "typed-record",
+          "Destination": "FRPGParticipantConfig.Stats (compile copy only)",
+          "FirstRead": "none after compile: TargetOnly has no consumer plan (X-341, Preflight.cpp:449-455)",
+          "Witness": "AutomationTest:OneBossFight.Binding.StatsAdapters.Assign (proves FRPGPostureConfig parsing only)"
+        }
+      ],
+      "bleed": {
+        "InitialThreshold": 100.0,
+        "ThresholdIncrease": 20.0,
+        "ThresholdMax": 200.0,
+        "HpFraction": 0.03,
+        "EffectHeight": 170.0,
+        "ProcEffect": "/Game/BloodPack/Hit/Niagara/NS_BulletHit_Med.NS_BulletHit_Med",
+        "ProcSound": "/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/A_Guardian_ImpactL_Cue.A_Guardian_ImpactL_Cue"
+      },
+      "low_sweep": {
+        "bEnabled": false,
+        "MoveId": "A4",
+        "Damage": 15.0,
+        "Reach": 250.0,
+        "InnerRadius": 40.0,
+        "BladeHeight": 30.0,
+        "SweepFromDegrees": 90.0,
+        "SweepToDegrees": -90.0
+      },
+      "shockwave": {
+        "bEnabled": false,
+        "MoveId": "A6",
+        "Damage": 35.0,
+        "StartRadius": 150.0,
+        "MaxRadius": 900.0,
+        "Speed": 800.0,
+        "Thickness": 150.0,
+        "JumpClearance": 40.0
+      },
+      "heal_punish": {
+        "bEnabled": false,
+        "MinRange": 400.0,
+        "MaxRange": 1000.0,
+        "Cooldown": 4.0,
+        "Damage": 12.0,
+        "FlightTime": 1.2,
+        "MinSpeed": 450.0,
+        "MaxSpeed": 2500.0,
+        "JavelinRadius": 25.0,
+        "JavelinMaxRange": 3000.0,
+        "SpawnSockets": [
+          "JavelinSpawn",
+          "hand_l"
+        ],
+        "AimHeight": 100.0,
+        "bRespondToHeal": false,
+        "bCancelJavelinsOnInterrupt": true
+      },
+      "look": {
+        "bEnabled": true,
+        "Body": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body",
+        "Pieces": [
+          "/Game/OneBossFight/Boss01/Body/SK_Boss01_Crown.SK_Boss01_Crown",
+          "/Game/OneBossFight/Boss01/Body/SK_Boss01_Mantle.SK_Boss01_Mantle",
+          "/Game/OneBossFight/Boss01/Body/SK_Boss01_BrazierGauntlet.SK_Boss01_BrazierGauntlet"
+        ],
+        "Sword": "/Game/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.SM_Boss01_Greatsword",
+        "SwordSocket": "HeavySwordSocket_R"
+      },
+      "close_clip_swap": {
+        "CloseAbilityClassName": "GA_GS_Boss_CloseAttack_C",
+        "AttackMontagesName": "AttackMontages",
+        "A1Montage": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1",
+        "A3aMontage": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a",
+        "A3bMontage": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b"
+      },
+      "death": {
+        "DeathMode": "PackMontage",
+        "DeathClip": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_DeathLegend.AN_Boss01_DeathLegend",
+        "DeathMontage": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.AM_Boss01_DeathLegend",
+        "PackDeathAbilityClassName": "GA_GS_Boss_Death_C",
+        "PackDeathMontagesName": "DeathMontages",
+        "PackPollSeconds": 0.1,
+        "PackEndTimeMultiplier": 1.0,
+        "HoldAtSeconds": 0.5,
+        "DyingSeconds": 1.0,
+        "BlendInSeconds": 0.2,
+        "MaxClipRestarts": 0,
+        "bGuardPackDeath": true
+      }
     }
   ]
-}
+}

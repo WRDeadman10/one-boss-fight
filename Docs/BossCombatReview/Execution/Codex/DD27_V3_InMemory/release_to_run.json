@@ -1,0 +1,7 @@
+{
+  "message_id": "C-366",
+  "task": "DD27_V3_InMemory",
+  "mode": "--apply --only DA_Player_Hero_Draft_V3",
+  "operator": "Codex",
+  "scope": "ONE V3 in-memory launch after A238 accepted; NO save/fix/retry"
+}

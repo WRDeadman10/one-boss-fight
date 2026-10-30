@@ -1,0 +1,18 @@
+[
+  {
+    "path": "Source/OneBossFight/Player/RPGBossMoveModel.h",
+    "sha256": "afacaf7fe5055ac70906c76758bd539d6963cad09b35d54b9f8f7c7da57d8286"
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossMoveModel.cpp",
+    "sha256": "3549bf027481d2a862181094e3ee19519629b6d21b785c8e3d5408549b0e77f3"
+  },
+  {
+    "path": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
+    "sha256": "b7550a930472283e4051e3b077a6d8aebf969256228bf1aa654b3ac0300cc70a"
+  },
+  {
+    "path": "Source/OneBossFight/OneBossFight.Build.cs",
+    "sha256": "eb7fa95d18cee29ff9d3598081be448c2a7edd35d06f27bdccdd1396d8e1bd79"
+  }
+]

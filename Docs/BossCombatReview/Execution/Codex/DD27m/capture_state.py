@@ -23,14 +23,16 @@ assert stage in ('pre','post')
 process_cmd="Get-Process | Where-Object { $_.ProcessName -match '^(UnrealEditor.*|UnrealBuildTool|UBT|cl|link)$' } | Select-Object ProcessName,Id | ConvertTo-Json -Compress"
 proc=subprocess.check_output(['powershell','-NoProfile','-Command',process_cmd],text=True).strip()
 source=snapshot('Source',hashes=True)
-expected={line.split(' *',1)[1]:line.split(' *',1)[0] for line in (OUT.parent/'DD27j/run_C339/promoted_source_manifest_sha256.txt').read_text().splitlines() if ' *' in line}
+expected={line.split(' *',1)[1]:line.split(' *',1)[0] for line in (ROOT/'Docs/BossCombatReview/Execution/Antigravity/EngineRuns/DD30ChronologyBuild2/promoted_source_manifest_sha256.txt').read_text().splitlines() if ' *' in line}
 drift=[r['path'] for r in source if expected.get(r['path'])!=r['sha256']]
-assert len(source)==len(expected)==217 and not drift, f'Source drift {drift}'
+assert len(source)==len(expected)==219 and not drift, f'Source drift {drift}'
 head=git('rev-parse','HEAD')
-delta=json.loads((OUT.parent/'C331_HEAD_BASELINE_DELTA.json').read_text(encoding='utf-8'))
-assert delta['release']=='C-331' and head==delta['expected_head']=='605c2dd81d4092e8f84aa7608651ed19d566423a',head
-assert sorted(git('diff','--name-only',delta['old_head'],'HEAD').splitlines())==sorted(delta['changed_files']),'C331 changed-file list drift'
-assert not git('diff','HEAD','--','Source'),'Tracked Source drift; new accepted test remains pinned by full217 manifest'
+delta=json.loads((OUT.parent/'C359_AUTHORING_BASELINE.json').read_text(encoding='utf-8'))
+assert delta['release']=='C-359' and head==delta['head']=='6ef433edf6cbf4813ff9db666fff6bc1bad9ddac',head
+assert sha(ROOT/delta['head_delta_path'])==delta['head_delta_sha256'],'HEAD delta file drift'
+assert git('diff','--name-only',delta['superseded_head'],'HEAD').splitlines()==(ROOT/delta['head_delta_path']).read_text().splitlines(),'HEAD file set drift'
+assert not git('diff','HEAD','--','Source'),'Tracked Source drift'
+
 toolkit=ROOT/'Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit'
 pins=[{'path':p.relative_to(ROOT).as_posix(),'sha256':sha(p)} for p in sorted(toolkit.glob('*.py'))]
 input_json=toolkit/'examples/boss_draft_profiles.json'

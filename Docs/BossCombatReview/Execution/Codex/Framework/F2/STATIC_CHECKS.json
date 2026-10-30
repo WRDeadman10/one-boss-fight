@@ -1,0 +1,13 @@
+{
+  "only3newAbsentDestinations": true,
+  "bothCppOwnHeaderFirst": true,
+  "live222MatchesAcceptedF1Manifest": true,
+  "testNames": [
+    "OneBossFight.Framework.MoveModel.Eligibility",
+    "OneBossFight.Framework.MoveModel.Crossing",
+    "OneBossFight.Framework.MoveModel.PauseAndBoundaries",
+    "OneBossFight.Framework.MoveModel.Abort",
+    "OneBossFight.Framework.MoveModel.GenerationAndDoubleStart"
+  ],
+  "allTests": "UNRUN; no build/promotion/engine operation"
+}

@@ -1,0 +1,68 @@
+[
+  {
+    "Schema": 1,
+    "MoveId": "Move_Sevarog_SwingSlow",
+    "FamilyId": "Family_01_DelayedOverhead",
+    "PhaseId": "Phase_1",
+    "Skeleton": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.Sevarog_Skeleton",
+    "Sequence": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Slow.Swing1_Slow",
+    "Montage": null,
+    "SlotName": "FullBody",
+    "SectionName": "None",
+    "PlayRate": 1.0,
+    "CommitSeconds": 0.40,
+    "ActiveStartSeconds": 0.70,
+    "ActiveEndSeconds": 1.10,
+    "RecoveryEndSeconds": 1.80,
+    "TrackDegreesPerSecond": 90.0,
+    "MinRangeCm": 200.0,
+    "MaxRangeCm": 400.0,
+    "FrontConeDegrees": 100.0,
+    "HPDamage": 35.0,
+    "bUsesRootMotion": false,
+    "Windows": [
+      {
+        "WindowId": "Window_SwingSlow_Primary",
+        "HitGroup": "HitGroup_ScytheBlade",
+        "StartSeconds": 0.70,
+        "EndSeconds": 1.10,
+        "SocketA": "weapon_r",
+        "SocketB": "root_weapon_end_r",
+        "RadiusCm": 15.0
+      }
+    ]
+  },
+  {
+    "Schema": 1,
+    "MoveId": "Move_Sevarog_SwingMedium",
+    "FamilyId": "Family_08_ComboSweep",
+    "PhaseId": "Phase_1",
+    "Skeleton": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.Sevarog_Skeleton",
+    "Sequence": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing2_Medium.Swing2_Medium",
+    "Montage": null,
+    "SlotName": "FullBody",
+    "SectionName": "None",
+    "PlayRate": 1.0,
+    "CommitSeconds": 0.25,
+    "ActiveStartSeconds": 0.45,
+    "ActiveEndSeconds": 0.85,
+    "RecoveryEndSeconds": 1.40,
+    "TrackDegreesPerSecond": 120.0,
+    "MinRangeCm": 150.0,
+    "MaxRangeCm": 350.0,
+    "FrontConeDegrees": 140.0,
+    "HPDamage": 25.0,
+    "bUsesRootMotion": false,
+    "Windows": [
+      {
+        "WindowId": "Window_SwingMedium_Sweep",
+        "HitGroup": "HitGroup_ScytheBlade",
+        "StartSeconds": 0.45,
+        "EndSeconds": 0.85,
+        "SocketA": "weapon_r",
+        "SocketB": "root_weapon_end_r",
+        "RadiusCm": 15.0
+      }
+    ]
+  }
+]

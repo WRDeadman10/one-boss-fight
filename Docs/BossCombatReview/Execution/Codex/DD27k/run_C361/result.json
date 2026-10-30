@@ -1,0 +1,24 @@
+{
+  "release": "C-361.1",
+  "build_exit": 0,
+  "build_seconds": 13.7326809,
+  "build_warning_count": 3,
+  "focused_exit": 255,
+  "finished": 1,
+  "passed": 0,
+  "failed": 1,
+  "fields_in_Hero": 4,
+  "boss_compile_ready": true,
+  "Hero_failure": "required skeleton/animation dependencies missing",
+  "preflight_ran": false,
+  "error_severity": 3,
+  "warning_severity": 13,
+  "raw_sha256": "912a388e09c04bdfbb7291e918fe5cdb1d06595ad8e0c876ebe5720cde01139b",
+  "binary": {
+    "Binaries/Win64/UnrealEditor-OneBossFight.dll": "432fb1f8d5c54fde9f0f39bf0bc1c41c73828c5a4df7db37146fdf5e72d082c9",
+    "Binaries/Win64/UnrealEditor-OneBossFight.pdb": "416115dab32d6e320e41b9009926417f7cf153ea88d1b79b0ea29ab6f892a0a6",
+    "Binaries/Win64/OneBossFight.exe": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65"
+  },
+  "source_count": 219,
+  "head": "6ef433edf6cbf4813ff9db666fff6bc1bad9ddac"
+}

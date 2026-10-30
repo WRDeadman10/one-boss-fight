@@ -1,0 +1,13 @@
+{
+  "message": "C-376",
+  "F2": "accepted;225Source/DLL4a2f07b3",
+  "slot": "FullBody",
+  "segment_bones": [
+    "weapon_r",
+    "root_weapon_end_r"
+  ],
+  "runtimeVerification": "still required; no fallback",
+  "timingProposalInF3Plan": "NOT adopted; C376 orders AG A242 weapon-motion measurement as basis before design windows are ratified",
+  "AGscope": "A242 offline tool only; Codex run requires later concrete release",
+  "F3implementation": "await lead source release"
+}

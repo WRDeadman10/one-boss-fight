@@ -1,0 +1,14 @@
+[
+  {
+    "packet": "DD27_V3_InMemory",
+    "old": "75eb1dd2808df8b6938a9e486d3a76c08a860e81851501e904acbaf98fcd0ead",
+    "new": "4b8eafbf110850457473132398d293dce5ff83ff5315db3cd23a62d73f82e6ff",
+    "diff": "--- before/preflight.py\n+++ after/preflight.py\n@@ -19,7 +19,7 @@\n pins=[]\r\n for name in ('draft_boss_profiles.py','authoring_core.py','inspect_authored_assets.py','examples/boss_draft_profiles.json','examples/hero_target_source.json','emit_fields_manifest.py'):\r\n     p=receipt.parent/name;rel=p.relative_to(ROOT).as_posix()\r\n-    rows=[s for s in receipt.read_text(encoding='utf-8').splitlines() if s.split()[-1].replace('\\\\','/')==rel]\r\n+    rows=[s for s in receipt.read_text(encoding='utf-8').splitlines() if s.strip() and s.split()[-1].replace('\\\\','/')==rel]\r\n     assert len(rows)==1,f'Receipt entry missing/ambiguous {name}'\r\n     want=rows[0].split()[0].lower();actual=sha(p)\r\n     assert len(want)==64 and actual==want,f'Toolkit receipt mismatch {name}; STOP'\r\n"
+  },
+  {
+    "packet": "DD27_V3_Save",
+    "old": "b5f6cccf2157037221c6c57511ee210cb7bb837645104b6b86d014fbde3460d2",
+    "new": "2504edc4aac090eafd5ae133de5db15c7c67b25df9fc3ab8e3f542ffef6e0d78",
+    "diff": "--- before/preflight.py\n+++ after/preflight.py\n@@ -30,7 +30,7 @@\n pins=[]\r\n for name in ('draft_boss_profiles.py','authoring_core.py','inspect_authored_assets.py','examples/boss_draft_profiles.json','examples/hero_target_source.json','emit_fields_manifest.py'):\r\n     p=receipt.parent/name;rel=p.relative_to(ROOT).as_posix()\r\n-    rows=[s for s in receipt.read_text(encoding='utf-8').splitlines() if s.split()[-1].replace('\\\\','/')==rel]\r\n+    rows=[s for s in receipt.read_text(encoding='utf-8').splitlines() if s.strip() and s.split()[-1].replace('\\\\','/')==rel]\r\n     assert len(rows)==1,f'Receipt entry missing/ambiguous {name}'\r\n     want=rows[0].split()[0].lower();actual=sha(p)\r\n     assert len(want)==64 and actual==want,f'Toolkit receipt mismatch {name}; STOP'\r\n"
+  }
+]

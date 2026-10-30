@@ -1,0 +1,372 @@
+[
+  {
+    "path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+    "sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+    "opened_citations": [
+      {
+        "line": 294,
+        "quote": "{"
+      },
+      {
+        "line": 319,
+        "quote": "UPROPERTY(EditAnywhere) TArray<FRPGParityField> Fields;"
+      },
+      {
+        "line": 457,
+        "quote": "ONEBOSSFIGHT_API FRPGHydrationResult CompileParticipant(const URPGBossDefinition& Definition,"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
+    "sha256": "a6ffc47ced93273bf5bf10f49fb232c149fa6cc125a2af8986e5a06d6c5d7afb",
+    "opened_citations": [
+      {
+        "line": 32,
+        "quote": "static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,"
+      },
+      {
+        "line": 115,
+        "quote": "if (Fields.IsEmpty()) { Result.Fail(TEXT(\"field manifest required\")); }"
+      },
+      {
+        "line": 206,
+        "quote": "FRPGHydrationResult URPGCombatContextSubsystem::BindEncounter(const ARPGEncounterBinding& Binding,"
+      },
+      {
+        "line": 257,
+        "quote": "if (!Slots.Contains(R.TargetSlot)) { Result.Fail(TEXT(\"explicit target slot missing\")); }"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossHydrationPreflight.cpp",
+    "sha256": "07261ce364ae0daa68d80075ea42d5a41ef2414a86457a3014648b1165e34897",
+    "opened_citations": [
+      {
+        "line": 79,
+        "quote": "TArray<FRPGComponentPlan> MakeBossCorePlans(FName SelectedPhaseId)"
+      },
+      {
+        "line": 93,
+        "quote": "Plans.Add(RPGBossDeathAdapters::MakeDeathPlan());"
+      },
+      {
+        "line": 449,
+        "quote": "if (Request.Role == ERPGPreflightRole::BossCore)"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGCombatCatalog.h",
+    "sha256": "e7d5296833cfa5bec4101e608a98ab336a5b8c7a5c476e0d3b17eae57279dbb5",
+    "opened_citations": [
+      {
+        "line": 79,
+        "quote": "FName WeaponId;"
+      },
+      {
+        "line": 103,
+        "quote": "ONEBOSSFIGHT_API TSharedPtr<const FEpoch> Legacy();"
+      },
+      {
+        "line": 141,
+        "quote": "class ONEBOSSFIGHT_API URPGCombatCatalogSubsystem : public UGameInstanceSubsystem"
+      },
+      {
+        "line": 147,
+        "quote": "TSharedPtr<const RPGCombatRegistry::FEpoch> GetEpoch() const;"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGAttackTracker.h",
+    "sha256": "df74131faeb6a0c2d19dac19b66509a366353beb6437ec03f9490d52bcd8ca48",
+    "opened_citations": [
+      {
+        "line": 16,
+        "quote": "struct FRPGAttackTiming"
+      },
+      {
+        "line": 75,
+        "quote": "* It keeps nothing alive that the montage does not: when the montage stops for any reason (end, interrupt, stagger, phase change, death, res"
+      },
+      {
+        "line": 110,
+        "quote": "*  the pack's behaviour is already held in those states). */"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+    "sha256": "f2d2615f1b938aa8bf1f4ad9d7574b1876446823d83b87cd69521ca9d1153f0c",
+    "opened_citations": [
+      {
+        "line": 134,
+        "quote": "bool URPGAttackTracker::IsNeutral() const"
+      },
+      {
+        "line": 151,
+        "quote": "UAnimInstance* Anim = Boss && Boss->GetMesh() ? Boss->GetMesh()->GetAnimInstance() : nullptr;"
+      },
+      {
+        "line": 169,
+        "quote": "return Anim->PlaySlotAnimationAsDynamicMontage(Clip, SlotName, 0.1f, 0.2f, 1.f, 1, -1.f, 0.f) != nullptr;"
+      },
+      {
+        "line": 234,
+        "quote": "bool URPGAttackTracker::StartMove(FName MoveId, bool bForce)"
+      },
+      {
+        "line": 248,
+        "quote": "return Tag && TryActivateByTag(GetOwner(), *Tag, bForce);"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGTraceGuard.h",
+    "sha256": "564453d7022532319716ac7e913bf54f3e1f44220678a87af0efa9b78dc9ef96",
+    "opened_citations": [
+      {
+        "line": 10,
+        "quote": "/**"
+      },
+      {
+        "line": 14,
+        "quote": "*   2. keeps the hit set across the windows of one attack instance (the A2 stand-in opens two windows in one swing: one damage event per ins"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGDamageResolver.h",
+    "sha256": "a5dd7de41aec0224bc6de96c55d64897db5529a2f5da90caf515060c83eebd30",
+    "opened_citations": [
+      {
+        "line": 90,
+        "quote": "}"
+      },
+      {
+        "line": 94,
+        "quote": "inline ERPGDamageOutcome Decide(bool bTargetAlive, bool bAttackerAlive, bool bGenerationCurrent, bool bDuplicate, bool bTargetInvulnerable)"
+      },
+      {
+        "line": 100,
+        "quote": "return ERPGDamageOutcome::Accepted;"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGDamageResolver.cpp",
+    "sha256": "82da0dd3400a049d92bd96409f90db58a319fd7db73e44f7b46b766e938a6bca",
+    "opened_citations": [
+      {
+        "line": 40,
+        "quote": "int32 URPGDamageResolver::CurrentGeneration() const"
+      },
+      {
+        "line": 57,
+        "quote": "void URPGDamageResolver::Record(const FRPGDamagePayload& Payload, ERPGDamageOutcome Outcome, FName Reason, float HealthBefore, float HealthA"
+      },
+      {
+        "line": 110,
+        "quote": "FRPGDamageResult URPGDamageResolver::Resolve(AActor* Target, const FRPGDamagePayload& Payload)"
+      },
+      {
+        "line": 130,
+        "quote": "Result.Outcome = RPGDamageRules::Decide(bTargetAlive, bAttackerAlive, bCurrent, bDuplicate, bInvulnerable);"
+      },
+      {
+        "line": 140,
+        "quote": "Result.HPApplied = static_cast<float>(HealthBefore - HealthAfter);"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossDamage.h",
+    "sha256": "d7ff4e3397ac969250081e35e3d2bfdbfcaee4575a3e51457c2d130ea98c372b",
+    "opened_citations": [
+      {
+        "line": 39,
+        "quote": "inline bool IsAlive(const AActor* Actor)"
+      },
+      {
+        "line": 42,
+        "quote": "return Actor && RPGPack::ReadAttribute(Actor, TEXT(\"Attribute.Health\"), false, Health) && Health > 0.0;"
+      },
+      {
+        "line": 46,
+        "quote": "inline bool HurtPlayer(const AActor* Player, double Damage, double& Before, double& After)"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossPhases.h",
+    "sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+    "opened_citations": [
+      {
+        "line": 14,
+        "quote": "/**"
+      },
+      {
+        "line": 20,
+        "quote": "* ResetPhases (called by URPGBossEncounter when the encounter resets) puts everything back to phase one. Attached by RPGPlayerMovesSubsystem"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+    "sha256": "c43615412e1f345d6ed75cc6d6a6b0d9ece6acaaac612e545b42cc24087f7a06",
+    "opened_citations": [
+      {
+        "line": 366,
+        "quote": "if (ReadAttribute(GetOwner(), AttackTag, false, Attack) && Attack > 0.0)"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+    "sha256": "c711d766b4fecb6999c638cf5d8720ca422ba758223f941ea437ebac5b474c98",
+    "opened_citations": [
+      {
+        "line": 364,
+        "quote": "void URPGBossStagger::StartStagger()"
+      },
+      {
+        "line": 432,
+        "quote": "void URPGBossStagger::EndStagger(bool bResumeBehaviour, bool bClearCooldown)"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossPosture.cpp",
+    "sha256": "b26e184b0410e858d1c504e0b374dbc9e8f4c6b6399b05617559bb6909e88e41",
+    "opened_citations": [
+      {
+        "line": 88,
+        "quote": "URPGBossPosture::EDrainResult URPGBossPosture::ApplyPostureDamage(float Amount, const TCHAR* Source)"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossRules.h",
+    "sha256": "e16744219deffffab4de69ddd62e5333c1b59ac43cc670c9e777aee3fd397395",
+    "opened_citations": [
+      {
+        "line": 8,
+        "quote": "* The Freeze 21 priority order for the boss's big state changes, in one place so the components and an automation test share it (SPEC_M4, Fr"
+      },
+      {
+        "line": 62,
+        "quote": "if (F.bDead) { return EBreakResult::Dead; }"
+      },
+      {
+        "line": 76,
+        "quote": "if (F.bDormant) { return ETransitionResult::Dormant; }"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGCombatDebug.h",
+    "sha256": "4956e5c050fe5582131f5eb36ea149713ad4c16878ec26d0fd72cded972774fd",
+    "opened_citations": [
+      {
+        "line": 10,
+        "quote": "* Combat debug overlay (Master Design Freeze section 22). Attached to the pack boss; shows the boss and the first player together."
+      },
+      {
+        "line": 29,
+        "quote": "void DumpAbilities() const;"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossWorldInputCompiler.cpp",
+    "sha256": "1a99ba054dc606c6514973e6423723bd3a3701ce40ea8c87f2c432d30e457f58",
+    "opened_citations": [
+      {
+        "line": 378,
+        "quote": "for (int32 Index = 0; Index < Selections.Num(); ++Index)"
+      },
+      {
+        "line": 414,
+        "quote": "FailMember(Result, TEXT(\"WorldInput.SelectionMissing\"), FString::Printf(TEXT(\"[slot=%s]\"), *Slot.ToString()), TEXT(\"the participant has no s"
+      },
+      {
+        "line": 469,
+        "quote": "if (Participant.TargetSlot.IsNone())"
+      },
+      {
+        "line": 488,
+        "quote": "FailMember(Result, TEXT(\"WorldInput.DefinitionMissing\"), Where, TEXT(\"no explicit production definition was given (every member, a target-on"
+      },
+      {
+        "line": 545,
+        "quote": "for (const FMember& Member : Members)"
+      },
+      {
+        "line": 584,
+        "quote": "Candidate.Requests.Add(Request);"
+      }
+    ]
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossActivation.cpp",
+    "sha256": "04a11fed558cd4c01f0df40b1e4e570bc904bc4ec600b90926a8dd8d161a73da",
+    "opened_citations": [
+      {
+        "line": 61,
+        "quote": "Finish(bContractViolation ? ERPGWorldActivationOutcome::HardError : ERPGWorldActivationOutcome::FallBackToLegacy,"
+      },
+      {
+        "line": 75,
+        "quote": "Finish(bClean ? ERPGWorldActivationOutcome::FallBackToLegacy : ERPGWorldActivationOutcome::HardError,"
+      }
+    ]
+  },
+  {
+    "path": "Documentation/Boss/Morgott_82_Point_Combat_Reference/Morgott_82_Point_Combat_Reference.md",
+    "sha256": "f731789e60d50f90a5e50370af37f915c5e401a71cf53fc782ef200273634519",
+    "opened_citations": [
+      {
+        "line": 961,
+        "quote": "## Recommended UE asset / component layout"
+      },
+      {
+        "line": 965,
+        "quote": "Data/DA_BossCombatProfile, DA_Moves/, DA_ComboGraph, DA_PhaseRules"
+      },
+      {
+        "line": 974,
+        "quote": "These are **proposed module boundaries**, not an instruction to replace a functioning project implementation. Preserve existing framework ow"
+      }
+    ]
+  },
+  {
+    "path": "Documentation/Boss/Mohg_82_Point_Reference/Mohg_82_Point_Combat_Reference.md",
+    "sha256": "3cf427241c00435936f31c3bdce380541443796c92676248f9a352e7c97d27e8",
+    "opened_citations": [
+      {
+        "line": 932,
+        "quote": "## Implementation model: concrete Unreal ownership pattern"
+      },
+      {
+        "line": 939,
+        "quote": "\u251c\u2500\u2500 UBossCombatContextComponent (target + hazard snapshot at gates)"
+      },
+      {
+        "line": 954,
+        "quote": ""
+      }
+    ]
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Codex/SevarogInventory/run_reviewed/inventory_records.jsonl",
+    "sha256": "fbd4851ca357a8ae2368a1578f19aa530427b7be8167b3594755256fd4369e0b",
+    "opened_citations": [
+      {
+        "line": 101,
+        "quote": "{\"kind\": \"ANIMATION\", \"record\": {\"class\": \"AnimSequence\", \"curves\": {\"RCT_FLOAT\": {\"api\": \"AnimationLibrary.get_animation_curve_names/RCT_FL"
+      }
+    ]
+  }
+]

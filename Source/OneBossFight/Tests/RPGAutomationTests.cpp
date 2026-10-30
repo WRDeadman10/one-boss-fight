@@ -1257,6 +1257,14 @@ bool FRPGCookCoverageTest::RunTest(const FString& Parameters)
 
 	// Path literals that are directory prefixes used for filtering, not assets that are loaded (the PackWiring test above).
 	const TSet<FString> NotAssets = {TEXT("/Game/AdvancedARPGCombat"), TEXT("/Game/OneBossFight/GreystonePack"), TEXT("/Game/OneBossFight/SevarogPack")};
+	// Editor-only F3 proof fixtures: RPGFrameworkRuntimeTests.cpp builds in-memory profiles from these paths (WITH_DEV_AUTOMATION_TESTS, not in a
+	// packaged build) and no shipped source loads them by path. The Sevarog boss ships only when its content is added to the cook list (not decided).
+	const TSet<FString> EditorProofOnly = {
+		TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog.Sevarog"),
+		TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.Sevarog_Skeleton"),
+		TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Sevarog_AnimBlueprint.Sevarog_AnimBlueprint_C"),
+		TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Slow.Swing1_Slow"),
+		TEXT("/Game/OneBossFight/FrameworkProof/DA_Sevarog_SwingProof.DA_Sevarog_SwingProof")};
 	TArray<FString> Files;
 	IFileManager::Get().FindFilesRecursive(Files, *(FPaths::ProjectDir() / TEXT("Source/OneBossFight")), TEXT("*.cpp"), true, false);
 	IFileManager::Get().FindFilesRecursive(Files, *(FPaths::ProjectDir() / TEXT("Source/OneBossFight")), TEXT("*.h"), true, false, /*bClearFileNames=*/false);
@@ -1280,7 +1288,7 @@ bool FRPGCookCoverageTest::RunTest(const FString& Parameters)
 			{
 				Path = Path.Left(Format); // "/Game/Dir/%s.%s": the directory part decides
 			}
-			if (Path.EndsWith(TEXT("/")) || NotAssets.Contains(Path) || Seen.Contains(Path))
+			if (Path.EndsWith(TEXT("/")) || NotAssets.Contains(Path) || Seen.Contains(Path) || (EditorProofOnly.Contains(Path) && (File.EndsWith(TEXT("RPGFrameworkRuntimeTests.cpp")) || File.EndsWith(TEXT("RPGAutomationTests.cpp")))))
 			{
 				continue;
 			}

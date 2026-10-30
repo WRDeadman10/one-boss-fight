@@ -1,0 +1,6 @@
+{
+  "message_id": "C-361",
+  "task": "SevarogInventory",
+  "operator": "Codex",
+  "scope": "ONE read-only synchronous inventory after DD27k freeze; no fix/retry"
+}

@@ -1,0 +1,1 @@
+Python AST PASS; PowerShell ScriptBlock parse PASS; all run controls staged only. 1099 total .uasset package paths/sizes listed offline, NOT1099animations. No engine/native API execution or asset modification.

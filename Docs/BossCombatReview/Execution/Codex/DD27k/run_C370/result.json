@@ -1,0 +1,77 @@
+{
+  "release": "C-370",
+  "build": {
+    "seconds": 5.9511216,
+    "end": "2026-10-30T12:09:25.6791881+05:30",
+    "exit_code": 0,
+    "release": "C-370",
+    "start": "2026-10-30T12:09:19.7280665+05:30"
+  },
+  "focused": {
+    "process_id": 21604,
+    "cached_handle": 2484,
+    "exit_code": 0,
+    "outcome": "SUCCESS",
+    "timed_out": false,
+    "seconds": 20.582923599999997,
+    "start": "2026-10-30T12:09:45.3838426+05:30",
+    "end": "2026-10-30T12:10:05.9718082+05:30"
+  },
+  "completed": [
+    "[2026.10.30-06.40.05:741][604]LogAutomationController: Display: Test Completed. Result={Success} Name={SavedProductionPreflight} Path={OneBossFight.Binding.AuthoredDraft.SavedProductionPreflight}"
+  ],
+  "raw_sha256": "0ee9fbb4f850b388bdc71547cee5629b1aeeba760cfd2f7941f90e0a14ef7c1b",
+  "plan_count": 12,
+  "required_path_count": 110,
+  "warnings": 13,
+  "errors": 0,
+  "build_warnings": [
+    "Warning: Visual Studio 2022 compiler is not a preferred version"
+  ],
+  "UHT_invocation_visible": false,
+  "binary": [
+    {
+      "path": "Binaries/Win64/UnrealEditor-OneBossFight.dll",
+      "sha256": "30ebe05603730e4ebe9a7deabe2ba483e5564bab242d05c60050bc7e032d2ff9",
+      "size": 5719552
+    },
+    {
+      "path": "Binaries/Win64/UnrealEditor-OneBossFight.pdb",
+      "sha256": "550d4567438c44a1b97b97b5837553fe6335491915d1affb4b107acf3e9b907d",
+      "size": 97701888
+    },
+    {
+      "path": "Binaries/Win64/OneBossFight.exe",
+      "sha256": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65",
+      "size": 301501952
+    }
+  ],
+  "five_assets": [
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_AbyssalRevenant_Draft.uasset",
+      "size": 6101,
+      "sha256": "90ee817f380aac486cecfa86d474078af98005190da1d8f370a62762af975ac5"
+    },
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft.uasset",
+      "size": 79966,
+      "sha256": "ba05a8aa93fec66526c59bf12f51bb824103f67860bdee16efcdd5217d6a3e2b"
+    },
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft.uasset",
+      "size": 4552,
+      "sha256": "8d18711526b7a746e1bb95546db984708984fccbc6cda3546eea39cd72edc822"
+    },
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V2.uasset",
+      "size": 8214,
+      "sha256": "ca4feaa671bbef352c88e9186fe64a3cad1400bd53e9bdf14b77edc687b4e848"
+    },
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V3.uasset",
+      "size": 8729,
+      "sha256": "30cdd6b0864ca3e23ddaf500bb7e31f2cc6942c5c18cf94147388cf885f4f8b3"
+    }
+  ],
+  "scope": "Reload/production compiler/12-plan subset preflight only; no registration/Ready/activation/playable proof"
+}

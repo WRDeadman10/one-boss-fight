@@ -1,0 +1,56 @@
+{
+  "release": "C-371",
+  "build": {
+    "seconds": 12.350562199999999,
+    "end": "2026-10-30T12:11:34.4979416+05:30",
+    "exit_code": 0,
+    "release": "C-371",
+    "start": "2026-10-30T12:11:22.1473794+05:30"
+  },
+  "focused": {
+    "process_id": 32032,
+    "cached_handle": 2248,
+    "exit_code": 0,
+    "outcome": "SUCCESS",
+    "timed_out": false,
+    "seconds": 20.2953162,
+    "start": "2026-10-30T12:11:47.7982417+05:30",
+    "end": "2026-10-30T12:12:08.0990730+05:30"
+  },
+  "unique_success_paths": [
+    "OneBossFight.Framework.MoveCard.Numbers",
+    "OneBossFight.Framework.MoveCard.Positive",
+    "OneBossFight.Framework.MoveCard.Rejections",
+    "OneBossFight.Framework.MoveCard.SnapshotAndFailure"
+  ],
+  "raw_sha256": "98b87ea758a9e0e315691056b7966c2cf71925c150b08a9e887688cf4c18ee46",
+  "build_raw_sha256": "9f8c31703d817acaf11564cd11e21ab328a5b3de0ac98c9829368eb3bd400282",
+  "error_lines": 0,
+  "warning_lines": 13,
+  "build_warnings": [
+    "Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'Niagara'.",
+    "Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'NiagaraEditor'.",
+    "Warning: Visual Studio 2022 compiler is not a preferred version"
+  ],
+  "build_warnings_equal_known_C361": true,
+  "actualUHTinvocation": "  Running Internal UnrealHeaderTool C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject C:\\UnrealProject\\OneBossFight\\Intermediate\\Build\\Win64\\OneBossFightEditor\\Development\\OneBossFightEditor.uhtmanifest -WarningsAsErrors -installed",
+  "source_count": 222,
+  "binary": [
+    {
+      "path": "Binaries/Win64/UnrealEditor-OneBossFight.dll",
+      "sha256": "e146e063925c5d1ba983cd520446d693f75bb12ed9af1b4503bc37da7726df87",
+      "size": 5790208
+    },
+    {
+      "path": "Binaries/Win64/UnrealEditor-OneBossFight.pdb",
+      "sha256": "ca41728c9dd5140f3ea75e6366ad24360652416b786df281a03332d497347afb",
+      "size": 98193408
+    },
+    {
+      "path": "Binaries/Win64/OneBossFight.exe",
+      "sha256": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65",
+      "size": 301501952
+    }
+  ],
+  "scope": "MoveCard pure contracts/null-resolved rejection only; no positive real asset compile, runtime/activation or fullsuite proof"
+}

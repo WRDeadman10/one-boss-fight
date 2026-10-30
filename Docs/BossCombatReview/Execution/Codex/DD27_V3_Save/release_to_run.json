@@ -1,0 +1,6 @@
+{
+  "task": "DD27_V3_Save",
+  "mode": "--apply --only DA_Player_Hero_Draft_V3 --save",
+  "operator": "Codex",
+  "message_id": "C-369"
+}
