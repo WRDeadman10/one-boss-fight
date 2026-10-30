@@ -23,6 +23,8 @@ public:
     bool StartCard(const TSharedPtr<const FRPGCompiledBossMoveCard>& NextCard,const FRPGBossDecisionSnapshot& Snapshot,FString& Error);
     /** After a clean finish: re-arms the executor for the next attack of the same encounter. */
     bool PrepareNextAttack();
+    /** F8: after an Abort (stagger) in the SAME generation: clears the abort and the spent attack token so the next StartCard can run. False unless aborted, not finished and idle. */
+    bool RecoverAfterAbort();
     /** Encounter restart (also after an abort): stops the owned montage, moves the model to the new generation and re-arms; Start* re-enables the tick. */
     bool Rearm(uint64 NewGeneration,FString& Error);
     const FRPGBossMoveModel& Model() const { return Model_; }

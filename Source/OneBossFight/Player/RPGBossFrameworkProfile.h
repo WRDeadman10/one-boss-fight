@@ -51,6 +51,13 @@ public:
     /** F6c (F5 fixture with a hittable boss): at or below this health fraction (0 < f < 1) the boss moves to PhaseTwoId at the next neutral decision. 0 = no phases (PhaseTwoId must then be empty). Design value, proposed. */
     UPROPERTY(EditAnywhere) float PhaseTwoFraction=0.f;
     UPROPERTY(EditAnywhere) FName PhaseTwoId;
+    /** F8 posture / stance break (F5 fixture with a hittable boss; all zero = off): each player hit drains PlayerPostureHitAmount of PostureMax; at zero the boss is staggered for StaggerSeconds
+     *  (a running attack is aborted), then posture refills. Regeneration waits PostureRegenDelaySeconds after the last drain, then adds PostureRegenPerSecond. Design values, proposed. */
+    UPROPERTY(EditAnywhere) float PostureMax=0.f;
+    UPROPERTY(EditAnywhere) float PlayerPostureHitAmount=0.f;
+    UPROPERTY(EditAnywhere) float StaggerSeconds=0.f;
+    UPROPERTY(EditAnywhere) float PostureRegenDelaySeconds=0.f;
+    UPROPERTY(EditAnywhere) float PostureRegenPerSecond=0.f;
     UPROPERTY(EditAnywhere) FTransform MeshRelativeTransform;
     UPROPERTY(EditAnywhere) bool bAlignmentAuthored=false;
 };

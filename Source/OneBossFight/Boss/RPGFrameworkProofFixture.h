@@ -32,6 +32,8 @@ private:
     UPROPERTY(Transient) TObjectPtr<URPGBossFrameworkProfile> ResolvedProfile;
     UPROPERTY(Transient) TObjectPtr<ARPGFrameworkBossCharacter> OwnedBoss;
     TWeakObjectPtr<APawn> ExplicitPlayer;
+    /** The pack equips its combat style (and resets the player's Health/Max) at about 9.4 s of PIE: wait for it, at most this long, before preparing the target (KI-150). */
+    static constexpr double PackStyleWaitSeconds=30.;
     double WaitStart=0.; bool bFailed=false,bAttempted=false,bTargetPrepared=false;
 };
 /** Only a NEW proof map can opt in with its own world override; no project default changes. */

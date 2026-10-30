@@ -34,6 +34,17 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
     if (P.PhaseTwoFraction!=0.f || !P.PhaseTwoId.IsNone())
         if (!bF5 || P.BossMaxHealth<=0.f || !FMath::IsFinite(P.PhaseTwoFraction) || P.PhaseTwoFraction<=0.f || P.PhaseTwoFraction>=1.f || P.PhaseTwoId.IsNone())
             return Fail(TEXT("Framework.Profile.Phase"));
+    // F8: posture needs the selector lane (F5) and a hittable boss; the five values are all zero (off) or a coherent set (token Framework.Profile.Posture).
+    {
+        const float Values[]={P.PostureMax,P.PlayerPostureHitAmount,P.StaggerSeconds,P.PostureRegenDelaySeconds,P.PostureRegenPerSecond};
+        bool bAnyPosture=false; for (float V:Values) bAnyPosture|=(V!=0.f);
+        if (bAnyPosture)
+        {
+            bool bOk=bF5&&P.BossMaxHealth>0.f; for (float V:Values) bOk&=(FMath::IsFinite(V)&&V>=0.f&&V<=1.e6f);
+            bOk=bOk&&P.PostureMax>0.f&&P.PlayerPostureHitAmount>0.f&&P.PlayerPostureHitAmount<=P.PostureMax&&P.StaggerSeconds>=.5f&&P.StaggerSeconds<=60.f;
+            if (!bOk) return Fail(TEXT("Framework.Profile.Posture"));
+        }
+    }
     if (bF5)
     {
         if (!FMath::IsFinite(P.RepeatPenalty) || P.RepeatPenalty<=0.f || P.RepeatPenalty>1.f || P.RepeatMemory<1 || P.RepeatMemory>8 || P.AttackCount<1 || P.AttackCount>8)

@@ -9,8 +9,17 @@
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Pack/RPGBlueprintCall.h"
+#include "Pack/RPGPackReflect.h"
 namespace
 {
+    // KI-150 (second cause, measured): about 9.4 s after PIE start the pack equips its combat style (BP_CombatComponent_C.CurrentCombatStyle None -> SwordCombatStyle) and the player's
+    // Health/Max are reset to 100/120. Anything written before that moment is lost, so the fixture waits for the pack to have answered before it prepares the target.
+    bool PackStyleKnown(const AActor* Player)
+    {
+        const UObject* Combat=RPGPack::FindComponentByClassName(Player,TEXT("BP_CombatComponent_C"));
+        const UObject* Style=Combat?RPGPackReflect::ReadObject(Combat,TEXT("CurrentCombatStyle")):nullptr;
+        return Style!=nullptr;
+    }
     // KI-150: the pack's regeneration clamps Health to the attribute MAXIMUM (PlayerInfo default 100), so a target health above it is pulled back to 100 at an unpredictable time
     // after damage. Write the maximum FIRST, then the current value, and read both back; the pack's own regeneration then stays inside the fixture's value.
     bool SetTargetHealth(const AActor* Player,double Value)
@@ -43,6 +52,13 @@ void ARPGFrameworkProofFixture::Tick(float Delta)
     Super::Tick(Delta);if(bFailed||bAttempted||!ResolvedProfile)return;
     if(ExplicitPlayer.IsValid()&&!bTargetPrepared)
     {
+        if(!PackStyleKnown(ExplicitPlayer.Get()))
+        {
+            if(GetWorld()->GetTimeSeconds()-WaitStart>PackStyleWaitSeconds){Fail(TEXT("Framework.Fixture.PackStyleTimeout"));}
+            return;
+        }
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] pack_style_known waitedSeconds=%g"),GetWorld()->GetTimeSeconds()-WaitStart);
+        WaitStart=GetWorld()->GetTimeSeconds();   // the target-health and navigation waits (walk timeout) count from here
         // A bare proof map leaves the pack player at health 0: write the profile value explicitly, read it back, never relax the target-alive gate.
         bTargetPrepared=true;double Back=0.;
         if(!SetTargetHealth(ExplicitPlayer.Get(),ResolvedProfile->TargetHealth)||!RPGPack::ReadAttribute(ExplicitPlayer.Get(),TEXT("Attribute.Health"),false,Back)||!FMath::IsNearlyEqual(Back,double(ResolvedProfile->TargetHealth)))

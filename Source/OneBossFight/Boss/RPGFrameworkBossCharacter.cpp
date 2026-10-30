@@ -11,6 +11,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Pack/RPGBlueprintCall.h"
+#include "Player/RPGBossMath.h"
 #include "Player/RPGBossRules.h"
 ARPGFrameworkBossCharacter::ARPGFrameworkBossCharacter()
 {
@@ -42,7 +43,7 @@ bool ARPGFrameworkBossCharacter::InitializeProof(ARPGFrameworkProofFixture* Fixt
         if (!Selector.Initialize(Config,List,Error)) {Fail(Error);return false;}
     }
     const auto& P=*Dependencies->Profile.Get();
-    CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId;bPhaseTwoLatched=false;
+    CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId;bPhaseTwoLatched=false;Posture=double(Dependencies->Profile->PostureMax);LastPostureDrain=-1.;bStaggered=bStaggerAbortedAttack=false;
     if (Dependencies->Profile->BossMaxHealth>0.f)
     {
         bHittable=true; MaxHealth=Health=Dependencies->Profile->BossMaxHealth;
@@ -89,6 +90,17 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
     }
     const auto& P=*Dependencies->Profile.Get();
     if(!bArrived&&GetWorld()->GetTimeSeconds()-StartedAt>P.WalkTimeoutSeconds){Fail(TEXT("Framework.Nav.Timeout"));return;}
+    if(PostureEnabled())
+    {
+        if(bStaggered)
+        {
+            GetCharacterMovement()->StopMovementImmediately();
+            if(GetWorld()->GetTimeSeconds()>=StaggerEndsAt)EndStagger();
+            return;   // no selection while down
+        }
+        const float Before=float(Posture); Posture=RPGBossMath::RegenStep(float(Posture),P.PostureMax,GetWorld()->GetTimeSeconds(),LastPostureDrain,P.PostureRegenDelaySeconds,P.PostureRegenPerSecond,Delta);
+        if(float(Posture)>Before+KINDA_SMALL_NUMBER&&FMath::IsNearlyEqual(float(Posture),P.PostureMax)){UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] posture_regen_full posture=%g max=%g"),Posture,double(P.PostureMax));}
+    }
     if(bArrived&&!bStartedMove)
     {
         // F6c phase gate: only here (neutral, nothing playing), the pure legacy rule decides; the phase latches until restart.
@@ -153,8 +165,47 @@ double ARPGFrameworkBossCharacter::ApplyPlayerHit(double Multiplier)
     const double Before=Health, Loss=FMath::Min(Health,double(Dependencies->Profile->PlayerHitDamage)*Multiplier);
     Health-=Loss;
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] boss_hit damage=%g healthBefore=%g healthAfter=%g"),Loss,Before,Health);
-    if (Health<=0.) Die();
+    if (Health<=0.) {Die();return Loss;}
+    if (PostureEnabled())
+    {
+        const double Now=GetWorld()->GetTimeSeconds();
+        if (bStaggered) {UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] posture_held reason=StaggerActive posture=%g"),Posture);}
+        else
+        {
+            const double Drain=FMath::Min(Posture,double(Dependencies->Profile->PlayerPostureHitAmount)*Multiplier);
+            Posture-=Drain; LastPostureDrain=Now;
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] posture_drain amount=%g postureBefore=%g postureAfter=%g max=%g"),Drain,Posture+Drain,Posture,double(Dependencies->Profile->PostureMax));
+            RPGBossRules::FFlags Flags; Flags.bDead=bDead; Flags.bStaggered=bStaggered;
+            if (Posture<=0. && RPGBossRules::ResolveBreak(Flags,false)==RPGBossRules::EBreakResult::Started) StartStagger();
+        }
+    }
     return Loss;
+}
+bool ARPGFrameworkBossCharacter::PostureEnabled() const {return bInitialized&&bHittable&&Dependencies&&Dependencies->Profile->PostureMax>0.f;}
+void ARPGFrameworkBossCharacter::StartStagger()
+{
+    // Stance break (reached only alive; Dead outranks it in ResolveBreak). A running attack is aborted (windows closed, montage stopped); in neutral nothing is aborted.
+    const bool bMidAttack=bStartedMove&&!Executor->DidFinish();
+    bStaggered=true; StaggerEndsAt=GetWorld()->GetTimeSeconds()+double(Dependencies->Profile->StaggerSeconds);
+    if(auto* AI=Cast<ARPGFrameworkBossController>(GetController()))AI->StopOwnedWalk();
+    GetCharacterMovement()->StopMovementImmediately();
+    if(bMidAttack){Executor->Abort(TEXT("StanceBreak"));bStaggerAbortedAttack=true;}
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] stance_break state=%s duration=%g generation=%llu phase=%s"),bMidAttack?TEXT("MidAttack"):TEXT("Neutral"),double(Dependencies->Profile->StaggerSeconds),GenerationId,*CurrentPhaseId.ToString());
+}
+void ARPGFrameworkBossCharacter::EndStagger()
+{
+    bool bRecovered=true;
+    if(bStaggerAbortedAttack){bRecovered=Executor->RecoverAfterAbort();bStartedMove=false;bStaggerAbortedAttack=false;}
+    if(!bRecovered){Fail(TEXT("Framework.Playback.StaggerRecover"));return;}
+    bStaggered=false; Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.;
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] stagger_recovery postureRefilled=%g generation=%llu"),Posture,GenerationId);
+    // A break while the boss was still walking to the band stopped the owned walk: ask for it again (the arrival check and the walk timeout run as before).
+    if(!bArrived)
+    {
+        FString WalkError; auto* AI=Cast<ARPGFrameworkBossController>(GetController());
+        if(!AI||!AI->WalkToBand(this,WalkError)){Fail(WalkError.IsEmpty()?FString(TEXT("Framework.Boss.Controller")):WalkError);return;}
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] walk_resumed generation=%llu"),GenerationId);
+    }
 }
 bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& Error)
 {
@@ -165,6 +216,7 @@ bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& 
     const TCHAR* OldState=bDead?TEXT("Dead"):TEXT("Finished");
     GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;
     if (bHittable) Health=MaxHealth;
+    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bStaggered=bStaggerAbortedAttack=false;
     Selector.Reset(); CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId; bPhaseTwoLatched=false;
     SetActorLocation(WalkStart,false,nullptr,ETeleportType::TeleportPhysics);
     FVector Face=Target->GetActorLocation()-WalkStart; Face.Z=0.f; if (!Face.IsNearlyZero()) SetActorRotation(FRotator(0.f,Face.Rotation().Yaw,0.f));
