@@ -17,7 +17,7 @@ LIVE = float(open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution
 LIVED = []
 INJECT_PIE = [float(x) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_inject_pie.txt').read().strip().split(',') if x] if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_inject_pie.txt') else []  # C-449: injected player hits at these seconds after PIE start (the boss may still be walking: a neutral stance break)
 INJECTED_PIE = []
-INJECT_ROW = [(float(x.split(':')[0]), x.split(':')[1], x.split(':')[2]) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_inject_row.txt').read().strip().split(',') if x] if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_inject_row.txt') else []  # C-457 (F10): "seconds:WeaponStyle:AttackKind,..." after playback_start: hits carrying the DA_WeaponAttacks row
+INJECT_ROW = [(float(x.split(':')[0]), x.split(':')[1], x.split(':')[2], (x.split(':')[3] if len(x.split(':'))>3 else '')) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_inject_row.txt').read().strip().split(',') if x] if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_inject_row.txt') else []  # C-457 (F10): "seconds:WeaponStyle:AttackKind,..." after playback_start: hits carrying the DA_WeaponAttacks row
 INJECTED_ROW = []
 DIAG_LONG = os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_diag_long.txt')  # C-449 (KI-150 follow-up): DIAG every second until 20 s of PIE and do not stop on a FrameworkProof ERROR
 DIAG_LAST = [-1.0]
@@ -134,10 +134,13 @@ def tick(dt):
                     pawn = unreal.GameplayStatics.get_player_pawn(w, 0) if w else None
                     intake = pawn.get_component_by_class(unreal.RPGHitIntake) if pawn else None
                     bosses = unreal.GameplayStatics.get_all_actors_of_class(w, unreal.RPGFrameworkBossCharacter) if w else []
-                    sec, weapon, kind = INJECT_ROW[len(INJECTED_ROW)]
+                    sec, weapon, kind, via = INJECT_ROW[len(INJECTED_ROW)]  # via: '' immediate row hit, 'p1' / 'p2' (C-465, KI-151): through Pending/FinalizePending with 1 / 2 blades of the same swing
                     enum_name = ''.join('_' + c if c.isupper() and i else c for i, c in enumerate(kind)).upper()
                     if intake is not None and bosses:
-                        intake.inject_boss_attack_hit_for_test(bosses[0], weapon, getattr(unreal.RPGAttackKind, enum_name))
+                        if via.startswith('p'):
+                            intake.inject_boss_pending_hit_for_test(bosses[0], weapon, getattr(unreal.RPGAttackKind, enum_name), int(via[1:]))
+                        else:
+                            intake.inject_boss_attack_hit_for_test(bosses[0], weapon, getattr(unreal.RPGAttackKind, enum_name))
                         log('injected row hit %d %s %s at %.3f s after playback_start' % (len(INJECTED_ROW) + 1, weapon, kind, S['pie_t'] - S['dodge_t']))
                     else:
                         log('inject row hit impossible')

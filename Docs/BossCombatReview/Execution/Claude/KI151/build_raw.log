@@ -1,0 +1,33 @@
+﻿Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" OneBossFightEditor Win64 Development -Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject -WaitMutex
+Log file: C:\Users\Rushit Vaghela\AppData\Local\UnrealBuildTool\Log.txt
+Using 'git status' to determine working set for adaptive non-unity build (C:\UnrealProject\OneBossFight).
+Parsing headers for OneBossFightEditor
+  Running Internal UnrealHeaderTool C:\UnrealProject\OneBossFight\OneBossFight.uproject C:\UnrealProject\OneBossFight\Intermediate\Build\Win64\OneBossFightEditor\Development\OneBossFightEditor.uhtmanifest -WarningsAsErrors -installed
+Total of 3 written
+Reflection code generated for OneBossFightEditor in 1.5278282 seconds
+Building OneBossFightEditor...
+Using Visual Studio 2022 14.44.35214 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+Warning: Visual Studio 2022 compiler is not a preferred version
+[Adaptive Build] Excluded from OneBossFight unity file: RPGFrameworkBossCharacter.cpp, RPGHitIntake.cpp
+Determining max actions to execute in parallel (8 physical cores, 16 logical cores)
+  Executing up to 8 processes, one per physical core
+  Requested 1.5 GB memory per action, 9.58 GB available: limiting max parallel actions to 6
+Using Unreal Build Accelerator local executor to run 9 action(s)
+  Storage capacity 40Gb
+---- Starting trace: 261031_042331 ----
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+------ Building 9 action(s) started ------
+[1/9] Compile [x64] OneBossFight.init.gen.cpp
+[2/9] Compile [x64] RPGHitIntake.gen.cpp
+[3/9] Compile [x64] RPGBossPhases.cpp
+[4/9] Compile [x64] RPGHitIntake.cpp
+[5/9] Compile [x64] RPGPlayerMovesSubsystem.cpp
+[6/9] Compile [x64] RPGAutomationTests.cpp
+[7/9] Link [x64] UnrealEditor-OneBossFight.lib
+[8/9] Link [x64] UnrealEditor-OneBossFight.dll
+   Creating object C:\UnrealProject\OneBossFight\Binaries\Win64\UnrealEditor-OneBossFight.exp
+[9/9] WriteMetadata OneBossFightEditor.target (UBA disabled)
+Trace file written to C:/Users/Rushit Vaghela/AppData/Local/UnrealBuildTool/Log.uba with size 4.5kb
+Total time in Unreal Build Accelerator local executor: 6.30 seconds
+Total execution time: 8.64 seconds
