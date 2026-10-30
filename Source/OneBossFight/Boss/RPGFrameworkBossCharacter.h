@@ -27,6 +27,7 @@ public:
     // IRPGNativeBossHealth
     virtual bool ReadNativeHealth(bool bMax, double& Out) const override { if (!bHittable) return false; Out = bMax ? MaxHealth : Health; return true; }
     virtual double ApplyPlayerHit(double Multiplier) override;
+    virtual double ApplyPlayerAttackHit(const FRPGWeaponAttackRow& Row, double Multiplier) override;
     bool IsDead() const { return bDead; }
     uint64 CurrentGeneration() const { return GenerationId; }
     /** Encounter restart after the boss died or finished (explicit, proof/test authority): next generation, health and state back, walks to the band again. */
@@ -59,7 +60,9 @@ private:
     RPGBleedRules::FState BleedState; uint64 BleedProcFrame=MAX_uint64;
     bool BleedEnabled() const;
     void ResetBleed();
-    void ApplyBleed(double Multiplier);
+    void ApplyBleed(double Amount);
+    /** The one hit path: health factor (times PlayerHitDamage), posture amount and bleed amount already include the multiplier. */
+    double ApplyHit(double HealthFactor, double PostureAmount, double BleedAmount);
     void StartStagger();
     void EndStagger();
 };

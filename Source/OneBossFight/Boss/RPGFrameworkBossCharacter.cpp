@@ -162,7 +162,18 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
 double ARPGFrameworkBossCharacter::ApplyPlayerHit(double Multiplier)
 {
     if (!bHittable||bDead||bFailed||!bInitialized||!FMath::IsFinite(Multiplier)||Multiplier<0.) return 0.;
-    const double Before=Health, Loss=FMath::Min(Health,double(Dependencies->Profile->PlayerHitDamage)*Multiplier);
+    const auto& P=*Dependencies->Profile.Get();
+    return ApplyHit(Multiplier,double(P.PlayerPostureHitAmount)*Multiplier,double(P.BleedBuildupPerHit)*Multiplier);
+}
+double ARPGFrameworkBossCharacter::ApplyPlayerAttackHit(const FRPGWeaponAttackRow& Row, double Multiplier)
+{
+    if (!bHittable||bDead||bFailed||!bInitialized||!FMath::IsFinite(Multiplier)||Multiplier<0.||!FMath::IsFinite(Row.HealthDamageMultiplier)||Row.HealthDamageMultiplier<0.f) return 0.;
+    return ApplyHit(double(Row.HealthDamageMultiplier)*Multiplier,double(Row.PostureDamage)*Multiplier,double(Row.BleedBuildup)*Multiplier);
+}
+double ARPGFrameworkBossCharacter::ApplyHit(double HealthFactor, double PostureAmount, double BleedAmount)
+{
+    if (!bHittable||bDead||bFailed||!bInitialized) return 0.;
+    const double Before=Health, Loss=FMath::Min(Health,double(Dependencies->Profile->PlayerHitDamage)*HealthFactor);
     Health-=Loss;
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] boss_hit damage=%g healthBefore=%g healthAfter=%g"),Loss,Before,Health);
     if (Health<=0.) {Die();return Loss;}
@@ -172,14 +183,14 @@ double ARPGFrameworkBossCharacter::ApplyPlayerHit(double Multiplier)
         if (bStaggered) {UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] posture_held reason=StaggerActive posture=%g"),Posture);}
         else
         {
-            const double Drain=FMath::Min(Posture,double(Dependencies->Profile->PlayerPostureHitAmount)*Multiplier);
+            const double Drain=FMath::Min(Posture,PostureAmount);
             Posture-=Drain; LastPostureDrain=Now;
             UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] posture_drain amount=%g postureBefore=%g postureAfter=%g max=%g"),Drain,Posture+Drain,Posture,double(Dependencies->Profile->PostureMax));
             RPGBossRules::FFlags Flags; Flags.bDead=bDead; Flags.bStaggered=bStaggered;
             if (Posture<=0. && RPGBossRules::ResolveBreak(Flags,false)==RPGBossRules::EBreakResult::Started) StartStagger();
         }
     }
-    if (BleedEnabled()) ApplyBleed(Multiplier);
+    if (BleedEnabled()) ApplyBleed(BleedAmount);
     return Loss;
 }
 bool ARPGFrameworkBossCharacter::BleedEnabled() const {return bInitialized&&bHittable&&Dependencies&&Dependencies->Profile->BleedBuildupPerHit>0.f;}
@@ -188,12 +199,12 @@ void ARPGFrameworkBossCharacter::ResetBleed()
     BleedState=RPGBleedRules::FState(); BleedProcFrame=MAX_uint64;
     if (Dependencies) BleedState.Threshold=Dependencies->Profile->BleedInitialThreshold;
 }
-void ARPGFrameworkBossCharacter::ApplyBleed(double Multiplier)
+void ARPGFrameworkBossCharacter::ApplyBleed(double BleedAmount)
 {
     // The legacy pure rules, unchanged: no buildup on a dead boss or in the same frame as a proc; a proc takes a fraction of the maximum health, never the last point.
     const auto& P=*Dependencies->Profile.Get();
     RPGBleedRules::FConfig Config; Config.InitialThreshold=P.BleedInitialThreshold; Config.ThresholdIncrease=P.BleedThresholdIncrease; Config.ThresholdMax=P.BleedThresholdMax; Config.HpFraction=P.BleedHpFraction;
-    const float Amount=float(double(P.BleedBuildupPerHit)*Multiplier);
+    const float Amount=float(BleedAmount);
     const RPGBleedRules::EResult Result=RPGBleedRules::Apply(BleedState,Config,Amount,bDead,false,false,BleedProcFrame==GFrameCounter);
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] bleed_buildup amount=%g buildup=%g threshold=%g result=%s"),double(Amount),double(BleedState.Buildup),double(BleedState.Threshold),RPGBleedRules::Name(Result));
     if (Result!=RPGBleedRules::EResult::Proc) return;

@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #pragma once
 #include "UObject/Interface.h"
+#include "Player/RPGWeaponAttackTable.h"
 #include "RPGNativeBossHealth.generated.h"
 
 UINTERFACE(MinimalAPI)
@@ -21,4 +22,6 @@ public:
     virtual bool ReadNativeHealth(bool bMax, double& Out) const = 0;
     /** One player hit: the boss turns its authored player-hit damage (design value) times the multiplier into a health loss. Returns the loss. */
     virtual double ApplyPlayerHit(double Multiplier) = 0;
+    /** F10: the same hit with the weapon attack ROW that caused it (DA_WeaponAttacks: PostureDamage, BleedBuildup, HealthDamageMultiplier). Default: the row is ignored (profile constants). */
+    virtual double ApplyPlayerAttackHit(const FRPGWeaponAttackRow& Row, double Multiplier) { return ApplyPlayerHit(Multiplier); }
 };
