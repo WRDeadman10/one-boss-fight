@@ -13,6 +13,8 @@ INJECT = [float(x) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCombatR
 INJECTED = []
 RESTART = os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_restart.txt')  # F6b: restart the encounter (generation 2) once the boss is dead and wait for the second RESULT
 RESTARTED = []
+LIVE = float(open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_live.txt').read().strip()) if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_live.txt') else None  # C-443: seconds after playback_start to call restart_encounter_for_test(2) on a LIVE boss (must be refused, X-370)
+LIVED = []
 S = {'dodge_t': None, 'down': False, 'up': False, 'phase': 'load', 't': 0.0, 'n': 0, 'handle': None, 'pie_t': 0.0, 'diag': False}
 
 
@@ -118,6 +120,15 @@ def tick(dt):
                         intake.inject_boss_hit_for_test(bosses[0])
                         log('injected hit %d at %.3f s after playback_start' % (len(INJECTED) + 1, S['pie_t'] - S['dodge_t']))
                         INJECTED.append(S['pie_t'])
+            if LIVE is not None and not LIVED:
+                if S['dodge_t'] is None and log_has('[FrameworkProof] playback_start'):
+                    S['dodge_t'] = S['pie_t']
+                if S['dodge_t'] is not None and (S['pie_t'] - S['dodge_t']) >= LIVE:
+                    w = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
+                    fixes = unreal.GameplayStatics.get_all_actors_of_class(w, unreal.RPGFrameworkProofFixture) if w else []
+                    res = fixes[0].restart_encounter_for_test(2) if fixes else None
+                    LIVED.append(res)
+                    log('LIVE restart_encounter_for_test(2) at %.3f s after playback_start -> %s (expected False)' % (S['pie_t'] - S['dodge_t'], res))
             if DODGE:
                 if S['dodge_t'] is None and log_has('[FrameworkProof] playback_start'):
                     S['dodge_t'] = S['pie_t']
