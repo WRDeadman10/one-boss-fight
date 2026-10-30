@@ -26,7 +26,7 @@ production compile (DD27j), startup chronology measured (DD30 probe).
 Rows of `Codex/ALL83_EXECUTION_LEDGER_2026-10-27.json`. Groups from `Antigravity/Ledger/DATA_DRIVEN_LEDGER_GAPS.md`:
 13 with typed fields (need a witness after A4), 11 missing fields (measure the current value in PIE first, then
 record + validator + adapter + authoring field + manifest row + test), 59 runtime systems (mostly verification, plus moving
-hardcoded numbers to data). State today: 0 of 83 closed.
+hardcoded numbers to data). State 2026-10-30 19:45 (lead, C-413): 16 of 82 framework rows WITNESSED on raw evidence (AWR-003, SEL-001, SEL-002, SEL-003, SEL-004, SEL-006, SEL-007, SEL-010, EXE-001, EXE-002, EXE-003, ANM-001, HIT-001, HIT-002, HIT-006, PAC-001; Antigravity/Ledger/WITNESS_STATUS_F3_F4.md v2.2.0 minus COM-002 and PAC-006 which the lead set to PARTIAL), 22 PARTIAL, 44 NOT YET. Legacy pack-boss tests never count.
 
 ## Track C: editor tools (5)
 | ID | Task | Depends on |

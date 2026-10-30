@@ -7,20 +7,27 @@ param(
     [Parameter(Mandatory = $true)][string]$Task,
     [string[]]$ExtraArgs = @(),
     [int]$TimeoutSeconds = 240,
-    [bool]$NullRhi = $true
+    [int]$NullRhi = 1,
+    [int]$PyCmd = 0  # 1: run the script through -ExecCmds="py <8.3 path>" (tick-based drivers keep the editor alive; the script must quit it)
 )
 $root = 'C:\UnrealProject\OneBossFight'
 $lock = "$root\Docs\BossCombatReview\Execution\ENGINE_LOCK.json"
 $snap = "$root\Docs\BossCombatReview\Execution\Claude\F3a\snapshot.ps1"
-$engine = 'C:\Program Files\Epic Games\UE_5.5\Engine\Binaries\Win64\UnrealEditor-Cmd.exe'
+$bin = 'C:\Program Files\Epic Games\UE_5.5\Engine\Binaries\Win64\'
+$engine = if ($NullRhi -ne 0) { $bin + 'UnrealEditor-Cmd.exe' } else { $bin + 'UnrealEditor.exe' }  # rendering runs use the windowed editor (EditorLevelLibrary spawns divide by zero without a viewport)
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 if (@(Get-Process | Where-Object { $_.ProcessName -match 'UnrealEditor|UnrealBuildTool' }).Count -gt 0) { 'STOP: engine process running' | Set-Content "$OutDir\STOP.txt"; exit 2 }
 if (Test-Path $lock) { 'STOP: engine lock present' | Set-Content "$OutDir\STOP.txt"; exit 2 }
 @{ agent = 'Claude'; party = 'C'; task = $Task; start_utc = (Get-Date).ToUniversalTime().ToString('o'); policy = 'C-321' } | ConvertTo-Json | Set-Content $lock
 try {
     & $snap -Out "$OutDir\pre_state.txt" | Set-Content "$OutDir\pre_state_summary.txt"
-    $args = @("$root\OneBossFight.uproject", "-ExecutePythonScript=`"$Script`"", '-unattended', '-nosound', '-nosplash', "-abslog=$OutDir\editor_raw.log") + $ExtraArgs
-    if ($NullRhi) { $args += '-nullrhi' }
+    $scriptArg = "-ExecutePythonScript=`"$Script`""
+    if ($PyCmd -ne 0) {
+        $short = (New-Object -ComObject Scripting.FileSystemObject).GetFile($Script).ShortPath.ToLower().Replace('\', '/')
+        $scriptArg = "-ExecCmds=`"py $short`""
+    }
+    $args = @("$root\OneBossFight.uproject", $scriptArg, '-unattended', '-nosound', '-nosplash', "-abslog=$OutDir\editor_raw.log") + $ExtraArgs
+    if ($NullRhi -ne 0) { $args += '-nullrhi' }
     $args | ConvertTo-Json | Set-Content "$OutDir\command.json"
     $sw = [Diagnostics.Stopwatch]::StartNew()
     $p = Start-Process -FilePath $engine -ArgumentList $args -PassThru -WindowStyle Hidden

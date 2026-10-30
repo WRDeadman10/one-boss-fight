@@ -1,0 +1,9 @@
+[
+    "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+    "-ExecutePythonScript=\"C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/MoveCards/probe_reach.py --output C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F5/reach_run1/reach_summary.json\"",
+    "-unattended",
+    "-nosound",
+    "-nosplash",
+    "-abslog=C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\F5\\reach_run1\\editor_raw.log",
+    "-nullrhi"
+]

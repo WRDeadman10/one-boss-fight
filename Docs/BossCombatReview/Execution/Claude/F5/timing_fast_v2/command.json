@@ -1,0 +1,9 @@
+[
+    "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+    "-ExecutePythonScript=\"C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/HitWindowProbe/probe_weapon_motion.py --sequences /Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_FAST_v2 --output-json C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F5/timing_fast_v2/swing1_fast_v2_timing.json\"",
+    "-unattended",
+    "-nosound",
+    "-nosplash",
+    "-abslog=C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\F5\\timing_fast_v2\\editor_raw.log",
+    "-nullrhi"
+]

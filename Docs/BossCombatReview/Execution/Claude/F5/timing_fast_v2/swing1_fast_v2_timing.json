@@ -1,0 +1,35 @@
+[
+  {
+    "sequence_path": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_FAST_v2",
+    "sequence_name": "Swing1_FAST_v2",
+    "sequence_length": 0.5333,
+    "sampling_dt": 0.008333,
+    "sample_count": 66,
+    "base_bone": "weapon_r",
+    "tip_bone": "root_weapon_end_r",
+    "base_bone_has_track": false,
+    "tip_bone_has_track": false,
+    "pose_eval_method": "AnimPoseExtensions.get_anim_pose_at_time",
+    "bone_pose_method": "AnimPose.get_bone_pose(WORLD)",
+    "peak_tip_speed_cms": 3069.6,
+    "peak_tip_time": 0.2583,
+    "active_windows_50pct": [
+      {
+        "start_time": 0.25,
+        "end_time": 0.3083,
+        "duration": 0.0583,
+        "peak_speed_cms": 3069.6,
+        "peak_time": 0.2583,
+        "sample_count": 8
+      },
+      {
+        "start_time": 0.15,
+        "end_time": 0.1667,
+        "duration": 0.0167,
+        "peak_speed_cms": 1929.93,
+        "peak_time": 0.1583,
+        "sample_count": 3
+      }
+    ]
+  }
+]

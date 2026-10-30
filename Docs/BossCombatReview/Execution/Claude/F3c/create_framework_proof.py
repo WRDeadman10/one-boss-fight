@@ -73,13 +73,13 @@ values = {
     'walk_timeout_seconds': 10.0, 'blend_in_seconds': 0.1, 'blend_out_seconds': 0.1,
     'capsule_radius_cm': CAPSULE_RADIUS, 'capsule_half_height_cm': CAPSULE_HALF_HEIGHT,
     'mesh_relative_transform': unreal.Transform(location=[0.0, 0.0, -CAPSULE_HALF_HEIGHT], rotation=unreal.Rotator(roll=0.0, pitch=0.0, yaw=-90.0), scale=[1.0, 1.0, 1.0]),
-    'b_alignment_authored': True,
+    'alignment_authored': True,
 }
 for k, v in values.items():
     prof.set_editor_property(k, v)
 back = {}
 for k in ('fixture_label', 'band_min_cm', 'band_max_cm', 'walk_speed_cm_per_second', 'acceptance_cm', 'walk_timeout_seconds',
-          'blend_in_seconds', 'blend_out_seconds', 'capsule_radius_cm', 'capsule_half_height_cm', 'b_alignment_authored'):
+          'blend_in_seconds', 'blend_out_seconds', 'capsule_radius_cm', 'capsule_half_height_cm', 'alignment_authored'):
     back[k] = prof.get_editor_property(k)
     if back[k] != values[k] and not (isinstance(values[k], float) and abs(back[k] - values[k]) < 1e-4):
         fatal('readback mismatch %s: %r != %r' % (k, back[k], values[k]))

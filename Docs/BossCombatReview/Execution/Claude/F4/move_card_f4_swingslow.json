@@ -1,0 +1,42 @@
+{
+  "status": "F4 proof card (lead): damage and range are design values, proposed; timings from probe run_C379",
+  "provenance": "derived from Antigravity move_cards_f4_proposed.json card Move_Sevarog_SwingSlow; only MoveId, range and DamageStatus changed",
+  "measurement_certification": "Timing verified via run_C379; HPDamage values are design proposals only",
+  "cards": [
+    {
+      "Schema": 1,
+      "MoveId": "Move_Sevarog_SwingSlow_F4",
+      "FamilyId": "Family_01_DelayedOverhead",
+      "PhaseId": "Phase_1",
+      "Skeleton": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.Sevarog_Skeleton",
+      "Sequence": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Slow.Swing1_Slow",
+      "Montage": null,
+      "SlotName": "FullBody",
+      "SectionName": "None",
+      "PlayRate": 1.0,
+      "ClipLengthSeconds": 1.7,
+      "CommitSeconds": 0.3,
+      "ActiveStartSeconds": 0.35,
+      "ActiveEndSeconds": 0.4917,
+      "RecoveryEndSeconds": 1.65,
+      "TrackDegreesPerSecond": 90.0,
+      "MinRangeCm": 100.0,
+      "MaxRangeCm": 250.0,
+      "FrontConeDegrees": 100.0,
+      "HPDamage": 35.0,
+      "bUsesRootMotion": false,
+      "Windows": [
+        {
+          "WindowId": "Window_SwingSlow_Primary",
+          "HitGroup": "HitGroup_ScytheBlade",
+          "StartSeconds": 0.35,
+          "EndSeconds": 0.4917,
+          "SocketA": "weapon_r",
+          "SocketB": "root_weapon_end_r",
+          "RadiusCm": 15.0
+        }
+      ],
+      "DamageStatus": "design value, proposed (AG F4 table); range 100..250 = design value proposed from measured blade reach 150 cm (F3d final_run1)"
+    }
+  ]
+}

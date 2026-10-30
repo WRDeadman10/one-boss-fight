@@ -1,0 +1,9 @@
+[
+    "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+    "-ExecutePythonScript=\"C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/MoveCards/bake_blade_path.py --card-json C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/MoveCards/move_cards_f5_set.json --output-json C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F7/bake_run1/baked_f5.json\"",
+    "-unattended",
+    "-nosound",
+    "-nosplash",
+    "-abslog=C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\F7\\bake_run1\\editor_raw.log",
+    "-nullrhi"
+]
