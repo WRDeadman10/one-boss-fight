@@ -87,6 +87,7 @@ bool ARPGFrameworkProofFixture::RestartEncounterForTest(int32 NewGeneration)
 #else
     FString Error;
     if (bFailed||!IsValid(OwnedBoss)||!ExplicitPlayer.IsValid()||!ResolvedProfile||NewGeneration<=0
+        ||!OwnedBoss->CanRestart(uint64(NewGeneration))   // refuse BEFORE any write: an active or stale-generation boss must not see its target's health rewritten (X-370)
         ||!SetTargetHealth(ExplicitPlayer.Get(),ResolvedProfile->TargetHealth)||!OwnedBoss->RestartEncounter(uint64(NewGeneration),Error))
     {
         UE_LOG(LogTemp,Error,TEXT("[FrameworkProof] encounter_reset refused generation=%d reason=%s"),NewGeneration,Error.IsEmpty()?TEXT("Framework.Fixture.RestartState"):*Error);

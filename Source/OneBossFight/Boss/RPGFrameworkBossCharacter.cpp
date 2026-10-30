@@ -159,7 +159,7 @@ double ARPGFrameworkBossCharacter::ApplyPlayerHit(double Multiplier)
 bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& Error)
 {
     Error.Reset();
-    if (!bInitialized||bFailed||(!bDead&&!bSucceeded)||NewGeneration<=GenerationId||!IsInGameThread()) {Error=TEXT("Framework.Boss.RestartState");return false;}
+    if (!CanRestart(NewGeneration)||!IsInGameThread()) {Error=TEXT("Framework.Boss.RestartState");return false;}
     double HP=0.; if (!ValidateTarget(HP)) {Error=TEXT("Framework.Boss.TargetHealth");return false;}
     if (!Executor->Rearm(NewGeneration,Error)) return false;
     const TCHAR* OldState=bDead?TEXT("Dead"):TEXT("Finished");
