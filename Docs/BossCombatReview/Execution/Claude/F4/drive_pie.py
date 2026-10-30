@@ -15,6 +15,10 @@ RESTART = os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Ex
 RESTARTED = []
 LIVE = float(open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_live.txt').read().strip()) if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_live.txt') else None  # C-443: seconds after playback_start to call restart_encounter_for_test(2) on a LIVE boss (must be refused, X-370)
 LIVED = []
+INJECT_PIE = [float(x) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_inject_pie.txt').read().strip().split(',') if x] if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_inject_pie.txt') else []  # C-449: injected player hits at these seconds after PIE start (the boss may still be walking: a neutral stance break)
+INJECTED_PIE = []
+DIAG_LONG = os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_diag_long.txt')  # C-449 (KI-150 follow-up): DIAG every second until 20 s of PIE and do not stop on a FrameworkProof ERROR
+DIAG_LAST = [-1.0]
 S = {'dodge_t': None, 'down': False, 'up': False, 'phase': 'load', 't': 0.0, 'n': 0, 'handle': None, 'pie_t': 0.0, 'diag': False}
 
 
@@ -120,6 +124,15 @@ def tick(dt):
                         intake.inject_boss_hit_for_test(bosses[0])
                         log('injected hit %d at %.3f s after playback_start' % (len(INJECTED) + 1, S['pie_t'] - S['dodge_t']))
                         INJECTED.append(S['pie_t'])
+            if INJECT_PIE and len(INJECTED_PIE) < len(INJECT_PIE) and S['pie_t'] >= INJECT_PIE[len(INJECTED_PIE)]:
+                w = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
+                pawn = unreal.GameplayStatics.get_player_pawn(w, 0) if w else None
+                intake = pawn.get_component_by_class(unreal.RPGHitIntake) if pawn else None
+                bosses = unreal.GameplayStatics.get_all_actors_of_class(w, unreal.RPGFrameworkBossCharacter) if w else []
+                if intake is not None and bosses:
+                    intake.inject_boss_hit_for_test(bosses[0])
+                    log('injected PIE-time hit %d at pie_t=%.3f' % (len(INJECTED_PIE) + 1, S['pie_t']))
+                    INJECTED_PIE.append(S['pie_t'])
             if LIVE is not None and not LIVED:
                 if S['dodge_t'] is None and log_has('[FrameworkProof] playback_start'):
                     S['dodge_t'] = S['pie_t']
@@ -145,6 +158,12 @@ def tick(dt):
                         unreal.RPGInputTestUtils.set_key_down(pc, KEY, False)
                         S['up'] = True
                         log('dodge key up since_playback_start=%.3f' % since)
+            if DIAG_LONG and S['pie_t'] - DIAG_LAST[0] >= 1.0:
+                DIAG_LAST[0] = S['pie_t']
+                w = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
+                pawn = unreal.GameplayStatics.get_player_pawn(w, 0) if w else None
+                if pawn is not None:
+                    log('DIAGLONG pie_t=%.2f health=%s max=%s' % (S['pie_t'], attr(pawn, 'Attribute.Health'), attr(pawn, 'Attribute.Health', False)))
             if S['pie_t'] > 2.0 and not S['diag']:
                 S['diag'] = True
                 diag()
@@ -155,7 +174,11 @@ def tick(dt):
                 RESTARTED.append(ok)
                 log('restart_encounter_for_test(2) -> %s' % ok)
             need = 2 if RESTART else 1
-            if S['pie_t'] > 3.0 and ((log_count('[FrameworkProof] RESULT') >= need) or log_has('[FrameworkProof] ERROR') or S['pie_t'] > PIE_TIMEOUT):
+            if DIAG_LONG:
+                stop_now = S['pie_t'] > 20.0
+            else:
+                stop_now = S['pie_t'] > 3.0 and ((log_count('[FrameworkProof] RESULT') >= need) or log_has('[FrameworkProof] ERROR') or S['pie_t'] > PIE_TIMEOUT)
+            if stop_now:
                 log('stopping PIE after %.1f s (timeout=%s)' % (S['pie_t'], S['pie_t'] > PIE_TIMEOUT))
                 unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
                 S.update(phase='quit', n=0)
