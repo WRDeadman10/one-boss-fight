@@ -410,6 +410,32 @@ void URPGHitIntake::InjectBossHitForTest(AActor* Boss)
 #endif
 }
 
+void URPGHitIntake::InjectBossAttackHitForTest(AActor* Boss, FName Weapon, ERPGAttackKind Kind)
+{
+#if UE_BUILD_SHIPPING
+	return;
+#else
+	IRPGNativeBossHealth* Native = Cast<IRPGNativeBossHealth>(Boss);
+	if (!Native)
+	{
+		UE_LOG(LogRPGHitIntake, Warning, TEXT("[FrameworkProof] attack_row_refused reason=NoNativeBoss"));
+		return;
+	}
+	const URPGWeaponAttackTable* AttackTable = URPGWeaponAttackTable::LoadOrDefault();
+	FRPGWeaponAttackRow Row;
+	const bool bFound = AttackTable && AttackTable->Find(Weapon, Kind, Row);
+	UE_LOG(LogRPGHitIntake, Log, TEXT("[FrameworkProof] attack_row weapon=%s kind=%s found=%d posture=%g bleed=%g healthMult=%g"), *Weapon.ToString(), RPGAttackKindName(Kind), bFound ? 1 : 0, Row.PostureDamage, Row.BleedBuildup, Row.HealthDamageMultiplier);
+	if (bFound)
+	{
+		Native->ApplyPlayerAttackHit(Row, 1.0);
+	}
+	else
+	{
+		Native->ApplyPlayerHit(1.0);
+	}
+#endif
+}
+
 void URPGHitIntake::HandlePackHit(FHitResult HitResult)
 {
 	AActor* Target = HitResult.GetActor();
