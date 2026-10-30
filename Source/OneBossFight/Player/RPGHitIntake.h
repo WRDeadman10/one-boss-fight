@@ -73,6 +73,10 @@ public:
 	UFUNCTION()
 	void HandlePackHit(FHitResult HitResult);
 
+	/** Test drivers only (the proof map has no pack input): raises the same path as the pack's own hit event, on this boss. */
+	UFUNCTION(BlueprintCallable, Category = "Hit intake")
+	void InjectBossHitForTest(AActor* Boss);
+
 	/**
 	 * The pack names the intake reads, looked up on the pack's Blueprint classes with no world (for the PackWiring test: a pack update that renames one fails there, not silently in a fight):
 	 * BP_CollisionComponent_C.OnHit(FHitResult), the trace target variables HitData, Attack Data and bCollisionEnabled?, BP_HitData_C.AttackData, BP_AttackData_C.AttackPower and PoiseDamage, the four melee attack data assets.

@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGHitIntake.h"
+#include "Player/RPGNativeBossHealth.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGBossBleed.h"
 #include "Player/RPGBossPosture.h"
@@ -394,9 +395,30 @@ FRPGHitRecord URPGHitIntake::BuildRecord(const FHitResult& HitResult, AActor* Ta
 	return Record;
 }
 
+void URPGHitIntake::InjectBossHitForTest(AActor* Boss)
+{
+#if UE_BUILD_SHIPPING
+	return;
+#else
+	if (Boss)
+	{
+		HandlePackHit(FHitResult(Boss, nullptr, Boss->GetActorLocation(), FVector::UpVector));
+		double Current = 0.0, Max = 0.0;
+		const bool bRead = RPGPack::ReadAttribute(Boss, TEXT("Attribute.Health"), false, Current) && RPGPack::ReadAttribute(Boss, TEXT("Attribute.Health"), true, Max);
+		UE_LOG(LogRPGHitIntake, Log, TEXT("[FrameworkProof] boss_health_read reader=ReadAttribute ok=%d value=%g max=%g"), bRead, Current, Max);
+	}
+#endif
+}
+
 void URPGHitIntake::HandlePackHit(FHitResult HitResult)
 {
 	AActor* Target = HitResult.GetActor();
+	// A boss with native health (the framework Sevarog) takes the hit directly: no pack damage execution, record, scaler or posture runs for it.
+	if (IRPGNativeBossHealth* Native = Cast<IRPGNativeBossHealth>(Target))
+	{
+		Native->ApplyPlayerHit(1.0);
+		return;
+	}
 	if (!Target || !URPGPlayerMovesSubsystem::IsPackBoss(Target))
 	{
 		++OtherHitCount;

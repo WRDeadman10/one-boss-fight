@@ -2,11 +2,13 @@
 #pragma once
 #include "GameFramework/Character.h"
 #include "Player/RPGBossFrameworkProfile.h"
+#include "Player/RPGBossMoveSelector.h"
+#include "Player/RPGNativeBossHealth.h"
 #include "RPGFrameworkBossCharacter.generated.h"
 class URPGFrameworkMoveExecutor;
 class ARPGFrameworkProofFixture;
 UCLASS()
-class ONEBOSSFIGHT_API ARPGFrameworkBossCharacter : public ACharacter
+class ONEBOSSFIGHT_API ARPGFrameworkBossCharacter : public ACharacter, public IRPGNativeBossHealth
 {
     GENERATED_BODY()
 public:
@@ -19,6 +21,15 @@ public:
     const URPGBossFrameworkProfile* ProofProfile() const {return Dependencies?Dependencies->Profile.Get():nullptr;}
     bool Succeeded() const {return bSucceeded;}
     bool Failed() const {return bFailed;}
+    /** F4: the executor reports every accepted hit so the target-health invariant expects exactly that loss. */
+    void NoteDamageApplied(double Applied) {ExpectedTargetHP-=Applied;}
+    // IRPGNativeBossHealth
+    virtual bool ReadNativeHealth(bool bMax, double& Out) const override { if (!bHittable) return false; Out = bMax ? MaxHealth : Health; return true; }
+    virtual double ApplyPlayerHit(double Multiplier) override;
+    bool IsDead() const { return bDead; }
+    uint64 CurrentGeneration() const { return GenerationId; }
+    /** Encounter restart after the boss died or finished (explicit, proof/test authority): next generation, health and state back, walks to the band again. */
+    bool RestartEncounter(uint64 NewGeneration,FString& Error);
     virtual void Tick(float Delta) override;
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
 private:
@@ -28,7 +39,14 @@ private:
     TWeakObjectPtr<AController> TargetController;
     TWeakObjectPtr<ARPGFrameworkProofFixture> ProofFixture;
     uint64 EncounterId=0, GenerationId=0;
-    double StartedAt=0., TargetHPBefore=0.;
+    double StartedAt=0., TargetHPBefore=0., ExpectedTargetHP=0.;
     FVector WalkStart=FVector::ZeroVector;
     bool bInitialized=false,bFailed=false,bArrived=false,bStartedMove=false,bSucceeded=false;
+    FRPGBossMoveSelector Selector;
+    void Die();
+    double Health=0., MaxHealth=0.;
+    bool bHittable=false, bDead=false;
+    int32 AttacksDone=0;
+    /** F6c: the authoritative phase, changed only at the neutral decision gate; latched until restart. */
+    FName CurrentPhaseId; bool bPhaseTwoLatched=false;
 };

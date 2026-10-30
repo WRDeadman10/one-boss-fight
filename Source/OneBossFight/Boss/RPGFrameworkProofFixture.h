@@ -20,6 +20,9 @@ public:
     bool Authorizes(const ARPGFrameworkBossCharacter* Boss,const APawn* InTarget) const;
     void SetExplicitTarget(APawn* Pawn);
     void InvalidateTarget();
+    /** Test drivers only: the explicit restart authority of the proof (there is no player respawn loop): restores the target's health and restarts the boss. */
+    UFUNCTION(BlueprintCallable, Category = "Framework proof")
+    bool RestartEncounterForTest(int32 NewGeneration);
     virtual void BeginPlay() override;
     virtual void Tick(float Delta) override;
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
@@ -29,7 +32,7 @@ private:
     UPROPERTY(Transient) TObjectPtr<URPGBossFrameworkProfile> ResolvedProfile;
     UPROPERTY(Transient) TObjectPtr<ARPGFrameworkBossCharacter> OwnedBoss;
     TWeakObjectPtr<APawn> ExplicitPlayer;
-    double WaitStart=0.; bool bFailed=false,bAttempted=false;
+    double WaitStart=0.; bool bFailed=false,bAttempted=false,bTargetPrepared=false;
 };
 /** Only a NEW proof map can opt in with its own world override; no project default changes. */
 UCLASS()

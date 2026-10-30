@@ -126,6 +126,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (ClampMin = "0.0"))
 	float OverlapEpisodeGapSeconds = 0.25f;
 
+	/**
+	 * Optional attacker authority for a boss that is not a pack boss (the framework Sevarog has no pack attributes and no URPGBossEncounter):
+	 * the provider replaces the owner's Attribute.Health liveness and the encounter generation. Never set = the legacy rules, unchanged.
+	 */
+	void SetLifeProvider(TFunction<bool()> InIsAlive, TFunction<int32()> InGeneration);
+	void ClearLifeProvider();
+	bool HasLifeProvider() const { return ProviderIsAlive != nullptr && ProviderGeneration != nullptr; }
+
 	/** The resolver of this boss; added when missing so a move never skips the rules. */
 	static URPGDamageResolver* FindOrAdd(AActor* Boss);
 
@@ -198,5 +206,7 @@ private:
 	TMap<FString, int32> Counts; // "Move|Outcome" and "|Outcome"
 	int32 AuditTotal = 0;
 	int32 SeenGeneration = 0;
+	TFunction<bool()> ProviderIsAlive;
+	TFunction<int32()> ProviderGeneration;
 	FString LastOutcome;
 };

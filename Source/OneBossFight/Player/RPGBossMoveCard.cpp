@@ -79,6 +79,21 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
         if (W.SocketA.IsNone() || W.SocketB.IsNone() || W.SocketA == W.SocketB ||
             !M.SocketOrBoneNames.Contains(W.SocketA) || !M.SocketOrBoneNames.Contains(W.SocketB))
             Fail(R, TEXT("MoveCard.Socket"), Field);
+        if (W.BakedSamples.Num() > 0)
+        {
+            bool bBakedOk = W.BakedSamples.Num() >= 2;
+            double PreviousTime = -1.0;
+            for (const FRPGBakedBladeSample& B : W.BakedSamples)
+            {
+                if (!FMath::IsFinite(B.TimeSeconds) || B.TimeSeconds <= PreviousTime || B.TimeSeconds > M.ClipLengthSeconds ||
+                    B.BaseCS.ContainsNaN() || B.TipCS.ContainsNaN() || B.BaseCS.GetAbsMax() > 1.e5 || B.TipCS.GetAbsMax() > 1.e5)
+                { bBakedOk = false; break; }
+                PreviousTime = B.TimeSeconds;
+            }
+            // The samples must cover the whole window (a sample at or before its start, one at or after its end).
+            if (bBakedOk && (W.BakedSamples[0].TimeSeconds > W.StartSeconds || W.BakedSamples.Last().TimeSeconds < W.EndSeconds)) bBakedOk = false;
+            if (!bBakedOk) Fail(R, TEXT("MoveCard.BakedSamples"), Field);
+        }
     }
     return R;
 }

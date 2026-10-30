@@ -2,57 +2,93 @@
 #include "Boss/RPGFrameworkMoveExecutor.h"
 #include "Boss/RPGFrameworkBossCharacter.h"
 #include "Player/RPGBossFrameworkProfile.h"
+#include "Player/RPGDamageResolver.h"
+#include "Player/RPGBossSweepSampling.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimSequence.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/Pawn.h"
+#include "CollisionQueryParams.h"
 URPGFrameworkMoveExecutor::URPGFrameworkMoveExecutor()
 {
     PrimaryComponentTick.bCanEverTick=true; PrimaryComponentTick.bStartWithTickEnabled=false;
     PrimaryComponentTick.TickGroup=TG_PostPhysics;
 }
-bool URPGFrameworkMoveExecutor::ValidatePlaybackCard(const TSharedPtr<const FRPGCompiledBossMoveCard>& C,FString& Error)
+bool URPGFrameworkMoveExecutor::ValidatePlaybackCard(const TSharedPtr<const FRPGCompiledBossMoveCard>& C,FString& Error,bool bDamage)
 {
     Error.Reset();
     if (!C||!C->HasResolvedAssets()) {Error=TEXT("Framework.Playback.UnresolvedPreview");return false;}
-    if (!RPGBossMoveCards::Validate(C->Spec(),C->Metadata()).IsValid()||!C->Spec().Montage.IsNull()||C->Spec().Sequence.IsNull()||!C->Spec().SectionName.IsNone()||C->Spec().HPDamage!=0.f)
+    if (!RPGBossMoveCards::Validate(C->Spec(),C->Metadata()).IsValid()||!C->Spec().Montage.IsNull()||C->Spec().Sequence.IsNull()||!C->Spec().SectionName.IsNone()||(bDamage?!(C->Spec().HPDamage>0.f):C->Spec().HPDamage!=0.f))
     {Error=TEXT("Framework.Playback.SequenceTelemetryOnly");return false;}
     return true;
 }
 bool URPGFrameworkMoveExecutor::Initialize(ARPGFrameworkBossCharacter* Boss,const FRPGFrameworkDependencies& D,APawn* InTarget,uint64 Encounter,uint64 Generation,FString& Error)
 {
-    if (!ValidatePlaybackCard(D.Card,Error)) return false;
+    const TSharedPtr<const FRPGCompiledBossMoveCard> First=D.Candidates.Num()>0?D.Candidates[0].Card:D.Card;
+    if (!ValidatePlaybackCard(First,Error,D.Profile.IsValid()&&D.Profile->bDamageEnabled)) return false;
     if (bInitialized||!IsInGameThread()||!IsValid(Boss)||GetOwner()!=Boss||!IsValid(InTarget)||Boss==InTarget||Boss->GetWorld()!=InTarget->GetWorld()||!D.Profile.IsValid())
     {Error=TEXT("Framework.Playback.OwnerTarget");return false;}
     UAnimInstance* Instance=Boss->GetMesh()->GetAnimInstance();
-    if (!IsValid(Instance)||Instance->GetClass()!=D.AnimClass.Get()||!RPGFramework::HasSlotNode(Instance,D.Card->Spec().SlotName))
+    if (!IsValid(Instance)||Instance->GetClass()!=D.AnimClass.Get()||!RPGFramework::HasSlotNode(Instance,First->Spec().SlotName))
     {Error=TEXT("Framework.Playback.SlotGraph");return false;}
-    if (!Model.Initialize(Encounter,Generation,Error)) return false;
-    OwnerBoss=Boss; Target=InTarget; Card=D.Card; Profile=D.Profile.Get(); Anim=Instance; bInitialized=true;
+    if (!Model_.Initialize(Encounter,Generation,Error)) return false;
+    OwnerBoss=Boss; Target=InTarget; Card=First; Profile=D.Profile.Get(); Anim=Instance; bInitialized=true;
     AddTickPrerequisiteComponent(Boss->GetMesh()); SetComponentTickEnabled(true);
-    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] slot_graph name=%s nodeClass=AnimNode_Slot verified=1 label=F3_fixture"),*Card->Spec().SlotName.ToString());
+    if (Profile->bDamageEnabled)
+    {
+        // Single life/generation authority of the framework boss: alive until the boss fails; generation = the proof generation.
+        URPGDamageResolver* R=URPGDamageResolver::FindOrAdd(Boss);
+        if (!IsValid(R)) {Error=TEXT("Framework.Playback.Resolver");return false;}
+        R->SetLifeProvider([W=TWeakObjectPtr<ARPGFrameworkBossCharacter>(Boss)]{return W.IsValid()&&!W->Failed()&&!W->IsDead();},[W=TWeakObjectPtr<ARPGFrameworkBossCharacter>(Boss)]{return W.IsValid()?int32(W->CurrentGeneration()):0;});
+        Resolver=R;
+    }
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] slot_graph name=%s nodeClass=AnimNode_Slot verified=1 label=%s"),*Card->Spec().SlotName.ToString(),*Label());
     return true;
 }
 bool URPGFrameworkMoveExecutor::Start(const FRPGBossDecisionSnapshot& S,FString& Error)
 {
+    return StartCard(Card,S,Error);
+}
+bool URPGFrameworkMoveExecutor::Rearm(uint64 NewGeneration,FString& Error)
+{
+    if (!bInitialized||!IsInGameThread()) {Error=TEXT("Framework.Playback.State");return false;}
+    StopOwned(0.f); OwnedMontage=nullptr;
+    TArray<FRPGBossMoveModelEvent> Events;
+    if (!Model_.ResetGeneration(NewGeneration,Events,Error)) return false;
+    LogEvents(Events);
+    bAborted=false; bFinished=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset(); Token=FRPGBossAttackToken();
+    SetComponentTickEnabled(false);
+    return true;
+}
+bool URPGFrameworkMoveExecutor::PrepareNextAttack()
+{
+    if (!bInitialized||bAborted||!bFinished||!IsIdle()) return false;
+    bFinished=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset();
+    return true;
+}
+bool URPGFrameworkMoveExecutor::StartCard(const TSharedPtr<const FRPGCompiledBossMoveCard>& NextCard,const FRPGBossDecisionSnapshot& S,FString& Error)
+{
+    if (!NextCard) {Error=TEXT("Framework.Playback.State");return false;}
+    Card=NextCard;
     if (!bInitialized||bAborted||!OwnerBoss.IsValid()||!Target.IsValid()||!IsIdle()||bFinished)
     {Error=TEXT("Framework.Playback.State");return false;}
-    if (!ValidatePlaybackCard(Card,Error)||!Model.IsEligible(Card,S,Error)) return false;
+    if (!ValidatePlaybackCard(Card,Error,Profile->bDamageEnabled)||!Model_.IsEligible(Card,S,Error)) return false;
     // Loaded dependency only. No Resolve/Load call or alternate animation path in the playback consumer.
+    SetComponentTickEnabled(true);
     UAnimSequence* Sequence=Card->Spec().Sequence.Get();
     if (!IsValid(Sequence)||!IsValid(Anim)||OwnerBoss->GetMesh()->GetAnimInstance()!=Anim)
     {Error=TEXT("Framework.Playback.DependencyDrift");return false;}
     // BOSS-EXE-002: the attack instance is reserved BEFORE playback; a failed play aborts that instance.
     TArray<FRPGBossMoveModelEvent> Events;
-    if (!Model.Start(Card,S,Token,Events,Error)) return false;
+    if (!Model_.Start(Card,S,Token,Events,Error)) return false;
     LogEvents(Events);
     OwnedMontage=Anim->PlaySlotAnimationAsDynamicMontage(Sequence,Card->Spec().SlotName,Profile->BlendInSeconds,Profile->BlendOutSeconds,Card->Spec().PlayRate,1,-1.f,0.f);
     if (!OwnedMontage) {Error=TEXT("Framework.Playback.StartFailed");Abort(Error);return false;}
-    if (!Model.AdvanceObservedLocal(Token,0.,Events,Error)) {Abort(Error);return false;}
+    if (!Model_.AdvanceObservedLocal(Token,0.,Events,Error)) {Abort(Error);return false;}
     StartWorldSeconds=LastWorldSeconds=GetWorld()->GetTimeSeconds(); LastPosition=0.; bSawPoseWeight=false;
-    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] playback_start encounter=%llu generation=%llu instance=%llu montage=%s slot=%s rate=%g label=F3_fixture"),Token.EncounterId,Token.Generation,Token.InstanceId,*OwnedMontage->GetPathName(),*Card->Spec().SlotName.ToString(),Card->Spec().PlayRate);
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] playback_start encounter=%llu generation=%llu instance=%llu montage=%s slot=%s rate=%g label=%s"),Token.EncounterId,Token.Generation,Token.InstanceId,*OwnedMontage->GetPathName(),*Card->Spec().SlotName.ToString(),Card->Spec().PlayRate,*Label());
     return true;
 }
 void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActorComponentTickFunction* Tick)
@@ -66,31 +102,88 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
     if (!FMath::IsFinite(Now)||Now<LastWorldSeconds||Now-StartWorldSeconds>Profile->WalkTimeoutSeconds)
     {Fail(TEXT("Framework.Playback.TimeoutOrClock"));return;}
     LastWorldSeconds=Now;
-    if (Model.State()==ERPGBossMoveModelState::Idle)
+    if (Model_.State()==ERPGBossMoveModelState::Idle)
     {
         if (!Anim->Montage_IsActive(OwnedMontage))
         {OwnedMontage=nullptr;bFinished=true;SetComponentTickEnabled(false);UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] cleanup reason=Finished modelIdle=1 ownedMontageStopped=1"));}
         return;
     }
-    if (!Anim->Montage_IsPlaying(OwnedMontage)) {Fail(TEXT("Framework.Playback.EarlyStop"));return;}
-    const double Position=Anim->Montage_GetPosition(OwnedMontage);
+    // A montage reaching its natural blend-out point (clip length - blend out) stops itself, possibly between two ticks. That is a finish when the last
+    // observed position was within 1.5 ticks (or the blend-out span, whichever is larger) of that point (the profile guarantees RecoveryEnd + BlendOut <= clip length); anything earlier is an interruption.
+    const bool bPlaying=Anim->Montage_IsPlaying(OwnedMontage);
+    const double NaturalEnd=Card->Metadata().ClipLengthSeconds-Profile->BlendOutSeconds;
+    if (!bPlaying&&LastPosition+FMath::Max(double(Delta)*Card->Spec().PlayRate*1.5,double(Profile->BlendOutSeconds))<NaturalEnd) {Fail(TEXT("Framework.Playback.EarlyStop"));return;}
+    const double Position=bPlaying?Anim->Montage_GetPosition(OwnedMontage):FMath::Max(NaturalEnd,LastPosition);
     const float Node=Anim->GetSlotNodeGlobalWeight(Card->Spec().SlotName), Weight=Anim->GetSlotMontageGlobalWeight(Card->Spec().SlotName);
     if (!FMath::IsFinite(Node)||!FMath::IsFinite(Weight)||!FMath::IsFinite(Position)||Position<LastPosition)
     {Fail(TEXT("Framework.Playback.Observation"));return;}
     if (Node>0.f&&Weight>0.f) bSawPoseWeight=true;
-    if ((!bSawPoseWeight&&Now-StartWorldSeconds>Profile->BlendInSeconds)||((Node<=0.f||Weight<=0.f)&&Position>=Card->Spec().ActiveStartSeconds))
+    if (bPlaying&&((!bSawPoseWeight&&Now-StartWorldSeconds>Profile->BlendInSeconds)||((Node<=0.f||Weight<=0.f)&&Position>=Card->Spec().ActiveStartSeconds)))
     {Fail(TEXT("Framework.Playback.NoSlotContribution"));return;}
-    if (!Model.HeadingCommitted())
+    if (!bPlaying) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] montage_natural_end instance=%llu lastPosition=%g naturalEnd=%g"),Token.InstanceId,LastPosition,NaturalEnd);
+    if (!Model_.HeadingCommitted())
     {
         const FVector D=Target->GetActorLocation()-OwnerBoss->GetActorLocation();
         const float Yaw=FMath::FixedTurn(OwnerBoss->GetActorRotation().Yaw,D.Rotation().Yaw,Card->Spec().TrackDegreesPerSecond*Delta);
         OwnerBoss->SetActorRotation(FRotator(0.f,Yaw,0.f));
     }
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] playback instance=%llu position=%g nodeWeight=%g montageWeight=%g base=%s tip=%s"),Token.InstanceId,Position,Node,Weight,*OwnerBoss->GetMesh()->GetSocketLocation(TEXT("weapon_r")).ToString(),*OwnerBoss->GetMesh()->GetSocketLocation(TEXT("root_weapon_end_r")).ToString());
-    LastPosition=Position; TArray<FRPGBossMoveModelEvent> Events; FString Error;
-    if (!Model.AdvanceObservedLocal(Token,Position,Events,Error)) {LogEvents(Events);Fail(*Error);return;}
+    const double PrevPosition=LastPosition; LastPosition=Position; TArray<FRPGBossMoveModelEvent> Events; FString Error;
+    if (!Model_.AdvanceObservedLocal(Token,Position,Events,Error)) {LogEvents(Events);Fail(*Error);return;}
     LogEvents(Events);
-    if (Model.State()==ERPGBossMoveModelState::Idle) StopOwned(Profile->BlendOutSeconds);
+    SweepWindows(PrevPosition,Position);
+    if (Model_.State()==ERPGBossMoveModelState::Idle) StopOwned(Profile->BlendOutSeconds);
+}
+void URPGFrameworkMoveExecutor::SweepWindows(double PrevPosition,double Position)
+{
+    if (!Profile->bDamageEnabled||!Resolver.IsValid()||!Target.IsValid()||!OwnerBoss.IsValid()) return;
+    USkeletalMeshComponent* Mesh=OwnerBoss->GetMesh();
+    for (const FRPGBossMoveWindow& W:Card->Spec().Windows)
+    {
+        // The sockets are read live every tick: the blade is not rigid (measured 67..123 cm base-to-tip over the clip).
+        const FVector A=Mesh->GetSocketLocation(W.SocketA), B=Mesh->GetSocketLocation(W.SocketB);
+        FWindowPose& Prev=PrevPoses.FindOrAdd(W.WindowId);
+        const bool bHad=Prev.bValid; const FVector PA=Prev.A, PB=Prev.B;
+        Prev.A=A; Prev.B=B; Prev.bValid=true;
+        FRPGSweepPose PrevTick; PrevTick.A=PA; PrevTick.B=PB; FRPGSweepPose CurrentTick; CurrentTick.A=A; CurrentTick.B=B;
+        TArray<FRPGSweepPose> Keys; bool bBaked=false; double Lo=0., Hi=0.;
+        if (!bHad||!RPGBossSweep::BuildKeyPoses(W,PrevPosition,Position,PrevTick,CurrentTick,Keys,bBaked,Lo,Hi)) continue;
+        // Baked poses are component space: the component transform of THIS tick puts them in the world (the heading is fixed after the commit time, before any window).
+        if (bBaked) { const FTransform Xf=Mesh->GetComponentTransform(); for (FRPGSweepPose& K:Keys) { K.A=Xf.TransformPosition(K.A); K.B=Xf.TransformPosition(K.B); } }
+        else
+        {
+            // Live sockets: only the part of this tick the window was open, subdivided by tip distance (profile step and cap), each substep one swept capsule.
+            const FRPGSweepPose First=Keys[0], Last=Keys.Last();
+            const double TipDistance=FVector::Dist(First.B,Last.B);
+            const int32 Wanted=FMath::Max(1,FMath::CeilToInt(float(TipDistance/Profile->HitStepCm))), Substeps=FMath::Min(Wanted,Profile->HitMaxSubsteps);
+            Keys.Reset();
+            for (int32 I=0;I<=Substeps;++I) { const double F=double(I)/Substeps; FRPGSweepPose K; K.A=FMath::Lerp(First.A,Last.A,F); K.B=FMath::Lerp(First.B,Last.B,F); Keys.Add(K); }
+        }
+        double TipDistance=0.; for (int32 I=1;I<Keys.Num();++I) TipDistance+=FVector::Dist(Keys[I-1].B,Keys[I].B);
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] sweep instance=%llu window=%s from=%g to=%g tipDistanceCm=%g substeps=%d clamped=0 baked=%d"),Token.InstanceId,*W.WindowId.ToString(),Lo,Hi,TipDistance,Keys.Num()-1,bBaked?1:0);
+        FCollisionQueryParams Params(SCENE_QUERY_STAT(FrameworkSweep),false,OwnerBoss.Get());
+        const FCollisionObjectQueryParams Objects(ECC_Pawn);
+        bool bContact=false;
+        for (int32 I=1;I<Keys.Num()&&!bContact;++I)
+        {
+            // Each pair of consecutive key poses is one swept capsule, so the chain has no gaps even across a long frame.
+            const FVector PoseA0=Keys[I-1].A, PoseB0=Keys[I-1].B, PoseA1=Keys[I].A, PoseB1=Keys[I].B;
+            const FVector Axis=PoseB1-PoseA1; const double Length=Axis.Size();
+            if (Length<KINDA_SMALL_NUMBER) continue;
+            const FQuat Rotation=FQuat::FindBetweenNormals(FVector::UpVector,Axis/Length);
+            const FCollisionShape Shape=FCollisionShape::MakeCapsule(W.RadiusCm,float(Length*.5)+W.RadiusCm);
+            TArray<FHitResult> Hits;
+            GetWorld()->SweepMultiByObjectType(Hits,(PoseA0+PoseB0)*.5,(PoseA1+PoseB1)*.5,Rotation,Objects,Shape,Params);
+            for (const FHitResult& H:Hits) if (H.GetActor()==Target.Get()) {bContact=true;break;}
+        }
+        if (!bContact) continue;
+        FRPGDamagePayload Payload;
+        Payload.MoveId=Card->Spec().MoveId; Payload.AttackInstance=int32(Token.InstanceId); Payload.Generation=int32(Token.Generation);
+        Payload.HitKey=W.HitGroup.IsNone()?W.WindowId:W.HitGroup; Payload.HPDamage=Card->Spec().HPDamage;
+        const FRPGDamageResult Result=Resolver->Resolve(Target.Get(),Payload);
+        if (Result.Outcome==ERPGDamageOutcome::Accepted) {++HitsAccepted; AppliedDamage+=Result.HPApplied; if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);}
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] hit instance=%llu window=%s key=%s outcome=%s hpApplied=%g healthBefore=%g healthAfter=%g"),Token.InstanceId,*W.WindowId.ToString(),*Payload.HitKey.ToString(),*UEnum::GetValueAsString(Result.Outcome),Result.HPApplied,Result.HealthBefore,Result.HealthAfter);
+    }
 }
 void URPGFrameworkMoveExecutor::LogEvents(const TArray<FRPGBossMoveModelEvent>& Events) const
 {
@@ -105,9 +198,10 @@ void URPGFrameworkMoveExecutor::LogEvents(const TArray<FRPGBossMoveModelEvent>& 
         case ERPGBossMoveModelEvent::Finished:Kind=TEXT("Finished");break;
         case ERPGBossMoveModelEvent::Aborted:Kind=TEXT("Aborted");break;
         }
-        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] event encounter=%llu generation=%llu instance=%llu kind=%s window=%s group=%s localSeconds=%g label=F3_fixture"),E.Token.EncounterId,E.Token.Generation,E.Token.InstanceId,Kind,*E.WindowId.ToString(),*E.HitGroup.ToString(),E.LocalSeconds);
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] event encounter=%llu generation=%llu instance=%llu kind=%s window=%s group=%s localSeconds=%g label=%s"),E.Token.EncounterId,E.Token.Generation,E.Token.InstanceId,Kind,*E.WindowId.ToString(),*E.HitGroup.ToString(),E.LocalSeconds,*Label());
     }
 }
+FString URPGFrameworkMoveExecutor::Label() const {return Profile?Profile->FixtureLabel.Replace(TEXT(" "),TEXT("_")):FString(TEXT("none"));}
 void URPGFrameworkMoveExecutor::StopOwned(float Blend)
 {if(IsValid(Anim)&&IsValid(OwnedMontage))Anim->Montage_Stop(Blend,OwnedMontage);}
 void URPGFrameworkMoveExecutor::Abort(const FString& Reason)
@@ -115,11 +209,11 @@ void URPGFrameworkMoveExecutor::Abort(const FString& Reason)
     // Cleanup runs exactly once: a clean finish or an earlier abort makes later calls (Fail, EndPlay) no-ops.
     if (bAborted||bFinished) return;
     TArray<FRPGBossMoveModelEvent> Events; FString Error;
-    if (Token.InstanceId) Model.Abort(Token,Events,Error);
+    if (Token.InstanceId) Model_.Abort(Token,Events,Error);
     bAborted=true; LogEvents(Events); StopOwned(0.f); OwnedMontage=nullptr; SetComponentTickEnabled(false);
-    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] cleanup reason=%s modelIdle=%d ownedMontageStopped=1"),*Reason,Model.State()==ERPGBossMoveModelState::Idle);
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] cleanup reason=%s modelIdle=%d ownedMontageStopped=1"),*Reason,Model_.State()==ERPGBossMoveModelState::Idle);
 }
-bool URPGFrameworkMoveExecutor::IsIdle() const {return Model.State()==ERPGBossMoveModelState::Idle&&!OwnedMontage;}
+bool URPGFrameworkMoveExecutor::IsIdle() const {return Model_.State()==ERPGBossMoveModelState::Idle&&!OwnedMontage;}
 bool URPGFrameworkMoveExecutor::IsClean() const {return IsIdle();}
 void URPGFrameworkMoveExecutor::EndPlay(const EEndPlayReason::Type Reason)
 {Abort(TEXT("EndPlay"));Super::EndPlay(Reason);}
