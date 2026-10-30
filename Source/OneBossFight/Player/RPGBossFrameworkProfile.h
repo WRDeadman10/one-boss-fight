@@ -58,6 +58,13 @@ public:
     UPROPERTY(EditAnywhere) float StaggerSeconds=0.f;
     UPROPERTY(EditAnywhere) float PostureRegenDelaySeconds=0.f;
     UPROPERTY(EditAnywhere) float PostureRegenPerSecond=0.f;
+    /** F9 bleed (F5 fixture with a hittable boss; BleedBuildupPerHit 0 = off, the other four must then be 0 too): each player hit adds BleedBuildupPerHit; at the threshold (first BleedInitialThreshold,
+     *  raised by BleedThresholdIncrease after each proc up to BleedThresholdMax) the boss loses BleedHpFraction of its maximum health at once, never its last point (RPGBleedRules, unchanged). Design values, proposed. */
+    UPROPERTY(EditAnywhere) float BleedBuildupPerHit=0.f;
+    UPROPERTY(EditAnywhere) float BleedInitialThreshold=0.f;
+    UPROPERTY(EditAnywhere) float BleedThresholdIncrease=0.f;
+    UPROPERTY(EditAnywhere) float BleedThresholdMax=0.f;
+    UPROPERTY(EditAnywhere) float BleedHpFraction=0.f;
     UPROPERTY(EditAnywhere) FTransform MeshRelativeTransform;
     UPROPERTY(EditAnywhere) bool bAlignmentAuthored=false;
 };
