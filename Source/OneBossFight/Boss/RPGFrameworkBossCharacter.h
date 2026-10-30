@@ -30,6 +30,8 @@ public:
     uint64 CurrentGeneration() const { return GenerationId; }
     /** Encounter restart after the boss died or finished (explicit, proof/test authority): next generation, health and state back, walks to the band again. */
     bool RestartEncounter(uint64 NewGeneration,FString& Error);
+    /** Pure state check of the restart preconditions RestartEncounter enforces first (terminal state, newer generation): lets the proof fixture refuse BEFORE it rewrites the target's health (Codex X-370 P2). */
+    bool CanRestart(uint64 NewGeneration) const {return bInitialized&&!bFailed&&(bDead||bSucceeded)&&NewGeneration>GenerationId;}
     virtual void Tick(float Delta) override;
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
 private:
