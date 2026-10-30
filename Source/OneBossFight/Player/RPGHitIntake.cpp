@@ -436,21 +436,61 @@ void URPGHitIntake::InjectBossAttackHitForTest(AActor* Boss, FName Weapon, ERPGA
 #endif
 }
 
+void URPGHitIntake::InjectBossPendingHitForTest(AActor* Boss, FName Weapon, ERPGAttackKind Kind, int32 Blades)
+{
+#if UE_BUILD_SHIPPING
+	return;
+#else
+	if (!Boss || !Cast<IRPGNativeBossHealth>(Boss) || Blades < 1 || Blades > 4)
+	{
+		UE_LOG(LogRPGHitIntake, Warning, TEXT("[FrameworkProof] pending_hit_refused reason=NoNativeBossOrBlades"));
+		return;
+	}
+	for (int32 Blade = 0; Blade < Blades; ++Blade)
+	{
+		FPending Entry;
+		UObject* ActiveTarget = nullptr;
+		Entry.Record = BuildRecord(FHitResult(Boss, nullptr, Boss->GetActorLocation(), FVector::UpVector), Boss, ActiveTarget);
+		Entry.Record.Weapon = Weapon;
+		Entry.Record.Montage = FName(TEXT("FrameworkProofSyntheticSwing"));
+		Entry.bNative = true;
+		Entry.bForceKind = true;
+		Entry.ForcedKind = Kind;
+		Pending.Add(MoveTemp(Entry));
+	}
+	UE_LOG(LogRPGHitIntake, Log, TEXT("[FrameworkProof] pending_hit_queued weapon=%s kind=%s blades=%d"), *Weapon.ToString(), RPGAttackKindName(Kind), Blades);
+	if (!bFinalizeScheduled && GetWorld())
+	{
+		bFinalizeScheduled = true;
+		GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateUObject(this, &URPGHitIntake::FinalizePending));
+	}
+#endif
+}
+
 void URPGHitIntake::HandlePackHit(FHitResult HitResult)
 {
 	AActor* Target = HitResult.GetActor();
 	// A boss with native health (the framework Sevarog) takes the hit directly: no pack damage execution, record, scaler or posture runs for it.
+	bool bNativeBoss = false;
 	if (IRPGNativeBossHealth* Native = Cast<IRPGNativeBossHealth>(Target))
 	{
-		Native->ApplyPlayerHit(1.0);
-		return;
+		// KI-151: a REAL swing (the attacker's weapon collision is bound, so its attack data will exist one frame later) joins the Pending path and takes its weapon attack row;
+		// a hit without a weapon collision (every injected proof hit) keeps the immediate path with the profile constants, exactly as before.
+		UObject* Probe = nullptr;
+		BuildRecord(HitResult, Target, Probe);
+		if (!Probe)
+		{
+			Native->ApplyPlayerHit(1.0);
+			return;
+		}
+		bNativeBoss = true;
 	}
-	if (!Target || !URPGPlayerMovesSubsystem::IsPackBoss(Target))
+	if (!bNativeBoss && (!Target || !URPGPlayerMovesSubsystem::IsPackBoss(Target)))
 	{
 		++OtherHitCount;
 		return;
 	}
-	if (GetWorld())
+	if (!bNativeBoss && GetWorld())
 	{
 		HotUntil = GetWorld()->GetTimeSeconds() + FRPGDamageScaler::Window + 0.1;
 	}
@@ -458,6 +498,7 @@ void URPGHitIntake::HandlePackHit(FHitResult HitResult)
 	UObject* ActiveTarget = nullptr;
 	Entry.Record = BuildRecord(HitResult, Target, ActiveTarget);
 	Entry.ActiveTarget = ActiveTarget;
+	Entry.bNative = bNativeBoss;
 	Pending.Add(MoveTemp(Entry));
 	if (!bFinalizeScheduled && GetWorld())
 	{
@@ -511,7 +552,7 @@ void URPGHitIntake::FinalizePending()
 			Record.AttackPower = ReadByte(Data, TEXT("AttackPower"));
 			Record.PackPoiseDamage = ReadFloat(Data, TEXT("PoiseDamage"));
 		}
-		Record.Kind = RPGClassifyAttack(Record.AttackData, Record.bAirborne || Record.bAirborneAtStart);
+		Record.Kind = Entry.bForceKind ? Entry.ForcedKind : RPGClassifyAttack(Record.AttackData, Record.bAirborne || Record.bAirborneAtStart);
 		// The dual swords' strong and jump heavy swings carry the generic Default attack data (the data says Light): when the hit's montage is the montage of the current (or last) swing and the swing tracker found it in the ability's strong or charged array, the swing's kind stands (M13).
 		if (Record.Kind == ERPGAttackKind::Light || Record.Kind == ERPGAttackKind::JumpLight)
 		{
@@ -539,6 +580,26 @@ void URPGHitIntake::FinalizePending()
 			}
 		}
 		Record.HealthMultiplier = Record.Row.HealthDamageMultiplier;
+		if (Entry.bNative)
+		{
+			// A native-health boss: the row goes straight into its own health, posture and bleed (no pack scaler, no pack components).
+			Record.bAmbiguous = bShared;
+			Record.Id = ++BossHitCount;
+			LastRecord = Record;
+			Lines.Add(Record.ToString());
+			if (Lines.Num() > 64)
+			{
+				Lines.RemoveAt(0);
+			}
+			UE_LOG(LogRPGHitIntake, Log, TEXT("%s"), *Record.ToString());
+			if (IRPGNativeBossHealth* Native = Cast<IRPGNativeBossHealth>(Record.Target.Get()))
+			{
+				UE_LOG(LogRPGHitIntake, Log, TEXT("[FrameworkProof] attack_row weapon=%s kind=%s found=%d posture=%g bleed=%g healthMult=%g via=pending"), *Record.Weapon.ToString(), RPGAttackKindName(Record.Kind), Record.bRowFound ? 1 : 0, Record.Row.PostureDamage, Record.Row.BleedBuildup, Record.Row.HealthDamageMultiplier);
+				Native->ApplyPlayerAttackHit(Record.Row, 1.0);
+			}
+			OnBossHit.Broadcast(Record);
+			continue;
+		}
 		if (AActor* ScaledBoss = Record.Target.Get())
 		{
 			const double Adjust = Scaler.OnHit(GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0, Record.HealthMultiplier);

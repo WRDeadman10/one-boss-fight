@@ -81,6 +81,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Hit intake")
 	void InjectBossAttackHitForTest(AActor* Boss, FName Weapon, ERPGAttackKind Kind);
 
+	/** KI-151 test hook: the same hit as a real swing would produce, through the Pending/FinalizePending path of a native-health boss (one frame later; Blades > 1 hits with the same Montage in the same frame merge into ONE hit, as the dual swords' two blades do). */
+	UFUNCTION(BlueprintCallable, Category = "Hit intake")
+	void InjectBossPendingHitForTest(AActor* Boss, FName Weapon, ERPGAttackKind Kind, int32 Blades);
+
 	/**
 	 * The pack names the intake reads, looked up on the pack's Blueprint classes with no world (for the PackWiring test: a pack update that renames one fails there, not silently in a fight):
 	 * BP_CollisionComponent_C.OnHit(FHitResult), the trace target variables HitData, Attack Data and bCollisionEnabled?, BP_HitData_C.AttackData, BP_AttackData_C.AttackPower and PoiseDamage, the four melee attack data assets.
@@ -152,6 +156,11 @@ private:
 	{
 		FRPGHitRecord Record;
 		TWeakObjectPtr<UObject> ActiveTarget;
+		/** KI-151: the target is a native-health boss: FinalizePending hands it the attack row (ApplyPlayerAttackHit) instead of running the pack scaler, posture and bleed components. */
+		bool bNative = false;
+		/** Test hook only: use this attack kind instead of classifying the pack's attack data (there is none for a synthetic entry). */
+		bool bForceKind = false;
+		ERPGAttackKind ForcedKind = ERPGAttackKind::Unknown;
 	};
 
 	bool TryBind();
