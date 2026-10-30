@@ -17,6 +17,8 @@ LIVE = float(open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution
 LIVED = []
 INJECT_PIE = [float(x) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_inject_pie.txt').read().strip().split(',') if x] if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_inject_pie.txt') else []  # C-449: injected player hits at these seconds after PIE start (the boss may still be walking: a neutral stance break)
 INJECTED_PIE = []
+INJECT_ROW = [(float(x.split(':')[0]), x.split(':')[1], x.split(':')[2]) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_inject_row.txt').read().strip().split(',') if x] if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_inject_row.txt') else []  # C-457 (F10): "seconds:WeaponStyle:AttackKind,..." after playback_start: hits carrying the DA_WeaponAttacks row
+INJECTED_ROW = []
 DIAG_LONG = os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_diag_long.txt')  # C-449 (KI-150 follow-up): DIAG every second until 20 s of PIE and do not stop on a FrameworkProof ERROR
 DIAG_LAST = [-1.0]
 S = {'dodge_t': None, 'down': False, 'up': False, 'phase': 'load', 't': 0.0, 'n': 0, 'handle': None, 'pie_t': 0.0, 'diag': False}
@@ -124,6 +126,22 @@ def tick(dt):
                         intake.inject_boss_hit_for_test(bosses[0])
                         log('injected hit %d at %.3f s after playback_start' % (len(INJECTED) + 1, S['pie_t'] - S['dodge_t']))
                         INJECTED.append(S['pie_t'])
+            if INJECT_ROW:
+                if S['dodge_t'] is None and log_has('[FrameworkProof] playback_start'):
+                    S['dodge_t'] = S['pie_t']
+                if S['dodge_t'] is not None and len(INJECTED_ROW) < len(INJECT_ROW) and (S['pie_t'] - S['dodge_t']) >= INJECT_ROW[len(INJECTED_ROW)][0]:
+                    w = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
+                    pawn = unreal.GameplayStatics.get_player_pawn(w, 0) if w else None
+                    intake = pawn.get_component_by_class(unreal.RPGHitIntake) if pawn else None
+                    bosses = unreal.GameplayStatics.get_all_actors_of_class(w, unreal.RPGFrameworkBossCharacter) if w else []
+                    sec, weapon, kind = INJECT_ROW[len(INJECTED_ROW)]
+                    enum_name = ''.join('_' + c if c.isupper() and i else c for i, c in enumerate(kind)).upper()
+                    if intake is not None and bosses:
+                        intake.inject_boss_attack_hit_for_test(bosses[0], weapon, getattr(unreal.RPGAttackKind, enum_name))
+                        log('injected row hit %d %s %s at %.3f s after playback_start' % (len(INJECTED_ROW) + 1, weapon, kind, S['pie_t'] - S['dodge_t']))
+                    else:
+                        log('inject row hit impossible')
+                    INJECTED_ROW.append(S['pie_t'])
             if INJECT_PIE and len(INJECTED_PIE) < len(INJECT_PIE) and S['pie_t'] >= INJECT_PIE[len(INJECTED_PIE)]:
                 w = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
                 pawn = unreal.GameplayStatics.get_player_pawn(w, 0) if w else None
