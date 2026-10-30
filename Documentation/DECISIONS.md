@@ -1220,3 +1220,15 @@ DD30Chronology C346 STOP 2026-10-29: promoted accepted2new+3edited cppfiles, Sou
 
 
 
+
+
+DD27m C359 measured 2026-10-30: ownerYes/fresh219Source/DLL332afd49/HEAD6ef433e reviewedfiledelta,6actualreceiptpins; ONEV2onlySAVEexit0/helperSUCCESS,22properties/4of4Fields. Exactly1NEWV2asset, original3bit-identical; Content11756/Data20,Config/Source/toolkit/binary unchanged. Saved1new+4changed+16removed oldfiles, originUNKNOWN/noCodexdelete,metadata retained. Raw/hash/newasset/report Codex/DD27m/RUN_REPORT_TO_CLAUDE.md. Not freshreload/compile/preflight; DD27k awaits separate leadrelease. HEADstop preserved/no silentretry/gitmutation.
+
+
+DD27k C361.1 FAILED 2026-10-30: accepted onepath-onlyV2revision promoted, Source219; ONEbuildexit0/noUHT/3warnings, ONEfocusedtest1finished0passed1failed/exit255. BossCompile ready1; HeroV2 Fields4 ready0: required skeleton/animation dependencies missing (which member UNKNOWN). Twelve-plan preflight notrun. Fourassets unchanged,Content11756/Data20/Config/toolkit/source stable;newDLL frozen;no fix/retry/fullsuite. Evidence Codex/DD27k/run_C361/RUN_REPORT_TO_CLAUDE.md.
+
+
+C365 design-only proposal 2026-10-30: Codex/Framework/FRAMEWORK_DESIGN_V1.md maps Morgott/Mohg ownership patterns to currentSource and proposes minimalSevarogwalk/select/oneMoveCard/authoredsweptwindow+singleHPbridge+abort path. Allnewcontracts/unmeasuredassumptions/testgates marked, no code/build/run/activation approval. SOURCE_CITATIONS_V1.json reopens/pins21primaryfiles. V3 authoring packets alreadyprepared X355; no save/runrelease inferred from design.
+
+F3a C392 2026-10-30 (lead, Claude): Codex staged F3a source promoted with four lead changes: (1) executor reserves the attack instance (Model.Start) BEFORE playing the montage; a failed play aborts the reserved instance; (2) executor Abort is a no-op after a clean finish or an earlier abort (cleanup exactly once) and the tick is disabled after a clean finish; (3) boss controller OnUnPossess stops its owned walk; (4) MoveTo cannot finish a NEW accepted request before OwnedRequest is set (engine PathFollowingComponent.cpp RequestMove: callbacks inside MoveTo carry the aborted previous id or an immediate-finish id handled via the result code); OwnedRequest is invalidated before MoveTo. CookCoverage: the F3 test fixture paths (Paragon Sevarog, FrameworkProof) are listed in an explicit EditorProofOnly set in RPGAutomationTests.cpp for the two test files only; shipping the Sevarog boss needs its content in DirectoriesToAlwaysCook (owner decision, about 1.4 GB, not made). Full-suite rule restated: run with -DD27jManifestHash (sha256 of Codex/DD27j/run_C339/EmberWarden_PhaseTwo_fields_manifest.json = cd088e39...), else AuthoredDraft fails by design.
+

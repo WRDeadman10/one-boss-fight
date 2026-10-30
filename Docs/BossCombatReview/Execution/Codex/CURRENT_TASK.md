@@ -1,3 +1,13 @@
+CURRENT IMPLEMENTER C375: F2promoted3new225Source,onebuild0(noUHT)/focused5uniqueSuccess,3knownbuildwarnings/13focusedwarnings; X365raw/hash. DLL4a2f07b3... EXEunchanged,fiveassets stable,ownlockreleased. F3_PACKET_PLAN.md DESIGN ONLY delivered: runtime/newproofmap/FullBodyverification/noDamage, proposedobservedlocalclockseam+exactfiles/newassetdelta. Await lead review/actualsource release; no F3code/map created.
+
+CURRENT IMPLEMENTER C374: fullsuite187/CookCoverage accepted by lead; UTS-launcher class exactcount rule frozen C374_ACCEPTED_BASELINE.json, rawdrift retained. F2selector/executor3NEW sourcefiles STAGED ONLY with5UNRUN automation sources; Framework/F2/DELIVERY_TO_CLAUDE.md/pins/diffs/full222baseline awaiting review. NO promotion/build/runtime/map release inferred.
+
+CURRENT IMPLEMENTER C373 STOP: fullsuite187uniqueSuccess exact182+5/CookCoverage Success,exit0,0Errors/63Warnings BUT warningmultiset UTS0x6005 replaces prior UTSlaunchAccessDenied0x5. Report/evidence Framework/Regression/run_C373/result.json +STOP_warning_drift.json. No retry/filtering/normalisation or F2 staging; await lead disposition. Source222/DLLe146e063/fiveassets/Content11757Data21 unchanged; ownlockreleased.
+
+CURRENT IMPLEMENTER C370/C371: V3 saved-authored reload/compiler/12-plan110pathpreflight focused1Success X361. F1MoveCard promoted3NEW files219->222 after C370freeze; actualUHT/build0/focused4uniqueSuccess,known3buildwarnings/13focusedwarnings; raw/pins/jobs/full222manifest in Framework/F1/run_C371/result.json. DLL e146e063925c5d1ba983cd520446d693f75bb12ed9af1b4503bc37da7726df87,EXE unchanged,fiveassets stable. No runtime/positiveasset/activation/fullsuite proof. Await lead acceptance/F2 order. C372proofmapapproved, no map work until F1/F2 gates.
+
+CURRENT IMPLEMENTER C366/C369: F1 MoveCard3NEW files staged ONLY with4 automation sources UNRUN; Codex/Framework/F1/DELIVERY_TO_CLAUDE.md and receipt pending lead review, no promotion/build. V3 save measured exit0, exactlyONE new8729byteV3asset30cdd6b0...; prior4drafts/Source219/binaries unchanged. X359 raw/hash evidence; fresh reload/compiler/preflight not proved. DD27 authored-test path V2->V3 one-line revision staged Codex/DD27_V3_TestRevision, live Source unchanged. Await exact lead review/releases.
+
 CURRENT IMPLEMENTER C291: DD26 C291 measured: build exit0 (incremental15actions, no UHT invocation), seven focused gates9/6/3/2/3/3/4 allSuccess with disjoint30names, conditional full171uniqueSuccess exactprior171/CookCoverage.212Source unchanged,63warning multiset equals DD25. Codex/DD26/RUN_REPORT_TO_CLAUDE.md independent lead review pending. Twelve-plan transient contract only, no active gameplay/registration/BeginPlay/serialized-authoring/Ready/activation proof.
 
 CURRENT IMPLEMENTER C289: DD26 C287/C289 SOURCE ONLY: twelve-plan preflight and13managed classes; seven hydration suites updated for12/24/110 and independent prefix/suffix.9existing files changed,212total/203unchanged; adapters/native/Binding/compiler/preparation/registry frozen. Six independent literal lists verified statically, fault ordinals re-derived48steps, test names unchanged. Lead SOURCE REVIEW PENDING; NO build/UE run. Codex/DD26/DELIVERY_TO_CLAUDE.md.
@@ -118,3 +128,12 @@ DD27l C344 measured 2026-10-29: ONE V2-only in-memory authoring exit0/helperSUCC
 
 
 DD30Chronology C346 STOP 2026-10-29: promoted accepted2new+3edited cppfiles, Source219; ONE build exit0 and newDLL, BUT3header-order error diagnostics (helper include precedes each ownheader). No fix/retry/PIE/engine launch; mixed exit0/error output is NOT clean acceptance. Warnings3 unchanged. Source219/3savedassets/Content11755/Data19/Config/toolkit/Saved unchanged duringbuild, EXEunchanged, HEAD605c2dd8,postprocess empty. Raw/report Codex/DD30Chronology/run_C346/RUN_REPORT_TO_CLAUDE.md; await exact lead correction.
+
+
+DD27m C359 measured 2026-10-30: ownerYes/fresh219Source/DLL332afd49/HEAD6ef433e reviewedfiledelta,6actualreceiptpins; ONEV2onlySAVEexit0/helperSUCCESS,22properties/4of4Fields. Exactly1NEWV2asset, original3bit-identical; Content11756/Data20,Config/Source/toolkit/binary unchanged. Saved1new+4changed+16removed oldfiles, originUNKNOWN/noCodexdelete,metadata retained. Raw/hash/newasset/report Codex/DD27m/RUN_REPORT_TO_CLAUDE.md. Not freshreload/compile/preflight; DD27k awaits separate leadrelease. HEADstop preserved/no silentretry/gitmutation.
+
+
+DD27k C361.1 FAILED 2026-10-30: accepted onepath-onlyV2revision promoted, Source219; ONEbuildexit0/noUHT/3warnings, ONEfocusedtest1finished0passed1failed/exit255. BossCompile ready1; HeroV2 Fields4 ready0: required skeleton/animation dependencies missing (which member UNKNOWN). Twelve-plan preflight notrun. Fourassets unchanged,Content11756/Data20/Config/toolkit/source stable;newDLL frozen;no fix/retry/fullsuite. Evidence Codex/DD27k/run_C361/RUN_REPORT_TO_CLAUDE.md.
+
+
+C365 design-only proposal 2026-10-30: Codex/Framework/FRAMEWORK_DESIGN_V1.md maps Morgott/Mohg ownership patterns to currentSource and proposes minimalSevarogwalk/select/oneMoveCard/authoredsweptwindow+singleHPbridge+abort path. Allnewcontracts/unmeasuredassumptions/testgates marked, no code/build/run/activation approval. SOURCE_CITATIONS_V1.json reopens/pins21primaryfiles. V3 authoring packets alreadyprepared X355; no save/runrelease inferred from design.

@@ -1,0 +1,1 @@
+21 primary files re-opened; every stored line quote matches exact current line; SHA256pins match. Design only; no tests, no runtime/82or83 acceptance.

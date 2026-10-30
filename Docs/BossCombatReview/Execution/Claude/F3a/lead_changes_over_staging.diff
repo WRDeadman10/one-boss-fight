@@ -1,0 +1,120 @@
+--- a/b/Source/OneBossFight/Boss/RPGFrameworkMoveExecutor.cpp	2026-10-30 13:03:20.601406800 +0530
++++ b/Source/OneBossFight/Boss/RPGFrameworkMoveExecutor.cpp	2026-10-30 15:47:52.065272800 +0530
+@@ -44,11 +44,12 @@
+     UAnimSequence* Sequence=Card->Spec().Sequence.Get();
+     if (!IsValid(Sequence)||!IsValid(Anim)||OwnerBoss->GetMesh()->GetAnimInstance()!=Anim)
+     {Error=TEXT("Framework.Playback.DependencyDrift");return false;}
+-    OwnedMontage=Anim->PlaySlotAnimationAsDynamicMontage(Sequence,Card->Spec().SlotName,Profile->BlendInSeconds,Profile->BlendOutSeconds,Card->Spec().PlayRate,1,-1.f,0.f);
+-    if (!OwnedMontage) {Error=TEXT("Framework.Playback.StartFailed");return false;}
++    // BOSS-EXE-002: the attack instance is reserved BEFORE playback; a failed play aborts that instance.
+     TArray<FRPGBossMoveModelEvent> Events;
+-    if (!Model.Start(Card,S,Token,Events,Error)) {StopOwned(0.f);OwnedMontage=nullptr;return false;}
++    if (!Model.Start(Card,S,Token,Events,Error)) return false;
+     LogEvents(Events);
++    OwnedMontage=Anim->PlaySlotAnimationAsDynamicMontage(Sequence,Card->Spec().SlotName,Profile->BlendInSeconds,Profile->BlendOutSeconds,Card->Spec().PlayRate,1,-1.f,0.f);
++    if (!OwnedMontage) {Error=TEXT("Framework.Playback.StartFailed");Abort(Error);return false;}
+     if (!Model.AdvanceObservedLocal(Token,0.,Events,Error)) {Abort(Error);return false;}
+     StartWorldSeconds=LastWorldSeconds=GetWorld()->GetTimeSeconds(); LastPosition=0.; bSawPoseWeight=false;
+     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] playback_start encounter=%llu generation=%llu instance=%llu montage=%s slot=%s rate=%g label=F3_fixture"),Token.EncounterId,Token.Generation,Token.InstanceId,*OwnedMontage->GetPathName(),*Card->Spec().SlotName.ToString(),Card->Spec().PlayRate);
+@@ -68,7 +69,7 @@
+     if (Model.State()==ERPGBossMoveModelState::Idle)
+     {
+         if (!Anim->Montage_IsActive(OwnedMontage))
+-        {OwnedMontage=nullptr;bFinished=true;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] cleanup reason=Finished modelIdle=1 ownedMontageStopped=1"));}
++        {OwnedMontage=nullptr;bFinished=true;SetComponentTickEnabled(false);UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] cleanup reason=Finished modelIdle=1 ownedMontageStopped=1"));}
+         return;
+     }
+     if (!Anim->Montage_IsPlaying(OwnedMontage)) {Fail(TEXT("Framework.Playback.EarlyStop"));return;}
+@@ -111,6 +112,8 @@
+ {if(IsValid(Anim)&&IsValid(OwnedMontage))Anim->Montage_Stop(Blend,OwnedMontage);}
+ void URPGFrameworkMoveExecutor::Abort(const FString& Reason)
+ {
++    // Cleanup runs exactly once: a clean finish or an earlier abort makes later calls (Fail, EndPlay) no-ops.
++    if (bAborted||bFinished) return;
+     TArray<FRPGBossMoveModelEvent> Events; FString Error;
+     if (Token.InstanceId) Model.Abort(Token,Events,Error);
+     bAborted=true; LogEvents(Events); StopOwned(0.f); OwnedMontage=nullptr; SetComponentTickEnabled(false);
+--- a/b/Source/OneBossFight/Boss/RPGFrameworkBossController.cpp	2026-10-30 12:55:14.968106200 +0530
++++ b/Source/OneBossFight/Boss/RPGFrameworkBossController.cpp	2026-10-30 15:47:52.210056600 +0530
+@@ -18,6 +18,10 @@
+     {Error=TEXT("Framework.Nav.Projection");return false;}
+     FAIMoveRequest Request; Request.SetGoalLocation(Projected.Location); Request.SetAcceptanceRadius(P.AcceptanceCm);
+     Request.SetUsePathfinding(true);Request.SetAllowPartialPath(false);Request.SetReachTestIncludesAgentRadius(false);Request.SetReachTestIncludesGoalRadius(false);
++    // Engine order (PathFollowingComponent.cpp RequestMove): callbacks fired inside MoveTo carry the id of the ABORTED previous
++    // request or of an immediate-finish request (failed/already-at-goal, handled below via R.Code); a new accepted request only
++    // starts moving there, so its completion cannot arrive before OwnedRequest is assigned. Invalidate first so an old id is ignored.
++    OwnedRequest=FAIRequestID::InvalidRequest;
+     FNavPathSharedPtr Path; BossOwner=Boss;
+     const FPathFollowingRequestResult R=MoveTo(Request,&Path);
+     if (R.Code==EPathFollowingRequestResult::Failed||!Path.IsValid()||Path->IsPartial())
+@@ -36,6 +40,11 @@
+     if (Result.Code==EPathFollowingResult::Success) BossOwner->WalkArrived();
+     else BossOwner->Fail(TEXT("Framework.Nav.MoveFailed"));
+ }
++void ARPGFrameworkBossController::OnUnPossess()
++{
++    StopOwnedWalk();
++    Super::OnUnPossess();
++}
+ void ARPGFrameworkBossController::StopOwnedWalk()
+ {
+     // Invalidate before StopMovement, whose completion callback can run synchronously.
+--- a/b/Source/OneBossFight/Boss/RPGFrameworkBossController.h	2026-10-30 12:55:14.968106200 +0530
++++ b/Source/OneBossFight/Boss/RPGFrameworkBossController.h	2026-10-30 15:47:52.300928400 +0530
+@@ -11,6 +11,7 @@
+     bool WalkToBand(ARPGFrameworkBossCharacter* Boss,FString& Error);
+     void StopOwnedWalk();
+     virtual void OnMoveCompleted(FAIRequestID RequestID,const FPathFollowingResult& Result) override;
++    virtual void OnUnPossess() override;
+ private:
+     FAIRequestID OwnedRequest=FAIRequestID::InvalidRequest;
+     TWeakObjectPtr<ARPGFrameworkBossCharacter> BossOwner;
+--- a/b/Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp	2026-10-30 12:58:50.429917100 +0530
++++ b/Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp	2026-10-30 15:48:05.818709400 +0530
+@@ -186,5 +186,18 @@
+     }
+     return true;
+ }
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveModelReserveBeforePlayback,"OneBossFight.Framework.MoveModel.ReserveBeforePlayback",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
++bool FBossMoveModelReserveBeforePlayback::RunTest(const FString&)
++{
++    // BOSS-EXE-002: the executor calls Start (reserve) before it plays the montage and Abort when the play fails.
++    using namespace BossMoveModelFixture;FRun R;if(!R.Start())return false;
++    TestTrue(TEXT("instance exists before any playback"),R.Token.InstanceId!=0&&R.Model.AcceptsCallback(R.Token));
++    TestTrue(TEXT("reserved attack is Committed"),R.Model.State()==ERPGBossMoveModelState::Committed);
++    TestTrue(TEXT("failed playback aborts the reserved instance"),R.Model.Abort(R.Token,R.Events,R.Error));
++    TestTrue(TEXT("model Idle after failed playback"),R.Model.State()==ERPGBossMoveModelState::Idle);
++    TestEqual(TEXT("exactly one event"),R.Events.Num(),1);if(R.Events.Num()==1)TestTrue(TEXT("Aborted event"),R.Events[0].Kind==ERPGBossMoveModelEvent::Aborted&&R.Events[0].Token==R.Token);
++    TestFalse(TEXT("aborted instance no longer accepts callbacks"),R.Model.AcceptsCallback(R.Token));
++    return true;
++}
+ 
+ #endif
+diff --git a/Source/OneBossFight/Tests/RPGAutomationTests.cpp b/Source/OneBossFight/Tests/RPGAutomationTests.cpp
+index 133fd6d..c63c35a 100644
+--- a/Source/OneBossFight/Tests/RPGAutomationTests.cpp
++++ b/Source/OneBossFight/Tests/RPGAutomationTests.cpp
+@@ -1257,6 +1257,14 @@ bool FRPGCookCoverageTest::RunTest(const FString& Parameters)
+ 
+ 	// Path literals that are directory prefixes used for filtering, not assets that are loaded (the PackWiring test above).
+ 	const TSet<FString> NotAssets = {TEXT("/Game/AdvancedARPGCombat"), TEXT("/Game/OneBossFight/GreystonePack"), TEXT("/Game/OneBossFight/SevarogPack")};
++	// Editor-only F3 proof fixtures: RPGFrameworkRuntimeTests.cpp builds in-memory profiles from these paths (WITH_DEV_AUTOMATION_TESTS, not in a
++	// packaged build) and no shipped source loads them by path. The Sevarog boss ships only when its content is added to the cook list (not decided).
++	const TSet<FString> EditorProofOnly = {
++		TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog.Sevarog"),
++		TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.Sevarog_Skeleton"),
++		TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Sevarog_AnimBlueprint.Sevarog_AnimBlueprint_C"),
++		TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Slow.Swing1_Slow"),
++		TEXT("/Game/OneBossFight/FrameworkProof/DA_Sevarog_SwingProof.DA_Sevarog_SwingProof")};
+ 	TArray<FString> Files;
+ 	IFileManager::Get().FindFilesRecursive(Files, *(FPaths::ProjectDir() / TEXT("Source/OneBossFight")), TEXT("*.cpp"), true, false);
+ 	IFileManager::Get().FindFilesRecursive(Files, *(FPaths::ProjectDir() / TEXT("Source/OneBossFight")), TEXT("*.h"), true, false, /*bClearFileNames=*/false);
+@@ -1280,7 +1288,7 @@ bool FRPGCookCoverageTest::RunTest(const FString& Parameters)
+ 			{
+ 				Path = Path.Left(Format); // "/Game/Dir/%s.%s": the directory part decides
+ 			}
+-			if (Path.EndsWith(TEXT("/")) || NotAssets.Contains(Path) || Seen.Contains(Path))
++			if (Path.EndsWith(TEXT("/")) || NotAssets.Contains(Path) || Seen.Contains(Path) || (EditorProofOnly.Contains(Path) && (File.EndsWith(TEXT("RPGFrameworkRuntimeTests.cpp")) || File.EndsWith(TEXT("RPGAutomationTests.cpp")))))
+ 			{
+ 				continue;
+ 			}

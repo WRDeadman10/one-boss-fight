@@ -1,0 +1,5 @@
+[2026.10.30-07.05.44:602][335]LogAutomationController: Display: Test Completed. Result={Success} Name={Abort} Path={OneBossFight.Framework.MoveModel.Abort}
+[2026.10.30-07.05.44:632][337]LogAutomationController: Display: Test Completed. Result={Success} Name={Crossing} Path={OneBossFight.Framework.MoveModel.Crossing}
+[2026.10.30-07.05.44:678][340]LogAutomationController: Display: Test Completed. Result={Success} Name={Eligibility} Path={OneBossFight.Framework.MoveModel.Eligibility}
+[2026.10.30-07.05.44:708][342]LogAutomationController: Display: Test Completed. Result={Success} Name={GenerationAndDoubleStart} Path={OneBossFight.Framework.MoveModel.GenerationAndDoubleStart}
+[2026.10.30-07.05.44:755][345]LogAutomationController: Display: Test Completed. Result={Success} Name={PauseAndBoundaries} Path={OneBossFight.Framework.MoveModel.PauseAndBoundaries}

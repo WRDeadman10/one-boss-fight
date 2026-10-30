@@ -1,0 +1,13 @@
+{
+  "classes": {
+    "AnimSequence": 144,
+    "AnimMontage": 15
+  },
+  "unknown_suffixes": {
+    "frame_rate": 159,
+    "RCT_VECTOR": 159,
+    "root_motion": 15,
+    "time": 49,
+    "duration": 49
+  }
+}

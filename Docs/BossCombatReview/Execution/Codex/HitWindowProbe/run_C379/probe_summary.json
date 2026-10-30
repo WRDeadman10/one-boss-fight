@@ -1,0 +1,168 @@
+[
+  {
+    "sequence_path": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Slow",
+    "sequence_name": "Swing1_Slow",
+    "sequence_length": 1.7,
+    "sampling_dt": 0.008333,
+    "sample_count": 206,
+    "base_bone": "weapon_r",
+    "tip_bone": "root_weapon_end_r",
+    "base_bone_has_track": false,
+    "tip_bone_has_track": false,
+    "pose_eval_method": "AnimPoseExtensions.get_anim_pose_at_time",
+    "bone_pose_method": "AnimPose.get_bone_pose(WORLD)",
+    "peak_tip_speed_cms": 1845.66,
+    "peak_tip_time": 0.4583,
+    "active_windows_50pct": [
+      {
+        "start_time": 0.35,
+        "end_time": 0.4917,
+        "duration": 0.1417,
+        "peak_speed_cms": 1845.66,
+        "peak_time": 0.4583,
+        "sample_count": 18
+      }
+    ]
+  },
+  {
+    "sequence_path": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Medium",
+    "sequence_name": "Swing1_Medium",
+    "sequence_length": 1.1333,
+    "sampling_dt": 0.008333,
+    "sample_count": 137,
+    "base_bone": "weapon_r",
+    "tip_bone": "root_weapon_end_r",
+    "base_bone_has_track": false,
+    "tip_bone_has_track": false,
+    "pose_eval_method": "AnimPoseExtensions.get_anim_pose_at_time",
+    "bone_pose_method": "AnimPose.get_bone_pose(WORLD)",
+    "peak_tip_speed_cms": 3057.06,
+    "peak_tip_time": 0.2583,
+    "active_windows_50pct": [
+      {
+        "start_time": 0.25,
+        "end_time": 0.2667,
+        "duration": 0.0167,
+        "peak_speed_cms": 3057.06,
+        "peak_time": 0.2583,
+        "sample_count": 3
+      },
+      {
+        "start_time": 0.15,
+        "end_time": 0.1667,
+        "duration": 0.0167,
+        "peak_speed_cms": 1929.83,
+        "peak_time": 0.1583,
+        "sample_count": 3
+      }
+    ]
+  },
+  {
+    "sequence_path": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing2_Medium",
+    "sequence_name": "Swing2_Medium",
+    "sequence_length": 1.1333,
+    "sampling_dt": 0.008333,
+    "sample_count": 137,
+    "base_bone": "weapon_r",
+    "tip_bone": "root_weapon_end_r",
+    "base_bone_has_track": false,
+    "tip_bone_has_track": false,
+    "pose_eval_method": "AnimPoseExtensions.get_anim_pose_at_time",
+    "bone_pose_method": "AnimPose.get_bone_pose(WORLD)",
+    "peak_tip_speed_cms": 3639.65,
+    "peak_tip_time": 0.225,
+    "active_windows_50pct": [
+      {
+        "start_time": 0.1917,
+        "end_time": 0.2667,
+        "duration": 0.075,
+        "peak_speed_cms": 3639.65,
+        "peak_time": 0.225,
+        "sample_count": 10
+      }
+    ]
+  },
+  {
+    "sequence_path": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing3_Slow",
+    "sequence_name": "Swing3_Slow",
+    "sequence_length": 1.7,
+    "sampling_dt": 0.008333,
+    "sample_count": 206,
+    "base_bone": "weapon_r",
+    "tip_bone": "root_weapon_end_r",
+    "base_bone_has_track": false,
+    "tip_bone_has_track": false,
+    "pose_eval_method": "AnimPoseExtensions.get_anim_pose_at_time",
+    "bone_pose_method": "AnimPose.get_bone_pose(WORLD)",
+    "peak_tip_speed_cms": 3475.59,
+    "peak_tip_time": 0.4917,
+    "active_windows_50pct": [
+      {
+        "start_time": 0.475,
+        "end_time": 0.5333,
+        "duration": 0.0583,
+        "peak_speed_cms": 3475.59,
+        "peak_time": 0.4917,
+        "sample_count": 8
+      }
+    ]
+  },
+  {
+    "sequence_path": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Subjugation",
+    "sequence_name": "Subjugation",
+    "sequence_length": 2.8667,
+    "sampling_dt": 0.008333,
+    "sample_count": 345,
+    "base_bone": "weapon_r",
+    "tip_bone": "root_weapon_end_r",
+    "base_bone_has_track": false,
+    "tip_bone_has_track": false,
+    "pose_eval_method": "AnimPoseExtensions.get_anim_pose_at_time",
+    "bone_pose_method": "AnimPose.get_bone_pose(WORLD)",
+    "peak_tip_speed_cms": 1781.88,
+    "peak_tip_time": 0.925,
+    "active_windows_50pct": [
+      {
+        "start_time": 0.8833,
+        "end_time": 0.9417,
+        "duration": 0.0583,
+        "peak_speed_cms": 1781.88,
+        "peak_time": 0.925,
+        "sample_count": 8
+      }
+    ]
+  },
+  {
+    "sequence_path": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Ultimate_Swing_120fps",
+    "sequence_name": "Ultimate_Swing_120fps",
+    "sequence_length": 2.6333,
+    "sampling_dt": 0.008333,
+    "sample_count": 318,
+    "base_bone": "weapon_r",
+    "tip_bone": "root_weapon_end_r",
+    "base_bone_has_track": false,
+    "tip_bone_has_track": false,
+    "pose_eval_method": "AnimPoseExtensions.get_anim_pose_at_time",
+    "bone_pose_method": "AnimPose.get_bone_pose(WORLD)",
+    "peak_tip_speed_cms": 2664.93,
+    "peak_tip_time": 0.7083,
+    "active_windows_50pct": [
+      {
+        "start_time": 0.6583,
+        "end_time": 0.7833,
+        "duration": 0.125,
+        "peak_speed_cms": 2664.93,
+        "peak_time": 0.7083,
+        "sample_count": 16
+      },
+      {
+        "start_time": 0.8333,
+        "end_time": 0.9167,
+        "duration": 0.0833,
+        "peak_speed_cms": 2080.99,
+        "peak_time": 0.8667,
+        "sample_count": 11
+      }
+    ]
+  }
+]

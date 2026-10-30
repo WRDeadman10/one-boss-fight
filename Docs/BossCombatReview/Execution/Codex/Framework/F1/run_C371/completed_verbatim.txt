@@ -1,0 +1,4 @@
+[2026.10.30-06.42.07:783][603]LogAutomationController: Display: Test Completed. Result={Success} Name={Numbers} Path={OneBossFight.Framework.MoveCard.Numbers}
+[2026.10.30-06.42.07:808][606]LogAutomationController: Display: Test Completed. Result={Success} Name={Positive} Path={OneBossFight.Framework.MoveCard.Positive}
+[2026.10.30-06.42.07:826][608]LogAutomationController: Display: Test Completed. Result={Success} Name={Rejections} Path={OneBossFight.Framework.MoveCard.Rejections}
+[2026.10.30-06.42.07:842][610]LogAutomationController: Display: Test Completed. Result={Success} Name={SnapshotAndFailure} Path={OneBossFight.Framework.MoveCard.SnapshotAndFailure}

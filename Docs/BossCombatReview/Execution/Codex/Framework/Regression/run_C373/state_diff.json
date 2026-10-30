@@ -1,0 +1,37 @@
+{
+  "content": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "config": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "saved": {
+    "added": [
+      "Saved/Config/CrashReportClient/UECC-Windows-47CAEE0644CA967FDC8561893E1229CB/CrashReportClient.ini"
+    ],
+    "removed": [],
+    "changed": [
+      "Saved/Autosaves/PackageRestoreData.json",
+      "Saved/Config/WindowsEditor/EditorPerProjectUserSettings.ini"
+    ]
+  },
+  "source": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "toolkit": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "binary": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  }
+}

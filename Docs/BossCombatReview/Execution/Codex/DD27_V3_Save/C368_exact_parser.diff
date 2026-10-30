@@ -1,0 +1,11 @@
+--- before/preflight.py
++++ after/preflight.py
+@@ -30,7 +30,7 @@
+ pins=[]
+ for name in ('draft_boss_profiles.py','authoring_core.py','inspect_authored_assets.py','examples/boss_draft_profiles.json','examples/hero_target_source.json','emit_fields_manifest.py'):
+     p=receipt.parent/name;rel=p.relative_to(ROOT).as_posix()
+-    rows=[s for s in receipt.read_text(encoding='utf-8').splitlines() if s.split()[-1].replace('\\','/')==rel]
++    rows=[s for s in receipt.read_text(encoding='utf-8').splitlines() if s.strip() and s.split()[-1].replace('\\','/')==rel]
+     assert len(rows)==1,f'Receipt entry missing/ambiguous {name}'
+     want=rows[0].split()[0].lower();actual=sha(p)
+     assert len(want)==64 and actual==want,f'Toolkit receipt mismatch {name}; STOP'

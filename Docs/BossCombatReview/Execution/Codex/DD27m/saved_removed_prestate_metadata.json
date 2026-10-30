@@ -1,0 +1,85 @@
+{
+  "removed": [
+    {
+      "path": "Saved/Config/CrashReportClient/UECC-Windows-03029BC84204B3F1B36D8C9BBA000E24/CrashReportClient.ini",
+      "size": 160,
+      "mtime_ns": 1793176297409970900
+    },
+    {
+      "path": "Saved/Config/CrashReportClient/UECC-Windows-1E134AB947A2139F231991849CD7932D/CrashReportClient.ini",
+      "size": 160,
+      "mtime_ns": 1793174544370721700
+    },
+    {
+      "path": "Saved/Config/CrashReportClient/UECC-Windows-39094B9A424AD35468ABDABBB78FA8F3/CrashReportClient.ini",
+      "size": 160,
+      "mtime_ns": 1793182704109178200
+    },
+    {
+      "path": "Saved/Config/CrashReportClient/UECC-Windows-87E805994F5CA89EFC1499A99CE8F1F8/CrashReportClient.ini",
+      "size": 160,
+      "mtime_ns": 1793178400036502100
+    },
+    {
+      "path": "Saved/Config/CrashReportClient/UECC-Windows-89C4BE59431281CA4AACBD832B890825/CrashReportClient.ini",
+      "size": 160,
+      "mtime_ns": 1793161763534931100
+    },
+    {
+      "path": "Saved/Config/CrashReportClient/UECC-Windows-8AE00D31480ED1201C8D48965D50B96B/CrashReportClient.ini",
+      "size": 160,
+      "mtime_ns": 1793170067268870500
+    },
+    {
+      "path": "Saved/Config/CrashReportClient/UECC-Windows-8EED992D4A3B8BB9D118A186512C11D1/CrashReportClient.ini",
+      "size": 160,
+      "mtime_ns": 1793174509800031200
+    },
+    {
+      "path": "Saved/Config/CrashReportClient/UECC-Windows-909631784A4CD0F6EF942D98BD99F868/CrashReportClient.ini",
+      "size": 160,
+      "mtime_ns": 1793161881230351100
+    },
+    {
+      "path": "Saved/Config/CrashReportClient/UECC-Windows-9729965B47C46D48F360CBB45B39AC42/CrashReportClient.ini",
+      "size": 160,
+      "mtime_ns": 1793172788052640300
+    },
+    {
+      "path": "Saved/Config/CrashReportClient/UECC-Windows-AD4BDC604447559F795A6EA293078E04/CrashReportClient.ini",
+      "size": 160,
+      "mtime_ns": 1793170033427239400
+    },
+    {
+      "path": "Saved/Config/CrashReportClient/UECC-Windows-B29CCEFD47943B76F271F58A2A02D415/CrashReportClient.ini",
+      "size": 160,
+      "mtime_ns": 1793176331374706800
+    },
+    {
+      "path": "Saved/Config/CrashReportClient/UECC-Windows-C55E096E41D683AF29CE38B61DAC869F/CrashReportClient.ini",
+      "size": 160,
+      "mtime_ns": 1793172822322187500
+    },
+    {
+      "path": "Saved/Config/CrashReportClient/UECC-Windows-E0EFC0CC45091FECAB3DA0A3A3155C58/CrashReportClient.ini",
+      "size": 160,
+      "mtime_ns": 1793178346994548200
+    },
+    {
+      "path": "Saved/Config/CrashReportClient/UECC-Windows-F98BF95E45244E5DC7A123A5047AB613/CrashReportClient.ini",
+      "size": 160,
+      "mtime_ns": 1793182740192193700
+    },
+    {
+      "path": "Saved/Logs/UnrealPak-backup-2026.10.24-19.12.51.log",
+      "size": 10853,
+      "mtime_ns": 1792869171000000000
+    },
+    {
+      "path": "Saved/Logs/UnrealPak-backup-2026.10.24-19.13.05.log",
+      "size": 24597,
+      "mtime_ns": 1792869185000000000
+    }
+  ],
+  "limit": "raw bytes not frozen before disappearance; no Codex deletion; origin UNKNOWN"
+}

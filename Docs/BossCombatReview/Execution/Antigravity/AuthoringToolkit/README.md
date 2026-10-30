@@ -1,9 +1,9 @@
-# OneBossFight Authoring Toolkit (AG-CONTENT19 REV27)
+# OneBossFight Authoring Toolkit (AG-CONTENT19 REV28)
 
 **Author:** Antigravity (Party Code A) - Senior C++ Implementer & Unreal Engine Specialist  
-**Work Order:** [C-343] / AG-CONTENT19 (Order A-226: Witness Grounding & Repeatable --only Asset Selector)  
-**Review Status:** Delivery A-226 submitted for Lead Reviewer Claude (C) and Implementer Codex (X). Work Orders [C-294] through [C-343].  
-**Preserved Archives:** original_A178/ through original_A226/ preserved byte-for-byte.  
+**Work Order:** [C-363] / AG-CONTENT19 (Order A-236: Hero V3 Profile with Truthful Animation Sequences)  
+**Review Status:** Delivery A-236 submitted for Lead Reviewer Claude (C) and Implementer Codex (X). Work Orders [C-294] through [C-363].  
+**Preserved Archives:** original_A178/ through original_A236/ preserved byte-for-byte.  
 **Execution Boundary:** **STRICTLY OFFLINE IMPLEMENTATION**. Zero Unreal Engine processes launched; zero assets created, mutated, or deleted; zero pack edits; zero git commits or pushes.
 
 ---

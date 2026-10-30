@@ -1,0 +1,46 @@
+{
+  "receipt_path": "Docs/BossCombatReview/Execution/Antigravity/HitWindowProbe/evidence_sha256.txt",
+  "receipt_sha256": "6c1cb07fc8a50e27377315639bc911204a458aeced73b08d9b4509a61afdb373",
+  "pins": [
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/HitWindowProbe/probe_weapon_motion.py",
+      "sha256": "5f12c9127c4d4a6f027f4cd638d24215f3e75a59f51a6c58785be317f744d839",
+      "size": 18449
+    },
+    {
+      "path": "Docs/BossCombatReview/Execution/Antigravity/HitWindowProbe/test_probe_weapon_motion.py",
+      "sha256": "5dd0899086072953467454edb67012e68ddc039c24409384f84dfff1e82e9ad8",
+      "size": 10512
+    },
+    {
+      "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Slow.uasset",
+      "sha256": "99d4ea9516cd9100d13815e94090a2a58bb45085b5c4499a056fed6e62f153cd",
+      "size": 857645
+    },
+    {
+      "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Medium.uasset",
+      "sha256": "ef9cb5f1cac0230dfc5b8b40a14ef258454922cfe66887f4b0fc07290881f537",
+      "size": 567514
+    },
+    {
+      "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing2_Medium.uasset",
+      "sha256": "3ca93e4db59e2640ab0cd336af8c21f0934777a51be48e17a746cd739467ce79",
+      "size": 576523
+    },
+    {
+      "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing3_Slow.uasset",
+      "sha256": "4c3b97db38c7c3a5274a967b046d79cbec5c920a15b9175866550e5bcbfa432b",
+      "size": 648644
+    },
+    {
+      "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Subjugation.uasset",
+      "sha256": "caa06e81f596a14a609242d6feddec365c07400550538fdd22d50411eef1d336",
+      "size": 220943
+    },
+    {
+      "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Ultimate_Swing_120fps.uasset",
+      "sha256": "fced34e662119977f8f9abb1242606ee5bae8ce7cca1881846f4a0779c4f49b3",
+      "size": 627511
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+C366 V3 in-memory preflight STOP BEFORE LAUNCH. Wrapper exit1.
+Observed traceback preflight.py:22: rows=[s for s in receipt.read_text(encoding='utf-8').splitlines() if s.split()[-1].replace('\\','/')==rel]
+IndexError: list index out of range
+run_once.ps1:6: Preflight failed; STOP BEFORE LAUNCH.
+This is an observed diagnostic transcript from tool output, not a raw engine log (no engine ran). No fix/retry.

@@ -1,0 +1,146 @@
+[
+  {
+    "path": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Plugins\\Experimental\\PythonScriptPlugin\\Source\\PythonScriptPlugin\\Private\\EditorUtilities\\EditorPythonExecuter.cpp",
+    "sha256": "697139f149c4a8c7e6cf9ba2f9d4b87cb1a678d61c701fe95690ea16632efaae",
+    "opened": [
+      {
+        "line": 58,
+        "quote": "virtual void Tick(float DeltaTime) override"
+      },
+      {
+        "line": 73,
+        "quote": "if (!UEditorPythonScriptingLibrary::GetKeepPythonScriptAlive())"
+      },
+      {
+        "line": 75,
+        "quote": "RequestExit();"
+      },
+      {
+        "line": 77,
+        "quote": "}"
+      },
+      {
+        "line": 109,
+        "quote": "}"
+      },
+      {
+        "line": 119,
+        "quote": "void RequestExit()"
+      },
+      {
+        "line": 125,
+        "quote": "GEngine->HandleDeferCommand(TEXT(\"QUIT_EDITOR\"), *GLog); // Defer close the editor"
+      },
+      {
+        "line": 144,
+        "quote": "const TCHAR* Match = TEXT(\"-ExecutePythonScript=\");"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Plugins\\Experimental\\PythonScriptPlugin\\Source\\PythonScriptPlugin\\Private\\EditorUtilities\\EditorPythonScriptingLibrary.cpp",
+    "sha256": "8c12011f528d16764877000eb4e4477a2029aa2096e0329a28a98c0f657ed729",
+    "opened": [
+      {
+        "line": 9,
+        "quote": "bool UEditorPythonScriptingLibrary::bKeepPythonScriptAlive = false;"
+      },
+      {
+        "line": 12,
+        "quote": "void UEditorPythonScriptingLibrary::SetKeepPythonScriptAlive(const bool bNewKeepAlive)"
+      },
+      {
+        "line": 17,
+        "quote": "bool UEditorPythonScriptingLibrary::GetKeepPythonScriptAlive()"
+      }
+    ]
+  },
+  {
+    "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Antigravity\\EngineRuns\\DD30ChronologyRun1\\dd30_chronology_pie.py",
+    "sha256": "0dd6114153b1a88c7cee8f8e74a4ba69160ea46d1da9e5c5ed4a65a25ae5a848",
+    "opened": [
+      {
+        "line": 39,
+        "quote": "def finish(message):"
+      },
+      {
+        "line": 55,
+        "quote": "quit_handle = unreal.register_slate_post_tick_callback(quit_tick)"
+      },
+      {
+        "line": 58,
+        "quote": "s['elapsed'] += dt"
+      },
+      {
+        "line": 69,
+        "quote": "unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()"
+      },
+      {
+        "line": 74,
+        "quote": "unreal.log('[DD30_CHRONO_DRIVER] PIE_WORLD ' + w.get_path_name())"
+      },
+      {
+        "line": 75,
+        "quote": "if s['elapsed'] >= 10.0:"
+      },
+      {
+        "line": 76,
+        "quote": "finish('CAPTURE_END started=' + str(s['started']) + '; native chronology must be reviewed, not an au"
+      },
+      {
+        "line": 78,
+        "quote": "handle = unreal.register_slate_post_tick_callback(tick)"
+      }
+    ]
+  },
+  {
+    "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Antigravity\\EngineRuns\\DD30ChronologyRun1\\chronology_raw.log",
+    "sha256": "d3db7c739104a4e81f972a327e02bbe1995fb2ae33d3afff775d916c0731a5ce",
+    "opened": [
+      {
+        "line": 1248,
+        "quote": "[2026.10.29-18.31.10:969][  2]LogPython: [DD30_CHRONO_DRIVER] REQUEST freshPIE map=L_SevarogArena no"
+      },
+      {
+        "line": 1292,
+        "quote": "[2026.10.29-18.31.13:899][  3]LogPython: [DD30_CHRONO_DRIVER] PIE_WORLD /Game/OneBossFight/Levels/UE"
+      },
+      {
+        "line": 1293,
+        "quote": "[2026.10.29-18.31.13:899][  3]LogAutomationController: Ignoring very large delta of 2.93 seconds in "
+      },
+      {
+        "line": 1306,
+        "quote": "[2026.10.29-18.31.13:903][  3]Cmd: QUIT_EDITOR"
+      }
+    ]
+  },
+  {
+    "path": "C:\\UnrealProject\\OneBossFight\\Scripts\\RunEditorScript.ps1",
+    "sha256": "e6e3696e32e78d0a11f95a354d90ae85597c86b144ff9bcaa69c36ffbb154e99",
+    "opened": [
+      {
+        "line": 3,
+        "quote": "Uses the 'py' console command (-ExecutePythonScript would exit the editor as soon as the script retu"
+      },
+      {
+        "line": 4,
+        "quote": "drivers), so the script must quit the editor itself when done (rpg_content_lib.quit_editor_soon). Th"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source\\Editor\\UnrealEd\\Private\\EditorServer.cpp",
+    "sha256": "7e801444f8c3940c56349f0db8d847fb615c22a0f4749efeb19174b3f334fc17",
+    "opened": [
+      {
+        "line": 5761,
+        "quote": "else if( FParse::Command(&Str,TEXT(\"QUIT_EDITOR\")) )"
+      },
+      {
+        "line": 5763,
+        "quote": "CloseEditor();"
+      }
+    ]
+  }
+]

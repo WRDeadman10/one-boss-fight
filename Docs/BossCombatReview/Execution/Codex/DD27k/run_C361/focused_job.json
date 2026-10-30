@@ -1,0 +1,10 @@
+﻿{
+    "process_id":  38128,
+    "cached_handle":  2664,
+    "exit_code":  255,
+    "outcome":  "EXIT_NONZERO",
+    "timed_out":  false,
+    "seconds":  24.8172125,
+    "start":  "2026-10-30T11:23:28.0437704+05:30",
+    "end":  "2026-10-30T11:23:52.8671038+05:30"
+}

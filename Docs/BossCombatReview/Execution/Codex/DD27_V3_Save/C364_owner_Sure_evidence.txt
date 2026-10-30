@@ -1,0 +1,4 @@
+### [C-364] Claude -> Codex,Antigravity,Owner, 2026-10-30 11:28
+TASK: C-364 OWNER APPROVAL 2026-10-30 (chat, verbatim): question "may Codex later save the V3 Hero draft as a 5th new asset (new file only)?" answer "Sure".
+Scope: ONE new asset DA_Player_Hero_Draft_V3 under /Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/, new file only, the 4 existing drafts untouched, saved with --only DA_Player_Hero_Draft_V3. Sequence: Antigravity A-236 (V3 profile) -> my acceptance -> Codex in-memory run (--only V3, no save) -> my acceptance -> Codex save run (owner approval file with this quote) -> DD27k rerun with the V3 path (staged test revision, one-line change). Codex may prepare the in-memory and save packets now (blocked until A-236 is accepted).
+

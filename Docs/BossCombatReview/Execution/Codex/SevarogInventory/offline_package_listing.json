@@ -1,0 +1,4410 @@
+[
+  {
+    "root": "Content/ParagonSevarog",
+    "package_file_count": 1067,
+    "files": [
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/Black_Linear.uasset",
+        "size": 3156
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/FX/Materials/Functions/MF_DitheredBumpOffsetSample.uasset",
+        "size": 109561
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/FX/Materials/Functions/MF_FuzzyBumpOffset.uasset",
+        "size": 131551
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/FX/Materials/Functions/MF_SubUV_Detail.uasset",
+        "size": 48888
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/FX/Materials/M_SoulEmbers.uasset",
+        "size": 99392
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/FX/Materials/Smoke/WispySmokeSoft/M_ShadowSwirls_v1.uasset",
+        "size": 84388
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/FX/Textures/Decals/Cracks/T_Radial_Cracks_NRM.uasset",
+        "size": 5067226
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/FX/Textures/Masks/simple_circle_mask.uasset",
+        "size": 16766
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/FX/Textures/Masks/spiritplane_arcs.uasset",
+        "size": 706867
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/FX/Textures/Masks/T_simple_circle_mask.uasset",
+        "size": 16774
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/FX/Textures/Masks/T_spiritplane_arcs.uasset",
+        "size": 706875
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/FX/Textures/Smoke/Inky/T_ShadowSwirls_v2_N.uasset",
+        "size": 12297704
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/FX/Textures/T_ShadowSwirls_v2B.uasset",
+        "size": 4825882
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/FX/Textures/T_Swirly_Noise.uasset",
+        "size": 1007629
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/FX/Textures/Tile/Cloud/filter_clouds.uasset",
+        "size": 1598279
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/FX/Textures/Tile/Cloud/T_filter_clouds.uasset",
+        "size": 1594214
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/FX/VectorFields/VF_TurbulentNoise_1_55.uasset",
+        "size": 3748563
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/HitFlash.uasset",
+        "size": 82866
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/MaterialLayerConstructors/MF_BaseColorTintAndContrast.uasset",
+        "size": 49686
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/MaterialLayerConstructors/MF_RoughnessAdjustment.uasset",
+        "size": 50405
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/MaterialLayerConstructors/MLC_ScratchAndGrime.uasset",
+        "size": 78139
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/MaterialLayerConstructors/MLC_Standard.uasset",
+        "size": 87304
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/MF_BrightnessAdjust.uasset",
+        "size": 68150
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/MF_CharacterEffects.uasset",
+        "size": 116103
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/MF_CharacterGradient.uasset",
+        "size": 85695
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/MF_ClothShading.uasset",
+        "size": 62945
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/MF_DeathFade.uasset",
+        "size": 146453
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/MF_HitFlash.uasset",
+        "size": 62718
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/MF_OrionCharacterAO.uasset",
+        "size": 103321
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/MF_OrionRimlight.uasset",
+        "size": 121324
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/MF_RimLight.uasset",
+        "size": 86399
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/Textures/AtmosphericCloudNoise01.uasset",
+        "size": 3758091
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/Textures/AtmosphericCloudNoise01_N.uasset",
+        "size": 1830798
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/Textures/AtmosphericCloudNoise03.uasset",
+        "size": 3156400
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/Textures/T_AtmosphericCloudNoise01.uasset",
+        "size": 3758099
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/Textures/T_AtmosphericCloudNoise01_N.uasset",
+        "size": 1830806
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/Textures/T_AtmosphericCloudNoise03.uasset",
+        "size": 3156408
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/Textures/T_Muriel_UV1_ScratchNormal.uasset",
+        "size": 822001
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialFunctions/Textures/T_Sevarog_UV1_ScratchNormal.uasset",
+        "size": 822005
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Fabric/ML_Fabric_Dirty.uasset",
+        "size": 142695
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Fabric/ML_HeavyPatternedFabric2.uasset",
+        "size": 112505
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Fabric/T_ML_Fabric_Blue_Medium_N.uasset",
+        "size": 3091878
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Fabric/T_ML_Fabric_Dirty.uasset",
+        "size": 2978412
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Leather/leather_02.uasset",
+        "size": 23557179
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Leather/ML_Dark_Leather01_Stained.uasset",
+        "size": 126552
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Leather/ML_Dark_Leather02_Brown_3.uasset",
+        "size": 125133
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Leather/ML_Dark_Leather_Brown.uasset",
+        "size": 132996
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Leather/ML_Worn_Under_Leather.uasset",
+        "size": 126890
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Leather/T_Dark_Leather.uasset",
+        "size": 10580786
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Leather/T_Dark_Leather2_desat.uasset",
+        "size": 10746536
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Leather/T_Dark_Leather_N.uasset",
+        "size": 9554616
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Leather/T_leather_02.uasset",
+        "size": 23593137
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Leather/T_Worn_Under_Leather.uasset",
+        "size": 12289611
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/ML_Aged_Bronze_1.uasset",
+        "size": 132945
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/ML_Aged_Bronze_3.uasset",
+        "size": 132159
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/ML_blue_Metal.uasset",
+        "size": 133811
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/ML_Brushed_Copper2.uasset",
+        "size": 124555
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/ML_Brushed_Copper4.uasset",
+        "size": 123003
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/ML_Rust01.uasset",
+        "size": 136368
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/ML_Rust02.uasset",
+        "size": 116788
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/ML_Scratched_metal.uasset",
+        "size": 122443
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/ML_Steel.uasset",
+        "size": 125589
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/ML_Steel_rough.uasset",
+        "size": 136401
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/T_Blue_Metal02.uasset",
+        "size": 8175039
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/T_Brushed_Copper_D.uasset",
+        "size": 21451519
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/T_Brushed_Copper_N.uasset",
+        "size": 14592227
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/T_Gadget_Machine_Base_RGB.uasset",
+        "size": 21128844
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/T_Kurohane_Metal_Tiling_D.uasset",
+        "size": 11572714
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/T_Rough_Metal_N.uasset",
+        "size": 49626162
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/T_RoughMetal01.uasset",
+        "size": 10947136
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/T_RoughMetal01_N.uasset",
+        "size": 3625920
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/T_RoughMetal01_N2.uasset",
+        "size": 6000788
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/T_Rust01.uasset",
+        "size": 12310666
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/T_Rust01_N.uasset",
+        "size": 12463801
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/T_Sevarog_Machine_Base_RGB.uasset",
+        "size": 21128848
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Metal/T_Sevarog_Metal_Tiling_D.uasset",
+        "size": 11643679
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/ML__Blank.uasset",
+        "size": 79195
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/ML_Blank.uasset",
+        "size": 79220
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/ML_FlatBlack.uasset",
+        "size": 45666
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Painted/T_PaintScratches.uasset",
+        "size": 5076743
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Rock/MF_ObsidianCracked.uasset",
+        "size": 134587
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Rock/MF_ObsidianCracked_Colour.uasset",
+        "size": 126173
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Rock/MF_ObsidionCracked.uasset",
+        "size": 132571
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Rock/RockTextureTile_000_D.uasset",
+        "size": 42062014
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Rock/T_Gem_Translucent_01_RGBA.uasset",
+        "size": 7141908
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Rock/T_MarbleVein_D.uasset",
+        "size": 26448024
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Rock/T_Metal_Scratched.uasset",
+        "size": 33846455
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Rock/T_RockTextureTile_000_D.uasset",
+        "size": 42119307
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Rock/T_Weathered__Detail001_Mask.uasset",
+        "size": 13164105
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Rubber/T_Blank_N.uasset",
+        "size": 3861
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Rubber/T_ML_FineRubber_N.uasset",
+        "size": 6118228
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Synthetics/ML_FlatPaint.uasset",
+        "size": 104551
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/Synthetics/ML_SimpleEmissive.uasset",
+        "size": 78187
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/MaterialLayers/T_TestML_Mask.uasset",
+        "size": 12133
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/ParameterCollections/OrionGlobalGameplayCollection.uasset",
+        "size": 6940
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Global/T_Black_Linear.uasset",
+        "size": 3164
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_AO.uasset",
+        "size": 90647
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_AO_CC.uasset",
+        "size": 125418
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_AO_CD.uasset",
+        "size": 125326
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_AO_CU.uasset",
+        "size": 125976
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_AO_LBC.uasset",
+        "size": 128568
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_AO_LBD.uasset",
+        "size": 129040
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_AO_LBU.uasset",
+        "size": 128454
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_AO_LC.uasset",
+        "size": 127331
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_AO_LD.uasset",
+        "size": 127119
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_AO_LU.uasset",
+        "size": 126914
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_AO_RBC.uasset",
+        "size": 125017
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_AO_RBD.uasset",
+        "size": 124794
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_AO_RBU.uasset",
+        "size": 125224
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_AO_RC.uasset",
+        "size": 125075
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_AO_RD.uasset",
+        "size": 126628
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_AO_RU.uasset",
+        "size": 125233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_CC_pose.uasset",
+        "size": 125233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_LBC_pose.uasset",
+        "size": 127954
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_LC_pose.uasset",
+        "size": 126361
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_RBC_pose.uasset",
+        "size": 125159
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Idle_RC_pose.uasset",
+        "size": 125477
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/TravelmodeStart_MSA.uasset",
+        "size": 98999
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/AimOffsets/Yaw_AO_1D.uasset",
+        "size": 84613
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Blendspaces/JogFwdSlopeLean.uasset",
+        "size": 103369
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Blendspaces/Sevarog_Locomotion_1D.uasset",
+        "size": 99312
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Blendspaces/Sevarog_TravelMode_Locomotion_1D.uasset",
+        "size": 98801
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Blendspaces/Sevarog_TravelMode_Start.uasset",
+        "size": 98714
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Blendspaces/Sevarog_TravelMode_TurnInPlace.uasset",
+        "size": 99489
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Blendspaces/Sevarog_TurnInPlace.uasset",
+        "size": 97951
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Blendspaces/SprintFwdSlopeLean.uasset",
+        "size": 102943
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Bound.uasset",
+        "size": 126085
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Cast.uasset",
+        "size": 163871
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Death_front.uasset",
+        "size": 158932
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Emote_Boogie.uasset",
+        "size": 403997
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Emote_Clap_T1.uasset",
+        "size": 344933
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Emote_Pointing_MC_T3.uasset",
+        "size": 924172
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Emote_Pull_MC_T1.uasset",
+        "size": 394520
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Emote_Thriller.uasset",
+        "size": 707003
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/FrontEndPose.uasset",
+        "size": 491964
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Hitreact_Back.uasset",
+        "size": 192317
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Hitreact_Front.uasset",
+        "size": 185240
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Hitreact_Left.uasset",
+        "size": 204226
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Hitreact_Right.uasset",
+        "size": 178783
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Idle.uasset",
+        "size": 619337
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Idle_additive.uasset",
+        "size": 606777
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jog_Bwd.uasset",
+        "size": 516309
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jog_Bwd_Pivot_180.uasset",
+        "size": 186646
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jog_Fwd.uasset",
+        "size": 487547
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jog_Fwd_Circle_Lt.uasset",
+        "size": 576086
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jog_Fwd_Circle_Rt.uasset",
+        "size": 576019
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jog_Fwd_Downhill.uasset",
+        "size": 568337
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jog_Fwd_Pivot_180.uasset",
+        "size": 188706
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jog_Fwd_Pose.uasset",
+        "size": 165465
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jog_Fwd_Uphill.uasset",
+        "size": 575398
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jog_Left.uasset",
+        "size": 517310
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jog_Right.uasset",
+        "size": 516598
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jump_Apex.uasset",
+        "size": 114936
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jump_Fall_Loop.uasset",
+        "size": 135578
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jump_Land.uasset",
+        "size": 111304
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jump_Landing.uasset",
+        "size": 167688
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jump_Mid.uasset",
+        "size": 168172
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jump_Recovery.uasset",
+        "size": 144628
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jump_Recovery_MSA.uasset",
+        "size": 140080
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jump_Recovery_NonAdditive.uasset",
+        "size": 127618
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Jump_Start.uasset",
+        "size": 113847
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Knock_back.uasset",
+        "size": 236262
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Knock_back_bwd.uasset",
+        "size": 236010
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/LaunchPad.uasset",
+        "size": 217867
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/LevelStart.uasset",
+        "size": 632229
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/LevelStart_Montage.uasset",
+        "size": 87856
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Recall.uasset",
+        "size": 442349
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Run_Bwd.uasset",
+        "size": 138270
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Run_Fwd.uasset",
+        "size": 137812
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Run_Left.uasset",
+        "size": 137767
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Run_Right.uasset",
+        "size": 139174
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/SelectScreen_Start.uasset",
+        "size": 296885
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Soul_Siphon.uasset",
+        "size": 185292
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Soul_Siphon_Targeting.uasset",
+        "size": 137909
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Soul_Siphon_Targeting_Loop.uasset",
+        "size": 176891
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Soul_Siphon_Targeting_Loop_MSA.uasset",
+        "size": 177361
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Soul_Siphon_Targeting_MSA.uasset",
+        "size": 138438
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Soul_Siphon_Targeting_pose.uasset",
+        "size": 120170
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Soul_Siphon_Targeting_pose_MSA.uasset",
+        "size": 121014
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Speedburst.uasset",
+        "size": 147344
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Sprint.uasset",
+        "size": 137759
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Sprint_Bwd.uasset",
+        "size": 249333
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Sprint_Fwd.uasset",
+        "size": 253262
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Sprint_Fwd_Circle_Lt.uasset",
+        "size": 257797
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Sprint_Fwd_Circle_Rt.uasset",
+        "size": 252514
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Sprint_Fwd_Downhill.uasset",
+        "size": 248880
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Sprint_Fwd_Uphill.uasset",
+        "size": 252627
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Sprint_Lt.uasset",
+        "size": 249935
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Sprint_Rt.uasset",
+        "size": 250111
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Stage_1.uasset",
+        "size": 123246
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Stage_2.uasset",
+        "size": 124242
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Stage_3.uasset",
+        "size": 123129
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Stage_4.uasset",
+        "size": 123129
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Stun_End.uasset",
+        "size": 170437
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Stun_Loop.uasset",
+        "size": 191379
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Stun_Start.uasset",
+        "size": 199882
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Subjugation.uasset",
+        "size": 220943
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_120fps.uasset",
+        "size": 331592
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_FAST_120fps.uasset",
+        "size": 210863
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_FAST_v2.uasset",
+        "size": 330364
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Medium.uasset",
+        "size": 567514
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Medium_Montage.uasset",
+        "size": 87946
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Return2Idle.uasset",
+        "size": 1139214
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Return2Idle_120fps.uasset",
+        "size": 664121
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Slow.uasset",
+        "size": 857645
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Slow_120fps.uasset",
+        "size": 452243
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1Start_120fps.uasset",
+        "size": 127189
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing2_120fps.uasset",
+        "size": 326411
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing2_FAST_120fps.uasset",
+        "size": 199247
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing2_FAST_v2.uasset",
+        "size": 333971
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing2_Medium.uasset",
+        "size": 576523
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing2_Medium_Montage.uasset",
+        "size": 87747
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing2_Return2Idle.uasset",
+        "size": 1058563
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing2_Return2Idle_120fps.uasset",
+        "size": 659596
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing2_Slow.uasset",
+        "size": 927457
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing2_Slow_120fps.uasset",
+        "size": 489125
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing3_120fps.uasset",
+        "size": 261147
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing3_FAST_120fps.uasset",
+        "size": 271068
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing3_FAST_v2.uasset",
+        "size": 278749
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing3_Medium.uasset",
+        "size": 455840
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing3_Return2Idle.uasset",
+        "size": 520638
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing3_Return2Idle_120fps.uasset",
+        "size": 280145
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing3_Return2Idle_Medium.uasset",
+        "size": 164467
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing3_Slow.uasset",
+        "size": 648644
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing3_Slow_120fps.uasset",
+        "size": 385994
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing_In_Air.uasset",
+        "size": 902054
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing_In_Air_120fps.uasset",
+        "size": 532089
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing_loop_pose_additive.uasset",
+        "size": 121010
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Travel_Mode_Bwd_Start.uasset",
+        "size": 204355
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Travel_Mode_Bwd_Start_MSA.uasset",
+        "size": 204969
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Travel_Mode_Idle.uasset",
+        "size": 529538
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Travel_Mode_Idle_Hover_Left.uasset",
+        "size": 528950
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Travel_Mode_Idle_Hover_Rt.uasset",
+        "size": 527168
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Travel_Mode_Start.uasset",
+        "size": 205655
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Travel_Mode_Start_InPlace.uasset",
+        "size": 228007
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Travel_Mode_Start_InPlace_MSA.uasset",
+        "size": 228157
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Travel_Mode_Start_MSA.uasset",
+        "size": 205839
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Turn_Lt_180.uasset",
+        "size": 210083
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Turn_Lt_90.uasset",
+        "size": 198688
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Turn_Rt_180.uasset",
+        "size": 214136
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Turn_Rt_90.uasset",
+        "size": 201131
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Ultimate_Swing_120fps.uasset",
+        "size": 627511
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Ultimate_Targeting.uasset",
+        "size": 174393
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Ultimate_Targeting_Loop.uasset",
+        "size": 199371
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Ultimate_Targeting_Loop_MSA.uasset",
+        "size": 199942
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Ultimate_Targeting_MSA.uasset",
+        "size": 174455
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Ultimate_Targeting_pose.uasset",
+        "size": 128274
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Ultimate_Targeting_poseMSA.uasset",
+        "size": 128410
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Victory_Emote.uasset",
+        "size": 3015479
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Walk_Bwd.uasset",
+        "size": 138229
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Walk_Fwd.uasset",
+        "size": 137771
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Walk_Left.uasset",
+        "size": 137726
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Walk_Right.uasset",
+        "size": 139133
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Effects/P_Sevarog_Homescreen_Hammer.uasset",
+        "size": 194011
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Materials/M_invis.uasset",
+        "size": 85633
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Materials/M_Sevarog_ArmourRuins.uasset",
+        "size": 220461
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Materials/M_Sevarog_Back_01.uasset",
+        "size": 170300
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Materials/M_Sevarog_Chainmail.uasset",
+        "size": 198844
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Materials/M_Sevarog_Hammer_01.uasset",
+        "size": 188828
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Materials/M_Sevarog_Torso.uasset",
+        "size": 216139
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Materials/MF_Sevarog_Glow.uasset",
+        "size": 164810
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Materials/MF_SevarogArmorStack.uasset",
+        "size": 75873
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog.uasset",
+        "size": 11255933
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Extents.uasset",
+        "size": 105653
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_ShadowCyl.uasset",
+        "size": 112730
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.uasset",
+        "size": 38121
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sevarog_AnimBlueprint.uasset",
+        "size": 600646
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/SevarogPlayerCharacter.uasset",
+        "size": 262206
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1/Sevarog_Chronos/Materials/M_Sevarog_ArmourR_Chronos3.uasset",
+        "size": 205919
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1/Sevarog_Chronos/Materials/M_Sevarog_Back_Chronos.uasset",
+        "size": 200125
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1/Sevarog_Chronos/Materials/M_Sevarog_Chainmail_Chonos.uasset",
+        "size": 208465
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1/Sevarog_Chronos/Materials/M_Sevarog_Hammer_Chonos.uasset",
+        "size": 224246
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1/Sevarog_Chronos/Materials/M_Sevarog_Torso_Chonos.uasset",
+        "size": 223649
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1/Sevarog_Chronos/Meshes/SevarogChronos.uasset",
+        "size": 11273598
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1/Sevarog_Chronos/Textures/T_StarMap.uasset",
+        "size": 18188277
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1/Sevarog_Red/Materials/M_Sevarog_Armour_Red2.uasset",
+        "size": 182028
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1/Sevarog_Red/Materials/M_Sevarog_Back_Red.uasset",
+        "size": 175598
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1/Sevarog_Red/Materials/M_Sevarog_Chainmail_Red.uasset",
+        "size": 180285
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1/Sevarog_Red/Materials/M_Sevarog_Hammer_Red.uasset",
+        "size": 195689
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1/Sevarog_Red/Materials/M_Sevarog_Torso_Red.uasset",
+        "size": 193687
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1/Sevarog_Red/Meshes/SevarogBloodred.uasset",
+        "size": 11267776
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Materials/M_Sevarog_MaskedReaperTorso.uasset",
+        "size": 218111
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Materials/M_Sevarog_MaskReaperArmorRuins2.uasset",
+        "size": 211361
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Materials/M_Sevarog_MaskReaperBack_01.uasset",
+        "size": 199223
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Materials/M_Sevarog_MaskReaperChainmail.uasset",
+        "size": 215725
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Materials/M_Sevarog_MaskReaperer.uasset",
+        "size": 204435
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Materials/M_Sevarog_ReaperMask.uasset",
+        "size": 225142
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Materials/MF_Sevarog_Porcelain.uasset",
+        "size": 141353
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Mesh/MaskedReaper.uasset",
+        "size": 430326
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Mesh/Sevarog_MaskedReaper_GDC.uasset",
+        "size": 11277450
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Textures/T_Sevarog_AO.uasset",
+        "size": 4812696
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Textures/T_Sevarog_MaskA.uasset",
+        "size": 21296936
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Textures/T_Sevarog_MaskB.uasset",
+        "size": 27797891
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Textures/T_Sevarog_Normal.uasset",
+        "size": 15397441
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Textures/T_Sevarog_porcelainmaskA.uasset",
+        "size": 778240
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Textures/T_Sevarog_porcelainmaskB.uasset",
+        "size": 7398502
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Textures/T_Sevarog_porcelainmaskc.uasset",
+        "size": 352622
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Skins/Tier_1_5/MaskedReaper/Textures/T_Sevarog_porcelainrockcolor.uasset",
+        "size": 437463
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueVoices/Sevarog.uasset",
+        "size": 1259
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_E_Engage_010_Dialogue.uasset",
+        "size": 2784
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_E_Engage_020_Dialogue.uasset",
+        "size": 2792
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_E_Engage_030_Dialogue.uasset",
+        "size": 2263
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_LMB_Engage_010_Dialogue.uasset",
+        "size": 2804
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_LMB_Engage_020_Dialogue.uasset",
+        "size": 2800
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_LMB_Engage_030_Dialogue.uasset",
+        "size": 2275
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_LowMana_010_Dialogue.uasset",
+        "size": 2802
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_No_010_Dialogue.uasset",
+        "size": 2732
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_OnCooldown_010_Dialogue.uasset",
+        "size": 2800
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_Passive_Level_01_Dialogue.uasset",
+        "size": 2826
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_Passive_Level_02_Dialogue.uasset",
+        "size": 2828
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_Passive_Level_03_Dialogue.uasset",
+        "size": 2814
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_Passive_Level_04_Dialogue.uasset",
+        "size": 2822
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_Q_Engage_010_Dialogue.uasset",
+        "size": 2784
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_Q_Engage_020_Dialogue.uasset",
+        "size": 2790
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_Q_Engage_030_Dialogue.uasset",
+        "size": 2263
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_RMB_Engage_010_Dialogue.uasset",
+        "size": 2806
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_RMB_Engage_020_Dialogue.uasset",
+        "size": 2802
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_RMB_Engage_030_Dialogue.uasset",
+        "size": 2275
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_ScoredCrit_010_Dialogue.uasset",
+        "size": 2806
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_ScoredCrit_020_Dialogue.uasset",
+        "size": 2798
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_ScoredCrit_030_Dialogue.uasset",
+        "size": 2275
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_Ultimate_Ally_010_Dialogue.uasset",
+        "size": 2850
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_Ultimate_Enemy_010_Dialogue.uasset",
+        "size": 2836
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_Ultimate_Ready_010_Dialogue.uasset",
+        "size": 2850
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_Ultimate_Ready_020_Dialogue.uasset",
+        "size": 2862
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_Ultimate_Ready_030_Dialogue.uasset",
+        "size": 2846
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_Ultimate_Self_010_Dialogue.uasset",
+        "size": 2846
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Ability_UsedLastCharge_010_Dialogue.uasset",
+        "size": 2840
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Catchphrase_010_Dialogue.uasset",
+        "size": 2754
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Catchphrase_020_Dialogue.uasset",
+        "size": 2768
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Catchphrase_030_Dialogue.uasset",
+        "size": 2760
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Catchphrase_040_Dialogue.uasset",
+        "size": 2812
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Catchphrase_050_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Death_010_Dialogue.uasset",
+        "size": 2698
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Death_020_Dialogue.uasset",
+        "size": 2706
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Death_030_Dialogue.uasset",
+        "size": 2702
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_DraftLock_010_Dialogue.uasset",
+        "size": 2734
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_DraftLock_020_Dialogue.uasset",
+        "size": 2728
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_DraftLock_030_Dialogue.uasset",
+        "size": 2726
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_DraftLock_050_Dialogue.uasset",
+        "size": 2221
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_DraftSelect_010_Dialogue.uasset",
+        "size": 2762
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_DraftSelect_020_Dialogue.uasset",
+        "size": 2758
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_DraftSelect_030_Dialogue.uasset",
+        "size": 2756
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Ability_E_01_Dialogue.uasset",
+        "size": 2257
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Ability_E_02_Dialogue.uasset",
+        "size": 2257
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Ability_E_03_Dialogue.uasset",
+        "size": 2257
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Ability_Primary_01_Dialogue.uasset",
+        "size": 2293
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Ability_Primary_02_Dialogue.uasset",
+        "size": 2293
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Ability_Primary_03_Dialogue.uasset",
+        "size": 2293
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Ability_Q_01_Dialogue.uasset",
+        "size": 2257
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Ability_Q_02_Dialogue.uasset",
+        "size": 2257
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Ability_Q_03_Dialogue.uasset",
+        "size": 2257
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Ability_RMB_01_Dialogue.uasset",
+        "size": 2269
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Ability_RMB_02_Dialogue.uasset",
+        "size": 2269
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Ability_RMB_03_Dialogue.uasset",
+        "size": 2269
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Ability_Ultimate_01_Dialogue.uasset",
+        "size": 2299
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Ability_Ultimate_02_Dialogue.uasset",
+        "size": 2299
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Ability_Ultimate_03_Dialogue.uasset",
+        "size": 2299
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Attack_01_Dialogue.uasset",
+        "size": 2239
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Attack_02_Dialogue.uasset",
+        "size": 2239
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Attack_03_Dialogue.uasset",
+        "size": 2239
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Block_01_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Block_02_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Block_03_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_BreathingLowHealth_01_Dialogue.uasset",
+        "size": 2311
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_BreathingRun_01_Dialogue.uasset",
+        "size": 2275
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Cheer_01_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Cheer_02_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Cheer_03_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Death_01_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Death_02_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Death_03_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Frustration_01_Dialogue.uasset",
+        "size": 2269
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Frustration_02_Dialogue.uasset",
+        "size": 2269
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Frustration_03_Dialogue.uasset",
+        "size": 2269
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Jump_01_Dialogue.uasset",
+        "size": 2227
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Jump_02_Dialogue.uasset",
+        "size": 2227
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Jump_03_Dialogue.uasset",
+        "size": 2227
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_JumpHeavy_01_Dialogue.uasset",
+        "size": 2257
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_JumpHeavy_02_Dialogue.uasset",
+        "size": 2257
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_JumpHeavy_03_Dialogue.uasset",
+        "size": 2257
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Land_01_Dialogue.uasset",
+        "size": 2227
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Land_02_Dialogue.uasset",
+        "size": 2227
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Land_03_Dialogue.uasset",
+        "size": 2227
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_LandHeavy_01_Dialogue.uasset",
+        "size": 2257
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_LandHeavy_02_Dialogue.uasset",
+        "size": 2257
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_LandHeavy_03_Dialogue.uasset",
+        "size": 2257
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Laugh_01_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Laugh_02_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Laugh_03_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Laugh_04_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Pain_01_Dialogue.uasset",
+        "size": 2227
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Pain_02_Dialogue.uasset",
+        "size": 2227
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Pain_03_Dialogue.uasset",
+        "size": 2227
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_PainHeavy_01_Dialogue.uasset",
+        "size": 2257
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_PainHeavy_02_Dialogue.uasset",
+        "size": 2257
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_PainHeavy_03_Dialogue.uasset",
+        "size": 2257
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Swing_01_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Swing_02_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Effort_Swing_03_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Emote_010_Dialogue.uasset",
+        "size": 2706
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Emote_020_Dialogue.uasset",
+        "size": 2694
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Emote_030_Dialogue.uasset",
+        "size": 2692
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Emote_040_Dialogue.uasset",
+        "size": 2706
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Emote_050_Dialogue.uasset",
+        "size": 2698
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Emote_060_Dialogue.uasset",
+        "size": 2706
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Emote_Taunt_010_Dialogue.uasset",
+        "size": 2772
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Emote_Taunt_020_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Emote_Taunt_030_Dialogue.uasset",
+        "size": 2746
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Emote_Taunt_040_Dialogue.uasset",
+        "size": 2750
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Emote_Taunt_050_Dialogue.uasset",
+        "size": 2762
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Health_Critical_010_Dialogue.uasset",
+        "size": 2800
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Health_CriticalSave_010_Dialogue.uasset",
+        "size": 2820
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Health_Healed_010_Dialogue.uasset",
+        "size": 2770
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Health_Low_010_Dialogue.uasset",
+        "size": 2740
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Health_SufferedCrit_010_Dialogue.uasset",
+        "size": 2281
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Intro_Boast_010_Dialogue.uasset",
+        "size": 2796
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Intro_Boast_020_Dialogue.uasset",
+        "size": 2744
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Intro_Boast_030_Dialogue.uasset",
+        "size": 2786
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Intro_BoastResponse_010_Dialogue.uasset",
+        "size": 2820
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Intro_BoastResponse_020_Dialogue.uasset",
+        "size": 2840
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Intro_BoastResponse_030_Dialogue.uasset",
+        "size": 2281
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Intro_Question_010_Dialogue.uasset",
+        "size": 2770
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Intro_Question_020_Dialogue.uasset",
+        "size": 2788
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Intro_Question_030_Dialogue.uasset",
+        "size": 2768
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Intro_QuestionResponse_010_Dialogue.uasset",
+        "size": 2830
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Intro_QuestionResponse_020_Dialogue.uasset",
+        "size": 2848
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Intro_QuestionResponse_030_Dialogue.uasset",
+        "size": 2299
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Intro_Statement_010_Dialogue.uasset",
+        "size": 2774
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Intro_Statement_020_Dialogue.uasset",
+        "size": 2786
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Intro_Statement_030_Dialogue.uasset",
+        "size": 2257
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Intro_Statement_040_Dialogue.uasset",
+        "size": 2854
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Kill_Assist_010_Dialogue.uasset",
+        "size": 2750
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Kill_Enemy_010_Dialogue.uasset",
+        "size": 2734
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Kill_Enemy_020_Dialogue.uasset",
+        "size": 2736
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Kill_Enemy_030_Dialogue.uasset",
+        "size": 2750
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Kill_Enemy_040_Dialogue.uasset",
+        "size": 2227
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Kill_Enemy_050_Dialogue.uasset",
+        "size": 2227
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Kill_Enemy_060_Dialogue.uasset",
+        "size": 2742
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Kill_Enemy_070_Dialogue.uasset",
+        "size": 2754
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Kill_FirstBlood_010_Dialogue.uasset",
+        "size": 2794
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Kill_Revenge_010_Dialogue.uasset",
+        "size": 2778
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Kill_SameEnemy_010_Dialogue.uasset",
+        "size": 2772
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Kill_Shutdown_010_Dialogue.uasset",
+        "size": 2766
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Kill_Streak_010_Dialogue.uasset",
+        "size": 2760
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Level_AbilityLevelConfirm_010_Dialogue.uasset",
+        "size": 2856
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Level_AbilityLevelConfirm_020_Dialogue.uasset",
+        "size": 2854
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Level_BoughtItem_010_Dialogue.uasset",
+        "size": 2784
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Level_CardPoints_010_Dialogue.uasset",
+        "size": 2816
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Level_Five_010_Dialogue.uasset",
+        "size": 2754
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Level_Five_020_Dialogue.uasset",
+        "size": 2776
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Level_Five_030_Dialogue.uasset",
+        "size": 2778
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Level_Up_010_Dialogue.uasset",
+        "size": 2728
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Level_Up_020_Dialogue.uasset",
+        "size": 2724
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Cassiel_010_Dialogue.uasset",
+        "size": 2764
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Cassiel_020_Dialogue.uasset",
+        "size": 2772
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Cassiel_030_Dialogue.uasset",
+        "size": 2772
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Cassiel_040_Dialogue.uasset",
+        "size": 2774
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Cassiel_050_Dialogue.uasset",
+        "size": 2774
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Cassiel_060_Dialogue.uasset",
+        "size": 2792
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Cassiel_070_Dialogue.uasset",
+        "size": 2788
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Cassiel_080_Dialogue.uasset",
+        "size": 2768
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Countess_010_Dialogue.uasset",
+        "size": 2778
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Countess_020_Dialogue.uasset",
+        "size": 2804
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Countess_030_Dialogue.uasset",
+        "size": 2778
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Countess_040_Dialogue.uasset",
+        "size": 2772
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Countess_050_Dialogue.uasset",
+        "size": 2776
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Countess_060_Dialogue.uasset",
+        "size": 2782
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Countess_070_Dialogue.uasset",
+        "size": 2774
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Countess_080_Dialogue.uasset",
+        "size": 2770
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Death_Cassiel_010_Dialogue.uasset",
+        "size": 2798
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Death_Countess_010_Dialogue.uasset",
+        "size": 2816
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Death_Serath_010_Dialogue.uasset",
+        "size": 2796
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Kill_Cassiel_010_Dialogue.uasset",
+        "size": 2802
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Kill_Cassiel_020_Dialogue.uasset",
+        "size": 2814
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Kill_Cassiel_030_Dialogue.uasset",
+        "size": 2792
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Kill_Countess_010_Dialogue.uasset",
+        "size": 2808
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Kill_Countess_020_Dialogue.uasset",
+        "size": 2816
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Kill_Countess_030_Dialogue.uasset",
+        "size": 2814
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Kill_Serath_010_Dialogue.uasset",
+        "size": 2786
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Kill_Serath_020_Dialogue.uasset",
+        "size": 2806
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Kill_Serath_030_Dialogue.uasset",
+        "size": 2784
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Serath_010_Dialogue.uasset",
+        "size": 2776
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Serath_020_Dialogue.uasset",
+        "size": 2786
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Serath_030_Dialogue.uasset",
+        "size": 2760
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Serath_040_Dialogue.uasset",
+        "size": 2780
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Serath_050_Dialogue.uasset",
+        "size": 2760
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Serath_060_Dialogue.uasset",
+        "size": 2748
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Serath_070_Dialogue.uasset",
+        "size": 2758
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Lore_Serath_080_Dialogue.uasset",
+        "size": 2764
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfileDizzy_010_Dialogue.uasset",
+        "size": 2748
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfileDizzy_020_Dialogue.uasset",
+        "size": 2752
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfileDizzy_030_Dialogue.uasset",
+        "size": 2798
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfileDizzy_040_Dialogue.uasset",
+        "size": 2780
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfileIdle_010_Dialogue.uasset",
+        "size": 2784
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfileIdle_020_Dialogue.uasset",
+        "size": 2782
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfileIdle_030_Dialogue.uasset",
+        "size": 2828
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfileIdle_040_Dialogue.uasset",
+        "size": 2814
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfileIdle_050_Dialogue.uasset",
+        "size": 2960
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfilePoke_010_Dialogue.uasset",
+        "size": 2748
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfilePoke_020_Dialogue.uasset",
+        "size": 2766
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfilePoke_030_ALT_Dialogue.uasset",
+        "size": 2257
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfilePoke_030_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfilePoke_030_LayerA_Dialogue.uasset",
+        "size": 2275
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfilePoke_030_LayerB_Dialogue.uasset",
+        "size": 2275
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfilePoke_030_LayerC_Dialogue.uasset",
+        "size": 2275
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfilePoke_040_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfilePoke_050_Dialogue.uasset",
+        "size": 2233
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfilePoke_060_Dialogue.uasset",
+        "size": 2926
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_ProfilePoke_070_Dialogue.uasset",
+        "size": 2878
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Revive_010_Dialogue.uasset",
+        "size": 2722
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Ace_010_Dialogue.uasset",
+        "size": 2758
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Buffed_010_Dialogue.uasset",
+        "size": 2782
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Celebrate_010_Dialogue.uasset",
+        "size": 2794
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Celebrate_020_Dialogue.uasset",
+        "size": 2782
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Celebrate_030_Dialogue.uasset",
+        "size": 2792
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Danger_010_Dialogue.uasset",
+        "size": 2766
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Defeat_010_Dialogue.uasset",
+        "size": 2810
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Defeat_020_Dialogue.uasset",
+        "size": 2760
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Defeat_030_Dialogue.uasset",
+        "size": 2766
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Idle_010_Dialogue.uasset",
+        "size": 2764
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Idle_020_Dialogue.uasset",
+        "size": 2760
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Idle_030_Dialogue.uasset",
+        "size": 2768
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_OrbPrimeActivated_010_Dialogue.uasset",
+        "size": 2870
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Recall_010_Dialogue.uasset",
+        "size": 2760
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Recall_020_Dialogue.uasset",
+        "size": 2778
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Recall_030_Dialogue.uasset",
+        "size": 2780
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_TeamDead_010_Dialogue.uasset",
+        "size": 2820
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Victory_010_Dialogue.uasset",
+        "size": 2834
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Victory_020_Dialogue.uasset",
+        "size": 2774
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Victory_030_Dialogue.uasset",
+        "size": 2774
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Victory_040_Dialogue.uasset",
+        "size": 2810
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/DialogueWaves/Sevarog_Status_Victory_050_Dialogue.uasset",
+        "size": 2828
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Ability_E_Engage.uasset",
+        "size": 8195
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Ability_LMB_Engage.uasset",
+        "size": 8215
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Ability_LowMana.uasset",
+        "size": 4340
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Ability_No.uasset",
+        "size": 4310
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Ability_OnCooldown.uasset",
+        "size": 4358
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Ability_Passive_Level_01.uasset",
+        "size": 4386
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Ability_Passive_Level_02.uasset",
+        "size": 4386
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Ability_Passive_Level_03.uasset",
+        "size": 4386
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Ability_Passive_Level_04.uasset",
+        "size": 4386
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Ability_Q_Engage.uasset",
+        "size": 8195
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Ability_RMB_Engage.uasset",
+        "size": 8215
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Ability_ScoredCrit.uasset",
+        "size": 8215
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Ability_Ultimate_Ally.uasset",
+        "size": 4376
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Ability_Ultimate_Enemy.uasset",
+        "size": 4382
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Ability_Ultimate_Ready.uasset",
+        "size": 8255
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Ability_Ultimate_Self.uasset",
+        "size": 4376
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Ability_UsedLastCharge.uasset",
+        "size": 4382
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Catchphrase.uasset",
+        "size": 10844
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Death.uasset",
+        "size": 8085
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_DraftLock.uasset",
+        "size": 9485
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_DraftSelect.uasset",
+        "size": 8145
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Ability_E.uasset",
+        "size": 8189
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Ability_Primary.uasset",
+        "size": 8249
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Ability_Q.uasset",
+        "size": 8189
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Ability_RMB.uasset",
+        "size": 8209
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Ability_Ultimate.uasset",
+        "size": 8259
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Attack.uasset",
+        "size": 8159
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Block.uasset",
+        "size": 8149
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_BreathingLowHealth.uasset",
+        "size": 4399
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_BreathingRun.uasset",
+        "size": 4362
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Cheer.uasset",
+        "size": 8149
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Death.uasset",
+        "size": 8149
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Frustration.uasset",
+        "size": 8209
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Jump.uasset",
+        "size": 8139
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_JumpHeavy.uasset",
+        "size": 8189
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Land.uasset",
+        "size": 8139
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_LandHeavy.uasset",
+        "size": 8160
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Laugh.uasset",
+        "size": 9513
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Pain.uasset",
+        "size": 8139
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_PainHeavy.uasset",
+        "size": 8189
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Swing.uasset",
+        "size": 8149
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Emote_010.uasset",
+        "size": 4296
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Emote_020.uasset",
+        "size": 4296
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Emote_030.uasset",
+        "size": 4296
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Emote_040.uasset",
+        "size": 4296
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Emote_050.uasset",
+        "size": 4296
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Emote_060.uasset",
+        "size": 4296
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Emote_Taunt.uasset",
+        "size": 10873
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Health_Critical.uasset",
+        "size": 4340
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Health_CriticalSave.uasset",
+        "size": 4364
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Health_Healed.uasset",
+        "size": 4328
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Health_Low.uasset",
+        "size": 4310
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Health_SufferedCrit.uasset",
+        "size": 4364
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Intro_Boast.uasset",
+        "size": 8145
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Intro_BoastResponse.uasset",
+        "size": 8225
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Intro_Question.uasset",
+        "size": 8175
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Intro_QuestionResponse.uasset",
+        "size": 8255
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Intro_Statement.uasset",
+        "size": 9557
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Kill_Assist.uasset",
+        "size": 4316
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Kill_Enemy.uasset",
+        "size": 13583
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Kill_FirstBlood.uasset",
+        "size": 4340
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Kill_Revenge.uasset",
+        "size": 4322
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Kill_SameEnemy.uasset",
+        "size": 4334
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Kill_Shutdown.uasset",
+        "size": 4328
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Kill_Streak.uasset",
+        "size": 4316
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Level_AbilityLevelConfirm.uasset",
+        "size": 6893
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Level_BoughtItem.uasset",
+        "size": 4346
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Level_CardPoints.uasset",
+        "size": 4346
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Level_Five.uasset",
+        "size": 8135
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Level_Up.uasset",
+        "size": 6757
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Cassiel_010.uasset",
+        "size": 4338
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Cassiel_020.uasset",
+        "size": 4338
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Cassiel_030.uasset",
+        "size": 4338
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Cassiel_040.uasset",
+        "size": 4338
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Cassiel_050.uasset",
+        "size": 4338
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Cassiel_060.uasset",
+        "size": 4338
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Cassiel_070.uasset",
+        "size": 4338
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Cassiel_080.uasset",
+        "size": 4338
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Countess_010.uasset",
+        "size": 4344
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Countess_020.uasset",
+        "size": 4344
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Countess_030.uasset",
+        "size": 4344
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Countess_040.uasset",
+        "size": 4344
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Countess_050.uasset",
+        "size": 4344
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Countess_060.uasset",
+        "size": 4344
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Countess_070.uasset",
+        "size": 4344
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Countess_080.uasset",
+        "size": 4344
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Death_Cassiel.uasset",
+        "size": 4358
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Death_Countess.uasset",
+        "size": 4364
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Death_Serath.uasset",
+        "size": 4352
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Kill_Cassiel.uasset",
+        "size": 8205
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Kill_Countess.uasset",
+        "size": 8215
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Kill_Serath.uasset",
+        "size": 8195
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Serath_010.uasset",
+        "size": 4332
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Serath_020.uasset",
+        "size": 4332
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Serath_030.uasset",
+        "size": 4332
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Serath_040.uasset",
+        "size": 4332
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Serath_050.uasset",
+        "size": 4332
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Serath_060.uasset",
+        "size": 4332
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Serath_070.uasset",
+        "size": 4332
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Lore_Serath_080.uasset",
+        "size": 4332
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_ProfileDizzy_010.uasset",
+        "size": 4338
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_ProfileDizzy_020.uasset",
+        "size": 4338
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_ProfileDizzy_030.uasset",
+        "size": 4338
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_ProfileDizzy_040.uasset",
+        "size": 4338
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_ProfileIdle_010.uasset",
+        "size": 4332
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_ProfileIdle_020.uasset",
+        "size": 4332
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_ProfileIdle_030.uasset",
+        "size": 4332
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_ProfileIdle_040.uasset",
+        "size": 4332
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_ProfileIdle_050.uasset",
+        "size": 4333
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_ProfilePoke_010.uasset",
+        "size": 4332
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_ProfilePoke_020.uasset",
+        "size": 4332
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_ProfilePoke_030.uasset",
+        "size": 10942
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_ProfilePoke_040.uasset",
+        "size": 4332
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_ProfilePoke_050.uasset",
+        "size": 4332
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_ProfilePoke_060.uasset",
+        "size": 4333
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_ProfilePoke_070.uasset",
+        "size": 4332
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Revive.uasset",
+        "size": 4286
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Status_Ace.uasset",
+        "size": 4310
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Status_Buffed.uasset",
+        "size": 4328
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Status_Celebrate.uasset",
+        "size": 8195
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Status_Danger.uasset",
+        "size": 4328
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Status_Defeat.uasset",
+        "size": 8165
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Status_Idle.uasset",
+        "size": 8145
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Status_OrbPrimeActivated.uasset",
+        "size": 4394
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Status_Recall.uasset",
+        "size": 8165
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Status_TeamDead.uasset",
+        "size": 4340
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Status_Victory.uasset",
+        "size": 10915
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_E_Engage_010.uasset",
+        "size": 527620
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_E_Engage_020.uasset",
+        "size": 558497
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_E_Engage_030.uasset",
+        "size": 452530
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_LMB_Engage_010.uasset",
+        "size": 524856
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_LMB_Engage_020.uasset",
+        "size": 447866
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_LMB_Engage_030.uasset",
+        "size": 368896
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_LowMana_010.uasset",
+        "size": 684336
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_No_010.uasset",
+        "size": 444997
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_OnCooldown_010.uasset",
+        "size": 448595
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_Passive_Level_01.uasset",
+        "size": 632603
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_Passive_Level_02.uasset",
+        "size": 614249
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_Passive_Level_03.uasset",
+        "size": 529580
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_Passive_Level_04.uasset",
+        "size": 635475
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_Q_Engage_010.uasset",
+        "size": 493113
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_Q_Engage_020.uasset",
+        "size": 565095
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_Q_Engage_030.uasset",
+        "size": 523545
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_RMB_Engage_010.uasset",
+        "size": 504563
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_RMB_Engage_020.uasset",
+        "size": 495102
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_RMB_Engage_030.uasset",
+        "size": 410267
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_ScoredCrit_010.uasset",
+        "size": 533469
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_ScoredCrit_020.uasset",
+        "size": 473791
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_ScoredCrit_030.uasset",
+        "size": 463170
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_Ultimate_Ally_010.uasset",
+        "size": 688290
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_Ultimate_Enemy_010.uasset",
+        "size": 491221
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_Ultimate_Ready_010.uasset",
+        "size": 646013
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_Ultimate_Ready_020.uasset",
+        "size": 712338
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_Ultimate_Ready_030.uasset",
+        "size": 571102
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_Ultimate_Self_010.uasset",
+        "size": 598023
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Ability_UsedLastCharge_010.uasset",
+        "size": 597069
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Catchphrase_010.uasset",
+        "size": 694615
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Catchphrase_020.uasset",
+        "size": 829342
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Catchphrase_030.uasset",
+        "size": 684456
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Catchphrase_040.uasset",
+        "size": 1245323
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Catchphrase_050.uasset",
+        "size": 812773
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Death_010.uasset",
+        "size": 679328
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Death_020.uasset",
+        "size": 666674
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Death_030.uasset",
+        "size": 685053
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_DraftLock_010.uasset",
+        "size": 689121
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_DraftLock_020.uasset",
+        "size": 513025
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_DraftLock_030.uasset",
+        "size": 600719
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_DraftLock_050.uasset",
+        "size": 1452932
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_DraftSelect_010.uasset",
+        "size": 1060559
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_DraftSelect_020.uasset",
+        "size": 770765
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_DraftSelect_030.uasset",
+        "size": 824628
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Ability_E_01.uasset",
+        "size": 544667
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Ability_E_02.uasset",
+        "size": 547671
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Ability_E_03.uasset",
+        "size": 538854
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Ability_Primary_01.uasset",
+        "size": 399525
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Ability_Primary_02.uasset",
+        "size": 407161
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Ability_Primary_03.uasset",
+        "size": 424787
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Ability_Q_01.uasset",
+        "size": 449595
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Ability_Q_02.uasset",
+        "size": 558359
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Ability_Q_03.uasset",
+        "size": 369591
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Ability_RMB_01.uasset",
+        "size": 389026
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Ability_RMB_02.uasset",
+        "size": 455338
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Ability_RMB_03.uasset",
+        "size": 435999
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Ability_Ultimate_01.uasset",
+        "size": 556288
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Ability_Ultimate_02.uasset",
+        "size": 545857
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Ability_Ultimate_03.uasset",
+        "size": 484406
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Attack_01.uasset",
+        "size": 394863
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Attack_02.uasset",
+        "size": 488199
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Attack_03.uasset",
+        "size": 393988
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Block_01.uasset",
+        "size": 401506
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Block_02.uasset",
+        "size": 364052
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Block_03.uasset",
+        "size": 381413
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_BreathingLowHealth_01.uasset",
+        "size": 2748648
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_BreathingRun_01.uasset",
+        "size": 1776871
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Cheer_01.uasset",
+        "size": 615048
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Cheer_02.uasset",
+        "size": 601322
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Cheer_03.uasset",
+        "size": 816889
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Death_01.uasset",
+        "size": 946374
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Death_02.uasset",
+        "size": 965479
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Death_03.uasset",
+        "size": 996211
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Frustration_01.uasset",
+        "size": 365976
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Frustration_02.uasset",
+        "size": 417016
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Frustration_03.uasset",
+        "size": 424813
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Jump_01.uasset",
+        "size": 314551
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Jump_02.uasset",
+        "size": 325404
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Jump_03.uasset",
+        "size": 313598
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_JumpHeavy_01.uasset",
+        "size": 335872
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_JumpHeavy_02.uasset",
+        "size": 377485
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_JumpHeavy_03.uasset",
+        "size": 334189
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Land_01.uasset",
+        "size": 344652
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Land_02.uasset",
+        "size": 379417
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Land_03.uasset",
+        "size": 381015
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_LandHeavy_01.uasset",
+        "size": 409250
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_LandHeavy_02.uasset",
+        "size": 379409
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_LandHeavy_03.uasset",
+        "size": 408359
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Laugh_01.uasset",
+        "size": 390835
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Laugh_02.uasset",
+        "size": 529599
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Laugh_03.uasset",
+        "size": 1240415
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Laugh_04.uasset",
+        "size": 1092674
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Pain_01.uasset",
+        "size": 373484
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Pain_02.uasset",
+        "size": 390867
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Pain_03.uasset",
+        "size": 361089
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_PainHeavy_01.uasset",
+        "size": 546572
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_PainHeavy_02.uasset",
+        "size": 469841
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_PainHeavy_03.uasset",
+        "size": 404461
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Swing_01.uasset",
+        "size": 387103
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Swing_02.uasset",
+        "size": 431357
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Effort_Swing_03.uasset",
+        "size": 386056
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Emote_010.uasset",
+        "size": 573701
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Emote_020.uasset",
+        "size": 451742
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Emote_030.uasset",
+        "size": 447865
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Emote_040.uasset",
+        "size": 515232
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Emote_050.uasset",
+        "size": 514164
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Emote_060.uasset",
+        "size": 549899
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Emote_Taunt_010.uasset",
+        "size": 760293
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Emote_Taunt_020.uasset",
+        "size": 1432196
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Emote_Taunt_030.uasset",
+        "size": 524750
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Emote_Taunt_040.uasset",
+        "size": 488225
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Emote_Taunt_050.uasset",
+        "size": 719961
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Health_Critical_010.uasset",
+        "size": 862142
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Health_CriticalSave_010.uasset",
+        "size": 556516
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Health_Healed_010.uasset",
+        "size": 590312
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Health_Low_010.uasset",
+        "size": 724595
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Health_SufferedCrit_010.uasset",
+        "size": 522784
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Intro_Boast_010.uasset",
+        "size": 1021496
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Intro_Boast_020.uasset",
+        "size": 633221
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Intro_Boast_030.uasset",
+        "size": 1064677
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Intro_BoastResponse_010.uasset",
+        "size": 636344
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Intro_BoastResponse_020.uasset",
+        "size": 846697
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Intro_BoastResponse_030.uasset",
+        "size": 635166
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Intro_Question_010.uasset",
+        "size": 525825
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Intro_Question_020.uasset",
+        "size": 716995
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Intro_Question_030.uasset",
+        "size": 481455
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Intro_QuestionResponse_010.uasset",
+        "size": 596112
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Intro_QuestionResponse_020.uasset",
+        "size": 685274
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Intro_QuestionResponse_030.uasset",
+        "size": 568678
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Intro_Statement_010.uasset",
+        "size": 614357
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Intro_Statement_020.uasset",
+        "size": 613383
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Intro_Statement_030.uasset",
+        "size": 865410
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Intro_Statement_040.uasset",
+        "size": 1500755
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Kill_Assist_010.uasset",
+        "size": 568036
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Kill_Enemy_010.uasset",
+        "size": 449647
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Kill_Enemy_020.uasset",
+        "size": 509478
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Kill_Enemy_030.uasset",
+        "size": 672888
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Kill_Enemy_040.uasset",
+        "size": 1093656
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Kill_Enemy_050.uasset",
+        "size": 526367
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Kill_Enemy_060.uasset",
+        "size": 656466
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Kill_Enemy_070.uasset",
+        "size": 670114
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Kill_FirstBlood_010.uasset",
+        "size": 709302
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Kill_Revenge_010.uasset",
+        "size": 744957
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Kill_SameEnemy_010.uasset",
+        "size": 506508
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Kill_Shutdown_010.uasset",
+        "size": 609432
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Kill_Streak_010.uasset",
+        "size": 742857
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Level_AbilityLevelConfirm_010.uasset",
+        "size": 503593
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Level_AbilityLevelConfirm_020.uasset",
+        "size": 529675
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Level_BoughtItem_010.uasset",
+        "size": 530807
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Level_CardPoints_010.uasset",
+        "size": 792967
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Level_Five_010.uasset",
+        "size": 679517
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Level_Five_020.uasset",
+        "size": 967482
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Level_Five_030.uasset",
+        "size": 932079
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Level_Up_010.uasset",
+        "size": 599669
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Level_Up_020.uasset",
+        "size": 568888
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Cassiel_010.uasset",
+        "size": 690027
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Cassiel_020.uasset",
+        "size": 705371
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Cassiel_030.uasset",
+        "size": 716159
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Cassiel_040.uasset",
+        "size": 939575
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Cassiel_050.uasset",
+        "size": 957114
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Cassiel_060.uasset",
+        "size": 858336
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Cassiel_070.uasset",
+        "size": 804551
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Cassiel_080.uasset",
+        "size": 766074
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Countess_010.uasset",
+        "size": 824586
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Countess_020.uasset",
+        "size": 939960
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Countess_030.uasset",
+        "size": 778602
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Countess_040.uasset",
+        "size": 812013
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Countess_050.uasset",
+        "size": 869628
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Countess_060.uasset",
+        "size": 703313
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Countess_070.uasset",
+        "size": 675752
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Countess_080.uasset",
+        "size": 567178
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Death_Cassiel_010.uasset",
+        "size": 507541
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Death_Countess_010.uasset",
+        "size": 565251
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Death_Serath_010.uasset",
+        "size": 552317
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Kill_Cassiel_010.uasset",
+        "size": 593130
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Kill_Cassiel_020.uasset",
+        "size": 641191
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Kill_Cassiel_030.uasset",
+        "size": 589955
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Kill_Countess_010.uasset",
+        "size": 569070
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Kill_Countess_020.uasset",
+        "size": 647589
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Kill_Countess_030.uasset",
+        "size": 727588
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Kill_Serath_010.uasset",
+        "size": 593764
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Kill_Serath_020.uasset",
+        "size": 711399
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Kill_Serath_030.uasset",
+        "size": 644951
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Serath_010.uasset",
+        "size": 880341
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Serath_020.uasset",
+        "size": 899561
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Serath_030.uasset",
+        "size": 809164
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Serath_040.uasset",
+        "size": 1127063
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Serath_050.uasset",
+        "size": 729455
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Serath_060.uasset",
+        "size": 689077
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Serath_070.uasset",
+        "size": 628638
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Lore_Serath_080.uasset",
+        "size": 712075
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfileDizzy_010.uasset",
+        "size": 598619
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfileDizzy_020.uasset",
+        "size": 588237
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfileDizzy_030.uasset",
+        "size": 922691
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfileDizzy_040.uasset",
+        "size": 1096158
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfileIdle_010.uasset",
+        "size": 945653
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfileIdle_020.uasset",
+        "size": 1008014
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfileIdle_030.uasset",
+        "size": 1041861
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfileIdle_040.uasset",
+        "size": 1841415
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfileIdle_050.uasset",
+        "size": 3288370
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfilePoke_010.uasset",
+        "size": 537397
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfilePoke_020.uasset",
+        "size": 753486
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfilePoke_030.uasset",
+        "size": 988374
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfilePoke_030_ALT.uasset",
+        "size": 914676
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfilePoke_030_LayerA.uasset",
+        "size": 882863
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfilePoke_030_LayerB.uasset",
+        "size": 759949
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfilePoke_030_LayerC.uasset",
+        "size": 956689
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfilePoke_040.uasset",
+        "size": 674455
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfilePoke_050.uasset",
+        "size": 698632
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfilePoke_060.uasset",
+        "size": 2182348
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_ProfilePoke_070.uasset",
+        "size": 1668838
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Revive_010.uasset",
+        "size": 720818
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Ace_010.uasset",
+        "size": 669998
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Buffed_010.uasset",
+        "size": 680526
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Celebrate_010.uasset",
+        "size": 652600
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Celebrate_020.uasset",
+        "size": 546906
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Celebrate_030.uasset",
+        "size": 581518
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Danger_010.uasset",
+        "size": 489296
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Defeat_010.uasset",
+        "size": 1047227
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Defeat_020.uasset",
+        "size": 667947
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Defeat_030.uasset",
+        "size": 624641
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Idle_010.uasset",
+        "size": 592175
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Idle_020.uasset",
+        "size": 697815
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Idle_030.uasset",
+        "size": 734413
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_OrbPrimeActivated_010.uasset",
+        "size": 865984
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Recall_010.uasset",
+        "size": 492972
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Recall_020.uasset",
+        "size": 647894
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Recall_030.uasset",
+        "size": 579615
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_TeamDead_010.uasset",
+        "size": 1068564
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Victory_010.uasset",
+        "size": 1276131
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Victory_020.uasset",
+        "size": 633598
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Victory_030.uasset",
+        "size": 635245
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Victory_040.uasset",
+        "size": 1042519
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundWaves/Sevarog_Status_Victory_050.uasset",
+        "size": 1229933
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_IronRust_Tile_D.uasset",
+        "size": 45346771
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_IronRust_Tile_N.uasset",
+        "size": 41019414
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_OldWeave_COLOR.uasset",
+        "size": 3759748
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_OldWeave_NRM.uasset",
+        "size": 3290401
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_Sevarog_Armour_Mask.uasset",
+        "size": 27026797
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_Sevarog_Armour_N.uasset",
+        "size": 15368719
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_Sevarog_ArmourR_Mask.uasset",
+        "size": 28623867
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_Sevarog_ArmourR_N.uasset",
+        "size": 21152108
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_Sevarog_Arms_BackCloth_Mask1.uasset",
+        "size": 8687374
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_Sevarog_Arms_BackCloth_N.uasset",
+        "size": 19185016
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_Sevarog_Arms_BackCloth_RGB.uasset",
+        "size": 39195398
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_Sevarog_Belt_Chainmall_Hammer_Mask.uasset",
+        "size": 14646018
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_Sevarog_Belt_Chainmall_Hammer_Mask1.uasset",
+        "size": 19800530
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_Sevarog_Belt_Chainmall_Hammer_N.uasset",
+        "size": 18872351
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_Sevarog_Belt_Chainmall_Hammer_RGB.uasset",
+        "size": 32780412
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_Sevarog_Torso_Mask.uasset",
+        "size": 15573548
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_Sevarog_Torso_Mask1.uasset",
+        "size": 3350927
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_Sevarog_Torso_N.uasset",
+        "size": 18348094
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_Sevarog_Torso_RGB.uasset",
+        "size": 22945799
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_Smoke_01.uasset",
+        "size": 2010886
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Textures/T_UnpleasentGrime_D.uasset",
+        "size": 9774703
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Maps/BackGroundAssets/HDRI_Epic_Courtyard_Daylight.uasset",
+        "size": 9423235
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Maps/BackGroundAssets/HDRSky.uasset",
+        "size": 97764
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Maps/BackGroundAssets/M_AssetPlatform.uasset",
+        "size": 90227
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Maps/BackGroundAssets/SM_AssetPlatform.uasset",
+        "size": 492817
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Maps/Lighting_Background_BuiltData.uasset",
+        "size": 1049819
+      },
+      {
+        "path": "Content/ParagonSevarog/Characters/Maps/Sevarog_BuiltData.uasset",
+        "size": 1103764
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Cut_Outs/T_Plasma_Soft_SubUV.uasset",
+        "size": 1347
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Cut_Outs/T_ShadowSwirls_v2B_SubUV.uasset",
+        "size": 1367
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Decals/M_RuneDecal.uasset",
+        "size": 94632
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Energy/M_PrimaryComet.uasset",
+        "size": 138246
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Energy/M_SevarogSwirls.uasset",
+        "size": 126555
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Energy/M_SevarogWeaponEnergy.uasset",
+        "size": 112224
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Energy/M_SiphonImpact.uasset",
+        "size": 126340
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Energy/M_SiphonSouls.uasset",
+        "size": 169146
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Energy/M_SiphonSoulsBody.uasset",
+        "size": 132543
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Energy/M_SoulHand4.uasset",
+        "size": 153079
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Energy/M_SoulHandTargeting.uasset",
+        "size": 159701
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Energy/M_Weakness_Projectile.uasset",
+        "size": 133921
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Fire/M_Shockwave.uasset",
+        "size": 111059
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Flare/M_ArrowFlare.uasset",
+        "size": 61770
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Flare/M_FaceRays.uasset",
+        "size": 82191
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Flare/M_Revenant_Primary_MeshFrontTrail.uasset",
+        "size": 111073
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Flare/M_Revenant_Primary_MeshWindy.uasset",
+        "size": 129582
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Flare/M_SevarogSpeed.uasset",
+        "size": 129021
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Flare/M_SevarogSpeed2.uasset",
+        "size": 126869
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Flare/M_Sparrow_Primary_Flare.uasset",
+        "size": 62276
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Functions/MF_CameraDistanceFade.uasset",
+        "size": 77154
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Functions/MF_Decal_SlopeMask.uasset",
+        "size": 74943
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Functions/MF_DecalWorldNormal.uasset",
+        "size": 90521
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Functions/MF_DitheredRefraction.uasset",
+        "size": 49287
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Functions/MF_FadeBasedOnViewAngle.uasset",
+        "size": 73862
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Functions/MF_FX_EmissiveModulate.uasset",
+        "size": 43548
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Functions/MF_ParticleRandomSize.uasset",
+        "size": 47380
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Functions/MF_SubUV_Detail.uasset",
+        "size": 48507
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Functions/MF_Tile_Isolate_XY.uasset",
+        "size": 81656
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Shockwave/M_ImpactShockwave.uasset",
+        "size": 103442
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Shockwave/M_ShockwaveFlame.uasset",
+        "size": 103972
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Shockwave/M_SpeedBlur.uasset",
+        "size": 108929
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Shockwave/M_SteelImpactRefraction.uasset",
+        "size": 74226
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Smoke/M_FaceDark.uasset",
+        "size": 74335
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Smoke/M_Sevarog_ShadowSkirt.uasset",
+        "size": 128115
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Smoke/M_ShadowSwirls_BrightColors.uasset",
+        "size": 79281
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Smoke/M_ShadowSwirls_Masked.uasset",
+        "size": 60519
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Smoke/M_ShadowSwirls_v4.uasset",
+        "size": 80069
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Smoke/WispySmokeSoft/M_ShadowSwirls_v1.uasset",
+        "size": 82939
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Smoke/WispySmokeSoft/M_ShadowSwirls_v2.uasset",
+        "size": 89356
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Sparks/M_hardSpark_Alpha_GPU_Random.uasset",
+        "size": 93006
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Sparks/M_Hotdog_Spark_VLerp_DOF_Rand_Master.uasset",
+        "size": 84242
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Sparks/M_SoulEmbers.uasset",
+        "size": 86673
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Sparks/M_Spark_VelocityLerp.uasset",
+        "size": 98251
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Trails/M_PrimaryTrails.uasset",
+        "size": 98203
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Materials/Trails/M_UltArc_Expanding.uasset",
+        "size": 141912
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Hero_Specific/SM_Sevarog_Hand_Frame1.uasset",
+        "size": 589835
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Hero_Specific/SM_Sevarog_Hand_Frame3.uasset",
+        "size": 589206
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Hero_Specific/SM_Sevarog_Hand_Frame4.uasset",
+        "size": 593969
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Hero_Specific/SM_Sevarog_Hand_Frame5.uasset",
+        "size": 594399
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Shapes/SM_Burden_Projectile.uasset",
+        "size": 197226
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Shapes/SM_CleanseBubble.uasset",
+        "size": 145699
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Shapes/SM_Dive_Flames.uasset",
+        "size": 133879
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Shapes/SM_Portal_Pointer.uasset",
+        "size": 272029
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Shapes/SM_Sevarog_Comet_v1.uasset",
+        "size": 164853
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Shapes/SM_Sevarog_Cone_v1.uasset",
+        "size": 312390
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Shapes/SM_Sevarog_FaceLight.uasset",
+        "size": 130814
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Shapes/SM_TravelMode.uasset",
+        "size": 103267
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Smoke/SM_Sevarog_Body_Spirals_v1.uasset",
+        "size": 145015
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Smoke/SM_Sevarog_Siphon_v1.uasset",
+        "size": 308940
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Smoke/SM_Sevarog_Spiral_Explosion.uasset",
+        "size": 123309
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Smoke/SM_Sevarog_Spiral_v1.uasset",
+        "size": 128300
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Smoke/SM_Sevarog_UltSwing_Arc_Y_Fwd_Expanding.uasset",
+        "size": 116841
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Smoke/SM_Sevarog_WeaponEnergy.uasset",
+        "size": 99483
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Meshes/Smoke/SM_SmokeFlat.uasset",
+        "size": 367542
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Primary/FX/P_Sevarog_Melee_SucessfulImpact.uasset",
+        "size": 141465
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Primary/FX/P_SevarogComet.uasset",
+        "size": 30764
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Primary/FX/P_SevarogTrails.uasset",
+        "size": 84467
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Relentless/FX/P_Sevarog_Relentless_Dustkick.uasset",
+        "size": 134170
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Relentless/FX/P_SevarogSpeedBlur.uasset",
+        "size": 28363
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Relentless/FX/P_SevarogTrailsDash.uasset",
+        "size": 29572
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/SoulSiphon/FX/P_GhostHand.uasset",
+        "size": 220503
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/SoulSiphon/FX/P_GreenFlashScreen.uasset",
+        "size": 27264
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/SoulSiphon/FX/P_SiphonCasting.uasset",
+        "size": 204397
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/SoulSiphon/FX/P_SiphonImpact.uasset",
+        "size": 161886
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/SoulSiphon/FX/P_SiphonTargeting.uasset",
+        "size": 119704
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/SoulSiphon/FX/P_SoulCastTrails.uasset",
+        "size": 23519
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/SoulSiphon/FX/P_SoulSwirls.uasset",
+        "size": 55238
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/SoulSiphon/FX/P_SoulSwirlsBody.uasset",
+        "size": 83558
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/SoulStackPassive/FX/P_FaceDark.uasset",
+        "size": 30995
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/SoulStackPassive/FX/P_ShadowTrails.uasset",
+        "size": 220434
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/SoulStackPassive/FX/P_ShadowTrailsCharSelect.uasset",
+        "size": 199228
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/SoulStackPassive/FX/P_SoulStageEmbers.uasset",
+        "size": 135178
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/SoulStackPassive/FX/P_SoulStageEmbersBurst.uasset",
+        "size": 75161
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Subjugate/FX/P_Sevarog_Subjugate_Blast.uasset",
+        "size": 191953
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Subjugate/FX/P_Sub_Cast.uasset",
+        "size": 274712
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Subjugate/FX/P_SubjugateSwirls.uasset",
+        "size": 511551
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Ultimate/FX/P_SevarogFaceGlow.uasset",
+        "size": 54476
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Ultimate/FX/P_SevarogFaceGlowActivate.uasset",
+        "size": 39447
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Ultimate/FX/P_SevarogUltTrails.uasset",
+        "size": 252223
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Ultimate/FX/P_Ult_GreenFlames.uasset",
+        "size": 100493
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Ultimate/FX/P_UltActivate.uasset",
+        "size": 488764
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Ultimate/FX/P_UltDamageTrails.uasset",
+        "size": 191598
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Ultimate/FX/P_UltimateLooping.uasset",
+        "size": 392036
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Ultimate/FX/P_UltMeshArc_Expanding.uasset",
+        "size": 302481
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/Abilities/Ultimate/FX/P_UltSmokeTrail.uasset",
+        "size": 195305
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/P_Sevarog_Emote.uasset",
+        "size": 188338
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/P_Sevarog_Homescreen_Hammer.uasset",
+        "size": 185723
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/P_Sevarog_Homescreen_Smoke.uasset",
+        "size": 156085
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Particles/P_Sevarog_LevelStart.uasset",
+        "size": 253740
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Decals/Scorch/T_Smash_Blast_Char.uasset",
+        "size": 601603
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Energy/Electricity/T_Lightning_B_Tile_Chromatic.uasset",
+        "size": 1729841
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Energy/Plasma/T_Plasma_Aurora_Seamless.uasset",
+        "size": 1947055
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Energy/Plasma/T_Plasma_Soft_N.uasset",
+        "size": 7641892
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Energy/Plasma/T_Plasma_Wisps.uasset",
+        "size": 9082206
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Energy/Plasma/T_Sevarog_Poster_Tendrils_v1_Seamless.uasset",
+        "size": 3447335
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Energy/Plasma/T_Turbulence_Seamless_N.uasset",
+        "size": 1947467
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Environment/Snow/T_Snow01_Packed.uasset",
+        "size": 72779
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Flares/T_Flare_Spikeball.uasset",
+        "size": 373623
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Flares/T_RayBeams_Packed.uasset",
+        "size": 262204
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Gradients/Masks/T_Portal_Gradient_02_M.uasset",
+        "size": 4715
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Hero_Specific/T_Sevarog_Arms_BackCloth_N.uasset",
+        "size": 19132831
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Hero_Specific/T_SevarogSigil.uasset",
+        "size": 4742879
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Masks/T_EngineFlameMask.uasset",
+        "size": 304499
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Masks/T_falloff_circle.uasset",
+        "size": 119157
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Masks/T_FireBall_LerpMask.uasset",
+        "size": 1431741
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Masks/T_GradientLaserSoft_M.uasset",
+        "size": 33351
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Masks/T_MaglevFX_Line.uasset",
+        "size": 5351
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Masks/T_NoisyMask.uasset",
+        "size": 121821
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Masks/T_NoisyRamp.uasset",
+        "size": 310027
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Masks/T_Shockwave.uasset",
+        "size": 66896
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Masks/T_SoftEdge_M.uasset",
+        "size": 384960
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Masks/T_Square_Gradient_M.uasset",
+        "size": 385560
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Masks/T_TankMoteNoise.uasset",
+        "size": 186615
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/NormalShapes/T_Sphere_N.uasset",
+        "size": 88639
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/NormalShapes/T_Torus_N.uasset",
+        "size": 125157
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Smoke/Inky/T_ShadowSwirls_v2_N.uasset",
+        "size": 12297686
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Smoke/Inky/T_ShadowSwirls_v2B.uasset",
+        "size": 4825799
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Smoke/T_ShadowSwirls_v2B.uasset",
+        "size": 4825870
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Smoke/T_SmokeRend_N.uasset",
+        "size": 200278
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Sparks/T_Spark_Soft.uasset",
+        "size": 208148
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Sparks/T_SparkSingle.uasset",
+        "size": 45481
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Tile/Energy/Plasma/T_Sevarog_Poster_Tendrils_v2_Seamless.uasset",
+        "size": 4284116
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Tile/Heat/T_2ndInfectedMapLinear.uasset",
+        "size": 1630588
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Tile/Noise/T_AtmosphericCloudNoise03.uasset",
+        "size": 3156386
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Tile/Noise/T_Inky_Smoke_Tile.uasset",
+        "size": 1374823
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Tile/Noise/T_NoiseBubbly_M.uasset",
+        "size": 94317
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Tile/Noise/T_NormalNoise.uasset",
+        "size": 148786
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Tile/Noise/T_Perlin_Soft_Packed_Gchannel_N.uasset",
+        "size": 7418001
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Tile/Noise/T_Soft_Noise.uasset",
+        "size": 1127244
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Tile/Noise/T_Swirly_Noise.uasset",
+        "size": 1007622
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Tile/Noise/T_TilingNoise02.uasset",
+        "size": 2858804
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Tile/Noise/T_TilingNoise12.uasset",
+        "size": 4443183
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Tile/Noise/T_Voronoi_Cells_01.uasset",
+        "size": 8678435
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/Textures/Water/T_Water_N.uasset",
+        "size": 2114802
+      },
+      {
+        "path": "Content/ParagonSevarog/FX/VectorFields/VF_TurbulentNoise_1_55.uasset",
+        "size": 3748545
+      }
+    ]
+  },
+  {
+    "root": "Content/OneBossFight/SevarogPack",
+    "package_file_count": 32,
+    "files": [
+      {
+        "path": "Content/OneBossFight/SevarogPack/Abilities/GA_Sev_CloseAttack.uasset",
+        "size": 7759
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Abilities/GA_Sev_CloseRare.uasset",
+        "size": 6944
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Abilities/GA_Sev_Death.uasset",
+        "size": 122118
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Abilities/GA_Sev_EnterCombat.uasset",
+        "size": 6634
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Abilities/GA_Sev_ExitCombat.uasset",
+        "size": 6603
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Abilities/GA_Sev_HitStun.uasset",
+        "size": 7678
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Abilities/GA_Sev_LeapAttack.uasset",
+        "size": 7270
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Abilities/GA_Sev_Lightning.uasset",
+        "size": 60535
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Abilities/GA_Sev_MidRangeAttack.uasset",
+        "size": 7105
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Abilities/GA_Sev_PhaseRoar.uasset",
+        "size": 6048
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Abilities/GA_Sev_RetaliationAttack.uasset",
+        "size": 7150
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Abilities/GA_Sev_SprintAttack.uasset",
+        "size": 7133
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Abilities/GA_Sev_TurnInPlace.uasset",
+        "size": 7027
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/BP_SevarogBossPack.uasset",
+        "size": 161412
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/BP_SevBolt.uasset",
+        "size": 29796
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Montages/AM_SevPack_Backhand.uasset",
+        "size": 19474
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Montages/AM_SevPack_Charge.uasset",
+        "size": 19046
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Montages/AM_SevPack_Death.uasset",
+        "size": 10058
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Montages/AM_SevPack_Entrance.uasset",
+        "size": 13162
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Montages/AM_SevPack_Exit.uasset",
+        "size": 13240
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Montages/AM_SevPack_Lightning.uasset",
+        "size": 20369
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Montages/AM_SevPack_Lunge.uasset",
+        "size": 17974
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Montages/AM_SevPack_Overhead.uasset",
+        "size": 17767
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Montages/AM_SevPack_Roar.uasset",
+        "size": 13828
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Montages/AM_SevPack_Shockwave.uasset",
+        "size": 25459
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Montages/AM_SevPack_Sweep.uasset",
+        "size": 19497
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/Montages/AM_SevPack_Turn.uasset",
+        "size": 13603
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/SevarogCombatStyle.uasset",
+        "size": 4940
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/SevarogEnemyInfo.uasset",
+        "size": 7040
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/SevBoltAttackData.uasset",
+        "size": 3047
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/SevBoltImpactEffect.uasset",
+        "size": 4445
+      },
+      {
+        "path": "Content/OneBossFight/SevarogPack/SM_SevarogScytheProxy.uasset",
+        "size": 189353
+      }
+    ]
+  }
+]

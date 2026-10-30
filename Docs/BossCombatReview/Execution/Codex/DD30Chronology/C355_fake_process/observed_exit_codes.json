@@ -1,0 +1,22 @@
+﻿[
+    {
+        "process_id":  33816,
+        "cached_handle":  2588,
+        "exit_code":  0,
+        "outcome":  "SUCCESS",
+        "timed_out":  false,
+        "seconds":  0.3494521,
+        "start":  "2026-10-30T11:09:14.9302054+05:30",
+        "end":  "2026-10-30T11:09:15.2874842+05:30"
+    },
+    {
+        "process_id":  26644,
+        "cached_handle":  2592,
+        "exit_code":  3,
+        "outcome":  "EXIT_NONZERO",
+        "timed_out":  false,
+        "seconds":  0.48858809999999997,
+        "start":  "2026-10-30T11:09:15.3035965+05:30",
+        "end":  "2026-10-30T11:09:15.7921846+05:30"
+    }
+]

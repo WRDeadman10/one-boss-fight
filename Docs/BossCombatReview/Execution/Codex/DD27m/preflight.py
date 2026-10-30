@@ -18,13 +18,13 @@ marker=json.loads(posted.read_text(encoding='utf-8-sig'))
 mail=(ROOT/'Documentation/TEAM_MAILBOX.md').read_text(encoding='utf-8',errors='replace')
 assert marker['release']=='C-319' and '### ['+marker['message_id']+']' in mail,'DD29 report must be posted BEFORE DD27m'
 assert '### ['+release['message_id']+'] Claude ->' in mail,'Run-release header absent'
-baseline=R.parent/'C343_AUTHORING_BASELINE.json';base=json.loads(baseline.read_text(encoding='utf-8'))
-assert base['source_count']==217 and base['release']=='C-343 preparation','Wrong engine baseline'
+baseline=R.parent/'C359_AUTHORING_BASELINE.json';base=json.loads(baseline.read_text(encoding='utf-8'))
+assert base['source_count']==219 and base['release']=='C-359','Wrong engine baseline'
 for kind in ('source','binary'):assert sha(ROOT/base[kind+'_manifest'])==base[kind+'_manifest_sha256'],'DD29 baseline manifest drift'
 for rel,want in base['binary'].items():assert sha(ROOT/rel)==want,'DD29 binary drift; STOP'
 receipt=ROOT/'Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/evidence_sha256.txt'
 pins=[]
-for name in ('draft_boss_profiles.py','authoring_core.py','inspect_authored_assets.py','examples/boss_draft_profiles.json','examples/hero_target_source.json'):
+for name in ('draft_boss_profiles.py','authoring_core.py','inspect_authored_assets.py','examples/boss_draft_profiles.json','examples/hero_target_source.json','emit_fields_manifest.py'):
     p=receipt.parent/name;rel=p.relative_to(ROOT).as_posix()
     rows=[s for s in receipt.read_text(encoding='utf-8').splitlines() if s.split()[-1].replace('\\','/')==rel]
     assert len(rows)==1,f'Receipt entry missing/ambiguous {name}'
@@ -44,4 +44,4 @@ assert all(sha(ROOT/a['path'])==a['sha256'] for a in assets),'Saved3asset drift;
 assert not (ROOT/'Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V2.uasset').exists(),'V2 already exists; no overwrite'
 v={'preparation_order':'C-343','release':release['message_id'],'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'DD29_report_id':marker['message_id'],'receipt_sha256':sha(receipt),'pins':pins,'binary':base['binary'],'baseline_sha256':sha(baseline),'pre_state_sha256':sha(R/'pre_state.json'),'git_status_Content_Config_Source':status,'passed':True}
 (R/'preflight_verified.json').write_text(json.dumps(v,indent=2)+'\n',encoding='utf-8')
-print('DD27m fresh217Source/DD27jbinary/five receipt pins/content/process checks passed AFTER posted DD29 report')
+print('DD27m fresh219Source/AGC350binary/six receipt pins/content/process checks passed AFTER posted DD29 report')

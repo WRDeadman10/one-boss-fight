@@ -1,0 +1,17 @@
+[
+  {
+    "path": "Source/OneBossFight/Player/RPGBossMoveCard.cpp",
+    "preimage": "ABSENT",
+    "sha256": "b4553d8a24ac11634c3aace5f58d1cdb84b38e4b5c6a34ab8566e224e7773799"
+  },
+  {
+    "path": "Source/OneBossFight/Player/RPGBossMoveCard.h",
+    "preimage": "ABSENT",
+    "sha256": "92e332c815fd4ed3d4d5c2d428240698da35516ea5d85bde72ebfd0e7ba250ef"
+  },
+  {
+    "path": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+    "preimage": "ABSENT",
+    "sha256": "03f4d4e78bae525047bc95b314dd5884f0581819701fd266f08857086ff0fe2d"
+  }
+]

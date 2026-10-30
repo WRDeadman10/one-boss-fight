@@ -1,0 +1,10 @@
+{
+  "approved": true,
+  "scope": "one new Hero V2 asset only",
+  "quote": "Save the Hero V2 asset: \"Yes\"",
+  "owner_verbatim_answer": "Yes",
+  "owner_answer_date": "2026-10-30",
+  "evidence_path": "Docs/BossCombatReview/Execution/Codex/DD27m/C356_OWNER_SAVE_EVIDENCE.txt",
+  "evidence_sha256": "6519bd4b83b78b6e303f549a695eb2f50ef6e3b7a2da8912a623c4b3095feabb",
+  "authority": "Owner chat quoted by lead C356; re-released C359"
+}

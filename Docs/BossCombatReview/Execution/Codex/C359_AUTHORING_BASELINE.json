@@ -1,0 +1,19 @@
+{
+  "release": "C-359",
+  "head": "6ef433edf6cbf4813ff9db666fff6bc1bad9ddac",
+  "superseded_head": "605c2dd81d4092e8f84aa7608651ed19d566423a",
+  "head_delta_path": "Docs/BossCombatReview/Execution/Codex/DD27m/C356_HEAD_DELTA_FILES.txt",
+  "head_delta_sha256": "3558eae8338b3cf9e907c9998b90a3c51e8719bf0f3f79e1d8cf31e30e46ee1b",
+  "source_count": 219,
+  "source_manifest": "Docs/BossCombatReview/Execution/Antigravity/EngineRuns/DD30ChronologyBuild2/promoted_source_manifest_sha256.txt",
+  "source_manifest_sha256": "cbe2bfc65cae135efa044020ded6072e3123f1d066cdd00ef5ac99ee8d2aa90b",
+  "binary_manifest": "Docs/BossCombatReview/Execution/Antigravity/EngineRuns/DD30ChronologyBuild2/final_binary_sha256.json",
+  "binary_manifest_sha256": "5321c093340803f4390def6666757194c418f79092dd03e131bc2031d9e3f1af",
+  "binary": {
+    "Binaries/Win64/UnrealEditor-OneBossFight.dll": "332afd497b68c01b556be9fd73682574e97c31ed868f46a382ee0cb301bdaacf",
+    "Binaries/Win64/UnrealEditor-OneBossFight.pdb": "e27ab3814e895a305f07c01e47dc3d916f77e066566de14063fe97a28c05fdb6",
+    "Binaries/Win64/OneBossFight.exe": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65"
+  },
+  "tracked_source_diff_HEAD_empty": true,
+  "provenance": "C350 clean chronology build accepted C352; C359 reviewed885file commit delta; no Codex git write"
+}

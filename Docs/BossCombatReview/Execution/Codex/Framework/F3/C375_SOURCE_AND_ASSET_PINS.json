@@ -1,0 +1,127 @@
+[
+  {
+    "path": "C:\\UnrealProject\\OneBossFight\\Source\\OneBossFight\\OneBossFight.Build.cs",
+    "sha256": "eb7fa95d18cee29ff9d3598081be448c2a7edd35d06f27bdccdd1396d8e1bd79",
+    "matches": [
+      {
+        "line": 25,
+        "quote": "\"AIModule\","
+      },
+      {
+        "line": 47,
+        "quote": "\"UnrealEd\""
+      }
+    ]
+  },
+  {
+    "path": "C:\\UnrealProject\\OneBossFight\\Source\\OneBossFight\\Player\\RPGBossMoveModel.cpp",
+    "sha256": "3549bf027481d2a862181094e3ee19519629b6d21b785c8e3d5408549b0e77f3",
+    "matches": [
+      {
+        "line": 59,
+        "quote": "void FRPGBossMoveModel::Cross(double Before,double After,bool bIncludeStart,"
+      },
+      {
+        "line": 86,
+        "quote": "bool FRPGBossMoveModel::Advance(const FRPGBossAttackToken& Token,double ClockSeconds,bool bPaused,"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source\\Runtime\\Engine\\Classes\\Animation\\AnimInstance.h",
+    "sha256": "a73155b9739ef40731c8ec684c57ebfb543a479a5c1892f4f7f67f4c360476a4",
+    "matches": [
+      {
+        "line": 400,
+        "quote": "ENGINE_API float GetSlotNodeGlobalWeight(const FName& SlotNodeName) const;"
+      },
+      {
+        "line": 407,
+        "quote": "ENGINE_API float GetSlotMontageGlobalWeight(const FName& SlotNodeName) const;"
+      },
+      {
+        "line": 545,
+        "quote": "ENGINE_API UAnimMontage* PlaySlotAnimationAsDynamicMontage(UAnimSequenceBase* Asset, FName SlotNodeName, float BlendInTime = 0.25f, float BlendOutTime = 0.25f, float InPlayRate = 1.f, int32 LoopCount = 1, float BlendOutTriggerTime = -1.f, float InTimeToStartMontageAt = 0.f);"
+      },
+      {
+        "line": 654,
+        "quote": "ENGINE_API float Montage_GetPosition(const UAnimMontage* Montage) const;"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source\\Runtime\\AIModule\\Classes\\AIController.h",
+    "sha256": "a815260e7814d74eb57c6f7add434a3e8cc9ca6d3f0cd1704d2bb202451d8c2b",
+    "matches": [
+      {
+        "line": 195,
+        "quote": "AIMODULE_API EPathFollowingRequestResult::Type MoveToLocation(const FVector& Dest, float AcceptanceRadius = -1, bool bStopOnOverlap = true,"
+      },
+      {
+        "line": 238,
+        "quote": "AIMODULE_API virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result);"
+      },
+      {
+        "line": 241,
+        "quote": "AIMODULE_API virtual void OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source\\Runtime\\NavigationSystem\\Public\\NavigationSystem.h",
+    "sha256": "f16247c491dbff8867e35c8306d75bceeb8df832548abc33abcebb4c638caf09",
+    "matches": [
+      {
+        "line": 694,
+        "quote": "bool ProjectPointToNavigation(const FVector& Point, FNavLocation& OutLocation, const FVector& Extent = INVALID_NAVEXTENT, const FNavAgentProperties* AgentProperties = NULL, FSharedConstNavQueryFilter QueryFilter = NULL)"
+      },
+      {
+        "line": 700,
+        "quote": "NAVIGATIONSYSTEM_API bool ProjectPointToNavigation(const FVector& Point, FNavLocation& OutLocation, const FVector& Extent = INVALID_NAVEXTENT, const ANavigationData* NavData = NULL, FSharedConstNavQueryFilter QueryFilter = NULL) const;"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source\\Runtime\\Engine\\Classes\\Components\\SkinnedMeshComponent.h",
+    "sha256": "e60c07034d6eda30b475881f66baae152dc66fbabbf7a18d1b60c6abc7460cbf",
+    "matches": [
+      {
+        "line": 1211,
+        "quote": "ENGINE_API virtual FTransform GetSocketTransform(FName InSocketName, ERelativeTransformSpace TransformSpace = RTS_World) const override;"
+      },
+      {
+        "line": 1212,
+        "quote": "ENGINE_API virtual bool DoesSocketExist(FName InSocketName) const override;"
+      },
+      {
+        "line": 1361,
+        "quote": "FTransform GetBoneTransform(FName InBoneName, ERelativeTransformSpace TransformSpace = RTS_World) const { return GetSocketTransform(InBoneName, TransformSpace); }"
+      }
+    ]
+  },
+  {
+    "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog.uasset",
+    "sha256": "b5b847db67c4bca4af8e476ec1256bc809f71775510248c4fc5a8d97e53f44ac",
+    "scope": "disk identity only; class/skeleton/slot/pose require released runtime probe"
+  },
+  {
+    "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.uasset",
+    "sha256": "d9991d2d103f0fcada927491848ec3703a9b0a83cb938dafccc99c8afcefc2dc",
+    "scope": "disk identity only; class/skeleton/slot/pose require released runtime probe"
+  },
+  {
+    "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Sevarog_AnimBlueprint.uasset",
+    "sha256": "3ca31fafa97082d0d325f5db3fdfde2b8966f9fdba11df91f873f3d9ec6f0c0c",
+    "scope": "disk identity only; class/skeleton/slot/pose require released runtime probe"
+  },
+  {
+    "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Slow.uasset",
+    "sha256": "99d4ea9516cd9100d13815e94090a2a58bb45085b5c4499a056fed6e62f153cd",
+    "scope": "disk identity only; class/skeleton/slot/pose require released runtime probe"
+  },
+  {
+    "path": "Content/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Medium_Montage.uasset",
+    "sha256": "d4f200992ab5ee9b987c2f7ee12b0057f0b99ca2b45c2e4ff520a4c24ea0cc25",
+    "scope": "disk identity only; class/skeleton/slot/pose require released runtime probe"
+  }
+]

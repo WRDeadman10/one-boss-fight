@@ -1,6 +1,6 @@
-.....................................................................................................................................................................................................................................
+........................................................................................................................................................................................................................................
 ----------------------------------------------------------------------
-Ran 229 tests in 1.009s
+Ran 232 tests in 1.141s
 
 OK
 [DRAFT_APPLY] FATAL: AssetTools is not available or missing create_asset
@@ -11,9 +11,9 @@ OK
 
 [DRAFT_APPLY] SUCCESS: In-memory asset creation and complete readback verified.
   NOTICE: --save flag was not provided. Output packages were NOT saved to disk.
-[DRAFT_APPLY] Creating draft asset at '/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V2'...
+[DRAFT_APPLY] Creating draft asset at '/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V3'...
 [DRAFT_APPLY] fields rows read back: 4 of 4 expected
-[DRAFT_APPLY] Initialized & verified all 22 typed properties on draft asset: 'DA_Player_Hero_Draft_V2'
+[DRAFT_APPLY] Initialized & verified all 22 typed properties on draft asset: 'DA_Player_Hero_Draft_V3'
 
 [DRAFT_APPLY] SUCCESS: In-memory asset creation and complete readback verified.
   NOTICE: --save flag was not provided. Output packages were NOT saved to disk.

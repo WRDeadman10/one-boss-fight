@@ -1,0 +1,39 @@
+{
+  "content": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "config": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "saved": {
+    "added": [
+      "Saved/Config/CrashReportClient/UECC-Windows-ADD6186E4258F36CD002E48F81DE807F/CrashReportClient.ini"
+    ],
+    "removed": [],
+    "changed": [
+      "Saved/Config/WindowsEditor/EditorPerProjectUserSettings.ini"
+    ]
+  },
+  "source": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "toolkit": {
+    "added": [],
+    "removed": [],
+    "changed": []
+  },
+  "binary": {
+    "added": [],
+    "removed": [],
+    "changed": [
+      "Binaries/Win64/UnrealEditor-OneBossFight.dll",
+      "Binaries/Win64/UnrealEditor-OneBossFight.pdb"
+    ]
+  }
+}

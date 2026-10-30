@@ -1,0 +1,3 @@
+C357 Sevarog probe+wrapper STAGED ONLY: Docs/BossCombatReview/Execution/Codex/SevarogInventory/probe_sevarog_inventory.py SHA256 df1b2f24b70fe81713b3f99fa680bbcf22725e333f72610a53662c2cd9ff8002
+Docs/BossCombatReview/Execution/Codex/SevarogInventory/REVIEW_AND_RUN_PLAN.md SHA256 334b195fec47a4354faee92306b60e9be89baf509c8896ff1483d77e4a044c86
+Read-only registry/asset/CDO/dependency inventory; exact field API failures yieldUNKNOWN/PARTIAL, no invented frames/times/rootmotion. No Blueprint graph behaviour/playback claim, no propertyset/save/spawn/PIE. Wrapper cachedhandle/180sownPIDtimeout +absentrelease/preflight/lockgates. AST parsed, no engine run. C356priority save completed X350; C355offline completed X351; await review/release and DD27k order.

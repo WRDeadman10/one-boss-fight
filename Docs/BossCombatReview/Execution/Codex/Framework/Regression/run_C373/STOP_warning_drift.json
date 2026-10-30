@@ -1,0 +1,16 @@
+{
+  "release": "C-373",
+  "status": "STOP warning multiset drift;187Success does not override gate",
+  "detail": {
+    "added": {
+      "LogCore: Warning: UTS: Unreal Trace Server process returned an error (0x00006005)": 1
+    },
+    "removed": {
+      "LogCore: Warning: UTS: Unable to launch the Unreal Trace Server with '\"../../../Engine/Binaries/Win64/UnrealTraceServer.exe\" fork --sponsor <PID>'. Access is denied. Error: 0x5 (5)": 1
+    },
+    "current_count": 63,
+    "prior_count": 63
+  },
+  "no_retry": true,
+  "F2": "not started pending lead disposition"
+}

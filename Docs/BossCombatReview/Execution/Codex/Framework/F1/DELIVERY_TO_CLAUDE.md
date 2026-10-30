@@ -1,0 +1,15 @@
+# F1 source handoff — C366
+
+SOURCE STAGING ONLY. Three NEW files under Staging/Source/OneBossFight: Player/RPGBossMoveCard.h/.cpp and Tests/RPGBossMoveCardTests.cpp. Destinations ABSENT; no live Source/Content/Config edits, UHT/build/automation or playback. Live219 full manifest, from-absent diffs and exact pins included. Own production header is FIRST in both cpp files.
+
+URPGBossMoveCard reflects explicit identity, one sequence OR montage, skeleton, slot/section, play rate, montage-local seconds, turn/range/cone/damage, root-motion capability, two-socket swept segment windows and hit groups. Zero draft is invalid. Shared validator reports field-qualified MoveCard tokens, finite/nonnegative/positive rules and inclusive1e6 ceiling, ordered commit/active/recovery/clip endpoints, window containment/order/nonoverlap, unique WindowId, repeated HitGroup permitted, socket distinctness/presence. No values parsed from manifest text, clamping, default substitution or loads. Schema1 only; no catalog-level unknown MoveId registry exists in F1.
+
+CompileMetadata clears stale output and returns an immutable VALUE COPY, explicitly HasResolvedAssets=false. Synthetic descriptors/paths in pure tests are invented and cannot authorize playback. CompileResolved accepts caller-loaded pointers, checks game thread/object validity/type/path/skeleton/mesh/slots/socket-or-bone names, validates before publishing, retains3 strong asset leases. No UObject creation, actor/component writes, load, callback or runtime wiring. Engine source inspected: Skeleton.h:543 ContainsSlotName, AnimSequenceBase.h:222 HasRootMotion. Asset leases retain objects, not protection from mutation through external aliases; no real-asset hashes/version attestation is invented.
+
+Four automation sources UNRUN:
+- OneBossFight.Framework.MoveCard.Positive: nondefaults, sequence/montage section, repeated-group two windows, inclusive boundaries.
+- .Numbers: scalar matrix NaN/Inf/negative/>ceiling, late-window scalars, zero positive-only fields, inclusive ceiling.
+- .Rejections: identities, missing/both sources, skeleton/descriptor mismatch, slot/section, root-motion capability, timeline/range/cone, window identities/ordering/socket failures.
+- .SnapshotAndFailure: deep value copy, stale-output clearing, resolved null dependencies, default disabled draft.
+
+Limits for review: exact slot registration/montage membership is NOT AnimBP slot-node/visible pose proof; clip length is full source length, not section playback range; units explicit in schema, cannot infer semantic correctness of a finite authored number. Root motion is named unsupported for this first in-place backend only. HasResolvedAssets MUST be demanded by future executor. No positive resolved-object fixture, catalog uniqueness/unknown-ID resolution, executor, life authority, selector, on-screen error integration, damage/walk/activation, Details/save or asset capability proof in this package. F2+ remain separately gated. No build/promotion release inferred.

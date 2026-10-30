@@ -1,0 +1,14 @@
+{
+    "attempt":  1,
+    "arguments":  [
+                      "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+                      "-ExecCmds=\"Automation RunTests OneBossFight.Framework.MoveModel; Quit\"",
+                      "-unattended",
+                      "-nullrhi",
+                      "-nosound",
+                      "-nosplash",
+                      "-abslog=C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Codex\\Framework\\F2\\run_C375\\focused_raw.log"
+                  ],
+    "release":  "C-375",
+    "executable":  "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Binaries\\Win64\\UnrealEditor-Cmd.exe"
+}

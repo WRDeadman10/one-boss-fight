@@ -1,0 +1,46 @@
+{
+  "release": "C-368",
+  "exit_code": 0,
+  "raw_sha256": "310cd96f555de17b50c13cfccb65ec72e52abe947555214dc67c96418fb3146f",
+  "errors": 0,
+  "warnings": 15,
+  "state_diff": {
+    "content": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "config": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "saved": {
+      "added": [
+        "Saved/Config/CrashReportClient/UECC-Windows-959F09204E5CE01F31B45A9EAC7411D0/CrashReportClient.ini"
+      ],
+      "removed": [],
+      "changed": [
+        "Saved/Autosaves/PackageRestoreData.json",
+        "Saved/Config/WindowsEditor/EditorPerProjectUserSettings.ini",
+        "Saved/UnrealClaude/script_history.json"
+      ]
+    },
+    "source": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "toolkit": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "binary": {
+      "added": [],
+      "removed": [],
+      "changed": []
+    }
+  },
+  "scope": "In-memory creation/readback ONLY; no saved asset, compile/preflight gameplay proof"
+}

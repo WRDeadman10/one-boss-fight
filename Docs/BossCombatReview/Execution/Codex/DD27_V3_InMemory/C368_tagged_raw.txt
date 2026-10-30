@@ -1,0 +1,4 @@
+[2026.10.30-06.27.10:201][  2]LogPython: [DRAFT_APPLY] Creating draft asset at '/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V3'...
+[2026.10.30-06.27.11:427][  2]LogPython: [DRAFT_APPLY] fields rows read back: 4 of 4 expected
+[2026.10.30-06.27.11:435][  2]LogPython: [DRAFT_APPLY] Initialized & verified all 22 typed properties on draft asset: 'DA_Player_Hero_Draft_V3'
+[DRAFT_APPLY] SUCCESS: In-memory asset creation and complete readback verified.

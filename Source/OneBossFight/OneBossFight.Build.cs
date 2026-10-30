@@ -23,6 +23,7 @@ public class OneBossFight : ModuleRules
 			"EnhancedInput",
 			"GameplayTags",
 			"AIModule",
+			"NavigationSystem",
 			"GameplayTasks",
 			"UMG",
 			"Slate",

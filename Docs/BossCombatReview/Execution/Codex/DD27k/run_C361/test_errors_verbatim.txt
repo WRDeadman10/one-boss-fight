@@ -1,0 +1,3 @@
+[2026.10.30-05.53.52:590][601]LogAutomationController: Error: Test Completed. Result={Fail} Name={SavedProductionPreflight} Path={OneBossFight.Binding.AuthoredDraft.SavedProductionPreflight}
+[2026.10.30-05.53.52:590][601]LogAutomationController: Error: required skeleton/animation dependencies missing [C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossAuthoredDraftPreflightTests.cpp(124)]
+[2026.10.30-05.53.52:590][601]LogAutomationController: Error: Expected 'saved Hero production compile; zero rows answered by actual compiler' to be true. [C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossAuthoredDraftPreflightTests.cpp(125)]

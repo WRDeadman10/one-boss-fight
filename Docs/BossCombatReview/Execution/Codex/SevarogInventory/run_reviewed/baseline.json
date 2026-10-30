@@ -1,0 +1,35 @@
+{
+  "release": "C-361.2",
+  "head": "6ef433edf6cbf4813ff9db666fff6bc1bad9ddac",
+  "base_head": "6ef433edf6cbf4813ff9db666fff6bc1bad9ddac",
+  "allowed_head_delta": "",
+  "assets": [
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_AbyssalRevenant_Draft.uasset",
+      "size": 6101,
+      "sha256": "90ee817f380aac486cecfa86d474078af98005190da1d8f370a62762af975ac5"
+    },
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft.uasset",
+      "size": 79966,
+      "sha256": "ba05a8aa93fec66526c59bf12f51bb824103f67860bdee16efcdd5217d6a3e2b"
+    },
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft.uasset",
+      "size": 4552,
+      "sha256": "8d18711526b7a746e1bb95546db984708984fccbc6cda3546eea39cd72edc822"
+    },
+    {
+      "path": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V2.uasset",
+      "sha256": "ca4feaa671bbef352c88e9186fe64a3cad1400bd53e9bdf14b77edc687b4e848",
+      "size": 8214
+    }
+  ],
+  "binary": {
+    "Binaries/Win64/UnrealEditor-OneBossFight.dll": "432fb1f8d5c54fde9f0f39bf0bc1c41c73828c5a4df7db37146fdf5e72d082c9",
+    "Binaries/Win64/UnrealEditor-OneBossFight.pdb": "416115dab32d6e320e41b9009926417f7cf153ea88d1b79b0ea29ab6f892a0a6",
+    "Binaries/Win64/OneBossFight.exe": "5495fb88c31c1546a01329165d4bbe697671176dd263ee46f57ff2e3c9c34b65"
+  },
+  "probe_sha256": "df1b2f24b70fe81713b3f99fa680bbcf22725e333f72610a53662c2cd9ff8002",
+  "wrapper_sha256": "36c085a34f2942bd4fd527d687ac1a8e512765ae7eb283b86d8662e727ee11e7"
+}

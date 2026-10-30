@@ -1,0 +1,21 @@
+{
+  "files": 15,
+  "new": 11,
+  "existing": 4,
+  "expected_source_if_promoted": 236,
+  "live225SourceMatchesAcceptedF2": true,
+  "ownHeaderFirst": true,
+  "automation_sources": [
+    "OneBossFight.Framework.MoveModel.Eligibility",
+    "OneBossFight.Framework.MoveModel.Crossing",
+    "OneBossFight.Framework.MoveModel.PauseAndBoundaries",
+    "OneBossFight.Framework.MoveModel.Abort",
+    "OneBossFight.Framework.MoveModel.GenerationAndDoubleStart",
+    "OneBossFight.Framework.MoveModel.ObservedClock",
+    "OneBossFight.Framework.MoveModel.ClockMode",
+    "OneBossFight.Framework.Runtime.ProfileDomains",
+    "OneBossFight.Framework.Runtime.ResolvedDependencies",
+    "OneBossFight.Framework.Runtime.PlaybackGuards"
+  ],
+  "result": "STATIC FILE CHECKS ONLY; no UHT/build/test/engine"
+}
