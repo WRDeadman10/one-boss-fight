@@ -1,0 +1,382 @@
+[
+  {
+    "path": "Docs/BossCombatReview/Execution/Claude/F6c/pie_run1/editor_raw.log",
+    "sha256": "e8a87858dcc386a40e5b6be2cc51e3f183fe84ddab81f7d01868155a41fcd4fa",
+    "selected_lines": [
+      {
+        "line": 1689,
+        "text": "[2026.10.30-17.29.24:126][460]LogTemp: Display: [FrameworkProof] phase_transition attack=2 from=Phase_1 to=Phase_2 health=50 max=250 fraction=0.5"
+      },
+      {
+        "line": 1849,
+        "text": "[2026.10.30-17.29.27:044][590]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=1 attacks=3"
+      }
+    ],
+    "completions": 0,
+    "failed_completions": []
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Claude/F6c/restart_run1/editor_raw.log",
+    "sha256": "f1c2d091726883878841b8446dfd4c507907a3a8a96a6317465b4444314d9bbb",
+    "selected_lines": [
+      {
+        "line": 1622,
+        "text": "[2026.10.30-17.32.21:306][463]LogTemp: Display: [FrameworkProof] phase_transition attack=2 from=Phase_1 to=Phase_2 health=50 max=250 fraction=0.5"
+      },
+      {
+        "line": 1687,
+        "text": "[2026.10.30-17.32.21:977][507]LogTemp: Display: [FrameworkProof] RESULT outcome=BossDefeated acceptedHits=1 attacks=2"
+      },
+      {
+        "line": 1690,
+        "text": "[2026.10.30-17.32.22:117][516]LogTemp: Display: [FrameworkProof] encounter_reset generation=2 oldState=Dead executorRearmed=1 bossHealth=250 targetHealth=800"
+      }
+    ],
+    "completions": 0,
+    "failed_completions": []
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Claude/F6c/ki149/pie_restart7/editor_raw.log",
+    "sha256": "4f66ac4c7f833fab0fc59d337f1888308542f9dfffba3097db1f2a4836e15933",
+    "selected_lines": [
+      {
+        "line": 1635,
+        "text": "[2026.10.30-18.38.22:168][429]LogTemp: Display: [FrameworkProof] phase_transition attack=2 from=Phase_1 to=Phase_2 health=50 max=250 fraction=0.5"
+      },
+      {
+        "line": 1672,
+        "text": "[2026.10.30-18.38.22:889][447]LogTemp: Display: [FrameworkProof] RESULT outcome=BossDefeated acceptedHits=1 attacks=2"
+      },
+      {
+        "line": 1675,
+        "text": "[2026.10.30-18.38.23:020][453]LogTemp: Display: [FrameworkProof] encounter_reset generation=2 oldState=Dead executorRearmed=1 bossHealth=250 targetHealth=800"
+      },
+      {
+        "line": 1949,
+        "text": "[2026.10.30-18.38.28:572][774]LogTemp: Display: [FrameworkProof] target_health_mismatch valid=1 actual=100 expected=765 generation=2"
+      }
+    ],
+    "completions": 0,
+    "failed_completions": []
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Claude/F6c/ki149/full_raw.log",
+    "sha256": "d0ab2c7f1b1267472b1e586b9cc8aaf7e05f63d1e379125723b21119d659ffd6",
+    "selected_lines": [
+      {
+        "line": 3824,
+        "text": "[2026.10.30-18.42.40:595][988]LogAutomationController: Display: Test Completed. Result={Success} Name={PhasePoolStarvation} Path={OneBossFight.Framework.Runtime.PhasePoolStarvation}"
+      },
+      {
+        "line": 3830,
+        "text": "[2026.10.30-18.42.40:612][990]LogAutomationController: Display: Test Completed. Result={Success} Name={PhaseProfile} Path={OneBossFight.Framework.Runtime.PhaseProfile}"
+      }
+    ],
+    "completions": 207,
+    "failed_completions": []
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Claude/F6c/ki150/full_raw.log",
+    "sha256": "ad70ded56536d883df3608f4026800050a08bb3266b90759bbbc7da0af786ff2",
+    "selected_lines": [
+      {
+        "line": 3824,
+        "text": "[2026.10.30-19.11.40:234][103]LogAutomationController: Display: Test Completed. Result={Success} Name={PhasePoolStarvation} Path={OneBossFight.Framework.Runtime.PhasePoolStarvation}"
+      },
+      {
+        "line": 3830,
+        "text": "[2026.10.30-19.11.40:258][106]LogAutomationController: Display: Test Completed. Result={Success} Name={PhaseProfile} Path={OneBossFight.Framework.Runtime.PhaseProfile}"
+      }
+    ],
+    "completions": 207,
+    "failed_completions": []
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Claude/F6c/ki150/restart1/editor_raw.log",
+    "sha256": "546737aebd7eb349de93f75b056d50b746f70ad95344cfb7f479b5239a77500f",
+    "selected_lines": [
+      {
+        "line": 1619,
+        "text": "[2026.10.30-18.59.43:192][505]LogTemp: Display: [FrameworkProof] phase_transition attack=2 from=Phase_1 to=Phase_2 health=50 max=250 fraction=0.5"
+      },
+      {
+        "line": 1692,
+        "text": "[2026.10.30-18.59.43:842][550]LogTemp: Display: [FrameworkProof] RESULT outcome=BossDefeated acceptedHits=1 attacks=2"
+      },
+      {
+        "line": 1695,
+        "text": "[2026.10.30-18.59.44:004][560]LogTemp: Display: [FrameworkProof] encounter_reset generation=2 oldState=Dead executorRearmed=1 bossHealth=250 targetHealth=800"
+      },
+      {
+        "line": 2014,
+        "text": "[2026.10.30-18.59.49:525][931]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=2"
+      }
+    ],
+    "completions": 0,
+    "failed_completions": []
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Claude/F6c/ki150/restart2/editor_raw.log",
+    "sha256": "6cacb5cf52a39dac790896ad24290d6941abc4d0f3199c2e4beebdcc58540497",
+    "selected_lines": [
+      {
+        "line": 1642,
+        "text": "[2026.10.30-19.00.31:106][435]LogTemp: Display: [FrameworkProof] phase_transition attack=2 from=Phase_1 to=Phase_2 health=50 max=250 fraction=0.5"
+      },
+      {
+        "line": 1679,
+        "text": "[2026.10.30-19.00.31:718][451]LogTemp: Display: [FrameworkProof] RESULT outcome=BossDefeated acceptedHits=1 attacks=2"
+      },
+      {
+        "line": 1682,
+        "text": "[2026.10.30-19.00.32:018][453]LogTemp: Display: [FrameworkProof] encounter_reset generation=2 oldState=Dead executorRearmed=1 bossHealth=250 targetHealth=800"
+      },
+      {
+        "line": 1957,
+        "text": "[2026.10.30-19.00.37:510][764]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=2"
+      }
+    ],
+    "completions": 0,
+    "failed_completions": []
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Claude/F6c/ki150/restart3/editor_raw.log",
+    "sha256": "3dfd3f6fd4fd4bc497d46d223688e7efc1b15896cfc62e8cfde698c901f6aa98",
+    "selected_lines": [
+      {
+        "line": 1642,
+        "text": "[2026.10.30-19.01.12:901][430]LogTemp: Display: [FrameworkProof] phase_transition attack=2 from=Phase_1 to=Phase_2 health=50 max=250 fraction=0.5"
+      },
+      {
+        "line": 1690,
+        "text": "[2026.10.30-19.01.13:750][457]LogTemp: Display: [FrameworkProof] RESULT outcome=BossDefeated acceptedHits=1 attacks=2"
+      },
+      {
+        "line": 1693,
+        "text": "[2026.10.30-19.01.13:865][463]LogTemp: Display: [FrameworkProof] encounter_reset generation=2 oldState=Dead executorRearmed=1 bossHealth=250 targetHealth=800"
+      },
+      {
+        "line": 1959,
+        "text": "[2026.10.30-19.01.19:369][786]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=2"
+      }
+    ],
+    "completions": 0,
+    "failed_completions": []
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Claude/F6c/ki150/restart4/editor_raw.log",
+    "sha256": "c80a127b0aa5b73da3cd24dd8d30ea590f1c06a4b5531b2b53ad8a5b63476713",
+    "selected_lines": [
+      {
+        "line": 1633,
+        "text": "[2026.10.30-19.01.52:549][419]LogTemp: Display: [FrameworkProof] phase_transition attack=2 from=Phase_1 to=Phase_2 health=50 max=250 fraction=0.5"
+      },
+      {
+        "line": 1678,
+        "text": "[2026.10.30-19.01.53:055][442]LogTemp: Display: [FrameworkProof] RESULT outcome=BossDefeated acceptedHits=1 attacks=2"
+      },
+      {
+        "line": 1681,
+        "text": "[2026.10.30-19.01.53:247][445]LogTemp: Display: [FrameworkProof] encounter_reset generation=2 oldState=Dead executorRearmed=1 bossHealth=250 targetHealth=800"
+      },
+      {
+        "line": 1960,
+        "text": "[2026.10.30-19.01.58:752][751]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=2"
+      }
+    ],
+    "completions": 0,
+    "failed_completions": []
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Claude/F6c/ki150/restart5/editor_raw.log",
+    "sha256": "3578e54a934dc7427b114da54311571021bea073208470642426832f9ad35eff",
+    "selected_lines": [
+      {
+        "line": 1636,
+        "text": "[2026.10.30-19.02.34:099][432]LogTemp: Display: [FrameworkProof] phase_transition attack=2 from=Phase_1 to=Phase_2 health=50 max=250 fraction=0.5"
+      },
+      {
+        "line": 1678,
+        "text": "[2026.10.30-19.02.34:893][454]LogTemp: Display: [FrameworkProof] RESULT outcome=BossDefeated acceptedHits=1 attacks=2"
+      },
+      {
+        "line": 1681,
+        "text": "[2026.10.30-19.02.34:983][458]LogTemp: Display: [FrameworkProof] encounter_reset generation=2 oldState=Dead executorRearmed=1 bossHealth=250 targetHealth=800"
+      },
+      {
+        "line": 1954,
+        "text": "[2026.10.30-19.02.40:494][779]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=2"
+      }
+    ],
+    "completions": 0,
+    "failed_completions": []
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Claude/F6c/ki150/restart6/editor_raw.log",
+    "sha256": "3e1498ce5b1679e577c80ae3db4c180ed97c03689e40fd09fdf83683eb39100b",
+    "selected_lines": [
+      {
+        "line": 1638,
+        "text": "[2026.10.30-19.03.14:714][434]LogTemp: Display: [FrameworkProof] phase_transition attack=2 from=Phase_1 to=Phase_2 health=50 max=250 fraction=0.5"
+      },
+      {
+        "line": 1679,
+        "text": "[2026.10.30-19.03.15:508][456]LogTemp: Display: [FrameworkProof] RESULT outcome=BossDefeated acceptedHits=1 attacks=2"
+      },
+      {
+        "line": 1682,
+        "text": "[2026.10.30-19.03.15:536][457]LogTemp: Display: [FrameworkProof] encounter_reset generation=2 oldState=Dead executorRearmed=1 bossHealth=250 targetHealth=800"
+      },
+      {
+        "line": 1943,
+        "text": "[2026.10.30-19.03.21:126][764]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=2"
+      }
+    ],
+    "completions": 0,
+    "failed_completions": []
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Claude/F6c/ki150/restart7/editor_raw.log",
+    "sha256": "60d65c76d538f36f1074f7edd4080799b8c6d84305364ff68ea2f67812627ef3",
+    "selected_lines": [
+      {
+        "line": 1639,
+        "text": "[2026.10.30-19.03.55:996][430]LogTemp: Display: [FrameworkProof] phase_transition attack=2 from=Phase_1 to=Phase_2 health=50 max=250 fraction=0.5"
+      },
+      {
+        "line": 1685,
+        "text": "[2026.10.30-19.03.56:827][454]LogTemp: Display: [FrameworkProof] RESULT outcome=BossDefeated acceptedHits=1 attacks=2"
+      },
+      {
+        "line": 1688,
+        "text": "[2026.10.30-19.03.56:957][460]LogTemp: Display: [FrameworkProof] encounter_reset generation=2 oldState=Dead executorRearmed=1 bossHealth=250 targetHealth=800"
+      },
+      {
+        "line": 1963,
+        "text": "[2026.10.30-19.04.02:479][784]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=2"
+      }
+    ],
+    "completions": 0,
+    "failed_completions": []
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Claude/F6c/ki150/restart8/editor_raw.log",
+    "sha256": "2bf4d440ff40b735c647e8717e2f2adbc5960bea01a9abf4d7541f3cd7910e26",
+    "selected_lines": [
+      {
+        "line": 1637,
+        "text": "[2026.10.30-19.04.36:607][429]LogTemp: Display: [FrameworkProof] phase_transition attack=2 from=Phase_1 to=Phase_2 health=50 max=250 fraction=0.5"
+      },
+      {
+        "line": 1682,
+        "text": "[2026.10.30-19.04.37:462][454]LogTemp: Display: [FrameworkProof] RESULT outcome=BossDefeated acceptedHits=1 attacks=2"
+      },
+      {
+        "line": 1685,
+        "text": "[2026.10.30-19.04.37:593][460]LogTemp: Display: [FrameworkProof] encounter_reset generation=2 oldState=Dead executorRearmed=1 bossHealth=250 targetHealth=800"
+      },
+      {
+        "line": 1943,
+        "text": "[2026.10.30-19.04.43:099][765]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=2"
+      }
+    ],
+    "completions": 0,
+    "failed_completions": []
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Claude/F6c/ki150/restart9/editor_raw.log",
+    "sha256": "008c4506139456b389f7b4b8a5883a67c6ccba6458dddadc4c61ee7507ba1ed4",
+    "selected_lines": [
+      {
+        "line": 1639,
+        "text": "[2026.10.30-19.05.18:880][433]LogTemp: Display: [FrameworkProof] phase_transition attack=2 from=Phase_1 to=Phase_2 health=50 max=250 fraction=0.5"
+      },
+      {
+        "line": 1682,
+        "text": "[2026.10.30-19.05.19:645][454]LogTemp: Display: [FrameworkProof] RESULT outcome=BossDefeated acceptedHits=1 attacks=2"
+      },
+      {
+        "line": 1685,
+        "text": "[2026.10.30-19.05.19:705][457]LogTemp: Display: [FrameworkProof] encounter_reset generation=2 oldState=Dead executorRearmed=1 bossHealth=250 targetHealth=800"
+      },
+      {
+        "line": 1953,
+        "text": "[2026.10.30-19.05.25:195][779]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=2"
+      }
+    ],
+    "completions": 0,
+    "failed_completions": []
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Claude/F6c/ki150/restart10/editor_raw.log",
+    "sha256": "3188f9374509f8819013905368f7c18734e784bccf493568cd3c9806f25e144a",
+    "selected_lines": [
+      {
+        "line": 1644,
+        "text": "[2026.10.30-19.06.01:899][426]LogTemp: Display: [FrameworkProof] phase_transition attack=2 from=Phase_1 to=Phase_2 health=50 max=250 fraction=0.5"
+      },
+      {
+        "line": 1692,
+        "text": "[2026.10.30-19.06.02:459][451]LogTemp: Display: [FrameworkProof] RESULT outcome=BossDefeated acceptedHits=1 attacks=2"
+      },
+      {
+        "line": 1695,
+        "text": "[2026.10.30-19.06.02:644][453]LogTemp: Display: [FrameworkProof] encounter_reset generation=2 oldState=Dead executorRearmed=1 bossHealth=250 targetHealth=800"
+      },
+      {
+        "line": 1947,
+        "text": "[2026.10.30-19.06.08:193][728]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=2"
+      }
+    ],
+    "completions": 0,
+    "failed_completions": []
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Claude/F6c/ki150/restart11/editor_raw.log",
+    "sha256": "c157738ded6547945644e20064f9594c390a0805e3c6da48f1d4bad0a43ff6ff",
+    "selected_lines": [
+      {
+        "line": 1646,
+        "text": "[2026.10.30-19.06.45:727][417]LogTemp: Display: [FrameworkProof] phase_transition attack=2 from=Phase_1 to=Phase_2 health=50 max=250 fraction=0.5"
+      },
+      {
+        "line": 1697,
+        "text": "[2026.10.30-19.06.46:503][447]LogTemp: Display: [FrameworkProof] RESULT outcome=BossDefeated acceptedHits=1 attacks=2"
+      },
+      {
+        "line": 1700,
+        "text": "[2026.10.30-19.06.46:629][450]LogTemp: Display: [FrameworkProof] encounter_reset generation=2 oldState=Dead executorRearmed=1 bossHealth=250 targetHealth=800"
+      },
+      {
+        "line": 1950,
+        "text": "[2026.10.30-19.06.52:189][718]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=2"
+      }
+    ],
+    "completions": 0,
+    "failed_completions": []
+  },
+  {
+    "path": "Docs/BossCombatReview/Execution/Claude/F6c/ki150/restart12/editor_raw.log",
+    "sha256": "087ab2382ccb8d43daf2325720a59360b4d7fcd477f77464412a990ac5f36865",
+    "selected_lines": [
+      {
+        "line": 1646,
+        "text": "[2026.10.30-19.07.31:552][423]LogTemp: Display: [FrameworkProof] phase_transition attack=2 from=Phase_1 to=Phase_2 health=50 max=250 fraction=0.5"
+      },
+      {
+        "line": 1692,
+        "text": "[2026.10.30-19.07.32:251][448]LogTemp: Display: [FrameworkProof] RESULT outcome=BossDefeated acceptedHits=1 attacks=2"
+      },
+      {
+        "line": 1695,
+        "text": "[2026.10.30-19.07.32:597][456]LogTemp: Display: [FrameworkProof] encounter_reset generation=2 oldState=Dead executorRearmed=1 bossHealth=250 targetHealth=800"
+      },
+      {
+        "line": 1955,
+        "text": "[2026.10.30-19.07.38:119][752]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=2"
+      }
+    ],
+    "completions": 0,
+    "failed_completions": []
+  }
+]
