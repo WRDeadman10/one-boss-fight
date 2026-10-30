@@ -51,4 +51,9 @@ private:
     int32 AttacksDone=0;
     /** F6c: the authoritative phase, changed only at the neutral decision gate; latched until restart. */
     FName CurrentPhaseId; bool bPhaseTwoLatched=false;
+    /** F8 posture: pool, break state, and the time of the last drain (regeneration delay). */
+    double Posture=0., LastPostureDrain=-1., StaggerEndsAt=0.; bool bStaggered=false, bStaggerAbortedAttack=false;
+    bool PostureEnabled() const;
+    void StartStagger();
+    void EndStagger();
 };

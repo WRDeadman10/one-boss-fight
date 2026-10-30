@@ -62,6 +62,13 @@ bool URPGFrameworkMoveExecutor::Rearm(uint64 NewGeneration,FString& Error)
     SetComponentTickEnabled(false);
     return true;
 }
+bool URPGFrameworkMoveExecutor::RecoverAfterAbort()
+{
+    if (!bInitialized||!bAborted||bFinished||!IsIdle()) return false;
+    bAborted=false; bFinished=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset(); Token=FRPGBossAttackToken();
+    SetComponentTickEnabled(false);
+    return true;
+}
 bool URPGFrameworkMoveExecutor::PrepareNextAttack()
 {
     if (!bInitialized||bAborted||!bFinished||!IsIdle()) return false;
