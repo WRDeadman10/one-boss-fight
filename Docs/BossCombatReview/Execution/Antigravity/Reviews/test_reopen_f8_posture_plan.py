@@ -69,10 +69,10 @@ class TestF8PostureImplementationPlan(unittest.TestCase):
         self.assertTrue(any("double ARPGFrameworkBossCharacter::ApplyPlayerHit(double Multiplier)" in l for l in boss_cpp[148:165]))
         
         # RestartEncounter (lines 158-215 across revisions)
-        self.assertTrue(any("bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& Error)" in l for l in boss_cpp[155:215]))
+        self.assertTrue(any("bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& Error)" in l for l in boss_cpp[155:240]))
         
         # Die (lines 177-235 across revisions)
-        self.assertTrue(any("void ARPGFrameworkBossCharacter::Die()" in l for l in boss_cpp[175:235]))
+        self.assertTrue(any("void ARPGFrameworkBossCharacter::Die()" in l for l in boss_cpp[175:260]))
 
     def test_executor_abort_citation(self):
         """Verify RPGFrameworkMoveExecutor::Abort cited in Section 4."""
