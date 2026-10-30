@@ -19,6 +19,9 @@ INJECT_PIE = [float(x) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCom
 INJECTED_PIE = []
 INJECT_ROW = [(float(x.split(':')[0]), x.split(':')[1], x.split(':')[2], (x.split(':')[3] if len(x.split(':'))>3 else '')) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_inject_row.txt').read().strip().split(',') if x] if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_inject_row.txt') else []  # C-457 (F10): "seconds:WeaponStyle:AttackKind,..." after playback_start: hits carrying the DA_WeaponAttacks row
 INJECTED_ROW = []
+REAL_SWING = [float(x) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_real_swing.txt').read().strip().split(',') if x] if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_real_swing.txt') else []  # C-466 (KI-151): seconds after the boss's first `walk start=` (arrival): a REAL pack light attack (EnterCombat once, IA_NormalAttack held 0.12 s)
+REAL = {'t0': None, 'n': 0, 'hold_until': -1.0, 'combat': False}
+IA_PATH = '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/'
 DIAG_LONG = os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_diag_long.txt')  # C-449 (KI-150 follow-up): DIAG every second until 20 s of PIE and do not stop on a FrameworkProof ERROR
 DIAG_LAST = [-1.0]
 S = {'dodge_t': None, 'down': False, 'up': False, 'phase': 'load', 't': 0.0, 'n': 0, 'handle': None, 'pie_t': 0.0, 'diag': False}
@@ -126,6 +129,27 @@ def tick(dt):
                         intake.inject_boss_hit_for_test(bosses[0])
                         log('injected hit %d at %.3f s after playback_start' % (len(INJECTED) + 1, S['pie_t'] - S['dodge_t']))
                         INJECTED.append(S['pie_t'])
+            if REAL_SWING:
+                w = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
+                pc = unreal.GameplayStatics.get_player_controller(w, 0) if w else None
+                pawn = pc.get_controlled_pawn() if pc else None
+                if pawn is not None and REAL['t0'] is None and log_has('[FrameworkProof] walk start='):
+                    REAL['t0'] = S['pie_t']
+                    tc = unreal.GameplayTagContainer()
+                    tc.import_text('(GameplayTags=((TagName="Ability.EnterCombat")))')
+                    asc = comp(pawn, 'BP_AdvancedAbilitySystemComponent_C')
+                    log('REAL enter combat: asc=%s' % (asc is not None))
+                    if asc is not None:
+                        asc.call_method('Try Activate Abilities By Tag', args=(tc,))
+                    log('REAL player stamina=%s max=%s health=%s' % (attr(pawn, 'Attribute.Stamina'), attr(pawn, 'Attribute.Stamina', False), attr(pawn, 'Attribute.Health')))
+                if pawn is not None and REAL['t0'] is not None:
+                    since = S['pie_t'] - REAL['t0']
+                    if REAL['n'] < len(REAL_SWING) and since >= REAL_SWING[REAL['n']] and S['pie_t'] > REAL['hold_until']:
+                        REAL['hold_until'] = S['pie_t'] + 0.12
+                        REAL['n'] += 1
+                        log('REAL swing %d pressed at %.3f s after arrival, player=%s boss yaw check' % (REAL['n'], since, pawn.get_actor_location()))
+                    if S['pie_t'] < REAL['hold_until']:
+                        unreal.RPGInputTestUtils.inject_action(pc, unreal.load_asset(IA_PATH + 'IA_NormalAttack'), unreal.Vector(1, 0, 0))
             if INJECT_ROW:
                 if S['dodge_t'] is None and log_has('[FrameworkProof] playback_start'):
                     S['dodge_t'] = S['pie_t']
