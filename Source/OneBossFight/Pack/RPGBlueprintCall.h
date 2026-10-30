@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Player/RPGNativeBossHealth.h"
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "UObject/ObjectKey.h"
@@ -208,6 +209,15 @@ namespace RPGPack
 	/** Reads a current attribute value from the pack's attribute component. */
 	inline bool ReadAttribute(const AActor* Actor, const TCHAR* AttributeTag, bool bMax, double& Value)
 	{
+		// A boss with native health (the framework Sevarog) answers for itself: every boss-health reader sees it through here.
+		if (AttributeTag && FCString::Stricmp(AttributeTag, TEXT("Attribute.Health")) == 0)
+		{
+			if (const IRPGNativeBossHealth* Native = Cast<const IRPGNativeBossHealth>(Actor))
+			{
+				Value = 0.0;
+				return Native->ReadNativeHealth(bMax, Value);
+			}
+		}
 		UObject* Attributes = FindCachedAttributesComponent(Actor);
 		const FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName(AttributeTag), false);
 		if (!Attributes || !Tag.IsValid())

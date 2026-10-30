@@ -8,6 +8,7 @@ class APawn;
 class UAnimInstance;
 class UAnimMontage;
 class URPGBossFrameworkProfile;
+class URPGDamageResolver;
 struct FRPGFrameworkDependencies;
 UCLASS()
 class ONEBOSSFIGHT_API URPGFrameworkMoveExecutor : public UActorComponent
@@ -15,25 +16,41 @@ class ONEBOSSFIGHT_API URPGFrameworkMoveExecutor : public UActorComponent
     GENERATED_BODY()
 public:
     URPGFrameworkMoveExecutor();
-    static bool ValidatePlaybackCard(const TSharedPtr<const FRPGCompiledBossMoveCard>& Card,FString& Error);
+    static bool ValidatePlaybackCard(const TSharedPtr<const FRPGCompiledBossMoveCard>& Card,FString& Error,bool bDamage=false);
     bool Initialize(ARPGFrameworkBossCharacter* Boss,const FRPGFrameworkDependencies& Dependencies,APawn* Target,uint64 Encounter,uint64 Generation,FString& Error);
     bool Start(const FRPGBossDecisionSnapshot& Snapshot,FString& Error);
+    /** F5: starts the card the selector chose (any resolved card of the profile); Start() plays the card given to Initialize. */
+    bool StartCard(const TSharedPtr<const FRPGCompiledBossMoveCard>& NextCard,const FRPGBossDecisionSnapshot& Snapshot,FString& Error);
+    /** After a clean finish: re-arms the executor for the next attack of the same encounter. */
+    bool PrepareNextAttack();
+    /** Encounter restart (also after an abort): stops the owned montage, moves the model to the new generation and re-arms; Start* re-enables the tick. */
+    bool Rearm(uint64 NewGeneration,FString& Error);
+    const FRPGBossMoveModel& Model() const { return Model_; }
     void Abort(const FString& Reason);
     bool IsIdle() const;
     bool IsClean() const;
     bool DidFinish() const { return bFinished; }
+    int32 AcceptedHits() const { return HitsAccepted; }
+    double AppliedDamageTotal() const { return AppliedDamage; }
     virtual void TickComponent(float Delta,ELevelTick TickType,FActorComponentTickFunction* ThisTick) override;
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
 private:
     void LogEvents(const TArray<FRPGBossMoveModelEvent>& Events) const;
     void StopOwned(float BlendSeconds);
+    FString Label() const;
+    /** F4: sweeps every card window over the part of this tick it was open and resolves a contact with the explicit target. */
+    void SweepWindows(double PrevPosition,double Position);
+    struct FWindowPose { FVector A=FVector::ZeroVector,B=FVector::ZeroVector; bool bValid=false; };
+    TMap<FName,FWindowPose> PrevPoses;
+    TWeakObjectPtr<URPGDamageResolver> Resolver;
+    int32 HitsAccepted=0; double AppliedDamage=0.;
     TWeakObjectPtr<ARPGFrameworkBossCharacter> OwnerBoss;
     TWeakObjectPtr<APawn> Target;
     UPROPERTY(Transient) TObjectPtr<UAnimInstance> Anim;
     UPROPERTY(Transient) TObjectPtr<UAnimMontage> OwnedMontage;
     UPROPERTY(Transient) TObjectPtr<URPGBossFrameworkProfile> Profile;
     TSharedPtr<const FRPGCompiledBossMoveCard> Card;
-    FRPGBossMoveModel Model;
+    FRPGBossMoveModel Model_;
     FRPGBossAttackToken Token;
     bool bInitialized=false, bAborted=false, bFinished=false, bSawPoseWeight=false;
     double StartWorldSeconds=0., LastWorldSeconds=0., LastPosition=0.;

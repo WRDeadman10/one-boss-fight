@@ -39,8 +39,30 @@ FString URPGDamageResolver::KeyOf(const FRPGDamagePayload& Payload)
 
 int32 URPGDamageResolver::CurrentGeneration() const
 {
+	if (ProviderGeneration)
+	{
+		return ProviderGeneration();
+	}
 	const URPGBossEncounter* Encounter = GetOwner() ? GetOwner()->FindComponentByClass<URPGBossEncounter>() : nullptr;
 	return Encounter ? Encounter->GetGeneration() : 0;
+}
+
+void URPGDamageResolver::SetLifeProvider(TFunction<bool()> InIsAlive, TFunction<int32()> InGeneration)
+{
+	// Both or none: a half provider would mix the framework's life with the legacy generation.
+	if (!InIsAlive || !InGeneration)
+	{
+		ClearLifeProvider();
+		return;
+	}
+	ProviderIsAlive = MoveTemp(InIsAlive);
+	ProviderGeneration = MoveTemp(InGeneration);
+}
+
+void URPGDamageResolver::ClearLifeProvider()
+{
+	ProviderIsAlive = nullptr;
+	ProviderGeneration = nullptr;
 }
 
 void URPGDamageResolver::SyncGeneration()
@@ -122,7 +144,7 @@ FRPGDamageResult URPGDamageResolver::Resolve(AActor* Target, const FRPGDamagePay
 	Result.HealthBefore = static_cast<float>(Before);
 	Result.HealthAfter = Result.HealthBefore;
 	const bool bTargetAlive = bHaveHealth && Before > 0.0 && !RPGBossDamage::HasTag(Target, TEXT("Status.Dead"));
-	const bool bAttackerAlive = RPGBossDamage::IsAlive(GetOwner());
+	const bool bAttackerAlive = ProviderIsAlive ? ProviderIsAlive() : RPGBossDamage::IsAlive(GetOwner());
 	const bool bCurrent = Payload.Generation == CurrentGeneration();
 	const bool bDuplicate = Spent.Contains(Key);
 	// The invulnerability is read here, at the moment the damage would be applied (Freeze 488), and only when the earlier rules did not already reject.

@@ -11,6 +11,16 @@ class UAnimSequence;
 class UAnimMontage;
 class UAnimSequenceBase;
 
+/** One baked sample of a hit window's blade segment in COMPONENT space. A COPY of animation data: re-bake whenever the animation changes. */
+USTRUCT(BlueprintType)
+struct FRPGBakedBladeSample
+{
+    GENERATED_BODY()
+    UPROPERTY(EditAnywhere) float TimeSeconds = 0.f;
+    UPROPERTY(EditAnywhere) FVector BaseCS = FVector::ZeroVector;
+    UPROPERTY(EditAnywhere) FVector TipCS = FVector::ZeroVector;
+};
+
 USTRUCT(BlueprintType)
 struct FRPGBossMoveWindow
 {
@@ -23,6 +33,8 @@ struct FRPGBossMoveWindow
     UPROPERTY(EditAnywhere) FName SocketA;
     UPROPERTY(EditAnywhere) FName SocketB;
     UPROPERTY(EditAnywhere) float RadiusCm = 0.f;
+    /** Optional (empty = live sockets): the baked blade path of this window, strictly ordered, covering [StartSeconds, EndSeconds], inside the clip. */
+    UPROPERTY(EditAnywhere) TArray<FRPGBakedBladeSample> BakedSamples;
 };
 
 USTRUCT(BlueprintType)
