@@ -4,7 +4,7 @@
     "combat_zero_seconds": 105.0,
     "extraction_start_seconds": 105.0,
     "frame_naming_pattern": "morgott_c0_{frame:05d}.png",
-    "description": "Template measurement ledger for 8 priority Morgott combat clips. All measurement fields null until measured from video. Notes must record camera state per clip. Confidence must be high, medium, or low."
+    "description": "Template measurement ledger for 9 Morgott combat clips. All measurement fields null until measured from video. Notes must record camera state per clip. Confidence must be high, medium, or low."
   },
   "entries": [
     {
@@ -209,6 +209,34 @@
       "ref_to_original": "Move_EmberWarden_CurseBurst",
       "id_status": "proposed_new",
       "attack_family": "Omen curse burst (~60% HP)",
+      "t_W_orig": null,
+      "t_W_combat": null,
+      "t_C_orig": null,
+      "t_C_combat": null,
+      "t_A_orig": null,
+      "t_A_combat": null,
+      "t_E_orig": null,
+      "t_E_combat": null,
+      "t_R_orig": null,
+      "t_R_combat": null,
+      "t_RE_orig": null,
+      "t_RE_combat": null,
+      "W_frame": null,
+      "C_frame": null,
+      "A_frame": null,
+      "E_frame": null,
+      "R_frame": null,
+      "RE_frame": null,
+      "evidence_pngs": null,
+      "confidence": null,
+      "notes": null
+    },
+    {
+      "priority": 9,
+      "ref_id": "REF_MaceSlam_Sweep",
+      "ref_to_original": "Move_EmberWarden_MaceSlam",
+      "id_status": "proposed_new",
+      "attack_family": "Conjured mace raised hold then ground sweep",
       "t_W_orig": null,
       "t_W_combat": null,
       "t_C_orig": null,
