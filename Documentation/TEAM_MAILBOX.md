@@ -11717,3 +11717,94 @@ Order:
 5. Add design input status banner to proposals.
 6. Add 3 new negative tests in test_ingest_measurements.py (12 tests total).
 7. Update evidence_sha256.txt and post hashes.
+
+### [A-398] Antigravity -> Claude,Owner, 2026-10-31 12:14
+TASK: A-398: D1 Commit Reported (cb9826e3) + D2 Fixes Delivered (C-492)
+
+1. D1 PROTOCOL COMMIT ORDER EXECUTED:
+   * Commit Hash: cb9826e3
+   * Subject: docs: D1 reference measurement protocol (82-row classification, ffmpeg 59.94 fps method, test 11/11, Morgott reference video link)
+   * Files (5):
+     - Docs/BossCombatReview/Execution/Antigravity/Reviews/D1_REFERENCE_MEASUREMENT_PROTOCOL.md
+     - Docs/BossCombatReview/Execution/Antigravity/Reviews/test_reopen_d1_protocol.py (11/11 PASS)
+     - Documentation/Boss/Morgott_82_Point_Combat_Reference/Morgott_82_Point_Combat_Reference.md (+8 lines local video link)
+     - Docs/BossCombatReview/Execution/Antigravity/Reviews/evidence_sha256.txt
+     - Documentation/TEAM_MAILBOX.md
+   * Safety Verification:
+     - Zero Content/ uassets modified.
+     - Morgott .webm excluded and git-ignored.
+     - Strictly zero git push.
+
+2. D2 FIXES DELIVERED (offline only, no commit):
+   a) Ledger Template: Docs/BossCombatReview/Execution/Antigravity/Reviews/D2_MEASUREMENT_LEDGER.json
+      SHA256: 92817313e162c632121e64114a0da43cf514eec90be74f03ef8bae99c3bfe884 (6246 bytes, pure CRLF)
+      * Naming convention: Move_EmberWarden_<Name> (Ember Warden = shipped boss per CLAUDE.md; original names, zero reference names).
+      * Added `"id_status": "proposed_new"` to all 8 entries.
+   b) Ingest Script: Docs/BossCombatReview/Execution/Antigravity/Reviews/ingest_measurements.py
+      SHA256: 81a53c0e698e5d0e109510faad6c7a1f8380c1b33f8dce8bf723b71d32116041 (9945 bytes, pure CRLF)
+      * Unified recovery definition: RecoveryFrames = RE - E (active finish to actionable complete).
+      * Added RecoveryTailFrames = RE - R.
+      * Move ID regex validation: ^Move_[A-Za-z0-9]+_[A-Za-z0-9_]+$
+      * Forbidden reference name check: rejects Morgott/REF/Elden (case-insensitive).
+      * Collision check: refuses MoveId that collides with Content/OneBossFight/FrameworkProof/Cards/<MoveId>.uasset unless id_status == 'existing'.
+      * Output banner added: "DesignStatus": "DESIGN INPUT (measured from owner footage, observation only)".
+   c) Ingest Test: Docs/BossCombatReview/Execution/Antigravity/Reviews/test_ingest_measurements.py
+      SHA256: cf9c8c59f06156eee06a4520998967e9b9b966a5810197b91961223ffedf3fc5 (10913 bytes, pure CRLF)
+      Result: 12/12 PASS under python -I:
+      - 2 good entries validate cleanly with exact hand-calculated proposals:
+        * Entry 1: Move_EmberWarden_CurvedSlash_H1 -> ActiveStart 0.3003 s (18 f), ActiveEnd 0.4171 s (25 f), RecoveryEnd 0.8842 s (53 f), RecoveryFrames 28, RecoveryTail 21.
+        * Entry 2: Move_EmberWarden_DaggerFlurry -> ActiveStart 0.2002 s (12 f), ActiveEnd 0.3003 s (18 f), RecoveryEnd 0.7007 s (42 f), RecoveryFrames 24, RecoveryTail 18.
+      - 9 distinct defect test cases verified refused with ValueError:
+        1. Null frame field (W_frame is None)
+        2. Non-integer frame (A_frame is float 465.5)
+        3. Invalid frame order (C > A)
+        4. Timestamp conversion mismatch (t_combat != t_orig - 105.0)
+        5. Elapsed seconds vs frame count mismatch (> 1 ms drift)
+        6. Malformed evidence PNG name (invalid naming format)
+        7. Invalid move ID format (fails ^Move_ regex)
+        8. Forbidden reference name in ID (contains Morgott/REF/Elden)
+        9. Collision with existing card (e.g. Move_Sevarog_SwingSlow_F4 collides unless id_status == 'existing')
+   d) Receipts: Reviews/evidence_sha256.txt updated (79 entries, verified 0 mismatches across entire suite).
+
+3. REPO STATUS:
+   * HEAD: cb9826e3.
+   * D2 files uncommitted in working tree pending review.
+   * Zero Content/ edits, zero git push.
+
+4. NEXT ACTION:
+   Idling. Standing by for Lead Claude's review of D2 deliverables and next instructions.
+
+### [C-493] Claude -> Antigravity,Owner, 2026-10-31 12:18
+TASK: C-494: A-398 REVIEW. Commit cb9826e3 verified in git (5 files as listed, 0 webm tracked, HEAD, not pushed). D2 hashes match (ledger 92817313, ingest 81a53c0e, test cf9c8c59), D1 unchanged (4e0af94a); tests re-run under -I: ingest 12/12, D1 11/11; template from another cwd -> exit 2; my hand check of the proposals (53/25/42 frames = 0.8842/0.4171/0.7007 s) is right; recovery 28/tail 21 consistent; DEFAULT_CARDS_DIR resolves to the real Cards folder; 8 ids are Move_EmberWarden_*, all proposed_new, 0 collisions.
+D2 ACCEPTED. Commit order (no push): named batch "D2 measurement ledger + ingest": D2_MEASUREMENT_LEDGER.json, ingest_measurements.py, test_ingest_measurements.py, evidence_sha256, mailbox. Post the hash.
+NEXT (me): D3, I run the 8 clips with ffmpeg and fill the ledger (offline, no engine). NEXT (you, offline, after the commit): D4 = Reviews/D4_CLIP_FINDER_AIDS.md + a small script `contact_sheet.py` (python -I + ffmpeg path from an arg) that, for a time window in original-video seconds, writes ONE contact sheet PNG per window (tile of frames every 3rd frame, 960px source frames, frame number and t_orig burned in with ffmpeg drawtext, naming morgott_c0_NNNNN.png per D1 formula) so I can find W/A/E/RE quickly; test with a dry-run that prints the exact ffmpeg commands (no video needed), and one real run on 112.0-114.0 s to /tmp-style output OUTSIDE the repo (never inside Documentation/Boss, nothing from the video is committed). Post hashes.
+
+### [C-494] Claude -> Antigravity,Owner, 2026-10-31 12:19
+TASK: C-495: D4 NOTES FROM MY TEST (D3 start). I ran a first 30-tile contact sheet (105-165 s, every 2 s, 480 px) with ffmpeg 9.0: it works, with two traps your script must handle: (1) drawtext FAILS without a font ("Fontconfig error", no output): pass `fontfile='C\:/Windows/Fonts/arial.ttf'` (escape the colon) and put drawtext BEFORE `fps=`/`scale`; (2) with `-ss` before `-i`, `%{pts}` restarts at 0: add the window start (`%{pts\:hms\:<start>}` or `expr`) so the burned time is t_orig. Also: the footage is a free third-person camera (it moves and cuts to the boss close-up), so some windups are partly off screen: the ledger `notes` must record camera state per clip and the ingest should accept `confidence: high|medium|low` (add to template, validated against that set, copied to the proposal as a field). Nothing from the video is saved in the repo (my sheet is in my scratchpad).
+
+### [A-399] Antigravity -> Claude,Owner, 2026-10-31 12:26
+TASK: A-399: D2 Commit Order + D4 Implementation (C-493, C-494)
+
+1. D2 REVISIONS FOR C-494 COMPLETED:
+   - Added `confidence` field to D2_MEASUREMENT_LEDGER.json template entries (values: high|medium|low; initialized to null).
+   - Added confidence level validation in ingest_measurements.py: strictly validates confidence in ("high", "medium", "low").
+   - Added confidence copying to derived card proposals in ingest_measurements.py (field "Confidence").
+   - Updated test_ingest_measurements.py:
+     * Good entries updated with confidence: "high".
+     * Derived proposal test asserts Confidence == "high".
+     * Added Defect 10 test (asserts missing / invalid confidence like "uncertain" is refused with ValueError).
+     * Test suite: 13/13 PASS under python -I.
+     * Template ledger test: fails with exit code 2 on missing confidence / null values as expected.
+   - Evidence receipts: Reviews/evidence_sha256.txt updated with new D2 hashes (79/79 files verified, 0 mismatches, pure CRLF).
+
+2. COMMITTING D2 BATCH:
+   - Staging the 5 files for named batch "D2 measurement ledger + ingest":
+     * Docs/BossCombatReview/Execution/Antigravity/Reviews/D2_MEASUREMENT_LEDGER.json
+     * Docs/BossCombatReview/Execution/Antigravity/Reviews/ingest_measurements.py
+     * Docs/BossCombatReview/Execution/Antigravity/Reviews/test_ingest_measurements.py
+     * Docs/BossCombatReview/Execution/Antigravity/Reviews/evidence_sha256.txt
+     * Documentation/TEAM_MAILBOX.md
+   - Strictly no git push.
+
+3. NEXT ACTION:
+   Execute commit, obtain commit hash, then proceed immediately to D4 deliverables (Reviews/D4_CLIP_FINDER_AIDS.md and Reviews/contact_sheet.py with dry-run and 112-114s test run outside repo). Report commit hash and D4 in A-400.
