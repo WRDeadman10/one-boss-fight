@@ -1,10 +1,10 @@
 {
-  "version": "v3.7.0",
+  "version": "3.8.0",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 34,
-    "PARTIAL": 24,
+    "WITNESSED": 35,
+    "PARTIAL": 23,
     "NOT YET": 24
   },
   "requirements": [
@@ -1261,7 +1261,7 @@
       "status": "NOT YET",
       "proof": [],
       "citations": [],
-      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45\u00b0).",
+      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45°).",
       "notes": "Motion warping clamping bounds not yet implemented in active runtime (designated for Movement Block)."
     },
     {
@@ -2186,7 +2186,7 @@
         }
       ],
       "observable": "Structured log output emits tagged lines: [CARD_VALIDATE], [CARD_PLAN], [CARD_APPLY], [CARD_DECISION], [CARD_HIT].",
-      "notes": "PIE fixture emits structured [FrameworkProof] telemetry tokens (target_health_init, walk, hit, invariant); production [CARD_*] prefix reserved for QA Block."
+      "notes": "PIE emits 50 structured [FrameworkProof] telemetry tokens; decisions carry unique monotonic seq=N across stance breaks (3924a2e); defenses and interrupts NOT LOGGED; production [CARD_*] prefix reserved."
     },
     {
       "id": "BOSS-QA-003",
@@ -2224,25 +2224,49 @@
       "title": "FPS and time-scale parity",
       "section": "Debugging, QA, presentation and optional networking",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:91",
-        "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log:1578"
+        "Docs/BossCombatReview/Execution/Claude/B_QA004/fixed30/editor_raw.log:1693",
+        "Docs/BossCombatReview/Execution/Claude/B_QA004/fixed30/editor_raw.log:1694",
+        "Docs/BossCombatReview/Execution/Claude/B_QA004/fixed60/editor_raw.log:1768",
+        "Docs/BossCombatReview/Execution/Claude/B_QA004/fixed60/editor_raw.log:1769",
+        "Docs/BossCombatReview/Execution/Claude/B_QA004/fixed120/editor_raw.log:1918",
+        "Docs/BossCombatReview/Execution/Claude/B_QA004/fixed120/editor_raw.log:1919"
       ],
       "citations": [
         {
-          "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 91,
-          "quoted": "TestEqual(TEXT(\"no edges lost or duplicated across step sizes/rates\"),EdgeCou..."
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA004/fixed30/editor_raw.log",
+          "line": 1693,
+          "quoted": "[2026.10.31-22.23.33:192][463]LogTemp: Display: [FrameworkProof] invariant ta..."
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log",
-          "line": 1578,
-          "quoted": "[2026.10.30-12.12.22:309][380]LogTemp: Display: [FrameworkProof] sweep instan..."
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA004/fixed30/editor_raw.log",
+          "line": 1694,
+          "quoted": "[2026.10.31-22.23.33:192][463]LogTemp: Display: [FrameworkProof] RESULT outco..."
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA004/fixed60/editor_raw.log",
+          "line": 1768,
+          "quoted": "[2026.10.31-22.24.13:786][609]LogTemp: Display: [FrameworkProof] invariant ta..."
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA004/fixed60/editor_raw.log",
+          "line": 1769,
+          "quoted": "[2026.10.31-22.24.13:786][609]LogTemp: Display: [FrameworkProof] RESULT outco..."
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA004/fixed120/editor_raw.log",
+          "line": 1918,
+          "quoted": "[2026.10.31-22.22.46:696][898]LogTemp: Display: [FrameworkProof] invariant ta..."
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA004/fixed120/editor_raw.log",
+          "line": 1919,
+          "quoted": "[2026.10.31-22.22.46:696][898]LogTemp: Display: [FrameworkProof] RESULT outco..."
         }
       ],
       "observable": "Combat execution at 30, 60, and 120 FPS yields identical hit counts and damage totals.",
-      "notes": "MoveModel assertion (model_tests:91) tests variable step invariance; swept capsule substeps adapt to velocity (f4_run1:1578); discrete 30/60/120 FPS PIE runs not logged."
+      "notes": "Witnessed live in PIE across fixed 30, 60, and 120 FPS runs (B_QA004 fixed30, fixed60, fixed120) with unwrapped frame stepping matching target FPS (30.0, 60.0, 120.0). All three runs produced identical accepted hit counts (2) and damage totals (55.0 applied, HP 800->745) on L_SevarogFrameworkProofF5; sweep substeps adapt to velocity (RPGFrameworkMoveExecutor.cpp:185) and MoveModel variable step invariance passes (RPGBossMoveModelTests.cpp:91). Limits: tested across frame rates on F5 scenario; slow-motion time dilation (t.TimeDilation) not tested; duplicate rejected contacts scale with framerate as expected (fixed30 2, fixed60 4, fixed120 9) while accepted damage and hit counts remain invariant."
     },
     {
       "id": "BOSS-QA-005",
@@ -2277,5 +2301,6 @@
       "observable": "Combat telegraphed cues remain readable under low VFX and audio-only/visual-only conditions.",
       "notes": "Accessibility contrast test harness not yet implemented (designated for QA / Telemetry Block)."
     }
-  ]
+  ],
+  "last_updated": "2026-11-01"
 }
