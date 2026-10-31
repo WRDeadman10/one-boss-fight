@@ -1270,7 +1270,7 @@ KI-151 C465 2026-10-31 (lead, Claude): the native-boss branch of `URPGHitIntake:
 Owner Decisions C515/C516 2026-10-31 (lead, Claude): Owner decisions received from OWNER_DECISION_BRIEF.md:
 (1) Cook scope: Option A, whole Content/ParagonSevarog (~1.4 GB) added to DirectoriesToAlwaysCook in Config/DefaultGame.ini (KI-143 Resolved).
 (2) NullRHI headless actor spawning: Option A, keep running level authoring and proof drivers in the windowed editor (Claude/run_editor_script.ps1 -NullRhi 0; KI-144 Accepted workaround).
-(3) Phase-2 and stagger animations: Option B, retarget / use existing animations on boss skeleton (Stun_Start -> Stun_Loop -> Stun_End, Death_front, Ultimate/Subjugation/LevelStart; F11 plan C-517/C-518).
+(3) Phase-2 and stagger animations: Option B, use existing animations on the boss skeleton (Stun_Start -> Stun_Loop -> Stun_End, Ultimate/Subjugation/LevelStart; F11 plan C-517/C-518).
 (4) HUD and boss health bar integration: Option B, keep the C++ UMG HUD (URPGHUDWidget).
 (5) Blood effect and sound: Option B, leave bleed as numeric loss without VFX/audio for now.
 (6) D3 reference numbers into Ember Warden cards: Option A, they stay DESIGN INPUT only.
