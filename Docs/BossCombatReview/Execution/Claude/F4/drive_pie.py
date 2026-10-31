@@ -1,4 +1,4 @@
-# F4 PIE driver (copy of the F3d driver; map and log path come from files) (lead, Claude). Run in the windowed editor through "-ExecCmds=py <script>" so the script stays alive on slate ticks.
+﻿# F4 PIE driver (copy of the F3d driver; map and log path come from files) (lead, Claude). Run in the windowed editor through "-ExecCmds=py <script>" so the script stays alive on slate ticks.
 # Loads the NEW proof map, starts PIE, waits until the framework logs RESULT or ERROR (or times out), ends PIE and quits the editor explicitly.
 # Reads the editor log file only to decide when to stop; all evidence is the raw log. Tags: [F3D_*]
 import os
@@ -21,7 +21,7 @@ INJECT_ROW = [(float(x.split(':')[0]), x.split(':')[1], x.split(':')[2], (x.spli
 INJECTED_ROW = []
 REAL_SWING = [(float(x.split(':')[0]), (x.split(':')[1] if ':' in x else 'Light')) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_real_swing.txt').read().strip().split(',') if x] if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_real_swing.txt') else []  # C-467 (KI-151): "seconds[:Light|Strong|Charged],..." after the arrival (and after the build switch): REAL pack attacks (EnterCombat once, the action held as pie_builds.py does)
 REAL_BUILD = open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_real_build.txt').read().strip() if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_real_build.txt') else ''  # Starter | Strength | Dex: switched through RPGBuildLoadout.set_build once the pack style is known
-REAL_STYLE = {'Starter': 'SwordCombatStyle', 'Strength': 'ClaymoreCombatStyle', 'Dex': 'DualSwordCombatStyle'}
+REAL_STYLE = {'Starter': 'SwordCombatStyle', 'Strength': 'ClaymoreCombatStyle', 'Dex': 'DualSwordCombatStyle', 'polearm': 'PolearmCombatStyle'}   # polearm: the C3 v1 example weapon (console name from its catalog build)
 REAL_ACTION = {'Light': ('IA_NormalAttack', 0.12), 'Strong': ('IA_StrongAttack', 0.12), 'Charged': ('IA_ChargedAttack', 1.6)}
 REAL = {'t0': None, 'n': 0, 'hold_until': -1.0, 'combat': False}
 IA_PATH = '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/'
