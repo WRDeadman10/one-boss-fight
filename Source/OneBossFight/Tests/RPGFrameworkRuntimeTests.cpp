@@ -320,6 +320,19 @@ bool FFrameworkRepositionProfile::RunTest(const FString&)
     {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);F3->RepositionMax=2;F3->RepositionTurnDegPerSecond=180.f;TestFalse(TEXT("outside the F5 lane refused"),RPGFramework::ValidateProfile(*F3,Error));TestEqual(TEXT("lane token"),Error,FString(TEXT("Framework.Profile.Domain")));}
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkArenaProfile,"OneBossFight.Framework.Runtime.ArenaProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkArenaProfile::RunTest(const FString&)
+{
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    auto F5=[&](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);P->ArenaRadiusCm=0.f;};
+    F5();TestTrue(TEXT("off by default: valid"),RPGFramework::ValidateProfile(*P,Error));
+    for(float V:{1.f,600.f,1.e6f}){F5();P->ArenaRadiusCm=V;TestTrue(TEXT("(0,1e6] valid"),RPGFramework::ValidateProfile(*P,Error));}
+    for(float V:{-1.f,1.0001e6f,std::numeric_limits<float>::quiet_NaN(),std::numeric_limits<float>::infinity()}){F5();P->ArenaRadiusCm=V;TestFalse(TEXT("outside [0,1e6] or non-finite refused"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("token"),Error,FString(TEXT("Framework.Profile.Domain")));}
+    {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);F3->ArenaRadiusCm=600.f;TestFalse(TEXT("outside the F5 lane refused"),RPGFramework::ValidateProfile(*F3,Error));TestEqual(TEXT("token"),Error,FString(TEXT("Framework.Profile.Domain")));}
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkStaggerAnimRules,"OneBossFight.Framework.Runtime.StaggerAnimRules",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
 bool FFrameworkStaggerAnimRules::RunTest(const FString&)
 {

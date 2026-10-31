@@ -1,10 +1,10 @@
 {
-  "version": "3.8.0",
+  "version": "3.9",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 35,
-    "PARTIAL": 23,
+    "WITNESSED": 36,
+    "PARTIAL": 22,
     "NOT YET": 24
   },
   "requirements": [
@@ -13,25 +13,31 @@
       "title": "Target validity",
       "section": "Awareness and observable context",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:79",
-        "Source/OneBossFight/Tests/RPGAutomationTests.cpp:173"
+        "Docs/BossCombatReview/Execution/Claude/B_AWR001/kill/editor_raw.log:1586",
+        "Docs/BossCombatReview/Execution/Claude/B_AWR001/offarena/editor_raw.log:1628",
+        "Docs/BossCombatReview/Execution/Claude/B_AWR001/destroy/editor_raw.log:1585"
       ],
       "citations": [
         {
-          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 79,
-          "quoted": "TestFalse(TEXT(\"no owner target fallback or playback\"),E->Initialize(nullptr,D,nullptr,1,1,Error));TestTrue(TEXT(\"rejected initialization stays clean\"),E->IsClean());"
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR001/kill/editor_raw.log",
+          "line": 1586,
+          "quoted": "[2026.10.31-23.00.56:662][949]LogTemp: Display: [FrameworkProof] target_health_mismatch valid=0 actual=0 expected=800 generation=1 reason=Dead"
         },
         {
-          "file": "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
-          "line": 173,
-          "quoted": "if (!bTargetAlive) { Expected = ERPGDamageOutcome::RejectedDead; }"
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR001/offarena/editor_raw.log",
+          "line": 1628,
+          "quoted": "[2026.10.31-23.02.20:308][992]LogTemp: Display: [FrameworkProof] target_health_mismatch valid=0 actual=0 expected=800 generation=1 reason=OffArena"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR001/destroy/editor_raw.log",
+          "line": 1585,
+          "quoted": "[2026.10.31-23.01.38:263][949]LogTemp: Display: [FrameworkProof] cleanup reason=Framework.Playback.Lifecycle modelIdle=1 ownedMontageStopped=1"
         }
       ],
       "observable": "Boss AI halts attack execution or rejects candidate when player target is marked Dead, Destroyed, or off-arena.",
-      "notes": "Unit playback guards test null target initialization refusal (runtime_tests:75) and resolver test rejects dead targets (auto_tests:173); full AI perception loop target validation and off-arena invalidation not yet wired."
+      "notes": "Live halt witnessed for all three fault conditions in Claude/B_AWR001 (kill:1586 reason=Dead, offarena:1628 reason=OffArena, destroy:1585 cleanup reason=Framework.Playback.Lifecycle with bossInactive=1 at :1586); zero candidate or decision lines follow fault in any run; control run (:1996) verifies no false triggers under valid target. Limits: target death was injected via health 0, not boss combat strike; Destroyed halt handled by executor IsActorBeingDestroyed check before character tick; arena center established at encounter target start."
     },
     {
       "id": "BOSS-AWR-002",
@@ -1186,17 +1192,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 404,
+          "line": 417,
           "quoted": "Near(TEXT(\"60 ticks (1 s) toward 170 turn exactly the cap, 90 deg\"),Yaw,90.f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 405,
+          "line": 418,
           "quoted": "TestTrue(TEXT(\"no tick turned more than cap * dt (1.5 deg)\"),MaxStep<=1.5f+1.e-3f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 407,
+          "line": 420,
           "quoted": "Near(TEXT(\"after the commit 60 more ticks leave the yaw unchanged\"),Yaw,90.f);"
         },
         {
@@ -1316,7 +1322,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 355,
+          "line": 368,
           "quoted": "TestEqual(TEXT(\"no slot node in the AnimBP\"),Token([](auto& X){X.bSlotNodePresent=false;}),FString(TEXT(\"Framework.Profile.StaggerAnim.SlotNode\")));"
         },
         {
@@ -1940,7 +1946,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 336,
+          "line": 349,
           "quoted": "TestEqual(TEXT(\"loop count middle 1.6 / loop 0.5 = ceil 3.2 = 4\"),RPGStaggerAnim::LoopCount(T,S,E,.5f),4);"
         }
       ],
@@ -2104,17 +2110,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 415,
+          "line": 428,
           "quoted": "TestEqual(TEXT(\"attack running\"),RPGBossOverlay::Format(I),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=129cm Cone=120deg Window=Open Posture=40/100 Health=150/250 Stagger=0 PhaseHold=0\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 417,
+          "line": 430,
           "quoted": "TestEqual(TEXT(\"no card, stagger and hold\"),RPGBossOverlay::Format(N),FString(TEXT(\"Card=None State=Idle Phase=Phase_2 Range=300cm Cone=0deg Window=Closed Posture=100/100 Health=50/250 Stagger=1 PhaseHold=1\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 419,
+          "line": 432,
           "quoted": "TestEqual(TEXT(\"non-finite values never print as numbers\"),RPGBossOverlay::Format(Bad),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=n/acm Cone=120deg Window=Open Posture=40/100 Health=n/a/250 Stagger=0 PhaseHold=0\")));"
         },
         {

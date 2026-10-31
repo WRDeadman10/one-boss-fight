@@ -19,6 +19,7 @@
 #include "Player/RPGBossTrackRules.h"
 #include "Player/RPGBossRules.h"
 static TAutoConsoleVariable<float> CVarBossProofBystander(TEXT("rpg.BossProofBystander"),0.f,TEXT("Test hook (BOSS-HIT-005): above 0 spawns one plain Character (a second pawn that is not the target) that many cm to the side of the target when the boss starts its first attack of an encounter. 0 = off. Not compiled into shipping builds."),ECVF_Default);
+static TAutoConsoleVariable<int32> CVarBossProofTargetFault(TEXT("rpg.BossProofTargetFault"),0,TEXT("Test hook (BOSS-AWR-001): 1 sets the target's health to 0, 2 destroys the target pawn, when the boss starts its first attack of an encounter. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossComboDuplicateGate(TEXT("rpg.BossComboDuplicateGate"),0,TEXT("Test hook (BOSS-COM-005): 1 evaluates every combo branch gate a second time with the SAME gate id right after the first, and logs that the duplicate was ignored without changing the combo state."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossOverlay(TEXT("rpg.BossOverlay"),0,TEXT("Framework boss runtime overlay (BOSS-QA-001): 0 off, 1 on screen, 2 on screen and one [FrameworkProof] overlay log line per second."),ECVF_Default);
 ARPGFrameworkBossCharacter::ARPGFrameworkBossCharacter()
@@ -39,7 +40,7 @@ bool ARPGFrameworkBossCharacter::InitializeProof(ARPGFrameworkProofFixture* Fixt
     TUniquePtr<FRPGFrameworkDependencies> D;
     if(!RPGFramework::ResolveProfile(Profile,D,Error))return false;
     if(!InTarget->IsA(D->TargetClass.Get())){Error=TEXT("Framework.Boss.TargetClass");return false;}
-    Target=InTarget;TargetController=InTarget->GetController();
+    Target=InTarget;TargetController=InTarget->GetController();ArenaOrigin=InTarget->GetActorLocation();
     if(!ValidateTarget(TargetHPBefore)){Target.Reset();Error=TEXT("Framework.Boss.TargetHealth");return false;}
     ExpectedTargetHP=TargetHPBefore;
     Dependencies=MoveTemp(D);ProofFixture=Fixture;EncounterId=Encounter;GenerationId=Generation;
@@ -75,10 +76,17 @@ bool ARPGFrameworkBossCharacter::InitializeProof(ARPGFrameworkProofFixture* Fixt
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] dependencies mesh=%s skeleton=%s animClass=%s sequence=%s slot=%s resolved=1 label=%s"),*Dependencies->Mesh->GetPathName(),*Dependencies->FirstCard()->Spec().Skeleton.ToSoftObjectPath().ToString(),*Dependencies->AnimClass->GetPathName(),*Dependencies->FirstCard()->Spec().Sequence.ToSoftObjectPath().ToString(),*Dependencies->FirstCard()->Spec().SlotName.ToString(),*Dependencies->Profile->FixtureLabel.Replace(TEXT(" "),TEXT("_")));
     if(!AI->WalkToBand(this,Error)){Fail(Error);return false;}return true;
 }
-bool ARPGFrameworkBossCharacter::ValidateTarget(double& HP) const
+bool ARPGFrameworkBossCharacter::ValidateTarget(double& HP) const {return TargetFault(HP).IsNone();}
+FName ARPGFrameworkBossCharacter::TargetFault(double& HP) const
 {
-    HP=0.;return TargetController.IsValid()&&Target.IsValid()&&Target->GetController()==TargetController.Get()&&TargetController->GetPawn()==Target.Get()&&!Target->IsActorBeingDestroyed()&&Target->GetWorld()==GetWorld()&&
-        RPGPack::ReadAttribute(Target.Get(),TEXT("Attribute.Health"),false,HP)&&FMath::IsFinite(HP)&&HP>0.;
+    HP=0.;
+    if(!TargetController.IsValid()||!Target.IsValid())return TEXT("Invalid");
+    if(Target->IsActorBeingDestroyed())return TEXT("Destroyed");
+    if(Target->GetController()!=TargetController.Get()||TargetController->GetPawn()!=Target.Get()||Target->GetWorld()!=GetWorld())return TEXT("Invalid");
+    const URPGBossFrameworkProfile* P=ProofProfile();
+    if(P&&P->ArenaRadiusCm>0.f&&FVector::Dist2D(Target->GetActorLocation(),ArenaOrigin)>double(P->ArenaRadiusCm))return TEXT("OffArena");
+    if(!RPGPack::ReadAttribute(Target.Get(),TEXT("Attribute.Health"),false,HP)||!FMath::IsFinite(HP))return TEXT("Unreadable");
+    return HP>0.?FName(NAME_None):FName(TEXT("Dead"));
 }
 void ARPGFrameworkBossCharacter::WalkArrived()
 {
@@ -93,10 +101,10 @@ void ARPGFrameworkBossCharacter::WalkArrived()
 void ARPGFrameworkBossCharacter::Tick(float Delta)
 {
     Super::Tick(Delta);if(!bInitialized||bFailed||bSucceeded||bDead)return;
-    double HP=0.;const bool bTargetOk=ProofFixture.IsValid()&&ValidateTarget(HP);
+    double HP=0.;const FName Fault=ProofFixture.IsValid()?TargetFault(HP):FName(TEXT("Invalid"));const bool bTargetOk=Fault.IsNone();
     if(!bTargetOk||!FMath::IsNearlyEqual(HP,ExpectedTargetHP))
     {
-        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] target_health_mismatch valid=%d actual=%g expected=%g generation=%llu"),bTargetOk?1:0,HP,ExpectedTargetHP,GenerationId);
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] target_health_mismatch valid=%d actual=%g expected=%g generation=%llu reason=%s"),bTargetOk?1:0,HP,ExpectedTargetHP,GenerationId,bTargetOk?TEXT("HealthChanged"):*Fault.ToString());
         Fail(TEXT("Framework.Boss.TargetLifeOrHealthChanged"));return;
     }
     const auto& P=*Dependencies->Profile.Get();
@@ -182,6 +190,12 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
             if(!Executor->StartCard(Dependencies->Candidates[Decision.ChosenIndex].Card,S,Error)){Fail(Error);return;}
             Selector.NoteStarted(Decision.ChosenIndex,S.ClockSeconds);RepositionsInARow=0;
 #if !UE_BUILD_SHIPPING
+            if(CVarBossProofTargetFault.GetValueOnGameThread()>0&&!bTargetFaultInjected)
+            {
+                bTargetFaultInjected=true;const int32 Kind=CVarBossProofTargetFault.GetValueOnGameThread();
+                UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] target_fault_injected kind=%s"),Kind==2?TEXT("Destroy"):TEXT("Kill"));
+                if(Kind==2)Target->Destroy();else RPGPack::WriteAttribute(Target.Get(),TEXT("Attribute.Health"),0.);
+            }
             if(CVarBossProofBystander.GetValueOnGameThread()>0.f&&!bBystanderSpawned)
             {
                 bBystanderSpawned=true;const FVector ToTarget=(Target->GetActorLocation()-GetActorLocation()).GetSafeNormal2D();
@@ -425,7 +439,7 @@ bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& 
     const TCHAR* OldState=bDead?TEXT("Dead"):TEXT("Finished");
     GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;
     if (bHittable) Health=MaxHealth;
-    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; bBystanderSpawned=false; ResetBleed();
+    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; bBystanderSpawned=false; bTargetFaultInjected=false; ResetBleed();
     Selector.Reset(); CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId; bPhaseTwoLatched=false;
     SetActorLocation(WalkStart,false,nullptr,ETeleportType::TeleportPhysics);
     FVector Face=Target->GetActorLocation()-WalkStart; Face.Z=0.f; if (!Face.IsNearlyZero()) SetActorRotation(FRotator(0.f,Face.Rotation().Yaw,0.f));

@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 # Copyright One Boss Fight. All Rights Reserved.
 """
-validate_framework_proof_logs.py (v3.1)
+validate_framework_proof_logs.py (v3.2)
 
 Formal schema and semantic validator for all [FrameworkProof] structured telemetry lines
-emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, B_QA002, and B_HIT005).
+emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, B_QA002, B_HIT005, and B_AWR001).
 
 Validates:
 1. Header prefix (optional Unreal Engine standard log prefix: [YYYY.MM.DD-HH.MM.SS:mmm][frame]LogCategory: Verbosity:)
 2. Exact [FrameworkProof] token tag
-3. Registered schema match for all 52 recognized telemetry tokens
+3. Registered schema match for all 53 recognized telemetry tokens
 4. Semantic checks per log:
    - seq= (when present) is unique and strictly increasing per process log across decisions
    - candidate and refusal lines of a decision carry the exact same seq as their decision
@@ -33,7 +33,7 @@ from datetime import datetime
 # Vector format pattern: X=<float> Y=<float> Z=<float>
 VEC = r"X=[^\s]+ Y=[^\s]+ Z=[^\s]+"
 
-# 52 Canonical FrameworkProof Schemas
+# 53 Canonical FrameworkProof Schemas
 SCHEMAS = {
     # 1. Encounter Lifecycle & Framework Fixture
     "dependencies": r"^mesh=[^\s]+ skeleton=[^\s]+ animClass=[^\s]+ sequence=[^\s]+ slot=[^\s]+ resolved=\d+ label=[^\s]+$",
@@ -41,7 +41,8 @@ SCHEMAS = {
     "boss_health": r"^max=[^\s]+ playerHitDamage=[^\s]+ label=[^\s]+$",
     "boss_health_read": r"^reader=[^\s]+ ok=\d+ value=[^\s]+ max=[^\s]+$",
     "target_health_init": r"^value=[^\s]+ readback=[^\s]+ label=[^\s]+$",
-    "target_health_mismatch": r"^valid=\d+ actual=[^\s]+ expected=[^\s]+ generation=\d+$",
+    "target_health_mismatch": r"^valid=\d+ actual=[^\s]+ expected=[^\s]+ generation=\d+(?:\s+reason=[^\s]+)?$",
+    "target_fault_injected": r"^kind=[^\s]+$",
     "pack_style_known": r"^waitedSeconds=[^\s]+$",
     "bystander_spawned": r"^ok=\d+ name=[^\s]+ x=[^\s]+ y=[^\s]+ z=[^\s]+$",
     "encounter_reset": r"^(?:generation=\d+ oldState=[^\s]+ executorRearmed=\d+ bossHealth=[^\s]+ targetHealth=[^\s]+|refused generation=\d+ reason=[^\s]+)$",

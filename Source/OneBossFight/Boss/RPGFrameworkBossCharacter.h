@@ -21,6 +21,8 @@ public:
     void WalkArrived();
     void Fail(const FString& Error);
     bool ValidateTarget(double& Health) const;
+    /** BOSS-AWR-001: NAME_None when the target is valid, else Invalid, Destroyed, OffArena, Unreadable or Dead (checked in this order). */
+    FName TargetFault(double& Health) const;
     APawn* ExplicitTarget() const {return Target.Get();}
     const URPGBossFrameworkProfile* ProofProfile() const {return Dependencies?Dependencies->Profile.Get():nullptr;}
     bool Succeeded() const {return bSucceeded;}
@@ -56,6 +58,8 @@ private:
     int32 AttacksDone=0;
     /** BOSS-QA-002: one id per selector decision, never reset inside a process (attack= is an attack-budget slot and repeats after an aborted attack). Logged as seq= on candidate, refusal and decision lines. */
     int32 DecisionSeq=0;
+    FVector ArenaOrigin=FVector::ZeroVector;   // BOSS-AWR-001: where the target stood when the encounter began
+    bool bTargetFaultInjected=false;           // test hook rpg.BossProofTargetFault: once per encounter
     /** BOSS-HIT-005 test hook (rpg.BossProofBystander): spawned once per encounter. */
     bool bBystanderSpawned=false;
     /** F6c: the authoritative phase, changed only at the neutral decision gate; latched until restart. */
