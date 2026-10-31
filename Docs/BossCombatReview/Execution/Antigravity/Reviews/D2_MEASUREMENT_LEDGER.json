@@ -258,6 +258,34 @@
       "evidence_pngs": null,
       "confidence": null,
       "notes": null
+    },
+    {
+      "priority": 10,
+      "ref_id": "REF_GapPounce_Close",
+      "ref_to_original": "Move_EmberWarden_GapPounce",
+      "id_status": "proposed_new",
+      "attack_family": "Boss closes distance with a fast pounce then strikes",
+      "t_W_orig": null,
+      "t_W_combat": null,
+      "t_C_orig": null,
+      "t_C_combat": null,
+      "t_A_orig": null,
+      "t_A_combat": null,
+      "t_E_orig": null,
+      "t_E_combat": null,
+      "t_R_orig": null,
+      "t_R_combat": null,
+      "t_RE_orig": null,
+      "t_RE_combat": null,
+      "W_frame": null,
+      "C_frame": null,
+      "A_frame": null,
+      "E_frame": null,
+      "R_frame": null,
+      "RE_frame": null,
+      "evidence_pngs": null,
+      "confidence": null,
+      "notes": null
     }
   ]
 }

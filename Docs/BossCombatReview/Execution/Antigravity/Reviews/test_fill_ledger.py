@@ -191,18 +191,29 @@ class TestFillLedger(unittest.TestCase):
         self.assertIn("Invalid confidence", str(ctx.exception))
 
 
-    def test_template_ledger_has_9_entries_including_mace_slam(self):
-        """Tests that template ledger contains 9 entries including REF_MaceSlam_Sweep."""
+    def test_template_ledger_has_10_entries_including_gap_pounce(self):
+        """Tests that template ledger contains 10 entries including REF_MaceSlam_Sweep and REF_GapPounce_Close."""
         with open(DEFAULT_TEMPLATE, "r", encoding="utf-8") as fp:
             data = json.load(fp)
-        self.assertEqual(len(data["entries"]), 9)
-        entry = next((e for e in data["entries"] if e["ref_id"] == "REF_MaceSlam_Sweep"), None)
-        self.assertIsNotNone(entry)
-        self.assertEqual(entry["priority"], 9)
-        self.assertEqual(entry["ref_to_original"], "Move_EmberWarden_MaceSlam")
-        self.assertEqual(entry["id_status"], "proposed_new")
-        self.assertEqual(entry["attack_family"], "Conjured mace raised hold then ground sweep")
-        self.assertIsNone(entry["W_frame"])
+        self.assertEqual(len(data["entries"]), 10)
+        
+        # Verify 9th entry
+        entry9 = next((e for e in data["entries"] if e["ref_id"] == "REF_MaceSlam_Sweep"), None)
+        self.assertIsNotNone(entry9)
+        self.assertEqual(entry9["priority"], 9)
+        self.assertEqual(entry9["ref_to_original"], "Move_EmberWarden_MaceSlam")
+        self.assertEqual(entry9["id_status"], "proposed_new")
+        self.assertEqual(entry9["attack_family"], "Conjured mace raised hold then ground sweep")
+        self.assertIsNone(entry9["W_frame"])
+
+        # Verify 10th entry
+        entry10 = next((e for e in data["entries"] if e["ref_id"] == "REF_GapPounce_Close"), None)
+        self.assertIsNotNone(entry10)
+        self.assertEqual(entry10["priority"], 10)
+        self.assertEqual(entry10["ref_to_original"], "Move_EmberWarden_GapPounce")
+        self.assertEqual(entry10["id_status"], "proposed_new")
+        self.assertEqual(entry10["attack_family"], "Boss closes distance with a fast pounce then strikes")
+        self.assertIsNone(entry10["W_frame"])
 
     def test_round_trip_c501_mace_slam_sweep_proposal(self):
         """Tests filling the 9th clip (REF_MaceSlam_Sweep) with Claude's C-501 marks."""
