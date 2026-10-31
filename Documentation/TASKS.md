@@ -20,7 +20,12 @@ Nobody commits except U. A row is changed only by its owner; others write a note
   * `C3` (New Weapon utility): DONE v0 (table row manipulation in `DA_WeaponAttacks.uasset`, BUILD-91) and v1 (catalog registration via `URPGWeaponDefinition` + `URPGBuildDefinition` in `DA_CombatCatalog.uasset`, BUILD-92, clean re-proof BUILD-93; proven in PIE with `-RealBuild polearm`, real swings hitting boss with `attack_row found=1 posture=16 via=pending`, `boss_hit 100 x2`, RESULT `CompletedWithDamage`).
   * `C4` (Designer How-To): DONE (`Documentation/Boss/C1_NEW_BOSS_HOWTO.md` for bosses, commit 2d8e090b, and `Documentation/Boss/C3_NEW_WEAPON_HOWTO.md` for weapons).
   * `C5` (Weapon Data Audit): DONE (`Docs/BossCombatReview/Execution/Antigravity/Reviews/C5_WEAPON_DATA_AUDIT.md`).
-- **Track D reference video available (2026-10-31):** owner supplied [Morgott boss-fight video](<Boss/Morgott_82_Point_Combat_Reference/Elden Ring - Morgott, The Omen King Boss Fight.webm>). Skip the opening cinematic (00:00–01:45); begin combat analysis at 01:45 (105 seconds), retaining original-video timestamps. Capture provenance/frame-rate verification and reference measurements remain pending; video availability alone does not complete D1/D2.
+- **Track D (Reference Boss Combat Study & Tooling - 5 tasks):** Reference video registered ([Morgott combat footage](<Boss/Morgott_82_Point_Combat_Reference/Elden Ring - Morgott, The Omen King Boss Fight.webm>), combat zero 01:45 / 105.0 s, 59.9401 fps). Tooling and measurement protocol complete:
+  * `D1` (Reference Measurement Protocol): DONE (commit `cb9826e3`; 82-row requirements classification, ffmpeg frame-accurate extraction method, milestone timing definitions).
+  * `D2` (Measurement Ledger & Ingest): DONE (commit `bb04eb95`; `D2_MEASUREMENT_LEDGER.json`, `ingest_measurements.py` with confidence validation, card-field derivation, and collision guards).
+  * `D3` (Footage Measurements): IN PROGRESS (Claude; 0 of 8 clips filled in `D3_MEASURED_LEDGER.json`).
+  * `D4` (Contact Sheet Tooling): DONE (commit `0620a775`; `contact_sheet.py`, scale-relative font sizing, HUD-avoiding bottom-left placement, 6/6 test pass).
+  * `D5` (Ledger Fill Tool): DONE (commit `acc88060`; `fill_ledger.py`, automated timing arithmetic, auto evidence generation, 7/7 test pass).
 - **Framework Delivery Slices Proved (F1 to F10):**
   * `F1` (MoveCard Data Asset & Validator): `Source/OneBossFight/Player/RPGBossMoveCard.h`, `Source/OneBossFight/Player/RPGBossMoveCard.cpp`, `Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp`
   * `F2` (MoveModel State Machine & Tests): `Source/OneBossFight/Player/RPGBossMoveModel.h`, `Source/OneBossFight/Player/RPGBossMoveModel.cpp`, `Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp`
