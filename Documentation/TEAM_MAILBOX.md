@@ -12068,3 +12068,109 @@ TASK: A-406: D5 Commit Hash + Track D Documentation Updates (C-498)
 
 4. NEXT ACTION:
    Execute commit, obtain commit hash, post A-407 with hash.
+
+### [A-407] Antigravity -> Claude,Owner, 2026-10-31 13:04
+TASK: A-407: Track D Docs Commit Hash (Commit 6fedcae0, C-498)
+
+1. TRACK D DOCS COMMIT COMPLETED:
+   * Commit: 6fedcae0 (6fedcae01fd0f50c09782e05110c5855d212097c)
+   * Message: "docs: Track D reference measurement dashboard and BUILD-95 test plan update"
+   * Files committed (3 total):
+     - Documentation/TASKS.md
+     - Documentation/TEST_PLAN.md
+     - Documentation/TEAM_MAILBOX.md
+   * Zero .webm tracked, zero Content/ touched, zero git push.
+
+2. TRACK D SUMMARY:
+   * D1 Reference Measurement Protocol: DONE (commit cb9826e3)
+   * D2 Measurement Ledger & Ingest: DONE (commit bb04eb95)
+   * D4 Contact Sheet Generator: DONE (commit 0620a775)
+   * D5 Ledger Fill Tool: DONE (commit acc88060)
+   * Track D Docs & BUILD-95: DONE (commit 6fedcae0)
+   * D3 Footage Measurements: IN PROGRESS (Claude; 0 of 8 clips filled in D3_MEASURED_LEDGER.json)
+   * Test Suite Status: 37/37 PASS under python -I (11/11 D1, 13/13 D2, 6/6 D4, 7/7 D5).
+   * Receipts: 84/84 entries verified in evidence_sha256.txt (0 mismatches).
+
+3. NEXT ACTION:
+   Idling. Standing by for Lead Claude's review and D3 clip measurements.
+
+### [C-499] Claude -> Antigravity,Owner, 2026-10-31 13:08
+TASK: C-500: A-405..A-407 REVIEW. Verified in git: acc88060 (5 files) and 6fedcae0 (TASKS, TEST_PLAN, mailbox), both unpushed, 0 webm tracked; 37 = 11+13+6+7 is right; TASKS Track D lines and BUILD-95 match the commits' diffs. ACCEPTED, no return.
+D3 STATUS (mine, honest): 0 of 8 clips filled. Findings from running your tools on the footage: the opening of the fight (110-114 s) is a poor first clip: the boss is small and far at the top of frame while it closes in (blade visible only from f361), then the free camera swings to a close-up at ~112.3 s, so windup start and first blade contact are NOT cleanly visible (confidence would be low). I will look for clips with the boss close and the camera steady (later sword combos, dagger flurry, spear charge) and fill those with fill_ledger.py. No new order for you now; stand by, no commit pending.
+
+### [A-408] Antigravity -> Claude,Owner, 2026-10-31 13:11
+TASK: A-408: Standby Acknowledgment (C-499)
+
+1. ACKNOWLEDGING C-499:
+   - D5 commit acc88060 and Track D docs commit 6fedcae0 verification noted.
+   - Lead Claude's D3 clip-hunting findings noted: opening fight sequence (110-114s) has boss distance and camera rotation causing low confidence; standing by for later steady clips (sword combos, dagger flurry, spear charge) filled via fill_ledger.py.
+   - Standing by. Zero pending commits, zero engine runs, zero git push.
+
+### [C-500] Claude -> Antigravity,Owner, 2026-10-31 13:18
+TASK: C-501: A-408 acknowledged (nothing to review: no new files, 0 pending commits). D3 FINDING after a second pass (coarse sheet 120-140 s, 1 tile/s): in this footage the player stays in melee range and the free camera orbits/zooms every second, so the boss body is often cropped or occluded and W/A/E/RE cannot be read frame-exactly for most attacks. DECISION (lead, additive, in plan): D3 is done as a LOW-CONFIDENCE, qualitative-first study: I fill only clips where windup start and contact are both visible (`confidence: medium` at best, camera noted in `notes`), the ingest keeps refusing anything inconsistent, and every proposal stays "DESIGN INPUT". Measured numbers will NOT be copied into Ember Warden cards without an owner decision (they are inputs for tuning, not truth). Candidates seen: hammer/mace overhead swings near 2:14-2:17 (f1740-1920), golden dagger fan near 2:15. Standby for you; no order now.
+
+### [A-409] Antigravity -> Claude,Owner, 2026-10-31 13:21
+TASK: A-409: D3 Qualitative Strategy Acknowledgment (C-500)
+
+1. ACKNOWLEDGING C-500:
+   - Lead Claude's architectural decision noted: D3 proceeds as a qualitative-first, low-confidence reference study given melee camera orbiting and boss occlusion.
+   - Confirmed: Only clips with visible windup start and contact will be populated (confidence capped at medium, camera notes recorded).
+   - Confirmed: All card proposals strictly retain DESIGN INPUT status and will not be applied to Ember Warden runtime cards without explicit owner decision.
+   - Identified candidate windows noted: hammer/mace overhead swings (~2:14-2:17 / f1740-1920) and golden dagger fan (~2:15).
+
+2. STATUS & NEXT ACTION:
+   - Continuing standby. Zero pending commits, zero git push, zero engine runs.
+
+### [C-501] Claude -> Antigravity,Owner, 2026-10-31 13:29
+TASK: C-502: A-409 acknowledged. D3 FIRST CLEAN CLIP FOUND (owner footage, camera steady enough, boss in frame the whole time): a golden-MACE SWEEP SLAM, t_orig 133.4-136.2 s, not in your 8-clip list (closest, HammerSpin, is a jump/spin: different). My marks, read frame by frame with contact_sheet.py (6 sheets, all in my scratchpad, none in the repo), formula frame = round((t-105)*59.9401)+1 (checked against the burned labels: 134.901 s = f1793):
+ W=1703 (133.400 s: mace summon flash begins, mace raised ~1.3 s hold), C=1787 (134.801 s: sweep starts, mace swings back/down), A=1796 (134.951 s: mace passes into the ground-level horizontal sweep with trail; first possible contact), E=1801 (135.035 s: trail ends, mace lands, dust), R=1835 (135.602 s: mace starts to fade, boss rises), RE=1871 (136.203 s: boss upright and idle, next attack's flare appears 136.30). Expected proposal: windup 93 f, active 5 f, recovery RE-E = 70 f. Confidence: MEDIUM (windup and the swing are clear; the exact first contact depends on where the player stands, which is off screen; R/RE read at 0.1 s steps = +-3 frames).
+ORDER (offline, small): add a 9th template entry to D2_MEASUREMENT_LEDGER.json: priority 9, ref_id `REF_MaceSlam_Sweep`, attack_family "Conjured mace raised hold then ground sweep", ref_to_original `Move_EmberWarden_MaceSlam`, id_status proposed_new, all measurement fields null; update the tests that count entries (8 -> 9), keep the 13 ingest + 7 fill tests green, re-post hashes, commit as "D2 template: mace slam entry" (no push). I then fill it with fill_ledger.py and post the ledger.
+
+### [A-410] Antigravity -> Claude,Owner, 2026-10-31 13:32
+TASK: A-410: Starting 9th Template Entry Addition (C-501)
+
+1. ACKNOWLEDGING C-501:
+   - D3 first clean clip identified by Claude: golden-mace sweep slam (t_orig 133.4-136.2s).
+   - Milestone marks verified: W=1703, C=1787, A=1796, E=1801, R=1835, RE=1871.
+   - Verified arithmetic: Windup=93f (1.5515s), Active=5f (0.0834s), Recovery=70f (1.1678s, RE-E), RecoveryTail=36f, Confidence=medium.
+   - Order: Adding 9th template entry to D2_MEASUREMENT_LEDGER.json (priority 9, ref_id REF_MaceSlam_Sweep, Move_EmberWarden_MaceSlam, proposed_new, null fields).
+   - Updating test suites to assert 9 entries and keep all 13 ingest + 7 fill tests green.
+   - Updating evidence receipts, staging and committing named batch "D2 template: mace slam entry" (no push), reporting commit hash in A-411.
+
+### [A-411] Antigravity -> Claude,Owner, 2026-10-31 13:35
+TASK: A-411: D2 Template 9th Entry Added & Tested (C-501)
+
+1. D2 TEMPLATE 9TH ENTRY COMPLETED:
+   a) D2 Measurement Ledger Template:
+      Docs/BossCombatReview/Execution/Antigravity/Reviews/D2_MEASUREMENT_LEDGER.json
+      SHA256: a2fb5a0032426befd0e89bdc9b2fdfd30106c86c441cb31d7d7c87082169fd7e (7310 bytes, pure CRLF)
+      * Added 9th template entry:
+        - priority: 9
+        - ref_id: REF_MaceSlam_Sweep
+        - ref_to_original: Move_EmberWarden_MaceSlam
+        - id_status: proposed_new
+        - attack_family: "Conjured mace raised hold then ground sweep"
+        - All timing and frame fields set to null.
+
+   b) Ledger Fill Test Suite:
+      Docs/BossCombatReview/Execution/Antigravity/Reviews/test_fill_ledger.py
+      SHA256: 56e25efc53ea1899b957c18c89dee50626adb05d167f8db143bd951a149c10c2 (10577 bytes, pure CRLF)
+      * Updated test suite (9/9 PASS under python -I):
+        - test_template_ledger_has_9_entries_including_mace_slam: asserts 9 entries, validates fields of REF_MaceSlam_Sweep.
+        - test_round_trip_c501_mace_slam_sweep_proposal: verifies filling Claude's C-501 marks (W=1703, C=1787, A=1796, E=1801, R=1835, RE=1871) yields exact expected proposal (ActiveStart 1.5515s, ActiveEnd 1.6350s, RecoveryEnd 2.8028s, Windup 93f, Active 5f, Recovery 70f, Tail 36f, Total 168f).
+
+   c) Receipts File:
+      Docs/BossCombatReview/Execution/Antigravity/Reviews/evidence_sha256.txt updated to 84 entries (84/84 verified, 0 mismatches, pure CRLF).
+
+2. TEST SUITE PASS RATES (python -I):
+   * test_fill_ledger.py: 9/9 PASS
+   * test_contact_sheet.py: 6/6 PASS
+   * test_ingest_measurements.py: 13/13 PASS
+   * test_reopen_d1_protocol.py: 11/11 PASS
+   * Total suite: 39/39 PASS
+
+3. COMMITTING BATCH:
+   Staging D2_MEASUREMENT_LEDGER.json, test_fill_ledger.py, evidence_sha256.txt, and TEAM_MAILBOX.md for named batch "D2 template: mace slam entry". Strictly no push.
+
+4. NEXT ACTION:
+   Execute commit, obtain commit hash, post A-412 with hash.

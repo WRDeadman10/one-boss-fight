@@ -191,5 +191,41 @@ class TestFillLedger(unittest.TestCase):
         self.assertIn("Invalid confidence", str(ctx.exception))
 
 
+    def test_template_ledger_has_9_entries_including_mace_slam(self):
+        """Tests that template ledger contains 9 entries including REF_MaceSlam_Sweep."""
+        with open(DEFAULT_TEMPLATE, "r", encoding="utf-8") as fp:
+            data = json.load(fp)
+        self.assertEqual(len(data["entries"]), 9)
+        entry = next((e for e in data["entries"] if e["ref_id"] == "REF_MaceSlam_Sweep"), None)
+        self.assertIsNotNone(entry)
+        self.assertEqual(entry["priority"], 9)
+        self.assertEqual(entry["ref_to_original"], "Move_EmberWarden_MaceSlam")
+        self.assertEqual(entry["id_status"], "proposed_new")
+        self.assertEqual(entry["attack_family"], "Conjured mace raised hold then ground sweep")
+        self.assertIsNone(entry["W_frame"])
+
+    def test_round_trip_c501_mace_slam_sweep_proposal(self):
+        """Tests filling the 9th clip (REF_MaceSlam_Sweep) with Claude's C-501 marks."""
+        proposal = process_ledger_fill(
+            ledger_path=DEFAULT_TEMPLATE,
+            out_path=self.test_out_ledger,
+            clip_id="REF_MaceSlam_Sweep",
+            W=1703, C=1787, A=1796, E=1801, R=1835, RE=1871,
+            confidence="medium",
+            notes="camera: steady, boss in frame the whole time, sweep slam",
+            evidence="auto"
+        )
+        self.assertEqual(proposal["MoveId"], "Move_EmberWarden_MaceSlam")
+        self.assertEqual(proposal["Confidence"], "medium")
+        self.assertEqual(proposal["WindupFrames"], 93)            # A - W = 1796 - 1703 = 93
+        self.assertEqual(proposal["ActiveFrames"], 5)             # E - A = 1801 - 1796 = 5
+        self.assertEqual(proposal["RecoveryFrames"], 70)          # RE - E = 1871 - 1801 = 70
+        self.assertEqual(proposal["RecoveryTailFrames"], 36)      # RE - R = 1871 - 1835 = 36
+        self.assertEqual(proposal["TotalAnimationFrames"], 168)   # RE - W = 1871 - 1703 = 168
+        self.assertEqual(proposal["ActiveStartSeconds"], 1.5515)  # 93 / 59.9401 = 1.5515
+        self.assertEqual(proposal["ActiveEndSeconds"], 1.635)     # 98 / 59.9401 = 1.6350
+        self.assertEqual(proposal["RecoveryEndSeconds"], 2.8028)  # 168 / 59.9401 = 2.8028
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
