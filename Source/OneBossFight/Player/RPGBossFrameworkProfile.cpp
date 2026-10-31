@@ -68,6 +68,8 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
             if (!bOk) return Fail(TEXT("Framework.Profile.Bleed"));
         }
     }
+    if (!FMath::IsFinite(P.SelectorTieBand) || P.SelectorTieBand<0.f || P.SelectorTieBand>0.5f || ((P.SelectorTieBand>0.f || P.SelectorTieSeed!=0) && !bF5))
+        return Fail(TEXT("Framework.Profile.Domain"));
     if (bF5)
     {
         if (!FMath::IsFinite(P.RepeatPenalty) || P.RepeatPenalty<=0.f || P.RepeatPenalty>1.f || P.RepeatMemory<1 || P.RepeatMemory>8 || P.AttackCount<1 || P.AttackCount>8)

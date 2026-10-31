@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Player/RPGBossMoveSelector.h"
 #include "Misc/AutomationTest.h"
+#include <limits>
 
 #if WITH_DEV_AUTOMATION_TESTS
 namespace BossMoveSelectorFixture
@@ -95,6 +96,29 @@ bool FBossMoveSelectorPolicy::RunTest(const FString&)
         TestEqual(TEXT("no choice"),D.ChosenIndex,(int32)INDEX_NONE);TestEqual(TEXT("both traced"),D.Traces.Num(),2);
         TestTrue(TEXT("every refusal named"),!D.Traces[0].Refusal.IsEmpty()&&!D.Traces[1].Refusal.IsEmpty());
     }
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveSelectorBoundedTie,"OneBossFight.Framework.Selector.BoundedTie",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FBossMoveSelectorBoundedTie::RunTest(const FString&)
+{
+    // BOSS-SEL-005 bounded randomness. Scores at range 100 (centred): A 1.0, B 0.95, C 0.5; TieBand 0.1 -> threshold 0.9 -> top tier {A,B}; C must never be picked.
+    using namespace BossMoveSelectorFixture;
+    FRPGBossMoveModel Model;FString E;if(!Model.Initialize(7,1,E))return false;
+    auto Cfg=[](float Band,int32 Seed){FRPGBossSelectorConfig C;C.RepeatPenalty=1.f;C.RepeatMemory=1;C.TieBand=Band;C.TieSeed=Seed;return C;};
+    auto Run=[&](float Band,int32 Seed,int32 Count,int32 Counts[3],TArray<int32>* First){
+        FRPGBossMoveSelector S;S.Initialize(Cfg(Band,Seed),{Cand(TEXT("A"),50,150,0.f,1.f),Cand(TEXT("B"),50,150,0.f,.95f),Cand(TEXT("C"),50,150,0.f,.5f)},E);
+        for(int32 I=0;I<3;++I)Counts[I]=0;
+        for(int32 I=0;I<Count;++I){FRPGBossSelectorDecision D;S.Select(Model,Snapshot(100.,100.+I),D);if(D.ChosenIndex>=0&&D.ChosenIndex<3)++Counts[D.ChosenIndex];if(First&&I<50)First->Add(D.ChosenIndex);S.NoteStarted(D.ChosenIndex,100.+I);}};
+    int32 N[3];TArray<int32> Seq1,Seq2,Seq3;
+    Run(.1f,12345,1000,N,&Seq1);
+    TestEqual(TEXT("1000 selections all counted"),N[0]+N[1]+N[2],1000);
+    TestEqual(TEXT("the card below the top tier is never picked"),N[2],0);
+    TestTrue(TEXT("top tier member A picked often"),N[0]>300);TestTrue(TEXT("top tier member B picked often"),N[1]>300);
+    Run(.1f,12345,1000,N,&Seq2);TestTrue(TEXT("same seed, same sequence"),Seq1==Seq2);
+    Run(.1f,54321,1000,N,&Seq3);TestTrue(TEXT("another seed gives another sequence"),Seq1!=Seq3);TestEqual(TEXT("still never the card below the tier"),N[2],0);
+    Run(0.f,12345,100,N,nullptr);TestEqual(TEXT("TieBand 0 stays deterministic: always A"),N[0],100);
+    Run(.02f,12345,200,N,nullptr);TestEqual(TEXT("a narrow band (threshold 0.98) leaves only A in the tier"),N[0],200);
+    for(float Bad:{-.1f,.51f,std::numeric_limits<float>::infinity(),std::numeric_limits<float>::quiet_NaN()}){FRPGBossMoveSelector S;FString Er;TestFalse(TEXT("tie band outside [0,0.5] refused"),S.Initialize(Cfg(Bad,1),{Cand(TEXT("A"),50,150)},Er));TestEqual(TEXT("named refusal"),Er,FString(TEXT("Selector.Config")));}
     return true;
 }
 #endif

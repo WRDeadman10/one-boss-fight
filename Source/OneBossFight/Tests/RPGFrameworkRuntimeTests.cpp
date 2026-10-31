@@ -266,6 +266,20 @@ bool FFrameworkBakedSamplesValidation::RunTest(const FString&)
     Refused(WithSamples([](auto& L){L[1].TipCS.Z=2.e5;}),TEXT("sample beyond the domain"));
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkSelectorTieProfile,"OneBossFight.Framework.Runtime.SelectorTieProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkSelectorTieProfile::RunTest(const FString&)
+{
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    auto F5=[&](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);P->SelectorTieBand=0.f;P->SelectorTieSeed=0;};
+    F5();TestTrue(TEXT("tie band off: valid"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->SelectorTieBand=.1f;P->SelectorTieSeed=12345;TestTrue(TEXT("tie band 0.1 with a seed: valid"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->SelectorTieBand=.5f;TestTrue(TEXT("tie band 0.5 is the upper edge: valid"),RPGFramework::ValidateProfile(*P,Error));
+    for(float Bad:{-.1f,.51f,std::numeric_limits<float>::infinity(),std::numeric_limits<float>::quiet_NaN()}){F5();P->SelectorTieBand=Bad;TestFalse(TEXT("tie band outside [0,0.5]"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("token"),Error,FString(TEXT("Framework.Profile.Domain")));}
+    {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);TestTrue(TEXT("fresh F3 profile valid"),RPGFramework::ValidateProfile(*F3,Error));F3->SelectorTieBand=.1f;TestFalse(TEXT("tie band outside the F5 lane"),RPGFramework::ValidateProfile(*F3,Error));TestEqual(TEXT("token"),Error,FString(TEXT("Framework.Profile.Domain")));}
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkStaggerAnimRules,"OneBossFight.Framework.Runtime.StaggerAnimRules",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
 bool FFrameworkStaggerAnimRules::RunTest(const FString&)
 {

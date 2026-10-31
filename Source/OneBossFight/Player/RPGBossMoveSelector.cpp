@@ -11,7 +11,7 @@ bool FRPGBossMoveSelector::Initialize(const FRPGBossSelectorConfig& InConfig,
     Error.Reset();
     if (bInitialized) return Refuse(Error,TEXT("Selector.AlreadyInitialized"));
     if (!FMath::IsFinite(InConfig.RepeatPenalty) || InConfig.RepeatPenalty<=0.f || InConfig.RepeatPenalty>1.f ||
-        InConfig.RepeatMemory<1 || InConfig.RepeatMemory>8)
+        InConfig.RepeatMemory<1 || InConfig.RepeatMemory>8 || !FMath::IsFinite(InConfig.TieBand) || InConfig.TieBand<0.f || InConfig.TieBand>0.5f)
         return Refuse(Error,TEXT("Selector.Config"));
     if (InCandidates.Num()==0) return Refuse(Error,TEXT("Selector.NoCandidates"));
     TSet<FName> Ids;
@@ -50,17 +50,29 @@ bool FRPGBossMoveSelector::Select(const FRPGBossMoveModel& Model, const FRPGBoss
         }
         Out.Traces.Add(T);
     }
+    // BOSS-SEL-005: with TieBand > 0 one eligible card of the top tier (score >= best * (1 - TieBand)) is picked with a seeded stream; TieBand 0 keeps the deterministic rule.
+    if (Config.TieBand>0.f && Out.ChosenIndex!=INDEX_NONE)
+    {
+        TArray<int32> Tier; const float Threshold=Out.Score*(1.f-Config.TieBand);
+        for (const FRPGBossSelectorTrace& T:Out.Traces) if (T.bEligible && T.Score>=Threshold) Tier.Add(T.Index);
+        if (Tier.Num()>1)
+        {
+            FRandomStream Stream(Config.TieSeed+StartedCount);
+            const int32 Pick=Tier[Stream.RandRange(0,Tier.Num()-1)];
+            Out.ChosenIndex=Pick; Out.MoveId=Out.Traces[Pick].MoveId; Out.Score=Out.Traces[Pick].Score;
+        }
+    }
     return true;
 }
 void FRPGBossMoveSelector::NoteStarted(int32 Index, double ClockSeconds)
 {
     if (!bInitialized || !Candidates.IsValidIndex(Index) || !FMath::IsFinite(ClockSeconds) || ClockSeconds<0.0) return;
-    LastStartClock[Index]=ClockSeconds;
+    LastStartClock[Index]=ClockSeconds; ++StartedCount;
     Recent.Remove(Index); Recent.Add(Index);
     while (Recent.Num()>Config.RepeatMemory) Recent.RemoveAt(0);
 }
 void FRPGBossMoveSelector::Reset()
 {
     if (!bInitialized) return;
-    LastStartClock.Init(-1.0,Candidates.Num()); Recent.Reset();
+    LastStartClock.Init(-1.0,Candidates.Num()); Recent.Reset(); StartedCount=0;
 }

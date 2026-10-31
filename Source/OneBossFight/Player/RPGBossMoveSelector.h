@@ -7,6 +7,9 @@ struct FRPGBossSelectorConfig
 {
     float RepeatPenalty = 0.f;   // (0,1]: score factor of a card that is in the recent history
     int32 RepeatMemory = 0;      // 1..8: how many recently started cards count as recent
+    /** BOSS-SEL-005 (opt-in, 0 = off = the deterministic rule): [0,0.5], the top tier is every eligible card scoring at least best * (1 - TieBand); one of them is picked with a seeded stream. */
+    float TieBand = 0.f;
+    int32 TieSeed = 0;           // the stream is seeded with TieSeed + the number of cards started so far: reproducible for the same sequence
 };
 struct FRPGBossSelectorCandidate
 {
@@ -32,7 +35,7 @@ struct FRPGBossSelectorDecision
 };
 /**
  * Deterministic two-stage selector. Stage 1 = hard filters (the move model's IsEligible, then the card cooldown), stage 2 = score
- * (weight x range preference x repeat factor), highest wins, ties go to the lowest index. No randomness, no world, no playback.
+ * (weight x range preference x repeat factor), highest wins, ties go to the lowest index. No randomness (unless the opt-in TieBand > 0: a seeded pick inside the top tier), no world, no playback.
  */
 class ONEBOSSFIGHT_API FRPGBossMoveSelector final
 {
@@ -49,5 +52,6 @@ private:
     TArray<FRPGBossSelectorCandidate> Candidates;
     TArray<double> LastStartClock; // negative = never started
     TArray<int32> Recent;          // newest last
+    int32 StartedCount = 0;        // cards started since the last Reset (seed offset of the bounded tie break)
     bool bInitialized = false;
 };

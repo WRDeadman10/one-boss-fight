@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 test_witness_status_v3.py
-Strict automated verification of Track B 82-Point Witness Status Ledger v3.0:
+Strict automated verification of Track B 82-Point Witness Status Ledger v3.1:
 (a) Checks that every canonical ID exists exactly once (82/82).
 (b) Checks that every cited file:line exists on disk and the quoted text is verbatim on that line.
 (c) Checks that the census in the markdown document matches the JSON counts.
@@ -46,11 +46,11 @@ def test_requirements_integrity():
     assert len(matrix_ids) == 82, f"Expected 82 matrix rows in markdown section 2, got {len(matrix_ids)}"
     assert matrix_ids == canonical_ids, "Markdown matrix IDs do not match canonical IDs in order"
     
-    # Delta table check (Section 1) - 10 graduated rows
+    # Delta table check (Section 1) - 11 graduated rows
     sec1_content = md_content.split("## 2. Complete 82-Point Witness Status Matrix")[0]
     delta_part = sec1_content.split("### Status Transition Delta Table")[1].split("### Re-Audited")[0]
     delta_ids = re.findall(r"^\|\s*\*\*(BOSS-[A-Z]+-\d+)\*\*", delta_part, re.MULTILINE)
-    assert len(delta_ids) == 10, f"Expected 10 delta table rows in section 1, got {len(delta_ids)}"
+    assert len(delta_ids) == 11, f"Expected 11 delta table rows in section 1, got {len(delta_ids)}"
     print(f"  [PASS] 82/82 canonical IDs match in matrix, and {len(delta_ids)} transition delta rows verified.")
 
 def test_census_parity():
@@ -68,9 +68,9 @@ def test_census_parity():
     
     assert json_census == calc_census, f"JSON census header mismatch: {json_census} vs {calc_census}"
     assert sum(calc_census.values()) == 82, f"Census sum != 82: {calc_census}"
-    assert calc_census["WITNESSED"] == 28, f"Expected 28 WITNESSED, got {calc_census['WITNESSED']}"
+    assert calc_census["WITNESSED"] == 29, f"Expected 29 WITNESSED, got {calc_census['WITNESSED']}"
     assert calc_census["PARTIAL"] == 20, f"Expected 20 PARTIAL, got {calc_census['PARTIAL']}"
-    assert calc_census["NOT YET"] == 34, f"Expected 34 NOT YET, got {calc_census['NOT YET']}"
+    assert calc_census["NOT YET"] == 33, f"Expected 33 NOT YET, got {calc_census['NOT YET']}"
 
     # Extract census from markdown
     md_content = MD_PATH.read_text(encoding="utf-8")
@@ -153,7 +153,7 @@ def test_file_formatting():
 
 def main():
     print("================================================================================")
-    print(" TRACK B WITNESS STATUS LEDGER v3.0 VERIFICATION SUITE")
+    print(" TRACK B WITNESS STATUS LEDGER v3.1 VERIFICATION SUITE")
     print("================================================================================")
     try:
         test_requirements_integrity()

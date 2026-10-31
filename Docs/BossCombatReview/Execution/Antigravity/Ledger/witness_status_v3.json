@@ -1,11 +1,11 @@
 {
-  "version": "3.0.0",
-  "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531 Remediation)",
+  "version": "3.1.0",
+  "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 28,
+    "WITNESSED": 29,
     "PARTIAL": 20,
-    "NOT YET": 34
+    "NOT YET": 33
   },
   "requirements": [
     {
@@ -146,7 +146,7 @@
       "status": "WITNESSED",
       "proof": [
         "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:141",
-        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:60",
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:61",
         "Docs/BossCombatReview/Execution/Claude/F5/pie_run1/editor_raw.log:1510",
         "Docs/BossCombatReview/Execution/Claude/F5/pie_run1/editor_raw.log:1656",
         "Docs/BossCombatReview/Execution/Claude/F5/pie_run1/editor_raw.log:1661",
@@ -160,7 +160,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 60,
+          "line": 61,
           "quoted": "FRPGBossSelectorDecision D;TestTrue(TEXT(\"select runs\"),S.Select(Model,Snap..."
         },
         {
@@ -195,8 +195,8 @@
       "status": "WITNESSED",
       "proof": [
         "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:46",
-        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:61",
-        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:62"
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:62",
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:63"
       ],
       "citations": [
         {
@@ -206,12 +206,12 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 61,
+          "line": 62,
           "quoted": "TestEqual(TEXT(\"eligible card wins over a heavier refused one\"),D.MoveId,FNa..."
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 62,
+          "line": 63,
           "quoted": "TestEqual(TEXT(\"refusal token traced\"),D.Traces[0].Refusal,FString(TEXT(\"Move..."
         }
       ],
@@ -227,7 +227,7 @@
       "proof": [
         "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp:96",
         "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:76",
-        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:44"
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:45"
       ],
       "citations": [
         {
@@ -242,7 +242,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 44,
+          "line": 45,
           "quoted": "FRPGBossSelectorCandidate Null;Reject(Config(),{Null},TEXT(\"Selector.NullCa..."
         }
       ],
@@ -256,18 +256,18 @@
       "old_status": "WITNESSED",
       "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:67",
-        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:73"
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:68",
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:74"
       ],
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 67,
+          "line": 68,
           "quoted": "for(int32 I=0;I<5;++I){FRPGBossSelectorDecision D;S.Select(Model,Snapshot(),D..."
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 73,
+          "line": 74,
           "quoted": "TestEqual(TEXT(\"centred range preferred\"),D.MoveId,FName(TEXT(\"Centred\")));Te..."
         }
       ],
@@ -279,11 +279,91 @@
       "title": "Bounded randomness",
       "section": "Eligibility, utility and selection",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
-      "observable": "1000-iteration seeded test confirms non-deterministic tie-breaking remains bounded within top-tier candidates.",
-      "notes": "Seeded PRNG selection harness not yet implemented (F5a uses deterministic index tie-break; PRNG designated for later slice)."
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:114",
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:115",
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:116",
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:117",
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:118",
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:119",
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:120",
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:121",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:276",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:277",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:278",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:279",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:280"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
+          "line": 114,
+          "quoted": "TestEqual(TEXT(\"1000 selections all counted\"),N[0]+N[1]+N[2],1000);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
+          "line": 115,
+          "quoted": "TestEqual(TEXT(\"the card below the top tier is never picked\"),N[2],0);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
+          "line": 116,
+          "quoted": "TestTrue(TEXT(\"top tier member A picked often\"),N[0]>300);TestTrue(TEXT(\"top tier member B picked often\"),N[1]>300);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
+          "line": 117,
+          "quoted": "Run(.1f,12345,1000,N,&Seq2);TestTrue(TEXT(\"same seed, same sequence\"),Seq1==Seq2);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
+          "line": 118,
+          "quoted": "Run(.1f,54321,1000,N,&Seq3);TestTrue(TEXT(\"another seed gives another sequence\"),Seq1!=Seq3);TestEqual(TEXT(\"still never the card below the tier\"),N[2],0);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
+          "line": 119,
+          "quoted": "Run(0.f,12345,100,N,nullptr);TestEqual(TEXT(\"TieBand 0 stays deterministic: always A\"),N[0],100);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
+          "line": 120,
+          "quoted": "Run(.02f,12345,200,N,nullptr);TestEqual(TEXT(\"a narrow band (threshold 0.98) leaves only A in the tier\"),N[0],200);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
+          "line": 121,
+          "quoted": "for(float Bad:{-.1f,.51f,std::numeric_limits<float>::infinity(),std::numeric_limits<float>::quiet_NaN()}){FRPGBossMoveSelector S;FString Er;TestFalse(TEXT(\"tie band outside [0,0.5] refused\"),S.Initialize(Cfg(Bad,1),{Cand(TEXT(\"A\"),50,150)},Er));TestEqual(TEXT(\"named refusal\"),Er,FString(TEXT(\"Selector.Config\")));}"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 276,
+          "quoted": "F5();TestTrue(TEXT(\"tie band off: valid\"),RPGFramework::ValidateProfile(*P,Error));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 277,
+          "quoted": "F5();P->SelectorTieBand=.1f;P->SelectorTieSeed=12345;TestTrue(TEXT(\"tie band 0.1 with a seed: valid\"),RPGFramework::ValidateProfile(*P,Error));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 278,
+          "quoted": "F5();P->SelectorTieBand=.5f;TestTrue(TEXT(\"tie band 0.5 is the upper edge: valid\"),RPGFramework::ValidateProfile(*P,Error));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 279,
+          "quoted": "for(float Bad:{-.1f,.51f,std::numeric_limits<float>::infinity(),std::numeric_limits<float>::quiet_NaN()}){F5();P->SelectorTieBand=Bad;TestFalse(TEXT(\"tie band outside [0,0.5]\"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT(\"token\"),Error,FString(TEXT(\"Framework.Profile.Domain\")));}"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 280,
+          "quoted": "{TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);TestTrue(TEXT(\"fresh F3 profile valid\"),RPGFramework::ValidateProfile(*F3,Error));F3->SelectorTieBand=.1f;TestFalse(TEXT(\"tie band outside the F5 lane\"),RPGFramework::ValidateProfile(*F3,Error));TestEqual(TEXT(\"token\"),Error,FString(TEXT(\"Framework.Profile.Domain\")));}"
+        }
+      ],
+      "observable": "Variation limited to near-best candidates within configurable tie band, with deterministic seeded RNG.",
+      "notes": "Bounded tie break implemented in FRPGBossSelectorConfig (TieBand [0,0.5], TieSeed). Automation test BoundedTie (selector_tests:114-121) runs 1000 selections confirming: card C below tier never picked (N[2]=0), near-best members A and B both selected (>300 each), same seed yields identical sequence (Seq1==Seq2), different seed alters sequence (Seq1!=Seq3), TieBand 0 stays deterministic (always A), narrow band limits to top card only, out-of-domain refused with Selector.Config. Profile validation test SelectorTieProfile (runtime_tests:276-280) verifies schema domain bounds [0,0.5] and F5 lane scoping with Framework.Profile.Domain. (Honest limit per C-532: 1000-iteration witness is pure selector unit test; proof map profiles keep TieBand=0, retaining deterministic baseline in PIE)."
     },
     {
       "id": "BOSS-SEL-006",
@@ -292,19 +372,19 @@
       "old_status": "WITNESSED",
       "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:79",
         "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:80",
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:81",
         "Docs/BossCombatReview/Execution/Claude/F5/pie_run1/editor_raw.log:1657"
       ],
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 79,
+          "line": 80,
           "quoted": "TestEqual(TEXT(\"cooling card refused\"),D.Traces[0].Refusal,FString(TEXT(\"Selec..."
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 80,
+          "line": 81,
           "quoted": "S.Select(Model,Snapshot(100.,102.),D);TestEqual(TEXT(\"eligible again at the c..."
         },
         {
@@ -323,26 +403,26 @@
       "old_status": "WITNESSED",
       "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:87",
         "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:88",
         "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:89",
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:90",
         "Docs/BossCombatReview/Execution/Claude/F5/pie_run1/editor_raw.log:1510",
         "Docs/BossCombatReview/Execution/Claude/F5/pie_run1/editor_raw.log:1661"
       ],
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 87,
+          "line": 88,
           "quoted": "S.Select(Model,Snapshot(),D);TestEqual(TEXT(\"repeat avoided\"),D.ChosenIndex,1..."
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 88,
+          "line": 89,
           "quoted": "S.Select(Model,Snapshot(),D);TestEqual(TEXT(\"both recent cards avoided\"),D.Ch..."
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 89,
+          "line": 90,
           "quoted": "S.Select(Model,Snapshot(),D);TestEqual(TEXT(\"memory of 2 forgets the oldest\"),..."
         },
         {
@@ -366,19 +446,19 @@
       "old_status": "PARTIAL",
       "status": "PARTIAL",
       "proof": [
-        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:95",
         "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:96",
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:97",
         "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:78"
       ],
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 95,
+          "line": 96,
           "quoted": "TestEqual(TEXT(\"no choice\"),D.ChosenIndex,(int32)INDEX_NONE);TestEqual(TEXT(\"b..."
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 96,
+          "line": 97,
           "quoted": "TestTrue(TEXT(\"every refusal named\"),!D.Traces[0].Refusal.IsEmpty()&&!D.Trace..."
         },
         {
@@ -819,9 +899,9 @@
       "old_status": "NOT YET",
       "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:350",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:351",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:353",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:364",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:365",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:367",
         "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1620",
         "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1793",
         "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1872"
@@ -829,17 +909,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 350,
+          "line": 364,
           "quoted": "Near(TEXT(\"60 ticks (1 s) toward 170 turn exactly the cap, 90 deg\"),Yaw,90.f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 351,
+          "line": 365,
           "quoted": "TestTrue(TEXT(\"no tick turned more than cap * dt (1.5 deg)\"),MaxStep<=1.5f+1.e-3f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 353,
+          "line": 367,
           "quoted": "Near(TEXT(\"after the commit 60 more ticks leave the yaw unchanged\"),Yaw,90.f);"
         },
         {
@@ -859,7 +939,7 @@
         }
       ],
       "observable": "Boss rotation rate capped by TrackDegreesPerSecond; tracking locks to 0 deg/s during active swing.",
-      "notes": "TrackYawCap automation test asserts 60 Hz step turn (1.5 deg/tick), exact 90 deg 1s turn cap, and zero drift across 60 post-commit ticks (runtime_tests:350, 351, 353); live PIE log verifies heading_commit with capDegPerSec=90 and 180, and heading_locked confirms maxDriftAfterCommitDegrees=0 across both attacks (b_anm004_pie:1620, 1793, 1872). (Honest note per C-529: in PIE fixture boss already faces player so turnedDegrees=0; rate cap is witnessed by pure unit assertions on the exact executor tracking math, and heading lock is witnessed by live PIE)."
+      "notes": "TrackYawCap automation test asserts 60 Hz step turn (1.5 deg/tick), exact 90 deg 1s turn cap, and zero drift across 60 post-commit ticks (runtime_tests:364, 365, 367); live PIE log verifies heading_commit with capDegPerSec=90 and 180, and heading_locked confirms maxDriftAfterCommitDegrees=0 across both attacks (b_anm004_pie:1620, 1793, 1872). (Honest note per C-529: in PIE fixture boss already faces player so turnedDegrees=0; rate cap is witnessed by pure unit assertions on the exact executor tracking math, and heading lock is witnessed by live PIE)."
     },
     {
       "id": "BOSS-ANM-005",
@@ -936,7 +1016,7 @@
       "status": "WITNESSED",
       "proof": [
         "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:60",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:301",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:315",
         "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log:1576",
         "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log:1577",
         "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log:1586"
@@ -949,7 +1029,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 301,
+          "line": 315,
           "quoted": "TestEqual(TEXT(\"no slot node in the AnimBP\"),Token([](auto& X){X.bSlotNodePresent=false;}),FString(TEXT(\"Framework.Profile.StaggerAnim.SlotNode\")));"
         },
         {
@@ -969,7 +1049,7 @@
         }
       ],
       "observable": "Animation Blueprint consumes authored MoveCard and profile animation parameters; slot node, sequence, and mesh dependencies resolved.",
-      "notes": "Profile dependency resolution verifies sequence/mesh/class dependencies (runtime_tests:60); AnimBP slot node presence enforced in test (runtime_tests:301); live PIE verifies FullBody AnimNode_Slot verified in AnimBP (f11_pie1:1576), dependencies resolved (f11_pie1:1577), and montage playback dispatched (f11_pie1:1586)."
+      "notes": "Profile dependency resolution verifies sequence/mesh/class dependencies (runtime_tests:60); AnimBP slot node presence enforced in test (runtime_tests:315); live PIE verifies FullBody AnimNode_Slot verified in AnimBP (f11_pie1:1576), dependencies resolved (f11_pie1:1577), and montage playback dispatched (f11_pie1:1586)."
     },
     {
       "id": "BOSS-HIT-001",
@@ -1538,7 +1618,7 @@
         "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log:1590",
         "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log:1591",
         "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log:1592",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:282"
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:296"
       ],
       "citations": [
         {
@@ -1573,12 +1653,12 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 282,
+          "line": 296,
           "quoted": "TestEqual(TEXT(\"loop count middle 1.6 / loop 0.5 = ceil 3.2 = 4\"),RPGStaggerAnim::LoopCount(T,S,E,.5f),4);"
         }
       ],
       "observable": "Posture reaching 0 triggers exactly one stance-break stagger state; subsequent hits during stagger do not loop break.",
-      "notes": "Live PIE verifies posture reaching 0 triggers MidAttack stance break and clean recovery (f8_pie1:1620, 1623); F11 executes full dynamic montage stagger sequence (Start, Loop, End, Finished, f11_pie1:1586-1592); StaggerAnim loop math validated in tests (runtime_tests:282). Non-test source lines dropped per C-530."
+      "notes": "Live PIE verifies posture reaching 0 triggers MidAttack stance break and clean recovery (f8_pie1:1620, 1623); F11 executes full dynamic montage stagger sequence (Start, Loop, End, Finished, f11_pie1:1586-1592); StaggerAnim loop math validated in tests (runtime_tests:296). Non-test source lines dropped per C-530."
     },
     {
       "id": "BOSS-DEF-004",

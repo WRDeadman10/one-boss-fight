@@ -45,6 +45,9 @@ public:
     UPROPERTY(EditAnywhere) TArray<FRPGBossProfileCard> Cards;
     UPROPERTY(EditAnywhere) float RepeatPenalty=0.f;
     UPROPERTY(EditAnywhere) int32 RepeatMemory=0;
+    /** BOSS-SEL-005 (opt-in, F5 fixture only, 0 = off): bounded random tie break inside the top score tier of the selector, [0,0.5], with its seed. Design values, proposed. */
+    UPROPERTY(EditAnywhere) float SelectorTieBand=0.f;
+    UPROPERTY(EditAnywhere) int32 SelectorTieSeed=0;
     UPROPERTY(EditAnywhere) int32 AttackCount=0;
     /** Optional (both > 0 or both 0): the boss's own health and what one player hit takes off it (design values, proposed). 0 = not hittable. */
     UPROPERTY(EditAnywhere) float BossMaxHealth=0.f;

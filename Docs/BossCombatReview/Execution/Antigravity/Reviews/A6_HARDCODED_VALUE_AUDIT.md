@@ -39,7 +39,7 @@ All entries in this section are in active framework runtime files (`RPGFramework
 | `Source/OneBossFight/Player/RPGBossFrameworkProfile.cpp:29` | `64` | Maximum substeps limit (64) for dynamic blade sweep temporal discretization. | `FRPGBossFrameworkProfileLimits::MaxSweepSubstepsLimit` | Low | Computational safety guard preventing runaway CPU sweep iteration. |
 | `Source/OneBossFight/Player/RPGBossFrameworkProfile.cpp:45` | `.5f` | Lower bound domain clamp (0.5s) on profile StaggerSeconds schema validation. | `FRPGBossFrameworkProfileLimits::MinStaggerSeconds` | Low | Defensive schema validator domain lower bound. |
 | `Source/OneBossFight/Player/RPGBossFrameworkProfile.cpp:45` | `60.f` | Upper bound domain clamp (60.0s) on profile StaggerSeconds schema validation. | `FRPGBossFrameworkProfileLimits::MaxStaggerSeconds` | Low | Defensive schema validator domain upper bound. |
-| `Source/OneBossFight/Player/RPGBossFrameworkProfile.cpp:73` | `8` | Maximum upper bound on RepeatMemory buffer and AttackCount sequence depth. | `FRPGBossFrameworkProfileLimits::MaxAttackSequenceDepth` | Low | Static array and history memory upper bound. |
+| `Source/OneBossFight/Player/RPGBossFrameworkProfile.cpp:75` | `8` | Maximum upper bound on RepeatMemory buffer and AttackCount sequence depth. | `FRPGBossFrameworkProfileLimits::MaxAttackSequenceDepth` | Low | Static array and history memory upper bound. |
 
 ---
 
