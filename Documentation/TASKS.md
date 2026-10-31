@@ -42,9 +42,9 @@ Nobody commits except U. A row is changed only by its owner; others write a note
 - **Automation Test Suite Health:** 209 of 209 tests passing (100% green across all modules; cited from `Docs/BossCombatReview/Execution/Claude/F10/full_raw.log:3999` `Display: **** TEST COMPLETE. EXIT CODE: 0 ****`, DLL `0628127b`).
 - **Owner Decisions (All 0-3 Resolved / Decided 2026-10-31, C-515/C-516):**
   * Decision 0 (DONE 2026-10-31): pushed to origin/main by Claude on the owner's explicit word; Antigravity still never pushes on its own.
-  * Decision 1 (DONE 2026-10-31, Option A): Decision 1: Cook scope for ParagonSevarog (Documentation/KNOWN_ISSUES.md:254, KI-143, whole Content/ParagonSevarog added to DirectoriesToAlwaysCook in Config/DefaultGame.ini, C-515).
-  * Decision 2 (DONE with caveat C-489, BUILD-94): live dodge i-frame rejection proven via IA_Dodge injection, timing dependent (Documentation/KNOWN_ISSUES.md:257, KI-146).
-  * Decision 3 (DONE 2026-10-31, Option B): Phase-2 and stagger animations retargeted from existing animations on boss skeleton (plan C-517/C-518; specification Reviews/F11_STAGGER_PHASE_ANIM_SPEC.md).
+  * Decision 1: Cook scope for ParagonSevarog (DONE 2026-10-31, Option A: whole `Content/ParagonSevarog` added to `DirectoriesToAlwaysCook` in `Config/DefaultGame.ini`, C-515; packaged cook of the folder not yet run: first packaged build will confirm size; `Documentation/KNOWN_ISSUES.md:254`, `KI-143`).
+  * Decision 2 (DONE with caveat C-489, BUILD-94): live dodge i-frame rejection proven via IA_Dodge injection, timing dependent (`Documentation/KNOWN_ISSUES.md:257`, `KI-146`).
+  * Decision 3: DECIDED 2026-10-31 (Option B: reuse existing Sevarog stagger/transition animations); implementation F11 pending (spec `Reviews/F11_STAGGER_PHASE_ANIM_SPEC.md`).
 - **Closed Known Issues (Verified 2026-10-31):**
   * `KI-145` (Card ranges vs measured reach): RESOLVED for new content in C-464 with calibrated `*_R2` cards (`Claude/KI145/r2`).
   * `KI-150` (Pack combat style warmup reset): RESOLVED in C-451 (`Claude/F8/ki150b`) by waiting for `pack_style_known` (~10 s) before preparing target.
