@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+# Copyright One Boss Fight. All Rights Reserved.
+"""
+test_partial_upgrade_plan.py
+
+Automated verification suite for PARTIAL_UPGRADE_PLAN.md:
+1. Pure LF line endings (no CR).
+2. Covers all 27 canonical PARTIAL rows from witness_status_v3.json.
+3. Title parity: Table titles and section titles match ledger titles verbatim for all 27 rows.
+4. Verbatim citations: Every file:line citation exists on disk and is within line bounds.
+5. Verbatim symbols and paths: Every backticked identifier referencing a file or C++ symbol exists in Source/ or Docs/ (grep).
+6. Complete execution authority classification: All 27 rows classified as Test-Only vs Engine Required.
+"""
+
+import unittest
+from pathlib import Path
+import json
+import re
+import subprocess
+
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
+DOC_PATH = REPO_ROOT / "Docs/BossCombatReview/Execution/Antigravity/Reviews/PARTIAL_UPGRADE_PLAN.md"
+LEDGER_PATH = REPO_ROOT / "Docs/BossCombatReview/Execution/Antigravity/Ledger/witness_status_v3.json"
+
+class TestPartialUpgradePlan(unittest.TestCase):
+
+    def test_file_exists_and_pure_lf(self):
+        self.assertTrue(DOC_PATH.exists(), f"Missing file: {DOC_PATH}")
+        raw = DOC_PATH.read_bytes()
+        self.assertNotIn(b"\r", raw, "PARTIAL_UPGRADE_PLAN.md contains CR! Must be pure LF.")
+
+    def test_all_27_rows_partial_and_title_parity(self):
+        ledger = json.loads(LEDGER_PATH.read_text(encoding="utf-8"))
+        canonical_partial = {r["id"]: r["title"] for r in ledger["requirements"] if r["status"] == "PARTIAL"}
+        self.assertEqual(len(canonical_partial), 27, f"Expected 27 canonical PARTIAL rows, got {len(canonical_partial)}")
+
+        text = DOC_PATH.read_text(encoding="utf-8")
+
+        # Check Table rows in Section 2: | `BOSS-...` | Title | ...
+        table_matches = re.findall(r"\|\s*`(BOSS-[A-Za-z0-9\-]+)`\s*\|\s*([^\|]+?)\s*\|\s*PARTIAL\s*\|", text)
+        self.assertEqual(len(table_matches), 27, f"Expected 27 table rows, got {len(table_matches)}")
+        for row_id, table_title in table_matches:
+            self.assertIn(row_id, canonical_partial, f"Unexpected row {row_id} in table")
+            expected_title = canonical_partial[row_id]
+            self.assertEqual(table_title.strip(), expected_title, f"Table title mismatch for {row_id}: got '{table_title.strip()}', expected '{expected_title}'")
+
+        # Check Section headers in Section 3: ### `BOSS-...`: Title
+        section_matches = re.findall(r"###\s*`(BOSS-[A-Za-z0-9\-]+)`:\s*([^\n\r]+)", text)
+        self.assertEqual(len(section_matches), 27, f"Expected 27 section headers, got {len(section_matches)}")
+        for row_id, sec_title in section_matches:
+            self.assertIn(row_id, canonical_partial, f"Unexpected section {row_id}")
+            expected_title = canonical_partial[row_id]
+            self.assertEqual(sec_title.strip(), expected_title, f"Section title mismatch for {row_id}: got '{sec_title.strip()}', expected '{expected_title}'")
+
+    def test_citations_exist_and_in_bounds(self):
+        text = DOC_PATH.read_text(encoding="utf-8")
+        citation_pattern = re.compile(r"([A-Za-z0-9_\-\./]+(?:\.cpp|\.h|\.json|\.umap|\.log|\.md)):([0-9]+)(?:-([0-9]+))?")
+        citations = citation_pattern.findall(text)
+        self.assertGreaterEqual(len(citations), 27, "Expected at least 27 verified citations in review.")
+
+        for file_ref, start_line_str, end_line_str in citations:
+            p = REPO_ROOT / file_ref
+            self.assertTrue(p.exists(), f"Cited file does not exist on disk: {file_ref}")
+            max_line = int(end_line_str) if end_line_str else int(start_line_str)
+            with open(p, "r", encoding="utf-8", errors="ignore") as f:
+                file_lines = f.readlines()
+            self.assertLessEqual(
+                max_line, len(file_lines),
+                f"Line {max_line} out of range for {file_ref} (total lines: {len(file_lines)})"
+            )
+
+    def test_backticked_identifiers_exist_via_grep(self):
+        text = DOC_PATH.read_text(encoding="utf-8")
+        backticks = re.findall(r"`([^`\n]+)`", text)
+
+        for token in set(backticks):
+            token_clean = token.strip()
+            # If token is a file path
+            if "/" in token_clean or token_clean.endswith((".cpp", ".h", ".json", ".py", ".md", ".log", ".txt")):
+                base_path = re.sub(r":[0-9\-]+$", "", token_clean)
+                p = REPO_ROOT / base_path
+                self.assertTrue(p.exists(), f"Backticked path does not exist on disk: {token_clean} -> {base_path}")
+            # If token looks like a C++ symbol or class
+            elif "::" in token_clean or (re.match(r"^[A-Z][a-zA-Z0-9_]+$", token_clean) and token_clean not in ["PARTIAL", "INDEX_NONE"] and not token_clean.startswith("BOSS-")):
+                # grep in Source/ and Docs/
+                cmd = ["git", "grep", "-q", "-F", token_clean, "--", "Source/", "Docs/"]
+                res = subprocess.run(cmd, cwd=str(REPO_ROOT))
+                self.assertEqual(res.returncode, 0, f"Backticked C++ symbol '{token_clean}' not found in Source/ or Docs/ via git grep!")
+
+    def test_authority_classification(self):
+        text = DOC_PATH.read_text(encoding="utf-8")
+        engine_count = len(re.findall(r"\*\*Authority\*\*:\s*\*\*Engine Required \(Claude\)\*\*", text))
+        test_only_count = len(re.findall(r"\*\*Authority\*\*:\s*\*\*Test-Only \(Antigravity\)\*\*", text))
+        self.assertEqual(engine_count + test_only_count, 27, f"Expected 27 classified rows, got {engine_count + test_only_count}")
+        self.assertEqual(engine_count, 26, f"Expected 26 Engine Required rows, got {engine_count}")
+        self.assertEqual(test_only_count, 1, f"Expected 1 Test-Only row, got {test_only_count}")
+
+if __name__ == "__main__":
+    unittest.main()
