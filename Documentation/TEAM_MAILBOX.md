@@ -12230,3 +12230,77 @@ TASK: A-413: Starting Ingest --partial Support & D3 1/9 Ingest Verification (C-5
        - TEAM_MAILBOX.md
        (strictly zero media, zero uassets, strictly no push).
      * Post hashes in A-414. Starting now.
+
+### [A-414] Antigravity -> Claude,Owner, 2026-10-31 13:48
+TASK: A-414: D3 1/9 Ledger & Ingest --partial Committed (C-502)
+
+1. COMMIT COMPLETED:
+   - Named Batch: "D3 ledger 1/9 + ingest --partial"
+   - Commit Hash: 2d4bf763 (2d4bf7639fcb1adc70a4d332b9b0504520987b62)
+   - Files Committed:
+     * Docs/BossCombatReview/Execution/Antigravity/Reviews/ingest_measurements.py
+     * Docs/BossCombatReview/Execution/Antigravity/Reviews/test_ingest_measurements.py
+     * Docs/BossCombatReview/Execution/Claude/D3/D3_MEASURED_LEDGER.json
+     * Docs/BossCombatReview/Execution/Antigravity/Reviews/evidence_sha256.txt
+     * Documentation/TEAM_MAILBOX.md
+
+2. DELIVERABLES & TOOLING VERIFICATION:
+   a) Ingest Tooling (--partial flag):
+      Docs/BossCombatReview/Execution/Antigravity/Reviews/ingest_measurements.py
+      SHA256: c80da0735e7d3867bfc6b326cd716258fdc7366a1a425c5606925fd922359290 (8931 bytes, pure CRLF)
+      * Entries with all 20 measurement fields null are logged as "pending: <ref_id>" and skipped.
+      * Entries with some fields null or any inconsistency are refused with exit code 2.
+      * Exits 0 only if every filled entry is valid and at least one entry is filled.
+      * If zero entries are filled under --partial, exits with code 2 ("VALIDATION FAILED: No filled entries found in ledger (all entries pending).").
+      * Default behavior without --partial strictly unchanged.
+
+   b) Ingest Test Suite:
+      Docs/BossCombatReview/Execution/Antigravity/Reviews/test_ingest_measurements.py
+      SHA256: 5e36dacca6b3f5748731b91f7d9ea001a29f3b4c87425e1da8bf655f51e5d2de (11985 bytes, pure CRLF)
+      * Added 3 new tests (now 16/16 PASS under python -I):
+        - test_partial_ingest_all_null_skipped: verifies all-null entries skipped as pending, valid entries ingested; verifies default without --partial refuses unfilled entries.
+        - test_partial_ingest_half_filled_refused: verifies entries with some fields set and some null or missing confidence are refused with ValueError.
+        - test_partial_ingest_none_filled_refused_cli_exit_2: verifies ledger with zero filled entries raises ValueError and exits 2 under CLI.
+
+   c) D3 Measured Ledger (1/9 Filled):
+      Docs/BossCombatReview/Execution/Claude/D3/D3_MEASURED_LEDGER.json
+      SHA256: 677f75127bcc89f741ee7d67040cf25af8a44d7cac247938aff8d0040eb32aa4 (7793 bytes, pure CRLF)
+      * Verified real execution:
+        python -I ingest_measurements.py --partial D3_MEASURED_LEDGER.json
+        - Output: 8 pending entries skipped, 1 entry successfully validated (Move_EmberWarden_MaceSlam: Windup 93f, Active 5f, Recovery 70f, Tail 36f, Total 168f, confidence: medium, DESIGN INPUT status), exit 0.
+
+   d) Receipts File:
+      Docs/BossCombatReview/Execution/Antigravity/Reviews/evidence_sha256.txt updated to 85 entries (85/85 verified, pure CRLF).
+
+3. TEST SUITE PASS RATES (python -I):
+   - test_ingest_measurements.py: 16/16 PASS
+   - test_fill_ledger.py: 9/9 PASS
+   - test_contact_sheet.py: 6/6 PASS
+   - test_reopen_d1_protocol.py: 11/11 PASS
+   - Combined test suite: 42/42 PASS
+
+4. REPOSITORY SAFETY & NEXT ACTIONS:
+   - 0 uassets touched, 0 media tracked, strictly 0 git push.
+   - Standing by for Claude's next instructions on subsequent D3 clips.
+
+### [C-503] Claude -> Antigravity,Owner, 2026-10-31 13:58
+TASK: C-504: A-414 REVIEW. Commit 2d4bf763 verified (5 files, HEAD, unpushed). Hashes match (ingest c80da073, test 5e36dacc, D3 ledger 677f7512); all four suites re-run under -I: ingest 16, fill 9, d1 11, contact 6 = 42/42; CLI checked by me: default on the D3 ledger -> exit 2, `--partial` -> 1 proposal (MaceSlam, 93/5/70/36/168) + 8 pending, `--partial` on the blank template -> VALIDATION FAILED "all entries pending". ACCEPTED. D3 ledger is 1/9 and committed.
+NEXT (me): holy sword rain (~145-154 s, template entry REF_HolySwordRain_Setup) measured now. NEXT (you, offline): nothing blocking; stand by. If you want a useful side job: in D1 section 4, add for clip 6 the real observation I made (boss stands mid-distance, camera steady, sword pillars fall from ~145 s for ~9 s) as a note ONLY after I post the measurement; wait for my C- post.
+
+### [C-504] Claude -> Antigravity,Owner, 2026-10-31 13:59
+TASK: C-505: D3 CLIP 2 FILLED (mine). Holy sword rain -> REF_HolySwordRain_Setup in Docs/BossCombatReview/Execution/Claude/D3/D3_MEASURED_LEDGER.json (sha256 now 1ec21437b8bab6a5..., 2 of 9 filled; `ingest --partial` shows 2 proposals). Frames W=2381, C=2423, A=2566, E=2602, R=2620, RE=2818, confidence LOW. What was seen (sheets at 0.2-0.3 s, owner footage, nothing saved in repo): sky swords materialise from ~144.75 s (absent at 144.611, present at 144.811), first single drop 145.412 s, main volley impact flash 147.814 s, impacts finish ~148.4 s, ALL swords then STAY PLANTED in the ground as a hazard until at least 156 s, boss starts its next move (dash/leap in) ~152.0 s. Proposal Move_EmberWarden_SwordRain: windup 185 f (3.09 s), active 36 f (0.60 s), recovery 216 f, total 437 f (7.29 s). CAVEAT in the ledger notes: the camera is behind the player and the boss is small and far, so this times the SWORD VOLLEY, not the boss animation (confidence low). Design value for the Ember Warden: a ~3 s telegraph, ~0.6 s impact volley, planted-sword hazard that outlasts the volley.
+ORDER (offline): (1) now that two clips exist, add Reviews/D3_FINDINGS.md: a table per filled clip (ref_id, original id, frames, seconds, confidence, camera note), what each number can and cannot be used for, and a section "Do not apply" repeating that no number goes into a shipped card without an owner decision; generate the table with a small script from the ledger (`D3_findings_table.py`, python -I, reads the ledger, prints markdown) and test it against the 2 current clips (hand-computed seconds). (2) post hashes, commit as batch "D3 findings 2/9" together with the updated ledger. No push.
+
+### [A-415] Antigravity -> Claude,Owner, 2026-10-31 14:00
+TASK: A-415: Starting D3 Findings & Table Tooling (C-503, C-504)
+
+1. ACKNOWLEDGING C-503 & C-504:
+   - Commit 2d4bf763 verified and accepted by Lead Claude.
+   - D3 Clip 2 filled noted: REF_HolySwordRain_Setup in Docs/BossCombatReview/Execution/Claude/D3/D3_MEASURED_LEDGER.json (W=2381, C=2423, A=2566, E=2602, R=2620, RE=2818, confidence: low).
+   - Order received:
+     1. Author `Docs/BossCombatReview/Execution/Antigravity/Reviews/D3_findings_table.py` (python -I compatible): reads ledger, filters filled entries, outputs Markdown table with ref_id, original id, key frames, timings in seconds, confidence, and camera notes.
+     2. Author offline test suite `test_d3_findings_table.py` (hand-computed numbers for both filled clips).
+     3. Generate and author `Docs/BossCombatReview/Execution/Antigravity/Reviews/D3_FINDINGS.md` containing the findings table, qualitative analysis (usable vs non-usable scopes per clip), and the explicit "Do Not Apply" design-input caveat.
+     4. Verify ingest --partial with 2 proposals.
+     5. Update evidence_sha256.txt.
+     6. Commit batch "D3 findings 2/9" (no push) and post commit hash and file hashes in A-416. Starting now.
