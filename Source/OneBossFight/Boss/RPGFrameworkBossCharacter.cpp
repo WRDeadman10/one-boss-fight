@@ -4,6 +4,9 @@
 #include "Boss/RPGFrameworkMoveExecutor.h"
 #include "Boss/RPGFrameworkProofFixture.h"
 #include "Components/CapsuleComponent.h"
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
+#include "Animation/AnimSequence.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/Engine.h"
 #include "Engine/SkeletalMesh.h"
@@ -57,6 +60,9 @@ bool ARPGFrameworkBossCharacter::InitializeProof(ARPGFrameworkProofFixture* Fixt
     if(GetMesh()->GetSocketLocation(TEXT("weapon_r")).Equals(GetMesh()->GetSocketLocation(TEXT("root_weapon_end_r"))))
     {Error=TEXT("Framework.Boss.DegenerateSegment");Fail(Error);return false;}
     if(!Executor->Initialize(this,*Dependencies,InTarget,Encounter,Generation,Error)){Fail(Error);return false;}
+    // F11: the clips play in the profile's slot node; refuse when the boss AnimBP has none of that name (same read-only graph check the executor uses for the cards).
+    if((Dependencies->StaggerStart.IsValid()||Dependencies->PhaseTransition.IsValid())&&!RPGFramework::HasSlotNode(GetMesh()->GetAnimInstance(),P.AnimSlotName))
+    {Error=TEXT("Framework.Profile.StaggerAnim.SlotNode");Fail(Error);return false;}
     SpawnDefaultController();auto* AI=Cast<ARPGFrameworkBossController>(GetController());
     if(!AI){Error=TEXT("Framework.Boss.Controller");Fail(Error);return false;}
     GetCharacterMovement()->MaxWalkSpeed=P.WalkSpeedCmPerSecond;GetCharacterMovement()->SetMovementMode(MOVE_Walking);
@@ -95,6 +101,7 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
         if(bStaggered)
         {
             GetCharacterMovement()->StopMovementImmediately();
+            TickStaggerAnim();
             if(GetWorld()->GetTimeSeconds()>=StaggerEndsAt)EndStagger();
             return;   // no selection while down
         }
@@ -103,6 +110,14 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
     }
     if(bArrived&&!bStartedMove)
     {
+        // F11: while the phase transition clip plays the selector is held for the clip length, then phase two selection starts in this tick.
+        if(bPhaseHold)
+        {
+            GetCharacterMovement()->StopMovementImmediately();
+            if(RPGStaggerAnim::PhaseHoldActive(Dependencies->PhaseTransition->GetPlayLength(),float(GetWorld()->GetTimeSeconds()-PhaseHoldStartedAt)))return;
+            bPhaseHold=false;F11Montage.Reset();
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] phase_anim state=Finished phase=%s"),*CurrentPhaseId.ToString());
+        }
         // F6c phase gate: only here (neutral, nothing playing), the pure legacy rule decides; the phase latches until restart.
         if(bHittable&&P.PhaseTwoFraction>0.f&&!bPhaseTwoLatched)
         {
@@ -111,7 +126,16 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
             {
                 bPhaseTwoLatched=true;
                 UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] phase_transition attack=%d from=%s to=%s health=%g max=%g fraction=%g"),AttacksDone+1,*CurrentPhaseId.ToString(),*P.PhaseTwoId.ToString(),Health,MaxHealth,double(P.PhaseTwoFraction));
+                const FName FromPhase=CurrentPhaseId;
                 CurrentPhaseId=P.PhaseTwoId;
+                if(Dependencies->PhaseTransition.IsValid())
+                {
+                    // F11: play the transition clip and hold the selector for its length (no clip = no hold, as before).
+                    PhaseHoldStartedAt=GetWorld()->GetTimeSeconds();bPhaseHold=true;GetCharacterMovement()->StopMovementImmediately();
+                    if(!PlayF11Clip(Dependencies->PhaseTransition.Get(),1)){Fail(TEXT("Framework.Playback.PhaseAnim"));return;}
+                    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] phase_anim state=Triggered sequence=%s slot=%s length=%g from=%s to=%s"),*Dependencies->PhaseTransition->GetName(),*P.AnimSlotName.ToString(),double(Dependencies->PhaseTransition->GetPlayLength()),*FromPhase.ToString(),*CurrentPhaseId.ToString());
+                    return;
+                }
             }
         }
         const FVector D=Target->GetActorLocation()-GetActorLocation();FRPGBossDecisionSnapshot S;
@@ -222,6 +246,19 @@ void ARPGFrameworkBossCharacter::StartStagger()
     if(auto* AI=Cast<ARPGFrameworkBossController>(GetController()))AI->StopOwnedWalk();
     GetCharacterMovement()->StopMovementImmediately();
     if(bMidAttack){Executor->Abort(TEXT("StanceBreak"));bStaggerAbortedAttack=true;}
+    if(bPhaseHold)
+    {
+        // F11: a stance break during the transition clip stops it; the phase stays latched and the clip is not replayed.
+        StopF11Clip();bPhaseHold=false;
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] phase_anim state=Aborted reason=StanceBreak phase=%s"),*CurrentPhaseId.ToString());
+    }
+    if(Dependencies->StaggerStart.IsValid())
+    {
+        const auto& P=*Dependencies->Profile.Get();
+        StaggerStartedAt=GetWorld()->GetTimeSeconds();StaggerAnimState=RPGStaggerAnim::EState::Start;bStaggerAnimActive=true;
+        if(!PlayF11Clip(Dependencies->StaggerStart.Get(),1)){Fail(TEXT("Framework.Playback.StaggerAnim"));return;}
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] stagger_anim state=Start sequence=%s slot=%s length=%g"),*Dependencies->StaggerStart->GetName(),*P.AnimSlotName.ToString(),double(Dependencies->StaggerStart->GetPlayLength()));
+    }
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] stance_break state=%s duration=%g generation=%llu phase=%s"),bMidAttack?TEXT("MidAttack"):TEXT("Neutral"),double(Dependencies->Profile->StaggerSeconds),GenerationId,*CurrentPhaseId.ToString());
 }
 void ARPGFrameworkBossCharacter::EndStagger()
@@ -230,6 +267,7 @@ void ARPGFrameworkBossCharacter::EndStagger()
     if(bStaggerAbortedAttack){bRecovered=Executor->RecoverAfterAbort();bStartedMove=false;bStaggerAbortedAttack=false;}
     if(!bRecovered){Fail(TEXT("Framework.Playback.StaggerRecover"));return;}
     bStaggered=false; Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.;
+    if(bStaggerAnimActive){bStaggerAnimActive=false;F11Montage.Reset();UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] stagger_anim state=Finished postureRefilled=%g"),Posture);}
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] stagger_recovery postureRefilled=%g generation=%llu"),Posture,GenerationId);
     // A break while the boss was still walking to the band stopped the owned walk: ask for it again (the arrival check and the walk timeout run as before).
     if(!bArrived)
@@ -237,6 +275,43 @@ void ARPGFrameworkBossCharacter::EndStagger()
         FString WalkError; auto* AI=Cast<ARPGFrameworkBossController>(GetController());
         if(!AI||!AI->WalkToBand(this,WalkError)){Fail(WalkError.IsEmpty()?FString(TEXT("Framework.Boss.Controller")):WalkError);return;}
         UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] walk_resumed generation=%llu"),GenerationId);
+    }
+}
+bool ARPGFrameworkBossCharacter::PlayF11Clip(UAnimSequence* Clip,int32 Loops)
+{
+    // The same runtime path the executor uses for the cards: a dynamic montage of the loaded sequence in the profile's slot. Loaded dependency only, no load here.
+    UAnimInstance* Anim=GetMesh()?GetMesh()->GetAnimInstance():nullptr;
+    if(!IsValid(Clip)||!IsValid(Anim)||!Dependencies)return false;
+    const auto& P=*Dependencies->Profile.Get();
+    F11Montage=Anim->PlaySlotAnimationAsDynamicMontage(Clip,P.AnimSlotName,P.BlendInSeconds,P.BlendOutSeconds,1.f,FMath::Max(1,Loops),-1.f,0.f);
+    return F11Montage.IsValid();
+}
+void ARPGFrameworkBossCharacter::StopF11Clip()
+{
+    UAnimMontage* Montage=F11Montage.Get();F11Montage.Reset();
+    UAnimInstance* Anim=GetMesh()?GetMesh()->GetAnimInstance():nullptr;
+    if(IsValid(Montage)&&IsValid(Anim)&&Dependencies)Anim->Montage_Stop(Dependencies->Profile->BlendOutSeconds,Montage);
+}
+void ARPGFrameworkBossCharacter::TickStaggerAnim()
+{
+    // The sub state follows the time since the break (RPGStaggerAnim::Evaluate): Start, then Loop (looped to fill the middle), then End started so that it finishes with StaggerSeconds.
+    if(!bStaggerAnimActive||!Dependencies||!Dependencies->StaggerStart.IsValid())return;
+    const auto& P=*Dependencies->Profile.Get();
+    const float StartLen=Dependencies->StaggerStart->GetPlayLength(), LoopLen=Dependencies->StaggerLoop->GetPlayLength(), EndLen=Dependencies->StaggerEnd->GetPlayLength();
+    const RPGStaggerAnim::EState Now=RPGStaggerAnim::Evaluate(StartLen,EndLen,P.StaggerSeconds,float(GetWorld()->GetTimeSeconds()-StaggerStartedAt));
+    if(Now==StaggerAnimState||Now==RPGStaggerAnim::EState::Finished)return;
+    StaggerAnimState=Now;
+    if(Now==RPGStaggerAnim::EState::Loop)
+    {
+        const int32 Loops=RPGStaggerAnim::LoopCount(P.StaggerSeconds,StartLen,EndLen,LoopLen);
+        if(!PlayF11Clip(Dependencies->StaggerLoop.Get(),Loops)){Fail(TEXT("Framework.Playback.StaggerAnim"));return;}
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] stagger_anim state=Loop sequence=%s slot=%s loops=%d"),*Dependencies->StaggerLoop->GetName(),*P.AnimSlotName.ToString(),Loops);
+    }
+    else
+    {
+        StopF11Clip();
+        if(!PlayF11Clip(Dependencies->StaggerEnd.Get(),1)){Fail(TEXT("Framework.Playback.StaggerAnim"));return;}
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] stagger_anim state=End sequence=%s slot=%s length=%g"),*Dependencies->StaggerEnd->GetName(),*P.AnimSlotName.ToString(),double(EndLen));
     }
 }
 bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& Error)
@@ -248,7 +323,7 @@ bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& 
     const TCHAR* OldState=bDead?TEXT("Dead"):TEXT("Finished");
     GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;
     if (bHittable) Health=MaxHealth;
-    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bStaggered=bStaggerAbortedAttack=false; ResetBleed();
+    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; ResetBleed();
     Selector.Reset(); CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId; bPhaseTwoLatched=false;
     SetActorLocation(WalkStart,false,nullptr,ETeleportType::TeleportPhysics);
     FVector Face=Target->GetActorLocation()-WalkStart; Face.Z=0.f; if (!Face.IsNearlyZero()) SetActorRotation(FRotator(0.f,Face.Rotation().Yaw,0.f));
@@ -266,7 +341,7 @@ void ARPGFrameworkBossCharacter::Die()
     bDead=true;
     if(auto* AI=Cast<ARPGFrameworkBossController>(GetController()))AI->StopOwnedWalk();
     GetCharacterMovement()->StopMovementImmediately();GetCharacterMovement()->DisableMovement();
-    Executor->Abort(TEXT("BossDead"));
+    Executor->Abort(TEXT("BossDead"));StopF11Clip();bStaggerAnimActive=bPhaseHold=false;
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] boss_dead generation=%llu executorAborted=1"),GenerationId);
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] RESULT outcome=BossDefeated acceptedHits=%d attacks=%d"),Executor->AcceptedHits(),AttacksDone+(bStartedMove?1:0));
 }
@@ -274,12 +349,12 @@ void ARPGFrameworkBossCharacter::Fail(const FString& Error)
 {
     if(bFailed)return;bFailed=true;
     if(auto* AI=Cast<ARPGFrameworkBossController>(GetController()))AI->StopOwnedWalk();
-    GetCharacterMovement()->StopMovementImmediately();GetCharacterMovement()->DisableMovement();Executor->Abort(Error);
+    GetCharacterMovement()->StopMovementImmediately();GetCharacterMovement()->DisableMovement();Executor->Abort(Error);StopF11Clip();
     UE_LOG(LogTemp,Error,TEXT("[FrameworkProof] ERROR token=%s bossInactive=1"),*Error);
     if(GEngine)GEngine->AddOnScreenDebugMessage(-1,10.f,FColor::Red,TEXT("FrameworkProof: ")+Error);
 }
 void ARPGFrameworkBossCharacter::EndPlay(const EEndPlayReason::Type Reason)
 {
-    if(auto* AI=Cast<ARPGFrameworkBossController>(GetController()))AI->StopOwnedWalk();Executor->Abort(TEXT("EndPlay"));
+    if(auto* AI=Cast<ARPGFrameworkBossController>(GetController()))AI->StopOwnedWalk();Executor->Abort(TEXT("EndPlay"));StopF11Clip();
     Dependencies.Reset();Target.Reset();TargetController.Reset();ProofFixture.Reset();Super::EndPlay(Reason);
 }

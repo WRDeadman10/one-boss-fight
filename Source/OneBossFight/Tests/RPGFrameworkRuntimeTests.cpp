@@ -2,6 +2,7 @@
 #include "Player/RPGBossFrameworkProfile.h"
 #include "Player/RPGDamageResolver.h"
 #include "Player/RPGBossSweepSampling.h"
+#include "Player/RPGBossStaggerAnimRules.h"
 #include "Boss/RPGFrameworkMoveExecutor.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimSequence.h"
@@ -262,6 +263,69 @@ bool FFrameworkBakedSamplesValidation::RunTest(const FString&)
     Refused(WithSamples([](auto& L){L.Last().TimeSeconds=1.71f;}),TEXT("sample beyond the clip length"));
     Refused(WithSamples([](auto& L){L[1].BaseCS.X=std::numeric_limits<double>::quiet_NaN();}),TEXT("non-finite sample"));
     Refused(WithSamples([](auto& L){L[1].TipCS.Z=2.e5;}),TEXT("sample beyond the domain"));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkStaggerAnimRules,"OneBossFight.Framework.Runtime.StaggerAnimRules",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkStaggerAnimRules::RunTest(const FString&)
+{
+    // F11 pure rules (spec Antigravity/Reviews/F11_STAGGER_PHASE_ANIM_SPEC.md). Hand values: Start 0.8 s, End 0.6 s, Total 3.0 s -> End starts at 2.4 s, middle 1.6 s.
+    using RPGStaggerAnim::EState;
+    const float S=.8f,E=.6f,T=3.f;
+    TestTrue(TEXT("t=0 Start"),RPGStaggerAnim::Evaluate(S,E,T,0.f)==EState::Start);
+    TestTrue(TEXT("t=0.79 Start"),RPGStaggerAnim::Evaluate(S,E,T,.79f)==EState::Start);
+    TestTrue(TEXT("t=0.80 Loop"),RPGStaggerAnim::Evaluate(S,E,T,.8f)==EState::Loop);
+    TestTrue(TEXT("t=2.39 Loop"),RPGStaggerAnim::Evaluate(S,E,T,2.39f)==EState::Loop);
+    TestTrue(TEXT("t=2.40 End"),RPGStaggerAnim::Evaluate(S,E,T,2.4f)==EState::End);
+    TestTrue(TEXT("t=2.99 End"),RPGStaggerAnim::Evaluate(S,E,T,2.99f)==EState::End);
+    TestTrue(TEXT("t=3.00 Finished"),RPGStaggerAnim::Evaluate(S,E,T,3.f)==EState::Finished);
+    TestEqual(TEXT("loop count middle 1.6 / loop 0.5 = ceil 3.2 = 4"),RPGStaggerAnim::LoopCount(T,S,E,.5f),4);
+    TestEqual(TEXT("loop count exact 1.6 / 0.8 = 2"),RPGStaggerAnim::LoopCount(T,S,E,.8f),2);
+    TestEqual(TEXT("no middle, no loop"),RPGStaggerAnim::LoopCount(1.4f,S,E,.5f),0);
+    TestEqual(TEXT("loop length zero, no loop"),RPGStaggerAnim::LoopCount(T,S,E,0.f),0);
+    TestTrue(TEXT("phase hold at 1.99 of 2.0"),RPGStaggerAnim::PhaseHoldActive(2.f,1.99f));
+    TestFalse(TEXT("phase hold over at 2.0"),RPGStaggerAnim::PhaseHoldActive(2.f,2.f));
+    TestFalse(TEXT("no clip = no hold"),RPGStaggerAnim::PhaseHoldActive(0.f,0.f));
+    RPGStaggerAnim::FPureParams P;P.BossSkeleton=P.StartSkeleton=P.LoopSkeleton=P.EndSkeleton=TEXT("SkeletonBoss");P.Slot=TEXT("FullBody");P.StartLen=S;P.LoopLen=.5f;P.EndLen=E;P.Total=T;P.bStart=P.bLoop=P.bEnd=true;
+    TestTrue(TEXT("valid set"),RPGStaggerAnim::Validate(P).IsEmpty());
+    RPGStaggerAnim::FPureParams None;TestTrue(TEXT("no clips = off = valid"),RPGStaggerAnim::Validate(None).IsEmpty());
+    auto Token=[&](TFunction<void(RPGStaggerAnim::FPureParams&)> Edit){RPGStaggerAnim::FPureParams X=P;Edit(X);return RPGStaggerAnim::Validate(X);};
+    TestEqual(TEXT("incoherent set"),Token([](auto& X){X.bEnd=false;}),FString(TEXT("Framework.Profile.StaggerAnim.CoherentSet")));
+    TestEqual(TEXT("start skeleton"),Token([](auto& X){X.StartSkeleton=TEXT("SkeletonOther");}),FString(TEXT("Framework.Profile.StaggerAnim.StartSkeleton")));
+    TestEqual(TEXT("loop skeleton"),Token([](auto& X){X.LoopSkeleton=TEXT("SkeletonOther");}),FString(TEXT("Framework.Profile.StaggerAnim.LoopSkeleton")));
+    TestEqual(TEXT("end skeleton"),Token([](auto& X){X.EndSkeleton=TEXT("SkeletonOther");}),FString(TEXT("Framework.Profile.StaggerAnim.EndSkeleton")));
+    TestEqual(TEXT("empty slot"),Token([](auto& X){X.Slot=NAME_None;}),FString(TEXT("Framework.Profile.StaggerAnim.SlotNameEmpty")));
+    TestEqual(TEXT("too short 1.8 + 1.5 > 3.0"),Token([](auto& X){X.StartLen=1.8f;X.EndLen=1.5f;}),FString(TEXT("Framework.Profile.StaggerAnim.TooShort")));
+    TestTrue(TEXT("exactly fits is valid"),Token([](auto& X){X.StartLen=1.5f;X.EndLen=1.5f;}).IsEmpty());
+    TestEqual(TEXT("zero loop length"),Token([](auto& X){X.LoopLen=0.f;}),FString(TEXT("Framework.Profile.StaggerAnim.TooShort")));
+    TestEqual(TEXT("no slot node in the AnimBP"),Token([](auto& X){X.bSlotNodePresent=false;}),FString(TEXT("Framework.Profile.StaggerAnim.SlotNode")));
+    TestTrue(TEXT("no phase clip = valid"),RPGStaggerAnim::ValidatePhaseClip(false,0.f,NAME_None,NAME_None,TEXT("A"),TEXT("B")).IsEmpty());
+    TestEqual(TEXT("phaseless clip"),RPGStaggerAnim::ValidatePhaseClip(true,0.f,TEXT("P2"),TEXT("FullBody"),TEXT("A"),TEXT("A")),FString(TEXT("Framework.Profile.PhaseTransitionAnim.Phaseless")));
+    TestEqual(TEXT("phase clip foreign skeleton"),RPGStaggerAnim::ValidatePhaseClip(true,.5f,TEXT("P2"),TEXT("FullBody"),TEXT("A"),TEXT("B")),FString(TEXT("Framework.Profile.PhaseTransitionAnim.Skeleton")));
+    TestTrue(TEXT("valid phase clip"),RPGStaggerAnim::ValidatePhaseClip(true,.5f,TEXT("P2"),TEXT("FullBody"),TEXT("A"),TEXT("A")).IsEmpty());
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkStaggerAnimProfile,"OneBossFight.Framework.Runtime.StaggerAnimProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkStaggerAnimProfile::RunTest(const FString&)
+{
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    const TCHAR* Dir=TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/");
+    auto Clip=[Dir](const TCHAR* Name){return TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(FString::Printf(TEXT("%s%s.%s"),Dir,Name,Name)));};
+    auto Postured=[&](){Fill(*P);P->StaggerStartAnim.Reset();P->StaggerLoopAnim.Reset();P->StaggerEndAnim.Reset();P->PhaseTransitionAnim.Reset();P->AnimSlotName=TEXT("FullBody");P->PhaseTwoFraction=0.f;P->PhaseTwoId=NAME_None;P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);
+        P->BossMaxHealth=100.f;P->PlayerHitDamage=10.f;P->PostureMax=100.f;P->PlayerPostureHitAmount=60.f;P->StaggerSeconds=3.f;P->PostureRegenDelaySeconds=6.f;P->PostureRegenPerSecond=13.f;};
+    auto Clips=[&](){P->StaggerStartAnim=Clip(TEXT("Stun_Start"));P->StaggerLoopAnim=Clip(TEXT("Stun_Loop"));P->StaggerEndAnim=Clip(TEXT("Stun_End"));};
+    auto Refused=[&](const TCHAR* Why,const TCHAR* Token){TestFalse(Why,RPGFramework::ValidateProfile(*P,Error));TestEqual(*FString::Printf(TEXT("%s: token"),Why),Error,FString(Token));};
+    TestEqual(TEXT("the default slot is the cards' slot"),P->AnimSlotName,FName(TEXT("FullBody")));
+    Postured();TestTrue(TEXT("no clips: valid, F8 unchanged"),RPGFramework::ValidateProfile(*P,Error));
+    Postured();Clips();TestTrue(TEXT("three stagger clips with posture: valid"),RPGFramework::ValidateProfile(*P,Error));
+    Postured();Clips();P->StaggerEndAnim.Reset();Refused(TEXT("two of three clips"),TEXT("Framework.Profile.StaggerAnim.CoherentSet"));
+    Postured();P->StaggerLoopAnim=Clip(TEXT("Stun_Loop"));Refused(TEXT("one of three clips"),TEXT("Framework.Profile.StaggerAnim.CoherentSet"));
+    Postured();Clips();P->AnimSlotName=NAME_None;Refused(TEXT("empty slot name"),TEXT("Framework.Profile.StaggerAnim.SlotNameEmpty"));
+    Postured();Clips();P->PostureMax=0.f;P->PlayerPostureHitAmount=0.f;P->StaggerSeconds=0.f;P->PostureRegenDelaySeconds=0.f;P->PostureRegenPerSecond=0.f;Refused(TEXT("stagger clips without posture"),TEXT("Framework.Profile.StaggerAnim.NoPosture"));
+    Postured();P->PhaseTransitionAnim=Clip(TEXT("Ultimate_Targeting"));Refused(TEXT("phase clip without a second phase"),TEXT("Framework.Profile.PhaseTransitionAnim.Phaseless"));
+    Postured();P->PhaseTransitionAnim=Clip(TEXT("Ultimate_Targeting"));P->PhaseTwoFraction=.5f;P->PhaseTwoId=TEXT("PhaseTwo");TestTrue(TEXT("phase clip with a second phase: valid"),RPGFramework::ValidateProfile(*P,Error));
+    Postured();P->PhaseTransitionAnim=Clip(TEXT("Ultimate_Targeting"));P->PhaseTwoFraction=.5f;P->PhaseTwoId=TEXT("PhaseTwo");P->AnimSlotName=NAME_None;Refused(TEXT("phase clip with an empty slot"),TEXT("Framework.Profile.StaggerAnim.SlotNameEmpty"));
     return true;
 }
 #endif

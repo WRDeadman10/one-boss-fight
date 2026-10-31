@@ -1,5 +1,6 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Player/RPGBossFrameworkProfile.h"
+#include "Player/RPGBossStaggerAnimRules.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimBlueprintGeneratedClass.h"
 #include "Animation/AnimClassInterface.h"
@@ -43,6 +44,17 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
             bool bOk=bF5&&P.BossMaxHealth>0.f; for (float V:Values) bOk&=(FMath::IsFinite(V)&&V>=0.f&&V<=1.e6f);
             bOk=bOk&&P.PostureMax>0.f&&P.PlayerPostureHitAmount>0.f&&P.PlayerPostureHitAmount<=P.PostureMax&&P.StaggerSeconds>=.5f&&P.StaggerSeconds<=60.f;
             if (!bOk) return Fail(TEXT("Framework.Profile.Posture"));
+        }
+    }
+    // F11: stagger clips are all set or all empty, need posture (a stagger to play in), a slot name; the phase clip needs a second phase (assets are checked in ResolveProfile).
+    {
+        const bool bStart=!P.StaggerStartAnim.IsNull(), bLoop=!P.StaggerLoopAnim.IsNull(), bEnd=!P.StaggerEndAnim.IsNull(), bPhaseClip=!P.PhaseTransitionAnim.IsNull();
+        if (bStart||bLoop||bEnd||bPhaseClip)
+        {
+            if (P.AnimSlotName.IsNone()) return Fail(TEXT("Framework.Profile.StaggerAnim.SlotNameEmpty"));
+            if ((bStart||bLoop||bEnd)&&!(bStart&&bLoop&&bEnd)) return Fail(TEXT("Framework.Profile.StaggerAnim.CoherentSet"));
+            if (bStart&&!(bF5&&P.PostureMax>0.f)) return Fail(TEXT("Framework.Profile.StaggerAnim.NoPosture"));
+            if (bPhaseClip&&(!bF5||P.BossMaxHealth<=0.f||!(P.PhaseTwoFraction>0.f)||P.PhaseTwoId.IsNone())) return Fail(TEXT("Framework.Profile.PhaseTransitionAnim.Phaseless"));
         }
     }
     // F9: bleed needs the selector lane (F5) and a hittable boss; BleedBuildupPerHit 0 = off (the other four then 0 too), else a coherent set (token Framework.Profile.Bleed).
@@ -128,6 +140,31 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
         if (WorstHit*P->AttackCount>=P->TargetHealth) {Error=TEXT("Framework.Profile.DamageBudget");return false;}
     }
     else if (!ResolveCard(P->Card.LoadSynchronous(),D->Card)) return false;
+    // F11: load the optional clips here (the explicit load boundary), check skeleton and lengths with the pure rules.
+    if (!P->StaggerStartAnim.IsNull()||!P->StaggerLoopAnim.IsNull()||!P->StaggerEndAnim.IsNull()||!P->PhaseTransitionAnim.IsNull())
+    {
+        const auto* Generated=Cast<UAnimBlueprintGeneratedClass>(Anim);
+        if (!Generated||!Generated->GetTargetSkeleton()) {Error=TEXT("Framework.Profile.AnimSkeleton");return false;}
+        const FString BossSkeleton=Generated->GetTargetSkeleton()->GetPathName();
+        auto LoadClip=[&](const TSoftObjectPtr<UAnimSequence>& Soft,TStrongObjectPtr<UAnimSequence>& Dest,const TCHAR* Token,float& Length,FString& SkeletonPath)->bool
+        {
+            Length=0.f; SkeletonPath.Reset(); if (Soft.IsNull()) return true;
+            UAnimSequence* Clip=Soft.LoadSynchronous();
+            if (!IsValid(Clip)||!IsValid(Clip->GetSkeleton())) {Error=Token;return false;}
+            Dest.Reset(Clip); Length=Clip->GetPlayLength(); SkeletonPath=Clip->GetSkeleton()->GetPathName(); return true;
+        };
+        RPGStaggerAnim::FPureParams Params; Params.BossSkeleton=BossSkeleton; Params.Slot=P->AnimSlotName; Params.Total=P->StaggerSeconds;
+        Params.bStart=!P->StaggerStartAnim.IsNull(); Params.bLoop=!P->StaggerLoopAnim.IsNull(); Params.bEnd=!P->StaggerEndAnim.IsNull();
+        if (!LoadClip(P->StaggerStartAnim,D->StaggerStart,TEXT("Framework.Profile.StaggerAnim.StartLoad"),Params.StartLen,Params.StartSkeleton)||
+            !LoadClip(P->StaggerLoopAnim,D->StaggerLoop,TEXT("Framework.Profile.StaggerAnim.LoopLoad"),Params.LoopLen,Params.LoopSkeleton)||
+            !LoadClip(P->StaggerEndAnim,D->StaggerEnd,TEXT("Framework.Profile.StaggerAnim.EndLoad"),Params.EndLen,Params.EndSkeleton)) return false;
+        const FString Failure=RPGStaggerAnim::Validate(Params);
+        if (!Failure.IsEmpty()) {Error=Failure;return false;}
+        float PhaseLen=0.f; FString PhaseSkeleton;
+        if (!LoadClip(P->PhaseTransitionAnim,D->PhaseTransition,TEXT("Framework.Profile.PhaseTransitionAnim.Load"),PhaseLen,PhaseSkeleton)) return false;
+        const FString PhaseFailure=RPGStaggerAnim::ValidatePhaseClip(!P->PhaseTransitionAnim.IsNull(),P->PhaseTwoFraction,P->PhaseTwoId,P->AnimSlotName,BossSkeleton,PhaseSkeleton);
+        if (!PhaseFailure.IsEmpty()) {Error=PhaseFailure;return false;}
+    }
     Out=MoveTemp(D);return true;
 }
 bool HasSlotNode(UAnimInstance* Instance,FName Slot)

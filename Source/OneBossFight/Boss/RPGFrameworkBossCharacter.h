@@ -4,10 +4,13 @@
 #include "Player/RPGBossFrameworkProfile.h"
 #include "Player/RPGBleedRules.h"
 #include "Player/RPGBossMoveSelector.h"
+#include "Player/RPGBossStaggerAnimRules.h"
 #include "Player/RPGNativeBossHealth.h"
 #include "RPGFrameworkBossCharacter.generated.h"
 class URPGFrameworkMoveExecutor;
 class ARPGFrameworkProofFixture;
+class UAnimMontage;
+class UAnimSequence;
 UCLASS()
 class ONEBOSSFIGHT_API ARPGFrameworkBossCharacter : public ACharacter, public IRPGNativeBossHealth
 {
@@ -65,4 +68,10 @@ private:
     double ApplyHit(double HealthFactor, double PostureAmount, double BleedAmount);
     void StartStagger();
     void EndStagger();
+    /** F11 stagger / phase transition animations (all optional, empty clips = the F8 and F6c behaviour unchanged). The stagger sub state is a pure function of the time since the break (RPGStaggerAnim). */
+    double StaggerStartedAt=0., PhaseHoldStartedAt=0.; RPGStaggerAnim::EState StaggerAnimState=RPGStaggerAnim::EState::Start; bool bStaggerAnimActive=false, bPhaseHold=false;
+    TWeakObjectPtr<UAnimMontage> F11Montage;
+    bool PlayF11Clip(UAnimSequence* Clip,int32 Loops);
+    void StopF11Clip();
+    void TickStaggerAnim();
 };
