@@ -1,0 +1,43 @@
+{
+  "status": "C1 v1 test card (copy of AntiGreed_F7_R2 without baked samples)",
+  "cards": [
+    {
+      "Schema": 1,
+      "MoveId": "Move_Sevarog_AntiGreed_C1",
+      "FamilyId": "Family_02_AntiGreed",
+      "PhaseId": "Phase_1",
+      "Skeleton": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.Sevarog_Skeleton",
+      "Sequence": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_FAST_v2.Swing1_FAST_v2",
+      "Montage": null,
+      "SlotName": "FullBody",
+      "SectionName": "None",
+      "PlayRate": 1.0,
+      "ClipLengthSeconds": 0.5333,
+      "CommitSeconds": 0.2,
+      "ActiveStartSeconds": 0.25,
+      "ActiveEndSeconds": 0.3083,
+      "RecoveryEndSeconds": 0.4833,
+      "TrackDegreesPerSecond": 180.0,
+      "MinRangeCm": 105.0,
+      "MaxRangeCm": 185.0,
+      "FrontConeDegrees": 100.0,
+      "HPDamage": 20.0,
+      "bUsesRootMotion": false,
+      "Windows": [
+        {
+          "WindowId": "Window_AntiGreed_FastJab_C1",
+          "HitGroup": "HitGroup_ScytheBlade",
+          "StartSeconds": 0.25,
+          "EndSeconds": 0.3083,
+          "SocketA": "weapon_r",
+          "SocketB": "root_weapon_end_r",
+          "RadiusCm": 15.0
+        }
+      ],
+      "DamageStatus": "design value, proposed",
+      "CooldownSeconds": 2.5,
+      "CooldownStatus": "design value, proposed",
+      "BaseUtility": 1.5
+    }
+  ]
+}
