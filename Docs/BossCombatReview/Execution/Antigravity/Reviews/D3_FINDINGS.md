@@ -1,4 +1,4 @@
-# D3 Reference Measurement Findings (2 of 9 Clips Measured)
+# D3 Reference Measurement Findings (3 of 10 Clips Measured)
 
 > **Status:** DESIGN INPUT (measured from owner footage, observation only).  
 > **Rule:** Observations are qualitative design aids. Strictly **NO** numbers from this review may be applied to runtime gameplay assets or Ember Warden cards without an explicit owner decision.  
@@ -14,6 +14,7 @@ The following table summarizes all clips measured to date in `Docs/BossCombatRev
 |---|---|---|---|---|---|---|---|---|---|
 | 6 | `REF_HolySwordRain_Setup` | `Move_EmberWarden_SwordRain` | W=2381 C=2423 A=2566 E=2602 R=2620 RE=2818 | 3.0864s (185f) | 0.6006s (36f) | 3.6036s (216f) | 7.2906s (437f) | **low** | camera: behind player, boss small and far away, boss body not readable; this measures the SKY SWORD VOLLEY, not the boss animation. W = swords begin to materialise at the top of frame 144.75 s (+-6 f, none at 144.611, present at 144.811), C = first single sword drop 145.412 s, A = main volley impact flash 147.814 s, E = volley impacts finish ~148.415 s, R = all swords planted 148.7 s (they persist as a ground hazard until at least 156 s), RE = boss starts its next move (leap/dash in) ~152.0 s; observation only from owner footage |
 | 9 | `REF_MaceSlam_Sweep` | `Move_EmberWarden_MaceSlam` | W=1703 C=1787 A=1796 E=1801 R=1835 RE=1871 | 1.5515s (93f) | 0.0834s (5f) | 1.1678s (70f) | 2.8028s (168f) | **medium** | camera: boss in frame the whole clip, player mostly off screen; W = mace summon flash 133.400 s, hold ~1.3 s, sweep starts 134.801 s; first contact depends on player position; R/RE read at 0.1 s steps (+-3 frames); observation only from owner footage |
+| 10 | `REF_GapPounce_Close` | `Move_EmberWarden_GapPounce` | W=3951 C=3981 A=4005 E=4023 R=4047 RE=4065 | 0.9009s (54f) | 0.3003s (18f) | 0.7007s (42f) | 1.9019s (114f) | **low** | camera: boss far then fills the frame, close melee, player partly hidden; W = boss starts its run-in at the far right ~170.9 s (+-6 f), C = boss leaves the ground ~171.4 s, A = boss meets the player at ~171.8 s, E = boss passes through ~172.1 s, R = landing/turn ~172.5 s, RE = the NEXT attack (mace summon flash) starts ~172.8 s, so this is a CHAIN: 'recovery' is only the gap to the next move and is not a true recovery window; observation only from owner footage |
 
 ---
 
@@ -54,6 +55,26 @@ The following table summarizes all clips measured to date in `Docs/BossCombatRev
 - **What these numbers CANNOT be used for:**
   - Boss skeletal animation card data (the boss was distant; bone transforms, montages, and AnimBP notify windows cannot be inferred from projectile VFX).
   - Hard collision timing (damage volume duration differs from projectile flight time).
+  - Direct parameter injection into Ember Warden runtime cards without designer validation and owner decision.
+
+---
+
+### Clip 3: `REF_GapPounce_Close` (`Move_EmberWarden_GapPounce`)
+- **Key Milestones:** $W=3951$ ($170.899\text{ s}$), $C=3981$ ($171.400\text{ s}$), $A=4005$ ($171.800\text{ s}$), $E=4023$ ($172.100\text{ s}$), $R=4047$ ($172.501\text{ s}$), $RE=4065$ ($172.801\text{ s}$).
+- **Calculated Durations:**
+  - Windup / Run-in & Leap: $54\text{ frames}$ ($0.9009\text{ s}$)
+  - Active Traversal Strike: $18\text{ frames}$ ($0.3003\text{ s}$)
+  - Recovery ($RE - E$): $42\text{ frames}$ ($0.7007\text{ s}$)
+  - Recovery Tail ($RE - R$): $18\text{ frames}$ ($0.3003\text{ s}$)
+  - Total Duration ($RE - W$): $114\text{ frames}$ ($1.9019\text{ s}$)
+- **Confidence Rating:** **LOW** (Camera: boss is far then rapidly fills the frame, close melee, player is partly hidden).
+- **What these numbers CAN be used for (Observations & Inferences for Design Review):**
+  - Observed gap-close telegraph pacing: boss starts its run-in from the far right at $\approx 170.9\text{ s}$ ($W$, frame $3951$), leaves the ground at $\approx 171.4\text{ s}$ ($C$, frame $3981$, $30\text{ frames}$ / $0.50\text{ s}$ ground run), and meets the player at $\approx 171.8\text{ s}$ ($A$, frame $4005$, $54\text{ frames}$ / $0.90\text{ s}$ total windup). *(INFERENCE for design review: illustrates a medium-range gap closer with a bifurcated ground-run into leap telegraph).*
+  - Observed active strike traversal: the aerial strike passes through player space from $171.8\text{ s}$ to $172.1\text{ s}$ ($18\text{ frames}$ / $0.3003\text{ s}$). *(INFERENCE for design review: snappy collision pass-through window).*
+  - Observed combo chain timing: boss lands and turns at $\approx 172.5\text{ s}$ ($R$, frame $4047$) and initiates the NEXT attack (mace summon flash) at $\approx 172.8\text{ s}$ ($RE$, frame $4065$). **CHAIN: "recovery" ($42\text{ frames}$ / $0.7007\text{ s}$) is only the gap to the next move and is not a true recovery or punish window.** *(INFERENCE for design review: in combo strings, recovery values measure move-to-move chaining cadence rather than player punish vulnerability).*
+- **What these numbers CANNOT be used for:**
+  - Player punish window design (the move chains immediately into the next attack without neutral recovery).
+  - Precise hurtbox/hitbox collision alignment (player was partially obscured during pass-through).
   - Direct parameter injection into Ember Warden runtime cards without designer validation and owner decision.
 
 ---
