@@ -1,0 +1,168 @@
+#!/usr/bin/env python3
+# Copyright One Boss Fight. All Rights Reserved.
+"""
+test_validate_framework_proof_logs.py
+
+Automated test suite verifying the FrameworkProof Log Validator:
+1. Pure LF line endings (no CR).
+2. Schema registration: verifies all 50 formal tokens are defined and compile.
+3. Unit tests: asserts validation of synthetic valid lines across key categories.
+4. 50-Token Mutation Test: extracts one real line per token from committed logs, mutates a key, and proves 50/50 fail validation.
+5. Semantic checks tests: tests detection of out-of-order attacks, duplicate gates, reused instances, and backward timestamps.
+6. Full repository sweep: scans all 633 tracked log files and asserts 0 syntax failures across 62,725 lines, and verifies the 17 known duplicate attack findings.
+"""
+
+import unittest
+import re
+from pathlib import Path
+import tempfile
+
+import sys
+REPO_ROOT = Path(__file__).resolve().parents[5]
+REVIEWS_DIR = REPO_ROOT / "Docs/BossCombatReview/Execution/Antigravity/Reviews"
+sys.path.append(str(REVIEWS_DIR))
+
+import validate_framework_proof_logs as validator
+
+class TestValidateFrameworkProofLogs(unittest.TestCase):
+
+    def test_file_exists_and_pure_lf(self):
+        val_path = REVIEWS_DIR / "validate_framework_proof_logs.py"
+        self.assertTrue(val_path.exists(), "validate_framework_proof_logs.py does not exist")
+        raw = val_path.read_bytes()
+        self.assertNotIn(b"\r", raw, "validate_framework_proof_logs.py contains CR! Must be pure LF.")
+
+    def test_all_50_tokens_registered(self):
+        self.assertEqual(len(validator.SCHEMAS), 50, f"Expected 50 schemas, got {len(validator.SCHEMAS)}")
+        for tok, pat in validator.SCHEMAS.items():
+            compiled = validator.COMPILED_SCHEMAS.get(tok)
+            self.assertIsNotNone(compiled, f"Token {tok} missing in COMPILED_SCHEMAS")
+            self.assertEqual(compiled.pattern, pat)
+
+    def test_synthetic_valid_lines(self):
+        valid_samples = [
+            # Decision
+            "[2026.10.30-13.52.25:120][352]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=Move_Sevarog_HeavySlam_F7 score=0.939261 range=129.533 phase=Phase_1",
+            "[FrameworkProof] decision attack=1 chosen=Move_Sevarog_SwingSlow_F5 score=0.803979 range=169.602",
+            # Walk
+            "[FrameworkProof] walk start=X=500.000 Y=0.000 Z=167.150 end=X=129.533 Y=0.000 Z=167.150 distanceCm=370.467 rangeCm=129.533 bandMin=110 bandMax=140 capsule=X=129.533 Y=0.000 Z=167.150 mesh=X=129.533 Y=0.000 Z=2.150",
+            # Sweep
+            "[FrameworkProof] sweep instance=1 window=Window_HeavySlam_Terminal from=0.475 to=0.482357 tipDistanceCm=24.0699 substeps=1 clamped=0 baked=1",
+            "[FrameworkProof] sweep instance=1 window=Window_SwingSlow_Primary from=0.35 to=0.350704 tipDistanceCm=0.654927 substeps=1 clamped=0",
+            # Combo gate
+            "[FrameworkProof] combo_gate gate=1 node=A outcome=Hit range=128.625 yaw=0 result=Continue next=B reason=",
+            "[FrameworkProof] combo_gate gate=1 node=A outcome=Whiff range=170.71 yaw=158.386 result=Recover next=None reason=Combo.DefaultRecovery",
+            # Combo duplicate hook
+            "[FrameworkProof] combo_gate_duplicate gate=1 result=Ignored reason=Combo.GateConsumed stateUnchanged=1",
+            # Invariant
+            "[FrameworkProof] invariant targetHPBefore=800 targetHPAfter=765 expectedHP=765 acceptedHits=1 appliedDamage=35",
+            "[FrameworkProof] invariant targetHPBefore=800 targetHPAfter=800 damageAPIInvocationsByThisExecutor=0",
+            # Result
+            "[FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=3",
+            "[FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=1",
+            "[FrameworkProof] RESULT outcome=CompletedTelemetryOnly",
+            # Encounter reset
+            "[FrameworkProof] encounter_reset generation=2 oldState=Dead executorRearmed=1 bossHealth=250 targetHealth=800",
+            "[FrameworkProof] encounter_reset refused generation=2 reason=Framework.Fixture.RestartState",
+        ]
+        for line in valid_samples:
+            ok, tok, payload, err = validator.validate_line(line)
+            self.assertTrue(ok, f"Expected line to be valid, got error: {err}\nLine: {line}")
+            self.assertIsNotNone(tok)
+
+    def test_50_token_mutation_suite(self):
+        """Extract one real line per token from committed logs, break one key, and prove 50/50 fail."""
+        import subprocess
+        res = subprocess.run(["git", "ls-files", "Docs/*.log"], cwd=REPO_ROOT, capture_output=True, text=True)
+        files = [REPO_ROOT / f for f in res.stdout.splitlines() if f.strip()]
+
+        real_lines = {}
+        for fp in files:
+            try:
+                content = fp.read_text(encoding="utf-8", errors="replace")
+            except Exception:
+                continue
+            for line in content.splitlines():
+                if "[FrameworkProof]" in line:
+                    m = validator.LINE_RE.search(line)
+                    if m:
+                        tok = m.group(1)
+                        if tok not in real_lines and tok in validator.SCHEMAS:
+                            real_lines[tok] = line
+                if len(real_lines) == 50:
+                    break
+            if len(real_lines) == 50:
+                break
+
+        self.assertEqual(len(real_lines), 50, f"Expected 50 real line samples, found {len(real_lines)}")
+
+        for tok, line in real_lines.items():
+            # First verify the real line passes
+            ok, t, p, err = validator.validate_line(line)
+            self.assertTrue(ok, f"Real line for {tok} failed prior to mutation: {line}")
+
+            # Mutate: corrupt the first key by appending 'z'
+            parts = line.split(f"[FrameworkProof] {tok}")
+            prefix = parts[0] + f"[FrameworkProof] {tok}"
+            payload = parts[1]
+            if "=" in payload:
+                mutated_payload = re.sub(r"\b([A-Za-z0-9_]+)=", r"\1z=", payload, count=1)
+            else:
+                mutated_payload = " corrupted_payload " + payload
+            mutated_line = prefix + mutated_payload
+
+            # Assert mutation is caught
+            m_ok, m_t, m_p, m_err = validator.validate_line(mutated_line)
+            self.assertFalse(m_ok, f"Token {tok} passed unexpectedly after mutation!\nMutated line: {mutated_line}")
+
+    def test_semantic_checks(self):
+        """Test detection of semantic ordering violations."""
+        with tempfile.NamedTemporaryFile("w+", encoding="utf-8", delete=False, suffix=".log") as tf:
+            tf.write("""[2026.10.30-10.00.00:000][1]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=MoveA score=0.9 range=100
+[2026.10.30-09.59.59:000][2]LogTemp: Display: [FrameworkProof] playback_start encounter=1 generation=1 instance=1 montage=M1 slot=FullBody rate=1 label=F5
+[2026.10.30-10.00.02:000][3]LogTemp: Display: [FrameworkProof] playback_start encounter=1 generation=1 instance=1 montage=M2 slot=FullBody rate=1 label=F5
+[2026.10.30-10.00.03:000][4]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=MoveB score=0.8 range=100
+[2026.10.30-10.00.04:000][5]LogTemp: Display: [FrameworkProof] combo_gate gate=1 node=A outcome=Hit range=100 yaw=0 result=Continue next=B reason=
+[2026.10.30-10.00.05:000][6]LogTemp: Display: [FrameworkProof] combo_gate gate=1 node=A outcome=Hit range=100 yaw=0 result=Continue next=B reason=
+""")
+            tf_path = Path(tf.name)
+
+        try:
+            res = validator.validate_log_file(tf_path)
+            kinds = [v["kind"] for v in res["semantic_violations"]]
+            self.assertIn("TIMESTAMP_BACKWARDS", kinds)
+            self.assertIn("REUSED_INSTANCE_ID", kinds)
+            self.assertIn("DUPLICATE_ATTACK_ID", kinds)
+            self.assertIn("DUPLICATE_GATE_ID", kinds)
+        finally:
+            tf_path.unlink()
+
+    def test_full_repository_committed_logs_sweep(self):
+        """Scans all tracked logs, asserts 0 syntax errors, and asserts 17 known semantic findings."""
+        import subprocess
+        res = subprocess.run(["git", "ls-files", "Docs/*.log"], cwd=REPO_ROOT, capture_output=True, text=True)
+        files = [REPO_ROOT / f for f in res.stdout.splitlines() if f.strip()]
+        self.assertGreater(len(files), 600, f"Expected >600 tracked log files, found {len(files)}")
+
+        total_lines = 0
+        total_syntax_failures = 0
+        total_semantic_violations = 0
+        all_semantic = []
+
+        for fp in files:
+            res = validator.validate_log_file(fp)
+            total_lines += res["framework_proof_lines"]
+            total_syntax_failures += len(res["syntax_failures"])
+            total_semantic_violations += len(res["semantic_violations"])
+            all_semantic.extend(res["semantic_violations"])
+
+        self.assertGreaterEqual(total_lines, 60000, f"Expected >=60,000 telemetry lines, found {total_lines}")
+        self.assertEqual(total_syntax_failures, 0, f"Expected 0 syntax failures across repository, found {total_syntax_failures}")
+        
+        # Verify the 17 known duplicate attack findings from F8 mid-attack stagger aborts
+        self.assertEqual(total_semantic_violations, 17, f"Expected 17 semantic findings, found {total_semantic_violations}")
+        for v in all_semantic:
+            self.assertEqual(v["kind"], "DUPLICATE_ATTACK_ID")
+
+if __name__ == "__main__":
+    unittest.main()
