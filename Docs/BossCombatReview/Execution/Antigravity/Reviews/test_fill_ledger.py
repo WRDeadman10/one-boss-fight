@@ -361,13 +361,14 @@ class TestFillLedger(unittest.TestCase):
         entry10 = d3_data["entries"][-1]
         self.assertEqual(entry10["ref_id"], "REF_GapPounce_Close")
         self.assertEqual(entry10["priority"], 10)
-        self.assertIsNone(entry10["W_frame"])
+        self.assertEqual(entry10["W_frame"], 3951)
+        self.assertEqual(entry10["confidence"], "low")
 
-        # Check filled entries subtrees
+        # Check filled entries subtrees (3 filled entries: p6, p9, p10)
         filled = [e for e in d3_data["entries"] if e.get("confidence") is not None]
-        self.assertEqual(len(filled), 2)
+        self.assertEqual(len(filled), 3)
         filled_ids = {e["ref_id"] for e in filled}
-        self.assertEqual(filled_ids, {"REF_HolySwordRain_Setup", "REF_MaceSlam_Sweep"})
+        self.assertEqual(filled_ids, {"REF_HolySwordRain_Setup", "REF_MaceSlam_Sweep", "REF_GapPounce_Close"})
 
         mace = next(e for e in filled if e["ref_id"] == "REF_MaceSlam_Sweep")
         self.assertEqual(mace["W_frame"], 1703)

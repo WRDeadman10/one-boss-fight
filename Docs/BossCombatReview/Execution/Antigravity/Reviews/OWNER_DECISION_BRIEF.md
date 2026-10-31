@@ -81,8 +81,8 @@
   - *Option B:* Author candidate Ember Warden cards based on selected reference timings subject to formal owner approval and proof verification.
 - **Recorded position (quote):** "Under NO CIRCUMSTANCES may any data from this study be copied, pasted, or injected into shipped gameplay assets or runtime cards located in Content/OneBossFight/FrameworkProof/Cards/ without explicit, formal direction and sign-off from the project Owner."
 - **Repository Citations:**
-  - `Docs/BossCombatReview/Execution/Antigravity/Reviews/D3_FINDINGS.md:67`: `Under **NO CIRCUMSTANCES** may any data from this study be copied, pasted, or injected into shipped gameplay assets or runtime cards located in Content/OneBossFight/FrameworkProof/Cards/ without explicit, formal direction and sign-off from the project **Owner**.`
-  - `Documentation/TASKS.md:26`: `D3 (Footage Measurements): IN PROGRESS (Claude; 2 of 9 clips filled in D3_MEASURED_LEDGER.json: REF_MaceSlam_Sweep medium, REF_HolySwordRain_Setup low, ledger commit 409ba526/3d9debd4).`
+  - `Docs/BossCombatReview/Execution/Antigravity/Reviews/D3_FINDINGS.md:88`: `Under **NO CIRCUMSTANCES** may any data from this study be copied, pasted, or injected into shipped gameplay assets or runtime cards located in Content/OneBossFight/FrameworkProof/Cards/ without explicit, formal direction and sign-off from the project **Owner**.`
+  - `Documentation/TASKS.md:26`: `D3 (Footage Measurements): IN PROGRESS (Claude; 3 of 10 clips filled in D3_MEASURED_LEDGER.json: REF_MaceSlam_Sweep medium, REF_HolySwordRain_Setup low, REF_GapPounce_Close low, ledger commit 409ba526/3d9debd4/eeb58706).`
 
 ---
 

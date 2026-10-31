@@ -4,7 +4,8 @@ Verifies:
 - Structure and column headers of generated Markdown table (including 'Ledger priority').
 - Hand-calculated frame counts and seconds for Clip 1 (REF_MaceSlam_Sweep, medium confidence).
 - Hand-calculated frame counts and seconds for Clip 2 (REF_HolySwordRain_Setup, low confidence).
-- Ledger priority values in table cells match the ledger's 'priority' fields (6 and 9).
+- Hand-calculated frame counts and seconds for Clip 3 (REF_GapPounce_Close, low confidence).
+- Ledger priority values in table cells match the ledger's 'priority' fields (6, 9, 10).
 - CLI execution returns returncode 0 on D3_MEASURED_LEDGER.json.
 
 Run: python -I test_d3_findings_table.py
@@ -78,26 +79,51 @@ class TestD3FindingsTable(unittest.TestCase):
         self.assertAlmostEqual(metrics["tail_s"], 3.3033, places=4)
         self.assertAlmostEqual(metrics["total_s"], 7.2906, places=4)
 
+    def test_hand_calculated_metrics_gap_pounce(self):
+        """Tests hand-calculated numbers for Clip 3: REF_GapPounce_Close."""
+        entry = next(e for e in self.ledger["entries"] if e["ref_id"] == "REF_GapPounce_Close")
+        metrics = compute_entry_metrics(entry, fps=FPS)
+
+        self.assertEqual(metrics["orig_id"], "Move_EmberWarden_GapPounce")
+        self.assertEqual(metrics["confidence"], "low")
+        self.assertEqual(metrics["priority"], 10)
+
+        # Frames: W=3951, C=3981, A=4005, E=4023, R=4047, RE=4065
+        self.assertEqual(metrics["windup_f"], 54)       # 4005 - 3951
+        self.assertEqual(metrics["active_f"], 18)       # 4023 - 4005
+        self.assertEqual(metrics["recovery_f"], 42)     # 4065 - 4023 (RE - E)
+        self.assertEqual(metrics["tail_f"], 18)         # 4065 - 4047 (RE - R)
+        self.assertEqual(metrics["total_f"], 114)       # 4065 - 3951
+
+        # Seconds: deltas / 59.9401
+        self.assertAlmostEqual(metrics["windup_s"], 0.9009, places=4)
+        self.assertAlmostEqual(metrics["active_s"], 0.3003, places=4)
+        self.assertAlmostEqual(metrics["recovery_s"], 0.7007, places=4)
+        self.assertAlmostEqual(metrics["tail_s"], 0.3003, places=4)
+        self.assertAlmostEqual(metrics["total_s"], 1.9019, places=4)
+
     def test_generate_markdown_table_structure(self):
-        """Tests that generated Markdown table contains expected header and exactly 2 populated rows."""
+        """Tests that generated Markdown table contains expected header and exactly 3 populated rows."""
         table_md = generate_markdown_table(self.ledger, fps=FPS)
         self.assertIn("| Ledger priority | Reference ID | Original Move ID |", table_md)
         self.assertIn("REF_MaceSlam_Sweep", table_md)
         self.assertIn("REF_HolySwordRain_Setup", table_md)
+        self.assertIn("REF_GapPounce_Close", table_md)
         self.assertIn("Move_EmberWarden_MaceSlam", table_md)
         self.assertIn("Move_EmberWarden_SwordRain", table_md)
+        self.assertIn("Move_EmberWarden_GapPounce", table_md)
 
         lines = [line for line in table_md.strip().split("\n") if line.startswith("|")]
-        # Header + separator + 2 data rows = 4 lines
-        self.assertEqual(len(lines), 4)
+        # Header + separator + 3 data rows = 5 lines
+        self.assertEqual(len(lines), 5)
 
     def test_table_ledger_priority_matches_entry_priority(self):
-        """Tests that generated table prints the actual ledger priority values (6 and 9)."""
+        """Tests that generated table prints the actual ledger priority values (6, 9, 10)."""
         table_md = generate_markdown_table(self.ledger, fps=FPS)
         lines = [line for line in table_md.strip().split("\n") if line.startswith("|")]
         # Data rows are lines[2:]
         data_rows = lines[2:]
-        self.assertEqual(len(data_rows), 2)
+        self.assertEqual(len(data_rows), 3)
 
         # Row 1 is REF_HolySwordRain_Setup with priority 6
         cells_row1 = [c.strip() for c in data_rows[0].split("|") if c.strip()]
@@ -109,6 +135,11 @@ class TestD3FindingsTable(unittest.TestCase):
         self.assertEqual(cells_row2[0], "9")
         self.assertIn("REF_MaceSlam_Sweep", cells_row2[1])
 
+        # Row 3 is REF_GapPounce_Close with priority 10
+        cells_row3 = [c.strip() for c in data_rows[2].split("|") if c.strip()]
+        self.assertEqual(cells_row3[0], "10")
+        self.assertIn("REF_GapPounce_Close", cells_row3[1])
+
     def test_cli_execution(self):
         """Tests CLI execution of D3_findings_table.py exits with code 0 and prints table."""
         script = os.path.join(os.path.dirname(__file__), "D3_findings_table.py")
@@ -117,6 +148,7 @@ class TestD3FindingsTable(unittest.TestCase):
         self.assertIn("| Ledger priority |", res.stdout)
         self.assertIn("REF_MaceSlam_Sweep", res.stdout)
         self.assertIn("REF_HolySwordRain_Setup", res.stdout)
+        self.assertIn("REF_GapPounce_Close", res.stdout)
 
 
 if __name__ == "__main__":
