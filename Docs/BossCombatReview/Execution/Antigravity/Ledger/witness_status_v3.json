@@ -2195,29 +2195,23 @@
       "old_status": "PARTIAL",
       "status": "PARTIAL",
       "proof": [
-        "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log:1651",
-        "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run2/editor_raw.log:1643",
-        "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run3/editor_raw.log:1653"
+        "Docs/BossCombatReview/Execution/Claude/B_QA003/tie_run1/editor_raw.log:2400",
+        "Docs/BossCombatReview/Execution/Claude/B_QA003/tie_run2/editor_raw.log:2399"
       ],
       "citations": [
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log",
-          "line": 1651,
-          "quoted": "[2026.10.30-12.12.23:605][435]LogTemp: Display: [FrameworkProof] invariant ta..."
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA003/tie_run1/editor_raw.log",
+          "line": 2400,
+          "quoted": "[2026.10.31-22.52.23:481][230]LogTemp: Display: [FrameworkProof] decision attack=8 chosen=Move_Sevarog_SwingSlow_F7 score=0.784666 range=128.467 phase=Phase_1 seq=8"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run2/editor_raw.log",
-          "line": 1643,
-          "quoted": "[2026.10.30-12.13.01:241][427]LogTemp: Display: [FrameworkProof] invariant ta..."
-        },
-        {
-          "file": "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run3/editor_raw.log",
-          "line": 1653,
-          "quoted": "[2026.10.30-12.13.39:271][433]LogTemp: Display: [FrameworkProof] invariant ta..."
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA003/tie_run2/editor_raw.log",
+          "line": 2399,
+          "quoted": "[2026.10.31-22.53.12:444][195]LogTemp: Display: [FrameworkProof] decision attack=8 chosen=Move_Sevarog_SwingSlow_F7 score=0.784666 range=128.467 phase=Phase_1 seq=8"
         }
       ],
       "observable": "Scripted replay driver executes fixed player inputs and asserts deterministic boss state progression under fixed seed.",
-      "notes": "PIE driver drive_pie.py produces consistent invariant outcomes across 3 runs, but a fixed-input replay harness asserting full state progression under fixed seed is not yet authored per C-405."
+      "notes": "Live 2-run event determinism proven on F5 (185/185 lines identical) and on seeded tie map QA003 (8 decisions identical across tie_run1/run2; attack 8 selects lower-scoring SwingSlow over HeavySlam via live seeded stream FRandomStream(TieSeed+StartedCount)); remains PARTIAL because player inputs are idle (-Inject operates on driver wall-clock rather than deterministic frame count)."
     },
     {
       "id": "BOSS-QA-004",

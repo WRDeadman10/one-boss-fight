@@ -200,5 +200,37 @@ class TestCompareRuns(unittest.TestCase):
         self.assertIsNotNone(first_diff)
         self.assertGreater(len(fails), 0)
 
+    def test_first_difference_lowest_step_priority(self):
+        """Test that first_diff reports the lowest step index (e.g. payload mismatch) rather than trailing length mismatch."""
+        run_a = """[FrameworkProof] walk start=X=0 Y=0 Z=0 end=X=100 Y=0 Z=0 distanceCm=100 rangeCm=100 bandMin=90 bandMax=110 capsule=X=100 Y=0 Z=0 mesh=X=100 Y=0 Z=0
+[FrameworkProof] decision attack=1 chosen=MoveA score=0.9 range=100 phase=Phase_1
+[FrameworkProof] hit instance=1 window=W1 key=K1 outcome=Accepted hpApplied=30 healthBefore=800 healthAfter=770
+[FrameworkProof] hit instance=2 window=W2 key=K2 outcome=Accepted hpApplied=20 healthBefore=770 healthAfter=750
+[FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=2
+"""
+        run_b_diff_step1_and_shorter = """[FrameworkProof] walk start=X=0 Y=0 Z=0 end=X=100 Y=0 Z=0 distanceCm=100 rangeCm=100 bandMin=90 bandMax=110 capsule=X=100 Y=0 Z=0 mesh=X=100 Y=0 Z=0
+[FrameworkProof] decision attack=1 chosen=MoveB score=0.8 range=100 phase=Phase_1
+[FrameworkProof] hit instance=1 window=W1 key=K1 outcome=Accepted hpApplied=30 healthBefore=800 healthAfter=770
+[FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=1 attacks=1
+"""
+        with tempfile.NamedTemporaryFile("w+", encoding="utf-8", delete=False, suffix=".log") as f1, \
+             tempfile.NamedTemporaryFile("w+", encoding="utf-8", delete=False, suffix=".log") as f2:
+            f1.write(run_a)
+            f2.write(run_b_diff_step1_and_shorter)
+            p1, p2 = Path(f1.name), Path(f2.name)
+
+        try:
+            r1 = compare_runs.parse_log_file(p1, exact_mode=True)
+            r2 = compare_runs.parse_log_file(p2, exact_mode=True)
+            ok, fails, diffs, first_diff = compare_runs.compare_runs([r1, r2], exact_mode=True)
+            self.assertFalse(ok)
+            self.assertIsNotNone(first_diff)
+            # Step 1 (decision chosen=MoveB vs MoveA) must be reported as first diff, NOT the length mismatch
+            self.assertEqual(first_diff["step_index"], 1)
+            self.assertEqual(first_diff["token"], "decision")
+        finally:
+            p1.unlink()
+            p2.unlink()
+
 if __name__ == "__main__":
     unittest.main()

@@ -169,7 +169,7 @@ def compare_runs(runs: List[Dict[str, Any]],
         nonlocal first_diff
         msg = f"Run {run_idx} ({runs[run_idx]['path'].name}:{r_lnum}) vs Baseline ({base['path'].name}:{b_lnum}) step {step_idx} [{tok}]: {detail}"
         failures.append(msg)
-        if first_diff is None:
+        if first_diff is None or step_idx < first_diff["step_index"]:
             first_diff = {
                 "run_index": run_idx,
                 "step_index": step_idx,
@@ -192,15 +192,7 @@ def compare_runs(runs: List[Dict[str, Any]],
             max_diffs["damage"] = max(max_diffs["damage"], diff)
             failures.append(f"Run {i} ({r['path'].name}) total damage mismatch: {r['counts']['total_damage']} != {base['counts']['total_damage']} (diff={diff} > tol={damage_tol})")
             
-    # 2. Compare canonical event sequence length
-    for i, r in enumerate(runs[1:], start=1):
-        if len(r["events"]) != len(b_events):
-            record_diff(i, min(len(b_events), len(r["events"])), 
-                        b_events[-1]["line_number"] if b_events else 0,
-                        r["events"][-1]["line_number"] if r["events"] else 0,
-                        "LENGTH", f"Event count mismatch: {len(r['events'])} != baseline {len(b_events)}")
-
-    # 3. Compare event by event up to min length
+    # 2. Compare event by event up to min length (evaluated first so first_diff captures lowest step index)
     for i, r in enumerate(runs[1:], start=1):
         min_len = min(len(b_events), len(r["events"]))
         for idx in range(min_len):
@@ -283,6 +275,14 @@ def compare_runs(runs: List[Dict[str, Any]],
                         record_diff(i, idx, be["line_number"], re_ev["line_number"], be["token"],
                                     f"{k} mismatch '{rv}' != '{bv}'")
                         
+    # 3. Compare canonical event sequence length (evaluated last)
+    for i, r in enumerate(runs[1:], start=1):
+        if len(r["events"]) != len(b_events):
+            record_diff(i, min(len(b_events), len(r["events"])), 
+                        b_events[-1]["line_number"] if b_events else 0,
+                        r["events"][-1]["line_number"] if r["events"] else 0,
+                        "LENGTH", f"Event count mismatch: {len(r['events'])} != baseline {len(b_events)}")
+
     b_pass = len(failures) == 0
     return b_pass, failures, max_diffs, first_diff
 
