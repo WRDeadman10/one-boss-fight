@@ -1,0 +1,8 @@
+[
+    "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+    "-ExecutePythonScript=\"C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/C3/new_weapon.py C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/C3/example_polearm_weapon_v1.json --apply\"",
+    "-unattended",
+    "-nosound",
+    "-nosplash",
+    "-abslog=C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\C3\\runs_v1\\apply\\editor_raw.log"
+]

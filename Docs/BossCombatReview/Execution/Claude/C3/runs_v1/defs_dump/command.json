@@ -1,0 +1,9 @@
+[
+    "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+    "-ExecutePythonScript=\"C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude/C3/dump_catalog_defs.py\"",
+    "-unattended",
+    "-nosound",
+    "-nosplash",
+    "-abslog=C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\C3\\runs_v1\\defs_dump\\editor_raw.log",
+    "-nullrhi"
+]

@@ -6,7 +6,7 @@
 #   3. prints the plan (rows to append, or old -> new numbers in update_existing_style mode),
 #   4. with --apply: appends the rows (mode new_weapon) or edits them in place (update_existing_style), reads EVERY row back, saves ONLY DA_WeaponAttacks.
 # The pack parts of a weapon (combat style asset, item, actor Blueprint, ability, montages) are NOT created here: they must exist (the validator checks the paths).
-# The catalog entry (RPGCombatCatalog) is not written by this version.
+# v1: with `catalog.register: true` it also creates DA_Weapon_<id> and DA_Build_<id> (NEW assets, refused if they exist) and appends them to the catalog root (DA_CombatCatalog, an EDIT of a shipped asset, read back).
 import importlib.util
 import json
 import sys
@@ -76,6 +76,8 @@ plan = []
 for r in cfg['attack_rows']:
     plan.append({'style': STYLE, 'kind': r['kind'], 'mode': MODE, **{k: r.get(k) for k, _p in FIELDS}})
 tag('PLAN', plan)
+if (cfg.get('catalog') or {}).get('register'):
+    tag('CATALOG_PLAN', {'weapon_asset': cfg['catalog']['weapon_asset_path'], 'build_asset': cfg['catalog']['build_asset_path'], 'root': cfg['catalog']['catalog_root_path'], 'console_name': cfg['build']['console_name'], 'legacy_slot': cfg['catalog'].get('legacy_slot', -1)})
 if not APPLY:
     tag('END', {'written': [], 'dry_run': True})
     raise SystemExit(0)
@@ -111,4 +113,80 @@ for r in cfg['attack_rows']:
 tag('READBACK_OK', {'rows_total': len(back), 'written': len(cfg['attack_rows'])})
 if not lib.save_loaded_asset(table):
     fatal('DA_WeaponAttacks save failed')
-tag('END', {'written': [TABLE], 'dry_run': False})
+
+# ---- v1: catalog registration (weapon definition + build definition + root catalog), only when asked
+CAT = cfg.get('catalog') or {}
+written = [TABLE]
+if CAT.get('register'):
+    def spath(p):
+        return unreal.SoftObjectPath(p)
+
+    def split(path):
+        pkg, name = path.rsplit('/', 1)
+        return pkg, name.split('.')[0]
+
+    wpath, bpath, rpath = CAT['weapon_asset_path'], CAT['build_asset_path'], CAT['catalog_root_path']
+    for p in (wpath, bpath):
+        if lib.does_asset_exist(p.split('.')[0]):
+            fatal('catalog asset exists, refusing: ' + p)
+    root = unreal.load_asset(rpath)
+    if root is None:
+        fatal('catalog root not found: ' + rpath)
+    tools = unreal.AssetToolsHelpers.get_asset_tools()
+    wpkg, wname = split(wpath)
+    weapon_asset = tools.create_asset(wname, wpkg, unreal.RPGWeaponDefinition, unreal.DataAssetFactory())
+    bpkg, bname = split(bpath)
+    build_asset = tools.create_asset(bname, bpkg, unreal.RPGBuildDefinition, unreal.DataAssetFactory())
+    if weapon_asset is None or build_asset is None:
+        fatal('catalog asset creation failed')
+    wd = weapon_asset.get_editor_property('definition')
+    wd.set_editor_property('weapon_id', cfg['weapon_id'])
+    wd.set_editor_property('style_name', STYLE)
+    wd.set_editor_property('style_asset', spath(cfg['style_asset_path']))
+    wd.set_editor_property('item_path', spath(cfg['item_path']))
+    wd.set_editor_property('item_base_class', spath(cfg['item_base_class']))
+    wd.set_editor_property('actor_class', spath(cfg['actor_class']))
+    wd.set_editor_property('ability_class', spath(cfg['ability_class']))
+    wd.set_editor_property('hud_weapon_word', cfg['hud_weapon_word'])
+    wd.set_editor_property('style_aliases', [unreal.Name(a) for a in cfg.get('style_aliases', [])])
+    if CAT.get('icon_path'):
+        wd.set_editor_property('icon', spath(CAT['icon_path']))
+    wd.set_editor_property('actions', [kind_enum(r['kind']) for r in cfg['attack_rows']])
+    wd.set_editor_property('require_exact_rows', bool(CAT.get('require_exact_rows', False)))
+    weapon_asset.set_editor_property('definition', wd)
+    b = cfg['build']
+    bd = build_asset.get_editor_property('definition')
+    bd.set_editor_property('build_id', b['build_id'])
+    bd.set_editor_property('console_name', b['console_name'])
+    bd.set_editor_property('aliases', list(b.get('aliases', [])))
+    bd.set_editor_property('display_name', b['display_name'])
+    bd.set_editor_property('ui_order', int(b['ui_order']))
+    bd.set_editor_property('legacy_slot', int(CAT.get('legacy_slot', -1)))
+    bd.set_editor_property('weapon_id', cfg['weapon_id'])
+    if CAT.get('icon_path'):
+        bd.set_editor_property('icon', spath(CAT['icon_path']))
+    build_asset.set_editor_property('definition', bd)
+    # readback of the two new definitions
+    wb = weapon_asset.get_editor_property('definition')
+    bb = build_asset.get_editor_property('definition')
+    if str(wb.get_editor_property('weapon_id')) != cfg['weapon_id'] or str(wb.get_editor_property('style_name')) != STYLE or len(list(wb.get_editor_property('actions'))) != len(cfg['attack_rows']):
+        fatal('weapon definition readback mismatch')
+    if str(bb.get_editor_property('build_id')) != b['build_id'] or str(bb.get_editor_property('console_name')) != b['console_name'] or int(bb.get_editor_property('legacy_slot')) != -1 or str(bb.get_editor_property('weapon_id')) != cfg['weapon_id']:
+        fatal('build definition readback mismatch')
+    # the root catalog: append the two soft references
+    weapons = list(root.get_editor_property('weapons'))
+    builds = list(root.get_editor_property('builds'))
+    n_w, n_b = len(weapons), len(builds)
+    weapons.append(weapon_asset)
+    builds.append(build_asset)
+    root.set_editor_property('weapons', weapons)
+    root.set_editor_property('builds', builds)
+    rw_, rb_ = list(root.get_editor_property('weapons')), list(root.get_editor_property('builds'))
+    if len(rw_) != n_w + 1 or len(rb_) != n_b + 1:
+        fatal('catalog root readback count mismatch')
+    for a_ in (weapon_asset, build_asset, root):
+        if not lib.save_loaded_asset(a_):
+            fatal('catalog save failed: ' + a_.get_name())
+    written += [wpath, bpath, rpath]
+    tag('CATALOG_READBACK_OK', {'weapons': [n_w, len(rw_)], 'builds': [n_b, len(rb_)]})
+tag('END', {'written': written, 'dry_run': False})
