@@ -18,6 +18,7 @@
 #include "Player/RPGBossOverlayRules.h"
 #include "Player/RPGBossTrackRules.h"
 #include "Player/RPGBossRules.h"
+static TAutoConsoleVariable<int32> CVarBossComboDuplicateGate(TEXT("rpg.BossComboDuplicateGate"),0,TEXT("Test hook (BOSS-COM-005): 1 evaluates every combo branch gate a second time with the SAME gate id right after the first, and logs that the duplicate was ignored without changing the combo state."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossOverlay(TEXT("rpg.BossOverlay"),0,TEXT("Framework boss runtime overlay (BOSS-QA-001): 0 off, 1 on screen, 2 on screen and one [FrameworkProof] overlay log line per second."),ECVF_Default);
 ARPGFrameworkBossCharacter::ARPGFrameworkBossCharacter()
 {
@@ -346,6 +347,11 @@ bool ARPGFrameworkBossCharacter::HandleComboGate()
     const FName From=ComboState.Node; const RPGBossCombo::FComboStep R=RPGBossCombo::Step(ComboGraph,ComboState,Gate);
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_gate gate=%llu node=%s outcome=%s range=%g yaw=%g result=%s next=%s reason=%s"),Gate.GateId,*From.ToString(),Gate.Outcome==RPGBossCombo::EOutcome::Hit?TEXT("Hit"):TEXT("Whiff"),S.RangeCm,S.SignedYawDegrees,
         R.Kind==RPGBossCombo::EStep::Continue?TEXT("Continue"):R.Kind==RPGBossCombo::EStep::Finished?TEXT("Finished"):R.Kind==RPGBossCombo::EStep::Ignored?TEXT("Ignored"):TEXT("Recover"),*R.NextNode.ToString(),*R.Reason);
+    if(CVarBossComboDuplicateGate.GetValueOnGameThread()>0&&R.Kind!=RPGBossCombo::EStep::Ignored)
+    {
+        const RPGBossCombo::FComboState Before=ComboState; const RPGBossCombo::FComboStep Dup=RPGBossCombo::Step(ComboGraph,ComboState,Gate);   // the same gate id again
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_gate_duplicate gate=%llu result=%s reason=%s stateUnchanged=%d"),Gate.GateId,Dup.Kind==RPGBossCombo::EStep::Ignored?TEXT("Ignored"):TEXT("NOT_IGNORED"),*Dup.Reason,(Before.Node==ComboState.Node&&Before.Depth==ComboState.Depth&&Before.LastGateId==ComboState.LastGateId)?1:0);
+    }
     if(R.Kind==RPGBossCombo::EStep::Ignored)return false;
     if(R.Kind!=RPGBossCombo::EStep::Continue){bComboActive=false;return false;}   // recovery or end of the combo: the normal next attack logic follows
     if(AttacksDone+1>=Dependencies->Profile->AttackCount){bComboActive=false;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_end reason=AttackBudget"));return false;}

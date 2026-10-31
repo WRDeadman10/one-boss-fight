@@ -31,8 +31,21 @@ class TestPartialUpgradePlan(unittest.TestCase):
 
     def test_all_27_rows_partial_and_title_parity(self):
         ledger = json.loads(LEDGER_PATH.read_text(encoding="utf-8"))
-        canonical_partial = {r["id"]: r["title"] for r in ledger["requirements"] if r["status"] == "PARTIAL"}
-        self.assertEqual(len(canonical_partial), 27, f"Expected 27 canonical PARTIAL rows, got {len(canonical_partial)}")
+        # 27 rows planned in v2.0 (v3.6.0 baseline; 3 graduated to WITNESSED in v3.7.0)
+        planned_ids = {
+            'BOSS-AWR-001', 'BOSS-AWR-002', 'BOSS-AWR-004', 'BOSS-AWR-005',
+            'BOSS-SEL-008',
+            'BOSS-EXE-004', 'BOSS-EXE-006', 'BOSS-EXE-007',
+            'BOSS-COM-002', 'BOSS-COM-003', 'BOSS-COM-004', 'BOSS-COM-005', 'BOSS-COM-007',
+            'BOSS-ANM-002', 'BOSS-ANM-005', 'BOSS-ANM-007',
+            'BOSS-HIT-005', 'BOSS-HIT-008', 'BOSS-HIT-009',
+            'BOSS-MOV-001',
+            'BOSS-PAC-006',
+            'BOSS-PHS-004',
+            'BOSS-QA-001', 'BOSS-QA-002', 'BOSS-QA-003', 'BOSS-QA-004', 'BOSS-QA-005'
+        }
+        canonical_partial = {r["id"]: r["title"] for r in ledger["requirements"] if r["id"] in planned_ids}
+        self.assertEqual(len(canonical_partial), 27, f"Expected 27 planned rows in ledger, got {len(canonical_partial)}")
 
         text = DOC_PATH.read_text(encoding="utf-8")
 
