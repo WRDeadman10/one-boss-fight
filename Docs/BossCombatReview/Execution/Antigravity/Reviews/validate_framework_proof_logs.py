@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 # Copyright One Boss Fight. All Rights Reserved.
 """
-validate_framework_proof_logs.py (v3.0)
+validate_framework_proof_logs.py (v3.1)
 
 Formal schema and semantic validator for all [FrameworkProof] structured telemetry lines
-emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, and B_QA002).
+emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, B_QA002, and B_HIT005).
 
 Validates:
 1. Header prefix (optional Unreal Engine standard log prefix: [YYYY.MM.DD-HH.MM.SS:mmm][frame]LogCategory: Verbosity:)
 2. Exact [FrameworkProof] token tag
-3. Registered schema match for all 50 recognized telemetry tokens
+3. Registered schema match for all 52 recognized telemetry tokens
 4. Semantic checks per log:
    - seq= (when present) is unique and strictly increasing per process log across decisions
    - candidate and refusal lines of a decision carry the exact same seq as their decision
@@ -33,7 +33,7 @@ from datetime import datetime
 # Vector format pattern: X=<float> Y=<float> Z=<float>
 VEC = r"X=[^\s]+ Y=[^\s]+ Z=[^\s]+"
 
-# 50 Canonical FrameworkProof Schemas
+# 52 Canonical FrameworkProof Schemas
 SCHEMAS = {
     # 1. Encounter Lifecycle & Framework Fixture
     "dependencies": r"^mesh=[^\s]+ skeleton=[^\s]+ animClass=[^\s]+ sequence=[^\s]+ slot=[^\s]+ resolved=\d+ label=[^\s]+$",
@@ -43,6 +43,7 @@ SCHEMAS = {
     "target_health_init": r"^value=[^\s]+ readback=[^\s]+ label=[^\s]+$",
     "target_health_mismatch": r"^valid=\d+ actual=[^\s]+ expected=[^\s]+ generation=\d+$",
     "pack_style_known": r"^waitedSeconds=[^\s]+$",
+    "bystander_spawned": r"^ok=\d+ name=[^\s]+ x=[^\s]+ y=[^\s]+ z=[^\s]+$",
     "encounter_reset": r"^(?:generation=\d+ oldState=[^\s]+ executorRearmed=\d+ bossHealth=[^\s]+ targetHealth=[^\s]+|refused generation=\d+ reason=[^\s]+)$",
     "boss_dead": r"^generation=\d+ executorAborted=\d+$",
     "RESULT": r"^outcome=[^\s]+(?:\s+acceptedHits=\d+)?(?:\s+attacks=\d+)?$",
@@ -75,6 +76,7 @@ SCHEMAS = {
     # 6. Sweeps, Events, and Damage Resolution
     "event": r"^encounter=\d+ generation=\d+ instance=\d+ kind=[^\s]+ window=[^\s]+ group=[^\s]+ localSeconds=[^\s]+ label=[^\s]+$",
     "sweep": r"^instance=\d+ window=[^\s]+ from=[^\s]+ to=[^\s]+ tipDistanceCm=[^\s]+ substeps=\d+ clamped=\d+(?:\s+baked=\d+)?$",
+    "sweep_filter": r"^instance=\d+ window=[^\s]+ ignoredPawns=\d+ first=[^\s]* targetContact=\d+ selfHits=\d+$",
     "hit": r"^instance=\d+ window=[^\s]+ key=[^\s]+ outcome=[^\s]+ hpApplied=[^\s]+ healthBefore=[^\s]+ healthAfter=[^\s]+$",
     "invariant": r"^(?:targetHPBefore=[^\s]+ targetHPAfter=[^\s]+ expectedHP=[^\s]+ acceptedHits=\d+ appliedDamage=[^\s]+|targetHPBefore=[^\s]+ targetHPAfter=[^\s]+ damageAPIInvocationsByThisExecutor=\d+)$",
 

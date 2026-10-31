@@ -1,25 +1,26 @@
-# QA-002 Structured Event Log Schema Specification & Repository Audit (v3.0)
+# QA-002 Structured Event Log Schema Specification & Repository Audit (v3.1)
 
-**Document Version:** 3.0.0  
+**Document Version:** 3.1.0  
 **Author:** Antigravity  
-**Task Reference:** `[C-552]`, `[C-553]`, `[C-554]`, `[C-555]` (QA-002 Log Schema Validator, Semantic Monotonicity, and Decision Sequence Resolution)  
+**Task Reference:** `[C-552]`-`[C-555]` (QA-002 Log Schema Validator), `[C-562]` (HIT-005 Bystander & Sweep Filter)  
 **Requirement Reference:** `requirements.json` -> `BOSS-QA-002` (*Structured event log*)  
-**Status:** DELIVERED (Formal Schema v3.0, 50 Tokens, Semantic Ordering, Decision Seq Monotonicity, 50/50 Mutation Tests, Pure LF)  
+**Status:** DELIVERED (Formal Schema v3.1, 52 Tokens, Semantic Ordering, Decision Seq Monotonicity, 52/52 Mutation Tests, Pure LF)  
 
 ---
 
 ## 1. Executive Summary & Verification Census
 
-Per Tech Lead Claude's instructions in `[C-552]` through `[C-555]`, this document defines the formal production schema and semantic stability audit for all `[FrameworkProof]` structured telemetry emitted by the One Boss Fight Sevarog Combat Framework (spanning F3d telemetry proof through F11 stagger/phases, Track B COMBO3, and B_QA002).
+Per Tech Lead Claude's instructions in `[C-552]` through `[C-555]` and `[C-562]`, this document defines the formal production schema and semantic stability audit for all `[FrameworkProof]` structured telemetry emitted by the One Boss Fight Sevarog Combat Framework (spanning F3d telemetry proof through F11 stagger/phases, Track B COMBO3, B_QA002, and B_HIT005).
 
-A dedicated offline Python validator (`validate_framework_proof_logs.py` v3.0) and automated test suite (`test_validate_framework_proof_logs.py`) ingest, parse, validate syntax, and verify semantic monotonicity across all tracked logs in the repository.
+A dedicated offline Python validator (`validate_framework_proof_logs.py` v3.1) and automated test suite (`test_validate_framework_proof_logs.py`) ingest, parse, validate syntax, and verify semantic monotonicity across all tracked logs in the repository.
 
 ### Ingestion Census Across Tracked Repository Logs:
 - **Total Tracked Log Files Scanned:** 633 files across `Docs/BossCombatReview/Execution/`
-- **Total `[FrameworkProof]` Lines Analyzed:** 62,725 lines (plus 367 lines in `B_QA002/pie_f8/editor_raw.log`)
-- **Distinct Telemetry Tokens Identified:** 50 canonical tokens
-- **Syntax Conformance:** The formal schema describes the committed logs across all 62,725 lines (zero syntax mismatches).
+- **Total `[FrameworkProof]` Lines Analyzed:** 62,725 lines (plus 367 lines in `B_QA002/pie_f8/editor_raw.log` and 298 lines in `B_HIT005/byst60/editor_raw.log`)
+- **Distinct Telemetry Tokens Identified:** 52 canonical tokens
+- **Syntax Conformance:** The formal schema describes the committed logs across all lines (zero syntax mismatches).
 - **Decision Identity Resolution (v3.0):** Added persistent engine `DecisionSeq` member and `seq=N` logging on candidate, refusal, and decision lines, resolving duplicate `attack=1` re-evaluations following mid-attack stance breaks.
+- **Pawn Filtering & Test Hook Fixtures (v3.1):** Added formal schemas for `sweep_filter` (pawn contact filtering) and `bystander_spawned` (test fixture pawn spawning).
 - **Ledger Status:** `BOSS-QA-002` remains **PARTIAL** per Tech Lead ruling until full 220-suite regression execution.
 
 ---
@@ -44,12 +45,12 @@ The table below maps each of the 8 canonical requirements to the framework telem
 
 ---
 
-## 3. Complete 50-Token Formal Schema Matrix
+## 3. Complete 52-Token Formal Schema Matrix
 
 Each `[FrameworkProof]` log line follows the canonical Unreal Engine log format:
 `[<Timestamp>][<FrameIndex>]<LogCategory>: <Verbosity>: [FrameworkProof] <Token> <Payload>`
 
-The 50 recognized tokens, grouped by functional lifecycle domain with exact occurrence counts across the repository, are detailed below:
+The 52 recognized tokens, grouped by functional lifecycle domain with exact occurrence counts across the repository, are detailed below:
 
 | Token | Category | Occurrence Count | Payload Schema & Field Types | Version Notes |
 |:---|:---|:---:|:---|:---|
@@ -99,8 +100,10 @@ The 50 recognized tokens, grouped by functional lifecycle domain with exact occu
 | `combo_gate_duplicate`| Conditional Combos| 4 | `gate=<int> result=<str> reason=<str> stateUnchanged=<int>` | Rejection of duplicate gate evaluation. |
 | `phase_anim` | Life Phases | 4 | `(state=Triggered sequence=<str> slot=<str> length=<float> from=<str> to=<str> \| state=Finished phase=<str>)` | Dedicated phase transition animation montage. |
 | `reposition_turn` | Locomotion | 3 | `start yawToTarget=<float> range=<float> ratePerSecond=<float>` | In-band turn-in-place repositioning. |
+| `sweep_filter` | Hit Detection | 3 | `instance=<int> window=<str> ignoredPawns=<int> first=[<str>] targetContact=<int> selfHits=<int>` | Emitted when sweep encounters non-target pawns. Proves non-target pawns are filtered out of damage pipeline. |
 | `target_health_mismatch`| Fixture Target | 3 | `valid=<int> actual=<float> expected=<float> generation=<int>` | Target HP corruption detection. |
 | `posture_regen_start`| Posture System | 2 | `posture=<float> sinceLastDrainSeconds=<float> delaySeconds=<float> perSecond=<float>` | Posture regeneration initiation. |
+| `bystander_spawned` | Test Fixtures | 1 | `ok=<int> name=<str> x=<float> y=<float> z=<float>` | Test hook (rpg.BossProofBystander) logging spawn of non-target bystander character. |
 | `posture_regen_full`| Posture System | 1 | `posture=<float> max=<float>` | Full posture pool restoration. |
 | `nav_not_ready` | Navigation | 1 | `navSystem=<int> buildInProgress=<int> targetLocation=<Vector>` | Navigation mesh wait diagnostics. |
 

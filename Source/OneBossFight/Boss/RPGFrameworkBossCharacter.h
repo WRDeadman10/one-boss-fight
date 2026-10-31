@@ -56,6 +56,8 @@ private:
     int32 AttacksDone=0;
     /** BOSS-QA-002: one id per selector decision, never reset inside a process (attack= is an attack-budget slot and repeats after an aborted attack). Logged as seq= on candidate, refusal and decision lines. */
     int32 DecisionSeq=0;
+    /** BOSS-HIT-005 test hook (rpg.BossProofBystander): spawned once per encounter. */
+    bool bBystanderSpawned=false;
     /** F6c: the authoritative phase, changed only at the neutral decision gate; latched until restart. */
     FName CurrentPhaseId; bool bPhaseTwoLatched=false;
     /** F8 posture: pool, break state, and the time of the last drain (regeneration delay). */

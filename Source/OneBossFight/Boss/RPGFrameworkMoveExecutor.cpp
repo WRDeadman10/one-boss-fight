@@ -190,7 +190,7 @@ void URPGFrameworkMoveExecutor::SweepWindows(double PrevPosition,double Position
         UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] sweep instance=%llu window=%s from=%g to=%g tipDistanceCm=%g substeps=%d clamped=0 baked=%d"),Token.InstanceId,*W.WindowId.ToString(),Lo,Hi,TipDistance,Keys.Num()-1,bBaked?1:0);
         FCollisionQueryParams Params(SCENE_QUERY_STAT(FrameworkSweep),false,OwnerBoss.Get());
         const FCollisionObjectQueryParams Objects(ECC_Pawn);
-        bool bContact=false;
+        bool bContact=false; TSet<const AActor*> IgnoredPawns; FString FirstIgnored;   // BOSS-HIT-005: pawns the sweep touched that are not the target
         for (int32 I=1;I<Keys.Num()&&!bContact;++I)
         {
             // Each pair of consecutive key poses is one swept capsule, so the chain has no gaps even across a long frame.
@@ -201,8 +201,14 @@ void URPGFrameworkMoveExecutor::SweepWindows(double PrevPosition,double Position
             const FCollisionShape Shape=FCollisionShape::MakeCapsule(W.RadiusCm,float(Length*.5)+W.RadiusCm);
             TArray<FHitResult> Hits;
             GetWorld()->SweepMultiByObjectType(Hits,(PoseA0+PoseB0)*.5,(PoseA1+PoseB1)*.5,Rotation,Objects,Shape,Params);
-            for (const FHitResult& H:Hits) if (H.GetActor()==Target.Get()) {bContact=true;break;}
+            for (const FHitResult& H:Hits)
+            {
+                if (H.GetActor()==Target.Get()) bContact=true;
+                else if (const AActor* Other=H.GetActor()) { bool bAlready=false; IgnoredPawns.Add(Other,&bAlready); if (!bAlready&&FirstIgnored.IsEmpty()) FirstIgnored=Other->GetName(); }
+            }
         }
+        // Only logged when something was filtered, so the logs of every earlier scenario are unchanged. The boss itself is excluded by the query params and never appears here.
+        if (IgnoredPawns.Num()>0) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] sweep_filter instance=%llu window=%s ignoredPawns=%d first=%s targetContact=%d selfHits=%d"),Token.InstanceId,*W.WindowId.ToString(),IgnoredPawns.Num(),*FirstIgnored,bContact?1:0,IgnoredPawns.Contains(OwnerBoss.Get())?1:0);
         if (!bContact) continue;
         FRPGDamagePayload Payload;
         Payload.MoveId=Card->Spec().MoveId; Payload.AttackInstance=int32(Token.InstanceId); Payload.Generation=int32(Token.Generation);

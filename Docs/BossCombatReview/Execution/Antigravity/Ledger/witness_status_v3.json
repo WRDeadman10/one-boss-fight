@@ -1446,7 +1446,7 @@
       "status": "PARTIAL",
       "proof": [
         "Source/OneBossFight/Tests/RPGAutomationTests.cpp:173",
-        "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log:1593"
+        "Docs/BossCombatReview/Execution/Claude/B_HIT005/byst60/editor_raw.log:1655"
       ],
       "citations": [
         {
@@ -1455,13 +1455,13 @@
           "quoted": "if (!bTargetAlive) { Expected = ERPGDamageOutcome::RejectedDead; }"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log",
-          "line": 1593,
-          "quoted": "[2026.10.30-12.12.22:385][386]LogTemp: Display: [FrameworkProof] hit instance..."
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT005/byst60/editor_raw.log",
+          "line": 1655,
+          "quoted": "[2026.10.31-22.42.54:643][  6]LogTemp: Display: [FrameworkProof] sweep_filter instance=1 window=Window_SwingSlow_Primary ignoredPawns=1 first=Character_0 targetContact=1 selfHits=0"
         }
       ],
       "observable": "Trace queries filter out boss self-collision and dead bodies; only valid player combat capsule registers hit.",
-      "notes": "Resolver asserts RejectedDead for dead bodies (auto_tests:173); PIE fixture registers hit exclusively on target capsule with zero self-hits (f4_run1:1593); ignored self/dead candidates not explicitly logged per C-405."
+      "notes": "Self and non-target live pawn collision verified: bystander spawned at y=-60 cm (byst60:1583) and filtered across 3 sweep ticks with ignoredPawns=1, targetContact=1, selfHits=0 (byst60:1655), leaving accepted hits (2) and damage (55.0) unchanged; resolver asserts RejectedDead for dead bodies (auto_tests:173), but live dead-body candidate filtering is not yet exercised in PIE."
     },
     {
       "id": "BOSS-HIT-006",
