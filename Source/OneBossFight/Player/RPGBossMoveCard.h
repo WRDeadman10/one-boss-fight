@@ -62,6 +62,8 @@ struct FRPGBossMoveCardSpec
     UPROPERTY(EditAnywhere) float MinRangeCm = 0.f;
     UPROPERTY(EditAnywhere) float MaxRangeCm = 0.f;
     UPROPERTY(EditAnywhere) float FrontConeDegrees = 0.f;
+    /** BOSS-AWR-005: the card is refused when the vertical separation to the target is above this many cm (floor-plane cards: a target on a ledge or in the air). 0 = no vertical limit (every card authored before this field). */
+    UPROPERTY(EditAnywhere) float MaxVerticalDeltaCm = 0.f;
     UPROPERTY(EditAnywhere) float HPDamage = 0.f;
     /** First backend is in-place only. True is a named unsupported capability, not silently ignored. */
     UPROPERTY(EditAnywhere) bool bUsesRootMotion = false;

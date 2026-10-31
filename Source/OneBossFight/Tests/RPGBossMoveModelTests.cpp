@@ -7,9 +7,9 @@
 namespace BossMoveModelFixture
 {
 // Synthetic, metadata-only scheduling input: not real assets, tuned combat or playback proof.
-TSharedPtr<const FRPGCompiledBossMoveCard> Card(bool bZeroStart=false, float Rate=2.f)
+TSharedPtr<const FRPGCompiledBossMoveCard> Card(bool bZeroStart=false, float Rate=2.f, float MaxVertical=0.f)
 {
-    FRPGBossMoveCardSpec S; FRPGBossMoveMetadata M;
+    FRPGBossMoveCardSpec S; FRPGBossMoveMetadata M; S.MaxVerticalDeltaCm=MaxVertical;
     S.Schema=1; S.MoveId=TEXT("SyntheticMove"); S.FamilyId=TEXT("SyntheticFamily"); S.PhaseId=TEXT("SyntheticPhase");
     S.Skeleton=TSoftObjectPtr<USkeleton>(FSoftObjectPath(TEXT("/Game/OneBossFight/Data/TypedABIFixtures/F1/Skeleton.Skeleton")));
     S.Sequence=TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Data/TypedABIFixtures/F1/Sequence.Sequence")));
@@ -200,4 +200,24 @@ bool FBossMoveModelReserveBeforePlayback::RunTest(const FString&)
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveModelVerticalSeparation,"OneBossFight.Framework.MoveModel.VerticalSeparation",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FBossMoveModelVerticalSeparation::RunTest(const FString&)
+{
+    // BOSS-AWR-005: elevation separation above the card's limit invalidates the (floor plane) card; equal is in; 0 = no limit.
+    using namespace BossMoveModelFixture;
+    FRPGBossMoveModel M; FString E; TestTrue(TEXT("initialize"),M.Initialize(7,1,E));
+    auto Limited=Card(false,2.f,50.f), Unlimited=Card();
+    auto WithZ=[](double Z){auto S=Snapshot();S.VerticalDeltaCm=Z;return S;};
+    TestTrue(TEXT("same floor is eligible"),M.IsEligible(Limited,WithZ(0.),E));
+    TestTrue(TEXT("exactly at the limit is eligible"),M.IsEligible(Limited,WithZ(50.),E));
+    TestFalse(TEXT("just above the limit is refused"),M.IsEligible(Limited,WithZ(50.01),E));TestEqual(TEXT("named refusal"),E,FString(TEXT("MoveModel.Vertical")));
+    TestFalse(TEXT("a target far above is refused"),M.IsEligible(Limited,WithZ(400.),E));TestEqual(TEXT("named refusal"),E,FString(TEXT("MoveModel.Vertical")));
+    TestTrue(TEXT("a card with no limit ignores any vertical separation"),M.IsEligible(Unlimited,WithZ(400.),E));
+    TestFalse(TEXT("negative separation is a bad snapshot"),M.IsEligible(Limited,WithZ(-1.),E));TestEqual(TEXT("named refusal"),E,FString(TEXT("MoveModel.SnapshotDomain")));
+    TestFalse(TEXT("NaN separation is a bad snapshot"),M.IsEligible(Limited,WithZ(std::numeric_limits<double>::quiet_NaN()),E));TestEqual(TEXT("named refusal"),E,FString(TEXT("MoveModel.SnapshotDomain")));
+    TestFalse(TEXT("infinite separation is a bad snapshot"),M.IsEligible(Unlimited,WithZ(std::numeric_limits<double>::infinity()),E));TestEqual(TEXT("named refusal"),E,FString(TEXT("MoveModel.SnapshotDomain")));
+    // The card itself: a negative or NaN limit is refused by the card validator.
+    for(float Bad:{-1.f,std::numeric_limits<float>::quiet_NaN(),std::numeric_limits<float>::infinity()}){auto C=Card(false,2.f,Bad);TestFalse(TEXT("card with a bad vertical limit does not compile"),C.IsValid());}
+    return true;
+}
 #endif

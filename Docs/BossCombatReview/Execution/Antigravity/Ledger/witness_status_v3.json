@@ -1,11 +1,11 @@
 {
-  "version": "3.2.0",
+  "version": "3.3.0",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
     "WITNESSED": 29,
-    "PARTIAL": 21,
-    "NOT YET": 32
+    "PARTIAL": 22,
+    "NOT YET": 31
   },
   "requirements": [
     {
@@ -99,11 +99,67 @@
       "title": "Vertical separation",
       "section": "Awareness and observable context",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "PARTIAL",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:211",
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:212",
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:213",
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:214",
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:215",
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:216",
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:217",
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:218",
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:220"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
+          "line": 211,
+          "quoted": "TestTrue(TEXT(\"same floor is eligible\"),M.IsEligible(Limited,WithZ(0.),E));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
+          "line": 212,
+          "quoted": "TestTrue(TEXT(\"exactly at the limit is eligible\"),M.IsEligible(Limited,WithZ(50.),E));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
+          "line": 213,
+          "quoted": "TestFalse(TEXT(\"just above the limit is refused\"),M.IsEligible(Limited,WithZ(50.01),E));TestEqual(TEXT(\"named refusal\"),E,FString(TEXT(\"MoveModel.Vertical\")));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
+          "line": 214,
+          "quoted": "TestFalse(TEXT(\"a target far above is refused\"),M.IsEligible(Limited,WithZ(400.),E));TestEqual(TEXT(\"named refusal\"),E,FString(TEXT(\"MoveModel.Vertical\")));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
+          "line": 215,
+          "quoted": "TestTrue(TEXT(\"a card with no limit ignores any vertical separation\"),M.IsEligible(Unlimited,WithZ(400.),E));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
+          "line": 216,
+          "quoted": "TestFalse(TEXT(\"negative separation is a bad snapshot\"),M.IsEligible(Limited,WithZ(-1.),E));TestEqual(TEXT(\"named refusal\"),E,FString(TEXT(\"MoveModel.SnapshotDomain\")));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
+          "line": 217,
+          "quoted": "TestFalse(TEXT(\"NaN separation is a bad snapshot\"),M.IsEligible(Limited,WithZ(std::numeric_limits<double>::quiet_NaN()),E));TestEqual(TEXT(\"named refusal\"),E,FString(TEXT(\"MoveModel.SnapshotDomain\")));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
+          "line": 218,
+          "quoted": "TestFalse(TEXT(\"infinite separation is a bad snapshot\"),M.IsEligible(Unlimited,WithZ(std::numeric_limits<double>::infinity()),E));TestEqual(TEXT(\"named refusal\"),E,FString(TEXT(\"MoveModel.SnapshotDomain\")));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
+          "line": 220,
+          "quoted": "for(float Bad:{-1.f,std::numeric_limits<float>::quiet_NaN(),std::numeric_limits<float>::infinity()}){auto C=Card(false,2.f,Bad);TestFalse(TEXT(\"card with a bad vertical limit does not compile\"),C.IsValid());}"
+        }
+      ],
       "observable": "Elevation separation delta Z > threshold invalidates horizontal ground sweep cards.",
-      "notes": "Vertical delta Z evaluation filter in candidate evaluator not yet implemented (designated for Selector Block)."
+      "notes": "MoveCardSpec defines MaxVerticalDeltaCm (0 = no limit); live boss character populates Snapshot.VerticalDeltaCm = |Target.Z - Boss.Z| (boss_character:148); MoveModel::IsEligible enforces vertical limit with named refusal MoveModel.Vertical and snapshot domain bounds (move_model:28, 38). VerticalSeparation automation test (model_tests:211-220) proves same floor eligible (Z=0), exact limit eligible (Z=50), just above refused (Z=50.01), far above refused (Z=400), unlimited card ignores Z separation, negative/NaN/inf delta Z refused with MoveModel.SnapshotDomain, and invalid card limits (-1, NaN, inf) refused compilation. Status is PARTIAL per C-537 honest limit: unit model evaluation is 100% verified, but no authored proof card in the test maps sets MaxVerticalDeltaCm > 0 and no PIE target stands on an elevated ledge, so runtime selector refusal in live PIE is unwitnessed."
     },
     {
       "id": "BOSS-AWR-006",

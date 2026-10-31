@@ -145,7 +145,7 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
         const FVector D=Target->GetActorLocation()-GetActorLocation();FRPGBossDecisionSnapshot S;
         S.EncounterId=EncounterId;S.Generation=GenerationId;S.TargetId=uint64(Target->GetUniqueID());S.FrameId=GFrameCounter;
         S.PhaseId=CurrentPhaseId;S.ClockSeconds=GetWorld()->GetTimeSeconds();S.RangeCm=D.Size2D();
-        S.SignedYawDegrees=FMath::FindDeltaAngleDegrees(GetActorRotation().Yaw,D.Rotation().Yaw);S.bTargetValid=S.bNeutral=true;
+        S.SignedYawDegrees=FMath::FindDeltaAngleDegrees(GetActorRotation().Yaw,D.Rotation().Yaw);S.VerticalDeltaCm=FMath::Abs(D.Z);S.bTargetValid=S.bNeutral=true;
         GetCharacterMovement()->StopMovementImmediately();FString Error;
         if(Dependencies->Candidates.Num()>0)
         {

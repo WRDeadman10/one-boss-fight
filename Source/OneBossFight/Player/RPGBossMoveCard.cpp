@@ -53,6 +53,7 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
     Number(R, TEXT("MinRangeCm"), S.MinRangeCm);
     Number(R, TEXT("MaxRangeCm"), S.MaxRangeCm);
     Number(R, TEXT("FrontConeDegrees"), S.FrontConeDegrees);
+    Number(R, TEXT("MaxVerticalDeltaCm"), S.MaxVerticalDeltaCm);
     Number(R, TEXT("HPDamage"), S.HPDamage);
     if (S.FrontConeDegrees > 360.f || S.MaxRangeCm < S.MinRangeCm)
         Fail(R, TEXT("MoveCard.Eligibility"), TEXT("cone or range order"));

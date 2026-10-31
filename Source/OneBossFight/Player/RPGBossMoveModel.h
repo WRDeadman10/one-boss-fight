@@ -8,6 +8,7 @@ struct FRPGBossDecisionSnapshot
     uint64 EncounterId = 0, Generation = 0, TargetId = 0, FrameId = 0;
     FName PhaseId;
     double ClockSeconds = 0.0, RangeCm = 0.0, SignedYawDegrees = 0.0;
+    double VerticalDeltaCm = 0.0;   // BOSS-AWR-005: |target Z - boss Z|, >= 0
     bool bTargetValid = false, bNeutral = false;
 };
 struct FRPGBossAttackToken

@@ -25,7 +25,8 @@ bool FRPGBossMoveModel::IsEligible(const TSharedPtr<const FRPGCompiledBossMoveCa
         return Refuse(Error,TEXT("MoveModel.State"));
     if (!FMath::IsFinite(S.ClockSeconds) || S.ClockSeconds<0.0 ||
         !FMath::IsFinite(S.RangeCm) || S.RangeCm<0.0 || S.RangeCm>1.e6 ||
-        !FMath::IsFinite(S.SignedYawDegrees) || FMath::Abs(S.SignedYawDegrees)>180.0)
+        !FMath::IsFinite(S.SignedYawDegrees) || FMath::Abs(S.SignedYawDegrees)>180.0 ||
+        !FMath::IsFinite(S.VerticalDeltaCm) || S.VerticalDeltaCm<0.0 || S.VerticalDeltaCm>1.e6)
         return Refuse(Error,TEXT("MoveModel.SnapshotDomain"));
     if (S.PhaseId!=Card->Spec().PhaseId) return Refuse(Error,TEXT("MoveModel.Phase"));
     if (S.RangeCm<Card->Spec().MinRangeCm || S.RangeCm>Card->Spec().MaxRangeCm)
@@ -33,6 +34,9 @@ bool FRPGBossMoveModel::IsEligible(const TSharedPtr<const FRPGCompiledBossMoveCa
     // FrontConeDegrees is the FULL cone width; signed yaw admits left and right symmetrically.
     if (FMath::Abs(S.SignedYawDegrees)>0.5*Card->Spec().FrontConeDegrees)
         return Refuse(Error,TEXT("MoveModel.Cone"));
+    // BOSS-AWR-005: a card with a vertical limit is refused above it (equal is in); 0 = no limit.
+    if (Card->Spec().MaxVerticalDeltaCm>0.f && S.VerticalDeltaCm>double(Card->Spec().MaxVerticalDeltaCm))
+        return Refuse(Error,TEXT("MoveModel.Vertical"));
     if (bHasStarted && (S.FrameId<=LastStartFrame || S.ClockSeconds<LastClock))
         return Refuse(Error,TEXT("MoveModel.StaleDecision"));
     return true;
