@@ -174,14 +174,16 @@ Editor Python scripts (`unreal.EditorAssetLibrary`, `unreal.AssetTools`) and off
 
 The offline validator (`validate_weapon_config.py`) checks all domain constraints:
 
-| Config Field | Constraint / Domain Invariant | Failure Token |
-| :--- | :--- | :--- |
+| `mode` | Operation mode: `"new_weapon"` (appends rows for a new style) or `"update_existing_style"` (edits numbers for an existing style). | `Weapon.Config.Mode` |
 | `weapon_id`, `style_name` | Non-empty alphanumeric string, not `"None"` or empty. | `Weapon.Config.Identity` |
 | `hud_weapon_word` | Non-empty string $\le 32$ characters. | `Weapon.Config.Identity` |
+| Style Collision (`mode == new_weapon`) | Style cannot already have rows in `DA_WeaponAttacks` (first-match lookup in `RPGWeaponAttackTable.cpp:80-92` shadows rows). | `Weapon.Config.StyleAlreadyHasRows[<style>]` |
+| Style Update (`mode == update_existing_style`) | Every attack kind in config must already exist in `DA_WeaponAttacks` for that style. | `Weapon.Config.UnknownUpdateKind` |
 | Asset Paths (`*_path`, `*_class`) | Must start with `/Game/`, contain package dot separator (`Package.Asset`). | `Weapon.Config.Path` |
+| Asset Disk Existence | Physical asset must exist in `Content/` tree. | `Weapon.Config.PathMissing[<path>]` |
 | `build.build_id`, `console_name` | Non-empty string, unique against catalog builds. | `Weapon.Config.Build` |
 | `build.ui_order` | Integer $\ge 0$. | `Weapon.Config.Build` |
-| `attack_rows` | `Num() >= 1`, unique `kind` per weapon style. Required kinds: `Light`, `Strong`, `Charged`, `JumpHeavy`, `JumpLight`, `Knockdown` (mirrors Strength archetype in `DA_WeaponAttacks`). | `Weapon.Config.AttackCoverage` |
+| `attack_rows` | `Num() >= 1`, unique `kind` per weapon style. In `new_weapon` mode, requires full archetype coverage: `Light`, `Strong`, `Charged`, `JumpHeavy`, `JumpLight`, `Knockdown`. | `Weapon.Config.AttackCoverage` |
 | `posture_damage` | Finite float $\ge 0.0$. | `Weapon.Config.AttackDomain` |
 | `stamina_cost` | $-1.0$ (preserve pack) OR finite float $> 0.0$. | `Weapon.Config.AttackDomain` |
 | `bleed_buildup` | Finite float $\ge 0.0$. | `Weapon.Config.AttackDomain` |
@@ -219,13 +221,33 @@ In the One Boss Fight codebase, build and style resolution exists in two distinc
 
 ### 5.2 Unattended PIE Proof Execution
 
-To prove that a newly authored weapon functions in-game, the designer executes the unattended PIE driver via `run_pie.ps1`:
+Weapon verification in One Boss Fight operates at two distinct tiers:
+
+#### Tier 1: Table Tuning Row Proof (`-InjectRow`)
+For the Track C3 data utility, row presence in `DA_WeaponAttacks` is proved directly via the `-InjectRow` hook without requiring pack player montage wiring:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File Docs\BossCombatReview\Execution\Claude\F4\run_pie.ps1 `
   -Map "/Game/OneBossFight/FrameworkProof/L_SevarogC1v1FrameworkProof" `
-  -OutDir "C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Claude\C3\runs\pie_proof" `
-  -Task "PIE_NewWeapon_Katana_Proof" `
+  -OutDir "C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Claude\C3\runs\pie_row_proof" `
+  -Task "PIE_NewWeapon_Row_Proof" `
+  -InjectRow "0.5:PolearmCombatStyle:Light"
+```
+
+> [!NOTE]
+> **DA_WeaponAttacks Verification Seam (`-InjectRow`)**:  
+> For the Track C3 utility, row presence in `DA_WeaponAttacks` is verified directly using the `-InjectRow "0.5:<Style>:<Kind>"` hook in `drive_pie.py`.  
+> The F10 hook executes an injection hit reading `DA_WeaponAttacks` by `style_name`. Observing `attack_row weapon=PolearmCombatStyle kind=Light ... found=1` in `editor_raw.log` proves that the attack row was correctly authored, parsed, and registered in the table.  
+> Note that performing a real in-game animation swing with a brand new style requires equipping the weapon actor, AnimBP layer, and gameplay abilities inside the Advanced ARPG Combat Pack's player blueprint—a pack Blueprint authoring task outside the scope of the data utility. The `-InjectRow` hook provides the exact unattended verification seam needed to prove table registration.
+
+#### Tier 2: Real Player Swing Execution (`-RealBuild`, `-RealSwing`)
+To prove full end-to-end combat execution (once pack weapon equip and AnimBP montages are wired), the driver executes:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File Docs\BossCombatReview\Execution\Claude\F4\run_pie.ps1 `
+  -Map "/Game/OneBossFight/FrameworkProof/L_SevarogC1v1FrameworkProof" `
+  -OutDir "C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Claude\C3\runs\pie_swing_proof" `
+  -Task "PIE_NewWeapon_RealSwing_Proof" `
   -RealBuild Katana `
   -RealSwing "0.0:Light,1.0:Light,2.0:Strong"
 ```

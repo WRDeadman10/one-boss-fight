@@ -6,7 +6,7 @@ test_reopen_c3_weapon_design.py
 Offline re-open test verifying that C3_NEW_WEAPON_UTILITY_DESIGN.md exists,
 every cited C++ file and symbol exists on disk, and the design document
 accurately maps the weapon authoring pipeline, Build <-> Style relationship,
-real ERPGAttackKind enum values, and driver REAL_STYLE extension.
+real ERPGAttackKind enum values, -InjectRow PIE proof, and driver REAL_STYLE extension.
 """
 
 import os
@@ -77,9 +77,12 @@ DESIGN_NEEDLES = [
     "Weapon.Config.HyperArmor",
     "Weapon.Config.Build",
     "Weapon.Config.AttackCoverage",
+    "Weapon.Config.StyleAlreadyHasRows",
+    "Weapon.Config.UnknownUpdateKind",
     "rpg.Build",
     "-RealBuild",
     "-RealSwing",
+    "-InjectRow",
     "DA_WeaponAttacks",
     "DA_CombatCatalog",
     "FKismetBytecode",
