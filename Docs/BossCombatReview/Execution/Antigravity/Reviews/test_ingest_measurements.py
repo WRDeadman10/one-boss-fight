@@ -17,6 +17,10 @@ Verifies:
   8. Move ID contains forbidden reference name (Morgott/REF/Elden).
   9. Move ID collides with existing Cards/.uasset without id_status == 'existing'.
   10. Invalid or missing confidence level (must be 'high', 'medium', or 'low').
+- Partial ledger support (--partial):
+  11. All-null measurement entries are listed as pending and skipped; valid filled entries are ingested.
+  12. Half-filled entries (some fields null, some filled) are refused with ValueError.
+  13. Ledgers with no filled entries are refused with ValueError and exit 2 under CLI.
 
 Run: python -I test_ingest_measurements.py
 """
@@ -24,6 +28,7 @@ Run: python -I test_ingest_measurements.py
 import copy
 import json
 import os
+import subprocess
 import sys
 import unittest
 
@@ -98,6 +103,36 @@ GOOD_ENTRY_2 = {
     "notes": "Hand-calculated test fixture 2"
 }
 
+# Unfilled template entry (all measurement fields null)
+UNFILLED_ENTRY = {
+    "priority": 3,
+    "ref_id": "REF_Template_Unfilled",
+    "ref_to_original": "Move_EmberWarden_TemplateMove",
+    "id_status": "proposed_new",
+    "attack_family": "Template attack family",
+    "t_W_orig": None,
+    "t_W_combat": None,
+    "t_C_orig": None,
+    "t_C_combat": None,
+    "t_A_orig": None,
+    "t_A_combat": None,
+    "t_E_orig": None,
+    "t_E_combat": None,
+    "t_R_orig": None,
+    "t_R_combat": None,
+    "t_RE_orig": None,
+    "t_RE_combat": None,
+    "W_frame": None,
+    "C_frame": None,
+    "A_frame": None,
+    "E_frame": None,
+    "R_frame": None,
+    "RE_frame": None,
+    "evidence_pngs": None,
+    "confidence": None,
+    "notes": None
+}
+
 
 class TestIngestMeasurements(unittest.TestCase):
     def test_good_entries_validate_cleanly(self):
@@ -138,7 +173,7 @@ class TestIngestMeasurements(unittest.TestCase):
         ledger = {"entries": [GOOD_ENTRY_1, GOOD_ENTRY_2]}
         proposals = ingest_ledger(ledger)
         self.assertEqual(len(proposals), 2)
-        
+
         serialized = json.dumps(proposals)
         self.assertNotIn("REF_", serialized, "Reference identifier 'REF_' leaked into output!")
         self.assertNotIn("Morgott", serialized, "Reference name 'Morgott' leaked into output!")
@@ -247,6 +282,51 @@ class TestIngestMeasurements(unittest.TestCase):
         self.assertTrue(validate_entry(bad))
         bad["confidence"] = "low"
         self.assertTrue(validate_entry(bad))
+
+    def test_partial_ingest_all_null_skipped(self):
+        """Partial ingest: entries with ALL measurement fields null are skipped as pending."""
+        ledger = {"entries": [GOOD_ENTRY_1, UNFILLED_ENTRY]}
+        # Default without allow_partial raises ValueError on unfilled entry
+        with self.assertRaises(ValueError):
+            ingest_ledger(ledger, allow_partial=False)
+
+        # With allow_partial=True, unfilled entry is skipped, valid filled entry is ingested
+        proposals = ingest_ledger(ledger, allow_partial=True)
+        self.assertEqual(len(proposals), 1)
+        self.assertEqual(proposals[0]["MoveId"], "Move_EmberWarden_CurvedSlash_H1")
+
+    def test_partial_ingest_half_filled_refused(self):
+        """Partial ingest: entries with SOME fields null or inconsistent are refused."""
+        half_filled = copy.deepcopy(UNFILLED_ENTRY)
+        half_filled["W_frame"] = 100  # Some fields filled, others null
+        half_filled["confidence"] = "medium"
+        ledger = {"entries": [GOOD_ENTRY_1, half_filled]}
+        with self.assertRaises(ValueError) as ctx:
+            ingest_ledger(ledger, allow_partial=True)
+        self.assertIn("null or missing", str(ctx.exception))
+
+        # Another half-filled variant: frames set but missing confidence
+        half_filled2 = copy.deepcopy(GOOD_ENTRY_1)
+        half_filled2["confidence"] = None
+        ledger2 = {"entries": [GOOD_ENTRY_2, half_filled2]}
+        with self.assertRaises(ValueError) as ctx:
+            ingest_ledger(ledger2, allow_partial=True)
+        self.assertIn("confidence", str(ctx.exception))
+
+    def test_partial_ingest_none_filled_refused_cli_exit_2(self):
+        """Partial ingest: ledger with zero filled entries raises ValueError and exits 2 under CLI."""
+        ledger = {"entries": [UNFILLED_ENTRY]}
+        with self.assertRaises(ValueError) as ctx:
+            ingest_ledger(ledger, allow_partial=True)
+        self.assertIn("No filled entries found", str(ctx.exception))
+
+        # CLI test on template ledger (all 9 entries pending) -> must exit with returncode 2
+        script = os.path.join(os.path.dirname(__file__), "ingest_measurements.py")
+        template = os.path.join(os.path.dirname(__file__), "D2_MEASUREMENT_LEDGER.json")
+        res = subprocess.run([sys.executable, "-I", script, "--partial", template], capture_output=True, text=True)
+        self.assertEqual(res.returncode, 2)
+        self.assertIn("VALIDATION FAILED", res.stdout)
+        self.assertIn("all entries pending", res.stdout)
 
 
 if __name__ == "__main__":
