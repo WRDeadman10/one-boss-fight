@@ -3,6 +3,19 @@
 > **Purpose:** Single-page summary of every pending item waiting on an Owner decision, compiled strictly from repository records.  
 > **Rule:** Every claim cites an exact `file:line` or mailbox post in repository documentation with verified verbatim text.
 
+## Decisions Summary (Decided 2026-10-31 per [C-515] / [C-516])
+
+| # | Topic | Owner Decision | Summary & Action Taken |
+|---|---|---|---|
+| 1 | Cook Scope for ParagonSevarog (KI-143) | **Option A** | Whole Content/ParagonSevarog folder (~1.4 GB) added to DirectoriesToAlwaysCook in Config/DefaultGame.ini. |
+| 2 | NullRHI Headless Actor Spawning (KI-144) | **Option A** | Keep running level authoring and proof drivers in windowed editor (Claude/run_editor_script.ps1 -NullRhi 0). |
+| 3 | Phase-2 and Stagger Animations | **Option B** | Retarget / use existing animations on boss skeleton (Stun_Start/Loop/End; plan F11 C-517/C-518). |
+| 4 | HUD and Boss Health Bar Integration | **Option B** | Keep the C++ UMG HUD (URPGHUDWidget). |
+| 5 | Blood Effect and Sound | **Option B** | Leave bleed as numeric loss without VFX/audio for now. |
+| 6 | D3 Reference Numbers into Cards | **Option A** | Stay design input only; no raw parameter injection into runtime cards. |
+| 7 | Push of Unpushed Commits | **Option A** | Pushed to origin/main by Claude on owner's explicit instruction (origin/main = 6307818c). |
+| 8 | git gc --prune=now of .git Garbage | **Option A** | Executed by Claude: tmp_obj 66 -> 0, .git reclaimed 368 MB, clean fsck. |
+
 ---
 
 ### 1. Cook Scope for ParagonSevarog (`KI-143`)
@@ -39,7 +52,7 @@
 - **Recorded position (quote):** no recorded recommendation
 - **Repository Citations:**
   - `Documentation/DECISIONS.md:1258`: `No stagger animation yet (the boss freezes in place): known limit.`
-  - `Documentation/TASKS.md:695`: `Open: break in neutral, regen-to-full, stagger animation.`
+  - `Documentation/TASKS.md:696`: `Open: break in neutral, regen-to-full, stagger animation.`
   - `Documentation/DECISIONS.md:627`: `The roar, transition montage and immunity dependencies are still open for a later reviewed package`
 
 ---
@@ -49,7 +62,7 @@
   - The canvas `ARPGHUD` was deleted and replaced with C++ UMG widgets (`URPGHUDWidget`, `URPGPauseMenuWidget`) (`Documentation/DECISIONS.md:118`).
   - `Source/OneBossFight/Core/RPGHUD.cpp` and `.h` were recorded as deleted in the working tree (`Documentation/KNOWN_ISSUES.md:45`, `KI-041`).
   - The Advanced ARPG pack's menus, input, and HUD replaced the custom C++ HUD, but have not undergone a controller playtest (`Documentation/KNOWN_ISSUES.md:54`, `KI-050`).
-  - In framework boss proof maps, native boss health is read via `RPGPack::ReadAttribute`, but HUD bar display remains unverified (`Documentation/TASKS.md:691`).
+  - In framework boss proof maps, native boss health is read via `RPGPack::ReadAttribute`, but HUD bar display remains unverified (`Documentation/TASKS.md:692`).
 - **Options:** *(options written for this brief, not recorded in the repo)*
   - *Option A:* Retain the Advanced ARPG pack's UMG HUD and boss health bar, verifying native framework boss health integration during controller playtesting.
   - *Option B:* Retain C++ UMG HUD architecture (`URPGHUDWidget`) if custom HUD presentation is desired.
@@ -58,7 +71,7 @@
   - `Documentation/DECISIONS.md:118`: `HUD (URPGHUDWidget) and pause menu (URPGPauseMenuWidget) are UMG widgets whose trees are built in C++; the canvas ARPGHUD was deleted`
   - `Documentation/KNOWN_ISSUES.md:45`: `Source/OneBossFight/Core/RPGHUD.cpp and .h show as deleted in the working tree (not by this work)`
   - `Documentation/KNOWN_ISSUES.md:54`: `the pack's menus, input and HUD replace ours and have not had a controller playtest`
-  - `Documentation/TASKS.md:691`: `physics-asset coverage, double OnHit per sweep and the HUD bar stay UNVERIFIED.`
+  - `Documentation/TASKS.md:692`: `physics-asset coverage, double OnHit per sweep and the HUD bar stay UNVERIFIED.`
 
 ---
 
