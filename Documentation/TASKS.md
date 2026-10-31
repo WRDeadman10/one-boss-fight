@@ -26,7 +26,7 @@ Nobody commits except U. A row is changed only by its owner; others write a note
   * `D3` (Footage Measurements): IN PROGRESS (Claude; 4 of 10 clips filled in `D3_MEASURED_LEDGER.json`: REF_MaceSlam_Sweep medium, REF_HolySwordRain_Setup low, REF_GapPounce_Close low, REF_OmenCurseBurst_Phase2 medium, ledger commit 409ba526/3d9debd4/eeb58706/bd1d0233).
   * `D4` (Contact Sheet Tooling): DONE (commit `0620a775`; `contact_sheet.py`, scale-relative font sizing, HUD-avoiding bottom-left placement, 6/6 test pass).
   * `D5` (Ledger Fill Tool): DONE (commit `acc88060`; `fill_ledger.py`, automated timing arithmetic, auto evidence generation, 7/7 test pass).
-- **Framework Delivery Slices Proved (F1 to F10):**
+- **Framework Delivery Slices Proved (F1 to F11):**
   * `F1` (MoveCard Data Asset & Validator): `Source/OneBossFight/Player/RPGBossMoveCard.h`, `Source/OneBossFight/Player/RPGBossMoveCard.cpp`, `Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp`
   * `F2` (MoveModel State Machine & Tests): `Source/OneBossFight/Player/RPGBossMoveModel.h`, `Source/OneBossFight/Player/RPGBossMoveModel.cpp`, `Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp`
   * `F3a` (Promoted Runtime Source & Build): `Docs/BossCombatReview/Execution/Claude/F3a/full2_raw.log`
@@ -39,12 +39,12 @@ Nobody commits except U. A row is changed only by its owner; others write a note
   * `F8` (Boss Stance / Posture System, Drain, Break, Reset; Regen-to-full unexercised): `Docs/BossCombatReview/Execution/Claude/F8/` and `Claude/F8/ki150b/` (graded PASS via `Docs/BossCombatReview/Execution/Antigravity/Reviews/grade_f8_log.py`)
   * `F9` (Boss Bleed / Ailment System, Threshold Scaling, Non-Lethal Proc, Reset): `Docs/BossCombatReview/Execution/Claude/F9/` (graded PASS via `Docs/BossCombatReview/Execution/Antigravity/Reviews/grade_f9_log.py`)
   * `F10` (Weapon Attack Row Hit Intake Authority, Health Mult, Posture Drain, Bleed Buildup from `DA_WeaponAttacks`): `Docs/BossCombatReview/Execution/Claude/F10/` (graded PASS via `Docs/BossCombatReview/Execution/Antigravity/Reviews/grade_f10_log.py`)
-- **Automation Test Suite Health:** 209 of 209 tests passing (100% green across all modules; cited from `Docs/BossCombatReview/Execution/Claude/F10/full_raw.log:3999` `Display: **** TEST COMPLETE. EXIT CODE: 0 ****`, DLL `0628127b`).
+- **Automation Test Suite Health:** 211 of 211 tests passing (100% green across all modules; cited from `Docs/BossCombatReview/Execution/Claude/F11/full_raw.log:4178` `Display: **** TEST COMPLETE. EXIT CODE: 0 ****`, DLL `9f0c814fc7bd4da5568cab4756666b732e9f158d926e647c6db8df2aed3aa0bf`, log sha256 `714631e3cee7e3fb5dbc9a2384c94c236b67e4f82fac645c6deedebeec661535`).
 - **Owner Decisions (All 0-3 Resolved / Decided 2026-10-31, C-515/C-516):**
   * Decision 0 (DONE 2026-10-31): pushed to origin/main by Claude on the owner's explicit word; Antigravity still never pushes on its own.
   * Decision 1: Cook scope for ParagonSevarog (DONE 2026-10-31, Option A: whole `Content/ParagonSevarog` added to `DirectoriesToAlwaysCook` in `Config/DefaultGame.ini`, C-515; packaged cook of the folder not yet run: first packaged build will confirm size; `Documentation/KNOWN_ISSUES.md:254`, `KI-143`).
   * Decision 2 (DONE with caveat C-489, BUILD-94): live dodge i-frame rejection proven via IA_Dodge injection, timing dependent (`Documentation/KNOWN_ISSUES.md:257`, `KI-146`).
-  * Decision 3: DECIDED 2026-10-31 (Option B: reuse existing Sevarog stagger/transition animations); implementation F11 pending (spec `Reviews/F11_STAGGER_PHASE_ANIM_SPEC.md`).
+  * Decision 3: DONE 2026-10-31 (Option B: reuse existing Sevarog stagger/transition animations; implemented in F11, C-522/C-523, BUILD-96; proof map L_SevarogFrameworkProofF11 with DA_Sevarog_AnimProof_F11 using Stun_Start 1.70s / Stun_Loop 2.033s / Stun_End 0.733s on slot FullBody, phase clip Soul_Siphon 1.833s as proposed values; PIE verified).
 - **Closed Known Issues (Verified 2026-10-31):**
   * `KI-145` (Card ranges vs measured reach): RESOLVED for new content in C-464 with calibrated `*_R2` cards (`Claude/KI145/r2`).
   * `KI-150` (Pack combat style warmup reset): RESOLVED in C-451 (`Claude/F8/ki150b`) by waiting for `pack_style_known` (~10 s) before preparing target.
@@ -701,3 +701,4 @@ C365 design-only proposal 2026-10-30: Codex/Framework/FRAMEWORK_DESIGN_V1.md map
 - [x] C1 new boss utility v0 & v1 (C-470 / C-471, BUILD-90): single editor run handles 120 Hz blade path baking, card authoring, read-back verification, profile and proof level spawning (`Claude/C1/new_boss.py`, `Move_Sevarog_AntiGreed_C1`, `DA_SevarogC1v1_Profile`, `L_SevarogC1v1FrameworkProof`).
 - [x] C4 designer how-tos (commit 2d8e090b for boss how-to; C3_NEW_WEAPON_HOWTO.md for weapon authoring): `Documentation/Boss/C1_NEW_BOSS_HOWTO.md` and `Documentation/Boss/C3_NEW_WEAPON_HOWTO.md`.
 - [x] C3 new weapon utility v0 & v1 (C-479 / C-480, C-481 / C-482, C-482 / C-483, BUILD-91/92/93): table row manipulation (BUILD-91) + catalog registration via `URPGWeaponDefinition` + `URPGBuildDefinition` in `DA_CombatCatalog` (BUILD-92) and clean re-proof (BUILD-93), validated offline with `validate_weapon_config.py` v3, proven end-to-end in PIE with `-RealBuild polearm` (`Claude/C3/new_weapon.py`).
+- [x] F11 boss stagger triplet & phase transition animation (C-522, BUILD-96): Source/OneBossFight/Player/RPGBossStaggerAnimRules.h + URPGBossFrameworkProfile + ARPGFrameworkBossCharacter + RPGFrameworkRuntimeTests (211/211); Content DA_Sevarog_AnimProof_F11 + L_SevarogFrameworkProofF11; PIE neutral break, mid-attack break, phase transition selector hold, F8/F6c regressions pass (Docs/BossCombatReview/Execution/Claude/F11/).

@@ -4,6 +4,7 @@
 #include "RPGBossFrameworkProfile.generated.h"
 class USkeletalMesh;
 class UAnimInstance;
+class UAnimSequence;
 class APawn;
 /** F5: one selectable card with its cooldown and authored weight (proof values, design values, proposed). */
 USTRUCT()
@@ -58,6 +59,14 @@ public:
     UPROPERTY(EditAnywhere) float StaggerSeconds=0.f;
     UPROPERTY(EditAnywhere) float PostureRegenDelaySeconds=0.f;
     UPROPERTY(EditAnywhere) float PostureRegenPerSecond=0.f;
+    /** F11 (owner decision 3, spec Antigravity/Reviews/F11_STAGGER_PHASE_ANIM_SPEC.md): optional animation sequences of the boss skeleton. The three stagger clips are all set or all empty (empty = the F8 freeze in place);
+     *  Start plays at the break, Loop fills the middle, End starts at StaggerSeconds - its length and finishes with the stagger. PhaseTransitionAnim plays at the phase latch and holds the selector for its length.
+     *  AnimSlotName is the slot node of the boss AnimBP the clips play in (the cards use FullBody). */
+    UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> StaggerStartAnim;
+    UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> StaggerLoopAnim;
+    UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> StaggerEndAnim;
+    UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> PhaseTransitionAnim;
+    UPROPERTY(EditAnywhere) FName AnimSlotName=TEXT("FullBody");
     /** F9 bleed (F5 fixture with a hittable boss; BleedBuildupPerHit 0 = off, the other four must then be 0 too): each player hit adds BleedBuildupPerHit; at the threshold (first BleedInitialThreshold,
      *  raised by BleedThresholdIncrease after each proc up to BleedThresholdMax) the boss loses BleedHpFraction of its maximum health at once, never its last point (RPGBleedRules, unchanged). Design values, proposed. */
     UPROPERTY(EditAnywhere) float BleedBuildupPerHit=0.f;
@@ -74,6 +83,7 @@ struct ONEBOSSFIGHT_API FRPGFrameworkDependencies
     TStrongObjectPtr<URPGBossFrameworkProfile> Profile;
     TStrongObjectPtr<USkeletalMesh> Mesh;
     TStrongObjectPtr<UClass> AnimClass, TargetClass;
+    TStrongObjectPtr<UAnimSequence> StaggerStart, StaggerLoop, StaggerEnd, PhaseTransition;   // F11, each null when its profile field is empty
     TSharedPtr<const FRPGCompiledBossMoveCard> Card;
     struct FCandidate { TSharedPtr<const FRPGCompiledBossMoveCard> Card; float CooldownSeconds=0.f,Weight=1.f; };
     TArray<FCandidate> Candidates;   // F5 only
