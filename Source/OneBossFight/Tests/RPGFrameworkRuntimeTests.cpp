@@ -3,6 +3,7 @@
 #include "Player/RPGDamageResolver.h"
 #include "Player/RPGBossSweepSampling.h"
 #include "Player/RPGBossStaggerAnimRules.h"
+#include "Player/RPGBossTrackRules.h"
 #include "Boss/RPGFrameworkMoveExecutor.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimSequence.h"
@@ -326,6 +327,30 @@ bool FFrameworkStaggerAnimProfile::RunTest(const FString&)
     Postured();P->PhaseTransitionAnim=Clip(TEXT("Ultimate_Targeting"));Refused(TEXT("phase clip without a second phase"),TEXT("Framework.Profile.PhaseTransitionAnim.Phaseless"));
     Postured();P->PhaseTransitionAnim=Clip(TEXT("Ultimate_Targeting"));P->PhaseTwoFraction=.5f;P->PhaseTwoId=TEXT("PhaseTwo");TestTrue(TEXT("phase clip with a second phase: valid"),RPGFramework::ValidateProfile(*P,Error));
     Postured();P->PhaseTransitionAnim=Clip(TEXT("Ultimate_Targeting"));P->PhaseTwoFraction=.5f;P->PhaseTwoId=TEXT("PhaseTwo");P->AnimSlotName=NAME_None;Refused(TEXT("phase clip with an empty slot"),TEXT("Framework.Profile.StaggerAnim.SlotNameEmpty"));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkTrackYawCap,"OneBossFight.Framework.Runtime.TrackYawCap",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkTrackYawCap::RunTest(const FString&)
+{
+    // BOSS-ANM-004 staged rotation cap (RPGBossTrack::StepYaw). Hand values: cap 90 deg/s, one 60 Hz tick = 1.5 deg. (Targets are not exactly 180 deg away: that case has no defined short way.)
+    const float Tick=1.f/60.f;
+    auto Near=[this](const TCHAR* Why,float A,float B){TestTrue(Why,FMath::Abs(FMath::FindDeltaAngleDegrees(A,B))<1.e-3f);};
+    Near(TEXT("one tick toward +90 turns 1.5 deg"),RPGBossTrack::StepYaw(0.f,90.f,90.f,Tick,false),1.5f);
+    Near(TEXT("one tick toward -90 turns -1.5 deg"),RPGBossTrack::StepYaw(0.f,-90.f,90.f,Tick,false),-1.5f);
+    Near(TEXT("a long step is capped at 90 deg in 1 s"),RPGBossTrack::StepYaw(0.f,170.f,90.f,1.f,false),90.f);
+    Near(TEXT("inside the cap the target is reached exactly"),RPGBossTrack::StepYaw(0.f,1.f,90.f,Tick,false),1.f);
+    Near(TEXT("wrap: 350 toward 10 goes the short way (+1.5)"),RPGBossTrack::StepYaw(350.f,10.f,90.f,Tick,false),351.5f);
+    Near(TEXT("wrap: 10 toward 350 goes the short way (-1.5)"),RPGBossTrack::StepYaw(10.f,350.f,90.f,Tick,false),8.5f);
+    Near(TEXT("committed heading never changes"),RPGBossTrack::StepYaw(30.f,200.f,90.f,1.f,true),30.f);
+    Near(TEXT("zero rate never turns"),RPGBossTrack::StepYaw(30.f,200.f,0.f,1.f,false),30.f);
+    Near(TEXT("negative rate never turns"),RPGBossTrack::StepYaw(30.f,200.f,-5.f,1.f,false),30.f);
+    Near(TEXT("zero dt never turns"),RPGBossTrack::StepYaw(30.f,200.f,90.f,0.f,false),30.f);
+    Near(TEXT("NaN rate never turns"),RPGBossTrack::StepYaw(30.f,200.f,std::numeric_limits<float>::quiet_NaN(),Tick,false),30.f);
+    float Yaw=0.f,MaxStep=0.f;for(int32 I=0;I<60;++I){const float Next=RPGBossTrack::StepYaw(Yaw,170.f,90.f,Tick,false);MaxStep=FMath::Max(MaxStep,FMath::Abs(FMath::FindDeltaAngleDegrees(Yaw,Next)));Yaw=Next;}
+    Near(TEXT("60 ticks (1 s) toward 170 turn exactly the cap, 90 deg"),Yaw,90.f);
+    TestTrue(TEXT("no tick turned more than cap * dt (1.5 deg)"),MaxStep<=1.5f+1.e-3f);
+    for(int32 I=0;I<60;++I)Yaw=RPGBossTrack::StepYaw(Yaw,170.f,90.f,Tick,true);
+    Near(TEXT("after the commit 60 more ticks leave the yaw unchanged"),Yaw,90.f);
     return true;
 }
 #endif

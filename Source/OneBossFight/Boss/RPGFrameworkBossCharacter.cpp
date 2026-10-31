@@ -106,6 +106,7 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
             return;   // no selection while down
         }
         const float Before=float(Posture); Posture=RPGBossMath::RegenStep(float(Posture),P.PostureMax,GetWorld()->GetTimeSeconds(),LastPostureDrain,P.PostureRegenDelaySeconds,P.PostureRegenPerSecond,Delta);
+        if(float(Posture)>Before+KINDA_SMALL_NUMBER&&!bPostureRegenLogged){bPostureRegenLogged=true;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] posture_regen_start posture=%g sinceLastDrainSeconds=%g delaySeconds=%g perSecond=%g"),double(Before),GetWorld()->GetTimeSeconds()-LastPostureDrain,double(P.PostureRegenDelaySeconds),double(P.PostureRegenPerSecond));}
         if(float(Posture)>Before+KINDA_SMALL_NUMBER&&FMath::IsNearlyEqual(float(Posture),P.PostureMax)){UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] posture_regen_full posture=%g max=%g"),Posture,double(P.PostureMax));}
     }
     if(bArrived&&!bStartedMove)
@@ -208,7 +209,7 @@ double ARPGFrameworkBossCharacter::ApplyHit(double HealthFactor, double PostureA
         else
         {
             const double Drain=FMath::Min(Posture,PostureAmount);
-            Posture-=Drain; LastPostureDrain=Now;
+            Posture-=Drain; LastPostureDrain=Now; bPostureRegenLogged=false;
             UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] posture_drain amount=%g postureBefore=%g postureAfter=%g max=%g"),Drain,Posture+Drain,Posture,double(Dependencies->Profile->PostureMax));
             RPGBossRules::FFlags Flags; Flags.bDead=bDead; Flags.bStaggered=bStaggered;
             if (Posture<=0. && RPGBossRules::ResolveBreak(Flags,false)==RPGBossRules::EBreakResult::Started) StartStagger();
@@ -323,7 +324,7 @@ bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& 
     const TCHAR* OldState=bDead?TEXT("Dead"):TEXT("Finished");
     GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;
     if (bHittable) Health=MaxHealth;
-    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; ResetBleed();
+    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; ResetBleed();
     Selector.Reset(); CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId; bPhaseTwoLatched=false;
     SetActorLocation(WalkStart,false,nullptr,ETeleportType::TeleportPhysics);
     FVector Face=Target->GetActorLocation()-WalkStart; Face.Z=0.f; if (!Face.IsNearlyZero()) SetActorRotation(FRotator(0.f,Face.Rotation().Yaw,0.f));

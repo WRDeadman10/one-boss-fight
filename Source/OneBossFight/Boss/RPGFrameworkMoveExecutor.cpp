@@ -1,5 +1,6 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Boss/RPGFrameworkMoveExecutor.h"
+#include "Player/RPGBossTrackRules.h"
 #include "Boss/RPGFrameworkBossCharacter.h"
 #include "Player/RPGBossFrameworkProfile.h"
 #include "Player/RPGDamageResolver.h"
@@ -95,6 +96,7 @@ bool URPGFrameworkMoveExecutor::StartCard(const TSharedPtr<const FRPGCompiledBos
     if (!OwnedMontage) {Error=TEXT("Framework.Playback.StartFailed");Abort(Error);return false;}
     if (!Model_.AdvanceObservedLocal(Token,0.,Events,Error)) {Abort(Error);return false;}
     StartWorldSeconds=LastWorldSeconds=GetWorld()->GetTimeSeconds(); LastPosition=0.; bSawPoseWeight=false;
+    TrackTurned=TrackMaxRate=TrackDriftMax=0.; TrackYawAtCommit=0.f; bTrackCommitLogged=false;
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] playback_start encounter=%llu generation=%llu instance=%llu montage=%s slot=%s rate=%g label=%s"),Token.EncounterId,Token.Generation,Token.InstanceId,*OwnedMontage->GetPathName(),*Card->Spec().SlotName.ToString(),Card->Spec().PlayRate,*Label());
     return true;
 }
@@ -112,7 +114,10 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
     if (Model_.State()==ERPGBossMoveModelState::Idle)
     {
         if (!Anim->Montage_IsActive(OwnedMontage))
-        {OwnedMontage=nullptr;bFinished=true;SetComponentTickEnabled(false);UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] cleanup reason=Finished modelIdle=1 ownedMontageStopped=1"));}
+        {
+            if (bTrackCommitLogged) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] heading_locked instance=%llu yawAtCommit=%g maxDriftAfterCommitDegrees=%g"),Token.InstanceId,double(TrackYawAtCommit),TrackDriftMax);
+            OwnedMontage=nullptr;bFinished=true;SetComponentTickEnabled(false);UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] cleanup reason=Finished modelIdle=1 ownedMontageStopped=1"));
+        }
         return;
     }
     // A montage reaching its natural blend-out point (clip length - blend out) stops itself, possibly between two ticks. That is a finish when the last
@@ -128,11 +133,26 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
     if (bPlaying&&((!bSawPoseWeight&&Now-StartWorldSeconds>Profile->BlendInSeconds)||((Node<=0.f||Weight<=0.f)&&Position>=Card->Spec().ActiveStartSeconds)))
     {Fail(TEXT("Framework.Playback.NoSlotContribution"));return;}
     if (!bPlaying) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] montage_natural_end instance=%llu lastPosition=%g naturalEnd=%g"),Token.InstanceId,LastPosition,NaturalEnd);
-    if (!Model_.HeadingCommitted())
     {
-        const FVector D=Target->GetActorLocation()-OwnerBoss->GetActorLocation();
-        const float Yaw=FMath::FixedTurn(OwnerBoss->GetActorRotation().Yaw,D.Rotation().Yaw,Card->Spec().TrackDegreesPerSecond*Delta);
-        OwnerBoss->SetActorRotation(FRotator(0.f,Yaw,0.f));
+        // BOSS-ANM-004: the pure rule (RPGBossTrack::StepYaw) turns at most the card's TrackDegreesPerSecond until the heading is committed, then the yaw is locked.
+        const bool bCommitted=Model_.HeadingCommitted();
+        const float YawBefore=OwnerBoss->GetActorRotation().Yaw;
+        if (!bCommitted)
+        {
+            const FVector D=Target->GetActorLocation()-OwnerBoss->GetActorLocation();
+            const float Yaw=RPGBossTrack::StepYaw(YawBefore,D.Rotation().Yaw,Card->Spec().TrackDegreesPerSecond,Delta,false);
+            OwnerBoss->SetActorRotation(FRotator(0.f,Yaw,0.f));
+            const double Step=FMath::Abs(FMath::FindDeltaAngleDegrees(YawBefore,Yaw)); TrackTurned+=Step; if (Delta>0.f) TrackMaxRate=FMath::Max(TrackMaxRate,Step/double(Delta));
+        }
+        else
+        {
+            if (!bTrackCommitLogged)
+            {
+                bTrackCommitLogged=true; TrackYawAtCommit=YawBefore;
+                UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] heading_commit instance=%llu yaw=%g turnedDegrees=%g maxRateDegPerSec=%g capDegPerSec=%g"),Token.InstanceId,double(YawBefore),TrackTurned,TrackMaxRate,double(Card->Spec().TrackDegreesPerSecond));
+            }
+            TrackDriftMax=FMath::Max(TrackDriftMax,double(FMath::Abs(FMath::FindDeltaAngleDegrees(TrackYawAtCommit,YawBefore))));
+        }
     }
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] playback instance=%llu position=%g nodeWeight=%g montageWeight=%g base=%s tip=%s"),Token.InstanceId,Position,Node,Weight,*OwnerBoss->GetMesh()->GetSocketLocation(TEXT("weapon_r")).ToString(),*OwnerBoss->GetMesh()->GetSocketLocation(TEXT("root_weapon_end_r")).ToString());
     const double PrevPosition=LastPosition; LastPosition=Position; TArray<FRPGBossMoveModelEvent> Events; FString Error;
