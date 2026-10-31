@@ -364,11 +364,11 @@ class TestFillLedger(unittest.TestCase):
         self.assertEqual(entry10["W_frame"], 3951)
         self.assertEqual(entry10["confidence"], "low")
 
-        # Check filled entries subtrees (3 filled entries: p6, p9, p10)
+        # Check filled entries subtrees (4 filled entries: p6, p8, p9, p10)
         filled = [e for e in d3_data["entries"] if e.get("confidence") is not None]
-        self.assertEqual(len(filled), 3)
+        self.assertEqual(len(filled), 4)
         filled_ids = {e["ref_id"] for e in filled}
-        self.assertEqual(filled_ids, {"REF_HolySwordRain_Setup", "REF_MaceSlam_Sweep", "REF_GapPounce_Close"})
+        self.assertEqual(filled_ids, {"REF_HolySwordRain_Setup", "REF_OmenCurseBurst_Phase2", "REF_MaceSlam_Sweep", "REF_GapPounce_Close"})
 
         mace = next(e for e in filled if e["ref_id"] == "REF_MaceSlam_Sweep")
         self.assertEqual(mace["W_frame"], 1703)
@@ -379,6 +379,11 @@ class TestFillLedger(unittest.TestCase):
         self.assertEqual(rain["W_frame"], 2381)
         self.assertEqual(rain["A_frame"], 2566)
         self.assertEqual(rain["confidence"], "low")
+
+        burst = next(e for e in filled if e["ref_id"] == "REF_OmenCurseBurst_Phase2")
+        self.assertEqual(burst["W_frame"], 5189)
+        self.assertEqual(burst["A_frame"], 5347)
+        self.assertEqual(burst["confidence"], "medium")
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
