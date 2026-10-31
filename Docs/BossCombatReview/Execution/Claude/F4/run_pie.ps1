@@ -1,5 +1,5 @@
 # One F4 PIE run: run_pie.ps1 -Map <asset path> -OutDir <dir> -Task <name>
-param([string[]]$Extra=@(),[switch]$Restart,[string]$Inject='',[string]$Dodge='',[string]$Live='',[string]$InjectPie='',[string]$InjectRow='',[string]$RealSwing='',[string]$RealBuild='',[switch]$DiagLong,[Parameter(Mandatory=$true)][string]$Map,[Parameter(Mandatory=$true)][string]$OutDir,[Parameter(Mandatory=$true)][string]$Task)
+param([string[]]$Extra=@(),[switch]$Restart,[string]$Inject='',[string]$Dodge='',[string]$Live='',[string]$InjectPie='',[string]$InjectRow='',[string]$RealSwing='',[string]$RealBuild='',[string]$DodgeAction='',[switch]$DiagLong,[Parameter(Mandatory=$true)][string]$Map,[Parameter(Mandatory=$true)][string]$OutDir,[Parameter(Mandatory=$true)][string]$Task)
 $E = 'C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Claude\F4'
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 $Map | Set-Content "$E\current_map.txt"
@@ -10,6 +10,7 @@ if ($DiagLong) { "1" | Set-Content "$E\current_diag_long.txt" } else { Remove-It
 if ($InjectRow) { $InjectRow | Set-Content "$E\current_inject_row.txt" } else { Remove-Item "$E\current_inject_row.txt" -ErrorAction SilentlyContinue }
 if ($RealSwing) { $RealSwing | Set-Content "$E\current_real_swing.txt" } else { Remove-Item "$E\current_real_swing.txt" -ErrorAction SilentlyContinue }
 if ($RealBuild) { $RealBuild | Set-Content "$E\current_real_build.txt" } else { Remove-Item "$E\current_real_build.txt" -ErrorAction SilentlyContinue }
+if ($DodgeAction) { $DodgeAction | Set-Content "$E\current_dodge_action.txt" } else { Remove-Item "$E\current_dodge_action.txt" -ErrorAction SilentlyContinue }
 if ($Live) { $Live | Set-Content "$E\current_live.txt" } else { Remove-Item "$E\current_live.txt" -ErrorAction SilentlyContinue }
 if ($Dodge) { $Dodge | Set-Content "$E\current_dodge.txt" } else { Remove-Item "$E\current_dodge.txt" -ErrorAction SilentlyContinue }
 "$OutDir\editor_raw.log" | Set-Content "$E\current_log.txt"

@@ -1,4 +1,4 @@
-﻿# F4 PIE driver (copy of the F3d driver; map and log path come from files) (lead, Claude). Run in the windowed editor through "-ExecCmds=py <script>" so the script stays alive on slate ticks.
+# F4 PIE driver (copy of the F3d driver; map and log path come from files) (lead, Claude). Run in the windowed editor through "-ExecCmds=py <script>" so the script stays alive on slate ticks.
 # Loads the NEW proof map, starts PIE, waits until the framework logs RESULT or ERROR (or times out), ends PIE and quits the editor explicitly.
 # Reads the editor log file only to decide when to stop; all evidence is the raw log. Tags: [F3D_*]
 import os
@@ -25,6 +25,8 @@ REAL_STYLE = {'Starter': 'SwordCombatStyle', 'Strength': 'ClaymoreCombatStyle', 
 REAL_ACTION = {'Light': ('IA_NormalAttack', 0.12), 'Strong': ('IA_StrongAttack', 0.12), 'Charged': ('IA_ChargedAttack', 1.6)}
 REAL = {'t0': None, 'n': 0, 'hold_until': -1.0, 'combat': False}
 IA_PATH = '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/'
+DODGE_ACTION = [float(x) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_dodge_action.txt').read().strip().split(',') if x] if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_dodge_action.txt') else []  # C-488 (KI-146): seconds after the first playback_start: IA_Dodge held 0.12 s through Enhanced Input action injection (no key mapping needed)
+DODGE_A = {'t0': None, 'n': 0, 'hold_until': -1.0}
 DIAG_LONG = os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_diag_long.txt')  # C-449 (KI-150 follow-up): DIAG every second until 20 s of PIE and do not stop on a FrameworkProof ERROR
 DIAG_LAST = [-1.0]
 S = {'dodge_t': None, 'down': False, 'up': False, 'phase': 'load', 't': 0.0, 'n': 0, 'handle': None, 'pie_t': 0.0, 'diag': False}
@@ -132,6 +134,21 @@ def tick(dt):
                         intake.inject_boss_hit_for_test(bosses[0])
                         log('injected hit %d at %.3f s after playback_start' % (len(INJECTED) + 1, S['pie_t'] - S['dodge_t']))
                         INJECTED.append(S['pie_t'])
+            if DODGE_ACTION:
+                w = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
+                pc = unreal.GameplayStatics.get_player_controller(w, 0) if w else None
+                if pc is not None and DODGE_A['t0'] is None and log_has('[FrameworkProof] playback_start'):
+                    DODGE_A['t0'] = S['pie_t']
+                    pawn_ = pc.get_controlled_pawn()
+                    log('DODGEACTION player stamina=%s health=%s' % (attr(pawn_, 'Attribute.Stamina') if pawn_ else None, attr(pawn_, 'Attribute.Health') if pawn_ else None))
+                if pc is not None and DODGE_A['t0'] is not None:
+                    since = S['pie_t'] - DODGE_A['t0']
+                    if DODGE_A['n'] < len(DODGE_ACTION) and since >= DODGE_ACTION[DODGE_A['n']] and S['pie_t'] > DODGE_A['hold_until']:
+                        DODGE_A['hold_until'] = S['pie_t'] + 0.12
+                        DODGE_A['n'] += 1
+                        log('DODGEACTION %d IA_Dodge pressed at %.3f s after playback_start' % (DODGE_A['n'], since))
+                    if S['pie_t'] < DODGE_A['hold_until']:
+                        unreal.RPGInputTestUtils.inject_action(pc, unreal.load_asset(IA_PATH + 'IA_Dodge'), unreal.Vector(1, 0, 0))
             if REAL_SWING:
                 w = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
                 pc = unreal.GameplayStatics.get_player_controller(w, 0) if w else None
