@@ -28,6 +28,8 @@ IA_PATH = '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActi
 OVERLAY = open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_overlay.txt').read().strip() if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_overlay.txt') else ''  # BOSS-QA-001: rpg.BossOverlay value (1 or 2) set after the map loads
 DODGE_ACTION = [float(x) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_dodge_action.txt').read().strip().split(',') if x] if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_dodge_action.txt') else []  # C-488 (KI-146): seconds after the first playback_start: IA_Dodge held 0.12 s through Enhanced Input action injection (no key mapping needed)
 DODGE_A = {'t0': None, 'n': 0, 'hold_until': -1.0}
+SHIFT = [float(x) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_shift.txt').read().strip().replace(':', ',').split(',') if x] if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_shift.txt') else []  # BOSS-AWR-002 / ANM-004 live: "seconds:dx,dy,dz": after the first playback_start the player pawn is teleported by that vector once
+SHIFT_S = {'t0': None, 'done': False}
 DIAG_LONG = os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_diag_long.txt')  # C-449 (KI-150 follow-up): DIAG every second until 20 s of PIE and do not stop on a FrameworkProof ERROR
 DIAG_LAST = [-1.0]
 S = {'dodge_t': None, 'down': False, 'up': False, 'phase': 'load', 't': 0.0, 'n': 0, 'handle': None, 'pie_t': 0.0, 'diag': False}
@@ -138,6 +140,18 @@ def tick(dt):
                         intake.inject_boss_hit_for_test(bosses[0])
                         log('injected hit %d at %.3f s after playback_start' % (len(INJECTED) + 1, S['pie_t'] - S['dodge_t']))
                         INJECTED.append(S['pie_t'])
+            if SHIFT and not SHIFT_S['done']:
+                w = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
+                pc = unreal.GameplayStatics.get_player_controller(w, 0) if w else None
+                pawn_ = pc.get_controlled_pawn() if pc else None
+                if pawn_ is not None and SHIFT_S['t0'] is None and log_has('[FrameworkProof] playback_start'):
+                    SHIFT_S['t0'] = S['pie_t']
+                if pawn_ is not None and SHIFT_S['t0'] is not None and S['pie_t'] - SHIFT_S['t0'] >= SHIFT[0]:
+                    loc = pawn_.get_actor_location()
+                    new = unreal.Vector(loc.x + SHIFT[1], loc.y + SHIFT[2], loc.z + SHIFT[3])
+                    pawn_.set_actor_location(new, False, True)
+                    SHIFT_S['done'] = True
+                    log('SHIFT player moved %.3f s after playback_start by (%g,%g,%g) from (%g,%g,%g)' % (S['pie_t'] - SHIFT_S['t0'], SHIFT[1], SHIFT[2], SHIFT[3], loc.x, loc.y, loc.z))
             if DODGE_ACTION:
                 w = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
                 pc = unreal.GameplayStatics.get_player_controller(w, 0) if w else None

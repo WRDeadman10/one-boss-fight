@@ -96,7 +96,7 @@ bool URPGFrameworkMoveExecutor::StartCard(const TSharedPtr<const FRPGCompiledBos
     if (!OwnedMontage) {Error=TEXT("Framework.Playback.StartFailed");Abort(Error);return false;}
     if (!Model_.AdvanceObservedLocal(Token,0.,Events,Error)) {Abort(Error);return false;}
     StartWorldSeconds=LastWorldSeconds=GetWorld()->GetTimeSeconds(); LastPosition=0.; bSawPoseWeight=false;
-    TrackTurned=TrackMaxRate=TrackDriftMax=0.; TrackYawAtCommit=0.f; bTrackCommitLogged=false;
+    TrackTurned=TrackMaxRate=TrackDriftMax=0.; TrackYawAtCommit=0.f; bTrackCommitLogged=false; DecisionRangeCm=S.RangeCm;
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] playback_start encounter=%llu generation=%llu instance=%llu montage=%s slot=%s rate=%g label=%s"),Token.EncounterId,Token.Generation,Token.InstanceId,*OwnedMontage->GetPathName(),*Card->Spec().SlotName.ToString(),Card->Spec().PlayRate,*Label());
     return true;
 }
@@ -149,7 +149,7 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
             if (!bTrackCommitLogged)
             {
                 bTrackCommitLogged=true; TrackYawAtCommit=YawBefore;
-                UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] heading_commit instance=%llu yaw=%g turnedDegrees=%g maxRateDegPerSec=%g capDegPerSec=%g"),Token.InstanceId,double(YawBefore),TrackTurned,TrackMaxRate,double(Card->Spec().TrackDegreesPerSecond));
+                UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] heading_commit instance=%llu yaw=%g turnedDegrees=%g maxRateDegPerSec=%g capDegPerSec=%g decisionRangeCm=%g liveRangeCm=%g"),Token.InstanceId,double(YawBefore),TrackTurned,TrackMaxRate,double(Card->Spec().TrackDegreesPerSecond),DecisionRangeCm,FVector::Dist2D(OwnerBoss->GetActorLocation(),Target->GetActorLocation()));
             }
             TrackDriftMax=FMath::Max(TrackDriftMax,double(FMath::Abs(FMath::FindDeltaAngleDegrees(TrackYawAtCommit,YawBefore))));
         }

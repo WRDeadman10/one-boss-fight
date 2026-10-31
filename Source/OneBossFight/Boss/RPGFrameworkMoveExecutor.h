@@ -60,4 +60,5 @@ private:
     double StartWorldSeconds=0., LastWorldSeconds=0., LastPosition=0.;
     /** BOSS-ANM-004 telemetry of the heading tracking of the running attack (log lines heading_commit / heading_locked). */
     double TrackTurned=0., TrackMaxRate=0., TrackDriftMax=0.; float TrackYawAtCommit=0.f; bool bTrackCommitLogged=false;
+    double DecisionRangeCm=0.;   // BOSS-AWR-002: the range of the decision snapshot the running attack was started with
 };

@@ -1,11 +1,11 @@
 {
-  "version": "3.4.0",
+  "version": "3.5.0",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
     "WITNESSED": 31,
-    "PARTIAL": 26,
-    "NOT YET": 25
+    "PARTIAL": 27,
+    "NOT YET": 24
   },
   "requirements": [
     {
@@ -38,11 +38,37 @@
       "title": "Gate-time snapshot",
       "section": "Awareness and observable context",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "PARTIAL",
+      "proof": [
+        "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log:1579",
+        "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log:1614",
+        "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log:1784",
+        "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log:1858"
+      ],
+      "citations": [
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log",
+          "line": 1579,
+          "quoted": "[2026.10.31-18.21.45:678][943]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=Move_Sevarog_SwingSlow_F5 score=0.961551 range=153.845 phase=Phase_1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log",
+          "line": 1614,
+          "quoted": "[2026.10.31-18.21.45:992][975]LogTemp: Display: [FrameworkProof] heading_commit instance=1 yaw=155.37 turnedDegrees=24.6298 maxRateDegPerSec=90.0008 capDegPerSec=90 decisionRangeCm=153.845 liveRangeCm=183.489"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log",
+          "line": 1784,
+          "quoted": "[2026.10.31-18.21.47:355][120]LogTemp: Display: [FrameworkProof] decision attack=2 chosen=Move_Sevarog_AntiGreed_F5 score=0.515904 range=183.489 phase=Phase_1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log",
+          "line": 1858,
+          "quoted": "[2026.10.31-18.21.47:860][176]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=2"
+        }
+      ],
       "observable": "AI state evaluator captures target distance/angle snapshot strictly at gate open, ignoring subsequent player repositioning during windup.",
-      "notes": "Decision snapshot latch struct in AI decision pipeline not yet implemented in active runtime (designated for Selector Block)."
+      "notes": "Target range and angle are sampled into FRPGBossDecisionSnapshot at decision gate. In PIE shift proof (pie_shift2:1579, 1614, 1784), attack 1 runs against decision range 153.845 despite player pawn shift changing live range to 183.489; card execution executes without mid-action retargeting or trajectory abortion, and attack 2 samples the fresh range 183.489. Status is PARTIAL per C-543 honest limit: range snapshot isolation and absence of mid-action retargeting are witnessed live in PIE; angle snapshot isolation during execution is witnessed by construction / unit test."
     },
     {
       "id": "BOSS-AWR-003",
@@ -1128,7 +1154,9 @@
         "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:391",
         "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1620",
         "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1793",
-        "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1872"
+        "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1872",
+        "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log:1614",
+        "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log:1778"
       ],
       "citations": [
         {
@@ -1160,10 +1188,20 @@
           "file": "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log",
           "line": 1872,
           "quoted": "[2026.10.31-14.32.13:453][812]LogTemp: Display: [FrameworkProof] heading_locked instance=2 yawAtCommit=180 maxDriftAfterCommitDegrees=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log",
+          "line": 1614,
+          "quoted": "[2026.10.31-18.21.45:992][975]LogTemp: Display: [FrameworkProof] heading_commit instance=1 yaw=155.37 turnedDegrees=24.6298 maxRateDegPerSec=90.0008 capDegPerSec=90 decisionRangeCm=153.845 liveRangeCm=183.489"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log",
+          "line": 1778,
+          "quoted": "[2026.10.31-18.21.47:338][118]LogTemp: Display: [FrameworkProof] heading_locked instance=1 yawAtCommit=155.37 maxDriftAfterCommitDegrees=0"
         }
       ],
       "observable": "Boss rotation rate capped by TrackDegreesPerSecond; tracking locks to 0 deg/s during active swing.",
-      "notes": "TrackYawCap automation test asserts 60 Hz step turn (1.5 deg/tick), exact 90 deg 1s turn cap, and zero drift across 60 post-commit ticks (runtime_tests:365, 366, 368); live PIE log verifies heading_commit with capDegPerSec=90 and 180, and heading_locked confirms maxDriftAfterCommitDegrees=0 across both attacks (b_anm004_pie:1620, 1793, 1872). (Honest note per C-529: in PIE fixture boss already faces player so turnedDegrees=0; rate cap is witnessed by pure unit assertions on the exact executor tracking math, and heading lock is witnessed by live PIE)."
+      "notes": "Boss rotation rate capped per-card (TrackDegreesPerSecond) during pre-commit window; post-commit drift strictly zero. Runtime tests verify 60Hz 1.5 deg/step turn (runtime_tests:388-391); PIE proof under B_SHIFT/pie_shift2 confirms live boss turned 24.63 deg in commit window at measured max rate 90.0008 deg/s against cap 90 (pie_shift2:1614), and zero drift after commit (pie_shift2:1778), eliminating C-530 unit-only limit."
     },
     {
       "id": "BOSS-ANM-005",
