@@ -1,0 +1,8 @@
+[
+    "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+    "-ExecutePythonScript=\"C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/C1/new_boss.py C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/C1/example_v1_boss.json --dry-run\"",
+    "-unattended",
+    "-nosound",
+    "-nosplash",
+    "-abslog=Docs\\BossCombatReview\\Execution\\Claude\\C1\\runs_v1\\howto_check_dry\\editor_raw.log"
+]
