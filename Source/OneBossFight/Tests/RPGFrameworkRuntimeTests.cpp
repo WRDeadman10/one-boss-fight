@@ -304,6 +304,22 @@ bool FFrameworkComboProfile::RunTest(const FString&)
     {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);F3->ComboRoot=TEXT("A");F3->ComboNodes={Node(TEXT("A"),TEXT("MoveA"))};TestFalse(TEXT("combo outside the F5 lane refused"),RPGFramework::ValidateProfile(*F3,Error));TestEqual(TEXT("lane token"),Error,FString(TEXT("Framework.Profile.Domain")));}
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkRepositionProfile,"OneBossFight.Framework.Runtime.RepositionProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkRepositionProfile::RunTest(const FString&)
+{
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    auto F5=[&](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);P->RepositionMax=0;P->RepositionTurnDegPerSecond=0.f;};
+    F5();TestTrue(TEXT("off by default: valid"),RPGFramework::ValidateProfile(*P,Error));
+    for(int32 V:{1,3,8}){F5();P->RepositionMax=V;P->RepositionTurnDegPerSecond=180.f;TestTrue(TEXT("1..8 valid"),RPGFramework::ValidateProfile(*P,Error));}
+    for(int32 V:{-1,9,100}){F5();P->RepositionMax=V;P->RepositionTurnDegPerSecond=180.f;TestFalse(TEXT("outside 0..8 refused"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("token"),Error,FString(TEXT("Framework.Profile.Domain")));}
+    F5();P->RepositionMax=2;TestFalse(TEXT("reposition without a turn rate refused"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("token"),Error,FString(TEXT("Framework.Profile.Domain")));
+    F5();P->RepositionTurnDegPerSecond=180.f;TestFalse(TEXT("turn rate without reposition refused"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("token"),Error,FString(TEXT("Framework.Profile.Domain")));
+    for(float V:{-1.f,721.f,std::numeric_limits<float>::quiet_NaN()}){F5();P->RepositionMax=2;P->RepositionTurnDegPerSecond=V;TestFalse(TEXT("turn rate outside (0,720] refused"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("token"),Error,FString(TEXT("Framework.Profile.Domain")));}
+    {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);F3->RepositionMax=2;F3->RepositionTurnDegPerSecond=180.f;TestFalse(TEXT("outside the F5 lane refused"),RPGFramework::ValidateProfile(*F3,Error));TestEqual(TEXT("lane token"),Error,FString(TEXT("Framework.Profile.Domain")));}
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkStaggerAnimRules,"OneBossFight.Framework.Runtime.StaggerAnimRules",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
 bool FFrameworkStaggerAnimRules::RunTest(const FString&)
 {

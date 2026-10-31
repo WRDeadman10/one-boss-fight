@@ -80,6 +80,8 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
         const FString ComboToken=RPGBossCombo::Validate(BuildComboGraph(P));
         if (!ComboToken.IsEmpty()) {Error=FString::Printf(TEXT("Framework.Profile.%s"),*ComboToken);return false;}
     }
+    if (P.RepositionMax<0 || P.RepositionMax>8 || (P.RepositionMax>0 && !bF5) || !FMath::IsFinite(P.RepositionTurnDegPerSecond) || P.RepositionTurnDegPerSecond<0.f || P.RepositionTurnDegPerSecond>720.f || ((P.RepositionMax>0)!=(P.RepositionTurnDegPerSecond>0.f)))
+        return Fail(TEXT("Framework.Profile.Domain"));
     // F9: bleed needs the selector lane (F5) and a hittable boss; BleedBuildupPerHit 0 = off (the other four then 0 too), else a coherent set (token Framework.Profile.Bleed).
     {
         const float Values[]={P.BleedBuildupPerHit,P.BleedInitialThreshold,P.BleedThresholdIncrease,P.BleedThresholdMax,P.BleedHpFraction};

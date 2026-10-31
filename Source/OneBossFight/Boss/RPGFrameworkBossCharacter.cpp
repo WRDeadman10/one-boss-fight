@@ -16,6 +16,7 @@
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGBossMath.h"
 #include "Player/RPGBossOverlayRules.h"
+#include "Player/RPGBossTrackRules.h"
 #include "Player/RPGBossRules.h"
 static TAutoConsoleVariable<int32> CVarBossOverlay(TEXT("rpg.BossOverlay"),0,TEXT("Framework boss runtime overlay (BOSS-QA-001): 0 off, 1 on screen, 2 on screen and one [FrameworkProof] overlay log line per second."),ECVF_Default);
 ARPGFrameworkBossCharacter::ARPGFrameworkBossCharacter()
@@ -156,10 +157,28 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
                 if(T.bEligible){UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] candidate attack=%d card=%s score=%g"),AttacksDone+1,*T.MoveId.ToString(),T.Score);}
                 else{UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] refusal attack=%d card=%s reason=%s"),AttacksDone+1,*T.MoveId.ToString(),*T.Refusal);}
             }
+            if(bAsked&&Decision.ChosenIndex==INDEX_NONE&&P.RepositionMax>0&&S.RangeCm>=P.BandMinCm&&S.RangeCm<=P.BandMaxCm)
+            {
+                // Inside the band but nobody is eligible: the boss does not face the target (the cone filter). Turn in place at the profile rate; bounded to 3 s, then fail closed as before.
+                const double Now=GetWorld()->GetTimeSeconds(); if(RepositionTurnStartedAt<0.){RepositionTurnStartedAt=Now;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] reposition_turn start yawToTarget=%g range=%g ratePerSecond=%g"),S.SignedYawDegrees,S.RangeCm,double(P.RepositionTurnDegPerSecond));}
+                if(Now-RepositionTurnStartedAt>3.){Fail(TEXT("Framework.Selector.NoCandidate"));return;}
+                SetActorRotation(FRotator(0.f,RPGBossTrack::StepYaw(GetActorRotation().Yaw,D.Rotation().Yaw,P.RepositionTurnDegPerSecond,Delta,false),0.f));
+                return;
+            }
+            RepositionTurnStartedAt=-1.;
+            if(bAsked&&Decision.ChosenIndex==INDEX_NONE&&RepositionsInARow<P.RepositionMax)
+            {
+                // Opt-in repositioning: nobody is eligible from here (the target left the band): walk back to the band through the controller and decide again on arrival.
+                ++RepositionsInARow;bArrived=false;StartedAt=GetWorld()->GetTimeSeconds();FString WalkError;
+                UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] reposition attempt=%d max=%d range=%g reason=NoCandidate"),RepositionsInARow,P.RepositionMax,S.RangeCm);
+                auto* AI=Cast<ARPGFrameworkBossController>(GetController());
+                if(!AI||!AI->WalkToBand(this,WalkError)){Fail(WalkError.IsEmpty()?FString(TEXT("Framework.Boss.Controller")):WalkError);}
+                return;
+            }
             if(!bAsked||Decision.ChosenIndex==INDEX_NONE){Fail(TEXT("Framework.Selector.NoCandidate"));return;}
             UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] decision attack=%d chosen=%s score=%g range=%g phase=%s"),AttacksDone+1,*Decision.MoveId.ToString(),Decision.Score,S.RangeCm,*S.PhaseId.ToString());
             if(!Executor->StartCard(Dependencies->Candidates[Decision.ChosenIndex].Card,S,Error)){Fail(Error);return;}
-            Selector.NoteStarted(Decision.ChosenIndex,S.ClockSeconds);
+            Selector.NoteStarted(Decision.ChosenIndex,S.ClockSeconds);RepositionsInARow=0;
             if(ComboGraph.Nodes.Num()>0)
             {
                 const int32 RootIndex=RPGBossCombo::FindNode(ComboGraph,ComboGraph.Root);
@@ -389,7 +408,7 @@ bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& 
     const TCHAR* OldState=bDead?TEXT("Dead"):TEXT("Finished");
     GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;
     if (bHittable) Health=MaxHealth;
-    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; ResetBleed();
+    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; ResetBleed();
     Selector.Reset(); CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId; bPhaseTwoLatched=false;
     SetActorLocation(WalkStart,false,nullptr,ETeleportType::TeleportPhysics);
     FVector Face=Target->GetActorLocation()-WalkStart; Face.Z=0.f; if (!Face.IsNearlyZero()) SetActorRotation(FRotator(0.f,Face.Rotation().Yaw,0.f));

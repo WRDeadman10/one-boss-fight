@@ -1,5 +1,5 @@
 {
-  "version": "3.5.0",
+  "version": "3.6.0",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
@@ -1161,17 +1161,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 388,
+          "line": 404,
           "quoted": "Near(TEXT(\"60 ticks (1 s) toward 170 turn exactly the cap, 90 deg\"),Yaw,90.f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 389,
+          "line": 405,
           "quoted": "TestTrue(TEXT(\"no tick turned more than cap * dt (1.5 deg)\"),MaxStep<=1.5f+1.e-3f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 391,
+          "line": 407,
           "quoted": "Near(TEXT(\"after the commit 60 more ticks leave the yaw unchanged\"),Yaw,90.f);"
         },
         {
@@ -1236,7 +1236,7 @@
       "status": "NOT YET",
       "proof": [],
       "citations": [],
-      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45°).",
+      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45\u00b0).",
       "notes": "Motion warping clamping bounds not yet implemented in active runtime (designated for Movement Block)."
     },
     {
@@ -1291,7 +1291,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 339,
+          "line": 355,
           "quoted": "TestEqual(TEXT(\"no slot node in the AnimBP\"),Token([](auto& X){X.bSlotNodePresent=false;}),FString(TEXT(\"Framework.Profile.StaggerAnim.SlotNode\")));"
         },
         {
@@ -1611,7 +1611,7 @@
       "proof": [],
       "citations": [],
       "observable": "Boss maintains center-arena bias when target is near walls, avoiding getting pinned in corners.",
-      "notes": "Arena center biasing vector in AI locomotion not yet implemented (designated for Movement Block)."
+      "notes": "Current state (C-545): Opt-in repositioning implemented (RepositionMax walk back to band and RepositionTurnDegPerSecond turn-in-place), but center-arena bias when target is near walls is NOT implemented. Boss navigates directly toward player band without arena boundary / wall clearance scoring. Remains NOT YET."
     },
     {
       "id": "BOSS-MOV-003",
@@ -1622,7 +1622,7 @@
       "proof": [],
       "citations": [],
       "observable": "Movement requests exhibit commitment hysteresis; boss does not flip direction every frame.",
-      "notes": "Movement direction commitment timer and smoothing filter not yet implemented (designated for Movement Block)."
+      "notes": "Current state (C-545): Opt-in repositioning adds discrete reposition attempts (reposition attempt=N) and turn-in-place (reposition_turn start), but movement commitment hysteresis across continuous locomotion frames is NOT implemented. Boss stops immediately on reaching band without direction latching or smoothing. Remains NOT YET."
     },
     {
       "id": "BOSS-MOV-004",
@@ -1644,7 +1644,7 @@
       "proof": [],
       "citations": [],
       "observable": "If player teleports outside arena bounds, boss leashes to arena center and resets to neutral.",
-      "notes": "Out-of-bounds player leash trigger and arena reset not yet implemented (designated for Movement Block)."
+      "notes": "Current state (C-545): Opt-in repositioning allows boss to recover and re-approach target band (reposition attempt=N max=3) instead of dying/freezing when target leaves band, but arena center leashing upon target teleporting outside arena bounds is NOT implemented. Boss walks to player band, not arena center, and fails closed with Framework.Selector.NoCandidate if out-of-bounds/unreachable. Remains NOT YET."
     },
     {
       "id": "BOSS-MOV-006",
@@ -1915,7 +1915,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 320,
+          "line": 336,
           "quoted": "TestEqual(TEXT(\"loop count middle 1.6 / loop 0.5 = ceil 3.2 = 4\"),RPGStaggerAnim::LoopCount(T,S,E,.5f),4);"
         }
       ],
@@ -2079,17 +2079,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 399,
+          "line": 415,
           "quoted": "TestEqual(TEXT(\"attack running\"),RPGBossOverlay::Format(I),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=129cm Cone=120deg Window=Open Posture=40/100 Health=150/250 Stagger=0 PhaseHold=0\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 401,
+          "line": 417,
           "quoted": "TestEqual(TEXT(\"no card, stagger and hold\"),RPGBossOverlay::Format(N),FString(TEXT(\"Card=None State=Idle Phase=Phase_2 Range=300cm Cone=0deg Window=Closed Posture=100/100 Health=50/250 Stagger=1 PhaseHold=1\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 403,
+          "line": 419,
           "quoted": "TestEqual(TEXT(\"non-finite values never print as numbers\"),RPGBossOverlay::Format(Bad),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=n/acm Cone=120deg Window=Open Posture=40/100 Health=n/a/250 Stagger=0 PhaseHold=0\")));"
         },
         {

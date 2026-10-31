@@ -80,6 +80,8 @@ private:
     double OverlayLoggedAt=-1.; FString OverlayLastState;
     /** Combo (BOSS-COM rows): the pure graph of the profile and the state of the running combo; a branch gate is evaluated when a card of the combo finishes. */
     RPGBossCombo::FComboGraph ComboGraph; RPGBossCombo::FComboState ComboState; bool bComboActive=false; int32 ComboHitsAtStart=0; uint64 ComboGateCounter=0;
+    /** Repositions in a row since the last attack started (profile RepositionMax). */
+    int32 RepositionsInARow=0; double RepositionTurnStartedAt=-1.;
     bool HandleComboGate();
     FRPGBossDecisionSnapshot MakeSnapshot() const;
     void TickOverlay();

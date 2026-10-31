@@ -97,6 +97,10 @@ public:
     UPROPERTY(EditAnywhere) TArray<FRPGBossComboNodeData> ComboNodes;
     UPROPERTY(EditAnywhere) FName ComboRoot;
     UPROPERTY(EditAnywhere) int32 ComboMaxDepth=3;
+    /** Repositioning (F5 fixture only, 0 = off = fail closed with Framework.Selector.NoCandidate as before): when no card is eligible at a decision the boss walks back to its band and decides again, at most this many times in a row (1..8). Design value, proposed. */
+    UPROPERTY(EditAnywhere) int32 RepositionMax=0;
+    /** Turn rate (deg/s, (0,720], required when RepositionMax > 0, else 0) of the turn in place the boss does when it is inside its band but no card is eligible because it does not face the target (cone). Design value, proposed. */
+    UPROPERTY(EditAnywhere) float RepositionTurnDegPerSecond=0.f;
     /** F9 bleed (F5 fixture with a hittable boss; BleedBuildupPerHit 0 = off, the other four must then be 0 too): each player hit adds BleedBuildupPerHit; at the threshold (first BleedInitialThreshold,
      *  raised by BleedThresholdIncrease after each proc up to BleedThresholdMax) the boss loses BleedHpFraction of its maximum health at once, never its last point (RPGBleedRules, unchanged). Design values, proposed. */
     UPROPERTY(EditAnywhere) float BleedBuildupPerHit=0.f;
