@@ -12029,3 +12029,42 @@ TASK: A-405: Executing D5 Commit Order (C-498)
 
 2. NEXT ACTION:
    Execute commit, obtain commit hash, then proceed immediately to Track D doc updates (TASKS.md dashboard + TEST_PLAN.md BUILD-95 entry, no KNOWN_ISSUES edits). Report D5 commit hash and doc updates in A-406.
+
+### [A-406] Antigravity -> Claude,Owner, 2026-10-31 13:04
+TASK: A-406: D5 Commit Hash + Track D Documentation Updates (C-498)
+
+1. D5 COMMIT COMPLETED:
+   * Commit: acc88060 (acc88060c9cb7153bedb77f9bd749b44c7889bd6)
+   * Message: "docs: D5 ledger fill tool, ingest integration, and test suite"
+   * Files committed (5 total):
+     - Docs/BossCombatReview/Execution/Antigravity/Reviews/fill_ledger.py
+     - Docs/BossCombatReview/Execution/Antigravity/Reviews/test_fill_ledger.py
+     - Docs/BossCombatReview/Execution/Antigravity/Reviews/D4_CLIP_FINDER_AIDS.md
+     - Docs/BossCombatReview/Execution/Antigravity/Reviews/evidence_sha256.txt
+     - Documentation/TEAM_MAILBOX.md
+   * Zero .webm tracked, zero Content/ touched, zero git push.
+
+2. TRACK D DOCUMENTATION UPDATES (C-498):
+   a) Documentation/TASKS.md Dashboard:
+      SHA256: 43aced0084b848f7bb74fc744889dcaf07a9fbe00df2515b7a37d5eba80f1a1f (214951 bytes, pure CRLF)
+      * Updated Track D dashboard entry:
+        - D1 (Reference Measurement Protocol): DONE (commit cb9826e3)
+        - D2 (Measurement Ledger & Ingest): DONE (commit bb04eb95)
+        - D3 (Footage Measurements): IN PROGRESS (Claude; 0 of 8 clips filled in D3_MEASURED_LEDGER.json)
+        - D4 (Contact Sheet Tooling): DONE (commit 0620a775)
+        - D5 (Ledger Fill Tool): DONE (commit acc88060)
+
+   b) Documentation/TEST_PLAN.md:
+      SHA256: e218fbb2add69b7e0910f6fd5215a3e4aa00f52ffdec397e7950d9a86463481e (198137 bytes, pure CRLF)
+      * Appended BUILD-95 entry: Track D reference combat study tooling.
+      * Cited test suite counts under python -I: 37/37 PASS across 4 suites (test_reopen_d1_protocol.py 11/11, test_ingest_measurements.py 13/13, test_contact_sheet.py 6/6, test_fill_ledger.py 7/7).
+      * Recorded real FFmpeg 9.0 extraction runs on owner reference video with scale-relative font sizing and HUD-avoiding bottom-left timestamps.
+      * Recorded repository boundary safety enforcement: in-repo media output blocked, zero video/image files in repo.
+
+   c) KNOWN_ISSUES.md: Strictly untouched as ordered.
+
+3. COMMITTING BATCH:
+   Staging Documentation/TASKS.md, Documentation/TEST_PLAN.md, and Documentation/TEAM_MAILBOX.md for named batch "Track D docs". Strictly no push.
+
+4. NEXT ACTION:
+   Execute commit, obtain commit hash, post A-407 with hash.
