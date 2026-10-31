@@ -164,5 +164,75 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
         for v in all_semantic:
             self.assertEqual(v["kind"], "DUPLICATE_ATTACK_ID")
 
+    def test_decision_seq_semantics(self):
+        """Test seq= validation rules introduced in v3.0."""
+        # 1. Valid seq matching between traces and decision, with repeated attack=1 resolved by distinct seq
+        valid_log = """[2026.10.31-21.40.23:255][950]LogTemp: Display: [FrameworkProof] candidate attack=1 card=MoveA score=0.7 seq=1
+[2026.10.31-21.40.23:255][950]LogTemp: Display: [FrameworkProof] refusal attack=1 card=MoveB reason=TooFar seq=1
+[2026.10.31-21.40.23:255][950]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=MoveA score=0.7 range=120 phase=Phase_1 seq=1
+[2026.10.31-21.40.25:100][960]LogTemp: Display: [FrameworkProof] candidate attack=1 card=MoveC score=0.8 seq=2
+[2026.10.31-21.40.25:100][960]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=MoveC score=0.8 range=120 phase=Phase_2 seq=2
+"""
+        with tempfile.NamedTemporaryFile("w+", encoding="utf-8", delete=False, suffix=".log") as tf:
+            tf.write(valid_log)
+            tf_path = Path(tf.name)
+        try:
+            res = validator.validate_log_file(tf_path)
+            self.assertEqual(len(res["syntax_failures"]), 0)
+            self.assertEqual(len(res["semantic_violations"]), 0, f"Expected 0 violations, got {res['semantic_violations']}")
+        finally:
+            tf_path.unlink()
+
+        # 2. Trace mismatch: candidate seq=2, decision seq=1
+        mismatch_log = """[2026.10.31-21.40.23:255][950]LogTemp: Display: [FrameworkProof] candidate attack=1 card=MoveA score=0.7 seq=2
+[2026.10.31-21.40.23:255][950]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=MoveA score=0.7 range=120 seq=1
+"""
+        with tempfile.NamedTemporaryFile("w+", encoding="utf-8", delete=False, suffix=".log") as tf:
+            tf.write(mismatch_log)
+            tf_path = Path(tf.name)
+        try:
+            res = validator.validate_log_file(tf_path)
+            kinds = [v["kind"] for v in res["semantic_violations"]]
+            self.assertIn("TRACE_DECISION_SEQ_MISMATCH", kinds)
+        finally:
+            tf_path.unlink()
+
+        # 3. Duplicate decision seq
+        dup_seq_log = """[2026.10.31-21.40.23:255][950]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=MoveA score=0.7 range=120 seq=1
+[2026.10.31-21.40.25:100][960]LogTemp: Display: [FrameworkProof] decision attack=2 chosen=MoveB score=0.8 range=120 seq=1
+"""
+        with tempfile.NamedTemporaryFile("w+", encoding="utf-8", delete=False, suffix=".log") as tf:
+            tf.write(dup_seq_log)
+            tf_path = Path(tf.name)
+        try:
+            res = validator.validate_log_file(tf_path)
+            kinds = [v["kind"] for v in res["semantic_violations"]]
+            self.assertIn("DUPLICATE_DECISION_SEQ", kinds)
+        finally:
+            tf_path.unlink()
+
+        # 4. Non-increasing decision seq
+        non_inc_seq_log = """[2026.10.31-21.40.23:255][950]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=MoveA score=0.7 range=120 seq=5
+[2026.10.31-21.40.25:100][960]LogTemp: Display: [FrameworkProof] decision attack=2 chosen=MoveB score=0.8 range=120 seq=4
+"""
+        with tempfile.NamedTemporaryFile("w+", encoding="utf-8", delete=False, suffix=".log") as tf:
+            tf.write(non_inc_seq_log)
+            tf_path = Path(tf.name)
+        try:
+            res = validator.validate_log_file(tf_path)
+            kinds = [v["kind"] for v in res["semantic_violations"]]
+            self.assertIn("NON_INCREASING_DECISION_SEQ", kinds)
+        finally:
+            tf_path.unlink()
+
+    def test_b_qa002_evidence_log(self):
+        """Validate Claude/B_QA002/pie_f8/editor_raw.log passes with 0 syntax and 0 semantic violations."""
+        log_path = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_QA002/pie_f8/editor_raw.log"
+        self.assertTrue(log_path.exists(), f"Log file not found: {log_path}")
+        res = validator.validate_log_file(log_path)
+        self.assertEqual(len(res["syntax_failures"]), 0, f"Expected 0 syntax failures, got {res['syntax_failures']}")
+        self.assertEqual(len(res["semantic_violations"]), 0, f"Expected 0 semantic violations, got {res['semantic_violations']}")
+        self.assertEqual(res["framework_proof_lines"], 367)
+
 if __name__ == "__main__":
     unittest.main()

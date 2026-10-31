@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
 # Copyright One Boss Fight. All Rights Reserved.
 """
-validate_framework_proof_logs.py
+validate_framework_proof_logs.py (v3.0)
 
 Formal schema and semantic validator for all [FrameworkProof] structured telemetry lines
-emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11 and Track B).
+emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, and B_QA002).
 
 Validates:
 1. Header prefix (optional Unreal Engine standard log prefix: [YYYY.MM.DD-HH.MM.SS:mmm][frame]LogCategory: Verbosity:)
 2. Exact [FrameworkProof] token tag
 3. Registered schema match for all 50 recognized telemetry tokens
 4. Semantic checks per log:
-   - attack= ids in decision lines are unique and increasing within one boss run
+   - seq= (when present) is unique and strictly increasing per process log across decisions
+   - candidate and refusal lines of a decision carry the exact same seq as their decision
+   - attack= ids in decision lines:
+     * With seq: unique decision identity is guaranteed by seq (repeated attack= after mid-attack abort is resolved)
+     * Without seq (legacy logs): duplicate attack= is recorded as "legacy, no seq" finding
    - gate= ids in combo_gate are unique except the logged combo_gate_duplicate
    - instance= in playback_start is not reused inside one generation
    - UE timestamps (when present) never go backwards
@@ -53,10 +57,10 @@ SCHEMAS = {
     "reposition": r"^attempt=\d+ max=\d+ range=[^\s]+ reason=[^\s]+$",
     "reposition_turn": r"^start yawToTarget=[^\s]+ range=[^\s]+ ratePerSecond=[^\s]+$",
 
-    # 3. Candidate Selection & Gate Decisions
-    "candidate": r"^attack=\d+ card=[^\s]+ score=[^\s]+$",
-    "refusal": r"^attack=\d+ card=[^\s]+ reason=[^\s]+$",
-    "decision": r"^attack=\d+ chosen=[^\s]+ score=[^\s]+ range=[^\s]+(?:\s+phase=[^\s]+)?$",
+    # 3. Candidate Selection & Gate Decisions (v3.0 adds optional seq=\d+)
+    "candidate": r"^attack=\d+ card=[^\s]+ score=[^\s]+(?:\s+seq=\d+)?$",
+    "refusal": r"^attack=\d+ card=[^\s]+ reason=[^\s]+(?:\s+seq=\d+)?$",
+    "decision": r"^attack=\d+ chosen=[^\s]+ score=[^\s]+ range=[^\s]+(?:\s+phase=[^\s]+)?(?:\s+seq=\d+)?$",
 
     # 4. Heading Tracking & Motion Commitment
     "heading_commit": r"^instance=\d+ yaw=[^\s]+ turnedDegrees=[^\s]+ maxRateDegPerSec=[^\s]+ capDegPerSec=[^\s]+(?:\s+decisionRangeCm=[^\s]+ liveRangeCm=[^\s]+)?$",
@@ -108,7 +112,8 @@ COMPILED_SCHEMAS = {tok: re.compile(pat) for tok, pat in SCHEMAS.items()}
 LINE_RE = re.compile(r"\[FrameworkProof\]\s+([A-Za-z0-9_]+)(?:\s+(.*))?$")
 TS_RE = re.compile(r"^\[(\d{4}\.\d{2}\.\d{2}-\d{2}\.\d{2}\.\d{2}):(\d{3})\]")
 
-ATTACK_RE = re.compile(r"\[FrameworkProof\]\s+decision\s+attack=(\d+)")
+CANDIDATE_REFUSAL_RE = re.compile(r"\[FrameworkProof\]\s+(?:candidate|refusal)\s+attack=(\d+)\s+.*?(?:\s+seq=(\d+))?$")
+DECISION_RE = re.compile(r"\[FrameworkProof\]\s+decision\s+attack=(\d+)\s+.*?(?:\s+seq=(\d+))?$")
 GATE_RE = re.compile(r"\[FrameworkProof\]\s+combo_gate\s+gate=(\d+)")
 INSTANCE_RE = re.compile(r"\[FrameworkProof\]\s+playback_start\s+.*?\bgeneration=(\d+)\s+instance=(\d+)")
 ENC_RESET_RE = re.compile(r"\[FrameworkProof\]\s+encounter_reset\b")
@@ -171,6 +176,10 @@ def validate_log_file(file_path: Path):
     gen_instances = set()
     current_gen = 1
     
+    last_decision_seq = 0
+    seen_decision_seqs = set()
+    pending_trace_seqs = []
+    
     for lnum, line in enumerate(lines, start=1):
         # 1. Timestamp monotonicity check across lines with UE timestamp
         ts = parse_ue_timestamp(line)
@@ -206,31 +215,73 @@ def validate_log_file(file_path: Path):
             seen_attacks.clear()
             seen_gates.clear()
             gen_instances.clear()
+            pending_trace_seqs.clear()
             current_gen += 1
             continue
             
-        # Semantic check A: attack= ids in decision lines unique and increasing within one boss run
-        m_att = ATTACK_RE.search(line)
-        if m_att:
-            att = int(m_att.group(1))
-            if att in seen_attacks:
-                results["semantic_violations"].append({
-                    "line_number": lnum,
-                    "kind": "DUPLICATE_ATTACK_ID",
-                    "details": f"attack={att} already seen in run (aborted attack re-evaluation)",
-                    "raw_line": line
-                })
-            elif att <= last_attack:
-                results["semantic_violations"].append({
-                    "line_number": lnum,
-                    "kind": "NON_INCREASING_ATTACK_ID",
-                    "details": f"attack={att} <= last_attack={last_attack}",
-                    "raw_line": line
-                })
+        # Semantic check A: candidate/refusal trace collection
+        m_trace = CANDIDATE_REFUSAL_RE.search(line)
+        if m_trace and tok in ("candidate", "refusal"):
+            trace_seq_str = m_trace.group(2)
+            if trace_seq_str is not None:
+                pending_trace_seqs.append((lnum, int(trace_seq_str)))
+
+        # Semantic check B: decision line evaluation
+        m_dec = DECISION_RE.search(line)
+        if m_dec and tok == "decision":
+            att = int(m_dec.group(1))
+            seq_str = m_dec.group(2)
+            
+            if seq_str is not None:
+                # Modern engine with seq=N
+                dec_seq = int(seq_str)
+                if dec_seq in seen_decision_seqs:
+                    results["semantic_violations"].append({
+                        "line_number": lnum,
+                        "kind": "DUPLICATE_DECISION_SEQ",
+                        "details": f"Duplicate decision seq={dec_seq} encountered",
+                        "raw_line": line
+                    })
+                elif dec_seq <= last_decision_seq:
+                    results["semantic_violations"].append({
+                        "line_number": lnum,
+                        "kind": "NON_INCREASING_DECISION_SEQ",
+                        "details": f"Decision seq={dec_seq} <= last_decision_seq={last_decision_seq}",
+                        "raw_line": line
+                    })
+                seen_decision_seqs.add(dec_seq)
+                last_decision_seq = dec_seq
+                
+                # Verify that preceding candidate/refusal traces carried the exact same seq
+                for t_lnum, t_seq in pending_trace_seqs:
+                    if t_seq != dec_seq:
+                        results["semantic_violations"].append({
+                            "line_number": t_lnum,
+                            "kind": "TRACE_DECISION_SEQ_MISMATCH",
+                            "details": f"Trace seq={t_seq} does not match decision seq={dec_seq}",
+                            "raw_line": line
+                        })
+                pending_trace_seqs.clear()
+            else:
+                # Legacy log without seq
+                if att in seen_attacks:
+                    results["semantic_violations"].append({
+                        "line_number": lnum,
+                        "kind": "DUPLICATE_ATTACK_ID",
+                        "details": f"attack={att} repeated (legacy, no seq; aborted attack re-evaluation)",
+                        "raw_line": line
+                    })
+                elif att <= last_attack:
+                    results["semantic_violations"].append({
+                        "line_number": lnum,
+                        "kind": "NON_INCREASING_ATTACK_ID",
+                        "details": f"attack={att} <= last_attack={last_attack} (legacy, no seq)",
+                        "raw_line": line
+                    })
             seen_attacks.add(att)
             last_attack = att
             
-        # Semantic check B: gate= ids in combo_gate unique
+        # Semantic check C: gate= ids in combo_gate unique
         m_gate = GATE_RE.search(line)
         if m_gate:
             gid = int(m_gate.group(1))
@@ -243,7 +294,7 @@ def validate_log_file(file_path: Path):
                 })
             seen_gates.add(gid)
             
-        # Semantic check C: instance= in playback_start not reused in one generation
+        # Semantic check D: instance= in playback_start not reused in one generation
         m_inst = INSTANCE_RE.search(line)
         if m_inst:
             gen = int(m_inst.group(1))
@@ -314,7 +365,7 @@ def main():
         print(json.dumps(report, indent=2))
     else:
         print("================================================================================")
-        print(" FRAMEWORK PROOF STRUCTURED LOG TELEMETRY VALIDATION REPORT")
+        print(" FRAMEWORK PROOF STRUCTURED LOG TELEMETRY VALIDATION REPORT (v3.0)")
         print("================================================================================")
         print(f"Log files checked:          {total_files}")
         print(f"Total [FrameworkProof] lines: {total_fp_lines}")

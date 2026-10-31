@@ -1,26 +1,26 @@
-# QA-002 Structured Event Log Schema Specification & Repository Audit (v2.0)
+# QA-002 Structured Event Log Schema Specification & Repository Audit (v3.0)
 
-**Document Version:** 2.0.0  
+**Document Version:** 3.0.0  
 **Author:** Antigravity  
-**Task Reference:** `[C-552]`, `[C-553]` (QA-002 Log Schema Validator, Semantic Monotonicity, and Mutation Audit)  
+**Task Reference:** `[C-552]`, `[C-553]`, `[C-554]`, `[C-555]` (QA-002 Log Schema Validator, Semantic Monotonicity, and Decision Sequence Resolution)  
 **Requirement Reference:** `requirements.json` -> `BOSS-QA-002` (*Structured event log*)  
-**Status:** DELIVERED (Formal Schema, 50 Tokens, Semantic Ordering, 50/50 Mutation Tests, Pure LF)  
+**Status:** DELIVERED (Formal Schema v3.0, 50 Tokens, Semantic Ordering, Decision Seq Monotonicity, 50/50 Mutation Tests, Pure LF)  
 
 ---
 
 ## 1. Executive Summary & Verification Census
 
-Per Tech Lead Claude's instructions in `[C-552]` and `[C-553]`, this document defines the formal production schema and semantic stability audit for all `[FrameworkProof]` structured telemetry emitted by the One Boss Fight Sevarog Combat Framework (spanning F3d telemetry proof through F11 stagger/phases and Track B COMBO3).
+Per Tech Lead Claude's instructions in `[C-552]` through `[C-555]`, this document defines the formal production schema and semantic stability audit for all `[FrameworkProof]` structured telemetry emitted by the One Boss Fight Sevarog Combat Framework (spanning F3d telemetry proof through F11 stagger/phases, Track B COMBO3, and B_QA002).
 
-A dedicated offline Python validator (`validate_framework_proof_logs.py`) and automated test suite (`test_validate_framework_proof_logs.py`) were developed to ingest, parse, validate syntax, and verify semantic monotonicity across all tracked logs in the repository.
+A dedicated offline Python validator (`validate_framework_proof_logs.py` v3.0) and automated test suite (`test_validate_framework_proof_logs.py`) ingest, parse, validate syntax, and verify semantic monotonicity across all tracked logs in the repository.
 
 ### Ingestion Census Across Tracked Repository Logs:
 - **Total Tracked Log Files Scanned:** 633 files across `Docs/BossCombatReview/Execution/`
-- **Total `[FrameworkProof]` Lines Analyzed:** 62,725 lines
+- **Total `[FrameworkProof]` Lines Analyzed:** 62,725 lines (plus 367 lines in `B_QA002/pie_f8/editor_raw.log`)
 - **Distinct Telemetry Tokens Identified:** 50 canonical tokens
 - **Syntax Conformance:** The formal schema describes the committed logs across all 62,725 lines (zero syntax mismatches).
-- **Semantic Findings:** Exactly 17 semantic findings identified across 633 logs (detailed in Section 4).
-- **Ledger Status:** `BOSS-QA-002` remains **PARTIAL** per Tech Lead ruling in `[C-553]`.
+- **Decision Identity Resolution (v3.0):** Added persistent engine `DecisionSeq` member and `seq=N` logging on candidate, refusal, and decision lines, resolving duplicate `attack=1` re-evaluations following mid-attack stance breaks.
+- **Ledger Status:** `BOSS-QA-002` remains **PARTIAL** per Tech Lead ruling until full 220-suite regression execution.
 
 ---
 
@@ -33,7 +33,7 @@ The table below maps each of the 8 canonical requirements to the framework telem
 
 | Requirement Category | Logged Status | Token | ID Key | Time Key | Behavioral & Architectural Notes |
 |:---|:---:|:---|:---|:---|:---|
-| **Decisions** | **LOGGED** | `decision` | `attack` (ordinal int) | UE Timestamp / `range` snapshot | Emitted at neutral gate when move is selected. Ordinal attack index tracks execution budget. |
+| **Decisions** | **LOGGED** | `decision` | `seq` (monotonic int, v3.0+) / `attack` (ordinal slot) | UE Timestamp / `range` snapshot | Emitted at neutral gate when move is selected. `seq=N` provides monotonic per-process unique decision identity across stance breaks. |
 | **Commits** | **LOGGED** | `heading_commit` / `playback_start` | `instance` (int) | UE Timestamp | `heading_commit` latches rotation; `playback_start` commits montage playback. |
 | **Windows** | **LOGGED** | `event` | `window` (name), `group` (name) | `localSeconds` (float) / UE Timestamp | Emitted at `kind=Open`, `kind=Close`, `kind=Recovery`, and `kind=Finished`. |
 | **Contacts** | **LOGGED** | `hit` | `instance`, `window`, `key` | UE Timestamp | Records `ERPGDamageOutcome::Accepted` vs `RejectedDuplicate` with damage and health deltas. |
@@ -57,11 +57,11 @@ The 50 recognized tokens, grouped by functional lifecycle domain with exact occu
 | `sweep` | Hit Detection | 3,633 | `instance=<int> window=<str> from=<float> to=<float> tipDistanceCm=<float> substeps=<int> clamped=<int> [baked=<int>]` | F4-F6 chord sweep; F7+ adds optional `baked=1` for 120 Hz apex path. |
 | `event` | Hit Windows | 1,967 | `encounter=<int> generation=<int> instance=<int> kind=<Open\|Close\|Recovery\|Finished> window=<str> group=<str> localSeconds=<float> label=<str>` | State transitions for attack active windows. |
 | `hit` | Hit Detection | 1,109 | `instance=<int> window=<str> key=<str> outcome=<OutcomeEnum> hpApplied=<float> healthBefore=<float> healthAfter=<float>` | Records Accepted vs RejectedDuplicate hit outcomes. |
-| `refusal` | Move Selector | 895 | `attack=<int> card=<str> reason=<RefusalToken>` | Hard-filter disqualifications prior to scoring. |
-| `candidate` | Move Selector | 888 | `attack=<int> card=<str> score=<float>` | Qualified candidates evaluated with normalized utility scores. |
+| `refusal` | Move Selector | 895 | `attack=<int> card=<str> reason=<RefusalToken> [seq=<int>]` | Hard-filter disqualifications prior to scoring. B_QA002+ adds monotonic `seq=N`. |
+| `candidate` | Move Selector | 888 | `attack=<int> card=<str> score=<float> [seq=<int>]` | Qualified candidates evaluated with normalized utility scores. B_QA002+ adds `seq=N`. |
 | `cleanup` | Move Execution | 551 | `reason=<str> modelIdle=<int> ownedMontageStopped=<int>` | Playback cleanup; `reason` may include multi-word text. |
 | `playback_start` | Attack Playback | 492 | `encounter=<int> generation=<int> instance=<int> montage=<str> slot=<str> rate=<float> label=<str>` | Emitted upon montage instance commitment. |
-| `decision` | Move Selector | 422 | `attack=<int> chosen=<str> score=<float> range=<float> [phase=<str>]` | Decision gate selection; F11+ adds `phase=Phase_N`. |
+| `decision` | Move Selector | 422 | `attack=<int> chosen=<str> score=<float> range=<float> [phase=<str>] [seq=<int>]` | Decision gate selection; F11+ adds `phase=Phase_N`; B_QA002+ adds monotonic `seq=N`. |
 | `boss_hit` | Player Intake | 289 | `damage=<float> healthBefore=<float> healthAfter=<float>` | Character health damage applied via hit intake. |
 | `nav` | Navigation | 267 | `request=<int> projected=<Vector> fullPath=<int> result=<int>` | Projected target location and path validity. |
 | `walk` | Locomotion | 260 | `start=<Vector> end=<Vector> distanceCm=<float> rangeCm=<float> bandMin=<float> bandMax=<float> capsule=<Vector> mesh=<Vector>` | Locomotion approach to card range band. |
@@ -118,14 +118,18 @@ Per `[C-553]`, four formal semantic monotonicity checks were executed across all
 4. **Attack ID Monotonicity:** `attack=` in `decision` must be strictly increasing ($attack_N > attack_{N-1}$) within one encounter run.
    - **Result:** Exactly **17 occurrences of `DUPLICATE_ATTACK_ID`** identified across 633 logs.
 
-### Root Cause of the 17 Duplicate Attack ID Findings:
-All 17 occurrences occurred in the F8 mid-attack stance break proof suite and its subsequent regression runs:
+### Root Cause & Resolution of the Duplicate Attack ID Findings:
+All 17 occurrences occurred in legacy logs of the F8 mid-attack stance break proof suite and its subsequent regression runs:
 - In F8 (`L_SevarogFrameworkProofF8`), the test harness injects a posture-draining player hit at $t_0 + 0.94\text{s}$ during attack 1.
 - Attack 1 is aborted mid-swing (`event kind=Aborted`, `cleanup reason=StanceBreak`, `stance_break state=MidAttack`).
 - The framework character controller tracks `AttacksDone`, which only increments upon *natural completion* of an attack.
 - Consequently, after recovery from stagger and transition to Phase 2, `AttacksDone` is still 0, so the next decision evaluates as `decision attack=1` a second time.
+- **Engine Resolution (`[C-554]`, `[C-555]`):** Claude confirmed this was a genuine engine gap (where `attack=` functioned as an attack-budget slot rather than a unique decision identifier). Claude introduced a persistent monotonic `int32 DecisionSeq` member on `URPGFrameworkBossCharacter` (incremented via `++DecisionSeq` in `Select()`), emitting `seq=N` at the end of `candidate`, `refusal`, and `decision` lines. `attack=` remains unchanged for downstream grading scripts.
+- **Validator v3.0 Semantics:**
+  - Modern logs with `seq=N`: asserts `seq` is unique and strictly increasing per process; asserts candidate and refusal lines carry the exact same `seq` as their decision; resolves repeated `attack=` as valid re-evaluations since `seq` differs.
+  - Legacy logs without `seq`: reports repeated `attack=` as `legacy, no seq` findings for backward compatibility audit.
 
-### Exhaustive List of the 17 Semantic Findings:
+### Exhaustive List of the 17 Legacy Semantic Findings:
 1. `Docs/BossCombatReview/Execution/Claude/B_COMBO2/reg_f8/editor_raw.log:1714` -> `DUPLICATE_ATTACK_ID: attack=1 already seen in run`
 2. `Docs/BossCombatReview/Execution/Claude/B_DEF002/reg_f8/editor_raw.log:1706` -> `DUPLICATE_ATTACK_ID: attack=1 already seen in run`
 3. `Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log:1728` -> `DUPLICATE_ATTACK_ID: attack=1 already seen in run`

@@ -152,11 +152,11 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
         if(Dependencies->Candidates.Num()>0)
         {
             FRPGBossSelectorDecision Decision;
-            const bool bAsked=Selector.Select(Executor->Model(),S,Decision);
+            const bool bAsked=Selector.Select(Executor->Model(),S,Decision);const int32 Seq=++DecisionSeq;
             for(const FRPGBossSelectorTrace& T:Decision.Traces)
             {
-                if(T.bEligible){UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] candidate attack=%d card=%s score=%g"),AttacksDone+1,*T.MoveId.ToString(),T.Score);}
-                else{UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] refusal attack=%d card=%s reason=%s"),AttacksDone+1,*T.MoveId.ToString(),*T.Refusal);}
+                if(T.bEligible){UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] candidate attack=%d card=%s score=%g seq=%d"),AttacksDone+1,*T.MoveId.ToString(),T.Score,Seq);}
+                else{UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] refusal attack=%d card=%s reason=%s seq=%d"),AttacksDone+1,*T.MoveId.ToString(),*T.Refusal,Seq);}
             }
             if(bAsked&&Decision.ChosenIndex==INDEX_NONE&&P.RepositionMax>0&&S.RangeCm>=P.BandMinCm&&S.RangeCm<=P.BandMaxCm)
             {
@@ -177,7 +177,7 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
                 return;
             }
             if(!bAsked||Decision.ChosenIndex==INDEX_NONE){Fail(TEXT("Framework.Selector.NoCandidate"));return;}
-            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] decision attack=%d chosen=%s score=%g range=%g phase=%s"),AttacksDone+1,*Decision.MoveId.ToString(),Decision.Score,S.RangeCm,*S.PhaseId.ToString());
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] decision attack=%d chosen=%s score=%g range=%g phase=%s seq=%d"),AttacksDone+1,*Decision.MoveId.ToString(),Decision.Score,S.RangeCm,*S.PhaseId.ToString(),Seq);
             if(!Executor->StartCard(Dependencies->Candidates[Decision.ChosenIndex].Card,S,Error)){Fail(Error);return;}
             Selector.NoteStarted(Decision.ChosenIndex,S.ClockSeconds);RepositionsInARow=0;
             if(ComboGraph.Nodes.Num()>0)
