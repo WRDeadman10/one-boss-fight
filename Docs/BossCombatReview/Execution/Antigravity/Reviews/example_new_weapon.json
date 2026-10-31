@@ -5,10 +5,19 @@
   "hud_weapon_word": "Polearm",
   "style_asset_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Polearms/PolearmCombatStyle.PolearmCombatStyle",
   "item_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Polearms/FengMaoWeapon.FengMaoWeapon",
-  "item_base_class": "/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/WeaponItem.WeaponItem",
+  "item_base_class": "/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/WeaponItem.WeaponItem_C",
   "actor_class": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Polearms/BP_FengMaoWeapon.BP_FengMaoWeapon_C",
   "ability_class": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Polearms/GA_Polearm_Melee.GA_Polearm_Melee_C",
   "style_aliases": [],
+  "catalog": {
+    "register": true,
+    "weapon_asset_path": "/Game/OneBossFight/Data/Catalog/DA_Weapon_FengMaoPolearm.DA_Weapon_FengMaoPolearm",
+    "build_asset_path": "/Game/OneBossFight/Data/Catalog/DA_Build_FengMaoPolearm.DA_Build_FengMaoPolearm",
+    "catalog_root_path": "/Game/OneBossFight/Data/Catalog/DA_CombatCatalog.DA_CombatCatalog",
+    "require_exact_rows": true,
+    "legacy_slot": -1,
+    "icon_path": "/Game/OneBossFight/UI/Art/T_Boss01_Icon_Strength.T_Boss01_Icon_Strength"
+  },
   "build": {
     "build_id": "FengMaoPolearmBuild",
     "console_name": "polearm",

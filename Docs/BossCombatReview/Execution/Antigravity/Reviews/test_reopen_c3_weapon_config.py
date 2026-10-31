@@ -5,7 +5,9 @@ test_reopen_c3_weapon_config.py
 ===============================
 Offline re-open test verifying that validate_weapon_config.py,
 test_validate_weapon_config.py, and example_new_weapon.json exist,
-pass all unit tests, and faithfully implement the C3 weapon schema.
+pass all unit tests, and faithfully implement the C3 weapon schema
+including the C3 v1 catalog block extension, item_base_class _C rule,
+and DirectoriesToAlwaysCook cooked root verification.
 """
 
 import json
@@ -32,11 +34,23 @@ CHECKS = [
         "Weapon.Config.EnemyCombatStyle",
         "Weapon.Config.StyleAlreadyHasRows",
         "Weapon.Config.UnknownUpdateKind",
+        "Weapon.Config.ItemBaseClassPath",
+        "Weapon.Config.Catalog.IconCookRoot",
         "Weapon.Config.AttackDomain",
         "Weapon.Config.HyperArmor",
         "Weapon.Config.Build",
         "Weapon.Config.AttackCoverage",
         "Weapon.Config.InvalidAttackKind",
+        "Weapon.Config.Catalog.Structure",
+        "Weapon.Config.Catalog.Path",
+        "Weapon.Config.Catalog.LegacySlot",
+        "Weapon.Config.Catalog.ReservedName",
+        "Weapon.Config.Catalog.AliasCollision",
+        "Weapon.Config.Catalog.IconPath",
+        "Weapon.Config.Catalog.ExactRows",
+        "SHIPPED_LEGACY_TOKENS",
+        "KNOWN_ITEM_BASE_CLASSES",
+        "ALWAYS_COOK_DIRECTORIES",
         "DEFAULT_EXISTING_ROWS",
         "KNOWN_PACK_COMBAT_STYLES",
         "REQUIRED_ATTACK_KINDS",
@@ -62,6 +76,14 @@ CHECKS = [
         "test_15_negative_style_already_has_rows",
         "test_16_negative_update_mode_unknown_kind",
         "test_17_negative_unknown_mode",
+        "test_18_negative_catalog_legacy_slot",
+        "test_19_negative_catalog_reserved_name",
+        "test_20_negative_catalog_legacy_collision",
+        "test_21_negative_catalog_path_not_in_catalog_folder",
+        "test_22_negative_catalog_icon_missing",
+        "test_23_negative_item_base_class_no_suffix_c",
+        "test_24_negative_catalog_icon_outside_cook_root",
+        "test_25_negative_asset_outside_cook_root",
     ]),
 ]
 
@@ -105,7 +127,7 @@ def main():
     unit_test_script = os.path.join(_THIS_DIR, "test_validate_weapon_config.py")
     res = subprocess.run([sys.executable, "-I", unit_test_script], capture_output=True, text=True)
     if res.returncode == 0:
-        print("[PASS] test_validate_weapon_config.py passed (20/20)")
+        print("[PASS] test_validate_weapon_config.py passed (28/28)")
         passed += 1
     else:
         print(f"[FAIL] test_validate_weapon_config.py failed:\n{res.stderr}\n{res.stdout}")

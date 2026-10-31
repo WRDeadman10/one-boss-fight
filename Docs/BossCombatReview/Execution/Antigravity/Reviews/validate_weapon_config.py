@@ -15,12 +15,19 @@ Validates the scriptable portion of a new weapon authoring specification:
 5. Attack kind domain rules (mirrors Source/OneBossFight/Player/RPGAttackKind.h:10-35).
 6. Pack combat style existence & enemy style rejection (mirrors Content/AdvancedARPGCombat/).
 7. Asset existence checking (optional asset_exists set/callable for live engine or offline disk checking).
+8. Blueprint Generated Class Suffix Check ([Weapon.Config.ItemBaseClassPath]):
+   item_base_class must be a generated Blueprint class path ending in '_C' (Cast<UClass> in RPGCombatCatalog.cpp:185).
+9. Cooked Dependency Directory Verification ([Weapon.Config.Catalog.IconCookRoot]):
+   Paths loaded by soft path (including catalog icons) must reside within DirectoriesToAlwaysCook
+   (Config/DefaultGame.ini:19-44) as checked by CookedDependency() in RPGCombatCatalog.cpp:103-123.
+10. Catalog Entry Block (Track C3 v1, mirrors Source/OneBossFight/Player/RPGCombatCatalog.cpp:124-234):
+   - LegacySlot must be -1 for expansion weapons.
+   - Console name / aliases cannot be reserved ("none", "off") or collide with legacy builds.
+   - Catalog asset paths must reside under /Game/OneBossFight/Data/Catalog/.
 
-PIE Verification Seam:
-Row presence in DA_WeaponAttacks is verified via unattended PIE driver:
-  -InjectRow "0.5:<Style>:<Kind>"
-The F10 debug hook reads DA_WeaponAttacks by style name; 'attack_row ... found=1' proves
-the row exists and returns tuned numbers without requiring pack animation equip blueprints.
+PIE Verification Seams:
+- Table Rows: -InjectRow "0.5:<Style>:<Kind>" (F10 hook reads DA_WeaponAttacks by style name)
+- Catalog Switch: -RealBuild <console_name> (FEpoch::Parse resolves console name, CallEquip equips item)
 
 Zero Unreal Engine imports; callable headlessly in pure python (-I).
 """
@@ -57,8 +64,52 @@ DEFAULT_EXISTING_ROWS = {
     for kind in ("Light", "Strong", "Charged", "JumpLight", "JumpHeavy", "Knockdown")
 }
 
+# Shipped legacy build console names and aliases (RPGCombatCatalog.cpp:80-97)
+SHIPPED_LEGACY_TOKENS = {
+    "starter",
+    "strength",
+    "dex",
+    "sword",
+    "str",
+    "dexterity",
+}
+
+# Shipped item base classes in AdvancedARPGCombat pack (RPGCombatCatalog.cpp:185)
+KNOWN_ITEM_BASE_CLASSES = {
+    "/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/WeaponItem.WeaponItem_C",
+    "/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/DualWeaponItem.DualWeaponItem_C",
+}
+
+# DirectoriesToAlwaysCook in Config/DefaultGame.ini:19-44 (CookedDependency in RPGCombatCatalog.cpp:103-123)
+ALWAYS_COOK_DIRECTORIES = {
+    "/Game/OneBossFight/Audio",
+    "/Game/OneBossFight/Boss",
+    "/Game/OneBossFight/Boss01",
+    "/Game/OneBossFight/Data",
+    "/Game/OneBossFight/Effects",
+    "/Game/OneBossFight/Environment",
+    "/Game/OneBossFight/Input",
+    "/Game/OneBossFight/Levels",
+    "/Game/OneBossFight/Poise",
+    "/Game/OneBossFight/UI",
+    "/Game/AdvancedARPGCombat/AdvancedCombatFramework/CollisionSystem",
+    "/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets",
+    "/Game/AdvancedARPGCombat/AdvancedCombatFramework/InventorySystem/Items",
+    "/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Actors/Weapons",
+    "/Game/AdvancedARPGCombat/AdvancedCombatFramework/AbilitySystem",
+    "/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/Collision",
+    "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Animations/Roll",
+    "/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy",
+    "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations",
+    "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints",
+    "/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX",
+    "/Game/AdvancedARPGCombat/MeleeCombatSystem/UI/Fonts",
+    "/Game/BloodPack/Hit/Niagara",
+    "/Game/Essential_Foosteps_SK/CUE/Concrete",
+    "/Game/StarterContent/Audio",
+}
+
 # Offline fallback dictionary of known player pack combat styles in Content/AdvancedARPGCombat/
-# Note: For runtime editor utility, asset existence is verified dynamically via does_asset_exist.
 KNOWN_PACK_COMBAT_STYLES = {
     "ClaymoreCombatStyle": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Claymore/ClaymoreCombatStyle.ClaymoreCombatStyle",
     "DualSwordCombatStyle": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/DualSwords/DualSwordCombatStyle.DualSwordCombatStyle",
@@ -104,7 +155,19 @@ def _check_asset_exists(path_str, asset_exists):
     return f"{base}.{leaf}" in asset_exists or f"{base}.{leaf}_C" in asset_exists
 
 
-def validate_weapon_config(cfg, existing_context=None, asset_exists=None, existing_rows=None):
+def _is_cooked_dependency(path_str, cook_roots=None):
+    """Checks whether asset path resides under DirectoriesToAlwaysCook (RPGCombatCatalog.cpp:103-123)."""
+    if not isinstance(path_str, str) or not path_str.startswith("/Game/"):
+        return False
+    roots = cook_roots if cook_roots is not None else ALWAYS_COOK_DIRECTORIES
+    pkg = path_str.split(".")[0]
+    for r in roots:
+        if pkg == r or pkg.startswith(r + "/"):
+            return True
+    return False
+
+
+def validate_weapon_config(cfg, existing_context=None, asset_exists=None, existing_rows=None, cook_roots=None):
     """
     Validates a new weapon or weapon tuning configuration dictionary.
 
@@ -113,6 +176,7 @@ def validate_weapon_config(cfg, existing_context=None, asset_exists=None, existi
         existing_context (dict, optional): Context containing existing weapon_ids, 'asset_exists', or 'existing_rows'.
         asset_exists (set|callable, optional): Set of existing asset paths or callable f(path)->bool.
         existing_rows (set[tuple[str, str]], optional): Set of (style_name, kind) existing in DA_WeaponAttacks.
+        cook_roots (set[str], optional): Set of directories to always cook (defaults to ALWAYS_COOK_DIRECTORIES).
 
     Returns:
         list[str]: List of failure messages starting with failure tokens. Empty list on success.
@@ -139,6 +203,13 @@ def validate_weapon_config(cfg, existing_context=None, asset_exists=None, existi
         current_existing_rows = existing_context.get("existing_rows")
     if current_existing_rows is None:
         current_existing_rows = DEFAULT_EXISTING_ROWS
+
+    # Resolve cook_roots
+    current_cook_roots = cook_roots
+    if current_cook_roots is None and isinstance(existing_context, dict):
+        current_cook_roots = existing_context.get("cook_roots")
+    if current_cook_roots is None:
+        current_cook_roots = ALWAYS_COOK_DIRECTORIES
 
     styles_with_rows = {s for s, _ in current_existing_rows}
 
@@ -179,15 +250,23 @@ def validate_weapon_config(cfg, existing_context=None, asset_exists=None, existi
             if style_name not in KNOWN_PACK_COMBAT_STYLES:
                 errors.append(f"[Weapon.Config.UnknownCombatStyle] style_name '{style_name}' does not match any known pack combat style asset")
 
-    # 5. Asset Paths Syntax & Physical Existence (RPGCombatCatalog.h:18-22)
+    # 5. Asset Paths Syntax, Cooked Roots & Physical Existence (RPGCombatCatalog.h:18-22)
     path_keys = ["style_asset_path", "item_path", "item_base_class", "actor_class", "ability_class"]
     for pk in path_keys:
         p_val = cfg.get(pk)
         if not _validate_asset_path(p_val):
             errors.append(f"[Weapon.Config.Path] {pk} must be a valid Unreal asset path starting with /Game/ and containing Package.Asset: '{p_val}'")
-        elif known_assets is not None:
-            if not _check_asset_exists(p_val, known_assets):
-                errors.append(f"[Weapon.Config.PathMissing[{p_val}]] Asset path does not exist on disk: '{p_val}'")
+        else:
+            # Check Cooked Dependency
+            if not _is_cooked_dependency(p_val, current_cook_roots):
+                errors.append(f"[Weapon.Config.Path] {pk} '{p_val}' is outside DirectoriesToAlwaysCook in DefaultGame.ini")
+
+            # Check physical existence on disk
+            if known_assets is not None:
+                # If path has _C suffix, check base asset path
+                check_path = p_val[:-2] if p_val.endswith("_C") else p_val
+                if not _check_asset_exists(check_path, known_assets):
+                    errors.append(f"[Weapon.Config.PathMissing[{p_val}]] Asset path does not exist on disk: '{p_val}'")
 
     # Verify style_asset_path matches style_name
     if style_name and style_asset_path and _validate_asset_path(style_asset_path):
@@ -195,7 +274,13 @@ def validate_weapon_config(cfg, existing_context=None, asset_exists=None, existi
         if leaf_pkg != style_name:
             errors.append(f"[Weapon.Config.Path] style_asset_path package name '{leaf_pkg}' does not match style_name '{style_name}'")
 
-    # 6. Build Definition (RPGCombatCatalog.h:34-45, RPGCombatCatalog.cpp:29-39)
+    # Verify item_base_class ends with _C (RPGCombatCatalog.cpp:185 Cast<UClass> requires generated class path)
+    item_base_class = cfg.get("item_base_class")
+    if item_base_class and isinstance(item_base_class, str):
+        if not item_base_class.endswith("_C"):
+            errors.append(f"[Weapon.Config.ItemBaseClassPath] item_base_class must be a generated Blueprint class path ending in '_C' (got '{item_base_class}')")
+
+    # 6. Build Definition (RPGCombatCatalog.h:34-45, RPGCombatCatalog.cpp:29-39, 150-156)
     build = cfg.get("build")
     if not isinstance(build, dict):
         errors.append("[Weapon.Config.Build] 'build' block must be a JSON object")
@@ -215,6 +300,25 @@ def validate_weapon_config(cfg, existing_context=None, asset_exists=None, existi
         display_name = build.get("display_name")
         if not display_name or not isinstance(display_name, str) or not display_name.strip():
             errors.append("[Weapon.Config.Build] build.display_name must be a non-empty string")
+
+        # Check console_name and aliases against reserved engine keywords and legacy collisions (RPGCombatCatalog.cpp:32, 154)
+        tokens_to_check = []
+        if isinstance(console_name, str) and console_name.strip():
+            tokens_to_check.append(console_name.strip())
+        if isinstance(build_id, str) and build_id.strip() and build_id != "None":
+            tokens_to_check.append(build_id.strip())
+        aliases = build.get("aliases")
+        if isinstance(aliases, list):
+            for a in aliases:
+                if isinstance(a, str) and a.strip():
+                    tokens_to_check.append(a.strip())
+
+        for tok in tokens_to_check:
+            norm = tok.strip().lower()
+            if norm in ("none", "off"):
+                errors.append(f"[Weapon.Config.Catalog.ReservedName] Build token '{tok}' is a reserved engine keyword ('none' / 'off')")
+            elif norm in SHIPPED_LEGACY_TOKENS:
+                errors.append(f"[Weapon.Config.Catalog.AliasCollision[{tok}]] Build token '{tok}' collides with shipped legacy catalog build name or alias")
 
     # 7. Attack Rows Validation (RPGWeaponAttackTable.h:15-53, RPGAttackKind.h:10-35)
     attack_rows = cfg.get("attack_rows")
@@ -283,5 +387,54 @@ def validate_weapon_config(cfg, existing_context=None, asset_exists=None, existi
             missing_required = REQUIRED_ATTACK_KINDS - seen_kinds
             if missing_required:
                 errors.append(f"[Weapon.Config.AttackCoverage] attack_rows missing required archetype kinds: {sorted(list(missing_required))}")
+
+    # 8. Catalog Entry Block Validation (Track C3 v1, RPGCombatCatalog.h:63-71, RPGCombatCatalog.cpp:124-234)
+    catalog = cfg.get("catalog")
+    if catalog is not None:
+        if not isinstance(catalog, dict):
+            errors.append("[Weapon.Config.Catalog.Structure] 'catalog' block must be a JSON object")
+        else:
+            # weapon_asset_path: must be valid path under /Game/OneBossFight/Data/Catalog/
+            w_path = catalog.get("weapon_asset_path")
+            if w_path is not None:
+                if not _validate_asset_path(w_path):
+                    errors.append(f"[Weapon.Config.Catalog.Path] catalog.weapon_asset_path must be a valid Unreal asset path: '{w_path}'")
+                elif not w_path.startswith("/Game/OneBossFight/Data/Catalog/"):
+                    errors.append(f"[Weapon.Config.Catalog.Path] catalog.weapon_asset_path must reside under /Game/OneBossFight/Data/Catalog/: '{w_path}'")
+
+            # build_asset_path: must be valid path under /Game/OneBossFight/Data/Catalog/
+            b_path = catalog.get("build_asset_path")
+            if b_path is not None:
+                if not _validate_asset_path(b_path):
+                    errors.append(f"[Weapon.Config.Catalog.Path] catalog.build_asset_path must be a valid Unreal asset path: '{b_path}'")
+                elif not b_path.startswith("/Game/OneBossFight/Data/Catalog/"):
+                    errors.append(f"[Weapon.Config.Catalog.Path] catalog.build_asset_path must reside under /Game/OneBossFight/Data/Catalog/: '{b_path}'")
+
+            # catalog_root_path: must be valid path under /Game/OneBossFight/Data/Catalog/
+            root_path = catalog.get("catalog_root_path")
+            if root_path is not None:
+                if not _validate_asset_path(root_path):
+                    errors.append(f"[Weapon.Config.Catalog.Path] catalog.catalog_root_path must be a valid Unreal asset path: '{root_path}'")
+
+            # legacy_slot: mandatory -1 for expansion builds (RPGCombatCatalog.cpp:148, 158)
+            legacy_slot = catalog.get("legacy_slot", -1)
+            if not isinstance(legacy_slot, int) or legacy_slot != -1:
+                errors.append(f"[Weapon.Config.Catalog.LegacySlot] catalog.legacy_slot must be -1 (INDEX_NONE) for new builds; 0..2 are strictly reserved for legacy builds (got {legacy_slot})")
+
+            # require_exact_rows: boolean
+            req_rows = catalog.get("require_exact_rows")
+            if req_rows is not None and not isinstance(req_rows, bool):
+                errors.append(f"[Weapon.Config.Catalog.ExactRows] catalog.require_exact_rows must be a boolean (got {type(req_rows).__name__})")
+
+            # icon_path: optional, if provided must reside in DirectoriesToAlwaysCook and exist on disk if known_assets is given
+            icon_path = catalog.get("icon_path")
+            if icon_path is not None and icon_path != "":
+                if not _validate_asset_path(icon_path):
+                    errors.append(f"[Weapon.Config.Catalog.IconPath] catalog.icon_path must be a valid Unreal asset path: '{icon_path}'")
+                elif not _is_cooked_dependency(icon_path, current_cook_roots):
+                    errors.append(f"[Weapon.Config.Catalog.IconCookRoot] catalog.icon_path '{icon_path}' is outside DirectoriesToAlwaysCook roots in DefaultGame.ini (e.g. /Game/OneBossFight/UI)")
+                elif known_assets is not None:
+                    if not _check_asset_exists(icon_path, known_assets):
+                        errors.append(f"[Weapon.Config.PathMissing[{icon_path}]] Catalog icon asset path does not exist on disk: '{icon_path}'")
 
     return errors

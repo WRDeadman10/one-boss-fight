@@ -3,9 +3,10 @@
 """
 test_validate_weapon_config.py
 ==============================
-Offline unit test suite for validate_weapon_config.py with 16+ negative test cases,
+Offline unit test suite for validate_weapon_config.py with 25+ negative test cases,
 exact failure token verification, enemy/boss style rejection, style collision checks,
-update mode validation, and physical asset existence checking.
+update mode validation, catalog block validation, Blueprint _C class checks,
+DirectoriesToAlwaysCook cooked root verification, and physical asset existence checking.
 """
 
 import copy
@@ -160,7 +161,7 @@ class TestValidateWeaponConfig(unittest.TestCase):
     def test_12_negative_missing_asset_on_disk(self):
         """Negative 12: Asset path is well-formed but does not exist in asset_exists."""
         cfg = copy.deepcopy(self.valid_cfg)
-        cfg["item_path"] = "/Game/AdvancedARPGCombat/NonExistentItem_12345.NonExistentItem_12345"
+        cfg["item_path"] = "/Game/OneBossFight/Data/NonExistentItem_12345.NonExistentItem_12345"
         errors = validate_weapon_config(cfg, asset_exists=self.content_assets)
         self.assertTrue(any("Weapon.Config.PathMissing" in e for e in errors))
 
@@ -176,7 +177,7 @@ class TestValidateWeaponConfig(unittest.TestCase):
         """Negative 14: Style name contains 'Boss' (e.g. SevarogBossCombatStyle)."""
         cfg = copy.deepcopy(self.valid_cfg)
         cfg["style_name"] = "SevarogBossCombatStyle"
-        cfg["style_asset_path"] = "/Game/OneBossFight/SevarogPack/SevarogBossCombatStyle.SevarogBossCombatStyle"
+        cfg["style_asset_path"] = "/Game/OneBossFight/Boss01/SevarogBossCombatStyle.SevarogBossCombatStyle"
         errors = validate_weapon_config(cfg)
         self.assertTrue(any("[Weapon.Config.EnemyCombatStyle]" in e for e in errors))
 
@@ -195,7 +196,6 @@ class TestValidateWeaponConfig(unittest.TestCase):
         cfg["mode"] = "update_existing_style"
         cfg["style_name"] = "ClaymoreCombatStyle"
         cfg["style_asset_path"] = "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Claymore/ClaymoreCombatStyle.ClaymoreCombatStyle"
-        # Pass a restricted existing_rows set where 'Knockdown' is not present for Claymore
         restricted_rows = {
             ("ClaymoreCombatStyle", "Light"),
             ("ClaymoreCombatStyle", "Strong"),
@@ -209,6 +209,62 @@ class TestValidateWeaponConfig(unittest.TestCase):
         cfg["mode"] = "invalid_mode_name"
         errors = validate_weapon_config(cfg)
         self.assertTrue(any("[Weapon.Config.Mode]" in e for e in errors))
+
+    def test_18_negative_catalog_legacy_slot(self):
+        """Negative 18: Catalog legacy_slot is not -1 for a new build."""
+        cfg = copy.deepcopy(self.valid_cfg)
+        cfg["catalog"]["legacy_slot"] = 1  # 0..2 are reserved for legacy compatibility builds
+        errors = validate_weapon_config(cfg)
+        self.assertTrue(any("[Weapon.Config.Catalog.LegacySlot]" in e for e in errors))
+
+    def test_19_negative_catalog_reserved_name(self):
+        """Negative 19: Build console name or alias uses reserved engine token 'none' or 'off'."""
+        cfg = copy.deepcopy(self.valid_cfg)
+        cfg["build"]["console_name"] = "none"
+        errors = validate_weapon_config(cfg)
+        self.assertTrue(any("[Weapon.Config.Catalog.ReservedName]" in e for e in errors))
+
+    def test_20_negative_catalog_legacy_collision(self):
+        """Negative 20: Build console name or alias collides with shipped legacy build name/alias."""
+        cfg = copy.deepcopy(self.valid_cfg)
+        cfg["build"]["aliases"].append("dexterity")
+        errors = validate_weapon_config(cfg)
+        self.assertTrue(any("[Weapon.Config.Catalog.AliasCollision[dexterity]]" in e for e in errors))
+
+    def test_21_negative_catalog_path_not_in_catalog_folder(self):
+        """Negative 21: Weapon definition path is outside /Game/OneBossFight/Data/Catalog/."""
+        cfg = copy.deepcopy(self.valid_cfg)
+        cfg["catalog"]["weapon_asset_path"] = "/Game/OneBossFight/Data/WrongFolder/DA_Weapon_Bad.DA_Weapon_Bad"
+        errors = validate_weapon_config(cfg)
+        self.assertTrue(any("[Weapon.Config.Catalog.Path]" in e for e in errors))
+
+    def test_22_negative_catalog_icon_missing(self):
+        """Negative 22: Catalog icon asset path does not exist on disk."""
+        cfg = copy.deepcopy(self.valid_cfg)
+        cfg["catalog"]["icon_path"] = "/Game/OneBossFight/UI/Art/NonExistentIcon_12345.NonExistentIcon_12345"
+        errors = validate_weapon_config(cfg, asset_exists=self.content_assets)
+        self.assertTrue(any("Weapon.Config.PathMissing" in e for e in errors))
+
+    def test_23_negative_item_base_class_no_suffix_c(self):
+        """Negative 23: item_base_class does not end in '_C'."""
+        cfg = copy.deepcopy(self.valid_cfg)
+        cfg["item_base_class"] = "/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/WeaponItem.WeaponItem"
+        errors = validate_weapon_config(cfg)
+        self.assertTrue(any("[Weapon.Config.ItemBaseClassPath]" in e for e in errors))
+
+    def test_24_negative_catalog_icon_outside_cook_root(self):
+        """Negative 24: Catalog icon path is outside DirectoriesToAlwaysCook roots."""
+        cfg = copy.deepcopy(self.valid_cfg)
+        cfg["catalog"]["icon_path"] = "/Game/AdvancedARPGCombat/MeleeCombatSystem/UI/InventoryEquipmentUI/Icons/Icon_FengMao_Weapon.Icon_FengMao_Weapon"
+        errors = validate_weapon_config(cfg)
+        self.assertTrue(any("[Weapon.Config.Catalog.IconCookRoot]" in e for e in errors))
+
+    def test_25_negative_asset_outside_cook_root(self):
+        """Negative 25: An asset path resides outside DirectoriesToAlwaysCook roots."""
+        cfg = copy.deepcopy(self.valid_cfg)
+        cfg["item_path"] = "/Game/NonCookedFolder/SomeWeaponItem.SomeWeaponItem"
+        errors = validate_weapon_config(cfg)
+        self.assertTrue(any("[Weapon.Config.Path]" in e and "outside DirectoriesToAlwaysCook" in e for e in errors))
 
 
 if __name__ == "__main__":
