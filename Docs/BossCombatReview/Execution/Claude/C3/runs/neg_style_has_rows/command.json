@@ -1,0 +1,9 @@
+[
+    "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+    "-ExecutePythonScript=\"C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/C3/new_weapon.py C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/C3/negative_style_has_rows.json\"",
+    "-unattended",
+    "-nosound",
+    "-nosplash",
+    "-abslog=C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\C3\\runs\\neg_style_has_rows\\editor_raw.log",
+    "-nullrhi"
+]
