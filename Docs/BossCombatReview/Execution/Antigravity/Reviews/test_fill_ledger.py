@@ -15,6 +15,7 @@ Verifies:
 Run: python -I test_fill_ledger.py
 """
 
+import hashlib
 import json
 import os
 import shutil
@@ -237,6 +238,146 @@ class TestFillLedger(unittest.TestCase):
         self.assertEqual(proposal["ActiveEndSeconds"], 1.635)     # 98 / 59.9401 = 1.6350
         self.assertEqual(proposal["RecoveryEndSeconds"], 2.8028)  # 168 / 59.9401 = 2.8028
 
+
+
+    def test_sync_appends_and_fills_10th_entry_preserving_prior_entries(self):
+        """Tests that syncing a 9-entry ledger with 10-entry template appends 10th and fills it."""
+        with open(DEFAULT_TEMPLATE, "r", encoding="utf-8") as fp:
+            tmpl_data = json.load(fp)
+
+        # Create 9-entry ledger
+        partial_data = {"entries": tmpl_data["entries"][:9]}
+        # Mark an entry in 1-9 to confirm custom values are preserved
+        partial_data["entries"][0]["notes"] = "preserved note"
+        with open(self.test_out_ledger, "w", encoding="utf-8") as fp:
+            json.dump(partial_data, fp, indent=2)
+
+        prior_entries_json = json.dumps(partial_data["entries"], sort_keys=True)
+        prior_sha = hashlib.sha256(prior_entries_json.encode("utf-8")).hexdigest()
+
+        # Fill the 10th entry (REF_GapPounce_Close)
+        proposal = process_ledger_fill(
+            ledger_path=DEFAULT_TEMPLATE,
+            out_path=self.test_out_ledger,
+            clip_id="REF_GapPounce_Close",
+            W=100, C=110, A=120, E=125, R=130, RE=150,
+            confidence="high",
+            notes="sync test fill",
+            evidence="auto"
+        )
+        self.assertEqual(proposal["MoveId"], "Move_EmberWarden_GapPounce")
+
+        with open(self.test_out_ledger, "r", encoding="utf-8") as fp:
+            after_data = json.load(fp)
+
+        self.assertEqual(len(after_data["entries"]), 10)
+        # Verify 1-9 entries are unchanged
+        after_prior_json = json.dumps(after_data["entries"][:9], sort_keys=True)
+        after_prior_sha = hashlib.sha256(after_prior_json.encode("utf-8")).hexdigest()
+        self.assertEqual(prior_sha, after_prior_sha)
+        self.assertEqual(after_data["entries"][0]["notes"], "preserved note")
+
+        # Verify 10th entry is populated
+        entry10 = after_data["entries"][9]
+        self.assertEqual(entry10["ref_id"], "REF_GapPounce_Close")
+        self.assertEqual(entry10["W_frame"], 100)
+        self.assertEqual(entry10["confidence"], "high")
+
+    def test_sync_unknown_clip_still_refused(self):
+        """Tests that unknown clip is still refused even with sync."""
+        with self.assertRaises(ValueError) as ctx:
+            process_ledger_fill(
+                ledger_path=DEFAULT_TEMPLATE,
+                out_path=self.test_out_ledger,
+                clip_id="REF_UnknownNonExistent_Move",
+                W=100, C=110, A=120, E=125, R=130, RE=150,
+                confidence="high"
+            )
+        self.assertIn("not found in ledger", str(ctx.exception))
+
+    def test_sync_noop_when_equal(self):
+        """Tests that sync is a no-op when out ledger already has all template entries."""
+        with open(DEFAULT_TEMPLATE, "r", encoding="utf-8") as fp:
+            tmpl_data = json.load(fp)
+
+        with open(self.test_out_ledger, "w", encoding="utf-8") as fp:
+            json.dump(tmpl_data, fp, indent=2)
+
+        before_json = json.dumps(tmpl_data["entries"], sort_keys=True)
+        before_sha = hashlib.sha256(before_json.encode("utf-8")).hexdigest()
+
+        # Run sync-only
+        process_ledger_fill(
+            ledger_path=DEFAULT_TEMPLATE,
+            out_path=self.test_out_ledger,
+            sync_only=True
+        )
+
+        with open(self.test_out_ledger, "r", encoding="utf-8") as fp:
+            after_data = json.load(fp)
+
+        self.assertEqual(len(after_data["entries"]), len(tmpl_data["entries"]))
+        after_json = json.dumps(after_data["entries"], sort_keys=True)
+        after_sha = hashlib.sha256(after_json.encode("utf-8")).hexdigest()
+        self.assertEqual(before_sha, after_sha)
+
+    def test_template_file_hash_unchanged(self):
+        """Tests that template file hash is completely untouched across sync and fill."""
+        with open(DEFAULT_TEMPLATE, "rb") as fp:
+            initial_sha = hashlib.sha256(fp.read()).hexdigest()
+
+        # Run sync-only
+        process_ledger_fill(
+            ledger_path=DEFAULT_TEMPLATE,
+            out_path=self.test_out_ledger,
+            sync_only=True
+        )
+        # Run fill
+        process_ledger_fill(
+            ledger_path=DEFAULT_TEMPLATE,
+            out_path=self.test_out_ledger,
+            clip_id="REF_CurvedSwordCombo_Chain1",
+            W=447, C=456, A=465, E=472, R=479, RE=500,
+            confidence="high",
+            force=True
+        )
+
+        with open(DEFAULT_TEMPLATE, "rb") as fp:
+            final_sha = hashlib.sha256(fp.read()).hexdigest()
+
+        self.assertEqual(initial_sha, final_sha)
+
+    def test_d3_measured_ledger_sync_and_subtree_integrity(self):
+        """Tests real D3 ledger: 10 entries present, filled entries subtree identical."""
+        d3_path = os.path.normpath(
+            os.path.join(os.path.dirname(__file__), "..", "..", "Claude", "D3", "D3_MEASURED_LEDGER.json")
+        )
+        self.assertTrue(os.path.exists(d3_path), f"D3 ledger not found at {d3_path}")
+
+        with open(d3_path, "r", encoding="utf-8") as fp:
+            d3_data = json.load(fp)
+
+        self.assertEqual(len(d3_data["entries"]), 10)
+        entry10 = d3_data["entries"][-1]
+        self.assertEqual(entry10["ref_id"], "REF_GapPounce_Close")
+        self.assertEqual(entry10["priority"], 10)
+        self.assertIsNone(entry10["W_frame"])
+
+        # Check filled entries subtrees
+        filled = [e for e in d3_data["entries"] if e.get("confidence") is not None]
+        self.assertEqual(len(filled), 2)
+        filled_ids = {e["ref_id"] for e in filled}
+        self.assertEqual(filled_ids, {"REF_HolySwordRain_Setup", "REF_MaceSlam_Sweep"})
+
+        mace = next(e for e in filled if e["ref_id"] == "REF_MaceSlam_Sweep")
+        self.assertEqual(mace["W_frame"], 1703)
+        self.assertEqual(mace["A_frame"], 1796)
+        self.assertEqual(mace["confidence"], "medium")
+
+        rain = next(e for e in filled if e["ref_id"] == "REF_HolySwordRain_Setup")
+        self.assertEqual(rain["W_frame"], 2381)
+        self.assertEqual(rain["A_frame"], 2566)
+        self.assertEqual(rain["confidence"], "low")
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
