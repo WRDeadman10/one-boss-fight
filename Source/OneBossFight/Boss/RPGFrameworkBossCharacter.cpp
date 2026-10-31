@@ -15,7 +15,9 @@
 #include "GameFramework/Controller.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGBossMath.h"
+#include "Player/RPGBossOverlayRules.h"
 #include "Player/RPGBossRules.h"
+static TAutoConsoleVariable<int32> CVarBossOverlay(TEXT("rpg.BossOverlay"),0,TEXT("Framework boss runtime overlay (BOSS-QA-001): 0 off, 1 on screen, 2 on screen and one [FrameworkProof] overlay log line per second."),ECVF_Default);
 ARPGFrameworkBossCharacter::ARPGFrameworkBossCharacter()
 {
     PrimaryActorTick.bCanEverTick=true; AutoPossessAI=EAutoPossessAI::Disabled;
@@ -95,6 +97,7 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
         Fail(TEXT("Framework.Boss.TargetLifeOrHealthChanged"));return;
     }
     const auto& P=*Dependencies->Profile.Get();
+    TickOverlay();
     if(!bArrived&&GetWorld()->GetTimeSeconds()-StartedAt>P.WalkTimeoutSeconds){Fail(TEXT("Framework.Nav.Timeout"));return;}
     if(PostureEnabled())
     {
@@ -277,6 +280,23 @@ void ARPGFrameworkBossCharacter::EndStagger()
         if(!AI||!AI->WalkToBand(this,WalkError)){Fail(WalkError.IsEmpty()?FString(TEXT("Framework.Boss.Controller")):WalkError);return;}
         UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] walk_resumed generation=%llu"),GenerationId);
     }
+}
+void ARPGFrameworkBossCharacter::TickOverlay()
+{
+    const int32 Mode=CVarBossOverlay.GetValueOnGameThread();
+    if(Mode<=0||!Dependencies||!Target.IsValid())return;
+    RPGBossOverlay::FInput I; const auto& P=*Dependencies->Profile.Get();
+    const FRPGCompiledBossMoveCard* Card=Executor->ActiveCard();
+    if(Card){I.CardId=Card->Spec().MoveId.ToString();I.Cone=Card->Spec().FrontConeDegrees;}
+    const ERPGBossMoveModelState State=Executor->Model().State();
+    I.State=State==ERPGBossMoveModelState::Idle?TEXT("Idle"):State==ERPGBossMoveModelState::Committed?TEXT("Committed"):State==ERPGBossMoveModelState::Active?TEXT("Active"):TEXT("Recovery");
+    I.bWindowOpen=State==ERPGBossMoveModelState::Active;I.Phase=CurrentPhaseId.ToString();
+    I.Range=FVector::Dist2D(GetActorLocation(),Target->GetActorLocation());
+    I.Posture=Posture;I.PostureMax=P.PostureMax;I.Health=Health;I.MaxHealth=MaxHealth;I.bStaggered=bStaggered;I.bPhaseHold=bPhaseHold;
+    const FString Line=RPGBossOverlay::Format(I);
+    if(GEngine)GEngine->AddOnScreenDebugMessage(int32(GetUniqueID()&0x7fffffff),.1f,FColor::Yellow,TEXT("Boss: ")+Line);
+    const double Now=GetWorld()->GetTimeSeconds();
+    if(Mode>=2&&(OverlayLoggedAt<0.||Now-OverlayLoggedAt>=1.)){OverlayLoggedAt=Now;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] overlay %s"),*Line);}
 }
 bool ARPGFrameworkBossCharacter::PlayF11Clip(UAnimSequence* Clip,int32 Loops)
 {

@@ -28,6 +28,8 @@ public:
     /** Encounter restart (also after an abort): stops the owned montage, moves the model to the new generation and re-arms; Start* re-enables the tick. */
     bool Rearm(uint64 NewGeneration,FString& Error);
     const FRPGBossMoveModel& Model() const { return Model_; }
+    /** BOSS-QA-001: the card of the attack in progress, null when idle. */
+    const FRPGCompiledBossMoveCard* ActiveCard() const { return Model_.State()!=ERPGBossMoveModelState::Idle ? Card.Get() : nullptr; }
     void Abort(const FString& Reason);
     bool IsIdle() const;
     bool IsClean() const;

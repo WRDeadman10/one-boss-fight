@@ -25,6 +25,7 @@ REAL_STYLE = {'Starter': 'SwordCombatStyle', 'Strength': 'ClaymoreCombatStyle', 
 REAL_ACTION = {'Light': ('IA_NormalAttack', 0.12), 'Strong': ('IA_StrongAttack', 0.12), 'Charged': ('IA_ChargedAttack', 1.6)}
 REAL = {'t0': None, 'n': 0, 'hold_until': -1.0, 'combat': False}
 IA_PATH = '/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/'
+OVERLAY = open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_overlay.txt').read().strip() if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_overlay.txt') else ''  # BOSS-QA-001: rpg.BossOverlay value (1 or 2) set after the map loads
 DODGE_ACTION = [float(x) for x in open('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_dodge_action.txt').read().strip().split(',') if x] if os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_dodge_action.txt') else []  # C-488 (KI-146): seconds after the first playback_start: IA_Dodge held 0.12 s through Enhanced Input action injection (no key mapping needed)
 DODGE_A = {'t0': None, 'n': 0, 'hold_until': -1.0}
 DIAG_LONG = os.path.exists('C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/F4/current_diag_long.txt')  # C-449 (KI-150 follow-up): DIAG every second until 20 s of PIE and do not stop on a FrameworkProof ERROR
@@ -88,6 +89,9 @@ def tick(dt):
                 return
             ok = unreal.EditorLoadingAndSavingUtils.load_map(MAP) is not None
             log('load_map %s ok=%s' % (MAP, ok))
+            if OVERLAY:
+                unreal.SystemLibrary.execute_console_command(unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world(), 'rpg.BossOverlay ' + OVERLAY)
+                log('overlay console variable rpg.BossOverlay=%s' % OVERLAY)
             S.update(phase='navwait', n=0, nav_t=0.0)
             unreal.SystemLibrary.execute_console_command(unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world(), 'RebuildNavigation')
         elif ph == 'navwait':

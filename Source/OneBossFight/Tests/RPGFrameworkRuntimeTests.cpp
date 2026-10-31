@@ -4,6 +4,7 @@
 #include "Player/RPGBossSweepSampling.h"
 #include "Player/RPGBossStaggerAnimRules.h"
 #include "Player/RPGBossTrackRules.h"
+#include "Player/RPGBossOverlayRules.h"
 #include "Boss/RPGFrameworkMoveExecutor.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimSequence.h"
@@ -365,6 +366,21 @@ bool FFrameworkTrackYawCap::RunTest(const FString&)
     TestTrue(TEXT("no tick turned more than cap * dt (1.5 deg)"),MaxStep<=1.5f+1.e-3f);
     for(int32 I=0;I<60;++I)Yaw=RPGBossTrack::StepYaw(Yaw,170.f,90.f,Tick,true);
     Near(TEXT("after the commit 60 more ticks leave the yaw unchanged"),Yaw,90.f);
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkBossOverlayFormat,"OneBossFight.Framework.Runtime.BossOverlayFormat",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkBossOverlayFormat::RunTest(const FString&)
+{
+    // BOSS-QA-001: the exact overlay line (hand-written expected strings).
+    RPGBossOverlay::FInput I;I.CardId=TEXT("SwingSlow");I.State=TEXT("Active");I.Phase=TEXT("Phase_1");I.Range=128.956;I.Cone=120.;I.bWindowOpen=true;I.Posture=40.;I.PostureMax=100.;I.Health=150.;I.MaxHealth=250.;
+    TestEqual(TEXT("attack running"),RPGBossOverlay::Format(I),FString(TEXT("Card=SwingSlow State=Active Phase=Phase_1 Range=129cm Cone=120deg Window=Open Posture=40/100 Health=150/250 Stagger=0 PhaseHold=0")));
+    RPGBossOverlay::FInput N;N.State=TEXT("Idle");N.Phase=TEXT("Phase_2");N.Range=300.;N.Posture=100.;N.PostureMax=100.;N.Health=50.;N.MaxHealth=250.;N.bStaggered=true;N.bPhaseHold=true;
+    TestEqual(TEXT("no card, stagger and hold"),RPGBossOverlay::Format(N),FString(TEXT("Card=None State=Idle Phase=Phase_2 Range=300cm Cone=0deg Window=Closed Posture=100/100 Health=50/250 Stagger=1 PhaseHold=1")));
+    RPGBossOverlay::FInput Bad=I;Bad.Range=std::numeric_limits<double>::quiet_NaN();Bad.Health=std::numeric_limits<double>::infinity();
+    TestEqual(TEXT("non-finite values never print as numbers"),RPGBossOverlay::Format(Bad),FString(TEXT("Card=SwingSlow State=Active Phase=Phase_1 Range=n/acm Cone=120deg Window=Open Posture=40/100 Health=n/a/250 Stagger=0 PhaseHold=0")));
+    TestEqual(TEXT("Num one digit"),RPGBossOverlay::Num(2.34,1),FString(TEXT("2.3")));
+    TestEqual(TEXT("Num zero digits"),RPGBossOverlay::Num(0.4),FString(TEXT("0")));
+    TestEqual(TEXT("Num NaN"),RPGBossOverlay::Num(std::numeric_limits<double>::quiet_NaN()),FString(TEXT("n/a")));
     return true;
 }
 #endif
