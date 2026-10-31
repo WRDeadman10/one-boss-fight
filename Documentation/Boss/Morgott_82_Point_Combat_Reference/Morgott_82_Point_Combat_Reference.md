@@ -4,6 +4,14 @@
 
 > **Scope:** This report maps 82 requirements from the supplied 83-point boss audit checklist to Morgott’s visible/reported fight behavior and to a technically plausible Unreal implementation. `BOSS-QA-008` (multiplayer/network authority) is intentionally excluded. This is a design and reverse-observation guide, **not an extraction of FromSoftware source code**, and it is **not an audit status report on your own Unreal boss**.
 
+## Local reference video
+
+[Watch Morgott reference boss fight](<Elden Ring - Morgott, The Omen King Boss Fight.webm>)
+
+**Analysis start: 01:45 (105 seconds).** Per the owner, 00:00–01:45 is cinematic; skip it when studying combat. Keep timestamps relative to the original video and use 01:45 as combat-relative time zero.
+
+Video supplied by the owner on 2026-10-31 for Track D reference-boss study. Registration of this video does not certify its recording provenance or frame rate; timing, phase and behavior measurements from it are pending.
+
 ## Executive summary
 
 Morgott combines highly varied attack geometry, conditional follow-ups, strong positional pressure and rapidly changing fight tempo. His curved sword offers delayed committed strikes; conjured daggers check greedy proximity; spear throws and charges cover distance; hammer and spinning sword/hammer strings punish spacing mistakes; tail sweeps counter rear camping. Holy sword rain creates temporary lanes, and bloodflame attacks add lingering hazards and a true impaling grab. His range of choices is less important than how **player position at specific moments** changes which follow-up is threatening. [S1] [S2] [S4]
