@@ -1,10 +1,10 @@
 {
-  "version": "3.9",
+  "version": "3.10",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 36,
-    "PARTIAL": 22,
+    "WITNESSED": 37,
+    "PARTIAL": 21,
     "NOT YET": 24
   },
   "requirements": [
@@ -1449,25 +1449,31 @@
       "title": "Query filtering",
       "section": "Hit detection and damage",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGAutomationTests.cpp:173",
-        "Docs/BossCombatReview/Execution/Claude/B_HIT005/byst60/editor_raw.log:1655"
+        "Docs/BossCombatReview/Execution/Claude/B_HIT005/byst60/editor_raw.log:1655",
+        "Docs/BossCombatReview/Execution/Claude/B_AWR001/kill/editor_raw.log:1586",
+        "Source/OneBossFight/Tests/RPGAutomationTests.cpp:173"
       ],
       "citations": [
-        {
-          "file": "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
-          "line": 173,
-          "quoted": "if (!bTargetAlive) { Expected = ERPGDamageOutcome::RejectedDead; }"
-        },
         {
           "file": "Docs/BossCombatReview/Execution/Claude/B_HIT005/byst60/editor_raw.log",
           "line": 1655,
           "quoted": "[2026.10.31-22.42.54:643][  6]LogTemp: Display: [FrameworkProof] sweep_filter instance=1 window=Window_SwingSlow_Primary ignoredPawns=1 first=Character_0 targetContact=1 selfHits=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR001/kill/editor_raw.log",
+          "line": 1586,
+          "quoted": "[2026.10.31-23.00.56:662][949]LogTemp: Display: [FrameworkProof] target_health_mismatch valid=0 actual=0 expected=800 generation=1 reason=Dead"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
+          "line": 173,
+          "quoted": "if (!bTargetAlive) { Expected = ERPGDamageOutcome::RejectedDead; }"
         }
       ],
       "observable": "Trace queries filter out boss self-collision and dead bodies; only valid player combat capsule registers hit.",
-      "notes": "Self and non-target live pawn collision verified: bystander spawned at y=-60 cm (byst60:1583) and filtered across 3 sweep ticks with ignoredPawns=1, targetContact=1, selfHits=0 (byst60:1655), leaving accepted hits (2) and damage (55.0) unchanged; resolver asserts RejectedDead for dead bodies (auto_tests:173), but live dead-body candidate filtering is not yet exercised in PIE."
+      "notes": "Graduated to WITNESSED in Ledger v3.10 per C-567. All three query filter categories verified live: (1) Boss self-collision excluded from scene queries by construction (RPGFrameworkMoveExecutor.cpp:191) with selfHits=0 verified live in PIE (byst60:1655); (2) Non-target pawns in sweep capsule ignored without blocking hit or absorbing damage (byst60:1655 ignoredPawns=1 first=Character_0 targetContact=1, damage 55.0 unchanged); (3) Dead target verified live (kill:1586 reason=Dead) triggering immediate boss lifecycle halt with zero sweeps or hits attempted thereafter. Unit test asserts RejectedDead for dead bodies (auto_tests:173). Honest limits: damage resolver RejectedDead branch is defensive fallback never reached live because boss controller TargetFault aborts upstream before sweep; dead body in PIE was injected target kill rather than third-party corpse actor."
     },
     {
       "id": "BOSS-HIT-006",

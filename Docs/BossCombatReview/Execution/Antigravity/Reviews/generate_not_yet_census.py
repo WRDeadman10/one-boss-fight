@@ -6,139 +6,253 @@ generate_not_yet_census.py
 Generates the exhaustive Track B NOT YET Census Report (Reviews/NOT_YET_CENSUS.md)
 by extracting exact IDs, titles, and observables from witness_status_v3.json.
 Classifies all 24 NOT YET requirements by Dependency Class, Code Reference, and Engine Cost.
+Enforces strict disk citation verification: fails if cited file does not exist, line is past EOF,
+or quoted string is not present in that exact line. Unimplemented items use 'no code: <what is missing>'.
 """
 
 import json
+import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[5]
 JSON_PATH = REPO_ROOT / "Docs/BossCombatReview/Execution/Antigravity/Ledger/witness_status_v3.json"
 OUTPUT_MD = REPO_ROOT / "Docs/BossCombatReview/Execution/Antigravity/Reviews/NOT_YET_CENSUS.md"
 
+VALID_DEP_CLASSES = {
+    "ENGINE-ONLY",
+    "NEEDS ART",
+    "NEEDS DESIGN DECISION",
+    "NEEDS NEW SYSTEM",
+    "PLAYER-SIDE",
+}
+
+VALID_COSTS = {"S", "M", "L"}
+
 CENSUS_METADATA = {
     "BOSS-AWR-006": {
         "dep_class": "PLAYER-SIDE",
-        "reason": "Player flask/heavy commitment state listener not exposed to boss perception (Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp:180)",
-        "cost": "M"
+        "cost": "M",
+        "cite": None,
+        "explanation": "no code: boss only reads target HP and transform; player activity tag listener and flask/heavy commitment observer not implemented in framework boss",
     },
     "BOSS-AWR-007": {
         "dep_class": "NEEDS NEW SYSTEM",
-        "reason": "Line-of-sight raycast filter and obstacle memory search state missing in candidate selection (Source/OneBossFight/Player/RPGBossMoveSelector.cpp:45)",
-        "cost": "L"
+        "cost": "L",
+        "cite": None,
+        "explanation": "no code: line-of-sight raycasts and obstacle search memory not implemented in boss selector or perception",
     },
     "BOSS-AWR-008": {
         "dep_class": "NEEDS NEW SYSTEM",
-        "reason": "Recent player movement buffer and roll-catch adaptation weights not tracked in context (Source/OneBossFight/Player/RPGBossMoveSelector.cpp:30)",
-        "cost": "L"
+        "cost": "L",
+        "cite": None,
+        "explanation": "no code: player movement history and dodge histogram tracking not implemented in AI context",
     },
     "BOSS-SEL-009": {
         "dep_class": "ENGINE-ONLY",
-        "reason": "AI reaction delay window [0.2-0.4s] before responding to player actions not wired in selector tick (Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp:165)",
-        "cost": "M"
+        "cost": "M",
+        "cite": None,
+        "explanation": "no code: AI reaction delay window [0.2-0.4s] buffering not implemented in boss tick loop",
     },
     "BOSS-EXE-005": {
         "dep_class": "ENGINE-ONLY",
-        "reason": "Phase threshold crossing priority over active stagger only exists in unit tests (Source/OneBossFight/Tests/RPGBossTransitionTests.cpp:25)",
-        "cost": "M"
+        "cost": "M",
+        "cite": {
+            "file": "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
+            "line": 226,
+            "quote": 'TestEqual(TEXT("below the threshold during a break is queued',
+        },
+        "explanation": "legacy unit test asserts phase transition queues behind stagger; framework boss has no runtime phase threshold vs stagger priority arbitration wired",
     },
     "BOSS-ANM-003": {
         "dep_class": "NEEDS ART",
-        "reason": "Dynamic hold duration limits and release audio/visual notifies require authored animation notify tracks (Source/OneBossFight/Boss/RPGFrameworkMoveExecutor.cpp:120)",
-        "cost": "L"
+        "cost": "L",
+        "cite": None,
+        "explanation": "no code: variable windup hold min/max durations and release cues not authored in move cards or montage tracks",
     },
     "BOSS-ANM-006": {
         "dep_class": "NEEDS NEW SYSTEM",
-        "reason": "Motion Warping plugin integration and translation/rotation clamping not enabled in runtime (Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp:140)",
-        "cost": "L"
+        "cost": "L",
+        "cite": None,
+        "explanation": "no code: Motion Warping plugin not enabled in uproject and warp clamping bounds not implemented",
     },
     "BOSS-HIT-010": {
         "dep_class": "NEEDS DESIGN DECISION",
-        "reason": "Simultaneous direct weapon and secondary splash precedence arbiter not defined in damage resolver (Source/OneBossFight/Damage/RPGDamageResolver.cpp:130)",
-        "cost": "M"
+        "cost": "M",
+        "cite": {
+            "file": "Source/OneBossFight/Player/RPGDamageResolver.cpp",
+            "line": 152,
+            "quote": "Result.Outcome = RPGDamageRules::Decide(bTargetAlive, bAtta",
+        },
+        "explanation": "resolver decide rule only takes alive, generation, duplicate, and invulnerable flags; no direct vs secondary splash precedence arbiter defined",
     },
     "BOSS-HIT-011": {
         "dep_class": "NEEDS NEW SYSTEM",
-        "reason": "Outward expanding ring/annulus sweep shape component not implemented in move executor (Source/OneBossFight/Boss/RPGFrameworkMoveExecutor.cpp:190)",
-        "cost": "L"
+        "cost": "L",
+        "cite": {
+            "file": "Source/OneBossFight/Boss/RPGFrameworkMoveExecutor.cpp",
+            "line": 201,
+            "quote": "const FCollisionShape Shape=FCollisionShape::MakeCapsule(W.",
+        },
+        "explanation": "sweep only constructs linear swept capsules along weapon key poses; outward expanding ring/annulus component not implemented",
     },
     "BOSS-HIT-012": {
         "dep_class": "NEEDS NEW SYSTEM",
-        "reason": "Two-character grab state machine and interrupt victim release handler not implemented (Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp:220)",
-        "cost": "L"
+        "cost": "L",
+        "cite": None,
+        "explanation": "no code: grab state machine, victim attachment sync, and interrupt release fail-safe not implemented",
     },
     "BOSS-MOV-002": {
         "dep_class": "NEEDS DESIGN DECISION",
-        "reason": "Center-arena bias wall-clearance scoring when player hugs perimeter not implemented (Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp:200)",
-        "cost": "M"
+        "cost": "M",
+        "cite": {
+            "file": "Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp",
+            "line": 181,
+            "quote": "// Opt-in repositioning: nobody is eligible from here (the ",
+        },
+        "explanation": "repositioning only walks straight toward target band without arena boundary or wall clearance scoring",
     },
     "BOSS-MOV-003": {
         "dep_class": "ENGINE-ONLY",
-        "reason": "Continuous movement commitment hysteresis / direction latching across frames not implemented (Source/OneBossFight/Player/RPGBossTrackRules.h:35)",
-        "cost": "S"
+        "cost": "S",
+        "cite": {
+            "file": "Source/OneBossFight/Player/RPGBossTrackRules.h",
+            "line": 13,
+            "quote": "if (bCommitted||!FMath::IsFinite(DegPerSecond)||!FMath::IsFi",
+        },
+        "explanation": "nearest code, not the feature: turn tracking turns shortest-way each tick without movement direction latching or continuous locomotion hysteresis",
     },
     "BOSS-MOV-004": {
         "dep_class": "NEEDS ART",
-        "reason": "Attack trajectory clamping against arena geometry bounds requires collision channel authoring (Source/OneBossFight/Boss/RPGFrameworkMoveExecutor.cpp:150)",
-        "cost": "M"
+        "cost": "M",
+        "cite": None,
+        "explanation": "no code: forward charge attack animations with root motion require level art perimeter collision geometry and collision preset authoring to prevent clipping",
     },
     "BOSS-MOV-005": {
         "dep_class": "ENGINE-ONLY",
-        "reason": "Leashing to arena center when player exits arena bounds not wired (Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp:185)",
-        "cost": "S"
+        "cost": "S",
+        "cite": {
+            "file": "Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp",
+            "line": 87,
+            "quote": "if(P&&P->ArenaRadiusCm>0.f&&FVector::Dist2D(Target->GetActor",
+        },
+        "explanation": "target leaving ArenaRadiusCm triggers TargetFault OffArena which halts and fails the boss; active leashing back to arena center and neutral reset not implemented",
     },
     "BOSS-MOV-006": {
         "dep_class": "NEEDS ART",
-        "reason": "Production level L_SevarogArena geometry clearance and snag point audit requires level art verification (Source/OneBossFight/Tests/RPGAutomationTests.cpp:210)",
-        "cost": "M"
+        "cost": "M",
+        "cite": {
+            "file": "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
+            "line": 766,
+            "quote": 'IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGArenaCollisionTest, "On',
+        },
+        "explanation": "collision tests only verify legacy ARPGGreyboxArena geometry; production level L_SevarogArena clearance and snag point audit requires level art verification",
     },
     "BOSS-PAC-002": {
         "dep_class": "NEEDS DESIGN DECISION",
-        "reason": "Deliberate tempo pause nodes in combo sequences not authored in profile combo graph (Source/OneBossFight/Player/RPGBossComboRules.h:45)",
-        "cost": "S"
+        "cost": "S",
+        "cite": {
+            "file": "Source/OneBossFight/Player/RPGBossComboRules.h",
+            "line": 12,
+            "quote": "struct FComboEdge",
+        },
+        "explanation": "combo graph edges only specify target node, range, yaw, and outcome; no tempo pause delay or deliberate pacing duration field exists",
     },
     "BOSS-PAC-003": {
         "dep_class": "PLAYER-SIDE",
-        "reason": "Finisher recovery opening window validation against player counter-attack loop requires player attack intake (Source/OneBossFight/Player/RPGBossRules.h:60)",
-        "cost": "M"
+        "cost": "M",
+        "cite": {
+            "file": "Source/OneBossFight/Player/RPGBossMoveCard.h",
+            "line": 60,
+            "quote": "UPROPERTY(EditAnywhere) float RecoveryEndSeconds = 0.f;",
+        },
+        "explanation": "move card specifies static RecoveryEndSeconds; validation against player punish attack timings requires player moveset intake",
     },
     "BOSS-PAC-004": {
         "dep_class": "NEEDS ART",
-        "reason": "Vulnerability visual/audio cues (e.g. weapon lodged in ground) require animation assets and notifies (Source/OneBossFight/Boss/RPGFrameworkMoveExecutor.cpp:135)",
-        "cost": "L"
+        "cost": "L",
+        "cite": None,
+        "explanation": "no code: visual/audio recovery cues (e.g. scythe lodged in ground) require authored animation notify tracks and VFX",
     },
     "BOSS-PAC-005": {
         "dep_class": "PLAYER-SIDE",
-        "reason": "Mathematical verification that recovery duration exceeds player startup + travel time by >= 0.3s requires player moveset timings (Source/OneBossFight/Player/RPGBossRules.h:80)",
-        "cost": "M"
+        "cost": "M",
+        "cite": None,
+        "explanation": "no code: punish margin formula (recovery > player startup + travel + 0.3s) requires player moveset startup data",
     },
     "BOSS-DEF-004": {
         "dep_class": "ENGINE-ONLY",
-        "reason": "Move card hyperarmor tag checking during active hit windows not wired into damage receiver (Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp:330)",
-        "cost": "S"
+        "cost": "S",
+        "cite": {
+            "file": "Source/OneBossFight/Player/RPGWeaponAttackTable.h",
+            "line": 44,
+            "quote": "float HyperArmorStart = -1.f;",
+        },
+        "explanation": "nearest code, not the feature: hyperarmor window fields exist only for player attacks in RPGWeaponAttackTable; hyperarmor tags not implemented for boss move cards",
     },
     "BOSS-DEF-005": {
         "dep_class": "NEEDS ART",
-        "reason": "Boss defensive actions (backstep, block animations) not authored in boss profile moveset (Source/OneBossFight/Player/RPGBossFrameworkProfile.h:40)",
-        "cost": "M"
+        "cost": "M",
+        "cite": None,
+        "explanation": "no code: defensive moves (backstep, block) not authored in boss profile moveset or animation cards",
     },
     "BOSS-PHS-005": {
         "dep_class": "NEEDS DESIGN DECISION",
-        "reason": "Player extreme kiting/hugging distance thresholds and anti-cheese trigger rules not defined (Source/OneBossFight/Player/RPGBossMoveSelector.cpp:55)",
-        "cost": "M"
+        "cost": "M",
+        "cite": {
+            "file": "Source/OneBossFight/Player/RPGBossMoveSelector.cpp",
+            "line": 49,
+            "quote": "if (Out.ChosenIndex==INDEX_NONE || T.Score>Out.Score) { Out.",
+        },
+        "explanation": "candidate evaluation selects solely by highest score among eligible cards; no anti-cheese override or exploit loop detector exists",
     },
     "BOSS-QA-006": {
         "dep_class": "PLAYER-SIDE",
-        "reason": "Combat camera framing evaluation requires player follow camera / lock-on system testing (Source/OneBossFight/Player/RPGFrameworkCharacter.cpp:50)",
-        "cost": "M"
+        "cost": "M",
+        "cite": None,
+        "explanation": "no code: camera framing and lock-on tracking evaluation requires player follow camera / lock-on system testing",
     },
     "BOSS-QA-007": {
         "dep_class": "NEEDS ART",
-        "reason": "Low VFX and audio-only/visual-only accessibility contrast test harness requires multi-channel asset audit (Source/OneBossFight/Tests/RPGAutomationTests.cpp:240)",
-        "cost": "L"
-    }
+        "cost": "L",
+        "cite": None,
+        "explanation": "no code: low VFX / audio-only / visual-only contrast testing harness not authored in project",
+    },
 }
 
+def validate_census_metadata():
+    """Validates every citation against disk and checks schema rules."""
+    for rid, meta in CENSUS_METADATA.items():
+        dep = meta["dep_class"]
+        cost = meta["cost"]
+        cite = meta["cite"]
+        exp = meta["explanation"]
+
+        assert dep in VALID_DEP_CLASSES, f"[{rid}] Invalid dep_class: {dep}"
+        assert cost in VALID_COSTS, f"[{rid}] Invalid cost: {cost}"
+
+        if cite is None:
+            assert exp.startswith("no code: "), f"[{rid}] Missing 'no code: ' prefix: {exp}"
+        else:
+            file_rel = cite["file"]
+            line_no = cite["line"]
+            quote = cite["quote"]
+
+            file_abs = REPO_ROOT / file_rel
+            assert file_abs.exists(), f"[{rid}] Cited file does not exist: {file_rel}"
+
+            with open(file_abs, "r", encoding="utf-8", errors="ignore") as f:
+                lines = f.readlines()
+
+            assert 1 <= line_no <= len(lines), f"[{rid}] Line {line_no} past EOF ({len(lines)}) in {file_rel}"
+            actual_line = lines[line_no - 1]
+            assert quote in actual_line, f"[{rid}] Quote mismatch in {file_rel}:{line_no}\nExpected: {quote!r}\nActual:   {actual_line!r}"
+            assert len(quote) <= 60, f"[{rid}] Quote exceeds 60 chars ({len(quote)}): {quote!r}"
+
 def main():
+    print("--- Validating Census Metadata Against Disk ---")
+    validate_census_metadata()
+    print("  [PASS] All citations and schemas verified on disk.")
+
     with open(JSON_PATH, "r", encoding="utf-8") as f:
         data = json.load(f)
 
@@ -148,7 +262,7 @@ def main():
     lines_md = []
     lines_md.append("# Track B Remaining Requirements Census: 24 NOT YET Rows\n")
     lines_md.append("**Document Reference:** `Reviews/NOT_YET_CENSUS.md`  ")
-    lines_md.append("**Task Reference:** `[C-565]` (Track B Direction Selection Census)  ")
+    lines_md.append("**Task Reference:** `[C-565]` / `[C-568]` (Track B Direction Selection Census)  ")
     lines_md.append("**Source Authority:** `witness_status_v3.json` (exact titles and observables)  ")
     lines_md.append("**Total Census:** 24 requirements currently classified as `NOT YET`  \n")
     lines_md.append("---\n")
@@ -170,8 +284,8 @@ def main():
     lines_md.append("|:---|:---|:---|:---:|:---|:---:|")
 
     print(f"=== TRACK B NOT YET CENSUS ({len(not_yet_reqs)} ROWS) ===")
-    print(f"{'ID':<14} | {'Title':<28} | {'Dep Class':<22} | {'Cost':<4} | Reason")
-    print("-" * 100)
+    print(f"{'ID':<14} | {'Title':<28} | {'Dep Class':<22} | {'Cost':<4} | Details")
+    print("-" * 110)
 
     for r in not_yet_reqs:
         rid = r["id"]
@@ -180,18 +294,29 @@ def main():
         meta = CENSUS_METADATA.get(rid)
         assert meta is not None, f"Missing metadata for {rid}"
         dep = meta["dep_class"]
-        reason = meta["reason"]
         cost = meta["cost"]
+        cite = meta["cite"]
+        exp = meta["explanation"]
+
+        if cite:
+            f_rel = cite["file"]
+            ln = cite["line"]
+            q = cite["quote"]
+            cell_detail = f"`{f_rel}:{ln}` quote: `{q}`<br>{exp}"
+            summary_log = f"{f_rel}:{ln} quote: \"{q}\" — {exp}"
+        else:
+            cell_detail = exp
+            summary_log = exp
 
         # Markdown row (escape pipes in observable if any)
         obs_escaped = obs.replace("|", "\\|")
-        lines_md.append(f"| **{rid}** | {title} | {obs_escaped} | `{dep}` | {reason} | **{cost}** |")
+        lines_md.append(f"| **{rid}** | {title} | {obs_escaped} | `{dep}` | {cell_detail} | **{cost}** |")
 
-        print(f"{rid:<14} | {title:<28} | {dep:<22} | {cost:<4} | {reason}")
+        print(f"{rid:<14} | {title:<28} | {dep:<22} | {cost:<4} | {summary_log[:70]}")
 
     lines_md.append("\n---\n")
     lines_md.append("## 3. Census Distribution Breakdown\n")
-    
+
     # Calculate distributions
     dep_counts = {}
     cost_counts = {}
@@ -212,8 +337,9 @@ def main():
     with open(OUTPUT_MD, "w", encoding="utf-8", newline="\n") as f:
         f.write(content_str)
 
-    print("-" * 100)
+    print("-" * 110)
     print(f"Successfully generated {OUTPUT_MD} with pure LF (24 rows).")
+    return 0
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
