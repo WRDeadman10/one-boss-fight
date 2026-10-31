@@ -23,7 +23,7 @@ Nobody commits except U. A row is changed only by its owner; others write a note
 - **Track D (Reference Boss Combat Study & Tooling - 5 tasks):** Reference video registered ([Morgott combat footage](<Boss/Morgott_82_Point_Combat_Reference/Elden Ring - Morgott, The Omen King Boss Fight.webm>), combat zero 01:45 / 105.0 s, 59.9401 fps). Tooling and measurement protocol complete:
   * `D1` (Reference Measurement Protocol): DONE (commit `cb9826e3`; 82-row requirements classification, ffmpeg frame-accurate extraction method, milestone timing definitions).
   * `D2` (Measurement Ledger & Ingest): DONE (commit `bb04eb95`; `D2_MEASUREMENT_LEDGER.json`, `ingest_measurements.py` with confidence validation, card-field derivation, and collision guards).
-  * `D3` (Footage Measurements): IN PROGRESS (Claude; 0 of 8 clips filled in `D3_MEASURED_LEDGER.json`).
+  * `D3` (Footage Measurements): IN PROGRESS (Claude; 2 of 9 clips filled in `D3_MEASURED_LEDGER.json`: REF_MaceSlam_Sweep medium, REF_HolySwordRain_Setup low, ledger commit 409ba526/3d9debd4).
   * `D4` (Contact Sheet Tooling): DONE (commit `0620a775`; `contact_sheet.py`, scale-relative font sizing, HUD-avoiding bottom-left placement, 6/6 test pass).
   * `D5` (Ledger Fill Tool): DONE (commit `acc88060`; `fill_ledger.py`, automated timing arithmetic, auto evidence generation, 7/7 test pass).
 - **Framework Delivery Slices Proved (F1 to F10):**
