@@ -1,4 +1,4 @@
-# D3 Reference Measurement Findings (3 of 10 Clips Measured)
+# D3 Reference Measurement Findings (4 of 10 Clips Measured)
 
 > **Status:** DESIGN INPUT (measured from owner footage, observation only).  
 > **Rule:** Observations are qualitative design aids. Strictly **NO** numbers from this review may be applied to runtime gameplay assets or Ember Warden cards without an explicit owner decision.  
@@ -13,6 +13,7 @@ The following table summarizes all clips measured to date in `Docs/BossCombatRev
 | Ledger priority | Reference ID | Original Move ID | Key Frames (W/C/A/E/R/RE) | Windup | Active | Recovery | Total | Confidence | Camera & Observation Notes |
 |---|---|---|---|---|---|---|---|---|---|
 | 6 | `REF_HolySwordRain_Setup` | `Move_EmberWarden_SwordRain` | W=2381 C=2423 A=2566 E=2602 R=2620 RE=2818 | 3.0864s (185f) | 0.6006s (36f) | 3.6036s (216f) | 7.2906s (437f) | **low** | camera: behind player, boss small and far away, boss body not readable; this measures the SKY SWORD VOLLEY, not the boss animation. W = swords begin to materialise at the top of frame 144.75 s (+-6 f, none at 144.611, present at 144.811), C = first single sword drop 145.412 s, A = main volley impact flash 147.814 s, E = volley impacts finish ~148.415 s, R = all swords planted 148.7 s (they persist as a ground hazard until at least 156 s), RE = boss starts its next move (leap/dash in) ~152.0 s; observation only from owner footage |
+| 8 | `REF_OmenCurseBurst_Phase2` | `Move_EmberWarden_CurseBurst` | W=5189 C=5270 A=5347 E=5612 R=5624 RE=5732 | 2.6360s (158f) | 4.4211s (265f) | 2.0020s (120f) | 9.0590s (543f) | **medium** | camera: steady, boss in frame and close during the buildup (190.8-194.1 s), then boss mid-distance behind the player for the burst; W = orange eye glow and embers start ~191.56 s (+-9 f), C = golden flame aura ignites ~192.91 s, A = golden detonation ~194.2 s (between 194.111 no burst and 194.261 burst, +-5 f), burst rays fade ~195.8 s, flame geysers across the arena erupt from ~196.2 s and burn until ~198.6 s (E = end of the flames), R = flames gone ~198.8 s, RE = next attack flare ~200.6 s (low certainty, boss small and far); NOT the boss's own recovery animation; observation only from owner footage |
 | 9 | `REF_MaceSlam_Sweep` | `Move_EmberWarden_MaceSlam` | W=1703 C=1787 A=1796 E=1801 R=1835 RE=1871 | 1.5515s (93f) | 0.0834s (5f) | 1.1678s (70f) | 2.8028s (168f) | **medium** | camera: boss in frame the whole clip, player mostly off screen; W = mace summon flash 133.400 s, hold ~1.3 s, sweep starts 134.801 s; first contact depends on player position; R/RE read at 0.1 s steps (+-3 frames); observation only from owner footage |
 | 10 | `REF_GapPounce_Close` | `Move_EmberWarden_GapPounce` | W=3951 C=3981 A=4005 E=4023 R=4047 RE=4065 | 0.9009s (54f) | 0.3003s (18f) | 0.7007s (42f) | 1.9019s (114f) | **low** | camera: boss far then fills the frame, close melee, player partly hidden; W = boss starts its run-in at the far right ~170.9 s (+-6 f), C = boss leaves the ground ~171.4 s, A = boss meets the player at ~171.8 s, E = boss passes through ~172.1 s, R = landing/turn ~172.5 s, RE = the NEXT attack (mace summon flash) starts ~172.8 s, so this is a CHAIN: 'recovery' is only the gap to the next move and is not a true recovery window; observation only from owner footage |
 
@@ -75,6 +76,26 @@ The following table summarizes all clips measured to date in `Docs/BossCombatRev
 - **What these numbers CANNOT be used for:**
   - Player punish window design (the move chains immediately into the next attack without neutral recovery).
   - Precise hurtbox/hitbox collision alignment (player was partially obscured during pass-through).
+  - Direct parameter injection into Ember Warden runtime cards without designer validation and owner decision.
+
+---
+
+### Clip 4: `REF_OmenCurseBurst_Phase2` (`Move_EmberWarden_CurseBurst`)
+- **Key Milestones:** $W=5189$ ($191.553\text{ s}$), $C=5270$ ($192.904\text{ s}$), $A=5347$ ($194.189\text{ s}$), $E=5612$ ($198.610\text{ s}$), $R=5624$ ($198.810\text{ s}$), $RE=5732$ ($200.612\text{ s}$).
+- **Calculated Durations:**
+  - Windup / Buildup & Aura Telegraph: $158\text{ frames}$ ($2.6360\text{ s}$)
+  - Active (Detonation + Flame Geysers): $265\text{ frames}$ ($4.4211\text{ s}$)
+  - Recovery ($RE - E$): $120\text{ frames}$ ($2.0020\text{ s}$)
+  - Recovery Tail ($RE - R$): $108\text{ frames}$ ($1.8018\text{ s}$)
+  - Total Duration ($RE - W$): $543\text{ frames}$ ($9.0590\text{ s}$)
+- **Confidence Rating:** **MEDIUM** (Camera is steady; boss is close and clearly framed throughout the buildup from $190.8\text{ s}$ to $194.1\text{ s}$, then moves to mid-distance behind the player during the burst).
+- **What these numbers CAN be used for (Observations & Inferences for Design Review):**
+  - Observed phase transition / macro buildup telegraph: the footage shows the boss hunched with orange eye glow and embers beginning at $\approx 191.56\text{ s}$ ($W$, frame $5189$), igniting a golden flame aura at $\approx 192.91\text{ s}$ ($C$, frame $5270$, $81\text{ frames}$ / $1.35\text{ s}$ initial hunch), followed by an explosive golden detonation at $\approx 194.2\text{ s}$ ($A$, frame $5347$, $158\text{ frames}$ / $2.6360\text{ s}$ total windup). *(INFERENCE for design review: informs macro telegraph pacing for a major phase transition explosion).*
+  - Observed hybrid active phase (instant burst + persistent hazard): the initial detonation occurs at frame $5347$ ($\approx 194.2\text{ s}$); explosive burst rays fade by $\approx 195.8\text{ s}$, while arena-wide flame geysers erupt from $\approx 196.2\text{ s}$ and continue burning until $\approx 198.6\text{ s}$ ($E$, frame $5612$). **The active duration ($265\text{ frames}$ / $4.4211\text{ s}$) combines both the instant primary detonation and the subsequent persistent arena flame hazard.** *(INFERENCE for design review: illustrates a compound move where primary shockwave transitions into area denial).*
+  - Observed recovery and flare: flame geysers extinguish by $\approx 198.8\text{ s}$ ($R$, frame $5624$), followed by next attack flare at $pprox 200.6\text{ s}$ ($RE$, frame $5732$, $120\text{ frames}$ / $2.0020\text{ s}$ after active flames end). **NOTE: End milestone $E$ covers the arena geyser fire rather than the boss's own recovery animation, and $RE$ carries lower certainty due to distant framing.** *(INFERENCE for design review: boss action recovery must be distinguished from lingering spell VFX).*
+- **What these numbers CANNOT be used for:**
+  - Boss skeletal animation card data (the active end $E$ measures environmental fire FX persistence, not boss character animation).
+  - Exact recovery vulnerability (boss recovery pose overlaps with arena flame hazard).
   - Direct parameter injection into Ember Warden runtime cards without designer validation and owner decision.
 
 ---
