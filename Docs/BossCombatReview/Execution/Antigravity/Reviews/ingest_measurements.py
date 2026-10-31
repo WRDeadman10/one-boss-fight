@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ingest_measurements.py - Ingests and validates reference combat measurement ledgers.
 
-Reads D2_MEASUREMENT_LEDGER.json, validates timing constraints, frame formulas,
+Reads D2_MEASUREMENT_LEDGER.json or measured ledgers, validates timing constraints, frame formulas,
 original move ID conventions, and evidence naming, then outputs card-field proposals
 mapped to original move IDs.
 
@@ -20,11 +20,15 @@ Validation Rules:
   * Forbidden reference names: strictly NO Morgott, REF, or Elden in move IDs.
   * Collision check: collides with Content/OneBossFight/FrameworkProof/Cards/<MoveId>.uasset
     unless id_status == 'existing'.
-- Rejection: Refuses entries with null, missing, or inconsistent values.
+- Partial ledger support (--partial):
+  * Entries whose measurement fields are ALL null are listed as 'pending: <ref_id>' and skipped.
+  * Entries with SOME fields null or any inconsistency are still refused.
+  * Exits 0 only if every filled entry is valid and at least one is filled.
+- Rejection: Refuses entries with null, missing, or inconsistent values (default behavior).
 - Clean Output: Emitted proposals contain ONLY original move IDs (strictly no REF_* names),
   and carry the 'DESIGN INPUT (measured from owner footage, observation only)' status.
 
-Run: python -I ingest_measurements.py <path_to_ledger.json>
+Run: python -I ingest_measurements.py [--partial] <path_to_ledger.json>
 """
 
 import json
@@ -42,6 +46,19 @@ FORBIDDEN_NAME_PATTERN = re.compile(r"morgott|ref|elden", re.IGNORECASE)
 DEFAULT_CARDS_DIR = os.path.normpath(
     os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "..", "Content", "OneBossFight", "FrameworkProof", "Cards")
 )
+
+REQUIRED_TIME_FIELDS = [
+    "t_W_orig", "t_W_combat", "t_C_orig", "t_C_combat",
+    "t_A_orig", "t_A_combat", "t_E_orig", "t_E_combat",
+    "t_R_orig", "t_R_combat", "t_RE_orig", "t_RE_combat"
+]
+REQUIRED_FRAME_FIELDS = ["W_frame", "C_frame", "A_frame", "E_frame", "R_frame", "RE_frame"]
+MEASUREMENT_FIELDS = REQUIRED_TIME_FIELDS + REQUIRED_FRAME_FIELDS + ["evidence_pngs", "confidence"]
+
+
+def is_entry_unfilled(entry):
+    """Returns True if ALL measurement fields are None (unfilled template entry)."""
+    return all(entry.get(f) is None for f in MEASUREMENT_FIELDS)
 
 
 def validate_entry(entry, fps=FPS, combat_zero=COMBAT_ZERO, cards_dir=DEFAULT_CARDS_DIR):
@@ -75,21 +92,14 @@ def validate_entry(entry, fps=FPS, combat_zero=COMBAT_ZERO, cards_dir=DEFAULT_CA
         raise ValueError(f"[{ref_id}] Invalid or missing confidence '{confidence}'. Must be 'high', 'medium', or 'low'.")
 
     # Check required fields are present and not null
-    required_time_fields = [
-        "t_W_orig", "t_W_combat", "t_C_orig", "t_C_combat",
-        "t_A_orig", "t_A_combat", "t_E_orig", "t_E_combat",
-        "t_R_orig", "t_R_combat", "t_RE_orig", "t_RE_combat"
-    ]
-    required_frame_fields = ["W_frame", "C_frame", "A_frame", "E_frame", "R_frame", "RE_frame"]
-
-    for tf in required_time_fields:
+    for tf in REQUIRED_TIME_FIELDS:
         val = entry.get(tf)
         if val is None:
             raise ValueError(f"[{ref_id}] Time field '{tf}' is null or missing.")
         if not isinstance(val, (int, float)):
             raise ValueError(f"[{ref_id}] Time field '{tf}' must be numeric, got {type(val).__name__}.")
 
-    for ff in required_frame_fields:
+    for ff in REQUIRED_FRAME_FIELDS:
         val = entry.get(ff)
         if val is None:
             raise ValueError(f"[{ref_id}] Frame field '{ff}' is null or missing.")
@@ -188,17 +198,31 @@ def derive_card_proposal(entry, fps=FPS):
     }
 
 
-def ingest_ledger(ledger_data, fps=FPS, combat_zero=COMBAT_ZERO, cards_dir=DEFAULT_CARDS_DIR):
-    """Ingests and validates full ledger dictionary. Returns list of card proposals."""
+def ingest_ledger(ledger_data, fps=FPS, combat_zero=COMBAT_ZERO, cards_dir=DEFAULT_CARDS_DIR, allow_partial=False):
+    """Ingests and validates full ledger dictionary. Returns list of card proposals.
+
+    If allow_partial is True:
+    - Entries where ALL measurement fields are None are listed as 'pending: <ref_id>' and skipped.
+    - Entries with SOME fields null or any inconsistency are still refused.
+    - Exits 0 only if every filled entry is valid and at least one is filled.
+    """
     entries = ledger_data.get("entries", [])
     if not entries:
         raise ValueError("Ledger contains no entries.")
 
     proposals = []
     for entry in entries:
+        ref_id = entry.get("ref_id", "UNKNOWN")
+        if allow_partial and is_entry_unfilled(entry):
+            print(f"pending: {ref_id}")
+            continue
+
         validate_entry(entry, fps=fps, combat_zero=combat_zero, cards_dir=cards_dir)
         proposal = derive_card_proposal(entry, fps=fps)
         proposals.append(proposal)
+
+    if allow_partial and len(proposals) == 0:
+        raise ValueError("No filled entries found in ledger (all entries pending).")
 
     # Sanity check: Ensure strictly NO reference names in proposals
     serialized = json.dumps(proposals)
@@ -208,12 +232,18 @@ def ingest_ledger(ledger_data, fps=FPS, combat_zero=COMBAT_ZERO, cards_dir=DEFAU
     return proposals
 
 
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: python -I ingest_measurements.py <path_to_ledger.json>")
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv[1:]
+
+    allow_partial = "--partial" in argv
+    clean_argv = [a for a in argv if a != "--partial"]
+
+    if len(clean_argv) < 1:
+        print("Usage: python -I ingest_measurements.py [--partial] <path_to_ledger.json>")
         sys.exit(1)
 
-    path = sys.argv[1]
+    path = clean_argv[0]
     if not os.path.exists(path):
         print(f"Error: Ledger file '{path}' not found.")
         sys.exit(1)
@@ -222,7 +252,7 @@ def main():
         data = json.load(f)
 
     try:
-        proposals = ingest_ledger(data)
+        proposals = ingest_ledger(data, allow_partial=allow_partial)
         print(f"Successfully validated {len(proposals)} entries.")
         print(json.dumps(proposals, indent=2))
     except ValueError as e:
