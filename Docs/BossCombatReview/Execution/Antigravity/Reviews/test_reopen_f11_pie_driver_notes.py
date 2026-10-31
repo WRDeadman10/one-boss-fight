@@ -79,6 +79,15 @@ class TestDriverSourceCitations(unittest.TestCase):
             var_name = "$" + p.lstrip("-")
             self.assertIn(var_name, self.run_pie_code, f"run_pie parameter {var_name} missing from run_pie.ps1")
 
+    def test_full_raw_log_exit_code_line(self):
+        full_raw_path = os.path.join(ROOT, "Docs", "BossCombatReview", "Execution", "Claude", "F11", "full_raw.log")
+        self.assertTrue(os.path.exists(full_raw_path), "full_raw.log missing")
+        with open(full_raw_path, "r", encoding="utf-8", errors="replace") as f:
+            lines = f.readlines()
+        self.assertGreaterEqual(len(lines), 4012, f"full_raw.log has only {len(lines)} lines")
+        line_4012 = lines[4011].strip()
+        self.assertIn("TEST COMPLETE. EXIT CODE: 0", line_4012, f"Line 4012 did not contain expected text. Actual: {line_4012}")
+
 
 class TestTestPlanCitations(unittest.TestCase):
     def setUp(self):
