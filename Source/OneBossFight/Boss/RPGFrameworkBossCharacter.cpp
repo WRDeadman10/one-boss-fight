@@ -296,7 +296,9 @@ void ARPGFrameworkBossCharacter::TickOverlay()
     const FString Line=RPGBossOverlay::Format(I);
     if(GEngine)GEngine->AddOnScreenDebugMessage(int32(GetUniqueID()&0x7fffffff),.1f,FColor::Yellow,TEXT("Boss: ")+Line);
     const double Now=GetWorld()->GetTimeSeconds();
-    if(Mode>=2&&(OverlayLoggedAt<0.||Now-OverlayLoggedAt>=1.)){OverlayLoggedAt=Now;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] overlay %s"),*Line);}
+    // Mode 2 logs once per second and also on every change of the move state, so a short Open window is caught.
+    const bool bStateChanged=I.State!=OverlayLastState; OverlayLastState=I.State;
+    if(Mode>=2&&(bStateChanged||OverlayLoggedAt<0.||Now-OverlayLoggedAt>=1.)){OverlayLoggedAt=Now;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] overlay %s"),*Line);}
 }
 bool ARPGFrameworkBossCharacter::PlayF11Clip(UAnimSequence* Clip,int32 Loops)
 {

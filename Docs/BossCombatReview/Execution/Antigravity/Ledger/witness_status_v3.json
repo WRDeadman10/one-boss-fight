@@ -3,8 +3,8 @@
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 30,
-    "PARTIAL": 20,
+    "WITNESSED": 29,
+    "PARTIAL": 21,
     "NOT YET": 32
   },
   "requirements": [
@@ -1802,15 +1802,17 @@
       "title": "Runtime overlay",
       "section": "Debugging, QA, presentation and optional networking",
       "old_status": "NOT YET",
-      "status": "WITNESSED",
+      "status": "PARTIAL",
       "proof": [
         "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:376",
         "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:378",
         "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:380",
-        "Docs/BossCombatReview/Execution/Claude/B_QA001/pie_f8_overlay/editor_raw.log:1576",
-        "Docs/BossCombatReview/Execution/Claude/B_QA001/pie_f8_overlay/editor_raw.log:1702",
-        "Docs/BossCombatReview/Execution/Claude/B_QA001/pie_f8_overlay/editor_raw.log:1722",
-        "Docs/BossCombatReview/Execution/Claude/B_QA001/pie_f8_overlay/editor_raw.log:1843"
+        "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log:1577",
+        "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log:1588",
+        "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log:1642",
+        "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log:1720",
+        "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log:1757",
+        "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log:1914"
       ],
       "citations": [
         {
@@ -1829,28 +1831,38 @@
           "quoted": "TestEqual(TEXT(\"non-finite values never print as numbers\"),RPGBossOverlay::Format(Bad),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=n/acm Cone=120deg Window=Open Posture=40/100 Health=n/a/250 Stagger=0 PhaseHold=0\")));"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/B_QA001/pie_f8_overlay/editor_raw.log",
-          "line": 1576,
-          "quoted": "[2026.10.31-15.50.42:287][769]LogTemp: Display: [FrameworkProof] overlay Card=None State=Idle Phase=Phase_1 Range=500cm Cone=0deg Window=Closed Posture=100/100 Health=250/250 Stagger=0 PhaseHold=0"
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log",
+          "line": 1577,
+          "quoted": "[2026.10.31-16.09.27:209][779]LogTemp: Display: [FrameworkProof] overlay Card=None State=Idle Phase=Phase_1 Range=500cm Cone=0deg Window=Closed Posture=100/100 Health=250/250 Stagger=0 PhaseHold=0"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/B_QA001/pie_f8_overlay/editor_raw.log",
-          "line": 1702,
-          "quoted": "[2026.10.31-15.50.44:944][ 35]LogTemp: Display: [FrameworkProof] overlay Card=Move_Sevarog_HeavySlam_F7 State=Recovery Phase=Phase_1 Range=130cm Cone=60deg Window=Closed Posture=40/100 Health=150/250 Stagger=0 PhaseHold=0"
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log",
+          "line": 1588,
+          "quoted": "[2026.10.31-16.09.28:947][946]LogTemp: Display: [FrameworkProof] overlay Card=Move_Sevarog_HeavySlam_F7 State=Committed Phase=Phase_1 Range=129cm Cone=60deg Window=Closed Posture=100/100 Health=250/250 Stagger=0 PhaseHold=0"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/B_QA001/pie_f8_overlay/editor_raw.log",
-          "line": 1722,
-          "quoted": "[2026.10.31-15.50.45:947][151]LogTemp: Display: [FrameworkProof] overlay Card=None State=Idle Phase=Phase_1 Range=130cm Cone=0deg Window=Closed Posture=0/100 Health=50/250 Stagger=1 PhaseHold=0"
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log",
+          "line": 1642,
+          "quoted": "[2026.10.31-16.09.29:431][995]LogTemp: Display: [FrameworkProof] overlay Card=Move_Sevarog_HeavySlam_F7 State=Active Phase=Phase_1 Range=129cm Cone=60deg Window=Open Posture=100/100 Health=250/250 Stagger=0 PhaseHold=0"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/B_QA001/pie_f8_overlay/editor_raw.log",
-          "line": 1843,
-          "quoted": "[2026.10.31-15.50.46:955][260]LogTemp: Display: [FrameworkProof] overlay Card=Move_Sevarog_SwingMedium_F7_P2 State=Recovery Phase=Phase_2 Range=130cm Cone=90deg Window=Closed Posture=100/100 Health=50/250 Stagger=0 PhaseHold=0"
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log",
+          "line": 1720,
+          "quoted": "[2026.10.31-16.09.29:980][ 52]LogTemp: Display: [FrameworkProof] overlay Card=None State=Idle Phase=Phase_1 Range=129cm Cone=0deg Window=Closed Posture=0/100 Health=50/250 Stagger=1 PhaseHold=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log",
+          "line": 1757,
+          "quoted": "[2026.10.31-16.09.31:200][193]LogTemp: Display: [FrameworkProof] overlay Card=Move_Sevarog_SwingMedium_F7_P2 State=Active Phase=Phase_2 Range=129cm Cone=90deg Window=Open Posture=100/100 Health=50/250 Stagger=0 PhaseHold=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log",
+          "line": 1914,
+          "quoted": "[2026.10.31-16.09.32:404][320]LogTemp: Display: [FrameworkProof] overlay Card=Move_Sevarog_AntiGreed_F7_P2 State=Active Phase=Phase_2 Range=129cm Cone=100deg Window=Open Posture=100/100 Health=50/250 Stagger=0 PhaseHold=0"
         }
       ],
       "observable": "On-screen debug overlay displays active MoveCard, Phase, Range, Cone, HitWindow state, and Posture.",
-      "notes": "Runtime debug overlay implemented in RPGBossOverlayRules.h (rpg.BossOverlay CVar 1 on-screen, 2 logged). Live PIE proof on L_SevarogFrameworkProofDEF002 (B_QA001 pie_f8_overlay) verifies 6 telemetry lines: idle at range 500cm (line 1576), HeavySlam recovery with Cone=60deg, Posture=40/100, Health=150/250 (line 1702), stance break stagger with Posture=0/100, Stagger=1 (line 1722), and Phase 2 SwingMedium recovery with Phase=Phase_2, Cone=90deg, Posture=100/100 (line 1843). Unit test BossOverlayFormat (runtime_tests:376, 378, 380) verifies active window formatting (Window=Open), phase hold flag, and non-finite NaN/inf safe fallback to 'n/a'. (Honest limits per C-533: on-screen text proven by identical string passed to AddOnScreenDebugMessage and logged; 1 Hz PIE sampling observed Window=Closed; Window=Open is proven by the unit test)."
+      "notes": "Runtime debug overlay implemented in RPGBossOverlayRules.h (rpg.BossOverlay CVar 1 on-screen, 2 logged). Live PIE proof on L_SevarogFrameworkProofF8 (B_QA001 pie2) verifies 16 telemetry lines, capturing idle (line 1577), HeavySlam committed (line 1588), live Window=Open during active swing (line 1642), stance break stagger with Posture=0/100 and Stagger=1 (line 1720), and Phase 2 live Window=Open swings (lines 1757, 1914). Unit test BossOverlayFormat (runtime_tests:376, 378, 380) verifies exact formatting and non-finite NaN/inf safe fallback to 'n/a'. Status remains PARTIAL per C-534/C-535: string construction and live logging are fully witnessed, but on-screen viewport pixel drawing has not yet been captured via screenshot (headless/unattended PIE GPU backbuffer readback returned black). Only the on-screen screenshot is required to graduate to WITNESSED."
     },
     {
       "id": "BOSS-QA-002",

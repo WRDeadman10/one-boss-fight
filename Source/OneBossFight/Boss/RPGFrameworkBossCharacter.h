@@ -77,6 +77,6 @@ private:
     void StopF11Clip();
     void TickStaggerAnim();
     /** BOSS-QA-001: the runtime overlay (console variable rpg.BossOverlay): on screen each tick, as a log line once per second at 2. */
-    double OverlayLoggedAt=-1.;
+    double OverlayLoggedAt=-1.; FString OverlayLastState;
     void TickOverlay();
 };
