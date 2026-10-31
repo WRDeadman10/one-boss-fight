@@ -81,7 +81,7 @@ class TestCompareRuns(unittest.TestCase):
         try:
             r1 = compare_runs.parse_log_file(p1)
             r2 = compare_runs.parse_log_file(p2)
-            ok, fails, diffs = compare_runs.compare_runs([r1, r2], damage_tol=0.0, score_tol=1e-3)
+            ok, fails, diffs, first_diff = compare_runs.compare_runs([r1, r2], damage_tol=0.0, score_tol=1e-3)
             self.assertTrue(ok, f"Expected identical runs to pass, got fails: {fails}")
             self.assertEqual(diffs["damage"], 0.0)
         finally:
@@ -98,7 +98,7 @@ class TestCompareRuns(unittest.TestCase):
         try:
             r1 = compare_runs.parse_log_file(p1)
             r2 = compare_runs.parse_log_file(p2)
-            ok, fails, diffs = compare_runs.compare_runs([r1, r2])
+            ok, fails, diffs, first_diff = compare_runs.compare_runs([r1, r2])
             self.assertFalse(ok, "Expected missing hit run to fail comparison")
             self.assertTrue(any("acceptedHits mismatch" in f for f in fails))
         finally:
@@ -115,7 +115,7 @@ class TestCompareRuns(unittest.TestCase):
         try:
             r1 = compare_runs.parse_log_file(p1)
             r2 = compare_runs.parse_log_file(p2)
-            ok, fails, diffs = compare_runs.compare_runs([r1, r2], damage_tol=0.0)
+            ok, fails, diffs, first_diff = compare_runs.compare_runs([r1, r2], damage_tol=0.0)
             self.assertFalse(ok, "Expected damage difference to fail")
             self.assertTrue(any("total damage mismatch" in f or "hpApplied diff" in f for f in fails))
         finally:
@@ -132,7 +132,7 @@ class TestCompareRuns(unittest.TestCase):
         try:
             r1 = compare_runs.parse_log_file(p1)
             r2 = compare_runs.parse_log_file(p2)
-            ok, fails, diffs = compare_runs.compare_runs([r1, r2])
+            ok, fails, diffs, first_diff = compare_runs.compare_runs([r1, r2])
             self.assertFalse(ok, "Expected swapped order to fail")
             self.assertTrue(any("mismatch" in f for f in fails))
         finally:
@@ -151,7 +151,7 @@ class TestCompareRuns(unittest.TestCase):
             self.assertTrue(l.exists(), f"Log missing: {l}")
 
         runs = [compare_runs.parse_log_file(l, ignore_duplicate_hits=True) for l in logs]
-        ok, fails, diffs = compare_runs.compare_runs(runs, damage_tol=0.0, score_tol=0.05, range_tol=10.0)
+        ok, fails, diffs, first_diff = compare_runs.compare_runs(runs, damage_tol=0.0, score_tol=0.05, range_tol=10.0)
         self.assertTrue(ok, f"Expected fixed30/60/120 to pass FPS parity comparison, got: {fails}")
         self.assertEqual(diffs["damage"], 0.0)
         self.assertEqual(runs[0]["counts"]["accepted_hits"], 2)
@@ -165,6 +165,40 @@ class TestCompareRuns(unittest.TestCase):
         self.assertEqual(runs[0]["counts"]["duplicate_hits"], 2)
         self.assertEqual(runs[1]["counts"]["duplicate_hits"], 4)
         self.assertEqual(runs[2]["counts"]["duplicate_hits"], 9)
+
+    def test_exact_mode_f5_fixed60_runs(self):
+        """Integration test on Claude/B_QA004 fixed60 vs Claude/B_QA003 f5_fixed60_run2 in --exact mode."""
+        log1 = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_QA004/fixed60/editor_raw.log"
+        log2 = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_QA003/f5_fixed60_run2/editor_raw.log"
+        self.assertTrue(log1.exists(), f"Log missing: {log1}")
+        self.assertTrue(log2.exists(), f"Log missing: {log2}")
+
+        r1 = compare_runs.parse_log_file(log1, exact_mode=True, ignored_tokens={"pack_style_known"})
+        r2 = compare_runs.parse_log_file(log2, exact_mode=True, ignored_tokens={"pack_style_known"})
+
+        self.assertEqual(r1["ignored_counts"]["pack_style_known"], 1)
+        self.assertEqual(r2["ignored_counts"]["pack_style_known"], 1)
+        self.assertEqual(len(r1["events"]), 185)
+        self.assertEqual(len(r2["events"]), 185)
+
+        ok, fails, diffs, first_diff = compare_runs.compare_runs([r1, r2], exact_mode=True)
+        self.assertTrue(ok, f"Expected exact F5 runs to match bit-for-bit after ignoring pack_style_known, got: {fails}")
+        self.assertIsNone(first_diff)
+
+    def test_exact_mode_f8_negative_control(self):
+        """Negative control on Claude/B_QA003 run1 vs run2 (F8 variable step)."""
+        log1 = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_QA003/run1/editor_raw.log"
+        log2 = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_QA003/run2/editor_raw.log"
+        self.assertTrue(log1.exists(), f"Log missing: {log1}")
+        self.assertTrue(log2.exists(), f"Log missing: {log2}")
+
+        r1 = compare_runs.parse_log_file(log1, exact_mode=True)
+        r2 = compare_runs.parse_log_file(log2, exact_mode=True)
+
+        ok, fails, diffs, first_diff = compare_runs.compare_runs([r1, r2], exact_mode=True)
+        self.assertFalse(ok, "Expected variable-step F8 runs to fail exact comparison")
+        self.assertIsNotNone(first_diff)
+        self.assertGreater(len(fails), 0)
 
 if __name__ == "__main__":
     unittest.main()
