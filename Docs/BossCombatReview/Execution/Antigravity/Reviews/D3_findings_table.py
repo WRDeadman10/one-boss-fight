@@ -2,8 +2,8 @@
 """D3_findings_table.py - Generates Markdown summary tables from measured combat ledgers.
 
 Reads D3_MEASURED_LEDGER.json, extracts all filled entries, computes phase durations
-in frames and seconds, and formats a clean Markdown findings table including confidence
-levels and camera/observability notes.
+in frames and seconds, and formats a clean Markdown findings table including ledger priority,
+confidence levels, and camera/observability notes.
 
 Run: python -I D3_findings_table.py [path_to_ledger.json]
 """
@@ -55,6 +55,7 @@ def compute_entry_metrics(entry, fps=FPS):
     total_s = round(total_f / fps, 4)
 
     return {
+        "priority": entry.get("priority", 0),
         "ref_id": entry["ref_id"],
         "orig_id": entry["ref_to_original"],
         "attack_family": entry.get("attack_family", ""),
@@ -79,19 +80,18 @@ def generate_markdown_table(ledger_data, fps=FPS):
     rows = [compute_entry_metrics(e, fps=fps) for e in filled]
 
     lines = []
-    lines.append("| Priority | Reference ID | Original Move ID | Key Frames (W/C/A/E/R/RE) | Windup | Active | Recovery | Total | Confidence | Camera & Observation Notes |")
+    lines.append("| Ledger priority | Reference ID | Original Move ID | Key Frames (W/C/A/E/R/RE) | Windup | Active | Recovery | Total | Confidence | Camera & Observation Notes |")
     lines.append("|---|---|---|---|---|---|---|---|---|---|")
 
-    for idx, r in enumerate(rows, start=1):
+    for r in rows:
         frames_str = f"W={r['W']} C={r['C']} A={r['A']} E={r['E']} R={r['R']} RE={r['RE']}"
         windup_str = f"{r['windup_s']:.4f}s ({r['windup_f']}f)"
         active_str = f"{r['active_s']:.4f}s ({r['active_f']}f)"
         recovery_str = f"{r['recovery_s']:.4f}s ({r['recovery_f']}f)"
         total_str = f"{r['total_s']:.4f}s ({r['total_f']}f)"
-        # Clean notes for markdown table (replace newlines or vertical pipes if any)
         clean_notes = r["notes"].replace("|", "\\|").replace("\r", " ").replace("\n", " ")
 
-        line = f"| {idx} | `{r['ref_id']}` | `{r['orig_id']}` | {frames_str} | {windup_str} | {active_str} | {recovery_str} | {total_str} | **{r['confidence']}** | {clean_notes} |"
+        line = f"| {r['priority']} | `{r['ref_id']}` | `{r['orig_id']}` | {frames_str} | {windup_str} | {active_str} | {recovery_str} | {total_str} | **{r['confidence']}** | {clean_notes} |"
         lines.append(line)
 
     return "\n".join(lines) + "\n"
