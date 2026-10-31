@@ -117,3 +117,50 @@ python -I Docs\BossCombatReview\Execution\Antigravity\Reviews\test_contact_sheet
 ```
 **Result:**
 - `6/6 PASS` (0 errors, 0 failures).
+
+---
+
+## 6. Automated Ledger Population Tooling (`fill_ledger.py`)
+
+To eliminate manual arithmetic during clip measurement (D3/D5), [`fill_ledger.py`](file:///c:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/Reviews/fill_ledger.py) populates measurement ledgers directly from visual frame milestones identified in contact sheets.
+
+### 6.1 Features & Workflow
+- **Automated Arithmetic:** Reviewers supply only integer frame markers (`--W`, `--C`, `--A`, `--E`, `--R`, `--RE`) and a confidence rating (`--confidence high|medium|low`). The tool automatically calculates:
+  $$t_{*\_\text{orig}} = \text{round}\left(105.0 + \frac{\text{frame} - 1}{59.9401}, 3\right)$$
+  $$t_{*\_\text{combat}} = \text{round}(t_{*\_\text{orig}} - 105.0, 3)$$
+- **Auto-Generated Evidence Filenames:** Sets canonical evidence list containing all six key frames (`morgott_c0_{frame:05d}.png`).
+- **Template Protection:** Creates the destination ledger from the template on first use; strictly refuses writing to `--ledger` directly.
+- **Immediate Ingest Validation:** Runs `ingest_measurements.validate_entry` immediately on the populated clip and prints the derived card proposal.
+- **Overwrite Protection:** Refuses overwriting an already-measured clip unless `--force` is explicitly passed.
+
+### 6.2 CLI Example
+```powershell
+python -I Docs\BossCombatReview\Execution\Antigravity\Reviews\fill_ledger.py `
+    --clip REF_CurvedSwordCombo_Chain1 `
+    --W 447 --C 456 --A 465 --E 472 --R 479 --RE 500 `
+    --confidence high --notes "camera: unobstructed track"
+```
+**Output:**
+```json
+SUCCESS: Clip 'REF_CurvedSwordCombo_Chain1' filled and validated in 'Docs/BossCombatReview/Execution/Claude/D3/D3_MEASURED_LEDGER.json'.
+Card Proposal:
+{
+  "MoveId": "Move_EmberWarden_CurvedSlash_H1",
+  "Confidence": "high",
+  "ActiveStartSeconds": 0.3003,
+  "ActiveEndSeconds": 0.4171,
+  "RecoveryEndSeconds": 0.8842,
+  "WindupFrames": 18,
+  "ActiveFrames": 7,
+  "RecoveryFrames": 28,
+  "RecoveryTailFrames": 21,
+  "TotalAnimationFrames": 53,
+  "DesignStatus": "DESIGN INPUT (measured from owner footage, observation only)"
+}
+```
+
+### 6.3 Test Suite (`test_fill_ledger.py`)
+```powershell
+python -I Docs\BossCombatReview\Execution\Antigravity\Reviews\test_fill_ledger.py
+```
+**Result:** `7/7 PASS` (round-trip test + 5 refusal defect tests).
