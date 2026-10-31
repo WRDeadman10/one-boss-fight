@@ -134,7 +134,7 @@ The configuration contains 30 standard keys (or 40 keys when optional Posture an
 ### 2.2 Reusing Cards vs. Authoring & Baking New Cards
 In the `cards` array:
 - **Reusing an existing card**: Provide only `move_id`, `cooldown_seconds`, and `weight`. `new_boss.py` loads the card from `<destination_package_dir>/Cards/<move_id>` on disk.
-- **Authoring and baking a new card**: Provide `move_id`, `cooldown_seconds`, `weight`, and **both** `spec_json` (absolute path with forward slashes to the card spec JSON) and **`bake: true`** (mandatory to trigger 120 Hz component-space blade trajectory sampling).
+- **Authoring and baking a new card**: Provide `move_id`, `cooldown_seconds`, `weight`, and **both** `spec_json` (absolute path with forward slashes to the card spec JSON) and **`bake: true`** (mandatory to trigger 120 Hz component-space blade trajectory sampling). Card specifications also accept the optional `MaxVerticalDeltaCm` (0 = no limit).
 
 ---
 

@@ -81,6 +81,7 @@ for entry in resolved.get('cards', []):
             fatal('spec_json does not contain exactly one card %s: %s' % (entry['move_id'], entry['spec_json']))
         c = match[0]
         entry['spec'] = {k: c.get(k) for k in ('MoveId', 'PhaseId', 'MinRangeCm', 'MaxRangeCm', 'ActiveStartSeconds', 'RecoveryEndSeconds', 'ClipLengthSeconds', 'HPDamage')}
+        entry['spec']['MaxVerticalDeltaCm'] = c.get('MaxVerticalDeltaCm', 0.0)   # optional card field (0 = no vertical limit)
         new_cards.append((entry, c))
         card_assets.append(None)
         continue
@@ -99,6 +100,7 @@ for entry in resolved.get('cards', []):
         'MinRangeCm': float(s_.get_editor_property('min_range_cm')), 'MaxRangeCm': float(s_.get_editor_property('max_range_cm')),
         'ActiveStartSeconds': float(s_.get_editor_property('active_start_seconds')), 'RecoveryEndSeconds': float(s_.get_editor_property('recovery_end_seconds')),
         'ClipLengthSeconds': clip_length, 'HPDamage': float(s_.get_editor_property('hp_damage')),
+        'MaxVerticalDeltaCm': float(s_.get_editor_property('max_vertical_delta_cm')),
     }
     if entry['spec']['MoveId'] != entry['move_id']:
         fatal('card id mismatch for ' + path)

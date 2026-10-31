@@ -51,6 +51,7 @@ def make_valid_spec() -> Dict[str, Any]:
         "MinRangeCm": 100.0,
         "MaxRangeCm": 300.0,
         "FrontConeDegrees": 120.0,
+        "MaxVerticalDeltaCm": 0.0,
         "HPDamage": 20.0,
         "bUsesRootMotion": False,
         "Windows": [
@@ -179,6 +180,39 @@ class TestMoveCardValidationRules(unittest.TestCase):
         spec3["HPDamage"] = float("nan")
         errors3 = validate_move_card_spec(spec3)
         self.assertIn("MoveCard.NonFinite[HPDamage]", errors3)
+
+    def test_vertical_delta_absent_defaults_to_zero_ok(self):
+        # Case 1: absent = 0 OK (backward-compatible optional field)
+        spec = make_valid_spec()
+        del spec["MaxVerticalDeltaCm"]
+        errors = validate_move_card_spec(spec)
+        self.assertEqual(errors, [])
+
+    def test_vertical_delta_zero_ok(self):
+        # Case 2: 0 OK (explicit zero = unlimited)
+        spec = make_valid_spec()
+        spec["MaxVerticalDeltaCm"] = 0.0
+        errors = validate_move_card_spec(spec)
+        self.assertEqual(errors, [])
+
+    def test_vertical_delta_negative_refused(self):
+        # Case 3: -1 refused (MoveCard.Domain)
+        spec = make_valid_spec()
+        spec["MaxVerticalDeltaCm"] = -1.0
+        errors = validate_move_card_spec(spec)
+        self.assertIn("MoveCard.Domain[MaxVerticalDeltaCm]", errors)
+
+    def test_vertical_delta_nan_and_inf_refused(self):
+        # Case 4: NaN / inf refused (MoveCard.NonFinite)
+        spec_nan = make_valid_spec()
+        spec_nan["MaxVerticalDeltaCm"] = float("nan")
+        errors_nan = validate_move_card_spec(spec_nan)
+        self.assertIn("MoveCard.NonFinite[MaxVerticalDeltaCm]", errors_nan)
+
+        spec_inf = make_valid_spec()
+        spec_inf["MaxVerticalDeltaCm"] = float("inf")
+        errors_inf = validate_move_card_spec(spec_inf)
+        self.assertIn("MoveCard.NonFinite[MaxVerticalDeltaCm]", errors_inf)
 
     def test_eligibility_cone_and_range_order(self):
         # Cone > 360
@@ -553,7 +587,12 @@ class TestAuthorMoveCardsExecution(unittest.TestCase):
 class TestCppTokenParity(unittest.TestCase):
     """Verifies that all Python validation tokens match the live C++ tokens in RPGBossMoveCard.cpp."""
     def test_tokens_match_cpp_source(self):
-        cpp_path = Path("Source/OneBossFight/Player/RPGBossMoveCard.cpp")
+        repo_root = Path(__file__).resolve()
+        while repo_root.parent != repo_root:
+            if (repo_root / "Source" / "OneBossFight").is_dir():
+                break
+            repo_root = repo_root.parent
+        cpp_path = repo_root / "Source" / "OneBossFight" / "Player" / "RPGBossMoveCard.cpp"
         self.assertTrue(cpp_path.is_file(), f"C++ source must exist at {cpp_path}")
         cpp_text = cpp_path.read_text(encoding="utf-8", errors="replace")
 

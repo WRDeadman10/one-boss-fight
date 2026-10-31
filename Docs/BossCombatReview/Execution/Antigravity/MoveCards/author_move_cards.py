@@ -164,6 +164,8 @@ def validate_move_card_spec(
     has_max_r = check_number(errors, "MaxRangeCm", spec.get("MaxRangeCm"))
     has_cone = check_number(errors, "FrontConeDegrees", spec.get("FrontConeDegrees"))
     check_number(errors, "HPDamage", spec.get("HPDamage"))
+    vert_delta = spec.get("MaxVerticalDeltaCm", 0.0)
+    check_number(errors, "MaxVerticalDeltaCm", vert_delta)
 
     # 7. Eligibility ordering
     if has_cone and has_min_r and has_max_r:
@@ -482,6 +484,8 @@ def execute_authoring(
         spec.set_editor_property("max_range_cm", float(card["MaxRangeCm"]))
         spec.set_editor_property("front_cone_degrees", float(card["FrontConeDegrees"]))
         spec.set_editor_property("hp_damage", float(card["HPDamage"]))
+        if "MaxVerticalDeltaCm" in card and card["MaxVerticalDeltaCm"] is not None:
+            spec.set_editor_property("max_vertical_delta_cm", float(card["MaxVerticalDeltaCm"]))
         # UE Python drops the "b" prefix of bool properties (bUsesRootMotion -> uses_root_motion); keep the old spelling as a fallback.
         try:
             spec.set_editor_property("uses_root_motion", bool(card["bUsesRootMotion"]))
@@ -534,6 +538,9 @@ def execute_authoring(
         read_spec = new_asset.get_editor_property("spec")
         assert int(read_spec.get_editor_property("schema")) == card["Schema"], "Schema readback failed"
         assert str(read_spec.get_editor_property("move_id")) == card["MoveId"], "MoveId readback failed"
+        if "MaxVerticalDeltaCm" in card and card["MaxVerticalDeltaCm"] is not None:
+            read_vert = read_spec.get_editor_property("max_vertical_delta_cm")
+            assert read_vert is not None and abs(float(read_vert) - float(card["MaxVerticalDeltaCm"])) < 1e-4, "MaxVerticalDeltaCm readback failed"
         read_wins = list(read_spec.get_editor_property("windows"))
         assert len(read_wins) == len(card["Windows"]), "Windows readback failed"
 

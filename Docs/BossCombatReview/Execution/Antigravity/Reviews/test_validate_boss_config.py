@@ -270,6 +270,40 @@ def main():
     else:
         print(f"[FAIL] Negative 10 expected PhaseCooldownStarvation, got: {errs}")
 
+    # Positive: MaxVerticalDeltaCm optional field valid when absent, 0, or positive (C-537 / C-539)
+    total += 1
+    cfg_vert_pos = copy.deepcopy(base_cfg)
+    cfg_vert_pos["cards"][0]["spec"]["MaxVerticalDeltaCm"] = 50.0
+    cfg_vert_pos["cards"][1]["spec"]["MaxVerticalDeltaCm"] = 0.0
+    errs_vert = validate_boss_config(cfg_vert_pos)
+    if len(errs_vert) == 0:
+        print("[PASS] Positive: MaxVerticalDeltaCm accepted with 50.0 and 0.0 -> 0 errors")
+        passed += 1
+    else:
+        print(f"[FAIL] Positive MaxVerticalDeltaCm expected 0 errors, got: {errs_vert}")
+
+    # Negative 11: Framework.Profile.Domain[Card[0].MaxVerticalDeltaCm] on negative value
+    total += 1
+    cfg11 = copy.deepcopy(base_cfg)
+    cfg11["cards"][0]["spec"]["MaxVerticalDeltaCm"] = -1.0
+    errs = validate_boss_config(cfg11)
+    if any("Card[0].MaxVerticalDeltaCm" in e for e in errs):
+        print("[PASS] Negative 11: Framework.Profile.Domain detected (MaxVerticalDeltaCm < 0)")
+        passed += 1
+    else:
+        print(f"[FAIL] Negative 11 expected MaxVerticalDeltaCm domain error, got: {errs}")
+
+    # Negative 12: Framework.Profile.Domain[Card[0].MaxVerticalDeltaCm] on NaN / inf
+    total += 1
+    cfg12 = copy.deepcopy(base_cfg)
+    cfg12["cards"][0]["spec"]["MaxVerticalDeltaCm"] = float("nan")
+    errs = validate_boss_config(cfg12)
+    if any("Card[0].MaxVerticalDeltaCm" in e for e in errs):
+        print("[PASS] Negative 12: Framework.Profile.Domain detected (MaxVerticalDeltaCm is NaN)")
+        passed += 1
+    else:
+        print(f"[FAIL] Negative 12 expected MaxVerticalDeltaCm domain error on NaN, got: {errs}")
+
     print(f"\nResult: {passed}/{total} tests passed.")
     if passed != total:
         sys.exit(1)

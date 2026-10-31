@@ -235,8 +235,13 @@ def validate_boss_config(config: Dict[str, Any], existing_destinations: Optional
         clip_len = float(spec.get("ClipLengthSeconds", 0.0))
         phase_id = str(spec.get("PhaseId", ""))
         cd = float(c_entry.get("cooldown_seconds", 0.0))
+        vert_delta = spec.get("MaxVerticalDeltaCm", 0.0)
 
         worst_hit = max(worst_hit, hp_dmg)
+
+        # MaxVerticalDeltaCm check (C-537 / C-539: optional field, default 0 = no limit, non-negative and finite)
+        if not is_valid_number(vert_delta, min_val=0.0, max_val=CEILING):
+            errors.append(f"Framework.Profile.Domain[Card[{i}].MaxVerticalDeltaCm]")
 
         # Damage Card check (lines 95-96)
         if b_damage:
