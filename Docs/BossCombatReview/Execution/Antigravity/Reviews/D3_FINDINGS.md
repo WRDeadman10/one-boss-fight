@@ -29,7 +29,7 @@ The following table summarizes all clips measured to date in `Docs/BossCombatRev
   - Total Duration ($RE - W$): $168\text{ frames}$ ($2.8028\text{ s}$)
 - **Confidence Rating:** **MEDIUM** (Windup summon flash and the downward sweep are visible in-frame; the player is mostly off screen so first contact point depends on player distance).
 - **What these numbers CAN be used for (Observations & Inferences for Design Review):**
-  - Observed macro telegraph timing: the footage shows a raised mace hold lasting $\approx 1.3\text{--}1.55\text{ s}$ ($93\text{ frames}$) before the sweep starts. *(INFERENCE for design review: provides reference timing for an extended windup telegraph).*
+  - Observed macro telegraph timing: the footage shows a raised mace hold lasting $84\text{ frames}$ ($1.4014\text{ s}$) before the sweep starts ($W \to C$), with total windup to first active strike lasting $93\text{ frames}$ ($1.5515\text{ s}$, $W \to A$). *(INFERENCE for design review: provides reference timing for an extended windup telegraph).*
   - Observed active strike duration: the footage shows the downward ground sweep completes its visual trail in $\approx 5\text{ frames}$ ($83\text{ ms}$). *(INFERENCE for design review: illustrates a brief, snappy strike release).*
   - Observed recovery duration: the footage shows the boss remains in recovery pose for $\approx 1.17\text{ s}$ ($70\text{ frames}$) after impact before reaching upright/idle pose at $136.2\text{ s}$. *(INFERENCE for design review: reference duration for recovery commitment; note that player counter-actions were not observed as the player was off screen).*
 - **What these numbers CANNOT be used for:**
