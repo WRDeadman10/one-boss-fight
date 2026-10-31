@@ -135,3 +135,8 @@ __pycache__/
 /scratch/
 Docs/BossCombatReview/Execution/Codex/WP6Support/
 Docs/BossCombatReview.zip
+
+# Reference footage (hundreds of MB, GitHub refuses files over 100 MB): never track it
+Documentation/Boss/**/*.webm
+Documentation/Boss/**/*.mp4
+Documentation/Boss/**/*.mkv

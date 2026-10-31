@@ -20,12 +20,13 @@ Nobody commits except U. A row is changed only by its owner; others write a note
   * `C3` (New Weapon utility): DONE v0 (table row manipulation in `DA_WeaponAttacks.uasset`, BUILD-91) and v1 (catalog registration via `URPGWeaponDefinition` + `URPGBuildDefinition` in `DA_CombatCatalog.uasset`, BUILD-92, clean re-proof BUILD-93; proven in PIE with `-RealBuild polearm`, real swings hitting boss with `attack_row found=1 posture=16 via=pending`, `boss_hit 100 x2`, RESULT `CompletedWithDamage`).
   * `C4` (Designer How-To): DONE (`Documentation/Boss/C1_NEW_BOSS_HOWTO.md` for bosses, commit 2d8e090b, and `Documentation/Boss/C3_NEW_WEAPON_HOWTO.md` for weapons).
   * `C5` (Weapon Data Audit): DONE (`Docs/BossCombatReview/Execution/Antigravity/Reviews/C5_WEAPON_DATA_AUDIT.md`).
+- **Track D reference video available (2026-10-31):** owner supplied [Morgott boss-fight video](<Boss/Morgott_82_Point_Combat_Reference/Elden Ring - Morgott, The Omen King Boss Fight.webm>). Skip the opening cinematic (00:00–01:45); begin combat analysis at 01:45 (105 seconds), retaining original-video timestamps. Capture provenance/frame-rate verification and reference measurements remain pending; video availability alone does not complete D1/D2.
 - **Framework Delivery Slices Proved (F1 to F10):**
   * `F1` (MoveCard Data Asset & Validator): `Source/OneBossFight/Player/RPGBossMoveCard.h`, `Source/OneBossFight/Player/RPGBossMoveCard.cpp`, `Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp`
   * `F2` (MoveModel State Machine & Tests): `Source/OneBossFight/Player/RPGBossMoveModel.h`, `Source/OneBossFight/Player/RPGBossMoveModel.cpp`, `Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp`
   * `F3a` (Promoted Runtime Source & Build): `Docs/BossCombatReview/Execution/Claude/F3a/full2_raw.log`
   * `F3b-d` (Card Resolution & Headless Level Proof): `Docs/BossCombatReview/Execution/Claude/F3b/`, `F3c/`, `F3d/` (graded PASS via `Docs/BossCombatReview/Execution/Antigravity/Ledger/grade_f3d_log.py`)
-  * `F4a` (Swept Hit Window & Damage Sink; Dodge unproven per `Documentation/KNOWN_ISSUES.md:257` `KI-146`): `Docs/BossCombatReview/Execution/Claude/F4/`
+  * `F4a` (Swept Hit Window & Damage Sink; Dodge proven with caveat, `Documentation/KNOWN_ISSUES.md:257` `KI-146`): `Docs/BossCombatReview/Execution/Claude/F4/`
   * `F5a/b` (Move Selector & Multi-Attack Proof): `Docs/BossCombatReview/Execution/Claude/F5/` (graded PASS via `Docs/BossCombatReview/Execution/Antigravity/Ledger/grade_f5_log.py`)
   * `F6a` (Boss Target, Life Provider & Death Authority with INJECTED hits): `Docs/BossCombatReview/Execution/Claude/F6/` (graded PASS via `Docs/BossCombatReview/Execution/Antigravity/Ledger/grade_f6a_log.py`)
   * `F6c` (Two-Phase Combat Flow, Health Fraction Phase Authority, Deterministic Reset): `Docs/BossCombatReview/Execution/Claude/F6c/` (graded PASS via `Docs/BossCombatReview/Execution/Antigravity/Ledger/grade_f6c_log.py`)
@@ -35,9 +36,9 @@ Nobody commits except U. A row is changed only by its owner; others write a note
   * `F10` (Weapon Attack Row Hit Intake Authority, Health Mult, Posture Drain, Bleed Buildup from `DA_WeaponAttacks`): `Docs/BossCombatReview/Execution/Claude/F10/` (graded PASS via `Docs/BossCombatReview/Execution/Antigravity/Reviews/grade_f10_log.py`)
 - **Automation Test Suite Health:** 209 of 209 tests passing (100% green across all modules; cited from `Docs/BossCombatReview/Execution/Claude/F10/full_raw.log:3999` `Display: **** TEST COMPLETE. EXIT CODE: 0 ****`, DLL `0628127b`).
 - **Open Owner Decisions:**
-  * Decision 0: PUSH of the local commits (F3a..F10, HEAD 8cea049) to the remote: Antigravity commits locally and never pushes without the owner's word.
+  * Decision 0 (DONE 2026-10-31, owner said "Yes, push"): the local commits F3a..docs (38 commits, 4d2035aa..68d211f6) were pushed to origin/main by Claude on the owner's explicit word; Antigravity still never pushes on its own.
   * Decision 1: Cook scope for ParagonSevarog (`Documentation/KNOWN_ISSUES.md:254`, `KI-143`, owner decision).
-  * Decision 2: Live player dodge i-frame rejection proof (`Documentation/KNOWN_ISSUES.md:257`, `KI-146`).
+  * Decision 2: DONE with caveat (C-489, BUILD-94): live dodge i-frame rejection proven via IA_Dodge injection, timing dependent (`Documentation/KNOWN_ISSUES.md:257`, `KI-146`).
 - **Closed Known Issues (Verified 2026-10-31):**
   * `KI-145` (Card ranges vs measured reach): RESOLVED for new content in C-464 with calibrated `*_R2` cards (`Claude/KI145/r2`).
   * `KI-150` (Pack combat style warmup reset): RESOLVED in C-451 (`Claude/F8/ki150b`) by waiting for `pack_style_known` (~10 s) before preparing target.
