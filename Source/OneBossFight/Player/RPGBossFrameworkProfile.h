@@ -1,11 +1,34 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #pragma once
 #include "Player/RPGBossMoveCard.h"
+#include "Player/RPGBossComboRules.h"
 #include "RPGBossFrameworkProfile.generated.h"
 class USkeletalMesh;
 class UAnimInstance;
 class UAnimSequence;
 class APawn;
+/** Combo graph data (BOSS-COM rows): the hit outcome an edge may require. Guarded and Parried are part of the data contract; the boss reports Hit or Whiff today (no guard telemetry yet). */
+UENUM()
+enum class ERPGBossComboOutcome : uint8 { Hit, Whiff, Guarded, Parried };
+USTRUCT()
+struct FRPGBossComboEdgeData
+{
+    GENERATED_BODY()
+    UPROPERTY(EditAnywhere) FName ToNode;
+    UPROPERTY(EditAnywhere) float MinRangeCm=0.f;
+    UPROPERTY(EditAnywhere) float MaxRangeCm=1.e6f;
+    UPROPERTY(EditAnywhere) float MaxAbsYawDegrees=180.f;
+    UPROPERTY(EditAnywhere) bool bAnyOutcome=true;
+    UPROPERTY(EditAnywhere) ERPGBossComboOutcome Outcome=ERPGBossComboOutcome::Hit;
+};
+USTRUCT()
+struct FRPGBossComboNodeData
+{
+    GENERATED_BODY()
+    UPROPERTY(EditAnywhere) FName NodeId;
+    UPROPERTY(EditAnywhere) FName MoveId;   // MoveId of one of the profile's cards
+    UPROPERTY(EditAnywhere) TArray<FRPGBossComboEdgeData> Edges;
+};
 /** F5: one selectable card with its cooldown and authored weight (proof values, design values, proposed). */
 USTRUCT()
 struct FRPGBossProfileCard
@@ -70,6 +93,10 @@ public:
     UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> StaggerEndAnim;
     UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> PhaseTransitionAnim;
     UPROPERTY(EditAnywhere) FName AnimSlotName=TEXT("FullBody");
+    /** Combo graph (F5 fixture only, empty = no combos): when the selector starts the card of ComboRoot's node the boss follows the graph at every branch gate (RPGBossComboRules.h). Design values, proposed. */
+    UPROPERTY(EditAnywhere) TArray<FRPGBossComboNodeData> ComboNodes;
+    UPROPERTY(EditAnywhere) FName ComboRoot;
+    UPROPERTY(EditAnywhere) int32 ComboMaxDepth=3;
     /** F9 bleed (F5 fixture with a hittable boss; BleedBuildupPerHit 0 = off, the other four must then be 0 too): each player hit adds BleedBuildupPerHit; at the threshold (first BleedInitialThreshold,
      *  raised by BleedThresholdIncrease after each proc up to BleedThresholdMax) the boss loses BleedHpFraction of its maximum health at once, never its last point (RPGBleedRules, unchanged). Design values, proposed. */
     UPROPERTY(EditAnywhere) float BleedBuildupPerHit=0.f;
@@ -100,4 +127,6 @@ namespace RPGFramework
     ONEBOSSFIGHT_API bool ValidateProfile(const URPGBossFrameworkProfile& Profile,FString& Error);
     ONEBOSSFIGHT_API bool ResolveProfile(URPGBossFrameworkProfile* Profile,TUniquePtr<FRPGFrameworkDependencies>& Out,FString& Error);
     ONEBOSSFIGHT_API bool HasSlotNode(UAnimInstance* Instance,FName Slot);
+    /** The pure combo graph of a profile (empty graph when the profile has no ComboNodes). */
+    ONEBOSSFIGHT_API RPGBossCombo::FComboGraph BuildComboGraph(const URPGBossFrameworkProfile& Profile);
 }

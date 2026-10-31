@@ -48,7 +48,7 @@ bool ARPGFrameworkBossCharacter::InitializeProof(ARPGFrameworkProofFixture* Fixt
         if (!Selector.Initialize(Config,List,Error)) {Fail(Error);return false;}
     }
     const auto& P=*Dependencies->Profile.Get();
-    ResetBleed();CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId;bPhaseTwoLatched=false;Posture=double(Dependencies->Profile->PostureMax);LastPostureDrain=-1.;bStaggered=bStaggerAbortedAttack=false;
+    ComboGraph=RPGFramework::BuildComboGraph(*Dependencies->Profile.Get());bComboActive=false;ResetBleed();CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId;bPhaseTwoLatched=false;Posture=double(Dependencies->Profile->PostureMax);LastPostureDrain=-1.;bStaggered=bStaggerAbortedAttack=false;
     if (Dependencies->Profile->BossMaxHealth>0.f)
     {
         bHittable=true; MaxHealth=Health=Dependencies->Profile->BossMaxHealth;
@@ -160,10 +160,20 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
             UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] decision attack=%d chosen=%s score=%g range=%g phase=%s"),AttacksDone+1,*Decision.MoveId.ToString(),Decision.Score,S.RangeCm,*S.PhaseId.ToString());
             if(!Executor->StartCard(Dependencies->Candidates[Decision.ChosenIndex].Card,S,Error)){Fail(Error);return;}
             Selector.NoteStarted(Decision.ChosenIndex,S.ClockSeconds);
+            if(ComboGraph.Nodes.Num()>0)
+            {
+                const int32 RootIndex=RPGBossCombo::FindNode(ComboGraph,ComboGraph.Root);
+                if(RootIndex!=INDEX_NONE&&ComboGraph.Nodes[RootIndex].MoveId==Decision.MoveId)
+                {
+                    bComboActive=true;ComboState=RPGBossCombo::FComboState();ComboState.Node=ComboGraph.Root;ComboHitsAtStart=Executor->AcceptedHits();
+                    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_start root=%s move=%s maxDepth=%d"),*ComboGraph.Root.ToString(),*Decision.MoveId.ToString(),ComboGraph.MaxDepth);
+                }
+            }
         }
         else if(!Executor->Start(S,Error)){Fail(Error);return;}
         bStartedMove=true;
     }
+    if(bStartedMove&&bComboActive&&Executor->DidFinish()&&Executor->IsClean()&&HandleComboGate())return;
     if(bStartedMove&&Executor->DidFinish()&&Executor->IsClean()&&Dependencies->Candidates.Num()>0&&AttacksDone+1<Dependencies->Profile->AttackCount)
     {
         // F5: the selector decides every attack; re-arm the executor and decide again on the next tick.
@@ -300,6 +310,39 @@ void ARPGFrameworkBossCharacter::TickOverlay()
     const bool bStateChanged=I.State!=OverlayLastState; OverlayLastState=I.State;
     if(Mode>=2&&(bStateChanged||OverlayLoggedAt<0.||Now-OverlayLoggedAt>=1.)){OverlayLoggedAt=Now;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] overlay %s"),*Line);}
 }
+FRPGBossDecisionSnapshot ARPGFrameworkBossCharacter::MakeSnapshot() const
+{
+    const FVector D=Target->GetActorLocation()-GetActorLocation();FRPGBossDecisionSnapshot S;
+    S.EncounterId=EncounterId;S.Generation=GenerationId;S.TargetId=uint64(Target->GetUniqueID());S.FrameId=GFrameCounter;
+    S.PhaseId=CurrentPhaseId;S.ClockSeconds=GetWorld()->GetTimeSeconds();S.RangeCm=D.Size2D();
+    S.SignedYawDegrees=FMath::FindDeltaAngleDegrees(GetActorRotation().Yaw,D.Rotation().Yaw);S.VerticalDeltaCm=FMath::Abs(D.Z);S.bTargetValid=S.bNeutral=true;
+    return S;
+}
+bool ARPGFrameworkBossCharacter::HandleComboGate()
+{
+    // A card of the combo finished: one branch gate with the FRESH snapshot of now (RPGBossCombo::Step). Returns true when the next card of the combo was started.
+    const FRPGBossDecisionSnapshot S=MakeSnapshot();
+    RPGBossCombo::FComboGate Gate; Gate.GateId=++ComboGateCounter; Gate.RangeCm=S.RangeCm; Gate.SignedYawDegrees=S.SignedYawDegrees; Gate.bTargetValid=true;
+    Gate.Outcome=Executor->AcceptedHits()>ComboHitsAtStart?RPGBossCombo::EOutcome::Hit:RPGBossCombo::EOutcome::Whiff;   // guard / parry telemetry does not exist yet
+    const FName From=ComboState.Node; const RPGBossCombo::FComboStep R=RPGBossCombo::Step(ComboGraph,ComboState,Gate);
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_gate gate=%llu node=%s outcome=%s range=%g yaw=%g result=%s next=%s reason=%s"),Gate.GateId,*From.ToString(),Gate.Outcome==RPGBossCombo::EOutcome::Hit?TEXT("Hit"):TEXT("Whiff"),S.RangeCm,S.SignedYawDegrees,
+        R.Kind==RPGBossCombo::EStep::Continue?TEXT("Continue"):R.Kind==RPGBossCombo::EStep::Finished?TEXT("Finished"):R.Kind==RPGBossCombo::EStep::Ignored?TEXT("Ignored"):TEXT("Recover"),*R.NextNode.ToString(),*R.Reason);
+    if(R.Kind==RPGBossCombo::EStep::Ignored)return false;
+    if(R.Kind!=RPGBossCombo::EStep::Continue){bComboActive=false;return false;}   // recovery or end of the combo: the normal next attack logic follows
+    if(AttacksDone+1>=Dependencies->Profile->AttackCount){bComboActive=false;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_end reason=AttackBudget"));return false;}
+    const int32 NodeIndex=RPGBossCombo::FindNode(ComboGraph,R.NextNode);
+    int32 CardIndex=INDEX_NONE; for(int32 I=0;I<Dependencies->Candidates.Num();++I) if(NodeIndex!=INDEX_NONE&&Dependencies->Candidates[I].Card->Spec().MoveId==ComboGraph.Nodes[NodeIndex].MoveId) CardIndex=I;
+    FString Error;
+    ++AttacksDone; if(!Executor->PrepareNextAttack()){Fail(TEXT("Framework.Playback.NextAttack"));return true;}
+    bStartedMove=false;
+    if(CardIndex==INDEX_NONE||!Executor->StartCard(Dependencies->Candidates[CardIndex].Card,S,Error))
+    {
+        bComboActive=false;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_end reason=NextCardRefused detail=%s"),*Error);return true;   // the next tick decides with the selector
+    }
+    Selector.NoteStarted(CardIndex,S.ClockSeconds);ComboHitsAtStart=Executor->AcceptedHits();bStartedMove=true;
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_step node=%s move=%s depth=%d"),*ComboState.Node.ToString(),*Dependencies->Candidates[CardIndex].Card->Spec().MoveId.ToString(),ComboState.Depth);
+    return true;
+}
 bool ARPGFrameworkBossCharacter::PlayF11Clip(UAnimSequence* Clip,int32 Loops)
 {
     // The same runtime path the executor uses for the cards: a dynamic montage of the loaded sequence in the profile's slot. Loaded dependency only, no load here.
@@ -346,7 +389,7 @@ bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& 
     const TCHAR* OldState=bDead?TEXT("Dead"):TEXT("Finished");
     GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;
     if (bHittable) Health=MaxHealth;
-    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; ResetBleed();
+    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; ResetBleed();
     Selector.Reset(); CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId; bPhaseTwoLatched=false;
     SetActorLocation(WalkStart,false,nullptr,ETeleportType::TeleportPhysics);
     FVector Face=Target->GetActorLocation()-WalkStart; Face.Z=0.f; if (!Face.IsNearlyZero()) SetActorRotation(FRotator(0.f,Face.Rotation().Yaw,0.f));

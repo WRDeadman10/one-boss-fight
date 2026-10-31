@@ -281,6 +281,29 @@ bool FFrameworkSelectorTieProfile::RunTest(const FString&)
     {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);TestTrue(TEXT("fresh F3 profile valid"),RPGFramework::ValidateProfile(*F3,Error));F3->SelectorTieBand=.1f;TestFalse(TEXT("tie band outside the F5 lane"),RPGFramework::ValidateProfile(*F3,Error));TestEqual(TEXT("token"),Error,FString(TEXT("Framework.Profile.Domain")));}
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkComboProfile,"OneBossFight.Framework.Runtime.ComboProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkComboProfile::RunTest(const FString&)
+{
+    // Combo graph in the profile (token Framework.Profile.<RPGBossCombo token>); the graph rules themselves are tested in Framework.Combo.*.
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    auto Edge=[](const TCHAR* To){FRPGBossComboEdgeData E;E.ToNode=To;return E;};
+    auto Node=[&](const TCHAR* Id,const TCHAR* Move,TArray<FRPGBossComboEdgeData> Edges={}){FRPGBossComboNodeData N;N.NodeId=Id;N.MoveId=Move;N.Edges=Edges;return N;};
+    auto F5=[&](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=3;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);
+        P->ComboNodes.Reset();P->ComboRoot=NAME_None;P->ComboMaxDepth=3;};
+    auto Chain=[&](){P->ComboRoot=TEXT("A");P->ComboNodes={Node(TEXT("A"),TEXT("MoveA"),{Edge(TEXT("B"))}),Node(TEXT("B"),TEXT("MoveB"))};};
+    F5();TestTrue(TEXT("no combo: valid"),RPGFramework::ValidateProfile(*P,Error));
+    F5();Chain();TestTrue(TEXT("two node chain: valid"),RPGFramework::ValidateProfile(*P,Error));
+    F5();Chain();P->ComboNodes[1].Edges={Edge(TEXT("A"))};{const FString Token=RPGBossCombo::Validate(RPGFramework::BuildComboGraph(*P));TestEqual(TEXT("cycle seen by the pure rule"),Token,FString(TEXT("Combo.Cycle")));}
+    TestFalse(TEXT("cycle refused"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("cycle token"),Error,FString(TEXT("Framework.Profile.Combo.Cycle")));
+    F5();Chain();P->ComboMaxDepth=1;TestFalse(TEXT("depth 2 path with max depth 1 refused"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("depth token"),Error,FString(TEXT("Framework.Profile.Combo.Depth")));
+    F5();Chain();P->ComboMaxDepth=4;TestFalse(TEXT("max depth 4 refused"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("max depth token"),Error,FString(TEXT("Framework.Profile.Combo.MaxDepth")));
+    F5();Chain();P->ComboRoot=TEXT("Zed");TestFalse(TEXT("unknown root refused"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("root token"),Error,FString(TEXT("Framework.Profile.Combo.Root")));
+    F5();P->ComboRoot=TEXT("A");TestFalse(TEXT("root without nodes refused"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("empty token"),Error,FString(TEXT("Framework.Profile.Combo.Empty")));
+    {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);F3->ComboRoot=TEXT("A");F3->ComboNodes={Node(TEXT("A"),TEXT("MoveA"))};TestFalse(TEXT("combo outside the F5 lane refused"),RPGFramework::ValidateProfile(*F3,Error));TestEqual(TEXT("lane token"),Error,FString(TEXT("Framework.Profile.Domain")));}
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkStaggerAnimRules,"OneBossFight.Framework.Runtime.StaggerAnimRules",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
 bool FFrameworkStaggerAnimRules::RunTest(const FString&)
 {

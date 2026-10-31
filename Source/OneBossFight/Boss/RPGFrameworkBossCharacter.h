@@ -78,5 +78,9 @@ private:
     void TickStaggerAnim();
     /** BOSS-QA-001: the runtime overlay (console variable rpg.BossOverlay): on screen each tick, as a log line once per second at 2. */
     double OverlayLoggedAt=-1.; FString OverlayLastState;
+    /** Combo (BOSS-COM rows): the pure graph of the profile and the state of the running combo; a branch gate is evaluated when a card of the combo finishes. */
+    RPGBossCombo::FComboGraph ComboGraph; RPGBossCombo::FComboState ComboState; bool bComboActive=false; int32 ComboHitsAtStart=0; uint64 ComboGateCounter=0;
+    bool HandleComboGate();
+    FRPGBossDecisionSnapshot MakeSnapshot() const;
     void TickOverlay();
 };

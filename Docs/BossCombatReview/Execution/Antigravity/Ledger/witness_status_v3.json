@@ -1,11 +1,11 @@
 {
-  "version": "3.3.0",
+  "version": "3.4.0",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 29,
-    "PARTIAL": 22,
-    "NOT YET": 31
+    "WITNESSED": 31,
+    "PARTIAL": 26,
+    "NOT YET": 25
   },
   "requirements": [
     {
@@ -783,11 +783,43 @@
       "title": "Authored graph",
       "section": "Conditional combos",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:28",
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:29",
+        "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log:1580",
+        "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log:1791",
+        "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log:1793"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
+          "line": 28,
+          "quoted": "TestTrue(TEXT(\"valid graph\"),Validate(Valid()).IsEmpty());"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
+          "line": 29,
+          "quoted": "TestEqual(TEXT(\"longest path in nodes\"),LongestPath(Valid()),3);"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log",
+          "line": 1580,
+          "quoted": "[2026.10.31-17.54.15:232][974]LogTemp: Display: [FrameworkProof] combo_start root=A move=Move_Sevarog_SwingSlow_F7 maxDepth=3"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log",
+          "line": 1791,
+          "quoted": "[2026.10.31-17.54.16:906][151]LogTemp: Display: [FrameworkProof] combo_gate gate=1 node=A outcome=Hit range=128.625 yaw=0 result=Continue next=B reason="
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log",
+          "line": 1793,
+          "quoted": "[2026.10.31-17.54.16:906][151]LogTemp: Display: [FrameworkProof] combo_step node=B move=Move_Sevarog_HeavySlam_F7 depth=2"
+        }
+      ],
       "observable": "Combo graph authored as Directed Acyclic Graph (DAG) with explicit terminal nodes (MC-04).",
-      "notes": "Combo graph authored in design docs, but runtime combo DAG executor block not yet implemented."
+      "notes": "Combo graph authored as Directed Acyclic Graph (DAG) with explicit terminal nodes in FComboGraph / FRPGBossComboNodeData; RPGBossCombo::Validate proves structural DAG properties (combo_tests:28, 29); PIE proof in L_SevarogFrameworkProofCOM confirms live combo activation (combo_start root=A, pie_run1:1580), live gate transition (combo_gate gate=1 node=A outcome=Hit range=128.625 yaw=0 result=Continue next=B, pie_run1:1791), and step execution (combo_step node=B move=Move_Sevarog_HeavySlam_F7 depth=2, pie_run1:1793)."
     },
     {
       "id": "BOSS-COM-002",
@@ -831,55 +863,191 @@
       "title": "Fresh branch context",
       "section": "Conditional combos",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "PARTIAL",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:69",
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:71",
+        "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log:1791"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
+          "line": 69,
+          "quoted": "FComboState Front;Front.Node=TEXT(\"A\");TestTrue(TEXT(\"in front: continue\"),Step(G,Front,Gate(1,100.,10.)).Kind==EStep::Continue);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
+          "line": 71,
+          "quoted": "TestTrue(TEXT(\"rolled behind: recover\"),R.Kind==EStep::Recover);TestEqual(TEXT(\"default recovery\"),R.Reason,FString(TEXT(\"Combo.DefaultRecovery\")));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log",
+          "line": 1791,
+          "quoted": "[2026.10.31-17.54.16:906][151]LogTemp: Display: [FrameworkProof] combo_gate gate=1 node=A outcome=Hit range=128.625 yaw=0 result=Continue next=B reason="
+        }
+      ],
       "observable": "Branch decision evaluates target position at branch gate; if player rolled behind boss, combo branches to turn-around sweep rather than continuing forward chain.",
-      "notes": "Branch decision target re-evaluation logic not yet implemented (designated for Combo Graph Block)."
+      "notes": "Branch decision evaluates fresh snapshot (FComboGate) at decision gate. Unit tests assert front continue vs behind recovery (combo_tests:69, 71); PIE proof confirms fresh range/yaw evaluation at gate 1 (pie_run1:1791). PARTIAL per C-542 honest limit: live target was always in front (yaw=0); behind-the-boss branch discrimination is unit-tested only."
     },
     {
       "id": "BOSS-COM-004",
       "title": "Explicit hit-confirm policy",
       "section": "Conditional combos",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "PARTIAL",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:75",
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:76",
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:77",
+        "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log:1791",
+        "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log:1987"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
+          "line": 75,
+          "quoted": "FComboState S;S.Node=TEXT(\"A\");FComboStep R=Step(G,S,Gate(1,100.,10.,EOutcome::Whiff));TestEqual(TEXT(\"whiff -> C\"),R.NextNode,FName(TEXT(\"C\")));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
+          "line": 76,
+          "quoted": "FComboState T;T.Node=TEXT(\"A\");R=Step(G,T,Gate(1,100.,10.,EOutcome::Guarded));TestEqual(TEXT(\"guarded -> D\"),R.NextNode,FName(TEXT(\"D\")));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
+          "line": 77,
+          "quoted": "FComboState U;U.Node=TEXT(\"A\");R=Step(G,U,Gate(1,100.,10.,EOutcome::Parried));TestTrue(TEXT(\"parried: no edge, recover\"),R.Kind==EStep::Recover);TestEqual(TEXT(\"default recovery\"),R.Reason,FString(TEXT(\"Combo.DefaultRecovery\")));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log",
+          "line": 1791,
+          "quoted": "[2026.10.31-17.54.16:906][151]LogTemp: Display: [FrameworkProof] combo_gate gate=1 node=A outcome=Hit range=128.625 yaw=0 result=Continue next=B reason="
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log",
+          "line": 1987,
+          "quoted": "[2026.10.31-17.54.18:580][331]LogTemp: Display: [FrameworkProof] combo_gate gate=2 node=B outcome=Whiff range=128.625 yaw=0 result=Finished next=None reason="
+        }
+      ],
       "observable": "Whiff, guard, and parry outcomes branch to distinct combo follow-ups (or force recovery reset).",
-      "notes": "Hit-confirm outcome branching policy not yet implemented (designated for Combo Graph Block)."
+      "notes": "Unit tests prove outcome branching for Whiff -> C, Guarded -> D, and Parried -> DefaultRecovery (combo_tests:75-77). PIE proof confirms Hit -> Continue (pie_run1:1791) and Whiff -> Finished (pie_run1:1987). PARTIAL per C-542 honest limit: live telemetry only produces Hit and Whiff outcomes; Guarded and Parried branch edges are unit-tested only."
     },
     {
       "id": "BOSS-COM-005",
       "title": "Single-use gate",
       "section": "Conditional combos",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "PARTIAL",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:64",
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:65",
+        "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log:1791",
+        "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log:1987"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
+          "line": 64,
+          "quoted": "TestTrue(TEXT(\"duplicate gate ignored\"),R.Kind==EStep::Ignored);TestTrue(TEXT(\"state untouched\"),S.Node==After.Node&&S.Depth==After.Depth&&S.LastGateId==After.LastGateId);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
+          "line": 65,
+          "quoted": "TestEqual(TEXT(\"gate id 0 is refused\"),Step(G,S,Gate(0,100.,10.)).Reason,FString(TEXT(\"Combo.GateId\")));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log",
+          "line": 1791,
+          "quoted": "[2026.10.31-17.54.16:906][151]LogTemp: Display: [FrameworkProof] combo_gate gate=1 node=A outcome=Hit range=128.625 yaw=0 result=Continue next=B reason="
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log",
+          "line": 1987,
+          "quoted": "[2026.10.31-17.54.18:580][331]LogTemp: Display: [FrameworkProof] combo_gate gate=2 node=B outcome=Whiff range=128.625 yaw=0 result=Finished next=None reason="
+        }
+      ],
       "observable": "Combo branch gate consumes trigger event; duplicate notifies within same window cannot trigger double branch.",
-      "notes": "Single-use branch gate consumption not yet implemented (designated for Combo Graph Block)."
+      "notes": "Unit test asserts duplicate GateId is ignored with EStep::Ignored (Combo.GateConsumed) leaving state untouched, and GateId 0 is refused (combo_tests:64, 65). PIE proof confirms monotonic gate generation (gate=1 at pie_run1:1791, gate=2 at pie_run1:1987). PARTIAL per C-542 honest limit: boss generates strictly monotonic GateIds so duplicate cannot occur live."
     },
     {
       "id": "BOSS-COM-006",
       "title": "Finite pressure",
       "section": "Conditional combos",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:41",
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:58",
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:93",
+        "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log:1987",
+        "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log:1990"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
+          "line": 41,
+          "quoted": "TestEqual(TEXT(\"four nodes deep with max depth 3\"),Token([](FComboGraph& G){G.Nodes.Add(Node(TEXT(\"F\"),TEXT(\"MoveF\")));G.Nodes[4].Edges.Add(Edge(TEXT(\"F\"),0.f,100.f,180.f,true));}),FString(TEXT(\"Combo.Depth\")));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
+          "line": 58,
+          "quoted": "R=Step(G,S,Gate(3,100.,10.));TestTrue(TEXT(\"terminal node finishes\"),R.Kind==EStep::Finished);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
+          "line": 93,
+          "quoted": "FComboStep R=Step(Short,S,Gate(2,100.,10.));TestTrue(TEXT(\"third node refused\"),R.Kind==EStep::Recover);TestEqual(TEXT(\"depth token\"),R.Reason,FString(TEXT(\"Combo.Depth\")));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log",
+          "line": 1987,
+          "quoted": "[2026.10.31-17.54.18:580][331]LogTemp: Display: [FrameworkProof] combo_gate gate=2 node=B outcome=Whiff range=128.625 yaw=0 result=Finished next=None reason="
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log",
+          "line": 1990,
+          "quoted": "[2026.10.31-17.54.18:589][332]LogTemp: Display: [FrameworkProof] decision attack=3 chosen=Move_Sevarog_SwingSlow_F7 score=0.157249 range=128.625 phase=Phase_1"
+        }
+      ],
       "observable": "Combo graph depth bounded (max depth 3); MC-04 terminal node enforces neutral recovery reset.",
-      "notes": "Combo graph depth bounds and terminal node enforcement not yet implemented (designated for Combo Graph Block)."
+      "notes": "MaxDepth bounded (1..3); terminal nodes enforce neutral recovery reset. RPGBossComboTests.cpp:41, 58, 93 proves 4-node depth refused during validation, terminal node finishes execution, and runtime depth guard halts stepping. PIE proof confirms terminal node B finishes combo (combo_gate gate=2 node=B outcome=Whiff ... result=Finished, pie_run1:1987) and boss returns cleanly to normal selector flow for attack 3 (pie_run1:1990)."
     },
     {
       "id": "BOSS-COM-007",
       "title": "Default recovery",
       "section": "Conditional combos",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "PARTIAL",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:81",
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:82",
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:86",
+        "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log:2205"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
+          "line": 81,
+          "quoted": "FComboState S;S.Node=TEXT(\"A\");FComboStep R=Step(G,S,Gate(1,300.,10.));TestTrue(TEXT(\"out of range: recover\"),R.Kind==EStep::Recover);TestEqual(TEXT(\"default recovery\"),R.Reason,FString(TEXT(\"Combo.DefaultRecovery\")));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
+          "line": 82,
+          "quoted": "FComboState Edge;Edge.Node=TEXT(\"A\");TestTrue(TEXT(\"exactly 250 cm is in\"),Step(G,Edge,Gate(1,250.,60.)).Kind==EStep::Continue);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
+          "line": 86,
+          "quoted": "FComboState S;S.Node=TEXT(\"A\");FComboGate Bad=Gate(1,100.,10.);Bad.bTargetValid=false;TestEqual(TEXT(\"invalid target\"),Step(G,S,Bad).Reason,FString(TEXT(\"Combo.Target\")));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log",
+          "line": 2205,
+          "quoted": "[2026.10.31-17.54.20:260][508]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=3"
+        }
+      ],
       "observable": "Absence of branch input or out-of-range target at combo gate defaults cleanly to recovery blend without freeze.",
-      "notes": "Branch gate timeout default recovery fallback not yet implemented (designated for Combo Graph Block)."
+      "notes": "Unit tests assert out-of-range target (300cm > 250cm) and invalid target recover cleanly with Combo.DefaultRecovery (combo_tests:81, 82, 86). PIE proof confirms clean combo completion and attack loop continuation without freeze (RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=3, pie_run1:2205). PARTIAL per C-542 honest limit: live run never triggered fallback recovery, witnessed via unit tests."
     },
     {
       "id": "BOSS-ANM-001",
@@ -955,9 +1123,9 @@
       "old_status": "NOT YET",
       "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:365",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:366",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:368",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:388",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:389",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:391",
         "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1620",
         "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1793",
         "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1872"
@@ -965,17 +1133,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 365,
+          "line": 388,
           "quoted": "Near(TEXT(\"60 ticks (1 s) toward 170 turn exactly the cap, 90 deg\"),Yaw,90.f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 366,
+          "line": 389,
           "quoted": "TestTrue(TEXT(\"no tick turned more than cap * dt (1.5 deg)\"),MaxStep<=1.5f+1.e-3f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 368,
+          "line": 391,
           "quoted": "Near(TEXT(\"after the commit 60 more ticks leave the yaw unchanged\"),Yaw,90.f);"
         },
         {
@@ -1030,7 +1198,7 @@
       "status": "NOT YET",
       "proof": [],
       "citations": [],
-      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45\u00b0).",
+      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45°).",
       "notes": "Motion warping clamping bounds not yet implemented in active runtime (designated for Movement Block)."
     },
     {
@@ -1072,7 +1240,7 @@
       "status": "WITNESSED",
       "proof": [
         "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:61",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:316",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:339",
         "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log:1576",
         "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log:1577",
         "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log:1586"
@@ -1085,7 +1253,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 316,
+          "line": 339,
           "quoted": "TestEqual(TEXT(\"no slot node in the AnimBP\"),Token([](auto& X){X.bSlotNodePresent=false;}),FString(TEXT(\"Framework.Profile.StaggerAnim.SlotNode\")));"
         },
         {
@@ -1674,7 +1842,7 @@
         "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log:1590",
         "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log:1591",
         "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log:1592",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:297"
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:320"
       ],
       "citations": [
         {
@@ -1709,7 +1877,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 297,
+          "line": 320,
           "quoted": "TestEqual(TEXT(\"loop count middle 1.6 / loop 0.5 = ceil 3.2 = 4\"),RPGStaggerAnim::LoopCount(T,S,E,.5f),4);"
         }
       ],
@@ -1860,9 +2028,9 @@
       "old_status": "NOT YET",
       "status": "PARTIAL",
       "proof": [
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:376",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:378",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:380",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:399",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:401",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:403",
         "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log:1577",
         "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log:1588",
         "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log:1642",
@@ -1873,17 +2041,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 376,
+          "line": 399,
           "quoted": "TestEqual(TEXT(\"attack running\"),RPGBossOverlay::Format(I),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=129cm Cone=120deg Window=Open Posture=40/100 Health=150/250 Stagger=0 PhaseHold=0\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 378,
+          "line": 401,
           "quoted": "TestEqual(TEXT(\"no card, stagger and hold\"),RPGBossOverlay::Format(N),FString(TEXT(\"Card=None State=Idle Phase=Phase_2 Range=300cm Cone=0deg Window=Closed Posture=100/100 Health=50/250 Stagger=1 PhaseHold=1\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 380,
+          "line": 403,
           "quoted": "TestEqual(TEXT(\"non-finite values never print as numbers\"),RPGBossOverlay::Format(Bad),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=n/acm Cone=120deg Window=Open Posture=40/100 Health=n/a/250 Stagger=0 PhaseHold=0\")));"
         },
         {

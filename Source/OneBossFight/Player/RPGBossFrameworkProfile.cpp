@@ -18,6 +18,22 @@ bool PhasePoolCannotStarve(const TArray<float>& Cooldowns,int32 AttackCount)
     for (float C:Cooldowns) if (FMath::IsFinite(C) && C<=0.f) return true;
     return false;
 }
+RPGBossCombo::FComboGraph BuildComboGraph(const URPGBossFrameworkProfile& P)
+{
+    RPGBossCombo::FComboGraph G; G.Root=P.ComboRoot; G.MaxDepth=P.ComboMaxDepth;
+    for (const FRPGBossComboNodeData& N:P.ComboNodes)
+    {
+        RPGBossCombo::FComboNode Node; Node.Id=N.NodeId; Node.MoveId=N.MoveId;
+        for (const FRPGBossComboEdgeData& E:N.Edges)
+        {
+            RPGBossCombo::FComboEdge Edge; Edge.To=E.ToNode; Edge.MinRangeCm=E.MinRangeCm; Edge.MaxRangeCm=E.MaxRangeCm; Edge.MaxAbsYawDegrees=E.MaxAbsYawDegrees; Edge.bAnyOutcome=E.bAnyOutcome;
+            Edge.Outcome=E.Outcome==ERPGBossComboOutcome::Whiff?RPGBossCombo::EOutcome::Whiff:E.Outcome==ERPGBossComboOutcome::Guarded?RPGBossCombo::EOutcome::Guarded:E.Outcome==ERPGBossComboOutcome::Parried?RPGBossCombo::EOutcome::Parried:RPGBossCombo::EOutcome::Hit;
+            Node.Edges.Add(Edge);
+        }
+        G.Nodes.Add(Node);
+    }
+    return G;
+}
 bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
 {
     Error.Reset();
@@ -56,6 +72,13 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
             if (bStart&&!(bF5&&P.PostureMax>0.f)) return Fail(TEXT("Framework.Profile.StaggerAnim.NoPosture"));
             if (bPhaseClip&&(!bF5||P.BossMaxHealth<=0.f||!(P.PhaseTwoFraction>0.f)||P.PhaseTwoId.IsNone())) return Fail(TEXT("Framework.Profile.PhaseTransitionAnim.Phaseless"));
         }
+    }
+    // Combo graph: only in the selector lane (F5), a valid DAG (RPGBossCombo::Validate, token Framework.Profile.<Combo token>); the cards of its nodes are checked in ResolveProfile.
+    if (P.ComboNodes.Num()>0 || !P.ComboRoot.IsNone())
+    {
+        if (!bF5) return Fail(TEXT("Framework.Profile.Domain"));
+        const FString ComboToken=RPGBossCombo::Validate(BuildComboGraph(P));
+        if (!ComboToken.IsEmpty()) {Error=FString::Printf(TEXT("Framework.Profile.%s"),*ComboToken);return false;}
     }
     // F9: bleed needs the selector lane (F5) and a hittable boss; BleedBuildupPerHit 0 = off (the other four then 0 too), else a coherent set (token Framework.Profile.Bleed).
     {
@@ -138,6 +161,13 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
             TArray<float> PoolOne,PoolTwo; for (const auto& C:D->Candidates) (C.Card->Spec().PhaseId==One?PoolOne:PoolTwo).Add(C.CooldownSeconds);
             if (!PhasePoolCannotStarve(PoolOne,P->AttackCount)||!PhasePoolCannotStarve(PoolTwo,P->AttackCount)) {Error=TEXT("Framework.Profile.PhaseCooldownStarvation");return false;}
         }
+        // Combo graph: every node plays one of the profile's cards.
+        if (P->ComboNodes.Num()>0)
+            for (const FRPGBossComboNodeData& N:P->ComboNodes)
+            {
+                bool bFound=false; for (const auto& C:D->Candidates) bFound|=C.Card->Spec().MoveId==N.MoveId;
+                if (!bFound) {Error=TEXT("Framework.Profile.Combo.UnknownMove");return false;}
+            }
         // The proof target must survive every attack of the run at the worst card damage.
         if (WorstHit*P->AttackCount>=P->TargetHealth) {Error=TEXT("Framework.Profile.DamageBudget");return false;}
     }

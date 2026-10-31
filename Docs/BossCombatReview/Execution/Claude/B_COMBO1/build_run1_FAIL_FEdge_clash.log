@@ -1,0 +1,106 @@
+﻿Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" OneBossFightEditor Win64 Development -Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject -WaitMutex
+Log file: C:\Users\Rushit Vaghela\AppData\Local\UnrealBuildTool\Log.txt
+Using 'git status' to determine working set for adaptive non-unity build (C:\UnrealProject\OneBossFight).
+Invalidating makefile for OneBossFightEditor (source file added)
+Available x64 toolchains (1):
+ * C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207
+    (Family=14.44.35207, FamilyRank=1, Version=14.44.35214, Is64Bit=True, ReleaseChannel=Latest, Architecture=x64)
+Visual Studio 2022 compiler version 14.44.35214 is not a preferred version. Please use the latest preferred version 14.38.33130
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'Niagara'.
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'NiagaraEditor'.
+Building OneBossFightEditor...
+Using Visual Studio 2022 14.44.35214 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+Warning: Visual Studio 2022 compiler is not a preferred version
+[Adaptive Build] Excluded from OneBossFight unity file: RPGBossComboTests.cpp
+Determining max actions to execute in parallel (8 physical cores, 16 logical cores)
+  Executing up to 8 processes, one per physical core
+  Requested 1.5 GB memory per action, 11.17 GB available: limiting max parallel actions to 7
+Using Unreal Build Accelerator local executor to run 4 action(s)
+  Storage capacity 40Gb
+---- Starting trace: 261031_232005 ----
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+------ Building 4 action(s) started ------
+[1/4] Compile [x64] RPGBossComboTests.cpp
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(10): error C2872: 'FEdge': ambiguous symbol
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Math\Edge.h(11): note: could be 'FEdge'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGBossComboRules.h(12): note: or       'RPGBossCombo::FEdge'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(11): error C2872: 'FEdge': ambiguous symbol
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Math\Edge.h(11): note: could be 'FEdge'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGBossComboRules.h(12): note: or       'RPGBossCombo::FEdge'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(11): error C2039: 'To': is not a member of 'FEdge'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Math\Edge.h(11): note: see declaration of 'FEdge'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(11): error C2039: 'MinRangeCm': is not a member of 'FEdge'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Math\Edge.h(11): note: see declaration of 'FEdge'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(11): error C2039: 'MaxRangeCm': is not a member of 'FEdge'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Math\Edge.h(11): note: see declaration of 'FEdge'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(11): error C2039: 'MaxAbsYawDegrees': is not a member of 'FEdge'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Math\Edge.h(11): note: see declaration of 'FEdge'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(11): error C2039: 'bAnyOutcome': is not a member of 'FEdge'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Math\Edge.h(11): note: see declaration of 'FEdge'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(11): error C2039: 'Outcome': is not a member of 'FEdge'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Math\Edge.h(11): note: see declaration of 'FEdge'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(12): error C2679: binary '=': no operator found which takes a right-hand operand of type 'TArray<FEdge,FDefaultAllocator>' (or there is no acceptable conversion)
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(671): note: could be 'TArray<RPGBossCombo::FEdge,FDefaultAllocator> &TArray<RPGBossCombo::FEdge,FDefaultAllocator>::operator =(TArray<RPGBossCombo::FEdge,FDefaultAllocator> &&)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(12): note: 'TArray<RPGBossCombo::FEdge,FDefaultAllocator> &TArray<RPGBossCombo::FEdge,FDefaultAllocator>::operator =(TArray<RPGBossCombo::FEdge,FDefaultAllocator> &&)': cannot convert argument 2 from 'TArray<FEdge,FDefaultAllocator>' to 'TArray<RPGBossCombo::FEdge,FDefaultAllocator> &&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(12): note: Reason: cannot convert from 'TArray<FEdge,FDefaultAllocator>' to 'TArray<RPGBossCombo::FEdge,FDefaultAllocator>'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(12): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(507): note: or       'TArray<RPGBossCombo::FEdge,FDefaultAllocator> &TArray<RPGBossCombo::FEdge,FDefaultAllocator>::operator =(const TArray<RPGBossCombo::FEdge,FDefaultAllocator> &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(12): note: 'TArray<RPGBossCombo::FEdge,FDefaultAllocator> &TArray<RPGBossCombo::FEdge,FDefaultAllocator>::operator =(const TArray<RPGBossCombo::FEdge,FDefaultAllocator> &)': cannot convert argument 2 from 'TArray<FEdge,FDefaultAllocator>' to 'const TArray<RPGBossCombo::FEdge,FDefaultAllocator> &'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(12): note: Reason: cannot convert from 'TArray<FEdge,FDefaultAllocator>' to 'const TArray<RPGBossCombo::FEdge,FDefaultAllocator>'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(12): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(475): note: or       'TArray<RPGBossCombo::FEdge,FDefaultAllocator> &TArray<RPGBossCombo::FEdge,FDefaultAllocator>::operator =(std::initializer_list<InElementType>)'
+        with
+        [
+            InElementType=RPGBossCombo::FEdge
+        ]
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(12): note: 'TArray<RPGBossCombo::FEdge,FDefaultAllocator> &TArray<RPGBossCombo::FEdge,FDefaultAllocator>::operator =(std::initializer_list<InElementType>)': cannot convert argument 2 from 'TArray<FEdge,FDefaultAllocator>' to 'std::initializer_list<InElementType>'
+        with
+        [
+            InElementType=RPGBossCombo::FEdge
+        ]
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(12): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(2503): note: or       'TArray<RPGBossCombo::FEdge,FDefaultAllocator> &TArray<RPGBossCombo::FEdge,FDefaultAllocator>::operator =(const TArray<RPGBossCombo::FEdge,OtherAllocatorType> &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(12): note: 'TArray<RPGBossCombo::FEdge,FDefaultAllocator> &TArray<RPGBossCombo::FEdge,FDefaultAllocator>::operator =(const TArray<RPGBossCombo::FEdge,OtherAllocatorType> &)': could not deduce template argument for 'const TArray<RPGBossCombo::FEdge,OtherAllocatorType> &' from 'TArray<FEdge,FDefaultAllocator>'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(2483): note: or       'TArray<RPGBossCombo::FEdge,FDefaultAllocator> &TArray<RPGBossCombo::FEdge,FDefaultAllocator>::operator =(TArray<RPGBossCombo::FEdge,FDefaultAllocator> &&)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(12): note: 'initializing': cannot convert from 'TArray<FEdge,FDefaultAllocator>' to 'TArray<RPGBossCombo::FEdge,FDefaultAllocator> &&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(12): note: Reason: cannot convert from 'TArray<FEdge,FDefaultAllocator>' to 'TArray<RPGBossCombo::FEdge,FDefaultAllocator>'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(12): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(518): note: or       'TArray<RPGBossCombo::FEdge,FDefaultAllocator> &TArray<RPGBossCombo::FEdge,FDefaultAllocator>::operator =(const TArrayView<OtherElementType,OtherSizeType> &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(12): note: 'TArray<RPGBossCombo::FEdge,FDefaultAllocator> &TArray<RPGBossCombo::FEdge,FDefaultAllocator>::operator =(const TArrayView<OtherElementType,OtherSizeType> &)': could not deduce template argument for 'const TArrayView<OtherElementType,OtherSizeType> &' from 'TArray<FEdge,FDefaultAllocator>'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(494): note: or       'TArray<RPGBossCombo::FEdge,FDefaultAllocator> &TArray<RPGBossCombo::FEdge,FDefaultAllocator>::operator =(const TArray<RPGBossCombo::FEdge,OtherAllocatorType> &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(12): note: 'TArray<RPGBossCombo::FEdge,FDefaultAllocator> &TArray<RPGBossCombo::FEdge,FDefaultAllocator>::operator =(const TArray<RPGBossCombo::FEdge,OtherAllocatorType> &)': could not deduce template argument for 'const TArray<RPGBossCombo::FEdge,OtherAllocatorType> &' from 'TArray<FEdge,FDefaultAllocator>'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(12): note: while trying to match the argument list '(TArray<RPGBossCombo::FEdge,FDefaultAllocator>, TArray<FEdge,FDefaultAllocator>)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(39): error C2665: 'TArray<RPGBossCombo::FEdge,FDefaultAllocator>::Add': no overloaded function could convert all the argument types
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(2333): note: could be 'int TArray<RPGBossCombo::FEdge,FDefaultAllocator>::Add(const RPGBossCombo::FEdge &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(39): note: 'int TArray<RPGBossCombo::FEdge,FDefaultAllocator>::Add(const RPGBossCombo::FEdge &)': cannot convert argument 1 from 'FEdge' to 'const RPGBossCombo::FEdge &'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(39): note: Reason: cannot convert from 'FEdge' to 'const RPGBossCombo::FEdge'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(39): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(2320): note: or       'int TArray<RPGBossCombo::FEdge,FDefaultAllocator>::Add(RPGBossCombo::FEdge &&)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(39): note: 'int TArray<RPGBossCombo::FEdge,FDefaultAllocator>::Add(RPGBossCombo::FEdge &&)': cannot convert argument 1 from 'FEdge' to 'RPGBossCombo::FEdge &&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(39): note: Reason: cannot convert from 'FEdge' to 'RPGBossCombo::FEdge'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(39): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(39): note: while trying to match the argument list '(FEdge)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(40): error C2665: 'TArray<RPGBossCombo::FEdge,FDefaultAllocator>::Add': no overloaded function could convert all the argument types
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(2333): note: could be 'int TArray<RPGBossCombo::FEdge,FDefaultAllocator>::Add(const RPGBossCombo::FEdge &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(40): note: 'int TArray<RPGBossCombo::FEdge,FDefaultAllocator>::Add(const RPGBossCombo::FEdge &)': cannot convert argument 1 from 'FEdge' to 'const RPGBossCombo::FEdge &'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(40): note: Reason: cannot convert from 'FEdge' to 'const RPGBossCombo::FEdge'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(40): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(2320): note: or       'int TArray<RPGBossCombo::FEdge,FDefaultAllocator>::Add(RPGBossCombo::FEdge &&)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(40): note: 'int TArray<RPGBossCombo::FEdge,FDefaultAllocator>::Add(RPGBossCombo::FEdge &&)': cannot convert argument 1 from 'FEdge' to 'RPGBossCombo::FEdge &&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(40): note: Reason: cannot convert from 'FEdge' to 'RPGBossCombo::FEdge'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(40): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(40): note: while trying to match the argument list '(FEdge)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(41): error C2665: 'TArray<RPGBossCombo::FEdge,FDefaultAllocator>::Add': no overloaded function could convert all the argument types
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(2333): note: could be 'int TArray<RPGBossCombo::FEdge,FDefaultAllocator>::Add(const RPGBossCombo::FEdge &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(41): note: 'int TArray<RPGBossCombo::FEdge,FDefaultAllocator>::Add(const RPGBossCombo::FEdge &)': cannot convert argument 1 from 'FEdge' to 'const RPGBossCombo::FEdge &'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(41): note: Reason: cannot convert from 'FEdge' to 'const RPGBossCombo::FEdge'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(41): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\Array.h(2320): note: or       'int TArray<RPGBossCombo::FEdge,FDefaultAllocator>::Add(RPGBossCombo::FEdge &&)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(41): note: 'int TArray<RPGBossCombo::FEdge,FDefaultAllocator>::Add(RPGBossCombo::FEdge &&)': cannot convert argument 1 from 'FEdge' to 'RPGBossCombo::FEdge &&'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(41): note: Reason: cannot convert from 'FEdge' to 'RPGBossCombo::FEdge'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(41): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGBossComboTests.cpp(41): note: while trying to match the argument list '(FEdge)'
+Trace file written to C:/Users/Rushit Vaghela/AppData/Local/UnrealBuildTool/Log.uba with size 16.7kb
+Total time in Unreal Build Accelerator local executor: 1.64 seconds
+Total execution time: 4.14 seconds
