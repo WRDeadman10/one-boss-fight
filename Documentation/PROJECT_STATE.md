@@ -21,8 +21,9 @@
   * `IRPGNativeBossHealth` (`ApplyPlayerHit`, `ApplyPlayerAttackHit`).
   * `URPGHitIntake` (`InjectBossHitForTest`, `InjectBossAttackHitForTest`).
 - **Framework Content (`Content/OneBossFight/FrameworkProof/`):**
-  * 11 Proof Maps: `L_SevarogFrameworkProof.umap`, `L_SevarogFrameworkProofF4.umap`, `L_SevarogFrameworkProofF5.umap`, `L_SevarogFrameworkProofF6.umap`, `L_SevarogFrameworkProofF6c.umap`, `L_SevarogFrameworkProofF6cBaked.umap`, `L_SevarogFrameworkProofF6cNear.umap`, `L_SevarogFrameworkProofF7.umap`, `L_SevarogFrameworkProofF8.umap`, `L_SevarogFrameworkProofF9.umap`, `L_SevarogFrameworkProofF10.umap`.
-  * 11 Proof Profiles: `DA_Sevarog_SwingProof.uasset`, `DA_Sevarog_SwingProof_F4.uasset`, `DA_Sevarog_SelectorProof_F5.uasset`, `DA_Sevarog_BossHealthProof_F6.uasset`, `DA_Sevarog_PhaseProof_F6c.uasset`, `DA_Sevarog_PhaseProofNear_F6c.uasset`, `DA_Sevarog_PhaseProofBaked_F6c.uasset`, `DA_Sevarog_BakedProof_F7.uasset`, `DA_Sevarog_PostureProof_F8.uasset`, `DA_Sevarog_BleedProof_F9.uasset`, `DA_Sevarog_AttackRowProof_F10.uasset`.
+  * 15 Proof Maps: `L_SevarogC1FrameworkProof.umap`, `L_SevarogC1v1FrameworkProof.umap`, `L_SevarogFrameworkProof.umap`, `L_SevarogFrameworkProofF4.umap`, `L_SevarogFrameworkProofF5.umap`, `L_SevarogFrameworkProofF6.umap`, `L_SevarogFrameworkProofF6c.umap`, `L_SevarogFrameworkProofF6cBaked.umap`, `L_SevarogFrameworkProofF6cNear.umap`, `L_SevarogFrameworkProofF7.umap`, `L_SevarogFrameworkProofF8.umap`, `L_SevarogFrameworkProofF9.umap`, `L_SevarogFrameworkProofF10.umap`, `L_SevarogFrameworkProofKI145.umap`, `L_SevarogFrameworkProofR2.umap`.
+  * 15 Proof Profiles: `DA_Sevarog_AttackRowProof_F10.uasset`, `DA_Sevarog_BakedProof_F7.uasset`, `DA_Sevarog_BleedProof_F9.uasset`, `DA_Sevarog_BossHealthProof_F6.uasset`, `DA_Sevarog_PhaseProof_F6c.uasset`, `DA_Sevarog_PhaseProofBaked_F6c.uasset`, `DA_Sevarog_PhaseProofNear_F6c.uasset`, `DA_Sevarog_PostureProof_F8.uasset`, `DA_Sevarog_R2Proof_KI145.uasset`, `DA_Sevarog_RangeProof_HeavySlam_KI145.uasset`, `DA_Sevarog_SelectorProof_F5.uasset`, `DA_Sevarog_SwingProof.uasset`, `DA_Sevarog_SwingProof_F4.uasset`, `DA_SevarogC1_Profile.uasset`, `DA_SevarogC1v1_Profile.uasset`.
+  * Proof Cards: `Move_Sevarog_*` (including baked proof card `Move_Sevarog_AntiGreed_C1.uasset`).
 - **PIE Driver & Execution Commands:**
   * Script: `powershell -NoProfile -ExecutionPolicy Bypass -File Docs/BossCombatReview/Execution/Claude/F4/run_pie.ps1 -Map <asset path> -OutDir <dir> -Task <name> [options]`
   * Driver options:
@@ -32,6 +33,8 @@
     - `-InjectRow <string>`: Injects F10 weapon attack row hits (`InjectBossAttackHitForTest`) with format `"seconds:WeaponStyle:Kind,..."` (e.g. `0.5:ClaymoreCombatStyle:JumpHeavy,0.8:ClaymoreCombatStyle:JumpHeavy`).
     - `-Live <seconds>`: Calls `restart_encounter_for_test` on a live boss to verify refusal.
     - `-DiagLong`: Extended diagnostic capture (up to 20 s).
+    - `-RealBuild <name>`: Equips player loadout build (Starter, Strength, Dex, polearm) via console `rpg.Build <name>` with data-driven catalog compilation.
+    - `-RealSwing <spec>`: Injects real player pack attack combo swings holding action buttons (e.g. "0.0:Light,1.0:Light").
   * **Pack Combat Style Wait (`pack_style_known`)**: To resolve KI-150 (late pack combat style equip overwriting target player health to 100 in generation 2), all proof maps poll up to 30 s for `BP_CombatComponent_C.CurrentCombatStyle != None` (measured ~10.03 s) before setting target health.
 - **Evidence & Verification Graders:**
   * Ledger Graders: `Docs/BossCombatReview/Execution/Antigravity/Ledger/` (`grade_f3d_log.py`, `grade_f5_log.py`, `grade_f6a_log.py`, `grade_f6c_log.py`).
@@ -39,15 +42,19 @@
   * Card Verification: `Docs/BossCombatReview/Execution/Claude/F7/verify_baked_cards.py`.
   * Evidence Folders: `Docs/BossCombatReview/Execution/Claude/F3a`, `F3b`, `F3c`, `F3d`, `F4`, `F5`, `F6`, `F6c`, `F7`, `F8`, `F9`, `F10`.
 - **Automation Suite:** 209 of 209 automation tests passing (100% green; cited from `Docs/BossCombatReview/Execution/Claude/F10/full_raw.log:3999` `Display: **** TEST COMPLETE. EXIT CODE: 0 ****`, DLL `0628127b`).
-- **Open Items (`KI-143..151`):**
+- **Open Items & Resolved Issues (`KI-143..151`):**
   * `KI-143`: Cook scope for `Content/ParagonSevarog` (1.4 GB, open owner decision).
   * `KI-144`: `nullrhi` editor cannot spawn level actors (`spawn_actor_from_class` divide by zero).
-  * `KI-145`: Proposed card ranges exceed measured blade reach.
+  * `KI-145`: RESOLVED for new content (2026-10-31, C-464): calibrated `*_R2` cards authored and proven (`Claude/KI145/r2`).
   * `KI-146`: Live player dodge i-frame rejection proof (crashed with `BP_AdvancedPlayerController`).
-  * `KI-147`: Unbaked windows keep live socket interpolation (baked windows resolved).
+  * `KI-147`: Unbaked windows keep live socket interpolation (resolved for baked windows).
   * `KI-149`: Phase starvation recovery (Tier 1 profile validation resolved; Tier 2 runtime neutral recovery open).
-  * `KI-150`: Intermittent target health reset in gen 2 (RESOLVED 2026-10-31 via `pack_style_known` 10.03 s wait, `Claude/F8/ki150b`).
-  * `KI-151`: Real pack weapon swing attack row routing through `Pending` queue (`RPGHitIntake.cpp` currently only routes injected hits to attack rows; real swings fall back to profile constants).
+  * `KI-150`: RESOLVED (2026-10-31, C-451): late pack combat style equip overwriting target health resolved via `pack_style_known` ~10 s wait (`Claude/F8/ki150b`).
+  * `KI-151`: RESOLVED (2026-10-31, C-466): real pack weapon swing attack row routing through native-boss Pending path and `-RealSwing` PIE driver execution (`Claude/KI151/real`).
+- **Data-Driven Authoring Utilities (Tracks C1..C4):**
+  * `C1` New Boss Utility (`Docs/BossCombatReview/Execution/Claude/C1/new_boss.py`): automated 120 Hz blade path baking, move card authoring, read-back verification, profile, and proof level generation in one editor run (Canonical guide: `Documentation/Boss/C1_NEW_BOSS_HOWTO.md`, BUILD-90/91).
+  * `C3` New Weapon Utility (`Docs/BossCombatReview/Execution/Claude/C3/new_weapon.py`): attack row manipulation in `DA_WeaponAttacks.uasset` + catalog registration via `URPGWeaponDefinition` + `URPGBuildDefinition` into `DA_CombatCatalog.uasset` (Canonical guide: `Documentation/Boss/C3_NEW_WEAPON_HOWTO.md`, BUILD-92/93).
+  * Offline Validators (`Docs/BossCombatReview/Execution/Antigravity/Reviews/`): `validate_boss_config.py` and `validate_weapon_config.py` enforcing strict type, domain, cook-root, class suffix (`_C`), and legacy slot constraints.
 - **Team Roles (Current Working Reality):** Claude (Technical lead, implementer, engine operator), Antigravity (Offline quality lane, architecture review, test qualification, committer), Codex (Independent read-only reviewer on request), Owner (Project direction, hand tests, commits/pushes).
 
 Updated 2026-10-19 (evening); the bullets under "Gotchas that cost time" are appended up to 2026-10-22 (the last one: boss clips, riposte execution, look). **Player and boss are the pack's own mannequin player and great-sword boss again** (Greystone and Sevarog retired, see DECISIONS "Back to the pack's own player and boss"; their folders are still on disk, unused, deletion awaits the user). One Boss Fight: single-player third-person Soulslike boss duel, Unreal Engine 5.5.4, target packaged 1080p / 120 FPS average and p99 <= 8.33 ms on an RTX 2060 Super (build PC has an RTX 3060, Ryzen 5 5500).
