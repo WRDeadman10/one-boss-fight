@@ -1,11 +1,11 @@
 {
-  "version": "3.18",
+  "version": "3.19",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 48,
+    "WITNESSED": 49,
     "PARTIAL": 14,
-    "NOT YET": 20
+    "NOT YET": 19
   },
   "requirements": [
     {
@@ -1005,18 +1005,18 @@
       "status": "WITNESSED",
       "proof": [
         "Source/OneBossFight/Tests/RPGBossComboTests.cpp:69",
-        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:71",
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:82",
         "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log:1791"
       ],
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 71,
+          "line": 82,
           "quoted": "FComboState Front;Front.Node=TEXT(\"A\");TestTrue(TEXT(\"in front: continue\"),Step(G,Front,Gate(1,100.,10.)).Kind==EStep::Continue);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 73,
+          "line": 84,
           "quoted": "TestTrue(TEXT(\"rolled behind: recover\"),R.Kind==EStep::Recover);TestEqual(TEXT(\"default recovery\"),R.Reason,FString(TEXT(\"Combo.DefaultRecovery\")));"
         },
         {
@@ -1047,19 +1047,19 @@
       "proof": [
         "Source/OneBossFight/Tests/RPGBossComboTests.cpp:75",
         "Source/OneBossFight/Tests/RPGBossComboTests.cpp:76",
-        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:77",
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:88",
         "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log:1791",
         "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log:1987"
       ],
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 77,
+          "line": 88,
           "quoted": "FComboState S;S.Node=TEXT(\"A\");FComboStep R=Step(G,S,Gate(1,100.,10.,EOutcome::Whiff));TestEqual(TEXT(\"whiff -> C\"),R.NextNode,FName(TEXT(\"C\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 79,
+          "line": 90,
           "quoted": "FComboState U;U.Node=TEXT(\"A\");R=Step(G,U,Gate(1,100.,10.,EOutcome::Parried));TestTrue(TEXT(\"parried: no edge, recover\"),R.Kind==EStep::Recover);TestEqual(TEXT(\"default recovery\"),R.Reason,FString(TEXT(\"Combo.DefaultRecovery\")));"
         },
         {
@@ -1091,12 +1091,12 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 66,
+          "line": 77,
           "quoted": "TestTrue(TEXT(\"duplicate gate ignored\"),R.Kind==EStep::Ignored);TestTrue(TEXT(\"state untouched\"),S.Node==After.Node&&S.Depth==After.Depth&&S.LastGateId==After.LastGateId);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 67,
+          "line": 78,
           "quoted": "TestEqual(TEXT(\"gate id 0 is refused\"),Step(G,S,Gate(0,100.,10.)).Reason,FString(TEXT(\"Combo.GateId\")));"
         },
         {
@@ -1144,17 +1144,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 43,
+          "line": 47,
           "quoted": "TestEqual(TEXT(\"four nodes deep with max depth 3\"),Token([](FComboGraph& G){G.Nodes.Add(Node(TEXT(\"F\"),TEXT(\"MoveF\")));G.Nodes[4].Edges.Add(Edge(TEXT(\"F\"),0.f,100.f,180.f,true));}),FString(TEXT(\"Combo.Depth\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 60,
+          "line": 64,
           "quoted": "R=Step(G,S,Gate(3,100.,10.));TestTrue(TEXT(\"terminal node finishes\"),R.Kind==EStep::Finished);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 95,
+          "line": 106,
           "quoted": "FComboStep R=Step(Short,S,Gate(2,100.,10.));TestTrue(TEXT(\"third node refused\"),R.Kind==EStep::Recover);TestEqual(TEXT(\"depth token\"),R.Reason,FString(TEXT(\"Combo.Depth\")));"
         },
         {
@@ -1186,7 +1186,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 83,
+          "line": 94,
           "quoted": "FComboState S;S.Node=TEXT(\"A\");FComboStep R=Step(G,S,Gate(1,300.,10.));TestTrue(TEXT(\"out of range: recover\"),R.Kind==EStep::Recover);TestEqual(TEXT(\"default recovery\"),R.Reason,FString(TEXT(\"Combo.DefaultRecovery\")));"
         },
         {
@@ -1909,11 +1909,37 @@
       "title": "Pressure variation",
       "section": "Pacing and punishability",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:42",
+        "Source/OneBossFight/Tests/RPGBossComboTests.cpp:70",
+        "Docs/BossCombatReview/Execution/Claude/B_PAC002/pie_tempo/editor_raw.log:1840",
+        "Docs/BossCombatReview/Execution/Claude/B_PAC002/pie_tempo/editor_raw.log:1841"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
+          "line": 42,
+          "quoted": "TestTrue(TEXT(\"tempo pause 0..5 is valid\"),Token([](FComboGraph& G){G.Nodes[1].Edges[0].TempoPauseSeconds=5.f;}).IsEmpty());"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
+          "line": 70,
+          "quoted": "R=Step(P,S,Gate(2,100.,170.));TestTrue(TEXT(\"continue\"),R.Kind==EStep::Continue);TestEqual(TEXT(\"the pause of the taken edge\"),R.PauseSeconds,1.25f);"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PAC002/pie_tempo/editor_raw.log",
+          "line": 1840,
+          "quoted": "[2026.11.01-06.50.29:512][768]LogTemp: Display: [FrameworkProof] combo_pause seconds=1 next=C"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PAC002/pie_tempo/editor_raw.log",
+          "line": 1841,
+          "quoted": "[2026.11.01-06.50.30:005][828]LogTemp: Display: [FrameworkProof] combo_pause_end"
+        }
+      ],
       "observable": "Combo sequences interleave high pressure with deliberate tempo pauses (e.g. after MC-04 slam).",
-      "notes": "Multi-move combo sequence tempo variation not yet active in runtime (designated for Combat Pacing Block)."
+      "notes": "Direction B: Optional per-edge TempoPauseSeconds (0..5s, default 0, proposed values) on combo edges (FRPGBossComboEdgeData / RPGBossCombo::FComboEdge). Step copies to FComboStep::PauseSeconds; Validate checks 0..5 range. In RPGFrameworkBossCharacter, HandleComboGate parks next card during pause (combo_pause seconds=%g next=%s), stands in neutral, and starts card after pause (combo_pause_end); stance break cancels pending pause. In live PIE (L_SevarogFrameworkProofPAC002, 3-node combo A SwingSlow -> B HeavySlam -> C SwingSlow with 1.0s pause on edge B->C; Claude/B_PAC002/pie_tempo): edge A->B has 0 pause (frame 666 gate=1 and playback_start instance=2 same frame: high pressure); edge B->C after HeavySlam logs combo_pause seconds=1 next=C at frame 768 (:1840), waits 60 frames (1.0s at 60 fps) in neutral, logs combo_pause_end at frame 828 (:1841), and starts playback instance=3 (:1842) completing combo normally (:2109 acceptedHits=3 attacks=4). Limits: 1.0s pause value is proposed design value on proof profile; pause is per edge, so after-MC-04 pause is authored on edges leaving slam node; boss stays in neutral without reacting during pause."
     },
     {
       "id": "BOSS-PAC-003",

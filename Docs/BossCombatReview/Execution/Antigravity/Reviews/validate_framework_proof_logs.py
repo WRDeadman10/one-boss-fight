@@ -60,6 +60,8 @@ SCHEMAS = {
     "reposition_turn": r"^start yawToTarget=[^\s]+ range=[^\s]+ ratePerSecond=[^\s]+$",
     "reposition_turn_end": r"^flips=\d+ latchDir=[^\s]+ seconds=[^\s]+$",
     "hyperarmor_absorbed": r"^card=[^\s]+ postureKept=[^\s]+ amountSkipped=[^\s]+$",
+    "combo_pause": r"^seconds=[^\s]+ next=[^\s]+$",
+    "combo_pause_end": r"^$",
     "arena_leash": r"^(?:state=Start targetDistanceCm=[^\s]+ radiusCm=[^\s]+ centerX=[^\s]+ centerY=[^\s]+|state=AtCenter distanceCm=[^\s]+|state=Resume(?:\s+bossDistanceToCenterCm=[^\s]+ atCenter=\d+)?)$",
 
     # 3. Candidate Selection & Gate Decisions (v3.0 adds optional seq=\d+)

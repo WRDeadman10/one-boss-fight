@@ -20,6 +20,8 @@ struct FRPGBossComboEdgeData
     UPROPERTY(EditAnywhere) float MaxAbsYawDegrees=180.f;
     UPROPERTY(EditAnywhere) bool bAnyOutcome=true;
     UPROPERTY(EditAnywhere) ERPGBossComboOutcome Outcome=ERPGBossComboOutcome::Hit;
+    /** BOSS-PAC-002: seconds the boss waits in neutral before the next card of the combo (0..5), a deliberate tempo pause. Design value, proposed. */
+    UPROPERTY(EditAnywhere) float TempoPauseSeconds=0.f;
 };
 USTRUCT()
 struct FRPGBossComboNodeData

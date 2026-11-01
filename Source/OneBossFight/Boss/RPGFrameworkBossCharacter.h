@@ -98,6 +98,8 @@ private:
     double OverlayLoggedAt=-1.; FString OverlayLastState;
     /** Combo (BOSS-COM rows): the pure graph of the profile and the state of the running combo; a branch gate is evaluated when a card of the combo finishes. */
     RPGBossCombo::FComboGraph ComboGraph; RPGBossCombo::FComboState ComboState; bool bComboActive=false; int32 ComboHitsAtStart=0; uint64 ComboGateCounter=0;
+    bool bComboPausing=false; double ComboPauseUntil=0.; int32 ComboPendingCard=INDEX_NONE;   // BOSS-PAC-002: a deliberate tempo pause between two cards of a combo
+    void StartComboCard();
     /** Repositions in a row since the last attack started (profile RepositionMax). */
     int32 RepositionsInARow=0; double RepositionTurnStartedAt=-1.;
     RPGBossTrack::FTurnLatch RepositionLatch;   // BOSS-MOV-003: direction memory of the reposition turn

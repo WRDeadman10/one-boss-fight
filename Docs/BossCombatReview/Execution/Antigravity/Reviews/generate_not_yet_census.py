@@ -117,16 +117,6 @@ CENSUS_METADATA = {
         },
         "explanation": "collision tests only verify legacy ARPGGreyboxArena geometry; production level L_SevarogArena clearance and snag point audit requires level art verification",
     },
-    "BOSS-PAC-002": {
-        "dep_class": "NEEDS DESIGN DECISION",
-        "cost": "S",
-        "cite": {
-            "file": "Source/OneBossFight/Player/RPGBossComboRules.h",
-            "line": 12,
-            "quote": "struct FComboEdge",
-        },
-        "explanation": "combo graph edges only specify target node, range, yaw, and outcome; no tempo pause delay or deliberate pacing duration field exists",
-    },
     "BOSS-PAC-003": {
         "dep_class": "PLAYER-SIDE",
         "cost": "M",
@@ -217,17 +207,17 @@ def main():
         data = json.load(f)
 
     not_yet_reqs = [r for r in data["requirements"] if r["status"] == "NOT YET"]
-    assert len(not_yet_reqs) == 20, f"Expected exactly 20 NOT YET requirements, found {len(not_yet_reqs)}"
+    assert len(not_yet_reqs) == 19, f"Expected exactly 19 NOT YET requirements, found {len(not_yet_reqs)}"
 
     lines_md = []
-    lines_md.append("# Track B Remaining Requirements Census: 20 NOT YET Rows\n")
+    lines_md.append("# Track B Remaining Requirements Census: 19 NOT YET Rows\n")
     lines_md.append("**Document Reference:** `Reviews/NOT_YET_CENSUS.md`  ")
     lines_md.append("**Task Reference:** `[C-565]` / `[C-568]` (Track B Direction Selection Census)  ")
     lines_md.append("**Source Authority:** `witness_status_v3.json` (exact titles and observables)  ")
-    lines_md.append("**Total Census:** 20 requirements currently classified as `NOT YET`  \n")
+    lines_md.append("**Total Census:** 19 requirements currently classified as `NOT YET`  \n")
     lines_md.append("---\n")
     lines_md.append("## 1. Executive Summary & Classification Matrix\n")
-    lines_md.append("This document classifies all 20 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).\n")
+    lines_md.append("This document classifies all 19 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).\n")
     lines_md.append("### Classification Definitions:")
     lines_md.append("- **ENGINE-ONLY:** Pure C++ / runtime rules or hooks; no art or external system dependencies.")
     lines_md.append("- **NEEDS ART:** Requires animations, montages, notify tracks, VFX/SFX, or arena mesh assets.")
@@ -239,7 +229,7 @@ def main():
     lines_md.append("- **M (Medium):** 2-4 runs; a new rule struct/method, unit tests, and live PIE proof scenario.")
     lines_md.append("- **L (Large):** 4+ runs; new multi-component system, asset plumbing, and multi-actor interaction harness.\n")
     lines_md.append("---\n")
-    lines_md.append("## 2. Complete 20-Row NOT YET Census Table\n")
+    lines_md.append("## 2. Complete 19-Row NOT YET Census Table\n")
     lines_md.append("| ID | Exact Title | Exact Observable | Dependency Class | Code Reference & Reason | Cost |")
     lines_md.append("|:---|:---|:---|:---:|:---|:---:|")
 

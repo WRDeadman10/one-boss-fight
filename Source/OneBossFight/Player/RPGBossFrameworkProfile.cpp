@@ -26,7 +26,7 @@ RPGBossCombo::FComboGraph BuildComboGraph(const URPGBossFrameworkProfile& P)
         RPGBossCombo::FComboNode Node; Node.Id=N.NodeId; Node.MoveId=N.MoveId;
         for (const FRPGBossComboEdgeData& E:N.Edges)
         {
-            RPGBossCombo::FComboEdge Edge; Edge.To=E.ToNode; Edge.MinRangeCm=E.MinRangeCm; Edge.MaxRangeCm=E.MaxRangeCm; Edge.MaxAbsYawDegrees=E.MaxAbsYawDegrees; Edge.bAnyOutcome=E.bAnyOutcome;
+            RPGBossCombo::FComboEdge Edge; Edge.To=E.ToNode; Edge.MinRangeCm=E.MinRangeCm; Edge.MaxRangeCm=E.MaxRangeCm; Edge.MaxAbsYawDegrees=E.MaxAbsYawDegrees; Edge.bAnyOutcome=E.bAnyOutcome; Edge.TempoPauseSeconds=E.TempoPauseSeconds;
             Edge.Outcome=E.Outcome==ERPGBossComboOutcome::Whiff?RPGBossCombo::EOutcome::Whiff:E.Outcome==ERPGBossComboOutcome::Guarded?RPGBossCombo::EOutcome::Guarded:E.Outcome==ERPGBossComboOutcome::Parried?RPGBossCombo::EOutcome::Parried:RPGBossCombo::EOutcome::Hit;
             Node.Edges.Add(Edge);
         }

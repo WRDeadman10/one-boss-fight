@@ -1,15 +1,15 @@
-# Track B Remaining Requirements Census: 20 NOT YET Rows
+# Track B Remaining Requirements Census: 19 NOT YET Rows
 
 **Document Reference:** `Reviews/NOT_YET_CENSUS.md`  
 **Task Reference:** `[C-565]` / `[C-568]` (Track B Direction Selection Census)  
 **Source Authority:** `witness_status_v3.json` (exact titles and observables)  
-**Total Census:** 20 requirements currently classified as `NOT YET`  
+**Total Census:** 19 requirements currently classified as `NOT YET`  
 
 ---
 
 ## 1. Executive Summary & Classification Matrix
 
-This document classifies all 20 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).
+This document classifies all 19 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).
 
 ### Classification Definitions:
 - **ENGINE-ONLY:** Pure C++ / runtime rules or hooks; no art or external system dependencies.
@@ -25,7 +25,7 @@ This document classifies all 20 remaining `NOT YET` combat requirements to infor
 
 ---
 
-## 2. Complete 20-Row NOT YET Census Table
+## 2. Complete 19-Row NOT YET Census Table
 
 | ID | Exact Title | Exact Observable | Dependency Class | Code Reference & Reason | Cost |
 |:---|:---|:---|:---:|:---|:---:|
@@ -41,7 +41,6 @@ This document classifies all 20 remaining `NOT YET` combat requirements to infor
 | **BOSS-MOV-002** | Combat positioning | Boss maintains center-arena bias when target is near walls, avoiding getting pinned in corners. | `NEEDS DESIGN DECISION` | `Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp:262` quote: `// Opt-in repositioning: nobody is eligible from here (the `<br>repositioning only walks straight toward target band without arena boundary or wall clearance scoring | **M** |
 | **BOSS-MOV-004** | Wall-safe attacks | Forward charge attacks clamp movement trajectory when hitting arena boundary without clipping through. | `NEEDS ART` | no code: forward charge attack animations with root motion require level art perimeter collision geometry and collision preset authoring to prevent clipping | **M** |
 | **BOSS-MOV-006** | Arena/attack fit | Arena geometry (L_SevarogArena) provides clear combat lane with zero player snag points. | `NEEDS ART` | `Source/OneBossFight/Tests/RPGAutomationTests.cpp:766` quote: `IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGArenaCollisionTest, "On`<br>collision tests only verify legacy ARPGGreyboxArena geometry; production level L_SevarogArena clearance and snag point audit requires level art verification | **M** |
-| **BOSS-PAC-002** | Pressure variation | Combo sequences interleave high pressure with deliberate tempo pauses (e.g. after MC-04 slam). | `NEEDS DESIGN DECISION` | `Source/OneBossFight/Player/RPGBossComboRules.h:12` quote: `struct FComboEdge`<br>combo graph edges only specify target node, range, yaw, and outcome; no tempo pause delay or deliberate pacing duration field exists | **S** |
 | **BOSS-PAC-003** | Guaranteed openings | Heavy finisher (MC-04) guarantees recovery window sufficient for player light or heavy punish counter-attack. | `PLAYER-SIDE` | `Source/OneBossFight/Player/RPGBossMoveCard.h:60` quote: `UPROPERTY(EditAnywhere) float RecoveryEndSeconds = 0.f;`<br>move card specifies static RecoveryEndSeconds; validation against player punish attack timings requires player moveset intake | **M** |
 | **BOSS-PAC-004** | Conditional opening cues | Visual recovery cues (scythe lodged in ground, posture reset) clearly indicate boss vulnerable state. | `NEEDS ART` | no code: visual/audio recovery cues (e.g. scythe lodged in ground) require authored animation notify tracks and VFX | **L** |
 | **BOSS-PAC-005** | Punish-margin calculation | Boss recovery duration exceeds player light attack startup + travel time by at least 0.3s. | `PLAYER-SIDE` | no code: punish margin formula (recovery > player startup + travel + 0.3s) requires player moveset startup data | **M** |
@@ -58,10 +57,9 @@ This document classifies all 20 remaining `NOT YET` combat requirements to infor
 - **NEEDS ART:** 6 requirements (25.0%)
 - **NEEDS NEW SYSTEM:** 5 requirements (20.8%)
 - **PLAYER-SIDE:** 4 requirements (16.7%)
-- **NEEDS DESIGN DECISION:** 4 requirements (16.7%)
+- **NEEDS DESIGN DECISION:** 3 requirements (12.5%)
 - **ENGINE-ONLY:** 1 requirements (4.2%)
 
 ### By Engine Run Cost:
 - **Cost M:** 11 requirements (45.8%)
 - **Cost L:** 8 requirements (33.3%)
-- **Cost S:** 1 requirements (4.2%)

@@ -311,6 +311,7 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
         else if(!Executor->Start(S,Error)){Fail(Error);return;}
         bStartedMove=true;
     }
+    if(bComboPausing){if(GetWorld()->GetTimeSeconds()<ComboPauseUntil)return;StartComboCard();return;}
     if(bStartedMove&&bComboActive&&Executor->DidFinish()&&Executor->IsClean()&&HandleComboGate())return;
     if(bStartedMove&&Executor->DidFinish()&&Executor->IsClean()&&Dependencies->Candidates.Num()>0&&AttacksDone+1<Dependencies->Profile->AttackCount)
     {
@@ -410,7 +411,7 @@ void ARPGFrameworkBossCharacter::StartStagger()
     GetCharacterMovement()->StopMovementImmediately();
     if(bMidAttack){Executor->Abort(TEXT("StanceBreak"));bStaggerAbortedAttack=true;}
     // An interrupted combo card ends the combo: no later, unrelated move may be taken for its continuation.
-    if(bComboActive){bComboActive=false;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_end reason=StanceBreak"));}
+    if(bComboActive){bComboActive=false;bComboPausing=false;ComboPendingCard=INDEX_NONE;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_end reason=StanceBreak"));}
     if(bPhaseHold)
     {
         // F11: a stance break during the transition clip stops it; the phase stays latched and the clip is not replayed.
@@ -490,6 +491,13 @@ bool ARPGFrameworkBossCharacter::HandleComboGate()
     if(AttacksDone+1>=Dependencies->Profile->AttackCount){bComboActive=false;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_end reason=AttackBudget"));return false;}
     const int32 NodeIndex=RPGBossCombo::FindNode(ComboGraph,R.NextNode);
     int32 CardIndex=INDEX_NONE; for(int32 I=0;I<Dependencies->Candidates.Num();++I) if(NodeIndex!=INDEX_NONE&&Dependencies->Candidates[I].Card->Spec().MoveId==ComboGraph.Nodes[NodeIndex].MoveId) CardIndex=I;
+    if(R.PauseSeconds>0.f&&CardIndex!=INDEX_NONE)
+    {
+        // BOSS-PAC-002: a deliberate tempo pause: the boss stands in neutral, then StartComboCard starts the card with a fresh snapshot.
+        bComboPausing=true;ComboPauseUntil=GetWorld()->GetTimeSeconds()+double(R.PauseSeconds);ComboPendingCard=CardIndex;
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_pause seconds=%g next=%s"),double(R.PauseSeconds),*ComboState.Node.ToString());
+        return true;
+    }
     FString Error;
     ++AttacksDone; if(!Executor->PrepareNextAttack()){Fail(TEXT("Framework.Playback.NextAttack"));return true;}
     bStartedMove=false;
@@ -500,6 +508,21 @@ bool ARPGFrameworkBossCharacter::HandleComboGate()
     Selector.NoteStarted(CardIndex,S.ClockSeconds);ComboHitsAtStart=Executor->AcceptedHits();bStartedMove=true;
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_step node=%s move=%s depth=%d"),*ComboState.Node.ToString(),*Dependencies->Candidates[CardIndex].Card->Spec().MoveId.ToString(),ComboState.Depth);
     return true;
+}
+void ARPGFrameworkBossCharacter::StartComboCard()
+{
+    // The pause is over: the same start the gate does without a pause (BOSS-COM-001), with a fresh snapshot of now.
+    bComboPausing=false;const int32 CardIndex=ComboPendingCard;ComboPendingCard=INDEX_NONE;
+    const FRPGBossDecisionSnapshot S=MakeSnapshot();FString Error;
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_pause_end"));
+    ++AttacksDone; if(!Executor->PrepareNextAttack()){Fail(TEXT("Framework.Playback.NextAttack"));return;}
+    bStartedMove=false;
+    if(!Dependencies->Candidates.IsValidIndex(CardIndex)||!Executor->StartCard(Dependencies->Candidates[CardIndex].Card,S,Error))
+    {
+        bComboActive=false;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_end reason=NextCardRefused detail=%s"),*Error);return;
+    }
+    Selector.NoteStarted(CardIndex,S.ClockSeconds);ComboHitsAtStart=Executor->AcceptedHits();bStartedMove=true;
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_step node=%s move=%s depth=%d"),*ComboState.Node.ToString(),*Dependencies->Candidates[CardIndex].Card->Spec().MoveId.ToString(),ComboState.Depth);
 }
 bool ARPGFrameworkBossCharacter::PlayF11Clip(UAnimSequence* Clip,int32 Loops)
 {
@@ -547,7 +570,7 @@ bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& 
     const TCHAR* OldState=bDead?TEXT("Dead"):TEXT("Finished");
     GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;
     if (bHittable) Health=MaxHealth;
-    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; bLeashed=bLeashAtCenter=false; ProofShiftStart=-1.; ProofShiftsDone=0; bBystanderSpawned=false; bTargetFaultInjected=false; ProofHitStart=-1.; ProofHitsDone=0; ResetBleed();
+    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; bComboPausing=false; ComboPendingCard=INDEX_NONE; bLeashed=bLeashAtCenter=false; ProofShiftStart=-1.; ProofShiftsDone=0; bBystanderSpawned=false; bTargetFaultInjected=false; ProofHitStart=-1.; ProofHitsDone=0; ResetBleed();
     Selector.Reset(); CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId; bPhaseTwoLatched=false;
     SetActorLocation(WalkStart,false,nullptr,ETeleportType::TeleportPhysics);
     FVector Face=Target->GetActorLocation()-WalkStart; Face.Z=0.f; if (!Face.IsNearlyZero()) SetActorRotation(FRotator(0.f,Face.Rotation().Yaw,0.f));

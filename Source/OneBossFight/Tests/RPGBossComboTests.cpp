@@ -39,6 +39,10 @@ bool FBossComboValidate::RunTest(const FString&)
     TestEqual(TEXT("cycle E -> A"),Token([](FComboGraph& G){G.Nodes[4].Edges.Add(Edge(TEXT("A"),0.f,100.f,180.f,true));}),FString(TEXT("Combo.Cycle")));
     TestEqual(TEXT("cycle between two nodes the root cannot reach"),Token([](FComboGraph& G){G.Nodes.Add(Node(TEXT("X"),TEXT("MoveX"),{Edge(TEXT("Y"),0.f,100.f,180.f,true)}));G.Nodes.Add(Node(TEXT("Y"),TEXT("MoveY"),{Edge(TEXT("X"),0.f,100.f,180.f,true)}));}),FString(TEXT("Combo.Cycle")));
     TestTrue(TEXT("an orphan node without a cycle stays valid"),Token([](FComboGraph& G){G.Nodes.Add(Node(TEXT("Z"),TEXT("MoveZ")));}).IsEmpty());
+    TestTrue(TEXT("tempo pause 0..5 is valid"),Token([](FComboGraph& G){G.Nodes[1].Edges[0].TempoPauseSeconds=5.f;}).IsEmpty());
+    TestEqual(TEXT("tempo pause above 5 s"),Token([](FComboGraph& G){G.Nodes[1].Edges[0].TempoPauseSeconds=5.01f;}),FString(TEXT("Combo.EdgeDomain")));
+    TestEqual(TEXT("negative tempo pause"),Token([](FComboGraph& G){G.Nodes[1].Edges[0].TempoPauseSeconds=-.1f;}),FString(TEXT("Combo.EdgeDomain")));
+    TestEqual(TEXT("NaN tempo pause"),Token([](FComboGraph& G){G.Nodes[1].Edges[0].TempoPauseSeconds=std::numeric_limits<float>::quiet_NaN();}),FString(TEXT("Combo.EdgeDomain")));
     TestEqual(TEXT("self loop"),Token([](FComboGraph& G){G.Nodes[2].Edges.Add(Edge(TEXT("C"),0.f,100.f,180.f,true));}),FString(TEXT("Combo.Cycle")));
     TestEqual(TEXT("four nodes deep with max depth 3"),Token([](FComboGraph& G){G.Nodes.Add(Node(TEXT("F"),TEXT("MoveF")));G.Nodes[4].Edges.Add(Edge(TEXT("F"),0.f,100.f,180.f,true));}),FString(TEXT("Combo.Depth")));
     TestEqual(TEXT("max depth 4 is outside 1..3"),Token([](FComboGraph& G){G.MaxDepth=4;}),FString(TEXT("Combo.MaxDepth")));
@@ -58,6 +62,13 @@ bool FBossComboStep::RunTest(const FString&)
         FComboStep R=Step(G,S,Gate(1,100.,10.));TestTrue(TEXT("hit in front within range: continue"),R.Kind==EStep::Continue);TestEqual(TEXT("to B"),R.NextNode,FName(TEXT("B")));TestEqual(TEXT("depth 2"),S.Depth,2);
         R=Step(G,S,Gate(2,100.,170.));TestTrue(TEXT("B takes any outcome and any yaw: continue"),R.Kind==EStep::Continue);TestEqual(TEXT("to E"),R.NextNode,FName(TEXT("E")));TestEqual(TEXT("depth 3"),S.Depth,3);
         R=Step(G,S,Gate(3,100.,10.));TestTrue(TEXT("terminal node finishes"),R.Kind==EStep::Finished);
+    }
+    // PAC-002: the pause of the taken edge travels with the step; other edges and recoveries carry none.
+    {
+        FComboGraph P=Valid();P.Nodes[1].Edges[0].TempoPauseSeconds=1.25f;FComboState S;S.Node=TEXT("A");
+        FComboStep R=Step(P,S,Gate(1,100.,10.));TestEqual(TEXT("edge without a pause"),R.PauseSeconds,0.f);
+        R=Step(P,S,Gate(2,100.,170.));TestTrue(TEXT("continue"),R.Kind==EStep::Continue);TestEqual(TEXT("the pause of the taken edge"),R.PauseSeconds,1.25f);
+        FComboState T;T.Node=TEXT("A");R=Step(P,T,Gate(1,100.,170.));TestEqual(TEXT("a recovery carries no pause"),R.PauseSeconds,0.f);
     }
     // COM-005: a gate id is consumed once; the duplicate is ignored and does not change the state.
     {

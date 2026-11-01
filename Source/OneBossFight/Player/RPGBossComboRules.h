@@ -14,13 +14,14 @@ namespace RPGBossCombo
         FName To;
         float MinRangeCm=0.f, MaxRangeCm=1.e6f, MaxAbsYawDegrees=180.f;
         bool bAnyOutcome=true; EOutcome Outcome=EOutcome::Hit;   // bAnyOutcome: the outcome does not matter
+        float TempoPauseSeconds=0.f;   // BOSS-PAC-002: the boss waits this long (neutral) before the next card of the combo starts; 0..5
     };
     struct FComboNode { FName Id, MoveId; TArray<FComboEdge> Edges; };
     struct FComboGraph { FName Root; TArray<FComboNode> Nodes; int32 MaxDepth=3; };
     struct FComboGate { double RangeCm=0., SignedYawDegrees=0.; EOutcome Outcome=EOutcome::Hit; bool bTargetValid=false; uint64 GateId=0; };
     struct FComboState { FName Node; int32 Depth=1; uint64 LastGateId=0; };
     enum class EStep : uint8 { Continue, Recover, Finished, Ignored };
-    struct FComboStep { EStep Kind=EStep::Recover; FName NextNode; FString Reason; };
+    struct FComboStep { EStep Kind=EStep::Recover; FName NextNode; FString Reason; float PauseSeconds=0.f; };
 
     inline int32 FindNode(const FComboGraph& G,FName Id) { for (int32 I=0;I<G.Nodes.Num();++I) if (G.Nodes[I].Id==Id) return I; return INDEX_NONE; }
 
@@ -60,7 +61,7 @@ namespace RPGBossCombo
         }
         for (const FComboNode& N:G.Nodes)
             for (const FComboEdge& E:N.Edges)
-                if (!FMath::IsFinite(E.MinRangeCm)||!FMath::IsFinite(E.MaxRangeCm)||!FMath::IsFinite(E.MaxAbsYawDegrees)||E.MinRangeCm<0.f||E.MinRangeCm>E.MaxRangeCm||E.MaxAbsYawDegrees<0.f||E.MaxAbsYawDegrees>180.f)
+                if (!FMath::IsFinite(E.MinRangeCm)||!FMath::IsFinite(E.MaxRangeCm)||!FMath::IsFinite(E.MaxAbsYawDegrees)||E.MinRangeCm<0.f||E.MinRangeCm>E.MaxRangeCm||E.MaxAbsYawDegrees<0.f||E.MaxAbsYawDegrees>180.f||!FMath::IsFinite(E.TempoPauseSeconds)||E.TempoPauseSeconds<0.f||E.TempoPauseSeconds>5.f)
                     return TEXT("Combo.EdgeDomain");
         // A cycle anywhere in the graph is refused, also in nodes the root cannot reach (Codex X-374 finding 3).
         for (int32 I=0;I<G.Nodes.Num();++I) if (LongestPathFrom(G,I)<0) return TEXT("Combo.Cycle");
@@ -85,7 +86,7 @@ namespace RPGBossCombo
             if (Gate.RangeCm<E.MinRangeCm||Gate.RangeCm>E.MaxRangeCm||FMath::Abs(Gate.SignedYawDegrees)>E.MaxAbsYawDegrees) continue;
             if (!E.bAnyOutcome&&E.Outcome!=Gate.Outcome) continue;
             if (S.Depth+1>G.MaxDepth) { R.Reason=TEXT("Combo.Depth"); return R; }
-            S.Node=E.To; ++S.Depth; R.Kind=EStep::Continue; R.NextNode=E.To; return R;
+            S.Node=E.To; ++S.Depth; R.Kind=EStep::Continue; R.NextNode=E.To; R.PauseSeconds=E.TempoPauseSeconds; return R;
         }
         R.Reason=TEXT("Combo.DefaultRecovery"); return R;
     }
