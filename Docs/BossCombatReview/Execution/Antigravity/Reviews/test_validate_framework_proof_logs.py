@@ -33,7 +33,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
         self.assertNotIn(b"\r", raw, "validate_framework_proof_logs.py contains CR! Must be pure LF.")
 
     def test_all_65_tokens_registered(self):
-        self.assertEqual(len(validator.SCHEMAS), 99, f"Expected 99 schemas, got {len(validator.SCHEMAS)}")
+        self.assertEqual(len(validator.SCHEMAS), 104, f"Expected 104 schemas, got {len(validator.SCHEMAS)}")
         for tok, pat in validator.SCHEMAS.items():
             compiled = validator.COMPILED_SCHEMAS.get(tok)
             self.assertIsNotNone(compiled, f"Token {tok} missing in COMPILED_SCHEMAS")
@@ -107,6 +107,18 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             # Fair Boss Defense (BOSS-DEF-005)
             "[FrameworkProof] defense_check card=Move_Sevarog_BackStep_DEF005 check=Cooldown cooldownSeconds=1 requiredSeconds=3 ok=0",
             "[FrameworkProof] defense_check card=Move_Sevarog_BackStep_DEF005 check=Counterplay recoveryAfterMoveSeconds=0.75 backstepCm=150 counterplayMarginSeconds=0.099663 ok=1",
+            # Neutral State (BOSS-PAC-006)
+            "[FrameworkProof] neutral_state seq=1 executorIdle=1 openWindows=0",
+            # Exclusive Motion Authority (BOSS-ANM-005)
+            "[FrameworkProof] motion_lock state=Acquired instance=1 mode=MOVE_None",
+            "[FrameworkProof] motion_lock state=Released instance=1 why=StanceBreak mode=MOVE_Walking",
+            "[FrameworkProof] motion_intruder state=Requested instance=1 requestResult=2 locked=1",
+            "[FrameworkProof] motion_intruder state=Result instance=1 movedCm=0 locked=1",
+            # Telegraph Cues (BOSS-ANM-002)
+            "[FrameworkProof] telegraph_cue instance=1 cue=Telegraph positionSeconds=0.05 commitSeconds=0.4 visual=1 audio=1",
+            # Idempotent Abort (BOSS-EXE-006)
+            "[FrameworkProof] abort_repeat reason=StanceBreak repeats=3 duplicateCleanups=0 duplicateReleases=0 modelIdle=1",
+            "[FrameworkProof] abort_repeat reason=BossDead repeats=3 duplicateCleanups=0 duplicateReleases=0 modelIdle=1",
             "[FrameworkProof] dodge_pattern state=BackDodging back=2 depth=2 threshold=2 seq=2",
             # Grab Fail-Safe (BOSS-HIT-012)
             "[FrameworkProof] grab_catch instance=1 window=Window_HeavySlam_Terminal socket=hand_l releaseAt=1.1 modeBefore=MOVE_Walking modeHeld=MOVE_None attached=1",
@@ -160,6 +172,10 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_CUE/pie_mode0_both/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_DEF005/pie_pass/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_DEF005/pie_fail/editor_raw.log",
+            REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_intruder_hold/editor_raw.log",
+            REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_abort_repeat_grab/editor_raw.log",
+            REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_telegraph/editor_raw.log",
+            REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
         ]:
             if candidate_log.exists() and candidate_log not in files:
                 files.append(candidate_log)
@@ -177,12 +193,12 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
                         tok = m.group(1)
                         if tok not in real_lines and tok in validator.SCHEMAS:
                             real_lines[tok] = line
-                if len(real_lines) == 99:
+                if len(real_lines) == 104:
                     break
-            if len(real_lines) == 99:
+            if len(real_lines) == 104:
                 break
 
-        self.assertEqual(len(real_lines), 99, f"Expected 99 real line samples, found {len(real_lines)}")
+        self.assertEqual(len(real_lines), 104, f"Expected 104 real line samples, found {len(real_lines)}")
 
         for tok, line in real_lines.items():
             # First verify the real line passes
@@ -530,6 +546,82 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             ("pie_regression_pac003_pass", 476),
         ]:
             log_path = def_dir / sub / "editor_raw.log"
+            self.assertTrue(log_path.exists(), f"Missing {log_path}")
+            res = validator.validate_log_file(log_path)
+            self.assertEqual(len(res["syntax_failures"]), 0, f"[{sub}] Expected 0 syntax failures, got {res['syntax_failures']}")
+            self.assertEqual(len(res["semantic_violations"]), 0, f"[{sub}] Expected 0 semantic violations, got {res['semantic_violations']}")
+            self.assertEqual(res["framework_proof_lines"], expected_lines)
+
+    def test_card_tag_lines_and_mutation(self):
+        """Verifies [CARD_*] log lines validate against schemas and fail under mutation."""
+        self.assertEqual(len(validator.CARD_TAG_PATTERNS), 5)
+        for tag, pat in validator.CARD_TAG_PATTERNS.items():
+            compiled = validator.COMPILED_CARD_TAG_PATTERNS.get(tag)
+            self.assertIsNotNone(compiled)
+            self.assertEqual(compiled.pattern, pat)
+
+        # Synthetic samples
+        synthetic_cards = [
+            "[2026.11.01-17.37.31:145][370]LogTemp: Display: [CARD_DECISION] seq=1 attack=1 card=Move_Sevarog_HeavySlam_F7 score=0.927407 rangeCm=128.467 phase=Phase_1",
+            "[2026.11.01-17.37.31:145][370]LogTemp: Display: [CARD_START] instance=1 card=Move_Sevarog_HeavySlam_F7 family=Family_06_HeavySlam phase=Phase_1 rangeCm=128.467",
+            "[2026.11.01-17.37.32:137][465]LogTemp: Display: [CARD_END] instance=1 card=Move_Sevarog_HeavySlam_F7 reason=Finished hitsAccepted=0 appliedDamage=0",
+            "[2026.11.01-17.33.33:988][533]LogTemp: Display: [CARD_ABORT] instance=1 card=Move_Sevarog_HeavyGrab_HIT012 reason=StanceBreak",
+            "[2026.11.01-17.34.16:980][498]LogTemp: Display: [CARD_HIT] instance=1 card=Move_Sevarog_HeavyRing_HIT011 window=Window_HeavyRing_Ring outcome=ERPGDamageOutcome::Accepted hpApplied=55",
+        ]
+        for line in synthetic_cards:
+            ok, tag, payload, err = validator.validate_card_tag_line(line)
+            self.assertTrue(ok, f"Synthetic card line failed: {line} -> {err}")
+
+        # Real lines from B_PARTIALS
+        partials_dir = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PARTIALS"
+        real_cards = {}
+        for p in partials_dir.glob("**/*.log"):
+            try:
+                for line in p.read_text(encoding="utf-8", errors="replace").splitlines():
+                    for tag in validator.CARD_TAG_PATTERNS:
+                        if f"[{tag}]" in line and tag not in real_cards:
+                            real_cards[tag] = line
+                    if len(real_cards) == 5:
+                        break
+            except Exception:
+                pass
+            if len(real_cards) == 5:
+                break
+
+        self.assertEqual(len(real_cards), 5, f"Expected 5 real CARD_* samples, found {len(real_cards)}")
+
+        for tag, line in real_cards.items():
+            ok, t, p, err = validator.validate_card_tag_line(line)
+            self.assertTrue(ok, f"Real CARD line failed prior to mutation: {line}")
+            self.assertEqual(t, tag)
+
+            # Mutate
+            parts = line.split(f"[{tag}]")
+            prefix = parts[0] + f"[{tag}]"
+            payload = parts[1]
+            if "=" in payload:
+                mutated_payload = re.sub(r"\b([A-Za-z0-9_]+)=", r"\1z=", payload, count=1)
+            else:
+                mutated_payload = " corrupted_payload " + payload
+            mutated_line = prefix + mutated_payload
+
+            m_ok, m_t, m_p, m_err = validator.validate_card_tag_line(mutated_line)
+            self.assertFalse(m_ok, f"CARD tag {tag} passed unexpectedly after mutation!\n{mutated_line}")
+
+    def test_b_partials_evidence_logs(self):
+        """B_PARTIALS evidence logs parse with 0 syntax failures and 0 semantic violations."""
+        partials_dir = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PARTIALS"
+        for sub, expected_lines in [
+            ("pie_abort_repeat_grab", 209),
+            ("pie_abort_repeat_ring", 95),
+            ("pie_flask_punish", 505),
+            ("pie_flask_punish2", 505),
+            ("pie_flask_toolate", 493),
+            ("pie_intruder_hold", 494),
+            ("pie_regression_pac003", 488),
+            ("pie_telegraph", 252),
+        ]:
+            log_path = partials_dir / sub / "editor_raw.log"
             self.assertTrue(log_path.exists(), f"Missing {log_path}")
             res = validator.validate_log_file(log_path)
             self.assertEqual(len(res["syntax_failures"]), 0, f"[{sub}] Expected 0 syntax failures, got {res['syntax_failures']}")

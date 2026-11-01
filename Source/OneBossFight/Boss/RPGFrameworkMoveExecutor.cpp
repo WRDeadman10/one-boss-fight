@@ -2,6 +2,8 @@
 #include "Boss/RPGFrameworkMoveExecutor.h"
 #include "Player/RPGBossTrackRules.h"
 #include "Player/RPGBossCueRules.h"
+#include "AIController.h"
+#include "Navigation/PathFollowingComponent.h"
 #include "Player/RPGFlipbookEffect.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundBase.h"
@@ -21,6 +23,10 @@
 #include "CollisionQueryParams.h"
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<int32> CVarCueMode(TEXT("rpg.CueMode"),0,TEXT("Accessible feedback (BOSS-QA-007): 0 = every boss cue shows its visual AND plays its sound, 1 = visual only, 2 = sound only, 3 = both with the visual at half size."),ECVF_Default);
+#if !UE_BUILD_SHIPPING
+static TAutoConsoleVariable<int32> CVarBossProofRepeatAbort(TEXT("rpg.BossProofRepeatAbort"),0,TEXT("Test hook (BOSS-EXE-006): after every abort the executor is aborted N more times and the duplicate cleanups / releases are counted (must be 0). 0 = off."),ECVF_Default);
+static TAutoConsoleVariable<float> CVarBossProofMotionIntruder(TEXT("rpg.BossProofMotionIntruder"),-1.f,TEXT("Test hook (BOSS-ANM-005): at this card time (seconds) a navigation move request is sent to the boss controller; the boss must not move. Negative = off."),ECVF_Default);
+#endif
 static TAutoConsoleVariable<int32> CVarBossProofStaleCallback(TEXT("rpg.BossProofStaleCallback"),0,TEXT("Test hook (BOSS-EXE-004): 1 sends a late abort callback of the PREVIOUS (aborted) attack to the move model right after the next attack started; it must be refused and the new attack must live. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossProofSuppressMontageEnd(TEXT("rpg.BossProofSuppressMontageEnd"),0,TEXT("Test hook (BOSS-EXE-007 / ANM-007): 1 stops feeding the montage position to the move model once the card has played 0.3 s, as if the end notifications were dropped; the watchdog must then abort the card. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 #endif
@@ -122,6 +128,8 @@ bool URPGFrameworkMoveExecutor::StartCard(const TSharedPtr<const FRPGCompiledBos
         LastAbortedToken=FRPGBossAttackToken();
     }
 #endif
+    LockMotion(); bIntruderDone=false; bIntruderPending=false;
+    UE_LOG(LogTemp,Display,TEXT("[CARD_START] instance=%llu card=%s family=%s phase=%s rangeCm=%g"),Token.InstanceId,*Card->Spec().MoveId.ToString(),*Card->Spec().FamilyId.ToString(),*Card->Spec().PhaseId.ToString(),S.RangeCm);
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] playback_start encounter=%llu generation=%llu instance=%llu montage=%s slot=%s rate=%g label=%s"),Token.EncounterId,Token.Generation,Token.InstanceId,*OwnedMontage->GetPathName(),*Card->Spec().SlotName.ToString(),Card->Spec().PlayRate,*Label());
     return true;
 }
@@ -155,6 +163,8 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
         {
             if (bTrackCommitLogged) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] heading_locked instance=%llu yawAtCommit=%g maxDriftAfterCommitDegrees=%g"),Token.InstanceId,double(TrackYawAtCommit),TrackDriftMax);
             ReleaseGrab(TEXT("CardEnded"),true);
+            UnlockMotion(TEXT("Finished")); ++CleanupLogCount;
+            UE_LOG(LogTemp,Display,TEXT("[CARD_END] instance=%llu card=%s reason=Finished hitsAccepted=%d appliedDamage=%g"),Token.InstanceId,*Card->Spec().MoveId.ToString(),HitsAccepted,AppliedDamage);
             OwnedMontage=nullptr;bFinished=true;SetComponentTickEnabled(false);UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] cleanup reason=Finished modelIdle=1 ownedMontageStopped=1"));
         }
         return;
@@ -170,6 +180,24 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
     {Fail(TEXT("Framework.Playback.Observation"));return;}
     if (Node>0.f&&Weight>0.f) bSawPoseWeight=true;
     TickHold(Position,Now);
+#if !UE_BUILD_SHIPPING
+    {
+        // BOSS-ANM-005 test hook: a navigation request is sent mid-card; 0.4 s later the displacement is logged (the lock must have refused it).
+        const float At=CVarBossProofMotionIntruder.GetValueOnGameThread();
+        if (At>=0.f&&!bIntruderDone&&Position>=double(At))
+        {
+            bIntruderDone=true; bIntruderPending=true; IntruderAt=Now; IntruderFrom=OwnerBoss->GetActorLocation();
+            AAIController* AI=Cast<AAIController>(OwnerBoss->GetController());
+            const EPathFollowingRequestResult::Type R=AI?AI->MoveToLocation(IntruderFrom+OwnerBoss->GetActorForwardVector()*600.,5.f,false,true,false,false):EPathFollowingRequestResult::Failed;
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] motion_intruder state=Requested instance=%llu requestResult=%d locked=%d"),Token.InstanceId,int32(R),bMotionLocked?1:0);
+        }
+        if (bIntruderPending&&Now-IntruderAt>=.4)
+        {
+            bIntruderPending=false;
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] motion_intruder state=Result instance=%llu movedCm=%g locked=%d"),Token.InstanceId,FVector::Dist2D(IntruderFrom,OwnerBoss->GetActorLocation()),bMotionLocked?1:0);
+        }
+    }
+#endif
     if (bPlaying&&((!bSawPoseWeight&&Now-StartWorldSeconds>Profile->BlendInSeconds)||((Node<=0.f||Weight<=0.f)&&Position>=Card->Spec().ActiveStartSeconds)))
     {Fail(TEXT("Framework.Playback.NoSlotContribution"));return;}
     if (!bPlaying) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] montage_natural_end instance=%llu lastPosition=%g naturalEnd=%g"),Token.InstanceId,LastPosition,NaturalEnd);
@@ -218,6 +246,7 @@ void URPGFrameworkMoveExecutor::SweepWindows(double PrevPosition,double Position
         Payload.HitKey=W.HitGroup.IsNone()?W.WindowId:W.HitGroup; Payload.HPDamage=Card->Spec().HPDamage;
         const FRPGDamageResult Result=Resolver->Resolve(Target.Get(),Payload);
         if (Result.Outcome==ERPGDamageOutcome::Accepted) {++HitsAccepted; AppliedDamage+=Result.HPApplied; if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);}
+        UE_LOG(LogTemp,Display,TEXT("[CARD_HIT] instance=%llu card=%s window=%s outcome=%s hpApplied=%g"),Token.InstanceId,*Card->Spec().MoveId.ToString(),*W.WindowId.ToString(),*UEnum::GetValueAsString(Result.Outcome),Result.HPApplied);
         UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] hit instance=%llu window=%s key=%s outcome=%s hpApplied=%g healthBefore=%g healthAfter=%g"),Token.InstanceId,*W.WindowId.ToString(),*Payload.HitKey.ToString(),*UEnum::GetValueAsString(Result.Outcome),Result.HPApplied,Result.HealthBefore,Result.HealthAfter);
     };
     for (const FRPGBossMoveWindow* WP:Ordered)
@@ -304,6 +333,7 @@ void URPGFrameworkMoveExecutor::ReleaseGrab(const TCHAR* Reason,bool bInterrupte
     // BOSS-HIT-012: put the victim back on the floor, upright, walking, collidable, with no attachment and no velocity, whatever ended the hold. Once per hold (Held is cleared first).
     ACharacter* Victim=Held.Get(); Held.Reset(); Grab=RPGBossTrack::FGrabState();
     if (!Victim) return;
+    ++ReleaseLogCount;
     UCharacterMovementComponent* Move=Victim->GetCharacterMovement(); UCapsuleComponent* Capsule=Victim->GetCapsuleComponent();
     Victim->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
     FVector Where=Victim->GetActorLocation(); const double Half=Capsule?Capsule->GetScaledCapsuleHalfHeight():0.;
@@ -421,7 +451,28 @@ void URPGFrameworkMoveExecutor::FireCue(const FRPGBossCue& Cue,const TCHAR* Why)
     }
     USoundBase* Sound=Cue.Sound.Get();
     if (Channels.bAudio&&Sound) {UGameplayStatics::PlaySoundAtLocation(this,Sound,Where); bAudio=true;}
+    // BOSS-ANM-002: a cue that fires INSIDE the telegraph phase [0, CommitSeconds] is logged as such, before any hit window can open.
+    if (LastPosition<double(Card->Spec().CommitSeconds)) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] telegraph_cue instance=%llu cue=%s positionSeconds=%g commitSeconds=%g visual=%d audio=%d"),Token.InstanceId,*Cue.CueId.ToString(),LastPosition,double(Card->Spec().CommitSeconds),bVisual?1:0,bAudio?1:0);
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] cue_fired instance=%llu cue=%s why=%s mode=%d visual=%d audio=%d visualKind=%d visualScale=%g sound=%s"),Token.InstanceId,*Cue.CueId.ToString(),Why,Mode,bVisual?1:0,bAudio?1:0,int32(Cue.Visual),double(Channels.VisualScale),Sound?*Sound->GetName():TEXT("None"));
+}
+void URPGFrameworkMoveExecutor::LockMotion()
+{
+    // BOSS-ANM-005: one motion authority per attack. Navigation is stopped and the movement component is disabled for the whole card: only the executor (the bounded warp) moves the boss.
+    if (bMotionLocked||!OwnerBoss.IsValid()) return;
+    if (AController* AI=OwnerBoss->GetController()) AI->StopMovement();
+    UCharacterMovementComponent* Move=OwnerBoss->GetCharacterMovement(); if (!Move) return;
+    Move->StopMovementImmediately(); Move->DisableMovement(); bMotionLocked=true;
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] motion_lock state=Acquired instance=%llu mode=%s"),Token.InstanceId,*UEnum::GetValueAsString(Move->MovementMode.GetValue()));
+}
+void URPGFrameworkMoveExecutor::UnlockMotion(const TCHAR* Why)
+{
+    if (!bMotionLocked) return;
+    bMotionLocked=false;
+    if (!OwnerBoss.IsValid()) return;
+    UCharacterMovementComponent* Move=OwnerBoss->GetCharacterMovement(); if (!Move) return;
+    // A dead or failed boss stays down; every other end gives the walking back.
+    if (!OwnerBoss->IsDead()&&!OwnerBoss->Failed()) Move->SetMovementMode(MOVE_Walking);
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] motion_lock state=Released instance=%llu why=%s mode=%s"),Token.InstanceId,Why,*UEnum::GetValueAsString(Move->MovementMode.GetValue()));
 }
 void URPGFrameworkMoveExecutor::LogEvents(const TArray<FRPGBossMoveModelEvent>& Events) const
 {
@@ -450,7 +501,19 @@ void URPGFrameworkMoveExecutor::Abort(const FString& Reason)
     TArray<FRPGBossMoveModelEvent> Events; FString Error;
     if (Token.InstanceId) {LastAbortedToken=Token; Model_.Abort(Token,Events,Error);}
     bAborted=true; LogEvents(Events); StopOwned(0.f); OwnedMontage=nullptr; SetComponentTickEnabled(false);
+    UnlockMotion(*Reason); ++CleanupLogCount;
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] cleanup reason=%s modelIdle=%d ownedMontageStopped=1"),*Reason,Model_.State()==ERPGBossMoveModelState::Idle);
+    UE_LOG(LogTemp,Display,TEXT("[CARD_ABORT] instance=%llu card=%s reason=%s"),Token.InstanceId,Card.IsValid()?*Card->Spec().MoveId.ToString():TEXT("None"),*Reason);
+#if !UE_BUILD_SHIPPING
+    if (CVarBossProofRepeatAbort.GetValueOnGameThread()>0&&!bInRepeatAbort)
+    {
+        // BOSS-EXE-006: abort again, N times: nothing may happen twice (no second cleanup, no second release, no second model event).
+        bInRepeatAbort=true; const int32 Cleanups=CleanupLogCount, Releases=ReleaseLogCount; const int32 N=CVarBossProofRepeatAbort.GetValueOnGameThread();
+        for (int32 I=0;I<N;++I) Abort(Reason);
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] abort_repeat reason=%s repeats=%d duplicateCleanups=%d duplicateReleases=%d modelIdle=%d"),*Reason,N,CleanupLogCount-Cleanups,ReleaseLogCount-Releases,Model_.State()==ERPGBossMoveModelState::Idle);
+        bInRepeatAbort=false;
+    }
+#endif
 }
 bool URPGFrameworkMoveExecutor::IsIdle() const {return Model_.State()==ERPGBossMoveModelState::Idle&&!OwnedMontage;}
 bool URPGFrameworkMoveExecutor::IsClean() const {return IsIdle();}

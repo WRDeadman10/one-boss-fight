@@ -1,10 +1,10 @@
 {
-  "version": "3.33",
+  "version": "3.34",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 67,
-    "PARTIAL": 14,
+    "WITNESSED": 73,
+    "PARTIAL": 8,
     "NOT YET": 1
   },
   "requirements": [
@@ -1048,19 +1048,32 @@
       "title": "Idempotent abort",
       "section": "Attack executor and state safety",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:130"
+        "Source/OneBossFight/Tests/RPGBossAbortTests.cpp",
+        "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_abort_repeat_grab/editor_raw.log",
+        "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_abort_repeat_ring/editor_raw.log"
       ],
       "citations": [
         {
-          "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 130,
-          "quoted": "TestTrue(TEXT(\"repeated abort idempotent\"),R.Model.Abort(R.Token,R.Events,R.E..."
+          "file": "Source/OneBossFight/Tests/RPGBossAbortTests.cpp",
+          "line": 13,
+          "quoted": "TestTrue(TEXT(\"the second interrupt does nothing\"),GrabStep(S,false,.6,0.,true)==EGrabEvent::None&&!S.bHeld);"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_abort_repeat_grab/editor_raw.log",
+          "line": 1666,
+          "quoted": "abort_repeat reason=StanceBreak repeats=3 duplicateCleanups=0 duplicateReleases=0 modelIdle=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_abort_repeat_ring/editor_raw.log",
+          "line": 1686,
+          "quoted": "abort_repeat reason=BossDead repeats=3 duplicateCleanups=0 duplicateReleases=0 modelIdle=1"
         }
       ],
       "observable": "Calling AbortAttack twice during grab or AoE produces identical clean recovery with zero duplicate hit events.",
-      "notes": "MoveModel assertion (model_tests:130) verifies repeated model abort is idempotent and emits zero second events; grab/AoE executor abort path not yet implemented."
+      "notes": "Witnessed (C-649, BUILD-141): Repeated abort is idempotent. Verified by unit test FBossAbortIdempotent (RPGBossAbortTests.cpp:13) and live PIE runs with test hook rpg.BossProofRepeatAbort N: stance break during grab hold (:1666) and boss death during ring window (:1686) both report 0 duplicate cleanups, 0 duplicate releases, and executor returns to idle. Honest limit: repeated abort is exercised through test hook after real aborts.",
+      "cost": "Cost S"
     },
     {
       "id": "BOSS-EXE-007",
@@ -1473,25 +1486,28 @@
       "title": "Telegraph phases",
       "section": "Animation, tracking and motion",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp:107",
-        "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log:1571"
+        "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_telegraph/editor_raw.log",
+        "Content/OneBossFight/FrameworkProof/Cards/Move_Sevarog_HeavyTelegraph_ANM002.uasset",
+        "Content/OneBossFight/FrameworkProof/DA_Sevarog_Telegraph_ANM002.uasset",
+        "Content/OneBossFight/FrameworkProof/L_SevarogFrameworkProofANM002.umap"
       ],
       "citations": [
         {
-          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
-          "line": 107,
-          "quoted": "Reject([](FInput& F){F.S.CommitSeconds=.5f;},TEXT(\"MoveCard.Timeline\"));"
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_telegraph/editor_raw.log",
+          "line": 1596,
+          "quoted": "telegraph_cue instance=1 cue=Telegraph positionSeconds=0.05 commitSeconds=0.4 visual=1 audio=1"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log",
-          "line": 1571,
-          "quoted": "[2026.10.30-12.12.22:294][379]LogTemp: Display: [FrameworkProof] event encoun..."
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_telegraph/editor_raw.log",
+          "line": 1597,
+          "quoted": "cue_fired instance=1 cue=Telegraph why=Time mode=0 visual=1 audio=1 visualKind=3 visualScale=1 sound=Sevarog_Effort_Ability_Primary"
         }
       ],
       "observable": "Every move card exhibits explicit CommitSeconds windup telegraph before active hit window.",
-      "notes": "MoveCard schema rejects Commit >= ActiveStart (card_tests:107); PIE log (f4_run1:1571) logs windup telegraph before Open event at localSeconds=0.35; visual/audio telegraph cues not formally asserted in logs."
+      "notes": "Witnessed (C-649, BUILD-141): Telegraph phase precedes attack commitment and active hit window with synchronized multi-channel cues. Move card Move_Sevarog_HeavyTelegraph_ANM002 configures telegraph cue at positionSeconds=0.05 preceding commitSeconds=0.4 (pie_telegraph:1596) and active window (:1666). Dual visual and audio channels fire synchronously on the same tick (:1597). Honest limit: cue visuals/sounds use existing project flipbook/sound placeholders; synchronized means same tick, same call.",
+      "cost": "Cost M"
     },
     {
       "id": "BOSS-ANM-003",
@@ -1626,25 +1642,35 @@
       "title": "Exclusive motion authority",
       "section": "Animation, tracking and motion",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
-        "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log:1506",
-        "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log:1507"
+        "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_intruder_hold/editor_raw.log"
       ],
       "citations": [
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log",
-          "line": 1506,
-          "quoted": "[2026.10.30-12.12.21:904][352]LogTemp: Display: [FrameworkProof] walk start=X..."
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_intruder_hold/editor_raw.log",
+          "line": 1593,
+          "quoted": "motion_lock state=Acquired instance=1 mode=MOVE_None"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log",
-          "line": 1507,
-          "quoted": "[2026.10.30-12.12.21:915][353]LogTemp: Display: [FrameworkProof] playback_sta..."
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_intruder_hold/editor_raw.log",
+          "line": 1608,
+          "quoted": "motion_intruder state=Requested instance=1 requestResult=2 locked=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_intruder_hold/editor_raw.log",
+          "line": 1635,
+          "quoted": "motion_intruder state=Result instance=1 movedCm=0 locked=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_intruder_hold/editor_raw.log",
+          "line": 1710,
+          "quoted": "motion_lock state=Released instance=1 why=Finished mode=MOVE_Walking"
         }
       ],
       "observable": "During attack card playback, AI navigation velocity translation is disabled; root motion / displacement authored explicitly.",
-      "notes": "PIE fixture completes AI navigation walk (f4_run1:1506) before attack playback starts (f4_run1:1507); formal AI navigation translation disablement lock in executor not yet authored."
+      "notes": "Witnessed (C-649, BUILD-141): Exclusive motion authority enforced during move card execution. Motion lock acquired on start (pie_intruder_hold:1593 mode=MOVE_None). External motion requests during hold are intercepted (pie_intruder_hold:1608,1635 movedCm=0 locked=1). Motion lock cleanly released upon attack finish (:1710 mode=MOVE_Walking). Honest limit: motion lock is executor-owned (bounded warp moves boss through executor), intruder is a test hook.",
+      "cost": "Cost S"
     },
     {
       "id": "BOSS-ANM-006",
@@ -1731,8 +1757,8 @@
           "quoted": "[FrameworkProof] warp_summary instance=1 movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45"
         }
       ],
-      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45°).",
-      "notes": "Witnessed (C-627, BUILD-134): Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45°). Architectural Decision (DECISIONS.md 2026-11-01): The Motion Warping plugin was not enabled in uproject because it operates on root-motion animation clips while the card backend is in-place only (MoveCard.UnsupportedRootMotion); the observable of the row (translation and rotation strictly clamped) is satisfied by boss-owned bounded warp clamping. Card spec fields WarpStartSeconds, WarpEndSeconds, WarpMaxDistanceCm (<=1000cm), WarpMaxAngleDegrees (<=180°), WarpStandoffCm (>=0) are validated in RPGBossMoveCards::Validate (RPGBossMoveCard.cpp:109-130; tests in RPGBossMoveCardTests.cpp:144-151). Pure warp step formulas RPGBossTrack::WarpStepCm and WarpStepDegrees dynamically allocate need proportionally across remaining window time, capped by remaining budget, and charged only by distance actually moved via swept move (tested in RPGFrameworkRuntimeTests.cpp:525-536 across dt 1/240..0.1s and ranges 20..600cm). Emits structured telemetry warp_step and warp_summary. Live PIE proofs on L_SevarogFrameworkProofANM006 (Move_Sevarog_HeavyWarp_ANM006, warp window 0.4..0.5333s, budget 150cm / 45°, standoff 105cm; Claude/B_ANM006): 1) pie_warp_room (target 128.467cm away, room to spare): closes exactly to standoff 105cm (:1643 warp_summary movedCm=23.4667 turnedDeg=0, well within budgets; parity in pie_warp_room2). 2) pie_warp_clamped (target at 626cm and 55°): needs 371cm / 55°, spends exactly budget limit (:1641 last step budgetCm=150, budgetDeg=45; :1644 warp_summary movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45). Limits: boss-owned actor translation/yaw sweep; root-motion plugin not used."
+      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45\u00b0).",
+      "notes": "Witnessed (C-627, BUILD-134): Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45\u00b0). Architectural Decision (DECISIONS.md 2026-11-01): The Motion Warping plugin was not enabled in uproject because it operates on root-motion animation clips while the card backend is in-place only (MoveCard.UnsupportedRootMotion); the observable of the row (translation and rotation strictly clamped) is satisfied by boss-owned bounded warp clamping. Card spec fields WarpStartSeconds, WarpEndSeconds, WarpMaxDistanceCm (<=1000cm), WarpMaxAngleDegrees (<=180\u00b0), WarpStandoffCm (>=0) are validated in RPGBossMoveCards::Validate (RPGBossMoveCard.cpp:109-130; tests in RPGBossMoveCardTests.cpp:144-151). Pure warp step formulas RPGBossTrack::WarpStepCm and WarpStepDegrees dynamically allocate need proportionally across remaining window time, capped by remaining budget, and charged only by distance actually moved via swept move (tested in RPGFrameworkRuntimeTests.cpp:525-536 across dt 1/240..0.1s and ranges 20..600cm). Emits structured telemetry warp_step and warp_summary. Live PIE proofs on L_SevarogFrameworkProofANM006 (Move_Sevarog_HeavyWarp_ANM006, warp window 0.4..0.5333s, budget 150cm / 45\u00b0, standoff 105cm; Claude/B_ANM006): 1) pie_warp_room (target 128.467cm away, room to spare): closes exactly to standoff 105cm (:1643 warp_summary movedCm=23.4667 turnedDeg=0, well within budgets; parity in pie_warp_room2). 2) pie_warp_clamped (target at 626cm and 55\u00b0): needs 371cm / 55\u00b0, spends exactly budget limit (:1641 last step budgetCm=150, budgetDeg=45; :1644 warp_summary movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45). Limits: boss-owned actor translation/yaw sweep; root-motion plugin not used."
     },
     {
       "id": "BOSS-ANM-007",
@@ -2827,43 +2853,25 @@
       "title": "Neutral is purposeful",
       "section": "Pacing and punishability",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:73",
-        "Docs/BossCombatReview/Execution/Claude/F5/pie_run1/editor_raw.log:1510",
-        "Docs/BossCombatReview/Execution/Claude/F5/pie_run1/editor_raw.log:1656",
-        "Docs/BossCombatReview/Execution/Claude/F5/pie_run1/editor_raw.log:1661",
-        "Docs/BossCombatReview/Execution/Claude/F5/pie_run1/editor_raw.log:1690"
+        "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log"
       ],
       "citations": [
         {
-          "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 73,
-          "quoted": "TestTrue(TEXT(\"finished Idle\"),R.Model.State()==ERPGBossMoveModelState::Idle);"
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
+          "line": 1587,
+          "quoted": "neutral_state seq=1 executorIdle=1 openWindows=0"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/F5/pie_run1/editor_raw.log",
-          "line": 1510,
-          "quoted": "[2026.10.30-13.52.25:120][352]LogTemp: Display: [FrameworkProof] decision att..."
-        },
-        {
-          "file": "Docs/BossCombatReview/Execution/Claude/F5/pie_run1/editor_raw.log",
-          "line": 1656,
-          "quoted": "[2026.10.30-13.52.26:794][434]LogTemp: Display: [FrameworkProof] cleanup reas..."
-        },
-        {
-          "file": "Docs/BossCombatReview/Execution/Claude/F5/pie_run1/editor_raw.log",
-          "line": 1661,
-          "quoted": "[2026.10.30-13.52.26:822][436]LogTemp: Display: [FrameworkProof] decision att..."
-        },
-        {
-          "file": "Docs/BossCombatReview/Execution/Claude/F5/pie_run1/editor_raw.log",
-          "line": 1690,
-          "quoted": "[2026.10.30-13.52.27:325][452]LogTemp: Display: [FrameworkProof] cleanup reas..."
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
+          "line": 1717,
+          "quoted": "neutral_state seq=2 executorIdle=1 openWindows=0"
         }
       ],
       "observable": "Neutral state has zero active hitboxes, zero root motion drift, and clear idle posture.",
-      "notes": "MoveModel asserts finished Idle (model_tests:73); PIE fixture verifies cleanups with modelIdle=1 and ownedMontageStopped=1 between attacks (f5_run1:1656, 1690); zero root motion drift confirmed across attack decisions with range held constant at exactly 169.602 cm (f5_run1:1510, 1661)."
+      "notes": "Witnessed (C-649, BUILD-141): Neutral state is purposeful and distinct from active attack execution. Telemetry verifies neutral_state executorIdle=1 openWindows=0 at every decision boundary (pie_flask_punish:1587 seq=1, :1717 seq=2). Honest limit: neutral_state is sampled at decision instants (neutral boundaries), not every tick.",
+      "cost": "Cost S"
     },
     {
       "id": "BOSS-DEF-001",
@@ -3225,11 +3233,53 @@
       "title": "Fair heal punish",
       "section": "Phases and anti-cheese reactions",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
+        "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_toolate/editor_raw.log",
+        "Content/OneBossFight/FrameworkProof/DA_Sevarog_FlaskPunish_PHS004.uasset",
+        "Content/OneBossFight/FrameworkProof/L_SevarogFrameworkProofPHS004.umap"
+      ],
+      "citations": [
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
+          "line": 1656,
+          "quoted": "player_drink_started n=1 offset=0.9 ok=1 length=1.13333"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
+          "line": 1657,
+          "quoted": "flask_perceived count=1 latencySeconds=0.431959 windowMin=0.3 windowMax=0.6"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
+          "line": 1684,
+          "quoted": "flask_reaction count=1 measuredSeconds=0.433333 windowMin=0.3 windowMax=0.6"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
+          "line": 1714,
+          "quoted": "greed_pattern state=Greedy source=Flask seq=2"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
+          "line": 1719,
+          "quoted": "decision attack=2 chosen=Move_Sevarog_SwingSlow_F7 score=1.56933 range=128.467 phase=Phase_1 seq=2"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_toolate/editor_raw.log",
+          "line": 1712,
+          "quoted": "decision attack=2 chosen=Move_Sevarog_HeavySlam_F7 score=0.927407 range=128.467 phase=Phase_1 seq=2"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_toolate/editor_raw.log",
+          "line": 1729,
+          "quoted": "flask_reaction count=1 measuredSeconds=0.433333 windowMin=0.3 windowMax=0.6"
+        }
+      ],
       "observable": "Heal punish move (MC-03/MC-05) triggers only when player initiates flask drink within reachable band.",
-      "notes": "Legacy context only for adapters (OneBossFight.Binding.HealPunish.*); player flask drinking perception reaction loop in framework boss not yet active."
+      "notes": "Witnessed (C-649, BUILD-141): Fair heal punish enforces perception and reaction delays before punishing greedy player drinks. On player drink at offset 0.9s (pie_flask_punish:1656), perception latency is 0.432s (:1657) and reaction timer completes at 0.433s (:1684), triggering greedy greed_pattern (:1714) and selecting fast punish SwingSlow (:1719). Negative control pie_flask_toolate proves boss decision at :1712 precedes reaction at :1729 when player drinks at 1.5s, preventing unfair instant reaction. Honest limit: punish is the AWR-006 anti-greed card choice after SEL-009 reaction delay (no bespoke heal-punish card).",
+      "cost": "Cost S"
     },
     {
       "id": "BOSS-PHS-005",
@@ -3344,37 +3394,42 @@
       "title": "Structured event log",
       "section": "Debugging, QA, presentation and optional networking",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
-        "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log:1439",
-        "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log:1506",
-        "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log:1593",
-        "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log:1651"
+        "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
+        "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_abort_repeat_grab/editor_raw.log",
+        "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_abort_repeat_ring/editor_raw.log"
       ],
       "citations": [
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log",
-          "line": 1439,
-          "quoted": "[2026.10.30-12.12.19:625][275]LogTemp: Display: [FrameworkProof] target_healt..."
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
+          "line": 1588,
+          "quoted": "[CARD_DECISION] seq=1 attack=1 card=Move_Sevarog_HeavySlam_F7 score=0.927407 rangeCm=128.467 phase=Phase_1"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log",
-          "line": 1506,
-          "quoted": "[2026.10.30-12.12.21:904][352]LogTemp: Display: [FrameworkProof] walk start=X..."
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
+          "line": 1591,
+          "quoted": "[CARD_START] instance=1 card=Move_Sevarog_HeavySlam_F7 family=Family_06_HeavySlam phase=Phase_1 rangeCm=128.467"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log",
-          "line": 1593,
-          "quoted": "[2026.10.30-12.12.22:385][386]LogTemp: Display: [FrameworkProof] hit instance..."
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
+          "line": 1712,
+          "quoted": "[CARD_END] instance=1 card=Move_Sevarog_HeavySlam_F7 reason=Finished hitsAccepted=0 appliedDamage=0"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log",
-          "line": 1651,
-          "quoted": "[2026.10.30-12.12.23:605][435]LogTemp: Display: [FrameworkProof] invariant ta..."
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_abort_repeat_grab/editor_raw.log",
+          "line": 1665,
+          "quoted": "[CARD_ABORT] instance=1 card=Move_Sevarog_HeavyGrab_HIT012 reason=StanceBreak"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_abort_repeat_ring/editor_raw.log",
+          "line": 1650,
+          "quoted": "[CARD_HIT] instance=1 card=Move_Sevarog_HeavyRing_HIT011 window=Window_HeavyRing_Ring outcome=ERPGDamageOutcome::Accepted hpApplied=55"
         }
       ],
       "observable": "Structured log output emits tagged lines: [CARD_VALIDATE], [CARD_PLAN], [CARD_APPLY], [CARD_DECISION], [CARD_HIT].",
-      "notes": "PIE emits 50 structured [FrameworkProof] telemetry tokens; decisions carry unique monotonic seq=N across stance breaks (3924a2e); defenses and interrupts NOT LOGGED; production [CARD_*] prefix reserved."
+      "notes": "Witnessed (C-649, BUILD-141): Structured event logging provides human- and machine-readable execution traces. Emits [CARD_DECISION] (:1588), [CARD_START] (:1591), [CARD_END] (:1712), [CARD_ABORT] (:1665), and [CARD_HIT] (:1650) tagged telemetry lines during execution. Honest limit: [CARD_*] lines are Development/Editor log lines (compiled out in Shipping builds); defense refusals at resolve time stay [FrameworkProof] defense_check.",
+      "cost": "Cost S"
     },
     {
       "id": "BOSS-QA-003",

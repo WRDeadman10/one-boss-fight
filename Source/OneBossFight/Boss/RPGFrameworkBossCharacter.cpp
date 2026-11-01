@@ -403,6 +403,9 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
                 return;
             }
             if(!bAsked||Decision.ChosenIndex==INDEX_NONE){Fail(TEXT("Framework.Selector.NoCandidate"));return;}
+            // BOSS-PAC-006: at every decision the boss is in neutral: the executor is idle and no hit window is open.
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] neutral_state seq=%d executorIdle=%d openWindows=%d"),Seq,Executor->IsIdle()?1:0,Executor->OpenWindowCount());
+            UE_LOG(LogTemp,Display,TEXT("[CARD_DECISION] seq=%d attack=%d card=%s score=%g rangeCm=%g phase=%s"),Seq,AttacksDone+1,*Decision.MoveId.ToString(),Decision.Score,S.RangeCm,*S.PhaseId.ToString());
             UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] decision attack=%d chosen=%s score=%g range=%g phase=%s seq=%d"),AttacksDone+1,*Decision.MoveId.ToString(),Decision.Score,S.RangeCm,*S.PhaseId.ToString(),Seq);
             if(!Executor->StartCard(Dependencies->Candidates[Decision.ChosenIndex].Card,S,Error)){Fail(Error);return;}
             Selector.NoteStarted(Decision.ChosenIndex,S.ClockSeconds);RepositionsInARow=0;

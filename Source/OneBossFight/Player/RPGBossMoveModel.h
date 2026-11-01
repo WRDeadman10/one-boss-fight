@@ -69,4 +69,8 @@ private:
     ERPGBossMoveModelState CurrentState = ERPGBossMoveModelState::Idle;
     TSharedPtr<const FRPGCompiledBossMoveCard> CurrentCard;
     TSet<FName> OpenWindows;
+public:
+    /** BOSS-PAC-006: how many hit windows are open right now (0 in neutral). */
+    int32 OpenWindowCount() const { return OpenWindows.Num(); }
+private:
 };

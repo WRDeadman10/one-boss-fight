@@ -73,6 +73,15 @@ private:
     void TickGrab(double Position);
     /** BOSS-ANM-006: the bounded warp of the running card: what it has used of its budgets so far. */
     void TickWarp(double PrevPosition,double Position);
+    /** BOSS-ANM-005: while a card runs the executor owns the boss's motion: navigation is stopped and the movement component disabled; both come back when the card ends or is aborted. */
+    void LockMotion();
+    void UnlockMotion(const TCHAR* Why);
+    bool bMotionLocked=false;
+    /** BOSS-EXE-006 / ANM-005 test hooks (not in shipping): repeated abort and a navigation intruder. */
+    int32 CleanupLogCount=0, ReleaseLogCount=0; bool bInRepeatAbort=false; bool bIntruderDone=false, bIntruderPending=false; double IntruderAt=0.; FVector IntruderFrom=FVector::ZeroVector;
+public:
+    int32 OpenWindowCount() const { return Model_.OpenWindowCount(); }
+private:
     /** BOSS-ANM-003 / PAC-004 / QA-007: the windup hold and the cues of the running card. */
     void TickHold(double Position,double Now);
     void TickCues(double PrevPosition,double Position);

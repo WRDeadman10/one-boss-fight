@@ -1,4 +1,4 @@
-# Track B: Owner Strategic Decision Brief (v2.26)
+# Track B: Owner Strategic Decision Brief (v2.27)
 
 **Date:** 2026-11-01  
 **Author:** Tech Lead Claude & Antigravity  
@@ -9,14 +9,15 @@
 
 ## 1. Executive Summary & Current State
 
-The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.33) and census script (`Reviews/generate_not_yet_census.py`).
+The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.34) and census script (`Reviews/generate_not_yet_census.py`).
 
 ### Ledger Census Today (82 Canonical Requirements):
-- **WITNESSED:** **67** (81.7%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
-- **PARTIAL:** **14** (17.1%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
+- **WITNESSED:** **73** (89.0%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
+- **PARTIAL:** **8** (9.8%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
 - **NOT YET:** **1** (1.2%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
 
 ### Milestones Graduated to WITNESSED (Since C-546):
+- **BOSS-EXE-006, ANM-002, ANM-005, PAC-006, PHS-004, QA-002 (Idempotent abort, telegraph cues, motion lock, neutral state, flask punish, and card logging):** Delivered in C++ and assets (C-649, BUILD-141) covering six partial rows: 1) `BOSS-EXE-006`: unit test `FBossAbortIdempotent` (`RPGBossAbortTests.cpp:13`) and live PIE runs with test hook `rpg.BossProofRepeatAbort N` prove repeated abort reports 0 duplicate cleanups and 0 duplicate releases after real aborts; 2) `BOSS-ANM-002`: `Move_Sevarog_HeavyTelegraph_ANM002` fires telegraph cue at 0.05s before commit at 0.4s and active window, with synchronized visual and audio cues on the same tick; 3) `BOSS-ANM-005`: exclusive motion authority acquired on attack start (`MOVE_None`), external motion requests during hold intercepted (`movedCm=0 locked=1`), cleanly released on finish (`MOVE_Walking`); 4) `BOSS-PAC-006`: `neutral_state executorIdle=1 openWindows=0` verified at every decision boundary; 5) `BOSS-PHS-004`: perception latency (0.432s) and reaction window (0.433s) enforced on player drink before selecting fast punish `SwingSlow`, while negative control proves boss cannot punish inside reaction delay; 6) `BOSS-QA-002`: structured event logging emits `[CARD_DECISION]`, `[CARD_START]`, `[CARD_END]`, `[CARD_ABORT]`, and `[CARD_HIT]` tagged telemetry lines in Development/Editor builds.
 - **BOSS-MOV-006 (Arena/attack fit & snag point audit):** Verified via editor sweep audit script (`Docs/BossCombatReview/Execution/Claude/B_MOV006/audit_arena_lane.py`). Player collision parameters read from `BP_CombatPlayerCharacter` (radius 42cm, half height 96cm, max step height 45cm, walkable floor angle 44.77 deg). Combat lane defined as circle inside pillar ring (radius 2496cm, grid 40cm, 12,257 cells; 98,056 8-directional 150cm capsule sweeps). Audit reports 0 holes, 0 snag points, 0 free lips (all 224 lips beside tall obstacles), 0 free unwalkable cells (all 216 beside tall obstacles), 0 unreadable blockers, and pass=true (`audit_run5_final/editor_raw.log:1292, :1294`; `report.json`). Negative control with in-memory low box confirms audit failure capability (`control_run1:1408` snag_points=112 pass=false). Limits noted: definitions (snag height 100cm, sweep 150cm, grid 40cm, tall obstacle >= 100cm with 2-cell skirt attribution) are proposed design values; audits static geometry only (no moving props, nav mesh, or camera clipping); 307 cells lie inside tall obstacles (`RPGGreyboxArena_0`, `RPGArenaDressing_0`) which are visible obstacles rather than player snags, but placement aesthetics remain open for owner visual review.
 - **BOSS-DEF-005 (Fair boss defense / backstep):** Delivered in C++ (`RPGBossDefenseRules.h`, `RPGBossMoveCard.h/.cpp`, `RPGBossFrameworkProfile.cpp`, `RPGFrameworkMoveExecutor.h/.cpp`, `RPGBossDefenseTests.cpp`, `RPGBossMoveCardTests.cpp`). BackStep defensive move card (`Cards/Move_Sevarog_BackStep_DEF005.uasset`) features 0 damage, 0 hit windows, `bDefensive=true`, and `bWarpAway=true`. Rules enforce minimum 0.25s real telegraph window before move starts, maximum 250cm backstep distance, minimum 3.0s cooldown between defensive cards, and counterplay recovery margin rule (recovery after move $\ge$ player light startup + walk from max range into reach at sprint speed). Validated in unit tests `RPGBossDefenseTests.cpp:12-26` and `RPGBossMoveCardTests.cpp:176,179`. Live PIE proof on `L_SevarogFrameworkProofDEF005` (`Claude/B_DEF005/pie_pass`, `pie_pass2`, `pie_fail`): 1) `pie_pass` verifies counterplay check passed (:1578 `defense_check card=Move_Sevarog_BackStep_DEF005 check=Counterplay recoveryAfterMoveSeconds=0.75 backstepCm=150 counterplayMarginSeconds=0.099663 ok=1`), player hug context triggers BackStep on attack 1 (:1589 score=2.78222, :1665 150cm backwards warp), boss repositions back into range (:1715 range=278.467), performs attack 2 (:1721 HeavySlam), and performs attack 3 (:1838, :1914 BackStep) after cooldown; 2) `pie_fail` proves rejection when cooldown is 1.0s (:1575 check=Cooldown ok=0, :1577 `Framework.Profile.DefenseCooldown`). Limits noted: only defensive action is the backstep (no block action; boss defense against player damage is posture/stagger per DECISIONS.md); counterplay margin is 0.0997s (design value, owner may widen).
 - **BOSS-ANM-003 (Bounded holds), BOSS-PAC-004 (Recovery opening cues) & BOSS-QA-007 (Accessible feedback):** Unified cue-and-hold delivery in C++ (`RPGBossCueRules.h`, `RPGBossMoveCard.h/.cpp`, `RPGFrameworkMoveExecutor.h/.cpp`, `RPGBossCueTests.cpp`). Card spec fields `HoldAtSeconds`, `HoldMinSeconds`, `HoldMaxSeconds` ((0,3s]), and `HoldSeed` freeze montage playback at rate 0 during windup for a seeded, un-trended, repeatable duration inside `[min, max]` before resuming attack execution. Cards support up to 8 cues (`FRPGBossCue`), each defining a visual flipbook sheet (`HitSpark`, `DodgeDust`, `BloodBurst`), sound cue, and socket. Validation enforces dual-channel presence and mutual distinction across both visual and audio modalities. Console variable `rpg.CueMode` provides non-shipping-stripped accessibility filtering: 0=both full size, 1=visual only, 2=audio only, 3=both with visual at half scale (0.5). Unit tests in `RPGBossCueTests.cpp` (:12-16 channel modes, :19-32 hold repeat/spread/trend, :36-40 distinct channels) and `RPGBossMoveCardTests.cpp` (:154, :164). Live PIE proofs on `L_SevarogFrameworkProofCUE` (`Cards/Move_Sevarog_HeavyHold_ANM003`, `DA_Sevarog_Cue_ANM003`, `Claude/B_CUE`): 1) `pie_mode0_both` verifies hold freeze at position 0.4333s (:1615 chosen=0.66487s), release at :1656 (held=0.6667s) with cue `HoldRelease` (:1657), and `RecoveryOpen` cue at frame 396 (:1664 visual=1 audio=1), repeated with varying bounded holds (0.800s, 0.800s, 0.733s); 2) `pie_mode1_visual` proves visual=1 audio=0 (:1658, :1665); 3) `pie_mode2_audio` proves visual=0 audio=1 (:1659, :1666); 4) `pie_mode3_lowvfx` proves visualScale=0.5 visual=1 audio=1 (:1660, :1667). Limits noted: held time rounds up to next frame tick within 1/60s; cue visuals use project placeholder flipbook sheets; validates dual-channel delivery and filtering rather than subjective human perceptual legibility.
@@ -51,29 +52,21 @@ The test boss combat framework has reached strong mathematical and behavioral ma
 
 ## 2. Taxonomy of Remaining Work
 
-### A. The 14 PARTIAL Rows (Grouped by Real Blocker)
-From the original plan (`Reviews/PARTIAL_UPGRADE_PLAN.md`), with its current status taken from the ledger (v3.16):
-1. **Engine / PIE Scenario Hooks (3 rows):**
-   - `BOSS-QA-001` (Runtime overlay): Formatted strings logged live; blocked because unattended PIE GPU backbuffer readback returned black pixels; requires on-screen display capture.
+### A. The 8 PARTIAL Rows (Grouped by Real Blocker)
+From the original plan (`Reviews/PARTIAL_UPGRADE_PLAN.md`), with its current status taken from the ledger (v3.34):
+1. **Engine / PIE Scenario Hooks (2 rows):**
+   - `BOSS-QA-001` (Runtime overlay): Formatted strings logged live; blocked because unattended PIE GPU backbuffer readback returned black pixels; assigned to Codex in C-650.
    - `BOSS-SEL-008` (No-candidate fallback): Walk-to-band verified live; requires continuous strafe loop when 0 cards qualify or production opt-in policy.
+2. **Player-Side / Combat Input Integration (3 rows):**
    - `BOSS-COM-004` (Hit-confirm policy): Whiff/recovery verified live; requires guarded and parried target states in PIE.
-2. **Player-Side / Combat Input Integration (4 rows):**
    - `BOSS-HIT-008` (Central defense order): Requires player shield block/parry stance integration in damage resolver.
    - `BOSS-HIT-009` (Iframe completeness): Requires player dodge iframe timing alignment with weapon sweep window.
-   - `BOSS-PHS-004` (Fair heal punish): Requires player flask drinking perception reaction loop in boss character.
-   - `BOSS-ANM-005` (Exclusive motion authority): Requires formal player-boss collision and AI navigation lock.
-3. **Animation & Notify Track Authoring (3 rows):**
-   - `BOSS-ANM-002` (Telegraph phases): Requires authored windup, active, and recovery notify tracks.
+3. **Animation & Notify Track Authoring (1 row):**
    - `BOSS-MOV-001` (Range-band policy): Requires full 15-family range-band card partitioning.
-   - `BOSS-PAC-006` (Neutral is purposeful): Requires multi-attack neutral transition testing with authored idle postures.
-4. **Lifecycle & Watchdog Robustness (1 row):**
-   - `BOSS-EXE-006` (Idempotent abort): Requires live grab/AoE executor abort path.
-5. **Architectural & Design Constraints (2 rows):**
+4. **Architectural & Design Constraints (1 row):**
    - `BOSS-AWR-004` (Signed angle hysteresis): Discrete-attack boss has no oscillation; requires selector-side memory.
-   - `BOSS-QA-002` (Structured event log): Defenses and interrupts not logged; production `[CARD_*]` prefix reserved.
-6. **Hardware Baseline (1 row):**
+5. **Hardware Baseline (1 row):**
    - `BOSS-QA-005` (Performance bounds): Packaged build 1080p 60 FPS $p99 \le 16.67\text{ ms}$ on physical RTX 2060 Super GPU (parked by owner).
-
 ### B. The 1 NOT YET Rows (Grouped by Class & Cost)
 Directly computed from `Reviews/NOT_YET_CENSUS.md` and verified against disk:
 - **Cost Breakdown:** **Cost S (1-2 runs): 0 reqs (0.0%)** | **Cost M (2-4 runs): 1 reqs (100.0%)** | **Cost L (4+ runs): 0 reqs (0.0%)**.

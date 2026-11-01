@@ -95,6 +95,8 @@ SCHEMAS = {
     "punish_check": r"^card=[^\s]+ recoverySeconds=[^\s]+ lightStartupSeconds=[^\s]+ heavyStartupSeconds=[^\s]+ travelSeconds=[^\s]+ lightMarginSeconds=[^\s]+ heavyMarginSeconds=[^\s]+ requiredSeconds=[^\s]+ heavyFinisher=[01] ok=[01]$",
     # Fair Boss Defense (BOSS-DEF-005)
     "defense_check": r"^(?:card=[^\s]+ check=Cooldown cooldownSeconds=[^\s]+ requiredSeconds=[^\s]+ ok=[01]|card=[^\s]+ check=Counterplay recoveryAfterMoveSeconds=[^\s]+ backstepCm=[^\s]+ counterplayMarginSeconds=[^\s]+ ok=[01])$",
+    # Neutral State (BOSS-PAC-006)
+    "neutral_state": r"^seq=\d+ executorIdle=[01] openWindows=\d+$",
 
     # 3. Candidate Selection & Gate Decisions (v3.0 adds optional seq=\d+)
     "candidate": r"^attack=\d+ card=[^\s]+ score=[^\s]+(?:\s+seq=\d+)?$",
@@ -111,6 +113,11 @@ SCHEMAS = {
     "hold_start": r"^instance=\d+ position=[^\s]+ holdAtSeconds=[^\s]+ chosenSeconds=[^\s]+ minSeconds=[^\s]+ maxSeconds=[^\s]+$",
     "hold_release": r"^instance=\d+ position=[^\s]+ heldSeconds=[^\s]+ chosenSeconds=[^\s]+ minSeconds=[^\s]+ maxSeconds=[^\s]+$",
     "cue_fired": r"^instance=\d+ cue=[^\s]+ why=[^\s]+ mode=[^\s]+ visual=[^\s]+ audio=[^\s]+ visualKind=[^\s]+ visualScale=[^\s]+ sound=[^\s]+$",
+    # Exclusive Motion Authority (BOSS-ANM-005)
+    "motion_lock": r"^(?:state=Acquired instance=\d+ mode=[^\s]+|state=Released instance=\d+ why=[^\s]+ mode=[^\s]+)$",
+    "motion_intruder": r"^(?:state=Requested instance=\d+ requestResult=\d+ locked=[01]|state=Result instance=\d+ movedCm=[^\s]+ locked=[01])$",
+    # Telegraph Cues (BOSS-ANM-002)
+    "telegraph_cue": r"^instance=\d+ cue=[^\s]+ positionSeconds=[^\s]+ commitSeconds=[^\s]+ visual=[01] audio=[01]$",
 
     # 5. Playback & Montages
     "playback_start": r"^encounter=\d+ generation=\d+ instance=\d+ montage=[^\s]+ slot=[^\s]+ rate=[^\s]+ label=[^\s]+$",
@@ -121,6 +128,8 @@ SCHEMAS = {
     "watchdog_recovered": r"^attacksDone=\d+$",
     "cleanup": r"^reason=.* modelIdle=\d+ ownedMontageStopped=\d+$",
     "stale_callback": r"^oldInstance=\d+ newInstance=\d+ refused=\d+ error=[^\s]+ newAttackAlive=\d+$",
+    # Idempotent Abort (BOSS-EXE-006)
+    "abort_repeat": r"^reason=[^\s]+ repeats=\d+ duplicateCleanups=\d+ duplicateReleases=\d+ modelIdle=[01]$",
 
     # 6. Sweeps, Events, and Damage Resolution
     "event": r"^encounter=\d+ generation=\d+ instance=\d+ kind=[^\s]+ window=[^\s]+ group=[^\s]+ localSeconds=[^\s]+ label=[^\s]+$",
@@ -188,6 +197,31 @@ def parse_ue_timestamp(line: str):
         return dt.timestamp() + float(m.group(2)) / 1000.0
     except Exception:
         return None
+
+# Structured Card Event Logging (BOSS-QA-002)
+CARD_TAG_PATTERNS = {
+    "CARD_DECISION": r"^seq=\d+ attack=\d+ card=[^\s]+ score=[^\s]+ rangeCm=[^\s]+ phase=[^\s]+$",
+    "CARD_START": r"^instance=\d+ card=[^\s]+ family=[^\s]+ phase=[^\s]+ rangeCm=[^\s]+$",
+    "CARD_END": r"^instance=\d+ card=[^\s]+ reason=[^\s]+ hitsAccepted=\d+ appliedDamage=[^\s]+$",
+    "CARD_ABORT": r"^instance=\d+ card=[^\s]+ reason=.+$",
+    "CARD_HIT": r"^instance=\d+ card=[^\s]+ window=[^\s]+ outcome=[^\s]+ hpApplied=[^\s]+$",
+}
+COMPILED_CARD_TAG_PATTERNS = {k: re.compile(v) for k, v in CARD_TAG_PATTERNS.items()}
+
+def validate_card_tag_line(line: str):
+    """
+    Validates an ordinary [CARD_*] log line.
+    Returns (ok, tag, payload, err).
+    """
+    for tag, pat in COMPILED_CARD_TAG_PATTERNS.items():
+        pfx = f"[{tag}]"
+        idx = line.find(pfx)
+        if idx != -1:
+            payload = line[idx + len(pfx):].strip()
+            if not pat.match(payload):
+                return False, tag, payload, f"Payload does not match schema for '{tag}'"
+            return True, tag, payload, None
+    return False, None, None, "No recognized [CARD_*] tag in line"
 
 def validate_line(line: str):
     """

@@ -1,23 +1,17 @@
 # Partial Rows Upgrade Plan (v2.0)
 
 > [!NOTE]
-> **Status as of ledger version 3.33:** 13 of the 27 rows are now WITNESSED (`BOSS-AWR-001`, `BOSS-AWR-002`, `BOSS-AWR-005`, `BOSS-EXE-004`, `BOSS-EXE-007`, `BOSS-COM-002`, `BOSS-COM-003`, `BOSS-COM-005`, `BOSS-COM-007`, `BOSS-ANM-007`, `BOSS-HIT-005`, `BOSS-QA-003`, `BOSS-QA-004`); the table below is the ORIGINAL plan at commit `58352ae`; current PARTIAL ids: `BOSS-AWR-004`, `BOSS-SEL-008`, `BOSS-EXE-006`, `BOSS-COM-004`, `BOSS-ANM-002`, `BOSS-ANM-005`, `BOSS-HIT-008`, `BOSS-HIT-009`, `BOSS-MOV-001`, `BOSS-PAC-006`, `BOSS-PHS-004`, `BOSS-QA-001`, `BOSS-QA-002`, `BOSS-QA-005`.
+> **Status as of ledger version 3.34:** 19 of the 27 rows are now WITNESSED (`BOSS-AWR-001`, `BOSS-AWR-002`, `BOSS-AWR-005`, `BOSS-EXE-004`, `BOSS-EXE-006`, `BOSS-EXE-007`, `BOSS-COM-002`, `BOSS-COM-003`, `BOSS-COM-005`, `BOSS-COM-007`, `BOSS-ANM-002`, `BOSS-ANM-005`, `BOSS-ANM-007`, `BOSS-HIT-005`, `BOSS-PAC-006`, `BOSS-PHS-004`, `BOSS-QA-002`, `BOSS-QA-003`, `BOSS-QA-004`); the table below is the ORIGINAL plan at commit `58352ae`; current PARTIAL ids: `BOSS-AWR-004`, `BOSS-SEL-008`, `BOSS-COM-004`, `BOSS-HIT-008`, `BOSS-HIT-009`, `BOSS-MOV-001`, `BOSS-QA-001`, `BOSS-QA-005`.
 > 
-> **Current Remaining 14 PARTIAL Blockers (as sent to the owner in C-620 (no answer yet) / Ledger v3.33):**
+> **Current Remaining 8 PARTIAL Blockers (as sent to the owner in C-620 (no answer yet) / Ledger v3.34):**
 > 1. `BOSS-AWR-004` (Signed angle and hysteresis): Discrete-attack boss has no oscillation to damp; hysteresis requires selector-side memory not built by design decision.
 > 2. `BOSS-SEL-008` (No-candidate fallback): Repositioning acts as reset, but continuous neutral strafe loop and production opt-in profile policy not built.
-> 3. `BOSS-EXE-006` (Idempotent abort): Model abort verified; grab and AoE executor abort path not yet implemented.
-> 4. `BOSS-COM-004` (Explicit hit-confirm policy): Hit/Whiff branch edges verified in live PIE; Guarded and Parried branch edges require player shield/parry telemetry.
-> 5. `BOSS-ANM-002` (Telegraph phases): Windup logged before Open; synchronized visual/audio telegraph cues not formally asserted in logs.
-> 6. `BOSS-ANM-005` (Exclusive motion authority): Nav walk completes before attack; formal AI navigation translation disablement lock in executor not yet authored.
-> 7. `BOSS-HIT-008` (Central defense order): Hierarchy verified in unit tests; live player shield blocking/parrying stance integration not active in PIE.
-> 8. `BOSS-HIT-009` (Iframe completeness): Damage rules verified; pack dodge iframe window alignment (~0.3s post-press) and full window completeness not witnessed live.
-> 9. `BOSS-MOV-001` (Range-band policy): Single band observed; full 15-family range-band partitioning awaits F5 authoring and reach calibration.
-> 10. `BOSS-PAC-006` (Neutral is purposeful): Cleanups and zero root motion drift verified; requires multi-attack neutral transition testing with authored idle postures.
-> 11. `BOSS-PHS-004` (Fair heal punish): Legacy heal punish exists; player flask drinking perception reaction loop in framework boss not yet active.
-> 12. `BOSS-QA-001` (Runtime overlay): Overlay logic and unit tests verified; unattended PIE GPU backbuffer readback returned black pixels (blocked on game-view screenshot).
-> 13. `BOSS-QA-002` (Structured event log): 75 FrameworkProof tokens emitted; defenses and interrupts not logged, production CARD prefix reserved.
-> 14. `BOSS-QA-005` (Performance bounds): Editor benchmark passes; packaged build benchmark at 1080p 60 FPS p99 <= 16.67ms on RTX 2060 Super hardware is parked by owner.
+> 3. `BOSS-COM-004` (Explicit hit-confirm policy): Hit/Whiff branch edges verified in live PIE; Guarded and Parried branch edges require player shield/parry telemetry.
+> 4. `BOSS-HIT-008` (Central defense order): Hierarchy verified in unit tests; live player shield blocking/parrying stance integration not active in PIE.
+> 5. `BOSS-HIT-009` (Iframe completeness): Damage rules verified; pack dodge iframe window alignment (~0.3s post-press) and full window completeness not witnessed live.
+> 6. `BOSS-MOV-001` (Range-band policy): Single band observed; full 15-family range-band partitioning awaits F5 authoring and reach calibration.
+> 7. `BOSS-QA-001` (Runtime overlay): Overlay logic and unit tests verified; unattended PIE GPU backbuffer readback returned black pixels (blocked on game-view screenshot; assigned to Codex in C-650).
+> 8. `BOSS-QA-005` (Performance bounds): Editor benchmark passes; packaged build benchmark at 1080p 60 FPS p99 <= 16.67ms on RTX 2060 Super hardware is parked by owner.
 
 ## 1. Executive Summary
 
