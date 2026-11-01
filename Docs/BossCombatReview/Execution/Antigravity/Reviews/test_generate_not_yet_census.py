@@ -90,8 +90,8 @@ class TestNotYetCensus(unittest.TestCase):
         self.assertTrue(gen.OUTPUT_MD.exists())
         with open(gen.OUTPUT_MD, "r", encoding="utf-8") as f:
             content = f.read()
-        self.assertIn("## 2. Complete 1-Row NOT YET Census Table", content)
-        self.assertEqual(content.count("| **BOSS-"), 1)
+        self.assertIn("## 2. Complete 0-Row NOT YET Census Table", content)
+        self.assertEqual(content.count("| **BOSS-"), 0)
 
 if __name__ == "__main__":
     unittest.main()

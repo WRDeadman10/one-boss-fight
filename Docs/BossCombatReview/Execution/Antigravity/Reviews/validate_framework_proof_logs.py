@@ -174,6 +174,10 @@ SCHEMAS = {
     "combo_gate_duplicate": r"^gate=\d+ result=[^\s]+ reason=[^\s]+ stateUnchanged=\d+$",
     "combo_end": r"^reason=[^\s]+$",
 
+    # 12. Camera & Readability (BOSS-QA-006)
+    "camera_frame": r"^t=[^\s]+ distCm=[^\s]+ screenMinX=[^\s]+ screenMinY=[^\s]+ screenMaxX=[^\s]+ screenMaxY=[^\s]+ viewX=\d+ viewY=\d+ cornersOnScreen=\d+ insideMargin=[01] heightPct=[^\s]+ occluded=[01]$",
+    "camera_stage": r"^index=\d+ distanceCm=[^\s]+(?:\s+cameraTurnedAway=[01])?$",
+
     # 11. Runtime Diagnostics & Overlay
     "overlay": r"^Card=[^\s]+ State=[^\s]+ Phase=[^\s]+ Range=[^\s]+ Cone=[^\s]+ Window=[^\s]+ Posture=[^\s]+ Health=[^\s]+ Stagger=[^\s]+ PhaseHold=[^\s]+$",
 }

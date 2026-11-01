@@ -1,17 +1,17 @@
-# Track B Remaining Requirements Census: 1 NOT YET Row
+# Track B Remaining Requirements Census: 0 NOT YET Rows
 
 **Document Reference:** `Reviews/NOT_YET_CENSUS.md`  
 **Task Reference:** `[C-565]` / `[C-568]` / `[C-617]` / `[C-621]` (Track B Direction Selection Census)  
 **Source Authority:** `witness_status_v3.json` (exact titles and observables)  
-**Total Census:** 1 requirement currently classified as `NOT YET`  
+**Total Census:** 0 requirements currently classified as `NOT YET`  
 
 ---
 
 ## 1. Executive Summary & Classification Matrix
 
-This document classifies the 1 remaining `NOT YET` combat requirement to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).
+This document records that 0 requirements remain in `NOT YET` (all 24 canonical NOT YET requirements have graduated to WITNESSED).
 
-*(Note: As of BUILD-133/BUILD-134, 0 ENGINE-ONLY, 0 NEEDS DESIGN DECISION, and 0 NEEDS NEW SYSTEM requirements remain in NOT YET; all three categories are 100% completed.)*
+*(Note: As of BUILD-142, all 24 canonical NOT YET requirements are 100% graduated to WITNESSED; NOT YET census is completely empty.)*
 
 ### Classification Definitions:
 - **ENGINE-ONLY:** Pure C++ / runtime rules or hooks; no art or external system dependencies.
@@ -27,24 +27,17 @@ This document classifies the 1 remaining `NOT YET` combat requirement to inform 
 
 ---
 
-## 2. Complete 1-Row NOT YET Census Table
+## 2. Complete 0-Row NOT YET Census Table
 
 | ID | Exact Title | Exact Observable | Dependency Class | Code Reference & Reason | Cost |
 |:---|:---|:---|:---:|:---|:---:|
-| **BOSS-QA-006** | Camera/readability | Camera framing maintains boss visibility and readability across near and far distance bands. | `PLAYER-SIDE` | no code: camera framing and lock-on tracking evaluation requires player follow camera / lock-on system testing | **M** |
 
 ---
 
 ## 3. Census Distribution Breakdown
 
 ### By Dependency Class:
-- **PLAYER-SIDE:** 1 requirements (4.2%)
-- **ENGINE-ONLY:** 0 requirements (0.0%)
-- **NEEDS ART:** 0 requirements (0.0%)
-- **NEEDS DESIGN DECISION:** 0 requirements (0.0%)
-- **NEEDS NEW SYSTEM:** 0 requirements (0.0%)
+- All dependency classes 100% completed (0 requirements remaining).
 
 ### By Engine Run Cost:
-- **Cost M:** 1 requirements (4.2%)
-- **Cost L:** 0 requirements (0.0%)
-- **Cost S:** 0 requirements (0.0%)
+- All engine cost tiers 100% completed (0 requirements remaining).

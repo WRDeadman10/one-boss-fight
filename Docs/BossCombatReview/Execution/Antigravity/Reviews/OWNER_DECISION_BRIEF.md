@@ -1,4 +1,4 @@
-# Track B: Owner Strategic Decision Brief (v2.27)
+# Track B: Owner Strategic Decision Brief (v2.28)
 
 **Date:** 2026-11-01  
 **Author:** Tech Lead Claude & Antigravity  
@@ -9,14 +9,15 @@
 
 ## 1. Executive Summary & Current State
 
-The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.34) and census script (`Reviews/generate_not_yet_census.py`).
+The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.35) and census script (`Reviews/generate_not_yet_census.py`).
 
 ### Ledger Census Today (82 Canonical Requirements):
-- **WITNESSED:** **73** (89.0%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
+- **WITNESSED:** **74** (90.2%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
 - **PARTIAL:** **8** (9.8%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
-- **NOT YET:** **1** (1.2%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
+- **NOT YET:** **0** (0.0%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
 
 ### Milestones Graduated to WITNESSED (Since C-546):
+- **BOSS-QA-006 (Combat follow camera framing probe and readability evaluation):** Delivered in C++ (`Player/RPGCameraProbe.h/.cpp`) and evaluated via Python tool (`Claude/B_QA006/evaluate_framing.py`). Live PIE execution on `L_SevarogFrameworkProofHIT011` with cvar `rpg.CameraProbe` 2 logs `camera_frame` telemetry across 4 distance bands (near 100-160cm: height 66.90%; 300cm: min height 46.97%; 600cm: min height 32.23%; 900cm: min height 24.24%; all 8 bounding corners inside 5% viewport margin with 0 occlusion; `framing_report.json pass=true`). Negative control `pie_control_turned_away` with camera turned 90 deg away at 900cm confirms detection capability (`control_report.json pass=false`). All 24 canonical NOT YET requirements are now 100% graduated (NOT YET CENSUS IS EMPTY).
 - **BOSS-EXE-006, ANM-002, ANM-005, PAC-006, PHS-004, QA-002 (Idempotent abort, telegraph cues, motion lock, neutral state, flask punish, and card logging):** Delivered in C++ and assets (C-649, BUILD-141) covering six partial rows: 1) `BOSS-EXE-006`: unit test `FBossAbortIdempotent` (`RPGBossAbortTests.cpp:13`) and live PIE runs with test hook `rpg.BossProofRepeatAbort N` prove repeated abort reports 0 duplicate cleanups and 0 duplicate releases after real aborts; 2) `BOSS-ANM-002`: `Move_Sevarog_HeavyTelegraph_ANM002` fires telegraph cue at 0.05s before commit at 0.4s and active window, with synchronized visual and audio cues on the same tick; 3) `BOSS-ANM-005`: exclusive motion authority acquired on attack start (`MOVE_None`), external motion requests during hold intercepted (`movedCm=0 locked=1`), cleanly released on finish (`MOVE_Walking`); 4) `BOSS-PAC-006`: `neutral_state executorIdle=1 openWindows=0` verified at every decision boundary; 5) `BOSS-PHS-004`: perception latency (0.432s) and reaction window (0.433s) enforced on player drink before selecting fast punish `SwingSlow`, while negative control proves boss cannot punish inside reaction delay; 6) `BOSS-QA-002`: structured event logging emits `[CARD_DECISION]`, `[CARD_START]`, `[CARD_END]`, `[CARD_ABORT]`, and `[CARD_HIT]` tagged telemetry lines in Development/Editor builds.
 - **BOSS-MOV-006 (Arena/attack fit & snag point audit):** Verified via editor sweep audit script (`Docs/BossCombatReview/Execution/Claude/B_MOV006/audit_arena_lane.py`). Player collision parameters read from `BP_CombatPlayerCharacter` (radius 42cm, half height 96cm, max step height 45cm, walkable floor angle 44.77 deg). Combat lane defined as circle inside pillar ring (radius 2496cm, grid 40cm, 12,257 cells; 98,056 8-directional 150cm capsule sweeps). Audit reports 0 holes, 0 snag points, 0 free lips (all 224 lips beside tall obstacles), 0 free unwalkable cells (all 216 beside tall obstacles), 0 unreadable blockers, and pass=true (`audit_run5_final/editor_raw.log:1292, :1294`; `report.json`). Negative control with in-memory low box confirms audit failure capability (`control_run1:1408` snag_points=112 pass=false). Limits noted: definitions (snag height 100cm, sweep 150cm, grid 40cm, tall obstacle >= 100cm with 2-cell skirt attribution) are proposed design values; audits static geometry only (no moving props, nav mesh, or camera clipping); 307 cells lie inside tall obstacles (`RPGGreyboxArena_0`, `RPGArenaDressing_0`) which are visible obstacles rather than player snags, but placement aesthetics remain open for owner visual review.
 - **BOSS-DEF-005 (Fair boss defense / backstep):** Delivered in C++ (`RPGBossDefenseRules.h`, `RPGBossMoveCard.h/.cpp`, `RPGBossFrameworkProfile.cpp`, `RPGFrameworkMoveExecutor.h/.cpp`, `RPGBossDefenseTests.cpp`, `RPGBossMoveCardTests.cpp`). BackStep defensive move card (`Cards/Move_Sevarog_BackStep_DEF005.uasset`) features 0 damage, 0 hit windows, `bDefensive=true`, and `bWarpAway=true`. Rules enforce minimum 0.25s real telegraph window before move starts, maximum 250cm backstep distance, minimum 3.0s cooldown between defensive cards, and counterplay recovery margin rule (recovery after move $\ge$ player light startup + walk from max range into reach at sprint speed). Validated in unit tests `RPGBossDefenseTests.cpp:12-26` and `RPGBossMoveCardTests.cpp:176,179`. Live PIE proof on `L_SevarogFrameworkProofDEF005` (`Claude/B_DEF005/pie_pass`, `pie_pass2`, `pie_fail`): 1) `pie_pass` verifies counterplay check passed (:1578 `defense_check card=Move_Sevarog_BackStep_DEF005 check=Counterplay recoveryAfterMoveSeconds=0.75 backstepCm=150 counterplayMarginSeconds=0.099663 ok=1`), player hug context triggers BackStep on attack 1 (:1589 score=2.78222, :1665 150cm backwards warp), boss repositions back into range (:1715 range=278.467), performs attack 2 (:1721 HeavySlam), and performs attack 3 (:1838, :1914 BackStep) after cooldown; 2) `pie_fail` proves rejection when cooldown is 1.0s (:1575 check=Cooldown ok=0, :1577 `Framework.Profile.DefenseCooldown`). Limits noted: only defensive action is the backstep (no block action; boss defense against player damage is posture/stagger per DECISIONS.md); counterplay margin is 0.0997s (design value, owner may widen).
@@ -67,17 +68,15 @@ From the original plan (`Reviews/PARTIAL_UPGRADE_PLAN.md`), with its current sta
    - `BOSS-AWR-004` (Signed angle hysteresis): Discrete-attack boss has no oscillation; requires selector-side memory.
 5. **Hardware Baseline (1 row):**
    - `BOSS-QA-005` (Performance bounds): Packaged build 1080p 60 FPS $p99 \le 16.67\text{ ms}$ on physical RTX 2060 Super GPU (parked by owner).
-### B. The 1 NOT YET Rows (Grouped by Class & Cost)
+### B. The 0 NOT YET Rows (Grouped by Class & Cost)
 Directly computed from `Reviews/NOT_YET_CENSUS.md` and verified against disk:
-- **Cost Breakdown:** **Cost S (1-2 runs): 0 reqs (0.0%)** | **Cost M (2-4 runs): 1 reqs (100.0%)** | **Cost L (4+ runs): 0 reqs (0.0%)**.
+- **Cost Breakdown:** **Cost S (1-2 runs): 0 reqs (0.0%)** | **Cost M (2-4 runs): 0 reqs (0.0%)** | **Cost L (4+ runs): 0 reqs (0.0%)**.
 - **By Dependency Class:**
   * **ENGINE-ONLY (0 reqs, 0.0%):** All engine-only requirements (`SEL-009`) now fully implemented and witnessed!
   * **NEEDS DESIGN DECISION (0 reqs, 0.0%):** All 4 design decision rows (`PAC-002`, `MOV-002`, `PHS-005`, `HIT-010`) now fully implemented and witnessed!
   * **NEEDS NEW SYSTEM (0 reqs, 0.0%):** All 5 new system requirements (`AWR-007`, `AWR-008`, `HIT-011`, `HIT-012`, `ANM-006`) now fully implemented and witnessed!
   * **NEEDS ART (0 reqs, 0.0%):** All art requirements now fully witnessed or audited!
-  * **PLAYER-SIDE (1 reqs, 100.0%):** Requires player combat intake, input buffers, or camera integration.
-    - Cost M: `BOSS-QA-006` (Combat follow camera framing; claimed by Codex C-635 / X-381).
-
+  * **PLAYER-SIDE (0 reqs, 0.0%):** All player-side requirements now fully witnessed (`BOSS-QA-006` graduated in BUILD-142)!
 ---
 
 ## 3. The Owner Question & Options

@@ -33,7 +33,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
         self.assertNotIn(b"\r", raw, "validate_framework_proof_logs.py contains CR! Must be pure LF.")
 
     def test_all_65_tokens_registered(self):
-        self.assertEqual(len(validator.SCHEMAS), 104, f"Expected 104 schemas, got {len(validator.SCHEMAS)}")
+        self.assertEqual(len(validator.SCHEMAS), 106, f"Expected 106 schemas, got {len(validator.SCHEMAS)}")
         for tok, pat in validator.SCHEMAS.items():
             compiled = validator.COMPILED_SCHEMAS.get(tok)
             self.assertIsNotNone(compiled, f"Token {tok} missing in COMPILED_SCHEMAS")
@@ -119,6 +119,10 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             # Idempotent Abort (BOSS-EXE-006)
             "[FrameworkProof] abort_repeat reason=StanceBreak repeats=3 duplicateCleanups=0 duplicateReleases=0 modelIdle=1",
             "[FrameworkProof] abort_repeat reason=BossDead repeats=3 duplicateCleanups=0 duplicateReleases=0 modelIdle=1",
+            # Camera & Readability (BOSS-QA-006)
+            "[FrameworkProof] camera_frame t=12.00 distCm=128.467 screenMinX=402.0 screenMinY=59.2 screenMaxX=499.7 screenMaxY=328.1 viewX=918 viewY=402 cornersOnScreen=8 insideMargin=1 heightPct=66.90 occluded=0",
+            "[FrameworkProof] camera_stage index=0 distanceCm=300 cameraTurnedAway=0",
+            "[FrameworkProof] camera_stage index=1 distanceCm=600",
             "[FrameworkProof] dodge_pattern state=BackDodging back=2 depth=2 threshold=2 seq=2",
             # Grab Fail-Safe (BOSS-HIT-012)
             "[FrameworkProof] grab_catch instance=1 window=Window_HeavySlam_Terminal socket=hand_l releaseAt=1.1 modeBefore=MOVE_Walking modeHeld=MOVE_None attached=1",
@@ -176,6 +180,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_abort_repeat_grab/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_telegraph/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
+            REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_QA006/pie_framing/editor_raw.log",
         ]:
             if candidate_log.exists() and candidate_log not in files:
                 files.append(candidate_log)
@@ -193,12 +198,12 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
                         tok = m.group(1)
                         if tok not in real_lines and tok in validator.SCHEMAS:
                             real_lines[tok] = line
-                if len(real_lines) == 104:
+                if len(real_lines) == 106:
                     break
-            if len(real_lines) == 104:
+            if len(real_lines) == 106:
                 break
 
-        self.assertEqual(len(real_lines), 104, f"Expected 104 real line samples, found {len(real_lines)}")
+        self.assertEqual(len(real_lines), 106, f"Expected 106 real line samples, found {len(real_lines)}")
 
         for tok, line in real_lines.items():
             # First verify the real line passes
@@ -607,6 +612,55 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
 
             m_ok, m_t, m_p, m_err = validator.validate_card_tag_line(mutated_line)
             self.assertFalse(m_ok, f"CARD tag {tag} passed unexpectedly after mutation!\n{mutated_line}")
+
+    def test_b_qa006_evidence_logs(self):
+        """B_QA006 evidence logs parse with 0 syntax failures and 0 semantic violations."""
+        qa006_dir = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_QA006"
+        for sub, expected_lines in [
+            ("pie_control_turned_away", 234),
+            ("pie_framing", 239),
+            ("pie_framing2", 240),
+        ]:
+            log_path = qa006_dir / sub / "editor_raw.log"
+            self.assertTrue(log_path.exists(), f"Missing {log_path}")
+            res = validator.validate_log_file(log_path)
+            self.assertEqual(len(res["syntax_failures"]), 0, f"[{sub}] Expected 0 syntax failures, got {res['syntax_failures']}")
+            self.assertEqual(len(res["semantic_violations"]), 0, f"[{sub}] Expected 0 semantic violations, got {res['semantic_violations']}")
+            self.assertEqual(res["framework_proof_lines"], expected_lines)
+
+    def test_qa006_evaluate_framing_reproducibility(self):
+        """Verify that evaluate_framing.py reproduces framing_report.json and control_report.json from raw logs."""
+        import subprocess
+        import json
+        b_dir = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_QA006"
+        eval_script = b_dir / "evaluate_framing.py"
+        self.assertTrue(eval_script.exists())
+
+        # Framing test
+        res_f = subprocess.run(["python", "-I", str(eval_script), str(b_dir / "pie_framing/editor_raw.log")], capture_output=True, text=True, cwd=REPO_ROOT)
+        self.assertEqual(res_f.returncode, 0)
+        eval_f = json.loads(res_f.stdout)
+        disk_f = json.loads((b_dir / "framing_report.json").read_text(encoding="utf-8"))
+        self.assertTrue(eval_f["pass"])
+        self.assertEqual(eval_f["pass"], disk_f["pass"])
+        for band in ["near", "300", "600", "900"]:
+            self.assertEqual(eval_f["bands"][band]["pass"], disk_f["bands"][band]["pass"])
+            self.assertEqual(eval_f["bands"][band]["min_height_pct"], disk_f["bands"][band]["min_height_pct"])
+            self.assertEqual(eval_f["bands"][band]["all_inside_margin"], disk_f["bands"][band]["all_inside_margin"])
+            self.assertEqual(eval_f["bands"][band]["any_occluded"], disk_f["bands"][band]["any_occluded"])
+
+        # Control test
+        res_c = subprocess.run(["python", "-I", str(eval_script), str(b_dir / "pie_control_turned_away/editor_raw.log")], capture_output=True, text=True, cwd=REPO_ROOT)
+        self.assertEqual(res_c.returncode, 0)
+        eval_c = json.loads(res_c.stdout)
+        disk_c = json.loads((b_dir / "control_report.json").read_text(encoding="utf-8"))
+        self.assertFalse(eval_c["pass"])
+        self.assertEqual(eval_c["pass"], disk_c["pass"])
+        for band in ["near", "300", "600", "900"]:
+            self.assertEqual(eval_c["bands"][band]["pass"], disk_c["bands"][band]["pass"])
+            self.assertEqual(eval_c["bands"][band]["min_height_pct"], disk_c["bands"][band]["min_height_pct"])
+            self.assertEqual(eval_c["bands"][band]["all_inside_margin"], disk_c["bands"][band]["all_inside_margin"])
+            self.assertEqual(eval_c["bands"][band]["any_occluded"], disk_c["bands"][band]["any_occluded"])
 
     def test_b_partials_evidence_logs(self):
         """B_PARTIALS evidence logs parse with 0 syntax failures and 0 semantic violations."""

@@ -1,11 +1,11 @@
 {
-  "version": "3.34",
+  "version": "3.35",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 73,
+    "WITNESSED": 74,
     "PARTIAL": 8,
-    "NOT YET": 1
+    "NOT YET": 0
   },
   "requirements": [
     {
@@ -3521,11 +3521,56 @@
       "title": "Camera/readability",
       "section": "Debugging, QA, presentation and optional networking",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Player/RPGCameraProbe.h",
+        "Source/OneBossFight/Player/RPGCameraProbe.cpp",
+        "Docs/BossCombatReview/Execution/Claude/B_QA006/evaluate_framing.py",
+        "Docs/BossCombatReview/Execution/Claude/B_QA006/framing_report.json",
+        "Docs/BossCombatReview/Execution/Claude/B_QA006/control_report.json",
+        "Docs/BossCombatReview/Execution/Claude/B_QA006/pie_framing/editor_raw.log",
+        "Docs/BossCombatReview/Execution/Claude/B_QA006/pie_control_turned_away/editor_raw.log"
+      ],
+      "citations": [
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA006/pie_framing/editor_raw.log",
+          "line": 1629,
+          "quoted": "camera_frame t=12.00 distCm=128.467 screenMinX=402.0 screenMinY=59.2 screenMaxX=499.7 screenMaxY=328.1 viewX=918 viewY=402 cornersOnScreen=8 insideMargin=1 heightPct=66.90 occluded=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA006/pie_framing/editor_raw.log",
+          "line": 1748,
+          "quoted": "camera_stage index=0 distanceCm=300 cameraTurnedAway=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA006/pie_framing/editor_raw.log",
+          "line": 1808,
+          "quoted": "camera_stage index=1 distanceCm=600 cameraTurnedAway=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA006/pie_framing/editor_raw.log",
+          "line": 1818,
+          "quoted": "camera_stage index=2 distanceCm=900 cameraTurnedAway=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA006/pie_framing/editor_raw.log",
+          "line": 1866,
+          "quoted": "camera_frame t=27.25 distCm=900 screenMinX=438.3 screenMinY=149.6 screenMaxX=473.8 screenMaxY=247.1 viewX=918 viewY=402 cornersOnScreen=8 insideMargin=1 heightPct=24.24 occluded=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA006/pie_control_turned_away/editor_raw.log",
+          "line": 1812,
+          "quoted": "camera_stage index=2 distanceCm=900 cameraTurnedAway=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA006/pie_control_turned_away/editor_raw.log",
+          "line": 1857,
+          "quoted": "camera_frame t=26.25 distCm=900 screenMinX=-659.1 screenMinY=0.4 screenMaxX=-247.4 screenMaxY=380.8 viewX=918 viewY=402 cornersOnScreen=0 insideMargin=0 heightPct=94.62 occluded=0"
+        }
+      ],
       "observable": "Camera framing maintains boss visibility and readability across near and far distance bands.",
-      "notes": "Combat camera framing evaluation not yet implemented (designated for QA / Telemetry Block)."
+      "notes": "Witnessed (C-651, BUILD-142): Combat follow camera framing evaluated via non-shipping world subsystem URPGCameraProbe (Player/RPGCameraProbe.h/.cpp) projecting boss bounding box through player camera in PIE. Log evaluator evaluate_framing.py (Claude/B_QA006/evaluate_framing.py) verifies framing across 4 distance bands (near 100-160cm: height 66.90% :1629; 300cm: min height 46.97% :1807; 600cm: min height 32.23% :1817; 900cm: min height 24.24% :1866; all inside 5% viewport margin with 0 occlusion; framing_report.json pass=true). Negative control pie_control_turned_away with camera turned 90 deg away at 900cm proves detection capability (:1857 cornersOnScreen=0 insideMargin=0; control_report.json pass=false). Honest limits noted: camera is aimed at boss in every band (player facing stands in for lock-on; real lock-on is not engaged); boss lies on camera axis without strafing angles; evaluated on small PIE viewport (918x402); thresholds and bands are proposed design values; boss is static after initial attack; readability measures bounding box presence and no occlusion.",
+      "cost": "Cost M"
     },
     {
       "id": "BOSS-QA-007",

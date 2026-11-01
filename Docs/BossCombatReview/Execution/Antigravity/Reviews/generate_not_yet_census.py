@@ -75,18 +75,19 @@ def main():
         data = json.load(f)
 
     not_yet_reqs = [r for r in data["requirements"] if r["status"] == "NOT YET"]
-    assert len(not_yet_reqs) == 1, f"Expected exactly 1 NOT YET requirements, found {len(not_yet_reqs)}"
+    n_reqs = len(not_yet_reqs)
+    assert n_reqs == 0, f"Expected exactly 0 NOT YET requirements, found {n_reqs}"
 
     lines_md = []
-    lines_md.append("# Track B Remaining Requirements Census: 1 NOT YET Row\n")
+    lines_md.append(f"# Track B Remaining Requirements Census: {n_reqs} NOT YET Rows\n")
     lines_md.append("**Document Reference:** `Reviews/NOT_YET_CENSUS.md`  ")
     lines_md.append("**Task Reference:** `[C-565]` / `[C-568]` / `[C-617]` / `[C-621]` (Track B Direction Selection Census)  ")
     lines_md.append("**Source Authority:** `witness_status_v3.json` (exact titles and observables)  ")
-    lines_md.append("**Total Census:** 1 requirement currently classified as `NOT YET`  \n")
+    lines_md.append(f"**Total Census:** {n_reqs} requirements currently classified as `NOT YET`  \n")
     lines_md.append("---\n")
     lines_md.append("## 1. Executive Summary & Classification Matrix\n")
-    lines_md.append("This document classifies the 1 remaining `NOT YET` combat requirement to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).\n")
-    lines_md.append("*(Note: As of BUILD-133/BUILD-134, 0 ENGINE-ONLY, 0 NEEDS DESIGN DECISION, and 0 NEEDS NEW SYSTEM requirements remain in NOT YET; all three categories are 100% completed.)*\n")
+    lines_md.append("This document records that 0 requirements remain in `NOT YET` (all 24 canonical NOT YET requirements have graduated to WITNESSED).\n")
+    lines_md.append("*(Note: As of BUILD-142, all 24 canonical NOT YET requirements are 100% graduated to WITNESSED; NOT YET census is completely empty.)*\n")
     lines_md.append("### Classification Definitions:")
     lines_md.append("- **ENGINE-ONLY:** Pure C++ / runtime rules or hooks; no art or external system dependencies.")
     lines_md.append("- **NEEDS ART:** Requires animations, montages, notify tracks, VFX/SFX, or arena mesh assets.")
@@ -98,11 +99,11 @@ def main():
     lines_md.append("- **M (Medium):** 2-4 runs; a new rule struct/method, unit tests, and live PIE proof scenario.")
     lines_md.append("- **L (Large):** 4+ runs; new multi-component system, asset plumbing, and multi-actor interaction harness.\n")
     lines_md.append("---\n")
-    lines_md.append("## 2. Complete 1-Row NOT YET Census Table\n")
+    lines_md.append(f"## 2. Complete {n_reqs}-Row NOT YET Census Table\n")
     lines_md.append("| ID | Exact Title | Exact Observable | Dependency Class | Code Reference & Reason | Cost |")
     lines_md.append("|:---|:---|:---|:---:|:---|:---:|")
 
-    print(f"=== TRACK B NOT YET CENSUS ({len(not_yet_reqs)} ROWS) ===")
+    print(f"=== TRACK B NOT YET CENSUS ({n_reqs} ROWS) ===")
     print(f"{'ID':<14} | {'Title':<28} | {'Dep Class':<22} | {'Cost':<4} | Details")
     print("-" * 110)
 
@@ -127,37 +128,41 @@ def main():
             cell_detail = exp
             summary_log = exp
 
-        # Markdown row (escape pipes in observable if any)
         obs_escaped = obs.replace("|", "\\|")
         lines_md.append(f"| **{rid}** | {title} | {obs_escaped} | `{dep}` | {cell_detail} | **{cost}** |")
-
         print(f"{rid:<14} | {title:<28} | {dep:<22} | {cost:<4} | {summary_log[:70]}")
 
     lines_md.append("\n---\n")
     lines_md.append("## 3. Census Distribution Breakdown\n")
 
-    # Calculate distributions
     dep_counts = {k: 0 for k in sorted(VALID_DEP_CLASSES)}
     cost_counts = {k: 0 for k in sorted(VALID_COSTS)}
-    for meta in CENSUS_METADATA.values():
-        dep_counts[meta["dep_class"]] = dep_counts.get(meta["dep_class"], 0) + 1
-        cost_counts[meta["cost"]] = cost_counts.get(meta["cost"], 0) + 1
+    for r in not_yet_reqs:
+        meta = CENSUS_METADATA.get(r["id"])
+        if meta:
+            dep_counts[meta["dep_class"]] = dep_counts.get(meta["dep_class"], 0) + 1
+            cost_counts[meta["cost"]] = cost_counts.get(meta["cost"], 0) + 1
 
     lines_md.append("### By Dependency Class:")
-    for dep, count in sorted(dep_counts.items(), key=lambda x: -x[1]):
-        lines_md.append(f"- **{dep}:** {count} requirements ({count/24*100:.1f}%)")
+    if n_reqs == 0:
+        lines_md.append("- All dependency classes 100% completed (0 requirements remaining).")
+    else:
+        for dep, count in sorted(dep_counts.items(), key=lambda x: -x[1]):
+            lines_md.append(f"- **{dep}:** {count} requirements ({count/24*100:.1f}%)")
 
     lines_md.append("\n### By Engine Run Cost:")
-    for cost, count in sorted(cost_counts.items(), key=lambda x: -x[1]):
-        lines_md.append(f"- **Cost {cost}:** {count} requirements ({count/24*100:.1f}%)")
+    if n_reqs == 0:
+        lines_md.append("- All engine cost tiers 100% completed (0 requirements remaining).")
+    else:
+        for cost, count in sorted(cost_counts.items(), key=lambda x: -x[1]):
+            lines_md.append(f"- **Cost {cost}:** {count} requirements ({count/24*100:.1f}%)")
 
-    # Write output markdown with pure LF
     content_str = "\n".join(lines_md) + "\n"
     with open(OUTPUT_MD, "w", encoding="utf-8", newline="\n") as f:
         f.write(content_str)
 
     print("-" * 110)
-    print(f"Successfully generated {OUTPUT_MD} with pure LF ({len(not_yet_reqs)} rows).")
+    print(f"Successfully generated {OUTPUT_MD} with pure LF ({n_reqs} rows).")
     return 0
 
 if __name__ == "__main__":

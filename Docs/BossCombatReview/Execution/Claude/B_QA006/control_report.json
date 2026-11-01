@@ -1,0 +1,63 @@
+{
+ "samples": 69,
+ "bands": {
+  "near": {
+   "samples_in_band": 3,
+   "settled_samples": 3,
+   "all_inside_margin": true,
+   "any_occluded": false,
+   "min_height_pct": 66.9,
+   "first_line": 1615,
+   "last_line": 1656,
+   "viewport": [
+    918,
+    402
+   ],
+   "pass": true
+  },
+  "300": {
+   "samples_in_band": 9,
+   "settled_samples": 4,
+   "all_inside_margin": true,
+   "any_occluded": false,
+   "min_height_pct": 47.89,
+   "first_line": 1600,
+   "last_line": 1801,
+   "viewport": [
+    918,
+    402
+   ],
+   "pass": true
+  },
+  "600": {
+   "samples_in_band": 8,
+   "settled_samples": 3,
+   "all_inside_margin": true,
+   "any_occluded": false,
+   "min_height_pct": 32.23,
+   "first_line": 1809,
+   "last_line": 1811,
+   "viewport": [
+    918,
+    402
+   ],
+   "pass": true
+  },
+  "900": {
+   "samples_in_band": 42,
+   "settled_samples": 3,
+   "all_inside_margin": false,
+   "any_occluded": false,
+   "min_height_pct": 94.62,
+   "first_line": 1857,
+   "last_line": 1859,
+   "viewport": [
+    918,
+    402
+   ],
+   "pass": false
+  }
+ },
+ "min_height_pct_threshold": 12.0,
+ "pass": false
+}
