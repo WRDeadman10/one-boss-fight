@@ -1,10 +1,10 @@
 {
-  "version": "3.10",
+  "version": "3.11",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 39,
-    "PARTIAL": 19,
+    "WITNESSED": 40,
+    "PARTIAL": 18,
     "NOT YET": 24
   },
   "requirements": [
@@ -44,7 +44,7 @@
       "title": "Gate-time snapshot",
       "section": "Awareness and observable context",
       "old_status": "NOT YET",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
         "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log:1579",
         "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log:1614",
@@ -53,28 +53,39 @@
       ],
       "citations": [
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log",
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR002/pie_shift/editor_raw.log",
           "line": 1579,
-          "quoted": "[2026.10.31-18.21.45:678][943]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=Move_Sevarog_SwingSlow_F5 score=0.961551 range=153.845 phase=Phase_1"
+          "quoted": "[2026.11.01-01.29.48:362][ 38]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=Move_Sevarog_SwingSlow_F5 score=0.954272 range=154.573 phase=Phase_1 seq=1"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log",
-          "line": 1614,
-          "quoted": "[2026.10.31-18.21.45:992][975]LogTemp: Display: [FrameworkProof] heading_commit instance=1 yaw=155.37 turnedDegrees=24.6298 maxRateDegPerSec=90.0008 capDegPerSec=90 decisionRangeCm=153.845 liveRangeCm=183.489"
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR002/pie_shift/editor_raw.log",
+          "line": 1607,
+          "quoted": "[2026.11.01-01.29.48:610][ 63]LogPython: [F3D] SHIFT player moved 0.226 s after playback_start by (0,100,0) from (0,0,98.15)"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log",
-          "line": 1784,
-          "quoted": "[2026.10.31-18.21.47:355][120]LogTemp: Display: [FrameworkProof] decision attack=2 chosen=Move_Sevarog_AntiGreed_F5 score=0.515904 range=183.489 phase=Phase_1"
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR002/pie_shift/editor_raw.log",
+          "line": 1615,
+          "quoted": "[2026.11.01-01.29.48:677][ 71]LogTemp: Display: [FrameworkProof] heading_commit instance=1 yaw=174.456 turnedDegrees=5.54402 maxRateDegPerSec=90.0008 capDegPerSec=90 decisionRangeCm=154.573 liveRangeCm=184.1 decisionYawDeg=0 liveYawDeg=-27.3566"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log",
-          "line": 1858,
-          "quoted": "[2026.10.31-18.21.47:860][176]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=2"
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR002/pie_shift/editor_raw.log",
+          "line": 1776,
+          "quoted": "[2026.11.01-01.29.50:029][212]LogTemp: Display: [FrameworkProof] heading_locked instance=1 yawAtCommit=174.456 maxDriftAfterCommitDegrees=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR002/pie_shift/editor_raw.log",
+          "line": 1782,
+          "quoted": "[2026.11.01-01.29.50:045][214]LogTemp: Display: [FrameworkProof] decision attack=2 chosen=Move_Sevarog_AntiGreed_F5 score=0.509475 range=184.1 phase=Phase_1 seq=2"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR002/pie_shift/editor_raw.log",
+          "line": 1807,
+          "quoted": "[2026.11.01-01.29.50:257][237]LogTemp: Display: [FrameworkProof] heading_commit instance=2 yaw=147.099 turnedDegrees=27.3566 maxRateDegPerSec=180.001 capDegPerSec=180 decisionRangeCm=184.1 liveRangeCm=184.1 decisionYawDeg=-27.3566 liveYawDeg=-9.0519e-07"
         }
       ],
       "observable": "AI state evaluator captures target distance/angle snapshot strictly at gate open, ignoring subsequent player repositioning during windup.",
-      "notes": "Target range and angle are sampled into FRPGBossDecisionSnapshot at decision gate. In PIE shift proof (pie_shift2:1579, 1614, 1784), attack 1 runs against decision range 153.845 despite player pawn shift changing live range to 183.489; card execution executes without mid-action retargeting or trajectory abortion, and attack 2 samples the fresh range 183.489. Status is PARTIAL per C-543 honest limit: range snapshot isolation and absence of mid-action retargeting are witnessed live in PIE; angle snapshot isolation during execution is witnessed by construction / unit test."
+      "notes": "Target range and angle are sampled into FRPGBossDecisionSnapshot at decision gate. In PIE shift proof (pie_shift2:1579, 1614, 1784), attack 1 runs against decision range 153.845 despite player pawn shift changing live range to 183.489; card execution executes without mid-action retargeting or trajectory abortion, and attack 2 samples the fresh range 183.489. Status is PARTIAL per C-543 honest limit: range snapshot isolation and absence of mid-action retargeting are witnessed live in PIE; angle snapshot isolation during execution is witnessed by construction / unit test.",
+      "status_reason": null
     },
     {
       "id": "BOSS-AWR-003",

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # Copyright One Boss Fight. All Rights Reserved.
 """
-validate_framework_proof_logs.py (v3.2)
+validate_framework_proof_logs.py (v3.3)
 
 Formal schema and semantic validator for all [FrameworkProof] structured telemetry lines
-emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, B_QA002, B_HIT005, and B_AWR001).
+emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, B_QA002, B_HIT005, B_AWR001, and B_AWR002).
 
 Validates:
 1. Header prefix (optional Unreal Engine standard log prefix: [YYYY.MM.DD-HH.MM.SS:mmm][frame]LogCategory: Verbosity:)
@@ -65,7 +65,7 @@ SCHEMAS = {
     "decision": r"^attack=\d+ chosen=[^\s]+ score=[^\s]+ range=[^\s]+(?:\s+phase=[^\s]+)?(?:\s+seq=\d+)?$",
 
     # 4. Heading Tracking & Motion Commitment
-    "heading_commit": r"^instance=\d+ yaw=[^\s]+ turnedDegrees=[^\s]+ maxRateDegPerSec=[^\s]+ capDegPerSec=[^\s]+(?:\s+decisionRangeCm=[^\s]+ liveRangeCm=[^\s]+)?$",
+    "heading_commit": r"^instance=\d+ yaw=[^\s]+ turnedDegrees=[^\s]+ maxRateDegPerSec=[^\s]+ capDegPerSec=[^\s]+(?:\s+decisionRangeCm=[^\s]+ liveRangeCm=[^\s]+)?(?:\s+decisionYawDeg=[^\s]+ liveYawDeg=[^\s]+)?$",
     "heading_locked": r"^instance=\d+ yawAtCommit=[^\s]+ maxDriftAfterCommitDegrees=[^\s]+$",
 
     # 5. Playback & Montages

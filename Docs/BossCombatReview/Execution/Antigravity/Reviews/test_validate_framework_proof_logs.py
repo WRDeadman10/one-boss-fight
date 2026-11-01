@@ -68,6 +68,10 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             # Invariant
             "[FrameworkProof] invariant targetHPBefore=800 targetHPAfter=765 expectedHP=765 acceptedHits=1 appliedDamage=35",
             "[FrameworkProof] invariant targetHPBefore=800 targetHPAfter=800 damageAPIInvocationsByThisExecutor=0",
+            # Heading Commit (BOSS-ANM-004 & BOSS-AWR-002)
+            "[FrameworkProof] heading_commit instance=1 yaw=174.456 turnedDegrees=5.54402 maxRateDegPerSec=18.4801 capDegPerSec=90",
+            "[FrameworkProof] heading_commit instance=1 yaw=174.456 turnedDegrees=5.54402 maxRateDegPerSec=18.4801 capDegPerSec=90 decisionRangeCm=154.573 liveRangeCm=184.1",
+            "[FrameworkProof] heading_commit instance=1 yaw=174.456 turnedDegrees=5.54402 maxRateDegPerSec=18.4801 capDegPerSec=90 decisionRangeCm=154.573 liveRangeCm=184.1 decisionYawDeg=0 liveYawDeg=-27.3566",
             # Result
             "[FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=3",
             "[FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=1",
@@ -89,6 +93,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
         for candidate_log in [
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_HIT005/byst60/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_AWR001/kill/editor_raw.log",
+            REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_AWR002/pie_shift/editor_raw.log",
         ]:
             if candidate_log.exists() and candidate_log not in files:
                 files.append(candidate_log)
