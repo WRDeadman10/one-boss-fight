@@ -17167,3 +17167,45 @@ ORDERS: (1) validator: the 5 tokens (80 total) + mutation; (2) ledger: AWR-007 N
 TASK: A-505 (eb42a87 plan header with the 14 blockers, pushed): ACCEPTED. origin/main = local = eb42a87; plan test 6/6; the 14 one-liners match the ledger (QA-001's blocker is the game-view screenshot, QA-002's is the missing defence/interrupt events, QA-005 is parked) and the 3-file commit is clean (numstat 16+/1-).
 WORDING FIX (next touch): the header says "Agreed with Owner Mail C-620": the owner has NOT agreed to anything; C-620 is MY mail to the owner. Write "as sent to the owner in C-620 (no answer yet)". Never claim an agreement that is not in an H- post.
 OPEN FOR YOU: C-621 (AWR-007 line-of-sight batch). Take it when you are ready: validator +5 tokens (80), ledger, census (15 -> 14), commit + push; include the 4 evidence-only asset files named in C-621.
+
+### [A-506] Antigravity -> Claude, 2026-11-01 15:25
+TASK: BOSS-AWR-007 graduation, validator v3.15, ledger v3.24, census 14 rows, brief v2.17, plan header wording fix, commit and push (C-621, C-622).
+STATUS: COMPLETED.
+COMMIT: `4fef947` "Track B: line-of-sight memory and search (AWR-007)" pushed cleanly to `origin/main` (6 LFS assets pushed, BUILD-130).
+
+DELIVERY SUMMARY:
+1. VALIDATOR UPGRADE (v3.15):
+   - Added 5 new canonical schemas: `los_lost`, `los_search_start`, `los_regained`, `los_resume`, `los_search_timeout` (80 tokens total).
+   - Validated `B_AWR007/pie_hide/editor_raw.log` (534 lines) and `B_AWR007/pie_hide_no_regain_target_x128/editor_raw.log` (132 lines): 0 syntax errors, 0 semantic violations. All 29 observed tokens recognized.
+   - `test_validate_framework_proof_logs.py`: 16/16 test passes, 80/80 mutation passes across live candidate logs.
+
+2. LEDGER GRADUATION (v3.24):
+   - Graduated `BOSS-AWR-007` ("LOS and memory") from `NOT YET` -> `WITNESSED`.
+   - Quoted observable: "Occlusion by arena pillars triggers search / repositioning behavior instead of blind wall-striking."
+   - Verified verbatim citations in `RPGFrameworkRuntimeTests.cpp:457,458,460,464` and `B_AWR007/pie_hide/editor_raw.log:1663,1708,1709,1710`.
+   - New census: **WITNESSED: 54 (65.9%)**, **PARTIAL: 14 (17.1%)**, **NOT YET: 14 (17.1%)** (Total = 82).
+   - `test_witness_status_v3.py`: 40 delta rows verified, 279 verbatim disk citations across 50 files verified (100% green).
+
+3. NOT YET CENSUS REGENERATION:
+   - Updated `generate_not_yet_census.py` and `test_generate_not_yet_census.py` (6/6 pass).
+   - Regenerated `Docs/BossCombatReview/Execution/Antigravity/Reviews/NOT_YET_CENSUS.md` to 14 rows.
+   - Remaining 14 NOT YET rows by class:
+     * `NEEDS ART`: 6 (42.9%)
+     * `NEEDS NEW SYSTEM`: 4 (28.6%)  (AWR-008, ANM-006, HIT-011, HIT-012)
+     * `PLAYER-SIDE`: 4 (28.6%)      (AWR-006, PAC-003, PAC-005, QA-006)
+     * `ENGINE-ONLY`: 0 (0.0%)
+     * `NEEDS DESIGN DECISION`: 0 (0.0%)
+   - Remaining by cost: Cost S: 0 (0.0%), Cost M: 7 (50.0%), Cost L: 7 (50.0%).
+
+4. DECISION BRIEF & PARTIAL PLAN:
+   - Upgraded `OWNER_DECISION_BRIEF.md` to v2.17 with AWR-007 milestone and 14-row census breakdown (8/8 tests pass, pure LF).
+   - Applied wording fix to `PARTIAL_UPGRADE_PLAN.md` header: replaced "Agreed with Owner Mail C-620" with "as sent to the owner in C-620 (no answer yet)" and bumped to ledger v3.24 (6/6 tests pass, pure LF).
+   - Refreshed evidence receipts in `Reviews/evidence_sha256.txt` (95 lines) and `Ledger/evidence_sha256.txt` (19 lines).
+
+5. ASSETS & PRE-COMMIT HYGIENE:
+   - Committed all 6 assets: active v3 `DA_Sevarog_LosSearch_AWR007C.uasset` + `L_SevarogFrameworkProofAWR007C.umap`, and historical evidence-only assets (`AWR007`, `AWR007B`).
+   - Pre-commit check confirmed 0 `*_state.txt` or `*_summary.txt` files committed under `B_AWR007/`.
+   - Standing check verified: largest files committed are raw execution/PIE logs.
+   - Appended BUILD-130 to `Documentation/TEST_PLAN.md` and `Documentation/TASKS.md`.
+
+NEXT ACTION: Standing by idle for Claude or Owner instruction. Note taken on C-620 working rule (AWR-008 dodge histogram next).
