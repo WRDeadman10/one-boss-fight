@@ -1,11 +1,11 @@
 {
-  "version": "3.22",
+  "version": "3.23",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 52,
+    "WITNESSED": 53,
     "PARTIAL": 14,
-    "NOT YET": 16
+    "NOT YET": 15
   },
   "requirements": [
     {
@@ -599,11 +599,40 @@
       "title": "Reaction latency and budget",
       "section": "Eligibility, utility and selection",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+        "Docs/BossCombatReview/Execution/Claude/B_SEL009/pie_flask/editor_raw.log"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 431,
+          "quoted": "TestTrue(TEXT(\"1000 draws inside [0.2, 0.4]\"),bInside);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 432,
+          "quoted": "TestTrue(TEXT(\"the draws spread over the window (not a constant)\"),Hi-Lo>.15);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 444,
+          "quoted": "F5();P->ReactionDelayMinSeconds=.2f;P->ReactionDelayMaxSeconds=.4f;TestTrue(TEXT(\"0.2..0.4 valid\"),RPGFramework::ValidateProfile(*P,Error));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_SEL009/pie_flask/editor_raw.log",
+          "line": 1613,
+          "quoted": "[FrameworkProof] flask_perceived count=1 latencySeconds=0.287973 windowMin=0.2 windowMax=0.4"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_SEL009/pie_flask/editor_raw.log",
+          "line": 1640,
+          "quoted": "[FrameworkProof] flask_reaction count=1 measuredSeconds=0.3 windowMin=0.2 windowMax=0.4"
+        }
+      ],
       "observable": "AI reaction latency to player flask action is bounded by reaction delay window [0.2s - 0.4s].",
-      "notes": "AI reaction latency delay window not yet implemented (designated for later slice)."
+      "notes": "Witnessed (C-617, BUILD-129): AI reaction latency to player flask action is bounded by reaction delay window [0.2s - 0.4s]. In ARPGFrameworkBossCharacter::TickFlask, perception samples the target DrinkingPotion montage edge, logs flask_perceived, and draws latency from pure rule RPGBossTrack::ReactionDelaySeconds(Min, Max, Seed, Count) in Player/RPGBossTrackRules.h (FRandomStream(Seed + Count * 7919), uniform in [Min, Max]); once delay elapses, logs flask_reaction with measured delay and sets FlaskKnown() until montage stops (flask_end). Profile fields ReactionDelayMinSeconds, ReactionDelayMaxSeconds, ReactionSeed in URPGBossFrameworkProfile (F5 lane, domain 0 < min <= max <= 5, token Framework.Profile.Domain). Unit tests in RPGFrameworkRuntimeTests.cpp:430-447 (OneBossFight.Framework.Runtime.ReactionDelay) verify 1000 draws within [0.2, 0.4] spreading > 0.15, seed determinism, count variation, min==max exactness, negative return on bad windows, and profile validation. Live PIE on L_SevarogFrameworkProofSEL009 (DA_Sevarog_FlaskReaction_SEL009, window [0.2, 0.4], seed 5, attack_count 4; Claude/B_SEL009/pie_flask) with test hook -Console 'rpg.BossProofPlayerDrink 0.3,3.5' proves: Drink 1 perceived at frame 590 with latency 0.287973s (:1613) and reacts at frame 608 with measured delay 0.30s (:1640, 18 frames at 60 fps); Drink 2 perceived at frame 782 with latency 0.28023s (:1837) and reacts at frame 799 with measured delay 0.283333s (:1855, 17 frames at 60 fps); both measured delays are strictly bounded within [0.2s, 0.4s]. Limits: only perception and delay window built; boss does not yet branch on FlaskKnown() (AWR-006 / PHS-004 retain own rows); measured delay is frame-quantised (0.0167s at 60 fps); drink triggered via test hook; window/seed are proposed values."
     },
     {
       "id": "BOSS-SEL-010",
@@ -1289,17 +1318,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 521,
+          "line": 546,
           "quoted": "Near(TEXT(\"60 ticks (1 s) toward 170 turn exactly the cap, 90 deg\"),Yaw,90.f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 522,
+          "line": 547,
           "quoted": "TestTrue(TEXT(\"no tick turned more than cap * dt (1.5 deg)\"),MaxStep<=1.5f+1.e-3f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 524,
+          "line": 549,
           "quoted": "Near(TEXT(\"after the commit 60 more ticks leave the yaw unchanged\"),Yaw,90.f);"
         },
         {
@@ -1425,7 +1454,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 472,
+          "line": 497,
           "quoted": "TestEqual(TEXT(\"no slot node in the AnimBP\"),Token([](auto& X){X.bSlotNodePresent=false;}),FString(TEXT(\"Framework.Profile.StaggerAnim.SlotNode\")));"
         },
         {
@@ -1877,7 +1906,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 436,
+          "line": 461,
           "quoted": "F5();P->ArenaRadiusCm=250.f;P->bArenaLeash=true;TestTrue(TEXT(\"leash with an arena radius is valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
@@ -2209,7 +2238,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 453,
+          "line": 478,
           "quoted": "TestEqual(TEXT(\"loop count middle 1.6 / loop 0.5 = ceil 3.2 = 4\"),RPGStaggerAnim::LoopCount(T,S,E,.5f),4);"
         }
       ],
@@ -2423,17 +2452,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 532,
+          "line": 557,
           "quoted": "TestEqual(TEXT(\"attack running\"),RPGBossOverlay::Format(I),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=129cm Cone=120deg Window=Open Posture=40/100 Health=150/250 Stagger=0 PhaseHold=0\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 534,
+          "line": 559,
           "quoted": "TestEqual(TEXT(\"no card, stagger and hold\"),RPGBossOverlay::Format(N),FString(TEXT(\"Card=None State=Idle Phase=Phase_2 Range=300cm Cone=0deg Window=Closed Posture=100/100 Health=50/250 Stagger=1 PhaseHold=1\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 536,
+          "line": 561,
           "quoted": "TestEqual(TEXT(\"non-finite values never print as numbers\"),RPGBossOverlay::Format(Bad),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=n/acm Cone=120deg Window=Open Posture=40/100 Health=n/a/250 Stagger=0 PhaseHold=0\")));"
         },
         {
@@ -2616,5 +2645,5 @@
     }
   ],
   "last_updated": "2026-11-01",
-  "file_version": "3.22"
+  "file_version": "3.23"
 }

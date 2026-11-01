@@ -24,6 +24,7 @@ static TAutoConsoleVariable<float> CVarBossProofBystander(TEXT("rpg.BossProofBys
 static TAutoConsoleVariable<FString> CVarBossProofPlayerHits(TEXT("rpg.BossProofPlayerHits"),TEXT(""),TEXT("Test hook (BOSS-QA-003): comma separated seconds after the boss's first attack of an encounter at which the target's hit intake lands one test hit on the boss (game clock, so a fixed time step replays it exactly). Empty = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<FString> CVarBossProofTargetShift(TEXT("rpg.BossProofTargetShift"),TEXT(""),TEXT("Test hook (BOSS-MOV-005): 'seconds:dx,dy,dz|seconds:dx,dy,dz' moves the target by that vector at those game-clock seconds after the boss first attack of an encounter (teleport). Empty = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossTurnLatch(TEXT("rpg.BossProofTurnLatch"),1,TEXT("Test hook (BOSS-MOV-003): 0 turns the reposition turn WITHOUT the direction latch (control run: it still counts the direction changes). 1 = latch on (default behaviour). Not compiled into shipping builds."),ECVF_Default);
+static TAutoConsoleVariable<FString> CVarBossProofPlayerDrink(TEXT("rpg.BossProofPlayerDrink"),TEXT(""),TEXT("Test hook (BOSS-SEL-009): comma separated seconds after the boss's first attack of an encounter at which the target plays its DrinkingPotion montage (game clock). Empty = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossProofTargetFault(TEXT("rpg.BossProofTargetFault"),0,TEXT("Test hook (BOSS-AWR-001): 1 sets the target's health to 0, 2 destroys the target pawn, when the boss starts its first attack of an encounter. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossComboDuplicateGate(TEXT("rpg.BossComboDuplicateGate"),0,TEXT("Test hook (BOSS-COM-005): 1 evaluates every combo branch gate a second time with the SAME gate id right after the first, and logs that the duplicate was ignored without changing the combo state."),ECVF_Default);
 #endif
@@ -99,6 +100,29 @@ FName ARPGFrameworkBossCharacter::TargetFault(double& HP) const
     if(!RPGPack::ReadAttribute(Target.Get(),TEXT("Attribute.Health"),false,HP)||!FMath::IsFinite(HP))return TEXT("Unreadable");
     return HP>0.?FName(NAME_None):FName(TEXT("Dead"));
 }
+void ARPGFrameworkBossCharacter::TickFlask()
+{
+    // BOSS-SEL-009: the boss PERCEIVES a flask drink at the edge of the target's DrinkingPotion montage (the same signal the legacy heal punish uses), and may REACT only after a seeded delay inside the profile window.
+    const auto& P=*Dependencies->Profile.Get();
+    if(P.ReactionDelayMinSeconds<=0.f||!Target.IsValid())return;
+    const ACharacter* Drinker=Cast<ACharacter>(Target.Get());UAnimInstance* DA=Drinker&&Drinker->GetMesh()?Drinker->GetMesh()->GetAnimInstance():nullptr;
+    if(!DrinkMontage.IsValid())DrinkMontage=LoadObject<UAnimMontage>(nullptr,TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/DrinkingPotion_Montage.DrinkingPotion_Montage"));
+    const bool bPlaying=DA&&DrinkMontage.IsValid()&&DA->Montage_IsPlaying(DrinkMontage.Get());
+    const double Now=GetWorld()->GetTimeSeconds();
+    if(bPlaying&&!bDrinkWasPlaying)
+    {
+        const double Latency=RPGBossTrack::ReactionDelaySeconds(P.ReactionDelayMinSeconds,P.ReactionDelayMaxSeconds,P.ReactionSeed,FlaskPerceivedCount);
+        ++FlaskPerceivedCount;bFlaskPending=true;bFlaskKnown=false;FlaskPerceivedAt=Now;FlaskReactAt=Now+Latency;
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] flask_perceived count=%d latencySeconds=%g windowMin=%g windowMax=%g"),FlaskPerceivedCount,Latency,double(P.ReactionDelayMinSeconds),double(P.ReactionDelayMaxSeconds));
+    }
+    if(bFlaskPending&&Now>=FlaskReactAt)
+    {
+        bFlaskPending=false;bFlaskKnown=true;
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] flask_reaction count=%d measuredSeconds=%g windowMin=%g windowMax=%g"),FlaskPerceivedCount,Now-FlaskPerceivedAt,double(P.ReactionDelayMinSeconds),double(P.ReactionDelayMaxSeconds));
+    }
+    if(!bPlaying&&bDrinkWasPlaying){bFlaskPending=false;bFlaskKnown=false;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] flask_end count=%d"),FlaskPerceivedCount);}
+    bDrinkWasPlaying=bPlaying;
+}
 void ARPGFrameworkBossCharacter::HandleLeash()
 {
     const auto& P=*Dependencies->Profile.Get();auto* AI=Cast<ARPGFrameworkBossController>(GetController());
@@ -166,6 +190,16 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
         ++ProofHitsDone;
     }
 #endif
+#if !UE_BUILD_SHIPPING
+    if(ProofDrinkStart>=0.&&ProofDrinksDone<ProofDrinkOffsets.Num()&&GetWorld()->GetTimeSeconds()-ProofDrinkStart>=ProofDrinkOffsets[ProofDrinksDone])
+    {
+        const ACharacter* Drinker=Cast<ACharacter>(Target.Get());UAnimInstance* DA=Drinker&&Drinker->GetMesh()?Drinker->GetMesh()->GetAnimInstance():nullptr;
+        if(!DrinkMontage.IsValid())DrinkMontage=LoadObject<UAnimMontage>(nullptr,TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/DrinkingPotion_Montage.DrinkingPotion_Montage"));
+        const float Len=(DA&&DrinkMontage.IsValid())?DA->Montage_Play(DrinkMontage.Get()):0.f;
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] player_drink_started n=%d offset=%g ok=%d length=%g"),ProofDrinksDone+1,ProofDrinkOffsets[ProofDrinksDone],Len>0.f?1:0,Len);++ProofDrinksDone;
+    }
+#endif
+    TickFlask();
     // BOSS-EXE-007: the executor's watchdog aborted the running card (end notification dropped / montage stuck): recover and decide again, never stall.
     if(Executor->WatchdogFired())
     {
@@ -282,6 +316,12 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
                 ProofShiftStart=GetWorld()->GetTimeSeconds();ProofShiftsDone=0;ProofShifts.Reset();TArray<FString> Steps;CVarBossProofTargetShift.GetValueOnGameThread().ParseIntoArray(Steps,TEXT("|"));
                 for(const FString& Step:Steps){FString When,Vec;if(!Step.Split(TEXT(":"),&When,&Vec))continue;TArray<FString> V;Vec.ParseIntoArray(V,TEXT(","));if(V.Num()==3)ProofShifts.Add(TPair<double,FVector>(FCString::Atod(*When),FVector(FCString::Atod(*V[0]),FCString::Atod(*V[1]),FCString::Atod(*V[2]))));}
                 UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] target_shifts_scheduled count=%d"),ProofShifts.Num());
+            }
+            if(ProofDrinkStart<0.&&!CVarBossProofPlayerDrink.GetValueOnGameThread().IsEmpty())
+            {
+                ProofDrinkStart=GetWorld()->GetTimeSeconds();ProofDrinksDone=0;ProofDrinkOffsets.Reset();TArray<FString> Parts;CVarBossProofPlayerDrink.GetValueOnGameThread().ParseIntoArray(Parts,TEXT(","));
+                for(const FString& Part:Parts)ProofDrinkOffsets.Add(FCString::Atod(*Part));
+                UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] player_drinks_scheduled count=%d"),ProofDrinkOffsets.Num());
             }
             if(ProofHitStart<0.&&!CVarBossProofPlayerHits.GetValueOnGameThread().IsEmpty())
             {
@@ -576,7 +616,7 @@ bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& 
     const TCHAR* OldState=bDead?TEXT("Dead"):TEXT("Finished");
     GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;
     if (bHittable) Health=MaxHealth;
-    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; KiteStreak=HugStreak=0; bComboPausing=false; ComboPendingCard=INDEX_NONE; bLeashed=bLeashAtCenter=false; ProofShiftStart=-1.; ProofShiftsDone=0; bBystanderSpawned=false; bTargetFaultInjected=false; ProofHitStart=-1.; ProofHitsDone=0; ResetBleed();
+    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; bDrinkWasPlaying=bFlaskPending=bFlaskKnown=false; FlaskPerceivedCount=0; ProofDrinkStart=-1.; ProofDrinksDone=0; KiteStreak=HugStreak=0; bComboPausing=false; ComboPendingCard=INDEX_NONE; bLeashed=bLeashAtCenter=false; ProofShiftStart=-1.; ProofShiftsDone=0; bBystanderSpawned=false; bTargetFaultInjected=false; ProofHitStart=-1.; ProofHitsDone=0; ResetBleed();
     Selector.Reset(); CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId; bPhaseTwoLatched=false;
     SetActorLocation(WalkStart,false,nullptr,ETeleportType::TeleportPhysics);
     FVector Face=Target->GetActorLocation()-WalkStart; Face.Z=0.f; if (!Face.IsNearlyZero()) SetActorRotation(FRotator(0.f,Face.Rotation().Yaw,0.f));

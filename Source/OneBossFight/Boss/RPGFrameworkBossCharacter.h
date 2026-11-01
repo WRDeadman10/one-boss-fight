@@ -31,6 +31,8 @@ public:
     APawn* ExplicitTarget() const {return Target.Get();}
     /** BOSS-AWR-001 / MOV-002 / MOV-005: the arena centre (authored in the profile, else where the target began). */
     FVector ArenaCentre() const {return ArenaOrigin;}
+    /** BOSS-SEL-009: true from the end of the reaction delay of a perceived flask drink until the drink montage stops. */
+    bool FlaskKnown() const {return bFlaskKnown;}
     const URPGBossFrameworkProfile* ProofProfile() const {return Dependencies?Dependencies->Profile.Get():nullptr;}
     bool Succeeded() const {return bSucceeded;}
     bool Failed() const {return bFailed;}
@@ -68,6 +70,9 @@ private:
     FVector ArenaOrigin=FVector::ZeroVector;   // BOSS-AWR-001: where the target stood when the encounter began
     double ProofHitStart=-1.; int32 ProofHitsDone=0; TArray<double> ProofHitOffsets;   // test hook rpg.BossProofPlayerHits: scripted player hits on the GAME clock
     bool bLeashed=false, bLeashAtCenter=false;   // BOSS-MOV-005
+    // BOSS-SEL-009: perception of the target's flask drink and the reaction delay
+    TWeakObjectPtr<UAnimMontage> DrinkMontage; bool bDrinkWasPlaying=false, bFlaskPending=false, bFlaskKnown=false; int32 FlaskPerceivedCount=0; double FlaskPerceivedAt=0., FlaskReactAt=0.; void TickFlask();
+    double ProofDrinkStart=-1.; int32 ProofDrinksDone=0; TArray<double> ProofDrinkOffsets;   // test hook rpg.BossProofPlayerDrink
     int32 KiteStreak=0, HugStreak=0;             // BOSS-PHS-005: consecutive chosen decisions with the target far / close
     TArray<TPair<double,FVector>> ProofShifts; int32 ProofShiftsDone=0; double ProofShiftStart=-1.;   // test hook rpg.BossProofTargetShift
     bool bTargetFaultInjected=false;           // test hook rpg.BossProofTargetFault: once per encounter

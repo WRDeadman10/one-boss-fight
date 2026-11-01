@@ -38,6 +38,16 @@ namespace RPGBossTrack
         const double B=FMath::Min(Bias,1.f); FVector R=FVector(Away.X,Away.Y,0.)*(1.-B)+C*B;
         return R.Normalize() ? R : Away;
     }
+    /**
+     * BOSS-SEL-009 (reaction latency): the delay between the boss PERCEIVING a player action (a flask drink) and the boss being able to REACT to it, drawn once per perceived action
+     * from a seeded stream (Seed + Count), uniformly inside the authored window [Min, Max] seconds. Negative = invalid window (the profile is refused): Min > 0, Max >= Min, Max <= 5, all finite.
+     */
+    inline double ReactionDelaySeconds(float MinSeconds,float MaxSeconds,int32 Seed,int32 Count)
+    {
+        if (!FMath::IsFinite(MinSeconds)||!FMath::IsFinite(MaxSeconds)||!(MinSeconds>0.f)||MaxSeconds<MinSeconds||MaxSeconds>5.f) return -1.;
+        FRandomStream Stream(Seed+Count*7919);
+        return double(MinSeconds)+(double(MaxSeconds)-double(MinSeconds))*double(Stream.FRand());
+    }
     /** BOSS-EXE-007 (executor watchdog): a card that is still running this many WORLD seconds after its start is aborted: RecoveryEndSeconds / PlayRate + 0.5 s. Negative = invalid input (the card is refused at start). */
     inline double WatchdogTimeoutSeconds(float RecoveryEndSeconds,float PlayRate)
     {

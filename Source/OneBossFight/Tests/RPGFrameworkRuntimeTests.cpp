@@ -422,6 +422,31 @@ bool FFrameworkAntiCheeseProfile::RunTest(const FString&)
     {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);F3->AntiCheeseKiteRangeCm=150.f;TestFalse(TEXT("outside the F5 lane refused"),RPGFramework::ValidateProfile(*F3,Error));}
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkReactionDelay,"OneBossFight.Framework.Runtime.ReactionDelay",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkReactionDelay::RunTest(const FString&)
+{
+    // BOSS-SEL-009: every drawn latency lies in the window; the draw is deterministic for a seed and count; bad windows are invalid.
+    double Lo=1.e9,Hi=-1.e9;bool bInside=true;
+    for(int32 Seed=0;Seed<200;++Seed)for(int32 Count=0;Count<5;++Count){const double L=RPGBossTrack::ReactionDelaySeconds(.2f,.4f,Seed,Count);bInside=bInside&&L>=.2&&L<=.4;Lo=FMath::Min(Lo,L);Hi=FMath::Max(Hi,L);}
+    TestTrue(TEXT("1000 draws inside [0.2, 0.4]"),bInside);
+    TestTrue(TEXT("the draws spread over the window (not a constant)"),Hi-Lo>.15);
+    TestEqual(TEXT("deterministic for a seed and count"),RPGBossTrack::ReactionDelaySeconds(.2f,.4f,5,0),RPGBossTrack::ReactionDelaySeconds(.2f,.4f,5,0));
+    TestTrue(TEXT("the count changes the draw"),RPGBossTrack::ReactionDelaySeconds(.2f,.4f,5,0)!=RPGBossTrack::ReactionDelaySeconds(.2f,.4f,5,1));
+    TestEqual(TEXT("min == max is exactly that value"),RPGBossTrack::ReactionDelaySeconds(.3f,.3f,9,2),.3,1.e-6);
+    for(const TPair<float,float>& Bad:{TPair<float,float>(0.f,.4f),TPair<float,float>(.5f,.4f),TPair<float,float>(.2f,6.f),TPair<float,float>(-.1f,.4f),TPair<float,float>(.2f,std::numeric_limits<float>::quiet_NaN())})
+        TestTrue(TEXT("bad window is invalid"),RPGBossTrack::ReactionDelaySeconds(Bad.Key,Bad.Value,1,0)<0.);
+    // Profile domain: both 0 = off; otherwise a valid window in the F5 lane.
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    auto F5=[&](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);P->ReactionDelayMinSeconds=0.f;P->ReactionDelayMaxSeconds=0.f;};
+    F5();TestTrue(TEXT("off by default"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->ReactionDelayMinSeconds=.2f;P->ReactionDelayMaxSeconds=.4f;TestTrue(TEXT("0.2..0.4 valid"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->ReactionDelayMinSeconds=.5f;P->ReactionDelayMaxSeconds=.4f;TestFalse(TEXT("min above max refused"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("token"),Error,FString(TEXT("Framework.Profile.Domain")));
+    F5();P->ReactionDelayMaxSeconds=.4f;TestFalse(TEXT("max without min refused"),RPGFramework::ValidateProfile(*P,Error));
+    {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);F3->ReactionDelayMinSeconds=.2f;F3->ReactionDelayMaxSeconds=.4f;TestFalse(TEXT("outside the F5 lane refused"),RPGFramework::ValidateProfile(*F3,Error));}
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkArenaProfile,"OneBossFight.Framework.Runtime.ArenaProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
 bool FFrameworkArenaProfile::RunTest(const FString&)
 {

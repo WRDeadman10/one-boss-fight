@@ -1,5 +1,6 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Player/RPGBossFrameworkProfile.h"
+#include "Player/RPGBossTrackRules.h"
 #include "Player/RPGBossStaggerAnimRules.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimBlueprintGeneratedClass.h"
@@ -95,6 +96,8 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
             P.AntiCheeseStreak<1||P.AntiCheeseStreak>8||(bAnti&&!bF5)||!bMultOk||(P.AntiCheeseKiteRangeCm>0.f&&P.AntiCheeseHugRangeCm>0.f&&P.AntiCheeseHugRangeCm>=P.AntiCheeseKiteRangeCm))
             return Fail(TEXT("Framework.Profile.Domain"));
     }
+    if (P.ReactionDelayMinSeconds!=0.f||P.ReactionDelayMaxSeconds!=0.f)
+        if (!bF5||RPGBossTrack::ReactionDelaySeconds(P.ReactionDelayMinSeconds,P.ReactionDelayMaxSeconds,P.ReactionSeed,0)<0.) return Fail(TEXT("Framework.Profile.Domain"));
     // F9: bleed needs the selector lane (F5) and a hittable boss; BleedBuildupPerHit 0 = off (the other four then 0 too), else a coherent set (token Framework.Profile.Bleed).
     {
         const float Values[]={P.BleedBuildupPerHit,P.BleedInitialThreshold,P.BleedThresholdIncrease,P.BleedThresholdMax,P.BleedHpFraction};

@@ -112,6 +112,10 @@ public:
     UPROPERTY(EditAnywhere) float ArenaRadiusCm=0.f;
     /** BOSS-MOV-005 (needs ArenaRadiusCm > 0): instead of failing the encounter when the target leaves the arena, the boss aborts its card, walks back to the arena centre (where the target began) and waits in neutral; it resumes when the target is back inside the radius. false = fail with reason OffArena (BOSS-AWR-001). Design choice, proposed. */
     UPROPERTY(EditAnywhere) bool bArenaLeash=false;
+    /** BOSS-SEL-009 (F5 lane, both 0 = off): the boss PERCEIVES the target's flask drink (the edge of the DrinkingPotion montage on the target) and may REACT to it only after a delay drawn per drink, seeded (ReactionSeed + count), inside [ReactionDelayMinSeconds, ReactionDelayMaxSeconds] (0 < min <= max <= 5). Design values, proposed. */
+    UPROPERTY(EditAnywhere) float ReactionDelayMinSeconds=0.f;
+    UPROPERTY(EditAnywhere) float ReactionDelayMaxSeconds=0.f;
+    UPROPERTY(EditAnywhere) int32 ReactionSeed=0;
     /** BOSS-PHS-005 (F5 lane, 0 = off): the target is KITING when its range at the boss's last AntiCheeseStreak decisions (this one included) was >= AntiCheeseKiteRangeCm, and HUGGING when it was <= AntiCheeseHugRangeCm; the cards' Kite/HugWeightMultiplier then apply. Design values, proposed. */
     UPROPERTY(EditAnywhere) float AntiCheeseKiteRangeCm=0.f;
     UPROPERTY(EditAnywhere) float AntiCheeseHugRangeCm=0.f;

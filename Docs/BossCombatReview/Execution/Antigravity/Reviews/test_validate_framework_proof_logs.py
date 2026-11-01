@@ -33,7 +33,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
         self.assertNotIn(b"\r", raw, "validate_framework_proof_logs.py contains CR! Must be pure LF.")
 
     def test_all_65_tokens_registered(self):
-        self.assertEqual(len(validator.SCHEMAS), 70, f"Expected 70 schemas, got {len(validator.SCHEMAS)}")
+        self.assertEqual(len(validator.SCHEMAS), 75, f"Expected 75 schemas, got {len(validator.SCHEMAS)}")
         for tok, pat in validator.SCHEMAS.items():
             compiled = validator.COMPILED_SCHEMAS.get(tok)
             self.assertIsNotNone(compiled, f"Token {tok} missing in COMPILED_SCHEMAS")
@@ -96,7 +96,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             self.assertTrue(ok, f"Expected line to be valid, got error: {err}\nLine: {line}")
             self.assertIsNotNone(tok)
 
-    def test_68_token_mutation_suite(self):
+    def test_75_token_mutation_suite(self):
         """Extract one real line per token from committed/candidate logs, break one key, and prove 68/68 fail."""
         import subprocess
         res = subprocess.run(["git", "ls-files", "Docs/*.log"], cwd=REPO_ROOT, capture_output=True, text=True)
@@ -115,6 +115,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PAC002/pie_tempo/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_MOV002/pie_biased_v2/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PHS005/pie_kite/editor_raw.log",
+            REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_SEL009/pie_flask/editor_raw.log",
         ]:
             if candidate_log.exists() and candidate_log not in files:
                 files.append(candidate_log)
@@ -132,12 +133,12 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
                         tok = m.group(1)
                         if tok not in real_lines and tok in validator.SCHEMAS:
                             real_lines[tok] = line
-                if len(real_lines) == 70:
+                if len(real_lines) == 75:
                     break
-            if len(real_lines) == 70:
+            if len(real_lines) == 75:
                 break
 
-        self.assertEqual(len(real_lines), 70, f"Expected 68 real line samples, found {len(real_lines)}")
+        self.assertEqual(len(real_lines), 75, f"Expected 68 real line samples, found {len(real_lines)}")
 
         for tok, line in real_lines.items():
             # First verify the real line passes
