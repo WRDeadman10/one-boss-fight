@@ -48,6 +48,19 @@ namespace RPGBossTrack
         FRandomStream Stream(Seed+Count*7919);
         return double(MinSeconds)+(double(MaxSeconds)-double(MinSeconds))*double(Stream.FRand());
     }
+    /**
+     * BOSS-AWR-007 (line of sight and memory): what the boss remembers about a target it can no longer see. LastKnown is the target's position at the last tick it was visible.
+     * LosStep is called once per tick with the result of the visibility trace: it reports the moment the sight is Lost, Regained, or the search has run SearchSeconds without sight (TimedOut, reported once).
+     */
+    struct FLosMemory { bool bLost=false, bTimedOut=false; double LostAt=0.; FVector LastKnown=FVector::ZeroVector; };
+    enum class ELosEvent : uint8 { None, Lost, Regained, TimedOut };
+    inline ELosEvent LosStep(FLosMemory& M,bool bVisible,double Now,double SearchSeconds,const FVector& TargetNow)
+    {
+        if (bVisible) { M.LastKnown=TargetNow; if (M.bLost) { M.bLost=false; M.bTimedOut=false; return ELosEvent::Regained; } return ELosEvent::None; }
+        if (!M.bLost) { M.bLost=true; M.bTimedOut=false; M.LostAt=Now; return ELosEvent::Lost; }
+        if (!M.bTimedOut && Now-M.LostAt>=SearchSeconds) { M.bTimedOut=true; return ELosEvent::TimedOut; }
+        return ELosEvent::None;
+    }
     /** BOSS-EXE-007 (executor watchdog): a card that is still running this many WORLD seconds after its start is aborted: RecoveryEndSeconds / PlayRate + 0.5 s. Negative = invalid input (the card is refused at start). */
     inline double WatchdogTimeoutSeconds(float RecoveryEndSeconds,float PlayRate)
     {

@@ -447,6 +447,34 @@ bool FFrameworkReactionDelay::RunTest(const FString&)
     {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);F3->ReactionDelayMinSeconds=.2f;F3->ReactionDelayMaxSeconds=.4f;TestFalse(TEXT("outside the F5 lane refused"),RPGFramework::ValidateProfile(*F3,Error));}
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkLosMemory,"OneBossFight.Framework.Runtime.LosMemory",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkLosMemory::RunTest(const FString&)
+{
+    // BOSS-AWR-007: the memory rule. Sight lost at t=1 (last seen at (10,0,0)), regained at t=2.5; or the search runs out after 3 s.
+    using namespace RPGBossTrack;
+    FLosMemory M;
+    TestTrue(TEXT("seen: nothing to report"),LosStep(M,true,0.,3.,FVector(10.,0.,0.))==ELosEvent::None);
+    TestTrue(TEXT("sight lost"),LosStep(M,false,1.,3.,FVector(500.,0.,0.))==ELosEvent::Lost);
+    TestTrue(TEXT("the last known position is the one of the last VISIBLE tick, not the hidden target"),M.LastKnown.Equals(FVector(10.,0.,0.)));
+    TestTrue(TEXT("still searching: nothing new"),LosStep(M,false,2.,3.,FVector(600.,0.,0.))==ELosEvent::None);
+    TestTrue(TEXT("sight regained"),LosStep(M,true,2.5,3.,FVector(20.,0.,0.))==ELosEvent::Regained);
+    TestTrue(TEXT("memory refreshed at regain"),M.LastKnown.Equals(FVector(20.,0.,0.))&&!M.bLost);
+    FLosMemory N;LosStep(N,true,0.,3.,FVector::ZeroVector);LosStep(N,false,1.,3.,FVector::ZeroVector);
+    TestTrue(TEXT("2.99 s: not yet"),LosStep(N,false,3.99,3.,FVector::ZeroVector)==ELosEvent::None);
+    TestTrue(TEXT("3.0 s: the search times out"),LosStep(N,false,4.,3.,FVector::ZeroVector)==ELosEvent::TimedOut);
+    TestTrue(TEXT("and it is reported once"),LosStep(N,false,5.,3.,FVector::ZeroVector)==ELosEvent::None);
+    TestTrue(TEXT("sight after a timeout is still a regain"),LosStep(N,true,6.,3.,FVector::ZeroVector)==ELosEvent::Regained);
+    // Profile domain: 0 off, (0,30] valid, in the F5 lane.
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    auto F5=[&](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);P->LosSearchSeconds=0.f;};
+    F5();TestTrue(TEXT("off by default"),RPGFramework::ValidateProfile(*P,Error));
+    for(float V:{.5f,3.f,30.f}){F5();P->LosSearchSeconds=V;TestTrue(TEXT("(0,30] valid"),RPGFramework::ValidateProfile(*P,Error));}
+    for(float V:{-1.f,30.01f,std::numeric_limits<float>::quiet_NaN()}){F5();P->LosSearchSeconds=V;TestFalse(TEXT("outside (0,30] refused"),RPGFramework::ValidateProfile(*P,Error));}
+    {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);F3->LosSearchSeconds=3.f;TestFalse(TEXT("outside the F5 lane refused"),RPGFramework::ValidateProfile(*F3,Error));}
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkArenaProfile,"OneBossFight.Framework.Runtime.ArenaProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
 bool FFrameworkArenaProfile::RunTest(const FString&)
 {

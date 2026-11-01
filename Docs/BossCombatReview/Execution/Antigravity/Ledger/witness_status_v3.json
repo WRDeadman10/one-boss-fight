@@ -1,11 +1,11 @@
 {
-  "version": "3.23",
+  "version": "3.24",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 53,
+    "WITNESSED": 54,
     "PARTIAL": 14,
-    "NOT YET": 15
+    "NOT YET": 14
   },
   "requirements": [
     {
@@ -235,11 +235,55 @@
       "title": "LOS and memory",
       "section": "Awareness and observable context",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+        "Docs/BossCombatReview/Execution/Claude/B_AWR007/pie_hide/editor_raw.log"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 457,
+          "quoted": "TestTrue(TEXT(\"sight lost\"),LosStep(M,false,1.,3.,FVector(500.,0.,0.))==ELosEvent::Lost);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 458,
+          "quoted": "TestTrue(TEXT(\"the last known position is the one of the last VISIBLE tick, not the hidden target\"),M.LastKnown.Equals(FVector(10.,0.,0.)));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 460,
+          "quoted": "TestTrue(TEXT(\"sight regained\"),LosStep(M,true,2.5,3.,FVector(20.,0.,0.))==ELosEvent::Regained);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 464,
+          "quoted": "TestTrue(TEXT(\"3.0 s: the search times out\"),LosStep(N,false,4.,3.,FVector::ZeroVector)==ELosEvent::TimedOut);"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR007/pie_hide/editor_raw.log",
+          "line": 1663,
+          "quoted": "[FrameworkProof] los_lost lastKnownX=0 lastKnownY=0 blocker=StaticMeshActor_1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR007/pie_hide/editor_raw.log",
+          "line": 1708,
+          "quoted": "[FrameworkProof] los_search_start x=0 y=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR007/pie_hide/editor_raw.log",
+          "line": 1709,
+          "quoted": "[FrameworkProof] los_regained lostForSeconds=0.916667"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR007/pie_hide/editor_raw.log",
+          "line": 1710,
+          "quoted": "[FrameworkProof] los_resume"
+        }
+      ],
       "observable": "Occlusion by arena pillars triggers search / repositioning behavior instead of blind wall-striking.",
-      "notes": "Line-of-sight raycast filter in candidate evaluation and Behavior Tree search state not yet implemented (designated for Selector Block)."
+      "notes": "Witnessed (C-621, BUILD-130): Occlusion by arena pillars triggers search / repositioning behavior instead of blind wall-striking. Profile field LosSearchSeconds (0 off, (0,30], F5 lane; token Framework.Profile.Domain) in URPGBossFrameworkProfile. Every tick in ARPGFrameworkBossCharacter::TickLos traces ECC_Visibility to target; pure memory rule RPGBossTrack::LosStep in Player/RPGBossTrackRules.h tracks sight loss/regain/timeout and retains LastKnown position of the last visible tick. While sight is lost in neutral, the boss neither decides nor strikes: it walks to LastKnown via MoveToLocation, and when sight is regained it returns to range band via WalkToBand. Unit tests in RPGFrameworkRuntimeTests.cpp:457,458,460,464 (OneBossFight.Framework.Runtime.LosMemory) prove sight loss, last known position retention, sight regain, timeout at 3.0s reported once, and profile domain validation. Live PIE on L_SevarogFrameworkProofAWR007C (DA_Sevarog_LosSearch_AWR007C; Claude/B_AWR007/pie_hide) with target teleported behind a 100x100x600cm pillar at frame 616 proves: sight lost (:1663 los_lost lastKnownX=0 lastKnownY=0 blocker=StaticMeshActor_1); after current card finishes, boss starts search at frame 659 (:1708 los_search_start x=0 y=0); sight regained at frame 671 (:1709 los_regained lostForSeconds=0.916667, :1710 los_resume); turns in place (:1715) and resumes decision loop at frame 834 (:1757); zero decisions, candidate evaluations, or playback_start occurred while sight was lost. Limits: only neutral state is handled (active card finishes before search; combo gates not blocked); pillar is test-map geometry; search goes to last-known point only (no patrol/sweep); 3s search duration is proposed value; visibility check is single center-to-center line trace."
     },
     {
       "id": "BOSS-AWR-008",
@@ -1318,17 +1362,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 546,
+          "line": 574,
           "quoted": "Near(TEXT(\"60 ticks (1 s) toward 170 turn exactly the cap, 90 deg\"),Yaw,90.f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 547,
+          "line": 575,
           "quoted": "TestTrue(TEXT(\"no tick turned more than cap * dt (1.5 deg)\"),MaxStep<=1.5f+1.e-3f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 549,
+          "line": 577,
           "quoted": "Near(TEXT(\"after the commit 60 more ticks leave the yaw unchanged\"),Yaw,90.f);"
         },
         {
@@ -1454,7 +1498,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 497,
+          "line": 525,
           "quoted": "TestEqual(TEXT(\"no slot node in the AnimBP\"),Token([](auto& X){X.bSlotNodePresent=false;}),FString(TEXT(\"Framework.Profile.StaggerAnim.SlotNode\")));"
         },
         {
@@ -1906,7 +1950,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 461,
+          "line": 489,
           "quoted": "F5();P->ArenaRadiusCm=250.f;P->bArenaLeash=true;TestTrue(TEXT(\"leash with an arena radius is valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
@@ -2238,7 +2282,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 478,
+          "line": 506,
           "quoted": "TestEqual(TEXT(\"loop count middle 1.6 / loop 0.5 = ceil 3.2 = 4\"),RPGStaggerAnim::LoopCount(T,S,E,.5f),4);"
         }
       ],
@@ -2452,17 +2496,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 557,
+          "line": 585,
           "quoted": "TestEqual(TEXT(\"attack running\"),RPGBossOverlay::Format(I),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=129cm Cone=120deg Window=Open Posture=40/100 Health=150/250 Stagger=0 PhaseHold=0\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 559,
+          "line": 587,
           "quoted": "TestEqual(TEXT(\"no card, stagger and hold\"),RPGBossOverlay::Format(N),FString(TEXT(\"Card=None State=Idle Phase=Phase_2 Range=300cm Cone=0deg Window=Closed Posture=100/100 Health=50/250 Stagger=1 PhaseHold=1\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 561,
+          "line": 589,
           "quoted": "TestEqual(TEXT(\"non-finite values never print as numbers\"),RPGBossOverlay::Format(Bad),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=n/acm Cone=120deg Window=Open Posture=40/100 Health=n/a/250 Stagger=0 PhaseHold=0\")));"
         },
         {
@@ -2645,5 +2689,5 @@
     }
   ],
   "last_updated": "2026-11-01",
-  "file_version": "3.23"
+  "file_version": "3.24"
 }

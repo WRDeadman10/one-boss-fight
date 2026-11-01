@@ -73,6 +73,13 @@ SCHEMAS = {
     "flask_reaction": r"^count=\d+ measuredSeconds=[^\s]+ windowMin=[^\s]+ windowMax=[^\s]+$",
     "flask_end": r"^count=\d+$",
 
+    # 2c. Line-of-Sight & Obstacle Search Memory (BOSS-AWR-007 / v3.15)
+    "los_lost": r"^lastKnownX=[^\s]+ lastKnownY=[^\s]+ blocker=[^\s]+$",
+    "los_search_start": r"^x=[^\s]+ y=[^\s]+$",
+    "los_regained": r"^lostForSeconds=[^\s]+$",
+    "los_resume": r"^$",
+    "los_search_timeout": r"^seconds=[^\s]+$",
+
     # 3. Candidate Selection & Gate Decisions (v3.0 adds optional seq=\d+)
     "candidate": r"^attack=\d+ card=[^\s]+ score=[^\s]+(?:\s+seq=\d+)?$",
     "refusal": r"^attack=\d+ card=[^\s]+ reason=[^\s]+(?:\s+seq=\d+)?$",

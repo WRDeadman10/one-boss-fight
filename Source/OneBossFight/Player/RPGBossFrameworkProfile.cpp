@@ -98,6 +98,7 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
     }
     if (P.ReactionDelayMinSeconds!=0.f||P.ReactionDelayMaxSeconds!=0.f)
         if (!bF5||RPGBossTrack::ReactionDelaySeconds(P.ReactionDelayMinSeconds,P.ReactionDelayMaxSeconds,P.ReactionSeed,0)<0.) return Fail(TEXT("Framework.Profile.Domain"));
+    if (!FMath::IsFinite(P.LosSearchSeconds)||P.LosSearchSeconds<0.f||P.LosSearchSeconds>30.f||(P.LosSearchSeconds>0.f&&!bF5)) return Fail(TEXT("Framework.Profile.Domain"));   // finite first: a NaN compares unreliably under fast-math
     // F9: bleed needs the selector lane (F5) and a hittable boss; BleedBuildupPerHit 0 = off (the other four then 0 too), else a coherent set (token Framework.Profile.Bleed).
     {
         const float Values[]={P.BleedBuildupPerHit,P.BleedInitialThreshold,P.BleedThresholdIncrease,P.BleedThresholdMax,P.BleedHpFraction};

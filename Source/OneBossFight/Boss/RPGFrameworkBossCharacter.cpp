@@ -100,6 +100,22 @@ FName ARPGFrameworkBossCharacter::TargetFault(double& HP) const
     if(!RPGPack::ReadAttribute(Target.Get(),TEXT("Attribute.Health"),false,HP)||!FMath::IsFinite(HP))return TEXT("Unreadable");
     return HP>0.?FName(NAME_None):FName(TEXT("Dead"));
 }
+void ARPGFrameworkBossCharacter::TickLos()
+{
+    // BOSS-AWR-007: one visibility trace per tick from the boss to the target (both actors ignored); the memory rule reports the moment sight is lost / regained / the search times out.
+    const auto& P=*Dependencies->Profile.Get();
+    if(!(P.LosSearchSeconds>0.f)||!Target.IsValid()||bLeashed)return;
+    FHitResult Hit;FCollisionQueryParams Params(SCENE_QUERY_STAT(BossLos),false,this);Params.AddIgnoredActor(Target.Get());
+    const bool bBlocked=GetWorld()->LineTraceSingleByChannel(Hit,GetActorLocation(),Target->GetActorLocation(),ECC_Visibility,Params);
+    const double Now=GetWorld()->GetTimeSeconds();
+    switch(RPGBossTrack::LosStep(Los,!bBlocked,Now,double(P.LosSearchSeconds),Target->GetActorLocation()))
+    {
+    case RPGBossTrack::ELosEvent::Lost: UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] los_lost lastKnownX=%g lastKnownY=%g blocker=%s"),Los.LastKnown.X,Los.LastKnown.Y,Hit.GetActor()?*Hit.GetActor()->GetName():TEXT("None"));break;
+    case RPGBossTrack::ELosEvent::Regained: UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] los_regained lostForSeconds=%g"),Now-Los.LostAt);break;
+    case RPGBossTrack::ELosEvent::TimedOut: UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] los_search_timeout seconds=%g"),Now-Los.LostAt);break;
+    default:break;
+    }
+}
 void ARPGFrameworkBossCharacter::TickFlask()
 {
     // BOSS-SEL-009: the boss PERCEIVES a flask drink at the edge of the target's DrinkingPotion montage (the same signal the legacy heal punish uses), and may REACT only after a seeded delay inside the profile window.
@@ -200,6 +216,7 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
     }
 #endif
     TickFlask();
+    TickLos();
     // BOSS-EXE-007: the executor's watchdog aborted the running card (end notification dropped / montage stuck): recover and decide again, never stall.
     if(Executor->WatchdogFired())
     {
@@ -234,6 +251,23 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
     }
     if(bArrived&&!bStartedMove)
     {
+        // BOSS-AWR-007: no sight of the target (a pillar): no decision, no blind strike: search where it was last seen, go back to the band when it is seen again.
+        if(P.LosSearchSeconds>0.f)
+        {
+            auto* LosAI=Cast<ARPGFrameworkBossController>(GetController());
+            if(Los.bLost)
+            {
+                if(!bLosWalking){bLosWalking=true;if(LosAI)LosAI->MoveToLocation(Los.LastKnown,P.AcceptanceCm,false,true,true,false);UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] los_search_start x=%g y=%g"),Los.LastKnown.X,Los.LastKnown.Y);}
+                return;
+            }
+            if(bLosWalking)
+            {
+                bLosWalking=false;FString WalkError;if(LosAI)LosAI->StopMovement();bArrived=false;StartedAt=GetWorld()->GetTimeSeconds();
+                UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] los_resume"));
+                if(!LosAI||!LosAI->WalkToBand(this,WalkError)){Fail(WalkError.IsEmpty()?FString(TEXT("Framework.Boss.Controller")):WalkError);}
+                return;
+            }
+        }
         // F11: while the phase transition clip plays the selector is held for the clip length, then phase two selection starts in this tick.
         if(bPhaseHold)
         {
@@ -616,7 +650,7 @@ bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& 
     const TCHAR* OldState=bDead?TEXT("Dead"):TEXT("Finished");
     GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;
     if (bHittable) Health=MaxHealth;
-    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; bDrinkWasPlaying=bFlaskPending=bFlaskKnown=false; FlaskPerceivedCount=0; ProofDrinkStart=-1.; ProofDrinksDone=0; KiteStreak=HugStreak=0; bComboPausing=false; ComboPendingCard=INDEX_NONE; bLeashed=bLeashAtCenter=false; ProofShiftStart=-1.; ProofShiftsDone=0; bBystanderSpawned=false; bTargetFaultInjected=false; ProofHitStart=-1.; ProofHitsDone=0; ResetBleed();
+    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; Los=RPGBossTrack::FLosMemory(); bLosWalking=false; bDrinkWasPlaying=bFlaskPending=bFlaskKnown=false; FlaskPerceivedCount=0; ProofDrinkStart=-1.; ProofDrinksDone=0; KiteStreak=HugStreak=0; bComboPausing=false; ComboPendingCard=INDEX_NONE; bLeashed=bLeashAtCenter=false; ProofShiftStart=-1.; ProofShiftsDone=0; bBystanderSpawned=false; bTargetFaultInjected=false; ProofHitStart=-1.; ProofHitsDone=0; ResetBleed();
     Selector.Reset(); CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId; bPhaseTwoLatched=false;
     SetActorLocation(WalkStart,false,nullptr,ETeleportType::TeleportPhysics);
     FVector Face=Target->GetActorLocation()-WalkStart; Face.Z=0.f; if (!Face.IsNearlyZero()) SetActorRotation(FRotator(0.f,Face.Rotation().Yaw,0.f));

@@ -4,7 +4,7 @@
 test_generate_not_yet_census.py
 
 Tests generate_not_yet_census.py:
-1. Verifies that all 15 entries pass validation on disk.
+1. Verifies that all 14 entries pass validation on disk.
 2. Mutation tests: asserts that validation fails when:
    - file does not exist
    - line number is past EOF
@@ -78,8 +78,8 @@ class TestNotYetCensus(unittest.TestCase):
         self.assertTrue(gen.OUTPUT_MD.exists())
         with open(gen.OUTPUT_MD, "r", encoding="utf-8") as f:
             content = f.read()
-        self.assertIn("## 2. Complete 15-Row NOT YET Census Table", content)
-        self.assertEqual(content.count("| **BOSS-"), 15)
+        self.assertIn("## 2. Complete 14-Row NOT YET Census Table", content)
+        self.assertEqual(content.count("| **BOSS-"), 14)
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,15 +1,15 @@
-# Track B Remaining Requirements Census: 15 NOT YET Rows
+# Track B Remaining Requirements Census: 14 NOT YET Rows
 
 **Document Reference:** `Reviews/NOT_YET_CENSUS.md`  
-**Task Reference:** `[C-565]` / `[C-568]` / `[C-617]` (Track B Direction Selection Census)  
+**Task Reference:** `[C-565]` / `[C-568]` / `[C-617]` / `[C-621]` (Track B Direction Selection Census)  
 **Source Authority:** `witness_status_v3.json` (exact titles and observables)  
-**Total Census:** 15 requirements currently classified as `NOT YET`  
+**Total Census:** 14 requirements currently classified as `NOT YET`  
 
 ---
 
 ## 1. Executive Summary & Classification Matrix
 
-This document classifies all 15 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).
+This document classifies all 14 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).
 
 *(Note: As of BUILD-129 / SEL-009, 0 ENGINE-ONLY and 0 NEEDS DESIGN DECISION requirements remain in NOT YET; both categories are 100% completed.)*
 
@@ -27,12 +27,11 @@ This document classifies all 15 remaining `NOT YET` combat requirements to infor
 
 ---
 
-## 2. Complete 15-Row NOT YET Census Table
+## 2. Complete 14-Row NOT YET Census Table
 
 | ID | Exact Title | Exact Observable | Dependency Class | Code Reference & Reason | Cost |
 |:---|:---|:---|:---:|:---|:---:|
 | **BOSS-AWR-006** | Observable player activity | Player flask drinking or heavy attack commitment raises priority of fast anti-greed card (MC-03). | `PLAYER-SIDE` | no code: boss only reads target HP and transform; player activity tag listener and flask/heavy commitment observer not implemented in framework boss | **M** |
-| **BOSS-AWR-007** | LOS and memory | Occlusion by arena pillars triggers search / repositioning behavior instead of blind wall-striking. | `NEEDS NEW SYSTEM` | no code: line-of-sight raycasts and obstacle search memory not implemented in boss selector or perception | **L** |
 | **BOSS-AWR-008** | Soft adaptation memory | Histogram of repeated backward player dodges triggers forward roll-catch gap-closer (MC-05) weighting boost. | `NEEDS NEW SYSTEM` | no code: player movement history and dodge histogram tracking not implemented in AI context | **L** |
 | **BOSS-ANM-003** | Bounded holds | Variable windup holds are bounded between min and max duration with distinct visual audio cue at release. | `NEEDS ART` | no code: variable windup hold min/max durations and release cues not authored in move cards or montage tracks | **L** |
 | **BOSS-ANM-006** | Bounded Motion Warping | Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45°). | `NEEDS NEW SYSTEM` | no code: Motion Warping plugin not enabled in uproject and warp clamping bounds not implemented | **L** |
@@ -53,12 +52,12 @@ This document classifies all 15 remaining `NOT YET` combat requirements to infor
 
 ### By Dependency Class:
 - **NEEDS ART:** 6 requirements (25.0%)
-- **NEEDS NEW SYSTEM:** 5 requirements (20.8%)
+- **NEEDS NEW SYSTEM:** 4 requirements (16.7%)
 - **PLAYER-SIDE:** 4 requirements (16.7%)
 - **ENGINE-ONLY:** 0 requirements (0.0%)
 - **NEEDS DESIGN DECISION:** 0 requirements (0.0%)
 
 ### By Engine Run Cost:
-- **Cost L:** 8 requirements (33.3%)
+- **Cost L:** 7 requirements (29.2%)
 - **Cost M:** 7 requirements (29.2%)
 - **Cost S:** 0 requirements (0.0%)
