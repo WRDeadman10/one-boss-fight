@@ -90,17 +90,27 @@ class TestOwnerDecisionBrief(unittest.TestCase):
     def test_evidence_receipts_match_disk(self):
         """Every receipt line in Reviews/evidence_sha256.txt must match file on disk (SHA256 and size)."""
         import hashlib
+        import re
         receipt_path = REPO_ROOT / "Docs/BossCombatReview/Execution/Antigravity/Reviews/evidence_sha256.txt"
         self.assertTrue(receipt_path.exists(), "evidence_sha256.txt does not exist")
+        raw_bytes = receipt_path.read_bytes()
+        self.assertTrue(raw_bytes.endswith(b"\r\n"), "evidence_sha256.txt must end with \\r\\n (CRLF)")
+        self.assertNotIn(b"\r\r\n", raw_bytes, "evidence_sha256.txt must not contain \\r\\r\\n")
+        self.assertNotIn(b"\n\n", raw_bytes, "evidence_sha256.txt must not contain blank lines")
+
         lines = receipt_path.read_text(encoding="utf-8").splitlines()
         self.assertGreater(len(lines), 0, "evidence_sha256.txt is empty")
 
+        receipt_pattern = re.compile(r"^[0-9a-f]{64}  \d+  \S+$")
         for idx, line in enumerate(lines, 1):
-            line = line.strip()
-            if not line:
-                continue
-            parts = line.split()
-            self.assertEqual(len(parts), 3, f"Line {idx} in evidence_sha256.txt must have 3 parts: {line}")
+            self.assertTrue(line.strip(), f"Line {idx} in evidence_sha256.txt is blank/empty")
+            self.assertRegex(
+                line,
+                receipt_pattern,
+                f"Line {idx} must match '<64 hex>  <size>  <path>' with exactly two spaces: {line!r}",
+            )
+            parts = line.split("  ")
+            self.assertEqual(len(parts), 3, f"Line {idx} in evidence_sha256.txt must have 3 parts separated by two spaces: {line}")
             expected_hash, expected_size, rel_path = parts[0], int(parts[1]), parts[2]
 
             p = REPO_ROOT / rel_path
