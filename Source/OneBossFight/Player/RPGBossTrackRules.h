@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #pragma once
 #include "CoreMinimal.h"
+#include "Player/RPGAttackKind.h"
 /**
  * BOSS-ANM-004 (staged rotation cap): the boss turns toward its target at most TrackDegreesPerSecond of the move card, only until the heading is committed; after the commit the yaw is locked.
  * Header only, no UObject: the executor and an automation test share this one rule.
@@ -125,6 +126,14 @@ namespace RPGBossTrack
         if (!FMath::IsFinite(NeededSignedDegrees)) return 0.;
         return (NeededSignedDegrees<0.?-1.:1.)*WarpStepCm(FMath::Abs(NeededSignedDegrees),RemainingBudgetDegrees,DeltaSeconds,SecondsLeft);
     }
+    /**
+     * BOSS-AWR-006 (observable player activity): what the boss reads from the player at a decision. A flask drink (already past the boss's reaction delay) or a HEAVY attack in progress (Strong, Charged or the
+     * jumping heavy: the player is committed to a long swing) makes the target greedy; the flask wins when both are true. Light attacks are not a commitment.
+     */
+    enum class EPlayerActivity : uint8 { None, Flask, HeavyCommit };
+    inline bool IsHeavyAttackKind(ERPGAttackKind Kind){return Kind==ERPGAttackKind::Strong||Kind==ERPGAttackKind::Charged||Kind==ERPGAttackKind::JumpHeavy;}
+    inline EPlayerActivity ClassifyPlayerActivity(bool bFlaskKnown,bool bHeavyInProgress){return bFlaskKnown?EPlayerActivity::Flask:(bHeavyInProgress?EPlayerActivity::HeavyCommit:EPlayerActivity::None);}
+    inline const TCHAR* PlayerActivityName(EPlayerActivity A){return A==EPlayerActivity::Flask?TEXT("Flask"):(A==EPlayerActivity::HeavyCommit?TEXT("HeavyCommit"):TEXT("None"));}
     /** BOSS-EXE-007 (executor watchdog): a card that is still running this many WORLD seconds after its start is aborted: RecoveryEndSeconds / PlayRate + 0.5 s. Negative = invalid input (the card is refused at start). */
     inline double WatchdogTimeoutSeconds(float RecoveryEndSeconds,float PlayRate)
     {

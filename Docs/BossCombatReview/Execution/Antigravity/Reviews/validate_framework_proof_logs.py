@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright One Boss Fight. All Rights Reserved.
 """
-validate_framework_proof_logs.py (v3.19)
+validate_framework_proof_logs.py (v3.20)
 
 Formal schema and semantic validator for all [FrameworkProof] structured telemetry lines
 emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, B_QA002, B_HIT005, B_AWR001, B_AWR002, B_EXE007, B_QA003B, B_EXE004, B_MOV005, B_EXE005, and B_MOV003).
@@ -85,6 +85,11 @@ SCHEMAS = {
     "player_dodge_started": r"^n=\d+ offset=[^\s]+ direction=[^\s]+ ok=[01]$",
     "dodge_observed": r"^n=\d+ direction=[^\s]+ speedCm=[^\s]+ back=\d+ depth=\d+$",
     "dodge_pattern": r"^state=[^\s]+ back=\d+ depth=\d+ threshold=\d+ seq=\d+$",
+
+    # 2e. Player Activity & Greed Adaptation (BOSS-AWR-006 / v3.20)
+    "player_activity": r"^from=[^\s]+ to=[^\s]+ attackKind=[^\s]+$",
+    "player_swing": r"^from=[^\s]+ to=[^\s]+ heavy=[01]$",
+    "greed_pattern": r"^state=[^\s]+ source=[^\s]+ seq=\d+$",
 
     # 3. Candidate Selection & Gate Decisions (v3.0 adds optional seq=\d+)
     "candidate": r"^attack=\d+ card=[^\s]+ score=[^\s]+(?:\s+seq=\d+)?$",

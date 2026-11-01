@@ -685,4 +685,17 @@ bool FFrameworkBossOverlayFormat::RunTest(const FString&)
     TestEqual(TEXT("Num NaN"),RPGBossOverlay::Num(std::numeric_limits<double>::quiet_NaN()),FString(TEXT("n/a")));
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkPlayerActivity,"OneBossFight.Framework.Runtime.PlayerActivity",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkPlayerActivity::RunTest(const FString&)
+{
+    // BOSS-AWR-006: what counts as greedy. Heavy kinds are Strong, Charged and the jumping heavy; a light swing is no commitment; the flask wins over a heavy swing.
+    using namespace RPGBossTrack;
+    TestTrue(TEXT("strong, charged and jump heavy are heavy"),IsHeavyAttackKind(ERPGAttackKind::Strong)&&IsHeavyAttackKind(ERPGAttackKind::Charged)&&IsHeavyAttackKind(ERPGAttackKind::JumpHeavy));
+    TestFalse(TEXT("light, jump light, knockdown and unknown are not"),IsHeavyAttackKind(ERPGAttackKind::Light)||IsHeavyAttackKind(ERPGAttackKind::JumpLight)||IsHeavyAttackKind(ERPGAttackKind::Knockdown)||IsHeavyAttackKind(ERPGAttackKind::Unknown));
+    TestTrue(TEXT("nothing"),ClassifyPlayerActivity(false,false)==EPlayerActivity::None);
+    TestTrue(TEXT("flask"),ClassifyPlayerActivity(true,false)==EPlayerActivity::Flask);
+    TestTrue(TEXT("heavy commitment"),ClassifyPlayerActivity(false,true)==EPlayerActivity::HeavyCommit);
+    TestTrue(TEXT("flask wins over heavy"),ClassifyPlayerActivity(true,true)==EPlayerActivity::Flask);
+    return true;
+}
 #endif

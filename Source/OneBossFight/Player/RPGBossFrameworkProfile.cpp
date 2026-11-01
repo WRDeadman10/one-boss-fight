@@ -91,7 +91,7 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
     {
         const bool bAnti=P.AntiCheeseKiteRangeCm>0.f||P.AntiCheeseHugRangeCm>0.f;
         auto Mult=[](float V){return FMath::IsFinite(V)&&V>0.f&&V<=100.f;};
-        bool bMultOk=true; for (const FRPGBossProfileCard& C:P.Cards) bMultOk=bMultOk&&Mult(C.KiteWeightMultiplier)&&Mult(C.HugWeightMultiplier)&&Mult(C.BackDodgeWeightMultiplier);
+        bool bMultOk=true; for (const FRPGBossProfileCard& C:P.Cards) bMultOk=bMultOk&&Mult(C.KiteWeightMultiplier)&&Mult(C.HugWeightMultiplier)&&Mult(C.BackDodgeWeightMultiplier)&&Mult(C.GreedWeightMultiplier);
         if (!FMath::IsFinite(P.AntiCheeseKiteRangeCm)||!FMath::IsFinite(P.AntiCheeseHugRangeCm)||P.AntiCheeseKiteRangeCm<0.f||P.AntiCheeseHugRangeCm<0.f||P.AntiCheeseKiteRangeCm>1.e5f||P.AntiCheeseHugRangeCm>1.e5f||
             P.AntiCheeseStreak<1||P.AntiCheeseStreak>8||(bAnti&&!bF5)||!bMultOk||(P.AntiCheeseKiteRangeCm>0.f&&P.AntiCheeseHugRangeCm>0.f&&P.AntiCheeseHugRangeCm>=P.AntiCheeseKiteRangeCm))
             return Fail(TEXT("Framework.Profile.Domain"));
@@ -167,7 +167,7 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
         float WorstHit=0.f;
         for (const FRPGBossProfileCard& C:P->Cards)
         {
-            FRPGFrameworkDependencies::FCandidate Candidate; Candidate.CooldownSeconds=C.CooldownSeconds; Candidate.Weight=C.Weight; Candidate.bHyperArmor=C.bHyperArmor; Candidate.KiteMultiplier=C.KiteWeightMultiplier; Candidate.HugMultiplier=C.HugWeightMultiplier; Candidate.BackDodgeMultiplier=C.BackDodgeWeightMultiplier;
+            FRPGFrameworkDependencies::FCandidate Candidate; Candidate.CooldownSeconds=C.CooldownSeconds; Candidate.Weight=C.Weight; Candidate.bHyperArmor=C.bHyperArmor; Candidate.KiteMultiplier=C.KiteWeightMultiplier; Candidate.HugMultiplier=C.HugWeightMultiplier; Candidate.BackDodgeMultiplier=C.BackDodgeWeightMultiplier; Candidate.GreedMultiplier=C.GreedWeightMultiplier;
             if (!ResolveCard(C.Card.LoadSynchronous(),Candidate.Card)) return false;
             WorstHit=FMath::Max(WorstHit,Candidate.Card->Spec().HPDamage); D->Candidates.Add(Candidate);
         }

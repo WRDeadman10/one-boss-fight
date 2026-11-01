@@ -19,9 +19,10 @@ struct FRPGBossSelectorCandidate
     float KiteMultiplier = 1.f;  // (0,1e6]: BOSS-PHS-005, score factor while the target is kiting
     float HugMultiplier = 1.f;   // (0,1e6]: BOSS-PHS-005, score factor while the target is hugging
     float BackDodgeMultiplier = 1.f;   // (0,1e6]: BOSS-AWR-008, score factor while the target keeps dodging backwards
+    float GreedMultiplier = 1.f;       // (0,1e6]: BOSS-AWR-006, score factor while the target drinks a flask or is committed to a heavy attack
 };
 /** BOSS-PHS-005: what the boss has observed about the target's pattern at this decision. */
-struct FRPGBossSelectorContext { bool bKiting = false, bHugging = false, bBackDodging = false; };
+struct FRPGBossSelectorContext { bool bKiting = false, bHugging = false, bBackDodging = false, bGreedy = false; };
 /** One line per candidate: why it was refused (named token) or its score. */
 struct FRPGBossSelectorTrace
 {

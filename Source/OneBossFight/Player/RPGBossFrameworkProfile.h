@@ -46,6 +46,8 @@ struct FRPGBossProfileCard
     UPROPERTY(EditAnywhere) float HugWeightMultiplier=1.f;
     /** BOSS-AWR-008: score factor of this card (the forward roll-catch / gap-closer) while the boss has seen the target dodge BACKWARDS DodgeBackThreshold times in its last DodgeHistoryDepth dodges; (0,100], 1 = no preference. Design values, proposed. */
     UPROPERTY(EditAnywhere) float BackDodgeWeightMultiplier=1.f;
+    /** BOSS-AWR-006: score factor of this card (the fast anti-greed card) while the target is drinking a flask or committed to a heavy attack at the decision; (0,100], 1 = no preference. Design value, proposed. */
+    UPROPERTY(EditAnywhere) float GreedWeightMultiplier=1.f;
 };
 UCLASS(BlueprintType)
 class ONEBOSSFIGHT_API URPGBossFrameworkProfile : public UPrimaryDataAsset
@@ -154,7 +156,7 @@ struct ONEBOSSFIGHT_API FRPGFrameworkDependencies
     TStrongObjectPtr<UClass> AnimClass, TargetClass;
     TStrongObjectPtr<UAnimSequence> StaggerStart, StaggerLoop, StaggerEnd, PhaseTransition;   // F11, each null when its profile field is empty
     TSharedPtr<const FRPGCompiledBossMoveCard> Card;
-    struct FCandidate { TSharedPtr<const FRPGCompiledBossMoveCard> Card; float CooldownSeconds=0.f,Weight=1.f; bool bHyperArmor=false; float KiteMultiplier=1.f,HugMultiplier=1.f,BackDodgeMultiplier=1.f; };
+    struct FCandidate { TSharedPtr<const FRPGCompiledBossMoveCard> Card; float CooldownSeconds=0.f,Weight=1.f; bool bHyperArmor=false; float KiteMultiplier=1.f,HugMultiplier=1.f,BackDodgeMultiplier=1.f,GreedMultiplier=1.f; };
     TArray<FCandidate> Candidates;   // F5 only
     const TSharedPtr<const FRPGCompiledBossMoveCard>& FirstCard() const { return Candidates.Num()>0 ? Candidates[0].Card : Card; }
 };

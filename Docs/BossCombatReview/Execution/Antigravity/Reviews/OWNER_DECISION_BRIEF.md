@@ -1,4 +1,4 @@
-# Track B: Owner Strategic Decision Brief (v2.20)
+# Track B: Owner Strategic Decision Brief (v2.21)
 
 **Date:** 2026-11-01  
 **Author:** Tech Lead Claude & Antigravity  
@@ -12,11 +12,12 @@
 The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.27) and census script (`Reviews/generate_not_yet_census.py`).
 
 ### Ledger Census Today (82 Canonical Requirements):
-- **WITNESSED:** **58** (70.7%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
+- **WITNESSED:** **59** (72.0%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
 - **PARTIAL:** **14** (17.1%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
-- **NOT YET:** **10** (12.2%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
+- **NOT YET:** **9** (11.0%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
 
 ### Milestones Graduated to WITNESSED (Since C-546):
+- **BOSS-AWR-006 (Observable player activity):** Live PIE proof on `L_SevarogFrameworkProofAWR006` (`DA_Sevarog_Greed_AWR006.uasset`, `Claude/B_AWR006/pie_flask`, `pie_heavy`) proves player flask drinking and heavy attack commitment (Strong, Charged, JumpHeavy) raise priority of anti-greed card (SwingSlow x2 multiplier). Boss samples player swing tracker (`URPGSwingTracker`) and `DrinkingPotion` montage playback to detect greedy window. Unit tests in `RPGFrameworkRuntimeTests.cpp:693-698` and `RPGBossMoveSelectorTests.cpp:143-145` verify classification and selector multiplier. Live PIE proves: flask drink triggers `player_activity None->Flask` (:1671), `greed_pattern state=Greedy` (:1704), and SwingSlow selection at 2x score (:1707; parity in pie_flask2); heavy attack triggers `player_swing heavy=1` (:1775), `player_activity None->HeavyCommit` (:1776), `greed_pattern` (:1827), and SwingSlow selection (:1830); control light swing triggers `player_swing heavy=0` (:1769) without greed pattern, selecting baseline HeavySlam (:1829). Caveat: wall-clock real-swing test driver yields frame differences between heavy repeats though decision sequence matches; flask pair is bit-for-bit exact.
 - **BOSS-ANM-006 (Bounded motion warping):** Live PIE proof on `L_SevarogFrameworkProofANM006` (`Move_Sevarog_HeavyWarp_ANM006.uasset`, `DA_Sevarog_Warp_ANM006.uasset`, `Claude/B_ANM006/pie_warp_room`) proves motion warping translation and rotation strictly clamped to max warp distance (150cm) and angle (45°) with standoff 105cm. Plugin not used because card backend is in-place only (DECISIONS.md 2026-11-01); observable met by boss-owned bounded warp clamping. Unit tests in `RPGFrameworkRuntimeTests.cpp:525-536` verify proportional need allocation across tick sizes and ranges, capped strictly by budget. Live PIE proves: with room, ends exactly at standoff (:1643 movedCm=23.4667 turnedDeg=0); when clamped (:1641, :1644), spends exactly budget limit (movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45).
 - **BOSS-HIT-012 (Grab fail-safe):** Live PIE proof on `L_SevarogFrameworkProofHIT012` and `L_SevarogFrameworkProofHIT012_Posture` (`Move_Sevarog_HeavyGrab_HIT012.uasset`, `Claude/B_HIT012/pie_grab_release`) proves interrupted grab releases victim immediately to ground locomotion without animation lock or falling through floor. Two-character state machine in `RPGBossTrack::GrabStep` and `RPGFrameworkRuntimeTests.cpp:508-517`. Live PIE proves: natural release (:1623 catch, :1668 damage, :1669 release gapCm=0.035cm); stance break interrupt (:1625 catch, :1655 release reason=StanceBreak interrupted=1 attached=0 gapCm=0.024cm); boss death interrupt (:1625 catch, :1659 release reason=BossDead interrupted=1 attached=0 gapCm=0.031cm).
 - **BOSS-HIT-011 (Swept annulus shockwave):** Live PIE proof on `L_SevarogFrameworkProofHIT011` (`Cards/Move_Sevarog_HeavyRing_HIT011.uasset`, `DA_Sevarog_Ring_HIT011.uasset`, `Claude/B_HIT011/pie_ring_hit`) proves outward expanding ground shockwave ring sweeps outward without invisible gaps or lingering ghost damage. Window in `FRPGBossMoveWindow` supports `bRing` (no sockets, no baked samples) parameterized by `RingStartRadiusCm` (40cm), `RingSpeedCmPerSecond` (600cm/s), `RingThicknessCm` (50cm), and `RingHeightCm` (80cm), validated in `RPGBossMoveCards::Validate` (`RPGBossMoveCard.cpp:75-84;` tests in `RPGBossMoveCardTests.cpp:128-132`). In `URPGFrameworkMoveExecutor::SweepWindows`, ring window evaluates outward expanding front and tests target span via pure rule `RPGBossTrack::RingTouches`, emitting structured token `ring_sweep`. Continuous tick spans leave no invisible gaps across frame times (proven by pure unit test `FFrameworkSweptAnnulus` in `RPGFrameworkRuntimeTests.cpp:484-488` and gap loop :490-499 across dt 1/240, 1/60, 1/30, 0.2s). Damage resolves centrally deduplicated by shared `HitGroup_ScytheBlade` (BOSS-HIT-010). Live PIE proves contact=1 and hit Accepted (hpApplied=55, health 800->745) at frame 522 (:1636, :1638) when front 85..95 reaches near edge 128.5 - 42 = 86.5cm, with bit-for-bit parity in `pie_ring_hit2`; out-of-reach run (:1624..:1666) confirms 19 ticks contact=0, 0 hits; passed run (:1656) confirms zero lingering ghost damage behind expanding band.
@@ -68,18 +69,18 @@ From the original plan (`Reviews/PARTIAL_UPGRADE_PLAN.md`), with its current sta
 6. **Hardware Baseline (1 row):**
    - `BOSS-QA-005` (Performance bounds): Packaged build 1080p 60 FPS $p99 \le 16.67\text{ ms}$ on physical RTX 2060 Super GPU (parked by owner).
 
-### B. The 10 NOT YET Rows (Grouped by Class & Cost)
+### B. The 9 NOT YET Rows (Grouped by Class & Cost)
 Directly computed from `Reviews/NOT_YET_CENSUS.md` and verified against disk:
-- **Cost Breakdown:** **Cost S (1-2 runs): 0 reqs (0.0%)** | **Cost M (2-4 runs): 7 reqs (70.0%)** | **Cost L (4+ runs): 3 reqs (30.0%)**.
+- **Cost Breakdown:** **Cost S (1-2 runs): 0 reqs (0.0%)** | **Cost M (2-4 runs): 6 reqs (66.7%)** | **Cost L (4+ runs): 3 reqs (33.3%)**.
 - **By Dependency Class:**
   * **ENGINE-ONLY (0 reqs, 0.0%):** All engine-only requirements (`SEL-009`) now fully implemented and witnessed!
   * **NEEDS DESIGN DECISION (0 reqs, 0.0%):** All 4 design decision rows (`PAC-002`, `MOV-002`, `PHS-005`, `HIT-010`) now fully implemented and witnessed!
   * **NEEDS NEW SYSTEM (0 reqs, 0.0%):** All 5 new system requirements (`AWR-007`, `AWR-008`, `HIT-011`, `HIT-012`, `ANM-006`) now fully implemented and witnessed!
-  * **NEEDS ART (6 reqs, 60.0%):** Requires animations, montages, notify tracks, or level collision art.
+  * **NEEDS ART (6 reqs, 66.7%):** Requires animations, montages, notify tracks, or level collision art.
     - Cost M: `BOSS-MOV-004` (Wall-safe charge trajectories), `BOSS-MOV-006` (L_SevarogArena snag point audit), `BOSS-DEF-005` (Defensive moveset actions).
     - Cost L: `BOSS-ANM-003` (Bounded holds), `BOSS-PAC-004` (Vulnerability visual cues), `BOSS-QA-007` (Low VFX accessibility harness).
-  * **PLAYER-SIDE (4 reqs, 40.0%):** Requires player combat intake, input buffers, or camera integration.
-    - Cost M: `BOSS-AWR-006` (Player flask/heavy commitment listener), `BOSS-PAC-003` (Finisher recovery punish window), `BOSS-PAC-005` (Punish-margin calculation formula), `BOSS-QA-006` (Combat follow camera framing).
+  * **PLAYER-SIDE (3 reqs, 33.3%):** Requires player combat intake, input buffers, or camera integration.
+    - Cost M: `BOSS-PAC-003` (Finisher recovery punish window), `BOSS-PAC-005` (Punish-margin calculation formula), `BOSS-QA-006` (Combat follow camera framing).
 
 ---
 

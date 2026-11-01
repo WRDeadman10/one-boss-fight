@@ -136,6 +136,13 @@ bool FBossMoveSelectorPattern::RunTest(const FString&)
     FRPGBossSelectorContext Both;Both.bKiting=Both.bHugging=true;S.Select(Model,Snapshot(100.),D,Both);TestEqual(TEXT("both: 0.5 x 3 x 2 wins"),D.MoveId,FName(TEXT("Boost")));
     TestTrue(TEXT("the score carries the multipliers (range factor 1 at the middle of 50..150: 0.5 x 3 x 2 = 3)"),FMath::IsNearlyEqual(D.Score,3.f,.01f));
     for(float Bad:{0.f,-1.f,1.0001e6f,std::numeric_limits<float>::quiet_NaN()}){FRPGBossSelectorCandidate X=Cand(TEXT("X"),50,150);X.KiteMultiplier=Bad;FRPGBossMoveSelector T;FString Err;TestFalse(TEXT("bad kite multiplier refused"),T.Initialize(Config(),{X},Err));TestEqual(TEXT("named refusal"),Err,FString(TEXT("Selector.Domain")));}
+    // BOSS-AWR-008 / AWR-006: the back-dodge and greed multipliers act only in their own context flag; bad values are refused.
+    FRPGBossSelectorCandidate Fast=Cand(TEXT("Fast"),50,150,0.f,.5f);Fast.BackDodgeMultiplier=4.f;Fast.GreedMultiplier=3.f;
+    FRPGBossMoveSelector G;TestTrue(TEXT("init greed"),G.Initialize(Config(),{Base,Fast},E));
+    G.Select(Model,Snapshot(100.),D);TestEqual(TEXT("no flag: the base card wins"),D.MoveId,FName(TEXT("Base")));
+    FRPGBossSelectorContext Greedy;Greedy.bGreedy=true;G.Select(Model,Snapshot(100.),D,Greedy);TestEqual(TEXT("greedy: 0.5 x 3 beats 1"),D.MoveId,FName(TEXT("Fast")));
+    FRPGBossSelectorContext Back;Back.bBackDodging=true;G.Select(Model,Snapshot(100.),D,Back);TestEqual(TEXT("back dodging: 0.5 x 4 beats 1"),D.MoveId,FName(TEXT("Fast")));
+    for(float Bad:{0.f,-1.f,1.0001e6f,std::numeric_limits<float>::quiet_NaN()}){FRPGBossSelectorCandidate X=Cand(TEXT("X"),50,150);X.GreedMultiplier=Bad;FRPGBossMoveSelector T;FString Err;TestFalse(TEXT("bad greed multiplier refused"),T.Initialize(Config(),{X},Err));}
     return true;
 }
 #endif

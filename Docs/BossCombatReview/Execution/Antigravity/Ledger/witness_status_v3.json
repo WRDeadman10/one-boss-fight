@@ -1,11 +1,11 @@
 {
-  "version": "3.27",
+  "version": "3.28",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 58,
+    "WITNESSED": 59,
     "PARTIAL": 14,
-    "NOT YET": 10
+    "NOT YET": 9
   },
   "requirements": [
     {
@@ -224,11 +224,128 @@
       "title": "Observable player activity",
       "section": "Awareness and observable context",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:693-698",
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:143-145",
+        "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_flask/editor_raw.log:1671,1704,1707,1738",
+        "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_heavy/editor_raw.log:1775,1776,1827,1830,1848,1849",
+        "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_light/editor_raw.log:1769,1829,1872"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 693,
+          "quoted": "TestTrue(TEXT(\"strong, charged and jump heavy are heavy\"),IsHeavyAttackKind(ERPGAttackKind::Strong)&&IsHeavyAttackKind(ERPGAttackKind::Charged)&&IsHeavyAttackKind(ERPGAttackKind::JumpHeavy));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 694,
+          "quoted": "TestFalse(TEXT(\"light, jump light, knockdown and unknown are not\"),IsHeavyAttackKind(ERPGAttackKind::Light)||IsHeavyAttackKind(ERPGAttackKind::JumpLight)||IsHeavyAttackKind(ERPGAttackKind::Knockdown)||IsHeavyAttackKind(ERPGAttackKind::Unknown));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 695,
+          "quoted": "TestTrue(TEXT(\"nothing\"),ClassifyPlayerActivity(false,false)==EPlayerActivity::None);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 696,
+          "quoted": "TestTrue(TEXT(\"flask\"),ClassifyPlayerActivity(true,false)==EPlayerActivity::Flask);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 697,
+          "quoted": "TestTrue(TEXT(\"heavy commitment\"),ClassifyPlayerActivity(false,true)==EPlayerActivity::HeavyCommit);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 698,
+          "quoted": "TestTrue(TEXT(\"flask wins over heavy\"),ClassifyPlayerActivity(true,true)==EPlayerActivity::Flask);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
+          "line": 143,
+          "quoted": "FRPGBossSelectorContext Greedy;Greedy.bGreedy=true;G.Select(Model,Snapshot(100.),D,Greedy);TestEqual(TEXT(\"greedy: 0.5 x 3 beats 1\"),D.MoveId,FName(TEXT(\"Fast\")));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
+          "line": 144,
+          "quoted": "FRPGBossSelectorContext Back;Back.bBackDodging=true;G.Select(Model,Snapshot(100.),D,Back);TestEqual(TEXT(\"back dodging: 0.5 x 4 beats 1\"),D.MoveId,FName(TEXT(\"Fast\")));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
+          "line": 145,
+          "quoted": "for(float Bad:{0.f,-1.f,1.0001e6f,std::numeric_limits<float>::quiet_NaN()}){FRPGBossSelectorCandidate X=Cand(TEXT(\"X\"),50,150);X.GreedMultiplier=Bad;FRPGBossMoveSelector T;FString Err;TestFalse(TEXT(\"bad greed multiplier refused\"),T.Initialize(Config(),{X},Err));}"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_flask/editor_raw.log",
+          "line": 1671,
+          "quoted": "[FrameworkProof] player_activity from=None to=Flask attackKind=Unknown"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_flask/editor_raw.log",
+          "line": 1704,
+          "quoted": "[FrameworkProof] greed_pattern state=Greedy source=Flask seq=2"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_flask/editor_raw.log",
+          "line": 1707,
+          "quoted": "[FrameworkProof] decision attack=2 chosen=Move_Sevarog_SwingSlow_F7 score=1.56933 range=128.467 phase=Phase_1 seq=2"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_flask/editor_raw.log",
+          "line": 1738,
+          "quoted": "[FrameworkProof] player_activity from=Flask to=None attackKind=Unknown"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_heavy/editor_raw.log",
+          "line": 1775,
+          "quoted": "[FrameworkProof] player_swing from=Unknown to=Strong heavy=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_heavy/editor_raw.log",
+          "line": 1776,
+          "quoted": "[FrameworkProof] player_activity from=None to=HeavyCommit attackKind=Strong"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_heavy/editor_raw.log",
+          "line": 1827,
+          "quoted": "[FrameworkProof] greed_pattern state=Greedy source=HeavyCommit seq=3"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_heavy/editor_raw.log",
+          "line": 1830,
+          "quoted": "[FrameworkProof] decision attack=3 chosen=Move_Sevarog_SwingSlow_F7 score=1.56933 range=128.467 phase=Phase_1 seq=3"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_heavy/editor_raw.log",
+          "line": 1848,
+          "quoted": "[FrameworkProof] player_swing from=Strong to=Unknown heavy=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_heavy/editor_raw.log",
+          "line": 1849,
+          "quoted": "[FrameworkProof] player_activity from=HeavyCommit to=None attackKind=Unknown"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_light/editor_raw.log",
+          "line": 1769,
+          "quoted": "[FrameworkProof] player_swing from=Unknown to=Light heavy=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_light/editor_raw.log",
+          "line": 1829,
+          "quoted": "[FrameworkProof] decision attack=3 chosen=Move_Sevarog_HeavySlam_F7 score=0.927407 range=128.467 phase=Phase_1 seq=3"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_light/editor_raw.log",
+          "line": 1872,
+          "quoted": "[FrameworkProof] player_swing from=Light to=Unknown heavy=0"
+        }
+      ],
       "observable": "Player flask drinking or heavy attack commitment raises priority of fast anti-greed card (MC-03).",
-      "notes": "Player activity tag listener in boss perception / blackboard not yet implemented (designated for Selector Block)."
+      "notes": "Witnessed (C-634, BUILD-135): Player flask drinking or heavy attack commitment raises priority of fast anti-greed card (MC-03, stood in by SwingSlow x2 multiplier). Boss reads player swing tracker (URPGSwingTracker) and montage playback to detect Strong, Charged, and JumpHeavy attacks in progress, or flask drinking. GreedWeightMultiplier in card spec scales score during greedy window. Unit tests in RPGFrameworkRuntimeTests.cpp:693-698 and RPGBossMoveSelectorTests.cpp:143-145. Live PIE on L_SevarogFrameworkProofAWR006: flask drink triggers player_activity None->Flask (:1671), greed_pattern state=Greedy (:1704), and SwingSlow selection at 2x score (:1707); heavy attack triggers player_swing Unknown->Strong heavy=1 (:1775), greed_pattern (:1827), and SwingSlow selection (:1830); control light swing does not trigger greed pattern (:1769, :1829 HeavySlam chosen). Caveat: pie_heavy vs pie_heavy2 are not frame-exact repeats due to wall-clock real-swing test driver timing, though decision sequences match; flask pair is frame-exact."
     },
     {
       "id": "BOSS-AWR-007",
@@ -1558,8 +1675,8 @@
           "quoted": "[FrameworkProof] warp_summary instance=1 movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45"
         }
       ],
-      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45\u00b0).",
-      "notes": "Witnessed (C-627, BUILD-134): Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45\u00b0). Architectural Decision (DECISIONS.md 2026-11-01): The Motion Warping plugin was not enabled in uproject because it operates on root-motion animation clips while the card backend is in-place only (MoveCard.UnsupportedRootMotion); the observable of the row (translation and rotation strictly clamped) is satisfied by boss-owned bounded warp clamping. Card spec fields WarpStartSeconds, WarpEndSeconds, WarpMaxDistanceCm (<=1000cm), WarpMaxAngleDegrees (<=180\u00b0), WarpStandoffCm (>=0) are validated in RPGBossMoveCards::Validate (RPGBossMoveCard.cpp:109-130; tests in RPGBossMoveCardTests.cpp:144-151). Pure warp step formulas RPGBossTrack::WarpStepCm and WarpStepDegrees dynamically allocate need proportionally across remaining window time, capped by remaining budget, and charged only by distance actually moved via swept move (tested in RPGFrameworkRuntimeTests.cpp:525-536 across dt 1/240..0.1s and ranges 20..600cm). Emits structured telemetry warp_step and warp_summary. Live PIE proofs on L_SevarogFrameworkProofANM006 (Move_Sevarog_HeavyWarp_ANM006, warp window 0.4..0.5333s, budget 150cm / 45\u00b0, standoff 105cm; Claude/B_ANM006): 1) pie_warp_room (target 128.467cm away, room to spare): closes exactly to standoff 105cm (:1643 warp_summary movedCm=23.4667 turnedDeg=0, well within budgets; parity in pie_warp_room2). 2) pie_warp_clamped (target at 626cm and 55\u00b0): needs 371cm / 55\u00b0, spends exactly budget limit (:1641 last step budgetCm=150, budgetDeg=45; :1644 warp_summary movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45). Limits: boss-owned actor translation/yaw sweep; root-motion plugin not used."
+      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45°).",
+      "notes": "Witnessed (C-627, BUILD-134): Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45°). Architectural Decision (DECISIONS.md 2026-11-01): The Motion Warping plugin was not enabled in uproject because it operates on root-motion animation clips while the card backend is in-place only (MoveCard.UnsupportedRootMotion); the observable of the row (translation and rotation strictly clamped) is satisfied by boss-owned bounded warp clamping. Card spec fields WarpStartSeconds, WarpEndSeconds, WarpMaxDistanceCm (<=1000cm), WarpMaxAngleDegrees (<=180°), WarpStandoffCm (>=0) are validated in RPGBossMoveCards::Validate (RPGBossMoveCard.cpp:109-130; tests in RPGBossMoveCardTests.cpp:144-151). Pure warp step formulas RPGBossTrack::WarpStepCm and WarpStepDegrees dynamically allocate need proportionally across remaining window time, capped by remaining budget, and charged only by distance actually moved via swept move (tested in RPGFrameworkRuntimeTests.cpp:525-536 across dt 1/240..0.1s and ranges 20..600cm). Emits structured telemetry warp_step and warp_summary. Live PIE proofs on L_SevarogFrameworkProofANM006 (Move_Sevarog_HeavyWarp_ANM006, warp window 0.4..0.5333s, budget 150cm / 45°, standoff 105cm; Claude/B_ANM006): 1) pie_warp_room (target 128.467cm away, room to spare): closes exactly to standoff 105cm (:1643 warp_summary movedCm=23.4667 turnedDeg=0, well within budgets; parity in pie_warp_room2). 2) pie_warp_clamped (target at 626cm and 55°): needs 371cm / 55°, spends exactly budget limit (:1641 last step budgetCm=150, budgetDeg=45; :1644 warp_summary movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45). Limits: boss-owned actor translation/yaw sweep; root-motion plugin not used."
     },
     {
       "id": "BOSS-ANM-007",
@@ -2986,4 +3103,4 @@
   ],
   "last_updated": "2026-11-01",
   "file_version": "3.26"
-}
+}

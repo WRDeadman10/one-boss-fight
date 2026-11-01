@@ -4,7 +4,7 @@
 test_generate_not_yet_census.py
 
 Tests generate_not_yet_census.py:
-1. Verifies that all 10 entries pass validation on disk.
+1. Verifies that all 9 entries pass validation on disk.
 2. Mutation tests: asserts that validation fails when:
    - file does not exist
    - line number is past EOF
@@ -64,7 +64,7 @@ class TestNotYetCensus(unittest.TestCase):
         """Fails when uncited entry does not begin with 'no code: '."""
         saved = deepcopy(gen.CENSUS_METADATA)
         try:
-            gen.CENSUS_METADATA["BOSS-AWR-006"]["explanation"] = "missing prefix"
+            gen.CENSUS_METADATA["BOSS-ANM-003"]["explanation"] = "missing prefix"
             with self.assertRaises(AssertionError) as ctx:
                 gen.validate_census_metadata()
             self.assertIn("Missing 'no code: ' prefix", str(ctx.exception))
@@ -78,8 +78,8 @@ class TestNotYetCensus(unittest.TestCase):
         self.assertTrue(gen.OUTPUT_MD.exists())
         with open(gen.OUTPUT_MD, "r", encoding="utf-8") as f:
             content = f.read()
-        self.assertIn("## 2. Complete 10-Row NOT YET Census Table", content)
-        self.assertEqual(content.count("| **BOSS-"), 10)
+        self.assertIn("## 2. Complete 9-Row NOT YET Census Table", content)
+        self.assertEqual(content.count("| **BOSS-"), 9)
 
 if __name__ == "__main__":
     unittest.main()

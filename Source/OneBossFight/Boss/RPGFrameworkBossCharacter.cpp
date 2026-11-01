@@ -15,6 +15,7 @@
 #include "GameFramework/Controller.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGHitIntake.h"
+#include "Player/RPGSwingTracker.h"
 #include "Player/RPGBossMath.h"
 #include "Player/RPGBossOverlayRules.h"
 #include "Player/RPGBossTrackRules.h"
@@ -56,7 +57,7 @@ bool ARPGFrameworkBossCharacter::InitializeProof(ARPGFrameworkProofFixture* Fixt
     {
         FRPGBossSelectorConfig Config; Config.RepeatPenalty=Dependencies->Profile->RepeatPenalty; Config.RepeatMemory=Dependencies->Profile->RepeatMemory; Config.TieBand=Dependencies->Profile->SelectorTieBand; Config.TieSeed=Dependencies->Profile->SelectorTieSeed;
         TArray<FRPGBossSelectorCandidate> List;
-        for (const auto& C:Dependencies->Candidates) {FRPGBossSelectorCandidate X; X.Card=C.Card; X.CooldownSeconds=C.CooldownSeconds; X.Weight=C.Weight; X.KiteMultiplier=C.KiteMultiplier; X.HugMultiplier=C.HugMultiplier; X.BackDodgeMultiplier=C.BackDodgeMultiplier; List.Add(X);}
+        for (const auto& C:Dependencies->Candidates) {FRPGBossSelectorCandidate X; X.Card=C.Card; X.CooldownSeconds=C.CooldownSeconds; X.Weight=C.Weight; X.KiteMultiplier=C.KiteMultiplier; X.HugMultiplier=C.HugMultiplier; X.BackDodgeMultiplier=C.BackDodgeMultiplier; X.GreedMultiplier=C.GreedMultiplier; List.Add(X);}
         if (!Selector.Initialize(Config,List,Error)) {Fail(Error);return false;}
     }
     const auto& P=*Dependencies->Profile.Get();
@@ -132,6 +133,36 @@ void ARPGFrameworkBossCharacter::TickLos()
     case RPGBossTrack::ELosEvent::Regained: UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] los_regained lostForSeconds=%g"),Now-Los.LostAt);break;
     case RPGBossTrack::ELosEvent::TimedOut: UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] los_search_timeout seconds=%g"),Now-Los.LostAt);break;
     default:break;
+    }
+}
+void ARPGFrameworkBossCharacter::TickActivity()
+{
+    // BOSS-AWR-006: what the boss reads from the player: a flask drink (after the boss's reaction delay when the profile has one, else at once) or a heavy attack in progress (the player's swing tracker knows the kind of the swing,
+    // the animation instance whether its montage is still playing). Read only when a card of the profile has a greed multiplier, so every other profile is unchanged.
+    bool bWanted=false; for(const auto& C:Dependencies->Candidates) if(!FMath::IsNearlyEqual(C.GreedMultiplier,1.f)) {bWanted=true;break;}
+    if(!bWanted||!Target.IsValid()) {Activity=RPGBossTrack::EPlayerActivity::None;return;}
+    const auto& P=*Dependencies->Profile.Get();
+    const ACharacter* Player=Cast<ACharacter>(Target.Get()); UAnimInstance* PA=Player&&Player->GetMesh()?Player->GetMesh()->GetAnimInstance():nullptr;
+    bool bFlask=false;
+    if(P.ReactionDelayMinSeconds>0.f) bFlask=bFlaskKnown;
+    else
+    {
+        if(!DrinkMontage.IsValid()) DrinkMontage=LoadObject<UAnimMontage>(nullptr,TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/DrinkingPotion_Montage.DrinkingPotion_Montage"));
+        bFlask=PA&&DrinkMontage.IsValid()&&PA->Montage_IsPlaying(DrinkMontage.Get());
+    }
+    bool bHeavy=false; ERPGAttackKind Kind=ERPGAttackKind::Unknown;
+    if(const URPGSwingTracker* Tracker=Target->FindComponentByClass<URPGSwingTracker>())
+    {
+        const FRPGSwing& Swing=Tracker->GetCurrentSwing(); const UAnimMontage* Playing=PA?PA->GetCurrentActiveMontage():nullptr;
+        if(Swing.IsAttack()&&Playing&&Playing->GetFName()==Swing.Montage) {Kind=Swing.Kind; bHeavy=RPGBossTrack::IsHeavyAttackKind(Kind);}
+    }
+    // Every attack swing in progress is logged on its edges (the proof that a LIGHT swing was running and did not count).
+    if(Kind!=SwingKindSeen) {UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] player_swing from=%s to=%s heavy=%d"),RPGAttackKindName(SwingKindSeen),RPGAttackKindName(Kind),bHeavy?1:0); SwingKindSeen=Kind;}
+    const RPGBossTrack::EPlayerActivity Now=RPGBossTrack::ClassifyPlayerActivity(bFlask,bHeavy);
+    if(Now!=Activity)
+    {
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] player_activity from=%s to=%s attackKind=%s"),RPGBossTrack::PlayerActivityName(Activity),RPGBossTrack::PlayerActivityName(Now),RPGAttackKindName(Kind));
+        Activity=Now;
     }
 }
 void ARPGFrameworkBossCharacter::TickFlask()
@@ -243,6 +274,7 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
 #endif
     TickDodge();
     TickFlask();
+    TickActivity();
     TickLos();
     // BOSS-EXE-007: the executor's watchdog aborted the running card (end notification dropped / montage stuck): recover and decide again, never stall.
     if(Executor->WatchdogFired())
@@ -336,7 +368,9 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
             if(P.AntiCheeseKiteRangeCm>0.f&&S.RangeCm>=double(P.AntiCheeseKiteRangeCm)&&KiteStreak+1>=P.AntiCheeseStreak) Pattern.bKiting=true;
             if(P.AntiCheeseHugRangeCm>0.f&&S.RangeCm<=double(P.AntiCheeseHugRangeCm)&&HugStreak+1>=P.AntiCheeseStreak) Pattern.bHugging=true;
             if(P.DodgeHistoryDepth>0&&DodgeHistory.BackCount()>=P.DodgeBackThreshold) Pattern.bBackDodging=true;   // BOSS-AWR-008
+            if(Activity!=RPGBossTrack::EPlayerActivity::None) Pattern.bGreedy=true;   // BOSS-AWR-006
             const bool bAsked=Selector.Select(Executor->Model(),S,Decision,Pattern);const int32 Seq=++DecisionSeq;
+            if(Pattern.bGreedy) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] greed_pattern state=Greedy source=%s seq=%d"),RPGBossTrack::PlayerActivityName(Activity),Seq);
             if(Pattern.bBackDodging) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] dodge_pattern state=BackDodging back=%d depth=%d threshold=%d seq=%d"),DodgeHistory.BackCount(),DodgeHistory.Dirs.Num(),P.DodgeBackThreshold,Seq);
             if(Pattern.bKiting||Pattern.bHugging) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] anticheese state=%s streak=%d rangeCm=%g thresholdCm=%g seq=%d"),Pattern.bKiting?TEXT("Kiting"):TEXT("Hugging"),Pattern.bKiting?KiteStreak+1:HugStreak+1,S.RangeCm,Pattern.bKiting?double(P.AntiCheeseKiteRangeCm):double(P.AntiCheeseHugRangeCm),Seq);
             for(const FRPGBossSelectorTrace& T:Decision.Traces)
