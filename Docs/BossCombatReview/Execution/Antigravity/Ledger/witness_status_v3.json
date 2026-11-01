@@ -1,11 +1,11 @@
 {
-  "version": "3.25",
+  "version": "3.26",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 55,
+    "WITNESSED": 56,
     "PARTIAL": 14,
-    "NOT YET": 13
+    "NOT YET": 12
   },
   "requirements": [
     {
@@ -298,22 +298,22 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 508,
+          "line": 546,
           "quoted": "TestTrue(TEXT(\"moving away fast = Back\"),ClassifyDodge(FVector(900.,0.,0.),ToTarget,600.f)==EDodgeDir::Back);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 509,
+          "line": 547,
           "quoted": "TestTrue(TEXT(\"moving toward the boss = Forward\"),ClassifyDodge(FVector(-900.,0.,0.),ToTarget,600.f)==EDodgeDir::Forward);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 517,
+          "line": 555,
           "quoted": "H.Push(EDodgeDir::Back,3);TestEqual(TEXT(\"two backs of three\"),H.BackCount(),2);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 525,
+          "line": 563,
           "quoted": "F5();P->DodgeHistoryDepth=3;TestTrue(TEXT(\"depth 3 threshold 2 valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
@@ -1406,17 +1406,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 629,
+          "line": 667,
           "quoted": "Near(TEXT(\"60 ticks (1 s) toward 170 turn exactly the cap, 90 deg\"),Yaw,90.f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 630,
+          "line": 668,
           "quoted": "TestTrue(TEXT(\"no tick turned more than cap * dt (1.5 deg)\"),MaxStep<=1.5f+1.e-3f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 632,
+          "line": 670,
           "quoted": "Near(TEXT(\"after the commit 60 more ticks leave the yaw unchanged\"),Yaw,90.f);"
         },
         {
@@ -1542,7 +1542,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 580,
+          "line": 618,
           "quoted": "TestEqual(TEXT(\"no slot node in the AnimBP\"),Token([](auto& X){X.bSlotNodePresent=false;}),FString(TEXT(\"Framework.Profile.StaggerAnim.SlotNode\")));"
         },
         {
@@ -1852,11 +1852,98 @@
       "title": "Swept annulus",
       "section": "Hit detection and damage",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+        "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT011/pie_ring_hit/editor_raw.log",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT011/pie_ring_out_of_reach/editor_raw.log",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT011/pie_ring_passed/editor_raw.log"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 484,
+          "quoted": "TestTrue(TEXT(\"target inside the band\"),RingTouches(240.,260.,40.,230.,35.,0.,50.));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 485,
+          "quoted": "TestFalse(TEXT(\"target beyond the front\"),RingTouches(240.,260.,40.,330.,35.,0.,50.));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 486,
+          "quoted": "TestFalse(TEXT(\"target the band has already passed (no ghost damage)\"),RingTouches(240.,260.,40.,100.,35.,0.,50.));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 487,
+          "quoted": "TestFalse(TEXT(\"a target above the wave is missed\"),RingTouches(240.,260.,40.,230.,35.,80.,50.));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 488,
+          "quoted": "TestFalse(TEXT(\"NaN refused\"),RingTouches(240.,260.,40.,std::numeric_limits<double>::quiet_NaN(),35.,0.,50.));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 497,
+          "quoted": "if (Touched<1) {AddError(FString::Printf(TEXT(\"gap at dist %g with dt %g\"),D,Dt));break;}"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 128,
+          "quoted": "{FInput F;MakeRing(F);TestTrue(TEXT(\"ring window without sockets is valid\"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 129,
+          "quoted": "Reject([&](FInput& F){MakeRing(F);F.S.Windows[1].RingSpeedCmPerSecond=0.f;},TEXT(\"MoveCard.Domain\"));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 130,
+          "quoted": "Reject([&](FInput& F){MakeRing(F);F.S.Windows[1].RingThicknessCm=-1.f;},TEXT(\"MoveCard.Domain\"));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 131,
+          "quoted": "Reject([&](FInput& F){MakeRing(F);F.S.Windows[1].RingHeightCm=std::numeric_limits<float>::quiet_NaN();},TEXT(\"MoveCard.NonFinite\"));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 132,
+          "quoted": "Reject([&](FInput& F){MakeRing(F);F.S.Windows[1].SocketA=F.S.Windows[0].SocketA;},TEXT(\"MoveCard.Window\"));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT011/pie_ring_hit/editor_raw.log",
+          "line": 1634,
+          "quoted": "[FrameworkProof] ring_sweep instance=1 window=Window_HeavyRing_Ring from=0.533333 to=0.55 frontLoCm=75.0001 frontHiCm=85.0001 thicknessCm=50 targetDistCm=128.467 targetRadiusCm=42 dzCm=3.10701 heightCm=80 contact=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT011/pie_ring_hit/editor_raw.log",
+          "line": 1636,
+          "quoted": "[FrameworkProof] ring_sweep instance=1 window=Window_HeavyRing_Ring from=0.55 to=0.566667 frontLoCm=85.0001 frontHiCm=95.0001 thicknessCm=50 targetDistCm=128.467 targetRadiusCm=42 dzCm=3.11047 heightCm=80 contact=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT011/pie_ring_hit/editor_raw.log",
+          "line": 1638,
+          "quoted": "[FrameworkProof] hit instance=1 window=Window_HeavyRing_Ring key=HitGroup_ScytheBlade outcome=ERPGDamageOutcome::Accepted hpApplied=55 healthBefore=800 healthAfter=745"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT011/pie_ring_out_of_reach/editor_raw.log",
+          "line": 1624,
+          "quoted": "[FrameworkProof] ring_sweep instance=1 window=Window_HeavyRing_Ring from=0.475 to=0.483334 frontLoCm=40 frontHiCm=45.0001 thicknessCm=50 targetDistCm=328.467 targetRadiusCm=42 dzCm=3.09188 heightCm=80 contact=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT011/pie_ring_passed/editor_raw.log",
+          "line": 1656,
+          "quoted": "[FrameworkProof] ring_sweep instance=1 window=Window_HeavyRing_Ring from=0.683333 to=0.7 frontLoCm=165 frontHiCm=175 thicknessCm=50 targetDistCm=68.4667 targetRadiusCm=42 dzCm=3.11786 heightCm=80 contact=0"
+        }
+      ],
       "observable": "Ground splash / shockwave sweeps outward in calibrated ring without invisible gaps or lingering ghost damage.",
-      "notes": "Swept annulus shockwave trace component not yet implemented (designated for Hazard / AoE Block)."
+      "notes": "Witnessed (C-625, BUILD-132): Ground splash / shockwave sweeps outward in calibrated ring without invisible gaps or lingering ghost damage. Window in FRPGBossMoveWindow supports bRing (no sockets, no baked samples) parameterized by RingStartRadiusCm (>=0), RingSpeedCmPerSecond (>0), RingThicknessCm (>0), and RingHeightCm (>0), validated in RPGBossMoveCards::Validate (RPGBossMoveCard.cpp:75-84; tests in RPGBossMoveCardTests.cpp:128-132). In URPGFrameworkMoveExecutor::SweepWindows, ring windows evaluate outward expansion frontLo = RingFront(Start, Speed, Lo-WindowStart) and frontHi = RingFront(Start, Speed, Hi-WindowStart); pure rule RPGBossTrack::RingTouches tests target distance within span [FrontLo - Thickness, FrontHi], vertical separation dz <= Height, emitting structured token ring_sweep. Continuous tick intervals leave no invisible gaps across frame times (proven by pure unit test FFrameworkSweptAnnulus in RPGFrameworkRuntimeTests.cpp:484-488 and gap loop :490-499 across dt 1/240, 1/60, 1/30, 0.2s). Damage application is shared with blade windows via ApplyHit lambda and centrally deduplicated by HitGroup (BOSS-HIT-010). Live PIE proofs on L_SevarogFrameworkProofHIT011 (Move_Sevarog_HeavyRing_HIT011, window 0.475..0.775s, start 40cm, speed 600cm/s, thickness 50cm, height 80cm, shared HitGroup_ScytheBlade; Claude/B_HIT011): 1) pie_ring_hit (:1634 contact=0 at front 75..85; :1636 contact=1 at front 85..95 touching near edge 128.467 - 42 = 86.47cm; :1638 hit Accepted hpApplied=55, health 800->745; subsequent contacts RejectedDuplicate; window ends cleanly at 0.775s :1688). Repeated with bit-for-bit parity in pie_ring_hit2. 2) pie_ring_out_of_reach (target shifted 200cm back to dist 328.5cm): all 19 ring_sweep lines contact=0 (:1624..:1666), 0 hits applied. 3) pie_ring_passed (target teleported behind expanding band to dist 68.5cm at 0.7s): ring_sweep contact=0 (:1656), proving zero lingering ghost damage. Limits: ring is ground-level cylinder expanding from boss origin; vertical check uses feet-to-feet dzAbs <= RingHeightCm; authoring is boss-only."
     },
     {
       "id": "BOSS-HIT-012",
@@ -1994,7 +2081,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 544,
+          "line": 582,
           "quoted": "F5();P->ArenaRadiusCm=250.f;P->bArenaLeash=true;TestTrue(TEXT(\"leash with an arena radius is valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
@@ -2326,7 +2413,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 561,
+          "line": 599,
           "quoted": "TestEqual(TEXT(\"loop count middle 1.6 / loop 0.5 = ceil 3.2 = 4\"),RPGStaggerAnim::LoopCount(T,S,E,.5f),4);"
         }
       ],
@@ -2540,17 +2627,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 640,
+          "line": 678,
           "quoted": "TestEqual(TEXT(\"attack running\"),RPGBossOverlay::Format(I),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=129cm Cone=120deg Window=Open Posture=40/100 Health=150/250 Stagger=0 PhaseHold=0\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 642,
+          "line": 680,
           "quoted": "TestEqual(TEXT(\"no card, stagger and hold\"),RPGBossOverlay::Format(N),FString(TEXT(\"Card=None State=Idle Phase=Phase_2 Range=300cm Cone=0deg Window=Closed Posture=100/100 Health=50/250 Stagger=1 PhaseHold=1\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 644,
+          "line": 682,
           "quoted": "TestEqual(TEXT(\"non-finite values never print as numbers\"),RPGBossOverlay::Format(Bad),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=n/acm Cone=120deg Window=Open Posture=40/100 Health=n/a/250 Stagger=0 PhaseHold=0\")));"
         },
         {
@@ -2733,5 +2820,5 @@
     }
   ],
   "last_updated": "2026-11-01",
-  "file_version": "3.25"
+  "file_version": "3.26"
 }

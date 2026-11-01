@@ -108,6 +108,7 @@ SCHEMAS = {
     # 6. Sweeps, Events, and Damage Resolution
     "event": r"^encounter=\d+ generation=\d+ instance=\d+ kind=[^\s]+ window=[^\s]+ group=[^\s]+ localSeconds=[^\s]+ label=[^\s]+$",
     "sweep": r"^instance=\d+ window=[^\s]+ from=[^\s]+ to=[^\s]+ tipDistanceCm=[^\s]+ substeps=\d+ clamped=\d+(?:\s+baked=\d+)?$",
+    "ring_sweep": r"^instance=\d+ window=[^\s]+ from=[^\s]+ to=[^\s]+ frontLoCm=[^\s]+ frontHiCm=[^\s]+ thicknessCm=[^\s]+ targetDistCm=[^\s]+ targetRadiusCm=[^\s]+ dzCm=[^\s]+ heightCm=[^\s]+ contact=[01]$",
     "sweep_filter": r"^instance=\d+ window=[^\s]+ ignoredPawns=\d+ first=[^\s]* targetContact=\d+ selfHits=\d+$",
     "hit": r"^instance=\d+ window=[^\s]+ key=[^\s]+ outcome=[^\s]+ hpApplied=[^\s]+ healthBefore=[^\s]+ healthAfter=[^\s]+$",
     "invariant": r"^(?:targetHPBefore=[^\s]+ targetHPAfter=[^\s]+ expectedHP=[^\s]+ acceptedHits=\d+ appliedDamage=[^\s]+|targetHPBefore=[^\s]+ targetHPAfter=[^\s]+ damageAPIInvocationsByThisExecutor=\d+)$",

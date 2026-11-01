@@ -11,6 +11,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
+#include "Components/CapsuleComponent.h"
 #include "CollisionQueryParams.h"
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<int32> CVarBossProofStaleCallback(TEXT("rpg.BossProofStaleCallback"),0,TEXT("Test hook (BOSS-EXE-004): 1 sends a late abort callback of the PREVIOUS (aborted) attack to the move model right after the next attack started; it must be refused and the new attack must live. 0 = off. Not compiled into shipping builds."),ECVF_Default);
@@ -196,9 +198,34 @@ void URPGFrameworkMoveExecutor::SweepWindows(double PrevPosition,double Position
     USkeletalMeshComponent* Mesh=OwnerBoss->GetMesh();
     // BOSS-HIT-010: the direct windows are swept first, the secondary ones (splash) after them in the same tick: with a shared hit group the direct hit is applied and a simultaneous splash is refused as a duplicate.
     TArray<const FRPGBossMoveWindow*> Ordered; for (const FRPGBossMoveWindow& D:Card->Spec().Windows) if (!D.bSecondary) Ordered.Add(&D); for (const FRPGBossMoveWindow& D:Card->Spec().Windows) if (D.bSecondary) Ordered.Add(&D);
+    // The hit application is shared by the blade windows and the ring windows (BOSS-HIT-011): the same payload, the same resolver, the same hit key.
+    auto ApplyHit=[&](const FRPGBossMoveWindow& W)
+    {
+        FRPGDamagePayload Payload;
+        Payload.MoveId=Card->Spec().MoveId; Payload.AttackInstance=int32(Token.InstanceId); Payload.Generation=int32(Token.Generation);
+        Payload.HitKey=W.HitGroup.IsNone()?W.WindowId:W.HitGroup; Payload.HPDamage=Card->Spec().HPDamage;
+        const FRPGDamageResult Result=Resolver->Resolve(Target.Get(),Payload);
+        if (Result.Outcome==ERPGDamageOutcome::Accepted) {++HitsAccepted; AppliedDamage+=Result.HPApplied; if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);}
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] hit instance=%llu window=%s key=%s outcome=%s hpApplied=%g healthBefore=%g healthAfter=%g"),Token.InstanceId,*W.WindowId.ToString(),*Payload.HitKey.ToString(),*UEnum::GetValueAsString(Result.Outcome),Result.HPApplied,Result.HealthBefore,Result.HealthAfter);
+    };
     for (const FRPGBossMoveWindow* WP:Ordered)
     {
         const FRPGBossMoveWindow& W=*WP;
+        if (W.bRing)
+        {
+            // BOSS-HIT-011: the band covered by the front during THIS tick, around the boss; no sockets, no capsule sweep.
+            const double Lo=FMath::Max(PrevPosition,double(W.StartSeconds)), Hi=FMath::Min(Position,double(W.EndSeconds));
+            if (Position<=PrevPosition||Hi<=Lo) continue;
+            const double FrontLo=RPGBossTrack::RingFront(W.RingStartRadiusCm,W.RingSpeedCmPerSecond,Lo-W.StartSeconds), FrontHi=RPGBossTrack::RingFront(W.RingStartRadiusCm,W.RingSpeedCmPerSecond,Hi-W.StartSeconds);
+            const double Dist=FVector::Dist2D(Target->GetActorLocation(),OwnerBoss->GetActorLocation());
+            FVector TO,TE,BO,BE; Target->GetActorBounds(true,TO,TE); OwnerBoss->GetActorBounds(true,BO,BE);
+            const double DzAbs=FMath::Abs((TO.Z-TE.Z)-(BO.Z-BE.Z));
+            const double TargetRadius=Target->IsA<ACharacter>()?double(Cast<ACharacter>(Target.Get())->GetCapsuleComponent()->GetScaledCapsuleRadius()):double(FMath::Max(TE.X,TE.Y));
+            const bool bTouch=RPGBossTrack::RingTouches(FrontLo,FrontHi,W.RingThicknessCm,Dist,TargetRadius,DzAbs,W.RingHeightCm);
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] ring_sweep instance=%llu window=%s from=%g to=%g frontLoCm=%g frontHiCm=%g thicknessCm=%g targetDistCm=%g targetRadiusCm=%g dzCm=%g heightCm=%g contact=%d"),Token.InstanceId,*W.WindowId.ToString(),Lo,Hi,FrontLo,FrontHi,double(W.RingThicknessCm),Dist,TargetRadius,DzAbs,double(W.RingHeightCm),bTouch?1:0);
+            if (bTouch) ApplyHit(W);
+            continue;
+        }
         // The sockets are read live every tick: the blade is not rigid (measured 67..123 cm base-to-tip over the clip).
         const FVector A=Mesh->GetSocketLocation(W.SocketA), B=Mesh->GetSocketLocation(W.SocketB);
         FWindowPose& Prev=PrevPoses.FindOrAdd(W.WindowId);
@@ -242,12 +269,7 @@ void URPGFrameworkMoveExecutor::SweepWindows(double PrevPosition,double Position
         // Only logged when something was filtered, so the logs of every earlier scenario are unchanged. The boss itself is excluded by the query params and never appears here.
         if (IgnoredPawns.Num()>0) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] sweep_filter instance=%llu window=%s ignoredPawns=%d first=%s targetContact=%d selfHits=%d"),Token.InstanceId,*W.WindowId.ToString(),IgnoredPawns.Num(),*FirstIgnored,bContact?1:0,IgnoredPawns.Contains(OwnerBoss.Get())?1:0);
         if (!bContact) continue;
-        FRPGDamagePayload Payload;
-        Payload.MoveId=Card->Spec().MoveId; Payload.AttackInstance=int32(Token.InstanceId); Payload.Generation=int32(Token.Generation);
-        Payload.HitKey=W.HitGroup.IsNone()?W.WindowId:W.HitGroup; Payload.HPDamage=Card->Spec().HPDamage;
-        const FRPGDamageResult Result=Resolver->Resolve(Target.Get(),Payload);
-        if (Result.Outcome==ERPGDamageOutcome::Accepted) {++HitsAccepted; AppliedDamage+=Result.HPApplied; if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);}
-        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] hit instance=%llu window=%s key=%s outcome=%s hpApplied=%g healthBefore=%g healthAfter=%g"),Token.InstanceId,*W.WindowId.ToString(),*Payload.HitKey.ToString(),*UEnum::GetValueAsString(Result.Outcome),Result.HPApplied,Result.HealthBefore,Result.HealthAfter);
+        ApplyHit(W);
     }
 }
 void URPGFrameworkMoveExecutor::LogEvents(const TArray<FRPGBossMoveModelEvent>& Events) const

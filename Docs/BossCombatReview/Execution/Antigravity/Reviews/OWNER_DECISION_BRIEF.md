@@ -1,4 +1,4 @@
-# Track B: Owner Strategic Decision Brief (v2.18)
+# Track B: Owner Strategic Decision Brief (v2.19)
 
 **Date:** 2026-11-01  
 **Author:** Tech Lead Claude & Antigravity  
@@ -9,14 +9,15 @@
 
 ## 1. Executive Summary & Current State
 
-The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.25) and census script (`Reviews/generate_not_yet_census.py`).
+The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.26) and census script (`Reviews/generate_not_yet_census.py`).
 
 ### Ledger Census Today (82 Canonical Requirements):
-- **WITNESSED:** **55** (67.1%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
+- **WITNESSED:** **56** (68.3%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
 - **PARTIAL:** **14** (17.1%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
-- **NOT YET:** **13** (15.9%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
+- **NOT YET:** **12** (14.6%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
 
 ### Milestones Graduated to WITNESSED (Since C-546):
+- **BOSS-HIT-011 (Swept annulus shockwave):** Live PIE proof on `L_SevarogFrameworkProofHIT011` (`Cards/Move_Sevarog_HeavyRing_HIT011.uasset`, `DA_Sevarog_Ring_HIT011.uasset`, `Claude/B_HIT011/pie_ring_hit`) proves outward expanding ground shockwave ring sweeps outward without invisible gaps or lingering ghost damage. Window in `FRPGBossMoveWindow` supports `bRing` (no sockets, no baked samples) parameterized by `RingStartRadiusCm` (40cm), `RingSpeedCmPerSecond` (600cm/s), `RingThicknessCm` (50cm), and `RingHeightCm` (80cm), validated in `RPGBossMoveCards::Validate` (`RPGBossMoveCard.cpp:75-84;` tests in `RPGBossMoveCardTests.cpp:128-132`). In `URPGFrameworkMoveExecutor::SweepWindows`, ring window evaluates outward expanding front and tests target span via pure rule `RPGBossTrack::RingTouches`, emitting structured token `ring_sweep`. Continuous tick spans leave no invisible gaps across frame times (proven by pure unit test `FFrameworkSweptAnnulus` in `RPGFrameworkRuntimeTests.cpp:484-488` and gap loop :490-499 across dt 1/240, 1/60, 1/30, 0.2s). Damage resolves centrally deduplicated by shared `HitGroup_ScytheBlade` (BOSS-HIT-010). Live PIE proves contact=1 and hit Accepted (hpApplied=55, health 800->745) at frame 522 (:1636, :1638) when front 85..95 reaches near edge 128.5 - 42 = 86.5cm, with bit-for-bit parity in `pie_ring_hit2`; out-of-reach run (:1624..:1666) confirms 19 ticks contact=0, 0 hits; passed run (:1656) confirms zero lingering ghost damage behind expanding band.
 - **BOSS-AWR-008 (Dodge direction histogram):** Live PIE proof on `L_SevarogFrameworkProofAWR008` (`DA_Sevarog_DodgeMemory_AWR008`, `Claude/B_AWR008/pie_dodge`) proves boss remembers player dodge directions and boosts forward roll-catch / gap-closer card score when backward dodges accumulate. Profile fields `DodgeHistoryDepth` (default 3), `DodgeBackThreshold` (default 2), and `DodgeSpeedCm` (default 600) in `URPGBossFrameworkProfile` (F5 lane). Candidate cards configure `BackDodgeWeightMultiplier` (default 1.0). In `ARPGFrameworkBossCharacter::TickDodge`, target velocity is classified relative to boss-target vector via pure rule `RPGBossTrack::ClassifyDodge` into ring buffer `FDodgeHistory`; when `BackCount() >= DodgeBackThreshold`, boss logs `dodge_pattern state=BackDodging` and scales card scores by `BackDodgeWeightMultiplier` in `FRPGBossMoveSelector`. Unit tests in `RPGFrameworkRuntimeTests.cpp:508,509,517,525` (`OneBossFight.Framework.Runtime.DodgeHistory`) verify Back/Forward velocity classification, slow roll suppression, history ring depth rotation, and profile validation. Live PIE with test hook `rpg.BossProofPlayerDodge 0.3:Back,0.8:Back` proves: attack 1 (before dodges) selects HeavySlam (0.927 vs SwingSlow 0.785); dodge 1 observed Back at frame 591 (:1614); dodge 2 observed Back at frame 621 (:1654); at decision 2, BackDodging confirmed (:1710), scaling SwingSlow score by ~2x to 1.578 (:1719), winning decision over HeavySlam (0.932); verified with bit-for-bit parity in `pie_dodge2`.
 - **BOSS-AWR-007 (LOS and memory):** Live PIE proof on `L_SevarogFrameworkProofAWR007C` (`Claude/B_AWR007/pie_hide`) proves occlusion by arena pillars triggers search and repositioning behavior instead of blind wall-striking. Profile field `LosSearchSeconds` (0 off, (0,30], F5 lane; token `Framework.Profile.Domain`) in `URPGBossFrameworkProfile`. Every tick `ARPGFrameworkBossCharacter::TickLos` traces `ECC_Visibility` to target; pure memory rule `RPGBossTrack::LosStep` in `Player/RPGBossTrackRules.h` tracks sight loss, regain, and timeout, retaining `LastKnown` position of the last visible tick. While sight is lost in neutral, boss neither decides nor strikes: it walks to `LastKnown` via `MoveToLocation`, returning to range band via `WalkToBand` upon regain. Unit tests in `RPGFrameworkRuntimeTests.cpp:457,458,460,464` verify sight loss, last known retention, sight regain, timeout at 3.0s reported once, and profile domain validation. Live PIE with target teleported behind a 100x100x600cm pillar at frame 616 proves: sight lost (:1663 `los_lost`), search start at frame 659 (:1708 `los_search_start`), sight regain (:1709 `los_regained`, :1710 `los_resume`), turn in place (:1715), and attack resume (:1757) with zero decisions, candidate evaluations, or blind strikes during occlusion.
 - **BOSS-SEL-009 (Reaction latency and budget):** Live PIE proof on `L_SevarogFrameworkProofSEL009` (`Claude/B_SEL009/pie_flask`) proves AI reaction latency to player flask action is bounded by reaction delay window [0.2s - 0.4s]. In `ARPGFrameworkBossCharacter::TickFlask`, perception samples the target `DrinkingPotion` montage edge, logs `flask_perceived`, and draws latency from pure rule `RPGBossTrack::ReactionDelaySeconds(Min, Max, Seed, Count)` in `Player/RPGBossTrackRules.h` (`FRandomStream(Seed + Count * 7919)`, uniform in [Min, Max]); once delay elapses, logs `flask_reaction` with measured delay and sets `FlaskKnown()` until montage stops (`flask_end`). Unit test `OneBossFight.Framework.Runtime.ReactionDelay` in `RPGFrameworkRuntimeTests.cpp` verifies 1000 draws within [0.2, 0.4] spreading > 0.15, seed determinism, and profile validation. Live PIE with test hook `-Console 'rpg.BossProofPlayerDrink 0.3,3.5'` proves Drink 1 perceived at frame 590 (latency 0.288s) and reacts at frame 608 (measured delay 0.30s, 18 frames at 60 fps); Drink 2 perceived at frame 782 (latency 0.280s) and reacts at frame 799 (measured delay 0.283s, 17 frames at 60 fps); both measured delays strictly within [0.2s, 0.4s].
@@ -65,18 +66,18 @@ From the original plan (`Reviews/PARTIAL_UPGRADE_PLAN.md`), with its current sta
 6. **Hardware Baseline (1 row):**
    - `BOSS-QA-005` (Performance bounds): Packaged build 1080p 60 FPS $p99 \le 16.67\text{ ms}$ on physical RTX 2060 Super GPU (parked by owner).
 
-### B. The 13 NOT YET Rows (Grouped by Class & Cost)
+### B. The 12 NOT YET Rows (Grouped by Class & Cost)
 Directly computed from `Reviews/NOT_YET_CENSUS.md` and verified against disk:
-- **Cost Breakdown:** **Cost S (1-2 runs): 0 reqs (0.0%)** | **Cost M (2-4 runs): 7 reqs (53.8%)** | **Cost L (4+ runs): 6 reqs (46.2%)**.
+- **Cost Breakdown:** **Cost S (1-2 runs): 0 reqs (0.0%)** | **Cost M (2-4 runs): 7 reqs (58.3%)** | **Cost L (4+ runs): 5 reqs (41.7%)**.
 - **By Dependency Class:**
   * **ENGINE-ONLY (0 reqs, 0.0%):** All engine-only requirements (`SEL-009`) now fully implemented and witnessed!
   * **NEEDS DESIGN DECISION (0 reqs, 0.0%):** All 4 design decision rows (`PAC-002`, `MOV-002`, `PHS-005`, `HIT-010`) now fully implemented and witnessed!
-  * **NEEDS ART (6 reqs, 46.2%):** Requires animations, montages, notify tracks, or level collision art.
+  * **NEEDS ART (6 reqs, 50.0%):** Requires animations, montages, notify tracks, or level collision art.
     - Cost M: `BOSS-MOV-004` (Wall-safe charge trajectories), `BOSS-MOV-006` (L_SevarogArena snag point audit), `BOSS-DEF-005` (Defensive moveset actions).
     - Cost L: `BOSS-ANM-003` (Bounded holds), `BOSS-PAC-004` (Vulnerability visual cues), `BOSS-QA-007` (Low VFX accessibility harness).
-  * **NEEDS NEW SYSTEM (3 reqs, 23.1%):** Requires unbuilt architectural subsystems.
-    - Cost L: `BOSS-ANM-006` (Motion Warping plugin integration), `BOSS-HIT-011` (Swept annulus shockwave), `BOSS-HIT-012` (Two-character grab state machine).
-  * **PLAYER-SIDE (4 reqs, 30.8%):** Requires player combat intake, input buffers, or camera integration.
+  * **NEEDS NEW SYSTEM (2 reqs, 16.7%):** Requires unbuilt architectural subsystems.
+    - Cost L: `BOSS-ANM-006` (Motion Warping plugin integration), `BOSS-HIT-012` (Two-character grab state machine).
+  * **PLAYER-SIDE (4 reqs, 33.3%):** Requires player combat intake, input buffers, or camera integration.
     - Cost M: `BOSS-AWR-006` (Player flask/heavy commitment listener), `BOSS-PAC-003` (Finisher recovery punish window), `BOSS-PAC-005` (Punish-margin calculation formula), `BOSS-QA-006` (Combat follow camera framing).
 
 ---

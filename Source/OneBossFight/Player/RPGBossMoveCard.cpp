@@ -72,14 +72,23 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
         Ids.Add(W.WindowId); // repeated HitGroup is intentional: shared dedupe across windows.
         Number(R, *FString::Printf(TEXT("%s.StartSeconds"), *Field), W.StartSeconds);
         Number(R, *FString::Printf(TEXT("%s.EndSeconds"), *Field), W.EndSeconds);
-        Number(R, *FString::Printf(TEXT("%s.RadiusCm"), *Field), W.RadiusCm, true);
+        // BOSS-HIT-011: a ring window has no blade: its own five numbers instead of the radius and sockets.
+        if (W.bRing)
+        {
+            Number(R, *FString::Printf(TEXT("%s.RingStartRadiusCm"), *Field), W.RingStartRadiusCm);
+            Number(R, *FString::Printf(TEXT("%s.RingSpeedCmPerSecond"), *Field), W.RingSpeedCmPerSecond, true);
+            Number(R, *FString::Printf(TEXT("%s.RingThicknessCm"), *Field), W.RingThicknessCm, true);
+            Number(R, *FString::Printf(TEXT("%s.RingHeightCm"), *Field), W.RingHeightCm, true);
+            if (W.BakedSamples.Num() > 0 || !W.SocketA.IsNone() || !W.SocketB.IsNone()) Fail(R, TEXT("MoveCard.Window"), Field + TEXT(" ring with sockets or baked samples"));
+        }
+        else Number(R, *FString::Printf(TEXT("%s.RadiusCm"), *Field), W.RadiusCm, true);
         // Direct windows run one after the other; a secondary window (BOSS-HIT-010) may overlap them.
         if (!(W.StartSeconds >= S.ActiveStartSeconds && W.StartSeconds < W.EndSeconds &&
             W.EndSeconds <= S.ActiveEndSeconds && (W.bSecondary || W.StartSeconds >= PreviousEnd)))
             Fail(R, TEXT("MoveCard.Window"), Field);
         if (!W.bSecondary) PreviousEnd = W.EndSeconds;
-        if (W.SocketA.IsNone() || W.SocketB.IsNone() || W.SocketA == W.SocketB ||
-            !M.SocketOrBoneNames.Contains(W.SocketA) || !M.SocketOrBoneNames.Contains(W.SocketB))
+        if (!W.bRing && (W.SocketA.IsNone() || W.SocketB.IsNone() || W.SocketA == W.SocketB ||
+            !M.SocketOrBoneNames.Contains(W.SocketA) || !M.SocketOrBoneNames.Contains(W.SocketB)))
             Fail(R, TEXT("MoveCard.Socket"), Field);
         if (W.BakedSamples.Num() > 0)
         {

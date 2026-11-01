@@ -35,6 +35,12 @@ struct FRPGBossMoveWindow
     UPROPERTY(EditAnywhere) float RadiusCm = 0.f;
     /** BOSS-HIT-010: a SECONDARY window (shockwave / ground splash). It may overlap the direct windows in time, must share a HitGroup with a direct window, and is always processed AFTER the direct windows of the same tick, so the shared hit key makes a simultaneous contact apply the direct hit only. */
     UPROPERTY(EditAnywhere) bool bSecondary = false;
+    /** BOSS-HIT-011: a RING window (ground shockwave around the boss, no sockets, no baked samples). Its front starts at RingStartRadiusCm when the window opens and moves outward at RingSpeedCmPerSecond; the band behind the front is RingThicknessCm wide; the wave reaches RingHeightCm above the ground (a target above that is missed). The ring ends with the window. */
+    UPROPERTY(EditAnywhere) bool bRing = false;
+    UPROPERTY(EditAnywhere) float RingStartRadiusCm = 0.f;
+    UPROPERTY(EditAnywhere) float RingSpeedCmPerSecond = 0.f;
+    UPROPERTY(EditAnywhere) float RingThicknessCm = 0.f;
+    UPROPERTY(EditAnywhere) float RingHeightCm = 0.f;
     /** Optional (empty = live sockets): the baked blade path of this window, strictly ordered, covering [StartSeconds, EndSeconds], inside the clip. */
     UPROPERTY(EditAnywhere) TArray<FRPGBakedBladeSample> BakedSamples;
 };

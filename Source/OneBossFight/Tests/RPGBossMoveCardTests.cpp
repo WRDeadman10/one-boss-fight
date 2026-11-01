@@ -123,6 +123,13 @@ bool FBossMoveCardRejections::RunTest(const FString&)
     Reject([](FInput& F){F.S.Windows[1].bSecondary=true;F.S.Windows[1].HitGroup=TEXT("OtherGroup");},TEXT("MoveCard.Window"));
     Reject([](FInput& F){for(auto& W:F.S.Windows)W.bSecondary=true;},TEXT("MoveCard.Window"));
     Reject([](FInput& F){F.S.Windows[1].StartSeconds=F.S.Windows[0].StartSeconds;},TEXT("MoveCard.Window"));   // two DIRECT windows still may not overlap
+    // BOSS-HIT-011: a ring window (no sockets) validates with its five numbers, and is refused without them or with a blade.
+    auto MakeRing=[](FInput& F){auto& W=F.S.Windows[1];W.bSecondary=true;W.HitGroup=F.S.Windows[0].HitGroup;W.SocketA=W.SocketB=NAME_None;W.RadiusCm=0.f;W.bRing=true;W.RingStartRadiusCm=60.f;W.RingSpeedCmPerSecond=400.f;W.RingThicknessCm=40.f;W.RingHeightCm=50.f;};
+    {FInput F;MakeRing(F);TestTrue(TEXT("ring window without sockets is valid"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}
+    Reject([&](FInput& F){MakeRing(F);F.S.Windows[1].RingSpeedCmPerSecond=0.f;},TEXT("MoveCard.Domain"));
+    Reject([&](FInput& F){MakeRing(F);F.S.Windows[1].RingThicknessCm=-1.f;},TEXT("MoveCard.Domain"));
+    Reject([&](FInput& F){MakeRing(F);F.S.Windows[1].RingHeightCm=std::numeric_limits<float>::quiet_NaN();},TEXT("MoveCard.NonFinite"));
+    Reject([&](FInput& F){MakeRing(F);F.S.Windows[1].SocketA=F.S.Windows[0].SocketA;},TEXT("MoveCard.Window"));
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveCardSnapshot, "OneBossFight.Framework.MoveCard.SnapshotAndFailure", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
