@@ -1,11 +1,11 @@
 {
-  "version": "3.31",
+  "version": "3.32",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 65,
+    "WITNESSED": 66,
     "PARTIAL": 14,
-    "NOT YET": 3
+    "NOT YET": 2
   },
   "requirements": [
     {
@@ -1731,8 +1731,8 @@
           "quoted": "[FrameworkProof] warp_summary instance=1 movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45"
         }
       ],
-      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45\u00b0).",
-      "notes": "Witnessed (C-627, BUILD-134): Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45\u00b0). Architectural Decision (DECISIONS.md 2026-11-01): The Motion Warping plugin was not enabled in uproject because it operates on root-motion animation clips while the card backend is in-place only (MoveCard.UnsupportedRootMotion); the observable of the row (translation and rotation strictly clamped) is satisfied by boss-owned bounded warp clamping. Card spec fields WarpStartSeconds, WarpEndSeconds, WarpMaxDistanceCm (<=1000cm), WarpMaxAngleDegrees (<=180\u00b0), WarpStandoffCm (>=0) are validated in RPGBossMoveCards::Validate (RPGBossMoveCard.cpp:109-130; tests in RPGBossMoveCardTests.cpp:144-151). Pure warp step formulas RPGBossTrack::WarpStepCm and WarpStepDegrees dynamically allocate need proportionally across remaining window time, capped by remaining budget, and charged only by distance actually moved via swept move (tested in RPGFrameworkRuntimeTests.cpp:525-536 across dt 1/240..0.1s and ranges 20..600cm). Emits structured telemetry warp_step and warp_summary. Live PIE proofs on L_SevarogFrameworkProofANM006 (Move_Sevarog_HeavyWarp_ANM006, warp window 0.4..0.5333s, budget 150cm / 45\u00b0, standoff 105cm; Claude/B_ANM006): 1) pie_warp_room (target 128.467cm away, room to spare): closes exactly to standoff 105cm (:1643 warp_summary movedCm=23.4667 turnedDeg=0, well within budgets; parity in pie_warp_room2). 2) pie_warp_clamped (target at 626cm and 55\u00b0): needs 371cm / 55\u00b0, spends exactly budget limit (:1641 last step budgetCm=150, budgetDeg=45; :1644 warp_summary movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45). Limits: boss-owned actor translation/yaw sweep; root-motion plugin not used."
+      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45°).",
+      "notes": "Witnessed (C-627, BUILD-134): Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45°). Architectural Decision (DECISIONS.md 2026-11-01): The Motion Warping plugin was not enabled in uproject because it operates on root-motion animation clips while the card backend is in-place only (MoveCard.UnsupportedRootMotion); the observable of the row (translation and rotation strictly clamped) is satisfied by boss-owned bounded warp clamping. Card spec fields WarpStartSeconds, WarpEndSeconds, WarpMaxDistanceCm (<=1000cm), WarpMaxAngleDegrees (<=180°), WarpStandoffCm (>=0) are validated in RPGBossMoveCards::Validate (RPGBossMoveCard.cpp:109-130; tests in RPGBossMoveCardTests.cpp:144-151). Pure warp step formulas RPGBossTrack::WarpStepCm and WarpStepDegrees dynamically allocate need proportionally across remaining window time, capped by remaining budget, and charged only by distance actually moved via swept move (tested in RPGFrameworkRuntimeTests.cpp:525-536 across dt 1/240..0.1s and ranges 20..600cm). Emits structured telemetry warp_step and warp_summary. Live PIE proofs on L_SevarogFrameworkProofANM006 (Move_Sevarog_HeavyWarp_ANM006, warp window 0.4..0.5333s, budget 150cm / 45°, standoff 105cm; Claude/B_ANM006): 1) pie_warp_room (target 128.467cm away, room to spare): closes exactly to standoff 105cm (:1643 warp_summary movedCm=23.4667 turnedDeg=0, well within budgets; parity in pie_warp_room2). 2) pie_warp_clamped (target at 626cm and 55°): needs 371cm / 55°, spends exactly budget limit (:1641 last step budgetCm=150, budgetDeg=45; :1644 warp_summary movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45). Limits: boss-owned actor translation/yaw sweep; root-motion plugin not used."
     },
     {
       "id": "BOSS-ANM-007",
@@ -2988,11 +2988,96 @@
       "title": "Fair boss defense",
       "section": "Defense, posture and interruption",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Player/RPGBossDefenseRules.h",
+        "Source/OneBossFight/Tests/RPGBossDefenseTests.cpp",
+        "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+        "Content/OneBossFight/FrameworkProof/Cards/Move_Sevarog_BackStep_DEF005.uasset",
+        "Content/OneBossFight/FrameworkProof/DA_Sevarog_Defense_DEF005.uasset",
+        "Content/OneBossFight/FrameworkProof/L_SevarogFrameworkProofDEF005.umap",
+        "Docs/BossCombatReview/Execution/Claude/B_DEF005/pie_pass/editor_raw.log",
+        "Docs/BossCombatReview/Execution/Claude/B_DEF005/pie_fail/editor_raw.log"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossDefenseTests.cpp",
+          "line": 12,
+          "quoted": "TestTrue(TEXT(\"a move that starts 0.3 s in is telegraphed\"),TelegraphOk(.3,1.));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossDefenseTests.cpp",
+          "line": 14,
+          "quoted": "TestTrue(TEXT(\"exactly 0.25 s is\"),TelegraphOk(.25,1.));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossDefenseTests.cpp",
+          "line": 17,
+          "quoted": "TestTrue(TEXT(\"a 150 cm backstep is fine, 250 is the cap\"),BackstepDistanceOk(150.)&&BackstepDistanceOk(250.));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossDefenseTests.cpp",
+          "line": 19,
+          "quoted": "TestTrue(TEXT(\"a 3 s cooldown is enough\"),CooldownOk(3.)&&CooldownOk(10.));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossDefenseTests.cpp",
+          "line": 23,
+          "quoted": "TestTrue(TEXT(\"0.75 s of recovery after the move leaves a window\"),CounterplayMarginSeconds(200.,150.,.75,M)>0.);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossDefenseTests.cpp",
+          "line": 24,
+          "quoted": "TestTrue(TEXT(\"the margin is 0.75 - 0.6833\"),FMath::IsNearlyEqual(CounterplayMarginSeconds(200.,150.,.75,M),.75-(.35+200./600.),1e-6));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 176,
+          "quoted": "{FInput F;MakeBackstep(F);TestTrue(TEXT(\"a backstep card without hit windows is valid\"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 179,
+          "quoted": "{FInput F;MakeBackstep(F);F.S.WarpStartSeconds=.3125f;F.S.ActiveStartSeconds=.3125f;TestTrue(TEXT(\"a move that starts at exactly 0.25 real seconds (0.3125 card seconds at rate 1.25) is valid\"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_DEF005/pie_pass/editor_raw.log",
+          "line": 1578,
+          "quoted": "[2026.11.01-16.57.42:701][269]LogTemp: Display: [FrameworkProof] defense_check card=Move_Sevarog_BackStep_DEF005 check=Counterplay recoveryAfterMoveSeconds=0.75 backstepCm=150 counterplayMarginSeconds=0.099663 ok=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_DEF005/pie_pass/editor_raw.log",
+          "line": 1589,
+          "quoted": "[2026.11.01-16.57.44:133][396]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=Move_Sevarog_BackStep_DEF005 score=2.78222 range=128.467 phase=Phase_1 seq=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_DEF005/pie_pass/editor_raw.log",
+          "line": 1665,
+          "quoted": "[2026.11.01-16.57.44:560][443]LogTemp: Display: [FrameworkProof] warp_summary instance=1 movedCm=150 maxDistanceCm=150 turnedDeg=0 maxAngleDeg=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_DEF005/pie_pass/editor_raw.log",
+          "line": 1838,
+          "quoted": "[2026.11.01-16.57.46:352][646]LogTemp: Display: [FrameworkProof] decision attack=3 chosen=Move_Sevarog_BackStep_DEF005 score=2.79778 range=128.933 phase=Phase_1 seq=4"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_DEF005/pie_pass/editor_raw.log",
+          "line": 1914,
+          "quoted": "[2026.11.01-16.57.46:818][693]LogTemp: Display: [FrameworkProof] warp_summary instance=3 movedCm=150 maxDistanceCm=150 turnedDeg=0 maxAngleDeg=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_DEF005/pie_fail/editor_raw.log",
+          "line": 1575,
+          "quoted": "[2026.11.01-16.59.24:154][191]LogTemp: Display: [FrameworkProof] defense_check card=Move_Sevarog_BackStep_DEF005 check=Cooldown cooldownSeconds=1 requiredSeconds=3 ok=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_DEF005/pie_fail/editor_raw.log",
+          "line": 1577,
+          "quoted": "[2026.11.01-16.59.24:154][191]LogTemp: Error: [FrameworkProof] ERROR token=Framework.Profile.DefenseCooldown bossInactive=1"
+        }
+      ],
       "observable": "Boss defensive actions (backstep, block) adhere to fair player counterplay windows.",
-      "notes": "Defensive moveset actions and counterplay evaluation not yet implemented (designated for Defense Block)."
+      "notes": "Witnessed (C-644, BUILD-139): Fair boss defensive action implemented via BackStep move card (Cards/Move_Sevarog_BackStep_DEF005.uasset). Defensive card rules enforced by RPGBossDefenseRules.h and RPGBossMoveCards::Validate: 0 damage, 0 hit windows, bDefensive=true, bWarpAway=true, MoveDistanceCm in (0, 250], telegraph window >= 0.25 real seconds (tested in RPGBossDefenseTests.cpp:12-16 and RPGBossMoveCardTests.cpp:176,179). Defensive card cooldown enforced at >= 3.0 s (pie_fail :1575, :1577 proves rejection with Framework.Profile.DefenseCooldown when cooldown is 1.0 s). Counterplay margin rule enforces recovery after move >= player light startup + walk into reach at sprint speed (pie_pass :1578 counterplayMarginSeconds=0.099663 ok=1). Live PIE on L_SevarogFrameworkProofDEF005: attack 1 triggers BackStep hug response (:1589 score=2.78222, warp 150 cm backwards :1665), boss walks back into range (:1715 range=278.467), performs attack 2 (HeavySlam :1721), and performs attack 3 (BackStep :1838, :1914) after cooldown. Honest limits noted: the boss's only defensive action is the backstep (no block action; boss defense against player damage is the posture/stagger system per DECISIONS.md); counterplay margin of proof card is 0.0997 s (positive design value, owner may widen)."
     },
     {
       "id": "BOSS-PHS-001",

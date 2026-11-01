@@ -33,7 +33,7 @@ bool URPGFrameworkMoveExecutor::ValidatePlaybackCard(const TSharedPtr<const FRPG
 {
     Error.Reset();
     if (!C||!C->HasResolvedAssets()) {Error=TEXT("Framework.Playback.UnresolvedPreview");return false;}
-    if (!RPGBossMoveCards::Validate(C->Spec(),C->Metadata()).IsValid()||!C->Spec().Montage.IsNull()||C->Spec().Sequence.IsNull()||!C->Spec().SectionName.IsNone()||(bDamage?!(C->Spec().HPDamage>0.f):C->Spec().HPDamage!=0.f))
+    if (!RPGBossMoveCards::Validate(C->Spec(),C->Metadata()).IsValid()||!C->Spec().Montage.IsNull()||C->Spec().Sequence.IsNull()||!C->Spec().SectionName.IsNone()||((bDamage&&!C->Spec().bDefensive)?!(C->Spec().HPDamage>0.f):C->Spec().HPDamage!=0.f))
     {Error=TEXT("Framework.Playback.SequenceTelemetryOnly");return false;}
     return true;
 }
@@ -355,7 +355,9 @@ void URPGFrameworkMoveExecutor::TickWarp(double PrevPosition,double Position)
     // What is still needed: the distance down to the standoff and the yaw to face the target, as of THIS tick (the target may have moved).
     const FVector Boss=OwnerBoss->GetActorLocation(); FVector ToTarget=Target->GetActorLocation()-Boss; ToTarget.Z=0.;
     const double Dist=ToTarget.Size(); if (Dist<KINDA_SMALL_NUMBER) return;
-    const double NeededCm=FMath::Max(0.,Dist-double(S.WarpStandoffCm));
+    // BOSS-DEF-005: a backstep (bWarpAway) walks AWAY from the target until it stands WarpStandoffCm away; every other warp closes on the target down to the standoff.
+    const double NeededCm=S.bWarpAway?FMath::Max(0.,double(S.WarpStandoffCm)-Dist):FMath::Max(0.,Dist-double(S.WarpStandoffCm));
+    const FVector WarpDir=S.bWarpAway?-ToTarget/Dist:ToTarget/Dist;
     const double YawBefore=OwnerBoss->GetActorRotation().Yaw, NeededDeg=FMath::FindDeltaAngleDegrees(YawBefore,ToTarget.Rotation().Yaw);
     const double SecondsLeft=double(S.WarpEndSeconds)-Lo, Delta=Hi-Lo;
     const double StepCm=RPGBossTrack::WarpStepCm(NeededCm,double(S.WarpMaxDistanceCm)-WarpMovedCm,Delta,SecondsLeft);
@@ -363,7 +365,7 @@ void URPGFrameworkMoveExecutor::TickWarp(double PrevPosition,double Position)
     // Swept: the boss does not walk through the target or a wall. The budget is charged with the distance the boss really moved (a blocked step costs less than it asked for).
     double ActualCm=0.;
     FHitResult WarpHit;
-    if (StepCm>0.) { OwnerBoss->AddActorWorldOffset(ToTarget/Dist*StepCm,true,&WarpHit); ActualCm=FVector::Dist2D(Boss,OwnerBoss->GetActorLocation()); }
+    if (StepCm>0.) { OwnerBoss->AddActorWorldOffset(WarpDir*StepCm,true,&WarpHit); ActualCm=FVector::Dist2D(Boss,OwnerBoss->GetActorLocation()); }
     // BOSS-MOV-004: a swept step that is stopped by a wall or another actor costs less than it asked for; the stop is logged with what blocked it and where the boss stands.
     if (StepCm>0.&&ActualCm<StepCm-0.5) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] warp_blocked instance=%llu stepCm=%g actualCm=%g blocker=%s bossX=%g bossY=%g"),Token.InstanceId,StepCm,ActualCm,WarpHit.GetActor()?*WarpHit.GetActor()->GetName():TEXT("None"),OwnerBoss->GetActorLocation().X,OwnerBoss->GetActorLocation().Y);
     if (StepDeg!=0.) OwnerBoss->SetActorRotation(FRotator(0.,YawBefore+StepDeg,0.));

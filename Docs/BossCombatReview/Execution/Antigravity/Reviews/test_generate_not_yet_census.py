@@ -64,7 +64,7 @@ class TestNotYetCensus(unittest.TestCase):
         """Fails when uncited entry does not begin with 'no code: '."""
         saved = deepcopy(gen.CENSUS_METADATA)
         try:
-            gen.CENSUS_METADATA["BOSS-DEF-005"]["explanation"] = "missing prefix"
+            gen.CENSUS_METADATA["BOSS-QA-006"]["explanation"] = "missing prefix"
             with self.assertRaises(AssertionError) as ctx:
                 gen.validate_census_metadata()
             self.assertIn("Missing 'no code: ' prefix", str(ctx.exception))
@@ -78,8 +78,8 @@ class TestNotYetCensus(unittest.TestCase):
         self.assertTrue(gen.OUTPUT_MD.exists())
         with open(gen.OUTPUT_MD, "r", encoding="utf-8") as f:
             content = f.read()
-        self.assertIn("## 2. Complete 3-Row NOT YET Census Table", content)
-        self.assertEqual(content.count("| **BOSS-"), 3)
+        self.assertIn("## 2. Complete 2-Row NOT YET Census Table", content)
+        self.assertEqual(content.count("| **BOSS-"), 2)
 
 if __name__ == "__main__":
     unittest.main()

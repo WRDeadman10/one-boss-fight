@@ -93,6 +93,8 @@ SCHEMAS = {
 
     # 2f. Punish Openings & Margin Rules (BOSS-PAC-003 / BOSS-PAC-005 / v3.21)
     "punish_check": r"^card=[^\s]+ recoverySeconds=[^\s]+ lightStartupSeconds=[^\s]+ heavyStartupSeconds=[^\s]+ travelSeconds=[^\s]+ lightMarginSeconds=[^\s]+ heavyMarginSeconds=[^\s]+ requiredSeconds=[^\s]+ heavyFinisher=[01] ok=[01]$",
+    # Fair Boss Defense (BOSS-DEF-005)
+    "defense_check": r"^(?:card=[^\s]+ check=Cooldown cooldownSeconds=[^\s]+ requiredSeconds=[^\s]+ ok=[01]|card=[^\s]+ check=Counterplay recoveryAfterMoveSeconds=[^\s]+ backstepCm=[^\s]+ counterplayMarginSeconds=[^\s]+ ok=[01])$",
 
     # 3. Candidate Selection & Gate Decisions (v3.0 adds optional seq=\d+)
     "candidate": r"^attack=\d+ card=[^\s]+ score=[^\s]+(?:\s+seq=\d+)?$",

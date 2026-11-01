@@ -97,6 +97,9 @@ struct FRPGBossMoveCardSpec
     UPROPERTY(EditAnywhere) float WarpMaxDistanceCm = 0.f;
     UPROPERTY(EditAnywhere) float WarpMaxAngleDegrees = 0.f;
     UPROPERTY(EditAnywhere) float WarpStandoffCm = 0.f;
+    /** BOSS-DEF-005: a DEFENSIVE card (a backstep): no hit window, no damage. With bWarpAway the warp moves the boss AWAY from the target, back to WarpStandoffCm at most WarpMaxDistanceCm. Fair-window rules in RPGBossDefenseRules.h. */
+    UPROPERTY(EditAnywhere) bool bDefensive = false;
+    UPROPERTY(EditAnywhere) bool bWarpAway = false;
     /** BOSS-ANM-003 (0/0 = off): the windup HOLD. At HoldAtSeconds (card time, after the commit, before the active start) the montage stops for a seeded time in [HoldMinSeconds, HoldMaxSeconds] ((0,3]), then goes on. */
     UPROPERTY(EditAnywhere) float HoldAtSeconds = 0.f;
     UPROPERTY(EditAnywhere) float HoldMinSeconds = 0.f;

@@ -33,7 +33,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
         self.assertNotIn(b"\r", raw, "validate_framework_proof_logs.py contains CR! Must be pure LF.")
 
     def test_all_65_tokens_registered(self):
-        self.assertEqual(len(validator.SCHEMAS), 98, f"Expected 98 schemas, got {len(validator.SCHEMAS)}")
+        self.assertEqual(len(validator.SCHEMAS), 99, f"Expected 99 schemas, got {len(validator.SCHEMAS)}")
         for tok, pat in validator.SCHEMAS.items():
             compiled = validator.COMPILED_SCHEMAS.get(tok)
             self.assertIsNotNone(compiled, f"Token {tok} missing in COMPILED_SCHEMAS")
@@ -104,6 +104,9 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             "[FrameworkProof] player_swing from=Unknown to=Strong heavy=1",
             "[FrameworkProof] greed_pattern state=Greedy source=Flask seq=2",
             "[FrameworkProof] punish_check card=Move_Sevarog_SwingSlow_F7 recoverySeconds=1.1583 lightStartupSeconds=0.350337 heavyStartupSeconds=0.502704 travelSeconds=0.0833333 lightMarginSeconds=0.72463 heavyMarginSeconds=0.572263 requiredSeconds=0.3 heavyFinisher=0 ok=1",
+            # Fair Boss Defense (BOSS-DEF-005)
+            "[FrameworkProof] defense_check card=Move_Sevarog_BackStep_DEF005 check=Cooldown cooldownSeconds=1 requiredSeconds=3 ok=0",
+            "[FrameworkProof] defense_check card=Move_Sevarog_BackStep_DEF005 check=Counterplay recoveryAfterMoveSeconds=0.75 backstepCm=150 counterplayMarginSeconds=0.099663 ok=1",
             "[FrameworkProof] dodge_pattern state=BackDodging back=2 depth=2 threshold=2 seq=2",
             # Grab Fail-Safe (BOSS-HIT-012)
             "[FrameworkProof] grab_catch instance=1 window=Window_HeavySlam_Terminal socket=hand_l releaseAt=1.1 modeBefore=MOVE_Walking modeHeld=MOVE_None attached=1",
@@ -125,8 +128,8 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             self.assertTrue(ok, f"Expected line to be valid, got error: {err}\nLine: {line}")
             self.assertIsNotNone(tok)
 
-    def test_98_token_mutation_suite(self):
-        """Extract one real line per token from committed/candidate logs, break one key, and prove 98/98 fail."""
+    def test_99_token_mutation_suite(self):
+        """Extract one real line per token from committed/candidate logs, break one key, and prove 99/99 fail."""
         import subprocess
         res = subprocess.run(["git", "ls-files", "Docs/*.log"], cwd=REPO_ROOT, capture_output=True, text=True)
         files = [REPO_ROOT / f for f in res.stdout.splitlines() if f.strip()]
@@ -155,6 +158,8 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PAC003/pie_pass/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_MOV004/pie_wall/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_CUE/pie_mode0_both/editor_raw.log",
+            REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_DEF005/pie_pass/editor_raw.log",
+            REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_DEF005/pie_fail/editor_raw.log",
         ]:
             if candidate_log.exists() and candidate_log not in files:
                 files.append(candidate_log)
@@ -172,12 +177,12 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
                         tok = m.group(1)
                         if tok not in real_lines and tok in validator.SCHEMAS:
                             real_lines[tok] = line
-                if len(real_lines) == 98:
+                if len(real_lines) == 99:
                     break
-            if len(real_lines) == 98:
+            if len(real_lines) == 99:
                 break
 
-        self.assertEqual(len(real_lines), 98, f"Expected 98 real line samples, found {len(real_lines)}")
+        self.assertEqual(len(real_lines), 99, f"Expected 99 real line samples, found {len(real_lines)}")
 
         for tok, line in real_lines.items():
             # First verify the real line passes
@@ -509,6 +514,22 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             ("pie_mode3_lowvfx", 474),
         ]:
             log_path = cue_dir / sub / "editor_raw.log"
+            self.assertTrue(log_path.exists(), f"Missing {log_path}")
+            res = validator.validate_log_file(log_path)
+            self.assertEqual(len(res["syntax_failures"]), 0, f"[{sub}] Expected 0 syntax failures, got {res['syntax_failures']}")
+            self.assertEqual(len(res["semantic_violations"]), 0, f"[{sub}] Expected 0 semantic violations, got {res['semantic_violations']}")
+            self.assertEqual(res["framework_proof_lines"], expected_lines)
+
+    def test_b_def005_evidence_logs(self):
+        """B_DEF005 evidence logs parse with 0 syntax failures and 0 semantic violations."""
+        def_dir = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_DEF005"
+        for sub, expected_lines in [
+            ("pie_pass", 511),
+            ("pie_pass2", 511),
+            ("pie_fail", 7),
+            ("pie_regression_pac003_pass", 476),
+        ]:
+            log_path = def_dir / sub / "editor_raw.log"
             self.assertTrue(log_path.exists(), f"Missing {log_path}")
             res = validator.validate_log_file(log_path)
             self.assertEqual(len(res["syntax_failures"]), 0, f"[{sub}] Expected 0 syntax failures, got {res['syntax_failures']}")

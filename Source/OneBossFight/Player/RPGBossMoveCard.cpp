@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Player/RPGBossMoveCard.h"
 #include "Player/RPGBossCueRules.h"
+#include "Player/RPGBossDefenseRules.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimSequence.h"
 #include "Animation/Skeleton.h"
@@ -88,7 +89,16 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
     if (!(S.CommitSeconds <= S.ActiveStartSeconds && S.ActiveStartSeconds < S.ActiveEndSeconds &&
         S.ActiveEndSeconds <= S.RecoveryEndSeconds && S.RecoveryEndSeconds <= M.ClipLengthSeconds))
         Fail(R, TEXT("MoveCard.Timeline"), TEXT("commit<=activeStart<activeEnd<=recoveryEnd<=clipLength"));
-    if (S.Windows.IsEmpty()) Fail(R, TEXT("MoveCard.Window"), TEXT("no hit windows"));
+    if (S.Windows.IsEmpty() && !S.bDefensive) Fail(R, TEXT("MoveCard.Window"), TEXT("no hit windows"));
+    // BOSS-DEF-005: a defensive card has no hit window and no damage; its move starts after a readable telegraph; a backstep needs a move budget and stays within the cap.
+    if (S.bDefensive)
+    {
+        if (!S.Windows.IsEmpty() || S.HPDamage != 0.f) Fail(R, TEXT("MoveCard.Defensive"), TEXT("a defensive card has no hit window and no damage"));
+        const double MoveStart = (S.WarpMaxDistanceCm > 0.f || S.WarpMaxAngleDegrees > 0.f) ? double(S.WarpStartSeconds) : double(S.ActiveStartSeconds);
+        if (!RPGBossDefense::TelegraphOk(MoveStart, S.PlayRate)) Fail(R, TEXT("MoveCard.Defensive"), TEXT("the move starts less than 0.25 s after the card starts"));
+        if (S.bWarpAway && !RPGBossDefense::BackstepDistanceOk(S.WarpMaxDistanceCm)) Fail(R, TEXT("MoveCard.Defensive"), TEXT("a backstep needs 0 < distance <= 250 cm"));
+    }
+    else if (S.bWarpAway) Fail(R, TEXT("MoveCard.Defensive"), TEXT("bWarpAway belongs to a defensive card"));
     TSet<FName> Ids;
     double PreviousEnd = -1.0;
     for (int32 I = 0; I < S.Windows.Num(); ++I)
@@ -145,7 +155,7 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
     // BOSS-HIT-010: a secondary window needs a direct window of the same hit group (shared dedupe), and a card cannot be all secondary.
     {
         TSet<FName> DirectGroups; for (const FRPGBossMoveWindow& W : S.Windows) if (!W.bSecondary) DirectGroups.Add(W.HitGroup);
-        if (DirectGroups.IsEmpty()) Fail(R, TEXT("MoveCard.Window"), TEXT("no direct window"));
+        if (DirectGroups.IsEmpty() && !S.bDefensive) Fail(R, TEXT("MoveCard.Window"), TEXT("no direct window"));
         for (int32 I = 0; I < S.Windows.Num(); ++I) if (S.Windows[I].bSecondary && !DirectGroups.Contains(S.Windows[I].HitGroup))
             Fail(R, TEXT("MoveCard.Window"), FString::Printf(TEXT("Windows[%d] secondary without a direct window in its hit group"), I));
     }
@@ -174,7 +184,8 @@ FRPGBossMoveIssues CompileResolved(const FRPGBossMoveCardSpec& S, USkeleton* Ske
     M.SkeletonPath = FSoftObjectPath(Skeleton);
     M.AnimationSkeletonPath = FSoftObjectPath(Animation->GetSkeleton());
     M.MeshSkeletonPath = FSoftObjectPath(Mesh->GetSkeleton());
-    M.ClipLengthSeconds = Animation->GetPlayLength();
+    // A sequence with its own rate scale (Sevarog Run_Bwd: 1.25) is played by the dynamic montage that much faster, so the montage is that much SHORTER than the raw length: the card is validated against the length that really plays.
+    M.ClipLengthSeconds = Animation->GetPlayLength() / (Animation->RateScale > KINDA_SMALL_NUMBER ? Animation->RateScale : 1.f);
     M.bRootMotion = Animation->HasRootMotion();
     if (const UAnimMontage* Montage = Cast<UAnimMontage>(Animation))
     {

@@ -42,23 +42,23 @@ class TestOwnerDecisionBrief(unittest.TestCase):
     def test_census_parity(self):
         """Census numbers in brief must match ledger v3.15."""
         ledger_census = self.ledger["census"]
-        self.assertIn(f"**{ledger_census['WITNESSED']}** (79.3%)", self.text)
+        self.assertIn(f"**{ledger_census['WITNESSED']}** (80.5%)", self.text)
         self.assertIn(f"**{ledger_census['PARTIAL']}** (17.1%)", self.text)
-        self.assertIn(f"**{ledger_census['NOT YET']}** (3.7%)", self.text)
+        self.assertIn(f"**{ledger_census['NOT YET']}** (2.4%)", self.text)
         self.assertIn("82 Canonical Requirements", self.text)
 
     def test_dependency_class_counts(self):
         """NOT YET dependency class breakdown must match counts."""
         self.assertIn("ENGINE-ONLY (0 reqs, 0.0%)", self.text)
         self.assertIn("NEEDS DESIGN DECISION (0 reqs, 0.0%)", self.text)
-        self.assertIn("NEEDS ART (2 reqs, 66.7%)", self.text)
+        self.assertIn("NEEDS ART (1 reqs, 50.0%)", self.text)
         self.assertIn("NEEDS NEW SYSTEM (0 reqs, 0.0%)", self.text)
-        self.assertIn("PLAYER-SIDE (1 reqs, 33.3%)", self.text)
+        self.assertIn("PLAYER-SIDE (1 reqs, 50.0%)", self.text)
 
     def test_cost_breakdown_counts(self):
         """Cost breakdown counts must match generate_not_yet_census.py (S: 3, M: 12, L: 8)."""
         self.assertIn("Cost S (1-2 runs): 0 reqs (0.0%)", self.text)
-        self.assertIn("Cost M (2-4 runs): 3 reqs (100.0%)", self.text)
+        self.assertIn("Cost M (2-4 runs): 2 reqs (100.0%)", self.text)
         self.assertIn("Cost L (4+ runs): 0 reqs (0.0%)", self.text)
 
     def test_partial_counts(self):

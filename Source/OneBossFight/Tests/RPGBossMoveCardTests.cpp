@@ -171,6 +171,16 @@ bool FBossMoveCardRejections::RunTest(const FString&)
     Reject([&](FInput& F){MakeHold(F);MakeCue(F);F.S.Cues[1].Sound=F.S.Cues[0].Sound;},TEXT("MoveCard.CueDistinct"));
     Reject([&](FInput& F){MakeHold(F);MakeCue(F);F.S.Cues[1].CueId=F.S.Cues[0].CueId;},TEXT("MoveCard.CueDistinct"));
     Reject([&](FInput& F){MakeHold(F);MakeCue(F);for(int32 I=0;I<8;++I){FRPGBossCue X=F.S.Cues[1];X.CueId=FName(*FString::Printf(TEXT("X%d"),I));F.S.Cues.Add(X);}},TEXT("MoveCard.Cue"));
+    // BOSS-DEF-005: a defensive card has no hit window and no damage, its move starts after a readable telegraph (0.25 s), a backstep stays within 250 cm; bWarpAway belongs to a defensive card.
+    auto MakeBackstep=[](FInput& F){F.S.Windows.Reset();F.S.HPDamage=0.f;F.S.bDefensive=true;F.S.bWarpAway=true;F.S.WarpStartSeconds=.4f;F.S.WarpEndSeconds=.7f;F.S.WarpMaxDistanceCm=150.f;F.S.WarpStandoffCm=300.f;F.S.ActiveStartSeconds=.4f;F.S.CommitSeconds=.1f;F.S.ActiveEndSeconds=.7f;F.S.RecoveryEndSeconds=1.2f;};
+    {FInput F;MakeBackstep(F);TestTrue(TEXT("a backstep card without hit windows is valid"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}
+    Reject([&](FInput& F){F.S.Windows.Reset();},TEXT("MoveCard.Window"));   // no hit window and not defensive
+    Reject([&](FInput& F){MakeBackstep(F);F.S.HPDamage=5.f;},TEXT("MoveCard.Defensive"));
+    {FInput F;MakeBackstep(F);F.S.WarpStartSeconds=.3125f;F.S.ActiveStartSeconds=.3125f;TestTrue(TEXT("a move that starts at exactly 0.25 real seconds (0.3125 card seconds at rate 1.25) is valid"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}
+    Reject([&](FInput& F){MakeBackstep(F);F.S.WarpStartSeconds=.2f;F.S.ActiveStartSeconds=.2f;},TEXT("MoveCard.Defensive"));
+    Reject([&](FInput& F){MakeBackstep(F);F.S.WarpMaxDistanceCm=251.f;},TEXT("MoveCard.Defensive"));
+    Reject([&](FInput& F){MakeBackstep(F);F.S.Windows.Add(FRPGBossMoveWindow());},TEXT("MoveCard.Defensive"));
+    Reject([&](FInput& F){F.S.bWarpAway=true;},TEXT("MoveCard.Defensive"));   // away-warp on an attack card
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveCardSnapshot, "OneBossFight.Framework.MoveCard.SnapshotAndFailure", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)

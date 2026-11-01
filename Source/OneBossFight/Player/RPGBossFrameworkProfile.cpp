@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Player/RPGBossFrameworkProfile.h"
 #include "Player/RPGBossPunish.h"
+#include "Player/RPGBossDefenseRules.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimMontage.h"
@@ -160,7 +161,7 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
             S.ActiveStartSeconds<=P->BlendInSeconds||S.RecoveryEndSeconds+P->BlendOutSeconds>1.e6f)
         {Error=TEXT("Framework.Profile.SequenceTelemetryOnly");return false;}
         // F3 cards are telemetry only; an F4/F5 card must damage, by less than the target's health (one hit never kills the proof target).
-        if (P->bDamageEnabled?!(S.HPDamage>0.f&&S.HPDamage<P->TargetHealth):S.HPDamage!=0.f)
+        if ((P->bDamageEnabled&&!S.bDefensive)?!(S.HPDamage>0.f&&S.HPDamage<P->TargetHealth):S.HPDamage!=0.f)
         {Error=P->bDamageEnabled?TEXT("Framework.Profile.DamageCard"):TEXT("Framework.Profile.SequenceTelemetryOnly");return false;}
         USkeleton* Skeleton=S.Skeleton.LoadSynchronous(); UAnimSequence* Sequence=S.Sequence.LoadSynchronous();
         const auto* Generated=Cast<UAnimBlueprintGeneratedClass>(Anim);
@@ -201,6 +202,12 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
             }
         // The proof target must survive every attack of the run at the worst card damage.
         if (WorstHit*P->AttackCount>=P->TargetHealth) {Error=TEXT("Framework.Profile.DamageBudget");return false;}
+        // BOSS-DEF-005: a defensive card (a backstep) cannot be spammed.
+        for (const auto& C:D->Candidates) if (C.Card->Spec().bDefensive&&!RPGBossDefense::CooldownOk(C.CooldownSeconds))
+        {
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] defense_check card=%s check=Cooldown cooldownSeconds=%g requiredSeconds=%g ok=0"),*C.Card->Spec().MoveId.ToString(),double(C.CooldownSeconds),RPGBossDefense::MinCooldownSeconds);
+            Error=TEXT("Framework.Profile.DefenseCooldown");return false;
+        }
         // BOSS-PAC-003 / PAC-005: every card leaves the player time to punish. The player's startups are measured from the pack's montages, its run speed is the target class default.
         if (P->PunishMarginSeconds>0.f)
         {
@@ -215,9 +222,19 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
                 const FRPGBossMoveCardSpec& S=C.Card->Spec();
                 const double Recovery=RPGBossPunish::RecoverySeconds(S.ActiveEndSeconds,S.RecoveryEndSeconds,S.PlayRate), Travel=RPGBossPunish::TravelSeconds(S.MaxRangeCm,Moves.ReachCm,Moves.RunSpeedCmPerSecond);
                 const double LightMargin=RPGBossPunish::MarginSeconds(Recovery,Moves.LightStartupSeconds,Travel), HeavyMargin=RPGBossPunish::MarginSeconds(Recovery,Moves.HeavyStartupSeconds,Travel);
-                const bool bLightOk=RPGBossPunish::PunishOk(LightMargin,double(P->PunishMarginSeconds)), bHeavyOk=!C.bHeavyFinisher||RPGBossPunish::PunishOk(HeavyMargin,0.);
+                // A defensive card (a backstep) is not an attack: its fairness is the DEF-005 counterplay rule below, not the attack-recovery margin.
+                const bool bLightOk=S.bDefensive||RPGBossPunish::PunishOk(LightMargin,double(P->PunishMarginSeconds)), bHeavyOk=S.bDefensive||!C.bHeavyFinisher||RPGBossPunish::PunishOk(HeavyMargin,0.);
                 UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] punish_check card=%s recoverySeconds=%g lightStartupSeconds=%g heavyStartupSeconds=%g travelSeconds=%g lightMarginSeconds=%g heavyMarginSeconds=%g requiredSeconds=%g heavyFinisher=%d ok=%d"),*S.MoveId.ToString(),Recovery,Moves.LightStartupSeconds,Moves.HeavyStartupSeconds,Travel,LightMargin,HeavyMargin,double(P->PunishMarginSeconds),C.bHeavyFinisher?1:0,(bLightOk&&bHeavyOk)?1:0);
                 if (!bLightOk||!bHeavyOk) {Error=TEXT("Framework.Profile.PunishMargin");return false;}
+                // BOSS-DEF-005: after a backstep the player must still be able to walk in and punish before the recovery ends.
+                if (S.bDefensive)
+                {
+                    const double After=RPGBossPunish::RecoverySeconds(S.WarpEndSeconds,S.RecoveryEndSeconds,S.PlayRate);
+                    const double Counter=RPGBossDefense::CounterplayMarginSeconds(S.MaxRangeCm,S.bWarpAway?double(S.WarpMaxDistanceCm):0.,After,Moves);
+                    const bool bCounterOk=RPGBossPunish::PunishOk(Counter,0.);
+                    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] defense_check card=%s check=Counterplay recoveryAfterMoveSeconds=%g backstepCm=%g counterplayMarginSeconds=%g ok=%d"),*S.MoveId.ToString(),After,S.bWarpAway?double(S.WarpMaxDistanceCm):0.,Counter,bCounterOk?1:0);
+                    if (!bCounterOk) {Error=TEXT("Framework.Profile.DefenseCounterplay");return false;}
+                }
             }
         }
     }
