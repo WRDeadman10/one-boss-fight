@@ -106,6 +106,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             "[FrameworkProof] grab_damage instance=1 key=HitGroup_ScytheBlade outcome=ERPGDamageOutcome::Accepted hpApplied=55",
             "[FrameworkProof] grab_release instance=1 reason=Released interrupted=0 attached=0 mode=MOVE_Walking floorFound=1 floorZ=-2.84217e-14 feetZ=0.0348507 gapCm=0.0348507",
             # Bounded Motion Warping (BOSS-ANM-006)
+            "[FrameworkProof] warp_step instance=1 from=0.4 to=0.4 distCm=128.467 neededCm=48.4667 stepCm=4.33434e-05 movedCm=4.33434e-05 budgetCm=150 neededDeg=0 stepDeg=0 turnedDeg=0 budgetDeg=45",
             "[FrameworkProof] warp_step instance=1 from=0.45 to=0.466667 distCm=475.98 neededCm=370.98 stepCm=0 actualCm=0 movedCm=150 budgetCm=150 neededDeg=-34.6418 stepDeg=-6.93114 turnedDeg=27.7246 budgetDeg=45",
             "[FrameworkProof] warp_summary instance=1 movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45",
         ]
@@ -434,6 +435,24 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             self.assertEqual(len(res["syntax_failures"]), 0, f"[{sub}] Expected 0 syntax failures, got {res['syntax_failures']}")
             self.assertEqual(len(res["semantic_violations"]), 0, f"[{sub}] Expected 0 semantic violations, got {res['semantic_violations']}")
             self.assertEqual(res["framework_proof_lines"], expected_lines)
+
+    def test_warp_step_v1_and_v2_accepted(self):
+        """Verify warp_step accepts both v1 (no actualCm) and v2 (with actualCm), but rejects missing other fields."""
+        v1_line = "[FrameworkProof] warp_step instance=1 from=0.4 to=0.4 distCm=128.467 neededCm=48.4667 stepCm=4.33434e-05 movedCm=4.33434e-05 budgetCm=150 neededDeg=0 stepDeg=0 turnedDeg=0 budgetDeg=45"
+        v2_line = "[FrameworkProof] warp_step instance=1 from=0.45 to=0.466667 distCm=475.98 neededCm=370.98 stepCm=0 actualCm=0 movedCm=150 budgetCm=150 neededDeg=-34.6418 stepDeg=-6.93114 turnedDeg=27.7246 budgetDeg=45"
+        
+        ok, tok, _, err = validator.validate_line(v1_line)
+        self.assertTrue(ok, f"v1 warp_step line failed validation: {err}")
+        self.assertEqual(tok, "warp_step")
+        
+        ok, tok, _, err = validator.validate_line(v2_line)
+        self.assertTrue(ok, f"v2 warp_step line failed validation: {err}")
+        self.assertEqual(tok, "warp_step")
+        
+        # Missing another required field (e.g. movedCm) must fail
+        bad_line = "[FrameworkProof] warp_step instance=1 from=0.45 to=0.466667 distCm=475.98 neededCm=370.98 stepCm=0 actualCm=0 budgetCm=150 neededDeg=-34.6418 stepDeg=-6.93114 turnedDeg=27.7246 budgetDeg=45"
+        ok, _, _, _ = validator.validate_line(bad_line)
+        self.assertFalse(ok, "warp_step line missing movedCm was unexpectedly accepted!")
 
 if __name__ == "__main__":
     unittest.main()

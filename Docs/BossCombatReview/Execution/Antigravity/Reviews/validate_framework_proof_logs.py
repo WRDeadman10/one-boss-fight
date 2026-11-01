@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright One Boss Fight. All Rights Reserved.
 """
-validate_framework_proof_logs.py (v3.18)
+validate_framework_proof_logs.py (v3.19)
 
 Formal schema and semantic validator for all [FrameworkProof] structured telemetry lines
 emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, B_QA002, B_HIT005, B_AWR001, B_AWR002, B_EXE007, B_QA003B, B_EXE004, B_MOV005, B_EXE005, and B_MOV003).
@@ -94,7 +94,7 @@ SCHEMAS = {
     # 4. Heading Tracking & Motion Commitment
     "heading_commit": r"^instance=\d+ yaw=[^\s]+ turnedDegrees=[^\s]+ maxRateDegPerSec=[^\s]+ capDegPerSec=[^\s]+(?:\s+decisionRangeCm=[^\s]+ liveRangeCm=[^\s]+)?(?:\s+decisionYawDeg=[^\s]+ liveYawDeg=[^\s]+)?$",
     "heading_locked": r"^instance=\d+ yawAtCommit=[^\s]+ maxDriftAfterCommitDegrees=[^\s]+$",
-    "warp_step": r"^instance=\d+ from=[^\s]+ to=[^\s]+ distCm=[^\s]+ neededCm=[^\s]+ stepCm=[^\s]+ actualCm=[^\s]+ movedCm=[^\s]+ budgetCm=[^\s]+ neededDeg=[^\s]+ stepDeg=[^\s]+ turnedDeg=[^\s]+ budgetDeg=[^\s]+$",
+    "warp_step": r"^instance=\d+ from=[^\s]+ to=[^\s]+ distCm=[^\s]+ neededCm=[^\s]+ stepCm=[^\s]+(?:\s+actualCm=[^\s]+)? movedCm=[^\s]+ budgetCm=[^\s]+ neededDeg=[^\s]+ stepDeg=[^\s]+ turnedDeg=[^\s]+ budgetDeg=[^\s]+$",
     "warp_summary": r"^instance=\d+ movedCm=[^\s]+ maxDistanceCm=[^\s]+ turnedDeg=[^\s]+ maxAngleDeg=[^\s]+$",
 
     # 5. Playback & Montages
