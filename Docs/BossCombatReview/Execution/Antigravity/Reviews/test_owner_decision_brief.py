@@ -40,26 +40,26 @@ class TestOwnerDecisionBrief(unittest.TestCase):
         self.assertIn(b"\n", self.raw_bytes, "Missing LF in OWNER_DECISION_BRIEF.md")
 
     def test_census_parity(self):
-        """Census numbers in brief must match ledger v3.12."""
+        """Census numbers in brief must match ledger v3.15."""
         ledger_census = self.ledger["census"]
-        self.assertIn(f"**{ledger_census['WITNESSED']}** (53.7%)", self.text)
+        self.assertIn(f"**{ledger_census['WITNESSED']}** (54.9%)", self.text)
         self.assertIn(f"**{ledger_census['PARTIAL']}** (17.1%)", self.text)
-        self.assertIn(f"**{ledger_census['NOT YET']}** (29.3%)", self.text)
+        self.assertIn(f"**{ledger_census['NOT YET']}** (28.0%)", self.text)
         self.assertIn("82 Canonical Requirements", self.text)
 
     def test_dependency_class_counts(self):
         """NOT YET dependency class breakdown must match counts."""
-        self.assertIn("ENGINE-ONLY (5 reqs, 20.8%)", self.text)
-        self.assertIn("NEEDS DESIGN DECISION (4 reqs, 16.7%)", self.text)
-        self.assertIn("NEEDS ART (6 reqs, 25.0%)", self.text)
-        self.assertIn("NEEDS NEW SYSTEM (5 reqs, 20.8%)", self.text)
-        self.assertIn("PLAYER-SIDE (4 reqs, 16.7%)", self.text)
+        self.assertIn("ENGINE-ONLY (4 reqs, 17.4%)", self.text)
+        self.assertIn("NEEDS DESIGN DECISION (4 reqs, 17.4%)", self.text)
+        self.assertIn("NEEDS ART (6 reqs, 26.1%)", self.text)
+        self.assertIn("NEEDS NEW SYSTEM (5 reqs, 21.7%)", self.text)
+        self.assertIn("PLAYER-SIDE (4 reqs, 17.4%)", self.text)
 
     def test_cost_breakdown_counts(self):
-        """Cost breakdown counts must match generate_not_yet_census.py (S: 4, M: 12, L: 8)."""
-        self.assertIn("Cost S (1-2 runs): 4 reqs (16.7%)", self.text)
-        self.assertIn("Cost M (2-4 runs): 12 reqs (50.0%)", self.text)
-        self.assertIn("Cost L (4+ runs): 8 reqs (33.3%)", self.text)
+        """Cost breakdown counts must match generate_not_yet_census.py (S: 3, M: 12, L: 8)."""
+        self.assertIn("Cost S (1-2 runs): 3 reqs (13.0%)", self.text)
+        self.assertIn("Cost M (2-4 runs): 12 reqs (52.2%)", self.text)
+        self.assertIn("Cost L (4+ runs): 8 reqs (34.8%)", self.text)
 
     def test_partial_counts(self):
         """PARTIAL category breakdown must sum to 14."""

@@ -106,7 +106,7 @@ CENSUS_METADATA = {
         "cost": "M",
         "cite": {
             "file": "Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp",
-            "line": 206,
+            "line": 245,
             "quote": "// Opt-in repositioning: nobody is eligible from here (the ",
         },
         "explanation": "repositioning only walks straight toward target band without arena boundary or wall clearance scoring",
@@ -126,16 +126,6 @@ CENSUS_METADATA = {
         "cost": "M",
         "cite": None,
         "explanation": "no code: forward charge attack animations with root motion require level art perimeter collision geometry and collision preset authoring to prevent clipping",
-    },
-    "BOSS-MOV-005": {
-        "dep_class": "ENGINE-ONLY",
-        "cost": "S",
-        "cite": {
-            "file": "Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp",
-            "line": 96,
-            "quote": "if(P&&P->ArenaRadiusCm>0.f&&FVector::Dist2D(Target->GetActor",
-        },
-        "explanation": "target leaving ArenaRadiusCm triggers TargetFault OffArena which halts and fails the boss; active leashing back to arena center and neutral reset not implemented",
     },
     "BOSS-MOV-006": {
         "dep_class": "NEEDS ART",
@@ -257,17 +247,17 @@ def main():
         data = json.load(f)
 
     not_yet_reqs = [r for r in data["requirements"] if r["status"] == "NOT YET"]
-    assert len(not_yet_reqs) == 24, f"Expected exactly 24 NOT YET requirements, found {len(not_yet_reqs)}"
+    assert len(not_yet_reqs) == 23, f"Expected exactly 23 NOT YET requirements, found {len(not_yet_reqs)}"
 
     lines_md = []
-    lines_md.append("# Track B Remaining Requirements Census: 24 NOT YET Rows\n")
+    lines_md.append("# Track B Remaining Requirements Census: 23 NOT YET Rows\n")
     lines_md.append("**Document Reference:** `Reviews/NOT_YET_CENSUS.md`  ")
     lines_md.append("**Task Reference:** `[C-565]` / `[C-568]` (Track B Direction Selection Census)  ")
     lines_md.append("**Source Authority:** `witness_status_v3.json` (exact titles and observables)  ")
-    lines_md.append("**Total Census:** 24 requirements currently classified as `NOT YET`  \n")
+    lines_md.append("**Total Census:** 23 requirements currently classified as `NOT YET`  \n")
     lines_md.append("---\n")
     lines_md.append("## 1. Executive Summary & Classification Matrix\n")
-    lines_md.append("This document classifies all 24 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).\n")
+    lines_md.append("This document classifies all 23 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).\n")
     lines_md.append("### Classification Definitions:")
     lines_md.append("- **ENGINE-ONLY:** Pure C++ / runtime rules or hooks; no art or external system dependencies.")
     lines_md.append("- **NEEDS ART:** Requires animations, montages, notify tracks, VFX/SFX, or arena mesh assets.")
@@ -279,7 +269,7 @@ def main():
     lines_md.append("- **M (Medium):** 2-4 runs; a new rule struct/method, unit tests, and live PIE proof scenario.")
     lines_md.append("- **L (Large):** 4+ runs; new multi-component system, asset plumbing, and multi-actor interaction harness.\n")
     lines_md.append("---\n")
-    lines_md.append("## 2. Complete 24-Row NOT YET Census Table\n")
+    lines_md.append("## 2. Complete 23-Row NOT YET Census Table\n")
     lines_md.append("| ID | Exact Title | Exact Observable | Dependency Class | Code Reference & Reason | Cost |")
     lines_md.append("|:---|:---|:---|:---:|:---|:---:|")
 
@@ -338,7 +328,7 @@ def main():
         f.write(content_str)
 
     print("-" * 110)
-    print(f"Successfully generated {OUTPUT_MD} with pure LF (24 rows).")
+    print(f"Successfully generated {OUTPUT_MD} with pure LF ({len(not_yet_reqs)} rows).")
     return 0
 
 if __name__ == "__main__":

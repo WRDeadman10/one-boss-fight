@@ -83,6 +83,7 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
     if (P.RepositionMax<0 || P.RepositionMax>8 || (P.RepositionMax>0 && !bF5) || !FMath::IsFinite(P.RepositionTurnDegPerSecond) || P.RepositionTurnDegPerSecond<0.f || P.RepositionTurnDegPerSecond>720.f || ((P.RepositionMax>0)!=(P.RepositionTurnDegPerSecond>0.f)))
         return Fail(TEXT("Framework.Profile.Domain"));
     if (!FMath::IsFinite(P.ArenaRadiusCm) || P.ArenaRadiusCm<0.f || P.ArenaRadiusCm>1.e6f || (P.ArenaRadiusCm>0.f && !bF5)) return Fail(TEXT("Framework.Profile.Domain"));
+    if (P.bArenaLeash && !(P.ArenaRadiusCm>0.f)) return Fail(TEXT("Framework.Profile.Domain"));
     // F9: bleed needs the selector lane (F5) and a hittable boss; BleedBuildupPerHit 0 = off (the other four then 0 too), else a coherent set (token Framework.Profile.Bleed).
     {
         const float Values[]={P.BleedBuildupPerHit,P.BleedInitialThreshold,P.BleedThresholdIncrease,P.BleedThresholdMax,P.BleedHpFraction};

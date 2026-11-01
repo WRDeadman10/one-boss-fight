@@ -1,4 +1,4 @@
-# Track B: Owner Strategic Decision Brief (v2.7)
+# Track B: Owner Strategic Decision Brief (v2.8)
 
 **Date:** 2026-11-01  
 **Author:** Tech Lead Claude & Antigravity  
@@ -9,14 +9,15 @@
 
 ## 1. Executive Summary & Current State
 
-The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.12) and census script (`Reviews/generate_not_yet_census.py`).
+The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.15) and census script (`Reviews/generate_not_yet_census.py`).
 
 ### Ledger Census Today (82 Canonical Requirements):
-- **WITNESSED:** **44** (53.7%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
+- **WITNESSED:** **45** (54.9%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
 - **PARTIAL:** **14** (17.1%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
-- **NOT YET:** **24** (29.3%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
+- **NOT YET:** **23** (28.0%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
 
 ### Milestones Graduated to WITNESSED (Since C-546):
+- **BOSS-MOV-005 (Arena-valid responses):** Live PIE proof on `L_SevarogFrameworkProofMOV005` (`Claude/B_MOV005/pie_leash3`) proves target teleporting outside radius triggers `arena_leash` Start, aborts active card with cleanup reason `ArenaLeash`, leashes back to arena center (where target began), and cleanly resumes fight upon player return.
 - **BOSS-AWR-001 (Target validity):** Attack abort and boss shutdown verified across all 3 fault states (Dead, OffArena, Destroyed) with zero subsequent candidate/decision evaluations (`Claude/B_AWR001`).
 - **BOSS-HIT-005 (Query filtering):** Non-target pawns filtered in sweep capsule (`ignoredPawns=1 selfHits=0`) with zero damage perturbation (`Claude/B_HIT005/byst60`), combined with dead-target abort.
 - **BOSS-QA-004 (FPS parity):** Fixed-timestep runs at 30, 60, and 120 FPS producing identical hit counts (2) and damage (55.0 applied).
@@ -59,22 +60,22 @@ From the original plan (`Reviews/PARTIAL_UPGRADE_PLAN.md`), with its current sta
 6. **Hardware Baseline (1 row):**
    - `BOSS-QA-005` (Performance bounds): Packaged build 1080p 60 FPS $p99 \le 16.67\text{ ms}$ on physical RTX 2060 Super GPU (parked by owner).
 
-### B. The 24 NOT YET Rows (Grouped by Class & Cost)
+### B. The 23 NOT YET Rows (Grouped by Class & Cost)
 Directly computed from `Reviews/NOT_YET_CENSUS.md` and verified against disk:
-- **Cost Breakdown:** **Cost S (1-2 runs): 4 reqs (16.7%)** | **Cost M (2-4 runs): 12 reqs (50.0%)** | **Cost L (4+ runs): 8 reqs (33.3%)**.
+- **Cost Breakdown:** **Cost S (1-2 runs): 3 reqs (13.0%)** | **Cost M (2-4 runs): 12 reqs (52.2%)** | **Cost L (4+ runs): 8 reqs (34.8%)**.
 - **By Dependency Class:**
-  * **ENGINE-ONLY (5 reqs, 20.8%):** Pure C++ runtime rules or hooks; no art dependencies.
-    - Cost S: `BOSS-MOV-003` (Movement commitment), `BOSS-MOV-005` (Arena center leashing), `BOSS-DEF-004` (MoveCard hyperarmor tags).
+  * **ENGINE-ONLY (4 reqs, 17.4%):** Pure C++ runtime rules or hooks; no art dependencies.
+    - Cost S: `BOSS-MOV-003` (Movement commitment), `BOSS-DEF-004` (MoveCard hyperarmor tags).
     - Cost M: `BOSS-SEL-009` (Reaction latency window), `BOSS-EXE-005` (Phase vs stagger priority).
-  * **NEEDS DESIGN DECISION (4 reqs, 16.7%):** Designer thresholds or scoring rules; requires owner choices before code.
+  * **NEEDS DESIGN DECISION (4 reqs, 17.4%):** Designer thresholds or scoring rules; requires owner choices before code.
     - Cost S: `BOSS-PAC-002` (Combo tempo pauses).
     - Cost M: `BOSS-MOV-002` (Combat positioning center bias), `BOSS-HIT-010` (Direct vs splash precedence), `BOSS-PHS-005` (Anti-cheese trigger rules).
-  * **NEEDS ART (6 reqs, 25.0%):** Requires animations, montages, notify tracks, or level collision art.
+  * **NEEDS ART (6 reqs, 26.1%):** Requires animations, montages, notify tracks, or level collision art.
     - Cost M: `BOSS-MOV-004` (Wall-safe charge trajectories), `BOSS-MOV-006` (L_SevarogArena snag point audit), `BOSS-DEF-005` (Defensive moveset actions).
     - Cost L: `BOSS-ANM-003` (Bounded holds), `BOSS-PAC-004` (Vulnerability visual cues), `BOSS-QA-007` (Low VFX accessibility harness).
-  * **NEEDS NEW SYSTEM (5 reqs, 20.8%):** Requires unbuilt architectural subsystems.
+  * **NEEDS NEW SYSTEM (5 reqs, 21.7%):** Requires unbuilt architectural subsystems.
     - Cost L: `BOSS-AWR-007` (LOS raycasts & memory), `BOSS-AWR-008` (Player dodge adaptation histogram), `BOSS-ANM-006` (Motion Warping plugin integration), `BOSS-HIT-011` (Swept annulus shockwave), `BOSS-HIT-012` (Two-character grab state machine).
-  * **PLAYER-SIDE (4 reqs, 16.7%):** Requires player combat intake, input buffers, or camera integration.
+  * **PLAYER-SIDE (4 reqs, 17.4%):** Requires player combat intake, input buffers, or camera integration.
     - Cost M: `BOSS-AWR-006` (Player flask/heavy commitment listener), `BOSS-PAC-003` (Finisher recovery punish window), `BOSS-PAC-005` (Punish-margin calculation formula), `BOSS-QA-006` (Combat follow camera framing).
 
 ---

@@ -53,7 +53,7 @@ class TestNotYetCensus(unittest.TestCase):
         """Fails when quote is not in cited line."""
         saved = deepcopy(gen.CENSUS_METADATA)
         try:
-            gen.CENSUS_METADATA["BOSS-MOV-005"]["cite"]["quote"] = "NonExistentQuoteString"
+            gen.CENSUS_METADATA["BOSS-MOV-003"]["cite"]["quote"] = "NonExistentQuoteString"
             with self.assertRaises(AssertionError) as ctx:
                 gen.validate_census_metadata()
             self.assertIn("Quote mismatch", str(ctx.exception))
@@ -78,8 +78,8 @@ class TestNotYetCensus(unittest.TestCase):
         self.assertTrue(gen.OUTPUT_MD.exists())
         with open(gen.OUTPUT_MD, "r", encoding="utf-8") as f:
             content = f.read()
-        self.assertIn("## 2. Complete 24-Row NOT YET Census Table", content)
-        self.assertEqual(content.count("| **BOSS-"), 24)
+        self.assertIn("## 2. Complete 23-Row NOT YET Census Table", content)
+        self.assertEqual(content.count("| **BOSS-"), 23)
 
 if __name__ == "__main__":
     unittest.main()

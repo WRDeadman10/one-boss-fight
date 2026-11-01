@@ -1,11 +1,11 @@
 {
-  "version": "3.14",
+  "version": "3.15",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 44,
+    "WITNESSED": 45,
     "PARTIAL": 14,
-    "NOT YET": 24
+    "NOT YET": 23
   },
   "requirements": [
     {
@@ -1239,29 +1239,29 @@
       "old_status": "NOT YET",
       "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:402",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:403",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:405",
-        "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1620",
-        "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1793",
-        "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1872",
-        "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log:1614",
-        "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log:1778"
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:433: Near(TEXT(\"60 ticks (1 s) toward 170 turn exactly the cap, 90 deg\"),Yaw,90.f);",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:434: TestTrue(TEXT(\"no tick turned more than cap * dt (1.5 deg)\"),MaxStep<=1.5f+1.e-3f);",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:436: Near(TEXT(\"after the commit 60 more ticks leave the yaw unchanged\"),Yaw,90.f);",
+        "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1620: [2026.10.31-14.32.11:592][615]LogTemp: Display: [FrameworkProof] heading_commit instance=1 yaw=180 turnedDegrees=0 maxRateDegPerSec=0 capDegPerSec=90",
+        "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1793: [2026.10.31-14.32.12:939][757]LogTemp: Display: [FrameworkProof] heading_locked instance=1 yawAtCommit=180 maxDriftAfterCommitDegrees=0",
+        "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1872: [2026.10.31-14.32.13:453][812]LogTemp: Display: [FrameworkProof] heading_locked instance=2 yawAtCommit=180 maxDriftAfterCommitDegrees=0",
+        "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log:1614: [2026.10.31-18.21.45:992][975]LogTemp: Display: [FrameworkProof] heading_commit instance=1 yaw=155.37 turnedDegrees=24.6298 maxRateDegPerSec=90.0008 capDegPerSec=90 decisionRangeCm=153.845 liveRangeCm=183.489",
+        "Docs/BossCombatReview/Execution/Claude/B_SHIFT/pie_shift2/editor_raw.log:1778: [2026.10.31-18.21.47:338][118]LogTemp: Display: [FrameworkProof] heading_locked instance=1 yawAtCommit=155.37 maxDriftAfterCommitDegrees=0"
       ],
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 431,
+          "line": 433,
           "quoted": "Near(TEXT(\"60 ticks (1 s) toward 170 turn exactly the cap, 90 deg\"),Yaw,90.f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 432,
+          "line": 434,
           "quoted": "TestTrue(TEXT(\"no tick turned more than cap * dt (1.5 deg)\"),MaxStep<=1.5f+1.e-3f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 434,
+          "line": 436,
           "quoted": "Near(TEXT(\"after the commit 60 more ticks leave the yaw unchanged\"),Yaw,90.f);"
         },
         {
@@ -1387,7 +1387,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 382,
+          "line": 384,
           "quoted": "TestEqual(TEXT(\"no slot node in the AnimBP\"),Token([](auto& X){X.bSlotNodePresent=false;}),FString(TEXT(\"Framework.Profile.StaggerAnim.SlotNode\")));"
         },
         {
@@ -1742,11 +1742,55 @@
       "title": "Arena-valid responses",
       "section": "Movement and arena",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:348: F5();P->ArenaRadiusCm=250.f;P->bArenaLeash=true;TestTrue(TEXT(\"leash with an arena radius is valid\"),RPGFramework::ValidateProfile(*P,Error));",
+        "Docs/BossCombatReview/Execution/Claude/B_MOV005/pie_leash3/editor_raw.log:1611: [2026.11.01-03.46.11:420][559]LogTemp: Display: [FrameworkProof] target_shift_injected n=1 dx=0 dy=500 dz=0",
+        "Docs/BossCombatReview/Execution/Claude/B_MOV005/pie_leash3/editor_raw.log:1612: [2026.11.01-03.46.11:420][559]LogTemp: Display: [FrameworkProof] arena_leash state=Start targetDistanceCm=500 radiusCm=250 centerX=0 centerY=0",
+        "Docs/BossCombatReview/Execution/Claude/B_MOV005/pie_leash3/editor_raw.log:1614: [2026.11.01-03.46.11:420][559]LogTemp: Display: [FrameworkProof] cleanup reason=ArenaLeash modelIdle=1 ownedMontageStopped=1",
+        "Docs/BossCombatReview/Execution/Claude/B_MOV005/pie_leash3/editor_raw.log:1615: [2026.11.01-03.46.11:689][593]LogTemp: Display: [FrameworkProof] arena_leash state=AtCenter distanceCm=32.9333",
+        "Docs/BossCombatReview/Execution/Claude/B_MOV005/pie_leash3/editor_raw.log:1616: [2026.11.01-03.46.12:913][751]LogTemp: Display: [FrameworkProof] target_shift_injected n=2 dx=0 dy=-400 dz=0",
+        "Docs/BossCombatReview/Execution/Claude/B_MOV005/pie_leash3/editor_raw.log:1617: [2026.11.01-03.46.12:913][751]LogTemp: Display: [FrameworkProof] arena_leash state=Resume bossDistanceToCenterCm=32.9333 atCenter=1"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 348,
+          "quoted": "F5();P->ArenaRadiusCm=250.f;P->bArenaLeash=true;TestTrue(TEXT(\"leash with an arena radius is valid\"),RPGFramework::ValidateProfile(*P,Error));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV005/pie_leash3/editor_raw.log",
+          "line": 1611,
+          "quoted": "[2026.11.01-03.46.11:420][559]LogTemp: Display: [FrameworkProof] target_shift_injected n=1 dx=0 dy=500 dz=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV005/pie_leash3/editor_raw.log",
+          "line": 1612,
+          "quoted": "[2026.11.01-03.46.11:420][559]LogTemp: Display: [FrameworkProof] arena_leash state=Start targetDistanceCm=500 radiusCm=250 centerX=0 centerY=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV005/pie_leash3/editor_raw.log",
+          "line": 1614,
+          "quoted": "[2026.11.01-03.46.11:420][559]LogTemp: Display: [FrameworkProof] cleanup reason=ArenaLeash modelIdle=1 ownedMontageStopped=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV005/pie_leash3/editor_raw.log",
+          "line": 1615,
+          "quoted": "[2026.11.01-03.46.11:689][593]LogTemp: Display: [FrameworkProof] arena_leash state=AtCenter distanceCm=32.9333"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV005/pie_leash3/editor_raw.log",
+          "line": 1616,
+          "quoted": "[2026.11.01-03.46.12:913][751]LogTemp: Display: [FrameworkProof] target_shift_injected n=2 dx=0 dy=-400 dz=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV005/pie_leash3/editor_raw.log",
+          "line": 1617,
+          "quoted": "[2026.11.01-03.46.12:913][751]LogTemp: Display: [FrameworkProof] arena_leash state=Resume bossDistanceToCenterCm=32.9333 atCenter=1"
+        }
+      ],
       "observable": "If player teleports outside arena bounds, boss leashes to arena center and resets to neutral.",
-      "notes": "Current state (C-545): Opt-in repositioning allows boss to recover and re-approach target band (reposition attempt=N max=3) instead of dying/freezing when target leaves band, but arena center leashing upon target teleporting outside arena bounds is NOT implemented. Boss walks to player band, not arena center, and fails closed with Framework.Selector.NoCandidate if out-of-bounds/unreachable. Remains NOT YET."
+      "notes": "Profile field bArenaLeash requires ArenaRadiusCm > 0 (runtime_tests:348). Live PIE proof on L_SevarogFrameworkProofMOV005 (B_MOV005 pie_leash3) proves: target teleporting outside radius (n=1 dy=500 > radius 250, line 1611) triggers arena_leash Start (line 1612), aborts active card with cleanup reason=ArenaLeash (line 1614), walks back to center and waits at distanceCm=32.93 (line 1615); when target shifts back inside (n=2 dy=-400, line 1616), boss logs arena_leash Resume (line 1617), turns to face target, and completes fight cleanly (:1886 RESULT outcome=CompletedWithDamage). Limit: center point is where target began (authored arena center marker not yet present in production map)."
     },
     {
       "id": "BOSS-MOV-006",
@@ -2017,7 +2061,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 363,
+          "line": 365,
           "quoted": "TestEqual(TEXT(\"loop count middle 1.6 / loop 0.5 = ceil 3.2 = 4\"),RPGStaggerAnim::LoopCount(T,S,E,.5f),4);"
         }
       ],
@@ -2181,17 +2225,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 442,
+          "line": 444,
           "quoted": "TestEqual(TEXT(\"attack running\"),RPGBossOverlay::Format(I),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=129cm Cone=120deg Window=Open Posture=40/100 Health=150/250 Stagger=0 PhaseHold=0\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 444,
+          "line": 446,
           "quoted": "TestEqual(TEXT(\"no card, stagger and hold\"),RPGBossOverlay::Format(N),FString(TEXT(\"Card=None State=Idle Phase=Phase_2 Range=300cm Cone=0deg Window=Closed Posture=100/100 Health=50/250 Stagger=1 PhaseHold=1\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 446,
+          "line": 448,
           "quoted": "TestEqual(TEXT(\"non-finite values never print as numbers\"),RPGBossOverlay::Format(Bad),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=n/acm Cone=120deg Window=Open Posture=40/100 Health=n/a/250 Stagger=0 PhaseHold=0\")));"
         },
         {

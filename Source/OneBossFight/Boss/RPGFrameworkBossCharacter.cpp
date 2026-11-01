@@ -22,6 +22,7 @@
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<float> CVarBossProofBystander(TEXT("rpg.BossProofBystander"),0.f,TEXT("Test hook (BOSS-HIT-005): above 0 spawns one plain Character (a second pawn that is not the target) that many cm to the side of the target when the boss starts its first attack of an encounter. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<FString> CVarBossProofPlayerHits(TEXT("rpg.BossProofPlayerHits"),TEXT(""),TEXT("Test hook (BOSS-QA-003): comma separated seconds after the boss's first attack of an encounter at which the target's hit intake lands one test hit on the boss (game clock, so a fixed time step replays it exactly). Empty = off. Not compiled into shipping builds."),ECVF_Default);
+static TAutoConsoleVariable<FString> CVarBossProofTargetShift(TEXT("rpg.BossProofTargetShift"),TEXT(""),TEXT("Test hook (BOSS-MOV-005): 'seconds:dx,dy,dz|seconds:dx,dy,dz' moves the target by that vector at those game-clock seconds after the boss first attack of an encounter (teleport). Empty = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossProofTargetFault(TEXT("rpg.BossProofTargetFault"),0,TEXT("Test hook (BOSS-AWR-001): 1 sets the target's health to 0, 2 destroys the target pawn, when the boss starts its first attack of an encounter. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossComboDuplicateGate(TEXT("rpg.BossComboDuplicateGate"),0,TEXT("Test hook (BOSS-COM-005): 1 evaluates every combo branch gate a second time with the SAME gate id right after the first, and logs that the duplicate was ignored without changing the combo state."),ECVF_Default);
 #endif
@@ -97,6 +98,28 @@ FName ARPGFrameworkBossCharacter::TargetFault(double& HP) const
     if(!RPGPack::ReadAttribute(Target.Get(),TEXT("Attribute.Health"),false,HP)||!FMath::IsFinite(HP))return TEXT("Unreadable");
     return HP>0.?FName(NAME_None):FName(TEXT("Dead"));
 }
+void ARPGFrameworkBossCharacter::HandleLeash()
+{
+    const auto& P=*Dependencies->Profile.Get();auto* AI=Cast<ARPGFrameworkBossController>(GetController());
+    if(!bLeashed)
+    {
+        bLeashed=true;bLeashAtCenter=false;
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] arena_leash state=Start targetDistanceCm=%g radiusCm=%g centerX=%g centerY=%g"),FVector::Dist2D(Target->GetActorLocation(),ArenaOrigin),double(P.ArenaRadiusCm),ArenaOrigin.X,ArenaOrigin.Y);
+        if(bStartedMove&&!Executor->DidFinish())
+        {
+            Executor->Abort(TEXT("ArenaLeash"));
+            if(!Executor->RecoverAfterAbort()){Fail(TEXT("Framework.Playback.LeashRecover"));return;}
+            bStartedMove=false;if(bComboActive){bComboActive=false;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_end reason=ArenaLeash"));}
+        }
+        if(AI)AI->StopOwnedWalk();GetCharacterMovement()->StopMovementImmediately();
+        if(AI)AI->MoveToLocation(ArenaOrigin,P.AcceptanceCm,false,true,true,false);
+    }
+    else if(!bLeashAtCenter&&FVector::Dist2D(GetActorLocation(),ArenaOrigin)<=double(P.AcceptanceCm)+30.)
+    {
+        bLeashAtCenter=true;GetCharacterMovement()->StopMovementImmediately();
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] arena_leash state=AtCenter distanceCm=%g"),FVector::Dist2D(GetActorLocation(),ArenaOrigin));
+    }
+}
 void ARPGFrameworkBossCharacter::WalkArrived()
 {
     if(!bInitialized||bFailed||bArrived)return;
@@ -110,7 +133,23 @@ void ARPGFrameworkBossCharacter::WalkArrived()
 void ARPGFrameworkBossCharacter::Tick(float Delta)
 {
     Super::Tick(Delta);if(!bInitialized||bFailed||bSucceeded||bDead)return;
+#if !UE_BUILD_SHIPPING
+    if(ProofShiftStart>=0.&&ProofShiftsDone<ProofShifts.Num()&&Target.IsValid()&&GetWorld()->GetTimeSeconds()-ProofShiftStart>=ProofShifts[ProofShiftsDone].Key)
+    {
+        const FVector Move=ProofShifts[ProofShiftsDone].Value;Target->SetActorLocation(Target->GetActorLocation()+Move,false,nullptr,ETeleportType::TeleportPhysics);
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] target_shift_injected n=%d dx=%g dy=%g dz=%g"),ProofShiftsDone+1,Move.X,Move.Y,Move.Z);++ProofShiftsDone;
+    }
+#endif
     double HP=0.;const FName Fault=ProofFixture.IsValid()?TargetFault(HP):FName(TEXT("Invalid"));const bool bTargetOk=Fault.IsNone();
+    // BOSS-MOV-005: a leashing profile does not fail when the target leaves the arena: the boss goes home and waits, and resumes when the target is back.
+    if(Fault==FName(TEXT("OffArena"))&&Dependencies->Profile->bArenaLeash){HandleLeash();return;}
+    if(bLeashed&&bTargetOk)
+    {
+        const bool bWasAtCenter=bLeashAtCenter;bLeashed=false;bLeashAtCenter=false;FString WalkError;auto* AI=Cast<ARPGFrameworkBossController>(GetController());
+        if(AI)AI->StopMovement();bArrived=false;StartedAt=GetWorld()->GetTimeSeconds();
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] arena_leash state=Resume bossDistanceToCenterCm=%g atCenter=%d"),FVector::Dist2D(GetActorLocation(),ArenaOrigin),bWasAtCenter?1:0);
+        if(!AI||!AI->WalkToBand(this,WalkError)){Fail(WalkError.IsEmpty()?FString(TEXT("Framework.Boss.Controller")):WalkError);return;}
+    }
     if(!bTargetOk||!FMath::IsNearlyEqual(HP,ExpectedTargetHP))
     {
         UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] target_health_mismatch valid=%d actual=%g expected=%g generation=%llu reason=%s"),bTargetOk?1:0,HP,ExpectedTargetHP,GenerationId,bTargetOk?TEXT("HealthChanged"):*Fault.ToString());
@@ -215,6 +254,12 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
             if(!Executor->StartCard(Dependencies->Candidates[Decision.ChosenIndex].Card,S,Error)){Fail(Error);return;}
             Selector.NoteStarted(Decision.ChosenIndex,S.ClockSeconds);RepositionsInARow=0;
 #if !UE_BUILD_SHIPPING
+            if(ProofShiftStart<0.&&!CVarBossProofTargetShift.GetValueOnGameThread().IsEmpty())
+            {
+                ProofShiftStart=GetWorld()->GetTimeSeconds();ProofShiftsDone=0;ProofShifts.Reset();TArray<FString> Steps;CVarBossProofTargetShift.GetValueOnGameThread().ParseIntoArray(Steps,TEXT("|"));
+                for(const FString& Step:Steps){FString When,Vec;if(!Step.Split(TEXT(":"),&When,&Vec))continue;TArray<FString> V;Vec.ParseIntoArray(V,TEXT(","));if(V.Num()==3)ProofShifts.Add(TPair<double,FVector>(FCString::Atod(*When),FVector(FCString::Atod(*V[0]),FCString::Atod(*V[1]),FCString::Atod(*V[2]))));}
+                UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] target_shifts_scheduled count=%d"),ProofShifts.Num());
+            }
             if(ProofHitStart<0.&&!CVarBossProofPlayerHits.GetValueOnGameThread().IsEmpty())
             {
                 ProofHitStart=GetWorld()->GetTimeSeconds();ProofHitsDone=0;ProofHitOffsets.Reset();TArray<FString> Parts;CVarBossProofPlayerHits.GetValueOnGameThread().ParseIntoArray(Parts,TEXT(","));
@@ -474,7 +519,7 @@ bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& 
     const TCHAR* OldState=bDead?TEXT("Dead"):TEXT("Finished");
     GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;
     if (bHittable) Health=MaxHealth;
-    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; bBystanderSpawned=false; bTargetFaultInjected=false; ProofHitStart=-1.; ProofHitsDone=0; ResetBleed();
+    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; bLeashed=bLeashAtCenter=false; ProofShiftStart=-1.; ProofShiftsDone=0; bBystanderSpawned=false; bTargetFaultInjected=false; ProofHitStart=-1.; ProofHitsDone=0; ResetBleed();
     Selector.Reset(); CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId; bPhaseTwoLatched=false;
     SetActorLocation(WalkStart,false,nullptr,ETeleportType::TeleportPhysics);
     FVector Face=Target->GetActorLocation()-WalkStart; Face.Z=0.f; if (!Face.IsNearlyZero()) SetActorRotation(FRotator(0.f,Face.Rotation().Yaw,0.f));

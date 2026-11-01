@@ -23,6 +23,8 @@ public:
     bool ValidateTarget(double& Health) const;
     /** BOSS-AWR-001: NAME_None when the target is valid, else Invalid, Destroyed, OffArena, Unreadable or Dead (checked in this order). */
     FName TargetFault(double& Health) const;
+    /** BOSS-MOV-005: the target is outside the arena and the profile asks for a leash: abort the card, walk back to the arena centre, wait in neutral. */
+    void HandleLeash();
     /** BOSS-AWR-005: vertical separation of the two FLOORS (feet to feet), not of the actor origins: a boss and a target with different capsule heights stand 0 cm apart on the same floor. */
     double FloorSeparationCm() const;
     APawn* ExplicitTarget() const {return Target.Get();}
@@ -62,6 +64,8 @@ private:
     int32 DecisionSeq=0;
     FVector ArenaOrigin=FVector::ZeroVector;   // BOSS-AWR-001: where the target stood when the encounter began
     double ProofHitStart=-1.; int32 ProofHitsDone=0; TArray<double> ProofHitOffsets;   // test hook rpg.BossProofPlayerHits: scripted player hits on the GAME clock
+    bool bLeashed=false, bLeashAtCenter=false;   // BOSS-MOV-005
+    TArray<TPair<double,FVector>> ProofShifts; int32 ProofShiftsDone=0; double ProofShiftStart=-1.;   // test hook rpg.BossProofTargetShift
     bool bTargetFaultInjected=false;           // test hook rpg.BossProofTargetFault: once per encounter
     /** BOSS-HIT-005 test hook (rpg.BossProofBystander): spawned once per encounter. */
     bool bBystanderSpawned=false;

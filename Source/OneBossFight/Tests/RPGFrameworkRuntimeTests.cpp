@@ -344,6 +344,8 @@ bool FFrameworkArenaProfile::RunTest(const FString&)
     F5();TestTrue(TEXT("off by default: valid"),RPGFramework::ValidateProfile(*P,Error));
     for(float V:{1.f,600.f,1.e6f}){F5();P->ArenaRadiusCm=V;TestTrue(TEXT("(0,1e6] valid"),RPGFramework::ValidateProfile(*P,Error));}
     for(float V:{-1.f,1.0001e6f,std::numeric_limits<float>::quiet_NaN(),std::numeric_limits<float>::infinity()}){F5();P->ArenaRadiusCm=V;TestFalse(TEXT("outside [0,1e6] or non-finite refused"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("token"),Error,FString(TEXT("Framework.Profile.Domain")));}
+    F5();P->bArenaLeash=true;TestFalse(TEXT("leash without an arena radius refused"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("token"),Error,FString(TEXT("Framework.Profile.Domain")));
+    F5();P->ArenaRadiusCm=250.f;P->bArenaLeash=true;TestTrue(TEXT("leash with an arena radius is valid"),RPGFramework::ValidateProfile(*P,Error));
     {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);F3->ArenaRadiusCm=600.f;TestFalse(TEXT("outside the F5 lane refused"),RPGFramework::ValidateProfile(*F3,Error));TestEqual(TEXT("token"),Error,FString(TEXT("Framework.Profile.Domain")));}
     return true;
 }

@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 # Copyright One Boss Fight. All Rights Reserved.
 """
-validate_framework_proof_logs.py (v3.6)
+validate_framework_proof_logs.py (v3.7)
 
 Formal schema and semantic validator for all [FrameworkProof] structured telemetry lines
-emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, B_QA002, B_HIT005, B_AWR001, B_AWR002, B_EXE007, B_QA003B, and B_EXE004).
+emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, B_QA002, B_HIT005, B_AWR001, B_AWR002, B_EXE007, B_QA003B, B_EXE004, and B_MOV005).
 
 Validates:
 1. Header prefix (optional Unreal Engine standard log prefix: [YYYY.MM.DD-HH.MM.SS:mmm][frame]LogCategory: Verbosity:)
 2. Exact [FrameworkProof] token tag
-3. Registered schema match for all 59 recognized telemetry tokens
+3. Registered schema match for all 62 recognized telemetry tokens
 4. Semantic checks per log:
    - seq= (when present) is unique and strictly increasing per process log across decisions
    - candidate and refusal lines of a decision carry the exact same seq as their decision
@@ -58,6 +58,7 @@ SCHEMAS = {
     "walk_resumed": r"^generation=\d+$",
     "reposition": r"^attempt=\d+ max=\d+ range=[^\s]+ reason=[^\s]+$",
     "reposition_turn": r"^start yawToTarget=[^\s]+ range=[^\s]+ ratePerSecond=[^\s]+$",
+    "arena_leash": r"^(?:state=Start targetDistanceCm=[^\s]+ radiusCm=[^\s]+ centerX=[^\s]+ centerY=[^\s]+|state=AtCenter distanceCm=[^\s]+|state=Resume(?:\s+bossDistanceToCenterCm=[^\s]+ atCenter=\d+)?)$",
 
     # 3. Candidate Selection & Gate Decisions (v3.0 adds optional seq=\d+)
     "candidate": r"^attack=\d+ card=[^\s]+ score=[^\s]+(?:\s+seq=\d+)?$",
@@ -91,6 +92,8 @@ SCHEMAS = {
     "boss_hit": r"^damage=[^\s]+ healthBefore=[^\s]+ healthAfter=[^\s]+$",
     "player_hits_scheduled": r"^count=\d+$",
     "player_hit_injected": r"^n=\d+ offset=[^\s]+ ok=\d+$",
+    "target_shifts_scheduled": r"^count=\d+$",
+    "target_shift_injected": r"^n=\d+ dx=[^\s]+ dy=[^\s]+ dz=[^\s]+$",
 
     # 8. Posture, Stagger, and Bleed System
     "posture_drain": r"^amount=[^\s]+ postureBefore=[^\s]+ postureAfter=[^\s]+ max=[^\s]+$",
