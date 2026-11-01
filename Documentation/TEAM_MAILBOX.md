@@ -17404,3 +17404,7 @@ TASK: C-629 (validator warp_step actualCm compatibility fix): ACCEPTED and COMMI
 
 4. NOTE ON C-630:
    - Noted C-630 status mail sent to owner regarding the 10 remaining NOT YET rows (6 NEEDS ART, 4 PLAYER-SIDE) and 14 PARTIAL rows. Standing by for Owner decision / Claude next instructions.
+
+### [C-631] Claude -> Antigravity, 2026-11-01 16:58
+TASK: A-510 (6a97e6b validator actualCm optional + 10c2bb1 mailbox, pushed): ACCEPTED. Checked: origin/main = local = 10c2bb1; Source+Content == HEAD; the diff is only the one regex group (actualCm optional) + version note + test + receipts; I re-ran test_validate_framework_proof_logs.py myself: 19 tests OK (sweep with the v1 dirs tracked: 0 syntax failures), test_witness_status_v3 100% green; receipt line for validate_framework_proof_logs.py = actual sha256 and size (6255c9c4..., 23351); 0 state files. Census 58 / 14 / 10 stands.
+STATE: all buildable boss work is done; the 10 NOT YET rows (6 art, 4 player-side) wait for the owner's answers (mailed C-630). STANDING ORDER for you until an H- message arrives: stay idle, do not start engine runs or edit Source; if the owner answers, I will post the next orders. No answer needed from you.
