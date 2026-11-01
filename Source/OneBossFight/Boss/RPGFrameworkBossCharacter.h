@@ -70,6 +70,8 @@ private:
     FVector ArenaOrigin=FVector::ZeroVector;   // BOSS-AWR-001: where the target stood when the encounter began
     double ProofHitStart=-1.; int32 ProofHitsDone=0; TArray<double> ProofHitOffsets;   // test hook rpg.BossProofPlayerHits: scripted player hits on the GAME clock
     bool bLeashed=false, bLeashAtCenter=false;   // BOSS-MOV-005
+    RPGBossTrack::FDodgeHistory DodgeHistory; bool bDodgeWasFast=false; double DodgeSeenAt=-100.; int32 DodgesSeen=0; void TickDodge();   // BOSS-AWR-008
+    double ProofDodgeStart=-1.; int32 ProofDodgesDone=0; TArray<TPair<double,bool>> ProofDodges;   // test hook rpg.BossProofPlayerDodge (bool = backward)
     RPGBossTrack::FLosMemory Los; bool bLosWalking=false; void TickLos();   // BOSS-AWR-007
     // BOSS-SEL-009: perception of the target's flask drink and the reaction delay
     TWeakObjectPtr<UAnimMontage> DrinkMontage; bool bDrinkWasPlaying=false, bFlaskPending=false, bFlaskKnown=false; int32 FlaskPerceivedCount=0; double FlaskPerceivedAt=0., FlaskReactAt=0.; void TickFlask();

@@ -91,7 +91,7 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
     {
         const bool bAnti=P.AntiCheeseKiteRangeCm>0.f||P.AntiCheeseHugRangeCm>0.f;
         auto Mult=[](float V){return FMath::IsFinite(V)&&V>0.f&&V<=100.f;};
-        bool bMultOk=true; for (const FRPGBossProfileCard& C:P.Cards) bMultOk=bMultOk&&Mult(C.KiteWeightMultiplier)&&Mult(C.HugWeightMultiplier);
+        bool bMultOk=true; for (const FRPGBossProfileCard& C:P.Cards) bMultOk=bMultOk&&Mult(C.KiteWeightMultiplier)&&Mult(C.HugWeightMultiplier)&&Mult(C.BackDodgeWeightMultiplier);
         if (!FMath::IsFinite(P.AntiCheeseKiteRangeCm)||!FMath::IsFinite(P.AntiCheeseHugRangeCm)||P.AntiCheeseKiteRangeCm<0.f||P.AntiCheeseHugRangeCm<0.f||P.AntiCheeseKiteRangeCm>1.e5f||P.AntiCheeseHugRangeCm>1.e5f||
             P.AntiCheeseStreak<1||P.AntiCheeseStreak>8||(bAnti&&!bF5)||!bMultOk||(P.AntiCheeseKiteRangeCm>0.f&&P.AntiCheeseHugRangeCm>0.f&&P.AntiCheeseHugRangeCm>=P.AntiCheeseKiteRangeCm))
             return Fail(TEXT("Framework.Profile.Domain"));
@@ -99,6 +99,7 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
     if (P.ReactionDelayMinSeconds!=0.f||P.ReactionDelayMaxSeconds!=0.f)
         if (!bF5||RPGBossTrack::ReactionDelaySeconds(P.ReactionDelayMinSeconds,P.ReactionDelayMaxSeconds,P.ReactionSeed,0)<0.) return Fail(TEXT("Framework.Profile.Domain"));
     if (!FMath::IsFinite(P.LosSearchSeconds)||P.LosSearchSeconds<0.f||P.LosSearchSeconds>30.f||(P.LosSearchSeconds>0.f&&!bF5)) return Fail(TEXT("Framework.Profile.Domain"));   // finite first: a NaN compares unreliably under fast-math
+    if (P.DodgeHistoryDepth<0||P.DodgeHistoryDepth>8||(P.DodgeHistoryDepth>0&&(!bF5||P.DodgeBackThreshold<1||P.DodgeBackThreshold>P.DodgeHistoryDepth||!FMath::IsFinite(P.DodgeSpeedCm)||!(P.DodgeSpeedCm>0.f)||P.DodgeSpeedCm>1.e5f))) return Fail(TEXT("Framework.Profile.Domain"));
     // F9: bleed needs the selector lane (F5) and a hittable boss; BleedBuildupPerHit 0 = off (the other four then 0 too), else a coherent set (token Framework.Profile.Bleed).
     {
         const float Values[]={P.BleedBuildupPerHit,P.BleedInitialThreshold,P.BleedThresholdIncrease,P.BleedThresholdMax,P.BleedHpFraction};
@@ -166,7 +167,7 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
         float WorstHit=0.f;
         for (const FRPGBossProfileCard& C:P->Cards)
         {
-            FRPGFrameworkDependencies::FCandidate Candidate; Candidate.CooldownSeconds=C.CooldownSeconds; Candidate.Weight=C.Weight; Candidate.bHyperArmor=C.bHyperArmor; Candidate.KiteMultiplier=C.KiteWeightMultiplier; Candidate.HugMultiplier=C.HugWeightMultiplier;
+            FRPGFrameworkDependencies::FCandidate Candidate; Candidate.CooldownSeconds=C.CooldownSeconds; Candidate.Weight=C.Weight; Candidate.bHyperArmor=C.bHyperArmor; Candidate.KiteMultiplier=C.KiteWeightMultiplier; Candidate.HugMultiplier=C.HugWeightMultiplier; Candidate.BackDodgeMultiplier=C.BackDodgeWeightMultiplier;
             if (!ResolveCard(C.Card.LoadSynchronous(),Candidate.Card)) return false;
             WorstHit=FMath::Max(WorstHit,Candidate.Card->Spec().HPDamage); D->Candidates.Add(Candidate);
         }

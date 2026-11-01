@@ -25,6 +25,7 @@ static TAutoConsoleVariable<FString> CVarBossProofPlayerHits(TEXT("rpg.BossProof
 static TAutoConsoleVariable<FString> CVarBossProofTargetShift(TEXT("rpg.BossProofTargetShift"),TEXT(""),TEXT("Test hook (BOSS-MOV-005): 'seconds:dx,dy,dz|seconds:dx,dy,dz' moves the target by that vector at those game-clock seconds after the boss first attack of an encounter (teleport). Empty = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossTurnLatch(TEXT("rpg.BossProofTurnLatch"),1,TEXT("Test hook (BOSS-MOV-003): 0 turns the reposition turn WITHOUT the direction latch (control run: it still counts the direction changes). 1 = latch on (default behaviour). Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<FString> CVarBossProofPlayerDrink(TEXT("rpg.BossProofPlayerDrink"),TEXT(""),TEXT("Test hook (BOSS-SEL-009): comma separated seconds after the boss's first attack of an encounter at which the target plays its DrinkingPotion montage (game clock). Empty = off. Not compiled into shipping builds."),ECVF_Default);
+static TAutoConsoleVariable<FString> CVarBossProofPlayerDodge(TEXT("rpg.BossProofPlayerDodge"),TEXT(""),TEXT("Test hook (BOSS-AWR-008): comma separated 'seconds' (backward) or 'seconds:F' (forward) after the boss's first attack of an encounter at which the target is launched away from / toward the boss (game clock). Empty = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossProofTargetFault(TEXT("rpg.BossProofTargetFault"),0,TEXT("Test hook (BOSS-AWR-001): 1 sets the target's health to 0, 2 destroys the target pawn, when the boss starts its first attack of an encounter. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossComboDuplicateGate(TEXT("rpg.BossComboDuplicateGate"),0,TEXT("Test hook (BOSS-COM-005): 1 evaluates every combo branch gate a second time with the SAME gate id right after the first, and logs that the duplicate was ignored without changing the combo state."),ECVF_Default);
 #endif
@@ -55,7 +56,7 @@ bool ARPGFrameworkBossCharacter::InitializeProof(ARPGFrameworkProofFixture* Fixt
     {
         FRPGBossSelectorConfig Config; Config.RepeatPenalty=Dependencies->Profile->RepeatPenalty; Config.RepeatMemory=Dependencies->Profile->RepeatMemory; Config.TieBand=Dependencies->Profile->SelectorTieBand; Config.TieSeed=Dependencies->Profile->SelectorTieSeed;
         TArray<FRPGBossSelectorCandidate> List;
-        for (const auto& C:Dependencies->Candidates) {FRPGBossSelectorCandidate X; X.Card=C.Card; X.CooldownSeconds=C.CooldownSeconds; X.Weight=C.Weight; X.KiteMultiplier=C.KiteMultiplier; X.HugMultiplier=C.HugMultiplier; List.Add(X);}
+        for (const auto& C:Dependencies->Candidates) {FRPGBossSelectorCandidate X; X.Card=C.Card; X.CooldownSeconds=C.CooldownSeconds; X.Weight=C.Weight; X.KiteMultiplier=C.KiteMultiplier; X.HugMultiplier=C.HugMultiplier; X.BackDodgeMultiplier=C.BackDodgeMultiplier; List.Add(X);}
         if (!Selector.Initialize(Config,List,Error)) {Fail(Error);return false;}
     }
     const auto& P=*Dependencies->Profile.Get();
@@ -99,6 +100,23 @@ FName ARPGFrameworkBossCharacter::TargetFault(double& HP) const
     if(P&&P->ArenaRadiusCm>0.f&&FVector::Dist2D(Target->GetActorLocation(),ArenaOrigin)>double(P->ArenaRadiusCm))return TEXT("OffArena");
     if(!RPGPack::ReadAttribute(Target.Get(),TEXT("Attribute.Health"),false,HP)||!FMath::IsFinite(HP))return TEXT("Unreadable");
     return HP>0.?FName(NAME_None):FName(TEXT("Dead"));
+}
+void ARPGFrameworkBossCharacter::TickDodge()
+{
+    // BOSS-AWR-008: a dodge is the rise of the target's flat speed to the profile threshold; its direction (seen from the boss) goes into the history ring.
+    const auto& P=*Dependencies->Profile.Get();
+    if(P.DodgeHistoryDepth<1||!Target.IsValid())return;
+    const FVector V=Target->GetVelocity();const bool bFast=FVector(V.X,V.Y,0.).Size()>=double(P.DodgeSpeedCm);const double Now=GetWorld()->GetTimeSeconds();
+    if(bFast&&!bDodgeWasFast&&Now-DodgeSeenAt>.5)
+    {
+        const RPGBossTrack::EDodgeDir Dir=RPGBossTrack::ClassifyDodge(V,Target->GetActorLocation()-GetActorLocation(),P.DodgeSpeedCm);
+        if(Dir!=RPGBossTrack::EDodgeDir::None)
+        {
+            DodgeSeenAt=Now;++DodgesSeen;DodgeHistory.Push(Dir,P.DodgeHistoryDepth);
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] dodge_observed n=%d direction=%s speedCm=%g back=%d depth=%d"),DodgesSeen,Dir==RPGBossTrack::EDodgeDir::Back?TEXT("Back"):Dir==RPGBossTrack::EDodgeDir::Forward?TEXT("Forward"):TEXT("Side"),FVector(V.X,V.Y,0.).Size(),DodgeHistory.BackCount(),DodgeHistory.Dirs.Num());
+        }
+    }
+    bDodgeWasFast=bFast;
 }
 void ARPGFrameworkBossCharacter::TickLos()
 {
@@ -215,6 +233,15 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
         UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] player_drink_started n=%d offset=%g ok=%d length=%g"),ProofDrinksDone+1,ProofDrinkOffsets[ProofDrinksDone],Len>0.f?1:0,Len);++ProofDrinksDone;
     }
 #endif
+#if !UE_BUILD_SHIPPING
+    if(ProofDodgeStart>=0.&&ProofDodgesDone<ProofDodges.Num()&&Target.IsValid()&&GetWorld()->GetTimeSeconds()-ProofDodgeStart>=ProofDodges[ProofDodgesDone].Key)
+    {
+        ACharacter* Dodger=Cast<ACharacter>(Target.Get());FVector Away=Target->GetActorLocation()-GetActorLocation();Away.Z=0.;Away.Normalize();
+        const bool bBack=ProofDodges[ProofDodgesDone].Value;if(Dodger)Dodger->LaunchCharacter(Away*(bBack?1.:-1.)*900.,true,false);
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] player_dodge_started n=%d offset=%g direction=%s ok=%d"),ProofDodgesDone+1,ProofDodges[ProofDodgesDone].Key,bBack?TEXT("Back"):TEXT("Forward"),Dodger?1:0);++ProofDodgesDone;
+    }
+#endif
+    TickDodge();
     TickFlask();
     TickLos();
     // BOSS-EXE-007: the executor's watchdog aborted the running card (end notification dropped / montage stuck): recover and decide again, never stall.
@@ -308,7 +335,9 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
             FRPGBossSelectorContext Pattern;
             if(P.AntiCheeseKiteRangeCm>0.f&&S.RangeCm>=double(P.AntiCheeseKiteRangeCm)&&KiteStreak+1>=P.AntiCheeseStreak) Pattern.bKiting=true;
             if(P.AntiCheeseHugRangeCm>0.f&&S.RangeCm<=double(P.AntiCheeseHugRangeCm)&&HugStreak+1>=P.AntiCheeseStreak) Pattern.bHugging=true;
+            if(P.DodgeHistoryDepth>0&&DodgeHistory.BackCount()>=P.DodgeBackThreshold) Pattern.bBackDodging=true;   // BOSS-AWR-008
             const bool bAsked=Selector.Select(Executor->Model(),S,Decision,Pattern);const int32 Seq=++DecisionSeq;
+            if(Pattern.bBackDodging) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] dodge_pattern state=BackDodging back=%d depth=%d threshold=%d seq=%d"),DodgeHistory.BackCount(),DodgeHistory.Dirs.Num(),P.DodgeBackThreshold,Seq);
             if(Pattern.bKiting||Pattern.bHugging) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] anticheese state=%s streak=%d rangeCm=%g thresholdCm=%g seq=%d"),Pattern.bKiting?TEXT("Kiting"):TEXT("Hugging"),Pattern.bKiting?KiteStreak+1:HugStreak+1,S.RangeCm,Pattern.bKiting?double(P.AntiCheeseKiteRangeCm):double(P.AntiCheeseHugRangeCm),Seq);
             for(const FRPGBossSelectorTrace& T:Decision.Traces)
             {
@@ -356,6 +385,12 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
                 ProofDrinkStart=GetWorld()->GetTimeSeconds();ProofDrinksDone=0;ProofDrinkOffsets.Reset();TArray<FString> Parts;CVarBossProofPlayerDrink.GetValueOnGameThread().ParseIntoArray(Parts,TEXT(","));
                 for(const FString& Part:Parts)ProofDrinkOffsets.Add(FCString::Atod(*Part));
                 UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] player_drinks_scheduled count=%d"),ProofDrinkOffsets.Num());
+            }
+            if(ProofDodgeStart<0.&&!CVarBossProofPlayerDodge.GetValueOnGameThread().IsEmpty())
+            {
+                ProofDodgeStart=GetWorld()->GetTimeSeconds();ProofDodgesDone=0;ProofDodges.Reset();TArray<FString> Parts;CVarBossProofPlayerDodge.GetValueOnGameThread().ParseIntoArray(Parts,TEXT(","));
+                for(const FString& Part:Parts){FString When,Dir;const bool bHasDir=Part.Split(TEXT(":"),&When,&Dir);ProofDodges.Add(TPair<double,bool>(FCString::Atod(bHasDir?*When:*Part),!(bHasDir&&Dir.StartsWith(TEXT("F")))));}
+                UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] player_dodges_scheduled count=%d"),ProofDodges.Num());
             }
             if(ProofHitStart<0.&&!CVarBossProofPlayerHits.GetValueOnGameThread().IsEmpty())
             {
@@ -650,7 +685,7 @@ bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& 
     const TCHAR* OldState=bDead?TEXT("Dead"):TEXT("Finished");
     GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;
     if (bHittable) Health=MaxHealth;
-    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; Los=RPGBossTrack::FLosMemory(); bLosWalking=false; bDrinkWasPlaying=bFlaskPending=bFlaskKnown=false; FlaskPerceivedCount=0; ProofDrinkStart=-1.; ProofDrinksDone=0; KiteStreak=HugStreak=0; bComboPausing=false; ComboPendingCard=INDEX_NONE; bLeashed=bLeashAtCenter=false; ProofShiftStart=-1.; ProofShiftsDone=0; bBystanderSpawned=false; bTargetFaultInjected=false; ProofHitStart=-1.; ProofHitsDone=0; ResetBleed();
+    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; DodgeHistory=RPGBossTrack::FDodgeHistory(); bDodgeWasFast=false; DodgesSeen=0; ProofDodgeStart=-1.; ProofDodgesDone=0; Los=RPGBossTrack::FLosMemory(); bLosWalking=false; bDrinkWasPlaying=bFlaskPending=bFlaskKnown=false; FlaskPerceivedCount=0; ProofDrinkStart=-1.; ProofDrinksDone=0; KiteStreak=HugStreak=0; bComboPausing=false; ComboPendingCard=INDEX_NONE; bLeashed=bLeashAtCenter=false; ProofShiftStart=-1.; ProofShiftsDone=0; bBystanderSpawned=false; bTargetFaultInjected=false; ProofHitStart=-1.; ProofHitsDone=0; ResetBleed();
     Selector.Reset(); CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId; bPhaseTwoLatched=false;
     SetActorLocation(WalkStart,false,nullptr,ETeleportType::TeleportPhysics);
     FVector Face=Target->GetActorLocation()-WalkStart; Face.Z=0.f; if (!Face.IsNearlyZero()) SetActorRotation(FRotator(0.f,Face.Rotation().Yaw,0.f));

@@ -20,7 +20,8 @@ bool FRPGBossMoveSelector::Initialize(const FRPGBossSelectorConfig& InConfig,
         if (!C.Card) return Refuse(Error,TEXT("Selector.NullCard"));
         if (!FMath::IsFinite(C.CooldownSeconds) || C.CooldownSeconds<0.f || C.CooldownSeconds>1.e6f ||
             !FMath::IsFinite(C.Weight) || C.Weight<=0.f || C.Weight>1.e6f ||
-            !FMath::IsFinite(C.KiteMultiplier) || C.KiteMultiplier<=0.f || C.KiteMultiplier>1.e6f || !FMath::IsFinite(C.HugMultiplier) || C.HugMultiplier<=0.f || C.HugMultiplier>1.e6f)
+            !FMath::IsFinite(C.KiteMultiplier) || C.KiteMultiplier<=0.f || C.KiteMultiplier>1.e6f || !FMath::IsFinite(C.HugMultiplier) || C.HugMultiplier<=0.f || C.HugMultiplier>1.e6f ||
+            !FMath::IsFinite(C.BackDodgeMultiplier) || C.BackDodgeMultiplier<=0.f || C.BackDodgeMultiplier>1.e6f)
             return Refuse(Error,TEXT("Selector.Domain"));
         bool bDuplicate=false; Ids.Add(C.Card->Spec().MoveId,&bDuplicate);
         if (bDuplicate) return Refuse(Error,TEXT("Selector.DuplicateMoveId"));
@@ -46,7 +47,7 @@ bool FRPGBossMoveSelector::Select(const FRPGBossMoveModel& Model, const FRPGBoss
             const double Mid=0.5*(Spec.MinRangeCm+Spec.MaxRangeCm), Half=0.5*(Spec.MaxRangeCm-Spec.MinRangeCm);
             const double RangeFactor=Half>0.0 ? 1.0-0.5*FMath::Min(1.0,FMath::Abs(S.RangeCm-Mid)/Half) : 1.0;
             const double Repeat=Recent.Contains(I) ? Config.RepeatPenalty : 1.0;
-            const double Pattern=(Context.bKiting ? double(C.KiteMultiplier) : 1.0)*(Context.bHugging ? double(C.HugMultiplier) : 1.0);   // BOSS-PHS-005
+            const double Pattern=(Context.bKiting ? double(C.KiteMultiplier) : 1.0)*(Context.bHugging ? double(C.HugMultiplier) : 1.0)*(Context.bBackDodging ? double(C.BackDodgeMultiplier) : 1.0);   // BOSS-PHS-005, AWR-008
             T.bEligible=true; T.Score=float(C.Weight*RangeFactor*Repeat*Pattern);
             if (Out.ChosenIndex==INDEX_NONE || T.Score>Out.Score) { Out.ChosenIndex=I; Out.MoveId=Spec.MoveId; Out.Score=T.Score; }
         }

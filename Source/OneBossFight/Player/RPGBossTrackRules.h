@@ -61,6 +61,37 @@ namespace RPGBossTrack
         if (!M.bTimedOut && Now-M.LostAt>=SearchSeconds) { M.bTimedOut=true; return ELosEvent::TimedOut; }
         return ELosEvent::None;
     }
+    /**
+     * BOSS-AWR-008 (soft adaptation memory): the direction of the target's dodges seen from the boss. Classify takes the target's velocity and the direction from the boss to the target (flat):
+     * Back = moving away (dot >= 0.5), Forward = toward the boss (dot <= -0.5), Side otherwise; None when the velocity is not finite or not above SpeedCm. FDodgeHistory keeps the last Depth directions
+     * (a ring) and BackCount() says how many of them were Back.
+     */
+    enum class EDodgeDir : uint8 { None, Back, Forward, Side };
+    inline EDodgeDir ClassifyDodge(const FVector& Velocity,const FVector& BossToTarget,float SpeedCm)
+    {
+        FVector V(Velocity.X,Velocity.Y,0.), A(BossToTarget.X,BossToTarget.Y,0.);
+        if (!FMath::IsFinite(SpeedCm)||!(SpeedCm>0.f)||V.ContainsNaN()||A.ContainsNaN()||!(V.Size()>=double(SpeedCm))||!A.Normalize()) return EDodgeDir::None;
+        V.Normalize(); const double Dot=FVector::DotProduct(V,A);
+        return Dot>=.5 ? EDodgeDir::Back : Dot<=-.5 ? EDodgeDir::Forward : EDodgeDir::Side;
+    }
+    struct FDodgeHistory
+    {
+        TArray<EDodgeDir> Dirs;
+        void Push(EDodgeDir D,int32 Depth) { if (D==EDodgeDir::None||Depth<1) return; Dirs.Add(D); while (Dirs.Num()>Depth) Dirs.RemoveAt(0); }
+        int32 BackCount() const { int32 N=0; for (EDodgeDir D:Dirs) if (D==EDodgeDir::Back) ++N; return N; }
+    };
+    /**
+     * BOSS-HIT-011 (swept annulus): a ground shockwave around the boss. At time t after the window opens its front is at Start+Speed*t and the band is [front-Thickness, front].
+     * RingTouches takes the front radius at both ends of ONE tick: the band covered during the tick is [FrontLo-Thickness, FrontHi], a continuous span, so consecutive ticks leave no gap (FrontHi of one tick is FrontLo of the next).
+     * Dist = horizontal distance boss to target, TargetRadius = the target capsule radius, DzAbs = vertical feet-to-feet distance, Height = how high the wave reaches (a target that jumped above it is missed).
+     */
+    inline double RingFront(double StartCm,double SpeedCmPerSecond,double SecondsIntoWindow){return StartCm+SpeedCmPerSecond*SecondsIntoWindow;}
+    inline bool RingTouches(double FrontLo,double FrontHi,double Thickness,double Dist,double TargetRadius,double DzAbs,double Height)
+    {
+        if (!FMath::IsFinite(FrontLo)||!FMath::IsFinite(FrontHi)||!FMath::IsFinite(Thickness)||!FMath::IsFinite(Dist)||!FMath::IsFinite(TargetRadius)||!FMath::IsFinite(DzAbs)||!FMath::IsFinite(Height)) return false;
+        if (FrontHi<FrontLo||DzAbs>Height) return false;
+        return Dist+TargetRadius>=FrontLo-Thickness && Dist-TargetRadius<=FrontHi;
+    }
     /** BOSS-EXE-007 (executor watchdog): a card that is still running this many WORLD seconds after its start is aborted: RecoveryEndSeconds / PlayRate + 0.5 s. Negative = invalid input (the card is refused at start). */
     inline double WatchdogTimeoutSeconds(float RecoveryEndSeconds,float PlayRate)
     {

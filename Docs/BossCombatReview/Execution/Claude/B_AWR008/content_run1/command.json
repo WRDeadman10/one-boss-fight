@@ -1,0 +1,9 @@
+[
+    "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+    "-ExecutePythonScript=\"C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_AWR008\\create_dodge_content.py\"",
+    "-unattended",
+    "-nosound",
+    "-nosplash",
+    "-abslog=C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_AWR008\\content_run1\\editor_raw.log",
+    "-nullrhi"
+]

@@ -1,11 +1,11 @@
 {
-  "version": "3.24",
+  "version": "3.25",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 54,
+    "WITNESSED": 55,
     "PARTIAL": 14,
-    "NOT YET": 14
+    "NOT YET": 13
   },
   "requirements": [
     {
@@ -290,11 +290,55 @@
       "title": "Soft adaptation memory",
       "section": "Awareness and observable context",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+        "Docs/BossCombatReview/Execution/Claude/B_AWR008/pie_dodge/editor_raw.log"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 508,
+          "quoted": "TestTrue(TEXT(\"moving away fast = Back\"),ClassifyDodge(FVector(900.,0.,0.),ToTarget,600.f)==EDodgeDir::Back);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 509,
+          "quoted": "TestTrue(TEXT(\"moving toward the boss = Forward\"),ClassifyDodge(FVector(-900.,0.,0.),ToTarget,600.f)==EDodgeDir::Forward);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 517,
+          "quoted": "H.Push(EDodgeDir::Back,3);TestEqual(TEXT(\"two backs of three\"),H.BackCount(),2);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 525,
+          "quoted": "F5();P->DodgeHistoryDepth=3;TestTrue(TEXT(\"depth 3 threshold 2 valid\"),RPGFramework::ValidateProfile(*P,Error));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR008/pie_dodge/editor_raw.log",
+          "line": 1614,
+          "quoted": "[FrameworkProof] dodge_observed n=1 direction=Back speedCm=900 back=1 depth=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR008/pie_dodge/editor_raw.log",
+          "line": 1654,
+          "quoted": "[FrameworkProof] dodge_observed n=2 direction=Back speedCm=900 back=2 depth=2"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR008/pie_dodge/editor_raw.log",
+          "line": 1710,
+          "quoted": "[FrameworkProof] dodge_pattern state=BackDodging back=2 depth=2 threshold=2 seq=2"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR008/pie_dodge/editor_raw.log",
+          "line": 1719,
+          "quoted": "[FrameworkProof] decision attack=2 chosen=Move_Sevarog_SwingSlow_F7 score=1.57821 range=128.911 phase=Phase_1 seq=3"
+        }
+      ],
       "observable": "Histogram of repeated backward player dodges triggers forward roll-catch gap-closer (MC-05) weighting boost.",
-      "notes": "Recent player movement memory buffer in AI context not yet implemented (designated for Selector Block)."
+      "notes": "Witnessed (C-624, BUILD-131): Histogram of repeated backward player dodges triggers forward roll-catch gap-closer (MC-05) weighting boost. Profile fields DodgeHistoryDepth (0 off, 1..8 default 3), DodgeBackThreshold (1..Depth default 2), DodgeSpeedCm (default 600) in URPGBossFrameworkProfile (F5 lane; token Framework.Profile.Domain). Card entries configure BackDodgeWeightMultiplier (default 1.0, domain (0,100]). In ARPGFrameworkBossCharacter::TickDodge, target velocity is classified relative to boss-target vector via pure rule RPGBossTrack::ClassifyDodge and recorded in ring buffer FDodgeHistory; when BackCount() >= DodgeBackThreshold, state is BackDodging, logging dodge_pattern, which scales candidate card scores by BackDodgeWeightMultiplier in FRPGBossMoveSelector. Unit tests in RPGFrameworkRuntimeTests.cpp:484,485,493,501 (OneBossFight.Framework.Runtime.DodgeHistory) prove Back/Forward velocity classification, slow roll suppression, history ring depth rotation, and profile validation. Live PIE on L_SevarogFrameworkProofAWR008 (DA_Sevarog_DodgeMemory_AWR008, SwingSlow BackDodgeWeightMultiplier 2.0; Claude/B_AWR008/pie_dodge) with test hook rpg.BossProofPlayerDodge 0.3:Back,0.8:Back proves: attack 1 (before dodges) selects HeavySlam (0.927 vs SwingSlow 0.785); dodge 1 observed Back at frame 591 (:1614); dodge 2 observed Back at frame 621 (:1654); at decision 2, BackDodging confirmed (:1710), scaling SwingSlow score by ~2x to 1.578 (:1719), which wins decision over HeavySlam (0.932). Repeated with bit-for-bit parity in pie_dodge2. Limits: only backward dodge direction triggers adaptation; roll-catch card represented by SwingSlow with multiplier; dodge triggered by test hook rather than player input; depth 3 and threshold 2 are proposed values."
     },
     {
       "id": "BOSS-SEL-001",
@@ -1362,17 +1406,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 574,
+          "line": 629,
           "quoted": "Near(TEXT(\"60 ticks (1 s) toward 170 turn exactly the cap, 90 deg\"),Yaw,90.f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 575,
+          "line": 630,
           "quoted": "TestTrue(TEXT(\"no tick turned more than cap * dt (1.5 deg)\"),MaxStep<=1.5f+1.e-3f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 577,
+          "line": 632,
           "quoted": "Near(TEXT(\"after the commit 60 more ticks leave the yaw unchanged\"),Yaw,90.f);"
         },
         {
@@ -1498,7 +1542,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 525,
+          "line": 580,
           "quoted": "TestEqual(TEXT(\"no slot node in the AnimBP\"),Token([](auto& X){X.bSlotNodePresent=false;}),FString(TEXT(\"Framework.Profile.StaggerAnim.SlotNode\")));"
         },
         {
@@ -1950,7 +1994,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 489,
+          "line": 544,
           "quoted": "F5();P->ArenaRadiusCm=250.f;P->bArenaLeash=true;TestTrue(TEXT(\"leash with an arena radius is valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
@@ -2282,7 +2326,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 506,
+          "line": 561,
           "quoted": "TestEqual(TEXT(\"loop count middle 1.6 / loop 0.5 = ceil 3.2 = 4\"),RPGStaggerAnim::LoopCount(T,S,E,.5f),4);"
         }
       ],
@@ -2496,17 +2540,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 585,
+          "line": 640,
           "quoted": "TestEqual(TEXT(\"attack running\"),RPGBossOverlay::Format(I),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=129cm Cone=120deg Window=Open Posture=40/100 Health=150/250 Stagger=0 PhaseHold=0\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 587,
+          "line": 642,
           "quoted": "TestEqual(TEXT(\"no card, stagger and hold\"),RPGBossOverlay::Format(N),FString(TEXT(\"Card=None State=Idle Phase=Phase_2 Range=300cm Cone=0deg Window=Closed Posture=100/100 Health=50/250 Stagger=1 PhaseHold=1\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 589,
+          "line": 644,
           "quoted": "TestEqual(TEXT(\"non-finite values never print as numbers\"),RPGBossOverlay::Format(Bad),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=n/acm Cone=120deg Window=Open Posture=40/100 Health=n/a/250 Stagger=0 PhaseHold=0\")));"
         },
         {
@@ -2689,5 +2733,5 @@
     }
   ],
   "last_updated": "2026-11-01",
-  "file_version": "3.24"
+  "file_version": "3.25"
 }

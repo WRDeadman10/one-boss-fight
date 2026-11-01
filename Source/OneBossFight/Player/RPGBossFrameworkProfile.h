@@ -44,6 +44,8 @@ struct FRPGBossProfileCard
     /** BOSS-PHS-005: score factor of this card while the boss has detected kiting / hugging (profile AntiCheese fields); 1 = no preference, (0,100]. Design values, proposed. */
     UPROPERTY(EditAnywhere) float KiteWeightMultiplier=1.f;
     UPROPERTY(EditAnywhere) float HugWeightMultiplier=1.f;
+    /** BOSS-AWR-008: score factor of this card (the forward roll-catch / gap-closer) while the boss has seen the target dodge BACKWARDS DodgeBackThreshold times in its last DodgeHistoryDepth dodges; (0,100], 1 = no preference. Design values, proposed. */
+    UPROPERTY(EditAnywhere) float BackDodgeWeightMultiplier=1.f;
 };
 UCLASS(BlueprintType)
 class ONEBOSSFIGHT_API URPGBossFrameworkProfile : public UPrimaryDataAsset
@@ -112,6 +114,10 @@ public:
     UPROPERTY(EditAnywhere) float ArenaRadiusCm=0.f;
     /** BOSS-MOV-005 (needs ArenaRadiusCm > 0): instead of failing the encounter when the target leaves the arena, the boss aborts its card, walks back to the arena centre (where the target began) and waits in neutral; it resumes when the target is back inside the radius. false = fail with reason OffArena (BOSS-AWR-001). Design choice, proposed. */
     UPROPERTY(EditAnywhere) bool bArenaLeash=false;
+    /** BOSS-AWR-008 (F5 lane, DodgeHistoryDepth 0 = off): a dodge is seen when the target's flat speed rises to DodgeSpeedCm or more; its direction (back / forward / side, seen from the boss) goes into a ring of DodgeHistoryDepth (1..8); BACK DODGING is when at least DodgeBackThreshold (1..depth) of them were back. Design values, proposed. */
+    UPROPERTY(EditAnywhere) int32 DodgeHistoryDepth=0;
+    UPROPERTY(EditAnywhere) int32 DodgeBackThreshold=2;
+    UPROPERTY(EditAnywhere) float DodgeSpeedCm=600.f;
     /** BOSS-AWR-007 (F5 lane, 0 = off): while the boss is in neutral and a visibility trace to the target is blocked (a pillar), it does not decide or strike: it searches, walking to where the target was last seen, for up to LosSearchSeconds ((0,30]), and goes back to the band when it sees the target again. Design value, proposed. */
     UPROPERTY(EditAnywhere) float LosSearchSeconds=0.f;
     /** BOSS-SEL-009 (F5 lane, both 0 = off): the boss PERCEIVES the target's flask drink (the edge of the DrinkingPotion montage on the target) and may REACT to it only after a delay drawn per drink, seeded (ReactionSeed + count), inside [ReactionDelayMinSeconds, ReactionDelayMaxSeconds] (0 < min <= max <= 5). Design values, proposed. */
@@ -148,7 +154,7 @@ struct ONEBOSSFIGHT_API FRPGFrameworkDependencies
     TStrongObjectPtr<UClass> AnimClass, TargetClass;
     TStrongObjectPtr<UAnimSequence> StaggerStart, StaggerLoop, StaggerEnd, PhaseTransition;   // F11, each null when its profile field is empty
     TSharedPtr<const FRPGCompiledBossMoveCard> Card;
-    struct FCandidate { TSharedPtr<const FRPGCompiledBossMoveCard> Card; float CooldownSeconds=0.f,Weight=1.f; bool bHyperArmor=false; float KiteMultiplier=1.f,HugMultiplier=1.f; };
+    struct FCandidate { TSharedPtr<const FRPGCompiledBossMoveCard> Card; float CooldownSeconds=0.f,Weight=1.f; bool bHyperArmor=false; float KiteMultiplier=1.f,HugMultiplier=1.f,BackDodgeMultiplier=1.f; };
     TArray<FCandidate> Candidates;   // F5 only
     const TSharedPtr<const FRPGCompiledBossMoveCard>& FirstCard() const { return Candidates.Num()>0 ? Candidates[0].Card : Card; }
 };

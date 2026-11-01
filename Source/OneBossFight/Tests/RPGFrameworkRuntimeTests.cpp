@@ -475,6 +475,61 @@ bool FFrameworkLosMemory::RunTest(const FString&)
     {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);F3->LosSearchSeconds=3.f;TestFalse(TEXT("outside the F5 lane refused"),RPGFramework::ValidateProfile(*F3,Error));}
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkSweptAnnulus,"OneBossFight.Framework.Runtime.SweptAnnulus",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkSweptAnnulus::RunTest(const FString&)
+{
+    // BOSS-HIT-011: the ring rule. Front = 60 + 400 t, band 40 cm thick, wave 50 cm high, target capsule radius 35 cm.
+    using namespace RPGBossTrack;
+    TestTrue(TEXT("front at t=0.5"),FMath::IsNearlyEqual(RingFront(60.,400.,.5),260.));
+    TestTrue(TEXT("target inside the band"),RingTouches(240.,260.,40.,230.,35.,0.,50.));
+    TestFalse(TEXT("target beyond the front"),RingTouches(240.,260.,40.,330.,35.,0.,50.));
+    TestFalse(TEXT("target the band has already passed (no ghost damage)"),RingTouches(240.,260.,40.,100.,35.,0.,50.));
+    TestFalse(TEXT("a target above the wave is missed"),RingTouches(240.,260.,40.,230.,35.,80.,50.));
+    TestFalse(TEXT("NaN refused"),RingTouches(240.,260.,40.,std::numeric_limits<double>::quiet_NaN(),35.,0.,50.));
+    // No invisible gaps: a target at ANY distance between the start and the end front is touched by exactly the tick whose span contains it, whatever the frame time.
+    for (const double Dt:{1./240.,1./60.,1./30.,.2})
+    {
+        for (double D=60.;D<=460.;D+=1.7)
+        {
+            int32 Touched=0;
+            for (double T=0.;T<1.;T+=Dt)
+                if (RingTouches(RingFront(60.,400.,T),RingFront(60.,400.,FMath::Min(T+Dt,1.)),40.,D,0.,0.,50.)) ++Touched;
+            if (Touched<1) {AddError(FString::Printf(TEXT("gap at dist %g with dt %g"),D,Dt));break;}
+        }
+    }
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkDodgeHistory,"OneBossFight.Framework.Runtime.DodgeHistory",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkDodgeHistory::RunTest(const FString&)
+{
+    // BOSS-AWR-008: classification of a dodge seen from the boss (the target stands +X of the boss), the history ring, and the profile domain.
+    using namespace RPGBossTrack;
+    const FVector ToTarget(100.,0.,0.);
+    TestTrue(TEXT("moving away fast = Back"),ClassifyDodge(FVector(900.,0.,0.),ToTarget,600.f)==EDodgeDir::Back);
+    TestTrue(TEXT("moving toward the boss = Forward"),ClassifyDodge(FVector(-900.,0.,0.),ToTarget,600.f)==EDodgeDir::Forward);
+    TestTrue(TEXT("moving sideways = Side"),ClassifyDodge(FVector(0.,900.,0.),ToTarget,600.f)==EDodgeDir::Side);
+    TestTrue(TEXT("60 degrees off the back axis is still Back (dot 0.5)"),ClassifyDodge(FVector(450.,779.4,0.),ToTarget,600.f)==EDodgeDir::Back);
+    TestTrue(TEXT("below the speed threshold = None"),ClassifyDodge(FVector(500.,0.,0.),ToTarget,600.f)==EDodgeDir::None);
+    TestTrue(TEXT("vertical speed does not count"),ClassifyDodge(FVector(0.,0.,2000.),ToTarget,600.f)==EDodgeDir::None);
+    TestTrue(TEXT("no direction to the target = None"),ClassifyDodge(FVector(900.,0.,0.),FVector::ZeroVector,600.f)==EDodgeDir::None);
+    TestTrue(TEXT("bad threshold = None"),ClassifyDodge(FVector(900.,0.,0.),ToTarget,-1.f)==EDodgeDir::None&&ClassifyDodge(FVector(900.,0.,0.),ToTarget,std::numeric_limits<float>::quiet_NaN())==EDodgeDir::None);
+    FDodgeHistory H;H.Push(EDodgeDir::Back,3);H.Push(EDodgeDir::Side,3);TestEqual(TEXT("one back of two"),H.BackCount(),1);
+    H.Push(EDodgeDir::Back,3);TestEqual(TEXT("two backs of three"),H.BackCount(),2);
+    H.Push(EDodgeDir::Forward,3);TestEqual(TEXT("depth 3: the oldest (Back) fell out"),H.BackCount(),1);TestEqual(TEXT("ring size"),H.Dirs.Num(),3);
+    H.Push(EDodgeDir::None,3);TestEqual(TEXT("None is not recorded"),H.Dirs.Num(),3);
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    auto F5=[&](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);P->DodgeHistoryDepth=0;P->DodgeBackThreshold=2;P->DodgeSpeedCm=600.f;};
+    F5();TestTrue(TEXT("off by default"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->DodgeHistoryDepth=3;TestTrue(TEXT("depth 3 threshold 2 valid"),RPGFramework::ValidateProfile(*P,Error));
+    for(int32 V:{-1,9}){F5();P->DodgeHistoryDepth=V;TestFalse(TEXT("depth outside 0..8 refused"),RPGFramework::ValidateProfile(*P,Error));}
+    F5();P->DodgeHistoryDepth=3;P->DodgeBackThreshold=4;TestFalse(TEXT("threshold above the depth refused"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->DodgeHistoryDepth=3;P->DodgeBackThreshold=0;TestFalse(TEXT("threshold 0 refused"),RPGFramework::ValidateProfile(*P,Error));
+    for(float V:{0.f,-1.f,std::numeric_limits<float>::quiet_NaN()}){F5();P->DodgeHistoryDepth=3;P->DodgeSpeedCm=V;TestFalse(TEXT("bad speed refused"),RPGFramework::ValidateProfile(*P,Error));}
+    {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);F3->DodgeHistoryDepth=3;TestFalse(TEXT("outside the F5 lane refused"),RPGFramework::ValidateProfile(*F3,Error));}
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkArenaProfile,"OneBossFight.Framework.Runtime.ArenaProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
 bool FFrameworkArenaProfile::RunTest(const FString&)
 {

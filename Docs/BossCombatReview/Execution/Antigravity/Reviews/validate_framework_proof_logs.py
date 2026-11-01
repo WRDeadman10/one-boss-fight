@@ -80,6 +80,12 @@ SCHEMAS = {
     "los_resume": r"^$",
     "los_search_timeout": r"^seconds=[^\s]+$",
 
+    # 2d. Dodge Direction Histogram & Soft Adaptation (BOSS-AWR-008 / v3.16)
+    "player_dodges_scheduled": r"^count=\d+$",
+    "player_dodge_started": r"^n=\d+ offset=[^\s]+ direction=[^\s]+ ok=[01]$",
+    "dodge_observed": r"^n=\d+ direction=[^\s]+ speedCm=[^\s]+ back=\d+ depth=\d+$",
+    "dodge_pattern": r"^state=[^\s]+ back=\d+ depth=\d+ threshold=\d+ seq=\d+$",
+
     # 3. Candidate Selection & Gate Decisions (v3.0 adds optional seq=\d+)
     "candidate": r"^attack=\d+ card=[^\s]+ score=[^\s]+(?:\s+seq=\d+)?$",
     "refusal": r"^attack=\d+ card=[^\s]+ reason=[^\s]+(?:\s+seq=\d+)?$",
