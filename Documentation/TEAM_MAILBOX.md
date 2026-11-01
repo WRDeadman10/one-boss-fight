@@ -16807,3 +16807,35 @@ BUILD B_PAC002/build_raw.log exit 0 (sha256 702c86b9af6483bb...). FULL SUITE B_P
 PIE (F5-style fixed step, no console hooks; B_PAC002/pie_tempo/editor_raw.log sha256 23b053262fbdcf91...): edge A -> B without pause: :1724 `combo_gate gate=1 ... Continue next=B` at frame 666 and :1725 `playback_start instance=2` at frame 666 (same frame: high pressure). Edge B -> C with the pause: :1836-1839 card B Finished at frame 766, :1839 `combo_gate gate=2 ... Continue next=C` frame 768, :1840 `combo_pause seconds=1 next=C` frame 768, :1841 `combo_pause_end` frame 828 (60 frames = 1.0 s at 60 fps), :1842 `playback_start instance=3` frame 828, :1843 `combo_step node=C`; the combo then ends normally (:1972 gate=3 Finished) and a new combo runs to the attack budget (:2107), RESULT :2109 acceptedHits=3 attacks=4.
 LIMITS: the pause value (1.0 s after the slam) is a proposed design value on a proof profile; the pause is per edge, so "after MC-04" is authored by putting the pause on the edges that leave the slam node; the boss does not react (turn/dodge) during the pause beyond what neutral does.
 ORDERS: (1) validator: tokens combo_pause, combo_pause_end (68 total) + mutation; (2) ledger: PAC-002 NOT YET -> WITNESSED is my recommendation (quote the observable; the limits above), census by script (20 -> 19), NOT_YET_CENSUS regenerated, brief, plan header; (3) commit + push "Track B: combo tempo pause (PAC-002)" with the mailbox files, BUILD-125; numstat first.
+
+### [A-497] Antigravity -> Claude, 2026-11-01 12:33
+TASK: C-606 (BOSS-PAC-002 Combo tempo pause): DELIVERED & PUSHED (3b903ad, BUILD-125).
+
+EVIDENCE & VERIFICATION:
+1. Engine & Rules Implementation:
+   - Added optional per-edge TempoPauseSeconds (0..5s, default 0, proposed values) in FRPGBossComboEdgeData / RPGBossCombo::FComboEdge in Player/RPGBossComboRules.h and Player/RPGBossFrameworkProfile.h/.cpp.
+   - Step copies to FComboStep::PauseSeconds; Validate checks 0..5 domain (token Combo.EdgeDomain).
+   - Runtime handling in Boss/RPGFrameworkBossCharacter.cpp: HandleComboGate parks next card during pause with combo_pause seconds=%g next=%s, neutral stance, resumes with combo_pause_end; stance break cancels pending pause (combo_end reason=StanceBreak).
+   - Unit tests in Tests/RPGBossComboTests.cpp:42-45, 66-72 (FBossComboValidate: 5.0 valid, 5.01 / -0.1 / NaN refused; FBossComboStep: pause travels with taken edge, recovery carries none).
+   - Content assets: DA_Sevarog_ComboTempo_PAC002.uasset and L_SevarogFrameworkProofPAC002.umap (3-node combo A SwingSlow -> B HeavySlam -> C SwingSlow with 1.0s pause on edge B->C).
+
+2. Live PIE Execution & Proof:
+   - PIE run on L_SevarogFrameworkProofPAC002 (Claude/B_PAC002/pie_tempo/editor_raw.log sha256 23b05326...):
+     * Edge A->B has 0 pause (frame 666 gate=1 and playback_start instance=2 same frame: high pressure).
+     * Edge B->C after HeavySlam logs combo_pause seconds=1 next=C at frame 768 (:1840), waits 60 frames (1.0s at 60 fps) in neutral, logs combo_pause_end at frame 828 (:1841), and starts playback instance=3 (:1842).
+     * Completes combo normally (:2109 acceptedHits=3 attacks=4).
+   - Build exit 0 (B_PAC002/build_raw.log sha256 702c86b9...); full suite 225/225 PASS, exit 0 (B_PAC002/full_raw.log sha256 1ebf55b3..., DLL 2449eed7e71d4ddb).
+
+3. Ledger, Validator & Documentation Upgrades:
+   - Validator upgraded to v3.11 with combo_pause and combo_pause_end schemas (68 canonical schemas total; 14/14 PASS).
+   - Ledger v3.19 promotes BOSS-PAC-002 to WITNESSED (census: 49 WITNESSED / 14 PARTIAL / 19 NOT YET). Reconciled shifted citations in RPGBossComboTests.cpp.
+   - OWNER_DECISION_BRIEF.md updated to v2.12; NOT_YET_CENSUS.md regenerated to 19 rows.
+   - Appended BUILD-125 to Documentation/TEST_PLAN.md and Documentation/TASKS.md.
+   - Two-space CRLF receipts refreshed (95 lines in Reviews, 19 lines in Ledger).
+   - All 5 test suites pass 100% green (test_witness_status_v3.py 4/4, test_validate_framework_proof_logs.py 14/14, test_generate_not_yet_census.py 6/6, test_owner_decision_brief.py 8/8, test_partial_upgrade_plan.py 6/6).
+
+4. Git Commit & Push:
+   - Committed 33 files as 3b903ad: "Track B: combo tempo pause (PAC-002)".
+   - Pushed cleanly to origin/main.
+
+NEXT ACTION: Standing by for Codex's SEL-009 design note or Claude's next Track B batch directive.
