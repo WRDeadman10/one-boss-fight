@@ -25,7 +25,7 @@ namespace RPGBossCombo
     inline int32 FindNode(const FComboGraph& G,FName Id) { for (int32 I=0;I<G.Nodes.Num();++I) if (G.Nodes[I].Id==Id) return I; return INDEX_NONE; }
 
     /** Longest root-to-terminal path counted in nodes; -1 when a cycle or an unknown node makes it undefined. */
-    inline int32 LongestPath(const FComboGraph& G)
+    inline int32 LongestPathFrom(const FComboGraph& G,int32 Start)
     {
         TArray<int32> Memo; Memo.Init(0,G.Nodes.Num()); TArray<uint8> Color; Color.Init(0,G.Nodes.Num());   // 0 new, 1 visiting, 2 done
         TFunction<int32(int32)> Visit=[&](int32 I)->int32
@@ -41,8 +41,9 @@ namespace RPGBossCombo
             }
             Color[I]=2; Memo[I]=Best; return Best;
         };
-        const int32 Root=FindNode(G,G.Root); return Root==INDEX_NONE ? -1 : Visit(Root);
+        return Start==INDEX_NONE ? -1 : Visit(Start);
     }
+    inline int32 LongestPath(const FComboGraph& G) { return LongestPathFrom(G,FindNode(G,G.Root)); }
 
     /** Empty = valid, else the failure token. Order: Empty, MaxDepth (1..3), Root, DuplicateNode, UnknownNode, EdgeDomain, Cycle, Depth (longest path in nodes > MaxDepth). */
     inline FString Validate(const FComboGraph& G)
@@ -61,8 +62,9 @@ namespace RPGBossCombo
             for (const FComboEdge& E:N.Edges)
                 if (!FMath::IsFinite(E.MinRangeCm)||!FMath::IsFinite(E.MaxRangeCm)||!FMath::IsFinite(E.MaxAbsYawDegrees)||E.MinRangeCm<0.f||E.MinRangeCm>E.MaxRangeCm||E.MaxAbsYawDegrees<0.f||E.MaxAbsYawDegrees>180.f)
                     return TEXT("Combo.EdgeDomain");
+        // A cycle anywhere in the graph is refused, also in nodes the root cannot reach (Codex X-374 finding 3).
+        for (int32 I=0;I<G.Nodes.Num();++I) if (LongestPathFrom(G,I)<0) return TEXT("Combo.Cycle");
         const int32 Longest=LongestPath(G);
-        if (Longest<0) return TEXT("Combo.Cycle");
         if (Longest>G.MaxDepth) return TEXT("Combo.Depth");
         return FString();
     }

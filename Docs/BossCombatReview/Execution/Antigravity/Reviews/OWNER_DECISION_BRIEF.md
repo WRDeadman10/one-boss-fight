@@ -1,134 +1,104 @@
-# Owner Decision Brief
+# Track B: Owner Strategic Decision Brief (v2.1)
 
-> **Purpose:** Single-page summary of every pending item waiting on an Owner decision, compiled strictly from repository records.  
-> **Rule:** Every claim cites an exact `file:line` or mailbox post in repository documentation with verified verbatim text.
-
-## Decisions Summary (Decided 2026-10-31 per [C-515] / [C-516])
-
-| # | Topic | Owner Decision | Summary & Action Taken |
-|---|---|---|---|
-| 1 | Cook Scope for ParagonSevarog (KI-143) | **Option A** | Whole Content/ParagonSevarog folder (~1.4 GB) added to DirectoriesToAlwaysCook in Config/DefaultGame.ini. |
-| 2 | NullRHI Headless Actor Spawning (KI-144) | **Option A** | Keep running level authoring and proof drivers in windowed editor (Claude/run_editor_script.ps1 -NullRhi 0). |
-| 3 | Phase-2 and Stagger Animations | **Option B** | Retarget / use existing animations on boss skeleton (Stun_Start/Loop/End; plan F11 C-517/C-518). |
-| 4 | HUD and Boss Health Bar Integration | **Option B** | Keep the C++ UMG HUD (URPGHUDWidget). |
-| 5 | Blood Effect and Sound | **Option B** | Leave bleed as numeric loss without VFX/audio for now. |
-| 6 | D3 Reference Numbers into Cards | **Option A** | Stay design input only; no raw parameter injection into runtime cards. |
-| 7 | Push of Unpushed Commits | **Option A** | Pushed to origin/main by Claude on owner's explicit instruction (origin/main = 6307818c). |
-| 8 | git gc --prune=now of .git Garbage | **Option A** | Executed by Claude: tmp_obj 66 -> 0, .git reclaimed 368 MB, clean fsck. |
+**Date:** 2026-11-01  
+**Author:** Tech Lead Claude & Antigravity  
+**Audience:** Project Owner  
+**Reference:** Question sent by email (`Documentation/TEAM_MAILBOX.md:14532`)  
 
 ---
 
-### 1. Cook Scope for ParagonSevarog (`KI-143`)
-- **What is blocked:** First packaged build containing the boss character. `Content/ParagonSevarog` (1.4 GB) is excluded from `DirectoriesToAlwaysCook`, so packaged builds will not cook the boss mesh or animations.
-- **Options:** *(options written for this brief, not recorded in the repo)*
-  - *Option A:* Add the entire `Content/ParagonSevarog` folder (~1.4 GB) to `DirectoriesToAlwaysCook` in `Config/DefaultGame.ini`.
-  - *Option B:* Audit and cook only the specific subset of needed assets/subfolders required for the boss.
-- **Recorded position (quote):** "Decide the cook scope (whole folder or the needed assets) before the first Sevarog packaged build."
-- **Repository Citations:**
-  - `Documentation/KNOWN_ISSUES.md:254`: `Decide the cook scope (whole folder or the needed assets) before the first Sevarog packaged build.`
-  - `Documentation/TASKS.md:45`: `Decision 1: Cook scope for ParagonSevarog`
-  - `Documentation/DECISIONS.md:1233`: `shipping the Sevarog boss needs its content in DirectoriesToAlwaysCook (owner decision, about 1.4 GB, not made)`
+## 1. Executive Summary & Current State
+
+The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.10) and census script (`Reviews/generate_not_yet_census.py`).
+
+### Ledger Census Today (82 Canonical Requirements):
+- **WITNESSED:** **37** (45.1%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
+- **PARTIAL:** **21** (25.6%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
+- **NOT YET:** **24** (29.3%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
+
+### Milestones Graduated to WITNESSED (Since C-546):
+- **BOSS-AWR-001 (Target validity):** Attack abort and boss shutdown verified across all 3 fault states (Dead, OffArena, Destroyed) with zero subsequent candidate/decision evaluations (`Claude/B_AWR001`).
+- **BOSS-HIT-005 (Query filtering):** Non-target pawns filtered in sweep capsule (`ignoredPawns=1 selfHits=0`) with zero damage perturbation (`Claude/B_HIT005/byst60`), combined with dead-target abort.
+- **BOSS-QA-004 (FPS parity):** Fixed-timestep runs at 30, 60, and 120 FPS producing identical hit counts (2) and damage (55.0 applied).
+- **BOSS-COM-003, 005, 007 (Combo graph):** Multi-scenario live PIE proofs on `L_SevarogFrameworkProofCOM3` verifying 3-node combo progression, single-use gate consumption, and default recovery fallbacks.
+
+### Progress on Key PARTIAL Rows:
+- **BOSS-QA-003 (Determinism):** Bit-for-bit event reproducibility across identical seeds, and live seeded tie-breaking on `L_SevarogFrameworkProofQA003` picking lower-scoring moves deterministically; remains PARTIAL pending frame-synchronized player input injection.
+- **BOSS-QA-002 (Structured event log):** 53 structured `[FrameworkProof]` tokens and unique monotonic decision sequence numbers across stance breaks; production `[CARD_*]` prefix reserved.
+- **BOSS-DEF-002 (Posture regen):** Reset-on-drain delay and linear regen rate verified live in PIE.
 
 ---
 
-### 2. NullRHI Headless Actor Spawning (`KI-144`)
-- **What is blocked:** Headless commandlet execution (`UnrealEditor-Cmd -nullrhi`) for automated level authoring and PIE proofs (`unreal.EditorLevelLibrary.spawn_actor_from_class` crashes with `EXCEPTION_INT_DIVIDE_BY_ZERO`).
-- **Options:** *(options written for this brief, not recorded in the repo)*
-  - *Option A:* Accept engine behavior and execute level authoring / proof drivers in the windowed editor (`Claude/run_editor_script.ps1 -NullRhi 0`).
-  - *Option B:* Re-architect actor spawning in native C++ to bypass `EditorLevelLibrary` in commandlet modes.
-- **Recorded position (quote):** "Run level authoring and proof drivers in the windowed editor (Claude/run_editor_script.ps1 -NullRhi 0 [-PyCmd 1])."
-- **Repository Citations:**
-  - `Documentation/KNOWN_ISSUES.md:255`: `Run level authoring and proof drivers in the windowed editor (Claude/run_editor_script.ps1 -NullRhi 0 [-PyCmd 1]).`
-  - `Documentation/DECISIONS.md:1235`: `EditorLevelLibrary spawns crash (INT_DIVIDE_BY_ZERO) in -nullrhi UnrealEditor-Cmd`
+## 2. Taxonomy of Remaining Work
+
+### A. The 21 PARTIAL Rows (Grouped by Real Blocker)
+From `Reviews/PARTIAL_UPGRADE_PLAN.md` (re-verified against Ledger v3.10):
+1. **Engine / PIE Scenario Hooks (6 rows):**
+   - `BOSS-QA-001` (Runtime overlay): Formatted strings logged live; blocked because unattended PIE GPU backbuffer readback returned black pixels; requires on-screen display capture.
+   - `BOSS-AWR-005` (Vertical separation): Rule unit-tested; requires authored proof map with target on an elevated ledge ($Z > 50\text{ cm}$).
+   - `BOSS-AWR-002` (Gate-time snapshot): Range snapshot verified live; requires lateral target displacement during windup proving angle lock.
+   - `BOSS-SEL-008` (No-candidate fallback): Walk-to-band verified live; requires continuous strafe loop when 0 cards qualify.
+   - `BOSS-COM-002` (Gate after damage): Card-finish gate verified live; requires in-flight recovery gate evaluation after damage.
+   - `BOSS-COM-004` (Hit-confirm policy): Whiff/recovery verified live; requires guarded and parried target states in PIE.
+2. **Player-Side / Combat Input Integration (5 rows):**
+   - `BOSS-HIT-008` (Central defense order): Requires player shield block/parry stance integration in damage resolver.
+   - `BOSS-HIT-009` (Iframe completeness): Requires player dodge iframe timing alignment with weapon sweep window.
+   - `BOSS-PHS-004` (Fair heal punish): Requires player flask drinking perception reaction loop in boss character.
+   - `BOSS-QA-003` (Reproducible scenarios): Requires frame-accurate player input injection driver.
+   - `BOSS-ANM-005` (Exclusive motion authority): Requires formal player-boss collision and AI navigation lock.
+3. **Animation & Notify Track Authoring (4 rows):**
+   - `BOSS-ANM-002` (Telegraph phases): Requires authored windup, active, and recovery notify tracks.
+   - `BOSS-ANM-007` (Notify-end independence): Requires testing dropped notify stall independence without notifies.
+   - `BOSS-MOV-001` (Range-band policy): Requires full 15-family range-band card partitioning.
+   - `BOSS-PAC-006` (Neutral is purposeful): Requires multi-attack neutral transition testing with authored idle postures.
+4. **Lifecycle & Watchdog Robustness (3 rows):**
+   - `BOSS-EXE-004` (Stale event rejection): Requires live logging of interrupted attack late AnimNotify rejection.
+   - `BOSS-EXE-006` (Idempotent abort): Requires live grab/AoE executor abort path.
+   - `BOSS-EXE-007` (Watchdog): Requires live logging of explicit suppressed-event watchdog timeout ($+0.5\text{s}$).
+5. **Architectural & Design Constraints (2 rows):**
+   - `BOSS-AWR-004` (Signed angle hysteresis): Discrete-attack boss has no oscillation; requires selector-side memory.
+   - `BOSS-QA-002` (Structured event log): Defenses and interrupts not logged; production `[CARD_*]` prefix reserved.
+6. **Hardware Baseline (1 row):**
+   - `BOSS-QA-005` (Performance bounds): Packaged build 1080p 60 FPS $p99 \le 16.67\text{ ms}$ on physical RTX 2060 Super GPU (parked by owner).
+
+### B. The 24 NOT YET Rows (Grouped by Class & Cost)
+Directly computed from `Reviews/NOT_YET_CENSUS.md` and verified against disk:
+- **Cost Breakdown:** **Cost S (1-2 runs): 4 reqs (16.7%)** | **Cost M (2-4 runs): 12 reqs (50.0%)** | **Cost L (4+ runs): 8 reqs (33.3%)**.
+- **By Dependency Class:**
+  * **ENGINE-ONLY (5 reqs, 20.8%):** Pure C++ runtime rules or hooks; no art dependencies.
+    - Cost S: `BOSS-MOV-003` (Movement commitment), `BOSS-MOV-005` (Arena center leashing), `BOSS-DEF-004` (MoveCard hyperarmor tags).
+    - Cost M: `BOSS-SEL-009` (Reaction latency window), `BOSS-EXE-005` (Phase vs stagger priority).
+  * **NEEDS DESIGN DECISION (4 reqs, 16.7%):** Designer thresholds or scoring rules; requires owner choices before code.
+    - Cost S: `BOSS-PAC-002` (Combo tempo pauses).
+    - Cost M: `BOSS-MOV-002` (Combat positioning center bias), `BOSS-HIT-010` (Direct vs splash precedence), `BOSS-PHS-005` (Anti-cheese trigger rules).
+  * **NEEDS ART (6 reqs, 25.0%):** Requires animations, montages, notify tracks, or level collision art.
+    - Cost M: `BOSS-MOV-004` (Wall-safe charge trajectories), `BOSS-MOV-006` (L_SevarogArena snag point audit), `BOSS-DEF-005` (Defensive moveset actions).
+    - Cost L: `BOSS-ANM-003` (Bounded holds), `BOSS-PAC-004` (Vulnerability visual cues), `BOSS-QA-007` (Low VFX accessibility harness).
+  * **NEEDS NEW SYSTEM (5 reqs, 20.8%):** Requires unbuilt architectural subsystems.
+    - Cost L: `BOSS-AWR-007` (LOS raycasts & memory), `BOSS-AWR-008` (Player dodge adaptation histogram), `BOSS-ANM-006` (Motion Warping plugin integration), `BOSS-HIT-011` (Swept annulus shockwave), `BOSS-HIT-012` (Two-character grab state machine).
+  * **PLAYER-SIDE (4 reqs, 16.7%):** Requires player combat intake, input buffers, or camera integration.
+    - Cost M: `BOSS-AWR-006` (Player flask/heavy commitment listener), `BOSS-PAC-003` (Finisher recovery punish window), `BOSS-PAC-005` (Punish-margin calculation formula), `BOSS-QA-006` (Combat follow camera framing).
 
 ---
 
-### 3. Phase-2 and Stagger Animations
-- **What is blocked:** Visual presentation for boss stance break / stagger (currently logic-only; the boss breaks and recovers but freezes in place) and dedicated Phase 2 transition presentation (currently uses proof cards and logic-only latching without roar/transition montage).
-- **Options:** *(options written for this brief, not recorded in the repo)*
-  - *Option A:* Author or source dedicated skeletal animations / montages for stagger (hit reaction, kneel, recovery) and phase 2 transition (roar / power-up).
-  - *Option B:* Retarget existing Paragon Sevarog animations.
-  - *Option C:* Retain freeze-in-place placeholders for framework proof verification.
-- **Recorded position (quote):** no recorded recommendation
-- **Repository Citations:**
-  - `Documentation/DECISIONS.md:1258`: `No stagger animation yet (the boss freezes in place): known limit.`
-  - `Documentation/TASKS.md:696`: `Open: break in neutral, regen-to-full, stagger animation.`
-  - `Documentation/DECISIONS.md:627`: `The roar, transition montage and immunity dependencies are still open for a later reviewed package`
+## 3. The Owner Question & Options
+
+Verbatim text of the question sent to the owner (`Documentation/TEAM_MAILBOX.md:14532`):
+
+> `"which way next" for Track B: A) upgrade the 27 PARTIAL rows to WITNESSED (mostly one live run or one screenshot each), then the open rows; B) the 24 NOT YET rows in cost order (about 8 need art/design input, about 16 need new systems); C) stop. My recommendation: A then B.`
+
+### Evaluation with Today's Data:
+- **Option A (Upgrade PARTIAL rows first):** 6 rows have already graduated (`AWR-001`, `QA-004`, `HIT-005`, `COM-003`, `COM-005`, `COM-007`), leaving 21 rows. 6 of these 21 have established framework hooks and can be graduated via targeted PIE scenario maps (e.g. `AWR-005` elevated ledge, `AWR-002` lateral shift). The remaining 15 rows depend on player-side intake, notify authoring, or lifecycle logging.
+- **Option B (Work NOT YET rows in cost order):** The 3 Cost S and 2 Cost M `ENGINE-ONLY` rows (`MOV-003`, `MOV-005`, `DEF-004`, `SEL-009`, `EXE-005`) can be implemented immediately in C++. However, the 4 `NEEDS DESIGN DECISION` rows require designer choices from the owner before implementation, and the remaining 15 rows depend on art assets or whole unbuilt subsystems.
+- **Option C (Stop):** Freeze Track B at current state (37 WITNESSED / 21 PARTIAL / 24 NOT YET) and transition focus to other project areas.
 
 ---
 
-### 4. HUD and Boss Health Bar Integration
-- **What is recorded & what is unverified:**
-  - The canvas `ARPGHUD` was deleted and replaced with C++ UMG widgets (`URPGHUDWidget`, `URPGPauseMenuWidget`) (`Documentation/DECISIONS.md:118`).
-  - `Source/OneBossFight/Core/RPGHUD.cpp` and `.h` were recorded as deleted in the working tree (`Documentation/KNOWN_ISSUES.md:45`, `KI-041`).
-  - The Advanced ARPG pack's menus, input, and HUD replaced the custom C++ HUD, but have not undergone a controller playtest (`Documentation/KNOWN_ISSUES.md:54`, `KI-050`).
-  - In framework boss proof maps, native boss health is read via `RPGPack::ReadAttribute`, but HUD bar display remains unverified (`Documentation/TASKS.md:692`).
-- **Options:** *(options written for this brief, not recorded in the repo)*
-  - *Option A:* Retain the Advanced ARPG pack's UMG HUD and boss health bar, verifying native framework boss health integration during controller playtesting.
-  - *Option B:* Retain C++ UMG HUD architecture (`URPGHUDWidget`) if custom HUD presentation is desired.
-- **Recorded position (quote):** no recorded recommendation
-- **Repository Citations:**
-  - `Documentation/DECISIONS.md:118`: `HUD (URPGHUDWidget) and pause menu (URPGPauseMenuWidget) are UMG widgets whose trees are built in C++; the canvas ARPGHUD was deleted`
-  - `Documentation/KNOWN_ISSUES.md:45`: `Source/OneBossFight/Core/RPGHUD.cpp and .h show as deleted in the working tree (not by this work)`
-  - `Documentation/KNOWN_ISSUES.md:54`: `the pack's menus, input and HUD replace ours and have not had a controller playtest`
-  - `Documentation/TASKS.md:692`: `physics-asset coverage, double OnHit per sweep and the HUD bar stay UNVERIFIED.`
+## 4. Recommendation
 
----
+### Recommendation: **Option A first, then the Cost S/M ENGINE-ONLY rows of Option B.**
 
-### 5. Blood Effect and Sound
-- **What is blocked:** Audio-visual feedback on boss bleed procs on the native framework boss (legacy `URPGBossBleed` effect/sound are not ported to the framework boss; realistic blood pack `Content/BloodPack` spawns nothing visible in UE 5.5).
-- **Options:** *(options written for this brief, not recorded in the repo)*
-  - *Option A:* Delete `Content/BloodPack` or find a working UE 5.5 replacement Niagara blood effect and port impact sound/VFX to the native framework boss.
-  - *Option B:* Leave bleed procs as numerical attribute loss without visual/audio VFX for proof lane.
-- **Recorded position (quote):** "Delete Content/BloodPack or find a replacement"
-- **Repository Citations:**
-  - `Documentation/KNOWN_ISSUES.md:28`: `Delete Content/BloodPack or find a replacement`
-  - `Documentation/DECISIONS.md:1264`: `No blood effect or sound yet (the legacy component's effect/sound are not ported): known limit.`
-
----
-
-### 6. Whether Any D3 Reference Numbers May Enter Ember Warden Cards
-- **What is blocked:** Injection or application of measured reference timings (Windup, Active, Recovery, Total) from the reference video study (`D3_MEASURED_LEDGER.json`) into runtime Ember Warden combat cards (`Content/OneBossFight/FrameworkProof/Cards/`).
-- **Options:** *(options written for this brief, not recorded in the repo)*
-  - *Option A:* Strictly maintain "DESIGN INPUT" status only; prohibit direct injection into runtime cards without explicit owner direction and validation.
-  - *Option B:* Author candidate Ember Warden cards based on selected reference timings subject to formal owner approval and proof verification.
-- **Recorded position (quote):** "Under NO CIRCUMSTANCES may any data from this study be copied, pasted, or injected into shipped gameplay assets or runtime cards located in Content/OneBossFight/FrameworkProof/Cards/ without explicit, formal direction and sign-off from the project Owner."
-- **Repository Citations:**
-  - `Docs/BossCombatReview/Execution/Antigravity/Reviews/D3_FINDINGS.md:109`: `Under **NO CIRCUMSTANCES** may any data from this study be copied, pasted, or injected into shipped gameplay assets or runtime cards located in Content/OneBossFight/FrameworkProof/Cards/ without explicit, formal direction and sign-off from the project **Owner**.`
-  - `Documentation/TASKS.md:26`: `D3 (Footage Measurements): IN PROGRESS (Claude; 4 of 10 clips filled in D3_MEASURED_LEDGER.json: REF_MaceSlam_Sweep medium, REF_HolySwordRain_Setup low, REF_GapPounce_Close low, REF_OmenCurseBurst_Phase2 medium, ledger commit 409ba526/3d9debd4/eeb58706/bd1d0233).`
-
----
-
-### 7. Push of Unpushed Commits
-- **What is blocked:** Remote synchronization of recent commits to `origin/main`.
-- **Commit Count & Subjects:** 11 at the time of writing: run `git log origin/main..HEAD --oneline`
-  1. `108c01d7 docs: owner decision brief`
-  2. `3d9debd4 docs: D3 findings fix`
-  3. `409ba526 docs: D3 findings 2/9`
-  4. `2d4bf763 docs: D3 ledger 1/9 + ingest --partial`
-  5. `7dee334d docs: D2 template: mace slam entry`
-  6. `6fedcae0 docs: Track D reference measurement dashboard and BUILD-95 test plan update`
-  7. `acc88060 docs: D5 ledger fill tool, ingest integration, and test suite`
-  8. `0620a775 docs: D4 contact sheet tooling, HUD-safe relative font sizing, and test suite`
-  9. `bb04eb95 docs: D2 measurement ledger template, ingest script, and test suite`
-  10. `cb9826e3 docs: D1 reference measurement protocol (82-row classification, ffmpeg 59.94 fps method, test 11/11, Morgott reference video link)`
-  11. `b455740b proof: KI-146 dodge i-frame (inject_action IA_Dodge), notes, test 38/38, Claude/KI146 runs, KNOWN_ISSUES/TASKS/TEST_PLAN/gitignore`
-- **Options:**
-  - *Option A:* Owner executes `git push origin main` directly, or explicitly instructs Claude to push.
-  - *Option B:* Keep commits local on development machine until Track D study is fully completed.
-- **Recorded position (quote):** "The user commits on their own; never commit or push unless asked."
-- **Repository Citations:**
-  - `Documentation/PROJECT_STATE.md:89`: `The user commits on their own; never commit or push unless asked.`
-  - `Documentation/TASKS.md:44`: `pushed to origin/main by Claude on the owner's explicit word; Antigravity still never pushes on its own.`
-
----
-
-### 8. Optional `git gc --prune=now` of `.git` Garbage
-- **What is blocked:** Reclamation of disk space from stale interrupted git write artifacts.
-- **Size / Measurement:** Exactly 66 files summing to 152,566,102 bytes (~145.5 MB) matching `*tmp_obj*` in `.git/objects/`.
-- **Options:** *(options written for this brief, not recorded in the repo)*
-  - *Option A:* Execute `git gc --prune=now` to clean up the 145 MB of temporary object files.
-  - *Option B:* Leave temporary object files untouched until a scheduled repository maintenance window.
-- **Recorded position (quote):** "please run git prune / git gc --prune=now only after the owner agrees (not now)"
-- **Repository Citations:**
-  - `Documentation/TEAM_MAILBOX.md:[C-486]`: `please run git prune / git gc --prune=now only after the owner agrees (not now)`
+**Rationale:**
+1. **Capitalize on Proven Scenarios:** The PARTIAL rows already possess verified C++ implementations and unit tests. Addressing the engine-accessible subset (such as `AWR-005` vertical separation on an elevated ledge and `AWR-002` lateral displacement) converts existing investments into clean WITNESSED rows with zero new system architecture.
+2. **Targeted C++ Expansion:** Following Option A's engine-ready slice with Option B's 5 `ENGINE-ONLY` rows (`MOV-003`, `MOV-005`, `DEF-004`, `SEL-009`, `EXE-005`) expands framework capability purely in code without art bottlenecks.
+3. **Avoid Premature Blockers:** Working strictly in cost order without separating by dependency class would stall against the 4 design-decision rows and 6 art rows.

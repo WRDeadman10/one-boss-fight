@@ -106,7 +106,7 @@ CENSUS_METADATA = {
         "cost": "M",
         "cite": {
             "file": "Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp",
-            "line": 181,
+            "line": 183,
             "quote": "// Opt-in repositioning: nobody is eligible from here (the ",
         },
         "explanation": "repositioning only walks straight toward target band without arena boundary or wall clearance scoring",
@@ -132,7 +132,7 @@ CENSUS_METADATA = {
         "cost": "S",
         "cite": {
             "file": "Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp",
-            "line": 87,
+            "line": 89,
             "quote": "if(P&&P->ArenaRadiusCm>0.f&&FVector::Dist2D(Target->GetActor",
         },
         "explanation": "target leaving ArenaRadiusCm triggers TargetFault OffArena which halts and fails the boss; active leashing back to arena center and neutral reset not implemented",

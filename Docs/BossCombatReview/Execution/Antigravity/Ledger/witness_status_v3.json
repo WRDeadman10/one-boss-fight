@@ -914,12 +914,12 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 69,
+          "line": 71,
           "quoted": "FComboState Front;Front.Node=TEXT(\"A\");TestTrue(TEXT(\"in front: continue\"),Step(G,Front,Gate(1,100.,10.)).Kind==EStep::Continue);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 71,
+          "line": 73,
           "quoted": "TestTrue(TEXT(\"rolled behind: recover\"),R.Kind==EStep::Recover);TestEqual(TEXT(\"default recovery\"),R.Reason,FString(TEXT(\"Combo.DefaultRecovery\")));"
         },
         {
@@ -957,12 +957,12 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 75,
+          "line": 77,
           "quoted": "FComboState S;S.Node=TEXT(\"A\");FComboStep R=Step(G,S,Gate(1,100.,10.,EOutcome::Whiff));TestEqual(TEXT(\"whiff -> C\"),R.NextNode,FName(TEXT(\"C\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 77,
+          "line": 79,
           "quoted": "FComboState U;U.Node=TEXT(\"A\");R=Step(G,U,Gate(1,100.,10.,EOutcome::Parried));TestTrue(TEXT(\"parried: no edge, recover\"),R.Kind==EStep::Recover);TestEqual(TEXT(\"default recovery\"),R.Reason,FString(TEXT(\"Combo.DefaultRecovery\")));"
         },
         {
@@ -994,12 +994,12 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 64,
+          "line": 66,
           "quoted": "TestTrue(TEXT(\"duplicate gate ignored\"),R.Kind==EStep::Ignored);TestTrue(TEXT(\"state untouched\"),S.Node==After.Node&&S.Depth==After.Depth&&S.LastGateId==After.LastGateId);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 65,
+          "line": 67,
           "quoted": "TestEqual(TEXT(\"gate id 0 is refused\"),Step(G,S,Gate(0,100.,10.)).Reason,FString(TEXT(\"Combo.GateId\")));"
         },
         {
@@ -1047,17 +1047,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 41,
+          "line": 43,
           "quoted": "TestEqual(TEXT(\"four nodes deep with max depth 3\"),Token([](FComboGraph& G){G.Nodes.Add(Node(TEXT(\"F\"),TEXT(\"MoveF\")));G.Nodes[4].Edges.Add(Edge(TEXT(\"F\"),0.f,100.f,180.f,true));}),FString(TEXT(\"Combo.Depth\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 58,
+          "line": 60,
           "quoted": "R=Step(G,S,Gate(3,100.,10.));TestTrue(TEXT(\"terminal node finishes\"),R.Kind==EStep::Finished);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 93,
+          "line": 95,
           "quoted": "FComboStep R=Step(Short,S,Gate(2,100.,10.));TestTrue(TEXT(\"third node refused\"),R.Kind==EStep::Recover);TestEqual(TEXT(\"depth token\"),R.Reason,FString(TEXT(\"Combo.Depth\")));"
         },
         {
@@ -1089,7 +1089,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 81,
+          "line": 83,
           "quoted": "FComboState S;S.Node=TEXT(\"A\");FComboStep R=Step(G,S,Gate(1,300.,10.));TestTrue(TEXT(\"out of range: recover\"),R.Kind==EStep::Recover);TestEqual(TEXT(\"default recovery\"),R.Reason,FString(TEXT(\"Combo.DefaultRecovery\")));"
         },
         {
@@ -1267,7 +1267,7 @@
       "status": "NOT YET",
       "proof": [],
       "citations": [],
-      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45°).",
+      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45\u00b0).",
       "notes": "Motion warping clamping bounds not yet implemented in active runtime (designated for Movement Block)."
     },
     {

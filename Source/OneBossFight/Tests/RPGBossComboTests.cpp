@@ -37,6 +37,8 @@ bool FBossComboValidate::RunTest(const FString&)
     TestEqual(TEXT("yaw above 180"),Token([](FComboGraph& G){G.Nodes[0].Edges[0].MaxAbsYawDegrees=181.f;}),FString(TEXT("Combo.EdgeDomain")));
     TestEqual(TEXT("NaN range"),Token([](FComboGraph& G){G.Nodes[0].Edges[0].MaxRangeCm=std::numeric_limits<float>::quiet_NaN();}),FString(TEXT("Combo.EdgeDomain")));
     TestEqual(TEXT("cycle E -> A"),Token([](FComboGraph& G){G.Nodes[4].Edges.Add(Edge(TEXT("A"),0.f,100.f,180.f,true));}),FString(TEXT("Combo.Cycle")));
+    TestEqual(TEXT("cycle between two nodes the root cannot reach"),Token([](FComboGraph& G){G.Nodes.Add(Node(TEXT("X"),TEXT("MoveX"),{Edge(TEXT("Y"),0.f,100.f,180.f,true)}));G.Nodes.Add(Node(TEXT("Y"),TEXT("MoveY"),{Edge(TEXT("X"),0.f,100.f,180.f,true)}));}),FString(TEXT("Combo.Cycle")));
+    TestTrue(TEXT("an orphan node without a cycle stays valid"),Token([](FComboGraph& G){G.Nodes.Add(Node(TEXT("Z"),TEXT("MoveZ")));}).IsEmpty());
     TestEqual(TEXT("self loop"),Token([](FComboGraph& G){G.Nodes[2].Edges.Add(Edge(TEXT("C"),0.f,100.f,180.f,true));}),FString(TEXT("Combo.Cycle")));
     TestEqual(TEXT("four nodes deep with max depth 3"),Token([](FComboGraph& G){G.Nodes.Add(Node(TEXT("F"),TEXT("MoveF")));G.Nodes[4].Edges.Add(Edge(TEXT("F"),0.f,100.f,180.f,true));}),FString(TEXT("Combo.Depth")));
     TestEqual(TEXT("max depth 4 is outside 1..3"),Token([](FComboGraph& G){G.MaxDepth=4;}),FString(TEXT("Combo.MaxDepth")));
