@@ -42,8 +42,8 @@ class TestOwnerDecisionBrief(unittest.TestCase):
     def test_census_parity(self):
         """Census numbers in brief must match ledger v3.15."""
         ledger_census = self.ledger["census"]
-        self.assertIn(f"**{ledger_census['WITNESSED']}** (90.2%)", self.text)
-        self.assertIn(f"**{ledger_census['PARTIAL']}** (9.8%)", self.text)
+        self.assertIn(f"**{ledger_census['WITNESSED']}** (91.5%)", self.text)
+        self.assertIn(f"**{ledger_census['PARTIAL']}** (8.5%)", self.text)
         self.assertIn(f"**{ledger_census['NOT YET']}** (0.0%)", self.text)
         self.assertIn("82 Canonical Requirements", self.text)
 
@@ -64,7 +64,7 @@ class TestOwnerDecisionBrief(unittest.TestCase):
     def test_partial_counts(self):
         """PARTIAL category breakdown must sum to 8."""
         self.assertIn("Engine / PIE Scenario Hooks (2 rows)", self.text)
-        self.assertIn("Player-Side / Combat Input Integration (3 rows)", self.text)
+        self.assertIn("Player-Side / Combat Input Integration (2 rows)", self.text)
         self.assertIn("Animation & Notify Track Authoring (1 row)", self.text)
         self.assertIn("Architectural & Design Constraints (1 row)", self.text)
         self.assertIn("Hardware Baseline (1 row)", self.text)

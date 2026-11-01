@@ -85,6 +85,12 @@ SCHEMAS = {
     "player_dodge_started": r"^n=\d+ offset=[^\s]+ direction=[^\s]+ ok=[01]$",
     "dodge_observed": r"^n=\d+ direction=[^\s]+ speedCm=[^\s]+ back=\d+ depth=\d+$",
     "dodge_pattern": r"^state=[^\s]+ back=\d+ depth=\d+ threshold=\d+ seq=\d+$",
+    # 2e. Player Dodge & Iframe Completeness (BOSS-HIT-009)
+    "iframe_sweep_armed": r"^dodgeAtSeconds=[^\s]+$",
+    "iframe_sweep_press": r"^t=[^\s]+ sinceFirstAttack=[^\s]+$",
+    "iframe_probe": r"^n=\d+ sinceDodgePress=[^\s]+ outcome=[^\s]+ hpApplied=[^\s]+$",
+    "iframe_sweep_end": r"^probes=\d+$",
+
 
     # 2e. Player Activity & Greed Adaptation (BOSS-AWR-006 / v3.20)
     "player_activity": r"^from=[^\s]+ to=[^\s]+ attackKind=[^\s]+$",

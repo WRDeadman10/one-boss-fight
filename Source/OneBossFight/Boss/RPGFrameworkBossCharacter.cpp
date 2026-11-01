@@ -15,6 +15,9 @@
 #include "GameFramework/Controller.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGHitIntake.h"
+#include "Combat/RPGInputTestUtils.h"
+#include "InputAction.h"
+#include "Player/RPGDamageResolver.h"
 #include "Player/RPGSwingTracker.h"
 #include "Player/RPGBossMath.h"
 #include "Player/RPGBossOverlayRules.h"
@@ -22,6 +25,7 @@
 #include "Player/RPGBossRules.h"
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<float> CVarBossProofBystander(TEXT("rpg.BossProofBystander"),0.f,TEXT("Test hook (BOSS-HIT-005): above 0 spawns one plain Character (a second pawn that is not the target) that many cm to the side of the target when the boss starts its first attack of an encounter. 0 = off. Not compiled into shipping builds."),ECVF_Default);
+static TAutoConsoleVariable<float> CVarBossProofIFrameSweep(TEXT("rpg.BossProofIFrameSweep"),-1.f,TEXT("Test hook (BOSS-HIT-009): at this many game seconds after the boss's first attack of an encounter the player's REAL dodge input (IA_Dodge, held 0.12 s) is injected, and every tick from the press for 1.2 s a 1 HP probe goes through the damage resolver; the outcome of every probe is logged. Negative = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<FString> CVarBossProofPlayerHits(TEXT("rpg.BossProofPlayerHits"),TEXT(""),TEXT("Test hook (BOSS-QA-003): comma separated seconds after the boss's first attack of an encounter at which the target's hit intake lands one test hit on the boss (game clock, so a fixed time step replays it exactly). Empty = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<FString> CVarBossProofTargetShift(TEXT("rpg.BossProofTargetShift"),TEXT(""),TEXT("Test hook (BOSS-MOV-005): 'seconds:dx,dy,dz|seconds:dx,dy,dz' moves the target by that vector at those game-clock seconds after the boss first attack of an encounter (teleport). Empty = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossTurnLatch(TEXT("rpg.BossProofTurnLatch"),1,TEXT("Test hook (BOSS-MOV-003): 0 turns the reposition turn WITHOUT the direction latch (control run: it still counts the direction changes). 1 = latch on (default behaviour). Not compiled into shipping builds."),ECVF_Default);
@@ -247,6 +251,37 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
     }
     const auto& P=*Dependencies->Profile.Get();
 #if !UE_BUILD_SHIPPING
+    if(ProofIFStart>=0.&&Target.IsValid())
+    {
+        // BOSS-HIT-009: the press of the REAL dodge input on the game clock, then one probe per tick through the damage resolver (the path every boss hit takes): the player's invulnerability window, measured.
+        const double Now=GetWorld()->GetTimeSeconds(); APlayerController* IFPC=Cast<APlayerController>(Cast<APawn>(Target.Get())->GetController());
+        if(!bProofIFPressed&&Now-ProofIFStart>=double(CVarBossProofIFrameSweep.GetValueOnGameThread()))
+        {
+            bProofIFPressed=true;ProofIFPressAt=Now;
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] iframe_sweep_press t=%.4f sinceFirstAttack=%.4f"),Now,Now-ProofIFStart);
+        }
+        if(bProofIFPressed&&IFPC)
+        {
+            const double Since=Now-ProofIFPressAt;
+            if(Since<=.12)
+            {
+                static const TCHAR* DodgeAsset=TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_Dodge.IA_Dodge");
+                if(UInputAction* IA=LoadObject<UInputAction>(nullptr,DodgeAsset))URPGInputTestUtils::InjectAction(IFPC,IA,FVector(1.,0.,0.));
+            }
+            if(Since<=1.2)
+            {
+                if(URPGDamageResolver* R=URPGDamageResolver::FindOrAdd(this))
+                {
+                    FRPGDamagePayload Payload;Payload.MoveId=TEXT("IFrameProbe");Payload.AttackInstance=9000+ProofIFProbes;Payload.Generation=int32(GenerationId);Payload.HitKey=FName(*FString::Printf(TEXT("IFProbe_%d"),ProofIFProbes));Payload.HPDamage=1.f;
+                    const FRPGDamageResult Result=R->Resolve(Target.Get(),Payload);
+                    if(Result.Outcome==ERPGDamageOutcome::Accepted)NoteDamageApplied(Result.HPApplied);   // the boss's own accounting of the target's health, as for every hit it lands
+                    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] iframe_probe n=%d sinceDodgePress=%.4f outcome=%s hpApplied=%g"),ProofIFProbes,Since,*UEnum::GetValueAsString(Result.Outcome),Result.HPApplied);
+                }
+                ++ProofIFProbes;
+            }
+            else if(ProofIFStart>=0.){UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] iframe_sweep_end probes=%d"),ProofIFProbes);ProofIFStart=-2.;}
+        }
+    }
     if(ProofHitStart>=0.&&ProofHitsDone<ProofHitOffsets.Num()&&GetWorld()->GetTimeSeconds()-ProofHitStart>=ProofHitOffsets[ProofHitsDone])
     {
         URPGHitIntake* Intake=Target.IsValid()?Target->FindComponentByClass<URPGHitIntake>():nullptr;
@@ -423,6 +458,7 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
                 for(const FString& Part:Parts)ProofDrinkOffsets.Add(FCString::Atod(*Part));
                 UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] player_drinks_scheduled count=%d"),ProofDrinkOffsets.Num());
             }
+            if(ProofIFStart<0.&&CVarBossProofIFrameSweep.GetValueOnGameThread()>=0.f){ProofIFStart=GetWorld()->GetTimeSeconds();ProofIFPressAt=-1.;ProofIFProbes=0;bProofIFPressed=false;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] iframe_sweep_armed dodgeAtSeconds=%g"),double(CVarBossProofIFrameSweep.GetValueOnGameThread()));}
             if(ProofDodgeStart<0.&&!CVarBossProofPlayerDodge.GetValueOnGameThread().IsEmpty())
             {
                 ProofDodgeStart=GetWorld()->GetTimeSeconds();ProofDodgesDone=0;ProofDodges.Reset();TArray<FString> Parts;CVarBossProofPlayerDodge.GetValueOnGameThread().ParseIntoArray(Parts,TEXT(","));

@@ -33,7 +33,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
         self.assertNotIn(b"\r", raw, "validate_framework_proof_logs.py contains CR! Must be pure LF.")
 
     def test_all_65_tokens_registered(self):
-        self.assertEqual(len(validator.SCHEMAS), 106, f"Expected 106 schemas, got {len(validator.SCHEMAS)}")
+        self.assertEqual(len(validator.SCHEMAS), 110, f"Expected 110 schemas, got {len(validator.SCHEMAS)}")
         for tok, pat in validator.SCHEMAS.items():
             compiled = validator.COMPILED_SCHEMAS.get(tok)
             self.assertIsNotNone(compiled, f"Token {tok} missing in COMPILED_SCHEMAS")
@@ -123,6 +123,12 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             "[FrameworkProof] camera_frame t=12.00 distCm=128.467 screenMinX=402.0 screenMinY=59.2 screenMaxX=499.7 screenMaxY=328.1 viewX=918 viewY=402 cornersOnScreen=8 insideMargin=1 heightPct=66.90 occluded=0",
             "[FrameworkProof] camera_stage index=0 distanceCm=300 cameraTurnedAway=0",
             "[FrameworkProof] camera_stage index=1 distanceCm=600",
+            # Player Dodge & Iframe Completeness (BOSS-HIT-009)
+            "[FrameworkProof] iframe_sweep_armed dodgeAtSeconds=0.5",
+            "[FrameworkProof] iframe_sweep_press t=12.3456 sinceFirstAttack=0.5000",
+            "[FrameworkProof] iframe_probe n=14 sinceDodgePress=0.2333 outcome=ERPGDamageOutcome::RejectedInvulnerable hpApplied=0",
+            "[FrameworkProof] iframe_probe n=1 sinceDodgePress=0.0167 outcome=ERPGDamageOutcome::Accepted hpApplied=1",
+            "[FrameworkProof] iframe_sweep_end probes=72",
             "[FrameworkProof] dodge_pattern state=BackDodging back=2 depth=2 threshold=2 seq=2",
             # Grab Fail-Safe (BOSS-HIT-012)
             "[FrameworkProof] grab_catch instance=1 window=Window_HeavySlam_Terminal socket=hand_l releaseAt=1.1 modeBefore=MOVE_Walking modeHeld=MOVE_None attached=1",
@@ -181,6 +187,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_telegraph/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_QA006/pie_framing/editor_raw.log",
+            REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p5/editor_raw.log",
         ]:
             if candidate_log.exists() and candidate_log not in files:
                 files.append(candidate_log)
@@ -198,12 +205,12 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
                         tok = m.group(1)
                         if tok not in real_lines and tok in validator.SCHEMAS:
                             real_lines[tok] = line
-                if len(real_lines) == 106:
+                if len(real_lines) == 110:
                     break
-            if len(real_lines) == 106:
+            if len(real_lines) == 110:
                 break
 
-        self.assertEqual(len(real_lines), 106, f"Expected 106 real line samples, found {len(real_lines)}")
+        self.assertEqual(len(real_lines), 110, f"Expected 110 real line samples, found {len(real_lines)}")
 
         for tok, line in real_lines.items():
             # First verify the real line passes
@@ -612,6 +619,52 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
 
             m_ok, m_t, m_p, m_err = validator.validate_card_tag_line(mutated_line)
             self.assertFalse(m_ok, f"CARD tag {tag} passed unexpectedly after mutation!\n{mutated_line}")
+
+    def test_b_hit009_evidence_logs(self):
+        """B_HIT009 evidence logs parse with 0 syntax failures and 0 semantic violations."""
+        hit009_dir = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_HIT009"
+        for sub, expected_lines in [
+            ("pie_sweep_at0p5", 206),
+            ("pie_sweep_at0p8", 189),
+            ("pie_sweep_at1p0", 177),
+        ]:
+            log_path = hit009_dir / sub / "editor_raw.log"
+            self.assertTrue(log_path.exists(), f"Missing {log_path}")
+            res = validator.validate_log_file(log_path)
+            self.assertEqual(len(res["syntax_failures"]), 0, f"[{sub}] Expected 0 syntax failures, got {res['syntax_failures']}")
+            self.assertEqual(len(res["semantic_violations"]), 0, f"[{sub}] Expected 0 semantic violations, got {res['semantic_violations']}")
+            self.assertEqual(res["framework_proof_lines"], expected_lines)
+
+    def test_hit009_evaluate_iframe_reproducibility(self):
+        """Verify that evaluate_iframe.py reports pass=true, 17 rejected, and reproducible=true across the 3 sweep logs."""
+        import subprocess
+        import json
+        b_dir = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_HIT009"
+        eval_script = b_dir / "evaluate_iframe.py"
+        self.assertTrue(eval_script.exists())
+
+        logs = [
+            str(b_dir / "pie_sweep_at0p5/editor_raw.log"),
+            str(b_dir / "pie_sweep_at0p8/editor_raw.log"),
+            str(b_dir / "pie_sweep_at1p0/editor_raw.log"),
+        ]
+        import tempfile
+        with tempfile.NamedTemporaryFile("w+", suffix=".json", delete=False) as tf:
+            out_json = tf.name
+
+        try:
+            res = subprocess.run(["python", "-I", str(eval_script), out_json, *logs], capture_output=True, text=True, cwd=REPO_ROOT)
+            self.assertEqual(res.returncode, 0, f"evaluate_iframe failed: {res.stderr}")
+            rep = json.loads(res.stdout)
+            self.assertTrue(rep["pass"])
+            self.assertTrue(rep["reproducible"])
+            self.assertEqual(len(rep["runs"]), 3)
+            for run in rep["runs"]:
+                self.assertTrue(run["pass"])
+                self.assertEqual(run["rejected"], 17)
+                self.assertTrue(run["contiguous"])
+        finally:
+            Path(out_json).unlink(missing_ok=True)
 
     def test_b_qa006_evidence_logs(self):
         """B_QA006 evidence logs parse with 0 syntax failures and 0 semantic violations."""

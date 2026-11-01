@@ -1,4 +1,4 @@
-# Track B: Owner Strategic Decision Brief (v2.28)
+# Track B: Owner Strategic Decision Brief (v2.29)
 
 **Date:** 2026-11-01  
 **Author:** Tech Lead Claude & Antigravity  
@@ -9,14 +9,15 @@
 
 ## 1. Executive Summary & Current State
 
-The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.35) and census script (`Reviews/generate_not_yet_census.py`).
+The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.36) and census script (`Reviews/generate_not_yet_census.py`).
 
 ### Ledger Census Today (82 Canonical Requirements):
-- **WITNESSED:** **74** (90.2%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
-- **PARTIAL:** **8** (9.8%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
+- **WITNESSED:** **75** (91.5%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
+- **PARTIAL:** **7** (8.5%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
 - **NOT YET:** **0** (0.0%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
 
 ### Milestones Graduated to WITNESSED (Since C-546):
+- **BOSS-HIT-009 (Player dodge iframe window completeness audit):** Delivered via test hook `rpg.BossProofIFrameSweep` in C++ (`Source/OneBossFight/Boss/RPGFrameworkBossCharacter.h/.cpp`) and evaluated via Python tool (`Claude/B_HIT009/evaluate_iframe.py`). Real player dodge input (`IA_Dodge` via `RPGInputTestUtils`) injected at calibrated game-clock offsets (0.5s, 0.8s, 1.0s after attack). Probes injected every tick for 1.2s through damage resolver. Probes are Accepted from press until 0.2167s, RejectedInvulnerable for exactly 17 consecutive probes from 0.2333s to 0.5000s (`pie_sweep_at0p5:1675..:1723`; `pie_sweep_at0p8:1691..:1746`; `pie_sweep_at1p0:1714..:1762`; 0 Accepted inside), and Accepted again from 0.5167s. Authored window 0.107 to 0.490 montage s at rate 1.30 (0.2946s real, diff -0.64 tick within 2-tick tolerance; opening offset and count identical across runs; `evaluate_iframe.py` pass=true, reproducible=true). Proves boss side honours pack iframe window completely.
 - **BOSS-QA-006 (Combat follow camera framing probe and readability evaluation):** Delivered in C++ (`Player/RPGCameraProbe.h/.cpp`) and evaluated via Python tool (`Claude/B_QA006/evaluate_framing.py`). Live PIE execution on `L_SevarogFrameworkProofHIT011` with cvar `rpg.CameraProbe` 2 logs `camera_frame` telemetry across 4 distance bands (near 100-160cm: height 66.90%; 300cm: min height 46.97%; 600cm: min height 32.23%; 900cm: min height 24.24%; all 8 bounding corners inside 5% viewport margin with 0 occlusion; `framing_report.json pass=true`). Negative control `pie_control_turned_away` with camera turned 90 deg away at 900cm confirms detection capability (`control_report.json pass=false`). All 24 canonical NOT YET requirements are now 100% graduated (NOT YET CENSUS IS EMPTY).
 - **BOSS-EXE-006, ANM-002, ANM-005, PAC-006, PHS-004, QA-002 (Idempotent abort, telegraph cues, motion lock, neutral state, flask punish, and card logging):** Delivered in C++ and assets (C-649, BUILD-141) covering six partial rows: 1) `BOSS-EXE-006`: unit test `FBossAbortIdempotent` (`RPGBossAbortTests.cpp:13`) and live PIE runs with test hook `rpg.BossProofRepeatAbort N` prove repeated abort reports 0 duplicate cleanups and 0 duplicate releases after real aborts; 2) `BOSS-ANM-002`: `Move_Sevarog_HeavyTelegraph_ANM002` fires telegraph cue at 0.05s before commit at 0.4s and active window, with synchronized visual and audio cues on the same tick; 3) `BOSS-ANM-005`: exclusive motion authority acquired on attack start (`MOVE_None`), external motion requests during hold intercepted (`movedCm=0 locked=1`), cleanly released on finish (`MOVE_Walking`); 4) `BOSS-PAC-006`: `neutral_state executorIdle=1 openWindows=0` verified at every decision boundary; 5) `BOSS-PHS-004`: perception latency (0.432s) and reaction window (0.433s) enforced on player drink before selecting fast punish `SwingSlow`, while negative control proves boss cannot punish inside reaction delay; 6) `BOSS-QA-002`: structured event logging emits `[CARD_DECISION]`, `[CARD_START]`, `[CARD_END]`, `[CARD_ABORT]`, and `[CARD_HIT]` tagged telemetry lines in Development/Editor builds.
 - **BOSS-MOV-006 (Arena/attack fit & snag point audit):** Verified via editor sweep audit script (`Docs/BossCombatReview/Execution/Claude/B_MOV006/audit_arena_lane.py`). Player collision parameters read from `BP_CombatPlayerCharacter` (radius 42cm, half height 96cm, max step height 45cm, walkable floor angle 44.77 deg). Combat lane defined as circle inside pillar ring (radius 2496cm, grid 40cm, 12,257 cells; 98,056 8-directional 150cm capsule sweeps). Audit reports 0 holes, 0 snag points, 0 free lips (all 224 lips beside tall obstacles), 0 free unwalkable cells (all 216 beside tall obstacles), 0 unreadable blockers, and pass=true (`audit_run5_final/editor_raw.log:1292, :1294`; `report.json`). Negative control with in-memory low box confirms audit failure capability (`control_run1:1408` snag_points=112 pass=false). Limits noted: definitions (snag height 100cm, sweep 150cm, grid 40cm, tall obstacle >= 100cm with 2-cell skirt attribution) are proposed design values; audits static geometry only (no moving props, nav mesh, or camera clipping); 307 cells lie inside tall obstacles (`RPGGreyboxArena_0`, `RPGArenaDressing_0`) which are visible obstacles rather than player snags, but placement aesthetics remain open for owner visual review.
@@ -53,15 +54,14 @@ The test boss combat framework has reached strong mathematical and behavioral ma
 
 ## 2. Taxonomy of Remaining Work
 
-### A. The 8 PARTIAL Rows (Grouped by Real Blocker)
-From the original plan (`Reviews/PARTIAL_UPGRADE_PLAN.md`), with its current status taken from the ledger (v3.34):
+### A. The 7 PARTIAL Rows (Grouped by Real Blocker)
+From the original plan (`Reviews/PARTIAL_UPGRADE_PLAN.md`), with its current status taken from the ledger (v3.36):
 1. **Engine / PIE Scenario Hooks (2 rows):**
    - `BOSS-QA-001` (Runtime overlay): Formatted strings logged live; blocked because unattended PIE GPU backbuffer readback returned black pixels; assigned to Codex in C-650.
    - `BOSS-SEL-008` (No-candidate fallback): Walk-to-band verified live; requires continuous strafe loop when 0 cards qualify or production opt-in policy.
-2. **Player-Side / Combat Input Integration (3 rows):**
+2. **Player-Side / Combat Input Integration (2 rows):**
    - `BOSS-COM-004` (Hit-confirm policy): Whiff/recovery verified live; requires guarded and parried target states in PIE.
    - `BOSS-HIT-008` (Central defense order): Requires player shield block/parry stance integration in damage resolver.
-   - `BOSS-HIT-009` (Iframe completeness): Requires player dodge iframe timing alignment with weapon sweep window.
 3. **Animation & Notify Track Authoring (1 row):**
    - `BOSS-MOV-001` (Range-band policy): Requires full 15-family range-band card partitioning.
 4. **Architectural & Design Constraints (1 row):**

@@ -68,6 +68,7 @@ private:
     /** BOSS-QA-002: one id per selector decision, never reset inside a process (attack= is an attack-budget slot and repeats after an aborted attack). Logged as seq= on candidate, refusal and decision lines. */
     int32 DecisionSeq=0;
     FVector ArenaOrigin=FVector::ZeroVector;   // BOSS-AWR-001: where the target stood when the encounter began
+    double ProofIFStart=-1., ProofIFPressAt=-1.; int32 ProofIFProbes=0; bool bProofIFPressed=false;   // test hook rpg.BossProofIFrameSweep (BOSS-HIT-009)
     double ProofHitStart=-1.; int32 ProofHitsDone=0; TArray<double> ProofHitOffsets;   // test hook rpg.BossProofPlayerHits: scripted player hits on the GAME clock
     bool bLeashed=false, bLeashAtCenter=false;   // BOSS-MOV-005
     RPGBossTrack::EPlayerActivity Activity=RPGBossTrack::EPlayerActivity::None; ERPGAttackKind SwingKindSeen=ERPGAttackKind::Unknown; void TickActivity();   // BOSS-AWR-006

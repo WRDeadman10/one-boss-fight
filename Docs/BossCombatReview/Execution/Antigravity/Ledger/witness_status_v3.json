@@ -1,10 +1,10 @@
 {
-  "version": "3.35",
+  "version": "3.36",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 74,
-    "PARTIAL": 8,
+    "WITNESSED": 75,
+    "PARTIAL": 7,
     "NOT YET": 0
   },
   "requirements": [
@@ -2063,25 +2063,85 @@
       "title": "Iframe completeness",
       "section": "Hit detection and damage",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGAutomationTests.cpp:176",
-        "Docs/BossCombatReview/Execution/Claude/KI146/dodge_0.15/editor_raw.log:1642"
+        "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p5/editor_raw.log:1627",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p5/editor_raw.log:1673",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p5/editor_raw.log:1675",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p5/editor_raw.log:1723",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p8/editor_raw.log:1643",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p8/editor_raw.log:1689",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p8/editor_raw.log:1691",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p8/editor_raw.log:1746",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at1p0/editor_raw.log:1659",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at1p0/editor_raw.log:1712",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at1p0/editor_raw.log:1714",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at1p0/editor_raw.log:1762"
       ],
       "citations": [
         {
-          "file": "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
-          "line": 176,
-          "quoted": "else if (bInvulnerable) { Expected = ERPGDamageOutcome::RejectedInvulnerable; }"
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p5/editor_raw.log",
+          "line": 1627,
+          "quoted": "[2026.11.01-18.15.50:005][434]LogTemp: Display: [FrameworkProof] iframe_sweep_press t=11.3833 sinceFirstAttack=0.5000"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/KI146/dodge_0.15/editor_raw.log",
-          "line": 1642,
-          "quoted": "[2026.10.31-04.50.06:538][  1]LogTemp: Display: [FrameworkProof] hit instance=1 window=Window_SwingSlow_Primary key=HitGroup_ScytheBlade outcome=ERPGDamageOutcome::RejectedInvulnerable hpApplied=0 healthBefore=800 healthAfter=800"
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p5/editor_raw.log",
+          "line": 1673,
+          "quoted": "[2026.11.01-18.15.50:164][447]LogRPGIFrame: BP_CombatPlayerCharacter_C_0: invulnerable on (dodge montage) at 0.108 s of Dodge_Small_Forward_Roll_Montage, rate 1.30, window 0.107 to 0.490"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p5/editor_raw.log",
+          "line": 1675,
+          "quoted": "[2026.11.01-18.15.50:172][448]LogTemp: Display: [FrameworkProof] iframe_probe n=14 sinceDodgePress=0.2333 outcome=ERPGDamageOutcome::RejectedInvulnerable hpApplied=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p5/editor_raw.log",
+          "line": 1723,
+          "quoted": "[2026.11.01-18.15.50:314][464]LogTemp: Display: [FrameworkProof] iframe_probe n=30 sinceDodgePress=0.5000 outcome=ERPGDamageOutcome::RejectedInvulnerable hpApplied=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p8/editor_raw.log",
+          "line": 1643,
+          "quoted": "[2026.11.01-18.17.55:986][321]LogTemp: Display: [FrameworkProof] iframe_sweep_press t=11.4500 sinceFirstAttack=0.8000"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p8/editor_raw.log",
+          "line": 1689,
+          "quoted": "[2026.11.01-18.17.56:143][334]LogRPGIFrame: BP_CombatPlayerCharacter_C_0: invulnerable on (dodge montage) at 0.108 s of Dodge_Small_Forward_Roll_Montage, rate 1.30, window 0.107 to 0.490"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p8/editor_raw.log",
+          "line": 1691,
+          "quoted": "[2026.11.01-18.17.56:157][335]LogTemp: Display: [FrameworkProof] iframe_probe n=14 sinceDodgePress=0.2333 outcome=ERPGDamageOutcome::RejectedInvulnerable hpApplied=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p8/editor_raw.log",
+          "line": 1746,
+          "quoted": "[2026.11.01-18.17.56:334][351]LogTemp: Display: [FrameworkProof] iframe_probe n=30 sinceDodgePress=0.5000 outcome=ERPGDamageOutcome::RejectedInvulnerable hpApplied=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at1p0/editor_raw.log",
+          "line": 1659,
+          "quoted": "[2026.11.01-18.16.33:006][570]LogTemp: Display: [FrameworkProof] iframe_sweep_press t=11.8833 sinceFirstAttack=1.0000"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at1p0/editor_raw.log",
+          "line": 1712,
+          "quoted": "[2026.11.01-18.16.33:192][583]LogRPGIFrame: BP_CombatPlayerCharacter_C_0: invulnerable on (dodge montage) at 0.108 s of Dodge_Small_Forward_Roll_Montage, rate 1.30, window 0.107 to 0.490"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at1p0/editor_raw.log",
+          "line": 1714,
+          "quoted": "[2026.11.01-18.16.33:199][584]LogTemp: Display: [FrameworkProof] iframe_probe n=14 sinceDodgePress=0.2333 outcome=ERPGDamageOutcome::RejectedInvulnerable hpApplied=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at1p0/editor_raw.log",
+          "line": 1762,
+          "quoted": "[2026.11.01-18.16.33:356][600]LogTemp: Display: [FrameworkProof] iframe_probe n=30 sinceDodgePress=0.5000 outcome=ERPGDamageOutcome::RejectedInvulnerable hpApplied=0"
         }
       ],
-      "observable": "Player dodge iframe rejection verified against weapon sweeps.",
-      "notes": "RPGDamageRules decides RejectedInvulnerable when target has invulnerable status (auto_tests:176); live PIE dodge sweep in KI-146 proves sweep rejected when iframe active (ki146_dodge:1642). However, per KI-146 and C-590, pack IA_Dodge iframes activate ~0.3s after press (after blade window), dodge press is driven from Python tick clock rather than game clock, and RejectedInvulnerable occurs in only some runs while others hit; window completeness is not witnessed, status remains PARTIAL."
+      "observable": "Player dodge iframe window completeness verified with 17 consecutive RejectedInvulnerable probes across full authored window.",
+      "notes": "Witnessed (C-653, BUILD-143): Calibrated test hook rpg.BossProofIFrameSweep injects real IA_Dodge at game-clock offsets (0.5s, 0.8s, 1.0s after attack) and probes damage resolver every tick for 1.2s. Probes Accepted until 0.2167s, RejectedInvulnerable for exactly 17 probes from 0.2333s to 0.5000s (pie_sweep_at0p5:1675..:1723; pie_sweep_at0p8:1691..:1746; pie_sweep_at1p0:1714..:1762), and Accepted again from 0.5167s. Authored window 0.107 to 0.490 montage s at rate 1.30 (0.2946s real, diff -0.64 tick within 2-tick tolerance; evaluate_iframe.py pass=true, reproducible=true). Honest limits: probes are 1 HP damage resolver queries, not boss blade swings; one dodge type (quick forward roll at x1.30); proves boss side honours pack iframe window; 60 FPS frame-locked benchmark."
     },
     {
       "id": "BOSS-HIT-010",

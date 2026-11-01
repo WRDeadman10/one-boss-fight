@@ -1,0 +1,94 @@
+{
+ "runs": [
+  {
+   "log": "B_HIT009\\pie_sweep_at0p5\\editor_raw.log",
+   "probes": 72,
+   "tick": 0.0167,
+   "rejected": 17,
+   "other_outcomes": [],
+   "first_rejected_since_press": 0.2333,
+   "last_rejected_since_press": 0.5,
+   "first_line": 1675,
+   "last_line": 1723,
+   "contiguous": true,
+   "accepted_inside_window": [],
+   "accepted_before": 14,
+   "accepted_after": 41,
+   "measured_window_seconds": 0.2839,
+   "authored": {
+    "line": 1673,
+    "montage": "Dodge_Small_Forward_Roll_Montage",
+    "rate": 1.3,
+    "start": 0.107,
+    "end": 0.49
+   },
+   "authored_window_real_seconds": 0.2946,
+   "measured_minus_authored_ticks": -0.64,
+   "pass": true
+  },
+  {
+   "log": "B_HIT009\\pie_sweep_at1p0\\editor_raw.log",
+   "probes": 44,
+   "tick": 0.0167,
+   "rejected": 17,
+   "other_outcomes": [],
+   "first_rejected_since_press": 0.2333,
+   "last_rejected_since_press": 0.5,
+   "first_line": 1714,
+   "last_line": 1762,
+   "contiguous": true,
+   "accepted_inside_window": [],
+   "accepted_before": 14,
+   "accepted_after": 13,
+   "measured_window_seconds": 0.2839,
+   "authored": {
+    "line": 1712,
+    "montage": "Dodge_Small_Forward_Roll_Montage",
+    "rate": 1.3,
+    "start": 0.107,
+    "end": 0.49
+   },
+   "authored_window_real_seconds": 0.2946,
+   "measured_minus_authored_ticks": -0.64,
+   "pass": true
+  },
+  {
+   "log": "B_HIT009\\pie_sweep_at0p8\\editor_raw.log",
+   "probes": 56,
+   "tick": 0.0167,
+   "rejected": 17,
+   "other_outcomes": [],
+   "first_rejected_since_press": 0.2333,
+   "last_rejected_since_press": 0.5,
+   "first_line": 1691,
+   "last_line": 1746,
+   "contiguous": true,
+   "accepted_inside_window": [],
+   "accepted_before": 14,
+   "accepted_after": 25,
+   "measured_window_seconds": 0.2839,
+   "authored": {
+    "line": 1689,
+    "montage": "Dodge_Small_Forward_Roll_Montage",
+    "rate": 1.3,
+    "start": 0.107,
+    "end": 0.49
+   },
+   "authored_window_real_seconds": 0.2946,
+   "measured_minus_authored_ticks": -0.64,
+   "pass": true
+  }
+ ],
+ "reproducible": true,
+ "opening_offsets": [
+  0.2333,
+  0.2333,
+  0.2333
+ ],
+ "rejected_counts": [
+  17,
+  17,
+  17
+ ],
+ "pass": true
+}
