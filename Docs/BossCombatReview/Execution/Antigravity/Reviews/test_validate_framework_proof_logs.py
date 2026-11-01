@@ -259,6 +259,38 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
         finally:
             tf_path.unlink()
 
+        # 5. Intervening unselected cycle then trace mismatch: seq=1 (unselected), seq=2 candidate, seq=3 decision
+        unselected_then_mismatch_log = """[2026.10.31-21.40.20:100][900]LogTemp: Display: [FrameworkProof] refusal attack=1 card=MoveA reason=MoveModel.Cone seq=1
+[2026.10.31-21.40.20:100][900]LogTemp: Display: [FrameworkProof] refusal attack=1 card=MoveB reason=MoveModel.Cone seq=1
+[2026.10.31-21.40.23:255][950]LogTemp: Display: [FrameworkProof] candidate attack=1 card=MoveA score=0.7 seq=2
+[2026.10.31-21.40.25:100][960]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=MoveA score=0.7 range=120 seq=3
+"""
+        with tempfile.NamedTemporaryFile("w+", encoding="utf-8", delete=False, suffix=".log") as tf:
+            tf.write(unselected_then_mismatch_log)
+            tf_path = Path(tf.name)
+        try:
+            res = validator.validate_log_file(tf_path)
+            kinds = [v["kind"] for v in res["semantic_violations"]]
+            self.assertIn("TRACE_DECISION_SEQ_MISMATCH", kinds)
+        finally:
+            tf_path.unlink()
+
+        # 6. Valid unselected cycle (seq=1) followed by valid decision cycle (seq=2)
+        unselected_then_valid_log = """[2026.10.31-21.40.20:100][900]LogTemp: Display: [FrameworkProof] refusal attack=1 card=MoveA reason=MoveModel.Cone seq=1
+[2026.10.31-21.40.20:100][900]LogTemp: Display: [FrameworkProof] refusal attack=1 card=MoveB reason=MoveModel.Cone seq=1
+[2026.10.31-21.40.23:255][950]LogTemp: Display: [FrameworkProof] candidate attack=1 card=MoveA score=0.7 seq=2
+[2026.10.31-21.40.23:255][950]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=MoveA score=0.7 range=120 seq=2
+"""
+        with tempfile.NamedTemporaryFile("w+", encoding="utf-8", delete=False, suffix=".log") as tf:
+            tf.write(unselected_then_valid_log)
+            tf_path = Path(tf.name)
+        try:
+            res = validator.validate_log_file(tf_path)
+            self.assertEqual(len(res["syntax_failures"]), 0)
+            self.assertEqual(len(res["semantic_violations"]), 0)
+        finally:
+            tf_path.unlink()
+
     def test_b_qa002_evidence_log(self):
         """Validate Claude/B_QA002/pie_f8/editor_raw.log passes with 0 syntax and 0 semantic violations."""
         log_path = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_QA002/pie_f8/editor_raw.log"
