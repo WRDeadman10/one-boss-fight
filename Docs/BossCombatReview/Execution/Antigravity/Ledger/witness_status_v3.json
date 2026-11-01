@@ -1,10 +1,10 @@
 {
-  "version": "3.13",
+  "version": "3.14",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 43,
-    "PARTIAL": 15,
+    "WITNESSED": 44,
+    "PARTIAL": 14,
     "NOT YET": 24
   },
   "requirements": [
@@ -740,25 +740,25 @@
       "title": "Stale event rejection",
       "section": "Attack executor and state safety",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:147",
-        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:151"
+        "Docs/BossCombatReview/Execution/Claude/B_EXE004/pie_stale/editor_raw.log:1677",
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:147"
       ],
       "citations": [
         {
-          "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 147,
-          "quoted": "TestFalse(TEXT(\"old callback cannot abort new attack\"),R.Model.Abort(Old,R.Ev..."
+          "file": "Docs/BossCombatReview/Execution/Claude/B_EXE004/pie_stale/editor_raw.log",
+          "line": 1677,
+          "quoted": "[2026.11.01-03.16.07:114][594]LogTemp: Display: [FrameworkProof] stale_callback oldInstance=1 newInstance=2 refused=1 error=MoveModel.StaleCallback newAttackAlive=1"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 151,
-          "quoted": "TestFalse(TEXT(\"delayed old tick rejected\"),R.Model.Advance(Current,999.,fals..."
+          "line": 147,
+          "quoted": "TestFalse(TEXT(\"old callback cannot abort new attack\"),R.Model.Abort(Old,R.Events,R.Error)); TestTrue(TEXT(\"new attack survives stale abort\"),R.Model.AcceptsCallback(Current));"
         }
       ],
       "observable": "Interrupted attack ignores late AnimNotifies from previous montage.",
-      "notes": "MoveModel assertions verify old callback cannot abort new attack (model_tests:147) and delayed old tick rejected (model_tests:151); interrupted attack late AnimNotify rejection in live executor path not yet fully logged."
+      "notes": "Interrupted attack ignores late AnimNotifies from previous montage. In this poll-based architecture without AnimNotify objects, late notifications are late model callbacks carrying the old attack token. Test hook rpg.BossProofStaleCallback 1 in URPGFrameworkMoveExecutor sends the previous aborted attack token (oldInstance=1) right after the next attack starts (newInstance=2); live PIE proof on F8 map (Claude/B_EXE004/pie_stale/editor_raw.log:1677) confirms stale callback is refused with error=MoveModel.StaleCallback, the new attack remains alive (newAttackAlive=1), completes cleanly (:1762 cleanup reason=Finished), and unit tests (RPGBossMoveModelTests.cpp:147-151) verify rejection."
     },
     {
       "id": "BOSS-EXE-005",
@@ -1650,7 +1650,7 @@
         }
       ],
       "observable": "Player dodge iframe rejection verified against weapon sweeps.",
-      "notes": "RPGDamageRules decides RejectedInvulnerable when target has invulnerable status (auto_tests:176); live PIE dodge sweep in KI-146 proves sweep rejected when iframe active (ki146_dodge:1642). However, per KI-146 and BUILD-94, pack IA_Dodge iframes activate ~0.3s after press (after blade window), and RejectedInvulnerable occurred in only 3 runs while most runs hit; window completeness is not witnessed, status remains PARTIAL per C-530."
+      "notes": "RPGDamageRules decides RejectedInvulnerable when target has invulnerable status (auto_tests:176); live PIE dodge sweep in KI-146 proves sweep rejected when iframe active (ki146_dodge:1642). However, per KI-146 and C-590, pack IA_Dodge iframes activate ~0.3s after press (after blade window), dodge press is driven from Python tick clock rather than game clock, and RejectedInvulnerable occurs in only some runs while others hit; window completeness is not witnessed, status remains PARTIAL."
     },
     {
       "id": "BOSS-HIT-010",
@@ -2226,7 +2226,7 @@
         }
       ],
       "observable": "On-screen debug overlay displays active MoveCard, Phase, Range, Cone, HitWindow state, and Posture.",
-      "notes": "Runtime debug overlay implemented in RPGBossOverlayRules.h (rpg.BossOverlay CVar 1 on-screen, 2 logged). Live PIE proof on L_SevarogFrameworkProofF8 (B_QA001 pie2) verifies 16 telemetry lines, capturing idle (line 1577), HeavySlam committed (line 1588), live Window=Open during active swing (line 1642), stance break stagger with Posture=0/100 and Stagger=1 (line 1720), and Phase 2 live Window=Open swings (lines 1757, 1914). Unit test BossOverlayFormat (runtime_tests:376, 378, 380) verifies exact formatting and non-finite NaN/inf safe fallback to 'n/a'. Status remains PARTIAL per C-534/C-535: string construction and live logging are fully witnessed, but on-screen viewport pixel drawing has not yet been captured via screenshot (headless/unattended PIE GPU backbuffer readback returned black). Only the on-screen screenshot is required to graduate to WITNESSED."
+      "notes": "Runtime debug overlay implemented in RPGBossOverlayRules.h (rpg.BossOverlay CVar 1 on-screen, 2 logged). Live PIE proof on L_SevarogFrameworkProofF8 (B_QA001 pie2) verifies 16 telemetry lines, capturing idle, committed, active Window=Open, stance break stagger, and Phase 2. Unit test BossOverlayFormat (runtime_tests:442, 444, 446) verifies exact formatting. Status remains PARTIAL per C-534/C-535 and C-590: unattended PIE PrintWindow GPU readback returned black pixels; an engine-side HighResShot attempt (Claude/B_QA001B/shot/HighresScreenshot00021.png) rendered the editor viewport rather than the PIE game viewport (no boss or overlay text). Graduation remains blocked on capturing the game viewport of the PIE window."
     },
     {
       "id": "BOSS-QA-002",

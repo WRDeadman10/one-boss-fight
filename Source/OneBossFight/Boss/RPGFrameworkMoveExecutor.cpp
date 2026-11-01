@@ -13,6 +13,7 @@
 #include "GameFramework/Pawn.h"
 #include "CollisionQueryParams.h"
 #if !UE_BUILD_SHIPPING
+static TAutoConsoleVariable<int32> CVarBossProofStaleCallback(TEXT("rpg.BossProofStaleCallback"),0,TEXT("Test hook (BOSS-EXE-004): 1 sends a late abort callback of the PREVIOUS (aborted) attack to the move model right after the next attack started; it must be refused and the new attack must live. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossProofSuppressMontageEnd(TEXT("rpg.BossProofSuppressMontageEnd"),0,TEXT("Test hook (BOSS-EXE-007 / ANM-007): 1 stops feeding the montage position to the move model once the card has played 0.3 s, as if the end notifications were dropped; the watchdog must then abort the card. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 #endif
 URPGFrameworkMoveExecutor::URPGFrameworkMoveExecutor()
@@ -104,6 +105,14 @@ bool URPGFrameworkMoveExecutor::StartCard(const TSharedPtr<const FRPGCompiledBos
     if (!Model_.AdvanceObservedLocal(Token,0.,Events,Error)) {Abort(Error);return false;}
     StartWorldSeconds=LastWorldSeconds=GetWorld()->GetTimeSeconds(); LastPosition=0.; bSawPoseWeight=false;
     TrackTurned=TrackMaxRate=TrackDriftMax=0.; TrackYawAtCommit=0.f; bTrackCommitLogged=false; DecisionRangeCm=S.RangeCm; DecisionYawDeg=S.SignedYawDegrees;
+#if !UE_BUILD_SHIPPING
+    if (CVarBossProofStaleCallback.GetValueOnGameThread()>0&&LastAbortedToken.InstanceId&&!(LastAbortedToken==Token))
+    {
+        TArray<FRPGBossMoveModelEvent> StaleEvents; FString StaleError; const bool bAccepted=Model_.Abort(LastAbortedToken,StaleEvents,StaleError);
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] stale_callback oldInstance=%llu newInstance=%llu refused=%d error=%s newAttackAlive=%d"),LastAbortedToken.InstanceId,Token.InstanceId,bAccepted?0:1,*StaleError,Model_.AcceptsCallback(Token)?1:0);
+        LastAbortedToken=FRPGBossAttackToken();
+    }
+#endif
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] playback_start encounter=%llu generation=%llu instance=%llu montage=%s slot=%s rate=%g label=%s"),Token.EncounterId,Token.Generation,Token.InstanceId,*OwnedMontage->GetPathName(),*Card->Spec().SlotName.ToString(),Card->Spec().PlayRate,*Label());
     return true;
 }
@@ -262,7 +271,7 @@ void URPGFrameworkMoveExecutor::Abort(const FString& Reason)
     // Cleanup runs exactly once: a clean finish or an earlier abort makes later calls (Fail, EndPlay) no-ops.
     if (bAborted||bFinished) return;
     TArray<FRPGBossMoveModelEvent> Events; FString Error;
-    if (Token.InstanceId) Model_.Abort(Token,Events,Error);
+    if (Token.InstanceId) {LastAbortedToken=Token; Model_.Abort(Token,Events,Error);}
     bAborted=true; LogEvents(Events); StopOwned(0.f); OwnedMontage=nullptr; SetComponentTickEnabled(false);
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] cleanup reason=%s modelIdle=%d ownedMontageStopped=1"),*Reason,Model_.State()==ERPGBossMoveModelState::Idle);
 }

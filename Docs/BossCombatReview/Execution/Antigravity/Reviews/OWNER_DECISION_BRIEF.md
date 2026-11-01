@@ -1,4 +1,4 @@
-# Track B: Owner Strategic Decision Brief (v2.6)
+# Track B: Owner Strategic Decision Brief (v2.7)
 
 **Date:** 2026-11-01  
 **Author:** Tech Lead Claude & Antigravity  
@@ -12,8 +12,8 @@
 The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.12) and census script (`Reviews/generate_not_yet_census.py`).
 
 ### Ledger Census Today (82 Canonical Requirements):
-- **WITNESSED:** **43** (52.4%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
-- **PARTIAL:** **15** (18.3%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
+- **WITNESSED:** **44** (53.7%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
+- **PARTIAL:** **14** (17.1%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
 - **NOT YET:** **24** (29.3%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
 
 ### Milestones Graduated to WITNESSED (Since C-546):
@@ -36,8 +36,8 @@ The test boss combat framework has reached strong mathematical and behavioral ma
 
 ## 2. Taxonomy of Remaining Work
 
-### A. The 15 PARTIAL Rows (Grouped by Real Blocker)
-From the original plan (`Reviews/PARTIAL_UPGRADE_PLAN.md`), with its current status taken from the ledger (v3.13):
+### A. The 14 PARTIAL Rows (Grouped by Real Blocker)
+From the original plan (`Reviews/PARTIAL_UPGRADE_PLAN.md`), with its current status taken from the ledger (v3.14):
 1. **Engine / PIE Scenario Hooks (3 rows):**
    - `BOSS-QA-001` (Runtime overlay): Formatted strings logged live; blocked because unattended PIE GPU backbuffer readback returned black pixels; requires on-screen display capture.
    - `BOSS-SEL-008` (No-candidate fallback): Walk-to-band verified live; requires continuous strafe loop when 0 cards qualify or production opt-in policy.
@@ -51,8 +51,7 @@ From the original plan (`Reviews/PARTIAL_UPGRADE_PLAN.md`), with its current sta
    - `BOSS-ANM-002` (Telegraph phases): Requires authored windup, active, and recovery notify tracks.
    - `BOSS-MOV-001` (Range-band policy): Requires full 15-family range-band card partitioning.
    - `BOSS-PAC-006` (Neutral is purposeful): Requires multi-attack neutral transition testing with authored idle postures.
-4. **Lifecycle & Watchdog Robustness (2 rows):**
-   - `BOSS-EXE-004` (Stale event rejection): Requires live logging of interrupted attack late AnimNotify rejection.
+4. **Lifecycle & Watchdog Robustness (1 row):**
    - `BOSS-EXE-006` (Idempotent abort): Requires live grab/AoE executor abort path.
 5. **Architectural & Design Constraints (2 rows):**
    - `BOSS-AWR-004` (Signed angle hysteresis): Discrete-attack boss has no oscillation; requires selector-side memory.

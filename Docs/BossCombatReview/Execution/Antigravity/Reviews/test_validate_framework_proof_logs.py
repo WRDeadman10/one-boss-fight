@@ -5,9 +5,9 @@ test_validate_framework_proof_logs.py
 
 Automated test suite verifying the FrameworkProof Log Validator:
 1. Pure LF line endings (no CR).
-2. Schema registration: verifies all 58 formal tokens are defined and compile.
+2. Schema registration: verifies all 59 formal tokens are defined and compile.
 3. Unit tests: asserts validation of synthetic valid lines across key categories.
-4. 58-Token Mutation Test: extracts one real line per token from committed/candidate logs, mutates a key, and proves 58/58 fail validation.
+4. 59-Token Mutation Test: extracts one real line per token from committed/candidate logs, mutates a key, and proves 59/59 fail validation.
 5. Semantic checks tests: tests detection of out-of-order attacks, duplicate gates, reused instances, and backward timestamps.
 6. Full repository sweep: scans all tracked log files and asserts 0 syntax failures across >60,000 lines, and verifies the 17 known duplicate attack findings.
 """
@@ -32,8 +32,8 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
         raw = val_path.read_bytes()
         self.assertNotIn(b"\r", raw, "validate_framework_proof_logs.py contains CR! Must be pure LF.")
 
-    def test_all_58_tokens_registered(self):
-        self.assertEqual(len(validator.SCHEMAS), 58, f"Expected 58 schemas, got {len(validator.SCHEMAS)}")
+    def test_all_59_tokens_registered(self):
+        self.assertEqual(len(validator.SCHEMAS), 59, f"Expected 59 schemas, got {len(validator.SCHEMAS)}")
         for tok, pat in validator.SCHEMAS.items():
             compiled = validator.COMPILED_SCHEMAS.get(tok)
             self.assertIsNotNone(compiled, f"Token {tok} missing in COMPILED_SCHEMAS")
@@ -89,8 +89,8 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             self.assertTrue(ok, f"Expected line to be valid, got error: {err}\nLine: {line}")
             self.assertIsNotNone(tok)
 
-    def test_58_token_mutation_suite(self):
-        """Extract one real line per token from committed/candidate logs, break one key, and prove 58/58 fail."""
+    def test_59_token_mutation_suite(self):
+        """Extract one real line per token from committed/candidate logs, break one key, and prove 59/59 fail."""
         import subprocess
         res = subprocess.run(["git", "ls-files", "Docs/*.log"], cwd=REPO_ROOT, capture_output=True, text=True)
         files = [REPO_ROOT / f for f in res.stdout.splitlines() if f.strip()]
@@ -100,6 +100,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_AWR002/pie_shift/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_QA003B/f8_run1/editor_raw.log",
+            REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_EXE004/pie_stale/editor_raw.log",
         ]:
             if candidate_log.exists() and candidate_log not in files:
                 files.append(candidate_log)
@@ -117,12 +118,12 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
                         tok = m.group(1)
                         if tok not in real_lines and tok in validator.SCHEMAS:
                             real_lines[tok] = line
-                if len(real_lines) == 58:
+                if len(real_lines) == 59:
                     break
-            if len(real_lines) == 58:
+            if len(real_lines) == 59:
                 break
 
-        self.assertEqual(len(real_lines), 58, f"Expected 58 real line samples, found {len(real_lines)}")
+        self.assertEqual(len(real_lines), 59, f"Expected 59 real line samples, found {len(real_lines)}")
 
         for tok, line in real_lines.items():
             # First verify the real line passes
