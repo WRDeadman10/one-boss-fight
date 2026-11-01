@@ -140,3 +140,7 @@ Docs/BossCombatReview.zip
 Documentation/Boss/**/*.webm
 Documentation/Boss/**/*.mp4
 Documentation/Boss/**/*.mkv
+
+# Run execution state dumps: never on git (C-613)
+Docs/BossCombatReview/Execution/**/*_state.txt
+Docs/BossCombatReview/Execution/**/*_summary.txt
