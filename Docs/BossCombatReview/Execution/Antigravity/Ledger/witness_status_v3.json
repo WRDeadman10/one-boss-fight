@@ -1,11 +1,11 @@
 {
-  "version": "3.17",
+  "version": "3.18",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 47,
+    "WITNESSED": 48,
     "PARTIAL": 14,
-    "NOT YET": 21
+    "NOT YET": 20
   },
   "requirements": [
     {
@@ -340,7 +340,7 @@
       "status": "WITNESSED",
       "proof": [
         "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp:96",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:77",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:78",
         "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:45"
       ],
       "citations": [
@@ -351,7 +351,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 77,
+          "line": 78,
           "quoted": "FString Error;TestFalse(TEXT(\"runtime MUST reject preview\"),URPGFrameworkMoveExecutor::ValidatePlaybackCard(Preview,Error));TestEqual(TEXT(\"preview refusal token\"),Error,FString(TEXT(\"Framework.Playback.UnresolvedPreview\")));"
         },
         {
@@ -403,7 +403,7 @@
         "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:119",
         "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:120",
         "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:121",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:277",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:282",
         "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:278",
         "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:279",
         "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:280",
@@ -452,27 +452,27 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 277,
+          "line": 278,
           "quoted": "F5();TestTrue(TEXT(\"tie band off: valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 278,
+          "line": 279,
           "quoted": "F5();P->SelectorTieBand=.1f;P->SelectorTieSeed=12345;TestTrue(TEXT(\"tie band 0.1 with a seed: valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 279,
+          "line": 280,
           "quoted": "F5();P->SelectorTieBand=.5f;TestTrue(TEXT(\"tie band 0.5 is the upper edge: valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 280,
+          "line": 281,
           "quoted": "for(float Bad:{-.1f,.51f,std::numeric_limits<float>::infinity(),std::numeric_limits<float>::quiet_NaN()}){F5();P->SelectorTieBand=Bad;TestFalse(TEXT(\"tie band outside [0,0.5]\"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT(\"token\"),Error,FString(TEXT(\"Framework.Profile.Domain\")));}"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 281,
+          "line": 282,
           "quoted": "{TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);TestTrue(TEXT(\"fresh F3 profile valid\"),RPGFramework::ValidateProfile(*F3,Error));F3->SelectorTieBand=.1f;TestFalse(TEXT(\"tie band outside the F5 lane\"),RPGFramework::ValidateProfile(*F3,Error));TestEqual(TEXT(\"token\"),Error,FString(TEXT(\"Framework.Profile.Domain\")));}"
         }
       ],
@@ -767,7 +767,7 @@
       "old_status": "NOT YET",
       "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:345",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:346",
         "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log:1674",
         "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log:1675",
         "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log:1676",
@@ -777,7 +777,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 345,
+          "line": 346,
           "quoted": "F5();P->bPhaseSupersedesStagger=true;TestFalse(TEXT(\"no posture and no phase two: refused\"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT(\"token\"),Error,FString(TEXT(\"Framework.Profile.Domain\")));"
         },
         {
@@ -835,7 +835,7 @@
       "old_status": "PARTIAL",
       "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:327",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:328",
         "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log:1616",
         "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log:1617",
         "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log:1619",
@@ -844,7 +844,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 327,
+          "line": 328,
           "quoted": "TestEqual(TEXT(\"1.65 s at rate 1\"),RPGBossTrack::WatchdogTimeoutSeconds(1.65f,1.f),2.15,1.e-6);"
         },
         {
@@ -1289,17 +1289,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 465,
+          "line": 478,
           "quoted": "Near(TEXT(\"60 ticks (1 s) toward 170 turn exactly the cap, 90 deg\"),Yaw,90.f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 466,
+          "line": 479,
           "quoted": "TestTrue(TEXT(\"no tick turned more than cap * dt (1.5 deg)\"),MaxStep<=1.5f+1.e-3f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 468,
+          "line": 481,
           "quoted": "Near(TEXT(\"after the commit 60 more ticks leave the yaw unchanged\"),Yaw,90.f);"
         },
         {
@@ -1411,7 +1411,7 @@
       "old_status": "PARTIAL",
       "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:61",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:62",
         "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:353",
         "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log:1576",
         "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log:1577",
@@ -1420,12 +1420,12 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 61,
+          "line": 62,
           "quoted": "TestTrue(TEXT(\"real existing sequence/mesh/class dependencies\"),RPGFramework::ResolveProfile(P.Get(),D,Error));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 416,
+          "line": 429,
           "quoted": "TestEqual(TEXT(\"no slot node in the AnimBP\"),Token([](auto& X){X.bSlotNodePresent=false;}),FString(TEXT(\"Framework.Profile.StaggerAnim.SlotNode\")));"
         },
         {
@@ -1498,13 +1498,13 @@
       "old_status": "PARTIAL",
       "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:259",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:260",
         "Docs/BossCombatReview/Execution/Claude/F7/baked_run1/editor_raw.log:1580"
       ],
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 259,
+          "line": 260,
           "quoted": "TestTrue(TEXT(\"valid baked samples\"),RPGBossMoveCards::Validate(WithSamples([](auto&){}),M).IsValid());"
         },
         {
@@ -1523,19 +1523,19 @@
       "old_status": "PARTIAL",
       "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:240",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:242",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:241",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:243",
         "Docs/BossCombatReview/Execution/Claude/F7/baked_run1/editor_raw.log:1597"
       ],
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 240,
+          "line": 241,
           "quoted": "TestTrue(TEXT(\"baked samples used\"),bBaked);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 242,
+          "line": 243,
           "quoted": "TestTrue(TEXT(\"baked path covers the apex across the same hitch\"),BakedMin<=15.f);"
         },
         {
@@ -1760,14 +1760,14 @@
       "old_status": "NOT YET",
       "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:356",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:357",
         "Docs/BossCombatReview/Execution/Claude/B_MOV003/pie_latch_on/editor_raw.log:1839",
         "Docs/BossCombatReview/Execution/Claude/B_MOV003/pie_latch_off_control/editor_raw.log:1933"
       ],
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 356,
+          "line": 357,
           "quoted": "TestEqual(TEXT(\"latched: no direction change while the target flickers across the back axis\"),FlipsOn,0);"
         },
         {
@@ -1782,7 +1782,7 @@
         }
       ],
       "observable": "Movement requests exhibit commitment hysteresis; boss does not flip direction every frame.",
-      "notes": "Direction B: Pure rule RPGBossTrack::StepYawLatched with FTurnLatch{Dir,LastDir,Flips} maintains turn direction while target stays within 30 deg of back axis; a real crossing releases latch; reaching target clears it. Reposition turn in RPGFrameworkBossCharacter uses RepositionLatch. In live PIE (L_SevarogFrameworkProofMOV, 180 deg/s turn, target y flickering +-15cm at back axis): latch on produces 0 direction flips and 120 deg progress in 0.72s (Claude/B_MOV003 pie_latch_on:1839 flips=0); unlatched control reverses 15 times and takes 1.48s (pie_latch_off_control:1933 flips=15). Limit: framework boss only decides direction for turns (locomotion uses nav path follower); 30 deg hysteresis is proposed design value; heading tracking (ANM-004) tracks to commit without flip scenario."
+      "notes": "Direction B: Pure rule RPGBossTrack::StepYawLatched with FTurnLatch{Dir,LastDir,Flips} maintains turn direction while target stays within 30 deg of back axis; a real crossing releases latch; reaching target clears it. Reposition turn in RPGFrameworkBossCharacter uses RepositionLatch. In live PIE (L_SevarogFrameworkProofMOV, 180 deg/s turn, target y flickering +-15cm at back axis): unit test proves 120 deg in 40 ticks with 0 flips; live run proves 0 flips in 0.72s (Claude/B_MOV003 pie_latch_on:1839 flips=0); unlatched control reverses 15 times and takes 1.48s (pie_latch_off_control:1933 flips=15). Limit: framework boss only decides direction for turns (locomotion uses nav path follower); 30 deg hysteresis is proposed design value; heading tracking (ANM-004) tracks to commit without flip scenario."
     },
     {
       "id": "BOSS-MOV-004",
@@ -1813,7 +1813,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 380,
+          "line": 393,
           "quoted": "F5();P->ArenaRadiusCm=250.f;P->bArenaLeash=true;TestTrue(TEXT(\"leash with an arena radius is valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
@@ -2119,7 +2119,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 397,
+          "line": 410,
           "quoted": "TestEqual(TEXT(\"loop count middle 1.6 / loop 0.5 = ceil 3.2 = 4\"),RPGStaggerAnim::LoopCount(T,S,E,.5f),4);"
         }
       ],
@@ -2131,11 +2131,31 @@
       "title": "Windowed hyperarmor",
       "section": "Defense, posture and interruption",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:374",
+        "Docs/BossCombatReview/Execution/Claude/B_DEF004/pie_armor/editor_raw.log:1634",
+        "Docs/BossCombatReview/Execution/Claude/B_DEF004/pie_armor/editor_raw.log:1667"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 374,
+          "quoted": "TestTrue(TEXT(\"armored card, active state: absorbed\"),RPGBossRules::HyperArmorActive(true,true));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_DEF004/pie_armor/editor_raw.log",
+          "line": 1634,
+          "quoted": "[2026.11.01-06.21.40:925][489]LogTemp: Display: [FrameworkProof] hyperarmor_absorbed card=Move_Sevarog_HeavySlam_F7 postureKept=100 amountSkipped=60"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_DEF004/pie_armor/editor_raw.log",
+          "line": 1667,
+          "quoted": "[2026.11.01-06.21.41:131][513]LogTemp: Display: [FrameworkProof] posture_drain amount=60 postureBefore=100 postureAfter=40 max=100"
+        }
+      ],
       "observable": "Heavy moves (MC-04) possess hyperarmor during active swing; light attacks do not interrupt swing.",
-      "notes": "Hyperarmor tag evaluation in runtime executor not yet implemented (designated for Defense / Stagger Block)."
+      "notes": "Direction B: Profile card entry carries bHyperArmor (FRPGBossProfileCard::bHyperArmor, default false; FRPGFrameworkDependencies::FCandidate::bHyperArmor). When running card has armor and move-model state is Active, ApplyHit skips posture drain and logs [FrameworkProof] hyperarmor_absorbed card=%s postureKept=%g amountSkipped=%g. Pure rule RPGBossRules::HyperArmorActive(bCardHasArmor, bCardActive) in Player/RPGBossRules.h; unit tests in RPGFrameworkRuntimeTests:374 cover all 4 combinations and default false. In live PIE (L_SevarogFrameworkProofDEF004, F8 posture 100, 60/hit, HeavySlam armored; Claude/B_DEF004/pie_armor): hit 1 at frame 489 (Active window 0.475-0.533s) absorbs posture drain (:1634 hyperarmor_absorbed postureKept=100 amountSkipped=60); hit 2 at frame 513 (recovery) drains 60 (:1667 posture_drain postureAfter=40) without stance break (unarmored F8 broke at hit 2). Limits: armor is on profile entry, not card asset; uses test hit intake (rpg.BossProofPlayerHits), not live light attack; ignores posture amount without distinguishing light vs heavy."
     },
     {
       "id": "BOSS-DEF-005",
@@ -2283,17 +2303,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 476,
+          "line": 489,
           "quoted": "TestEqual(TEXT(\"attack running\"),RPGBossOverlay::Format(I),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=129cm Cone=120deg Window=Open Posture=40/100 Health=150/250 Stagger=0 PhaseHold=0\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 478,
+          "line": 491,
           "quoted": "TestEqual(TEXT(\"no card, stagger and hold\"),RPGBossOverlay::Format(N),FString(TEXT(\"Card=None State=Idle Phase=Phase_2 Range=300cm Cone=0deg Window=Closed Posture=100/100 Health=50/250 Stagger=1 PhaseHold=1\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 480,
+          "line": 493,
           "quoted": "TestEqual(TEXT(\"non-finite values never print as numbers\"),RPGBossOverlay::Format(Bad),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=n/acm Cone=120deg Window=Open Posture=40/100 Health=n/a/250 Stagger=0 PhaseHold=0\")));"
         },
         {

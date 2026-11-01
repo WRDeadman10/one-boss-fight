@@ -152,7 +152,7 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
         float WorstHit=0.f;
         for (const FRPGBossProfileCard& C:P->Cards)
         {
-            FRPGFrameworkDependencies::FCandidate Candidate; Candidate.CooldownSeconds=C.CooldownSeconds; Candidate.Weight=C.Weight;
+            FRPGFrameworkDependencies::FCandidate Candidate; Candidate.CooldownSeconds=C.CooldownSeconds; Candidate.Weight=C.Weight; Candidate.bHyperArmor=C.bHyperArmor;
             if (!ResolveCard(C.Card.LoadSynchronous(),Candidate.Card)) return false;
             WorstHit=FMath::Max(WorstHit,Candidate.Card->Spec().HPDamage); D->Candidates.Add(Candidate);
         }

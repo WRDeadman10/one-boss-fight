@@ -1,4 +1,4 @@
-# Track B: Owner Strategic Decision Brief (v2.10)
+# Track B: Owner Strategic Decision Brief (v2.11)
 
 **Date:** 2026-11-01  
 **Author:** Tech Lead Claude & Antigravity  
@@ -9,12 +9,12 @@
 
 ## 1. Executive Summary & Current State
 
-The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.17) and census script (`Reviews/generate_not_yet_census.py`).
+The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.18) and census script (`Reviews/generate_not_yet_census.py`).
 
 ### Ledger Census Today (82 Canonical Requirements):
-- **WITNESSED:** **47** (57.3%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
+- **WITNESSED:** **48** (58.5%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
 - **PARTIAL:** **14** (17.1%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
-- **NOT YET:** **21** (25.6%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
+- **NOT YET:** **20** (24.4%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
 
 ### Milestones Graduated to WITNESSED (Since C-546):
 - **BOSS-EXE-005 (Explicit priority):** Live PIE proof on `L_SevarogFrameworkProofEXE005` (`Claude/B_EXE005/pie_supersede`) proves phase threshold crossing (hit 3 taking health 300->200 below threshold 250 at frame 641) supersedes 4s stagger: boss logs `stagger_superseded`, finishes stagger clip 3.5s early, refills posture to 100 with `stagger_recovery`, and triggers `phase_transition` and phase anim `Soul_Siphon` in the same tick.
@@ -61,22 +61,21 @@ From the original plan (`Reviews/PARTIAL_UPGRADE_PLAN.md`), with its current sta
 6. **Hardware Baseline (1 row):**
    - `BOSS-QA-005` (Performance bounds): Packaged build 1080p 60 FPS $p99 \le 16.67\text{ ms}$ on physical RTX 2060 Super GPU (parked by owner).
 
-### B. The 21 NOT YET Rows (Grouped by Class & Cost)
+### B. The 20 NOT YET Rows (Grouped by Class & Cost)
 Directly computed from `Reviews/NOT_YET_CENSUS.md` and verified against disk:
-- **Cost Breakdown:** **Cost S (1-2 runs): 2 reqs (9.5%)** | **Cost M (2-4 runs): 11 reqs (52.4%)** | **Cost L (4+ runs): 8 reqs (38.1%)**.
+- **Cost Breakdown:** **Cost S (1-2 runs): 1 req (5.0%)** | **Cost M (2-4 runs): 11 reqs (55.0%)** | **Cost L (4+ runs): 8 reqs (40.0%)**.
 - **By Dependency Class:**
-  * **ENGINE-ONLY (2 reqs, 9.5%):** Pure C++ runtime rules or hooks; no art dependencies.
-    - Cost S: `BOSS-DEF-004` (MoveCard hyperarmor tags).
+  * **ENGINE-ONLY (1 req, 5.0%):** Pure C++ runtime rules or hooks; no art dependencies.
     - Cost M: `BOSS-SEL-009` (Reaction latency window).
-  * **NEEDS DESIGN DECISION (4 reqs, 19.0%):** Designer thresholds or scoring rules; requires owner choices before code.
+  * **NEEDS DESIGN DECISION (4 reqs, 20.0%):** Designer thresholds or scoring rules; requires owner choices before code.
     - Cost S: `BOSS-PAC-002` (Combo tempo pauses).
     - Cost M: `BOSS-MOV-002` (Combat positioning center bias), `BOSS-HIT-010` (Direct vs splash precedence), `BOSS-PHS-005` (Anti-cheese trigger rules).
-  * **NEEDS ART (6 reqs, 28.6%):** Requires animations, montages, notify tracks, or level collision art.
+  * **NEEDS ART (6 reqs, 30.0%):** Requires animations, montages, notify tracks, or level collision art.
     - Cost M: `BOSS-MOV-004` (Wall-safe charge trajectories), `BOSS-MOV-006` (L_SevarogArena snag point audit), `BOSS-DEF-005` (Defensive moveset actions).
     - Cost L: `BOSS-ANM-003` (Bounded holds), `BOSS-PAC-004` (Vulnerability visual cues), `BOSS-QA-007` (Low VFX accessibility harness).
-  * **NEEDS NEW SYSTEM (5 reqs, 23.8%):** Requires unbuilt architectural subsystems.
+  * **NEEDS NEW SYSTEM (5 reqs, 25.0%):** Requires unbuilt architectural subsystems.
     - Cost L: `BOSS-AWR-007` (LOS raycasts & memory), `BOSS-AWR-008` (Player dodge adaptation histogram), `BOSS-ANM-006` (Motion Warping plugin integration), `BOSS-HIT-011` (Swept annulus shockwave), `BOSS-HIT-012` (Two-character grab state machine).
-  * **PLAYER-SIDE (4 reqs, 19.0%):** Requires player combat intake, input buffers, or camera integration.
+  * **PLAYER-SIDE (4 reqs, 20.0%):** Requires player combat intake, input buffers, or camera integration.
     - Cost M: `BOSS-AWR-006` (Player flask/heavy commitment listener), `BOSS-PAC-003` (Finisher recovery punish window), `BOSS-PAC-005` (Punish-margin calculation formula), `BOSS-QA-006` (Combat follow camera framing).
 
 ---
@@ -89,7 +88,7 @@ Verbatim text of the question sent to the owner (`Documentation/TEAM_MAILBOX.md:
 
 ### Evaluation with Today's Data:
 - **Option A (Upgrade PARTIAL rows first):** 11 rows have already graduated (`AWR-001`, `QA-004`, `HIT-005`, `COM-003`, `COM-005`, `COM-007`, `AWR-005`, `COM-002`, `AWR-002`, `EXE-007`, `ANM-007`), leaving 16 rows. Several of these 16 have established framework hooks and can be graduated via targeted PIE scenario maps (e.g. `QA-001` on-screen screenshot, `SEL-008` no-candidate strafe reset). The remaining rows depend on player-side intake, notify authoring, or lifecycle logging.
-- **Option B (Work NOT YET rows in cost order):** The 1 Cost S and 1 Cost M `ENGINE-ONLY` rows (`DEF-004`, `SEL-009`) can be implemented immediately in C++. However, the 4 `NEEDS DESIGN DECISION` rows require designer choices from the owner before implementation, and the remaining 15 rows depend on art assets or whole unbuilt subsystems.
+- **Option B (Work NOT YET rows in cost order):** The 1 Cost M `ENGINE-ONLY` row (`SEL-009`) can be implemented immediately in C++. However, the 4 `NEEDS DESIGN DECISION` rows require designer choices from the owner before implementation, and the remaining 15 rows depend on art assets or whole unbuilt subsystems.
 - **Option C (Stop):** Freeze Track B at current state (42 WITNESSED / 16 PARTIAL / 24 NOT YET) and transition focus to other project areas.
 
 ---
@@ -100,5 +99,5 @@ Verbatim text of the question sent to the owner (`Documentation/TEAM_MAILBOX.md:
 
 **Rationale:**
 1. **Capitalize on Proven Scenarios:** The PARTIAL rows already possess verified C++ implementations and unit tests. Addressing the engine-accessible subset converts existing investments into clean WITNESSED rows with zero new system architecture.
-2. **Targeted C++ Expansion:** Following Option A's engine-ready slice with Option B's 2 remaining `ENGINE-ONLY` rows (`DEF-004`, `SEL-009`) expands framework capability purely in code without art bottlenecks.
+2. **Targeted C++ Expansion:** Following Option A's engine-ready slice with Option B's remaining `ENGINE-ONLY` row (`SEL-009`) expands framework capability purely in code without art bottlenecks.
 3. **Avoid Premature Blockers:** Working strictly in cost order without separating by dependency class would stall against the 4 design-decision rows and 6 art rows.

@@ -67,6 +67,9 @@ namespace RPGBossRules
 		return EBreakResult::Started;
 	}
 
+	/** BOSS-DEF-004: a hit during the ACTIVE state of a card with hyperarmor costs no posture (it cannot start a stance break). */
+	inline bool HyperArmorActive(bool bCardHasArmor, bool bCardActive) { return bCardHasArmor && bCardActive; }
+
 	/** Order: no maximum, dead (the lethal crossing wins, Freeze 765 and 1269), dormant, phase two already begun (bPhaseTwo is set together with bTransition, so it covers a running transition too: idempotent, 764),
 	 *  above the threshold, a stance break running (queued: the transition starts when the break ends, 770 and 1201), else it starts. Equality starts (the Freeze says at or below). */
 	inline ETransitionResult ResolveTransition(const FFlags& F, double Health, double Max, float Fraction)

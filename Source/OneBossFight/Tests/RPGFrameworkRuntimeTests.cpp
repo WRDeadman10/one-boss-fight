@@ -4,6 +4,7 @@
 #include "Player/RPGBossSweepSampling.h"
 #include "Player/RPGBossStaggerAnimRules.h"
 #include "Player/RPGBossTrackRules.h"
+#include "Player/RPGBossRules.h"
 #include "Player/RPGBossOverlayRules.h"
 #include "Boss/RPGFrameworkMoveExecutor.h"
 #include "Animation/AnimInstance.h"
@@ -364,6 +365,18 @@ bool FFrameworkTurnLatch::RunTest(const FString&)
     {RPGBossTrack::FTurnLatch L;float Yaw=RPGBossTrack::StepYawLatched(0.f,1.f,180.f,Tick,false,L);TestTrue(TEXT("inside one step the target is reached exactly"),FMath::IsNearlyEqual(Yaw,1.f,.001f));TestEqual(TEXT("latch cleared"),L.Dir,0);
      TestEqual(TEXT("committed never turns"),RPGBossTrack::StepYawLatched(30.f,200.f,90.f,1.f,true,L),30.f);
      TestEqual(TEXT("zero rate never turns"),RPGBossTrack::StepYawLatched(30.f,200.f,0.f,1.f,false,L),30.f);}
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkHyperArmor,"OneBossFight.Framework.Runtime.HyperArmor",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkHyperArmor::RunTest(const FString&)
+{
+    // BOSS-DEF-004: armor needs BOTH an armored card and the Active state.
+    TestTrue(TEXT("armored card, active state: absorbed"),RPGBossRules::HyperArmorActive(true,true));
+    TestFalse(TEXT("armored card, not active (commit / recovery / neutral): the hit counts"),RPGBossRules::HyperArmorActive(true,false));
+    TestFalse(TEXT("plain card, active state: the hit counts"),RPGBossRules::HyperArmorActive(false,true));
+    TestFalse(TEXT("plain card, not active: the hit counts"),RPGBossRules::HyperArmorActive(false,false));
+    // The profile flag defaults to false and a card entry with armor stays valid.
+    FRPGBossProfileCard Entry;TestFalse(TEXT("default is off"),Entry.bHyperArmor);
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkArenaProfile,"OneBossFight.Framework.Runtime.ArenaProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)

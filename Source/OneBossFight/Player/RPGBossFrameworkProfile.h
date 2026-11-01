@@ -37,6 +37,8 @@ struct FRPGBossProfileCard
     UPROPERTY(EditAnywhere) TSoftObjectPtr<URPGBossMoveCard> Card;
     UPROPERTY(EditAnywhere) float CooldownSeconds=0.f;
     UPROPERTY(EditAnywhere) float Weight=1.f;
+    /** BOSS-DEF-004: during the ACTIVE state of this card a player hit costs health but no posture, so it cannot start a stance break. Design choice, proposed. */
+    UPROPERTY(EditAnywhere) bool bHyperArmor=false;
 };
 UCLASS(BlueprintType)
 class ONEBOSSFIGHT_API URPGBossFrameworkProfile : public UPrimaryDataAsset
@@ -125,7 +127,7 @@ struct ONEBOSSFIGHT_API FRPGFrameworkDependencies
     TStrongObjectPtr<UClass> AnimClass, TargetClass;
     TStrongObjectPtr<UAnimSequence> StaggerStart, StaggerLoop, StaggerEnd, PhaseTransition;   // F11, each null when its profile field is empty
     TSharedPtr<const FRPGCompiledBossMoveCard> Card;
-    struct FCandidate { TSharedPtr<const FRPGCompiledBossMoveCard> Card; float CooldownSeconds=0.f,Weight=1.f; };
+    struct FCandidate { TSharedPtr<const FRPGCompiledBossMoveCard> Card; float CooldownSeconds=0.f,Weight=1.f; bool bHyperArmor=false; };
     TArray<FCandidate> Candidates;   // F5 only
     const TSharedPtr<const FRPGCompiledBossMoveCard>& FirstCard() const { return Candidates.Num()>0 ? Candidates[0].Card : Card; }
 };

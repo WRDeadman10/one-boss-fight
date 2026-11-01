@@ -75,6 +75,8 @@ private:
     /** F8 posture: pool, break state, and the time of the last drain (regeneration delay). */
     double Posture=0., LastPostureDrain=-1., StaggerEndsAt=0.; bool bStaggered=false, bStaggerAbortedAttack=false;
     bool PostureEnabled() const;
+    /** BOSS-DEF-004: the running card has hyperarmor and is in its ACTIVE state. */
+    bool HyperArmorNow() const;
     /** BOSS-DEF-002 telemetry: the regeneration of the current cycle was already logged (reset by every drain, break and restart). */
     bool bPostureRegenLogged=false;
     /** F9 bleed: buildup state of the legacy rules and the frame of the last proc (two hits in one frame do not proc twice). */

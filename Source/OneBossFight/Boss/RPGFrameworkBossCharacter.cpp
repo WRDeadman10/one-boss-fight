@@ -357,6 +357,11 @@ double ARPGFrameworkBossCharacter::ApplyHit(double HealthFactor, double PostureA
     {
         const double Now=GetWorld()->GetTimeSeconds();
         if (bStaggered) {UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] posture_held reason=StaggerActive posture=%g"),Posture);}
+        else if(HyperArmorNow())
+        {
+            // BOSS-DEF-004: the running card has hyperarmor and is in its ACTIVE state: the hit costs health only.
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] hyperarmor_absorbed card=%s postureKept=%g amountSkipped=%g"),*Executor->ActiveCard()->Spec().MoveId.ToString(),Posture,PostureAmount);
+        }
         else
         {
             const double Drain=FMath::Min(Posture,PostureAmount);
@@ -368,6 +373,12 @@ double ARPGFrameworkBossCharacter::ApplyHit(double HealthFactor, double PostureA
     }
     if (BleedEnabled()) ApplyBleed(BleedAmount);
     return Loss;
+}
+bool ARPGFrameworkBossCharacter::HyperArmorNow() const
+{
+    const FRPGCompiledBossMoveCard* Active=Executor->ActiveCard(); if(!Active||!Dependencies) return false;
+    bool bArmor=false; for(const auto& C:Dependencies->Candidates) if(C.Card->Spec().MoveId==Active->Spec().MoveId){bArmor=C.bHyperArmor;break;}
+    return RPGBossRules::HyperArmorActive(bArmor,Executor->Model().State()==ERPGBossMoveModelState::Active);
 }
 bool ARPGFrameworkBossCharacter::BleedEnabled() const {return bInitialized&&bHittable&&Dependencies&&Dependencies->Profile->BleedBuildupPerHit>0.f;}
 void ARPGFrameworkBossCharacter::ResetBleed()
