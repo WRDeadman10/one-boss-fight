@@ -1,6 +1,10 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Boss/RPGFrameworkMoveExecutor.h"
 #include "Player/RPGBossTrackRules.h"
+#include "Player/RPGBossCueRules.h"
+#include "Player/RPGFlipbookEffect.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundBase.h"
 #include "Boss/RPGFrameworkBossCharacter.h"
 #include "Player/RPGBossFrameworkProfile.h"
 #include "Player/RPGDamageResolver.h"
@@ -16,6 +20,7 @@
 #include "Components/CapsuleComponent.h"
 #include "CollisionQueryParams.h"
 #if !UE_BUILD_SHIPPING
+static TAutoConsoleVariable<int32> CVarCueMode(TEXT("rpg.CueMode"),0,TEXT("Accessible feedback (BOSS-QA-007): 0 = every boss cue shows its visual AND plays its sound, 1 = visual only, 2 = sound only, 3 = both with the visual at half size."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossProofStaleCallback(TEXT("rpg.BossProofStaleCallback"),0,TEXT("Test hook (BOSS-EXE-004): 1 sends a late abort callback of the PREVIOUS (aborted) attack to the move model right after the next attack started; it must be refused and the new attack must live. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossProofSuppressMontageEnd(TEXT("rpg.BossProofSuppressMontageEnd"),0,TEXT("Test hook (BOSS-EXE-007 / ANM-007): 1 stops feeding the montage position to the move model once the card has played 0.3 s, as if the end notifications were dropped; the watchdog must then abort the card. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 #endif
@@ -92,8 +97,9 @@ bool URPGFrameworkMoveExecutor::StartCard(const TSharedPtr<const FRPGCompiledBos
     if (!ValidatePlaybackCard(Card,Error,Profile->bDamageEnabled)||!Model_.IsEligible(Card,S,Error)) return false;
     // BOSS-EXE-007: the watchdog budget of this card. A healthy card must end inside it, otherwise the watchdog would abort it: refuse such a card here, named.
     CardWatchdogTimeoutSeconds=RPGBossTrack::WatchdogTimeoutSeconds(Card->Spec().RecoveryEndSeconds,Card->Spec().PlayRate);
+    if (CardWatchdogTimeoutSeconds>=0.&&Card->Spec().HoldMaxSeconds>0.f) CardWatchdogTimeoutSeconds+=double(Card->Spec().HoldMaxSeconds);   // BOSS-ANM-003: the watchdog allows the longest hold
     if (CardWatchdogTimeoutSeconds<0.||(double(Card->Metadata().ClipLengthSeconds)-double(Profile->BlendOutSeconds))/double(Card->Spec().PlayRate)>CardWatchdogTimeoutSeconds) {Error=TEXT("Framework.Playback.WatchdogWindow");return false;}
-    bWatchdogFired=false; bSuppressLogged=false;
+    bWatchdogFired=false; bSuppressLogged=false; bHoldActive=bHoldDone=false; CuesFiredMask=0; PreloadCues();
     // Loaded dependency only. No Resolve/Load call or alternate animation path in the playback consumer.
     SetComponentTickEnabled(true);
     UAnimSequence* Sequence=Card->Spec().Sequence.Get();
@@ -163,6 +169,7 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
     if (!FMath::IsFinite(Node)||!FMath::IsFinite(Weight)||!FMath::IsFinite(Position)||Position<LastPosition)
     {Fail(TEXT("Framework.Playback.Observation"));return;}
     if (Node>0.f&&Weight>0.f) bSawPoseWeight=true;
+    TickHold(Position,Now);
     if (bPlaying&&((!bSawPoseWeight&&Now-StartWorldSeconds>Profile->BlendInSeconds)||((Node<=0.f||Weight<=0.f)&&Position>=Card->Spec().ActiveStartSeconds)))
     {Fail(TEXT("Framework.Playback.NoSlotContribution"));return;}
     if (!bPlaying) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] montage_natural_end instance=%llu lastPosition=%g naturalEnd=%g"),Token.InstanceId,LastPosition,NaturalEnd);
@@ -194,6 +201,7 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
     TickWarp(PrevPosition,Position);
     SweepWindows(PrevPosition,Position);
     TickGrab(Position);
+    TickCues(PrevPosition,Position);
     if (Model_.State()==ERPGBossMoveModelState::Idle) StopOwned(Profile->BlendOutSeconds);
 }
 void URPGFrameworkMoveExecutor::SweepWindows(double PrevPosition,double Position)
@@ -361,6 +369,57 @@ void URPGFrameworkMoveExecutor::TickWarp(double PrevPosition,double Position)
     if (StepDeg!=0.) OwnerBoss->SetActorRotation(FRotator(0.,YawBefore+StepDeg,0.));
     WarpMovedCm+=ActualCm; WarpTurnedDeg+=FMath::Abs(StepDeg);
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] warp_step instance=%llu from=%g to=%g distCm=%g neededCm=%g stepCm=%g actualCm=%g movedCm=%g budgetCm=%g neededDeg=%g stepDeg=%g turnedDeg=%g budgetDeg=%g"),Token.InstanceId,Lo,Hi,Dist,NeededCm,StepCm,ActualCm,WarpMovedCm,double(S.WarpMaxDistanceCm),NeededDeg,StepDeg,WarpTurnedDeg,double(S.WarpMaxAngleDegrees));
+}
+void URPGFrameworkMoveExecutor::PreloadCues()
+{
+    // The sounds are loaded here, at the start of the card, never at the frame a cue fires.
+    CueSounds.Reset(); for (const FRPGBossCue& C:Card->Spec().Cues) if (USoundBase* Sound=C.Sound.LoadSynchronous()) CueSounds.Add(Sound);
+}
+void URPGFrameworkMoveExecutor::TickHold(double Position,double Now)
+{
+    const FRPGBossMoveCardSpec& S=Card->Spec();
+    if (!(S.HoldMaxSeconds>0.f)||!IsValid(OwnedMontage)) return;
+    if (bHoldActive)
+    {
+        if (Now<HoldEndsAt) return;
+        // The hold is over: the montage goes on at the card's rate, the release cues fire, the actual length is logged.
+        Anim->Montage_SetPlayRate(OwnedMontage,S.PlayRate); bHoldActive=false; bHoldDone=true;
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] hold_release instance=%llu position=%g heldSeconds=%g chosenSeconds=%g minSeconds=%g maxSeconds=%g"),Token.InstanceId,Position,Now-HoldStartedAt,HoldChosen,double(S.HoldMinSeconds),double(S.HoldMaxSeconds));
+        for (const FRPGBossCue& C:S.Cues) if (C.bAtHoldRelease) FireCue(C,TEXT("HoldRelease"));
+        return;
+    }
+    if (bHoldDone||Position<double(S.HoldAtSeconds)) return;
+    HoldChosen=RPGBossCue::HoldSeconds(S.HoldMinSeconds,S.HoldMaxSeconds,S.HoldSeed,++HoldsInRun);
+    if (HoldChosen<0.) {bHoldDone=true;return;}
+    Anim->Montage_SetPlayRate(OwnedMontage,0.f); bHoldActive=true; HoldStartedAt=Now; HoldEndsAt=Now+HoldChosen;
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] hold_start instance=%llu position=%g holdAtSeconds=%g chosenSeconds=%g minSeconds=%g maxSeconds=%g"),Token.InstanceId,Position,double(S.HoldAtSeconds),HoldChosen,double(S.HoldMinSeconds),double(S.HoldMaxSeconds));
+}
+void URPGFrameworkMoveExecutor::TickCues(double PrevPosition,double Position)
+{
+    const TArray<FRPGBossCue>& Cues=Card->Spec().Cues;
+    for (int32 I=0;I<Cues.Num()&&I<31;++I)
+    {
+        const FRPGBossCue& C=Cues[I];
+        if (C.bAtHoldRelease||(CuesFiredMask&(1<<I))||Position<double(C.TimeSeconds)) continue;
+        CuesFiredMask|=(1<<I); FireCue(C,TEXT("Time"));
+    }
+}
+void URPGFrameworkMoveExecutor::FireCue(const FRPGBossCue& Cue,const TCHAR* Why)
+{
+    // One cue: its visual (a flipbook sheet at the socket or at the boss's feet) and its sound, as the accessibility setting allows. Both channels exist for every cue (validated), so each mode still carries the cue.
+    if (!OwnerBoss.IsValid()) return;
+    const int32 Mode=CVarCueMode.GetValueOnGameThread(); const RPGBossCue::FChannels Channels=RPGBossCue::ChannelsFor(Mode);
+    const USkeletalMeshComponent* Mesh=OwnerBoss->GetMesh();
+    const FVector Where=(!Cue.Socket.IsNone()&&Mesh)?Mesh->GetSocketLocation(Cue.Socket):OwnerBoss->GetActorLocation()-FVector(0.,0.,double(OwnerBoss->GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
+    bool bVisual=false, bAudio=false;
+    if (Channels.bVisual)
+    {
+        const ERPGEFlipbookKind Kind=Cue.Visual==ERPGBossCueVisual::DodgeDust?ERPGEFlipbookKind::DodgeDust:(Cue.Visual==ERPGBossCueVisual::BloodBurst?ERPGEFlipbookKind::BloodBurst:ERPGEFlipbookKind::HitSpark);
+        if (ARPGFlipbookEffect* Effect=ARPGFlipbookEffect::Spawn(GetWorld(),Where,Kind,ARPGFlipbookEffect::LoadMaterial(Kind))) {Effect->SetActorScale3D(FVector(Channels.VisualScale)); bVisual=true;}
+    }
+    USoundBase* Sound=Cue.Sound.Get();
+    if (Channels.bAudio&&Sound) {UGameplayStatics::PlaySoundAtLocation(this,Sound,Where); bAudio=true;}
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] cue_fired instance=%llu cue=%s why=%s mode=%d visual=%d audio=%d visualKind=%d visualScale=%g sound=%s"),Token.InstanceId,*Cue.CueId.ToString(),Why,Mode,bVisual?1:0,bAudio?1:0,int32(Cue.Visual),double(Channels.VisualScale),Sound?*Sound->GetName():TEXT("None"));
 }
 void URPGFrameworkMoveExecutor::LogEvents(const TArray<FRPGBossMoveModelEvent>& Events) const
 {

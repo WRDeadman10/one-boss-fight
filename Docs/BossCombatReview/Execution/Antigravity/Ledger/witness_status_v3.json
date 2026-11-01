@@ -1,11 +1,11 @@
 {
-  "version": "3.30",
+  "version": "3.31",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 62,
+    "WITNESSED": 65,
     "PARTIAL": 14,
-    "NOT YET": 6
+    "NOT YET": 3
   },
   "requirements": [
     {
@@ -1498,11 +1498,67 @@
       "title": "Bounded holds",
       "section": "Animation, tracking and motion",
       "old_status": "NOT YET",
-      "status": "NOT YET",
+      "status": "WITNESSED",
       "proof": [],
-      "citations": [],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossCueTests.cpp",
+          "line": 19,
+          "quoted": "const double H=HoldSeconds(.4f,.9f,7,I);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossCueTests.cpp",
+          "line": 22,
+          "quoted": "TestTrue(TEXT(\"the hold is repeatable for the same seed and index\"),HoldSeconds(.4f,.9f,7,3)==HoldSeconds(.4f,.9f,7,3));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossCueTests.cpp",
+          "line": 24,
+          "quoted": "TestTrue(TEXT(\"the hold varies from attack to attack\"),bVaries);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossCueTests.cpp",
+          "line": 27,
+          "quoted": "TestTrue(TEXT(\"64 holds spread over at least 0.3 s of the 0.5 s window\"),Hi-Lo>=.3);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossCueTests.cpp",
+          "line": 28,
+          "quoted": "TestTrue(TEXT(\"their mean is near the middle of the window (0.55 to 0.75)\"),Sum/64.>=.55&&Sum/64.<=.75);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossCueTests.cpp",
+          "line": 30,
+          "quoted": "TestTrue(TEXT(\"neither always rising nor always falling\"),Rising>10&&Rising<54);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossCueTests.cpp",
+          "line": 32,
+          "quoted": "TestTrue(TEXT(\"min = max is a fixed hold\"),HoldSeconds(.5f,.5f,1,4)==.5);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 154,
+          "quoted": "TestTrue(TEXT(\"hold window is valid\"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_CUE/pie_mode0_both/editor_raw.log",
+          "line": 1615,
+          "quoted": "[2026.11.01-16.28.43:109][355]LogTemp: Display: [FrameworkProof] hold_start instance=1 position=0.433333 holdAtSeconds=0.42 chosenSeconds=0.66487 minSeconds=0.4 maxSeconds=0.9"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_CUE/pie_mode0_both/editor_raw.log",
+          "line": 1656,
+          "quoted": "[2026.11.01-16.28.43:475][395]LogTemp: Display: [FrameworkProof] hold_release instance=1 position=0.433333 heldSeconds=0.666667 chosenSeconds=0.66487 minSeconds=0.4 maxSeconds=0.9"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_CUE/pie_mode0_both/editor_raw.log",
+          "line": 1657,
+          "quoted": "[2026.11.01-16.28.43:476][395]LogTemp: Display: [FrameworkProof] cue_fired instance=1 cue=HoldRelease why=HoldRelease mode=0 visual=1 audio=1 visualKind=1 visualScale=1 sound=Sevarog_Effort_Attack"
+        }
+      ],
       "observable": "Variable windup holds are bounded between min and max duration with distinct visual audio cue at release.",
-      "notes": "Dynamic hold duration limits and audio release cues not yet implemented (designated for Combat Pacing Block)."
+      "notes": "Witnessed (C-641, BUILD-138): Variable windup holds bounded between min and max duration with visual and audio cues at release. Card spec fields HoldAtSeconds, HoldMinSeconds, HoldMaxSeconds ((0, 3s]), and HoldSeed in FRPGBossMoveCardSpec validated by RPGBossMoveCards::Validate (RPGBossMoveCardTests.cpp:154). Pure rule RPGBossCue::HoldSeconds (RPGBossCueRules.h) draws seeded, un-trended, repeatable durations (RPGBossCueTests.cpp:19-32). In URPGFrameworkMoveExecutor::TickHold, boss montage play rate freezes to 0.0 at HoldAtSeconds for the chosen duration and resumes upon completion, emitting hold_start, hold_release, and cue_fired. Live PIE on L_SevarogFrameworkProofCUE (Cards/Move_Sevarog_HeavyHold_ANM003, window 0.4..0.9s): pie_mode0_both verifies attack 1 freezes at position 0.4333s (:1615 chosen=0.66487s) and releases at :1656 (held=0.6667s, matching next-tick rounding within 1/60s) with cue HoldRelease (:1657); subsequent attacks hold 0.800s, 0.800s, 0.733s (chosen 0.7906s, 0.7902s, 0.7258s), proving bounded varying holds. Limit noted: held time is rounded up to next frame tick (at most 1/60s above chosen value; chosen value is strictly inside [min, max])."
     },
     {
       "id": "BOSS-ANM-004",
@@ -2589,11 +2645,32 @@
       "title": "Conditional opening cues",
       "section": "Pacing and punishability",
       "old_status": "NOT YET",
-      "status": "NOT YET",
+      "status": "WITNESSED",
       "proof": [],
-      "citations": [],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 164,
+          "quoted": "TestTrue(TEXT(\"a hold with a release cue and a recovery cue is valid\"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossCueTests.cpp",
+          "line": 36,
+          "quoted": "TestTrue(TEXT(\"two cues that differ in id, visual and sound are distinct\"),DistinctChannels({A,B}));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_CUE/pie_mode0_both/editor_raw.log",
+          "line": 1664,
+          "quoted": "[2026.11.01-16.28.43:486][396]LogTemp: Display: [FrameworkProof] cue_fired instance=1 cue=RecoveryOpen why=Time mode=0 visual=1 audio=1 visualKind=2 visualScale=1 sound=Sevarog_Effort_BreathingLowHealth"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_CUE/pie_mode0_both/editor_raw.log",
+          "line": 1788,
+          "quoted": "[2026.11.01-16.28.44:515][507]LogTemp: Display: [FrameworkProof] cue_fired instance=2 cue=RecoveryOpen why=Time mode=0 visual=1 audio=1 visualKind=2 visualScale=1 sound=Sevarog_Effort_BreathingLowHealth"
+        }
+      ],
       "observable": "Visual recovery cues (scythe lodged in ground, posture reset) clearly indicate boss vulnerable state.",
-      "notes": "Visual/audio recovery cues and posture reset notifies not yet implemented (designated for Combat Pacing Block)."
+      "notes": "Witnessed (C-641, BUILD-138): Multi-channel recovery and opening cues indicate boss state transitions. Move card spec supports up to 8 cues (FRPGBossCue) with visual, sound, socket, and timing/hold-release triggers, validated in RPGBossMoveCards::Validate (RPGBossMoveCardTests.cpp:164) and tested for multi-channel distinctness in RPGBossCueTests.cpp:36. In URPGFrameworkMoveExecutor::TickCues, cues evaluate on active/recovery phase boundaries, firing visual flipbook sheets (HitSpark, DodgeDust, BloodBurst) and sound cues. Live PIE on L_SevarogFrameworkProofCUE: pie_mode0_both verifies RecoveryOpen cue fires at frame 396 (:1664 why=Time mode=0 visual=1 audio=1 visualKind=2 sound=Sevarog_Effort_BreathingLowHealth) at the end of active state, repeated at attack 2 (:1788). Limit noted: cue visuals utilize project placeholder flipbook sheets (HitSpark, DodgeDust, BloodBurst) rather than bespoke custom meshes (e.g. scythe embedded in ground); distinct visual kind and sound cue reliably signal recovery opening."
     },
     {
       "id": "BOSS-PAC-005",
@@ -3267,11 +3344,57 @@
       "title": "Accessible feedback",
       "section": "Debugging, QA, presentation and optional networking",
       "old_status": "NOT YET",
-      "status": "NOT YET",
+      "status": "WITNESSED",
       "proof": [],
-      "citations": [],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossCueTests.cpp",
+          "line": 12,
+          "quoted": "TestTrue(TEXT(\"mode 0: both channels at full size\"),ChannelsFor(0).bVisual&&ChannelsFor(0).bAudio&&ChannelsFor(0).VisualScale==1.f);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossCueTests.cpp",
+          "line": 13,
+          "quoted": "TestTrue(TEXT(\"mode 1: visual only\"),ChannelsFor(1).bVisual&&!ChannelsFor(1).bAudio);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossCueTests.cpp",
+          "line": 14,
+          "quoted": "TestTrue(TEXT(\"mode 2: audio only\"),!ChannelsFor(2).bVisual&&ChannelsFor(2).bAudio);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossCueTests.cpp",
+          "line": 15,
+          "quoted": "TestTrue(TEXT(\"mode 3: both, the visual at half size\"),ChannelsFor(3).bVisual&&ChannelsFor(3).bAudio&&ChannelsFor(3).VisualScale==.5f);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossCueTests.cpp",
+          "line": 37,
+          "quoted": "TestFalse(TEXT(\"the same visual: the picture alone could not tell them apart\"),DistinctChannels({A,SameVisual}));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossCueTests.cpp",
+          "line": 38,
+          "quoted": "TestFalse(TEXT(\"the same sound: the audio alone could not tell them apart\"),DistinctChannels({A,SameSound}));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_CUE/pie_mode1_visual/editor_raw.log",
+          "line": 1658,
+          "quoted": "[2026.11.01-16.29.30:448][405]LogTemp: Display: [FrameworkProof] cue_fired instance=1 cue=HoldRelease why=HoldRelease mode=1 visual=1 audio=0 visualKind=1 visualScale=1 sound=Sevarog_Effort_Attack"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_CUE/pie_mode2_audio/editor_raw.log",
+          "line": 1659,
+          "quoted": "[2026.11.01-16.30.19:177][507]LogTemp: Display: [FrameworkProof] cue_fired instance=1 cue=HoldRelease why=HoldRelease mode=2 visual=0 audio=1 visualKind=1 visualScale=1 sound=Sevarog_Effort_Attack"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_CUE/pie_mode3_lowvfx/editor_raw.log",
+          "line": 1660,
+          "quoted": "[2026.11.01-16.31.07:403][524]LogTemp: Display: [FrameworkProof] cue_fired instance=1 cue=HoldRelease why=HoldRelease mode=3 visual=1 audio=1 visualKind=1 visualScale=0.5 sound=Sevarog_Effort_Attack"
+        }
+      ],
       "observable": "Combat telegraphed cues remain readable under low VFX and audio-only/visual-only conditions.",
-      "notes": "Accessibility contrast test harness not yet implemented (designated for QA / Telemetry Block)."
+      "notes": "Witnessed (C-641, BUILD-138): Combat telegraphed cues remain readable under low VFX, visual-only, and audio-only conditions. Console variable rpg.CueMode provides non-shipping-stripped accessibility filtering: 0=both full size, 1=visual only, 2=audio only, 3=both with visual at half scale (0.5). Pure rules RPGBossCue::ChannelsFor and DistinctChannels (RPGBossCueRules.h; tested in RPGBossCueTests.cpp:12-16, 37-38) enforce dual-channel presence and mutual distinction across both modalities. In URPGFrameworkMoveExecutor::FireCue, cues respect rpg.CueMode channel masking and scaling. Live PIE on L_SevarogFrameworkProofCUE across all modes: pie_mode1_visual (:1658, :1665) verifies visual=1 audio=0; pie_mode2_audio (:1659, :1666) verifies visual=0 audio=1; pie_mode3_lowvfx (:1660, :1667) verifies visualScale=0.5 visual=1 audio=1. Limit noted: verifies dual-channel delivery and channel filtering; cannot formally assert subjective human perceptual legibility."
     }
   ],
   "last_updated": "2026-11-01",

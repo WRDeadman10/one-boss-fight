@@ -149,6 +149,28 @@ bool FBossMoveCardRejections::RunTest(const FString&)
     Reject([&](FInput& F){MakeWarp(F);F.S.WarpMaxAngleDegrees=181.f;},TEXT("MoveCard.Warp"));
     Reject([&](FInput& F){MakeWarp(F);F.S.WarpMaxDistanceCm=-1.f;},TEXT("MoveCard.Domain"));
     Reject([&](FInput& F){MakeWarp(F);F.S.WarpStandoffCm=std::numeric_limits<float>::quiet_NaN();},TEXT("MoveCard.NonFinite"));
+    // BOSS-ANM-003: the windup hold is off at 0/0; on it needs a window after the commit and before the active start, 0 < min <= max <= 3.
+    auto MakeHold=[](FInput& F){F.S.HoldAtSeconds=.3f;F.S.HoldMinSeconds=.4f;F.S.HoldMaxSeconds=.9f;F.S.HoldSeed=5;};
+    {FInput F;MakeHold(F);TestTrue(TEXT("hold window is valid"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}
+    Reject([&](FInput& F){MakeHold(F);F.S.HoldAtSeconds=F.S.CommitSeconds-.1f;},TEXT("MoveCard.Hold"));
+    Reject([&](FInput& F){MakeHold(F);F.S.HoldAtSeconds=F.S.ActiveStartSeconds;},TEXT("MoveCard.Hold"));
+    Reject([&](FInput& F){MakeHold(F);F.S.HoldMinSeconds=0.f;},TEXT("MoveCard.Hold"));
+    Reject([&](FInput& F){MakeHold(F);F.S.HoldMaxSeconds=.3f;},TEXT("MoveCard.Hold"));
+    Reject([&](FInput& F){MakeHold(F);F.S.HoldMaxSeconds=3.1f;},TEXT("MoveCard.Hold"));
+    Reject([&](FInput& F){MakeHold(F);F.S.HoldMaxSeconds=std::numeric_limits<float>::quiet_NaN();},TEXT("MoveCard.NonFinite"));
+    // BOSS-PAC-004 / QA-007: a cue has an id, a visual AND a sound; two cues differ in both; a release cue needs the hold.
+    auto MakeCue=[](FInput& F){FRPGBossCue A;A.CueId=TEXT("Release");A.bAtHoldRelease=true;A.Visual=ERPGBossCueVisual::HitSpark;A.Sound=TSoftObjectPtr<USoundBase>(FSoftObjectPath(TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_Attack.Sevarog_Effort_Attack")));
+        FRPGBossCue B;B.CueId=TEXT("Recovery");B.TimeSeconds=F.S.ActiveEndSeconds;B.Visual=ERPGBossCueVisual::DodgeDust;B.Sound=TSoftObjectPtr<USoundBase>(FSoftObjectPath(TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Sounds/SoundCues/Sevarog_Effort_BreathingLowHealth.Sevarog_Effort_BreathingLowHealth")));F.S.Cues={A,B};};
+    {FInput F;MakeHold(F);MakeCue(F);TestTrue(TEXT("a hold with a release cue and a recovery cue is valid"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}
+    Reject([&](FInput& F){MakeCue(F);},TEXT("MoveCard.Cue"));   // the release cue without a hold
+    Reject([&](FInput& F){MakeHold(F);MakeCue(F);F.S.Cues[1].Sound.Reset();},TEXT("MoveCard.Cue"));
+    Reject([&](FInput& F){MakeHold(F);MakeCue(F);F.S.Cues[1].Visual=ERPGBossCueVisual::None;},TEXT("MoveCard.Cue"));
+    Reject([&](FInput& F){MakeHold(F);MakeCue(F);F.S.Cues[1].CueId=NAME_None;},TEXT("MoveCard.Cue"));
+    Reject([&](FInput& F){MakeHold(F);MakeCue(F);F.S.Cues[1].TimeSeconds=F.S.RecoveryEndSeconds+.1f;},TEXT("MoveCard.Cue"));
+    Reject([&](FInput& F){MakeHold(F);MakeCue(F);F.S.Cues[1].Visual=F.S.Cues[0].Visual;},TEXT("MoveCard.CueDistinct"));
+    Reject([&](FInput& F){MakeHold(F);MakeCue(F);F.S.Cues[1].Sound=F.S.Cues[0].Sound;},TEXT("MoveCard.CueDistinct"));
+    Reject([&](FInput& F){MakeHold(F);MakeCue(F);F.S.Cues[1].CueId=F.S.Cues[0].CueId;},TEXT("MoveCard.CueDistinct"));
+    Reject([&](FInput& F){MakeHold(F);MakeCue(F);for(int32 I=0;I<8;++I){FRPGBossCue X=F.S.Cues[1];X.CueId=FName(*FString::Printf(TEXT("X%d"),I));F.S.Cues.Add(X);}},TEXT("MoveCard.Cue"));
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveCardSnapshot, "OneBossFight.Framework.MoveCard.SnapshotAndFailure", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)

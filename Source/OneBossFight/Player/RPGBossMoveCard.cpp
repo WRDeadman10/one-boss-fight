@@ -1,5 +1,6 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Player/RPGBossMoveCard.h"
+#include "Player/RPGBossCueRules.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimSequence.h"
 #include "Animation/Skeleton.h"
@@ -62,6 +63,25 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
     {
         if (S.WarpMaxDistanceCm > 1000.f || S.WarpMaxAngleDegrees > 180.f) Fail(R, TEXT("MoveCard.Warp"), TEXT("budget above 1000 cm or 180 degrees"));
         if (!(S.WarpStartSeconds >= S.CommitSeconds && S.WarpStartSeconds < S.WarpEndSeconds && S.WarpEndSeconds <= S.ActiveEndSeconds)) Fail(R, TEXT("MoveCard.Warp"), TEXT("commit<=warpStart<warpEnd<=activeEnd"));
+    }
+    // BOSS-ANM-003: the hold is off at 0/0; on it needs a window after the commit and before the active start, and bounds (0,3].
+    Number(R, TEXT("HoldAtSeconds"), S.HoldAtSeconds); Number(R, TEXT("HoldMinSeconds"), S.HoldMinSeconds); Number(R, TEXT("HoldMaxSeconds"), S.HoldMaxSeconds);
+    const bool bHoldOn = FMath::IsFinite(S.HoldMinSeconds) && FMath::IsFinite(S.HoldMaxSeconds) && (S.HoldMinSeconds > 0.f || S.HoldMaxSeconds > 0.f);
+    if (bHoldOn && !(S.HoldMinSeconds > 0.f && S.HoldMaxSeconds >= S.HoldMinSeconds && S.HoldMaxSeconds <= 3.f && S.HoldAtSeconds >= S.CommitSeconds && S.HoldAtSeconds < S.ActiveStartSeconds))
+        Fail(R, TEXT("MoveCard.Hold"), TEXT("commit<=holdAt<activeStart, 0<min<=max<=3"));
+    // BOSS-PAC-004 / QA-007: at most 8 cues; each has an id, a time inside the card (or the hold release), a visual AND a sound; two cues differ in both channels.
+    if (S.Cues.Num() > 8) Fail(R, TEXT("MoveCard.Cue"), TEXT("more than 8 cues"));
+    {
+        TArray<RPGBossCue::FCueKey> Keys;
+        for (int32 I = 0; I < S.Cues.Num(); ++I)
+        {
+            const FRPGBossCue& C = S.Cues[I]; const FString Field = FString::Printf(TEXT("Cues[%d]"), I);
+            Number(R, *FString::Printf(TEXT("%s.TimeSeconds"), *Field), C.TimeSeconds);
+            if (C.CueId.IsNone() || C.Visual == ERPGBossCueVisual::None || C.Sound.IsNull()) Fail(R, TEXT("MoveCard.Cue"), Field + TEXT(" id, visual and sound are all required"));
+            if (C.bAtHoldRelease ? !bHoldOn : (FMath::IsFinite(C.TimeSeconds) && C.TimeSeconds > S.RecoveryEndSeconds)) Fail(R, TEXT("MoveCard.Cue"), Field + TEXT(" time"));
+            RPGBossCue::FCueKey K; K.Id = C.CueId; K.Visual = int32(C.Visual); K.Sound = C.Sound.ToSoftObjectPath().ToString(); Keys.Add(K);
+        }
+        if (!RPGBossCue::DistinctChannels(Keys)) Fail(R, TEXT("MoveCard.CueDistinct"), TEXT("cue ids repeat or two cues share a visual or a sound"));
     }
     if (S.FrontConeDegrees > 360.f || S.MaxRangeCm < S.MinRangeCm)
         Fail(R, TEXT("MoveCard.Eligibility"), TEXT("cone or range order"));

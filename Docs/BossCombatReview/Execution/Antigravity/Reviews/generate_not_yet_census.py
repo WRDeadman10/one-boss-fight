@@ -29,12 +29,6 @@ VALID_DEP_CLASSES = {
 VALID_COSTS = {"S", "M", "L"}
 
 CENSUS_METADATA = {
-    "BOSS-ANM-003": {
-        "dep_class": "NEEDS ART",
-        "cost": "L",
-        "cite": None,
-        "explanation": "no code: variable windup hold min/max durations and release cues not authored in move cards or montage tracks",
-    },
     "BOSS-MOV-006": {
         "dep_class": "NEEDS ART",
         "cost": "M",
@@ -44,12 +38,6 @@ CENSUS_METADATA = {
             "quote": 'IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGArenaCollisionTest, "On',
         },
         "explanation": "collision tests only verify legacy ARPGGreyboxArena geometry; production level L_SevarogArena clearance and snag point audit requires level art verification",
-    },
-    "BOSS-PAC-004": {
-        "dep_class": "NEEDS ART",
-        "cost": "L",
-        "cite": None,
-        "explanation": "no code: visual/audio recovery cues (e.g. scythe lodged in ground) require authored animation notify tracks and VFX",
     },
     "BOSS-DEF-005": {
         "dep_class": "NEEDS ART",
@@ -62,12 +50,6 @@ CENSUS_METADATA = {
         "cost": "M",
         "cite": None,
         "explanation": "no code: camera framing and lock-on tracking evaluation requires player follow camera / lock-on system testing",
-    },
-    "BOSS-QA-007": {
-        "dep_class": "NEEDS ART",
-        "cost": "L",
-        "cite": None,
-        "explanation": "no code: low VFX / audio-only / visual-only contrast testing harness not authored in project",
     },
 }
 
@@ -109,17 +91,17 @@ def main():
         data = json.load(f)
 
     not_yet_reqs = [r for r in data["requirements"] if r["status"] == "NOT YET"]
-    assert len(not_yet_reqs) == 6, f"Expected exactly 7 NOT YET requirements, found {len(not_yet_reqs)}"
+    assert len(not_yet_reqs) == 3, f"Expected exactly 7 NOT YET requirements, found {len(not_yet_reqs)}"
 
     lines_md = []
-    lines_md.append("# Track B Remaining Requirements Census: 6 NOT YET Rows\n")
+    lines_md.append("# Track B Remaining Requirements Census: 3 NOT YET Rows\n")
     lines_md.append("**Document Reference:** `Reviews/NOT_YET_CENSUS.md`  ")
     lines_md.append("**Task Reference:** `[C-565]` / `[C-568]` / `[C-617]` / `[C-621]` (Track B Direction Selection Census)  ")
     lines_md.append("**Source Authority:** `witness_status_v3.json` (exact titles and observables)  ")
-    lines_md.append("**Total Census:** 6 requirements currently classified as `NOT YET`  \n")
+    lines_md.append("**Total Census:** 3 requirements currently classified as `NOT YET`  \n")
     lines_md.append("---\n")
     lines_md.append("## 1. Executive Summary & Classification Matrix\n")
-    lines_md.append("This document classifies all 6 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).\n")
+    lines_md.append("This document classifies all 3 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).\n")
     lines_md.append("*(Note: As of BUILD-133/BUILD-134, 0 ENGINE-ONLY, 0 NEEDS DESIGN DECISION, and 0 NEEDS NEW SYSTEM requirements remain in NOT YET; all three categories are 100% completed.)*\n")
     lines_md.append("### Classification Definitions:")
     lines_md.append("- **ENGINE-ONLY:** Pure C++ / runtime rules or hooks; no art or external system dependencies.")
@@ -132,7 +114,7 @@ def main():
     lines_md.append("- **M (Medium):** 2-4 runs; a new rule struct/method, unit tests, and live PIE proof scenario.")
     lines_md.append("- **L (Large):** 4+ runs; new multi-component system, asset plumbing, and multi-actor interaction harness.\n")
     lines_md.append("---\n")
-    lines_md.append("## 2. Complete 6-Row NOT YET Census Table\n")
+    lines_md.append("## 2. Complete 3-Row NOT YET Census Table\n")
     lines_md.append("| ID | Exact Title | Exact Observable | Dependency Class | Code Reference & Reason | Cost |")
     lines_md.append("|:---|:---|:---|:---:|:---|:---:|")
 

@@ -21,6 +21,26 @@ struct FRPGBakedBladeSample
     UPROPERTY(EditAnywhere) FVector TipCS = FVector::ZeroVector;
 };
 
+class USoundBase;
+
+/** BOSS-PAC-004 / QA-007: the visual of a cue (the project's authored flipbook sheets). None is refused: a cue has both channels. */
+UENUM(BlueprintType)
+enum class ERPGBossCueVisual : uint8 { None, HitSpark, DodgeDust, BloodBurst };
+
+/** BOSS-ANM-003 / PAC-004 / QA-007: one cue of a card: a visual and a sound at a card time (or at the end of the windup hold), at a boss socket (None = at the boss's feet). */
+USTRUCT(BlueprintType)
+struct FRPGBossCue
+{
+    GENERATED_BODY()
+    UPROPERTY(EditAnywhere) FName CueId;
+    UPROPERTY(EditAnywhere) float TimeSeconds = 0.f;
+    /** True: fired when the windup hold ends (TimeSeconds is ignored; the card needs a hold). */
+    UPROPERTY(EditAnywhere) bool bAtHoldRelease = false;
+    UPROPERTY(EditAnywhere) ERPGBossCueVisual Visual = ERPGBossCueVisual::None;
+    UPROPERTY(EditAnywhere) TSoftObjectPtr<USoundBase> Sound;
+    UPROPERTY(EditAnywhere) FName Socket;
+};
+
 USTRUCT(BlueprintType)
 struct FRPGBossMoveWindow
 {
@@ -77,6 +97,13 @@ struct FRPGBossMoveCardSpec
     UPROPERTY(EditAnywhere) float WarpMaxDistanceCm = 0.f;
     UPROPERTY(EditAnywhere) float WarpMaxAngleDegrees = 0.f;
     UPROPERTY(EditAnywhere) float WarpStandoffCm = 0.f;
+    /** BOSS-ANM-003 (0/0 = off): the windup HOLD. At HoldAtSeconds (card time, after the commit, before the active start) the montage stops for a seeded time in [HoldMinSeconds, HoldMaxSeconds] ((0,3]), then goes on. */
+    UPROPERTY(EditAnywhere) float HoldAtSeconds = 0.f;
+    UPROPERTY(EditAnywhere) float HoldMinSeconds = 0.f;
+    UPROPERTY(EditAnywhere) float HoldMaxSeconds = 0.f;
+    UPROPERTY(EditAnywhere) int32 HoldSeed = 0;
+    /** BOSS-PAC-004 / QA-007: the cues of this card (at most 8), each with both channels, distinct per id. */
+    UPROPERTY(EditAnywhere) TArray<FRPGBossCue> Cues;
     UPROPERTY(EditAnywhere) float MinRangeCm = 0.f;
     UPROPERTY(EditAnywhere) float MaxRangeCm = 0.f;
     UPROPERTY(EditAnywhere) float FrontConeDegrees = 0.f;

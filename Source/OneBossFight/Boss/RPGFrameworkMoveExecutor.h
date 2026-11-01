@@ -73,6 +73,13 @@ private:
     void TickGrab(double Position);
     /** BOSS-ANM-006: the bounded warp of the running card: what it has used of its budgets so far. */
     void TickWarp(double PrevPosition,double Position);
+    /** BOSS-ANM-003 / PAC-004 / QA-007: the windup hold and the cues of the running card. */
+    void TickHold(double Position,double Now);
+    void TickCues(double PrevPosition,double Position);
+    void FireCue(const struct FRPGBossCue& Cue,const TCHAR* Why);
+    void PreloadCues();
+    bool bHoldActive=false, bHoldDone=false; double HoldEndsAt=0., HoldStartedAt=0., HoldChosen=0.; int32 CuesFiredMask=0, HoldsInRun=0;
+    UPROPERTY(Transient) TArray<TObjectPtr<class USoundBase>> CueSounds;
     double WarpMovedCm=0., WarpTurnedDeg=0.; bool bWarpSummaryLogged=false;
     RPGBossTrack::FGrabState Grab; bool bGrabUsed=false; double GrabReleaseAt=0.; FName GrabWindowId; FName GrabHitKey;
     TWeakObjectPtr<ACharacter> Held; TEnumAsByte<ECollisionEnabled::Type> HeldCapsuleCollision=ECollisionEnabled::QueryAndPhysics;

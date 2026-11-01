@@ -33,7 +33,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
         self.assertNotIn(b"\r", raw, "validate_framework_proof_logs.py contains CR! Must be pure LF.")
 
     def test_all_65_tokens_registered(self):
-        self.assertEqual(len(validator.SCHEMAS), 95, f"Expected 95 schemas, got {len(validator.SCHEMAS)}")
+        self.assertEqual(len(validator.SCHEMAS), 98, f"Expected 98 schemas, got {len(validator.SCHEMAS)}")
         for tok, pat in validator.SCHEMAS.items():
             compiled = validator.COMPILED_SCHEMAS.get(tok)
             self.assertIsNotNone(compiled, f"Token {tok} missing in COMPILED_SCHEMAS")
@@ -115,14 +115,18 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             "[FrameworkProof] warp_summary instance=1 movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45",
             # Wall-Safe Attacks (BOSS-MOV-004)
             "[FrameworkProof] warp_blocked instance=1 stepCm=27.6756 actualCm=13.8502 blocker=StaticMeshActor_1 bossX=90.3312 bossY=89.0553",
+            # Bounded Holds & Accessible Cues (BOSS-ANM-003, BOSS-PAC-004, BOSS-QA-007)
+            "[FrameworkProof] hold_start instance=1 position=0.433333 holdAtSeconds=0.42 chosenSeconds=0.66487 minSeconds=0.4 maxSeconds=0.9",
+            "[FrameworkProof] hold_release instance=1 position=0.433333 heldSeconds=0.666667 chosenSeconds=0.66487 minSeconds=0.4 maxSeconds=0.9",
+            "[FrameworkProof] cue_fired instance=1 cue=HoldRelease why=HoldRelease mode=0 visual=1 audio=1 visualKind=1 visualScale=1 sound=Sevarog_Effort_Attack",
         ]
         for line in valid_samples:
             ok, tok, payload, err = validator.validate_line(line)
             self.assertTrue(ok, f"Expected line to be valid, got error: {err}\nLine: {line}")
             self.assertIsNotNone(tok)
 
-    def test_95_token_mutation_suite(self):
-        """Extract one real line per token from committed/candidate logs, break one key, and prove 95/95 fail."""
+    def test_98_token_mutation_suite(self):
+        """Extract one real line per token from committed/candidate logs, break one key, and prove 98/98 fail."""
         import subprocess
         res = subprocess.run(["git", "ls-files", "Docs/*.log"], cwd=REPO_ROOT, capture_output=True, text=True)
         files = [REPO_ROOT / f for f in res.stdout.splitlines() if f.strip()]
@@ -150,6 +154,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_heavy/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PAC003/pie_pass/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_MOV004/pie_wall/editor_raw.log",
+            REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_CUE/pie_mode0_both/editor_raw.log",
         ]:
             if candidate_log.exists() and candidate_log not in files:
                 files.append(candidate_log)
@@ -167,12 +172,12 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
                         tok = m.group(1)
                         if tok not in real_lines and tok in validator.SCHEMAS:
                             real_lines[tok] = line
-                if len(real_lines) == 95:
+                if len(real_lines) == 98:
                     break
-            if len(real_lines) == 95:
+            if len(real_lines) == 98:
                 break
 
-        self.assertEqual(len(real_lines), 95, f"Expected 95 real line samples, found {len(real_lines)}")
+        self.assertEqual(len(real_lines), 98, f"Expected 98 real line samples, found {len(real_lines)}")
 
         for tok, line in real_lines.items():
             # First verify the real line passes
@@ -487,6 +492,23 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             ("pie_nowall_control", 137),
         ]:
             log_path = mov_dir / sub / "editor_raw.log"
+            self.assertTrue(log_path.exists(), f"Missing {log_path}")
+            res = validator.validate_log_file(log_path)
+            self.assertEqual(len(res["syntax_failures"]), 0, f"[{sub}] Expected 0 syntax failures, got {res['syntax_failures']}")
+            self.assertEqual(len(res["semantic_violations"]), 0, f"[{sub}] Expected 0 semantic violations, got {res['semantic_violations']}")
+            self.assertEqual(res["framework_proof_lines"], expected_lines)
+
+    def test_b_cue_evidence_logs(self):
+        """B_CUE evidence logs parse with 0 syntax failures and 0 semantic violations."""
+        cue_dir = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_CUE"
+        for sub, expected_lines in [
+            ("pie_mode0_both", 474),
+            ("pie_mode0_both2", 474),
+            ("pie_mode1_visual", 474),
+            ("pie_mode2_audio", 474),
+            ("pie_mode3_lowvfx", 474),
+        ]:
+            log_path = cue_dir / sub / "editor_raw.log"
             self.assertTrue(log_path.exists(), f"Missing {log_path}")
             res = validator.validate_log_file(log_path)
             self.assertEqual(len(res["syntax_failures"]), 0, f"[{sub}] Expected 0 syntax failures, got {res['syntax_failures']}")
