@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 # Copyright One Boss Fight. All Rights Reserved.
 """
-validate_framework_proof_logs.py (v3.7)
+validate_framework_proof_logs.py (v3.8)
 
 Formal schema and semantic validator for all [FrameworkProof] structured telemetry lines
-emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, B_QA002, B_HIT005, B_AWR001, B_AWR002, B_EXE007, B_QA003B, B_EXE004, and B_MOV005).
+emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, B_QA002, B_HIT005, B_AWR001, B_AWR002, B_EXE007, B_QA003B, B_EXE004, B_MOV005, and B_EXE005).
 
 Validates:
 1. Header prefix (optional Unreal Engine standard log prefix: [YYYY.MM.DD-HH.MM.SS:mmm][frame]LogCategory: Verbosity:)
 2. Exact [FrameworkProof] token tag
-3. Registered schema match for all 62 recognized telemetry tokens
+3. Registered schema match for all 64 recognized telemetry tokens
 4. Semantic checks per log:
    - seq= (when present) is unique and strictly increasing per process log across decisions
    - candidate and refusal lines of a decision carry the exact same seq as their decision
@@ -102,6 +102,8 @@ SCHEMAS = {
     "stance_break": r"^state=[^\s]+ duration=[^\s]+ generation=\d+ phase=[^\s]+$",
     "stagger_anim": r"^(?:state=Start sequence=[^\s]+ slot=[^\s]+ length=[^\s]+|state=Loop sequence=[^\s]+ slot=[^\s]+ loops=\d+|state=End sequence=[^\s]+ slot=[^\s]+ length=[^\s]+|state=Finished(?:\s+postureRefilled=[^\s]+)?)$",
     "stagger_recovery": r"^postureRefilled=[^\s]+ generation=\d+$",
+    "posture_held": r"^reason=[^\s]+ posture=[^\s]+$",
+    "stagger_superseded": r"^reason=[^\s]+ health=[^\s]+ max=[^\s]+ fraction=[^\s]+$",
     "bleed_buildup": r"^amount=[^\s]+ buildup=[^\s]+ threshold=[^\s]+ result=.*$",
     "bleed_proc": r"^procs=\d+ damage=[^\s]+ healthBefore=[^\s]+ healthAfter=[^\s]+ nextThreshold=[^\s]+$",
 
@@ -239,7 +241,11 @@ def validate_log_file(file_path: Path):
         if m_trace and tok in ("candidate", "refusal"):
             trace_seq_str = m_trace.group(2)
             if trace_seq_str is not None:
-                pending_trace_seqs.append((lnum, int(trace_seq_str)))
+                t_seq = int(trace_seq_str)
+                # When a new query cycle starts, clear pending traces from previous unselected cycles
+                if pending_trace_seqs and pending_trace_seqs[-1][1] != t_seq:
+                    pending_trace_seqs.clear()
+                pending_trace_seqs.append((lnum, t_seq))
 
         # Semantic check B: decision line evaluation
         m_dec = DECISION_RE.search(line)

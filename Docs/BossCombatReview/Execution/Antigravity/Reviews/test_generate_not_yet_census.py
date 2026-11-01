@@ -31,7 +31,7 @@ class TestNotYetCensus(unittest.TestCase):
         """Fails when cited file does not exist."""
         saved = deepcopy(gen.CENSUS_METADATA)
         try:
-            gen.CENSUS_METADATA["BOSS-EXE-005"]["cite"]["file"] = "Source/NonExistentFile.cpp"
+            gen.CENSUS_METADATA["BOSS-MOV-003"]["cite"]["file"] = "Source/NonExistentFile.cpp"
             with self.assertRaises(AssertionError) as ctx:
                 gen.validate_census_metadata()
             self.assertIn("Cited file does not exist", str(ctx.exception))
@@ -78,8 +78,8 @@ class TestNotYetCensus(unittest.TestCase):
         self.assertTrue(gen.OUTPUT_MD.exists())
         with open(gen.OUTPUT_MD, "r", encoding="utf-8") as f:
             content = f.read()
-        self.assertIn("## 2. Complete 23-Row NOT YET Census Table", content)
-        self.assertEqual(content.count("| **BOSS-"), 23)
+        self.assertIn("## 2. Complete 22-Row NOT YET Census Table", content)
+        self.assertEqual(content.count("| **BOSS-"), 22)
 
 if __name__ == "__main__":
     unittest.main()

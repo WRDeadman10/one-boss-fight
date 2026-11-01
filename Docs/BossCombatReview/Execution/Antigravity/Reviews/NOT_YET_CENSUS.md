@@ -1,15 +1,15 @@
-# Track B Remaining Requirements Census: 23 NOT YET Rows
+# Track B Remaining Requirements Census: 22 NOT YET Rows
 
 **Document Reference:** `Reviews/NOT_YET_CENSUS.md`  
 **Task Reference:** `[C-565]` / `[C-568]` (Track B Direction Selection Census)  
 **Source Authority:** `witness_status_v3.json` (exact titles and observables)  
-**Total Census:** 23 requirements currently classified as `NOT YET`  
+**Total Census:** 22 requirements currently classified as `NOT YET`  
 
 ---
 
 ## 1. Executive Summary & Classification Matrix
 
-This document classifies all 23 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).
+This document classifies all 22 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).
 
 ### Classification Definitions:
 - **ENGINE-ONLY:** Pure C++ / runtime rules or hooks; no art or external system dependencies.
@@ -25,7 +25,7 @@ This document classifies all 23 remaining `NOT YET` combat requirements to infor
 
 ---
 
-## 2. Complete 23-Row NOT YET Census Table
+## 2. Complete 22-Row NOT YET Census Table
 
 | ID | Exact Title | Exact Observable | Dependency Class | Code Reference & Reason | Cost |
 |:---|:---|:---|:---:|:---|:---:|
@@ -33,13 +33,12 @@ This document classifies all 23 remaining `NOT YET` combat requirements to infor
 | **BOSS-AWR-007** | LOS and memory | Occlusion by arena pillars triggers search / repositioning behavior instead of blind wall-striking. | `NEEDS NEW SYSTEM` | no code: line-of-sight raycasts and obstacle search memory not implemented in boss selector or perception | **L** |
 | **BOSS-AWR-008** | Soft adaptation memory | Histogram of repeated backward player dodges triggers forward roll-catch gap-closer (MC-05) weighting boost. | `NEEDS NEW SYSTEM` | no code: player movement history and dodge histogram tracking not implemented in AI context | **L** |
 | **BOSS-SEL-009** | Reaction latency and budget | AI reaction latency to player flask action is bounded by reaction delay window [0.2s - 0.4s]. | `ENGINE-ONLY` | no code: AI reaction delay window [0.2-0.4s] buffering not implemented in boss tick loop | **M** |
-| **BOSS-EXE-005** | Explicit priority | Phase threshold crossing supersedes normal stagger and triggers phase transition animation. | `ENGINE-ONLY` | `Source/OneBossFight/Tests/RPGAutomationTests.cpp:226` quote: `TestEqual(TEXT("below the threshold during a break is queued`<br>legacy unit test asserts phase transition queues behind stagger; framework boss has no runtime phase threshold vs stagger priority arbitration wired | **M** |
 | **BOSS-ANM-003** | Bounded holds | Variable windup holds are bounded between min and max duration with distinct visual audio cue at release. | `NEEDS ART` | no code: variable windup hold min/max durations and release cues not authored in move cards or montage tracks | **L** |
 | **BOSS-ANM-006** | Bounded Motion Warping | Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45°). | `NEEDS NEW SYSTEM` | no code: Motion Warping plugin not enabled in uproject and warp clamping bounds not implemented | **L** |
 | **BOSS-HIT-010** | Direct/splash precedence | Direct weapon impact takes precedence over secondary shockwave / ground splash; simultaneous hit applies direct only. | `NEEDS DESIGN DECISION` | `Source/OneBossFight/Player/RPGDamageResolver.cpp:152` quote: `Result.Outcome = RPGDamageRules::Decide(bTargetAlive, bAtta`<br>resolver decide rule only takes alive, generation, duplicate, and invulnerable flags; no direct vs secondary splash precedence arbiter defined | **M** |
 | **BOSS-HIT-011** | Swept annulus | Ground splash / shockwave sweeps outward in calibrated ring without invisible gaps or lingering ghost damage. | `NEEDS NEW SYSTEM` | `Source/OneBossFight/Boss/RPGFrameworkMoveExecutor.cpp:230` quote: `const FCollisionShape Shape=FCollisionShape::MakeCapsule(W.`<br>sweep only constructs linear swept capsules along weapon key poses; outward expanding ring/annulus component not implemented | **L** |
 | **BOSS-HIT-012** | Grab fail-safe | Interrupted grab releases victim immediately to ground locomotion without animation lock or falling through floor. | `NEEDS NEW SYSTEM` | no code: grab state machine, victim attachment sync, and interrupt release fail-safe not implemented | **L** |
-| **BOSS-MOV-002** | Combat positioning | Boss maintains center-arena bias when target is near walls, avoiding getting pinned in corners. | `NEEDS DESIGN DECISION` | `Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp:245` quote: `// Opt-in repositioning: nobody is eligible from here (the `<br>repositioning only walks straight toward target band without arena boundary or wall clearance scoring | **M** |
+| **BOSS-MOV-002** | Combat positioning | Boss maintains center-arena bias when target is near walls, avoiding getting pinned in corners. | `NEEDS DESIGN DECISION` | `Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp:255` quote: `// Opt-in repositioning: nobody is eligible from here (the `<br>repositioning only walks straight toward target band without arena boundary or wall clearance scoring | **M** |
 | **BOSS-MOV-003** | Movement commitment | Movement requests exhibit commitment hysteresis; boss does not flip direction every frame. | `ENGINE-ONLY` | `Source/OneBossFight/Player/RPGBossTrackRules.h:19` quote: `if (bCommitted||!FMath::IsFinite(DegPerSecond)||!FMath::IsFi`<br>nearest code, not the feature: turn tracking turns shortest-way each tick without movement direction latching or continuous locomotion hysteresis | **S** |
 | **BOSS-MOV-004** | Wall-safe attacks | Forward charge attacks clamp movement trajectory when hitting arena boundary without clipping through. | `NEEDS ART` | no code: forward charge attack animations with root motion require level art perimeter collision geometry and collision preset authoring to prevent clipping | **M** |
 | **BOSS-MOV-006** | Arena/attack fit | Arena geometry (L_SevarogArena) provides clear combat lane with zero player snag points. | `NEEDS ART` | `Source/OneBossFight/Tests/RPGAutomationTests.cpp:766` quote: `IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGArenaCollisionTest, "On`<br>collision tests only verify legacy ARPGGreyboxArena geometry; production level L_SevarogArena clearance and snag point audit requires level art verification | **M** |
@@ -61,10 +60,10 @@ This document classifies all 23 remaining `NOT YET` combat requirements to infor
 - **NEEDS ART:** 6 requirements (25.0%)
 - **NEEDS NEW SYSTEM:** 5 requirements (20.8%)
 - **PLAYER-SIDE:** 4 requirements (16.7%)
-- **ENGINE-ONLY:** 4 requirements (16.7%)
 - **NEEDS DESIGN DECISION:** 4 requirements (16.7%)
+- **ENGINE-ONLY:** 3 requirements (12.5%)
 
 ### By Engine Run Cost:
-- **Cost M:** 12 requirements (50.0%)
+- **Cost M:** 11 requirements (45.8%)
 - **Cost L:** 8 requirements (33.3%)
 - **Cost S:** 3 requirements (12.5%)

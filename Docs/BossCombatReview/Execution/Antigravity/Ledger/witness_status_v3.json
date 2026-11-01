@@ -1,11 +1,11 @@
 {
-  "version": "3.15",
+  "version": "3.16",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 45,
+    "WITNESSED": 46,
     "PARTIAL": 14,
-    "NOT YET": 23
+    "NOT YET": 22
   },
   "requirements": [
     {
@@ -765,11 +765,49 @@
       "title": "Explicit priority",
       "section": "Attack executor and state safety",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:345",
+        "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log:1674",
+        "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log:1675",
+        "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log:1676",
+        "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log:1677",
+        "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log:1678"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 345,
+          "quoted": "F5();P->bPhaseSupersedesStagger=true;TestFalse(TEXT(\"no posture and no phase two: refused\"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT(\"token\"),Error,FString(TEXT(\"Framework.Profile.Domain\")));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log",
+          "line": 1674,
+          "quoted": "[2026.11.01-04.22.23:015][641]LogTemp: Display: [FrameworkProof] stagger_superseded reason=PhaseTransition health=200 max=500 fraction=0.5"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log",
+          "line": 1675,
+          "quoted": "[2026.11.01-04.22.23:015][641]LogTemp: Display: [FrameworkProof] stagger_anim state=Finished postureRefilled=100"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log",
+          "line": 1676,
+          "quoted": "[2026.11.01-04.22.23:015][641]LogTemp: Display: [FrameworkProof] stagger_recovery postureRefilled=100 generation=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log",
+          "line": 1677,
+          "quoted": "[2026.11.01-04.22.23:015][641]LogTemp: Display: [FrameworkProof] phase_transition attack=1 from=Phase_1 to=Phase_2 health=200 max=500 fraction=0.5"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log",
+          "line": 1678,
+          "quoted": "[2026.11.01-04.22.23:015][641]LogTemp: Display: [FrameworkProof] phase_anim state=Triggered sequence=Soul_Siphon slot=FullBody length=1.83333 from=Phase_1 to=Phase_2"
+        }
+      ],
       "observable": "Phase threshold crossing supersedes normal stagger and triggers phase transition animation.",
-      "notes": "Phase transition priority exists only in legacy pack-boss rules tests (OneBossFight.Boss.TransitionRules); framework boss has no phases implemented yet per C-405."
+      "notes": "Opt-in profile flag bPhaseSupersedesStagger triggers phase transition when health crosses threshold while down in stagger: stagger clip stopped 3.5s early, stagger_superseded logged, posture refilled to 100, phase transition montage (Soul_Siphon) triggers immediately in the same tick (Claude/B_EXE005, C-596)."
     },
     {
       "id": "BOSS-EXE-006",
@@ -1251,17 +1289,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 433,
+          "line": 445,
           "quoted": "Near(TEXT(\"60 ticks (1 s) toward 170 turn exactly the cap, 90 deg\"),Yaw,90.f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 434,
+          "line": 446,
           "quoted": "TestTrue(TEXT(\"no tick turned more than cap * dt (1.5 deg)\"),MaxStep<=1.5f+1.e-3f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 436,
+          "line": 448,
           "quoted": "Near(TEXT(\"after the commit 60 more ticks leave the yaw unchanged\"),Yaw,90.f);"
         },
         {
@@ -1387,7 +1425,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 384,
+          "line": 396,
           "quoted": "TestEqual(TEXT(\"no slot node in the AnimBP\"),Token([](auto& X){X.bSlotNodePresent=false;}),FString(TEXT(\"Framework.Profile.StaggerAnim.SlotNode\")));"
         },
         {
@@ -1755,7 +1793,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 348,
+          "line": 360,
           "quoted": "F5();P->ArenaRadiusCm=250.f;P->bArenaLeash=true;TestTrue(TEXT(\"leash with an arena radius is valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
@@ -2061,7 +2099,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 365,
+          "line": 377,
           "quoted": "TestEqual(TEXT(\"loop count middle 1.6 / loop 0.5 = ceil 3.2 = 4\"),RPGStaggerAnim::LoopCount(T,S,E,.5f),4);"
         }
       ],
@@ -2225,17 +2263,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 444,
+          "line": 456,
           "quoted": "TestEqual(TEXT(\"attack running\"),RPGBossOverlay::Format(I),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=129cm Cone=120deg Window=Open Posture=40/100 Health=150/250 Stagger=0 PhaseHold=0\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 446,
+          "line": 458,
           "quoted": "TestEqual(TEXT(\"no card, stagger and hold\"),RPGBossOverlay::Format(N),FString(TEXT(\"Card=None State=Idle Phase=Phase_2 Range=300cm Cone=0deg Window=Closed Posture=100/100 Health=50/250 Stagger=1 PhaseHold=1\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 448,
+          "line": 460,
           "quoted": "TestEqual(TEXT(\"non-finite values never print as numbers\"),RPGBossOverlay::Format(Bad),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=n/acm Cone=120deg Window=Open Posture=40/100 Health=n/a/250 Stagger=0 PhaseHold=0\")));"
         },
         {

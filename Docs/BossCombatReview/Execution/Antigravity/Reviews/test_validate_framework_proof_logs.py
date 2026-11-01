@@ -5,9 +5,9 @@ test_validate_framework_proof_logs.py
 
 Automated test suite verifying the FrameworkProof Log Validator:
 1. Pure LF line endings (no CR).
-2. Schema registration: verifies all 62 formal tokens are defined and compile.
+2. Schema registration: verifies all 64 formal tokens are defined and compile.
 3. Unit tests: asserts validation of synthetic valid lines across key categories.
-4. 62-Token Mutation Test: extracts one real line per token from committed/candidate logs, mutates a key, and proves 62/62 fail validation.
+4. 64-Token Mutation Test: extracts one real line per token from committed/candidate logs, mutates a key, and proves 64/64 fail validation.
 5. Semantic checks tests: tests detection of out-of-order attacks, duplicate gates, reused instances, and backward timestamps.
 6. Full repository sweep: scans all tracked log files and asserts 0 syntax failures across >60,000 lines, and verifies the 17 known duplicate attack findings.
 """
@@ -32,8 +32,8 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
         raw = val_path.read_bytes()
         self.assertNotIn(b"\r", raw, "validate_framework_proof_logs.py contains CR! Must be pure LF.")
 
-    def test_all_62_tokens_registered(self):
-        self.assertEqual(len(validator.SCHEMAS), 62, f"Expected 62 schemas, got {len(validator.SCHEMAS)}")
+    def test_all_64_tokens_registered(self):
+        self.assertEqual(len(validator.SCHEMAS), 64, f"Expected 64 schemas, got {len(validator.SCHEMAS)}")
         for tok, pat in validator.SCHEMAS.items():
             compiled = validator.COMPILED_SCHEMAS.get(tok)
             self.assertIsNotNone(compiled, f"Token {tok} missing in COMPILED_SCHEMAS")
@@ -60,6 +60,9 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             "[FrameworkProof] target_health_mismatch valid=0 actual=0 expected=800 generation=1 reason=Dead",
             "[FrameworkProof] target_health_mismatch valid=0 actual=0 expected=800 generation=1 reason=OffArena",
             "[FrameworkProof] target_health_mismatch valid=0 actual=0 expected=800 generation=1",
+            # Phase Supersedes Stagger & Posture Held (BOSS-EXE-005 & F8)
+            "[FrameworkProof] stagger_superseded reason=PhaseTransition health=240 max=500 fraction=0.48",
+            "[FrameworkProof] posture_held reason=StaggerActive posture=0",
             # Combo gate
             "[FrameworkProof] combo_gate gate=1 node=A outcome=Hit range=128.625 yaw=0 result=Continue next=B reason=",
             "[FrameworkProof] combo_gate gate=1 node=A outcome=Whiff range=170.71 yaw=158.386 result=Recover next=None reason=Combo.DefaultRecovery",
@@ -89,8 +92,8 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             self.assertTrue(ok, f"Expected line to be valid, got error: {err}\nLine: {line}")
             self.assertIsNotNone(tok)
 
-    def test_62_token_mutation_suite(self):
-        """Extract one real line per token from committed/candidate logs, break one key, and prove 62/62 fail."""
+    def test_64_token_mutation_suite(self):
+        """Extract one real line per token from committed/candidate logs, break one key, and prove 64/64 fail."""
         import subprocess
         res = subprocess.run(["git", "ls-files", "Docs/*.log"], cwd=REPO_ROOT, capture_output=True, text=True)
         files = [REPO_ROOT / f for f in res.stdout.splitlines() if f.strip()]
@@ -102,6 +105,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_QA003B/f8_run1/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_EXE004/pie_stale/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_MOV005/pie_leash3/editor_raw.log",
+            REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log",
         ]:
             if candidate_log.exists() and candidate_log not in files:
                 files.append(candidate_log)
@@ -119,12 +123,12 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
                         tok = m.group(1)
                         if tok not in real_lines and tok in validator.SCHEMAS:
                             real_lines[tok] = line
-                if len(real_lines) == 62:
+                if len(real_lines) == 64:
                     break
-            if len(real_lines) == 62:
+            if len(real_lines) == 64:
                 break
 
-        self.assertEqual(len(real_lines), 62, f"Expected 62 real line samples, found {len(real_lines)}")
+        self.assertEqual(len(real_lines), 64, f"Expected 64 real line samples, found {len(real_lines)}")
 
         for tok, line in real_lines.items():
             # First verify the real line passes
@@ -282,6 +286,15 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             res = validator.validate_log_file(log_path)
             self.assertEqual(len(res["syntax_failures"]), 0, f"[{sub}] Expected 0 syntax failures, got {res['syntax_failures']}")
             self.assertEqual(len(res["semantic_violations"]), 0, f"[{sub}] Expected 0 semantic violations, got {res['semantic_violations']}")
+
+    def test_b_exe005_evidence_log(self):
+        """Validate Claude/B_EXE005/pie_supersede/editor_raw.log passes with 0 syntax and 0 semantic violations."""
+        log_path = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log"
+        self.assertTrue(log_path.exists(), f"Log missing: {log_path}")
+        res = validator.validate_log_file(log_path)
+        self.assertEqual(len(res["syntax_failures"]), 0, f"Expected 0 syntax failures, got {res['syntax_failures']}")
+        self.assertEqual(len(res["semantic_violations"]), 0, f"Expected 0 semantic violations, got {res['semantic_violations']}")
+        self.assertEqual(res["framework_proof_lines"], 240)
 
 if __name__ == "__main__":
     unittest.main()

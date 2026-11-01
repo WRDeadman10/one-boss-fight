@@ -105,6 +105,8 @@ public:
     UPROPERTY(EditAnywhere) float ArenaRadiusCm=0.f;
     /** BOSS-MOV-005 (needs ArenaRadiusCm > 0): instead of failing the encounter when the target leaves the arena, the boss aborts its card, walks back to the arena centre (where the target began) and waits in neutral; it resumes when the target is back inside the radius. false = fail with reason OffArena (BOSS-AWR-001). Design choice, proposed. */
     UPROPERTY(EditAnywhere) bool bArenaLeash=false;
+    /** BOSS-EXE-005 (needs posture and a phase two threshold, F5 lane): when the phase threshold is crossed while the boss is staggered, the stagger ends at once and the phase transition starts in the same tick. false = the stagger runs to its end first (BOSS-DEF-001 / F8 behaviour). Design choice, proposed. */
+    UPROPERTY(EditAnywhere) bool bPhaseSupersedesStagger=false;
     /** F9 bleed (F5 fixture with a hittable boss; BleedBuildupPerHit 0 = off, the other four must then be 0 too): each player hit adds BleedBuildupPerHit; at the threshold (first BleedInitialThreshold,
      *  raised by BleedThresholdIncrease after each proc up to BleedThresholdMax) the boss loses BleedHpFraction of its maximum health at once, never its last point (RPGBleedRules, unchanged). Design values, proposed. */
     UPROPERTY(EditAnywhere) float BleedBuildupPerHit=0.f;

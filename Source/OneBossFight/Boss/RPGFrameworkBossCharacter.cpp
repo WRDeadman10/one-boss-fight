@@ -179,9 +179,19 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
         if(bStaggered)
         {
             GetCharacterMovement()->StopMovementImmediately();
-            TickStaggerAnim();
-            if(GetWorld()->GetTimeSeconds()>=StaggerEndsAt)EndStagger();
-            return;   // no selection while down
+            // BOSS-EXE-005: a phase threshold crossed while down supersedes the stagger: it ends now, and the neutral phase gate below starts the transition in this same tick.
+            RPGBossRules::FFlags NoFlags;
+            if(P.bPhaseSupersedesStagger&&bHittable&&P.PhaseTwoFraction>0.f&&!bPhaseTwoLatched&&RPGBossRules::ResolveTransition(NoFlags,Health,MaxHealth,P.PhaseTwoFraction)==RPGBossRules::ETransitionResult::Start)
+            {
+                UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] stagger_superseded reason=PhaseTransition health=%g max=%g fraction=%g"),Health,MaxHealth,double(P.PhaseTwoFraction));
+                StopF11Clip();EndStagger();if(bFailed)return;
+            }
+            else
+            {
+                TickStaggerAnim();
+                if(GetWorld()->GetTimeSeconds()>=StaggerEndsAt)EndStagger();
+                return;   // no selection while down
+            }
         }
         const float Before=float(Posture); Posture=RPGBossMath::RegenStep(float(Posture),P.PostureMax,GetWorld()->GetTimeSeconds(),LastPostureDrain,P.PostureRegenDelaySeconds,P.PostureRegenPerSecond,Delta);
         if(float(Posture)>Before+KINDA_SMALL_NUMBER&&!bPostureRegenLogged){bPostureRegenLogged=true;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] posture_regen_start posture=%g sinceLastDrainSeconds=%g delaySeconds=%g perSecond=%g"),double(Before),GetWorld()->GetTimeSeconds()-LastPostureDrain,double(P.PostureRegenDelaySeconds),double(P.PostureRegenPerSecond));}
