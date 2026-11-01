@@ -1,7 +1,7 @@
 # Partial Rows Upgrade Plan (v2.0)
 
 > [!NOTE]
-> **Status as of ledger version 3.20:** 13 of the 27 rows are now WITNESSED (`BOSS-AWR-001`, `BOSS-AWR-002`, `BOSS-AWR-005`, `BOSS-EXE-004`, `BOSS-EXE-007`, `BOSS-COM-002`, `BOSS-COM-003`, `BOSS-COM-005`, `BOSS-COM-007`, `BOSS-ANM-007`, `BOSS-HIT-005`, `BOSS-QA-003`, `BOSS-QA-004`); the table below is the ORIGINAL plan at commit `58352ae`; current PARTIAL ids: `BOSS-AWR-004`, `BOSS-SEL-008`, `BOSS-EXE-006`, `BOSS-COM-004`, `BOSS-ANM-002`, `BOSS-ANM-005`, `BOSS-HIT-008`, `BOSS-HIT-009`, `BOSS-MOV-001`, `BOSS-PAC-006`, `BOSS-PHS-004`, `BOSS-QA-001`, `BOSS-QA-002`, `BOSS-QA-005`.
+> **Status as of ledger version 3.21:** 13 of the 27 rows are now WITNESSED (`BOSS-AWR-001`, `BOSS-AWR-002`, `BOSS-AWR-005`, `BOSS-EXE-004`, `BOSS-EXE-007`, `BOSS-COM-002`, `BOSS-COM-003`, `BOSS-COM-005`, `BOSS-COM-007`, `BOSS-ANM-007`, `BOSS-HIT-005`, `BOSS-QA-003`, `BOSS-QA-004`); the table below is the ORIGINAL plan at commit `58352ae`; current PARTIAL ids: `BOSS-AWR-004`, `BOSS-SEL-008`, `BOSS-EXE-006`, `BOSS-COM-004`, `BOSS-ANM-002`, `BOSS-ANM-005`, `BOSS-HIT-008`, `BOSS-HIT-009`, `BOSS-MOV-001`, `BOSS-PAC-006`, `BOSS-PHS-004`, `BOSS-QA-001`, `BOSS-QA-002`, `BOSS-QA-005`.
 
 ## 1. Executive Summary
 

@@ -405,6 +405,23 @@ bool FFrameworkCenterBias::RunTest(const FString&)
     F5();P->ArenaRadiusCm=0.f;P->bArenaCenterAuthored=true;TestFalse(TEXT("authored centre without a radius refused"),RPGFramework::ValidateProfile(*P,Error));
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkAntiCheeseProfile,"OneBossFight.Framework.Runtime.AntiCheeseProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkAntiCheeseProfile::RunTest(const FString&)
+{
+    // BOSS-PHS-005: profile domain of the kiting / hugging detector and the per-card multipliers.
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    auto F5=[&](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);P->AntiCheeseKiteRangeCm=0.f;P->AntiCheeseHugRangeCm=0.f;P->AntiCheeseStreak=2;};
+    F5();TestTrue(TEXT("off by default: valid"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->AntiCheeseKiteRangeCm=150.f;P->AntiCheeseHugRangeCm=60.f;P->Cards[0].KiteWeightMultiplier=2.f;P->Cards[0].HugWeightMultiplier=3.f;TestTrue(TEXT("kite 150, hug 60, multipliers valid"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->AntiCheeseKiteRangeCm=150.f;P->AntiCheeseHugRangeCm=150.f;TestFalse(TEXT("hug threshold must be below the kite threshold"),RPGFramework::ValidateProfile(*P,Error));
+    for(int32 V:{0,9,-1}){F5();P->AntiCheeseKiteRangeCm=150.f;P->AntiCheeseStreak=V;TestFalse(TEXT("streak outside 1..8 refused"),RPGFramework::ValidateProfile(*P,Error));}
+    for(float V:{-1.f,std::numeric_limits<float>::quiet_NaN(),2.e5f}){F5();P->AntiCheeseKiteRangeCm=V;TestFalse(TEXT("bad kite range refused"),RPGFramework::ValidateProfile(*P,Error));}
+    for(float V:{0.f,-1.f,101.f,std::numeric_limits<float>::quiet_NaN()}){F5();P->Cards[0].KiteWeightMultiplier=V;TestFalse(TEXT("multiplier outside (0,100] refused"),RPGFramework::ValidateProfile(*P,Error));}
+    {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);F3->AntiCheeseKiteRangeCm=150.f;TestFalse(TEXT("outside the F5 lane refused"),RPGFramework::ValidateProfile(*F3,Error));}
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkArenaProfile,"OneBossFight.Framework.Runtime.ArenaProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
 bool FFrameworkArenaProfile::RunTest(const FString&)
 {

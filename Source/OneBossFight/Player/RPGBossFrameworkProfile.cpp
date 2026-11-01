@@ -87,6 +87,14 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
     if (P.bPhaseSupersedesStagger && !(bF5 && P.PostureMax>0.f && P.PhaseTwoFraction>0.f)) return Fail(TEXT("Framework.Profile.Domain"));
     if (!FMath::IsFinite(P.ArenaCenterBias)||P.ArenaCenterBias<0.f||P.ArenaCenterBias>1.f||!FMath::IsFinite(P.CenterBiasStartFraction)||!(P.CenterBiasStartFraction>0.f)||P.CenterBiasStartFraction>1.f||P.ArenaCenter.ContainsNaN()||
         ((P.ArenaCenterBias>0.f||P.bArenaCenterAuthored)&&!(P.ArenaRadiusCm>0.f))) return Fail(TEXT("Framework.Profile.Domain"));
+    {
+        const bool bAnti=P.AntiCheeseKiteRangeCm>0.f||P.AntiCheeseHugRangeCm>0.f;
+        auto Mult=[](float V){return FMath::IsFinite(V)&&V>0.f&&V<=100.f;};
+        bool bMultOk=true; for (const FRPGBossProfileCard& C:P.Cards) bMultOk=bMultOk&&Mult(C.KiteWeightMultiplier)&&Mult(C.HugWeightMultiplier);
+        if (!FMath::IsFinite(P.AntiCheeseKiteRangeCm)||!FMath::IsFinite(P.AntiCheeseHugRangeCm)||P.AntiCheeseKiteRangeCm<0.f||P.AntiCheeseHugRangeCm<0.f||P.AntiCheeseKiteRangeCm>1.e5f||P.AntiCheeseHugRangeCm>1.e5f||
+            P.AntiCheeseStreak<1||P.AntiCheeseStreak>8||(bAnti&&!bF5)||!bMultOk||(P.AntiCheeseKiteRangeCm>0.f&&P.AntiCheeseHugRangeCm>0.f&&P.AntiCheeseHugRangeCm>=P.AntiCheeseKiteRangeCm))
+            return Fail(TEXT("Framework.Profile.Domain"));
+    }
     // F9: bleed needs the selector lane (F5) and a hittable boss; BleedBuildupPerHit 0 = off (the other four then 0 too), else a coherent set (token Framework.Profile.Bleed).
     {
         const float Values[]={P.BleedBuildupPerHit,P.BleedInitialThreshold,P.BleedThresholdIncrease,P.BleedThresholdMax,P.BleedHpFraction};
@@ -154,7 +162,7 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
         float WorstHit=0.f;
         for (const FRPGBossProfileCard& C:P->Cards)
         {
-            FRPGFrameworkDependencies::FCandidate Candidate; Candidate.CooldownSeconds=C.CooldownSeconds; Candidate.Weight=C.Weight; Candidate.bHyperArmor=C.bHyperArmor;
+            FRPGFrameworkDependencies::FCandidate Candidate; Candidate.CooldownSeconds=C.CooldownSeconds; Candidate.Weight=C.Weight; Candidate.bHyperArmor=C.bHyperArmor; Candidate.KiteMultiplier=C.KiteWeightMultiplier; Candidate.HugMultiplier=C.HugWeightMultiplier;
             if (!ResolveCard(C.Card.LoadSynchronous(),Candidate.Card)) return false;
             WorstHit=FMath::Max(WorstHit,Candidate.Card->Spec().HPDamage); D->Candidates.Add(Candidate);
         }

@@ -54,7 +54,7 @@ bool ARPGFrameworkBossCharacter::InitializeProof(ARPGFrameworkProofFixture* Fixt
     {
         FRPGBossSelectorConfig Config; Config.RepeatPenalty=Dependencies->Profile->RepeatPenalty; Config.RepeatMemory=Dependencies->Profile->RepeatMemory; Config.TieBand=Dependencies->Profile->SelectorTieBand; Config.TieSeed=Dependencies->Profile->SelectorTieSeed;
         TArray<FRPGBossSelectorCandidate> List;
-        for (const auto& C:Dependencies->Candidates) {FRPGBossSelectorCandidate X; X.Card=C.Card; X.CooldownSeconds=C.CooldownSeconds; X.Weight=C.Weight; List.Add(X);}
+        for (const auto& C:Dependencies->Candidates) {FRPGBossSelectorCandidate X; X.Card=C.Card; X.CooldownSeconds=C.CooldownSeconds; X.Weight=C.Weight; X.KiteMultiplier=C.KiteMultiplier; X.HugMultiplier=C.HugMultiplier; List.Add(X);}
         if (!Selector.Initialize(Config,List,Error)) {Fail(Error);return false;}
     }
     const auto& P=*Dependencies->Profile.Get();
@@ -236,7 +236,12 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
         if(Dependencies->Candidates.Num()>0)
         {
             FRPGBossSelectorDecision Decision;
-            const bool bAsked=Selector.Select(Executor->Model(),S,Decision);const int32 Seq=++DecisionSeq;
+            // BOSS-PHS-005: the pattern of the target at this decision: N consecutive chosen decisions (this one included) with the range beyond / inside the profile's thresholds.
+            FRPGBossSelectorContext Pattern;
+            if(P.AntiCheeseKiteRangeCm>0.f&&S.RangeCm>=double(P.AntiCheeseKiteRangeCm)&&KiteStreak+1>=P.AntiCheeseStreak) Pattern.bKiting=true;
+            if(P.AntiCheeseHugRangeCm>0.f&&S.RangeCm<=double(P.AntiCheeseHugRangeCm)&&HugStreak+1>=P.AntiCheeseStreak) Pattern.bHugging=true;
+            const bool bAsked=Selector.Select(Executor->Model(),S,Decision,Pattern);const int32 Seq=++DecisionSeq;
+            if(Pattern.bKiting||Pattern.bHugging) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] anticheese state=%s streak=%d rangeCm=%g thresholdCm=%g seq=%d"),Pattern.bKiting?TEXT("Kiting"):TEXT("Hugging"),Pattern.bKiting?KiteStreak+1:HugStreak+1,S.RangeCm,Pattern.bKiting?double(P.AntiCheeseKiteRangeCm):double(P.AntiCheeseHugRangeCm),Seq);
             for(const FRPGBossSelectorTrace& T:Decision.Traces)
             {
                 if(T.bEligible){UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] candidate attack=%d card=%s score=%g seq=%d"),AttacksDone+1,*T.MoveId.ToString(),T.Score,Seq);}
@@ -270,6 +275,7 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
             UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] decision attack=%d chosen=%s score=%g range=%g phase=%s seq=%d"),AttacksDone+1,*Decision.MoveId.ToString(),Decision.Score,S.RangeCm,*S.PhaseId.ToString(),Seq);
             if(!Executor->StartCard(Dependencies->Candidates[Decision.ChosenIndex].Card,S,Error)){Fail(Error);return;}
             Selector.NoteStarted(Decision.ChosenIndex,S.ClockSeconds);RepositionsInARow=0;
+            KiteStreak=(P.AntiCheeseKiteRangeCm>0.f&&S.RangeCm>=double(P.AntiCheeseKiteRangeCm))?KiteStreak+1:0;HugStreak=(P.AntiCheeseHugRangeCm>0.f&&S.RangeCm<=double(P.AntiCheeseHugRangeCm))?HugStreak+1:0;
 #if !UE_BUILD_SHIPPING
             if(ProofShiftStart<0.&&!CVarBossProofTargetShift.GetValueOnGameThread().IsEmpty())
             {
@@ -570,7 +576,7 @@ bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& 
     const TCHAR* OldState=bDead?TEXT("Dead"):TEXT("Finished");
     GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;
     if (bHittable) Health=MaxHealth;
-    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; bComboPausing=false; ComboPendingCard=INDEX_NONE; bLeashed=bLeashAtCenter=false; ProofShiftStart=-1.; ProofShiftsDone=0; bBystanderSpawned=false; bTargetFaultInjected=false; ProofHitStart=-1.; ProofHitsDone=0; ResetBleed();
+    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; KiteStreak=HugStreak=0; bComboPausing=false; ComboPendingCard=INDEX_NONE; bLeashed=bLeashAtCenter=false; ProofShiftStart=-1.; ProofShiftsDone=0; bBystanderSpawned=false; bTargetFaultInjected=false; ProofHitStart=-1.; ProofHitsDone=0; ResetBleed();
     Selector.Reset(); CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId; bPhaseTwoLatched=false;
     SetActorLocation(WalkStart,false,nullptr,ETeleportType::TeleportPhysics);
     FVector Face=Target->GetActorLocation()-WalkStart; Face.Z=0.f; if (!Face.IsNearlyZero()) SetActorRotation(FRotator(0.f,Face.Rotation().Yaw,0.f));

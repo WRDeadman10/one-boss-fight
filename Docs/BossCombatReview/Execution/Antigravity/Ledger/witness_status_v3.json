@@ -1,11 +1,11 @@
 {
-  "version": "3.20",
+  "version": "3.21",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 50,
+    "WITNESSED": 51,
     "PARTIAL": 14,
-    "NOT YET": 18
+    "NOT YET": 17
   },
   "requirements": [
     {
@@ -1289,17 +1289,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 504,
+          "line": 521,
           "quoted": "Near(TEXT(\"60 ticks (1 s) toward 170 turn exactly the cap, 90 deg\"),Yaw,90.f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 505,
+          "line": 522,
           "quoted": "TestTrue(TEXT(\"no tick turned more than cap * dt (1.5 deg)\"),MaxStep<=1.5f+1.e-3f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 507,
+          "line": 524,
           "quoted": "Near(TEXT(\"after the commit 60 more ticks leave the yaw unchanged\"),Yaw,90.f);"
         },
         {
@@ -1425,7 +1425,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 455,
+          "line": 472,
           "quoted": "TestEqual(TEXT(\"no slot node in the AnimBP\"),Token([](auto& X){X.bSlotNodePresent=false;}),FString(TEXT(\"Framework.Profile.StaggerAnim.SlotNode\")));"
         },
         {
@@ -1848,7 +1848,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 419,
+          "line": 436,
           "quoted": "F5();P->ArenaRadiusCm=250.f;P->bArenaLeash=true;TestTrue(TEXT(\"leash with an arena radius is valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
@@ -2180,7 +2180,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 436,
+          "line": 453,
           "quoted": "TestEqual(TEXT(\"loop count middle 1.6 / loop 0.5 = ceil 3.2 = 4\"),RPGStaggerAnim::LoopCount(T,S,E,.5f),4);"
         }
       ],
@@ -2338,11 +2338,41 @@
       "title": "Anti-cheese with counterplay",
       "section": "Phases and anti-cheese reactions",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+        "Docs/BossCombatReview/Execution/Claude/B_PHS005/pie_kite/editor_raw.log"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
+          "line": 134,
+          "quoted": "    FRPGBossSelectorContext Kite;Kite.bKiting=true;S.Select(Model,Snapshot(100.),D,Kite);TestEqual(TEXT(\"kiting: 0.5 x 3 beats 1\"),D.MoveId,FName(TEXT(\"Boost\")));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
+          "line": 135,
+          "quoted": "    FRPGBossSelectorContext Hug;Hug.bHugging=true;S.Select(Model,Snapshot(100.),D,Hug);TestEqual(TEXT(\"hugging: 0.5 x 2 ties 1 -> lowest index\"),D.MoveId,FName(TEXT(\"Base\")));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 417,
+          "quoted": "    F5();P->AntiCheeseKiteRangeCm=150.f;P->AntiCheeseHugRangeCm=60.f;P->Cards[0].KiteWeightMultiplier=2.f;P->Cards[0].HugWeightMultiplier=3.f;TestTrue(TEXT(\"kite 150, hug 60, multipliers valid\"),RPGFramework::ValidateProfile(*P,Error));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PHS005/pie_kite/editor_raw.log",
+          "line": 1837,
+          "quoted": "[2026.11.01-07.42.10:273][750]LogTemp: Display: [FrameworkProof] anticheese state=Kiting streak=2 rangeCm=158.467 thresholdCm=150 seq=3"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_PHS005/pie_kite/editor_raw.log",
+          "line": 1840,
+          "quoted": "[2026.11.01-07.42.10:273][750]LogTemp: Display: [FrameworkProof] decision attack=3 chosen=Move_Sevarog_HeavySlam_F7 score=1.47852 range=158.467 phase=Phase_1 seq=3"
+        }
+      ],
       "observable": "Extreme player kiting or hugging triggers anti-greed/gap-closer moves, preventing exploit loops.",
-      "notes": "Anti-cheese exploit counterplay triggers not yet implemented (designated for Phase Block)."
+      "notes": "Witnessed (C-610, BUILD-127): Anti-cheese pattern detector implemented in ARPGFrameworkBossCharacter at decision time: target is Kiting when range at last AntiCheeseStreak decisions >= AntiCheeseKiteRangeCm, Hugging when <= AntiCheeseHugRangeCm (profile fields, F5 lane, streak 1..8 default 2). While detected, card KiteWeightMultiplier or HugWeightMultiplier (profile card entry fields, default 1, domain (0,100]) scales selector candidate score via FRPGBossSelectorContext{bKiting, bHugging} in FRPGBossMoveSelector::Select, logging anticheese state=%s streak=%d rangeCm=%g thresholdCm=%g seq=%d. Unit tests in RPGBossMoveSelectorTests.cpp:124-140 (OneBossFight.Framework.Selector.PatternMultipliers) and RPGFrameworkRuntimeTests.cpp:408-424 (OneBossFight.Framework.Runtime.AntiCheeseProfile) verify selector multipliers, tie-breaking, domain constraints, and F5 lane validation. Live PIE on L_SevarogFrameworkProofPHS005 (DA_Sevarog_AntiCheese_PHS005, kite range 150cm, streak 2, HeavySlam KiteWeightMultiplier 2.0; Claude/B_PHS005/pie_kite) with target kiting at 158cm proves: decision 1 (range 128 < 150) selects HeavySlam (0.927); decision 2 (range 158, streak 1 unconfirmed) selects SwingSlow (0.915 vs Heavy 0.739); at decision 3, streak=2 confirms Kiting (:1837), scaling HeavySlam to 1.47852 (:1839) and choosing it (:1840); decision 4 repeats with streak=3 (:1954/:1957); RESULT acceptedHits=2 attacks=4 (:2072). Limits: boost authored per card entry (HeavySlam stands in for gap closer); only Kiting proven live in PIE (Hugging shares identical code path, unit-tested); streak counts chosen decisions; thresholds and multipliers are proposed values."
     },
     {
       "id": "BOSS-QA-001",
@@ -2364,17 +2394,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 515,
+          "line": 532,
           "quoted": "TestEqual(TEXT(\"attack running\"),RPGBossOverlay::Format(I),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=129cm Cone=120deg Window=Open Posture=40/100 Health=150/250 Stagger=0 PhaseHold=0\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 517,
+          "line": 534,
           "quoted": "TestEqual(TEXT(\"no card, stagger and hold\"),RPGBossOverlay::Format(N),FString(TEXT(\"Card=None State=Idle Phase=Phase_2 Range=300cm Cone=0deg Window=Closed Posture=100/100 Health=50/250 Stagger=1 PhaseHold=1\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 519,
+          "line": 536,
           "quoted": "TestEqual(TEXT(\"non-finite values never print as numbers\"),RPGBossOverlay::Format(Bad),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=n/acm Cone=120deg Window=Open Posture=40/100 Health=n/a/250 Stagger=0 PhaseHold=0\")));"
         },
         {

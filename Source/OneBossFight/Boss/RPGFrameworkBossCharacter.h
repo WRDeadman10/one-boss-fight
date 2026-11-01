@@ -68,6 +68,7 @@ private:
     FVector ArenaOrigin=FVector::ZeroVector;   // BOSS-AWR-001: where the target stood when the encounter began
     double ProofHitStart=-1.; int32 ProofHitsDone=0; TArray<double> ProofHitOffsets;   // test hook rpg.BossProofPlayerHits: scripted player hits on the GAME clock
     bool bLeashed=false, bLeashAtCenter=false;   // BOSS-MOV-005
+    int32 KiteStreak=0, HugStreak=0;             // BOSS-PHS-005: consecutive chosen decisions with the target far / close
     TArray<TPair<double,FVector>> ProofShifts; int32 ProofShiftsDone=0; double ProofShiftStart=-1.;   // test hook rpg.BossProofTargetShift
     bool bTargetFaultInjected=false;           // test hook rpg.BossProofTargetFault: once per encounter
     /** BOSS-HIT-005 test hook (rpg.BossProofBystander): spawned once per encounter. */

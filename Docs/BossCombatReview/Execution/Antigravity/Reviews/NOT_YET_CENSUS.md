@@ -1,15 +1,15 @@
-# Track B Remaining Requirements Census: 18 NOT YET Rows
+# Track B Remaining Requirements Census: 17 NOT YET Rows
 
 **Document Reference:** `Reviews/NOT_YET_CENSUS.md`  
 **Task Reference:** `[C-565]` / `[C-568]` (Track B Direction Selection Census)  
 **Source Authority:** `witness_status_v3.json` (exact titles and observables)  
-**Total Census:** 18 requirements currently classified as `NOT YET`  
+**Total Census:** 17 requirements currently classified as `NOT YET`  
 
 ---
 
 ## 1. Executive Summary & Classification Matrix
 
-This document classifies all 18 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).
+This document classifies all 17 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).
 
 ### Classification Definitions:
 - **ENGINE-ONLY:** Pure C++ / runtime rules or hooks; no art or external system dependencies.
@@ -25,7 +25,7 @@ This document classifies all 18 remaining `NOT YET` combat requirements to infor
 
 ---
 
-## 2. Complete 18-Row NOT YET Census Table
+## 2. Complete 17-Row NOT YET Census Table
 
 | ID | Exact Title | Exact Observable | Dependency Class | Code Reference & Reason | Cost |
 |:---|:---|:---|:---:|:---|:---:|
@@ -44,7 +44,6 @@ This document classifies all 18 remaining `NOT YET` combat requirements to infor
 | **BOSS-PAC-004** | Conditional opening cues | Visual recovery cues (scythe lodged in ground, posture reset) clearly indicate boss vulnerable state. | `NEEDS ART` | no code: visual/audio recovery cues (e.g. scythe lodged in ground) require authored animation notify tracks and VFX | **L** |
 | **BOSS-PAC-005** | Punish-margin calculation | Boss recovery duration exceeds player light attack startup + travel time by at least 0.3s. | `PLAYER-SIDE` | no code: punish margin formula (recovery > player startup + travel + 0.3s) requires player moveset startup data | **M** |
 | **BOSS-DEF-005** | Fair boss defense | Boss defensive actions (backstep, block) adhere to fair player counterplay windows. | `NEEDS ART` | no code: defensive moves (backstep, block) not authored in boss profile moveset or animation cards | **M** |
-| **BOSS-PHS-005** | Anti-cheese with counterplay | Extreme player kiting or hugging triggers anti-greed/gap-closer moves, preventing exploit loops. | `NEEDS DESIGN DECISION` | `Source/OneBossFight/Player/RPGBossMoveSelector.cpp:49` quote: `if (Out.ChosenIndex==INDEX_NONE || T.Score>Out.Score) { Out.`<br>candidate evaluation selects solely by highest score among eligible cards; no anti-cheese override or exploit loop detector exists | **M** |
 | **BOSS-QA-006** | Camera/readability | Camera framing maintains boss visibility and readability across near and far distance bands. | `PLAYER-SIDE` | no code: camera framing and lock-on tracking evaluation requires player follow camera / lock-on system testing | **M** |
 | **BOSS-QA-007** | Accessible feedback | Combat telegraphed cues remain readable under low VFX and audio-only/visual-only conditions. | `NEEDS ART` | no code: low VFX / audio-only / visual-only contrast testing harness not authored in project | **L** |
 
@@ -56,9 +55,9 @@ This document classifies all 18 remaining `NOT YET` combat requirements to infor
 - **NEEDS ART:** 6 requirements (25.0%)
 - **NEEDS NEW SYSTEM:** 5 requirements (20.8%)
 - **PLAYER-SIDE:** 4 requirements (16.7%)
-- **NEEDS DESIGN DECISION:** 2 requirements (8.3%)
 - **ENGINE-ONLY:** 1 requirements (4.2%)
+- **NEEDS DESIGN DECISION:** 1 requirements (4.2%)
 
 ### By Engine Run Cost:
-- **Cost M:** 10 requirements (41.7%)
+- **Cost M:** 9 requirements (37.5%)
 - **Cost L:** 8 requirements (33.3%)

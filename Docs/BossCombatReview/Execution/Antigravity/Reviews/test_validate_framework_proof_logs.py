@@ -33,7 +33,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
         self.assertNotIn(b"\r", raw, "validate_framework_proof_logs.py contains CR! Must be pure LF.")
 
     def test_all_65_tokens_registered(self):
-        self.assertEqual(len(validator.SCHEMAS), 69, f"Expected 69 schemas, got {len(validator.SCHEMAS)}")
+        self.assertEqual(len(validator.SCHEMAS), 70, f"Expected 70 schemas, got {len(validator.SCHEMAS)}")
         for tok, pat in validator.SCHEMAS.items():
             compiled = validator.COMPILED_SCHEMAS.get(tok)
             self.assertIsNotNone(compiled, f"Token {tok} missing in COMPILED_SCHEMAS")
@@ -114,6 +114,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_DEF004/pie_armor/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PAC002/pie_tempo/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_MOV002/pie_biased_v2/editor_raw.log",
+            REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PHS005/pie_kite/editor_raw.log",
         ]:
             if candidate_log.exists() and candidate_log not in files:
                 files.append(candidate_log)
@@ -131,12 +132,12 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
                         tok = m.group(1)
                         if tok not in real_lines and tok in validator.SCHEMAS:
                             real_lines[tok] = line
-                if len(real_lines) == 69:
+                if len(real_lines) == 70:
                     break
-            if len(real_lines) == 69:
+            if len(real_lines) == 70:
                 break
 
-        self.assertEqual(len(real_lines), 69, f"Expected 68 real line samples, found {len(real_lines)}")
+        self.assertEqual(len(real_lines), 70, f"Expected 68 real line samples, found {len(real_lines)}")
 
         for tok, line in real_lines.items():
             # First verify the real line passes
@@ -370,6 +371,17 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
         mov_dir = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_MOV002"
         for sub, expected_lines in [("pie_biased_v2", 309), ("pie_control_bias0_v2", 254), ("pie_control_bias0", 254), ("pie_biased_NoCandidate_no_reposition", 14)]:
             log_path = mov_dir / sub / "editor_raw.log"
+            self.assertTrue(log_path.exists(), f"Missing {log_path}")
+            res = validator.validate_log_file(log_path)
+            self.assertEqual(len(res["syntax_failures"]), 0, f"[{sub}] Expected 0 syntax failures, got {res['syntax_failures']}")
+            self.assertEqual(len(res["semantic_violations"]), 0, f"[{sub}] Expected 0 semantic violations, got {res['semantic_violations']}")
+            self.assertEqual(res["framework_proof_lines"], expected_lines)
+
+    def test_b_phs005_evidence_logs(self):
+        """B_PHS005 evidence logs parse with 0 syntax failures and 0 semantic violations."""
+        phs_dir = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PHS005"
+        for sub, expected_lines in [("pie_kite", 488)]:
+            log_path = phs_dir / sub / "editor_raw.log"
             self.assertTrue(log_path.exists(), f"Missing {log_path}")
             res = validator.validate_log_file(log_path)
             self.assertEqual(len(res["syntax_failures"]), 0, f"[{sub}] Expected 0 syntax failures, got {res['syntax_failures']}")

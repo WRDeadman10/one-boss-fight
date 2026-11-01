@@ -16,7 +16,11 @@ struct FRPGBossSelectorCandidate
     TSharedPtr<const FRPGCompiledBossMoveCard> Card;
     float CooldownSeconds = 0.f; // [0,1e6]: hard filter after a start of this card
     float Weight = 1.f;          // (0,1e6]: authored preference
+    float KiteMultiplier = 1.f;  // (0,1e6]: BOSS-PHS-005, score factor while the target is kiting
+    float HugMultiplier = 1.f;   // (0,1e6]: BOSS-PHS-005, score factor while the target is hugging
 };
+/** BOSS-PHS-005: what the boss has observed about the target's pattern at this decision. */
+struct FRPGBossSelectorContext { bool bKiting = false, bHugging = false; };
 /** One line per candidate: why it was refused (named token) or its score. */
 struct FRPGBossSelectorTrace
 {
@@ -41,7 +45,7 @@ class ONEBOSSFIGHT_API FRPGBossMoveSelector final
 {
 public:
     bool Initialize(const FRPGBossSelectorConfig& InConfig, const TArray<FRPGBossSelectorCandidate>& InCandidates, FString& Error);
-    bool Select(const FRPGBossMoveModel& Model, const FRPGBossDecisionSnapshot& Snapshot, FRPGBossSelectorDecision& Out) const;
+    bool Select(const FRPGBossMoveModel& Model, const FRPGBossDecisionSnapshot& Snapshot, FRPGBossSelectorDecision& Out, const FRPGBossSelectorContext& Context = FRPGBossSelectorContext()) const;
     /** The chosen card really started: cooldown clock and repeat history. */
     void NoteStarted(int32 Index, double ClockSeconds);
     /** Encounter reset: forget cooldown clocks and the repeat history (the clock of a new encounter may restart below the old start times). */

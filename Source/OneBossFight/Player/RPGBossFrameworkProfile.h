@@ -41,6 +41,9 @@ struct FRPGBossProfileCard
     UPROPERTY(EditAnywhere) float Weight=1.f;
     /** BOSS-DEF-004: during the ACTIVE state of this card a player hit costs health but no posture, so it cannot start a stance break. Design choice, proposed. */
     UPROPERTY(EditAnywhere) bool bHyperArmor=false;
+    /** BOSS-PHS-005: score factor of this card while the boss has detected kiting / hugging (profile AntiCheese fields); 1 = no preference, (0,100]. Design values, proposed. */
+    UPROPERTY(EditAnywhere) float KiteWeightMultiplier=1.f;
+    UPROPERTY(EditAnywhere) float HugWeightMultiplier=1.f;
 };
 UCLASS(BlueprintType)
 class ONEBOSSFIGHT_API URPGBossFrameworkProfile : public UPrimaryDataAsset
@@ -109,6 +112,10 @@ public:
     UPROPERTY(EditAnywhere) float ArenaRadiusCm=0.f;
     /** BOSS-MOV-005 (needs ArenaRadiusCm > 0): instead of failing the encounter when the target leaves the arena, the boss aborts its card, walks back to the arena centre (where the target began) and waits in neutral; it resumes when the target is back inside the radius. false = fail with reason OffArena (BOSS-AWR-001). Design choice, proposed. */
     UPROPERTY(EditAnywhere) bool bArenaLeash=false;
+    /** BOSS-PHS-005 (F5 lane, 0 = off): the target is KITING when its range at the boss's last AntiCheeseStreak decisions (this one included) was >= AntiCheeseKiteRangeCm, and HUGGING when it was <= AntiCheeseHugRangeCm; the cards' Kite/HugWeightMultiplier then apply. Design values, proposed. */
+    UPROPERTY(EditAnywhere) float AntiCheeseKiteRangeCm=0.f;
+    UPROPERTY(EditAnywhere) float AntiCheeseHugRangeCm=0.f;
+    UPROPERTY(EditAnywhere) int32 AntiCheeseStreak=2;
     /** BOSS-MOV-002 (needs ArenaRadiusCm > 0): when the target stands at least CenterBiasStartFraction * ArenaRadiusCm from the arena centre (near a wall), the boss takes its place in the band on the CENTRE side of the target (blend 0..1: 0 = where it stands now, 1 = straight to the centre side) so it does not get pinned between the target and the wall. 0 = off. Design values, proposed. */
     UPROPERTY(EditAnywhere) float ArenaCenterBias=0.f;
     UPROPERTY(EditAnywhere) float CenterBiasStartFraction=0.5f;
@@ -135,7 +142,7 @@ struct ONEBOSSFIGHT_API FRPGFrameworkDependencies
     TStrongObjectPtr<UClass> AnimClass, TargetClass;
     TStrongObjectPtr<UAnimSequence> StaggerStart, StaggerLoop, StaggerEnd, PhaseTransition;   // F11, each null when its profile field is empty
     TSharedPtr<const FRPGCompiledBossMoveCard> Card;
-    struct FCandidate { TSharedPtr<const FRPGCompiledBossMoveCard> Card; float CooldownSeconds=0.f,Weight=1.f; bool bHyperArmor=false; };
+    struct FCandidate { TSharedPtr<const FRPGCompiledBossMoveCard> Card; float CooldownSeconds=0.f,Weight=1.f; bool bHyperArmor=false; float KiteMultiplier=1.f,HugMultiplier=1.f; };
     TArray<FCandidate> Candidates;   // F5 only
     const TSharedPtr<const FRPGCompiledBossMoveCard>& FirstCard() const { return Candidates.Num()>0 ? Candidates[0].Card : Card; }
 };
