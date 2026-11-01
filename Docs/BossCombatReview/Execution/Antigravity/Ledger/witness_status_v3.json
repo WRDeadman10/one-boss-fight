@@ -3,8 +3,8 @@
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 37,
-    "PARTIAL": 21,
+    "WITNESSED": 38,
+    "PARTIAL": 20,
     "NOT YET": 24
   },
   "requirements": [
@@ -131,7 +131,7 @@
       "title": "Vertical separation",
       "section": "Awareness and observable context",
       "old_status": "NOT YET",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
         "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:211",
         "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:212",
@@ -188,10 +188,25 @@
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
           "line": 220,
           "quoted": "for(float Bad:{-1.f,std::numeric_limits<float>::quiet_NaN(),std::numeric_limits<float>::infinity()}){auto C=Card(false,2.f,Bad);TestFalse(TEXT(\"card with a bad vertical limit does not compile\"),C.IsValid());}"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR005/pie_ledge/editor_raw.log",
+          "line": 1576,
+          "quoted": "[2026.11.01-00.40.55:925][ 33]LogTemp: Display: [FrameworkProof] candidate attack=1 card=Move_Sevarog_VerticalProof_AWR005 score=0.784425 seq=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR005/pie_ledge/editor_raw.log",
+          "line": 1657,
+          "quoted": "[2026.11.01-00.40.56:439][ 87]LogTemp: Display: [FrameworkProof] refusal attack=2 card=Move_Sevarog_VerticalProof_AWR005 reason=MoveModel.Vertical seq=2"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_AWR005/pie_ledge/editor_raw.log",
+          "line": 1733,
+          "quoted": "[2026.11.01-00.40.56:939][140]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=2"
         }
       ],
       "observable": "Elevation separation delta Z > threshold invalidates horizontal ground sweep cards.",
-      "notes": "MoveCardSpec defines MaxVerticalDeltaCm (0 = no limit); live boss character populates Snapshot.VerticalDeltaCm = |Target.Z - Boss.Z| (boss_character:148); MoveModel::IsEligible enforces vertical limit with named refusal MoveModel.Vertical and snapshot domain bounds (move_model:28, 38). VerticalSeparation automation test (model_tests:211-220) proves same floor eligible (Z=0), exact limit eligible (Z=50), just above refused (Z=50.01), far above refused (Z=400), unlimited card ignores Z separation, negative/NaN/inf delta Z refused with MoveModel.SnapshotDomain, and invalid card limits (-1, NaN, inf) refused compilation. Status is PARTIAL per C-537 honest limit: unit model evaluation is 100% verified, but no authored proof card in the test maps sets MaxVerticalDeltaCm > 0 and no PIE target stands on an elevated ledge, so runtime selector refusal in live PIE is unwitnessed."
+      "notes": "Vertical separation threshold verified live on L_SevarogFrameworkProofAWR005 (DA_Sevarog_VerticalProof_AWR005, MaxVerticalDeltaCm=50). On flat ground (feet to feet delta Z=0 via FloorSeparationCm), Move_Sevarog_VerticalProof_AWR005 is eligible (pie_ledge:1576). When target is lifted onto ledge (+115 cm, pie_ledge:1648), card is refused (pie_ledge:1657 refusal reason=MoveModel.Vertical seq=2), and alternative card executes cleanly (pie_ledge:1733 RESULT CompletedWithDamage). Unit model tests (model_tests:211-220) verify synthetic bounds (0, 50, 50.01, 400). Limits noted: snapshot at :1657 was taken 0.15 s after lift, so player may still have been in the air; floor separation is above 50 cm either way (ledge top 110 cm vs boss floor 0). Threshold 50 cm is a proposed design value on proof card only. Promoted to WITNESSED per C-577."
     },
     {
       "id": "BOSS-AWR-006",

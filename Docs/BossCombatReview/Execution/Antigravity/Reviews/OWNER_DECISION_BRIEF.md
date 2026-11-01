@@ -1,4 +1,4 @@
-# Track B: Owner Strategic Decision Brief (v2.1)
+# Track B: Owner Strategic Decision Brief (v2.2)
 
 **Date:** 2026-11-01  
 **Author:** Tech Lead Claude & Antigravity  
@@ -9,11 +9,11 @@
 
 ## 1. Executive Summary & Current State
 
-The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.10) and census script (`Reviews/generate_not_yet_census.py`).
+The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.11) and census script (`Reviews/generate_not_yet_census.py`).
 
 ### Ledger Census Today (82 Canonical Requirements):
-- **WITNESSED:** **37** (45.1%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
-- **PARTIAL:** **21** (25.6%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
+- **WITNESSED:** **38** (46.3%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
+- **PARTIAL:** **20** (24.4%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
 - **NOT YET:** **24** (29.3%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
 
 ### Milestones Graduated to WITNESSED (Since C-546):
@@ -21,23 +21,24 @@ The test boss combat framework has reached strong mathematical and behavioral ma
 - **BOSS-HIT-005 (Query filtering):** Non-target pawns filtered in sweep capsule (`ignoredPawns=1 selfHits=0`) with zero damage perturbation (`Claude/B_HIT005/byst60`), combined with dead-target abort.
 - **BOSS-QA-004 (FPS parity):** Fixed-timestep runs at 30, 60, and 120 FPS producing identical hit counts (2) and damage (55.0 applied).
 - **BOSS-COM-003, 005, 007 (Combo graph):** Multi-scenario live PIE proofs on `L_SevarogFrameworkProofCOM3` verifying 3-node combo progression, single-use gate consumption, and default recovery fallbacks.
+- **BOSS-AWR-005 (Vertical separation):** Proved horizontal ground sweep card refusal on elevated ledge ($Z=115\text{ cm} > 50\text{ cm}$) using `FloorSeparationCm()` feet-to-feet distance fixing capsule origin offset (`Claude/B_AWR005/pie_ledge`).
 
 ### Progress on Key PARTIAL Rows:
 - **BOSS-QA-003 (Determinism):** Bit-for-bit event reproducibility across identical seeds, and live seeded tie-breaking on `L_SevarogFrameworkProofQA003` picking lower-scoring moves deterministically; remains PARTIAL pending frame-synchronized player input injection.
 - **BOSS-QA-002 (Structured event log):** 53 structured `[FrameworkProof]` tokens and unique monotonic decision sequence numbers across stance breaks; production `[CARD_*]` prefix reserved.
 - **BOSS-DEF-002 (Posture regen):** Reset-on-drain delay and linear regen rate verified live in PIE.
+- **BOSS-SEL-008 (No-candidate fallback):** Opt-in walk-back-to-band and turn-in-place repositioning reset verified when 0 cards qualify; remains PARTIAL pending design decision on default profile shipping policy.
 
 ---
 
 ## 2. Taxonomy of Remaining Work
 
-### A. The 21 PARTIAL Rows (Grouped by Real Blocker)
-From `Reviews/PARTIAL_UPGRADE_PLAN.md` (re-verified against Ledger v3.10):
-1. **Engine / PIE Scenario Hooks (6 rows):**
+### A. The 20 PARTIAL Rows (Grouped by Real Blocker)
+From `Reviews/PARTIAL_UPGRADE_PLAN.md` (re-verified against Ledger v3.11):
+1. **Engine / PIE Scenario Hooks (5 rows):**
    - `BOSS-QA-001` (Runtime overlay): Formatted strings logged live; blocked because unattended PIE GPU backbuffer readback returned black pixels; requires on-screen display capture.
-   - `BOSS-AWR-005` (Vertical separation): Rule unit-tested; requires authored proof map with target on an elevated ledge ($Z > 50\text{ cm}$).
    - `BOSS-AWR-002` (Gate-time snapshot): Range snapshot verified live; requires lateral target displacement during windup proving angle lock.
-   - `BOSS-SEL-008` (No-candidate fallback): Walk-to-band verified live; requires continuous strafe loop when 0 cards qualify.
+   - `BOSS-SEL-008` (No-candidate fallback): Walk-to-band verified live; requires continuous strafe loop when 0 cards qualify or production opt-in policy.
    - `BOSS-COM-002` (Gate after damage): Card-finish gate verified live; requires in-flight recovery gate evaluation after damage.
    - `BOSS-COM-004` (Hit-confirm policy): Whiff/recovery verified live; requires guarded and parried target states in PIE.
 2. **Player-Side / Combat Input Integration (5 rows):**
@@ -88,9 +89,9 @@ Verbatim text of the question sent to the owner (`Documentation/TEAM_MAILBOX.md:
 > `"which way next" for Track B: A) upgrade the 27 PARTIAL rows to WITNESSED (mostly one live run or one screenshot each), then the open rows; B) the 24 NOT YET rows in cost order (about 8 need art/design input, about 16 need new systems); C) stop. My recommendation: A then B.`
 
 ### Evaluation with Today's Data:
-- **Option A (Upgrade PARTIAL rows first):** 6 rows have already graduated (`AWR-001`, `QA-004`, `HIT-005`, `COM-003`, `COM-005`, `COM-007`), leaving 21 rows. 6 of these 21 have established framework hooks and can be graduated via targeted PIE scenario maps (e.g. `AWR-005` elevated ledge, `AWR-002` lateral shift). The remaining 15 rows depend on player-side intake, notify authoring, or lifecycle logging.
+- **Option A (Upgrade PARTIAL rows first):** 7 rows have already graduated (`AWR-001`, `QA-004`, `HIT-005`, `COM-003`, `COM-005`, `COM-007`, `AWR-005`), leaving 20 rows. 5 of these 20 have established framework hooks and can be graduated via targeted PIE scenario maps (e.g. `AWR-002` lateral shift, `COM-002` in-flight recovery gate). The remaining 15 rows depend on player-side intake, notify authoring, or lifecycle logging.
 - **Option B (Work NOT YET rows in cost order):** The 3 Cost S and 2 Cost M `ENGINE-ONLY` rows (`MOV-003`, `MOV-005`, `DEF-004`, `SEL-009`, `EXE-005`) can be implemented immediately in C++. However, the 4 `NEEDS DESIGN DECISION` rows require designer choices from the owner before implementation, and the remaining 15 rows depend on art assets or whole unbuilt subsystems.
-- **Option C (Stop):** Freeze Track B at current state (37 WITNESSED / 21 PARTIAL / 24 NOT YET) and transition focus to other project areas.
+- **Option C (Stop):** Freeze Track B at current state (38 WITNESSED / 20 PARTIAL / 24 NOT YET) and transition focus to other project areas.
 
 ---
 
@@ -99,6 +100,6 @@ Verbatim text of the question sent to the owner (`Documentation/TEAM_MAILBOX.md:
 ### Recommendation: **Option A first, then the Cost S/M ENGINE-ONLY rows of Option B.**
 
 **Rationale:**
-1. **Capitalize on Proven Scenarios:** The PARTIAL rows already possess verified C++ implementations and unit tests. Addressing the engine-accessible subset (such as `AWR-005` vertical separation on an elevated ledge and `AWR-002` lateral displacement) converts existing investments into clean WITNESSED rows with zero new system architecture.
+1. **Capitalize on Proven Scenarios:** The PARTIAL rows already possess verified C++ implementations and unit tests. Addressing the engine-accessible subset (such as `AWR-002` lateral displacement and `COM-002` in-flight recovery gate) converts existing investments into clean WITNESSED rows with zero new system architecture.
 2. **Targeted C++ Expansion:** Following Option A's engine-ready slice with Option B's 5 `ENGINE-ONLY` rows (`MOV-003`, `MOV-005`, `DEF-004`, `SEL-009`, `EXE-005`) expands framework capability purely in code without art bottlenecks.
 3. **Avoid Premature Blockers:** Working strictly in cost order without separating by dependency class would stall against the 4 design-decision rows and 6 art rows.

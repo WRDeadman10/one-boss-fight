@@ -23,6 +23,8 @@ public:
     bool ValidateTarget(double& Health) const;
     /** BOSS-AWR-001: NAME_None when the target is valid, else Invalid, Destroyed, OffArena, Unreadable or Dead (checked in this order). */
     FName TargetFault(double& Health) const;
+    /** BOSS-AWR-005: vertical separation of the two FLOORS (feet to feet), not of the actor origins: a boss and a target with different capsule heights stand 0 cm apart on the same floor. */
+    double FloorSeparationCm() const;
     APawn* ExplicitTarget() const {return Target.Get();}
     const URPGBossFrameworkProfile* ProofProfile() const {return Dependencies?Dependencies->Profile.Get():nullptr;}
     bool Succeeded() const {return bSucceeded;}

@@ -79,6 +79,11 @@ bool ARPGFrameworkBossCharacter::InitializeProof(ARPGFrameworkProofFixture* Fixt
     if(!AI->WalkToBand(this,Error)){Fail(Error);return false;}return true;
 }
 bool ARPGFrameworkBossCharacter::ValidateTarget(double& HP) const {return TargetFault(HP).IsNone();}
+double ARPGFrameworkBossCharacter::FloorSeparationCm() const
+{
+    float Radius=0.f,BossHalf=0.f,TargetHalf=0.f; GetSimpleCollisionCylinder(Radius,BossHalf); Target->GetSimpleCollisionCylinder(Radius,TargetHalf);
+    return FMath::Abs((double(Target->GetActorLocation().Z)-double(TargetHalf))-(double(GetActorLocation().Z)-double(BossHalf)));
+}
 FName ARPGFrameworkBossCharacter::TargetFault(double& HP) const
 {
     HP=0.;
@@ -158,7 +163,7 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
         const FVector D=Target->GetActorLocation()-GetActorLocation();FRPGBossDecisionSnapshot S;
         S.EncounterId=EncounterId;S.Generation=GenerationId;S.TargetId=uint64(Target->GetUniqueID());S.FrameId=GFrameCounter;
         S.PhaseId=CurrentPhaseId;S.ClockSeconds=GetWorld()->GetTimeSeconds();S.RangeCm=D.Size2D();
-        S.SignedYawDegrees=FMath::FindDeltaAngleDegrees(GetActorRotation().Yaw,D.Rotation().Yaw);S.VerticalDeltaCm=FMath::Abs(D.Z);S.bTargetValid=S.bNeutral=true;
+        S.SignedYawDegrees=FMath::FindDeltaAngleDegrees(GetActorRotation().Yaw,D.Rotation().Yaw);S.VerticalDeltaCm=FloorSeparationCm();S.bTargetValid=S.bNeutral=true;
         GetCharacterMovement()->StopMovementImmediately();FString Error;
         if(Dependencies->Candidates.Num()>0)
         {
@@ -364,7 +369,7 @@ FRPGBossDecisionSnapshot ARPGFrameworkBossCharacter::MakeSnapshot() const
     const FVector D=Target->GetActorLocation()-GetActorLocation();FRPGBossDecisionSnapshot S;
     S.EncounterId=EncounterId;S.Generation=GenerationId;S.TargetId=uint64(Target->GetUniqueID());S.FrameId=GFrameCounter;
     S.PhaseId=CurrentPhaseId;S.ClockSeconds=GetWorld()->GetTimeSeconds();S.RangeCm=D.Size2D();
-    S.SignedYawDegrees=FMath::FindDeltaAngleDegrees(GetActorRotation().Yaw,D.Rotation().Yaw);S.VerticalDeltaCm=FMath::Abs(D.Z);S.bTargetValid=S.bNeutral=true;
+    S.SignedYawDegrees=FMath::FindDeltaAngleDegrees(GetActorRotation().Yaw,D.Rotation().Yaw);S.VerticalDeltaCm=FloorSeparationCm();S.bTargetValid=S.bNeutral=true;
     return S;
 }
 bool ARPGFrameworkBossCharacter::HandleComboGate()
