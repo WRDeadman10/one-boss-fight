@@ -23,6 +23,7 @@
 static TAutoConsoleVariable<float> CVarBossProofBystander(TEXT("rpg.BossProofBystander"),0.f,TEXT("Test hook (BOSS-HIT-005): above 0 spawns one plain Character (a second pawn that is not the target) that many cm to the side of the target when the boss starts its first attack of an encounter. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<FString> CVarBossProofPlayerHits(TEXT("rpg.BossProofPlayerHits"),TEXT(""),TEXT("Test hook (BOSS-QA-003): comma separated seconds after the boss's first attack of an encounter at which the target's hit intake lands one test hit on the boss (game clock, so a fixed time step replays it exactly). Empty = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<FString> CVarBossProofTargetShift(TEXT("rpg.BossProofTargetShift"),TEXT(""),TEXT("Test hook (BOSS-MOV-005): 'seconds:dx,dy,dz|seconds:dx,dy,dz' moves the target by that vector at those game-clock seconds after the boss first attack of an encounter (teleport). Empty = off. Not compiled into shipping builds."),ECVF_Default);
+static TAutoConsoleVariable<int32> CVarBossTurnLatch(TEXT("rpg.BossProofTurnLatch"),1,TEXT("Test hook (BOSS-MOV-003): 0 turns the reposition turn WITHOUT the direction latch (control run: it still counts the direction changes). 1 = latch on (default behaviour). Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossProofTargetFault(TEXT("rpg.BossProofTargetFault"),0,TEXT("Test hook (BOSS-AWR-001): 1 sets the target's health to 0, 2 destroys the target pawn, when the boss starts its first attack of an encounter. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossComboDuplicateGate(TEXT("rpg.BossComboDuplicateGate"),0,TEXT("Test hook (BOSS-COM-005): 1 evaluates every combo branch gate a second time with the SAME gate id right after the first, and logs that the duplicate was ignored without changing the combo state."),ECVF_Default);
 #endif
@@ -246,10 +247,16 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
                 // Inside the band but nobody is eligible: the boss does not face the target (the cone filter). Turn in place at the profile rate; bounded to 3 s, then fail closed as before.
                 const double Now=GetWorld()->GetTimeSeconds(); if(RepositionTurnStartedAt<0.){RepositionTurnStartedAt=Now;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] reposition_turn start yawToTarget=%g range=%g ratePerSecond=%g"),S.SignedYawDegrees,S.RangeCm,double(P.RepositionTurnDegPerSecond));}
                 if(Now-RepositionTurnStartedAt>3.){Fail(TEXT("Framework.Selector.NoCandidate"));return;}
-                SetActorRotation(FRotator(0.f,RPGBossTrack::StepYaw(GetActorRotation().Yaw,D.Rotation().Yaw,P.RepositionTurnDegPerSecond,Delta,false),0.f));
+#if !UE_BUILD_SHIPPING
+                const bool bLatch=CVarBossTurnLatch.GetValueOnGameThread()!=0;
+#else
+                const bool bLatch=true;
+#endif
+                SetActorRotation(FRotator(0.f,RPGBossTrack::StepYawLatched(GetActorRotation().Yaw,D.Rotation().Yaw,P.RepositionTurnDegPerSecond,Delta,false,RepositionLatch,bLatch),0.f));
                 return;
             }
-            RepositionTurnStartedAt=-1.;
+            if(RepositionTurnStartedAt>=0.)UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] reposition_turn_end flips=%d latchDir=%d seconds=%g"),RepositionLatch.Flips,RepositionLatch.Dir,GetWorld()->GetTimeSeconds()-RepositionTurnStartedAt);
+            RepositionTurnStartedAt=-1.;RepositionLatch=RPGBossTrack::FTurnLatch();
             if(bAsked&&Decision.ChosenIndex==INDEX_NONE&&RepositionsInARow<P.RepositionMax)
             {
                 // Opt-in repositioning: nobody is eligible from here (the target left the band): walk back to the band through the controller and decide again on arrival.

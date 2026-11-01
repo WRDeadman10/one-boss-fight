@@ -1,11 +1,11 @@
 {
-  "version": "3.16",
+  "version": "3.17",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 46,
+    "WITNESSED": 47,
     "PARTIAL": 14,
-    "NOT YET": 22
+    "NOT YET": 21
   },
   "requirements": [
     {
@@ -1289,17 +1289,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 445,
+          "line": 465,
           "quoted": "Near(TEXT(\"60 ticks (1 s) toward 170 turn exactly the cap, 90 deg\"),Yaw,90.f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 446,
+          "line": 466,
           "quoted": "TestTrue(TEXT(\"no tick turned more than cap * dt (1.5 deg)\"),MaxStep<=1.5f+1.e-3f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 448,
+          "line": 468,
           "quoted": "Near(TEXT(\"after the commit 60 more ticks leave the yaw unchanged\"),Yaw,90.f);"
         },
         {
@@ -1425,7 +1425,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 396,
+          "line": 416,
           "quoted": "TestEqual(TEXT(\"no slot node in the AnimBP\"),Token([](auto& X){X.bSlotNodePresent=false;}),FString(TEXT(\"Framework.Profile.StaggerAnim.SlotNode\")));"
         },
         {
@@ -1758,11 +1758,31 @@
       "title": "Movement commitment",
       "section": "Movement and arena",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:356",
+        "Docs/BossCombatReview/Execution/Claude/B_MOV003/pie_latch_on/editor_raw.log:1839",
+        "Docs/BossCombatReview/Execution/Claude/B_MOV003/pie_latch_off_control/editor_raw.log:1933"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 356,
+          "quoted": "TestEqual(TEXT(\"latched: no direction change while the target flickers across the back axis\"),FlipsOn,0);"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV003/pie_latch_on/editor_raw.log",
+          "line": 1839,
+          "quoted": "[2026.11.01-04.53.09:066][569]LogTemp: Display: [FrameworkProof] reposition_turn_end flips=0 latchDir=-1 seconds=0.716667"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV003/pie_latch_off_control/editor_raw.log",
+          "line": 1933,
+          "quoted": "[2026.11.01-04.53.55:212][693]LogTemp: Display: [FrameworkProof] reposition_turn_end flips=15 latchDir=1 seconds=1.48333"
+        }
+      ],
       "observable": "Movement requests exhibit commitment hysteresis; boss does not flip direction every frame.",
-      "notes": "Current state (C-545): Opt-in repositioning adds discrete reposition attempts (reposition attempt=N) and turn-in-place (reposition_turn start), but movement commitment hysteresis across continuous locomotion frames is NOT implemented. Boss stops immediately on reaching band without direction latching or smoothing. Remains NOT YET."
+      "notes": "Direction B: Pure rule RPGBossTrack::StepYawLatched with FTurnLatch{Dir,LastDir,Flips} maintains turn direction while target stays within 30 deg of back axis; a real crossing releases latch; reaching target clears it. Reposition turn in RPGFrameworkBossCharacter uses RepositionLatch. In live PIE (L_SevarogFrameworkProofMOV, 180 deg/s turn, target y flickering +-15cm at back axis): latch on produces 0 direction flips and 120 deg progress in 0.72s (Claude/B_MOV003 pie_latch_on:1839 flips=0); unlatched control reverses 15 times and takes 1.48s (pie_latch_off_control:1933 flips=15). Limit: framework boss only decides direction for turns (locomotion uses nav path follower); 30 deg hysteresis is proposed design value; heading tracking (ANM-004) tracks to commit without flip scenario."
     },
     {
       "id": "BOSS-MOV-004",
@@ -1793,7 +1813,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 360,
+          "line": 380,
           "quoted": "F5();P->ArenaRadiusCm=250.f;P->bArenaLeash=true;TestTrue(TEXT(\"leash with an arena radius is valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
@@ -2099,7 +2119,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 377,
+          "line": 397,
           "quoted": "TestEqual(TEXT(\"loop count middle 1.6 / loop 0.5 = ceil 3.2 = 4\"),RPGStaggerAnim::LoopCount(T,S,E,.5f),4);"
         }
       ],
@@ -2263,17 +2283,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 456,
+          "line": 476,
           "quoted": "TestEqual(TEXT(\"attack running\"),RPGBossOverlay::Format(I),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=129cm Cone=120deg Window=Open Posture=40/100 Health=150/250 Stagger=0 PhaseHold=0\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 458,
+          "line": 478,
           "quoted": "TestEqual(TEXT(\"no card, stagger and hold\"),RPGBossOverlay::Format(N),FString(TEXT(\"Card=None State=Idle Phase=Phase_2 Range=300cm Cone=0deg Window=Closed Posture=100/100 Health=50/250 Stagger=1 PhaseHold=1\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 460,
+          "line": 480,
           "quoted": "TestEqual(TEXT(\"non-finite values never print as numbers\"),RPGBossOverlay::Format(Bad),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=n/acm Cone=120deg Window=Open Posture=40/100 Health=n/a/250 Stagger=0 PhaseHold=0\")));"
         },
         {

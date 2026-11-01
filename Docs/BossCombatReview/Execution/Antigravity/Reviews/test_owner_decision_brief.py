@@ -42,24 +42,24 @@ class TestOwnerDecisionBrief(unittest.TestCase):
     def test_census_parity(self):
         """Census numbers in brief must match ledger v3.15."""
         ledger_census = self.ledger["census"]
-        self.assertIn(f"**{ledger_census['WITNESSED']}** (56.1%)", self.text)
+        self.assertIn(f"**{ledger_census['WITNESSED']}** (57.3%)", self.text)
         self.assertIn(f"**{ledger_census['PARTIAL']}** (17.1%)", self.text)
-        self.assertIn(f"**{ledger_census['NOT YET']}** (26.8%)", self.text)
+        self.assertIn(f"**{ledger_census['NOT YET']}** (25.6%)", self.text)
         self.assertIn("82 Canonical Requirements", self.text)
 
     def test_dependency_class_counts(self):
         """NOT YET dependency class breakdown must match counts."""
-        self.assertIn("ENGINE-ONLY (3 reqs, 13.6%)", self.text)
-        self.assertIn("NEEDS DESIGN DECISION (4 reqs, 18.2%)", self.text)
-        self.assertIn("NEEDS ART (6 reqs, 27.3%)", self.text)
-        self.assertIn("NEEDS NEW SYSTEM (5 reqs, 22.7%)", self.text)
-        self.assertIn("PLAYER-SIDE (4 reqs, 18.2%)", self.text)
+        self.assertIn("ENGINE-ONLY (2 reqs, 9.5%)", self.text)
+        self.assertIn("NEEDS DESIGN DECISION (4 reqs, 19.0%)", self.text)
+        self.assertIn("NEEDS ART (6 reqs, 28.6%)", self.text)
+        self.assertIn("NEEDS NEW SYSTEM (5 reqs, 23.8%)", self.text)
+        self.assertIn("PLAYER-SIDE (4 reqs, 19.0%)", self.text)
 
     def test_cost_breakdown_counts(self):
         """Cost breakdown counts must match generate_not_yet_census.py (S: 3, M: 12, L: 8)."""
-        self.assertIn("Cost S (1-2 runs): 3 reqs (13.6%)", self.text)
-        self.assertIn("Cost M (2-4 runs): 11 reqs (50.0%)", self.text)
-        self.assertIn("Cost L (4+ runs): 8 reqs (36.4%)", self.text)
+        self.assertIn("Cost S (1-2 runs): 2 reqs (9.5%)", self.text)
+        self.assertIn("Cost M (2-4 runs): 11 reqs (52.4%)", self.text)
+        self.assertIn("Cost L (4+ runs): 8 reqs (38.1%)", self.text)
 
     def test_partial_counts(self):
         """PARTIAL category breakdown must sum to 14."""

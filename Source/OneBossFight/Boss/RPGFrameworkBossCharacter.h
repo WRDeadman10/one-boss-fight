@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #pragma once
 #include "GameFramework/Character.h"
+#include "Player/RPGBossTrackRules.h"
 #include "Player/RPGBossFrameworkProfile.h"
 #include "Player/RPGBleedRules.h"
 #include "Player/RPGBossMoveSelector.h"
@@ -97,6 +98,7 @@ private:
     RPGBossCombo::FComboGraph ComboGraph; RPGBossCombo::FComboState ComboState; bool bComboActive=false; int32 ComboHitsAtStart=0; uint64 ComboGateCounter=0;
     /** Repositions in a row since the last attack started (profile RepositionMax). */
     int32 RepositionsInARow=0; double RepositionTurnStartedAt=-1.;
+    RPGBossTrack::FTurnLatch RepositionLatch;   // BOSS-MOV-003: direction memory of the reposition turn
     bool HandleComboGate();
     FRPGBossDecisionSnapshot MakeSnapshot() const;
     void TickOverlay();

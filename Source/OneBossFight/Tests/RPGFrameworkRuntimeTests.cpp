@@ -346,6 +346,26 @@ bool FFrameworkPhaseSupersedesProfile::RunTest(const FString&)
     F5();TestTrue(TEXT("off by default: valid"),RPGFramework::ValidateProfile(*P,Error));
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkTurnLatch,"OneBossFight.Framework.Runtime.TurnLatch",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkTurnLatch::RunTest(const FString&)
+{
+    // BOSS-MOV-003: a target flickering across the back axis (+170 / -170 relative to a boss at yaw 0) must not make the turn reverse every tick.
+    const float Tick=1.f/60.f;
+    auto Run=[&](bool bLatch,float& EndYaw){RPGBossTrack::FTurnLatch L;float Yaw=0.f;for(int32 I=0;I<40;++I){Yaw=RPGBossTrack::StepYawLatched(Yaw,(I%2==0)?170.f:-170.f,180.f,Tick,false,L,bLatch);}EndYaw=Yaw;return L.Flips;};
+    float EndOn=0.f,EndOff=0.f;const int32 FlipsOn=Run(true,EndOn),FlipsOff=Run(false,EndOff);
+    TestEqual(TEXT("latched: no direction change while the target flickers across the back axis"),FlipsOn,0);
+    TestTrue(TEXT("unlatched control: it reverses on most ticks"),FlipsOff>=30);
+    TestTrue(TEXT("latched turn made real progress (3 deg per tick, 40 ticks = 120 deg)"),FMath::IsNearlyEqual(EndOn,120.f,.01f));
+    TestTrue(TEXT("unlatched control barely moves"),FMath::Abs(EndOff)<10.f);
+    // A target that really crosses to the other side (90 deg off the back axis) releases the latch.
+    {RPGBossTrack::FTurnLatch L;float Yaw=0.f;Yaw=RPGBossTrack::StepYawLatched(Yaw,170.f,180.f,Tick,false,L);TestEqual(TEXT("started turning +"),L.Dir,1);
+     Yaw=RPGBossTrack::StepYawLatched(Yaw,-90.f,180.f,Tick,false,L);TestEqual(TEXT("a real crossing turns the other way"),L.Dir,-1);TestEqual(TEXT("and counts as one change"),L.Flips,1);}
+    // Reaching the target ends the turn and clears the latch; committed / bad input never turn.
+    {RPGBossTrack::FTurnLatch L;float Yaw=RPGBossTrack::StepYawLatched(0.f,1.f,180.f,Tick,false,L);TestTrue(TEXT("inside one step the target is reached exactly"),FMath::IsNearlyEqual(Yaw,1.f,.001f));TestEqual(TEXT("latch cleared"),L.Dir,0);
+     TestEqual(TEXT("committed never turns"),RPGBossTrack::StepYawLatched(30.f,200.f,90.f,1.f,true,L),30.f);
+     TestEqual(TEXT("zero rate never turns"),RPGBossTrack::StepYawLatched(30.f,200.f,0.f,1.f,false,L),30.f);}
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkArenaProfile,"OneBossFight.Framework.Runtime.ArenaProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
 bool FFrameworkArenaProfile::RunTest(const FString&)
 {

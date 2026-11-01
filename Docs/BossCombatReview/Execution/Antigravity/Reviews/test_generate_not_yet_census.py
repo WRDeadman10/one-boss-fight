@@ -31,7 +31,7 @@ class TestNotYetCensus(unittest.TestCase):
         """Fails when cited file does not exist."""
         saved = deepcopy(gen.CENSUS_METADATA)
         try:
-            gen.CENSUS_METADATA["BOSS-MOV-003"]["cite"]["file"] = "Source/NonExistentFile.cpp"
+            gen.CENSUS_METADATA["BOSS-MOV-002"]["cite"]["file"] = "Source/NonExistentFile.cpp"
             with self.assertRaises(AssertionError) as ctx:
                 gen.validate_census_metadata()
             self.assertIn("Cited file does not exist", str(ctx.exception))
@@ -42,7 +42,7 @@ class TestNotYetCensus(unittest.TestCase):
         """Fails when cited line is past EOF."""
         saved = deepcopy(gen.CENSUS_METADATA)
         try:
-            gen.CENSUS_METADATA["BOSS-MOV-003"]["cite"]["line"] = 99999
+            gen.CENSUS_METADATA["BOSS-MOV-002"]["cite"]["line"] = 99999
             with self.assertRaises(AssertionError) as ctx:
                 gen.validate_census_metadata()
             self.assertIn("past EOF", str(ctx.exception))
@@ -53,7 +53,7 @@ class TestNotYetCensus(unittest.TestCase):
         """Fails when quote is not in cited line."""
         saved = deepcopy(gen.CENSUS_METADATA)
         try:
-            gen.CENSUS_METADATA["BOSS-MOV-003"]["cite"]["quote"] = "NonExistentQuoteString"
+            gen.CENSUS_METADATA["BOSS-MOV-002"]["cite"]["quote"] = "NonExistentQuoteString"
             with self.assertRaises(AssertionError) as ctx:
                 gen.validate_census_metadata()
             self.assertIn("Quote mismatch", str(ctx.exception))
@@ -78,8 +78,8 @@ class TestNotYetCensus(unittest.TestCase):
         self.assertTrue(gen.OUTPUT_MD.exists())
         with open(gen.OUTPUT_MD, "r", encoding="utf-8") as f:
             content = f.read()
-        self.assertIn("## 2. Complete 22-Row NOT YET Census Table", content)
-        self.assertEqual(content.count("| **BOSS-"), 22)
+        self.assertIn("## 2. Complete 21-Row NOT YET Census Table", content)
+        self.assertEqual(content.count("| **BOSS-"), 21)
 
 if __name__ == "__main__":
     unittest.main()
