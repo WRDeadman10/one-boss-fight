@@ -12,6 +12,9 @@
 #include "Engine/World.h"
 #include "GameFramework/Pawn.h"
 #include "CollisionQueryParams.h"
+#if !UE_BUILD_SHIPPING
+static TAutoConsoleVariable<int32> CVarBossProofSuppressMontageEnd(TEXT("rpg.BossProofSuppressMontageEnd"),0,TEXT("Test hook (BOSS-EXE-007 / ANM-007): 1 stops feeding the montage position to the move model once the card has played 0.3 s, as if the end notifications were dropped; the watchdog must then abort the card. 0 = off. Not compiled into shipping builds."),ECVF_Default);
+#endif
 URPGFrameworkMoveExecutor::URPGFrameworkMoveExecutor()
 {
     PrimaryComponentTick.bCanEverTick=true; PrimaryComponentTick.bStartWithTickEnabled=false;
@@ -59,14 +62,14 @@ bool URPGFrameworkMoveExecutor::Rearm(uint64 NewGeneration,FString& Error)
     TArray<FRPGBossMoveModelEvent> Events;
     if (!Model_.ResetGeneration(NewGeneration,Events,Error)) return false;
     LogEvents(Events);
-    bAborted=false; bFinished=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset(); Token=FRPGBossAttackToken();
+    bAborted=false; bFinished=false; bWatchdogFired=false; bSuppressDone=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset(); Token=FRPGBossAttackToken();
     SetComponentTickEnabled(false);
     return true;
 }
 bool URPGFrameworkMoveExecutor::RecoverAfterAbort()
 {
     if (!bInitialized||!bAborted||bFinished||!IsIdle()) return false;
-    bAborted=false; bFinished=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset(); Token=FRPGBossAttackToken();
+    bAborted=false; bFinished=false; bWatchdogFired=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset(); Token=FRPGBossAttackToken();
     SetComponentTickEnabled(false);
     return true;
 }
@@ -83,6 +86,10 @@ bool URPGFrameworkMoveExecutor::StartCard(const TSharedPtr<const FRPGCompiledBos
     if (!bInitialized||bAborted||!OwnerBoss.IsValid()||!Target.IsValid()||!IsIdle()||bFinished)
     {Error=TEXT("Framework.Playback.State");return false;}
     if (!ValidatePlaybackCard(Card,Error,Profile->bDamageEnabled)||!Model_.IsEligible(Card,S,Error)) return false;
+    // BOSS-EXE-007: the watchdog budget of this card. A healthy card must end inside it, otherwise the watchdog would abort it: refuse such a card here, named.
+    CardWatchdogTimeoutSeconds=RPGBossTrack::WatchdogTimeoutSeconds(Card->Spec().RecoveryEndSeconds,Card->Spec().PlayRate);
+    if (CardWatchdogTimeoutSeconds<0.||(double(Card->Metadata().ClipLengthSeconds)-double(Profile->BlendOutSeconds))/double(Card->Spec().PlayRate)>CardWatchdogTimeoutSeconds) {Error=TEXT("Framework.Playback.WatchdogWindow");return false;}
+    bWatchdogFired=false; bSuppressLogged=false;
     // Loaded dependency only. No Resolve/Load call or alternate animation path in the playback consumer.
     SetComponentTickEnabled(true);
     UAnimSequence* Sequence=Card->Spec().Sequence.Get();
@@ -111,6 +118,19 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
     if (!FMath::IsFinite(Now)||Now<LastWorldSeconds||Now-StartWorldSeconds>Profile->WalkTimeoutSeconds)
     {Fail(TEXT("Framework.Playback.TimeoutOrClock"));return;}
     LastWorldSeconds=Now;
+    // BOSS-EXE-007 / ANM-007 watchdog: a card still running after RecoveryEndSeconds / PlayRate + 0.5 s (end notification dropped, montage stuck) is aborted; the boss recovers and decides again.
+    if (Now-StartWorldSeconds>CardWatchdogTimeoutSeconds)
+    {
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] watchdog_timeout instance=%llu elapsedSeconds=%g timeoutSeconds=%g recoveryEndSeconds=%g playRate=%g"),Token.InstanceId,Now-StartWorldSeconds,CardWatchdogTimeoutSeconds,double(Card->Spec().RecoveryEndSeconds),double(Card->Spec().PlayRate));
+        bWatchdogFired=true; Abort(TEXT("Framework.Playback.WatchdogTimeout")); return;
+    }
+#if !UE_BUILD_SHIPPING
+    if (CVarBossProofSuppressMontageEnd.GetValueOnGameThread()>0&&LastPosition>=0.3&&(bSuppressLogged||!bSuppressDone))
+    {
+        if (!bSuppressLogged) {bSuppressLogged=true; bSuppressDone=true; UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] montage_end_suppressed instance=%llu position=%g"),Token.InstanceId,LastPosition);}
+        return;
+    }
+#endif
     if (Model_.State()==ERPGBossMoveModelState::Idle)
     {
         if (!Anim->Montage_IsActive(OwnedMontage))

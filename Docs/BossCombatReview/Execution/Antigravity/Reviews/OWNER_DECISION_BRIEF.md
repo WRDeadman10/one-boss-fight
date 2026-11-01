@@ -1,4 +1,4 @@
-# Track B: Owner Strategic Decision Brief (v2.4)
+# Track B: Owner Strategic Decision Brief (v2.5)
 
 **Date:** 2026-11-01  
 **Author:** Tech Lead Claude & Antigravity  
@@ -9,11 +9,11 @@
 
 ## 1. Executive Summary & Current State
 
-The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.11) and census script (`Reviews/generate_not_yet_census.py`).
+The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.12) and census script (`Reviews/generate_not_yet_census.py`).
 
 ### Ledger Census Today (82 Canonical Requirements):
-- **WITNESSED:** **40** (48.8%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
-- **PARTIAL:** **18** (22.0%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
+- **WITNESSED:** **42** (51.2%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
+- **PARTIAL:** **16** (19.5%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
 - **NOT YET:** **24** (29.3%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
 
 ### Milestones Graduated to WITNESSED (Since C-546):
@@ -22,10 +22,13 @@ The test boss combat framework has reached strong mathematical and behavioral ma
 - **BOSS-QA-004 (FPS parity):** Fixed-timestep runs at 30, 60, and 120 FPS producing identical hit counts (2) and damage (55.0 applied).
 - **BOSS-COM-003, 005, 007 (Combo graph):** Multi-scenario live PIE proofs on `L_SevarogFrameworkProofCOM3` verifying 3-node combo progression, single-use gate consumption, and default recovery fallbacks.
 - **BOSS-AWR-005 (Vertical separation):** Proved horizontal ground sweep card refusal on elevated ledge ($Z=115\text{ cm} > 50\text{ cm}$) using `FloorSeparationCm()` feet-to-feet distance fixing capsule origin offset (`Claude/B_AWR005/pie_ledge`).
+- **BOSS-COM-002 (Branch evaluation timing):** Hit window EndSeconds proven to close strictly before combo branch decision gate opens across all evaluated gates in B_COMBO3.
+- **BOSS-AWR-002 (Gate-time snapshot):** Lateral shift proof on `L_SevarogFrameworkProofF5` proving heading commit and lock without mid-action re-evaluation or trajectory abort despite player lateral shift.
+- **BOSS-EXE-007 (Watchdog) & BOSS-ANM-007 (Notify-end independence):** C++ watchdog in executor aborting stalled card after $T = \text{RecoveryEndSeconds} / \text{PlayRate} + 0.5\text{s}$ under simulated dropped montage end (`rpg.BossProofSuppressMontageEnd 1`), cleaning up model, clearing active combo, and resuming decision loop without AI stall.
 
 ### Progress on Key PARTIAL Rows:
 - **BOSS-QA-003 (Determinism):** Bit-for-bit event reproducibility across identical seeds, and live seeded tie-breaking on `L_SevarogFrameworkProofQA003` picking lower-scoring moves deterministically; remains PARTIAL pending frame-synchronized player input injection.
-- **BOSS-QA-002 (Structured event log):** 53 structured `[FrameworkProof]` tokens and unique monotonic decision sequence numbers across stance breaks; production `[CARD_*]` prefix reserved.
+- **BOSS-QA-002 (Structured event log):** 56 structured `[FrameworkProof]` tokens and unique monotonic decision sequence numbers across stance breaks; production `[CARD_*]` prefix reserved.
 - **BOSS-DEF-002 (Posture regen):** Reset-on-drain delay and linear regen rate verified live in PIE.
 - **BOSS-SEL-008 (No-candidate fallback):** Opt-in walk-back-to-band and turn-in-place repositioning reset verified when 0 cards qualify; remains PARTIAL pending design decision on default profile shipping policy.
 
@@ -33,12 +36,11 @@ The test boss combat framework has reached strong mathematical and behavioral ma
 
 ## 2. Taxonomy of Remaining Work
 
-### A. The 18 PARTIAL Rows (Grouped by Real Blocker)
-From `Reviews/PARTIAL_UPGRADE_PLAN.md` (re-verified against Ledger v3.11):
+### A. The 16 PARTIAL Rows (Grouped by Real Blocker)
+From `Reviews/PARTIAL_UPGRADE_PLAN.md` (re-verified against Ledger v3.12):
 1. **Engine / PIE Scenario Hooks (3 rows):**
    - `BOSS-QA-001` (Runtime overlay): Formatted strings logged live; blocked because unattended PIE GPU backbuffer readback returned black pixels; requires on-screen display capture.
    - `BOSS-SEL-008` (No-candidate fallback): Walk-to-band verified live; requires continuous strafe loop when 0 cards qualify or production opt-in policy.
-   - `BOSS-COM-002` (Gate after damage): Card-finish gate verified live; requires in-flight recovery gate evaluation after damage.
    - `BOSS-COM-004` (Hit-confirm policy): Whiff/recovery verified live; requires guarded and parried target states in PIE.
 2. **Player-Side / Combat Input Integration (5 rows):**
    - `BOSS-HIT-008` (Central defense order): Requires player shield block/parry stance integration in damage resolver.
@@ -46,15 +48,13 @@ From `Reviews/PARTIAL_UPGRADE_PLAN.md` (re-verified against Ledger v3.11):
    - `BOSS-PHS-004` (Fair heal punish): Requires player flask drinking perception reaction loop in boss character.
    - `BOSS-QA-003` (Reproducible scenarios): Requires frame-accurate player input injection driver.
    - `BOSS-ANM-005` (Exclusive motion authority): Requires formal player-boss collision and AI navigation lock.
-3. **Animation & Notify Track Authoring (4 rows):**
+3. **Animation & Notify Track Authoring (3 rows):**
    - `BOSS-ANM-002` (Telegraph phases): Requires authored windup, active, and recovery notify tracks.
-   - `BOSS-ANM-007` (Notify-end independence): Requires testing dropped notify stall independence without notifies.
    - `BOSS-MOV-001` (Range-band policy): Requires full 15-family range-band card partitioning.
    - `BOSS-PAC-006` (Neutral is purposeful): Requires multi-attack neutral transition testing with authored idle postures.
-4. **Lifecycle & Watchdog Robustness (3 rows):**
+4. **Lifecycle & Watchdog Robustness (2 rows):**
    - `BOSS-EXE-004` (Stale event rejection): Requires live logging of interrupted attack late AnimNotify rejection.
    - `BOSS-EXE-006` (Idempotent abort): Requires live grab/AoE executor abort path.
-   - `BOSS-EXE-007` (Watchdog): Requires live logging of explicit suppressed-event watchdog timeout ($+0.5\text{s}$).
 5. **Architectural & Design Constraints (2 rows):**
    - `BOSS-AWR-004` (Signed angle hysteresis): Discrete-attack boss has no oscillation; requires selector-side memory.
    - `BOSS-QA-002` (Structured event log): Defenses and interrupts not logged; production `[CARD_*]` prefix reserved.
@@ -88,9 +88,9 @@ Verbatim text of the question sent to the owner (`Documentation/TEAM_MAILBOX.md:
 > `"which way next" for Track B: A) upgrade the 27 PARTIAL rows to WITNESSED (mostly one live run or one screenshot each), then the open rows; B) the 24 NOT YET rows in cost order (about 8 need art/design input, about 16 need new systems); C) stop. My recommendation: A then B.`
 
 ### Evaluation with Today's Data:
-- **Option A (Upgrade PARTIAL rows first):** 7 rows have already graduated (`AWR-001`, `QA-004`, `HIT-005`, `COM-003`, `COM-005`, `COM-007`, `AWR-005`), leaving 20 rows. 5 of these 20 have established framework hooks and can be graduated via targeted PIE scenario maps (e.g. `AWR-002` lateral shift, `COM-002` in-flight recovery gate). The remaining 15 rows depend on player-side intake, notify authoring, or lifecycle logging.
+- **Option A (Upgrade PARTIAL rows first):** 11 rows have already graduated (`AWR-001`, `QA-004`, `HIT-005`, `COM-003`, `COM-005`, `COM-007`, `AWR-005`, `COM-002`, `AWR-002`, `EXE-007`, `ANM-007`), leaving 16 rows. Several of these 16 have established framework hooks and can be graduated via targeted PIE scenario maps (e.g. `QA-001` on-screen screenshot, `SEL-008` no-candidate strafe reset). The remaining rows depend on player-side intake, notify authoring, or lifecycle logging.
 - **Option B (Work NOT YET rows in cost order):** The 3 Cost S and 2 Cost M `ENGINE-ONLY` rows (`MOV-003`, `MOV-005`, `DEF-004`, `SEL-009`, `EXE-005`) can be implemented immediately in C++. However, the 4 `NEEDS DESIGN DECISION` rows require designer choices from the owner before implementation, and the remaining 15 rows depend on art assets or whole unbuilt subsystems.
-- **Option C (Stop):** Freeze Track B at current state (40 WITNESSED / 18 PARTIAL / 24 NOT YET) and transition focus to other project areas.
+- **Option C (Stop):** Freeze Track B at current state (42 WITNESSED / 16 PARTIAL / 24 NOT YET) and transition focus to other project areas.
 
 ---
 
@@ -99,6 +99,6 @@ Verbatim text of the question sent to the owner (`Documentation/TEAM_MAILBOX.md:
 ### Recommendation: **Option A first, then the Cost S/M ENGINE-ONLY rows of Option B.**
 
 **Rationale:**
-1. **Capitalize on Proven Scenarios:** The PARTIAL rows already possess verified C++ implementations and unit tests. Addressing the engine-accessible subset (such as `AWR-002` lateral displacement and `COM-002` in-flight recovery gate) converts existing investments into clean WITNESSED rows with zero new system architecture.
+1. **Capitalize on Proven Scenarios:** The PARTIAL rows already possess verified C++ implementations and unit tests. Addressing the engine-accessible subset converts existing investments into clean WITNESSED rows with zero new system architecture.
 2. **Targeted C++ Expansion:** Following Option A's engine-ready slice with Option B's 5 `ENGINE-ONLY` rows (`MOV-003`, `MOV-005`, `DEF-004`, `SEL-009`, `EXE-005`) expands framework capability purely in code without art bottlenecks.
 3. **Avoid Premature Blockers:** Working strictly in cost order without separating by dependency class would stall against the 4 design-decision rows and 6 art rows.

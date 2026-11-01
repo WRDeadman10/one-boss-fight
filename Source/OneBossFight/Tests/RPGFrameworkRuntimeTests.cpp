@@ -320,6 +320,20 @@ bool FFrameworkRepositionProfile::RunTest(const FString&)
     {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);F3->RepositionMax=2;F3->RepositionTurnDegPerSecond=180.f;TestFalse(TEXT("outside the F5 lane refused"),RPGFramework::ValidateProfile(*F3,Error));TestEqual(TEXT("lane token"),Error,FString(TEXT("Framework.Profile.Domain")));}
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkExecutorWatchdogRule,"OneBossFight.Framework.Runtime.ExecutorWatchdogRule",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkExecutorWatchdogRule::RunTest(const FString&)
+{
+    // BOSS-EXE-007: timeout = RecoveryEndSeconds / PlayRate + 0.5 s of world time; invalid input is negative (the card is refused at start).
+    TestEqual(TEXT("1.65 s at rate 1"),RPGBossTrack::WatchdogTimeoutSeconds(1.65f,1.f),2.15,1.e-6);
+    TestEqual(TEXT("1.65 s at rate 2 is faster"),RPGBossTrack::WatchdogTimeoutSeconds(1.65f,2.f),1.325,1.e-6);
+    TestEqual(TEXT("0.4833 s at rate 0.5 is slower"),RPGBossTrack::WatchdogTimeoutSeconds(.4833f,.5f),0.4833/0.5+0.5,1.e-4);
+    for(float Bad:{0.f,-1.f,std::numeric_limits<float>::quiet_NaN(),std::numeric_limits<float>::infinity()})
+    {
+        TestTrue(TEXT("bad recovery end is invalid"),RPGBossTrack::WatchdogTimeoutSeconds(Bad,1.f)<0.);
+        TestTrue(TEXT("bad play rate is invalid"),RPGBossTrack::WatchdogTimeoutSeconds(1.65f,Bad)<0.);
+    }
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkArenaProfile,"OneBossFight.Framework.Runtime.ArenaProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
 bool FFrameworkArenaProfile::RunTest(const FString&)
 {

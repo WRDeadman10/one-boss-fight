@@ -115,6 +115,13 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
         Fail(TEXT("Framework.Boss.TargetLifeOrHealthChanged"));return;
     }
     const auto& P=*Dependencies->Profile.Get();
+    // BOSS-EXE-007: the executor's watchdog aborted the running card (end notification dropped / montage stuck): recover and decide again, never stall.
+    if(Executor->WatchdogFired())
+    {
+        if(!Executor->RecoverAfterAbort()){Fail(TEXT("Framework.Playback.WatchdogRecover"));return;}
+        bStartedMove=false; if(bComboActive){bComboActive=false;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_end reason=Watchdog"));}
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] watchdog_recovered attacksDone=%d"),AttacksDone);
+    }
     TickOverlay();
     if(!bArrived&&GetWorld()->GetTimeSeconds()-StartedAt>P.WalkTimeoutSeconds){Fail(TEXT("Framework.Nav.Timeout"));return;}
     if(PostureEnabled())

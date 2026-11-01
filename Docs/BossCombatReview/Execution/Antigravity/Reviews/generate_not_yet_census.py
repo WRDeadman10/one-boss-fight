@@ -90,7 +90,7 @@ CENSUS_METADATA = {
         "cost": "L",
         "cite": {
             "file": "Source/OneBossFight/Boss/RPGFrameworkMoveExecutor.cpp",
-            "line": 201,
+            "line": 221,
             "quote": "const FCollisionShape Shape=FCollisionShape::MakeCapsule(W.",
         },
         "explanation": "sweep only constructs linear swept capsules along weapon key poses; outward expanding ring/annulus component not implemented",
@@ -106,7 +106,7 @@ CENSUS_METADATA = {
         "cost": "M",
         "cite": {
             "file": "Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp",
-            "line": 188,
+            "line": 195,
             "quote": "// Opt-in repositioning: nobody is eligible from here (the ",
         },
         "explanation": "repositioning only walks straight toward target band without arena boundary or wall clearance scoring",
@@ -116,7 +116,7 @@ CENSUS_METADATA = {
         "cost": "S",
         "cite": {
             "file": "Source/OneBossFight/Player/RPGBossTrackRules.h",
-            "line": 13,
+            "line": 19,
             "quote": "if (bCommitted||!FMath::IsFinite(DegPerSecond)||!FMath::IsFi",
         },
         "explanation": "nearest code, not the feature: turn tracking turns shortest-way each tick without movement direction latching or continuous locomotion hysteresis",

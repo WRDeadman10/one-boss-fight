@@ -1,10 +1,10 @@
 {
-  "version": "3.11",
+  "version": "3.12",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 40,
-    "PARTIAL": 18,
+    "WITNESSED": 42,
+    "PARTIAL": 16,
     "NOT YET": 24
   },
   "requirements": [
@@ -795,25 +795,43 @@
       "title": "Watchdog",
       "section": "Attack executor and state safety",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:114",
-        "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log:1649"
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:327",
+        "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log:1616",
+        "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log:1617",
+        "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log:1619",
+        "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log:1620"
       ],
       "citations": [
         {
-          "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 114,
-          "quoted": "R.Model.Advance(R.Token,101.5,false,R.Events,R.Error); TestTrue(TEXT(\"Idle ex..."
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 327,
+          "quoted": "TestEqual(TEXT(\"1.65 s at rate 1\"),RPGBossTrack::WatchdogTimeoutSeconds(1.65f,1.f),2.15,1.e-6);"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log",
-          "line": 1649,
-          "quoted": "[2026.10.30-12.12.23:569][433]LogTemp: Display: [FrameworkProof] event encoun..."
+          "file": "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log",
+          "line": 1616,
+          "quoted": "[2026.11.01-02.10.44:930][992]LogTemp: Display: [FrameworkProof] montage_end_suppressed instance=1 position=0.306394"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log",
+          "line": 1617,
+          "quoted": "[2026.11.01-02.10.46:763][200]LogTemp: Display: [FrameworkProof] watchdog_timeout instance=1 elapsedSeconds=2.15051 timeoutSeconds=2.15 recoveryEndSeconds=1.65 playRate=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log",
+          "line": 1619,
+          "quoted": "[2026.11.01-02.10.46:763][200]LogTemp: Display: [FrameworkProof] cleanup reason=Framework.Playback.WatchdogTimeout modelIdle=1 ownedMontageStopped=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log",
+          "line": 1620,
+          "quoted": "[2026.11.01-02.10.46:770][201]LogTemp: Display: [FrameworkProof] watchdog_recovered attacksDone=0"
         }
       ],
-      "observable": "Suppressed MontageEnd / NotifyEnd automatically aborts card after Timeout = RecoveryEndSeconds + 0.5s.",
-      "notes": "MoveModel tests exact Idle end boundary (model_tests:114); PIE fixture adopts BlendOut-span natural end (f4_run1:1649); explicit suppressed-event watchdog timeout (+0.5s) not logged."
+      "observable": "Suppressed MontageEnd / NotifyEnd automatically aborts card after Timeout = RecoveryEndSeconds / PlayRate + 0.5s.",
+      "notes": "Graduated in C-582 (BUILD-118). Unit test FFrameworkExecutorWatchdogRule tests RPGBossTrack::WatchdogTimeoutSeconds pure rule; PIE test hook rpg.BossProofSuppressMontageEnd 1 simulates dropped montage end at position 0.306s; watchdog fires at elapsed 2.15051s (> 2.15s), aborts card with Framework.Playback.WatchdogTimeout, cleans up model, logs watchdog_recovered, and boss decides again without stall. Limits: stall is simulated at model input; 0.5s margin is canonical ledger specification."
     },
     {
       "id": "BOSS-EXE-008",
@@ -1221,9 +1239,9 @@
       "old_status": "NOT YET",
       "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:388",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:389",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:391",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:402",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:403",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:405",
         "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1620",
         "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1793",
         "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log:1872",
@@ -1233,17 +1251,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 417,
+          "line": 431,
           "quoted": "Near(TEXT(\"60 ticks (1 s) toward 170 turn exactly the cap, 90 deg\"),Yaw,90.f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 418,
+          "line": 432,
           "quoted": "TestTrue(TEXT(\"no tick turned more than cap * dt (1.5 deg)\"),MaxStep<=1.5f+1.e-3f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 420,
+          "line": 434,
           "quoted": "Near(TEXT(\"after the commit 60 more ticks leave the yaw unchanged\"),Yaw,90.f);"
         },
         {
@@ -1316,11 +1334,12 @@
       "title": "Notify-end independence",
       "section": "Animation, tracking and motion",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
         "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:129",
         "Docs/BossCombatReview/Execution/Claude/F8/pie_run1/editor_raw.log:1619",
-        "Docs/BossCombatReview/Execution/Claude/F8/pie_run1/editor_raw.log:1620"
+        "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log:1619",
+        "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log:1625"
       ],
       "citations": [
         {
@@ -1334,13 +1353,18 @@
           "quoted": "[2026.10.30-20.17.39:006][409]LogTemp: Display: [FrameworkProof] cleanup reason=StanceBreak modelIdle=1 ownedMontageStopped=1"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/F8/pie_run1/editor_raw.log",
-          "line": 1620,
-          "quoted": "[2026.10.30-20.17.39:006][409]LogTemp: Display: [FrameworkProof] stance_break state=MidAttack duration=1 generation=1 phase=Phase_1"
+          "file": "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log",
+          "line": 1619,
+          "quoted": "[2026.11.01-02.10.46:763][200]LogTemp: Display: [FrameworkProof] cleanup reason=Framework.Playback.WatchdogTimeout modelIdle=1 ownedMontageStopped=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log",
+          "line": 1625,
+          "quoted": "[2026.11.01-02.10.46:770][201]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=Move_Sevarog_AntiGreed_F5 score=0.821047 range=154.5 phase=Phase_1 seq=2"
         }
       ],
       "observable": "Attack state recovery and cleanup cannot stall if animation notify is dropped or montage interrupted prematurely.",
-      "notes": "MoveModel asserts active abort closes hit window immediately and signals Aborted without waiting for montage end (model_tests:129); live PIE confirms MidAttack interruption cleans up model and stops owned montage at exact stance break tick (f8_pie1:1619, 1620). Status remains PARTIAL per C-530 because dropped notify end stall independence is not yet proven without notify."
+      "notes": "Graduated in C-582 (BUILD-118). Interrupted-montage robustness proven live by stance break mid-attack cleanup (f8_pie1:1619); dropped notify/montage-end independence proven by executor watchdog aborting stalled card at RecoveryEnd + 0.5s (pie_suppress:1619) and seamlessly transitioning to next attack decision without AI stall (pie_suppress:1625). Limits: notify drop is simulated at model input."
     },
     {
       "id": "BOSS-ANM-008",
@@ -1350,7 +1374,7 @@
       "status": "WITNESSED",
       "proof": [
         "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:61",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:339",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:353",
         "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log:1576",
         "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log:1577",
         "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log:1586"
@@ -1363,7 +1387,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 368,
+          "line": 382,
           "quoted": "TestEqual(TEXT(\"no slot node in the AnimBP\"),Token([](auto& X){X.bSlotNodePresent=false;}),FString(TEXT(\"Framework.Profile.StaggerAnim.SlotNode\")));"
         },
         {
@@ -1993,7 +2017,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 349,
+          "line": 363,
           "quoted": "TestEqual(TEXT(\"loop count middle 1.6 / loop 0.5 = ceil 3.2 = 4\"),RPGStaggerAnim::LoopCount(T,S,E,.5f),4);"
         }
       ],
@@ -2144,9 +2168,9 @@
       "old_status": "NOT YET",
       "status": "PARTIAL",
       "proof": [
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:399",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:401",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:403",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:413",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:415",
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:417",
         "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log:1577",
         "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log:1588",
         "Docs/BossCombatReview/Execution/Claude/B_QA001/pie2/editor_raw.log:1642",
@@ -2157,17 +2181,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 428,
+          "line": 442,
           "quoted": "TestEqual(TEXT(\"attack running\"),RPGBossOverlay::Format(I),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=129cm Cone=120deg Window=Open Posture=40/100 Health=150/250 Stagger=0 PhaseHold=0\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 430,
+          "line": 444,
           "quoted": "TestEqual(TEXT(\"no card, stagger and hold\"),RPGBossOverlay::Format(N),FString(TEXT(\"Card=None State=Idle Phase=Phase_2 Range=300cm Cone=0deg Window=Closed Posture=100/100 Health=50/250 Stagger=1 PhaseHold=1\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 432,
+          "line": 446,
           "quoted": "TestEqual(TEXT(\"non-finite values never print as numbers\"),RPGBossOverlay::Format(Bad),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=n/acm Cone=120deg Window=Open Posture=40/100 Health=n/a/250 Stagger=0 PhaseHold=0\")));"
         },
         {
