@@ -40,10 +40,10 @@ class TestOwnerDecisionBrief(unittest.TestCase):
         self.assertIn(b"\n", self.raw_bytes, "Missing LF in OWNER_DECISION_BRIEF.md")
 
     def test_census_parity(self):
-        """Census numbers in brief must match ledger v3.11."""
+        """Census numbers in brief must match ledger v3.12."""
         ledger_census = self.ledger["census"]
-        self.assertIn(f"**{ledger_census['WITNESSED']}** (46.3%)", self.text)
-        self.assertIn(f"**{ledger_census['PARTIAL']}** (24.4%)", self.text)
+        self.assertIn(f"**{ledger_census['WITNESSED']}** (47.6%)", self.text)
+        self.assertIn(f"**{ledger_census['PARTIAL']}** (23.2%)", self.text)
         self.assertIn(f"**{ledger_census['NOT YET']}** (29.3%)", self.text)
         self.assertIn("82 Canonical Requirements", self.text)
 
@@ -62,8 +62,8 @@ class TestOwnerDecisionBrief(unittest.TestCase):
         self.assertIn("Cost L (4+ runs): 8 reqs (33.3%)", self.text)
 
     def test_partial_counts(self):
-        """PARTIAL category breakdown must sum to 20."""
-        self.assertIn("Engine / PIE Scenario Hooks (5 rows)", self.text)
+        """PARTIAL category breakdown must sum to 19."""
+        self.assertIn("Engine / PIE Scenario Hooks (4 rows)", self.text)
         self.assertIn("Player-Side / Combat Input Integration (5 rows)", self.text)
         self.assertIn("Animation & Notify Track Authoring (4 rows)", self.text)
         self.assertIn("Lifecycle & Watchdog Robustness (3 rows)", self.text)

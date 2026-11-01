@@ -1,4 +1,4 @@
-# Track B: Owner Strategic Decision Brief (v2.2)
+# Track B: Owner Strategic Decision Brief (v2.3)
 
 **Date:** 2026-11-01  
 **Author:** Tech Lead Claude & Antigravity  
@@ -12,8 +12,8 @@
 The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.11) and census script (`Reviews/generate_not_yet_census.py`).
 
 ### Ledger Census Today (82 Canonical Requirements):
-- **WITNESSED:** **38** (46.3%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
-- **PARTIAL:** **20** (24.4%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
+- **WITNESSED:** **39** (47.6%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
+- **PARTIAL:** **19** (23.2%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
 - **NOT YET:** **24** (29.3%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
 
 ### Milestones Graduated to WITNESSED (Since C-546):
@@ -33,9 +33,9 @@ The test boss combat framework has reached strong mathematical and behavioral ma
 
 ## 2. Taxonomy of Remaining Work
 
-### A. The 20 PARTIAL Rows (Grouped by Real Blocker)
-From `Reviews/PARTIAL_UPGRADE_PLAN.md` (re-verified against Ledger v3.11):
-1. **Engine / PIE Scenario Hooks (5 rows):**
+### A. The 19 PARTIAL Rows (Grouped by Real Blocker)
+From `Reviews/PARTIAL_UPGRADE_PLAN.md` (re-verified against Ledger v3.12):
+1. **Engine / PIE Scenario Hooks (4 rows):**
    - `BOSS-QA-001` (Runtime overlay): Formatted strings logged live; blocked because unattended PIE GPU backbuffer readback returned black pixels; requires on-screen display capture.
    - `BOSS-AWR-002` (Gate-time snapshot): Range snapshot verified live; requires lateral target displacement during windup proving angle lock.
    - `BOSS-SEL-008` (No-candidate fallback): Walk-to-band verified live; requires continuous strafe loop when 0 cards qualify or production opt-in policy.
@@ -91,7 +91,7 @@ Verbatim text of the question sent to the owner (`Documentation/TEAM_MAILBOX.md:
 ### Evaluation with Today's Data:
 - **Option A (Upgrade PARTIAL rows first):** 7 rows have already graduated (`AWR-001`, `QA-004`, `HIT-005`, `COM-003`, `COM-005`, `COM-007`, `AWR-005`), leaving 20 rows. 5 of these 20 have established framework hooks and can be graduated via targeted PIE scenario maps (e.g. `AWR-002` lateral shift, `COM-002` in-flight recovery gate). The remaining 15 rows depend on player-side intake, notify authoring, or lifecycle logging.
 - **Option B (Work NOT YET rows in cost order):** The 3 Cost S and 2 Cost M `ENGINE-ONLY` rows (`MOV-003`, `MOV-005`, `DEF-004`, `SEL-009`, `EXE-005`) can be implemented immediately in C++. However, the 4 `NEEDS DESIGN DECISION` rows require designer choices from the owner before implementation, and the remaining 15 rows depend on art assets or whole unbuilt subsystems.
-- **Option C (Stop):** Freeze Track B at current state (38 WITNESSED / 20 PARTIAL / 24 NOT YET) and transition focus to other project areas.
+- **Option C (Stop):** Freeze Track B at current state (39 WITNESSED / 19 PARTIAL / 24 NOT YET) and transition focus to other project areas.
 
 ---
 

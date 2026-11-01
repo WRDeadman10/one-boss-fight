@@ -3,8 +3,8 @@
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 38,
-    "PARTIAL": 20,
+    "WITNESSED": 39,
+    "PARTIAL": 19,
     "NOT YET": 24
   },
   "requirements": [
@@ -883,7 +883,7 @@
       "title": "Gate after damage",
       "section": "Conditional combos",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
         "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp:108",
         "Docs/BossCombatReview/Execution/Claude/F5/pie_run1/editor_raw.log:1605",
@@ -898,22 +898,37 @@
         },
         {
           "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO3/pie_normal/editor_raw.log",
+          "line": 1657,
+          "quoted": "[2026.10.31-19.50.21:625][ 14]LogTemp: Display: [FrameworkProof] event encounter=1 generation=1 instance=1 kind=Close window=Window_SwingSlow_Primary group=HitGroup_ScytheBlade localSeconds=0.4917 label=F5_fixture"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO3/pie_normal/editor_raw.log",
           "line": 1791,
-          "quoted": "[FrameworkProof] combo_gate gate=1 node=A outcome=Hit range=129.503 yaw=0 result=Continue next=B reason="
+          "quoted": "[2026.10.31-19.50.22:803][142]LogTemp: Display: [FrameworkProof] combo_gate gate=1 node=A outcome=Hit range=129.503 yaw=0 result=Continue next=B reason="
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO3/pie_normal/editor_raw.log",
+          "line": 1861,
+          "quoted": "[2026.10.31-19.50.23:343][200]LogTemp: Display: [FrameworkProof] event encounter=1 generation=1 instance=2 kind=Close window=Window_HeavySlam_Terminal group=HitGroup_ScytheBlade localSeconds=0.5333 label=F5_fixture"
         },
         {
           "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO3/pie_normal/editor_raw.log",
           "line": 1986,
-          "quoted": "[FrameworkProof] combo_gate gate=2 node=B outcome=Whiff range=129.503 yaw=0 result=Continue next=C reason="
+          "quoted": "[2026.10.31-19.50.24:477][321]LogTemp: Display: [FrameworkProof] combo_gate gate=2 node=B outcome=Whiff range=129.503 yaw=0 result=Continue next=C reason="
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO3/pie_normal/editor_raw.log",
+          "line": 2067,
+          "quoted": "[2026.10.31-19.50.24:972][372]LogTemp: Display: [FrameworkProof] event encounter=1 generation=1 instance=3 kind=Close window=Window_SwingSlow_Primary group=HitGroup_ScytheBlade localSeconds=0.4917 label=F5_fixture"
         },
         {
           "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO3/pie_normal/editor_raw.log",
           "line": 2199,
-          "quoted": "[FrameworkProof] combo_gate gate=3 node=C outcome=Hit range=129.503 yaw=0 result=Finished next=None reason="
+          "quoted": "[2026.10.31-19.50.26:152][498]LogTemp: Display: [FrameworkProof] combo_gate gate=3 node=C outcome=Hit range=129.503 yaw=0 result=Finished next=None reason="
         }
       ],
       "observable": "Hit window EndSeconds occurs strictly before combo branch decision gate opens.",
-      "notes": "Card schema enforces timeline ordering (card_tests:108). In live 3-node combo proof on L_SevarogFrameworkProofCOM3 (B_COMBO3 pie_normal:1791, 1986, 2199), attack 1 (SwingSlow) closes hit window before gate 1 opens at line 1791 (Continue to B), attack 2 (HeavySlam) closes hit window before gate 2 opens at line 1986 (Continue to C), and attack 3 completes before gate 3 opens at line 2199 (Finished). However, per C-549/C-551 limits, gate evaluation in HandleComboGate occurs upon card finish rather than in-flight during recovery after damage; status remains strictly PARTIAL."
+      "notes": "Hit window EndSeconds occurs strictly before combo branch decision gate opens across all evaluated gates in B_COMBO3 (pie_normal: Close :1657 -> Finished :1788 -> combo_gate :1791; Close :1861 -> Finished :1983 -> combo_gate :1986; Close :2067 -> Finished :2196 -> combo_gate :2199; Close :2285 -> Finished :2414 -> combo_gate :2417; verified across all 12 gates in pie_normal, pie_dupgate, and pie_behind where hit window closes ~1.1-1.2s before decision gate opens at card completion). Anomaly noted: pie_normal:1661 logs hit outcome=RejectedDuplicate (hpApplied=0) 4 lines after Close (:1657) due to trailing sweep substep in same tick frame (frame 14); decision gate opens at frame 142 (:1791), over 125 frames later. Secondary schema test RPGBossMoveCardTests.cpp:108 enforces timeline ordering ActiveStartSeconds < ActiveEndSeconds < RecoveryEndSeconds. Promoted to WITNESSED per C-578/C-579."
     },
     {
       "id": "BOSS-COM-003",
@@ -1282,7 +1297,7 @@
       "status": "NOT YET",
       "proof": [],
       "citations": [],
-      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45\u00b0).",
+      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45°).",
       "notes": "Motion warping clamping bounds not yet implemented in active runtime (designated for Movement Block)."
     },
     {
