@@ -1,0 +1,20 @@
+{
+    "raw_sha256":  "02c9afaf9cda7609d9d3e75f8d929c386ede9d4d9e19cf241bdb6d2c61b1b269",
+    "task":  "qa001_game2",
+    "timed_out":  true,
+    "command":  [
+                    "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+                    "/Game/OneBossFight/FrameworkProof/L_SevarogFrameworkProofQA001",
+                    "-game",
+                    "-windowed",
+                    "-ResX=1280",
+                    "-ResY=720",
+                    "-nosound",
+                    "-nosplash",
+                    "-unattended",
+                    "-ExecCmds=\"rpg.BossOverlay 1;rpg.ScreenshotShowUI 0;rpg.ScreenshotQuit 1;rpg.ScreenshotPath C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/B_QA001/attempt3_standalone_game.png;rpg.ScreenshotAt 6\"",
+                    "-abslog=\"C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_QA001\\game_run2\\editor_raw.log\""
+                ],
+    "exit_code":  -1,
+    "seconds":  150
+}

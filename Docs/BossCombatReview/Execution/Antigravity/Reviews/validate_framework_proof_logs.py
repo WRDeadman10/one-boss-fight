@@ -186,6 +186,9 @@ SCHEMAS = {
 
     # 11. Runtime Diagnostics & Overlay
     "overlay": r"^Card=[^\s]+ State=[^\s]+ Phase=[^\s]+ Range=[^\s]+ Cone=[^\s]+ Window=[^\s]+ Posture=[^\s]+ Health=[^\s]+ Stagger=[^\s]+ PhaseHold=[^\s]+$",
+    # 13. Viewport Screenshot & Overlay Evaluation (BOSS-QA-001)
+    "screenshot_requested": r"^(?:|t=[^\s]+ viewX=\d+ viewY=\d+(?:\s+showUI=[01])?\s+path=[^\s]+)$",
+    "screenshot_quit": r"^$",
 }
 
 COMPILED_SCHEMAS = {tok: re.compile(pat) for tok, pat in SCHEMAS.items()}
@@ -249,9 +252,6 @@ def validate_line(line: str):
     payload = (m.group(2) or "").strip()
     
     if token not in COMPILED_SCHEMAS:
-        # Ephemeral non-canonical diagnostic hooks from historical experiments (e.g. screenshot_requested in B_QA001B)
-        if token in {"screenshot_requested"}:
-            return True, token, payload, None
         return False, token, payload, f"Unrecognized token '{token}'"
         
     if not COMPILED_SCHEMAS[token].match(payload):

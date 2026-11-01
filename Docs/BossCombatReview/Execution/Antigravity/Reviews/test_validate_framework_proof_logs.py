@@ -33,7 +33,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
         self.assertNotIn(b"\r", raw, "validate_framework_proof_logs.py contains CR! Must be pure LF.")
 
     def test_all_65_tokens_registered(self):
-        self.assertEqual(len(validator.SCHEMAS), 110, f"Expected 110 schemas, got {len(validator.SCHEMAS)}")
+        self.assertEqual(len(validator.SCHEMAS), 112, f"Expected 112 schemas, got {len(validator.SCHEMAS)}")
         for tok, pat in validator.SCHEMAS.items():
             compiled = validator.COMPILED_SCHEMAS.get(tok)
             self.assertIsNotNone(compiled, f"Token {tok} missing in COMPILED_SCHEMAS")
@@ -123,6 +123,10 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             "[FrameworkProof] camera_frame t=12.00 distCm=128.467 screenMinX=402.0 screenMinY=59.2 screenMaxX=499.7 screenMaxY=328.1 viewX=918 viewY=402 cornersOnScreen=8 insideMargin=1 heightPct=66.90 occluded=0",
             "[FrameworkProof] camera_stage index=0 distanceCm=300 cameraTurnedAway=0",
             "[FrameworkProof] camera_stage index=1 distanceCm=600",
+            # Viewport Screenshot & Overlay Evaluation (BOSS-QA-001)
+            "[FrameworkProof] screenshot_requested t=6.00 viewX=966 viewY=450 showUI=0 path=C:/test.png",
+            "[FrameworkProof] screenshot_requested t=3.00 viewX=918 viewY=402 path=C:/test.png",
+            "[FrameworkProof] screenshot_quit",
             # Player Dodge & Iframe Completeness (BOSS-HIT-009)
             "[FrameworkProof] iframe_sweep_armed dodgeAtSeconds=0.5",
             "[FrameworkProof] iframe_sweep_press t=12.3456 sinceFirstAttack=0.5000",
@@ -188,6 +192,7 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_QA006/pie_framing/editor_raw.log",
             REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p5/editor_raw.log",
+            REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_QA001/game_run3/editor_raw.log",
         ]:
             if candidate_log.exists() and candidate_log not in files:
                 files.append(candidate_log)
@@ -205,12 +210,12 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
                         tok = m.group(1)
                         if tok not in real_lines and tok in validator.SCHEMAS:
                             real_lines[tok] = line
-                if len(real_lines) == 110:
+                if len(real_lines) == 112:
                     break
-            if len(real_lines) == 110:
+            if len(real_lines) == 112:
                 break
 
-        self.assertEqual(len(real_lines), 110, f"Expected 110 real line samples, found {len(real_lines)}")
+        self.assertEqual(len(real_lines), 112, f"Expected 112 real line samples, found {len(real_lines)}")
 
         for tok, line in real_lines.items():
             # First verify the real line passes
@@ -665,6 +670,21 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
                 self.assertTrue(run["contiguous"])
         finally:
             Path(out_json).unlink(missing_ok=True)
+
+    def test_b_qa001_evidence_logs(self):
+        """B_QA001 evidence logs parse with 0 syntax failures and 0 semantic violations."""
+        qa001_dir = REPO_ROOT / "Docs/BossCombatReview/Execution/Claude/B_QA001"
+        for sub, expected_lines in [
+            ("game_run3", 3),
+            ("pie_shot1_showUI1", 2),
+            ("pie_shot2_showUI0", 487),
+        ]:
+            log_path = qa001_dir / sub / "editor_raw.log"
+            self.assertTrue(log_path.exists(), f"Missing {log_path}")
+            res = validator.validate_log_file(log_path)
+            self.assertEqual(len(res["syntax_failures"]), 0, f"[{sub}] Expected 0 syntax failures, got {res['syntax_failures']}")
+            self.assertEqual(len(res["semantic_violations"]), 0, f"[{sub}] Expected 0 semantic violations, got {res['semantic_violations']}")
+            self.assertEqual(res["framework_proof_lines"], expected_lines)
 
     def test_b_qa006_evidence_logs(self):
         """B_QA006 evidence logs parse with 0 syntax failures and 0 semantic violations."""

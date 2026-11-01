@@ -6,14 +6,35 @@
 #include "EngineUtils.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "UnrealClient.h"
+#include "Misc/Paths.h"
 
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<int32> CVarCameraProbe(TEXT("rpg.CameraProbe"),0,TEXT("Measurement (BOSS-QA-006): 1 = log the framework boss place on the player screen four times a second (camera_frame lines); 2 = also stage the player at 300, 600 and 900 cm; 3 = as 2 with the camera turned away at 900 (negative control). 0 = off."),ECVF_Default);
 #endif
 
+#if !UE_BUILD_SHIPPING
+static TAutoConsoleVariable<float> CVarScreenshotAt(TEXT("rpg.ScreenshotAt"),-1.f,TEXT("Measurement (BOSS-QA-001): at this many game seconds the engine's own screenshot request writes the GAME VIEWPORT (with the on-screen messages, such as the boss overlay) to rpg.ScreenshotPath. Negative = off."),ECVF_Default);
+static TAutoConsoleVariable<int32> CVarScreenshotShowUI(TEXT("rpg.ScreenshotShowUI"),1,TEXT("Measurement (BOSS-QA-001): 1 = the screenshot request includes the Slate UI (in the editor: the whole window), 0 = the game viewport only."),ECVF_Default);
+static TAutoConsoleVariable<int32> CVarScreenshotQuit(TEXT("rpg.ScreenshotQuit"),0,TEXT("Measurement (BOSS-QA-001): 1 = quit the game 20 frames after the screenshot was requested (for a standalone run)."),ECVF_Default);
+static TAutoConsoleVariable<FString> CVarScreenshotPath(TEXT("rpg.ScreenshotPath"),TEXT(""),TEXT("Measurement (BOSS-QA-001): absolute path of the PNG written by rpg.ScreenshotAt."),ECVF_Default);
+#endif
+
 void URPGCameraProbe::Tick(float DeltaTime)
 {
 #if !UE_BUILD_SHIPPING
+    {
+        // BOSS-QA-001: one screenshot of the game view, requested from inside the game (the editor's HighResShot captured the editor viewport, not this).
+        const float At=CVarScreenshotAt.GetValueOnGameThread(); UWorld* ShotWorld=GetWorld();
+        if (bShotTaken&&CVarScreenshotQuit.GetValueOnGameThread()>0&&++FramesSinceShot==20&&ShotWorld) {UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] screenshot_quit"));if(GEngine)GEngine->Exec(ShotWorld,TEXT("quit"));}
+        if (At>=0.f&&!bShotTaken&&ShotWorld&&ShotWorld->GetTimeSeconds()>=double(At)&&!CVarScreenshotPath.GetValueOnGameThread().IsEmpty())
+        {
+            bShotTaken=true; const FString Path=CVarScreenshotPath.GetValueOnGameThread();
+            FScreenshotRequest::RequestScreenshot(Path,CVarScreenshotShowUI.GetValueOnGameThread()!=0,false);
+            int32 VX=0,VY=0; if (APlayerController* P0=UGameplayStatics::GetPlayerController(ShotWorld,0)) P0->GetViewportSize(VX,VY);
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] screenshot_requested t=%.2f viewX=%d viewY=%d showUI=%d path=%s"),ShotWorld->GetTimeSeconds(),VX,VY,CVarScreenshotShowUI.GetValueOnGameThread(),*Path);
+        }
+    }
     if (CVarCameraProbe.GetValueOnGameThread()<=0) return;
     SinceLastSample+=DeltaTime; if (SinceLastSample<.25) return; SinceLastSample=0.;
     UWorld* World=GetWorld(); APlayerController* PC=World?UGameplayStatics::GetPlayerController(World,0):nullptr; if (!PC||!PC->PlayerCameraManager||!PC->GetPawn()) return;

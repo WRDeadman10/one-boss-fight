@@ -3447,7 +3447,7 @@
         }
       ],
       "observable": "On-screen debug overlay displays active MoveCard, Phase, Range, Cone, HitWindow state, and Posture.",
-      "notes": "Runtime debug overlay implemented in RPGBossOverlayRules.h (rpg.BossOverlay CVar 1 on-screen, 2 logged). Live PIE proof on L_SevarogFrameworkProofF8 (B_QA001 pie2) verifies 16 telemetry lines, capturing idle, committed, active Window=Open, stance break stagger, and Phase 2. Unit test BossOverlayFormat (runtime_tests:442, 444, 446) verifies exact formatting. Status remains PARTIAL per C-534/C-535 and C-590: unattended PIE PrintWindow GPU readback returned black pixels; an engine-side HighResShot attempt (Claude/B_QA001B/shot/HighresScreenshot00021.png) rendered the editor viewport rather than the PIE game viewport (no boss or overlay text). Graduation remains blocked on capturing the game viewport of the PIE window."
+      "notes": "Runtime debug overlay implemented in RPGBossOverlayRules.h (rpg.BossOverlay CVar 1 on-screen, 2 logged). Live PIE proof on L_SevarogFrameworkProofF8 (B_QA001 pie2) verifies 16 telemetry lines, capturing idle, committed, active Window=Open, stance break stagger, and Phase 2. Unit test BossOverlayFormat (runtime_tests:376, 378, 380) verifies exact formatting. Status remains PARTIAL (C-656, BUILD-144): overlay logic, unit tests and the live overlay lines verified; a real game-view PNG needs a CONNECTED desktop session: this machine's agent session is disconnected (query session: Disc), three capture routes return black (B_QA001 attempt1..3); the capture tool and the owner's one-command recipe are ready (B_QA001/OWNER_RUN_THIS.md)."
     },
     {
       "id": "BOSS-QA-002",

@@ -9,7 +9,7 @@
 > 3. BOSS-COM-004 (Explicit hit-confirm policy): Hit/Whiff branch edges verified in live PIE; Guarded and Parried branch edges require player shield/parry telemetry.
 > 4. BOSS-HIT-008 (Central defense order): Hierarchy verified in unit tests; live player shield blocking/parrying stance integration not active in PIE.
 > 5. BOSS-MOV-001 (Range-band policy): Single band observed; full 15-family range-band partitioning awaits F5 authoring and reach calibration.
-> 6. BOSS-QA-001 (Runtime overlay): Overlay logic and unit tests verified; unattended PIE GPU backbuffer readback returned black pixels (blocked on game-view screenshot; assigned to Codex in C-650).
+> 6. BOSS-QA-001 (Runtime overlay): Overlay logic, unit tests and live lines verified; real game-view PNG needs a CONNECTED desktop session (agent session is disconnected, 3 routes return black in B_QA001 attempt1..3); capture tool and recipe ready in B_QA001/OWNER_RUN_THIS.md (OWNER ACTION 1: run the command once in a connected session and send PNG path or tell us).
 > 7. BOSS-QA-005 (Performance bounds): Editor benchmark passes; packaged build benchmark at 1080p 60 FPS p99 <= 16.67ms on RTX 2060 Super hardware is parked by owner.
 
 ## 1. Executive Summary

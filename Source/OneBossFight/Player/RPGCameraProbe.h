@@ -20,6 +20,8 @@ public:
     virtual bool DoesSupportWorldType(const EWorldType::Type WorldType) const override { return WorldType == EWorldType::Game || WorldType == EWorldType::PIE; }
 private:
     double SinceLastSample = 0.;
+    bool bShotTaken = false;   // rpg.ScreenshotAt (BOSS-QA-001)
+    int32 FramesSinceShot = 0;
     // Stage mode (rpg.CameraProbe 2): once the boss stands still the player is placed at 300, 600 and 900 cm from it, 2 s each, so every distance band is measured.
     double LastDistance = -1.; int32 StillSamples = 0, StageIndex = -1; double StageSince = 0.;
 };
