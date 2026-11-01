@@ -6,6 +6,7 @@
 class USkeletalMesh;
 class UAnimInstance;
 class UAnimSequence;
+class UAnimMontage;
 class APawn;
 /** Combo graph data (BOSS-COM rows): the hit outcome an edge may require. Guarded and Parried are part of the data contract; the boss reports Hit or Whiff today (no guard telemetry yet). */
 UENUM()
@@ -48,6 +49,8 @@ struct FRPGBossProfileCard
     UPROPERTY(EditAnywhere) float BackDodgeWeightMultiplier=1.f;
     /** BOSS-AWR-006: score factor of this card (the fast anti-greed card) while the target is drinking a flask or committed to a heavy attack at the decision; (0,100], 1 = no preference. Design value, proposed. */
     UPROPERTY(EditAnywhere) float GreedWeightMultiplier=1.f;
+    /** BOSS-PAC-003: this card is a heavy finisher: its recovery must also leave time for the player's HEAVY punish (margin 0), not only the light one. */
+    UPROPERTY(EditAnywhere) bool bHeavyFinisher=false;
 };
 UCLASS(BlueprintType)
 class ONEBOSSFIGHT_API URPGBossFrameworkProfile : public UPrimaryDataAsset
@@ -122,6 +125,11 @@ public:
     UPROPERTY(EditAnywhere) float DodgeSpeedCm=600.f;
     /** BOSS-AWR-007 (F5 lane, 0 = off): while the boss is in neutral and a visibility trace to the target is blocked (a pillar), it does not decide or strike: it searches, walking to where the target was last seen, for up to LosSearchSeconds ((0,30]), and goes back to the band when it sees the target again. Design value, proposed. */
     UPROPERTY(EditAnywhere) float LosSearchSeconds=0.f;
+    /** BOSS-PAC-003 / PAC-005 (F5 lane, 0 = off, (0,5]): the punish margin. At resolve time every card must leave the player this many seconds more than its LIGHT punish needs (startup of PlayerLightMontage + the walk from the card's max range into PlayerReachCm at the player's run speed); a heavy finisher must also leave time for the HEAVY punish (PlayerHeavyMontage, margin 0). A card that does not is refused (Framework.Profile.PunishMargin). The startups are MEASURED from the pack montages. Design values, proposed: 0.3 s, reach 150 cm. */
+    UPROPERTY(EditAnywhere) float PunishMarginSeconds=0.f;
+    UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimMontage> PlayerLightMontage;
+    UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimMontage> PlayerHeavyMontage;
+    UPROPERTY(EditAnywhere) float PlayerReachCm=0.f;
     /** BOSS-SEL-009 (F5 lane, both 0 = off): the boss PERCEIVES the target's flask drink (the edge of the DrinkingPotion montage on the target) and may REACT to it only after a delay drawn per drink, seeded (ReactionSeed + count), inside [ReactionDelayMinSeconds, ReactionDelayMaxSeconds] (0 < min <= max <= 5). Design values, proposed. */
     UPROPERTY(EditAnywhere) float ReactionDelayMinSeconds=0.f;
     UPROPERTY(EditAnywhere) float ReactionDelayMaxSeconds=0.f;
@@ -156,7 +164,7 @@ struct ONEBOSSFIGHT_API FRPGFrameworkDependencies
     TStrongObjectPtr<UClass> AnimClass, TargetClass;
     TStrongObjectPtr<UAnimSequence> StaggerStart, StaggerLoop, StaggerEnd, PhaseTransition;   // F11, each null when its profile field is empty
     TSharedPtr<const FRPGCompiledBossMoveCard> Card;
-    struct FCandidate { TSharedPtr<const FRPGCompiledBossMoveCard> Card; float CooldownSeconds=0.f,Weight=1.f; bool bHyperArmor=false; float KiteMultiplier=1.f,HugMultiplier=1.f,BackDodgeMultiplier=1.f,GreedMultiplier=1.f; };
+    struct FCandidate { TSharedPtr<const FRPGCompiledBossMoveCard> Card; float CooldownSeconds=0.f,Weight=1.f; bool bHyperArmor=false; float KiteMultiplier=1.f,HugMultiplier=1.f,BackDodgeMultiplier=1.f,GreedMultiplier=1.f; bool bHeavyFinisher=false; };
     TArray<FCandidate> Candidates;   // F5 only
     const TSharedPtr<const FRPGCompiledBossMoveCard>& FirstCard() const { return Candidates.Num()>0 ? Candidates[0].Card : Card; }
 };

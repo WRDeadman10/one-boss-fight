@@ -1,5 +1,9 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Player/RPGBossFrameworkProfile.h"
+#include "Player/RPGBossPunish.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Animation/AnimMontage.h"
 #include "Player/RPGBossTrackRules.h"
 #include "Player/RPGBossStaggerAnimRules.h"
 #include "Animation/AnimInstance.h"
@@ -100,6 +104,13 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
         if (!bF5||RPGBossTrack::ReactionDelaySeconds(P.ReactionDelayMinSeconds,P.ReactionDelayMaxSeconds,P.ReactionSeed,0)<0.) return Fail(TEXT("Framework.Profile.Domain"));
     if (!FMath::IsFinite(P.LosSearchSeconds)||P.LosSearchSeconds<0.f||P.LosSearchSeconds>30.f||(P.LosSearchSeconds>0.f&&!bF5)) return Fail(TEXT("Framework.Profile.Domain"));   // finite first: a NaN compares unreliably under fast-math
     if (P.DodgeHistoryDepth<0||P.DodgeHistoryDepth>8||(P.DodgeHistoryDepth>0&&(!bF5||P.DodgeBackThreshold<1||P.DodgeBackThreshold>P.DodgeHistoryDepth||!FMath::IsFinite(P.DodgeSpeedCm)||!(P.DodgeSpeedCm>0.f)||P.DodgeSpeedCm>1.e5f))) return Fail(TEXT("Framework.Profile.Domain"));
+    // BOSS-PAC-003 / PAC-005: the punish margin is an F5 lane check with its player data.
+    {
+        bool bFinisher=false; for (const FRPGBossProfileCard& C:P.Cards) bFinisher=bFinisher||C.bHeavyFinisher;
+        const bool bOn=P.PunishMarginSeconds!=0.f;
+        if (!FMath::IsFinite(P.PunishMarginSeconds)||!FMath::IsFinite(P.PlayerReachCm)||P.PunishMarginSeconds<0.f||P.PunishMarginSeconds>5.f||P.PlayerReachCm<0.f||P.PlayerReachCm>2000.f||
+            (bOn&&(!bF5||P.PlayerLightMontage.IsNull()||P.PlayerHeavyMontage.IsNull()))||(!bOn&&bFinisher)) return Fail(TEXT("Framework.Profile.Domain"));
+    }
     // F9: bleed needs the selector lane (F5) and a hittable boss; BleedBuildupPerHit 0 = off (the other four then 0 too), else a coherent set (token Framework.Profile.Bleed).
     {
         const float Values[]={P.BleedBuildupPerHit,P.BleedInitialThreshold,P.BleedThresholdIncrease,P.BleedThresholdMax,P.BleedHpFraction};
@@ -167,7 +178,7 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
         float WorstHit=0.f;
         for (const FRPGBossProfileCard& C:P->Cards)
         {
-            FRPGFrameworkDependencies::FCandidate Candidate; Candidate.CooldownSeconds=C.CooldownSeconds; Candidate.Weight=C.Weight; Candidate.bHyperArmor=C.bHyperArmor; Candidate.KiteMultiplier=C.KiteWeightMultiplier; Candidate.HugMultiplier=C.HugWeightMultiplier; Candidate.BackDodgeMultiplier=C.BackDodgeWeightMultiplier; Candidate.GreedMultiplier=C.GreedWeightMultiplier;
+            FRPGFrameworkDependencies::FCandidate Candidate; Candidate.CooldownSeconds=C.CooldownSeconds; Candidate.Weight=C.Weight; Candidate.bHyperArmor=C.bHyperArmor; Candidate.KiteMultiplier=C.KiteWeightMultiplier; Candidate.HugMultiplier=C.HugWeightMultiplier; Candidate.BackDodgeMultiplier=C.BackDodgeWeightMultiplier; Candidate.GreedMultiplier=C.GreedWeightMultiplier; Candidate.bHeavyFinisher=C.bHeavyFinisher;
             if (!ResolveCard(C.Card.LoadSynchronous(),Candidate.Card)) return false;
             WorstHit=FMath::Max(WorstHit,Candidate.Card->Spec().HPDamage); D->Candidates.Add(Candidate);
         }
@@ -190,6 +201,25 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
             }
         // The proof target must survive every attack of the run at the worst card damage.
         if (WorstHit*P->AttackCount>=P->TargetHealth) {Error=TEXT("Framework.Profile.DamageBudget");return false;}
+        // BOSS-PAC-003 / PAC-005: every card leaves the player time to punish. The player's startups are measured from the pack's montages, its run speed is the target class default.
+        if (P->PunishMarginSeconds>0.f)
+        {
+            RPGBossPunish::FPlayerMoves Moves; Moves.ReachCm=double(P->PlayerReachCm);
+            Moves.LightStartupSeconds=RPGBossPunish::MeasureStartupSeconds(P->PlayerLightMontage.LoadSynchronous());
+            Moves.HeavyStartupSeconds=RPGBossPunish::MeasureStartupSeconds(P->PlayerHeavyMontage.LoadSynchronous());
+            const ACharacter* PlayerDefault=Cast<ACharacter>(Target->GetDefaultObject()); const UCharacterMovementComponent* PlayerMove=PlayerDefault?PlayerDefault->GetCharacterMovement():nullptr;
+            Moves.RunSpeedCmPerSecond=PlayerMove?double(PlayerMove->MaxWalkSpeed):0.;
+            if (!Moves.IsValid()) {Error=TEXT("Framework.Profile.PunishData");return false;}
+            for (const auto& C:D->Candidates)
+            {
+                const FRPGBossMoveCardSpec& S=C.Card->Spec();
+                const double Recovery=RPGBossPunish::RecoverySeconds(S.ActiveEndSeconds,S.RecoveryEndSeconds,S.PlayRate), Travel=RPGBossPunish::TravelSeconds(S.MaxRangeCm,Moves.ReachCm,Moves.RunSpeedCmPerSecond);
+                const double LightMargin=RPGBossPunish::MarginSeconds(Recovery,Moves.LightStartupSeconds,Travel), HeavyMargin=RPGBossPunish::MarginSeconds(Recovery,Moves.HeavyStartupSeconds,Travel);
+                const bool bLightOk=RPGBossPunish::PunishOk(LightMargin,double(P->PunishMarginSeconds)), bHeavyOk=!C.bHeavyFinisher||RPGBossPunish::PunishOk(HeavyMargin,0.);
+                UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] punish_check card=%s recoverySeconds=%g lightStartupSeconds=%g heavyStartupSeconds=%g travelSeconds=%g lightMarginSeconds=%g heavyMarginSeconds=%g requiredSeconds=%g heavyFinisher=%d ok=%d"),*S.MoveId.ToString(),Recovery,Moves.LightStartupSeconds,Moves.HeavyStartupSeconds,Travel,LightMargin,HeavyMargin,double(P->PunishMarginSeconds),C.bHeavyFinisher?1:0,(bLightOk&&bHeavyOk)?1:0);
+                if (!bLightOk||!bHeavyOk) {Error=TEXT("Framework.Profile.PunishMargin");return false;}
+            }
+        }
     }
     else if (!ResolveCard(P->Card.LoadSynchronous(),D->Card)) return false;
     // F11: load the optional clips here (the explicit load boundary), check skeleton and lengths with the pure rules.

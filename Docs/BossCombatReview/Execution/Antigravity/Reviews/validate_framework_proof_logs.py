@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright One Boss Fight. All Rights Reserved.
 """
-validate_framework_proof_logs.py (v3.20)
+validate_framework_proof_logs.py (v3.21)
 
 Formal schema and semantic validator for all [FrameworkProof] structured telemetry lines
 emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, B_QA002, B_HIT005, B_AWR001, B_AWR002, B_EXE007, B_QA003B, B_EXE004, B_MOV005, B_EXE005, and B_MOV003).
@@ -90,6 +90,9 @@ SCHEMAS = {
     "player_activity": r"^from=[^\s]+ to=[^\s]+ attackKind=[^\s]+$",
     "player_swing": r"^from=[^\s]+ to=[^\s]+ heavy=[01]$",
     "greed_pattern": r"^state=[^\s]+ source=[^\s]+ seq=\d+$",
+
+    # 2f. Punish Openings & Margin Rules (BOSS-PAC-003 / BOSS-PAC-005 / v3.21)
+    "punish_check": r"^card=[^\s]+ recoverySeconds=[^\s]+ lightStartupSeconds=[^\s]+ heavyStartupSeconds=[^\s]+ travelSeconds=[^\s]+ lightMarginSeconds=[^\s]+ heavyMarginSeconds=[^\s]+ requiredSeconds=[^\s]+ heavyFinisher=[01] ok=[01]$",
 
     # 3. Candidate Selection & Gate Decisions (v3.0 adds optional seq=\d+)
     "candidate": r"^attack=\d+ card=[^\s]+ score=[^\s]+(?:\s+seq=\d+)?$",

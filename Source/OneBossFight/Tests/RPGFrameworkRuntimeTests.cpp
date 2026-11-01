@@ -698,4 +698,24 @@ bool FFrameworkPlayerActivity::RunTest(const FString&)
     TestTrue(TEXT("flask wins over heavy"),ClassifyPlayerActivity(true,true)==EPlayerActivity::Flask);
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkPunishProfile,"OneBossFight.Framework.Runtime.PunishProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkPunishProfile::RunTest(const FString&)
+{
+    // BOSS-PAC-003 / PAC-005: the profile domain of the punish margin: off by default, (0,5] with both player montages and a reach in the F5 lane; a heavy finisher needs the margin on.
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    auto F5=[&](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);P->PunishMarginSeconds=0.f;P->PlayerReachCm=0.f;P->PlayerLightMontage.Reset();P->PlayerHeavyMontage.Reset();};
+    auto On=[&](){P->PunishMarginSeconds=.3f;P->PlayerReachCm=150.f;P->PlayerLightMontage=TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/Attack_PrimaryA_Montage.Attack_PrimaryA_Montage")));P->PlayerHeavyMontage=TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/ChargedAttack_Montage.ChargedAttack_Montage")));};
+    F5();TestTrue(TEXT("off by default"),RPGFramework::ValidateProfile(*P,Error));
+    F5();On();TestTrue(TEXT("on with both montages and a reach is valid"),RPGFramework::ValidateProfile(*P,Error));
+    for(float V:{-.1f,5.01f,std::numeric_limits<float>::quiet_NaN()}){F5();On();P->PunishMarginSeconds=V;TestFalse(TEXT("margin outside [0,5] refused"),RPGFramework::ValidateProfile(*P,Error));}
+    for(float V:{-1.f,2000.5f,std::numeric_limits<float>::quiet_NaN()}){F5();On();P->PlayerReachCm=V;TestFalse(TEXT("reach outside [0,2000] refused"),RPGFramework::ValidateProfile(*P,Error));}
+    F5();On();P->PlayerLightMontage.Reset();TestFalse(TEXT("on without the light montage refused"),RPGFramework::ValidateProfile(*P,Error));
+    F5();On();P->PlayerHeavyMontage.Reset();TestFalse(TEXT("on without the heavy montage refused"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->Cards[0].bHeavyFinisher=true;TestFalse(TEXT("a heavy finisher with the margin off refused"),RPGFramework::ValidateProfile(*P,Error));
+    F5();On();P->Cards[0].bHeavyFinisher=true;TestTrue(TEXT("a heavy finisher with the margin on is valid"),RPGFramework::ValidateProfile(*P,Error));
+    {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);F3->PunishMarginSeconds=.3f;TestFalse(TEXT("outside the F5 lane refused"),RPGFramework::ValidateProfile(*F3,Error));}
+    return true;
+}
 #endif
