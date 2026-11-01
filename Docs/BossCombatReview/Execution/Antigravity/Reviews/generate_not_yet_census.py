@@ -90,7 +90,7 @@ CENSUS_METADATA = {
         "cost": "L",
         "cite": {
             "file": "Source/OneBossFight/Boss/RPGFrameworkMoveExecutor.cpp",
-            "line": 221,
+            "line": 230,
             "quote": "const FCollisionShape Shape=FCollisionShape::MakeCapsule(W.",
         },
         "explanation": "sweep only constructs linear swept capsules along weapon key poses; outward expanding ring/annulus component not implemented",
@@ -106,7 +106,7 @@ CENSUS_METADATA = {
         "cost": "M",
         "cite": {
             "file": "Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp",
-            "line": 195,
+            "line": 206,
             "quote": "// Opt-in repositioning: nobody is eligible from here (the ",
         },
         "explanation": "repositioning only walks straight toward target band without arena boundary or wall clearance scoring",
@@ -132,7 +132,7 @@ CENSUS_METADATA = {
         "cost": "S",
         "cite": {
             "file": "Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp",
-            "line": 94,
+            "line": 96,
             "quote": "if(P&&P->ArenaRadiusCm>0.f&&FVector::Dist2D(Target->GetActor",
         },
         "explanation": "target leaving ArenaRadiusCm triggers TargetFault OffArena which halts and fails the boss; active leashing back to arena center and neutral reset not implemented",

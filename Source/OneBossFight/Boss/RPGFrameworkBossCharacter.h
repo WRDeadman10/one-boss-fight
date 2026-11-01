@@ -61,6 +61,7 @@ private:
     /** BOSS-QA-002: one id per selector decision, never reset inside a process (attack= is an attack-budget slot and repeats after an aborted attack). Logged as seq= on candidate, refusal and decision lines. */
     int32 DecisionSeq=0;
     FVector ArenaOrigin=FVector::ZeroVector;   // BOSS-AWR-001: where the target stood when the encounter began
+    double ProofHitStart=-1.; int32 ProofHitsDone=0; TArray<double> ProofHitOffsets;   // test hook rpg.BossProofPlayerHits: scripted player hits on the GAME clock
     bool bTargetFaultInjected=false;           // test hook rpg.BossProofTargetFault: once per encounter
     /** BOSS-HIT-005 test hook (rpg.BossProofBystander): spawned once per encounter. */
     bool bBystanderSpawned=false;

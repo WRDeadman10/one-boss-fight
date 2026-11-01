@@ -1,10 +1,10 @@
 {
-  "version": "3.12",
+  "version": "3.13",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 42,
-    "PARTIAL": 16,
+    "WITNESSED": 43,
+    "PARTIAL": 15,
     "NOT YET": 24
   },
   "requirements": [
@@ -1326,7 +1326,7 @@
       "status": "NOT YET",
       "proof": [],
       "citations": [],
-      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45°).",
+      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45\u00b0).",
       "notes": "Motion warping clamping bounds not yet implemented in active runtime (designated for Movement Block)."
     },
     {
@@ -2270,25 +2270,25 @@
       "title": "Reproducible scenarios",
       "section": "Debugging, QA, presentation and optional networking",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
-        "Docs/BossCombatReview/Execution/Claude/B_QA003/tie_run1/editor_raw.log:2400",
-        "Docs/BossCombatReview/Execution/Claude/B_QA003/tie_run2/editor_raw.log:2399"
+        "Docs/BossCombatReview/Execution/Claude/B_QA003B/f8_run1/editor_raw.log:1631",
+        "Docs/BossCombatReview/Execution/Claude/B_QA003B/f8_run2/editor_raw.log:1630"
       ],
       "citations": [
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/B_QA003/tie_run1/editor_raw.log",
-          "line": 2400,
-          "quoted": "[2026.10.31-22.52.23:481][230]LogTemp: Display: [FrameworkProof] decision attack=8 chosen=Move_Sevarog_SwingSlow_F7 score=0.784666 range=128.467 phase=Phase_1 seq=8"
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA003B/f8_run1/editor_raw.log",
+          "line": 1631,
+          "quoted": "[2026.11.01-03.10.13:644][599]LogTemp: Display: [FrameworkProof] player_hit_injected n=1 offset=0.5 ok=1"
         },
         {
-          "file": "Docs/BossCombatReview/Execution/Claude/B_QA003/tie_run2/editor_raw.log",
-          "line": 2399,
-          "quoted": "[2026.10.31-22.53.12:444][195]LogTemp: Display: [FrameworkProof] decision attack=8 chosen=Move_Sevarog_SwingSlow_F7 score=0.784666 range=128.467 phase=Phase_1 seq=8"
+          "file": "Docs/BossCombatReview/Execution/Claude/B_QA003B/f8_run2/editor_raw.log",
+          "line": 1630,
+          "quoted": "[2026.11.01-03.10.59:214][508]LogTemp: Display: [FrameworkProof] player_hit_injected n=1 offset=0.5 ok=1"
         }
       ],
       "observable": "Scripted replay driver executes fixed player inputs and asserts deterministic boss state progression under fixed seed.",
-      "notes": "Live 2-run event determinism proven on F5 (185/185 lines identical) and on seeded tie map QA003 (8 decisions identical across tie_run1/run2; attack 8 selects lower-scoring SwingSlow over HeavySlam via live seeded stream FRandomStream(TieSeed+StartedCount)); remains PARTIAL because player inputs are idle (-Inject operates on driver wall-clock rather than deterministic frame count)."
+      "notes": "Live 2-run comparative parity proven on F8 map with fixed player inputs on game clock (rpg.BossProofPlayerHits \"0.5,0.9\"; f8_run1 vs f8_run2 100% parity across decisions, stance break, stagger, phase transition, and damage via compare_runs.py) and live seeded stream tie selection proven on QA003 (8 decisions identical across tie_run1/run2; attack 8 selects lower-scoring SwingSlow over HeavySlam via FRandomStream(TieSeed+StartedCount))."
     },
     {
       "id": "BOSS-QA-004",

@@ -50,7 +50,7 @@ def test_requirements_integrity():
     sec1_content = md_content.split("## 2. Complete 82-Point Witness Status Matrix")[0]
     delta_part = sec1_content.split("### Status Transition Delta Table")[1].split("### Re-Audited")[0]
     delta_ids = re.findall(r"^\|\s*\*\*(BOSS-[A-Z]+-\d+)\*\*", delta_part, re.MULTILINE)
-    assert len(delta_ids) == 28, f"Expected 26 delta table rows in section 1, got {len(delta_ids)}"
+    assert len(delta_ids) == 29, f"Expected 29 delta table rows in section 1, got {len(delta_ids)}"
     print(f"  [PASS] 82/82 canonical IDs match in matrix, and {len(delta_ids)} transition delta rows verified.")
 
 def test_census_parity():
@@ -68,8 +68,8 @@ def test_census_parity():
     
     assert json_census == calc_census, f"JSON census header mismatch: {json_census} vs {calc_census}"
     assert sum(calc_census.values()) == 82, f"Census sum != 82: {calc_census}"
-    assert calc_census["WITNESSED"] == 42, f"Expected 40 WITNESSED, got {calc_census['WITNESSED']}"
-    assert calc_census["PARTIAL"] == 16, f"Expected 18 PARTIAL, got {calc_census['PARTIAL']}"
+    assert calc_census["WITNESSED"] == 43, f"Expected 40 WITNESSED, got {calc_census['WITNESSED']}"
+    assert calc_census["PARTIAL"] == 15, f"Expected 18 PARTIAL, got {calc_census['PARTIAL']}"
     assert calc_census["NOT YET"] == 24, f"Expected 24 NOT YET, got {calc_census['NOT YET']}"
 
     # Extract census from markdown

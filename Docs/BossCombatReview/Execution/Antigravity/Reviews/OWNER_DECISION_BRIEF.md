@@ -1,4 +1,4 @@
-# Track B: Owner Strategic Decision Brief (v2.5)
+# Track B: Owner Strategic Decision Brief (v2.6)
 
 **Date:** 2026-11-01  
 **Author:** Tech Lead Claude & Antigravity  
@@ -12,8 +12,8 @@
 The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.12) and census script (`Reviews/generate_not_yet_census.py`).
 
 ### Ledger Census Today (82 Canonical Requirements):
-- **WITNESSED:** **42** (51.2%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
-- **PARTIAL:** **16** (19.5%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
+- **WITNESSED:** **43** (52.4%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
+- **PARTIAL:** **15** (18.3%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
 - **NOT YET:** **24** (29.3%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
 
 ### Milestones Graduated to WITNESSED (Since C-546):
@@ -36,17 +36,16 @@ The test boss combat framework has reached strong mathematical and behavioral ma
 
 ## 2. Taxonomy of Remaining Work
 
-### A. The 16 PARTIAL Rows (Grouped by Real Blocker)
-From the original plan (`Reviews/PARTIAL_UPGRADE_PLAN.md`), with its current status taken from the ledger (v3.12):
+### A. The 15 PARTIAL Rows (Grouped by Real Blocker)
+From the original plan (`Reviews/PARTIAL_UPGRADE_PLAN.md`), with its current status taken from the ledger (v3.13):
 1. **Engine / PIE Scenario Hooks (3 rows):**
    - `BOSS-QA-001` (Runtime overlay): Formatted strings logged live; blocked because unattended PIE GPU backbuffer readback returned black pixels; requires on-screen display capture.
    - `BOSS-SEL-008` (No-candidate fallback): Walk-to-band verified live; requires continuous strafe loop when 0 cards qualify or production opt-in policy.
    - `BOSS-COM-004` (Hit-confirm policy): Whiff/recovery verified live; requires guarded and parried target states in PIE.
-2. **Player-Side / Combat Input Integration (5 rows):**
+2. **Player-Side / Combat Input Integration (4 rows):**
    - `BOSS-HIT-008` (Central defense order): Requires player shield block/parry stance integration in damage resolver.
    - `BOSS-HIT-009` (Iframe completeness): Requires player dodge iframe timing alignment with weapon sweep window.
    - `BOSS-PHS-004` (Fair heal punish): Requires player flask drinking perception reaction loop in boss character.
-   - `BOSS-QA-003` (Reproducible scenarios): Requires frame-accurate player input injection driver.
    - `BOSS-ANM-005` (Exclusive motion authority): Requires formal player-boss collision and AI navigation lock.
 3. **Animation & Notify Track Authoring (3 rows):**
    - `BOSS-ANM-002` (Telegraph phases): Requires authored windup, active, and recovery notify tracks.

@@ -14,12 +14,14 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Pack/RPGBlueprintCall.h"
+#include "Player/RPGHitIntake.h"
 #include "Player/RPGBossMath.h"
 #include "Player/RPGBossOverlayRules.h"
 #include "Player/RPGBossTrackRules.h"
 #include "Player/RPGBossRules.h"
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<float> CVarBossProofBystander(TEXT("rpg.BossProofBystander"),0.f,TEXT("Test hook (BOSS-HIT-005): above 0 spawns one plain Character (a second pawn that is not the target) that many cm to the side of the target when the boss starts its first attack of an encounter. 0 = off. Not compiled into shipping builds."),ECVF_Default);
+static TAutoConsoleVariable<FString> CVarBossProofPlayerHits(TEXT("rpg.BossProofPlayerHits"),TEXT(""),TEXT("Test hook (BOSS-QA-003): comma separated seconds after the boss's first attack of an encounter at which the target's hit intake lands one test hit on the boss (game clock, so a fixed time step replays it exactly). Empty = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossProofTargetFault(TEXT("rpg.BossProofTargetFault"),0,TEXT("Test hook (BOSS-AWR-001): 1 sets the target's health to 0, 2 destroys the target pawn, when the boss starts its first attack of an encounter. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossComboDuplicateGate(TEXT("rpg.BossComboDuplicateGate"),0,TEXT("Test hook (BOSS-COM-005): 1 evaluates every combo branch gate a second time with the SAME gate id right after the first, and logs that the duplicate was ignored without changing the combo state."),ECVF_Default);
 #endif
@@ -115,6 +117,15 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
         Fail(TEXT("Framework.Boss.TargetLifeOrHealthChanged"));return;
     }
     const auto& P=*Dependencies->Profile.Get();
+#if !UE_BUILD_SHIPPING
+    if(ProofHitStart>=0.&&ProofHitsDone<ProofHitOffsets.Num()&&GetWorld()->GetTimeSeconds()-ProofHitStart>=ProofHitOffsets[ProofHitsDone])
+    {
+        URPGHitIntake* Intake=Target.IsValid()?Target->FindComponentByClass<URPGHitIntake>():nullptr;
+        if(Intake)Intake->InjectBossHitForTest(this);
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] player_hit_injected n=%d offset=%g ok=%d"),ProofHitsDone+1,ProofHitOffsets[ProofHitsDone],Intake?1:0);
+        ++ProofHitsDone;
+    }
+#endif
     // BOSS-EXE-007: the executor's watchdog aborted the running card (end notification dropped / montage stuck): recover and decide again, never stall.
     if(Executor->WatchdogFired())
     {
@@ -204,6 +215,12 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
             if(!Executor->StartCard(Dependencies->Candidates[Decision.ChosenIndex].Card,S,Error)){Fail(Error);return;}
             Selector.NoteStarted(Decision.ChosenIndex,S.ClockSeconds);RepositionsInARow=0;
 #if !UE_BUILD_SHIPPING
+            if(ProofHitStart<0.&&!CVarBossProofPlayerHits.GetValueOnGameThread().IsEmpty())
+            {
+                ProofHitStart=GetWorld()->GetTimeSeconds();ProofHitsDone=0;ProofHitOffsets.Reset();TArray<FString> Parts;CVarBossProofPlayerHits.GetValueOnGameThread().ParseIntoArray(Parts,TEXT(","));
+                for(const FString& Part:Parts)ProofHitOffsets.Add(FCString::Atod(*Part));
+                UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] player_hits_scheduled count=%d"),ProofHitOffsets.Num());
+            }
             if(CVarBossProofTargetFault.GetValueOnGameThread()>0&&!bTargetFaultInjected)
             {
                 bTargetFaultInjected=true;const int32 Kind=CVarBossProofTargetFault.GetValueOnGameThread();
@@ -457,7 +474,7 @@ bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& 
     const TCHAR* OldState=bDead?TEXT("Dead"):TEXT("Finished");
     GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;
     if (bHittable) Health=MaxHealth;
-    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; bBystanderSpawned=false; bTargetFaultInjected=false; ResetBleed();
+    Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; bBystanderSpawned=false; bTargetFaultInjected=false; ProofHitStart=-1.; ProofHitsDone=0; ResetBleed();
     Selector.Reset(); CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId; bPhaseTwoLatched=false;
     SetActorLocation(WalkStart,false,nullptr,ETeleportType::TeleportPhysics);
     FVector Face=Target->GetActorLocation()-WalkStart; Face.Z=0.f; if (!Face.IsNearlyZero()) SetActorRotation(FRotator(0.f,Face.Rotation().Yaw,0.f));

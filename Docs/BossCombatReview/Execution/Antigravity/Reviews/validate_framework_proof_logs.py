@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 # Copyright One Boss Fight. All Rights Reserved.
 """
-validate_framework_proof_logs.py (v3.4)
+validate_framework_proof_logs.py (v3.5)
 
 Formal schema and semantic validator for all [FrameworkProof] structured telemetry lines
-emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, B_QA002, B_HIT005, B_AWR001, B_AWR002, and B_EXE007).
+emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, B_QA002, B_HIT005, B_AWR001, B_AWR002, B_EXE007, and B_QA003B).
 
 Validates:
 1. Header prefix (optional Unreal Engine standard log prefix: [YYYY.MM.DD-HH.MM.SS:mmm][frame]LogCategory: Verbosity:)
 2. Exact [FrameworkProof] token tag
-3. Registered schema match for all 56 recognized telemetry tokens
+3. Registered schema match for all 58 recognized telemetry tokens
 4. Semantic checks per log:
    - seq= (when present) is unique and strictly increasing per process log across decisions
    - candidate and refusal lines of a decision carry the exact same seq as their decision
@@ -33,7 +33,7 @@ from datetime import datetime
 # Vector format pattern: X=<float> Y=<float> Z=<float>
 VEC = r"X=[^\s]+ Y=[^\s]+ Z=[^\s]+"
 
-# 56 Canonical FrameworkProof Schemas
+# 58 Canonical FrameworkProof Schemas
 SCHEMAS = {
     # 1. Encounter Lifecycle & Framework Fixture
     "dependencies": r"^mesh=[^\s]+ skeleton=[^\s]+ animClass=[^\s]+ sequence=[^\s]+ slot=[^\s]+ resolved=\d+ label=[^\s]+$",
@@ -88,6 +88,8 @@ SCHEMAS = {
     "pending_hit_queued": r"^weapon=[^\s]+ kind=[^\s]+ blades=\d+$",
     "attack_row": r"^weapon=[^\s]+ kind=[^\s]+ found=\d+ posture=[^\s]+ bleed=[^\s]+ healthMult=[^\s]+(?:\s+via=[^\s]+)?$",
     "boss_hit": r"^damage=[^\s]+ healthBefore=[^\s]+ healthAfter=[^\s]+$",
+    "player_hits_scheduled": r"^count=\d+$",
+    "player_hit_injected": r"^n=\d+ offset=[^\s]+ ok=\d+$",
 
     # 8. Posture, Stagger, and Bleed System
     "posture_drain": r"^amount=[^\s]+ postureBefore=[^\s]+ postureAfter=[^\s]+ max=[^\s]+$",
