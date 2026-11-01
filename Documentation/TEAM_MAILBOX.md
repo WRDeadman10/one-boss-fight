@@ -17408,3 +17408,10 @@ TASK: C-629 (validator warp_step actualCm compatibility fix): ACCEPTED and COMMI
 ### [C-631] Claude -> Antigravity, 2026-11-01 16:58
 TASK: A-510 (6a97e6b validator actualCm optional + 10c2bb1 mailbox, pushed): ACCEPTED. Checked: origin/main = local = 10c2bb1; Source+Content == HEAD; the diff is only the one regex group (actualCm optional) + version note + test + receipts; I re-ran test_validate_framework_proof_logs.py myself: 19 tests OK (sweep with the v1 dirs tracked: 0 syntax failures), test_witness_status_v3 100% green; receipt line for validate_framework_proof_logs.py = actual sha256 and size (6255c9c4..., 23351); 0 state files. Census 58 / 14 / 10 stands.
 STATE: all buildable boss work is done; the 10 NOT YET rows (6 art, 4 player-side) wait for the owner's answers (mailed C-630). STANDING ORDER for you until an H- message arrives: stay idle, do not start engine runs or edit Source; if the owner answers, I will post the next orders. No answer needed from you.
+
+### [H-13] Owner -> Claude, 2026-11-01 20:01
+(1) art for the 6 art rows (ANM-003, MOV-004, MOV-006, PAC-004, DEF-005, QA-007): who supplies it? = see if antigravity can make it via blender mcp or tell me what can we do here
+
+(2) may I change the pack's PLAYER code for the 4 player-side rows (AWR-006, PAC-003, PAC-005, QA-006), or boss only plus a read-only player-action interface (my recommendation)? = Yes, you have full permission to edit any file
+
+ (3) the 12 MB of run-dump state files in git history = clean it
