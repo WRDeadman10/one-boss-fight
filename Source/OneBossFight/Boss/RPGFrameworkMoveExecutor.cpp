@@ -194,8 +194,11 @@ void URPGFrameworkMoveExecutor::SweepWindows(double PrevPosition,double Position
 {
     if (!Profile->bDamageEnabled||!Resolver.IsValid()||!Target.IsValid()||!OwnerBoss.IsValid()) return;
     USkeletalMeshComponent* Mesh=OwnerBoss->GetMesh();
-    for (const FRPGBossMoveWindow& W:Card->Spec().Windows)
+    // BOSS-HIT-010: the direct windows are swept first, the secondary ones (splash) after them in the same tick: with a shared hit group the direct hit is applied and a simultaneous splash is refused as a duplicate.
+    TArray<const FRPGBossMoveWindow*> Ordered; for (const FRPGBossMoveWindow& D:Card->Spec().Windows) if (!D.bSecondary) Ordered.Add(&D); for (const FRPGBossMoveWindow& D:Card->Spec().Windows) if (D.bSecondary) Ordered.Add(&D);
+    for (const FRPGBossMoveWindow* WP:Ordered)
     {
+        const FRPGBossMoveWindow& W=*WP;
         // The sockets are read live every tick: the blade is not rigid (measured 67..123 cm base-to-tip over the clip).
         const FVector A=Mesh->GetSocketLocation(W.SocketA), B=Mesh->GetSocketLocation(W.SocketB);
         FWindowPose& Prev=PrevPoses.FindOrAdd(W.WindowId);

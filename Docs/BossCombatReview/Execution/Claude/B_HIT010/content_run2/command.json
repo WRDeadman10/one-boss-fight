@@ -1,0 +1,8 @@
+[
+    "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+    "-ExecutePythonScript=\"C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_HIT010\\set_radii.py\"",
+    "-unattended",
+    "-nosound",
+    "-nosplash",
+    "-abslog=C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_HIT010\\content_run2\\editor_raw.log"
+]

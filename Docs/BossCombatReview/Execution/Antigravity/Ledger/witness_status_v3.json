@@ -1,11 +1,11 @@
 {
-  "version": "3.21",
+  "version": "3.22",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 51,
+    "WITNESSED": 52,
     "PARTIAL": 14,
-    "NOT YET": 17
+    "NOT YET": 16
   },
   "requirements": [
     {
@@ -1695,11 +1695,40 @@
       "title": "Direct/splash precedence",
       "section": "Hit detection and damage",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT010/pie_splash_final/editor_raw.log"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 122,
+          "quoted": "{FInput F;F.S.Windows[1].bSecondary=true;F.S.Windows[1].StartSeconds=F.S.Windows[0].StartSeconds;F.S.Windows[1].HitGroup=F.S.Windows[0].HitGroup;TestTrue(TEXT(\"overlapping secondary window of the same group is valid\"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 123,
+          "quoted": "Reject([](FInput& F){F.S.Windows[1].bSecondary=true;F.S.Windows[1].HitGroup=TEXT(\"OtherGroup\");},TEXT(\"MoveCard.Window\"));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 124,
+          "quoted": "Reject([](FInput& F){for(auto& W:F.S.Windows)W.bSecondary=true;},TEXT(\"MoveCard.Window\"));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT010/pie_splash_final/editor_raw.log",
+          "line": 1625,
+          "quoted": "[FrameworkProof] hit instance=1 window=Window_HeavySlam_Terminal key=HitGroup_ScytheBlade outcome=ERPGDamageOutcome::Accepted hpApplied=55 healthBefore=800 healthAfter=745"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT010/pie_splash_final/editor_raw.log",
+          "line": 1628,
+          "quoted": "[FrameworkProof] hit instance=1 window=Window_HeavySplash_Splash key=HitGroup_ScytheBlade outcome=ERPGDamageOutcome::RejectedDuplicate hpApplied=0 healthBefore=745 healthAfter=745"
+        }
+      ],
       "observable": "Direct weapon impact takes precedence over secondary shockwave / ground splash; simultaneous hit applies direct only.",
-      "notes": "Direct vs secondary splash hit precedence arbiter not yet implemented (designated for Hazard / AoE Block)."
+      "notes": "Witnessed (C-612, BUILD-128): Direct weapon impact takes precedence over secondary ground splash via per-window bSecondary flag in FRPGBossMoveWindow (Player/RPGBossMoveCard.h). Secondary windows may overlap direct windows in time, must share a HitGroup with a direct window, and are swept AFTER direct windows of the same tick (RPGFrameworkMoveExecutor.cpp SweepWindows orders direct first). With the shared hit key, the damage resolver applies the direct hit (Accepted) and suppresses the simultaneous splash (RejectedDuplicate). Validation in RPGBossMoveCard.cpp requires at least one non-secondary window and requires secondary windows to share a HitGroup with a direct window (token MoveCard.Window). Unit tests in RPGBossMoveCardTests.cpp:122-125 (MoveCard.Rejections) verify valid overlap, other-group refusal, all-secondary refusal, and direct-direct overlap refusal. Live PIE on L_SevarogFrameworkProofHIT010 (Move_Sevarog_HeavySplash_HIT010, splash window listed FIRST with radius 75cm vs direct window 50cm; Claude/B_HIT010/pie_splash_final) proves: at frame 579, direct window hit is logged as Accepted (hpApplied=55 health 800->745 at :1625), while splash window on same frame is logged as RejectedDuplicate (hpApplied=0 at :1628); subsequent ticks continue duplicate suppression; 0 double damage across entire encounter (appliedDamage=110 acceptedHits=2 over 2 attacks). Limits: splash is same sweep shape (larger capsule), not expanding ring (HIT-011); rule carried by shared hit group; card has one HPDamage value for both windows; radii are proof values."
     },
     {
       "id": "BOSS-HIT-011",
@@ -2372,7 +2401,7 @@
         }
       ],
       "observable": "Extreme player kiting or hugging triggers anti-greed/gap-closer moves, preventing exploit loops.",
-      "notes": "Witnessed (C-610, BUILD-127): Anti-cheese pattern detector implemented in ARPGFrameworkBossCharacter at decision time: target is Kiting when range at last AntiCheeseStreak decisions >= AntiCheeseKiteRangeCm, Hugging when <= AntiCheeseHugRangeCm (profile fields, F5 lane, streak 1..8 default 2). While detected, card KiteWeightMultiplier or HugWeightMultiplier (profile card entry fields, default 1, domain (0,100]) scales selector candidate score via FRPGBossSelectorContext{bKiting, bHugging} in FRPGBossMoveSelector::Select, logging anticheese state=%s streak=%d rangeCm=%g thresholdCm=%g seq=%d. Unit tests in RPGBossMoveSelectorTests.cpp:124-140 (OneBossFight.Framework.Selector.PatternMultipliers) and RPGFrameworkRuntimeTests.cpp:408-424 (OneBossFight.Framework.Runtime.AntiCheeseProfile) verify selector multipliers, tie-breaking, domain constraints, and F5 lane validation. Live PIE on L_SevarogFrameworkProofPHS005 (DA_Sevarog_AntiCheese_PHS005, kite range 150cm, streak 2, HeavySlam KiteWeightMultiplier 2.0; Claude/B_PHS005/pie_kite) with target kiting at 158cm proves: decision 1 (range 128 < 150) selects HeavySlam (0.927); decision 2 (range 158, streak 1 unconfirmed) selects SwingSlow (0.915 vs Heavy 0.739); at decision 3, streak=2 confirms Kiting (:1837), scaling HeavySlam to 1.47852 (:1839) and choosing it (:1840); decision 4 repeats with streak=3 (:1954/:1957); RESULT acceptedHits=2 attacks=4 (:2072). Limits: boost authored per card entry (HeavySlam stands in for gap closer); only Kiting proven live in PIE (Hugging shares identical code path, unit-tested); streak counts chosen decisions; thresholds and multipliers are proposed values."
+      "notes": "Witnessed (C-610, BUILD-127): Anti-cheese pattern detector implemented in ARPGFrameworkBossCharacter at decision time: target is Kiting when range at last AntiCheeseStreak decisions >= AntiCheeseKiteRangeCm, Hugging when <= AntiCheeseHugRangeCm (profile fields, F5 lane, streak 1..8 default 2). While detected, card KiteWeightMultiplier or HugWeightMultiplier (profile card entry fields, default 1, domain (0,100]) scales selector candidate score via FRPGBossSelectorContext{bKiting, bHugging} in FRPGBossMoveSelector::Select, logging anticheese state=%s streak=%d rangeCm=%g thresholdCm=%g seq=%d. Unit tests in RPGBossMoveSelectorTests.cpp:124-140 (OneBossFight.Framework.Selector.PatternMultipliers) and RPGFrameworkRuntimeTests.cpp:408-424 (OneBossFight.Framework.Runtime.AntiCheeseProfile) verify selector multipliers, tie-breaking, domain constraints, and F5 lane validation. Live PIE on L_SevarogFrameworkProofPHS005 (DA_Sevarog_AntiCheese_PHS005, kite range 150cm, streak 2, HeavySlam KiteWeightMultiplier 2.0; Claude/B_PHS005/pie_kite) with target kiting at 158cm proves: decision 1 (range 128 < 150) selects HeavySlam (0.927); decision 2 (range 158, streak 1 unconfirmed) selects SwingSlow (0.915 vs Heavy 0.739); at decision 3, streak=2 confirms Kiting (:1837), scaling HeavySlam to 1.47852 (:1839) and choosing it (:1840); decision 4 repeats with streak=3 (:1954/:1957); RESULT acceptedHits=1 attacks=4 (:2072). Limits: boost authored per card entry (HeavySlam stands in for gap closer); only Kiting proven live in PIE (Hugging shares identical code path, unit-tested); streak counts chosen decisions; thresholds and multipliers are proposed values."
     },
     {
       "id": "BOSS-QA-001",
@@ -2586,5 +2615,6 @@
       "notes": "Accessibility contrast test harness not yet implemented (designated for QA / Telemetry Block)."
     }
   ],
-  "last_updated": "2026-11-01"
+  "last_updated": "2026-11-01",
+  "file_version": "3.22"
 }

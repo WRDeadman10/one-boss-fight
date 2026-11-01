@@ -73,10 +73,11 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
         Number(R, *FString::Printf(TEXT("%s.StartSeconds"), *Field), W.StartSeconds);
         Number(R, *FString::Printf(TEXT("%s.EndSeconds"), *Field), W.EndSeconds);
         Number(R, *FString::Printf(TEXT("%s.RadiusCm"), *Field), W.RadiusCm, true);
+        // Direct windows run one after the other; a secondary window (BOSS-HIT-010) may overlap them.
         if (!(W.StartSeconds >= S.ActiveStartSeconds && W.StartSeconds < W.EndSeconds &&
-            W.EndSeconds <= S.ActiveEndSeconds && W.StartSeconds >= PreviousEnd))
+            W.EndSeconds <= S.ActiveEndSeconds && (W.bSecondary || W.StartSeconds >= PreviousEnd)))
             Fail(R, TEXT("MoveCard.Window"), Field);
-        PreviousEnd = W.EndSeconds;
+        if (!W.bSecondary) PreviousEnd = W.EndSeconds;
         if (W.SocketA.IsNone() || W.SocketB.IsNone() || W.SocketA == W.SocketB ||
             !M.SocketOrBoneNames.Contains(W.SocketA) || !M.SocketOrBoneNames.Contains(W.SocketB))
             Fail(R, TEXT("MoveCard.Socket"), Field);
@@ -95,6 +96,13 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
             if (bBakedOk && (W.BakedSamples[0].TimeSeconds > W.StartSeconds || W.BakedSamples.Last().TimeSeconds < W.EndSeconds)) bBakedOk = false;
             if (!bBakedOk) Fail(R, TEXT("MoveCard.BakedSamples"), Field);
         }
+    }
+    // BOSS-HIT-010: a secondary window needs a direct window of the same hit group (shared dedupe), and a card cannot be all secondary.
+    {
+        TSet<FName> DirectGroups; for (const FRPGBossMoveWindow& W : S.Windows) if (!W.bSecondary) DirectGroups.Add(W.HitGroup);
+        if (DirectGroups.IsEmpty()) Fail(R, TEXT("MoveCard.Window"), TEXT("no direct window"));
+        for (int32 I = 0; I < S.Windows.Num(); ++I) if (S.Windows[I].bSecondary && !DirectGroups.Contains(S.Windows[I].HitGroup))
+            Fail(R, TEXT("MoveCard.Window"), FString::Printf(TEXT("Windows[%d] secondary without a direct window in its hit group"), I));
     }
     return R;
 }

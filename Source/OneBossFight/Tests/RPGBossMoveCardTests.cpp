@@ -118,6 +118,11 @@ bool FBossMoveCardRejections::RunTest(const FString&)
     Reject([](FInput& F){F.S.Windows[1].EndSeconds=.9f;},TEXT("MoveCard.Window"));
     Reject([](FInput& F){F.S.Windows[1].SocketB=F.S.Windows[1].SocketA;},TEXT("MoveCard.Socket"));
     Reject([](FInput& F){F.M.SocketOrBoneNames.Remove(F.S.Windows[1].SocketB);},TEXT("MoveCard.Socket"));
+    // BOSS-HIT-010: a secondary window may overlap in time and must share a hit group with a direct window.
+    {FInput F;F.S.Windows[1].bSecondary=true;F.S.Windows[1].StartSeconds=F.S.Windows[0].StartSeconds;F.S.Windows[1].HitGroup=F.S.Windows[0].HitGroup;TestTrue(TEXT("overlapping secondary window of the same group is valid"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}
+    Reject([](FInput& F){F.S.Windows[1].bSecondary=true;F.S.Windows[1].HitGroup=TEXT("OtherGroup");},TEXT("MoveCard.Window"));
+    Reject([](FInput& F){for(auto& W:F.S.Windows)W.bSecondary=true;},TEXT("MoveCard.Window"));
+    Reject([](FInput& F){F.S.Windows[1].StartSeconds=F.S.Windows[0].StartSeconds;},TEXT("MoveCard.Window"));   // two DIRECT windows still may not overlap
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveCardSnapshot, "OneBossFight.Framework.MoveCard.SnapshotAndFailure", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)

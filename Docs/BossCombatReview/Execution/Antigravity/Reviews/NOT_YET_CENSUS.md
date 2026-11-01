@@ -1,15 +1,15 @@
-# Track B Remaining Requirements Census: 17 NOT YET Rows
+# Track B Remaining Requirements Census: 16 NOT YET Rows
 
 **Document Reference:** `Reviews/NOT_YET_CENSUS.md`  
 **Task Reference:** `[C-565]` / `[C-568]` (Track B Direction Selection Census)  
 **Source Authority:** `witness_status_v3.json` (exact titles and observables)  
-**Total Census:** 17 requirements currently classified as `NOT YET`  
+**Total Census:** 16 requirements currently classified as `NOT YET`  
 
 ---
 
 ## 1. Executive Summary & Classification Matrix
 
-This document classifies all 17 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).
+This document classifies all 16 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).
 
 ### Classification Definitions:
 - **ENGINE-ONLY:** Pure C++ / runtime rules or hooks; no art or external system dependencies.
@@ -25,7 +25,7 @@ This document classifies all 17 remaining `NOT YET` combat requirements to infor
 
 ---
 
-## 2. Complete 17-Row NOT YET Census Table
+## 2. Complete 16-Row NOT YET Census Table
 
 | ID | Exact Title | Exact Observable | Dependency Class | Code Reference & Reason | Cost |
 |:---|:---|:---|:---:|:---|:---:|
@@ -35,12 +35,11 @@ This document classifies all 17 remaining `NOT YET` combat requirements to infor
 | **BOSS-SEL-009** | Reaction latency and budget | AI reaction latency to player flask action is bounded by reaction delay window [0.2s - 0.4s]. | `ENGINE-ONLY` | no code: AI reaction delay window [0.2-0.4s] buffering not implemented in boss tick loop | **M** |
 | **BOSS-ANM-003** | Bounded holds | Variable windup holds are bounded between min and max duration with distinct visual audio cue at release. | `NEEDS ART` | no code: variable windup hold min/max durations and release cues not authored in move cards or montage tracks | **L** |
 | **BOSS-ANM-006** | Bounded Motion Warping | Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45°). | `NEEDS NEW SYSTEM` | no code: Motion Warping plugin not enabled in uproject and warp clamping bounds not implemented | **L** |
-| **BOSS-HIT-010** | Direct/splash precedence | Direct weapon impact takes precedence over secondary shockwave / ground splash; simultaneous hit applies direct only. | `NEEDS DESIGN DECISION` | `Source/OneBossFight/Player/RPGDamageResolver.cpp:152` quote: `Result.Outcome = RPGDamageRules::Decide(bTargetAlive, bAtta`<br>resolver decide rule only takes alive, generation, duplicate, and invulnerable flags; no direct vs secondary splash precedence arbiter defined | **M** |
-| **BOSS-HIT-011** | Swept annulus | Ground splash / shockwave sweeps outward in calibrated ring without invisible gaps or lingering ghost damage. | `NEEDS NEW SYSTEM` | `Source/OneBossFight/Boss/RPGFrameworkMoveExecutor.cpp:230` quote: `const FCollisionShape Shape=FCollisionShape::MakeCapsule(W.`<br>sweep only constructs linear swept capsules along weapon key poses; outward expanding ring/annulus component not implemented | **L** |
+| **BOSS-HIT-011** | Swept annulus | Ground splash / shockwave sweeps outward in calibrated ring without invisible gaps or lingering ghost damage. | `NEEDS NEW SYSTEM` | `Source/OneBossFight/Boss/RPGFrameworkMoveExecutor.cpp:233` quote: `const FCollisionShape Shape=FCollisionShape::MakeCapsule(W.`<br>sweep only constructs linear swept capsules along weapon key poses; outward expanding ring/annulus component not implemented | **L** |
 | **BOSS-HIT-012** | Grab fail-safe | Interrupted grab releases victim immediately to ground locomotion without animation lock or falling through floor. | `NEEDS NEW SYSTEM` | no code: grab state machine, victim attachment sync, and interrupt release fail-safe not implemented | **L** |
 | **BOSS-MOV-004** | Wall-safe attacks | Forward charge attacks clamp movement trajectory when hitting arena boundary without clipping through. | `NEEDS ART` | no code: forward charge attack animations with root motion require level art perimeter collision geometry and collision preset authoring to prevent clipping | **M** |
 | **BOSS-MOV-006** | Arena/attack fit | Arena geometry (L_SevarogArena) provides clear combat lane with zero player snag points. | `NEEDS ART` | `Source/OneBossFight/Tests/RPGAutomationTests.cpp:766` quote: `IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGArenaCollisionTest, "On`<br>collision tests only verify legacy ARPGGreyboxArena geometry; production level L_SevarogArena clearance and snag point audit requires level art verification | **M** |
-| **BOSS-PAC-003** | Guaranteed openings | Heavy finisher (MC-04) guarantees recovery window sufficient for player light or heavy punish counter-attack. | `PLAYER-SIDE` | `Source/OneBossFight/Player/RPGBossMoveCard.h:60` quote: `UPROPERTY(EditAnywhere) float RecoveryEndSeconds = 0.f;`<br>move card specifies static RecoveryEndSeconds; validation against player punish attack timings requires player moveset intake | **M** |
+| **BOSS-PAC-003** | Guaranteed openings | Heavy finisher (MC-04) guarantees recovery window sufficient for player light or heavy punish counter-attack. | `PLAYER-SIDE` | `Source/OneBossFight/Player/RPGBossMoveCard.h:62` quote: `UPROPERTY(EditAnywhere) float RecoveryEndSeconds = 0.f;`<br>move card specifies static RecoveryEndSeconds; validation against player punish attack timings requires player moveset intake | **M** |
 | **BOSS-PAC-004** | Conditional opening cues | Visual recovery cues (scythe lodged in ground, posture reset) clearly indicate boss vulnerable state. | `NEEDS ART` | no code: visual/audio recovery cues (e.g. scythe lodged in ground) require authored animation notify tracks and VFX | **L** |
 | **BOSS-PAC-005** | Punish-margin calculation | Boss recovery duration exceeds player light attack startup + travel time by at least 0.3s. | `PLAYER-SIDE` | no code: punish margin formula (recovery > player startup + travel + 0.3s) requires player moveset startup data | **M** |
 | **BOSS-DEF-005** | Fair boss defense | Boss defensive actions (backstep, block) adhere to fair player counterplay windows. | `NEEDS ART` | no code: defensive moves (backstep, block) not authored in boss profile moveset or animation cards | **M** |
@@ -56,8 +55,7 @@ This document classifies all 17 remaining `NOT YET` combat requirements to infor
 - **NEEDS NEW SYSTEM:** 5 requirements (20.8%)
 - **PLAYER-SIDE:** 4 requirements (16.7%)
 - **ENGINE-ONLY:** 1 requirements (4.2%)
-- **NEEDS DESIGN DECISION:** 1 requirements (4.2%)
 
 ### By Engine Run Cost:
-- **Cost M:** 9 requirements (37.5%)
+- **Cost M:** 8 requirements (33.3%)
 - **Cost L:** 8 requirements (33.3%)

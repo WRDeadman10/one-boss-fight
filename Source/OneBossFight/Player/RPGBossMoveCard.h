@@ -33,6 +33,8 @@ struct FRPGBossMoveWindow
     UPROPERTY(EditAnywhere) FName SocketA;
     UPROPERTY(EditAnywhere) FName SocketB;
     UPROPERTY(EditAnywhere) float RadiusCm = 0.f;
+    /** BOSS-HIT-010: a SECONDARY window (shockwave / ground splash). It may overlap the direct windows in time, must share a HitGroup with a direct window, and is always processed AFTER the direct windows of the same tick, so the shared hit key makes a simultaneous contact apply the direct hit only. */
+    UPROPERTY(EditAnywhere) bool bSecondary = false;
     /** Optional (empty = live sockets): the baked blade path of this window, strictly ordered, covering [StartSeconds, EndSeconds], inside the clip. */
     UPROPERTY(EditAnywhere) TArray<FRPGBakedBladeSample> BakedSamples;
 };
