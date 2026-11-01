@@ -1,0 +1,583 @@
+{
+ "map": "/Game/OneBossFight/Levels/L_SevarogArena",
+ "player": {
+  "radius": 42.0,
+  "half_height": 96.0,
+  "max_step_height": 45.0,
+  "walkable_floor_angle": 44.76508331298828
+ },
+ "lane_radius_cm": 2495.9999284744263,
+ "grid_cm": 200.0,
+ "cells": 489,
+ "capsule_sweeps": 3880,
+ "holes": 0,
+ "lips": 19,
+ "unwalkable_cells": 4,
+ "snag_points": 128,
+ "unreadable_blockers": 6,
+ "tall_obstacle_blocks_by_actor": {
+  "RPGGreyboxArena_0": 84,
+  "RPGArenaDressing_0": 15
+ },
+ "first_snags": [
+  {
+   "x": -2400.0,
+   "y": 600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -2400.0,
+   "y": 600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -2400.0,
+   "y": 600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -2400.0,
+   "y": 600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -2400.0,
+   "y": 600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -2400.0,
+   "y": 600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -2400.0,
+   "y": 600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -2400.0,
+   "y": 600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -2200.0,
+   "y": 600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -2200.0,
+   "y": 600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -2200.0,
+   "y": 600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -2200.0,
+   "y": 600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -2200.0,
+   "y": 600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -2200.0,
+   "y": 600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -2200.0,
+   "y": 600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -2200.0,
+   "y": 600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1800.0,
+   "y": 1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1800.0,
+   "y": 1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1800.0,
+   "y": 1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1800.0,
+   "y": 1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1800.0,
+   "y": 1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1800.0,
+   "y": 1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1800.0,
+   "y": 1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1800.0,
+   "y": 1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": -1800.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": -1800.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": -1800.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": -1800.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": -1800.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": -1800.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": -1800.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": -1800.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": -1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": -1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": -1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": -1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": -1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": -1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": -1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": -1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": 1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": 1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": 1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": 1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": 1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": 1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": 1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -1600.0,
+   "y": 1600.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -600.0,
+   "y": -2400.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  },
+  {
+   "x": -600.0,
+   "y": -2400.0,
+   "why": "StartPenetrating",
+   "actor": "RPGGreyboxArena_0",
+   "component": "Braziers",
+   "height_cm": 319.9
+  }
+ ],
+ "first_unreadable": [
+  {
+   "x": 0.0,
+   "y": 0.0,
+   "actor": "BP_ExampleGreatSwordBoss_C_3",
+   "component": "Boss Stealth Kill"
+  },
+  {
+   "x": 0.0,
+   "y": 0.0,
+   "actor": "BP_ExampleGreatSwordBoss_C_3",
+   "component": "Boss Stealth Kill"
+  },
+  {
+   "x": 0.0,
+   "y": 0.0,
+   "actor": "BP_ExampleGreatSwordBoss_C_3",
+   "component": "Boss Stealth Kill"
+  },
+  {
+   "x": 200.0,
+   "y": 0.0,
+   "actor": "BP_ExampleGreatSwordBoss_C_3",
+   "component": "Boss Stealth Kill"
+  },
+  {
+   "x": 200.0,
+   "y": 0.0,
+   "actor": "BP_ExampleGreatSwordBoss_C_3",
+   "component": "Boss Stealth Kill"
+  },
+  {
+   "x": 200.0,
+   "y": 0.0,
+   "actor": "BP_ExampleGreatSwordBoss_C_3",
+   "component": "Boss Stealth Kill"
+  }
+ ],
+ "first_lips": [
+  [
+   -2400.0,
+   -600.0,
+   50.7
+  ],
+  [
+   -2400.0,
+   -400.0,
+   50.7
+  ],
+  [
+   -2200.0,
+   -800.0,
+   50.7
+  ],
+  [
+   -800.0,
+   2000.0,
+   50.7
+  ],
+  [
+   -800.0,
+   2200.0,
+   50.7
+  ],
+  [
+   -600.0,
+   2000.0,
+   50.7
+  ],
+  [
+   400.0,
+   -2400.0,
+   50.7
+  ],
+  [
+   400.0,
+   -2200.0,
+   50.7
+  ],
+  [
+   400.0,
+   -2000.0,
+   50.7
+  ],
+  [
+   600.0,
+   -2400.0,
+   50.7
+  ],
+  [
+   2000.0,
+   -1000.0,
+   74.2
+  ],
+  [
+   2000.0,
+   -800.0,
+   74.2
+  ],
+  [
+   2000.0,
+   -600.0,
+   74.2
+  ],
+  [
+   2000.0,
+   400.0,
+   50.7
+  ],
+  [
+   2000.0,
+   600.0,
+   50.7
+  ],
+  [
+   2000.0,
+   800.0,
+   50.7
+  ],
+  [
+   2200.0,
+   -1000.0,
+   74.2
+  ],
+  [
+   2200.0,
+   -800.0,
+   -74.2
+  ],
+  [
+   2200.0,
+   400.0,
+   50.7
+  ]
+ ],
+ "first_holes": [],
+ "first_unwalkable": [
+  [
+   -2200.0,
+   -600.0,
+   0.707
+  ],
+  [
+   -600.0,
+   2200.0,
+   0.707
+  ],
+  [
+   600.0,
+   -2200.0,
+   0.707
+  ],
+  [
+   2200.0,
+   600.0,
+   0.707
+  ]
+ ],
+ "pass": false
+}

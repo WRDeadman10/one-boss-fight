@@ -1,11 +1,11 @@
 {
-  "version": "3.32",
+  "version": "3.33",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 66,
+    "WITNESSED": 67,
     "PARTIAL": 14,
-    "NOT YET": 2
+    "NOT YET": 1
   },
   "requirements": [
     {
@@ -2497,11 +2497,59 @@
       "title": "Arena/attack fit",
       "section": "Movement and arena",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
+        "Docs/BossCombatReview/Execution/Claude/B_MOV006/audit_arena_lane.py",
+        "Docs/BossCombatReview/Execution/Claude/B_MOV006/report.json",
+        "Docs/BossCombatReview/Execution/Claude/B_MOV006/report_control.json",
+        "Docs/BossCombatReview/Execution/Claude/B_MOV006/audit_run5_final/editor_raw.log",
+        "Docs/BossCombatReview/Execution/Claude/B_MOV006/control_run1/editor_raw.log"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
+          "line": 788,
+          "quoted": "TestTrue(TEXT(\"floor is hit by a downward trace\"), bFloorHit);"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV006/audit_run5_final/editor_raw.log",
+          "line": 1289,
+          "quoted": "[2026.11.01-17.15.50:363][  2]LogPython: [MOV006_LANE] {\"arena_radius\": 3000.0, \"pillar_ring_fraction\": 0.8999999761581421, \"pillar_radius\": 120.0, \"centre\": [0.0, 0.0, 0.0], \"lane_radius\": 2495.9999284744263, \"grid_cm\": 40.0}"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV006/audit_run5_final/editor_raw.log",
+          "line": 1290,
+          "quoted": "[2026.11.01-17.15.51:000][  2]LogPython: [MOV006_GRID] {\"cells\": 12257}"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV006/audit_run5_final/editor_raw.log",
+          "line": 1292,
+          "quoted": "[2026.11.01-17.15.54:706][  2]LogPython: [MOV006_SUMMARY] {\"lane_radius_cm\": 2495.9999284744263, \"cells\": 12257, \"capsule_sweeps\": 98056, \"holes\": 0, \"lips\": 224, \"lips_beside_tall_obstacles\": 224, \"lips_free\": 0, \"unwalkable_cells\": 216, \"unwalkable_beside_tall_obstacles\": 216, \"unwalkable_free\": 0, \"snag_points\": 0, \"cells_inside_tall_obstacles\": 307, \"unreadable_blockers\": 0, \"pass\": true}"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV006/audit_run5_final/editor_raw.log",
+          "line": 1294,
+          "quoted": "[2026.11.01-17.15.54:707][  2]LogPython: [MOV006_VERDICT] {\"pass\": true}"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV006/control_run1/editor_raw.log",
+          "line": 1400,
+          "quoted": "[2026.11.01-17.15.09:589][  2]LogPython: [MOV006_CONTROL] {\"low_box_at\": [300.0, 300.0], \"size_cm\": [100, 100, 50]}"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV006/control_run1/editor_raw.log",
+          "line": 1408,
+          "quoted": "[2026.11.01-17.15.14:226][  2]LogPython: [MOV006_SUMMARY] {\"lane_radius_cm\": 2495.9999284744263, \"cells\": 12257, \"capsule_sweeps\": 98056, \"holes\": 0, \"lips\": 235, \"lips_beside_tall_obstacles\": 224, \"lips_free\": 11, \"unwalkable_cells\": 216, \"unwalkable_beside_tall_obstacles\": 216, \"unwalkable_free\": 0, \"snag_points\": 112, \"cells_inside_tall_obstacles\": 307, \"unreadable_blockers\": 0, \"pass\": false}"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV006/control_run1/editor_raw.log",
+          "line": 1420,
+          "quoted": "[2026.11.01-17.15.14:226][  2]LogPython: [MOV006_VERDICT] {\"pass\": false}"
+        }
+      ],
       "observable": "Arena geometry (L_SevarogArena) provides clear combat lane with zero player snag points.",
-      "notes": "Arena collision tests exist only for legacy greybox arena (OneBossFight.Arena.Collision); framework Sevarog arena clearance not yet formally benchmarked per C-405."
+      "notes": "Witnessed (C-647, BUILD-140): Arena geometry audit of L_SevarogArena executed via editor sweep script (Claude/B_MOV006/audit_arena_lane.py). Player collision parameters read from BP_CombatPlayerCharacter (radius 42cm, half height 96cm, max step height 45cm, walkable floor angle 44.77 deg). Combat lane defined as circle inside pillar ring (radius 2496cm, grid 40cm, 12,257 cells; 98,056 8-directional 150cm capsule sweeps). Audit reports 0 holes, 0 snag points, 0 free lips (all 224 lips beside tall obstacles), 0 free unwalkable cells (all 216 beside tall obstacles), 0 unreadable blockers, and pass=true (audit_run5_final/editor_raw.log:1292, :1294; report.json). Negative control with in-memory low box confirms audit failure capability (control_run1:1408 snag_points=112 pass=false). Honest limits noted: definitions (snag height 100cm, sweep 150cm, grid 40cm, tall obstacle >= 100cm with 2-cell skirt attribution) are proposed design values; audits static geometry only (no moving props, nav mesh, or camera clipping); 307 cells lie inside tall obstacles (RPGGreyboxArena_0, RPGArenaDressing_0) which are visible obstacles rather than player snags, but placement aesthetics remain open for owner visual review."
     },
     {
       "id": "BOSS-PAC-001",

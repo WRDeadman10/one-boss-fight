@@ -1,0 +1,139 @@
+{
+ "map": "/Game/OneBossFight/Levels/L_SevarogArena",
+ "player": {
+  "radius": 42.0,
+  "half_height": 96.0,
+  "max_step_height": 45.0,
+  "walkable_floor_angle": 44.76508331298828
+ },
+ "lane_radius_cm": 2495.9999284744263,
+ "grid_cm": 40.0,
+ "cells": 12257,
+ "capsule_sweeps": 98056,
+ "holes": 0,
+ "lips": 224,
+ "lips_beside_tall_obstacles": 224,
+ "lips_free": 0,
+ "unwalkable_cells": 216,
+ "unwalkable_beside_tall_obstacles": 216,
+ "unwalkable_free": 0,
+ "pawn_hits_excluded": {
+  "BP_ExampleGreatSwordBoss_C_3": 214
+ },
+ "nonblocking_trigger_hits": {},
+ "snag_points": 0,
+ "cells_inside_tall_obstacles": 307,
+ "unreadable_blockers": 0,
+ "tall_obstacle_blocks_by_actor": {
+  "RPGArenaDressing_0": 299,
+  "RPGGreyboxArena_0": 2255
+ },
+ "first_snags": [],
+ "first_unreadable": [],
+ "first_lips": [],
+ "first_unwalkable_free": [],
+ "first_holes": [],
+ "first_unwalkable": [
+  [
+   -2360.0,
+   -680.0,
+   0.707
+  ],
+  [
+   -2360.0,
+   -640.0,
+   0.707
+  ],
+  [
+   -2360.0,
+   520.0,
+   0.707
+  ],
+  [
+   -2360.0,
+   560.0,
+   0.707
+  ],
+  [
+   -2360.0,
+   600.0,
+   0.707
+  ],
+  [
+   -2320.0,
+   -720.0,
+   0.707
+  ],
+  [
+   -2320.0,
+   -680.0,
+   0.707
+  ],
+  [
+   -2320.0,
+   -640.0,
+   0.707
+  ],
+  [
+   -2320.0,
+   480.0,
+   0.705
+  ],
+  [
+   -2320.0,
+   520.0,
+   0.707
+  ],
+  [
+   -2320.0,
+   560.0,
+   0.707
+  ],
+  [
+   -2320.0,
+   600.0,
+   0.707
+  ],
+  [
+   -2280.0,
+   -720.0,
+   0.707
+  ],
+  [
+   -2280.0,
+   -680.0,
+   0.707
+  ],
+  [
+   -2280.0,
+   -640.0,
+   0.707
+  ],
+  [
+   -2280.0,
+   520.0,
+   0.707
+  ],
+  [
+   -2280.0,
+   560.0,
+   0.707
+  ],
+  [
+   -2280.0,
+   600.0,
+   0.707
+  ],
+  [
+   -2240.0,
+   -680.0,
+   0.707
+  ],
+  [
+   -2240.0,
+   -640.0,
+   0.707
+  ]
+ ],
+ "pass": true
+}

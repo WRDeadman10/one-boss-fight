@@ -1,0 +1,596 @@
+{
+ "map": "/Game/OneBossFight/Levels/L_SevarogArena",
+ "player": {
+  "radius": 42.0,
+  "half_height": 96.0,
+  "max_step_height": 45.0,
+  "walkable_floor_angle": 44.76508331298828
+ },
+ "lane_radius_cm": 2495.9999284744263,
+ "grid_cm": 40.0,
+ "cells": 12257,
+ "capsule_sweeps": 98056,
+ "holes": 0,
+ "lips": 235,
+ "lips_beside_tall_obstacles": 224,
+ "lips_free": 11,
+ "unwalkable_cells": 216,
+ "unwalkable_beside_tall_obstacles": 216,
+ "unwalkable_free": 0,
+ "pawn_hits_excluded": {
+  "BP_ExampleGreatSwordBoss_C_3": 214
+ },
+ "nonblocking_trigger_hits": {},
+ "snag_points": 112,
+ "cells_inside_tall_obstacles": 307,
+ "unreadable_blockers": 0,
+ "tall_obstacle_blocks_by_actor": {
+  "RPGArenaDressing_0": 299,
+  "RPGGreyboxArena_0": 2255
+ },
+ "first_snags": [
+  {
+   "x": 80.0,
+   "y": 240.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 80.0,
+   "y": 280.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 80.0,
+   "y": 320.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 80.0,
+   "y": 360.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 120.0,
+   "y": 120.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 120.0,
+   "y": 160.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 120.0,
+   "y": 200.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 120.0,
+   "y": 240.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 120.0,
+   "y": 280.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 120.0,
+   "y": 320.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 120.0,
+   "y": 360.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 120.0,
+   "y": 400.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 120.0,
+   "y": 440.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 120.0,
+   "y": 480.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 160.0,
+   "y": 120.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 160.0,
+   "y": 160.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 160.0,
+   "y": 200.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 160.0,
+   "y": 240.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 160.0,
+   "y": 280.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 160.0,
+   "y": 320.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 160.0,
+   "y": 360.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 160.0,
+   "y": 400.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 160.0,
+   "y": 440.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 160.0,
+   "y": 480.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 200.0,
+   "y": 120.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 200.0,
+   "y": 160.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 200.0,
+   "y": 200.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 200.0,
+   "y": 240.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 200.0,
+   "y": 280.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 200.0,
+   "y": 320.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 200.0,
+   "y": 360.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 200.0,
+   "y": 400.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 200.0,
+   "y": 440.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 200.0,
+   "y": 480.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 240.0,
+   "y": 80.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 240.0,
+   "y": 120.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 240.0,
+   "y": 160.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 240.0,
+   "y": 200.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 240.0,
+   "y": 240.0,
+   "why": "StartPenetrating",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 240.0,
+   "y": 280.0,
+   "why": "StartPenetrating",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 240.0,
+   "y": 320.0,
+   "why": "StartPenetrating",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 240.0,
+   "y": 360.0,
+   "why": "StartPenetrating",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 240.0,
+   "y": 400.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 240.0,
+   "y": 440.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 240.0,
+   "y": 480.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 240.0,
+   "y": 520.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 280.0,
+   "y": 80.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 280.0,
+   "y": 120.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 280.0,
+   "y": 160.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  },
+  {
+   "x": 280.0,
+   "y": 200.0,
+   "why": "LowBlocker",
+   "actor": "StaticMeshActor_13",
+   "component": "StaticMeshComponent0",
+   "height_cm": 50.0
+  }
+ ],
+ "first_unreadable": [],
+ "first_lips": [
+  [
+   240.0,
+   240.0,
+   50.0
+  ],
+  [
+   240.0,
+   280.0,
+   50.0
+  ],
+  [
+   240.0,
+   320.0,
+   50.0
+  ],
+  [
+   240.0,
+   360.0,
+   50.0
+  ],
+  [
+   280.0,
+   240.0,
+   50.0
+  ],
+  [
+   280.0,
+   280.0,
+   -50.0
+  ],
+  [
+   280.0,
+   320.0,
+   -50.0
+  ],
+  [
+   280.0,
+   360.0,
+   50.0
+  ],
+  [
+   320.0,
+   240.0,
+   50.0
+  ],
+  [
+   320.0,
+   280.0,
+   -50.0
+  ],
+  [
+   320.0,
+   320.0,
+   -50.0
+  ]
+ ],
+ "first_unwalkable_free": [],
+ "first_holes": [],
+ "first_unwalkable": [
+  [
+   -2360.0,
+   -680.0,
+   0.707
+  ],
+  [
+   -2360.0,
+   -640.0,
+   0.707
+  ],
+  [
+   -2360.0,
+   520.0,
+   0.707
+  ],
+  [
+   -2360.0,
+   560.0,
+   0.707
+  ],
+  [
+   -2360.0,
+   600.0,
+   0.707
+  ],
+  [
+   -2320.0,
+   -720.0,
+   0.707
+  ],
+  [
+   -2320.0,
+   -680.0,
+   0.707
+  ],
+  [
+   -2320.0,
+   -640.0,
+   0.707
+  ],
+  [
+   -2320.0,
+   480.0,
+   0.705
+  ],
+  [
+   -2320.0,
+   520.0,
+   0.707
+  ],
+  [
+   -2320.0,
+   560.0,
+   0.707
+  ],
+  [
+   -2320.0,
+   600.0,
+   0.707
+  ],
+  [
+   -2280.0,
+   -720.0,
+   0.707
+  ],
+  [
+   -2280.0,
+   -680.0,
+   0.707
+  ],
+  [
+   -2280.0,
+   -640.0,
+   0.707
+  ],
+  [
+   -2280.0,
+   520.0,
+   0.707
+  ],
+  [
+   -2280.0,
+   560.0,
+   0.707
+  ],
+  [
+   -2280.0,
+   600.0,
+   0.707
+  ],
+  [
+   -2240.0,
+   -680.0,
+   0.707
+  ],
+  [
+   -2240.0,
+   -640.0,
+   0.707
+  ]
+ ],
+ "pass": false
+}
