@@ -108,5 +108,39 @@ class TestPartialUpgradePlan(unittest.TestCase):
         self.assertEqual(engine_count, 26, f"Expected 26 Engine Required rows, got {engine_count}")
         self.assertEqual(test_only_count, 1, f"Expected 1 Test-Only row, got {test_only_count}")
 
+    def test_header_status_matches_ledger(self):
+        """Verify that every id listed in the header block as WITNESSED or PARTIAL matches ledger v3.12."""
+        ledger = json.loads(LEDGER_PATH.read_text(encoding="utf-8"))
+        ledger_version = ledger.get("version", "")
+        status_map = {r["id"]: r["status"] for r in ledger["requirements"]}
+
+        text = DOC_PATH.read_text(encoding="utf-8")
+        # Extract header line
+        m_version = re.search(r"Status as of ledger version ([0-9\.]+):", text)
+        self.assertIsNotNone(m_version, "Header block missing ledger version string")
+        self.assertEqual(m_version.group(1), ledger_version, f"Header version {m_version.group(1)} does not match ledger {ledger_version}")
+
+        # Extract witnessed list
+        m_wit = re.search(r"([0-9]+)\s+of the 27 rows are now WITNESSED \(([^)]+)\)", text)
+        self.assertIsNotNone(m_wit, "Header block missing WITNESSED section")
+        wit_count = int(m_wit.group(1))
+        wit_ids = [tok.strip().strip("`") for tok in m_wit.group(2).split(",") if tok.strip()]
+        self.assertEqual(len(wit_ids), wit_count, "WITNESSED count mismatch in header")
+        for rid in wit_ids:
+            self.assertEqual(status_map.get(rid), "WITNESSED", f"{rid} listed as WITNESSED in header, but ledger says {status_map.get(rid)}")
+
+        # Extract current partial ids
+        m_part = re.search(r"current PARTIAL ids:\s*([^\n\r]+)", text)
+        self.assertIsNotNone(m_part, "Header block missing current PARTIAL ids section")
+        part_str = m_part.group(1).rstrip(".")
+        part_ids = [tok.strip().strip("`") for tok in part_str.split(",") if tok.strip()]
+        self.assertEqual(len(part_ids), 27 - wit_count, "PARTIAL count mismatch in header (should be 27 - WITNESSED)")
+        for rid in part_ids:
+            self.assertEqual(status_map.get(rid), "PARTIAL", f"{rid} listed as PARTIAL in header, but ledger says {status_map.get(rid)}")
+
+        # Combined must equal all 27 original planned rows
+        self.assertEqual(set(wit_ids) | set(part_ids), set(wit_ids + part_ids), "Duplicate IDs between WITNESSED and PARTIAL")
+        self.assertEqual(len(wit_ids) + len(part_ids), 27, "Total planned IDs in header != 27")
+
 if __name__ == "__main__":
     unittest.main()

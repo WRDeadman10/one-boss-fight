@@ -37,7 +37,7 @@ The test boss combat framework has reached strong mathematical and behavioral ma
 ## 2. Taxonomy of Remaining Work
 
 ### A. The 16 PARTIAL Rows (Grouped by Real Blocker)
-From `Reviews/PARTIAL_UPGRADE_PLAN.md` (re-verified against Ledger v3.12):
+From the original plan (`Reviews/PARTIAL_UPGRADE_PLAN.md`), with its current status taken from the ledger (v3.12):
 1. **Engine / PIE Scenario Hooks (3 rows):**
    - `BOSS-QA-001` (Runtime overlay): Formatted strings logged live; blocked because unattended PIE GPU backbuffer readback returned black pixels; requires on-screen display capture.
    - `BOSS-SEL-008` (No-candidate fallback): Walk-to-band verified live; requires continuous strafe loop when 0 cards qualify or production opt-in policy.
