@@ -1,11 +1,11 @@
 {
-  "version": "3.26",
+  "version": "3.27",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 56,
+    "WITNESSED": 58,
     "PARTIAL": 14,
-    "NOT YET": 12
+    "NOT YET": 10
   },
   "requirements": [
     {
@@ -1478,11 +1478,88 @@
       "title": "Bounded Motion Warping",
       "section": "Animation, tracking and motion",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+        "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+        "Docs/BossCombatReview/Execution/Claude/B_ANM006/pie_warp_room/editor_raw.log",
+        "Docs/BossCombatReview/Execution/Claude/B_ANM006/pie_warp_room2/editor_raw.log",
+        "Docs/BossCombatReview/Execution/Claude/B_ANM006/pie_warp_clamped/editor_raw.log"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 525,
+          "quoted": "TestTrue(TEXT(\"a tick that is half of the time left covers half of the need\"),FMath::IsNearlyEqual(WarpStepCm(100.,150.,.1,.2),50.));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 526,
+          "quoted": "TestTrue(TEXT(\"the budget caps the step\"),FMath::IsNearlyEqual(WarpStepCm(400.,30.,.2,.2),30.));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 527,
+          "quoted": "TestTrue(TEXT(\"nothing needed, nothing spent, no time\"),WarpStepCm(0.,150.,.1,.2)==0.&&WarpStepCm(10.,0.,.1,.2)==0.&&WarpStepCm(10.,150.,0.,.2)==0.&&WarpStepCm(10.,150.,.1,0.)==0.);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 529,
+          "quoted": "TestTrue(TEXT(\"the angle keeps its sign\"),WarpStepDegrees(-90.,45.,.2,.2)==-45.&&WarpStepDegrees(30.,45.,.2,.2)==30.);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 535,
+          "quoted": "if (Moved>150.+1e-6) AddError(FString::Printf(TEXT(\"budget exceeded: need %g dt %g moved %g\"),Need,Dt,Moved));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 536,
+          "quoted": "if (Need<=150.&&!FMath::IsNearlyEqual(Moved,Need,1e-6)) AddError(FString::Printf(TEXT(\"did not end at the need: need %g dt %g moved %g\"),Need,Dt,Moved));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 144,
+          "quoted": "{FInput F;MakeWarp(F);TestTrue(TEXT(\"warp window and budgets are valid\"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 145,
+          "quoted": "Reject([&](FInput& F){MakeWarp(F);F.S.WarpStartSeconds=F.S.CommitSeconds-.1f;},TEXT(\"MoveCard.Warp\"));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 147,
+          "quoted": "Reject([&](FInput& F){MakeWarp(F);F.S.WarpEndSeconds=F.S.ActiveEndSeconds+.1f;},TEXT(\"MoveCard.Warp\"));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 148,
+          "quoted": "Reject([&](FInput& F){MakeWarp(F);F.S.WarpMaxDistanceCm=1000.5f;},TEXT(\"MoveCard.Warp\"));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 149,
+          "quoted": "Reject([&](FInput& F){MakeWarp(F);F.S.WarpMaxAngleDegrees=181.f;},TEXT(\"MoveCard.Warp\"));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_ANM006/pie_warp_room/editor_raw.log",
+          "line": 1643,
+          "quoted": "[FrameworkProof] warp_summary instance=1 movedCm=23.4667 maxDistanceCm=150 turnedDeg=0 maxAngleDeg=45"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_ANM006/pie_warp_clamped/editor_raw.log",
+          "line": 1641,
+          "quoted": "[FrameworkProof] warp_step instance=1 from=0.516667 to=0.5333 distCm=475.98 neededCm=370.98 stepCm=0 actualCm=0 movedCm=150 budgetCm=150 neededDeg=-10.4352 stepDeg=-0 turnedDeg=45 budgetDeg=45"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_ANM006/pie_warp_clamped/editor_raw.log",
+          "line": 1644,
+          "quoted": "[FrameworkProof] warp_summary instance=1 movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45"
+        }
+      ],
       "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45\u00b0).",
-      "notes": "Motion warping clamping bounds not yet implemented in active runtime (designated for Movement Block)."
+      "notes": "Witnessed (C-627, BUILD-134): Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45\u00b0). Architectural Decision (DECISIONS.md 2026-11-01): The Motion Warping plugin was not enabled in uproject because it operates on root-motion animation clips while the card backend is in-place only (MoveCard.UnsupportedRootMotion); the observable of the row (translation and rotation strictly clamped) is satisfied by boss-owned bounded warp clamping. Card spec fields WarpStartSeconds, WarpEndSeconds, WarpMaxDistanceCm (<=1000cm), WarpMaxAngleDegrees (<=180\u00b0), WarpStandoffCm (>=0) are validated in RPGBossMoveCards::Validate (RPGBossMoveCard.cpp:109-130; tests in RPGBossMoveCardTests.cpp:144-151). Pure warp step formulas RPGBossTrack::WarpStepCm and WarpStepDegrees dynamically allocate need proportionally across remaining window time, capped by remaining budget, and charged only by distance actually moved via swept move (tested in RPGFrameworkRuntimeTests.cpp:525-536 across dt 1/240..0.1s and ranges 20..600cm). Emits structured telemetry warp_step and warp_summary. Live PIE proofs on L_SevarogFrameworkProofANM006 (Move_Sevarog_HeavyWarp_ANM006, warp window 0.4..0.5333s, budget 150cm / 45\u00b0, standoff 105cm; Claude/B_ANM006): 1) pie_warp_room (target 128.467cm away, room to spare): closes exactly to standoff 105cm (:1643 warp_summary movedCm=23.4667 turnedDeg=0, well within budgets; parity in pie_warp_room2). 2) pie_warp_clamped (target at 626cm and 55\u00b0): needs 371cm / 55\u00b0, spends exactly budget limit (:1641 last step budgetCm=150, budgetDeg=45; :1644 warp_summary movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45). Limits: boss-owned actor translation/yaw sweep; root-motion plugin not used."
     },
     {
       "id": "BOSS-ANM-007",
@@ -1950,11 +2027,99 @@
       "title": "Grab fail-safe",
       "section": "Hit detection and damage",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+        "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT012/pie_grab_release/editor_raw.log",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT012/pie_grab_release2/editor_raw.log",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT012/pie_grab_stagger/editor_raw.log",
+        "Docs/BossCombatReview/Execution/Claude/B_HIT012/pie_grab_death/editor_raw.log"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 508,
+          "quoted": "TestTrue(TEXT(\"no contact: nothing\"),GrabStep(S,false,.5,1.,false)==EGrabEvent::None&&!S.bHeld);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 509,
+          "quoted": "TestTrue(TEXT(\"contact catches\"),GrabStep(S,true,.5,1.,false)==EGrabEvent::Caught&&S.bHeld);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 512,
+          "quoted": "TestTrue(TEXT(\"at the release time: released\"),GrabStep(S,false,1.,0.,false)==EGrabEvent::Released&&!S.bHeld);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 514,
+          "quoted": "TestTrue(TEXT(\"an interrupt before the release time frees the victim at once\"),GrabStep(S,false,.6,0.,true)==EGrabEvent::Interrupted&&!S.bHeld);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 517,
+          "quoted": "TestTrue(TEXT(\"grounded: capsule centre above the floor by half height and skin\"),FMath::IsNearlyEqual(GroundedZ(10.,90.,2.),102.));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 135,
+          "quoted": "{FInput F;MakeGrab(F);TestTrue(TEXT(\"grab window is valid\"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 136,
+          "quoted": "Reject([&](FInput& F){MakeGrab(F);F.S.Windows[0].GrabAttachSocket=NAME_None;},TEXT(\"MoveCard.Grab\"));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 138,
+          "quoted": "Reject([&](FInput& F){MakeGrab(F);F.S.Windows[0].GrabReleaseSeconds=F.S.Windows[0].EndSeconds;},TEXT(\"MoveCard.Grab\"));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
+          "line": 140,
+          "quoted": "Reject([&](FInput& F){MakeGrab(F);F.S.Windows[1].bGrab=true;F.S.Windows[1].GrabAttachSocket=F.S.Windows[1].SocketA;F.S.Windows[1].GrabReleaseSeconds=1.f;},TEXT(\"MoveCard.Grab\"));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT012/pie_grab_release/editor_raw.log",
+          "line": 1623,
+          "quoted": "[FrameworkProof] grab_catch instance=1 window=Window_HeavySlam_Terminal socket=hand_l releaseAt=1.1 modeBefore=MOVE_Walking modeHeld=MOVE_None attached=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT012/pie_grab_release/editor_raw.log",
+          "line": 1668,
+          "quoted": "[FrameworkProof] grab_damage instance=1 key=HitGroup_ScytheBlade outcome=ERPGDamageOutcome::Accepted hpApplied=55"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT012/pie_grab_release/editor_raw.log",
+          "line": 1669,
+          "quoted": "[FrameworkProof] grab_release instance=1 reason=Released interrupted=0 attached=0 mode=MOVE_Walking floorFound=1 floorZ=-2.84217e-14 feetZ=0.0348507 gapCm=0.0348507"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT012/pie_grab_stagger/editor_raw.log",
+          "line": 1625,
+          "quoted": "[FrameworkProof] grab_catch instance=1 window=Window_HeavySlam_Terminal socket=hand_l releaseAt=1.1 modeBefore=MOVE_Walking modeHeld=MOVE_None attached=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT012/pie_grab_stagger/editor_raw.log",
+          "line": 1655,
+          "quoted": "[FrameworkProof] grab_release instance=1 reason=StanceBreak interrupted=1 attached=0 mode=MOVE_Walking floorFound=1 floorZ=2.84217e-14 feetZ=0.0238439 gapCm=0.0238439"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT012/pie_grab_death/editor_raw.log",
+          "line": 1625,
+          "quoted": "[FrameworkProof] grab_catch instance=1 window=Window_HeavySlam_Terminal socket=hand_l releaseAt=1.1 modeBefore=MOVE_Walking modeHeld=MOVE_None attached=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_HIT012/pie_grab_death/editor_raw.log",
+          "line": 1659,
+          "quoted": "[FrameworkProof] grab_release instance=1 reason=BossDead interrupted=1 attached=0 mode=MOVE_Walking floorFound=1 floorZ=0 feetZ=0.0309088 gapCm=0.0309088"
+        }
+      ],
       "observable": "Interrupted grab releases victim immediately to ground locomotion without animation lock or falling through floor.",
-      "notes": "Grab interrupt fail-safe release handler not yet implemented (designated for Grab Block)."
+      "notes": "Witnessed (C-626, BUILD-133): Interrupted grab releases victim immediately to ground locomotion without animation lock or falling through floor. Window in FRPGBossMoveWindow supports bGrab, GrabAttachSocket, and GrabReleaseSeconds (must be > EndSeconds and <= RecoveryEndSeconds, max 1 grab window per card), validated in RPGBossMoveCards::Validate (RPGBossMoveCard.cpp:86-107; tests in RPGBossMoveCardTests.cpp:135-141). Two-character grab state machine implemented in RPGBossTrack::GrabStep (RPGBossTrackRules.h:176-200; unit tests FFrameworkGrabFailSafe in RPGFrameworkRuntimeTests.cpp:508-517). In URPGFrameworkMoveExecutor, victim is caught on contact during grab window, movement mode disabled (MOVE_None) and attached to socket (hand_l), emitting grab_catch; damage is applied at window end via ApplyHit (emitting grab_damage); on card completion, natural release, stance break/stagger, or boss death, ReleaseGrab is guaranteed to be called immediately, detaching victim, restoring original movement mode (MOVE_Walking), performing downward raycast sweep to snap victim capsule feet onto floor (GroundedZ), emitting grab_release with reason, interrupted flag, and floor gap. Live PIE proofs on L_SevarogFrameworkProofHIT012 and L_SevarogFrameworkProofHIT012_Posture: 1) pie_grab_release (:1623 grab_catch, :1668 grab_damage hpApplied=55, :1669 grab_release reason=Released interrupted=0 gapCm=0.0348507; parity in pie_grab_release2). 2) pie_grab_stagger (:1625 grab_catch, :1655 grab_release reason=StanceBreak interrupted=1 attached=0 gapCm=0.0238439; second attack completes full grab at :1744). 3) pie_grab_death (:1625 grab_catch, :1659 grab_release reason=BossDead interrupted=1 attached=0 gapCm=0.0309088). Limits: authoring is boss-side only; single victim attach."
     },
     {
       "id": "BOSS-MOV-001",

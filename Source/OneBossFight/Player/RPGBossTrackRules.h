@@ -92,6 +92,39 @@ namespace RPGBossTrack
         if (FrontHi<FrontLo||DzAbs>Height) return false;
         return Dist+TargetRadius>=FrontLo-Thickness && Dist-TargetRadius<=FrontHi;
     }
+    /**
+     * BOSS-HIT-012 (grab fail-safe): the hold of a grabbed victim. A contact of the grab window catches (once per card); the hold ends at ReleaseAtSeconds (card time) with Released, or AT ONCE with Interrupted when anything
+     * aborts the attack (stagger, death, leash, watchdog, the card ending early, a lost victim). GroundedZ is where the victim's capsule centre goes on release: on the floor, never below it.
+     */
+    enum class EGrabEvent : uint8 { None, Caught, Released, Interrupted };
+    struct FGrabState { bool bHeld=false; double ReleaseAt=0.; };
+    inline EGrabEvent GrabStep(FGrabState& S,bool bContact,double Position,double ReleaseAtSeconds,bool bInterrupt)
+    {
+        if (S.bHeld)
+        {
+            if (bInterrupt) { S=FGrabState(); return EGrabEvent::Interrupted; }
+            if (Position>=S.ReleaseAt) { S=FGrabState(); return EGrabEvent::Released; }
+            return EGrabEvent::None;
+        }
+        if (bContact&&!bInterrupt&&FMath::IsFinite(ReleaseAtSeconds)) { S.bHeld=true; S.ReleaseAt=ReleaseAtSeconds; return EGrabEvent::Caught; }
+        return EGrabEvent::None;
+    }
+    inline double GroundedZ(double FloorZ,double CapsuleHalfHeight,double SkinCm){return FloorZ+CapsuleHalfHeight+SkinCm;}
+    /**
+     * BOSS-ANM-006 (bounded warp): the boss closes on the target during a warp window of the card, but never by more than WarpMaxDistanceCm / WarpMaxAngleDegrees IN TOTAL. Each tick covers the share of what is still needed
+     * that this tick is of the time left in the window (so the warp ends exactly at the standoff when the budget allows), and never more than the budget still unspent: the sum of the steps cannot exceed the budget.
+     */
+    inline double WarpStepCm(double NeededCm,double RemainingBudgetCm,double DeltaSeconds,double SecondsLeft)
+    {
+        if (!FMath::IsFinite(NeededCm)||!FMath::IsFinite(RemainingBudgetCm)||!FMath::IsFinite(DeltaSeconds)||!FMath::IsFinite(SecondsLeft)) return 0.;
+        if (NeededCm<=0.||RemainingBudgetCm<=0.||DeltaSeconds<=0.||SecondsLeft<=0.) return 0.;
+        return FMath::Min(NeededCm*FMath::Min(1.,DeltaSeconds/SecondsLeft),RemainingBudgetCm);
+    }
+    inline double WarpStepDegrees(double NeededSignedDegrees,double RemainingBudgetDegrees,double DeltaSeconds,double SecondsLeft)
+    {
+        if (!FMath::IsFinite(NeededSignedDegrees)) return 0.;
+        return (NeededSignedDegrees<0.?-1.:1.)*WarpStepCm(FMath::Abs(NeededSignedDegrees),RemainingBudgetDegrees,DeltaSeconds,SecondsLeft);
+    }
     /** BOSS-EXE-007 (executor watchdog): a card that is still running this many WORLD seconds after its start is aborted: RecoveryEndSeconds / PlayRate + 0.5 s. Negative = invalid input (the card is refused at start). */
     inline double WatchdogTimeoutSeconds(float RecoveryEndSeconds,float PlayRate)
     {

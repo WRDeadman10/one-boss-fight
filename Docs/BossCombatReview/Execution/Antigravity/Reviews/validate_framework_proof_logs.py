@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright One Boss Fight. All Rights Reserved.
 """
-validate_framework_proof_logs.py (v3.14)
+validate_framework_proof_logs.py (v3.18)
 
 Formal schema and semantic validator for all [FrameworkProof] structured telemetry lines
 emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, B_QA002, B_HIT005, B_AWR001, B_AWR002, B_EXE007, B_QA003B, B_EXE004, B_MOV005, B_EXE005, and B_MOV003).
@@ -94,6 +94,8 @@ SCHEMAS = {
     # 4. Heading Tracking & Motion Commitment
     "heading_commit": r"^instance=\d+ yaw=[^\s]+ turnedDegrees=[^\s]+ maxRateDegPerSec=[^\s]+ capDegPerSec=[^\s]+(?:\s+decisionRangeCm=[^\s]+ liveRangeCm=[^\s]+)?(?:\s+decisionYawDeg=[^\s]+ liveYawDeg=[^\s]+)?$",
     "heading_locked": r"^instance=\d+ yawAtCommit=[^\s]+ maxDriftAfterCommitDegrees=[^\s]+$",
+    "warp_step": r"^instance=\d+ from=[^\s]+ to=[^\s]+ distCm=[^\s]+ neededCm=[^\s]+ stepCm=[^\s]+ actualCm=[^\s]+ movedCm=[^\s]+ budgetCm=[^\s]+ neededDeg=[^\s]+ stepDeg=[^\s]+ turnedDeg=[^\s]+ budgetDeg=[^\s]+$",
+    "warp_summary": r"^instance=\d+ movedCm=[^\s]+ maxDistanceCm=[^\s]+ turnedDeg=[^\s]+ maxAngleDeg=[^\s]+$",
 
     # 5. Playback & Montages
     "playback_start": r"^encounter=\d+ generation=\d+ instance=\d+ montage=[^\s]+ slot=[^\s]+ rate=[^\s]+ label=[^\s]+$",
@@ -109,6 +111,9 @@ SCHEMAS = {
     "event": r"^encounter=\d+ generation=\d+ instance=\d+ kind=[^\s]+ window=[^\s]+ group=[^\s]+ localSeconds=[^\s]+ label=[^\s]+$",
     "sweep": r"^instance=\d+ window=[^\s]+ from=[^\s]+ to=[^\s]+ tipDistanceCm=[^\s]+ substeps=\d+ clamped=\d+(?:\s+baked=\d+)?$",
     "ring_sweep": r"^instance=\d+ window=[^\s]+ from=[^\s]+ to=[^\s]+ frontLoCm=[^\s]+ frontHiCm=[^\s]+ thicknessCm=[^\s]+ targetDistCm=[^\s]+ targetRadiusCm=[^\s]+ dzCm=[^\s]+ heightCm=[^\s]+ contact=[01]$",
+    "grab_catch": r"^instance=\d+ window=[^\s]+ socket=[^\s]+ releaseAt=[^\s]+ modeBefore=[^\s]+ modeHeld=[^\s]+ attached=[01]$",
+    "grab_damage": r"^instance=\d+ key=[^\s]+ outcome=[^\s]+ hpApplied=[^\s]+$",
+    "grab_release": r"^instance=\d+ reason=[^\s]+ interrupted=[01] attached=[01] mode=[^\s]+ floorFound=[01] floorZ=[^\s]+ feetZ=[^\s]+ gapCm=[^\s]+$",
     "sweep_filter": r"^instance=\d+ window=[^\s]+ ignoredPawns=\d+ first=[^\s]* targetContact=\d+ selfHits=\d+$",
     "hit": r"^instance=\d+ window=[^\s]+ key=[^\s]+ outcome=[^\s]+ hpApplied=[^\s]+ healthBefore=[^\s]+ healthAfter=[^\s]+$",
     "invariant": r"^(?:targetHPBefore=[^\s]+ targetHPAfter=[^\s]+ expectedHP=[^\s]+ acceptedHits=\d+ appliedDamage=[^\s]+|targetHPBefore=[^\s]+ targetHPAfter=[^\s]+ damageAPIInvocationsByThisExecutor=\d+)$",

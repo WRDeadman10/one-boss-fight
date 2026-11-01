@@ -41,6 +41,10 @@ struct FRPGBossMoveWindow
     UPROPERTY(EditAnywhere) float RingSpeedCmPerSecond = 0.f;
     UPROPERTY(EditAnywhere) float RingThicknessCm = 0.f;
     UPROPERTY(EditAnywhere) float RingHeightCm = 0.f;
+    /** BOSS-HIT-012: a GRAB window. It is a blade window (sockets, radius) whose contact catches the target instead of damaging it: the victim is attached to GrabAttachSocket (a boss socket or bone) with movement off until GrabReleaseSeconds (card time, after the window, within the recovery), then released to the floor and the card's HPDamage is applied. Any abort of the attack releases the victim at once, without damage. At most one grab window per card. */
+    UPROPERTY(EditAnywhere) bool bGrab = false;
+    UPROPERTY(EditAnywhere) FName GrabAttachSocket;
+    UPROPERTY(EditAnywhere) float GrabReleaseSeconds = 0.f;
     /** Optional (empty = live sockets): the baked blade path of this window, strictly ordered, covering [StartSeconds, EndSeconds], inside the clip. */
     UPROPERTY(EditAnywhere) TArray<FRPGBakedBladeSample> BakedSamples;
 };
@@ -67,6 +71,12 @@ struct FRPGBossMoveCardSpec
     UPROPERTY(EditAnywhere) float ActiveEndSeconds = 0.f;
     UPROPERTY(EditAnywhere) float RecoveryEndSeconds = 0.f;
     UPROPERTY(EditAnywhere) float TrackDegreesPerSecond = 0.f;
+    /** BOSS-ANM-006 (0 = off): bounded warp. Between WarpStartSeconds and WarpEndSeconds (card time, after the commit, inside the active end) the boss closes on the target down to WarpStandoffCm and turns toward it, by at most WarpMaxDistanceCm and WarpMaxAngleDegrees in total. The clip stays in place (no root motion); the boss actor moves. */
+    UPROPERTY(EditAnywhere) float WarpStartSeconds = 0.f;
+    UPROPERTY(EditAnywhere) float WarpEndSeconds = 0.f;
+    UPROPERTY(EditAnywhere) float WarpMaxDistanceCm = 0.f;
+    UPROPERTY(EditAnywhere) float WarpMaxAngleDegrees = 0.f;
+    UPROPERTY(EditAnywhere) float WarpStandoffCm = 0.f;
     UPROPERTY(EditAnywhere) float MinRangeCm = 0.f;
     UPROPERTY(EditAnywhere) float MaxRangeCm = 0.f;
     UPROPERTY(EditAnywhere) float FrontConeDegrees = 0.f;

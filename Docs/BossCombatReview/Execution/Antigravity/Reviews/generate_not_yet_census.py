@@ -41,18 +41,6 @@ CENSUS_METADATA = {
         "cite": None,
         "explanation": "no code: variable windup hold min/max durations and release cues not authored in move cards or montage tracks",
     },
-    "BOSS-ANM-006": {
-        "dep_class": "NEEDS NEW SYSTEM",
-        "cost": "L",
-        "cite": None,
-        "explanation": "no code: Motion Warping plugin not enabled in uproject and warp clamping bounds not implemented",
-    },
-    "BOSS-HIT-012": {
-        "dep_class": "NEEDS NEW SYSTEM",
-        "cost": "L",
-        "cite": None,
-        "explanation": "no code: grab state machine, victim attachment sync, and interrupt release fail-safe not implemented",
-    },
     "BOSS-MOV-004": {
         "dep_class": "NEEDS ART",
         "cost": "M",
@@ -149,18 +137,18 @@ def main():
         data = json.load(f)
 
     not_yet_reqs = [r for r in data["requirements"] if r["status"] == "NOT YET"]
-    assert len(not_yet_reqs) == 12, f"Expected exactly 12 NOT YET requirements, found {len(not_yet_reqs)}"
+    assert len(not_yet_reqs) == 10, f"Expected exactly 12 NOT YET requirements, found {len(not_yet_reqs)}"
 
     lines_md = []
-    lines_md.append("# Track B Remaining Requirements Census: 12 NOT YET Rows\n")
+    lines_md.append("# Track B Remaining Requirements Census: 10 NOT YET Rows\n")
     lines_md.append("**Document Reference:** `Reviews/NOT_YET_CENSUS.md`  ")
     lines_md.append("**Task Reference:** `[C-565]` / `[C-568]` / `[C-617]` / `[C-621]` (Track B Direction Selection Census)  ")
     lines_md.append("**Source Authority:** `witness_status_v3.json` (exact titles and observables)  ")
-    lines_md.append("**Total Census:** 12 requirements currently classified as `NOT YET`  \n")
+    lines_md.append("**Total Census:** 10 requirements currently classified as `NOT YET`  \n")
     lines_md.append("---\n")
     lines_md.append("## 1. Executive Summary & Classification Matrix\n")
-    lines_md.append("This document classifies all 12 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).\n")
-    lines_md.append("*(Note: As of BUILD-129 / SEL-009, 0 ENGINE-ONLY and 0 NEEDS DESIGN DECISION requirements remain in NOT YET; both categories are 100% completed.)*\n")
+    lines_md.append("This document classifies all 10 remaining `NOT YET` combat requirements to inform the Owner's strategic roadmap choice across **Direction A** (Framework completion to full duel), **Direction B** (Track B soulslike boss framework polish), and **Direction C** (Pack-level authoring & Greystone integration).\n")
+    lines_md.append("*(Note: As of BUILD-133/BUILD-134, 0 ENGINE-ONLY, 0 NEEDS DESIGN DECISION, and 0 NEEDS NEW SYSTEM requirements remain in NOT YET; all three categories are 100% completed.)*\n")
     lines_md.append("### Classification Definitions:")
     lines_md.append("- **ENGINE-ONLY:** Pure C++ / runtime rules or hooks; no art or external system dependencies.")
     lines_md.append("- **NEEDS ART:** Requires animations, montages, notify tracks, VFX/SFX, or arena mesh assets.")
@@ -172,7 +160,7 @@ def main():
     lines_md.append("- **M (Medium):** 2-4 runs; a new rule struct/method, unit tests, and live PIE proof scenario.")
     lines_md.append("- **L (Large):** 4+ runs; new multi-component system, asset plumbing, and multi-actor interaction harness.\n")
     lines_md.append("---\n")
-    lines_md.append("## 2. Complete 12-Row NOT YET Census Table\n")
+    lines_md.append("## 2. Complete 10-Row NOT YET Census Table\n")
     lines_md.append("| ID | Exact Title | Exact Observable | Dependency Class | Code Reference & Reason | Cost |")
     lines_md.append("|:---|:---|:---|:---:|:---|:---:|")
 

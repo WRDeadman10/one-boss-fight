@@ -499,6 +499,44 @@ bool FFrameworkSweptAnnulus::RunTest(const FString&)
     }
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkGrabFailSafe,"OneBossFight.Framework.Runtime.GrabFailSafe",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkGrabFailSafe::RunTest(const FString&)
+{
+    // BOSS-HIT-012: the hold rule. Catch at a contact, release at the release time, or AT ONCE on any interrupt; one catch per hold; the victim ends on the floor.
+    using namespace RPGBossTrack;
+    FGrabState S;
+    TestTrue(TEXT("no contact: nothing"),GrabStep(S,false,.5,1.,false)==EGrabEvent::None&&!S.bHeld);
+    TestTrue(TEXT("contact catches"),GrabStep(S,true,.5,1.,false)==EGrabEvent::Caught&&S.bHeld);
+    TestTrue(TEXT("a second contact while held changes nothing"),GrabStep(S,true,.6,9.,false)==EGrabEvent::None&&S.ReleaseAt==1.);
+    TestTrue(TEXT("before the release time: held"),GrabStep(S,false,.99,0.,false)==EGrabEvent::None&&S.bHeld);
+    TestTrue(TEXT("at the release time: released"),GrabStep(S,false,1.,0.,false)==EGrabEvent::Released&&!S.bHeld);
+    GrabStep(S,true,.5,1.,false);
+    TestTrue(TEXT("an interrupt before the release time frees the victim at once"),GrabStep(S,false,.6,0.,true)==EGrabEvent::Interrupted&&!S.bHeld);
+    TestTrue(TEXT("nothing is caught during an interrupt"),GrabStep(S,true,.7,1.,true)==EGrabEvent::None&&!S.bHeld);
+    TestTrue(TEXT("a non finite release time never catches"),GrabStep(S,true,.7,std::numeric_limits<double>::quiet_NaN(),false)==EGrabEvent::None&&!S.bHeld);
+    TestTrue(TEXT("grounded: capsule centre above the floor by half height and skin"),FMath::IsNearlyEqual(GroundedZ(10.,90.,2.),102.));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkBoundedWarp,"OneBossFight.Framework.Runtime.BoundedWarp",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkBoundedWarp::RunTest(const FString&)
+{
+    // BOSS-ANM-006: the warp never exceeds its budgets, whatever is needed and however the window is cut into ticks; with room in the budget it ends exactly at the need.
+    using namespace RPGBossTrack;
+    TestTrue(TEXT("a tick that is half of the time left covers half of the need"),FMath::IsNearlyEqual(WarpStepCm(100.,150.,.1,.2),50.));
+    TestTrue(TEXT("the budget caps the step"),FMath::IsNearlyEqual(WarpStepCm(400.,30.,.2,.2),30.));
+    TestTrue(TEXT("nothing needed, nothing spent, no time"),WarpStepCm(0.,150.,.1,.2)==0.&&WarpStepCm(10.,0.,.1,.2)==0.&&WarpStepCm(10.,150.,0.,.2)==0.&&WarpStepCm(10.,150.,.1,0.)==0.);
+    TestTrue(TEXT("NaN and infinity do nothing"),WarpStepCm(std::numeric_limits<double>::quiet_NaN(),150.,.1,.2)==0.&&WarpStepCm(std::numeric_limits<double>::infinity(),150.,.1,.2)==0.&&WarpStepDegrees(std::numeric_limits<double>::quiet_NaN(),45.,.1,.2)==0.);
+    TestTrue(TEXT("the angle keeps its sign"),WarpStepDegrees(-90.,45.,.2,.2)==-45.&&WarpStepDegrees(30.,45.,.2,.2)==30.);
+    for (const double Dt:{1./240.,1./60.,1./30.,.1})
+        for (const double Need:{20.,148.,150.,151.,600.})
+        {
+            double Moved=0.;
+            for (double T=0.;T<.4-1e-9;T+=Dt) Moved+=WarpStepCm(Need-Moved,150.-Moved,FMath::Min(Dt,.4-T),.4-T);   // the executor recomputes what is still needed every tick
+            if (Moved>150.+1e-6) AddError(FString::Printf(TEXT("budget exceeded: need %g dt %g moved %g"),Need,Dt,Moved));
+            if (Need<=150.&&!FMath::IsNearlyEqual(Moved,Need,1e-6)) AddError(FString::Printf(TEXT("did not end at the need: need %g dt %g moved %g"),Need,Dt,Moved));
+        }
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkDodgeHistory,"OneBossFight.Framework.Runtime.DodgeHistory",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
 bool FFrameworkDodgeHistory::RunTest(const FString&)
 {

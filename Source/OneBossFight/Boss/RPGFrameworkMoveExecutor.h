@@ -2,9 +2,11 @@
 #pragma once
 #include "Components/ActorComponent.h"
 #include "Player/RPGBossMoveModel.h"
+#include "Player/RPGBossTrackRules.h"
 #include "RPGFrameworkMoveExecutor.generated.h"
 class ARPGFrameworkBossCharacter;
 class APawn;
+class ACharacter;
 class UAnimInstance;
 class UAnimMontage;
 class URPGBossFrameworkProfile;
@@ -65,6 +67,15 @@ private:
     FRPGBossAttackToken LastAbortedToken;   // BOSS-EXE-004 test hook: the token of the last aborted attack
     double CardWatchdogTimeoutSeconds=0.;   // BOSS-EXE-007: RPGBossTrack::WatchdogTimeoutSeconds of the running card
     bool bWatchdogFired=false, bSuppressLogged=false, bSuppressDone=false;   // bSuppressDone: the test hook acts on ONE card only
+    /** BOSS-HIT-012: the grab. Held is the caught victim, the saved values are put back on release; bGrabUsed: one catch per card. */
+    void BeginGrab(const FRPGBossMoveWindow& Window);
+    void ReleaseGrab(const TCHAR* Reason,bool bInterrupted);
+    void TickGrab(double Position);
+    /** BOSS-ANM-006: the bounded warp of the running card: what it has used of its budgets so far. */
+    void TickWarp(double PrevPosition,double Position);
+    double WarpMovedCm=0., WarpTurnedDeg=0.; bool bWarpSummaryLogged=false;
+    RPGBossTrack::FGrabState Grab; bool bGrabUsed=false; double GrabReleaseAt=0.; FName GrabWindowId; FName GrabHitKey;
+    TWeakObjectPtr<ACharacter> Held; TEnumAsByte<ECollisionEnabled::Type> HeldCapsuleCollision=ECollisionEnabled::QueryAndPhysics;
     double DecisionYawDeg=0.;    // BOSS-AWR-002: the signed yaw to the target in the same decision snapshot
     double DecisionRangeCm=0.;   // BOSS-AWR-002: the range of the decision snapshot the running attack was started with
 };

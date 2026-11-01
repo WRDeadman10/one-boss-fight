@@ -9,6 +9,7 @@
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimSequence.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/Character.h"
@@ -65,21 +66,21 @@ bool URPGFrameworkMoveExecutor::Rearm(uint64 NewGeneration,FString& Error)
     TArray<FRPGBossMoveModelEvent> Events;
     if (!Model_.ResetGeneration(NewGeneration,Events,Error)) return false;
     LogEvents(Events);
-    bAborted=false; bFinished=false; bWatchdogFired=false; bSuppressDone=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset(); Token=FRPGBossAttackToken();
+    bAborted=false; bFinished=false; bWatchdogFired=false; bSuppressDone=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset(); bGrabUsed=false; WarpMovedCm=WarpTurnedDeg=0.; bWarpSummaryLogged=false; Token=FRPGBossAttackToken();
     SetComponentTickEnabled(false);
     return true;
 }
 bool URPGFrameworkMoveExecutor::RecoverAfterAbort()
 {
     if (!bInitialized||!bAborted||bFinished||!IsIdle()) return false;
-    bAborted=false; bFinished=false; bWatchdogFired=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset(); Token=FRPGBossAttackToken();
+    bAborted=false; bFinished=false; bWatchdogFired=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset(); bGrabUsed=false; WarpMovedCm=WarpTurnedDeg=0.; bWarpSummaryLogged=false; Token=FRPGBossAttackToken();
     SetComponentTickEnabled(false);
     return true;
 }
 bool URPGFrameworkMoveExecutor::PrepareNextAttack()
 {
     if (!bInitialized||bAborted||!bFinished||!IsIdle()) return false;
-    bFinished=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset();
+    bFinished=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset(); bGrabUsed=false; WarpMovedCm=WarpTurnedDeg=0.; bWarpSummaryLogged=false;
     return true;
 }
 bool URPGFrameworkMoveExecutor::StartCard(const TSharedPtr<const FRPGCompiledBossMoveCard>& NextCard,const FRPGBossDecisionSnapshot& S,FString& Error)
@@ -147,6 +148,7 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
         if (!Anim->Montage_IsActive(OwnedMontage))
         {
             if (bTrackCommitLogged) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] heading_locked instance=%llu yawAtCommit=%g maxDriftAfterCommitDegrees=%g"),Token.InstanceId,double(TrackYawAtCommit),TrackDriftMax);
+            ReleaseGrab(TEXT("CardEnded"),true);
             OwnedMontage=nullptr;bFinished=true;SetComponentTickEnabled(false);UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] cleanup reason=Finished modelIdle=1 ownedMontageStopped=1"));
         }
         return;
@@ -189,7 +191,9 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
     const double PrevPosition=LastPosition; LastPosition=Position; TArray<FRPGBossMoveModelEvent> Events; FString Error;
     if (!Model_.AdvanceObservedLocal(Token,Position,Events,Error)) {LogEvents(Events);Fail(*Error);return;}
     LogEvents(Events);
+    TickWarp(PrevPosition,Position);
     SweepWindows(PrevPosition,Position);
+    TickGrab(Position);
     if (Model_.State()==ERPGBossMoveModelState::Idle) StopOwned(Profile->BlendOutSeconds);
 }
 void URPGFrameworkMoveExecutor::SweepWindows(double PrevPosition,double Position)
@@ -269,8 +273,91 @@ void URPGFrameworkMoveExecutor::SweepWindows(double PrevPosition,double Position
         // Only logged when something was filtered, so the logs of every earlier scenario are unchanged. The boss itself is excluded by the query params and never appears here.
         if (IgnoredPawns.Num()>0) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] sweep_filter instance=%llu window=%s ignoredPawns=%d first=%s targetContact=%d selfHits=%d"),Token.InstanceId,*W.WindowId.ToString(),IgnoredPawns.Num(),*FirstIgnored,bContact?1:0,IgnoredPawns.Contains(OwnerBoss.Get())?1:0);
         if (!bContact) continue;
+        if (W.bGrab) { if (!bGrabUsed&&!Grab.bHeld) BeginGrab(W); continue; }   // BOSS-HIT-012: the contact catches, the damage comes at the release
         ApplyHit(W);
     }
+}
+void URPGFrameworkMoveExecutor::BeginGrab(const FRPGBossMoveWindow& W)
+{
+    // BOSS-HIT-012: the victim is the explicit target, caught once per card. Movement off and the capsule out of the way while it rides the boss's socket; the saved values come back on release.
+    ACharacter* Victim=Cast<ACharacter>(Target.Get()); USkeletalMeshComponent* Mesh=OwnerBoss.IsValid()?OwnerBoss->GetMesh():nullptr;
+    if (!Victim||!Mesh||Victim->GetCharacterMovement()==nullptr||Victim->GetCapsuleComponent()==nullptr) return;
+    if (RPGBossTrack::GrabStep(Grab,true,LastPosition,double(W.GrabReleaseSeconds),false)!=RPGBossTrack::EGrabEvent::Caught) return;
+    bGrabUsed=true; GrabWindowId=W.WindowId; GrabHitKey=W.HitGroup.IsNone()?W.WindowId:W.HitGroup; GrabReleaseAt=W.GrabReleaseSeconds;
+    UCharacterMovementComponent* Move=Victim->GetCharacterMovement(); UCapsuleComponent* Capsule=Victim->GetCapsuleComponent();
+    const FString Before=UEnum::GetValueAsString(Move->MovementMode.GetValue());
+    HeldCapsuleCollision=Capsule->GetCollisionEnabled(); Held=Victim;
+    Move->StopMovementImmediately(); Move->DisableMovement(); Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    Victim->AttachToComponent(Mesh,FAttachmentTransformRules::SnapToTargetNotIncludingScale,W.GrabAttachSocket);
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] grab_catch instance=%llu window=%s socket=%s releaseAt=%g modeBefore=%s modeHeld=%s attached=%d"),Token.InstanceId,*W.WindowId.ToString(),*W.GrabAttachSocket.ToString(),double(W.GrabReleaseSeconds),*Before,*UEnum::GetValueAsString(Move->MovementMode.GetValue()),Victim->GetAttachParentActor()==OwnerBoss.Get()?1:0);
+}
+void URPGFrameworkMoveExecutor::ReleaseGrab(const TCHAR* Reason,bool bInterrupted)
+{
+    // BOSS-HIT-012: put the victim back on the floor, upright, walking, collidable, with no attachment and no velocity, whatever ended the hold. Once per hold (Held is cleared first).
+    ACharacter* Victim=Held.Get(); Held.Reset(); Grab=RPGBossTrack::FGrabState();
+    if (!Victim) return;
+    UCharacterMovementComponent* Move=Victim->GetCharacterMovement(); UCapsuleComponent* Capsule=Victim->GetCapsuleComponent();
+    Victim->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+    FVector Where=Victim->GetActorLocation(); const double Half=Capsule?Capsule->GetScaledCapsuleHalfHeight():0.;
+    // The floor under the victim; when the socket put it inside the floor (no hit from above) the boss's own feet are the floor.
+    FHitResult Floor; FCollisionQueryParams Params(SCENE_QUERY_STAT(GrabFloor),false,Victim); if (OwnerBoss.IsValid()) Params.AddIgnoredActor(OwnerBoss.Get());
+    double FloorZ=0.; const bool bFloor=GetWorld()->LineTraceSingleByChannel(Floor,Where+FVector(0.,0.,Half+50.),Where-FVector(0.,0.,5000.),ECC_Visibility,Params);
+    if (bFloor) FloorZ=Floor.ImpactPoint.Z; else if (OwnerBoss.IsValid()) { FVector BO,BE; OwnerBoss->GetActorBounds(true,BO,BE); FloorZ=BO.Z-BE.Z; }
+    Where.Z=RPGBossTrack::GroundedZ(FloorZ,Half,2.);
+    Victim->SetActorLocationAndRotation(Where,FRotator(0.,Victim->GetActorRotation().Yaw,0.),false,nullptr,ETeleportType::TeleportPhysics);
+    if (Capsule) Capsule->SetCollisionEnabled(HeldCapsuleCollision);
+    if (Move) { Move->StopMovementImmediately(); Move->SetMovementMode(MOVE_Walking); }
+    FVector O,E; Victim->GetActorBounds(true,O,E);
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] grab_release instance=%llu reason=%s interrupted=%d attached=%d mode=%s floorFound=%d floorZ=%g feetZ=%g gapCm=%g"),Token.InstanceId,Reason,bInterrupted?1:0,Victim->GetAttachParentActor()?1:0,Move?*UEnum::GetValueAsString(Move->MovementMode.GetValue()):TEXT("none"),bFloor?1:0,FloorZ,O.Z-E.Z,(O.Z-E.Z)-FloorZ);
+}
+void URPGFrameworkMoveExecutor::TickGrab(double Position)
+{
+    if (!Grab.bHeld) return;
+    // A victim that was destroyed while held is lost: nothing to put back (a stale weak pointer makes ReleaseGrab a no-op).
+    const bool bLost=!Held.IsValid()||Held->IsActorBeingDestroyed();
+    const RPGBossTrack::EGrabEvent Event=RPGBossTrack::GrabStep(Grab,false,Position,0.,bLost);
+    if (Event==RPGBossTrack::EGrabEvent::Released)
+    {
+        // The normal end of the hold: the damage of the card, once, with the hit key of the grab window, then the release.
+        if (Resolver.IsValid()&&Target.IsValid())
+        {
+            FRPGDamagePayload Payload; Payload.MoveId=Card->Spec().MoveId; Payload.AttackInstance=int32(Token.InstanceId); Payload.Generation=int32(Token.Generation); Payload.HitKey=GrabHitKey; Payload.HPDamage=Card->Spec().HPDamage;
+            const FRPGDamageResult Result=Resolver->Resolve(Target.Get(),Payload);
+            if (Result.Outcome==ERPGDamageOutcome::Accepted) {++HitsAccepted; AppliedDamage+=Result.HPApplied; if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);}
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] grab_damage instance=%llu key=%s outcome=%s hpApplied=%g"),Token.InstanceId,*GrabHitKey.ToString(),*UEnum::GetValueAsString(Result.Outcome),Result.HPApplied);
+        }
+        ReleaseGrab(TEXT("Released"),false);
+    }
+    else if (Event==RPGBossTrack::EGrabEvent::Interrupted) ReleaseGrab(TEXT("VictimLost"),true);
+}
+void URPGFrameworkMoveExecutor::TickWarp(double PrevPosition,double Position)
+{
+    const FRPGBossMoveCardSpec& S=Card->Spec();
+    if (!(S.WarpMaxDistanceCm>0.f||S.WarpMaxAngleDegrees>0.f)||!OwnerBoss.IsValid()||!Target.IsValid()) return;
+    const double Lo=FMath::Max(PrevPosition,double(S.WarpStartSeconds)), Hi=FMath::Min(Position,double(S.WarpEndSeconds));
+    if (Position<=PrevPosition||Hi<=Lo)
+    {
+        if (!bWarpSummaryLogged&&Position>=S.WarpEndSeconds&&PrevPosition>=S.WarpStartSeconds)
+        {
+            bWarpSummaryLogged=true;
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] warp_summary instance=%llu movedCm=%g maxDistanceCm=%g turnedDeg=%g maxAngleDeg=%g"),Token.InstanceId,WarpMovedCm,double(S.WarpMaxDistanceCm),WarpTurnedDeg,double(S.WarpMaxAngleDegrees));
+        }
+        return;
+    }
+    // What is still needed: the distance down to the standoff and the yaw to face the target, as of THIS tick (the target may have moved).
+    const FVector Boss=OwnerBoss->GetActorLocation(); FVector ToTarget=Target->GetActorLocation()-Boss; ToTarget.Z=0.;
+    const double Dist=ToTarget.Size(); if (Dist<KINDA_SMALL_NUMBER) return;
+    const double NeededCm=FMath::Max(0.,Dist-double(S.WarpStandoffCm));
+    const double YawBefore=OwnerBoss->GetActorRotation().Yaw, NeededDeg=FMath::FindDeltaAngleDegrees(YawBefore,ToTarget.Rotation().Yaw);
+    const double SecondsLeft=double(S.WarpEndSeconds)-Lo, Delta=Hi-Lo;
+    const double StepCm=RPGBossTrack::WarpStepCm(NeededCm,double(S.WarpMaxDistanceCm)-WarpMovedCm,Delta,SecondsLeft);
+    const double StepDeg=RPGBossTrack::WarpStepDegrees(NeededDeg,double(S.WarpMaxAngleDegrees)-WarpTurnedDeg,Delta,SecondsLeft);
+    // Swept: the boss does not walk through the target or a wall. The budget is charged with the distance the boss really moved (a blocked step costs less than it asked for).
+    double ActualCm=0.;
+    if (StepCm>0.) { OwnerBoss->AddActorWorldOffset(ToTarget/Dist*StepCm,true); ActualCm=FVector::Dist2D(Boss,OwnerBoss->GetActorLocation()); }
+    if (StepDeg!=0.) OwnerBoss->SetActorRotation(FRotator(0.,YawBefore+StepDeg,0.));
+    WarpMovedCm+=ActualCm; WarpTurnedDeg+=FMath::Abs(StepDeg);
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] warp_step instance=%llu from=%g to=%g distCm=%g neededCm=%g stepCm=%g actualCm=%g movedCm=%g budgetCm=%g neededDeg=%g stepDeg=%g turnedDeg=%g budgetDeg=%g"),Token.InstanceId,Lo,Hi,Dist,NeededCm,StepCm,ActualCm,WarpMovedCm,double(S.WarpMaxDistanceCm),NeededDeg,StepDeg,WarpTurnedDeg,double(S.WarpMaxAngleDegrees));
 }
 void URPGFrameworkMoveExecutor::LogEvents(const TArray<FRPGBossMoveModelEvent>& Events) const
 {
@@ -295,6 +382,7 @@ void URPGFrameworkMoveExecutor::Abort(const FString& Reason)
 {
     // Cleanup runs exactly once: a clean finish or an earlier abort makes later calls (Fail, EndPlay) no-ops.
     if (bAborted||bFinished) return;
+    ReleaseGrab(*Reason,true);   // BOSS-HIT-012: every abort (stagger, death, leash, watchdog, EndPlay, a failure) frees a held victim first
     TArray<FRPGBossMoveModelEvent> Events; FString Error;
     if (Token.InstanceId) {LastAbortedToken=Token; Model_.Abort(Token,Events,Error);}
     bAborted=true; LogEvents(Events); StopOwned(0.f); OwnedMontage=nullptr; SetComponentTickEnabled(false);

@@ -55,6 +55,14 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
     Number(R, TEXT("FrontConeDegrees"), S.FrontConeDegrees);
     Number(R, TEXT("MaxVerticalDeltaCm"), S.MaxVerticalDeltaCm);
     Number(R, TEXT("HPDamage"), S.HPDamage);
+    // BOSS-ANM-006: the warp is off when both budgets are 0; otherwise a window after the commit inside the active end, and bounded budgets.
+    Number(R, TEXT("WarpStartSeconds"), S.WarpStartSeconds); Number(R, TEXT("WarpEndSeconds"), S.WarpEndSeconds);
+    Number(R, TEXT("WarpMaxDistanceCm"), S.WarpMaxDistanceCm); Number(R, TEXT("WarpMaxAngleDegrees"), S.WarpMaxAngleDegrees); Number(R, TEXT("WarpStandoffCm"), S.WarpStandoffCm);
+    if (FMath::IsFinite(S.WarpMaxDistanceCm) && FMath::IsFinite(S.WarpMaxAngleDegrees) && (S.WarpMaxDistanceCm > 0.f || S.WarpMaxAngleDegrees > 0.f))
+    {
+        if (S.WarpMaxDistanceCm > 1000.f || S.WarpMaxAngleDegrees > 180.f) Fail(R, TEXT("MoveCard.Warp"), TEXT("budget above 1000 cm or 180 degrees"));
+        if (!(S.WarpStartSeconds >= S.CommitSeconds && S.WarpStartSeconds < S.WarpEndSeconds && S.WarpEndSeconds <= S.ActiveEndSeconds)) Fail(R, TEXT("MoveCard.Warp"), TEXT("commit<=warpStart<warpEnd<=activeEnd"));
+    }
     if (S.FrontConeDegrees > 360.f || S.MaxRangeCm < S.MinRangeCm)
         Fail(R, TEXT("MoveCard.Eligibility"), TEXT("cone or range order"));
     if (!(S.CommitSeconds <= S.ActiveStartSeconds && S.ActiveStartSeconds < S.ActiveEndSeconds &&
@@ -82,6 +90,14 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
             if (W.BakedSamples.Num() > 0 || !W.SocketA.IsNone() || !W.SocketB.IsNone()) Fail(R, TEXT("MoveCard.Window"), Field + TEXT(" ring with sockets or baked samples"));
         }
         else Number(R, *FString::Printf(TEXT("%s.RadiusCm"), *Field), W.RadiusCm, true);
+        // BOSS-HIT-012: a grab window is a blade window with an attach socket and a release time after its end, inside the recovery.
+        if (W.bGrab)
+        {
+            if (W.bRing || W.bSecondary || W.GrabAttachSocket.IsNone() || !M.SocketOrBoneNames.Contains(W.GrabAttachSocket)) Fail(R, TEXT("MoveCard.Grab"), Field);
+            if (!Number(R, *FString::Printf(TEXT("%s.GrabReleaseSeconds"), *Field), W.GrabReleaseSeconds, true) || W.GrabReleaseSeconds <= W.EndSeconds || W.GrabReleaseSeconds > S.RecoveryEndSeconds)
+                Fail(R, TEXT("MoveCard.Grab"), Field + TEXT(" release time"));
+            for (int32 J = 0; J < I; ++J) if (S.Windows[J].bGrab) Fail(R, TEXT("MoveCard.Grab"), Field + TEXT(" second grab window"));
+        }
         // Direct windows run one after the other; a secondary window (BOSS-HIT-010) may overlap them.
         if (!(W.StartSeconds >= S.ActiveStartSeconds && W.StartSeconds < W.EndSeconds &&
             W.EndSeconds <= S.ActiveEndSeconds && (W.bSecondary || W.StartSeconds >= PreviousEnd)))
@@ -147,7 +163,7 @@ FRPGBossMoveIssues CompileResolved(const FRPGBossMoveCardSpec& S, USkeleton* Ske
     }
     else if (Skeleton->ContainsSlotName(S.SlotName)) { M.Slots.Add(S.SlotName); }
     for (const FRPGBossMoveWindow& W : S.Windows)
-        for (FName Name : {W.SocketA, W.SocketB})
+        for (FName Name : {W.SocketA, W.SocketB, W.GrabAttachSocket})
             if (Mesh->FindSocket(Name) || Mesh->GetRefSkeleton().FindBoneIndex(Name) != INDEX_NONE)
                 M.SocketOrBoneNames.Add(Name);
     R = Validate(S, M);

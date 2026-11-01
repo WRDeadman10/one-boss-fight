@@ -130,6 +130,25 @@ bool FBossMoveCardRejections::RunTest(const FString&)
     Reject([&](FInput& F){MakeRing(F);F.S.Windows[1].RingThicknessCm=-1.f;},TEXT("MoveCard.Domain"));
     Reject([&](FInput& F){MakeRing(F);F.S.Windows[1].RingHeightCm=std::numeric_limits<float>::quiet_NaN();},TEXT("MoveCard.NonFinite"));
     Reject([&](FInput& F){MakeRing(F);F.S.Windows[1].SocketA=F.S.Windows[0].SocketA;},TEXT("MoveCard.Window"));
+    // BOSS-HIT-012: a grab window is a blade window with a known attach socket and a release time after its end, inside the recovery; one per card.
+    auto MakeGrab=[](FInput& F){auto& W=F.S.Windows[0];W.bGrab=true;W.GrabAttachSocket=W.SocketA;W.GrabReleaseSeconds=1.f;};
+    {FInput F;MakeGrab(F);TestTrue(TEXT("grab window is valid"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}
+    Reject([&](FInput& F){MakeGrab(F);F.S.Windows[0].GrabAttachSocket=NAME_None;},TEXT("MoveCard.Grab"));
+    Reject([&](FInput& F){MakeGrab(F);F.S.Windows[0].GrabAttachSocket=TEXT("NotASocket");},TEXT("MoveCard.Grab"));
+    Reject([&](FInput& F){MakeGrab(F);F.S.Windows[0].GrabReleaseSeconds=F.S.Windows[0].EndSeconds;},TEXT("MoveCard.Grab"));
+    Reject([&](FInput& F){MakeGrab(F);F.S.Windows[0].GrabReleaseSeconds=F.S.RecoveryEndSeconds+.1f;},TEXT("MoveCard.Grab"));
+    Reject([&](FInput& F){MakeGrab(F);F.S.Windows[1].bGrab=true;F.S.Windows[1].GrabAttachSocket=F.S.Windows[1].SocketA;F.S.Windows[1].GrabReleaseSeconds=1.f;},TEXT("MoveCard.Grab"));
+    Reject([&](FInput& F){MakeGrab(F);F.S.Windows[0].GrabReleaseSeconds=std::numeric_limits<float>::quiet_NaN();},TEXT("MoveCard.NonFinite"));
+    // BOSS-ANM-006: the warp is off at 0/0; with a budget it needs a window after the commit inside the active end and budgets within 1000 cm / 180 degrees.
+    auto MakeWarp=[](FInput& F){F.S.WarpStartSeconds=F.S.CommitSeconds;F.S.WarpEndSeconds=F.S.ActiveStartSeconds;F.S.WarpMaxDistanceCm=150.f;F.S.WarpMaxAngleDegrees=45.f;F.S.WarpStandoffCm=80.f;};
+    {FInput F;MakeWarp(F);TestTrue(TEXT("warp window and budgets are valid"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}
+    Reject([&](FInput& F){MakeWarp(F);F.S.WarpStartSeconds=F.S.CommitSeconds-.1f;},TEXT("MoveCard.Warp"));
+    Reject([&](FInput& F){MakeWarp(F);F.S.WarpEndSeconds=F.S.WarpStartSeconds;},TEXT("MoveCard.Warp"));
+    Reject([&](FInput& F){MakeWarp(F);F.S.WarpEndSeconds=F.S.ActiveEndSeconds+.1f;},TEXT("MoveCard.Warp"));
+    Reject([&](FInput& F){MakeWarp(F);F.S.WarpMaxDistanceCm=1000.5f;},TEXT("MoveCard.Warp"));
+    Reject([&](FInput& F){MakeWarp(F);F.S.WarpMaxAngleDegrees=181.f;},TEXT("MoveCard.Warp"));
+    Reject([&](FInput& F){MakeWarp(F);F.S.WarpMaxDistanceCm=-1.f;},TEXT("MoveCard.Domain"));
+    Reject([&](FInput& F){MakeWarp(F);F.S.WarpStandoffCm=std::numeric_limits<float>::quiet_NaN();},TEXT("MoveCard.NonFinite"));
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveCardSnapshot, "OneBossFight.Framework.MoveCard.SnapshotAndFailure", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
