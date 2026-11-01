@@ -1,4 +1,4 @@
-# Track B: Owner Strategic Decision Brief (v2.12)
+# Track B: Owner Strategic Decision Brief (v2.13)
 
 **Date:** 2026-11-01  
 **Author:** Tech Lead Claude & Antigravity  
@@ -9,12 +9,12 @@
 
 ## 1. Executive Summary & Current State
 
-The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.19) and census script (`Reviews/generate_not_yet_census.py`).
+The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.20) and census script (`Reviews/generate_not_yet_census.py`).
 
 ### Ledger Census Today (82 Canonical Requirements):
-- **WITNESSED:** **49** (59.8%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
+- **WITNESSED:** **50** (61.0%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
 - **PARTIAL:** **14** (17.1%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
-- **NOT YET:** **19** (23.2%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
+- **NOT YET:** **18** (22.0%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
 
 ### Milestones Graduated to WITNESSED (Since C-546):
 - **BOSS-EXE-005 (Explicit priority):** Live PIE proof on `L_SevarogFrameworkProofEXE005` (`Claude/B_EXE005/pie_supersede`) proves phase threshold crossing (hit 3 taking health 300->200 below threshold 250 at frame 641) supersedes 4s stagger: boss logs `stagger_superseded`, finishes stagger clip 3.5s early, refills posture to 100 with `stagger_recovery`, and triggers `phase_transition` and phase anim `Soul_Siphon` in the same tick.
@@ -61,20 +61,20 @@ From the original plan (`Reviews/PARTIAL_UPGRADE_PLAN.md`), with its current sta
 6. **Hardware Baseline (1 row):**
    - `BOSS-QA-005` (Performance bounds): Packaged build 1080p 60 FPS $p99 \le 16.67\text{ ms}$ on physical RTX 2060 Super GPU (parked by owner).
 
-### B. The 19 NOT YET Rows (Grouped by Class & Cost)
+### B. The 18 NOT YET Rows (Grouped by Class & Cost)
 Directly computed from `Reviews/NOT_YET_CENSUS.md` and verified against disk:
-- **Cost Breakdown:** **Cost S (1-2 runs): 0 reqs (0.0%)** | **Cost M (2-4 runs): 11 reqs (57.9%)** | **Cost L (4+ runs): 8 reqs (42.1%)**.
+- **Cost Breakdown:** **Cost S (1-2 runs): 0 reqs (0.0%)** | **Cost M (2-4 runs): 10 reqs (55.6%)** | **Cost L (4+ runs): 8 reqs (44.4%)**.
 - **By Dependency Class:**
-  * **ENGINE-ONLY (1 req, 5.3%):** Pure C++ runtime rules or hooks; no art dependencies.
+  * **ENGINE-ONLY (1 req, 5.6%):** Pure C++ runtime rules or hooks; no art dependencies.
     - Cost M: `BOSS-SEL-009` (Reaction latency window).
-  * **NEEDS DESIGN DECISION (3 reqs, 15.8%):** Designer thresholds or scoring rules; requires owner choices before code.
-    - Cost M: `BOSS-MOV-002` (Combat positioning center bias), `BOSS-HIT-010` (Direct vs splash precedence), `BOSS-PHS-005` (Anti-cheese trigger rules).
-  * **NEEDS ART (6 reqs, 31.6%):** Requires animations, montages, notify tracks, or level collision art.
+  * **NEEDS DESIGN DECISION (2 reqs, 11.1%):** Designer thresholds or scoring rules; requires owner choices before code.
+    - Cost M: `BOSS-HIT-010` (Direct vs splash precedence), `BOSS-PHS-005` (Anti-cheese trigger rules).
+  * **NEEDS ART (6 reqs, 33.3%):** Requires animations, montages, notify tracks, or level collision art.
     - Cost M: `BOSS-MOV-004` (Wall-safe charge trajectories), `BOSS-MOV-006` (L_SevarogArena snag point audit), `BOSS-DEF-005` (Defensive moveset actions).
     - Cost L: `BOSS-ANM-003` (Bounded holds), `BOSS-PAC-004` (Vulnerability visual cues), `BOSS-QA-007` (Low VFX accessibility harness).
-  * **NEEDS NEW SYSTEM (5 reqs, 26.3%):** Requires unbuilt architectural subsystems.
+  * **NEEDS NEW SYSTEM (5 reqs, 27.8%):** Requires unbuilt architectural subsystems.
     - Cost L: `BOSS-AWR-007` (LOS raycasts & memory), `BOSS-AWR-008` (Player dodge adaptation histogram), `BOSS-ANM-006` (Motion Warping plugin integration), `BOSS-HIT-011` (Swept annulus shockwave), `BOSS-HIT-012` (Two-character grab state machine).
-  * **PLAYER-SIDE (4 reqs, 21.1%):** Requires player combat intake, input buffers, or camera integration.
+  * **PLAYER-SIDE (4 reqs, 22.2%):** Requires player combat intake, input buffers, or camera integration.
     - Cost M: `BOSS-AWR-006` (Player flask/heavy commitment listener), `BOSS-PAC-003` (Finisher recovery punish window), `BOSS-PAC-005` (Punish-margin calculation formula), `BOSS-QA-006` (Combat follow camera framing).
 
 ---

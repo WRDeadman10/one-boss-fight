@@ -46,7 +46,7 @@ bool ARPGFrameworkBossCharacter::InitializeProof(ARPGFrameworkProofFixture* Fixt
     TUniquePtr<FRPGFrameworkDependencies> D;
     if(!RPGFramework::ResolveProfile(Profile,D,Error))return false;
     if(!InTarget->IsA(D->TargetClass.Get())){Error=TEXT("Framework.Boss.TargetClass");return false;}
-    Target=InTarget;TargetController=InTarget->GetController();ArenaOrigin=InTarget->GetActorLocation();
+    Target=InTarget;TargetController=InTarget->GetController();ArenaOrigin=D->Profile->bArenaCenterAuthored?D->Profile->ArenaCenter:InTarget->GetActorLocation();
     if(!ValidateTarget(TargetHPBefore)){Target.Reset();Error=TEXT("Framework.Boss.TargetHealth");return false;}
     ExpectedTargetHP=TargetHPBefore;
     Dependencies=MoveTemp(D);ProofFixture=Fixture;EncounterId=Encounter;GenerationId=Generation;

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright One Boss Fight. All Rights Reserved.
 """
-validate_framework_proof_logs.py (v3.9)
+validate_framework_proof_logs.py (v3.12)
 
 Formal schema and semantic validator for all [FrameworkProof] structured telemetry lines
 emitted by the One Boss Fight Sevarog Combat Framework (F3d through F11, Track B, B_QA002, B_HIT005, B_AWR001, B_AWR002, B_EXE007, B_QA003B, B_EXE004, B_MOV005, B_EXE005, and B_MOV003).
@@ -62,6 +62,7 @@ SCHEMAS = {
     "hyperarmor_absorbed": r"^card=[^\s]+ postureKept=[^\s]+ amountSkipped=[^\s]+$",
     "combo_pause": r"^seconds=[^\s]+ next=[^\s]+$",
     "combo_pause_end": r"^$",
+    "walk_center_bias": r"^targetFromCenterCm=[^\s]+ thresholdCm=[^\s]+ bias=[^\s]+ near=[01] awayX=[^\s]+ awayY=[^\s]+ biasedX=[^\s]+ biasedY=[^\s]+$",
     "arena_leash": r"^(?:state=Start targetDistanceCm=[^\s]+ radiusCm=[^\s]+ centerX=[^\s]+ centerY=[^\s]+|state=AtCenter distanceCm=[^\s]+|state=Resume(?:\s+bossDistanceToCenterCm=[^\s]+ atCenter=\d+)?)$",
 
     # 3. Candidate Selection & Gate Decisions (v3.0 adds optional seq=\d+)
@@ -390,7 +391,7 @@ def main():
         print(json.dumps(report, indent=2))
     else:
         print("================================================================================")
-        print(" FRAMEWORK PROOF STRUCTURED LOG TELEMETRY VALIDATION REPORT (v3.4)")
+        print(" FRAMEWORK PROOF STRUCTURED LOG TELEMETRY VALIDATION REPORT (v3.12)")
         print("================================================================================")
         print(f"Log files checked:          {total_files}")
         print(f"Total [FrameworkProof] lines: {total_fp_lines}")

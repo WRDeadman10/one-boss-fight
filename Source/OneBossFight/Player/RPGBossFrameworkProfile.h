@@ -109,6 +109,12 @@ public:
     UPROPERTY(EditAnywhere) float ArenaRadiusCm=0.f;
     /** BOSS-MOV-005 (needs ArenaRadiusCm > 0): instead of failing the encounter when the target leaves the arena, the boss aborts its card, walks back to the arena centre (where the target began) and waits in neutral; it resumes when the target is back inside the radius. false = fail with reason OffArena (BOSS-AWR-001). Design choice, proposed. */
     UPROPERTY(EditAnywhere) bool bArenaLeash=false;
+    /** BOSS-MOV-002 (needs ArenaRadiusCm > 0): when the target stands at least CenterBiasStartFraction * ArenaRadiusCm from the arena centre (near a wall), the boss takes its place in the band on the CENTRE side of the target (blend 0..1: 0 = where it stands now, 1 = straight to the centre side) so it does not get pinned between the target and the wall. 0 = off. Design values, proposed. */
+    UPROPERTY(EditAnywhere) float ArenaCenterBias=0.f;
+    UPROPERTY(EditAnywhere) float CenterBiasStartFraction=0.5f;
+    /** The arena centre when it is authored; otherwise the point where the target began (BOSS-AWR-001 / MOV-005). */
+    UPROPERTY(EditAnywhere) bool bArenaCenterAuthored=false;
+    UPROPERTY(EditAnywhere) FVector ArenaCenter=FVector::ZeroVector;
     /** BOSS-EXE-005 (needs posture and a phase two threshold, F5 lane): when the phase threshold is crossed while the boss is staggered, the stagger ends at once and the phase transition starts in the same tick. false = the stagger runs to its end first (BOSS-DEF-001 / F8 behaviour). Design choice, proposed. */
     UPROPERTY(EditAnywhere) bool bPhaseSupersedesStagger=false;
     /** F9 bleed (F5 fixture with a hittable boss; BleedBuildupPerHit 0 = off, the other four must then be 0 too): each player hit adds BleedBuildupPerHit; at the threshold (first BleedInitialThreshold,

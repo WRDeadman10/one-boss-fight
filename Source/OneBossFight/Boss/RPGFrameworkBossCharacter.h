@@ -29,6 +29,8 @@ public:
     /** BOSS-AWR-005: vertical separation of the two FLOORS (feet to feet), not of the actor origins: a boss and a target with different capsule heights stand 0 cm apart on the same floor. */
     double FloorSeparationCm() const;
     APawn* ExplicitTarget() const {return Target.Get();}
+    /** BOSS-AWR-001 / MOV-002 / MOV-005: the arena centre (authored in the profile, else where the target began). */
+    FVector ArenaCentre() const {return ArenaOrigin;}
     const URPGBossFrameworkProfile* ProofProfile() const {return Dependencies?Dependencies->Profile.Get():nullptr;}
     bool Succeeded() const {return bSucceeded;}
     bool Failed() const {return bFailed;}

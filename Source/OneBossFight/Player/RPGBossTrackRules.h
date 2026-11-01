@@ -26,6 +26,18 @@ namespace RPGBossTrack
         L.LastDir=Dir;
         return FRotator::NormalizeAxis(Current+float(Dir)*Step);
     }
+    /**
+     * BOSS-MOV-002 (centre bias): the direction, seen from the target, in which the boss takes its place in the band. Away is where the boss stands now (the unbiased way),
+     * ToCenter points from the target to the arena centre. Bias 0 = Away, 1 = ToCenter (the boss ends between the target and the middle, not between the target and the wall),
+     * in between = the normalised blend. Degenerate input (no centre direction, opposite vectors that cancel, bad bias) falls back to Away. Flat (Z = 0).
+     */
+    inline FVector CenterBiasedAway(const FVector& Away,const FVector& ToCenter,float Bias)
+    {
+        if (!FMath::IsFinite(Bias)||!(Bias>0.f)) return Away;
+        FVector C(ToCenter.X,ToCenter.Y,0.); if (!C.Normalize()) return Away;
+        const double B=FMath::Min(Bias,1.f); FVector R=FVector(Away.X,Away.Y,0.)*(1.-B)+C*B;
+        return R.Normalize() ? R : Away;
+    }
     /** BOSS-EXE-007 (executor watchdog): a card that is still running this many WORLD seconds after its start is aborted: RecoveryEndSeconds / PlayRate + 0.5 s. Negative = invalid input (the card is refused at start). */
     inline double WatchdogTimeoutSeconds(float RecoveryEndSeconds,float PlayRate)
     {

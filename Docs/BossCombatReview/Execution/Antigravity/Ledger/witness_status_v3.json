@@ -1,11 +1,11 @@
 {
-  "version": "3.19",
+  "version": "3.20",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 49,
+    "WITNESSED": 50,
     "PARTIAL": 14,
-    "NOT YET": 19
+    "NOT YET": 18
   },
   "requirements": [
     {
@@ -1289,17 +1289,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 478,
+          "line": 504,
           "quoted": "Near(TEXT(\"60 ticks (1 s) toward 170 turn exactly the cap, 90 deg\"),Yaw,90.f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 479,
+          "line": 505,
           "quoted": "TestTrue(TEXT(\"no tick turned more than cap * dt (1.5 deg)\"),MaxStep<=1.5f+1.e-3f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 481,
+          "line": 507,
           "quoted": "Near(TEXT(\"after the commit 60 more ticks leave the yaw unchanged\"),Yaw,90.f);"
         },
         {
@@ -1425,7 +1425,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 429,
+          "line": 455,
           "quoted": "TestEqual(TEXT(\"no slot node in the AnimBP\"),Token([](auto& X){X.bSlotNodePresent=false;}),FString(TEXT(\"Framework.Profile.StaggerAnim.SlotNode\")));"
         },
         {
@@ -1747,11 +1747,46 @@
       "title": "Combat positioning",
       "section": "Movement and arena",
       "old_status": "NOT YET",
-      "status": "NOT YET",
-      "proof": [],
-      "citations": [],
+      "status": "WITNESSED",
+      "proof": [
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+        "Docs/BossCombatReview/Execution/Claude/B_MOV002/pie_biased_v2/editor_raw.log",
+        "Docs/BossCombatReview/Execution/Claude/B_MOV002/pie_control_bias0_v2/editor_raw.log"
+      ],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 388,
+          "quoted": "    Near(TEXT(\"bias 0 keeps the way the boss stands\"),RPGBossTrack::CenterBiasedAway(Away,ToCenter,0.f),-1.,0.);"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 389,
+          "quoted": "    Near(TEXT(\"bias 1 goes to the centre side\"),RPGBossTrack::CenterBiasedAway(Away,ToCenter,1.f),1.,0.);"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV002/pie_biased_v2/editor_raw.log",
+          "line": 1588,
+          "quoted": "[2026.11.01-07.13.44:460][338]LogTemp: Display: [FrameworkProof] walk_center_bias targetFromCenterCm=250 thresholdCm=150 bias=1 near=1 awayX=-0.6 awayY=0.8 biasedX=1 biasedY=0"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV002/pie_biased_v2/editor_raw.log",
+          "line": 1592,
+          "quoted": "[2026.11.01-07.13.46:232][537]LogTemp: Display: [FrameworkProof] walk start=X=-300.000 Y=400.000 Z=167.150 end=X=122.511 Y=3.516 Z=167.150 distanceCm=579.409 rangeCm=122.561 bandMin=110 bandMax=140 capsule=X=122.511 Y=3.516 Z=167.150 mesh=X=122.511 Y=3.516 Z=2.150"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV002/pie_control_bias0_v2/editor_raw.log",
+          "line": 1591,
+          "quoted": "[2026.11.01-07.14.26:341][341]LogTemp: Display: [FrameworkProof] walk_center_bias targetFromCenterCm=250 thresholdCm=150 bias=0 near=1 awayX=-0.6 awayY=0.8 biasedX=-0.6 biasedY=0.8"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV002/pie_control_bias0_v2/editor_raw.log",
+          "line": 1593,
+          "quoted": "[2026.11.01-07.14.27:515][467]LogTemp: Display: [FrameworkProof] walk start=X=-300.000 Y=400.000 Z=167.150 end=X=-77.080 Y=102.773 Z=167.150 distanceCm=371.533 rangeCm=128.467 bandMin=110 bandMax=140 capsule=X=-77.080 Y=102.773 Z=167.150 mesh=X=-77.080 Y=102.773 Z=2.150"
+        }
+      ],
       "observable": "Boss maintains center-arena bias when target is near walls, avoiding getting pinned in corners.",
-      "notes": "Current state (C-545): Opt-in repositioning implemented (RepositionMax walk back to band and RepositionTurnDegPerSecond turn-in-place), but center-arena bias when target is near walls is NOT implemented. Boss navigates directly toward player band without arena boundary / wall clearance scoring. Remains NOT YET."
+      "notes": "Witnessed (C-607, BUILD-126): Arena center bias when target is near walls implemented via profile fields ArenaCenterBias (0..1), CenterBiasStartFraction (0.5), and optional authored center bArenaCenterAuthored + ArenaCenter in URPGBossFrameworkProfile. When target is >= CenterBiasStartFraction * ArenaRadiusCm from center, ARPGFrameworkBossController::WalkToBand blends boss reposition direction toward arena center via pure rule RPGBossTrack::CenterBiasedAway in RPGBossTrackRules.h, logging walk_center_bias. Unit tests in RPGFrameworkRuntimeTests.cpp:388-404 verify boundary cases, vector blend/cancellation, and profile validation domain. Live PIE on L_SevarogFrameworkProofMOV002 (DA_Sevarog_CenterBias_MOV002) with target near wall (250cm from center, radius 300cm) and boss spawning on wall side (-300, 400) proves: (1) biased run (pie_biased_v2) logs walk_center_bias near=1 bias=1 biasedX=1 biasedY=0 at :1588 and walks around target to center side (+122.5, +3.5) at :1592; (2) control run (pie_control_bias0_v2, rpg.BossProofCenterBias 0) logs bias=0 biasedX=-0.6 biasedY=0.8 at :1591 and stops on wall side (-77.1, +102.8) pinned between target and wall at :1593. Limits: boss spawn and authored center setup by proof map; threshold/bias are proposed values; path uses navmesh without obstacle avoidance; corners unmodeled beyond radial distance; bias applies during reposition walk."
     },
     {
       "id": "BOSS-MOV-003",
@@ -1813,7 +1848,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 393,
+          "line": 419,
           "quoted": "F5();P->ArenaRadiusCm=250.f;P->bArenaLeash=true;TestTrue(TEXT(\"leash with an arena radius is valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
@@ -2145,7 +2180,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 410,
+          "line": 436,
           "quoted": "TestEqual(TEXT(\"loop count middle 1.6 / loop 0.5 = ceil 3.2 = 4\"),RPGStaggerAnim::LoopCount(T,S,E,.5f),4);"
         }
       ],
@@ -2329,17 +2364,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 489,
+          "line": 515,
           "quoted": "TestEqual(TEXT(\"attack running\"),RPGBossOverlay::Format(I),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=129cm Cone=120deg Window=Open Posture=40/100 Health=150/250 Stagger=0 PhaseHold=0\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 491,
+          "line": 517,
           "quoted": "TestEqual(TEXT(\"no card, stagger and hold\"),RPGBossOverlay::Format(N),FString(TEXT(\"Card=None State=Idle Phase=Phase_2 Range=300cm Cone=0deg Window=Closed Posture=100/100 Health=50/250 Stagger=1 PhaseHold=1\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 493,
+          "line": 519,
           "quoted": "TestEqual(TEXT(\"non-finite values never print as numbers\"),RPGBossOverlay::Format(Bad),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=n/acm Cone=120deg Window=Open Posture=40/100 Health=n/a/250 Stagger=0 PhaseHold=0\")));"
         },
         {

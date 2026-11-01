@@ -379,6 +379,32 @@ bool FFrameworkHyperArmor::RunTest(const FString&)
     FRPGBossProfileCard Entry;TestFalse(TEXT("default is off"),Entry.bHyperArmor);
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkCenterBias,"OneBossFight.Framework.Runtime.CenterBias",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkCenterBias::RunTest(const FString&)
+{
+    // BOSS-MOV-002: the boss stands on the wall side (Away = -X), the centre lies +X from the target.
+    const FVector Away(-1.,0.,0.),ToCenter(300.,0.,0.);
+    auto Near=[&](const TCHAR* W,const FVector& V,double X,double Y){TestTrue(W,FMath::IsNearlyEqual(V.X,X,1.e-4)&&FMath::IsNearlyEqual(V.Y,Y,1.e-4));};
+    Near(TEXT("bias 0 keeps the way the boss stands"),RPGBossTrack::CenterBiasedAway(Away,ToCenter,0.f),-1.,0.);
+    Near(TEXT("bias 1 goes to the centre side"),RPGBossTrack::CenterBiasedAway(Away,ToCenter,1.f),1.,0.);
+    Near(TEXT("bias above 1 is clamped"),RPGBossTrack::CenterBiasedAway(Away,ToCenter,5.f),1.,0.);
+    Near(TEXT("half way between two perpendicular ways"),RPGBossTrack::CenterBiasedAway(FVector(0.,-1.,0.),FVector(1.,0.,0.),.5f),FMath::Sqrt(.5),-FMath::Sqrt(.5));
+    Near(TEXT("opposite ways that cancel fall back to Away"),RPGBossTrack::CenterBiasedAway(Away,ToCenter,.5f),-1.,0.);
+    Near(TEXT("no centre direction falls back to Away"),RPGBossTrack::CenterBiasedAway(Away,FVector::ZeroVector,1.f),-1.,0.);
+    Near(TEXT("NaN bias falls back to Away"),RPGBossTrack::CenterBiasedAway(Away,ToCenter,std::numeric_limits<float>::quiet_NaN()),-1.,0.);
+    // Profile domain: the bias needs an arena radius; fractions and bias are bounded.
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    auto F5=[&](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);P->ArenaRadiusCm=300.f;P->ArenaCenterBias=0.f;P->CenterBiasStartFraction=.5f;P->bArenaCenterAuthored=false;};
+    F5();P->ArenaCenterBias=1.f;TestTrue(TEXT("bias 1 with a radius is valid"),RPGFramework::ValidateProfile(*P,Error));
+    for(float V:{-.1f,1.01f,std::numeric_limits<float>::quiet_NaN()}){F5();P->ArenaCenterBias=V;TestFalse(TEXT("bias outside 0..1 refused"),RPGFramework::ValidateProfile(*P,Error));}
+    for(float V:{0.f,-.5f,1.01f}){F5();P->ArenaCenterBias=.5f;P->CenterBiasStartFraction=V;TestFalse(TEXT("start fraction outside (0,1] refused"),RPGFramework::ValidateProfile(*P,Error));}
+    F5();P->ArenaRadiusCm=0.f;P->ArenaCenterBias=.5f;TestFalse(TEXT("bias without a radius refused"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("token"),Error,FString(TEXT("Framework.Profile.Domain")));
+    F5();P->bArenaCenterAuthored=true;P->ArenaCenter=FVector(250.,0.,0.);TestTrue(TEXT("authored centre with a radius is valid"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->ArenaRadiusCm=0.f;P->bArenaCenterAuthored=true;TestFalse(TEXT("authored centre without a radius refused"),RPGFramework::ValidateProfile(*P,Error));
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkArenaProfile,"OneBossFight.Framework.Runtime.ArenaProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
 bool FFrameworkArenaProfile::RunTest(const FString&)
 {
