@@ -321,6 +321,67 @@ class TestMoveCardValidationRules(unittest.TestCase):
         self.assertIn("MoveCard.UnmeasuredTiming[Windows[0].StartSeconds]", errors2)
 
 
+
+    def test_window_secondary_boolean_validation(self):
+        # 1. Non-boolean Secondary value refused
+        spec = make_valid_spec()
+        spec["Windows"][0]["Secondary"] = "true"
+        errors = validate_move_card_spec(spec)
+        self.assertTrue(any("Secondary: must be bool" in e for e in errors), f"Expected bool refusal: {errors}")
+
+        # 2. All secondary windows refused (card cannot be all secondary)
+        spec = make_valid_spec()
+        spec["Windows"][0]["Secondary"] = True
+        errors = validate_move_card_spec(spec)
+        self.assertIn("MoveCard.Window[no direct window]", errors)
+
+        # 3. Two direct windows overlapping still refused
+        spec = make_valid_spec()
+        spec["Windows"].append({
+            "WindowId": "Window_2",
+            "HitGroup": "HitGroup_Blade",
+            "StartSeconds": 0.4,
+            "EndSeconds": 0.8,
+            "SocketA": "weapon_r",
+            "SocketB": "root_weapon_end_r",
+            "RadiusCm": 20.0,
+            "Secondary": False
+        })
+        errors = validate_move_card_spec(spec)
+        self.assertIn("MoveCard.Window[Windows[1]]", errors)
+
+        # 4. Secondary window with different HitGroup than direct window refused
+        spec = make_valid_spec()
+        spec["Windows"].append({
+            "WindowId": "Window_Splash",
+            "HitGroup": "HitGroup_Other",
+            "StartSeconds": 0.4,
+            "EndSeconds": 0.8,
+            "SocketA": "weapon_r",
+            "SocketB": "root_weapon_end_r",
+            "RadiusCm": 30.0,
+            "Secondary": True
+        })
+        errors = validate_move_card_spec(spec)
+        self.assertTrue(any("secondary without a direct window in its hit group" in e for e in errors), f"Expected group refusal: {errors}")
+
+        # 5. Secondary window overlapping direct window of SAME hit group is valid
+        spec = make_valid_spec()
+        spec["Windows"].append({
+            "WindowId": "Window_Splash",
+            "HitGroup": "HitGroup_Blade",
+            "StartSeconds": 0.4,
+            "EndSeconds": 0.8,
+            "SocketA": "weapon_r",
+            "SocketB": "root_weapon_end_r",
+            "RadiusCm": 30.0,
+            "Secondary": True
+        })
+        meta = make_valid_metadata()
+        errors = validate_move_card_spec(spec, meta)
+        self.assertEqual(len(errors), 0, f"Valid secondary overlap should produce 0 errors: {errors}")
+
+
 class FakeEditorPropertyObject:
     def __init__(self):
         self._props = {}
@@ -582,6 +643,31 @@ class TestAuthorMoveCardsExecution(unittest.TestCase):
         FakeUnrealModule.EditorAssetLibrary.default_anim_length = 1.0
         rc = execute_authoring([card], apply_mode=True, save_mode=False)
         self.assertEqual(rc, 1)
+
+
+
+    def test_apply_secondary_property_mapping_and_readback(self):
+        spec = make_valid_spec()
+        spec["Windows"].append({
+            "WindowId": "Window_Splash",
+            "HitGroup": "HitGroup_Blade",
+            "StartSeconds": 0.4,
+            "EndSeconds": 0.8,
+            "SocketA": "weapon_r",
+            "SocketB": "root_weapon_end_r",
+            "RadiusCm": 30.0,
+            "Secondary": True
+        })
+        rc = execute_authoring([spec], apply_mode=True, save_mode=False)
+        self.assertEqual(rc, 0, "execute_authoring with secondary window must succeed")
+        tools = FakeUnrealModule.AssetToolsHelpers.get_asset_tools()
+        self.assertEqual(len(tools.created), 1)
+        created_asset = tools.created[0][2]
+        created_spec = created_asset.get_editor_property("spec")
+        created_wins = created_spec.get_editor_property("windows")
+        self.assertEqual(len(created_wins), 2)
+        self.assertFalse(created_wins[0].get_editor_property("secondary"))
+        self.assertTrue(created_wins[1].get_editor_property("secondary"))
 
 
 class TestCppTokenParity(unittest.TestCase):

@@ -198,6 +198,7 @@ def validate_move_card_spec(
     else:
         window_ids = set()
         previous_end = -1.0
+        direct_groups = set()
         for i, w in enumerate(windows):
             field_prefix = f"Windows[{i}]"
             w_id = w.get("WindowId")
@@ -207,6 +208,17 @@ def validate_move_card_spec(
                 errors.append(f"MoveCard.WindowIdentity[{field_prefix}]")
             if w_id:
                 window_ids.add(w_id)
+
+            # BOSS-HIT-010: optional boolean Secondary per window
+            is_secondary = False
+            if "Secondary" in w and w["Secondary"] is not None:
+                if not isinstance(w["Secondary"], bool):
+                    errors.append(f"MoveCard.Window[{field_prefix}.Secondary: must be bool]")
+                else:
+                    is_secondary = w["Secondary"]
+
+            if not is_secondary and h_grp and h_grp != "None":
+                direct_groups.add(h_grp)
 
             has_w_s = check_number(errors, f"{field_prefix}.StartSeconds", w.get("StartSeconds"))
             has_w_e = check_number(errors, f"{field_prefix}.EndSeconds", w.get("EndSeconds"))
@@ -218,9 +230,11 @@ def validate_move_card_spec(
                 act_start = float(spec["ActiveStartSeconds"])
                 act_end = float(spec["ActiveEndSeconds"])
 
-                if not (w_start >= act_start and w_start < w_end and w_end <= act_end and w_start >= previous_end):
+                # Direct windows run one after the other; a secondary window (BOSS-HIT-010) may overlap them.
+                if not (w_start >= act_start and w_start < w_end and w_end <= act_end and (is_secondary or w_start >= previous_end)):
                     errors.append(f"MoveCard.Window[{field_prefix}]")
-                previous_end = w_end
+                if not is_secondary:
+                    previous_end = w_end
 
             sock_a = w.get("SocketA")
             sock_b = w.get("SocketB")
@@ -230,6 +244,15 @@ def validate_move_card_spec(
                 valid_bones = metadata["SocketOrBoneNames"]
                 if sock_a not in valid_bones or sock_b not in valid_bones:
                     errors.append(f"MoveCard.Socket[{field_prefix}]")
+
+        # BOSS-HIT-010: a secondary window needs a direct window of the same hit group (shared dedupe), and a card cannot be all secondary.
+        if len(direct_groups) == 0:
+            errors.append("MoveCard.Window[no direct window]")
+        for i, w in enumerate(windows):
+            if w.get("Secondary") is True:
+                h_grp = w.get("HitGroup")
+                if h_grp and h_grp not in direct_groups:
+                    errors.append(f"MoveCard.Window[Windows[{i}] secondary without a direct window in its hit group]")
 
             # 10. Optional Baked Blade Path Samples (VR-CARD-008 / A-308)
             baked_samples = w.get("BakedSamples")
@@ -503,6 +526,14 @@ def execute_authoring(
             win_struct.set_editor_property("socket_a", unreal.Name(w["SocketA"]))
             win_struct.set_editor_property("socket_b", unreal.Name(w["SocketB"]))
             win_struct.set_editor_property("radius_cm", float(w["RadiusCm"]))
+            is_secondary = bool(w.get("Secondary", False))
+            try:
+                win_struct.set_editor_property("secondary", is_secondary)
+            except Exception:
+                try:
+                    win_struct.set_editor_property("b_secondary", is_secondary)
+                except Exception:
+                    pass
 
             if "BakedSamples" in w and w["BakedSamples"]:
                 if not hasattr(unreal, "RPGBakedBladeSample"):
@@ -545,6 +576,14 @@ def execute_authoring(
         assert len(read_wins) == len(card["Windows"]), "Windows readback failed"
 
         for k, jw in enumerate(card.get("Windows", [])):
+            want_sec = bool(jw.get("Secondary", False))
+            read_win = read_wins[k]
+            got_sec = read_win.get_editor_property("secondary")
+            if got_sec is None:
+                got_sec = read_win.get_editor_property("b_secondary")
+            got_sec = bool(got_sec) if got_sec is not None else False
+            assert got_sec == want_sec, f"Window {k} Secondary readback failed: got {got_sec}, expected {want_sec}"
+
             if "BakedSamples" in jw and jw["BakedSamples"]:
                 want_samples = jw["BakedSamples"]
                 read_win = read_wins[k]
