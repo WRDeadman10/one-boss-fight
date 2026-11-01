@@ -144,3 +144,8 @@ Documentation/Boss/**/*.mkv
 # Run execution state dumps: never on git (C-613)
 Docs/BossCombatReview/Execution/Claude/B_*/**/*_state.txt
 Docs/BossCombatReview/Execution/Claude/B_*/**/*_summary.txt
+# Run snapshot dumps of ANY execution folder (history cleaned 2026-11-01, owner H-13): never tracked again
+Docs/BossCombatReview/Execution/**/*pre_state*.txt
+Docs/BossCombatReview/Execution/**/*post_state*.txt
+Docs/BossCombatReview/Execution/**/*pre_summary.txt
+Docs/BossCombatReview/Execution/**/*post_summary.txt
