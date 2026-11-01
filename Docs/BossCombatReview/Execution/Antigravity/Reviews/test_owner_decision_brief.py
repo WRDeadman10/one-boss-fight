@@ -87,5 +87,32 @@ class TestOwnerDecisionBrief(unittest.TestCase):
         self.assertNotIn("Greystone duel", self.text)
         self.assertNotIn("Greystone visual bridge", self.text)
 
+    def test_evidence_receipts_match_disk(self):
+        """Every receipt line in Reviews/evidence_sha256.txt must match file on disk (SHA256 and size)."""
+        import hashlib
+        receipt_path = REPO_ROOT / "Docs/BossCombatReview/Execution/Antigravity/Reviews/evidence_sha256.txt"
+        self.assertTrue(receipt_path.exists(), "evidence_sha256.txt does not exist")
+        lines = receipt_path.read_text(encoding="utf-8").splitlines()
+        self.assertGreater(len(lines), 0, "evidence_sha256.txt is empty")
+
+        for idx, line in enumerate(lines, 1):
+            line = line.strip()
+            if not line:
+                continue
+            parts = line.split()
+            self.assertEqual(len(parts), 3, f"Line {idx} in evidence_sha256.txt must have 3 parts: {line}")
+            expected_hash, expected_size, rel_path = parts[0], int(parts[1]), parts[2]
+
+            p = REPO_ROOT / rel_path
+            if not p.exists():
+                p = REPO_ROOT / "Docs/BossCombatReview/Execution/Antigravity/Reviews" / rel_path
+            self.assertTrue(p.exists(), f"File at line {idx} does not exist: {rel_path}")
+
+            data = p.read_bytes()
+            actual_hash = hashlib.sha256(data).hexdigest()
+            actual_size = len(data)
+            self.assertEqual(actual_hash, expected_hash, f"Hash mismatch at line {idx} for {rel_path}")
+            self.assertEqual(actual_size, expected_size, f"Size mismatch at line {idx} for {rel_path}")
+
 if __name__ == "__main__":
     unittest.main()
