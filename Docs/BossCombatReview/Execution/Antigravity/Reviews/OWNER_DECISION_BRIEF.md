@@ -1,4 +1,4 @@
-# Track B: Owner Strategic Decision Brief (v2.22)
+# Track B: Owner Strategic Decision Brief (v2.23)
 
 **Date:** 2026-11-01  
 **Author:** Tech Lead Claude & Antigravity  
@@ -12,11 +12,12 @@
 The test boss combat framework has reached strong mathematical and behavioral maturity. All numbers below are computed directly from the canonical verification ledger (`Ledger/witness_status_v3.json` v3.27) and census script (`Reviews/generate_not_yet_census.py`).
 
 ### Ledger Census Today (82 Canonical Requirements):
-- **WITNESSED:** **61** (74.4%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
+- **WITNESSED:** **62** (75.6%) — Behavioral proof verified live in PIE or via C++ unit test assertions on the framework boss.
 - **PARTIAL:** **14** (17.1%) — Core logic implemented and tested; awaiting specific engine scenarios, input drivers, or authoring.
-- **NOT YET:** **7** (8.5%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
+- **NOT YET:** **6** (7.3%) — Unbuilt subsystems, unauthored animations, or future combat blocks.
 
 ### Milestones Graduated to WITNESSED (Since C-546):
+- **BOSS-MOV-004 (Wall-safe attacks):** Live PIE proof on `L_SevarogFrameworkProofMOV004` (`Claude/B_MOV004/pie_wall`, `pie_wall2`, `pie_nowall_control`) proves forward charge attack trajectory clamps when hitting an arena boundary without clipping through or creeping. In the in-place card backend, forward charges are executed via bounded motion warping with swept collision offsets; when colliding with a blocking actor (wall cube 800x20x200cm at Y=150cm), movement trajectory clamps without penetration or clipping through (boss capsule radius 60cm stands at Y=89.0553cm, 0.94cm short of the wall face, logging `warp_blocked` across 5 consecutive frames with zero subsequent creeping), and warp budget charges only actual distance traversed (96.877cm of 150cm budget spent vs 150cm full budget in unblocked control). Unit tests in `RPGFrameworkRuntimeTests.cpp:525-527` (FFrameworkBoundedWarp). Live PIE verifies: `pie_wall` proves initial stop at frame 454 (:1625 `warp_blocked instance=1 stepCm=27.6756 actualCm=13.8502 blocker=StaticMeshActor_1 bossX=90.3312 bossY=89.0553`), followed by zero-progress clamped steps (:1629, :1633, :1637, :1643 `actualCm=0`), and summary (:1647 `warp_summary movedCm=96.877 maxDistanceCm=150 turnedDeg=45`), with bit-for-bit parity in `pie_wall2`; control `pie_nowall_control` confirms 0 `warp_blocked` lines and full 150cm budget execution (:1640). Note: the forward charge is the bounded warp (in-place backend) and the wall actor stands in for the arena boundary (the real arena boundary check is the MOV-006 audit, C-635).
 - **BOSS-PAC-003 (Guaranteed openings) & BOSS-PAC-005 (Punish-margin calculation):** Live PIE proof on `L_SevarogFrameworkProofPAC003` (`DA_Sevarog_Punish_PAC003.uasset`, `Claude/B_PAC003/pie_pass`, `pie_fail`) proves every move card's recovery window is validated at resolve time against measured player attack startup and travel time into reach. Player light startup (0.3503s, `Attack_PrimaryA_Montage`) and charged heavy startup (0.5027s, `ChargedAttack_Montage`) are measured directly from the pack's animation montages in C++ via `RPGBossPunish::MeasureStartupSeconds`. Profile field `PunishMarginSeconds` (default 0.3s) enforces light punish margin; `bHeavyFinisher` (MC-04 HeavySlam) additionally guarantees heavy punish margin (>= 0). Unit tests in `RPGFrameworkRuntimeTests.cpp:710-718` and `RPGBossPunishTests.cpp` (Rules :13-27, PackMontages :40-45). Live PIE verifies: `pie_pass` proves SwingSlow recovery 1.1583s leaves light margin 0.7246s >= 0.3s (:1576) and HeavySlam recovery 1.1167s leaves light margin 0.7164s and heavy margin 0.5640s >= 0 (:1577; parity in `pie_pass2`); `pie_fail` (0.9s margin requirement) proves refusal: SwingSlow margin 0.7246s < 0.9s logs `ok=0` (:1574), `cleanup reason=Framework.Profile.PunishMargin` (:1575), and `ERROR bossInactive=1` (:1576). Note: player startups measured from pack montages; reach 150cm is a design value pending measured weapon reach.
 - **BOSS-AWR-006 (Observable player activity):** Live PIE proof on `L_SevarogFrameworkProofAWR006` (`DA_Sevarog_Greed_AWR006.uasset`, `Claude/B_AWR006/pie_flask`, `pie_heavy`) proves player flask drinking and heavy attack commitment (Strong, Charged, JumpHeavy) raise priority of anti-greed card (SwingSlow x2 multiplier). Boss samples player swing tracker (`URPGSwingTracker`) and `DrinkingPotion` montage playback to detect greedy window. Unit tests in `RPGFrameworkRuntimeTests.cpp:693-698` and `RPGBossMoveSelectorTests.cpp:143-145` verify classification and selector multiplier. Live PIE proves: flask drink triggers `player_activity None->Flask` (:1671), `greed_pattern state=Greedy` (:1704), and SwingSlow selection at 2x score (:1707; parity in pie_flask2); heavy attack triggers `player_swing heavy=1` (:1775), `player_activity None->HeavyCommit` (:1776), `greed_pattern` (:1827), and SwingSlow selection (:1830); control light swing triggers `player_swing heavy=0` (:1769) without greed pattern, selecting baseline HeavySlam (:1829). Caveat: wall-clock real-swing test driver yields frame differences between heavy repeats though decision sequence matches; flask pair is bit-for-bit exact.
 - **BOSS-ANM-006 (Bounded motion warping):** Live PIE proof on `L_SevarogFrameworkProofANM006` (`Move_Sevarog_HeavyWarp_ANM006.uasset`, `DA_Sevarog_Warp_ANM006.uasset`, `Claude/B_ANM006/pie_warp_room`) proves motion warping translation and rotation strictly clamped to max warp distance (150cm) and angle (45°) with standoff 105cm. Plugin not used because card backend is in-place only (DECISIONS.md 2026-11-01); observable met by boss-owned bounded warp clamping. Unit tests in `RPGFrameworkRuntimeTests.cpp:525-536` verify proportional need allocation across tick sizes and ranges, capped strictly by budget. Live PIE proves: with room, ends exactly at standoff (:1643 movedCm=23.4667 turnedDeg=0); when clamped (:1641, :1644), spends exactly budget limit (movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45).
@@ -72,15 +73,15 @@ From the original plan (`Reviews/PARTIAL_UPGRADE_PLAN.md`), with its current sta
 
 ### B. The 7 NOT YET Rows (Grouped by Class & Cost)
 Directly computed from `Reviews/NOT_YET_CENSUS.md` and verified against disk:
-- **Cost Breakdown:** **Cost S (1-2 runs): 0 reqs (0.0%)** | **Cost M (2-4 runs): 4 reqs (57.1%)** | **Cost L (4+ runs): 3 reqs (42.9%)**.
+- **Cost Breakdown:** **Cost S (1-2 runs): 0 reqs (0.0%)** | **Cost M (2-4 runs): 3 reqs (50.0%)** | **Cost L (4+ runs): 3 reqs (50.0%)**.
 - **By Dependency Class:**
   * **ENGINE-ONLY (0 reqs, 0.0%):** All engine-only requirements (`SEL-009`) now fully implemented and witnessed!
   * **NEEDS DESIGN DECISION (0 reqs, 0.0%):** All 4 design decision rows (`PAC-002`, `MOV-002`, `PHS-005`, `HIT-010`) now fully implemented and witnessed!
   * **NEEDS NEW SYSTEM (0 reqs, 0.0%):** All 5 new system requirements (`AWR-007`, `AWR-008`, `HIT-011`, `HIT-012`, `ANM-006`) now fully implemented and witnessed!
-  * **NEEDS ART (6 reqs, 85.7%):** Requires animations, montages, notify tracks, or level collision art.
-    - Cost M: `BOSS-MOV-004` (Wall-safe charge trajectories), `BOSS-MOV-006` (L_SevarogArena snag point audit), `BOSS-DEF-005` (Defensive moveset actions).
+  * **NEEDS ART (5 reqs, 83.3%):** Requires animations, montages, notify tracks, or level collision art.
+    - Cost M: `BOSS-MOV-006` (L_SevarogArena snag point audit), `BOSS-DEF-005` (Defensive moveset actions).
     - Cost L: `BOSS-ANM-003` (Bounded holds), `BOSS-PAC-004` (Vulnerability visual cues), `BOSS-QA-007` (Low VFX accessibility harness).
-  * **PLAYER-SIDE (1 reqs, 14.3%):** Requires player combat intake, input buffers, or camera integration.
+  * **PLAYER-SIDE (1 reqs, 16.7%):** Requires player combat intake, input buffers, or camera integration.
     - Cost M: `BOSS-QA-006` (Combat follow camera framing; claimed by Codex C-635 / X-381).
 
 ---

@@ -354,7 +354,10 @@ void URPGFrameworkMoveExecutor::TickWarp(double PrevPosition,double Position)
     const double StepDeg=RPGBossTrack::WarpStepDegrees(NeededDeg,double(S.WarpMaxAngleDegrees)-WarpTurnedDeg,Delta,SecondsLeft);
     // Swept: the boss does not walk through the target or a wall. The budget is charged with the distance the boss really moved (a blocked step costs less than it asked for).
     double ActualCm=0.;
-    if (StepCm>0.) { OwnerBoss->AddActorWorldOffset(ToTarget/Dist*StepCm,true); ActualCm=FVector::Dist2D(Boss,OwnerBoss->GetActorLocation()); }
+    FHitResult WarpHit;
+    if (StepCm>0.) { OwnerBoss->AddActorWorldOffset(ToTarget/Dist*StepCm,true,&WarpHit); ActualCm=FVector::Dist2D(Boss,OwnerBoss->GetActorLocation()); }
+    // BOSS-MOV-004: a swept step that is stopped by a wall or another actor costs less than it asked for; the stop is logged with what blocked it and where the boss stands.
+    if (StepCm>0.&&ActualCm<StepCm-0.5) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] warp_blocked instance=%llu stepCm=%g actualCm=%g blocker=%s bossX=%g bossY=%g"),Token.InstanceId,StepCm,ActualCm,WarpHit.GetActor()?*WarpHit.GetActor()->GetName():TEXT("None"),OwnerBoss->GetActorLocation().X,OwnerBoss->GetActorLocation().Y);
     if (StepDeg!=0.) OwnerBoss->SetActorRotation(FRotator(0.,YawBefore+StepDeg,0.));
     WarpMovedCm+=ActualCm; WarpTurnedDeg+=FMath::Abs(StepDeg);
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] warp_step instance=%llu from=%g to=%g distCm=%g neededCm=%g stepCm=%g actualCm=%g movedCm=%g budgetCm=%g neededDeg=%g stepDeg=%g turnedDeg=%g budgetDeg=%g"),Token.InstanceId,Lo,Hi,Dist,NeededCm,StepCm,ActualCm,WarpMovedCm,double(S.WarpMaxDistanceCm),NeededDeg,StepDeg,WarpTurnedDeg,double(S.WarpMaxAngleDegrees));

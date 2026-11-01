@@ -1,11 +1,11 @@
 {
-  "version": "3.29",
+  "version": "3.30",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 61,
+    "WITNESSED": 62,
     "PARTIAL": 14,
-    "NOT YET": 7
+    "NOT YET": 6
   },
   "requirements": [
     {
@@ -1675,8 +1675,8 @@
           "quoted": "[FrameworkProof] warp_summary instance=1 movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45"
         }
       ],
-      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45°).",
-      "notes": "Witnessed (C-627, BUILD-134): Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45°). Architectural Decision (DECISIONS.md 2026-11-01): The Motion Warping plugin was not enabled in uproject because it operates on root-motion animation clips while the card backend is in-place only (MoveCard.UnsupportedRootMotion); the observable of the row (translation and rotation strictly clamped) is satisfied by boss-owned bounded warp clamping. Card spec fields WarpStartSeconds, WarpEndSeconds, WarpMaxDistanceCm (<=1000cm), WarpMaxAngleDegrees (<=180°), WarpStandoffCm (>=0) are validated in RPGBossMoveCards::Validate (RPGBossMoveCard.cpp:109-130; tests in RPGBossMoveCardTests.cpp:144-151). Pure warp step formulas RPGBossTrack::WarpStepCm and WarpStepDegrees dynamically allocate need proportionally across remaining window time, capped by remaining budget, and charged only by distance actually moved via swept move (tested in RPGFrameworkRuntimeTests.cpp:525-536 across dt 1/240..0.1s and ranges 20..600cm). Emits structured telemetry warp_step and warp_summary. Live PIE proofs on L_SevarogFrameworkProofANM006 (Move_Sevarog_HeavyWarp_ANM006, warp window 0.4..0.5333s, budget 150cm / 45°, standoff 105cm; Claude/B_ANM006): 1) pie_warp_room (target 128.467cm away, room to spare): closes exactly to standoff 105cm (:1643 warp_summary movedCm=23.4667 turnedDeg=0, well within budgets; parity in pie_warp_room2). 2) pie_warp_clamped (target at 626cm and 55°): needs 371cm / 55°, spends exactly budget limit (:1641 last step budgetCm=150, budgetDeg=45; :1644 warp_summary movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45). Limits: boss-owned actor translation/yaw sweep; root-motion plugin not used."
+      "observable": "Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45\u00b0).",
+      "notes": "Witnessed (C-627, BUILD-134): Motion Warping translation and rotation strictly clamped to max warp distance (e.g. 150cm) and angle (e.g. 45\u00b0). Architectural Decision (DECISIONS.md 2026-11-01): The Motion Warping plugin was not enabled in uproject because it operates on root-motion animation clips while the card backend is in-place only (MoveCard.UnsupportedRootMotion); the observable of the row (translation and rotation strictly clamped) is satisfied by boss-owned bounded warp clamping. Card spec fields WarpStartSeconds, WarpEndSeconds, WarpMaxDistanceCm (<=1000cm), WarpMaxAngleDegrees (<=180\u00b0), WarpStandoffCm (>=0) are validated in RPGBossMoveCards::Validate (RPGBossMoveCard.cpp:109-130; tests in RPGBossMoveCardTests.cpp:144-151). Pure warp step formulas RPGBossTrack::WarpStepCm and WarpStepDegrees dynamically allocate need proportionally across remaining window time, capped by remaining budget, and charged only by distance actually moved via swept move (tested in RPGFrameworkRuntimeTests.cpp:525-536 across dt 1/240..0.1s and ranges 20..600cm). Emits structured telemetry warp_step and warp_summary. Live PIE proofs on L_SevarogFrameworkProofANM006 (Move_Sevarog_HeavyWarp_ANM006, warp window 0.4..0.5333s, budget 150cm / 45\u00b0, standoff 105cm; Claude/B_ANM006): 1) pie_warp_room (target 128.467cm away, room to spare): closes exactly to standoff 105cm (:1643 warp_summary movedCm=23.4667 turnedDeg=0, well within budgets; parity in pie_warp_room2). 2) pie_warp_clamped (target at 626cm and 55\u00b0): needs 371cm / 55\u00b0, spends exactly budget limit (:1641 last step budgetCm=150, budgetDeg=45; :1644 warp_summary movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45). Limits: boss-owned actor translation/yaw sweep; root-motion plugin not used."
     },
     {
       "id": "BOSS-ANM-007",
@@ -2339,11 +2339,47 @@
       "title": "Wall-safe attacks",
       "section": "Movement and arena",
       "old_status": "NOT YET",
-      "status": "NOT YET",
+      "status": "WITNESSED",
       "proof": [],
-      "citations": [],
+      "citations": [
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 525,
+          "quoted": "TestTrue(TEXT(\"a tick that is half of the time left covers half of the need\"),FMath::IsNearlyEqual(WarpStepCm(100.,150.,.1,.2),50.));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 526,
+          "quoted": "TestTrue(TEXT(\"the budget caps the step\"),FMath::IsNearlyEqual(WarpStepCm(400.,30.,.2,.2),30.));"
+        },
+        {
+          "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
+          "line": 527,
+          "quoted": "TestTrue(TEXT(\"nothing needed, nothing spent, no time\"),WarpStepCm(0.,150.,.1,.2)==0.&&WarpStepCm(10.,0.,.1,.2)==0.&&WarpStepCm(10.,150.,0.,.2)==0.&&WarpStepCm(10.,150.,.1,0.)==0.);"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV004/pie_wall/editor_raw.log",
+          "line": 1625,
+          "quoted": "[2026.11.01-15.41.25:839][454]LogTemp: Display: [FrameworkProof] warp_blocked instance=1 stepCm=27.6756 actualCm=13.8502 blocker=StaticMeshActor_1 bossX=90.3312 bossY=89.0553"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV004/pie_wall/editor_raw.log",
+          "line": 1629,
+          "quoted": "[2026.11.01-15.41.25:859][455]LogTemp: Display: [FrameworkProof] warp_blocked instance=1 stepCm=31.1337 actualCm=0 blocker=StaticMeshActor_1 bossX=90.3312 bossY=89.0553"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV004/pie_wall/editor_raw.log",
+          "line": 1647,
+          "quoted": "[2026.11.01-15.41.25:906][459]LogTemp: Display: [FrameworkProof] warp_summary instance=1 movedCm=96.877 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_MOV004/pie_nowall_control/editor_raw.log",
+          "line": 1640,
+          "quoted": "[2026.11.01-15.39.35:999][285]LogTemp: Display: [FrameworkProof] warp_summary instance=1 movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45"
+        }
+      ],
       "observable": "Forward charge attacks clamp movement trajectory when hitting arena boundary without clipping through.",
-      "notes": "Attack trajectory arena perimeter clamping sweep not yet implemented (designated for Movement Block)."
+      "notes": "Witnessed (C-638, BUILD-137): Forward charge attack trajectory clamping verified against a boundary wall actor standing in for the arena perimeter (the real arena boundary check is the MOV-006 audit, C-635). In the in-place card backend, forward charges are executed via bounded motion warping with swept collision offsets; when colliding with a blocking actor, movement trajectory clamps without penetration or clipping through (boss capsule radius 60cm stands at Y=89.0553cm, 0.94cm short of the wall face at Y=150cm, logging warp_blocked with zero subsequent creeping), and warp budget charges only actual distance traversed (96.877cm of 150cm budget spent vs 150cm full budget in unblocked control)."
     },
     {
       "id": "BOSS-MOV-005",
@@ -3240,4 +3276,4 @@
   ],
   "last_updated": "2026-11-01",
   "file_version": "3.26"
-}
+}
