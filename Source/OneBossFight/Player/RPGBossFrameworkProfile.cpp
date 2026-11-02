@@ -125,6 +125,14 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
     }
     if (!FMath::IsFinite(P.SelectorTieBand) || P.SelectorTieBand<0.f || P.SelectorTieBand>0.5f || ((P.SelectorTieBand>0.f || P.SelectorTieSeed!=0) && !bF5))
         return Fail(TEXT("Framework.Profile.Domain"));
+    if (!FMath::IsFinite(P.ConeHysteresisDegrees)||P.ConeHysteresisDegrees<0.f||P.ConeHysteresisDegrees>40.f||(P.ConeHysteresisDegrees>0.f&&!bF5))
+        return Fail(TEXT("Framework.Profile.ConeHysteresis"));
+    if (!FMath::IsFinite(P.NeutralStrafeSeconds)||P.NeutralStrafeSeconds<0.f||P.NeutralStrafeSeconds>20.f||(P.NeutralStrafeSeconds>0.f&&(!bF5||P.WalkSpeedCmPerSecond<=0.f)))
+        return Fail(TEXT("Framework.Profile.NeutralStrafe"));
+    if (!FMath::IsFinite(P.ParryPostureAmount)||P.ParryPostureAmount<0.f||(P.ParryPostureAmount>0.f&&(!bF5||P.PostureMax<=0.f||P.ParryPostureAmount>P.PostureMax)))
+        return Fail(TEXT("Framework.Profile.ParryPosture"));
+    if (P.bParryGradeScale&&!bF5)
+        return Fail(TEXT("Framework.Profile.ParryGradeScale"));
     if (bF5)
     {
         if (!FMath::IsFinite(P.RepeatPenalty) || P.RepeatPenalty<=0.f || P.RepeatPenalty>1.f || P.RepeatMemory<1 || P.RepeatMemory>8 || P.AttackCount<1 || P.AttackCount>8)
@@ -169,7 +177,8 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
         const auto Issues=RPGBossMoveCards::CompileResolved(S,Skeleton,Sequence,Mesh,OutCard);
         if (!Issues.IsValid()||!OutCard||!OutCard->HasResolvedAssets())
         {Error=Issues.Errors.IsEmpty()?TEXT("Framework.Profile.ResolvedCard"):FString::Join(Issues.Errors,TEXT(";"));return false;}
-        if(P->BandMinCm<S.MinRangeCm||P->BandMaxCm>S.MaxRangeCm||S.RecoveryEndSeconds+P->BlendOutSeconds>OutCard->Metadata().ClipLengthSeconds)
+        const bool bBandOk=P->bRangeBandPartition||(P->BandMinCm>=S.MinRangeCm&&P->BandMaxCm<=S.MaxRangeCm);   // BOSS-MOV-001: a partition profile's band is only the walk target; each card is gated by its own range at decision time
+        if(!bBandOk||S.RecoveryEndSeconds+P->BlendOutSeconds>OutCard->Metadata().ClipLengthSeconds)
         {Error=TEXT("Framework.Profile.CardBandOrBlendTail");return false;}
         return true;
     };

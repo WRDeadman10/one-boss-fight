@@ -22,7 +22,11 @@ struct FRPGBossSelectorCandidate
     float GreedMultiplier = 1.f;       // (0,1e6]: BOSS-AWR-006, score factor while the target drinks a flask or is committed to a heavy attack
 };
 /** BOSS-PHS-005: what the boss has observed about the target's pattern at this decision. */
-struct FRPGBossSelectorContext { bool bKiting = false, bHugging = false, bBackDodging = false, bGreedy = false; };
+struct FRPGBossSelectorContext
+{
+    bool bKiting = false, bHugging = false, bBackDodging = false, bGreedy = false;
+    double ConeHysteresisDegrees = 0.0; // BOSS-AWR-004: extra full-cone width; 0 = off
+};
 /** One line per candidate: why it was refused (named token) or its score. */
 struct FRPGBossSelectorTrace
 {
@@ -59,5 +63,6 @@ private:
     TArray<double> LastStartClock; // negative = never started
     TArray<int32> Recent;          // newest last
     int32 StartedCount = 0;        // cards started since the last Reset (seed offset of the bounded tie break)
+    mutable TMap<int32,bool> ConeInside; // Select stays const; per-card eligibility memory is observational selector state
     bool bInitialized = false;
 };

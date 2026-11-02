@@ -27,7 +27,7 @@ bool FRPGBossMoveSelector::Initialize(const FRPGBossSelectorConfig& InConfig,
         bool bDuplicate=false; Ids.Add(C.Card->Spec().MoveId,&bDuplicate);
         if (bDuplicate) return Refuse(Error,TEXT("Selector.DuplicateMoveId"));
     }
-    Config=InConfig; Candidates=InCandidates; LastStartClock.Init(-1.0,Candidates.Num()); Recent.Reset();
+    Config=InConfig; Candidates=InCandidates; LastStartClock.Init(-1.0,Candidates.Num()); Recent.Reset(); ConeInside.Reset();
     bInitialized=true; return true;
 }
 bool FRPGBossMoveSelector::Select(const FRPGBossMoveModel& Model, const FRPGBossDecisionSnapshot& S,
@@ -40,9 +40,20 @@ bool FRPGBossMoveSelector::Select(const FRPGBossMoveModel& Model, const FRPGBoss
         const auto& C=Candidates[I]; const auto& Spec=C.Card->Spec();
         FRPGBossSelectorTrace T; T.Index=I; T.MoveId=Spec.MoveId;
         FString Error;
-        if (!Model.IsEligible(C.Card,S,Error)) T.Refusal=Error;   // stage 1: the model's named hard filters
-        else if (LastStartClock[I]>=0.0 && S.ClockSeconds-LastStartClock[I]<C.CooldownSeconds) T.Refusal=TEXT("Selector.Cooldown");
-        else
+        FRPGBossDecisionSnapshot ModelSnapshot=S;
+        const bool bConeMemoryEnabled=FMath::IsFinite(Context.ConeHysteresisDegrees)&&Context.ConeHysteresisDegrees>0.0;
+        if (bConeMemoryEnabled) ModelSnapshot.ConeHoldSlackDegrees=ConeInside.FindRef(I)?Context.ConeHysteresisDegrees:0.0;
+        else { ModelSnapshot.ConeHoldSlackDegrees=0.0; ConeInside.Reset(); }
+        const bool bModelEligible=Model.IsEligible(C.Card,ModelSnapshot,Error);
+        if (!bModelEligible)
+        {
+            T.Refusal=Error;   // stage 1: the model's named hard filters
+            if (bConeMemoryEnabled && Error==TEXT("MoveModel.Cone")) ConeInside.Add(I,false);
+        }
+        else if (bConeMemoryEnabled) ConeInside.Add(I,true);
+        if (bModelEligible && LastStartClock[I]>=0.0 && S.ClockSeconds-LastStartClock[I]<C.CooldownSeconds)
+            T.Refusal=TEXT("Selector.Cooldown");
+        if (bModelEligible && T.Refusal.IsEmpty())
         {
             // stage 2: range preference is 1 at the middle of the card's range and 0.5 at its edges; a recently started card is scaled down.
             const double Mid=0.5*(Spec.MinRangeCm+Spec.MaxRangeCm), Half=0.5*(Spec.MaxRangeCm-Spec.MinRangeCm);
@@ -78,5 +89,5 @@ void FRPGBossMoveSelector::NoteStarted(int32 Index, double ClockSeconds)
 void FRPGBossMoveSelector::Reset()
 {
     if (!bInitialized) return;
-    LastStartClock.Init(-1.0,Candidates.Num()); Recent.Reset(); StartedCount=0;
+    LastStartClock.Init(-1.0,Candidates.Num()); Recent.Reset(); StartedCount=0; ConeInside.Reset();
 }

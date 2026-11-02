@@ -7,14 +7,14 @@
 namespace BossMoveSelectorFixture
 {
 // Synthetic, metadata-only cards: scheduling inputs, not real assets, tuned combat or playback proof.
-TSharedPtr<const FRPGCompiledBossMoveCard> Card(const TCHAR* Id, float MinRange, float MaxRange)
+TSharedPtr<const FRPGCompiledBossMoveCard> Card(const TCHAR* Id, float MinRange, float MaxRange,float FrontCone=120.f)
 {
     FRPGBossMoveCardSpec S; FRPGBossMoveMetadata M;
     S.Schema=1; S.MoveId=Id; S.FamilyId=TEXT("SyntheticFamily"); S.PhaseId=TEXT("SyntheticPhase");
     S.Skeleton=TSoftObjectPtr<USkeleton>(FSoftObjectPath(TEXT("/Game/OneBossFight/Data/TypedABIFixtures/F1/Skeleton.Skeleton")));
     S.Sequence=TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Data/TypedABIFixtures/F1/Sequence.Sequence")));
     S.SlotName=TEXT("SyntheticSlot"); S.PlayRate=1.f; S.CommitSeconds=.25f; S.ActiveStartSeconds=.5f;
-    S.ActiveEndSeconds=1.f; S.RecoveryEndSeconds=1.5f; S.MinRangeCm=MinRange; S.MaxRangeCm=MaxRange; S.FrontConeDegrees=120.f; S.HPDamage=17.f;
+    S.ActiveEndSeconds=1.f; S.RecoveryEndSeconds=1.5f; S.MinRangeCm=MinRange; S.MaxRangeCm=MaxRange; S.FrontConeDegrees=FrontCone; S.HPDamage=17.f;
     FRPGBossMoveWindow W; W.WindowId=TEXT("A"); W.HitGroup=TEXT("Shared"); W.SocketA=TEXT("Base"); W.SocketB=TEXT("Tip"); W.RadiusCm=8.f;
     W.StartSeconds=.5f; W.EndSeconds=1.f; S.Windows.Add(W);
     M.AnimationPath=S.Sequence.ToSoftObjectPath(); M.SkeletonPath=S.Skeleton.ToSoftObjectPath();
@@ -29,8 +29,8 @@ FRPGBossDecisionSnapshot Snapshot(double Range=100., double Clock=100.)
     S.PhaseId=TEXT("SyntheticPhase"); S.ClockSeconds=Clock; S.RangeCm=Range; S.SignedYawDegrees=0.; S.bTargetValid=S.bNeutral=true; return S;
 }
 FRPGBossSelectorConfig Config() { FRPGBossSelectorConfig C; C.RepeatPenalty=.2f; C.RepeatMemory=2; return C; }
-FRPGBossSelectorCandidate Cand(const TCHAR* Id, float Min, float Max, float Cooldown=0.f, float Weight=1.f)
-{ FRPGBossSelectorCandidate C; C.Card=Card(Id,Min,Max); C.CooldownSeconds=Cooldown; C.Weight=Weight; return C; }
+FRPGBossSelectorCandidate Cand(const TCHAR* Id, float Min, float Max, float Cooldown=0.f, float Weight=1.f,float FrontCone=120.f)
+{ FRPGBossSelectorCandidate C; C.Card=Card(Id,Min,Max,FrontCone); C.CooldownSeconds=Cooldown; C.Weight=Weight; return C; }
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveSelectorInit,"OneBossFight.Framework.Selector.Init",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
 bool FBossMoveSelectorInit::RunTest(const FString&)
@@ -143,6 +143,60 @@ bool FBossMoveSelectorPattern::RunTest(const FString&)
     FRPGBossSelectorContext Greedy;Greedy.bGreedy=true;G.Select(Model,Snapshot(100.),D,Greedy);TestEqual(TEXT("greedy: 0.5 x 3 beats 1"),D.MoveId,FName(TEXT("Fast")));
     FRPGBossSelectorContext Back;Back.bBackDodging=true;G.Select(Model,Snapshot(100.),D,Back);TestEqual(TEXT("back dodging: 0.5 x 4 beats 1"),D.MoveId,FName(TEXT("Fast")));
     for(float Bad:{0.f,-1.f,1.0001e6f,std::numeric_limits<float>::quiet_NaN()}){FRPGBossSelectorCandidate X=Cand(TEXT("X"),50,150);X.GreedMultiplier=Bad;FRPGBossMoveSelector T;FString Err;TestFalse(TEXT("bad greed multiplier refused"),T.Initialize(Config(),{X},Err));}
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveSelectorConeHysteresis,"OneBossFight.Framework.Selector.ConeHysteresis",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FBossMoveSelectorConeHysteresis::RunTest(const FString&)
+{
+    using namespace BossMoveSelectorFixture;
+    FRPGBossMoveModel Model;FString Error;if(!Model.Initialize(7,1,Error))return false;
+    auto Eligible=[&](FRPGBossMoveSelector& Selector,double Yaw,const FRPGBossSelectorContext& Context)
+    {
+        FRPGBossDecisionSnapshot S=Snapshot();S.SignedYawDegrees=Yaw;
+        FRPGBossSelectorDecision D;Selector.Select(Model,S,D,Context);
+        return D.Traces.Num()==1&&D.Traces[0].bEligible;
+    };
+
+    const FRPGBossSelectorCandidate Candidate60=Cand(TEXT("Cone"),50,150,0.f,1.f,60.f);
+    FRPGBossSelectorContext Off;
+    FRPGBossMoveSelector NoHysteresis;TestTrue(TEXT("initialize no-hysteresis selector"),NoHysteresis.Initialize(Config(),{Candidate60},Error));
+    bool bPrevious=false;int32 PlainFlips=0;
+    for(int32 Cycle=0;Cycle<20;++Cycle)
+        for(const double Yaw:{29.,31.})
+        {
+            const bool bNow=Eligible(NoHysteresis,Yaw,Off);
+            if(bNow!=bPrevious)++PlainFlips;
+            bPrevious=bNow;
+        }
+    TestEqual(TEXT("without hysteresis, oscillating around the cone edge flips 40 times"),PlainFlips,40);
+
+    FRPGBossSelectorContext On;On.ConeHysteresisDegrees=6.;
+    FRPGBossMoveSelector Hysteresis;TestTrue(TEXT("initialize hysteresis selector"),Hysteresis.Initialize(Config(),{Candidate60},Error));
+    bool bInside=Eligible(Hysteresis,29.,On);TestTrue(TEXT("first entry at or inside half angle"),bInside);
+    int32 FlipsAfterEntry=0;
+    for(int32 Cycle=0;Cycle<20;++Cycle)
+        for(const double Yaw:{31.,29.})
+        {
+            const bool bNow=Eligible(Hysteresis,Yaw,On);
+            if(bNow!=bInside)++FlipsAfterEntry;
+            bInside=bNow;
+        }
+    TestEqual(TEXT("six degrees of full-cone slack holds through the same edge oscillation"),FlipsAfterEntry,0);
+
+    TestFalse(TEXT("outside the exit edge leaves the cone"),Eligible(Hysteresis,34.,On));
+    TestFalse(TEXT("after leaving, hysteresis does not re-enter above the original half angle"),Eligible(Hysteresis,31.,On));
+    TestTrue(TEXT("after leaving, re-enter at the original half angle"),Eligible(Hysteresis,30.,On));
+
+    FRPGBossMoveSelector Resettable;TestTrue(TEXT("initialize reset selector"),Resettable.Initialize(Config(),{Candidate60},Error));
+    TestTrue(TEXT("reset test enters cone"),Eligible(Resettable,30.,On));
+    TestTrue(TEXT("remembered card stays eligible in exit band"),Eligible(Resettable,32.,On));
+    Resettable.Reset();
+    TestFalse(TEXT("reset forgets cone memory"),Eligible(Resettable,32.,On));
+
+    FRPGBossMoveSelector ZeroSlack;TestTrue(TEXT("initialize zero-slack selector"),ZeroSlack.Initialize(Config(),{Candidate60},Error));
+    const double Yaws[]={-180.,-90.,-30.001,-30.,-12.,0.,12.,30.,30.001,90.,179.,180.};
+    for(const double Yaw:Yaws)
+        TestEqual(*FString::Printf(TEXT("zero slack retains prior cone rule at yaw %g"),Yaw),Eligible(ZeroSlack,Yaw,Off),FMath::Abs(Yaw)<=30.);
     return true;
 }
 #endif

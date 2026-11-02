@@ -1,5 +1,6 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Player/RPGBossMoveModel.h"
+#include "Player/RPGBossAimHysteresisRules.h"
 
 namespace
 {
@@ -31,8 +32,10 @@ bool FRPGBossMoveModel::IsEligible(const TSharedPtr<const FRPGCompiledBossMoveCa
     if (S.PhaseId!=Card->Spec().PhaseId) return Refuse(Error,TEXT("MoveModel.Phase"));
     if (S.RangeCm<Card->Spec().MinRangeCm || S.RangeCm>Card->Spec().MaxRangeCm)
         return Refuse(Error,TEXT("MoveModel.Range"));
-    // FrontConeDegrees is the FULL cone width; signed yaw admits left and right symmetrically.
-    if (FMath::Abs(S.SignedYawDegrees)>0.5*Card->Spec().FrontConeDegrees)
+    // FrontConeDegrees is the FULL cone width; slack is also a full-cone width. Zero slack preserves the original boundary.
+    const double ConeHalf=0.5*double(Card->Spec().FrontConeDegrees);
+    const double ConeExit=ConeHalf+0.5*FMath::Max(0.0,S.ConeHoldSlackDegrees);
+    if (!RPGBossAimHysteresis::Step(S.ConeHoldSlackDegrees>0.0,S.SignedYawDegrees,ConeHalf,ConeExit))
         return Refuse(Error,TEXT("MoveModel.Cone"));
     // BOSS-AWR-005: a card with a vertical limit is refused above it (equal is in); 0 = no limit.
     if (Card->Spec().MaxVerticalDeltaCm>0.f && S.VerticalDeltaCm>double(Card->Spec().MaxVerticalDeltaCm))

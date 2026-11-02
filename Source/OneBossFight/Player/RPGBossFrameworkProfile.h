@@ -85,6 +85,16 @@ public:
     /** BOSS-SEL-005 (opt-in, F5 fixture only, 0 = off): bounded random tie break inside the top score tier of the selector, [0,0.5], with its seed. Design values, proposed. */
     UPROPERTY(EditAnywhere) float SelectorTieBand=0.f;
     UPROPERTY(EditAnywhere) int32 SelectorTieSeed=0;
+    /** BOSS-AWR-004 (F5 lane, 0 = off): extra full-cone degrees allowed after a card enters its facing cone; [0,40]. Design value, proposed. */
+    UPROPERTY(EditAnywhere) float ConeHysteresisDegrees=0.f;
+    /** BOSS-MOV-001 (F5 lane, false = off): the cards sit in DIFFERENT range bands (Melee, Close, Medium, Gap-Closer). The profile band is then only the walk target (the boss walks to its middle); each card is gated by its own range at decision time instead of the band lying inside every card's range. Default false keeps the old rule. */
+    UPROPERTY(EditAnywhere) bool bRangeBandPartition=false;
+    /** BOSS-SEL-008 (F5 lane, 0 = off): when no card is eligible and the boss is in its band and faces the target, it circles the target at WalkSpeedCmPerSecond for at most this many seconds (direction flips on seeded 0.8..1.6 s holds) and decides again every tick; only after the budget does it fail closed as before. [0,20]. Design value, proposed. */
+    UPROPERTY(EditAnywhere) float NeutralStrafeSeconds=0.f;
+    /** Player parry reaction (F8 posture lane, 0 = off): a boss contact that the player PARRIES drains this much of the boss's posture (a break staggers it as any posture break does). Needs PostureMax > 0. Design value, proposed. */
+    UPROPERTY(EditAnywhere) float ParryPostureAmount=0.f;
+    /** Opt-in (F5 lane): scale ParryPostureAmount by the player's Perfect/Good/Late parry grade. False preserves the unscaled reaction. */
+    UPROPERTY(EditAnywhere) bool bParryGradeScale=false;
     UPROPERTY(EditAnywhere) int32 AttackCount=0;
     /** Optional (both > 0 or both 0): the boss's own health and what one player hit takes off it (design values, proposed). 0 = not hittable. */
     UPROPERTY(EditAnywhere) float BossMaxHealth=0.f;
