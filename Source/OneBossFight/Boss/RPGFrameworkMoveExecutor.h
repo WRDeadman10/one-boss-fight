@@ -40,6 +40,9 @@ public:
     bool WatchdogFired() const { return bWatchdogFired; }
     int32 AcceptedHits() const { return HitsAccepted; }
     double AppliedDamageTotal() const { return AppliedDamage; }
+    /** BOSS-COM-004 / HIT-008: accepted hits that landed while the player's guard (Status.Blocking) or parry window (URPGPlayerParry, the resolver outcome Parried) was up; read-only observation, damage unchanged. */
+    int32 GuardedHits() const { return HitsGuarded; }
+    int32 ParriedHits() const { return HitsParried; }
     virtual void TickComponent(float Delta,ELevelTick TickType,FActorComponentTickFunction* ThisTick) override;
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
 private:
@@ -51,7 +54,7 @@ private:
     struct FWindowPose { FVector A=FVector::ZeroVector,B=FVector::ZeroVector; bool bValid=false; };
     TMap<FName,FWindowPose> PrevPoses;
     TWeakObjectPtr<URPGDamageResolver> Resolver;
-    int32 HitsAccepted=0; double AppliedDamage=0.;
+    int32 HitsAccepted=0, HitsGuarded=0, HitsParried=0; double AppliedDamage=0.;
     TWeakObjectPtr<ARPGFrameworkBossCharacter> OwnerBoss;
     TWeakObjectPtr<APawn> Target;
     UPROPERTY(Transient) TObjectPtr<UAnimInstance> Anim;
@@ -89,7 +92,7 @@ private:
     void PreloadCues();
     bool bHoldActive=false, bHoldDone=false; double HoldEndsAt=0., HoldStartedAt=0., HoldChosen=0.; int32 CuesFiredMask=0, HoldsInRun=0;
     UPROPERTY(Transient) TArray<TObjectPtr<class USoundBase>> CueSounds;
-    double WarpMovedCm=0., WarpTurnedDeg=0.; bool bWarpSummaryLogged=false;
+    double WarpMovedCm=0., WarpTurnedDeg=0., WarpEaseDistanceCm=0.; bool bWarpEaseDistanceSet=false, bWarpEaseLogged=false, bWarpSummaryLogged=false;
     RPGBossTrack::FGrabState Grab; bool bGrabUsed=false; double GrabReleaseAt=0.; FName GrabWindowId; FName GrabHitKey;
     TWeakObjectPtr<ACharacter> Held; TEnumAsByte<ECollisionEnabled::Type> HeldCapsuleCollision=ECollisionEnabled::QueryAndPhysics;
     double DecisionYawDeg=0.;    // BOSS-AWR-002: the signed yaw to the target in the same decision snapshot

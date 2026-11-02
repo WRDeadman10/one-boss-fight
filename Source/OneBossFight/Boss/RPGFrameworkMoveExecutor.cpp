@@ -1,7 +1,11 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Boss/RPGFrameworkMoveExecutor.h"
 #include "Player/RPGBossTrackRules.h"
+#include "Player/RPGBossApproachRules.h"
 #include "Player/RPGBossCueRules.h"
+#include "Player/RPGBossGuardRules.h"
+#include "Player/RPGBossDamage.h"
+#include "Player/RPGPlayerParry.h"
 #include "AIController.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Player/RPGFlipbookEffect.h"
@@ -21,6 +25,20 @@
 #include "GameFramework/Character.h"
 #include "Components/CapsuleComponent.h"
 #include "CollisionQueryParams.h"
+
+namespace
+{
+	void RecordParriedContact(ARPGFrameworkBossCharacter* Boss, APawn* Target)
+	{
+		const URPGPlayerParry* Parry=Target?Target->FindComponentByClass<URPGPlayerParry>():nullptr;
+		const RPGParryGrade::EGrade Grade=Parry?Parry->GradeNow():RPGParryGrade::EGrade::None;
+		const TCHAR* GradeName=Grade==RPGParryGrade::EGrade::Perfect?TEXT("Perfect"):Grade==RPGParryGrade::EGrade::Good?TEXT("Good"):Grade==RPGParryGrade::EGrade::Late?TEXT("Late"):TEXT("None");
+		const URPGBossFrameworkProfile* Profile=Boss?Boss->ProofProfile():nullptr;
+		const double Scale=Profile&&Profile->bParryGradeScale?RPGParryGrade::PostureScale(Grade):1.0;
+		if (Boss) Boss->NoteParried(Scale);
+		UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] parry_grade grade=%s scale=%g"),GradeName,Scale);
+	}
+}
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<int32> CVarCueMode(TEXT("rpg.CueMode"),0,TEXT("Accessible feedback (BOSS-QA-007): 0 = every boss cue shows its visual AND plays its sound, 1 = visual only, 2 = sound only, 3 = both with the visual at half size."),ECVF_Default);
 #if !UE_BUILD_SHIPPING
@@ -77,21 +95,21 @@ bool URPGFrameworkMoveExecutor::Rearm(uint64 NewGeneration,FString& Error)
     TArray<FRPGBossMoveModelEvent> Events;
     if (!Model_.ResetGeneration(NewGeneration,Events,Error)) return false;
     LogEvents(Events);
-    bAborted=false; bFinished=false; bWatchdogFired=false; bSuppressDone=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset(); bGrabUsed=false; WarpMovedCm=WarpTurnedDeg=0.; bWarpSummaryLogged=false; Token=FRPGBossAttackToken();
+    bAborted=false; bFinished=false; bWatchdogFired=false; bSuppressDone=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset(); bGrabUsed=false; WarpMovedCm=WarpTurnedDeg=0.; WarpEaseDistanceCm=0.; bWarpEaseDistanceSet=false; bWarpEaseLogged=false; bWarpSummaryLogged=false; Token=FRPGBossAttackToken();
     SetComponentTickEnabled(false);
     return true;
 }
 bool URPGFrameworkMoveExecutor::RecoverAfterAbort()
 {
     if (!bInitialized||!bAborted||bFinished||!IsIdle()) return false;
-    bAborted=false; bFinished=false; bWatchdogFired=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset(); bGrabUsed=false; WarpMovedCm=WarpTurnedDeg=0.; bWarpSummaryLogged=false; Token=FRPGBossAttackToken();
+    bAborted=false; bFinished=false; bWatchdogFired=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset(); bGrabUsed=false; WarpMovedCm=WarpTurnedDeg=0.; WarpEaseDistanceCm=0.; bWarpEaseDistanceSet=false; bWarpEaseLogged=false; bWarpSummaryLogged=false; Token=FRPGBossAttackToken();
     SetComponentTickEnabled(false);
     return true;
 }
 bool URPGFrameworkMoveExecutor::PrepareNextAttack()
 {
     if (!bInitialized||bAborted||!bFinished||!IsIdle()) return false;
-    bFinished=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset(); bGrabUsed=false; WarpMovedCm=WarpTurnedDeg=0.; bWarpSummaryLogged=false;
+    bFinished=false; bSawPoseWeight=false; LastPosition=0.; PrevPoses.Reset(); bGrabUsed=false; WarpMovedCm=WarpTurnedDeg=0.; WarpEaseDistanceCm=0.; bWarpEaseDistanceSet=false; bWarpEaseLogged=false; bWarpSummaryLogged=false;
     return true;
 }
 bool URPGFrameworkMoveExecutor::StartCard(const TSharedPtr<const FRPGCompiledBossMoveCard>& NextCard,const FRPGBossDecisionSnapshot& S,FString& Error)
@@ -244,8 +262,12 @@ void URPGFrameworkMoveExecutor::SweepWindows(double PrevPosition,double Position
         FRPGDamagePayload Payload;
         Payload.MoveId=Card->Spec().MoveId; Payload.AttackInstance=int32(Token.InstanceId); Payload.Generation=int32(Token.Generation);
         Payload.HitKey=W.HitGroup.IsNone()?W.WindowId:W.HitGroup; Payload.HPDamage=Card->Spec().HPDamage;
+        const bool bBlocking=RPGBossDamage::HasTag(Target.Get(),TEXT("Status.Blocking"));   // read BEFORE the damage: the guard of the moment of contact
         const FRPGDamageResult Result=Resolver->Resolve(Target.Get(),Payload);
-        if (Result.Outcome==ERPGDamageOutcome::Accepted) {++HitsAccepted; AppliedDamage+=Result.HPApplied; if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);}
+        const RPGBossGuard::EGuardState Guard=RPGBossGuard::Classify(bBlocking,Result.Outcome==ERPGDamageOutcome::Parried);   // the parry window is decided by the resolver
+        if (Result.Outcome==ERPGDamageOutcome::Accepted) {++HitsAccepted; AppliedDamage+=Result.HPApplied; if (Guard==RPGBossGuard::EGuardState::Guarded) ++HitsGuarded; if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);}
+        else if (Result.Outcome==ERPGDamageOutcome::Parried) {++HitsParried; if (OwnerBoss.IsValid()) RecordParriedContact(OwnerBoss.Get(),Target.Get());}
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] guard_state instance=%llu window=%s guard=%s outcome=%s"),Token.InstanceId,*W.WindowId.ToString(),RPGBossGuard::Name(Guard),*UEnum::GetValueAsString(Result.Outcome));
         UE_LOG(LogTemp,Display,TEXT("[CARD_HIT] instance=%llu card=%s window=%s outcome=%s hpApplied=%g"),Token.InstanceId,*Card->Spec().MoveId.ToString(),*W.WindowId.ToString(),*UEnum::GetValueAsString(Result.Outcome),Result.HPApplied);
         UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] hit instance=%llu window=%s key=%s outcome=%s hpApplied=%g healthBefore=%g healthAfter=%g"),Token.InstanceId,*W.WindowId.ToString(),*Payload.HitKey.ToString(),*UEnum::GetValueAsString(Result.Outcome),Result.HPApplied,Result.HealthBefore,Result.HealthAfter);
     };
@@ -360,8 +382,11 @@ void URPGFrameworkMoveExecutor::TickGrab(double Position)
         if (Resolver.IsValid()&&Target.IsValid())
         {
             FRPGDamagePayload Payload; Payload.MoveId=Card->Spec().MoveId; Payload.AttackInstance=int32(Token.InstanceId); Payload.Generation=int32(Token.Generation); Payload.HitKey=GrabHitKey; Payload.HPDamage=Card->Spec().HPDamage;
+            const bool bBlocking=RPGBossDamage::HasTag(Target.Get(),TEXT("Status.Blocking"));
             const FRPGDamageResult Result=Resolver->Resolve(Target.Get(),Payload);
-            if (Result.Outcome==ERPGDamageOutcome::Accepted) {++HitsAccepted; AppliedDamage+=Result.HPApplied; if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);}
+            const RPGBossGuard::EGuardState Guard=RPGBossGuard::Classify(bBlocking,Result.Outcome==ERPGDamageOutcome::Parried);
+            if (Result.Outcome==ERPGDamageOutcome::Accepted) {++HitsAccepted; AppliedDamage+=Result.HPApplied; if (Guard==RPGBossGuard::EGuardState::Guarded) ++HitsGuarded; if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);}
+            else if (Result.Outcome==ERPGDamageOutcome::Parried) {++HitsParried; if (OwnerBoss.IsValid()) RecordParriedContact(OwnerBoss.Get(),Target.Get());}
             UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] grab_damage instance=%llu key=%s outcome=%s hpApplied=%g"),Token.InstanceId,*GrabHitKey.ToString(),*UEnum::GetValueAsString(Result.Outcome),Result.HPApplied);
         }
         ReleaseGrab(TEXT("Released"),false);
@@ -389,8 +414,31 @@ void URPGFrameworkMoveExecutor::TickWarp(double PrevPosition,double Position)
     const double NeededCm=S.bWarpAway?FMath::Max(0.,double(S.WarpStandoffCm)-Dist):FMath::Max(0.,Dist-double(S.WarpStandoffCm));
     const FVector WarpDir=S.bWarpAway?-ToTarget/Dist:ToTarget/Dist;
     const double YawBefore=OwnerBoss->GetActorRotation().Yaw, NeededDeg=FMath::FindDeltaAngleDegrees(YawBefore,ToTarget.Rotation().Yaw);
-    const double SecondsLeft=double(S.WarpEndSeconds)-Lo, Delta=Hi-Lo;
-    const double StepCm=RPGBossTrack::WarpStepCm(NeededCm,double(S.WarpMaxDistanceCm)-WarpMovedCm,Delta,SecondsLeft);
+    const double Delta=Hi-Lo, SecondsLeft=double(S.WarpEndSeconds)-Lo;
+    double StepCm=0.;
+    if(S.WarpEaseInOut)
+    {
+        if(!bWarpEaseDistanceSet)
+        {
+            WarpEaseDistanceCm=FMath::Min(NeededCm,double(S.WarpMaxDistanceCm));
+            bWarpEaseDistanceSet=true;
+        }
+        if(!bWarpEaseLogged)
+        {
+            bWarpEaseLogged=true;
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] warp_ease on=1"));
+        }
+        const double Duration=double(S.WarpEndSeconds)-double(S.WarpStartSeconds);
+        const double T0=(Lo-double(S.WarpStartSeconds))/Duration;
+        const double T1=(Hi-double(S.WarpStartSeconds))/Duration;
+        const double EasedStep=RPGBossApproach::StepCm(WarpEaseDistanceCm,T0,T1);
+        const double ClampStep=RPGBossTrack::WarpStepCm(NeededCm,double(S.WarpMaxDistanceCm)-WarpMovedCm,1.,1.);
+        StepCm=FMath::Min(EasedStep,ClampStep);
+    }
+    else
+    {
+        StepCm=RPGBossTrack::WarpStepCm(NeededCm,double(S.WarpMaxDistanceCm)-WarpMovedCm,Delta,SecondsLeft);
+    }
     const double StepDeg=RPGBossTrack::WarpStepDegrees(NeededDeg,double(S.WarpMaxAngleDegrees)-WarpTurnedDeg,Delta,SecondsLeft);
     // Swept: the boss does not walk through the target or a wall. The budget is charged with the distance the boss really moved (a blocked step costs less than it asked for).
     double ActualCm=0.;

@@ -5,6 +5,7 @@
 #include "Player/RPGBossFrameworkProfile.h"
 #include "Player/RPGBleedRules.h"
 #include "Player/RPGBossMoveSelector.h"
+#include "Player/RPGBossStuckRules.h"
 #include "Player/RPGBossStaggerAnimRules.h"
 #include "Player/RPGNativeBossHealth.h"
 #include "RPGFrameworkBossCharacter.generated.h"
@@ -38,6 +39,12 @@ public:
     bool Failed() const {return bFailed;}
     /** F4: the executor reports every accepted hit so the target-health invariant expects exactly that loss. */
     void NoteDamageApplied(double Applied) {ExpectedTargetHP-=Applied;}
+    /** The player parried a contact of this boss (called by the move executor): schedules the posture reaction of the profile (ParryPostureAmount) at the start of the next tick. */
+    void NoteParried(double PostureScale=1.0){
+        const double SafeScale=FMath::IsFinite(PostureScale)?FMath::Clamp(PostureScale,0.0,1.0):0.0;
+        PendingParryReactionScale=bParryReactionPending?FMath::Max(PendingParryReactionScale,SafeScale):SafeScale;
+        bParryReactionPending=true;
+    }
     // IRPGNativeBossHealth
     virtual bool ReadNativeHealth(bool bMax, double& Out) const override { if (!bHittable) return false; Out = bMax ? MaxHealth : Health; return true; }
     virtual double ApplyPlayerHit(double Multiplier) override;
@@ -69,6 +76,7 @@ private:
     int32 DecisionSeq=0;
     FVector ArenaOrigin=FVector::ZeroVector;   // BOSS-AWR-001: where the target stood when the encounter began
     double ProofIFStart=-1., ProofIFPressAt=-1.; int32 ProofIFProbes=0; bool bProofIFPressed=false;   // test hook rpg.BossProofIFrameSweep (BOSS-HIT-009)
+    double ProofGStart=-1.;   // test hook rpg.BossProofPlayerGuard (BOSS-COM-004 / HIT-008)
     double ProofHitStart=-1.; int32 ProofHitsDone=0; TArray<double> ProofHitOffsets;   // test hook rpg.BossProofPlayerHits: scripted player hits on the GAME clock
     bool bLeashed=false, bLeashAtCenter=false;   // BOSS-MOV-005
     RPGBossTrack::EPlayerActivity Activity=RPGBossTrack::EPlayerActivity::None; ERPGAttackKind SwingKindSeen=ERPGAttackKind::Unknown; void TickActivity();   // BOSS-AWR-006
@@ -110,11 +118,13 @@ private:
     /** BOSS-QA-001: the runtime overlay (console variable rpg.BossOverlay): on screen each tick, as a log line once per second at 2. */
     double OverlayLoggedAt=-1.; FString OverlayLastState;
     /** Combo (BOSS-COM rows): the pure graph of the profile and the state of the running combo; a branch gate is evaluated when a card of the combo finishes. */
-    RPGBossCombo::FComboGraph ComboGraph; RPGBossCombo::FComboState ComboState; bool bComboActive=false; int32 ComboHitsAtStart=0; uint64 ComboGateCounter=0;
+    RPGBossCombo::FComboGraph ComboGraph; RPGBossCombo::FComboState ComboState; bool bComboActive=false; int32 ComboHitsAtStart=0, ComboGuardedAtStart=0, ComboParriedAtStart=0; uint64 ComboGateCounter=0;
     bool bComboPausing=false; double ComboPauseUntil=0.; int32 ComboPendingCard=INDEX_NONE;   // BOSS-PAC-002: a deliberate tempo pause between two cards of a combo
     void StartComboCard();
     /** Repositions in a row since the last attack started (profile RepositionMax). */
-    int32 RepositionsInARow=0; double RepositionTurnStartedAt=-1.;
+    bool bParryReactionPending=false; double PendingParryReactionScale=0.;   // a contact was parried: apply the strongest same-tick grade at the start of the NEXT boss tick, never inside the executor's sweep
+    int32 RepositionsInARow=0; double RepositionTurnStartedAt=-1., StrafeStartedAt=-1., StrafeLastLog=-1., StrafeLastTick=-1.;   // StrafeStartedAt: BOSS-SEL-008 neutral strafe
+    int32 StrafeDirFlip=1; RPGBossStuck::FStuck StrafeStuck; int32 YawProbeSampleIndex=0;
     RPGBossTrack::FTurnLatch RepositionLatch;   // BOSS-MOV-003: direction memory of the reposition turn
     bool HandleComboGate();
     FRPGBossDecisionSnapshot MakeSnapshot() const;
