@@ -68,9 +68,9 @@ def test_census_parity():
     
     assert json_census == calc_census, f"JSON census header mismatch: {json_census} vs {calc_census}"
     assert sum(calc_census.values()) == 82, f"Census sum != 82: {calc_census}"
-    assert calc_census["WITNESSED"] == 75, f"Expected 40 WITNESSED, got {calc_census['WITNESSED']}"
-    assert calc_census["PARTIAL"] == 7, f"Expected 18 PARTIAL, got {calc_census['PARTIAL']}"
-    assert calc_census["NOT YET"] == 0, f"Expected 24 NOT YET, got {calc_census['NOT YET']}"
+    assert calc_census["WITNESSED"] == 80, f"Expected 80 WITNESSED, got {calc_census['WITNESSED']}"
+    assert calc_census["PARTIAL"] == 2, f"Expected 2 PARTIAL, got {calc_census['PARTIAL']}"
+    assert calc_census["NOT YET"] == 0, f"Expected 0 NOT YET, got {calc_census['NOT YET']}"
 
     # Extract census from markdown
     md_content = MD_PATH.read_text(encoding="utf-8")

@@ -138,6 +138,7 @@ void URPGPlayerMovesSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	LastEncounterManifestHash.Reset();
 	if (bSelectionRequested)
 	{
+		UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] route=data reason=StoredDefinition outcome=Pending"));
 		double OperationStartSeconds = 0.0;
 		const uint64 OperationId = BeginEncounterTiming(TEXT("selected_startup"), OperationStartSeconds);
 		ON_SCOPE_EXIT
@@ -236,6 +237,7 @@ void URPGPlayerMovesSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 		UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] outcome=LegacyStartupDisabled reason=Config.bUseLegacyStartupFalse"));
 		return;
 	}
+	UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] route=legacy reason=NoSelectionAndConfigEnabled outcome=LegacyNoSelection"));
 	// Pawns that exist already (placed in the level or spawned before the handler).
 	for (TActorIterator<APawn> It(&InWorld); It; ++It)
 	{

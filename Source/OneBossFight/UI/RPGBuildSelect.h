@@ -92,7 +92,6 @@ private:
 	friend class FRPGBuildSelectKeyListener;
 
 	bool CanOpen(FString& OutWhy) const;
-	void Toggle();
 	void EnsureWidget();
 	void RegisterKeyListener();
 	void UnregisterKeyListener();

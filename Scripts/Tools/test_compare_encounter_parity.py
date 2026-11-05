@@ -203,6 +203,23 @@ class EncounterParityTests(unittest.TestCase):
         changed_count = compare_messages("observed 1.0 sample", "observed sample")
         self.assertTrue(any("numeric token 1 count differs" in issue for issue in changed_count))
 
+    def test_build_231_l1d_camera_sample_noise_is_volatile_but_ratio_is_not(self) -> None:
+        # Values copied from the retained pie_legend_t1 comparison. Sample counts
+        # vary while the reported high-pass ratio agrees across routes.
+        left = "L1d ratio 0.22 scales [('600 cm', 0.982, 523), ('1500 cm', 0.174, 1877)]"
+        right = "L1d ratio 0.22 scales [('600 cm', 0.661, 983), ('1500 cm', 0.174, 1877)]"
+        self.assertIsNone(parity._message_mismatch(left, right))
+        self.assertTrue(parity._volatile_message_differs(left, right))
+        self.assertIsNotNone(parity._message_mismatch(left.replace("ratio 0.22", "ratio 0.72"), right))
+
+    def test_health_diagnostic_tokens_remain_semantic(self) -> None:
+        # Shape and values copied from both retained pie_riposte_lethal_d5 logs.
+        left = "L1 the riposte took the boss from 60.0 health to zero (health 0.0, dead tag True, montage AN_Boss01_DeathLegend)"
+        same = "L1 the riposte took the boss from 60 health to zero (health 0, dead tag True, montage AN_Boss01_DeathLegend)"
+        changed = left.replace("60.0", "50.0")
+        self.assertIsNone(parity._message_mismatch(left, same))
+        self.assertIsNotNone(parity._message_mismatch(left, changed))
+
     def test_d6c_warns_for_sample_count_and_bracketed_series_without_failing(self) -> None:
         control = self.timing_receipt("legacy", "one", 0.4)
         candidate = self.timing_receipt("data", "two", 0.4)

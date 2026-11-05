@@ -1212,7 +1212,7 @@
       "source": {
         "excerpt": "URPGBossDeath::Attach(Pawn, ERPGBossDeathMode::OwnClip); // the death clip (G2-9): the component plays AN_Boss01_DeathLegend itself, holds the pose and keeps the pack's ragdoll off (the pack's ragdoll ability ignores DeathMontages: probe 2026-10-22, DEATH_CLIP_NOTES.md)",
         "file": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
-        "line": 771
+        "line": 773
       },
       "status": "comparable"
     },

@@ -246,11 +246,12 @@ bool HasLegacyBossBundle(const AActor* Boss)
 		|| Boss->FindComponentByClass<URPGBossStagger>());
 }
 
-bool ReadActivationSnapshot(const URPGPlayerMovesSubsystem& Moves, FString& OutOutcome, FString& OutReason, bool& bOutBindingRetained)
+bool ReadActivationSnapshot(const URPGPlayerMovesSubsystem& Moves, FString& OutOutcome, FString& OutReason, bool& bOutBindingRetained, FString* OutRoute = nullptr)
 {
 	TSharedPtr<FJsonObject> Snapshot;
 	const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Moves.BuildEncounterParitySnapshot());
 	if (!FJsonSerializer::Deserialize(Reader, Snapshot) || !Snapshot.IsValid()) { return false; }
+	if (OutRoute && !Snapshot->TryGetStringField(TEXT("route"), *OutRoute)) { return false; }
 	const TSharedPtr<FJsonObject>* Activation = nullptr;
 	if (!Snapshot->TryGetObjectField(TEXT("activation"), Activation) || !Activation || !Activation->IsValid()) { return false; }
 	return (*Activation)->TryGetStringField(TEXT("outcome"), OutOutcome)
@@ -313,12 +314,20 @@ bool FRPGEncounterSelectionAbsentPreservesLegacy::RunTest(const FString&)
 	URPGEncounterSelectionSubsystem* Selection = Scope.GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>();
 	URPGPlayerMovesSubsystem* Moves = Scope.World->GetSubsystem<URPGPlayerMovesSubsystem>();
 	if (!TestNotNull(TEXT("game-instance selection store"), Selection) || !TestNotNull(TEXT("moves subsystem"), Moves)) return false;
-	TestTrue(TEXT("A7-B config defaults legacy startup on"), Moves->bUseLegacyStartup);
+	TestTrue(TEXT("absent config key preserves legacy startup default"), Moves->bUseLegacyStartup);
 	Selection->ClearSelectedDefinition();
 	TestFalse(TEXT("cleared store means selection absent"), Selection->HasSelectionRequest());
 	APawn* Boss = Scope.SpawnPackPawn(BossClassPath, FVector::ZeroVector);
 	APawn* Player = Scope.SpawnPackPawn(PlayerClassPath, FVector(1000.f, 0.f, 0.f));
 	if (!TestNotNull(TEXT("pack boss"), Boss) || !TestNotNull(TEXT("pack player"), Player)) return false;
+	Scope.BeginPlay();
+	FString Route;
+	FString Outcome;
+	FString Reason;
+	bool bBindingRetained = false;
+	TestTrue(TEXT("legacy route snapshot parses"), ReadActivationSnapshot(*Moves, Outcome, Reason, bBindingRetained, &Route));
+	TestEqual(TEXT("no selection chooses legacy route"), Route, FString(TEXT("legacy")));
+	TestEqual(TEXT("legacy route records no-selection outcome"), Outcome, FString(TEXT("LegacyNoSelection")));
 	TestTrue(TEXT("no-selection startup keeps legacy boss bundle"), HasLegacyBossBundle(Boss));
 	TestNotNull(TEXT("no-selection startup keeps player-side dodge setup"), Player->FindComponentByClass<URPGDodgeTiming>());
 	TestNotNull(TEXT("no-selection startup keeps player footsteps"), Player->FindComponentByClass<URPGFootsteps>());
@@ -341,6 +350,13 @@ bool FRPGEncounterSelectionLegacyStartupDisabled::RunTest(const FString&)
 	APawn* Player = Scope.SpawnPackPawn(PlayerClassPath, FVector(1000.f, 0.f, 0.f));
 	if (!TestNotNull(TEXT("pack boss"), Boss) || !TestNotNull(TEXT("pack player"), Player)) return false;
 	Scope.BeginPlay();
+	FString Route;
+	FString Outcome;
+	FString Reason;
+	bool bBindingRetained = false;
+	TestTrue(TEXT("disabled route snapshot parses"), ReadActivationSnapshot(*Moves, Outcome, Reason, bBindingRetained, &Route));
+	TestEqual(TEXT("config-off startup selects disabled route"), Route, FString(TEXT("disabled")));
+	TestEqual(TEXT("disabled route records its selected outcome"), Outcome, FString(TEXT("LegacyStartupDisabled")));
 	TestFalse(TEXT("legacy boss bundle stays absent with config off"), HasLegacyBossBundle(Boss));
 	TestNull(TEXT("legacy player dodge component stays absent with config off"), Player->FindComponentByClass<URPGDodgeTiming>());
 	TestNull(TEXT("legacy player footsteps stay absent with config off"), Player->FindComponentByClass<URPGFootsteps>());
@@ -366,6 +382,13 @@ bool FRPGEncounterSelectionStartupSuccess::RunTest(const FString&)
 	if (!TestNotNull(TEXT("pack boss"), Boss) || !TestNotNull(TEXT("pack player"), Player)) return false;
 
 	Scope.BeginPlay();
+	FString Route;
+	FString Outcome;
+	FString Reason;
+	bool bBindingRetained = false;
+	TestTrue(TEXT("selected route snapshot parses"), ReadActivationSnapshot(*Moves, Outcome, Reason, bBindingRetained, &Route));
+	TestEqual(TEXT("stored definition selects data route"), Route, FString(TEXT("data")));
+	TestEqual(TEXT("data route records successful activation"), Outcome, FString(TEXT("Activated")));
 	TestTrue(TEXT("successful startup clears selection diagnostic"), Selection->GetSelectionDiagnostic().IsEmpty());
 	TestTrue(TEXT("successful startup leaves boss collision enabled"), Boss->GetActorEnableCollision());
 	TestNotNull(TEXT("data activation registers boss encounter component"), Boss->FindComponentByClass<URPGBossEncounter>());

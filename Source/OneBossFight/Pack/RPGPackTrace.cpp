@@ -333,14 +333,6 @@ void RPGPackTrace::FTarget::ClearHitSet()
 	}
 }
 
-void RPGPackTrace::FTarget::RefreshPrevious()
-{
-	if (UObject* Target = Object.Get())
-	{
-		CallBlueprintFunction(Target, TEXT("UpdateTraceLocations"), [](UFunction&, uint8*) {}, [](UFunction&, uint8*) {});
-	}
-}
-
 bool RPGPackTrace::CheckLiveNames(const AActor* Boss, FString& OutMissing)
 {
 	OutMissing.Reset();

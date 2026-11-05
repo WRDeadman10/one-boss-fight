@@ -352,18 +352,6 @@ void URPGBuildSelect::EnsureWidget()
 	}
 }
 
-void URPGBuildSelect::Toggle()
-{
-	if (bOpen)
-	{
-		Close();
-	}
-	else
-	{
-		Open();
-	}
-}
-
 bool URPGBuildSelect::Open()
 {
 	FString Why;

@@ -50,9 +50,19 @@ class Round6ReportTests(unittest.TestCase):
         value["runs"][4]["temporal_upscaler"] = "TSR"
         self.assertTrue(any("treatment temporal_upscaler must be DLSS" in e for e in r6.validate(value)))
 
+    def test_treatment_missing_active_upscaler_field_is_rejected(self):
+        value = fixture()
+        del value["runs"][4]["temporal_upscaler"]
+        self.assertTrue(any("treatment temporal_upscaler must be DLSS" in e for e in r6.validate(value)))
+
     def test_missing_creation_log_line_is_rejected(self):
         value = fixture()
         value["runs"][4]["active_mode_log_line"] = "DLSS supported"
+        self.assertTrue(any("must prove active DLSS" in e for e in r6.validate(value)))
+
+    def test_missing_mode_witness_is_rejected(self):
+        value = fixture()
+        del value["runs"][4]["active_mode_log_line"]
         self.assertTrue(any("must prove active DLSS" in e for e in r6.validate(value)))
 
     def test_incomplete_mode_trials_are_rejected(self):

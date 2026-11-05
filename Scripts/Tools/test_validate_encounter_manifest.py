@@ -97,6 +97,12 @@ class EncounterManifestTests(unittest.TestCase):
         errors = validate(resign(value))
         self.assertTrue(any("parry_slow_motion must contain exactly" in error for error in errors))
 
+    def test_unknown_optional_group_member_fails_with_exact_validator_token(self):
+        value = add_parry_slow_motion_group(receipt())
+        value["definitions"]["player"]["parry_slow_motion"]["future_field"] = 1
+        errors = validate(resign(value))
+        self.assertIn("player parry_slow_motion must contain exactly the seven supported fields", errors)
+
     def test_partial_optional_parry_slow_motion_provenance_fails(self):
         value = receipt()
         add_parry_slow_motion_group(value)

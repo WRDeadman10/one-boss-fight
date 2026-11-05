@@ -155,60 +155,60 @@
       "old_status": "NOT YET",
       "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:211",
-        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:212",
-        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:213",
-        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:214",
-        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:215",
-        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:216",
-        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:217",
-        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:218",
-        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:220"
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:283",
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:284",
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:285",
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:286",
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:287",
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:288",
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:289",
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:290",
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:292"
       ],
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 211,
+          "line": 283,
           "quoted": "TestTrue(TEXT(\"same floor is eligible\"),M.IsEligible(Limited,WithZ(0.),E));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 212,
+          "line": 284,
           "quoted": "TestTrue(TEXT(\"exactly at the limit is eligible\"),M.IsEligible(Limited,WithZ(50.),E));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 213,
+          "line": 285,
           "quoted": "TestFalse(TEXT(\"just above the limit is refused\"),M.IsEligible(Limited,WithZ(50.01),E));TestEqual(TEXT(\"named refusal\"),E,FString(TEXT(\"MoveModel.Vertical\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 214,
+          "line": 286,
           "quoted": "TestFalse(TEXT(\"a target far above is refused\"),M.IsEligible(Limited,WithZ(400.),E));TestEqual(TEXT(\"named refusal\"),E,FString(TEXT(\"MoveModel.Vertical\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 215,
+          "line": 287,
           "quoted": "TestTrue(TEXT(\"a card with no limit ignores any vertical separation\"),M.IsEligible(Unlimited,WithZ(400.),E));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 216,
+          "line": 288,
           "quoted": "TestFalse(TEXT(\"negative separation is a bad snapshot\"),M.IsEligible(Limited,WithZ(-1.),E));TestEqual(TEXT(\"named refusal\"),E,FString(TEXT(\"MoveModel.SnapshotDomain\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 217,
+          "line": 289,
           "quoted": "TestFalse(TEXT(\"NaN separation is a bad snapshot\"),M.IsEligible(Limited,WithZ(std::numeric_limits<double>::quiet_NaN()),E));TestEqual(TEXT(\"named refusal\"),E,FString(TEXT(\"MoveModel.SnapshotDomain\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 218,
+          "line": 290,
           "quoted": "TestFalse(TEXT(\"infinite separation is a bad snapshot\"),M.IsEligible(Unlimited,WithZ(std::numeric_limits<double>::infinity()),E));TestEqual(TEXT(\"named refusal\"),E,FString(TEXT(\"MoveModel.SnapshotDomain\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 220,
+          "line": 292,
           "quoted": "for(float Bad:{-1.f,std::numeric_limits<float>::quiet_NaN(),std::numeric_limits<float>::infinity()}){auto C=Card(false,2.f,Bad);TestFalse(TEXT(\"card with a bad vertical limit does not compile\"),C.IsValid());}"
         },
         {
@@ -246,47 +246,47 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 693,
+          "line": 870,
           "quoted": "TestTrue(TEXT(\"strong, charged and jump heavy are heavy\"),IsHeavyAttackKind(ERPGAttackKind::Strong)&&IsHeavyAttackKind(ERPGAttackKind::Charged)&&IsHeavyAttackKind(ERPGAttackKind::JumpHeavy));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 694,
+          "line": 871,
           "quoted": "TestFalse(TEXT(\"light, jump light, knockdown and unknown are not\"),IsHeavyAttackKind(ERPGAttackKind::Light)||IsHeavyAttackKind(ERPGAttackKind::JumpLight)||IsHeavyAttackKind(ERPGAttackKind::Knockdown)||IsHeavyAttackKind(ERPGAttackKind::Unknown));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 695,
+          "line": 872,
           "quoted": "TestTrue(TEXT(\"nothing\"),ClassifyPlayerActivity(false,false)==EPlayerActivity::None);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 696,
+          "line": 873,
           "quoted": "TestTrue(TEXT(\"flask\"),ClassifyPlayerActivity(true,false)==EPlayerActivity::Flask);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 697,
+          "line": 874,
           "quoted": "TestTrue(TEXT(\"heavy commitment\"),ClassifyPlayerActivity(false,true)==EPlayerActivity::HeavyCommit);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 698,
+          "line": 875,
           "quoted": "TestTrue(TEXT(\"flask wins over heavy\"),ClassifyPlayerActivity(true,true)==EPlayerActivity::Flask);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 143,
+          "line": 167,
           "quoted": "FRPGBossSelectorContext Greedy;Greedy.bGreedy=true;G.Select(Model,Snapshot(100.),D,Greedy);TestEqual(TEXT(\"greedy: 0.5 x 3 beats 1\"),D.MoveId,FName(TEXT(\"Fast\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 144,
+          "line": 168,
           "quoted": "FRPGBossSelectorContext Back;Back.bBackDodging=true;G.Select(Model,Snapshot(100.),D,Back);TestEqual(TEXT(\"back dodging: 0.5 x 4 beats 1\"),D.MoveId,FName(TEXT(\"Fast\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 145,
+          "line": 174,
           "quoted": "for(float Bad:{0.f,-1.f,1.0001e6f,std::numeric_limits<float>::quiet_NaN()}){FRPGBossSelectorCandidate X=Cand(TEXT(\"X\"),50,150);X.GreedMultiplier=Bad;FRPGBossMoveSelector T;FString Err;TestFalse(TEXT(\"bad greed multiplier refused\"),T.Initialize(Config(),{X},Err));}"
         },
         {
@@ -371,22 +371,22 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 457,
+          "line": 609,
           "quoted": "TestTrue(TEXT(\"sight lost\"),LosStep(M,false,1.,3.,FVector(500.,0.,0.))==ELosEvent::Lost);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 458,
+          "line": 610,
           "quoted": "TestTrue(TEXT(\"the last known position is the one of the last VISIBLE tick, not the hidden target\"),M.LastKnown.Equals(FVector(10.,0.,0.)));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 460,
+          "line": 612,
           "quoted": "TestTrue(TEXT(\"sight regained\"),LosStep(M,true,2.5,3.,FVector(20.,0.,0.))==ELosEvent::Regained);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 464,
+          "line": 616,
           "quoted": "TestTrue(TEXT(\"3.0 s: the search times out\"),LosStep(N,false,4.,3.,FVector::ZeroVector)==ELosEvent::TimedOut);"
         },
         {
@@ -426,22 +426,22 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 546,
+          "line": 698,
           "quoted": "TestTrue(TEXT(\"moving away fast = Back\"),ClassifyDodge(FVector(900.,0.,0.),ToTarget,600.f)==EDodgeDir::Back);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 547,
+          "line": 699,
           "quoted": "TestTrue(TEXT(\"moving toward the boss = Forward\"),ClassifyDodge(FVector(-900.,0.,0.),ToTarget,600.f)==EDodgeDir::Forward);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 555,
+          "line": 707,
           "quoted": "H.Push(EDodgeDir::Back,3);TestEqual(TEXT(\"two backs of three\"),H.BackCount(),2);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 563,
+          "line": 715,
           "quoted": "F5();P->DodgeHistoryDepth=3;TestTrue(TEXT(\"depth 3 threshold 2 valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
@@ -485,7 +485,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 141,
+          "line": 173,
           "quoted": "TestFalse(TEXT(\"second start while busy\"),R.Model.Start(Card(),Snapshot(),Ref..."
         },
         {
@@ -567,7 +567,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 78,
+          "line": 126,
           "quoted": "FString Error;TestFalse(TEXT(\"runtime MUST reject preview\"),URPGFrameworkMoveExecutor::ValidatePlaybackCard(Preview,Error));TestEqual(TEXT(\"preview refusal token\"),Error,FString(TEXT(\"Framework.Playback.UnresolvedPreview\")));"
         },
         {
@@ -668,27 +668,27 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 278,
+          "line": 408,
           "quoted": "F5();TestTrue(TEXT(\"tie band off: valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 279,
+          "line": 409,
           "quoted": "F5();P->SelectorTieBand=.1f;P->SelectorTieSeed=12345;TestTrue(TEXT(\"tie band 0.1 with a seed: valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 280,
+          "line": 410,
           "quoted": "F5();P->SelectorTieBand=.5f;TestTrue(TEXT(\"tie band 0.5 is the upper edge: valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 281,
+          "line": 411,
           "quoted": "for(float Bad:{-.1f,.51f,std::numeric_limits<float>::infinity(),std::numeric_limits<float>::quiet_NaN()}){F5();P->SelectorTieBand=Bad;TestFalse(TEXT(\"tie band outside [0,0.5]\"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT(\"token\"),Error,FString(TEXT(\"Framework.Profile.Domain\")));}"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 282,
+          "line": 412,
           "quoted": "{TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);TestTrue(TEXT(\"fresh F3 profile valid\"),RPGFramework::ValidateProfile(*F3,Error));F3->SelectorTieBand=.1f;TestFalse(TEXT(\"tie band outside the F5 lane\"),RPGFramework::ValidateProfile(*F3,Error));TestEqual(TEXT(\"token\"),Error,FString(TEXT(\"Framework.Profile.Domain\")));}"
         }
       ],
@@ -834,17 +834,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 431,
+          "line": 583,
           "quoted": "TestTrue(TEXT(\"1000 draws inside [0.2, 0.4]\"),bInside);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 432,
+          "line": 584,
           "quoted": "TestTrue(TEXT(\"the draws spread over the window (not a constant)\"),Hi-Lo>.15);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 444,
+          "line": 596,
           "quoted": "F5();P->ReactionDelayMinSeconds=.2f;P->ReactionDelayMaxSeconds=.4f;TestTrue(TEXT(\"0.2..0.4 valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
@@ -908,7 +908,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 141,
+          "line": 173,
           "quoted": "TestFalse(TEXT(\"second start while busy\"),R.Model.Start(Card(),Snapshot(),Ref..."
         },
         {
@@ -949,12 +949,12 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 194,
+          "line": 266,
           "quoted": "TestTrue(TEXT(\"instance exists before any playback\"),R.Token.InstanceId!=0&&R..."
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 195,
+          "line": 267,
           "quoted": "TestTrue(TEXT(\"reserved attack is Committed\"),R.Model.State()==ERPGBossMoveMo..."
         },
         {
@@ -979,12 +979,12 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 196,
+          "line": 268,
           "quoted": "TestTrue(TEXT(\"failed playback aborts the reserved instance\"),R.Model.Abort(R..."
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 197,
+          "line": 269,
           "quoted": "TestTrue(TEXT(\"model Idle after failed playback\"),R.Model.State()==ERPGBossMo..."
         }
       ],
@@ -1009,7 +1009,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 147,
+          "line": 179,
           "quoted": "TestFalse(TEXT(\"old callback cannot abort new attack\"),R.Model.Abort(Old,R.Events,R.Error)); TestTrue(TEXT(\"new attack survives stale abort\"),R.Model.AcceptsCallback(Current));"
         }
       ],
@@ -1033,7 +1033,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 346,
+          "line": 498,
           "quoted": "F5();P->bPhaseSupersedesStagger=true;TestFalse(TEXT(\"no posture and no phase two: refused\"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT(\"token\"),Error,FString(TEXT(\"Framework.Profile.Domain\")));"
         },
         {
@@ -1113,7 +1113,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 328,
+          "line": 480,
           "quoted": "TestEqual(TEXT(\"1.65 s at rate 1\"),RPGBossTrack::WatchdogTimeoutSeconds(1.65f,1.f),2.15,1.e-6);"
         },
         {
@@ -1154,7 +1154,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 129,
+          "line": 161,
           "quoted": "if (bActive) {TestEqual(TEXT(\"active abort closes window then signals abort\"),R.Events.Num(),2); if(R.Events.Num()==2) TestTrue(TEXT(\"close before abort\"),R.Events[0].Kind==ERPGBossMoveModelEvent::Close && R.Events[1].Kind==ERPGBossMoveModelEvent::Aborted);}"
         },
         {
@@ -1324,13 +1324,13 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 88,
-          "quoted": "FComboState S;S.Node=TEXT(\"A\");FComboStep R=Step(G,S,Gate(1,100.,10.,EOutcome::Whiff));TestEqual(TEXT(\"whiff -> C\"),R.NextNode,FName(TEXT(\"C\")));"
+          "line": 93,
+          "quoted": "FComboState State;State.Node=TEXT(\"A\");const FComboStep Result=Step(G,State,Gate(GateId++,100.,10.,Route.Outcome));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 90,
-          "quoted": "FComboState U;U.Node=TEXT(\"A\");R=Step(G,U,Gate(1,100.,10.,EOutcome::Parried));TestTrue(TEXT(\"parried: no edge, recover\"),R.Kind==EStep::Recover);TestEqual(TEXT(\"default recovery\"),R.Reason,FString(TEXT(\"Combo.DefaultRecovery\")));"
+          "line": 93,
+          "quoted": "FComboState State;State.Node=TEXT(\"A\");const FComboStep Result=Step(G,State,Gate(GateId++,100.,10.,Route.Outcome));"
         },
         {
           "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO3/pie_normal/editor_raw.log",
@@ -1424,8 +1424,8 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 47,
-          "quoted": "TestEqual(TEXT(\"four nodes deep with max depth 3\"),Token([](FComboGraph& G){G.Nodes.Add(Node(TEXT(\"F\"),TEXT(\"MoveF\")));G.Nodes[4].Edges.Add(Edge(TEXT(\"F\"),0.f,100.f,180.f,true));}),FString(TEXT(\"Combo.Depth\")));"
+          "line": 112,
+          "quoted": "FComboStep R=Step(Short,S,Gate(2,100.,10.));TestTrue(TEXT(\"third node refused\"),R.Kind==EStep::Recover);TestEqual(TEXT(\"depth token\"),R.Reason,FString(TEXT(\"Combo.Depth\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
@@ -1434,7 +1434,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 106,
+          "line": 112,
           "quoted": "FComboStep R=Step(Short,S,Gate(2,100.,10.));TestTrue(TEXT(\"third node refused\"),R.Kind==EStep::Recover);TestEqual(TEXT(\"depth token\"),R.Reason,FString(TEXT(\"Combo.Depth\")));"
         },
         {
@@ -1466,7 +1466,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossComboTests.cpp",
-          "line": 94,
+          "line": 100,
           "quoted": "FComboState S;S.Node=TEXT(\"A\");FComboStep R=Step(G,S,Gate(1,300.,10.));TestTrue(TEXT(\"out of range: recover\"),R.Kind==EStep::Recover);TestEqual(TEXT(\"default recovery\"),R.Reason,FString(TEXT(\"Combo.DefaultRecovery\")));"
         },
         {
@@ -1497,12 +1497,12 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 85,
+          "line": 116,
           "quoted": "TestTrue(TEXT(\"authored variable play rate starts\"),V.Model.Start(Card(false,..."
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 91,
+          "line": 122,
           "quoted": "TestEqual(TEXT(\"no edges lost or duplicated across step sizes/rates\"),EdgeCou..."
         },
         {
@@ -1628,17 +1628,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 667,
+          "line": 828,
           "quoted": "Near(TEXT(\"60 ticks (1 s) toward 170 turn exactly the cap, 90 deg\"),Yaw,90.f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 668,
+          "line": 829,
           "quoted": "TestTrue(TEXT(\"no tick turned more than cap * dt (1.5 deg)\"),MaxStep<=1.5f+1.e-3f);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 670,
+          "line": 831,
           "quoted": "Near(TEXT(\"after the commit 60 more ticks leave the yaw unchanged\"),Yaw,90.f);"
         },
         {
@@ -1721,32 +1721,32 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 525,
+          "line": 677,
           "quoted": "TestTrue(TEXT(\"a tick that is half of the time left covers half of the need\"),FMath::IsNearlyEqual(WarpStepCm(100.,150.,.1,.2),50.));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 526,
+          "line": 678,
           "quoted": "TestTrue(TEXT(\"the budget caps the step\"),FMath::IsNearlyEqual(WarpStepCm(400.,30.,.2,.2),30.));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 527,
+          "line": 679,
           "quoted": "TestTrue(TEXT(\"nothing needed, nothing spent, no time\"),WarpStepCm(0.,150.,.1,.2)==0.&&WarpStepCm(10.,0.,.1,.2)==0.&&WarpStepCm(10.,150.,0.,.2)==0.&&WarpStepCm(10.,150.,.1,0.)==0.);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 529,
+          "line": 681,
           "quoted": "TestTrue(TEXT(\"the angle keeps its sign\"),WarpStepDegrees(-90.,45.,.2,.2)==-45.&&WarpStepDegrees(30.,45.,.2,.2)==30.);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 535,
+          "line": 687,
           "quoted": "if (Moved>150.+1e-6) AddError(FString::Printf(TEXT(\"budget exceeded: need %g dt %g moved %g\"),Need,Dt,Moved));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 536,
+          "line": 688,
           "quoted": "if (Need<=150.&&!FMath::IsNearlyEqual(Moved,Need,1e-6)) AddError(FString::Printf(TEXT(\"did not end at the need: need %g dt %g moved %g\"),Need,Dt,Moved));"
         },
         {
@@ -1808,7 +1808,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
-          "line": 129,
+          "line": 161,
           "quoted": "if (bActive) {TestEqual(TEXT(\"active abort closes window then signals abort\"),R.Events.Num(),2); if(R.Events.Num()==2) TestTrue(TEXT(\"close before abort\"),R.Events[0].Kind==ERPGBossMoveModelEvent::Close && R.Events[1].Kind==ERPGBossMoveModelEvent::Aborted);}"
         },
         {
@@ -1846,12 +1846,12 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 62,
+          "line": 105,
           "quoted": "TestTrue(TEXT(\"real existing sequence/mesh/class dependencies\"),RPGFramework::ResolveProfile(P.Get(),D,Error));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 618,
+          "line": 777,
           "quoted": "TestEqual(TEXT(\"no slot node in the AnimBP\"),Token([](auto& X){X.bSlotNodePresent=false;}),FString(TEXT(\"Framework.Profile.StaggerAnim.SlotNode\")));"
         },
         {
@@ -1930,7 +1930,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 260,
+          "line": 389,
           "quoted": "TestTrue(TEXT(\"valid baked samples\"),RPGBossMoveCards::Validate(WithSamples([](auto&){}),M).IsValid());"
         },
         {
@@ -1956,12 +1956,12 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 241,
+          "line": 370,
           "quoted": "TestTrue(TEXT(\"baked samples used\"),bBaked);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 243,
+          "line": 372,
           "quoted": "TestTrue(TEXT(\"baked path covers the apex across the same hitch\"),BakedMin<=15.f);"
         },
         {
@@ -1997,7 +1997,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
-          "line": 173,
+          "line": 176,
           "quoted": "if (!bTargetAlive) { Expected = ERPGDamageOutcome::RejectedDead; }"
         }
       ],
@@ -2019,7 +2019,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
-          "line": 175,
+          "line": 178,
           "quoted": "else if (bDuplicate) { Expected = ERPGDamageOutcome::RejectedDuplicate; }"
         },
         {
@@ -2085,7 +2085,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
-          "line": 172,
+          "line": 175,
           "quoted": "ERPGDamageOutcome Expected = ERPGDamageOutcome::Accepted;"
         },
         {
@@ -2243,32 +2243,32 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 484,
+          "line": 636,
           "quoted": "TestTrue(TEXT(\"target inside the band\"),RingTouches(240.,260.,40.,230.,35.,0.,50.));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 485,
+          "line": 637,
           "quoted": "TestFalse(TEXT(\"target beyond the front\"),RingTouches(240.,260.,40.,330.,35.,0.,50.));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 486,
+          "line": 638,
           "quoted": "TestFalse(TEXT(\"target the band has already passed (no ghost damage)\"),RingTouches(240.,260.,40.,100.,35.,0.,50.));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 487,
+          "line": 639,
           "quoted": "TestFalse(TEXT(\"a target above the wave is missed\"),RingTouches(240.,260.,40.,230.,35.,80.,50.));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 488,
+          "line": 640,
           "quoted": "TestFalse(TEXT(\"NaN refused\"),RingTouches(240.,260.,40.,std::numeric_limits<double>::quiet_NaN(),35.,0.,50.));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 497,
+          "line": 649,
           "quoted": "if (Touched<1) {AddError(FString::Printf(TEXT(\"gap at dist %g with dt %g\"),D,Dt));break;}"
         },
         {
@@ -2342,27 +2342,27 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 508,
+          "line": 660,
           "quoted": "TestTrue(TEXT(\"no contact: nothing\"),GrabStep(S,false,.5,1.,false)==EGrabEvent::None&&!S.bHeld);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 509,
+          "line": 661,
           "quoted": "TestTrue(TEXT(\"contact catches\"),GrabStep(S,true,.5,1.,false)==EGrabEvent::Caught&&S.bHeld);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 512,
+          "line": 664,
           "quoted": "TestTrue(TEXT(\"at the release time: released\"),GrabStep(S,false,1.,0.,false)==EGrabEvent::Released&&!S.bHeld);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 514,
+          "line": 666,
           "quoted": "TestTrue(TEXT(\"an interrupt before the release time frees the victim at once\"),GrabStep(S,false,.6,0.,true)==EGrabEvent::Interrupted&&!S.bHeld);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 517,
+          "line": 669,
           "quoted": "TestTrue(TEXT(\"grounded: capsule centre above the floor by half height and skin\"),FMath::IsNearlyEqual(GroundedZ(10.,90.,2.),102.));"
         },
         {
@@ -2468,12 +2468,12 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 388,
+          "line": 540,
           "quoted": "    Near(TEXT(\"bias 0 keeps the way the boss stands\"),RPGBossTrack::CenterBiasedAway(Away,ToCenter,0.f),-1.,0.);"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 389,
+          "line": 541,
           "quoted": "    Near(TEXT(\"bias 1 goes to the centre side\"),RPGBossTrack::CenterBiasedAway(Away,ToCenter,1.f),1.,0.);"
         },
         {
@@ -2514,7 +2514,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 357,
+          "line": 509,
           "quoted": "TestEqual(TEXT(\"latched: no direction change while the target flickers across the back axis\"),FlipsOn,0);"
         },
         {
@@ -2541,17 +2541,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 525,
+          "line": 677,
           "quoted": "TestTrue(TEXT(\"a tick that is half of the time left covers half of the need\"),FMath::IsNearlyEqual(WarpStepCm(100.,150.,.1,.2),50.));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 526,
+          "line": 678,
           "quoted": "TestTrue(TEXT(\"the budget caps the step\"),FMath::IsNearlyEqual(WarpStepCm(400.,30.,.2,.2),30.));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 527,
+          "line": 679,
           "quoted": "TestTrue(TEXT(\"nothing needed, nothing spent, no time\"),WarpStepCm(0.,150.,.1,.2)==0.&&WarpStepCm(10.,0.,.1,.2)==0.&&WarpStepCm(10.,150.,0.,.2)==0.&&WarpStepCm(10.,150.,.1,0.)==0.);"
         },
         {
@@ -2596,7 +2596,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 582,
+          "line": 734,
           "quoted": "F5();P->ArenaRadiusCm=250.f;P->bArenaLeash=true;TestTrue(TEXT(\"leash with an arena radius is valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
@@ -2650,7 +2650,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
-          "line": 788,
+          "line": 875,
           "quoted": "TestTrue(TEXT(\"floor is hit by a downward trace\"), bFloorHit);"
         },
         {
@@ -2787,12 +2787,12 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 716,
+          "line": 893,
           "quoted": "F5();P->Cards[0].bHeavyFinisher=true;TestFalse(TEXT(\"a heavy finisher with the margin off refused\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 717,
+          "line": 894,
           "quoted": "F5();On();P->Cards[0].bHeavyFinisher=true;TestTrue(TEXT(\"a heavy finisher with the margin on is valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
@@ -2876,32 +2876,32 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 710,
+          "line": 595,
           "quoted": "F5();TestTrue(TEXT(\"off by default\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 711,
+          "line": 888,
           "quoted": "F5();On();TestTrue(TEXT(\"on with both montages and a reach is valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 712,
+          "line": 889,
           "quoted": "for(float V:{-.1f,5.01f,std::numeric_limits<float>::quiet_NaN()}){F5();On();P->PunishMarginSeconds=V;TestFalse(TEXT(\"margin outside [0,5] refused\"),RPGFramework::ValidateProfile(*P,Error));}"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 713,
+          "line": 890,
           "quoted": "for(float V:{-1.f,2000.5f,std::numeric_limits<float>::quiet_NaN()}){F5();On();P->PlayerReachCm=V;TestFalse(TEXT(\"reach outside [0,2000] refused\"),RPGFramework::ValidateProfile(*P,Error));}"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 714,
+          "line": 891,
           "quoted": "F5();On();P->PlayerLightMontage.Reset();TestFalse(TEXT(\"on without the light montage refused\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 715,
+          "line": 892,
           "quoted": "F5();On();P->PlayerHeavyMontage.Reset();TestFalse(TEXT(\"on without the heavy montage refused\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
@@ -3041,7 +3041,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
-          "line": 261,
+          "line": 265,
           "quoted": "TestEqual(TEXT(\"exactly 6.00 s after the drain: starts\"), RegenStep(40.f, 100.f, 6.0, 0.0, 6.f, 13.f, 1.f), 53.f);"
         },
         {
@@ -3116,7 +3116,7 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 599,
+          "line": 751,
           "quoted": "TestEqual(TEXT(\"loop count middle 1.6 / loop 0.5 = ceil 3.2 = 4\"),RPGStaggerAnim::LoopCount(T,S,E,.5f),4);"
         }
       ],
@@ -3137,7 +3137,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 374,
+          "line": 526,
           "quoted": "TestTrue(TEXT(\"armored card, active state: absorbed\"),RPGBossRules::HyperArmorActive(true,true));"
         },
         {
@@ -3203,12 +3203,12 @@
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
-          "line": 176,
+          "line": 177,
           "quoted": "{FInput F;MakeBackstep(F);TestTrue(TEXT(\"a backstep card without hit windows is valid\"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp",
-          "line": 179,
+          "line": 180,
           "quoted": "{FInput F;MakeBackstep(F);F.S.WarpStartSeconds=.3125f;F.S.ActiveStartSeconds=.3125f;TestTrue(TEXT(\"a move that starts at exactly 0.25 real seconds (0.3125 card seconds at rate 1.25) is valid\"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}"
         },
         {
@@ -3410,17 +3410,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 134,
+          "line": 158,
           "quoted": "    FRPGBossSelectorContext Kite;Kite.bKiting=true;S.Select(Model,Snapshot(100.),D,Kite);TestEqual(TEXT(\"kiting: 0.5 x 3 beats 1\"),D.MoveId,FName(TEXT(\"Boost\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp",
-          "line": 135,
+          "line": 159,
           "quoted": "    FRPGBossSelectorContext Hug;Hug.bHugging=true;S.Select(Model,Snapshot(100.),D,Hug);TestEqual(TEXT(\"hugging: 0.5 x 2 ties 1 -> lowest index\"),D.MoveId,FName(TEXT(\"Base\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 417,
+          "line": 569,
           "quoted": "    F5();P->AntiCheeseKiteRangeCm=150.f;P->AntiCheeseHugRangeCm=60.f;P->Cards[0].KiteWeightMultiplier=2.f;P->Cards[0].HugWeightMultiplier=3.f;TestTrue(TEXT(\"kite 150, hug 60, multipliers valid\"),RPGFramework::ValidateProfile(*P,Error));"
         },
         {
@@ -3457,17 +3457,17 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 678,
+          "line": 839,
           "quoted": "TestEqual(TEXT(\"attack running\"),RPGBossOverlay::Format(I),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=129cm Cone=120deg Window=Open Posture=40/100 Health=150/250 Stagger=0 PhaseHold=0\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 680,
+          "line": 841,
           "quoted": "TestEqual(TEXT(\"no card, stagger and hold\"),RPGBossOverlay::Format(N),FString(TEXT(\"Card=None State=Idle Phase=Phase_2 Range=300cm Cone=0deg Window=Closed Posture=100/100 Health=50/250 Stagger=1 PhaseHold=1\")));"
         },
         {
           "file": "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp",
-          "line": 682,
+          "line": 843,
           "quoted": "TestEqual(TEXT(\"non-finite values never print as numbers\"),RPGBossOverlay::Format(Bad),FString(TEXT(\"Card=SwingSlow State=Active Phase=Phase_1 Range=n/acm Cone=120deg Window=Open Posture=40/100 Health=n/a/250 Stagger=0 PhaseHold=0\")));"
         },
         {

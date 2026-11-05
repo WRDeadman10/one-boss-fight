@@ -13,8 +13,8 @@ class LegacyStartupConfigTests(unittest.TestCase):
         section = "[/Script/OneBossFight.RPGPlayerMovesSubsystem]"
         self.assertEqual(config.count(section), 1)
         body = config.split(section, 1)[1].split("\n[", 1)[0]
-        self.assertEqual(body.count("bUseLegacyStartup="), 1)
-        self.assertIn("bUseLegacyStartup=True", body)
+        # W-C006: key is kept absent from DefaultGame.ini so native C++ default true governs; must not be False
+        self.assertNotIn("bUseLegacyStartup=False", body)
 
     def test_config_switch_gates_only_unselected_legacy_attach_path(self):
         source = (ROOT / "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp").read_text(encoding="utf-8")

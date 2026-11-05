@@ -46,8 +46,6 @@ namespace RPGPackTrace
 		bool Deactivate(FName Tag = TEXT("TargetType.MainWeapon"));
 		/** Calls the pack's ClearHitActors custom event on the target. */
 		void ClearHitSet();
-		/** Calls the pack's UpdateTraceLocations on the target (previous positions = current positions). */
-		void RefreshPrevious();
 	};
 
 	/** Names the facade needs that are not found on the live objects, for the PackWiring check and the log. Empty when everything resolves. */

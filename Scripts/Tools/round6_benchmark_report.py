@@ -62,7 +62,8 @@ def validate(receipt: Any) -> list[str]:
             if not isinstance(row.get("active_mode_log_line"), str) or "Creating NGX DLSS Feature" not in row["active_mode_log_line"]:
                 issues.append(f"{prefix}.active_mode_log_line must prove active DLSS")
             expected_witness = MODE_WITNESSES.get(str(mode))
-            if expected_witness and expected_witness not in row["active_mode_log_line"]:
+            active_mode_line = row.get("active_mode_log_line")
+            if expected_witness and isinstance(active_mode_line, str) and expected_witness not in active_mode_line:
                 issues.append(f"{prefix}.active_mode_log_line does not witness {mode}")
         for field in METRICS:
             value = row.get(field)
