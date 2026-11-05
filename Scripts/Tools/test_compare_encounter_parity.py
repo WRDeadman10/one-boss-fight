@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import contextlib
+import copy
 import hashlib
 import io
 import sys
@@ -309,14 +310,34 @@ class EncounterParityTests(unittest.TestCase):
         self.assertTrue(any("parity mismatch observable windup" in issue
                             for issue in parity.compare(control, candidate)))
 
-    def test_typed_observable_precedes_check_message_tokens(self) -> None:
+    def test_typed_timing_masks_only_time_values_and_checks_other_message_numbers(self) -> None:
         control = self.timing_receipt("legacy", "one", 0.400)
         candidate = self.timing_receipt("data", "two", 0.427)
         control["observables"]["windup"]["check_status"] = "PASS"  # type: ignore[index]
         candidate["observables"]["windup"]["check_status"] = "PASS"  # type: ignore[index]
-        control["observables"]["windup"]["check_message"] = "health 2000"  # type: ignore[index]
-        candidate["observables"]["windup"]["check_message"] = "health 1500"  # type: ignore[index]
+        control["observables"]["windup"]["check_message"] = "windup 0.400s health 2000 hits 3"  # type: ignore[index]
+        candidate["observables"]["windup"]["check_message"] = "windup 0.427s health 2000 hits 3"  # type: ignore[index]
         self.assertEqual(parity.compare(control, candidate), [])
+        candidate["observables"]["windup"]["check_message"] = "windup 0.427s health 1500 hits 3"  # type: ignore[index]
+        self.assertTrue(any("parity mismatch observable windup" in issue
+                            for issue in parity.compare(control, candidate)))
+        candidate["observables"]["windup"]["check_message"] = "windup 0.427s health 2000 hits 2"  # type: ignore[index]
+        self.assertTrue(any("parity mismatch observable windup" in issue
+                            for issue in parity.compare(control, candidate)))
+
+    def test_retained_legend_t1c_passes_but_mutated_health_token_fails(self) -> None:
+        repo_root = Path(__file__).resolve().parents[2]
+        pair = repo_root / "Docs/BossCombatReview/Execution/Claude/B_C835_PARITY/pie_legend_t1c"
+        control = parity.read_receipt(pair / "receipt_legacy.json", "legacy")
+        candidate = parity.read_receipt(pair / "receipt_data.json", "data")
+        self.assertEqual(parity.compare(control, candidate), [])
+
+        mutated_control = copy.deepcopy(control)
+        mutated_candidate = copy.deepcopy(candidate)
+        mutated_control["observables"]["check-0021"]["check_message"] += " health 2000"
+        mutated_candidate["observables"]["check-0021"]["check_message"] += " health 1500"
+        self.assertTrue(any("parity mismatch observable check-0021" in issue
+                            for issue in parity.compare(mutated_control, mutated_candidate)))
 
     def test_v2_pair_compares_captured_values_and_retains_source_hashes(self) -> None:
         def capture(route: str, run_id: str) -> dict[str, object]:

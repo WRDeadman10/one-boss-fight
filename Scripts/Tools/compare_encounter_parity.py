@@ -50,6 +50,12 @@ _BRACKETED_DETAIL = re.compile(r"\[[^\]]*\]")
 _SAMPLE_COUNT = re.compile(r"\b\d+(?=\s+samples\b)", re.IGNORECASE)
 _MESSAGE_NUMBER = re.compile(r"(?<![\w.])[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?(?![\w.])")
 _STATE_KEYWORD = re.compile(r"\b(?:health|posture|poise|damage|stamina|hp)\b", re.IGNORECASE)
+_TIMING_MESSAGE_NUMBER = re.compile(
+    r"(?i)(\b(?:press[-_ ]to[-_ ]contact|onset[-_ ]gap|windup|startup|duration|"
+    r"elapsed|latency|cooldown|interval|delay|frame|scale|timing)\b\s*(?:=|:)?\s*)"
+    r"([-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?)"
+    r"(\s*(?:milliseconds?|msec|ms|seconds?|secs?|sec|s|frames?)?)(?![\w.]|\s*/\s*\d)"
+)
 _SAMPLED_SERIES = re.compile(r"\s*[-+\d.eE,;()\s'\"]+\Z")
 _SAMPLED_TUPLES = re.compile(
     r"\s*\(\s*['\"][^'\"]+['\"]\s*,\s*[-+\d.eE,;()\s]+\)(?:\s*,\s*\(\s*['\"][^'\"]+['\"]\s*,\s*[-+\d.eE,;()\s]+\))*\s*\Z"
@@ -96,6 +102,21 @@ def _message_mismatch(left: str, right: str) -> str | None:
                     f"absolute_delta={absolute_delta:g}, limits={MESSAGE_ABSOLUTE_TOLERANCE:g}s or "
                     f"{MESSAGE_RELATIVE_TOLERANCE:.0%} of max magnitude")
     return None
+
+
+def _timing_message_mismatch(left: str, right: str) -> str | None:
+    """Compare the residual check message after typed timing fields own their values.
+
+    This keeps the receipt's timing comparator authoritative for labeled timing
+    diagnostics, while preserving checks for health, damage, counts, and other
+    non-timing numeric tokens in the same message.
+    """
+    def mask_timing_fields(message: str) -> str:
+        return _TIMING_MESSAGE_NUMBER.sub(
+            lambda match: match.group(1) + "<TIMING>" + match.group(3), message
+        )
+
+    return _message_mismatch(mask_timing_fields(left), mask_timing_fields(right))
 
 
 def _volatile_message_differs(left: str, right: str) -> bool:
@@ -158,6 +179,13 @@ def _observable_value_matches(left: dict[str, Any], right: dict[str, Any]) -> bo
     if not isinstance(left_comparison, dict):
         return False
     kind = left_comparison.get("type")
+    if kind == "timing_seconds":
+        left_message, right_message = left.get("check_message"), right.get("check_message")
+        if isinstance(left_message, str) != isinstance(right_message, str):
+            return False
+        if isinstance(left_message, str) and isinstance(right_message, str):
+            if _timing_message_mismatch(left_message, right_message) is not None:
+                return False
     if kind == "exact":
         return set(left_comparison) == {"type"} and left.get("value") == right.get("value")
     if kind == "stochastic":

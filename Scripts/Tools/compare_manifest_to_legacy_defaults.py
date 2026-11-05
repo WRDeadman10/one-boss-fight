@@ -22,6 +22,15 @@ CONFIG_GROUPS = (
     "stagger_policy", "stagger_profile", "stats",
 )
 
+# Numeric literals are taken from the cited C++ excerpt, not inferred from
+# arbitrary prose, comments, or string literals in the same source line.
+_CPP_STRING_OR_COMMENT = re.compile(
+    r'"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'|//.*|/\*.*?\*/', re.DOTALL
+)
+_CPP_DECIMAL_NUMBER = re.compile(
+    r"(?<![A-Za-z0-9_.])[-+]?(?:\d+\.\d*|\.\d+|\d+)(?:[eE][-+]?\d+)?[fFlL]?(?![A-Za-z0-9_.])"
+)
+
 # Runtime-use proof for the selected G044 route. These line citations are
 # checked against Source on every audit, just like legacy-default citations.
 # Player definition leaves are compiled and retained for the target-only
@@ -242,6 +251,22 @@ def _equal(left: Any, right: Any) -> bool:
     return type(left) is type(right) and left == right
 
 
+def _cited_numeric_literals(excerpt: str) -> list[tuple[str, float]]:
+    """Return decimal C++ literals in code, excluding strings and comments."""
+    code = _CPP_STRING_OR_COMMENT.sub(" ", excerpt)
+    result: list[tuple[str, float]] = []
+    for match in _CPP_DECIMAL_NUMBER.finditer(code):
+        token = match.group(0)
+        normalized = token.rstrip("fFlL")
+        try:
+            number = float(normalized)
+        except ValueError:
+            continue
+        if math.isfinite(number):
+            result.append((token, number))
+    return result
+
+
 def _checked_runtime_classification(path: str, project_root: Path) -> tuple[str, list[dict[str, str]]]:
     if not path.startswith("definitions.player."):
         return "NOT_PLAYER", []
@@ -308,6 +333,16 @@ def audit(manifest: dict[str, Any], table: dict[str, Any], project_root: Path = 
         if status == "comparable":
             if "legacy_value" not in rule:
                 raise AuditError(f"{path}: comparable rule is missing legacy_value")
+            if type(legacy_value) in (int, float):
+                cited_numbers = _cited_numeric_literals(cite["excerpt"])
+                matching_tokens = [token for token, number in cited_numbers
+                                   if _equal(number, legacy_value)]
+                if len(matching_tokens) != 1:
+                    raise AuditError(
+                        f"{path}: legacy_value {legacy_value!r} must match exactly one numeric literal "
+                        f"in cited source {cite['file']}:{cite['line']}; "
+                        f"matching tokens={matching_tokens!r}"
+                    )
             row["legacy_value"] = legacy_value
             row["status"] = "MATCH" if _equal(value, legacy_value) else "MISMATCH"
         elif status == "not_comparable":

@@ -137,6 +137,31 @@ class CompareManifestLegacyDefaultsTests(unittest.TestCase):
             self.assertEqual(by_path["definitions.player.stats.max_health"]["runtime_classification"], "INERT")
             self.assertEqual(len(by_path["definitions.player.stats.max_health"]["runtime_evidence"]), 4)
 
+    def test_numeric_legacy_default_must_match_cited_source_token(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            write_runtime_evidence(root)
+            excerpt = "float MaxHealth = 2000.f; // obsolete 1800.f"
+            (root / "source.h").write_text(excerpt + "\n", encoding="utf-8")
+            table = {"rules": [
+                {"pattern": "definitions.boss.stats.max_health", "status": "comparable",
+                 "legacy_value": 1800.0,
+                 "source": {"file": "source.h", "line": 1, "excerpt": excerpt}},
+                {"pattern": "definitions.player.stats.max_health", "status": "not_comparable",
+                 "reason": "No legacy player CDO value is available.",
+                 "source": {"file": "source.h", "line": 1, "excerpt": excerpt}},
+            ]}
+            data = manifest()
+            data["definitions"]["boss"]["stats"]["max_health"] = 1800.0  # type: ignore[index]
+            with self.assertRaisesRegex(audit_tool.AuditError, "must match exactly one numeric literal"):
+                audit_tool.audit(data, table, root)
+
+            table["rules"][0]["legacy_value"] = 2000.0  # type: ignore[index]
+            data["definitions"]["boss"]["stats"]["max_health"] = 2000.0  # type: ignore[index]
+            rows = audit_tool.audit(data, table, root)
+            boss = next(row for row in rows if row["path"] == "definitions.boss.stats.max_health")
+            self.assertEqual(boss["status"], "MATCH")
+
     def test_refuses_uncited_or_uncovered_manifest_fields(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
