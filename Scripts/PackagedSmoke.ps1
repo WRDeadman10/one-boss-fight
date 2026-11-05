@@ -11,6 +11,9 @@ param(
     [ValidateRange(1, 3600)]
     [int]$Seconds = 20,
 
+    [ValidateSet('Development', 'Shipping')]
+    [string]$Configuration = 'Development',
+
     [string]$ExePath = ''
 )
 
@@ -22,26 +25,6 @@ if (-not $scriptDir -and $MyInvocation.MyCommand.Path) { $scriptDir = Split-Path
 if (-not $scriptDir) { $scriptDir = Join-Path (Get-Location).Path 'Scripts' }
 if (-not $ExePath) { $ExePath = Join-Path $scriptDir '..\Saved\StagedBuilds\Windows\OneBossFight.exe' }
 
-function Find-RuntimeLog {
-    param([string]$Executable)
-
-    $folder = Split-Path -Parent $Executable
-    for ($level = 0; $level -lt 5 -and $folder; ++$level) {
-        $candidate = Join-Path $folder 'OneBossFight\Saved\Logs\OneBossFight.log'
-        if (Test-Path -LiteralPath $candidate) {
-            return (Get-Item -LiteralPath $candidate).FullName
-        }
-        $candidate = Join-Path $folder 'Saved\Logs\OneBossFight.log'
-        if (Test-Path -LiteralPath $candidate) {
-            return (Get-Item -LiteralPath $candidate).FullName
-        }
-        $parent = Split-Path -Parent $folder
-        if ($parent -eq $folder) { break }
-        $folder = $parent
-    }
-    return $null
-}
-
 $resolvedExe = (Resolve-Path -LiteralPath $ExePath -ErrorAction Stop).Path
 if (-not (Test-Path -LiteralPath $resolvedExe -PathType Leaf)) {
     throw "Packaged executable is not a file: $resolvedExe"
@@ -52,12 +35,16 @@ if (-not (Test-Path -LiteralPath $checker -PathType Leaf)) {
     throw "Packaged log checker is missing: $checker"
 }
 
+Import-Module (Join-Path $scriptDir 'PackagedRunLog.psm1') -Force
+$StageRoot = Split-Path -Parent $resolvedExe
+$RunLog = New-PackagedRunLogPath -StageRoot $StageRoot -Label 'smoke'
+
 $process = $null
 $alive = $false
 $launchTime = Get-Date
 try {
     Write-Host ("[Smoke] launching {0} for {1} s" -f $resolvedExe, $Seconds)
-    $process = Start-Process -FilePath $resolvedExe -ArgumentList '-nosound', '-log' -PassThru
+    $process = Start-Process -FilePath $resolvedExe -ArgumentList '-nosound', '-log', "-abslog=$RunLog" -PassThru
     Start-Sleep -Seconds $Seconds
     $process.Refresh()
     $alive = -not $process.HasExited
@@ -102,11 +89,12 @@ finally {
     }
 }
 
-# The log is looked for AFTER the run (a first run has none before it) and must have been written by this run.
+# The log path is unique to this invocation. Shipping compiles runtime logging out,
+# so its debug-off proof remains the binary checker.
 # A Shipping build writes no log (logging is compiled out, found 2026-10-24): for it the log step is skipped and the debug-off proof is Scripts/CheckShippingBinary.py (no rpg.Debug, no LogRPGDebug in the executable).
-$runtimeLog = Find-RuntimeLog -Executable $resolvedExe
+$runtimeLog = $RunLog
 $shippingBinary = Join-Path (Split-Path -Parent $resolvedExe) 'OneBossFight\Binaries\Win64\OneBossFight-Win64-Shipping.exe'
-if (-not $runtimeLog -or (Get-Item -LiteralPath $runtimeLog).LastWriteTime -lt $launchTime) {
+if ($Configuration -eq 'Shipping') {
     if (Test-Path -LiteralPath $shippingBinary -PathType Leaf) {
         Write-Host '[Smoke] NOTE a Shipping build writes no runtime log: the log step is skipped, the binary is checked instead'
         $binaryChecker = Join-Path $scriptDir 'CheckShippingBinary.py'
@@ -117,6 +105,11 @@ if (-not $runtimeLog -or (Get-Item -LiteralPath $runtimeLog).LastWriteTime -lt $
         Write-Host '[Smoke] VERDICT FAIL'
         exit 1
     }
+    Write-Host ("[Smoke] FAIL Shipping binary not found: {0}" -f $shippingBinary)
+    Write-Host '[Smoke] VERDICT FAIL'
+    exit 1
+}
+if (-not (Test-Path -LiteralPath $runtimeLog -PathType Leaf)) {
     Write-Host ("[Smoke] FAIL no runtime log written by this run beside {0}" -f $resolvedExe)
     Write-Host '[Smoke] VERDICT FAIL'
     exit 1

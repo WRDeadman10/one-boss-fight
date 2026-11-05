@@ -39,14 +39,34 @@ if ($IncludeDevelopment) {
     Copy-Stage $DevelopmentStage (Join-Path $Kit 'Saved\StagedBuilds_Development\Windows')
 }
 # BenchmarkEncounterSelection.psm1: RunBenchmark.ps1 imports it (data-route selector, G1); missing it broke Round 4 on the bench PC (2026-11-05).
-# CheckPackagedLog.ps1 and CheckShippingBinary.py: PackagedSmoke.ps1 calls them from its own folder.
-foreach ($f in 'RunBenchmark.ps1', 'BenchmarkEncounterSelection.psm1', 'SummarizeBenchmark.py', 'BenchKit_Collect.ps1', 'PackagedSmoke.ps1', 'CheckPackagedLog.ps1', 'CheckShippingBinary.py', 'RunPerfExperiments.ps1', 'round5_experiments.json', 'round6_experiments.json') {
+# CheckPackagedLog.ps1, CheckShippingBinary.py and PackagedRunLog.psm1: PackagedSmoke.ps1 calls/imports them from its own folder.
+foreach ($f in 'RunBenchmark.ps1', 'BenchmarkEncounterSelection.psm1', 'PackagedRunLog.psm1', 'SummarizeBenchmark.py', 'BenchKit_Collect.ps1', 'PackagedSmoke.ps1', 'CheckPackagedLog.ps1', 'CheckShippingBinary.py', 'RunPerfExperiments.ps1', 'round5_experiments.json', 'round6_experiments.json') {
     Copy-Item (Join-Path $Root "Scripts\$f") (Join-Path $Kit "Scripts\$f") -Force
 }
 Copy-Item (Join-Path $Root 'Documentation\BENCHKIT_README.md') (Join-Path $Kit 'BENCHKIT_README.md') -Force
+$KitTools = Join-Path $Kit 'Scripts\Tools'
+New-Item -ItemType Directory -Path $KitTools -Force | Out-Null
+Copy-Item (Join-Path $PSScriptRoot 'Tools\check_bench_kit.py') (Join-Path $KitTools 'check_bench_kit.py') -Force
 $exePath = if ($DevelopmentOnly) { Join-Path $Kit 'Saved\StagedBuilds_Development\Windows\OneBossFight\Binaries\Win64\OneBossFight.exe' } else { Join-Path $Kit 'Saved\StagedBuilds\Windows\OneBossFight\Binaries\Win64\OneBossFight-Win64-Shipping.exe' }
 $exe = Get-Item $exePath
-"Executable time: $($exe.LastWriteTime.ToString('o')); size $($exe.Length)`r`nShipping stage included: $(-not $DevelopmentOnly); Development stage included: $IncludeDevelopment" | Out-File (Join-Path $Kit 'BUILD_INFO.txt') -Encoding utf8
+$exeHash = (Get-FileHash -LiteralPath $exe.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+$selectedStage = if ($DevelopmentOnly) { Join-Path $Kit 'Saved\StagedBuilds_Development\Windows' } else { Join-Path $Kit 'Saved\StagedBuilds\Windows' }
+$selectedBuildId = 'UNSTAMPED'
+$selectedStamp = Join-Path $selectedStage 'OneBossFight\Saved\BuildStamp.txt'
+if (Test-Path -LiteralPath $selectedStamp -PathType Leaf) { $selectedBuildId = (Get-Content -LiteralPath $selectedStamp -Raw).Trim() }
+$buildInfo = @(
+    "Package build ID: $selectedBuildId",
+    "Package configuration: $(if ($DevelopmentOnly) { 'Development' } else { 'Shipping' })",
+    "Executable SHA-256: $exeHash",
+    "Executable time: $($exe.LastWriteTime.ToString('o')); size $($exe.Length)",
+    "Shipping stage included: $(-not $DevelopmentOnly); Development stage included: $IncludeDevelopment"
+)
+$buildInfo | Out-File (Join-Path $Kit 'BUILD_INFO.txt') -Encoding utf8
+$KitCheckArgs = @('--kit-root', $Kit)
+if ($IncludeDevelopment) { $KitCheckArgs += '--include-development' }
+if ($DevelopmentOnly) { $KitCheckArgs += '--development-only' }
+& python.exe -I (Join-Path $Kit 'Scripts\Tools\check_bench_kit.py') @KitCheckArgs
+if ($LASTEXITCODE -ne 0) { throw "Bench-kit readiness checklist failed with exit code $LASTEXITCODE" }
 Write-Host "Kit: $Kit"
 if ($Zip) {
     $z = Join-Path $OutDir 'OneBossFight_BenchKit.zip'

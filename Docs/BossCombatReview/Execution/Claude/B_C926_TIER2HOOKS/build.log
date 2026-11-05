@@ -1,0 +1,158 @@
+﻿Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" OneBossFightEditor Win64 Development -Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject -WaitMutex -NoHotReload
+Log file: C:\Users\Rushit Vaghela\AppData\Local\UnrealBuildTool\Log.txt
+Using 'git status' to determine working set for adaptive non-unity build (C:\UnrealProject\OneBossFight).
+Invalidating makefile for OneBossFightEditor (working set of source files changed)
+Available x64 toolchains (1):
+ * C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207
+    (Family=14.44.35207, FamilyRank=1, Version=14.44.35214, Is64Bit=True, ReleaseChannel=Latest, Architecture=x64)
+Visual Studio 2022 compiler version 14.44.35214 is not a preferred version. Please use the latest preferred version 14.38.33130
+NGX Using Lib Dir x64 Platform Dir Win64
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'Niagara'.
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'NiagaraEditor'.
+Parsing headers for OneBossFightEditor
+  Running Internal UnrealHeaderTool C:\UnrealProject\OneBossFight\OneBossFight.uproject C:\UnrealProject\OneBossFight\Intermediate\Build\Win64\OneBossFightEditor\Development\OneBossFightEditor.uhtmanifest -WarningsAsErrors -installed
+Total of 8 written
+Reflection code generated for OneBossFightEditor in 5.1414331 seconds
+Building OneBossFightEditor...
+Using Visual Studio 2022 14.44.35214 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+Warning: Visual Studio 2022 compiler is not a preferred version
+[Adaptive Build] Excluded from OneBossFight unity file: RPGSevarogDirector.cpp, RPGAttackTracker.cpp, RPGLegend.cpp, RPGPlayerParry.cpp, RPGTier1VisualRules.cpp
+Determining max actions to execute in parallel (8 physical cores, 16 logical cores)
+  Executing up to 8 processes, one per physical core
+  Requested 1.5 GB memory per action, 9.58 GB available: limiting max parallel actions to 6
+Using Unreal Build Accelerator local executor to run 91 action(s)
+  Storage capacity 40Gb
+---- Starting trace: 261106_001842 ----
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+------ Building 91 action(s) started ------
+[1/91] Compile [x64] OneBossFight.init.gen.cpp
+[2/91] Compile [x64] RPGAttackTracker.gen.cpp
+[3/91] Compile [x64] RPGBossActivation.cpp
+UbaSessionServer - Waited 2.8s for memory pressure to go down (Available: 13.2gb Total: 50.9gb)
+[4/91] Compile [x64] RPGAttackTracker.cpp
+UbaSessionServer - Waited 2.3s for memory pressure to go down (Available: 11.1gb Total: 50.9gb)
+[5/91] Compile [x64] RPGBossActivationTests.cpp
+[6/91] Compile [x64] RPGBossActivationWorldTests.cpp
+[7/91] Compile [x64] RPGBossAttackTrackerAdapters.cpp
+[8/91] Compile [x64] RPGAutomationTests.cpp
+[9/91] Compile [x64] RPGBenchmarkRunner.cpp
+[10/91] Compile [x64] RPGBossBleedAdapters.cpp
+[11/91] Compile [x64] RPGBossAttackTrackerAdaptersTests.cpp
+UbaSessionServer - Waited 896ms for memory pressure to go down (Available: 11.2gb Total: 50.9gb)
+[12/91] Compile [x64] RPGBossCloseClipSwapAdapters.cpp
+UbaSessionServer - Waited 1.8s for memory pressure to go down (Available: 13.4gb Total: 50.9gb)
+[13/91] Compile [x64] RPGBossAuthoredDraftPreflightTests.cpp
+[14/91] Compile [x64] RPGBossCloseClipSwapAdaptersTests.cpp
+[15/91] Compile [x64] RPGBossDeathAdapters.cpp
+UbaSessionServer - Waited 3.5s for memory pressure to go down (Available: 11.0gb Total: 50.9gb)
+[16/91] Compile [x64] RPGBossEncounterClusterAdapters.cpp
+[17/91] Compile [x64] RPGBossDormantWakeAdaptersTests.cpp
+[18/91] Compile [x64] RPGBossBleedAdaptersTests.cpp
+[19/91] Compile [x64] RPGBossEncounterClusterAdaptersTests.cpp
+[20/91] Compile [x64] RPGBossDormantWakeAdapters.cpp
+[21/91] Compile [x64] RPGBossEncounterDefinition.cpp
+[22/91] Compile [x64] RPGBossEncounterDefinition.gen.cpp
+[23/91] Compile [x64] RPGBossDeathAdaptersTests.cpp
+[24/91] Compile [x64] RPGBossEncounterPolicyAdapters.cpp
+[25/91] Compile [x64] RPGBossEncounter.cpp
+[26/91] Compile [x64] RPGBossHealPunishAdapters.cpp
+[27/91] Compile [x64] RPGBossEncounterPolicyAdaptersTests.cpp
+UbaSessionServer - Waited 1.4s for memory pressure to go down (Available: 10.9gb Total: 50.9gb)
+[28/91] Compile [x64] RPGBossHealPunish.cpp
+[29/91] Compile [x64] RPGBossHealPunishAdaptersTests.cpp
+[30/91] Compile [x64] RPGBossHydrationPreparation.cpp
+[31/91] Compile [x64] RPGBossHydrationPreflight.cpp
+[32/91] Compile [x64] RPGBossInterrupt.cpp
+[33/91] Compile [x64] RPGBossHydrationPreparationTests.cpp
+UbaSessionServer - Waited 150ms for memory pressure to go down (Available: 11.2gb Total: 50.9gb)
+[34/91] Compile [x64] RPGBossLookAdapters.cpp
+UbaSessionServer - Waited 1.1s for memory pressure to go down (Available: 13.3gb Total: 50.9gb)
+[35/91] Compile [x64] RPGBossLowSweepAdapters.cpp
+[36/91] Compile [x64] RPGBossHydrationPreflightTests.cpp
+[37/91] Compile [x64] RPGBossPhaseAdapters.cpp
+[38/91] Compile [x64] RPGBossLowSweep.cpp
+[39/91] Compile [x64] RPGBossLookAdaptersTests.cpp
+[40/91] Compile [x64] RPGBossPhaseFlowAdapters.cpp
+[41/91] Compile [x64] RPGBossLowSweepAdaptersTests.cpp
+[42/91] Compile [x64] RPGBossPhasesClusterAdapters.cpp
+UbaSessionServer - Waited 682ms for memory pressure to go down (Available: 13.6gb Total: 50.9gb)
+[43/91] Compile [x64] RPGBossPhaseAdaptersTests.cpp
+[44/91] Compile [x64] RPGBossPhaseFlowAdaptersTests.cpp
+UbaSessionServer - Waited 1.4s for memory pressure to go down (Available: 9.3gb Total: 50.9gb)
+UbaSessionServer - Waited 2.2s for memory pressure to go down (Available: 11.1gb Total: 50.9gb)
+[45/91] Compile [x64] RPGBossMusic.cpp
+[46/91] Compile [x64] RPGBossPreparationRegistry.cpp
+[47/91] Compile [x64] RPGBossPhasesClusterAdaptersTests.cpp
+UbaSessionServer - Delaying 1 processes from spawning due to memory pressure (Available: 6.9gb Total: 50.9gb)
+UbaSessionServer - NOTE - To mitigate this spawn delay it is recommended to make page file larger until you don't see these messages again (Or reduce number of max parallel processes)
+UbaSessionServer -        Set max page file to a large number (like 128gb). It will not use disk space unless you actually start using that amount of committed memory
+UbaSessionServer -        Also note, this is "committed" memory. Not memory in use. So you necessarily don't need more physical memory
+UbaSessionServer -   MaxPage:   7.6gb
+UbaSessionServer -   TotalPhys: 34.3gb
+UbaSessionServer -   AvailPhys: 7.5gb
+UbaSessionServer -   TotalPage: 50.9gb
+UbaSessionServer -   AvailPage: 6.9gb
+[48/91] Compile [x64] RPGBossShockwave.cpp
+[49/91] Compile [x64] RPGBossShockwaveAdapters.cpp
+UbaSessionServer - Waited 4.1s for memory pressure to go down (Available: 11.1gb Total: 50.9gb)
+[50/91] Compile [x64] RPGBossStaggerClusterAdapters.cpp
+[51/91] Compile [x64] RPGBossProductionPreparationTests.cpp
+UbaSessionServer - Waited 1.7s for memory pressure to go down (Available: 9.1gb Total: 50.9gb)
+[52/91] Compile [x64] RPGBossShockwaveAdaptersTests.cpp
+UbaSessionServer - Waited 2.2s for memory pressure to go down (Available: 8.2gb Total: 50.9gb)
+[53/91] Compile [x64] RPGBossPreparationRegistryTests.cpp
+[54/91] Compile [x64] RPGBossStaggerPolicyAdaptersTests.cpp
+[55/91] Compile [x64] RPGBossStatsAdapters.cpp
+[56/91] Compile [x64] RPGBossStaggerPolicyAdapters.cpp
+[57/91] Compile [x64] RPGBossProductionPreflightTests.cpp
+[58/91] Compile [x64] RPGBossStatsAdaptersTests.cpp
+UbaSessionServer - Waited 78ms for memory pressure to go down (Available: 11.0gb Total: 50.9gb)
+[59/91] Compile [x64] RPGBossWorldPreparation.cpp
+[60/91] Compile [x64] RPGBossStaggerClusterAdaptersTests.cpp
+[61/91] Compile [x64] RPGBossStartupActivationTests.cpp
+UbaSessionServer - Waited 215ms for memory pressure to go down (Available: 8.8gb Total: 50.9gb)
+[62/91] Compile [x64] RPGBossWorldInputCompiler.cpp
+[63/91] Compile [x64] RPGBossWorldInputCompilerTests.cpp
+[64/91] Compile [x64] RPGBossWorldPreparationTests.cpp
+UbaSessionServer - Delaying 1 processes from spawning due to memory pressure (Available: 11.1gb Total: 50.9gb)
+UbaSessionServer - Waited 483ms for memory pressure to go down (Available: 11.1gb Total: 50.9gb)
+[65/91] Compile [x64] RPGBuildLoadout.cpp
+[66/91] Compile [x64] RPGCombatDebug.cpp
+UbaSessionServer - Waited 1.4s for memory pressure to go down (Available: 8.9gb Total: 50.9gb)
+[67/91] Compile [x64] RPGEncounterBinding.gen.cpp
+[68/91] Compile [x64] RPGEncounterBinding.cpp
+[69/91] Compile [x64] RPGEncounterSelectionSubsystem.gen.cpp
+[70/91] Compile [x64] RPGBuildSelect.cpp
+C:\UnrealProject\OneBossFight\Source\OneBossFight\UI\RPGBuildSelect.cpp(101): warning C4996: 'UUserWidget::bIsFocusable': Direct access to bIsFocusable is deprecated. Please use the getter. Note that this property is only set at construction and is not modifiable at runtime. Please update your code to the new API before upgrading to the next release, otherwise your project will no longer compile.
+[71/91] Compile [x64] RPGEncounterBindingTests.cpp
+UbaSessionServer - Waited 982ms for memory pressure to go down (Available: 9.1gb Total: 50.9gb)
+[72/91] Compile [x64] RPGLegend.gen.cpp
+UbaSessionServer - Waited 1.2s for memory pressure to go down (Available: 11.1gb Total: 50.9gb)
+[73/91] Compile [x64] RPGFogGate.cpp
+[74/91] Compile [x64] RPGEncounterSelectionSubsystem.cpp
+[75/91] Compile [x64] RPGPlayerMovesSubsystem.gen.cpp
+[76/91] Compile [x64] RPGLegend.cpp
+[77/91] Compile [x64] RPGHitIntake.cpp
+UbaSessionServer - Waited 499ms for memory pressure to go down (Available: 11.4gb Total: 50.9gb)
+UbaSessionServer - Waited 1.4s for memory pressure to go down (Available: 9.1gb Total: 50.9gb)
+UbaSessionServer - Waited 2.4s for memory pressure to go down (Available: 11.1gb Total: 50.9gb)
+[78/91] Compile [x64] RPGPlayerMovesAttachWitnessTests.cpp
+UbaSessionServer - Waited 3.0s for memory pressure to go down (Available: 8.8gb Total: 50.9gb)
+[79/91] Compile [x64] RPGRiposteInput.cpp
+[80/91] Compile [x64] RPGPlayerParry.cpp
+[81/91] Compile [x64] RPGPlayerMovesSubsystem.cpp
+[82/91] Compile [x64] RPGTier1VisualRulesTests.cpp
+[83/91] Compile [x64] RPGSevarogDirector.gen.cpp
+[84/91] Compile [x64] RPGStartupChronology.cpp
+[85/91] Compile [x64] RPGTier1VisualRules.cpp
+[86/91] Compile [x64] RPGTraceGuard.cpp
+[87/91] Compile [x64] RPGSevarogDirector.cpp
+[88/91] Compile [x64] RPGTraceAudit.cpp
+[89/91] Link [x64] UnrealEditor-OneBossFight.lib
+[90/91] Link [x64] UnrealEditor-OneBossFight.dll
+   Creating object C:\UnrealProject\OneBossFight\Binaries\Win64\UnrealEditor-OneBossFight.exp
+[91/91] WriteMetadata OneBossFightEditor.target (UBA disabled)
+Trace file written to C:/Users/Rushit Vaghela/AppData/Local/UnrealBuildTool/Log.uba with size 23.6kb
+Total time in Unreal Build Accelerator local executor: 51.90 seconds
+Total execution time: 63.96 seconds

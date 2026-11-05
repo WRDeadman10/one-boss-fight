@@ -16,6 +16,7 @@ QUICK = "Dodge_Small_Forward_Roll_Montage"
 FULL = "Dodge_To_Idle_Montage"
 QUICK_WINDOW = (0.10718, 0.48975)
 FULL_WINDOW = (0.0001, 0.69987)
+FULL_ROLL_EXPECTED_RATE = 2.0   # effective play rate of the full roll montage under the pack dodge ability (INFO FF lines: min 2.00 max 2.00)
 results = []
 TIMING_OBSERVABLES = {}
 S = {"phase": "start", "t": 0.0, "wake_at": 0.0, "gen": None, "keys": {}}
@@ -191,8 +192,9 @@ def duration_ok(r, fps):
 
 
 def full_roll_timing_range(fps):
-    """Stable comparison interval for the authored full-roll window at its expected 1.0 play rate."""
-    expected = FULL_WINDOW[1] - FULL_WINDOW[0]
+    """Stable comparison interval for the authored full-roll window in REAL seconds: the pack plays the roll at a fixed effective rate of 2.0
+    (measured 2.00 min/max in every FF30/FF60/FF120 run), so the real duration is the window divided by that constant. Run-independent (lead, BUILD-231 pair)."""
+    expected = (FULL_WINDOW[1] - FULL_WINDOW[0]) / FULL_ROLL_EXPECTED_RATE
     tolerance = 2.0 / fps + 0.004
     return [max(0.0, expected - tolerance), expected + tolerance]
 

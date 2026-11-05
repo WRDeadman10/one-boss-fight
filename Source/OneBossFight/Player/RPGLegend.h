@@ -16,6 +16,9 @@ class URPGBossEncounter;
 class URPGBossHud;
 class URPGBossPhases;
 class URPGBossStagger;
+class UMaterialParameterCollection;
+class UMaterialParameterCollectionInstance;
+class USoundMix;
 
 namespace RPGBossLegendRules
 {
@@ -105,6 +108,7 @@ public:
 	/** Slows the world to Scale for RealSeconds. Same refusals. */
 	bool RequestSlowMotion(float Scale, float RealSeconds, const URPGBossEncounter* Encounter, uint64 Generation, bool bKillPriority = false);
 	/** Ends every effect now, restores time, stops the shakes. Logs one line only when something was active. */
+	void BeginParryFeedbackPulse(UMaterialParameterCollection* Collection, FName Parameter, USoundMix* SoundMix);
 	void CancelAll(const TCHAR* Reason);
 
 	UFUNCTION(BlueprintPure, Category = "Legend")
@@ -136,10 +140,14 @@ private:
 	void EnsureTicker();
 	void RestoreHitStop(const TCHAR* Reason);
 	void RestoreSlowMotion(const TCHAR* Reason);
+	void RestoreParryFeedbackPulse();
 	bool CheckRequest(const URPGBossEncounter* Encounter, uint64 Generation);
 
 	FRPGDilationScope HitStop;
 	FRPGDilationScope SlowMotion;
+	TWeakObjectPtr<UMaterialParameterCollectionInstance> ParryFeedbackInstance;
+	TWeakObjectPtr<USoundMix> ParryFeedbackSoundMix;
+	FName ParryFeedbackParameter;
 	TArray<FStoppedActor> Stopped;
 	TWeakObjectPtr<const URPGBossEncounter> RequestOwner;
 	uint64 RequestGeneration = 0;
@@ -205,6 +213,17 @@ public:
 	/** Typed data-route controls for successful parries. Defaults are proposals from C-903; normal-grade feedback is opt-in. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Legend|Parry")
 	FRPGParrySlowMotionConfig ParrySlowMotion;
+
+	/** Optional Tier 2 MPC pulse, set only during an accepted parry slow-motion scope. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Legend|Parry|Visuals")
+	TObjectPtr<UMaterialParameterCollection> ParryFeedbackCollection = nullptr;
+
+	/** Optional SoundMix configured by the asset author for parry low-pass/duck. Null means no audio change. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Legend|Parry|Audio")
+	TObjectPtr<USoundMix> ParrySlowMotionSoundMix = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Legend|Parry|Visuals")
+	FName ParryPulseParameter = TEXT("ParryPulse");
 
 	/** Called once for each confirmed player parry by URPGPlayerParry::NotifyParried. */
 	bool HandlePlayerParrySlowMotion(RPGParryGrade::EGrade Grade, const FRPGParrySlowMotionConfig* PlayerPolicy = nullptr);

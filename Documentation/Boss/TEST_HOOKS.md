@@ -1,6 +1,6 @@
 # Runtime test and measurement console variables
 
-Inventory source: actual `TAutoConsoleVariable` registrations in `Source/OneBossFight` plus the eight `rpg.Perf.*` controls (seven macro expansions and the separately declared FireShadows control). Current source has 45 registered names: 37 non-performance controls listed below and eight performance controls summarized in the performance section. The older reference scan's 49 count included five incomplete caller-string prefixes (`rpg.Legend.`, `rpg.Perf.`, `rpg.ScreenshotAt.`, `rpg.ScreenshotPath.`, `rpg.WakeClip.`); those are not registrations. Six controls (`rpg.BossOverlay`, `rpg.CloseTelegraph`, `rpg.Build`, `rpg.CameraDebug`, `rpg.Legend`, `rpg.LegendShakeScale`) are Shipping-visible runtime controls, not test-only hooks; the prior C-702 mailbox disposition records that set as intentional. The remaining test/proof registrations are excluded from Shipping by `!UE_BUILD_SHIPPING` guards. Defaults below are declaration defaults; confirm the source declaration before use.
+Inventory source: actual CVar/console-command registrations in `Source/OneBossFight` plus the nine `rpg.Perf.*` controls (seven macro expansions and separately declared FireShadows and FireRadiusScale controls). Current source has 53 names: 44 non-performance controls listed below and nine performance controls summarized in the performance section. This source audit excludes names found only in comments, tests, or caller strings. Six controls (`rpg.BossOverlay`, `rpg.CloseTelegraph`, `rpg.Build`, `rpg.CameraDebug`, `rpg.Legend`, `rpg.LegendShakeScale`) are Shipping-visible runtime controls, not test-only hooks; the prior C-702 mailbox disposition records that set as intentional. The remaining test/proof registrations are excluded from Shipping by `!UE_BUILD_SHIPPING` or Development-only guards. Defaults below are declaration defaults; confirm the source declaration before use.
 
 ## Framework proof hooks
 
@@ -10,6 +10,7 @@ Inventory source: actual `TAutoConsoleVariable` registrations in `Source/OneBoss
 | `rpg.BossProofIFrameSweep` | -1 | Schedule real dodge and resolver probes at seconds after first attack; negative disables. |
 | `rpg.BossProofPlayerGuard` | 0 | 1 drives real block, 2 drives repeated real parry input. |
 | `rpg.BossProofPlayerGuardSeconds` | 6 | Duration for the guard hook. |
+| `rpg.BossProofPlayerGuardPhaseSeconds` | 0 | Seconds added to guard-pulse phase; zero preserves the existing phase. |
 | `rpg.ParryStaminaCost` | 0 | Non-shipping: when above 0 and `URPGPlayerParry::StaminaCost` is 0, the component adopts this stamina cost at its next press (parry stamina proof). |
 | `rpg.BossProofPlayerHits` | empty | Comma-separated game-clock seconds for injected target hits. |
 | `rpg.BossProofTargetShift` | empty | `seconds:dx,dy,dz` entries separated by `|` teleport target on game clock. |
@@ -33,6 +34,12 @@ Inventory source: actual `TAutoConsoleVariable` registrations in `Source/OneBoss
 | `rpg.CatalogTestFourth` | 0 | Development startup fixture adds fourth build sharing existing sword. |
 | `rpg.CatalogPath` | empty | Startup-only isolated test-catalog object path; requires data source. |
 | `rpg.CatalogTestInvalid` | 0 | Development startup-only invalid-input catalog fixture. |
+| `rpg.EncounterDefinition` | empty | Non-Shipping opt-in data-route encounter definition object path; empty preserves legacy startup. |
+| `rpg.EncounterLifecycle.SpawnGate` | 0 | Diagnostic: 1 logs pack pawn spawn-gate state. |
+| `rpg.DeterminismSeed` | command | Development command: `rpg.DeterminismSeed <unsigned-integer>` seeds global `FMath` for a deterministic PIE repeat; accepted range is uint32. |
+| `rpg.Art.Tier1` | 0 | Development preview of Tier 1 Niagara visual overrides. |
+| `rpg.Art.Tier2` | 0 | Development-only opt-in for optional Tier 2 presentation hooks. |
+| `rpg.AttackTracker.A2PreviewClip` | 0 | Development preview route for the optional A2 authored tracker montage in `PlayMoveMontageForTest`; production ability route is unchanged. |
 | `rpg.WakeClip` | 1 | 0 skips authored wake clip in tests. |
 | `rpg.CloseTelegraph` | 0.4 | Close-attack windup seconds; 0 restores raw pack pacing. |
 | `rpg.CameraProbe` | 0 | 1 logs camera framing; 2 stages 300/600/900 cm; 3 adds turned-away negative control. |
@@ -51,6 +58,6 @@ Inventory source: actual `TAutoConsoleVariable` registrations in `Source/OneBoss
 
 ## Arena performance switches
 
-All `rpg.Perf.*` switches are compiled as runtime controls outside Shipping; their macro default is 1 (on). `rpg.Perf.FireShadows` defaults to -1 (authored); 0 disables fire-light shadows, positive N retains only first N. Other controls: `FireLights` (fire point lights), `FireFx` (fire/smoke/sparks), `GateMist` (fog gate), `DressingAll` (all arena dressing instances), `DressingMist` (mist sheets), `DressingShadows` (dressing shadows), and `Embers` (ember field). Set to 0 to disable the named contribution for performance experiments. `rpg.Perf.*` are not gameplay tuning controls.
+All `rpg.Perf.*` switches are compiled as runtime controls outside Shipping; their macro default is 1 (on). `rpg.Perf.FireShadows` defaults to -1 (authored); 0 disables fire-light shadows, positive N retains only first N. `rpg.Perf.FireRadiusScale` defaults to 1 and clamps to 0.25–1.25; 1 preserves authored fire-light attenuation radius. Other controls: `FireLights` (fire point lights), `FireFx` (fire/smoke/sparks), `GateMist` (fog gate), `DressingAll` (all arena dressing instances), `DressingMist` (mist sheets), `DressingShadows` (dressing shadows), and `Embers` (ember field). Set to 0 to disable the named contribution for performance experiments. `rpg.Perf.*` are not gameplay tuning controls.
 
 Inventory is a source snapshot; update it whenever registrations or guards change. Names found only in comments, tests, or caller strings are not registrations.

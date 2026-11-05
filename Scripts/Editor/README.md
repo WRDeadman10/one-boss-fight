@@ -226,6 +226,7 @@ This directory has 340 Python editor scripts. This index uses each module docstr
 | pie_debug_overlay.py | Starts PIE, switches the combat debug overlay on (rpg.Debug 2), lets it log for a few seconds, stops PIE. Log lines appear under LogRPGDebug. Log prefix [DebugOverlay]. |
 | pie_dodge.py | PIE measurement of the dodge input with the pack's real IA_Dodge pressed through URPGInputTestUtils: a tap, a hold (while pushing forward), and a double tap. |
 | pie_dodge_trials.py | G0-7: scripted PIE trials of the double tap rule with the pack's real IA_Dodge key (RPGInputTestUtils), Freeze tests D01 to D07. |
+| pie_input_montage_latency.py | V-C041 diagnostic: logs injected attack/dodge/parry input to first observed player montage change; run separately on legacy and selected encounter routes. Lead-run only; tick-sampled, not device latency. |
 | pie_dormant_wake.py | B11: authored dormant loop and wake gate. Exercises normal wake, direct attack veto, reset during wake, and death during wake. Log prefix [DormantWake]. |
 | pie_dump_abilities.py | Starts PIE, asks the boss's debug component to log all ability variables (LogRPGDebug "ABILITY" lines), stops PIE. Log prefix [DumpAb]. |
 | pie_dump_player_functions.py | PIE: logs the Blueprint functions of the player pawn and its components ([RPGDebug] FUNCTION lines). Needs a warm-up PIE first. |

@@ -12,6 +12,8 @@ namespace
 {
 	TAutoConsoleVariable<int32> CVarTier1Art(TEXT("rpg.Art.Tier1"), 0,
 		TEXT("Development-only Tier 1 Niagara preview when a visual override field is empty."), ECVF_Default);
+	TAutoConsoleVariable<int32> CVarTier2Art(TEXT("rpg.Art.Tier2"), 0,
+		TEXT("Development-only opt-in for optional Tier 2 presentation hooks."), ECVF_Default);
 }
 #endif
 
@@ -21,6 +23,15 @@ bool RPGTier1Visuals::IsTier1PreviewEnabled()
 	return CVarTier1Art.GetValueOnGameThread() != 0;
 #else
 	return false;
+#endif
+}
+
+bool RPGTier1Visuals::IsTier2PreviewEnabled()
+{
+#if UE_BUILD_DEVELOPMENT
+	return RPGPresentationRules::IsTier2PreviewEnabledForBuild(true, CVarTier2Art.GetValueOnGameThread());
+#else
+	return RPGPresentationRules::IsTier2PreviewEnabledForBuild(false, 0);
 #endif
 }
 

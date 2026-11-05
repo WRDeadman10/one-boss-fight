@@ -46,7 +46,7 @@ def scenario():
     check("A1 exactly A1, A3a and A3b swap", swap.get_applied_entry_count() == 3, "entries %d" % swap.get_applied_entry_count())
     check("A1 result identifies the retained pack A1b", "A1b remains pack" in swap.get_last_result(), swap.get_last_result())
 
-    expected = {"A1": (0.33, 0.35, 0.50, 1.20), "A3a": (0.38, 0.40, 0.60, 0.80), "A3b": (0.13, 0.15, 0.40, 1.3333)}
+    expected = {"A2": (1.68, 1.93, 2.11, 3.14), "A1": (0.33, 0.35, 0.50, 1.20), "A3a": (0.38, 0.40, 0.60, 0.80), "A3b": (0.13, 0.15, 0.40, 1.3333)}
     for move, values in expected.items():
         # UFUNCTIONs: PlayMoveMontageForTest, GetCommitCount, GetLastCommitPosition and GetLastActiveStartPosition (RPGAttackTracker.h).
         commits = tracker.get_commit_count()
@@ -107,6 +107,8 @@ def tick(delta):
                 selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
                 if selection:
                     unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
+                preview = 1 if os.environ.get("A2_TRACKER_PREVIEW", "0").strip() == "1" else 0
+                unreal.SystemLibrary.execute_console_command(None, "rpg.AttackTracker.A2PreviewClip %d" % preview)
                 unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
                 state["phase"] = "wait"
             return

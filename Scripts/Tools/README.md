@@ -7,6 +7,9 @@ File outputs use the shared `atomic_io.py` helper where replacement or no-overwr
 | Script | Purpose |
 |---|---|
 | `audit_a5_driver_registration.py` | Compare all receipt-registered A5 drivers with RunDrivers and fresh-process runner registration. |
+| `mailbox_decision_digest.py` | Read-only JSON digest of Claude mailbox messages in an inclusive C-id range. |
+| `check_bench_kit.py` | Validate staged bench-kit inputs, build identity, expected files and PDB exclusion before zip publication. |
+| `check_packaged_g044_cook.py` | Validate the normalized selected-encounter cook manifest and G044/VFX closure against a package stage. |
 | `audit_source_test_coverage.py` | Heuristic source-to-native-test inventory for Queue U; reports primary types without a direct automation source reference and flags helper files needing manual mapping. |
 | `audit_editor_map_loads.py` | Find literal known-map paths passed to `load_asset` in Editor scripts. |
 | `audit_editor_save_safety.py` | Report explicit first-save lines and earlier assertion/guard markers in Editor writers. |

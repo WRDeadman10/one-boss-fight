@@ -1,5 +1,69 @@
 # Test Plan
 
+## Historical Queue V batch 10 heading correction
+
+The former heading below mislabeled legacy `QUEUE_50.md` tasks 46–50 as Queue V. The C-927 Tier 2/A2 regression coverage is separate delivered work. Actual Queue V V-C041–V-C045 are tracked in `Documentation/Boss/V_C041_C045_FEEL_FLOW_AUDIT.md`; no Lead run or build is claimed here.
+
+## Legacy Queue_50 / C-927 regression coverage (not Queue V IDs)
+
+- Extracted `IsTier2PreviewEnabledForBuild` and `MatchesOptionalTrackerMontagePath` into `RPGPresentationRules.h`; the Development CVar wrapper and both A2 path consumers use these pure predicates.
+- Added `RPGPresentationRulesTests.cpp` (Tier 2 off/on/non-Development behavior, exact A2 path and empty-path rejection) and `test_optional_presentation_wiring_contract.py` (empty/null defaults and Director/Legend cleanup on reset, boss death, scope restoration and teardown). Focused presentation source contracts: 4/4; combined Tier 2/source contracts: 10/10.
+- The first full offline run exposed 74 stale G044 source line citations after the added include. Refreshed each from its unique exact source excerpt; focused G044 tests: 8/8. This was a batch hotfix.
+- Audited tasks 46–49: zero-default parry stamina wiring and `parry_stamina` schema already exist; overlay parry-window/grade capture and test exist; resolver outcome counts and `DAMAGE ... parried N` summary exist; JSON combo sample and pure graph-loading Parried-branch test exist. No duplicate implementation added.
+- Queue 50 consistency pass: 50 unique sequential task IDs; the 9 KI references in the open-issue digest are present in the authoritative issue ledger. Reworded two stale PROJECT_STATE Queue U headlines as historical snapshots; no KI status changes were required.
+- Full Scripts/Tools suite: 315 passed, 1 skipped. Validator-token audit: 138/138. Markdown link check: 0 broken. `CheckDocLineCounts.ps1` and `git diff --check`: PASS. The new C++ automation test is authored but not compiled/run by Codex; Lead owns the build gate. No Unreal/PIE/build run.
+
+## Legacy Queue_50 documentation and reference audits (not Queue V C041–C045)
+
+- Added `Documentation/Boss/NEW_CARD_HOWTO.md`, cross-checked against every field in `FRPGBossMoveCardSpec`, `FRPGBossMoveWindow`, `FRPGBossCue`, and baked-sample declarations plus the native validation rules.
+- Added `Documentation/Boss/PROOF_WORKFLOW.md`; command lines were copied from `Scripts/Rebuild.ps1`, `Scripts/RunDrivers.ps1`, the FrameworkProof validator, and evidence-hash checker. Corrected the hash checker invocation to pass repository root.
+- Refreshed `Documentation/Boss/TEST_HOOKS.md`: current source census 53 registered names (44 non-performance including the Development seed command, nine performance switches). Compared all explicit non-performance names against source; performance names are enumerated in its grouped reference.
+- `python -I Scripts/Tools/check_validator_tokens.py`: PASS, 138 emitted tokens / 138 schemas and both indexes complete. `python Scripts/Tools/check_doc_links.py .`: 0 broken links.
+- Full offline suite: 311 passed, 1 skipped. `CheckDocLineCounts.ps1`: PASS; `git diff --check`: PASS; no broken links. No Unreal/build/PIE was run by Codex.
+- C-927 verdict received after Queue V batches 7–8: accepted after BUILD-231 GREEN 476/476 and native CookCoverage. Its identified automation gap is addressed in the separate C-927 section above.
+
+## Queue V C041–C045 feel/flow audit in progress
+
+- Added `Scripts/Editor/pie_input_montage_latency.py`; Lead must run the attack/dodge/parry cases once on legacy and once on the selected/data route. Results represent injected-input to first observed montage change and include the sampled tick duration.
+- Freeze/source comparisons and existing phase-two, hit-feel, HUD/victory, death and respawn driver assertions are cataloged in `Documentation/Boss/V_C041_C045_FEEL_FLOW_AUDIT.md`.
+- Lead runtime receipts remain pending. Codex did not launch Unreal, PIE, build or package. No offline test suite was run during this doc/driver update.
+
+## Queue V C046–C050 audit
+
+- Camera framing: archived `B_QA006/framing_report.json` passes its near/300/600/900 cm bands (73 samples); `control_report.json` fails the deliberately turned-away 900 cm negative control. These are 918×402 captures, not packaged 1080p evidence. Lock-on acquisition/release range remains unspecified by this audit.
+- Stamina/posture: Freeze v1.2 says 35 stamina per Strength swing; the Strength Light row retains the pack's 15 cost. KI-190 records the confirmed mismatch and asks for scope clarification before tuning. Dex light/jump-heavy and Strength jump-heavy row values match their listed targets.
+- Details and proposals: `Documentation/Boss/V_C046_C049_CAMERA_STAMINA_AUDIT.md`. Existing Lead runtime evidence remains required for live feel/poise; Codex ran no Unreal/build. No suite run was made during this docs-only batch.
+
+## Queue V C051–C055 in progress
+
+- U-C02/U-C08 candidate triage and exact proposed test gaps are in `Documentation/Boss/V_C051_C055_TEST_GAP_DEPRECATION.md`. Static token references alone do not count as branch coverage.
+
+## Queue V C056–C060
+
+- C056–C059 report: `Documentation/Boss/V_C056_C059_LOG_GATE_RUNTIME_TEST_INDEX.md`. The BUILD-231 suite log contains 476 successful completed tests and source maps to all 476 paths. Its timestamp intervals are controller-observed, millisecond-resolution intervals, not CPU profiling. Current source has two registration paths absent from that historical runtime log.
+- `Scripts/Gate.ps1` already supports the requested one-JSON receipt and has a no-write dry-run; a full Gate run and receipt are still pending Lead execution. Codex did not run Unreal, build, native automation, or the full gate.
+- C052/C053 remaining native cases, C054 semantic branch-to-test matrix, and C055 rebuild confirmation remain open from the prior batch.
+
+## Queue V C061–C065 (partial)
+
+- C063: focused `python -I -m unittest discover -s Scripts/Tools -p test_check_packaged_g044_cook.py -v` passes 5/5. PowerShell parser accepts `Scripts/Package.ps1`. The optional parameters require both a reviewed G044 closure list and a normalized manifest; the check validates the requested configuration, every closure package, and all project VFX package paths. Package/build provenance still has to be verified by Lead.
+- C061/C062 Lead procedures and C064/C065 size disposition: `Documentation/Boss/V_C061_C065_PACKAGING_AND_SIZE.md`. The available staged tree contains 60 files / 4,351,585,036 bytes, but its target identity is not established. The 3,249,584,880-byte IoStore `.ucas` prevents asset-level ranking from the stage inventory; C064 remains partial pending a matching-build per-package size export.
+- Codex did not build or launch a package.
+
+## Queue V C066–C069 (authored; Lead runtime evidence pending)
+
+- C067 Development build stamp and C068 per-run packaged logging are detailed in `Documentation/Boss/V_C066_C069_BUILD_AND_LOG_SUPPORT.md`. `Package.ps1` writes a configuration-specific `Saved/BuildStamp.txt` only after successful UAT; the Development game overlay displays its ID (or `UNSTAMPED`). Packaged play/smoke passes a unique `-abslog` path under `Saved/PackagedRuns`; Shipping still uses its binary check when logging is compiled out.
+- C069 `python -I -m unittest discover -s Scripts/Tools -p test_check_bench_kit.py -v`: 5 passed. `MakeBenchKit.ps1` runs the new readiness checker before zip creation; existing `test_make_bench_kit_dependencies.py` should be rerun with the full offline suite by Lead. PowerShell parser and a local two-run log-path allocation check passed. No package/game run or C++ build by Codex.
+
+## Queue V C071–C075 (partial)
+
+- Current D5 comparator dry-run on `Saved/G044/encounter_manifest.json`: 424 leaves, 214 MATCH / 0 MISMATCH / 210 NOT-COMPARABLE. It is not a second encounter; the repo has one saved selection asset. See `Documentation/Boss/V_C071_C075_ENCOUNTER_AUTHORING_AUDIT.md` for the blocker and required next evidence.
+- C072 synthetic one-field example: updated `max_health` 2000→1999, recomputed canonical digest, schema validator PASS, exactly one source-backed mismatch, and test-only allowlist structure PASS. This does not authorize a real tuning change.
+- C073 stays open: no ParrySlowMotion rows exist in `legacy_defaults_g044.json` or current 424-leaf manifest, and the C-903 native numbers are explicitly proposal defaults, not historical legacy witnesses.
+- C074 adds optional `parry_slow_motion` all-or-none values/provenance validation and native bounds. `python -I -m unittest discover -s Scripts/Tools -p test_validate_encounter_manifest.py -v`: 18 passed. No Unreal/build/asset write by Codex.
+- Replaced `bIsFocusable = true` with `SetIsFocusable(true)` to remove the deprecation reported in the latest available Lead build. A fresh Lead build is required to verify removal; C052/C053 native cases and the full C054 branch-to-test matrix are outstanding.
+- Three native cases are authored but unverified: destroyed owned component rejected before activation registration, non-default tracker config rejected without typed provenance, and invalid legacy build slot rejected with its token. Other high-priority gaps need safe seams or explicit unresolved status. No Unreal/native suite run by Codex.
+
 ## C-916 P1 — parry slow-motion PIE witness
 
 `Scripts/Editor/pie_legend.py` group `l8` uses `URPGPlayerParry::Press()` followed by an actual A4 blade contact, which passes through `RPGDamageResolver::Resolve()` and its `NotifyParried()` call. It records onset, 0.30 scale, real duration, restoration, and a real-contact `rpg.Legend 0` control. After Lead's H9 rejection, L8 now runs before the kill scenario and refuses cleanly if the boss is absent before or after reset; offline driver checks pass 3/3. Driver/run details and the two-route Lead commands are in `Documentation/Boss/P1_LEGEND_PARRY_RUN.md`. Neither live route has been run by Codex.
@@ -1355,4 +1419,53 @@ BUILD-218–222 summaries and A5 status above reflect Lead-reported evidence; Co
 ## C-925 parity range audit
 
 - Audited all 118 `Scripts/Editor/pie_*.py` drivers for `record_timing` and `range_seconds` construction. One unstable typed interval was found in `pie_iframes.py::ff`: the bounds used `expected_durations`, which were calculated from each run's measured effective rate. The comparison interval now uses the authored full-roll window at its expected 1.0 play rate; per-run timing remains separately measured and checked. Regression fixture verifies the typed bounds are identical for measured rates 0.98, 1.00, and 1.02.
-- Verification pending: `python -m unittest discover -s Scripts/Tools`, `CheckDocLineCounts.ps1`, and `git diff --check`. Codex did not run Unreal, PIE, or a build.
+- Verification: offline suite passed 305 tests, 1 skipped; CheckDocLineCounts PASS; `git diff --check` clean. Codex did not run Unreal, PIE, or a build.
+
+## Queue V batch 7 (C-926), V-C031–V-C035 — Optional presentation hooks
+
+- Added an optional A2 tracker montage path with an off-by-default Development CVar. `pie_authored_close_clips.py` now includes the A2 commit/active timing checks and reads `A2_TRACKER_PREVIEW=0|1` before PIE. The default pack montage and `StartMove("A2")` path remain unchanged. V-A013's measured timing/notify review is cited in `Documentation/Boss/V_C031_C035_OPTIONAL_PRESENTATION_HOOKS.md`; Lead still owns both-route off/on comparisons.
+- Added optional, null-default parry MPC and phase-two Niagara/MPC hooks plus an optional boss recoil montage. `rpg.Art.Tier2` defaults to 0 and compiles as Development-only; phase effect state resets through Legend scope restoration, boss death/reset and EndPlay. No Content assets were edited or assigned.
+- UE 5.5.4 header checks confirmed `UWorld::GetParameterCollectionInstance`, `UMaterialParameterCollectionInstance::SetScalarParameterValue` (bool), and Niagara `SpawnSystemAttached` signatures. Focused source-contract tests: 4/4 PASS. The first full suite caught 92 stale G044 source line citations moved by the new A2 C++ field/initializer and an expected Tier 1 preview-guard count change; refreshed those citations and guard, then full suite passed 309, 1 skipped. CheckDocLineCounts PASS; `git diff --check` clean. No Unreal/build by Codex.
+
+## Queue V batch 8 (C-926), V-C036–V-C040 — Audio, cook, and default parity
+
+- Added optional `ParrySlowMotionSoundMix` to `URPGBossLegend`; it defaults null, and `rpg.Art.Tier2` must be enabled in Development before the mix is pushed. The same Legend scope restoration that clears the parry MPC pulse pops the mix on expiry, cancellation, encounter reset, and teardown. UE 5.5.4 headers confirm `PushSoundMixModifier`/`PopSoundMixModifier` and `FSoundClassAdjuster::LowPassFilterFrequency`; no mix asset was created or assigned.
+- `V_C037_TIER1_PREVIEW_SWITCH.md` documents default-off Tier 1/Tier 2 preview controls. `V_C038_C039_COOK_AND_PARITY_GATES.md` records the existing `/Game/OneBossFight/Boss01` cook root for A2 and specifies five Lead-run default-parity pairs. Offline tests validate the 31-driver inventory and sample list; no pairs were run by Codex.
+- Full offline suite 311 passed/1 skipped; CheckDocLineCounts PASS; `git diff --check` clean. Lead build, native CookCoverage and live pairs remain pending. No Unreal/build by Codex.
+- [x] BUILD-231 (lead, 2026-11-06): Codex X-1296/X-1297 (A2 optional tracker clip preview, Tier 2 optional presentation hooks behind rpg.Art.Tier2, null-default recoil/aura/MPC/SoundMix) built first time: GREEN 476/476 (raw Docs/BossCombatReview/Execution/Claude/B_C926_TIER2HOOKS/). No native test covers the new code yet (asked from Codex). Five default-off parity pairs running (B_C835_PARITY, suffix _t2).
+## Queue V C076–C079 — offline audit tools and fixtures (2026-11-06)
+
+- C076 preserves D6 bracketed health/posture/poise/damage/stamina/hp mismatches as numeric failures; six keyword regressions pass while existing sampled-series WARN fixture remains. `test_compare_encounter_parity.py`: 28/28.
+- C077 checks L8 typed-observable alias and in-range value against the retained live Legend log. `test_a5_parity_driver_registration.py`: 21/21.
+- C078 registration audit: 31 receipt definitions, 41 scheduled RunDrivers rows, 32 A5 runner entries, all 31 receipt drivers checked with no issues; refusal and standalone memory-soak registration tests pass. `test_audit_a5_driver_registration.py`: 6/6.
+- C079 mailbox digest range selection, complete bodies, interleaved non-C messages, and invalid ranges: 2/2. `Scripts/Tools/test_mailbox_decision_digest.py`.
+- No Editor, build, or PIE run.
+
+## Queue V C081–C085 — performance decision and confirmation prep (2026-11-06)
+
+- No Round 6 result zip found in `Saved/bench_return`; Round 3 has no attributable result table in the current performance log. Do not infer missing measurements.
+- Prepared owner brief, conditional Round 7 confirmation plan, and five-driver post-setting parity sheet (`Documentation/Boss/PERFORMANCE_DECISION_BRIEF_ROUNDS_1_6.md`, `V_C084_ROUND7_CONFIRMATION_PLAN.md`, `V_C085_POST_PERFORMANCE_PARITY_SPOTCHECK.md`).
+- C083 waits for explicit owner approval of measured settings; C085 waits for application/build and Lead paired runs. No settings/graphics defaults changed. No Editor/build/PIE.
+
+## Queue V C088 — BUILD-223–BUILD-232 evidence index
+
+| Build | Indexed evidence | Status |
+|---|---|---|
+| BUILD-223 | [`B_C895_DLSS/build.log`](../Docs/BossCombatReview/Execution/Claude/B_C895_DLSS/build.log) | GREEN 463/463 |
+| BUILD-224 | [`B_C899_PERFSW/build.log`](../Docs/BossCombatReview/Execution/Claude/B_C899_PERFSW/build.log) | GREEN 463/463 |
+| BUILD-225 | [`B_C904_TESTGAP/build.log`](../Docs/BossCombatReview/Execution/Claude/B_C904_TESTGAP/build.log) | GREEN 472/472 |
+| BUILD-226/227 | [`B_C909_PARRYSLOWMO/build_v1_failed.log`](../Docs/BossCombatReview/Execution/Claude/B_C909_PARRYSLOWMO/build_v1_failed.log), [`B_C915_REBIND/build.log`](../Docs/BossCombatReview/Execution/Claude/B_C915_REBIND/build.log) | 226 rejected; 227 GREEN 474/474 |
+| BUILD-228 | [`B_C919_TIER1VFX/build.log`](../Docs/BossCombatReview/Execution/Claude/B_C919_TIER1VFX/build.log) | GREEN 476/476 after retained first failure/fix |
+| BUILD-229 | [`B_C923_P2A/build.log`](../Docs/BossCombatReview/Execution/Claude/B_C923_P2A/build.log) | GREEN 476/476 after Lead API fix |
+| BUILD-230 | [`pie_legend_t1c/compare.txt`](../Docs/BossCombatReview/Execution/Claude/B_C835_PARITY/pie_legend_t1c/compare.txt) | Pair pass, 25/25 both arms; compare output |
+| BUILD-231 | [`B_C926_TIER2HOOKS/build.log`](../Docs/BossCombatReview/Execution/Claude/B_C926_TIER2HOOKS/build.log) | GREEN 476/476 |
+| BUILD-232 | [`B_C928_TESTS/status.txt`](../Docs/BossCombatReview/Execution/Claude/B_C928_TESTS/status.txt), [`B_C928_TESTS/suite.log`](../Docs/BossCombatReview/Execution/Claude/B_C928_TESTS/suite.log) | GREEN 478/478; new baseline 478; two first-run test failures retained |
+
+BUILD-232 status and the five default-off parity pair verdicts were posted in C-929; parity raw files are under `Docs/BossCombatReview/Execution/Claude/B_C835_PARITY/`. These references index Lead evidence and do not claim a Codex-run build or parity pair.
+
+## Queue V C086–C090
+
+- Post-performance KI disposition remains deferred until Round 6 evidence and an approved/applied setting exist; no issue is closed from missing data.
+- C-878–C-929 index is in `DECISIONS.md`; BUILD-223–232 evidence links resolve, with BUILD-232's GREEN verdict attributed to Claude.
+- Tools README now lists the mailbox digest, bench-kit checker and G044 cook checker. Queue W roll remains Claude-owned per C-928.
+- [x] BUILD-232 (lead, 2026-11-06): GREEN 478/478, NEW BASELINE 478 (raw Docs/BossCombatReview/Execution/Claude/B_C928_TESTS/). First run 476 pass / 2 FAIL (kept): RPGCombatCatalogTests.cpp:86 expected diagnostic text; RPGPresentationRulesTests.cpp:20 full /Game literal flagged by CookCoverage; both fixed by the lead. BUILD-231 default-off parity: pie_phase_reset, pie_boss_death, pie_authored_close_clips, pie_legend PASS (_t2); pie_iframes PASS after the lead fixed the expected full-roll duration (window / effective rate 2.0) in Scripts/Editor/pie_iframes.py (_t2b). Hashes: evidence_sha256_b231_t2.txt.

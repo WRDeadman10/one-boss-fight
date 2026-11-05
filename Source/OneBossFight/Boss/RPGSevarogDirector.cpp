@@ -13,8 +13,12 @@
 #include "GameFramework/Pawn.h"
 #include "GameplayTagContainer.h"
 #include "Engine/World.h"
+#include "Materials/MaterialParameterCollection.h"
+#include "Materials/MaterialParameterCollectionInstance.h"
+#include "NiagaraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Player/RPGTier1VisualRules.h"
 #include "TimerManager.h"
 #include "UObject/UnrealType.h"
 
@@ -49,6 +53,7 @@ void URPGSevarogDirector::BeginPlay()
 
 void URPGSevarogDirector::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	ClearPhaseTwoVisuals();
 	if (UWorld* World = GetWorld())
 	{
 		World->RemoveOnActorSpawnedHandler(SpawnHandle);
@@ -165,6 +170,7 @@ bool URPGSevarogDirector::ActivateAbility(TSubclassOf<UObject> AbilityClass, boo
 void URPGSevarogDirector::EnterPhaseTwo()
 {
 	bPhaseTwo = true;
+	ApplyPhaseTwoVisuals();
 	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
 	{
 		if (UCharacterMovementComponent* Movement = Character->GetCharacterMovement())
@@ -184,6 +190,66 @@ void URPGSevarogDirector::EnterPhaseTwo()
 		}
 	}
 	UE_LOG(LogSevarogDirector, Log, TEXT("%s enters phase two (roar %.2f s)"), *GetOwner()->GetName(), RoarLength);
+}
+
+void URPGSevarogDirector::ApplyPhaseTwoVisuals()
+{
+	if (!RPGTier1Visuals::IsTier2PreviewEnabled())
+	{
+		return;
+	}
+	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
+	{
+		if (USkeletalMeshComponent* Mesh = Character->GetMesh())
+		{
+			if (UNiagaraSystem* Aura = PhaseTwoAuraEffect.LoadSynchronous())
+			{
+				PhaseTwoAuraComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(Aura, Mesh, NAME_None, FVector::ZeroVector,
+					FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, true);
+			}
+		}
+	}
+	if (PhaseTwoMaterialCollection && !PhaseTwoGlowParameter.IsNone())
+	{
+		if (UWorld* World = GetWorld())
+		{
+			if (UMaterialParameterCollectionInstance* Instance = World->GetParameterCollectionInstance(PhaseTwoMaterialCollection))
+			{
+				bPhaseTwoGlowApplied = Instance->SetScalarParameterValue(PhaseTwoGlowParameter, 1.f);
+			}
+		}
+	}
+}
+
+void URPGSevarogDirector::ClearPhaseTwoVisuals()
+{
+	if (PhaseTwoAuraComponent)
+	{
+		PhaseTwoAuraComponent->DestroyComponent();
+		PhaseTwoAuraComponent = nullptr;
+	}
+	if (bPhaseTwoGlowApplied && PhaseTwoMaterialCollection)
+	{
+		if (UWorld* World = GetWorld())
+		{
+			if (UMaterialParameterCollectionInstance* Instance = World->GetParameterCollectionInstance(PhaseTwoMaterialCollection))
+			{
+				Instance->SetScalarParameterValue(PhaseTwoGlowParameter, 0.f);
+			}
+		}
+	}
+	bPhaseTwoGlowApplied = false;
+}
+
+bool URPGSevarogDirector::PlayParryRecoil()
+{
+	if (!RPGTier1Visuals::IsTier2PreviewEnabled() || !ParryRecoilMontage)
+	{
+		return false;
+	}
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	UAnimInstance* Anim = Character && Character->GetMesh() ? Character->GetMesh()->GetAnimInstance() : nullptr;
+	return Anim && Anim->Montage_Play(ParryRecoilMontage, 1.f) > 0.f;
 }
 
 namespace
@@ -384,6 +450,7 @@ void URPGSevarogDirector::ResetEncounter()
 			[](UFunction&, uint8*) {});
 	}
 
+	ClearPhaseTwoVisuals();
 	bPhaseTwo = false;
 	bGateOpen = GateRadius <= 0.f;
 	LightningTimer = FMath::RandRange(LightningCooldown.X, FMath::Max(LightningCooldown.X, LightningCooldown.Y));
@@ -491,6 +558,7 @@ void URPGSevarogDirector::TickComponent(float DeltaTime, ELevelTick TickType, FA
 			{
 				bDead = true;
 				StrikePendingTime = 0.f;
+				ClearPhaseTwoVisuals();
 				return;
 			}
 			if (!bPhaseTwo && Current / Max <= PhaseTwoHealthFraction)

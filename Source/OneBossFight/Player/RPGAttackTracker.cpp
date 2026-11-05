@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGAttackTracker.h"
+#include "Player/RPGPresentationRules.h"
 #include "Player/RPGTelegraphRules.h"
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGBossPhases.h"
@@ -19,6 +20,11 @@ DEFINE_LOG_CATEGORY_STATIC(LogRPGAttack, Log, All);
 static TAutoConsoleVariable<float> CVarRPGCloseTelegraph(TEXT("rpg.CloseTelegraph"), 0.4f,
 	TEXT("Close-attack telegraph: the time in seconds from the start of an A3 stage to its active window (A1 and A1b: at most 0.35). The pack's stand-in clips have 0.14 to 0.17 s, the Freeze asks for 0.35 to 0.40 s (KI-102); the montage play rate is lowered until the active window. 0.4 is the default until the authored clips arrive (owner, 2026-10-24); 0 keeps the pack's pacing."), ECVF_Default);
 
+#if UE_BUILD_DEVELOPMENT
+static TAutoConsoleVariable<int32> CVarRPGAttackTrackerA2PreviewClip(TEXT("rpg.AttackTracker.A2PreviewClip"), 0,
+	TEXT("Development-only preview: play A2's optional authored tracker montage instead of its pack montage when PlayMoveMontageForTest is called. Does not change the production ability route or hit setup."), ECVF_Default);
+#endif
+
 using namespace RPGPack;
 
 FRPGAttackTrackerConfig::FRPGAttackTrackerConfig()
@@ -29,6 +35,7 @@ FRPGAttackTrackerConfig::FRPGAttackTrackerConfig()
 	FRPGAttackTiming A2;
 	A2.MoveId = TEXT("A2");
 	A2.MontageName = TEXT("GS_ChargedAttack_Montage");
+	A2.OptionalTrackerMontagePath = TEXT("/Game/OneBossFight/Boss01/Animations/AM_Boss01_A2.AM_Boss01_A2");
 	A2.CommitTime = 1.68f;
 	A2.ActiveStartTime = 1.93f;
 	A2.ActiveEndTime = 2.11f;
@@ -128,7 +135,12 @@ int32 URPGAttackTracker::FindTimingIndex(const UAnimMontage* Montage) const
 			ClipName = Clip->GetName();
 		}
 	}
-	return Attacks.IndexOfByPredicate([&Name, &ClipName](const FRPGAttackTiming& T) { return T.MontageName == Name || T.FallbackMontageName == Name || (!T.ClipPath.IsEmpty() && T.MontageName == ClipName); });
+	const FString ObjectPath = Montage->GetPathName();
+	return Attacks.IndexOfByPredicate([&Name, &ClipName, &ObjectPath](const FRPGAttackTiming& T)
+	{
+		return T.MontageName == Name || T.FallbackMontageName == Name || (!T.ClipPath.IsEmpty() && T.MontageName == ClipName)
+			|| RPGPresentationRules::MatchesOptionalTrackerMontagePath(T.OptionalTrackerMontagePath, ObjectPath);
+	});
 }
 
 bool URPGAttackTracker::GetTiming(FName MoveId, FRPGAttackTiming& OutTiming) const
@@ -208,6 +220,13 @@ bool URPGAttackTracker::PlayMoveMontageForTest(FName MoveId)
 	{
 		return false;
 	}
+	#if UE_BUILD_DEVELOPMENT
+	if (MoveId == FName(TEXT("A2")) && CVarRPGAttackTrackerA2PreviewClip.GetValueOnGameThread() != 0 && !Timing->OptionalTrackerMontagePath.IsEmpty())
+	{
+		UAnimMontage* PreviewMontage = LoadObject<UAnimMontage>(nullptr, *Timing->OptionalTrackerMontagePath);
+		return PreviewMontage && Anim->Montage_Play(PreviewMontage) > 0.f;
+	}
+	#endif
 	if (!Timing->ClipPath.IsEmpty())
 	{
 		return PlayClip(*Timing);
@@ -294,7 +313,8 @@ void URPGAttackTracker::RestoreTelegraph()
 
 void URPGAttackTracker::UpdateTelegraph(UAnimMontage* Montage, const FRPGAttackTiming& Timing, float Position)
 {
-	if (Timing.bAuthoredWindup && Montage && Montage->GetName() == Timing.MontageName)
+	if (Montage && (RPGPresentationRules::MatchesOptionalTrackerMontagePath(Timing.OptionalTrackerMontagePath, Montage->GetPathName())
+		|| (Timing.bAuthoredWindup && Montage->GetName() == Timing.MontageName)))
 	{
 		RestoreTelegraph();
 		return;

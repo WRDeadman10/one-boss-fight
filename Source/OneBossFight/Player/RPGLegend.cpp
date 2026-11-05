@@ -10,12 +10,16 @@
 #include "HAL/IConsoleManager.h"
 #include "HAL/PlatformTime.h"
 #include "Kismet/GameplayStatics.h"
+#include "Materials/MaterialParameterCollection.h"
+#include "Materials/MaterialParameterCollectionInstance.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGAttackTracker.h"
+#include "Player/RPGTier1VisualRules.h"
 #include "Player/RPGBossTrackerTickPrerequisite.h"
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossStagger.h"
+#include "Sound/SoundMix.h"
 #include "UI/RPGBossHud.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRPGLegend, Log, All);
@@ -158,6 +162,26 @@ bool URPGLegendSubsystem::RequestSlowMotion(float Scale, float RealSeconds, cons
 	return true;
 }
 
+void URPGLegendSubsystem::BeginParryFeedbackPulse(UMaterialParameterCollection* Collection, FName Parameter, USoundMix* SoundMix)
+{
+	if (!RPGTier1Visuals::IsTier2PreviewEnabled())
+	{
+		return;
+	}
+	UWorld* World = GetWorld();
+	if (World && SoundMix)
+	{
+		UGameplayStatics::PushSoundMixModifier(World, SoundMix);
+		ParryFeedbackSoundMix = SoundMix;
+	}
+	UMaterialParameterCollectionInstance* Instance = World && Collection && !Parameter.IsNone() ? World->GetParameterCollectionInstance(Collection) : nullptr;
+	if (Instance && Instance->SetScalarParameterValue(Parameter, 1.f))
+	{
+		ParryFeedbackInstance = Instance;
+		ParryFeedbackParameter = Parameter;
+	}
+}
+
 void URPGLegendSubsystem::RestoreHitStop(const TCHAR* Reason)
 {
 	for (const FStoppedActor& Entry : Stopped)
@@ -178,6 +202,7 @@ void URPGLegendSubsystem::RestoreHitStop(const TCHAR* Reason)
 
 void URPGLegendSubsystem::RestoreSlowMotion(const TCHAR* Reason)
 {
+	RestoreParryFeedbackPulse();
 	UWorld* World = GetWorld();
 	const float Applied = SlowMotion.Applied;
 	const float Saved = SlowMotion.End();
@@ -194,6 +219,24 @@ void URPGLegendSubsystem::RestoreSlowMotion(const TCHAR* Reason)
 		}
 	}
 	++RestoreCount;
+}
+
+void URPGLegendSubsystem::RestoreParryFeedbackPulse()
+{
+	if (UWorld* World = GetWorld())
+	{
+		if (USoundMix* SoundMix = ParryFeedbackSoundMix.Get())
+		{
+			UGameplayStatics::PopSoundMixModifier(World, SoundMix);
+		}
+	}
+	ParryFeedbackSoundMix.Reset();
+	if (UMaterialParameterCollectionInstance* Instance = ParryFeedbackInstance.Get())
+	{
+		Instance->SetScalarParameterValue(ParryFeedbackParameter, 0.f);
+	}
+	ParryFeedbackInstance.Reset();
+	ParryFeedbackParameter = NAME_None;
 }
 
 void URPGLegendSubsystem::CancelAll(const TCHAR* Reason)
@@ -468,6 +511,7 @@ bool URPGBossLegend::HandlePlayerParrySlowMotion(RPGParryGrade::EGrade Grade, co
 	{
 		return false;
 	}
+	Time->BeginParryFeedbackPulse(ParryFeedbackCollection, ParryPulseParameter, ParrySlowMotionSoundMix);
 	LastParrySlowMotionTime = NowReal;
 	++ParrySlowMotionCount;
 	return true;

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Player/RPGPresentationRules.h"
 #include "UObject/SoftObjectPtr.h"
 
 class UNiagaraSystem;
@@ -21,6 +22,8 @@ namespace RPGTier1Visuals
 
 	/** Always false outside Development: authored references remain usable there. */
 	ONEBOSSFIGHT_API bool IsTier1PreviewEnabled();
+	/** Always false outside Development; gates optional Tier 2 presentation hooks. */
+	ONEBOSSFIGHT_API bool IsTier2PreviewEnabled();
 	ONEBOSSFIGHT_API UNiagaraComponent* SpawnConfiguredEffect(UWorld* World,
 		const TSoftObjectPtr<UNiagaraSystem>& Authored, const TCHAR* Tier1Path,
 		const FVector& Location, const FRotator& Rotation, const FVector& Scale = FVector::OneVector);

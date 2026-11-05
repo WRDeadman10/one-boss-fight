@@ -8,6 +8,9 @@
 #include "NiagaraSystem.h"
 #include "RPGSevarogDirector.generated.h"
 
+class UNiagaraComponent;
+class UMaterialParameterCollection;
+
 /**
  * Boss director for Sevarog on the Advanced ARPG pack. The pack has no phase logic, no boss entrance gate and no ranged scheduling,
  * so this component adds them without touching the pack's behaviour tree:
@@ -41,6 +44,22 @@ public:
 	/** Roar montage played once on entering phase two (played directly on the mesh: the pack's enter-combat ability cannot restart while in combat). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase")
 	TObjectPtr<UAnimMontage> PhaseRoarMontage;
+
+	/** Optional Tier 2 phase-two aura. Empty by default and only previewed in Development with rpg.Art.Tier2=1. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase|Visuals")
+	TSoftObjectPtr<UNiagaraSystem> PhaseTwoAuraEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase|Visuals")
+	TObjectPtr<UMaterialParameterCollection> PhaseTwoMaterialCollection = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase|Visuals")
+	FName PhaseTwoGlowParameter = TEXT("PhaseTwoGlow");
+
+	/** Optional recoil montage; parry hit stop is unchanged when unset or when Tier 2 preview is off. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parry|Visuals")
+	TObjectPtr<UAnimMontage> ParryRecoilMontage = nullptr;
+
+	bool PlayParryRecoil();
 
 	/** Blueprint ability class (enter combat) activated when the gate opens, so the entrance plays. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gate")
@@ -107,6 +126,8 @@ private:
 	bool ReadHealth(float& Current, float& Max);
 	bool ActivateAbility(TSubclassOf<UObject> AbilityClass, bool bForce = false);
 	void EnterPhaseTwo();
+	void ApplyPhaseTwoVisuals();
+	void ClearPhaseTwoVisuals();
 	bool TryLightning(const APawn* Player, bool bIgnoreConditions = false);
 	void ResetEncounter();
 	/** Stops the pack's behaviour (tree, perception reactions) while the boss sleeps; keeps the AI controller so the abilities granted at BeginPlay stay valid. */
@@ -123,6 +144,9 @@ private:
 	bool bBehaviorHeld = false;
 	float EntranceTimer = -1.f;
 	FDelegateHandle SpawnHandle;
+	UPROPERTY(Transient)
+	TObjectPtr<UNiagaraComponent> PhaseTwoAuraComponent = nullptr;
+	bool bPhaseTwoGlowApplied = false;
 	FVector StrikeLocation = FVector::ZeroVector;
 	float StrikePendingTime = 0.f;
 	bool bPhaseTwo = false;

@@ -55,12 +55,67 @@ def resign(value):
     return value
 
 
+def add_parry_slow_motion_group(value):
+    row = value["definitions"]["player"]
+    row["parry_slow_motion"] = {
+        "perfect_enabled": True, "perfect_scale": 0.30, "perfect_seconds": 0.35,
+        "normal_enabled": False, "normal_scale": 0.50, "normal_seconds": 0.20,
+        "cooldown_seconds": 0.60,
+    }
+    for path in (
+        "ParrySlowMotion.bPerfectEnabled", "ParrySlowMotion.PerfectScale", "ParrySlowMotion.PerfectSeconds",
+        "ParrySlowMotion.bNormalEnabled", "ParrySlowMotion.NormalScale", "ParrySlowMotion.NormalSeconds",
+        "ParrySlowMotion.CooldownSeconds",
+    ):
+        row["fields"].append({
+            "field_path": path, "type": "typed", "source_path": "RPGEncounterBinding.h",
+            "source_sha256": "b" * 64, "source_site": "FRPGParrySlowMotionConfig." + path.split(".")[-1],
+            "origin": "saved draft value", "precedence": "definition source",
+            "destination": path, "first_read": "RPGHydrationPreflight", "witness": "fixture only",
+        })
+    return value
+
+
 class EncounterManifestTests(unittest.TestCase):
     def test_valid_canonical_receipt_passes(self):
         self.assertEqual(validate(receipt()), [])
 
     def test_actual_d2_saved_draft_receipt_passes(self):
         self.assertEqual(validate(d2_receipt()), [])
+
+    def test_optional_parry_slow_motion_group_absent_is_compatible(self):
+        self.assertEqual(validate(receipt()), [])
+
+    def test_complete_optional_parry_slow_motion_group_passes(self):
+        value = resign(add_parry_slow_motion_group(receipt()))
+        self.assertEqual(validate(value), [])
+
+    def test_partial_optional_parry_slow_motion_group_fails(self):
+        value = receipt()
+        add_parry_slow_motion_group(value)
+        del value["definitions"]["player"]["parry_slow_motion"]["normal_seconds"]
+        errors = validate(resign(value))
+        self.assertTrue(any("parry_slow_motion must contain exactly" in error for error in errors))
+
+    def test_partial_optional_parry_slow_motion_provenance_fails(self):
+        value = receipt()
+        add_parry_slow_motion_group(value)
+        value["definitions"]["player"]["fields"].pop()
+        errors = validate(resign(value))
+        self.assertTrue(any("provenance must contain all seven fields" in error for error in errors))
+
+    def test_explicit_null_optional_group_is_not_treated_as_absent(self):
+        value = receipt()
+        value["definitions"]["player"]["parry_slow_motion"] = None
+        errors = validate(resign(value))
+        self.assertTrue(any("parry_slow_motion must contain exactly" in error for error in errors))
+
+    def test_optional_parry_slow_motion_values_obey_native_domains(self):
+        value = receipt()
+        add_parry_slow_motion_group(value)
+        value["definitions"]["player"]["parry_slow_motion"]["perfect_scale"] = 1.0
+        errors = validate(resign(value))
+        self.assertTrue(any("perfect_scale is outside" in error for error in errors))
 
     def test_d2_attack_tracker_missing_key_fails_after_resigning(self):
         value = d2_receipt()

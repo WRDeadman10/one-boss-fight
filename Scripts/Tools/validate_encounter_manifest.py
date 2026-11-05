@@ -39,6 +39,52 @@ TRACKER_PROVENANCE_VALUES = (
     "native default (effective reflected value matches class default; serialized presence is not distinguished)",
     "saved draft value",
 )
+PARRY_SLOW_MOTION_FIELDS = {
+    "perfect_enabled": ("ParrySlowMotion.bPerfectEnabled", bool),
+    "perfect_scale": ("ParrySlowMotion.PerfectScale", (int, float)),
+    "perfect_seconds": ("ParrySlowMotion.PerfectSeconds", (int, float)),
+    "normal_enabled": ("ParrySlowMotion.bNormalEnabled", bool),
+    "normal_scale": ("ParrySlowMotion.NormalScale", (int, float)),
+    "normal_seconds": ("ParrySlowMotion.NormalSeconds", (int, float)),
+    "cooldown_seconds": ("ParrySlowMotion.CooldownSeconds", (int, float)),
+}
+
+
+def _validate_optional_parry_slow_motion(row, role, seen_fields, errors):
+    group_paths = {path for path, _value_type in PARRY_SLOW_MOTION_FIELDS.values()}
+    present_paths = group_paths & seen_fields
+    if "parry_slow_motion" not in row:
+        if present_paths:
+            errors.append(role + " parry_slow_motion provenance must be absent or contain all seven fields")
+        return
+    group = row["parry_slow_motion"]
+    if not isinstance(group, dict) or set(group) != set(PARRY_SLOW_MOTION_FIELDS):
+        errors.append(role + " parry_slow_motion must contain exactly the seven supported fields")
+        return
+    if present_paths != group_paths:
+        errors.append(role + " parry_slow_motion provenance must contain all seven fields when the optional group is present")
+    valid_values = True
+    for key, (_path, value_type) in PARRY_SLOW_MOTION_FIELDS.items():
+        value = group.get(key)
+        if value_type is bool:
+            if type(value) is not bool:
+                errors.append(role + " parry_slow_motion." + key + " must be boolean")
+                valid_values = False
+        elif type(value) not in value_type or not math.isfinite(value):
+            errors.append(role + " parry_slow_motion." + key + " must be a finite number")
+            valid_values = False
+    if not valid_values:
+        return
+    if not (0.05 <= group["perfect_scale"] <= 1.0) or (group["perfect_enabled"] and group["perfect_scale"] >= 1.0):
+        errors.append(role + " parry_slow_motion.perfect_scale is outside the native runtime range")
+    if not (0.0 < group["perfect_seconds"] <= 5.0):
+        errors.append(role + " parry_slow_motion.perfect_seconds is outside the native runtime range")
+    if not (0.05 <= group["normal_scale"] <= 1.0) or (group["normal_enabled"] and group["normal_scale"] >= 1.0):
+        errors.append(role + " parry_slow_motion.normal_scale is outside the native runtime range")
+    if not (0.0 < group["normal_seconds"] <= 5.0):
+        errors.append(role + " parry_slow_motion.normal_seconds is outside the native runtime range")
+    if not (0.0 <= group["cooldown_seconds"] <= 30.0):
+        errors.append(role + " parry_slow_motion.cooldown_seconds is outside the native runtime range")
 
 
 def canonical_payload(receipt):
@@ -170,10 +216,10 @@ def validate(receipt, source_snapshots_dir=None, project_root=None):
             if not row.get("skeleton") or not row.get("animations"):
                 errors.append(role + " skeleton and animations are required")
             fields = row.get("fields")
+            seen_fields = set()
             if not isinstance(fields, list) or not fields:
                 errors.append(role + " provenance fields must be a nonempty array")
             else:
-                seen_fields = set()
                 for index, field in enumerate(fields):
                     where = role + " fields[" + str(index) + "]"
                     if not isinstance(field, dict):
@@ -194,6 +240,7 @@ def validate(receipt, source_snapshots_dir=None, project_root=None):
                         errors.append(where + " source_sha256 must be 64 lowercase hexadecimal characters")
                     if any(not isinstance(field.get(key), str) or not field[key] for key in REQUIRED_PROVENANCE - {"source_sha256"}):
                         errors.append(where + " provenance values must be nonempty strings")
+            _validate_optional_parry_slow_motion(row, role, seen_fields, errors)
             if draft_provenance_mode:
                 _validate_attack_tracker(row, role, errors, draft_provenance_mode)
                 provenance = row.get("source_provenance")

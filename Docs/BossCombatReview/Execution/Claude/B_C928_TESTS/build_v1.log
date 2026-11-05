@@ -1,0 +1,58 @@
+﻿Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" OneBossFightEditor Win64 Development -Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject -WaitMutex -NoHotReload
+Log file: C:\Users\Rushit Vaghela\AppData\Local\UnrealBuildTool\Log.txt
+Using 'git status' to determine working set for adaptive non-unity build (C:\UnrealProject\OneBossFight).
+Invalidating makefile for OneBossFightEditor (source file added)
+Available x64 toolchains (1):
+ * C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207
+    (Family=14.44.35207, FamilyRank=1, Version=14.44.35214, Is64Bit=True, ReleaseChannel=Latest, Architecture=x64)
+Visual Studio 2022 compiler version 14.44.35214 is not a preferred version. Please use the latest preferred version 14.38.33130
+NGX Using Lib Dir x64 Platform Dir Win64
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'Niagara'.
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'NiagaraEditor'.
+Building OneBossFightEditor...
+Using Visual Studio 2022 14.44.35214 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+Warning: Visual Studio 2022 compiler is not a preferred version
+[Adaptive Build] Excluded from OneBossFight unity file: RPGSevarogDirector.cpp, RPGAttackTracker.cpp, RPGDevelopmentBuildStamp.cpp, RPGLegend.cpp, RPGPlayerMovesSubsystem.cpp, RPGPlayerParry.cpp, RPGTier1VisualRules.cpp, RPGBossHydrationPreparationTests.cpp, RPGCombatCatalogTests.cpp, RPGEncounterBindingTests.cpp, RPGPresentationRulesTests.cpp, RPGBuildSelect.cpp
+Determining max actions to execute in parallel (8 physical cores, 16 logical cores)
+  Executing up to 8 processes, one per physical core
+  Requested 1.5 GB memory per action, 9.26 GB available: limiting max parallel actions to 6
+Using Unreal Build Accelerator local executor to run 17 action(s)
+  Storage capacity 40Gb
+---- Starting trace: 261106_013829 ----
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+------ Building 17 action(s) started ------
+[1/17] Compile [x64] RPGDevelopmentBuildStamp.cpp
+[2/17] Compile [x64] RPGCombatCatalogTests.cpp
+UbaSessionServer - Waited 349ms for memory pressure to go down (Available: 11.7gb Total: 50.9gb)
+[3/17] Compile [x64] RPGEncounterBindingTests.cpp
+[4/17] Compile [x64] RPGBossShockwave.cpp
+UbaSessionServer - Waited 1.1s for memory pressure to go down (Available: 9.5gb Total: 50.9gb)
+[5/17] Compile [x64] RPGAttackTracker.cpp
+[6/17] Compile [x64] RPGPresentationRulesTests.cpp
+UbaSessionServer - Delaying 1 processes from spawning due to memory pressure (Available: 7.0gb Total: 50.9gb)
+UbaSessionServer - NOTE - To mitigate this spawn delay it is recommended to make page file larger until you don't see these messages again (Or reduce number of max parallel processes)
+UbaSessionServer -        Set max page file to a large number (like 128gb). It will not use disk space unless you actually start using that amount of committed memory
+UbaSessionServer -        Also note, this is "committed" memory. Not memory in use. So you necessarily don't need more physical memory
+UbaSessionServer -   MaxPage:   7.6gb
+UbaSessionServer -   TotalPhys: 34.3gb
+UbaSessionServer -   AvailPhys: 6.5gb
+UbaSessionServer -   TotalPage: 50.9gb
+UbaSessionServer -   AvailPage: 7.0gb
+[7/17] Compile [x64] RPGBossHydrationPreparationTests.cpp
+UbaSessionServer - Waited 1.8s for memory pressure to go down (Available: 9.3gb Total: 50.9gb)
+[8/17] Compile [x64] RPGBuildSelect.cpp
+UbaSessionServer - Waited 2.3s for memory pressure to go down (Available: 9.0gb Total: 50.9gb)
+[9/17] Compile [x64] RPGLegend.cpp
+[10/17] Compile [x64] RPGTier1VisualRulesTests.cpp
+[11/17] Compile [x64] RPGPlayerParry.cpp
+[12/17] Compile [x64] RPGPlayerMovesSubsystem.cpp
+[13/17] Compile [x64] RPGTier1VisualRules.cpp
+[14/17] Compile [x64] RPGSevarogDirector.cpp
+[15/17] Link [x64] UnrealEditor-OneBossFight.lib
+[16/17] Link [x64] UnrealEditor-OneBossFight.dll
+   Creating object C:\UnrealProject\OneBossFight\Binaries\Win64\UnrealEditor-OneBossFight.exp
+[17/17] WriteMetadata OneBossFightEditor.target (UBA disabled)
+Trace file written to C:/Users/Rushit Vaghela/AppData/Local/UnrealBuildTool/Log.uba with size 6.7kb
+Total time in Unreal Build Accelerator local executor: 16.72 seconds
+Total execution time: 20.16 seconds

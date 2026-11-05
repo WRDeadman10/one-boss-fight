@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGPlayerParry.h"
+#include "Boss/RPGSevarogDirector.h"
 #include "EnhancedInputComponent.h"
 #include "EngineUtils.h"
 #include "GameFramework/Pawn.h"
@@ -155,6 +156,10 @@ void URPGPlayerParry::NotifyParried(AActor* Actor)
 		{
 			for (TActorIterator<AActor> It(World); It; ++It)
 			{
+				if (URPGSevarogDirector* Director = It->FindComponentByClass<URPGSevarogDirector>())
+				{
+					Director->PlayParryRecoil();
+				}
 				if (URPGBossLegend* Legend = It->FindComponentByClass<URPGBossLegend>())
 				{
 					const URPGCombatParticipant* Participant = Actor->FindComponentByClass<URPGCombatParticipant>();

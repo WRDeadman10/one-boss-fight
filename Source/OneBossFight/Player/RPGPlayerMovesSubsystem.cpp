@@ -20,6 +20,7 @@
 #include "Player/RPGBossDormantWake.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGAttackTracker.h"
+#include "Player/RPGDevelopmentBuildStamp.h"
 #include "Player/RPGBossCloseClipSwap.h"
 #include "Player/RPGRiposteInput.h"
 #include "Player/RPGBossBleed.h"
@@ -119,6 +120,7 @@ void URPGPlayerMovesSubsystem::PostInitialize()
 
 void URPGPlayerMovesSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 {
+	RPGDevelopmentBuildStamp::ShowIfAvailable(InWorld);
 	// Bind at the world-begin-play boundary: transient test worlds can initialize the subsystem before their
 	// actor-spawn delegate is ready, and all preexisting actors are handled by the census below.
 	if (!SpawnHandle.IsValid())

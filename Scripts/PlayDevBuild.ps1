@@ -13,8 +13,12 @@
 param([string]$Cvar = '')
 $Root = Split-Path -Parent $PSScriptRoot
 $Exe = Join-Path $Root 'Saved\StagedBuilds\Windows\OneBossFight.exe'
-if (-not (Test-Path $Exe)) { throw "No Development build at $Exe: run Scripts\Package.ps1 -Configuration Development first." }
+if (-not (Test-Path $Exe)) { throw "No Development build at ${Exe}: run Scripts\Package.ps1 -Configuration Development first." }
+$StageRoot = Split-Path -Parent $Exe
+Import-Module (Join-Path $PSScriptRoot 'PackagedRunLog.psm1') -Force
+$RunLog = New-PackagedRunLogPath -StageRoot $StageRoot -Label 'play'
 $args2 = @('/Game/OneBossFight/Levels/L_SevarogArena', '-windowed', '-ResX=1920', '-ResY=1080', '-ForceRes', '-nosplash', '-log')
+$args2 += "-abslog=$RunLog"
 if ($Cvar) { $args2 += "-ExecCmds=`"$Cvar`"" }
-Write-Host "Starting $Exe"
+Write-Host "Starting $Exe (run log: $RunLog)"
 Start-Process -FilePath $Exe -ArgumentList $args2

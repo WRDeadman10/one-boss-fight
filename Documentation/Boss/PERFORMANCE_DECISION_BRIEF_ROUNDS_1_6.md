@@ -1,0 +1,16 @@
+# Owner brief: performance evidence through Round 6
+
+**Recommendation: keep current shipped/default graphics settings unchanged pending Round 6 results and owner image-quality approval.** Available evidence shows rendering is the bottleneck and some experiments improve frame time, but the records are from different builds/methods and do not establish the Round 6 choice. No performance setting is applied here.
+
+| Round | Evidence and outcome | Limitation |
+|---|---|---|
+| 1 | First valid packaged Shipping result on RTX 3060: 28–29 average FPS, p99 about 40 ms; target failed. | Older package and route, before later feature/build changes. `PERFORMANCE_LOG.md`, “Gate 4 first VALID packaged result.” |
+| 2 | Development experiment table: fire lights off 77.7 average / 14.2 ms p99; fire-light shadows off 71.6 / 15.3; broad FX/mist/dressing-off 78.4 / 13.9. | Suite is explicitly unstable: first ten trials were 22–35 FPS, later/no-op trials 44–49 FPS. Use only the later within-block comparisons as directional evidence; do not use these values to select current production settings. `PERFORMANCE_LOG.md`, “Round 2 experiments.” |
+| 3 | No distinct Round 3 result table or attributable receipt was located in the current performance log / returned-run folders reviewed for this brief. | Do not infer or fill a missing round. |
+| 4 | BUILD-222 Development, owner console, RTX 3060: legacy 27.29 average / 42.88 ms p99; selected route 27.10 / 42.85 ms. Relative A7 gate passed; absolute 60 FPS / 16.67 ms target failed. | Valid comparison for those routes/build only; GPU-bound. `PERFORMANCE_LOG.md`, Round 4; raw bundle `Docs/BossCombatReview/Execution/Claude/R4_BENCH_20261105/`. |
+| 5 | BUILD-224 selected route: TSR 28.6 / ~41.6 ms p99; DLSS Quality 32.6 / 36.5; Balanced 36.4 / 32.9; Performance 38.1 / 31.9. Archived treatment logs later confirmed the requested NGX modes were active. | RTX 3060 proxy, Development kit; every mode missed the absolute target. These mode results do not establish visual acceptability. `PERFORMANCE_LOG.md`, Round 5; raw bundle `Docs/BossCombatReview/Execution/Claude/R5_BENCH_20261105/`. |
+| 6 | Experiment protocol is ready: 13 Phase 1 runs and conditional 16-run tuning block, with active-upscaler/mode/fraction telemetry and TSR anchors. | No returned Round 6 result bundle is present under `Saved/bench_return`; telemetry/run evidence and owner image-quality acceptance remain outstanding. |
+
+**Decision requested after Round 6:** review the returned zip and quality notes; choose whether any measured Development experiment should become a project setting. Do not choose from prediction alone. Require three valid mode witnesses, anchor drift within 5%, no p99 regression above 5% versus TSR, and owner image-quality acceptance before considering the tuning block. Any accepted change still needs a post-change five-pair parity spot-check and a repeatable confirmation run.
+
+The release target remains packaged 1920×1080, average ≥60 FPS and p99 ≤16.67 ms; 120 FPS is stretch telemetry. The 3060 is accepted proxy hardware per the recorded owner decision; prefer a physical RTX 2060 Super confirmation if available. This brief records evidence and asks for a future choice; it does not change defaults or close the performance gate.

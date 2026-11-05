@@ -233,6 +233,15 @@ class EncounterParityTests(unittest.TestCase):
                             for issue in parity.compare(control, candidate)))
         self.assertEqual(parity._message_warnings(control, candidate), [])
 
+    def test_bracketed_state_metric_keywords_are_never_downgraded_to_sample_warnings(self) -> None:
+        for keyword in ("health", "posture", "poise", "damage", "stamina", "hp"):
+            with self.subTest(keyword=keyword):
+                left, right = f"state [{keyword} 2000]", f"state [{keyword} 1500]"
+                mismatch = parity._message_mismatch(left, right)
+                self.assertIsNotNone(mismatch)
+                self.assertIn("control=2000", mismatch or "")
+                self.assertFalse(parity._volatile_message_differs(left, right))
+
     def test_d6c_exact_typed_per_trial_counts_fail_on_one_boundary_trial(self) -> None:
         control = self.timing_receipt("legacy", "one", 0.4)
         candidate = self.timing_receipt("data", "two", 0.4)

@@ -80,6 +80,9 @@ bool FRPGCatalogValidationTest::RunTest(const FString& Parameters)
 	auto BadBuilds = Builds; BadBuilds[3].BuildId = BadBuilds[0].BuildId;
 	TestFalse(TEXT("duplicate ids rejected"), Compile(BadBuilds, Weapons, Error, false).IsValid());
 	TestEqual(TEXT("duplicate build failure exposes stable diagnostic"), Error, FString(TEXT("Builds.Id/WeaponId/DisplayName: invalid")));
+	BadBuilds = Builds; BadBuilds[0].LegacySlot = 3;
+	TestFalse(TEXT("legacy slot outside the three compatibility positions is rejected"), Compile(BadBuilds, Weapons, Error, false).IsValid());
+	TestTrue(TEXT("invalid legacy slot reports its exact refusal"), Error.Contains(TEXT(".LegacySlot: invalid/duplicate"))); // lead fix: the catalog prefixes the build id (RPGCombatCatalog.cpp:148), there is no "Builds." prefix
 	BadBuilds = Builds; BadBuilds[3].ConsoleName = TEXT("off");
 	TestFalse(TEXT("reserved name rejected"), Compile(BadBuilds, Weapons, Error, false).IsValid());
 	BadBuilds = Builds; BadBuilds[3].Aliases.Add(TEXT("str"));

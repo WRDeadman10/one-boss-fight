@@ -1,6 +1,7 @@
 #include "Misc/AutomationTest.h"
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Player/RPGEncounterBinding.h"
+#include "Player/RPGBossAttackTrackerAdapters.h"
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGLegend.h"
 #include "Engine/World.h"
@@ -35,6 +36,13 @@ bool FRPGEncounterBindingDraftTest::RunTest(const FString& Parameters)
 		&& FMath::IsNearlyEqual(Config->ParrySlowMotion.PerfectScale, 0.30f) && FMath::IsNearlyEqual(Config->ParrySlowMotion.PerfectSeconds, 0.35f)
 		&& !Config->ParrySlowMotion.bNormalEnabled && FMath::IsNearlyEqual(Config->ParrySlowMotion.CooldownSeconds, 0.60f));
 	TestTrue(TEXT("typed default membership carries the complete parry policy"), Config->Fields.ContainsByPredicate([](const FRPGParityField& Entry) { return Entry.FieldPath == RPGParrySlowMotionConfigRules::FieldCooldownSeconds; }));
+	Def->AttackTracker.bEnabled = false;
+	TSharedPtr<const FRPGParticipantConfig> MissingTrackerFields;
+	const FRPGHydrationResult MissingTracker = RPGCombatHydration::CompileSyntheticParticipant(*Def, RPGCombatRegistry::Legacy(), FString::ChrN(64, TEXT('b')), MissingTrackerFields);
+	TestTrue(TEXT("a non-default tracker config without its five typed source fields is rejected with its exact refusal token"), !MissingTracker.IsReady()
+		&& !MissingTrackerFields.IsValid() && MissingTracker.Errors.ContainsByPredicate([](const FString& Error)
+		{ return Error.StartsWith(TEXT("AttackTracker.ProvenanceMissing:")); }));
+	Def->AttackTracker = FRPGAttackTrackerConfig();
 	Def->ParrySlowMotion.bNormalEnabled = true;
 	Def->ParrySlowMotion.NormalScale = 0.55f;
 	TSharedPtr<const FRPGParticipantConfig> MissingPolicyFields;

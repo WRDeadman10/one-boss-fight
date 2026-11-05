@@ -20,8 +20,9 @@ class Tier1VisualWiringContractTests(unittest.TestCase):
 
     def test_preview_cvar_is_development_only_and_default_off(self) -> None:
         rules = (ROOT / "Source/OneBossFight/Player/RPGTier1VisualRules.cpp").read_text(encoding="utf-8")
-        self.assertEqual(rules.count("#if UE_BUILD_DEVELOPMENT"), 2)
+        self.assertEqual(rules.count("#if UE_BUILD_DEVELOPMENT"), 3)
         self.assertIn('TEXT("rpg.Art.Tier1"), 0', rules)
+        self.assertIn('TEXT("rpg.Art.Tier2"), 0', rules)
         self.assertIn("#else\n\treturn false;", rules)
 
     def test_asset_overrides_and_default_empty_properties_are_optional(self) -> None:

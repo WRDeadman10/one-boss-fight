@@ -41,6 +41,14 @@ class A5RegistrationAuditTests(unittest.TestCase):
         _, issues = MODULE.audit({}, {}, {"pie_memory_soak": 1200})
         self.assertNotIn("EXTRA A5 runner registration: pie_memory_soak", issues)
 
+    def test_refusal_and_soak_have_explicit_standalone_runner_registrations(self):
+        allowed = MODULE.literal_assignment(ROOT / "Scripts/Editor/run_a5_parity_driver_and_quit.py", "ALLOWED")
+        self.assertIn("pie_selection_refusal", allowed)
+        self.assertIn("pie_memory_soak", allowed)
+        scheduled = (ROOT / "Scripts/RunDrivers.ps1").read_text(encoding="utf-8")
+        self.assertIn("pie_selection_refusal", scheduled)
+        self.assertTrue((ROOT / "Scripts/Editor/pie_memory_soak.py").is_file())
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

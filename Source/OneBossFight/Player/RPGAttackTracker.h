@@ -33,6 +33,10 @@ struct FRPGAttackTiming
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	FString MontagePath;
 
+	/** Optional authored tracker-only montage. It is previewed only when the Development preview CVar is enabled; pack ability remains the live A2 default. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Preview")
+	FString OptionalTrackerMontagePath;
+
 	/** Authored close clips already contain their designed windup and must not receive rpg.CloseTelegraph rate scaling. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	bool bAuthoredWindup = false;

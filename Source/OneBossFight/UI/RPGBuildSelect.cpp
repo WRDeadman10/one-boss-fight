@@ -98,7 +98,7 @@ namespace
 URPGBuildSelectWidget::URPGBuildSelectWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	bIsFocusable = true;
+	SetIsFocusable(true);
 }
 
 void URPGBuildSelectWidget::SetSelector(URPGBuildSelect* InSelector)

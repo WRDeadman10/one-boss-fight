@@ -853,4 +853,26 @@ bool FRPGPreparationLifetimeTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGActivationInvalidOwnedComponentTest, "OneBossFight.Binding.Activation.InvalidOwnedComponent",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGActivationInvalidOwnedComponentTest::RunTest(const FString& Parameters)
+{
+	FFixture F;
+	if (!PreconditionOk(*this, F)) { return false; }
+	const FWorldState Before = F.Capture();
+	FRPGPreparationResult Prepared = RPGBossHydrationPreparation::PrepareBatch(F.Input);
+	if (!TestTrue(TEXT("control: the fixture prepares"), Prepared.Succeeded()) || !Prepared.Batch.IsValid()) { return false; }
+	const TArray<const UActorComponent*> Owned = Prepared.Batch->OwnedComponentsForTest();
+	if (!TestTrue(TEXT("fixture has an owned component to invalidate"), !Owned.IsEmpty() && IsValid(Owned[0]))) { return false; }
+	// Only the dev-automation accessor exposes these components; invalidate one before the real registration path.
+	const_cast<UActorComponent*>(Owned[0])->DestroyComponent();
+	FRPGRegistrationReport Report;
+	const bool bRegistered = Prepared.Batch->RegisterOwnedComponents(Report);
+	TestFalse(TEXT("registration rejects the destroyed owned component"), bRegistered);
+	TestTrue(TEXT("failure is the exact activation component guard"), AnyErrorStartsWith(Report.Errors, TEXT("Activation.ComponentInvalid")));
+	TestFalse(TEXT("invalid registration creates no retained batch state"), Prepared.Batch->IsRegistered() || Prepared.Batch->IsPrepared());
+	TestTrue(TEXT("cleanup leaves no partially registered managed components"), SameWorld(F.Capture(), Before));
+	return true;
+}
+
 #endif // WITH_DEV_AUTOMATION_TESTS

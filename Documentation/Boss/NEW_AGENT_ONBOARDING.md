@@ -5,8 +5,8 @@
 1. `AGENTS.md` at the repository root for project constraints.
 2. `Documentation/PROJECT_STATE.md` for current project state, gotchas, and the team protocol. The team protocol is near its end.
 3. `Documentation/TASKS.md` for accepted work, backlog, and current assignments.
-4. If Queue 200 C is active, read `Documentation/Boss/QUEUE_200_C_HANDOVER_S193.md` and the latest mailsocket history; it supersedes Queue B snapshots for the current order. C-737 requires one X- receipt per completed task.
-5. `Documentation/Archive/HANDOFF_NEXT_CHAT.md` for longer historical handoff context.
+4. Read `Documentation/Boss/QUEUE_V.md` for active tasks across both lanes (Codex V-C001..V-C100 and Antigravity V-A001..V-A100). Queue V supersedes all prior Queue 200/B snapshots.
+5. `Documentation/Archive/HANDOFF_NEXT_CHAT.md` for historical handoff context.
 6. `Documentation/TEST_PLAN.md`, `Documentation/KNOWN_ISSUES.md`, and `Documentation/DECISIONS.md` as the task requires.
 7. For framework boss work, read `Documentation/Boss/ARCHITECTURE_OVERVIEW.md` and the topic reference/data-flow page before editing.
 
@@ -45,7 +45,18 @@ The plugin and its required runtime dependencies are installed at the **ENGINE l
    `C:\Program Files\Epic Games\UE_5.5\Engine\Plugins\Marketplace\`
 3. Verify `nvngx_dlss.dll` exists at:
    `C:\Program Files\Epic Games\UE_5.5\Engine\Plugins\Marketplace\DLSS\Binaries\ThirdParty\Win64\nvngx_dlss.dll`
-4. Building or packaging the project will automatically package the runtime DLLs into the staged build (`Saved/StagedBuilds/Windows/`).
+4. Packaging & Staging Gate:
+   - Packaging automatically copies the runtime DLLs to:
+     `Saved/StagedBuilds/Windows/OneBossFight/Plugins/Marketplace/DLSS/Binaries/ThirdParty/Win64/nvngx_dlss.dll`
+   - Staging scripts verify this dependency via `Scripts/Tools/test_make_bench_kit_dependencies.py`.
+   - Native cook coverage enforces that any path literals in Source/ are listed in `Config/DefaultGame.ini` under `DirectoriesToAlwaysCook`.
 
+## Development Preview CVars (Strict Parity Contract)
 
-Use `Documentation/TEST_PLAN.md` for the current evidence and known limitations. The full PIE driver gate can take around 100 minutes; run selected rows in chunks. Do not launch an editor/build/driver run unless you own the editor handoff.
+All new art and presentation features default to empty/`nullptr` to preserve the D5 parity baseline. They are previewed in Development builds using explicit console switches:
+- `rpg.Art.Tier1 1`: Previews Tier 1 Niagara effects (`NS_Boss_ShockwaveRing`, `NS_Combat_ParrySpark`).
+- `rpg.Art.Tier2 1`: Previews Tier 2 hooks (parry slow-motion post-process MPC pulse, Phase 2 aura, boss recoil montage).
+- `rpg.AttackTracker.A2PreviewClip 1`: Previews authored composite `AM_Boss01_A2` in `PlayMoveMontageForTest`.
+- `rpg.Perf.FireShadows 4`: Evaluates cardinal shadow reduction for GPU performance optimization.
+
+Use `Documentation/TEST_PLAN.md` for current evidence. The full PIE driver gate can take around 100 minutes; run selected rows in chunks. Do not launch an editor/build/driver run unless you own the editor handoff.

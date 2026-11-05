@@ -14,7 +14,12 @@ param(
 	[ValidateSet('Development', 'Shipping')]
 	[string]$Configuration = 'Development',
 
-	[string]$EngineRoot = 'C:\Program Files\Epic Games\UE_5.5'
+	[string]$EngineRoot = 'C:\Program Files\Epic Games\UE_5.5',
+
+	# Optional post-cook G044 + project VFX closure check. Supply a Lead-reviewed
+	# closure export and a normalized manifest captured from this exact package.
+	[string]$G044RequiredFile = '',
+	[string]$G044CookManifest = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -25,6 +30,10 @@ $Uat = Join-Path $EngineRoot 'Engine\Build\BatchFiles\RunUAT.bat'
 $StageDir = Join-Path $ProjectRoot 'Saved\StagedBuilds'
 
 if (-not (Test-Path $Uat)) { throw "RunUAT.bat not found at $Uat" }
+
+if ([string]::IsNullOrWhiteSpace($G044RequiredFile) -ne [string]::IsNullOrWhiteSpace($G044CookManifest)) {
+	throw 'G044 cook verification requires both -G044RequiredFile and -G044CookManifest.'
+}
 
 # Only the maps we ship are cooked.
 $Maps = '/Game/OneBossFight/Levels/L_SevarogArena'
@@ -41,5 +50,22 @@ Write-Host "Packaging $Configuration build -> $StageDir"
 	-NoP4 -utf8output
 
 if ($LASTEXITCODE -ne 0) { throw "BuildCookRun failed with exit code $LASTEXITCODE" }
+
+if ($Configuration -eq 'Development') {
+	$StampDirectory = Join-Path $StageDir 'Windows\OneBossFight\Saved'
+	New-Item -ItemType Directory -Path $StampDirectory -Force | Out-Null
+	$BuildId = 'OBF-DEV-' + (Get-Date).ToUniversalTime().ToString('yyyyMMddTHHmmssZ') + '-' + [guid]::NewGuid().ToString('N').Substring(0, 8)
+	$StampPath = Join-Path $StampDirectory 'BuildStamp.txt'
+	Set-Content -LiteralPath $StampPath -Value $BuildId -Encoding ascii
+	Write-Host ("[PACKAGE_BUILD_ID] {0}" -f $BuildId)
+}
+
+if ($G044RequiredFile) {
+	$G044Checker = Join-Path $PSScriptRoot 'Tools\check_packaged_g044_cook.py'
+	if (-not (Test-Path -LiteralPath $G044RequiredFile -PathType Leaf)) { throw "G044 required closure file not found: $G044RequiredFile" }
+	if (-not (Test-Path -LiteralPath $G044CookManifest -PathType Leaf)) { throw "G044 normalized cook manifest not found: $G044CookManifest" }
+	& python.exe -I $G044Checker --required $G044RequiredFile --manifest $G044CookManifest --configuration $Configuration --content-root (Join-Path $ProjectRoot 'Content')
+	if ($LASTEXITCODE -ne 0) { throw "G044/VFX cook-manifest verification failed with exit code $LASTEXITCODE" }
+}
 
 Write-Host "Done. Run it with Scripts\RunBenchmark.ps1"

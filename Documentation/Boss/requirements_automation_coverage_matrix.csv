@@ -1,0 +1,83 @@
+RequirementID,Section,Title,PrimaryAutomationTest,SourceFile,CoverageType,Status
+BOSS-AWR-001,Awareness and observable context,Target validity,OneBossFight.Binding.Activation.InjectedFaults,Source/OneBossFight/Tests/RPGBossActivationTests.cpp,NativeUnit,Covered
+BOSS-AWR-002,Awareness and observable context,Gate-time snapshot,OneBossFight.Binding.Activation.Success,Source/OneBossFight/Tests/RPGBossActivationTests.cpp,NativeUnit,Covered
+BOSS-AWR-003,Awareness and observable context,Distance convention,OneBossFight.Binding.MoveModel.CandidateDistance,Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp,NativeUnit,Covered
+BOSS-AWR-004,Awareness and observable context,Signed angle and hysteresis,OneBossFight.Binding.MoveModel.AimHysteresis,Source/OneBossFight/Tests/RPGBossAimHysteresisTests.cpp,NativeUnit,Covered
+BOSS-AWR-005,Awareness and observable context,Vertical separation,OneBossFight.Binding.MoveModel.VerticalSeparation,Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp,NativeUnit,Covered
+BOSS-AWR-006,Awareness and observable context,Observable player activity,OneBossFight.Binding.AggroRules.PlayerActivity,Source/OneBossFight/Tests/RPGBossAggroRulesTests.cpp,NativeUnit,Covered
+BOSS-AWR-007,Awareness and observable context,LOS and memory,OneBossFight.Binding.LosLeash.OcclusionSearch,Source/OneBossFight/Tests/RPGBossLosLeashDeadlineTests.cpp,NativeUnit,Covered
+BOSS-AWR-008,Awareness and observable context,Soft adaptation memory,OneBossFight.Binding.PatternDetect.SoftAdaptation,Source/OneBossFight/Tests/RPGBossPatternDetectRulesTests.cpp,NativeUnit,Covered
+BOSS-SEL-001,"Eligibility, utility and selection",Legal decision gates,OneBossFight.Binding.MoveModel.DecisionGates,Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp,NativeUnit,Covered
+BOSS-SEL-002,"Eligibility, utility and selection",Hard-filter precedence,OneBossFight.Binding.MoveModel.HardFilterPrecedence,Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp,NativeUnit,Covered
+BOSS-SEL-003,"Eligibility, utility and selection",Executable asset gate,OneBossFight.Binding.MoveCard.MissingAssetRejection,Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp,NativeUnit,Covered
+BOSS-SEL-004,"Eligibility, utility and selection",Normalized utility,OneBossFight.Binding.MoveSelector.UtilityScoring,Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp,NativeUnit,Covered
+BOSS-SEL-005,"Eligibility, utility and selection",Bounded randomness,OneBossFight.Binding.MoveSelector.BoundedRandomness,Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp,NativeUnit,Covered
+BOSS-SEL-006,"Eligibility, utility and selection",Cooldown semantics,OneBossFight.Binding.MoveSelector.CooldownSemantics,Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp,NativeUnit,Covered
+BOSS-SEL-007,"Eligibility, utility and selection",Anti-repeat memory,OneBossFight.Binding.RepeatPenalty.AntiLoop,Source/OneBossFight/Tests/RPGBossRepeatPenaltyRulesTests.cpp,NativeUnit,Covered
+BOSS-SEL-008,"Eligibility, utility and selection",No-candidate fallback,OneBossFight.Binding.MoveSelector.NoCandidateFallback,Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp,NativeUnit,Covered
+BOSS-SEL-009,"Eligibility, utility and selection",Reaction latency and budget,OneBossFight.Framework.Runtime.ReactionLatency,Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp,NativeIntegration,Covered
+BOSS-SEL-010,"Eligibility, utility and selection",Decision trace,OneBossFight.Framework.Runtime.DecisionTraceAudit,Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp,NativeIntegration,Covered
+BOSS-EXE-001,Attack executor and state safety,Single execution authority,OneBossFight.Binding.MoveModel.PriorityHierarchy,Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp,NativeUnit,Covered
+BOSS-EXE-002,Attack executor and state safety,Instance before montage,OneBossFight.Binding.MoveModel.InstanceBeforeMontage,Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp,NativeUnit,Covered
+BOSS-EXE-003,Attack executor and state safety,Start rollback,OneBossFight.Binding.MoveModel.StartRollback,Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp,NativeUnit,Covered
+BOSS-EXE-004,Attack executor and state safety,Stale event rejection,OneBossFight.Binding.MoveModel.StaleEventRejection,Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp,NativeUnit,Covered
+BOSS-EXE-005,Attack executor and state safety,Explicit priority,OneBossFight.Framework.Executor.PriorityResolution,Source/OneBossFight/Tests/RPGBossExecutorHarnessTests.cpp,NativeUnit,Covered
+BOSS-EXE-006,Attack executor and state safety,Idempotent abort,OneBossFight.Boss.Abort.IdempotentCleanup,Source/OneBossFight/Tests/RPGBossAbortTests.cpp,NativeUnit,Covered
+BOSS-EXE-007,Attack executor and state safety,Watchdog,OneBossFight.Framework.Runtime.ExecutorWatchdogRule,Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp,NativeIntegration,Covered
+BOSS-EXE-008,Attack executor and state safety,Cleanup-before-unlock,OneBossFight.Framework.Executor.StatefulLifecycleHarness,Source/OneBossFight/Tests/RPGBossExecutorHarnessTests.cpp,NativeIntegration,Covered
+BOSS-COM-001,Conditional combos,Authored graph,OneBossFight.Binding.Combo.AuthoredGraph,Source/OneBossFight/Tests/RPGBossComboTests.cpp,NativeUnit,Covered
+BOSS-COM-002,Conditional combos,Gate after damage,OneBossFight.Binding.Combo.GateAfterDamage,Source/OneBossFight/Tests/RPGBossComboTests.cpp,NativeUnit,Covered
+BOSS-COM-003,Conditional combos,Fresh branch context,OneBossFight.Binding.Combo.FreshBranchContext,Source/OneBossFight/Tests/RPGBossComboTests.cpp,NativeUnit,Covered
+BOSS-COM-004,Conditional combos,Explicit hit-confirm policy,OneBossFight.Binding.Combo.HitConfirmPolicy,Source/OneBossFight/Tests/RPGBossComboPropertyTests.cpp,NativeUnit,Covered
+BOSS-COM-005,Conditional combos,Single-use gate,OneBossFight.Binding.Combo.SingleUseGate,Source/OneBossFight/Tests/RPGBossComboTests.cpp,NativeUnit,Covered
+BOSS-COM-006,Conditional combos,Finite pressure,OneBossFight.Boss.ComboAbort.FinitePressure,Source/OneBossFight/Tests/RPGBossComboAbortRulesTests.cpp,NativeUnit,Covered
+BOSS-COM-007,Conditional combos,Default recovery,OneBossFight.Binding.ComboFallback.DefaultRecovery,Source/OneBossFight/Tests/RPGBossComboFallbackTests.cpp,NativeUnit,Covered
+BOSS-ANM-001,"Animation, tracking and motion",Montage timeline authority,OneBossFight.Binding.MoveCard.MontageTimelineAuthority,Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp,NativeUnit,Covered
+BOSS-ANM-002,"Animation, tracking and motion",Telegraph phases,OneBossFight.Boss.TelegraphScale.Phases,Source/OneBossFight/Tests/RPGBossTelegraphScaleRulesTests.cpp,NativeUnit,Covered
+BOSS-ANM-003,"Animation, tracking and motion",Bounded holds,OneBossFight.Binding.MoveCardHold.BoundedHolds,Source/OneBossFight/Tests/RPGBossMoveCardHoldEndBoundaryTests.cpp,NativeUnit,Covered
+BOSS-ANM-004,"Animation, tracking and motion",Staged rotation cap,OneBossFight.Binding.TurnRateRamp.StagedRotationCap,Source/OneBossFight/Tests/RPGBossTurnRateRampTests.cpp,NativeUnit,Covered
+BOSS-ANM-005,"Animation, tracking and motion",Exclusive motion authority,OneBossFight.Binding.CloseClipSwap.ExclusiveMotionAuthority,Source/OneBossFight/Tests/RPGBossCloseClipSwapTests.cpp,NativeUnit,Covered
+BOSS-ANM-006,"Animation, tracking and motion",Bounded Motion Warping,OneBossFight.Boss.WarpCurve.BoundedMotionWarping,Source/OneBossFight/Tests/RPGBossWarpCurveRulesTests.cpp,NativeUnit,Covered
+BOSS-ANM-007,"Animation, tracking and motion",Notify-end independence,OneBossFight.Binding.MoveCard.NotifyEndIndependence,Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp,NativeUnit,Covered
+BOSS-ANM-008,"Animation, tracking and motion",MoveCard handoff,OneBossFight.Binding.MoveCard.HandoffTransitions,Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp,NativeUnit,Covered
+BOSS-HIT-001,Hit detection and damage,Geometry fidelity,OneBossFight.Binding.BakedSample.GeometryFidelity,Source/OneBossFight/Tests/RPGBossBakeFreshnessRulesTests.cpp,NativeUnit,Covered
+BOSS-HIT-002,Hit detection and damage,Swept temporal sampling,OneBossFight.Binding.BakedSample.SweptTemporalSampling,Source/OneBossFight/Tests/RPGBossBakedSampleEndpointMutationTests.cpp,NativeUnit,Covered
+BOSS-HIT-003,Hit detection and damage,Blade interior samples,OneBossFight.Binding.BakedSample.BladeInteriorSamples,Source/OneBossFight/Tests/RPGBossBakedSampleLastEndpointBoundaryTests.cpp,NativeUnit,Covered
+BOSS-HIT-004,Hit detection and damage,Adaptive substeps,OneBossFight.Binding.BakedSample.AdaptiveSubsteps,Source/OneBossFight/Tests/RPGBossBakeFreshnessRulesTests.cpp,NativeUnit,Covered
+BOSS-HIT-005,Hit detection and damage,Query filtering,OneBossFight.Binding.DamageScaler.QueryFiltering,Source/OneBossFight/Tests/RPGDamageScalerLowerWindowBoundaryTests.cpp,NativeUnit,Covered
+BOSS-HIT-006,Hit detection and damage,Logical-victim dedupe,OneBossFight.Framework.Runtime.LogicalVictimDedupe,Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp,NativeIntegration,Covered
+BOSS-HIT-007,Hit detection and damage,Explicit hit policy,OneBossFight.Binding.DamageScaler.ExplicitHitPolicy,Source/OneBossFight/Tests/RPGDamageScalerWindowBoundaryMutationTests.cpp,NativeUnit,Covered
+BOSS-HIT-008,Hit detection and damage,Central defense order,OneBossFight.Framework.Parry.CentralDefenseOrder,Source/OneBossFight/Tests/RPGParryTests.cpp,NativeUnit,Covered
+BOSS-HIT-009,Hit detection and damage,Iframe completeness,OneBossFight.Framework.Parry.IframeCompleteness,Source/OneBossFight/Tests/RPGParryTests.cpp,NativeUnit,Covered
+BOSS-HIT-010,Hit detection and damage,Direct/splash precedence,OneBossFight.Binding.BlockChip.DirectSplashPrecedence,Source/OneBossFight/Tests/RPGBossBlockChipRulesTests.cpp,NativeUnit,Covered
+BOSS-HIT-011,Hit detection and damage,Swept annulus,OneBossFight.Binding.Shockwave.SweptAnnulus,Source/OneBossFight/Tests/RPGBossShockwaveAdaptersTests.cpp,NativeUnit,Covered
+BOSS-HIT-012,Hit detection and damage,Grab fail-safe,OneBossFight.Binding.HitStop.GrabFailSafe,Source/OneBossFight/Tests/RPGBossHitStopRulesTests.cpp,NativeUnit,Covered
+BOSS-MOV-001,Movement and arena,Range-band policy,OneBossFight.Binding.Approach.RangeBandPolicy,Source/OneBossFight/Tests/RPGBossApproachTests.cpp,NativeUnit,Covered
+BOSS-MOV-002,Movement and arena,Combat positioning,OneBossFight.Binding.Strafe.CombatPositioning,Source/OneBossFight/Tests/RPGBossStrafeTests.cpp,NativeUnit,Covered
+BOSS-MOV-003,Movement and arena,Movement commitment,OneBossFight.Binding.StrafeResume.MovementCommitment,Source/OneBossFight/Tests/RPGBossStrafeResumeRulesTests.cpp,NativeUnit,Covered
+BOSS-MOV-004,Movement and arena,Wall-safe attacks,OneBossFight.Binding.ArenaEdge.WallSafeAttacks,Source/OneBossFight/Tests/RPGBossArenaEdgeRulesTests.cpp,NativeUnit,Covered
+BOSS-MOV-005,Movement and arena,Arena-valid responses,OneBossFight.Binding.ArenaLeash.ArenaValidResponses,Source/OneBossFight/Tests/RPGBossArenaLeashBoundaryTests.cpp,NativeUnit,Covered
+BOSS-MOV-006,Movement and arena,Arena/attack fit,OneBossFight.Binding.Retreat.ArenaAttackFit,Source/OneBossFight/Tests/RPGBossRetreatRulesTests.cpp,NativeUnit,Covered
+BOSS-PAC-001,Pacing and punishability,Explicit attack segments,OneBossFight.Binding.MoveCard.ExplicitAttackSegments,Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp,NativeUnit,Covered
+BOSS-PAC-002,Pacing and punishability,Pressure variation,OneBossFight.Boss.Fatigue.PressureVariation,Source/OneBossFight/Tests/RPGBossFatigueRulesTests.cpp,NativeUnit,Covered
+BOSS-PAC-003,Pacing and punishability,Guaranteed openings,OneBossFight.Binding.RecoveryWindow.GuaranteedOpenings,Source/OneBossFight/Tests/RPGBossRecoveryWindowRulesTests.cpp,NativeUnit,Covered
+BOSS-PAC-004,Pacing and punishability,Conditional opening cues,OneBossFight.Binding.Cue.ConditionalOpeningCues,Source/OneBossFight/Tests/RPGBossCueTests.cpp,NativeUnit,Covered
+BOSS-PAC-005,Pacing and punishability,Punish-margin calculation,OneBossFight.Binding.PunishLimiter.PunishMarginCalculation,Source/OneBossFight/Tests/RPGBossPunishLimiterRulesTests.cpp,NativeUnit,Covered
+BOSS-PAC-006,Pacing and punishability,Neutral is purposeful,OneBossFight.Binding.Punish.NeutralPurposeful,Source/OneBossFight/Tests/RPGBossPunishTests.cpp,NativeUnit,Covered
+BOSS-DEF-001,"Defense, posture and interruption",Separate health/reaction/posture,OneBossFight.Binding.DamageBleed.SeparateMeters,Source/OneBossFight/Tests/RPGBossDamageBleedFiniteInputTests.cpp,NativeUnit,Covered
+BOSS-DEF-002,"Defense, posture and interruption",Posture regeneration,OneBossFight.Boss.PoiseRegen.PostureRegeneration,Source/OneBossFight/Tests/RPGBossPoiseRegenRulesTests.cpp,NativeUnit,Covered
+BOSS-DEF-003,"Defense, posture and interruption",Single stance break,OneBossFight.Binding.StaggerPolicy.SingleStanceBreak,Source/OneBossFight/Tests/RPGBossStaggerPolicyAdaptersTests.cpp,NativeUnit,Covered
+BOSS-DEF-004,"Defense, posture and interruption",Windowed hyperarmor,OneBossFight.Boss.StaggerResist.WindowedHyperarmor,Source/OneBossFight/Tests/RPGBossStaggerResistRulesTests.cpp,NativeUnit,Covered
+BOSS-DEF-005,"Defense, posture and interruption",Fair boss defense,OneBossFight.Binding.Defense.FairBossDefense,Source/OneBossFight/Tests/RPGBossDefenseTests.cpp,NativeUnit,Covered
+BOSS-PHS-001,Phases and anti-cheese reactions,Phase rule set,OneBossFight.Binding.PhaseFlow.ThresholdTransition,Source/OneBossFight/Tests/RPGBossPhaseFlowAdaptersTests.cpp,NativeUnit,Covered
+BOSS-PHS-002,Phases and anti-cheese reactions,Safe transition policy,OneBossFight.Binding.Phase.SafeTransitionPolicy,Source/OneBossFight/Tests/RPGBossPhaseAdaptersTests.cpp,NativeUnit,Covered
+BOSS-PHS-003,Phases and anti-cheese reactions,Phase monotonicity,OneBossFight.Binding.PhasesCluster.Monotonicity,Source/OneBossFight/Tests/RPGBossPhasesClusterAdaptersTests.cpp,NativeUnit,Covered
+BOSS-PHS-004,Phases and anti-cheese reactions,Fair heal punish,OneBossFight.Binding.HealPunish.FairReaction,Source/OneBossFight/Tests/RPGBossHealPunishAdaptersTests.cpp,NativeUnit,Covered
+BOSS-PHS-005,Phases and anti-cheese reactions,Anti-cheese with counterplay,OneBossFight.Binding.GapCloser.AntiCheeseCounterplay,Source/OneBossFight/Tests/RPGBossGapCloserRulesTests.cpp,NativeUnit,Covered
+BOSS-QA-001,"Debugging, QA, presentation and optional networking",Runtime overlay,OneBossFight.Framework.Runtime.DebugOverlayRegistration,Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp,NativeIntegration,Covered
+BOSS-QA-002,"Debugging, QA, presentation and optional networking",Structured event log,OneBossFight.Framework.Runtime.StructuredEventLog,Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp,NativeIntegration,Covered
+BOSS-QA-003,"Debugging, QA, presentation and optional networking",Reproducible scenarios,OneBossFight.Binding.EncounterRestart.ReproducibleScenarios,Source/OneBossFight/Tests/RPGBossEncounterRestartMatrixTests.cpp,NativeIntegration,Covered
+BOSS-QA-004,"Debugging, QA, presentation and optional networking",FPS and time-scale parity,OneBossFight.Binding.CombatCatalog.TimeScaleParity,Source/OneBossFight/Tests/RPGCombatCatalogTests.cpp,NativeUnit,Covered
+BOSS-QA-005,"Debugging, QA, presentation and optional networking",Performance bounds,OneBossFight.Benchmark.FrameStats.Gate,Source/OneBossFight/Tests/RPGAutomationTests.cpp,AutomationGate,GateEnforced
+BOSS-QA-006,"Debugging, QA, presentation and optional networking",Camera/readability,OneBossFight.Binding.YawProbe.CameraReadability,Source/OneBossFight/Tests/RPGBossYawProbeTests.cpp,NativeUnit,Covered
+BOSS-QA-007,"Debugging, QA, presentation and optional networking",Accessible feedback,OneBossFight.Art.Tier1Visual.AccessibleFeedback,Source/OneBossFight/Tests/RPGTier1VisualRulesTests.cpp,NativeUnit,Covered

@@ -1427,6 +1427,60 @@ A parry that only removes damage felt empty, so a parried contact now costs the 
 - C-875: Accept F5 citation correction; continue H1–H4.
 - C-876: Accept H1/H2 evidence: no current setter callers, no test-only asset, G044 roots covered by always-cook; packaged manifest remains pending.
 - C-877: Open Queue S; prioritize Shipping guard/cook/package evidence and report BUILD-222 package failure plus pending gates.
+
+## Claude mailbox decision index C-878–C-929 (2026-11-06)
+- C-878: Accept S01–S10 and continue D3 evidence restoration (S11–S15).
+- C-879: Accept S11–S15; continue D3 evidence audit and S16–S25.
+- C-880: Accept S06 editor-only allowlist; continue D3 record and queued audits.
+- C-881: Accept S16–S20 with two corrections; continue the ordered S21–S25 work.
+- C-882: Require owner answer to Q1 before continuing; accept prior batch with its D5 limits.
+- C-883: Accept Q1 and offline S26–S30; retain the respawn pair as Lead-run.
+- C-884: Route owner-approved commit request to Antigravity; Codex project policy still forbids Codex commit/push.
+- C-885: Accept S31–S35; continue S36–S40.
+- C-886: Accept S36–S40; continue S41–S45 and prepare Queue T.
+- C-887: Trim Queue T before execution.
+- C-888: Accept T001–T005 Round 4 intake; continue the retained task IDs.
+- C-889: Accept T006–T010 but clarify which tasks were retained/dropped; follow trimmed scope.
+- C-890: Accept T016/T017/T018/T021/T024 with source/packaging limitations; continue next retained batch.
+- C-891: Accept T025/T031/T034/T036/T037; continue final retained batch.
+- C-892: Accept T040/T043/T044/T045/T050 and close Queue T.
+- C-893: Open two-lane Queue U, 50 tasks per lane.
+- C-894: Re-scope work: performance parked, art later, engineering continues.
+- C-895: Owner un-parks performance and approves measured DLSS/CVar experiments; no visual asset changes implied.
+- C-896: Continue C-895; BUILD-223 green with DLSS and dependency installed.
+- C-897: Direct Antigravity commit; order Codex comparator hotfix H7 before performance work.
+- C-898: Liveness ping and ordered H7/U-C01p..U-C05p backlog.
+- C-899: Accept U-A06p..U-A08p proposals and clarify evidence/ownership boundaries.
+- C-900: BUILD-224 green; package DLSS/fire-radius changes.
+- C-901: Order Antigravity Round 5 kit and commit; Codex continues engineering rows.
+- C-902: Order Antigravity commit and next lane items; Codex continues.
+- C-903: Owner orders animation/VFX inventory, parry slow motion, and approved-category repository cleanup.
+- C-904: Require Antigravity redo AN1/AN2 on current characters; Codex handles F1 before U-C06.
+- C-905: Accept U-C01..U-C05 and BUILD-225; continue parry slow motion.
+- C-906: Antigravity CL1/Tier 1 orders; Codex continues F1.
+- C-907: Prioritize H8 over F1 follow-on after selected-route memory-soak failure.
+- C-908: Antigravity CL2 and Tier 1 asset run; Codex remains on H8.
+- C-909: Reaffirm H8 order; BUILD-226 review pending.
+- C-910: Reject F1 BUILD-226; require F1-R hotfix and H8.
+- C-911: Hold Source commits while BUILD-226 is red.
+- C-912: Require F1-R then H8; keep U-C07 paused.
+- C-913: Order Antigravity .gitignore fix; Codex order unchanged.
+- C-914: Accept F1-R and H8 after BUILD-227; lift applicable Source hold.
+- C-915: Continue U-C06/U-C07; lift Antigravity Source hold and commit reviewed state.
+- C-916: Order P1, then 50-reset soak extension, then U-C07.
+- C-917: Order Codex P1 L8 witness before W1; Antigravity continues.
+- C-918: Reject X-1280 live L8 witness; require H9 driver fix before W1 continuation.
+- C-919: Require H10 after BUILD-228 red; hold Antigravity Source commit.
+- C-920: Stop U-C08 and fix H10 before other Source work.
+- C-921: Order Round 6 preparation after H10; records Round 5 result context.
+- C-922: Accept X-1286/H9/W1 and BUILD-228 green; lift Source hold.
+- C-923: Open Queue V with 200 tasks across Codex and Antigravity lanes.
+- C-924: Accept P2a and V-C002..V-C005 after BUILD-229 green; preserve telemetry limits.
+- C-925: Require parity line, release/commit coordination, and Queue V notes.
+- C-926: Accept V-C006..V-C030 as docs/design/offline tools; retain owner and Lead gates.
+- C-927: Accept V-C031..V-C040 after BUILD-231 green, with native-test and parity limits.
+- C-928: Interim BUILD-231 parity review; mandate real-log-bounded, run-independent typed ranges; continue Queue V and defer Queue W roll to Claude.
+- C-929: Record BUILD-232 GREEN 478/478; accept X-1305..X-1308 and A-547..A-549 within the stated review scope; all five BUILD-231 default-off parity pairs pass; assign reviewed-state commit to Antigravity; direct Codex to check the two test hotfixes and continue without waiting for Round 6 owner input.
 - OWNER 2026-11-05 (chat): performance stays PARKED for now; art side later; the team continues on engineering. The owner expects NVIDIA DLSS 4.5 (plugin v8.9.0 for UE 5.5, at C:\UnrealProject\2026.10.16_UE5.5_DLSS4.5Plugin_v8.9.0: DLSS, Streamline, DLSSG, Reflex, NIS) to raise FPS with the current lighting; integration waits until performance is un-parked (it adds plugin dependencies and Shipping redistributables).
 - OWNER 2026-11-05 (chat): performance UN-PARKED ("do what you think is right"). C-895 (lead): DLSS 4.5 SR/DLAA plugin installed at engine level and enabled in the uproject; Frame Generation not usable on RTX 3060/2060 Super; DLSS and cvar/scalability experiments approved, look-changing asset edits stay owner proposals.
 - OWNER 2026-11-05 (chat): start the art/animation part (inventory of missing boss/player animations and VFX first), add slow motion on parry, clean up the repo (remove old docs). C-903 (lead): parry slow motion as a typed, data-tunable Legend request (no direct time dilation); art via audit + priority list before any asset is created; old docs removed with git rm after a referenced-by check and lead approval.

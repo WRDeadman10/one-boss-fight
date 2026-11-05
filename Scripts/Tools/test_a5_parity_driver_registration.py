@@ -62,15 +62,19 @@ class A5ParityDriverRegistrationTests(unittest.TestCase):
             node for node in tree.body
             if isinstance(node, ast.FunctionDef) and node.name == "full_roll_timing_range"
         )
-        namespace = {"FULL_WINDOW": (0.0001, 0.69987)}
+        namespace = {"FULL_WINDOW": (0.0001, 0.69987), "FULL_ROLL_EXPECTED_RATE": 2.0}
         exec(compile(ast.Module(body=[helper], type_ignores=[]), "pie_iframes.py", "exec"), namespace)
-        expected = [max(0.0, 0.69987 - 0.0001 - (2.0 / 60 + 0.004)),
-                    0.69987 - 0.0001 + (2.0 / 60 + 0.004)]
+        real = (0.69987 - 0.0001) / 2.0   # the pack plays the roll at a fixed effective rate of 2.0 (live logs: 2.00 min/max)
+        expected = [max(0.0, real - (2.0 / 60 + 0.004)), real + (2.0 / 60 + 0.004)]
         # These fixture rates vary by run. The serialized comparison bounds must
         # remain fixed and therefore identical across the legacy/data pair.
         measured_rates = (0.98, 1.0, 1.02)
         bounds_by_run = [namespace["full_roll_timing_range"](60) for _rate in measured_rates]
         self.assertEqual(bounds_by_run, [expected, expected, expected])
+        # BUILD-231 live pair: the measured real durations (0.35 s at 60/120 FPS, 0.3667 s at 30 FPS) must lie inside the range.
+        for fps, measured in ((30, 0.36666668578982353), (60, 0.34999997913837433), (120, 0.34999997913837433)):
+            low, high = namespace["full_roll_timing_range"](fps)
+            self.assertTrue(low <= measured <= high, (fps, low, high, measured))
         ff = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == "ff")
         self.assertIn("bounds = full_roll_timing_range(fps)", ast.unparse(ff))
 
@@ -82,6 +86,16 @@ class A5ParityDriverRegistrationTests(unittest.TestCase):
         self.assertTrue(observable["check_message"].startswith("L8 real perfect parry contact starts"))
         self.assertEqual(observable["value"], 0.3670568000525236)
         self.assertEqual(observable["comparison"]["type"], "timing_seconds")
+
+    def test_legend_l8_typed_label_matches_hashed_live_log_and_contains_live_value(self) -> None:
+        live = ROOT / "Docs/BossCombatReview/Execution/Claude/B_C835_PARITY/pie_legend_t1/legacy/editor_raw.log"
+        payload = read_driver_capture(live, "pie_legend")
+        typed = payload["run_facts"]["observables"]["check-0021"]
+        self.assertEqual(typed["check_status"], "PASS")
+        self.assertIn("L8 real perfect parry contact starts", typed["check_message"])
+        low, high = typed["comparison"]["range_seconds"]
+        self.assertLessEqual(low, typed["value"])
+        self.assertLessEqual(typed["value"], high)
 
     def test_s27_death_reset_x3_route_runs_three_cycles_on_both_arms(self) -> None:
         driver = (ROOT / "Scripts/Editor/pie_player_death_reset.py").read_text(encoding="utf-8")
