@@ -1,0 +1,56 @@
+{
+  "mode": "update_existing_style",
+  "weapon_id": "FengMaoSwordReviewDryRun",
+  "style_name": "SwordCombatStyle",
+  "hud_weapon_word": "Sword",
+  "style_asset_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Sword/SwordCombatStyle.SwordCombatStyle",
+  "item_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Items/Weapons/ToughSword.ToughSword",
+  "item_base_class": "/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/WeaponItem.WeaponItem_C",
+  "actor_class": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Sword/SwordInstances/BP_ToughSword.BP_ToughSword_C",
+  "ability_class": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Sword/GA_Sword_Melee.GA_Sword_Melee_C",
+  "style_aliases": [],
+  "catalog": {
+    "register": false,
+    "legacy_slot": -1,
+    "require_exact_rows": false
+  },
+  "build": {
+    "build_id": "FengMaoSwordReviewDryRunBuild",
+    "console_name": "fengmao_sword_review_dry_run",
+    "aliases": [],
+    "display_name": "Feng Mao Sword Review Dry Run",
+    "ui_order": 99
+  },
+  "attack_rows": [
+    {
+      "kind": "Light",
+      "posture_damage": 18.0,
+      "stamina_cost": -1.0,
+      "bleed_buildup": 0.0,
+      "health_damage_multiplier": 0.39,
+      "hyperarmor_start": -1.0,
+      "hyperarmor_end": -1.0,
+      "note": "P30 validation-only Sword style row; no apply"
+    },
+    {
+      "kind": "Strong",
+      "posture_damage": 30.0,
+      "stamina_cost": -1.0,
+      "bleed_buildup": 0.0,
+      "health_damage_multiplier": 0.39,
+      "hyperarmor_start": -1.0,
+      "hyperarmor_end": -1.0,
+      "note": "P30 validation-only Sword style row; no apply"
+    },
+    {
+      "kind": "Charged",
+      "posture_damage": 38.0,
+      "stamina_cost": -1.0,
+      "bleed_buildup": 0.0,
+      "health_damage_multiplier": 0.39,
+      "hyperarmor_start": -1.0,
+      "hyperarmor_end": -1.0,
+      "note": "P30 validation-only Sword style row; no apply"
+    }
+  ]
+}

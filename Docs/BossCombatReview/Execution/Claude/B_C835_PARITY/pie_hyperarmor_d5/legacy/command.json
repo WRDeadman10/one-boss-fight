@@ -1,0 +1,8 @@
+[
+    "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+    "-ExecCmds=\"py c:/unreal~1/onebos~1/scripts/editor/run_a5~1.py\"",
+    "-unattended",
+    "-nosound",
+    "-nosplash",
+    "-abslog=C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_hyperarmor_d5\\legacy\\editor_raw.log"
+]

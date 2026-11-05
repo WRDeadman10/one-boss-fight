@@ -4,6 +4,7 @@
 #include "Player/RPGBossSweepSampling.h"
 #include "Player/RPGBossStaggerAnimRules.h"
 #include "Player/RPGBossTrackRules.h"
+#include "Player/RPGBossStrafeRules.h"
 #include "Player/RPGBossRules.h"
 #include "Player/RPGBossOverlayRules.h"
 #include "Boss/RPGFrameworkMoveExecutor.h"
@@ -13,12 +14,16 @@
 #include "Engine/SkeletalMesh.h"
 #include "GameFramework/Pawn.h"
 #include "Misc/AutomationTest.h"
+#include <cmath>
 #include <limits>
 #if WITH_DEV_AUTOMATION_TESTS
 namespace FrameworkRuntimeFixture
 {
 void Fill(URPGBossFrameworkProfile& P)
 {
+    P.bAggroEnabled=false;P.bAlignmentAuthored=false;P.bArenaCenterAuthored=false;P.bArenaLeash=false;
+    P.bDamageEnabled=false;P.bPhaseSupersedesStagger=false;P.bRangeBandPartition=false;
+    P.HitStepCm=0.f;P.HitMaxSubsteps=0;P.BossMaxHealth=0.f;P.PlayerHitDamage=0.f;
     P.FixtureLabel=TEXT("F3 fixture");P.Mesh=TSoftObjectPtr<USkeletalMesh>(FSoftObjectPath(TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog.Sevarog")));
     P.AnimClass=TSoftClassPtr<UAnimInstance>(FSoftObjectPath(TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Sevarog_AnimBlueprint.Sevarog_AnimBlueprint_C")));
     P.TargetPawnClass=TSoftClassPtr<APawn>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/BP_CombatPlayerCharacter.BP_CombatPlayerCharacter_C")));
@@ -51,6 +56,44 @@ bool FFrameworkProfileDomains::RunTest(const FString&)
     Fill(*P);P->BandMinCm=P->BandMaxCm;TestFalse(TEXT("strict band order"),RPGFramework::ValidateProfile(*P,Error));
     Fill(*P);P->AcceptanceCm=50.f;TestFalse(TEXT("arrival tolerance must fit band"),RPGFramework::ValidateProfile(*P,Error));
     Fill(*P);P->AnimClass.Reset();TestFalse(TEXT("required animation class"),RPGFramework::ValidateProfile(*P,Error));
+    Fill(*P);P->bRangeBandPartition=true;TestFalse(TEXT("range partition requires F5"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("range partition lane token"),Error,FString(TEXT("Framework.Profile.Domain")));
+    Fill(*P);P->FixtureLabel=TEXT("F4 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->BossMaxHealth=1000.f;P->PlayerHitDamage=100.f;
+    const bool bF4ControlValid=RPGFramework::ValidateProfile(*P,Error);
+    TestTrue(FString::Printf(TEXT("F4 control profile valid with range partition off: %s"),*Error),bF4ControlValid);
+    P->bRangeBandPartition=true;TestFalse(TEXT("range partition is refused in F4"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("F4 lane token"),Error,FString(TEXT("Framework.Profile.Domain")));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkProfileValidationFuzz,"OneBossFight.Framework.Runtime.ProfileValidationFuzz",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkProfileValidationFuzz::RunTest(const FString&)
+{
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());
+    using Field=float URPGBossFrameworkProfile::*;
+    const Field Fields[]={&URPGBossFrameworkProfile::BandMinCm,&URPGBossFrameworkProfile::BandMaxCm,&URPGBossFrameworkProfile::WalkSpeedCmPerSecond,&URPGBossFrameworkProfile::AcceptanceCm,&URPGBossFrameworkProfile::WalkTimeoutSeconds,&URPGBossFrameworkProfile::TargetHealth,&URPGBossFrameworkProfile::ArenaRadiusCm,&URPGBossFrameworkProfile::GuardChipFraction,&URPGBossFrameworkProfile::ParryRecoveryScale,&URPGBossFrameworkProfile::SelectorTieBand};
+    FRandomStream Random(0x91A11);int32 Valid=0,Rejected=0;
+    {Fill(*P);FString Baseline;if(RPGFramework::ValidateProfile(*P,Baseline))++Valid;} // the unmodified fixture is valid: single-field fuzz alone rarely stays valid
+    for(int32 I=0;I<2000;++I)
+    {
+        Fill(*P);const Field Pick=Fields[Random.RandRange(0,static_cast<int32>(UE_ARRAY_COUNT(Fields))-1)];
+        const int32 Kind=Random.RandRange(0,5);
+        P.Get()->*Pick=Kind==0?std::numeric_limits<float>::quiet_NaN():Kind==1?std::numeric_limits<float>::infinity():Kind==2?-1.e6f:Kind==3?1.e6f:Random.FRandRange(0.f,10000.f);
+        FString Error;const bool bOk=RPGFramework::ValidateProfile(*P,Error);
+        if(bOk){++Valid;TestTrue(TEXT("accepted profile has no stale error"),Error.IsEmpty());}
+        else{++Rejected;TestTrue(*FString::Printf(TEXT("rejected profile %d returns a named token"),I),Error.StartsWith(TEXT("Framework.Profile.")));}
+    }
+    TestTrue(TEXT("fuzz covers both accepted and rejected values"),Valid>0&&Rejected>0);
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkProfileInstancesAreIndependent,"OneBossFight.Framework.Runtime.ProfileInstanceIsolation",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkProfileInstancesAreIndependent::RunTest(const FString&)
+{
+    TStrongObjectPtr<URPGBossFrameworkProfile> A(NewObject<URPGBossFrameworkProfile>()),B(NewObject<URPGBossFrameworkProfile>());
+    TestNotNull(TEXT("first profile allocated"),A.Get());TestNotNull(TEXT("second profile allocated"),B.Get());
+    if(!A.IsValid()||!B.IsValid())return false;
+    A->ArenaCenterBias=.75f;A->SelectorTieBand=.2f;A->Cards.Reset();
+    TestEqual(TEXT("second profile keeps default center bias"),B->ArenaCenterBias,0.f);
+    TestEqual(TEXT("second profile keeps default selector tie"),B->SelectorTieBand,0.f);
+    TestTrue(TEXT("second profile's default card list remains empty"),B->Cards.IsEmpty());
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkResolvedDependencies,"OneBossFight.Framework.Runtime.ResolvedDependencies",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
@@ -65,6 +108,11 @@ bool FFrameworkResolvedDependencies::RunTest(const FString&)
     TestTrue(TEXT("static playback gate accepts resolved card"),URPGFrameworkMoveExecutor::ValidatePlaybackCard(D->Card,Error));
     const auto Source=A->Spec;A->Spec.HPDamage=1.f;
     TestFalse(TEXT("telemetry lane refuses damage card"),RPGFramework::ResolveProfile(P.Get(),D,Error));TestFalse(TEXT("stale resolved output cleared"),D.IsValid());A->Spec=Source;
+    A->Spec.HPDamage=17.f;Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+    P->Card.Reset();P->Cards.Reset();for(int32 Index=0;Index<2;++Index){FRPGBossProfileCard Candidate;Candidate.Card=A.Get();Candidate.CooldownSeconds=1.f;Candidate.Weight=1.f;P->Cards.Add(Candidate);}
+    TestFalse(TEXT("duplicate resolved card MoveIds are refused"),RPGFramework::ResolveProfile(P.Get(),D,Error));
+    TestEqual(TEXT("duplicate MoveId has a named profile token"),Error,FString(TEXT("Framework.Profile.Combo.DuplicateMoveId")));
+    TestFalse(TEXT("duplicate profile publishes no resolved output"),D.IsValid());
     TestFalse(TEXT("missing profile clears output"),RPGFramework::ResolveProfile(nullptr,D,Error));TestFalse(TEXT("no publication on failure"),D.IsValid());
     return true;
 }
@@ -121,6 +169,7 @@ bool FFrameworkSelectorProfile::RunTest(const FString&)
     auto F5=[&P](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
         FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);};
     F5();TestTrue(TEXT("explicit F5 profile valid"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->bRangeBandPartition=true;TestTrue(TEXT("range partition remains available in F5"),RPGFramework::ValidateProfile(*P,Error));
     F5();P->Cards.Reset();TestFalse(TEXT("F5 needs at least one card"),RPGFramework::ValidateProfile(*P,Error));
     F5();P->Card=P->Cards[0].Card;TestFalse(TEXT("F5 cannot also carry the single card"),RPGFramework::ValidateProfile(*P,Error));
     for(int32 V:{0,-1,9}){F5();P->AttackCount=V;TestFalse(TEXT("attack count domain"),RPGFramework::ValidateProfile(*P,Error));}
@@ -131,6 +180,80 @@ bool FFrameworkSelectorProfile::RunTest(const FString&)
     F5();P->Cards[0].Card.Reset();TestFalse(TEXT("null candidate card"),RPGFramework::ValidateProfile(*P,Error));
     F5();P->bDamageEnabled=false;TestFalse(TEXT("F5 label needs the damage flag"),RPGFramework::ValidateProfile(*P,Error));
     Fill(*P);FRPGBossProfileCard C;C.Card=P->Card;P->Cards.Add(C);TestFalse(TEXT("F3 profile cannot carry a card list"),RPGFramework::ValidateProfile(*P,Error));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkGuardChipProfile,"OneBossFight.Framework.Runtime.GuardChipProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkGuardChipProfile::RunTest(const FString&)
+{
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    auto F5=[&P](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);};
+    F5();TestTrue(TEXT("zero keeps guard chip disabled"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->GuardChipFraction=.25f;TestTrue(TEXT("fraction inside range is valid"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->GuardChipFraction=1.f;TestTrue(TEXT("full fraction boundary is valid"),RPGFramework::ValidateProfile(*P,Error));
+    for(float V:{-.01f,1.01f,std::numeric_limits<float>::infinity(),std::numeric_limits<float>::quiet_NaN()})
+    {F5();P->GuardChipFraction=V;TestFalse(TEXT("fraction outside [0,1] fails closed"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("guard chip validation token"),Error,FString(TEXT("Framework.Profile.GuardChip")));}
+    P.Reset(NewObject<URPGBossFrameworkProfile>());Fill(*P);P->GuardChipFraction=.25f;TestFalse(TEXT("enabled guard chip requires F5"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("F5 lane token"),Error,FString(TEXT("Framework.Profile.GuardChip")));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkParryRecoveryProfile,"OneBossFight.Framework.Runtime.ParryRecoveryProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkParryRecoveryProfile::RunTest(const FString&)
+{
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    auto F5=[&P](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);};
+    F5();TestTrue(TEXT("zero disables parry recovery"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->ParryRecoveryScale=1.f;TestTrue(TEXT("positive recovery scale is valid in F5"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->ParryRecoveryScale=3.f;TestTrue(TEXT("scale upper edge is valid"),RPGFramework::ValidateProfile(*P,Error));
+    for(float V:{-.01f,3.01f,std::numeric_limits<float>::infinity(),std::numeric_limits<float>::quiet_NaN()})
+    {F5();P->ParryRecoveryScale=V;TestFalse(TEXT("scale outside [0,3] fails closed"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("parry recovery validation token"),Error,FString(TEXT("Framework.Profile.ParryRecovery")));}
+    P.Reset(NewObject<URPGBossFrameworkProfile>());Fill(*P);P->ParryRecoveryScale=1.f;TestFalse(TEXT("enabled parry recovery requires F5"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("F5 lane token"),Error,FString(TEXT("Framework.Profile.ParryRecovery")));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkParryFairTelegraphProfile,"OneBossFight.Framework.Runtime.ParryFairTelegraphProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkParryFairTelegraphProfile::RunTest(const FString&)
+{
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    auto F5=[&P](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);};
+    F5();TestTrue(TEXT("default off is valid"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->ParryFairTelegraph=true;TestTrue(TEXT("enabled with default minimum rate is valid"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->ParryFairMinScale=1.f;TestTrue(TEXT("minimum scale upper edge is valid"),RPGFramework::ValidateProfile(*P,Error));
+    for(float V:{0.f,-.1f,1.01f,std::numeric_limits<float>::infinity(),std::numeric_limits<float>::quiet_NaN()})
+    {F5();P->ParryFairMinScale=V;TestFalse(TEXT("minimum rate scale must be in (0,1]"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("telegraph validation token"),Error,FString(TEXT("Framework.Profile.ParryFairTelegraph")));}
+    P.Reset(NewObject<URPGBossFrameworkProfile>());Fill(*P);P->ParryFairTelegraph=true;TestFalse(TEXT("enabled telegraph requires F5"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("F5 lane token"),Error,FString(TEXT("Framework.Profile.ParryFairTelegraph")));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkAggroProfile,"OneBossFight.Framework.Runtime.AggroProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkAggroProfile::RunTest(const FString&)
+{
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    auto F5=[&P](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);};
+    Fill(*P);TestTrue(TEXT("aggro disabled by default"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->bAggroEnabled=true;P->DodgeSpeedCm=250.f;TestTrue(TEXT("enabled aggro with valid thresholds is accepted"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->bAggroEnabled=true;P->DodgeSpeedCm=250.f;P->AggroEnterFarCm=P->AggroExitFarCm;TestFalse(TEXT("overlapping range thresholds are refused"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("aggro validation token"),Error,FString(TEXT("Framework.Profile.Aggro")));
+    F5();P->bAggroEnabled=true;P->DodgeSpeedCm=250.f;P->AggroDodgeEnterRate=P->AggroDodgeExitRate;TestFalse(TEXT("dodge thresholds need hysteresis"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("dodge threshold token"),Error,FString(TEXT("Framework.Profile.Aggro")));
+    P.Reset(NewObject<URPGBossFrameworkProfile>());Fill(*P);P->bAggroEnabled=true;P->DodgeSpeedCm=250.f;TestFalse(TEXT("enabled aggro requires F5"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("F5 lane token"),Error,FString(TEXT("Framework.Profile.Aggro")));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkFatigueProfile,"OneBossFight.Framework.Runtime.FatigueProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkFatigueProfile::RunTest(const FString&)
+{
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    Fill(*P);TestTrue(TEXT("fatigue disabled by default is valid"),RPGFramework::ValidateProfile(*P,Error));
+    auto F5=[&P](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);};
+    F5();P->FatigueGraceWhiffs=2;P->FatigueFloor=.7f;TestTrue(TEXT("enabled fatigue on valid F5 profile"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->FatigueGraceWhiffs=-1;P->FatigueFloor=.7f;TestFalse(TEXT("negative grace is rejected"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("fatigue token"),Error,FString(TEXT("Framework.Profile.Fatigue")));
+    F5();P->FatigueGraceWhiffs=2;P->FatigueFloor=0.f;TestFalse(TEXT("partial fatigue configuration is rejected"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("fatigue token"),Error,FString(TEXT("Framework.Profile.Fatigue")));
+    F5();P->FatigueGraceWhiffs=2;P->FatigueFloor=1.01f;TestFalse(TEXT("floor above one is rejected"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("fatigue token"),Error,FString(TEXT("Framework.Profile.Fatigue")));
+    P.Reset(NewObject<URPGBossFrameworkProfile>());Fill(*P);P->FatigueGraceWhiffs=2;P->FatigueFloor=.7f;TestFalse(TEXT("enabled fatigue requires F5"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("F5 lane token"),Error,FString(TEXT("Framework.Profile.Fatigue")));
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkPhaseProfile,"OneBossFight.Framework.Runtime.PhaseProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
@@ -163,6 +286,12 @@ bool FFrameworkPhasePoolStarvation::RunTest(const FString&)
     TestFalse(TEXT("no cards"),PhasePoolCannotStarve({},1));
     TestFalse(TEXT("attack count below one"),PhasePoolCannotStarve({0.f,0.f},0));
     TestFalse(TEXT("non-finite cooldown is not a filler"),PhasePoolCannotStarve({std::numeric_limits<float>::quiet_NaN()},2));
+    for(int32 Attacks=1;Attacks<=8;++Attacks)for(int32 Cards=0;Cards<=8;++Cards)
+    {
+        TArray<float> Positive;Positive.Init(2.f,Cards);
+        TestEqual(*FString::Printf(TEXT("positive-cooldown pool cards=%d attacks=%d"),Cards,Attacks),PhasePoolCannotStarve(Positive,Attacks),Cards>=Attacks);
+        if(Cards<Attacks){TArray<float> WithZero=Positive;WithZero.Add(0.f);TestTrue(*FString::Printf(TEXT("zero-cooldown filler cards=%d attacks=%d"),Cards,Attacks),PhasePoolCannotStarve(WithZero,Attacks));}
+    }
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkPostureProfile,"OneBossFight.Framework.Runtime.PostureProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
@@ -262,6 +391,7 @@ bool FFrameworkBakedSamplesValidation::RunTest(const FString&)
     Refused(WithSamples([](auto& L){L.SetNum(1);}),TEXT("one sample"));
     Refused(WithSamples([](auto& L){L[2].TimeSeconds=L[1].TimeSeconds;}),TEXT("times not strictly increasing"));
     Refused(WithSamples([](auto& L){L[0].TimeSeconds=L[0].TimeSeconds+.05f;}),TEXT("first sample after the window start"));
+    Refused(WithSamples([](auto& L){L[0].TimeSeconds=-.5f;}),TEXT("negative first sample time"));
     Refused(WithSamples([](auto& L){L.Last().TimeSeconds=L.Last().TimeSeconds-.05f;}),TEXT("last sample before the window end"));
     Refused(WithSamples([](auto& L){L.Last().TimeSeconds=1.71f;}),TEXT("sample beyond the clip length"));
     Refused(WithSamples([](auto& L){L[1].BaseCS.X=std::numeric_limits<double>::quiet_NaN();}),TEXT("non-finite sample"));
@@ -280,6 +410,28 @@ bool FFrameworkSelectorTieProfile::RunTest(const FString&)
     F5();P->SelectorTieBand=.5f;TestTrue(TEXT("tie band 0.5 is the upper edge: valid"),RPGFramework::ValidateProfile(*P,Error));
     for(float Bad:{-.1f,.51f,std::numeric_limits<float>::infinity(),std::numeric_limits<float>::quiet_NaN()}){F5();P->SelectorTieBand=Bad;TestFalse(TEXT("tie band outside [0,0.5]"),RPGFramework::ValidateProfile(*P,Error));TestEqual(TEXT("token"),Error,FString(TEXT("Framework.Profile.Domain")));}
     {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);TestTrue(TEXT("fresh F3 profile valid"),RPGFramework::ValidateProfile(*F3,Error));F3->SelectorTieBand=.1f;TestFalse(TEXT("tie band outside the F5 lane"),RPGFramework::ValidateProfile(*F3,Error));TestEqual(TEXT("token"),Error,FString(TEXT("Framework.Profile.Domain")));}
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkNeutralStrafeHoldProfile,"OneBossFight.Framework.Runtime.NeutralStrafeHoldProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkNeutralStrafeHoldProfile::RunTest(const FString&)
+{
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    TestEqual(TEXT("minimum hold default retains literal .8"),P->NeutralStrafeMinHoldSeconds,.8);
+    TestEqual(TEXT("maximum hold default retains literal 1.6"),P->NeutralStrafeMaxHoldSeconds,1.6);
+    for(const double Elapsed:{0.,.79,1.6,2.41,10.})
+        TestEqual(TEXT("profile defaults preserve seeded direction result"),RPGBossStrafe::DirectionAt(193,Elapsed,P->NeutralStrafeMinHoldSeconds,P->NeutralStrafeMaxHoldSeconds),RPGBossStrafe::DirectionAt(193,Elapsed,.8,1.6));
+    auto F5=[&](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards={C};};
+    F5();TestTrue(TEXT("default hold window is valid"),RPGFramework::ValidateProfile(*P,Error));
+    for(double Bad:{std::numeric_limits<double>::quiet_NaN(),std::numeric_limits<double>::infinity(),0.})
+    {F5();P->NeutralStrafeMinHoldSeconds=Bad;TestFalse(TEXT("invalid minimum hold is refused"),RPGFramework::ValidateProfile(*P,Error));}
+    for(double Bad:{std::numeric_limits<double>::quiet_NaN(),std::numeric_limits<double>::infinity(),0.})
+    {F5();P->NeutralStrafeMaxHoldSeconds=Bad;TestFalse(TEXT("invalid maximum hold is refused"),RPGFramework::ValidateProfile(*P,Error));}
+    F5();P->NeutralStrafeMinHoldSeconds=.8;P->NeutralStrafeMaxHoldSeconds=std::nextafter(.8,1.);TestTrue(TEXT("adjacent greater maximum is valid"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->NeutralStrafeMinHoldSeconds=.8;P->NeutralStrafeMaxHoldSeconds=std::nextafter(.8,0.);TestFalse(TEXT("adjacent lower maximum is refused"),RPGFramework::ValidateProfile(*P,Error));
+    F5();P->NeutralStrafeMinHoldSeconds=.7;TestTrue(TEXT("valid authored hold window is accepted"),RPGFramework::ValidateProfile(*P,Error));
+    Fill(*P);P->NeutralStrafeMinHoldSeconds=.7;TestFalse(TEXT("custom hold window is F5 only"),RPGFramework::ValidateProfile(*P,Error));
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkComboProfile,"OneBossFight.Framework.Runtime.ComboProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
@@ -603,10 +755,17 @@ bool FFrameworkStaggerAnimRules::RunTest(const FString&)
     TestTrue(TEXT("phase hold at 1.99 of 2.0"),RPGStaggerAnim::PhaseHoldActive(2.f,1.99f));
     TestFalse(TEXT("phase hold over at 2.0"),RPGStaggerAnim::PhaseHoldActive(2.f,2.f));
     TestFalse(TEXT("no clip = no hold"),RPGStaggerAnim::PhaseHoldActive(0.f,0.f));
+    TestFalse(TEXT("NaN clip length does not hold"),RPGStaggerAnim::PhaseHoldActive(std::numeric_limits<float>::quiet_NaN(),0.f));
+    TestFalse(TEXT("infinite elapsed does not hold"),RPGStaggerAnim::PhaseHoldActive(2.f,std::numeric_limits<float>::infinity()));
+    TestTrue(TEXT("NaN elapsed fails closed to Finished"),RPGStaggerAnim::Evaluate(S,E,T,std::numeric_limits<float>::quiet_NaN())==EState::Finished);
+    TestTrue(TEXT("infinite elapsed fails closed to Finished"),RPGStaggerAnim::Evaluate(S,E,T,std::numeric_limits<float>::infinity())==EState::Finished);
+    TestEqual(TEXT("infinite loop duration does not overflow count"),RPGStaggerAnim::LoopCount(T,S,E,std::numeric_limits<float>::infinity()),0);
+    TestEqual(TEXT("oversized loop count fails closed"),RPGStaggerAnim::LoopCount(1.e30f,0.f,0.f,1.e-30f),0);
     RPGStaggerAnim::FPureParams P;P.BossSkeleton=P.StartSkeleton=P.LoopSkeleton=P.EndSkeleton=TEXT("SkeletonBoss");P.Slot=TEXT("FullBody");P.StartLen=S;P.LoopLen=.5f;P.EndLen=E;P.Total=T;P.bStart=P.bLoop=P.bEnd=true;
     TestTrue(TEXT("valid set"),RPGStaggerAnim::Validate(P).IsEmpty());
     RPGStaggerAnim::FPureParams None;TestTrue(TEXT("no clips = off = valid"),RPGStaggerAnim::Validate(None).IsEmpty());
     auto Token=[&](TFunction<void(RPGStaggerAnim::FPureParams&)> Edit){RPGStaggerAnim::FPureParams X=P;Edit(X);return RPGStaggerAnim::Validate(X);};
+    TestEqual(TEXT("NaN stagger length is rejected"),Token([](auto& X){X.Total=std::numeric_limits<float>::quiet_NaN();}),FString(TEXT("Framework.Profile.StaggerAnim.TooShort")));
     TestEqual(TEXT("incoherent set"),Token([](auto& X){X.bEnd=false;}),FString(TEXT("Framework.Profile.StaggerAnim.CoherentSet")));
     TestEqual(TEXT("start skeleton"),Token([](auto& X){X.StartSkeleton=TEXT("SkeletonOther");}),FString(TEXT("Framework.Profile.StaggerAnim.StartSkeleton")));
     TestEqual(TEXT("loop skeleton"),Token([](auto& X){X.LoopSkeleton=TEXT("SkeletonOther");}),FString(TEXT("Framework.Profile.StaggerAnim.LoopSkeleton")));
@@ -620,6 +779,8 @@ bool FFrameworkStaggerAnimRules::RunTest(const FString&)
     TestEqual(TEXT("phaseless clip"),RPGStaggerAnim::ValidatePhaseClip(true,0.f,TEXT("P2"),TEXT("FullBody"),TEXT("A"),TEXT("A")),FString(TEXT("Framework.Profile.PhaseTransitionAnim.Phaseless")));
     TestEqual(TEXT("phase clip foreign skeleton"),RPGStaggerAnim::ValidatePhaseClip(true,.5f,TEXT("P2"),TEXT("FullBody"),TEXT("A"),TEXT("B")),FString(TEXT("Framework.Profile.PhaseTransitionAnim.Skeleton")));
     TestTrue(TEXT("valid phase clip"),RPGStaggerAnim::ValidatePhaseClip(true,.5f,TEXT("P2"),TEXT("FullBody"),TEXT("A"),TEXT("A")).IsEmpty());
+    TestEqual(TEXT("phase fraction one is invalid"),RPGStaggerAnim::ValidatePhaseClip(true,1.f,TEXT("P2"),TEXT("FullBody"),TEXT("A"),TEXT("A")),FString(TEXT("Framework.Profile.PhaseTransitionAnim.Phaseless")));
+    TestEqual(TEXT("NaN phase fraction is invalid"),RPGStaggerAnim::ValidatePhaseClip(true,std::numeric_limits<float>::quiet_NaN(),TEXT("P2"),TEXT("FullBody"),TEXT("A"),TEXT("A")),FString(TEXT("Framework.Profile.PhaseTransitionAnim.Phaseless")));
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkStaggerAnimProfile,"OneBossFight.Framework.Runtime.StaggerAnimProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
@@ -683,6 +844,22 @@ bool FFrameworkBossOverlayFormat::RunTest(const FString&)
     TestEqual(TEXT("Num one digit"),RPGBossOverlay::Num(2.34,1),FString(TEXT("2.3")));
     TestEqual(TEXT("Num zero digits"),RPGBossOverlay::Num(0.4),FString(TEXT("0")));
     TestEqual(TEXT("Num NaN"),RPGBossOverlay::Num(std::numeric_limits<double>::quiet_NaN()),FString(TEXT("n/a")));
+    TestEqual(TEXT("Num negative digit count is treated as zero"),RPGBossOverlay::Num(2.4,-1),FString(TEXT("2")));
+    const double BadValues[]={std::numeric_limits<double>::quiet_NaN(),std::numeric_limits<double>::infinity(),-std::numeric_limits<double>::infinity()};
+    for(int32 Index=0;Index<UE_ARRAY_COUNT(BadValues);++Index)
+    {
+        RPGBossOverlay::FInput Invalid=I;
+        Invalid.Range=BadValues[Index];Invalid.Cone=BadValues[Index];Invalid.Posture=BadValues[Index];Invalid.PostureMax=BadValues[Index];Invalid.Health=BadValues[Index];Invalid.MaxHealth=BadValues[Index];
+        const FString Rendered=RPGBossOverlay::Format(Invalid);
+        TestTrue(*FString::Printf(TEXT("non-finite numeric column set %d is sanitized"),Index),Rendered.Contains(TEXT("n/a"))&&!Rendered.Contains(TEXT("nan"))&&!Rendered.Contains(TEXT("inf")));
+    }
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkOverlayParry,"OneBossFight.Framework.Runtime.OverlayParry",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkOverlayParry::RunTest(const FString&)
+{
+    RPGBossOverlay::FInput I;I.State=TEXT("Idle");I.Phase=TEXT("Phase_1");I.bHasParryData=true;I.bParryWindowOpen=true;I.LastParryGrade=TEXT("Perfect");
+    TestEqual(TEXT("parry state and last grade appear when available"),RPGBossOverlay::Format(I),FString(TEXT("Card=None State=Idle Phase=Phase_1 Range=0cm Cone=0deg Window=Closed Posture=0/0 Health=0/0 Stagger=0 PhaseHold=0 Parry=Open Grade=Perfect")));
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkPlayerActivity,"OneBossFight.Framework.Runtime.PlayerActivity",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)

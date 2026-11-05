@@ -52,7 +52,7 @@ This audit establishes the boundary between **Data-Driven** weapon parameters (a
 | **Assumed Pack Stamina Cost** | `RPGSwingTracker.cpp` C++ constant | Hardcoded | Baseline subtracted before `StaminaCost` delta | `Source/OneBossFight/Player/RPGSwingTracker.cpp:22` (`StaminaTag`), `RPGSwingTracker.cpp:259` |
 | **Strength Stamina Cost** | `DA_WeaponAttacks.uasset` / `FillDefaults()` | Both (Data + C++ default) | 35.f per heavy swing for Claymore (-1.f starter) | `DA_WeaponAttacks.uasset` @ `0x3f9`; `RPGWeaponAttackTable.cpp:44` |
 | **Dexterity Stamina Cost** | `DA_WeaponAttacks.uasset` / `FillDefaults()` | Both (Data + C++ default) | 10.f per swing for Dual Swords / Twinblades | `DA_WeaponAttacks.uasset` @ `0x3f9`; `RPGWeaponAttackTable.cpp:70-74` |
-| **Dexterity Bleed Buildup** | `DA_WeaponAttacks.uasset` / `FillDefaults()` | Both (Data + C++ default) | 20.f status buildup applied to `URPGBossBleed` | `DA_WeaponAttacks.uasset` @ `0x1a5`; `RPGWeaponAttackTable.cpp:70-74`; `RPGHitIntake.cpp:546` |
+| **Dexterity Bleed Buildup** | `DA_WeaponAttacks.uasset` / `FillDefaults()` | Both (Data + C++ default) | 20.f status buildup applied to `URPGBossBleed` | `DA_WeaponAttacks.uasset` @ `0x1a5`; `RPGWeaponAttackTable.cpp:70-74`; `RPGHitIntake.cpp:633` |
 | **Strength HyperArmor Windows** | `DA_WeaponAttacks.uasset` / `FillDefaults()` / `set_weapon_windows.py` | Both (Data + C++ default) | Active window: Strong/Jump (0.352-0.618s), Charged (0.423-1.005s) | `DA_WeaponAttacks.uasset` @ `0x342`, `0x32c`; `RPGWeaponAttackTable.cpp:54-58`; `set_weapon_windows.py:15` |
 | **Weapon Equipment Slot Index** | `RPGBuildRules.h` `WeaponSlotEnumerator` | Hardcoded | Indexes weapon equip slot in `BP_EquipmentComponent` | `Source/OneBossFight/Player/RPGBuildRules.h:27` (`WeaponSlotEnumerator = 11`) |
 | **Weapon Loadout Startup Delay** | `RPGBuildLoadout.h` `StartupDelaySeconds` | Hardcoded C++ (Configurable UPROPERTY) | Delay before applying initial build weapon (1.0s) | `Source/OneBossFight/Player/RPGBuildLoadout.h:40` |
@@ -77,8 +77,8 @@ This audit establishes the boundary between **Data-Driven** weapon parameters (a
 - **Location**: `Source/OneBossFight/Player/RPGWeaponAttackTable.h:15-86`
 - **Data Asset**: `Content/OneBossFight/Data/DA_WeaponAttacks.uasset` contains 24 structured rows (4 weapons × 6 attack kinds).
 - **Runtime Consumers**:
-  1. `URPGHitIntake::ProcessPending()` (`Source/OneBossFight/Player/RPGHitIntake.cpp:167, 538, 546`): Looks up `(CurrentCombatStyle, AttackKind)`. If found, extracts `PostureDamage` (forwarded to `URPGBossPosture::ApplyPostureDamage`) and `BleedBuildup` (forwarded to `URPGBossBleed::AddBuildup`).
-  2. `URPGSwingTracker::RecordSwing()` (`Source/OneBossFight/Player/RPGSwingTracker.cpp:59, 282`): Extracts `StaminaCost` and calculates `StaminaExtra = Wanted - 15.0f`. Also extracts `HyperArmorStart` / `HyperArmorEnd` to grant temporary poise immunity during montage playback.
+  1. `URPGHitIntake::ProcessPending()` (`Source/OneBossFight/Player/RPGHitIntake.cpp:167, 625, 633`): Looks up `(CurrentCombatStyle, AttackKind)`. If found, extracts `PostureDamage` (forwarded to `URPGBossPosture::ApplyPostureDamage`) and `BleedBuildup` (forwarded to `URPGBossBleed::AddBuildup`).
+  2. `URPGSwingTracker::RecordSwing()` (`Source/OneBossFight/Player/RPGSwingTracker.cpp:58, 260, 282`): Extracts `StaminaCost` and calculates the stamina differential. Also extracts `HyperArmorStart` / `HyperArmorEnd` to grant temporary poise immunity during montage playback.
 - **Hardcoding Risk**: `URPGWeaponAttackTable::FillDefaults()` in `Source/OneBossFight/Player/RPGWeaponAttackTable.cpp:37-77` hardcodes the exact values for Claymore, Sword, DualSwords, and Twinblades. If a new weapon is introduced in data, but no row is added to `DA_WeaponAttacks.uasset`, it silently falls back to `Fallback` (poise 20.f, stamina -1.f, bleed 0.f).
 
 ### 3.3 Pack Gameplay Abilities & Timing

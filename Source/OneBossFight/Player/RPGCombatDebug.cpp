@@ -2,6 +2,7 @@
 
 #include "Player/RPGCombatDebug.h"
 #include "Player/RPGAttackTracker.h"
+#include "Player/RPGBossTrackerTickPrerequisite.h"
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGBossHealPunish.h"
 #include "Player/RPGBossLowSweep.h"
@@ -74,6 +75,15 @@ URPGCombatDebug::URPGCombatDebug()
 #endif
 }
 
+void URPGCombatDebug::BeginPlay()
+{
+	Super::BeginPlay();
+	if (AActor* Boss = GetOwner())
+	{
+		RPGBossTrackerTickPrerequisite::Add(*this, TrackerTickPrerequisite, Boss->FindComponentByClass<URPGAttackTracker>());
+	}
+}
+
 TArray<FString> URPGCombatDebug::BuildLines() const
 {
 	TArray<FString> Lines;
@@ -105,7 +115,7 @@ TArray<FString> URPGCombatDebug::BuildLines() const
 	{
 		State = TEXT("Staggered");
 	}
-	Lines.Add(FString::Printf(TEXT("BOSS %s  state %s  phase %d  generation %d  resets %d"), *Boss->GetName(), *State, Phases && Phases->IsPhaseTwo() ? 2 : 1, Encounter ? Encounter->GetGeneration() : 0, Encounter ? Encounter->GetResetCount() : 0));
+	Lines.Add(FString::Printf(TEXT("BOSS %s  state %s  phase %d  generation %llu  resets %d"), *Boss->GetName(), *State, Phases && Phases->IsPhaseTwo() ? 2 : 1, static_cast<unsigned long long>(Encounter ? Encounter->GetParticipantGeneration() : 0), Encounter ? Encounter->GetResetCount() : 0));
 	Lines.Add(FString::Printf(TEXT("  %s  %s  stance breaks %d  critical window %d"), *AttributeLine(Boss, TEXT("Attribute.Health"), TEXT("health")), *AttributeLine(Boss, TEXT("Attribute.Poise"), TEXT("poise")),
 		Stagger ? Stagger->GetStaggerCount() : 0, Stagger ? Stagger->IsCriticalWindowOpen() : 0));
 	if (Stagger)
@@ -567,6 +577,10 @@ void URPGCombatDebug::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 #if !UE_BUILD_SHIPPING
+	if (AActor* Boss = GetOwner())
+	{
+		RPGBossTrackerTickPrerequisite::Add(*this, TrackerTickPrerequisite, Boss->FindComponentByClass<URPGAttackTracker>());
+	}
 	const int32 Mode = CVarRPGDebug.GetValueOnGameThread();
 	if (Mode <= 0 || !GEngine)
 	{

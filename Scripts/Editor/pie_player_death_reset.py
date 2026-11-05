@@ -3,6 +3,7 @@ with an A5 javelin in flight. After the respawn (a new pawn) the boss must be ba
 and the new player must be at full health (nothing from the old fight hurts the new one). Run pie_debug_overlay.py once after an editor start first. Log prefix [DeathReset].
 """
 import math
+import os
 import unreal
 
 log = lambda m: unreal.log("[DeathReset] " + m)
@@ -96,11 +97,19 @@ def noop(w, pc, pawn, boss):
     pass
 
 
-SCENARIOS = [
+_BASE_SCENARIOS = [
     ("stance break", setup_break, noop, 0.0, 1.0),
     ("riposte", setup_riposte, act_riposte, 1.0, 2.3),  # the press waits for the kneel (the interaction opens when the 0.7 s fall clip is over); the paired clips start at once and the impact lands 0.8 s later: the player dies 1.3 s after the press, with the clips still running
     ("A4 sweep", setup_a4, noop, 0.0, 0.8),
     ("A5 javelin in flight", setup_a5, noop, 0.0, 1.0),
+]
+_repeat_count = int(os.environ.get("A5_DEATH_RESET_REPETITIONS", "1"))
+if _repeat_count not in (1, 3):
+    raise ValueError("A5_DEATH_RESET_REPETITIONS must be 1 or 3")
+SCENARIOS = [
+    ("%s (cycle %d)" % (scenario[0], cycle + 1),) + scenario[1:]
+    for cycle in range(_repeat_count)
+    for scenario in _BASE_SCENARIOS
 ]
 
 
@@ -119,6 +128,9 @@ def _tick(dt):
     s["now"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0, st=9.0)
         return
@@ -147,7 +159,7 @@ def _tick(dt):
     elif s["stage"] == "setup":
         p["dbg"].debug_refill_player()
         s["pawn_name"] = pawn.get_name()
-        s["mem"] = {"gen": p["enc"].get_generation(), "resets": p["enc"].get_reset_count(), "jav": 0}
+        s["mem"] = {"gen": int(p["enc"].get_participant_generation_text()), "resets": p["enc"].get_reset_count(), "jav": 0}
         setup(w, pc, pawn, boss)
         s.update(stage="act", t=0.0, st=act_t)
     elif s["stage"] == "act":
@@ -178,7 +190,8 @@ def _tick(dt):
         inst = mesh.get_anim_instance()
         montage = inst.get_current_active_montage() if inst else None
         php = attr(pawn, "Attribute.Health")
-        check("%s: encounter reset once (generation +1)" % name, enc.get_generation() == s["mem"]["gen"] + 1 and enc.get_reset_count() == s["mem"]["resets"] + 1, "generation %d -> %d" % (s["mem"]["gen"], enc.get_generation()))
+        generation = int(enc.get_participant_generation_text())
+        check("%s: encounter reset once (generation +1)" % name, generation == s["mem"]["gen"] + 1 and enc.get_reset_count() == s["mem"]["resets"] + 1, "generation %d -> %d" % (s["mem"]["gen"], generation))
         check("%s: boss back at its start, dormant" % name, away < 10.0 and enc.is_dormant(), "%.1f cm from home, dormant %s" % (away, enc.is_dormant()))
         check("%s: boss not staggered, no montage left" % name, (not stg.is_staggered()) and (montage is None or (dbg.debug_boss_montage_anim_name() or "") == "AN_Boss01_DormantIdle"), "staggered %s, montage %s, anim %s" % (stg.is_staggered(), montage.get_name() if montage else None, dbg.debug_boss_montage_anim_name() if montage else None))  # since B11 a dormant boss plays its idle loop (2026-10-25)
         health, maximum = attr(boss, "Attribute.Health"), max_attr(boss, "Attribute.Health")

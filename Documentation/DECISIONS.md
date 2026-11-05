@@ -1,7 +1,27 @@
 # Decisions
 
+## Opt-in encounter-definition startup route (C-800/C-801, 2026-11-04)
+
+- **Accepted by Claude:** use a typed `URPGBossEncounterDefinition`, a GameInstance selection store, and a transient `ARPGEncounterBinding` built from an exact pre-BeginPlay boss/player census. Preserve `ActivateWorld` and `CompileWorldInput` APIs and do not edit `.umap` assets.
+- **No selection:** preserve the existing startup path. **Selection present:** errors in census, definition/phase, manifest, preparation, or cleanup report an on-screen error and structured error log; framework activation fails closed with no legacy boss-bundle fallback. Player-only setup stays independent.
+- A non-shipping `rpg.EncounterDefinition` opt-in and the GameInstance store API can exercise the route. Choosing a production default definition and changing binary map content remain owner-gated.
+- A6 data migration is limited to literal constants whose defaults equal the current literals and whose formula/evaluation order stay unchanged. Any formula/rounding change stays in code. This preserves bit-identical default behavior (C-801).
+
+## A6 literal disposition refresh (Queue P16–P25)
+
+- Migrated the BOSS-SEL-008 seeded neutral-strafe direction hold bounds into `URPGBossFrameworkProfile` as double fields with defaults `.8` and `1.6`, matching the former double literals exactly. The seeded rule and argument order are unchanged; profile validation rejects nonfinite/nonpositive/reversed windows and keeps custom windows in F5.
+- Kept A6 rows 1–10 in code: playback early-stop slack is a correctness tolerance; 10-second messages are diagnostics; band midpoint is a derived formula; dormant-wake grace is safety behavior; substep/stagger/repeat bounds are schema/CPU limits. No extra eligible values were found in the audited scope. Receipt scope remains route-specific: these new fields belong to the F5 framework profile, not G044's selected definition.
+
+## Same-world selected encounter respawn observation (C-803/C-804, 2026-11-04)
+
+- C-803's same-world late participant fail-closed policy remains the interim opt-in behavior; a player death currently disables the selected encounter and blocks choosing a production default.
+- C-804 approves a native multicast on `URPGBossEncounter`, emitted after a successful `ResetEncounter` has advanced generation/reset count and completed the reset. Payload is `(NewGeneration, ResetCount)`; owner/lifetime is the component; subscribers bind with `AddUObject` and unbind during subsystem `Deinitialize`.
+- Step A is instrumentation only: `[EncounterLifecycle]` timestamps for `spawn_player`, `reset_detected`, `reset_broadcast`, and `binding_released`. No rebind behavior in Step A. Claude owns the live pack PIE measurement of actual spawn/reset/broadcast/release order.
+- Step B is gated on that measured order. Preserve `CompileWorldInput`; if needed, add a separate narrow rebind compiler entry accepting a begun world only with explicit participant generation and the unchanged selection record. Participant generation must be monotonic `uint64`; at `MAX_uint64`, refuse with HardError and never wrap. Begun components may remain present but inactive after safe cleanup refuses them (KI-182).
+
 | Date | Decision | Reason | Status |
 |---|---|---|---|
+| 2026-11-03 | D91 extreme finite rule outputs fail closed: yaw uses neutral 0, strafe hold uses its finite minimum, invalid ring front uses a negative sentinel rejected by contact, grounded Z falls back to finite floor Z (or 0) | Lead-directed minimal guards for overflow/nonfinite computed outputs; preserve ordinary finite arithmetic | Implemented; build/test pending |
 | 2026-10-18 | UE **5.5.4**, pinned | User choice; stable release with Enhanced Input, StateTree | Locked |
 | 2026-10-18 | C++ module name `OneBossFight` | Matches project name; single primary game module | Locked |
 | 2026-10-18 | Custom C++ combat, **no GAS** | Souls-style frame-data combat (animation-owned windows); GAS adds overhead and fights that model | Locked |
@@ -1305,6 +1325,105 @@ Owner said yes. The framework gates cards by their own range at decision time, b
 
 When no card is eligible the boss either idled (turn branch) or failed closed. Chosen: an opt-in profile budget `NeutralStrafeSeconds` (default 0 = old behaviour exactly): a circle at the walk speed around the target with seeded direction holds, deciding again every tick. It sits after the reposition turn and walk branches, so RepositionMax profiles are unchanged; it fails closed only after the budget. No strafe animation yet (the boss slides).
 
+## FrameworkProof RESULT counter scope (2026-11-03, Claude)
+
+`RESULT acceptedHits`, `parriedHits`, and `guardedHits` are lifetime totals of the executor; a second encounter generation continues the count. Per-generation totals are the difference between the Gen1 RESULT and the Gen2 RESULT. This matches the retained F8 restart evidence and existing graders, which do not require generation-local totals.
+
 ## Parry reaction on the boss (2026-11-02, Claude)
 
 A parry that only removes damage felt empty, so a parried contact now costs the boss posture (`ParryPostureAmount`, default 0 = nothing changes; proof value 100 = PostureMax). The reaction is deferred to the boss's next tick because a stagger started inside the executor's own hit sweep would abort the card that is being swept. The production profile keeps 0 until the owner picks the number.
+
+## C-800–C-832 decision index (Queue P48, 2026-11-05)
+
+- C-800: G1 encounter-route architecture accepted; keep owner scope separate from implementation. See `Documentation/Boss/G1_BINDING_SELECTION_DECISION.md`.
+- C-801: A6 moves only literal gameplay constants with default-equal values and unchanged formulas into typed data.
+- C-802: selected encounter-definition startup is opt-in and preserves the unset legacy attach path.
+- C-803: interim selected-mode late-participant policy fails closed until rebind design is approved.
+- C-804: approve a native reset multicast after successful `ResetEncounter`; consumers unbind at subsystem deinitialization.
+- C-805: stop queue churn and finish implementation work already ordered.
+- C-806: fix the three selected-startup test failures before continuing.
+- C-807: revise the H019 death/respawn driver to observe the measured order.
+- C-808: accept H019 v2 after its lead fixes; preserve failure evidence.
+- C-809: authorize selected-mode same-world respawn rebind following the measured reset-broadcast order.
+- C-810: freeze new features until BUILD-212 rebind work is green.
+- C-811: preserve the measured root cause for default-route regressions in rebind listener ordering.
+- C-812: correct the begun-world fixture and propose the two remaining rebind design changes before implementation.
+- C-813: approve the persistent boss lease and safe rebind retag design.
+- C-814: fix remaining failures in approved C-813 work; feature freeze does not block its defect repairs.
+- C-815: align fault tests with the accepted rebind design.
+- C-816: remove the test-only `GameplayAbilities` module dependency.
+- C-817: use the pack-backed dead-tag check and close the final three rebind failures.
+- C-818: correct the expected-error timeout token and finish BUILD-212.
+- C-819: accept BUILD-212 v12 at 459/459 as the native suite baseline and lift the freeze.
+- C-820: stop queue churn; unblock G044 with a fresh source/readback path.
+- C-821: authorize saved draft boss/player definitions as the G044 source after the exporter limitation was established.
+- C-822: accept the curved-sword D3 measurement with its visual-contact limits.
+- C-823: require G044 Editor API fixes before rerunning read-only verification.
+- C-824: use `PhaseTwo` as the selected G044 phase record.
+- C-825: accept BUILD-214 G044 steps 1–5 and identify missing tracker/diagnostic parity as a design gap.
+- C-826: authorize tracker integration and independent diagnostics attachment to close the selected-route gap.
+- C-827: batch tracker work with the already-started diagnostics change before building.
+- C-828: repair tracker validation after the BUILD-216 failure.
+- C-829: prioritize tracker hotfixes before returning to D3 backlog.
+- C-830: fix tracker default parity, duplicate validation, lifetime and begun-owner assertions.
+- C-831: accept BUILD-216 at 460/460 as the new native suite baseline.
+- C-832: continue with opt-in A5 legacy/data parity; BUILD-217 selected startup/rebind is witnessed, parity remains separate.
+- C-839: A5 live parity v1 (BUILD-219, 6 pairs) not met: boss max health 2000 legacy vs 1500 data, data route lacks RPGFootsteps/RPGBossMusic/RPGTraceGuard/RPGBossHud/RPGBossLegend (+ RPGDamageResolver), damage and HUD drivers fail on data, A4 S9 boundary shift.
+- C-840 (lead): D1 selected route attaches the same boss component set as legacy (empty exclusion list, test-first); D2 selected boss MaxHealth = 2000 (legacy shipped value), lead-run asset edit with backups; D3 timing observables compare within 1/60 s and inside the authored range, all other observables exact; D4 S9 diagnostic before any timing change.
+- C-852 (lead): D5 applied: the G044 selected boss draft now carries the legacy runtime values for 15 fields (death config incl. OwnClip mode, phase two 0.6/1.2/1.2, posture 100/6/13); audit 87 MATCH, 0 MISMATCH, 337 NOT-COMPARABLE (residual A7 risk); manifest f7c6610d.
+- C-857 (lead) D6: parity per check = PASS/FAIL status + scenario identity (message text not compared); typed timing tolerance 2/60 s (legacy-only run-to-run spread 0.025 s measured on telegraph A2), rate 0.01, aggregate counts exact.
+- C-858 (lead) D6b replaces D6 point 1: message text is compared by tokens (text identical, numbers within 2/60 abs or 10 % rel, pointers dropped); D6 alone passed the pre-D2 health pair 2000 vs 1500.
+- C-859 (lead) D6c: bracketed sampled series and "N samples" counts in check messages are WARN rows, not FAIL; per-trial lists that matter become typed exact observables (heal-punish P06 first); heal-punish side roll at heal+1.30 s (0,0,1 on data only) tracked OPEN with A4 S9.
+- C-860 (lead) D6d: free-fight AI counts (attack_rules R5) and the KI-106 close-attack hit rate (C7) are declared stochastic: parity = both arms meet the driver threshold, reported as WARN.
+- C-865 (lead): A4 S9 jump 0.05 s boundary shift closed: caused by data-route registration order (LowSweep before AttackTracker), fixed by explicit tracker tick prerequisites (BUILD-221), confirmed in two pairs. S9 roll 0.40 s and P06 world_hits classified boundary noise (flip on both routes).
+- OWNER 2026-11-05 (chat): J049 Shipping selector policy = A: the BlueprintCallable setter (URPGEncounterSelectionSubsystem SetSelectedDefinition, stored-object selection) is an approved Shipping selection route; no Source change. The rpg.EncounterDefinition CVar and the -RPGBenchmark command-line selector stay non-Shipping.
+- OWNER 2026-11-05 (chat): A7 = B: retire the legacy startup route LATER, after the open release gates close (packaged Shipping proof incl. the setter route, selected-route performance on the RTX 2060 Super, content/cook closure). Legacy stays as fallback and parity control until then.
+- C-876 (lead): no Blueprint calls SetSelectedDefinition today (byte search of 11,738 Content packages, 0 hits); the J049-A Shipping setter route is approved but unused, its packaged proof is deferred to the first real caller and joins the A7-B gate; no test-only caller asset is added to shipping content. G044 closure is cooked by reference (/Game/OneBossFight/Data is always-cook); packaged cook manifest check at the next package.
+- C-879 (lead): Track D reference ledger closed at 5/10 measured (P1, P6, P8, P9, P10); P2-P5 and P7 withdrawn because the available footage does not establish attack identity and milestone boundaries; no timings inferred.
+
+## Claude mailbox decision index C-833–C-877 (2026-11-05)
+- C-833: Open Queue P for A5 route parity and the remaining data-migration evidence.
+- C-834: Accept P01–P05 and BUILD-218 at 460/460; continue P06–P10.
+- C-835: Accept P06–P25 with Lead fixes; BUILD-219 establishes 461/461 baseline; prioritize H1–H3 and P26–P30.
+- C-836: Order F1/F2 hotfix before P31–P35 after offline tests exposed two failures; keep P27 live proof Lead-run.
+- C-837: Prioritize parity root-cause triage (P13/P14) over F3 and further queue work.
+- C-838: Accept H1–H3 and P26–P28 offline; retain P27 live readback as Lead-run.
+- C-839: BUILD-219 initial six-pair parity is not met: health, component-set, damage/HUD and A4 differences remain.
+- C-840: Order D1 attach parity, D2 health parity, D3 tolerance rules and D4 diagnostics before Queue Q.
+- C-841: Do D1 then D2–D4; keep Queue Q paused until D1 handoff.
+- C-842: Reject D1 implementation after BUILD-220 RED while accepting the design direction; repair before D2 onward.
+- C-843: Stop Queue Q for the D1 hotfix; retain D3 acceptance and resolve the build crash first.
+- C-844: Accept D1 hotfix after Lead correction; BUILD-220 green at 462/462.
+- C-845: Order H4, then D2, then Queue Q; report BUILD-220 parity v2 without overstating remaining failures.
+- C-846: Prioritize H4 diagnostic guard, H5 typed telegraph timing and Lead-run D2; send a liveness ping only.
+- C-847: Accept H4/H5; Lead-run D2 health correction passes; fix V1 validator before Queue Q.
+- C-848: Accept V1 and Q01–Q05 with limits; continue Q06–Q10 and retain live reruns as gates.
+- C-849: Start Queue R for remaining A5 parity drivers; stop stale-evidence reconciliation until new Lead results.
+- C-850: Order H6 and the D5 source/data audit before Queue R; report BUILD-220+D2 parity v3.
+- C-851: Execute H6/D5 first; prior status-only reconciliation and footage scan do not replace evidence-producing work.
+- C-852: Accept H6, D5 and R1; continue R2/R3; D5 Lead run applies 15 values and leaves residual NOT-COMPARABLE risk.
+- C-853: Accept R2–R4 offline; continue R5 then investigate the 210 NOT-COMPARABLE census reduction.
+- C-854: Accept R5 offline; close Queue R and retain explicit limits on source-evidence claims.
+- C-855: D5 census is 424 fields: 214 MATCH, 0 MISMATCH, 210 NOT-COMPARABLE; no unsupported player parity inferred.
+- C-856: Accept the A7 evidence-packet draft as a bounded evidence summary, not an owner decision.
+- C-857: Set D6 parity comparison rules and declare BUILD-220+D5 seven-pair results; continue A7 packet.
+- C-858: Replace D6 point 1 with token-aware D6b after the prior rule missed the 2000-vs-1500 health mismatch.
+- C-859: Accept D6b; add D6c WARN treatment for sampled series/count deltas and preserve exact typed trial values.
+- C-860: Continue D6c/O1 then D6d; report ten R2/R3 pairs passing driver checks under the then-current comparator.
+- C-861: Accept D6c/O1; continue D6d then O2, with source-hash-verified parity totals and evidence limits.
+- C-862: Order T1 tick-order production change test-first with O3 start-state instrumentation.
+- C-863: Continue F4 and soak receipt work; BUILD-220+D5 R4/R5 adds ten more live driver pairs.
+- C-864: Accept T1/O3 after Lead fixes; BUILD-221 green at 463/463 and same-frame prerequisite test succeeds.
+- C-865: Confirm T1 fixes A4 S9 0.05 s boundary through two pairs; treat S9 0.40 s and P06 world_hits as boundary noise.
+- C-866: Prioritize F4/soak and O4 classification; request concise result handoff.
+- C-867: Accept F4, soak D6d and O4; require P15 final state and A7 release gates.
+- C-868: Report BUILD-221 post-D5 pairs and all 31 A5 driver pairs passing under accepted parity rules.
+- C-869: Require P15 final edits: close S9 jump, state parity status and list proof paths for A7 gates.
+- C-870: Open five-item Queue G for A7 release-gate evidence.
+- C-871: Accept G1 with policy fixes; BUILD-222 stays green at 463/463.
+- C-872: Accept G2 live refusal and G3–G5 with Lead fixes; repair F5 stale citation before Queue H.
+- C-873: Record owner decisions J049=A (setter allowed in Shipping) and A7=B (defer legacy retirement; keep fallback/control).
+- C-874: Prioritize F5 citation hotfix, then owner-decision docs and Queue H; ping for liveness.
+- C-875: Accept F5 citation correction; continue H1–H4.
+- C-876: Accept H1/H2 evidence: no current setter callers, no test-only asset, G044 roots covered by always-cook; packaged manifest remains pending.
+- C-877: Open Queue S; prioritize Shipping guard/cook/package evidence and report BUILD-222 package failure plus pending gates.

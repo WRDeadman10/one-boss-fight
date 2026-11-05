@@ -10,7 +10,6 @@ $buildExit = $LASTEXITCODE
 if ($buildExit -ne 0) { 'STOP build failed' | Set-Content "$E\DONE4.txt"; exit 3 }
 (Get-FileHash "$root\Binaries\Win64\UnrealEditor-OneBossFight.dll").Hash.ToLower() | Set-Content "$E\c4_post_dll.txt"
 foreach ($i in 1..3) {
-    New-Item -ItemType Directory -Force -Path "$E\final_run$i" | Out-Null
     "$E\final_run$i\editor_raw.log" | Set-Content "$E\current_log.txt"
     powershell -NoProfile -ExecutionPolicy Bypass -File "$root\Docs\BossCombatReview\Execution\Claude\run_editor_script.ps1" -Script "$E\drive_f3d.py" -OutDir "$E\final_run$i" -Task "C-398/F3d-pie-final-$i" -NullRhi 0 -PyCmd 1 -TimeoutSeconds 240 | Set-Content "$E\c4_pie_result_$i.txt"
 }

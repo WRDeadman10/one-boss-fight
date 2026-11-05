@@ -1,6 +1,13 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGBossHydrationPreflight.h"
+#include "Audio/RPGFootsteps.h"
+#include "Audio/RPGBossMusic.h"
+#include "Player/RPGDamageResolver.h"
+#include "Player/RPGTraceGuard.h"
+#include "UI/RPGBossHud.h"
+#include "Player/RPGLegend.h"
+#include "Sound/SoundBase.h"
 #include "Animation/AnimSequenceBase.h"
 #include "Animation/Skeleton.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -32,6 +39,8 @@
 #include "Player/RPGBossCloseClipSwapAdapters.h"
 #include "Player/RPGBossDeath.h"
 #include "Player/RPGBossDeathAdapters.h"
+#include "Player/RPGBossAttackTrackerAdapters.h"
+#include "Player/RPGAttackTracker.h"
 #include "UObject/StrongObjectPtr.h"
 
 namespace RPGBossHydrationPreflight
@@ -71,11 +80,24 @@ namespace RPGBossHydrationPreflight
 			Result.Fail(FString::Printf(TEXT("%s: %s"), Token, *Detail));
 		}
 
-		/** The number of plans of one boss-core member: the twelve accepted native component plans, each exactly once. */
-		constexpr int32 BossCorePlanCount = 12;
+		template <typename T>
+		T* RequireNativeComponent(UActorComponent& Component, FString& Error)
+		{
+			T* Typed = Cast<T>(&Component);
+			if (!Typed)
+			{
+				Error = FString::Printf(TEXT("WrongComponentClass: expected %s, received %s"), *T::StaticClass()->GetName(), *Component.GetClass()->GetName());
+				return nullptr;
+			}
+			Error.Reset();
+			return Typed;
+		}
 
-		/** The plans of one boss-core member, from the twelve accepted factories and no other (no separate scalar, profile, flow, policy or stats plan), in this deterministic RELATIVE plan order: Stagger, Phases
-		 *  (with the explicit selected id, captured by value), Encounter, DormantWake, Posture, Bleed, LowSweep, Shockwave, HealPunish, Look, CloseClipSwap, Death. The order is a plan order, not an observed registration or BeginPlay chronology. Built, never run. */
+		/** The number of plans of one boss-core member, each exactly once. */
+		constexpr int32 BossCorePlanCount = 19;
+
+		/** The thirteen typed plans followed by six configuration-independent legacy parity consumers, in deterministic relative plan order: Stagger, Phases
+		 *  (with the explicit selected id, captured by value), Encounter, DormantWake, Posture, Bleed, LowSweep, Shockwave, HealPunish, Look, CloseClipSwap, Death, AttackTracker. The order is a plan order, not an observed registration or BeginPlay chronology. Built, never run. */
 		TArray<FRPGComponentPlan> MakeBossCorePlans(FName SelectedPhaseId)
 		{
 			TArray<FRPGComponentPlan> Plans;
@@ -91,6 +113,43 @@ namespace RPGBossHydrationPreflight
 			Plans.Add(RPGBossLookAdapters::MakeLookPlan());
 			Plans.Add(RPGBossCloseClipSwapAdapters::MakeCloseClipSwapPlan());
 			Plans.Add(RPGBossDeathAdapters::MakeDeathPlan());
+			Plans.Add(RPGBossAttackTrackerAdapters::MakeAttackTrackerPlan());
+			// These six consumers were historically attached by AttachLegacyBossPrelude/Bundle. They have
+			// no authorable definition fields; their exact maintained defaults and asset paths are applied
+			// during preparation and their instances share the BossCore lease/cleanup lifecycle.
+			auto AddNative = [&Plans](UClass* Class, FName Name, TFunction<bool(UActorComponent&, const FRPGParticipantConfig&, FString&)> Configure)
+			{
+				FRPGComponentPlan Plan;
+				Plan.Class = Class;
+				Plan.InstanceName = Name;
+				Plan.bConfigurationIndependent = true;
+				Plan.Configure = MoveTemp(Configure);
+				Plans.Add(MoveTemp(Plan));
+			};
+			AddNative(URPGFootsteps::StaticClass(), TEXT("RPGFootsteps"), [](UActorComponent& Component, const FRPGParticipantConfig&, FString& Error)
+			{
+				URPGFootsteps* Steps = RequireNativeComponent<URPGFootsteps>(Component, Error);
+				if (!Steps) { return false; }
+				Steps->WalkSound = LoadObject<USoundBase>(nullptr, TEXT("/Game/Essential_Foosteps_SK/CUE/Concrete/Footstep_Concrete_Boots_Walk_1_Cue.Footstep_Concrete_Boots_Walk_1_Cue"));
+				Steps->JogSound = LoadObject<USoundBase>(nullptr, TEXT("/Game/Essential_Foosteps_SK/CUE/Concrete/Footstep_Concrete_Boots_Jog_8_Cue.Footstep_Concrete_Boots_Jog_8_Cue"));
+				Steps->RunSound = LoadObject<USoundBase>(nullptr, TEXT("/Game/Essential_Foosteps_SK/CUE/Concrete/Footstep_Concrete_Boots_Run_8_Cue.Footstep_Concrete_Boots_Run_8_Cue"));
+				Steps->LandSound = LoadObject<USoundBase>(nullptr, TEXT("/Game/Essential_Foosteps_SK/CUE/Concrete/Footstep_Concrete_Boots_Land_4_Cue.Footstep_Concrete_Boots_Land_4_Cue"));
+				Steps->PitchScale = 0.62f; Steps->VolumeScale = 1.5f; Steps->AudibleRange = 4500.f; Steps->JogSpeed = 200.f; Steps->RunSpeed = 420.f;
+				return true;
+			});
+			AddNative(URPGBossMusic::StaticClass(), TEXT("RPGBossMusic"), [](UActorComponent& Component, const FRPGParticipantConfig&, FString& Error)
+			{
+				URPGBossMusic* Music = RequireNativeComponent<URPGBossMusic>(Component, Error);
+				if (!Music) { return false; }
+				Music->Music = LoadObject<USoundBase>(nullptr, TEXT("/Game/OneBossFight/Audio/MX_Boss01_Phase1.MX_Boss01_Phase1"), nullptr, LOAD_NoWarn);
+				if (!Music->Music) { Music->Music = LoadObject<USoundBase>(nullptr, TEXT("/Game/StarterContent/Audio/Starter_Music_Cue.Starter_Music_Cue")); }
+				Music->PhaseTwoMusic = LoadObject<USoundBase>(nullptr, TEXT("/Game/OneBossFight/Audio/MX_Boss01_Phase2.MX_Boss01_Phase2"), nullptr, LOAD_NoWarn);
+				return true;
+			});
+			AddNative(URPGTraceGuard::StaticClass(), TEXT("RPGTraceGuard"), [](UActorComponent& Component, const FRPGParticipantConfig&, FString& Error) { return RequireNativeComponent<URPGTraceGuard>(Component, Error) != nullptr; });
+			AddNative(URPGBossHud::StaticClass(), TEXT("RPGBossHud"), [](UActorComponent& Component, const FRPGParticipantConfig&, FString& Error) { return RequireNativeComponent<URPGBossHud>(Component, Error) != nullptr; });
+			AddNative(URPGBossLegend::StaticClass(), TEXT("RPGBossLegend"), [](UActorComponent& Component, const FRPGParticipantConfig&, FString& Error) { return RequireNativeComponent<URPGBossLegend>(Component, Error) != nullptr; });
+			AddNative(URPGDamageResolver::StaticClass(), TEXT("RPGDamageResolver"), [](UActorComponent& Component, const FRPGParticipantConfig&, FString& Error) { return RequireNativeComponent<URPGDamageResolver>(Component, Error) != nullptr; });
 			return Plans;
 		}
 
@@ -136,7 +195,7 @@ namespace RPGBossHydrationPreflight
 				{
 					Problems.Add(FString::Printf(TEXT("plan #%d has no configure callback"), Index));
 				}
-				if (Plan.RequiredFields.IsEmpty())
+				if (Plan.RequiredFields.IsEmpty() && !Plan.bConfigurationIndependent)
 				{
 					Problems.Add(FString::Printf(TEXT("plan #%d names no required field"), Index));
 				}
@@ -163,7 +222,7 @@ namespace RPGBossHydrationPreflight
 
 	TArray<UClass*> ManagedCoreConsumerClasses()
 	{
-		return {URPGBossPhases::StaticClass(), URPGBossEncounter::StaticClass(), URPGBossPosture::StaticClass(), URPGBossStagger::StaticClass(), URPGBossDormantWake::StaticClass(), URPGCombatParticipant::StaticClass(), URPGBossBleed::StaticClass(), URPGBossLowSweep::StaticClass(), URPGBossShockwave::StaticClass(), URPGBossHealPunish::StaticClass(), URPGBossLook::StaticClass(), URPGBossCloseClipSwap::StaticClass(), URPGBossDeath::StaticClass()};
+		return {URPGBossPhases::StaticClass(), URPGBossEncounter::StaticClass(), URPGBossPosture::StaticClass(), URPGBossStagger::StaticClass(), URPGBossDormantWake::StaticClass(), URPGCombatParticipant::StaticClass(), URPGBossBleed::StaticClass(), URPGBossLowSweep::StaticClass(), URPGBossShockwave::StaticClass(), URPGBossHealPunish::StaticClass(), URPGBossLook::StaticClass(), URPGBossCloseClipSwap::StaticClass(), URPGBossDeath::StaticClass(), URPGAttackTracker::StaticClass(), URPGFootsteps::StaticClass(), URPGBossMusic::StaticClass(), URPGTraceGuard::StaticClass(), URPGBossHud::StaticClass(), URPGBossLegend::StaticClass(), URPGDamageResolver::StaticClass()};
 	}
 
 	bool CheckCompiledDependencies(const FRPGParticipantConfig& Config, FString& OutError)
@@ -202,7 +261,7 @@ namespace RPGBossHydrationPreflight
 		return true;
 	}
 
-	FRPGHydrationResult CompilePreflight(const FRPGHydrationPreflightInput& Input, TSharedPtr<const FRPGHydrationPreflightPlan>& OutPlan)
+	static FRPGHydrationResult CompilePreflightInternal(const FRPGHydrationPreflightInput& Input, TSharedPtr<const FRPGHydrationPreflightPlan>& OutPlan, bool bAllowBegunPlay)
 	{
 		// First: no earlier output may survive a compile that fails.
 		OutPlan.Reset();
@@ -297,7 +356,7 @@ namespace RPGBossHydrationPreflight
 				{
 					FailMember(Result, TEXT("Preflight.ForeignWorld"), Label, TEXT("the actor is not in the expected world"));
 				}
-				if (Actor->HasActorBegunPlay() || Actor->IsActorBeginningPlay())
+				if (Actor->IsActorBeginningPlay() || (Actor->HasActorBegunPlay() && !bAllowBegunPlay))
 				{
 					FailMember(Result, TEXT("Preflight.ActorBegunPlay"), Label, TEXT("the actor began or is beginning play: configuration is read before BeginPlay"));
 				}
@@ -306,7 +365,7 @@ namespace RPGBossHydrationPreflight
 					FailMember(Result, TEXT("Preflight.DuplicateActor"), Label, TEXT("the actor appears in more than one request"));
 				}
 				SeenActors.Add(Actor);
-				// An already attached or configured consumer is never adopted silently: the participant component for every member, the five boss-core consumers for a boss-core member (a target-only member gets no boss plan and is not checked for them).
+				// An already attached or configured consumer is never adopted silently: the participant component for every member, the six new native and thirteen typed boss-core consumers for a boss-core member (a target-only member gets no boss plan and is not checked for them).
 				const TArray<UClass*> Managed = ManagedCoreConsumerClasses();
 				for (int32 ClassIndex = 0; ClassIndex < Managed.Num(); ++ClassIndex)
 				{
@@ -397,7 +456,11 @@ namespace RPGBossHydrationPreflight
 				{
 					FailMember(Result, TEXT("Preflight.DormantWakeRejected"), Label, Error);
 				}
-				// The plans of this member are built here only to be CHECKED (class, instance name, callback bound, no duplicate) and for the union of the typed inputs they read: 110 unique paths, the selected-phase
+				if (!RPGBossAttackTrackerAdapters::ValidateAttackTracker(Config->AttackTracker, Error))
+				{
+					FailMember(Result, TEXT("Preflight.AttackTrackerRejected"), Label, Error);
+				}
+				// The plans of this member are built here only to be CHECKED (class, instance name, callback bound, no duplicate) and for the union of the typed inputs they read: 115 unique paths, the selected-phase
 				// paths from the explicit selected id. Membership only; a Value text is never authority. No callback is invoked.
 				const TArray<FRPGComponentPlan> MemberPlans = MakeBossCorePlans(Request.SelectedPhaseId);
 				for (const FString& Problem : CheckPlans(MemberPlans))
@@ -436,6 +499,7 @@ namespace RPGBossHydrationPreflight
 		// ---- Build: only reached when every member passed. Plans are built from the accepted factories and never run.
 		TSharedRef<FRPGHydrationPreflightPlan> Plan = MakeShared<FRPGHydrationPreflightPlan>();
 		Plan->EncounterInstance = Input.EncounterInstance;
+		Plan->ParticipantGeneration = Input.ParticipantGeneration;
 		Plan->World = World;
 		Plan->Content = Input.ExpectedContent;
 		for (const FRPGHydrationPreflightRequest& Request : Input.Requests)
@@ -458,5 +522,15 @@ namespace RPGBossHydrationPreflight
 		}
 		OutPlan = Plan;
 		return Result;
+	}
+
+	FRPGHydrationResult CompilePreflight(const FRPGHydrationPreflightInput& Input, TSharedPtr<const FRPGHydrationPreflightPlan>& OutPlan)
+	{
+		return CompilePreflightInternal(Input, OutPlan, false);
+	}
+
+	FRPGHydrationResult CompilePreflightForRebind(const FRPGHydrationPreflightInput& Input, TSharedPtr<const FRPGHydrationPreflightPlan>& OutPlan)
+	{
+		return CompilePreflightInternal(Input, OutPlan, true);
 	}
 }

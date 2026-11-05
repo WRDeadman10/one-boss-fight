@@ -74,7 +74,8 @@ namespace RPGBossRules
 	 *  above the threshold, a stance break running (queued: the transition starts when the break ends, 770 and 1201), else it starts. Equality starts (the Freeze says at or below). */
 	inline ETransitionResult ResolveTransition(const FFlags& F, double Health, double Max, float Fraction)
 	{
-		if (Max <= 0.0) { return ETransitionResult::NotReady; }
+		if (!FMath::IsFinite(Health) || !FMath::IsFinite(Max) || !FMath::IsFinite(Fraction)
+			|| Max <= 0.0 || Fraction < 0.f || Fraction > 1.f) { return ETransitionResult::NotReady; }
 		if (Health <= 0.0 || F.bDead) { return ETransitionResult::Dead; }
 		if (F.bDormant) { return ETransitionResult::Dormant; }
 		if (F.bPhaseTwo) { return ETransitionResult::AlreadyDone; }

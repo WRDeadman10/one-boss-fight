@@ -77,6 +77,9 @@ public:
 	int32 GetHitCount() const { return HitCount; }
 
 	UFUNCTION(BlueprintPure, Category = "Wave")
+	int32 GetParriedCount() const { return ParriedCount; }
+
+	UFUNCTION(BlueprintPure, Category = "Wave")
 	int32 GetJumpedCount() const { return JumpedCount; }
 
 	UFUNCTION(BlueprintPure, Category = "Wave")
@@ -86,6 +89,7 @@ public:
 	int32 GetCentralPriorityCount() const { return CentralPriorityCount; }
 
 protected:
+	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
@@ -101,12 +105,14 @@ private:
 	float GroundZ = 0.f;
 	double HealthAtLaunch = -1.0;
 	int32 LastInstance = -1;
-	int32 LaunchGeneration = 0;
+	uint64 LaunchGeneration = 0;
 	int32 LaunchCount = 0;
 	int32 HitCount = 0;
+	int32 ParriedCount = 0;
 	int32 JumpedCount = 0;
 	int32 InvulnerableCount = 0;
 	int32 CentralPriorityCount = 0;
 	bool bDead = false;
+	TWeakObjectPtr<UActorComponent> TrackerTickPrerequisite;
 	float DeathCheck = 0.f;
 };

@@ -12,7 +12,37 @@ Average 28.4 to 29.4 fps, p99 39.6 to 41.5 ms, every frame over the 16.67 ms bud
 
 The fire lights of the arena are the main GPU cost: the 12 shadow casting brazier lights (radius 32 m) cost about 8 ms of GPU; with their shadows off the game ran at 71.6 fps, with all fire lights off at 77.7 fps. The GPU profile shows, besides the virtual shadow maps (8 ms) and the lights (2 ms), volumetric clouds 5.3 ms and TSR 3.5 ms. Unexplained: the first ten experiments ran at 22 to 35 fps and the later ones at 44 to 49 fps (including no-op experiments), so round 2's early comparisons are not reliable. Round 3 repeats a baseline every few runs and logs the GPU clocks to find out.
 
-## Prompt for Claude on the benchmark PC, ROUND 3 (copy everything between the lines)
+## Round 4 (2026-11-05): legacy route vs data-driven route (A7 gate) + owner play test
+
+This kit holds BOTH builds of BUILD-222 (2026-11-05): `Saved\StagedBuilds\Windows` = **Shipping** (play test, final look and feel) and `Saved\StagedBuilds_Development\Windows` = **Development** (benchmark; only the Development build accepts the data-route selector, by design). Round 4 measures the same fight twice: the legacy startup route and the data-driven route (`DA_Sevarog_G044_Encounter`), and checks that the data route is not slower.
+
+## Prompt for Claude on the benchmark PC, ROUND 4 (copy everything between the lines)
+
+----------------------------------------------------------------------
+You are helping me measure the frame rate of a game on this PC (round 4). Do exactly this and report faithfully: never say a step passed unless you saw it pass, never replace a failed run silently, never edit, delete or move anything inside the kit's `Saved` folders, do not change drivers or Windows settings, do not install software. The kit folder is `OneBossFight_BenchKit` (called KIT); work in a PowerShell prompt opened in KIT. Close the browser, chat apps, launchers and recorders first (keep yourself open). I must not touch the keyboard or mouse while a run is going (a bot plays the game; each run takes about 1.5 minutes).
+
+1. **Session check (mandatory).** Run `query user`: my line must show SESSIONNAME `console`. If it shows `rdp-tcp#...`, STOP and tell me (remote desktop numbers are invalid). Run `nvidia-smi`: tell me the GPU name, driver version and current GPU utilisation (should be under 10 percent).
+2. **Set the stage variable** (the Development build): `$dev = (Resolve-Path 'Saved\StagedBuilds_Development\Windows').Path` and confirm `Test-Path "$dev\OneBossFight.exe"` is True.
+3. **Legacy route, 4 runs** (first is a warm-up):
+   `Remove-Item Env:H019_ENCOUNTER_DEFINITION -ErrorAction SilentlyContinue`
+   then one after another: `.\Scripts\RunBenchmark.ps1 -StageDir $dev -Label r4_legacy_warmup`, `... -Label r4_legacy_a`, `... -Label r4_legacy_b`, `... -Label r4_legacy_c` (same command, only the label changes).
+4. **Data route, 4 runs:**
+   `$env:H019_ENCOUNTER_DEFINITION = '/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter'`
+   then `.\Scripts\RunBenchmark.ps1 -StageDir $dev -Label r4_selected_warmup`, `... -Label r4_selected_a`, `... -Label r4_selected_b`, `... -Label r4_selected_c`.
+   Afterwards: `Remove-Item Env:H019_ENCOUNTER_DEFINITION -ErrorAction SilentlyContinue`.
+   If a run fails or times out: copy the exact error, keep its folder, and run that label once more with the suffix `_retry`; report both.
+5. **Summarise.** `python -I .\Scripts\SummarizeBenchmark.py --root "$dev\OneBossFight\Saved\Benchmark"` and show me the table exactly as printed.
+6. **Collect.** `powershell -NoProfile -ExecutionPolicy Bypass -File Scripts\BenchKit_Collect.ps1` writes `bench_results_<computer>_<time>.zip` next to KIT. Tell me its full path and size.
+7. **Report to me:** (a) GPU, driver, session type, utilisation before start; (b) the summary table verbatim; (c) for each route the average of the three measured runs (a, b, c): average FPS and p99 frame time in ms; (d) PASS or FAIL for: data route average FPS >= 60, data route p99 <= 16.67 ms, data route p99 at most 0.5 ms worse than legacy p99; (e) whether `fight_started` was true and the `gpu` field named this NVIDIA card in every run; (f) anything that looked wrong (crash, error, visible stutter, a run much slower than the others).
+----------------------------------------------------------------------
+
+## Owner play test (no Claude needed)
+
+- **Final look and feel:** run `KIT\Saved\StagedBuilds\Windows\OneBossFight.exe` (Shipping). This build starts the legacy route (no Blueprint selects the data route yet, by the J049-A decision); the parity runs show the two routes play the same.
+- **Data-driven boss by hand:** run `KIT\Saved\StagedBuilds_Development\Windows\OneBossFight.exe`, press the console key (` or ~), type `rpg.EncounterDefinition /Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter`, Enter, then `open L_SevarogArena`, Enter. The arena reloads with the data-driven boss. To go back: `rpg.EncounterDefinition ""` then `open L_SevarogArena`.
+- Worth writing down: input delay on attack/dodge/parry, whether hits feel connected (hit stop, sound, camera), boss telegraph readability, phase two at 60 % health, death and restart, and any frame hitch you can feel. Compare the two builds if you like.
+
+## Prompt for Claude on the benchmark PC, ROUND 3 (historical)
 
 ----------------------------------------------------------------------
 You are helping me measure the frame rate of a game on this PC again (round 3 of a performance investigation). Do exactly this and report faithfully (never say a step passed unless you saw it pass). Do not edit, delete or move anything inside the kit's `Saved\StagedBuilds_Development` folder, do not change drivers or Windows settings, do not install software. The kit folder is `OneBossFight_BenchKit` (called KIT); work from a PowerShell prompt opened in KIT. Close the browser, chat apps, launchers and recorders first (Edge, WhatsApp, Comet and the like; keep yourself open); I must not touch the keyboard or mouse during runs (a bot plays the game).

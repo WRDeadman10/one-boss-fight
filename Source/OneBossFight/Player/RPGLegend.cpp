@@ -12,6 +12,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGAttackTracker.h"
+#include "Player/RPGBossTrackerTickPrerequisite.h"
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossStagger.h"
@@ -74,7 +75,7 @@ void URPGLegendSubsystem::Deinitialize()
 	Super::Deinitialize();
 }
 
-bool URPGLegendSubsystem::CheckRequest(const URPGBossEncounter* Encounter, int32 Generation)
+bool URPGLegendSubsystem::CheckRequest(const URPGBossEncounter* Encounter, uint64 Generation)
 {
 	if (!IsLegendOn())
 	{
@@ -82,7 +83,7 @@ bool URPGLegendSubsystem::CheckRequest(const URPGBossEncounter* Encounter, int32
 		return false;
 	}
 	// Cosmetic feedback ranks last (Freeze 21, item 8): never in a dormant fight, never for a fight that has been reset.
-	if (!Encounter || Encounter->IsDormant() || Encounter->GetGeneration() != Generation)
+	if (!Encounter || Encounter->IsDormant() || Encounter->GetParticipantGeneration() != Generation)
 	{
 		++RefusedCount;
 		return false;
@@ -99,7 +100,7 @@ void URPGLegendSubsystem::EnsureTicker()
 	}
 }
 
-bool URPGLegendSubsystem::RequestHitStop(AActor* First, AActor* Second, float RealSeconds, float Dilation, const URPGBossEncounter* Encounter, int32 Generation)
+bool URPGLegendSubsystem::RequestHitStop(AActor* First, AActor* Second, float RealSeconds, float Dilation, const URPGBossEncounter* Encounter, uint64 Generation)
 {
 	if (!CheckRequest(Encounter, Generation) || !GetWorld())
 	{
@@ -128,7 +129,7 @@ bool URPGLegendSubsystem::RequestHitStop(AActor* First, AActor* Second, float Re
 	return true;
 }
 
-bool URPGLegendSubsystem::RequestSlowMotion(float Scale, float RealSeconds, const URPGBossEncounter* Encounter, int32 Generation)
+bool URPGLegendSubsystem::RequestSlowMotion(float Scale, float RealSeconds, const URPGBossEncounter* Encounter, uint64 Generation)
 {
 	UWorld* World = GetWorld();
 	if (!CheckRequest(Encounter, Generation) || !World)
@@ -226,7 +227,7 @@ bool URPGLegendSubsystem::TickEffects(float DeltaSeconds)
 		{
 			CancelAll(TEXT("the boss is gone"));
 		}
-		else if (Owner->GetGeneration() != RequestGeneration)
+		else if (Owner->GetParticipantGeneration() != RequestGeneration)
 		{
 			CancelAll(TEXT("encounter reset"));
 		}
@@ -270,6 +271,15 @@ URPGBossLegend::URPGBossLegend()
 	Roar.Falloff = 1.f;
 }
 
+void URPGBossLegend::BeginPlay()
+{
+	Super::BeginPlay();
+	if (AActor* Boss = GetOwner())
+	{
+		RPGBossTrackerTickPrerequisite::Add(*this, TrackerTickPrerequisite, Boss->FindComponentByClass<URPGAttackTracker>());
+	}
+}
+
 bool URPGBossLegend::FindParts()
 {
 	AActor* Boss = GetOwner();
@@ -285,6 +295,7 @@ bool URPGBossLegend::FindParts()
 	if (!Tracker)
 	{
 		Tracker = Boss->FindComponentByClass<URPGAttackTracker>();
+		RPGBossTrackerTickPrerequisite::Add(*this, TrackerTickPrerequisite, Tracker);
 	}
 	if (!Phases)
 	{
@@ -386,7 +397,7 @@ bool URPGBossLegend::HandleHitStop(bool bLethal)
 	{
 		return false;
 	}
-	if (!Time->RequestHitStop(GetOwner(), UGameplayStatics::GetPlayerPawn(this, 0), HitStopSeconds, HitStopDilation, Encounter, Encounter->GetGeneration()))
+	if (!Time->RequestHitStop(GetOwner(), UGameplayStatics::GetPlayerPawn(this, 0), HitStopSeconds, HitStopDilation, Encounter, Encounter->GetParticipantGeneration()))
 	{
 		return false;
 	}
@@ -405,7 +416,7 @@ bool URPGBossLegend::HandleSlowMotion()
 	{
 		return false;
 	}
-	if (!Time->RequestSlowMotion(SlowMotionScale, SlowMotionSeconds, Encounter, Encounter->GetGeneration()))
+	if (!Time->RequestSlowMotion(SlowMotionScale, SlowMotionSeconds, Encounter, Encounter->GetParticipantGeneration()))
 	{
 		return false;
 	}
@@ -424,7 +435,7 @@ void URPGBossLegend::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	{
 		return;
 	}
-	const int32 Generation = Encounter->GetGeneration();
+	const uint64 Generation = Encounter->GetParticipantGeneration();
 	if (Generation != LastGeneration)
 	{
 		if (LastGeneration != 0)

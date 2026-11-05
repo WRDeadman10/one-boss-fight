@@ -83,7 +83,7 @@ private:
 		int32 Ordinal = 0;
 		int32 Instance = -1;
 		FName Move;
-		int32 Generation = 0;
+		uint64 Generation = 0;
 		FString Montage;
 		FString CloseReason;
 		float OpenPos = 0.f;
@@ -103,6 +103,7 @@ private:
 	TMap<int32, TMap<FName, double>> Instances;
 	TMap<FName, FVector> Previous;
 	TArray<TWeakObjectPtr<AActor>> PrevSet;
+	TWeakObjectPtr<UActorComponent> TrackerTickPrerequisite;
 	bool bActive = false;
 	int32 OrdinalBase = 0;
 	// outcome of the player's insertion into the hit set
@@ -116,7 +117,7 @@ private:
 	bool bInterrupted = false;
 	uint64 InterruptFrame = 0;
 	FString WindowMontage;
-	int32 WindowGeneration = 0;
+	uint64 WindowGeneration = 0;
 	FName LastMove;
 	FString LastCloseText;
 };

@@ -97,6 +97,8 @@ struct FRPGBossMoveCardSpec
     UPROPERTY(EditAnywhere) float WarpMaxDistanceCm = 0.f;
     UPROPERTY(EditAnywhere) float WarpMaxAngleDegrees = 0.f;
     UPROPERTY(EditAnywhere) float WarpStandoffCm = 0.f;
+    /** Optional smoothstep distribution of the bounded warp distance over its window; disabled by default. */
+    UPROPERTY(EditAnywhere) bool WarpEaseInOut = false;
     /** BOSS-DEF-005: a DEFENSIVE card (a backstep): no hit window, no damage. With bWarpAway the warp moves the boss AWAY from the target, back to WarpStandoffCm at most WarpMaxDistanceCm. Fair-window rules in RPGBossDefenseRules.h. */
     UPROPERTY(EditAnywhere) bool bDefensive = false;
     UPROPERTY(EditAnywhere) bool bWarpAway = false;

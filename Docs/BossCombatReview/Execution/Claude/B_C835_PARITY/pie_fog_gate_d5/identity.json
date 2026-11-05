@@ -1,0 +1,14 @@
+{
+    "map":  "/Game/OneBossFight/Levels/L_SevarogArena",
+    "build_id":  "BUILD-220",
+    "content_sha256":  "56019a84634627293504184ad3ee38256623724763eedd2b3f718b13834fd631",
+    "settings_sha256":  "e21a61154b7a8422f09156314a9dd335fc218826a6e6bda1c7f142b38262919c",
+    "seed":  "none",
+    "driver":  "pie_fog_gate",
+    "driver_args":  [
+                        "fresh-process",
+                        "run_editor_script",
+                        "NullRhi=0"
+                    ],
+    "input_sha256":  "bb4d069206ed8c587e032bc79a87f49250dc25b1113f6f860f9095ff2cd047f6"
+}

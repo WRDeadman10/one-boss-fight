@@ -1,4 +1,5 @@
 """Death-remains driver: kill through debug_kill_boss (health 0 and the pack's Ability.Dead, the path pie_boss_death uses; a single injected light attack is not reliable here: the boss has to be fully awake first), wait for the pack to destroy the boss, verify the statue forms, then retry. Log prefix [Remains]."""
+import os
 import unreal
 
 log = lambda text: unreal.log("[Remains] " + text)
@@ -47,6 +48,9 @@ def tick(delta):
         state["time"] += delta
         if state["phase"] == "start":
             if state["time"] >= 0.5:
+                selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+                if selection:
+                    unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
                 unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
                 state.update(phase="warm", time=0.0)
             return

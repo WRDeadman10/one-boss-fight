@@ -109,7 +109,7 @@ private:
 	};
 
 	bool ReadWindow(const UAnimMontage* Montage, float& OutStart, float& OutEnd) const;
-	void RemoveTag(const TCHAR* Reason);
+	bool RemoveTag(const TCHAR* Reason);
 	void CloseRecord(const TCHAR* Reason, float EndPos);
 	const FRecord* Get(int32 Index) const;
 

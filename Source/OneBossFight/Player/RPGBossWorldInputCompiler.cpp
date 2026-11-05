@@ -169,9 +169,9 @@ namespace
 		return Snapshot;
 	}
 
-	bool SameSnapshot(const ARPGEncounterBinding& Binding, const FGuid& Encounter, const TArray<FMemberSnapshot>& Taken)
+	bool SameSnapshot(const ARPGEncounterBinding& Binding, const FGuid& Encounter, uint64 ParticipantGeneration, const TArray<FMemberSnapshot>& Taken)
 	{
-		if (!Binding.EncounterInstance.IsValid() || Binding.EncounterInstance != Encounter || Binding.Participants.Num() != Taken.Num())
+		if (!Binding.EncounterInstance.IsValid() || Binding.EncounterInstance != Encounter || Binding.ParticipantGeneration != ParticipantGeneration || Binding.Participants.Num() != Taken.Num())
 		{
 			return false;
 		}
@@ -187,7 +187,7 @@ namespace
 	}
 
 	/** The lifecycle and identity of the binding itself. Used by the initial validation AND by every checkpoint, with the same messages. */
-	bool BindingProblem(const ARPGEncounterBinding* Binding, const UWorld* World, FString& Why)
+	bool BindingProblem(const ARPGEncounterBinding* Binding, const UWorld* World, FString& Why, bool bAllowBegunPlay = false)
 	{
 		if (!Binding || !IsValid(Binding))
 		{
@@ -204,7 +204,7 @@ namespace
 			Why = TEXT("the encounter binding is not in the expected world");
 			return true;
 		}
-		if (Binding->HasActorBegunPlay() || Binding->IsActorBeginningPlay())
+		if (Binding->IsActorBeginningPlay() || (Binding->HasActorBegunPlay() && !bAllowBegunPlay))
 		{
 			Why = TEXT("the encounter binding began or is beginning play: the input is compiled before BeginPlay");
 			return true;
@@ -219,7 +219,7 @@ namespace
 	constexpr uint32 ActorForeign = 8u;
 	constexpr uint32 ActorBegun = 16u;
 
-	uint32 ActorProblems(const AActor* Actor, const UWorld* World)
+	uint32 ActorProblems(const AActor* Actor, const UWorld* World, bool bAllowBegunPlay = false)
 	{
 		if (!Actor)
 		{
@@ -238,7 +238,7 @@ namespace
 		{
 			Problems |= ActorForeign;
 		}
-		if (Actor->HasActorBegunPlay() || Actor->IsActorBeginningPlay())
+		if (Actor->IsActorBeginningPlay() || (Actor->HasActorBegunPlay() && !bAllowBegunPlay))
 		{
 			Problems |= ActorBegun;
 		}
@@ -263,7 +263,7 @@ namespace
 	 * callback, a cvar or an injection: these are source claims, and the initial validation uses the same predicates so the existing negative tests exercise the same guards.
 	 */
 	ECheckpoint Checkpoint(UWorld* World, const FAcquisition& Acquired, const TWeakObjectPtr<const ARPGEncounterBinding>& BindingRef, const FGuid& Encounter, const TArray<FMemberSnapshot>& Snapshot,
-		const TArray<FMember>& Members, FString& Why)
+		const TArray<FMember>& Members, FString& Why, bool bAllowBegunPlay, uint64 ParticipantGeneration)
 	{
 		if (!StillSame(World, Acquired, Why))
 		{
@@ -275,11 +275,11 @@ namespace
 			Why = TEXT("the retained reference to the encounter binding no longer resolves (destroyed or collected)");
 			return ECheckpoint::BindingDrift;
 		}
-		if (BindingProblem(Live, World, Why))
+		if (BindingProblem(Live, World, Why, bAllowBegunPlay))
 		{
 			return ECheckpoint::BindingDrift;
 		}
-		if (!SameSnapshot(*Live, Encounter, Snapshot))
+		if (!SameSnapshot(*Live, Encounter, ParticipantGeneration, Snapshot))
 		{
 			Why = TEXT("the encounter GUID or a participant (actor, slot, target or definition) of the binding changed");
 			return ECheckpoint::BindingDrift;
@@ -300,7 +300,7 @@ namespace
 				Why = FString::Printf(TEXT("%s: the retained actor or definition no longer resolves to the original (destroyed, collected or replaced)"), *MemberText(Member.Slot, Member.Index));
 				return ECheckpoint::BindingDrift;
 			}
-			if (ActorProblems(ResolvedActor, World) != 0u)
+			if (ActorProblems(ResolvedActor, World, bAllowBegunPlay) != 0u)
 			{
 				Why = FString::Printf(TEXT("%s: the actor is no longer valid, in the expected world and not begun"), *MemberText(Member.Slot, Member.Index));
 				return ECheckpoint::BindingDrift;
@@ -312,7 +312,8 @@ namespace
 
 namespace RPGBossWorldInputCompiler
 {
-	FRPGHydrationResult CompileWorldInput(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding, const TArray<FSelection>& Selections, const FString& ManifestHash, FRPGHydrationPreflightInput& OutInput)
+	static FRPGHydrationResult CompileWorldInputInternal(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding, const TArray<FSelection>& Selections,
+		const FString& ManifestHash, bool bAllowBegunPlay, uint64 ParticipantGeneration, FRPGHydrationPreflightInput& OutInput)
 	{
 		FRPGHydrationResult Result;
 		// Before any UObject (the world, the binding, the output's leases) is touched.
@@ -331,7 +332,7 @@ namespace RPGBossWorldInputCompiler
 			return Result;
 		}
 		FString BindingWhy;
-		if (BindingProblem(Binding, ExpectedWorld, BindingWhy))
+		if (BindingProblem(Binding, ExpectedWorld, BindingWhy, bAllowBegunPlay))
 		{
 			FailBatch(Result, TEXT("WorldInput.InvalidBinding"), BindingWhy);
 			return Result;
@@ -339,6 +340,13 @@ namespace RPGBossWorldInputCompiler
 		if (!Binding->EncounterInstance.IsValid())
 		{
 			FailBatch(Result, TEXT("WorldInput.InvalidEncounter"), TEXT("the binding has no explicit valid encounter GUID (none is generated)"));
+			return Result;
+		}
+		if (bAllowBegunPlay && (ParticipantGeneration == 0 || ParticipantGeneration == MAX_uint64
+			|| Binding->ParticipantGeneration != ParticipantGeneration))
+		{
+			FailBatch(Result, ParticipantGeneration == MAX_uint64 ? TEXT("EncounterActivation.GenerationExhausted") : TEXT("EncounterActivation.GenerationMismatch"),
+				TEXT("the rebind generation must be nonzero, below MAX_uint64 and match the binding"));
 			return Result;
 		}
 		if (Binding->Participants.IsEmpty())
@@ -352,6 +360,7 @@ namespace RPGBossWorldInputCompiler
 			return Result;
 		}
 		const FGuid Encounter = Binding->EncounterInstance;
+		const uint64 BindingGeneration = Binding->ParticipantGeneration;
 		const TArray<FMemberSnapshot> Snapshot = TakeSnapshot(*Binding);
 		// The retained reference every checkpoint resolves again.
 		const TWeakObjectPtr<const ARPGEncounterBinding> BindingRef(Binding);
@@ -429,7 +438,7 @@ namespace RPGBossWorldInputCompiler
 			bool bUsable = !Participant.Slot.IsNone();
 
 			AActor* Actor = Participant.Actor.Get();
-			const uint32 Problems = ActorProblems(Actor, ExpectedWorld);
+			const uint32 Problems = ActorProblems(Actor, ExpectedWorld, bAllowBegunPlay);
 			if (Problems & ActorMissing)
 			{
 				FailMember(Result, TEXT("WorldInput.ParticipantActorMissing"), Where, TEXT("no actor was given"));
@@ -546,16 +555,17 @@ namespace RPGBossWorldInputCompiler
 		{
 			const FString Where = MemberText(Member.Slot, Member.Index);
 			FString LoopDrift;
-			const ECheckpoint BeforeCompile = Checkpoint(ExpectedWorld, Acquired, BindingRef, Encounter, Snapshot, Members, LoopDrift);
+			const ECheckpoint BeforeCompile = Checkpoint(ExpectedWorld, Acquired, BindingRef, Encounter, Snapshot, Members, LoopDrift, bAllowBegunPlay, BindingGeneration);
 			if (BeforeCompile != ECheckpoint::Ok)
 			{
 				FailBatch(Result, DriftToken(BeforeCompile), FString::Printf(TEXT("before compiling %s: %s"), *Where, *LoopDrift));
 				return Result;
 			}
 			TSharedPtr<const FRPGParticipantConfig> Config;
-			const FRPGHydrationResult Compiled = RPGCombatHydration::CompileParticipant(*Member.Definition, Content, ManifestHash, Config);
+			const FRPGHydrationResult Compiled = RPGCombatHydration::CompileParticipant(*Member.Definition, Content, ManifestHash, Config,
+				Member.Role == ERPGPreflightRole::BossCore);
 			// After the loads: before the candidate reuses the raw actor of this member, everything is checked again.
-			const ECheckpoint AfterCompile = Checkpoint(ExpectedWorld, Acquired, BindingRef, Encounter, Snapshot, Members, LoopDrift);
+			const ECheckpoint AfterCompile = Checkpoint(ExpectedWorld, Acquired, BindingRef, Encounter, Snapshot, Members, LoopDrift, bAllowBegunPlay, BindingGeneration);
 			if (AfterCompile != ECheckpoint::Ok)
 			{
 				FailBatch(Result, DriftToken(AfterCompile), FString::Printf(TEXT("while compiling %s: %s"), *Where, *LoopDrift));
@@ -590,7 +600,9 @@ namespace RPGBossWorldInputCompiler
 
 		// The whole candidate through the accepted preflight (load-free). Its diagnostics are carried unchanged.
 		TSharedPtr<const FRPGHydrationPreflightPlan> Plan;
-		const FRPGHydrationResult Preflight = RPGBossHydrationPreflight::CompilePreflight(Candidate, Plan);
+		const FRPGHydrationResult Preflight = bAllowBegunPlay
+			? RPGBossHydrationPreflight::CompilePreflightForRebind(Candidate, Plan)
+			: RPGBossHydrationPreflight::CompilePreflight(Candidate, Plan);
 		if (!Preflight.IsReady() || !Plan.IsValid())
 		{
 			for (const FString& Nested : Preflight.Errors)
@@ -606,7 +618,7 @@ namespace RPGBossWorldInputCompiler
 
 		// Publication gate: the same checkpoint as around every compile (content identities, binding lifecycle, GUID, snapshot, member identities).
 		FString DriftError;
-		const ECheckpoint Final = Checkpoint(ExpectedWorld, Acquired, BindingRef, Encounter, Snapshot, Members, DriftError);
+		const ECheckpoint Final = Checkpoint(ExpectedWorld, Acquired, BindingRef, Encounter, Snapshot, Members, DriftError, bAllowBegunPlay, BindingGeneration);
 		if (Final != ECheckpoint::Ok)
 		{
 			FailBatch(Result, DriftToken(Final), FString::Printf(TEXT("before publication: %s"), *DriftError));
@@ -614,5 +626,17 @@ namespace RPGBossWorldInputCompiler
 		}
 		OutInput = MoveTemp(Candidate);
 		return Result;
+	}
+
+	FRPGHydrationResult CompileWorldInput(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding, const TArray<FSelection>& Selections,
+		const FString& ManifestHash, FRPGHydrationPreflightInput& OutInput)
+	{
+		return CompileWorldInputInternal(ExpectedWorld, Binding, Selections, ManifestHash, false, 0, OutInput);
+	}
+
+	FRPGHydrationResult CompileWorldInputForRebind(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding, const TArray<FSelection>& Selections,
+		const FString& ManifestHash, uint64 ParticipantGeneration, FRPGHydrationPreflightInput& OutInput)
+	{
+		return CompileWorldInputInternal(ExpectedWorld, Binding, Selections, ManifestHash, true, ParticipantGeneration, OutInput);
 	}
 }

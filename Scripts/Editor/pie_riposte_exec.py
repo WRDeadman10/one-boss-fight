@@ -10,11 +10,14 @@ Real press (IA_NormalAttack injected), boss held awake, stance break through the
 Log prefix [RipostExec]; ends with RESULT n/m passed. Run pie_debug_overlay.py once after an editor start first.
 """
 import math
+import json
+import os
 import unreal
 
 log = lambda m: unreal.log("[RipostExec] " + m)
 IA = "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/"
 results = []
+TIMING_OBSERVABLES = {}
 S = {"phase": "start", "t": 0.0, "now": 0.0, "wait": 0.0, "gen": None, "press_until": 0.0, "action": "IA_NormalAttack", "samples": None}
 handle = None
 
@@ -176,10 +179,15 @@ def s1_execution():
     dropped = [s for s in samples if s["hp"] is not None and hp0 is not None and s["hp"] < hp0 - 0.01]
     t_hit = dropped[0]["t"] - t0 if (dropped and t0 is not None) else None
     hp_after = samples[-1]["hp"]
-    check("S1 the riposte was available (%s) and the press started the execution %.2f s after the press (ended %s)" % (ok_avail, (run[0]["t"] - t_press) if run else -1, ended), ok_avail and started and ended and len(run) > 20 and (run[0]["t"] - t_press) < 0.5, "")
+    start_delay = run[0]["t"] - t_press if run else -1.0
+    start_name = "S1 execution starts within 0.5 s of press"
+    check(start_name, ok_avail and started and ended and len(run) > 20 and 0.0 <= start_delay < 0.5, "%.2f s" % start_delay)
+    TIMING_OBSERVABLES[start_name] = {"value": float(max(0.0, start_delay)), "comparison": {"type": "timing_seconds", "range_seconds": [0.0, 0.5]}}
     check("S1 the player plays AN_Riposte_Player_Front and the boss AN_Riposte_Boss_Reaction during the execution", first_clip is not None and any(s["bclip"] == "AN_Riposte_Boss_Reaction" for s in run), "stages %s" % sorted(set(s["stage"] for s in run)))
     run_len = (run[-1]["t"] - run[0]["t"]) if run else 0.0
-    check("S1 the execution lasted about 2 s (%.2f s)" % run_len, 1.7 <= run_len <= 2.3, "")
+    duration_name = "S1 execution duration about 2 s"
+    check(duration_name, 1.7 <= run_len <= 2.3, "%.2f s" % run_len)
+    TIMING_OBSERVABLES[duration_name] = {"value": float(run_len), "comparison": {"type": "timing_seconds", "range_seconds": [1.7, 2.3]}}
     check("S1 the player is locked: the second press and the dodge started no other montage and no swing (swings %d -> %d, the first press's own attack counts once)" % (samples[0]["swings"], samples[-1]["swings"]),
           all(s["pclip"] in (None, "AN_Riposte_Player_Front") or s["t"] < (t0 or 0) + 0.05 for s in run) and samples[-1]["swings"] <= samples[0]["swings"] + 1, "%s" % sorted(set(str(s["pclip"]) for s in run)))
     d_back = max([s["dist"] for s in run if t0 is not None and t0 <= s["t"] <= t0 + 0.5] or [-1.0])
@@ -189,7 +197,9 @@ def s1_execution():
     check("S1 after the execution the capsules are apart again (distance %.0f cm 0.3 s later or more, at least 95)" % (contact[-1] if contact else -1), bool(contact) and contact[-1] >= 95.0, "")
     check("S1 one damage event of exactly 100 (40 x 2.5): health %s -> %s, impacts %d, hit intake hits %d -> %d (the weapon trace is cut)" % (hp0, hp_after, p["stg"].get_riposte_impact_count(), hits0, p["intake"].get_boss_hit_count()),
           hp0 is not None and hp_after is not None and abs((hp0 - hp_after) - 100.0) < 0.6 and p["stg"].get_riposte_impact_count() == 1 and p["intake"].get_boss_hit_count() == hits0, "")
-    check("S1 the damage landed at the impact, 0.8 s after the clips started (%s s)" % (("%.2f" % t_hit) if t_hit is not None else None), t_hit is not None and 0.65 <= t_hit <= 1.0, "")
+    impact_name = "S1 damage timing from clip start"
+    check(impact_name, t_hit is not None and 0.65 <= t_hit <= 1.0, "%.2f s" % t_hit if t_hit is not None else "missing")
+    TIMING_OBSERVABLES[impact_name] = {"value": float(t_hit if t_hit is not None else 0.0), "comparison": {"type": "timing_seconds", "range_seconds": [0.65, 1.0]}}
     check("S1 the second request in the same break was rejected (%s: %s), the riposte count is %d" % (again, p["stg"].get_last_riposte_result(), p["stg"].get_riposte_count()), again is False and p["stg"].get_riposte_reject_count() == rej0 + 1 and p["stg"].get_riposte_count() >= 1, "")
     # the input is back and the boss goes on
     n0 = P()["swing"].get_attack_swing_count()
@@ -211,7 +221,7 @@ def s2_player_dies():
     a0 = p["stg"].get_riposte_abort_count()
     impacts0 = p["stg"].get_riposte_impact_count()
     hp0 = attr(p["boss"], "Attribute.Health")
-    gen0, resets0 = p["enc"].get_generation(), p["enc"].get_reset_count()
+    gen0, resets0 = int(p["enc"].get_participant_generation_text()), p["enc"].get_reset_count()
     press("IA_NormalAttack", 0.12)
     yield from until(lambda: P()["stg"].is_riposte_executing(), 1.0)
     yield 0.4
@@ -223,8 +233,9 @@ def s2_player_dies():
     p = P()
     check("S2 the player's death aborts the execution (aborts %d -> %d), no impact lands after it (impacts %d -> %d)" % (a0, p["stg"].get_riposte_abort_count(), impacts0, p["stg"].get_riposte_impact_count()),
           p["stg"].get_riposte_abort_count() == a0 + 1 and p["stg"].get_riposte_impact_count() == impacts0 and not p["stg"].is_riposte_executing(), "")
-    check("S2 the player respawned (%s) and the encounter reset (generation %d -> %d, resets %d -> %d): the boss sleeps at home, standing and full (health %s)" % (respawned, gen0, p["enc"].get_generation(), resets0, p["enc"].get_reset_count(), attr(p["boss"], "Attribute.Health")),
-          respawned and p["enc"].get_generation() > gen0 and p["enc"].get_reset_count() > resets0 and p["enc"].is_dormant() and not p["stg"].is_staggered() and (attr(p["boss"], "Attribute.Health") or 0) >= (hp0 or 0) - 0.5, "")
+    generation = int(p["enc"].get_participant_generation_text())
+    check("S2 the player respawned (%s) and the encounter reset (generation %d -> %d, resets %d -> %d): the boss sleeps at home, standing and full (health %s)" % (respawned, gen0, generation, resets0, p["enc"].get_reset_count(), attr(p["boss"], "Attribute.Health")),
+          respawned and generation > gen0 and p["enc"].get_reset_count() > resets0 and p["enc"].is_dormant() and not p["stg"].is_staggered() and (attr(p["boss"], "Attribute.Health") or 0) >= (hp0 or 0) - 0.5, "")
 
 
 def s5_early_press():
@@ -300,6 +311,8 @@ def finish():
         P()["stg"].set_use_riposte_clips_for_test(True)
     except Exception:
         pass
+    if TIMING_OBSERVABLES:
+        log("TIMING_OBSERVABLES_JSON " + json.dumps(TIMING_OBSERVABLES, sort_keys=True, separators=(",", ":")))
     log("RESULT %d/%d passed" % (sum(1 for r in results if r), len(results)))
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
 
@@ -310,6 +323,9 @@ def _tick(dt):
     s["now"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0)
         return

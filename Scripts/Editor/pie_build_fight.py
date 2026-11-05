@@ -1248,7 +1248,7 @@ def script():
     M["flags"]["slept"] = bool(baseline)
     M["flags"]["intake_bound"] = bool(safe("intake.is_hit_intake_bound", lambda: C["intake"].is_hit_intake_bound(), False))
     log("SETUP dormant baseline: %s; health %s/%s, posture %s/%s; hit intake bound: %s; generation %s" % (
-        M["flags"]["slept"], boss_health, boss_max_health, posture, BASE_POSTURE, M["flags"]["intake_bound"], safe("enc.get_generation", lambda: C["enc"].get_generation(), "?")))
+        M["flags"]["slept"], boss_health, boss_max_health, posture, BASE_POSTURE, M["flags"]["intake_bound"], safe("enc.get_participant_generation_text", lambda: C["enc"].get_participant_generation_text(), "?")))
     if not baseline:
         end_fight("setup_failed", "reset baseline was not dormant/full (health %s, posture %s)" % (boss_health, posture))
         return

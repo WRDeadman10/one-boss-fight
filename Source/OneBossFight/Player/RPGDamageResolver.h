@@ -19,7 +19,8 @@ enum class ERPGDamageOutcome : uint8
 	MissJumped,           // the player's feet were above the blade or wave (geometry verdict of the move)
 	MissWorld,            // arena geometry stopped the move
 	Superseded,           // another hit of the same move already hurt the player (the wave yields to the central hit)
-	Failed                // the health attribute could not be written
+	Failed,               // the health attribute could not be written
+	Parried               // the player's parry window was open at the moment of contact: no damage, the hit is spent (owner decision 2026-11-02)
 };
 
 /** What a boss move asks the resolver to do to the player. HP only: boss moves take no posture (Freeze 504); guard and hit reaction are not built (KI-065, KI-067, KI-068). */
@@ -37,8 +38,8 @@ struct FRPGDamagePayload
 	int32 AttackInstance = 0;
 
 	/** Encounter generation when the move started; a payload of an older generation is stale (Freeze 32.2). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	int32 Generation = 0;
+	UPROPERTY(EditAnywhere, Category = "Damage")   // uint64 is not a Blueprint type (UHT); the payload is only consumed by native Resolve/NoteOverlap/NoteMiss
+	uint64 Generation = 0;
 
 	/** A second authored stage of one instance that may hit again uses another key (Freeze 530). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
@@ -85,18 +86,20 @@ namespace RPGDamageRules
 		case ERPGDamageOutcome::MissJumped: return TEXT("MissJumped");
 		case ERPGDamageOutcome::MissWorld: return TEXT("MissWorld");
 		case ERPGDamageOutcome::Superseded: return TEXT("Superseded");
+		case ERPGDamageOutcome::Parried: return TEXT("Parried");
 		default: return TEXT("Failed");
 		}
 	}
 
 	/** The decision order of one contact (Freeze 12.1 steps 1 to 4): the target must be alive, the attacker alive and of the current generation, the swing must not have hurt already, and only then the target's
 	 *  invulnerability at this moment decides. Pure, so an automation test can run it without a world or the pack. */
-	inline ERPGDamageOutcome Decide(bool bTargetAlive, bool bAttackerAlive, bool bGenerationCurrent, bool bDuplicate, bool bTargetInvulnerable)
+	inline ERPGDamageOutcome Decide(bool bTargetAlive, bool bAttackerAlive, bool bGenerationCurrent, bool bDuplicate, bool bTargetInvulnerable, bool bTargetParrying = false)
 	{
 		if (!bTargetAlive) { return ERPGDamageOutcome::RejectedDead; }
 		if (!bAttackerAlive || !bGenerationCurrent) { return ERPGDamageOutcome::RejectedStale; }
 		if (bDuplicate) { return ERPGDamageOutcome::RejectedDuplicate; }
 		if (bTargetInvulnerable) { return ERPGDamageOutcome::RejectedInvulnerable; }
+		if (bTargetParrying) { return ERPGDamageOutcome::Parried; } // after the dodge: an i-frame contact is not a parry
 		return ERPGDamageOutcome::Accepted;
 	}
 }
@@ -127,10 +130,10 @@ public:
 	float OverlapEpisodeGapSeconds = 0.25f;
 
 	/**
-	 * Optional attacker authority for a boss that is not a pack boss (the framework Sevarog has no pack attributes and no URPGBossEncounter):
+	 * Optional attacker authority for a boss that is not a pack boss (the framework boss has no pack attributes and no URPGBossEncounter):
 	 * the provider replaces the owner's Attribute.Health liveness and the encounter generation. Never set = the legacy rules, unchanged.
 	 */
-	void SetLifeProvider(TFunction<bool()> InIsAlive, TFunction<int32()> InGeneration);
+	void SetLifeProvider(TFunction<bool()> InIsAlive, TFunction<uint64()> InGeneration);
 	void ClearLifeProvider();
 	bool HasLifeProvider() const { return ProviderIsAlive != nullptr && ProviderGeneration != nullptr; }
 
@@ -185,7 +188,7 @@ private:
 		double Time = 0.0;
 		FName Move;
 		int32 Instance = 0;
-		int32 Generation = 0;
+		uint64 Generation = 0;
 		FName Key;
 		ERPGDamageOutcome Outcome = ERPGDamageOutcome::Overlap;
 		FName Reason;
@@ -196,7 +199,7 @@ private:
 
 	static FString KeyOf(const FRPGDamagePayload& Payload);
 	void Record(const FRPGDamagePayload& Payload, ERPGDamageOutcome Outcome, FName Reason, float HealthBefore, float HealthAfter);
-	int32 CurrentGeneration() const;
+	uint64 CurrentGeneration() const;
 	/** The duplicate set belongs to one encounter generation. */
 	void SyncGeneration();
 
@@ -205,8 +208,8 @@ private:
 	TMap<FString, double> LastOverlap;
 	TMap<FString, int32> Counts; // "Move|Outcome" and "|Outcome"
 	int32 AuditTotal = 0;
-	int32 SeenGeneration = 0;
+	uint64 SeenGeneration = 0;
 	TFunction<bool()> ProviderIsAlive;
-	TFunction<int32()> ProviderGeneration;
+	TFunction<uint64()> ProviderGeneration;
 	FString LastOutcome;
 };

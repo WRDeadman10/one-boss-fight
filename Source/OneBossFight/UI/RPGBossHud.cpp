@@ -9,6 +9,7 @@
 #include "Components/TextBlock.h"
 #include "Engine/Font.h"
 #include "Engine/World.h"
+#include "Engine/LocalPlayer.h"
 #include "GameFramework/PlayerController.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGBossEncounter.h"
@@ -312,9 +313,9 @@ void URPGBossHud::EnsureWidget()
 		return;
 	}
 	APlayerController* Controller = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
-	if (!Controller || !Controller->IsLocalController())
+	if (!Controller || !Controller->IsLocalController() || !Controller->GetLocalPlayer())
 	{
-		return;
+		return; // TickComponent retries once a local player is attached; headless/test controllers never create a viewport widget.
 	}
 	Widget = CreateWidget<URPGBossHudWidget>(Controller, URPGBossHudWidget::StaticClass());
 	if (Widget)
@@ -385,7 +386,7 @@ void URPGBossHud::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	}
 
 	// A reset (generation change) clears everything that belongs to the old fight: banner, bar, victory latch.
-	const int32 Generation = Encounter->GetGeneration();
+	const uint64 Generation = Encounter->GetParticipantGeneration();
 	if (Generation != LastGeneration)
 	{
 		LastGeneration = Generation;
@@ -431,7 +432,7 @@ void URPGBossHud::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 			{
 				VictoryFiredGeneration = Generation;
 				++VictoryCount;
-				UE_LOG(LogRPGBossHud, Log, TEXT("victory (generation %d, count %d)"), Generation, VictoryCount);
+				UE_LOG(LogRPGBossHud, Log, TEXT("victory (generation %llu, count %d)"), static_cast<unsigned long long>(Generation), VictoryCount);
 				if (bLockPlayerOnVictory)
 				{
 					// Freeze 18.2 and L11: no combat action may run after the boss has fallen. The pawn's whole input is switched off; the controller stays alive for the retry keys.

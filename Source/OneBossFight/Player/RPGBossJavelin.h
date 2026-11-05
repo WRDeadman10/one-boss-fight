@@ -15,6 +15,7 @@ UENUM()
 enum class ERPGJavelinResult : uint8
 {
 	Hit,        // damaged the player
+	Parried,    // contact was consumed by the player's parry window
 	Dodged,     // passed through the player while invulnerable (dodge i-frames) and flew on
 	HitWorld,   // stopped by arena geometry
 	Expired,    // flew its full range
@@ -37,7 +38,7 @@ public:
 	ARPGBossJavelin();
 
 	/** Sets the flight (called right after spawning). */
-	void Launch(URPGBossHealPunish* InOwner, const FVector& InDirection, float InSpeed, float InRadius, float InDamage, float InMaxRange, int32 InGeneration, int32 InAttackInstance);
+	void Launch(URPGBossHealPunish* InOwner, const FVector& InDirection, float InSpeed, float InRadius, float InDamage, float InMaxRange, uint64 InGeneration, int32 InAttackInstance);
 
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -60,7 +61,7 @@ private:
 	float Damage = 12.f;
 	float MaxRange = 3000.f;
 	float Travelled = 0.f;
-	int32 Generation = 0;
+	uint64 Generation = 0;
 	int32 AttackInstance = 0; // the tracker's attack instance of the throw (the damage resolver's duplicate key)
 	bool bDodgedCounted = false;
 	bool bFinished = false;

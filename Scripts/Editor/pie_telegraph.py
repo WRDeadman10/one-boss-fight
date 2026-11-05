@@ -1,8 +1,11 @@
 """Q13: close-stage telegraph coverage (rpg.CloseTelegraph, default 0.4 since 2026-10-24). Logs [Telegraph] and restores the value the session had at the start."""
+import os
+import json
 import unreal
 
 log = lambda message: unreal.log("[Telegraph] " + message)
 results = []
+TIMING_OBSERVABLES = {}
 S = {"phase": "start", "now": 0.0, "wake": 0.0, "t": 0.0, "finished": False, "initial": 0.4}
 handle = None
 
@@ -10,6 +13,23 @@ handle = None
 def check(name, ok, detail=""):
     results.append(bool(ok))
     log("%s %s %s" % ("PASS" if ok else "FAIL", name, detail))
+
+
+def record_windup(name, seconds, expected, tolerance):
+    TIMING_OBSERVABLES[name] = {
+        "value": float(seconds),
+        "comparison": {
+            "type": "timing_seconds",
+            "range_seconds": [max(0.0, expected - tolerance), expected + tolerance],
+        },
+    }
+
+
+def record_rate(name, ratio, minimum, maximum):
+    TIMING_OBSERVABLES[name] = {
+        "value": float(ratio),
+        "comparison": {"type": "rate_ratio", "range": [minimum, maximum]},
+    }
 
 
 def close(a, b, tolerance):
@@ -77,9 +97,12 @@ def scenario():
     console("rpg.CloseTelegraph 0")
     if start(tracker, "A3a"):
         yield 0.05
-        check("T1 cvar zero keeps A3a rate one", close(tracker.get_telegraph_rate(), 1.0, 0.01), "rate %.3f" % tracker.get_telegraph_rate())
+        rate = tracker.get_telegraph_rate()
+        record_rate("T1 cvar zero keeps A3a rate one", rate, 0.99, 1.01)
+        check("T1 cvar zero keeps A3a rate one", close(rate, 1.0, 0.01), "rate %.3f" % rate)
         yield from settle(0.35)
         windup = tracker.get_last_stage_windup_seconds()
+        record_windup("T1 cvar zero keeps the authored A3a windup (0.40 s since the authored clips, B10)", windup, 0.40, 0.06)
         check("T1 cvar zero keeps the authored A3a windup (0.40 s since the authored clips, B10)", close(windup, 0.40, 0.06), "windup %.3f" % windup)
     yield from settle(0.8)
 
@@ -87,9 +110,11 @@ def scenario():
     if start(tracker, "A3a"):
         yield 0.05
         rate = tracker.get_telegraph_rate()
+        record_rate("T2 authored A3a is not stretched by the cvar", rate, 0.99, 1.01)
         check("T2 authored A3a is not stretched by the cvar (its own windup is already 0.40 s)", close(rate, 1.0, 0.01), "rate %.3f" % rate)
         yield from settle(0.55)
         windup = tracker.get_last_stage_windup_seconds()
+        record_windup("T2 authored A3a windup stays 0.40 seconds", windup, 0.40, 0.06)
         check("T2 authored A3a windup stays 0.40 seconds", close(windup, 0.40, 0.06), "windup %.3f" % windup)
         check("T2 authored A3a rate is one after active", close(tracker.get_telegraph_rate(), 1.0, 0.01), "rate %.3f" % tracker.get_telegraph_rate())
     yield from settle(0.8)
@@ -100,9 +125,11 @@ def scenario():
     if start(tracker, "A1b"):
         yield 0.05
         rate = tracker.get_telegraph_rate()
+        record_rate("T2b pack A1b slows before active", rate, 0.0, 1.0)
         check("T2b pack A1b slows before active", rate < 1.0, "rate %.3f" % rate)
         yield from settle(0.55)
         windup = tracker.get_last_stage_windup_seconds()
+        record_windup("T2b pack A1b reaches the 0.35 second cap", windup, 0.35, 0.06)
         check("T2b pack A1b reaches the 0.35 second cap", close(windup, 0.35, 0.06), "windup %.3f" % windup)
         check("T2b pack A1b restores rate after active", close(tracker.get_telegraph_rate(), 1.0, 0.01), "rate %.3f" % tracker.get_telegraph_rate())
     yield from settle(1.0)
@@ -110,6 +137,7 @@ def scenario():
     if start(tracker, "A1"):
         yield 0.50
         windup = tracker.get_last_stage_windup_seconds()
+        record_windup("T3 A1 caps at 0.35 seconds", windup, 0.35, 0.06)
         check("T3 A1 caps at 0.35 seconds", close(windup, 0.35, 0.06), "windup %.3f" % windup)
         check("T3 A1 restores its rate", close(tracker.get_telegraph_rate(), 1.0, 0.01), "rate %.3f" % tracker.get_telegraph_rate())
     yield from settle(1.0)
@@ -117,6 +145,7 @@ def scenario():
     if start(tracker, "A2"):
         yield 2.20
         windup = tracker.get_last_stage_windup_seconds()
+        record_windup("T4 A2 keeps its un-stretched windup", windup, 1.93, 0.12)
         check("T4 A2 keeps its un-stretched windup", close(windup, 1.93, 0.12), "windup %.3f" % windup)
         check("T4 A2 never changes telegraph rate", close(tracker.get_telegraph_rate(), 1.0, 0.01), "rate %.3f" % tracker.get_telegraph_rate())
     yield from settle(1.0)
@@ -125,16 +154,22 @@ def scenario():
     yield 0.1
     if start(tracker, "A1b"):
         yield 0.05
-        check("T5 pack A1b is slowed before cvar reset", tracker.get_telegraph_rate() < 1.0, "rate %.3f" % tracker.get_telegraph_rate())
+        rate = tracker.get_telegraph_rate()
+        record_rate("T5 pack A1b is slowed before cvar reset", rate, 0.0, 1.0)
+        check("T5 pack A1b is slowed before cvar reset", rate < 1.0, "rate %.3f" % rate)
         console("rpg.CloseTelegraph 0")
         yield 0.15
-        check("T5 cvar reset restores rate within 0.2 seconds", close(tracker.get_telegraph_rate(), 1.0, 0.01), "rate %.3f" % tracker.get_telegraph_rate())
+        rate = tracker.get_telegraph_rate()
+        record_rate("T5 cvar reset restores rate within 0.2 seconds", rate, 0.99, 1.01)
+        check("T5 cvar reset restores rate within 0.2 seconds", close(rate, 1.0, 0.01), "rate %.3f" % rate)
     yield from settle(1.0)
 
     console("rpg.CloseTelegraph 0")
     if start(tracker, "A3a"):
         yield 0.05
-        check("T6 final cvar reset leaves rate one", close(tracker.get_telegraph_rate(), 1.0, 0.01), "rate %.3f" % tracker.get_telegraph_rate())
+        rate = tracker.get_telegraph_rate()
+        record_rate("T6 final cvar reset leaves rate one", rate, 0.99, 1.01)
+        check("T6 final cvar reset leaves rate one", close(rate, 1.0, 0.01), "rate %.3f" % rate)
 
 
 def finish():
@@ -149,6 +184,7 @@ def finish():
     if handle is not None:
         unreal.unregister_slate_post_tick_callback(handle)
         handle = None
+    log("TIMING_OBSERVABLES_JSON " + json.dumps(TIMING_OBSERVABLES, sort_keys=True, separators=(",", ":")))
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
     log("RESULT %d/%d passed" % (sum(1 for result in results if result), len(results)))
 
@@ -159,6 +195,9 @@ def tick(delta_seconds):
         if S["phase"] == "start":
             S["t"] += delta_seconds
             if S["t"] > 0.5:
+                selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+                if selection:
+                    unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
                 unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
                 S["phase"] = "wait"
             return

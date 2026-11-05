@@ -1,5 +1,6 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Boss/RPGFrameworkBossCharacter.h"
+#include <limits>
 #include "Boss/RPGFrameworkBossController.h"
 #include "Boss/RPGFrameworkMoveExecutor.h"
 #include "Boss/RPGFrameworkProofFixture.h"
@@ -24,15 +25,19 @@
 #include "Player/RPGSwingTracker.h"
 #include "Player/RPGBossMath.h"
 #include "Player/RPGBossOverlayRules.h"
+#include "Player/RPGPlayerParry.h"
 #include "Player/RPGBossTrackRules.h"
 #include "Player/RPGBossStuckRules.h"
+#include "Player/RPGBossLeashRules.h"
 #include "Player/RPGBossYawProbeRules.h"
+#include "Player/RPGBossFatigueRules.h"
 #include "Player/RPGBossRules.h"
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<float> CVarBossProofBystander(TEXT("rpg.BossProofBystander"),0.f,TEXT("Test hook (BOSS-HIT-005): above 0 spawns one plain Character (a second pawn that is not the target) that many cm to the side of the target when the boss starts its first attack of an encounter. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<float> CVarBossProofIFrameSweep(TEXT("rpg.BossProofIFrameSweep"),-1.f,TEXT("Test hook (BOSS-HIT-009): at this many game seconds after the boss's first attack of an encounter the player's REAL dodge input (IA_Dodge, held 0.12 s) is injected, and every tick from the press for 1.2 s a 1 HP probe goes through the damage resolver; the outcome of every probe is logged. Negative = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossProofPlayerGuard(TEXT("rpg.BossProofPlayerGuard"),0,TEXT("Test hook (BOSS-COM-004 / HIT-008): 1 = from the boss's first attack of an encounter the player's REAL block input (IA_Block) is held for rpg.BossProofPlayerGuardSeconds; 2 = the REAL parry input (IA_Parry) is pressed every 0.5 s in that time. The guard tags of the player are logged every tick. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<float> CVarBossProofPlayerGuardSeconds(TEXT("rpg.BossProofPlayerGuardSeconds"),6.f,TEXT("Test hook (BOSS-COM-004 / HIT-008): how long the guard input of rpg.BossProofPlayerGuard is driven."),ECVF_Default);
+static TAutoConsoleVariable<float> CVarBossProofPlayerGuardPhaseSeconds(TEXT("rpg.BossProofPlayerGuardPhaseSeconds"),0.f,TEXT("Test hook (BOSS-COM-004): seconds added to time since the first attack for periodic IA_Parry pulses; 0 preserves the existing phase. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<FString> CVarBossProofPlayerHits(TEXT("rpg.BossProofPlayerHits"),TEXT(""),TEXT("Test hook (BOSS-QA-003): comma separated seconds after the boss's first attack of an encounter at which the target's hit intake lands one test hit on the boss (game clock, so a fixed time step replays it exactly). Empty = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<FString> CVarBossProofTargetShift(TEXT("rpg.BossProofTargetShift"),TEXT(""),TEXT("Test hook (BOSS-MOV-005): 'seconds:dx,dy,dz|seconds:dx,dy,dz' moves the target by that vector at those game-clock seconds after the boss first attack of an encounter (teleport). Empty = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossTurnLatch(TEXT("rpg.BossProofTurnLatch"),1,TEXT("Test hook (BOSS-MOV-003): 0 turns the reposition turn WITHOUT the direction latch (control run: it still counts the direction changes). 1 = latch on (default behaviour). Not compiled into shipping builds."),ECVF_Default);
@@ -73,7 +78,7 @@ bool ARPGFrameworkBossCharacter::InitializeProof(ARPGFrameworkProofFixture* Fixt
         if (!Selector.Initialize(Config,List,Error)) {Fail(Error);return false;}
     }
     const auto& P=*Dependencies->Profile.Get();
-    ComboGraph=RPGFramework::BuildComboGraph(*Dependencies->Profile.Get());bComboActive=false;ResetBleed();CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId;bPhaseTwoLatched=false;Posture=double(Dependencies->Profile->PostureMax);LastPostureDrain=-1.;bStaggered=bStaggerAbortedAttack=false;StrafeDirFlip=1;StrafeStuck=RPGBossStuck::FStuck();YawProbeSampleIndex=0;
+    ComboGraph=RPGFramework::BuildComboGraph(*Dependencies->Profile.Get());bComboActive=false;ResetBleed();CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId;bPhaseTwoLatched=false;Posture=double(Dependencies->Profile->PostureMax);LastPostureDrain=-1.;bStaggered=bStaggerAbortedAttack=false;StrafeDirFlip=1;StrafeStuck=RPGBossStuck::FStuck();YawProbeSampleIndex=0;PendingParryRecoverySeconds=ParryRecoveryUntil=0.;PendingParryRecoveryGrade=0;AggroBand=RPGBossAggro::EBand::Balanced;AggroDodgeTimes.Reset();FatigueWhiffs=0;bFatigueFinishedCardSeen=false;
     if (Dependencies->Profile->BossMaxHealth>0.f)
     {
         bHittable=true; MaxHealth=Health=Dependencies->Profile->BossMaxHealth;
@@ -110,7 +115,7 @@ FName ARPGFrameworkBossCharacter::TargetFault(double& HP) const
     if(Target->IsActorBeingDestroyed())return TEXT("Destroyed");
     if(Target->GetController()!=TargetController.Get()||TargetController->GetPawn()!=Target.Get()||Target->GetWorld()!=GetWorld())return TEXT("Invalid");
     const URPGBossFrameworkProfile* P=ProofProfile();
-    if(P&&P->ArenaRadiusCm>0.f&&FVector::Dist2D(Target->GetActorLocation(),ArenaOrigin)>double(P->ArenaRadiusCm))return TEXT("OffArena");
+    if(P&&RPGBossLeashRules::IsOutsideArena(Target->GetActorLocation(),ArenaOrigin,double(P->ArenaRadiusCm)))return TEXT("OffArena");
     if(!RPGPack::ReadAttribute(Target.Get(),TEXT("Attribute.Health"),false,HP)||!FMath::IsFinite(HP))return TEXT("Unreadable");
     return HP>0.?FName(NAME_None):FName(TEXT("Dead"));
 }
@@ -118,14 +123,14 @@ void ARPGFrameworkBossCharacter::TickDodge()
 {
     // BOSS-AWR-008: a dodge is the rise of the target's flat speed to the profile threshold; its direction (seen from the boss) goes into the history ring.
     const auto& P=*Dependencies->Profile.Get();
-    if(P.DodgeHistoryDepth<1||!Target.IsValid())return;
+    if((P.DodgeHistoryDepth<1&&!P.bAggroEnabled)||!Target.IsValid())return;
     const FVector V=Target->GetVelocity();const bool bFast=FVector(V.X,V.Y,0.).Size()>=double(P.DodgeSpeedCm);const double Now=GetWorld()->GetTimeSeconds();
     if(bFast&&!bDodgeWasFast&&Now-DodgeSeenAt>.5)
     {
         const RPGBossTrack::EDodgeDir Dir=RPGBossTrack::ClassifyDodge(V,Target->GetActorLocation()-GetActorLocation(),P.DodgeSpeedCm);
         if(Dir!=RPGBossTrack::EDodgeDir::None)
         {
-            DodgeSeenAt=Now;++DodgesSeen;DodgeHistory.Push(Dir,P.DodgeHistoryDepth);
+            DodgeSeenAt=Now;++DodgesSeen;DodgeHistory.Push(Dir,P.DodgeHistoryDepth);if(P.bAggroEnabled)AggroDodgeTimes.Add(Now);
             UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] dodge_observed n=%d direction=%s speedCm=%g back=%d depth=%d"),DodgesSeen,Dir==RPGBossTrack::EDodgeDir::Back?TEXT("Back"):Dir==RPGBossTrack::EDodgeDir::Forward?TEXT("Forward"):TEXT("Side"),FVector(V.X,V.Y,0.).Size(),DodgeHistory.BackCount(),DodgeHistory.Dirs.Num());
         }
     }
@@ -267,11 +272,13 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
         if(Since<=double(CVarBossProofPlayerGuardSeconds.GetValueOnGameThread())&&GPC)
         {
             const int32 RawMode=CVarBossProofPlayerGuard.GetValueOnGameThread(); const bool bToggle=RawMode>=3; const int32 Mode=RawMode==5?1:(RawMode==6?0:(bToggle?RawMode-2:RawMode));   // 3 / 4 = the same as 1 / 2 after a tap of the toggle-combat input (weapon drawn) in the first 0.12 s; 5 = 3 plus a tap of IA_Parry every 0.5 s while the block is held
+            const float RequestedGuardPhase=CVarBossProofPlayerGuardPhaseSeconds.GetValueOnGameThread(); const double PhaseLimit=double(std::numeric_limits<float>::max());
+            const double GuardPhase=FMath::IsFinite(RequestedGuardPhase)?FMath::Clamp(double(RequestedGuardPhase),-PhaseLimit,PhaseLimit):0.;
             if(bToggle&&Since<=.12) if(UInputAction* TA=LoadObject<UInputAction>(nullptr,TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_ToggleCombat.IA_ToggleCombat")))URPGInputTestUtils::InjectAction(GPC,TA,FVector(1.,0.,0.));
             const TCHAR* Asset=Mode==2?TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_Parry.IA_Parry"):TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_Block.IA_Block");
-            if(Mode>0&&Since>(bToggle?.5:0.)&&(Mode==1||FMath::Fmod(Since,.5)<.1)) if(UInputAction* IA=LoadObject<UInputAction>(nullptr,Asset))URPGInputTestUtils::InjectAction(GPC,IA,FVector(1.,0.,0.));
+            if(Mode>0&&Since>(bToggle?.5:0.)&&(Mode==1||RPGBossGuard::IsProofParryPulse(Since,GuardPhase))) if(UInputAction* IA=LoadObject<UInputAction>(nullptr,Asset))URPGInputTestUtils::InjectAction(GPC,IA,FVector(1.,0.,0.));
             if(RawMode==6&&Since>.5&&Executor&&Executor->OpenWindowCount()>0) if(UInputAction* PerfectParry=LoadObject<UInputAction>(nullptr,TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_Parry.IA_Parry")))URPGInputTestUtils::InjectAction(GPC,PerfectParry,FVector(1.,0.,0.));   // 6 = toggle combat, then press the parry while a boss hit window is open (perfect timing)
-            if(RawMode==5&&Since>.5&&FMath::Fmod(Since,.5)<.1) if(UInputAction* PA=LoadObject<UInputAction>(nullptr,TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_Parry.IA_Parry")))URPGInputTestUtils::InjectAction(GPC,PA,FVector(1.,0.,0.));
+            if(RawMode==5&&Since>.5&&RPGBossGuard::IsProofParryPulse(Since,GuardPhase)) if(UInputAction* PA=LoadObject<UInputAction>(nullptr,TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_Parry.IA_Parry")))URPGInputTestUtils::InjectAction(GPC,PA,FVector(1.,0.,0.));
             UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] guard_tags since=%.4f statusBlocking=%d stateBlocking=%d abilityParry=%d abilityBlock=%d statusParryActive=%d hasParryAbility=%d hasGuardAbility=%d"),Since,RPGBossDamage::HasTag(Target.Get(),TEXT("Status.Blocking"))?1:0,RPGBossDamage::HasTag(Target.Get(),TEXT("State.Blocking"))?1:0,RPGBossDamage::HasTag(Target.Get(),TEXT("Ability.Parry"))?1:0,RPGBossDamage::HasTag(Target.Get(),TEXT("Ability.Block"))?1:0,RPGBossDamage::HasTag(Target.Get(),TEXT("Status.ParryActive"))?1:0,RPGPack::FindAbilityByClassName(Target.Get(),TEXT("GA_PlayerParry_C"))?1:0,RPGPack::FindAbilityByClassName(Target.Get(),TEXT("GA_PlayerGuardBlock_C"))?1:0);
         }
         else if(ProofGStart>=0.){UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] guard_hook_end"));ProofGStart=-2.;}
@@ -297,7 +304,7 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
             {
                 if(URPGDamageResolver* R=URPGDamageResolver::FindOrAdd(this))
                 {
-                    FRPGDamagePayload Payload;Payload.MoveId=TEXT("IFrameProbe");Payload.AttackInstance=9000+ProofIFProbes;Payload.Generation=int32(GenerationId);Payload.HitKey=FName(*FString::Printf(TEXT("IFProbe_%d"),ProofIFProbes));Payload.HPDamage=1.f;
+                    FRPGDamagePayload Payload;Payload.MoveId=TEXT("IFrameProbe");Payload.AttackInstance=9000+ProofIFProbes;Payload.Generation=GenerationId;Payload.HitKey=FName(*FString::Printf(TEXT("IFProbe_%d"),ProofIFProbes));Payload.HPDamage=1.f;
                     const FRPGDamageResult Result=R->Resolve(Target.Get(),Payload);
                     if(Result.Outcome==ERPGDamageOutcome::Accepted)NoteDamageApplied(Result.HPApplied);   // the boss's own accounting of the target's health, as for every hit it lands
                     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] iframe_probe n=%d sinceDodgePress=%.4f outcome=%s hpApplied=%g"),ProofIFProbes,Since,*UEnum::GetValueAsString(Result.Outcome),Result.HPApplied);
@@ -405,6 +412,7 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
                 UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] phase_transition attack=%d from=%s to=%s health=%g max=%g fraction=%g"),AttacksDone+1,*CurrentPhaseId.ToString(),*P.PhaseTwoId.ToString(),Health,MaxHealth,double(P.PhaseTwoFraction));
                 const FName FromPhase=CurrentPhaseId;
                 CurrentPhaseId=P.PhaseTwoId;
+                FatigueWhiffs=0;bFatigueFinishedCardSeen=false;
                 if(Dependencies->PhaseTransition.IsValid())
                 {
                     // F11: play the transition clip and hold the selector for its length (no clip = no hold, as before).
@@ -425,7 +433,7 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
             FRPGBossSelectorDecision Decision;
 #if !UE_BUILD_SHIPPING
             const float YawProbeAmplitude=CVarBossProofYawProbe.GetValueOnGameThread();
-            if(YawProbeAmplitude>0.f)
+            if(FMath::IsFinite(YawProbeAmplitude)&&YawProbeAmplitude>0.f)
             {
                 const int32 Sample=YawProbeSampleIndex++;
                 const double Center=double(Dependencies->Candidates[0].Card->Spec().FrontConeDegrees)*.5;
@@ -436,6 +444,15 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
             // BOSS-PHS-005: the pattern of the target at this decision: N consecutive chosen decisions (this one included) with the range beyond / inside the profile's thresholds.
             FRPGBossSelectorContext Pattern;
             Pattern.ConeHysteresisDegrees=double(P.ConeHysteresisDegrees);   // BOSS-AWR-004: 0 = off, the cone filter is exactly the old one
+            if(P.bAggroEnabled)
+            {
+                RPGBossAggro::FConfig AggroConfig;AggroConfig.EnterCloseCm=P.AggroEnterCloseCm;AggroConfig.ExitCloseCm=P.AggroExitCloseCm;AggroConfig.EnterFarCm=P.AggroEnterFarCm;AggroConfig.ExitFarCm=P.AggroExitFarCm;
+                AggroConfig.EnterDodgeRate=P.AggroDodgeEnterRate;AggroConfig.ExitDodgeRate=P.AggroDodgeExitRate;AggroConfig.DodgeRateWindowSeconds=P.AggroDodgeWindowSeconds;
+                const double Now=GetWorld()->GetTimeSeconds();AggroDodgeTimes.RemoveAll([Now,&P](double T){return T<Now-double(P.AggroDodgeWindowSeconds);});
+                const double DodgeRate=double(AggroDodgeTimes.Num())/double(P.AggroDodgeWindowSeconds);const RPGBossAggro::EBand PreviousBand=AggroBand;
+                AggroBand=RPGBossAggro::Step(AggroBand,S.RangeCm,false,false,DodgeRate,AggroConfig);Pattern.PreferredAggroBand=AggroBand;
+                if(AggroBand!=PreviousBand)UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] aggro_switch from=%d to=%d"),static_cast<int32>(PreviousBand),static_cast<int32>(AggroBand));
+            }
             if(P.AntiCheeseKiteRangeCm>0.f&&S.RangeCm>=double(P.AntiCheeseKiteRangeCm)&&KiteStreak+1>=P.AntiCheeseStreak) Pattern.bKiting=true;
             if(P.AntiCheeseHugRangeCm>0.f&&S.RangeCm<=double(P.AntiCheeseHugRangeCm)&&HugStreak+1>=P.AntiCheeseStreak) Pattern.bHugging=true;
             if(P.DodgeHistoryDepth>0&&DodgeHistory.BackCount()>=P.DodgeBackThreshold) Pattern.bBackDodging=true;   // BOSS-AWR-008
@@ -483,7 +500,7 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
                 const double Elapsed=StrafeNow-StrafeStartedAt;
                 if(Elapsed<=double(P.NeutralStrafeSeconds))
                 {
-                    const int32 StrafeDir=RPGBossStrafe::DirectionAt(P.SelectorTieSeed,Elapsed,.8,1.6)*StrafeDirFlip;
+                    const int32 StrafeDir=RPGBossStrafe::DirectionAt(P.SelectorTieSeed,Elapsed,P.NeutralStrafeMinHoldSeconds,P.NeutralStrafeMaxHoldSeconds)*StrafeDirFlip;
                     const FVector2D Boss2(GetActorLocation().X,GetActorLocation().Y), Next=RPGBossStrafe::NextPosition(Boss2,FVector2D(Target->GetActorLocation().X,Target->GetActorLocation().Y),double(P.WalkSpeedCmPerSecond),double(Delta),StrafeDir);
                     SetActorLocation(FVector(Next.X,Next.Y,GetActorLocation().Z),true);
                     const FVector2D After(GetActorLocation().X,GetActorLocation().Y);
@@ -503,7 +520,9 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
             UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] neutral_state seq=%d executorIdle=%d openWindows=%d"),Seq,Executor->IsIdle()?1:0,Executor->OpenWindowCount());
             UE_LOG(LogTemp,Display,TEXT("[CARD_DECISION] seq=%d attack=%d card=%s score=%g rangeCm=%g phase=%s"),Seq,AttacksDone+1,*Decision.MoveId.ToString(),Decision.Score,S.RangeCm,*S.PhaseId.ToString());
             UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] decision attack=%d chosen=%s score=%g range=%g phase=%s seq=%d"),AttacksDone+1,*Decision.MoveId.ToString(),Decision.Score,S.RangeCm,*S.PhaseId.ToString(),Seq);
-            if(!Executor->StartCard(Dependencies->Candidates[Decision.ChosenIndex].Card,S,Error)){Fail(Error);return;}
+            FRPGBossDecisionSnapshot StartSnapshot=S;if(Decision.Traces.IsValidIndex(Decision.ChosenIndex))StartSnapshot.ConeHoldSlackDegrees=Decision.Traces[Decision.ChosenIndex].ConeHoldSlackDegrees;   // AWR-004 fix (live long run): the start must see the same cone slack as the selection
+            if(!Executor->StartCard(Dependencies->Candidates[Decision.ChosenIndex].Card,StartSnapshot,Error)){Fail(Error);return;}
+            bFatigueFinishedCardSeen=false;
             Selector.NoteStarted(Decision.ChosenIndex,S.ClockSeconds);RepositionsInARow=0;
             KiteStreak=(P.AntiCheeseKiteRangeCm>0.f&&S.RangeCm>=double(P.AntiCheeseKiteRangeCm))?KiteStreak+1:0;HugStreak=(P.AntiCheeseHugRangeCm>0.f&&S.RangeCm<=double(P.AntiCheeseHugRangeCm))?HugStreak+1:0;
 #if !UE_BUILD_SHIPPING
@@ -519,7 +538,7 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
                 for(const FString& Part:Parts)ProofDrinkOffsets.Add(FCString::Atod(*Part));
                 UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] player_drinks_scheduled count=%d"),ProofDrinkOffsets.Num());
             }
-            if(ProofGStart<0.&&CVarBossProofPlayerGuard.GetValueOnGameThread()>0){ProofGStart=GetWorld()->GetTimeSeconds();UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] guard_hook_armed mode=%d seconds=%g"),CVarBossProofPlayerGuard.GetValueOnGameThread(),double(CVarBossProofPlayerGuardSeconds.GetValueOnGameThread()));}
+            if(ProofGStart<0.&&CVarBossProofPlayerGuard.GetValueOnGameThread()>0){ProofGStart=GetWorld()->GetTimeSeconds();const float RequestedPhase=CVarBossProofPlayerGuardPhaseSeconds.GetValueOnGameThread();const double PhaseLimit=double(std::numeric_limits<float>::max());const double Phase=FMath::IsFinite(RequestedPhase)?FMath::Clamp(double(RequestedPhase),-PhaseLimit,PhaseLimit):0.;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] guard_hook_armed mode=%d seconds=%g phaseSeconds=%g"),CVarBossProofPlayerGuard.GetValueOnGameThread(),double(CVarBossProofPlayerGuardSeconds.GetValueOnGameThread()),Phase);}
             if(ProofIFStart<0.&&CVarBossProofIFrameSweep.GetValueOnGameThread()>=0.f){ProofIFStart=GetWorld()->GetTimeSeconds();ProofIFPressAt=-1.;ProofIFProbes=0;bProofIFPressed=false;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] iframe_sweep_armed dodgeAtSeconds=%g"),double(CVarBossProofIFrameSweep.GetValueOnGameThread()));}
             if(ProofDodgeStart<0.&&!CVarBossProofPlayerDodge.GetValueOnGameThread().IsEmpty())
             {
@@ -560,6 +579,28 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
         }
         else if(!Executor->Start(S,Error)){Fail(Error);return;}
         bStartedMove=true;
+    }
+    if(bStartedMove&&Executor->DidFinish()&&Executor->IsClean())
+    {
+        const double Now=GetWorld()->GetTimeSeconds();
+        if(!bFatigueFinishedCardSeen)
+        {
+            bFatigueFinishedCardSeen=true;
+            if(Dependencies->Profile->FatigueFloor>0.f)
+            {
+                if(Executor->CurrentCardHadContact()) FatigueWhiffs=0; else ++FatigueWhiffs;
+                RPGBossFatigue::FConfig Fatigue;Fatigue.GraceWhiffs=Dependencies->Profile->FatigueGraceWhiffs;Fatigue.MinRateScale=Dependencies->Profile->FatigueFloor;
+                UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] fatigue whiffs=%d scale=%g"),FatigueWhiffs,RPGBossFatigue::RateScale(FatigueWhiffs,Fatigue));
+            }
+        }
+        if(PendingParryRecoverySeconds>0.)
+        {
+            ParryRecoveryUntil=Now+PendingParryRecoverySeconds;
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] parry_recovery grade=%d extra=%g"),PendingParryRecoveryGrade,PendingParryRecoverySeconds);
+            PendingParryRecoverySeconds=0.;PendingParryRecoveryGrade=0;
+        }
+        if(Now<ParryRecoveryUntil)return;
+        ParryRecoveryUntil=0.;
     }
     if(bComboPausing){if(GetWorld()->GetTimeSeconds()<ComboPauseUntil)return;StartComboCard();return;}
     if(bStartedMove&&bComboActive&&Executor->DidFinish()&&Executor->IsClean()&&HandleComboGate())return;
@@ -707,6 +748,7 @@ void ARPGFrameworkBossCharacter::TickOverlay()
     I.bWindowOpen=State==ERPGBossMoveModelState::Active;I.Phase=CurrentPhaseId.ToString();
     I.Range=FVector::Dist2D(GetActorLocation(),Target->GetActorLocation());
     I.Posture=Posture;I.PostureMax=P.PostureMax;I.Health=Health;I.MaxHealth=MaxHealth;I.bStaggered=bStaggered;I.bPhaseHold=bPhaseHold;
+    if(const URPGPlayerParry* Parry=Target->FindComponentByClass<URPGPlayerParry>()){I.bHasParryData=true;I.bParryWindowOpen=Parry->IsWindowOpen();I.LastParryGrade=Parry->LastGradeName();}
     const FString Line=RPGBossOverlay::Format(I);
     if(GEngine)GEngine->AddOnScreenDebugMessage(int32(GetUniqueID()&0x7fffffff),.1f,FColor::Yellow,TEXT("Boss: ")+Line);
     const double Now=GetWorld()->GetTimeSeconds();
@@ -759,7 +801,7 @@ bool ARPGFrameworkBossCharacter::HandleComboGate()
     {
         bComboActive=false;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_end reason=NextCardRefused detail=%s"),*Error);return true;   // the next tick decides with the selector
     }
-    Selector.NoteStarted(CardIndex,S.ClockSeconds);ComboHitsAtStart=Executor->AcceptedHits();ComboGuardedAtStart=Executor->GuardedHits();ComboParriedAtStart=Executor->ParriedHits();bStartedMove=true;
+    bFatigueFinishedCardSeen=false;Selector.NoteStarted(CardIndex,S.ClockSeconds);ComboHitsAtStart=Executor->AcceptedHits();ComboGuardedAtStart=Executor->GuardedHits();ComboParriedAtStart=Executor->ParriedHits();bStartedMove=true;
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_step node=%s move=%s depth=%d"),*ComboState.Node.ToString(),*Dependencies->Candidates[CardIndex].Card->Spec().MoveId.ToString(),ComboState.Depth);
     return true;
 }
@@ -775,7 +817,7 @@ void ARPGFrameworkBossCharacter::StartComboCard()
     {
         bComboActive=false;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_end reason=NextCardRefused detail=%s"),*Error);return;
     }
-    Selector.NoteStarted(CardIndex,S.ClockSeconds);ComboHitsAtStart=Executor->AcceptedHits();ComboGuardedAtStart=Executor->GuardedHits();ComboParriedAtStart=Executor->ParriedHits();bStartedMove=true;
+    bFatigueFinishedCardSeen=false;Selector.NoteStarted(CardIndex,S.ClockSeconds);ComboHitsAtStart=Executor->AcceptedHits();ComboGuardedAtStart=Executor->GuardedHits();ComboParriedAtStart=Executor->ParriedHits();bStartedMove=true;
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_step node=%s move=%s depth=%d"),*ComboState.Node.ToString(),*Dependencies->Candidates[CardIndex].Card->Spec().MoveId.ToString(),ComboState.Depth);
 }
 bool ARPGFrameworkBossCharacter::PlayF11Clip(UAnimSequence* Clip,int32 Loops)
@@ -822,7 +864,7 @@ bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& 
     double HP=0.; if (!ValidateTarget(HP)) {Error=TEXT("Framework.Boss.TargetHealth");return false;}
     if (!Executor->Rearm(NewGeneration,Error)) return false;
     const TCHAR* OldState=bDead?TEXT("Dead"):TEXT("Finished");
-    GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; StrafeStartedAt=-1.; StrafeLastTick=-1.; StrafeLastLog=-1.; StrafeDirFlip=1; StrafeStuck=RPGBossStuck::FStuck(); YawProbeSampleIndex=0; RepositionTurnStartedAt=-1.;RepositionLatch=RPGBossTrack::FTurnLatch(); bParryReactionPending=false; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;
+    GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; StrafeStartedAt=-1.; StrafeLastTick=-1.; StrafeLastLog=-1.; StrafeDirFlip=1; StrafeStuck=RPGBossStuck::FStuck(); YawProbeSampleIndex=0; RepositionTurnStartedAt=-1.;RepositionLatch=RPGBossTrack::FTurnLatch(); bParryReactionPending=false; PendingParryReactionScale=0.;PendingParryRecoverySeconds=ParryRecoveryUntil=0.;PendingParryRecoveryGrade=0;AggroBand=RPGBossAggro::EBand::Balanced;AggroDodgeTimes.Reset();FatigueWhiffs=0;bFatigueFinishedCardSeen=false; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;
     if (bHittable) Health=MaxHealth;
     Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; DodgeHistory=RPGBossTrack::FDodgeHistory(); bDodgeWasFast=false; DodgesSeen=0; ProofDodgeStart=-1.; ProofDodgesDone=0; Los=RPGBossTrack::FLosMemory(); bLosWalking=false; bDrinkWasPlaying=bFlaskPending=bFlaskKnown=false; FlaskPerceivedCount=0; ProofDrinkStart=-1.; ProofDrinksDone=0; KiteStreak=HugStreak=0; bComboPausing=false; ComboPendingCard=INDEX_NONE; bLeashed=bLeashAtCenter=false; ProofShiftStart=-1.; ProofShiftsDone=0; bBystanderSpawned=false; bTargetFaultInjected=false; ProofHitStart=-1.; ProofHitsDone=0; ResetBleed();
     Selector.Reset(); CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId; bPhaseTwoLatched=false;
@@ -839,7 +881,7 @@ void ARPGFrameworkBossCharacter::Die()
 {
     // Death: the attack in progress ends through the executor's abort (windows closed, owned montage stopped), movement stops, the encounter is over.
     if (bDead) return;
-    bDead=true; RepositionTurnStartedAt=-1.;RepositionLatch=RPGBossTrack::FTurnLatch();
+    bDead=true; RepositionTurnStartedAt=-1.;RepositionLatch=RPGBossTrack::FTurnLatch();PendingParryRecoverySeconds=ParryRecoveryUntil=0.;PendingParryRecoveryGrade=0;
     if(auto* AI=Cast<ARPGFrameworkBossController>(GetController()))AI->StopOwnedWalk();
     GetCharacterMovement()->StopMovementImmediately();GetCharacterMovement()->DisableMovement();
     Executor->Abort(TEXT("BossDead"));StopF11Clip();bStaggerAnimActive=bPhaseHold=false;
@@ -848,7 +890,7 @@ void ARPGFrameworkBossCharacter::Die()
 }
 void ARPGFrameworkBossCharacter::Fail(const FString& Error)
 {
-    if(bFailed)return;bFailed=true;RepositionTurnStartedAt=-1.;RepositionLatch=RPGBossTrack::FTurnLatch();
+    if(bFailed)return;bFailed=true;RepositionTurnStartedAt=-1.;RepositionLatch=RPGBossTrack::FTurnLatch();PendingParryRecoverySeconds=ParryRecoveryUntil=0.;PendingParryRecoveryGrade=0;
     if(auto* AI=Cast<ARPGFrameworkBossController>(GetController()))AI->StopOwnedWalk();
     GetCharacterMovement()->StopMovementImmediately();GetCharacterMovement()->DisableMovement();Executor->Abort(Error);StopF11Clip();
     UE_LOG(LogTemp,Error,TEXT("[FrameworkProof] ERROR token=%s bossInactive=1"),*Error);

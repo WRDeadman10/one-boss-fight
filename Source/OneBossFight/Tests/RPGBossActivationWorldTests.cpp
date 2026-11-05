@@ -7,6 +7,13 @@
 #include "Player/RPGBossLook.h"
 #include "Player/RPGBossCloseClipSwap.h"
 #include "Player/RPGBossDeath.h"
+#include "Player/RPGAttackTracker.h"
+#include "Audio/RPGFootsteps.h"
+#include "Audio/RPGBossMusic.h"
+#include "Player/RPGDamageResolver.h"
+#include "Player/RPGTraceGuard.h"
+#include "UI/RPGBossHud.h"
+#include "Player/RPGLegend.h"
 #include "Misc/AutomationTest.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -155,7 +162,8 @@ namespace ActivationWorldTests
 			TEXT("HealPunish.bEnabled"), TEXT("HealPunish.MinRange"), TEXT("HealPunish.MaxRange"), TEXT("HealPunish.Cooldown"), TEXT("HealPunish.Damage"), TEXT("HealPunish.FlightTime"), TEXT("HealPunish.MinSpeed"), TEXT("HealPunish.MaxSpeed"), TEXT("HealPunish.JavelinRadius"), TEXT("HealPunish.JavelinMaxRange"), TEXT("HealPunish.SpawnSockets"), TEXT("HealPunish.AimHeight"), TEXT("HealPunish.bRespondToHeal"), TEXT("HealPunish.bCancelJavelinsOnInterrupt"),
 			TEXT("Look.bEnabled"), TEXT("Look.Body"), TEXT("Look.Pieces"), TEXT("Look.Sword"), TEXT("Look.SwordSocket"),
 			TEXT("CloseClipSwap.CloseAbilityClassName"), TEXT("CloseClipSwap.AttackMontagesName"), TEXT("CloseClipSwap.A1Montage"), TEXT("CloseClipSwap.A3aMontage"), TEXT("CloseClipSwap.A3bMontage"),
-			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath")};
+			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath"),
+			TEXT("AttackTracker.Attacks"), TEXT("AttackTracker.bEnabled"), TEXT("AttackTracker.bVetoIllegalStarts"), TEXT("AttackTracker.BranchRange"), TEXT("AttackTracker.BranchConeDegrees")};
 	}
 
 	FRPGParityField MakeProductionField(const FString& Path)
@@ -319,7 +327,7 @@ namespace ActivationWorldTests
 	{
 		return TArray<FExpectedComponent>{{URPGBossStagger::StaticClass(), TEXT("RPGBossStagger")}, {URPGBossPhases::StaticClass(), TEXT("RPGBossPhases")}, {URPGBossEncounter::StaticClass(), TEXT("RPGBossEncounter")},
 			{URPGBossDormantWake::StaticClass(), TEXT("RPGBossDormantWake")}, {URPGBossPosture::StaticClass(), TEXT("RPGBossPosture")},
-			{URPGBossBleed::StaticClass(), TEXT("RPGBossBleed")} , {URPGBossLowSweep::StaticClass(), TEXT("RPGBossLowSweep")} , {URPGBossShockwave::StaticClass(), TEXT("RPGBossShockwave")} , {URPGBossHealPunish::StaticClass(), TEXT("RPGBossHealPunish")} , {URPGBossLook::StaticClass(), TEXT("RPGBossLook")} , {URPGBossCloseClipSwap::StaticClass(), TEXT("RPGBossCloseClipSwap")} , {URPGBossDeath::StaticClass(), TEXT("RPGBossDeath")}};
+			{URPGBossBleed::StaticClass(), TEXT("RPGBossBleed")} , {URPGBossLowSweep::StaticClass(), TEXT("RPGBossLowSweep")} , {URPGBossShockwave::StaticClass(), TEXT("RPGBossShockwave")} , {URPGBossHealPunish::StaticClass(), TEXT("RPGBossHealPunish")} , {URPGBossLook::StaticClass(), TEXT("RPGBossLook")} , {URPGBossCloseClipSwap::StaticClass(), TEXT("RPGBossCloseClipSwap")} , {URPGBossDeath::StaticClass(), TEXT("RPGBossDeath")}, {URPGAttackTracker::StaticClass(), TEXT("RPGAttackTracker")}, {URPGFootsteps::StaticClass(), TEXT("RPGFootsteps")}, {URPGBossMusic::StaticClass(), TEXT("RPGBossMusic")}, {URPGTraceGuard::StaticClass(), TEXT("RPGTraceGuard")}, {URPGBossHud::StaticClass(), TEXT("RPGBossHud")}, {URPGBossLegend::StaticClass(), TEXT("RPGBossLegend")}, {URPGDamageResolver::StaticClass(), TEXT("RPGDamageResolver")}};
 	}
 
 	bool NoManagedConsumer(const AActor* Actor)
@@ -520,13 +528,13 @@ bool FRPGActivationWorldSuccessTest::RunTest(const FString& Parameters)
 	{
 		auto Result = RPGBossActivation::ActivateWorld(F.Scope.World, F.Binding, F.MakeSelections(), ManifestHash());
 		if (!TestTrue(TEXT("world composition holds registered subset"), Result.Succeeded())) { return false; }
-		TestTrue(TEXT("caller owns artifact/content lease, not a registry token"), Result.IsHeld() && Result.Batch->GetOwnedComponentCount() == 24 && Result.Batch->GetPreflightPlan()->Content.Get() == Epoch.Get());
-		TestTrue(TEXT("exact ordered registrations"), Result.Registration.bSucceeded && Result.Registration.Registered.Num() == 24);
+		TestTrue(TEXT("caller owns artifact/content lease, not a registry token"), Result.IsHeld() && Result.Batch->GetOwnedComponentCount() == 38 && Result.Batch->GetPreflightPlan()->Content.Get() == Epoch.Get());
+		TestTrue(TEXT("exact ordered registrations"), Result.Registration.bSucceeded && Result.Registration.Registered.Num() == 38);
 		for (const UActorComponent* Component : Result.Batch->OwnedComponentsForTest())
 		{ TestTrue(TEXT("owned registered components never begun"), Component && Component->IsRegistered() && !Component->HasBegunPlay()); }
 		TestTrue(TEXT("target/context unchanged"), SameActorState(CaptureActor(F.TargetActor), Before.Actors[2]) && F.Capture().Bound == Before.Bound && F.Capture().Ready == Before.Ready);
 		const auto Release = Result.Release();
-		TestTrue(TEXT("explicit release clean, all24 destroyed, lease gone, world restored"), Release.IsClean() && Release.Destroyed == 24 && !Result.IsHeld() && !Result.Batch.IsValid() && SameWorld(F.Capture(), Before) && F.NoConsumers());
+		TestTrue(TEXT("explicit release clean, all 38 destroyed, lease gone, world restored"), Release.IsClean() && Release.Destroyed == 38 && !Result.IsHeld() && !Result.Batch.IsValid() && SameWorld(F.Capture(), Before) && F.NoConsumers());
 		const auto Again = Result.Release();
 		TestTrue(TEXT("repeat release empty"), Again.IsClean() && Again.Destroyed == 0);
 	}
@@ -600,7 +608,7 @@ bool FRPGActivationWorldRegistrationFailureTest::RunTest(const FString& Paramete
 		RPGBossActivation::FRegistrationFaultScope Fault(Ordinal);
 		auto Result = RPGBossActivation::ActivateWorld(F.Scope.World, F.Binding, F.MakeSelections(), ManifestHash());
 		TestTrue(TEXT("registration failure reports fallback and nested reason"), Fault.Fired() && Result.Outcome == ERPGWorldActivationOutcome::FallBackToLegacy && Result.Reason == FName(TEXT("ActivationWorld.RegistrationRejected")) && Result.Errors.ContainsByPredicate([](const FString& S) { return S.StartsWith(TEXT("Activation.InjectedFault")); }));
-		TestTrue(TEXT("actual ordinal and clean rollback result retained"), Result.Registration.Registered.Num() == Ordinal && Result.Registration.Cleanup.Destroyed == 24 && Result.Registration.Cleanup.IsClean());
+		TestTrue(TEXT("actual ordinal and clean rollback result retained"), Result.Registration.Registered.Num() == Ordinal && Result.Registration.Cleanup.Destroyed == 38 && Result.Registration.Cleanup.IsClean());
 		TestTrue(TEXT("no partial registered subset or artifact lease"), !Result.Batch.IsValid() && F.NoConsumers() && SameWorld(F.Capture(), Before));
 	}
 	return true;

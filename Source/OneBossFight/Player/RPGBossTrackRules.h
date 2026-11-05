@@ -86,11 +86,16 @@ namespace RPGBossTrack
      * RingTouches takes the front radius at both ends of ONE tick: the band covered during the tick is [FrontLo-Thickness, FrontHi], a continuous span, so consecutive ticks leave no gap (FrontHi of one tick is FrontLo of the next).
      * Dist = horizontal distance boss to target, TargetRadius = the target capsule radius, DzAbs = vertical feet-to-feet distance, Height = how high the wave reaches (a target that jumped above it is missed).
      */
-    inline double RingFront(double StartCm,double SpeedCmPerSecond,double SecondsIntoWindow){return StartCm+SpeedCmPerSecond*SecondsIntoWindow;}
+    inline double RingFront(double StartCm,double SpeedCmPerSecond,double SecondsIntoWindow)
+    {
+        if (!FMath::IsFinite(StartCm)||!FMath::IsFinite(SpeedCmPerSecond)||!FMath::IsFinite(SecondsIntoWindow)) return -1.;
+        const double Front=StartCm+SpeedCmPerSecond*SecondsIntoWindow;
+        return FMath::IsFinite(Front) && Front>=0. ? Front : -1.;
+    }
     inline bool RingTouches(double FrontLo,double FrontHi,double Thickness,double Dist,double TargetRadius,double DzAbs,double Height)
     {
         if (!FMath::IsFinite(FrontLo)||!FMath::IsFinite(FrontHi)||!FMath::IsFinite(Thickness)||!FMath::IsFinite(Dist)||!FMath::IsFinite(TargetRadius)||!FMath::IsFinite(DzAbs)||!FMath::IsFinite(Height)) return false;
-        if (FrontHi<FrontLo||DzAbs>Height) return false;
+        if (FrontLo<0.||FrontHi<0.||FrontHi<FrontLo||DzAbs>Height) return false;
         return Dist+TargetRadius>=FrontLo-Thickness && Dist-TargetRadius<=FrontHi;
     }
     /**
@@ -110,7 +115,12 @@ namespace RPGBossTrack
         if (bContact&&!bInterrupt&&FMath::IsFinite(ReleaseAtSeconds)) { S.bHeld=true; S.ReleaseAt=ReleaseAtSeconds; return EGrabEvent::Caught; }
         return EGrabEvent::None;
     }
-    inline double GroundedZ(double FloorZ,double CapsuleHalfHeight,double SkinCm){return FloorZ+CapsuleHalfHeight+SkinCm;}
+    inline double GroundedZ(double FloorZ,double CapsuleHalfHeight,double SkinCm)
+    {
+        if (!FMath::IsFinite(FloorZ)||!FMath::IsFinite(CapsuleHalfHeight)||!FMath::IsFinite(SkinCm)) return FMath::IsFinite(FloorZ) ? FloorZ : 0.;
+        const double Result=FloorZ+CapsuleHalfHeight+SkinCm;
+        return FMath::IsFinite(Result) ? Result : FloorZ;
+    }
     /**
      * BOSS-ANM-006 (bounded warp): the boss closes on the target during a warp window of the card, but never by more than WarpMaxDistanceCm / WarpMaxAngleDegrees IN TOTAL. Each tick covers the share of what is still needed
      * that this tick is of the time left in the window (so the warp ends exactly at the standoff when the budget allows), and never more than the budget still unspent: the sum of the steps cannot exceed the budget.

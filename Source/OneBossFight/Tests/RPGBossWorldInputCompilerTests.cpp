@@ -192,7 +192,7 @@ namespace WorldInputTests
 		ARPGEncounterBinding* SpawnBindingActor() const { return World ? World->SpawnActor<ARPGEncounterBinding>() : nullptr; }
 	};
 
-	/** The unique manifest paths the twelve combined boss-core plans read for a selected phase id, written out as independent literals (copied from DD14). Membership only. */
+	/** The unique manifest paths the thirteen combined boss-core plans read for a selected phase id, written out as independent literals (copied from DD14). Membership only. */
 	TArray<FString> AllRequiredPaths(FName PhaseId)
 	{
 		const FString Id = PhaseId.ToString();
@@ -216,7 +216,8 @@ namespace WorldInputTests
 			TEXT("HealPunish.bEnabled"), TEXT("HealPunish.MinRange"), TEXT("HealPunish.MaxRange"), TEXT("HealPunish.Cooldown"), TEXT("HealPunish.Damage"), TEXT("HealPunish.FlightTime"), TEXT("HealPunish.MinSpeed"), TEXT("HealPunish.MaxSpeed"), TEXT("HealPunish.JavelinRadius"), TEXT("HealPunish.JavelinMaxRange"), TEXT("HealPunish.SpawnSockets"), TEXT("HealPunish.AimHeight"), TEXT("HealPunish.bRespondToHeal"), TEXT("HealPunish.bCancelJavelinsOnInterrupt"),
 			TEXT("Look.bEnabled"), TEXT("Look.Body"), TEXT("Look.Pieces"), TEXT("Look.Sword"), TEXT("Look.SwordSocket"),
 			TEXT("CloseClipSwap.CloseAbilityClassName"), TEXT("CloseClipSwap.AttackMontagesName"), TEXT("CloseClipSwap.A1Montage"), TEXT("CloseClipSwap.A3aMontage"), TEXT("CloseClipSwap.A3bMontage"),
-			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath")};
+			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath"),
+			TEXT("AttackTracker.Attacks"), TEXT("AttackTracker.bEnabled"), TEXT("AttackTracker.bVetoIllegalStarts"), TEXT("AttackTracker.BranchRange"), TEXT("AttackTracker.BranchConeDegrees")};
 	}
 
 	/** A manifest row supplied by this fixture: it satisfies the production compiler's row shape and the preflight's membership check; it is not derived from any asset and carries no authority. */
@@ -389,7 +390,7 @@ namespace WorldInputTests
 	}
 
 	/** The reviewed instance names of the twelve managed consumers, written out independently. */
-	const TCHAR* const PlannedNames[12] = {TEXT("RPGBossStagger"), TEXT("RPGBossPhases"), TEXT("RPGBossEncounter"), TEXT("RPGBossDormantWake"), TEXT("RPGBossPosture"), TEXT("RPGBossBleed"), TEXT("RPGBossLowSweep"), TEXT("RPGBossShockwave"), TEXT("RPGBossHealPunish"), TEXT("RPGBossLook"), TEXT("RPGBossCloseClipSwap"), TEXT("RPGBossDeath")};
+	const TCHAR* const PlannedNames[13] = {TEXT("RPGBossStagger"), TEXT("RPGBossPhases"), TEXT("RPGBossEncounter"), TEXT("RPGBossDormantWake"), TEXT("RPGBossPosture"), TEXT("RPGBossBleed"), TEXT("RPGBossLowSweep"), TEXT("RPGBossShockwave"), TEXT("RPGBossHealPunish"), TEXT("RPGBossLook"), TEXT("RPGBossCloseClipSwap"), TEXT("RPGBossDeath"), TEXT("RPGAttackTracker")};
 
 	/** A populated output whose every part must be gone after a failure: the leases of a good output, a new encounter GUID and the LIVE world of the case (the good output may come from a world that no longer exists). */
 	FRPGHydrationPreflightInput MakeSentinel(const FRPGHydrationPreflightInput& Good, UWorld* LiveWorld)

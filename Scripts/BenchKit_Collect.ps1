@@ -13,7 +13,7 @@
 .EXAMPLE
   powershell -NoProfile -ExecutionPolicy Bypass -File Scripts\BenchKit_Collect.ps1
 #>
-$ErrorActionPreference = 'Continue'
+$ErrorActionPreference = 'Stop'
 $Kit = Split-Path -Parent $PSScriptRoot
 $Stamp = Get-Date -Format 'yyyyMMdd_HHmmss'
 $Work = Join-Path $env:TEMP "bench_collect_$Stamp"
@@ -50,7 +50,12 @@ foreach ($root in $roots) {
     if (Test-Path $root) {
         foreach ($dir in Get-ChildItem $root -Directory) {
             $target = Join-Path $Work (Join-Path 'runs' $dir.Name)
-            Copy-Item $dir.FullName $target -Recurse -Force
+            try { Copy-Item $dir.FullName $target -Recurse -Force -ErrorAction Stop }
+            catch { throw "Failed to copy run folder '$($dir.FullName)' to '$target': $($_.Exception.Message)" }
+            if (-not (Test-Path -LiteralPath $target -PathType Container)) { throw "Run folder copy did not produce '$target'." }
+            $sourceFiles = @(Get-ChildItem -LiteralPath $dir.FullName -Recurse -File).Count
+            $copiedFiles = @(Get-ChildItem -LiteralPath $target -Recurse -File).Count
+            if ($sourceFiles -ne $copiedFiles) { throw "Run folder '$($dir.FullName)' copied $copiedFiles of $sourceFiles files." }
             $n++
         }
     }
@@ -62,7 +67,10 @@ $py = Join-Path $Kit 'Scripts\SummarizeBenchmark.py'
 if (Test-Path $py) {
     $rootArgs = @()
     foreach ($root in $roots) { if (Test-Path $root) { $rootArgs += @('--root', $root) } }
-    (& python -I $py @rootArgs 2>&1 | Out-String) | Out-File (Join-Path $Work 'summary_table.txt') -Encoding utf8
+    $summaryOutput = (& python -I $py @rootArgs 2>&1 | Out-String)
+    $summaryExitCode = $LASTEXITCODE
+    $summaryOutput | Out-File (Join-Path $Work 'summary_table.txt') -Encoding utf8
+    if ($summaryExitCode -ne 0) { throw "SummarizeBenchmark.py failed with exit code $summaryExitCode; see $Work\summary_table.txt" }
 }
 
 # 4. the newest game log
@@ -82,6 +90,13 @@ Get-ChildItem (Join-Path $Kit 'Saved') -Filter 'smi_*.csv' -ErrorAction Silently
 Get-ChildItem (Join-Path $Kit 'Saved') -Filter 'perf_experiments_*.txt' -ErrorAction SilentlyContinue | ForEach-Object { Copy-Item $_.FullName $Work -Force }
 
 $zip = Join-Path (Split-Path -Parent $Kit) "bench_results_${env:COMPUTERNAME}_$Stamp.zip"
-Compress-Archive -Path (Join-Path $Work '*') -DestinationPath $zip -Force
+Compress-Archive -Path (Join-Path $Work '*') -DestinationPath $zip -Force -ErrorAction Stop
+if (-not (Test-Path -LiteralPath $zip -PathType Leaf)) { throw "Archive was not created: $zip" }
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$archive = [System.IO.Compression.ZipFile]::OpenRead($zip)
+try {
+    if ($archive.Entries.Count -eq 0) { throw "Archive contains no entries: $zip" }
+}
+finally { $archive.Dispose() }
 Write-Host "Results written to: $zip"
 Write-Host "Run folders: $n. Look at system_info.txt first: the session must be 'console' and the GPU must name the NVIDIA card."

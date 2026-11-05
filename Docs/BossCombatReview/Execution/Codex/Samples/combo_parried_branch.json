@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "root": "Root",
+  "maxDepth": 2,
+  "nodes": [
+    {
+      "id": "Root",
+      "moveId": "Opening",
+      "edges": [
+        {
+          "to": "ParryFollow",
+          "minRangeCm": 0,
+          "maxRangeCm": 500,
+          "maxAbsYawDegrees": 180,
+          "anyOutcome": false,
+          "outcome": "Parried",
+          "tempoPauseSeconds": 0
+        }
+      ]
+    },
+    { "id": "ParryFollow", "moveId": "FollowUp", "edges": [] }
+  ]
+}

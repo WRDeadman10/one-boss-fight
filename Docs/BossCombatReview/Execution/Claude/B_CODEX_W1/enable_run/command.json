@@ -1,0 +1,11 @@
+[
+    "C:\\UnrealProject\\OneBossFight\\OneBossFight.uproject",
+    "-ExecutePythonScript=\"C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_CODEX_W1\\enable_grade_scale.py\"",
+    "-unattended",
+    "-nosound",
+    "-nosplash",
+    "-abslog=C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_CODEX_W1\\enable_run\\editor_raw.log",
+    "-PyCmd",
+    "1",
+    "-nullrhi"
+]

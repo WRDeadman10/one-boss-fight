@@ -1,0 +1,278 @@
+{
+  "source": "Documentation/Boss/Morgott_82_Point_Combat_Reference/Elden Ring - Morgott, The Omen King Boss Fight.webm",
+  "source_sha256": "e0a069547c66c508d2bc56954dec358f6516b3e1bd649687dd03243715fd924a",
+  "fps": 59.9401,
+  "combat_zero_seconds": 105.0,
+  "restored": [
+    {
+      "priority": 8,
+      "ref_id": "REF_OmenCurseBurst_Phase2",
+      "frame": 5189,
+      "expected_source_time_s": 191.553075,
+      "file": "morgott_c0_05189.png",
+      "sha256": "928c81fc262f61f5b480670e9adea0d7a8fc55fedb5da90c163918bad738b7d8",
+      "bytes": 9828833
+    },
+    {
+      "priority": 8,
+      "ref_id": "REF_OmenCurseBurst_Phase2",
+      "frame": 5270,
+      "expected_source_time_s": 192.904425,
+      "file": "morgott_c0_05270.png",
+      "sha256": "a80263fef9952bddeca2e5b25699925f5c690d5dd71c6042e88610e4cc24b97b",
+      "bytes": 9943065
+    },
+    {
+      "priority": 8,
+      "ref_id": "REF_OmenCurseBurst_Phase2",
+      "frame": 5347,
+      "expected_source_time_s": 194.18904,
+      "file": "morgott_c0_05347.png",
+      "sha256": "84e1dc94dbab5f61f61c56be8b2db8291f0389ced94079a1785bc682d83f0b6c",
+      "bytes": 10338518
+    },
+    {
+      "priority": 8,
+      "ref_id": "REF_OmenCurseBurst_Phase2",
+      "frame": 5612,
+      "expected_source_time_s": 198.610121,
+      "file": "morgott_c0_05612.png",
+      "sha256": "c7bd10ed081910f1fba4612a7d7d6ed6919b867002ab89016b78762d9ee68876",
+      "bytes": 10825824
+    },
+    {
+      "priority": 8,
+      "ref_id": "REF_OmenCurseBurst_Phase2",
+      "frame": 5624,
+      "expected_source_time_s": 198.810321,
+      "file": "morgott_c0_05624.png",
+      "sha256": "0d789268bfc941761d231b509731affd87e04e6bbc341ae8712b69521354204e",
+      "bytes": 11001301
+    },
+    {
+      "priority": 8,
+      "ref_id": "REF_OmenCurseBurst_Phase2",
+      "frame": 5732,
+      "expected_source_time_s": 200.612119,
+      "file": "morgott_c0_05732.png",
+      "sha256": "1173f16377e1b46b4042ba8fc0744cc31d06e0f66818e1148cf80655e585a0ec",
+      "bytes": 9947493
+    },
+    {
+      "priority": 9,
+      "ref_id": "REF_MaceSlam_Sweep",
+      "frame": 1703,
+      "expected_source_time_s": 133.395014,
+      "file": "morgott_c0_01703.png",
+      "sha256": "d042deb32851bcfbb01aa8a3d40335b8cd35004ebdf0d2bf34ac785480be748b",
+      "bytes": 9518160
+    },
+    {
+      "priority": 9,
+      "ref_id": "REF_MaceSlam_Sweep",
+      "frame": 1787,
+      "expected_source_time_s": 134.796413,
+      "file": "morgott_c0_01787.png",
+      "sha256": "6d06bef9865a759763d14a5593ba05279c4138d68db3257ea2595d9a57bc11b6",
+      "bytes": 9597061
+    },
+    {
+      "priority": 9,
+      "ref_id": "REF_MaceSlam_Sweep",
+      "frame": 1796,
+      "expected_source_time_s": 134.946563,
+      "file": "morgott_c0_01796.png",
+      "sha256": "9d5a065b415b179eb8fc22603598cac6df09a180fd7c63bf83c8d86f16f5663d",
+      "bytes": 9492528
+    },
+    {
+      "priority": 9,
+      "ref_id": "REF_MaceSlam_Sweep",
+      "frame": 1801,
+      "expected_source_time_s": 135.02998,
+      "file": "morgott_c0_01801.png",
+      "sha256": "f627916d285bd045c377d3c46a305e7b5209069990ed10c9fb5acf9f6230c4c3",
+      "bytes": 9144951
+    },
+    {
+      "priority": 9,
+      "ref_id": "REF_MaceSlam_Sweep",
+      "frame": 1835,
+      "expected_source_time_s": 135.597213,
+      "file": "morgott_c0_01835.png",
+      "sha256": "efc69017b4a0137ca470db7a0472b35a6a70ecacbc6e2fe77e599cc049345b39",
+      "bytes": 9830219
+    },
+    {
+      "priority": 9,
+      "ref_id": "REF_MaceSlam_Sweep",
+      "frame": 1871,
+      "expected_source_time_s": 136.197812,
+      "file": "morgott_c0_01871.png",
+      "sha256": "b58b8c2eebafe863b6f9783f94d0a943356df928515d6e3c9c7ad886365b9f2e",
+      "bytes": 10571161
+    },
+    {
+      "priority": 10,
+      "ref_id": "REF_GapPounce_Close",
+      "frame": 3951,
+      "expected_source_time_s": 170.899123,
+      "file": "morgott_c0_03951.png",
+      "sha256": "b2b3806ef50833d1e9d23f341dbb459d6aa34ca8634dd40edcd173024aafe6bb",
+      "bytes": 11243113
+    },
+    {
+      "priority": 10,
+      "ref_id": "REF_GapPounce_Close",
+      "frame": 3981,
+      "expected_source_time_s": 171.399622,
+      "file": "morgott_c0_03981.png",
+      "sha256": "27afaa68329438f511453467dbc583f3464ba616e5f4160d9aec94a62686a896",
+      "bytes": 11523765
+    },
+    {
+      "priority": 10,
+      "ref_id": "REF_GapPounce_Close",
+      "frame": 4005,
+      "expected_source_time_s": 171.800022,
+      "file": "morgott_c0_04005.png",
+      "sha256": "e5ee3818e2851f68698fd4f9febcb87045890c73f287d1f9cb6a04e0a05b6284",
+      "bytes": 11590311
+    },
+    {
+      "priority": 10,
+      "ref_id": "REF_GapPounce_Close",
+      "frame": 4023,
+      "expected_source_time_s": 172.100322,
+      "file": "morgott_c0_04023.png",
+      "sha256": "c86cc0e6fc4efcabb5e811a4ace65409cb6277501659dd6243083e65944a18d4",
+      "bytes": 11545780
+    },
+    {
+      "priority": 10,
+      "ref_id": "REF_GapPounce_Close",
+      "frame": 4047,
+      "expected_source_time_s": 172.500722,
+      "file": "morgott_c0_04047.png",
+      "sha256": "179d5573931c0e37b6a9fa280a7354962485f6cc88c925d64e53e2ae68d55b05",
+      "bytes": 7847998
+    },
+    {
+      "priority": 10,
+      "ref_id": "REF_GapPounce_Close",
+      "frame": 4065,
+      "expected_source_time_s": 172.801021,
+      "file": "morgott_c0_04065.png",
+      "sha256": "fb16ad2a0b4545bee3a62834aea66cbffbc3e8f3674fc765e751bc25d857ccd8",
+      "bytes": 7358497
+    },
+    {
+      "priority": 1,
+      "ref_id": "REF_CurvedSwordCombo_Chain1",
+      "frame": 447,
+      "expected_source_time_s": 112.440762,
+      "file": "morgott_c0_00447.png",
+      "sha256": "6165b14ec1cbde64d97fb95cfa76ed107193f5647d7c5b955c36486f9f386bc3",
+      "bytes": 4954561
+    },
+    {
+      "priority": 1,
+      "ref_id": "REF_CurvedSwordCombo_Chain1",
+      "frame": 456,
+      "expected_source_time_s": 112.590912,
+      "file": "morgott_c0_00456.png",
+      "sha256": "f6349bf216d641829289830d5f423dbce28630287397e47b1ff9bf206fce1593",
+      "bytes": 4989219
+    },
+    {
+      "priority": 1,
+      "ref_id": "REF_CurvedSwordCombo_Chain1",
+      "frame": 465,
+      "expected_source_time_s": 112.741061,
+      "file": "morgott_c0_00465.png",
+      "sha256": "6ca18d2377b6e0b20fcfae56d00a24241eac548311cec660b0dd9a0cabeb85a5",
+      "bytes": 5363574
+    },
+    {
+      "priority": 1,
+      "ref_id": "REF_CurvedSwordCombo_Chain1",
+      "frame": 472,
+      "expected_source_time_s": 112.857845,
+      "file": "morgott_c0_00472.png",
+      "sha256": "f1b1a974f8978b3805144783bcad53870022fc760b6e1e9e27f847da60fb444e",
+      "bytes": 5649373
+    },
+    {
+      "priority": 1,
+      "ref_id": "REF_CurvedSwordCombo_Chain1",
+      "frame": 479,
+      "expected_source_time_s": 112.974628,
+      "file": "morgott_c0_00479.png",
+      "sha256": "b71971d574a97c317c868badd3e4fe5e984f68dd14a385d71409e691ab196f79",
+      "bytes": 5947601
+    },
+    {
+      "priority": 1,
+      "ref_id": "REF_CurvedSwordCombo_Chain1",
+      "frame": 500,
+      "expected_source_time_s": 113.324978,
+      "file": "morgott_c0_00500.png",
+      "sha256": "3f0c89e4a568b2be4025830b8e255cd554a9238e8a2b7b53b150583616e9f22a",
+      "bytes": 6025948
+    },
+    {
+      "priority": 6,
+      "ref_id": "REF_HolySwordRain_Setup",
+      "frame": 2381,
+      "expected_source_time_s": 144.706307,
+      "file": "morgott_c0_02381.png",
+      "sha256": "4c4f5a0eebd05b34ff7a799d33eb2e8bb8f5424173d1d8e511088672b1b1350e",
+      "bytes": 7388697
+    },
+    {
+      "priority": 6,
+      "ref_id": "REF_HolySwordRain_Setup",
+      "frame": 2423,
+      "expected_source_time_s": 145.407006,
+      "file": "morgott_c0_02423.png",
+      "sha256": "cd746b530de50f345d2d9c8ad4641eafd3be6477310e286da018ce2beb7182e3",
+      "bytes": 7037119
+    },
+    {
+      "priority": 6,
+      "ref_id": "REF_HolySwordRain_Setup",
+      "frame": 2566,
+      "expected_source_time_s": 147.792721,
+      "file": "morgott_c0_02566.png",
+      "sha256": "a67e3c7d6366de5f943eb2b2b154ca1cfd5745f649d0aa30c056fcb5943eb011",
+      "bytes": 6663575
+    },
+    {
+      "priority": 6,
+      "ref_id": "REF_HolySwordRain_Setup",
+      "frame": 2602,
+      "expected_source_time_s": 148.393321,
+      "file": "morgott_c0_02602.png",
+      "sha256": "868819d1be6fdd60abb6b1bc3f8b95a6753d6ce6e8bf4c1a45931b8bf2ac6c2a",
+      "bytes": 6980746
+    },
+    {
+      "priority": 6,
+      "ref_id": "REF_HolySwordRain_Setup",
+      "frame": 2620,
+      "expected_source_time_s": 148.693621,
+      "file": "morgott_c0_02620.png",
+      "sha256": "430bd11b7216ec5522ba86b06b7b15e40150e5e2b372a6fa0f05af2aaa87803a",
+      "bytes": 7248216
+    },
+    {
+      "priority": 6,
+      "ref_id": "REF_HolySwordRain_Setup",
+      "frame": 2818,
+      "expected_source_time_s": 151.996919,
+      "file": "morgott_c0_02818.png",
+      "sha256": "fb2df3c31c79430286013516b19fa978c19efe180808a0ebd80154a98b6a5564",
+      "bytes": 6994552
+    }
+  ]
+}

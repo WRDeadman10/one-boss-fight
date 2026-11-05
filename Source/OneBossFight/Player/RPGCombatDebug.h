@@ -108,8 +108,10 @@ private:
 	TObjectPtr<class UStaticMeshComponent> TestMeshComponent;
 
 protected:
+	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
 	double NextLog = 0.0;
+	TWeakObjectPtr<UActorComponent> TrackerTickPrerequisite;
 };

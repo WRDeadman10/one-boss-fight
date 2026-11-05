@@ -1,0 +1,3181 @@
+{
+  "description": "Static, source-cited native runtime defaults for the mapped typed fields. Rules not covered by these defaults remain NOT-COMPARABLE.",
+  "rules": [
+    {
+      "destination": "URPGBossStagger::StaggerSeconds",
+      "field_path": "StaggerPolicy.StaggerSeconds",
+      "legacy_value": 2.5,
+      "pattern": "definitions.boss.stagger_policy.stagger_seconds",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float StaggerSeconds = 2.5f;",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 36
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossStagger::FreezeAtPosition",
+      "field_path": "StaggerPolicy.FreezeAtPosition",
+      "legacy_value": 1.55,
+      "pattern": "definitions.boss.stagger_policy.freeze_at_position",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float FreezeAtPosition = 1.55f;",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 40
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossStagger::CriticalMultiplier",
+      "field_path": "StaggerPolicy.CriticalMultiplier",
+      "legacy_value": 2.5,
+      "pattern": "definitions.boss.stagger_policy.critical_multiplier",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float CriticalMultiplier = 2.5f;",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 44
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossStagger::RiposteRange",
+      "field_path": "StaggerPolicy.RiposteRange",
+      "legacy_value": 150.0,
+      "pattern": "definitions.boss.stagger_policy.riposte_range",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float RiposteRange = 150.f;",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 49
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossStagger::RiposteConeDegrees",
+      "field_path": "StaggerPolicy.RiposteConeDegrees",
+      "legacy_value": 120.0,
+      "pattern": "definitions.boss.stagger_policy.riposte_cone_degrees",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float RiposteConeDegrees = 120.f;",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 52
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossStagger::RiposteFacingDegrees",
+      "field_path": "StaggerPolicy.RiposteFacingDegrees",
+      "legacy_value": 120.0,
+      "pattern": "definitions.boss.stagger_policy.riposte_facing_degrees",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float RiposteFacingDegrees = 120.f;",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 56
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossStagger::RiposteArmSeconds",
+      "field_path": "StaggerPolicy.RiposteArmSeconds",
+      "legacy_value": 1.2,
+      "pattern": "definitions.boss.stagger_policy.riposte_arm_seconds",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float RiposteArmSeconds = 1.2f;",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 59
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossStagger::RipostePlayerStartGap",
+      "field_path": "StaggerPolicy.RipostePlayerStartGap",
+      "legacy_value": 150.0,
+      "pattern": "definitions.boss.stagger_policy.riposte_player_start_gap",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float RipostePlayerStartGap = 150.f;",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 80
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossStagger::RiposteAlignSeconds",
+      "field_path": "StaggerPolicy.RiposteAlignSeconds",
+      "legacy_value": 0.3,
+      "pattern": "definitions.boss.stagger_policy.riposte_align_seconds",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float RiposteAlignSeconds = 0.3f;",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 83
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossStagger::RiposteImpactSeconds",
+      "field_path": "StaggerPolicy.RiposteImpactSeconds",
+      "legacy_value": 0.8,
+      "pattern": "definitions.boss.stagger_policy.riposte_impact_seconds",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float RiposteImpactSeconds = 0.8f;",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 87
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossStagger::RiposteBaseDamage",
+      "field_path": "StaggerPolicy.RiposteBaseDamage",
+      "legacy_value": 40.0,
+      "pattern": "definitions.boss.stagger_policy.riposte_base_damage",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float RiposteBaseDamage = 40.f;",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 91
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossStagger::CooldownSeconds",
+      "field_path": "StaggerPolicy.CooldownSeconds",
+      "legacy_value": 0.0,
+      "pattern": "definitions.boss.stagger_policy.cooldown_seconds",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float CooldownSeconds = 0.f;",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 134
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossStagger::GetUpRate",
+      "field_path": "StaggerPolicy.GetUpRate",
+      "legacy_value": 0.6,
+      "pattern": "definitions.boss.stagger_policy.get_up_rate",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float GetUpRate = 0.6f;",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 173
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossStagger::bHoldPostureAtZero",
+      "field_path": "StaggerPolicy.bHoldPostureAtZero",
+      "legacy_value": true,
+      "pattern": "definitions.boss.stagger_policy.hold_posture_at_zero",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "bool bHoldPostureAtZero = true;",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 225
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossStagger::bUseRiposteClips",
+      "field_path": "StaggerProfile.bUseRiposteClips",
+      "legacy_value": true,
+      "pattern": "definitions.boss.stagger_profile.use_riposte_clips",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "bool bUseRiposteClips = true;",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 70
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossStagger::bCriticalOnEveryHit",
+      "field_path": "StaggerProfile.bCriticalOnEveryHit",
+      "legacy_value": false,
+      "pattern": "definitions.boss.stagger_profile.critical_on_every_hit",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "bool bCriticalOnEveryHit = false;",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 129
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossStagger::HitStunAbilityClassName",
+      "field_path": "StaggerProfile.HitStunAbilityClassName",
+      "legacy_value": "GA_GS_Boss_HitStun_C",
+      "pattern": "definitions.boss.stagger_profile.hit_stun_ability_class_name",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "FName HitStunAbilityClassName = TEXT(\"GA_GS_Boss_HitStun_C\");",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 152
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossStagger::FallMontage",
+      "field_path": "StaggerProfile.FallMontage",
+      "legacy_value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage",
+      "pattern": "definitions.boss.stagger_profile.fall_montage.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "FallMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage\")));",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+        "line": 58
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossStagger::GetUpMontage",
+      "field_path": "StaggerProfile.GetUpMontage",
+      "legacy_value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage",
+      "pattern": "definitions.boss.stagger_profile.get_up_montage.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "GetUpMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage\")));",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+        "line": 59
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossStagger::FallClip",
+      "field_path": "StaggerProfile.FallClip",
+      "legacy_value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall",
+      "pattern": "definitions.boss.stagger_profile.fall_clip.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "FallClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall\")));",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+        "line": 61
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossStagger::DownClip",
+      "field_path": "StaggerProfile.DownClip",
+      "legacy_value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown",
+      "pattern": "definitions.boss.stagger_profile.down_clip.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "DownClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown\")));",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+        "line": 62
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossStagger::RipostePlayerClip",
+      "field_path": "StaggerProfile.RipostePlayerClip",
+      "legacy_value": "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.AN_Riposte_Player_Front",
+      "pattern": "definitions.boss.stagger_profile.riposte_player_clip.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "RipostePlayerClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.AN_Riposte_Player_Front\")));",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+        "line": 63
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossStagger::RiposteBossClip",
+      "field_path": "StaggerProfile.RiposteBossClip",
+      "legacy_value": "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction",
+      "pattern": "definitions.boss.stagger_profile.riposte_boss_clip.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "RiposteBossClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction\")));",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+        "line": 64
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossStagger::ImmunityEffect",
+      "field_path": "StaggerProfile.ImmunityEffect",
+      "legacy_value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C",
+      "pattern": "definitions.boss.stagger_profile.immunity_effect.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "ImmunityEffect = TSoftClassPtr<UObject>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C\")));",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.cpp",
+        "line": 60
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossPhases::TransitionSeconds",
+      "field_path": "PhaseFlow.TransitionSeconds",
+      "legacy_value": 1.8,
+      "pattern": "definitions.boss.phase_flow.transition_seconds",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float TransitionSeconds = 1.8f;",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "line": 35
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossPhases::bUseRoarClip",
+      "field_path": "PhaseFlow.bUseRoarClip",
+      "legacy_value": true,
+      "pattern": "definitions.boss.phase_flow.use_roar_clip",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "bool bUseRoarClip = true;",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "line": 39
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossPhases::bPausePostureInTransition",
+      "field_path": "PhaseFlow.bPausePostureInTransition",
+      "legacy_value": true,
+      "pattern": "definitions.boss.phase_flow.pause_posture_in_transition",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "bool bPausePostureInTransition = true;",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "line": 113
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossPhases::bLockLeapUntilPhaseTwo",
+      "field_path": "PhaseFlow.bLockLeapUntilPhaseTwo",
+      "legacy_value": true,
+      "pattern": "definitions.boss.phase_flow.lock_leap_until_phase_two",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "bool bLockLeapUntilPhaseTwo = true;",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "line": 87
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossPhases::AttackAbilityPrefix",
+      "field_path": "PhaseFlow.AttackAbilityPrefix",
+      "legacy_value": "GA_GS_Boss_",
+      "pattern": "definitions.boss.phase_flow.attack_ability_prefix",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "FString AttackAbilityPrefix = TEXT(\"GA_GS_Boss_\");",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "line": 83
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossPhases::LeapAbilityTag",
+      "field_path": "PhaseFlow.LeapAbilityTag",
+      "legacy_value": "Ability.Melee.LeapAttack",
+      "pattern": "definitions.boss.phase_flow.leap_ability_tag",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "FName LeapAbilityTag = TEXT(\"Ability.Melee.LeapAttack\");",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "line": 90
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossPhases::bFireballEnabled",
+      "field_path": "Fireball.bFireballEnabled",
+      "legacy_value": false,
+      "pattern": "definitions.boss.fireball.fireball_enabled",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "bool bFireballEnabled = false;",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "line": 66
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossPhases::FireballAbility",
+      "field_path": "Fireball.FireballAbility",
+      "legacy_value": "/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C",
+      "pattern": "definitions.boss.fireball.fireball_ability.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "FireballAbility = TSoftClassPtr<UObject>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C\")));",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+        "line": 59
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossPhases::FireballCooldown",
+      "field_path": "Fireball.FireballCooldown",
+      "legacy_value": [
+        6.0,
+        10.0
+      ],
+      "pattern": "definitions.boss.fireball.fireball_cooldown",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "FVector2D FireballCooldown = FVector2D(6.f, 10.f);",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "line": 73
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossPhases::FireballMinRange",
+      "field_path": "Fireball.FireballMinRange",
+      "legacy_value": 500.0,
+      "pattern": "definitions.boss.fireball.fireball_min_range",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float FireballMinRange = 500.f;",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "line": 76
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossPhases::FireballMaxRange",
+      "field_path": "Fireball.FireballMaxRange",
+      "legacy_value": 1800.0,
+      "pattern": "definitions.boss.fireball.fireball_max_range",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float FireballMaxRange = 1800.f;",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "line": 79
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossPhases::RoarClip",
+      "field_path": "PhaseDependencies.RoarClip",
+      "legacy_value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar",
+      "pattern": "definitions.boss.phase_dependencies.roar_clip.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "RoarClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar\")));",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+        "line": 56
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossPhases::TransitionMontage",
+      "field_path": "PhaseDependencies.TransitionMontage",
+      "legacy_value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage",
+      "pattern": "definitions.boss.phase_dependencies.transition_montage.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "TransitionMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage\")));",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+        "line": 57
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossPhases::ImmunityEffect",
+      "field_path": "PhaseDependencies.ImmunityEffect",
+      "legacy_value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C",
+      "pattern": "definitions.boss.phase_dependencies.immunity_effect.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "ImmunityEffect = TSoftClassPtr<UObject>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C\")));",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.cpp",
+        "line": 58
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossEncounter::BossMaxHealth",
+      "field_path": "Stats.MaxHealth",
+      "legacy_value": 2000.0,
+      "pattern": "definitions.boss.stats.max_health",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float BossMaxHealth = 2000.f;",
+        "file": "Source/OneBossFight/Player/RPGBossEncounter.h",
+        "line": 42
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossEncounter::GateRadius",
+      "field_path": "EncounterPolicy.GateRadius",
+      "legacy_value": 1200.0,
+      "pattern": "definitions.boss.encounter_policy.gate_radius",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float GateRadius = 1200.f;",
+        "file": "Source/OneBossFight/Player/RPGBossEncounter.h",
+        "line": 30
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossEncounter::bResetOnPlayerRespawn",
+      "field_path": "EncounterPolicy.bResetOnPlayerRespawn",
+      "legacy_value": true,
+      "pattern": "definitions.boss.encounter_policy.reset_on_player_respawn",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "bool bResetOnPlayerRespawn = true;",
+        "file": "Source/OneBossFight/Player/RPGBossEncounter.h",
+        "line": 38
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossDormantWake::DormantClip",
+      "field_path": "DormantWake.DormantClip",
+      "legacy_value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.AN_Boss01_DormantIdle",
+      "pattern": "definitions.boss.dormant_wake.dormant_clip.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "DormantClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.AN_Boss01_DormantIdle\")));",
+        "file": "Source/OneBossFight/Player/RPGBossDormantWake.cpp",
+        "line": 20
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossDormantWake::WakeClip",
+      "field_path": "DormantWake.WakeClip",
+      "legacy_value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_Wake.AN_Boss01_Wake",
+      "pattern": "definitions.boss.dormant_wake.wake_clip.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "WakeClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_Wake.AN_Boss01_Wake\")));",
+        "file": "Source/OneBossFight/Player/RPGBossDormantWake.cpp",
+        "line": 21
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossPosture::PostureMax",
+      "field_path": "Stats.MaxPosture",
+      "legacy_value": 100.0,
+      "pattern": "definitions.boss.stats.max_posture",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float PostureMax = 100.f;",
+        "file": "Source/OneBossFight/Player/RPGBossPosture.h",
+        "line": 31
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossPosture::RegenDelaySeconds",
+      "field_path": "Stats.PostureRegenDelay",
+      "legacy_value": 6.0,
+      "pattern": "definitions.boss.stats.posture_regen_delay",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float RegenDelaySeconds = 6.f;",
+        "file": "Source/OneBossFight/Player/RPGBossPosture.h",
+        "line": 35
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossPosture::RegenPerSecond",
+      "field_path": "Stats.PostureRegenRate",
+      "legacy_value": 13.0,
+      "pattern": "definitions.boss.stats.posture_regen_rate",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float RegenPerSecond = 13.f;",
+        "file": "Source/OneBossFight/Player/RPGBossPosture.h",
+        "line": 39
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossBleed::InitialThreshold",
+      "field_path": "Bleed.InitialThreshold",
+      "legacy_value": 100.0,
+      "pattern": "definitions.boss.bleed.initial_threshold",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float InitialThreshold = 100.f;",
+        "file": "Source/OneBossFight/Player/RPGBossBleed.h",
+        "line": 30
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossBleed::ThresholdIncrease",
+      "field_path": "Bleed.ThresholdIncrease",
+      "legacy_value": 20.0,
+      "pattern": "definitions.boss.bleed.threshold_increase",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float ThresholdIncrease = 20.f;",
+        "file": "Source/OneBossFight/Player/RPGBossBleed.h",
+        "line": 34
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossBleed::ThresholdMax",
+      "field_path": "Bleed.ThresholdMax",
+      "legacy_value": 200.0,
+      "pattern": "definitions.boss.bleed.threshold_max",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float ThresholdMax = 200.f;",
+        "file": "Source/OneBossFight/Player/RPGBossBleed.h",
+        "line": 38
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossBleed::HpFraction",
+      "field_path": "Bleed.HpFraction",
+      "legacy_value": 0.03,
+      "pattern": "definitions.boss.bleed.hp_fraction",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float HpFraction = 0.03f;",
+        "file": "Source/OneBossFight/Player/RPGBossBleed.h",
+        "line": 42
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossBleed::EffectHeight",
+      "field_path": "Bleed.EffectHeight",
+      "legacy_value": 170.0,
+      "pattern": "definitions.boss.bleed.effect_height",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float EffectHeight = 170.f;",
+        "file": "Source/OneBossFight/Player/RPGBossBleed.h",
+        "line": 50
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossBleed::ProcEffect",
+      "field_path": "Bleed.ProcEffect",
+      "legacy_value": "/Game/BloodPack/Hit/Niagara/NS_BulletHit_Med.NS_BulletHit_Med",
+      "pattern": "definitions.boss.bleed.proc_effect.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "ProcEffect = TSoftObjectPtr<UNiagaraSystem>(FSoftObjectPath(TEXT(\"/Game/BloodPack/Hit/Niagara/NS_BulletHit_Med.NS_BulletHit_Med\")));",
+        "file": "Source/OneBossFight/Player/RPGBossBleed.cpp",
+        "line": 27
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossBleed::ProcSound",
+      "field_path": "Bleed.ProcSound",
+      "legacy_value": "/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/A_Guardian_ImpactL_Cue.A_Guardian_ImpactL_Cue",
+      "pattern": "definitions.boss.bleed.proc_sound.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "ProcSound = TSoftObjectPtr<USoundBase>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/A_Guardian_ImpactL_Cue.A_Guardian_ImpactL_Cue\")));",
+        "file": "Source/OneBossFight/Player/RPGBossBleed.cpp",
+        "line": 28
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossLowSweep::bEnabled",
+      "field_path": "LowSweep.bEnabled",
+      "legacy_value": true,
+      "pattern": "definitions.boss.low_sweep.enabled",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "bool bEnabled = true;",
+        "file": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+        "line": 29
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossLowSweep::MoveId",
+      "field_path": "LowSweep.MoveId",
+      "legacy_value": "A4",
+      "pattern": "definitions.boss.low_sweep.move_id",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "FName MoveId = TEXT(\"A4\");",
+        "file": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+        "line": 33
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossLowSweep::Damage",
+      "field_path": "LowSweep.Damage",
+      "legacy_value": 20.0,
+      "pattern": "definitions.boss.low_sweep.damage",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float Damage = 20.f;",
+        "file": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+        "line": 37
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossLowSweep::Reach",
+      "field_path": "LowSweep.Reach",
+      "legacy_value": 380.0,
+      "pattern": "definitions.boss.low_sweep.reach",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float Reach = 380.f;",
+        "file": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+        "line": 41
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossLowSweep::InnerRadius",
+      "field_path": "LowSweep.InnerRadius",
+      "legacy_value": 60.0,
+      "pattern": "definitions.boss.low_sweep.inner_radius",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float InnerRadius = 60.f;",
+        "file": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+        "line": 44
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossLowSweep::BladeHeight",
+      "field_path": "LowSweep.BladeHeight",
+      "legacy_value": 40.0,
+      "pattern": "definitions.boss.low_sweep.blade_height",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float BladeHeight = 40.f;",
+        "file": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+        "line": 48
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossLowSweep::SweepFromDegrees",
+      "field_path": "LowSweep.SweepFromDegrees",
+      "legacy_value": 90.0,
+      "pattern": "definitions.boss.low_sweep.sweep_from_degrees",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float SweepFromDegrees = 90.f;",
+        "file": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+        "line": 52
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossShockwave::bEnabled",
+      "field_path": "Shockwave.bEnabled",
+      "legacy_value": true,
+      "pattern": "definitions.boss.shockwave.enabled",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "bool bEnabled = true;",
+        "file": "Source/OneBossFight/Player/RPGBossShockwave.h",
+        "line": 30
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossShockwave::MoveId",
+      "field_path": "Shockwave.MoveId",
+      "legacy_value": "A6",
+      "pattern": "definitions.boss.shockwave.move_id",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "FName MoveId = TEXT(\"A6\");",
+        "file": "Source/OneBossFight/Player/RPGBossShockwave.h",
+        "line": 34
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossShockwave::Damage",
+      "field_path": "Shockwave.Damage",
+      "legacy_value": 48.0,
+      "pattern": "definitions.boss.shockwave.damage",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float Damage = 48.f;",
+        "file": "Source/OneBossFight/Player/RPGBossShockwave.h",
+        "line": 39
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossShockwave::StartRadius",
+      "field_path": "Shockwave.StartRadius",
+      "legacy_value": 200.0,
+      "pattern": "definitions.boss.shockwave.start_radius",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float StartRadius = 200.f;",
+        "file": "Source/OneBossFight/Player/RPGBossShockwave.h",
+        "line": 42
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossShockwave::MaxRadius",
+      "field_path": "Shockwave.MaxRadius",
+      "legacy_value": 1100.0,
+      "pattern": "definitions.boss.shockwave.max_radius",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float MaxRadius = 1100.f;",
+        "file": "Source/OneBossFight/Player/RPGBossShockwave.h",
+        "line": 45
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossShockwave::Speed",
+      "field_path": "Shockwave.Speed",
+      "legacy_value": 1000.0,
+      "pattern": "definitions.boss.shockwave.speed",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float Speed = 1000.f;",
+        "file": "Source/OneBossFight/Player/RPGBossShockwave.h",
+        "line": 49
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossShockwave::Thickness",
+      "field_path": "Shockwave.Thickness",
+      "legacy_value": 180.0,
+      "pattern": "definitions.boss.shockwave.thickness",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float Thickness = 180.f;",
+        "file": "Source/OneBossFight/Player/RPGBossShockwave.h",
+        "line": 53
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossShockwave::JumpClearance",
+      "field_path": "Shockwave.JumpClearance",
+      "legacy_value": 50.0,
+      "pattern": "definitions.boss.shockwave.jump_clearance",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float JumpClearance = 50.f;",
+        "file": "Source/OneBossFight/Player/RPGBossShockwave.h",
+        "line": 57
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossHealPunish::bEnabled",
+      "field_path": "HealPunish.bEnabled",
+      "legacy_value": true,
+      "pattern": "definitions.boss.heal_punish.enabled",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "bool bEnabled = true;",
+        "file": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+        "line": 33
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossHealPunish::MinRange",
+      "field_path": "HealPunish.MinRange",
+      "legacy_value": 400.0,
+      "pattern": "definitions.boss.heal_punish.min_range",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float MinRange = 400.f;",
+        "file": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+        "line": 37
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossHealPunish::MaxRange",
+      "field_path": "HealPunish.MaxRange",
+      "legacy_value": 1000.0,
+      "pattern": "definitions.boss.heal_punish.max_range",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float MaxRange = 1000.f;",
+        "file": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+        "line": 40
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossHealPunish::Cooldown",
+      "field_path": "HealPunish.Cooldown",
+      "legacy_value": 4.0,
+      "pattern": "definitions.boss.heal_punish.cooldown",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float Cooldown = 4.f;",
+        "file": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+        "line": 44
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossHealPunish::Damage",
+      "field_path": "HealPunish.Damage",
+      "legacy_value": 12.0,
+      "pattern": "definitions.boss.heal_punish.damage",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float Damage = 12.f;",
+        "file": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+        "line": 48
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossHealPunish::FlightTime",
+      "field_path": "HealPunish.FlightTime",
+      "legacy_value": 1.2,
+      "pattern": "definitions.boss.heal_punish.flight_time",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float FlightTime = 1.2f;",
+        "file": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+        "line": 54
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossHealPunish::MinSpeed",
+      "field_path": "HealPunish.MinSpeed",
+      "legacy_value": 450.0,
+      "pattern": "definitions.boss.heal_punish.min_speed",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float MinSpeed = 450.f;",
+        "file": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+        "line": 57
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossHealPunish::MaxSpeed",
+      "field_path": "HealPunish.MaxSpeed",
+      "legacy_value": 2500.0,
+      "pattern": "definitions.boss.heal_punish.max_speed",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float MaxSpeed = 2500.f;",
+        "file": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+        "line": 60
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossHealPunish::JavelinRadius",
+      "field_path": "HealPunish.JavelinRadius",
+      "legacy_value": 25.0,
+      "pattern": "definitions.boss.heal_punish.javelin_radius",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float JavelinRadius = 25.f;",
+        "file": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+        "line": 65
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossHealPunish::JavelinMaxRange",
+      "field_path": "HealPunish.JavelinMaxRange",
+      "legacy_value": 3000.0,
+      "pattern": "definitions.boss.heal_punish.javelin_max_range",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float JavelinMaxRange = 3000.f;",
+        "file": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+        "line": 68
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossHealPunish::SpawnSockets",
+      "field_path": "HealPunish.SpawnSockets",
+      "legacy_value": [
+        "JavelinSpawn",
+        "hand_l"
+      ],
+      "pattern": "definitions.boss.heal_punish.spawn_sockets*",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "TArray<FName> SpawnSockets = {TEXT(\"JavelinSpawn\"), TEXT(\"hand_l\")};",
+        "file": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+        "line": 72
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossHealPunish::AimHeight",
+      "field_path": "HealPunish.AimHeight",
+      "legacy_value": 100.0,
+      "pattern": "definitions.boss.heal_punish.aim_height",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float AimHeight = 100.f;",
+        "file": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+        "line": 76
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossHealPunish::bRespondToHeal",
+      "field_path": "HealPunish.bRespondToHeal",
+      "legacy_value": true,
+      "pattern": "definitions.boss.heal_punish.respond_to_heal",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "bool bRespondToHeal = true;",
+        "file": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+        "line": 80
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossHealPunish::bCancelJavelinsOnInterrupt",
+      "field_path": "HealPunish.bCancelJavelinsOnInterrupt",
+      "legacy_value": true,
+      "pattern": "definitions.boss.heal_punish.cancel_javelins_on_interrupt",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "bool bCancelJavelinsOnInterrupt = true;",
+        "file": "Source/OneBossFight/Player/RPGBossHealPunish.h",
+        "line": 144
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossLook::bEnabled",
+      "field_path": "Look.bEnabled",
+      "legacy_value": true,
+      "pattern": "definitions.boss.look.enabled",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "bool bEnabled = true;",
+        "file": "Source/OneBossFight/Player/RPGBossLook.h",
+        "line": 30
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossLook::Body",
+      "field_path": "Look.Body",
+      "legacy_value": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body",
+      "pattern": "definitions.boss.look.body.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "Body = TSoftObjectPtr<USkeletalMesh>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body\")));",
+        "file": "Source/OneBossFight/Player/RPGBossLook.cpp",
+        "line": 17
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossLook::Pieces",
+      "field_path": "Look.Pieces",
+      "pattern": "definitions.boss.look.pieces*",
+      "reason": "The selected mesh-piece array augments the pack boss mesh. Source does not capture the effective legacy Blueprint skeletal mesh component list, so comparing the C++ empty-array default would be unsafe.",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "TArray<TSoftObjectPtr<USkeletalMesh>> Pieces;",
+        "file": "Source/OneBossFight/Player/RPGBossLook.h",
+        "line": 37
+      },
+      "status": "not_comparable"
+    },
+        {
+      "destination": "URPGBossLook::Sword",
+      "field_path": "Look.Sword",
+      "legacy_value": "/Game/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.SM_Boss01_Greatsword",
+      "pattern": "definitions.boss.look.sword.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "Sword = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.SM_Boss01_Greatsword\")));",
+        "file": "Source/OneBossFight/Player/RPGBossLook.cpp",
+        "line": 23
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossLook::SwordSocket",
+      "field_path": "Look.SwordSocket",
+      "legacy_value": "HeavySwordSocket_R",
+      "pattern": "definitions.boss.look.sword_socket",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "FName SwordSocket = TEXT(\"HeavySwordSocket_R\");",
+        "file": "Source/OneBossFight/Player/RPGBossLook.h",
+        "line": 44
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossCloseClipSwap::CloseAbilityClassName",
+      "field_path": "CloseClipSwap.CloseAbilityClassName",
+      "legacy_value": "GA_GS_Boss_CloseAttack_C",
+      "pattern": "definitions.boss.close_clip_swap.close_ability_class_name",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "FName CloseAbilityClassName = TEXT(\"GA_GS_Boss_CloseAttack_C\");",
+        "file": "Source/OneBossFight/Player/RPGBossCloseClipSwap.h",
+        "line": 26
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossCloseClipSwap::AttackMontagesName",
+      "field_path": "CloseClipSwap.AttackMontagesName",
+      "legacy_value": "AttackMontages",
+      "pattern": "definitions.boss.close_clip_swap.attack_montages_name",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "FName AttackMontagesName = TEXT(\"AttackMontages\");",
+        "file": "Source/OneBossFight/Player/RPGBossCloseClipSwap.h",
+        "line": 29
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossCloseClipSwap::A1Montage",
+      "field_path": "CloseClipSwap.A1Montage",
+      "legacy_value": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1",
+      "pattern": "definitions.boss.close_clip_swap.a1_montage.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "A1Montage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1\")));",
+        "file": "Source/OneBossFight/Player/RPGBossCloseClipSwap.cpp",
+        "line": 43
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossCloseClipSwap::A3aMontage",
+      "field_path": "CloseClipSwap.A3aMontage",
+      "legacy_value": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a",
+      "pattern": "definitions.boss.close_clip_swap.a3a_montage.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "A3aMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a\")));",
+        "file": "Source/OneBossFight/Player/RPGBossCloseClipSwap.cpp",
+        "line": 44
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossCloseClipSwap::A3bMontage",
+      "field_path": "CloseClipSwap.A3bMontage",
+      "legacy_value": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b",
+      "pattern": "definitions.boss.close_clip_swap.a3b_montage.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "A3bMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b\")));",
+        "file": "Source/OneBossFight/Player/RPGBossCloseClipSwap.cpp",
+        "line": 45
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossDeath::DeathMode",
+      "field_path": "Death.DeathMode",
+      "legacy_value": "OwnClip",
+      "pattern": "definitions.boss.death.death_mode",
+      "runtime_value_basis": "legacy attach route setter (native property default is overridden)",
+      "source": {
+        "excerpt": "URPGBossDeath::Attach(Pawn, ERPGBossDeathMode::OwnClip); // the death clip (G2-9): the component plays AN_Boss01_DeathLegend itself, holds the pose and keeps the pack's ragdoll off (the pack's ragdoll ability ignores DeathMontages: probe 2026-10-22, DEATH_CLIP_NOTES.md)",
+        "file": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+        "line": 692
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossDeath::DeathClip",
+      "field_path": "Death.DeathClip",
+      "legacy_value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_DeathLegend.AN_Boss01_DeathLegend",
+      "pattern": "definitions.boss.death.death_clip.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "DeathClip = TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_DeathLegend.AN_Boss01_DeathLegend\")));",
+        "file": "Source/OneBossFight/Player/RPGBossDeath.cpp",
+        "line": 37
+      },
+      "status": "comparable"
+    },
+        {
+      "destination": "URPGBossDeath::DeathMontage",
+      "field_path": "Death.DeathMontage",
+      "legacy_value": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.AM_Boss01_DeathLegend",
+      "pattern": "definitions.boss.death.death_montage.object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "DeathMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.AM_Boss01_DeathLegend\")));",
+        "file": "Source/OneBossFight/Player/RPGBossDeath.cpp",
+        "line": 38
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossDeath::PackDeathAbilityClassName",
+      "field_path": "Death.PackDeathAbilityClassName",
+      "legacy_value": "GA_EnemyRagdollDeath_C",
+      "pattern": "definitions.boss.death.pack_death_ability_class_name",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "FName PackDeathAbilityClassName = TEXT(\"GA_EnemyRagdollDeath_C\");",
+        "file": "Source/OneBossFight/Player/RPGBossDeath.h",
+        "line": 63
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossDeath::PackDeathMontagesName",
+      "field_path": "Death.PackDeathMontagesName",
+      "legacy_value": "DeathMontages",
+      "pattern": "definitions.boss.death.pack_death_montages_name",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "FName PackDeathMontagesName = TEXT(\"DeathMontages\");",
+        "file": "Source/OneBossFight/Player/RPGBossDeath.h",
+        "line": 66
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossDeath::PackPollSeconds",
+      "field_path": "Death.PackPollSeconds",
+      "legacy_value": 1.0,
+      "pattern": "definitions.boss.death.pack_poll_seconds",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float PackPollSeconds = 1.f;",
+        "file": "Source/OneBossFight/Player/RPGBossDeath.h",
+        "line": 70
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossDeath::PackEndTimeMultiplier",
+      "field_path": "Death.PackEndTimeMultiplier",
+      "legacy_value": 0.0,
+      "pattern": "definitions.boss.death.pack_end_time_multiplier",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float PackEndTimeMultiplier = 0.f;",
+        "file": "Source/OneBossFight/Player/RPGBossDeath.h",
+        "line": 74
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossDeath::HoldAtSeconds",
+      "field_path": "Death.HoldAtSeconds",
+      "legacy_value": 3.0,
+      "pattern": "definitions.boss.death.hold_at_seconds",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float HoldAtSeconds = 3.f;",
+        "file": "Source/OneBossFight/Player/RPGBossDeath.h",
+        "line": 78
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossDeath::DyingSeconds",
+      "field_path": "Death.DyingSeconds",
+      "legacy_value": 2.5,
+      "pattern": "definitions.boss.death.dying_seconds",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float DyingSeconds = 2.5f;",
+        "file": "Source/OneBossFight/Player/RPGBossDeath.h",
+        "line": 82
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossDeath::BlendInSeconds",
+      "field_path": "Death.BlendInSeconds",
+      "legacy_value": 0.1,
+      "pattern": "definitions.boss.death.blend_in_seconds",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float BlendInSeconds = 0.1f;",
+        "file": "Source/OneBossFight/Player/RPGBossDeath.h",
+        "line": 85
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossDeath::MaxClipRestarts",
+      "field_path": "Death.MaxClipRestarts",
+      "legacy_value": 8,
+      "pattern": "definitions.boss.death.max_clip_restarts",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "int32 MaxClipRestarts = 8;",
+        "file": "Source/OneBossFight/Player/RPGBossDeath.h",
+        "line": 89
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossDeath::bGuardPackDeath",
+      "field_path": "Death.bGuardPackDeath",
+      "legacy_value": false,
+      "pattern": "definitions.boss.death.guard_pack_death",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "bool bGuardPackDeath = false;",
+        "file": "Source/OneBossFight/Player/RPGBossDeath.h",
+        "line": 93
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossPhases::PhaseTwoHealthFraction",
+      "field_path": "Phases[PhaseTwo].entry_health_fraction",
+      "legacy_value": 0.6,
+      "pattern": "definitions.boss.phases[PhaseTwo].entry_health_fraction",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float PhaseTwoHealthFraction = 0.6f; // Master Design Freeze 30.1 and 36: phase two starts on the first crossing to 60 % of health or below",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "line": 31
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossPhases::MovementScale",
+      "field_path": "Phases[PhaseTwo].speed_multiplier",
+      "legacy_value": 1.2,
+      "pattern": "definitions.boss.phases[PhaseTwo].speed_multiplier",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float MovementScale = 1.2f;",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "line": 55
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossPhases::AttackRateScale",
+      "field_path": "Phases[PhaseTwo].rate_multiplier",
+      "legacy_value": 1.2,
+      "pattern": "definitions.boss.phases[PhaseTwo].rate_multiplier",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float AttackRateScale = 1.2f;",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "line": 58
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossPhases::DamageScale",
+      "field_path": "Phases[PhaseTwo].attack_multiplier",
+      "legacy_value": 1.25,
+      "pattern": "definitions.boss.phases[PhaseTwo].attack_multiplier",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float DamageScale = 1.25f;",
+        "file": "Source/OneBossFight/Player/RPGBossPhases.h",
+        "line": 62
+      },
+      "status": "comparable"
+    },
+    {
+      "pattern": "definitions.boss.attack_tracker.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+    {
+      "pattern": "definitions.boss.bleed.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+    {
+      "pattern": "definitions.boss.close_clip_swap.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+    {
+      "pattern": "definitions.boss.death.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+    {
+      "pattern": "definitions.boss.dormant_wake.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+    {
+      "pattern": "definitions.boss.encounter_policy.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+    {
+      "pattern": "definitions.boss.fireball.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+    {
+      "pattern": "definitions.boss.heal_punish.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+    {
+      "pattern": "definitions.boss.look.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+    {
+      "pattern": "definitions.boss.low_sweep.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+    {
+      "pattern": "definitions.boss.phase_dependencies.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+    {
+      "pattern": "definitions.boss.phase_flow.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+    {
+      "pattern": "definitions.boss.phases.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+    {
+      "pattern": "definitions.boss.shockwave.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+    {
+      "pattern": "definitions.boss.stagger_policy.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+    {
+      "pattern": "definitions.boss.stagger_profile.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+    {
+      "pattern": "definitions.boss.stats.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+        {
+      "pattern": "definitions.player.attack_tracker.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+        {
+      "pattern": "definitions.player.bleed.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+        {
+      "pattern": "definitions.player.close_clip_swap.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+        {
+      "pattern": "definitions.player.death.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+        {
+      "pattern": "definitions.player.dormant_wake.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+        {
+      "pattern": "definitions.player.encounter_policy.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+        {
+      "pattern": "definitions.player.fireball.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+        {
+      "pattern": "definitions.player.heal_punish.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+        {
+      "pattern": "definitions.player.look.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+        {
+      "pattern": "definitions.player.low_sweep.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+        {
+      "pattern": "definitions.player.phase_dependencies.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+        {
+      "pattern": "definitions.player.phase_flow.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+        {
+      "pattern": "definitions.player.phases.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+        {
+      "pattern": "definitions.player.shockwave.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+        {
+      "pattern": "definitions.player.stagger_policy.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+        {
+      "pattern": "definitions.player.stagger_profile.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+        {
+      "pattern": "definitions.player.stats.*",
+      "reason": "This manifest leaf has no explicit legacy value row in the offline source table (pack Blueprint effective values and legacy attach overrides are unavailable here). Preserve as NOT-COMPARABLE; do not infer from the authored draft.",
+      "runtime_value_basis": "not established",
+      "source": {
+        "excerpt": "class ONEBOSSFIGHT_API URPGBossDefinition : public UPrimaryDataAsset",
+        "file": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+        "line": 294
+      },
+      "status": "not_comparable"
+    },
+    {
+      "destination": "URPGBossStagger::bUseClips",
+      "field_path": "StaggerProfile.bUseClips",
+      "legacy_value": true,
+      "pattern": "definitions.boss.stagger_profile.use_clips",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "bool bUseClips = true;",
+        "file": "Source/OneBossFight/Player/RPGBossStagger.h",
+        "line": 163
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossLowSweep::SweepToDegrees",
+      "field_path": "LowSweep.SweepToDegrees",
+      "legacy_value": -90.0,
+      "pattern": "definitions.boss.low_sweep.sweep_to_degrees",
+      "runtime_value_basis": "native UPROPERTY default",
+      "source": {
+        "excerpt": "float SweepToDegrees = -90.f;",
+        "file": "Source/OneBossFight/Player/RPGBossLowSweep.h",
+        "line": 55
+      },
+      "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[0].ActiveEndTime",
+        "field_path": "AttackTracker.Attacks[0].ActiveEndTime",
+        "legacy_value": 2.109999895095825,
+        "pattern": "definitions.boss.attack_tracker.attacks[0].active_end_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A2.ActiveEndTime = 2.11f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 34
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[0].ActiveStartTime",
+        "field_path": "AttackTracker.Attacks[0].ActiveStartTime",
+        "legacy_value": 1.9299999475479126,
+        "pattern": "definitions.boss.attack_tracker.attacks[0].active_start_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A2.ActiveStartTime = 1.93f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 33
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[0].bAuthoredWindup",
+        "field_path": "AttackTracker.Attacks[0].bAuthoredWindup",
+        "legacy_value": false,
+        "pattern": "definitions.boss.attack_tracker.attacks[0].authored_windup",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "bool bAuthoredWindup = false;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 38
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[0].bBranchStage",
+        "field_path": "AttackTracker.Attacks[0].bBranchStage",
+        "legacy_value": false,
+        "pattern": "definitions.boss.attack_tracker.attacks[0].branch_stage",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "bool bBranchStage = false;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 61
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[0].ClipPath",
+        "field_path": "AttackTracker.Attacks[0].ClipPath",
+        "legacy_value": "",
+        "pattern": "definitions.boss.attack_tracker.attacks[0].clip_path",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "FString ClipPath;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 65
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[0].CommitTime",
+        "field_path": "AttackTracker.Attacks[0].CommitTime",
+        "legacy_value": 1.6799999475479126,
+        "pattern": "definitions.boss.attack_tracker.attacks[0].commit_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A2.CommitTime = 1.68f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 32
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[0].FallbackMontageName",
+        "field_path": "AttackTracker.Attacks[0].FallbackMontageName",
+        "legacy_value": "",
+        "pattern": "definitions.boss.attack_tracker.attacks[0].fallback_montage_name",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "FString FallbackMontageName;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 30
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[0].MontageName",
+        "field_path": "AttackTracker.Attacks[0].MontageName",
+        "legacy_value": "GS_ChargedAttack_Montage",
+        "pattern": "definitions.boss.attack_tracker.attacks[0].montage_name",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A2.MontageName = TEXT(\"GS_ChargedAttack_Montage\");",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 31
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[0].MontagePath",
+        "field_path": "AttackTracker.Attacks[0].MontagePath",
+        "legacy_value": "",
+        "pattern": "definitions.boss.attack_tracker.attacks[0].montage_path",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "FString MontagePath;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 34
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[0].MoveId",
+        "field_path": "AttackTracker.Attacks[0].MoveId",
+        "legacy_value": "A2",
+        "pattern": "definitions.boss.attack_tracker.attacks[0].move_id",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A2.MoveId = TEXT(\"A2\");",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 30
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[0].RecoveryEndTime",
+        "field_path": "AttackTracker.Attacks[0].RecoveryEndTime",
+        "legacy_value": 3.140000104904175,
+        "pattern": "definitions.boss.attack_tracker.attacks[0].recovery_end_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A2.RecoveryEndTime = 3.14f; // the ability ends (montage blends out) at 3.14 s of the 3.40 s clip",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 35
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[0].TrackTurnRate",
+        "field_path": "AttackTracker.Attacks[0].TrackTurnRate",
+        "legacy_value": 120.0,
+        "pattern": "definitions.boss.attack_tracker.attacks[0].track_turn_rate",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A2.TrackTurnRate = 120.f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 36
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[1].ActiveEndTime",
+        "field_path": "AttackTracker.Attacks[1].ActiveEndTime",
+        "legacy_value": 0.5,
+        "pattern": "definitions.boss.attack_tracker.attacks[1].active_end_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1\"), TEXT(\"AM_Boss01_A1\"), TEXT(\"GS_Attack03_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1\"), 0.33f, 0.35f, 0.50f, 1.20f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 59
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[1].ActiveStartTime",
+        "field_path": "AttackTracker.Attacks[1].ActiveStartTime",
+        "legacy_value": 0.3499999940395355,
+        "pattern": "definitions.boss.attack_tracker.attacks[1].active_start_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1\"), TEXT(\"AM_Boss01_A1\"), TEXT(\"GS_Attack03_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1\"), 0.33f, 0.35f, 0.50f, 1.20f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 59
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[1].bAuthoredWindup",
+        "field_path": "AttackTracker.Attacks[1].bAuthoredWindup",
+        "legacy_value": true,
+        "pattern": "definitions.boss.attack_tracker.attacks[1].authored_windup",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1\"), TEXT(\"AM_Boss01_A1\"), TEXT(\"GS_Attack03_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1\"), 0.33f, 0.35f, 0.50f, 1.20f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 59
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[1].bBranchStage",
+        "field_path": "AttackTracker.Attacks[1].bBranchStage",
+        "legacy_value": false,
+        "pattern": "definitions.boss.attack_tracker.attacks[1].branch_stage",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1\"), TEXT(\"AM_Boss01_A1\"), TEXT(\"GS_Attack03_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1\"), 0.33f, 0.35f, 0.50f, 1.20f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 59
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[1].ClipPath",
+        "field_path": "AttackTracker.Attacks[1].ClipPath",
+        "legacy_value": "",
+        "pattern": "definitions.boss.attack_tracker.attacks[1].clip_path",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "FString ClipPath;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 65
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[1].CommitTime",
+        "field_path": "AttackTracker.Attacks[1].CommitTime",
+        "legacy_value": 0.33000001311302185,
+        "pattern": "definitions.boss.attack_tracker.attacks[1].commit_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1\"), TEXT(\"AM_Boss01_A1\"), TEXT(\"GS_Attack03_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1\"), 0.33f, 0.35f, 0.50f, 1.20f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 59
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[1].FallbackMontageName",
+        "field_path": "AttackTracker.Attacks[1].FallbackMontageName",
+        "legacy_value": "GS_Attack03_Montage",
+        "pattern": "definitions.boss.attack_tracker.attacks[1].fallback_montage_name",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1\"), TEXT(\"AM_Boss01_A1\"), TEXT(\"GS_Attack03_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1\"), 0.33f, 0.35f, 0.50f, 1.20f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 59
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[1].MontageName",
+        "field_path": "AttackTracker.Attacks[1].MontageName",
+        "legacy_value": "AM_Boss01_A1",
+        "pattern": "definitions.boss.attack_tracker.attacks[1].montage_name",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1\"), TEXT(\"AM_Boss01_A1\"), TEXT(\"GS_Attack03_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1\"), 0.33f, 0.35f, 0.50f, 1.20f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 59
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[1].MontagePath",
+        "field_path": "AttackTracker.Attacks[1].MontagePath",
+        "legacy_value": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1",
+        "pattern": "definitions.boss.attack_tracker.attacks[1].montage_path",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1\"), TEXT(\"AM_Boss01_A1\"), TEXT(\"GS_Attack03_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1\"), 0.33f, 0.35f, 0.50f, 1.20f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 59
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[1].MoveId",
+        "field_path": "AttackTracker.Attacks[1].MoveId",
+        "legacy_value": "A1",
+        "pattern": "definitions.boss.attack_tracker.attacks[1].move_id",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1\"), TEXT(\"AM_Boss01_A1\"), TEXT(\"GS_Attack03_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1\"), 0.33f, 0.35f, 0.50f, 1.20f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 59
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[1].RecoveryEndTime",
+        "field_path": "AttackTracker.Attacks[1].RecoveryEndTime",
+        "legacy_value": 1.2000000476837158,
+        "pattern": "definitions.boss.attack_tracker.attacks[1].recovery_end_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1\"), TEXT(\"AM_Boss01_A1\"), TEXT(\"GS_Attack03_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1\"), 0.33f, 0.35f, 0.50f, 1.20f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 59
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[1].TrackTurnRate",
+        "field_path": "AttackTracker.Attacks[1].TrackTurnRate",
+        "legacy_value": 360.0,
+        "pattern": "definitions.boss.attack_tracker.attacks[1].track_turn_rate",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "T.TrackTurnRate = 360.f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 54
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[2].ActiveEndTime",
+        "field_path": "AttackTracker.Attacks[2].ActiveEndTime",
+        "legacy_value": 0.46000000834465027,
+        "pattern": "definitions.boss.attack_tracker.attacks[2].active_end_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1b\"), TEXT(\"GS_Attack04_Montage\"), TEXT(\"\"), TEXT(\"\"), 0.12f, 0.16f, 0.46f, 1.25f, true, false);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 60
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[2].ActiveStartTime",
+        "field_path": "AttackTracker.Attacks[2].ActiveStartTime",
+        "legacy_value": 0.1599999964237213,
+        "pattern": "definitions.boss.attack_tracker.attacks[2].active_start_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1b\"), TEXT(\"GS_Attack04_Montage\"), TEXT(\"\"), TEXT(\"\"), 0.12f, 0.16f, 0.46f, 1.25f, true, false);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 60
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[2].bAuthoredWindup",
+        "field_path": "AttackTracker.Attacks[2].bAuthoredWindup",
+        "legacy_value": false,
+        "pattern": "definitions.boss.attack_tracker.attacks[2].authored_windup",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1b\"), TEXT(\"GS_Attack04_Montage\"), TEXT(\"\"), TEXT(\"\"), 0.12f, 0.16f, 0.46f, 1.25f, true, false);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 60
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[2].bBranchStage",
+        "field_path": "AttackTracker.Attacks[2].bBranchStage",
+        "legacy_value": true,
+        "pattern": "definitions.boss.attack_tracker.attacks[2].branch_stage",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1b\"), TEXT(\"GS_Attack04_Montage\"), TEXT(\"\"), TEXT(\"\"), 0.12f, 0.16f, 0.46f, 1.25f, true, false);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 60
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[2].ClipPath",
+        "field_path": "AttackTracker.Attacks[2].ClipPath",
+        "legacy_value": "",
+        "pattern": "definitions.boss.attack_tracker.attacks[2].clip_path",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "FString ClipPath;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 65
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[2].CommitTime",
+        "field_path": "AttackTracker.Attacks[2].CommitTime",
+        "legacy_value": 0.11999999731779099,
+        "pattern": "definitions.boss.attack_tracker.attacks[2].commit_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1b\"), TEXT(\"GS_Attack04_Montage\"), TEXT(\"\"), TEXT(\"\"), 0.12f, 0.16f, 0.46f, 1.25f, true, false);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 60
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[2].FallbackMontageName",
+        "field_path": "AttackTracker.Attacks[2].FallbackMontageName",
+        "legacy_value": "",
+        "pattern": "definitions.boss.attack_tracker.attacks[2].fallback_montage_name",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1b\"), TEXT(\"GS_Attack04_Montage\"), TEXT(\"\"), TEXT(\"\"), 0.12f, 0.16f, 0.46f, 1.25f, true, false);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 60
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[2].MontageName",
+        "field_path": "AttackTracker.Attacks[2].MontageName",
+        "legacy_value": "GS_Attack04_Montage",
+        "pattern": "definitions.boss.attack_tracker.attacks[2].montage_name",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1b\"), TEXT(\"GS_Attack04_Montage\"), TEXT(\"\"), TEXT(\"\"), 0.12f, 0.16f, 0.46f, 1.25f, true, false);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 60
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[2].MontagePath",
+        "field_path": "AttackTracker.Attacks[2].MontagePath",
+        "legacy_value": "",
+        "pattern": "definitions.boss.attack_tracker.attacks[2].montage_path",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1b\"), TEXT(\"GS_Attack04_Montage\"), TEXT(\"\"), TEXT(\"\"), 0.12f, 0.16f, 0.46f, 1.25f, true, false);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 60
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[2].MoveId",
+        "field_path": "AttackTracker.Attacks[2].MoveId",
+        "legacy_value": "A1b",
+        "pattern": "definitions.boss.attack_tracker.attacks[2].move_id",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1b\"), TEXT(\"GS_Attack04_Montage\"), TEXT(\"\"), TEXT(\"\"), 0.12f, 0.16f, 0.46f, 1.25f, true, false);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 60
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[2].RecoveryEndTime",
+        "field_path": "AttackTracker.Attacks[2].RecoveryEndTime",
+        "legacy_value": 1.25,
+        "pattern": "definitions.boss.attack_tracker.attacks[2].recovery_end_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A1b\"), TEXT(\"GS_Attack04_Montage\"), TEXT(\"\"), TEXT(\"\"), 0.12f, 0.16f, 0.46f, 1.25f, true, false);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 60
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[2].TrackTurnRate",
+        "field_path": "AttackTracker.Attacks[2].TrackTurnRate",
+        "legacy_value": 360.0,
+        "pattern": "definitions.boss.attack_tracker.attacks[2].track_turn_rate",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "T.TrackTurnRate = 360.f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 54
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[3].ActiveEndTime",
+        "field_path": "AttackTracker.Attacks[3].ActiveEndTime",
+        "legacy_value": 0.6000000238418579,
+        "pattern": "definitions.boss.attack_tracker.attacks[3].active_end_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3a\"), TEXT(\"AM_Boss01_A3a\"), TEXT(\"GS_Attack01_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a\"), 0.38f, 0.40f, 0.60f, 0.80f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 61
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[3].ActiveStartTime",
+        "field_path": "AttackTracker.Attacks[3].ActiveStartTime",
+        "legacy_value": 0.4000000059604645,
+        "pattern": "definitions.boss.attack_tracker.attacks[3].active_start_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3a\"), TEXT(\"AM_Boss01_A3a\"), TEXT(\"GS_Attack01_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a\"), 0.38f, 0.40f, 0.60f, 0.80f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 61
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[3].bAuthoredWindup",
+        "field_path": "AttackTracker.Attacks[3].bAuthoredWindup",
+        "legacy_value": true,
+        "pattern": "definitions.boss.attack_tracker.attacks[3].authored_windup",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3a\"), TEXT(\"AM_Boss01_A3a\"), TEXT(\"GS_Attack01_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a\"), 0.38f, 0.40f, 0.60f, 0.80f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 61
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[3].bBranchStage",
+        "field_path": "AttackTracker.Attacks[3].bBranchStage",
+        "legacy_value": false,
+        "pattern": "definitions.boss.attack_tracker.attacks[3].branch_stage",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3a\"), TEXT(\"AM_Boss01_A3a\"), TEXT(\"GS_Attack01_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a\"), 0.38f, 0.40f, 0.60f, 0.80f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 61
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[3].ClipPath",
+        "field_path": "AttackTracker.Attacks[3].ClipPath",
+        "legacy_value": "",
+        "pattern": "definitions.boss.attack_tracker.attacks[3].clip_path",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "FString ClipPath;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 65
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[3].CommitTime",
+        "field_path": "AttackTracker.Attacks[3].CommitTime",
+        "legacy_value": 0.3799999952316284,
+        "pattern": "definitions.boss.attack_tracker.attacks[3].commit_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3a\"), TEXT(\"AM_Boss01_A3a\"), TEXT(\"GS_Attack01_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a\"), 0.38f, 0.40f, 0.60f, 0.80f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 61
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[3].FallbackMontageName",
+        "field_path": "AttackTracker.Attacks[3].FallbackMontageName",
+        "legacy_value": "GS_Attack01_Montage",
+        "pattern": "definitions.boss.attack_tracker.attacks[3].fallback_montage_name",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3a\"), TEXT(\"AM_Boss01_A3a\"), TEXT(\"GS_Attack01_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a\"), 0.38f, 0.40f, 0.60f, 0.80f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 61
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[3].MontageName",
+        "field_path": "AttackTracker.Attacks[3].MontageName",
+        "legacy_value": "AM_Boss01_A3a",
+        "pattern": "definitions.boss.attack_tracker.attacks[3].montage_name",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3a\"), TEXT(\"AM_Boss01_A3a\"), TEXT(\"GS_Attack01_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a\"), 0.38f, 0.40f, 0.60f, 0.80f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 61
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[3].MontagePath",
+        "field_path": "AttackTracker.Attacks[3].MontagePath",
+        "legacy_value": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a",
+        "pattern": "definitions.boss.attack_tracker.attacks[3].montage_path",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3a\"), TEXT(\"AM_Boss01_A3a\"), TEXT(\"GS_Attack01_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a\"), 0.38f, 0.40f, 0.60f, 0.80f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 61
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[3].MoveId",
+        "field_path": "AttackTracker.Attacks[3].MoveId",
+        "legacy_value": "A3a",
+        "pattern": "definitions.boss.attack_tracker.attacks[3].move_id",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3a\"), TEXT(\"AM_Boss01_A3a\"), TEXT(\"GS_Attack01_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a\"), 0.38f, 0.40f, 0.60f, 0.80f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 61
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[3].RecoveryEndTime",
+        "field_path": "AttackTracker.Attacks[3].RecoveryEndTime",
+        "legacy_value": 0.800000011920929,
+        "pattern": "definitions.boss.attack_tracker.attacks[3].recovery_end_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3a\"), TEXT(\"AM_Boss01_A3a\"), TEXT(\"GS_Attack01_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a\"), 0.38f, 0.40f, 0.60f, 0.80f, false, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 61
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[3].TrackTurnRate",
+        "field_path": "AttackTracker.Attacks[3].TrackTurnRate",
+        "legacy_value": 360.0,
+        "pattern": "definitions.boss.attack_tracker.attacks[3].track_turn_rate",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "T.TrackTurnRate = 360.f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 54
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[4].ActiveEndTime",
+        "field_path": "AttackTracker.Attacks[4].ActiveEndTime",
+        "legacy_value": 0.4000000059604645,
+        "pattern": "definitions.boss.attack_tracker.attacks[4].active_end_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3b\"), TEXT(\"AM_Boss01_A3b\"), TEXT(\"GS_Attack02_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b\"), 0.13f, 0.15f, 0.40f, 1.3333f, true, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 62
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[4].ActiveStartTime",
+        "field_path": "AttackTracker.Attacks[4].ActiveStartTime",
+        "legacy_value": 0.15000000596046448,
+        "pattern": "definitions.boss.attack_tracker.attacks[4].active_start_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3b\"), TEXT(\"AM_Boss01_A3b\"), TEXT(\"GS_Attack02_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b\"), 0.13f, 0.15f, 0.40f, 1.3333f, true, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 62
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[4].bAuthoredWindup",
+        "field_path": "AttackTracker.Attacks[4].bAuthoredWindup",
+        "legacy_value": true,
+        "pattern": "definitions.boss.attack_tracker.attacks[4].authored_windup",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3b\"), TEXT(\"AM_Boss01_A3b\"), TEXT(\"GS_Attack02_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b\"), 0.13f, 0.15f, 0.40f, 1.3333f, true, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 62
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[4].bBranchStage",
+        "field_path": "AttackTracker.Attacks[4].bBranchStage",
+        "legacy_value": true,
+        "pattern": "definitions.boss.attack_tracker.attacks[4].branch_stage",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3b\"), TEXT(\"AM_Boss01_A3b\"), TEXT(\"GS_Attack02_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b\"), 0.13f, 0.15f, 0.40f, 1.3333f, true, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 62
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[4].ClipPath",
+        "field_path": "AttackTracker.Attacks[4].ClipPath",
+        "legacy_value": "",
+        "pattern": "definitions.boss.attack_tracker.attacks[4].clip_path",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "FString ClipPath;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 65
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[4].CommitTime",
+        "field_path": "AttackTracker.Attacks[4].CommitTime",
+        "legacy_value": 0.12999999523162842,
+        "pattern": "definitions.boss.attack_tracker.attacks[4].commit_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3b\"), TEXT(\"AM_Boss01_A3b\"), TEXT(\"GS_Attack02_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b\"), 0.13f, 0.15f, 0.40f, 1.3333f, true, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 62
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[4].FallbackMontageName",
+        "field_path": "AttackTracker.Attacks[4].FallbackMontageName",
+        "legacy_value": "GS_Attack02_Montage",
+        "pattern": "definitions.boss.attack_tracker.attacks[4].fallback_montage_name",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3b\"), TEXT(\"AM_Boss01_A3b\"), TEXT(\"GS_Attack02_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b\"), 0.13f, 0.15f, 0.40f, 1.3333f, true, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 62
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[4].MontageName",
+        "field_path": "AttackTracker.Attacks[4].MontageName",
+        "legacy_value": "AM_Boss01_A3b",
+        "pattern": "definitions.boss.attack_tracker.attacks[4].montage_name",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3b\"), TEXT(\"AM_Boss01_A3b\"), TEXT(\"GS_Attack02_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b\"), 0.13f, 0.15f, 0.40f, 1.3333f, true, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 62
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[4].MontagePath",
+        "field_path": "AttackTracker.Attacks[4].MontagePath",
+        "legacy_value": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b",
+        "pattern": "definitions.boss.attack_tracker.attacks[4].montage_path",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3b\"), TEXT(\"AM_Boss01_A3b\"), TEXT(\"GS_Attack02_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b\"), 0.13f, 0.15f, 0.40f, 1.3333f, true, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 62
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[4].MoveId",
+        "field_path": "AttackTracker.Attacks[4].MoveId",
+        "legacy_value": "A3b",
+        "pattern": "definitions.boss.attack_tracker.attacks[4].move_id",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3b\"), TEXT(\"AM_Boss01_A3b\"), TEXT(\"GS_Attack02_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b\"), 0.13f, 0.15f, 0.40f, 1.3333f, true, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 62
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[4].RecoveryEndTime",
+        "field_path": "AttackTracker.Attacks[4].RecoveryEndTime",
+        "legacy_value": 1.333299994468689,
+        "pattern": "definitions.boss.attack_tracker.attacks[4].recovery_end_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "AddClose(TEXT(\"A3b\"), TEXT(\"AM_Boss01_A3b\"), TEXT(\"GS_Attack02_Montage\"), TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b\"), 0.13f, 0.15f, 0.40f, 1.3333f, true, true);",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 62
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[4].TrackTurnRate",
+        "field_path": "AttackTracker.Attacks[4].TrackTurnRate",
+        "legacy_value": 360.0,
+        "pattern": "definitions.boss.attack_tracker.attacks[4].track_turn_rate",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "T.TrackTurnRate = 360.f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 54
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[5].ActiveEndTime",
+        "field_path": "AttackTracker.Attacks[5].ActiveEndTime",
+        "legacy_value": 1.1699999570846558,
+        "pattern": "definitions.boss.attack_tracker.attacks[5].active_end_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A6.ActiveEndTime = 1.17f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 72
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[5].ActiveStartTime",
+        "field_path": "AttackTracker.Attacks[5].ActiveStartTime",
+        "legacy_value": 0.75,
+        "pattern": "definitions.boss.attack_tracker.attacks[5].active_start_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A6.ActiveStartTime = 0.75f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 71
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[5].bAuthoredWindup",
+        "field_path": "AttackTracker.Attacks[5].bAuthoredWindup",
+        "legacy_value": false,
+        "pattern": "definitions.boss.attack_tracker.attacks[5].authored_windup",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "bool bAuthoredWindup = false;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 38
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[5].bBranchStage",
+        "field_path": "AttackTracker.Attacks[5].bBranchStage",
+        "legacy_value": false,
+        "pattern": "definitions.boss.attack_tracker.attacks[5].branch_stage",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "bool bBranchStage = false;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 61
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[5].ClipPath",
+        "field_path": "AttackTracker.Attacks[5].ClipPath",
+        "legacy_value": "",
+        "pattern": "definitions.boss.attack_tracker.attacks[5].clip_path",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "FString ClipPath;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 65
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[5].CommitTime",
+        "field_path": "AttackTracker.Attacks[5].CommitTime",
+        "legacy_value": 0.1599999964237213,
+        "pattern": "definitions.boss.attack_tracker.attacks[5].commit_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A6.CommitTime = 0.16f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 70
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[5].FallbackMontageName",
+        "field_path": "AttackTracker.Attacks[5].FallbackMontageName",
+        "legacy_value": "",
+        "pattern": "definitions.boss.attack_tracker.attacks[5].fallback_montage_name",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "FString FallbackMontageName;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 30
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[5].MontageName",
+        "field_path": "AttackTracker.Attacks[5].MontageName",
+        "legacy_value": "GS_LeapAttack_Montage",
+        "pattern": "definitions.boss.attack_tracker.attacks[5].montage_name",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A6.MontageName = TEXT(\"GS_LeapAttack_Montage\");",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 69
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[5].MontagePath",
+        "field_path": "AttackTracker.Attacks[5].MontagePath",
+        "legacy_value": "",
+        "pattern": "definitions.boss.attack_tracker.attacks[5].montage_path",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "FString MontagePath;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 34
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[5].MoveId",
+        "field_path": "AttackTracker.Attacks[5].MoveId",
+        "legacy_value": "A6",
+        "pattern": "definitions.boss.attack_tracker.attacks[5].move_id",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A6.MoveId = TEXT(\"A6\");",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 68
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[5].RecoveryEndTime",
+        "field_path": "AttackTracker.Attacks[5].RecoveryEndTime",
+        "legacy_value": 1.7999999523162842,
+        "pattern": "definitions.boss.attack_tracker.attacks[5].recovery_end_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A6.RecoveryEndTime = 1.80f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 73
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[5].TrackTurnRate",
+        "field_path": "AttackTracker.Attacks[5].TrackTurnRate",
+        "legacy_value": 120.0,
+        "pattern": "definitions.boss.attack_tracker.attacks[5].track_turn_rate",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A6.TrackTurnRate = 120.f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 74
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[6].ActiveEndTime",
+        "field_path": "AttackTracker.Attacks[6].ActiveEndTime",
+        "legacy_value": 0.8999999761581421,
+        "pattern": "definitions.boss.attack_tracker.attacks[6].active_end_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A4.ActiveEndTime = 0.90f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 85
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[6].ActiveStartTime",
+        "field_path": "AttackTracker.Attacks[6].ActiveStartTime",
+        "legacy_value": 0.6000000238418579,
+        "pattern": "definitions.boss.attack_tracker.attacks[6].active_start_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A4.ActiveStartTime = 0.60f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 84
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[6].bAuthoredWindup",
+        "field_path": "AttackTracker.Attacks[6].bAuthoredWindup",
+        "legacy_value": false,
+        "pattern": "definitions.boss.attack_tracker.attacks[6].authored_windup",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "bool bAuthoredWindup = false;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 38
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[6].bBranchStage",
+        "field_path": "AttackTracker.Attacks[6].bBranchStage",
+        "legacy_value": false,
+        "pattern": "definitions.boss.attack_tracker.attacks[6].branch_stage",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "bool bBranchStage = false;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 61
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[6].ClipPath",
+        "field_path": "AttackTracker.Attacks[6].ClipPath",
+        "legacy_value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_A4_LowSweep.AN_Boss01_A4_LowSweep",
+        "pattern": "definitions.boss.attack_tracker.attacks[6].clip_path",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A4.ClipPath = TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_A4_LowSweep.AN_Boss01_A4_LowSweep\");",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 82
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[6].CommitTime",
+        "field_path": "AttackTracker.Attacks[6].CommitTime",
+        "legacy_value": 0.4000000059604645,
+        "pattern": "definitions.boss.attack_tracker.attacks[6].commit_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A4.CommitTime = 0.40f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 83
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[6].FallbackMontageName",
+        "field_path": "AttackTracker.Attacks[6].FallbackMontageName",
+        "legacy_value": "",
+        "pattern": "definitions.boss.attack_tracker.attacks[6].fallback_montage_name",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "FString FallbackMontageName;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 30
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[6].MontageName",
+        "field_path": "AttackTracker.Attacks[6].MontageName",
+        "legacy_value": "AN_Boss01_A4_LowSweep",
+        "pattern": "definitions.boss.attack_tracker.attacks[6].montage_name",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A4.MontageName = TEXT(\"AN_Boss01_A4_LowSweep\");",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 81
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[6].MontagePath",
+        "field_path": "AttackTracker.Attacks[6].MontagePath",
+        "legacy_value": "",
+        "pattern": "definitions.boss.attack_tracker.attacks[6].montage_path",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "FString MontagePath;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 34
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[6].MoveId",
+        "field_path": "AttackTracker.Attacks[6].MoveId",
+        "legacy_value": "A4",
+        "pattern": "definitions.boss.attack_tracker.attacks[6].move_id",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A4.MoveId = TEXT(\"A4\");",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 80
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[6].RecoveryEndTime",
+        "field_path": "AttackTracker.Attacks[6].RecoveryEndTime",
+        "legacy_value": 1.75,
+        "pattern": "definitions.boss.attack_tracker.attacks[6].recovery_end_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A4.RecoveryEndTime = 1.75f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 86
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[6].TrackTurnRate",
+        "field_path": "AttackTracker.Attacks[6].TrackTurnRate",
+        "legacy_value": 180.0,
+        "pattern": "definitions.boss.attack_tracker.attacks[6].track_turn_rate",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A4.TrackTurnRate = 180.f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 87
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[7].ActiveEndTime",
+        "field_path": "AttackTracker.Attacks[7].ActiveEndTime",
+        "legacy_value": 0.5,
+        "pattern": "definitions.boss.attack_tracker.attacks[7].active_end_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A5.ActiveEndTime = 0.50f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 98
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[7].ActiveStartTime",
+        "field_path": "AttackTracker.Attacks[7].ActiveStartTime",
+        "legacy_value": 0.44999998807907104,
+        "pattern": "definitions.boss.attack_tracker.attacks[7].active_start_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A5.ActiveStartTime = 0.45f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 97
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[7].bAuthoredWindup",
+        "field_path": "AttackTracker.Attacks[7].bAuthoredWindup",
+        "legacy_value": false,
+        "pattern": "definitions.boss.attack_tracker.attacks[7].authored_windup",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "bool bAuthoredWindup = false;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 38
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[7].bBranchStage",
+        "field_path": "AttackTracker.Attacks[7].bBranchStage",
+        "legacy_value": false,
+        "pattern": "definitions.boss.attack_tracker.attacks[7].branch_stage",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "bool bBranchStage = false;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 61
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[7].ClipPath",
+        "field_path": "AttackTracker.Attacks[7].ClipPath",
+        "legacy_value": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_A5_JavelinThrow.AN_Boss01_A5_JavelinThrow",
+        "pattern": "definitions.boss.attack_tracker.attacks[7].clip_path",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A5.ClipPath = TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_A5_JavelinThrow.AN_Boss01_A5_JavelinThrow\");",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 95
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[7].CommitTime",
+        "field_path": "AttackTracker.Attacks[7].CommitTime",
+        "legacy_value": 0.44999998807907104,
+        "pattern": "definitions.boss.attack_tracker.attacks[7].commit_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A5.CommitTime = 0.45f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 96
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[7].FallbackMontageName",
+        "field_path": "AttackTracker.Attacks[7].FallbackMontageName",
+        "legacy_value": "",
+        "pattern": "definitions.boss.attack_tracker.attacks[7].fallback_montage_name",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "FString FallbackMontageName;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 30
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[7].MontageName",
+        "field_path": "AttackTracker.Attacks[7].MontageName",
+        "legacy_value": "AN_Boss01_A5_JavelinThrow",
+        "pattern": "definitions.boss.attack_tracker.attacks[7].montage_name",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A5.MontageName = TEXT(\"AN_Boss01_A5_JavelinThrow\");",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 94
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[7].MontagePath",
+        "field_path": "AttackTracker.Attacks[7].MontagePath",
+        "legacy_value": "",
+        "pattern": "definitions.boss.attack_tracker.attacks[7].montage_path",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "FString MontagePath;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 34
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[7].MoveId",
+        "field_path": "AttackTracker.Attacks[7].MoveId",
+        "legacy_value": "A5",
+        "pattern": "definitions.boss.attack_tracker.attacks[7].move_id",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A5.MoveId = TEXT(\"A5\");",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 93
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[7].RecoveryEndTime",
+        "field_path": "AttackTracker.Attacks[7].RecoveryEndTime",
+        "legacy_value": 0.949999988079071,
+        "pattern": "definitions.boss.attack_tracker.attacks[7].recovery_end_time",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A5.RecoveryEndTime = 0.95f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 99
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::Attacks[7].TrackTurnRate",
+        "field_path": "AttackTracker.Attacks[7].TrackTurnRate",
+        "legacy_value": 240.0,
+        "pattern": "definitions.boss.attack_tracker.attacks[7].track_turn_rate",
+        "runtime_value_basis": "native FRPGAttackTrackerConfig constructor copied by component constructor",
+        "source": {
+            "excerpt": "A5.TrackTurnRate = 240.f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.cpp",
+            "line": 100
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::bEnabled",
+        "field_path": "AttackTracker.bEnabled",
+        "legacy_value": true,
+        "pattern": "definitions.boss.attack_tracker.enabled",
+        "runtime_value_basis": "native config UPROPERTY default copied by component constructor",
+        "source": {
+            "excerpt": "UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = \"Attack\") bool bEnabled = true;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 75
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::bVetoIllegalStarts",
+        "field_path": "AttackTracker.bVetoIllegalStarts",
+        "legacy_value": true,
+        "pattern": "definitions.boss.attack_tracker.veto_illegal_starts",
+        "runtime_value_basis": "native config UPROPERTY default copied by component constructor",
+        "source": {
+            "excerpt": "UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = \"Attack\") bool bVetoIllegalStarts = true;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 76
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::BranchRange",
+        "field_path": "AttackTracker.BranchRange",
+        "legacy_value": 400.0,
+        "pattern": "definitions.boss.attack_tracker.branch_range",
+        "runtime_value_basis": "native config UPROPERTY default copied by component constructor",
+        "source": {
+            "excerpt": "UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = \"Attack\", meta = (ClampMin = \"0.0\")) float BranchRange = 400.f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 77
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGAttackTracker::BranchConeDegrees",
+        "field_path": "AttackTracker.BranchConeDegrees",
+        "legacy_value": 120.0,
+        "pattern": "definitions.boss.attack_tracker.branch_cone_degrees",
+        "runtime_value_basis": "native config UPROPERTY default copied by component constructor",
+        "source": {
+            "excerpt": "UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = \"Attack\", meta = (ClampMin = \"10.0\", ClampMax = \"360.0\")) float BranchConeDegrees = 120.f;",
+            "file": "Source/OneBossFight/Player/RPGAttackTracker.h",
+            "line": 78
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGBossPhases::FireballCooldown.x",
+        "field_path": "Fireball.FireballCooldown.x",
+        "legacy_value": 6.0,
+        "pattern": "definitions.boss.fireball.fireball_cooldown.x",
+        "runtime_value_basis": "native UPROPERTY default; Lead verified the phase constructor does not override header defaults",
+        "source": {
+            "excerpt": "FVector2D FireballCooldown = FVector2D(6.f, 10.f);",
+            "file": "Source/OneBossFight/Player/RPGBossPhases.h",
+            "line": 73
+        },
+        "status": "comparable"
+    },
+    {
+        "destination": "URPGBossPhases::FireballCooldown.y",
+        "field_path": "Fireball.FireballCooldown.y",
+        "legacy_value": 10.0,
+        "pattern": "definitions.boss.fireball.fireball_cooldown.y",
+        "runtime_value_basis": "native UPROPERTY default; Lead verified the phase constructor does not override header defaults",
+        "source": {
+            "excerpt": "FVector2D FireballCooldown = FVector2D(6.f, 10.f);",
+            "file": "Source/OneBossFight/Player/RPGBossPhases.h",
+            "line": 73
+        },
+        "status": "comparable"
+    }
+  ,
+    {
+      "destination": "URPGBossLook::Pieces[0]",
+      "field_path": "Look.Pieces[0]",
+      "legacy_value": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Crown.SK_Boss01_Crown",
+      "pattern": "definitions.boss.look.pieces[0].object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "TSoftObjectPtr<USkeletalMesh>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Body/SK_Boss01_Crown.SK_Boss01_Crown\"))),",
+        "file": "Source/OneBossFight/Player/RPGBossLook.cpp",
+        "line": 19
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossLook::Pieces[1]",
+      "field_path": "Look.Pieces[1]",
+      "legacy_value": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Mantle.SK_Boss01_Mantle",
+      "pattern": "definitions.boss.look.pieces[1].object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "TSoftObjectPtr<USkeletalMesh>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Body/SK_Boss01_Mantle.SK_Boss01_Mantle\"))),",
+        "file": "Source/OneBossFight/Player/RPGBossLook.cpp",
+        "line": 20
+      },
+      "status": "comparable"
+    },
+    {
+      "destination": "URPGBossLook::Pieces[2]",
+      "field_path": "Look.Pieces[2]",
+      "legacy_value": "/Game/OneBossFight/Boss01/Body/SK_Boss01_BrazierGauntlet.SK_Boss01_BrazierGauntlet",
+      "pattern": "definitions.boss.look.pieces[2].object_path",
+      "runtime_value_basis": "native component constructor assignment; legacy component is created by the pack attach path when absent",
+      "source": {
+        "excerpt": "TSoftObjectPtr<USkeletalMesh>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Body/SK_Boss01_BrazierGauntlet.SK_Boss01_BrazierGauntlet\"))),",
+        "file": "Source/OneBossFight/Player/RPGBossLook.cpp",
+        "line": 21
+      },
+      "status": "comparable"
+    }],
+  "schema": "onebossfight.legacy-defaults-g044/v1"
+}

@@ -1,0 +1,25 @@
+{
+  "files": [
+    {
+      "backup": "Saved/G044/backups/C840_D2_37d12b9c1dc84d368dab6324444d8f5e/Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft.uasset",
+      "sha256": "ba05a8aa93fec66526c59bf12f51bb824103f67860bdee16efcdd5217d6a3e2b",
+      "source": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft.uasset"
+    },
+    {
+      "backup": "Saved/G044/backups/C840_D2_37d12b9c1dc84d368dab6324444d8f5e/Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V3.uasset",
+      "sha256": "30cdd6b0864ca3e23ddaf500bb7e31f2cc6942c5c18cf94147388cf885f4f8b3",
+      "source": "Content/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V3.uasset"
+    },
+    {
+      "backup": "Saved/G044/backups/C840_D2_37d12b9c1dc84d368dab6324444d8f5e/Content/OneBossFight/Data/DA_Sevarog_G044_Encounter.uasset",
+      "sha256": "c60f62752f894c31fc270fbdaa4fac54323206862bf00c56e3d54c2db96ad297",
+      "source": "Content/OneBossFight/Data/DA_Sevarog_G044_Encounter.uasset"
+    },
+    {
+      "backup": "Saved/G044/backups/C840_D2_37d12b9c1dc84d368dab6324444d8f5e/Saved/G044/encounter_manifest.json",
+      "sha256": "aaf9460cb3325df0316817d6cd01ec7cbce551e0e1345014705e7c6cd6443cd8",
+      "source": "Saved/G044/encounter_manifest.json"
+    }
+  ],
+  "schema": "g044.health-backup/v1"
+}

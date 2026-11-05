@@ -1,0 +1,96 @@
+﻿Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" OneBossFightEditor Win64 Development -Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject -WaitMutex -NoHotReload
+Log file: C:\Users\Rushit Vaghela\AppData\Local\UnrealBuildTool\Log.txt
+Using 'git status' to determine working set for adaptive non-unity build (C:\UnrealProject\OneBossFight).
+Parsing headers for OneBossFightEditor
+  Running Internal UnrealHeaderTool C:\UnrealProject\OneBossFight\OneBossFight.uproject C:\UnrealProject\OneBossFight\Intermediate\Build\Win64\OneBossFightEditor\Development\OneBossFightEditor.uhtmanifest -WarningsAsErrors -installed
+Total of 0 written
+Reflection code generated for OneBossFightEditor in 1.3697783 seconds
+Building OneBossFightEditor...
+Using Visual Studio 2022 14.44.35214 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+Warning: Visual Studio 2022 compiler is not a preferred version
+[Adaptive Build] Excluded from OneBossFight unity file: RPGArenaDressing.cpp, RPGFrameStats.cpp, RPGFrameworkBossCharacter.cpp, RPGFrameworkBossController.cpp, RPGFrameworkMoveExecutor.cpp, RPGSevarogDirector.cpp, RPGInputTestUtils.cpp, RPGAttackTracker.cpp, RPGBossActivation.cpp, RPGBossAttackTrackerAdapters.cpp, RPGBossEncounter.cpp, RPGBossEncounterDefinition.cpp, RPGBossFrameworkProfile.cpp, RPGBossHealPunish.cpp, RPGBossHydrationPreflight.cpp, RPGBossHydrationPreparation.cpp, RPGBossJavelin.cpp, RPGBossLowSweep.cpp, RPGBossMoveCard.cpp, RPGBossMoveModel.cpp, RPGBossMoveSelector.cpp, RPGBossShockwave.cpp, RPGBossWorldInputCompiler.cpp, RPGBossWorldPreparation.cpp, RPGBuildLoadout.cpp, RPGCombatDebug.cpp, RPGDamageResolver.cpp, RPGEncounterBinding.cpp, RPGEncounterSelectionSubsystem.cpp, RPGIFrameMonitor.cpp, RPGLegend.cpp, RPGPlayerMovesSubsystem.cpp, RPGPlayerParry.cpp, RPGTraceAudit.cpp, RPGAutomationTests.cpp, RPGBleedRulesPropertyTests.cpp, RPGBossAbortTests.cpp, RPGBossActivationTests.cpp, RPGBossActivationWorldTests.cpp, RPGBossAggroRulesTests.cpp, RPGBossAimHysteresisTests.cpp, RPGBossApproachTests.cpp, RPGBossArenaEdgeRulesTests.cpp, RPGBossArenaLeashBoundaryTests.cpp, RPGBossAttackTrackerAdaptersTests.cpp, RPGBossAuthoredDraftPreflightTests.cpp, RPGBossBakedSampleEndpointMutationTests.cpp, RPGBossBakedSampleLastEndpointBoundaryTests.cpp, RPGBossBakeFreshnessRulesTests.cpp, RPGBossBlockChipRulesTests.cpp, RPGBossCloseClipSwapTests.cpp, RPGBossComboAbortRulesTests.cpp, RPGBossComboFallbackTests.cpp, RPGBossComboParriedSampleTests.cpp, RPGBossComboPropertyTests.cpp, RPGBossComboTests.cpp, RPGBossCueJitterRulesTests.cpp, RPGBossCueSweepTests.cpp, RPGBossDamageBleedFiniteInputTests.cpp, RPGBossDefenseSweepTests.cpp, RPGBossDesperationFullThresholdMutationTests.cpp, RPGBossDesperationRulesTests.cpp, RPGBossDifficultyEqualEndpointsMutationTests.cpp, RPGBossDifficultyRulesTests.cpp, RPGBossDormantWakeTests.cpp, RPGBossEncounterClusterAdaptersTests.cpp, RPGBossEncounterLoopTests.cpp, RPGBossEncounterPolicyAdaptersTests.cpp, RPGBossEncounterRestartMatrixTests.cpp, RPGBossEnrageRulesTests.cpp, RPGBossExecutorHarnessTests.cpp, RPGBossFatigueRulesTests.cpp, RPGBossFeintMaxChanceBoundaryMutationTests.cpp, RPGBossFeintRulesTests.cpp, RPGBossFiniteRuleOverflowWitnessTests.cpp, RPGBossGapCloserExitBoundaryMutationTests.cpp, RPGBossGapCloserRulesTests.cpp, RPGBossGuardTests.cpp, RPGBossHitStopRulesTests.cpp, RPGBossHydrationPreflightTests.cpp, RPGBossHydrationPreparationTests.cpp, RPGBossLosLeashDeadlineTests.cpp, RPGBossMoveCardHoldEndBoundaryTests.cpp, RPGBossMoveCardHoldStartBoundaryMutationTests.cpp, RPGBossMoveCardTests.cpp, RPGBossMoveCardWarpEndBoundaryTests.cpp, RPGBossMoveCardWarpStartBoundaryMutationTests.cpp, RPGBossMoveModelTests.cpp, RPGBossMoveSelectorTests.cpp, RPGBossMusicIntensityRulesTests.cpp, RPGBossParryBoundaryUpgradeTests.cpp, RPGBossParryFairAdjacentBoundaryTests.cpp, RPGBossParryFairTests.cpp, RPGBossParryFeedbackFalseAlreadyMutationTests.cpp, RPGBossParryFeedbackRulesTests.cpp, RPGBossParryRecoveryWiringTests.cpp, RPGBossPatternDetectRulesTests.cpp, RPGBossPoiseRegenRulesTests.cpp, RPGBossPoiseRegenZeroRampMutationTests.cpp, RPGBossPreparationRegistryTests.cpp, RPGBossPresentationRulesTests.cpp, RPGBossProductionPreflightTests.cpp, RPGBossProductionPreparationTests.cpp, RPGBossPunishLimiterRulesTests.cpp, RPGBossPunishSweepTests.cpp, RPGBossQueueDEdgeTests.cpp, RPGBossQueueEAdjacentBoundaryTests.cpp, RPGBossQueueEBoundaryTests.cpp, RPGBossQueueEPolicyBoundaryTests.cpp, RPGBossReactiveDodgeRulesTests.cpp, RPGBossRecoveryWindowRulesTests.cpp, RPGBossRepeatPenaltyRulesTests.cpp, RPGBossRetreatCloseBoundaryMutationTests.cpp, RPGBossRetreatRulesTests.cpp, RPGBossSelectorRouteLifecycleTests.cpp, RPGBossSelectorStartParityTests.cpp, RPGBossStaggerResistRulesTests.cpp, RPGBossStaggerResistUnknownPhaseMutationTests.cpp, RPGBossStaminaPressureRulesTests.cpp, RPGBossStartupActivationTests.cpp, RPGBossStatsAdaptersTests.cpp, RPGBossStrafeHoldBoundaryMutationTests.cpp, RPGBossStrafeResumeNegativeBudgetMutationTests.cpp, RPGBossStrafeResumeRulesTests.cpp, RPGBossStrafeTests.cpp, RPGBossStuckRecoveryCapEightMutationTests.cpp, RPGBossStuckRecoveryRulesTests.cpp, RPGBossStuckTests.cpp, RPGBossTelegraphScaleRulesTests.cpp, RPGBossTrackRulesSweepTests.cpp, RPGBossTurnLatchBoundaryTests.cpp, RPGBossTurnRateRampTests.cpp, RPGBossWarpCurveRulesTests.cpp, RPGBossWarpExactDurationBoundaryTests.cpp, RPGBossWorldInputCompilerTests.cpp, RPGBossWorldPreparationTests.cpp, RPGBossYawProbeExtremaBoundaryTests.cpp, RPGBossYawProbeTests.cpp, RPGBuildTests.cpp, RPGCodexTests.cpp, RPGCombatCatalogTests.cpp, RPGDamageScalerLowerWindowBoundaryTests.cpp, RPGDamageScalerReciprocalBoundaryTests.cpp, RPGDamageScalerWindowBoundaryMutationTests.cpp, RPGEncounterGenerationRulesTests.cpp, RPGFlaskHudTests.cpp, RPGFrameworkRuntimeTests.cpp, RPGParryAdjacentWindowBoundaryTests.cpp, RPGParryCooldownAdjacentBoundaryTests.cpp, RPGParryCostTests.cpp, RPGParryGradeTests.cpp, RPGParryPropertyTests.cpp, RPGParryTests.cpp, RPGPlayerMovesAttachWitnessTests.cpp, RPGBossHud.cpp
+Determining max actions to execute in parallel (8 physical cores, 16 logical cores)
+  Executing up to 8 processes, one per physical core
+Using Unreal Build Accelerator local executor to run 72 action(s)
+  Storage capacity 40Gb
+---- Starting trace: 261104_233442 ----
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+------ Building 72 action(s) started ------
+[1/72] Compile [x64] RPGBossAttackTrackerAdapters.cpp
+[2/72] Compile [x64] RPGBossBleedAdapters.cpp
+[3/72] Compile [x64] RPGBossActivation.cpp
+[4/72] Compile [x64] RPGBossAttackTrackerAdaptersTests.cpp
+[5/72] Compile [x64] RPGBossCloseClipSwapAdapters.cpp
+[6/72] Compile [x64] RPGBossDeathAdapters.cpp
+[7/72] Compile [x64] RPGBossActivationWorldTests.cpp
+[8/72] Compile [x64] RPGBossAuthoredDraftPreflightTests.cpp
+[9/72] Compile [x64] RPGBossActivationTests.cpp
+[10/72] Compile [x64] RPGBenchmarkRunner.cpp
+[11/72] Compile [x64] RPGBossDormantWakeAdapters.cpp
+[12/72] Compile [x64] RPGBossCloseClipSwapAdaptersTests.cpp
+[13/72] Compile [x64] RPGBossEncounterDefinition.cpp
+[14/72] Compile [x64] RPGBossEncounterClusterAdapters.cpp
+[15/72] Compile [x64] RPGBossEncounterDefinition.gen.cpp
+[16/72] Compile [x64] RPGBossDormantWakeAdaptersTests.cpp
+[17/72] Compile [x64] RPGBossEncounterClusterAdaptersTests.cpp
+[18/72] Compile [x64] RPGBossEncounterPolicyAdapters.cpp
+[19/72] Compile [x64] RPGBossHealPunishAdapters.cpp
+[20/72] Compile [x64] RPGBossDeathAdaptersTests.cpp
+[21/72] Compile [x64] RPGBossEncounterPolicyAdaptersTests.cpp
+[22/72] Compile [x64] RPGBossBleedAdaptersTests.cpp
+[23/72] Compile [x64] RPGBossEncounter.cpp
+[24/72] Compile [x64] RPGBossLookAdapters.cpp
+[25/72] Compile [x64] RPGBossHydrationPreflight.cpp
+[26/72] Compile [x64] RPGBossLowSweepAdapters.cpp
+[27/72] Compile [x64] RPGBossHydrationPreparation.cpp
+[28/72] Compile [x64] RPGBossLookAdaptersTests.cpp
+[29/72] Compile [x64] RPGBossHealPunishAdaptersTests.cpp
+[30/72] Compile [x64] RPGBossPhaseAdapters.cpp
+[31/72] Compile [x64] RPGBossHydrationPreparationTests.cpp
+[32/72] Compile [x64] RPGBossHydrationPreflightTests.cpp
+[33/72] Compile [x64] RPGBossPhaseFlowAdapters.cpp
+[34/72] Compile [x64] RPGBossLowSweepAdaptersTests.cpp
+[35/72] Compile [x64] RPGBossPhaseAdaptersTests.cpp
+[36/72] Compile [x64] RPGBossPhasesClusterAdapters.cpp
+[37/72] Compile [x64] RPGBossPhaseFlowAdaptersTests.cpp
+[38/72] Compile [x64] RPGBossShockwaveAdapters.cpp
+[39/72] Compile [x64] RPGBossPreparationRegistry.cpp
+[40/72] Compile [x64] RPGBossStaggerClusterAdapters.cpp
+[41/72] Compile [x64] RPGBossStaggerPolicyAdapters.cpp
+[42/72] Compile [x64] RPGBossPhasesClusterAdaptersTests.cpp
+[43/72] Compile [x64] RPGBossShockwaveAdaptersTests.cpp
+[44/72] Compile [x64] RPGBossPreparationRegistryTests.cpp
+[45/72] Compile [x64] RPGBossStatsAdapters.cpp
+[46/72] Compile [x64] RPGBossStaggerPolicyAdaptersTests.cpp
+[47/72] Compile [x64] RPGBossProductionPreflightTests.cpp
+[48/72] Compile [x64] RPGBossProductionPreparationTests.cpp
+[49/72] Compile [x64] RPGBossStaggerClusterAdaptersTests.cpp
+[50/72] Compile [x64] RPGBossStatsAdaptersTests.cpp
+[51/72] Compile [x64] RPGBossWorldPreparation.cpp
+[52/72] Compile [x64] RPGBossStartupActivationTests.cpp
+[53/72] Compile [x64] RPGBossWorldInputCompiler.cpp
+[54/72] Compile [x64] RPGEncounterBinding.gen.cpp
+[55/72] Compile [x64] RPGBuildLoadout.cpp
+[56/72] Compile [x64] RPGEncounterBinding.cpp
+[57/72] Compile [x64] RPGBossWorldInputCompilerTests.cpp
+[58/72] Compile [x64] RPGBossWorldPreparationTests.cpp
+[59/72] Compile [x64] RPGEncounterBindingTests.cpp
+[60/72] Compile [x64] RPGEncounterSelectionSubsystem.gen.cpp
+[61/72] Compile [x64] RPGPlayerMovesSubsystem.gen.cpp
+[62/72] Compile [x64] RPGBuildSelect.cpp
+C:\UnrealProject\OneBossFight\Source\OneBossFight\UI\RPGBuildSelect.cpp(101): warning C4996: 'UUserWidget::bIsFocusable': Direct access to bIsFocusable is deprecated. Please use the getter. Note that this property is only set at construction and is not modifiable at runtime. Please update your code to the new API before upgrading to the next release, otherwise your project will no longer compile.
+[63/72] Compile [x64] RPGEncounterSelectionSubsystem.cpp
+[64/72] Compile [x64] RPGPlayerMovesAttachWitnessTests.cpp
+[65/72] Compile [x64] RPGFogGate.cpp
+[66/72] Compile [x64] RPGRiposteInput.cpp
+[67/72] Compile [x64] RPGHitIntake.cpp
+[68/72] Compile [x64] RPGStartupChronology.cpp
+[69/72] Compile [x64] RPGPlayerMovesSubsystem.cpp
+[70/72] Link [x64] UnrealEditor-OneBossFight.lib
+[71/72] Link [x64] UnrealEditor-OneBossFight.dll
+   Creating object C:\UnrealProject\OneBossFight\Binaries\Win64\UnrealEditor-OneBossFight.exp
+[72/72] WriteMetadata OneBossFightEditor.target (UBA disabled)
+Trace file written to C:/Users/Rushit Vaghela/AppData/Local/UnrealBuildTool/Log.uba with size 18.7kb
+Total time in Unreal Build Accelerator local executor: 29.71 seconds
+Total execution time: 31.78 seconds

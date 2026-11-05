@@ -213,7 +213,7 @@ private:
 	RPGBuildRules::EDecision LastDecision = RPGBuildRules::EDecision::Done;
 	int32 Attempts = 0;
 	double LastAttemptTime = -1.0;
-	int32 LastGeneration = 0;
+	uint64 LastGeneration = 0;
 
 	bool bLocked = false;
 	int32 LockFailureStreak = 0;

@@ -2,6 +2,7 @@
 Usage: python -I Scripts/run_in_editor.py Scripts/Editor/<script>.py [max_chars]   (Git Bash: MSYS_NO_PATHCONV=1)"""
 import json
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -26,10 +27,21 @@ st = None
 for _ in range(1200):
     r = call("task_result", {"task_id": tid})
     st = r.get("data", {}).get("status")
-    if st in ("completed", "failed"):
+    if st in ("completed", "failed", "error", "cancelled"):
         break
     time.sleep(1)
 inner = r.get("data", {}).get("data", {})
 out = inner.get("output") or inner.get("error") or json.dumps(r)[:2000]
 print(st)
 print(out[:limit])
+if st != "completed":
+    print("RESULT: FAIL (editor task status=%s)" % (st or "missing"))
+    raise SystemExit(1)
+if re.search(r"\[EncPie\] RESULT FAIL\b", out):
+    print("RESULT: FAIL (encounter probe reported failed checks)")
+    raise SystemExit(1)
+if "[EncPie] RESULT PASS " in out:
+    print("RESULT: PASS (encounter probe)")
+elif "[EncPie]" in out:
+    print("RESULT: INCOMPLETE (encounter probe emitted no terminal RESULT)")
+    raise SystemExit(1)

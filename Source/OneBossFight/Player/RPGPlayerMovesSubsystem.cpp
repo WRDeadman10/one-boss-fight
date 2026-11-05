@@ -1,9 +1,16 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGPlayerMovesSubsystem.h"
+#include "Player/RPGBossEncounterDefinition.h"
+
+#include "Player/RPGEncounterSelectionSubsystem.h"
+#include "Player/RPGEncounterBinding.h"
+#include "Player/RPGBossActivation.h"
+#include "Player/RPGEncounterGenerationRules.h"
 #include "Player/RPGStartupChronology.h"
 #include "Combat/RPGInputTestUtils.h"
 #include "Player/RPGDodgeTiming.h"
+#include "Player/RPGPlayerParry.h"
 #include "Player/RPGIFrameMonitor.h"
 #include "Player/RPGHitIntake.h"
 #include "Player/RPGSwingTracker.h"
@@ -37,6 +44,30 @@
 #include "EngineUtils.h"
 #include "GameFramework/Pawn.h"
 #include "Engine/World.h"
+#include "Engine/GameInstance.h"
+#include "Engine/Engine.h"
+#include "GameFramework/Actor.h"
+#include "HAL/IConsoleManager.h"
+#include "HAL/PlatformTime.h"
+#include "TimerManager.h"
+#include "Dom/JsonObject.h"
+#include "Serialization/JsonSerializer.h"
+#include "Serialization/JsonWriter.h"
+
+URPGPlayerMovesSubsystem* URPGPlayerMovesSubsystem::GetForWorld(const UObject* WorldContextObject)
+{
+	UWorld* World = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
+	return World ? World->GetSubsystem<URPGPlayerMovesSubsystem>() : nullptr;
+}
+#include "Misc/ScopeExit.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogRPGEncounterTiming, Log, All);
+
+#if !UE_BUILD_SHIPPING
+static TAutoConsoleVariable<int32> CVarEncounterSpawnGate(
+	TEXT("rpg.EncounterLifecycle.SpawnGate"), 0,
+	TEXT("Temporary diagnostic: 1 logs pack pawn spawn-gate state. 0 = off. Not compiled into Shipping."), ECVF_Default);
+#endif
 
 bool URPGPlayerMovesSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 {
@@ -47,6 +78,8 @@ bool URPGPlayerMovesSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 void URPGPlayerMovesSubsystem::PostInitialize()
 {
 	Super::PostInitialize();
+	// Lead (BUILD-212): restored. The legacy spawn hook must be live before BeginPlay (AttachWitness/AbsentPreservesLegacyStartup
+	// spawn pawns in worlds that never begin play); OnWorldBeginPlay only binds when this did not.
 	if (UWorld* World = GetWorld())
 	{
 		SpawnHandle = World->AddOnActorSpawnedHandler(FOnActorSpawned::FDelegate::CreateUObject(this, &URPGPlayerMovesSubsystem::OnActorSpawned));
@@ -55,8 +88,116 @@ void URPGPlayerMovesSubsystem::PostInitialize()
 
 void URPGPlayerMovesSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 {
+	// Bind at the world-begin-play boundary: transient test worlds can initialize the subsystem before their
+	// actor-spawn delegate is ready, and all preexisting actors are handled by the census below.
+	if (!SpawnHandle.IsValid())
+	{
+		SpawnHandle = InWorld.AddOnActorSpawnedHandler(FOnActorSpawned::FDelegate::CreateUObject(this, &URPGPlayerMovesSubsystem::OnActorSpawned));
+	}
 	RPGStartupChronology::AtWorldBeginPlay(InWorld);
 	Super::OnWorldBeginPlay(InWorld);
+	UGameInstance* GameInstance = InWorld.GetGameInstance();
+	URPGEncounterSelectionSubsystem* Selection = GameInstance ? GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>() : nullptr;
+	const bool bSelectionRequested = Selection && Selection->HasSelectionRequest();
+	LastEncounterRoute = bSelectionRequested ? TEXT("data") : TEXT("legacy");
+	LastEncounterOutcome = bSelectionRequested ? TEXT("Pending") : TEXT("LegacyNoSelection");
+	LastEncounterReason.Reset();
+	LastEncounterManifestHash.Reset();
+	if (bSelectionRequested)
+	{
+		double OperationStartSeconds = 0.0;
+		const uint64 OperationId = BeginEncounterTiming(TEXT("selected_startup"), OperationStartSeconds);
+		ON_SCOPE_EXIT
+		{
+			EndEncounterTiming(OperationId, TEXT("selected_startup"), OperationStartSeconds, LastEncounterOutcome);
+		};
+		FString Error;
+		TArray<RPGBossWorldInputCompiler::FSelection> Selections;
+		ARPGEncounterBinding* Binding = nullptr;
+		bool bReady = Selection->BuildWorldBinding(InWorld, Binding, Selections, Error);
+		if (bReady)
+		{
+			for (TActorIterator<APawn> It(&InWorld); It; ++It)
+			{
+				if (IsPackBoss(*It) && !RemoveOwnedLegacyBossComponents(*It, Error))
+				{
+					bReady = false;
+					break;
+				}
+			}
+		}
+		URPGBossEncounterDefinition* Definition = bReady ? Selection->ResolveSelectedDefinition(Error) : nullptr;
+		if (Definition) { LastEncounterManifestHash = Definition->StableManifestHash; }
+		if (bReady && Definition)
+		{
+			FRPGWorldActivationResult Attempt = RPGBossActivation::ActivateWorld(&InWorld, Binding, Selections, Definition->StableManifestHash);
+			if (Attempt.Succeeded())
+			{
+				LastEncounterOutcome = TEXT("Activated");
+				LastEncounterReason.Reset();
+				ActiveTransientBinding = Binding;
+				ActiveDataActivation = MoveTemp(Attempt);
+				ActiveSelectionDefinition = Definition;
+				ActiveManifestHash = Definition->StableManifestHash;
+				ActiveEncounterInstance = Binding->EncounterInstance;
+				ActiveBossSlot = Definition->BossSlot;
+				ActivePlayerSlot = Definition->PlayerSlot;
+				ActiveBossPhase = Definition->InitialBossPhase;
+				ActiveBossDefinitionPath = Definition->BossDefinition.ToSoftObjectPath();
+				ActivePlayerDefinitionPath = Definition->PlayerDefinition.ToSoftObjectPath();
+				LastAcceptedParticipantGeneration = Binding->ParticipantGeneration;
+				for (TActorIterator<APawn> It(&InWorld); It; ++It)
+				{
+					if (IsPackBoss(*It)) { BindResetBroadcast(*It); break; }
+				}
+			}
+			else
+			{
+				Error = Attempt.Errors.IsEmpty() ? Attempt.Reason.ToString() : FString::Join(Attempt.Errors, TEXT("; "));
+				if (Attempt.Batch.IsValid())
+				{
+					double ReleaseStartSeconds = 0.0;
+					const uint64 ReleaseOperationId = BeginEncounterTiming(TEXT("activation_release_startup_refusal"), ReleaseStartSeconds);
+					const FRPGPreparationAbortReport Release = Attempt.Release();
+					EndEncounterTiming(ReleaseOperationId, TEXT("activation_release_startup_refusal"), ReleaseStartSeconds,
+						Release.IsClean() ? TEXT("clean") : TEXT("refused"));
+					if (!Release.Errors.IsEmpty()) { Error += TEXT("; cleanup: ") + FString::Join(Release.Errors, TEXT("; ")); }
+				}
+				if (IsValid(Binding)) Binding->Destroy();
+				LastEncounterOutcome = TEXT("HardError");
+				LastEncounterReason = Error;
+				bReady = false;
+			}
+		}
+		else
+		{
+			if (IsValid(Binding)) Binding->Destroy();
+			bReady = false;
+		}
+
+		if (!bReady)
+		{
+			for (TActorIterator<APawn> It(&InWorld); It; ++It)
+			{
+				if (IsPackBoss(*It))
+				{
+					FString CleanupError;
+					if (!RemoveOwnedLegacyBossComponents(*It, CleanupError)) { Error += TEXT("; ") + CleanupError; }
+					DisableSelectedBoss(*It);
+				}
+			}
+			LastEncounterOutcome = TEXT("HardError");
+			LastEncounterReason = Error.IsEmpty() ? TEXT("EncounterActivation.Refused") : Error;
+			ReportActivationFailure(&InWorld, LastEncounterReason);
+		}
+		// The player-side additions are independent of boss activation and remain available on refusal.
+		for (TActorIterator<APawn> It(&InWorld); It; ++It)
+		{
+			AttachSelectedPlayerComponents(*It);
+			AttachBossDiagnostics(*It);
+		}
+		return;
+	}
 	// Pawns that exist already (placed in the level or spawned before the handler).
 	for (TActorIterator<APawn> It(&InWorld); It; ++It)
 	{
@@ -67,6 +208,21 @@ void URPGPlayerMovesSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 void URPGPlayerMovesSubsystem::Deinitialize()
 {
 	URPGInputTestUtils::RestoreFixedFrameRate(); // a driver that was cut must not leave the editor at 30 FPS
+	if (UWorld* World = GetWorld()) { World->GetTimerManager().ClearTimer(RebindTimeoutHandle); }
+	if (URPGBossEncounter* Source = ResetBroadcastSource.Get()) { Source->OnResetBroadcast().Remove(ResetBroadcastHandle); }
+	ResetBroadcastSource.Reset();
+	if (ActiveDataActivation.Batch.IsValid())
+	{
+		double ReleaseStartSeconds = 0.0;
+		const uint64 ReleaseOperationId = BeginEncounterTiming(TEXT("activation_release_shutdown"), ReleaseStartSeconds);
+		const FRPGPreparationAbortReport Release = ActiveDataActivation.ReleaseForRebind();
+		EndEncounterTiming(ReleaseOperationId, TEXT("activation_release_shutdown"), ReleaseStartSeconds,
+			Release.IsClean() ? TEXT("clean") : TEXT("refused"));
+		for (const FString& Error : Release.Errors) { UE_LOG(LogTemp, Error, TEXT("[EncounterActivation] cleanup=%s"), *Error); }
+	}
+	if (AActor* Binding = ActiveTransientBinding.Get()) { Binding->Destroy(); }
+	ActiveTransientBinding.Reset();
+	LegacyBossComponents.Reset();
 	if (UWorld* World = GetWorld())
 	{
 		World->RemoveOnActorSpawnedHandler(SpawnHandle);
@@ -76,7 +232,232 @@ void URPGPlayerMovesSubsystem::Deinitialize()
 
 void URPGPlayerMovesSubsystem::OnActorSpawned(AActor* Actor)
 {
+	UWorld* World = GetWorld();
+	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	URPGEncounterSelectionSubsystem* Selection = GameInstance ? GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>() : nullptr;
+	const bool bSpawnIsPackPlayer = IsPackPlayer(Actor);
+	const bool bSpawnIsPackBoss = IsPackBoss(Actor);
+	const bool bWorldHasBegunPlay = World && World->HasBegunPlay();
+	const bool bSelectionRequested = Selection && Selection->HasSelectionRequest();
+	const bool bSelectedMode = LastAcceptedParticipantGeneration > 0 || bSelectionRequested;
+	// Temporary BUILD-212 probe: distinguish a missing spawn callback from a skipped begun-world/player gate.
+#if !UE_BUILD_SHIPPING
+	if (CVarEncounterSpawnGate.GetValueOnGameThread() != 0 && (bSpawnIsPackPlayer || bSpawnIsPackBoss))
+	{
+		UE_LOG(LogTemp, Display, TEXT("[EncounterLifecycle] spawn_gate actor_id=%u actor_class=%s world_begun=%d pack_player=%d pack_boss=%d selection_requested=%d selected_mode=%d accepted_generation=%llu pending_valid=%d"),
+			Actor ? static_cast<uint32>(Actor->GetUniqueID()) : 0u, Actor ? *Actor->GetClass()->GetPathName() : TEXT("<null>"),
+			bWorldHasBegunPlay ? 1 : 0, bSpawnIsPackPlayer ? 1 : 0, bSpawnIsPackBoss ? 1 : 0, bSelectionRequested ? 1 : 0,
+			bSelectedMode ? 1 : 0, static_cast<unsigned long long>(LastAcceptedParticipantGeneration), PendingRespawnPlayer.IsValid() ? 1 : 0);
+	}
+#endif
+	if (World && World->HasBegunPlay() && IsPackPlayer(Actor))
+	{
+		uint64 Generation = 0;
+		int32 ResetCount = 0;
+		for (TActorIterator<APawn> It(World); It; ++It)
+		{
+			if (IsPackBoss(*It))
+			{
+				if (const URPGBossEncounter* Encounter = (*It)->FindComponentByClass<URPGBossEncounter>())
+				{
+					Generation = Encounter->GetParticipantGeneration();
+					ResetCount = Encounter->GetResetCount();
+				}
+				break;
+			}
+		}
+		UE_LOG(LogTemp, Display, TEXT("[EncounterLifecycle] spawn_player timestamp=%.6f generation=%llu reset_count=%d actor_id=%u"),
+			FPlatformTime::Seconds(), static_cast<unsigned long long>(Generation), ResetCount, static_cast<uint32>(Actor->GetUniqueID()));
+	}
+	if (bSelectedMode)
+	{
+		if (LastAcceptedParticipantGeneration > 0 && World && World->HasBegunPlay() && IsPackPlayer(Actor))
+		{
+			// Spawn callbacks only arm the rebind window. The authoritative player is resolved from local possession at reset broadcast.
+			PendingRespawnPlayer = Actor;
+			World->GetTimerManager().ClearTimer(RebindTimeoutHandle);
+			World->GetTimerManager().SetTimer(RebindTimeoutHandle, this, &URPGPlayerMovesSubsystem::OnRebindTimeout, 5.0f, false);
+			UE_LOG(LogTemp, Display, TEXT("[EncounterLifecycle] rebind_pending timestamp=%.6f generation=%llu actor_id=%u timeout_seconds=5"),
+				FPlatformTime::Seconds(), static_cast<unsigned long long>(LastAcceptedParticipantGeneration), static_cast<uint32>(Actor->GetUniqueID()));
+		}
+		else if (LastAcceptedParticipantGeneration > 0 && World && World->HasBegunPlay() && IsPackBoss(Actor))
+		{
+			FailSelectedRebind(TEXT("EncounterActivation.LateBossSpawn"), true);
+		}
+		else if (World && World->HasBegunPlay() && IsPackBoss(Actor))
+		{
+			DisableSelectedBoss(Actor);
+			ReportActivationFailure(World, TEXT("EncounterActivation.SelectedRouteUnavailable"));
+		}
+		if (IsPackPlayer(Actor)) { AttachSelectedPlayerComponents(Actor); }
+		AttachBossDiagnostics(Actor);
+		return;
+	}
 	Attach(Actor);
+}
+
+void URPGPlayerMovesSubsystem::BindResetBroadcast(AActor* Boss)
+{
+	URPGBossEncounter* Encounter = IsValid(Boss) ? Boss->FindComponentByClass<URPGBossEncounter>() : nullptr;
+	if (!Encounter)
+	{
+		FailSelectedRebind(TEXT("EncounterActivation.ResetSourceUnavailable"), true);
+		return;
+	}
+	ResetBroadcastSource = Encounter;
+	ResetBroadcastHandle = Encounter->OnResetBroadcast().AddUObject(this, &URPGPlayerMovesSubsystem::OnEncounterResetBroadcast);
+}
+
+void URPGPlayerMovesSubsystem::OnRebindTimeout()
+{
+	double OperationStartSeconds = 0.0;
+	const uint64 OperationId = BeginEncounterTiming(TEXT("selected_rebind_timeout"), OperationStartSeconds);
+	ON_SCOPE_EXIT
+	{
+		EndEncounterTiming(OperationId, TEXT("selected_rebind_timeout"), OperationStartSeconds, LastEncounterOutcome);
+	};
+	if (PendingRespawnPlayer.IsValid())
+	{
+		FailSelectedRebind(TEXT("EncounterActivation.RebindTimeout"), true);
+	}
+}
+
+void URPGPlayerMovesSubsystem::FailSelectedRebind(const FString& Reason, bool bReleaseCurrentActivation)
+{
+	double OperationStartSeconds = 0.0;
+	const uint64 OperationId = BeginEncounterTiming(TEXT("selected_rebind_refusal"), OperationStartSeconds);
+	ON_SCOPE_EXIT
+	{
+		EndEncounterTiming(OperationId, TEXT("selected_rebind_refusal"), OperationStartSeconds, LastEncounterOutcome);
+	};
+	UWorld* World = GetWorld();
+	if (World) { World->GetTimerManager().ClearTimer(RebindTimeoutHandle); }
+	if (URPGBossEncounter* Source = ResetBroadcastSource.Get()) { Source->OnResetBroadcast().Remove(ResetBroadcastHandle); }
+	ResetBroadcastSource.Reset();
+	FString FullReason = Reason;
+	bool bReleaseClean = true;
+	if (bReleaseCurrentActivation && ActiveDataActivation.Batch.IsValid())
+	{
+		double ReleaseStartSeconds = 0.0;
+		const uint64 ReleaseOperationId = BeginEncounterTiming(TEXT("activation_release_failure"), ReleaseStartSeconds);
+		const FRPGPreparationAbortReport Release = ActiveDataActivation.ReleaseForRebind();
+		EndEncounterTiming(ReleaseOperationId, TEXT("activation_release_failure"), ReleaseStartSeconds,
+			Release.IsClean() ? TEXT("clean") : TEXT("refused"));
+		bReleaseClean = Release.IsClean();
+		for (const FString& Error : Release.Errors) { FullReason += TEXT("; cleanup: ") + Error; }
+	}
+	if (bReleaseCurrentActivation && bReleaseClean)
+	{
+		if (AActor* Binding = ActiveTransientBinding.Get()) { Binding->Destroy(); }
+		ActiveTransientBinding.Reset();
+	}
+	if (World)
+	{
+		for (TActorIterator<APawn> It(World); It; ++It) { if (IsPackBoss(*It)) { DisableSelectedBoss(*It); } }
+	}
+	PendingRespawnPlayer.Reset();
+	LastEncounterOutcome = TEXT("HardError");
+	LastEncounterReason = FullReason;
+	ReportActivationFailure(World, FullReason);
+}
+
+void URPGPlayerMovesSubsystem::OnEncounterResetBroadcast(uint64 ParticipantGeneration, int32 ResetCount)
+{
+	double OperationStartSeconds = 0.0;
+	const uint64 OperationId = BeginEncounterTiming(TEXT("selected_rebind"), OperationStartSeconds);
+	FString TimingOutcome = TEXT("InProgress");
+	ON_SCOPE_EXIT
+	{
+		EndEncounterTiming(OperationId, TEXT("selected_rebind"), OperationStartSeconds,
+			TimingOutcome == TEXT("InProgress") ? LastEncounterOutcome : TimingOutcome);
+	};
+	if (ParticipantGeneration == LastAcceptedParticipantGeneration)
+	{
+		TimingOutcome = TEXT("DuplicateNoOp");
+		UE_LOG(LogTemp, Display, TEXT("[EncounterLifecycle] rebind_duplicate timestamp=%.6f generation=%llu reset_count=%d"),
+			FPlatformTime::Seconds(), static_cast<unsigned long long>(ParticipantGeneration), ResetCount);
+		return;
+	}
+	FString GenerationError;
+	if (!RPGEncounterGenerationRules::CanAdvance(LastAcceptedParticipantGeneration, ParticipantGeneration, GenerationError))
+	{
+		FailSelectedRebind(GenerationError, true);
+		return;
+	}
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		FailSelectedRebind(TEXT("EncounterActivation.RebindWorldMissing"), true);
+		return;
+	}
+	APawn* CandidatePlayer = nullptr;
+	const int32 AuthoritativePlayerCount = RPGEncounterPlayerIdentity::CountLocalPossessedPlayers(*World, CandidatePlayer);
+	if (AuthoritativePlayerCount == 0)
+	{
+		FailSelectedRebind(TEXT("EncounterActivation.RebindPlayerMissing"), true);
+		return;
+	}
+	if (AuthoritativePlayerCount != 1)
+	{
+		FailSelectedRebind(TEXT("EncounterActivation.RebindAmbiguousPlayer"), true);
+		return;
+	}
+
+	// Stop receiving callbacks from the old lease while the replacement binding is validated.
+	if (URPGBossEncounter* Source = ResetBroadcastSource.Get()) { Source->OnResetBroadcast().Remove(ResetBroadcastHandle); }
+	ResetBroadcastSource.Reset();
+
+	UGameInstance* GameInstance = World->GetGameInstance();
+	URPGEncounterSelectionSubsystem* Selection = GameInstance ? GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>() : nullptr;
+	FString Error;
+	URPGBossEncounterDefinition* Definition = Selection ? Selection->ResolveSelectedDefinition(Error) : nullptr;
+	if (!Definition || Definition != ActiveSelectionDefinition.Get() || Definition->StableManifestHash != ActiveManifestHash
+		|| Definition->EncounterInstance != ActiveEncounterInstance || Definition->BossSlot != ActiveBossSlot
+		|| Definition->PlayerSlot != ActivePlayerSlot || Definition->InitialBossPhase != ActiveBossPhase
+		|| Definition->BossDefinition.ToSoftObjectPath() != ActiveBossDefinitionPath
+		|| Definition->PlayerDefinition.ToSoftObjectPath() != ActivePlayerDefinitionPath)
+	{
+		FailSelectedRebind(Error.IsEmpty() ? TEXT("EncounterActivation.SelectionChanged") : Error, true);
+		return;
+	}
+
+	ARPGEncounterBinding* Binding = nullptr;
+	TArray<RPGBossWorldInputCompiler::FSelection> Selections;
+	if (!Selection->BuildWorldBindingForRebind(*World, ParticipantGeneration, ResetCount, Binding, Selections, Error))
+	{
+		if (IsValid(Binding)) { Binding->Destroy(); }
+		FailSelectedRebind(Error.IsEmpty() ? TEXT("EncounterActivation.RebindCensus") : Error, true);
+		return;
+	}
+	const bool bCandidateBound = Binding->Participants.ContainsByPredicate([&](const FRPGPlacedParticipantBinding& Participant)
+	{
+		return Participant.Slot == ActivePlayerSlot && Participant.Actor.Get() == CandidatePlayer;
+	});
+	if (!bCandidateBound)
+	{
+		Binding->Destroy();
+		FailSelectedRebind(TEXT("EncounterActivation.RebindPlayerMissing"), true);
+		return;
+	}
+	if (!ActiveDataActivation.RetagForRebind(*Binding, LastAcceptedParticipantGeneration, Error))
+	{
+		Binding->Destroy();
+		FailSelectedRebind(Error.IsEmpty() ? TEXT("EncounterActivation.RebindRetag") : Error, true);
+		return;
+	}
+	if (AActor* OldBinding = ActiveTransientBinding.Get()) { OldBinding->Destroy(); }
+	ActiveTransientBinding = Binding;
+	LastEncounterOutcome = TEXT("Activated");
+	LastEncounterReason.Reset();
+	LastAcceptedParticipantGeneration = ParticipantGeneration;
+	World->GetTimerManager().ClearTimer(RebindTimeoutHandle);
+	PendingRespawnPlayer.Reset();
+	for (TActorIterator<APawn> It(World); It; ++It)
+	{
+		if (IsPackBoss(*It)) { BindResetBroadcast(*It); break; }
+	}
+	UE_LOG(LogTemp, Display, TEXT("[EncounterLifecycle] rebind_activated timestamp=%.6f generation=%llu reset_count=%d"),
+		FPlatformTime::Seconds(), static_cast<unsigned long long>(ParticipantGeneration), ResetCount);
 }
 
 bool URPGPlayerMovesSubsystem::IsPackPlayer(const AActor* Actor)
@@ -90,6 +471,128 @@ bool URPGPlayerMovesSubsystem::IsPackPlayer(const AActor* Actor)
 		}
 	}
 	return false;
+}
+
+FString URPGPlayerMovesSubsystem::BuildEncounterParitySnapshot() const
+{
+	const UWorld* World = GetWorld();
+	const ARPGEncounterBinding* Binding = Cast<ARPGEncounterBinding>(ActiveTransientBinding.Get());   // the weak pointer is typed AActor
+	const bool bHasBinding = IsValid(Binding);
+	const bool bSelected = LastEncounterRoute == TEXT("data");
+
+	TSharedRef<FJsonObject> Root = MakeShared<FJsonObject>();
+	Root->SetStringField(TEXT("schema"), TEXT("onebossfight.encounter-runtime-snapshot/v1"));
+	Root->SetStringField(TEXT("world"), World ? World->GetPathName() : FString());
+	Root->SetStringField(TEXT("route"), LastEncounterRoute);
+	Root->SetStringField(TEXT("participant_generation"),
+		bHasBinding ? FString::Printf(TEXT("%llu"), static_cast<unsigned long long>(Binding->ParticipantGeneration))
+			: (LastAcceptedParticipantGeneration > 0
+				? FString::Printf(TEXT("%llu"), static_cast<unsigned long long>(LastAcceptedParticipantGeneration)) : FString()));
+	Root->SetNumberField(TEXT("reset_count"), bHasBinding ? Binding->ResetCount : 0);
+
+	TSharedRef<FJsonObject> Selection = MakeShared<FJsonObject>();
+	Selection->SetBoolField(TEXT("selected"), bSelected);
+	Selection->SetStringField(TEXT("definition"), bHasBinding ? Binding->SelectionDefinitionPath : FString());
+	Selection->SetStringField(TEXT("manifest_sha256"), bHasBinding ? Binding->StableManifestHash : LastEncounterManifestHash);
+	Selection->SetStringField(TEXT("encounter_instance"), bHasBinding ? Binding->EncounterInstance.ToString() : FString());
+	Selection->SetStringField(TEXT("boss_slot"), bHasBinding ? Binding->BossSlot.ToString() : ActiveBossSlot.ToString());
+	Selection->SetStringField(TEXT("player_slot"), bHasBinding ? Binding->PlayerSlot.ToString() : ActivePlayerSlot.ToString());
+	Selection->SetStringField(TEXT("initial_boss_phase"), bHasBinding ? Binding->InitialBossPhase.ToString() : ActiveBossPhase.ToString());
+	if (!bHasBinding && bSelected)
+	{
+		if (UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr)
+		{
+			if (const URPGEncounterSelectionSubsystem* Store = GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>())
+			{
+				Selection->SetStringField(TEXT("definition"), Store->GetRequestedDefinitionPathForDiagnostics());
+				if (LastEncounterManifestHash.IsEmpty())
+				{
+					Selection->SetStringField(TEXT("manifest_sha256"), Store->GetRequestedManifestHashForDiagnostics());
+				}
+			}
+		}
+	}
+	Root->SetObjectField(TEXT("selection"), Selection);
+
+	TSharedRef<FJsonObject> Activation = MakeShared<FJsonObject>();
+	Activation->SetStringField(TEXT("outcome"), LastEncounterOutcome);
+	Activation->SetStringField(TEXT("reason"), LastEncounterReason);
+	Activation->SetBoolField(TEXT("lease_held"), ActiveDataActivation.IsHeld());
+	Activation->SetBoolField(TEXT("binding_retained"), bHasBinding);
+	Root->SetObjectField(TEXT("activation"), Activation);
+
+	TArray<TSharedPtr<FJsonValue>> ParticipantRows;
+	TSharedRef<FJsonObject> ComponentCensus = MakeShared<FJsonObject>();
+	for (const TCHAR* RoleName : {TEXT("boss"), TEXT("player")})
+	{
+		TArray<TSharedPtr<FJsonValue>> ComponentsForRole;
+		if (bHasBinding)
+		{
+			const FName RoleSlot = FCString::Stricmp(RoleName, TEXT("boss")) == 0 ? Binding->BossSlot : Binding->PlayerSlot;
+			for (const FRPGPlacedParticipantBinding& Participant : Binding->Participants)
+			{
+				if (Participant.Slot != RoleSlot) { continue; }
+				const AActor* Actor = Participant.Actor;
+				TSharedRef<FJsonObject> Row = MakeShared<FJsonObject>();
+				Row->SetStringField(TEXT("role"), RoleName);
+				Row->SetStringField(TEXT("slot"), Participant.Slot.ToString());
+				Row->SetStringField(TEXT("target_slot"), Participant.TargetSlot.ToString());
+				Row->SetStringField(TEXT("actor_class"), IsValid(Actor) ? Actor->GetClass()->GetPathName() : FString());
+				Row->SetStringField(TEXT("actor_id"), IsValid(Actor) ? Actor->GetPathName() : FString());
+				Row->SetStringField(TEXT("participant_generation"),
+					FString::Printf(TEXT("%llu"), static_cast<unsigned long long>(Binding->ParticipantGeneration)));
+				Row->SetNumberField(TEXT("reset_count"), Binding->ResetCount);
+				Row->SetStringField(TEXT("definition"), IsValid(Participant.Definition) ? Participant.Definition->GetPathName() : FString());
+				ParticipantRows.Add(MakeShared<FJsonValueObject>(Row));
+				if (IsValid(Actor))
+				{
+					TArray<UActorComponent*> ActorComponents;
+					Actor->GetComponents(ActorComponents);
+					for (const UActorComponent* Component : ActorComponents)
+					{
+						if (IsValid(Component)) { ComponentsForRole.Add(MakeShared<FJsonValueString>(Component->GetPathName())); }
+					}
+				}
+			}
+		}
+		else if (World)
+		{
+			for (TActorIterator<APawn> It(World); It; ++It)
+			{
+				const AActor* Actor = *It;
+				const bool bRoleMatches = FCString::Stricmp(RoleName, TEXT("boss")) == 0 ? IsPackBoss(Actor) : IsPackPlayer(Actor);
+				if (!bRoleMatches) { continue; }
+				TSharedRef<FJsonObject> Row = MakeShared<FJsonObject>();
+				Row->SetStringField(TEXT("role"), RoleName);
+				Row->SetStringField(TEXT("slot"), FString());
+				Row->SetStringField(TEXT("target_slot"), FString());
+				Row->SetStringField(TEXT("actor_class"), Actor->GetClass()->GetPathName());
+				Row->SetStringField(TEXT("actor_id"), Actor->GetPathName());
+				Row->SetStringField(TEXT("participant_generation"), FString());
+				Row->SetNumberField(TEXT("reset_count"), 0);
+				Row->SetStringField(TEXT("definition"), FString());
+				ParticipantRows.Add(MakeShared<FJsonValueObject>(Row));
+				TArray<UActorComponent*> ActorComponents;
+				Actor->GetComponents(ActorComponents);
+				for (const UActorComponent* Component : ActorComponents)
+				{
+					if (IsValid(Component)) { ComponentsForRole.Add(MakeShared<FJsonValueString>(Component->GetPathName())); }
+				}
+			}
+		}
+		ComponentsForRole.Sort([](const TSharedPtr<FJsonValue>& Left, const TSharedPtr<FJsonValue>& Right)
+		{
+			return Left->AsString() < Right->AsString();
+		});
+		ComponentCensus->SetArrayField(RoleName, ComponentsForRole);
+	}
+	Root->SetArrayField(TEXT("participants"), ParticipantRows);
+	Root->SetObjectField(TEXT("components"), ComponentCensus);
+
+	FString Json;
+	const TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&Json);
+	FJsonSerializer::Serialize(Root, Writer);
+	return Json;
 }
 
 bool URPGPlayerMovesSubsystem::IsPackBoss(const AActor* Actor)
@@ -227,21 +730,11 @@ void URPGPlayerMovesSubsystem::AttachLegacyBossBundle(AActor* Pawn) const
 		{
 			NewObject<URPGTraceGuard>(Pawn, TEXT("RPGTraceGuard"))->RegisterComponent(); // closes the pack's weapon trace on every interrupt, carries the hit set per instance, blocks hits through walls
 		}
-		if (!Pawn->FindComponentByClass<URPGTraceAudit>())
-		{
-			NewObject<URPGTraceAudit>(Pawn, TEXT("RPGTraceAudit"))->RegisterComponent(); // observer: trace overlap versus damage accepted (empty in Shipping)
-		}
 	}
 	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossHud>())
 	{
 		URPGBossHud* Hud = NewObject<URPGBossHud>(Pawn, TEXT("RPGBossHud"));
 		Hud->RegisterComponent();
-	}
-	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGCombatDebug>())
-	{
-		// Shows nothing until the console variable rpg.Debug is above 0.
-		URPGCombatDebug* Debug = NewObject<URPGCombatDebug>(Pawn, TEXT("RPGCombatDebug"));
-		Debug->RegisterComponent();
 	}
 	if (IsPackBoss(Pawn) && !Pawn->FindComponentByClass<URPGBossLegend>())
 	{
@@ -250,8 +743,11 @@ void URPGPlayerMovesSubsystem::AttachLegacyBossBundle(AActor* Pawn) const
 	}
 }
 
-void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
+void URPGPlayerMovesSubsystem::Attach(AActor* Pawn)
 {
+	if (!IsValid(Pawn)) return;
+	TArray<UActorComponent*> Before;
+	Pawn->GetComponents(Before);
 	if (IsPackPlayer(Pawn))
 	{
 		AddFootsteps(Pawn, false);
@@ -261,7 +757,40 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
 		AttachLegacyBossPrelude(Pawn);
 	}
 
-	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGCameraRig>())
+	AttachPlayerComponents(Pawn);
+	AttachLegacyBossBundle(Pawn); // after the player components, as the boss statements always were
+
+	if (IsPackBoss(Pawn))
+	{
+		TArray<UActorComponent*> After;
+		Pawn->GetComponents(After);
+		TArray<TWeakObjectPtr<UActorComponent>>& Owned = LegacyBossComponents.FindOrAdd(Pawn);
+		for (UActorComponent* Component : After)
+		{
+			if (IsValid(Component) && !Before.Contains(Component)) { Owned.AddUnique(Component); }
+		}
+	}
+	AttachBossDiagnostics(Pawn);
+}
+
+void URPGPlayerMovesSubsystem::AttachBossDiagnostics(AActor* Pawn) const
+{
+	if (!IsPackBoss(Pawn)) return;
+	if (!Pawn->FindComponentByClass<URPGTraceAudit>())
+	{
+		NewObject<URPGTraceAudit>(Pawn, TEXT("RPGTraceAudit"))->RegisterComponent(); // observer: trace overlap versus damage accepted (empty in Shipping)
+	}
+	if (!Pawn->FindComponentByClass<URPGCombatDebug>())
+	{
+		// Shows nothing until the console variable rpg.Debug is above 0.
+		NewObject<URPGCombatDebug>(Pawn, TEXT("RPGCombatDebug"))->RegisterComponent();
+	}
+}
+
+void URPGPlayerMovesSubsystem::AttachPlayerComponents(AActor* Pawn) const
+{
+	if (!IsPackPlayer(Pawn)) return;
+	if (!Pawn->FindComponentByClass<URPGCameraRig>())
 	{
 		URPGCameraRig* Rig = NewObject<URPGCameraRig>(Pawn, TEXT("RPGCameraRig"));
 		Rig->RegisterComponent();
@@ -275,6 +804,10 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
 	{
 		URPGDodgeTiming* Timing = NewObject<URPGDodgeTiming>(Pawn, TEXT("RPGDodgeTiming"));
 		Timing->RegisterComponent();
+	}
+	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGPlayerParry>())
+	{
+		NewObject<URPGPlayerParry>(Pawn, TEXT("RPGPlayerParry"))->RegisterComponent(); // the parry window of the player (owner decision 2026-11-02)
 	}
 	if (IsPackPlayer(Pawn) && !Pawn->FindComponentByClass<URPGSwingTracker>())
 	{
@@ -295,5 +828,82 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn) const
 		URPGIFrameMonitor* IFrames = NewObject<URPGIFrameMonitor>(Pawn, TEXT("RPGIFrameMonitor"));
 		IFrames->RegisterComponent();
 	}
-	AttachLegacyBossBundle(Pawn); // after the player components, as the boss statements always were
+}
+
+void URPGPlayerMovesSubsystem::AttachSelectedPlayerComponents(AActor* Pawn) const
+{
+	if (!IsPackPlayer(Pawn)) return;
+	AddFootsteps(Pawn, false);
+	AttachPlayerComponents(Pawn);
+}
+
+void URPGPlayerMovesSubsystem::DisableSelectedBoss(AActor* Boss) const
+{
+	if (!IsValid(Boss) || !IsPackBoss(Boss)) return;
+	Boss->SetActorTickEnabled(false);
+	Boss->SetActorEnableCollision(false);
+	Boss->SetActorHiddenInGame(true);
+	TArray<UActorComponent*> Components;
+	Boss->GetComponents(Components);
+	for (UActorComponent* Component : Components)
+	{
+		if (!IsValid(Component)) continue;
+		Component->Deactivate();
+		Component->SetComponentTickEnabled(false);
+	}
+}
+
+bool URPGPlayerMovesSubsystem::RemoveOwnedLegacyBossComponents(AActor* Boss, FString& OutError)
+{
+	OutError.Reset();
+	if (!IsValid(Boss)) { OutError = TEXT("EncounterActivation.LegacyOwnerInvalid"); return false; }
+	TArray<TWeakObjectPtr<UActorComponent>>* Owned = LegacyBossComponents.Find(Boss);
+	if (!Owned) return true;
+	for (const TWeakObjectPtr<UActorComponent>& WeakComponent : *Owned)
+	{
+		UActorComponent* Component = WeakComponent.Get();
+		if (!IsValid(Component)) continue;
+		if (Component->HasBegunPlay())
+		{
+			OutError = TEXT("EncounterActivation.LegacyAlreadyBegun");
+			return false;
+		}
+	}
+	for (const TWeakObjectPtr<UActorComponent>& WeakComponent : *Owned)
+	{
+		if (UActorComponent* Component = WeakComponent.Get()) { Component->DestroyComponent(); }
+	}
+	LegacyBossComponents.Remove(Boss);
+	return true;
+}
+
+uint64 URPGPlayerMovesSubsystem::BeginEncounterTiming(const TCHAR* Operation, double& OutStartSeconds)
+{
+	OutStartSeconds = FPlatformTime::Seconds();
+	const uint64 OperationId = NextEncounterTimingOperationId;
+	if (NextEncounterTimingOperationId < MAX_uint64) { ++NextEncounterTimingOperationId; }
+	const UWorld* World = GetWorld();
+	UE_LOG(LogRPGEncounterTiming, Display, TEXT("[EncounterTiming] world_id=%u operation_id=%llu operation=%s event=begin timestamp_seconds=%.9f"),
+		World ? static_cast<uint32>(World->GetUniqueID()) : 0u,
+		static_cast<unsigned long long>(OperationId), Operation, OutStartSeconds);
+	return OperationId;
+}
+
+void URPGPlayerMovesSubsystem::EndEncounterTiming(uint64 OperationId, const TCHAR* Operation, double StartSeconds, const FString& Outcome) const
+{
+	const double EndSeconds = FPlatformTime::Seconds();
+	const UWorld* World = GetWorld();
+	UE_LOG(LogRPGEncounterTiming, Display, TEXT("[EncounterTiming] world_id=%u operation_id=%llu operation=%s event=end timestamp_seconds=%.9f elapsed_ms=%.6f outcome=%s"),
+		World ? static_cast<uint32>(World->GetUniqueID()) : 0u,
+		static_cast<unsigned long long>(OperationId), Operation, EndSeconds, FMath::Max(0.0, EndSeconds - StartSeconds) * 1000.0, *Outcome);
+}
+
+void URPGPlayerMovesSubsystem::ReportActivationFailure(UWorld* World, const FString& Reason) const
+{
+	UE_LOG(LogTemp, Error, TEXT("[EncounterActivation] outcome=HardError reason=%s"), *Reason);
+	if (GEngine && World)
+	{
+		GEngine->AddOnScreenDebugMessage(uint64(World->GetUniqueID()), 10.f, FColor::Red,
+			FString::Printf(TEXT("Encounter activation refused: %s"), *Reason));
+	}
 }

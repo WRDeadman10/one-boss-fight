@@ -1,0 +1,25 @@
+{
+  "schema": "c3.new-weapon-run-evidence.v1",
+  "status": "PASSED",
+  "execution_owner": "Claude/Lead",
+  "reason": "Lead completed approved dry run, recovered and reran apply, and accepted the fresh PIE real-build proof (2026-11-04; BUILD-206).",
+  "config_path": "Docs/BossCombatReview/Execution/Claude/C3/example_polearm_weapon_v1.json",
+  "dry_run_log": "Docs/BossCombatReview/Execution/Claude/C3/runs_v2_lead/dry/editor_raw.log (NEWWEAPON_VALIDATION errors=[], existing_rows=24; NEWWEAPON_END written=[], dry_run=true)",
+  "apply_log": "Docs/BossCombatReview/Execution/Claude/C3/runs_v2_lead/apply/editor_raw.log (NEWWEAPON_READBACK_OK; NEWWEAPON_CATALOG_READBACK_OK weapons/builds [3,4]; NEWWEAPON_END dry_run=false; exit 0)",
+  "runtime_catalog_compile_log": "Docs/BossCombatReview/Execution/Claude/C3/runs_v2_lead/pie_polearm_real/editor_raw.log (fresh PIE epoch=DD7562184B4D2FB25100CA85184859A6 source=data at line 1429; PolearmCombatStyle equip and real boss-hit proof)",
+  "prerequisite_hashes_before": "NOT_CAPTURED; runs_v2_lead/apply_backup/before_sha256.txt records mutable DA_WeaponAttacks and DA_CombatCatalog backup hashes only.",
+  "prerequisite_hashes_after": "NOT_CAPTURED; runs_v2_lead/after_apply_sha256.txt records final hashes of the four changed registration packages, not pack prerequisites.",
+  "expected_changed_packages": [
+    "/Game/OneBossFight/Data/DA_WeaponAttacks",
+    "/Game/OneBossFight/Data/Catalog/DA_Weapon_FengMaoPolearm",
+    "/Game/OneBossFight/Data/Catalog/DA_Build_FengMaoPolearm",
+    "/Game/OneBossFight/Data/Catalog/DA_CombatCatalog"
+  ],
+  "observed_changed_packages": [
+    "/Game/OneBossFight/Data/DA_WeaponAttacks",
+    "/Game/OneBossFight/Data/Catalog/DA_Weapon_FengMaoPolearm",
+    "/Game/OneBossFight/Data/Catalog/DA_Build_FengMaoPolearm",
+    "/Game/OneBossFight/Data/Catalog/DA_CombatCatalog"
+  ],
+  "notes": "Initial approved apply failed after writing rows because UE 5.5 SoftObjectPath readback returned repr {}; Lead restored DA_WeaponAttacks byte-exact from apply_backup and hash-checked, fixed reference_path() to use export_text(), then reran successfully. Final changed-package hashes are in runs_v2_lead/after_apply_sha256.txt; full execution/evidence hashes are in evidence_sha256.txt. Fresh PIE on L_SevarogFrameworkProofF8 equipped polearm as PolearmCombatStyle and landed three Light hits for health 250->150->50->0 (BUILD-206, accepted). Pack prerequisite before/after hashes were not captured."
+}

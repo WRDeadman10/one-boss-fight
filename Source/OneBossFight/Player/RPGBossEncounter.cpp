@@ -1,6 +1,8 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGEncounterGenerationRules.h"
+#include "Player/RPGEncounterBinding.h"
 #include "Player/RPGStartupChronology.h"
 #include "Player/RPGBossBleed.h"
 #include "Player/RPGBossDeath.h"
@@ -18,6 +20,8 @@
 #include "BrainComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/World.h"
+#include "EngineUtils.h"
+#include "HAL/PlatformTime.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -68,6 +72,24 @@ void URPGBossEncounter::BeginPlay()
 {
 	RPGStartupChronology::AtComponentBeginPlay(*this);
 	Super::BeginPlay();
+	if (UWorld* World = GetWorld())
+	{
+		for (TActorIterator<ARPGEncounterBinding> It(World); It; ++It)
+		{
+			const ARPGEncounterBinding* Binding = *It;
+			if (Binding->ParticipantGeneration == 0) { continue; }
+			const bool bOwnsThisBoss = Binding->Participants.ContainsByPredicate([this](const FRPGPlacedParticipantBinding& Participant)
+			{
+				return Participant.Actor.Get() == GetOwner();
+			});
+			if (bOwnsThisBoss)
+			{
+				ParticipantGeneration = Binding->ParticipantGeneration;
+				ResetCount = Binding->ResetCount;
+				break;
+			}
+		}
+	}
 	HomeTransform = GetOwner()->GetActorTransform();
 	if (GateRadius > 0.f)
 	{
@@ -132,6 +154,9 @@ void URPGBossEncounter::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	}
 	if (TrackedPlayer.IsValid() && TrackedPlayer.Get() != Player)
 	{
+		UE_LOG(LogTemp, Display, TEXT("[EncounterLifecycle] reset_detected timestamp=%.6f generation=%llu reset_count=%d previous_player=%u new_player=%u"),
+			FPlatformTime::Seconds(), static_cast<unsigned long long>(ParticipantGeneration), ResetCount,
+			static_cast<uint32>(TrackedPlayer->GetUniqueID()), static_cast<uint32>(Player->GetUniqueID()));
 		TrackedPlayer = Player;
 		if (bResetOnPlayerRespawn)
 		{
@@ -176,7 +201,7 @@ bool URPGBossEncounter::HoldBehaviour()
 	}
 	if (UObject* Manager = FindControllerComponent(Controller, TEXT("BP_BehaviorManagerComponent_C")))
 	{
-		CallBlueprintFunction(Manager, TEXT("StopBehaviorLogic"),
+		const bool bStopped = CallBlueprintFunction(Manager, TEXT("StopBehaviorLogic"),
 			[](UFunction& F, uint8* P)
 			{
 				if (const FStrProperty* Reason = CastField<FStrProperty>(F.FindPropertyByName(TEXT("Reason"))))
@@ -185,6 +210,10 @@ bool URPGBossEncounter::HoldBehaviour()
 				}
 			},
 			[](UFunction&, uint8*) {});
+		if (!bStopped)
+		{
+			Controller->BrainComponent->StopLogic(TEXT("Boss dormant")); // audit X-491: a failed reflected call must not report the boss held while behaviour runs
+		}
 	}
 	else
 	{
@@ -299,8 +328,6 @@ void URPGBossEncounter::CancelWake()
 void URPGBossEncounter::ResetEncounter()
 {
 	AActor* Owner = GetOwner();
-	URPGBossDormantWake::StopFor(Owner, TEXT("encounter reset"));
-	ARPGBossRemains::DestroyForWorld(Owner ? Owner->GetWorld() : nullptr);
 	// A boss that is dying stays dead: the pack destroys it a few seconds after its death whatever is done, so a reset would only bring back a corpse-less ghost with the ragdoll's changes on it (review D).
 	if (const URPGBossDeath* Death = Owner->FindComponentByClass<URPGBossDeath>(); Death && Death->IsDeathActive())
 	{
@@ -308,14 +335,25 @@ void URPGBossEncounter::ResetEncounter()
 		UE_LOG(LogRPGEncounter, Log, TEXT("%s: encounter reset refused: the boss is dying (%s), the dead boss stays dead"), *Owner->GetName(), *Death->GetDeathStateName());
 		return;
 	}
+	const uint64 NextParticipantGeneration = ParticipantGeneration == MAX_uint64 ? MAX_uint64 : ParticipantGeneration + 1;
+	FString GenerationError;
+	if (ResetCount == MAX_int32 || !RPGEncounterGenerationRules::CanAdvance(ParticipantGeneration, NextParticipantGeneration, GenerationError))
+	{
+		UE_LOG(LogTemp, Error, TEXT("[EncounterLifecycle] outcome=HardError reason=%s generation=%llu reset_count=%d"),
+			ResetCount == MAX_int32 ? TEXT("EncounterActivation.ResetCountExhausted") : *GenerationError,
+			static_cast<unsigned long long>(ParticipantGeneration), ResetCount);
+		return; // refuse before any reset side effects: neither counter may wrap
+	}
+	URPGBossDormantWake::StopFor(Owner, TEXT("encounter reset"));
+	ARPGBossRemains::DestroyForWorld(Owner ? Owner->GetWorld() : nullptr); // audit X-442 #16: only after the refusal check, a dead boss keeps its remains
 	URPGTraceGuard::CloseFor(Owner, TEXT("reset")); // first: before the montage stops, the weapon is sheathed and the boss is teleported, so no stale sweep can run across the arena
 	++ResetCount;
-	++Generation; // every callback made for the old fight is stale from here on
+	ParticipantGeneration = NextParticipantGeneration;
 	if (URPGIFrameMonitor* IFrames = URPGIFrameMonitor::Find(this))
 	{
 		IFrames->OnEncounterReset(); // a dodge's invulnerability does not survive the reset (Freeze 800)
 	}
-	UE_LOG(LogRPGEncounter, Log, TEXT("%s: encounter reset %d (generation %d, player respawned), from %s back to %s"), *Owner->GetName(), ResetCount, Generation, *Owner->GetActorLocation().ToCompactString(),
+	UE_LOG(LogRPGEncounter, Log, TEXT("%s: encounter reset %d (generation %llu, player respawned), from %s back to %s"), *Owner->GetName(), ResetCount, static_cast<unsigned long long>(ParticipantGeneration), *Owner->GetActorLocation().ToCompactString(),
 		*HomeTransform.GetLocation().ToCompactString());
 
 	if (URPGBossStagger* Stagger = Owner->FindComponentByClass<URPGBossStagger>())
@@ -395,4 +433,7 @@ void URPGBossEncounter::ResetEncounter()
 	{
 		ResumeBehaviour();
 	}
+	UE_LOG(LogTemp, Display, TEXT("[EncounterLifecycle] reset_broadcast timestamp=%.6f generation=%llu reset_count=%d"),
+		FPlatformTime::Seconds(), static_cast<unsigned long long>(ParticipantGeneration), ResetCount);
+	ResetBroadcast.Broadcast(ParticipantGeneration, ResetCount);
 }

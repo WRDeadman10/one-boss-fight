@@ -44,4 +44,6 @@ namespace RPGBossWorldPreparation
 {
 	/** Compiles the world input and prepares the whole batch (see above). Game thread only. */
 	ONEBOSSFIGHT_API FRPGWorldPreparationResult PrepareWorldBatch(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding, const TArray<RPGBossWorldInputCompiler::FSelection>& Selections, const FString& ManifestHash);
+	ONEBOSSFIGHT_API FRPGWorldPreparationResult PrepareWorldBatchForRebind(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding,
+		const TArray<RPGBossWorldInputCompiler::FSelection>& Selections, const FString& ManifestHash, uint64 ParticipantGeneration);
 }

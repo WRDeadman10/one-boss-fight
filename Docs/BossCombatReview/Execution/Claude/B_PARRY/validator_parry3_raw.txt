@@ -1,0 +1,46 @@
+================================================================================
+ FRAMEWORK PROOF STRUCTURED LOG TELEMETRY VALIDATION REPORT (v3.14)
+================================================================================
+Log files checked:          1
+Total [FrameworkProof] lines: 713
+Registered token schemas:   124
+Observed tokens in logs:    30
+Syntax failures (mismatches): 0
+Semantic violations (findings): 0
+--------------------------------------------------------------------------------
+Token Occurrences (Descending):
+  guard_tags               :    307 occurrences
+  playback                 :    303 occurrences
+  sweep                    :     24 occurrences
+  event                    :     12 occurrences
+  guard_state              :     10 occurrences
+  hit                      :     10 occurrences
+  motion_lock              :      6 occurrences
+  candidate                :      4 occurrences
+  playback_start           :      3 occurrences
+  heading_commit           :      3 occurrences
+  parry_press              :      3 occurrences
+  heading_locked           :      3 occurrences
+  cleanup                  :      3 occurrences
+  combo_gate               :      3 occurrences
+  neutral_state            :      2 occurrences
+  decision                 :      2 occurrences
+  combo_start              :      2 occurrences
+  pack_style_known         :      1 occurrences
+  target_health_init       :      1 occurrences
+  nav_ready                :      1 occurrences
+  boss_health              :      1 occurrences
+  slot_graph               :      1 occurrences
+  dependencies             :      1 occurrences
+  nav                      :      1 occurrences
+  walk                     :      1 occurrences
+  guard_hook_armed         :      1 occurrences
+  combo_step               :      1 occurrences
+  combo_end                :      1 occurrences
+  invariant                :      1 occurrences
+  RESULT                   :      1 occurrences
+--------------------------------------------------------------------------------
+Semantic Findings Summary (0 occurrences):
+================================================================================
+ALL COMMITTED LOGS CONFORM TO SYNTAX SCHEMAS (100% GREEN)
+================================================================================

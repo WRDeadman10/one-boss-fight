@@ -8,6 +8,7 @@ the mesh never simulates physics while the clip plays, the mesh keeps its place 
 the clip is not restarted more than once, and the pack's own sword (static mesh Weapon Mesh) stays hidden while the look is on.
 Log prefix [DeathStates]; ends with RESULT n/m passed. Run pie_debug_overlay.py once after an editor start first.
 """
+import os
 import unreal
 
 log = lambda m: unreal.log("[DeathStates] " + m)
@@ -263,6 +264,9 @@ def _tick(dt):
     s["now"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0)
         return

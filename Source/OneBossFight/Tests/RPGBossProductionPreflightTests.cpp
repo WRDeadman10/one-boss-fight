@@ -35,7 +35,7 @@
 // mesh and its skeleton are placed on two ISOLATED native ACharacter actors in a test-local headless game world that never begins play; the animation dependencies are the authoring-default cooked-directory candidates
 // of the typed records; the definitions are transient; the content epoch is the existing legacy registry epoch.
 // What it can establish: that, for these exact assets in this editor binary, the production compiler loads the skeleton and every listed animation, every animation is on the skeleton, the actor meshes are compatible with
-// the skeleton, and the preflight then publishes twelve plans for the boss and none for the target. A mismatch is a real finding and fails the test with the observed names; nothing is retargeted, substituted or weakened.
+// the skeleton, and the preflight then publishes thirteen plans for the boss and none for the target. A mismatch is a real finding and fails the test with the observed names; nothing is retargeted, substituted or weakened.
 // What it does NOT establish: a cold load (the pack classes are loaded first and the assets may already be in memory; the state before the fixture is only logged), the packaged or cooked build, the arena level, the placed
 // Blueprint boss, an ability or gameplay effect (class paths are structural only), animation playback or root motion, the real boss definition asset (the typed values, phase list and manifest rows are fixture values, not
 // authority), a game-instance content epoch, BeginPlay, registration, context binding, activation or any wiring. The plans are built and never run.
@@ -107,7 +107,7 @@ namespace ProductionPreflightTests
 		}
 	};
 
-	/** The 110 unique manifest paths the twelve combined boss-core plans read, written out as independent literals. Membership only. */
+	/** The 115 unique manifest paths the thirteen combined boss-core plans read, written out as independent literals. Membership only. */
 	TArray<FString> AllRequiredPaths(FName PhaseId)
 	{
 		const FString Id = PhaseId.ToString();
@@ -131,7 +131,8 @@ namespace ProductionPreflightTests
 			TEXT("HealPunish.bEnabled"), TEXT("HealPunish.MinRange"), TEXT("HealPunish.MaxRange"), TEXT("HealPunish.Cooldown"), TEXT("HealPunish.Damage"), TEXT("HealPunish.FlightTime"), TEXT("HealPunish.MinSpeed"), TEXT("HealPunish.MaxSpeed"), TEXT("HealPunish.JavelinRadius"), TEXT("HealPunish.JavelinMaxRange"), TEXT("HealPunish.SpawnSockets"), TEXT("HealPunish.AimHeight"), TEXT("HealPunish.bRespondToHeal"), TEXT("HealPunish.bCancelJavelinsOnInterrupt"),
 			TEXT("Look.bEnabled"), TEXT("Look.Body"), TEXT("Look.Pieces"), TEXT("Look.Sword"), TEXT("Look.SwordSocket"),
 			TEXT("CloseClipSwap.CloseAbilityClassName"), TEXT("CloseClipSwap.AttackMontagesName"), TEXT("CloseClipSwap.A1Montage"), TEXT("CloseClipSwap.A3aMontage"), TEXT("CloseClipSwap.A3bMontage"),
-			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath")};
+			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath"),
+			TEXT("AttackTracker.Attacks"), TEXT("AttackTracker.bEnabled"), TEXT("AttackTracker.bVetoIllegalStarts"), TEXT("AttackTracker.BranchRange"), TEXT("AttackTracker.BranchConeDegrees")};
 	}
 
 	/** A manifest row supplied by this fixture: it satisfies the production compiler's row shape and the preflight's membership check; it is not derived from any asset and carries no authority. */
@@ -394,7 +395,7 @@ namespace ProductionPreflightTests
 		void CompileProduction()
 		{
 			BossCompile = RPGCombatHydration::CompileParticipant(*BossDefinition, Content, ManifestHash(), BossConfig);
-			PlayerCompile = RPGCombatHydration::CompileParticipant(*PlayerDefinition, Content, ManifestHash(), PlayerConfig);
+			PlayerCompile = RPGCombatHydration::CompileParticipant(*PlayerDefinition, Content, ManifestHash(), PlayerConfig, false);
 		}
 
 		FRPGHydrationPreflightInput MakeInput() const
@@ -531,7 +532,7 @@ bool FRPGProductionPreflightPositiveTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("slots, targets, roles and actors are as requested"), BossPlan.Slot == FName(TEXT("Boss")) && BossPlan.TargetSlot == FName(TEXT("Player")) && BossPlan.Role == ERPGPreflightRole::BossCore && BossPlan.Actor.Get() == F.BossActor
 		&& PlayerPlan.Slot == FName(TEXT("Player")) && PlayerPlan.TargetSlot == FName(TEXT("Boss")) && PlayerPlan.Role == ERPGPreflightRole::TargetOnly && PlayerPlan.Actor.Get() == F.PlayerActor);
 	TestTrue(TEXT("the plan holds the very production config leases"), BossPlan.Config.Get() == F.BossConfig.Get() && PlayerPlan.Config.Get() == F.PlayerConfig.Get());
-	if (!TestEqual(TEXT("the boss has twelve plans"), BossPlan.Plans.Num(), 12))
+	if (!TestEqual(TEXT("the boss has nineteen plans"), BossPlan.Plans.Num(), 19))
 	{
 		return false;
 	}
@@ -547,12 +548,12 @@ bool FRPGProductionPreflightPositiveTest::RunTest(const FString& Parameters)
 		Required.Append(ComponentPlan.RequiredFields);
 	}
 	const TArray<FString> Expected = AllRequiredPaths(PhaseTwo);
-	TestEqual(TEXT("the union of required manifest paths is one hundred ten"), Required.Num(), 110);
+	TestEqual(TEXT("the union of required manifest paths is one hundred fifteen"), Required.Num(), 115);
 	for (const FString& Path : Expected)
 	{
 		TestTrue(FString::Printf(TEXT("required path %s is named by a plan"), *Path), Required.Contains(Path));
 	}
-	TestEqual(TEXT("one class lease per boss plan"), BossPlan.ClassLeases.Num(), 12);
+	TestEqual(TEXT("one class lease per boss plan"), BossPlan.ClassLeases.Num(), 19);
 	TestTrue(TEXT("the target gets no plan and no class lease"), PlayerPlan.Plans.IsEmpty() && PlayerPlan.ClassLeases.IsEmpty());
 
 	// A stable repeat compile, and the world and the assets are exactly as before: nothing created, registered, bound, begun or ticked, and no touched package dirtied by the preflight.

@@ -14,6 +14,8 @@ namespace RPGBossOverlay
         bool bWindowOpen=false;              // the move model is in its Active state (a hit window is open)
         double Posture=0., PostureMax=0., Health=0., MaxHealth=0.;
         bool bStaggered=false, bPhaseHold=false;
+        bool bHasParryData=false, bParryWindowOpen=false;
+        FString LastParryGrade=TEXT("None");
     };
     /** A finite number with the given digits, "n/a" otherwise (the overlay must never show NaN or inf as a value). */
     inline FString Num(double V,int32 Digits=0)
@@ -23,8 +25,9 @@ namespace RPGBossOverlay
     }
     inline FString Format(const FInput& I)
     {
-        return FString::Printf(TEXT("Card=%s State=%s Phase=%s Range=%scm Cone=%sdeg Window=%s Posture=%s/%s Health=%s/%s Stagger=%d PhaseHold=%d"),
+        const FString Core=FString::Printf(TEXT("Card=%s State=%s Phase=%s Range=%scm Cone=%sdeg Window=%s Posture=%s/%s Health=%s/%s Stagger=%d PhaseHold=%d"),
             I.CardId.IsEmpty()?TEXT("None"):*I.CardId,*I.State,*I.Phase,*Num(I.Range),*Num(I.Cone),I.bWindowOpen?TEXT("Open"):TEXT("Closed"),
             *Num(I.Posture),*Num(I.PostureMax),*Num(I.Health),*Num(I.MaxHealth),I.bStaggered?1:0,I.bPhaseHold?1:0);
+        return I.bHasParryData ? Core+FString::Printf(TEXT(" Parry=%s Grade=%s"),I.bParryWindowOpen?TEXT("Open"):TEXT("Closed"),*I.LastParryGrade) : Core;
     }
 }

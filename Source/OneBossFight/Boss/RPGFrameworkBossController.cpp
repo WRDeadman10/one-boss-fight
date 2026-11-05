@@ -20,7 +20,7 @@ bool ARPGFrameworkBossController::WalkToBand(ARPGFrameworkBossCharacter* Boss,FS
     // BOSS-MOV-002: near a wall the boss takes its place on the centre side of the target.
     float Bias=P.ArenaCenterBias;
 #if !UE_BUILD_SHIPPING
-    if (CVarBossProofCenterBias.GetValueOnGameThread()>=0.f) Bias=CVarBossProofCenterBias.GetValueOnGameThread();
+    if (FMath::IsFinite(CVarBossProofCenterBias.GetValueOnGameThread())&&CVarBossProofCenterBias.GetValueOnGameThread()>=0.f) Bias=CVarBossProofCenterBias.GetValueOnGameThread();
 #endif
     if (P.ArenaRadiusCm>0.f&&(Bias>0.f||P.ArenaCenterBias>0.f))
     {

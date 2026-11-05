@@ -76,6 +76,9 @@ public:
 	int32 GetHitCount() const { return HitCount; }
 
 	UFUNCTION(BlueprintPure, Category = "Sweep")
+	int32 GetParriedCount() const { return ParriedCount; }
+
+	UFUNCTION(BlueprintPure, Category = "Sweep")
 	int32 GetJumpedCount() const { return JumpedCount; }
 
 	UFUNCTION(BlueprintPure, Category = "Sweep")
@@ -85,6 +88,7 @@ public:
 	int32 GetBlockedCount() const { return BlockedCount; }
 
 protected:
+	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
@@ -94,6 +98,7 @@ private:
 
 	bool bActive = false;
 	bool bDamaged = false; // this attack instance has hurt the player
+	bool bParriedCounted = false; // this attack instance's contact was consumed by a parry
 	bool bJumpCounted = false;
 	bool bInvulnerableCounted = false;
 	bool bBlockedCounted = false;
@@ -102,12 +107,14 @@ private:
 	float ForwardYaw = 0.f;
 	float GroundZ = 0.f;
 	int32 LastInstance = -1;
-	int32 SweepGeneration = 0;
+	uint64 SweepGeneration = 0;
 	int32 SweepCount = 0;
 	int32 HitCount = 0;
+	int32 ParriedCount = 0;
 	int32 JumpedCount = 0;
 	int32 InvulnerableCount = 0;
 	int32 BlockedCount = 0;
 	bool bDead = false;
+	TWeakObjectPtr<UActorComponent> TrackerTickPrerequisite;
 	float DeathCheck = 0.f;
 };

@@ -1,0 +1,10 @@
+{
+  "fixture_version": "c2.dispatch.cases.v1",
+  "cases": [
+    {"name": "empty_selection", "selection_count": 0, "asset_class": "", "action": null, "diagnostic": "Selection.Count"},
+    {"name": "multiple_selection", "selection_count": 2, "asset_class": "AnimBlueprint", "action": null, "diagnostic": "Selection.Count"},
+    {"name": "framework_profile", "selection_count": 1, "asset_class": "RPGBossFrameworkProfile", "action": "validate_selected_boss_profile.py", "diagnostic": null},
+    {"name": "animation_blueprint", "selection_count": 1, "asset_class": "AnimBlueprint", "action": "validate_selected_anim_blueprint.py", "diagnostic": null},
+    {"name": "unsupported_asset", "selection_count": 1, "asset_class": "StaticMesh", "action": null, "diagnostic": "Selection.WrongAssetType"}
+  ]
+}

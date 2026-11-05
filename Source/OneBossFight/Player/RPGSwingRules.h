@@ -26,19 +26,25 @@ namespace RPGSwingRules
 			OutStart = Override->X;
 			OutEnd = Override->Y;
 		}
+		if (!FMath::IsFinite(OutStart) || !FMath::IsFinite(OutEnd) || OutStart < 0.f || OutEnd <= OutStart)
+		{
+			OutStart = -1.f;
+			OutEnd = -1.f;
+		}
 	}
 
 	/** True when a window [Start, End] wants the effect at this montage position (both ends inclusive; a window without a start or with End not after Start never opens). */
 	inline bool WindowOpen(float Start, float End, float Position)
 	{
-		return Start >= 0.f && End > Start && Position >= Start && Position <= End;
+		return FMath::IsFinite(Start) && FMath::IsFinite(End) && FMath::IsFinite(Position)
+			&& Start >= 0.f && End > Start && Position >= Start && Position <= End;
 	}
 
 	/** Stamina taken (positive) or given back (negative) on top of the pack's own cost so that the swing costs Wanted in total. Wanted below zero: the row leaves the pack's cost (0). A positive extra never takes
 	 *  more than the stamina left (the value never goes below zero). */
 	inline float StaminaExtra(float Wanted, float PackCost, double StaminaNow)
 	{
-		if (Wanted < 0.f)
+		if (!FMath::IsFinite(Wanted) || !FMath::IsFinite(PackCost) || !FMath::IsFinite(StaminaNow) || Wanted < 0.f)
 		{
 			return 0.f;
 		}
@@ -53,6 +59,7 @@ namespace RPGSwingRules
 	/** The pack's immunity effect (GE_HitStunImmune) lasts 4 s and is not applied again while it is active: a window that is still wanted when the effect is RefreshAfter seconds old needs it applied again. */
 	inline bool NeedsRefresh(double Now, double AppliedAt, float RefreshAfter)
 	{
-		return RefreshAfter > 0.f && Now - AppliedAt >= RefreshAfter;
+		return FMath::IsFinite(Now) && FMath::IsFinite(AppliedAt) && FMath::IsFinite(RefreshAfter)
+			&& RefreshAfter > 0.f && Now - AppliedAt >= RefreshAfter;
 	}
 }

@@ -65,6 +65,19 @@ struct FRPGAttackTiming
 	FString ClipPath;
 };
 
+/** Authoring/configuration record for the selected BossCore tracker. Its native default constructor is the single source for legacy tracker defaults. */
+USTRUCT(BlueprintType)
+struct FRPGAttackTrackerConfig
+{
+	GENERATED_BODY()
+	FRPGAttackTrackerConfig();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack") TArray<FRPGAttackTiming> Attacks;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack") bool bEnabled = true;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack") bool bVetoIllegalStarts = true;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack", meta = (ClampMin = "0.0")) float BranchRange = 400.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack", meta = (ClampMin = "10.0", ClampMax = "360.0")) float BranchConeDegrees = 120.f;
+};
+
 /**
  * Tracking, commitment and window bookkeeping for the pack boss's attacks (Freeze 14, 32.1).
  * It watches the boss's active montage. When the montage belongs to an entry of Attacks it starts an attack instance (a counter that goes up once per attack) and then:

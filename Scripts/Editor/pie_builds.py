@@ -521,14 +521,14 @@ def b10_respawn():
     ld = P()["ld"]
     check("B10 Strength is equipped before the death (%s, %s)" % (ld.get_actual_style_name(), answer), ok, ld_detail(ld))
     old = P()["pawn"].get_name()
-    gen0 = P()["enc"].get_generation()
+    gen0 = int(P()["enc"].get_participant_generation_text())
     P()["dbg"].debug_set_player_health(0.0)
     respawned = yield from until(lambda: P()["pawn"] is not None and P()["pawn"].get_name() != old, 25.0)
     check("B10 the player respawns as a new pawn", respawned, "")
     yield 1.0
     p = P()
     ld = p["ld"]
-    check("B10 the encounter reset (generation %d -> %d) and the new pawn has its own loadout" % (gen0, p["enc"].get_generation() if p["enc"] else -1), p["enc"] is not None and p["enc"].get_generation() > gen0 and ld is not None, "")
+    check("B10 the encounter reset (generation %d -> %d) and the new pawn has its own loadout" % (gen0, int(p["enc"].get_participant_generation_text()) if p["enc"] else -1), p["enc"] is not None and int(p["enc"].get_participant_generation_text()) > gen0 and ld is not None, "")
     if ld is None:
         for what in ("the new pawn applies Strength again", "the line says Strength", "no deferral is stuck"):
             check("B10 %s (skipped: no loadout)" % what, False)

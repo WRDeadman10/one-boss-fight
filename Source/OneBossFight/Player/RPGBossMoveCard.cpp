@@ -65,6 +65,7 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
         if (S.WarpMaxDistanceCm > 1000.f || S.WarpMaxAngleDegrees > 180.f) Fail(R, TEXT("MoveCard.Warp"), TEXT("budget above 1000 cm or 180 degrees"));
         if (!(S.WarpStartSeconds >= S.CommitSeconds && S.WarpStartSeconds < S.WarpEndSeconds && S.WarpEndSeconds <= S.ActiveEndSeconds)) Fail(R, TEXT("MoveCard.Warp"), TEXT("commit<=warpStart<warpEnd<=activeEnd"));
     }
+    if (S.WarpEaseInOut && !(S.WarpMaxDistanceCm > 0.f)) Fail(R, TEXT("MoveCard.Warp"), TEXT("WarpEaseInOut requires a positive distance budget"));
     // BOSS-ANM-003: the hold is off at 0/0; on it needs a window after the commit and before the active start, and bounds (0,3].
     Number(R, TEXT("HoldAtSeconds"), S.HoldAtSeconds); Number(R, TEXT("HoldMinSeconds"), S.HoldMinSeconds); Number(R, TEXT("HoldMaxSeconds"), S.HoldMaxSeconds);
     const bool bHoldOn = FMath::IsFinite(S.HoldMinSeconds) && FMath::IsFinite(S.HoldMaxSeconds) && (S.HoldMinSeconds > 0.f || S.HoldMaxSeconds > 0.f);
@@ -78,7 +79,7 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
         {
             const FRPGBossCue& C = S.Cues[I]; const FString Field = FString::Printf(TEXT("Cues[%d]"), I);
             Number(R, *FString::Printf(TEXT("%s.TimeSeconds"), *Field), C.TimeSeconds);
-            if (C.CueId.IsNone() || C.Visual == ERPGBossCueVisual::None || C.Sound.IsNull()) Fail(R, TEXT("MoveCard.Cue"), Field + TEXT(" id, visual and sound are all required"));
+            if (C.CueId.IsNone() || C.Visual == ERPGBossCueVisual::None || uint8(C.Visual) > uint8(ERPGBossCueVisual::BloodBurst) || C.Sound.IsNull()) Fail(R, TEXT("MoveCard.Cue"), Field + TEXT(" id, visual and sound are all required"));
             if (C.bAtHoldRelease ? !bHoldOn : (FMath::IsFinite(C.TimeSeconds) && C.TimeSeconds > S.RecoveryEndSeconds)) Fail(R, TEXT("MoveCard.Cue"), Field + TEXT(" time"));
             RPGBossCue::FCueKey K; K.Id = C.CueId; K.Visual = int32(C.Visual); K.Sound = C.Sound.ToSoftObjectPath().ToString(); Keys.Add(K);
         }
@@ -142,7 +143,7 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
             double PreviousTime = -1.0;
             for (const FRPGBakedBladeSample& B : W.BakedSamples)
             {
-                if (!FMath::IsFinite(B.TimeSeconds) || B.TimeSeconds <= PreviousTime || B.TimeSeconds > M.ClipLengthSeconds ||
+                if (!FMath::IsFinite(B.TimeSeconds) || B.TimeSeconds < 0.0 || B.TimeSeconds <= PreviousTime || B.TimeSeconds > M.ClipLengthSeconds ||
                     B.BaseCS.ContainsNaN() || B.TipCS.ContainsNaN() || B.BaseCS.GetAbsMax() > 1.e5 || B.TipCS.GetAbsMax() > 1.e5)
                 { bBakedOk = false; break; }
                 PreviousTime = B.TimeSeconds;

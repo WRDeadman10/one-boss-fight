@@ -20,6 +20,9 @@ class ONEBOSSFIGHT_API ARPGFrameworkBossCharacter : public ACharacter, public IR
 public:
     ARPGFrameworkBossCharacter();
     bool InitializeProof(ARPGFrameworkProofFixture* Fixture,URPGBossFrameworkProfile* Profile,APawn* Target,uint64 Encounter,uint64 Generation,FString& Error);
+#if WITH_DEV_AUTOMATION_TESTS
+    /** Initializes the real proof actor/target path for transient-world automation, omitting only the map-owned navigation request. */
+#endif
     void WalkArrived();
     void Fail(const FString& Error);
     bool ValidateTarget(double& Health) const;
@@ -35,15 +38,17 @@ public:
     /** BOSS-SEL-009: true from the end of the reaction delay of a perceived flask drink until the drink montage stops. */
     bool FlaskKnown() const {return bFlaskKnown;}
     const URPGBossFrameworkProfile* ProofProfile() const {return Dependencies?Dependencies->Profile.Get():nullptr;}
+    int32 ConsecutiveWhiffs() const { return FatigueWhiffs; }
     bool Succeeded() const {return bSucceeded;}
     bool Failed() const {return bFailed;}
     /** F4: the executor reports every accepted hit so the target-health invariant expects exactly that loss. */
     void NoteDamageApplied(double Applied) {ExpectedTargetHP-=Applied;}
     /** The player parried a contact of this boss (called by the move executor): schedules the posture reaction of the profile (ParryPostureAmount) at the start of the next tick. */
-    void NoteParried(double PostureScale=1.0){
+    void NoteParried(double PostureScale=1.0,double RecoverySeconds=0.,int32 RecoveryGrade=0){
         const double SafeScale=FMath::IsFinite(PostureScale)?FMath::Clamp(PostureScale,0.0,1.0):0.0;
         PendingParryReactionScale=bParryReactionPending?FMath::Max(PendingParryReactionScale,SafeScale):SafeScale;
         bParryReactionPending=true;
+        if(FMath::IsFinite(RecoverySeconds)&&RecoverySeconds>PendingParryRecoverySeconds){PendingParryRecoverySeconds=RecoverySeconds;PendingParryRecoveryGrade=RecoveryGrade;}
     }
     // IRPGNativeBossHealth
     virtual bool ReadNativeHealth(bool bMax, double& Out) const override { if (!bHittable) return false; Out = bMax ? MaxHealth : Health; return true; }
@@ -123,6 +128,9 @@ private:
     void StartComboCard();
     /** Repositions in a row since the last attack started (profile RepositionMax). */
     bool bParryReactionPending=false; double PendingParryReactionScale=0.;   // a contact was parried: apply the strongest same-tick grade at the start of the NEXT boss tick, never inside the executor's sweep
+    double PendingParryRecoverySeconds=0.,ParryRecoveryUntil=0.; int32 PendingParryRecoveryGrade=0;
+    RPGBossAggro::EBand AggroBand=RPGBossAggro::EBand::Balanced; TArray<double> AggroDodgeTimes;
+    int32 FatigueWhiffs=0; bool bFatigueFinishedCardSeen=false;
     int32 RepositionsInARow=0; double RepositionTurnStartedAt=-1., StrafeStartedAt=-1., StrafeLastLog=-1., StrafeLastTick=-1.;   // StrafeStartedAt: BOSS-SEL-008 neutral strafe
     int32 StrafeDirFlip=1; RPGBossStuck::FStuck StrafeStuck; int32 YawProbeSampleIndex=0;
     RPGBossTrack::FTurnLatch RepositionLatch;   // BOSS-MOV-003: direction memory of the reposition turn

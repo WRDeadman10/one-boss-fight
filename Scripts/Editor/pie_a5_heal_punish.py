@@ -6,15 +6,80 @@ informational scan of the press times). P07 a reset clears a pending request and
 Run pie_debug_overlay.py once after an editor start first. Log prefix [A5].
 """
 import math
+import json
+import os
+import time
 import unreal
 
 log = lambda m: unreal.log("[A5] " + m)
+PIE_START_MONOTONIC = None
 USE = "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_UseTool"
 MOVE = "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_Move"
 DODGE_KEY = "Gamepad_FaceButton_Right"
 results = []
+TIMING_OBSERVABLES = {}
 S = {"phase": "start", "t": 0.0, "i": 0, "next": 0.0, "mem": {}, "heal_until": 0.0, "real": False, "walls": [], "now": 0.0, "events": [], "last": {}, "heal_t": None, "stick": None, "stick_until": 0.0, "keys": {}}
 handle = None
+START_STATE_ERROR_LOGGED = False
+
+
+def _start_state_actor(actor):
+    def vector(value):
+        return [round(float(value.x), 3), round(float(value.y), 3), round(float(value.z), 3)] if value is not None else None
+
+    def rotation(value):
+        return [round(float(value.pitch), 3), round(float(value.yaw), 3), round(float(value.roll), 3)] if value is not None else None
+
+    row = {"name": actor.get_name(), "location": vector(actor.get_actor_location()), "rotation": rotation(actor.get_actor_rotation())}
+    capsules = actor.get_components_by_class(unreal.CapsuleComponent)
+    capsule = capsules[0] if capsules else None
+    try:
+        row["capsule"] = {"radius": capsule.get_scaled_capsule_radius(), "half_height": capsule.get_scaled_capsule_half_height()} if capsule else None
+    except Exception:
+        row["capsule"] = None
+    meshes = actor.get_components_by_class(unreal.SkeletalMeshComponent)
+    mesh = meshes[0] if meshes else None
+    try:
+        row["mesh_relative"] = {"location": vector(mesh.get_editor_property("relative_location")), "rotation": rotation(mesh.get_editor_property("relative_rotation"))} if mesh else None
+    except Exception:
+        row["mesh_relative"] = None
+    movements = actor.get_components_by_class(unreal.CharacterMovementComponent)
+    movement = movements[0] if movements else None
+    values = {}
+    for prop in ("max_walk_speed", "max_acceleration", "braking_deceleration_walking", "ground_friction", "gravity_scale", "jump_z_velocity", "rotation_rate"):
+        try:
+            value = movement.get_editor_property(prop) if movement else None
+            if prop == "rotation_rate" and value is not None:
+                value = rotation(value)
+            values[prop] = value
+        except Exception:
+            values[prop] = None
+    row["movement"] = values if movement else None
+    return row
+
+
+def start_state_line(scenario, trial, boss, pawn):
+    global START_STATE_ERROR_LOGGED
+    try:
+        row = {"scenario": scenario, "trial": trial, "elapsed_monotonic_s": round(time.perf_counter() - PIE_START_MONOTONIC, 6) if PIE_START_MONOTONIC is not None else None,
+               "boss": _start_state_actor(boss), "player": _start_state_actor(pawn)}
+    except Exception as exc:
+        row = {"scenario": scenario, "trial": trial, "elapsed_monotonic_s": None, "boss": None, "player": None}
+        if not START_STATE_ERROR_LOGGED:
+            START_STATE_ERROR_LOGGED = True
+            try:
+                log("START_STATE unavailable: %s" % exc)
+            except Exception:
+                pass
+    try:
+        log("START_STATE " + json.dumps(row, sort_keys=True, separators=(",", ":")))
+    except Exception as exc:
+        if not START_STATE_ERROR_LOGGED:
+            START_STATE_ERROR_LOGGED = True
+            try:
+                log("START_STATE serialization unavailable: %s" % exc)
+            except Exception:
+                pass
 
 
 def check(name, ok, detail=""):
@@ -126,12 +191,23 @@ def s_h0_done(w, pc, pawn, boss):
     pu, tr, dbg, enc = parts(boss)
     d = delta(S["mem"]["s"], snap(pu, tr))
     check("P01 one release, one A5 attack instance", d["rel"] == 1 and d["inst"] == 1, "released +%d instances +%d" % (d["rel"], d["inst"]))
-    check("P01 A5 committed near 0.45 s with the release in its window", 0.35 <= tr.get_last_commit_position() <= 0.6 and 0.35 <= tr.get_last_active_start_position() <= 0.65, "commit %.2f active %.2f" % (tr.get_last_commit_position(), tr.get_last_active_start_position()))
+    commit, active = tr.get_last_commit_position(), tr.get_last_active_start_position()
+    commit_name = "P01 A5 commit position near 0.45 s"
+    active_name = "P01 A5 active window position"
+    check(commit_name, 0.35 <= commit <= 0.6, "commit %.2f" % commit)
+    check(active_name, 0.35 <= active <= 0.65, "active %.2f" % active)
+    TIMING_OBSERVABLES[commit_name] = {"value": float(commit), "comparison": {"type": "timing_seconds", "range_seconds": [0.35, 0.6]}}
+    TIMING_OBSERVABLES[active_name] = {"value": float(active), "comparison": {"type": "timing_seconds", "range_seconds": [0.35, 0.65]}}
     check("P06 a player who stays put is hit (stationary)", d["hit"] == 1, "javelin hits +%d" % d["hit"])
     hit_at = next((t for (t, e) in S["events"] if e == "hit" and t >= (S["heal_t"] or 0)), None)
     if hit_at is not None and S["heal_t"] is not None:
         rel = hit_at - S["heal_t"]
-        check("P06 the javelin arrives after the drink animation ends (dodgeable on the heal exit)", rel >= 1.15, "hit %.2f s after the heal start (drink ends at 1.13 s)" % rel)
+        timing_name = "P06 the javelin arrives after the drink animation ends (dodgeable on the heal exit)"
+        check(timing_name, rel >= 1.15, "hit %.2f s after the heal start (drink ends at 1.13 s)" % rel)
+        TIMING_OBSERVABLES[timing_name] = {
+            "value": float(rel),
+            "comparison": {"type": "timing_seconds", "range_seconds": [1.15, 2.75]},
+        }
     check("P01 heading locked from the release (no yaw drift)", tr.get_max_yaw_drift_after_commit() < 0.5, "drift %.2f" % tr.get_max_yaw_drift_after_commit())
     check("P01 no tracked move left running, no javelin left", not pu.is_pending() and len(javelins(w)) == 0)
 
@@ -287,6 +363,7 @@ def make_p06(offset, mode):
         pu, tr, dbg, enc = parts(boss)
         dbg.debug_refill_player()
         place(pawn, boss, 700, 0)
+        start_state_line(tag, 1, boss, pawn)
         S["mem"] = {"s": snap(pu, tr), "hp": health(pawn)}
         S["heal_t"] = None
         if S["real"]:
@@ -317,7 +394,15 @@ def s_p06_summary(w, pc, pawn, boss):
     rows = S.get("p06", [])
     by_tag = {r[0]: r for r in rows}
     exit_ok = [t for t in ("side roll at heal+1.13", "side roll at heal+1.30", "side roll at heal+1.50") if by_tag.get(t) and by_tag[t][1] == 0]
-    check("P06 a side roll pressed on the heal exit (1.13, 1.30, 1.50 s after the heal start) leaves the javelin's line", len(exit_ok) == 3, "%s" % rows)
+    name = "P06 a side roll pressed on the heal exit (1.13, 1.30, 1.50 s after the heal start) leaves the javelin's line"
+    check(name, len(exit_ok) == 3, "%s" % rows)
+    TIMING_OBSERVABLES[name] = {
+        "value": [
+            {"trial": row[0], "hits": row[1], "iframe_passes": row[2], "world_hits": row[3]}
+            for row in rows
+        ],
+        "comparison": {"type": "exact"},
+    }
     back_hit = [r[0] for r in rows if r[0].startswith("back") and r[1] == 1]
     log("INFO P06 a backward roll along the flight line does not dodge: hit in %d of %d presses (%s)" % (len(back_hit), len([r for r in rows if r[0].startswith("back")]), back_hit))
 
@@ -458,6 +543,8 @@ def finish():
     if handle:
         unreal.unregister_slate_post_tick_callback(handle)
         handle = None
+    if TIMING_OBSERVABLES:
+        log("TIMING_OBSERVABLES_JSON " + json.dumps(TIMING_OBSERVABLES, sort_keys=True, separators=(",", ":")))
     log("RESULT %d/%d passed" % (sum(1 for r in results if r), len(results)))
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
 
@@ -468,6 +555,12 @@ def _tick(dt):
     s["now"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
+            global PIE_START_MONOTONIC
+            PIE_START_MONOTONIC = time.perf_counter()
+            log("PIE_START monotonic=%.6f source=editor_request_begin_play" % PIE_START_MONOTONIC)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0, next=STEPS[0][0])
         return

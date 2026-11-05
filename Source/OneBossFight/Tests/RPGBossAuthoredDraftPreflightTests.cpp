@@ -23,6 +23,13 @@
 #include "Player/RPGBossLook.h"
 #include "Player/RPGBossCloseClipSwap.h"
 #include "Player/RPGBossDeath.h"
+#include "Player/RPGAttackTracker.h"
+#include "Audio/RPGFootsteps.h"
+#include "Audio/RPGBossMusic.h"
+#include "Player/RPGDamageResolver.h"
+#include "Player/RPGTraceGuard.h"
+#include "UI/RPGBossHud.h"
+#include "Player/RPGLegend.h"
 #include "UObject/StrongObjectPtr.h"
 
 namespace AuthoredDraftPreflightTests
@@ -119,7 +126,7 @@ bool FRPGAuthoredDraftProductionPreflightTest::RunTest(const FString& Parameters
     AddInfo(FString::Printf(TEXT("[DD27j] stage=BossCompile ready=%d output=%d"), BossResult.IsReady(), BossConfig.IsValid()));
     for (const FString& Error : BossResult.Errors) AddError(Error);
     if (!TestTrue(TEXT("saved boss production compile"), BossResult.IsReady() && BossConfig.IsValid())) return false;
-    const FRPGHydrationResult PlayerResult = RPGCombatHydration::CompileParticipant(*PlayerDefinition, Content, ManifestHash, PlayerConfig);
+    const FRPGHydrationResult PlayerResult = RPGCombatHydration::CompileParticipant(*PlayerDefinition, Content, ManifestHash, PlayerConfig, false);
     AddInfo(FString::Printf(TEXT("[DD27j] stage=HeroCompile ready=%d output=%d fields=%d"), PlayerResult.IsReady(), PlayerConfig.IsValid(), PlayerDefinition->Fields.Num()));
     for (const FString& Error : PlayerResult.Errors) AddError(Error);
     if (!TestTrue(TEXT("saved Hero production compile; zero rows answered by actual compiler"), PlayerResult.IsReady() && PlayerConfig.IsValid())) return false;
@@ -172,9 +179,10 @@ bool FRPGAuthoredDraftProductionPreflightTest::RunTest(const FString& Parameters
     if (Plan->Participants.Num() != 2) return false;
     const TArray<UClass*> Expected{URPGBossStagger::StaticClass(), URPGBossPhases::StaticClass(), URPGBossEncounter::StaticClass(),
         URPGBossDormantWake::StaticClass(), URPGBossPosture::StaticClass(), URPGBossBleed::StaticClass(), URPGBossLowSweep::StaticClass(),
-        URPGBossShockwave::StaticClass(), URPGBossHealPunish::StaticClass(), URPGBossLook::StaticClass(), URPGBossCloseClipSwap::StaticClass(), URPGBossDeath::StaticClass()};
+        URPGBossShockwave::StaticClass(), URPGBossHealPunish::StaticClass(), URPGBossLook::StaticClass(), URPGBossCloseClipSwap::StaticClass(), URPGBossDeath::StaticClass(), URPGAttackTracker::StaticClass(),
+        URPGFootsteps::StaticClass(), URPGBossMusic::StaticClass(), URPGTraceGuard::StaticClass(), URPGBossHud::StaticClass(), URPGBossLegend::StaticClass(), URPGDamageResolver::StaticClass()};
     const auto& BossPlan = Plan->Participants[0].Plans;
-    bOk &= TestEqual(TEXT("exact twelve boss plans"), BossPlan.Num(), 12);
+    bOk &= TestEqual(TEXT("exact nineteen boss plans"), BossPlan.Num(), 19);
     bOk &= TestEqual(TEXT("no target-only boss plans"), Plan->Participants[1].Plans.Num(), 0);
     TSet<UClass*> Classes; TSet<FName> Names; TSet<FString> Required;
     for (int32 I = 0; I < BossPlan.Num(); ++I)
@@ -185,9 +193,9 @@ bool FRPGAuthoredDraftProductionPreflightTest::RunTest(const FString& Parameters
         Classes.Add(P.Class); Names.Add(P.InstanceName);
         for (const FString& Field : P.RequiredFields) { Required.Add(Field); AddInfo(TEXT("[DD27j] required=") + Field); }
     }
-    bOk &= TestEqual(TEXT("twelve unique classes"), Classes.Num(), 12);
-    bOk &= TestEqual(TEXT("twelve unique instance names"), Names.Num(), 12);
-    bOk &= TestEqual(TEXT("110 distinct required paths"), Required.Num(), 110);
+    bOk &= TestEqual(TEXT("nineteen unique classes"), Classes.Num(), 19);
+    bOk &= TestEqual(TEXT("nineteen unique instance names"), Names.Num(), 19);
+    bOk &= TestEqual(TEXT("115 distinct required paths"), Required.Num(), 115);
     AddInfo(TEXT("[DD27j] scope=ExpandedNativeSubsetPreflight; no Configure, registration, activation, save or gameplay claim"));
     return bOk;
 }

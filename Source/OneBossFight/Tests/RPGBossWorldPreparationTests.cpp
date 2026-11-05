@@ -7,6 +7,13 @@
 #include "Player/RPGBossLook.h"
 #include "Player/RPGBossCloseClipSwap.h"
 #include "Player/RPGBossDeath.h"
+#include "Player/RPGAttackTracker.h"
+#include "Audio/RPGFootsteps.h"
+#include "Audio/RPGBossMusic.h"
+#include "Player/RPGDamageResolver.h"
+#include "Player/RPGTraceGuard.h"
+#include "UI/RPGBossHud.h"
+#include "Player/RPGLegend.h"
 #include "Misc/AutomationTest.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -44,7 +51,7 @@
 // world context and a world and initializes every game-instance subsystem, the project's catalog subsystem included, with its actual default latch; cleanup Shutdown, DestroyWorldContext, DestroyWorld), real pack assets (the two
 // pack classes are loaded only to READ the mesh their default object holds), three isolated native ACharacter actors finished before any call (two boss-core, one target), transient production-compatible definitions, one real
 // ARPGEncounterBinding. No Legacy() epoch is injected, no cvar or asset is changed, nothing is mocked. The setup is copied from DD14, DD16 and DD17 into this file (no helper promoted, no earlier file edited).
-// What it can establish, for these exact assets in this editor binary: the facade composes the accepted stages (the epoch is the very lease the game instance published), twenty-four owned unregistered components with each owner's own
+// What it can establish, for these exact assets in this editor binary: the facade composes the accepted stages (the epoch is the very lease the game instance published), thirty-eight owned unregistered components with each owner's own
 // values, abort and scope-exit abort restore the prior component sets, the context and the mesh, an invalid later member allocates nothing, a REAL name collision under a later owner is refused by the allocation guard and
 // cleans the earlier allocations, only the fixture-owned blocker is removed before the retry, and a second independent preparation of the same actors is refused without damaging the first.
 // What it does NOT establish: epoch, game-instance or binding drift DURING a stage (not provokable without a callback, cvar or injection framework: source-checked only), re-entry, an organic native configure failure,
@@ -163,7 +170,8 @@ namespace WorldPreparationTests
 			TEXT("HealPunish.bEnabled"), TEXT("HealPunish.MinRange"), TEXT("HealPunish.MaxRange"), TEXT("HealPunish.Cooldown"), TEXT("HealPunish.Damage"), TEXT("HealPunish.FlightTime"), TEXT("HealPunish.MinSpeed"), TEXT("HealPunish.MaxSpeed"), TEXT("HealPunish.JavelinRadius"), TEXT("HealPunish.JavelinMaxRange"), TEXT("HealPunish.SpawnSockets"), TEXT("HealPunish.AimHeight"), TEXT("HealPunish.bRespondToHeal"), TEXT("HealPunish.bCancelJavelinsOnInterrupt"),
 			TEXT("Look.bEnabled"), TEXT("Look.Body"), TEXT("Look.Pieces"), TEXT("Look.Sword"), TEXT("Look.SwordSocket"),
 			TEXT("CloseClipSwap.CloseAbilityClassName"), TEXT("CloseClipSwap.AttackMontagesName"), TEXT("CloseClipSwap.A1Montage"), TEXT("CloseClipSwap.A3aMontage"), TEXT("CloseClipSwap.A3bMontage"),
-			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath")};
+			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath"),
+			TEXT("AttackTracker.Attacks"), TEXT("AttackTracker.bEnabled"), TEXT("AttackTracker.bVetoIllegalStarts"), TEXT("AttackTracker.BranchRange"), TEXT("AttackTracker.BranchConeDegrees")};
 	}
 
 	FRPGParityField MakeProductionField(const FString& Path)
@@ -327,7 +335,7 @@ namespace WorldPreparationTests
 	{
 		return TArray<FExpectedComponent>{{URPGBossStagger::StaticClass(), TEXT("RPGBossStagger")}, {URPGBossPhases::StaticClass(), TEXT("RPGBossPhases")}, {URPGBossEncounter::StaticClass(), TEXT("RPGBossEncounter")},
 			{URPGBossDormantWake::StaticClass(), TEXT("RPGBossDormantWake")}, {URPGBossPosture::StaticClass(), TEXT("RPGBossPosture")},
-			{URPGBossBleed::StaticClass(), TEXT("RPGBossBleed")} , {URPGBossLowSweep::StaticClass(), TEXT("RPGBossLowSweep")} , {URPGBossShockwave::StaticClass(), TEXT("RPGBossShockwave")} , {URPGBossHealPunish::StaticClass(), TEXT("RPGBossHealPunish")} , {URPGBossLook::StaticClass(), TEXT("RPGBossLook")} , {URPGBossCloseClipSwap::StaticClass(), TEXT("RPGBossCloseClipSwap")} , {URPGBossDeath::StaticClass(), TEXT("RPGBossDeath")}};
+			{URPGBossBleed::StaticClass(), TEXT("RPGBossBleed")} , {URPGBossLowSweep::StaticClass(), TEXT("RPGBossLowSweep")} , {URPGBossShockwave::StaticClass(), TEXT("RPGBossShockwave")} , {URPGBossHealPunish::StaticClass(), TEXT("RPGBossHealPunish")} , {URPGBossLook::StaticClass(), TEXT("RPGBossLook")} , {URPGBossCloseClipSwap::StaticClass(), TEXT("RPGBossCloseClipSwap")} , {URPGBossDeath::StaticClass(), TEXT("RPGBossDeath")}, {URPGAttackTracker::StaticClass(), TEXT("RPGAttackTracker")}, {URPGFootsteps::StaticClass(), TEXT("RPGFootsteps")}, {URPGBossMusic::StaticClass(), TEXT("RPGBossMusic")}, {URPGTraceGuard::StaticClass(), TEXT("RPGTraceGuard")}, {URPGBossHud::StaticClass(), TEXT("RPGBossHud")}, {URPGBossLegend::StaticClass(), TEXT("RPGBossLegend")}, {URPGDamageResolver::StaticClass(), TEXT("RPGDamageResolver")}};
 	}
 
 	bool NoManagedConsumer(const AActor* Actor)
@@ -554,7 +562,7 @@ namespace WorldPreparationTests
 				bCleanState = bCleanState && !Garbage->IsRegistered() && !Garbage->HasBegunPlay() && Garbage->IsBeingDestroyed();
 			}
 		}
-		bool bOk = Test.TestTrue(FString::Printf(TEXT("%s: every owned component is destroyed (none resolves any more)"), Label), Weak.Num() == 24 && bGone);
+		bool bOk = Test.TestTrue(FString::Printf(TEXT("%s: every owned component is destroyed (none resolves any more)"), Label), Weak.Num() == 38 && bGone);
 		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: any destroyed object still awaiting collection is unregistered, not begun and marked destroyed"), Label), bCleanState);
 		return bOk;
 	}
@@ -567,13 +575,13 @@ namespace WorldPreparationTests
 		return bOk;
 	}
 
-	/** The exact success shape of a world preparation: twenty-four owned components, the very GI epoch, per-owner values, unregistered/uninitialized/not begun/unticked, the target and the context untouched, summaries. */
+	/** The exact success shape of a world preparation: thirty-eight owned components, the very GI epoch, per-owner values, unregistered/uninitialized/not begun/unticked, the target and the context untouched, summaries. */
 	bool ExpectPrepared(FAutomationTestBase& Test, const FFixture& F, const FRPGPreparedBatch& Batch, const FWorldState& Before, const FEpochPtr& Epoch)
 	{
-		bool bOk = Test.TestTrue(TEXT("the artifact reports prepared and leases twenty-four components"), Batch.IsPrepared() && Batch.GetOwnedComponentCount() == 24);
+		bool bOk = Test.TestTrue(TEXT("the artifact reports prepared and leases thirty-eight components"), Batch.IsPrepared() && Batch.GetOwnedComponentCount() == 38);
 		const TArray<const UActorComponent*> OwnedList = Batch.OwnedComponentsForTest();
 		const TSet<const UActorComponent*> OwnedSet(OwnedList);
-		bOk &= Test.TestTrue(TEXT("twenty-four distinct owned component pointers"), OwnedList.Num() == 24 && OwnedSet.Num() == 24);
+		bOk &= Test.TestTrue(TEXT("thirty-eight distinct owned component pointers"), OwnedList.Num() == 38 && OwnedSet.Num() == 38);
 
 		struct FBossCase
 		{
@@ -601,12 +609,12 @@ namespace WorldPreparationTests
 			}
 			const FActorState Now = CaptureActor(Case.Actor);
 			const FActorState& Prior = Before.Actors[Case.Index];
-			bool bPriorKept = Now.Components.Num() == Prior.Components.Num() + 12 && !Now.bBegun && Now.MeshAsset == Prior.MeshAsset;
+			bool bPriorKept = Now.Components.Num() == Prior.Components.Num() + 19 && !Now.bBegun && Now.MeshAsset == Prior.MeshAsset;
 			for (const UActorComponent* PriorComponent : Prior.Components)
 			{
 				bPriorKept = bPriorKept && Now.Components.Contains(PriorComponent) && !OwnedSet.Contains(PriorComponent);
 			}
-			bOk &= Test.TestTrue(FString::Printf(TEXT("%s: exactly twelve components were added, every unrelated component is still there, the mesh asset is unchanged and no participant component exists"), *Label), bPriorKept && !Case.Actor->FindComponentByClass<URPGCombatParticipant>());
+			bOk &= Test.TestTrue(FString::Printf(TEXT("%s: exactly nineteen components were added, every unrelated component is still there, the mesh asset is unchanged and no participant component exists"), *Label), bPriorKept && !Case.Actor->FindComponentByClass<URPGCombatParticipant>());
 			const URPGBossStagger* Stagger = Case.Actor->FindComponentByClass<URPGBossStagger>();
 			const URPGBossPhases* Phases = Case.Actor->FindComponentByClass<URPGBossPhases>();
 			const URPGBossEncounter* Encounter = Case.Actor->FindComponentByClass<URPGBossEncounter>();
@@ -631,7 +639,7 @@ namespace WorldPreparationTests
 			bOk &= Test.TestTrue(TEXT("the plan is an incomplete subset: not a complete playable bundle, not a reservation, not ready"), !Plan->IsCompletePlayableBundle() && !Plan->IsReservation() && !Plan->IsReady());
 		}
 		const TArray<FRPGPreparedParticipantInfo> Infos = Batch.GetParticipants();
-		bOk &= Test.TestTrue(TEXT("summaries: three participants, twenty-four components, the explicit phase ids"), Infos.Num() == 3 && Infos[0].OwnedComponentCount == 12 && Infos[1].OwnedComponentCount == 12 && Infos[2].OwnedComponentCount == 0
+		bOk &= Test.TestTrue(TEXT("summaries: three participants, thirty-eight components, the explicit phase ids"), Infos.Num() == 3 && Infos[0].OwnedComponentCount == 19 && Infos[1].OwnedComponentCount == 19 && Infos[2].OwnedComponentCount == 0
 			&& Infos[0].SelectedPhaseId == FName(One.Phase) && Infos[1].SelectedPhaseId == FName(Two.Phase) && Infos[2].SelectedPhaseId.IsNone());
 		return bOk;
 	}
@@ -665,7 +673,7 @@ bool FRPGWorldPreparationPositiveTest::RunTest(const FString& Parameters)
 			return false;
 		}
 		const FRPGPreparationAbortReport Report = Loading.Batch->Abort();
-		TestTrue(TEXT("and its abort is clean, twenty-four destroyed"), Report.IsClean() && Report.Destroyed == 24 && Report.ContractViolations == 0);
+		TestTrue(TEXT("and its abort is clean, thirty-eight destroyed"), Report.IsClean() && Report.Destroyed == 38 && Report.ContractViolations == 0);
 	}
 	TArray<const UObject*> Touched{F.PlayerClass, F.BossClass, F.PlayerMesh, F.BossMesh, F.PlayerSkeleton, F.BossSkeleton};
 	const FWorldState Before = F.Capture();
@@ -681,7 +689,7 @@ bool FRPGWorldPreparationPositiveTest::RunTest(const FString& Parameters)
 		ExpectPrepared(*this, F, *First.Batch, Before, Epoch);
 		TArray<TWeakObjectPtr<UActorComponent>> FirstWeak = WeakOwned(*First.Batch);
 		const FRPGPreparationAbortReport Report = First.Batch->Abort();
-		TestTrue(FString::Printf(TEXT("explicit abort: clean report and twenty-four destroyed (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsClean() && Report.Destroyed == 24 && Report.AlreadyGone == 0 && Report.ContractViolations == 0 && !Report.bRefused);
+		TestTrue(FString::Printf(TEXT("explicit abort: clean report and thirty-eight destroyed (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsClean() && Report.Destroyed == 38 && Report.AlreadyGone == 0 && Report.ContractViolations == 0 && !Report.bRefused);
 		ExpectAllDestroyed(*this, FirstWeak, TEXT("explicit abort")); // read BEFORE the names are created again (the engine replaces a destroyed object of the same name in place)
 		FirstWeak.Reset();
 		ExpectRestored(*this, F, Before, TEXT("explicit abort"));
@@ -702,7 +710,7 @@ bool FRPGWorldPreparationPositiveTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("no touched package became dirty around the preparations and aborts (after the legitimate loads)"), CaptureDirty(Touched) == DirtyBefore);
 	TestTrue(TEXT("the game instance and its published epoch are still the very ones used"), F.Scope.World->GetGameInstance() == F.Scope.GameInstance.Get() && F.PublishedEpoch().Get() == Epoch.Get());
 
-	AddInfo(TEXT("World preparation on a real game-instance world: twenty-four owned unregistered components with each owner's own values and the very GI epoch lease; abort and scope-exit abort restore the sets. NOT established: drift during a stage (source-checked only), "
+	AddInfo(TEXT("World preparation on a real game-instance world: thirty-eight owned unregistered components with each owner's own values and the very GI epoch lease; abort and scope-exit abort restore the sets. NOT established: drift during a stage (source-checked only), "
 		"the latched source (logged), a cold load, authoritative manifest provenance, registration, BeginPlay, binding, reservation, Ready, activation or wiring."));
 	return true;
 }
@@ -774,7 +782,7 @@ bool FRPGWorldPreparationLateFailureTest::RunTest(const FString& Parameters)
 		TestTrue(FString::Printf(TEXT("name collision: ONE error carries Preparation.AllocationFailed, [slot=BossTwo] and [component=RPGBossEncounter], and nothing else (got: %s)"), *JoinErrors(Refused.Errors)),
 			Refused.Errors.Num() == 1 && AnyErrorHasAll(Refused.Errors, TEXT("Preparation.AllocationFailed"), TEXT("[slot=BossTwo]"), TEXT("[component=RPGBossEncounter]")));
 	}
-	// Seven earlier allocations (boss one's twelve, boss two's stagger and phases) must now be destroyed objects; the later names were never allocated; the blocker is the very live object.
+	// Fifteen earlier allocations (boss one's nineteen, boss two's stagger and phases) must now be destroyed objects; the later names were never allocated; the blocker is the very live object.
 	bool bBossOneDestroyed = true;
 	for (const FExpectedComponent& Wanted : Expected)
 	{
@@ -787,13 +795,13 @@ bool FRPGWorldPreparationLateFailureTest::RunTest(const FString& Parameters)
 		const UObject* Found = StaticFindObjectFast(UObject::StaticClass(), F.BossTwoActor, FName(Expected[Index].Name));
 		bBossTwoEarlierDestroyed = bBossTwoEarlierDestroyed && Found && !IsValid(Found) && Found->GetClass() == Expected[Index].Class;
 	}
-	TestTrue(TEXT("name collision: boss one's twelve and boss two's two earlier components were allocated and are now destroyed"), bBossOneDestroyed && bBossTwoEarlierDestroyed);
+	TestTrue(TEXT("name collision: boss one's nineteen and boss two's two earlier components were allocated and are now destroyed"), bBossOneDestroyed && bBossTwoEarlierDestroyed);
 	bool bAllLaterNamesAbsent = true;
 	for (int32 Index = 3; Index < Expected.Num(); ++Index)
 	{
 		bAllLaterNamesAbsent = bAllLaterNamesAbsent && StaticFindObjectFast(UObject::StaticClass(), F.BossTwoActor, FName(Expected[Index].Name)) == nullptr;
 	}
-	TestTrue(TEXT("name collision: blocked name keeps identity; all nine later names absent; target gets none"),
+	TestTrue(TEXT("name collision: blocked name keeps identity; all ten later names absent; target gets none"),
 		StaticFindObjectFast(UObject::StaticClass(), F.BossTwoActor, FName(Expected[2].Name)) == Blocker && IsValid(Blocker) && bAllLaterNamesAbsent
 		&& StaticFindObjectFast(UObject::StaticClass(), F.TargetActor, FName(Expected[0].Name)) == nullptr);
 	ExpectRestored(*this, F, BeforeCollision, TEXT("name collision"));
@@ -824,12 +832,12 @@ bool FRPGWorldPreparationLateFailureTest::RunTest(const FString& Parameters)
 		ExpectPrepared(*this, F, *Retry.Batch, AfterRemoval, Epoch);
 		TArray<TWeakObjectPtr<UActorComponent>> RetryWeak = WeakOwned(*Retry.Batch);
 		const FRPGPreparationAbortReport Report = Retry.Batch->Abort();
-		TestTrue(TEXT("the retry's abort is clean and destroyed twenty-four"), Report.IsClean() && Report.Destroyed == 24 && Report.ContractViolations == 0);
+		TestTrue(TEXT("the retry's abort is clean and destroyed thirty-eight"), Report.IsClean() && Report.Destroyed == 38 && Report.ContractViolations == 0);
 		ExpectAllDestroyed(*this, RetryWeak, TEXT("retry abort"));
 	}
 	ExpectRestored(*this, F, AfterRemoval, TEXT("retry abort"));
 
-	AddInfo(TEXT("Late invalid member (preflight layer, nothing allocated) and a real name collision under the later owner (allocation guard, seven earlier components cleaned, blocker and preexisting objects untouched, only the fixture-owned blocker removed). NOT covered: "
+	AddInfo(TEXT("Late invalid member (preflight layer, nothing allocated) and a real name collision under the later owner (allocation guard, twenty-one earlier components cleaned, blocker and preexisting objects untouched, only the fixture-owned blocker removed). NOT covered: "
 		"garbage-collected name reuse, an organic native configure failure, drift during a stage."));
 	return true;
 }
@@ -866,24 +874,24 @@ bool FRPGWorldPreparationSecondTest::RunTest(const FString& Parameters)
 		TestFalse(TEXT("second preparation: refused, no artifact"), Refused.Succeeded() || Refused.Batch.IsValid());
 		TestTrue(FString::Printf(TEXT("second preparation: the preflight layer names the preexisting consumer of the first boss (got: %s)"), *JoinErrors(Refused.Errors)),
 			AnyErrorHasAll(Refused.Errors, TEXT("WorldInput.PreflightRejected"), TEXT("Preflight.PreexistingConsumer[slot=BossOne]"), TEXT("already has a")));
-		TestTrue(TEXT("second preparation: the first artifact is undamaged: still prepared, twenty-four components, the very same objects, unregistered, and every actor is exactly as with the first"),
-			First.Batch->IsPrepared() && First.Batch->GetOwnedComponentCount() == 24 && SameWorld(WithFirst, F.Capture()));
+		TestTrue(TEXT("second preparation: the first artifact is undamaged: still prepared, thirty-eight components, the very same objects, unregistered, and every actor is exactly as with the first"),
+			First.Batch->IsPrepared() && First.Batch->GetOwnedComponentCount() == 38 && SameWorld(WithFirst, F.Capture()));
 		bool bAllLive = true;
 		for (const TWeakObjectPtr<UActorComponent>& Pointer : FirstWeak)
 		{
 			bAllLive = bAllLive && Pointer.IsValid() && !Pointer->IsRegistered();
 		}
-		TestTrue(TEXT("second preparation: every component of the first artifact is still the same live unregistered object"), FirstWeak.Num() == 24 && bAllLive);
+		TestTrue(TEXT("second preparation: every component of the first artifact is still the same live unregistered object"), FirstWeak.Num() == 38 && bAllLive);
 	}
 	// The SAME binding again (the first artifact is still held): refused the same way.
 	{
 		const FRPGWorldPreparationResult Refused = RPGBossWorldPreparation::PrepareWorldBatch(F.Scope.World, F.Binding, Selections, ManifestHash());
 		TestFalse(TEXT("the same binding again: refused, no artifact"), Refused.Succeeded() || Refused.Batch.IsValid());
-		TestTrue(TEXT("the same binding again: the first artifact is still undamaged"), First.Batch->IsPrepared() && First.Batch->GetOwnedComponentCount() == 24 && SameWorld(WithFirst, F.Capture()));
+		TestTrue(TEXT("the same binding again: the first artifact is still undamaged"), First.Batch->IsPrepared() && First.Batch->GetOwnedComponentCount() == 38 && SameWorld(WithFirst, F.Capture()));
 	}
 	// After the first artifact is aborted the same actors prepare again (a new artifact).
 	const FRPGPreparationAbortReport Report = First.Batch->Abort();
-	TestTrue(TEXT("the first artifact's abort is clean and destroyed twenty-four"), Report.IsClean() && Report.Destroyed == 24 && Report.ContractViolations == 0);
+	TestTrue(TEXT("the first artifact's abort is clean and destroyed thirty-eight"), Report.IsClean() && Report.Destroyed == 38 && Report.ContractViolations == 0);
 	FirstWeak.Reset();
 	TestTrue(TEXT("after the abort the world is as before"), SameWorld(Before, F.Capture()) && F.NoConsumers());
 	{
@@ -944,7 +952,7 @@ bool FRPGWorldPreparationRefusalsTest::RunTest(const FString& Parameters)
 	// The control: the unmodified call succeeds after all the refusals.
 	{
 		FRPGWorldPreparationResult Control = RPGBossWorldPreparation::PrepareWorldBatch(F.Scope.World, F.Binding, Valid, ManifestHash());
-		TestTrue(FString::Printf(TEXT("control: the unmodified call succeeds after the refusals (errors: %s)"), *JoinErrors(Control.Errors)), Control.Succeeded() && Control.Batch->GetOwnedComponentCount() == 24);
+		TestTrue(FString::Printf(TEXT("control: the unmodified call succeeds after the refusals (errors: %s)"), *JoinErrors(Control.Errors)), Control.Succeeded() && Control.Batch->GetOwnedComponentCount() == 38);
 	}
 	TestTrue(TEXT("the control artifact was released by scope exit: the world is as before"), SameWorld(Before, F.Capture()) && F.NoConsumers());
 

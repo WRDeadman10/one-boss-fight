@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include <limits>
 
 /**
  * BOSS-COM-004 / BOSS-HIT-008 (guard and parry telemetry): pure rules, header only so an automation test can check them.
@@ -22,5 +23,15 @@ namespace RPGBossGuard
     inline ECardOutcome CardOutcome(int32 Accepted,int32 Guarded,int32 Parried)
     {
         return Parried>0?ECardOutcome::Parried:Guarded>0?ECardOutcome::Guarded:Accepted>0?ECardOutcome::Hit:ECardOutcome::Whiff;
+    }
+    /** The non-shipping proof hook's 100 ms parry-input pulse every 500 ms, shifted by PhaseSeconds. */
+    inline bool IsProofParryPulse(double SinceFirstAttack,double PhaseSeconds)
+    {
+        if (!FMath::IsFinite(SinceFirstAttack)||SinceFirstAttack<0.||!FMath::IsFinite(PhaseSeconds)) return false;
+        const double MaxPhase=double(std::numeric_limits<float>::max());
+        const double Clock=SinceFirstAttack+FMath::Clamp(PhaseSeconds,-MaxPhase,MaxPhase);
+        if (!FMath::IsFinite(Clock)||Clock<0.) return false;
+        const double PulsePosition=FMath::Fmod(Clock,.5);
+        return PulsePosition>=0.&&PulsePosition<.1;
     }
 }

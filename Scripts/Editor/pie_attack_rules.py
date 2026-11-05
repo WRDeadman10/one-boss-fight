@@ -2,10 +2,13 @@
 counted as a double launch, R5 a 40 s natural fight against a player that stays close: no double launch, no vetoed start, attacks are tracked, every attack ends before the next begins.
 Run pie_debug_overlay.py once after an editor start first. Log prefix [Rules]."""
 import math
+import json
+import os
 import unreal
 
 log = lambda m: unreal.log("[Rules] " + m)
 results = []
+TIMING_OBSERVABLES = {}
 S = {"phase": "start", "t": 0.0, "i": 0, "next": 0.0, "mem": {}, "fight": 0.0, "seen": [], "last_move": None}
 handle = None
 
@@ -161,14 +164,34 @@ def s_r5_check(w, pc, pawn, boss):
     n = tr.get_attack_instance() - m["inst"]
     log("INFO moves seen in the fight: %s" % S["seen"])
     # KI-101 (2026-10-24): with the build selector registered the pack's behaviour tree stalled in about a third of the runs of this artificial setup (a held boss with attacks injected by hand in R1 to R4): one attack, the montage of its own first attack stopped 0.05 s after it begins, no more attacks, not even after a reset. Real fights are not affected (30 encounter soak, bot runs: see KNOWN_ISSUES). This check proves that attacks are tracked in the natural fight (at least one); the liveness of the boss over time is proved by pie_soak and the bot runs.
-    check("R5 the boss attacked in the fight (%d tracked attacks)" % n, n >= 1)
+    attack_name = "R5 the boss attacked in the fight (%d tracked attacks)" % n
+    scenario_ran = S["fight"] >= 39.0
+    check(attack_name, n >= 1)
+    TIMING_OBSERVABLES[attack_name] = {
+        "value": {"scenario_ran": scenario_ran, "tracked_attacks": n},
+        "comparison": {
+            "type": "stochastic", "scenario_ran_field": "scenario_ran",
+            "threshold": {"left_field": "tracked_attacks", "op": "gte", "right_value": 1},
+        },
+    }
     if n < 4:
         log("WARN R5 only %d tracked attacks in 40 s (KI-101 stall)" % n)
     check("R5 no double launch in the natural fight", tr.get_double_launch_count() == m["dbl"], "%d -> %d" % (m["dbl"], tr.get_double_launch_count()))
     check("R5 no vetoed start in the natural fight", tr.get_illegal_start_count() == m["ill"], "%d -> %d" % (m["ill"], tr.get_illegal_start_count()))
     # attacks the pack stopped in their windup (KI-069) never reach the commit point: they are counted apart
     cut = tr.get_ended_before_commit_count() - m.get("cut", 0)
-    check("R5 every tracked attack that reached its commit point committed once (%d attacks, %d stopped in the windup)" % (n, cut), tr.get_commit_count() - m.get("commits", 0) + cut >= n, "commits %d" % (tr.get_commit_count() - m.get("commits", 0)))
+    commits = tr.get_commit_count() - m.get("commits", 0)
+    accounted = commits + cut
+    commit_name = "R5 every tracked attack that reached its commit point committed once (%d attacks, %d stopped in the windup)" % (n, cut)
+    check(commit_name, accounted >= n, "commits %d" % commits)
+    TIMING_OBSERVABLES[commit_name] = {
+        "value": {"scenario_ran": scenario_ran, "tracked_attacks": n, "commits": commits,
+                  "stopped_in_windup": cut, "accounted_attacks": accounted},
+        "comparison": {
+            "type": "stochastic", "scenario_ran_field": "scenario_ran",
+            "threshold": {"left_field": "accounted_attacks", "op": "gte", "right_field": "tracked_attacks"},
+        },
+    }
 
 
 STEPS = [
@@ -187,6 +210,9 @@ def _tick(dt):
     s["t"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0, next=STEPS[0][0])
         return
@@ -204,6 +230,8 @@ def _tick(dt):
         unreal.unregister_slate_post_tick_callback(handle)
         handle = None
         unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
+        if TIMING_OBSERVABLES:
+            log("TIMING_OBSERVABLES_JSON " + json.dumps(TIMING_OBSERVABLES, sort_keys=True, separators=(",", ":")))
         log("RESULT %d/%d passed" % (sum(1 for r in results if r), len(results)))
         return
     _, fn = STEPS[s["i"]]

@@ -797,14 +797,14 @@ void URPGBuildLoadout::Poll()
 	const URPGBossEncounter* Encounter = FindEncounter(Now);
 	const bool bBossPresent = Encounter != nullptr;
 	const bool bBossDormant = !Encounter || Encounter->IsDormant();
-	if (Encounter && Encounter->GetGeneration() != LastGeneration)
+	if (Encounter && Encounter->GetParticipantGeneration() != LastGeneration)
 	{
 		if (LastGeneration != 0)
 		{
 			ResetRequest();
-			AddEvent(FString::Printf(TEXT("a new fight (generation %d): the attempts start again"), Encounter->GetGeneration()));
+			AddEvent(FString::Printf(TEXT("a new fight (generation %llu): the attempts start again"), static_cast<unsigned long long>(Encounter->GetParticipantGeneration())));
 		}
-		LastGeneration = Encounter->GetGeneration();
+		LastGeneration = Encounter->GetParticipantGeneration();
 	}
 	const bool bLockChanged = SyncLock(bBossPresent, bBossDormant);
 

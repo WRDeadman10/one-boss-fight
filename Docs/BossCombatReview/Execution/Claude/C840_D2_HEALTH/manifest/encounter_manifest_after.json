@@ -1,0 +1,2326 @@
+{
+  "boss_definition": "/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft",
+  "definitions": {
+    "boss": {
+      "animations": [
+        {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_A1_QuickSlash.AN_Boss01_A1_QuickSlash"
+        }
+      ],
+      "asset_path": "/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft.DA_Boss_EmberWarden_Draft",
+      "attack_tracker": {
+        "attacks": [
+          {
+            "active_end_time": 2.109999895095825,
+            "active_start_time": 1.9299999475479126,
+            "authored_windup": false,
+            "branch_stage": false,
+            "clip_path": "",
+            "commit_time": 1.6799999475479126,
+            "fallback_montage_name": "",
+            "montage_name": "GS_ChargedAttack_Montage",
+            "montage_path": "",
+            "move_id": "A2",
+            "recovery_end_time": 3.140000104904175,
+            "track_turn_rate": 120.0
+          },
+          {
+            "active_end_time": 0.5,
+            "active_start_time": 0.3499999940395355,
+            "authored_windup": true,
+            "branch_stage": false,
+            "clip_path": "",
+            "commit_time": 0.33000001311302185,
+            "fallback_montage_name": "GS_Attack03_Montage",
+            "montage_name": "AM_Boss01_A1",
+            "montage_path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1",
+            "move_id": "A1",
+            "recovery_end_time": 1.2000000476837158,
+            "track_turn_rate": 360.0
+          },
+          {
+            "active_end_time": 0.46000000834465027,
+            "active_start_time": 0.1599999964237213,
+            "authored_windup": false,
+            "branch_stage": true,
+            "clip_path": "",
+            "commit_time": 0.11999999731779099,
+            "fallback_montage_name": "",
+            "montage_name": "GS_Attack04_Montage",
+            "montage_path": "",
+            "move_id": "A1b",
+            "recovery_end_time": 1.25,
+            "track_turn_rate": 360.0
+          },
+          {
+            "active_end_time": 0.6000000238418579,
+            "active_start_time": 0.4000000059604645,
+            "authored_windup": true,
+            "branch_stage": false,
+            "clip_path": "",
+            "commit_time": 0.3799999952316284,
+            "fallback_montage_name": "GS_Attack01_Montage",
+            "montage_name": "AM_Boss01_A3a",
+            "montage_path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a",
+            "move_id": "A3a",
+            "recovery_end_time": 0.800000011920929,
+            "track_turn_rate": 360.0
+          },
+          {
+            "active_end_time": 0.4000000059604645,
+            "active_start_time": 0.15000000596046448,
+            "authored_windup": true,
+            "branch_stage": true,
+            "clip_path": "",
+            "commit_time": 0.12999999523162842,
+            "fallback_montage_name": "GS_Attack02_Montage",
+            "montage_name": "AM_Boss01_A3b",
+            "montage_path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b",
+            "move_id": "A3b",
+            "recovery_end_time": 1.333299994468689,
+            "track_turn_rate": 360.0
+          },
+          {
+            "active_end_time": 1.1699999570846558,
+            "active_start_time": 0.75,
+            "authored_windup": false,
+            "branch_stage": false,
+            "clip_path": "",
+            "commit_time": 0.1599999964237213,
+            "fallback_montage_name": "",
+            "montage_name": "GS_LeapAttack_Montage",
+            "montage_path": "",
+            "move_id": "A6",
+            "recovery_end_time": 1.7999999523162842,
+            "track_turn_rate": 120.0
+          },
+          {
+            "active_end_time": 0.8999999761581421,
+            "active_start_time": 0.6000000238418579,
+            "authored_windup": false,
+            "branch_stage": false,
+            "clip_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_A4_LowSweep.AN_Boss01_A4_LowSweep",
+            "commit_time": 0.4000000059604645,
+            "fallback_montage_name": "",
+            "montage_name": "AN_Boss01_A4_LowSweep",
+            "montage_path": "",
+            "move_id": "A4",
+            "recovery_end_time": 1.75,
+            "track_turn_rate": 180.0
+          },
+          {
+            "active_end_time": 0.5,
+            "active_start_time": 0.44999998807907104,
+            "authored_windup": false,
+            "branch_stage": false,
+            "clip_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_A5_JavelinThrow.AN_Boss01_A5_JavelinThrow",
+            "commit_time": 0.44999998807907104,
+            "fallback_montage_name": "",
+            "montage_name": "AN_Boss01_A5_JavelinThrow",
+            "montage_path": "",
+            "move_id": "A5",
+            "recovery_end_time": 0.949999988079071,
+            "track_turn_rate": 240.0
+          }
+        ],
+        "branch_cone_degrees": 120.0,
+        "branch_range": 400.0,
+        "enabled": true,
+        "veto_illegal_starts": true
+      },
+      "attack_tracker_field_provenance": {
+        "attacks": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+        "b_enabled": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+        "b_veto_illegal_starts": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+        "branch_cone_degrees": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+        "branch_range": "native default (effective reflected value matches class default; serialized presence is not distinguished)"
+      },
+      "attack_tracker_provenance": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+      "bleed": {
+        "effect_height": 170.0,
+        "hp_fraction": 0.029999999329447746,
+        "initial_threshold": 100.0,
+        "proc_effect": {
+          "object_path": "/Game/BloodPack/Hit/Niagara/NS_BulletHit_Med.NS_BulletHit_Med"
+        },
+        "proc_sound": {
+          "object_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/A_Guardian_ImpactL_Cue.A_Guardian_ImpactL_Cue"
+        },
+        "threshold_increase": 20.0,
+        "threshold_max": 200.0
+      },
+      "close_clip_swap": {
+        "a1_montage": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1"
+        },
+        "a3a_montage": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a"
+        },
+        "a3b_montage": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b"
+        },
+        "attack_montages_name": "AttackMontages",
+        "close_ability_class_name": "GA_GS_Boss_CloseAttack_C"
+      },
+      "death": {
+        "blend_in_seconds": 0.20000000298023224,
+        "death_clip": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_DeathLegend.AN_Boss01_DeathLegend"
+        },
+        "death_mode": "<RPGBossDeathMode.PACK_MONTAGE: 0>",
+        "death_montage": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.AM_Boss01_DeathLegend"
+        },
+        "dying_seconds": 1.0,
+        "guard_pack_death": true,
+        "hold_at_seconds": 0.5,
+        "max_clip_restarts": 0,
+        "pack_death_ability_class_name": "GA_GS_Boss_Death_C",
+        "pack_death_montages_name": "DeathMontages",
+        "pack_end_time_multiplier": 1.0,
+        "pack_poll_seconds": 0.10000000149011612
+      },
+      "definition_id": "Boss_EmberWarden",
+      "dormant_wake": {
+        "dormant_clip": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.AN_Boss01_DormantIdle"
+        },
+        "wake_clip": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_Wake.AN_Boss01_Wake"
+        }
+      },
+      "encounter_policy": {
+        "gate_radius": 1200.0,
+        "reset_on_player_respawn": true
+      },
+      "fields": [
+        {
+          "destination": "URPGBossStagger::StaggerSeconds",
+          "field_path": "StaggerPolicy.StaggerSeconds",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:36",
+          "type": "float",
+          "units": "seconds",
+          "value": "2.5f",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerPolicy.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::FreezeAtPosition",
+          "field_path": "StaggerPolicy.FreezeAtPosition",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:40",
+          "type": "float",
+          "units": "seconds",
+          "value": "1.55f",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerPolicy.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::CriticalMultiplier",
+          "field_path": "StaggerPolicy.CriticalMultiplier",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:44",
+          "type": "float",
+          "units": "multiplier",
+          "value": "2.5f",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerPolicy.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::RiposteRange",
+          "field_path": "StaggerPolicy.RiposteRange",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:49",
+          "type": "float",
+          "units": "cm",
+          "value": "150.f",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerPolicy.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::RiposteConeDegrees",
+          "field_path": "StaggerPolicy.RiposteConeDegrees",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:52",
+          "type": "float",
+          "units": "degrees",
+          "value": "120.f",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerPolicy.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::RiposteFacingDegrees",
+          "field_path": "StaggerPolicy.RiposteFacingDegrees",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:56",
+          "type": "float",
+          "units": "degrees",
+          "value": "120.f",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerPolicy.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::RiposteArmSeconds",
+          "field_path": "StaggerPolicy.RiposteArmSeconds",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:59",
+          "type": "float",
+          "units": "seconds",
+          "value": "1.2f",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerPolicy.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::RipostePlayerStartGap",
+          "field_path": "StaggerPolicy.RipostePlayerStartGap",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:80",
+          "type": "float",
+          "units": "cm",
+          "value": "150.f",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerPolicy.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::RiposteAlignSeconds",
+          "field_path": "StaggerPolicy.RiposteAlignSeconds",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:83",
+          "type": "float",
+          "units": "seconds",
+          "value": "0.3f",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerPolicy.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::RiposteImpactSeconds",
+          "field_path": "StaggerPolicy.RiposteImpactSeconds",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:87",
+          "type": "float",
+          "units": "seconds",
+          "value": "0.8f",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerPolicy.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::RiposteBaseDamage",
+          "field_path": "StaggerPolicy.RiposteBaseDamage",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:91",
+          "type": "float",
+          "units": "hp",
+          "value": "40.f",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerPolicy.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::CooldownSeconds",
+          "field_path": "StaggerPolicy.CooldownSeconds",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:134",
+          "type": "float",
+          "units": "seconds",
+          "value": "0.f",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerPolicy.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::GetUpRate",
+          "field_path": "StaggerPolicy.GetUpRate",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:173",
+          "type": "float",
+          "units": "multiplier",
+          "value": "0.6f",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerPolicy.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::bHoldPostureAtZero",
+          "field_path": "StaggerPolicy.bHoldPostureAtZero",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:225",
+          "type": "bool",
+          "units": "dimensionless",
+          "value": "true",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerPolicy.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::bUseClips",
+          "field_path": "StaggerProfile.bUseClips",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:163",
+          "type": "bool",
+          "units": "dimensionless",
+          "value": "true",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerCluster.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::bUseRiposteClips",
+          "field_path": "StaggerProfile.bUseRiposteClips",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:70",
+          "type": "bool",
+          "units": "dimensionless",
+          "value": "true",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerCluster.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::bCriticalOnEveryHit",
+          "field_path": "StaggerProfile.bCriticalOnEveryHit",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:129",
+          "type": "bool",
+          "units": "dimensionless",
+          "value": "false",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerCluster.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::HitStunAbilityClassName",
+          "field_path": "StaggerProfile.HitStunAbilityClassName",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:152",
+          "type": "FName",
+          "units": "identifier",
+          "value": "TEXT(\"GA_GS_Boss_HitStun_C\")",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerCluster.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::FallMontage",
+          "field_path": "StaggerProfile.FallMontage",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:155",
+          "type": "TSoftObjectPtr<UAnimMontage>",
+          "units": "dimensionless",
+          "value": "",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerCluster.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::GetUpMontage",
+          "field_path": "StaggerProfile.GetUpMontage",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:158",
+          "type": "TSoftObjectPtr<UAnimMontage>",
+          "units": "dimensionless",
+          "value": "",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerCluster.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::FallClip",
+          "field_path": "StaggerProfile.FallClip",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:166",
+          "type": "TSoftObjectPtr<UAnimSequence>",
+          "units": "dimensionless",
+          "value": "",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerCluster.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::DownClip",
+          "field_path": "StaggerProfile.DownClip",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:169",
+          "type": "TSoftObjectPtr<UAnimSequence>",
+          "units": "dimensionless",
+          "value": "",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerCluster.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::RipostePlayerClip",
+          "field_path": "StaggerProfile.RipostePlayerClip",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:73",
+          "type": "TSoftObjectPtr<UAnimSequence>",
+          "units": "dimensionless",
+          "value": "",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerCluster.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::RiposteBossClip",
+          "field_path": "StaggerProfile.RiposteBossClip",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:76",
+          "type": "TSoftObjectPtr<UAnimSequence>",
+          "units": "dimensionless",
+          "value": "",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerCluster.Assign"
+        },
+        {
+          "destination": "URPGBossStagger::ImmunityEffect",
+          "field_path": "StaggerProfile.ImmunityEffect",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossStagger.h",
+          "source_sha256": "7cfaaadbc33934d1dfe66560c0ff8c7fb47ac9e05399a5445b8c1e9a18c3695b",
+          "source_site": "RPGBossStagger.h:184",
+          "type": "TSoftClassPtr<UObject>",
+          "units": "dimensionless",
+          "value": "",
+          "witness": "AutomationTest:OneBossFight.Binding.StaggerCluster.Assign"
+        },
+        {
+          "destination": "URPGBossPhases::TransitionSeconds",
+          "field_path": "PhaseFlow.TransitionSeconds",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossPhases.h",
+          "source_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+          "source_site": "RPGBossPhases.h:35",
+          "type": "float",
+          "units": "seconds",
+          "value": "1.8f",
+          "witness": "AutomationTest:OneBossFight.Binding.PhaseFlow.Assign"
+        },
+        {
+          "destination": "URPGBossPhases::bUseRoarClip",
+          "field_path": "PhaseFlow.bUseRoarClip",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossPhases.h",
+          "source_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+          "source_site": "RPGBossPhases.h:39",
+          "type": "bool",
+          "units": "dimensionless",
+          "value": "true",
+          "witness": "AutomationTest:OneBossFight.Binding.PhaseFlow.Assign"
+        },
+        {
+          "destination": "URPGBossPhases::bPausePostureInTransition",
+          "field_path": "PhaseFlow.bPausePostureInTransition",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossPhases.h",
+          "source_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+          "source_site": "RPGBossPhases.h:113",
+          "type": "bool",
+          "units": "dimensionless",
+          "value": "true",
+          "witness": "AutomationTest:OneBossFight.Binding.PhaseFlow.Assign"
+        },
+        {
+          "destination": "URPGBossPhases::bLockLeapUntilPhaseTwo",
+          "field_path": "PhaseFlow.bLockLeapUntilPhaseTwo",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossPhases.h",
+          "source_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+          "source_site": "RPGBossPhases.h:87",
+          "type": "bool",
+          "units": "dimensionless",
+          "value": "true",
+          "witness": "AutomationTest:OneBossFight.Binding.PhaseFlow.Assign"
+        },
+        {
+          "destination": "URPGBossPhases::AttackAbilityPrefix",
+          "field_path": "PhaseFlow.AttackAbilityPrefix",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossPhases.h",
+          "source_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+          "source_site": "RPGBossPhases.h:83",
+          "type": "FString",
+          "units": "identifier",
+          "value": "TEXT(\"GA_GS_Boss_\")",
+          "witness": "AutomationTest:OneBossFight.Binding.PhaseFlow.Assign"
+        },
+        {
+          "destination": "URPGBossPhases::LeapAbilityTag",
+          "field_path": "PhaseFlow.LeapAbilityTag",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossPhases.h",
+          "source_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+          "source_site": "RPGBossPhases.h:90",
+          "type": "FName",
+          "units": "identifier",
+          "value": "TEXT(\"Ability.Melee.LeapAttack\")",
+          "witness": "AutomationTest:OneBossFight.Binding.PhaseFlow.Assign"
+        },
+        {
+          "destination": "URPGBossPhases::bFireballEnabled",
+          "field_path": "Fireball.bFireballEnabled",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossPhases.h",
+          "source_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+          "source_site": "RPGBossPhases.h:66",
+          "type": "bool",
+          "units": "dimensionless",
+          "value": "false",
+          "witness": "AutomationTest:OneBossFight.Binding.PhasesCluster.Assign"
+        },
+        {
+          "destination": "URPGBossPhases::FireballAbility",
+          "field_path": "Fireball.FireballAbility",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossPhases.h",
+          "source_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+          "source_site": "RPGBossPhases.h:70",
+          "type": "TSoftClassPtr<UObject>",
+          "units": "dimensionless",
+          "value": "",
+          "witness": "AutomationTest:OneBossFight.Binding.PhasesCluster.Assign"
+        },
+        {
+          "destination": "URPGBossPhases::FireballCooldown",
+          "field_path": "Fireball.FireballCooldown",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossPhases.h",
+          "source_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+          "source_site": "RPGBossPhases.h:73",
+          "type": "FVector2D",
+          "units": "seconds",
+          "value": "FVector2D(6.f, 10.f)",
+          "witness": "AutomationTest:OneBossFight.Binding.PhasesCluster.Assign"
+        },
+        {
+          "destination": "URPGBossPhases::FireballMinRange",
+          "field_path": "Fireball.FireballMinRange",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossPhases.h",
+          "source_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+          "source_site": "RPGBossPhases.h:76",
+          "type": "float",
+          "units": "cm",
+          "value": "500.f",
+          "witness": "AutomationTest:OneBossFight.Binding.PhasesCluster.Assign"
+        },
+        {
+          "destination": "URPGBossPhases::FireballMaxRange",
+          "field_path": "Fireball.FireballMaxRange",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossPhases.h",
+          "source_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+          "source_site": "RPGBossPhases.h:79",
+          "type": "float",
+          "units": "cm",
+          "value": "1800.f",
+          "witness": "AutomationTest:OneBossFight.Binding.PhasesCluster.Assign"
+        },
+        {
+          "destination": "URPGBossPhases::RoarClip",
+          "field_path": "PhaseDependencies.RoarClip",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossPhases.h",
+          "source_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+          "source_site": "RPGBossPhases.h:42",
+          "type": "TSoftObjectPtr<UAnimSequence>",
+          "units": "dimensionless",
+          "value": "",
+          "witness": "AutomationTest:OneBossFight.Binding.PhasesCluster.Assign"
+        },
+        {
+          "destination": "URPGBossPhases::TransitionMontage",
+          "field_path": "PhaseDependencies.TransitionMontage",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossPhases.h",
+          "source_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+          "source_site": "RPGBossPhases.h:45",
+          "type": "TSoftObjectPtr<UAnimMontage>",
+          "units": "dimensionless",
+          "value": "",
+          "witness": "AutomationTest:OneBossFight.Binding.PhasesCluster.Assign"
+        },
+        {
+          "destination": "URPGBossPhases::ImmunityEffect",
+          "field_path": "PhaseDependencies.ImmunityEffect",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossPhases.h",
+          "source_sha256": "0887f37564a28564261b81ad21a1baf2a4c6f6adae99a3a49c3c15622225a69a",
+          "source_site": "RPGBossPhases.h:52",
+          "type": "TSoftClassPtr<UObject>",
+          "units": "dimensionless",
+          "value": "",
+          "witness": "AutomationTest:OneBossFight.Binding.PhasesCluster.Assign"
+        },
+        {
+          "destination": "URPGBossEncounter::BossMaxHealth",
+          "field_path": "Stats.MaxHealth",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossEncounter.h",
+          "source_sha256": "4f3ab203562ef2d3a2d18828feaf5f437a5a7eaff1054e9b6ce60e9150cae9d6",
+          "source_site": "RPGBossEncounter.h:40",
+          "type": "float",
+          "units": "hp",
+          "value": "2000.f",
+          "witness": "AutomationTest:OneBossFight.Binding.EncounterCluster.Assign"
+        },
+        {
+          "destination": "URPGBossEncounter::GateRadius",
+          "field_path": "EncounterPolicy.GateRadius",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossEncounter.h",
+          "source_sha256": "4f3ab203562ef2d3a2d18828feaf5f437a5a7eaff1054e9b6ce60e9150cae9d6",
+          "source_site": "RPGBossEncounter.h:28",
+          "type": "float",
+          "units": "cm",
+          "value": "1200.f",
+          "witness": "AutomationTest:OneBossFight.Binding.EncounterCluster.Assign"
+        },
+        {
+          "destination": "URPGBossEncounter::bResetOnPlayerRespawn",
+          "field_path": "EncounterPolicy.bResetOnPlayerRespawn",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossEncounter.h",
+          "source_sha256": "4f3ab203562ef2d3a2d18828feaf5f437a5a7eaff1054e9b6ce60e9150cae9d6",
+          "source_site": "RPGBossEncounter.h:36",
+          "type": "bool",
+          "units": "dimensionless",
+          "value": "true",
+          "witness": "AutomationTest:OneBossFight.Binding.EncounterCluster.Assign"
+        },
+        {
+          "destination": "URPGBossDormantWake::DormantClip",
+          "field_path": "DormantWake.DormantClip",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossDormantWake.h",
+          "source_sha256": "ff450db792f59af3bab6ff73464d1dfe360f27003b268c0f574b58124f05f83c",
+          "source_site": "RPGBossDormantWake.h:66",
+          "type": "TSoftObjectPtr<UAnimSequence>",
+          "units": "dimensionless",
+          "value": "",
+          "witness": "AutomationTest:OneBossFight.Binding.DormantWake.Assign"
+        },
+        {
+          "destination": "URPGBossDormantWake::WakeClip",
+          "field_path": "DormantWake.WakeClip",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossDormantWake.h",
+          "source_sha256": "ff450db792f59af3bab6ff73464d1dfe360f27003b268c0f574b58124f05f83c",
+          "source_site": "RPGBossDormantWake.h:68",
+          "type": "TSoftObjectPtr<UAnimSequence>",
+          "units": "dimensionless",
+          "value": "",
+          "witness": "AutomationTest:OneBossFight.Binding.DormantWake.Assign"
+        },
+        {
+          "destination": "URPGBossPosture::PostureMax",
+          "field_path": "Stats.MaxPosture",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossPosture.h",
+          "source_sha256": "bca70f5816a45733f0ea2d5550651da7192ba179a5e31d736eab90fd46cd3ff8",
+          "source_site": "RPGBossPosture.h:31",
+          "type": "float",
+          "units": "hp",
+          "value": "100.f",
+          "witness": "AutomationTest:OneBossFight.Binding.StatsAdapters.Assign"
+        },
+        {
+          "destination": "URPGBossPosture::RegenDelaySeconds",
+          "field_path": "Stats.PostureRegenDelay",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossPosture.h",
+          "source_sha256": "bca70f5816a45733f0ea2d5550651da7192ba179a5e31d736eab90fd46cd3ff8",
+          "source_site": "RPGBossPosture.h:35",
+          "type": "float",
+          "units": "seconds",
+          "value": "6.f",
+          "witness": "AutomationTest:OneBossFight.Binding.StatsAdapters.Assign"
+        },
+        {
+          "destination": "URPGBossPosture::RegenPerSecond",
+          "field_path": "Stats.PostureRegenRate",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "NativeDefault",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGBossPosture.h",
+          "source_sha256": "bca70f5816a45733f0ea2d5550651da7192ba179a5e31d736eab90fd46cd3ff8",
+          "source_site": "RPGBossPosture.h:39",
+          "type": "float",
+          "units": "hp/s",
+          "value": "13.f",
+          "witness": "AutomationTest:OneBossFight.Binding.StatsAdapters.Assign"
+        },
+        {
+          "destination": "URPGBossBleed::InitialThreshold",
+          "field_path": "Bleed.InitialThreshold",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:150",
+          "type": "float",
+          "units": "hp",
+          "value": "100.f",
+          "witness": "AutomationTest:OneBossFight.Binding.Bleed.Assign"
+        },
+        {
+          "destination": "URPGBossBleed::ThresholdIncrease",
+          "field_path": "Bleed.ThresholdIncrease",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:151",
+          "type": "float",
+          "units": "hp",
+          "value": "20.f",
+          "witness": "AutomationTest:OneBossFight.Binding.Bleed.Assign"
+        },
+        {
+          "destination": "URPGBossBleed::ThresholdMax",
+          "field_path": "Bleed.ThresholdMax",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:152",
+          "type": "float",
+          "units": "hp",
+          "value": "200.f",
+          "witness": "AutomationTest:OneBossFight.Binding.Bleed.Assign"
+        },
+        {
+          "destination": "URPGBossBleed::HpFraction",
+          "field_path": "Bleed.HpFraction",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:153",
+          "type": "float",
+          "units": "fraction 0..1",
+          "value": "0.03f",
+          "witness": "AutomationTest:OneBossFight.Binding.Bleed.Assign"
+        },
+        {
+          "destination": "URPGBossBleed::EffectHeight",
+          "field_path": "Bleed.EffectHeight",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:154",
+          "type": "float",
+          "units": "cm",
+          "value": "170.f",
+          "witness": "AutomationTest:OneBossFight.Binding.Bleed.Assign"
+        },
+        {
+          "destination": "URPGBossBleed::ProcEffect",
+          "field_path": "Bleed.ProcEffect",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:155",
+          "type": "TSoftObjectPtr<UNiagaraSystem>",
+          "units": "dimensionless",
+          "value": "TSoftObjectPtr<UNiagaraSystem>(FSoftObjectPath(TEXT(\"/Game/BloodPack/Hit/Niagara/NS_BulletHit_Med.NS_BulletHit_Med\")))",
+          "witness": "AutomationTest:OneBossFight.Binding.Bleed.Assign"
+        },
+        {
+          "destination": "URPGBossBleed::ProcSound",
+          "field_path": "Bleed.ProcSound",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:156",
+          "type": "TSoftObjectPtr<USoundBase>",
+          "units": "dimensionless",
+          "value": "TSoftObjectPtr<USoundBase>(FSoftObjectPath(TEXT(\"/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/A_Guardian_ImpactL_Cue.A_Guardian_ImpactL_Cue\")))",
+          "witness": "AutomationTest:OneBossFight.Binding.Bleed.Assign"
+        },
+        {
+          "destination": "URPGBossLowSweep::bEnabled",
+          "field_path": "LowSweep.bEnabled",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:166",
+          "type": "bool",
+          "units": "dimensionless",
+          "value": "true",
+          "witness": "AutomationTest:OneBossFight.Binding.LowSweep.Assign"
+        },
+        {
+          "destination": "URPGBossLowSweep::MoveId",
+          "field_path": "LowSweep.MoveId",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:167",
+          "type": "FName",
+          "units": "identifier",
+          "value": "TEXT(\"A4\")",
+          "witness": "AutomationTest:OneBossFight.Binding.LowSweep.Assign"
+        },
+        {
+          "destination": "URPGBossLowSweep::Damage",
+          "field_path": "LowSweep.Damage",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:168",
+          "type": "float",
+          "units": "hp",
+          "value": "20.f",
+          "witness": "AutomationTest:OneBossFight.Binding.LowSweep.Assign"
+        },
+        {
+          "destination": "URPGBossLowSweep::Reach",
+          "field_path": "LowSweep.Reach",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:169",
+          "type": "float",
+          "units": "cm",
+          "value": "380.f",
+          "witness": "AutomationTest:OneBossFight.Binding.LowSweep.Assign"
+        },
+        {
+          "destination": "URPGBossLowSweep::InnerRadius",
+          "field_path": "LowSweep.InnerRadius",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:170",
+          "type": "float",
+          "units": "cm",
+          "value": "60.f",
+          "witness": "AutomationTest:OneBossFight.Binding.LowSweep.Assign"
+        },
+        {
+          "destination": "URPGBossLowSweep::BladeHeight",
+          "field_path": "LowSweep.BladeHeight",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:171",
+          "type": "float",
+          "units": "cm",
+          "value": "40.f",
+          "witness": "AutomationTest:OneBossFight.Binding.LowSweep.Assign"
+        },
+        {
+          "destination": "URPGBossLowSweep::SweepFromDegrees",
+          "field_path": "LowSweep.SweepFromDegrees",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:172",
+          "type": "float",
+          "units": "degrees",
+          "value": "90.f",
+          "witness": "AutomationTest:OneBossFight.Binding.LowSweep.Assign"
+        },
+        {
+          "destination": "URPGBossLowSweep::SweepToDegrees",
+          "field_path": "LowSweep.SweepToDegrees",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:173",
+          "type": "float",
+          "units": "degrees",
+          "value": "-90.f",
+          "witness": "AutomationTest:OneBossFight.Binding.LowSweep.Assign"
+        },
+        {
+          "destination": "URPGBossShockwave::bEnabled",
+          "field_path": "Shockwave.bEnabled",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:166",
+          "type": "bool",
+          "units": "dimensionless",
+          "value": "true",
+          "witness": "AutomationTest:OneBossFight.Binding.Shockwave.Assign"
+        },
+        {
+          "destination": "URPGBossShockwave::MoveId",
+          "field_path": "Shockwave.MoveId",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:167",
+          "type": "FName",
+          "units": "identifier",
+          "value": "TEXT(\"A4\")",
+          "witness": "AutomationTest:OneBossFight.Binding.Shockwave.Assign"
+        },
+        {
+          "destination": "URPGBossShockwave::Damage",
+          "field_path": "Shockwave.Damage",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:168",
+          "type": "float",
+          "units": "hp",
+          "value": "20.f",
+          "witness": "AutomationTest:OneBossFight.Binding.Shockwave.Assign"
+        },
+        {
+          "destination": "URPGBossShockwave::StartRadius",
+          "field_path": "Shockwave.StartRadius",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:186",
+          "type": "float",
+          "units": "cm",
+          "value": "200.f",
+          "witness": "AutomationTest:OneBossFight.Binding.Shockwave.Assign"
+        },
+        {
+          "destination": "URPGBossShockwave::MaxRadius",
+          "field_path": "Shockwave.MaxRadius",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:187",
+          "type": "float",
+          "units": "cm",
+          "value": "1100.f",
+          "witness": "AutomationTest:OneBossFight.Binding.Shockwave.Assign"
+        },
+        {
+          "destination": "URPGBossShockwave::Speed",
+          "field_path": "Shockwave.Speed",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:188",
+          "type": "float",
+          "units": "cm/s",
+          "value": "1000.f",
+          "witness": "AutomationTest:OneBossFight.Binding.Shockwave.Assign"
+        },
+        {
+          "destination": "URPGBossShockwave::Thickness",
+          "field_path": "Shockwave.Thickness",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:189",
+          "type": "float",
+          "units": "cm",
+          "value": "180.f",
+          "witness": "AutomationTest:OneBossFight.Binding.Shockwave.Assign"
+        },
+        {
+          "destination": "URPGBossShockwave::JumpClearance",
+          "field_path": "Shockwave.JumpClearance",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:190",
+          "type": "float",
+          "units": "cm",
+          "value": "50.f",
+          "witness": "AutomationTest:OneBossFight.Binding.Shockwave.Assign"
+        },
+        {
+          "destination": "URPGBossHealPunish::bEnabled",
+          "field_path": "HealPunish.bEnabled",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:166",
+          "type": "bool",
+          "units": "dimensionless",
+          "value": "true",
+          "witness": "AutomationTest:OneBossFight.Binding.HealPunish.Assign"
+        },
+        {
+          "destination": "URPGBossHealPunish::MinRange",
+          "field_path": "HealPunish.MinRange",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:200",
+          "type": "float",
+          "units": "cm",
+          "value": "400.f",
+          "witness": "AutomationTest:OneBossFight.Binding.HealPunish.Assign"
+        },
+        {
+          "destination": "URPGBossHealPunish::MaxRange",
+          "field_path": "HealPunish.MaxRange",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:201",
+          "type": "float",
+          "units": "cm",
+          "value": "1000.f",
+          "witness": "AutomationTest:OneBossFight.Binding.HealPunish.Assign"
+        },
+        {
+          "destination": "URPGBossHealPunish::Cooldown",
+          "field_path": "HealPunish.Cooldown",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:202",
+          "type": "float",
+          "units": "seconds",
+          "value": "4.f",
+          "witness": "AutomationTest:OneBossFight.Binding.HealPunish.Assign"
+        },
+        {
+          "destination": "URPGBossHealPunish::Damage",
+          "field_path": "HealPunish.Damage",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:168",
+          "type": "float",
+          "units": "hp",
+          "value": "20.f",
+          "witness": "AutomationTest:OneBossFight.Binding.HealPunish.Assign"
+        },
+        {
+          "destination": "URPGBossHealPunish::FlightTime",
+          "field_path": "HealPunish.FlightTime",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:204",
+          "type": "float",
+          "units": "seconds",
+          "value": "1.2f",
+          "witness": "AutomationTest:OneBossFight.Binding.HealPunish.Assign"
+        },
+        {
+          "destination": "URPGBossHealPunish::MinSpeed",
+          "field_path": "HealPunish.MinSpeed",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:205",
+          "type": "float",
+          "units": "cm/s",
+          "value": "450.f",
+          "witness": "AutomationTest:OneBossFight.Binding.HealPunish.Assign"
+        },
+        {
+          "destination": "URPGBossHealPunish::MaxSpeed",
+          "field_path": "HealPunish.MaxSpeed",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:206",
+          "type": "float",
+          "units": "cm/s",
+          "value": "2500.f",
+          "witness": "AutomationTest:OneBossFight.Binding.HealPunish.Assign"
+        },
+        {
+          "destination": "URPGBossHealPunish::JavelinRadius",
+          "field_path": "HealPunish.JavelinRadius",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:207",
+          "type": "float",
+          "units": "cm",
+          "value": "25.f",
+          "witness": "AutomationTest:OneBossFight.Binding.HealPunish.Assign"
+        },
+        {
+          "destination": "URPGBossHealPunish::JavelinMaxRange",
+          "field_path": "HealPunish.JavelinMaxRange",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:208",
+          "type": "float",
+          "units": "cm",
+          "value": "3000.f",
+          "witness": "AutomationTest:OneBossFight.Binding.HealPunish.Assign"
+        },
+        {
+          "destination": "URPGBossHealPunish::SpawnSockets",
+          "field_path": "HealPunish.SpawnSockets",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:209",
+          "type": "TArray<FName>",
+          "units": "identifier",
+          "value": "{TEXT(\"JavelinSpawn\"),TEXT(\"hand_l\")}",
+          "witness": "AutomationTest:OneBossFight.Binding.HealPunish.Assign"
+        },
+        {
+          "destination": "URPGBossHealPunish::AimHeight",
+          "field_path": "HealPunish.AimHeight",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:210",
+          "type": "float",
+          "units": "cm",
+          "value": "100.f",
+          "witness": "AutomationTest:OneBossFight.Binding.HealPunish.Assign"
+        },
+        {
+          "destination": "URPGBossHealPunish::bRespondToHeal",
+          "field_path": "HealPunish.bRespondToHeal",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:211",
+          "type": "bool",
+          "units": "dimensionless",
+          "value": "true",
+          "witness": "AutomationTest:OneBossFight.Binding.HealPunish.Assign"
+        },
+        {
+          "destination": "URPGBossHealPunish::bCancelJavelinsOnInterrupt",
+          "field_path": "HealPunish.bCancelJavelinsOnInterrupt",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:212",
+          "type": "bool",
+          "units": "dimensionless",
+          "value": "true",
+          "witness": "AutomationTest:OneBossFight.Binding.HealPunish.Assign"
+        },
+        {
+          "destination": "URPGBossLook::bEnabled",
+          "field_path": "Look.bEnabled",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:166",
+          "type": "bool",
+          "units": "dimensionless",
+          "value": "true",
+          "witness": "AutomationTest:OneBossFight.Binding.Look.Assign"
+        },
+        {
+          "destination": "URPGBossLook::Body",
+          "field_path": "Look.Body",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:221",
+          "type": "TSoftObjectPtr<USkeletalMesh>",
+          "units": "dimensionless",
+          "value": "TSoftObjectPtr<USkeletalMesh>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body\")))",
+          "witness": "AutomationTest:OneBossFight.Binding.Look.Assign"
+        },
+        {
+          "destination": "URPGBossLook::Pieces",
+          "field_path": "Look.Pieces",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:222",
+          "type": "TArray<TSoftObjectPtr<USkeletalMesh>>",
+          "units": "dimensionless",
+          "value": "{",
+          "witness": "AutomationTest:OneBossFight.Binding.Look.Assign"
+        },
+        {
+          "destination": "URPGBossLook::Sword",
+          "field_path": "Look.Sword",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:227",
+          "type": "TSoftObjectPtr<UStaticMesh>",
+          "units": "dimensionless",
+          "value": "TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.SM_Boss01_Greatsword\")))",
+          "witness": "AutomationTest:OneBossFight.Binding.Look.Assign"
+        },
+        {
+          "destination": "URPGBossLook::SwordSocket",
+          "field_path": "Look.SwordSocket",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:228",
+          "type": "FName",
+          "units": "identifier",
+          "value": "TEXT(\"HeavySwordSocket_R\")",
+          "witness": "AutomationTest:OneBossFight.Binding.Look.Assign"
+        },
+        {
+          "destination": "URPGBossCloseClipSwap::CloseAbilityClassName",
+          "field_path": "CloseClipSwap.CloseAbilityClassName",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:236",
+          "type": "FName",
+          "units": "identifier",
+          "value": "TEXT(\"GA_GS_Boss_CloseAttack_C\")",
+          "witness": "AutomationTest:OneBossFight.Binding.CloseClipSwap.Assign"
+        },
+        {
+          "destination": "URPGBossCloseClipSwap::AttackMontagesName",
+          "field_path": "CloseClipSwap.AttackMontagesName",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:237",
+          "type": "FName",
+          "units": "identifier",
+          "value": "TEXT(\"AttackMontages\")",
+          "witness": "AutomationTest:OneBossFight.Binding.CloseClipSwap.Assign"
+        },
+        {
+          "destination": "URPGBossCloseClipSwap::A1Montage",
+          "field_path": "CloseClipSwap.A1Montage",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:238",
+          "type": "TSoftObjectPtr<UAnimMontage>",
+          "units": "dimensionless",
+          "value": "TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1\")))",
+          "witness": "AutomationTest:OneBossFight.Binding.CloseClipSwap.Assign"
+        },
+        {
+          "destination": "URPGBossCloseClipSwap::A3aMontage",
+          "field_path": "CloseClipSwap.A3aMontage",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:239",
+          "type": "TSoftObjectPtr<UAnimMontage>",
+          "units": "dimensionless",
+          "value": "TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a\")))",
+          "witness": "AutomationTest:OneBossFight.Binding.CloseClipSwap.Assign"
+        },
+        {
+          "destination": "URPGBossCloseClipSwap::A3bMontage",
+          "field_path": "CloseClipSwap.A3bMontage",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:240",
+          "type": "TSoftObjectPtr<UAnimMontage>",
+          "units": "dimensionless",
+          "value": "TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b\")))",
+          "witness": "AutomationTest:OneBossFight.Binding.CloseClipSwap.Assign"
+        },
+        {
+          "destination": "URPGBossDeath::DeathMode",
+          "field_path": "Death.DeathMode",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "SubsystemOverride",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp",
+          "source_sha256": "17bc29c9d9e033de98cf9956c8d0d8e8bd2f7516a80295d96b4c2ff7ef822834",
+          "source_site": "RPGPlayerMovesSubsystem.cpp:187",
+          "type": "ERPGBossDeathMode",
+          "units": "identifier",
+          "value": "ERPGBossDeathMode::OwnClip",
+          "witness": "AutomationTest:OneBossFight.Binding.Death.Assign"
+        },
+        {
+          "destination": "URPGBossDeath::DeathClip",
+          "field_path": "Death.DeathClip",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:249",
+          "type": "TSoftObjectPtr<UAnimSequence>",
+          "units": "dimensionless",
+          "value": "TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_DeathLegend.AN_Boss01_DeathLegend\")))",
+          "witness": "AutomationTest:OneBossFight.Binding.Death.Assign"
+        },
+        {
+          "destination": "URPGBossDeath::DeathMontage",
+          "field_path": "Death.DeathMontage",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:250",
+          "type": "TSoftObjectPtr<UAnimMontage>",
+          "units": "dimensionless",
+          "value": "TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT(\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.AM_Boss01_DeathLegend\")))",
+          "witness": "AutomationTest:OneBossFight.Binding.Death.Assign"
+        },
+        {
+          "destination": "URPGBossDeath::PackDeathAbilityClassName",
+          "field_path": "Death.PackDeathAbilityClassName",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:251",
+          "type": "FName",
+          "units": "identifier",
+          "value": "TEXT(\"GA_EnemyRagdollDeath_C\")",
+          "witness": "AutomationTest:OneBossFight.Binding.Death.Assign"
+        },
+        {
+          "destination": "URPGBossDeath::PackDeathMontagesName",
+          "field_path": "Death.PackDeathMontagesName",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:252",
+          "type": "FName",
+          "units": "identifier",
+          "value": "TEXT(\"DeathMontages\")",
+          "witness": "AutomationTest:OneBossFight.Binding.Death.Assign"
+        },
+        {
+          "destination": "URPGBossDeath::PackPollSeconds",
+          "field_path": "Death.PackPollSeconds",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:253",
+          "type": "float",
+          "units": "seconds",
+          "value": "1.f",
+          "witness": "AutomationTest:OneBossFight.Binding.Death.Assign"
+        },
+        {
+          "destination": "URPGBossDeath::PackEndTimeMultiplier",
+          "field_path": "Death.PackEndTimeMultiplier",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:254",
+          "type": "float",
+          "units": "multiplier",
+          "value": "0.f",
+          "witness": "AutomationTest:OneBossFight.Binding.Death.Assign"
+        },
+        {
+          "destination": "URPGBossDeath::HoldAtSeconds",
+          "field_path": "Death.HoldAtSeconds",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:255",
+          "type": "float",
+          "units": "seconds",
+          "value": "3.f",
+          "witness": "AutomationTest:OneBossFight.Binding.Death.Assign"
+        },
+        {
+          "destination": "URPGBossDeath::DyingSeconds",
+          "field_path": "Death.DyingSeconds",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:256",
+          "type": "float",
+          "units": "seconds",
+          "value": "2.5f",
+          "witness": "AutomationTest:OneBossFight.Binding.Death.Assign"
+        },
+        {
+          "destination": "URPGBossDeath::BlendInSeconds",
+          "field_path": "Death.BlendInSeconds",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:257",
+          "type": "float",
+          "units": "seconds",
+          "value": "0.1f",
+          "witness": "AutomationTest:OneBossFight.Binding.Death.Assign"
+        },
+        {
+          "destination": "URPGBossDeath::MaxClipRestarts",
+          "field_path": "Death.MaxClipRestarts",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:258",
+          "type": "int32",
+          "units": "count",
+          "value": "8",
+          "witness": "AutomationTest:OneBossFight.Binding.Death.Assign"
+        },
+        {
+          "destination": "URPGBossDeath::bGuardPackDeath",
+          "field_path": "Death.bGuardPackDeath",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "LeadContract",
+          "precedence": "typed-record",
+          "source_path": "Source/OneBossFight/Player/RPGEncounterBinding.h",
+          "source_sha256": "588583702779c2c26948c8cbf1a7d02b251461aa9275545c42117ec065f4d2f6",
+          "source_site": "RPGEncounterBinding.h:259",
+          "type": "bool",
+          "units": "dimensionless",
+          "value": "false",
+          "witness": "AutomationTest:OneBossFight.Binding.Death.Assign"
+        },
+        {
+          "destination": "FRPGPhaseConfig::EntryHealthFraction",
+          "field_path": "Phases[PhaseTwo].EntryHealthFraction",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "AuthoredAsset",
+          "precedence": "typed-record",
+          "source_path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json",
+          "source_sha256": "2d79bac663083f73646a1c6ba9cb682dd0e9e0ba4a8908a641c283d71c221295",
+          "source_site": "/profiles/0/phases/0/EntryHealthFraction",
+          "type": "float",
+          "units": "fraction 0..1",
+          "value": "0.5",
+          "witness": "AutomationTest:OneBossFight.Binding.PhaseFlow.Assign"
+        },
+        {
+          "destination": "FRPGPhaseConfig::SpeedMultiplier",
+          "field_path": "Phases[PhaseTwo].SpeedMultiplier",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "AuthoredAsset",
+          "precedence": "typed-record",
+          "source_path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json",
+          "source_sha256": "2d79bac663083f73646a1c6ba9cb682dd0e9e0ba4a8908a641c283d71c221295",
+          "source_site": "/profiles/0/phases/0/SpeedMultiplier",
+          "type": "float",
+          "units": "dimensionless",
+          "value": "1.15",
+          "witness": "AutomationTest:OneBossFight.Binding.PhaseFlow.Assign"
+        },
+        {
+          "destination": "FRPGPhaseConfig::RateMultiplier",
+          "field_path": "Phases[PhaseTwo].RateMultiplier",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "AuthoredAsset",
+          "precedence": "typed-record",
+          "source_path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json",
+          "source_sha256": "2d79bac663083f73646a1c6ba9cb682dd0e9e0ba4a8908a641c283d71c221295",
+          "source_site": "/profiles/0/phases/0/RateMultiplier",
+          "type": "float",
+          "units": "dimensionless",
+          "value": "1.1",
+          "witness": "AutomationTest:OneBossFight.Binding.PhaseFlow.Assign"
+        },
+        {
+          "destination": "FRPGPhaseConfig::AttackMultiplier",
+          "field_path": "Phases[PhaseTwo].AttackMultiplier",
+          "first_read": "PrepareBatch.Configure",
+          "origin": "AuthoredAsset",
+          "precedence": "typed-record",
+          "source_path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/boss_draft_profiles.json",
+          "source_sha256": "2d79bac663083f73646a1c6ba9cb682dd0e9e0ba4a8908a641c283d71c221295",
+          "source_site": "/profiles/0/phases/0/AttackMultiplier",
+          "type": "float",
+          "units": "dimensionless",
+          "value": "1.25",
+          "witness": "AutomationTest:OneBossFight.Binding.PhaseFlow.Assign"
+        }
+      ],
+      "fireball": {
+        "fireball_ability": {
+          "object_path": "/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C"
+        },
+        "fireball_cooldown": {
+          "x": 6.0,
+          "y": 10.0
+        },
+        "fireball_enabled": false,
+        "fireball_max_range": 1800.0,
+        "fireball_min_range": 500.0
+      },
+      "heal_punish": {
+        "aim_height": 100.0,
+        "cancel_javelins_on_interrupt": true,
+        "cooldown": 4.0,
+        "damage": 12.0,
+        "enabled": true,
+        "flight_time": 1.2000000476837158,
+        "javelin_max_range": 3000.0,
+        "javelin_radius": 25.0,
+        "max_range": 1000.0,
+        "max_speed": 2500.0,
+        "min_range": 400.0,
+        "min_speed": 450.0,
+        "respond_to_heal": true,
+        "spawn_sockets": [
+          "JavelinSpawn",
+          "hand_l"
+        ]
+      },
+      "look": {
+        "body": {
+          "object_path": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body"
+        },
+        "enabled": true,
+        "pieces": [
+          {
+            "object_path": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Crown.SK_Boss01_Crown"
+          },
+          {
+            "object_path": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Mantle.SK_Boss01_Mantle"
+          },
+          {
+            "object_path": "/Game/OneBossFight/Boss01/Body/SK_Boss01_BrazierGauntlet.SK_Boss01_BrazierGauntlet"
+          }
+        ],
+        "sword": {
+          "object_path": "/Game/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.SM_Boss01_Greatsword"
+        },
+        "sword_socket": "HeavySwordSocket_R"
+      },
+      "low_sweep": {
+        "blade_height": 40.0,
+        "damage": 20.0,
+        "enabled": true,
+        "inner_radius": 60.0,
+        "move_id": "A4",
+        "reach": 380.0,
+        "sweep_from_degrees": 90.0,
+        "sweep_to_degrees": -90.0
+      },
+      "phase_dependencies": {
+        "immunity_effect": {
+          "object_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C"
+        },
+        "roar_clip": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar"
+        },
+        "transition_montage": {
+          "object_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage"
+        }
+      },
+      "phase_flow": {
+        "attack_ability_prefix": "GA_GS_Boss_",
+        "leap_ability_tag": "Ability.Melee.LeapAttack",
+        "lock_leap_until_phase_two": true,
+        "pause_posture_in_transition": true,
+        "transition_seconds": 1.7999999523162842,
+        "use_roar_clip": true
+      },
+      "phases": [
+        {
+          "attack_multiplier": 1.25,
+          "entry_health_fraction": 0.5,
+          "phase_id": "PhaseTwo",
+          "rate_multiplier": 1.100000023841858,
+          "speed_multiplier": 1.149999976158142
+        }
+      ],
+      "presentation_id": "Presentation_EmberWarden",
+      "schema": 1,
+      "shockwave": {
+        "damage": 48.0,
+        "enabled": true,
+        "jump_clearance": 50.0,
+        "max_radius": 1100.0,
+        "move_id": "A6",
+        "speed": 1000.0,
+        "start_radius": 200.0,
+        "thickness": 180.0
+      },
+      "skeleton": {
+        "object_path": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin"
+      },
+      "source_provenance": {
+        "asset_file_sha256": "806d8747b8e802a3097277517d82e4c12693cb4390972bcc6eff7fa5b86b1f4a",
+        "attack_tracker_fields": {
+          "attacks": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+          "b_enabled": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+          "b_veto_illegal_starts": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+          "branch_cone_degrees": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+          "branch_range": "native default (effective reflected value matches class default; serialized presence is not distinguished)"
+        },
+        "dd27j_evidence_path": "Docs/BossCombatReview/Execution/Claude/F3a/full2_raw.log",
+        "dd27j_evidence_sha256": "39b2c7df37d2b332de4655211b3dfa5b5bba3373fcaa825d2cce9951cf478927"
+      },
+      "stagger_policy": {
+        "cooldown_seconds": 0.0,
+        "critical_multiplier": 2.5,
+        "freeze_at_position": 1.5499999523162842,
+        "get_up_rate": 0.6000000238418579,
+        "hold_posture_at_zero": true,
+        "riposte_align_seconds": 0.30000001192092896,
+        "riposte_arm_seconds": 1.2000000476837158,
+        "riposte_base_damage": 40.0,
+        "riposte_cone_degrees": 120.0,
+        "riposte_facing_degrees": 120.0,
+        "riposte_impact_seconds": 0.800000011920929,
+        "riposte_player_start_gap": 150.0,
+        "riposte_range": 150.0,
+        "stagger_seconds": 2.5
+      },
+      "stagger_profile": {
+        "critical_on_every_hit": false,
+        "down_clip": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown"
+        },
+        "fall_clip": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall"
+        },
+        "fall_montage": {
+          "object_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage"
+        },
+        "get_up_montage": {
+          "object_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage"
+        },
+        "hit_stun_ability_class_name": "GA_GS_Boss_HitStun_C",
+        "immunity_effect": {
+          "object_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C"
+        },
+        "riposte_boss_clip": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction"
+        },
+        "riposte_player_clip": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.AN_Riposte_Player_Front"
+        },
+        "use_clips": true,
+        "use_riposte_clips": true
+      },
+      "stats": {
+        "max_health": 2000.0,
+        "max_posture": 120.0,
+        "posture_regen_delay": 3.0,
+        "posture_regen_rate": 15.0
+      }
+    },
+    "player": {
+      "animations": [
+        {
+          "object_path": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Animations/Roll/Dodge_Small_Forward_Roll.Dodge_Small_Forward_Roll"
+        },
+        {
+          "object_path": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Animations/Manny/MM_Idle.MM_Idle"
+        },
+        {
+          "object_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/Attack_PrimaryA_Anim.Attack_PrimaryA_Anim"
+        }
+      ],
+      "asset_path": "/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V3.DA_Player_Hero_Draft_V3",
+      "attack_tracker": {
+        "attacks": [
+          {
+            "active_end_time": 2.109999895095825,
+            "active_start_time": 1.9299999475479126,
+            "authored_windup": false,
+            "branch_stage": false,
+            "clip_path": "",
+            "commit_time": 1.6799999475479126,
+            "fallback_montage_name": "",
+            "montage_name": "GS_ChargedAttack_Montage",
+            "montage_path": "",
+            "move_id": "A2",
+            "recovery_end_time": 3.140000104904175,
+            "track_turn_rate": 120.0
+          },
+          {
+            "active_end_time": 0.5,
+            "active_start_time": 0.3499999940395355,
+            "authored_windup": true,
+            "branch_stage": false,
+            "clip_path": "",
+            "commit_time": 0.33000001311302185,
+            "fallback_montage_name": "GS_Attack03_Montage",
+            "montage_name": "AM_Boss01_A1",
+            "montage_path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1",
+            "move_id": "A1",
+            "recovery_end_time": 1.2000000476837158,
+            "track_turn_rate": 360.0
+          },
+          {
+            "active_end_time": 0.46000000834465027,
+            "active_start_time": 0.1599999964237213,
+            "authored_windup": false,
+            "branch_stage": true,
+            "clip_path": "",
+            "commit_time": 0.11999999731779099,
+            "fallback_montage_name": "",
+            "montage_name": "GS_Attack04_Montage",
+            "montage_path": "",
+            "move_id": "A1b",
+            "recovery_end_time": 1.25,
+            "track_turn_rate": 360.0
+          },
+          {
+            "active_end_time": 0.6000000238418579,
+            "active_start_time": 0.4000000059604645,
+            "authored_windup": true,
+            "branch_stage": false,
+            "clip_path": "",
+            "commit_time": 0.3799999952316284,
+            "fallback_montage_name": "GS_Attack01_Montage",
+            "montage_name": "AM_Boss01_A3a",
+            "montage_path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a",
+            "move_id": "A3a",
+            "recovery_end_time": 0.800000011920929,
+            "track_turn_rate": 360.0
+          },
+          {
+            "active_end_time": 0.4000000059604645,
+            "active_start_time": 0.15000000596046448,
+            "authored_windup": true,
+            "branch_stage": true,
+            "clip_path": "",
+            "commit_time": 0.12999999523162842,
+            "fallback_montage_name": "GS_Attack02_Montage",
+            "montage_name": "AM_Boss01_A3b",
+            "montage_path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b",
+            "move_id": "A3b",
+            "recovery_end_time": 1.333299994468689,
+            "track_turn_rate": 360.0
+          },
+          {
+            "active_end_time": 1.1699999570846558,
+            "active_start_time": 0.75,
+            "authored_windup": false,
+            "branch_stage": false,
+            "clip_path": "",
+            "commit_time": 0.1599999964237213,
+            "fallback_montage_name": "",
+            "montage_name": "GS_LeapAttack_Montage",
+            "montage_path": "",
+            "move_id": "A6",
+            "recovery_end_time": 1.7999999523162842,
+            "track_turn_rate": 120.0
+          },
+          {
+            "active_end_time": 0.8999999761581421,
+            "active_start_time": 0.6000000238418579,
+            "authored_windup": false,
+            "branch_stage": false,
+            "clip_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_A4_LowSweep.AN_Boss01_A4_LowSweep",
+            "commit_time": 0.4000000059604645,
+            "fallback_montage_name": "",
+            "montage_name": "AN_Boss01_A4_LowSweep",
+            "montage_path": "",
+            "move_id": "A4",
+            "recovery_end_time": 1.75,
+            "track_turn_rate": 180.0
+          },
+          {
+            "active_end_time": 0.5,
+            "active_start_time": 0.44999998807907104,
+            "authored_windup": false,
+            "branch_stage": false,
+            "clip_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_A5_JavelinThrow.AN_Boss01_A5_JavelinThrow",
+            "commit_time": 0.44999998807907104,
+            "fallback_montage_name": "",
+            "montage_name": "AN_Boss01_A5_JavelinThrow",
+            "montage_path": "",
+            "move_id": "A5",
+            "recovery_end_time": 0.949999988079071,
+            "track_turn_rate": 240.0
+          }
+        ],
+        "branch_cone_degrees": 120.0,
+        "branch_range": 400.0,
+        "enabled": true,
+        "veto_illegal_starts": true
+      },
+      "attack_tracker_field_provenance": {
+        "attacks": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+        "b_enabled": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+        "b_veto_illegal_starts": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+        "branch_cone_degrees": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+        "branch_range": "native default (effective reflected value matches class default; serialized presence is not distinguished)"
+      },
+      "attack_tracker_provenance": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+      "bleed": {
+        "effect_height": 170.0,
+        "hp_fraction": 0.029999999329447746,
+        "initial_threshold": 100.0,
+        "proc_effect": {
+          "object_path": "/Game/BloodPack/Hit/Niagara/NS_BulletHit_Med.NS_BulletHit_Med"
+        },
+        "proc_sound": {
+          "object_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/A_Guardian_ImpactL_Cue.A_Guardian_ImpactL_Cue"
+        },
+        "threshold_increase": 20.0,
+        "threshold_max": 200.0
+      },
+      "close_clip_swap": {
+        "a1_montage": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1"
+        },
+        "a3a_montage": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a"
+        },
+        "a3b_montage": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b"
+        },
+        "attack_montages_name": "AttackMontages",
+        "close_ability_class_name": "GA_GS_Boss_CloseAttack_C"
+      },
+      "death": {
+        "blend_in_seconds": 0.20000000298023224,
+        "death_clip": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_DeathLegend.AN_Boss01_DeathLegend"
+        },
+        "death_mode": "<RPGBossDeathMode.PACK_MONTAGE: 0>",
+        "death_montage": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.AM_Boss01_DeathLegend"
+        },
+        "dying_seconds": 1.0,
+        "guard_pack_death": true,
+        "hold_at_seconds": 0.5,
+        "max_clip_restarts": 0,
+        "pack_death_ability_class_name": "GA_GS_Boss_Death_C",
+        "pack_death_montages_name": "DeathMontages",
+        "pack_end_time_multiplier": 1.0,
+        "pack_poll_seconds": 0.10000000149011612
+      },
+      "definition_id": "Player_Hero_V3",
+      "dormant_wake": {
+        "dormant_clip": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.AN_Boss01_DormantIdle"
+        },
+        "wake_clip": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_Wake.AN_Boss01_Wake"
+        }
+      },
+      "encounter_policy": {
+        "gate_radius": 1200.0,
+        "reset_on_player_respawn": true
+      },
+      "fields": [
+        {
+          "destination": "FRPGParticipantConfig.Stats (compile copy only)",
+          "field_path": "Stats.MaxHealth",
+          "first_read": "none after compile: TargetOnly has no consumer plan (X-341, Preflight.cpp:449-455)",
+          "origin": "AuthoredAsset",
+          "precedence": "typed-record",
+          "source_path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/hero_target_source.json",
+          "source_sha256": "25e50a332009da8ddec783ce7e6f2c992f94a50d8f8c6a14427fcfa47240cc41",
+          "source_site": "/stats/MaxHealth",
+          "type": "float",
+          "units": "hp",
+          "value": "800.0",
+          "witness": "AutomationTest:OneBossFight.Binding.StatsAdapters.Assign (proves FRPGPostureConfig parsing only)"
+        },
+        {
+          "destination": "FRPGParticipantConfig.Stats (compile copy only)",
+          "field_path": "Stats.MaxPosture",
+          "first_read": "none after compile: TargetOnly has no consumer plan (X-341, Preflight.cpp:449-455)",
+          "origin": "AuthoredAsset",
+          "precedence": "typed-record",
+          "source_path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/hero_target_source.json",
+          "source_sha256": "25e50a332009da8ddec783ce7e6f2c992f94a50d8f8c6a14427fcfa47240cc41",
+          "source_site": "/stats/MaxPosture",
+          "type": "float",
+          "units": "hp",
+          "value": "60.0",
+          "witness": "AutomationTest:OneBossFight.Binding.StatsAdapters.Assign (proves FRPGPostureConfig parsing only)"
+        },
+        {
+          "destination": "FRPGParticipantConfig.Stats (compile copy only)",
+          "field_path": "Stats.PostureRegenDelay",
+          "first_read": "none after compile: TargetOnly has no consumer plan (X-341, Preflight.cpp:449-455)",
+          "origin": "AuthoredAsset",
+          "precedence": "typed-record",
+          "source_path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/hero_target_source.json",
+          "source_sha256": "25e50a332009da8ddec783ce7e6f2c992f94a50d8f8c6a14427fcfa47240cc41",
+          "source_site": "/stats/PostureRegenDelay",
+          "type": "float",
+          "units": "seconds",
+          "value": "1.5",
+          "witness": "AutomationTest:OneBossFight.Binding.StatsAdapters.Assign (proves FRPGPostureConfig parsing only)"
+        },
+        {
+          "destination": "FRPGParticipantConfig.Stats (compile copy only)",
+          "field_path": "Stats.PostureRegenRate",
+          "first_read": "none after compile: TargetOnly has no consumer plan (X-341, Preflight.cpp:449-455)",
+          "origin": "AuthoredAsset",
+          "precedence": "typed-record",
+          "source_path": "Docs/BossCombatReview/Execution/Antigravity/AuthoringToolkit/examples/hero_target_source.json",
+          "source_sha256": "25e50a332009da8ddec783ce7e6f2c992f94a50d8f8c6a14427fcfa47240cc41",
+          "source_site": "/stats/PostureRegenRate",
+          "type": "float",
+          "units": "hp/s",
+          "value": "25.0",
+          "witness": "AutomationTest:OneBossFight.Binding.StatsAdapters.Assign (proves FRPGPostureConfig parsing only)"
+        }
+      ],
+      "fireball": {
+        "fireball_ability": {
+          "object_path": "/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C"
+        },
+        "fireball_cooldown": {
+          "x": 6.0,
+          "y": 10.0
+        },
+        "fireball_enabled": false,
+        "fireball_max_range": 1800.0,
+        "fireball_min_range": 500.0
+      },
+      "heal_punish": {
+        "aim_height": 100.0,
+        "cancel_javelins_on_interrupt": true,
+        "cooldown": 4.0,
+        "damage": 12.0,
+        "enabled": false,
+        "flight_time": 1.2000000476837158,
+        "javelin_max_range": 3000.0,
+        "javelin_radius": 25.0,
+        "max_range": 1000.0,
+        "max_speed": 2500.0,
+        "min_range": 400.0,
+        "min_speed": 450.0,
+        "respond_to_heal": false,
+        "spawn_sockets": [
+          "JavelinSpawn",
+          "hand_l"
+        ]
+      },
+      "look": {
+        "body": {
+          "object_path": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body"
+        },
+        "enabled": true,
+        "pieces": [
+          {
+            "object_path": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Crown.SK_Boss01_Crown"
+          },
+          {
+            "object_path": "/Game/OneBossFight/Boss01/Body/SK_Boss01_Mantle.SK_Boss01_Mantle"
+          },
+          {
+            "object_path": "/Game/OneBossFight/Boss01/Body/SK_Boss01_BrazierGauntlet.SK_Boss01_BrazierGauntlet"
+          }
+        ],
+        "sword": {
+          "object_path": "/Game/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.SM_Boss01_Greatsword"
+        },
+        "sword_socket": "HeavySwordSocket_R"
+      },
+      "low_sweep": {
+        "blade_height": 30.0,
+        "damage": 15.0,
+        "enabled": false,
+        "inner_radius": 40.0,
+        "move_id": "A4",
+        "reach": 250.0,
+        "sweep_from_degrees": 90.0,
+        "sweep_to_degrees": -90.0
+      },
+      "phase_dependencies": {
+        "immunity_effect": {
+          "object_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C"
+        },
+        "roar_clip": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar"
+        },
+        "transition_montage": {
+          "object_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage"
+        }
+      },
+      "phase_flow": {
+        "attack_ability_prefix": "GA_Hero_",
+        "leap_ability_tag": "Ability.Melee.Hero",
+        "lock_leap_until_phase_two": false,
+        "pause_posture_in_transition": true,
+        "transition_seconds": 1.7999999523162842,
+        "use_roar_clip": false
+      },
+      "phases": [],
+      "presentation_id": "Presentation_Player_Hero_V3",
+      "schema": 1,
+      "shockwave": {
+        "damage": 35.0,
+        "enabled": false,
+        "jump_clearance": 40.0,
+        "max_radius": 900.0,
+        "move_id": "A6",
+        "speed": 800.0,
+        "start_radius": 150.0,
+        "thickness": 150.0
+      },
+      "skeleton": {
+        "object_path": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin"
+      },
+      "source_provenance": {
+        "asset_file_sha256": "30cdd6b0864ca3e23ddaf500bb7e31f2cc6942c5c18cf94147388cf885f4f8b3",
+        "attack_tracker_fields": {
+          "attacks": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+          "b_enabled": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+          "b_veto_illegal_starts": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+          "branch_cone_degrees": "native default (effective reflected value matches class default; serialized presence is not distinguished)",
+          "branch_range": "native default (effective reflected value matches class default; serialized presence is not distinguished)"
+        },
+        "dd27j_evidence_path": "Docs/BossCombatReview/Execution/Claude/F3a/full2_raw.log",
+        "dd27j_evidence_sha256": "39b2c7df37d2b332de4655211b3dfa5b5bba3373fcaa825d2cce9951cf478927"
+      },
+      "stagger_policy": {
+        "cooldown_seconds": 0.0,
+        "critical_multiplier": 2.5,
+        "freeze_at_position": 1.5499999523162842,
+        "get_up_rate": 0.6000000238418579,
+        "hold_posture_at_zero": true,
+        "riposte_align_seconds": 0.30000001192092896,
+        "riposte_arm_seconds": 1.2000000476837158,
+        "riposte_base_damage": 40.0,
+        "riposte_cone_degrees": 120.0,
+        "riposte_facing_degrees": 120.0,
+        "riposte_impact_seconds": 0.800000011920929,
+        "riposte_player_start_gap": 150.0,
+        "riposte_range": 150.0,
+        "stagger_seconds": 2.5
+      },
+      "stagger_profile": {
+        "critical_on_every_hit": false,
+        "down_clip": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown"
+        },
+        "fall_clip": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall"
+        },
+        "fall_montage": {
+          "object_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage"
+        },
+        "get_up_montage": {
+          "object_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage"
+        },
+        "hit_stun_ability_class_name": "GA_Hero_HitStun_C",
+        "immunity_effect": {
+          "object_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C"
+        },
+        "riposte_boss_clip": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction"
+        },
+        "riposte_player_clip": {
+          "object_path": "/Game/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.AN_Riposte_Player_Front"
+        },
+        "use_clips": false,
+        "use_riposte_clips": false
+      },
+      "stats": {
+        "max_health": 800.0,
+        "max_posture": 60.0,
+        "posture_regen_delay": 1.5,
+        "posture_regen_rate": 25.0
+      }
+    }
+  },
+  "initial_boss_phase": "PhaseTwo",
+  "manifest_sha256": "4bcf1a637f649a2199e9668c3a11d8e9278efa8175d41b7aa445fc66c34076d6",
+  "player_definition": "/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V3",
+  "provenance_mode": "saved-draft-package-v1",
+  "schema": "onebossfight.encounter-manifest/v1"
+}

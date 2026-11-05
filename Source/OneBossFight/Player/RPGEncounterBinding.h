@@ -7,6 +7,7 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "Player/RPGCombatCatalog.h"
 #include "Player/RPGBossDeath.h"
+#include "Player/RPGAttackTracker.h"
 #include "RPGEncounterBinding.generated.h"
 
 class URPGBossEncounter;
@@ -312,6 +313,8 @@ public:
 	UPROPERTY(EditAnywhere) FRPGLookConfig Look;
 	UPROPERTY(EditAnywhere) FRPGCloseClipSwapConfig CloseClipSwap;
 	UPROPERTY(EditAnywhere) FRPGDeathConfig Death;
+	/** Tracker configuration. Old definitions receive native defaults additively; these are not proof of serialized values. */
+	UPROPERTY(EditAnywhere) FRPGAttackTrackerConfig AttackTracker;
 	UPROPERTY(EditAnywhere) TArray<FRPGPhaseConfig> Phases;
 	UPROPERTY(EditAnywhere) TSoftObjectPtr<USkeleton> Skeleton;
 	UPROPERTY(EditAnywhere) TArray<TSoftObjectPtr<UAnimSequenceBase>> Animations;
@@ -359,6 +362,7 @@ struct FRPGParticipantConfig
 	FRPGLookConfig Look;
 	FRPGCloseClipSwapConfig CloseClipSwap;
 	FRPGDeathConfig Death;
+	FRPGAttackTrackerConfig AttackTracker;
 	TArray<FRPGPhaseConfig> Phases;
 	TArray<FRPGParityField> Fields;
 	TSharedPtr<const RPGCombatRegistry::FEpoch> Content;
@@ -384,6 +388,16 @@ class ONEBOSSFIGHT_API ARPGEncounterBinding : public AActor
 public:
 	/** Explicit identity; invalid/duplicate is rejected, not regenerated silently. */
 	UPROPERTY(EditInstanceOnly) FGuid EncounterInstance;
+	/** Exact authored selection path and membership digest carried into the world-owned runtime binding. */
+	UPROPERTY(Transient) FString SelectionDefinitionPath;
+	UPROPERTY(Transient) FString StableManifestHash;
+	UPROPERTY(Transient) FName InitialBossPhase;
+	UPROPERTY(Transient) FName BossSlot;
+	UPROPERTY(Transient) FName PlayerSlot;
+	/** Selected-route lifecycle identity; zero is invalid. */
+	UPROPERTY(Transient) uint64 ParticipantGeneration = 0;
+	/** Diagnostic reset count carried across the transient binding replacement. */
+	UPROPERTY(Transient) int32 ResetCount = 0;
 	UPROPERTY(EditInstanceOnly) TArray<FRPGPlacedParticipantBinding> Participants;
 };
 
@@ -413,6 +427,8 @@ struct FRPGComponentPlan
 	UClass* Class = nullptr;
 	FName InstanceName;
 	TArray<FString> RequiredFields;
+	/** True only for lifecycle-bundled components configured entirely from maintained native legacy defaults/assets. */
+	bool bConfigurationIndependent = false;
 	TFunction<bool(UActorComponent&, const FRPGParticipantConfig&, FString&)> Configure;
 };
 
@@ -456,7 +472,7 @@ namespace RPGCombatHydration
 {
 	ONEBOSSFIGHT_API FRPGHydrationResult CompileParticipant(const URPGBossDefinition& Definition,
 		TSharedPtr<const RPGCombatRegistry::FEpoch> Content, const FString& ManifestHash,
-		TSharedPtr<const FRPGParticipantConfig>& Out);
+		TSharedPtr<const FRPGParticipantConfig>& Out, bool bNeedsAttackTracker = true);
 #if WITH_DEV_AUTOMATION_TESTS
 	ONEBOSSFIGHT_API FRPGHydrationResult CompileSyntheticParticipant(const URPGBossDefinition& Definition,
 		TSharedPtr<const RPGCombatRegistry::FEpoch> Content, const FString& ManifestHash,

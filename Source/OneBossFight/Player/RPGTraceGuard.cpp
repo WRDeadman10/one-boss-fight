@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGAttackTracker.h"
+#include "Player/RPGBossTrackerTickPrerequisite.h"
 #include "Player/RPGBossDamage.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRPGTraceGuard, Log, All);
@@ -22,6 +23,10 @@ URPGTraceGuard::URPGTraceGuard()
 void URPGTraceGuard::BeginPlay()
 {
 	Super::BeginPlay();
+	if (AActor* Boss = GetOwner())
+	{
+		RPGBossTrackerTickPrerequisite::Add(*this, TrackerTickPrerequisite, Boss->FindComponentByClass<URPGAttackTracker>());
+	}
 	// After the boss's animation update and its notify dispatch of this frame, before the pack's trace sample (it ticks in the physics group).
 	if (const ACharacter* Character = Cast<ACharacter>(GetOwner()))
 	{
@@ -82,7 +87,12 @@ void URPGTraceGuard::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	AActor* Boss = GetOwner();
-	if (!bEnabled || !Boss || !Target.Resolve(Boss, TargetTypeTag))
+	if (!bEnabled || !Boss)
+	{
+		return;
+	}
+	RPGBossTrackerTickPrerequisite::Add(*this, TrackerTickPrerequisite, Boss->FindComponentByClass<URPGAttackTracker>());
+	if (!Target.Resolve(Boss, TargetTypeTag))
 	{
 		return;
 	}

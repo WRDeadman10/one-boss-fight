@@ -14,6 +14,13 @@
 #include "Player/RPGBossCloseClipSwapAdapters.h"
 #include "Player/RPGBossDeath.h"
 #include "Player/RPGBossDeathAdapters.h"
+#include "Player/RPGBossAttackTrackerAdapters.h"
+#include "Audio/RPGFootsteps.h"
+#include "Audio/RPGBossMusic.h"
+#include "Player/RPGDamageResolver.h"
+#include "Player/RPGTraceGuard.h"
+#include "UI/RPGBossHud.h"
+#include "Player/RPGLegend.h"
 #include "Misc/AutomationTest.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -24,6 +31,7 @@
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
+#include "Player/RPGEncounterBinding.h"
 #include "Player/RPGBossDormantWake.h"
 #include "Player/RPGBossDormantWakeAdapters.h"
 #include "Player/RPGBossEncounter.h"
@@ -99,6 +107,7 @@ namespace ActivationTests
 		Plans.Add(RPGBossLookAdapters::MakeLookPlan());
 		Plans.Add(RPGBossCloseClipSwapAdapters::MakeCloseClipSwapPlan());
 		Plans.Add(RPGBossDeathAdapters::MakeDeathPlan());
+		Plans.Add(RPGBossAttackTrackerAdapters::MakeAttackTrackerPlan());
 		TArray<FString> Paths;
 		for (const FRPGComponentPlan& ComponentPlan : Plans)
 		{
@@ -298,6 +307,41 @@ namespace ActivationTests
 }
 using namespace ActivationTests;
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGBossSelectedAttachClassParityTest, "OneBossFight.Binding.Activation.LegacyAttachClassParity", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGBossSelectedAttachClassParityTest::RunTest(const FString& Parameters)
+{
+	FFixture F; if (!PreconditionOk(*this, F)) { return false; }
+	TSharedPtr<const FRPGHydrationPreflightPlan> Plan;
+	const FRPGHydrationResult Compiled = RPGBossHydrationPreflight::CompilePreflight(F.Input, Plan);
+	if (!TestTrue(TEXT("selected plan compiles"), Compiled.IsReady() && Plan.IsValid())) { return false; }
+	const UClass* Expected[] = {
+		URPGBossStagger::StaticClass(), URPGBossPhases::StaticClass(), URPGBossEncounter::StaticClass(),
+		URPGBossDormantWake::StaticClass(), URPGBossPosture::StaticClass(), URPGBossBleed::StaticClass(),
+		URPGBossLowSweep::StaticClass(), URPGBossShockwave::StaticClass(), URPGBossHealPunish::StaticClass(),
+		URPGBossLook::StaticClass(), URPGBossCloseClipSwap::StaticClass(), URPGBossDeath::StaticClass(),
+		URPGAttackTracker::StaticClass(), URPGFootsteps::StaticClass(), URPGBossMusic::StaticClass(),
+		URPGTraceGuard::StaticClass(), URPGBossHud::StaticClass(), URPGBossLegend::StaticClass(),
+		URPGDamageResolver::StaticClass()
+	};
+	const TArray<UClass*> ExcludedClasses;
+	TestEqual(TEXT("legacy attach parity has an empty exclusion list"), ExcludedClasses.Num(), 0);
+	TSet<const UClass*> Actual;
+	for (const FRPGComponentPlan& ComponentPlan : Plan->Participants[0].Plans) { Actual.Add(ComponentPlan.Class); }
+	TestEqual(TEXT("selected data plan carries every legacy boss attach class"), Actual.Num(), static_cast<int32>(UE_ARRAY_COUNT(Expected)));   // lead fix (C-842): UE_ARRAY_COUNT is size_t, TestEqual(int32, size_t) is ambiguous
+	for (const UClass* Class : Expected)
+	{
+		TestTrue(FString::Printf(TEXT("selected plan includes %s"), *Class->GetName()), Actual.Contains(Class));
+	}
+	bool bNativePlansAreExplicitlyConfigurationIndependent = true;
+	for (int32 Index = 13; Index < 19; ++Index)
+	{
+		const FRPGComponentPlan& ComponentPlan = Plan->Participants[0].Plans[Index];
+		bNativePlansAreExplicitlyConfigurationIndependent &= ComponentPlan.bConfigurationIndependent && ComponentPlan.RequiredFields.IsEmpty();
+	}
+	TestTrue(TEXT("the six legacy parity plans are explicit native-only plans with no fabricated manifest fields"), bNativePlansAreExplicitlyConfigurationIndependent);
+	return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGActivationSuccessTest, "OneBossFight.Binding.Activation.Success", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
 bool FRPGActivationSuccessTest::RunTest(const FString& Parameters)
 {
@@ -308,20 +352,27 @@ bool FRPGActivationSuccessTest::RunTest(const FString& Parameters)
 	FRPGRegistrationReport Report;
 	if (!TestTrue(TEXT("registration succeeded"), Result.Batch->RegisterOwnedComponents(Report))) { return false; }
 	TestTrue(TEXT("state remains prepared and registered"), Result.Batch->IsPrepared() && Result.Batch->IsRegistered() && Report.bSucceeded && Report.Errors.IsEmpty());
-	const TCHAR* Expected[] = {TEXT("RPGBossStagger"), TEXT("RPGBossPhases"), TEXT("RPGBossEncounter"), TEXT("RPGBossDormantWake"), TEXT("RPGBossPosture"), TEXT("RPGBossBleed"), TEXT("RPGBossLowSweep"), TEXT("RPGBossShockwave"), TEXT("RPGBossHealPunish"), TEXT("RPGBossLook"), TEXT("RPGBossCloseClipSwap"), TEXT("RPGBossDeath")};
-	if (TestEqual(TEXT("two bosses times twelve"), Report.Registered.Num(), 24))
+	const TCHAR* Expected[] = {TEXT("RPGBossStagger"), TEXT("RPGBossPhases"), TEXT("RPGBossEncounter"), TEXT("RPGBossDormantWake"), TEXT("RPGBossPosture"), TEXT("RPGBossBleed"), TEXT("RPGBossLowSweep"), TEXT("RPGBossShockwave"), TEXT("RPGBossHealPunish"), TEXT("RPGBossLook"), TEXT("RPGBossCloseClipSwap"), TEXT("RPGBossDeath"), TEXT("RPGAttackTracker"), TEXT("RPGFootsteps"), TEXT("RPGBossMusic"), TEXT("RPGTraceGuard"), TEXT("RPGBossHud"), TEXT("RPGBossLegend"), TEXT("RPGDamageResolver")};
+	if (TestEqual(TEXT("two bosses times nineteen"), Report.Registered.Num(), 38))
 	{
-		for (int32 Index = 0; Index < 24; ++Index)
+		for (int32 Index = 0; Index < 38; ++Index)
 		{
 			const FRPGRegisteredComponentInfo& Entry = Report.Registered[Index];
-			TestTrue(TEXT("actual registered order matches independent legacy-relative list"), Entry.MemberIndex == Index / 12 && Entry.PlanIndex == Index % 12 && Entry.ClassName == FName(Expected[Index % 12]));
+			TestTrue(TEXT("actual registered order matches independent legacy-relative list"), Entry.MemberIndex == Index / 19 && Entry.PlanIndex == Index % 19 && Entry.ClassName == FName(Expected[Index % 19]));
 		}
 	}
 	for (const UActorComponent* C : Result.Batch->OwnedComponentsForTest())
 	{ TestTrue(TEXT("registered and never begun"), C && C->IsRegistered() && !C->HasBegunPlay()); }
+	const URPGFootsteps* Steps = F.Boss1->FindComponentByClass<URPGFootsteps>();
+	const URPGBossMusic* Music = F.Boss1->FindComponentByClass<URPGBossMusic>();
+	TestTrue(TEXT("legacy boss footsteps retain their authored boss scales"), Steps && Steps->PitchScale == 0.62f && Steps->VolumeScale == 1.5f
+		&& Steps->AudibleRange == 4500.f && Steps->JogSpeed == 200.f && Steps->RunSpeed == 420.f);
+	TestTrue(TEXT("music, trace guard, HUD, legend and damage resolver are all in the batch"), Music && Music->Music
+		&& F.Boss1->FindComponentByClass<URPGTraceGuard>() && F.Boss1->FindComponentByClass<URPGBossHud>()
+		&& F.Boss1->FindComponentByClass<URPGBossLegend>() && F.Boss1->FindComponentByClass<URPGDamageResolver>());
 	TestTrue(TEXT("target and context untouched"), SameActor(CaptureActor(F.Player), Before.Actors[2]) && F.Capture().Bound == Before.Bound && F.Capture().Ready == Before.Ready);
 	const auto Cleanup = Result.Batch->Abort();
-	TestTrue(TEXT("clean cleanup restores actors"), Cleanup.IsClean() && Cleanup.Destroyed == 24 && SameWorld(F.Capture(), Before));
+	TestTrue(TEXT("clean cleanup restores actors"), Cleanup.IsClean() && Cleanup.Destroyed == 38 && SameWorld(F.Capture(), Before));
 	return true;
 }
 
@@ -351,8 +402,65 @@ bool FRPGActivationBegunTest::RunTest(const FString& Parameters)
 	FRPGRegistrationReport Report;
 	TestFalse(TEXT("begun owner refused"), Result.Batch->RegisterOwnedComponents(Report));
 	TestTrue(TEXT("whole-batch refusal before first registration"), Report.Registered.IsEmpty() && Report.FailedMemberIndex == 1 && Report.Errors.Num() > 0 && Report.Errors[0].StartsWith(TEXT("Activation.MemberInvalid")));
-	TestTrue(TEXT("failure abort destroyed all twenty-four unregistered consumers"), Report.Cleanup.IsClean() && Report.Cleanup.Destroyed == 24 && !Result.Batch->IsPrepared());
+	TestTrue(TEXT("failure abort destroyed all thirty-eight unregistered consumers"), Report.Cleanup.IsClean() && Report.Cleanup.Destroyed == 38 && !Result.Batch->IsPrepared());
 	TestEqual(TEXT("all owned leases gone"), Result.Batch->GetOwnedComponentCount(), 0);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGActivationRuntimeRebindLifecycleTest, "OneBossFight.Binding.Activation.RuntimeRebindLifecycle", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGActivationRuntimeRebindLifecycleTest::RunTest(const FString& Parameters)
+{
+	FFixture F; if (!PreconditionOk(*this, F)) { return false; }
+	const FWorldState Before = F.Capture();
+	// Runtime retag retains the single boss-core lease and replaces only its target-only player identity.
+	F.Input.Requests.RemoveAt(1);
+	F.Input.ParticipantGeneration = 1;
+	auto Result = RPGBossHydrationPreparation::PrepareBatch(F.Input);
+	if (!TestTrue(TEXT("initial generation prepares before owner BeginPlay"), Result.Succeeded())) { return false; }
+	FRPGRegistrationReport Report;
+	if (!TestTrue(TEXT("initial boss lease registers before owner BeginPlay"), Result.Batch->RegisterOwnedComponents(Report))) { return false; }
+	const TArray<const UActorComponent*> OwnedBeforeRetag = Result.Batch->OwnedComponentsForTest();
+	const UActorComponent* TrackerBeforeRetag = F.Boss1->FindComponentByClass<URPGAttackTracker>();
+	if (!TestNotNull(TEXT("prepared boss-core lease includes its tracker"), TrackerBeforeRetag)) { return false; }
+	F.Boss1->DispatchBeginPlay();
+	F.Player->DispatchBeginPlay();
+	F.Scope.World->SetBegunPlay(true); // the no-GameMode fixture manually dispatched actors; model WorldSettings::NotifyBeginPlay as well
+	if (!TestTrue(TEXT("all rebind participants and their components have begun play"), F.Scope.World->HasBegunPlay()
+		&& F.Boss1->HasActorBegunPlay() && F.Player->HasActorBegunPlay())) { return false; }
+	ARPGEncounterBinding* Binding = F.Scope.World->SpawnActor<ARPGEncounterBinding>();
+	if (!TestNotNull(TEXT("new generation binding"), Binding)) { return false; }
+	Binding->EncounterInstance = F.Encounter;
+	Binding->ParticipantGeneration = 2;
+	FRPGPlacedParticipantBinding BossOne;
+	BossOne.Slot = TEXT("Boss1"); BossOne.TargetSlot = TEXT("Player"); BossOne.Actor = F.Boss1;
+	FRPGPlacedParticipantBinding Player;
+	Player.Slot = TEXT("Player"); Player.TargetSlot = TEXT("Boss1"); Player.Actor = F.Player;
+	Binding->Participants.Reset();
+	Binding->Participants.Add(BossOne);
+	Binding->Participants.Add(Player);
+	FString RetagError;
+	const bool bRetagged = Result.Batch->RetagForRebind(*Binding, 1, RetagError);
+	if (!TestTrue(FString::Printf(TEXT("existing begun boss lease retags without re-preparation (refusal=%s)"), *RetagError), bRetagged)) { return false; }
+	TestTrue(TEXT("successful retag clears its refusal diagnostic"), RetagError.IsEmpty());
+	TestTrue(TEXT("retag leaves the prepared batch registered"), Result.Batch->IsRegistered());
+	TestEqual(TEXT("retag advances the lease generation"), Result.Batch->GetParticipantGeneration(), static_cast<uint64>(2));
+	const TArray<const UActorComponent*> OwnedAfterRetag = Result.Batch->OwnedComponentsForTest();
+	TestTrue(TEXT("retag keeps the exact tracker instance without reconfiguration"), F.Boss1->FindComponentByClass<URPGAttackTracker>() == TrackerBeforeRetag);
+	TestEqual(TEXT("retag preserves every leased boss component"), OwnedAfterRetag.Num(), OwnedBeforeRetag.Num());
+	if (OwnedAfterRetag.Num() == OwnedBeforeRetag.Num())
+	{
+		for (int32 Index = 0; Index < OwnedBeforeRetag.Num(); ++Index)
+		{
+			TestTrue(TEXT("retag retains exact component identity"), OwnedAfterRetag[Index] == OwnedBeforeRetag[Index]);
+		}
+	}
+	const FRPGPreparationAbortReport OffThreadRelease = Async(EAsyncExecution::ThreadPool, [&]() { return Result.Batch->AbortForRebind(); }).Get();
+	TestTrue(TEXT("off-thread release refuses without consuming the live batch"), OffThreadRelease.bRefused && Result.Batch->IsRegistered() && Result.Batch->GetOwnedComponentCount() == 19);
+	const FRPGPreparationAbortReport Cleanup = Result.Batch->AbortForRebind();
+	TestTrue(TEXT("runtime release invokes cleanup and removes the exact batch"), Cleanup.IsClean() && Cleanup.Destroyed == 19 && !Result.Batch->IsPrepared());
+	TestEqual(TEXT("runtime release drops every owned lease"), Result.Batch->GetOwnedComponentCount(), 0);
+	const FWorldState After = F.Capture();
+	TestTrue(TEXT("runtime release preserves independent context state"), After.Bound == Before.Bound && After.Ready == Before.Ready);
 	return true;
 }
 
@@ -379,15 +487,15 @@ bool FRPGActivationFaultTest::RunTest(const FString& Parameters)
 {
 	FFixture F; if (!PreconditionOk(*this, F)) { return false; }
 	const FWorldState Before = F.Capture();
-	for (int32 Ordinal = 1; Ordinal <= 24; ++Ordinal)
+	for (int32 Ordinal = 1; Ordinal <= 38; ++Ordinal)
 	{
 		auto Result = RPGBossHydrationPreparation::PrepareBatch(F.Input);
 		if (!TestTrue(TEXT("fresh preparation for ordinal"), Result.Succeeded())) { return false; }
 		RPGBossActivation::FRegistrationFaultScope Fault(Ordinal);
 		FRPGRegistrationReport Report;
 		TestFalse(TEXT("injected registration failure"), Result.Batch->RegisterOwnedComponents(Report));
-		TestTrue(TEXT("failure fired at exact member and plan"), Fault.Fired() && Report.FailedMemberIndex == (Ordinal - 1) / 12 && Report.FailedPlanIndex == (Ordinal - 1) % 12 && Report.Registered.Num() == Ordinal);
-		TestTrue(TEXT("reverse unregister then clean full abort"), Report.Cleanup.Destroyed == 24 && Report.Cleanup.IsClean() && !Result.Batch->IsPrepared() && !Result.Batch->IsRegistered() && SameWorld(F.Capture(), Before));
+		TestTrue(TEXT("failure fired at exact member and plan"), Fault.Fired() && Report.FailedMemberIndex == (Ordinal - 1) / 19 && Report.FailedPlanIndex == (Ordinal - 1) % 19 && Report.Registered.Num() == Ordinal);
+		TestTrue(TEXT("reverse unregister then clean full abort"), Report.Cleanup.Destroyed == 38 && Report.Cleanup.IsClean() && !Result.Batch->IsPrepared() && !Result.Batch->IsRegistered() && SameWorld(F.Capture(), Before));
 		for (const AActor* Actor : {F.Boss1, F.Boss2, F.Player})
 		{
 			for (UClass* Class : RPGBossHydrationPreflight::ManagedCoreConsumerClasses())
@@ -408,7 +516,7 @@ bool FRPGActivationLifetimeTest::RunTest(const FString& Parameters)
 		FRPGRegistrationReport Report;
 		if (!TestTrue(TEXT("registered"), Result.Batch->RegisterOwnedComponents(Report))) { return false; }
 		const auto Abort = Result.Batch->Abort();
-		TestTrue(TEXT("owned registration abort is clean"), Abort.Destroyed == 24 && Abort.ContractViolations == 0 && Abort.IsClean() && !Result.Batch->IsRegistered() && SameWorld(F.Capture(), Before));
+		TestTrue(TEXT("owned registration abort is clean"), Abort.Destroyed == 38 && Abort.ContractViolations == 0 && Abort.IsClean() && !Result.Batch->IsRegistered() && SameWorld(F.Capture(), Before));
 		const auto Again = Result.Batch->Abort();
 		TestTrue(TEXT("repeated abort empty"), Again.Destroyed == 0 && Again.AlreadyGone == 0 && Again.ContractViolations == 0 && Again.IsClean());
 	}

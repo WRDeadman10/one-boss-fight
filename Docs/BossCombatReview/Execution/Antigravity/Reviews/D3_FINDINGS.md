@@ -1,4 +1,4 @@
-# D3 Reference Measurement Findings (4 of 10 Clips Measured)
+# D3 Reference Measurement Findings (5 of 10 Clips Measured)
 
 > **Status:** DESIGN INPUT (measured from owner footage, observation only).  
 > **Rule:** Observations are qualitative design aids. Strictly **NO** numbers from this review may be applied to runtime gameplay assets or Ember Warden cards without an explicit owner decision.  
@@ -12,10 +12,24 @@ The following table summarizes all clips measured to date in `Docs/BossCombatRev
 
 | Ledger priority | Reference ID | Original Move ID | Key Frames (W/C/A/E/R/RE) | Windup | Active | Recovery | Total | Confidence | Camera & Observation Notes |
 |---|---|---|---|---|---|---|---|---|---|
+| 1 | `REF_CurvedSwordCombo_Chain1` | `Move_EmberWarden_CurvedSlash_H1` | W=447 C=456 A=465 E=472 R=479 RE=500 | 0.3003s (18f) | 0.1168s (7f) | 0.4671s (28f) | 0.8842s (53f) | **medium** | camera: boss and player visible, boss foreground-to-mid distance; sampled frame-by-frame around 112.3-113.4 s. W=447 start of committed lateral sword windup; C=456 point after arm/sword trajectory is locked; A=465 first visible sweep at player space (collision/contact frame not provable); E=472 last visible sweep trail; R=479 return from low follow-through begins; RE=500 boss begins next actionable movement. Visual boundaries are approximate; observation from registered owner footage only. |
 | 6 | `REF_HolySwordRain_Setup` | `Move_EmberWarden_SwordRain` | W=2381 C=2423 A=2566 E=2602 R=2620 RE=2818 | 3.0864s (185f) | 0.6006s (36f) | 3.6036s (216f) | 7.2906s (437f) | **low** | camera: behind player, boss small and far away, boss body not readable; this measures the SKY SWORD VOLLEY, not the boss animation. W = swords begin to materialise at the top of frame 144.75 s (+-6 f, none at 144.611, present at 144.811), C = first single sword drop 145.412 s, A = main volley impact flash 147.814 s, E = volley impacts finish ~148.415 s, R = all swords planted 148.7 s (they persist as a ground hazard until at least 156 s), RE = boss starts its next move (leap/dash in) ~152.0 s; observation only from owner footage |
 | 8 | `REF_OmenCurseBurst_Phase2` | `Move_EmberWarden_CurseBurst` | W=5189 C=5270 A=5347 E=5612 R=5624 RE=5732 | 2.6360s (158f) | 4.4211s (265f) | 2.0020s (120f) | 9.0590s (543f) | **medium** | camera: steady, boss in frame and close during the buildup (190.8-194.1 s), then boss mid-distance behind the player for the burst; W = orange eye glow and embers start ~191.56 s (+-9 f), C = golden flame aura ignites ~192.91 s, A = golden detonation ~194.2 s (between 194.111 no burst and 194.261 burst, +-5 f), burst rays fade ~195.8 s, flame geysers across the arena erupt from ~196.2 s and burn until ~198.6 s (E = end of the flames), R = flames gone ~198.8 s, RE = next attack flare ~200.6 s (low certainty, boss small and far); NOT the boss's own recovery animation; observation only from owner footage |
 | 9 | `REF_MaceSlam_Sweep` | `Move_EmberWarden_MaceSlam` | W=1703 C=1787 A=1796 E=1801 R=1835 RE=1871 | 1.5515s (93f) | 0.0834s (5f) | 1.1678s (70f) | 2.8028s (168f) | **medium** | camera: boss in frame the whole clip, player mostly off screen; W = mace summon flash 133.400 s, hold ~1.3 s, sweep starts 134.801 s; first contact depends on player position; R/RE read at 0.1 s steps (+-3 frames); observation only from owner footage |
 | 10 | `REF_GapPounce_Close` | `Move_EmberWarden_GapPounce` | W=3951 C=3981 A=4005 E=4023 R=4047 RE=4065 | 0.9009s (54f) | 0.3003s (18f) | 0.7007s (42f) | 1.9019s (114f) | **low** | camera: boss far then fills the frame, close melee, player partly hidden; W = boss starts its run-in at the far right ~170.9 s (+-6 f), C = boss leaves the ground ~171.4 s, A = boss meets the player at ~171.8 s, E = boss passes through ~172.1 s, R = landing/turn ~172.5 s, RE = the NEXT attack (mace summon flash) starts ~172.8 s, so this is a CHAIN: 'recovery' is only the gap to the next move and is not a true recovery window; observation only from owner footage |
+
+---
+
+### Codex measurement note — `REF_CurvedSwordCombo_Chain1`
+
+- **Key milestones:** W=447 (112.441 s), C=456 (112.591 s), A=465 (112.741 s), E=472 (112.858 s), R=479 (112.975 s), RE=500 (113.325 s). The ledger's combat-relative values use `t_orig - 105.000 s`.
+- **Frame review:** visually inspected the registered video around 112.0–113.7 s with labeled contact sheets retained in-repo: `Docs/BossCombatReview/Execution/Claude/D3/evidence/REF_CurvedSwordCombo_Chain1_contact_sheet.png` (SHA-256 `7591bd525d6cdf82d7f3aae92360eab8b8362e69c045af87346bd83e587bde7f`) and `Docs/BossCombatReview/Execution/Claude/D3/evidence/REF_CurvedSwordCombo_Chain1_detail_sheet.png` (SHA-256 `9a45cefea158481728514f2d4bc027d702e5280bb985165fed0c046c0ce2f609`). The detail sheet samples every source frame across the windup and strike. Marker meanings follow D1; C/R/RE remain visual estimates, and first damaging contact cannot be proven from this camera view.
+- **Scope:** measured from the registered owner footage only; no game files or runtime assets were used. This is observation-only design input and does not authorize runtime parameter changes.
+
+### Codex correction — `REF_DaggerFlurry_TapClose` remains unmeasured
+
+- The 116.0–118.8 s segment reported in X-1191 is withdrawn: a visual cross-check indicates it shows a different attack, so those frames cannot be attributed to this ledger entry. The priority-2 timing fields and evidence pointer are null in `D3_MEASURED_LEDGER.json`; D3 remains 5/10.
+- The labeled sheet is retained as exploratory material at `Docs/BossCombatReview/Execution/Claude/D3/evidence/D3_candidate_wrong_id_116_1188_timeline.png` (SHA-256 `F4BBACAD3CA79545D3777697100B52E33A3D8CBBF877E20A51606DB1A098A54D`), not accepted measurement evidence. Re-identify the clip before timing it. First contact, maximum trigger distance, and audio cue remain unknown.
 
 ---
 

@@ -1,0 +1,9 @@
+﻿python : INCONCLUSIVE: Docs\BossCombatReview\Execution\Claude\B_C835_PARITY\pie_a4_low_sweep\receipt_data.json: cannot 
+read valid UTF-8 JSON ([Errno 2] No such file or directory: 
+'Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_a4_low_sweep\\receipt_data.json')
+At line:1 char:657
++ ... t: $_" } }; python Scripts\Tools\compare_encounter_parity.py "$p\rece ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (INCONCLUSIVE: D...ipt_data.json'):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

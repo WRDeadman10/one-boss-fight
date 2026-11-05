@@ -165,6 +165,7 @@ bool FBossMoveCardRejections::RunTest(const FString&)
     Reject([&](FInput& F){MakeCue(F);},TEXT("MoveCard.Cue"));   // the release cue without a hold
     Reject([&](FInput& F){MakeHold(F);MakeCue(F);F.S.Cues[1].Sound.Reset();},TEXT("MoveCard.Cue"));
     Reject([&](FInput& F){MakeHold(F);MakeCue(F);F.S.Cues[1].Visual=ERPGBossCueVisual::None;},TEXT("MoveCard.Cue"));
+    Reject([&](FInput& F){MakeHold(F);MakeCue(F);F.S.Cues[1].Visual=static_cast<ERPGBossCueVisual>(255);},TEXT("MoveCard.Cue"));
     Reject([&](FInput& F){MakeHold(F);MakeCue(F);F.S.Cues[1].CueId=NAME_None;},TEXT("MoveCard.Cue"));
     Reject([&](FInput& F){MakeHold(F);MakeCue(F);F.S.Cues[1].TimeSeconds=F.S.RecoveryEndSeconds+.1f;},TEXT("MoveCard.Cue"));
     Reject([&](FInput& F){MakeHold(F);MakeCue(F);F.S.Cues[1].Visual=F.S.Cues[0].Visual;},TEXT("MoveCard.CueDistinct"));
@@ -202,6 +203,42 @@ bool FBossMoveCardSnapshot::RunTest(const FString&)
     TestFalse(TEXT("no loaded dependencies fails closed"),R.IsValid());
     TestFalse(TEXT("resolved failure clears stale preview"),Out.IsValid());
     TestFalse(TEXT("default unconfigured draft invalid"),RPGBossMoveCards::Validate(FRPGBossMoveCardSpec(),FRPGBossMoveMetadata()).IsValid());
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveCardOptInDefaultsOff, "OneBossFight.Framework.MoveCard.OptInDefaultsOff", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FBossMoveCardOptInDefaultsOff::RunTest(const FString&)
+{
+    const FRPGBossMoveCardSpec Defaults;
+    TestFalse(TEXT("warp ease-in/out is disabled by default"), Defaults.WarpEaseInOut);
+    TestFalse(TEXT("defensive warp-away is disabled by default"), Defaults.bWarpAway);
+    TestFalse(TEXT("defensive mode is disabled by default"), Defaults.bDefensive);
+    TestEqual(TEXT("warp start defaults to off"), Defaults.WarpStartSeconds, 0.f);
+    TestEqual(TEXT("warp end defaults to off"), Defaults.WarpEndSeconds, 0.f);
+    TestEqual(TEXT("warp distance defaults to off"), Defaults.WarpMaxDistanceCm, 0.f);
+    TestEqual(TEXT("warp angle defaults to off"), Defaults.WarpMaxAngleDegrees, 0.f);
+    TestEqual(TEXT("warp standoff defaults to off"), Defaults.WarpStandoffCm, 0.f);
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveCardValidationFuzz,"OneBossFight.Framework.MoveCard.ValidationFuzz",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FBossMoveCardValidationFuzz::RunTest(const FString&)
+{
+    using namespace BossMoveCardFixture;FRandomStream Random(0x92A11);int32 Invalid=0;
+    using FMember=float FRPGBossMoveCardSpec::*;
+    const FMember Fields[]={&FRPGBossMoveCardSpec::PlayRate,&FRPGBossMoveCardSpec::CommitSeconds,&FRPGBossMoveCardSpec::ActiveStartSeconds,&FRPGBossMoveCardSpec::ActiveEndSeconds,&FRPGBossMoveCardSpec::RecoveryEndSeconds,&FRPGBossMoveCardSpec::TrackDegreesPerSecond,&FRPGBossMoveCardSpec::MinRangeCm,&FRPGBossMoveCardSpec::MaxRangeCm,&FRPGBossMoveCardSpec::FrontConeDegrees,&FRPGBossMoveCardSpec::HPDamage};
+    for(int32 I=0;I<1000;++I)
+    {
+        FInput F;const int32 Kind=Random.RandRange(0,5);const float V=Kind==0?std::numeric_limits<float>::quiet_NaN():Kind==1?std::numeric_limits<float>::infinity():Kind==2?-1.f:Kind==3?1000001.f:Random.FRandRange(0.f,1000.f);
+        F.S.*Fields[Random.RandRange(0,static_cast<int32>(UE_ARRAY_COUNT(Fields))-1)]=V;
+        if((I%3)==0)F.S.Windows[1].RadiusCm=V;
+        if((I%7)==0)F.S.Windows[1].StartSeconds=V;
+        const FRPGBossMoveIssues Result=RPGBossMoveCards::Validate(F.S,F.M);
+        if(!Result.IsValid())
+        {
+            ++Invalid;TestTrue(*FString::Printf(TEXT("invalid card fuzz case %d returns at least one named issue"),I),!Result.Errors.IsEmpty());
+            for(const FString& Issue:Result.Errors)TestTrue(TEXT("issue uses a MoveCard token"),Issue.StartsWith(TEXT("MoveCard.")));
+        }
+    }
+    TestTrue(TEXT("fuzz reaches invalid card cases"),Invalid>0);
     return true;
 }
 #endif

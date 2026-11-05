@@ -37,21 +37,21 @@ namespace AttachWitness
 	const TCHAR* const BossClassPath = TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/AI/Enemies/ExampleGreatswordBoss/BP_ExampleGreatSwordBoss.BP_ExampleGreatSwordBoss_C");
 	const TCHAR* const PlayerClassPath = TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/BP_CombatPlayerCharacter.BP_CombatPlayerCharacter_C");
 
-	// The creation order the PREIMAGE Attach produced, read from its statement order (not from the new code): boss prelude, then the bundle, 21 steps.
+	// Legacy gameplay creation order followed by the independent diagnostics attach; diagnostics stay outside the legacy component lease.
 	TArray<FString> ExpectedBossSequence()
 	{
 		return TArray<FString>{
 			TEXT("RPGFootsteps"), TEXT("RPGBossMusic"), TEXT("RPGBossStagger"), TEXT("RPGBossPhases"), TEXT("RPGBossEncounter"), TEXT("RPGBossDormantWake"),
 			TEXT("RPGBossPosture"), TEXT("RPGBossDeath"), TEXT("RPGBossLook"), TEXT("RPGBossBleed"), TEXT("RPGAttackTracker"), TEXT("RPGBossCloseClipSwap"),
-			TEXT("RPGBossShockwave"), TEXT("RPGBossLowSweep"), TEXT("RPGBossHealPunish"), TEXT("RPGDamageResolver"), TEXT("RPGTraceGuard"), TEXT("RPGTraceAudit"),
-			TEXT("RPGBossHud"), TEXT("RPGCombatDebug"), TEXT("RPGBossLegend")};
+			TEXT("RPGBossShockwave"), TEXT("RPGBossLowSweep"), TEXT("RPGBossHealPunish"), TEXT("RPGDamageResolver"), TEXT("RPGTraceGuard"),
+			TEXT("RPGBossHud"), TEXT("RPGBossLegend"), TEXT("RPGTraceAudit"), TEXT("RPGCombatDebug")};
 	}
 
 	// The player statements, in the order of the preimage.
 	TArray<FString> ExpectedPlayerSequence()
 	{
 		return TArray<FString>{
-			TEXT("RPGFootsteps"), TEXT("RPGCameraRig"), TEXT("RPGRiposteInput"), TEXT("RPGDodgeTiming"), TEXT("RPGSwingTracker"), TEXT("RPGHitIntake"),
+			TEXT("RPGFootsteps"), TEXT("RPGCameraRig"), TEXT("RPGRiposteInput"), TEXT("RPGDodgeTiming"), TEXT("RPGPlayerParry"), TEXT("RPGSwingTracker"), TEXT("RPGHitIntake"),
 			TEXT("RPGBuildLoadout"), TEXT("RPGBuildSelect"), TEXT("RPGFlaskHud"), TEXT("RPGIFrameMonitor")};
 	}
 

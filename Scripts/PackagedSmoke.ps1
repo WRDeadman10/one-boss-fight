@@ -69,15 +69,35 @@ try {
     }
 }
 finally {
-    # The staged OneBossFight.exe is a launcher: the game itself is its child (OneBossFight-Win64-*.exe). Stopping only the launcher leaves the game running and locks the staging folder (found 2026-10-24), so the whole process tree is stopped and any game process started since the launch.
+    # The staged OneBossFight.exe is a launcher: stop only its PID tree so the game child cannot keep the staging folder locked. Avoid image-name sweeps that can stop an unrelated game.
     if ($process) {
+        $descendants = @()
+        try {
+            $allProcesses = @(Get-CimInstance Win32_Process -ErrorAction Stop)
+            $treeIds = @([int]$process.Id)
+            do {
+                $children = @($allProcesses | Where-Object {
+                    ([int]$_.ParentProcessId) -in $treeIds -and
+                    ([int]$_.ProcessId) -notin $treeIds -and
+                    $_.CreationDate -ge $launchTime
+                })
+                foreach ($child in $children) { $treeIds += [int]$child.ProcessId }
+            } while ($children.Count -gt 0)
+            $descendants = @($allProcesses | Where-Object { ([int]$_.ProcessId) -in @($treeIds | Select-Object -Skip 1) })
+        }
+        catch {
+            Write-Warning ("[Smoke] could not snapshot launcher descendants; will attempt PID-tree cleanup only: {0}" -f $_)
+        }
         if (-not $process.HasExited) {
             & taskkill.exe /PID $process.Id /T /F | Out-Null
             Write-Host ("[Smoke] stopped process tree {0}" -f $process.Id)
         }
-        Get-Process -Name 'OneBossFight-Win64-*' -ErrorAction SilentlyContinue | Where-Object { $_.StartTime -ge $launchTime.AddSeconds(-2) } | ForEach-Object {
-            Write-Host ("[Smoke] stopped game process {0}" -f $_.Id)
-            Stop-Process -Id $_.Id -Force
+        foreach ($descendant in $descendants) {
+            $current = Get-CimInstance Win32_Process -Filter ("ProcessId={0}" -f $descendant.ProcessId) -ErrorAction SilentlyContinue
+            if ($current -and [string]$current.CreationDate -eq [string]$descendant.CreationDate -and $current.ParentProcessId -eq $descendant.ParentProcessId) {
+                Write-Host ("[Smoke] stopping snapshotted child process {0}" -f $descendant.ProcessId)
+                & taskkill.exe /PID $descendant.ProcessId /T /F | Out-Null
+            }
         }
     }
 }

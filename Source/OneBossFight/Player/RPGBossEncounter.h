@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "RPGBossEncounter.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FRPGBossEncounterResetBroadcast, uint64, int32);
+
 /**
  * Encounter flow for the pack's boss: a beginning (the gate) and a reset.
  *   - Dormant: the boss stands at home with its behaviour held (the AI controller exists, the pack's abilities were granted at BeginPlay) until the player comes within
@@ -53,15 +55,24 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Encounter")
 	int32 GetDeathResetRefusals() const { return DeathResetRefusals; }
 
+	/** Native lifecycle observation emitted once after a successful reset has applied its new generation. */
+	FRPGBossEncounterResetBroadcast& OnResetBroadcast() { return ResetBroadcast; }
+
 	/**
 	 * Encounter generation (Freeze 32.2). Starts at 1 and goes up on every reset. A timer, montage callback or projectile that outlives the fight it was made for stores the generation
 	 * it started in and drops itself when this value has changed (IsCurrentGeneration).
 	 */
-	UFUNCTION(BlueprintPure, Category = "Encounter")
-	int32 GetGeneration() const { return Generation; }
+	UFUNCTION(BlueprintPure, Category = "Encounter", meta = (DeprecatedFunction, DeprecationMessage = "Use GetParticipantGenerationText; this legacy counter saturates at MAX_int32."))
+	int32 GetGeneration() const { return static_cast<int32>(FMath::Min<uint64>(ParticipantGeneration, static_cast<uint64>(MAX_int32))); }
 
+	/** Authoritative generation for native gameplay and diagnostics. The old Blueprint-facing int32 getter saturates at MAX_int32. */
+	uint64 GetParticipantGeneration() const { return ParticipantGeneration; }
+	/** Exact full-width generation for Blueprint diagnostics; decimal text avoids signed or floating-point narrowing. */
 	UFUNCTION(BlueprintPure, Category = "Encounter")
-	bool IsCurrentGeneration(int32 Token) const { return Token == Generation; }
+	FString GetParticipantGenerationText() const { return FString::Printf(TEXT("%llu"), static_cast<unsigned long long>(ParticipantGeneration)); }
+
+	UFUNCTION(BlueprintPure, Category = "Encounter", meta = (DeprecatedFunction, DeprecationMessage = "Use full-width native generation tokens."))
+	bool IsCurrentGeneration(int32 Token) const { return Token >= 0 && static_cast<uint64>(Token) == FMath::Min<uint64>(ParticipantGeneration, static_cast<uint64>(MAX_int32)); }
 
 	UFUNCTION(BlueprintPure, Category = "Encounter")
 	FTransform GetHomeTransform() const { return HomeTransform; }
@@ -73,6 +84,15 @@ public:
 	/** Tests: runs the encounter reset as if the player had died and respawned. */
 	UFUNCTION(BlueprintCallable, Category = "Encounter")
 	void ResetForTest();
+
+#if WITH_DEV_AUTOMATION_TESTS
+	/** Seeds native lifecycle counters so overflow and full-width generation paths are testable without billions of resets. */
+	void SeedLifecycleStateForTest(uint64 InParticipantGeneration, int32 InResetCount)
+	{
+		ParticipantGeneration = InParticipantGeneration;
+		ResetCount = InResetCount;
+	}
+#endif
 
 	/** Wakes the boss now (tests and scripted encounters). */
 	UFUNCTION(BlueprintCallable, Category = "Encounter")
@@ -103,7 +123,8 @@ private:
 	float StartupTime = 0.f; // seconds since BeginPlay: the pack finishes its own attribute set-up a moment after the first write (probe 2026-10-23: current health read 500 half a second after the write of 2000)
 	static constexpr float StartupEnforceSeconds = 4.f;
 	int32 DeathResetRefusals = 0;
-	int32 Generation = 1;
+	uint64 ParticipantGeneration = 1;
+	FRPGBossEncounterResetBroadcast ResetBroadcast;
 	float DormantTime = 0.f;
 	double HealthBaseline = -1.0;
 	TWeakObjectPtr<const APawn> TrackedPlayer;

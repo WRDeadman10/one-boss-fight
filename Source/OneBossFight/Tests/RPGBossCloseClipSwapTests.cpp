@@ -12,16 +12,21 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGBossCloseClipSwapRulesTest, "OneBossFight.B
 bool FRPGBossCloseClipSwapRulesTest::RunTest(const FString& Parameters)
 {
 	using namespace RPGBossCloseClipSwapRules;
-	TestEqual(TEXT("Attack03 maps to authored A1"), ReplacementFor(TEXT("GS_Attack03_Montage")), FName(TEXT("AM_Boss01_A1")));
-	TestEqual(TEXT("Attack01 maps to authored A3a"), ReplacementFor(TEXT("GS_Attack01_Montage")), FName(TEXT("AM_Boss01_A3a")));
-	TestEqual(TEXT("Attack02 maps to authored A3b"), ReplacementFor(TEXT("GS_Attack02_Montage")), FName(TEXT("AM_Boss01_A3b")));
-	TestTrue(TEXT("Attack04 remains pack owned"), ReplacementFor(TEXT("GS_Attack04_Montage")).IsNone());
-	for (const FName Name : { FName(TEXT("GS_Attack01_Montage")), FName(TEXT("GS_Attack02_Montage")), FName(TEXT("GS_Attack03_Montage")), FName(TEXT("GS_Attack04_Montage")) })
+	struct FMapping { const TCHAR* Pack; const TCHAR* Replacement; bool bPackClose; };
+	const FMapping Cases[] = {
+		{TEXT("GS_Attack01_Montage"), TEXT("AM_Boss01_A3a"), true},
+		{TEXT("GS_Attack02_Montage"), TEXT("AM_Boss01_A3b"), true},
+		{TEXT("GS_Attack03_Montage"), TEXT("AM_Boss01_A1"), true},
+		{TEXT("GS_Attack04_Montage"), TEXT(""), true},
+		{TEXT("GS_LeapAttack_Montage"), TEXT(""), false},
+		{TEXT(""), TEXT(""), false},
+	};
+	for (const FMapping& Case : Cases)
 	{
-		TestTrue(*FString::Printf(TEXT("%s is a validated pack close montage"), *Name.ToString()), IsPackCloseMontage(Name));
+		const FName Pack(Case.Pack);
+		TestEqual(*FString::Printf(TEXT("%s replacement table row"), Case.Pack), ReplacementFor(Pack), FName(Case.Replacement));
+		TestEqual(*FString::Printf(TEXT("%s close montage membership"), Case.Pack), IsPackCloseMontage(Pack), Case.bPackClose);
 	}
-	TestFalse(TEXT("an unrelated montage fails closed"), IsPackCloseMontage(TEXT("GS_LeapAttack_Montage")));
-	TestTrue(TEXT("an unrelated montage has no replacement"), ReplacementFor(TEXT("GS_LeapAttack_Montage")).IsNone());
 	return true;
 }
 

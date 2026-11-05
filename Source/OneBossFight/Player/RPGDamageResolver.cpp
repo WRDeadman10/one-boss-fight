@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGDamageResolver.h"
+#include "Player/RPGPlayerParry.h"
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
@@ -37,17 +38,17 @@ FString URPGDamageResolver::KeyOf(const FRPGDamagePayload& Payload)
 	return FString::Printf(TEXT("%s|%d|%s"), *Payload.MoveId.ToString(), Payload.AttackInstance, *Payload.HitKey.ToString());
 }
 
-int32 URPGDamageResolver::CurrentGeneration() const
+uint64 URPGDamageResolver::CurrentGeneration() const
 {
 	if (ProviderGeneration)
 	{
 		return ProviderGeneration();
 	}
 	const URPGBossEncounter* Encounter = GetOwner() ? GetOwner()->FindComponentByClass<URPGBossEncounter>() : nullptr;
-	return Encounter ? Encounter->GetGeneration() : 0;
+	return Encounter ? Encounter->GetParticipantGeneration() : 0;
 }
 
-void URPGDamageResolver::SetLifeProvider(TFunction<bool()> InIsAlive, TFunction<int32()> InGeneration)
+void URPGDamageResolver::SetLifeProvider(TFunction<bool()> InIsAlive, TFunction<uint64()> InGeneration)
 {
 	// Both or none: a half provider would mix the framework's life with the legacy generation.
 	if (!InIsAlive || !InGeneration)
@@ -67,7 +68,7 @@ void URPGDamageResolver::ClearLifeProvider()
 
 void URPGDamageResolver::SyncGeneration()
 {
-	const int32 Generation = CurrentGeneration();
+	const uint64 Generation = CurrentGeneration();
 	if (Generation != SeenGeneration)
 	{
 		SeenGeneration = Generation;
@@ -98,7 +99,7 @@ void URPGDamageResolver::Record(const FRPGDamagePayload& Payload, ERPGDamageOutc
 	LastOutcome = RPGDamageRules::Name(Outcome);
 	++Counts.FindOrAdd(FString::Printf(TEXT("%s|%s"), *Payload.MoveId.ToString(), RPGDamageRules::Name(Outcome)));
 	++Counts.FindOrAdd(FString::Printf(TEXT("|%s"), RPGDamageRules::Name(Outcome)));
-	UE_LOG(LogRPGDamage, Log, TEXT("%s: %s instance %d generation %d: %s%s (health %.1f -> %.1f, asked %.1f)"), *GetOwner()->GetName(), *Payload.MoveId.ToString(), Payload.AttackInstance, Payload.Generation,
+	UE_LOG(LogRPGDamage, Log, TEXT("%s: %s instance %d generation %llu: %s%s (health %.1f -> %.1f, asked %.1f)"), *GetOwner()->GetName(), *Payload.MoveId.ToString(), Payload.AttackInstance, static_cast<unsigned long long>(Payload.Generation),
 		RPGDamageRules::Name(Outcome), Reason.IsNone() ? TEXT("") : *FString::Printf(TEXT(" (%s)"), *Reason.ToString()), HealthBefore, HealthAfter, Payload.HPDamage);
 }
 
@@ -149,7 +150,8 @@ FRPGDamageResult URPGDamageResolver::Resolve(AActor* Target, const FRPGDamagePay
 	const bool bDuplicate = Spent.Contains(Key);
 	// The invulnerability is read here, at the moment the damage would be applied (Freeze 488), and only when the earlier rules did not already reject.
 	const bool bInvulnerable = bTargetAlive && bAttackerAlive && bCurrent && !bDuplicate && RPGBossDamage::IsInvulnerable(Target);
-	Result.Outcome = RPGDamageRules::Decide(bTargetAlive, bAttackerAlive, bCurrent, bDuplicate, bInvulnerable);
+	const bool bParrying = bTargetAlive && bAttackerAlive && bCurrent && !bDuplicate && !bInvulnerable && URPGPlayerParry::IsParrying(Target);
+	Result.Outcome = RPGDamageRules::Decide(bTargetAlive, bAttackerAlive, bCurrent, bDuplicate, bInvulnerable, bParrying);
 	FName Reason = NAME_None;
 	switch (Result.Outcome)
 	{
@@ -176,6 +178,11 @@ FRPGDamageResult URPGDamageResolver::Resolve(AActor* Target, const FRPGDamagePay
 	case ERPGDamageOutcome::RejectedInvulnerable:
 		Reason = TEXT("Status.Invulnerable");
 		break;
+	case ERPGDamageOutcome::Parried:
+		Spent.Add(Key); // a parried swing is spent: the other windows of the same swing do not hurt
+		URPGPlayerParry::NotifyParried(Target);
+		Reason = TEXT("parry window");
+		break;
 	default:
 		break;
 	}
@@ -190,7 +197,7 @@ FString URPGDamageResolver::GetAuditLine(int32 Index) const
 		return FString();
 	}
 	const FEntry& E = Audit[Index];
-	return FString::Printf(TEXT("#%d t=%.2f %s inst %d gen %d %s%s health %.1f -> %.1f asked %.1f"), E.Index, E.Time, *E.Move.ToString(), E.Instance, E.Generation, RPGDamageRules::Name(E.Outcome),
+	return FString::Printf(TEXT("#%d t=%.2f %s inst %d gen %llu %s%s health %.1f -> %.1f asked %.1f"), E.Index, E.Time, *E.Move.ToString(), E.Instance, static_cast<unsigned long long>(E.Generation), RPGDamageRules::Name(E.Outcome),
 		E.Reason.IsNone() ? TEXT("") : *FString::Printf(TEXT(" (%s)"), *E.Reason.ToString()), E.HealthBefore, E.HealthAfter, E.HPRequested);
 }
 
@@ -217,7 +224,7 @@ void URPGDamageResolver::ClearAudit()
 
 FString URPGDamageResolver::BuildSummaryLine() const
 {
-	return FString::Printf(TEXT("  DAMAGE  accepted %d  rejected invulnerable %d  duplicate %d  stale %d  dead %d  overlaps %d  last: %s"), GetOutcomeCount(TEXT("Accepted")), GetOutcomeCount(TEXT("RejectedInvulnerable")),
+	return FString::Printf(TEXT("  DAMAGE  accepted %d  parried %d  rejected invulnerable %d  duplicate %d  stale %d  dead %d  overlaps %d  last: %s"), GetOutcomeCount(TEXT("Accepted")), GetOutcomeCount(TEXT("Parried")), GetOutcomeCount(TEXT("RejectedInvulnerable")),
 		GetOutcomeCount(TEXT("RejectedDuplicate")), GetOutcomeCount(TEXT("RejectedStale")), GetOutcomeCount(TEXT("RejectedDead")), GetOutcomeCount(TEXT("Overlap")), Audit.Num() > 0 ? *GetAuditLine(Audit.Num() - 1) : TEXT("-"));
 }
 
@@ -231,7 +238,7 @@ FString URPGDamageResolver::ResolveForTest(FName MoveId, int32 Instance, float H
 	Payload.AttackInstance = Instance;
 	Payload.HitKey = HitKey;
 	Payload.HPDamage = HP;
-	Payload.Generation = Generation >= 0 ? Generation : CurrentGeneration();
+	Payload.Generation = Generation >= 0 ? static_cast<uint64>(Generation) : CurrentGeneration();
 	const FRPGDamageResult Result = Resolve(UGameplayStatics::GetPlayerPawn(this, 0), Payload);
 	return RPGDamageRules::Name(Result.Outcome);
 #endif

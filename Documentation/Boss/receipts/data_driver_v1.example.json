@@ -1,0 +1,21 @@
+{
+  "schema": "onebossfight.encounter-parity/v1",
+  "route": "data",
+  "run_id": "EXAMPLE-DATA-RUN-002",
+  "identity": {
+    "map": "/Game/Maps/L_SevarogArena",
+    "build_id": "EXAMPLE-BUILD-SHA256-REPLACE-BEFORE-USE",
+    "content_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "settings_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "seed": 12345,
+    "driver": "pie_a4_low_sweep.py",
+    "driver_args": ["--seed", "12345"],
+    "input_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  },
+  "final_marker": {"kind": "R", "passed": 14, "total": 14},
+  "checks": {"passed": 14, "minimum": 14},
+  "terminal": {"clean": true, "result": "CompletedWithDamage"},
+  "activation": {"outcome": "Activated", "selection": "EXAMPLE-ENCOUNTER-GUID"},
+  "components": {"boss": ["example-data-components"], "player": ["example-player-components"]},
+  "observables": {"result": "CompletedWithDamage", "player_hp": 80}
+}

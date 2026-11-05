@@ -5,9 +5,13 @@ S3 a jump pressed at 0.33 s clears the blade (20 trials); S4 out of reach (520 c
 without damage; S8 the boss dying in the middle of the sweep ends it without damage. S9 prints (does not assert) the jump press times that clear the blade. Run pie_debug_overlay.py once after an editor start first. Log prefix [A4].
 """
 import math
+import json
+import os
+import time
 import unreal
 
 log = lambda m: unreal.log("[A4] " + m)
+PIE_START_MONOTONIC = None
 JUMP_KEY = "Gamepad_FaceButton_Bottom"
 DODGE_KEY = "Gamepad_FaceButton_Right"
 TRIAL_LEN = 2.6
@@ -15,6 +19,68 @@ SETTLE = 0.5
 results = []
 S = {"phase": "start", "t": 0.0, "i": 0, "running": False, "t0": 0.0, "mem": {}, "keys": {}, "woke": None, "n": 0, "done_actions": set(), "info": {}}
 handle = None
+S9_DIAG_SEQUENCE = 0
+S9_DIAG_UNAVAILABLE_LOGGED = False
+START_STATE_ERROR_LOGGED = False
+
+
+def _start_state_actor(actor):
+    def vector(value):
+        return [round(float(value.x), 3), round(float(value.y), 3), round(float(value.z), 3)] if value is not None else None
+
+    def rotation(value):
+        return [round(float(value.pitch), 3), round(float(value.yaw), 3), round(float(value.roll), 3)] if value is not None else None
+
+    row = {"name": actor.get_name(), "location": vector(actor.get_actor_location()), "rotation": rotation(actor.get_actor_rotation())}
+    capsules = actor.get_components_by_class(unreal.CapsuleComponent)
+    capsule = capsules[0] if capsules else None
+    try:
+        row["capsule"] = {"radius": capsule.get_scaled_capsule_radius(), "half_height": capsule.get_scaled_capsule_half_height()} if capsule else None
+    except Exception:
+        row["capsule"] = None
+    meshes = actor.get_components_by_class(unreal.SkeletalMeshComponent)
+    mesh = meshes[0] if meshes else None
+    try:
+        row["mesh_relative"] = {"location": vector(mesh.get_editor_property("relative_location")), "rotation": rotation(mesh.get_editor_property("relative_rotation"))} if mesh else None
+    except Exception:
+        row["mesh_relative"] = None
+    movements = actor.get_components_by_class(unreal.CharacterMovementComponent)
+    movement = movements[0] if movements else None
+    values = {}
+    for prop in ("max_walk_speed", "max_acceleration", "braking_deceleration_walking", "ground_friction", "gravity_scale", "jump_z_velocity", "rotation_rate"):
+        try:
+            value = movement.get_editor_property(prop) if movement else None
+            if prop == "rotation_rate" and value is not None:
+                value = rotation(value)
+            values[prop] = value
+        except Exception:
+            values[prop] = None
+    row["movement"] = values if movement else None
+    return row
+
+
+def start_state_line(scenario, trial, boss, pawn):
+    global START_STATE_ERROR_LOGGED
+    try:
+        row = {"scenario": scenario, "trial": trial, "elapsed_monotonic_s": round(time.perf_counter() - PIE_START_MONOTONIC, 6) if PIE_START_MONOTONIC is not None else None,
+               "boss": _start_state_actor(boss), "player": _start_state_actor(pawn)}
+    except Exception as exc:
+        row = {"scenario": scenario, "trial": trial, "elapsed_monotonic_s": None, "boss": None, "player": None}
+        if not START_STATE_ERROR_LOGGED:
+            START_STATE_ERROR_LOGGED = True
+            try:
+                log("START_STATE unavailable: %s" % exc)
+            except Exception:
+                pass
+    try:
+        log("START_STATE " + json.dumps(row, sort_keys=True, separators=(",", ":")))
+    except Exception as exc:
+        if not START_STATE_ERROR_LOGGED:
+            START_STATE_ERROR_LOGGED = True
+            try:
+                log("START_STATE serialization unavailable: %s" % exc)
+            except Exception:
+                pass
 
 
 def check(name, ok, detail=""):
@@ -59,6 +125,35 @@ def counters(sw, tr):
             "inst": tr.get_attack_instance(), "double": tr.get_double_launch_count()}
 
 
+def s9_diagnostic_line(boss, pawn, sw, tr, elapsed):
+    """Emit best-effort same-frame diagnostics; this must never interrupt a trial."""
+    global S9_DIAG_SEQUENCE, S9_DIAG_UNAVAILABLE_LOGGED
+    try:
+        S9_DIAG_SEQUENCE += 1
+        mesh = pawn.get_editor_property("mesh")
+        anim = mesh.get_anim_instance() if mesh else None
+        montage = anim.get_current_active_montage() if anim else None
+        montage_name = montage.get_name() if montage else "none"
+        montage_pos = anim.montage_get_position(montage) if anim and montage else -1.0
+        monitor = comp(pawn, "RPGIFrameMonitor")
+        tag = monitor.is_invulnerable_now() if monitor else False
+        component_rows = []
+        for actor in (boss, pawn):
+            for registered_order, component in enumerate(actor.get_components_by_class(unreal.ActorComponent)):
+                if component.get_class().get_name() in ("RPGBossLowSweep", "RPGAttackTracker", "RPGIFrameMonitor"):
+                    component_rows.append("%s#%d" % (component.get_class().get_name(), registered_order))
+        log("S9DIAG seq=%d scenario=%s trial=%d elapsed=%.4f montage=%s montage_pos=%.4f iframes=%s tracker_pos=%.4f blade_active=%s component_registered_order=%s" % (
+            S9_DIAG_SEQUENCE, SCENARIOS[S["i"]][0], S["n"] + 1, elapsed, montage_name, montage_pos,
+            tag, tr.get_position(), sw.is_blade_active(), ",".join(component_rows)))
+    except Exception as exc:
+        if not S9_DIAG_UNAVAILABLE_LOGGED:
+            S9_DIAG_UNAVAILABLE_LOGGED = True
+            try:
+                log("S9DIAG unavailable: %s" % exc)
+            except Exception:
+                pass
+
+
 # Scenario: (name, distance, angle, trials, actions, expectation). actions: list of (time since the start, fn(pc, pawn, boss)); jump and roll are key holds (start, end).
 def jump_at(t):
     return {"jump": (t, t + 0.12)}
@@ -92,6 +187,7 @@ def start_trial(w, pc, pawn, boss):
     dbg.debug_refill_player()
     S["keys"] = {}
     place(pawn, boss, dist, ang)
+    start_state_line(name, S["n"] + 1, boss, pawn)
     S["mem"] = {"c": counters(sw, tr), "hp": health(pawn), "yaw": boss.get_actor_rotation().yaw, "zs": [], "drift": tr.get_max_yaw_drift_after_commit()}
     S["running"] = True
     S["t0"] = S["t"]
@@ -139,6 +235,36 @@ def finish():
         unreal.unregister_slate_post_tick_callback(handle)
         handle = None
     log("RESULT %d/%d passed" % (sum(1 for r in results if r), len(results)))
+    try:
+        world = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
+        subsystem_type = getattr(unreal, "RPGPlayerMovesSubsystem", None)
+        accessor = getattr(subsystem_type, "get_for_world", None) if subsystem_type else None
+        subsystem = accessor(world) if accessor and world else None
+        if subsystem is None:
+            log("PARITY_CAPTURE_UNAVAILABLE snapshot accessor/world missing")
+        else:
+            snapshot = json.loads(subsystem.build_encounter_parity_snapshot())
+            observables = {}
+            for name, rows in S.get("info", {}).items():
+                observables[name] = {
+                    "hits": sum(row[0] for row in rows),
+                    "trials": len(rows),
+                    "jumped": sum(row[1] for row in rows),
+                    "invulnerable": sum(row[2] for row in rows),
+                    "scenario_checks": S.get("scen", {}).get(name, []),
+                }
+            payload = {
+                "snapshot": snapshot,
+                "run_facts": {
+                    "final_marker": {"kind": "R", "passed": sum(1 for value in results if value), "total": len(results)},
+                    "checks": {"passed": sum(1 for value in results if value), "minimum": 14},
+                    "terminal": {"clean": len(results) >= 14 and all(results), "result": "Completed" if len(results) >= 14 and all(results) else "Failed"},
+                    "observables": observables,
+                },
+            }
+            log("PARITY_CAPTURE_JSON " + json.dumps(payload, sort_keys=True, separators=(",", ":")))
+    except Exception as exc:
+        log("PARITY_CAPTURE_UNAVAILABLE %s" % exc)
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
 
 
@@ -147,6 +273,12 @@ def _tick(dt):
     s["t"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
+            global PIE_START_MONOTONIC
+            PIE_START_MONOTONIC = time.perf_counter()
+            log("PIE_START monotonic=%.6f source=editor_request_begin_play" % PIE_START_MONOTONIC)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="wait", t=0.0)
         return
@@ -191,6 +323,9 @@ def _tick(dt):
                     check("%s: the move starts" % name, False)
             return
         tm = s["t"] - s["t_start"]
+        if (name in ("S6 backward roll at 0.50 s: i-frames pass", "S9 info jump at 0.05 s", "S9 info roll at 0.40 s")
+                and 0.0 <= tm <= 1.05):
+            s9_diagnostic_line(boss, pawn, sw, tr, tm)
         if "jump" in actions:
             a, b = actions["jump"]
             key(pc, JUMP_KEY, a <= tm < b)

@@ -33,6 +33,8 @@ The boss Animation Blueprint must implement a pose slot named `"FullBody"`:
 
 ## 2. Configuration File Reference (`config.json`)
 
+The neutral-strafe hold window is optional in the JSON. When omitted, the utility materializes the native defaults (`neutral_strafe_min_hold_seconds: 0.8`, `neutral_strafe_max_hold_seconds: 1.6`) into its dry-run output and the saved profile readback. Custom windows are F5-only and must be finite, positive, and ordered.
+
 `new_boss.py` reads a single JSON file. Below is the complete 40-key schema covering baseline locomotion, combat bands, optional two-phase transitions, posture stance break, bleed hemorrhage, and move cards:
 
 ```json
@@ -130,6 +132,12 @@ The configuration contains 30 standard keys (or 40 keys when optional Posture an
 | `phase_two_fraction`, `phase_two_id` | **Optional Block** | Float, String | Phase 2 transition trigger. Strictly $0.0 < \text{fraction} < 1.0$ and non-empty ID $\ne \text{None}$. | `Framework.Profile.Phase`, `Framework.Profile.PhaseCards` |
 | `posture_*` (5 fields) | **Optional Block** | Floats | Posture pool: `posture_max`, `player_posture_hit_amount`, `stagger_seconds`, `posture_regen_delay_seconds`, `posture_regen_per_second`. **All-or-nothing**: all $0.0$ (off) OR all positive with $\text{hit} \le \text{max}$ and $\text{stagger} \in [0.5, 60.0]$. | `Framework.Profile.Posture` |
 | `bleed_*` (5 fields) | **Optional Block** | Floats | Bleed pool: `bleed_buildup_per_hit`, `bleed_initial_threshold`, `bleed_threshold_increase`, `bleed_threshold_max`, `bleed_hp_fraction`. **All-or-nothing**: all $0.0$ (off) OR all positive with $\text{initial} \ge 1.0$, $\text{max} \ge \text{initial}$, and $\text{fraction} \in (0.0, 1.0]$. | `Framework.Profile.Bleed` |
+
+### 2.1a Native profile options outside the C1 JSON
+
+The current `new_boss.py` JSON does not expose these optional native profile fields; configure them directly on the profile asset. `bAggroEnabled` defaults off. When enabled, the boss chooses a hysteretic Close/Balanced/Far preference from its distance to the player and the player's rolling dodge rate; dodge detection uses `DodgeSpeedCm`. The selector applies the preferred band through each card's authored `HugMultiplier` or `KiteMultiplier`, preserving deterministic scoring. The range entry/exit pairs and dodge-rate entry/exit rates must have separation, so small movement around a threshold does not flip the preferred band every decision.
+
+`FatigueGraceWhiffs` and `FatigueFloor` are opt-in F5 profile fields; both default to zero. After a clean card ends, accepted contacts (including guarded hits) and parries clear the consecutive-whiff count; a card without any of those outcomes increments it. On the next card, the fatigue rule scales its authored play rate after the grace count, down to the configured floor. If `ParryFairTelegraph` is also enabled, its fairness slowdown is applied to that already-fatigued rate, so the scales compose without accelerating the card. The executor restores the authored rate when it finishes or aborts. `[FrameworkProof] fatigue whiffs=%d scale=%g` reports the count and resulting fatigue scale. This is not live-proven.
 
 ### 2.2 Reusing Cards vs. Authoring & Baking New Cards
 In the `cards` array:

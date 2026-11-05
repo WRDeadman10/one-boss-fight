@@ -93,6 +93,7 @@ private:
 	TArray<TWeakObjectPtr<AActor>> LastSet;
 	TArray<TWeakObjectPtr<AActor>> OpenCarried;
 	bool bWasActive = false;
+	TWeakObjectPtr<UActorComponent> TrackerTickPrerequisite;
 	int32 WindowId = 0;
 	int32 LastWindowInstance = -1;
 	int32 CloseCount = 0;

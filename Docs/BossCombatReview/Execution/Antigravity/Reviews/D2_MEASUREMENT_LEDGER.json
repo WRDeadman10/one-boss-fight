@@ -4,7 +4,7 @@
     "combat_zero_seconds": 105.0,
     "extraction_start_seconds": 105.0,
     "frame_naming_pattern": "morgott_c0_{frame:05d}.png",
-    "description": "Template measurement ledger for 9 Morgott combat clips. All measurement fields null until measured from video. Notes must record camera state per clip. Confidence must be high, medium, or low."
+    "description": "Template measurement ledger for 10 Morgott combat clips. All measurement fields null until measured from video. Notes must record camera state per clip. Confidence must be high, medium, or low."
   },
   "entries": [
     {

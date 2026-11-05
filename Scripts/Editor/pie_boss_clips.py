@@ -7,10 +7,13 @@ Boss clips (Brief 12 deliveries wired in): the phase two roar and the stance bre
   S4 the fallback: with bUseClips off (through the test hook) the pack's knockdown montage plays and the stance break still runs its stages.
 Boss held awake (HoldForTest), same scaffold as pie_posture_hits.py. Log prefix [BossClips]; ends with RESULT n/m passed. Run pie_debug_overlay.py once after an editor start first.
 """
+import json
+import os
 import unreal
 
 log = lambda m: unreal.log("[BossClips] " + m)
 results = []
+TIMING_OBSERVABLES = {}
 S = {"phase": "start", "t": 0.0, "now": 0.0, "wait": 0.0, "gen": None, "samples": None}
 handle = None
 
@@ -113,8 +116,12 @@ def stance_break(label, expect_clips=True):
     last = samples[-1]
     if expect_clips:
         check("%s: the break started (%s) and the stages ran in order fall, down, getup" % (label, result), result == "started" and [x for x in stages if x != "none"] == ["fall", "down", "getup"], "%s" % stages)
-        check("%s: fall about 0.7 s (%.2f), down until 2.5 s in total (%.2f after the fall), get-up about 1.2 s (%.2f)" % (label, spans["fall"], spans["down"], spans["getup"]),
-              0.5 <= spans["fall"] <= 1.0 and 1.4 <= spans["down"] <= 2.3 and 0.8 <= spans["getup"] <= 1.7)
+        for stage, expected, bounds in (("fall", 0.7, (0.5, 1.0)), ("down", 2.5, (1.4, 2.3)), ("get-up", 1.2, (0.8, 1.7))):
+            stage_key = "getup" if stage == "get-up" else stage
+            timing_name = "%s: %s duration near %.1f s" % (label, stage, expected)
+            duration = spans[stage_key]
+            check(timing_name, bounds[0] <= duration <= bounds[1], "%.2f s" % duration)
+            TIMING_OBSERVABLES[timing_name] = {"value": float(duration), "comparison": {"type": "timing_seconds", "range_seconds": list(bounds)}}
         clips = {}
         for s in samples:
             if s["stage"] != "none" and s["clip"]:
@@ -148,7 +155,9 @@ def script():
     ended = yield from until(lambda: not P()["ph"].is_in_transition(), 4.0)
     length = S["now"] - t_start
     check("S3 the roar plays the project's clip (source %s, montage segment %s)" % (source, clip), started and source == "AN_Boss01_PhaseRoar" and clip == "AN_Boss01_PhaseRoar", "")
-    check("S3 the transition lasts 1.8 s (%.2f) and ends" % length, ended and 1.5 <= length <= 2.3, "")
+    roar_name = "S3 the transition lasts 1.8 s and ends"
+    check(roar_name, ended and 1.5 <= length <= 2.3, "%.2f s" % length)
+    TIMING_OBSERVABLES[roar_name] = {"value": float(length), "comparison": {"type": "timing_seconds", "range_seconds": [1.5, 2.3]}}
 
     # S4 the fallback to the pack's montages
     yield from fresh()
@@ -166,6 +175,8 @@ def finish():
         P()["stg"].set_use_clips_for_test(True)
     except Exception:
         pass
+    if TIMING_OBSERVABLES:
+        log("TIMING_OBSERVABLES_JSON " + json.dumps(TIMING_OBSERVABLES, sort_keys=True, separators=(",", ":")))
     log("RESULT %d/%d passed" % (sum(1 for r in results if r), len(results)))
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
 
@@ -176,6 +187,9 @@ def _tick(dt):
     s["now"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0)
         return

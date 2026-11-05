@@ -4,6 +4,10 @@
 #include "Player/RPGBossApproachRules.h"
 #include "Player/RPGBossCueRules.h"
 #include "Player/RPGBossGuardRules.h"
+#include "Player/RPGBossBlockChipRules.h"
+#include "Player/RPGBossRecoveryWindowRules.h"
+#include "Player/RPGBossTelegraphScaleRules.h"
+#include "Player/RPGBossFatigueRules.h"
 #include "Player/RPGBossDamage.h"
 #include "Player/RPGPlayerParry.h"
 #include "AIController.h"
@@ -28,14 +32,15 @@
 
 namespace
 {
-	void RecordParriedContact(ARPGFrameworkBossCharacter* Boss, APawn* Target)
+	void RecordParriedContact(ARPGFrameworkBossCharacter* Boss, APawn* Target, double CardRecoverySeconds)
 	{
 		const URPGPlayerParry* Parry=Target?Target->FindComponentByClass<URPGPlayerParry>():nullptr;
 		const RPGParryGrade::EGrade Grade=Parry?Parry->GradeNow():RPGParryGrade::EGrade::None;
 		const TCHAR* GradeName=Grade==RPGParryGrade::EGrade::Perfect?TEXT("Perfect"):Grade==RPGParryGrade::EGrade::Good?TEXT("Good"):Grade==RPGParryGrade::EGrade::Late?TEXT("Late"):TEXT("None");
 		const URPGBossFrameworkProfile* Profile=Boss?Boss->ProofProfile():nullptr;
 		const double Scale=Profile&&Profile->bParryGradeScale?RPGParryGrade::PostureScale(Grade):1.0;
-		if (Boss) Boss->NoteParried(Scale);
+		const double Recovery=Profile?RPGBossRecoveryWindow::ScaledSeconds(Grade,CardRecoverySeconds,Profile->ParryRecoveryScale):0.;
+		if (Boss) Boss->NoteParried(Scale,Recovery,static_cast<int32>(Grade));
 		UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] parry_grade grade=%s scale=%g"),GradeName,Scale);
 	}
 }
@@ -78,7 +83,7 @@ bool URPGFrameworkMoveExecutor::Initialize(ARPGFrameworkBossCharacter* Boss,cons
         // Single life/generation authority of the framework boss: alive until the boss fails; generation = the proof generation.
         URPGDamageResolver* R=URPGDamageResolver::FindOrAdd(Boss);
         if (!IsValid(R)) {Error=TEXT("Framework.Playback.Resolver");return false;}
-        R->SetLifeProvider([W=TWeakObjectPtr<ARPGFrameworkBossCharacter>(Boss)]{return W.IsValid()&&!W->Failed()&&!W->IsDead();},[W=TWeakObjectPtr<ARPGFrameworkBossCharacter>(Boss)]{return W.IsValid()?int32(W->CurrentGeneration()):0;});
+        R->SetLifeProvider([W=TWeakObjectPtr<ARPGFrameworkBossCharacter>(Boss)]{return W.IsValid()&&!W->Failed()&&!W->IsDead();},[W=TWeakObjectPtr<ARPGFrameworkBossCharacter>(Boss)]{return W.IsValid()?W->CurrentGeneration():uint64(0);});
         Resolver=R;
     }
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] slot_graph name=%s nodeClass=AnimNode_Slot verified=1 label=%s"),*Card->Spec().SlotName.ToString(),*Label());
@@ -91,6 +96,7 @@ bool URPGFrameworkMoveExecutor::Start(const FRPGBossDecisionSnapshot& S,FString&
 bool URPGFrameworkMoveExecutor::Rearm(uint64 NewGeneration,FString& Error)
 {
     if (!bInitialized||!IsInGameThread()) {Error=TEXT("Framework.Playback.State");return false;}
+    if (NewGeneration<=Model_.Generation()) {Error=TEXT("MoveModel.Generation");return false;}
     StopOwned(0.f); OwnedMontage=nullptr;
     TArray<FRPGBossMoveModelEvent> Events;
     if (!Model_.ResetGeneration(NewGeneration,Events,Error)) return false;
@@ -115,14 +121,30 @@ bool URPGFrameworkMoveExecutor::PrepareNextAttack()
 bool URPGFrameworkMoveExecutor::StartCard(const TSharedPtr<const FRPGCompiledBossMoveCard>& NextCard,const FRPGBossDecisionSnapshot& S,FString& Error)
 {
     if (!NextCard) {Error=TEXT("Framework.Playback.State");return false;}
-    Card=NextCard;
     if (!bInitialized||bAborted||!OwnerBoss.IsValid()||!Target.IsValid()||!IsIdle()||bFinished)
     {Error=TEXT("Framework.Playback.State");return false;}
-    if (!ValidatePlaybackCard(Card,Error,Profile->bDamageEnabled)||!Model_.IsEligible(Card,S,Error)) return false;
+    if (!ValidatePlaybackCard(NextCard,Error,Profile->bDamageEnabled)||!Model_.IsEligible(NextCard,S,Error)) return false;
+    Card=NextCard;
+    CardOriginalPlayRate=Card->Spec().PlayRate; CardPlayRate=CardOriginalPlayRate;
+    CardAcceptedHits=CardParriedHits=0;
+    if (Profile->FatigueFloor>0.f)
+    {
+        RPGBossFatigue::FConfig Fatigue; Fatigue.GraceWhiffs=Profile->FatigueGraceWhiffs; Fatigue.MinRateScale=Profile->FatigueFloor;
+        const double Scale=RPGBossFatigue::RateScale(OwnerBoss->ConsecutiveWhiffs(),Fatigue);
+        if (Scale<0.) {Error=TEXT("Framework.Profile.Fatigue");return false;}
+        CardPlayRate*=Scale;
+    }
+    if (Profile->ParryFairTelegraph)
+    {
+        const double RequiredRealSeconds=RPGBossParryFair::DefaultReactionSeconds+.5*RPGBossParryFair::DefaultWindowSeconds;
+        CardPlayRate=RPGBossTelegraphScale::Rate(Card->Spec().ActiveStartSeconds,CardPlayRate,RequiredRealSeconds,Profile->ParryFairMinScale);
+        if (CardPlayRate<0.) {Error=TEXT("Framework.Profile.ParryFairTelegraph.Unachievable");return false;}
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] telegraph_scale card=%s rate=%g"),*Card->Spec().MoveId.ToString(),CardPlayRate);
+    }
     // BOSS-EXE-007: the watchdog budget of this card. A healthy card must end inside it, otherwise the watchdog would abort it: refuse such a card here, named.
-    CardWatchdogTimeoutSeconds=RPGBossTrack::WatchdogTimeoutSeconds(Card->Spec().RecoveryEndSeconds,Card->Spec().PlayRate);
+    CardWatchdogTimeoutSeconds=RPGBossTrack::WatchdogTimeoutSeconds(Card->Spec().RecoveryEndSeconds,CardPlayRate);
     if (CardWatchdogTimeoutSeconds>=0.&&Card->Spec().HoldMaxSeconds>0.f) CardWatchdogTimeoutSeconds+=double(Card->Spec().HoldMaxSeconds);   // BOSS-ANM-003: the watchdog allows the longest hold
-    if (CardWatchdogTimeoutSeconds<0.||(double(Card->Metadata().ClipLengthSeconds)-double(Profile->BlendOutSeconds))/double(Card->Spec().PlayRate)>CardWatchdogTimeoutSeconds) {Error=TEXT("Framework.Playback.WatchdogWindow");return false;}
+    if (CardWatchdogTimeoutSeconds<0.||(double(Card->Metadata().ClipLengthSeconds)-double(Profile->BlendOutSeconds))/CardPlayRate>CardWatchdogTimeoutSeconds) {Error=TEXT("Framework.Playback.WatchdogWindow");return false;}
     bWatchdogFired=false; bSuppressLogged=false; bHoldActive=bHoldDone=false; CuesFiredMask=0; PreloadCues();
     // Loaded dependency only. No Resolve/Load call or alternate animation path in the playback consumer.
     SetComponentTickEnabled(true);
@@ -133,7 +155,7 @@ bool URPGFrameworkMoveExecutor::StartCard(const TSharedPtr<const FRPGCompiledBos
     TArray<FRPGBossMoveModelEvent> Events;
     if (!Model_.Start(Card,S,Token,Events,Error)) return false;
     LogEvents(Events);
-    OwnedMontage=Anim->PlaySlotAnimationAsDynamicMontage(Sequence,Card->Spec().SlotName,Profile->BlendInSeconds,Profile->BlendOutSeconds,Card->Spec().PlayRate,1,-1.f,0.f);
+    OwnedMontage=Anim->PlaySlotAnimationAsDynamicMontage(Sequence,Card->Spec().SlotName,Profile->BlendInSeconds,Profile->BlendOutSeconds,CardPlayRate,1,-1.f,0.f);
     if (!OwnedMontage) {Error=TEXT("Framework.Playback.StartFailed");Abort(Error);return false;}
     if (!Model_.AdvanceObservedLocal(Token,0.,Events,Error)) {Abort(Error);return false;}
     StartWorldSeconds=LastWorldSeconds=GetWorld()->GetTimeSeconds(); LastPosition=0.; bSawPoseWeight=false;
@@ -148,7 +170,7 @@ bool URPGFrameworkMoveExecutor::StartCard(const TSharedPtr<const FRPGCompiledBos
 #endif
     LockMotion(); bIntruderDone=false; bIntruderPending=false;
     UE_LOG(LogTemp,Display,TEXT("[CARD_START] instance=%llu card=%s family=%s phase=%s rangeCm=%g"),Token.InstanceId,*Card->Spec().MoveId.ToString(),*Card->Spec().FamilyId.ToString(),*Card->Spec().PhaseId.ToString(),S.RangeCm);
-    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] playback_start encounter=%llu generation=%llu instance=%llu montage=%s slot=%s rate=%g label=%s"),Token.EncounterId,Token.Generation,Token.InstanceId,*OwnedMontage->GetPathName(),*Card->Spec().SlotName.ToString(),Card->Spec().PlayRate,*Label());
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] playback_start encounter=%llu generation=%llu instance=%llu montage=%s slot=%s rate=%g label=%s"),Token.EncounterId,Token.Generation,Token.InstanceId,*OwnedMontage->GetPathName(),*Card->Spec().SlotName.ToString(),CardPlayRate,*Label());
     return true;
 }
 void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActorComponentTickFunction* Tick)
@@ -165,7 +187,7 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
     // BOSS-EXE-007 / ANM-007 watchdog: a card still running after RecoveryEndSeconds / PlayRate + 0.5 s (end notification dropped, montage stuck) is aborted; the boss recovers and decides again.
     if (Now-StartWorldSeconds>CardWatchdogTimeoutSeconds)
     {
-        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] watchdog_timeout instance=%llu elapsedSeconds=%g timeoutSeconds=%g recoveryEndSeconds=%g playRate=%g"),Token.InstanceId,Now-StartWorldSeconds,CardWatchdogTimeoutSeconds,double(Card->Spec().RecoveryEndSeconds),double(Card->Spec().PlayRate));
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] watchdog_timeout instance=%llu elapsedSeconds=%g timeoutSeconds=%g recoveryEndSeconds=%g playRate=%g"),Token.InstanceId,Now-StartWorldSeconds,CardWatchdogTimeoutSeconds,double(Card->Spec().RecoveryEndSeconds),CardPlayRate);
         bWatchdogFired=true; Abort(TEXT("Framework.Playback.WatchdogTimeout")); return;
     }
 #if !UE_BUILD_SHIPPING
@@ -183,7 +205,7 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
             ReleaseGrab(TEXT("CardEnded"),true);
             UnlockMotion(TEXT("Finished")); ++CleanupLogCount;
             UE_LOG(LogTemp,Display,TEXT("[CARD_END] instance=%llu card=%s reason=Finished hitsAccepted=%d appliedDamage=%g"),Token.InstanceId,*Card->Spec().MoveId.ToString(),HitsAccepted,AppliedDamage);
-            OwnedMontage=nullptr;bFinished=true;SetComponentTickEnabled(false);UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] cleanup reason=Finished modelIdle=1 ownedMontageStopped=1"));
+            RestoreCardPlayRate();OwnedMontage=nullptr;bFinished=true;SetComponentTickEnabled(false);UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] cleanup reason=Finished modelIdle=1 ownedMontageStopped=1"));
         }
         return;
     }
@@ -191,7 +213,7 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
     // observed position was within 1.5 ticks (or the blend-out span, whichever is larger) of that point (the profile guarantees RecoveryEnd + BlendOut <= clip length); anything earlier is an interruption.
     const bool bPlaying=Anim->Montage_IsPlaying(OwnedMontage);
     const double NaturalEnd=Card->Metadata().ClipLengthSeconds-Profile->BlendOutSeconds;
-    if (!bPlaying&&LastPosition+FMath::Max(double(Delta)*Card->Spec().PlayRate*1.5,double(Profile->BlendOutSeconds))<NaturalEnd) {Fail(TEXT("Framework.Playback.EarlyStop"));return;}
+    if (!bPlaying&&LastPosition+FMath::Max(double(Delta)*CardPlayRate*1.5,double(Profile->BlendOutSeconds))<NaturalEnd) {Fail(TEXT("Framework.Playback.EarlyStop"));return;}
     const double Position=bPlaying?Anim->Montage_GetPosition(OwnedMontage):FMath::Max(NaturalEnd,LastPosition);
     const float Node=Anim->GetSlotNodeGlobalWeight(Card->Spec().SlotName), Weight=Anim->GetSlotMontageGlobalWeight(Card->Spec().SlotName);
     if (!FMath::IsFinite(Node)||!FMath::IsFinite(Weight)||!FMath::IsFinite(Position)||Position<LastPosition)
@@ -260,13 +282,15 @@ void URPGFrameworkMoveExecutor::SweepWindows(double PrevPosition,double Position
     auto ApplyHit=[&](const FRPGBossMoveWindow& W)
     {
         FRPGDamagePayload Payload;
-        Payload.MoveId=Card->Spec().MoveId; Payload.AttackInstance=int32(Token.InstanceId); Payload.Generation=int32(Token.Generation);
+        Payload.MoveId=Card->Spec().MoveId; Payload.AttackInstance=int32(Token.InstanceId); Payload.Generation=Token.Generation;
         Payload.HitKey=W.HitGroup.IsNone()?W.WindowId:W.HitGroup; Payload.HPDamage=Card->Spec().HPDamage;
         const bool bBlocking=RPGBossDamage::HasTag(Target.Get(),TEXT("Status.Blocking"));   // read BEFORE the damage: the guard of the moment of contact
+        const double IncomingDamage=Payload.HPDamage;
+        if (bBlocking&&Profile->GuardChipFraction>0.f) Payload.HPDamage=float(RPGBossBlockChip::GuardedDamage(IncomingDamage,Profile->GuardChipFraction));
         const FRPGDamageResult Result=Resolver->Resolve(Target.Get(),Payload);
         const RPGBossGuard::EGuardState Guard=RPGBossGuard::Classify(bBlocking,Result.Outcome==ERPGDamageOutcome::Parried);   // the parry window is decided by the resolver
-        if (Result.Outcome==ERPGDamageOutcome::Accepted) {++HitsAccepted; AppliedDamage+=Result.HPApplied; if (Guard==RPGBossGuard::EGuardState::Guarded) ++HitsGuarded; if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);}
-        else if (Result.Outcome==ERPGDamageOutcome::Parried) {++HitsParried; if (OwnerBoss.IsValid()) RecordParriedContact(OwnerBoss.Get(),Target.Get());}
+        if (Result.Outcome==ERPGDamageOutcome::Accepted) {++HitsAccepted;++CardAcceptedHits; AppliedDamage+=Result.HPApplied; if (Guard==RPGBossGuard::EGuardState::Guarded) {++HitsGuarded; if(Profile->GuardChipFraction>0.f) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] guard_chip incoming=%g applied=%g"),IncomingDamage,Result.HPApplied);} if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);}
+        else if (Result.Outcome==ERPGDamageOutcome::Parried) {++HitsParried;++CardParriedHits; if (OwnerBoss.IsValid()) RecordParriedContact(OwnerBoss.Get(),Target.Get(),(double(Card->Spec().RecoveryEndSeconds)-double(Card->Spec().ActiveEndSeconds))/CardPlayRate);}
         UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] guard_state instance=%llu window=%s guard=%s outcome=%s"),Token.InstanceId,*W.WindowId.ToString(),RPGBossGuard::Name(Guard),*UEnum::GetValueAsString(Result.Outcome));
         UE_LOG(LogTemp,Display,TEXT("[CARD_HIT] instance=%llu card=%s window=%s outcome=%s hpApplied=%g"),Token.InstanceId,*Card->Spec().MoveId.ToString(),*W.WindowId.ToString(),*UEnum::GetValueAsString(Result.Outcome),Result.HPApplied);
         UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] hit instance=%llu window=%s key=%s outcome=%s hpApplied=%g healthBefore=%g healthAfter=%g"),Token.InstanceId,*W.WindowId.ToString(),*Payload.HitKey.ToString(),*UEnum::GetValueAsString(Result.Outcome),Result.HPApplied,Result.HealthBefore,Result.HealthAfter);
@@ -381,12 +405,14 @@ void URPGFrameworkMoveExecutor::TickGrab(double Position)
         // The normal end of the hold: the damage of the card, once, with the hit key of the grab window, then the release.
         if (Resolver.IsValid()&&Target.IsValid())
         {
-            FRPGDamagePayload Payload; Payload.MoveId=Card->Spec().MoveId; Payload.AttackInstance=int32(Token.InstanceId); Payload.Generation=int32(Token.Generation); Payload.HitKey=GrabHitKey; Payload.HPDamage=Card->Spec().HPDamage;
+            FRPGDamagePayload Payload; Payload.MoveId=Card->Spec().MoveId; Payload.AttackInstance=int32(Token.InstanceId); Payload.Generation=Token.Generation; Payload.HitKey=GrabHitKey; Payload.HPDamage=Card->Spec().HPDamage;
             const bool bBlocking=RPGBossDamage::HasTag(Target.Get(),TEXT("Status.Blocking"));
+            const double IncomingDamage=Payload.HPDamage;
+            if (bBlocking&&Profile->GuardChipFraction>0.f) Payload.HPDamage=float(RPGBossBlockChip::GuardedDamage(IncomingDamage,Profile->GuardChipFraction));
             const FRPGDamageResult Result=Resolver->Resolve(Target.Get(),Payload);
             const RPGBossGuard::EGuardState Guard=RPGBossGuard::Classify(bBlocking,Result.Outcome==ERPGDamageOutcome::Parried);
-            if (Result.Outcome==ERPGDamageOutcome::Accepted) {++HitsAccepted; AppliedDamage+=Result.HPApplied; if (Guard==RPGBossGuard::EGuardState::Guarded) ++HitsGuarded; if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);}
-            else if (Result.Outcome==ERPGDamageOutcome::Parried) {++HitsParried; if (OwnerBoss.IsValid()) RecordParriedContact(OwnerBoss.Get(),Target.Get());}
+            if (Result.Outcome==ERPGDamageOutcome::Accepted) {++HitsAccepted;++CardAcceptedHits; AppliedDamage+=Result.HPApplied; if (Guard==RPGBossGuard::EGuardState::Guarded) {++HitsGuarded; if(Profile->GuardChipFraction>0.f) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] guard_chip incoming=%g applied=%g"),IncomingDamage,Result.HPApplied);} if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);}
+            else if (Result.Outcome==ERPGDamageOutcome::Parried) {++HitsParried;++CardParriedHits; if (OwnerBoss.IsValid()) RecordParriedContact(OwnerBoss.Get(),Target.Get(),(double(Card->Spec().RecoveryEndSeconds)-double(Card->Spec().ActiveEndSeconds))/CardPlayRate);}
             UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] grab_damage instance=%llu key=%s outcome=%s hpApplied=%g"),Token.InstanceId,*GrabHitKey.ToString(),*UEnum::GetValueAsString(Result.Outcome),Result.HPApplied);
         }
         ReleaseGrab(TEXT("Released"),false);
@@ -463,7 +489,7 @@ void URPGFrameworkMoveExecutor::TickHold(double Position,double Now)
     {
         if (Now<HoldEndsAt) return;
         // The hold is over: the montage goes on at the card's rate, the release cues fire, the actual length is logged.
-        Anim->Montage_SetPlayRate(OwnedMontage,S.PlayRate); bHoldActive=false; bHoldDone=true;
+        Anim->Montage_SetPlayRate(OwnedMontage,CardPlayRate); bHoldActive=false; bHoldDone=true;
         UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] hold_release instance=%llu position=%g heldSeconds=%g chosenSeconds=%g minSeconds=%g maxSeconds=%g"),Token.InstanceId,Position,Now-HoldStartedAt,HoldChosen,double(S.HoldMinSeconds),double(S.HoldMaxSeconds));
         for (const FRPGBossCue& C:S.Cues) if (C.bAtHoldRelease) FireCue(C,TEXT("HoldRelease"));
         return;
@@ -488,7 +514,13 @@ void URPGFrameworkMoveExecutor::FireCue(const FRPGBossCue& Cue,const TCHAR* Why)
 {
     // One cue: its visual (a flipbook sheet at the socket or at the boss's feet) and its sound, as the accessibility setting allows. Both channels exist for every cue (validated), so each mode still carries the cue.
     if (!OwnerBoss.IsValid()) return;
-    const int32 Mode=CVarCueMode.GetValueOnGameThread(); const RPGBossCue::FChannels Channels=RPGBossCue::ChannelsFor(Mode);
+    // Lead fix (C-877): CVarCueMode is declared only outside Shipping (line 47-48); Shipping uses its default 0 (visual AND sound).
+#if !UE_BUILD_SHIPPING
+    const int32 Mode=CVarCueMode.GetValueOnGameThread();
+#else
+    const int32 Mode=0;
+#endif
+    const RPGBossCue::FChannels Channels=RPGBossCue::ChannelsFor(Mode);
     const USkeletalMeshComponent* Mesh=OwnerBoss->GetMesh();
     const FVector Where=(!Cue.Socket.IsNone()&&Mesh)?Mesh->GetSocketLocation(Cue.Socket):OwnerBoss->GetActorLocation()-FVector(0.,0.,double(OwnerBoss->GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
     bool bVisual=false, bAudio=false;
@@ -540,7 +572,17 @@ void URPGFrameworkMoveExecutor::LogEvents(const TArray<FRPGBossMoveModelEvent>& 
 }
 FString URPGFrameworkMoveExecutor::Label() const {return Profile?Profile->FixtureLabel.Replace(TEXT(" "),TEXT("_")):FString(TEXT("none"));}
 void URPGFrameworkMoveExecutor::StopOwned(float Blend)
-{if(IsValid(Anim)&&IsValid(OwnedMontage))Anim->Montage_Stop(Blend,OwnedMontage);}
+{RestoreCardPlayRate();if(IsValid(Anim)&&IsValid(OwnedMontage))Anim->Montage_Stop(Blend,OwnedMontage);}
+void URPGFrameworkMoveExecutor::RestoreCardPlayRate()
+{
+    if(IsValid(Anim)&&IsValid(OwnedMontage)&&Anim->Montage_IsActive(OwnedMontage)&&FMath::IsFinite(CardOriginalPlayRate)&&CardOriginalPlayRate>0.)
+    {
+        Anim->Montage_SetPlayRate(OwnedMontage,CardOriginalPlayRate);
+        if(Profile&&Profile->ParryFairTelegraph&&Card.IsValid())
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] telegraph_restore card=%s rate=%g"),*Card->Spec().MoveId.ToString(),Anim->Montage_GetPlayRate(OwnedMontage));
+    }
+    CardPlayRate=CardOriginalPlayRate;
+}
 void URPGFrameworkMoveExecutor::Abort(const FString& Reason)
 {
     // Cleanup runs exactly once: a clean finish or an earlier abort makes later calls (Fail, EndPlay) no-ops.

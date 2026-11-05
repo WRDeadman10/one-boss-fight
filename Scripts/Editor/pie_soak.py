@@ -4,6 +4,7 @@ Boss death is last because the pack destroys that boss; every result is out of 2
 Run pie_debug_overlay.py once after an editor start first (KI-081).
 """
 import math
+import os
 import traceback
 import unreal
 
@@ -93,7 +94,7 @@ def place(pawn, boss, distance=220.0):
 def snapshot(p):
     tracker = p["tracker"]
     stagger = p["stagger"]
-    return {"generation": p["enc"].get_generation(), "resets": p["enc"].get_reset_count(),
+    return {"generation": int(p["enc"].get_participant_generation_text()), "resets": p["enc"].get_reset_count(),
             "illegal": tracker.get_illegal_start_count(), "double": tracker.get_double_launch_count(),
             "attacks": tracker.get_attack_instance(), "commits": tracker.get_commit_count(),
             "interrupted": tracker.get_interrupted_count(), "stagger": stagger.get_stagger_count(),
@@ -371,6 +372,9 @@ def _tick(dt):
             (S["encounter"], TOTAL, S["phase"], S["now"]))
     if S["phase"] == "start":
         if S["phase_time"] >= 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             S["phase"], S["phase_time"] = "warming", 0.0
         return

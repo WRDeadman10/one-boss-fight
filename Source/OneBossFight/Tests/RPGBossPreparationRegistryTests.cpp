@@ -7,6 +7,13 @@
 #include "Player/RPGBossLook.h"
 #include "Player/RPGBossCloseClipSwap.h"
 #include "Player/RPGBossDeath.h"
+#include "Player/RPGAttackTracker.h"
+#include "Audio/RPGFootsteps.h"
+#include "Audio/RPGBossMusic.h"
+#include "Player/RPGDamageResolver.h"
+#include "Player/RPGTraceGuard.h"
+#include "UI/RPGBossHud.h"
+#include "Player/RPGLegend.h"
 #include "Misc/AutomationTest.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -288,7 +295,7 @@ namespace PreparationRegistryTests
 	{
 		return TArray<FExpectedComponent>{{URPGBossStagger::StaticClass(), TEXT("RPGBossStagger")}, {URPGBossPhases::StaticClass(), TEXT("RPGBossPhases")}, {URPGBossEncounter::StaticClass(), TEXT("RPGBossEncounter")},
 			{URPGBossDormantWake::StaticClass(), TEXT("RPGBossDormantWake")}, {URPGBossPosture::StaticClass(), TEXT("RPGBossPosture")},
-			{URPGBossBleed::StaticClass(), TEXT("RPGBossBleed")} , {URPGBossLowSweep::StaticClass(), TEXT("RPGBossLowSweep")} , {URPGBossShockwave::StaticClass(), TEXT("RPGBossShockwave")} , {URPGBossHealPunish::StaticClass(), TEXT("RPGBossHealPunish")} , {URPGBossLook::StaticClass(), TEXT("RPGBossLook")} , {URPGBossCloseClipSwap::StaticClass(), TEXT("RPGBossCloseClipSwap")} , {URPGBossDeath::StaticClass(), TEXT("RPGBossDeath")}};
+			{URPGBossBleed::StaticClass(), TEXT("RPGBossBleed")} , {URPGBossLowSweep::StaticClass(), TEXT("RPGBossLowSweep")} , {URPGBossShockwave::StaticClass(), TEXT("RPGBossShockwave")} , {URPGBossHealPunish::StaticClass(), TEXT("RPGBossHealPunish")} , {URPGBossLook::StaticClass(), TEXT("RPGBossLook")} , {URPGBossCloseClipSwap::StaticClass(), TEXT("RPGBossCloseClipSwap")} , {URPGBossDeath::StaticClass(), TEXT("RPGBossDeath")}, {URPGAttackTracker::StaticClass(), TEXT("RPGAttackTracker")}, {URPGFootsteps::StaticClass(), TEXT("RPGFootsteps")}, {URPGBossMusic::StaticClass(), TEXT("RPGBossMusic")}, {URPGTraceGuard::StaticClass(), TEXT("RPGTraceGuard")}, {URPGBossHud::StaticClass(), TEXT("RPGBossHud")}, {URPGBossLegend::StaticClass(), TEXT("RPGBossLegend")}, {URPGDamageResolver::StaticClass(), TEXT("RPGDamageResolver")}};
 	}
 
 	bool NoManagedConsumer(const AActor* Actor)
@@ -531,7 +538,7 @@ namespace PreparationRegistryTests
 		return SameStates(States, Now, Bound, Ready, NowBound, NowReady);
 	}
 
-	/** The twelve consumers of both bosses, none on the target, all unregistered, uninitialized, not begun and unticked. */
+	/** The thirteen consumers of both bosses, none on the target, all unregistered, uninitialized, not begun and unticked. */
 	bool IsFullyPrepared(const FEncounterSet& Set)
 	{
 		for (const AActor* Boss : {static_cast<const AActor*>(Set.BossOne), static_cast<const AActor*>(Set.BossTwo)})
@@ -633,7 +640,7 @@ bool FRPGPreparationRegistryAdmissionTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("the tokens carry the registry identity, distinct serials and their own encounter GUIDs, and are held"), ResultA.Token.IsHeld() && ResultB.Token.IsHeld() && ResultA.Token.GetRegistryId() == Registry.GetRegistryId()
 		&& ResultB.Token.GetRegistryId() == Registry.GetRegistryId() && ResultA.Token.GetSerial() != ResultB.Token.GetSerial() && ResultA.Token.GetSerial() != 0 && ResultB.Token.GetSerial() != 0
 		&& ResultA.Token.GetEncounter() == A->Encounter && ResultB.Token.GetEncounter() == B->Encounter);
-	TestTrue(TEXT("both encounters hold twenty-four unregistered components each (twelve per boss, none on the target) and the unrelated markers are untouched"), IsFullyPrepared(*A) && IsFullyPrepared(*B) && MarkersIntact(*A) && MarkersIntact(*B));
+	TestTrue(TEXT("both encounters hold thirty-eight unregistered components each (nineteen per boss, none on the target) and the unrelated markers are untouched"), IsFullyPrepared(*A) && IsFullyPrepared(*B) && MarkersIntact(*A) && MarkersIntact(*B));
 
 	// A duplicate encounter GUID with fully disjoint actors: refused before anything is allocated for the new actors.
 	FEncounterSet* C = F.AddSet(*this, 2);
@@ -807,7 +814,7 @@ bool FRPGPreparationRegistryReleaseTest::RunTest(const FString& Parameters)
 
 	// A clean release frees the GUID and the actors, restores the actors exactly and consumes the token.
 	const FRPGReleaseReport Released = Registry.Release(TokenOne);
-	TestTrue(FString::Printf(TEXT("clean release: Released, twenty-four destroyed, no violation (errors: %s)"), *JoinErrors(Released.Errors)), Released.IsReleased() && Released.Abort.IsClean() && Released.Abort.Destroyed == 24 && Released.Abort.ContractViolations == 0);
+	TestTrue(FString::Printf(TEXT("clean release: Released, thirty-eight destroyed, no violation (errors: %s)"), *JoinErrors(Released.Errors)), Released.IsReleased() && Released.Abort.IsClean() && Released.Abort.Destroyed == 38 && Released.Abort.ContractViolations == 0);
 	TestTrue(TEXT("after the release the actors are exactly as at the start, the registry is empty and the token is consumed"), Matches(F, Start, BoundStart, ReadyStart)
 		&& Registry.GetActiveReservationCount() == 0 && Registry.GetReservedEncounters().IsEmpty() && !TokenOne.IsHeld() && TokenOne.GetSerial() == 0 && HasNoConsumers(*A) && MarkersIntact(*A));
 
@@ -869,7 +876,7 @@ bool FRPGPreparationRegistryReleaseTest::RunTest(const FString& Parameters)
 	}
 	// The token releases through itself.
 	const FRPGReleaseReport ByOwnToken = TokenTwo.Release();
-	TestTrue(FString::Printf(TEXT("the token releases through its own registry: Released, twenty-four destroyed (errors: %s)"), *JoinErrors(ByOwnToken.Errors)), ByOwnToken.IsReleased() && ByOwnToken.Abort.Destroyed == 24 && !TokenTwo.IsHeld());
+	TestTrue(FString::Printf(TEXT("the token releases through its own registry: Released, thirty-eight destroyed (errors: %s)"), *JoinErrors(ByOwnToken.Errors)), ByOwnToken.IsReleased() && ByOwnToken.Abort.Destroyed == 38 && !TokenTwo.IsHeld());
 	TestTrue(TEXT("the registry is empty and the actors are exactly as at the start"), Registry.GetActiveReservationCount() == 0 && Matches(F, Start, BoundStart, ReadyStart) && HasNoConsumers(*A));
 
 	AddInfo(TEXT("Release on a real game-instance world: a clean release frees the GUID and the actors, re-admission gets a new larger serial, and a consumed, forged-serial (same registry and GUID), forged-GUID or wrong-registry token releases nothing and never "
@@ -907,7 +914,7 @@ bool FRPGPreparationRegistryLifetimeTest::RunTest(const FString& Parameters)
 	{
 		const FRPGReleaseReport Report = OuterRegistry->Release(OuterToken);
 		AddInfo(FString::Printf(TEXT("world torn down first: release outcome %d, destroyed %d, already gone %d, violations %d (split logged, not assumed)"), static_cast<int32>(Report.Outcome), Report.Abort.Destroyed, Report.Abort.AlreadyGone, Report.Abort.ContractViolations));
-		TestTrue(FString::Printf(TEXT("world dies first: the release is clean without a crash, every owned component accounted for (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsReleased() && Report.Abort.Destroyed + Report.Abort.AlreadyGone == 24 && Report.Abort.ContractViolations == 0);
+		TestTrue(FString::Printf(TEXT("world dies first: the release is clean without a crash, every owned component accounted for (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsReleased() && Report.Abort.Destroyed + Report.Abort.AlreadyGone == 38 && Report.Abort.ContractViolations == 0);
 		TestTrue(TEXT("world dies first: the registry is empty and the token is consumed"), OuterRegistry->GetActiveReservationCount() == 0 && !OuterToken.IsHeld());
 		const FRPGReservationResult Refused = OuterRegistry->TryPrepareAndReserve(nullptr, TArray<FSelection>(), ManifestHash());
 		TestTrue(TEXT("world dies first: a later admission through that registry is refused as invalid input (the world is gone)"), !Refused.Succeeded() && Refused.Failure == EReservationFailure::InvalidInput);
@@ -1000,7 +1007,7 @@ bool FRPGPreparationRegistryLifetimeTest::RunTest(const FString& Parameters)
 		const FRPGReleaseReport Report = Registry.Release(Token);
 		AddInfo(FString::Printf(TEXT("owners destroyed first: release outcome %d, destroyed %d, already gone %d, violations %d (split logged, not assumed)"), static_cast<int32>(Report.Outcome), Report.Abort.Destroyed, Report.Abort.AlreadyGone, Report.Abort.ContractViolations));
 		TestTrue(FString::Printf(TEXT("actors die first: the release is clean, every component was destroyed with its owner (twenty-four already gone, none destroyed by the abort), no violation (errors: %s)"), *JoinErrors(Report.Errors)),
-			Report.IsReleased() && Report.Abort.AlreadyGone == 24 && Report.Abort.Destroyed == 0 && Report.Abort.ContractViolations == 0 && Registry.GetActiveReservationCount() == 0 && !Token.IsHeld());
+			Report.IsReleased() && Report.Abort.AlreadyGone == 38 && Report.Abort.Destroyed == 0 && Report.Abort.ContractViolations == 0 && Registry.GetActiveReservationCount() == 0 && !Token.IsHeld());
 	}
 
 	// Off the game thread: admission and release are refused without touching anything; the token and the registry are unchanged. (Destroying a held token or the registry off the game thread is NOT run: an unsafe experiment.)

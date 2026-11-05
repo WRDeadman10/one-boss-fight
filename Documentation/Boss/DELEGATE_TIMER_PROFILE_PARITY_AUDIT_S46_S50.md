@@ -1,0 +1,43 @@
+# Delegate, timer, tag, and validation parity audit (Queue C S46–S50)
+
+Read-only source audit, 2026-11-03. No C++ behavior, assets, editor state, or runtime evidence was changed or exercised.
+
+## S46 — dynamic delegate lifetime
+
+- `URPGFootsteps::BeginPlay` binds `Character->LandedDelegate` and `EndPlay` removes the same delegate/function pair (`Audio/RPGFootsteps.cpp:35,40–45`). The character is the component owner, so whole-actor teardown shares the lifetime; the matched removal also handles component-only teardown.
+- `ARPGArenaAmbience::BeginPlay` binds `WindPlayer->OnAudioFinished` (`Audio/RPGArenaAmbience.cpp:29–36`) and has no explicit `RemoveDynamic`/`EndPlay` unbind. `WindPlayer` is a default subobject of the actor and the callback target is that same actor; no external surviving publisher/target pair was found. This remains an explicit-unbind omission, with no dangling raw pointer demonstrated by source.
+- The two `FOnActorSpawned` subscriptions are paired with removal in EndPlay/Deinitialize (`Boss/RPGSevarogDirector.cpp:42,50–55`; `Player/RPGPlayerMovesSubsystem.cpp:53,68–75`). `URPGLegendSubsystem` likewise removes its stored ticker handle in `Deinitialize` (`Player/RPGLegend.cpp:66–74,94–100`).
+- Source-wide `AddDynamic` scan found the two UObject dynamic bindings above; the rest of the subsystem/world registrations found in this audit have explicit stored-handle cleanup.
+
+## S47 — timer and lambda captures
+
+- `RPGSevarogDirector` schedules a delayed Niagara strike with a local timer handle. The lambda captures weak `UNiagaraSystem` and `UWorld` references plus a copied position, not the director (`Boss/RPGSevarogDirector.cpp:76–88`). It cannot dereference a destroyed director/effect/world, but EndPlay does not cancel it; a still-live world may receive the VFX after the director component ends.
+- `RPGBossLook` and `RPGBossStagger` use `SetTimerForNextTick(CreateUObject(...))` without storing handles (`Player/RPGBossLook.cpp:28–34`; `Player/RPGBossStagger.cpp:572`). UObject binding avoids a raw-pointer callback after UObject invalidation. Component EndPlay is not itself a cancellation boundary in these call sites; a callback could still run after component EndPlay while the UObject remains valid. `RPGBossLook::EndPlay` reverts before the scheduled `Apply` would run, so component-only removal merits a regression test.
+- `RPGHitIntake` schedules `FinalizePending` from two paths with `CreateUObject` and no timer handle (`Player/RPGHitIntake.cpp:462–466,503–506`). `EndPlay` unbinds pack collision delegates (`:172–175,343–361`) but does not explicitly cancel/drain the queued finalizer or `Pending` state; callback behavior after dynamic component removal remains untested.
+- `URPGLegendSubsystem`'s ticker is stored and removed on world deinitialization; its camera-shake initializer captures a settings value copy only (`Player/RPGLegend.cpp:66–74,94–100,343–346`). No actor/component/world pointer is captured by that initializer.
+
+## S48 — Blueprint tag bridge boundary
+
+- C++ writes `Status.ParryActive` through reflected `AddOwnedGameplayTag` / `RemoveOwnedGameplayTag`; it retains `bTagOn` when removal fails and retries from tick/EndPlay (`Player/RPGPlayerParry.cpp:182–200`). The pack's `ParryFramesNS` also owns that tag; C++ does not inspect or mutate the pack's internal tag container directly (`Player/RPGPlayerParry.h:58`).
+- `Status.Invulnerable` is owned by the pack's i-frame notify. `URPGIFrameMonitor` observes it and calls reflected `RemoveOwnedGameplayTag`; source already records the EndPlay failed-removal ownership loss candidate (`Player/RPGIFrameMonitor.cpp:122–127,146–165,268–298`).
+- `Ability.Melee.LeapAttack` and `Ability.Quickslot` are blocked/unblocked through reflected `AddBlockedAbilityTags` / `RemoveBlockedAbilityTags` (`Player/RPGBossPhases.cpp:190–216`; `Player/RPGBuildLoadout.cpp:616–660`). These components have no EndPlay override. Their normal phase/reset and loadout transitions pair the calls, but dynamic removal while the pawn and ASC survive may leave a blocked tag. No live/reflection behavior was inferred from the C++ call-success boolean.
+- `Status.Blocking`, `Status.Dead`, `Status.HitStunImmune`, `Ability.Parry`, `Ability.Block`, and `Attribute.Health` / `Attribute.Stamina` are queried or bridged through `RPGPack` reflected calls; pack-side producers/effect stacks remain outside native C++ ownership (`Player/RPGBossDamage.h:18–36`; `Pack/RPGBlueprintCall.h:210–267`; `Player/RPGSwingTracker.cpp:108–113`).
+- `URPGBossPhases::RemoveImmunity` clears its local `bImmunityApplied` before attempting reflected removal and ignores the reflected call result (`Player/RPGBossPhases.cpp:216–235`). This is a bounded source-level retry/ownership gap for the Blueprint-owned effect, not proof that the effect remains active.
+
+## S49 — profile validation/runtime parity
+
+- `ValidateProfile` groups finite/domain/coherence checks before resolution (`Player/RPGBossFrameworkProfile.cpp:44–166`). Feature-specific gates cover phase/posture/bleed all-or-none inputs, combo DAGs, arena/reposition, anti-cheese multipliers, reaction/LOS/dodge, punish windows, tie band, cone hysteresis, strafe, guard chip, parry recovery/telegraph, aggro, fatigue, parry posture, and F5 card weights/cooldowns. Core walk/geometry/transform bounds are checked before success.
+- `ResolveProfile` then requires real mesh/animation/target class identities, compiles every card through resolved asset validation, enforces card/profile band containment or explicit partition mode, clip/blend tail, phase-pool starvation, combo-node membership, run damage budget, defensive cooldown, and optional punish/counterplay (`:168–288`). No profile value is defaulted or clamped there.
+- Runtime consumers read the validated profile values directly: selector and encounter setup (`Boss/RPGFrameworkBossCharacter.cpp:66–99,434–458`), phase/stagger/posture (`:357–416,649–705`), opt-in selector/movement logic (`:440–600`), and executor recovery/warp/telegraph (`Boss/RPGFrameworkMoveExecutor.cpp:120–157,424–476,574–575`). Runtime bounds such as total warp distance/angle are explicit rule caps and are separately checked by the card validator.
+- No accepted-value versus consumer-range mismatch was established in this static pass. This is a source parity review, not property coverage for every field or proof of pack Blueprint behavior.
+
+## S50 — MoveCard numeric validation/runtime parity
+
+- Shared `Number` rejects non-finite, negative, over-1,000,000 values, and zero where `Positive=true` (`Player/RPGBossMoveCard.cpp:12–21`). Identity/source/skeleton/slot/timeline and ordered-window constraints are checked before compilation (`:31–88,108–160`). Resolved compilation verifies game thread, actual object/type/skeleton/mesh/slot/socket identities and computes effective clip length using animation rate scale (`:173–215`).
+- More restrictive active-field rules match downstream assumptions: warp budgets cap at 1000 cm/180 degrees and require an in-card window; backstep distance uses the 0–250 cm rule (`:55–68`); hold bounds are `(0,3]`; defensive telegraph and counterplay use shared rules; ring fields are validated only for ring windows; blade radius/socket and baked-sample coverage are validated only for direct blade windows; grab release must follow contact and lie inside recovery (`:73–160`). Runtime reads these fields in the corresponding warp/ring/grab/sweep paths (`Boss/RPGFrameworkMoveExecutor.cpp:299–311,360–374,424–476`; `Player/RPGBossSweepSampling.cpp:32–42`).
+- Fields inactive under a false feature flag or different window kind can retain values that their branch ignores; the header documents the active gates. The generic 1e6 ceiling is broader than several active-feature caps, but each active branch applies its narrower bound before publishing the compiled card. No confirmed numeric range mismatch was found.
+- Open boundary for review: `WarpStandoffCm` has only the generic numeric bound. A `bWarpAway` card may be valid yet request zero movement when current target distance is already at or beyond that standoff (`Boss/RPGFrameworkMoveExecutor.cpp:438–448`). This follows the current target-distance rule, but no pure boundary test was found for the expected no-op case.
+
+## Limits / review candidates
+
+Dynamic component teardown while the owner actor survives, a late timer callback after component EndPlay, Blueprint tag/effect failure, and the `WarpStandoffCm` boundary were not executed. These are review/test candidates; the audit does not claim runtime failure. No source changes were made.

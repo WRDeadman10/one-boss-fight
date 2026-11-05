@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGAttackTracker.h"
+#include "Player/RPGBossTrackerTickPrerequisite.h"
 #include "Player/RPGBossDamage.h"
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGDamageResolver.h"
@@ -20,6 +21,15 @@ using namespace RPGPack;
 URPGBossLowSweep::URPGBossLowSweep()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+}
+
+void URPGBossLowSweep::BeginPlay()
+{
+	Super::BeginPlay();
+	if (AActor* Boss = GetOwner())
+	{
+		RPGBossTrackerTickPrerequisite::Add(*this, TrackerTickPrerequisite, Boss->FindComponentByClass<URPGAttackTracker>());
+	}
 }
 
 bool URPGBossLowSweep::StartForTest(bool bForce)
@@ -45,12 +55,13 @@ void URPGBossLowSweep::Begin(float InForwardYaw)
 	PreviousAngle = SweepFromDegrees;
 	bActive = true;
 	bDamaged = false;
+	bParriedCounted = false;
 	bJumpCounted = false;
 	bInvulnerableCounted = false;
 	bBlockedCounted = false;
 	++SweepCount;
 	const URPGBossEncounter* Encounter = GetOwner()->FindComponentByClass<URPGBossEncounter>();
-	SweepGeneration = Encounter ? Encounter->GetGeneration() : 0;
+	SweepGeneration = Encounter ? Encounter->GetParticipantGeneration() : 0;
 	UE_LOG(LogRPGSweep, Log, TEXT("%s: sweep %d begins, heading %.1f, blade %.0f cm high, reach %.0f cm, from %.0f to %.0f deg"), *GetOwner()->GetName(), SweepCount, ForwardYaw, BladeHeight, Reach, SweepFromDegrees, SweepToDegrees);
 }
 
@@ -67,7 +78,7 @@ void URPGBossLowSweep::Test(float FromAngle, float ToAngle)
 {
 	const ACharacter* Boss = Cast<ACharacter>(GetOwner());
 	const ACharacter* Player = Cast<ACharacter>(UGameplayStatics::GetPlayerPawn(this, 0));
-	if (!Boss || !Player || bDamaged)
+	if (!Boss || !Player || bDamaged || bParriedCounted)
 	{
 		return;
 	}
@@ -131,6 +142,11 @@ void URPGBossLowSweep::Test(float FromAngle, float ToAngle)
 		++HitCount;
 		UE_LOG(LogRPGSweep, Log, TEXT("blade hit the player at %.0f cm, angle %.0f deg, feet %.0f cm above the floor: health %.0f -> %.0f"), Distance, Angle, FeetHeight, Result.HealthBefore, Result.HealthAfter);
 		break;
+	case ERPGDamageOutcome::Parried:
+		bParriedCounted = true;
+		++ParriedCount;
+		UE_LOG(LogRPGSweep, Log, TEXT("blade contact parried at %.0f cm, angle %.0f deg"), Distance, Angle);
+		break;
 	case ERPGDamageOutcome::RejectedInvulnerable:
 		if (!bInvulnerableCounted)
 		{
@@ -148,7 +164,12 @@ void URPGBossLowSweep::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	AActor* Boss = GetOwner();
-	if (!bEnabled || !Boss)
+	if (!bEnabled)
+	{
+		End(TEXT("component disabled"));
+		return;
+	}
+	if (!Boss)
 	{
 		return;
 	}
@@ -163,15 +184,16 @@ void URPGBossLowSweep::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 		}
 	}
 	const URPGBossEncounter* Encounter = Boss->FindComponentByClass<URPGBossEncounter>();
-	if (bActive && (bDead || (Encounter && Encounter->GetGeneration() != SweepGeneration)))
+	if (bActive && (bDead || (Encounter && Encounter->GetParticipantGeneration() != SweepGeneration)))
 	{
 		End(bDead ? TEXT("boss dead") : TEXT("encounter reset"));
 	}
-	const URPGAttackTracker* Tracker = Boss->FindComponentByClass<URPGAttackTracker>();
+	URPGAttackTracker* Tracker = Boss->FindComponentByClass<URPGAttackTracker>();
 	if (!Tracker)
 	{
 		return;
 	}
+	RPGBossTrackerTickPrerequisite::Add(*this, TrackerTickPrerequisite, Tracker);
 	const bool bTrackerActive = !bDead && Tracker->GetCurrentMove() == MoveId && Tracker->IsActiveWindow();
 	if (!bActive && bTrackerActive && Tracker->GetAttackInstance() != LastInstance)
 	{

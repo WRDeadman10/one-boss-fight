@@ -36,6 +36,7 @@ $drivers = @(
     @{ N = 'pie_flask_hud';            K = 'R'; Min = 7; T = 600 },
     @{ N = 'pie_dormant_wake';         K = 'R'; Min = 11; T = 600 },
     @{ N = 'pie_telegraph';            K = 'R'; Min = 25; T = 600 },
+    @{ N = 'pie_selection_refusal';   K = 'R'; Min = 12; T = 180 },
       @{ N = 'pie_authored_close_clips'; K = 'R'; Min = 14; T = 600 },
     @{ N = 'pie_soak';                 K = 'R'; Min = 213; T = 900 },
     @{ N = 'pie_a5_heal_punish';      K = 'R'; Min = 31 },
@@ -83,6 +84,7 @@ function Count-Log() { return (Read-LogFrom 0).Count }
 
 function Invoke-Editor([string]$scriptName) {
     & python -I $runner (Join-Path $editorScripts $scriptName) | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw "Editor task runner failed for $scriptName.py with exit code $LASTEXITCODE" }
 }
 
 function Test-Bridge() {
@@ -90,11 +92,17 @@ function Test-Bridge() {
     catch { return $false }
 }
 
-# The editor may still be starting (a rebuild relaunches it): wait for the bridge up to 4 minutes.
-$waited = 0
-while (-not (Test-Bridge) -and $waited -lt 240) { Start-Sleep -Seconds 5; $waited += 5 }
-if (-not (Test-Bridge)) { 'The editor bridge (http://localhost:3000) is not reachable after 4 minutes: open the project with -nosound (Scripts\Rebuild.ps1 does it).'; exit 2 }
-if ($waited -gt 0) { Start-Sleep -Seconds 30 }  # the bridge is up before the map is loaded
+# The editor may still be starting (a rebuild relaunches it): use one absolute deadline,
+# so probe latency cannot extend the advertised four-minute startup bound.
+$bridgeDeadline = [DateTime]::UtcNow.AddMinutes(4)
+$bridgeReady = $false
+while ([DateTime]::UtcNow -lt $bridgeDeadline) {
+    if (Test-Bridge) { $bridgeReady = $true; break }
+    $remaining = ($bridgeDeadline - [DateTime]::UtcNow).TotalSeconds
+    if ($remaining -gt 0) { Start-Sleep -Seconds ([Math]::Min(5, [Math]::Ceiling($remaining))) }
+}
+if (-not $bridgeReady) { 'The editor bridge (http://localhost:3000) is not reachable within the four-minute startup deadline: open the project with -nosound (Scripts\Rebuild.ps1 does it).'; exit 2 }
+Start-Sleep -Seconds 30  # the bridge is up before the map is loaded
 
 Invoke-Editor 'no_throttle.py'  # always: a relaunched editor in a background or minimised window ticks at about 3 fps and every timing check fails (2026-10-25)
 Invoke-Editor 'wake_clip_off.py'  # rpg.WakeClip 0: the authored 3.5 s wake clip would delay every older driver that attacks right after Wake(); pie_dormant_wake.py switches it on itself

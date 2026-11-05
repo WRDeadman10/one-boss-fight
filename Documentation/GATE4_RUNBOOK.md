@@ -10,6 +10,20 @@ This runbook executes G4-1 through G4-3. The final gate is a packaged 1920x1080 
 4. Use the same 1920x1080 windowed launch mode for all compared runs. Record every launch cvar exactly as passed to `-ExtraArgs`.
 5. Do not compare results from different build configurations or driver versions. Re-package after a code, content, or config change.
 
+## Editor and staging locks
+
+- `Scripts/Rebuild.ps1` closes only `UnrealEditor.exe` processes whose command line contains this checkout's full `OneBossFight.uproject` path. If it cannot inspect process command lines, it fails before closing anything or building. It waits for those PIDs, then uses `taskkill.exe /PID <pid> /T /F` only for the matching hung editor process tree.
+- To diagnose a lock, list candidate process IDs and command lines first; do not use `Stop-Process -Name UnrealEditor`, `taskkill /IM`, wildcard process names, or command-line-pattern kills. Example read-only inspection:
+
+  ```powershell
+  Get-CimInstance Win32_Process |
+    Where-Object { $_.Name -in @('UnrealEditor.exe', 'OneBossFight.exe') -or $_.Name -like 'OneBossFight-Win64-*.exe' } |
+    Select-Object ProcessId, ParentProcessId, Name, CommandLine
+  ```
+
+- Close the matching editor or staged-game launcher normally. If it is hung, use the confirmed root PID with `taskkill.exe /PID <pid> /T /F` so only that process and its descendants are stopped. `PackagedSmoke.ps1` uses this PID-tree cleanup for the staged launcher. Do not delete or rename staged files to clear an active handle; first identify and stop the process holding it. Recheck the process list and retry packaging only after the lock clears.
+- A process whose command line does not identify this project is not safe to stop based on its image name alone. Ask the process owner or inspect its parent/launch context before acting.
+
 ## G4-1: Packaged Performance Profile
 
 1. Produce a Development package:

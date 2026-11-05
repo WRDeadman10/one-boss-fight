@@ -25,6 +25,7 @@ namespace
 		TWeakObjectPtr<UGameInstance> GameInstance;
 		TWeakObjectPtr<const ARPGEncounterBinding> Binding;
 		FGuid Encounter;
+		uint64 ParticipantGeneration = 0;
 		TArray<FMember> Members;
 		/** The very epoch lease the compiled input holds (set by Complete). */
 		TSharedPtr<const RPGCombatRegistry::FEpoch> Content;
@@ -43,6 +44,7 @@ namespace
 		Out.GameInstance = World->GetGameInstance();
 		Out.Binding = Binding;
 		Out.Encounter = Binding->EncounterInstance;
+		Out.ParticipantGeneration = Binding->ParticipantGeneration;
 		for (const FRPGPlacedParticipantBinding& Participant : Binding->Participants)
 		{
 			FIdentity::FMember Member;
@@ -85,7 +87,7 @@ namespace
 	}
 
 	/** The checkpoint, run after the input stage and after the preparation stage. */
-	bool Holds(UWorld* World, const FIdentity& Identity, FString& Why)
+	bool Holds(UWorld* World, const FIdentity& Identity, FString& Why, bool bAllowBegunPlay = false)
 	{
 		if (!Identity.bCompleted || !Identity.World.IsValid() || Identity.World.Get() != World || !IsValid(World))
 		{
@@ -104,12 +106,12 @@ namespace
 			return false;
 		}
 		const ARPGEncounterBinding* Live = Identity.Binding.Get();
-		if (!Live || !IsValid(Live) || Live->IsActorBeingDestroyed() || Live->GetWorld() != World || Live->HasActorBegunPlay() || Live->IsActorBeginningPlay())
+		if (!Live || !IsValid(Live) || Live->IsActorBeingDestroyed() || Live->GetWorld() != World || Live->IsActorBeginningPlay() || (Live->HasActorBegunPlay() && !bAllowBegunPlay))
 		{
 			Why = TEXT("the encounter binding is no longer valid, is being destroyed, is not in the world or began play");
 			return false;
 		}
-		if (Live->EncounterInstance != Identity.Encounter || Live->Participants.Num() != Identity.Members.Num())
+		if (Live->EncounterInstance != Identity.Encounter || Live->ParticipantGeneration != Identity.ParticipantGeneration || Live->Participants.Num() != Identity.Members.Num())
 		{
 			Why = TEXT("the encounter GUID or the participant count of the binding changed");
 			return false;
@@ -124,7 +126,7 @@ namespace
 				return false;
 			}
 			const AActor* Actor = Member.Actor.Get();
-			if (!Actor || !IsValid(Actor) || Actor->IsActorBeingDestroyed() || Actor->GetWorld() != World || Actor->HasActorBegunPlay() || Actor->IsActorBeginningPlay() || !Member.Definition.Get() || !IsValid(Member.Definition.Get()))
+			if (!Actor || !IsValid(Actor) || Actor->IsActorBeingDestroyed() || Actor->GetWorld() != World || Actor->IsActorBeginningPlay() || (Actor->HasActorBegunPlay() && !bAllowBegunPlay) || !Member.Definition.Get() || !IsValid(Member.Definition.Get()))
 			{
 				Why = FString::Printf(TEXT("the actor or the definition of participant #%d is no longer valid, in the world and not begun"), Index);
 				return false;
@@ -136,7 +138,8 @@ namespace
 
 namespace RPGBossWorldPreparation
 {
-	FRPGWorldPreparationResult PrepareWorldBatch(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding, const TArray<RPGBossWorldInputCompiler::FSelection>& Selections, const FString& ManifestHash)
+	static FRPGWorldPreparationResult PrepareWorldBatchInternal(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding,
+		const TArray<RPGBossWorldInputCompiler::FSelection>& Selections, const FString& ManifestHash, bool bForRebind, uint64 ParticipantGeneration)
 	{
 		FRPGWorldPreparationResult Result;
 		// Before any UObject (the world, the binding) is touched.
@@ -151,21 +154,26 @@ namespace RPGBossWorldPreparation
 
 		// Stage 1: the world-bound input (the epoch comes only from the world's own game instance). Its diagnostics, nested layers included, are carried unchanged.
 		FRPGHydrationPreflightInput Input;
-		const FRPGHydrationResult Compiled = RPGBossWorldInputCompiler::CompileWorldInput(ExpectedWorld, Binding, Selections, ManifestHash, Input);
+		const FRPGHydrationResult Compiled = bForRebind
+			? RPGBossWorldInputCompiler::CompileWorldInputForRebind(ExpectedWorld, Binding, Selections, ManifestHash, ParticipantGeneration, Input)
+			: RPGBossWorldInputCompiler::CompileWorldInput(ExpectedWorld, Binding, Selections, ManifestHash, Input);
 		if (!Compiled.IsReady())
 		{
 			Result.Errors = Compiled.Errors;
 			return Result; // nothing was allocated: the input stage creates no component
 		}
+		Input.ParticipantGeneration = Identity.ParticipantGeneration;
 		FString Why;
-		if (!Complete(Identity, ExpectedWorld, Input, Why) || !Holds(ExpectedWorld, Identity, Why))
+		if (!Complete(Identity, ExpectedWorld, Input, Why) || !Holds(ExpectedWorld, Identity, Why, bForRebind))
 		{
 			Result.Errors.Add(FString::Printf(TEXT("WorldPrep.Drift[after the input stage]: %s (nothing was allocated)"), *Why));
 			return Result;
 		}
 
 		// Stage 2: the owned unregistered preparation of the whole batch. Its diagnostics are carried unchanged.
-		FRPGPreparationResult Prepared = RPGBossHydrationPreparation::PrepareBatch(Input);
+		FRPGPreparationResult Prepared = bForRebind
+			? RPGBossHydrationPreparation::PrepareBatchForRebind(Input)
+			: RPGBossHydrationPreparation::PrepareBatch(Input);
 		if (!Prepared.Succeeded())
 		{
 			Result.Errors = Prepared.Errors; // PrepareBatch already destroyed everything it allocated
@@ -177,7 +185,7 @@ namespace RPGBossWorldPreparation
 		}
 
 		// The same checkpoint after the preparation. A failure aborts precisely the components this call allocated.
-		if (!Holds(ExpectedWorld, Identity, Why))
+		if (!Holds(ExpectedWorld, Identity, Why, bForRebind))
 		{
 			Result.Errors.Add(FString::Printf(TEXT("WorldPrep.Drift[after the preparation stage]: %s (this call's components were aborted)"), *Why));
 			const FRPGPreparationAbortReport Cleanup = Prepared.Batch->Abort();
@@ -194,5 +202,17 @@ namespace RPGBossWorldPreparation
 
 		Result.Batch = MoveTemp(Prepared.Batch);
 		return Result;
+	}
+
+	FRPGWorldPreparationResult PrepareWorldBatch(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding,
+		const TArray<RPGBossWorldInputCompiler::FSelection>& Selections, const FString& ManifestHash)
+	{
+		return PrepareWorldBatchInternal(ExpectedWorld, Binding, Selections, ManifestHash, false, 0);
+	}
+
+	FRPGWorldPreparationResult PrepareWorldBatchForRebind(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding,
+		const TArray<RPGBossWorldInputCompiler::FSelection>& Selections, const FString& ManifestHash, uint64 ParticipantGeneration)
+	{
+		return PrepareWorldBatchInternal(ExpectedWorld, Binding, Selections, ManifestHash, true, ParticipantGeneration);
 	}
 }

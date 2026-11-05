@@ -73,6 +73,7 @@ public:
 private:
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UInstancedStaticMeshComponent>> Built;
+	TArray<bool> BuiltCastShadows;
 
 	/** Sets that sway: the component, its resting transforms and the swing. */
 	struct FSwaying

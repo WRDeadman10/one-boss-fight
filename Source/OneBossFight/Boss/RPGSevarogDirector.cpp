@@ -312,6 +312,7 @@ void URPGSevarogDirector::ResetEncounter()
 	}
 	// Keep the controller (the pack's abilities hold references to its components); stop the behaviour and make the boss forget the player.
 	EntranceTimer = -1.f;
+	StrikePendingTime = 0.f; // a delayed bolt from the defeated player's old encounter must not be relocated after respawn
 	HoldBehavior();
 	if (AAIController* Controller = GetAIController(Pawn))
 	{
@@ -489,6 +490,7 @@ void URPGSevarogDirector::TickComponent(float DeltaTime, ELevelTick TickType, FA
 			if (Current <= 0.f)
 			{
 				bDead = true;
+				StrikePendingTime = 0.f;
 				return;
 			}
 			if (!bPhaseTwo && Current / Max <= PhaseTwoHealthFraction)

@@ -72,11 +72,12 @@ namespace EncounterClusterTests
 		float BossMaxHealth;
 		float GateRadius;
 		bool bTestFreeze, bResetOnPlayerRespawn, bDormant, bWaking;
-		int32 Generation, ResetCount, DeathResetRefusals;
+		uint64 Generation;
+		int32 ResetCount, DeathResetRefusals;
 
 		explicit FEncounterState(const URPGBossEncounter& E)
 			: BossMaxHealth(E.BossMaxHealth), GateRadius(E.GateRadius), bTestFreeze(E.bTestFreeze), bResetOnPlayerRespawn(E.bResetOnPlayerRespawn)
-			, bDormant(E.IsDormant()), bWaking(E.IsWaking()), Generation(E.GetGeneration()), ResetCount(E.GetResetCount()), DeathResetRefusals(E.GetDeathResetRefusals())
+			, bDormant(E.IsDormant()), bWaking(E.IsWaking()), Generation(E.GetParticipantGeneration()), ResetCount(E.GetResetCount()), DeathResetRefusals(E.GetDeathResetRefusals())
 		{
 		}
 

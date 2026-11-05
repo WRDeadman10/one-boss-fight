@@ -1,5 +1,6 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Player/RPGBossActivation.h"
+#include "Player/RPGEncounterBinding.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRPGActivationWorld, Log, All);
 
@@ -20,10 +21,35 @@ FRPGPreparationAbortReport FRPGWorldActivationResult::Release()
 	return Report;
 }
 
+FRPGPreparationAbortReport FRPGWorldActivationResult::ReleaseForRebind()
+{
+	FRPGPreparationAbortReport Report;
+	if (!IsInGameThread())
+	{
+		Report.bRefused = true;
+		Report.Errors.Add(TEXT("ActivationWorld.ReleaseNotGameThread: runtime release on the game thread only; artifact retained"));
+		return Report;
+	}
+	if (Batch.IsValid())
+	{
+		Report = Batch->AbortForRebind();
+		if (Report.IsClean()) { Batch.Reset(); }
+	}
+	return Report;
+}
+
+bool FRPGWorldActivationResult::RetagForRebind(const ARPGEncounterBinding& Binding, uint64 ExpectedGeneration, FString& OutError)
+{
+	OutError.Reset();
+	if (!IsInGameThread()) { OutError = TEXT("ActivationWorld.RebindRetagNotGameThread"); return false; }
+	if (!Batch.IsValid()) { OutError = TEXT("ActivationWorld.RebindRetagLeaseUnavailable"); return false; }
+	return Batch->RetagForRebind(Binding, ExpectedGeneration, OutError);
+}
+
 namespace RPGBossActivation
 {
-	FRPGWorldActivationResult ActivateWorld(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding,
-		const TArray<RPGBossWorldInputCompiler::FSelection>& Selections, const FString& ManifestHash)
+	static FRPGWorldActivationResult ActivateWorldInternal(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding,
+		const TArray<RPGBossWorldInputCompiler::FSelection>& Selections, const FString& ManifestHash, bool bForRebind, uint64 ParticipantGeneration)
 	{
 		FRPGWorldActivationResult Result;
 		auto Finish = [&](ERPGWorldActivationOutcome Outcome, const TCHAR* Reason)
@@ -43,7 +69,9 @@ namespace RPGBossActivation
 		}
 
 		// The facade obtains the epoch from this world's GI; no duplicate validators, registry or manufactured fallback config.
-		FRPGWorldPreparationResult Prepared = RPGBossWorldPreparation::PrepareWorldBatch(ExpectedWorld, Binding, Selections, ManifestHash);
+		FRPGWorldPreparationResult Prepared = bForRebind
+			? RPGBossWorldPreparation::PrepareWorldBatchForRebind(ExpectedWorld, Binding, Selections, ManifestHash, ParticipantGeneration)
+			: RPGBossWorldPreparation::PrepareWorldBatch(ExpectedWorld, Binding, Selections, ManifestHash);
 		if (!Prepared.Succeeded())
 		{
 			Result.Errors = MoveTemp(Prepared.Errors);
@@ -58,26 +86,43 @@ namespace RPGBossActivation
 			});
 			// Match leading diagnostic tokens, never arbitrary identifier/message substrings.
 			// Mid-call authority/input mutation violates the accepted stable-input contract; do not claim it was undone.
-			Finish(bContractViolation ? ERPGWorldActivationOutcome::HardError : ERPGWorldActivationOutcome::FallBackToLegacy,
-				bContractViolation ? TEXT("ActivationWorld.PreparationContractViolation") : TEXT("ActivationWorld.PrepareRejected"));
+			const bool bHardError = bForRebind || bContractViolation;
+			Finish(bHardError ? ERPGWorldActivationOutcome::HardError : ERPGWorldActivationOutcome::FallBackToLegacy,
+				bHardError ? (bForRebind ? TEXT("ActivationWorld.RebindRejected") : TEXT("ActivationWorld.PreparationContractViolation")) : TEXT("ActivationWorld.PrepareRejected"));
 			return Result;
 		}
-		if (!Prepared.Batch->RegisterOwnedComponents(Result.Registration))
+		const bool bRegistered = bForRebind
+			? Prepared.Batch->RegisterOwnedComponentsForRebind(Result.Registration)
+			: Prepared.Batch->RegisterOwnedComponents(Result.Registration);
+		if (!bRegistered)
 		{
 			Result.Errors = Result.Registration.Errors;
 			// Registration already rolls back then Aborts on execution failure; state refusal may not consume it.
 			// Idempotent Abort also handles that refusal, and preserves all cleanup diagnostics.
-			const FRPGPreparationAbortReport Cleanup = Prepared.Batch->Abort();
+			const FRPGPreparationAbortReport Cleanup = bForRebind ? Prepared.Batch->AbortForRebind() : Prepared.Batch->Abort();
 			Result.Errors.Append(Cleanup.Errors);
 			const bool bClean = Result.Registration.Cleanup.IsClean() && Cleanup.IsClean()
 				&& Prepared.Batch->GetOwnedComponentCount() == 0;
 			Prepared.Batch.Reset();
-			Finish(bClean ? ERPGWorldActivationOutcome::FallBackToLegacy : ERPGWorldActivationOutcome::HardError,
-				bClean ? TEXT("ActivationWorld.RegistrationRejected") : TEXT("ActivationWorld.RegistrationContractViolation"));
+			const bool bHardError = !bClean || bForRebind;
+			Finish(bHardError ? ERPGWorldActivationOutcome::HardError : ERPGWorldActivationOutcome::FallBackToLegacy,
+				bHardError ? (bClean ? TEXT("ActivationWorld.RebindRegistrationRejected") : TEXT("ActivationWorld.RegistrationContractViolation")) : TEXT("ActivationWorld.RegistrationRejected"));
 			return Result;
 		}
 		Result.Batch = MoveTemp(Prepared.Batch);
 		Finish(ERPGWorldActivationOutcome::Activated, TEXT("ActivationWorld.RegisteredSubset"));
 		return Result;
+	}
+
+	FRPGWorldActivationResult ActivateWorld(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding,
+		const TArray<RPGBossWorldInputCompiler::FSelection>& Selections, const FString& ManifestHash)
+	{
+		return ActivateWorldInternal(ExpectedWorld, Binding, Selections, ManifestHash, false, 0);
+	}
+
+	FRPGWorldActivationResult ActivateWorldForRebind(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding,
+		const TArray<RPGBossWorldInputCompiler::FSelection>& Selections, const FString& ManifestHash, uint64 ParticipantGeneration)
+	{
+		return ActivateWorldInternal(ExpectedWorld, Binding, Selections, ManifestHash, true, ParticipantGeneration);
 	}
 }

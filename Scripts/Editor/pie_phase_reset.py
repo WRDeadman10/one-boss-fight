@@ -6,6 +6,7 @@ Gate 2 checks on phase two and the reset (Freeze L01 to L04, L10, 18.1): runs on
  4. a stance break is running when health crosses 60 percent: no transition during the break, one transition after it ends.
 Log prefix [PhaseReset]; results as PASS or FAIL lines and a summary.
 """
+import os
 import unreal
 
 log = lambda m: unreal.log("[PhaseReset] " + m)
@@ -39,6 +40,7 @@ def finish():
         handle = None
     bad = [n for n, ok in state["res"] if not ok]
     log("SUMMARY %d checks, %d failed %s" % (len(state["res"]), len(bad), bad))
+    log("RESULT %d/%d passed" % (len(state["res"]) - len(bad), len(state["res"])))
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
 
 
@@ -47,6 +49,9 @@ def _tick(dt):
     s["t"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="wake", t=0.0)
         return
@@ -105,7 +110,7 @@ def _tick(dt):
         a = attr(boss, "Attribute.Attack")
         check("L02 phase two once under repeated health drops", ph.get_phase_two_count() == 1, "count %d" % ph.get_phase_two_count())
         check("L04b buffs not applied again", abs(a - A0 * 1.25) < 0.6, "%s" % a)
-        c["g0"] = enc.get_generation()
+        c["g0"] = int(enc.get_participant_generation_text())
         enc.reset_for_test()
         nxt(0.4)
     elif n == 6:
@@ -114,7 +119,8 @@ def _tick(dt):
     elif n == 7:
         a = attr(boss, "Attribute.Attack")
         comps = sorted(x.get_class().get_name() for x in boss.get_components_by_class(unreal.ActorComponent))
-        check("L10a generation +2 after two resets", enc.get_generation() == c["g0"] + 2, "%d -> %d" % (c["g0"], enc.get_generation()))
+        generation = int(enc.get_participant_generation_text())
+        check("L10a generation +2 after two resets", generation == c["g0"] + 2, "%d -> %d" % (c["g0"], generation))
         check("L10b phase one again, buffs removed", (not ph.is_phase_two()) and abs(a - A0) < 0.6, "attack %s" % a)
         check("L10c posture full", post.get_posture() >= post.get_max_posture() - 0.5, "posture %.0f" % post.get_posture())
         check("L10d no duplicate components", comps == c["comps0"], "%d vs %d" % (len(comps), len(c["comps0"])))

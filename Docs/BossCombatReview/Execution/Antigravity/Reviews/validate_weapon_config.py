@@ -222,6 +222,10 @@ def validate_weapon_config(cfg, existing_context=None, asset_exists=None, existi
     if not style_name or not isinstance(style_name, str) or not style_name.strip() or style_name == "None":
         errors.append("[Weapon.Config.Identity] style_name must be a non-empty string and not 'None'")
 
+    style_aliases = cfg.get("style_aliases", [])
+    if not isinstance(style_aliases, list) or any(not isinstance(alias, str) or not alias.strip() for alias in style_aliases):
+        errors.append("[Weapon.Config.Structure] style_aliases must be an array of non-empty strings")
+
     hud_word = cfg.get("hud_weapon_word")
     if not hud_word or not isinstance(hud_word, str) or not hud_word.strip() or len(hud_word) > 32:
         errors.append("[Weapon.Config.Identity] hud_weapon_word must be a non-empty string of length <= 32")
@@ -308,6 +312,8 @@ def validate_weapon_config(cfg, existing_context=None, asset_exists=None, existi
         if isinstance(build_id, str) and build_id.strip() and build_id != "None":
             tokens_to_check.append(build_id.strip())
         aliases = build.get("aliases")
+        if aliases is not None and (not isinstance(aliases, list) or any(not isinstance(a, str) or not a.strip() for a in aliases)):
+            errors.append("[Weapon.Config.Structure] build.aliases must be an array of non-empty strings")
         if isinstance(aliases, list):
             for a in aliases:
                 if isinstance(a, str) and a.strip():
@@ -394,6 +400,11 @@ def validate_weapon_config(cfg, existing_context=None, asset_exists=None, existi
         if not isinstance(catalog, dict):
             errors.append("[Weapon.Config.Catalog.Structure] 'catalog' block must be a JSON object")
         else:
+            register = catalog.get("register")
+            if not isinstance(register, bool):
+                errors.append("[Weapon.Config.Catalog.Structure] catalog.register must be a boolean")
+                register = False
+
             # weapon_asset_path: must be valid path under /Game/OneBossFight/Data/Catalog/
             w_path = catalog.get("weapon_asset_path")
             if w_path is not None:
@@ -415,6 +426,17 @@ def validate_weapon_config(cfg, existing_context=None, asset_exists=None, existi
             if root_path is not None:
                 if not _validate_asset_path(root_path):
                     errors.append(f"[Weapon.Config.Catalog.Path] catalog.catalog_root_path must be a valid Unreal asset path: '{root_path}'")
+                elif not root_path.startswith("/Game/OneBossFight/Data/Catalog/"):
+                    errors.append(f"[Weapon.Config.Catalog.Path] catalog.catalog_root_path must reside under /Game/OneBossFight/Data/Catalog/: '{root_path}'")
+
+            if register:
+                for key, value in (("weapon_asset_path", w_path), ("build_asset_path", b_path), ("catalog_root_path", root_path)):
+                    if not isinstance(value, str) or not value.strip():
+                        errors.append(f"[Weapon.Config.Catalog.Path] catalog.{key} is required when catalog.register is true")
+                if isinstance(w_path, str) and isinstance(b_path, str) and w_path == b_path:
+                    errors.append("[Weapon.Config.Catalog.DestinationCollision] weapon_asset_path and build_asset_path must be distinct")
+                if isinstance(root_path, str) and root_path in (w_path, b_path):
+                    errors.append("[Weapon.Config.Catalog.DestinationCollision] catalog_root_path cannot equal a new definition destination")
 
             # legacy_slot: mandatory -1 for expansion builds (RPGCombatCatalog.cpp:148, 158)
             legacy_slot = catalog.get("legacy_slot", -1)

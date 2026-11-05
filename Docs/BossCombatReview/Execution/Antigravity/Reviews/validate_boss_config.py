@@ -28,6 +28,18 @@ import math
 from typing import List, Dict, Any, Optional, Set
 
 CEILING = 1.0e6
+PROFILE_FIELD_DEFAULTS = {
+    "neutral_strafe_min_hold_seconds": 0.8,
+    "neutral_strafe_max_hold_seconds": 1.6,
+}
+
+
+def with_profile_defaults(config: Dict[str, Any]) -> Dict[str, Any]:
+    """Return a copy with native-default profile values materialized for dry-run/readback."""
+    result = dict(config)
+    for key, value in PROFILE_FIELD_DEFAULTS.items():
+        result.setdefault(key, value)
+    return result
 
 
 def phase_pool_cannot_starve(cooldowns: List[float], attack_count: int) -> bool:
@@ -88,6 +100,13 @@ def validate_boss_config(config: Dict[str, Any], existing_destinations: Optional
     b_f4 = (fixture_label == "F4 fixture")
     b_f5 = (fixture_label == "F5 fixture")
     b_damage = bool(config.get("damage_enabled", False))
+
+    strafe_min = config.get("neutral_strafe_min_hold_seconds", PROFILE_FIELD_DEFAULTS["neutral_strafe_min_hold_seconds"])
+    strafe_max = config.get("neutral_strafe_max_hold_seconds", PROFILE_FIELD_DEFAULTS["neutral_strafe_max_hold_seconds"])
+    if (not is_valid_number(strafe_min, positive=True) or not is_valid_number(strafe_max, positive=True)
+            or float(strafe_max) < float(strafe_min)
+            or ((float(strafe_min) != 0.8 or float(strafe_max) != 1.6) and not b_f5)):
+        errors.append("Framework.Profile.NeutralStrafe")
 
     mesh_path = config.get("mesh_path", "")
     anim_class_path = config.get("anim_class_path", "")

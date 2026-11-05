@@ -93,6 +93,10 @@ bool FRPGCodexBleedEdgesTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("same-frame follow-up does not build"), static_cast<uint8>(Apply(State, Config, 20.f, false, false, false, true)), static_cast<uint8>(EResult::IgnoredSameFrame));
 	TestEqual(TEXT("proc damage leaves the final health point"), ProcDamage(500.f, 10.f, Config), 9.f);
 	TestEqual(TEXT("proc damage is zero at one health"), ProcDamage(500.f, 1.f, Config), 0.f);
+	FState Saturated;
+	Saturated.Procs = MAX_int32;
+	TestEqual(TEXT("proc counter saturates at MAX_int32 without wrapping"), static_cast<uint8>(Apply(Saturated, Config, 100.f, false, false, false, false)), static_cast<uint8>(EResult::Proc));
+	TestEqual(TEXT("saturated proc counter remains at MAX_int32"), Saturated.Procs, MAX_int32);
 	return true;
 }
 

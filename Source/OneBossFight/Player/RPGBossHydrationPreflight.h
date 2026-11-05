@@ -16,18 +16,18 @@
  * apparently usable plan behind, and no actor, component or combat context is touched. Failures are collected with the slot (and field) they concern, never by dereferencing an invalid actor.
  *
  * Output on success: weak actor identities, copied slot / target slot / encounter identity, the expected world, the SAME content lease and config leases that were validated, class leases, and for each boss-core member
- * the plans of the twelve accepted native component records, each exactly once, in this deterministic RELATIVE plan order: Stagger (policy and profile, 25 fields), Phases (the explicitly selected phase, flow, fireball and
- * dependencies, 18 fields), Encounter (health, gate radius and reset, 3 fields), DormantWake (the two clip references) and Posture (the three posture stats), followed by Bleed, LowSweep, Shockwave, HealPunish, Look, CloseClipSwap and Death (59 additional paths). No separate scalar, profile, flow, policy or stats plan exists in
+ * the plans of nineteen native component records, each exactly once: the thirteen typed BossCore records Stagger (policy and profile, 25 fields), Phases (the explicitly selected phase, flow, fireball and
+ * dependencies, 18 fields), Encounter (health, gate radius and reset, 3 fields), DormantWake (the two clip references) and Posture (the three posture stats), followed by Bleed, LowSweep, Shockwave, HealPunish, Look, CloseClipSwap, Death and AttackTracker (five additional typed paths). No separate scalar, profile, flow, policy or stats plan exists in
  * the output and no native class or instance name appears twice. This order is a plan order only: it is NOT an observed registration or BeginPlay chronology. A target-only member gets no boss plan. Participants keep the
  * order of the request list.
  *
- * WHAT THIS IS NOT. The result is an EXPANDED NATIVE SUBSET PREFLIGHT. It is still not a complete playable boss bundle (audio, attack tracking and other legacy consumers remain absent; the twelve plans alone are not a playable bundle), not a reservation, not a
+ * WHAT THIS IS NOT. The result is an EXPANDED NATIVE SUBSET PREFLIGHT. It is still not a complete playable boss bundle (other legacy consumers remain absent; these plans alone are not a playable bundle), not a reservation, not a
  * hydrated or ready context and not an authorization to suppress any legacy component. It has no activate, register or ready operation and the plan says so (IsCompletePlayableBundle, IsReservation and IsReady are
  * false by construction). The kernel never calls a Configure callback (not even as a dry run), never creates or registers a component, never queries a pack attribute, never ticks, never loads an asset or animation
  * playback, never binds a context.
  *
  * What the validators here say and do not say. Each boss-core config is validated with the full accepted cluster validators (stagger policy and profile, the selected phase with flow, fireball and dependencies, the stats
- * and the encounter policy, and the dormant wake references), so a backend capability the generic definition compiler accepts can fail HERE. The soft references of the profile records are checked for path STRUCTURE only: they are not
+ * and encounter policy, dormant wake references and attack-tracker timing/config shape), so a backend capability the generic definition compiler accepts can fail HERE. The soft references of the profile records are checked for path STRUCTURE only: they are not
  * loaded and not certified as existing, cooked, of the right type, matching the compiled animation array, the mesh or the skeleton. A production request still fails closed through the compiled skeleton, all-animation
  * and mesh prerequisite checks and a passing production request is NOT a complete playable bundle.
  *
@@ -49,7 +49,7 @@
 enum class ERPGPreflightRole : uint8
 {
 	None,
-	BossCore,   // receives twelve plans: Stagger, Phases, Encounter, DormantWake, Posture, Bleed, LowSweep, Shockwave, HealPunish, Look, CloseClipSwap, Death
+	BossCore,   // receives nineteen plans: thirteen typed plans plus six legacy parity consumers
 	TargetOnly, // receives no boss component plan
 };
 
@@ -71,6 +71,8 @@ struct FRPGHydrationPreflightInput
 {
 	TWeakObjectPtr<UWorld> ExpectedWorld;
 	FGuid EncounterInstance;
+	/** Runtime lease generation; zero for standalone preflight fixtures without a binding. */
+	uint64 ParticipantGeneration = 0;
 	TSharedPtr<const RPGCombatRegistry::FEpoch> ExpectedContent;
 	TArray<FRPGHydrationPreflightRequest> Requests;
 };
@@ -83,7 +85,7 @@ struct FRPGPreflightParticipantPlan
 	ERPGPreflightRole Role = ERPGPreflightRole::None;
 	/** The very config lease that was validated. */
 	TSharedPtr<const FRPGParticipantConfig> Config;
-	/** Boss-core: Stagger, Phases, Encounter, DormantWake, Posture, Bleed, LowSweep, Shockwave, HealPunish, Look, CloseClipSwap, Death in this relative plan order. Target-only: empty. Plans were built, never run. */
+	/** Boss-core: Stagger, Phases, Encounter, DormantWake, Posture, Bleed, LowSweep, Shockwave, HealPunish, Look, CloseClipSwap, Death, AttackTracker in this relative plan order. Target-only: empty. Plans were built, never run. */
 	TArray<FRPGComponentPlan> Plans;
 	/** One lease per plan class. */
 	TArray<TStrongObjectPtr<UClass>> ClassLeases;
@@ -92,6 +94,7 @@ struct FRPGPreflightParticipantPlan
 struct FRPGHydrationPreflightPlan
 {
 	FGuid EncounterInstance;
+	uint64 ParticipantGeneration = 0;
 	TWeakObjectPtr<UWorld> World;
 	/** The very content lease that was validated against every config. */
 	TSharedPtr<const RPGCombatRegistry::FEpoch> Content;
@@ -122,4 +125,6 @@ namespace RPGBossHydrationPreflight
 	 * with its slot. Game thread only.
 	 */
 	ONEBOSSFIGHT_API FRPGHydrationResult CompilePreflight(const FRPGHydrationPreflightInput& Input, TSharedPtr<const FRPGHydrationPreflightPlan>& OutPlan);
+	/** Same structural preflight for a reset-broadcast rebind; permits already-begun actors, while preserving all other checks. */
+	ONEBOSSFIGHT_API FRPGHydrationResult CompilePreflightForRebind(const FRPGHydrationPreflightInput& Input, TSharedPtr<const FRPGHydrationPreflightPlan>& OutPlan);
 }

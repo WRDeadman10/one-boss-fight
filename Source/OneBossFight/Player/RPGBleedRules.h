@@ -47,7 +47,16 @@ namespace RPGBleedRules
 	/** One hit's buildup. Order of the checks: no amount, dead, dormant, phase transition, a proc already happened this frame, else it is added and a threshold crossing procs once. */
 	inline EResult Apply(FState& State, const FConfig& Config, float Amount, bool bDead, bool bDormant, bool bTransition, bool bProcThisFrame)
 	{
-		if (Amount <= 0.f) { return EResult::IgnoredAmount; }
+		if (!FMath::IsFinite(Amount) || Amount <= 0.f
+			|| !FMath::IsFinite(Config.InitialThreshold) || Config.InitialThreshold <= 0.f
+			|| !FMath::IsFinite(Config.ThresholdIncrease) || Config.ThresholdIncrease < 0.f
+			|| !FMath::IsFinite(Config.ThresholdMax) || Config.ThresholdMax < Config.InitialThreshold
+			|| !FMath::IsFinite(Config.HpFraction) || Config.HpFraction < 0.f
+			|| !FMath::IsFinite(State.Buildup) || State.Buildup < 0.f
+			|| !FMath::IsFinite(State.Threshold) || State.Threshold <= 0.f || State.Procs < 0)
+		{
+			return EResult::IgnoredAmount;
+		}
 		if (bDead) { return EResult::IgnoredDead; }
 		if (bDormant) { return EResult::IgnoredDormant; }
 		if (bTransition) { return EResult::IgnoredTransition; }
@@ -56,7 +65,7 @@ namespace RPGBleedRules
 		if (State.Buildup >= State.Threshold)
 		{
 			State.Buildup = 0.f;
-			++State.Procs;
+			if (State.Procs < MAX_int32) { ++State.Procs; }
 			State.Threshold = FMath::Min(State.Threshold + Config.ThresholdIncrease, Config.ThresholdMax);
 			return EResult::Proc;
 		}
@@ -66,6 +75,11 @@ namespace RPGBleedRules
 	/** The health a proc takes: the fraction of the maximum, but never the last point (a proc is a burst of damage, the kill stays with the weapon). */
 	inline float ProcDamage(float MaxHealth, float Health, const FConfig& Config)
 	{
+		if (!FMath::IsFinite(MaxHealth) || !FMath::IsFinite(Health) || !FMath::IsFinite(Config.HpFraction)
+			|| MaxHealth <= 0.f || Health <= 0.f || Config.HpFraction < 0.f)
+		{
+			return 0.f;
+		}
 		return FMath::Clamp(MaxHealth * Config.HpFraction, 0.f, FMath::Max(0.f, Health - 1.f));
 	}
 }

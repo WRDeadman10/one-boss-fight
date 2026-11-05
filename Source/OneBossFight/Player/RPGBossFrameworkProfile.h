@@ -9,7 +9,7 @@ class UAnimSequence;
 class UAnimMontage;
 class APawn;
 /** Combo graph data (BOSS-COM rows): the hit outcome an edge may require. Guarded and Parried are part of the data contract; the boss reports Hit or Whiff today (no guard telemetry yet). */
-UENUM()
+UENUM(BlueprintType)   // BlueprintType: exposes the enum to editor Python content scripts (F-AG2/AG3); no runtime effect
 enum class ERPGBossComboOutcome : uint8 { Hit, Whiff, Guarded, Parried };
 USTRUCT()
 struct FRPGBossComboEdgeData
@@ -91,6 +91,29 @@ public:
     UPROPERTY(EditAnywhere) bool bRangeBandPartition=false;
     /** BOSS-SEL-008 (F5 lane, 0 = off): when no card is eligible and the boss is in its band and faces the target, it circles the target at WalkSpeedCmPerSecond for at most this many seconds (direction flips on seeded 0.8..1.6 s holds) and decides again every tick; only after the budget does it fail closed as before. [0,20]. Design value, proposed. */
     UPROPERTY(EditAnywhere) float NeutralStrafeSeconds=0.f;
+    /** BOSS-SEL-008 (F5 lane): seeded neutral-strafe direction hold window, seconds. Defaults preserve the original code literals. */
+    UPROPERTY(EditAnywhere) double NeutralStrafeMinHoldSeconds=.8;
+    UPROPERTY(EditAnywhere) double NeutralStrafeMaxHoldSeconds=1.6;
+    /** Opt-in (F5 lane, 0 = off): a guarded contact deals this fraction of normal damage, [0,1]. Zero preserves the existing guarded-hit damage exactly. */
+    UPROPERTY(EditAnywhere) float GuardChipFraction=0.f;
+    /** Opt-in (F5 lane, 0 = off): additional post-card recovery after a parried contact, scaled from the card recovery and parry grade; [0,3]. */
+    UPROPERTY(EditAnywhere) float ParryRecoveryScale=0.f;
+    /** Opt-in (F5 lane): slow the card only as much as needed to satisfy the parry reaction tell, bounded by ParryFairMinScale. */
+    UPROPERTY(EditAnywhere) bool ParryFairTelegraph=false;
+    UPROPERTY(EditAnywhere) float ParryFairMinScale=.4f;
+    /** Opt-in (F5 lane): preferred range adapts with distance and rolling dodge rate; thresholds use cm and dodges per second. */
+    UPROPERTY(EditAnywhere) bool bAggroEnabled=false;
+    UPROPERTY(EditAnywhere) float AggroEnterCloseCm=250.f;
+    UPROPERTY(EditAnywhere) float AggroExitCloseCm=300.f;
+    UPROPERTY(EditAnywhere) float AggroEnterFarCm=700.f;
+    UPROPERTY(EditAnywhere) float AggroExitFarCm=600.f;
+    UPROPERTY(EditAnywhere) float AggroDodgeEnterRate=0.6f;
+    UPROPERTY(EditAnywhere) float AggroDodgeExitRate=0.3f;
+    UPROPERTY(EditAnywhere) float AggroDodgeWindowSeconds=5.f;
+    /** Opt-in (F5 lane): count consecutive cards with no accepted, guarded, or parried contact; all zero disables fatigue. */
+    UPROPERTY(EditAnywhere) int32 FatigueGraceWhiffs=0;
+    /** Minimum attack playback-rate fraction after repeated whiffs; 0 disables fatigue, otherwise (0,1]. */
+    UPROPERTY(EditAnywhere) float FatigueFloor=0.f;
     /** Player parry reaction (F8 posture lane, 0 = off): a boss contact that the player PARRIES drains this much of the boss's posture (a break staggers it as any posture break does). Needs PostureMax > 0. Design value, proposed. */
     UPROPERTY(EditAnywhere) float ParryPostureAmount=0.f;
     /** Opt-in (F5 lane): scale ParryPostureAmount by the player's Perfect/Good/Late parry grade. False preserves the unscaled reaction. */

@@ -46,6 +46,7 @@ Write-Host "Warm-up (thrown away) ..."
 $wargs = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $run, '-Label', 'pxwarm')
 if ($StageDir) { $wargs += @('-StageDir', $StageDir) }
 & powershell @wargs | Out-Null
+if ($LASTEXITCODE -ne 0) { throw "Benchmark warm-up failed with exit code $LASTEXITCODE" }
 $rows = @()
 foreach ($e in $Experiments) {
     $extra = ''
@@ -58,10 +59,16 @@ foreach ($e in $Experiments) {
     $rargs = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $run, '-Label', $e.N)
     if ($extra) { $rargs += @('-ExtraArgs', $extra) }
     if ($StageDir) { $rargs += @('-StageDir', $StageDir) }
-    & powershell @rargs | Out-Null
+    try {
+        & powershell @rargs | Out-Null
+        $runExitCode = $LASTEXITCODE
+        if ($runExitCode -ne 0) { throw "Benchmark experiment $($e.N) failed with exit code $runExitCode" }
+    }
+    finally {
+        if ($smi -and -not $smi.HasExited) { Stop-Process -Id $smi.Id -Force -ErrorAction SilentlyContinue }
+    }
     $stageForRoots = if ($StageDir) { $StageDir } else { Join-Path $Root 'Saved\StagedBuilds\Windows' }
     $roots = @((Join-Path $stageForRoots 'OneBossFight\Saved\Benchmark'), (Join-Path $env:LOCALAPPDATA 'OneBossFight\Saved\Benchmark'))
-    if ($smi) { Stop-Process -Id $smi.Id -Force -ErrorAction SilentlyContinue }
     $dir = $roots | ForEach-Object { Get-ChildItem $_ -Directory -Filter "$($e.N)_*" -ErrorAction SilentlyContinue } | Sort-Object LastWriteTime -Descending | Select-Object -First 1
     if (-not $dir) { Write-Host "  no result for $($e.N)"; continue }
     $s = Get-Content (Join-Path $dir.FullName 'summary.json') -Raw | ConvertFrom-Json

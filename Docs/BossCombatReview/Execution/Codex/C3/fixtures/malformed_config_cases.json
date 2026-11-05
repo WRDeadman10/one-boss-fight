@@ -1,0 +1,11 @@
+{
+  "schema": "c3.malformed-config-cases.v1",
+  "cases": [
+    {"name": "invalid_json", "input": "{", "expected": "Weapon config parse error before asset access"},
+    {"name": "non_object_root", "input": "[]", "expected": "root must be a JSON object"},
+    {"name": "missing_style_name", "config": {"weapon_id": "Example"}, "expected": "Weapon.Config.Identity"},
+    {"name": "style_aliases_not_array", "config": {"style_aliases": "alias"}, "expected": "Weapon.Config.Structure"},
+    {"name": "build_aliases_not_array", "config": {"build": {"aliases": "alias"}}, "expected": "Weapon.Config.Structure"},
+    {"name": "registration_missing_destinations", "config": {"catalog": {"register": true}}, "expected": "Weapon.Config.Catalog.Path"}
+  ]
+}

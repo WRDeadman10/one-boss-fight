@@ -1,5 +1,6 @@
 """PIE test of the boss HUD and the victory signal (RPGBossHud): dormant -> fighting (banner, bar), phase two subtitle, stance break flash, riposte prompt, victory once, reset, second victory.
 Run pie_debug_overlay.py once after an editor start first (warm-up). Log prefix [BossHud]; screenshots (with UI) go to Saved/Screenshots/WindowsEditor."""
+import os
 import unreal
 
 log = lambda m: unreal.log("[BossHud] " + m)
@@ -170,6 +171,9 @@ def _tick(dt):
     s["t"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0, next=STEPS[0][0])
         return

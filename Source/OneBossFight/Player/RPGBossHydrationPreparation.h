@@ -126,10 +126,17 @@ public:
 	 *  Own registrations are undone by Abort (and thus by the existing destructor's Abort). External registrations retain the old contract-violation behaviour.
 	 *  Thread/state refusals do not touch an earlier success; execution/prevalidation failure unregisters this call in reverse, then Abort. */
 	bool RegisterOwnedComponents(FRPGRegistrationReport& OutReport);
+	/** Runtime reset path: registers this batch onto an already begun world/actors. */
+	bool RegisterOwnedComponentsForRebind(FRPGRegistrationReport& OutReport);
 	bool IsRegistered() const { return bRegisteredByBatch; }
 
 	/** Destroys exactly the components this artifact allocated and releases every lease. Idempotent. Game thread only. */
 	FRPGPreparationAbortReport Abort();
+	/** Explicit teardown for a registered runtime batch; destroys only this batch's exact components through normal EndPlay. */
+	FRPGPreparationAbortReport AbortForRebind();
+	/** Advances the retained begun boss lease to a new binding generation without Configure or component replacement. */
+	bool RetagForRebind(const class ARPGEncounterBinding& Binding, uint64 ExpectedGeneration, FString& OutError);
+	uint64 GetParticipantGeneration() const { return ParticipantGeneration; }
 
 	/** The validated preflight plan this artifact was prepared from (world, encounter, slots, targets, the very config and content leases). Null never. */
 	TSharedPtr<const FRPGHydrationPreflightPlan> GetPreflightPlan() const { return Plan; }
@@ -164,9 +171,11 @@ private:
 
 	/** The validated plan, the same participant order as Members. */
 	TSharedPtr<const FRPGHydrationPreflightPlan> Plan;
+	uint64 ParticipantGeneration = 0;
 	TArray<FMember> Members;
 	bool bPrepared = false;
 	bool bAborted = false;
+	bool RegisterOwnedComponentsInternal(FRPGRegistrationReport& OutReport, bool bAllowBegunPlay);
 	bool bRegisteredByBatch = false;
 };
 
@@ -183,6 +192,8 @@ namespace RPGBossHydrationPreparation
 {
 	/** Prepares the whole batch (see above). Game thread only. No caller-supplied plan or callback is accepted: the plans are the ones the accepted preflight builds from the input. */
 	ONEBOSSFIGHT_API FRPGPreparationResult PrepareBatch(const FRPGHydrationPreflightInput& Input);
+	/** Runtime counterpart for reset rebind; permits begun actors/world but still returns an unregistered owned batch. */
+	ONEBOSSFIGHT_API FRPGPreparationResult PrepareBatchForRebind(const FRPGHydrationPreflightInput& Input);
 
 #if WITH_DEV_AUTOMATION_TESTS
 	/**
@@ -199,6 +210,17 @@ namespace RPGBossHydrationPreparation
 		FFaultInjectionScope& operator=(const FFaultInjectionScope&) = delete;
 
 		/** True when the injected failure actually fired inside this scope. */
+		bool Fired() const;
+	};
+
+	/** TEST ONLY: force one runtime release to refuse before touching any owned component. */
+	class ONEBOSSFIGHT_API FRebindReleaseRefusalScope
+	{
+	public:
+		FRebindReleaseRefusalScope();
+		~FRebindReleaseRefusalScope();
+		FRebindReleaseRefusalScope(const FRebindReleaseRefusalScope&) = delete;
+		FRebindReleaseRefusalScope& operator=(const FRebindReleaseRefusalScope&) = delete;
 		bool Fired() const;
 	};
 #endif

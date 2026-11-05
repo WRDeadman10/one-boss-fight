@@ -29,7 +29,7 @@ _THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 if _THIS_DIR not in sys.path:
     sys.path.insert(0, _THIS_DIR)
 
-from validate_boss_config import validate_boss_config
+from validate_boss_config import validate_boss_config, with_profile_defaults
 
 
 def get_sevarog_f10_valid_config():
@@ -150,6 +150,30 @@ def main():
     # 1. Positive Baseline Test
     total += 1
     base_cfg = get_sevarog_f10_valid_config()
+    total += 1
+    defaults_cfg = with_profile_defaults(base_cfg)
+    if (defaults_cfg.get("neutral_strafe_min_hold_seconds") == 0.8
+            and defaults_cfg.get("neutral_strafe_max_hold_seconds") == 1.6
+            and "neutral_strafe_min_hold_seconds" not in base_cfg
+            and validate_boss_config(defaults_cfg) == []):
+        print("[PASS] Positive: neutral-strafe native defaults materialize for dry-run")
+        passed += 1
+    else:
+        print("[FAIL] neutral-strafe default materialization / validation")
+
+    total += 1
+    custom_hold_cfg = with_profile_defaults(base_cfg)
+    custom_hold_cfg["neutral_strafe_min_hold_seconds"] = 0.7
+    if validate_boss_config(custom_hold_cfg) == []:
+        custom_hold_cfg["fixture_label"] = "F3 fixture"
+        if "Framework.Profile.NeutralStrafe" in validate_boss_config(custom_hold_cfg):
+            print("[PASS] Negative: custom neutral-strafe window requires F5")
+            passed += 1
+        else:
+            print("[FAIL] custom neutral-strafe window accepted outside F5")
+    else:
+        print("[FAIL] custom F5 neutral-strafe window refused")
+
     errs = validate_boss_config(base_cfg)
     if not errs:
         print("[PASS] Test 1: Positive Baseline (Sevarog F10 equivalent) -> 0 errors")

@@ -39,6 +39,8 @@ namespace RPGStaggerAnim
     /** Sub state at Dt seconds after the break. Start for Dt < StartLen, Loop until Total - EndLen, End until Total, then Finished. */
     inline EState Evaluate(float StartLen,float EndLen,float Total,float Dt)
     {
+        if (!FMath::IsFinite(StartLen)||!FMath::IsFinite(EndLen)||!FMath::IsFinite(Total)||!FMath::IsFinite(Dt)
+            ||StartLen<0.f||EndLen<0.f||Total<=0.f||StartLen+EndLen>Total) return EState::Finished;
         if (Dt>=Total) return EState::Finished;
         if (Dt>=Total-EndLen) return EState::End;
         if (Dt>=StartLen) return EState::Loop;
@@ -48,20 +50,25 @@ namespace RPGStaggerAnim
     /** Loops the Loop clip is asked for: ceil(middle / LoopLen), middle = Total - StartLen - EndLen. 0 when there is no middle or no loop length. The loop is stopped at Total - EndLen anyway. */
     inline int32 LoopCount(float Total,float StartLen,float EndLen,float LoopLen)
     {
+        if (!FMath::IsFinite(Total)||!FMath::IsFinite(StartLen)||!FMath::IsFinite(EndLen)||!FMath::IsFinite(LoopLen)) return 0;
         const float Middle=Total-StartLen-EndLen;
         if (!(Middle>0.f)||!(LoopLen>0.f)) return 0;
-        return int32(FMath::CeilToInt(Middle/LoopLen));
+        const double Count=FMath::CeilToDouble(static_cast<double>(Middle)/LoopLen);
+        return Count<=MAX_int32 ? static_cast<int32>(Count) : 0;
     }
 
     /** Phase transition: the selector is held for the clip length from the latch (0 or less = no clip = no hold, F6c behaviour). */
-    inline bool PhaseHoldActive(float ClipLen,float Elapsed) { return ClipLen>0.f && Elapsed<ClipLen; }
+    inline bool PhaseHoldActive(float ClipLen,float Elapsed)
+    {
+        return FMath::IsFinite(ClipLen)&&FMath::IsFinite(Elapsed)&&ClipLen>0.f&&Elapsed<ClipLen;
+    }
 
     /** Profile level phase clip check: a clip needs a second phase (fraction in (0,1), a name) and a slot name. Empty = valid. */
     inline FString ValidatePhaseClip(bool bClip,float PhaseTwoFraction,FName PhaseTwoId,FName Slot,const FString& BossSkeleton,const FString& ClipSkeleton)
     {
         if (!bClip) return FString();
-        if (!(PhaseTwoFraction>0.f)||PhaseTwoId.IsNone()) return TEXT("Framework.Profile.PhaseTransitionAnim.Phaseless");
-        if (ClipSkeleton!=BossSkeleton) return TEXT("Framework.Profile.PhaseTransitionAnim.Skeleton");
+        if (!FMath::IsFinite(PhaseTwoFraction)||!(PhaseTwoFraction>0.f)||PhaseTwoFraction>=1.f||PhaseTwoId.IsNone()) return TEXT("Framework.Profile.PhaseTransitionAnim.Phaseless");
+        if (BossSkeleton.IsEmpty()||ClipSkeleton.IsEmpty()||ClipSkeleton!=BossSkeleton) return TEXT("Framework.Profile.PhaseTransitionAnim.Skeleton");
         if (Slot.IsNone()) return TEXT("Framework.Profile.StaggerAnim.SlotNameEmpty");
         return FString();
     }

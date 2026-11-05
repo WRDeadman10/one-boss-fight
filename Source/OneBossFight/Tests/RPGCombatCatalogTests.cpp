@@ -75,12 +75,14 @@ bool FRPGCatalogValidationTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("common visible count"), VisibleRows(4, 200.f), 2);
 	auto BadBuilds = Builds; BadBuilds[3].BuildId = BadBuilds[0].BuildId;
 	TestFalse(TEXT("duplicate ids rejected"), Compile(BadBuilds, Weapons, Error, false).IsValid());
+	TestEqual(TEXT("duplicate build failure exposes stable diagnostic"), Error, FString(TEXT("Builds.Id/WeaponId/DisplayName: invalid")));
 	BadBuilds = Builds; BadBuilds[3].ConsoleName = TEXT("off");
 	TestFalse(TEXT("reserved name rejected"), Compile(BadBuilds, Weapons, Error, false).IsValid());
 	BadBuilds = Builds; BadBuilds[3].Aliases.Add(TEXT("str"));
 	TestFalse(TEXT("alias collision rejected"), Compile(BadBuilds, Weapons, Error, false).IsValid());
 	BadBuilds = Builds; BadBuilds[3].WeaponId = TEXT("MissingWeapon");
 	TestFalse(TEXT("unknown weapon rejected"), Compile(BadBuilds, Weapons, Error, false).IsValid());
+	TestEqual(TEXT("unknown build weapon failure exposes stable diagnostic"), Error, FString(TEXT("Builds.Id/WeaponId/DisplayName: invalid")));
 	BadBuilds = Builds; BadBuilds[0].Aliases.Reset();
 	TestFalse(TEXT("legacy alias removal rejected"), Compile(BadBuilds, Weapons, Error, false).IsValid());
 	auto BadWeapons = Weapons; BadWeapons[0].StyleName = NAME_None;
@@ -332,12 +334,13 @@ namespace
 {
 	struct FCatalogCvarScope
 	{
-		TArray<TPair<FString, FString>> Saved;
+		struct FSaved { FString Name; FString Value; uint32 SetByFlags = ECVF_SetByCode; };
+		TArray<FSaved> Saved;
 		bool Set(const TCHAR* Name, const FString& Value)
 		{
 			IConsoleVariable* Variable = IConsoleManager::Get().FindConsoleVariable(Name);
 			if (!Variable) return false;
-			Saved.Emplace(Name, Variable->GetString());
+			Saved.Add({Name, Variable->GetString(), static_cast<uint32>(Variable->GetFlags() & ECVF_SetByMask)}); // lead fix: braces forbid the int to uint32 narrowing (C2397)
 			Variable->Set(*Value, ECVF_SetByCode);
 			return true;
 		}
@@ -345,7 +348,11 @@ namespace
 		{
 			for (int32 I = Saved.Num() - 1; I >= 0; --I)
 			{
-				if (IConsoleVariable* Variable = IConsoleManager::Get().FindConsoleVariable(*Saved[I].Key)) Variable->Set(*Saved[I].Value, ECVF_SetByCode);
+				if (IConsoleVariable* Variable = IConsoleManager::Get().FindConsoleVariable(*Saved[I].Name))
+				{
+					Variable->ClearFlags(ECVF_SetByMask);
+					Variable->Set(*Saved[I].Value, static_cast<EConsoleVariableFlags>(Saved[I].SetByFlags));
+				}
 			}
 		}
 	};
@@ -367,6 +374,38 @@ namespace
 		Host.Subsystem->Initialize(Collection);
 		return Host;
 	}
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGCatalogCvarRestoreTest, "OneBossFight.Catalog.CVarValueAndPriorityRestore", EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGCatalogCvarRestoreTest::RunTest(const FString&)
+{
+	const TCHAR* Name = TEXT("rpg.CatalogTestFourth");
+	IConsoleVariable* Variable = IConsoleManager::Get().FindConsoleVariable(Name);
+	if (!TestNotNull(TEXT("catalog fixture CVar is registered"), Variable)) return false;
+	const FString OriginalValue = Variable->GetString();
+	const uint32 OriginalSetBy = Variable->GetFlags() & ECVF_SetByMask;
+	auto VerifyRestored = [&](bool bReturnEarly)
+	{
+		if (bReturnEarly)
+		{
+			[&]()
+			{
+				FCatalogCvarScope Scope;
+				if (!Scope.Set(Name, TEXT("7"))) return;
+				return;
+			}();
+		}
+		else
+		{
+			FCatalogCvarScope Scope;
+			TestTrue(TEXT("successful scope mutation"), Scope.Set(Name, TEXT("6")));
+		}
+		TestEqual(TEXT("CVar value restored"), Variable->GetString(), OriginalValue);
+		TestEqual(TEXT("CVar set-by source restored"), Variable->GetFlags() & ECVF_SetByMask, OriginalSetBy);
+	};
+	VerifyRestored(false);
+	VerifyRestored(true);
+	return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGCatalogPathSeamTest, "OneBossFight.Catalog.TestPathSeam",
@@ -424,7 +463,7 @@ bool FRPGCatalogPathSeamTest::RunTest(const FString& Parameters)
 	const auto SecondEpoch = Second->GetEpoch();
 	if (TestTrue(TEXT("the second game instance publishes the shipped catalog"), SecondEpoch.IsValid()))
 	{
-		TestEqual(TEXT("the second latch is independent: shipped three builds"), SecondEpoch->Builds.Num(), 3);
+		TestEqual(TEXT("the second latch is independent: shipped four builds"), SecondEpoch->Builds.Num(), 4);   // 2026-11-04: C3 added FengMaoPolearmBuild (owner-approved)
 		TestTrue(TEXT("the second latch is empty (shipped default)"), Second->GetLatchedPath().IsEmpty());
 		TestTrue(TEXT("a distinct epoch id"), SecondEpoch->Id != FirstEpoch->Id);
 	}

@@ -1,0 +1,16 @@
+# Designer FAQ
+
+Answers below describe current source contracts. Proposed or opt-in settings are labeled; they are not claims of approved balance or live proof.
+
+1. **Where do I change a move's timing and reach?** Edit the `URPGBossMoveCard` spec. Times are card-local seconds; range and vertical separation use centimeters. The validator checks the time order and authored window data (`RPGBossMoveCard.h:76-120`; `RPGBossMoveCard.cpp:15-48`).
+2. **Why did a candidate card not start?** Read the selector trace refusal (`MoveModel.*` hard gate or `Selector.Cooldown`) and the per-candidate score. The selector can also return `INDEX_NONE` with no failure; caller policy handles no candidate (`RPGBossMoveSelector.cpp:33-68`; `RPGBossMoveSelector.h:32-37`).
+3. **What controls how often a card repeats?** Profile candidate cooldown, weight, `RepeatPenalty`, and `RepeatMemory`; cooldown starts only once `NoteStarted` records that playback actually began (`RPGBossFrameworkProfile.h:37-53,82-89`; `RPGBossMoveSelector.cpp:84-94`).
+4. **Why is there a second contact window?** Secondary splash windows are processed after direct hits and can share the direct hit group, so one swing does not damage twice in a simultaneous overlap (`RPGBossMoveCard.h:50-63`; `RPGFrameworkMoveExecutor.cpp:278-300`).
+5. **What does a parry do to the boss attack?** The resolver returns `Parried`, spends the swing key and applies no player HP damage; the executor counts it and may apply profile-configured posture/recovery effects (`RPGDamageResolver.cpp:181-185`; `RPGFrameworkMoveExecutor.cpp:411-414`).
+6. **What happens if the player dodges through a hit?** If `Status.Invulnerable` is active at resolution, the hit is rejected and not spent. A later contact from the same attack can still land if it is no longer invulnerable (`RPGDamageResolver.cpp:151-180`).
+7. **How do I make the boss stop standing at a wall?** `ArenaRadiusCm`, optional `bArenaLeash`, `ArenaCenterBias`, and authored center settings control arena boundary/position behavior. These are profile choices requiring a positive radius where documented (`RPGBossFrameworkProfile.h:148-176`; validation `RPGFrameworkProfile.cpp:91-96`).
+8. **Can the boss recover when no card is eligible?** `NeutralStrafeSeconds` and reposition limits are opt-in profile settings. Zero retains fail-closed behavior; exact recovery depends on which option is enabled (`RPGBossFrameworkProfile.h:90-93,144-147`; `RPGFrameworkBossCharacter.cpp:480-518`).
+9. **How is a Phase 2 transition timed?** `PhaseTwoFraction` and `PhaseTwoId` set the threshold and name. The transition is latched at a neutral gate; an optional transition clip holds selection for its duration (`RPGBossFrameworkProfile.h:122-139`; `RPGFrameworkBossCharacter.cpp:386-407`).
+10. **Can a designer reset a dying pack boss?** No. `URPGBossEncounter::ResetEncounter` refuses while pack death is active, preserving death and remains. The framework proof fixture has a separate newer-generation restart rule (`RPGBossEncounter.cpp:299-318`; `RPGFrameworkBossCharacter.h:57-60`).
+
+For the full tuning surface, see [MoveCard fields](REF_MOVECARD.md) and [Profile fields](REF_PROFILE.md). For source flow, see [attack](DATA_FLOW_ATTACK.md) and [parry](DATA_FLOW_PARRY.md).

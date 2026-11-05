@@ -1,0 +1,42 @@
+{
+  "purpose": "unchanged pack prerequisite control; excludes intended DA_WeaponAttacks and DA_CombatCatalog targets",
+  "records": [
+    {
+      "asset_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Polearms/PolearmCombatStyle.PolearmCombatStyle",
+      "field": "style_asset_path",
+      "file": "Content/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Polearms/PolearmCombatStyle.uasset",
+      "sha256": "7d7a7f91f69a59a233695fe113863fa70199f4bccb00f9cdcdbf31f338fdd775"
+    },
+    {
+      "asset_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Polearms/FengMaoWeapon.FengMaoWeapon",
+      "field": "item_path",
+      "file": "Content/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Polearms/FengMaoWeapon.uasset",
+      "sha256": "4bd4ac3d33bea138af635702a2ac1ff7d5572a23e4e0795ee87ef41edf3e27c7"
+    },
+    {
+      "asset_path": "/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/WeaponItem.WeaponItem_C",
+      "field": "item_base_class",
+      "file": "Content/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/DataAssets/Items/WeaponItem.uasset",
+      "sha256": "3241309b16282334d830be79f49b86b4db35bf0bfe46b313678bc3ddc785800c"
+    },
+    {
+      "asset_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Polearms/BP_FengMaoWeapon.BP_FengMaoWeapon_C",
+      "field": "actor_class",
+      "file": "Content/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Polearms/BP_FengMaoWeapon.uasset",
+      "sha256": "d9a17603d09f4d45225913b01eb0189ce5a195a4429b83b616c9f92f9ecc1a66"
+    },
+    {
+      "asset_path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Polearms/GA_Polearm_Melee.GA_Polearm_Melee_C",
+      "field": "ability_class",
+      "file": "Content/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Weapons/Polearms/GA_Polearm_Melee.uasset",
+      "sha256": "6783a74eecb8c3dc0fbc7abf364a015c2199103711d04c966f9fc45242a7a483"
+    },
+    {
+      "asset_path": "/Game/OneBossFight/UI/Art/T_Boss01_Icon_Strength.T_Boss01_Icon_Strength",
+      "field": "catalog.icon_path",
+      "file": "Content/OneBossFight/UI/Art/T_Boss01_Icon_Strength.uasset",
+      "sha256": "4a65d7e0aea7e512f2594e07cf1bdb14c117b2e4988268f45ffe7e2a6380a37b"
+    }
+  ],
+  "schema": "c3.prerequisite-control.v1"
+}

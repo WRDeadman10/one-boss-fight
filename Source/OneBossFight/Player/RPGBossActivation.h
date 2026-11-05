@@ -30,6 +30,10 @@ struct FRPGWorldActivationResult
 	bool Succeeded() const { return Outcome == ERPGWorldActivationOutcome::Activated && IsHeld(); }
 	/** Refused off-thread without releasing the artifact; otherwise reports cleanup and is idempotent. */
 	ONEBOSSFIGHT_API FRPGPreparationAbortReport Release();
+	/** Removes the exact registered components owned by a selected runtime activation, including their normal EndPlay path. */
+	ONEBOSSFIGHT_API FRPGPreparationAbortReport ReleaseForRebind();
+	/** Re-keys the retained boss-owned lease to a reset binding without reconfiguring begun owners. */
+	ONEBOSSFIGHT_API bool RetagForRebind(const class ARPGEncounterBinding& Binding, uint64 ExpectedGeneration, FString& OutError);
 };
 
 namespace RPGBossActivation
@@ -42,4 +46,6 @@ namespace RPGBossActivation
 	 */
 	ONEBOSSFIGHT_API FRPGWorldActivationResult ActivateWorld(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding,
 		const TArray<RPGBossWorldInputCompiler::FSelection>& Selections, const FString& ManifestHash);
+	ONEBOSSFIGHT_API FRPGWorldActivationResult ActivateWorldForRebind(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding,
+		const TArray<RPGBossWorldInputCompiler::FSelection>& Selections, const FString& ManifestHash, uint64 ParticipantGeneration);
 }

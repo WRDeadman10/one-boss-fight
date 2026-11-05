@@ -4,8 +4,8 @@
 > **Status as of ledger version 3.36:** 20 of the 27 rows are now WITNESSED (BOSS-AWR-001, BOSS-AWR-002, BOSS-AWR-005, BOSS-EXE-004, BOSS-EXE-006, BOSS-EXE-007, BOSS-COM-002, BOSS-COM-003, BOSS-COM-005, BOSS-COM-007, BOSS-ANM-002, BOSS-ANM-005, BOSS-ANM-007, BOSS-HIT-005, BOSS-HIT-009, BOSS-PAC-006, BOSS-PHS-004, BOSS-QA-002, BOSS-QA-003, BOSS-QA-004); the table below is the ORIGINAL plan at commit 58352ae; current PARTIAL ids: BOSS-AWR-004, BOSS-SEL-008, BOSS-COM-004, BOSS-HIT-008, BOSS-MOV-001, BOSS-QA-001, BOSS-QA-005.
 >
 > **Current Remaining 7 PARTIAL Blockers (as sent to the owner in C-620 (no answer yet) / Ledger v3.36):**
-> 1. BOSS-AWR-004 (Signed angle and hysteresis): Discrete-attack boss has no oscillation to damp; hysteresis requires selector-side memory not built by design decision.
-> 2. BOSS-SEL-008 (No-candidate fallback): Repositioning acts as reset, but continuous neutral strafe loop and production opt-in profile policy not built.
+> 1. BOSS-AWR-004 (Signed angle and hysteresis): selector-side per-card hysteresis memory is implemented and profile-wired; BUILD-173 proves the cone-slack start fix live. The live edge-flicker/oscillation scenario remains the evidence gap; see BUILD-146 and `DECISIONS.md`.
+> 2. BOSS-SEL-008 (No-candidate fallback): opt-in neutral strafe is implemented and live-proven in BUILD-149b; the remaining gap is live proof of the interrupted/stuck-recovery branch (`strafe_stuck`), not the ordinary strafe loop or opt-in policy.
 > 3. BOSS-COM-004 (Explicit hit-confirm policy): Hit/Whiff branch edges verified in live PIE; Guarded and Parried branch edges require player shield/parry telemetry.
 > 4. BOSS-HIT-008 (Central defense order): Hierarchy verified in unit tests; live player shield blocking/parrying stance integration not active in PIE.
 > 5. BOSS-MOV-001 (Range-band policy): Single band observed; full 15-family range-band partitioning awaits F5 authoring and reach calibration.
@@ -26,9 +26,9 @@ For each row, the ONE concrete missing observation needed beyond today's lines i
 |---|---|---|---|---|
 | `BOSS-AWR-001` | Target validity | PARTIAL | Live perception loop in boss character/controller detecting target death or despawn and halting offensive action in PIE. | Engine Required (Claude) |
 | `BOSS-AWR-002` | Gate-time snapshot | PARTIAL | Live PIE run with lateral target displacement during windup proving trajectory commits strictly to gate snapshot angle. | Engine Required (Claude) |
-| `BOSS-AWR-004` | Signed angle and hysteresis | PARTIAL | Hysteresis buffer implemented in `RPGBossMoveModel` and verified by unit test with yaw oscillating near cone boundary. | Test-Only (Antigravity) |
+| `BOSS-AWR-004` | Signed angle and hysteresis | PARTIAL | Hysteresis is implemented in the selector and live-wired (BUILD-146; cone-slack start fix BUILD-173). The boundary oscillation behavior remains unit-tested only; live oscillation evidence is still needed if required by the ledger observable. | Engine Required (Claude) |
 | `BOSS-AWR-005` | Vertical separation | PARTIAL | Live PIE run with target on an elevated platform witnessing selector refusal log: `[FrameworkProof] refusal ... reason=MoveModel.Vertical`. | Engine Required (Claude) |
-| `BOSS-SEL-008` | No-candidate fallback | PARTIAL | Live PIE run witnessing boss execute purposeful neutral repositioning when selector returns `INDEX_NONE` without failing closed. | Engine Required (Claude) |
+| `BOSS-SEL-008` | No-candidate fallback | PARTIAL | Opt-in neutral strafe is live-proven (BUILD-149b); live proof that a strafe interruption triggers the stuck-recovery branch (`strafe_stuck`) remains outstanding. | Engine Required (Claude) |
 | `BOSS-EXE-004` | Stale event rejection | PARTIAL | Live executor log confirming rejection of late AnimNotify callbacks from an interrupted previous attack instance. | Engine Required (Claude) |
 | `BOSS-EXE-006` | Idempotent abort | PARTIAL | Grab or AoE attack executor abort path implemented and verified with repeated abort producing clean recovery and zero duplicate events. | Engine Required (Claude) |
 | `BOSS-EXE-007` | Watchdog | PARTIAL | Live executor telemetry logging watchdog timeout abort when montage end or notify end is suppressed. | Engine Required (Claude) |

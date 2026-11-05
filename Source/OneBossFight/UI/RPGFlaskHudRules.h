@@ -25,7 +25,7 @@ namespace RPGFlaskHudRules
 		{
 			return EFill::Empty;
 		}
-		return Count * 3 > Maximum * 2 ? EFill::Full : EFill::Half;
+		return static_cast<int64>(Count) * 3 > static_cast<int64>(Maximum) * 2 ? EFill::Full : EFill::Half;
 	}
 
 	inline FString FillName(EFill Fill)

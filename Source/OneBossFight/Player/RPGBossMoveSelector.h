@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #pragma once
 #include "Player/RPGBossMoveModel.h"
+#include "Player/RPGBossAggroRules.h"
 
 /** Explicit selector numbers (design values, proposed): no hidden defaults, Initialize refuses zero. */
 struct FRPGBossSelectorConfig
@@ -26,6 +27,7 @@ struct FRPGBossSelectorContext
 {
     bool bKiting = false, bHugging = false, bBackDodging = false, bGreedy = false;
     double ConeHysteresisDegrees = 0.0; // BOSS-AWR-004: extra full-cone width; 0 = off
+    RPGBossAggro::EBand PreferredAggroBand = RPGBossAggro::EBand::Balanced;
 };
 /** One line per candidate: why it was refused (named token) or its score. */
 struct FRPGBossSelectorTrace
@@ -35,6 +37,7 @@ struct FRPGBossSelectorTrace
     bool bEligible = false;
     FString Refusal;
     float Score = 0.f;
+    double ConeHoldSlackDegrees = 0.0; // the slack the model used for this card: the start must use the same one (BOSS-AWR-004)
 };
 struct FRPGBossSelectorDecision
 {

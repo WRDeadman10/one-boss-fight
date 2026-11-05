@@ -161,20 +161,22 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGDamageDecideTest, "OneBossFight.Combat.Dama
 
 bool FRPGDamageDecideTest::RunTest(const FString& Parameters)
 {
-	// All 32 combinations against the written order: dead target, stale attacker or generation, duplicate swing, invulnerable target, else accepted.
-	for (int32 Bits = 0; Bits < 32; ++Bits)
+	// All 64 combinations against the written order: dead target, stale attacker or generation, duplicate swing, invulnerable target, parrying target, else accepted.
+	for (int32 Bits = 0; Bits < 64; ++Bits)
 	{
 		const bool bTargetAlive = (Bits & 1) != 0;
 		const bool bAttackerAlive = (Bits & 2) != 0;
 		const bool bCurrent = (Bits & 4) != 0;
 		const bool bDuplicate = (Bits & 8) != 0;
 		const bool bInvulnerable = (Bits & 16) != 0;
+		const bool bParrying = (Bits & 32) != 0;
 		ERPGDamageOutcome Expected = ERPGDamageOutcome::Accepted;
 		if (!bTargetAlive) { Expected = ERPGDamageOutcome::RejectedDead; }
 		else if (!bAttackerAlive || !bCurrent) { Expected = ERPGDamageOutcome::RejectedStale; }
 		else if (bDuplicate) { Expected = ERPGDamageOutcome::RejectedDuplicate; }
 		else if (bInvulnerable) { Expected = ERPGDamageOutcome::RejectedInvulnerable; }
-		TestEqual(*FString::Printf(TEXT("decision for flags %d"), Bits), static_cast<int32>(RPGDamageRules::Decide(bTargetAlive, bAttackerAlive, bCurrent, bDuplicate, bInvulnerable)), static_cast<int32>(Expected));
+		else if (bParrying) { Expected = ERPGDamageOutcome::Parried; }
+		TestEqual(*FString::Printf(TEXT("decision for flags %d"), Bits), static_cast<int32>(RPGDamageRules::Decide(bTargetAlive, bAttackerAlive, bCurrent, bDuplicate, bInvulnerable, bParrying)), static_cast<int32>(Expected));
 	}
 	// A rejected contact for invulnerability is never an accepted one, and the names are stable (the drivers read them).
 	TestEqual(TEXT("name of RejectedInvulnerable"), FString(RPGDamageRules::Name(ERPGDamageOutcome::RejectedInvulnerable)), FString(TEXT("RejectedInvulnerable")));
@@ -1256,7 +1258,7 @@ bool FRPGCookCoverageTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Config/DefaultGame.ini lists directories to always cook"), CookDirectories.Num() > 0);
 
 	// Path literals that are directory prefixes used for filtering, not assets that are loaded (the PackWiring test above).
-	const TSet<FString> NotAssets = {TEXT("/Game/AdvancedARPGCombat"), TEXT("/Game/OneBossFight/GreystonePack"), TEXT("/Game/OneBossFight/SevarogPack")};
+	const TSet<FString> NotAssets = {TEXT("/Game/AdvancedARPGCombat"), TEXT("/Game/OneBossFight/GreystonePack"), TEXT("/Game/OneBossFight/SevarogPack"), TEXT("/Game/DoesNotExist/DA_MissingBoss.DA_MissingBoss")};   // deliberate missing asset (startup tests); full object path as the scan sees it
 	// Editor-only F3 proof fixtures: RPGFrameworkRuntimeTests.cpp builds in-memory profiles from these paths (WITH_DEV_AUTOMATION_TESTS, not in a
 	// packaged build) and no shipped source loads them by path. The Sevarog boss ships only when its content is added to the cook list (not decided).
 	const TSet<FString> EditorProofOnly = {
@@ -1264,7 +1266,8 @@ bool FRPGCookCoverageTest::RunTest(const FString& Parameters)
 		TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.Sevarog_Skeleton"),
 		TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Sevarog_AnimBlueprint.Sevarog_AnimBlueprint_C"),
 		TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Slow.Swing1_Slow"),
-		TEXT("/Game/OneBossFight/FrameworkProof/DA_Sevarog_SwingProof.DA_Sevarog_SwingProof")};
+		TEXT("/Game/OneBossFight/FrameworkProof/DA_Sevarog_SwingProof.DA_Sevarog_SwingProof"),
+		TEXT("/Game/OneBossFight/FrameworkProof/DA_Sevarog_SelectorProof_F5.DA_Sevarog_SelectorProof_F5")};
 	TArray<FString> Files;
 	IFileManager::Get().FindFilesRecursive(Files, *(FPaths::ProjectDir() / TEXT("Source/OneBossFight")), TEXT("*.cpp"), true, false);
 	IFileManager::Get().FindFilesRecursive(Files, *(FPaths::ProjectDir() / TEXT("Source/OneBossFight")), TEXT("*.h"), true, false, /*bClearFileNames=*/false);
@@ -1288,7 +1291,7 @@ bool FRPGCookCoverageTest::RunTest(const FString& Parameters)
 			{
 				Path = Path.Left(Format); // "/Game/Dir/%s.%s": the directory part decides
 			}
-			if (Path.EndsWith(TEXT("/")) || NotAssets.Contains(Path) || Seen.Contains(Path) || (EditorProofOnly.Contains(Path) && (File.EndsWith(TEXT("RPGFrameworkRuntimeTests.cpp")) || File.EndsWith(TEXT("RPGAutomationTests.cpp")))))
+			if (Path.EndsWith(TEXT("/")) || NotAssets.Contains(Path) || Seen.Contains(Path) || (EditorProofOnly.Contains(Path) && (File.EndsWith(TEXT("RPGFrameworkRuntimeTests.cpp")) || File.EndsWith(TEXT("RPGAutomationTests.cpp")) || File.EndsWith(TEXT("RPGBossExecutorHarnessTests.cpp")))))
 			{
 				continue;
 			}

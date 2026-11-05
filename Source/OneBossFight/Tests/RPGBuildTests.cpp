@@ -26,7 +26,10 @@ bool FRPGBuildRulesTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("three builds"), BuildCount, 3);
 	for (int32 Index = 0; Index < BuildCount; ++Index)
 	{
-		TestTrue(*FString::Printf(TEXT("row %d is the build with that enumerator"), Index), RPGBuildRules::Entry(static_cast<ERPGBuild>(Index)).Build == static_cast<ERPGBuild>(Index));
+		const RPGBuildRules::FBuildEntry& Row = RPGBuildRules::Entry(static_cast<ERPGBuild>(Index));
+		TestTrue(*FString::Printf(TEXT("row %d is the build with that enumerator"), Index), Row.Build == static_cast<ERPGBuild>(Index));
+		TestTrue(*FString::Printf(TEXT("row %d has all required mappings"), Index), Row.Name && *Row.Name && Row.Style && *Row.Style && Row.ItemPath && *Row.ItemPath
+			&& Row.ActorClass && *Row.ActorClass && Row.AbilityClass && *Row.AbilityClass && Row.Weapon && *Row.Weapon);
 	}
 	TestEqual(TEXT("name of Starter"), FString(BuildName(ERPGBuild::Starter)), FString(TEXT("Starter")));
 	TestEqual(TEXT("name of Strength"), FString(BuildName(ERPGBuild::Strength)), FString(TEXT("Strength")));

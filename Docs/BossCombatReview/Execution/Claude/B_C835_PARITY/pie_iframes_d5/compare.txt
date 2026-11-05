@@ -1,0 +1,10 @@
+﻿python.exe : INCONCLUSIVE: 
+C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Claude\B_C835_PARITY\pie_iframes_d5\receipt_legacy.json: 
+cannot read valid UTF-8 JSON ([Errno 2] No such file or directory: 'C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatRe
+view\\Execution\\Claude\\B_C835_PARITY\\pie_iframes_d5\\receipt_legacy.json')
+At C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Claude\B_C835_PARITY\run_parity.ps1:49 char:5
++     & python "$repo\Scripts\Tools\compare_encounter_parity.py" "$pair ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (INCONCLUSIVE: C...t_legacy.json'):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

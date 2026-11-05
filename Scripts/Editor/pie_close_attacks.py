@@ -2,10 +2,13 @@
 Scenarios: C1 A1 baseline, C2 A3a baseline, C3 branch allowed (A3b, player in front), C4 branch denied (player behind), C5 branch denied (player too far), C6 heading lock (player moves to the side after commit).
 Run pie_debug_overlay.py once after an editor start first. Log prefix [Close]."""
 import math
+import json
+import os
 import unreal
 
 log = lambda m: unreal.log("[Close] " + m)
 results = []
+TIMING_OBSERVABLES = {}
 S = {"phase": "start", "t": 0.0, "i": 0, "next": 0.0, "mem": {}}
 handle = None
 
@@ -89,8 +92,12 @@ def end_check(name, move, expect_hit, expect_branch=None, commit_range=None, act
             # the pack chains Attack01 to Attack02 at its follow-up notify even for a bare montage, so one or two instances are legal; each one commits once
             check(name + " instance counted", n in (1, 2) if move == "A3a" else n == 1, "%d -> %d" % (pre["inst"], post["inst"]))
             check(name + " committed once per instance", post["commit"] - pre["commit"] == n)
-            check(name + " commit position", commit_range[0] <= tr.get_last_commit_position() <= commit_range[1], "%.2f" % tr.get_last_commit_position())
-            check(name + " active opens in range", active_range[0] <= tr.get_last_active_start_position() <= active_range[1], "%.2f" % tr.get_last_active_start_position())
+            commit_name, active_name = name + " commit position", name + " active opens in range"
+            commit, active = tr.get_last_commit_position(), tr.get_last_active_start_position()
+            check(commit_name, commit_range[0] <= commit <= commit_range[1], "%.2f" % commit)
+            check(active_name, active_range[0] <= active <= active_range[1], "%.2f" % active)
+            TIMING_OBSERVABLES[commit_name] = {"value": float(commit), "comparison": {"type": "timing_seconds", "range_seconds": list(commit_range)}}
+            TIMING_OBSERVABLES[active_name] = {"value": float(active), "comparison": {"type": "timing_seconds", "range_seconds": list(active_range)}}
         if expect_branch == "allowed":
             check(name + " branch allowed", post["allowed"] == pre["allowed"] + 1 and post["denied"] == pre["denied"])
         if expect_branch == "denied":
@@ -115,7 +122,16 @@ def close_ability(dist):
 def c7_summary(w, pc, pawn, boss):
     hits = S["mem"].get("hits90", [])
     # KI-106 (2026-10-25): even run FIRST in a clean boss state only about 2 of 5 real close attacks hit at 90 cm in THIS driver, while Scripts/Editor/pie_close_reach.py (same ability, same distance, the boss yaw set per trial) hits 100 percent, also after real branch denials: the cause is something in this driver's setup (boss heading chosen by the pack AI, not set), not the swap; until it is explained the assertion is "at least 1 of 5" (target 4)
-    check("C7 the close attack hurts a player in front (90 cm): at least 1 of %d trials (KI-106, target 4)" % len(hits), sum(hits) >= 1, "%d of %d" % (sum(hits), len(hits)))
+    name = "C7 the close attack hurts a player in front (90 cm): at least 1 of %d trials (KI-106, target 4)" % len(hits)
+    successes = sum(hits)
+    check(name, successes >= 1, "%d of %d" % (successes, len(hits)))
+    TIMING_OBSERVABLES[name] = {
+        "value": {"scenario_ran": len(hits) == 5, "hits": successes, "trials": len(hits)},
+        "comparison": {
+            "type": "stochastic", "scenario_ran_field": "scenario_ran",
+            "threshold": {"left_field": "hits", "op": "gte", "right_value": 1},
+        },
+    }
 
 
 def montage_diagnostic(label):
@@ -188,6 +204,9 @@ def _tick(dt):
     s["t"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0, next=STEPS[0][0])
         return
@@ -202,6 +221,8 @@ def _tick(dt):
         handle = None
         unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
         unreal.SystemLibrary.execute_console_command(unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world(), "rpg.CloseTelegraph %s" % TELEGRAPH_INITIAL)  # back to the session's value
+        if TIMING_OBSERVABLES:
+            log("TIMING_OBSERVABLES_JSON " + json.dumps(TIMING_OBSERVABLES, sort_keys=True, separators=(",", ":")))
         log("RESULT %d/%d passed" % (sum(1 for r in results if r), len(results)))
         return
     _, fn = STEPS[s["i"]]

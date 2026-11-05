@@ -1,0 +1,74 @@
+{
+  "boss_definition": "/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft",
+  "definitions": {
+    "boss": {
+      "animations": "[\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_A1_QuickSlash.AN_Boss01_A1_QuickSlash\"]",
+      "asset_path": "/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Boss_EmberWarden_Draft.DA_Boss_EmberWarden_Draft",
+      "bleed": "(InitialThreshold=100.000000,ThresholdIncrease=20.000000,ThresholdMax=200.000000,HpFraction=0.030000,EffectHeight=170.000000,ProcEffect=\"/Game/BloodPack/Hit/Niagara/NS_BulletHit_Med.NS_BulletHit_Med\",ProcSound=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/A_Guardian_ImpactL_Cue.A_Guardian_ImpactL_Cue\")",
+      "close_clip_swap": "(CloseAbilityClassName=\"GA_GS_Boss_CloseAttack_C\",AttackMontagesName=\"AttackMontages\",A1Montage=\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1\",A3aMontage=\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a\",A3bMontage=\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b\")",
+      "death": "(DeathMode=PackMontage,DeathClip=\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_DeathLegend.AN_Boss01_DeathLegend\",DeathMontage=\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.AM_Boss01_DeathLegend\",PackDeathAbilityClassName=\"GA_GS_Boss_Death_C\",PackDeathMontagesName=\"DeathMontages\",PackPollSeconds=0.100000,PackEndTimeMultiplier=1.000000,HoldAtSeconds=0.500000,DyingSeconds=1.000000,BlendInSeconds=0.200000,MaxClipRestarts=0,bGuardPackDeath=True)",
+      "definition_id": "Boss_EmberWarden",
+      "dormant_wake": "(DormantClip=\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.AN_Boss01_DormantIdle\",WakeClip=\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_Wake.AN_Boss01_Wake\")",
+      "encounter_policy": "(GateRadius=1200.000000,bResetOnPlayerRespawn=True)",
+      "fields": "[{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]",
+      "fireball": "(bFireballEnabled=False,FireballAbility=\"/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C\",FireballCooldown=(X=6.000000,Y=10.000000),FireballMinRange=500.000000,FireballMaxRange=1800.000000)",
+      "heal_punish": "(bEnabled=True,MinRange=400.000000,MaxRange=1000.000000,Cooldown=4.000000,Damage=12.000000,FlightTime=1.200000,MinSpeed=450.000000,MaxSpeed=2500.000000,JavelinRadius=25.000000,JavelinMaxRange=3000.000000,SpawnSockets=(\"JavelinSpawn\",\"hand_l\"),AimHeight=100.000000,bRespondToHeal=True,bCancelJavelinsOnInterrupt=True)",
+      "look": "(bEnabled=True,Body=\"/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body\",Pieces=(\"/Game/OneBossFight/Boss01/Body/SK_Boss01_Crown.SK_Boss01_Crown\",\"/Game/OneBossFight/Boss01/Body/SK_Boss01_Mantle.SK_Boss01_Mantle\",\"/Game/OneBossFight/Boss01/Body/SK_Boss01_BrazierGauntlet.SK_Boss01_BrazierGauntlet\"),Sword=\"/Game/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.SM_Boss01_Greatsword\",SwordSocket=\"HeavySwordSocket_R\")",
+      "low_sweep": "(bEnabled=True,MoveId=\"A4\",Damage=20.000000,Reach=380.000000,InnerRadius=60.000000,BladeHeight=40.000000,SweepFromDegrees=90.000000,SweepToDegrees=-90.000000)",
+      "phase_dependencies": "(RoarClip=\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar\",TransitionMontage=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage\",ImmunityEffect=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C\")",
+      "phase_flow": "(TransitionSeconds=1.800000,bUseRoarClip=True,bPausePostureInTransition=True,bLockLeapUntilPhaseTwo=True,AttackAbilityPrefix=\"GA_GS_Boss_\",LeapAbilityTag=\"Ability.Melee.LeapAttack\")",
+      "phases": "[{}]",
+      "presentation_id": "Presentation_EmberWarden",
+      "schema": 1,
+      "shockwave": "(bEnabled=True,MoveId=\"A6\",Damage=48.000000,StartRadius=200.000000,MaxRadius=1100.000000,Speed=1000.000000,Thickness=180.000000,JumpClearance=50.000000)",
+      "skeleton": {
+        "object_path": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin"
+      },
+      "source_provenance": {
+        "asset_file_sha256": "ba05a8aa93fec66526c59bf12f51bb824103f67860bdee16efcdd5217d6a3e2b",
+        "dd27j_evidence_path": "Docs/BossCombatReview/Execution/Claude/F3a/full2_raw.log",
+        "dd27j_evidence_sha256": "39b2c7df37d2b332de4655211b3dfa5b5bba3373fcaa825d2cce9951cf478927"
+      },
+      "stagger_policy": "(StaggerSeconds=2.500000,FreezeAtPosition=1.550000,CriticalMultiplier=2.500000,RiposteRange=150.000000,RiposteConeDegrees=120.000000,RiposteFacingDegrees=120.000000,RiposteArmSeconds=1.200000,RipostePlayerStartGap=150.000000,RiposteAlignSeconds=0.300000,RiposteImpactSeconds=0.800000,RiposteBaseDamage=40.000000,CooldownSeconds=0.000000,GetUpRate=0.600000,bHoldPostureAtZero=True)",
+      "stagger_profile": "(bUseClips=True,bUseRiposteClips=True,bCriticalOnEveryHit=False,HitStunAbilityClassName=\"GA_GS_Boss_HitStun_C\",FallMontage=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage\",GetUpMontage=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage\",FallClip=\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall\",DownClip=\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown\",RipostePlayerClip=\"/Game/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.AN_Riposte_Player_Front\",RiposteBossClip=\"/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction\",ImmunityEffect=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C\")",
+      "stats": "(MaxHealth=1500.000000,MaxPosture=120.000000,PostureRegenDelay=3.000000,PostureRegenRate=15.000000)"
+    },
+    "player": {
+      "animations": "[\"/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Animations/Roll/Dodge_Small_Forward_Roll.Dodge_Small_Forward_Roll\", \"/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Animations/Manny/MM_Idle.MM_Idle\", \"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/Attack_PrimaryA_Anim.Attack_PrimaryA_Anim\"]",
+      "asset_path": "/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V3.DA_Player_Hero_Draft_V3",
+      "bleed": "(InitialThreshold=100.000000,ThresholdIncrease=20.000000,ThresholdMax=200.000000,HpFraction=0.030000,EffectHeight=170.000000,ProcEffect=\"/Game/BloodPack/Hit/Niagara/NS_BulletHit_Med.NS_BulletHit_Med\",ProcSound=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/A_Guardian_ImpactL_Cue.A_Guardian_ImpactL_Cue\")",
+      "close_clip_swap": "(CloseAbilityClassName=\"GA_GS_Boss_CloseAttack_C\",AttackMontagesName=\"AttackMontages\",A1Montage=\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1.AM_Boss01_A1\",A3aMontage=\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a.AM_Boss01_A3a\",A3bMontage=\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b.AM_Boss01_A3b\")",
+      "death": "(DeathMode=PackMontage,DeathClip=\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_DeathLegend.AN_Boss01_DeathLegend\",DeathMontage=\"/Game/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.AM_Boss01_DeathLegend\",PackDeathAbilityClassName=\"GA_GS_Boss_Death_C\",PackDeathMontagesName=\"DeathMontages\",PackPollSeconds=0.100000,PackEndTimeMultiplier=1.000000,HoldAtSeconds=0.500000,DyingSeconds=1.000000,BlendInSeconds=0.200000,MaxClipRestarts=0,bGuardPackDeath=True)",
+      "definition_id": "Player_Hero_V3",
+      "dormant_wake": "(DormantClip=\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_DormantIdle.AN_Boss01_DormantIdle\",WakeClip=\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_Wake.AN_Boss01_Wake\")",
+      "encounter_policy": "(GateRadius=1200.000000,bResetOnPlayerRespawn=True)",
+      "fields": "[{}, {}, {}, {}]",
+      "fireball": "(bFireballEnabled=False,FireballAbility=\"/Game/AdvancedARPGCombat/MagicCombatSystem/Blueprints/AI/ExampleMagicEnemy/GA_Fireball_Enemy.GA_Fireball_Enemy_C\",FireballCooldown=(X=6.000000,Y=10.000000),FireballMinRange=500.000000,FireballMaxRange=1800.000000)",
+      "heal_punish": "(bEnabled=False,MinRange=400.000000,MaxRange=1000.000000,Cooldown=4.000000,Damage=12.000000,FlightTime=1.200000,MinSpeed=450.000000,MaxSpeed=2500.000000,JavelinRadius=25.000000,JavelinMaxRange=3000.000000,SpawnSockets=(\"JavelinSpawn\",\"hand_l\"),AimHeight=100.000000,bRespondToHeal=False,bCancelJavelinsOnInterrupt=True)",
+      "look": "(bEnabled=True,Body=\"/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body\",Pieces=(\"/Game/OneBossFight/Boss01/Body/SK_Boss01_Crown.SK_Boss01_Crown\",\"/Game/OneBossFight/Boss01/Body/SK_Boss01_Mantle.SK_Boss01_Mantle\",\"/Game/OneBossFight/Boss01/Body/SK_Boss01_BrazierGauntlet.SK_Boss01_BrazierGauntlet\"),Sword=\"/Game/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.SM_Boss01_Greatsword\",SwordSocket=\"HeavySwordSocket_R\")",
+      "low_sweep": "(bEnabled=False,MoveId=\"A4\",Damage=15.000000,Reach=250.000000,InnerRadius=40.000000,BladeHeight=30.000000,SweepFromDegrees=90.000000,SweepToDegrees=-90.000000)",
+      "phase_dependencies": "(RoarClip=\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.AN_Boss01_PhaseRoar\",TransitionMontage=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Ability_R_Intro_Anim_Montage.Ability_R_Intro_Anim_Montage\",ImmunityEffect=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C\")",
+      "phase_flow": "(TransitionSeconds=1.800000,bUseRoarClip=False,bPausePostureInTransition=True,bLockLeapUntilPhaseTwo=False,AttackAbilityPrefix=\"GA_Hero_\",LeapAbilityTag=\"Ability.Melee.Hero\")",
+      "phases": "[]",
+      "presentation_id": "Presentation_Player_Hero_V3",
+      "schema": 1,
+      "shockwave": "(bEnabled=False,MoveId=\"A6\",Damage=35.000000,StartRadius=150.000000,MaxRadius=900.000000,Speed=800.000000,Thickness=150.000000,JumpClearance=40.000000)",
+      "skeleton": {
+        "object_path": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin"
+      },
+      "source_provenance": {
+        "asset_file_sha256": "30cdd6b0864ca3e23ddaf500bb7e31f2cc6942c5c18cf94147388cf885f4f8b3",
+        "dd27j_evidence_path": "Docs/BossCombatReview/Execution/Claude/F3a/full2_raw.log",
+        "dd27j_evidence_sha256": "39b2c7df37d2b332de4655211b3dfa5b5bba3373fcaa825d2cce9951cf478927"
+      },
+      "stagger_policy": "(StaggerSeconds=2.500000,FreezeAtPosition=1.550000,CriticalMultiplier=2.500000,RiposteRange=150.000000,RiposteConeDegrees=120.000000,RiposteFacingDegrees=120.000000,RiposteArmSeconds=1.200000,RipostePlayerStartGap=150.000000,RiposteAlignSeconds=0.300000,RiposteImpactSeconds=0.800000,RiposteBaseDamage=40.000000,CooldownSeconds=0.000000,GetUpRate=0.600000,bHoldPostureAtZero=True)",
+      "stagger_profile": "(bUseClips=False,bUseRiposteClips=False,bCriticalOnEveryHit=False,HitStunAbilityClassName=\"GA_Hero_HitStun_C\",FallMontage=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/KnockdownStart_Anim_Montage.KnockdownStart_Anim_Montage\",GetUpMontage=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/2handed/Knockdown_Getup_Anim_Montage.Knockdown_Getup_Anim_Montage\",FallClip=\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerFall.AN_Boss01_StaggerFall\",DownClip=\"/Game/OneBossFight/Boss01/Animations/AN_Boss01_StaggerDown.AN_Boss01_StaggerDown\",RipostePlayerClip=\"/Game/OneBossFight/Boss01/Animations/AN_Riposte_Player_Front.AN_Riposte_Player_Front\",RiposteBossClip=\"/Game/OneBossFight/Boss01/Animations/AN_Riposte_Boss_Reaction.AN_Riposte_Boss_Reaction\",ImmunityEffect=\"/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/GameplayEffects/GE_HitStunImmune.GE_HitStunImmune_C\")",
+      "stats": "(MaxHealth=800.000000,MaxPosture=60.000000,PostureRegenDelay=1.500000,PostureRegenRate=25.000000)"
+    }
+  },
+  "initial_boss_phase": "PhaseTwo",
+  "manifest_sha256": "051614e5e42be31694345948c63df1dcf134b4ac74af33bf17344be6839363a0",
+  "player_definition": "/Game/OneBossFight/Data/TypedABIFixtures/AuthoringPreview/BossDrafts/DA_Player_Hero_Draft_V3",
+  "provenance_mode": "saved-draft-package-v1",
+  "schema": "onebossfight.encounter-manifest/v1"
+}

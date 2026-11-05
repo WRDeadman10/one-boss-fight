@@ -53,6 +53,7 @@ public:
     bool ResetGeneration(uint64 Generation, TArray<FRPGBossMoveModelEvent>& Events, FString& Error);
     bool AcceptsCallback(const FRPGBossAttackToken& Token) const;
     ERPGBossMoveModelState State() const { return CurrentState; }
+    uint64 Generation() const { return Epoch; }
     double LocalSeconds() const { return LocalTime; }
     bool HeadingCommitted() const;
     const FRPGBossAttackToken& ActiveToken() const { return CurrentToken; }

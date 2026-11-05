@@ -142,6 +142,20 @@ All referenced asset paths—especially `catalog.icon_path` and soft asset refer
 | `attack_rows[].health_damage_multiplier` | Mandatory | Float | Damage multiplier applied to player base attack ($> 0.0$). | `[Weapon.Config.AttackDomain]` |
 | `attack_rows[].hyperarmor_start/end` | Mandatory | Float | Hyperarmor active window relative to attack ($[-1.0, -1.0]$ for none). | `[Weapon.Config.HyperArmor]` |
 
+`catalog.register` must be a JSON boolean. When true, the weapon definition, build definition, and root catalog paths are required; the two new definition packages must be distinct and must not already exist. The editor utility performs these collision and root-existence checks before it changes or saves attack-table rows.
+
+Before applying a registration, the Editor utility also loads the existing root entries and refuses duplicate weapon IDs, style names/aliases, build IDs, console names, or aliases; unresolved existing references fail closed. `CATALOG_READBACK_OK` proves only that the authored data and references read back in the Editor. The native `URPGCombatCatalogSubsystem` compile is a game-instance startup operation; `CATALOG_COMPILE_PENDING` is emitted after save, and acceptance still requires a fresh runtime startup/PIE with its catalog compile result.
+
+To capture an unchanged-pack prerequisite control for a config before/after an authoring run:
+
+```powershell
+python Docs/BossCombatReview/Execution/Codex/C3/capture_prerequisite_hashes.py `
+  Docs/BossCombatReview/Execution/Claude/C3/example_polearm_weapon_v1.json `
+  --output Docs/BossCombatReview/Execution/Codex/C3/fixtures/polearm_prerequisite_hashes.json
+```
+
+The manifest covers the referenced pack style/item/class/ability/icon packages. `DA_WeaponAttacks` and `DA_CombatCatalog` are intentionally excluded because registration edits them; definition paths must be absent before the run. Re-capture to a separate before/after file and compare the prerequisite `sha256` values.
+
 ---
 
 ## 3. Tool Command Lines
@@ -213,25 +227,17 @@ When `-RealBuild polearm` is passed:
 
 ---
 
-## 5. Restoring Repository State (Content Cleanliness)
+## 5. Recovery and run evidence
 
-Because authoring edits the shipped assets `DA_WeaponAttacks.uasset` and `DA_CombatCatalog.uasset`, testing temporary or proof weapons requires strict cleanup:
+The editor utility is fail-closed for config, destination, root, and identity collisions, and dry-run is its default. If an apply run stops after it starts writing, stop and preserve the current assets. Record the final `[NEWWEAPON_*]` log lines and the changed package list in `C3_RUNTIME_EVIDENCE_TEMPLATE.json`; do not rerun against partially created destinations.
 
-### 5.1 Reverting Shipped Assets
-Revert modifications to the shared combat assets using git checkout:
-```powershell
-git checkout Content/OneBossFight/Data/DA_WeaponAttacks.uasset Content/OneBossFight/Data/Catalog/DA_CombatCatalog.uasset
-```
+### 5.1 Lead recovery and accepted Polearm run (2026-11-04)
 
-### 5.2 Deleting Unreferenced Proof Assets
-Delete the temporary definition assets created during testing **only after** the catalog has been restored:
-```powershell
-Remove-Item "Content\OneBossFight\Data\Catalog\DA_Weapon_FengMaoPolearm.uasset" -Force
-Remove-Item "Content\OneBossFight\Data\Catalog\DA_Build_FengMaoPolearm.uasset" -Force
-```
+The first approved apply wrote six attack rows and then failed the weapon-definition SoftObjectPath readback (`runs_v2_lead/apply_FAIL_1_softpath_readback/editor_raw.log`, `[NEWWEAPON_FATAL]`). The Lead restored `DA_WeaponAttacks` byte-exact from `runs_v2_lead/apply_backup/DA_WeaponAttacks.uasset`, checked it against the recorded pre-apply hash, and fixed `reference_path()` to use the UE 5.5 SoftObjectPath `export_text()` representation. The retry used the same reviewed config; it completed row readback and catalog readback, and created the weapon/build definitions. Keep the failed attempt and its logs as recovery history; do not delete/recreate assets or use blanket source-control checkout to recover.
 
-> [!CAUTION]
-> As mandated by project policy in CLAUDE.md: "Never delete and recreate assets that other assets reference". If new weapon/build definition assets are deleted before `DA_CombatCatalog.uasset` is reverted, the catalog is left with broken unresolved references. Always run `git checkout` on the catalog first, and delete the unreferenced definition assets only afterwards.
+The successful retry's `[NEWWEAPON_END]` listed these four written packages: `/Game/OneBossFight/Data/DA_WeaponAttacks`, `/Game/OneBossFight/Data/Catalog/DA_Weapon_FengMaoPolearm`, `/Game/OneBossFight/Data/Catalog/DA_Build_FengMaoPolearm`, and `/Game/OneBossFight/Data/Catalog/DA_CombatCatalog`. `after_apply_sha256.txt` records their final hashes. A fresh PIE startup on `L_SevarogFrameworkProofF8` logged catalog epoch `DD7562184B4D2FB25100CA85184859A6` with `source=data`; the `polearm` build equipped as `PolearmCombatStyle`, attack-row lookup found the Light row with posture 16, and three real hits reduced boss health 250→150→50→0. This is accepted runtime evidence for the authoring flow. It does not establish a packaged build or hand-play balance acceptance.
+
+The evidence template is populated from `runs_v2_lead/`. Pack prerequisite before/after hashes were not captured in that run; the listed backup and final hash files cover the mutable registration assets, not the pack prerequisites.
 
 ---
 

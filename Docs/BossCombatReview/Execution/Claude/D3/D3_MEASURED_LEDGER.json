@@ -4,7 +4,7 @@
     "combat_zero_seconds": 105.0,
     "extraction_start_seconds": 105.0,
     "frame_naming_pattern": "morgott_c0_{frame:05d}.png",
-    "description": "Template measurement ledger for 9 Morgott combat clips. All measurement fields null until measured from video. Notes must record camera state per clip. Confidence must be high, medium, or low."
+    "description": "Measured ledger synchronized to the ten-row Morgott source template. Retain only measurements supported by owner footage and referenced evidence frames; notes record camera state per clip. Confidence is high, medium, or low."
   },
   "entries": [
     {
@@ -13,27 +13,34 @@
       "ref_to_original": "Move_EmberWarden_CurvedSlash_H1",
       "id_status": "proposed_new",
       "attack_family": "Curved sword 1-2-3 chain",
-      "t_W_orig": null,
-      "t_W_combat": null,
-      "t_C_orig": null,
-      "t_C_combat": null,
-      "t_A_orig": null,
-      "t_A_combat": null,
-      "t_E_orig": null,
-      "t_E_combat": null,
-      "t_R_orig": null,
-      "t_R_combat": null,
-      "t_RE_orig": null,
-      "t_RE_combat": null,
-      "W_frame": null,
-      "C_frame": null,
-      "A_frame": null,
-      "E_frame": null,
-      "R_frame": null,
-      "RE_frame": null,
-      "evidence_pngs": null,
-      "confidence": null,
-      "notes": null
+      "t_W_orig": 112.441,
+      "t_W_combat": 7.441,
+      "t_C_orig": 112.591,
+      "t_C_combat": 7.591,
+      "t_A_orig": 112.741,
+      "t_A_combat": 7.741,
+      "t_E_orig": 112.858,
+      "t_E_combat": 7.858,
+      "t_R_orig": 112.975,
+      "t_R_combat": 7.975,
+      "t_RE_orig": 113.325,
+      "t_RE_combat": 8.325,
+      "W_frame": 447,
+      "C_frame": 456,
+      "A_frame": 465,
+      "E_frame": 472,
+      "R_frame": 479,
+      "RE_frame": 500,
+      "evidence_pngs": [
+        "morgott_c0_00447.png",
+        "morgott_c0_00456.png",
+        "morgott_c0_00465.png",
+        "morgott_c0_00472.png",
+        "morgott_c0_00479.png",
+        "morgott_c0_00500.png"
+      ],
+      "confidence": "medium",
+      "notes": "camera: boss and player visible, boss foreground-to-mid distance; sampled frame-by-frame around 112.3-113.4 s. W=447 start of committed lateral sword windup; C=456 point after arm/sword trajectory is locked; A=465 first visible sweep at player space (collision/contact frame not provable); E=472 last visible sweep trail; R=479 return from low follow-through begins; RE=500 boss begins next actionable movement. Visual boundaries are approximate; observation from registered owner footage only."
     },
     {
       "priority": 2,
@@ -61,7 +68,7 @@
       "RE_frame": null,
       "evidence_pngs": null,
       "confidence": null,
-      "notes": null
+      "notes": "WITHDRAWN: the 116-118.8 s sample used in X-1191 appears to show a different attack and is not accepted as REF_DaggerFlurry_TapClose. Re-identify this clip from footage before measuring; first contact, maximum trigger distance, and audio cue are not established."
     },
     {
       "priority": 3,
@@ -89,7 +96,7 @@
       "RE_frame": null,
       "evidence_pngs": null,
       "confidence": null,
-      "notes": null
+      "notes": "WITHDRAWN after evidence-first review of the available 3840x2160, 59.9401 fps WebM. A full-combat sparse survey plus focused 2 fps review of 105.0-170.0 s did not identify a distinct spear throw followed by a charge with defensible W/C/A/E/R/RE boundaries. The 129-135 s Gemini-described candidate overlaps the already measured priority-9 mace clip. Keep timing/frame fields null; re-identify from a suitable source clip before measuring."
     },
     {
       "priority": 4,
@@ -117,7 +124,7 @@
       "RE_frame": null,
       "evidence_pngs": null,
       "confidence": null,
-      "notes": null
+      "notes": "WITHDRAWN after evidence-first review of the available 3840x2160, 59.9401 fps WebM. A full-combat sparse survey plus focused 2 fps review of 105.0-170.0 s did not identify a distinct hammer jump/spin finisher with defensible rotation, slam, and recovery boundaries. Keep timing/frame fields null; re-identify from a suitable source clip before measuring."
     },
     {
       "priority": 5,
@@ -145,7 +152,7 @@
       "RE_frame": null,
       "evidence_pngs": null,
       "confidence": null,
-      "notes": null
+      "notes": "WITHDRAWN after evidence-first review of the available 3840x2160, 59.9401 fps WebM. A full-combat sparse survey plus focused 2 fps review of 105.0-170.0 s did not identify a distinct rear-camped tail sweep or establish a baited response with defensible windup/active/recovery boundaries. Keep timing/frame fields null; re-identify from a suitable source clip before measuring."
     },
     {
       "priority": 6,

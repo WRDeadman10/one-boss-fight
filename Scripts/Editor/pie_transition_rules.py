@@ -451,7 +451,7 @@ def s14_reset_in_roar():
         yield from fresh()
         p = P()
         A0 = attr(p["boss"], "Attribute.Attack")
-        g0 = p["enc"].get_generation()
+        g0 = int(p["enc"].get_participant_generation_text())
         p["dbg"].debug_set_boss_health_fraction(0.55)
         yield from until(lambda: P()["ph"].is_in_transition(), 3.0)
         yield 0.5
@@ -461,7 +461,7 @@ def s14_reset_in_roar():
         a = attr(p["boss"], "Attribute.Attack")
         poise = p["post"].get_posture()
         ok = ((not p["ph"].is_in_transition()) and (not p["ph"].is_phase_two()) and abs(a - A0) < 0.6 and has_tag(p["boss"], "Status.HitStunImmune") is False and p["post"].get_hold_name() == "None" and poise >= 99.5
-              and p["enc"].get_generation() == g0 + 1 and p["enc"].is_dormant())
+              and int(p["enc"].get_participant_generation_text()) == g0 + 1 and p["enc"].is_dormant())
         c = p["ph"].get_phase_two_count()
         p["enc"].wake()
         p["enc"].hold_for_test(True)
@@ -612,6 +612,9 @@ def _tick(dt):
     s["now"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0)
         return

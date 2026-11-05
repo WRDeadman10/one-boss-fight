@@ -6,6 +6,7 @@ A six lights (100 - 18 k, the sixth breaks), hits during the break are held and 
 C three jump heavies (62, 24, then the break); D regeneration after a real hit: nothing for 6 s, then 13 per second.
 """
 import math
+import os
 import unreal
 
 log = lambda m: unreal.log("[Posture] " + m)
@@ -280,6 +281,9 @@ def _tick(dt):
     s["now"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0)
         return

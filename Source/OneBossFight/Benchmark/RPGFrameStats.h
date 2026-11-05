@@ -28,7 +28,7 @@ struct ONEBOSSFIGHT_API FRPGFrameStats
 	double BudgetMs = 1000.0 / 120.0;
 
 	/** Frame budget in ms for a target frame rate. */
-	static double BudgetForFPS(double TargetFPS) { return 1000.0 / TargetFPS; }
+	static double BudgetForFPS(double TargetFPS) { return FMath::IsFinite(TargetFPS) && TargetFPS > 0.0 ? 1000.0 / TargetFPS : 0.0; }
 
 	/** Computes statistics from per-frame times in milliseconds. Empty input yields zeros. */
 	static FRPGFrameStats Compute(const TArray<double>& FrameTimesMs, double InBudgetMs = 1000.0 / 120.0);

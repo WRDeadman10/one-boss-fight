@@ -13,7 +13,15 @@
 #include "Player/RPGBossCloseClipSwap.h"
 #include "Player/RPGBossCloseClipSwapAdapters.h"
 #include "Player/RPGBossDeath.h"
+#include "Player/RPGAttackTracker.h"
+#include "Audio/RPGFootsteps.h"
+#include "Audio/RPGBossMusic.h"
+#include "Player/RPGTraceGuard.h"
+#include "UI/RPGBossHud.h"
+#include "Player/RPGLegend.h"   // lead fix (C-844): URPGBossLegend is declared in RPGLegend.h
+#include "Player/RPGDamageResolver.h"
 #include "Player/RPGBossDeathAdapters.h"
+#include "Player/RPGBossAttackTrackerAdapters.h"
 #include "Misc/AutomationTest.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -37,7 +45,7 @@
 #include "Player/RPGBossStatsAdapters.h"
 #include "UObject/StrongObjectPtr.h"
 
-// These tests prove the unregistered batch preparation primitive on real isolated UE objects (a headless game world, plain native actors, the accepted synthetic config shape): the success shape (twenty-four real owned
+// These tests prove the unregistered batch preparation primitive on real isolated UE objects (a headless game world, plain native actors, the accepted synthetic config shape): the success shape (the count from real owned
 // components, unregistered, never begun), whole-batch rejection before any allocation, explicit and scope-exit abort, exclusivity of the owned components, cleanup after an INJECTED failure after real allocations and
 // configures (a dev-automation-only ordinal, never an organically reproduced native failure), and the lifetime branches (a component destroyed first, an actor destroyed first, the world torn down first, a component
 // registered by someone else, the off-thread refusals).
@@ -51,6 +59,23 @@ namespace PreparationTests
 {
 	using FEpochPtr = TSharedPtr<const RPGCombatRegistry::FEpoch>;
 	using FConfigPtr = TSharedPtr<const FRPGParticipantConfig>;
+	int32 BossPlanCount(const FRPGPreparedBatch& Batch)
+	{
+		const TSharedPtr<const FRPGHydrationPreflightPlan> Plan = Batch.GetPreflightPlan();
+		if (!Plan.IsValid()) { return 0; }
+		const FRPGPreflightParticipantPlan* Boss = Plan->Participants.FindByPredicate([](const FRPGPreflightParticipantPlan& P)
+			{ return P.Role == ERPGPreflightRole::BossCore; });
+		return Boss ? Boss->Plans.Num() : 0;
+	}
+	int32 TotalBossPlanCount(const FRPGPreparedBatch& Batch)
+	{
+		const TSharedPtr<const FRPGHydrationPreflightPlan> Plan = Batch.GetPreflightPlan();
+		if (!Plan.IsValid()) { return 0; }
+		int32 Total = 0;
+		for (const FRPGPreflightParticipantPlan& P : Plan->Participants)
+			if (P.Role == ERPGPreflightRole::BossCore) { Total += P.Plans.Num(); }
+		return Total;
+	}
 
 	const FName PhaseTwo(TEXT("PhaseTwo"));
 	const FName PhaseAlt(TEXT("PhaseAlt"));
@@ -90,7 +115,7 @@ namespace PreparationTests
 		AActor* SpawnActor() const { return World ? World->SpawnActor<AActor>() : nullptr; }
 	};
 
-	/** The manifest paths the twelve boss-core plans read for a selected phase id (the union of the twelve accepted factories). DD13 holds the independent literal list; this file does not test membership, it only needs a manifest the preflight accepts. */
+	/** The manifest paths the boss-core plan factories read for a selected phase id (the union of the accepted factories). This file only needs a manifest the preflight accepts. */
 	TArray<FString> RequiredPaths(FName PhaseId)
 	{
 		TArray<FRPGComponentPlan> Plans;
@@ -106,6 +131,7 @@ namespace PreparationTests
 		Plans.Add(RPGBossLookAdapters::MakeLookPlan());
 		Plans.Add(RPGBossCloseClipSwapAdapters::MakeCloseClipSwapPlan());
 		Plans.Add(RPGBossDeathAdapters::MakeDeathPlan());
+		Plans.Add(RPGBossAttackTrackerAdapters::MakeAttackTrackerPlan());
 		TArray<FString> Paths;
 		for (const FRPGComponentPlan& ComponentPlan : Plans)
 		{
@@ -307,12 +333,13 @@ namespace PreparationTests
 		const TCHAR* Name;
 	};
 
-	/** The twelve accepted native consumers with the reviewed instance names, written out independently of the preflight. */
+	/** The accepted native consumers with the reviewed instance names, written out independently of the preflight. */
 	TArray<FExpectedComponent> ExpectedComponents()
 	{
 		return TArray<FExpectedComponent>{{URPGBossStagger::StaticClass(), TEXT("RPGBossStagger")}, {URPGBossPhases::StaticClass(), TEXT("RPGBossPhases")}, {URPGBossEncounter::StaticClass(), TEXT("RPGBossEncounter")},
 			{URPGBossDormantWake::StaticClass(), TEXT("RPGBossDormantWake")}, {URPGBossPosture::StaticClass(), TEXT("RPGBossPosture")},
-			{URPGBossBleed::StaticClass(), TEXT("RPGBossBleed")} , {URPGBossLowSweep::StaticClass(), TEXT("RPGBossLowSweep")} , {URPGBossShockwave::StaticClass(), TEXT("RPGBossShockwave")} , {URPGBossHealPunish::StaticClass(), TEXT("RPGBossHealPunish")} , {URPGBossLook::StaticClass(), TEXT("RPGBossLook")} , {URPGBossCloseClipSwap::StaticClass(), TEXT("RPGBossCloseClipSwap")} , {URPGBossDeath::StaticClass(), TEXT("RPGBossDeath")}};
+			{URPGBossBleed::StaticClass(), TEXT("RPGBossBleed")} , {URPGBossLowSweep::StaticClass(), TEXT("RPGBossLowSweep")} , {URPGBossShockwave::StaticClass(), TEXT("RPGBossShockwave")} , {URPGBossHealPunish::StaticClass(), TEXT("RPGBossHealPunish")} , {URPGBossLook::StaticClass(), TEXT("RPGBossLook")} , {URPGBossCloseClipSwap::StaticClass(), TEXT("RPGBossCloseClipSwap")} , {URPGBossDeath::StaticClass(), TEXT("RPGBossDeath")}, {URPGAttackTracker::StaticClass(), TEXT("RPGAttackTracker")},
+			{URPGFootsteps::StaticClass(), TEXT("RPGFootsteps")}, {URPGBossMusic::StaticClass(), TEXT("RPGBossMusic")}, {URPGTraceGuard::StaticClass(), TEXT("RPGTraceGuard")}, {URPGBossHud::StaticClass(), TEXT("RPGBossHud")}, {URPGBossLegend::StaticClass(), TEXT("RPGBossLegend")}, {URPGDamageResolver::StaticClass(), TEXT("RPGDamageResolver")}};
 	}
 
 	bool NoManagedConsumer(const AActor* Actor)
@@ -343,16 +370,18 @@ namespace PreparationTests
 		return Errors.ContainsByPredicate([Token, SlotText](const FString& E) { return E.StartsWith(Token) && E.Contains(SlotText); });
 	}
 
-	/** The exact success shape: twenty-four owned real components (twelve per boss-core actor, classes, names, owners, configured representative fields), unregistered, never begun, never ticking, nothing for the target, no participant,
+	/** The exact success shape: owned real components (one per validated BossCore plan per boss actor, classes, names, owners, configured representative fields), unregistered, never begun, never ticking, nothing for the target, no participant,
 	 *  no bound or ready context, the unrelated components untouched, the artifact's read-only summary and the retained plan identities. */
 	bool ExpectPrepared(FAutomationTestBase& Test, const FFixture& F, const FRPGPreparedBatch& Batch, const FWorldState& Before)
 	{
 		bool bOk = true;
 		bOk &= Test.TestTrue(TEXT("the artifact reports prepared"), Batch.IsPrepared());
-		bOk &= Test.TestEqual(TEXT("twenty-four components are leased"), Batch.GetOwnedComponentCount(), 24);
+		const int32 TotalBossComponents = TotalBossPlanCount(Batch);
+		const int32 ComponentsPerBoss = BossPlanCount(Batch);
+		bOk &= Test.TestEqual(TEXT("components are leased according to the validated boss plans"), Batch.GetOwnedComponentCount(), TotalBossComponents);
 		const TArray<const UActorComponent*> OwnedList = Batch.OwnedComponentsForTest();
 		const TSet<const UActorComponent*> OwnedSet(OwnedList);
-		bOk &= Test.TestTrue(TEXT("twenty-four distinct owned component pointers"), OwnedList.Num() == 24 && OwnedSet.Num() == 24);
+		bOk &= Test.TestTrue(TEXT("distinct owned component pointers match the validated plans"), OwnedList.Num() == TotalBossComponents && OwnedSet.Num() == TotalBossComponents);
 
 		struct FBossCase
 		{
@@ -381,12 +410,12 @@ namespace PreparationTests
 			}
 			const FActorState Now = CaptureActor(Case.Actor);
 			const FActorState& Prior = Before.Actors[Case.Index];
-			bool bPriorKept = Now.Components.Num() == Prior.Components.Num() + 12 && !Now.bBegun;
+			bool bPriorKept = Now.Components.Num() == Prior.Components.Num() + ComponentsPerBoss && !Now.bBegun;
 			for (const UActorComponent* PriorComponent : Prior.Components)
 			{
 				bPriorKept = bPriorKept && Now.Components.Contains(PriorComponent) && !OwnedSet.Contains(PriorComponent);
 			}
-			bOk &= Test.TestTrue(FString::Printf(TEXT("%s: exactly twelve components were added and every unrelated component is still there"), *Label), bPriorKept);
+			bOk &= Test.TestTrue(FString::Printf(TEXT("%s: exactly %d planned components were added and every unrelated component is still there"), *Label, ComponentsPerBoss), bPriorKept);
 			bOk &= Test.TestFalse(FString::Printf(TEXT("%s has no participant component"), *Label), Case.Actor->FindComponentByClass<URPGCombatParticipant>() != nullptr);
 
 			// Representative configured fields: the typed records of this member's own config, never the other boss's.
@@ -406,8 +435,8 @@ namespace PreparationTests
 		if (Test.TestEqual(TEXT("three participant summaries in the request order"), Infos.Num(), 3))
 		{
 			bOk &= Test.TestTrue(TEXT("summary: slots, targets, roles, explicit phase ids and owned counts"),
-				Infos[0].Slot == FName(TEXT("Boss1")) && Infos[0].TargetSlot == FName(TEXT("Player")) && Infos[0].Role == ERPGPreflightRole::BossCore && Infos[0].SelectedPhaseId == PhaseTwo && Infos[0].OwnedComponentCount == 12
-				&& Infos[1].Slot == FName(TEXT("Boss2")) && Infos[1].TargetSlot == FName(TEXT("Player")) && Infos[1].Role == ERPGPreflightRole::BossCore && Infos[1].SelectedPhaseId == PhaseAlt && Infos[1].OwnedComponentCount == 12
+				Infos[0].Slot == FName(TEXT("Boss1")) && Infos[0].TargetSlot == FName(TEXT("Player")) && Infos[0].Role == ERPGPreflightRole::BossCore && Infos[0].SelectedPhaseId == PhaseTwo && Infos[0].OwnedComponentCount == ComponentsPerBoss
+				&& Infos[1].Slot == FName(TEXT("Boss2")) && Infos[1].TargetSlot == FName(TEXT("Player")) && Infos[1].Role == ERPGPreflightRole::BossCore && Infos[1].SelectedPhaseId == PhaseAlt && Infos[1].OwnedComponentCount == ComponentsPerBoss
 				&& Infos[2].Slot == FName(TEXT("Player")) && Infos[2].TargetSlot == FName(TEXT("Boss1")) && Infos[2].Role == ERPGPreflightRole::TargetOnly && Infos[2].SelectedPhaseId.IsNone() && Infos[2].OwnedComponentCount == 0);
 		}
 		const TSharedPtr<const FRPGHydrationPreflightPlan> Plan = Batch.GetPreflightPlan();
@@ -432,7 +461,7 @@ namespace PreparationTests
 	}
 
 	/** Every earlier owned component is destroyed: no longer valid, and (the garbage object may still exist until collection) unregistered, not begun and flagged as destroyed. */
-	bool ExpectAllDestroyed(FAutomationTestBase& Test, const TArray<TWeakObjectPtr<UActorComponent>>& Weak, const TCHAR* Label)
+	bool ExpectAllDestroyed(FAutomationTestBase& Test, const TArray<TWeakObjectPtr<UActorComponent>>& Weak, int32 ExpectedCount, const TCHAR* Label)
 	{
 		bool bGone = true;
 		bool bCleanState = true;
@@ -444,7 +473,7 @@ namespace PreparationTests
 				bCleanState = bCleanState && !Garbage->IsRegistered() && !Garbage->HasBegunPlay() && Garbage->IsBeingDestroyed();
 			}
 		}
-		bool bOk = Test.TestTrue(FString::Printf(TEXT("%s: every owned component is destroyed (none resolves any more)"), Label), Weak.Num() == 24 && bGone);
+		bool bOk = Test.TestTrue(FString::Printf(TEXT("%s: every owned component is destroyed (none resolves any more)"), Label), Weak.Num() == ExpectedCount && bGone);   // lead fix: the plan count is passed in (no batch in this helper's scope)
 		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: any destroyed object still awaiting collection is unregistered, not begun and marked destroyed"), Label), bCleanState);
 		return bOk;
 	}
@@ -470,11 +499,11 @@ bool FRPGPreparationSuccessTest::RunTest(const FString& Parameters)
 	}
 	ExpectPrepared(*this, F, *Result.Batch, Before);
 
-	// A second look: the world state is exactly the state before plus the twenty-four components and nothing else; the abort returns every actor to its prior state.
+	// A second look: the world state is exactly the state before plus the validated plan components and nothing else; the abort returns every actor to its prior state.
 	const FRPGPreparationAbortReport Report = Result.Batch->Abort();
-	TestTrue(TEXT("the abort destroyed twenty-four components and found nothing else"), Report.Destroyed == 24 && Report.AlreadyGone == 0 && Report.ContractViolations == 0 && Report.IsClean());
+	TestTrue(TEXT("the abort destroyed every validated-plan component and found nothing else"), Report.Destroyed == TotalBossPlanCount(*Result.Batch) && Report.AlreadyGone == 0 && Report.ContractViolations == 0 && Report.IsClean());
 	TestTrue(TEXT("after the abort every actor is exactly as before"), SameWorld(F.Capture(), Before));
-	AddInfo(TEXT("The prepared subset is twelve owned, unregistered, never begun components per boss-core actor; nothing registers, binds, reserves or activates them, and it is not a complete playable boss."));
+	AddInfo(TEXT("The prepared subset contains one owned, unregistered, never-begun component per validated boss-core plan; nothing registers, binds, reserves or activates them, and it is not a complete playable boss."));
 	return true;
 }
 
@@ -498,18 +527,19 @@ bool FRPGPreparationAbortTest::RunTest(const FString& Parameters)
 		}
 		const TArray<TWeakObjectPtr<UActorComponent>> Weak = WeakOwned(*Result.Batch);
 		const FRPGPreparationAbortReport First = Result.Batch->Abort();
-		TestTrue(TEXT("explicit abort: twenty-four destroyed, none already gone, no violation, clean"), First.Destroyed == 24 && First.AlreadyGone == 0 && First.ContractViolations == 0 && First.IsClean() && !First.bRefused);
+		TestTrue(TEXT("explicit abort: every planned component destroyed, none already gone, no violation, clean"), First.Destroyed == TotalBossPlanCount(*Result.Batch) && First.AlreadyGone == 0 && First.ContractViolations == 0 && First.IsClean() && !First.bRefused);
 		TestFalse(TEXT("the artifact is no longer prepared"), Result.Batch->IsPrepared());
 		TestEqual(TEXT("every lease is released"), Result.Batch->GetOwnedComponentCount(), 0);
 		TestTrue(TEXT("the summary reports no owned component"), Result.Batch->GetParticipants().Num() == 3 && Result.Batch->GetParticipants()[0].OwnedComponentCount == 0);
 		TestTrue(TEXT("every actor is exactly as before: the unrelated components and the public state restored"), SameWorld(F.Capture(), Before));
-		ExpectAllDestroyed(*this, Weak, TEXT("explicit abort"));
+		ExpectAllDestroyed(*this, Weak, TotalBossPlanCount(*Result.Batch), TEXT("explicit abort"));
 		const FRPGPreparationAbortReport Second = Result.Batch->Abort();
 		TestTrue(TEXT("a repeated abort is harmless: nothing destroyed, nothing reported"), Second.Destroyed == 0 && Second.AlreadyGone == 0 && Second.ContractViolations == 0 && Second.IsClean());
 		TestTrue(TEXT("the repeated abort changed nothing"), SameWorld(F.Capture(), Before));
 	}
 	// Scope-exit abort: the artifact goes out of scope without an explicit Abort.
 	TArray<TWeakObjectPtr<UActorComponent>> ScopeWeak;
+	int32 ScopeExpected = 0;
 	{
 		FRPGPreparationResult Result = RPGBossHydrationPreparation::PrepareBatch(F.Input);
 		if (!TestTrue(TEXT("preparation succeeds again after the first artifact was aborted"), Result.Succeeded()))
@@ -518,9 +548,10 @@ bool FRPGPreparationAbortTest::RunTest(const FString& Parameters)
 		}
 		TestTrue(TEXT("the second generation is a full, correct preparation too"), ExpectPrepared(*this, F, *Result.Batch, Before));
 		ScopeWeak = WeakOwned(*Result.Batch);
+		ScopeExpected = TotalBossPlanCount(*Result.Batch);
 	}
 	TestTrue(TEXT("scope exit restored every actor to its prior state"), SameWorld(F.Capture(), Before));
-	ExpectAllDestroyed(*this, ScopeWeak, TEXT("scope-exit abort"));
+	ExpectAllDestroyed(*this, ScopeWeak, ScopeExpected, TEXT("scope-exit abort"));
 	ScopeWeak.Reset();
 
 	// Release the result: a destroyed, never-moved result owns nothing and nothing in the world moved.
@@ -557,13 +588,13 @@ bool FRPGPreparationExclusiveTest::RunTest(const FString& Parameters)
 	TestFalse(TEXT("the second preparation fails"), Second.Succeeded());
 	TestFalse(TEXT("and returns no artifact"), Second.Batch.IsValid());
 	TestTrue(TEXT("named by the preflight for both boss-core members"), AnyErrorHas(Second.Errors, TEXT("Preflight.PreexistingConsumer"), TEXT("slot=Boss1")) && AnyErrorHas(Second.Errors, TEXT("Preflight.PreexistingConsumer"), TEXT("slot=Boss2")));
-	TestTrue(TEXT("the first artifact is intact: prepared, the same twenty-four components, still unregistered and not begun"), First.Batch->IsPrepared() && First.Batch->GetOwnedComponentCount() == 24 && First.Batch->OwnedComponentsForTest() == Snapshot);
+	TestTrue(TEXT("the first artifact is intact: prepared, same plan-derived components, still unregistered and not begun"), First.Batch->IsPrepared() && First.Batch->GetOwnedComponentCount() == TotalBossPlanCount(*First.Batch) && First.Batch->OwnedComponentsForTest() == Snapshot);
 	TestTrue(TEXT("no actor, component or context state changed by the refused attempt"), SameWorld(F.Capture(), AfterFirst));
 	TestTrue(TEXT("the first artifact still has the exact success shape"), ExpectPrepared(*this, F, *First.Batch, Before));
 
 	// Only after the first has aborted does a preparation succeed again.
 	const FRPGPreparationAbortReport Report = First.Batch->Abort();
-	TestTrue(TEXT("the first artifact aborts cleanly"), Report.Destroyed == 24 && Report.IsClean());
+	TestTrue(TEXT("the first artifact aborts cleanly"), Report.Destroyed == TotalBossPlanCount(*First.Batch) && Report.IsClean());
 	FRPGPreparationResult Third = RPGBossHydrationPreparation::PrepareBatch(F.Input);
 	TestTrue(TEXT("a preparation succeeds again after the abort"), Third.Succeeded());
 	if (Third.Batch.IsValid())
@@ -635,9 +666,23 @@ bool FRPGPreparationFaultTest::RunTest(const FString& Parameters)
 	}
 	const FWorldState Before = F.Capture();
 
-	// The steps are counted from 1: allocations 1 to 12 are the first boss, 13 to 24 the second boss, configures 25 to 36 the first boss, 37 to 48 the second boss. The failure is injected right AFTER the step: a real
+	const TSharedPtr<const FRPGHydrationPreflightPlan> CompiledPlan = [&F, this]()
+	{
+		TSharedPtr<const FRPGHydrationPreflightPlan> Plan;
+		const FRPGHydrationResult Result = RPGBossHydrationPreflight::CompilePreflight(F.Input, Plan);
+		TestTrue(TEXT("fixture preflight exposes the plans used to derive injected ordinals"), Result.IsReady() && Plan.IsValid());
+		return Plan;
+	}();
+	if (!CompiledPlan.IsValid()) { return false; }
+	const int32 PlansPerBoss = CompiledPlan->Participants[0].Plans.Num();
+	const int32 TotalAllocations = CompiledPlan->Participants[0].Plans.Num() + CompiledPlan->Participants[1].Plans.Num();
+	const int32 TotalSteps = TotalAllocations * 2;
+	// Steps are derived from the validated plan: allocate each BossCore participant in order, then configure each in order. Failure is injected AFTER a real step.
 	// allocation or a real configure had completed.
-	const int32 Ordinals[] = {1, 6, 12, 13, 18, 24, 25, 30, 36, 37, 42, 48};
+	const int32 Midpoint = FMath::Max(1, PlansPerBoss / 2);
+	const int32 Ordinals[] = {1, Midpoint, PlansPerBoss, PlansPerBoss + 1, PlansPerBoss + Midpoint, TotalAllocations,
+		TotalAllocations + 1, TotalAllocations + Midpoint, TotalAllocations + PlansPerBoss, TotalAllocations + PlansPerBoss + 1,
+		TotalAllocations + PlansPerBoss + Midpoint, TotalSteps};
 	for (const int32 Ordinal : Ordinals)
 	{
 		const FString Label = FString::Printf(TEXT("fault after step %d"), Ordinal);
@@ -660,9 +705,9 @@ bool FRPGPreparationFaultTest::RunTest(const FString& Parameters)
 		}
 		TestTrue(FString::Printf(TEXT("%s: and abort back to the prior state"), *Label), SameWorld(F.Capture(), Before));
 	}
-	// The control: an ordinal beyond the forty-eight real steps never fires and the preparation succeeds.
+	// The control: an ordinal beyond the plan-derived real steps never fires and the preparation succeeds.
 	{
-		RPGBossHydrationPreparation::FFaultInjectionScope Fault(49);
+		RPGBossHydrationPreparation::FFaultInjectionScope Fault(TotalSteps + 1);
 		FRPGPreparationResult Result = RPGBossHydrationPreparation::PrepareBatch(F.Input);
 		TestTrue(TEXT("control: an ordinal past the last step does not fire and the preparation succeeds"), !Fault.Fired() && Result.Succeeded());
 		if (Result.Batch.IsValid())
@@ -698,7 +743,7 @@ bool FRPGPreparationLifetimeTest::RunTest(const FString& Parameters)
 			Posture->DestroyComponent();
 		}
 		const FRPGPreparationAbortReport Report = Result.Batch->Abort();
-		TestTrue(TEXT("component destroyed first: twenty-three destroyed by the abort, one already gone, no violation, clean"), Report.Destroyed == 23 && Report.AlreadyGone == 1 && Report.ContractViolations == 0 && Report.IsClean());
+		TestTrue(TEXT("component destroyed first: all other planned components destroyed, one already gone"), Report.Destroyed + 1 == TotalBossPlanCount(*Result.Batch) && Report.AlreadyGone == 1 && Report.ContractViolations == 0 && Report.IsClean());
 		TestTrue(TEXT("every actor is back to its prior state"), SameWorld(F.Capture(), Before));
 	}
 	// 2. An owner actor destroyed before the abort: its components are released without being dereferenced as live objects; the other member is cleaned.
@@ -717,7 +762,8 @@ bool FRPGPreparationLifetimeTest::RunTest(const FString& Parameters)
 		}
 		F.Boss2->Destroy();
 		const FRPGPreparationAbortReport Report = Result.Batch->Abort();
-		TestTrue(TEXT("owner destroyed first: the first boss's twelve are destroyed, the destroyed owner's twelve are already gone, no violation"), Report.Destroyed == 12 && Report.AlreadyGone == 12 && Report.ContractViolations == 0 && Report.IsClean());
+		const int32 ComponentsPerBoss = BossPlanCount(*Result.Batch);
+		TestTrue(TEXT("owner destroyed first: each boss plan is destroyed or already gone"), Report.Destroyed == ComponentsPerBoss && Report.AlreadyGone == ComponentsPerBoss && Report.ContractViolations == 0 && Report.IsClean());
 		TestTrue(TEXT("the surviving actors are exactly as before"), SameActor(CaptureActor(F.Boss1), Boss1Before) && SameActor(CaptureActor(F.Player), PlayerBefore));
 	}
 	// 3. The whole world torn down before the abort (DestroyWorld does not itself mark the actors or components as garbage, so the abort may find them still valid): no crash and every owned component is accounted for,
@@ -735,7 +781,8 @@ bool FRPGPreparationLifetimeTest::RunTest(const FString& Parameters)
 		}
 		F.Reset(); // the world, its actors and the fixture are gone; the artifact still holds its leases
 		const FRPGPreparationAbortReport Report = Result.Batch->Abort();
-		TestTrue(TEXT("world torn down first: every owned component is accounted for and nothing is reported as a registration violation"), Report.Destroyed + Report.AlreadyGone == 24 && Report.ContractViolations == 0 && Report.IsClean());
+		const int32 ExpectedOwned = TotalBossPlanCount(*Result.Batch);
+		TestTrue(TEXT("world torn down first: every owned component is accounted for and nothing is reported as a registration violation"), Report.Destroyed + Report.AlreadyGone == ExpectedOwned && Report.ContractViolations == 0 && Report.IsClean());
 		AddInfo(FString::Printf(TEXT("world torn down first: the abort destroyed %d and found %d already gone"), Report.Destroyed, Report.AlreadyGone));
 		TestFalse(TEXT("the artifact is no longer prepared"), Result.Batch->IsPrepared());
 	}
@@ -766,7 +813,7 @@ bool FRPGPreparationLifetimeTest::RunTest(const FString& Parameters)
 			return false;
 		}
 		const FRPGPreparationAbortReport Report = Result.Batch->Abort();
-		TestTrue(TEXT("registered by somebody else: twenty-three destroyed, one contract violation, not clean"), Report.Destroyed == 23 && Report.ContractViolations == 1 && !Report.IsClean() && AnyErrorStartsWith(Report.Errors, TEXT("Preparation.ContractViolation")) && AnyErrorContains(Report.Errors, TEXT("RPGBossEncounter")));
+		TestTrue(TEXT("registered by somebody else: all but the external registration are destroyed"), Report.Destroyed + 1 == TotalBossPlanCount(*Result.Batch) && Report.ContractViolations == 1 && !Report.IsClean() && AnyErrorStartsWith(Report.Errors, TEXT("Preparation.ContractViolation")) && AnyErrorContains(Report.Errors, TEXT("RPGBossEncounter")));
 		TestTrue(TEXT("the registered component was left in place and is still registered (no rollback was pretended)"), IsValid(Encounter) && Encounter->IsRegistered() && Encounter->GetOwner() == F.Boss1);
 		Encounter->DestroyComponent(); // the test, which registered it, undoes it
 		TestTrue(TEXT("after the test removed its own registered component every actor is back to its prior state"), SameWorld(F.Capture(), Before));
@@ -797,9 +844,9 @@ bool FRPGPreparationLifetimeTest::RunTest(const FString& Parameters)
 		TFuture<FRPGPreparationAbortReport> AbortFuture = Async(EAsyncExecution::ThreadPool, [Raw]() { return Raw->Abort(); });
 		const FRPGPreparationAbortReport Refused = AbortFuture.Get();
 		TestTrue(TEXT("an abort on a worker thread is refused by name and destroys nothing"), Refused.bRefused && Refused.Destroyed == 0 && AnyErrorStartsWith(Refused.Errors, TEXT("Preparation.NotGameThread")));
-		TestTrue(TEXT("the artifact is still prepared with its twenty-four components after the refused abort"), Result.Batch->IsPrepared() && Result.Batch->GetOwnedComponentCount() == 24);
+		TestTrue(TEXT("the artifact is still prepared with its plan-derived components after the refused abort"), Result.Batch->IsPrepared() && Result.Batch->GetOwnedComponentCount() == TotalBossPlanCount(*Result.Batch));
 		const FRPGPreparationAbortReport Report = Result.Batch->Abort();
-		TestTrue(TEXT("the game-thread abort then succeeds"), Report.Destroyed == 24 && Report.IsClean());
+		TestTrue(TEXT("the game-thread abort then succeeds"), Report.Destroyed == TotalBossPlanCount(*Result.Batch) && Report.IsClean());
 		TestTrue(TEXT("final state is the state before"), SameWorld(F.Capture(), Before));
 	}
 	AddInfo(TEXT("Not exercised: destroying the artifact itself on a worker thread (it would be a flagged contract violation and cannot be exercised safely), and a component the engine collected during preparation (no collection is forced)."));

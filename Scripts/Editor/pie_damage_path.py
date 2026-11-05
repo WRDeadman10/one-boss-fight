@@ -5,6 +5,7 @@ R4 an old encounter generation is stale; R5 a dead player takes nothing; R6 a le
 Not built from the spec (still open, TASKS G1-5): the i-frame monitor and the fixed frame rate measurement of the dodge windows (D12, D13), guard and hit reaction.
 """
 import math
+import os
 import unreal
 
 log = lambda m: unreal.log("[Dmg] " + m)
@@ -175,7 +176,7 @@ def r4_stale():
     for k in range(5):
         p = P()
         p["dbg"].debug_refill_player()
-        old = p["enc"].get_generation()
+        old = int(p["enc"].get_participant_generation_text())
         p["enc"].reset_for_test()
         yield 0.8
         p = P()
@@ -358,6 +359,9 @@ def _tick(dt):
     s["now"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0)
         return
@@ -380,8 +384,9 @@ def tick(dt):
         _tick(dt)
     except Exception:
         import traceback
-        log("tick error " + traceback.format_exc())
-        check("tick raised", False)
+        detail = traceback.format_exc()
+        log("tick error " + detail)
+        check("tick raised", False, detail)
         finish()
 
 

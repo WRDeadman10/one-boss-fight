@@ -1,0 +1,22 @@
+# Parry feedback event fan-out audit (Queue D25)
+
+Scope: static trace of a resolver `Parried` result through player state, boss response, logs/UI, and the other known resolver callers. No source/test changes; no tests/build/Editor/PIE run.
+
+## Dispatch sequence
+
+1. `URPGDamageResolver::Resolve` returns `Failed` immediately for disabled resolver, null target, or missing world, before any parry notification (`Source/OneBossFight/Player/RPGDamageResolver.cpp:133-140`). It reads target/attacker liveness, generation, spent-key and invulnerability state, then checks the parry window only if prior gates pass (`:141-154`).
+2. On `Parried`, the resolver spends the swing key first, synchronously calls `URPGPlayerParry::NotifyParried(Target)`, assigns the reason, then records the outcome and returns (`:181-190`). Thus later windows from that swing are rejected before another notification (`:149-154`, `:181-183`).
+3. `NotifyParried` null-checks the actor and component, stores the current grade, and sets the pending stamina-refund flag only when a charged press is still pending (`Source/OneBossFight/Player/RPGPlayerParry.cpp:138-145`). It does not broadcast a delegate or invoke animation, sound, or UI. `LastGradeName` exposes the stored grade for the overlay (`:121-129`); the boss overlay polls that value when enabled (`Source/OneBossFight/Boss/RPGFrameworkBossCharacter.cpp:734-752`).
+4. A framework move-executor contact then independently calls `RecordParriedContact` after `Resolve` returns. That helper sends grade-scaled posture/recovery to the boss through `NoteParried` and logs a grade token (`Source/OneBossFight/Boss/RPGFrameworkMoveExecutor.cpp:35-45,282-295,405-416`). The resolver's player-side update therefore precedes the executor's boss-side update. Javelin, low-sweep, and shockwave also call the resolver; their caller branches count/log/finish the parried outcome (`Source/OneBossFight/Player/RPGBossJavelin.cpp:145-158`, `RPGBossLowSweep.cpp:127-139`, `RPGBossShockwave.cpp:113-123`). They do not call the framework boss `NoteParried` helper.
+5. Charged stamina resolution is deferred until the parry window closes: the component Tick clears its owned tag, then calls `FinishStaminaCost` (`Source/OneBossFight/Player/RPGPlayerParry.cpp:30-42`). Failed refund/rollback writes retry on later ticks, with bounded EndPlay retries (`:147-185`). This is not a separate presentation event.
+
+## Fan-out and failure boundaries
+
+- There is one direct `NotifyParried` call site in maintained Source (`RPGDamageResolver.cpp:183`) and no parry-specific multicast/delegate or subscriber registration. The `URPGPlayerParry` input binding is guarded by `bBound` after a successful `BindAction` (`RPGPlayerParry.cpp:49-61`); this audit does not establish behavior if the pawn's input component is later replaced.
+- Duplicate contact fan-out for a spent swing is blocked by the resolver's key check before notification. The resolver records one outcome after the branch. The executor may independently update aggregate counts and emit its own contact/grade/reaction logs; those are distinct observers of the same outcome, not subscriptions to a shared event.
+- A null actor or absent parry component is a no-op in `NotifyParried`; a null target is rejected before that call. Boss response is guarded by a valid weak owner at the executor call sites; `RecordParriedContact` also tolerates missing player/profile/boss pointers (`RPGFrameworkMoveExecutor.cpp:35-45`).
+- The overlay reads `LastGradeName` on tick rather than receiving a push event, so stale grade display lifetime is governed by state retention, not an event unsubscribe. No dedicated parry animation/audio/UI dispatch was found in these reviewed routes; generic move-card cues remain independent of the result (see D24).
+
+## Coverage and limits
+
+Existing pure tests cover damage-decision precedence, grade calculation, resolver-related rule helpers, and duplicate suppression decisions. The audit found no stateful test that asserts exactly-once `NotifyParried`, charged-refund delivery, boss `NoteParried`, or consumer ordering across executor/javelin/sweep/wave callers. D21 already records the stateful duplicate-contact fixture gap. No new issue is asserted here: the observed fan-out has a single resolver notification path, while input-component replacement and stateful end-to-end delivery remain untested boundaries.

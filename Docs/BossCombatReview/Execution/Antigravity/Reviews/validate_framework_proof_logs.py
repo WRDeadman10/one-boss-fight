@@ -34,6 +34,8 @@ from datetime import datetime
 VEC = r"X=[^\s]+ Y=[^\s]+ Z=[^\s]+"
 
 # 59 Canonical FrameworkProof Schemas
+NUMBER = r"[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?"
+
 SCHEMAS = {
     # 1. Encounter Lifecycle & Framework Fixture
     "dependencies": r"^mesh=[^\s]+ skeleton=[^\s]+ animClass=[^\s]+ sequence=[^\s]+ slot=[^\s]+ resolved=\d+ label=[^\s]+$",
@@ -47,7 +49,7 @@ SCHEMAS = {
     "bystander_spawned": r"^ok=\d+ name=[^\s]+ x=[^\s]+ y=[^\s]+ z=[^\s]+$",
     "encounter_reset": r"^(?:generation=\d+ oldState=[^\s]+ executorRearmed=\d+ bossHealth=[^\s]+ targetHealth=[^\s]+|refused generation=\d+ reason=[^\s]+)$",
     "boss_dead": r"^generation=\d+ executorAborted=\d+$",
-    "RESULT": r"^outcome=[^\s]+(?:\s+acceptedHits=\d+)?(?:\s+attacks=\d+)?$",
+    "RESULT": r"^outcome=[^\s]+(?:\s+acceptedHits=\d+)?(?:\s+attacks=\d+)?(?:\s+parriedHits=\d+)?$",   # parriedHits: BUILD-147b
     "ERROR": r"^token=[^\s]+(?:\s+.*)?$",
 
     # 2. Navigation & Locomotion
@@ -171,24 +173,53 @@ SCHEMAS = {
 
     # 9. Phase Transitions
     "phase_transition": r"^attack=\d+ from=[^\s]+ to=[^\s]+ health=[^\s]+ max=[^\s]+ fraction=[^\s]+$",
-    "phase_anim": r"^(?:state=Triggered sequence=[^\s]+ slot=[^\s]+ length=[^\s]+ from=[^\s]+ to=[^\s]+|state=Finished phase=[^\s]+)$",
+    "phase_anim": r"^(?:state=Triggered sequence=[^\s]+ slot=[^\s]+ length=[^\s]+ from=[^\s]+ to=[^\s]+|state=Finished phase=[^\s]+|state=Aborted reason=[^\s]+ phase=[^\s]+)$",
 
     # 10. Conditional Combos (Track B)
     "combo_start": r"^root=[^\s]+ move=[^\s]+ maxDepth=\d+$",
     "combo_step": r"^node=[^\s]+ move=[^\s]+ depth=\d+$",
     "combo_gate": r"^gate=\d+ node=[^\s]+ outcome=[^\s]+ range=[^\s]+ yaw=[^\s]+ result=[^\s]+ next=[^\s]+ reason=.*$",
     "combo_gate_duplicate": r"^gate=\d+ result=[^\s]+ reason=[^\s]+ stateUnchanged=\d+$",
-    "combo_end": r"^reason=[^\s]+$",
+    "combo_end": r"^reason=[^\s]+(?: detail=.*)?$",   # lead: RPGFrameworkBossCharacter.cpp emits detail= on NextCardRefused
 
     # 12. Camera & Readability (BOSS-QA-006)
     "camera_frame": r"^t=[^\s]+ distCm=[^\s]+ screenMinX=[^\s]+ screenMinY=[^\s]+ screenMaxX=[^\s]+ screenMaxY=[^\s]+ viewX=\d+ viewY=\d+ cornersOnScreen=\d+ insideMargin=[01] heightPct=[^\s]+ occluded=[01]$",
     "camera_stage": r"^index=\d+ distanceCm=[^\s]+(?:\s+cameraTurnedAway=[01])?$",
 
     # 11. Runtime Diagnostics & Overlay
-    "overlay": r"^Card=[^\s]+ State=[^\s]+ Phase=[^\s]+ Range=[^\s]+ Cone=[^\s]+ Window=[^\s]+ Posture=[^\s]+ Health=[^\s]+ Stagger=[^\s]+ PhaseHold=[^\s]+$",
+    "overlay": r"^Card=[^\s]+ State=[^\s]+ Phase=[^\s]+ Range=[^\s]+ Cone=[^\s]+ Window=[^\s]+ Posture=[^\s]+ Health=[^\s]+ Stagger=[^\s]+ PhaseHold=[^\s]+(?: Parry=(?:Open|Closed) Grade=(?:Perfect|Good|Late|None))?$",
     # 13. Viewport Screenshot & Overlay Evaluation (BOSS-QA-001)
     "screenshot_requested": r"^(?:|t=[^\s]+ viewX=\d+ viewY=\d+(?:\s+showUI=[01])?\s+path=[^\s]+)$",
     "screenshot_quit": r"^$",
+
+    # 14. Guard, parry, cone hysteresis and neutral strafe (BUILD-145..150, lead Claude 2026-11-02; formats copied from the UE_LOG lines in Source/OneBossFight)
+    "guard_state": r"^instance=\d+ window=[^\s]+ guard=(?:None|Guarded|Parried) outcome=ERPGDamageOutcome::[A-Za-z]+$",
+    "parry_press": rf"^n=\d+ t={NUMBER} opened=[01] windowSeconds={NUMBER}$",
+    "parry_reaction": rf"^posture={NUMBER}$",
+    "attack_row_refused": r"^reason=[^\s]+$",   # RPGHitIntake.cpp (Codex audit X-430)
+    "pending_hit_refused": r"^reason=[^\s]+$",
+    "parry_grade": rf"^grade=(?:Perfect|Good|Late|None) scale={NUMBER}$",   # BUILD-153 W1
+    "parry_stamina": rf"^before={NUMBER} after={NUMBER} parried=[01]$",   # QUEUE_50 task 46
+    "guard_chip": r"^incoming=\d+(?:\.\d+)?(?:[eE][+-]?\d+)? applied=\d+(?:\.\d+)?(?:[eE][+-]?\d+)?$",   # QUEUE_200 Q3
+    "parry_recovery": r"^grade=\d+ extra=\d+(?:\.\d+)?(?:[eE][+-]?\d+)?$",   # QUEUE_200 Q8
+    "telegraph_scale": r"^card=[^\s]+ rate=\d+(?:\.\d+)?(?:[eE][+-]?\d+)?$",   # QUEUE_200 Q13
+    "telegraph_restore": r"^card=[^\s]+ rate=\d+(?:\.\d+)?(?:[eE][+-]?\d+)?$",   # C-708
+    "aggro_switch": r"^from=[0-2] to=[0-2]$",   # QUEUE_200 Q19
+    "fatigue": r"^whiffs=\d+ scale=\d+(?:\.\d+)?(?:[eE][+-]?\d+)?$",   # QUEUE_200 Q24
+    "warp_ease": r"^on=1$",   # BUILD-155 W2
+    "strafe_stuck": r"^flipped=1 movedRatio=[^\s]+$",   # BUILD-155 W3
+    "yaw_probe": r"^sample=\d+ yaw=[^\s]+$",   # BUILD-155 W4
+    "parry_tag": r"^state=(?:added|removed) call=(?:ok|failed) reason=[^\s]+$",
+    "cone_hysteresis": r"^degrees=[^\s]+ seq=\d+$",
+    "strafe_start": r"^range=[^\s]+ budgetSeconds=[^\s]+ speedCmPerSecond=[^\s]+ seq=\d+$",
+    "strafe_step": r"^elapsed=[^\s]+ dir=-?1 range=[^\s]+ movedCm=[^\s]+$",
+    "strafe_end": r"^seconds=[^\s]+ reason=CandidateEligible card=[^\s]+$",
+    "strafe_budget_exhausted": r"^seconds=[^\s]+$",
+    "strafe_budget_restarted": r"^gapSeconds=[^\s]+ reason=Interrupted$",
+    # test hooks (not compiled into shipping builds)
+    "guard_hook_armed": r"^mode=\d+ seconds=[^\s]+$",
+    "guard_hook_end": r"^$",
+    "guard_tags": r"^since=[^\s]+ statusBlocking=[01] stateBlocking=[01] abilityParry=[01] abilityBlock=[01](?: statusParryActive=[01])?(?: hasParryAbility=[01] hasGuardAbility=[01])?$",   # the last two groups were added by later builds: older logs stay valid
 }
 
 COMPILED_SCHEMAS = {tok: re.compile(pat) for tok, pat in SCHEMAS.items()}

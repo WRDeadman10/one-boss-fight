@@ -127,6 +127,9 @@ public:
 	int32 GetJavelinHitCount() const { return JavelinHits; }
 
 	UFUNCTION(BlueprintPure, Category = "Punish")
+	int32 GetJavelinParriedCount() const { return JavelinParried; }
+
+	UFUNCTION(BlueprintPure, Category = "Punish")
 	int32 GetJavelinDodgedCount() const { return JavelinDodged; }
 
 	UFUNCTION(BlueprintPure, Category = "Punish")
@@ -144,6 +147,7 @@ public:
 	void ReportJavelin(ERPGJavelinResult Result);
 
 protected:
+	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
@@ -157,11 +161,12 @@ private:
 	bool bStarted = false; // the tracker has shown the throw since the request was accepted
 	bool bWasHealing = false;
 	bool bDead = false;
+	TWeakObjectPtr<UActorComponent> TrackerTickPrerequisite;
 	float DeathCheck = 0.f;
 	double PendingSince = 0.0;
 	double CooldownEnd = -1.0; // world time
 	int32 LastInstance = -1;
-	int32 SeenGeneration = 0;
+	uint64 SeenGeneration = 0;
 	int32 HealEvents = 0;
 	int32 Accepted = 0;
 	int32 Released = 0;
@@ -172,6 +177,7 @@ private:
 	int32 DiscardedPending = 0;
 	int32 Cancelled = 0;
 	int32 JavelinHits = 0;
+	int32 JavelinParried = 0;
 	int32 JavelinDodged = 0;
 	int32 JavelinWorld = 0;
 	TWeakObjectPtr<const UAnimMontage> DrinkMontage;

@@ -29,6 +29,7 @@ NUMERIC_KEYS = [
     'boss_max_health', 'player_hit_damage', 'phase_two_fraction', 'posture_max', 'player_posture_hit_amount', 'stagger_seconds',
     'posture_regen_delay_seconds', 'posture_regen_per_second', 'bleed_buildup_per_hit', 'bleed_initial_threshold', 'bleed_threshold_increase',
     'bleed_threshold_max', 'bleed_hp_fraction',
+    'neutral_strafe_min_hold_seconds', 'neutral_strafe_max_hold_seconds',
 ]
 
 
@@ -59,6 +60,8 @@ CONFIG_PATH = argv[0]
 DRY = '--dry-run' in argv
 with open(CONFIG_PATH, 'r', encoding='utf-8-sig') as f:   # utf-8-sig: PowerShell writes a BOM
     cfg = json.load(f)
+validator_module = load_module('validate_boss_config', VALIDATOR)
+cfg = validator_module.with_profile_defaults(cfg)
 BOSS = cfg['boss_name']
 DIR = cfg['destination_package_dir']
 PROFILE_NAME = 'DA_%s_Profile' % BOSS
@@ -123,6 +126,8 @@ for p in (PROFILE_PATH, LEVEL_PATH):
         fatal('destination exists, refusing: ' + p)
 tag('PREFLIGHT', {'destinations_absent': [PROFILE_PATH, LEVEL_PATH], 'dry_run': DRY})
 if DRY:
+    tag('PROFILE_FIELD_DEFAULTS', {'neutral_strafe_min_hold_seconds': cfg['neutral_strafe_min_hold_seconds'],
+                                   'neutral_strafe_max_hold_seconds': cfg['neutral_strafe_max_hold_seconds']})
     tag('END', {'written': [], 'dry_run': True})
     raise SystemExit(0)
 

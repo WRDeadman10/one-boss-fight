@@ -39,6 +39,7 @@ void ARPGArenaDressing::OnConstruction(const FTransform& Transform)
 		}
 	}
 	Built.Reset();
+	BuiltCastShadows.Reset();
 	Swaying.Reset();
 
 	for (int32 SetIndex = 0; SetIndex < Sets.Num(); ++SetIndex)
@@ -66,6 +67,7 @@ void ARPGArenaDressing::OnConstruction(const FTransform& Transform)
 		AddInstanceComponent(Component);
 		Component->AddInstances(Set.Instances, /*bShouldReturnIndices=*/false, /*bWorldSpace=*/false);
 		Built.Add(Component);
+		BuiltCastShadows.Add(Set.bCastShadow);
 		if (Set.SwayDegrees > 0.f)
 		{
 			FSwaying Sway;
@@ -90,18 +92,17 @@ void ARPGArenaDressing::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 #if !UE_BUILD_SHIPPING
 	// performance experiments (rpg.Perf.*): see RPGPerfSwitches.h
-	for (UInstancedStaticMeshComponent* Component : Built)
+	const bool bDressingShadows = RPGPerf::DressingShadows();
+	for (int32 Index=0; Index<Built.Num(); ++Index)
 	{
+		UInstancedStaticMeshComponent* Component=Built[Index];
 		if (!Component)
 		{
 			continue;
 		}
 		const bool bMist = Component->GetStaticMesh() && Component->GetStaticMesh()->GetName().Contains(TEXT("FogCard"));
 		Component->SetVisibility(RPGPerf::DressingAll() && (RPGPerf::DressingMist() || !bMist));
-		if (!RPGPerf::DressingShadows())
-		{
-			Component->SetCastShadow(false);
-		}
+		Component->SetCastShadow(bDressingShadows && BuiltCastShadows.IsValidIndex(Index) && BuiltCastShadows[Index]);
 	}
 #endif
 	if (Swaying.IsEmpty())

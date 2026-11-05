@@ -73,9 +73,9 @@ public:
 	static float GetShakeScaleCVar();
 
 	/** Slows both actors to Dilation for RealSeconds. False (and counted) when the layer is off, the encounter is dormant or the generation is stale. */
-	bool RequestHitStop(AActor* First, AActor* Second, float RealSeconds, float Dilation, const URPGBossEncounter* Encounter, int32 Generation);
+	bool RequestHitStop(AActor* First, AActor* Second, float RealSeconds, float Dilation, const URPGBossEncounter* Encounter, uint64 Generation);
 	/** Slows the world to Scale for RealSeconds. Same refusals. */
-	bool RequestSlowMotion(float Scale, float RealSeconds, const URPGBossEncounter* Encounter, int32 Generation);
+	bool RequestSlowMotion(float Scale, float RealSeconds, const URPGBossEncounter* Encounter, uint64 Generation);
 	/** Ends every effect now, restores time, stops the shakes. Logs one line only when something was active. */
 	void CancelAll(const TCHAR* Reason);
 
@@ -108,13 +108,13 @@ private:
 	void EnsureTicker();
 	void RestoreHitStop(const TCHAR* Reason);
 	void RestoreSlowMotion(const TCHAR* Reason);
-	bool CheckRequest(const URPGBossEncounter* Encounter, int32 Generation);
+	bool CheckRequest(const URPGBossEncounter* Encounter, uint64 Generation);
 
 	FRPGDilationScope HitStop;
 	FRPGDilationScope SlowMotion;
 	TArray<FStoppedActor> Stopped;
 	TWeakObjectPtr<const URPGBossEncounter> RequestOwner;
-	int32 RequestGeneration = 0;
+	uint64 RequestGeneration = 0;
 	FTSTicker::FDelegateHandle TickerHandle;
 	int32 CancelCount = 0;
 	int32 RestoreCount = 0;
@@ -199,6 +199,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Legend") bool FireSlowMotionForTest();
 
 protected:
+	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
@@ -214,6 +215,7 @@ private:
 	TObjectPtr<URPGBossEncounter> Encounter;
 	UPROPERTY(Transient)
 	TObjectPtr<URPGAttackTracker> Tracker;
+	TWeakObjectPtr<UActorComponent> TrackerTickPrerequisite;
 	UPROPERTY(Transient)
 	TObjectPtr<URPGBossPhases> Phases;
 	UPROPERTY(Transient)
@@ -226,7 +228,7 @@ private:
 	int32 LastRoarCount = 0;
 	int32 LastRiposteCount = 0;
 	int32 LastVictoryCount = 0;
-	int32 LastGeneration = 0;
+	uint64 LastGeneration = 0;
 	bool bRoarPrimed = false;
 	bool bRiposteKeyPrimed = false;
 	bool bVictoryPrimed = false;

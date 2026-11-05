@@ -7,6 +7,13 @@
 #include "Player/RPGBossLook.h"
 #include "Player/RPGBossCloseClipSwap.h"
 #include "Player/RPGBossDeath.h"
+#include "Player/RPGAttackTracker.h"
+#include "Audio/RPGFootsteps.h"
+#include "Audio/RPGBossMusic.h"
+#include "Player/RPGDamageResolver.h"
+#include "Player/RPGTraceGuard.h"
+#include "UI/RPGBossHud.h"
+#include "Player/RPGLegend.h"
 #include "Misc/AutomationTest.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -38,7 +45,7 @@
 // mesh and its skeleton are placed on THREE isolated native ACharacter actors (two boss-core owners, one target) in a test-local headless game world that never begins play, every actor fully finished before any preparation;
 // the animation dependencies are the authoring-default cooked-directory candidates of the typed records; the definitions are transient; the content epoch is the existing legacy registry epoch; the manifest rows are
 // hand-authored membership rows. The setup is copied from DD14 into this file (no shared helper, no edit of the DD14 file).
-// What it can establish, for these exact assets in this editor binary: PositiveBatch: twenty-four real owned components (twelve exact native consumers per boss-core actor), unregistered, uninitialized, not begun, not ticking, each
+// What it can establish, for these exact assets in this editor binary: PositiveBatch: thirty-eight real owned components (twelve exact native consumers per boss-core actor), unregistered, uninitialized, not begun, not ticking, each
 // holding its own member's configured values, the exact production config, content, skeleton and animation leases retained by the plan, the unrelated component sets and mesh assets unchanged, explicit and scope-exit abort
 // restoring the prior sets. LateRejection: which LAYER refused a batch whose later member is invalid (the preflight inside PrepareBatch for a dependency or a selected phase; CompileParticipant before PrepareBatch can be
 // called for a bad definition, after which the missing config is refused by the preflight), with no allocation of any planned name on any actor, and an unmodified positive control. NameCollisionCleanup: a real live
@@ -47,7 +54,7 @@
 // What it does NOT establish: a cold load (the pack classes are loaded first and the assets may already be in memory; the state before the fixture is only logged), the packaged or cooked build, the arena level, the placed
 // Blueprint boss, abilities or effects (class paths are structural only), animation playback, the real boss definition asset (typed values, phase lists and manifest rows are fixture values, not authority), serialized
 // authoring or a game-instance content epoch, an organic native configure failure, garbage-name reuse after a real collection (no collection is forced; the retry after the collision reuses the names the failed attempt left as
-// destroyed objects and its outcome is only observed), a registration, BeginPlay, context binding, reservation, readiness, legacy suppression or any wiring. The prepared subset is twelve components per boss-core member, not a
+// destroyed objects and its outcome is only observed), a registration, BeginPlay, context binding, reservation, readiness, legacy suppression or any wiring. The prepared subset is nineteen components per boss-core member, not a
 // complete playable boss.
 
 namespace
@@ -142,7 +149,7 @@ namespace ProductionPreparationTests
 		}
 	};
 
-	/** The unique manifest paths the twelve combined boss-core plans read for a selected phase id, written out as independent literals (copied from DD14). Membership only. */
+	/** The unique manifest paths the nineteen combined boss-core plans read for a selected phase id, written out as independent literals (copied from DD14). Membership only. */
 	TArray<FString> AllRequiredPaths(FName PhaseId)
 	{
 		const FString Id = PhaseId.ToString();
@@ -166,7 +173,8 @@ namespace ProductionPreparationTests
 			TEXT("HealPunish.bEnabled"), TEXT("HealPunish.MinRange"), TEXT("HealPunish.MaxRange"), TEXT("HealPunish.Cooldown"), TEXT("HealPunish.Damage"), TEXT("HealPunish.FlightTime"), TEXT("HealPunish.MinSpeed"), TEXT("HealPunish.MaxSpeed"), TEXT("HealPunish.JavelinRadius"), TEXT("HealPunish.JavelinMaxRange"), TEXT("HealPunish.SpawnSockets"), TEXT("HealPunish.AimHeight"), TEXT("HealPunish.bRespondToHeal"), TEXT("HealPunish.bCancelJavelinsOnInterrupt"),
 			TEXT("Look.bEnabled"), TEXT("Look.Body"), TEXT("Look.Pieces"), TEXT("Look.Sword"), TEXT("Look.SwordSocket"),
 			TEXT("CloseClipSwap.CloseAbilityClassName"), TEXT("CloseClipSwap.AttackMontagesName"), TEXT("CloseClipSwap.A1Montage"), TEXT("CloseClipSwap.A3aMontage"), TEXT("CloseClipSwap.A3bMontage"),
-			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath")};
+			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath"),
+			TEXT("AttackTracker.Attacks"), TEXT("AttackTracker.bEnabled"), TEXT("AttackTracker.bVetoIllegalStarts"), TEXT("AttackTracker.BranchRange"), TEXT("AttackTracker.BranchConeDegrees")};
 	}
 
 	/** A manifest row supplied by this fixture: it satisfies the production compiler's row shape and the preflight's membership check; it is not derived from any asset and carries no authority. */
@@ -399,7 +407,8 @@ namespace ProductionPreparationTests
 	{
 		return TArray<FExpectedComponent>{{URPGBossStagger::StaticClass(), TEXT("RPGBossStagger")}, {URPGBossPhases::StaticClass(), TEXT("RPGBossPhases")}, {URPGBossEncounter::StaticClass(), TEXT("RPGBossEncounter")},
 			{URPGBossDormantWake::StaticClass(), TEXT("RPGBossDormantWake")}, {URPGBossPosture::StaticClass(), TEXT("RPGBossPosture")},
-			{URPGBossBleed::StaticClass(), TEXT("RPGBossBleed")} , {URPGBossLowSweep::StaticClass(), TEXT("RPGBossLowSweep")} , {URPGBossShockwave::StaticClass(), TEXT("RPGBossShockwave")} , {URPGBossHealPunish::StaticClass(), TEXT("RPGBossHealPunish")} , {URPGBossLook::StaticClass(), TEXT("RPGBossLook")} , {URPGBossCloseClipSwap::StaticClass(), TEXT("RPGBossCloseClipSwap")} , {URPGBossDeath::StaticClass(), TEXT("RPGBossDeath")}};
+			{URPGBossBleed::StaticClass(), TEXT("RPGBossBleed")} , {URPGBossLowSweep::StaticClass(), TEXT("RPGBossLowSweep")} , {URPGBossShockwave::StaticClass(), TEXT("RPGBossShockwave")} , {URPGBossHealPunish::StaticClass(), TEXT("RPGBossHealPunish")} , {URPGBossLook::StaticClass(), TEXT("RPGBossLook")} , {URPGBossCloseClipSwap::StaticClass(), TEXT("RPGBossCloseClipSwap")} , {URPGBossDeath::StaticClass(), TEXT("RPGBossDeath")}, {URPGAttackTracker::StaticClass(), TEXT("RPGAttackTracker")},
+			{URPGFootsteps::StaticClass(), TEXT("RPGFootsteps")}, {URPGBossMusic::StaticClass(), TEXT("RPGBossMusic")}, {URPGTraceGuard::StaticClass(), TEXT("RPGTraceGuard")}, {URPGBossHud::StaticClass(), TEXT("RPGBossHud")}, {URPGBossLegend::StaticClass(), TEXT("RPGBossLegend")}, {URPGDamageResolver::StaticClass(), TEXT("RPGDamageResolver")}};
 	}
 
 	bool NoManagedConsumer(const AActor* Actor)
@@ -521,7 +530,7 @@ namespace ProductionPreparationTests
 		{
 			BossOneCompile = RPGCombatHydration::CompileParticipant(*BossOneDefinition, Content, ManifestHash(), BossOneConfig);
 			BossTwoCompile = RPGCombatHydration::CompileParticipant(*BossTwoDefinition, Content, ManifestHash(), BossTwoConfig);
-			PlayerCompile = RPGCombatHydration::CompileParticipant(*PlayerDefinition, Content, ManifestHash(), PlayerConfig);
+			PlayerCompile = RPGCombatHydration::CompileParticipant(*PlayerDefinition, Content, ManifestHash(), PlayerConfig, false);
 		}
 
 		/** The valid batch: two boss-core members with their own explicit selected phase ids, both targeting the player slot, and the target-only player targeting the first boss. */
@@ -626,7 +635,7 @@ namespace ProductionPreparationTests
 				bCleanState = bCleanState && !Garbage->IsRegistered() && !Garbage->HasBegunPlay() && Garbage->IsBeingDestroyed();
 			}
 		}
-		bool bOk = Test.TestTrue(FString::Printf(TEXT("%s: every owned component is destroyed (none resolves any more)"), Label), Weak.Num() == 24 && bGone);
+		bool bOk = Test.TestTrue(FString::Printf(TEXT("%s: every owned component is destroyed (none resolves any more)"), Label), Weak.Num() == 38 && bGone);
 		bOk &= Test.TestTrue(FString::Printf(TEXT("%s: any destroyed object still awaiting collection is unregistered, not begun and marked destroyed"), Label), bCleanState);
 		return bOk;
 	}
@@ -655,16 +664,16 @@ namespace ProductionPreparationTests
 		return Test.TestTrue(FString::Printf(TEXT("%s: no object, not even a destroyed one, carries a planned instance name under any actor (nothing was allocated)"), Label), bNone);
 	}
 
-	/** The exact success shape on real assets: twenty-four owned real components (twelve per boss-core actor, exact classes, reviewed names, owners, each holding its OWN member's configured values), unregistered, uninitialized, not
+	/** The exact success shape on real assets: thirty-eight owned real components (twelve per boss-core actor, exact classes, reviewed names, owners, each holding its OWN member's configured values), unregistered, uninitialized, not
 	 *  begun, not ticking, nothing for the target, no participant, no bound or ready context, the unrelated components and mesh assets untouched, the artifact's read-only summary and the retained plan and lease identities. */
 	bool ExpectPrepared(FAutomationTestBase& Test, const FProductionFixture& F, const FRPGPreparedBatch& Batch, const FWorldState& Before)
 	{
 		bool bOk = true;
 		bOk &= Test.TestTrue(TEXT("the artifact reports prepared"), Batch.IsPrepared());
-		bOk &= Test.TestEqual(TEXT("twenty-four components are leased"), Batch.GetOwnedComponentCount(), 24);
+		bOk &= Test.TestEqual(TEXT("thirty-eight components are leased"), Batch.GetOwnedComponentCount(), 38);
 		const TArray<const UActorComponent*> OwnedList = Batch.OwnedComponentsForTest();
 		const TSet<const UActorComponent*> OwnedSet(OwnedList);
-		bOk &= Test.TestTrue(TEXT("twenty-four distinct owned component pointers"), OwnedList.Num() == 24 && OwnedSet.Num() == 24);
+		bOk &= Test.TestTrue(TEXT("thirty-eight distinct owned component pointers"), OwnedList.Num() == 38 && OwnedSet.Num() == 38);
 
 		struct FBossCase
 		{
@@ -695,12 +704,12 @@ namespace ProductionPreparationTests
 			}
 			const FActorState Now = CaptureActor(Case.Actor);
 			const FActorState& Prior = Before.Actors[Case.Index];
-			bool bPriorKept = Now.Components.Num() == Prior.Components.Num() + 12 && !Now.bBegun && Now.MeshAsset == Prior.MeshAsset;
+			bool bPriorKept = Now.Components.Num() == Prior.Components.Num() + 19 && !Now.bBegun && Now.MeshAsset == Prior.MeshAsset;
 			for (const UActorComponent* PriorComponent : Prior.Components)
 			{
 				bPriorKept = bPriorKept && Now.Components.Contains(PriorComponent) && !OwnedSet.Contains(PriorComponent);
 			}
-			bOk &= Test.TestTrue(FString::Printf(TEXT("%s: exactly twelve components were added, every unrelated component is still there and the mesh asset is unchanged"), *Label), bPriorKept);
+			bOk &= Test.TestTrue(FString::Printf(TEXT("%s: exactly nineteen components were added, every unrelated component is still there and the mesh asset is unchanged"), *Label), bPriorKept);
 			bOk &= Test.TestFalse(FString::Printf(TEXT("%s has no participant component"), *Label), Case.Actor->FindComponentByClass<URPGCombatParticipant>() != nullptr);
 
 			// Representative configured fields: the typed records of this member's own config, never the other boss's.
@@ -720,8 +729,8 @@ namespace ProductionPreparationTests
 		if (Test.TestEqual(TEXT("three participant summaries in the request order"), Infos.Num(), 3))
 		{
 			bOk &= Test.TestTrue(TEXT("summary: slots, targets, roles, explicit phase ids and owned counts"),
-				Infos[0].Slot == FName(TEXT("BossOne")) && Infos[0].TargetSlot == FName(TEXT("Player")) && Infos[0].Role == ERPGPreflightRole::BossCore && Infos[0].SelectedPhaseId == FName(One.Phase) && Infos[0].OwnedComponentCount == 12
-				&& Infos[1].Slot == FName(TEXT("BossTwo")) && Infos[1].TargetSlot == FName(TEXT("Player")) && Infos[1].Role == ERPGPreflightRole::BossCore && Infos[1].SelectedPhaseId == FName(Two.Phase) && Infos[1].OwnedComponentCount == 12
+				Infos[0].Slot == FName(TEXT("BossOne")) && Infos[0].TargetSlot == FName(TEXT("Player")) && Infos[0].Role == ERPGPreflightRole::BossCore && Infos[0].SelectedPhaseId == FName(One.Phase) && Infos[0].OwnedComponentCount == 19
+				&& Infos[1].Slot == FName(TEXT("BossTwo")) && Infos[1].TargetSlot == FName(TEXT("Player")) && Infos[1].Role == ERPGPreflightRole::BossCore && Infos[1].SelectedPhaseId == FName(Two.Phase) && Infos[1].OwnedComponentCount == 19
 				&& Infos[2].Slot == FName(TEXT("Player")) && Infos[2].TargetSlot == FName(TEXT("BossOne")) && Infos[2].Role == ERPGPreflightRole::TargetOnly && Infos[2].SelectedPhaseId.IsNone() && Infos[2].OwnedComponentCount == 0);
 		}
 		const TSharedPtr<const FRPGHydrationPreflightPlan> Plan = Batch.GetPreflightPlan();
@@ -801,7 +810,7 @@ bool FRPGProductionPreparationPositiveTest::RunTest(const FString& Parameters)
 		TArray<TWeakObjectPtr<UActorComponent>> FirstWeak = WeakOwned(*First.Batch);
 		const FRPGPreparationAbortReport Report = First.Batch->Abort();
 		TestTrue(FString::Printf(TEXT("explicit abort: clean report (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsClean());
-		TestTrue(TEXT("explicit abort destroyed twenty-four components, found none already gone and no contract violation"), Report.Destroyed == 24 && Report.AlreadyGone == 0 && Report.ContractViolations == 0 && !Report.bRefused);
+		TestTrue(TEXT("explicit abort destroyed thirty-eight components, found none already gone and no contract violation"), Report.Destroyed == 38 && Report.AlreadyGone == 0 && Report.ContractViolations == 0 && !Report.bRefused);
 		TestFalse(TEXT("the artifact is no longer prepared after the abort"), First.Batch->IsPrepared());
 		TestEqual(TEXT("the artifact owns nothing after the abort"), First.Batch->GetOwnedComponentCount(), 0);
 		// The weak identities of this generation are inspected NOW, before the names are created again (the engine replaces a destroyed object of the same name in place, so a stale pointer would alias the new one).
@@ -912,7 +921,7 @@ bool FRPGProductionPreparationLateRejectionTest::RunTest(const FString& Paramete
 		}
 		ExpectPrepared(*this, F, *Control.Batch, Before);
 		const FRPGPreparationAbortReport Report = Control.Batch->Abort();
-		TestTrue(FString::Printf(TEXT("control: abort is clean and destroyed twenty-four components (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsClean() && Report.Destroyed == 24 && Report.AlreadyGone == 0 && Report.ContractViolations == 0);
+		TestTrue(FString::Printf(TEXT("control: abort is clean and destroyed thirty-eight components (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsClean() && Report.Destroyed == 38 && Report.AlreadyGone == 0 && Report.ContractViolations == 0);
 	}
 	ExpectRestored(*this, F, Before, TEXT("control abort"));
 	TestTrue(TEXT("no touched package became dirty around the cases"), CaptureDirty(Touched) == DirtyBefore);
@@ -989,7 +998,7 @@ bool FRPGProductionPreparationNameCollisionTest::RunTest(const FString& Paramete
 		TestTrue(TEXT("layer reached is the real allocation guard: only Preparation.* tokens, no Preflight.* token (the preflight passed)"), NoErrorStartsWith(Refused.Errors, TEXT("Preflight.")));
 	}
 
-	// The cleanup. The allocation order is boss one's twelve, then boss two's first two, then the blocked third: seven earlier components were allocated and must now be destroyed (a destroyed object stays findable under its
+	// The cleanup. The allocation order is boss one's nineteen, then boss two's first two, then the blocked third: twenty-one earlier components were allocated and must now be destroyed (a destroyed object stays findable under its
 	// name until collection; no collection is forced). The later names were never allocated, the target never gets any, and the blocker is the very live object.
 	bool bBossOneAllocatedAndDestroyed = true;
 	for (const FExpectedComponent& Wanted : Expected)
@@ -997,7 +1006,7 @@ bool FRPGProductionPreparationNameCollisionTest::RunTest(const FString& Paramete
 		const UObject* Found = StaticFindObjectFast(UObject::StaticClass(), const_cast<AActor*>(Actors[0]), FName(Wanted.Name));
 		bBossOneAllocatedAndDestroyed = bBossOneAllocatedAndDestroyed && Found && !IsValid(Found) && Found->GetClass() == Wanted.Class;
 	}
-	TestTrue(TEXT("all twelve of boss one's components (earlier owner) were allocated and are now destroyed"), bBossOneAllocatedAndDestroyed);
+	TestTrue(TEXT("all nineteen of boss one's components (earlier owner) were allocated and are now destroyed"), bBossOneAllocatedAndDestroyed);
 	bool bBossTwoEarlierDestroyed = true;
 	for (int32 Index = 0; Index < 2; ++Index)
 	{
@@ -1011,7 +1020,7 @@ bool FRPGProductionPreparationNameCollisionTest::RunTest(const FString& Paramete
 	{
 		bAllLaterNamesAbsent = bAllLaterNamesAbsent && StaticFindObjectFast(UObject::StaticClass(), const_cast<AActor*>(Actors[1]), FName(Expected[Index].Name)) == nullptr;
 	}
-	TestTrue(TEXT("all nine names after the blocked third component were never allocated"), bAllLaterNamesAbsent);
+	TestTrue(TEXT("all ten names after the blocked third component were never allocated"), bAllLaterNamesAbsent);
 	bool bTargetNone = true;
 	for (const FExpectedComponent& Wanted : Expected)
 	{
@@ -1069,7 +1078,7 @@ bool FRPGProductionPreparationNameCollisionTest::RunTest(const FString& Paramete
 		ExpectPrepared(*this, F, *Retry.Batch, AfterRemoval);
 		TArray<TWeakObjectPtr<UActorComponent>> RetryWeak = WeakOwned(*Retry.Batch);
 		const FRPGPreparationAbortReport Report = Retry.Batch->Abort();
-		TestTrue(FString::Printf(TEXT("the retry's abort is clean and destroyed twenty-four components (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsClean() && Report.Destroyed == 24 && Report.AlreadyGone == 0 && Report.ContractViolations == 0);
+		TestTrue(FString::Printf(TEXT("the retry's abort is clean and destroyed thirty-eight components (errors: %s)"), *JoinErrors(Report.Errors)), Report.IsClean() && Report.Destroyed == 38 && Report.AlreadyGone == 0 && Report.ContractViolations == 0);
 		ExpectAllDestroyed(*this, RetryWeak, TEXT("retry abort"));
 	}
 	ExpectRestored(*this, F, AfterRemoval, TEXT("retry abort"));

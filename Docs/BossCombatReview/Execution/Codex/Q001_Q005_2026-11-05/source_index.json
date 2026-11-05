@@ -1,0 +1,191 @@
+{
+  "schema": "codex.q01-q05-source-index/v1",
+  "sources": [
+    {
+      "identity": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_a4_low_sweep_r2\\identity.json",
+      "identity_sha256": "9435cbd962fb68d1349c2151f14a6f229d829cc66cb1f32b4d571fb81d3c358c",
+      "pair": "a4_low_sweep_r2",
+      "runs": [
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_a4_low_sweep_r2\\legacy\\editor_raw.log",
+          "sha256": "534756e8da9bd61b3f2d251145358ad3187e547c766a668308ad000b808010c9"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_a4_low_sweep_r2\\legacy\\command.json",
+          "sha256": "0bf928d52cd4edb01302d92ca1b4e87118fdc960f571e4e35bce173355760e3e"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_a4_low_sweep_r2\\legacy\\result.json",
+          "sha256": "345486df182a4e5402f8007a6c2e2f2c1f1de81c11c64b3b1e265fc7a32a9c89"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_a4_low_sweep_r2\\data\\editor_raw.log",
+          "sha256": "9d60c746839c06472a4cf334e815edb22bf52174c64251f63f4b14ceb744ad1f"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_a4_low_sweep_r2\\data\\command.json",
+          "sha256": "f5c49249cc279061c5f01cbd3dcbee0ab66853a421c4be66c85be2fd97894f14"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_a4_low_sweep_r2\\data\\result.json",
+          "sha256": "eafe926ad1d4af5037e2bb59450c0d0df0fd59bed6d246e1c2908c6b3dc0a9b8"
+        }
+      ]
+    },
+    {
+      "identity": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_dormant_wake_b220\\identity.json",
+      "identity_sha256": "2d04589238906608c74add0ca8b5fb4aa2e1e6255478299325be0ab40b9dc493",
+      "pair": "dormant_wake_b220",
+      "runs": [
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_dormant_wake_b220\\legacy\\editor_raw.log",
+          "sha256": "0ee7bbc57d8b4c66f8f868be27ee2b41a8507e3438006f8f161da9d91c5d19d8"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_dormant_wake_b220\\legacy\\command.json",
+          "sha256": "93fb486e624faa874e9b8c61624799f8164b7ef15c8b20dbdb15eeb43a4cbc20"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_dormant_wake_b220\\legacy\\result.json",
+          "sha256": "01ba058c739a56a5282637a48b34813441708b44a6e10e52a3850bae565bf233"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_dormant_wake_b220\\data\\editor_raw.log",
+          "sha256": "bb82617e75c1ddce2c7320450155c9cb54be7684458f44a85532a6d2ca757167"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_dormant_wake_b220\\data\\command.json",
+          "sha256": "f02e0d0eff4073989e09c44141cbbc6bc347429d70cc14485848bd1f9ac5cc29"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_dormant_wake_b220\\data\\result.json",
+          "sha256": "22184ba03bfd0a59826939499c1be7aa5b2533bdf00d4aed00f3dcd1904e9504"
+        }
+      ]
+    },
+    {
+      "identity": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_damage_path_b220\\identity.json",
+      "identity_sha256": "8d6f7bd904e1ce4c6b48f605a4af7972855b58c4a3c451e6ffd9222d3d287a07",
+      "pair": "damage_path_b220",
+      "runs": [
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_damage_path_b220\\legacy\\editor_raw.log",
+          "sha256": "39b6ea700ac3ccc4e96584ab9f10014aff2bf5245242c9463a8520db01dddc05"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_damage_path_b220\\legacy\\command.json",
+          "sha256": "a37461c40872dbc6c4d31ef5c7c8a34947b0f9fea9a9c4cd10e36bf3d5c9c61d"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_damage_path_b220\\legacy\\result.json",
+          "sha256": "95481d3bbbddf4f7068ea702fc18e43f5f223abb54d98290f8a082eb4817f60d"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_damage_path_b220\\data\\editor_raw.log",
+          "sha256": "c73b2db46c4400255a6b42638109a60091cce8094f78a35b7041c0bd91a1560b"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_damage_path_b220\\data\\command.json",
+          "sha256": "28515a56b0bdd9ddcd9143f3022a07ef26fbdf429e2f62103363baea17ecc539"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_damage_path_b220\\data\\result.json",
+          "sha256": "e26b54536aa032d5a00444c6289bb0f74bb8e20bb840726e6b016ab053518d4e"
+        }
+      ]
+    },
+    {
+      "identity": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_player_death_reset_b220\\identity.json",
+      "identity_sha256": "81797147871f7535488b10af8e272b6728d3388bb054c8a7033a8fe5268eef42",
+      "pair": "player_death_reset_b220",
+      "runs": [
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_player_death_reset_b220\\legacy\\editor_raw.log",
+          "sha256": "55254153f7d3c7db4386bbfc15e5c9626e7392cf0cda279da5776a5066e23c34"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_player_death_reset_b220\\legacy\\command.json",
+          "sha256": "25609fe75c1003d371a0d2201741d42a6dc37fa6df5aba187aa50a36dbc909b2"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_player_death_reset_b220\\legacy\\result.json",
+          "sha256": "ece043bb6b1bc8f500ebebd3eca2bd8a49fbb9d2a34678d52d7b1763dadc04fa"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_player_death_reset_b220\\data\\editor_raw.log",
+          "sha256": "6b422b2760e375a830dac8089061d16ddc556aae4d21d02125e09c4e72e9d29b"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_player_death_reset_b220\\data\\command.json",
+          "sha256": "2f8f134746f401d59ce306727b1c9107ef866a2dff519e6eb099515fca3d2573"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_player_death_reset_b220\\data\\result.json",
+          "sha256": "62cec7e8ee93fb7f115522a726ad3e2f3531c12a106583769ae4c2128cb36771"
+        }
+      ]
+    },
+    {
+      "identity": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_telegraph_b220\\identity.json",
+      "identity_sha256": "e5a54a8617d630149cd50a0cb35f714416425b69aed99b4bf823a6cad8cafb3e",
+      "pair": "telegraph_b220",
+      "runs": [
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_telegraph_b220\\legacy\\editor_raw.log",
+          "sha256": "e8ba177e99266cd48dda0bd7f98a523a7ee85b3e6f8cc0ba74c53e6d7d34db33"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_telegraph_b220\\legacy\\command.json",
+          "sha256": "15c5a660d1db660b779c9f3d58214ba24789f178ce673982d2a405a97a95ec02"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_telegraph_b220\\legacy\\result.json",
+          "sha256": "6fb4d8c17241986b44435b4deeed1718f22aec7fd3420f9bcccd7f5dbfe01826"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_telegraph_b220\\data\\editor_raw.log",
+          "sha256": "f555674d989ce7d1f91a4a7eaa10bf261836d1ddf8d78ac136adcbe769300751"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_telegraph_b220\\data\\command.json",
+          "sha256": "1e2e509458ded55cf09ada924e6b0a5c7a585166efa8628a1f87fe91fe5ffea4"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_telegraph_b220\\data\\result.json",
+          "sha256": "57fde101c04e3641fbef1e8730539ac5cfead84ffc591c9e21b467fbade684e3"
+        }
+      ]
+    },
+    {
+      "identity": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_boss_hud_b220\\identity.json",
+      "identity_sha256": "5113fabe580312450b99195886b42a0d263a18b4b32e93301b616cf2e0f34d31",
+      "pair": "boss_hud_b220",
+      "runs": [
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_boss_hud_b220\\legacy\\editor_raw.log",
+          "sha256": "02ffe5ef2abbf43a17b8773b1f5ff362dcc9816b3d940733d24ce376f4abb2b7"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_boss_hud_b220\\legacy\\command.json",
+          "sha256": "758c82f7c3a7988bcef14085d0cf0dd0d340e971a83f83e6fbb609c78d0d51f0"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_boss_hud_b220\\legacy\\result.json",
+          "sha256": "3f80fcc582556495ff38f7fb87dee3dd1c6803e1a83038c440f6296cdc224977"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_boss_hud_b220\\data\\editor_raw.log",
+          "sha256": "ae39f6a501b6dda32c85e58b7eec08bdb67266866d1d88a7791ac3397c6c2642"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_boss_hud_b220\\data\\command.json",
+          "sha256": "7715612b6dfd93184b1b96da452e455a68ea4b863ed573254d3df672be85f6e2"
+        },
+        {
+          "path": "C:\\UnrealProject\\OneBossFight\\Docs\\BossCombatReview\\Execution\\Claude\\B_C835_PARITY\\pie_boss_hud_b220\\data\\result.json",
+          "sha256": "d87c21fe9a0cfb20bafdcfe67720e56cd8001cf1ce0cee7ac89d9144566b5921"
+        }
+      ]
+    }
+  ]
+}

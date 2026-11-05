@@ -1,0 +1,973 @@
+{
+  "schema": 1,
+  "source_note": "Samples are first retained real log occurrences; missing entries are explicitly not represented by synthetic examples.",
+  "schema_count": 138,
+  "tokens": [
+    {
+      "token": "ERROR",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1792,
+      "sample": "[2026.11.02-20.15.37:976][121]LogTemp: Error: [FrameworkProof] ERROR token=Framework.Selector.NoCandidate bossInactive=1"
+    },
+    {
+      "token": "RESULT",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log",
+      "line": 1875,
+      "sample": "[2026.10.31-14.32.13:462][813]LogTemp: Display: [FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=2 attacks=2"
+    },
+    {
+      "token": "abort_repeat",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_abort_repeat_grab/editor_raw.log",
+      "line": 1666,
+      "sample": "[2026.11.01-17.33.33:988][533]LogTemp: Display: [FrameworkProof] abort_repeat reason=StanceBreak repeats=3 duplicateCleanups=0 duplicateReleases=0 modelIdle=1"
+    },
+    {
+      "token": "aggro_switch",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_enabled/editor_raw.log",
+      "line": 1577,
+      "sample": "[2026.11.02-20.14.52:510][949]LogTemp: Display: [FrameworkProof] aggro_switch from=0 to=1"
+    },
+    {
+      "token": "anticheese",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_DEF005/pie_pass/editor_raw.log",
+      "line": 1586,
+      "sample": "[2026.11.01-16.57.44:133][396]LogTemp: Display: [FrameworkProof] anticheese state=Hugging streak=1 rangeCm=128.467 thresholdCm=200 seq=1"
+    },
+    {
+      "token": "arena_leash",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_MOV005/pie_leash3/editor_raw.log",
+      "line": 1612,
+      "sample": "[2026.11.01-03.46.11:420][559]LogTemp: Display: [FrameworkProof] arena_leash state=Start targetDistanceCm=500 radiusCm=250 centerX=0 centerY=0"
+    },
+    {
+      "token": "attack_row",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_heavy/editor_raw.log",
+      "line": 1812,
+      "sample": "[2026.11.01-15.02.10:476][499]LogRPGHitIntake: [FrameworkProof] attack_row weapon=SwordCombatStyle kind=Strong found=1 posture=30 bleed=0 healthMult=0.39 via=pending"
+    },
+    {
+      "token": "attack_row_refused",
+      "source": "no_real_sample",
+      "path": null,
+      "line": null,
+      "sample": null
+    },
+    {
+      "token": "bleed_buildup",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/C3/runs/pie_polearm/editor_raw.log",
+      "line": 1657,
+      "sample": "[2026.10.31-01.51.51:948][ 10]LogTemp: Display: [FrameworkProof] bleed_buildup amount=0 buildup=0 threshold=100 result=no buildup"
+    },
+    {
+      "token": "bleed_proc",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/F10/dual/editor_raw.log",
+      "line": 1757,
+      "sample": "[2026.10.30-21.34.36:052][106]LogTemp: Display: [FrameworkProof] bleed_proc procs=1 damage=200 healthBefore=500 healthAfter=300 nextThreshold=120"
+    },
+    {
+      "token": "boss_dead",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_HIT012/pie_grab_death/editor_raw.log",
+      "line": 1662,
+      "sample": "[2026.11.01-10.27.30:112][569]LogTemp: Display: [FrameworkProof] boss_dead generation=1 executorAborted=1"
+    },
+    {
+      "token": "boss_health",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_ANM006/pie_warp_clamped/editor_raw.log",
+      "line": 1580,
+      "sample": "[2026.11.01-10.40.45:383][368]LogTemp: Display: [FrameworkProof] boss_health max=250 playerHitDamage=100 label=F5_fixture"
+    },
+    {
+      "token": "boss_health_read",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_COMBO2/reg_f8/editor_raw.log",
+      "line": 1653,
+      "sample": "[2026.10.31-17.56.25:718][ 24]LogRPGHitIntake: [FrameworkProof] boss_health_read reader=ReadAttribute ok=1 value=150 max=250"
+    },
+    {
+      "token": "boss_hit",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_heavy/editor_raw.log",
+      "line": 1813,
+      "sample": "[2026.11.01-15.02.10:476][499]LogTemp: Display: [FrameworkProof] boss_hit damage=39 healthBefore=250 healthAfter=211"
+    },
+    {
+      "token": "bystander_spawned",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_HIT005/byst60/editor_raw.log",
+      "line": 1583,
+      "sample": "[2026.10.31-22.42.54:166][956]LogTemp: Display: [FrameworkProof] bystander_spawned ok=1 name=Character_0 x=0 y=-60 z=98.15"
+    },
+    {
+      "token": "camera_frame",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_QA006/pie_control_turned_away/editor_raw.log",
+      "line": 1596,
+      "sample": "[2026.11.01-17.48.42:287][254]LogTemp: Display: [FrameworkProof] camera_frame t=9.75 distCm=482.467 screenMinX=427.4 screenMinY=122.5 screenMaxX=481.5 screenMaxY=271.3 viewX=918 viewY=402 cornersOnScreen=8 insideMargin=1 heightPct=37.02 occluded=0"
+    },
+    {
+      "token": "camera_stage",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_QA006/pie_control_turned_away/editor_raw.log",
+      "line": 1728,
+      "sample": "[2026.11.01-17.48.43:716][419]LogTemp: Display: [FrameworkProof] camera_stage index=0 distanceCm=300 cameraTurnedAway=0"
+    },
+    {
+      "token": "candidate",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1577,
+      "sample": "[2026.11.02-20.15.36:276][947]LogTemp: Display: [FrameworkProof] candidate attack=1 card=Move_Sevarog_SwingSlow_F5 score=0.958915 seq=1"
+    },
+    {
+      "token": "cleanup",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1785,
+      "sample": "[2026.11.02-20.15.37:960][119]LogTemp: Display: [FrameworkProof] cleanup reason=Finished modelIdle=1 ownedMontageStopped=1"
+    },
+    {
+      "token": "combo_end",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log",
+      "line": 2203,
+      "sample": "[2026.10.31-17.54.20:260][508]LogTemp: Display: [FrameworkProof] combo_end reason=AttackBudget"
+    },
+    {
+      "token": "combo_gate",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log",
+      "line": 1791,
+      "sample": "[2026.10.31-17.54.16:906][151]LogTemp: Display: [FrameworkProof] combo_gate gate=1 node=A outcome=Hit range=128.625 yaw=0 result=Continue next=B reason="
+    },
+    {
+      "token": "combo_gate_duplicate",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_COMBO3/pie_dupgate/editor_raw.log",
+      "line": 1803,
+      "sample": "[2026.10.31-19.55.27:978][193]LogTemp: Display: [FrameworkProof] combo_gate_duplicate gate=1 result=Ignored reason=Combo.GateConsumed stateUnchanged=1"
+    },
+    {
+      "token": "combo_pause",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_PAC002/pie_tempo/editor_raw.log",
+      "line": 1840,
+      "sample": "[2026.11.01-06.50.29:512][768]LogTemp: Display: [FrameworkProof] combo_pause seconds=1 next=C"
+    },
+    {
+      "token": "combo_pause_end",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_PAC002/pie_tempo/editor_raw.log",
+      "line": 1841,
+      "sample": "[2026.11.01-06.50.30:005][828]LogTemp: Display: [FrameworkProof] combo_pause_end"
+    },
+    {
+      "token": "combo_start",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log",
+      "line": 1580,
+      "sample": "[2026.10.31-17.54.15:232][974]LogTemp: Display: [FrameworkProof] combo_start root=A move=Move_Sevarog_SwingSlow_F7 maxDepth=3"
+    },
+    {
+      "token": "combo_step",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log",
+      "line": 1793,
+      "sample": "[2026.10.31-17.54.16:906][151]LogTemp: Display: [FrameworkProof] combo_step node=B move=Move_Sevarog_HeavySlam_F7 depth=2"
+    },
+    {
+      "token": "cone_hysteresis",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR004/pie_run1/editor_raw.log",
+      "line": 1581,
+      "sample": "[2026.11.02-09.00.12:322][295]LogTemp: Display: [FrameworkProof] cone_hysteresis degrees=6 seq=1"
+    },
+    {
+      "token": "cue_fired",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_CUE/pie_mode0_both/editor_raw.log",
+      "line": 1657,
+      "sample": "[2026.11.01-16.28.43:476][395]LogTemp: Display: [FrameworkProof] cue_fired instance=1 cue=HoldRelease why=HoldRelease mode=0 visual=1 audio=1 visualKind=1 visualScale=1 sound=Sevarog_Effort_Attack"
+    },
+    {
+      "token": "decision",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1583,
+      "sample": "[2026.11.02-20.15.36:276][947]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=Move_Sevarog_SwingSlow_F5 score=0.958915 range=154.108 phase=Phase_1 seq=1"
+    },
+    {
+      "token": "defense_check",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_DEF005/pie_fail/editor_raw.log",
+      "line": 1575,
+      "sample": "[2026.11.01-16.59.24:154][191]LogTemp: Display: [FrameworkProof] defense_check card=Move_Sevarog_BackStep_DEF005 check=Cooldown cooldownSeconds=1 requiredSeconds=3 ok=0"
+    },
+    {
+      "token": "dependencies",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1573,
+      "sample": "[2026.11.02-20.15.34:682][792]LogTemp: Display: [FrameworkProof] dependencies mesh=/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog.Sevarog skeleton=/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog_Skeleton.Sevarog_Skeleton animClass=/Game/ParagonSevarog/Characters/Heroes/Sevarog/Sevarog_AnimBlueprint.Sevarog_AnimBlueprint_C sequence=/Game/ParagonSevarog/Characters/Heroes/Sevarog/Animations/Swing1_Slow.Swing1_Slow slot=FullBody resolved=1 label=F5_fixture"
+    },
+    {
+      "token": "dodge_observed",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_enabled/editor_raw.log",
+      "line": 1611,
+      "sample": "[2026.11.02-20.14.52:723][970]LogTemp: Display: [FrameworkProof] dodge_observed n=1 direction=Back speedCm=900 back=0 depth=0"
+    },
+    {
+      "token": "dodge_pattern",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR008/pie_dodge/editor_raw.log",
+      "line": 1710,
+      "sample": "[2026.11.01-10.03.29:750][675]LogTemp: Display: [FrameworkProof] dodge_pattern state=BackDodging back=2 depth=2 threshold=2 seq=2"
+    },
+    {
+      "token": "encounter_reset",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/F6/band_f6_restart/editor_raw.log",
+      "line": 1643,
+      "sample": "[2026.10.30-15.39.50:800][407]LogTemp: Display: [FrameworkProof] encounter_reset generation=2 oldState=Dead executorRearmed=1 bossHealth=250 targetHealth=800"
+    },
+    {
+      "token": "event",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1629,
+      "sample": "[2026.11.02-20.15.36:631][985]LogTemp: Display: [FrameworkProof] event encounter=1 generation=1 instance=1 kind=Open window=Window_SwingSlow_Primary group=HitGroup_ScytheBlade localSeconds=0.35 label=F5_fixture"
+    },
+    {
+      "token": "fatigue",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_FATIGUE/pie_run1_initial_shift/editor_raw.log",
+      "line": 1782,
+      "sample": "[2026.11.02-21.19.27:464][101]LogTemp: Display: [FrameworkProof] fatigue whiffs=1 scale=1"
+    },
+    {
+      "token": "flask_end",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
+      "line": 1728,
+      "sample": "[2026.11.01-17.37.32:258][478]LogTemp: Display: [FrameworkProof] flask_end count=1"
+    },
+    {
+      "token": "flask_perceived",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
+      "line": 1657,
+      "sample": "[2026.11.01-17.37.31:680][424]LogTemp: Display: [FrameworkProof] flask_perceived count=1 latencySeconds=0.431959 windowMin=0.3 windowMax=0.6"
+    },
+    {
+      "token": "flask_reaction",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_flask_punish/editor_raw.log",
+      "line": 1684,
+      "sample": "[2026.11.01-17.37.31:970][450]LogTemp: Display: [FrameworkProof] flask_reaction count=1 measuredSeconds=0.433333 windowMin=0.3 windowMax=0.6"
+    },
+    {
+      "token": "grab_catch",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_HIT012/pie_grab_death/editor_raw.log",
+      "line": 1625,
+      "sample": "[2026.11.01-10.27.29:893][547]LogTemp: Display: [FrameworkProof] grab_catch instance=1 window=Window_HeavySlam_Terminal socket=hand_l releaseAt=1.1 modeBefore=MOVE_Walking modeHeld=MOVE_None attached=1"
+    },
+    {
+      "token": "grab_damage",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_HIT012/pie_grab_release/editor_raw.log",
+      "line": 1668,
+      "sample": "[2026.11.01-10.26.05:648][614]LogTemp: Display: [FrameworkProof] grab_damage instance=1 key=HitGroup_ScytheBlade outcome=ERPGDamageOutcome::Accepted hpApplied=55"
+    },
+    {
+      "token": "grab_release",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_HIT012/pie_grab_death/editor_raw.log",
+      "line": 1659,
+      "sample": "[2026.11.01-10.27.30:112][569]LogTemp: Display: [FrameworkProof] grab_release instance=1 reason=BossDead interrupted=1 attached=0 mode=MOVE_Walking floorFound=1 floorZ=0 feetZ=0.0309088 gapCm=0.0309088"
+    },
+    {
+      "token": "greed_pattern",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_flask/editor_raw.log",
+      "line": 1704,
+      "sample": "[2026.11.01-15.00.33:187][454]LogTemp: Display: [FrameworkProof] greed_pattern state=Greedy source=Flask seq=2"
+    },
+    {
+      "token": "guard_chip",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_GUARD_CHIP/pie_enabled/editor_raw.log",
+      "line": 2058,
+      "sample": "[2026.11.02-19.59.25:586][139]LogTemp: Display: [FrameworkProof] guard_chip incoming=20 applied=5"
+    },
+    {
+      "token": "guard_hook_armed",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_CODEX_W1/pie_grade/editor_raw.log",
+      "line": 1601,
+      "sample": "[2026.11.02-17.31.21:583][574]LogTemp: Display: [FrameworkProof] guard_hook_armed mode=6 seconds=20"
+    },
+    {
+      "token": "guard_hook_end",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_GUARD/pie_abilities8/editor_raw.log",
+      "line": 2180,
+      "sample": "[2026.11.02-07.09.16:190][648]LogTemp: Display: [FrameworkProof] guard_hook_end"
+    },
+    {
+      "token": "guard_state",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR004/pie_run1/editor_raw.log",
+      "line": 1626,
+      "sample": "[2026.11.02-09.00.12:561][321]LogTemp: Display: [FrameworkProof] guard_state instance=1 window=Window_SwingSlow_Primary guard=None outcome=ERPGDamageOutcome::Accepted"
+    },
+    {
+      "token": "guard_tags",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_CODEX_W1/pie_grade/editor_raw.log",
+      "line": 1603,
+      "sample": "[2026.11.02-17.31.21:589][575]LogTemp: Display: [FrameworkProof] guard_tags since=0.0167 statusBlocking=0 stateBlocking=0 abilityParry=0 abilityBlock=0 statusParryActive=0 hasParryAbility=1 hasGuardAbility=1"
+    },
+    {
+      "token": "heading_commit",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1622,
+      "sample": "[2026.11.02-20.15.36:588][980]LogTemp: Display: [FrameworkProof] heading_commit instance=1 yaw=180 turnedDegrees=0 maxRateDegPerSec=0 capDegPerSec=90 decisionRangeCm=154.108 liveRangeCm=226.457 decisionYawDeg=0 liveYawDeg=0"
+    },
+    {
+      "token": "heading_locked",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1782,
+      "sample": "[2026.11.02-20.15.37:960][119]LogTemp: Display: [FrameworkProof] heading_locked instance=1 yawAtCommit=180 maxDriftAfterCommitDegrees=0"
+    },
+    {
+      "token": "hit",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log",
+      "line": 1646,
+      "sample": "[2026.10.31-14.32.11:718][628]LogTemp: Display: [FrameworkProof] hit instance=1 window=Window_SwingSlow_Primary key=HitGroup_ScytheBlade outcome=ERPGDamageOutcome::Accepted hpApplied=35 healthBefore=800 healthAfter=765"
+    },
+    {
+      "token": "hold_release",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_CUE/pie_mode0_both/editor_raw.log",
+      "line": 1656,
+      "sample": "[2026.11.01-16.28.43:475][395]LogTemp: Display: [FrameworkProof] hold_release instance=1 position=0.433333 heldSeconds=0.666667 chosenSeconds=0.66487 minSeconds=0.4 maxSeconds=0.9"
+    },
+    {
+      "token": "hold_start",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_CUE/pie_mode0_both/editor_raw.log",
+      "line": 1615,
+      "sample": "[2026.11.01-16.28.43:109][355]LogTemp: Display: [FrameworkProof] hold_start instance=1 position=0.433333 holdAtSeconds=0.42 chosenSeconds=0.66487 minSeconds=0.4 maxSeconds=0.9"
+    },
+    {
+      "token": "hyperarmor_absorbed",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_DEF004/pie_armor/editor_raw.log",
+      "line": 1634,
+      "sample": "[2026.11.01-06.21.40:925][489]LogTemp: Display: [FrameworkProof] hyperarmor_absorbed card=Move_Sevarog_HeavySlam_F7 postureKept=100 amountSkipped=60"
+    },
+    {
+      "token": "iframe_probe",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p5/editor_raw.log",
+      "line": 1629,
+      "sample": "[2026.11.01-18.15.50:005][434]LogTemp: Display: [FrameworkProof] iframe_probe n=0 sinceDodgePress=0.0000 outcome=ERPGDamageOutcome::Accepted hpApplied=1"
+    },
+    {
+      "token": "iframe_sweep_armed",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p5/editor_raw.log",
+      "line": 1594,
+      "sample": "[2026.11.01-18.15.49:768][404]LogTemp: Display: [FrameworkProof] iframe_sweep_armed dodgeAtSeconds=0.5"
+    },
+    {
+      "token": "iframe_sweep_end",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p5/editor_raw.log",
+      "line": 1862,
+      "sample": "[2026.11.01-18.15.50:718][506]LogTemp: Display: [FrameworkProof] iframe_sweep_end probes=72"
+    },
+    {
+      "token": "iframe_sweep_press",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_sweep_at0p5/editor_raw.log",
+      "line": 1627,
+      "sample": "[2026.11.01-18.15.50:005][434]LogTemp: Display: [FrameworkProof] iframe_sweep_press t=11.3833 sinceFirstAttack=0.5000"
+    },
+    {
+      "token": "invariant",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_ANM004/pie_f5/editor_raw.log",
+      "line": 1874,
+      "sample": "[2026.10.31-14.32.13:462][813]LogTemp: Display: [FrameworkProof] invariant targetHPBefore=800 targetHPAfter=745 expectedHP=745 acceptedHits=2 appliedDamage=55"
+    },
+    {
+      "token": "los_lost",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR007/pie_hide/editor_raw.log",
+      "line": 1663,
+      "sample": "[2026.11.01-09.39.07:688][616]LogTemp: Display: [FrameworkProof] los_lost lastKnownX=0 lastKnownY=0 blocker=StaticMeshActor_1"
+    },
+    {
+      "token": "los_regained",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR007/pie_hide/editor_raw.log",
+      "line": 1709,
+      "sample": "[2026.11.01-09.39.08:135][671]LogTemp: Display: [FrameworkProof] los_regained lostForSeconds=0.916667"
+    },
+    {
+      "token": "los_resume",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR007/pie_hide/editor_raw.log",
+      "line": 1710,
+      "sample": "[2026.11.01-09.39.08:135][671]LogTemp: Display: [FrameworkProof] los_resume"
+    },
+    {
+      "token": "los_search_start",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR007/pie_hide/editor_raw.log",
+      "line": 1708,
+      "sample": "[2026.11.01-09.39.08:044][659]LogTemp: Display: [FrameworkProof] los_search_start x=0 y=0"
+    },
+    {
+      "token": "los_search_timeout",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR007/pie_hide_no_regain_target_x128/editor_raw.log",
+      "line": 1708,
+      "sample": "[2026.11.01-09.32.30:071][755]LogTemp: Display: [FrameworkProof] los_search_timeout seconds=3"
+    },
+    {
+      "token": "montage_end_suppressed",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log",
+      "line": 1616,
+      "sample": "[2026.11.01-02.10.44:930][992]LogTemp: Display: [FrameworkProof] montage_end_suppressed instance=1 position=0.306394"
+    },
+    {
+      "token": "montage_natural_end",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1779,
+      "sample": "[2026.11.02-20.15.37:951][118]LogTemp: Display: [FrameworkProof] montage_natural_end instance=1 lastPosition=1.64866 naturalEnd=1.67"
+    },
+    {
+      "token": "motion_intruder",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_intruder_hold/editor_raw.log",
+      "line": 1608,
+      "sample": "[2026.11.01-17.32.48:098][537]LogTemp: Display: [FrameworkProof] motion_intruder state=Requested instance=1 requestResult=2 locked=1"
+    },
+    {
+      "token": "motion_lock",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1584,
+      "sample": "[2026.11.02-20.15.36:276][947]LogTemp: Display: [FrameworkProof] motion_lock state=Acquired instance=1 mode=MOVE_None"
+    },
+    {
+      "token": "nav",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1574,
+      "sample": "[2026.11.02-20.15.34:682][792]LogTemp: Display: [FrameworkProof] nav request=1 projected=X=150.000 Y=-0.000 Z=10.000 fullPath=1 result=2"
+    },
+    {
+      "token": "nav_not_ready",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_QA001/game_run1_FAIL_standalone_no_baked_navmesh_fixture_nav_not_ready/editor_raw.log",
+      "line": 1303,
+      "sample": "[2026.11.01-18.33.23:033][206]LogTemp: Error: [FrameworkProof] nav_not_ready navSystem=1 buildInProgress=0 targetLocation=X=0.000 Y=0.000 Z=98.150"
+    },
+    {
+      "token": "nav_ready",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1558,
+      "sample": "[2026.11.02-20.15.34:011][792]LogTemp: Display: [FrameworkProof] nav_ready waitedSeconds=0"
+    },
+    {
+      "token": "neutral_state",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1581,
+      "sample": "[2026.11.02-20.15.36:276][947]LogTemp: Display: [FrameworkProof] neutral_state seq=1 executorIdle=1 openWindows=0"
+    },
+    {
+      "token": "overlay",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_PARRY_STAMINA/pie_stamina_overlay_run1/editor_raw.log",
+      "line": 1582,
+      "sample": "[2026.11.02-21.10.54:405][784]LogTemp: Display: [FrameworkProof] overlay Card=None State=Idle Phase=Phase_1 Range=500cm Cone=0deg Window=Closed Posture=100/100 Health=250/250 Stagger=0 PhaseHold=0 Parry=Closed Grade=None"
+    },
+    {
+      "token": "pack_style_known",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1556,
+      "sample": "[2026.11.02-20.15.34:011][792]LogTemp: Display: [FrameworkProof] pack_style_known waitedSeconds=9.66272"
+    },
+    {
+      "token": "parry_grade",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_CODEX_W1/pie_grade/editor_raw.log",
+      "line": 1900,
+      "sample": "[2026.11.02-17.31.22:694][703]LogTemp: Display: [FrameworkProof] parry_grade grade=Perfect scale=1"
+    },
+    {
+      "token": "parry_press",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_CODEX_W1/pie_grade/editor_raw.log",
+      "line": 1668,
+      "sample": "[2026.11.02-17.31.21:835][605]LogRPGParry: Display: [FrameworkProof] parry_press n=1 t=11.1333 opened=1 windowSeconds=0.25"
+    },
+    {
+      "token": "parry_reaction",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_CODEX_W1/pie_grade/editor_raw.log",
+      "line": 1904,
+      "sample": "[2026.11.02-17.31.22:720][704]LogTemp: Display: [FrameworkProof] parry_reaction posture=100"
+    },
+    {
+      "token": "parry_recovery",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_PARRY_RECOVERY/pie_enabled_noposture_run1/editor_raw.log",
+      "line": 2334,
+      "sample": "[2026.11.02-20.07.03:899][289]LogTemp: Display: [FrameworkProof] parry_recovery grade=1 extra=0.752895"
+    },
+    {
+      "token": "parry_stamina",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_PARRY_STAMINA/pie_stamina_overlay_run1/editor_raw.log",
+      "line": 1771,
+      "sample": "[2026.11.02-21.10.56:899][ 32]LogRPGParry: Display: [FrameworkProof] parry_stamina before=100 after=80 parried=0"
+    },
+    {
+      "token": "parry_tag",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_CODEX_W1/pie_grade/editor_raw.log",
+      "line": 1667,
+      "sample": "[2026.11.02-17.31.21:835][605]LogRPGParry: Display: [FrameworkProof] parry_tag state=added call=ok reason=Press"
+    },
+    {
+      "token": "pending_hit_queued",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/KI151/clay/editor_raw.log",
+      "line": 1654,
+      "sample": "[2026.10.30-22.54.12:676][994]LogRPGHitIntake: [FrameworkProof] pending_hit_queued weapon=ClaymoreCombatStyle kind=JumpHeavy blades=1"
+    },
+    {
+      "token": "pending_hit_refused",
+      "source": "no_real_sample",
+      "path": null,
+      "line": null,
+      "sample": null
+    },
+    {
+      "token": "phase_anim",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log",
+      "line": 1678,
+      "sample": "[2026.11.01-04.22.23:015][641]LogTemp: Display: [FrameworkProof] phase_anim state=Triggered sequence=Soul_Siphon slot=FullBody length=1.83333 from=Phase_1 to=Phase_2"
+    },
+    {
+      "token": "phase_transition",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_COMBO2/reg_f8/editor_raw.log",
+      "line": 1709,
+      "sample": "[2026.10.31-17.56.27:124][185]LogTemp: Display: [FrameworkProof] phase_transition attack=1 from=Phase_1 to=Phase_2 health=50 max=250 fraction=0.5"
+    },
+    {
+      "token": "playback",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1588,
+      "sample": "[2026.11.02-20.15.36:277][947]LogTemp: Display: [FrameworkProof] playback instance=1 position=0 nodeWeight=1 montageWeight=0 base=X=82.679 Y=-12.609 Z=94.227 tip=X=-4.451 Y=69.234 Z=63.805"
+    },
+    {
+      "token": "playback_start",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1586,
+      "sample": "[2026.11.02-20.15.36:276][947]LogTemp: Display: [FrameworkProof] playback_start encounter=1 generation=1 instance=1 montage=/Engine/Transient.AnimMontage_0 slot=FullBody rate=1 label=F5_fixture"
+    },
+    {
+      "token": "player_activity",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_flask/editor_raw.log",
+      "line": 1671,
+      "sample": "[2026.11.01-15.00.32:890][423]LogTemp: Display: [FrameworkProof] player_activity from=None to=Flask attackKind=Unknown"
+    },
+    {
+      "token": "player_dodge_started",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1611,
+      "sample": "[2026.11.02-20.15.36:481][970]LogTemp: Display: [FrameworkProof] player_dodge_started n=1 offset=0.2 direction=Back ok=1"
+    },
+    {
+      "token": "player_dodges_scheduled",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1587,
+      "sample": "[2026.11.02-20.15.36:276][947]LogTemp: Display: [FrameworkProof] player_dodges_scheduled count=3"
+    },
+    {
+      "token": "player_drink_started",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_flask/editor_raw.log",
+      "line": 1670,
+      "sample": "[2026.11.01-15.00.32:890][423]LogTemp: Display: [FrameworkProof] player_drink_started n=1 offset=1.2 ok=1 length=1.13333"
+    },
+    {
+      "token": "player_drinks_scheduled",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_flask/editor_raw.log",
+      "line": 1589,
+      "sample": "[2026.11.01-15.00.32:274][351]LogTemp: Display: [FrameworkProof] player_drinks_scheduled count=1"
+    },
+    {
+      "token": "player_hit_injected",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_DEF004/pie_armor/editor_raw.log",
+      "line": 1636,
+      "sample": "[2026.11.01-06.21.40:925][489]LogTemp: Display: [FrameworkProof] player_hit_injected n=1 offset=0.5 ok=1"
+    },
+    {
+      "token": "player_hits_scheduled",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_DEF004/pie_armor/editor_raw.log",
+      "line": 1599,
+      "sample": "[2026.11.01-06.21.40:666][459]LogTemp: Display: [FrameworkProof] player_hits_scheduled count=2"
+    },
+    {
+      "token": "player_swing",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR006/pie_heavy/editor_raw.log",
+      "line": 1775,
+      "sample": "[2026.11.01-15.02.10:134][466]LogTemp: Display: [FrameworkProof] player_swing from=Unknown to=Strong heavy=1"
+    },
+    {
+      "token": "posture_drain",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_CODEX_W1/pie_grade/editor_raw.log",
+      "line": 1906,
+      "sample": "[2026.11.02-17.31.22:720][704]LogTemp: Display: [FrameworkProof] posture_drain amount=100 postureBefore=100 postureAfter=0 max=100"
+    },
+    {
+      "token": "posture_held",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log",
+      "line": 1671,
+      "sample": "[2026.11.01-04.22.23:015][641]LogTemp: Display: [FrameworkProof] posture_held reason=StaggerActive posture=0"
+    },
+    {
+      "token": "posture_regen_full",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_DEF002/pie_run2/editor_raw.log",
+      "line": 1871,
+      "sample": "[2026.10.31-15.11.54:102][199]LogTemp: Display: [FrameworkProof] posture_regen_full posture=100 max=100"
+    },
+    {
+      "token": "posture_regen_start",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_DEF002/pie_run1_rate40_no_full_before_end/editor_raw.log",
+      "line": 1843,
+      "sample": "[2026.10.31-15.10.34:412][164]LogTemp: Display: [FrameworkProof] posture_regen_start posture=40 sinceLastDrainSeconds=1.00486 delaySeconds=1 perSecond=40"
+    },
+    {
+      "token": "punish_check",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_DEF005/pie_pass/editor_raw.log",
+      "line": 1576,
+      "sample": "[2026.11.01-16.57.42:701][269]LogTemp: Display: [FrameworkProof] punish_check card=Move_Sevarog_HeavySlam_F7 recoverySeconds=1.1167 lightStartupSeconds=0.350337 heavyStartupSeconds=0.502704 travelSeconds=0.05 lightMarginSeconds=0.716363 heavyMarginSeconds=0.563996 requiredSeconds=0.3 heavyFinisher=1 ok=1"
+    },
+    {
+      "token": "refusal",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1786,
+      "sample": "[2026.11.02-20.15.37:976][121]LogTemp: Display: [FrameworkProof] refusal attack=2 card=Move_Sevarog_SwingSlow_F5 reason=MoveModel.Range seq=2"
+    },
+    {
+      "token": "reposition",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR008/pie_dodge/editor_raw.log",
+      "line": 1713,
+      "sample": "[2026.11.01-10.03.29:750][675]LogTemp: Display: [FrameworkProof] reposition attempt=1 max=3 range=272.444 reason=NoCandidate"
+    },
+    {
+      "token": "reposition_turn",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR007/pie_hide/editor_raw.log",
+      "line": 1715,
+      "sample": "[2026.11.01-09.39.09:250][814]LogTemp: Display: [FrameworkProof] reposition_turn start yawToTarget=-102.18 range=128.132 ratePerSecond=180"
+    },
+    {
+      "token": "reposition_turn_end",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR007/pie_hide/editor_raw.log",
+      "line": 1756,
+      "sample": "[2026.11.01-09.39.09:408][834]LogTemp: Display: [FrameworkProof] reposition_turn_end flips=0 latchDir=-1 seconds=0.333333"
+    },
+    {
+      "token": "ring_sweep",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_HIT009/pie_probe_FAIL_driver_wall_clock_dodge_no_iframe_sweep/editor_raw.log",
+      "line": 1625,
+      "sample": "[2026.11.01-18.09.57:887][336]LogTemp: Display: [FrameworkProof] ring_sweep instance=1 window=Window_HeavyRing_Ring from=0.475 to=0.483334 frontLoCm=40 frontHiCm=45.0001 thicknessCm=50 targetDistCm=128.467 targetRadiusCm=42 dzCm=3.09188 heightCm=80 contact=0"
+    },
+    {
+      "token": "screenshot_quit",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_QA001/game_run3/editor_raw.log",
+      "line": 1295,
+      "sample": "[2026.11.01-18.40.05:447][408]LogTemp: Display: [FrameworkProof] screenshot_quit"
+    },
+    {
+      "token": "screenshot_requested",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_QA001/game_run3/editor_raw.log",
+      "line": 1293,
+      "sample": "[2026.11.01-18.40.04:790][388]LogTemp: Display: [FrameworkProof] screenshot_requested t=6.00 viewX=966 viewY=450 showUI=0 path=C:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Claude/B_QA001/attempt3_standalone_game.png"
+    },
+    {
+      "token": "slot_graph",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1572,
+      "sample": "[2026.11.02-20.15.34:682][792]LogTemp: Display: [FrameworkProof] slot_graph name=FullBody nodeClass=AnimNode_Slot verified=1 label=F5_fixture"
+    },
+    {
+      "token": "stagger_anim",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log",
+      "line": 1666,
+      "sample": "[2026.11.01-04.22.22:779][611]LogTemp: Display: [FrameworkProof] stagger_anim state=Start sequence=Stun_Start slot=FullBody length=1.7"
+    },
+    {
+      "token": "stagger_recovery",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_CODEX_W1/pie_grade/editor_raw.log",
+      "line": 1975,
+      "sample": "[2026.11.02-17.31.23:206][764]LogTemp: Display: [FrameworkProof] stagger_recovery postureRefilled=100 generation=1"
+    },
+    {
+      "token": "stagger_superseded",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_EXE005/pie_supersede/editor_raw.log",
+      "line": 1674,
+      "sample": "[2026.11.01-04.22.23:015][641]LogTemp: Display: [FrameworkProof] stagger_superseded reason=PhaseTransition health=200 max=500 fraction=0.5"
+    },
+    {
+      "token": "stale_callback",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_EXE004/pie_stale/editor_raw.log",
+      "line": 1677,
+      "sample": "[2026.11.01-03.16.07:114][594]LogTemp: Display: [FrameworkProof] stale_callback oldInstance=1 newInstance=2 refused=1 error=MoveModel.StaleCallback newAttackAlive=1"
+    },
+    {
+      "token": "stance_break",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_CODEX_W1/pie_grade/editor_raw.log",
+      "line": 1912,
+      "sample": "[2026.11.02-17.31.22:720][704]LogTemp: Display: [FrameworkProof] stance_break state=MidAttack duration=1 generation=1 phase=Phase_1"
+    },
+    {
+      "token": "strafe_budget_exhausted",
+      "source": "no_real_sample",
+      "path": null,
+      "line": null,
+      "sample": null
+    },
+    {
+      "token": "strafe_budget_restarted",
+      "source": "no_real_sample",
+      "path": null,
+      "line": null,
+      "sample": null
+    },
+    {
+      "token": "strafe_end",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_SEL008/pie_run2/editor_raw.log",
+      "line": 1881,
+      "sample": "[2026.11.02-10.35.23:050][691]LogTemp: Display: [FrameworkProof] strafe_end seconds=2.28333 reason=CandidateEligible card=Move_Sevarog_SwingSlow_F7"
+    },
+    {
+      "token": "strafe_start",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_SEL008/pie_run2/editor_raw.log",
+      "line": 1738,
+      "sample": "[2026.11.02-10.35.21:723][554]LogTemp: Display: [FrameworkProof] strafe_start range=128.467 budgetSeconds=8 speedCmPerSecond=180 seq=2"
+    },
+    {
+      "token": "strafe_step",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_SEL008/pie_run2/editor_raw.log",
+      "line": 1739,
+      "sample": "[2026.11.02-10.35.21:723][554]LogTemp: Display: [FrameworkProof] strafe_step elapsed=0.000 dir=-1 range=128.467 movedCm=2.99993"
+    },
+    {
+      "token": "strafe_stuck",
+      "source": "no_real_sample",
+      "path": null,
+      "line": null,
+      "sample": null
+    },
+    {
+      "token": "sweep",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1630,
+      "sample": "[2026.11.02-20.15.36:631][985]LogTemp: Display: [FrameworkProof] sweep instance=1 window=Window_SwingSlow_Primary from=0.35 to=0.354476 tipDistanceCm=4.32824 substeps=1 clamped=0 baked=0"
+    },
+    {
+      "token": "sweep_filter",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_HIT005/byst60/editor_raw.log",
+      "line": 1655,
+      "sample": "[2026.10.31-22.42.54:643][  6]LogTemp: Display: [FrameworkProof] sweep_filter instance=1 window=Window_SwingSlow_Primary ignoredPawns=1 first=Character_0 targetContact=1 selfHits=0"
+    },
+    {
+      "token": "target_fault_injected",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR001/destroy/editor_raw.log",
+      "line": 1583,
+      "sample": "[2026.10.31-23.01.38:255][949]LogTemp: Display: [FrameworkProof] target_fault_injected kind=Destroy"
+    },
+    {
+      "token": "target_health_init",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1557,
+      "sample": "[2026.11.02-20.15.34:011][792]LogTemp: Display: [FrameworkProof] target_health_init value=800 readback=800 label=F5_fixture"
+    },
+    {
+      "token": "target_health_mismatch",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AWR001/kill/editor_raw.log",
+      "line": 1586,
+      "sample": "[2026.10.31-23.00.56:662][949]LogTemp: Display: [FrameworkProof] target_health_mismatch valid=0 actual=0 expected=800 generation=1 reason=Dead"
+    },
+    {
+      "token": "target_shift_injected",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_ANM006/pie_warp_clamped/editor_raw.log",
+      "line": 1593,
+      "sample": "[2026.11.01-10.40.46:558][496]LogTemp: Display: [FrameworkProof] target_shift_injected n=1 dx=-50 dy=600 dz=0"
+    },
+    {
+      "token": "target_shifts_scheduled",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_ANM006/pie_warp_clamped/editor_raw.log",
+      "line": 1591,
+      "sample": "[2026.11.01-10.40.46:550][495]LogTemp: Display: [FrameworkProof] target_shifts_scheduled count=1"
+    },
+    {
+      "token": "telegraph_cue",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_PARTIALS/pie_telegraph/editor_raw.log",
+      "line": 1596,
+      "sample": "[2026.11.01-17.36.44:220][332]LogTemp: Display: [FrameworkProof] telegraph_cue instance=1 cue=Telegraph positionSeconds=0.05 commitSeconds=0.4 visual=1 audio=1"
+    },
+    {
+      "token": "telegraph_restore",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_TELEGRAPH/pie_enabled_run2_restore/editor_raw.log",
+      "line": 1792,
+      "sample": "[2026.11.02-20.29.53:646][111]LogTemp: Display: [FrameworkProof] telegraph_restore card=Move_Sevarog_SwingSlow_F5 rate=1"
+    },
+    {
+      "token": "telegraph_scale",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_TELEGRAPH/pie_enabled/editor_raw.log",
+      "line": 1582,
+      "sample": "[2026.11.02-20.12.49:367][938]LogTemp: Display: [FrameworkProof] telegraph_scale card=Move_Sevarog_SwingSlow_F5 rate=1"
+    },
+    {
+      "token": "walk",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_AGGRO/pie_control/editor_raw.log",
+      "line": 1576,
+      "sample": "[2026.11.02-20.15.36:266][946]LogTemp: Display: [FrameworkProof] walk start=X=500.000 Y=0.000 Z=167.150 end=X=154.108 Y=0.000 Z=167.150 distanceCm=345.892 rangeCm=154.108 bandMin=140 bandMax=160 capsule=X=154.108 Y=0.000 Z=167.150 mesh=X=154.108 Y=0.000 Z=2.150"
+    },
+    {
+      "token": "walk_center_bias",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_MOV002/pie_biased_NoCandidate_no_reposition/editor_raw.log",
+      "line": 1589,
+      "sample": "[2026.11.01-07.11.46:138][330]LogTemp: Display: [FrameworkProof] walk_center_bias targetFromCenterCm=250 thresholdCm=150 bias=1 near=1 awayX=-0.6 awayY=0.8 biasedX=1 biasedY=0"
+    },
+    {
+      "token": "walk_resumed",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/F11/pie_run1/editor_raw.log",
+      "line": 1595,
+      "sample": "[2026.10.31-12.47.33:664][259]LogTemp: Display: [FrameworkProof] walk_resumed generation=1"
+    },
+    {
+      "token": "warp_blocked",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_MOV001/pie_R150_FAIL_wide_band_always_decides_at_525/editor_raw.log",
+      "line": 1664,
+      "sample": "[2026.11.02-10.18.29:366][490]LogTemp: Display: [FrameworkProof] warp_blocked instance=1 stepCm=15.2263 actualCm=7.40681 blocker=BP_CombatPlayerCharacter_C_0 bossX=453.015 bossY=0"
+    },
+    {
+      "token": "warp_ease",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_WARP_EASE/pie_eased/editor_raw.log",
+      "line": 1620,
+      "sample": "[2026.11.02-19.52.29:339][977]LogTemp: Display: [FrameworkProof] warp_ease on=1"
+    },
+    {
+      "token": "warp_step",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_ANM006/pie_warp_clamped/editor_raw.log",
+      "line": 1618,
+      "sample": "[2026.11.01-10.40.46:746][519]LogTemp: Display: [FrameworkProof] warp_step instance=1 from=0.4 to=0.4 distCm=625.98 neededCm=520.98 stepCm=0.000465909 actualCm=0.000465909 movedCm=0.000465909 budgetCm=150 neededDeg=-55.4352 stepDeg=-4.95753e-05 turnedDeg=4.95753e-05 budgetDeg=45"
+    },
+    {
+      "token": "warp_summary",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_ANM006/pie_warp_clamped/editor_raw.log",
+      "line": 1644,
+      "sample": "[2026.11.01-10.40.46:823][528]LogTemp: Display: [FrameworkProof] warp_summary instance=1 movedCm=150 maxDistanceCm=150 turnedDeg=45 maxAngleDeg=45"
+    },
+    {
+      "token": "watchdog_recovered",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log",
+      "line": 1620,
+      "sample": "[2026.11.01-02.10.46:770][201]LogTemp: Display: [FrameworkProof] watchdog_recovered attacksDone=0"
+    },
+    {
+      "token": "watchdog_timeout",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_EXE007/pie_suppress/editor_raw.log",
+      "line": 1617,
+      "sample": "[2026.11.01-02.10.46:763][200]LogTemp: Display: [FrameworkProof] watchdog_timeout instance=1 elapsedSeconds=2.15051 timeoutSeconds=2.15 recoveryEndSeconds=1.65 playRate=1"
+    },
+    {
+      "token": "yaw_probe",
+      "source": "real_log",
+      "path": "Docs/BossCombatReview/Execution/Claude/B_YAW_CONE/pie_control/editor_raw.log",
+      "line": 1577,
+      "sample": "[2026.11.02-20.18.50:786][930]LogTemp: Display: [FrameworkProof] yaw_probe sample=0 yaw=45"
+    }
+  ]
+}

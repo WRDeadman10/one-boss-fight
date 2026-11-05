@@ -21,9 +21,8 @@ static TAutoConsoleVariable<float> CVarRPGCloseTelegraph(TEXT("rpg.CloseTelegrap
 
 using namespace RPGPack;
 
-URPGAttackTracker::URPGAttackTracker()
+FRPGAttackTrackerConfig::FRPGAttackTrackerConfig()
 {
-	PrimaryComponentTick.bCanEverTick = true;
 	// A2, the delayed overhead slam (Freeze 16). Stand-in: the pack boss's rare close attack (GS_ChargedAttack). Measured in PIE (pie_a2_scenarios.py): it has two trace windows, 1.57 to 1.76 s and 1.93 to 2.11 s,
 	// and only the second one hurt a player at 140 to 220 cm (health -36 at 2.00 s, three of three; nothing at 260 cm). It behaves as a ground slam with a radius of about 330 cm, not as a directional swing.
 	// The heading therefore locks 0.25 s before the damaging window (Freeze 30.2 item 1). The pack clip has no rotation notify, so the boss does not turn during it unless this component turns it.
@@ -100,6 +99,17 @@ URPGAttackTracker::URPGAttackTracker()
 	A5.RecoveryEndTime = 0.95f;
 	A5.TrackTurnRate = 240.f;
 	Attacks.Add(A5);
+}
+
+URPGAttackTracker::URPGAttackTracker()
+{
+	PrimaryComponentTick.bCanEverTick = true;
+	const FRPGAttackTrackerConfig NativeDefaults;
+	Attacks = NativeDefaults.Attacks;
+	bEnabled = NativeDefaults.bEnabled;
+	bVetoIllegalStarts = NativeDefaults.bVetoIllegalStarts;
+	BranchRange = NativeDefaults.BranchRange;
+	BranchConeDegrees = NativeDefaults.BranchConeDegrees;
 }
 
 int32 URPGAttackTracker::FindTimingIndex(const UAnimMontage* Montage) const
@@ -333,7 +343,15 @@ void URPGAttackTracker::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	{
 		if (!bEnabled)
 		{
+			if (Phase != EPhase::None)
+			{
+				End(TEXT("tracker disabled"), LastPosition);
+			}
 			RestoreTelegraph();
+		}
+		else if (!Anim && Phase != EPhase::None)
+		{
+			End(TEXT("animation instance unavailable"), LastPosition);
 		}
 		return;
 	}
@@ -427,7 +445,8 @@ void URPGAttackTracker::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 				return;
 			}
 		}
-		UE_LOG(LogRPGAttack, Log, TEXT("%s: attack %s instance %d begins (generation %d)"), *GetOwner()->GetName(), *CurrentMove.ToString(), AttackInstance, GetOwner()->FindComponentByClass<URPGBossEncounter>() ? GetOwner()->FindComponentByClass<URPGBossEncounter>()->GetGeneration() : 0);
+		const URPGBossEncounter* Encounter = GetOwner()->FindComponentByClass<URPGBossEncounter>();
+		UE_LOG(LogRPGAttack, Log, TEXT("%s: attack %s instance %d begins (generation %llu)"), *GetOwner()->GetName(), *CurrentMove.ToString(), AttackInstance, static_cast<unsigned long long>(Encounter ? Encounter->GetParticipantGeneration() : 0));
 	}
 	UpdateTelegraph(Montage, Timing, Position);
 

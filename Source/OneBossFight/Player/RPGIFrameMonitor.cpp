@@ -119,12 +119,13 @@ void URPGIFrameMonitor::DebugForceOwned(bool bOwned)
 #endif
 }
 
-void URPGIFrameMonitor::RemoveTag(const TCHAR* Reason)
+bool URPGIFrameMonitor::RemoveTag(const TCHAR* Reason)
 {
 	AActor* Owner = GetOwner();
 	const FGameplayTag Tag = FGameplayTag::RequestGameplayTag(TEXT("Status.Invulnerable"), false);
 	const bool bCalled = CallBlueprintFunction(Owner, TEXT("RemoveOwnedGameplayTag"), [&Tag](UFunction& F, uint8* P) { SetTag(F, P, TEXT("TagToRemove"), Tag); }, [](UFunction&, uint8*) {});
 	UE_LOG(LogRPGIFrame, Log, TEXT("%s: Status.Invulnerable removed (%s), call %s"), *Owner->GetName(), Reason, bCalled ? TEXT("ok") : TEXT("failed"));
+	return bCalled; // audit X-450: callers keep ownership when the removal could not be made
 }
 
 void URPGIFrameMonitor::CloseRecord(const TCHAR* Reason, float EndPos)
@@ -144,9 +145,8 @@ void URPGIFrameMonitor::CloseRecord(const TCHAR* Reason, float EndPos)
 
 void URPGIFrameMonitor::OnEncounterReset()
 {
-	if (bTag && bOwnedNow)
+	if (bTag && bOwnedNow && RemoveTag(TEXT("encounter reset")))
 	{
-		RemoveTag(TEXT("encounter reset"));
 		++ResetCleared;
 		CloseRecord(TEXT("EncounterReset"), LastPos);
 		bTag = false;
@@ -156,6 +156,12 @@ void URPGIFrameMonitor::OnEncounterReset()
 
 void URPGIFrameMonitor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	if (bTag && bOwnedNow)
+	{
+		RemoveTag(TEXT("EndPlay")); // audit X-441 #14: a removed monitor must not leave Status.Invulnerable set on a live pawn
+		bTag = false;
+		bOwnedNow = false;
+	}
 	CloseRecord(TEXT("EndPlay"), LastPos);
 	Super::EndPlay(EndPlayReason);
 }
@@ -263,13 +269,15 @@ void URPGIFrameMonitor::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 			}
 			if (Now - MontageGoneSince >= StaleGraceSeconds)
 			{
-				RemoveTag(TEXT("stale"));
-				++StaleCleared;
-				CloseRecord(TEXT("StaleCleared"), Montage ? Position : GonePosition);
-				bTag = false;
-				bOwnedNow = false;
-				bForceOwned = false;
-				MontageGoneSince = -1.0;
+				if (RemoveTag(TEXT("stale"))) // a failed removal keeps the ownership: the next tick retries
+				{
+					++StaleCleared;
+					CloseRecord(TEXT("StaleCleared"), Montage ? Position : GonePosition);
+					bTag = false;
+					bOwnedNow = false;
+					bForceOwned = false;
+					MontageGoneSince = -1.0;
+				}
 			}
 		}
 		else
@@ -279,11 +287,13 @@ void URPGIFrameMonitor::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		// Death: the tag goes at once.
 		if (!bAlive && bWasAlive)
 		{
-			RemoveTag(TEXT("player died"));
-			++DeathCleared;
-			CloseRecord(TEXT("Death"), Position);
-			bTag = false;
-			bOwnedNow = false;
+			if (RemoveTag(TEXT("player died")))
+			{
+				++DeathCleared;
+				CloseRecord(TEXT("Death"), Position);
+				bTag = false;
+				bOwnedNow = false;
+			}
 		}
 	}
 	bWasAlive = bAlive;

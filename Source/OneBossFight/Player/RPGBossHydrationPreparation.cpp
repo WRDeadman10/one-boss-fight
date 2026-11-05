@@ -1,6 +1,10 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGBossHydrationPreparation.h"
+
+#include "Player/RPGEncounterBinding.h"
+#include "Player/RPGEncounterGenerationRules.h"
+#include "Player/RPGBossDamage.h"
 #include "Components/ActorComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
@@ -15,6 +19,8 @@ namespace
 	int32 GStepCount = 0;
 	bool GFaultFired = false;
 	bool GFaultScopeActive = false;
+	bool GRebindReleaseRefusalActive = false;
+	bool GRebindReleaseRefusalFired = false;
 #endif
 
 	/** Called after every real allocation and every real configure. In a production build it never fails. */
@@ -39,18 +45,18 @@ namespace
 class FRPGBatchPreparer
 {
 public:
-	static FRPGPreparationResult Run(const FRPGHydrationPreflightInput& Input);
+	static FRPGPreparationResult Run(const FRPGHydrationPreflightInput& Input, bool bAllowBegunPlay = false);
 
 private:
 	/** The world, the encounter, the role and the weak actor of a member are still what the preflight validated. Never dereferences a stale pointer. */
-	static bool CheckMember(const FRPGPreparedBatch& Batch, int32 MemberIndex, FString& OutError);
+	static bool CheckMember(const FRPGPreparedBatch& Batch, int32 MemberIndex, FString& OutError, bool bAllowBegunPlay = false);
 	/** The component at PlanIndex of a member is still the live, exact-class, correctly named, owned, unregistered and not begun component that was allocated. */
 	static bool CheckComponent(const FRPGPreparedBatch& Batch, int32 MemberIndex, int32 PlanIndex, FString& OutError);
-	static bool Allocate(FRPGPreparedBatch& Batch, FString& OutError);
-	static bool Configure(FRPGPreparedBatch& Batch, FString& OutError);
+	static bool Allocate(FRPGPreparedBatch& Batch, FString& OutError, bool bAllowBegunPlay);
+	static bool Configure(FRPGPreparedBatch& Batch, FString& OutError, bool bAllowBegunPlay);
 };
 
-bool FRPGBatchPreparer::CheckMember(const FRPGPreparedBatch& Batch, int32 MemberIndex, FString& OutError)
+bool FRPGBatchPreparer::CheckMember(const FRPGPreparedBatch& Batch, int32 MemberIndex, FString& OutError, bool bAllowBegunPlay)
 {
 	const FRPGPreflightParticipantPlan& Participant = Batch.Plan->Participants[MemberIndex];
 	const FString Slot = Participant.Slot.ToString();
@@ -86,7 +92,7 @@ bool FRPGBatchPreparer::CheckMember(const FRPGPreparedBatch& Batch, int32 Member
 		OutError = FString::Printf(TEXT("Preparation.MemberInvalid[slot=%s]: the actor is no longer in the expected world"), *Slot);
 		return false;
 	}
-	if (Actor->HasActorBegunPlay() || Actor->IsActorBeginningPlay())
+	if (Actor->IsActorBeginningPlay() || (Actor->HasActorBegunPlay() && !bAllowBegunPlay))
 	{
 		OutError = FString::Printf(TEXT("Preparation.MemberInvalid[slot=%s]: the actor began or is beginning play"), *Slot);
 		return false;
@@ -134,7 +140,7 @@ bool FRPGBatchPreparer::CheckComponent(const FRPGPreparedBatch& Batch, int32 Mem
 	return false;
 }
 
-bool FRPGBatchPreparer::Allocate(FRPGPreparedBatch& Batch, FString& OutError)
+bool FRPGBatchPreparer::Allocate(FRPGPreparedBatch& Batch, FString& OutError, bool bAllowBegunPlay)
 {
 	for (int32 MemberIndex = 0; MemberIndex < Batch.Plan->Participants.Num(); ++MemberIndex)
 	{
@@ -146,7 +152,7 @@ bool FRPGBatchPreparer::Allocate(FRPGPreparedBatch& Batch, FString& OutError)
 		for (int32 PlanIndex = 0; PlanIndex < Participant.Plans.Num(); ++PlanIndex)
 		{
 			const FRPGComponentPlan& ComponentPlan = Participant.Plans[PlanIndex];
-			if (!CheckMember(Batch, MemberIndex, OutError))
+			if (!CheckMember(Batch, MemberIndex, OutError, bAllowBegunPlay))
 			{
 				return false;
 			}
@@ -172,7 +178,7 @@ bool FRPGBatchPreparer::Allocate(FRPGPreparedBatch& Batch, FString& OutError)
 				OutError = FString::Printf(TEXT("Preparation.AllocationFailed[slot=%s][component=%s]: NewObject returned no component"), *Participant.Slot.ToString(), *ComponentPlan.InstanceName.ToString());
 				return false;
 			}
-			if (!CheckComponent(Batch, MemberIndex, PlanIndex, OutError) || !CheckMember(Batch, MemberIndex, OutError))
+			if (!CheckComponent(Batch, MemberIndex, PlanIndex, OutError) || !CheckMember(Batch, MemberIndex, OutError, bAllowBegunPlay))
 			{
 				return false;
 			}
@@ -185,7 +191,7 @@ bool FRPGBatchPreparer::Allocate(FRPGPreparedBatch& Batch, FString& OutError)
 	return true;
 }
 
-bool FRPGBatchPreparer::Configure(FRPGPreparedBatch& Batch, FString& OutError)
+bool FRPGBatchPreparer::Configure(FRPGPreparedBatch& Batch, FString& OutError, bool bAllowBegunPlay)
 {
 	for (int32 MemberIndex = 0; MemberIndex < Batch.Plan->Participants.Num(); ++MemberIndex)
 	{
@@ -197,7 +203,7 @@ bool FRPGBatchPreparer::Configure(FRPGPreparedBatch& Batch, FString& OutError)
 		for (int32 PlanIndex = 0; PlanIndex < Participant.Plans.Num(); ++PlanIndex)
 		{
 			const FRPGComponentPlan& ComponentPlan = Participant.Plans[PlanIndex];
-			if (!CheckMember(Batch, MemberIndex, OutError) || !CheckComponent(Batch, MemberIndex, PlanIndex, OutError))
+			if (!CheckMember(Batch, MemberIndex, OutError, bAllowBegunPlay) || !CheckComponent(Batch, MemberIndex, PlanIndex, OutError))
 			{
 				return false;
 			}
@@ -214,7 +220,7 @@ bool FRPGBatchPreparer::Configure(FRPGPreparedBatch& Batch, FString& OutError)
 				OutError = FString::Printf(TEXT("Preparation.ConfigureRejected[slot=%s][component=%s]: %s"), *Participant.Slot.ToString(), *ComponentPlan.InstanceName.ToString(), *ConfigureError);
 				return false;
 			}
-			if (!CheckComponent(Batch, MemberIndex, PlanIndex, OutError) || !CheckMember(Batch, MemberIndex, OutError))
+			if (!CheckComponent(Batch, MemberIndex, PlanIndex, OutError) || !CheckMember(Batch, MemberIndex, OutError, bAllowBegunPlay))
 			{
 				return false;
 			}
@@ -227,7 +233,7 @@ bool FRPGBatchPreparer::Configure(FRPGPreparedBatch& Batch, FString& OutError)
 	return true;
 }
 
-FRPGPreparationResult FRPGBatchPreparer::Run(const FRPGHydrationPreflightInput& Input)
+FRPGPreparationResult FRPGBatchPreparer::Run(const FRPGHydrationPreflightInput& Input, bool bAllowBegunPlay)
 {
 	FRPGPreparationResult Result;
 	// Before any UObject (including the input's weak pointers) is read.
@@ -243,7 +249,9 @@ FRPGPreparationResult FRPGBatchPreparer::Run(const FRPGHydrationPreflightInput& 
 
 	// The whole batch first: the accepted preflight over the ENTIRE input. A rejection creates no component for any actor.
 	TSharedPtr<const FRPGHydrationPreflightPlan> Plan;
-	const FRPGHydrationResult Preflight = RPGBossHydrationPreflight::CompilePreflight(Input, Plan);
+	const FRPGHydrationResult Preflight = bAllowBegunPlay
+		? RPGBossHydrationPreflight::CompilePreflightForRebind(Input, Plan)
+		: RPGBossHydrationPreflight::CompilePreflight(Input, Plan);
 	if (!Preflight.IsReady() || !Plan.IsValid())
 	{
 		Result.Errors = Preflight.Errors;
@@ -271,11 +279,11 @@ FRPGPreparationResult FRPGBatchPreparer::Run(const FRPGHydrationPreflightInput& 
 
 	TUniquePtr<FRPGPreparedBatch> Batch(new FRPGPreparedBatch(Plan.ToSharedRef(), MoveTemp(SelectedPhaseIds)));
 	FString Error;
-	if (!Allocate(*Batch, Error) || !Configure(*Batch, Error))
+	if (!Allocate(*Batch, Error, bAllowBegunPlay) || !Configure(*Batch, Error, bAllowBegunPlay))
 	{
 		// Everything created so far, for every member, is destroyed here; nothing survives a failed preparation.
 		Result.Errors.Add(Error);
-		const FRPGPreparationAbortReport Cleanup = Batch->Abort();
+		const FRPGPreparationAbortReport Cleanup = bAllowBegunPlay ? Batch->AbortForRebind() : Batch->Abort();
 		Result.Errors.Append(Cleanup.Errors);
 		UE_LOG(LogRPGPreparation, Log, TEXT("batch preparation failed and was cleaned up: %s (destroyed %d, already gone %d, violations %d)"), *Error, Cleanup.Destroyed, Cleanup.AlreadyGone, Cleanup.ContractViolations);
 		return Result;
@@ -286,7 +294,7 @@ FRPGPreparationResult FRPGBatchPreparer::Run(const FRPGHydrationPreflightInput& 
 }
 
 FRPGPreparedBatch::FRPGPreparedBatch(TSharedRef<const FRPGHydrationPreflightPlan> InPlan, TArray<FName>&& InSelectedPhaseIds)
-	: Plan(InPlan)
+	: Plan(InPlan), ParticipantGeneration(InPlan->ParticipantGeneration)
 {
 	Members.SetNum(Plan->Participants.Num());
 	for (int32 Index = 0; Index < Members.Num() && Index < InSelectedPhaseIds.Num(); ++Index)
@@ -380,6 +388,160 @@ FRPGPreparationAbortReport FRPGPreparedBatch::Abort()
 	return Report;
 }
 
+FRPGPreparationAbortReport FRPGPreparedBatch::AbortForRebind()
+{
+	FRPGPreparationAbortReport Report;
+	if (!IsInGameThread())
+	{
+		Report.bRefused = true;
+		Report.Errors.Add(TEXT("Preparation.NotGameThread: runtime batch is released on the game thread only"));
+		return Report;
+	}
+	if (bAborted) { return Report; }
+#if WITH_DEV_AUTOMATION_TESTS
+	if (GRebindReleaseRefusalActive)
+	{
+		GRebindReleaseRefusalFired = true;
+		Report.bRefused = true;
+		Report.Errors.Add(TEXT("Preparation.RebindReleaseInjectedRefusal: test-only refusal before runtime teardown"));
+		return Report;
+	}
+#endif
+
+	// Validate all still-live ownership before any EndPlay callback can run. This path is deliberately
+	// separate from Abort(): only a reset transaction may tear down this batch's begun components.
+	for (int32 MemberIndex = 0; MemberIndex < Members.Num(); ++MemberIndex)
+	{
+		AActor* Owner = Plan->Participants[MemberIndex].Actor.Get();
+		for (const FOwnedComponent& Owned : Members[MemberIndex].Owned)
+		{
+			UActorComponent* Component = Owned.Component.Get();
+			if (!Component || !IsValid(Component) || Component->IsBeingDestroyed() || !IsValid(Owner)) { continue; }
+			if (Component->GetOwner() != Owner || !Owner->GetComponents().Contains(Component))
+			{
+				Report.bRefused = true;
+				Report.Errors.Add(FString::Printf(TEXT("Preparation.RebindReleaseRefused[slot=%s][component=%s]: exact owner membership changed"),
+					*Plan->Participants[MemberIndex].Slot.ToString(), *Owned.Name.ToString()));
+				return Report;
+			}
+		}
+	}
+
+	for (int32 MemberIndex = Members.Num() - 1; MemberIndex >= 0; --MemberIndex)
+	{
+		TArray<FOwnedComponent>& Owned = Members[MemberIndex].Owned;
+		for (int32 OwnedIndex = Owned.Num() - 1; OwnedIndex >= 0; --OwnedIndex)
+		{
+			UActorComponent* Component = Owned[OwnedIndex].Component.Get();
+			AActor* Owner = Plan->Participants[MemberIndex].Actor.Get();
+			if (!Component || !IsValid(Component) || Component->IsBeingDestroyed() || !IsValid(Owner))
+			{
+				++Report.AlreadyGone;
+				continue;
+			}
+			Component->Deactivate();
+			Component->SetComponentTickEnabled(false);
+			Component->DestroyComponent(); // normal EndPlay runs before ownership is released
+			++Report.Destroyed;
+		}
+		Owned.Reset();
+	}
+	bRegisteredByBatch = false;
+	bAborted = true;
+	return Report;
+}
+
+bool FRPGPreparedBatch::RetagForRebind(const ARPGEncounterBinding& Binding, uint64 ExpectedGeneration, FString& OutError)
+{
+	OutError.Reset();
+	if (!IsInGameThread()) { OutError = TEXT("Preparation.RebindRetagNotGameThread"); return false; }
+	if (!IsPrepared() || !bRegisteredByBatch || !Plan.IsValid())
+	{
+		OutError = TEXT("Preparation.RebindRetagLeaseUnavailable");
+		return false;
+	}
+	FString GenerationError;
+	if (ParticipantGeneration != ExpectedGeneration || Binding.ParticipantGeneration == 0
+		|| !RPGEncounterGenerationRules::CanAdvance(ExpectedGeneration, Binding.ParticipantGeneration, GenerationError))
+	{
+		OutError = GenerationError.IsEmpty() ? TEXT("Preparation.RebindRetagGenerationMismatch") : GenerationError;
+		return false;
+	}
+	UWorld* ExpectedWorld = Plan->World.Get();
+	if (!IsValid(ExpectedWorld) || !IsValid(&Binding) || Binding.IsActorBeingDestroyed() || Binding.GetWorld() != ExpectedWorld
+		|| !ExpectedWorld->HasBegunPlay() || Binding.EncounterInstance != Plan->EncounterInstance
+		|| Binding.Participants.Num() != Plan->Participants.Num())
+	{
+		OutError = TEXT("Preparation.RebindRetagBindingMismatch");
+		return false;
+	}
+	int32 BossCoreCount = 0;
+	for (int32 Index = 0; Index < Plan->Participants.Num(); ++Index)
+	{
+		const FRPGPreflightParticipantPlan& Old = Plan->Participants[Index];
+		const FRPGPlacedParticipantBinding& New = Binding.Participants[Index];
+		AActor* NewActor = New.Actor.Get();
+		if (Old.Slot != New.Slot || Old.TargetSlot != New.TargetSlot || !IsValid(NewActor) || NewActor->GetWorld() != ExpectedWorld
+			|| NewActor->IsActorBeingDestroyed() || NewActor->IsPendingKillPending() || NewActor->IsActorBeginningPlay())
+		{
+			OutError = FString::Printf(TEXT("Preparation.RebindRetagParticipantMismatch[slot=%s]"), *Old.Slot.ToString());
+			return false;
+		}
+		if (Old.Role == ERPGPreflightRole::BossCore)
+		{
+			++BossCoreCount;
+			if (RPGBossDamage::HasTag(NewActor, TEXT("Status.Dead")))
+			{
+				OutError = FString::Printf(TEXT("Preparation.RebindRetagBossDead[slot=%s]"), *Old.Slot.ToString());
+				return false;
+			}
+			if (Old.Actor.Get() != NewActor || !NewActor->HasActorBegunPlay())
+			{
+				OutError = FString::Printf(TEXT("Preparation.RebindRetagBossMismatch[slot=%s]"), *Old.Slot.ToString());
+				return false;
+			}
+		}
+		else if (Old.Role != ERPGPreflightRole::TargetOnly || !NewActor->HasActorBegunPlay())
+		{
+			OutError = FString::Printf(TEXT("Preparation.RebindRetagPlayerMismatch[slot=%s]"), *Old.Slot.ToString());
+			return false;
+		}
+	}
+	if (BossCoreCount != 1)
+	{
+		OutError = TEXT("Preparation.RebindRetagBossCount");
+		return false;
+	}
+	for (int32 MemberIndex = 0; MemberIndex < Members.Num(); ++MemberIndex)
+	{
+		AActor* Owner = Plan->Participants[MemberIndex].Actor.Get();
+		for (const FOwnedComponent& Owned : Members[MemberIndex].Owned)
+		{
+			UActorComponent* Component = Owned.Component.Get();
+			if (!IsValid(Owner) || !IsValid(Component) || Component->IsBeingDestroyed() || Component->GetOwner() != Owner
+				|| !Owner->GetComponents().Contains(Component) || !Component->IsRegistered() || !Component->HasBegunPlay())
+			{
+				OutError = FString::Printf(TEXT("Preparation.RebindRetagOwnershipMismatch[slot=%s][component=%s]"),
+					*Plan->Participants[MemberIndex].Slot.ToString(), *Owned.Name.ToString());
+				return false;
+			}
+		}
+	}
+
+	TSharedRef<FRPGHydrationPreflightPlan> RetaggedPlan = MakeShared<FRPGHydrationPreflightPlan>(*Plan);
+	RetaggedPlan->ParticipantGeneration = Binding.ParticipantGeneration;
+	for (int32 Index = 0; Index < RetaggedPlan->Participants.Num(); ++Index)
+	{
+		if (RetaggedPlan->Participants[Index].Role == ERPGPreflightRole::TargetOnly)
+		{
+			RetaggedPlan->Participants[Index].Actor = Binding.Participants[Index].Actor.Get();   // FRPGPreflightParticipantPlan has no Definition field; the actor is the retagged identity
+		}
+	}
+	Plan = RetaggedPlan;
+	ParticipantGeneration = Binding.ParticipantGeneration;
+	return true;
+}
+
 int32 FRPGPreparedBatch::GetOwnedComponentCount() const
 {
 	int32 Count = 0;
@@ -431,6 +593,11 @@ namespace RPGBossHydrationPreparation
 		return FRPGBatchPreparer::Run(Input);
 	}
 
+	FRPGPreparationResult PrepareBatchForRebind(const FRPGHydrationPreflightInput& Input)
+	{
+		return FRPGBatchPreparer::Run(Input, true);
+	}
+
 #if WITH_DEV_AUTOMATION_TESTS
 	FFaultInjectionScope::FFaultInjectionScope(int32 InFailAfterStep)
 	{
@@ -452,6 +619,19 @@ namespace RPGBossHydrationPreparation
 	{
 		return GFaultFired;
 	}
+
+	FRebindReleaseRefusalScope::FRebindReleaseRefusalScope()
+	{
+		check(IsInGameThread() && !GRebindReleaseRefusalActive);
+		GRebindReleaseRefusalActive = true;
+		GRebindReleaseRefusalFired = false;
+	}
+	FRebindReleaseRefusalScope::~FRebindReleaseRefusalScope()
+	{
+		check(IsInGameThread() && GRebindReleaseRefusalActive);
+		GRebindReleaseRefusalActive = false;
+	}
+	bool FRebindReleaseRefusalScope::Fired() const { return GRebindReleaseRefusalFired; }
 #endif
 }
 
@@ -465,6 +645,16 @@ namespace
 }
 
 bool FRPGPreparedBatch::RegisterOwnedComponents(FRPGRegistrationReport& OutReport)
+{
+	return RegisterOwnedComponentsInternal(OutReport, false);
+}
+
+bool FRPGPreparedBatch::RegisterOwnedComponentsForRebind(FRPGRegistrationReport& OutReport)
+{
+	return RegisterOwnedComponentsInternal(OutReport, true);
+}
+
+bool FRPGPreparedBatch::RegisterOwnedComponentsInternal(FRPGRegistrationReport& OutReport, bool bAllowBegunPlay)
 {
 	OutReport = FRPGRegistrationReport();
 	// Refusals for thread/state do not consume a valid earlier registration.
@@ -497,7 +687,7 @@ bool FRPGPreparedBatch::RegisterOwnedComponents(FRPGRegistrationReport& OutRepor
 				Component->UnregisterComponent();
 			}
 		}
-		OutReport.Cleanup = Abort();
+		OutReport.Cleanup = bAllowBegunPlay ? AbortForRebind() : Abort();
 		OutReport.Errors.Append(OutReport.Cleanup.Errors);
 		return false;
 	};
@@ -509,9 +699,9 @@ bool FRPGPreparedBatch::RegisterOwnedComponents(FRPGRegistrationReport& OutRepor
 		}
 		UWorld* World = Plan->World.Get();
 		AActor* Actor = Plan->Participants[MemberIndex].Actor.Get();
-		return IsValid(World) && !World->HasBegunPlay() && Plan->EncounterInstance.IsValid()
+		return IsValid(World) && (bAllowBegunPlay || !World->HasBegunPlay()) && Plan->EncounterInstance.IsValid()
 			&& IsValid(Actor) && !Actor->IsActorBeingDestroyed() && Actor->GetWorld() == World
-			&& !Actor->HasActorBegunPlay() && !Actor->IsActorBeginningPlay();
+			&& (bAllowBegunPlay || !Actor->HasActorBegunPlay()) && !Actor->IsActorBeginningPlay();
 	};
 	auto CheckComponent = [&]() -> bool
 	{
@@ -562,9 +752,9 @@ bool FRPGPreparedBatch::RegisterOwnedComponents(FRPGRegistrationReport& OutRepor
 			UActorComponent* Component = Members[MemberIndex].Owned[PlanIndex].Component.Get();
 			Component->RegisterComponent();
 			if (IsValid(Component) && Component->IsRegistered()) { RegisteredThisCall.Add(Component); }
-			if (!IsValid(Component) || Component->IsBeingDestroyed() || !Component->IsRegistered() || Component->HasBegunPlay()
+			if (!IsValid(Component) || Component->IsBeingDestroyed() || !Component->IsRegistered() || (Component->HasBegunPlay() && !bAllowBegunPlay)
 				|| !CheckMember() || Component->GetOwner() != Participant.Actor.Get())
-			{ return Fail(TEXT("Activation.RegistrationFailed: component did not remain registered and never begun")); }
+			{ return Fail(bAllowBegunPlay ? TEXT("Activation.RegistrationFailed: runtime component did not remain registered") : TEXT("Activation.RegistrationFailed: component did not remain registered and never begun")); }
 			FRPGRegisteredComponentInfo Info;
 			Info.MemberIndex = MemberIndex;
 			Info.PlanIndex = PlanIndex;

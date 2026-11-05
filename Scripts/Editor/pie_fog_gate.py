@@ -1,5 +1,6 @@
 """Fog gate states in PIE (Gate 2 entrance moment): Idle while the boss sleeps, Closed (blocking, full mist) when it wakes, Idle again after an encounter reset, Cleared (open, mist gone) when the boss dies.
 Log prefix [FogGate]."""
+import os
 import unreal
 
 log = lambda m: unreal.log("[FogGate] " + m)
@@ -31,6 +32,9 @@ def _tick(dt):
     s["t"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0, wait=9.0)
         return

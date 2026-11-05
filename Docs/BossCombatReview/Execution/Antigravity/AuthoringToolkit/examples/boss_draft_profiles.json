@@ -19,7 +19,7 @@
         "/Game/OneBossFight/Boss01/Animations/AN_Boss01_A1_QuickSlash.AN_Boss01_A1_QuickSlash"
       ],
       "stats": {
-        "MaxHealth": 1500.0,
+        "MaxHealth": 2000.0,
         "MaxPosture": 120.0,
         "PostureRegenDelay": 3.0,
         "PostureRegenRate": 15.0

@@ -14,9 +14,9 @@ FComboNode Node(const TCHAR* Id,const TCHAR* Move,TArray<FComboEdge> Edges={}) {
 FComboGraph Valid()
 {
     FComboGraph G; G.Root=TEXT("A"); G.MaxDepth=3;
-    G.Nodes.Add(Node(TEXT("A"),TEXT("MoveA"),{Edge(TEXT("B"),0.f,250.f,60.f,false,EOutcome::Hit),Edge(TEXT("C"),0.f,1.e6f,180.f,false,EOutcome::Whiff),Edge(TEXT("D"),0.f,1.e6f,180.f,false,EOutcome::Guarded)}));
+    G.Nodes.Add(Node(TEXT("A"),TEXT("MoveA"),{Edge(TEXT("B"),0.f,250.f,60.f,false,EOutcome::Hit),Edge(TEXT("C"),0.f,1.e6f,180.f,false,EOutcome::Whiff),Edge(TEXT("D"),0.f,1.e6f,180.f,false,EOutcome::Guarded),Edge(TEXT("F"),0.f,1.e6f,180.f,false,EOutcome::Parried)}));
     G.Nodes.Add(Node(TEXT("B"),TEXT("MoveB"),{Edge(TEXT("E"),0.f,300.f,180.f,true)}));
-    G.Nodes.Add(Node(TEXT("C"),TEXT("MoveC")));G.Nodes.Add(Node(TEXT("D"),TEXT("MoveD")));G.Nodes.Add(Node(TEXT("E"),TEXT("MoveE")));
+    G.Nodes.Add(Node(TEXT("C"),TEXT("MoveC")));G.Nodes.Add(Node(TEXT("D"),TEXT("MoveD")));G.Nodes.Add(Node(TEXT("E"),TEXT("MoveE")));G.Nodes.Add(Node(TEXT("F"),TEXT("MoveF")));
     return G;
 }
 FComboGate Gate(uint64 Id,double Range,double Yaw,EOutcome Out=EOutcome::Hit) { FComboGate G; G.GateId=Id; G.RangeCm=Range; G.SignedYawDegrees=Yaw; G.Outcome=Out; G.bTargetValid=true; return G; }
@@ -44,7 +44,7 @@ bool FBossComboValidate::RunTest(const FString&)
     TestEqual(TEXT("negative tempo pause"),Token([](FComboGraph& G){G.Nodes[1].Edges[0].TempoPauseSeconds=-.1f;}),FString(TEXT("Combo.EdgeDomain")));
     TestEqual(TEXT("NaN tempo pause"),Token([](FComboGraph& G){G.Nodes[1].Edges[0].TempoPauseSeconds=std::numeric_limits<float>::quiet_NaN();}),FString(TEXT("Combo.EdgeDomain")));
     TestEqual(TEXT("self loop"),Token([](FComboGraph& G){G.Nodes[2].Edges.Add(Edge(TEXT("C"),0.f,100.f,180.f,true));}),FString(TEXT("Combo.Cycle")));
-    TestEqual(TEXT("four nodes deep with max depth 3"),Token([](FComboGraph& G){G.Nodes.Add(Node(TEXT("F"),TEXT("MoveF")));G.Nodes[4].Edges.Add(Edge(TEXT("F"),0.f,100.f,180.f,true));}),FString(TEXT("Combo.Depth")));
+    TestEqual(TEXT("four nodes deep with max depth 3"),Token([](FComboGraph& G){G.Nodes.Add(Node(TEXT("G"),TEXT("MoveG")));G.Nodes[4].Edges.Add(Edge(TEXT("G"),0.f,100.f,180.f,true));}),FString(TEXT("Combo.Depth")));
     TestEqual(TEXT("max depth 4 is outside 1..3"),Token([](FComboGraph& G){G.MaxDepth=4;}),FString(TEXT("Combo.MaxDepth")));
     TestEqual(TEXT("max depth 0 is outside 1..3"),Token([](FComboGraph& G){G.MaxDepth=0;}),FString(TEXT("Combo.MaxDepth")));
     TestTrue(TEXT("max depth 3 with three nodes is exactly enough"),Token([](FComboGraph& G){G.MaxDepth=3;}).IsEmpty());
@@ -85,9 +85,15 @@ bool FBossComboStep::RunTest(const FString&)
     }
     // COM-004: whiff, guard and parry branch differently.
     {
-        FComboState S;S.Node=TEXT("A");FComboStep R=Step(G,S,Gate(1,100.,10.,EOutcome::Whiff));TestEqual(TEXT("whiff -> C"),R.NextNode,FName(TEXT("C")));
-        FComboState T;T.Node=TEXT("A");R=Step(G,T,Gate(1,100.,10.,EOutcome::Guarded));TestEqual(TEXT("guarded -> D"),R.NextNode,FName(TEXT("D")));
-        FComboState U;U.Node=TEXT("A");R=Step(G,U,Gate(1,100.,10.,EOutcome::Parried));TestTrue(TEXT("parried: no edge, recover"),R.Kind==EStep::Recover);TestEqual(TEXT("default recovery"),R.Reason,FString(TEXT("Combo.DefaultRecovery")));
+        struct FOutcomeRoute { EOutcome Outcome; const TCHAR* Next; };
+        const FOutcomeRoute Routes[]={{EOutcome::Hit,TEXT("B")},{EOutcome::Whiff,TEXT("C")},{EOutcome::Guarded,TEXT("D")},{EOutcome::Parried,TEXT("F")}};
+        uint64 GateId=1;
+        for (const FOutcomeRoute& Route:Routes)
+        {
+            FComboState State;State.Node=TEXT("A");const FComboStep Result=Step(G,State,Gate(GateId++,100.,10.,Route.Outcome));
+            TestTrue(FString::Printf(TEXT("outcome %d continues"),int32(Route.Outcome)),Result.Kind==EStep::Continue);
+            TestEqual(FString::Printf(TEXT("outcome %d routes to its distinct node"),int32(Route.Outcome)),Result.NextNode,FName(Route.Next));
+        }
     }
     // COM-007: out of range recovers cleanly (hit at 300 cm, band is 0..250).
     {
@@ -105,6 +111,63 @@ bool FBossComboStep::RunTest(const FString&)
         FComboGraph Short=Valid();Short.MaxDepth=2;FComboState S;S.Node=TEXT("A");Step(Short,S,Gate(1,100.,10.));
         FComboStep R=Step(Short,S,Gate(2,100.,10.));TestTrue(TEXT("third node refused"),R.Kind==EStep::Recover);TestEqual(TEXT("depth token"),R.Reason,FString(TEXT("Combo.Depth")));
     }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossComboValidationPrecedence,"OneBossFight.Framework.Combo.ValidationPrecedence",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FBossComboValidationPrecedence::RunTest(const FString&)
+{
+    using namespace BossComboFixture;
+    FComboGraph G=Valid(); G.MaxDepth=0; G.Root=TEXT("MissingRoot");
+    TestEqual(TEXT("invalid MaxDepth precedes unknown root when both are present"),Validate(G),FString(TEXT("Combo.MaxDepth")));
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossComboUnreachableNodeValidation,"OneBossFight.Framework.Combo.UnreachableNodeValidation",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FBossComboUnreachableNodeValidation::RunTest(const FString&)
+{
+    using namespace BossComboFixture;
+    FComboGraph G=Valid();
+    G.Nodes.Add(Node(TEXT("UnreachableOrphan"),TEXT("")));
+    TestEqual(TEXT("invalid orphan MoveId is rejected despite being unreachable"),Validate(G),FString(TEXT("Combo.UnknownNode")));
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossComboNodePermutationMutation,"OneBossFight.Framework.Combo.NodePermutationMutation",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FBossComboNodePermutationMutation::RunTest(const FString&)
+{
+    using namespace BossComboFixture;
+    FComboGraph Original=Valid();
+    FComboGraph Permuted=Original;
+    for(int32 I=0;I<Permuted.Nodes.Num()/2;++I) Permuted.Nodes.Swap(I,Permuted.Nodes.Num()-1-I);
+    TestTrue(TEXT("original graph validates"),Validate(Original).IsEmpty());
+    TestTrue(TEXT("node storage order does not change graph validity"),Validate(Permuted).IsEmpty());
+    TestEqual(TEXT("node storage order does not change longest root path"),LongestPath(Permuted),LongestPath(Original));
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossComboEdgeMutationReachability,"OneBossFight.Framework.Combo.EdgeMutationReachability",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FBossComboEdgeMutationReachability::RunTest(const FString&)
+{
+    using namespace BossComboFixture;
+    FComboGraph G=Valid();
+    TestEqual(TEXT("before mutation root reaches the three-node path"),LongestPath(G),3);
+    // The root has three outgoing edges. Remove B's only edge to E: A->B
+    // disappears as a three-node path, while A->C and A->D remain depth 2.
+    G.Nodes[1].Edges.RemoveAt(0);
+    TestEqual(TEXT("removing B's sole edge to E shrinks the root path"),LongestPath(G),2);
+    TestTrue(TEXT("remaining graph remains valid"),Validate(G).IsEmpty());
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossComboPairedInvalidPrecedence,"OneBossFight.Framework.Combo.PairedInvalidPrecedence",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FBossComboPairedInvalidPrecedence::RunTest(const FString&)
+{
+    using namespace BossComboFixture;
+    FComboGraph G=Valid();
+    G.Nodes[0].Edges[0].To=TEXT("Missing");
+    G.Nodes[0].Edges[1].MaxAbsYawDegrees=std::numeric_limits<float>::quiet_NaN();
+    TestEqual(TEXT("unknown edge target is reported before a later malformed edge domain"),Validate(G),FString(TEXT("Combo.UnknownNode")));
     return true;
 }
 #endif

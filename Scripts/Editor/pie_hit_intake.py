@@ -3,6 +3,7 @@ Gate 3, M7: the hit intake (URPGHitIntake on the player) sees every hit the play
 real input presses: light attack, strong attack, charged attack, a jump attack. Per scenario: the number of intake records against the number of health drops of the boss (each hit costs health), the weapon,
 the attack data and the stance of every record. Log prefix [Intake]; ends with RESULT n/m passed. Run with Scripts/run_in_editor.py after the warm-up.
 """
+import os
 import unreal
 
 log = lambda m: unreal.log("[Intake] " + m)
@@ -60,6 +61,9 @@ def _tick(dt):
     s["t"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="wake", t=0.0)
         return

@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGAttackTracker.h"
+#include "Player/RPGBossTrackerTickPrerequisite.h"
 #include "Player/RPGBossDamage.h"
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGBossPhases.h"
@@ -34,6 +35,10 @@ URPGTraceAudit::URPGTraceAudit()
 void URPGTraceAudit::BeginPlay()
 {
 	Super::BeginPlay();
+	if (AActor* Boss = GetOwner())
+	{
+		RPGBossTrackerTickPrerequisite::Add(*this, TrackerTickPrerequisite, Boss->FindComponentByClass<URPGAttackTracker>());
+	}
 	ResetCounters();
 }
 
@@ -167,9 +172,10 @@ void URPGTraceAudit::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	const ACharacter* Character = Cast<ACharacter>(Boss);
 	const UAnimInstance* Anim = Character && Character->GetMesh() ? Character->GetMesh()->GetAnimInstance() : nullptr;
 	const UAnimMontage* Montage = Anim ? Anim->GetCurrentActiveMontage() : nullptr;
-	const URPGAttackTracker* Tracker = Boss->FindComponentByClass<URPGAttackTracker>();
+	URPGAttackTracker* Tracker = Boss->FindComponentByClass<URPGAttackTracker>();
+	RPGBossTrackerTickPrerequisite::Add(*this, TrackerTickPrerequisite, Tracker);
 	const URPGBossEncounter* Encounter = Boss->FindComponentByClass<URPGBossEncounter>();
-	const int32 Generation = Encounter ? Encounter->GetGeneration() : 0;
+	const uint64 Generation = Encounter ? Encounter->GetParticipantGeneration() : 0;
 	APawn* Player = UGameplayStatics::GetPlayerPawn(this, 0);
 	double PlayerHealth = 0.0;
 	const bool bHealthKnown = Player && ReadAttribute(Player, TEXT("Attribute.Health"), false, PlayerHealth);
@@ -249,7 +255,7 @@ void URPGTraceAudit::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 		}
 		TArray<AActor*> Set;
 		Target.GetHitSet(Set);
-		UE_LOG(LogRPGTraceAudit, Log, TEXT("trace window open: %s instance %d window %d generation %d at %.2f s, montage %s, radius %.0f+%.0f, sockets %d, ability %d, hit set %d"), *W.Move.ToString(), W.Instance, W.Ordinal, Generation, W.OpenPos, *W.Montage,
+		UE_LOG(LogRPGTraceAudit, Log, TEXT("trace window open: %s instance %d window %d generation %llu at %.2f s, montage %s, radius %.0f+%.0f, sockets %d, ability %d, hit set %d"), *W.Move.ToString(), W.Instance, W.Ordinal, static_cast<unsigned long long>(Generation), W.OpenPos, *W.Montage,
 			Target.GetBaseRadius(), Target.GetRadiusModifier(), Sockets.Num(), Target.HasAbility() ? 1 : 0, Set.Num());
 	}
 

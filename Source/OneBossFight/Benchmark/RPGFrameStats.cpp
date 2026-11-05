@@ -19,15 +19,17 @@ double FRPGFrameStats::PercentileSorted(const TArray<double>& SortedMs, double P
 FRPGFrameStats FRPGFrameStats::Compute(const TArray<double>& FrameTimesMs, double InBudgetMs)
 {
 	FRPGFrameStats Stats;
-	Stats.BudgetMs = InBudgetMs;
-	Stats.FrameCount = FrameTimesMs.Num();
+	Stats.BudgetMs = FMath::IsFinite(InBudgetMs) && InBudgetMs > 0.0 ? InBudgetMs : 0.0;
+	TArray<double> Sorted = FrameTimesMs;
+	Sorted.RemoveAll([](double Ms) { return !FMath::IsFinite(Ms) || Ms <= 0.0; });
+	Stats.FrameCount = Sorted.Num();
 	if (Stats.FrameCount == 0)
 	{
 		return Stats;
 	}
 
 	double SumMs = 0.0;
-	for (const double Ms : FrameTimesMs)
+	for (const double Ms : Sorted)
 	{
 		SumMs += Ms;
 		if (Ms > InBudgetMs)
@@ -36,7 +38,6 @@ FRPGFrameStats FRPGFrameStats::Compute(const TArray<double>& FrameTimesMs, doubl
 		}
 	}
 
-	TArray<double> Sorted = FrameTimesMs;
 	Sorted.Sort();
 
 	Stats.TotalSeconds = SumMs / 1000.0;
@@ -52,7 +53,8 @@ FRPGFrameStats FRPGFrameStats::Compute(const TArray<double>& FrameTimesMs, doubl
 
 bool FRPGFrameStats::MeetsTarget(double TargetFPS) const
 {
-	return FrameCount > 0 && AverageFPS >= TargetFPS && P99Ms <= BudgetForFPS(TargetFPS);
+	return FMath::IsFinite(TargetFPS) && TargetFPS > 0.0 && FrameCount > 0 && FMath::IsFinite(AverageFPS) && FMath::IsFinite(P99Ms) &&
+		AverageFPS >= TargetFPS && P99Ms <= BudgetForFPS(TargetFPS);
 }
 
 FString FRPGFrameStats::ToLogString() const

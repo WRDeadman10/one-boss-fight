@@ -121,6 +121,30 @@ bool FBossMoveSelectorBoundedTie::RunTest(const FString&)
     for(float Bad:{-.1f,.51f,std::numeric_limits<float>::infinity(),std::numeric_limits<float>::quiet_NaN()}){FRPGBossMoveSelector S;FString Er;TestFalse(TEXT("tie band outside [0,0.5] refused"),S.Initialize(Cfg(Bad,1),{Cand(TEXT("A"),50,150)},Er));TestEqual(TEXT("named refusal"),Er,FString(TEXT("Selector.Config")));}
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveSelectorEligibilityProperty,"OneBossFight.Framework.Selector.EligibilityProperty",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FBossMoveSelectorEligibilityProperty::RunTest(const FString&)
+{
+    using namespace BossMoveSelectorFixture;
+    FRPGBossMoveModel Model;FString Error;if(!Model.Initialize(7,1,Error))return false;
+    FRPGBossMoveSelector Selector;FRPGBossSelectorConfig C=Config();C.TieBand=.5f;C.TieSeed=0x51EC;
+    TestTrue(TEXT("initialize candidates"),Selector.Initialize(C,{Cand(TEXT("Close"),20,120),Cand(TEXT("Mid"),100,300),Cand(TEXT("Far"),280,600)},Error));
+    FRandomStream Random(0x86A11);
+    for(int32 I=0;I<10000;++I)
+    {
+        const double Range=Random.FRandRange(0.f,700.f);
+        const double Yaw=Random.FRandRange(-180.f,180.f);
+        FRPGBossDecisionSnapshot S=Snapshot(Range,100.+I);S.SignedYawDegrees=Yaw;
+        FRPGBossSelectorDecision D;TestTrue(TEXT("selection call succeeds"),Selector.Select(Model,S,D));
+        if(D.ChosenIndex!=INDEX_NONE)
+        {
+            TestTrue(*FString::Printf(TEXT("decision %d never chooses an ineligible card"),I),D.ChosenIndex>=0&&D.ChosenIndex<D.Traces.Num()&&D.Traces[D.ChosenIndex].bEligible);
+            Selector.NoteStarted(D.ChosenIndex,100.+I);
+        }
+        for(const FRPGBossSelectorTrace& Trace:D.Traces)
+            TestTrue(*FString::Printf(TEXT("decision %d trace eligibility agrees with refusal"),I),Trace.bEligible==Trace.Refusal.IsEmpty());
+    }
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveSelectorPattern,"OneBossFight.Framework.Selector.PatternMultipliers",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
 bool FBossMoveSelectorPattern::RunTest(const FString&)
 {
@@ -142,6 +166,11 @@ bool FBossMoveSelectorPattern::RunTest(const FString&)
     G.Select(Model,Snapshot(100.),D);TestEqual(TEXT("no flag: the base card wins"),D.MoveId,FName(TEXT("Base")));
     FRPGBossSelectorContext Greedy;Greedy.bGreedy=true;G.Select(Model,Snapshot(100.),D,Greedy);TestEqual(TEXT("greedy: 0.5 x 3 beats 1"),D.MoveId,FName(TEXT("Fast")));
     FRPGBossSelectorContext Back;Back.bBackDodging=true;G.Select(Model,Snapshot(100.),D,Back);TestEqual(TEXT("back dodging: 0.5 x 4 beats 1"),D.MoveId,FName(TEXT("Fast")));
+    FRPGBossSelectorCandidate BandBase=Cand(TEXT("BandBase"),50,150,0.f,1.f),BandSensitive=Cand(TEXT("BandSensitive"),50,150,0.f,.5f);BandSensitive.KiteMultiplier=3.f;BandSensitive.HugMultiplier=3.f;
+    FRPGBossMoveSelector Aggro;TestTrue(TEXT("init aggro band weights"),Aggro.Initialize(Config(),{BandBase,BandSensitive},E));FRPGBossSelectorContext PreferFar;PreferFar.PreferredAggroBand=RPGBossAggro::EBand::Far;
+    Aggro.Select(Model,Snapshot(100.),D,PreferFar);TestEqual(TEXT("preferred far band routes to authored kite weight"),D.MoveId,FName(TEXT("BandSensitive")));
+    FRPGBossSelectorContext PreferClose;PreferClose.PreferredAggroBand=RPGBossAggro::EBand::Close;Aggro.Select(Model,Snapshot(100.),D,PreferClose);TestEqual(TEXT("preferred close band routes to authored hug weight"),D.MoveId,FName(TEXT("BandSensitive")));
+    FRPGBossSelectorDecision DRepeat;Aggro.Select(Model,Snapshot(100.),DRepeat,PreferClose);TestEqual(TEXT("preferred band remains deterministic"),DRepeat.MoveId,D.MoveId);
     for(float Bad:{0.f,-1.f,1.0001e6f,std::numeric_limits<float>::quiet_NaN()}){FRPGBossSelectorCandidate X=Cand(TEXT("X"),50,150);X.GreedMultiplier=Bad;FRPGBossMoveSelector T;FString Err;TestFalse(TEXT("bad greed multiplier refused"),T.Initialize(Config(),{X},Err));}
     return true;
 }
@@ -199,4 +228,141 @@ bool FBossMoveSelectorConeHysteresis::RunTest(const FString&)
         TestEqual(*FString::Printf(TEXT("zero slack retains prior cone rule at yaw %g"),Yaw),Eligible(ZeroSlack,Yaw,Off),FMath::Abs(Yaw)<=30.);
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveSelectorStartConeSlack,"OneBossFight.Framework.Selector.StartConeSlack",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FBossMoveSelectorStartConeSlack::RunTest(const FString&)
+{
+    using namespace BossMoveSelectorFixture;
+    FRPGBossMoveModel Model;FString Error;if(!Model.Initialize(7,1,Error))return false;
+    const FRPGBossSelectorCandidate Card90=Cand(TEXT("Cone90"),50,150,0.f,1.f,90.f);
+    FRPGBossSelectorContext Hysteresis;Hysteresis.ConeHysteresisDegrees=6.;
+    FRPGBossMoveSelector Selector;TestTrue(TEXT("initialize hysteresis selector"),Selector.Initialize(Config(),{Card90},Error));
+    auto Decide=[&](double Yaw,const FRPGBossSelectorContext& Context,FRPGBossSelectorDecision& Out)
+    {
+        FRPGBossDecisionSnapshot S=Snapshot();S.SignedYawDegrees=Yaw;
+        TestTrue(TEXT("selector call succeeds"),Selector.Select(Model,S,Out,Context));
+    };
+
+    FRPGBossSelectorDecision D;
+    Decide(44.,Hysteresis,D);
+    TestTrue(TEXT("yaw 44 enters the 45-degree half-cone"),D.Traces[0].bEligible);
+    TestTrue(TEXT("entry trace has no prior cone slack"),FMath::IsNearlyZero(D.Traces[0].ConeHoldSlackDegrees));
+    Decide(47.,Hysteresis,D);
+    TestTrue(TEXT("remembered candidate remains eligible at yaw 47"),D.Traces[0].bEligible);
+    TestTrue(TEXT("trace carries the full six-degree slack required at StartCard"),FMath::IsNearlyEqual(D.Traces[0].ConeHoldSlackDegrees,6.));
+    Decide(49.,Hysteresis,D);
+    TestFalse(TEXT("yaw 49 exceeds the 48-degree exit edge"),D.Traces[0].bEligible);
+    TestEqual(TEXT("outside exit edge is refused by cone"),D.Traces[0].Refusal,FString(TEXT("MoveModel.Cone")));
+
+    FRPGBossSelectorContext Off;
+    FRPGBossMoveSelector NoHysteresis;TestTrue(TEXT("initialize zero-hysteresis selector"),NoHysteresis.Initialize(Config(),{Card90},Error));
+    FRPGBossDecisionSnapshot S=Snapshot();S.SignedYawDegrees=44.;
+    TestTrue(TEXT("zero-hysteresis entry selection succeeds"),NoHysteresis.Select(Model,S,D,Off));
+    TestTrue(TEXT("zero-hysteresis trace slack stays zero"),FMath::IsNearlyZero(D.Traces[0].ConeHoldSlackDegrees));
+    S.SignedYawDegrees=47.;
+    TestTrue(TEXT("zero-hysteresis outside selection succeeds"),NoHysteresis.Select(Model,S,D,Off));
+    TestFalse(TEXT("zero hysteresis keeps the strict 45-degree cone"),D.Traces[0].bEligible);
+    TestTrue(TEXT("zero-hysteresis refusal trace slack stays zero"),FMath::IsNearlyZero(D.Traces[0].ConeHoldSlackDegrees));
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveSelectorSubnormalScore,"OneBossFight.Framework.Selector.SubnormalScore",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FBossMoveSelectorSubnormalScore::RunTest(const FString&)
+{
+    using namespace BossMoveSelectorFixture;
+    FRPGBossMoveModel Model; FString Error; TestTrue(TEXT("initialize model"),Model.Initialize(7,1,Error));
+    FRPGBossSelectorCandidate Candidate=Cand(TEXT("Subnormal"),50,150);
+    Candidate.Weight=std::numeric_limits<float>::denorm_min();
+    FRPGBossMoveSelector Selector; TestTrue(TEXT("positive subnormal weight is accepted"),Selector.Initialize(Config(),{Candidate},Error));
+    FRPGBossSelectorDecision Decision; TestTrue(TEXT("selector evaluation succeeds"),Selector.Select(Model,Snapshot(50.),Decision));
+    TestTrue(TEXT("trace keeps subnormal-weight candidate eligible"),Decision.Traces.Num()==1&&Decision.Traces[0].bEligible);
+    TestEqual(TEXT("range factor underflows stored score to zero"),Decision.Traces[0].Score,0.f);
+    TestEqual(TEXT("sole eligible zero-score candidate is selected"),Decision.ChosenIndex,0);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveSelectorRepeatedResetTieReplay,"OneBossFight.Framework.Selector.RepeatedResetTieReplay",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FBossMoveSelectorRepeatedResetTieReplay::RunTest(const FString&)
+{
+    using namespace BossMoveSelectorFixture;
+    FRPGBossMoveModel Model; FString Error; TestTrue(TEXT("initialize model"),Model.Initialize(7,1,Error));
+    FRPGBossSelectorConfig C=Config(); C.RepeatPenalty=1.f; C.TieBand=.5f; C.TieSeed=731;
+    const auto A=Cand(TEXT("ResetTieA"),50,150), B=Cand(TEXT("ResetTieB"),50,150);
+    FRPGBossMoveSelector Fresh,Resettable;
+    TestTrue(TEXT("initialize fresh selector"),Fresh.Initialize(C,{A,B},Error));
+    TestTrue(TEXT("initialize resettable selector"),Resettable.Initialize(C,{A,B},Error));
+    FRPGBossSelectorDecision Expected,Discard;
+    TestTrue(TEXT("fresh seeded decision succeeds"),Fresh.Select(Model,Snapshot(),Expected));
+    TestTrue(TEXT("advance tie seed offset"),Resettable.Select(Model,Snapshot(),Discard));
+    Resettable.NoteStarted(Discard.ChosenIndex,100.);
+    TestTrue(TEXT("advanced decision succeeds"),Resettable.Select(Model,Snapshot(),Discard));
+    Resettable.Reset(); Resettable.Reset();
+    FRPGBossSelectorDecision Actual;
+    TestTrue(TEXT("repeated reset selector remains usable"),Resettable.Select(Model,Snapshot(),Actual));
+    TestEqual(TEXT("repeated reset restores fresh first tie choice"),Actual.MoveId,Expected.MoveId);
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveSelectorSeededTieOrderPermutation,"OneBossFight.Framework.Selector.SeededTieOrderPermutation",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FBossMoveSelectorSeededTieOrderPermutation::RunTest(const FString&)
+{
+    using namespace BossMoveSelectorFixture;
+    FRPGBossMoveModel Model; FString Error; TestTrue(TEXT("initialize model"),Model.Initialize(7,1,Error));
+    FRPGBossSelectorConfig C=Config(); C.RepeatPenalty=1.f; C.TieBand=.5f; C.TieSeed=610;
+    FRPGBossMoveSelector AB,BA;
+    TestTrue(TEXT("initialize A/B order"),AB.Initialize(C,{Cand(TEXT("A"),50,150),Cand(TEXT("B"),50,150)},Error));
+    TestTrue(TEXT("initialize B/A order"),BA.Initialize(C,{Cand(TEXT("B"),50,150),Cand(TEXT("A"),50,150)},Error));
+    FRPGBossSelectorDecision First,Permuted;
+    TestTrue(TEXT("select from A/B order"),AB.Select(Model,Snapshot(),First));
+    TestTrue(TEXT("select from B/A order"),BA.Select(Model,Snapshot(),Permuted));
+    TestTrue(TEXT("same seed and started count use the same tier index"),First.ChosenIndex==Permuted.ChosenIndex);
+    TestTrue(TEXT("permuting candidate order changes selected identity"),First.MoveId!=Permuted.MoveId);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveSelectorZeroBandPermutation,"OneBossFight.Framework.Selector.ZeroBandPermutation",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FBossMoveSelectorZeroBandPermutation::RunTest(const FString&)
+{
+    using namespace BossMoveSelectorFixture;
+    FRPGBossMoveModel Model; FString Error; TestTrue(TEXT("initialize model"),Model.Initialize(7,1,Error));
+    FRPGBossSelectorConfig C=Config(); C.RepeatPenalty=1.f; C.TieBand=0.f;
+    FRPGBossMoveSelector AB,BA;
+    TestTrue(TEXT("initialize A/B order"),AB.Initialize(C,{Cand(TEXT("A"),50,150),Cand(TEXT("B"),50,150)},Error));
+    TestTrue(TEXT("initialize B/A order"),BA.Initialize(C,{Cand(TEXT("B"),50,150),Cand(TEXT("A"),50,150)},Error));
+    FRPGBossSelectorDecision First,Permuted;
+    TestTrue(TEXT("select from A/B order"),AB.Select(Model,Snapshot(),First));
+    TestTrue(TEXT("select from B/A order"),BA.Select(Model,Snapshot(),Permuted));
+    TestEqual(TEXT("zero-band tie chooses first input candidate"),First.MoveId,FName(TEXT("A")));
+    TestEqual(TEXT("zero-band choice follows the permuted first input"),Permuted.MoveId,FName(TEXT("B")));
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveSelectorExtremeFiniteScore,"OneBossFight.Framework.Selector.ExtremeFiniteScore",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FBossMoveSelectorExtremeFiniteScore::RunTest(const FString&)
+{
+    using namespace BossMoveSelectorFixture;
+    FRPGBossMoveModel Model; FString Error; TestTrue(TEXT("initialize model"),Model.Initialize(7,1,Error));
+    FRPGBossSelectorCandidate C=Cand(TEXT("Extreme"),50,150,0.f,1.e6f);
+    C.KiteMultiplier=C.HugMultiplier=C.BackDodgeMultiplier=C.GreedMultiplier=1.e6f;
+    FRPGBossMoveSelector Selector; TestTrue(TEXT("maximum legal authored factors initialize"),Selector.Initialize(Config(),{C},Error));
+    FRPGBossSelectorContext Context; Context.bKiting=Context.bHugging=Context.bBackDodging=Context.bGreedy=true;
+    FRPGBossSelectorDecision D; TestTrue(TEXT("extreme finite score selection succeeds"),Selector.Select(Model,Snapshot(),D,Context));
+    TestEqual(TEXT("extreme eligible candidate remains selected"),D.ChosenIndex,0);
+    TestTrue(TEXT("stored maximum legal product remains finite"),D.Traces.Num()==1&&FMath::IsFinite(D.Traces[0].Score)&&D.Traces[0].Score>0.f);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossMoveSelectorZeroScoreOutsideTieTier,"OneBossFight.Framework.Selector.ZeroScoreOutsideTieTier",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FBossMoveSelectorZeroScoreOutsideTieTier::RunTest(const FString&)
+{
+    using namespace BossMoveSelectorFixture;
+    FRPGBossMoveModel Model; FString Error; TestTrue(TEXT("initialize model"),Model.Initialize(7,1,Error));
+    FRPGBossSelectorConfig C=Config(); C.TieBand=.5f; C.TieSeed=83;
+    FRPGBossSelectorCandidate Positive=Cand(TEXT("Positive"),50,150,0.f,1.f);
+    FRPGBossSelectorCandidate Underflow=Cand(TEXT("Underflow"),50,150,0.f,std::numeric_limits<float>::denorm_min());
+    FRPGBossMoveSelector Selector; TestTrue(TEXT("initialize positive and underflow candidates"),Selector.Initialize(C,{Positive,Underflow},Error));
+    FRPGBossSelectorDecision D; TestTrue(TEXT("selection succeeds"),Selector.Select(Model,Snapshot(50.),D));
+    TestEqual(TEXT("underflowed score is zero but candidate remains eligible"),D.Traces[1].Score,0.f);
+    TestTrue(TEXT("zero score stays outside positive tie tier"),D.ChosenIndex==0&&D.MoveId==FName(TEXT("Positive")));
+    return true;
+}
+
 #endif

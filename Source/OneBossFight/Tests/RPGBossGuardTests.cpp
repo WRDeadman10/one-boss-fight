@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Player/RPGBossGuardRules.h"
 #include "Misc/AutomationTest.h"
+#include <limits>
 
 #if WITH_DEV_AUTOMATION_TESTS
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossGuardRules,"OneBossFight.Framework.Guard.Rules",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
@@ -18,6 +19,13 @@ bool FBossGuardRules::RunTest(const FString&)
     TestTrue(TEXT("a guarded hit: Guarded (it is also an accepted hit)"),CardOutcome(1,1,0)==ECardOutcome::Guarded);
     TestTrue(TEXT("a parried hit: Parried"),CardOutcome(1,0,1)==ECardOutcome::Parried);
     TestTrue(TEXT("parried beats guarded beats hit"),CardOutcome(3,1,1)==ECardOutcome::Parried&&CardOutcome(3,1,0)==ECardOutcome::Guarded);
+    // BOSS-COM-004 test hook phase: the measured root-A contact at +0.433 s
+    // moves into the 0.5 s pulse when the approved phase is +0.080 s.
+    TestTrue(TEXT("phase shifts measured root-A contact into the parry pulse"),IsProofParryPulse(.433,.080));
+    TestTrue(TEXT("zero phase preserves the original pulse window"),IsProofParryPulse(.050,0.));
+    TestFalse(TEXT("phase-shifted pulse remains bounded to 100 ms"),IsProofParryPulse(.530,.080));   // .53+.08=.61, so the pulse position is .11 (clear of the boundary).
+    TestFalse(TEXT("negative elapsed input cannot pulse"),IsProofParryPulse(-.01,.080));
+    TestFalse(TEXT("nonfinite phase cannot pulse"),IsProofParryPulse(.433,std::numeric_limits<double>::infinity()));
     return true;
 }
 #endif

@@ -9,7 +9,8 @@ namespace RPGTelegraphRules
 /** The play rate that makes the montage reach ActiveStart (montage seconds) Target real seconds after it began. Position is where the montage is when the rate is applied (the tracker sees a stage a frame or two after it began, at rate 1): the rest of the way, ActiveStart - Position, must take Target - Position real seconds. Position 0 gives ActiveStart / Target. */
 inline float RateFor(float ActiveStart, float Target, float Position = 0.f)
 {
-	if (Target <= 0.f || Target <= ActiveStart || ActiveStart <= 0.f || Position < 0.f || Position >= ActiveStart || Position >= Target)
+	if (!FMath::IsFinite(ActiveStart) || !FMath::IsFinite(Target) || !FMath::IsFinite(Position)
+		|| Target <= 0.f || Target <= ActiveStart || ActiveStart <= 0.f || Position < 0.f || Position >= ActiveStart || Position >= Target)
 	{
 		return 1.f;
 	}
@@ -18,7 +19,7 @@ inline float RateFor(float ActiveStart, float Target, float Position = 0.f)
 
 inline float TargetFor(FName MoveId, float CvarValue)
 {
-	if (CvarValue <= 0.f)
+	if (!FMath::IsFinite(CvarValue) || CvarValue <= 0.f)
 	{
 		return 0.f;
 	}

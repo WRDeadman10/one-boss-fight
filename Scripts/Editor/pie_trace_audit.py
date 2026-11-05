@@ -6,11 +6,13 @@ one damage event per instance (G-3). T8 the trace ends at once on a stop, a stan
 Uses bare montages (no attack ability: the trace runs, nothing is damaged) except T6 and T9 (the A2 ability). Boss frozen awake. Generator style, world-clock waits. Always restores the frame rate. Log prefix [Trace].
 """
 import math
+import json
 import os
 import unreal
 
 log = lambda m: unreal.log("[Trace] " + m)
 results = []
+TIMING_OBSERVABLES = {}
 S = {"phase": "start", "t": 0.0, "wake_at": 0.0, "gen": None}
 handle = None
 SOCKETS = ["BladeStart", "MiddleSocket", "BladeEnd", "Weapon Start", "Weapon End"]
@@ -207,7 +209,11 @@ def t1_step_vs_fps():
     for fps, (step, speed, maxdt, suspect) in peaks.items():
         log("INFO T1 %d FPS: peak step %.0f cm, peak speed %.0f cm/s, max dt %.4f, suspect sweeps %d (capsule radius %.0f cm, sweep radius %.0f cm)" % (fps, step, speed, maxdt, suspect, CAPSULE, R_SWEEP))
     check("T1 the frame step shrinks with the frame rate (15 > 30 > 60 > 120 FPS) and no step is suspect (> 800 cm)", peaks[15][0] > peaks[30][0] > peaks[60][0] > peaks[120][0] and all(v[3] == 0 for v in peaks.values()))
-    check("T1 the logical frame time followed the fixed rate (max dt within 15 percent)", all(abs(peaks[f][2] - 1.0 / f) <= 0.15 / f for f in peaks))
+    for fps, (_, _, maxdt, _) in peaks.items():
+        timing_name = "T1 %d FPS maximum logical frame time" % fps
+        bounds = [0.85 / fps, 1.15 / fps]
+        check(timing_name, bounds[0] <= maxdt <= bounds[1], "%.5f s" % maxdt)
+        TIMING_OBSERVABLES[timing_name] = {"value": float(maxdt), "comparison": {"type": "timing_seconds", "range_seconds": bounds}}
 
 
 def t2_no_tunnel():
@@ -451,6 +457,8 @@ def finish():
         P()["dbg"].debug_clear_walls()
     except Exception:
         pass
+    if TIMING_OBSERVABLES:
+        log("TIMING_OBSERVABLES_JSON " + json.dumps(TIMING_OBSERVABLES, sort_keys=True, separators=(",", ":")))
     log("RESULT %d/%d passed" % (sum(1 for r in results if r), len(results)))
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
 
@@ -460,6 +468,9 @@ def _tick(dt):
     s["t"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0)
         return

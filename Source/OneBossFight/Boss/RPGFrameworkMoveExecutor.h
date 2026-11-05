@@ -42,6 +42,7 @@ public:
     double AppliedDamageTotal() const { return AppliedDamage; }
     /** BOSS-COM-004 / HIT-008: accepted hits that landed while the player's guard (Status.Blocking) or parry window (URPGPlayerParry, the resolver outcome Parried) was up; read-only observation, damage unchanged. */
     int32 GuardedHits() const { return HitsGuarded; }
+    bool CurrentCardHadContact() const { return CardAcceptedHits>0||CardParriedHits>0; }
     int32 ParriedHits() const { return HitsParried; }
     virtual void TickComponent(float Delta,ELevelTick TickType,FActorComponentTickFunction* ThisTick) override;
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
@@ -55,6 +56,7 @@ private:
     TMap<FName,FWindowPose> PrevPoses;
     TWeakObjectPtr<URPGDamageResolver> Resolver;
     int32 HitsAccepted=0, HitsGuarded=0, HitsParried=0; double AppliedDamage=0.;
+    int32 CardAcceptedHits=0,CardParriedHits=0;
     TWeakObjectPtr<ARPGFrameworkBossCharacter> OwnerBoss;
     TWeakObjectPtr<APawn> Target;
     UPROPERTY(Transient) TObjectPtr<UAnimInstance> Anim;
@@ -69,6 +71,8 @@ private:
     double TrackTurned=0., TrackMaxRate=0., TrackDriftMax=0.; float TrackYawAtCommit=0.f; bool bTrackCommitLogged=false;
     FRPGBossAttackToken LastAbortedToken;   // BOSS-EXE-004 test hook: the token of the last aborted attack
     double CardWatchdogTimeoutSeconds=0.;   // BOSS-EXE-007: RPGBossTrack::WatchdogTimeoutSeconds of the running card
+    double CardOriginalPlayRate=1.,CardPlayRate=1.;
+    void RestoreCardPlayRate();
     bool bWatchdogFired=false, bSuppressLogged=false, bSuppressDone=false;   // bSuppressDone: the test hook acts on ONE card only
     /** BOSS-HIT-012: the grab. Held is the caught victim, the saved values are put back on release; bGrabUsed: one catch per card. */
     void BeginGrab(const FRPGBossMoveWindow& Window);

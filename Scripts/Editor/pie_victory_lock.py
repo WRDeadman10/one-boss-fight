@@ -1,6 +1,7 @@
 """Gate 2 / L11: after the victory no combat action can run and a retry is offered. V0 control: a Light Attack press plays a player montage; V1 the boss dies, victory fires once and the player is locked;
 V2 the same press now does nothing; V3 the retry line is hidden at first and shown after 3 s; V4 R reloads the level: the new boss sleeps, no victory counted, the player is free again.
 Run pie_debug_overlay.py once after an editor start first. Log prefix [VictoryLock]."""
+import os
 import unreal
 
 log = lambda m: unreal.log("[VictoryLock] " + m)
@@ -102,6 +103,9 @@ def _tick(dt):
     s["t"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0, next=STEPS[0][0])
         return

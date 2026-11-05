@@ -13,6 +13,7 @@
 #include "Player/RPGBossLookAdapters.h"
 #include "Player/RPGBossCloseClipSwapAdapters.h"
 #include "Player/RPGBossDeathAdapters.h"
+#include "Player/RPGBossAttackTrackerAdapters.h"
 #include "Engine/World.h"
 #include "Animation/AnimSequenceBase.h"
 #include "Animation/Skeleton.h"
@@ -31,7 +32,7 @@ static bool IsSHA256(const FString& Text)
 }
 static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
 	TSharedPtr<const RPGCombatRegistry::FEpoch> Content, const FString& Hash,
-	TSharedPtr<const FRPGParticipantConfig>& Out, bool bSynthetic)
+	TSharedPtr<const FRPGParticipantConfig>& Out, bool bSynthetic, bool bNeedsAttackTracker)
 {
 	Out.Reset(); FRPGHydrationResult Result;
 	if (D.Schema != 1 || D.DefinitionId.IsNone() || D.PresentationId.IsNone()
@@ -87,6 +88,11 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
 	{
 		Result.Fail(DeathError);
 	}
+	FString AttackTrackerError;
+	if (bNeedsAttackTracker && !RPGBossAttackTrackerAdapters::ValidateAttackTracker(D.AttackTracker, AttackTrackerError))
+	{
+		Result.Fail(AttackTrackerError);
+	}
 	TSet<FName> PhaseIds;
 	for (const FRPGPhaseConfig& Phase : D.Phases)
 	{
@@ -112,6 +118,16 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
 		}
 		Fields.Add(F.FieldPath);
 	}
+	const TCHAR* AttackTrackerFieldPaths[] = {
+		RPGBossAttackTrackerAdapters::FieldAttacks, RPGBossAttackTrackerAdapters::FieldEnabled,
+		RPGBossAttackTrackerAdapters::FieldVetoIllegalStarts, RPGBossAttackTrackerAdapters::FieldBranchRange,
+		RPGBossAttackTrackerAdapters::FieldBranchConeDegrees};
+	bool bMissingAttackTrackerProvenance = false;
+	for (const TCHAR* Path : AttackTrackerFieldPaths) { bMissingAttackTrackerProvenance |= !Fields.Contains(FString(Path)); }
+	if (bNeedsAttackTracker && bMissingAttackTrackerProvenance && !RPGBossAttackTrackerAdapters::IsNativeDefault(D.AttackTracker))
+	{
+		Result.Fail(TEXT("AttackTracker.ProvenanceMissing: non-default tracker config requires all five typed source fields"));
+	}
 	if (Fields.IsEmpty()) { Result.Fail(TEXT("field manifest required")); }
 	if (!Result.IsReady()) { return Result; }
 	auto Value = MakeShared<FRPGParticipantConfig>();
@@ -132,6 +148,26 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
 	Value->Look = D.Look;
 	Value->CloseClipSwap = D.CloseClipSwap;
 	Value->Death = D.Death;
+	Value->AttackTracker = D.AttackTracker;
+	if (RPGBossAttackTrackerAdapters::IsNativeDefault(D.AttackTracker))
+	{
+		for (const TCHAR* Path : AttackTrackerFieldPaths)
+		{
+			if (Fields.Contains(FString(Path))) { continue; }
+			FRPGParityField NativeDefaultMembership;
+			NativeDefaultMembership.FieldPath = Path;
+			NativeDefaultMembership.Type = TEXT("native-default-membership");
+			NativeDefaultMembership.Value = TEXT("native default; effective reflected value equals the native config default");
+			NativeDefaultMembership.SourcePath = TEXT("URPGAttackTracker::FRPGAttackTrackerConfig default");
+			NativeDefaultMembership.SourceSite = TEXT("native config default; receipt records provenance");
+			NativeDefaultMembership.Origin = TEXT("native default");
+			NativeDefaultMembership.Precedence = TEXT("typed native config default");
+			NativeDefaultMembership.Destination = TEXT("URPGAttackTracker");
+			NativeDefaultMembership.FirstRead = TEXT("RPGAttackTracker typed config adapter");
+			NativeDefaultMembership.Witness = TEXT("native default effective value; draft serialization presence is not inferred");
+			Value->Fields.Add(MoveTemp(NativeDefaultMembership));
+		}
+	}
 	Value->Content = MoveTemp(Content); Out = Value;
 	Value->bSyntheticFixture = bSynthetic;
 	if (!bSynthetic)
@@ -150,15 +186,15 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
 }
 
 FRPGHydrationResult CompileParticipant(const URPGBossDefinition& D, TSharedPtr<const RPGCombatRegistry::FEpoch> C,
-	const FString& H, TSharedPtr<const FRPGParticipantConfig>& Out)
+	const FString& H, TSharedPtr<const FRPGParticipantConfig>& Out, bool bNeedsAttackTracker)
 {
-	return CompileParticipantImpl(D, MoveTemp(C), H, Out, false);
+	return CompileParticipantImpl(D, MoveTemp(C), H, Out, false, bNeedsAttackTracker);
 }
 #if WITH_DEV_AUTOMATION_TESTS
 FRPGHydrationResult CompileSyntheticParticipant(const URPGBossDefinition& D, TSharedPtr<const RPGCombatRegistry::FEpoch> C,
 	const FString& H, TSharedPtr<const FRPGParticipantConfig>& Out)
 {
-	return CompileParticipantImpl(D, MoveTemp(C), H, Out, true);
+	return CompileParticipantImpl(D, MoveTemp(C), H, Out, true, true);
 }
 #endif
 }

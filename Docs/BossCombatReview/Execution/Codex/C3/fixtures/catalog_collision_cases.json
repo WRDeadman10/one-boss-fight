@@ -1,0 +1,12 @@
+{
+  "schema": "c3.catalog-collision-cases.v1",
+  "cases": [
+    {"name": "duplicate_weapon_id", "expected": "refuse before table mutation"},
+    {"name": "duplicate_style_or_alias", "expected": "refuse before table mutation"},
+    {"name": "duplicate_build_id", "expected": "refuse before table mutation"},
+    {"name": "duplicate_console_name_or_alias", "expected": "refuse before table mutation"},
+    {"name": "unresolved_existing_weapon_or_build_reference", "expected": "fail closed before table mutation"},
+    {"name": "definition_destination_collision", "expected": "refuse before table mutation"},
+    {"name": "missing_catalog_root", "expected": "refuse before table mutation"}
+  ]
+}

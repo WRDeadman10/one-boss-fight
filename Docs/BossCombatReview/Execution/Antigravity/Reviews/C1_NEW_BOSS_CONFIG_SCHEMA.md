@@ -64,6 +64,8 @@ A complete configuration file represents a single boss definition and proof map 
   "bleed_threshold_increase": 50.0,
   "bleed_threshold_max": 300.0,
   "bleed_hp_fraction": 0.15,
+  "neutral_strafe_min_hold_seconds": 0.8,
+  "neutral_strafe_max_hold_seconds": 1.6,
   "alignment_authored": true,
   "mesh_relative_transform": {
     "location": [0.0, 0.0, -165.0],
@@ -113,6 +115,7 @@ A complete configuration file represents a single boss definition and proof map 
 | **Phases** | `phase_two_fraction`, `phase_two_id` | Float, FName | `RPGBossFrameworkProfile.cpp:34-36`<br>`Framework.Profile.Phase` | If fraction $\ne 0$ or ID $\ne \text{None}$: requires F5, hittable boss, fraction $\in (0, 1)$, ID valid. |
 | **Posture** | `posture_max`, `player_posture_hit_amount`, `stagger_seconds`, `posture_regen_delay_seconds`, `posture_regen_per_second` | 5 Floats | `RPGBossFrameworkProfile.cpp:38-46`<br>`Framework.Profile.Posture` | All 5 zero (off) OR coherent set: F5, hittable boss, $\text{hit\_amount} \le \text{posture\_max}$, $\text{stagger} \in [0.5, 60.0]$. |
 | **Bleed** | `bleed_buildup_per_hit`, `bleed_initial_threshold`, `bleed_threshold_increase`, `bleed_threshold_max`, `bleed_hp_fraction` | 5 Floats | `RPGBossFrameworkProfile.cpp:49-57`<br>`Framework.Profile.Bleed` | All 5 zero (off) OR coherent set: F5, hittable boss, $\text{initial} \ge 1.0$, $\text{max} \ge \text{initial}$, $\text{fraction} \in (0, 1]$. |
+| **Neutral strafe holds** | `neutral_strafe_min_hold_seconds`, `neutral_strafe_max_hold_seconds` | Double | `RPGBossFrameworkProfile.cpp`<br>`Framework.Profile.NeutralStrafe` | Optional defaults 0.8 and 1.6 seconds. Both must be finite and positive, maximum must be >= minimum; non-default windows require F5. |
 | **Selector**| `repeat_penalty`, `repeat_memory`, `attack_count` | Float, Int, Int | `RPGBossFrameworkProfile.cpp:61-62`<br>`Framework.Profile.Domain` | Penalty $\in (0, 1]$, memory $\in [1, 8]$, attack count $\in [1, 8]$. |
 | **Starvation**| `PhasePoolCannotStarve` | Evaluated across card cooldowns | `RPGBossFrameworkProfile.cpp:13-18, 125`<br>`Framework.Profile.PhaseCooldownStarvation` | KI-149 Starvation Rule: each phase pool must offer a card on every attack ($\text{pool.len} \ge \text{AttackCount}$ or any $\text{cooldown} \le 0$). |
 | **Card Band**| `MinRangeCm`, `MaxRangeCm`, `RecoveryEndSeconds`, `ClipLengthSeconds` | Card Spec Floats | `RPGBossFrameworkProfile.cpp:103-104`<br>`Framework.Profile.CardBandOrBlendTail` | For every card: $\text{BandMin} \ge \text{Card.MinRange}$, $\text{BandMax} \le \text{Card.MaxRange}$, and $\text{RecoveryEnd} + \text{BlendOut} \le \text{ClipLength}$. |

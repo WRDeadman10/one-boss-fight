@@ -73,8 +73,8 @@ class TestC5WeaponDataAudit(unittest.TestCase):
         """Verify citations in RPGHitIntake.cpp and RPGSwingTracker.cpp."""
         intake_lines = self._read_lines("Source/OneBossFight/Player/RPGHitIntake.cpp")
         self.assertIn("URPGWeaponAttackTable::LoadOrDefault()", intake_lines[166])
-        self.assertTrue(any("ApplyPostureDamage" in l for l in intake_lines[530:580]))
-        self.assertTrue(any("AddBuildup" in l for l in intake_lines[540:590]))
+        self.assertTrue(any("ApplyPostureDamage" in l for l in intake_lines[620:640]))
+        self.assertTrue(any("AddBuildup" in l for l in intake_lines[625:645]))
 
         swing_lines = self._read_lines("Source/OneBossFight/Player/RPGSwingTracker.cpp")
         self.assertIn("Attribute.Stamina", swing_lines[21])

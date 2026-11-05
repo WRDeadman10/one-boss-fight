@@ -38,6 +38,10 @@ struct FRPGDamageScaler
 	/** The boss lost health that nobody has claimed. Returns the health to give back now (positive) or take away (negative), 0 when no scaled hit is waiting for it. */
 	double OnLoss(double Time, double Amount)
 	{
+		if (!FMath::IsFinite(Time) || !FMath::IsFinite(Amount))
+		{
+			return 0.0;
+		}
 		Prune(Time);
 		if (Amount <= 0.0)
 		{
@@ -62,7 +66,15 @@ struct FRPGDamageScaler
 	/** A weapon hit record was finalized with this multiplier. A hit with multiplier 1 still claims the loss it caused (so no later scaled hit takes it). Returns the adjustment as OnLoss does. */
 	double OnHit(double Time, float Multiplier)
 	{
+		if (!FMath::IsFinite(Time))
+		{
+			return 0.0;
+		}
 		Prune(Time);
+		if (!FMath::IsFinite(Multiplier) || Multiplier < 0.f)
+		{
+			Multiplier = 1.f; // claim any matching loss at pack damage; never poison a future hit with invalid authored data
+		}
 		for (int32 Index = 0; Index < Losses.Num(); ++Index)
 		{
 			if (FMath::Abs(Time - Losses[Index].Time) <= Window)
@@ -85,7 +97,7 @@ struct FRPGDamageScaler
 	/** Health after an adjustment: never above the maximum, never below 1 (the scaler never kills and never revives). */
 	static double Apply(double Health, double Adjust, double MaxHealth)
 	{
-		if (Health <= 0.0)
+		if (!FMath::IsFinite(Health) || !FMath::IsFinite(Adjust) || !FMath::IsFinite(MaxHealth) || MaxHealth <= 0.0 || Health <= 0.0)
 		{
 			return Health;
 		}
@@ -95,7 +107,7 @@ struct FRPGDamageScaler
 private:
 	void Prune(double Time)
 	{
-		Losses.RemoveAll([Time](const FLoss& Loss) { return Time - Loss.Time > Window; });
-		Hits.RemoveAll([Time](const FHit& Hit) { return Time - Hit.Time > Window; });
+		Losses.RemoveAll([Time](const FLoss& Loss) { return !FMath::IsFinite(Loss.Time) || !FMath::IsFinite(Loss.Amount) || Time - Loss.Time > Window; });
+		Hits.RemoveAll([Time](const FHit& Hit) { return !FMath::IsFinite(Hit.Time) || !FMath::IsFinite(Hit.Multiplier) || Time - Hit.Time > Window; });
 	}
 };

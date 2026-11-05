@@ -18,17 +18,22 @@ $short = (New-Object -ComObject Scripting.FileSystemObject).GetFile($full).Short
 $log = Join-Path $project ('Saved\' + [IO.Path]::GetFileNameWithoutExtension($Script) + '.log')
 $proc = Start-Process -FilePath "$EngineRoot\Engine\Binaries\Win64\UnrealEditor.exe" -PassThru -ArgumentList @(
 	"`"$project\OneBossFight.uproject`"", "-ExecCmds=`"py $short`"", '-unattended', '-nosplash', "-abslog=`"$log`"")
+$timedOut = $false
+$stoppedByPattern = $false
 $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
 while (-not $proc.HasExited -and (Get-Date) -lt $deadline) {
 	Start-Sleep -Seconds 2
 	if ($StopPattern -and (Test-Path $log) -and (Select-String -Path $log -Pattern $StopPattern -Quiet)) {
+		$stoppedByPattern = $true
 		Start-Sleep -Seconds 3
 		if (-not $proc.HasExited) { $proc.Kill() }
 	}
 }
 if (-not $proc.HasExited) {
+	$timedOut = $true
 	Write-Output "Timed out after $TimeoutSeconds s; killing the editor."
 	$proc.Kill()
 }
 Write-Output "editor exit code: $($proc.ExitCode)"
 Select-String -Path $log -Pattern "$Tag|LogPython: Error|Fatal error|Assertion failed" | ForEach-Object { $_.Line } | Select-Object -First 80
+if ($timedOut -or ($proc.ExitCode -ne 0 -and -not $stoppedByPattern)) { exit 1 }

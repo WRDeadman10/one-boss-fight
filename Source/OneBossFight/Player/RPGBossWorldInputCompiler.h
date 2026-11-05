@@ -56,4 +56,7 @@ namespace RPGBossWorldInputCompiler
 	 * leaves OutInput untouched, because releasing its leases off the game thread would be unsafe. The result is only an input: not a plan, not a preparation, not a reservation, not Ready.
 	 */
 	ONEBOSSFIGHT_API FRPGHydrationResult CompileWorldInput(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding, const TArray<FSelection>& Selections, const FString& ManifestHash, FRPGHydrationPreflightInput& OutInput);
+	/** Begun-world reset-broadcast rebind. Binding generation must match the explicit nonzero, non-MAX generation. */
+	ONEBOSSFIGHT_API FRPGHydrationResult CompileWorldInputForRebind(UWorld* ExpectedWorld, const ARPGEncounterBinding* Binding, const TArray<FSelection>& Selections,
+		const FString& ManifestHash, uint64 ParticipantGeneration, FRPGHydrationPreflightInput& OutInput);
 }

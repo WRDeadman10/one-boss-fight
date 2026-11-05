@@ -55,7 +55,11 @@ def finish(reason):
     if handle:
         unreal.unregister_slate_post_tick_callback(handle)
         handle = None
-    log("finished: " + reason)
+    fails = [n for n, ok in state["events"] if not ok]
+    passed = len(state["events"]) - len(fails)
+    result = "PASS" if reason.startswith("%d checks, 0 failed" % len(state["events"])) and not fails else "FAIL"
+    log("RESULT %s %d/%d passed reason=%s" % (result, passed, len(state["events"]), reason.replace("\n", " ")))
+    log("SUMMARY checks=%d failed=%d" % (len(state["events"]), len(fails)))
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
 
 
@@ -159,6 +163,9 @@ def _tick(dt):
         if not dorm:
             check("boss wakes again after the reset", True, "(player %.0f cm away)" % flat.length())
             s.update(stage="end", stage_t0=s["t"])
+        elif el > 30.0:
+            check("boss wakes again after the reset", False, "(never woke after respawn)")
+            finish("no second wake")
     elif s["stage"] == "end":
         if el > 4.0:
             fails = [n for n, ok in s["events"] if not ok]

@@ -38,12 +38,13 @@ bool FRPGBossMoveSelector::Select(const FRPGBossMoveModel& Model, const FRPGBoss
     for (int32 I=0;I<Candidates.Num();++I)
     {
         const auto& C=Candidates[I]; const auto& Spec=C.Card->Spec();
-        FRPGBossSelectorTrace T; T.Index=I; T.MoveId=Spec.MoveId;
+        FRPGBossSelectorTrace T; T.Index=I; T.MoveId=Spec.MoveId; T.ConeHoldSlackDegrees=0.0;
         FString Error;
         FRPGBossDecisionSnapshot ModelSnapshot=S;
         const bool bConeMemoryEnabled=FMath::IsFinite(Context.ConeHysteresisDegrees)&&Context.ConeHysteresisDegrees>0.0;
         if (bConeMemoryEnabled) ModelSnapshot.ConeHoldSlackDegrees=ConeInside.FindRef(I)?Context.ConeHysteresisDegrees:0.0;
         else { ModelSnapshot.ConeHoldSlackDegrees=0.0; ConeInside.Reset(); }
+        T.ConeHoldSlackDegrees=ModelSnapshot.ConeHoldSlackDegrees;
         const bool bModelEligible=Model.IsEligible(C.Card,ModelSnapshot,Error);
         if (!bModelEligible)
         {
@@ -59,7 +60,9 @@ bool FRPGBossMoveSelector::Select(const FRPGBossMoveModel& Model, const FRPGBoss
             const double Mid=0.5*(Spec.MinRangeCm+Spec.MaxRangeCm), Half=0.5*(Spec.MaxRangeCm-Spec.MinRangeCm);
             const double RangeFactor=Half>0.0 ? 1.0-0.5*FMath::Min(1.0,FMath::Abs(S.RangeCm-Mid)/Half) : 1.0;
             const double Repeat=Recent.Contains(I) ? Config.RepeatPenalty : 1.0;
-            const double Pattern=(Context.bKiting ? double(C.KiteMultiplier) : 1.0)*(Context.bHugging ? double(C.HugMultiplier) : 1.0)*(Context.bBackDodging ? double(C.BackDodgeMultiplier) : 1.0)*(Context.bGreedy ? double(C.GreedMultiplier) : 1.0);   // BOSS-PHS-005, AWR-008
+            const bool bPreferClose=Context.bHugging||Context.PreferredAggroBand==RPGBossAggro::EBand::Close;
+            const bool bPreferFar=Context.bKiting||Context.PreferredAggroBand==RPGBossAggro::EBand::Far;
+            const double Pattern=(bPreferFar ? double(C.KiteMultiplier) : 1.0)*(bPreferClose ? double(C.HugMultiplier) : 1.0)*(Context.bBackDodging ? double(C.BackDodgeMultiplier) : 1.0)*(Context.bGreedy ? double(C.GreedMultiplier) : 1.0);   // BOSS-PHS-005, AWR-008, B4
             T.bEligible=true; T.Score=float(C.Weight*RangeFactor*Repeat*Pattern);
             if (Out.ChosenIndex==INDEX_NONE || T.Score>Out.Score) { Out.ChosenIndex=I; Out.MoveId=Spec.MoveId; Out.Score=T.Score; }
         }

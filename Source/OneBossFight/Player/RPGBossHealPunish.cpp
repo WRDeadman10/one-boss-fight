@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGAttackTracker.h"
+#include "Player/RPGBossTrackerTickPrerequisite.h"
 #include "Player/RPGBossDamage.h"
 #include "Player/RPGBossEncounter.h"
 
@@ -26,6 +27,15 @@ namespace
 URPGBossHealPunish::URPGBossHealPunish()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+}
+
+void URPGBossHealPunish::BeginPlay()
+{
+	Super::BeginPlay();
+	if (AActor* Boss = GetOwner())
+	{
+		RPGBossTrackerTickPrerequisite::Add(*this, TrackerTickPrerequisite, Boss->FindComponentByClass<URPGAttackTracker>());
+	}
 }
 
 float URPGBossHealPunish::GetCooldownRemaining() const
@@ -178,7 +188,7 @@ void URPGBossHealPunish::Release()
 	Parameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	if (ARPGBossJavelin* Javelin = GetWorld()->SpawnActor<ARPGBossJavelin>(ARPGBossJavelin::StaticClass(), From, Direction.Rotation(), Parameters))
 	{
-		Javelin->Launch(this, Direction, Speed, JavelinRadius, Damage, JavelinMaxRange, Encounter ? Encounter->GetGeneration() : 0, Boss->FindComponentByClass<URPGAttackTracker>() ? Boss->FindComponentByClass<URPGAttackTracker>()->GetAttackInstance() : 0);
+		Javelin->Launch(this, Direction, Speed, JavelinRadius, Damage, JavelinMaxRange, Encounter ? Encounter->GetParticipantGeneration() : 0, Boss->FindComponentByClass<URPGAttackTracker>() ? Boss->FindComponentByClass<URPGAttackTracker>()->GetAttackInstance() : 0);
 		Flying.Add(Javelin);
 	}
 	UE_LOG(LogRPGHealPunish, Log, TEXT("%s: javelin %d released from (%.0f, %.0f, %.0f) towards the player at %.0f cm, speed %.0f cm/s, cooldown %.1f s"), *Boss->GetName(), Released, From.X, From.Y, From.Z, FVector::Dist(From, Target), Speed, Cooldown);
@@ -189,6 +199,7 @@ void URPGBossHealPunish::ReportJavelin(ERPGJavelinResult Result)
 	switch (Result)
 	{
 	case ERPGJavelinResult::Hit: ++JavelinHits; break;
+	case ERPGJavelinResult::Parried: ++JavelinParried; break;
 	case ERPGJavelinResult::Dodged: ++JavelinDodged; break;
 	case ERPGJavelinResult::HitWorld: ++JavelinWorld; break;
 	default: break;
@@ -199,8 +210,13 @@ void URPGBossHealPunish::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	AActor* Boss = GetOwner();
-	if (!bEnabled || !Boss)
+	if (!Boss)
 	{
+		return;
+	}
+	if (!bEnabled)
+	{
+		ClearPending(TEXT("component disabled"));
 		return;
 	}
 	DeathCheck += DeltaTime;
@@ -215,7 +231,7 @@ void URPGBossHealPunish::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	}
 	// A new fight (generation change) starts with no pending request and a ready cooldown; the javelins in flight end themselves on the same token.
 	const URPGBossEncounter* Encounter = Boss->FindComponentByClass<URPGBossEncounter>();
-	const int32 Generation = Encounter ? Encounter->GetGeneration() : 0;
+	const uint64 Generation = Encounter ? Encounter->GetParticipantGeneration() : 0;
 	if (Generation != SeenGeneration)
 	{
 		SeenGeneration = Generation;
@@ -246,11 +262,12 @@ void URPGBossHealPunish::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	{
 		return;
 	}
-	const URPGAttackTracker* Tracker = Boss->FindComponentByClass<URPGAttackTracker>();
+	URPGAttackTracker* Tracker = Boss->FindComponentByClass<URPGAttackTracker>();
 	if (!Tracker)
 	{
 		return;
 	}
+	RPGBossTrackerTickPrerequisite::Add(*this, TrackerTickPrerequisite, Tracker);
 	const bool bThrowing = Tracker->GetCurrentMove() == ThrowMove;
 	if (bThrowing && Tracker->IsActiveWindow() && Tracker->GetAttackInstance() != LastInstance)
 	{

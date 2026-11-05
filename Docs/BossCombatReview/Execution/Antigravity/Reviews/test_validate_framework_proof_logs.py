@@ -5,9 +5,9 @@ test_validate_framework_proof_logs.py
 
 Automated test suite verifying the FrameworkProof Log Validator:
 1. Pure LF line endings (no CR).
-2. Schema registration: verifies all 65 formal tokens are defined and compile.
+2. Schema registration: verifies all 138 formal tokens are defined and compile.
 3. Unit tests: asserts validation of synthetic valid lines across key categories.
-4. 65-Token Mutation Test: extracts one real line per token from committed/candidate logs, mutates a key, and proves 65/65 fail validation.
+4. Token mutation test: extracts one real line per token from committed/candidate logs, mutates a key, and proves each mutation fails validation (currently 112 samples).
 5. Semantic checks tests: tests detection of out-of-order attacks, duplicate gates, reused instances, backward timestamps, and seq monotonicity.
 6. Full repository sweep: scans all tracked log files and asserts 0 syntax failures across >60,000 lines, and verifies the 17 known duplicate attack findings.
 """
@@ -32,8 +32,8 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
         raw = val_path.read_bytes()
         self.assertNotIn(b"\r", raw, "validate_framework_proof_logs.py contains CR! Must be pure LF.")
 
-    def test_all_65_tokens_registered(self):
-        self.assertEqual(len(validator.SCHEMAS), 112, f"Expected 112 schemas, got {len(validator.SCHEMAS)}")
+    def test_all_registered_tokens_have_compiled_schemas(self):
+        self.assertEqual(len(validator.SCHEMAS), 138, f"Expected 138 schemas including telegraph restore, got {len(validator.SCHEMAS)}")
         for tok, pat in validator.SCHEMAS.items():
             compiled = validator.COMPILED_SCHEMAS.get(tok)
             self.assertIsNotNone(compiled, f"Token {tok} missing in COMPILED_SCHEMAS")
@@ -41,6 +41,10 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
 
     def test_synthetic_valid_lines(self):
         valid_samples = [
+            # lead (S26 drift): lines the source really emits
+            "[FrameworkProof] combo_end reason=NextCardRefused detail=MoveModel.Cone",
+            "[FrameworkProof] combo_end reason=Finished",
+            "[FrameworkProof] phase_anim state=Aborted reason=StanceBreak phase=Phase_2",
             # Decision
             "[2026.10.30-13.52.25:120][352]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=Move_Sevarog_HeavySlam_F7 score=0.939261 range=129.533 phase=Phase_1",
             "[FrameworkProof] decision attack=1 chosen=Move_Sevarog_SwingSlow_F5 score=0.803979 range=169.602",
@@ -154,8 +158,8 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             self.assertTrue(ok, f"Expected line to be valid, got error: {err}\nLine: {line}")
             self.assertIsNotNone(tok)
 
-    def test_99_token_mutation_suite(self):
-        """Extract one real line per token from committed/candidate logs, break one key, and prove 99/99 fail."""
+    def test_112_token_mutation_suite(self):
+        """Extract one real line per token from committed/candidate logs, break one key, and prove 112/112 fail."""
         import subprocess
         res = subprocess.run(["git", "ls-files", "Docs/*.log"], cwd=REPO_ROOT, capture_output=True, text=True)
         files = [REPO_ROOT / f for f in res.stdout.splitlines() if f.strip()]
@@ -236,6 +240,56 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             m_ok, m_t, m_p, m_err = validator.validate_line(mutated_line)
             self.assertFalse(m_ok, f"Token {tok} passed unexpectedly after mutation!\nMutated line: {mutated_line}")
 
+    def test_per_schema_missing_last_field_mutations(self):
+        """Remove each sampled schema's final field and reject; validate hand-authored no-log schemas."""
+        sys.path.insert(0, str(REPO_ROOT / "Scripts/Tools"))
+        import audit_framework_schemas
+
+        samples = audit_framework_schemas.log_samples(REPO_ROOT, validator)
+        self.assertGreaterEqual(len(samples), 132, f"Expected at least the assigned 132 retained valid samples, found {len(samples)}")
+        hand_authored = {
+            "attack_row_refused": "reason=NoNativeBoss",
+            "fatigue": "whiffs=2 scale=0.95",
+            "pending_hit_refused": "reason=NoNativeBossOrBlades",
+            "strafe_budget_exhausted": "seconds=8",
+            "strafe_budget_restarted": "gapSeconds=0.6 reason=Interrupted",
+            "strafe_stuck": "flipped=1 movedRatio=0.1",
+        }
+        # These are the five currently absent from retained logs plus fatigue,
+        # whose newer live sample is also checked above. Keep all six fixtures
+        # so every schema formerly listed as sample-less remains independently
+        # proven against its source format.
+        for token, payload in hand_authored.items():
+            ok, _, _, error = validator.validate_line(f"[FrameworkProof] {token} {payload}")
+            self.assertTrue(ok, f"Hand-authored source-format sample rejected for {token}: {error}")
+
+        self.assertEqual(set(samples) | set(hand_authored), set(validator.SCHEMAS))
+        no_field_samples = {"los_resume", "guard_hook_end", "combo_pause_end", "screenshot_quit"}
+        mutated = 0
+        for token, (_, line_number, payload) in samples.items():
+            fields = payload.split()
+            if not fields:
+                self.assertIn(token, no_field_samples, f"Unexpected empty sample for {token} at line {line_number}")
+                continue
+            # A sample can carry punctuation or an optional trailing field. Walk
+            # backward through actual key=value fields until one required field
+            # is removed; optional suffix removal is valid by definition.
+            rejected = False
+            missing_field = "<none>"
+            for index in range(len(fields) - 1, -1, -1):
+                if "=" not in fields[index]:
+                    continue
+                missing_field = fields[index]
+                mutated_fields = fields[:index] + fields[index + 1:]
+                mutated_line = f"[FrameworkProof] {token}" + (f" {' '.join(mutated_fields)}" if mutated_fields else "")
+                ok, _, _, error = validator.validate_line(mutated_line)
+                if not ok:
+                    rejected = True
+                    break
+            self.assertTrue(rejected, f"{token} has no required field mutation rejected from sample at line {line_number}; final field was {missing_field if 'missing_field' in locals() else '<none>'}")
+            mutated += 1
+        self.assertEqual(mutated, len(samples) - len(no_field_samples), "Every nonempty retained sample must receive a missing-final-field mutation")
+
     def test_semantic_checks(self):
         """Test detection of semantic ordering violations."""
         with tempfile.NamedTemporaryFile("w+", encoding="utf-8", delete=False, suffix=".log") as tf:
@@ -255,6 +309,28 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
             self.assertIn("REUSED_INSTANCE_ID", kinds)
             self.assertIn("DUPLICATE_ATTACK_ID", kinds)
             self.assertIn("DUPLICATE_GATE_ID", kinds)
+        finally:
+            tf_path.unlink()
+
+    def test_repeated_and_reordered_playback_events(self):
+        """Duplicate instance starts and backwards source timestamps remain visible in order."""
+        log = """[2026.10.30-10.00.00:000][1]LogTemp: Display: [FrameworkProof] playback_start encounter=1 generation=1 instance=8 montage=M1 slot=FullBody rate=1 label=fixture
+[2026.10.30-10.00.01:000][2]LogTemp: Display: [FrameworkProof] playback_start encounter=1 generation=1 instance=8 montage=M2 slot=FullBody rate=1 label=fixture
+[2026.10.30-09.59.59:000][3]LogTemp: Display: [FrameworkProof] playback_start encounter=1 generation=1 instance=8 montage=M3 slot=FullBody rate=1 label=fixture
+"""
+        with tempfile.NamedTemporaryFile("w+", encoding="utf-8", delete=False, suffix=".log") as tf:
+            tf.write(log)
+            tf_path = Path(tf.name)
+        try:
+            res = validator.validate_log_file(tf_path)
+            self.assertEqual(res["token_counts"]["playback_start"], 3)
+            self.assertEqual(
+                [(v["line_number"], v["kind"]) for v in res["semantic_violations"]],
+                [(2, "REUSED_INSTANCE_ID"), (3, "TIMESTAMP_BACKWARDS"), (3, "REUSED_INSTANCE_ID")],
+            )
+            self.assertEqual([v["raw_line"] for v in res["semantic_violations"]], [
+                log.splitlines()[1], log.splitlines()[2], log.splitlines()[2]
+            ])
         finally:
             tf_path.unlink()
 
@@ -772,6 +848,83 @@ class TestValidateFrameworkProofLogs(unittest.TestCase):
         bad_line = "[FrameworkProof] warp_step instance=1 from=0.45 to=0.466667 distCm=475.98 neededCm=370.98 stepCm=0 actualCm=0 budgetCm=150 neededDeg=-34.6418 stepDeg=-6.93114 turnedDeg=27.7246 budgetDeg=45"
         ok, _, _, _ = validator.validate_line(bad_line)
         self.assertFalse(ok, "warp_step line missing movedCm was unexpectedly accepted!")
+
+    def test_build145_to_155_telemetry(self):
+        """BUILD-145..155 guard, parry, warp ease, yaw probe, and strafe lines validate; malformed lines do not."""
+        good = [
+            ("guard_state", "[FrameworkProof] guard_state instance=3 window=Window_SwingSlow_Primary guard=Parried outcome=ERPGDamageOutcome::Parried"),
+            ("guard_state", "[FrameworkProof] guard_state instance=3 window=Window_SwingSlow_Primary guard=Guarded outcome=ERPGDamageOutcome::Accepted"),
+            ("parry_press", "[FrameworkProof] parry_press n=1 t=10.7833 opened=1 windowSeconds=0.25"),
+            ("parry_reaction", "[FrameworkProof] parry_reaction posture=100"),
+            ("parry_grade", "[FrameworkProof] parry_grade grade=Good scale=0.6"),
+            ("parry_stamina", "[FrameworkProof] parry_stamina before=100 after=96 parried=1"),
+            ("parry_press", "[FrameworkProof] parry_press n=2 t=-1.25e+1 opened=1 windowSeconds=.25"),
+            ("parry_reaction", "[FrameworkProof] parry_reaction posture=+1.0E-2"),
+            ("parry_grade", "[FrameworkProof] parry_grade grade=Perfect scale=1."),
+            ("parry_stamina", "[FrameworkProof] parry_stamina before=-2.5e1 after=0. parried=0"),
+            ("guard_chip", "[FrameworkProof] guard_chip incoming=40 applied=10"),
+            ("parry_recovery", "[FrameworkProof] parry_recovery grade=2 extra=0.52"),
+            ("telegraph_scale", "[FrameworkProof] telegraph_scale card=Move_Sevarog_SwingSlow_F7 rate=0.65"),
+            ("telegraph_restore", "[FrameworkProof] telegraph_restore card=Move_Sevarog_SwingSlow_F7 rate=1"),
+            ("aggro_switch", "[FrameworkProof] aggro_switch from=0 to=2"),
+            ("fatigue", "[FrameworkProof] fatigue whiffs=3 scale=0.95"),
+            ("warp_ease", "[FrameworkProof] warp_ease on=1"),
+            ("strafe_stuck", "[FrameworkProof] strafe_stuck flipped=1 movedRatio=0.12"),
+            ("yaw_probe", "[FrameworkProof] yaw_probe sample=7 yaw=31.9319"),
+            ("parry_tag", "[FrameworkProof] parry_tag state=added call=ok reason=Press"),
+            ("overlay", "[FrameworkProof] overlay Card=None State=Idle Phase=Phase_1 Range=0cm Cone=0deg Window=Closed Posture=0/0 Health=0/0 Stagger=0 PhaseHold=0 Parry=Open Grade=Perfect"),
+            ("attack_row_refused", "[FrameworkProof] attack_row_refused reason=NoNativeBoss"),
+            ("pending_hit_refused", "[FrameworkProof] pending_hit_refused reason=NoNativeBossOrBlades"),
+            ("cone_hysteresis", "[FrameworkProof] cone_hysteresis degrees=6 seq=1"),
+            ("strafe_start", "[FrameworkProof] strafe_start range=128.467 budgetSeconds=8 speedCmPerSecond=180 seq=2"),
+            ("strafe_step", "[FrameworkProof] strafe_step elapsed=0.000 dir=-1 range=128.467 movedCm=2.99993"),
+            ("strafe_end", "[FrameworkProof] strafe_end seconds=2.28333 reason=CandidateEligible card=Move_Sevarog_SwingSlow_F7"),
+            ("strafe_budget_exhausted", "[FrameworkProof] strafe_budget_exhausted seconds=8.01"),
+            ("strafe_budget_restarted", "[FrameworkProof] strafe_budget_restarted gapSeconds=1.2 reason=Interrupted"),
+            ("guard_hook_armed", "[FrameworkProof] guard_hook_armed mode=6 seconds=14"),
+            ("guard_hook_end", "[FrameworkProof] guard_hook_end"),
+            ("guard_tags", "[FrameworkProof] guard_tags since=3.9833 statusBlocking=1 stateBlocking=0 abilityParry=0 abilityBlock=0 statusParryActive=0 hasParryAbility=1 hasGuardAbility=1"),
+            ("guard_tags", "[FrameworkProof] guard_tags since=0.0167 statusBlocking=0 stateBlocking=0 abilityParry=0 abilityBlock=0"),
+            ("RESULT", "[FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=1 attacks=3 parriedHits=1"),
+            ("RESULT", "[FrameworkProof] RESULT outcome=CompletedAllParried acceptedHits=0 attacks=3 parriedHits=2"),
+            ("RESULT", "[FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=1 attacks=3"),
+        ]
+        for token, line in good:
+            ok, tok, _, err = validator.validate_line(line)
+            self.assertTrue(ok, f"{token} line failed validation: {err}")
+            self.assertEqual(tok, token)
+        bad = [
+            "[FrameworkProof] guard_state instance=3 window=W guard=Sideways outcome=ERPGDamageOutcome::Parried",
+            "[FrameworkProof] parry_press n=1 t=10.7833 opened=2 windowSeconds=0.25",
+            "[FrameworkProof] parry_press n=1 t=oops opened=1 windowSeconds=0.25",
+            "[FrameworkProof] parry_press n=1 t=1 opened=1 windowSeconds=NaN",
+            "[FrameworkProof] parry_reaction posture=Infinity",
+            "[FrameworkProof] parry_grade grade=Good scale=oops",
+            "[FrameworkProof] parry_stamina before=100 after=nan parried=1",
+            "[FrameworkProof] parry_stamina before=-Infinity after=0 parried=0",
+            "[FrameworkProof] guard_chip incoming=NaN applied=10",
+            "[FrameworkProof] guard_chip incoming=Infinity applied=10",
+            "[FrameworkProof] guard_chip incoming=-Infinity applied=10",
+            "[FrameworkProof] guard_chip incoming=inf applied=10",
+            "[FrameworkProof] guard_chip incoming=oops applied=10",
+            "[FrameworkProof] parry_recovery grade=2 extra=unknown",
+            "[FrameworkProof] telegraph_scale card=Move rate=slow",
+            "[FrameworkProof] telegraph_restore card=Move rate=original",
+            "[FrameworkProof] aggro_switch from=2 to=Far",
+            "[FrameworkProof] fatigue whiffs=x scale=0.8",
+            "[FrameworkProof] fatigue whiffs=3 scale=NaN",
+            "[FrameworkProof] fatigue whiffs=3 scale=Infinity",
+            "[FrameworkProof] fatigue whiffs=3 scale=-Infinity",
+            "[FrameworkProof] fatigue whiffs=3 scale=inf",
+            "[FrameworkProof] fatigue whiffs=3 scale=oops",
+            "[FrameworkProof] strafe_step elapsed=0.000 dir=0 range=128.467 movedCm=2.99993",
+            "[FrameworkProof] strafe_end seconds=2.28333 reason=Other card=X",
+            "[FrameworkProof] RESULT outcome=CompletedWithDamage acceptedHits=1 attacks=3 parriedHits=x",
+        ]
+        for line in bad:
+            ok, _, _, _ = validator.validate_line(line)
+            self.assertFalse(ok, f"mutated line was unexpectedly accepted: {line}")
+
 
 if __name__ == "__main__":
     unittest.main()

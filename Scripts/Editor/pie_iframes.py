@@ -6,6 +6,7 @@ C4a a montage-owned tag that outlives its montage is removed by the watchdog; C4
 Waits use the WORLD clock (the logical time the dodge logic uses), not the slate delta. Always ends by restoring the frame rate. Run pie_debug_overlay.py once after an editor start first.
 """
 import math
+import json
 import os
 import unreal
 
@@ -16,6 +17,7 @@ FULL = "Dodge_To_Idle_Montage"
 QUICK_WINDOW = (0.10718, 0.48975)
 FULL_WINDOW = (0.0001, 0.69987)
 results = []
+TIMING_OBSERVABLES = {}
 S = {"phase": "start", "t": 0.0, "wake_at": 0.0, "gen": None, "keys": {}}
 handle = None
 
@@ -169,7 +171,9 @@ def f0_rate_proof(fps):
     mean = sum(samples) / len(samples)
     spread = (max(samples) - min(samples))
     ok = abs(mean - 1.0 / fps) <= 0.02 / fps and spread <= 0.1 / fps
-    check("F0 fixed %d FPS gives logical delta 1/%d (mean %.5f, spread %.5f)" % (fps, fps, mean, spread), ok)
+    timing_name = "F0 fixed %d FPS logical delta" % fps
+    check(timing_name, ok, "mean %.5f spread %.5f" % (mean, spread))
+    TIMING_OBSERVABLES[timing_name] = {"value": float(mean), "comparison": {"type": "timing_seconds", "range_seconds": [0.98 / fps, 1.02 / fps]}}
     return ok
 
 
@@ -209,13 +213,18 @@ def fq(fps, trials):
             log("FQ%d trial %d: montage %s/%s rate %.2f reason %s start delta %.4f end delta %.4f step %.4f real %.4f s (window says %.4f)" % (fps, i, r["montage"], r["end_montage"], r["rate"], r["reason"], r["sd"], r["ed"], r["step"], r["dur"], want))
     log("INFO FQ%d: start delta min %.4f max %.4f, end delta min %.4f max %.4f (montage seconds, frame step %.4f), real duration min %.4f max %.4f s = %.1f frames, tag ended by %s" % (fps, min(starts or [0]), max(starts or [0]), min(ends or [0]), max(ends or [0]), 1.3 / fps,
         min(durs or [0]), max(durs or [0]), (sum(durs) / max(len(durs), 1)) * fps, reasons))
-    check("FQ%d quick dash at %d FPS: one record, the pack's clip at rate 1.30, window start and end inside one frame step, real duration = window / rate: %d/%d trials" % (fps, fps, sum(outcomes), len(outcomes)), len(outcomes) == trials and all(outcomes))
+    timing_name = "FQ%d quick dash at %d FPS" % (fps, fps)
+    check(timing_name, len(outcomes) == trials and all(outcomes), "%d/%d trials" % (sum(outcomes), len(outcomes)))
+    expected = (QUICK_WINDOW[1] - QUICK_WINDOW[0]) / 1.3
+    tolerance = 2.0 / fps + 0.004
+    TIMING_OBSERVABLES[timing_name] = {"value": float(sum(durs) / len(durs)) if durs else 0.0,
+        "comparison": {"type": "timing_seconds", "range_seconds": [max(0.0, expected - tolerance), expected + tolerance]}}
 
 
 def ff(fps, trials):
     # A double tap with a gap of 0.14 s reaches the second press before the quick dodge's own window opens, so the tag belongs to the full roll alone. (With a longer gap the quick dash has already
     # raised the tag and the forced roll continues it: that chain is the E group.)
-    outcomes, starts, ends, durs, rates, others = [], [], [], [], [], 0
+    outcomes, starts, ends, durs, rates, expected_durations, others = [], [], [], [], [], [], 0
     attempts = 0
     while len(outcomes) < trials and attempts < trials * 3:
         attempts += 1
@@ -232,11 +241,17 @@ def ff(fps, trials):
         ends.append(r["ed"])
         durs.append(r["dur"])
         rates.append(r["rate"])
+        expected_durations.append(want)
         if not ok:
             log("FF%d trial %d: reason %s rate %.2f start delta %.4f end delta %.4f step %.4f real %.4f s (window says %.4f)" % (fps, len(outcomes), r["reason"], r["rate"], r["sd"], r["ed"], r["step"], r["dur"], want))
     log("INFO FF%d: effective rate min %.2f max %.2f, start delta min %.4f max %.4f, end delta min %.4f max %.4f (frame step %.4f), real duration min %.4f max %.4f s = %.1f frames, attempts that were not a full-only roll %d" % (fps, min(rates or [0]), max(rates or [0]),
         min(starts or [0]), max(starts or [0]), min(ends or [0]), max(ends or [0]), 1.0 / fps, min(durs or [0]), max(durs or [0]), (sum(durs) / max(len(durs), 1)) * fps, others))
-    check("FF%d full roll at %d FPS: one record, window start and end inside one frame step, real duration = window / effective rate: %d/%d trials" % (fps, fps, sum(outcomes), len(outcomes)), len(outcomes) == trials and all(outcomes))
+    timing_name = "FF%d full roll at %d FPS" % (fps, fps)
+    check(timing_name, len(outcomes) == trials and all(outcomes), "%d/%d trials" % (sum(outcomes), len(outcomes)))
+    tolerance = 2.0 / fps + 0.004
+    bounds = [max(0.0, min(expected_durations or [0.0]) - tolerance), max(expected_durations or [0.0]) + tolerance]
+    TIMING_OBSERVABLES[timing_name] = {"value": float(sum(durs) / len(durs)) if durs else 0.0,
+        "comparison": {"type": "timing_seconds", "range_seconds": bounds}}
 
 
 def pack_quick(trials):
@@ -325,6 +340,9 @@ def c1_stop(kind):
             log("C1 %s trial %d: got %s montage %s off %s after %.3f s reason %s" % (kind, i, got, inside, off, off_after, reason))
     log("INFO C1 %s: the tag was off %.3f to %.3f s after the stop, record reasons %s, cleared by the watchdog in %d of 10 (a stop that the pack's own window state does not answer needs it)" % (kind, min(offs), max(offs), reasons, stale))
     check("C1 %s: a stopped montage leaves no tag behind (off within 0.25 s, record Interrupted or StaleCleared): %d/%d trials" % (kind, sum(outcomes), len(outcomes)), all(outcomes))
+    timing_name = "C1 %s: a stopped montage leaves no tag behind" % kind
+    TIMING_OBSERVABLES[timing_name] = {"value": float(max(offs or [0.0])),
+        "comparison": {"type": "timing_seconds", "range_seconds": [0.0, 0.25]}}
 
 
 def c3_reset():
@@ -358,7 +376,7 @@ def c3_reset():
 
 
 def c4_owned_and_foreign():
-    outcomes = []
+    outcomes, clear_times = [], []
     for i in range(5):
         p = P()
         p["mon"].clear_records()
@@ -369,6 +387,7 @@ def c4_owned_and_foreign():
         t0 = now()
         gone = yield from until(lambda: has_tag(P()["pawn"], "Status.Invulnerable") is False, 1.0)
         dt = now() - t0
+        clear_times.append(dt)
         mon = P()["mon"]
         ok = gone and 0.05 <= dt <= 0.35 and mon.get_stale_cleared_count() == s0 + 1
         outcomes.append(ok)
@@ -376,6 +395,9 @@ def c4_owned_and_foreign():
             log("C4a trial %d: gone %s after %.3f s stale +%d" % (i, gone, dt, mon.get_stale_cleared_count() - s0))
         yield from wait(0.3)
     check("C4a a montage-owned tag with no montage is removed by the watchdog after about 0.1 s: %d/%d trials" % (sum(outcomes), len(outcomes)), all(outcomes))
+    timing_name = "C4a a montage-owned tag with no montage is removed by the watchdog"
+    TIMING_OBSERVABLES[timing_name] = {"value": float(sum(clear_times) / len(clear_times)) if clear_times else 0.0,
+        "comparison": {"type": "timing_seconds", "range_seconds": [0.05, 0.35]}}
     outcomes = []
     for i in range(5):
         p = P()
@@ -447,6 +469,8 @@ def finish():
         key(P(), False)
     except Exception:
         pass
+    if TIMING_OBSERVABLES:
+        log("TIMING_OBSERVABLES_JSON " + json.dumps(TIMING_OBSERVABLES, sort_keys=True, separators=(",", ":")))
     log("RESULT %d/%d passed" % (sum(1 for r in results if r), len(results)))
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
 
@@ -456,6 +480,9 @@ def _tick(dt):
     s["t"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0)
         return

@@ -57,7 +57,7 @@ ARPGBossJavelin::ARPGBossJavelin()
 	Glow->SetCastShadows(false);
 }
 
-void ARPGBossJavelin::Launch(URPGBossHealPunish* InOwner, const FVector& InDirection, float InSpeed, float InRadius, float InDamage, float InMaxRange, int32 InGeneration, int32 InAttackInstance)
+void ARPGBossJavelin::Launch(URPGBossHealPunish* InOwner, const FVector& InDirection, float InSpeed, float InRadius, float InDamage, float InMaxRange, uint64 InGeneration, int32 InAttackInstance)
 {
 	Source = InOwner;
 	Direction = InDirection.GetSafeNormal();
@@ -109,7 +109,7 @@ void ARPGBossJavelin::Tick(float DeltaSeconds)
 	const URPGBossEncounter* Encounter = Boss->FindComponentByClass<URPGBossEncounter>();
 	double BossHealth = 1.0;
 	ReadAttribute(Boss, TEXT("Attribute.Health"), false, BossHealth);
-	if (BossHealth <= 0.0 || (Encounter && Encounter->GetGeneration() != Generation))
+	if (BossHealth <= 0.0 || (Encounter && Encounter->GetParticipantGeneration() != Generation))
 	{
 		Finish(ERPGJavelinResult::Cancelled, BossHealth <= 0.0 ? TEXT("boss dead") : TEXT("encounter reset"));
 		return;
@@ -151,6 +151,10 @@ void ARPGBossJavelin::Tick(float DeltaSeconds)
 		case ERPGDamageOutcome::Failed:
 			UE_LOG(LogRPGJavelin, Log, TEXT("javelin hit the player after %.0f cm: health %.0f -> %.0f"), Travelled + Step * PawnHit.Time, Result.HealthBefore, Result.HealthAfter);
 			Finish(ERPGJavelinResult::Hit, TEXT("hit the player"));
+			return;
+		case ERPGDamageOutcome::Parried:
+			UE_LOG(LogRPGJavelin, Log, TEXT("javelin parried after %.0f cm"), Travelled + Step * PawnHit.Time);
+			Finish(ERPGJavelinResult::Parried, TEXT("parried by the player"));
 			return;
 		case ERPGDamageOutcome::RejectedInvulnerable:
 			if (!bDodgedCounted)

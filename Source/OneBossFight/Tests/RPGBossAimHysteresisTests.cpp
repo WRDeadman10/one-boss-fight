@@ -73,6 +73,13 @@ bool FBossAimHysteresisRules::RunTest(const FString&)
         bSweepB=bNextB;
     }
     TestEqual(TEXT("deterministic sweep transition count"),SweepFlipsA,SweepFlipsB);
+    FRandomStream Noise(0x97A11);bool bNoiseInside=true;int32 NoiseFlips=0;
+    for(int32 Sample=0;Sample<10000;++Sample)
+    {
+        const double Yaw=31.+Noise.FRandRange(-1.f,1.f);const bool bNext=Step(bNoiseInside,Yaw,Enter,Exit);
+        if(bNext!=bNoiseInside)++NoiseFlips;bNoiseInside=bNext;
+    }
+    TestEqual(TEXT("long seeded noise inside hysteresis band never flickers"),NoiseFlips,0);
     return true;
 }
 #endif

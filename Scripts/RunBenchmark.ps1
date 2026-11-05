@@ -10,6 +10,7 @@
 .EXAMPLE
   .\Scripts\RunBenchmark.ps1 -Label baseline_defaults
   .\Scripts\RunBenchmark.ps1 -Label lumen_off -ExtraArgs '-ExecCmds="r.DynamicGlobalIlluminationMethod 0"'
+  $env:H019_ENCOUNTER_DEFINITION = '/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter'; .\Scripts\RunBenchmark.ps1 -Label selected_a
 #>
 param(
 	[string]$Label = 'run',
@@ -19,10 +20,12 @@ param(
 	[switch]$Empty,   # empty-arena orbit camera instead of the full fight
 	[string]$ExtraArgs = '',
 	[switch]$KeepConfig,
-	[string]$StageDir = ''   # a different staged build folder (the one that holds OneBossFight.exe), e.g. the Development stage of the kit
+	[string]$StageDir = '',  # a different staged build folder (the one that holds OneBossFight.exe), e.g. the Development stage of the kit
+	[ValidateRange(1, 7200)][int]$TimeoutSeconds = 900
 )
 
 $ErrorActionPreference = 'Stop'
+Import-Module (Join-Path $PSScriptRoot 'BenchmarkEncounterSelection.psm1') -Force
 
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $StageRoot = if ($StageDir) { $StageDir } else { Join-Path $ProjectRoot 'Saved\StagedBuilds\Windows' }
@@ -36,6 +39,7 @@ $LaunchArgs = @(
 	'-nosplash', '-NoSound', '-log'
 )
 if (-not $Empty) { $LaunchArgs += '-RPGBenchmarkFight' }
+$LaunchArgs += @(Get-H019EncounterArgument -EncounterDefinition $env:H019_ENCOUNTER_DEFINITION)
 if ($ExtraArgs) { $LaunchArgs += $ExtraArgs }
 
 # Precaution: every run starts from the default graphics settings. A previous run can leave GameUserSettings.ini behind (suspected, not proven: in the round 2 experiments of 2026-10-25 the first ten runs were slow and the later ones fast with no clear cause). Only the staged game's own Saved\Config and the local data copy of a Shipping build are cleaned, never the project.
@@ -45,8 +49,15 @@ if (-not $KeepConfig) {
 	}
 }
 Write-Host "Running benchmark '$Label' at ${ResX}x${ResY} ..."
-$Process = Start-Process -FilePath $Exe -ArgumentList $LaunchArgs -PassThru -Wait
+$Process = Start-Process -FilePath $Exe -ArgumentList $LaunchArgs -PassThru
+if (-not $Process.WaitForExit($TimeoutSeconds * 1000)) {
+	& taskkill.exe /PID $Process.Id /T /F | Out-Null
+	throw "Benchmark process exceeded the $TimeoutSeconds-second deadline; terminated owned PID tree $($Process.Id)."
+}
 Write-Host "Exit code: $($Process.ExitCode)"
+if ($Process.ExitCode -ne 0) {
+	throw "Benchmark process failed with exit code $($Process.ExitCode); refusing to report a successful run."
+}
 
 # A Development build writes next to the staged game (Saved\StagedBuilds\Windows\OneBossFight\Saved); a SHIPPING build writes to the user's local data folder (%LOCALAPPDATA%\OneBossFight\Saved), found 2026-10-24: both places are searched, the newest run of this label wins.
 $BenchmarkDirs = @(

@@ -15,6 +15,9 @@ bool FRPGFlaskHudFillTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("exactly two thirds is half"), DecideFill(6, 9), EFill::Half);
 	TestEqual(TEXT("above two thirds is full"), DecideFill(7, 10), EFill::Full);
 	TestEqual(TEXT("starting count is full"), DecideFill(10, 10), EFill::Full);
+	TestEqual(TEXT("large maximum does not overflow the two-thirds comparison"), DecideFill(1, 1500000000), EFill::Half);
+	TestEqual(TEXT("maximum integer count and maximum use count remain full without overflow"), DecideFill(MAX_int32, MAX_int32), EFill::Full);
+	TestEqual(TEXT("one below maximum integer count remains full without overflow"), DecideFill(MAX_int32-1, MAX_int32), EFill::Full);
 	return true;
 }
 #endif

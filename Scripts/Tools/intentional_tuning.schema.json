@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Approved intentional boss tuning",
+  "description": "Each record approves one exact current boss-field mismatch and the exact value in the draft. The approval ID must resolve to an owner decision outside this file.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["field", "value", "reason", "owner_approval_id"],
+    "properties": {
+      "field": { "type": "string", "minLength": 1 },
+      "value": { "type": ["string", "number", "boolean", "null", "array", "object"] },
+      "reason": { "type": "string", "minLength": 1 },
+      "owner_approval_id": { "type": "string", "minLength": 1 }
+    }
+  }
+}

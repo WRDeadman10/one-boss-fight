@@ -1,4 +1,5 @@
 """B11: authored dormant loop and wake gate. Exercises normal wake, direct attack veto, reset during wake, and death during wake. Log prefix [DormantWake]."""
+import os
 import unreal
 
 log = lambda message: unreal.log("[DormantWake] " + message)
@@ -88,6 +89,9 @@ def tick(delta):
         state["time"] += delta
         if state["phase"] == "start":
             if state["time"] > 0.5:
+                selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+                if selection:
+                    unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
                 unreal.SystemLibrary.execute_console_command(unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world(), "rpg.WakeClip 1")  # this driver tests the wake clip itself
                 unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
                 state.update(phase="play", time=0.0, next=8.0)

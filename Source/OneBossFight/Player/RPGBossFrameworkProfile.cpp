@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Player/RPGBossFrameworkProfile.h"
 #include "Player/RPGBossPunish.h"
+#include "Player/RPGBossAggroRules.h"
 #include "Player/RPGBossDefenseRules.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -48,6 +49,8 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
     if (!(bF3||bF4||bF5) || (bF4||bF5)!=P.bDamageEnabled || P.Mesh.IsNull() || P.AnimClass.IsNull() || P.TargetPawnClass.IsNull() ||
         (bF5 ? (P.Cards.Num()<1||!P.Card.IsNull()) : (P.Card.IsNull()||P.Cards.Num()>0)))
         return Fail(TEXT("Framework.Profile.Identity"));
+    if (P.bRangeBandPartition && !bF5)
+        return Fail(TEXT("Framework.Profile.Domain"));
     if (P.bDamageEnabled && (!FMath::IsFinite(P.HitStepCm) || P.HitStepCm<=0.f || P.HitStepCm>1.e6f || P.HitMaxSubsteps<1 || P.HitMaxSubsteps>64))
         return Fail(TEXT("Framework.Profile.Domain"));
     if ((P.BossMaxHealth>0.f)!=(P.PlayerHitDamage>0.f) || !FMath::IsFinite(P.BossMaxHealth) || !FMath::IsFinite(P.PlayerHitDamage) || P.BossMaxHealth<0.f || P.PlayerHitDamage<0.f ||
@@ -129,6 +132,23 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
         return Fail(TEXT("Framework.Profile.ConeHysteresis"));
     if (!FMath::IsFinite(P.NeutralStrafeSeconds)||P.NeutralStrafeSeconds<0.f||P.NeutralStrafeSeconds>20.f||(P.NeutralStrafeSeconds>0.f&&(!bF5||P.WalkSpeedCmPerSecond<=0.f)))
         return Fail(TEXT("Framework.Profile.NeutralStrafe"));
+    if (!FMath::IsFinite(P.NeutralStrafeMinHoldSeconds)||!FMath::IsFinite(P.NeutralStrafeMaxHoldSeconds)||P.NeutralStrafeMinHoldSeconds<=0.||P.NeutralStrafeMaxHoldSeconds<P.NeutralStrafeMinHoldSeconds||
+        ((P.NeutralStrafeMinHoldSeconds!=.8||P.NeutralStrafeMaxHoldSeconds!=1.6)&&!bF5))
+        return Fail(TEXT("Framework.Profile.NeutralStrafe"));
+    if (!FMath::IsFinite(P.GuardChipFraction)||P.GuardChipFraction<0.f||P.GuardChipFraction>1.f||(P.GuardChipFraction>0.f&&!bF5))
+        return Fail(TEXT("Framework.Profile.GuardChip"));
+    if (!FMath::IsFinite(P.ParryRecoveryScale)||P.ParryRecoveryScale<0.f||P.ParryRecoveryScale>3.f||(P.ParryRecoveryScale>0.f&&!bF5))
+        return Fail(TEXT("Framework.Profile.ParryRecovery"));
+    if (!FMath::IsFinite(P.ParryFairMinScale)||P.ParryFairMinScale<=0.f||P.ParryFairMinScale>1.f||(P.ParryFairTelegraph&&!bF5))
+        return Fail(TEXT("Framework.Profile.ParryFairTelegraph"));
+    {
+        RPGBossAggro::FConfig C; C.EnterCloseCm=P.AggroEnterCloseCm;C.ExitCloseCm=P.AggroExitCloseCm;C.EnterFarCm=P.AggroEnterFarCm;C.ExitFarCm=P.AggroExitFarCm;
+        C.EnterDodgeRate=P.AggroDodgeEnterRate;C.ExitDodgeRate=P.AggroDodgeExitRate;C.DodgeRateWindowSeconds=P.AggroDodgeWindowSeconds;
+        if (!RPGBossAggro::IsValid(C)||(P.bAggroEnabled&&(!bF5||!FMath::IsFinite(P.DodgeSpeedCm)||P.DodgeSpeedCm<=0.f||P.DodgeSpeedCm>1.e5f))) return Fail(TEXT("Framework.Profile.Aggro"));
+    }
+    if (P.FatigueGraceWhiffs<0||P.FatigueGraceWhiffs>100||!FMath::IsFinite(P.FatigueFloor)||P.FatigueFloor<0.f||P.FatigueFloor>1.f||
+        ((P.FatigueGraceWhiffs!=0||P.FatigueFloor!=0.f)&&(!bF5||P.FatigueFloor<=0.f)))
+        return Fail(TEXT("Framework.Profile.Fatigue"));
     if (!FMath::IsFinite(P.ParryPostureAmount)||P.ParryPostureAmount<0.f||(P.ParryPostureAmount>0.f&&(!bF5||P.PostureMax<=0.f||P.ParryPostureAmount>P.PostureMax)))
         return Fail(TEXT("Framework.Profile.ParryPosture"));
     if (P.bParryGradeScale&&!bF5)
@@ -185,11 +205,14 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
     auto D=MakeUnique<FRPGFrameworkDependencies>(); D->Profile.Reset(P); D->Mesh.Reset(Mesh); D->AnimClass.Reset(Anim); D->TargetClass.Reset(Target);
     if (P->Cards.Num()>0)
     {
-        float WorstHit=0.f;
+        float WorstHit=0.f; TSet<FName> ResolvedMoveIds;
         for (const FRPGBossProfileCard& C:P->Cards)
         {
             FRPGFrameworkDependencies::FCandidate Candidate; Candidate.CooldownSeconds=C.CooldownSeconds; Candidate.Weight=C.Weight; Candidate.bHyperArmor=C.bHyperArmor; Candidate.KiteMultiplier=C.KiteWeightMultiplier; Candidate.HugMultiplier=C.HugWeightMultiplier; Candidate.BackDodgeMultiplier=C.BackDodgeWeightMultiplier; Candidate.GreedMultiplier=C.GreedWeightMultiplier; Candidate.bHeavyFinisher=C.bHeavyFinisher;
             if (!ResolveCard(C.Card.LoadSynchronous(),Candidate.Card)) return false;
+            const FName MoveId=Candidate.Card->Spec().MoveId;
+            if (ResolvedMoveIds.Contains(MoveId)) {Error=TEXT("Framework.Profile.Combo.DuplicateMoveId");return false;}
+            ResolvedMoveIds.Add(MoveId);
             WorstHit=FMath::Max(WorstHit,Candidate.Card->Spec().HPDamage); D->Candidates.Add(Candidate);
         }
         // F6c: every card belongs to phase one (the first card's phase) or to PhaseTwoId, and each phase has at least one card.

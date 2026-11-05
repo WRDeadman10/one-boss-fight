@@ -7,6 +7,13 @@
 #include "Player/RPGBossLook.h"
 #include "Player/RPGBossCloseClipSwap.h"
 #include "Player/RPGBossDeath.h"
+#include "Player/RPGAttackTracker.h"
+#include "Audio/RPGFootsteps.h"
+#include "Audio/RPGBossMusic.h"
+#include "Player/RPGDamageResolver.h"
+#include "Player/RPGTraceGuard.h"
+#include "UI/RPGBossHud.h"
+#include "Player/RPGLegend.h"
 #include "Misc/AutomationTest.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -28,7 +35,7 @@
 #include "UObject/StrongObjectPtr.h"
 #include <limits>
 
-// These tests prove the whole-batch expanded native subset preflight kernel (twelve combined plans per boss-core member) on real isolated UE objects (a headless game world, plain actors, the existing synthetic config factory): validation of the whole batch, named failures,
+// These tests prove the whole-batch expanded native subset preflight kernel (19 plans per boss-core member: 13 typed and 6 configuration-independent parity consumers) on real isolated UE objects (a headless game world, plain actors, the existing synthetic config factory): validation of the whole batch, named failures,
 // the plan order and leases of a success, clearing of earlier output, and that a failed or successful compile changes no actor, component or combat context.
 // They do NOT prove a duel, PIE, a startup chronology, the real game-instance provenance of a content lease, a production skeleton/mesh pairing (no real pack mesh is used: a production member is only shown to FAIL CLOSED),
 // or the not-game-thread rule (the tests run on the game thread) and the synthetic-fixture-unavailable rule of a non-test target (compiled out here).
@@ -80,7 +87,7 @@ namespace PreflightTests
 		AActor* SpawnActor() const { return World ? World->SpawnActor<AActor>() : nullptr; }
 	};
 
-	/** The 110 unique manifest paths the twelve combined boss-core plans read, written out as INDEPENDENT literals (not derived from the factories under test): stagger 25 (14 policy + 11 profile), phases 18 (the 4 paths of
+	/** The 115 unique manifest paths the thirteen combined boss-core plans read, written out as INDEPENDENT literals (not derived from the factories under test): stagger 25 (14 policy + 11 profile), phases 18 (the 4 paths of
 	 *  the selected phase + 6 flow + 5 fireball + 3 dependencies), encounter 3, dormant wake 2, posture 3. Membership only; the fixtures' manifests are built from this list and the plans' own required fields are what the
 	 *  implementation produces and is compared against it. */
 	TArray<FString> AllRequiredPaths(FName PhaseId)
@@ -113,7 +120,8 @@ namespace PreflightTests
 			TEXT("HealPunish.bEnabled"), TEXT("HealPunish.MinRange"), TEXT("HealPunish.MaxRange"), TEXT("HealPunish.Cooldown"), TEXT("HealPunish.Damage"), TEXT("HealPunish.FlightTime"), TEXT("HealPunish.MinSpeed"), TEXT("HealPunish.MaxSpeed"), TEXT("HealPunish.JavelinRadius"), TEXT("HealPunish.JavelinMaxRange"), TEXT("HealPunish.SpawnSockets"), TEXT("HealPunish.AimHeight"), TEXT("HealPunish.bRespondToHeal"), TEXT("HealPunish.bCancelJavelinsOnInterrupt"),
 			TEXT("Look.bEnabled"), TEXT("Look.Body"), TEXT("Look.Pieces"), TEXT("Look.Sword"), TEXT("Look.SwordSocket"),
 			TEXT("CloseClipSwap.CloseAbilityClassName"), TEXT("CloseClipSwap.AttackMontagesName"), TEXT("CloseClipSwap.A1Montage"), TEXT("CloseClipSwap.A3aMontage"), TEXT("CloseClipSwap.A3bMontage"),
-			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath")};
+			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath"),
+			TEXT("AttackTracker.Attacks"), TEXT("AttackTracker.bEnabled"), TEXT("AttackTracker.bVetoIllegalStarts"), TEXT("AttackTracker.BranchRange"), TEXT("AttackTracker.BranchConeDegrees")};
 	}
 
 	FRPGParityField MakeField(const FString& Path)
@@ -388,7 +396,7 @@ bool FRPGPreflightValidTest::RunTest(const FString& Parameters)
 
 	// Boss-core: Stagger, Phases, Encounter, DormantWake, Posture, built from the twelve accepted combined factories; target-only: no boss plan.
 	const FRPGPreflightParticipantPlan& Boss = Plan->Participants[1];
-	if (!TestEqual(TEXT("boss-core has twelve plans"), Boss.Plans.Num(), 12))
+	if (!TestEqual(TEXT("boss-core has nineteen plans"), Boss.Plans.Num(), 19))
 	{
 		return false;
 	}
@@ -406,24 +414,24 @@ bool FRPGPreflightValidTest::RunTest(const FString& Parameters)
 			Required.Add(Path);
 		}
 	}
-	TestEqual(TEXT("the union of required manifest paths is one hundred ten"), Required.Num(), 110);
+	TestEqual(TEXT("the union of required manifest paths is one hundred fifteen"), Required.Num(), 115);
 	for (const FString& Path : AllRequiredPaths(PhaseTwo))
 	{
 		TestTrue(FString::Printf(TEXT("required path %s is named by a plan"), *Path), Required.Contains(Path));
 	}
-	TestEqual(TEXT("one class lease per boss plan"), Boss.ClassLeases.Num(), 12);
-	TestTrue(TEXT("the class leases are the plan classes"), Boss.ClassLeases.Num() == 12 && Boss.ClassLeases[0].Get() == Boss.Plans[0].Class && Boss.ClassLeases[1].Get() == Boss.Plans[1].Class && Boss.ClassLeases[2].Get() == Boss.Plans[2].Class
-		&& Boss.ClassLeases[3].Get() == Boss.Plans[3].Class && Boss.ClassLeases[4].Get() == Boss.Plans[4].Class && Boss.ClassLeases[5].Get() == Boss.Plans[5].Class && Boss.ClassLeases[6].Get() == Boss.Plans[6].Class && Boss.ClassLeases[7].Get() == Boss.Plans[7].Class && Boss.ClassLeases[8].Get() == Boss.Plans[8].Class && Boss.ClassLeases[9].Get() == Boss.Plans[9].Class && Boss.ClassLeases[10].Get() == Boss.Plans[10].Class && Boss.ClassLeases[11].Get() == Boss.Plans[11].Class);
+	TestEqual(TEXT("one class lease per boss plan"), Boss.ClassLeases.Num(), 19);
+	TestTrue(TEXT("the class leases are the plan classes"), Boss.ClassLeases.Num() == 19 && Boss.ClassLeases[0].Get() == Boss.Plans[0].Class && Boss.ClassLeases[1].Get() == Boss.Plans[1].Class && Boss.ClassLeases[2].Get() == Boss.Plans[2].Class
+		&& Boss.ClassLeases[3].Get() == Boss.Plans[3].Class && Boss.ClassLeases[4].Get() == Boss.Plans[4].Class && Boss.ClassLeases[5].Get() == Boss.Plans[5].Class && Boss.ClassLeases[6].Get() == Boss.Plans[6].Class && Boss.ClassLeases[7].Get() == Boss.Plans[7].Class && Boss.ClassLeases[8].Get() == Boss.Plans[8].Class && Boss.ClassLeases[9].Get() == Boss.Plans[9].Class && Boss.ClassLeases[10].Get() == Boss.Plans[10].Class && Boss.ClassLeases[11].Get() == Boss.Plans[11].Class && Boss.ClassLeases[12].Get() == Boss.Plans[12].Class);
 	TestTrue(TEXT("target-only members get no boss plan and no class lease"), Plan->Participants[0].Plans.IsEmpty() && Plan->Participants[2].Plans.IsEmpty() && Plan->Participants[0].ClassLeases.IsEmpty() && Plan->Participants[2].ClassLeases.IsEmpty());
 
 	// Deterministic: a second compile of the same input gives the same plan names, classes and order, as a different object.
 	FPlanPtr Again;
 	TestTrue(TEXT("second compile"), RPGBossHydrationPreflight::CompilePreflight(Input, Again).IsReady() && Again.IsValid());
-	if (Again.IsValid() && Again->Participants.Num() == 3 && Again->Participants[1].Plans.Num() == 12)
+	if (Again.IsValid() && Again->Participants.Num() == 3 && Again->Participants[1].Plans.Num() == 19)
 	{
 		TestTrue(TEXT("a different plan object"), Again.Get() != Plan.Get());
 		bool bSame = true;
-		for (int32 Index = 0; Index < 12; ++Index)
+		for (int32 Index = 0; Index < 19; ++Index)
 		{
 			bSame = bSame && Again->Participants[1].Plans[Index].InstanceName == Boss.Plans[Index].InstanceName && Again->Participants[1].Plans[Index].Class == Boss.Plans[Index].Class;
 		}
@@ -757,7 +765,7 @@ bool FRPGPreflightConfigTest::RunTest(const FString& Parameters)
 		ExpectRejected(*this, F, TEXT("attack multiplier below 1 (unsupported by the native reset)"), WithBossConfig(Spec), TEXT("Preflight.PhaseRejected"), TEXT("UnsupportedNativeDamageScale"));
 	}
 
-	// Each of the one hundred ten required manifest paths of the twelve combined plans, one at a time.
+	// Each of the one hundred fifteen required manifest paths of the 19 plans (13 typed and 6 configuration-independent parity consumers), one at a time.
 	for (const FString& Path : AllRequiredPaths(PhaseTwo))
 	{
 		FConfigSpec Spec = Base;
@@ -843,7 +851,7 @@ bool FRPGPreflightTargetsTest::RunTest(const FString& Parameters)
 		{
 			TestTrue(TEXT("the plan follows the request order, the player first"), Out->Participants[0].Slot == FName(TEXT("Player")) && Out->Participants[1].Slot == FName(TEXT("Boss")));
 			TestTrue(TEXT("the boss target slot is still the explicit one, not 'the first member'"), Out->Participants[1].TargetSlot == FName(TEXT("Player")) && Out->Participants[0].TargetSlot == FName(TEXT("Boss")));
-			TestTrue(TEXT("only the boss has plans"), Out->Participants[0].Plans.IsEmpty() && Out->Participants[1].Plans.Num() == 12);
+			TestTrue(TEXT("only the boss has plans"), Out->Participants[0].Plans.IsEmpty() && Out->Participants[1].Plans.Num() == 19);
 		}
 	}
 	// A target that is a member but is itself invalid: the batch fails on that member, and no plan exists for the valid boss either.
@@ -864,7 +872,7 @@ bool FRPGPreflightTargetsTest::RunTest(const FString& Parameters)
 		In.Requests[0].TargetSlot = FName(TEXT("Boss2"));
 		FPlanPtr Out;
 		const FRPGHydrationResult Result = RPGBossHydrationPreflight::CompilePreflight(In, Out);
-		TestTrue(TEXT("two boss-core members targeting each other compile"), Result.IsReady() && Out.IsValid() && Out->Participants.Num() == 2 && Out->Participants[0].Plans.Num() == 12 && Out->Participants[1].Plans.Num() == 12);
+		TestTrue(TEXT("two boss-core members targeting each other compile"), Result.IsReady() && Out.IsValid() && Out->Participants.Num() == 2 && Out->Participants[0].Plans.Num() == 19 && Out->Participants[1].Plans.Num() == 19);
 	}
 	return true;
 }
@@ -998,7 +1006,7 @@ bool FRPGPreflightDependenciesTest::RunTest(const FString& Parameters)
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// DD13: the expanded native subset (twelve combined plans per boss-core member). The expected classes, names, counts and the 110-path union are written as independent literals in this file (AllRequiredPaths),
+// DD13: the expanded native subset plus the tracker plan (19 plans per boss-core member: 13 typed and 6 configuration-independent parity consumers). The expected classes, names, counts and the 115-path union are written as independent literals in this file (AllRequiredPaths),
 // not derived from the factories under test; the manifest the fixtures carry comes from the same literal list, the plans' own required fields are what the implementation produces.
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1039,15 +1047,15 @@ bool FRPGPreflightExpandedTest::RunTest(const FString& Parameters)
 		&& !Plan->IsCompletePlayableBundle() && !Plan->IsReservation() && !Plan->IsReady());
 
 	// Independent expectations: the twelve classes and the legacy instance names, each exactly once, in the relative plan order.
-	const TArray<UClass*> ExpectedClasses = {URPGBossStagger::StaticClass(), URPGBossPhases::StaticClass(), URPGBossEncounter::StaticClass(), URPGBossDormantWake::StaticClass(), URPGBossPosture::StaticClass(), URPGBossBleed::StaticClass(), URPGBossLowSweep::StaticClass(), URPGBossShockwave::StaticClass(), URPGBossHealPunish::StaticClass(), URPGBossLook::StaticClass(), URPGBossCloseClipSwap::StaticClass(), URPGBossDeath::StaticClass()};
-	const TArray<FName> ExpectedNames = {FName(TEXT("RPGBossStagger")), FName(TEXT("RPGBossPhases")), FName(TEXT("RPGBossEncounter")), FName(TEXT("RPGBossDormantWake")), FName(TEXT("RPGBossPosture")), FName(TEXT("RPGBossBleed")), FName(TEXT("RPGBossLowSweep")), FName(TEXT("RPGBossShockwave")), FName(TEXT("RPGBossHealPunish")), FName(TEXT("RPGBossLook")), FName(TEXT("RPGBossCloseClipSwap")), FName(TEXT("RPGBossDeath"))};
+	const TArray<UClass*> ExpectedClasses = {URPGBossStagger::StaticClass(), URPGBossPhases::StaticClass(), URPGBossEncounter::StaticClass(), URPGBossDormantWake::StaticClass(), URPGBossPosture::StaticClass(), URPGBossBleed::StaticClass(), URPGBossLowSweep::StaticClass(), URPGBossShockwave::StaticClass(), URPGBossHealPunish::StaticClass(), URPGBossLook::StaticClass(), URPGBossCloseClipSwap::StaticClass(), URPGBossDeath::StaticClass(), URPGAttackTracker::StaticClass(), URPGFootsteps::StaticClass(), URPGBossMusic::StaticClass(), URPGTraceGuard::StaticClass(), URPGBossHud::StaticClass(), URPGBossLegend::StaticClass(), URPGDamageResolver::StaticClass()};
+	const TArray<FName> ExpectedNames = {FName(TEXT("RPGBossStagger")), FName(TEXT("RPGBossPhases")), FName(TEXT("RPGBossEncounter")), FName(TEXT("RPGBossDormantWake")), FName(TEXT("RPGBossPosture")), FName(TEXT("RPGBossBleed")), FName(TEXT("RPGBossLowSweep")), FName(TEXT("RPGBossShockwave")), FName(TEXT("RPGBossHealPunish")), FName(TEXT("RPGBossLook")), FName(TEXT("RPGBossCloseClipSwap")), FName(TEXT("RPGBossDeath")), FName(TEXT("RPGAttackTracker")), FName(TEXT("RPGFootsteps")), FName(TEXT("RPGBossMusic")), FName(TEXT("RPGTraceGuard")), FName(TEXT("RPGBossHud")), FName(TEXT("RPGBossLegend")), FName(TEXT("RPGDamageResolver"))};
 	for (int32 Member = 0; Member < 2; ++Member)
 	{
 		const FRPGPreflightParticipantPlan& BossPlan = Plan->Participants[Member];
 		const FName Selected = Member == 0 ? PhaseTwo : PhaseAlt;
 		const FName Other = Member == 0 ? PhaseAlt : PhaseTwo;
 		const FString Who = Member == 0 ? TEXT("boss with PhaseTwo") : TEXT("boss with PhaseAlt");
-		if (!TestTrue(FString::Printf(TEXT("%s: exactly twelve plans, a boss-core role and twelve class leases"), *Who), BossPlan.Role == ERPGPreflightRole::BossCore && BossPlan.Plans.Num() == 12 && BossPlan.ClassLeases.Num() == 12))
+		if (!TestTrue(FString::Printf(TEXT("%s: exactly nineteen plans and class leases"), *Who), BossPlan.Role == ERPGPreflightRole::BossCore && BossPlan.Plans.Num() == 19 && BossPlan.ClassLeases.Num() == 19))
 		{
 			return false;
 		}
@@ -1070,7 +1078,7 @@ bool FRPGPreflightExpandedTest::RunTest(const FString& Parameters)
 		TSet<FName> DistinctNames;
 		int32 SumOfRequired = 0;
 		TSet<FString> Union;
-		for (int32 Index = 0; Index < 12; ++Index)
+		for (int32 Index = 0; Index < 19; ++Index)
 		{
 			bClasses = bClasses && BossPlan.Plans[Index].Class == ExpectedClasses[Index];
 			bNames = bNames && BossPlan.Plans[Index].InstanceName == ExpectedNames[Index];
@@ -1087,15 +1095,15 @@ bool FRPGPreflightExpandedTest::RunTest(const FString& Parameters)
 		TestTrue(FString::Printf(TEXT("%s: all twelve classes follow the reviewed prefix and DD-order suffix"), *Who), bClasses);
 		TestTrue(FString::Printf(TEXT("%s: the instance names are the legacy names in the same order"), *Who), bNames);
 		TestTrue(FString::Printf(TEXT("%s: every plan has its callback (built, never run) and the class leases are the plan classes"), *Who), bCallbacks && bLeases);
-		TestTrue(FString::Printf(TEXT("%s: no native class and no instance name appears twice"), *Who), DistinctClasses.Num() == 12 && DistinctNames.Num() == 12);
-		// The separate scalar, profile, flow and policy plans are gone: no plan names a class twice and the twelve plans together name each of the 110 paths exactly once.
+		TestTrue(FString::Printf(TEXT("%s: no native class and no instance name appears twice"), *Who), DistinctClasses.Num() == 19 && DistinctNames.Num() == 19);
+		// The separate scalar, profile, flow and policy plans are gone: no plan names a class twice and the thirteen typed plans name each of the 115 paths exactly once.
 		const TArray<FString> ExpectedPaths = AllRequiredPaths(Selected);
-		bool bUnion = ExpectedPaths.Num() == 110 && Union.Num() == 110 && SumOfRequired == 110;
+		bool bUnion = ExpectedPaths.Num() == 115 && Union.Num() == 115 && SumOfRequired == 115;
 		for (const FString& Path : ExpectedPaths)
 		{
 			bUnion = bUnion && Union.Contains(Path);
 		}
-		TestTrue(FString::Printf(TEXT("%s: the union of the plans' required paths is exactly the 110 independent literal paths, each named by exactly one plan"), *Who), bUnion);
+		TestTrue(FString::Printf(TEXT("%s: the union of the plans' required paths is exactly the 115 independent literal paths, each named by exactly one plan"), *Who), bUnion);
 		// The selected phase decides the phase paths: no default first or last phase.
 		TestTrue(FString::Printf(TEXT("%s: the selected phase paths are named and the other phase's are not"), *Who),
 			Union.Contains(FString::Printf(TEXT("Phases[%s].EntryHealthFraction"), *Selected.ToString())) && !Union.Contains(FString::Printf(TEXT("Phases[%s].EntryHealthFraction"), *Other.ToString())));
@@ -1113,8 +1121,8 @@ bool FRPGPreflightExpandedTest::RunTest(const FString& Parameters)
 		bool bStable = true;
 		for (int32 Member = 0; Member < 2; ++Member)
 		{
-			bStable = bStable && Again->Participants[Member].Plans.Num() == 12;
-			for (int32 Index = 0; bStable && Index < 12; ++Index)
+			bStable = bStable && Again->Participants[Member].Plans.Num() == 19;
+			for (int32 Index = 0; bStable && Index < 19; ++Index)
 			{
 				bStable = bStable && Again->Participants[Member].Plans[Index].Class == Plan->Participants[Member].Plans[Index].Class
 					&& Again->Participants[Member].Plans[Index].InstanceName == Plan->Participants[Member].Plans[Index].InstanceName
@@ -1131,8 +1139,8 @@ bool FRPGPreflightExpandedTest::RunTest(const FString& Parameters)
 	{
 		bNoConsumers = bNoConsumers && !F.Boss->FindComponentByClass(Class) && !Boss2->FindComponentByClass(Class) && !F.Player->FindComponentByClass(Class);
 	}
-	TestTrue(TEXT("none of the thirteen managed consumer classes exists on any actor"), bNoConsumers);
-	TestTrue(TEXT("the managed consumers are the thirteen expected classes"), RPGBossHydrationPreflight::ManagedCoreConsumerClasses().Num() == 13);
+	TestTrue(TEXT("none of the twenty managed consumer classes exists on any actor"), bNoConsumers);
+	TestTrue(TEXT("the managed consumers are the twenty expected classes"), RPGBossHydrationPreflight::ManagedCoreConsumerClasses().Num() == 20);
 
 	AddInfo(TEXT("Expanded native subset: a plan order only (NOT a BeginPlay chronology), structural soft references (NOT production fit, load or cook proof), NOT a complete playable bundle, reservation or ready context."));
 	return true;
@@ -1308,7 +1316,7 @@ bool FRPGPreflightConsumersTest::RunTest(const FString& Parameters)
 	FPlanPtr Plan;
 	const TArray<int32> Before = CaptureState(F.Scope.World);
 	const int32 BossComponentsBefore = F.Boss->GetComponents().Num();
-	if (!TestTrue(TEXT("the batch compiles"), RPGBossHydrationPreflight::CompilePreflight(F.Valid, Plan).IsReady() && Plan.IsValid() && Plan->Participants.Num() == 2 && Plan->Participants[0].Plans.Num() == 12))
+	if (!TestTrue(TEXT("the batch compiles"), RPGBossHydrationPreflight::CompilePreflight(F.Valid, Plan).IsReady() && Plan.IsValid() && Plan->Participants.Num() == 2 && Plan->Participants[0].Plans.Num() == 19))
 	{
 		return false;
 	}

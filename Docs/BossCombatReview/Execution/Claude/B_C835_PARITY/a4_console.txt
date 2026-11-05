@@ -1,0 +1,30 @@
+﻿exit=0 timedOut=False seconds=427 raw=178b3d5a31bbd100ff3ee42c54b7858e1d0e7f8534ee75e98ee843886537afeb
+pie_a4_low_sweep legacy runner exit=0
+pie_a4_low_sweep legacy receipt: Traceback (most recent call last):
+pie_a4_low_sweep legacy receipt:   File "C:\UnrealProject\OneBossFight\Scripts\Tools\write_a4_parity_receipt.py", line 12, in <module>
+pie_a4_low_sweep legacy receipt:     from encounter_parity_receipt import ReceiptError, build_receipt_from_snapshot, sha256_file, write_receipt
+pie_a4_low_sweep legacy receipt: ModuleNotFoundError: No module named 'encounter_parity_receipt'
+exit=0 timedOut=False seconds=429 raw=d0c7ab175ba6037225420350e1086a5fe4bb33d66e3728f60d9c7abfb6311c5e
+pie_a4_low_sweep data runner exit=1
+pie_a4_low_sweep data receipt: Traceback (most recent call last):
+pie_a4_low_sweep data receipt:   File "C:\UnrealProject\OneBossFight\Scripts\Tools\write_a4_parity_receipt.py", line 12, in <module>
+pie_a4_low_sweep data receipt:     from encounter_parity_receipt import ReceiptError, build_receipt_from_snapshot, sha256_file, write_receipt
+pie_a4_low_sweep data receipt: ModuleNotFoundError: No module named 'encounter_parity_receipt'
+pie_a4_low_sweep compare: Traceback (most recent call last):
+pie_a4_low_sweep compare:   File "C:\UnrealProject\OneBossFight\Scripts\Tools\compare_encounter_parity.py", line 18, in <module>
+pie_a4_low_sweep compare:     from encounter_parity_receipt import ReceiptError as V2ReceiptError
+pie_a4_low_sweep compare: ModuleNotFoundError: No module named 'encounter_parity_receipt'
+pie_a4_low_sweep compare exit=1
+Get-FileHash : The file 
+'C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Claude\B_C835_PARITY\a4_console.txt' cannot be read: 
+The process cannot access the file 
+'C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Claude\B_C835_PARITY\a4_console.txt' because it is 
+being used by another process.
+At C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Claude\B_C835_PARITY\run_parity.ps1:63 char:84
++ ... ect Name -ne 'evidence_sha256.txt' | Get-FileHash -Algorithm SHA256 |
++                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ReadError: (C:\UnrealProjec...\a4_console.txt:PSObject) [Write-Error], WriteErrorExcepti 
+   on
+    + FullyQualifiedErrorId : FileReadError,Get-FileHash
+ 
+ALL PAIRS DONE

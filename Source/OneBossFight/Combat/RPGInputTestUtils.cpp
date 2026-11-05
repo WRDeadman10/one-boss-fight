@@ -59,6 +59,10 @@ bool URPGInputTestUtils::SetFixedFrameRate(float Fps)
 	{
 		return false;
 	}
+	if (!FMath::IsFinite(Fps))
+	{
+		return false;
+	}
 	if (Fps <= 0.f)
 	{
 		RestoreFixedFrameRate();

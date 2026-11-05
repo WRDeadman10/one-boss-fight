@@ -1,10 +1,13 @@
 """Gate 2 / G2-4: the A6 leap. W1 leap blocked in phase one, W2 wave hits a grounded player, W3 a jump clears it, W4 central hit priority, W5 reset mid wave stops it, W6 leap unlocked after phase two,
 W7 real leap (pack ability) tracked as A6 with one wave per instance. Run pie_debug_overlay.py once after an editor start first. Log prefix [Leap]."""
 import math
+import json
+import os
 import unreal
 
 log = lambda m: unreal.log("[Leap] " + m)
 results = []
+TIMING_OBSERVABLES = {}
 S = {"phase": "start", "t": 0.0, "i": 0, "next": 0.0, "mem": {}}
 handle = None
 
@@ -160,7 +163,12 @@ def s_w7_check(w, pc, pawn, boss):
     wave, tr, ph, dbg, enc = parts(boss)
     m = S["mem"]
     check("W7 tracked once as A6", tr.get_attack_instance() == m["inst"] + 1 and tr.get_commit_count() == m["commit"] + 1, "instances %d -> %d" % (m["inst"], tr.get_attack_instance()))
-    check("W7 commit near 0.16 s and window near 0.75 s", 0.05 <= tr.get_last_commit_position() <= 0.4 and 0.6 <= tr.get_last_active_start_position() <= 0.95, "commit %.2f active %.2f" % (tr.get_last_commit_position(), tr.get_last_active_start_position()))
+    commit, active = tr.get_last_commit_position(), tr.get_last_active_start_position()
+    commit_name, active_name = "W7 commit position", "W7 active window position"
+    check(commit_name, 0.05 <= commit <= 0.4, "commit %.2f" % commit)
+    check(active_name, 0.6 <= active <= 0.95, "active %.2f" % active)
+    TIMING_OBSERVABLES[commit_name] = {"value": float(commit), "comparison": {"type": "timing_seconds", "range_seconds": [0.05, 0.4]}}
+    TIMING_OBSERVABLES[active_name] = {"value": float(active), "comparison": {"type": "timing_seconds", "range_seconds": [0.6, 0.95]}}
     check("W7 one wave for the leap", wave.get_launch_count() == m["launch"] + 1, "launches %d -> %d" % (m["launch"], wave.get_launch_count()))
     bl = boss.get_actor_location()
     log("INFO leap landing at %.0f, %.0f (boss yaw %.0f -> %.0f); player health %s -> %s" % (bl.x, bl.y, m["yaw"], boss.get_actor_rotation().yaw, m["hp"], health(pawn)))
@@ -183,6 +191,9 @@ def _tick(dt):
     s["t"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0, next=STEPS[0][0])
         return
@@ -198,6 +209,8 @@ def _tick(dt):
         unreal.unregister_slate_post_tick_callback(handle)
         handle = None
         unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
+        if TIMING_OBSERVABLES:
+            log("TIMING_OBSERVABLES_JSON " + json.dumps(TIMING_OBSERVABLES, sort_keys=True, separators=(",", ":")))
         log("RESULT %d/%d passed" % (sum(1 for r in results if r), len(results)))
         return
     _, fn = STEPS[s["i"]]

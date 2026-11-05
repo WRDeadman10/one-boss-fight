@@ -1,8 +1,11 @@
 """B10 authored close clips: validates the live pack-ability swap and the A1/A3 tracker timing source. Log prefix [AuthoredClose]."""
+import json
+import os
 import unreal
 
 log = lambda text: unreal.log("[AuthoredClose] " + text)
 results = []
+TIMING_OBSERVABLES = {}
 state = {"phase": "start", "now": 0.0, "wake": 0.0, "t": 0.0, "finished": False}
 handle = None
 
@@ -59,11 +62,17 @@ def scenario():
         check("A2 %s keeps authored windup unscaled" % move, abs(tracker.get_telegraph_rate() - 1.0) < 0.01,
               "rate %.3f" % tracker.get_telegraph_rate())
         yield values[0] + 0.05
-        check("A2 %s commits at authored %.2f seconds" % (move, values[0]), tracker.get_commit_count() == commits + 1 and abs(tracker.get_last_commit_position() - values[0]) < 0.12,
-              "commit %.3f" % tracker.get_last_commit_position())
+        commit_name = "A2 %s commits at authored %.2f seconds" % (move, values[0])
+        commit = tracker.get_last_commit_position()
+        check(commit_name, tracker.get_commit_count() == commits + 1 and abs(commit - values[0]) < 0.12,
+              "commit %.3f" % commit)
+        TIMING_OBSERVABLES[commit_name] = {"value": float(commit), "comparison": {"type": "timing_seconds", "range_seconds": [max(0.0, values[0] - 0.12), values[0] + 0.12]}}
         yield max(0.05, values[1] - values[0]) + 0.08
-        check("A2 %s opens at authored %.2f seconds" % (move, values[1]), abs(tracker.get_last_active_start_position() - values[1]) < 0.12,
-              "active %.3f, recovery %.4f" % (tracker.get_last_active_start_position(), values[3]))
+        active_name = "A2 %s opens at authored %.2f seconds" % (move, values[1])
+        active = tracker.get_last_active_start_position()
+        check(active_name, abs(active - values[1]) < 0.12,
+              "active %.3f, recovery %.4f" % (active, values[3]))
+        TIMING_OBSERVABLES[active_name] = {"value": float(active), "comparison": {"type": "timing_seconds", "range_seconds": [max(0.0, values[1] - 0.12), values[1] + 0.12]}}
         yield max(0.10, values[3] - values[1]) + 0.25
 
     restores = swap.get_restore_count()
@@ -84,6 +93,8 @@ def finish():
         unreal.unregister_slate_post_tick_callback(handle)
         handle = None
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
+    if TIMING_OBSERVABLES:
+        log("TIMING_OBSERVABLES_JSON " + json.dumps(TIMING_OBSERVABLES, sort_keys=True, separators=(",", ":")))
     log("RESULT %d/%d passed" % (sum(results), len(results)))
 
 
@@ -93,6 +104,9 @@ def tick(delta):
         if state["phase"] == "start":
             state["t"] += delta
             if state["t"] > 0.5:
+                selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+                if selection:
+                    unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
                 unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
                 state["phase"] = "wait"
             return

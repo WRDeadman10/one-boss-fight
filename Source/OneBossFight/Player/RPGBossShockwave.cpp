@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGAttackTracker.h"
+#include "Player/RPGBossTrackerTickPrerequisite.h"
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGDamageResolver.h"
 
@@ -19,6 +20,15 @@ using namespace RPGPack;
 URPGBossShockwave::URPGBossShockwave()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+}
+
+void URPGBossShockwave::BeginPlay()
+{
+	Super::BeginPlay();
+	if (AActor* Boss = GetOwner())
+	{
+		RPGBossTrackerTickPrerequisite::Add(*this, TrackerTickPrerequisite, Boss->FindComponentByClass<URPGAttackTracker>());
+	}
 }
 
 void URPGBossShockwave::LaunchForTest()
@@ -43,7 +53,7 @@ void URPGBossShockwave::Launch()
 	bClearedBand = false;
 	++LaunchCount;
 	const URPGBossEncounter* Encounter = GetOwner()->FindComponentByClass<URPGBossEncounter>();
-	LaunchGeneration = Encounter ? Encounter->GetGeneration() : 0;
+	LaunchGeneration = Encounter ? Encounter->GetParticipantGeneration() : 0;
 	HealthAtLaunch = -1.0;
 	if (const APawn* Player = UGameplayStatics::GetPlayerPawn(this, 0))
 	{
@@ -117,6 +127,10 @@ void URPGBossShockwave::Resolve()
 		++HitCount;
 		UE_LOG(LogRPGWave, Log, TEXT("wave hit the player at %.0f cm (feet %.0f cm above the floor): health %.0f -> %.0f"), Distance, FeetZ - GroundZ, Result.HealthBefore, Result.HealthAfter);
 		break;
+	case ERPGDamageOutcome::Parried:
+		++ParriedCount;
+		UE_LOG(LogRPGWave, Log, TEXT("wave contact parried at %.0f cm"), Distance);
+		break;
 	case ERPGDamageOutcome::RejectedInvulnerable:
 		++InvulnerableCount;
 		UE_LOG(LogRPGWave, Log, TEXT("wave ignored: player invulnerable (dodge i-frames)"));
@@ -130,7 +144,12 @@ void URPGBossShockwave::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	AActor* Boss = GetOwner();
-	if (!bEnabled || !Boss)
+	if (!bEnabled)
+	{
+		Stop(TEXT("component disabled"));
+		return;
+	}
+	if (!Boss)
 	{
 		return;
 	}
@@ -145,11 +164,12 @@ void URPGBossShockwave::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		}
 	}
 	const URPGBossEncounter* Encounter = Boss->FindComponentByClass<URPGBossEncounter>();
-	if (bActive && (bDead || (Encounter && Encounter->GetGeneration() != LaunchGeneration)))
+	if (bActive && (bDead || (Encounter && Encounter->GetParticipantGeneration() != LaunchGeneration)))
 	{
 		Stop(bDead ? TEXT("boss dead") : TEXT("encounter reset"));
 	}
-	const URPGAttackTracker* Tracker = Boss->FindComponentByClass<URPGAttackTracker>();
+	URPGAttackTracker* Tracker = Boss->FindComponentByClass<URPGAttackTracker>();
+	RPGBossTrackerTickPrerequisite::Add(*this, TrackerTickPrerequisite, Tracker);
 	if (!bActive && !bDead && Tracker && Tracker->GetCurrentMove() == MoveId && Tracker->IsActiveWindow() && Tracker->GetAttackInstance() != LastInstance)
 	{
 		LastInstance = Tracker->GetAttackInstance();

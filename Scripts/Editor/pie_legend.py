@@ -5,12 +5,14 @@ Camera: every tick the camera manager's location and rotation are sampled with a
 Time: every duration is measured with the REAL clock (time.perf_counter), waits for effects are real waits (the world clock is the thing being dilated). The gate is switched on here and ALWAYS switched off again (finish and error path): rpg.Legend 0 is the state the older drivers expect.
 Saved/legend_groups.txt (names separated by spaces: l0 l1 l2 l3 l4 l5 l6 m l7) selects groups for a rerun; l7 kills the boss and must be last. Run Scripts/Editor/legend_off.py and a warm-up PIE first. The editor should run with -nosound: the music tests prove the state, never audibility."""
 import math
+import json
 import os
 import time
 import unreal
 
 log = lambda m: unreal.log("[Legend] " + m)
 results = []
+TIMING_OBSERVABLES = {}
 S = {"phase": "start", "t": 0.0, "wake_at": 0.0, "gen": None, "cam": [], "dil": [], "press_until": 0.0}
 handle = None
 IA_NORMAL = "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_NormalAttack"
@@ -19,6 +21,11 @@ IA_NORMAL = "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputAc
 def check(name, ok, detail=""):
     results.append(ok)
     log("%s %s %s" % ("PASS" if ok else "FAIL", name, detail))
+
+
+def record_timing(name, value, bounds):
+    TIMING_OBSERVABLES[name] = {"value": float(value),
+        "comparison": {"type": "timing_seconds", "range_seconds": list(bounds)}}
 
 
 def comp(actor, name):
@@ -358,12 +365,14 @@ def l4_hit_stop():
             log("L4 trial %d: fired %s delta %d min dilation boss %.3f pawn %.3f duration %s now boss %.3f pawn %.3f riposte +%d second press stopped again %s" % (i, fired, delta, low, low_p, duration, cdil(p["boss"]), cdil(p["pawn"]),
                 p["stg"].get_riposte_count() - rip0, not no_second))
     log("INFO L4 hit stop real durations %s s (target 0.08)" % [round(s, 3) if s else None for s in spans])
-    check("L4 the riposte hit: one hit stop (boss and player at 0.05, 0.04 to 0.20 s real, restored exactly), a second press in the same break does not stop again: %d/%d trials" % (sum(outcomes), len(outcomes)), all(outcomes))
+    timing_name = "L4 riposte hit stop duration"
+    check(timing_name, all(outcomes), "%d/%d trials; durations %s" % (sum(outcomes), len(outcomes), spans))
+    record_timing(timing_name, max((s for s in spans if s is not None), default=0.0), (0.04, 0.20))
 
 
 def l5_no_stacking():
     console("rpg.Legend 1")
-    outcomes = []
+    outcomes, hit_stop_durations = [], []
     for i in range(5):
         yield from fresh()
         p = P()
@@ -377,12 +386,16 @@ def l5_no_stacking():
         p = P()
         start, end, low = dil_span(t0, t0 + 2.0, 1)
         duration = (end - start) if (start is not None and end is not None) else None
+        if duration is not None:
+            hit_stop_durations.append(duration)
         ok = a and b and low >= 0.049 and duration is not None and abs(duration - 0.10) <= 0.06 and abs(cdil(p["boss"]) - base_boss) < 1e-4 and abs(cdil(p["pawn"]) - base_pawn) < 1e-4
         outcomes.append(ok)
         if not ok:
             log("L5 trial %d: %s %s min %.4f duration %s boss %.4f pawn %.4f" % (i, a, b, low, duration, cdil(p["boss"]), cdil(p["pawn"])))
-    check("L5 two hit stops 20 ms apart never stack (minimum 0.05, about 0.10 s together, restored exactly): %d/%d trials" % (sum(outcomes), len(outcomes)), all(outcomes))
-    outcomes = []
+    timing_name = "L5 two hit stops 20 ms apart duration"
+    check(timing_name, all(outcomes), "%d/%d trials" % (sum(outcomes), len(outcomes)))
+    record_timing(timing_name, sum(hit_stop_durations) / len(hit_stop_durations) if hit_stop_durations else 0.0, (0.04, 0.16))
+    outcomes, slow_motion_durations = [], []
     for i in range(3):
         yield from fresh()
         p = P()
@@ -394,21 +407,25 @@ def l5_no_stacking():
         yield from rwait(2.0)
         start, end, low = dil_span(t0, t0 + 4.0, 2)
         duration = (end - start) if (start is not None and end is not None) else None
+        if duration is not None:
+            slow_motion_durations.append(duration)
         ok = a and b and abs(low - 0.25) <= 0.01 and duration is not None and abs(duration - 1.3) <= 0.35 and abs(gdil() - base) < 1e-4
         outcomes.append(ok)
         if not ok:
             log("L5b trial %d: %s %s min %.4f duration %s now %.4f (before %.4f)" % (i, a, b, low, duration, gdil(), base))
-    check("L5b two slow motions 100 ms apart never stack (minimum 0.25, about 1.3 s together, restored exactly): %d/%d trials" % (sum(outcomes), len(outcomes)), all(outcomes))
+    timing_name = "L5b two slow motions 100 ms apart duration"
+    check(timing_name, all(outcomes), "%d/%d trials" % (sum(outcomes), len(outcomes)))
+    record_timing(timing_name, sum(slow_motion_durations) / len(slow_motion_durations) if slow_motion_durations else 0.0, (0.95, 1.65))
 
 
 def l6_reset():
     console("rpg.Legend 1")
-    outcomes = []
+    outcomes, restore_times = [], []
     for kind, wait_s in (("hit stop", 0.03), ("slow motion", 0.4), ("slow motion", 0.4)):
         yield from fresh()
         p = P()
         leg = p["leg"]
-        c0, g0 = leg.get_cancel_count(), p["enc"].get_generation()
+        c0, g0 = leg.get_cancel_count(), int(p["enc"].get_participant_generation_text())
         base = gdil()
         if kind == "hit stop":
             a = leg.fire_hit_stop_for_test(False)
@@ -421,11 +438,15 @@ def l6_reset():
         took = time.perf_counter() - t_reset
         yield from rwait(0.3)
         p = P()
-        ok = a and back and took <= 0.15 + 0.1 and p["leg"].get_cancel_count() == c0 + 1 and p["enc"].get_generation() == g0 + 1 and abs(gdil() - base) < 1e-4
+        generation = int(p["enc"].get_participant_generation_text())
+        ok = a and back and took <= 0.15 + 0.1 and p["leg"].get_cancel_count() == c0 + 1 and generation == g0 + 1 and abs(gdil() - base) < 1e-4
         outcomes.append(ok)
+        restore_times.append(took)
         if not ok:
-            log("L6 %s: started %s restored %s after %.3f s cancel +%d generation +%d global %.4f" % (kind, a, back, took, p["leg"].get_cancel_count() - c0, p["enc"].get_generation() - g0, gdil()))
-    check("L6 a reset during a hit stop or a slow motion restores time within 0.25 s and counts one cancel: %d/%d trials" % (sum(outcomes), len(outcomes)), all(outcomes))
+            log("L6 %s: started %s restored %s after %.3f s cancel +%d generation +%d global %.4f" % (kind, a, back, took, p["leg"].get_cancel_count() - c0, generation - g0, gdil()))
+    timing_name = "L6 time restoration after encounter reset"
+    check(timing_name, all(outcomes), "%d/%d trials" % (sum(outcomes), len(outcomes)))
+    record_timing(timing_name, max(restore_times or [0.0]), (0.0, 0.25))
 
 
 def captures():
@@ -585,8 +606,10 @@ def l7_kill():
     start, end, low = dil_span(t0, t0 + 4.0, 2)
     duration = (end - start) if (start is not None and end is not None) else None
     leg, hud = p["leg"], p["hud"]
-    check("L7 the kill: victory once, slow motion once (minimum 0.25, about 1.2 s real), time restored", fired and hud.get_victory_count() == v0 + 1 and leg.get_slow_motion_count() == sm0 + 1 and abs(low - 0.25) <= 0.01 and duration is not None and abs(duration - 1.2) <= 0.35
-          and abs(gdil() - base) < 1e-4, "victory +%d slow motion +%d minimum %.3f duration %s global now %.4f" % (hud.get_victory_count() - v0, leg.get_slow_motion_count() - sm0, low, duration, gdil()))
+    timing_name = "L7 kill slow motion duration"
+    check(timing_name, fired and hud.get_victory_count() == v0 + 1 and leg.get_slow_motion_count() == sm0 + 1 and abs(low - 0.25) <= 0.01 and duration is not None and abs(duration - 1.2) <= 0.35
+          and abs(gdil() - base) < 1e-4, "duration %s global now %.4f" % (duration, gdil()))
+    record_timing(timing_name, float(duration if duration is not None else 0.0), (0.85, 1.55))
     yield from until(lambda: P()["mus"] is not None and P()["mus"].get_active_track_name() == "None", 4.0)
     mus = P()["mus"]
     if mus is not None:
@@ -622,6 +645,8 @@ def finish():
         console("rpg.Legend 0")  # the state every other driver expects
     except Exception:
         pass
+    if TIMING_OBSERVABLES:
+        log("TIMING_OBSERVABLES_JSON " + json.dumps(TIMING_OBSERVABLES, sort_keys=True, separators=(",", ":")))
     log("RESULT %d/%d passed" % (sum(1 for r in results if r), len(results)))
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
 
@@ -631,6 +656,9 @@ def _tick(dt):
     s["t"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="run", t=0.0)
         return

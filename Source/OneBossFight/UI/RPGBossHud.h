@@ -120,7 +120,7 @@ private:
 	FText RetryText;
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRPGVictoryDelegate, int32, Generation);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRPGVictoryDelegate, uint64, Generation);
 
 /**
  * Encounter presentation owner for the pack's boss (Freeze 18.2, 18.3 and 32): decides the encounter state from the boss itself and drives the HUD.
@@ -215,8 +215,8 @@ private:
 
 	FRPGBossHudState Last;
 	EState State = EState::Dormant;
-	int32 LastGeneration = -1;
-	int32 VictoryFiredGeneration = -1;
+	uint64 LastGeneration = 0;
+	uint64 VictoryFiredGeneration = 0;
 	int32 VictoryCount = 0;
 	bool bSeenAlive = false;
 	bool bWasStaggered = false;

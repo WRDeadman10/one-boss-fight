@@ -7,6 +7,7 @@ Gate 2 riposte checks (Freeze S08 to S10, 17.4) with the pack's real Light Attac
   S09b      a second press in the same break: no second critical (about L).
 Log prefix [Riposte].
 """
+import os
 import unreal
 
 log = lambda m: unreal.log("[Riposte] " + m)
@@ -55,6 +56,9 @@ def _tick(dt):
     s["t"] += dt
     if s["phase"] == "start":
         if s["t"] > 0.5:
+            selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+            if selection:
+                unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + selection)
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             s.update(phase="wake", t=0.0)
         return
