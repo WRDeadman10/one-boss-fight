@@ -1,9 +1,0 @@
-# I014 — begun-world rebind compiler contract
-
-`CompileWorldInput` stays unchanged for strict pre-BeginPlay startup. `CompileWorldInputForRebind` is the additive begun-world entry point with explicit `uint64 ParticipantGeneration` and the existing selection array plus the exact same `URPGEncounterSelectionSubsystem` selection record/manifest identity. The rebind path carries the begun-world allowance through preflight, preparation and activation as separate APIs; it does not relax the original startup path.
-
-The rebind entry point may accept a begun world and begun participant actors only after it verifies: game-thread execution; expected world and GameInstance/catalog epoch identity; exactly one pack boss and one current pack player; unique actor identities; valid explicit typed definitions and selected phase; a strictly newer nonzero generation below `MAX_uint64`; same encounter GUID, slots, roles, selected phase and manifest as the original selection; and no actor/binding/content drift around production compilation and preflight.
-
-It publishes only a fully compiled preflight input. It does not mutate the selection store, choose a fallback, or publish a partial binding. The original `CompileWorldInput` predicates and behavior remain unchanged. The rebind facade uses `PrepareWorldBatchForRebind` and `ActivateWorldForRebind`; only those methods can prepare/register against begun actors. Runtime release destroys the exact owned components through their normal `EndPlay` path, while the original `Abort` contract still refuses begun components.
-
-Call order is fixed by C-809: release old activation; destroy the old transient binding only after clean release; census the begun world; build the new binding from the same selection; compile for the broadcast generation; activate. Any failure disables the framework boss and reports a hard error without legacy fallback. Unsafe release failure stops before binding destruction or new activation.
