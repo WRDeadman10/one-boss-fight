@@ -31,6 +31,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parry", meta = (ClampMin = "0.0"))
 	float StaminaCost = 0.f;
 
+	/** Optional additional Niagara parry visual. Empty preserves the current visual path; Development preview is controlled by rpg.Art.Tier1. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parry|Visuals")
+	TSoftObjectPtr<class UNiagaraSystem> ParrySparkVFX;
+
+	UFUNCTION(BlueprintPure, Category = "Parry|Visuals")
+	int32 GetTier1VisualSpawnCount() const { return Tier1VisualSpawnCount; }
+
 	/** Opens the window like a press of the parry input (the input binding calls this); returns whether a window was opened. */
 	UFUNCTION(BlueprintCallable, Category = "Parry")
 	bool Press();
@@ -48,6 +55,7 @@ public:
 	static void NotifyParried(AActor* Actor);
 
 	int32 PressCount = 0, ParriedCount = 0;
+	int32 Tier1VisualSpawnCount = 0;
 
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;

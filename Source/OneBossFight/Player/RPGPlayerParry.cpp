@@ -9,6 +9,7 @@
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGParryCostRules.h"
 #include "Player/RPGLegend.h"
+#include "Player/RPGTier1VisualRules.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRPGParry, Log, All);
 
@@ -143,6 +144,12 @@ void URPGPlayerParry::NotifyParried(AActor* Actor)
 	{
 		Parry->LastGrade = Parry->GradeNow();
 		++Parry->ParriedCount;
+		const FVector SparkLocation = Actor->GetActorLocation() + FVector(0.f, 0.f, 65.f);
+		if (RPGTier1Visuals::SpawnConfiguredEffect(Parry->GetWorld(), Parry->ParrySparkVFX,
+			TEXT("/Game/OneBossFight/VFX/NS_Combat_ParrySpark.NS_Combat_ParrySpark"), SparkLocation, Actor->GetActorRotation()))
+		{
+			++Parry->Tier1VisualSpawnCount;
+		}
 		if (Parry->bCostPending) Parry->bPendingParried = true;
 		if (UWorld* World = Parry->GetWorld())
 		{

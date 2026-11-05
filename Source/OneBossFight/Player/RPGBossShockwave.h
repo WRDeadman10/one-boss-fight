@@ -7,6 +7,7 @@
 #include "RPGBossShockwave.generated.h"
 
 class URPGAttackTracker;
+class UNiagaraSystem;
 
 /**
  * The radial ground wave of A6, the phase two leap (Master Design Freeze 16 A6).
@@ -55,6 +56,13 @@ public:
 	/** Feet height above the floor (cm) that clears the wave. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave", meta = (ClampMin = "0.0"))
 	float JumpClearance = 50.f;
+
+	/** Optional additional Niagara wave. Empty preserves the current visual path; Development preview is controlled by rpg.Art.Tier1. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave|Visuals")
+	TSoftObjectPtr<UNiagaraSystem> ShockwaveVFX;
+
+	UFUNCTION(BlueprintPure, Category = "Wave|Visuals")
+	int32 GetTier1VisualSpawnCount() const { return Tier1VisualSpawnCount; }
 
 	/** Tests and scripted fights: launches a wave at the boss's feet now, as the leap's landing would. */
 	UFUNCTION(BlueprintCallable, Category = "Wave")
@@ -112,6 +120,7 @@ private:
 	int32 JumpedCount = 0;
 	int32 InvulnerableCount = 0;
 	int32 CentralPriorityCount = 0;
+	int32 Tier1VisualSpawnCount = 0;
 	bool bDead = false;
 	TWeakObjectPtr<UActorComponent> TrackerTickPrerequisite;
 	float DeathCheck = 0.f;

@@ -43,6 +43,7 @@ File outputs use the shared `atomic_io.py` helper where replacement or no-overwr
 | `test_gate_script.py` | Contract tests for Gate.ps1 step order, editor refusal and dry-run behavior. |
 | `test_audit_source_test_coverage.py` | Fixture tests for the source/test gap inventory heuristic. |
 | `test_memory_soak_driver.py` | Offline syntax/contract tests for the opt-in U-C05 PIE memory soak driver. |
+| `test_tier1_visual_wiring_contract.py` | Source contract for opt-in Tier 1 Niagara event wiring, defaults, and Shipping CVar guards. |
 | `diff_suite_logs.py` | Compare two automation suite logs; reports incomplete inputs as `PARTIAL` (exit 3). |
 | `evidence_summary.py` | CSV index of retained editor logs with identity, date, outcome, validator status, and SHA-256. |
 | `framework_results.py` | Parse FrameworkProof RESULT lines. |

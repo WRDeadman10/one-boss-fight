@@ -325,13 +325,26 @@ void URPGCombatCatalogSubsystem::Initialize(FSubsystemCollectionBase& Collection
 		{
 			TArray<FRPGCatalogBuild> Builds; TArray<FRPGCatalogWeapon> Weapons;
 			TArray<TStrongObjectPtr<UObject>> DefinitionLeases;
-			for (const auto& Ref : Catalog->Builds) { auto* D = Ref.LoadSynchronous(); if (D) { DefinitionLeases.Emplace(D); Builds.Add(D->Definition); } else Error = TEXT("Catalog.Builds: missing definition"); }
-			for (const auto& Ref : Catalog->Weapons) { auto* D = Ref.LoadSynchronous(); if (D) { DefinitionLeases.Emplace(D); Weapons.Add(D->Definition); } else Error = TEXT("Catalog.Weapons: missing definition"); }
+			auto BuildRefs = Catalog->Builds;
+			auto WeaponRefs = Catalog->Weapons;
+#if !UE_BUILD_SHIPPING
+			// Isolated startup test seam: corrupt a local reference copy, never the data asset.
+			if (CVarCatalogInvalid.GetValueOnGameThread() == 2 && !BuildRefs.IsEmpty())
+			{
+				BuildRefs[0] = TSoftObjectPtr<URPGBuildDefinition>(FSoftObjectPath(TEXT("/Game/OneBossFight/Tests/TypedABIFixtures/DA_ABITest_Missing.DA_ABITest_Missing")));
+			}
+			if (CVarCatalogInvalid.GetValueOnGameThread() == 3 && !WeaponRefs.IsEmpty())
+			{
+				WeaponRefs[0] = TSoftObjectPtr<URPGWeaponDefinition>(FSoftObjectPath(TEXT("/Game/OneBossFight/Tests/TypedABIFixtures/DA_ABITest_Missing.DA_ABITest_Missing")));
+			}
+#endif
+			for (const auto& Ref : BuildRefs) { auto* D = Ref.LoadSynchronous(); if (D) { DefinitionLeases.Emplace(D); Builds.Add(D->Definition); } else { Error = TEXT("Catalog.Builds: missing definition"); break; } }
+			for (const auto& Ref : WeaponRefs) { auto* D = Ref.LoadSynchronous(); if (D) { DefinitionLeases.Emplace(D); Weapons.Add(D->Definition); } else { Error = TEXT("Catalog.Weapons: missing definition"); break; } }
 			if (Error.IsEmpty()) Candidate = Compile(Builds, Weapons, Error);
 		}
 	}
 #if !UE_BUILD_SHIPPING
-	if (CVarCatalogInvalid.GetValueOnGameThread() != 0) { Candidate.Reset(); Error = TEXT("Catalog.SchemaVersion: deliberately invalid startup fixture"); }
+	if (CVarCatalogInvalid.GetValueOnGameThread() == 1) { Candidate.Reset(); Error = TEXT("Catalog.SchemaVersion: deliberately invalid startup fixture"); }
 	if (CVarCatalogFourth.GetValueOnGameThread() != 0 && Candidate)
 	{
 		// Startup-scoped fixture belongs to this GI; no global override or live mutation.

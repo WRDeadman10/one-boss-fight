@@ -4,6 +4,7 @@
 #if WITH_DEV_AUTOMATION_TESTS
 
 #include "CoreGlobals.h"
+#include "Async/Async.h"
 #include "Engine/Engine.h"
 #include "Engine/GameInstance.h"
 #include "Engine/SkeletalMesh.h"
@@ -1097,6 +1098,36 @@ bool FRPGEncounterSelectionEmptyCensus::RunTest(const FString&)
 	TestFalse(TEXT("failed census leaves no transient binding"), static_cast<bool>(Bindings));   // TActorIterator has only an explicit bool conversion
 	TestTrue(TEXT("no pack boss exists to receive legacy bundle"), !HasLegacyBossBundle(nullptr));
 	Selection->ClearSelectedDefinition();
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGEncounterSelectionThreadAndWorldRefusal,
+	"OneBossFight.Binding.EncounterSelection.ThreadAndWorldStateRefuseBeforeResolution",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGEncounterSelectionThreadAndWorldRefusal::RunTest(const FString&)
+{
+	FStartupActivationWorld Scope;
+	FStartupActivationWorld ForeignScope;
+	if (!TestNotNull(TEXT("selection-owner game world"), Scope.World) || !TestNotNull(TEXT("foreign game world"), ForeignScope.World)) return false;
+	URPGEncounterSelectionSubsystem* Selection = Scope.GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>();
+	if (!TestNotNull(TEXT("game-instance selection store"), Selection)) return false;
+
+	ARPGEncounterBinding* Binding = nullptr;
+	TArray<RPGBossWorldInputCompiler::FSelection> Selections;
+	FString Error;
+	const bool bOffThreadBuilt = Async(EAsyncExecution::ThreadPool, [&Selection, &Scope, &Binding, &Selections, &Error]()
+	{
+		return Selection->BuildWorldBinding(*Scope.World, Binding, Selections, Error);
+	}).Get();
+	TestFalse(TEXT("off-thread selection request refuses before world access"), bOffThreadBuilt);
+	TestEqual(TEXT("off-thread selection has its exact refusal token"), Error, FString(TEXT("EncounterSelection.NotGameThread")));
+	TestNull(TEXT("off-thread refusal creates no binding"), Binding);
+
+	Error.Reset();
+	TestFalse(TEXT("a game world owned by another game instance is refused"), Selection->BuildWorldBinding(*ForeignScope.World, Binding, Selections, Error));
+	TestEqual(TEXT("foreign world has its exact refusal token"), Error, FString(TEXT("EncounterSelection.WorldState")));
+	TestNull(TEXT("foreign-world refusal creates no binding"), Binding);
+	TestTrue(TEXT("foreign-world refusal publishes no participant selections"), Selections.IsEmpty());
 	return true;
 }
 

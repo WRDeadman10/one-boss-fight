@@ -35,7 +35,7 @@ Source of the active standard gate: `Scripts/RunDrivers.ps1` lines 17–56. Its 
 | 27 | `pie_damage_path.py` | Legacy pack path | R | 17 | 900 |
 | 28 | `pie_iframes.py` | Legacy pack path | R | 19 | 1500 |
 | 29 | `pie_trace_audit.py` | Legacy pack path | R | 30 | 1500 |
-| 30 | `pie_legend.py` | Legacy pack path | R | 22 | 900 |
+| 30 | `pie_legend.py` | Legacy pack path | R | 25 | 900 |
 | 31 | `pie_close_attacks.py` | Legacy pack path | R | 55 | 420 |
 | 32 | `pie_leap_wave.py` | Legacy pack path | R | 17 | 420 |
 | 33 | `pie_attack_rules.py` | Legacy pack path | R | 13 | 420 |

@@ -246,7 +246,7 @@ This directory has 340 Python editor scripts. This index uses each module docstr
 | pie_input_smoke.py | PIE input smoke test: starts PIE, then presses real keys through the player controller's input pipeline |
 | pie_jump_probe.py | PIE probe: presses a key (Saved/jump_key.txt, default SpaceBar) and logs the player's height above its start for 2 s. Log prefix [JumpProbe]. Needs a warm-up PIE once. |
 | pie_leap_wave.py | Gate 2 / G2-4: the A6 leap. W1 leap blocked in phase one, W2 wave hits a grounded player, W3 a jump clears it, W4 central hit priority, W5 reset mid wave stops it, W6 leap unlocked after phase two, |
-| pie_legend.py | Gate 2 / M3 (SPEC_M3_legend.md section 6): the legend pass on the boss fight (log prefix [Legend]). Camera shake on the A2 and A6 slam and on the phase two roar, hit stop on the riposte hit, slow motion on the kill, and the music state machine. |
+| pie_legend.py | Gate 2 / M3 and C-916 P1: legend pass on the boss fight (log prefix [Legend]); opt-in L8 witnesses player parry slow motion via a real A4 contact. |
 | pie_look.py | PIE look check: plays the arena and takes high resolution screenshots from the player's own camera at a few spots (player start, mid arena facing the boss, |
 | pie_m7_check.py | PIE visual check for the M7 assets: roll montage, block/parry sparks, shockwave and lightning effects. |
 | pie_montage_shots.py | PIE frame capture of montages on the pack player: plays each clip of CLIPS on the idle player (boss removed) and takes a high resolution screenshot every |

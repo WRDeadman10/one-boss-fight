@@ -45,7 +45,7 @@ DRIVERS = {
     "pie_fog_gate": ("FogGate", 6),
     "pie_remains": ("Remains", 4),
     "pie_soak": ("Soak", 213),
-    "pie_legend": ("Legend", 22),
+    "pie_legend": ("Legend", 25),
 }
 
 

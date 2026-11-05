@@ -56,6 +56,10 @@ bool FRPGCatalogValidationTest::RunTest(const FString& Parameters)
 	using namespace RPGCombatRegistry;
 	auto L = Legacy(); FString Error;
 	auto Builds = L->Builds; auto Weapons = L->Weapons;
+	TestFalse(TEXT("empty catalog arrays are refused"), Compile(TArray<FRPGCatalogBuild>(), Weapons, Error, false).IsValid());
+	TestEqual(TEXT("empty builds identify the catalog schema field"), Error, FString(TEXT("Catalog.Builds/Weapons: empty")));
+	TestFalse(TEXT("empty weapon definitions are refused"), Compile(Builds, TArray<FRPGCatalogWeapon>(), Error, false).IsValid());
+	TestEqual(TEXT("empty weapons identify the catalog schema field"), Error, FString(TEXT("Catalog.Builds/Weapons: empty")));
 	FRPGCatalogBuild Fourth = Builds[0]; Fourth.BuildId = TEXT("TestFourth"); Fourth.ConsoleName = TEXT("TestFourth"); Fourth.DisplayName = TEXT("Fourth"); Fourth.LegacySlot = INDEX_NONE; Fourth.UiOrder = 3; Fourth.Aliases.Reset(); Builds.Add(Fourth);
 	auto E = Compile(Builds, Weapons, Error, false);
 	TestTrue(TEXT("fourth build supported without enum addition"), E.IsValid());
@@ -182,6 +186,8 @@ bool FRPGCatalogResolutionTest::RunTest(const FString& Parameters)
 	CheckABI(TEXT("ABI-N02 non-weapon actor"), Bad, BadRefs, TEXT("Actor.ExpectedABI"));
 	BadRefs = Refs; Bad = Good; BadRefs.AbilityClass = UObject::StaticClass(); Bad.AbilityClass = FSoftObjectPath(UObject::StaticClass());
 	CheckABI(TEXT("ABI-N03 arbitrary UClass ability"), Bad, BadRefs, TEXT("Ability.ExpectedABI"));
+	BadRefs = Refs; Bad = Good; BadRefs.Item = GetTransientPackage();
+	CheckABI(TEXT("ABI-N17 loaded object must implement the pinned weapon item ABI"), Bad, BadRefs, TEXT("Item.ExpectedABI"));
 	BadRefs = Refs; Bad = Good; Bad.AbilityClass = Weapons[1].AbilityClass; BadRefs.AbilityClass = Cast<UClass>(Bad.AbilityClass.TryLoad());
 	CheckABI(TEXT("ABI-N04 compatible class not granted by this style"), Bad, BadRefs, TEXT("Style.AbilityGrant"));
 	BadRefs = Refs; Bad = Good; Bad.ActorClass = Weapons[1].ActorClass; BadRefs.ActorClass = Cast<UClass>(Bad.ActorClass.TryLoad());
@@ -190,8 +196,22 @@ bool FRPGCatalogResolutionTest::RunTest(const FString& Parameters)
 	CheckABI(TEXT("ABI-N07 non-style object"), Bad, BadRefs, TEXT("Style.ExpectedABI"));
 	BadRefs = Refs; BadRefs.Item = nullptr;
 	CheckABI(TEXT("ABI-N10 missing required item"), Good, BadRefs, TEXT("Item.Missing"));
+	BadRefs = Refs; BadRefs.ActorClass = nullptr;
+	CheckABI(TEXT("ABI-N12 missing required actor class"), Good, BadRefs, TEXT("Actor.Missing"));
+	BadRefs = Refs; BadRefs.AbilityClass = nullptr;
+	CheckABI(TEXT("ABI-N13 missing required ability class"), Good, BadRefs, TEXT("Ability.Missing"));
+	BadRefs = Refs; BadRefs.Style = nullptr;
+	CheckABI(TEXT("ABI-N18 style reference is required"), Good, BadRefs, TEXT("Style.Missing"));
 	Bad = Good; Bad.ActorClass = Weapons[1].ActorClass;
 	CheckABI(TEXT("full path identity not short-name membership"), Bad, Refs, TEXT("Actor.Identity"));
+	Bad = Good; Bad.ItemBaseClass = FSoftObjectPath(AActor::StaticClass());
+	CheckABI(TEXT("ABI-N19 declared item base must match the resolved native base"), Bad, Refs, TEXT("Item.DeclaredBaseIdentity"));
+	Bad = Good; Bad.ItemPath = Weapons[1].ItemPath;
+	CheckABI(TEXT("ABI-N14 loaded item must match its complete configured identity"), Bad, Refs, TEXT("Item.Identity"));
+	Bad = Good; Bad.AbilityClass = Weapons[1].AbilityClass;
+	CheckABI(TEXT("ABI-N15 loaded ability must match its complete configured identity"), Bad, Refs, TEXT("Ability.Identity"));
+	Bad = Good; Bad.StyleAsset = Weapons[1].StyleAsset;
+	CheckABI(TEXT("ABI-N16 loaded style must match its complete configured identity"), Bad, Refs, TEXT("Style.Identity"));
 
 	// Duplicate in memory only. Put the expected style identity in text but remove its
 	// real typed edge: the former exported-text union could be fooled by such a bundle.
@@ -470,16 +490,19 @@ bool FRPGCatalogPathSeamTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("the first game instance is untouched by the second"), First->GetEpoch()->Builds.Num(), 4);
 
 	// 3. Explicit failures: no quiet legacy fallback, every one ends in a null epoch and a named error.
-	struct FFailure { const TCHAR* Name; const TCHAR* Source; FString Path; const TCHAR* Fourth; const TCHAR* Expected; };
+	struct FFailure { const TCHAR* Name; const TCHAR* Source; FString Path; const TCHAR* Fourth; const TCHAR* Invalid; const TCHAR* Expected; };
 	const FString Missing = Root + TEXT("DA_ABITest_Missing.DA_ABITest_Missing");
 	const FString WrongType = Root + TEXT("DA_ABI_FourthWeaponItem.DA_ABI_FourthWeaponItem");
 	const TArray<FFailure> Failures = {
-		{TEXT("source auto"), TEXT("auto"), TestPath, TEXT("0"), TEXT("needs rpg.CatalogSource data")},
-		{TEXT("source legacy"), TEXT("legacy"), TestPath, TEXT("0"), TEXT("needs rpg.CatalogSource data")},
-		{TEXT("contradictory fourth fixture flag"), TEXT("data"), TestPath, TEXT("1"), TEXT("conflicts with rpg.CatalogTestFourth")},
-		{TEXT("path outside the folder"), TEXT("data"), ShippedCatalog, TEXT("0"), TEXT("outside the approved TypedABIFixtures folder")},
-		{TEXT("absent asset"), TEXT("data"), Missing, TEXT("0"), TEXT("CatalogPath: asset absent")},
-		{TEXT("wrong asset type"), TEXT("data"), WrongType, TEXT("0"), TEXT("wrong asset type")},
+		{TEXT("source auto"), TEXT("auto"), TestPath, TEXT("0"), TEXT("0"), TEXT("needs rpg.CatalogSource data")},
+		{TEXT("source legacy"), TEXT("legacy"), TestPath, TEXT("0"), TEXT("0"), TEXT("needs rpg.CatalogSource data")},
+		{TEXT("contradictory fourth fixture flag"), TEXT("data"), TestPath, TEXT("1"), TEXT("0"), TEXT("conflicts with rpg.CatalogTestFourth")},
+		{TEXT("path outside the folder"), TEXT("data"), ShippedCatalog, TEXT("0"), TEXT("0"), TEXT("outside the approved TypedABIFixtures folder")},
+		{TEXT("absent asset"), TEXT("data"), Missing, TEXT("0"), TEXT("0"), TEXT("CatalogPath: asset absent")},
+		{TEXT("wrong asset type"), TEXT("data"), WrongType, TEXT("0"), TEXT("0"), TEXT("wrong asset type")},
+		{TEXT("deliberately invalid schema startup"), TEXT("data"), TestPath, TEXT("0"), TEXT("1"), TEXT("Catalog.SchemaVersion")},
+		{TEXT("missing build definition"), TEXT("data"), TestPath, TEXT("0"), TEXT("2"), TEXT("Catalog.Builds: missing definition")},
+		{TEXT("missing weapon definition"), TEXT("data"), TestPath, TEXT("0"), TEXT("3"), TEXT("Catalog.Weapons: missing definition")},
 	};
 	AddExpectedError(TEXT("DA_ABITest_Missing"), EAutomationExpectedErrorFlags::Contains, 0); // the engine's own load diagnostics of a missing asset, any number
 	for (const FFailure& Case : Failures)
@@ -488,6 +511,7 @@ bool FRPGCatalogPathSeamTest::RunTest(const FString& Parameters)
 		Scope.Set(TEXT("rpg.CatalogSource"), Case.Source);
 		Scope.Set(TEXT("rpg.CatalogPath"), Case.Path);
 		Scope.Set(TEXT("rpg.CatalogTestFourth"), Case.Fourth);
+		Scope.Set(TEXT("rpg.CatalogTestInvalid"), Case.Invalid);
 		FTestCatalogHost Failed = StartCatalogSubsystem();
 		TestFalse(*FString::Printf(TEXT("%s: no epoch is published (no legacy fallback)"), Case.Name), Failed->GetEpoch().IsValid());
 		TestTrue(*FString::Printf(TEXT("%s: the diagnostic says data is required"), Case.Name), Failed->GetDiagnostic().StartsWith(TEXT("unavailable")));

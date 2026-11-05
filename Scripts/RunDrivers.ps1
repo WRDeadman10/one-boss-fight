@@ -44,7 +44,7 @@ $drivers = @(
     @{ N = 'pie_damage_path';         K = 'R'; Min = 17; T = 900 },
     @{ N = 'pie_iframes';             K = 'R'; Min = 19; T = 1500 },
     @{ N = 'pie_trace_audit';         K = 'R'; Min = 30; T = 1500 },
-    @{ N = 'pie_legend';              K = 'R'; Min = 22; T = 900 },
+    @{ N = 'pie_legend';              K = 'R'; Min = 25; T = 900 },
     @{ N = 'pie_close_attacks';       K = 'R'; Min = 55 },
     @{ N = 'pie_leap_wave';           K = 'R'; Min = 17 },
     @{ N = 'pie_attack_rules';        K = 'R'; Min = 13 },

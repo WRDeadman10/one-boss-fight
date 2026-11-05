@@ -37,7 +37,7 @@ EXPECTED = {
     "pie_fog_gate": ("FogGate", 6, 420),
     "pie_remains": ("Remains", 4, 600),
     "pie_soak": ("Soak", 213, 900),
-    "pie_legend": ("Legend", 22, 900),
+    "pie_legend": ("Legend", 25, 900),
 }
 
 

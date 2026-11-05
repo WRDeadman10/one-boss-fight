@@ -619,6 +619,95 @@ def l7_kill():
         check("M5 the boss is gone before the music state could be read (the pack removes it a few seconds after death)", False)
 
 
+def l8_perfect_parry_slow_motion():
+    """Use the bound component Press API, then let a real A4 blade contact be graded by RPGDamageResolver."""
+    console("rpg.Legend 1")
+    console("rpg.Art.Tier1 0")
+    p = P()
+    if p["boss"] is None:
+        check("L8 boss found before reset", False, "boss not found; refusing to dereference a destroyed boss")
+        return
+    if p["pawn"] is None or p["enc"] is None:
+        check("L8 player and encounter found before reset", False, "player or encounter not found")
+        return
+    yield from fresh()
+    p = P()
+    if p["boss"] is None:
+        check("L8 boss found after reset", False, "boss not found; refusing to dereference a destroyed boss")
+        return
+    if p["pawn"] is None or p["enc"] is None:
+        check("L8 player and encounter found after reset", False, "player or encounter not found")
+        return
+    parry = comp(p["pawn"], "RPGPlayerParry")
+    sweep = comp(p["boss"], "RPGBossLowSweep")
+    if parry is None or sweep is None:
+        check("L8 perfect parry witness components exist", False, "parry %s sweep %s" % (parry, sweep))
+        return
+    place(p, 250, 0)
+    yield from rwait(0.6)
+    # A4 contact is normally near 0.74 s (pie_a4_low_sweep.py S6); opening at
+    # 0.66 s targets the first 40% of the default 0.25 s parry window.
+    parried0 = sweep.get_parried_count()
+    t_attack = time.perf_counter()
+    p["tr"].start_move("A4", True)
+    yield from rwait(0.66)
+    t_press = time.perf_counter()
+    opened = bool(parry.press())
+    t_contact = None
+    contact_deadline = time.perf_counter() + 1.2
+    while time.perf_counter() < contact_deadline and sweep.get_parried_count() == parried0:
+        yield 0.0
+    if sweep.get_parried_count() > parried0:
+        t_contact = time.perf_counter()
+    yield from rwait(0.45)
+    p = P()
+    samples = [r for r in S["dil"] if t_attack <= r[0] <= time.perf_counter()]
+    frame_deltas = [b[0] - a[0] for a, b in zip(samples, samples[1:]) if 0.001 <= b[0] - a[0] <= 0.1]
+    frame = sorted(frame_deltas)[len(frame_deltas) // 2] if frame_deltas else 1.0 / 60.0
+    start, end, low = dil_span(t_attack, time.perf_counter(), 2)
+    duration = end - start if start is not None and end is not None else None
+    onset_gap = start - t_contact if start is not None and t_contact is not None else None
+    within_two_frames = onset_gap is not None and -frame <= onset_gap <= 2.0 * frame
+    duration_ok = duration is not None and abs(duration - 0.35) <= 2.0 * frame
+    restored = abs(gdil() - 1.0) <= 0.02
+    check("L8 real perfect parry contact starts 0.30 world dilation within two frames and restores after 0.35 real seconds",
+          opened and t_contact is not None and sweep.get_parried_count() == parried0 + 1 and 0.0 <= t_contact - t_press < 0.10 and within_two_frames and abs(low - 0.30) <= 0.02 and duration_ok and restored,
+          "opened %s contact %s press-to-contact %s onset-gap %s frame %.4f scale %.3f duration %s restored %s" %
+          (opened, t_contact is not None, "%.4f" % (t_contact - t_press) if t_contact is not None else None,
+           "%.4f" % onset_gap if onset_gap is not None else None, frame, low, "%.4f" % duration if duration is not None else None, restored))
+    if duration is not None:
+        record_timing("L8 perfect parry slow motion duration", duration, (0.35 - 2.0 * frame, 0.35 + 2.0 * frame))
+
+    # The player parry component has a 0.70 s press cooldown, so another
+    # accepted perfect parry cannot occur inside the slow-motion policy's 0.60 s
+    # cooldown. Verify its real Press API refuses an attempt at contact +0.45 s.
+    retry_opened = bool(parry.press())
+    yield from rwait(0.10)
+    check("L8 second press inside the 0.60 s policy cooldown is refused by the 0.70 s parry cooldown without starting another scope",
+          not retry_opened and abs(gdil() - 1.0) <= 0.02,
+          "retry opened %s global dilation %.3f; a second perfect contact is unreachable before the parry cooldown expires" % (retry_opened, gdil()))
+
+    # Gate-off control uses the same real damage-resolver path and must not start dilation.
+    console("rpg.Legend 0")
+    yield from fresh()
+    p = P()
+    parry, sweep = comp(p["pawn"], "RPGPlayerParry"), comp(p["boss"], "RPGBossLowSweep")
+    place(p, 250, 0)
+    yield from rwait(0.6)
+    base_count = sweep.get_parried_count()
+    p["tr"].start_move("A4", True)
+    yield from rwait(0.66)
+    off_opened = bool(parry.press()) if parry else False
+    deadline = time.perf_counter() + 1.0
+    while time.perf_counter() < deadline and sweep.get_parried_count() == base_count:
+        yield 0.0
+    yield from rwait(0.40)
+    check("L8 rpg.Legend 0: real parry contact succeeds but starts no world dilation",
+          off_opened and sweep.get_parried_count() == base_count + 1 and abs(gdil() - 1.0) <= 0.02,
+          "opened %s parry count +%d global dilation %.3f" % (off_opened, sweep.get_parried_count() - base_count, gdil()))
+    console("rpg.Legend 1")
+
+
 def script():
     yield 9.0
     console("rpg.Legend 1")
@@ -627,7 +716,8 @@ def script():
             wanted = f.read().split()
     except Exception:
         wanted = []
-    groups = (("l0", l0_gate_off), ("l1", l1_slam), ("l2", l2_roar), ("l3", l3_leap), ("l4", l4_hit_stop), ("l5", l5_no_stacking), ("l6", l6_reset), ("m", music_group), ("l7", l7_kill), ("cap", captures))
+    # L8 needs a live boss; L7's kill lets the pack destroy it.
+    groups = (("l0", l0_gate_off), ("l1", l1_slam), ("l2", l2_roar), ("l3", l3_leap), ("l4", l4_hit_stop), ("l5", l5_no_stacking), ("l6", l6_reset), ("m", music_group), ("l8", l8_perfect_parry_slow_motion), ("l7", l7_kill), ("cap", captures))
     yield from fresh()
     for name, fn in groups:
         if (wanted and name not in wanted) or (not wanted and name == "cap"):
@@ -643,6 +733,7 @@ def finish():
         handle = None
     try:
         console("rpg.Legend 0")  # the state every other driver expects
+        console("rpg.Art.Tier1 0")  # opt-in Tier 1 visuals stay disabled for other drivers
     except Exception:
         pass
     if TIMING_OBSERVABLES:

@@ -567,6 +567,25 @@ bool FRPGActivationWorldInvalidTest::RunTest(const FString& Parameters)
 		}).Get();
 		TestTrue(TEXT("programmer thread misuse hard-errors without UObject work"), Errors && SameWorld(F.Capture(), Before));
 	}
+	{
+		FRPGWorldActivationResult Unheld;
+		const auto ReleaseReport = Async(EAsyncExecution::ThreadPool, [&Unheld]() { return Unheld.Release(); }).Get();
+		TestTrue(TEXT("off-thread release refuses and retains the explicit refusal token"), ReleaseReport.bRefused
+			&& ReleaseReport.Errors.Contains(TEXT("ActivationWorld.ReleaseNotGameThread: release on the game thread only; artifact retained")));
+		const auto RebindReleaseReport = Async(EAsyncExecution::ThreadPool, [&Unheld]() { return Unheld.ReleaseForRebind(); }).Get();
+		TestTrue(TEXT("off-thread rebind release refuses and retains the refusal token"), RebindReleaseReport.bRefused
+			&& RebindReleaseReport.Errors.Contains(TEXT("ActivationWorld.ReleaseNotGameThread: runtime release on the game thread only; artifact retained")));
+		FString RetagError;
+		const bool bRetagged = Async(EAsyncExecution::ThreadPool, [&F, &RetagError, &Unheld]()   // lead fix (C-919): Unheld was not captured (C3493)
+		{
+			return Unheld.RetagForRebind(*F.Binding, 1, RetagError);
+		}).Get();
+		TestFalse(TEXT("off-thread rebind retag refuses"), bRetagged);
+		TestEqual(TEXT("off-thread rebind retag exposes its exact token"), RetagError, FString(TEXT("ActivationWorld.RebindRetagNotGameThread")));
+		RetagError.Reset();
+		TestFalse(TEXT("game-thread rebind retag without a lease refuses"), Unheld.RetagForRebind(*F.Binding, 1, RetagError));
+		TestEqual(TEXT("missing rebind lease exposes its exact token"), RetagError, FString(TEXT("ActivationWorld.RebindRetagLeaseUnavailable")));
+	}
 	return true;
 }
 

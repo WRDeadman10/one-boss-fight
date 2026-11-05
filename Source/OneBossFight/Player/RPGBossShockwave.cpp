@@ -12,6 +12,7 @@
 #include "Player/RPGBossTrackerTickPrerequisite.h"
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGDamageResolver.h"
+#include "Player/RPGTier1VisualRules.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRPGWave, Log, All);
 
@@ -60,6 +61,11 @@ void URPGBossShockwave::Launch()
 		ReadAttribute(Player, TEXT("Attribute.Health"), false, HealthAtLaunch);
 	}
 	UE_LOG(LogRPGWave, Log, TEXT("%s: wave %d launched from (%.0f, %.0f), floor z %.0f, player health %.0f"), *GetOwner()->GetName(), LaunchCount, Origin.X, Origin.Y, GroundZ, HealthAtLaunch);
+	if (RPGTier1Visuals::SpawnConfiguredEffect(GetWorld(), ShockwaveVFX,
+		TEXT("/Game/OneBossFight/VFX/NS_Boss_ShockwaveRing.NS_Boss_ShockwaveRing"), Origin, FRotator::ZeroRotator))
+	{
+		++Tier1VisualSpawnCount;
+	}
 }
 
 void URPGBossShockwave::Stop(const TCHAR* Reason)

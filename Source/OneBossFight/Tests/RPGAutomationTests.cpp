@@ -1344,6 +1344,12 @@ bool FRPGCookCoverageTest::RunTest(const FString& Parameters)
 
 	// Path literals that are directory prefixes used for filtering, not assets that are loaded (the PackWiring test above).
 	const TSet<FString> NotAssets = {TEXT("/Game/AdvancedARPGCombat"), TEXT("/Game/OneBossFight/GreystonePack"), TEXT("/Game/OneBossFight/SevarogPack"), TEXT("/Game/DoesNotExist/DA_MissingBoss.DA_MissingBoss")};   // deliberate missing asset (startup tests); full object path as the scan sees it
+	// Explicit intentionally-uncooked test-only paths. No other source path is allowlisted here.
+	const TSet<FString> IntentionallyUncookedTestOnly = {
+		// Non-Shipping RPGCombatCatalog negative fixture substitutes this missing definition into a local soft-reference copy; there is no asset to cook.
+		TEXT("/Game/OneBossFight/Tests/TypedABIFixtures/DA_ABITest_Missing.DA_ABITest_Missing"),
+		// RPGTier1VisualRulesTests uses this only as an authored soft-path value for selection priority; it never loads the nonexistent asset.
+		TEXT("/Game/Test/NS_Authored.NS_Authored")};
 	// Editor-only F3 proof fixtures: RPGFrameworkRuntimeTests.cpp builds in-memory profiles from these paths (WITH_DEV_AUTOMATION_TESTS, not in a
 	// packaged build) and no shipped source loads them by path. The Sevarog boss ships only when its content is added to the cook list (not decided).
 	const TSet<FString> EditorProofOnly = {
@@ -1376,7 +1382,7 @@ bool FRPGCookCoverageTest::RunTest(const FString& Parameters)
 			{
 				Path = Path.Left(Format); // "/Game/Dir/%s.%s": the directory part decides
 			}
-			if (Path.EndsWith(TEXT("/")) || NotAssets.Contains(Path) || Seen.Contains(Path) || (EditorProofOnly.Contains(Path) && (File.EndsWith(TEXT("RPGFrameworkRuntimeTests.cpp")) || File.EndsWith(TEXT("RPGAutomationTests.cpp")) || File.EndsWith(TEXT("RPGBossExecutorHarnessTests.cpp")))))
+			if (Path.EndsWith(TEXT("/")) || NotAssets.Contains(Path) || IntentionallyUncookedTestOnly.Contains(Path) || Seen.Contains(Path) || (EditorProofOnly.Contains(Path) && (File.EndsWith(TEXT("RPGFrameworkRuntimeTests.cpp")) || File.EndsWith(TEXT("RPGAutomationTests.cpp")) || File.EndsWith(TEXT("RPGBossExecutorHarnessTests.cpp")))))
 			{
 				continue;
 			}
