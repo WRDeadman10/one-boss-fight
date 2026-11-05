@@ -125,7 +125,7 @@ Import/ThirdParty/
 # Copies of third-party pack content inside the archive of the retired C++ combat
 Archive/**/Characters/Greystone/
 Archive/**/*Sevarog*
-Archive/
+/Archive/
 # Music brought in by hand
 Import/Audio/
 Content/__ExternalActors__/Free_Spells/

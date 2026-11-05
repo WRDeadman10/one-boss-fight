@@ -1,0 +1,22 @@
+# Codex Brief 12: engineering work (C++ allowed) - tick and frame cost audit, Shipping tick hardening, independent review of the balance knobs
+
+From Claude via the owner. NEW, owner decision 2026-10-23: you may now take complex engineering tasks including C++ ("she is smart like you"). Claude reviews every line you change, builds, and runs the tests; you cannot build or run the game. Do Brief 10 first if it is not finished (it is files only); this brief is the next one.
+
+## 1. Context
+Target: packaged 1080p, average >= 60 FPS, p99 <= 16.67 ms on an RTX 2060 Super (`Documentation/PROJECT_STATE.md`, `PERFORMANCE_LOG.md`). The project's own C++ is in `Source/OneBossFight`; it reaches the pack's Blueprints by reflection (`Pack/RPGBlueprintCall.h`). Several components tick every frame (hit intake, boss components, HUD, debug, trace audit). Claude has just added balance knobs (boss max health 2000, bleed fraction 0.03, per-weapon health damage multiplier with `Player/RPGDamageScale.h`); they are being verified now.
+
+## 2. Tasks
+### T1 Tick and per-frame cost audit (read and report; edit only what T2 names)
+Inventory every `UActorComponent`, `AActor` and widget of `Source/OneBossFight` that ticks (`PrimaryComponentTick`, `PrimaryActorTick`, `NativeTick`, timers with short intervals): tick group, interval, and what it does per tick. For each, find per-frame costs that matter at 60 FPS: `TActorIterator` / `GetAllActorsOfClass` / `FindComponentByClass` / `LoadObject` / `FindFunction` / `TFieldIterator` per tick, string building, `FString` and `FName` creation, TArray allocation, `UE_LOG` at Log level in a tick, Blueprint calls through `ProcessEvent` per tick. Report: file:line, how often it runs, estimated cost class (negligible / small / worth fixing), and a fix. Do not guess numbers: say "estimated" and why.
+
+### T2 Shipping hardening (you may edit these files; claim them in `TEAM_MAILBOX.md` first)
+`Source/OneBossFight/Player/RPGTraceAudit.cpp/.h`, `Source/OneBossFight/Player/RPGCombatDebug.cpp/.h`, `Source/OneBossFight/Combat/RPGInputTestUtils.cpp/.h` (AUDIT_02 A02-2 and A02-3): in a Shipping build the test and debug components must not tick (`bCanEverTick`/`bStartWithTickEnabled` false when `UE_BUILD_SHIPPING`), must not be created if creation is avoidable, and a reflected call must not be able to change frame rate or vsync. Constraints learned the hard way: UHT rejects a `UFUNCTION` inside `#if`, so keep every declaration unconditional and guard only the BODY; `RerunConstructionScripts` and editor-only calls need `#if WITH_EDITOR`; keep Development and Editor behaviour byte for byte the same (the PIE drivers depend on it). If a fix from T1 is simple and local to a file you claimed, you may apply it; otherwise only report it.
+
+### T3 Independent review of Claude's new code (read only, report findings, do not edit)
+`Source/OneBossFight/Player/RPGDamageScale.h`, the new `TrackBossHealth` / `AdjustBossHealth` in `Player/RPGHitIntake.cpp`, `BossMaxHealth` in `Player/RPGBossEncounter.cpp` (`TickComponent`), `RPGPack::WriteMaxAttribute` in `Pack/RPGBlueprintCall.h`, the multiplier column in `Player/RPGWeaponAttackTable.h/.cpp`. Look for: a hit that is scaled twice or not at all, a loss claimed by the wrong hit (bleed proc, riposte, thorns, environment), a boss revived or killed by the scaler, a race with encounter reset or phase two (max health changes), the first-PIE-reads-zero quirk (KI-081), per-frame cost, wrong clamps, anything that breaks at 3 players or two bosses. Give each finding: severity, file:line, a failing scenario with numbers, and a fix.
+
+## 3. Rules
+No commit or push; no git command that changes the working tree (about 240 uncommitted changes must survive); no editor, build, package or game run; never delete and recreate a referenced asset; never edit a pack asset; no secrets or personal data in files. Claim files in `Documentation/TEAM_MAILBOX.md` before editing (append only). Edit only the T2 files and your report. Match the surrounding code's comment density and naming. Syntax and include discipline: you cannot compile, so re-read every edit twice, check every identifier exists (grep the header), and list in the report each symbol you used and where it is declared.
+
+## 4. Acceptance (Claude checks)
+`Documentation/Codex/REPORT_12.md` with T1 table, T2 diff summary (file, before, after), T3 findings, and "not verified" list. Claude builds with `Scripts/Rebuild.ps1 -Tests`, runs the gate, and reads the diff. Tell the owner "Report 12 is ready".
