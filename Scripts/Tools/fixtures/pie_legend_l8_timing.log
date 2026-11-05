@@ -1,0 +1,4 @@
+[A5ParityRunner] SNAPSHOT_JSON {}
+[Legend] PASS L8 real perfect parry contact starts 0.30 world dilation within two frames and restores after 0.35 real seconds opened True contact True press-to-contact 0.0605 onset-gap -0.0002 frame 0.0305 scale 0.300 duration 0.3671 restored True
+[Legend] TIMING_OBSERVABLES_JSON {"L8 perfect parry slow motion duration":{"comparison":{"range_seconds":[0.2890704003162682,0.41092959968373177],"type":"timing_seconds"},"value":0.3670568000525236}}
+[Legend] RESULT 25/25 passed

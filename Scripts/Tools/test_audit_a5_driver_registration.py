@@ -37,6 +37,10 @@ class A5RegistrationAuditTests(unittest.TestCase):
         _, issues = MODULE.audit({}, {}, {"pie_unexpected": 30})
         self.assertIn("EXTRA A5 runner registration: pie_unexpected", issues)
 
+    def test_standalone_memory_soak_is_not_a_parity_receipt_row(self):
+        _, issues = MODULE.audit({}, {}, {"pie_memory_soak": 1200})
+        self.assertNotIn("EXTRA A5 runner registration: pie_memory_soak", issues)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -1,0 +1,50 @@
+{
+  "schema": "onebossfight.round6-experiment-plan/v1",
+  "round": 6,
+  "route": "selected",
+  "resolution": "1920x1080",
+  "target_gpu": "RTX 3060 proxy (RTX 2060 Super remains release target)",
+  "trial_count": 3,
+  "anchor_policy": "TSR anchors use the P2a view-family primary resolution-fraction upper bound recorded in the summary, with r.DynamicRes.OperationMode=0; one anchor before treatment block, one after each four treatments, and one final anchor.",
+  "dlss_mode_selection": "Phase 1 compares Quality, Balanced, and Performance three times each. Select the mode with highest median avg_fps only among modes with three active-mode witnesses, no baseline drift beyond 5%, no p99 regression above 5% vs TSR, and owner image-quality acceptance. Phase 2 is separate and requires that accepted mode plus its recorded primary fraction upper bound; Dynamic Resolution must be disabled for all runs.",
+  "preflight": {
+    "required_summary_fields": [
+      "temporal_upscaler",
+      "effective_primary_screen_percentage",
+      "anti_aliasing_method"
+    ],
+    "mode_witness_log_pattern": "Creating NGX DLSS Feature ... NGXPerfQuality=<mode>",
+    "mode_mapping": { "DLAA": "DLAA", "MaxQuality": "Quality", "Balanced": "Balanced", "MaxPerf": "Performance" },
+    "anchor_upscaler": "TSR",
+    "treatment_upscaler": "DLSS",
+    "screen_percentage_tolerance": 0.5,
+    "dlss_log_command": "-LogCmds=\"LogDLSS Verbose\"",
+    "reject_if_active_upscaler_mismatch": true
+  },
+  "treatments": [
+    { "key": "dlss_quality", "mode": "Quality", "screen_percentage": 66.7, "cvar": "" },
+    { "key": "dlss_balanced", "mode": "Balanced", "screen_percentage": 58.0, "cvar": "" },
+    { "key": "dlss_performance", "mode": "Performance", "screen_percentage": 50.0, "cvar": "" },
+    { "key": "best_fire_shadows_4", "mode": "best", "cvar": "rpg.Perf.FireShadows=4" },
+    { "key": "best_fire_shadows_0", "mode": "best", "cvar": "rpg.Perf.FireShadows=0" },
+    { "key": "best_fire_radius_065", "mode": "best", "cvar": "rpg.Perf.FireRadiusScale=0.65" },
+    { "key": "best_skylight_capture_0", "mode": "best", "cvar": "r.SkyLight.RealTimeReflectionCapture=0" }
+  ],
+  "clouds": {
+    "status": "omitted",
+    "reason": "Do not use the non-existent r.VolumetricCloud.ViewRaySampleCountScale. UE 5.5 source confirms r.VolumetricCloud.ViewRaySampleMaxCount and r.VolumetricCloud.Shadow.ViewRaySampleMaxCount; runtime help confirmation and owner-approved cloud experiment are still required before adding either to Round 6."
+  },
+  "phase1_order": [
+    ["dlss_quality", "dlss_balanced", "dlss_performance"],
+    ["dlss_balanced", "dlss_performance", "dlss_quality"],
+    ["dlss_performance", "dlss_quality", "dlss_balanced"]
+  ],
+  "phase2_order": [
+    ["best_fire_shadows_4", "best_fire_shadows_0", "best_fire_radius_065", "best_skylight_capture_0"],
+    ["best_fire_radius_065", "best_skylight_capture_0", "best_fire_shadows_4", "best_fire_shadows_0"],
+    ["best_fire_shadows_0", "best_fire_shadows_4", "best_skylight_capture_0", "best_fire_radius_065"]
+  ],
+  "trials": 3,
+  "anchor_every_treatments": 4,
+  "execution": "Run -Round6 for Phase 1 mode comparisons first (13 runs). Select a best mode only if three active-mode witnesses, baseline drift <=5%, p99 regression <=5% vs TSR, and owner image-quality acceptance all pass. Then run -Round6Tuning separately with the selected mode and recorded primary fraction upper bounds (16 runs). Keep r.DynamicRes.OperationMode=0 throughout. Each phase's anchors are explicit; active-upscaler, mode-witness, and fraction-upper-bound preflight must pass before proceeding."
+}

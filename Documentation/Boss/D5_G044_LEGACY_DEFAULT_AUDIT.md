@@ -129,7 +129,7 @@ This audit compares the saved G044 draft manifest with source-cited legacy defau
 | MATCH | NOT_PLAYER | `definitions.boss.close_clip_swap.close_ability_class_name` | 'GA_GS_Boss_CloseAttack_C' | 'GA_GS_Boss_CloseAttack_C' | `Source/OneBossFight/Player/RPGBossCloseClipSwap.h:26` | — |  |
 | MATCH | NOT_PLAYER | `definitions.boss.death.blend_in_seconds` | 0.10000000149011612 | 0.1 | `Source/OneBossFight/Player/RPGBossDeath.h:85` | — |  |
 | MATCH | NOT_PLAYER | `definitions.boss.death.death_clip.object_path` | '/Game/OneBossFight/Boss01/Animations/AN_Boss01_DeathLegend.AN_Boss01_DeathLegend' | '/Game/OneBossFight/Boss01/Animations/AN_Boss01_DeathLegend.AN_Boss01_DeathLegend' | `Source/OneBossFight/Player/RPGBossDeath.cpp:37` | — |  |
-| MATCH | NOT_PLAYER | `definitions.boss.death.death_mode` | '<RPGBossDeathMode.OWN_CLIP: 1>' | 'OwnClip' | `Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp:692` | — |  |
+| MATCH | NOT_PLAYER | `definitions.boss.death.death_mode` | '<RPGBossDeathMode.OWN_CLIP: 1>' | 'OwnClip' | `Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp:769` | — |  |
 | MATCH | NOT_PLAYER | `definitions.boss.death.death_montage.object_path` | '/Game/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.AM_Boss01_DeathLegend' | '/Game/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.AM_Boss01_DeathLegend' | `Source/OneBossFight/Player/RPGBossDeath.cpp:38` | — |  |
 | MATCH | NOT_PLAYER | `definitions.boss.death.dying_seconds` | 2.5 | 2.5 | `Source/OneBossFight/Player/RPGBossDeath.h:82` | — |  |
 | MATCH | NOT_PLAYER | `definitions.boss.death.guard_pack_death` | False | False | `Source/OneBossFight/Player/RPGBossDeath.h:93` | — |  |

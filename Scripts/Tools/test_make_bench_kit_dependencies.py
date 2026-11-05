@@ -43,9 +43,13 @@ def _missing_dependencies(script_text: str, manifest: set[str]) -> set[str]:
 
 class MakeBenchKitDependencyTests(unittest.TestCase):
     def test_every_kit_script_local_target_is_staged(self) -> None:
-        manifest = _manifest_names(MAKE_KIT.read_text(encoding="utf-8"))
+        make_kit_text = MAKE_KIT.read_text(encoding="utf-8")
+        manifest = _manifest_names(make_kit_text)
         self.assertIn("round5_experiments.json", manifest)
+        self.assertIn("round6_experiments.json", manifest)
         self.assertIn("RunPerfExperiments.ps1", manifest)
+        self.assertIn("Documentation\\BENCHKIT_README.md", make_kit_text)
+        self.assertIn("Copy-Item (Join-Path $Root 'Documentation\\BENCHKIT_README.md')", make_kit_text)
         missing_files = sorted(name for name in manifest if not (SCRIPTS_DIR / name).is_file())
         self.assertEqual(missing_files, [], f"manifest names absent files: {missing_files}")
 

@@ -48,6 +48,12 @@ DRIVERS = {
     "pie_legend": ("Legend", 25),
 }
 
+# The timing key can be a semantic label rather than a literal prefix of the
+# check text. Keep the explicit alias narrow and backed by the live Legend log.
+TIMING_OBSERVABLE_CHECK_PREFIXES = {
+    "L8 perfect parry slow motion duration": ("L8 real perfect parry contact starts",),
+}
+
 
 def read_capture(log_path: Path) -> dict[str, Any]:
     try:
@@ -184,8 +190,9 @@ def read_driver_capture(log_path: Path, driver: str) -> dict[str, Any]:
         for check_name, typed_value in timing_values.items():
             if not isinstance(typed_value, dict) or "value" not in typed_value or "comparison" not in typed_value:
                 raise ReceiptError(f"{driver} timing observable {check_name!r} must have value and comparison")
+            prefixes = TIMING_OBSERVABLE_CHECK_PREFIXES.get(check_name, (check_name,))
             matching_indices = [index for index, check in enumerate(checks, 1)
-                                if check["message"].startswith(check_name)]
+                                if any(check["message"].startswith(prefix) for prefix in prefixes)]
             if len(matching_indices) != 1:
                 raise ReceiptError(f"{driver} timing observable {check_name!r} matched {len(matching_indices)} checks")
             check_result = checks[matching_indices[0] - 1]

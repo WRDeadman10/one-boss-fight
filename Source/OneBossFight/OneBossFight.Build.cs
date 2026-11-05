@@ -37,6 +37,7 @@ public class OneBossFight : ModuleRules
 			"Json",
 			"AssetRegistry", // content wiring test: dependencies of the pack assets
 			"RenderCore", // game/render thread timings for the benchmark
+			"Renderer", // benchmark-only active temporal upscaler view-family telemetry
 			"RHI"         // GPU frame time for the benchmark
 		});
 

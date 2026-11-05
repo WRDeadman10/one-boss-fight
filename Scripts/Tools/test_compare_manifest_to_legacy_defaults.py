@@ -174,7 +174,7 @@ class CompareManifestLegacyDefaultsTests(unittest.TestCase):
                                           "--project-root", str(root)])
             self.assertEqual(result, 0)
             self.assertIn("runtime=INERT [", output.getvalue())
-            self.assertIn("RPGBossHydrationPreflight.cpp:513", output.getvalue())
+        self.assertIn("RPGBossHydrationPreflight.cpp:566", output.getvalue())
 
 
 if __name__ == "__main__":

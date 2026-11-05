@@ -3745,7 +3745,7 @@
       "notes": "Witnessed (C-641, BUILD-138): Combat telegraphed cues remain readable under low VFX, visual-only, and audio-only conditions. Console variable rpg.CueMode provides non-shipping-stripped accessibility filtering: 0=both full size, 1=visual only, 2=audio only, 3=both with visual at half scale (0.5). Pure rules RPGBossCue::ChannelsFor and DistinctChannels (RPGBossCueRules.h; tested in RPGBossCueTests.cpp:12-16, 37-38) enforce dual-channel presence and mutual distinction across both modalities. In URPGFrameworkMoveExecutor::FireCue, cues respect rpg.CueMode channel masking and scaling. Live PIE on L_SevarogFrameworkProofCUE across all modes: pie_mode1_visual (:1658, :1665) verifies visual=1 audio=0; pie_mode2_audio (:1659, :1666) verifies visual=0 audio=1; pie_mode3_lowvfx (:1660, :1667) verifies visualScale=0.5 visual=1 audio=1. Limit noted: verifies dual-channel delivery and channel filtering; cannot formally assert subjective human perceptual legibility."
     }
   ],
-  "last_updated": "2026-11-05",
+  "last_updated": "2026-11-05 (BUILD-228 witness additions)",
   "file_version": "3.26",
   "route_parity_and_integration_witnesses": [
     {
@@ -3806,6 +3806,54 @@
       "citations": [
         "Documentation/TEST_PLAN.md: C-872 G2 entry",
         "Docs/BossCombatReview/Execution/Claude/C872_G2_REFUSAL_v2/"
+      ]
+    },
+    {
+      "id": "F1-PARRY-SLOWMO",
+      "title": "Parry Slow Motion Live Witness",
+      "status": "WITNESSED",
+      "evidence_build": "BUILD-228",
+      "evidence_path": "Docs/BossCombatReview/Execution/Claude/B_C835_PARITY/pie_legend_h9/",
+      "summary": "Live pie_legend L8 witness verified across both routes: perfect parry triggers 0.30 world time dilation within two frames (-0.0001s onset gap), restores after 0.35s real; second press refused by 0.70s cooldown; rpg.Legend 0 suppresses dilation.",
+      "citations": [
+        "Documentation/TEST_PLAN.md: C-922 L8 entry",
+        "Documentation/Boss/P1_LEGEND_PARRY_RUN.md"
+      ]
+    },
+    {
+      "id": "H8-REBIND-RETRY",
+      "title": "Encounter Selection Rebind Bounded Polling",
+      "status": "WITNESSED",
+      "evidence_build": "BUILD-227",
+      "evidence_path": "Docs/BossCombatReview/Execution/Claude/B_C915_REBIND/",
+      "summary": "RPGPlayerMovesSubsystem bounded pending state with 0.05s polling resolves reset-before-possession race; 20/20 resets pass on selected route with 0 RebindPlayerMissing.",
+      "citations": [
+        "Documentation/TEST_PLAN.md: C-915 H8 entry",
+        "Documentation/DECISIONS.md: C-915"
+      ]
+    },
+    {
+      "id": "U-C05-MEMORY-SOAK",
+      "title": "Encounter Reset Memory Soak Parity",
+      "status": "WITNESSED",
+      "evidence_build": "BUILD-227",
+      "evidence_path": "Docs/BossCombatReview/Execution/Claude/C915_MEMORY_SOAK/",
+      "summary": "20/20 resets pass cleanly on both legacy and selected routes with 0 hard errors; actors stable at 88-90 legacy / 90-91 selected.",
+      "citations": [
+        "Documentation/Boss/U_C05_MEMORY_SOAK_LEAD_RUN.md",
+        "Documentation/TEST_PLAN.md: C-915 soak entry"
+      ]
+    },
+    {
+      "id": "W1-H10-TIER1-NIAGARA",
+      "title": "Tier 1 Niagara Visual Wiring & Cook Coverage",
+      "status": "WITNESSED",
+      "evidence_build": "BUILD-228",
+      "evidence_path": "Docs/BossCombatReview/Execution/Claude/B_C919_TIER1VFX/",
+      "summary": "URPGBossShockwave and URPGPlayerParry soft-reference properties wired with empty defaults (D5 parity); rpg.Art.Tier1 Development preview switch; CookCoverage verified with /Game/OneBossFight/VFX in DirectoriesToAlwaysCook.",
+      "citations": [
+        "Documentation/Boss/W1_TIER1_NIAGARA_WIRING.md",
+        "Documentation/TEST_PLAN.md: BUILD-228 entry"
       ]
     }
   ]

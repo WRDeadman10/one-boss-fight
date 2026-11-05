@@ -190,6 +190,13 @@ def duration_ok(r, fps):
     return abs(r["dur"] - want) <= 2.0 / fps + 0.004, want
 
 
+def full_roll_timing_range(fps):
+    """Stable comparison interval for the authored full-roll window at its expected 1.0 play rate."""
+    expected = FULL_WINDOW[1] - FULL_WINDOW[0]
+    tolerance = 2.0 / fps + 0.004
+    return [max(0.0, expected - tolerance), expected + tolerance]
+
+
 def fq(fps, trials):
     outcomes, starts, ends, durs, reasons = [], [], [], [], {}
     for i in range(trials):
@@ -248,8 +255,9 @@ def ff(fps, trials):
         min(starts or [0]), max(starts or [0]), min(ends or [0]), max(ends or [0]), 1.0 / fps, min(durs or [0]), max(durs or [0]), (sum(durs) / max(len(durs), 1)) * fps, others))
     timing_name = "FF%d full roll at %d FPS" % (fps, fps)
     check(timing_name, len(outcomes) == trials and all(outcomes), "%d/%d trials" % (sum(outcomes), len(outcomes)))
-    tolerance = 2.0 / fps + 0.004
-    bounds = [max(0.0, min(expected_durations or [0.0]) - tolerance), max(expected_durations or [0.0]) + tolerance]
+    # `want` is per-record diagnostic data derived from the measured effective rate;
+    # never let it define the typed parity interval shared by both routes.
+    bounds = full_roll_timing_range(fps)
     TIMING_OBSERVABLES[timing_name] = {"value": float(sum(durs) / len(durs)) if durs else 0.0,
         "comparison": {"type": "timing_seconds", "range_seconds": bounds}}
 

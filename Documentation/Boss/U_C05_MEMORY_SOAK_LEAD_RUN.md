@@ -33,3 +33,5 @@ Compare post-reset rows 1–50 within each route, and inspect both pre/post-rese
 ### Prior 20-reset result (C-915)
 
 Claude reports actor counts stable at 88–90 (legacy) and 90–91 (selected), while Editor private bytes rose about 150 MB and 110 MB respectively over the 20 resets. This is a watch item, not a leak finding: Unreal's Editor caches can retain allocations. The next run uses 50 resets with a full `obj gc` immediately before every sample to separate unreachable garbage from retained memory; compare the post-GC samples and preserve raw Editor logs.
+
+Queue V-C029 adds the offline `Scripts/Tools/summarize_memory_soak.py` interpreter for the paired 50-reset logs. It validates the `PASS 50/50` terminal, 101 GC-marked samples, stage/cycle identities and required post-GC actor/private-memory fields, then reports endpoint delta and actor range without classifying a leak. It does not replace either Lead-run Editor arm.

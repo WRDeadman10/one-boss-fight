@@ -31,10 +31,12 @@ def audit(expected: dict[str, tuple[str, int]], scheduled: dict[str, tuple[str, 
     issues = []
     for name in sorted(expected.keys() - scheduled.keys()):
         issues.append(f"MISSING RunDrivers registration: {name}")
-    independently_registered = {"pie_selection_refusal"} | ({"pie_a4_low_sweep"} if a4_registered else set())
+    # These are valid A5-host entries with standalone contracts, not parity
+    # receipt rows: refusal testing and the memory soak use their own receipts.
+    independently_registered = {"pie_selection_refusal", "pie_memory_soak"} | ({"pie_a4_low_sweep"} if a4_registered else set())
     for name in sorted(expected.keys() - allowed.keys() - independently_registered):
         issues.append(f"MISSING A5 runner registration: {name}")
-    for name in sorted(allowed.keys() - expected.keys() - {"pie_selection_refusal"}):
+    for name in sorted(allowed.keys() - expected.keys() - {"pie_selection_refusal", "pie_memory_soak"}):
         issues.append(f"EXTRA A5 runner registration: {name}")
     rows = []
     for name in sorted(expected):

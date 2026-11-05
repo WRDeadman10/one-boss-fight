@@ -10,6 +10,10 @@
 #include "Engine/Engine.h"
 #include "Engine/GameViewportClient.h"
 #include "Engine/World.h"
+#include "SceneViewExtension.h"
+#include "SceneView.h"
+#include "TemporalUpscaler.h"
+#include "DynamicResolutionState.h"
 #include "GameFramework/PlayerController.h"
 #include "GenericPlatform/GenericPlatformDriver.h"
 #include "HAL/FileManager.h"
@@ -17,6 +21,7 @@
 #include "HAL/PlatformMemory.h"
 #include "HAL/PlatformMisc.h"
 #include "HAL/PlatformTime.h"
+#include "HAL/CriticalSection.h"
 #include "RHIGlobals.h"
 #include "RenderTimer.h"
 #include "Misc/App.h"
@@ -28,9 +33,96 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Parse.h"
 #include "Misc/Paths.h"
+#include "Misc/ScopeLock.h"
 #include "Serialization/JsonSerializer.h"
 #include "Serialization/JsonWriter.h"
 #include "UnrealClient.h"
+
+#if !UE_BUILD_SHIPPING
+class FBenchmarkViewMetricsCapture final : public FSceneViewExtensionBase
+{
+public:
+	struct FSnapshot
+	{
+		FString ActiveUpscaler;
+		FString DebugName;
+		double EffectivePrimaryScreenPercentage = 0.0;
+		int32 AntiAliasingMethodCVar = -1;
+		int32 ViewFamilyAntiAliasingMethod = -1;
+		bool bCaptured = false;
+	};
+
+	explicit FBenchmarkViewMetricsCapture(const FAutoRegister& AutoRegister)
+		: FSceneViewExtensionBase(AutoRegister)
+	{
+	}
+
+	virtual void SetupViewFamily(FSceneViewFamily& InViewFamily) override {}
+	virtual void SetupView(FSceneViewFamily& InViewFamily, FSceneView& InView) override {}
+	virtual void BeginRenderViewFamily(FSceneViewFamily& InViewFamily) override {}
+
+	void RequestCapture(int32 AntiAliasingMethodCVar)
+	{
+		FScopeLock Lock(&Mutex);
+		if (!Snapshot.bCaptured)
+		{
+			Snapshot.AntiAliasingMethodCVar = AntiAliasingMethodCVar;
+			bCaptureRequested = true;
+		}
+	}
+
+	virtual void PreRenderViewFamily_RenderThread(FRDGBuilder& GraphBuilder, FSceneViewFamily& InViewFamily) override
+	{
+		FScopeLock Lock(&Mutex);
+		if (!bCaptureRequested || Snapshot.bCaptured || InViewFamily.Views.IsEmpty())
+		{
+			return;
+		}
+
+		const FSceneView& View = *InViewFamily.Views[0];
+		const UE::Renderer::Private::ITemporalUpscaler* TemporalUpscaler = InViewFamily.GetTemporalUpscalerInterface();
+		if (TemporalUpscaler)
+		{
+			Snapshot.DebugName = TemporalUpscaler->GetDebugName();
+			Snapshot.ActiveUpscaler = Snapshot.DebugName.Contains(TEXT("DLSS"), ESearchCase::IgnoreCase) ? TEXT("DLSS") : Snapshot.DebugName;
+		}
+		else if (View.AntiAliasingMethod == AAM_TSR)
+		{
+			// Built-in TSR is selected by the view's AA method (FSceneView::AntiAliasingMethod, UE 5.5); third-party temporal upscalers expose the interface above.
+			Snapshot.ActiveUpscaler = TEXT("TSR");
+			Snapshot.DebugName = TEXT("BuiltInTSR");
+		}
+		else
+		{
+			Snapshot.ActiveUpscaler = TEXT("UNKNOWN");
+		}
+
+		// The rendered rect is scaled later inside the renderer (FViewInfo is private), so the primary resolution fraction is read from the
+		// view family's screen percentage interface (UE 5.5: ISceneViewFamilyScreenPercentage::GetResolutionFractionsUpperBound, primary budget).
+		if (const ISceneViewFamilyScreenPercentage* ScreenPercentage = InViewFamily.GetScreenPercentageInterface())
+		{
+			Snapshot.EffectivePrimaryScreenPercentage = 100.0 * static_cast<double>(ScreenPercentage->GetResolutionFractionsUpperBound()[GDynamicPrimaryResolutionFraction]);
+		}
+		Snapshot.ViewFamilyAntiAliasingMethod = static_cast<int32>(View.AntiAliasingMethod);
+		Snapshot.bCaptured = true;
+		bCaptureRequested = false;
+		UE_LOG(LogOneBossFight, Log, TEXT("Benchmark rendered view config: upscaler=%s debug_name=%s effective_primary_screen_percentage=%.3f r.AntiAliasingMethod=%d view_family_aa_method=%d"),
+			*Snapshot.ActiveUpscaler, *Snapshot.DebugName, Snapshot.EffectivePrimaryScreenPercentage,
+			Snapshot.AntiAliasingMethodCVar, Snapshot.ViewFamilyAntiAliasingMethod);
+	}
+
+	FSnapshot GetSnapshot() const
+	{
+		FScopeLock Lock(&Mutex);
+		return Snapshot;
+	}
+
+private:
+	mutable FCriticalSection Mutex;
+	FSnapshot Snapshot;
+	bool bCaptureRequested = false;
+};
+#endif
 
 ARPGBenchmarkRunner::ARPGBenchmarkRunner()
 {
@@ -116,6 +208,11 @@ void ARPGBenchmarkRunner::StartBenchmark()
 	bProfileGpuDone = false;
 	FParse::Value(FCommandLine::Get(), TEXT("RPGBenchmarkProfileGPUAt="), ProfileGpuAt);
 
+#if !UE_BUILD_SHIPPING
+	ViewMetricsCapture = FSceneViewExtensions::NewExtension<FBenchmarkViewMetricsCapture>();
+	bViewMetricsCaptureRequested = false;
+#endif
+
 	if (APlayerController* PlayerController = bFightMode ? nullptr : GetWorld()->GetFirstPlayerController())
 	{
 		FActorSpawnParameters SpawnParams;
@@ -161,6 +258,19 @@ void ARPGBenchmarkRunner::Tick(float DeltaSeconds)
 	// Raw wall-clock frame time; the engine's DeltaSeconds can be clamped and would hide hitches.
 	const double Now = FPlatformTime::Seconds();
 	const double Elapsed = Now - StartTime;
+
+#if !UE_BUILD_SHIPPING
+	if (!bViewMetricsCaptureRequested && Elapsed >= WarmupSeconds && ViewMetricsCapture.IsValid())
+	{
+		int32 AntiAliasingMethod = -1;
+		if (IConsoleVariable* AntiAliasingCVar = IConsoleManager::Get().FindConsoleVariable(TEXT("r.AntiAliasingMethod")))
+		{
+			AntiAliasingMethod = AntiAliasingCVar->GetInt();
+		}
+		ViewMetricsCapture->RequestCapture(AntiAliasingMethod);
+		bViewMetricsCaptureRequested = true;
+	}
+#endif
 
 	if (LastTickTime > 0.0 && Elapsed >= WarmupSeconds)
 	{
@@ -369,6 +479,17 @@ void ARPGBenchmarkRunner::WriteResults(const FRPGFrameStats& Stats) const
 	Json->SetStringField(TEXT("engine_version"), FEngineVersion::Current().ToString());
 	Json->SetStringField(TEXT("build_configuration"), LexToString(FApp::GetBuildConfiguration()));
 	Json->SetStringField(TEXT("cvars"), AppliedCvars);
+#if !UE_BUILD_SHIPPING
+	const FBenchmarkViewMetricsCapture::FSnapshot ViewMetrics = ViewMetricsCapture.IsValid()
+		? ViewMetricsCapture->GetSnapshot()
+		: FBenchmarkViewMetricsCapture::FSnapshot();
+	Json->SetStringField(TEXT("temporal_upscaler"), ViewMetrics.ActiveUpscaler.IsEmpty() ? TEXT("UNAVAILABLE") : ViewMetrics.ActiveUpscaler);
+	Json->SetStringField(TEXT("temporal_upscaler_debug_name"), ViewMetrics.DebugName);
+	Json->SetNumberField(TEXT("effective_primary_screen_percentage"), ViewMetrics.EffectivePrimaryScreenPercentage);
+	Json->SetNumberField(TEXT("anti_aliasing_method"), ViewMetrics.AntiAliasingMethodCVar);
+	Json->SetNumberField(TEXT("view_family_anti_aliasing_method"), ViewMetrics.ViewFamilyAntiAliasingMethod);
+	Json->SetBoolField(TEXT("view_config_captured"), ViewMetrics.bCaptured);
+#endif
 	Json->SetStringField(TEXT("gpu"), GpuBrand);
 	Json->SetStringField(TEXT("gpu_driver_user"), DriverInfo.UserDriverVersion);
 	Json->SetStringField(TEXT("gpu_driver_internal"), DriverInfo.InternalDriverVersion);

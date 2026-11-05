@@ -232,7 +232,7 @@ def l1_slam():
         shakes[label] = sum(zs) / max(len(zs), 1)
         check("L1 real A2 slam with the player %s away: exactly one shake per swing, scale equals the formula, the camera moves (peak to peak) and rests: %d/%d trials" % (label, sum(outcomes), len(outcomes)), all(outcomes))
     ratio = shakes["1500 cm"] / max(shakes["600 cm"], 0.001)
-    check("L1d the shake at 1500 cm is weaker than at 600 cm (high-pass Z ratio 0.1 to 0.6)", 0.1 <= ratio <= 0.6, "scales %s, mean high-pass Z 600 cm %.2f 1500 cm %.2f ratio %.2f" % (scales[:1] + scales[5:6], shakes["600 cm"], shakes["1500 cm"], ratio))
+    check("L1d the shake at 1500 cm is weaker than at 600 cm (high-pass Z ratio 0.1 to 0.6)", 0.1 <= ratio <= 0.6, "scales %s, mean high-pass Z samples [600 cm %.2f 1500 cm %.2f ratio %.2f]" % (scales[:1] + scales[5:6], shakes["600 cm"], shakes["1500 cm"], ratio))
 
     # interrupted before the active window: no shake
     outcomes = []
@@ -676,7 +676,7 @@ def l8_perfect_parry_slow_motion():
           (opened, t_contact is not None, "%.4f" % (t_contact - t_press) if t_contact is not None else None,
            "%.4f" % onset_gap if onset_gap is not None else None, frame, low, "%.4f" % duration if duration is not None else None, restored))
     if duration is not None:
-        record_timing("L8 perfect parry slow motion duration", duration, (0.35 - 2.0 * frame, 0.35 + 2.0 * frame))
+        record_timing("L8 perfect parry slow motion duration", duration, (0.35 - 4.0 / 60.0, 0.35 + 4.0 / 60.0))   # lead: FIXED bounds (4 frames at 60 fps); the run-specific 2*frame bounds made the two arms' comparison dicts differ, so the parity comparator rejected two PASS runs
 
     # The player parry component has a 0.70 s press cooldown, so another
     # accepted perfect parry cannot occur inside the slow-motion policy's 0.60 s

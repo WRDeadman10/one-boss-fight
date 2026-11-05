@@ -35,19 +35,19 @@ PLAYER_RUNTIME_EVIDENCE = (
     },
     {
         "file": "Source/OneBossFight/Player/RPGBossHydrationPreflight.cpp",
-        "line": 368,
-        "excerpt": "\t\t\t\t// An already attached or configured consumer is never adopted silently: the participant component for every member, the six new native and thirteen typed boss-core consumers for a boss-core member (a target-only member gets no boss plan and is not checked for them).",
+        "line": 463,
+        "excerpt": "\t\t\tif (bBossCore)",
         "reason": "preflight explicitly gives TargetOnly no BossCore plan",
     },
     {
         "file": "Source/OneBossFight/Player/RPGBossHydrationPreflight.cpp",
-        "line": 513,
+        "line": 566,
         "excerpt": "\t\t\tif (Request.Role == ERPGPreflightRole::BossCore)",
         "reason": "plans are constructed only for BossCore",
     },
     {
         "file": "Source/OneBossFight/Player/RPGEncounterBinding.cpp",
-        "line": 419,
+        "line": 437,
         "excerpt": "\tfor (const FRPGComponentPlan& Plan : Plans)",
         "reason": "actor component configuration runs only by iterating supplied plans",
     },

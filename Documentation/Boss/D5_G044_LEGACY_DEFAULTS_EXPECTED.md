@@ -18,7 +18,7 @@ The values below come from the corresponding native runtime declarations. File a
 |---|---:|---:|---|
 | `definitions.boss.death.blend_in_seconds` | 0.2 | 0.1 | `Source/OneBossFight/Player/RPGBossDeath.h:85` |
 | `definitions.boss.death.dying_seconds` | 1.0 | 2.5 | `Source/OneBossFight/Player/RPGBossDeath.h:82` |
-| `definitions.boss.death.death_mode` | `PackMontage` | `OwnClip` | `Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp:692` |
+| `definitions.boss.death.death_mode` | `PackMontage` | `OwnClip` | `Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp:769` |
 | `definitions.boss.death.guard_pack_death` | true | false | `Source/OneBossFight/Player/RPGBossDeath.h:93` |
 | `definitions.boss.death.hold_at_seconds` | 0.5 | 3.0 | `Source/OneBossFight/Player/RPGBossDeath.h:78` |
 | `definitions.boss.death.max_clip_restarts` | 0 | 8 | `Source/OneBossFight/Player/RPGBossDeath.h:89` |

@@ -55,6 +55,34 @@ def module_assignments(path: Path) -> dict[str, object]:
 
 
 class A5ParityDriverRegistrationTests(unittest.TestCase):
+    def test_iframe_full_roll_comparison_range_is_independent_of_measured_rate(self) -> None:
+        source = (ROOT / "Scripts/Editor/pie_iframes.py").read_text(encoding="utf-8")
+        tree = ast.parse(source)
+        helper = next(
+            node for node in tree.body
+            if isinstance(node, ast.FunctionDef) and node.name == "full_roll_timing_range"
+        )
+        namespace = {"FULL_WINDOW": (0.0001, 0.69987)}
+        exec(compile(ast.Module(body=[helper], type_ignores=[]), "pie_iframes.py", "exec"), namespace)
+        expected = [max(0.0, 0.69987 - 0.0001 - (2.0 / 60 + 0.004)),
+                    0.69987 - 0.0001 + (2.0 / 60 + 0.004)]
+        # These fixture rates vary by run. The serialized comparison bounds must
+        # remain fixed and therefore identical across the legacy/data pair.
+        measured_rates = (0.98, 1.0, 1.02)
+        bounds_by_run = [namespace["full_roll_timing_range"](60) for _rate in measured_rates]
+        self.assertEqual(bounds_by_run, [expected, expected, expected])
+        ff = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == "ff")
+        self.assertIn("bounds = full_roll_timing_range(fps)", ast.unparse(ff))
+
+    def test_legend_l8_timing_label_maps_to_live_check_text(self) -> None:
+        fixture = ROOT / "Scripts" / "Tools" / "fixtures" / "pie_legend_l8_timing.log"
+        payload = read_driver_capture(fixture, "pie_legend")
+        observable = payload["run_facts"]["observables"]["check-0001"]
+        self.assertEqual(observable["check_status"], "PASS")
+        self.assertTrue(observable["check_message"].startswith("L8 real perfect parry contact starts"))
+        self.assertEqual(observable["value"], 0.3670568000525236)
+        self.assertEqual(observable["comparison"]["type"], "timing_seconds")
+
     def test_s27_death_reset_x3_route_runs_three_cycles_on_both_arms(self) -> None:
         driver = (ROOT / "Scripts/Editor/pie_player_death_reset.py").read_text(encoding="utf-8")
         pair = (ROOT / "Scripts/RunA5ParityPair.ps1").read_text(encoding="utf-8")

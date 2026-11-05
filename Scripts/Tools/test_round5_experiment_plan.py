@@ -36,6 +36,11 @@ def receipt():
 
 
 class Round5ExperimentPlanTests(unittest.TestCase):
+    def test_round3_cloud_shadow_sample_cvar_matches_ue55_source_name(self):
+        runner = (ROOT / "Scripts/RunPerfExperiments.ps1").read_text(encoding="utf-8")
+        self.assertIn("r.VolumetricCloud.Shadow.ViewRaySampleMaxCount=64", runner)
+        self.assertNotIn("r.VolumetricCloud.ShadowViewRaySampleMaxCount", runner)
+
     def test_plan_has_four_anchors_and_three_replicates_for_each_dlss_mode(self):
         plan = json.loads((ROOT / "Scripts/round5_experiments.json").read_text(encoding="utf-8"))
         rows = plan["experiments"]
@@ -71,7 +76,7 @@ class Round5ExperimentPlanTests(unittest.TestCase):
 
     def test_round5_runner_stops_after_unknown_console_variable(self):
         script = (ROOT / "Scripts/RunPerfExperiments.ps1").read_text(encoding="utf-8")
-        self.assertIn("$Round5 -and $e.C -and $s.cvars -match", script)
+        self.assertIn("($Round5 -or $Round6 -or $Round6Tuning) -and $e.C -and $s.cvars -match", script)
         self.assertIn(r"\(UNKNOWN variable\)", script)
         self.assertIn("experiment series is stopped", script)
 

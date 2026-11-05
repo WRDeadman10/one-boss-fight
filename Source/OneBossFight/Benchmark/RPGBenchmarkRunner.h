@@ -8,6 +8,7 @@
 #include "RPGBenchmarkRunner.generated.h"
 
 class ACameraActor;
+class FBenchmarkViewMetricsCapture;
 
 /**
  * Repeatable frame-time benchmark. Place one in a map and launch with -RPGBenchmark
@@ -116,6 +117,9 @@ private:
 
 	/** Console variables applied by -RPGBenchmarkCvars="name=value;name=value" (performance experiments, works in Shipping), as "name=value" with a note when unknown; written to summary.json. */
 	FString AppliedCvars;
+	/** Development benchmark telemetry sampled once from the rendered view family after warm-up. */
+	TSharedPtr<FBenchmarkViewMetricsCapture, ESPMode::ThreadSafe> ViewMetricsCapture;
+	bool bViewMetricsCaptureRequested = false;
 	/** -RPGBenchmarkProfileGPUAt=<seconds>: runs ProfileGPU once at that benchmark time (Development builds only; the pass table goes to the log). */
 	float ProfileGpuAt = -1.f;
 	bool bProfileGpuDone = false;
