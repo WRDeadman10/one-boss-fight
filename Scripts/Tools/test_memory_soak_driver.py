@@ -14,10 +14,11 @@ class MemorySoakDriverTests(unittest.TestCase):
         source = DRIVER.read_text(encoding="utf-8")
         ast.parse(source, filename=str(DRIVER))
 
-    def test_driver_requires_twenty_resets_and_records_lifetime_evidence(self):
+    def test_driver_requires_fifty_resets_and_collects_before_samples(self):
         source = DRIVER.read_text(encoding="utf-8")
         for token in (
-            "CYCLES = 20", "H019_ENCOUNTER_DEFINITION", "reset_for_test()",
+            "CYCLES = 50", 'execute_console_command(game_world, "obj gc")',
+            "gc_before_sample_completed", "H019_ENCOUNTER_DEFINITION", "reset_for_test()",
             "GetProcessMemoryInfo", "WorkingSetSize", "PrivateUsage",
             "get_all_actors_of_class", "generation/count", "resets=%d/%d",
         ):

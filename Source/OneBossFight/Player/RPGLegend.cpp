@@ -129,14 +129,20 @@ bool URPGLegendSubsystem::RequestHitStop(AActor* First, AActor* Second, float Re
 	return true;
 }
 
-bool URPGLegendSubsystem::RequestSlowMotion(float Scale, float RealSeconds, const URPGBossEncounter* Encounter, uint64 Generation)
+bool URPGLegendSubsystem::RequestSlowMotion(float Scale, float RealSeconds, const URPGBossEncounter* Encounter, uint64 Generation, bool bKillPriority)
 {
 	UWorld* World = GetWorld();
 	if (!CheckRequest(Encounter, Generation) || !World)
 	{
 		return false;
 	}
-	if (SlowMotion.Begin(Scale, FPlatformTime::Seconds(), RealSeconds, UGameplayStatics::GetGlobalTimeDilation(World)))
+	const double NowReal = FPlatformTime::Seconds();
+	if (SlowMotion.bActive && bKillPriority)
+	{
+		SlowMotion.OverrideActive(Scale, NowReal, RealSeconds);
+		UGameplayStatics::SetGlobalTimeDilation(World, SlowMotion.Applied);
+	}
+	else if (SlowMotion.Begin(Scale, NowReal, RealSeconds, UGameplayStatics::GetGlobalTimeDilation(World)))
 	{
 		UGameplayStatics::SetGlobalTimeDilation(World, SlowMotion.Applied);
 		const float Now = UGameplayStatics::GetGlobalTimeDilation(World);
@@ -416,7 +422,7 @@ bool URPGBossLegend::HandleSlowMotion()
 	{
 		return false;
 	}
-	if (!Time->RequestSlowMotion(SlowMotionScale, SlowMotionSeconds, Encounter, Encounter->GetParticipantGeneration()))
+	if (!Time->RequestSlowMotion(SlowMotionScale, SlowMotionSeconds, Encounter, Encounter->GetParticipantGeneration(), true))
 	{
 		return false;
 	}
@@ -425,6 +431,45 @@ bool URPGBossLegend::HandleSlowMotion()
 	{
 		Camera->StopAllInstancesOfCameraShake(URPGRoarCameraShake::StaticClass(), false); // death outranks the roar: it blends out
 	}
+	return true;
+}
+
+bool URPGBossLegend::HandlePlayerParrySlowMotion(RPGParryGrade::EGrade Grade, const FRPGParrySlowMotionConfig* PlayerPolicy)
+{
+	if (Grade == RPGParryGrade::EGrade::None || !FindParts() || !EffectsAllowed(false))
+	{
+		return false;
+	}
+	const FRPGParrySlowMotionConfig& Policy = PlayerPolicy ? *PlayerPolicy : ParrySlowMotion;
+	const bool bPerfect = Grade == RPGParryGrade::EGrade::Perfect;
+	if ((bPerfect && !Policy.bPerfectEnabled) || (!bPerfect && !Policy.bNormalEnabled))
+	{
+		return false;
+	}
+	URPGLegendSubsystem* Time = URPGLegendSubsystem::Get(this);
+	if (!Time || !Encounter)
+	{
+		return false;
+	}
+	const double NowReal = FPlatformTime::Seconds();
+	if (!RPGBossLegendRules::CanRequestParrySlowMotion(Grade, NowReal, LastParrySlowMotionTime,
+		Policy.CooldownSeconds, bEnabled, URPGLegendSubsystem::IsLegendOn(),
+		Time->IsSlowMotionActive(), Time->IsHitStopActive(), !Encounter->IsDormant()))
+	{
+		return false;
+	}
+	const float Scale = bPerfect ? Policy.PerfectScale : Policy.NormalScale;
+	const float Seconds = bPerfect ? Policy.PerfectSeconds : Policy.NormalSeconds;
+	if (!FMath::IsFinite(Scale) || Scale < 0.05f || Scale >= 1.0f || !FMath::IsFinite(Seconds) || Seconds <= 0.f || Seconds > 5.f)
+	{
+		return false;
+	}
+	if (!Time->RequestSlowMotion(Scale, Seconds, Encounter, Encounter->GetParticipantGeneration()))
+	{
+		return false;
+	}
+	LastParrySlowMotionTime = NowReal;
+	++ParrySlowMotionCount;
 	return true;
 }
 
@@ -446,6 +491,7 @@ void URPGBossLegend::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 			}
 		}
 		LastGeneration = Generation;
+		LastParrySlowMotionTime = -1000000000.0;
 	}
 	// The counters of the sources never go down: the key of an event is the value its effect was made for. The first poll of a part records the current value (nothing fires for the past).
 	if (Phases && !bRoarPrimed)

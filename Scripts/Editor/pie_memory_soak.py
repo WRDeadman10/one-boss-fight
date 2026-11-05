@@ -1,4 +1,4 @@
-"""U-C05: one PIE run per route, natural combat exposure and twenty encounter resets.
+"""U-C05: one PIE run per route, natural combat exposure and fifty encounter resets.
 
 Run with the editor open using Scripts/run_in_editor.py. Set
 H019_ENCOUNTER_DEFINITION before launching the editor for the selected route;
@@ -14,11 +14,11 @@ import unreal
 BOSS_CLASS = "BP_ExampleGreatSwordBoss_C"
 SELECTED = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
 ROUTE = "selected" if SELECTED else "legacy"
-CYCLES = 20
+CYCLES = 50
 WARMUP_SECONDS = 9.0
 FIGHT_SECONDS = 10.0
 RESET_WAIT_SECONDS = 15.0
-TOTAL_TIMEOUT_SECONDS = 900.0
+TOTAL_TIMEOUT_SECONDS = 1800.0
 HEARTBEAT_SECONDS = 15.0
 S = {"time": 0.0, "phase": "start", "phase_time": 0.0, "cycle": 0,
      "generation": None, "reset_count": None, "results": [], "tick_error": False,
@@ -103,9 +103,14 @@ def place_player(pawn, boss):
 
 def sample(stage):
     game_world, pawn, boss = actors()
+    if game_world is None:
+        raise RuntimeError("cannot sample lifetime evidence without an active PIE world")
+    log("gc_before_sample stage=%s command=obj gc" % stage)
+    unreal.SystemLibrary.execute_console_command(game_world, "obj gc")
+    log("gc_before_sample_completed stage=%s" % stage)
     encounter = component(boss, "RPGBossEncounter")
     gen, resets = generation(encounter) if encounter else (None, None)
-    record = {"route": ROUTE, "cycle": S["cycle"], "stage": stage,
+    record = {"route": ROUTE, "cycle": S["cycle"], "stage": stage, "gc_before_sample": True,
               "generation": gen, "reset_count": resets,
               "objects": census(game_world), "memory": process_memory_mb()}
     log("sample " + repr(record))
@@ -202,7 +207,8 @@ def on_tick(delta_seconds):
         finish("tick exception")
 
 
-if __name__ == "__main__":
-    log("start route=%s selected_definition=%s cycles=%d warmup=%.1fs fight=%.1fs" %
-        (ROUTE, SELECTED or "<unset>", CYCLES, WARMUP_SECONDS, FIGHT_SECONDS))
-    handle = unreal.register_slate_post_tick_callback(on_tick)
+# Lead fix (C-906): register at module level like every other registered driver; the fresh-process runner imports this file as a
+# module (__name__ != "__main__"), so the old __main__ guard never started the soak.
+log("start route=%s selected_definition=%s cycles=%d warmup=%.1fs fight=%.1fs" %
+    (ROUTE, SELECTED or "<unset>", CYCLES, WARMUP_SECONDS, FIGHT_SECONDS))
+handle = unreal.register_slate_post_tick_callback(on_tick)

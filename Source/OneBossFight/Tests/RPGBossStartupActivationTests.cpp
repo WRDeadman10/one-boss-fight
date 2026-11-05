@@ -244,6 +244,18 @@ bool HasLegacyBossBundle(const AActor* Boss)
 		|| Boss->FindComponentByClass<URPGBossPhases>()
 		|| Boss->FindComponentByClass<URPGBossStagger>());
 }
+
+bool ReadActivationSnapshot(const URPGPlayerMovesSubsystem& Moves, FString& OutOutcome, FString& OutReason, bool& bOutBindingRetained)
+{
+	TSharedPtr<FJsonObject> Snapshot;
+	const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Moves.BuildEncounterParitySnapshot());
+	if (!FJsonSerializer::Deserialize(Reader, Snapshot) || !Snapshot.IsValid()) { return false; }
+	const TSharedPtr<FJsonObject>* Activation = nullptr;
+	if (!Snapshot->TryGetObjectField(TEXT("activation"), Activation) || !Activation || !Activation->IsValid()) { return false; }
+	return (*Activation)->TryGetStringField(TEXT("outcome"), OutOutcome)
+		&& (*Activation)->TryGetStringField(TEXT("reason"), OutReason)
+		&& (*Activation)->TryGetBoolField(TEXT("binding_retained"), bOutBindingRetained);
+}
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGEncounterSelectionRecordValidation,
@@ -298,7 +310,9 @@ bool FRPGEncounterSelectionAbsentPreservesLegacy::RunTest(const FString&)
 	FStartupActivationWorld Scope;
 	if (!TestNotNull(TEXT("real game-instance test world"), Scope.World)) return false;
 	URPGEncounterSelectionSubsystem* Selection = Scope.GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>();
-	if (!TestNotNull(TEXT("game-instance selection store"), Selection)) return false;
+	URPGPlayerMovesSubsystem* Moves = Scope.World->GetSubsystem<URPGPlayerMovesSubsystem>();
+	if (!TestNotNull(TEXT("game-instance selection store"), Selection) || !TestNotNull(TEXT("moves subsystem"), Moves)) return false;
+	TestTrue(TEXT("A7-B config defaults legacy startup on"), Moves->bUseLegacyStartup);
 	Selection->ClearSelectedDefinition();
 	TestFalse(TEXT("cleared store means selection absent"), Selection->HasSelectionRequest());
 	APawn* Boss = Scope.SpawnPackPawn(BossClassPath, FVector::ZeroVector);
@@ -307,6 +321,28 @@ bool FRPGEncounterSelectionAbsentPreservesLegacy::RunTest(const FString&)
 	TestTrue(TEXT("no-selection startup keeps legacy boss bundle"), HasLegacyBossBundle(Boss));
 	TestNotNull(TEXT("no-selection startup keeps player-side dodge setup"), Player->FindComponentByClass<URPGDodgeTiming>());
 	TestNotNull(TEXT("no-selection startup keeps player footsteps"), Player->FindComponentByClass<URPGFootsteps>());
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGEncounterSelectionLegacyStartupDisabled,
+	"OneBossFight.Binding.EncounterSelection.LegacyStartupConfigOff",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGEncounterSelectionLegacyStartupDisabled::RunTest(const FString&)
+{
+	FStartupActivationWorld Scope;
+	if (!TestNotNull(TEXT("real game-instance test world"), Scope.World)) return false;
+	URPGEncounterSelectionSubsystem* Selection = Scope.GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>();
+	URPGPlayerMovesSubsystem* Moves = Scope.World->GetSubsystem<URPGPlayerMovesSubsystem>();
+	if (!TestNotNull(TEXT("game-instance selection store"), Selection) || !TestNotNull(TEXT("moves subsystem"), Moves)) return false;
+	Selection->ClearSelectedDefinition();
+	Moves->bUseLegacyStartup = false;
+	APawn* Boss = Scope.SpawnPackPawn(BossClassPath, FVector::ZeroVector);
+	APawn* Player = Scope.SpawnPackPawn(PlayerClassPath, FVector(1000.f, 0.f, 0.f));
+	if (!TestNotNull(TEXT("pack boss"), Boss) || !TestNotNull(TEXT("pack player"), Player)) return false;
+	Scope.BeginPlay();
+	TestFalse(TEXT("legacy boss bundle stays absent with config off"), HasLegacyBossBundle(Boss));
+	TestNull(TEXT("legacy player dodge component stays absent with config off"), Player->FindComponentByClass<URPGDodgeTiming>());
+	TestNull(TEXT("legacy player footsteps stay absent with config off"), Player->FindComponentByClass<URPGFootsteps>());
 	return true;
 }
 
@@ -320,6 +356,7 @@ bool FRPGEncounterSelectionStartupSuccess::RunTest(const FString&)
 	URPGEncounterSelectionSubsystem* Selection = Scope.GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>();
 	URPGPlayerMovesSubsystem* Moves = Scope.World->GetSubsystem<URPGPlayerMovesSubsystem>();
 	if (!TestNotNull(TEXT("game-instance selection store"), Selection) || !TestNotNull(TEXT("world moves subsystem"), Moves)) return false;
+	Moves->bUseLegacyStartup = false; // explicit selected route stays independent of the legacy fallback switch
 	URPGBossEncounterDefinition* Encounter = MakeValidPackSelection();
 	if (!TestNotNull(TEXT("valid transient boss/player definitions"), Encounter)) return false;
 	Selection->SetSelectedDefinition(Encounter);
@@ -732,10 +769,10 @@ bool FRPGEncounterRepeatedSubsystemRestartPreservesPlayerSetup::RunTest(const FS
 	return true;
 }
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGEncounterSelectionRebindTimeoutFailsClosed,
-	"OneBossFight.Binding.EncounterSelection.RebindTimeoutFailsClosed",
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGEncounterSelectionRebindWaitsForDelayedPossession,
+	"OneBossFight.Binding.EncounterSelection.RebindWaitsForDelayedPossession",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
-bool FRPGEncounterSelectionRebindTimeoutFailsClosed::RunTest(const FString&)
+bool FRPGEncounterSelectionRebindWaitsForDelayedPossession::RunTest(const FString&)
 {
 	FStartupActivationWorld Scope;
 	if (!TestNotNull(TEXT("real game-instance test world"), Scope.World)) return false;
@@ -748,18 +785,54 @@ bool FRPGEncounterSelectionRebindTimeoutFailsClosed::RunTest(const FString&)
 	Selection->SetSelectedDefinition(Definition);
 	Scope.BeginPlay();
 	OldPlayer->Destroy();
-	APawn* NewPlayer = Scope.SpawnPackPawn(PlayerClassPath, FVector(1000.f, 0.f, 0.f));
-	if (!TestNotNull(TEXT("replacement player"), NewPlayer)) return false;
-	AddExpectedError(TEXT("outcome=HardError reason=EncounterActivation.RebindTimeout"), EAutomationExpectedErrorFlags::Contains, 1);
-	for (int32 Tick = 0; Tick < 24; ++Tick)
+	URPGBossEncounter* Encounter = Boss->FindComponentByClass<URPGBossEncounter>();
+	URPGPlayerMovesSubsystem* Moves = Scope.World->GetSubsystem<URPGPlayerMovesSubsystem>();
+	if (!TestNotNull(TEXT("reset source"), Encounter) || !TestNotNull(TEXT("moves subsystem"), Moves)) return false;
+	Encounter->ResetForTest(); // reset broadcast arrives while the controller has no pawn
+	FString PendingOutcome, PendingReason;
+	bool bPendingBindingRetained = false;
+	TestTrue(TEXT("pending snapshot parses"), ReadActivationSnapshot(*Moves, PendingOutcome, PendingReason, bPendingBindingRetained));
+	TestTrue(TEXT("pending rebind retains the active binding while no pawn is possessed"), PendingOutcome == TEXT("Activated") && bPendingBindingRetained);
+	TestTrue(TEXT("pending rebind keeps boss collision active"), Boss->GetActorEnableCollision());
+	for (int32 Tick = 0; Tick < 3; ++Tick)
 	{
-		Scope.World->Tick(LEVELTICK_All, 0.25f);
-		++GFrameCounter; // UWorld::Tick's timer manager runs at most once per engine frame.
+		Scope.World->Tick(LEVELTICK_All, 1.f / 60.f);
+		++GFrameCounter;
 	}
-	TestFalse(TEXT("timeout disables the framework boss"), Boss->GetActorEnableCollision());
-	TActorIterator<ARPGEncounterBinding> Bindings(Scope.World);
-	TestFalse(TEXT("timeout releases the old binding"), static_cast<bool>(Bindings));
-	TestTrue(TEXT("independent replacement player setup survives timeout"), NewPlayer->FindComponentByClass<URPGDodgeTiming>() != nullptr);
+	UClass* PlayerClass = LoadClass<APawn>(nullptr, PlayerClassPath);
+	if (!TestNotNull(TEXT("pack player class"), PlayerClass)) return false;
+	APawn* NewPlayer = Scope.World->SpawnActor<APawn>(PlayerClass, FVector(1000.f, 0.f, 0.f), FRotator::ZeroRotator);
+	if (!TestNotNull(TEXT("unpossessed replacement player"), NewPlayer)) return false;
+	for (int32 Tick = 0; Tick < 3; ++Tick)
+	{
+		Scope.World->Tick(LEVELTICK_All, 1.f / 60.f);
+		++GFrameCounter;
+	}
+	if (!TestTrue(TEXT("local controller possesses delayed replacement"), Scope.PossessPlayer(NewPlayer))) return false;
+	APlayerController* Controller = nullptr;
+	for (FConstPlayerControllerIterator It = Scope.World->GetPlayerControllerIterator(); It; ++It)
+	{
+		APlayerController* CandidateController = It->Get();
+		if (IsValid(CandidateController) && CandidateController->IsLocalController() && CandidateController->GetPawn() == NewPlayer)
+		{
+			Controller = CandidateController;
+			break;
+		}
+	}
+	TestNotNull(TEXT("possessing local controller"), Controller);
+	for (int32 Tick = 0; Tick < 3; ++Tick)
+	{
+		Scope.World->Tick(LEVELTICK_All, 1.f / 60.f);
+		++GFrameCounter;
+	}
+	FString Outcome, Reason;
+	bool bBindingRetained = false;
+	TestTrue(TEXT("post-possession snapshot parses"), ReadActivationSnapshot(*Moves, Outcome, Reason, bBindingRetained));
+	TestTrue(TEXT("delayed possession completes rebind without HardError"), Outcome == TEXT("Activated") && Reason.IsEmpty() && bBindingRetained);
+	ARPGEncounterBinding* NewBinding = nullptr;
+	for (TActorIterator<ARPGEncounterBinding> It(Scope.World); It; ++It) { NewBinding = *It; break; }
+	TestNotNull(TEXT("new selected binding after possession"), NewBinding);
+	TestTrue(TEXT("new binding uses the possessed replacement pawn"), NewBinding && NewBinding->Participants.ContainsByPredicate([NewPlayer](const FRPGPlacedParticipantBinding& Participant) { return Participant.Slot == FName(TEXT("Player")) && Participant.Actor.Get() == NewPlayer; }));
 	Selection->ClearSelectedDefinition();
 	return true;
 }
@@ -871,10 +944,10 @@ bool FRPGEncounterSelectionRebindRefusesDeadBoss::RunTest(const FString&)
 	return true;
 }
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGEncounterSelectionRebindMissingPlayerFailsClosed,
-	"OneBossFight.Binding.EncounterSelection.RebindMissingPlayerFailsClosed",
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGEncounterSelectionRebindTimeoutFailsClosed,
+	"OneBossFight.Binding.EncounterSelection.RebindTimeoutFailsClosed",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
-bool FRPGEncounterSelectionRebindMissingPlayerFailsClosed::RunTest(const FString&)
+bool FRPGEncounterSelectionRebindTimeoutFailsClosed::RunTest(const FString&)
 {
 	FStartupActivationWorld Scope;
 	if (!TestNotNull(TEXT("real game-instance test world"), Scope.World)) return false;
@@ -889,13 +962,30 @@ bool FRPGEncounterSelectionRebindMissingPlayerFailsClosed::RunTest(const FString
 	URPGBossEncounter* Encounter = Boss->FindComponentByClass<URPGBossEncounter>();
 	if (!TestNotNull(TEXT("reset source"), Encounter)) return false;
 	OldPlayer->Destroy();
-	APawn* Candidate = Scope.SpawnPackPawn(PlayerClassPath, FVector(1000.f, 0.f, 0.f));
-	if (!TestNotNull(TEXT("replacement candidate"), Candidate)) return false;
-	Candidate->Destroy();
-	AddExpectedError(TEXT("outcome=HardError reason=EncounterActivation.RebindPlayerMissing"), EAutomationExpectedErrorFlags::Contains, 1);
+	URPGPlayerMovesSubsystem* Moves = Scope.World->GetSubsystem<URPGPlayerMovesSubsystem>();
+	if (!TestNotNull(TEXT("moves subsystem"), Moves)) return false;
 	Encounter->ResetForTest();
-	TestFalse(TEXT("missing candidate disables boss collision"), Boss->GetActorEnableCollision());
-	TestFalse(TEXT("missing candidate leaves no active binding"), static_cast<bool>(TActorIterator<ARPGEncounterBinding>(Scope.World)));
+	AddExpectedError(TEXT("outcome=HardError reason=EncounterActivation.RebindTimeout"), EAutomationExpectedErrorFlags::Contains, 1);
+	for (int32 Tick = 0; Tick < 19; ++Tick)
+	{
+		Scope.World->Tick(LEVELTICK_All, 0.25f);
+		++GFrameCounter;
+	}
+	FString PendingOutcome, PendingReason;
+	bool bPendingBindingRetained = false;
+	TestTrue(TEXT("pre-timeout snapshot parses"), ReadActivationSnapshot(*Moves, PendingOutcome, PendingReason, bPendingBindingRetained));
+	TestTrue(TEXT("before five seconds, no pawn means the old binding and boss remain active"), bPendingBindingRetained
+		&& Boss->GetActorEnableCollision() && static_cast<bool>(TActorIterator<ARPGEncounterBinding>(Scope.World)));
+	for (int32 Tick = 0; Tick < 3; ++Tick)
+	{
+		Scope.World->Tick(LEVELTICK_All, 0.25f);
+		++GFrameCounter;
+	}
+	FString Outcome, Reason;
+	bool bBindingRetained = true;
+	TestTrue(TEXT("timeout snapshot parses"), ReadActivationSnapshot(*Moves, Outcome, Reason, bBindingRetained));
+	TestTrue(TEXT("a pawn that never arrives times out and releases the selected activation"), Outcome == TEXT("HardError") && Reason == TEXT("EncounterActivation.RebindTimeout")
+		&& !bBindingRetained && !Boss->GetActorEnableCollision() && !static_cast<bool>(TActorIterator<ARPGEncounterBinding>(Scope.World)));
 	Selection->ClearSelectedDefinition();
 	return true;
 }

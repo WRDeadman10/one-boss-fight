@@ -30,6 +30,8 @@
 #include "Pack/RPGPackTrace.h"
 #include "Player/RPGDamageResolver.h"
 #include "Player/RPGLegend.h"
+#include "Player/RPGBossEncounter.h"
+#include "Kismet/GameplayStatics.h"
 #include "Audio/RPGBossMusic.h"
 #include "Player/RPGAttackTracker.h"
 #include "Player/RPGBossHealPunish.h"
@@ -705,6 +707,13 @@ bool FRPGLegendDilationScopeTest::RunTest(const FString& Parameters)
 	TestNearlyEqual(TEXT("end returns the saved value"), Scope.End(), 1.f);
 	TestFalse(TEXT("inactive after the end"), Scope.bActive);
 	TestFalse(TEXT("an inactive scope is never expired"), Scope.Expired(1000.0));
+	FRPGDilationScope PriorityScope;
+	TestTrue(TEXT("parry starts the lower-priority scope"), PriorityScope.Begin(0.30f, 200.0, 0.35, 1.f));
+	TestTrue(TEXT("kill slow motion replaces the applied scale"), PriorityScope.OverrideActive(0.25f, 200.1, 1.2));
+	TestNearlyEqual(TEXT("priority replacement keeps original time restoration target"), PriorityScope.Saved, 1.f);
+	TestNearlyEqual(TEXT("priority replacement applies kill scale"), PriorityScope.Applied, 0.25f);
+	TestEqual(TEXT("priority replacement owns the kill deadline"), PriorityScope.DeadlineReal, 201.3);
+	TestNearlyEqual(TEXT("priority effect restores original time"), PriorityScope.End(), 1.f);
 
 	// 20 random sequences of requests and ends against a world value: after every end the world is back to what it was before the first request.
 	FRandomStream Random(7);
@@ -738,6 +747,27 @@ bool FRPGLegendDilationScopeTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGLegendParrySlowMotionAdmissionTest, "OneBossFight.Legend.ParrySlowMotionAdmission",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGLegendParrySlowMotionAdmissionTest::RunTest(const FString& Parameters)
+{
+	using RPGBossLegendRules::CanRequestParrySlowMotion;
+	const double NoPriorRequest = -1000000.0;
+	TestTrue(TEXT("a successful perfect parry is admitted"), CanRequestParrySlowMotion(RPGParryGrade::EGrade::Perfect, 10.0, NoPriorRequest, 0.5, true, true, false, false, true));
+	TestTrue(TEXT("normal grades can be admitted when their typed policy enables them"), CanRequestParrySlowMotion(RPGParryGrade::EGrade::Good, 10.0, NoPriorRequest, 0.5, true, true, false, false, true));
+	TestFalse(TEXT("a non-parry grade cannot trigger feedback"), CanRequestParrySlowMotion(RPGParryGrade::EGrade::None, 10.0, NoPriorRequest, 0.5, true, true, false, false, true));
+	TestFalse(TEXT("a disabled feedback policy cannot trigger"), CanRequestParrySlowMotion(RPGParryGrade::EGrade::Perfect, 10.0, NoPriorRequest, 0.5, false, true, false, false, true));
+	TestFalse(TEXT("cooldown blocks chained parries"), CanRequestParrySlowMotion(RPGParryGrade::EGrade::Perfect, 10.4, 10.0, 0.5, true, true, false, false, true));
+	TestTrue(TEXT("cooldown expires on its boundary"), CanRequestParrySlowMotion(RPGParryGrade::EGrade::Perfect, 10.5, 10.0, 0.5, true, true, false, false, true));
+	TestFalse(TEXT("rpg.Legend off suppresses the effect"), CanRequestParrySlowMotion(RPGParryGrade::EGrade::Perfect, 10.0, NoPriorRequest, 0.5, true, false, false, false, true));
+	TestFalse(TEXT("an active slow-motion scope such as the kill effect cannot be extended"), CanRequestParrySlowMotion(RPGParryGrade::EGrade::Perfect, 10.0, NoPriorRequest, 0.5, true, true, true, false, true));
+	TestFalse(TEXT("parry slow motion never stacks with hit stop"), CanRequestParrySlowMotion(RPGParryGrade::EGrade::Perfect, 10.0, NoPriorRequest, 0.5, true, true, false, true, true));
+	TestFalse(TEXT("stale encounter generations are refused"), CanRequestParrySlowMotion(RPGParryGrade::EGrade::Perfect, 10.0, NoPriorRequest, 0.5, true, true, false, false, false));
+	TestFalse(TEXT("invalid cooldowns fail closed"), CanRequestParrySlowMotion(RPGParryGrade::EGrade::Perfect, 10.0, NoPriorRequest, 31.0, true, true, false, false, true));
+	return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGLegendDefaultsTest, "OneBossFight.Legend.Defaults",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
 
@@ -748,6 +778,11 @@ bool FRPGLegendDefaultsTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("hit stop dilation is nearly frozen but above zero"), Legend->HitStopDilation > 0.f && Legend->HitStopDilation <= 0.1f);
 	TestEqual(TEXT("slow motion scale 0.25"), Legend->SlowMotionScale, 0.25f);
 	TestEqual(TEXT("slow motion 1.2 s"), Legend->SlowMotionSeconds, 1.2f);
+	TestTrue(TEXT("perfect parry feedback is enabled by the C-903 proposal"), Legend->ParrySlowMotion.bPerfectEnabled);
+	TestEqual(TEXT("perfect parry proposal scale is 0.30"), Legend->ParrySlowMotion.PerfectScale, 0.30f);
+	TestEqual(TEXT("perfect parry proposal duration is 0.35 real seconds"), Legend->ParrySlowMotion.PerfectSeconds, 0.35f);
+	TestFalse(TEXT("normal parry feedback stays off pending owner tuning"), Legend->ParrySlowMotion.bNormalEnabled);
+	TestEqual(TEXT("parry feedback cooldown is 0.60 real seconds"), Legend->ParrySlowMotion.CooldownSeconds, 0.60f);
 	TestTrue(TEXT("no hit stop on a lethal riposte"), Legend->bSkipHitStopOnLethal);
 	// A shake is applied after the camera spring arm (34 cm probe): its location amplitude stays far below it.
 	TestTrue(TEXT("slam location amplitude under 10 cm"), Legend->Slam.LocationAmplitude.GetMax() <= 10.0);
@@ -758,6 +793,56 @@ bool FRPGLegendDefaultsTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("crossfade is above zero"), Music->CrossfadeSeconds > 0.f);
 	TestTrue(TEXT("Phase 2 plays quieter than Phase 1 (it measures louder)"), Music->PhaseTwoVolume < Music->Volume);
 	TestTrue(TEXT("the victory fade is shorter than the 4 s fade (the pack removes the boss about 3.5 s after death)"), Music->VictoryFadeOutSeconds < Music->FadeOutSeconds);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGLegendParrySlowMotionWorldTest, "OneBossFight.Legend.ParrySlowMotionWorld",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGLegendParrySlowMotionWorldTest::RunTest(const FString& Parameters)
+{
+	RPGTests::FScopedTestWorld Scope;
+	UWorld* World = Scope.World;
+	AActor* Boss = World ? World->SpawnActor<AActor>() : nullptr;
+	AActor* Player = World ? World->SpawnActor<AActor>() : nullptr;
+	if (!TestNotNull(TEXT("test boss actor"), Boss) || !TestNotNull(TEXT("test player actor"), Player)) { return false; }
+	URPGBossEncounter* Encounter = NewObject<URPGBossEncounter>(Boss);
+	URPGBossLegend* Legend = NewObject<URPGBossLegend>(Boss);
+	if (!TestNotNull(TEXT("encounter component"), Encounter) || !TestNotNull(TEXT("legend component"), Legend)) { return false; }
+	Boss->AddInstanceComponent(Encounter);
+	Boss->AddInstanceComponent(Legend);
+	Encounter->SeedLifecycleStateForTest(1, 0);
+	Encounter->RegisterComponent();
+	Legend->RegisterComponent();
+	static_cast<UActorComponent*>(Legend)->TickComponent(0.f, LEVELTICK_All, &Legend->PrimaryComponentTick); // lead fix (C-910): TickComponent is protected in URPGBossLegend, public in UActorComponent // record generation before the first event
+	URPGLegendSubsystem* Time = URPGLegendSubsystem::Get(Boss);
+	if (!TestNotNull(TEXT("world legend subsystem"), Time)) { return false; }
+	IConsoleVariable* LegendSwitch = IConsoleManager::Get().FindConsoleVariable(TEXT("rpg.Legend"));
+	if (!TestNotNull(TEXT("legend console switch"), LegendSwitch)) { return false; }
+	const int32 PreviousSwitch = LegendSwitch->GetInt();
+	LegendSwitch->Set(1, ECVF_SetByCode);
+	const float OriginalDilation = UGameplayStatics::GetGlobalTimeDilation(World);
+
+	TestTrue(TEXT("a confirmed perfect parry starts its world effect"), Legend->HandlePlayerParrySlowMotion(RPGParryGrade::EGrade::Perfect));
+	TestTrue(TEXT("the parry request activates the existing time subsystem"), Time->IsSlowMotionActive());
+	TestNearlyEqual(TEXT("perfect parry applies its typed scale"), UGameplayStatics::GetGlobalTimeDilation(World), 0.30f, 0.01f);
+	TestFalse(TEXT("an immediate chained parry does not extend the active effect"), Legend->HandlePlayerParrySlowMotion(RPGParryGrade::EGrade::Perfect));
+	TestEqual(TEXT("one parry event starts one effect"), Legend->GetParrySlowMotionCount(), 1);
+	TestTrue(TEXT("kill motion replaces a running parry scope"), Time->RequestSlowMotion(0.25f, 1.2f, Encounter, Encounter->GetParticipantGeneration(), true));
+	TestNearlyEqual(TEXT("kill priority applies its own scale"), UGameplayStatics::GetGlobalTimeDilation(World), 0.25f, 0.01f);
+	Encounter->SeedLifecycleStateForTest(2, 1);
+	static_cast<UActorComponent*>(Legend)->TickComponent(0.f, LEVELTICK_All, &Legend->PrimaryComponentTick); // lead fix (C-910): TickComponent is protected in URPGBossLegend, public in UActorComponent
+	TestFalse(TEXT("generation change cancels time effects"), Time->IsSlowMotionActive());
+	TestNearlyEqual(TEXT("generation cancellation restores the pre-effect world dilation"), UGameplayStatics::GetGlobalTimeDilation(World), OriginalDilation, 0.01f);
+
+	LegendSwitch->Set(0, ECVF_SetByCode);
+	TestFalse(TEXT("rpg.Legend 0 suppresses parry motion"), Legend->HandlePlayerParrySlowMotion(RPGParryGrade::EGrade::Perfect));
+	TestEqual(TEXT("suppressed event does not count as an applied effect"), Legend->GetParrySlowMotionCount(), 1);
+	LegendSwitch->Set(1, ECVF_SetByCode);
+	TestTrue(TEXT("hit-stop setup is accepted"), Time->RequestHitStop(Boss, Player, 0.08f, 0.05f, Encounter, Encounter->GetParticipantGeneration()));
+	TestFalse(TEXT("parry motion cannot stack with hit stop"), Legend->HandlePlayerParrySlowMotion(RPGParryGrade::EGrade::Perfect));
+	Time->CancelAll(TEXT("automation cleanup"));
+	LegendSwitch->Set(PreviousSwitch, ECVF_SetByCode);
 	return true;
 }
 

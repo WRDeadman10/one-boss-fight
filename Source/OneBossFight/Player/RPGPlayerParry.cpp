@@ -2,11 +2,13 @@
 
 #include "Player/RPGPlayerParry.h"
 #include "EnhancedInputComponent.h"
+#include "EngineUtils.h"
 #include "GameFramework/Pawn.h"
 #include "Engine/World.h"
 #include "GameplayTagContainer.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGParryCostRules.h"
+#include "Player/RPGLegend.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRPGParry, Log, All);
 
@@ -140,7 +142,20 @@ void URPGPlayerParry::NotifyParried(AActor* Actor)
 	if (URPGPlayerParry* Parry = Actor ? Actor->FindComponentByClass<URPGPlayerParry>() : nullptr)
 	{
 		Parry->LastGrade = Parry->GradeNow();
+		++Parry->ParriedCount;
 		if (Parry->bCostPending) Parry->bPendingParried = true;
+		if (UWorld* World = Parry->GetWorld())
+		{
+			for (TActorIterator<AActor> It(World); It; ++It)
+			{
+				if (URPGBossLegend* Legend = It->FindComponentByClass<URPGBossLegend>())
+				{
+					const URPGCombatParticipant* Participant = Actor->FindComponentByClass<URPGCombatParticipant>();
+					const TSharedPtr<const FRPGParticipantConfig> PlayerConfig = Participant ? Participant->Config() : nullptr;
+					Legend->HandlePlayerParrySlowMotion(Parry->LastGrade, PlayerConfig.IsValid() ? &PlayerConfig->ParrySlowMotion : nullptr);
+				}
+			}
+		}
 	}
 }
 

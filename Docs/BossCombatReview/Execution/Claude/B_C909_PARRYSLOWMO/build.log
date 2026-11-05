@@ -1,0 +1,102 @@
+﻿Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" OneBossFightEditor Win64 Development -Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject -WaitMutex -NoHotReload
+Log file: C:\Users\Rushit Vaghela\AppData\Local\UnrealBuildTool\Log.txt
+Using 'git status' to determine working set for adaptive non-unity build (C:\UnrealProject\OneBossFight).
+Parsing headers for OneBossFightEditor
+  Running Internal UnrealHeaderTool C:\UnrealProject\OneBossFight\OneBossFight.uproject C:\UnrealProject\OneBossFight\Intermediate\Build\Win64\OneBossFightEditor\Development\OneBossFightEditor.uhtmanifest -WarningsAsErrors -installed
+Total of 1 written
+Reflection code generated for OneBossFightEditor in 1.5620877 seconds
+Building OneBossFightEditor...
+Using Visual Studio 2022 14.44.35214 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+Warning: Visual Studio 2022 compiler is not a preferred version
+[Adaptive Build] Excluded from OneBossFight unity file: RPGBossHydrationPreflight.cpp, RPGEncounterBinding.cpp, RPGLegend.cpp, RPGPlayerMovesSubsystem.cpp, RPGPlayerParry.cpp, RPGAutomationTests.cpp, RPGBossHydrationPreflightTests.cpp, RPGBossStartupActivationTests.cpp, RPGEncounterBindingTests.cpp, RPGSourceTestGapTests.cpp
+Determining max actions to execute in parallel (8 physical cores, 16 logical cores)
+  Executing up to 8 processes, one per physical core
+  Requested 1.5 GB memory per action, 9.58 GB available: limiting max parallel actions to 6
+Using Unreal Build Accelerator local executor to run 77 action(s)
+  Storage capacity 40Gb
+---- Starting trace: 261105_203441 ----
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+------ Building 77 action(s) started ------
+[1/77] Compile [x64] RPGBossAttackTrackerAdapters.cpp
+[2/77] Compile [x64] RPGBossActivation.cpp
+[3/77] Compile [x64] RPGBossAttackTrackerAdaptersTests.cpp
+[4/77] Compile [x64] RPGBenchmarkRunner.cpp
+[5/77] Compile [x64] RPGBossBleedAdapters.cpp
+[6/77] Compile [x64] RPGBossActivationTests.cpp
+[7/77] Compile [x64] RPGBossActivationWorldTests.cpp
+[8/77] Compile [x64] RPGAutomationTests.cpp
+[9/77] Compile [x64] RPGBossCloseClipSwapAdapters.cpp
+[10/77] Compile [x64] RPGBossAuthoredDraftPreflightTests.cpp
+[11/77] Compile [x64] RPGBossDeathAdapters.cpp
+[12/77] Compile [x64] RPGBossDormantWakeAdapters.cpp
+[13/77] Compile [x64] RPGBossCloseClipSwapAdaptersTests.cpp
+[14/77] Compile [x64] RPGBossEncounterClusterAdapters.cpp
+[15/77] Compile [x64] RPGBossDormantWakeAdaptersTests.cpp
+[16/77] Compile [x64] RPGBossEncounterDefinition.cpp
+[17/77] Compile [x64] RPGBossBleedAdaptersTests.cpp
+[18/77] Compile [x64] RPGBossEncounterDefinition.gen.cpp
+[19/77] Compile [x64] RPGBossDeathAdaptersTests.cpp
+[20/77] Compile [x64] RPGBossEncounterClusterAdaptersTests.cpp
+[21/77] Compile [x64] RPGBossEncounterPolicyAdapters.cpp
+[22/77] Compile [x64] RPGBossHealPunishAdapters.cpp
+[23/77] Compile [x64] RPGBossEncounterPolicyAdaptersTests.cpp
+[24/77] Compile [x64] RPGBossEncounter.cpp
+[25/77] Compile [x64] RPGBossLookAdapters.cpp
+[26/77] Compile [x64] RPGBossHydrationPreparation.cpp
+[27/77] Compile [x64] RPGBossHealPunishAdaptersTests.cpp
+[28/77] Compile [x64] RPGBossHydrationPreflight.cpp
+[29/77] Compile [x64] RPGBossLowSweepAdapters.cpp
+[30/77] Compile [x64] RPGBossHydrationPreflightTests.cpp
+[31/77] Compile [x64] RPGBossLookAdaptersTests.cpp
+[32/77] Compile [x64] RPGBossHydrationPreparationTests.cpp
+[33/77] Compile [x64] RPGBossLowSweepAdaptersTests.cpp
+[34/77] Compile [x64] RPGBossPhaseAdapters.cpp
+[35/77] Compile [x64] RPGBossMusic.cpp
+[36/77] Compile [x64] RPGBossPhaseFlowAdapters.cpp
+[37/77] Compile [x64] RPGBossPhasesClusterAdapters.cpp
+[38/77] Compile [x64] RPGBossPhaseAdaptersTests.cpp
+[39/77] Compile [x64] RPGBossPhaseFlowAdaptersTests.cpp
+[40/77] Compile [x64] RPGBossPreparationRegistry.cpp
+[41/77] Compile [x64] RPGBossPhasesClusterAdaptersTests.cpp
+[42/77] Compile [x64] RPGBossShockwaveAdapters.cpp
+[43/77] Compile [x64] RPGBossStaggerClusterAdapters.cpp
+[44/77] Compile [x64] RPGBossProductionPreflightTests.cpp
+[45/77] Compile [x64] RPGBossPreparationRegistryTests.cpp
+[46/77] Compile [x64] RPGBossShockwaveAdaptersTests.cpp
+[47/77] Compile [x64] RPGBossStaggerPolicyAdapters.cpp
+[48/77] Compile [x64] RPGBossProductionPreparationTests.cpp
+[49/77] Compile [x64] RPGBossStatsAdapters.cpp
+[50/77] Compile [x64] RPGBossStaggerPolicyAdaptersTests.cpp
+[51/77] Compile [x64] RPGBossStatsAdaptersTests.cpp
+[52/77] Compile [x64] RPGBossStaggerClusterAdaptersTests.cpp
+[53/77] Compile [x64] RPGBossWorldPreparation.cpp
+[54/77] Compile [x64] RPGBossWorldInputCompiler.cpp
+[55/77] Compile [x64] RPGBossStartupActivationTests.cpp
+[56/77] Compile [x64] RPGBuildLoadout.cpp
+[57/77] Compile [x64] RPGBossWorldInputCompilerTests.cpp
+[58/77] Compile [x64] RPGBossWorldPreparationTests.cpp
+[59/77] Compile [x64] RPGEncounterBinding.cpp
+[60/77] Compile [x64] RPGEncounterBinding.gen.cpp
+[61/77] Compile [x64] RPGEncounterBindingTests.cpp
+[62/77] Compile [x64] RPGEncounterSelectionSubsystem.gen.cpp
+[63/77] Compile [x64] RPGBuildSelect.cpp
+C:\UnrealProject\OneBossFight\Source\OneBossFight\UI\RPGBuildSelect.cpp(101): warning C4996: 'UUserWidget::bIsFocusable': Direct access to bIsFocusable is deprecated. Please use the getter. Note that this property is only set at construction and is not modifiable at runtime. Please update your code to the new API before upgrading to the next release, otherwise your project will no longer compile.
+[64/77] Compile [x64] RPGEncounterSelectionSubsystem.cpp
+[65/77] Compile [x64] RPGLegend.gen.cpp
+[66/77] Compile [x64] RPGPlayerMovesAttachWitnessTests.cpp
+[67/77] Compile [x64] RPGFogGate.cpp
+[68/77] Compile [x64] RPGPlayerMovesSubsystem.gen.cpp
+[69/77] Compile [x64] RPGLegend.cpp
+[70/77] Compile [x64] RPGHitIntake.cpp
+[71/77] Compile [x64] RPGStartupChronology.cpp
+[72/77] Compile [x64] RPGRiposteInput.cpp
+[73/77] Compile [x64] RPGPlayerParry.cpp
+[74/77] Compile [x64] RPGPlayerMovesSubsystem.cpp
+[75/77] Link [x64] UnrealEditor-OneBossFight.lib
+[76/77] Link [x64] UnrealEditor-OneBossFight.dll
+   Creating object C:\UnrealProject\OneBossFight\Binaries\Win64\UnrealEditor-OneBossFight.exp
+[77/77] WriteMetadata OneBossFightEditor.target (UBA disabled)
+Trace file written to C:/Users/Rushit Vaghela/AppData/Local/UnrealBuildTool/Log.uba with size 20.7kb
+Total time in Unreal Build Accelerator local executor: 48.13 seconds
+Total execution time: 50.46 seconds

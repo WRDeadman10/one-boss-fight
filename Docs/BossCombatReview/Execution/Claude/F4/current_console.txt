@@ -1,0 +1,1 @@
+rpg.BossProofPlayerGuard 2;rpg.BossProofPlayerGuardSeconds 15;rpg.BossProofPlayerGuardPhaseSeconds 0.20

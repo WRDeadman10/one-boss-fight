@@ -96,7 +96,7 @@ namespace RPGBossHydrationPreflight
 		/** The number of plans of one boss-core member, each exactly once. */
 		constexpr int32 BossCorePlanCount = 19;
 
-		/** The thirteen typed plans followed by six configuration-independent legacy parity consumers, in deterministic relative plan order: Stagger, Phases
+		/** The fourteen typed plans followed by five configuration-independent legacy parity consumers, in deterministic relative plan order: Stagger, Phases
 		 *  (with the explicit selected id, captured by value), Encounter, DormantWake, Posture, Bleed, LowSweep, Shockwave, HealPunish, Look, CloseClipSwap, Death, AttackTracker. The order is a plan order, not an observed registration or BeginPlay chronology. Built, never run. */
 		TArray<FRPGComponentPlan> MakeBossCorePlans(FName SelectedPhaseId)
 		{
@@ -148,7 +148,23 @@ namespace RPGBossHydrationPreflight
 			});
 			AddNative(URPGTraceGuard::StaticClass(), TEXT("RPGTraceGuard"), [](UActorComponent& Component, const FRPGParticipantConfig&, FString& Error) { return RequireNativeComponent<URPGTraceGuard>(Component, Error) != nullptr; });
 			AddNative(URPGBossHud::StaticClass(), TEXT("RPGBossHud"), [](UActorComponent& Component, const FRPGParticipantConfig&, FString& Error) { return RequireNativeComponent<URPGBossHud>(Component, Error) != nullptr; });
-			AddNative(URPGBossLegend::StaticClass(), TEXT("RPGBossLegend"), [](UActorComponent& Component, const FRPGParticipantConfig&, FString& Error) { return RequireNativeComponent<URPGBossLegend>(Component, Error) != nullptr; });
+			FRPGComponentPlan LegendPlan;
+			LegendPlan.Class = URPGBossLegend::StaticClass();
+			LegendPlan.InstanceName = TEXT("RPGBossLegend");
+			LegendPlan.bConfigurationIndependent = true; // additive parry policy has native defaults when an older definition omits it
+			LegendPlan.OptionalFields = {
+				RPGParrySlowMotionConfigRules::FieldPerfectEnabled, RPGParrySlowMotionConfigRules::FieldPerfectScale,
+				RPGParrySlowMotionConfigRules::FieldPerfectSeconds, RPGParrySlowMotionConfigRules::FieldNormalEnabled,
+				RPGParrySlowMotionConfigRules::FieldNormalScale, RPGParrySlowMotionConfigRules::FieldNormalSeconds,
+				RPGParrySlowMotionConfigRules::FieldCooldownSeconds};
+			LegendPlan.Configure = [](UActorComponent& Component, const FRPGParticipantConfig& Config, FString& Error)
+			{
+				URPGBossLegend* Legend = RequireNativeComponent<URPGBossLegend>(Component, Error);
+				if (!Legend) { return false; }
+				Legend->ParrySlowMotion = Config.ParrySlowMotion;
+				return true;
+			};
+			Plans.Add(MoveTemp(LegendPlan));
 			AddNative(URPGDamageResolver::StaticClass(), TEXT("RPGDamageResolver"), [](UActorComponent& Component, const FRPGParticipantConfig&, FString& Error) { return RequireNativeComponent<URPGDamageResolver>(Component, Error) != nullptr; });
 			return Plans;
 		}
@@ -209,6 +225,17 @@ namespace RPGBossHydrationPreflight
 					else if (Paths.Contains(Path))
 					{
 						Problems.Add(FString::Printf(TEXT("plan #%d names the required path %s twice"), Index, *Path));
+					}
+					else
+					{
+						Paths.Add(Path);
+					}
+				}
+				for (const FString& Path : Plan.OptionalFields)
+				{
+					if (Path.IsEmpty() || Paths.Contains(Path))
+					{
+						Problems.Add(FString::Printf(TEXT("plan #%d has an empty, repeated, or required optional path %s"), Index, *Path));
 					}
 					else
 					{
@@ -365,7 +392,7 @@ namespace RPGBossHydrationPreflight
 					FailMember(Result, TEXT("Preflight.DuplicateActor"), Label, TEXT("the actor appears in more than one request"));
 				}
 				SeenActors.Add(Actor);
-				// An already attached or configured consumer is never adopted silently: the participant component for every member, the six new native and thirteen typed boss-core consumers for a boss-core member (a target-only member gets no boss plan and is not checked for them).
+				// An already attached or configured consumer is never adopted silently: the participant component for every member, the five configuration-independent and fourteen typed boss-core consumers for a boss-core member (a target-only member gets no boss plan and is not checked for them).
 				const TArray<UClass*> Managed = ManagedCoreConsumerClasses();
 				for (int32 ClassIndex = 0; ClassIndex < Managed.Num(); ++ClassIndex)
 				{
@@ -460,8 +487,34 @@ namespace RPGBossHydrationPreflight
 				{
 					FailMember(Result, TEXT("Preflight.AttackTrackerRejected"), Label, Error);
 				}
-				// The plans of this member are built here only to be CHECKED (class, instance name, callback bound, no duplicate) and for the union of the typed inputs they read: 115 unique paths, the selected-phase
-				// paths from the explicit selected id. Membership only; a Value text is never authority. No callback is invoked.
+				const FRPGParrySlowMotionConfig& Parry = Config->ParrySlowMotion;
+				FString ParryError;
+				if (!RPGParrySlowMotionConfigRules::Validate(Parry, ParryError))
+				{
+					FailMember(Result, TEXT("Preflight.ParrySlowMotionRejected"), Label, ParryError);
+				}
+				const TCHAR* ParryPaths[] = {RPGParrySlowMotionConfigRules::FieldPerfectEnabled, RPGParrySlowMotionConfigRules::FieldPerfectScale,
+					RPGParrySlowMotionConfigRules::FieldPerfectSeconds, RPGParrySlowMotionConfigRules::FieldNormalEnabled,
+					RPGParrySlowMotionConfigRules::FieldNormalScale, RPGParrySlowMotionConfigRules::FieldNormalSeconds,
+					RPGParrySlowMotionConfigRules::FieldCooldownSeconds};
+				bool bMissingParryProvenance = false;
+				bool bHasAnyParryProvenance = false;
+				for (const TCHAR* Path : ParryPaths)
+				{
+					const bool bPresent = Config->Fields.ContainsByPredicate([Path](const FRPGParityField& Field) { return Field.FieldPath == Path; });
+					bHasAnyParryProvenance |= bPresent;
+					bMissingParryProvenance |= !bPresent;
+				}
+				if (bHasAnyParryProvenance && bMissingParryProvenance)
+				{
+					FailMember(Result, TEXT("Preflight.ParrySlowMotionProvenanceIncomplete"), Label, TEXT("optional policy fields must be supplied as a complete typed group"));
+				}
+				if (bMissingParryProvenance && !RPGParrySlowMotionConfigRules::IsNativeProposal(Parry))
+				{
+					FailMember(Result, TEXT("Preflight.ParrySlowMotionProvenanceMissing"), Label, TEXT("non-default parry slow-motion config requires all seven typed source fields"));
+				}
+				// The plans of this member are built here only to be CHECKED (class, instance name, callback bound, no duplicate) and for the union of 115 required paths plus seven separately counted optional parry paths, the selected-phase
+				// paths from the explicit selected id. The seven parry-policy paths are optional typed inputs. Membership only; a Value text is never authority. No callback is invoked.
 				const TArray<FRPGComponentPlan> MemberPlans = MakeBossCorePlans(Request.SelectedPhaseId);
 				for (const FString& Problem : CheckPlans(MemberPlans))
 				{

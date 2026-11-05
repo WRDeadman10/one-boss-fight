@@ -37,7 +37,8 @@ ALLOWED = {
     "pie_remains": 600.0,
     "pie_soak": 900.0,
     "pie_legend": 900.0,
-    "pie_selection_refusal": 600.0,  # lead (C-872): single-arm G2 recovery run through the same preconditions
+    "pie_selection_refusal": 600.0,
+    "pie_memory_soak": 1200.0,  # lead (C-905): U-C05 single-arm soak, 20 resets  # lead (C-872): single-arm G2 recovery run through the same preconditions
 }
 log = lambda message: unreal.log("[A5ParityRunner] " + message)
 driver_name = os.environ.get("A5_PARITY_DRIVER", "").strip()

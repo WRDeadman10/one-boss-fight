@@ -1,0 +1,7 @@
+{
+    "timed_out":  false,
+    "seconds":  300,
+    "task":  "C915-memory-soak-selected",
+    "raw_sha256":  "dded8f6cc0ee7c6a96c75a0f072aa73c99386db81844c8af519c558ea0044a5d",
+    "exit_code":  0
+}

@@ -43,6 +43,62 @@ struct FRPGEncounterPolicyConfig
 	UPROPERTY(EditAnywhere) bool bResetOnPlayerRespawn = true;
 };
 
+/** Tunable time feedback for successful parries. Defaults are the C-903 design proposal, not measured gameplay values. */
+USTRUCT(BlueprintType)
+struct FRPGParrySlowMotionConfig
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere) bool bPerfectEnabled = true;
+	UPROPERTY(EditAnywhere) float PerfectScale = 0.30f;
+	UPROPERTY(EditAnywhere) float PerfectSeconds = 0.35f;
+	UPROPERTY(EditAnywhere) bool bNormalEnabled = false;
+	UPROPERTY(EditAnywhere) float NormalScale = 0.50f;
+	UPROPERTY(EditAnywhere) float NormalSeconds = 0.20f;
+	UPROPERTY(EditAnywhere) float CooldownSeconds = 0.60f;
+};
+
+namespace RPGParrySlowMotionConfigRules
+{
+	inline constexpr const TCHAR* FieldPerfectEnabled = TEXT("ParrySlowMotion.bPerfectEnabled");
+	inline constexpr const TCHAR* FieldPerfectScale = TEXT("ParrySlowMotion.PerfectScale");
+	inline constexpr const TCHAR* FieldPerfectSeconds = TEXT("ParrySlowMotion.PerfectSeconds");
+	inline constexpr const TCHAR* FieldNormalEnabled = TEXT("ParrySlowMotion.bNormalEnabled");
+	inline constexpr const TCHAR* FieldNormalScale = TEXT("ParrySlowMotion.NormalScale");
+	inline constexpr const TCHAR* FieldNormalSeconds = TEXT("ParrySlowMotion.NormalSeconds");
+	inline constexpr const TCHAR* FieldCooldownSeconds = TEXT("ParrySlowMotion.CooldownSeconds");
+	inline bool IsNativeProposal(const FRPGParrySlowMotionConfig& Config)
+	{
+		return Config.bPerfectEnabled && Config.PerfectScale == 0.30f && Config.PerfectSeconds == 0.35f
+			&& !Config.bNormalEnabled && Config.NormalScale == 0.50f && Config.NormalSeconds == 0.20f
+			&& Config.CooldownSeconds == 0.60f;
+	}
+	inline bool Validate(const FRPGParrySlowMotionConfig& Config, FString& OutError)
+	{
+		if (!FMath::IsFinite(Config.PerfectScale) || Config.PerfectScale < 0.05f || Config.PerfectScale > 1.0f || (Config.bPerfectEnabled && Config.PerfectScale >= 1.0f))
+		{
+			OutError = TEXT("ParrySlowMotion.InvalidPerfectScale"); return false;
+		}
+		if (!FMath::IsFinite(Config.PerfectSeconds) || Config.PerfectSeconds <= 0.f || Config.PerfectSeconds > 5.f)
+		{
+			OutError = TEXT("ParrySlowMotion.InvalidPerfectDuration"); return false;
+		}
+		if (!FMath::IsFinite(Config.NormalScale) || Config.NormalScale < 0.05f || Config.NormalScale > 1.0f || (Config.bNormalEnabled && Config.NormalScale >= 1.0f))
+		{
+			OutError = TEXT("ParrySlowMotion.InvalidNormalScale"); return false;
+		}
+		if (!FMath::IsFinite(Config.NormalSeconds) || Config.NormalSeconds <= 0.f || Config.NormalSeconds > 5.f)
+		{
+			OutError = TEXT("ParrySlowMotion.InvalidNormalDuration"); return false;
+		}
+		if (!FMath::IsFinite(Config.CooldownSeconds) || Config.CooldownSeconds < 0.f || Config.CooldownSeconds > 30.f)
+		{
+			OutError = TEXT("ParrySlowMotion.InvalidCooldown"); return false;
+		}
+		OutError.Reset();
+		return true;
+	}
+}
+
 /** Stagger and riposte scalar policy of the boss (URPGBossStagger): the typed authoring record, thirteen floats and one bool with the names of the native component. The defaults are defaults of this NEW asset field
  *  (old schema 1 definitions receive them additively); they match the native declarations, are not proof of any serialized or live actor value and are never a fallback for an invalid value. The domains are in
  *  RPGBossStaggerPolicyAdapters (the native ClampMin and ClampMax metadata is editor metadata and is not copied here as a runtime rule). Clips, classes, effects and mode toggles are NOT part of this record. */
@@ -300,6 +356,7 @@ public:
 	UPROPERTY(EditAnywhere) FName PresentationId;
 	UPROPERTY(EditAnywhere) FRPGBossStatsConfig Stats;
 	UPROPERTY(EditAnywhere) FRPGEncounterPolicyConfig EncounterPolicy;
+	UPROPERTY(EditAnywhere) FRPGParrySlowMotionConfig ParrySlowMotion;
 	UPROPERTY(EditAnywhere) FRPGStaggerPolicyConfig StaggerPolicy;
 	UPROPERTY(EditAnywhere) FRPGPhaseFlowConfig PhaseFlow;
 	UPROPERTY(EditAnywhere) FRPGFireballConfig Fireball;
@@ -349,6 +406,7 @@ struct FRPGParticipantConfig
 	int32 Schema = 1;
 	FRPGBossStatsConfig Stats;
 	FRPGEncounterPolicyConfig EncounterPolicy;
+	FRPGParrySlowMotionConfig ParrySlowMotion;
 	FRPGStaggerPolicyConfig StaggerPolicy;
 	FRPGPhaseFlowConfig PhaseFlow;
 	FRPGFireballConfig Fireball;
@@ -427,7 +485,9 @@ struct FRPGComponentPlan
 	UClass* Class = nullptr;
 	FName InstanceName;
 	TArray<FString> RequiredFields;
-	/** True only for lifecycle-bundled components configured entirely from maintained native legacy defaults/assets. */
+	/** Optional typed inputs: these may be absent from older authored definitions and use the config's additive native defaults. */
+	TArray<FString> OptionalFields;
+	/** Allows an empty RequiredFields list when the plan uses native defaults or explicitly optional typed inputs. */
 	bool bConfigurationIndependent = false;
 	TFunction<bool(UActorComponent&, const FRPGParticipantConfig&, FString&)> Configure;
 };

@@ -93,6 +93,11 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
 	{
 		Result.Fail(AttackTrackerError);
 	}
+	FString ParrySlowMotionError;
+	if (!RPGParrySlowMotionConfigRules::Validate(D.ParrySlowMotion, ParrySlowMotionError))
+	{
+		Result.Fail(ParrySlowMotionError);
+	}
 	TSet<FName> PhaseIds;
 	for (const FRPGPhaseConfig& Phase : D.Phases)
 	{
@@ -122,11 +127,32 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
 		RPGBossAttackTrackerAdapters::FieldAttacks, RPGBossAttackTrackerAdapters::FieldEnabled,
 		RPGBossAttackTrackerAdapters::FieldVetoIllegalStarts, RPGBossAttackTrackerAdapters::FieldBranchRange,
 		RPGBossAttackTrackerAdapters::FieldBranchConeDegrees};
+	const TCHAR* ParrySlowMotionFieldPaths[] = {
+		RPGParrySlowMotionConfigRules::FieldPerfectEnabled, RPGParrySlowMotionConfigRules::FieldPerfectScale,
+		RPGParrySlowMotionConfigRules::FieldPerfectSeconds, RPGParrySlowMotionConfigRules::FieldNormalEnabled,
+		RPGParrySlowMotionConfigRules::FieldNormalScale, RPGParrySlowMotionConfigRules::FieldNormalSeconds,
+		RPGParrySlowMotionConfigRules::FieldCooldownSeconds};
 	bool bMissingAttackTrackerProvenance = false;
 	for (const TCHAR* Path : AttackTrackerFieldPaths) { bMissingAttackTrackerProvenance |= !Fields.Contains(FString(Path)); }
 	if (bNeedsAttackTracker && bMissingAttackTrackerProvenance && !RPGBossAttackTrackerAdapters::IsNativeDefault(D.AttackTracker))
 	{
 		Result.Fail(TEXT("AttackTracker.ProvenanceMissing: non-default tracker config requires all five typed source fields"));
+	}
+	bool bMissingParrySlowMotionProvenance = false;
+	bool bHasAnyParrySlowMotionProvenance = false;
+	for (const TCHAR* Path : ParrySlowMotionFieldPaths)
+	{
+		const bool bPresent = Fields.Contains(FString(Path));
+		bHasAnyParrySlowMotionProvenance |= bPresent;
+		bMissingParrySlowMotionProvenance |= !bPresent;
+	}
+	if (bHasAnyParrySlowMotionProvenance && bMissingParrySlowMotionProvenance)
+	{
+		Result.Fail(TEXT("ParrySlowMotion.ProvenanceIncomplete: optional policy fields must be supplied as a complete typed group"));
+	}
+	if (bMissingParrySlowMotionProvenance && !RPGParrySlowMotionConfigRules::IsNativeProposal(D.ParrySlowMotion))
+	{
+		Result.Fail(TEXT("ParrySlowMotion.ProvenanceMissing: non-default parry feedback requires all seven typed source fields"));
 	}
 	if (Fields.IsEmpty()) { Result.Fail(TEXT("field manifest required")); }
 	if (!Result.IsReady()) { return Result; }
@@ -135,6 +161,7 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
 	Value->Schema = D.Schema; Value->StableManifestHash = Hash;
 	Value->Stats = D.Stats; Value->Phases = D.Phases; Value->Fields = D.Fields;
 	Value->EncounterPolicy = D.EncounterPolicy;
+	Value->ParrySlowMotion = D.ParrySlowMotion;
 	Value->StaggerPolicy = D.StaggerPolicy;
 	Value->PhaseFlow = D.PhaseFlow;
 	Value->Fireball = D.Fireball;
@@ -166,6 +193,25 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
 			NativeDefaultMembership.FirstRead = TEXT("RPGAttackTracker typed config adapter");
 			NativeDefaultMembership.Witness = TEXT("native default effective value; draft serialization presence is not inferred");
 			Value->Fields.Add(MoveTemp(NativeDefaultMembership));
+		}
+	}
+	if (RPGParrySlowMotionConfigRules::IsNativeProposal(D.ParrySlowMotion))
+	{
+		for (const TCHAR* Path : ParrySlowMotionFieldPaths)
+		{
+			if (Fields.Contains(FString(Path))) { continue; }
+			FRPGParityField NativeProposalMembership;
+			NativeProposalMembership.FieldPath = Path;
+			NativeProposalMembership.Type = TEXT("native-default-membership");
+			NativeProposalMembership.Value = TEXT("C-903 parry slow-motion proposal default; serialized presence is not inferred");
+			NativeProposalMembership.SourcePath = TEXT("FRPGParrySlowMotionConfig defaults");
+			NativeProposalMembership.SourceSite = TEXT("typed config declaration; proposal values are unmeasured");
+			NativeProposalMembership.Origin = TEXT("native proposal default");
+			NativeProposalMembership.Precedence = TEXT("typed config default");
+			NativeProposalMembership.Destination = TEXT("URPGBossLegend.ParrySlowMotion");
+			NativeProposalMembership.FirstRead = TEXT("RPGBossHydrationPreflight Legend plan");
+			NativeProposalMembership.Witness = TEXT("proposal default carried by the typed participant config");
+			Value->Fields.Add(MoveTemp(NativeProposalMembership));
 		}
 	}
 	Value->Content = MoveTemp(Content); Out = Value;

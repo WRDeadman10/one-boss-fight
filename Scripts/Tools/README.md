@@ -7,6 +7,7 @@ File outputs use the shared `atomic_io.py` helper where replacement or no-overwr
 | Script | Purpose |
 |---|---|
 | `audit_a5_driver_registration.py` | Compare all receipt-registered A5 drivers with RunDrivers and fresh-process runner registration. |
+| `audit_source_test_coverage.py` | Heuristic source-to-native-test inventory for Queue U; reports primary types without a direct automation source reference and flags helper files needing manual mapping. |
 | `audit_editor_map_loads.py` | Find literal known-map paths passed to `load_asset` in Editor scripts. |
 | `audit_editor_save_safety.py` | Report explicit first-save lines and earlier assertion/guard markers in Editor writers. |
 | `round4_benchmark_report.py` | Inventory Round 4 evidence, compare route identity, or validate Round 5 DLSS mode evidence, report per-mode avg FPS/p99/GPU p99 and deltas vs TSR, and detect >5% repeated-baseline drift. |
@@ -26,6 +27,7 @@ File outputs use the shared `atomic_io.py` helper where replacement or no-overwr
 | `check_move_card_ids.py` | Duplicate MoveId values across JSON card exports. |
 | `check_shipping_guards.py` | Actual console variable registrations outside Shipping guards. |
 | `check_test_plan_ids.py` | Duplicate/out-of-order BUILD rows. |
+| `CheckDocLineCounts.ps1` | Ensure changed tracked Markdown documents have not shrunk relative to HEAD; used by `Scripts/Gate.ps1`. |
 | `compare_framework_tokens.py` | FrameworkProof token count delta between logs. |
 | `compare_parry_runs.py` | Compare two parry proof runs without timestamps. |
 | `diff_manifests.py` | Added/removed/changed paths between SHA-256 manifests. |
@@ -38,6 +40,9 @@ File outputs use the shared `atomic_io.py` helper where replacement or no-overwr
 | `audit_pie_command.py` | Compare captured command arguments with structured requirements in a proof expected sheet. |
 | `asset_provenance.py` | Read authoring-script source/destination asset declarations and find matching evidence-log references; never changes assets. |
 | `suite_log_report.py` | Summarize Unreal automation completion lines; requires terminal success marker unless `--allow-partial` is explicit. |
+| `test_gate_script.py` | Contract tests for Gate.ps1 step order, editor refusal and dry-run behavior. |
+| `test_audit_source_test_coverage.py` | Fixture tests for the source/test gap inventory heuristic. |
+| `test_memory_soak_driver.py` | Offline syntax/contract tests for the opt-in U-C05 PIE memory soak driver. |
 | `diff_suite_logs.py` | Compare two automation suite logs; reports incomplete inputs as `PARTIAL` (exit 3). |
 | `evidence_summary.py` | CSV index of retained editor logs with identity, date, outcome, validator status, and SHA-256. |
 | `framework_results.py` | Parse FrameworkProof RESULT lines. |

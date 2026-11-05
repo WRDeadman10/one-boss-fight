@@ -1,1 +1,1 @@
-C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Claude\B_QA001\pie_shot2_showUI0\editor_raw.log
+C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Claude\B_LIVE_20261104b\com004_parried_phase200\editor_raw.log

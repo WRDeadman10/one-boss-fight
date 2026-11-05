@@ -64,6 +64,37 @@ URPGPlayerMovesSubsystem* URPGPlayerMovesSubsystem::GetForWorld(const UObject* W
 DEFINE_LOG_CATEGORY_STATIC(LogRPGEncounterTiming, Log, All);
 
 #if !UE_BUILD_SHIPPING
+namespace
+{
+	void SetDeterminismSeed(const TArray<FString>& Arguments)
+	{
+		if (Arguments.Num() != 1)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[Determinism] usage: rpg.DeterminismSeed <unsigned-integer>"));
+			return;
+		}
+		if (!Arguments[0].IsNumeric())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[Determinism] seed must contain decimal digits only"));
+			return;
+		}
+		const uint64 ParsedSeed = FCString::Strtoui64(*Arguments[0], nullptr, 10);
+		if (ParsedSeed > MAX_uint32)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[Determinism] seed is outside the uint32 range"));
+			return;
+		}
+		const uint32 Seed = static_cast<uint32>(ParsedSeed);
+		FMath::RandInit(static_cast<int32>(Seed));
+		UE_LOG(LogTemp, Display, TEXT("[Determinism] global FMath random stream seeded with %u"), Seed);
+	}
+
+	FAutoConsoleCommand DeterminismSeedCommand(
+		TEXT("rpg.DeterminismSeed"),
+		TEXT("Development test hook: seed the global FMath random stream before a deterministic PIE repeat."),
+		FConsoleCommandWithArgsDelegate::CreateStatic(&SetDeterminismSeed));
+}
+
 static TAutoConsoleVariable<int32> CVarEncounterSpawnGate(
 	TEXT("rpg.EncounterLifecycle.SpawnGate"), 0,
 	TEXT("Temporary diagnostic: 1 logs pack pawn spawn-gate state. 0 = off. Not compiled into Shipping."), ECVF_Default);
@@ -99,8 +130,8 @@ void URPGPlayerMovesSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	UGameInstance* GameInstance = InWorld.GetGameInstance();
 	URPGEncounterSelectionSubsystem* Selection = GameInstance ? GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>() : nullptr;
 	const bool bSelectionRequested = Selection && Selection->HasSelectionRequest();
-	LastEncounterRoute = bSelectionRequested ? TEXT("data") : TEXT("legacy");
-	LastEncounterOutcome = bSelectionRequested ? TEXT("Pending") : TEXT("LegacyNoSelection");
+	LastEncounterRoute = bSelectionRequested ? TEXT("data") : (bUseLegacyStartup ? TEXT("legacy") : TEXT("disabled"));
+	LastEncounterOutcome = bSelectionRequested ? TEXT("Pending") : (bUseLegacyStartup ? TEXT("LegacyNoSelection") : TEXT("LegacyStartupDisabled"));
 	LastEncounterReason.Reset();
 	LastEncounterManifestHash.Reset();
 	if (bSelectionRequested)
@@ -198,6 +229,11 @@ void URPGPlayerMovesSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 		}
 		return;
 	}
+	if (!bUseLegacyStartup)
+	{
+		UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] outcome=LegacyStartupDisabled reason=Config.bUseLegacyStartupFalse"));
+		return;
+	}
 	// Pawns that exist already (placed in the level or spawned before the handler).
 	for (TActorIterator<APawn> It(&InWorld); It; ++It)
 	{
@@ -208,7 +244,11 @@ void URPGPlayerMovesSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 void URPGPlayerMovesSubsystem::Deinitialize()
 {
 	URPGInputTestUtils::RestoreFixedFrameRate(); // a driver that was cut must not leave the editor at 30 FPS
-	if (UWorld* World = GetWorld()) { World->GetTimerManager().ClearTimer(RebindTimeoutHandle); }
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(RebindTimeoutHandle);
+		World->GetTimerManager().ClearTimer(RebindPollHandle);
+	}
 	if (URPGBossEncounter* Source = ResetBroadcastSource.Get()) { Source->OnResetBroadcast().Remove(ResetBroadcastHandle); }
 	ResetBroadcastSource.Reset();
 	if (ActiveDataActivation.Batch.IsValid())
@@ -273,12 +313,10 @@ void URPGPlayerMovesSubsystem::OnActorSpawned(AActor* Actor)
 	{
 		if (LastAcceptedParticipantGeneration > 0 && World && World->HasBegunPlay() && IsPackPlayer(Actor))
 		{
-			// Spawn callbacks only arm the rebind window. The authoritative player is resolved from local possession at reset broadcast.
+			// Respawn can precede possession and the reset broadcast. Remember the spawn, but let the reset event own the bounded rebind window.
 			PendingRespawnPlayer = Actor;
-			World->GetTimerManager().ClearTimer(RebindTimeoutHandle);
-			World->GetTimerManager().SetTimer(RebindTimeoutHandle, this, &URPGPlayerMovesSubsystem::OnRebindTimeout, 5.0f, false);
-			UE_LOG(LogTemp, Display, TEXT("[EncounterLifecycle] rebind_pending timestamp=%.6f generation=%llu actor_id=%u timeout_seconds=5"),
-				FPlatformTime::Seconds(), static_cast<unsigned long long>(LastAcceptedParticipantGeneration), static_cast<uint32>(Actor->GetUniqueID()));
+			UE_LOG(LogTemp, Display, TEXT("[EncounterLifecycle] rebind_spawn_seen timestamp=%.6f generation=%llu actor_id=%u waiting_for_reset_broadcast=%d"),
+				FPlatformTime::Seconds(), static_cast<unsigned long long>(LastAcceptedParticipantGeneration), static_cast<uint32>(Actor->GetUniqueID()), PendingRebindGeneration == 0 ? 1 : 0);
 		}
 		else if (LastAcceptedParticipantGeneration > 0 && World && World->HasBegunPlay() && IsPackBoss(Actor))
 		{
@@ -293,6 +331,7 @@ void URPGPlayerMovesSubsystem::OnActorSpawned(AActor* Actor)
 		AttachBossDiagnostics(Actor);
 		return;
 	}
+	if (!bUseLegacyStartup) return;
 	Attach(Actor);
 }
 
@@ -316,10 +355,27 @@ void URPGPlayerMovesSubsystem::OnRebindTimeout()
 	{
 		EndEncounterTiming(OperationId, TEXT("selected_rebind_timeout"), OperationStartSeconds, LastEncounterOutcome);
 	};
-	if (PendingRespawnPlayer.IsValid())
+	if (PendingRebindGeneration != 0)
 	{
 		FailSelectedRebind(TEXT("EncounterActivation.RebindTimeout"), true);
 	}
+}
+
+void URPGPlayerMovesSubsystem::OnRebindPoll()
+{
+	if (PendingRebindGeneration == 0) { return; }
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		FailSelectedRebind(TEXT("EncounterActivation.RebindWorldMissing"), true);
+		return;
+	}
+	APawn* CandidatePlayer = nullptr;
+	if (RPGEncounterPlayerIdentity::CountLocalPossessedPlayers(*World, CandidatePlayer) == 0) { return; }
+	const uint64 Generation = PendingRebindGeneration;
+	const int32 ResetCount = PendingRebindResetCount;
+	World->GetTimerManager().ClearTimer(RebindPollHandle);
+	OnEncounterResetBroadcast(Generation, ResetCount);
 }
 
 void URPGPlayerMovesSubsystem::FailSelectedRebind(const FString& Reason, bool bReleaseCurrentActivation)
@@ -331,7 +387,11 @@ void URPGPlayerMovesSubsystem::FailSelectedRebind(const FString& Reason, bool bR
 		EndEncounterTiming(OperationId, TEXT("selected_rebind_refusal"), OperationStartSeconds, LastEncounterOutcome);
 	};
 	UWorld* World = GetWorld();
-	if (World) { World->GetTimerManager().ClearTimer(RebindTimeoutHandle); }
+	if (World)
+	{
+		World->GetTimerManager().ClearTimer(RebindTimeoutHandle);
+		World->GetTimerManager().ClearTimer(RebindPollHandle);
+	}
 	if (URPGBossEncounter* Source = ResetBroadcastSource.Get()) { Source->OnResetBroadcast().Remove(ResetBroadcastHandle); }
 	ResetBroadcastSource.Reset();
 	FString FullReason = Reason;
@@ -356,6 +416,8 @@ void URPGPlayerMovesSubsystem::FailSelectedRebind(const FString& Reason, bool bR
 		for (TActorIterator<APawn> It(World); It; ++It) { if (IsPackBoss(*It)) { DisableSelectedBoss(*It); } }
 	}
 	PendingRespawnPlayer.Reset();
+	PendingRebindGeneration = 0;
+	PendingRebindResetCount = 0;
 	LastEncounterOutcome = TEXT("HardError");
 	LastEncounterReason = FullReason;
 	ReportActivationFailure(World, FullReason);
@@ -394,7 +456,19 @@ void URPGPlayerMovesSubsystem::OnEncounterResetBroadcast(uint64 ParticipantGener
 	const int32 AuthoritativePlayerCount = RPGEncounterPlayerIdentity::CountLocalPossessedPlayers(*World, CandidatePlayer);
 	if (AuthoritativePlayerCount == 0)
 	{
-		FailSelectedRebind(TEXT("EncounterActivation.RebindPlayerMissing"), true);
+		PendingRebindGeneration = ParticipantGeneration;
+		PendingRebindResetCount = ResetCount;
+		if (!World->GetTimerManager().IsTimerActive(RebindTimeoutHandle))
+		{
+			World->GetTimerManager().SetTimer(RebindTimeoutHandle, this, &URPGPlayerMovesSubsystem::OnRebindTimeout, 5.0f, false);
+		}
+		if (!World->GetTimerManager().IsTimerActive(RebindPollHandle))
+		{
+			World->GetTimerManager().SetTimer(RebindPollHandle, this, &URPGPlayerMovesSubsystem::OnRebindPoll, 0.05f, true);
+		}
+		TimingOutcome = TEXT("PendingPlayerPossession");
+		UE_LOG(LogTemp, Display, TEXT("[EncounterLifecycle] rebind_pending_possession timestamp=%.6f generation=%llu reset_count=%d timeout_seconds=5"),
+			FPlatformTime::Seconds(), static_cast<unsigned long long>(ParticipantGeneration), ResetCount);
 		return;
 	}
 	if (AuthoritativePlayerCount != 1)
@@ -451,7 +525,10 @@ void URPGPlayerMovesSubsystem::OnEncounterResetBroadcast(uint64 ParticipantGener
 	LastEncounterReason.Reset();
 	LastAcceptedParticipantGeneration = ParticipantGeneration;
 	World->GetTimerManager().ClearTimer(RebindTimeoutHandle);
+	World->GetTimerManager().ClearTimer(RebindPollHandle);
 	PendingRespawnPlayer.Reset();
+	PendingRebindGeneration = 0;
+	PendingRebindResetCount = 0;
 	for (TActorIterator<APawn> It(World); It; ++It)
 	{
 		if (IsPackBoss(*It)) { BindResetBroadcast(*It); break; }

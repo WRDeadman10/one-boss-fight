@@ -7,6 +7,8 @@
 #include "Containers/Ticker.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "Player/RPGCameraShakes.h"
+#include "Player/RPGEncounterBinding.h"
+#include "Player/RPGParryGradeRules.h"
 #include "RPGLegend.generated.h"
 
 class URPGAttackTracker;
@@ -14,6 +16,20 @@ class URPGBossEncounter;
 class URPGBossHud;
 class URPGBossPhases;
 class URPGBossStagger;
+
+namespace RPGBossLegendRules
+{
+	/** Pure admission rule for a parry slow-motion request. Caller supplies the real-time cooldown state. */
+	inline bool CanRequestParrySlowMotion(RPGParryGrade::EGrade Grade, double Now, double LastRequest,
+		double CooldownSeconds, bool bEnabled, bool bLegendOn, bool bKillSlowMotionActive,
+		bool bHitStopActive, bool bEncounterCurrent)
+	{
+		return Grade != RPGParryGrade::EGrade::None && FMath::IsFinite(Now) && FMath::IsFinite(LastRequest)
+			&& FMath::IsFinite(CooldownSeconds) && CooldownSeconds >= 0.0 && CooldownSeconds <= 30.0
+			&& Now >= LastRequest && Now - LastRequest >= CooldownSeconds
+			&& bEnabled && bLegendOn && !bKillSlowMotionActive && !bHitStopActive && bEncounterCurrent;
+	}
+}
 
 /**
  * The bookkeeping of one time dilation effect, with no engine objects so that it can be tested alone. Rules: a second request while the effect runs never captures the already dilated value
@@ -49,6 +65,18 @@ struct ONEBOSSFIGHT_API FRPGDilationScope
 		bActive = false;
 		return Saved;
 	}
+
+	/** A higher-priority effect replaces the current applied value and deadline without changing the original restoration target. */
+	bool OverrideActive(float Value, double Now, double Seconds)
+	{
+		if (!bActive || !FMath::IsFinite(Value) || !FMath::IsFinite(Now) || !FMath::IsFinite(Seconds) || Seconds <= 0.0)
+		{
+			return false;
+		}
+		Applied = Value;
+		DeadlineReal = Now + Seconds;
+		return true;
+	}
 };
 
 /**
@@ -75,7 +103,7 @@ public:
 	/** Slows both actors to Dilation for RealSeconds. False (and counted) when the layer is off, the encounter is dormant or the generation is stale. */
 	bool RequestHitStop(AActor* First, AActor* Second, float RealSeconds, float Dilation, const URPGBossEncounter* Encounter, uint64 Generation);
 	/** Slows the world to Scale for RealSeconds. Same refusals. */
-	bool RequestSlowMotion(float Scale, float RealSeconds, const URPGBossEncounter* Encounter, uint64 Generation);
+	bool RequestSlowMotion(float Scale, float RealSeconds, const URPGBossEncounter* Encounter, uint64 Generation, bool bKillPriority = false);
 	/** Ends every effect now, restores time, stops the shakes. Logs one line only when something was active. */
 	void CancelAll(const TCHAR* Reason);
 
@@ -174,6 +202,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Legend|Time")
 	bool bSkipHitStopOnLethal = true;
 
+	/** Typed data-route controls for successful parries. Defaults are proposals from C-903; normal-grade feedback is opt-in. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Legend|Parry")
+	FRPGParrySlowMotionConfig ParrySlowMotion;
+
+	/** Called once for each confirmed player parry by URPGPlayerParry::NotifyParried. */
+	bool HandlePlayerParrySlowMotion(RPGParryGrade::EGrade Grade, const FRPGParrySlowMotionConfig* PlayerPolicy = nullptr);
+	int32 GetParrySlowMotionCount() const { return ParrySlowMotionCount; }
+
 	// Counters (once per event; the drivers read them).
 	UFUNCTION(BlueprintPure, Category = "Legend") int32 GetSlamShakeCount() const { return SlamShakeCount; }
 	UFUNCTION(BlueprintPure, Category = "Legend") int32 GetRoarShakeCount() const { return RoarShakeCount; }
@@ -237,6 +273,8 @@ private:
 	int32 RoarShakeCount = 0;
 	int32 HitStopCount = 0;
 	int32 SlowMotionCount = 0;
+	int32 ParrySlowMotionCount = 0;
+	double LastParrySlowMotionTime = -1000000000.0;
 	int32 ShakeTooFarCount = 0;
 	int32 ShakeNotStartedCount = 0;
 	int32 SuppressedCount = 0;

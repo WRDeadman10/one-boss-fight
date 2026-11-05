@@ -1,0 +1,7 @@
+{
+    "timed_out":  false,
+    "seconds":  299,
+    "task":  "C906-memory-soak-legacy",
+    "raw_sha256":  "666d27caa23a8333ddda82a048781a3c6e9993899db11453f968dd7c27c5c055",
+    "exit_code":  0
+}

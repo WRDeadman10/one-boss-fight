@@ -91,8 +91,13 @@ def render(rows: list[Row]) -> str:
     for row in rows:
         if not row.types:
             lines.append(f"| `{row.path}` | {row.primary_header} |")
-    lines.extend(["", "## Reproduction", "", "`python -I Scripts/Tools/audit_source_test_coverage.py`", ""])
-    return "\n".join(lines)
+    lines.extend([
+        "",
+        "Manual disposition: `RPGPerfSwitches.cpp` exposes free functions rather than a same-name class; U-C04 adds a CVar clamp/Shipping accessor automation. `RPGBossInterrupt.cpp` similarly exposes `CancelOffence`; U-C04 adds empty-component, repeat-call, and null-input coverage. `OneBossFight.cpp` is the Unreal module entry point without an independently callable gameplay surface. The adapter helper units are exercised through their focused `*AdaptersTests.cpp` fixtures; this heuristic lists them for human confirmation rather than counting their shared target types as direct proof.",
+        "",
+        "## Reproduction", "", "`python -I Scripts/Tools/audit_source_test_coverage.py`", "",
+    ])
+    return "\n".join(lines).rstrip()
 
 
 if __name__ == "__main__":

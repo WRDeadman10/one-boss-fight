@@ -13,12 +13,16 @@
  * game world, it gets a URPGDodgeTiming component (a new pawn after a respawn gets its own); the pack great-sword boss (BP_ExampleGreatSwordBoss) gets a
  * URPGBossStagger component (stance break and critical window).
  */
-UCLASS()
+UCLASS(Config=Game, DefaultConfig)
 class ONEBOSSFIGHT_API URPGPlayerMovesSubsystem : public UWorldSubsystem
 {
 	GENERATED_BODY()
 
 public:
+	/** A7-B preparation switch. True preserves the current legacy no-selection startup; explicit data selections remain independent. */
+	UPROPERTY(Config, EditDefaultsOnly, Category="Encounter|Startup")
+	bool bUseLegacyStartup = true;
+
 	/** Read-only reflected accessor for editor/runtime diagnostics that need this world's subsystem. */
 	UFUNCTION(BlueprintCallable, Category="Encounter|Diagnostics", meta=(WorldContext="WorldContextObject"))
 	static URPGPlayerMovesSubsystem* GetForWorld(const UObject* WorldContextObject);
@@ -38,6 +42,7 @@ public:
 private:
 	void OnActorSpawned(AActor* Actor);
 	void OnEncounterResetBroadcast(uint64 ParticipantGeneration, int32 ResetCount);
+	void OnRebindPoll();
 	void OnRebindTimeout();
 	void FailSelectedRebind(const FString& Reason, bool bReleaseCurrentActivation);
 	void BindResetBroadcast(AActor* Boss);
@@ -68,7 +73,10 @@ private:
 	FSoftObjectPath ActivePlayerDefinitionPath;
 	uint64 LastAcceptedParticipantGeneration = 0;
 	TWeakObjectPtr<AActor> PendingRespawnPlayer;
+	uint64 PendingRebindGeneration = 0;
+	int32 PendingRebindResetCount = 0;
 	FTimerHandle RebindTimeoutHandle;
+	FTimerHandle RebindPollHandle;
 	FString LastEncounterRoute = TEXT("legacy");
 	FString LastEncounterOutcome = TEXT("NotStarted");
 	FString LastEncounterReason;

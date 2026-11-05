@@ -35,7 +35,7 @@
 #include "UObject/StrongObjectPtr.h"
 #include <limits>
 
-// These tests prove the whole-batch expanded native subset preflight kernel (19 plans per boss-core member: 13 typed and 6 configuration-independent parity consumers) on real isolated UE objects (a headless game world, plain actors, the existing synthetic config factory): validation of the whole batch, named failures,
+// These tests prove the whole-batch expanded native subset preflight kernel (19 plans per boss-core member: 14 typed and 5 configuration-independent parity consumers) on real isolated UE objects (a headless game world, plain actors, the existing synthetic config factory): validation of the whole batch, named failures,
 // the plan order and leases of a success, clearing of earlier output, and that a failed or successful compile changes no actor, component or combat context.
 // They do NOT prove a duel, PIE, a startup chronology, the real game-instance provenance of a content lease, a production skeleton/mesh pairing (no real pack mesh is used: a production member is only shown to FAIL CLOSED),
 // or the not-game-thread rule (the tests run on the game thread) and the synthetic-fixture-unavailable rule of a non-test target (compiled out here).
@@ -87,7 +87,7 @@ namespace PreflightTests
 		AActor* SpawnActor() const { return World ? World->SpawnActor<AActor>() : nullptr; }
 	};
 
-	/** The 115 unique manifest paths the thirteen combined boss-core plans read, written out as INDEPENDENT literals (not derived from the factories under test): stagger 25 (14 policy + 11 profile), phases 18 (the 4 paths of
+	/** The 115 required manifest paths the fourteen typed boss-core plans read, written out as INDEPENDENT literals (not derived from the factories under test): stagger 25 (14 policy + 11 profile), phases 18 (the 4 paths of
 	 *  the selected phase + 6 flow + 5 fireball + 3 dependencies), encounter 3, dormant wake 2, posture 3. Membership only; the fixtures' manifests are built from this list and the plans' own required fields are what the
 	 *  implementation produces and is compared against it. */
 	TArray<FString> AllRequiredPaths(FName PhaseId)
@@ -122,6 +122,12 @@ namespace PreflightTests
 			TEXT("CloseClipSwap.CloseAbilityClassName"), TEXT("CloseClipSwap.AttackMontagesName"), TEXT("CloseClipSwap.A1Montage"), TEXT("CloseClipSwap.A3aMontage"), TEXT("CloseClipSwap.A3bMontage"),
 			TEXT("Death.DeathMode"), TEXT("Death.DeathClip"), TEXT("Death.DeathMontage"), TEXT("Death.PackDeathAbilityClassName"), TEXT("Death.PackDeathMontagesName"), TEXT("Death.PackPollSeconds"), TEXT("Death.PackEndTimeMultiplier"), TEXT("Death.HoldAtSeconds"), TEXT("Death.DyingSeconds"), TEXT("Death.BlendInSeconds"), TEXT("Death.MaxClipRestarts"), TEXT("Death.bGuardPackDeath"),
 			TEXT("AttackTracker.Attacks"), TEXT("AttackTracker.bEnabled"), TEXT("AttackTracker.bVetoIllegalStarts"), TEXT("AttackTracker.BranchRange"), TEXT("AttackTracker.BranchConeDegrees")};
+	}
+
+	TArray<FString> OptionalParryPaths()
+	{
+		return {TEXT("ParrySlowMotion.bPerfectEnabled"), TEXT("ParrySlowMotion.PerfectScale"), TEXT("ParrySlowMotion.PerfectSeconds"), TEXT("ParrySlowMotion.bNormalEnabled"),
+			TEXT("ParrySlowMotion.NormalScale"), TEXT("ParrySlowMotion.NormalSeconds"), TEXT("ParrySlowMotion.CooldownSeconds")};
 	}
 
 	FRPGParityField MakeField(const FString& Path)
@@ -414,7 +420,7 @@ bool FRPGPreflightValidTest::RunTest(const FString& Parameters)
 			Required.Add(Path);
 		}
 	}
-	TestEqual(TEXT("the union of required manifest paths is one hundred fifteen"), Required.Num(), 115);
+	TestEqual(TEXT("the unchanged required manifest set has one hundred fifteen paths"), Required.Num(), 115);
 	for (const FString& Path : AllRequiredPaths(PhaseTwo))
 	{
 		TestTrue(FString::Printf(TEXT("required path %s is named by a plan"), *Path), Required.Contains(Path));
@@ -678,7 +684,8 @@ bool FRPGPreflightConfigTest::RunTest(const FString& Parameters)
 	{
 		FRPGHydrationPreflightInput In = WithBossConfig(Base);
 		FPlanPtr Out;
-		TestTrue(TEXT("control: a hand-built config of the same shape is accepted like the factory one"), RPGBossHydrationPreflight::CompilePreflight(In, Out).IsReady() && Out.IsValid());
+		TestFalse(TEXT("legacy fixture omits the optional parry fields"), In.Requests[0].Config->Fields.ContainsByPredicate([](const FRPGParityField& Field) { return Field.FieldPath.StartsWith(TEXT("ParrySlowMotion.")); }));
+		TestTrue(TEXT("legacy fixture prepares without any optional parry fields"), RPGBossHydrationPreflight::CompilePreflight(In, Out).IsReady() && Out.IsValid());
 	}
 
 	{
@@ -765,7 +772,7 @@ bool FRPGPreflightConfigTest::RunTest(const FString& Parameters)
 		ExpectRejected(*this, F, TEXT("attack multiplier below 1 (unsupported by the native reset)"), WithBossConfig(Spec), TEXT("Preflight.PhaseRejected"), TEXT("UnsupportedNativeDamageScale"));
 	}
 
-	// Each of the one hundred fifteen required manifest paths of the 19 plans (13 typed and 6 configuration-independent parity consumers), one at a time.
+	// Each required manifest path of the 19 plans (14 typed and 5 configuration-independent parity consumers), one at a time; optional parry paths are excluded.
 	for (const FString& Path : AllRequiredPaths(PhaseTwo))
 	{
 		FConfigSpec Spec = Base;
@@ -1006,8 +1013,8 @@ bool FRPGPreflightDependenciesTest::RunTest(const FString& Parameters)
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// DD13: the expanded native subset plus the tracker plan (19 plans per boss-core member: 13 typed and 6 configuration-independent parity consumers). The expected classes, names, counts and the 115-path union are written as independent literals in this file (AllRequiredPaths),
-// not derived from the factories under test; the manifest the fixtures carry comes from the same literal list, the plans' own required fields are what the implementation produces.
+// DD13/F1: the expanded native subset plus tracker and parry-feedback plans (19 plans per boss-core member: 14 typed and 5 configuration-independent parity consumers). Required paths (115) and optional parry paths (7) are independently listed here,
+// not derived from the factories under test; fixture manifests carry required paths only, proving optional fields can be absent.
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGPreflightExpandedTest, "OneBossFight.Binding.Preflight.ExpandedSubset",
@@ -1078,6 +1085,8 @@ bool FRPGPreflightExpandedTest::RunTest(const FString& Parameters)
 		TSet<FName> DistinctNames;
 		int32 SumOfRequired = 0;
 		TSet<FString> Union;
+		TSet<FString> OptionalUnion;
+		int32 SumOfOptional = 0;
 		for (int32 Index = 0; Index < 19; ++Index)
 		{
 			bClasses = bClasses && BossPlan.Plans[Index].Class == ExpectedClasses[Index];
@@ -1091,19 +1100,29 @@ bool FRPGPreflightExpandedTest::RunTest(const FString& Parameters)
 			{
 				Union.Add(Path);
 			}
+			for (const FString& Path : BossPlan.Plans[Index].OptionalFields)
+			{
+				OptionalUnion.Add(Path);
+				++SumOfOptional;
+			}
 		}
 		TestTrue(FString::Printf(TEXT("%s: all twelve classes follow the reviewed prefix and DD-order suffix"), *Who), bClasses);
 		TestTrue(FString::Printf(TEXT("%s: the instance names are the legacy names in the same order"), *Who), bNames);
 		TestTrue(FString::Printf(TEXT("%s: every plan has its callback (built, never run) and the class leases are the plan classes"), *Who), bCallbacks && bLeases);
 		TestTrue(FString::Printf(TEXT("%s: no native class and no instance name appears twice"), *Who), DistinctClasses.Num() == 19 && DistinctNames.Num() == 19);
-		// The separate scalar, profile, flow and policy plans are gone: no plan names a class twice and the thirteen typed plans name each of the 115 paths exactly once.
+		// Required paths remain unchanged. The seven new parry fields are explicitly optional and counted separately.
 		const TArray<FString> ExpectedPaths = AllRequiredPaths(Selected);
+		const TArray<FString> ExpectedOptionalPaths = OptionalParryPaths();
 		bool bUnion = ExpectedPaths.Num() == 115 && Union.Num() == 115 && SumOfRequired == 115;
 		for (const FString& Path : ExpectedPaths)
 		{
 			bUnion = bUnion && Union.Contains(Path);
 		}
-		TestTrue(FString::Printf(TEXT("%s: the union of the plans' required paths is exactly the 115 independent literal paths, each named by exactly one plan"), *Who), bUnion);
+		for (const FString& Path : ExpectedOptionalPaths)
+		{
+			bUnion = bUnion && OptionalUnion.Contains(Path) && !Union.Contains(Path);
+		}
+		TestTrue(FString::Printf(TEXT("%s: all 115 required paths are unchanged and the seven parry paths are optional"), *Who), bUnion && OptionalUnion.Num() == 7 && SumOfOptional == 7);
 		// The selected phase decides the phase paths: no default first or last phase.
 		TestTrue(FString::Printf(TEXT("%s: the selected phase paths are named and the other phase's are not"), *Who),
 			Union.Contains(FString::Printf(TEXT("Phases[%s].EntryHealthFraction"), *Selected.ToString())) && !Union.Contains(FString::Printf(TEXT("Phases[%s].EntryHealthFraction"), *Other.ToString())));
@@ -1126,7 +1145,8 @@ bool FRPGPreflightExpandedTest::RunTest(const FString& Parameters)
 			{
 				bStable = bStable && Again->Participants[Member].Plans[Index].Class == Plan->Participants[Member].Plans[Index].Class
 					&& Again->Participants[Member].Plans[Index].InstanceName == Plan->Participants[Member].Plans[Index].InstanceName
-					&& Again->Participants[Member].Plans[Index].RequiredFields == Plan->Participants[Member].Plans[Index].RequiredFields;
+					&& Again->Participants[Member].Plans[Index].RequiredFields == Plan->Participants[Member].Plans[Index].RequiredFields
+					&& Again->Participants[Member].Plans[Index].OptionalFields == Plan->Participants[Member].Plans[Index].OptionalFields;
 			}
 		}
 		TestTrue(TEXT("the second compile has the same order, classes, names and required fields"), bStable);
@@ -1180,6 +1200,8 @@ bool FRPGPreflightClustersTest::RunTest(const FString& Parameters)
 	// The encounter cluster: a VALID stats record with an invalid policy, and an invalid stats record with a valid policy, each caught (so a premature or one-sided check would be found).
 	ExpectRejected(*this, F, TEXT("valid stats with a NaN gate radius"), WithMutation([](FRPGParticipantConfig& C) { C.EncounterPolicy.GateRadius = std::numeric_limits<float>::quiet_NaN(); }), TEXT("Preflight.EncounterPolicyRejected"), TEXT("InvalidPolicy.NotFinite"));
 	ExpectRejected(*this, F, TEXT("valid stats with a negative gate radius"), WithMutation([](FRPGParticipantConfig& C) { C.EncounterPolicy.GateRadius = -1.f; }), TEXT("Preflight.EncounterPolicyRejected"), TEXT("InvalidPolicy.Negative"));
+	ExpectRejected(*this, F, TEXT("parry slow-motion enabled at normal speed"), WithMutation([](FRPGParticipantConfig& C) { C.ParrySlowMotion.PerfectScale = 1.f; }), TEXT("Preflight.ParrySlowMotionRejected"), TEXT("ParrySlowMotion.InvalidPerfectScale"));
+	ExpectRejected(*this, F, TEXT("parry slow-motion duration above five seconds"), WithMutation([](FRPGParticipantConfig& C) { C.ParrySlowMotion.PerfectSeconds = 5.1f; }), TEXT("Preflight.ParrySlowMotionRejected"), TEXT("ParrySlowMotion.InvalidPerfectDuration"));
 	{
 		FConfigSpec Spec = Base;
 		Spec.Health = 0.5f; // a native capability the generic compiler accepts; the policy of this config is valid

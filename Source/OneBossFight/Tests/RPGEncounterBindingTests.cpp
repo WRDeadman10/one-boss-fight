@@ -2,6 +2,7 @@
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Player/RPGEncounterBinding.h"
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGLegend.h"
 #include "Engine/World.h"
 #include "Misc/ScopeExit.h"
 #include "UObject/GarbageCollection.h"
@@ -29,7 +30,45 @@ bool FRPGEncounterBindingDraftTest::RunTest(const FString& Parameters)
 	Field.FirstRead = TEXT("BeginPlay"); Field.Witness = TEXT("synthetic only"); Def->Fields.Add(Field);
 	TSharedPtr<const FRPGParticipantConfig> Config;
 	auto Compiled = RPGCombatHydration::CompileSyntheticParticipant(*Def, RPGCombatRegistry::Legacy(), FString::ChrN(64, TEXT('b')), Config);
-	if (!TestTrue(TEXT("compile fixture"), Compiled.IsReady() && Config.IsValid())) { return false; }
+	if (!TestTrue(TEXT("legacy definition without new parry fields compiles using additive defaults"), Compiled.IsReady() && Config.IsValid())) { return false; }
+	TestTrue(TEXT("proposal defaults are carried into the participant snapshot"), Config->ParrySlowMotion.bPerfectEnabled
+		&& FMath::IsNearlyEqual(Config->ParrySlowMotion.PerfectScale, 0.30f) && FMath::IsNearlyEqual(Config->ParrySlowMotion.PerfectSeconds, 0.35f)
+		&& !Config->ParrySlowMotion.bNormalEnabled && FMath::IsNearlyEqual(Config->ParrySlowMotion.CooldownSeconds, 0.60f));
+	TestTrue(TEXT("typed default membership carries the complete parry policy"), Config->Fields.ContainsByPredicate([](const FRPGParityField& Entry) { return Entry.FieldPath == RPGParrySlowMotionConfigRules::FieldCooldownSeconds; }));
+	Def->ParrySlowMotion.bNormalEnabled = true;
+	Def->ParrySlowMotion.NormalScale = 0.55f;
+	TSharedPtr<const FRPGParticipantConfig> MissingPolicyFields;
+	const auto MissingPolicy = RPGCombatHydration::CompileSyntheticParticipant(*Def, RPGCombatRegistry::Legacy(), FString::ChrN(64, TEXT('b')), MissingPolicyFields);
+	TestTrue(TEXT("a customized typed policy without matching source fields is rejected"), !MissingPolicy.IsReady() && MissingPolicyFields.IsValid() == false
+		&& MissingPolicy.Errors.ContainsByPredicate([](const FString& Error) { return Error.Contains(TEXT("ParrySlowMotion.ProvenanceMissing")); }));
+	const TCHAR* PolicyPaths[] = {RPGParrySlowMotionConfigRules::FieldPerfectEnabled, RPGParrySlowMotionConfigRules::FieldPerfectScale,
+		RPGParrySlowMotionConfigRules::FieldPerfectSeconds, RPGParrySlowMotionConfigRules::FieldNormalEnabled,
+		RPGParrySlowMotionConfigRules::FieldNormalScale, RPGParrySlowMotionConfigRules::FieldNormalSeconds,
+		RPGParrySlowMotionConfigRules::FieldCooldownSeconds};
+	FRPGParityField PartialPolicySource = Field;
+	PartialPolicySource.FieldPath = PolicyPaths[0];
+	Def->Fields.Add(PartialPolicySource);
+	TSharedPtr<const FRPGParticipantConfig> PartialPolicy;
+	const auto PartialPolicyResult = RPGCombatHydration::CompileSyntheticParticipant(*Def, RPGCombatRegistry::Legacy(), FString::ChrN(64, TEXT('b')), PartialPolicy);
+	TestTrue(TEXT("a partially authored optional policy group is refused"), !PartialPolicyResult.IsReady() && !PartialPolicy.IsValid()
+		&& PartialPolicyResult.Errors.ContainsByPredicate([](const FString& Error) { return Error.Contains(TEXT("ParrySlowMotion.ProvenanceIncomplete")); }));
+	Def->Fields.RemoveAll([&](const FRPGParityField& Entry) { return Entry.FieldPath == PolicyPaths[0]; });
+	for (const TCHAR* Path : PolicyPaths)
+	{
+		FRPGParityField Source; Source.FieldPath = Path; Source.Type = TEXT("typed-config"); Source.Value = TEXT("fixture");
+		Source.SourcePath = TEXT("fixture"); Source.SourceSHA256 = FString::ChrN(64, TEXT('c')); Source.SourceSite = TEXT("test");
+		Source.Origin = TEXT("test"); Source.Precedence = TEXT("test"); Source.Destination = TEXT("URPGBossLegend.ParrySlowMotion");
+		Source.FirstRead = TEXT("preflight"); Source.Witness = TEXT("synthetic"); Def->Fields.Add(Source);
+	}
+	TSharedPtr<const FRPGParticipantConfig> CustomPolicy;
+	const auto CustomPolicyResult = RPGCombatHydration::CompileSyntheticParticipant(*Def, RPGCombatRegistry::Legacy(), FString::ChrN(64, TEXT('b')), CustomPolicy);
+	TestTrue(TEXT("a source-backed player policy is copied into the data route"), CustomPolicyResult.IsReady() && CustomPolicy.IsValid()
+		&& CustomPolicy->ParrySlowMotion.bNormalEnabled && FMath::IsNearlyEqual(CustomPolicy->ParrySlowMotion.NormalScale, 0.55f));
+	Def->ParrySlowMotion.PerfectScale = 1.f;
+	TSharedPtr<const FRPGParticipantConfig> InvalidPolicy;
+	const auto InvalidPolicyResult = RPGCombatHydration::CompileSyntheticParticipant(*Def, RPGCombatRegistry::Legacy(), FString::ChrN(64, TEXT('b')), InvalidPolicy);
+	TestTrue(TEXT("an enabled parry policy at normal speed fails closed"), !InvalidPolicyResult.IsReady() && !InvalidPolicy.IsValid()
+		&& InvalidPolicyResult.Errors.ContainsByPredicate([](const FString& Error) { return Error.Contains(TEXT("ParrySlowMotion.InvalidPerfectScale")); }));
 	Def->Stats.MaxHealth = 1.f; TestEqual(TEXT("value snapshot independent"), Config->Stats.MaxHealth, 2000.f);
 	TSharedPtr<const FRPGParticipantConfig> Invalid = Config;
 	TestFalse(TEXT("strict missing content rejects"), RPGCombatHydration::CompileParticipant(*Def, nullptr, TEXT(""), Invalid).IsReady());
@@ -62,8 +101,21 @@ bool FRPGEncounterBindingDraftTest::RunTest(const FString& Parameters)
 		E->BossMaxHealth = C.Stats.MaxHealth; E->GateRadius = 0.f;
 		return !E->IsRegistered() && !E->HasBegunPlay();
 	};
-	const TArray<FRPGComponentPlan> Plans = {Plan};
+	FRPGComponentPlan LegendPlan; LegendPlan.Class = URPGBossLegend::StaticClass(); LegendPlan.InstanceName = TEXT("FixtureLegend");
+	LegendPlan.bConfigurationIndependent = true; // optional policy defaults keep old definitions usable
+	LegendPlan.Configure = [](UActorComponent& Component, const FRPGParticipantConfig& C, FString& Error)
+	{
+		auto* Legend = Cast<URPGBossLegend>(&Component); if (!Legend) { Error = TEXT("wrong type"); return false; }
+		Legend->ParrySlowMotion = C.ParrySlowMotion;
+		return true;
+	};
+	const TArray<FRPGComponentPlan> Plans = {Plan, LegendPlan};
 	TestTrue(TEXT("hydrate all A before play"), CA->CreateConfigureRegister(*BossA, Plans).IsReady() && CA->CreateConfigureRegister(*PlayerA, Plans).IsReady());
+	const URPGBossLegend* HydratedLegacyLegend = BossA->FindComponentByClass<URPGBossLegend>();
+	TestTrue(TEXT("legacy definition without parry fields prepares and activates with native proposal defaults"), HydratedLegacyLegend
+		&& HydratedLegacyLegend->ParrySlowMotion.bPerfectEnabled && !HydratedLegacyLegend->ParrySlowMotion.bNormalEnabled
+		&& FMath::IsNearlyEqual(HydratedLegacyLegend->ParrySlowMotion.PerfectScale, 0.30f)
+		&& FMath::IsNearlyEqual(HydratedLegacyLegend->ParrySlowMotion.PerfectSeconds, 0.35f));
 	TestEqual(TEXT("own target only"), CA->ResolveTarget(KA.GetValue(), TEXT("Player")), PlayerA);
 	TestFalse(TEXT("repeat attach rejected"), CA->CreateConfigureRegister(*BossA, Plans).IsReady());
 	CollectGarbage(RF_NoFlags);
