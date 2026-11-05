@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-06  
 **Scope:** Enhanced Input Action (`InputAction`) mapping, context binding (`InputMappingContext`), and C++ handler execution audit for the player character.
+**Sources:** Config/DefaultInput.ini, Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp
 
 ---
 

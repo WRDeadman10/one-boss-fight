@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-06  
 **Scope:** Shader complexity, instruction counts, texture sampler density, and material overdraw analysis for `L_SevarogArena` and Boss duel assets.
+**Sources:** Content/OneBossFight/Materials/, Documentation/PROJECT_STATE.md:259
 
 ---
 

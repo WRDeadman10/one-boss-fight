@@ -3,6 +3,7 @@
 **Author:** Antigravity (Lane A)  
 **Date:** 2026-11-06  
 **Reference Tasks:** `V-A058`, `V-A011`, `V-A012`, `V-C035`, `Scripts/author_parry_recoil_anim.py`, `[C-928]`
+**Sources:** Content/OneBossFight/Boss01/Animations/AM_Boss01_ParryRecoil.uasset, Source/OneBossFight/Player/RPGLegend.cpp:484-486
 
 ---
 

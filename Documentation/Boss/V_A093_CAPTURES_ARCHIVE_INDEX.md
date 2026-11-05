@@ -4,6 +4,7 @@
 **Author:** Antigravity (Lane A)  
 **Status:** Complete  
 **Scope:** Canonical index of tracked visual captures, combat animation contact sheets, architecture diagrams, and review renders across the repository.
+**Sources:** Unreal_Boss_Combat_Engineering_Kit/diagrams/, Docs/BossCombatReview/Execution/Claude/D3/evidence/
 
 ---
 

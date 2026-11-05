@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-06  
 **Scope:** Read-only census of `ObjectRedirector` assets, soft object references, and package cross-references across `/Game/OneBossFight`.
+**Sources:** Content/OneBossFight/, Scripts/Tools/test_content_script_safety.py
 
 ---
 

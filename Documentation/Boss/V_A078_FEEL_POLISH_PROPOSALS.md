@@ -3,6 +3,7 @@
 **Author:** Antigravity (Lane A)  
 **Date:** 2026-11-06  
 **Reference Tasks:** `V-A078`, `V_A076`, `V_A077`, `V_A016`, `V_A017`
+**Sources:** Documentation/Boss/V_A017_SWORD_TRAIL_PROPOSAL.md, Documentation/Boss/V_A034_AUDIO_MIX_AUDIT.md [PROPOSAL]
 
 ---
 

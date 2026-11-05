@@ -4,6 +4,7 @@
 **Author:** Antigravity (Lane A)  
 **Status:** Post-Slice Planning Reference  
 **Scope:** Architectural catalog of post-vertical-slice enhancements, stretch goals, and advanced features slated for production following release candidate certification (`rc-v0.9.0`).
+**Sources:** Documentation/DECISIONS.md:1492, Documentation/PROJECT_STATE.md:259 [PROPOSAL / Post-Slice Backlog]
 
 ---
 

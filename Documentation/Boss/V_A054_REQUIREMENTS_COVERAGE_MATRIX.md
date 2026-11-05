@@ -33,7 +33,7 @@ This task maps every single one of the 82 canonical requirements to its authorit
 | **9. Defense, posture and interruption** | 5 | `RPGBossDamageBleedFiniteInputTests`, `RPGBossPoiseRegenRulesTests`, `RPGBossStaggerPolicyAdaptersTests`, `RPGBossStaggerResistRulesTests`, `RPGBossDefenseTests` | NativeUnit | 5 / 5 Covered |
 | **10. Phases and anti-cheese reactions** | 5 | `RPGBossPhaseFlowAdaptersTests`, `RPGBossPhaseAdaptersTests`, `RPGBossPhasesClusterAdaptersTests`, `RPGBossHealPunishAdaptersTests`, `RPGBossGapCloserRulesTests` | NativeUnit | 5 / 5 Covered |
 | **11. Debugging, QA, presentation and optional networking** | 7 | `RPGFrameworkRuntimeTests`, `RPGBossEncounterRestartMatrixTests`, `RPGCombatCatalogTests`, `RPGAutomationTests`, `RPGBossYawProbeTests`, `RPGTier1VisualRulesTests` | NativeIntegration / Gate | 7 / 7 Covered |
-| **TOTAL** | **82** | **Full C++ Native Test Harness** | — | **100% (82/82)** |
+| **TOTAL** | **82** | **Full C++ Native Test Harness** | — | **100% (82/82)** (Source: [`requirements_automation_coverage_matrix.csv`](file:///c:/UnrealProject/OneBossFight/Documentation/Boss/requirements_automation_coverage_matrix.csv)) |
 
 ---
 

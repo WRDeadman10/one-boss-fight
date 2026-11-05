@@ -1,5 +1,33 @@
 # Test Plan
 
+## Queue Z Batch 7 benchmark contract audit (2026-11-06)
+
+`Documentation/Boss/Z031_Z034_BENCHMARK_TELEMETRY_CONTRACT_AUDIT.md` records raw-frame sample/warmup semantics, nearest-rank p99, current target, mode witness requirements and R6 identity gaps. Corrected stale PERF-01 120 FPS acceptance to current 60 FPS / 16.67 ms target. No benchmark or test run.
+
+## Queue Z Batch 6 source/evidence audit (2026-11-06)
+
+`Documentation/Boss/Z026_Z029_CONTENT_SAFETY_REFERENCE_AUDIT.md` reconciles the source-only writer inventory and prior redirector/reference reports. No Editor asset query, writer, test or package run was performed. Dated 743/827 asset counts remain unresolved pending current Asset Registry evidence; `LoadSynchronous` sites are not cold-load hitch measurements.
+
+## Queue Z Batch 5 source/evidence audit (2026-11-06)
+
+`Documentation/Boss/Z021_Z024_TELEGRAPH_HUD_CAMERA_ACCESSIBILITY_AUDIT.md` distinguishes native timing configuration from actual hit notifies, HUD polling from historical HUD-01, camera safeguards from historical CAM-01, and framework cue proof from the legacy route. D154/D185 remain protocols for manual/Lead review. No tests or live runs were executed for this audit.
+
+## Queue Z Batch 4 source/evidence audit (2026-11-06)
+
+`Documentation/Boss/Z016_Z019_ENCOUNTER_RESET_CLEANUP_AUDIT.md` inventories activation/rebind tests and retained C915 reset bundles. Tests were not run by Codex; C915 is historical Lead evidence, not a new run.
+
+## Queue Z Batch 3 source/evidence audit (2026-11-06)
+
+Existing synthetic move selector/model tests, combo fallback case, KI-145 historical R2 PIE evidence, and no-candidate mitigation records are indexed in `Documentation/Boss/Z011_Z014_TARGET_SELECTOR_RANGE_AUDIT.md`; no tests were run. Target destruction/respawn, production pack-AI behavior, multi-level navigation, and exhausted-selector runtime branches remain outside this evidence.
+
+## Queue Z Batch 2 source/evidence audit (2026-11-06)
+
+Existing parry, stamina-rule, and dodge i-frame tests/receipts were inventoried in `Documentation/Boss/Z006_Z009_PLAYER_ACTION_LIFECYCLE_AUDIT.md`; no tests were run. Keep key-to-action mapping, runtime-configured table values, and contact-to-riposte integration as explicit evidence gaps.
+
+## Queue Z Batch 1 source audit (2026-11-06)
+
+Z001–Z004 inventoried existing C++ automation coverage in `Documentation/Boss/Z001_Z004_BOSS_RULE_LIFECYCLE_AUDIT.md`; this was a read-only audit and no tests were run. Existing pure rule cases are documented there, with untested invalid-input and runtime cancellation branches left open for future test work.
+
 ## Historical Queue V batch 10 heading correction
 
 The former heading below mislabeled legacy `QUEUE_50.md` tasks 46–50 as Queue V. The C-927 Tier 2/A2 regression coverage is separate delivered work. Actual Queue V V-C041–V-C045 are tracked in `Documentation/Boss/V_C041_C045_FEEL_FLOW_AUDIT.md`; no Lead run or build is claimed here.
@@ -300,7 +328,7 @@ Acceptance matrix is in `Idea/IDEA.md` section 14. Record results here per build
 | ENC-05 | Boss phase two | `pie_boss_phase_two.py` (boss pushed to 240 HP, player kept at 900 cm, then killed) | Transition clip, speed, Attack and attack rates up, fireballs cast, reset restores phase one | Encounter | PASS (2026-10-20): 6 of 6 | `[P2Pie]`, `LogRPGPhases` |
 | ENC-06 | Phase two assets guard | Automation `OneBossFight.Content.PackWiring`: transition montage, immunity effect, fireball ability exist | All load | Encounter | PASS (2026-10-20) | Five automation tests pass |
 | DODGE-02 | Dodge assets guard | Automation `OneBossFight.Content.PackWiring`: `IA_Dodge`, both montages, `GA_Player_Dodge.DodgeMontage` exist | All load | Player moves | PASS (2026-10-19) | All five automation tests pass |
-| PERF-01 | Performance | Packaged 1080p full fight: `Scripts/RunBenchmark.ps1` (bot fights Sevarog for 60 s after a 5 s warm-up) | Avg >= 120 FPS, p99 <= 8.33 ms | | Not met yet: unpackaged baseline 79 FPS, p99 27 ms (2026-10-20) | `Saved/Benchmark/pack_check_*` |
+| PERF-01 | Performance | Packaged 1080p full fight including phase two: `Scripts/RunBenchmark.ps1` (60 s after 5 s warm-up) | Avg >= 60 FPS and whole-frame p99 <= 16.67 ms; 120 FPS / 8.33 ms stretch only | | Not met: Round 4 legacy/data and Round 5 DLSS modes missed the absolute target; see dated captures below | `Saved/Benchmark/pack_check_*`; `Saved/bench_return/` |
 | ENV-01 | Arena dressing | Automation `OneBossFight.Arena.Dressing`: one instanced component per set, collision only where asked, a rebuild does not pile up components, the fire light flickers | All true | Presentation | PASS (2026-10-20) | Six automation tests pass |
 | ENV-02 | Arena look | `Scripts/Editor/pie_look.py` (run twice) and `Scripts/shot.sh`: player start, mid arena, brazier, west wall, boss close | Ruins ring, lit fires, readable player and boss, no floor glare | Presentation | Looked at by Claude 2026-10-20 (fine), needs the user's eyes | `Saved/Screenshots/WindowsEditor/` |
 | AUD-01 | Footsteps and music logic | `pie_audio.py`: walking and running count steps, music silent while the boss sleeps, starts on wake, stops on boss death | 5 of 5 | Presentation | PASS (2026-10-20): 16 steps in 8 s walking, 11 in 2.5 s running | The editor runs `-nosound`: not heard |
@@ -1519,3 +1547,85 @@ W-C046's read-only review found that the Tier 1 A2 montage creator supplies Rais
 ## Queue X X-C001–X-C005 — Tier 1 writer safety hotfix
 
 UE 5.5 `AnimMontageFactory` source confirms it creates a single-sequence montage. The Tier 1 writer now defaults to dry run and the incomplete A2 montage creation path refuses to write. The content-writer guard suite now checks the execution gate, per-save assertion ordering, and fail-closed A2 behavior; focused tests pass 7/7. No project asset was created or saved, and the VFX creation path was not executed. Editor-side sequence verification is still required before implementing multi-clip assembly. See `Documentation/Boss/X_C001_C004_TIER1_WRITER_HOTFIX_SPEC.md` and `W_C046_SECOND_REVIEW_AG_TOOLS.md`.
+
+## Queue X X-C006–X-C009 — asset-writer safety audit
+
+The generated source inventory scans 361 `Scripts/Editor` Python files (30 create, 69 modify, 42 map setup, 220 read-only); the separate save audit yields heuristic counts of 141 candidates, 80 explicit saves, 61 without literal saves, and 34 with an assertion/guard marker before the first save. These heuristics do not equal confirmed asset writes or prove safe call paths. Exact source examples include third-party in-place mutations and delete-before-recreate helpers. V-A036's test scope (two named scripts) does not enforce its global path/overwrite/property claims. No script was executed or asset changed. See `X_C006_ASSET_WRITER_INVENTORY.md` and `X_C006_C009_ASSET_WRITER_AUDIT.md`.
+
+## Queue X X-C011..X-C015 — requirements mapping validator review (2026-11-06)
+- Ran `python Scripts/Tools/test_requirements_coverage_matrix.py`: 4 tests passed. This validates current implementation only; it does not enforce registration existence or the semantics of mapping/status fields.
+- Independent static scan found 478 native automation registration literals. Of 82 CSV rows, 5 `PrimaryAutomationTest` identifiers matched their declared source exactly; 77 identifiers were absent from all scanned test sources. See `Documentation/Boss/X_C011_C014_REQUIREMENTS_MATRIX_REVIEW.md`. No C++ build/automation run; the four Python tests are not evidence that the CSV mappings are correct.
+
+## Queue X X-C016..X-C020 — G044 and parity audit (2026-11-06)
+- Offline G044 comparison: 424 typed leaves, 214 MATCH / 0 MISMATCH / 210 NOT-COMPARABLE; all 424 saved report path/status/value/legacy-value rows agree with current audit. Report hashes for defaults JSON and tool source are stale; manifest hash agrees. Current numeric literals match all 104 numeric default values, but a synthetic fixture shows the comparator does not bind a numeric default to its cited source literal. `test_compare_manifest_to_legacy_defaults.py`: 8/8 pass.
+- Read-only saved parity scan: 59 legacy/data receipt pairs have consistent shared identities and expected routes; 124 evidence manifests have zero hash/missing-file issues. Historical builds vary; no live build authentication claim.
+- Comparator fixture exposes an unreported health difference (`health 2000` vs `health 1500`) when a typed timing observable passes within tolerance; existing focused suite 30/30. This is a report-only finding, not resolved. No Unreal/build/PIE or source edit. See `Documentation/Boss/X_C016_C019_G044_PARITY_AUDIT.md`.
+
+## Queue X X-C021..X-C025 — Round 6 kit and intake audit (2026-11-06)
+- `check_bench_kit.py --include-development` returned FAIL: 110 files, 7,540,732,206 bytes; missing `Scripts/PackagedRunLog.psm1` and `Scripts/Tools/check_bench_kit.py`; `BUILD_INFO.txt` lacks generated package build ID and executable SHA-256. No empty required files or PDBs. Three copied telemetry files differ from checkout; no build identity stamp binds either version to the staged binaries.
+- `test_round6_benchmark_report.py`: 9/9 passed, but the valid fixture omits a cited source field; the README requests a source while V-C002 allows accompanying notes, so that contract needs clarification. Phase 2 `best` does not bind its logged concrete mode to the owner-accepted selection. Static control-flow review found stop gates fail closed, but failed process logs are not copied into the run folder before throw. No benchmark/game/Editor/build run. Full review: `Documentation/Boss/X_C021_C024_R6_KIT_AUDIT.md`.
+
+## Queue X X-C026..X-C029 — R6 evidence availability and metric reconciliation (2026-11-06)
+- No R6 returned run bundle found; `Saved/bench_return` has only R1, R2, R4, and R5. No raw R6 summaries/logs are available for recomputation or active-mode witness checks; X-C026..28 remain waiting for Lead/owner evidence.
+- Cross-document reconciliation found no current claim that R6 is complete. Keep R4/R5 measured metrics separate from absent R6 fields, predicted GPU savings, the primary fraction upper bound, ProfileGPU diagnostics, and configured combat timings. See `Documentation/Boss/X_C026_C029_ROUND6_EVIDENCE_AUDIT.md`. No live run or source change.
+# Queue X combat timing evidence status (X-C031–X-C035)
+
+No fresh Lead latency sessions or synchronized A1-A6 tell/input/contact captures are available. Historical paired automation receipts cover subsets but are not reaction-window evidence. Later BUILD-231 `pie_legend_t2` paired receipts pass 25/25 checks per route with comparator MATCH and provide instrumented A2/A6/roar shake, riposte hit-stop, parry dilation, and reset-restoration results. Active Blueprint shake values and per-event audio playback remain unverified. See `Documentation/Boss/X_C031_C034_COMBAT_TIMING_AUDIT.md`, `Documentation/Boss/Y006_Y009_LATENCY_TELEGRAPH_INTAKE.md`, and `Documentation/Boss/Y011_Y014_HIT_FEEDBACK_RUNTIME_RECONCILIATION.md`.
+
+# Queue X selected-route release evidence status (X-C036–X-C040)
+
+Packaged setter/first-caller evidence, authoritative cooked manifest/closure, and packaged refusal plus owner-visible recovery remain OPEN and require Lead/owner receipts. Existing PIE refusal outcomes do not close package proof. Current owner policy remains J049=A and A7=B with legacy fallback/parity control until all gates close. See `Documentation/Boss/X_C036_C039_RELEASE_GATE_AUDIT.md`, `Documentation/Boss/A7_RELEASE_GATE_CHECKLIST.json`, and `Documentation/Boss/V_C025_PACKAGED_SELECTOR_RECOVERY_RUNBOOK.md`.
+
+# Queue X owner-gate and P35 status (X-C041 through X-C045)
+
+KI-190 and Tier 2 art remain owner-gated; no gameplay cost or look change was made. J049=A and A7=B remain current. P35 packages are present but referencer counts need the Lead Editor receipt; no deletion is authorized. See `Documentation/Boss/X_C041_C044_OWNER_GATES_AND_P35_AUDIT.md`.
+
+# Queue X closeout (X-C046–X-C050)
+
+The witness ledger verifier passed all 4 checks: 82 IDs/61 deltas, census 80 WITNESSED / 2 PARTIAL / 0 NOT YET, 470 citations across 94 files, and formatting checks. No witness rows were edited; semantic exceptions are listed in `Documentation/Boss/X_C047_LEDGER_CROSSCHECK.md`. Current risks and owner handover: `Documentation/Boss/X_RESIDUAL_RISK_REGISTER.md` and `Documentation/Boss/X_RELEASE_OWNER_HANDOVER.md`. Queue Y is a proposal pending Lead review, not task authorization.
+# Queue Y R6 intake status (Y001–Y005)
+
+The latest read-only check found no R6 return bundle or raw per-run summaries, frames, and logs. Transfer-kit BUILD_INFO still lacks a package build ID and executable SHA-256. R6 metrics and active-mode witnesses remain unverified; do not substitute R5. See `Documentation/Boss/Y001_Y005_R6_INTAKE_RECHECK.md`.
+
+# Queue Y latency/telegraph intake (Y006-Y010)
+
+No six latency sessions or synchronized A1-A6 tell/input/contact captures are available. Historical paired automation receipts cover subsets; comparator failures and their evidence limits are recorded in `Documentation/Boss/Y006_Y009_LATENCY_TELEGRAPH_INTAKE.md`. These receipts do not measure player reaction windows.
+
+# Queue Y hit-feedback runtime evidence (Y011-Y015)
+
+Retained BUILD-231 paired `pie_legend_t2` run passes 25/25 per route with comparator MATCH. Instrumented results cover selected shake triggers, hit-stop duration, parry slow-motion, and reset restoration; L4 runs about 0.093-0.098 s while the configured nominal is 0.08 s and driver bounds are 0.04-0.20 s. Serialized shake overrides and per-event audio playback are not established. See `Documentation/Boss/Y011_Y014_HIT_FEEDBACK_RUNTIME_RECONCILIATION.md`.
+
+# Queue Y A7 cook evidence (Y016-Y020)
+
+The R6 transfer kit's staged Shipping manifest lists all three H2 roots and 78/156 H2 `/Game` closure paths; the 78 missing paths match C-878's editor-only skeleton-reference categories. The manifest is not tied to an executable by package ID/hash, and there is no accompanying UAT log or normalized manifest. Treat this as partial cook evidence only. Real Shipping caller/setter proof and packaged refusal/recovery evidence remain open. See `Documentation/Boss/Y016_Y020_A7_COOK_MANIFEST_RECONCILIATION.md`.
+
+# Queue Y packaged recovery intake (Y021-Y025)
+
+No package-bound selected, missing, invalid, or empty-selector runtime cases or usable owner-visible screenshots are present. Existing H019 and C872 evidence is Editor/PIE; C872 passed 13/13, but its invalid definition is a transient copy and its screenshots were black. Keep all A7 gates OPEN until the package cases and visible recovery proof meet `T025_G2_PACKAGED_RECOVERY_MATRIX.md`. Intake and hashes: `Documentation/Boss/Y021_Y025_A7_PACKAGED_RECOVERY_INTAKE.md`.
+
+# Queue Y owner gates (Y026-Y030)
+
+KI-190 remains OPEN: Strength Light uses the pack's 15 cost because its row is `StaminaCost=-1`; the source table's 35 value applies to heavy swings, and current 35-cost driver checks use test overrides. Tier 2 A/B/C remains unselected; no owner approval for look changes. No tuning or art change. See `Documentation/Boss/Y026_Y029_OWNER_GATES_RECHECK.md`.
+
+# Queue Y P35 referencer intake (Y031-Y035)
+
+Seven candidate package files were verified present and hashed. No Lead Asset Registry `[P35_REFERENCERS_JSON]` output or owner cleanup authorization was found; direct/transitive reference status remains UNKNOWN. Keep all seven files. See `Documentation/Boss/Y031_Y035_P35_REFERENCER_INTAKE.md`.
+
+# Queue Y tool-gap specifications (Y036-Y040)
+
+Specified regression cases for G044 source-token binding, parity health metric mismatches, benchmark failure-log retention on timeout/nonzero/success, and requirement-to-test/source registration mapping. No test code was added or executed; these acceptance cases remain open. See `Documentation/Boss/Y036_Y039_TOOL_GAP_SPEC.md`.
+
+# Queue Y ledger/status reconciliation (Y041-Y045)
+
+The specified witness ledger verifier passed 4/4 (82 IDs/61 deltas, 80/2/0, 470 citations across 94 files, formatting clean); this confirms structure/citations and does not close semantic/runtime/package gates. No ledger row changed. Current A7, owner-decision, and P35 statuses are recorded in `Documentation/Boss/Y041_Y045_STATUS_LEDGER_HANDOVER.md`.
+
+# Queue Y release recheck and Queue Z proposal (Y046-Y050)
+
+All four A7 gates remain OPEN. Staged launchers and inner binaries are hashed, but source revision/build ID and manifest/run provenance are missing. C872 recovery remains Editor/PIE evidence only. Owner-facing Tier 2 numeric values are marked unmeasured proposals; no option is chosen. Queue Z is drafted as a proposed read-only lane. See `Documentation/Boss/Y046_Y049_RELEASE_READINESS_RECHECK.md` and `Documentation/Boss/QUEUE_Z.md`.
+# Queue Z Batch 4 audit note (2026-11-06): Z016–Z020 are source/evidence reconciliation only. Native activation/rebind and Legend tests are registered but were not run by Codex. Existing C915 selected/legacy artifacts each report 20/20 resets; raw-log hashes and caveats are recorded in `Documentation/Boss/Z016_Z019_ENCOUNTER_RESET_CLEANUP_AUDIT.md`. No new runtime result is claimed.
+
+# Queue Z Batch 8 audit note (2026-11-06): Z036–Z040 are static/tool review plus explicit scans of two present Shipping executables. The matrix still has 77 unverified exact test/source mappings; G044 source-token and parity health counterexamples remain accepted by current code. Both binaries pass only the scanner's three-token check; this is not package-wide symbol or provenance acceptance. No tests or game/runtime operation was run.
+
+# Queue Z Batch 9 audit note (2026-11-06): Z041–Z045 corrected stale historical evidence-index anchors and updated the owner handover with C-936. The current ledger still shows two PARTIAL rows despite C-936's report that the owner closed them; no ledger status was changed. C-936 directs Codex to stop after this batch. No tests/runtime were run.
+
+# Queue Z Batch 8 audit note (2026-11-06): Z036–Z040 are static/tool review plus explicit scans of two present Shipping executables. The matrix still has 77 unverified exact test/source mappings; G044 source-token and parity health counterexamples remain accepted by current code. Both binaries pass only the scanner's three-token check; this is not package-wide symbol or provenance acceptance. No tests or game/runtime operation was run.

@@ -3,6 +3,7 @@
 **Author:** Antigravity (Lane A)  
 **Date:** 2026-11-06  
 **Reference Tasks:** `V-A057`, `V-C034`, `TIER2_ART_OWNER_BRIEF.md`, `[C-927]`
+**Sources:** Content/OneBossFight/Boss01/Animations/AM_Boss01_PhaseTransition.uasset, Source/OneBossFight/Boss/RPGSevarogDirector.cpp:212-225
 
 ---
 

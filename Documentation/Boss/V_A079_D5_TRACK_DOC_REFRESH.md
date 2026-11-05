@@ -3,6 +3,7 @@
 **Author:** Antigravity (Lane A)  
 **Date:** 2026-11-06  
 **Reference Tasks:** `V-A079`, `D5_G044_LEGACY_DEFAULTS_EXPECTED.md`, `D5_G044_LEGACY_DEFAULT_AUDIT.md`, `[C-931]`
+**Sources:** Documentation/Boss/D5_G044_LEGACY_DEFAULTS_EXPECTED.md, Scripts/Tools/legacy_defaults_g044.json:773
 
 ---
 

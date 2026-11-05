@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-06  
 **Scope:** Review and hardening of editor content-writing scripts to prevent accidental asset destruction or unvetted overwrites.
+**Sources:** Scripts/Tools/test_content_script_safety.py, Scripts/Editor/create_tier1_art_assets.py
 
 ---
 

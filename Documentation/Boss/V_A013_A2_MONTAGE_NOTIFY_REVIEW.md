@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)
 **Date:** 2026-11-05
 **Scope:** Verification of composite montage `/Game/OneBossFight/Boss01/Animations/AM_Boss01_A2` against the production tracker row (`FRPGAttackTrackerConfig::A2`) in `Source/OneBossFight/Player/RPGAttackTracker.cpp`.
+**Sources:** Source/OneBossFight/Player/RPGAttackTracker.cpp:30-108, Content/OneBossFight/Boss01/Animations/AM_Boss01_A2.uasset
 
 ---
 

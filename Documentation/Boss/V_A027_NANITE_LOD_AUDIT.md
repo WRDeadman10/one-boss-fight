@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-06  
 **Scope:** Geometric complexity, Nanite enablement status, triangle counts, and LOD fallback configurations for environment and character meshes.
+**Sources:** Config/DefaultEngine.ini, Documentation/PROJECT_STATE.md:259
 
 ---
 

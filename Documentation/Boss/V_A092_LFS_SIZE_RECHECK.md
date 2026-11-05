@@ -4,6 +4,7 @@
 **Author:** Antigravity (Lane A)  
 **Status:** Complete  
 **Scope:** Verification of Git Large File Storage (LFS) tracking, object integrity, pointer correctness, and disk footprint following Tier 1/2 asset integration.
+**Sources:** git lfs ls-files, git lfs fsck, .git/lfs/objects
 
 ---
 

@@ -4,6 +4,7 @@
 **Author:** Antigravity (Lane A)  
 **Status:** Complete  
 **Scope:** Concise, plain-language visual summary for project leadership detailing artistic enhancements, performance bounds, and preview procedures.
+**Sources:** Documentation/Boss/V_A059_TIER2_OWNER_REVIEW_PACKAGE.md, Source/OneBossFight/Boss/RPGSevarogDirector.h
 
 ---
 

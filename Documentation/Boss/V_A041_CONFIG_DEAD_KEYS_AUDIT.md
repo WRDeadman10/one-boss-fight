@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-06  
 **Scope:** Systematic review of all `Config/Default*.ini` files for obsolete properties, dead legacy bindings, and stale template remnants.
+**Sources:** Config/DefaultInput.ini, Config/DefaultGame.ini
 
 ---
 

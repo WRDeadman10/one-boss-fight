@@ -3,6 +3,7 @@
 **Author:** Antigravity (Lane A)  
 **Date:** 2026-11-06  
 **Reference Tasks:** `V-A066`, `V-A067`, `V-A068`, `V-A069`
+**Sources:** Documentation/Boss/V_A066_PACKAGE_SIZE_PROPOSALS_REVIEW.md, Documentation/Boss/V_A067_CONTENT_FOLDER_STRUCTURE_REVIEW.md
 
 ---
 

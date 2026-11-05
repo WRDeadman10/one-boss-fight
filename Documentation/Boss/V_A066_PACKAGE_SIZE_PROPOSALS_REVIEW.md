@@ -3,6 +3,7 @@
 **Author:** Antigravity (Lane A)  
 **Date:** 2026-11-06  
 **Reference Tasks:** `V-A066`, `V-C064`, `V-C065`, `Documentation/Boss/V_C061_C065_PACKAGING_AND_SIZE.md`
+**Sources:** Documentation/Boss/W_C021_C024_PACKAGED_SMOKE_AND_SIZE.md:12-18, Documentation/Boss/V_C061_C065_PACKAGING_AND_SIZE.md
 
 ---
 

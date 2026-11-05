@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-06  
 **Scope:** Performance, particle counts, emitter architectures, sim types, and tick budgets for all visual effects active in the boss duel.
+**Sources:** Content/OneBossFight/VFX/, Documentation/PROJECT_STATE.md:259
 
 ---
 

@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-06  
 **Scope:** Selection analysis, arena layout mapping, and combat depth perception rationale for the 4 shadow-casting braziers in `L_SevarogArena`.
+**Sources:** Config/DefaultEngine.ini, Content/OneBossFight/Maps/L_SevarogArena.umap
 
 ---
 

@@ -53,3 +53,16 @@ are listed separately as external module/engine dependencies.
 reviewed, every required content package is accounted for in the authoritative
 Shipping cook manifest, and no unresolved required dependency remains. This
 closes H2's census only; packaged activation remains H1.
+
+## R6 transfer-kit follow-up (Codex Y016–Y020, 2026-11-06)
+
+The external R6 kit contains staged Shipping and Development UFS file manifests.
+The Shipping manifest lists all three roots and 78 of the 156 unique `/Game`
+paths in the retained H2 closure. Its 78 missing paths match C-878's prior
+editor-only skeleton-reference categories (28 Manny poses, 28 Quinn poses, 4
+rigs, 12 Quinn textures, 2 Quinn material instances, 4 meshes). This is a
+category-level reconciliation, not independent proof of editor-only status.
+BUILD_INFO does not bind the manifests to a package ID or executable hash, and
+no UAT log or normalized schema manifest accompanied the kit. The package/cook
+gate therefore remains open pending identity-bound evidence. Hashes and method:
+`Documentation/Boss/Y016_Y020_A7_COOK_MANIFEST_RECONCILIATION.md`.

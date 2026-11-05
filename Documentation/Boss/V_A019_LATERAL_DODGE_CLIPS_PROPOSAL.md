@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-05  
 **Scope:** Proposal for dedicated left and right evasion roll animations on `SK_CombatMannequin` replacing generic forward roll rotation offsets.
+**Sources:** Content/OneBossFight/Characters/ [PROPOSAL / Animation Synthesis Blueprint]
 
 ---
 

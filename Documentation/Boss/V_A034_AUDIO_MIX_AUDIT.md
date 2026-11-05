@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-06  
 **Scope:** Audio mix hierarchy, SoundClasses, SoundMixes, volume balancing, spatialization, and dynamic ducking across duel SFX, voice, and music.
+**Sources:** Source/OneBossFight/Player/RPGLegend.cpp:475-515, Content/OneBossFight/Audio/
 
 ---
 

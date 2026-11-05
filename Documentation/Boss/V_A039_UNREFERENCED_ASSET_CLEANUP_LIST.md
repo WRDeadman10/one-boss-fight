@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-06  
 **Scope:** Inventory of standalone historical framework proof assets, orphaned test maps, and legacy data assets in `/Game/OneBossFight/FrameworkProof/` prepared for Owner review and disposal.
+**Sources:** Documentation/Boss/V_A037_REFERENCE_INTEGRITY_CENSUS.md, Content/OneBossFight/Data/
 
 ---
 

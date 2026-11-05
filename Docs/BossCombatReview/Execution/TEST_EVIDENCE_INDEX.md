@@ -6,13 +6,13 @@ Updated 2026-10-25. No new engine/build/PIE/package/benchmark test executed by C
 
 | Evidence ID | Existing record | What it supports | What it does not prove |
 |---|---|---|---|
-| HIST-C84 | [C-84](C:/UnrealProject/OneBossFight/Documentation/TEAM_MAILBOX.md:2746) | Owner-run report: 37/37 automation; flask 7/7; build select 18/18; wake 11/11; close-path diagnosis | Raw reports not independently revalidated this turn; not complete current regression |
+| HIST-C84 | [C-84](C:/UnrealProject/OneBossFight/Documentation/TEAM_MAILBOX.md:190) | Owner-run report: 37/37 automation; flask 7/7; build select 18/18; wake 11/11; close-path diagnosis | Raw reports not independently revalidated this turn; not complete current regression |
 | HIST-TRACE | [TRACE-01](C:/UnrealProject/OneBossFight/Documentation/TEST_PLAN.md:97) | Historical 30/30 trace scenarios | Every later authored clip/rate/hitch or exact visible sword alignment |
 | HIST-IFR | [IFR-01](C:/UnrealProject/OneBossFight/Documentation/TEST_PLAN.md:99) | Historical 19/19 window/cleanup checks | Full current damage/defense parity or human dodge feel |
-| HIST-SOAK | [SOAK-01](C:/UnrealProject/OneBossFight/Documentation/TEST_PLAN.md:120) | Historical 213/213 scripted encounter stability | Latest close/wake changes or balance |
+| HIST-SOAK | [SOAK-01](C:/UnrealProject/OneBossFight/Documentation/TEST_PLAN.md:385) | Historical 213/213 scripted encounter stability | Latest close/wake changes or balance |
 | HIST-M14-RAW | [M14 section 14](C:/UnrealProject/OneBossFight/Documentation/M14_FIGHT_NOTES.md:154) | Nine retuned raw-pacing records: seven wins, two early deaths; wins 122.6–143.5 s | Nine wins, current authored-clip balance, human difficulty |
 | HIST-M14-TELL | [M14 section 15](C:/UnrealProject/OneBossFight/Documentation/M14_FIGHT_NOTES.md:187) | Six telegraph-0.4 runs: six wins, four hits total | Same sample size as raw set or current authored-montage feel |
-| HIST-PERF | [Performance log](C:/UnrealProject/OneBossFight/Documentation/PERFORMANCE_LOG.md:21) | Valid console Shipping RTX 3060 proxy result failed target; later Development experiments | Final Shipping pass; RDP results never count as hardware acceptance |
+| HIST-PERF | [Performance log](C:/UnrealProject/OneBossFight/Documentation/PERFORMANCE_LOG.md:30) | Valid console Shipping RTX 3060 proxy result failed target; later Development experiments | Final Shipping pass; RDP results never count as hardware acceptance |
 | HIST-GRAPH | [Saved melee graph](C:/UnrealProject/OneBossFight/Saved/asset_text/GA_EnemyMeleeAttack.t3d) | Inspectable saved graph/pin connections | Current runtime instance/default equivalence |
 | HIST-AUDIT | [83-row audit](C:/UnrealProject/OneBossFight/Docs/BossCombatReview/ExistingBossAudit/03_REFERENCE_COMPARISON_MATRIX.md) | Prior source/asset-dependency analysis and verification backlog | Fresh gameplay or approved implementation scope |
 

@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-06  
 **Scope:** Verification of Git LFS tracking rules, pointer integrity, binary asset boundaries, and remote sync state.
+**Sources:** .gitattributes, git lfs ls-files
 
 ---
 

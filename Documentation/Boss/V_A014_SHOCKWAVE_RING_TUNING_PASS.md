@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)
 **Date:** 2026-11-05
 **Scope:** Tuning pass and readability audit for `/Game/OneBossFight/VFX/NS_Boss_ShockwaveRing` under the Development preview switch `rpg.Art.Tier1`.
+**Sources:** Source/OneBossFight/Boss/RPGSevarogDirector.cpp:480-500, Content/OneBossFight/VFX/NS_Boss_ShockwaveRing.uasset
 
 ---
 

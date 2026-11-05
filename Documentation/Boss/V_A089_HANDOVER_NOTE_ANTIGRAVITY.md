@@ -4,6 +4,7 @@
 **Author:** Antigravity (Lane A)  
 **Status:** Canonical Handover  
 **Scope:** Synthesis of Lane A accomplishments across Queue V (Tasks `V-A001..V-A090`), repository health state, and operational readiness for Queue W.
+**Sources:** Docs/BossCombatReview/Execution/Antigravity/Ledger/witness_status_v3.json, Documentation/Boss/QUEUE_V.md
 
 ---
 

@@ -4,6 +4,7 @@
 **Author:** Antigravity (Lane A)  
 **Status:** Complete  
 **Scope:** Cross-lane documentation reconciliation covering BUILD-234 baseline, ledger census, test coverage validator, packaging metrics, and binding Evidence Rule compliance.
+**Sources:** Documentation/Boss/V_C091_C095_HANDOVER_AND_REVIEW.md, Documentation/Boss/W_C021_C024_PACKAGED_SMOKE_AND_SIZE.md
 
 ---
 

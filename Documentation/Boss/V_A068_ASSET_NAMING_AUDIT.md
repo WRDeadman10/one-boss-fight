@@ -3,6 +3,7 @@
 **Author:** Antigravity (Lane A)  
 **Date:** 2026-11-06  
 **Reference Tasks:** `V-A068`, `V_A037`, `V_A067`
+**Sources:** Content/OneBossFight/, Documentation/Boss/V_A067_CONTENT_FOLDER_STRUCTURE_REVIEW.md
 
 ---
 

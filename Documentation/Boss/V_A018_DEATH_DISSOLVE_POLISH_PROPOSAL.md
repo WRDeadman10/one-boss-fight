@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-05  
 **Scope:** Architecture proposal for smooth material dissolve transition and ember monument solidification on Boss defeat.
+**Sources:** Source/OneBossFight/Player/RPGLegend.cpp:438-454, Content/OneBossFight/Boss01/Remains/ [PROPOSAL]
 
 ---
 

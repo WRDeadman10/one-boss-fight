@@ -4,6 +4,7 @@
 **Author:** Antigravity (Lane A)  
 **Status:** Complete  
 **Scope:** Structural and content comparison of current living [`Documentation/PROJECT_STATE.md`](file:///c:/UnrealProject/OneBossFight/Documentation/PROJECT_STATE.md) (429 lines) against the five historical recovery snapshots preserved in [`Saved/doc_backups/2026-11-05_project_state_recovery/`](file:///c:/UnrealProject/OneBossFight/Saved/doc_backups/2026-11-05_project_state_recovery/) following incident [`KI-186`](file:///c:/UnrealProject/OneBossFight/Documentation/KNOWN_ISSUES.md#L299).
+**Sources:** Saved/doc_backups/2026-11-05_project_state_recovery/, Documentation/PROJECT_STATE.md:1-429
 
 ---
 

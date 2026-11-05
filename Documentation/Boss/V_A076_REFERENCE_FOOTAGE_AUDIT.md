@@ -3,6 +3,7 @@
 **Author:** Antigravity (Lane A)  
 **Date:** 2026-11-06  
 **Reference Tasks:** `V-A076`, `V_A032`, `V_A073`, `Morgott_82_Point_Combat_Reference`
+**Sources:** Docs/BossCombatReview/Execution/Claude/D3/evidence/, Documentation/Boss/Morgott_82_Point_Combat_Reference.md
 
 ---
 

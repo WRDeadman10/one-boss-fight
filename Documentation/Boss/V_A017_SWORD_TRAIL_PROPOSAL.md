@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-05  
 **Scope:** Architecture proposal, material design, and GPU cost estimation for weapon blade ribbon trails on Boss and Player.
+**Sources:** Documentation/PROJECT_STATE.md:259, Content/OneBossFight/Boss01/Weapons/ [PROPOSAL]
 
 ---
 

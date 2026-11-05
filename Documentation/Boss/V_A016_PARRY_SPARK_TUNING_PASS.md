@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-05  
 **Scope:** Parameter tuning, directional ejection, particle density, and lifetime review for `/Game/OneBossFight/VFX/NS_Combat_ParrySpark`.
+**Sources:** Content/OneBossFight/VFX/NS_Combat_ParrySpark.uasset, Documentation/PROJECT_STATE.md:259
 
 ---
 

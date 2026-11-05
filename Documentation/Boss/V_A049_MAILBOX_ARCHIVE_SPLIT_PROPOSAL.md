@@ -4,6 +4,7 @@
 **Date:** 2026-11-06  
 **Status:** **PROPOSAL — WAITING ON LEAD APPROVAL** (No message edits or file split executed).  
 **Scope:** Proposal to split historical October 2026 messages from `Documentation/TEAM_MAILBOX.md` into `Documentation/Archive/TEAM_MAILBOX_OCT2026.md` to optimize repository inspection and file loading performance.
+**Sources:** Documentation/TEAM_MAILBOX.md:1-14820 [PROPOSAL / Archive Split]
 
 ---
 

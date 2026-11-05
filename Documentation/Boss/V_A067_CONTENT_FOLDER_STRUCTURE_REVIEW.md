@@ -3,6 +3,7 @@
 **Author:** Antigravity (Lane A)  
 **Date:** 2026-11-06  
 **Reference Tasks:** `V-A067`, `V_A037`, `V_A039`, `V_A066`
+**Sources:** Content/OneBossFight/, Scripts/Tools/test_content_script_safety.py
 
 ---
 

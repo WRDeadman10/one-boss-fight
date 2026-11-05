@@ -3,6 +3,7 @@
 **Author:** Antigravity (Lane A)  
 **Date:** 2026-11-06  
 **Reference Tasks:** `V-A072`, `V-A048`, `V-A071`, `DECISIONS.md`, `[C-929]`, `[C-930]`
+**Sources:** Documentation/Boss/V_A048_RELEASE_CHECKLIST_FINAL_FORM.md, Documentation/TEST_PLAN.md:1500-1525
 
 ---
 

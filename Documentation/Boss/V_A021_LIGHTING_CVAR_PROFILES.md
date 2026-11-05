@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-06  
 **Scope:** CVar-only lighting and atmosphere optimization profiles for Round 6 performance experiments.
+**Sources:** Config/DefaultEngine.ini, Documentation/Boss/U_A06P_U_A08P_LIGHTING_AND_ATMOSPHERE_FEASIBILITY.md [PROPOSAL]
 
 ---
 

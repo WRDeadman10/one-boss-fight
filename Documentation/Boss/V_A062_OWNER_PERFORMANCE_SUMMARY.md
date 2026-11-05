@@ -3,6 +3,7 @@
 **Author:** Antigravity (Lane A)  
 **Date:** 2026-11-06  
 **Reference Tasks:** `V-A062`, `PERFORMANCE_LOG.md`, `DECISIONS.md`, `V_A021`, `V_A029`
+**Sources:** Documentation/Boss/W_C003_PREDICTED_MEASURED_SAVINGS.md, Documentation/Boss/V_C014_ROUND6_GPU_CAPTURE_SHEET.md
 
 ---
 

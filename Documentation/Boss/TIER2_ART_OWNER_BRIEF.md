@@ -4,6 +4,8 @@
 **Status:** Prepared for Owner Decision per Lead [C-903], [C-917], and Queue V rules.
 **Constraint:** Binding project rule: *Look-changing asset edits (lights, materials, level, Tier 2 art) need the owner's yes; cvar/scalability experiments and DLSS are approved.*
 
+**Evidence class for numeric values:** The thresholds, animation timing, color/intensity settings, per-asset sizes, and render/GPU cost estimates in this brief are design proposals, not observed measurements or verified asset properties. No Tier 2 assets have been authored or profiled. The project target of 1080p/60 FPS and p99 <=16.67 ms on RTX 2060 Super comes from `Documentation/DECISIONS.md` (2026-10-20); it does not substantiate the asset-specific costs below. Require authored-asset profiling and a retained Lead capture before treating those estimates as measured.
+
 ---
 
 ## 1. Executive Summary & Goals

@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-06  
 **Scope:** Authoritative release gate criteria for packaging and shipping *One Boss Fight*.
+**Sources:** Documentation/TEST_PLAN.md:1500-1525, Documentation/PROJECT_STATE.md:259
 
 ---
 

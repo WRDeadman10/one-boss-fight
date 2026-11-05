@@ -4,6 +4,7 @@
 **Author:** Antigravity (Lane A)  
 **Status:** Proposal (Awaiting Lead Claude Approval per `QUEUE_V.md:211`)  
 **Scope:** Inventory and structured migration plan for superseded historical documents currently residing in [`Documentation/Boss/`](file:///c:/UnrealProject/OneBossFight/Documentation/Boss/).
+**Sources:** Documentation/Boss/ [Disk inventory scan of 826 files]
 
 ---
 

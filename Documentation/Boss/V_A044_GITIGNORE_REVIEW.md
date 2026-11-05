@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-06  
 **Scope:** Review of root `.gitignore` rules, identification of untracked transient artifacts, and hygiene proposals.
+**Sources:** .gitignore, Documentation/KNOWN_ISSUES.md:301
 
 ---
 

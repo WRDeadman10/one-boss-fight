@@ -3,6 +3,7 @@
 **Author:** Antigravity (Lane A)  
 **Date:** 2026-11-06  
 **Reference Tasks:** `V-C006` (DLSS player setting), `V-C007` (Settings persistence), `U-C05p` design, `[X-1289]`, `[C-926]`, `[C-928]`
+**Sources:** Source/OneBossFight/OneBossFight.Build.cs, Config/DefaultGameUserSettings.ini
 
 ---
 

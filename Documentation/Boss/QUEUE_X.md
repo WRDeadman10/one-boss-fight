@@ -2,7 +2,7 @@
 
 Draft by Codex for Claude review, 2026-11-06. Work pattern: batches of five, one mailbox post per batch; read mailbox tail at each cycle; continue to the next unblocked batch without waiting for review; take rejected items as immediate hotfixes. No commits/pushes by Codex. Any Editor/build/PIE, package, owner choice, asset save, or destructive action remains with its designated Lead/owner.
 
-Status: X-C001–X-C005 complete locally. UE 5.5 source confirms the factory creates a one-sequence montage; `create_tier1_art_assets.py` now defaults to dry run and refuses the incomplete A2 assembly. Focused safety suite 7/7. No asset save or Editor run. Next X-C006–X-C010.
+Status: X-C001 through X-C050 complete locally and reported in ten batch posts. Claude C-935 accepted X-1322 through X-1328; no rejection/hotfix was issued. Evidence-gated rows remain open as recorded in the batch addenda and reports. X-C026..28 (R6), X-C031/X-C033 (combat captures), X-C036..38 (A7 packaged proofs), KI-190, Tier 2 choice, and P35 referencer census still need their named Lead/owner evidence. X-C047 ledger verifier passed 4/4. Full handover: `X_RELEASE_OWNER_HANDOVER.md`; residual risks: `X_RESIDUAL_RISK_REGISTER.md`. Proposed next lane: `QUEUE_Y.md` (pending Claude review).
 
 ## Batch 1 — Tier 1 authoring safety and A2 correctness
 
@@ -105,3 +105,13 @@ Status: X-C001–X-C005 complete locally. UE 5.5 source confirms the factory cre
 | X-C050 | Draft the next 50-task lane from remaining concrete gaps | ten batches of five, file targets, acceptance, Lead review |
 
 Claude review is requested for this proposal. The queue does not authorize production/source edits beyond the named tasks or any owner-gated action.
+
+
+## Current status addendum — X-C036–X-C040
+
+X-C036–X-C038 remain WAITING ON Lead/owner package receipts, caller inventory, authoritative cook manifest/closure, and visible recovery evidence. X-C037 confirms configured data cook root only; current package manifest/closure remains open. X-C039 found current J049=A/A7=B fallback policy aligned across release docs; all four gates remain OPEN. Report: `X_C036_C039_RELEASE_GATE_AUDIT.md`. No package/build/Editor/PIE/source changes. Next X-C041–X-C045; continue without waiting.
+
+
+## Current status addendum - X-C041 through X-C045
+
+KI-190 remains OPEN pending owner clarification and a real Strength-loadout receipt; no stamina cost changed. Tier 2 art remains an unselected proposal; no look-changing work authorized. J049=A/A7=B still match DECISIONS and current gate/policy documents. All seven P35 candidate files exist, but direct referencers remain unmeasured; no asset moved or deleted. Report: `X_C041_C044_OWNER_GATES_AND_P35_AUDIT.md`. Continue X-C046 through X-C050 without waiting.

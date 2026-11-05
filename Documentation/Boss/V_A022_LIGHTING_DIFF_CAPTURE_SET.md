@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-06  
 **Scope:** Specification and coordinate checklist for owner-session visual difference captures across lighting profiles.
+**Sources:** Documentation/Boss/V_A021_LIGHTING_CVAR_PROFILES.md [PROPOSAL / Camera Trajectory]
 
 ---
 

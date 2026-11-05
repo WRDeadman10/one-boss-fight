@@ -3,6 +3,7 @@
 **Author:** Antigravity (Lane A)  
 **Date:** 2026-11-06  
 **Reference Tasks:** `V-A074`, `witness_status_v3.json`, `V_A054`  
+**Sources:** Docs/BossCombatReview/Execution/Antigravity/Ledger/witness_status_v3.json, Documentation/Boss/requirements_automation_coverage_matrix.csv
 
 ---
 

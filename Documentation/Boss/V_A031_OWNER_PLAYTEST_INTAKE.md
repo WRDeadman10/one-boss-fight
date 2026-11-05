@@ -4,6 +4,7 @@
 **Date:** 2026-11-06  
 **Status:** **FRAMEWORK READY — WAITING ON OWNER PLAY-TEST NOTES**  
 **Scope:** Intake structure, tagging taxonomy, and automated PIE reproduction mapping for incoming Owner play-session feedback.
+**Sources:** Documentation/PROJECT_STATE.md:301-350, Documentation/TASKS.md [PROPOSAL / Intake Template]
 
 ---
 

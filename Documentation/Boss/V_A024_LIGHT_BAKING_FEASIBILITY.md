@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-06  
 **Scope:** Feasibility analysis of baking static lighting (GPU Lightmass / CPU Lightmass) vs maintaining dynamic Lumen GI in `L_SevarogArena`.
+**Sources:** Config/DefaultEngine.ini, Documentation/DECISIONS.md:1492
 
 ---
 

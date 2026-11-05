@@ -4,6 +4,7 @@
 **Author:** Antigravity (Lane A)  
 **Status:** Complete  
 **Scope:** Exhaustive risk evaluation covering art assets, content organization, GPU budgets, lifetime leaks, and platform memory constraints.
+**Sources:** Documentation/KNOWN_ISSUES.md:298-302, Documentation/Boss/V_A066_PACKAGE_SIZE_PROPOSALS_REVIEW.md
 
 ---
 

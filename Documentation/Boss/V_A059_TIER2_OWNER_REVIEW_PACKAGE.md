@@ -3,6 +3,7 @@
 **Author:** Antigravity (Lane A)  
 **Date:** 2026-11-06  
 **Reference Tasks:** `V-A059`, `TIER2_ART_OWNER_BRIEF.md`, `V_A056..V_A058`, `[C-926]`, `[C-928]`
+**Sources:** Documentation/Boss/V_A056_TIER2_INTEGRATION_CHECK.md, Source/OneBossFight/Boss/RPGSevarogDirector.h
 
 ---
 

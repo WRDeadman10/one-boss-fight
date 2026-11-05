@@ -4,6 +4,7 @@
 **Author:** Antigravity (Lane A)  
 **Status:** Canonical Reference  
 **Scope:** Single-page onboarding guide covering environment prerequisites, build procedures, test automation, packaging, and agent collaboration rules.
+**Sources:** Documentation/PROJECT_STATE.md, Scripts/Gate.ps1, Scripts/Package.ps1
 
 ---
 

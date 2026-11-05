@@ -3,6 +3,7 @@
 **Author:** Antigravity (Lane A)  
 **Date:** 2026-11-06  
 **Reference Tasks:** `V-A056`, `V-C031..V-C036`, `[C-927]`, `[C-928]`
+**Sources:** Source/OneBossFight/Boss/RPGSevarogDirector.cpp:480-530, Source/OneBossFight/Player/RPGLegend.cpp:475-515
 
 ---
 

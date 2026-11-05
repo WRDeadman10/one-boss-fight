@@ -3,6 +3,7 @@
 **Author:** Antigravity (Offline Quality, Audit & Asset Lane)  
 **Date:** 2026-11-06  
 **Scope:** Consolidated optimization proposals derived from audits V-A026 (Materials), V-A027 (Nanite/LOD), and V-A028 (VFX) with projected savings.
+**Sources:** Config/DefaultEngine.ini, Documentation/Boss/V_A026_MATERIAL_COST_AUDIT.md [PROPOSAL]
 
 ---
 
