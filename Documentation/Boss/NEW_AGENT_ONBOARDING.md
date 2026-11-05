@@ -32,4 +32,20 @@ powershell -ExecutionPolicy Bypass -File Scripts\RunDrivers.ps1 -Only pie_boss_d
 Get-Content Documentation\Boss\TOOLS.md
 ```
 
+## Engine Plugin Prerequisites (NVIDIA DLSS 4.5 & Streamline)
+
+As of `BUILD-223` (C-895 / C-896), NVIDIA DLSS 4.5 (plugin v8.9.0-NGX310.9.16) is enabled in `OneBossFight.uproject`.
+The plugin and its required runtime dependencies are installed at the **ENGINE level** and are kept **OUT OF GIT**:
+- `Engine/Plugins/Marketplace/DLSS`
+- `Engine/Plugins/Marketplace/StreamlineNGXCommon`
+
+### Fresh Machine Setup Steps:
+1. Obtain the plugin distribution from `C:\UnrealProject\2026.10.16_UE5.5_DLSS4.5Plugin_v8.9.0` or Epic Games Marketplace.
+2. Copy the `DLSS` and `StreamlineNGXCommon` folders into your engine marketplace plugins directory:
+   `C:\Program Files\Epic Games\UE_5.5\Engine\Plugins\Marketplace\`
+3. Verify `nvngx_dlss.dll` exists at:
+   `C:\Program Files\Epic Games\UE_5.5\Engine\Plugins\Marketplace\DLSS\Binaries\ThirdParty\Win64\nvngx_dlss.dll`
+4. Building or packaging the project will automatically package the runtime DLLs into the staged build (`Saved/StagedBuilds/Windows/`).
+
+
 Use `Documentation/TEST_PLAN.md` for the current evidence and known limitations. The full PIE driver gate can take around 100 minutes; run selected rows in chunks. Do not launch an editor/build/driver run unless you own the editor handoff.

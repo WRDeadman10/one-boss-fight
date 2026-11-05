@@ -10,8 +10,9 @@ Owner Round 4 on the RTX 3060 proxy (BUILD-222 Development, 1920x1080, console s
 |---|---:|---:|---|---|
 | `rpg.Perf.FireShadows=0` (E18) | 71.55 / 15.35 ms | -8.50 ms | All 12 brazier point lights lose dynamic shadows; lighting remains. | **Not measured.** Applying the old delta arithmetically to the Round 4 selected baseline gives about 34.35 ms, still over budget; this projection is only a scenario illustration, not an estimate. |
 | `rpg.Perf.FireLights=0` (E17) | 77.73 / 14.24 ms | -9.61 ms | All 12 brazier point lights disappear; highest known visual cost among the isolated light trials. | **Not measured.** Carrying the old delta arithmetically gives about 33.24 ms, still over budget; do not treat as a forecast. |
+| `rpg.Perf.FireLights=0` + fire FX, gate/dressing mist, and embers off (E25) | 78.45 / 13.94 ms | -9.91 ms | Combined and visually substantial removal of the point lights, flame/smoke/spark particles, fog cards, dressing mist, and ember field. | **Not measured.** Carrying the old delta arithmetically gives about 32.94 ms, still over budget; do not treat as a forecast. |
 
-Source summaries: `Saved/bench_return/r2/runs/E18_fire_shadow_off_20261025_001426/summary.json`, `E17_fire_lights_off_20261025_001314/summary.json`, and late baseline `E00_baseline_20261025_002532/summary.json`. Round 2 values met the absolute target in that older run context, but the project/build differs and Round 4's baseline is much slower. The measured historical delta cannot be assumed to transfer.
+Source summaries: `Saved/bench_return/r2/runs/E18_fire_shadow_off_20261025_001426/summary.json`, `E17_fire_lights_off_20261025_001314/summary.json`, `E25_fire_mist_embers_off_20261025_002251/summary.json`, and late baseline `E00_baseline_20261025_002532/summary.json`. Round 2 values met the absolute target in that older run context, but the project/build differs and Round 4's baseline is much slower. The measured historical delta cannot be assumed to transfer.
 
 ## Budget conclusion
 

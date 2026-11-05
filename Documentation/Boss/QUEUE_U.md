@@ -17,9 +17,9 @@ verdict (owner authority), never staging *.webm or Saved/.
 | ID | Task | Acceptance |
 |---|---|---|
 | U-C01 | DONE — GPU cost model from rounds 1–4: known fire-light shadow, VSM, cloud, TSR and Lumen evidence with source and ms | `U-C01_GPU_COST_MODEL.md`; every measured row cites its run folder; limits stated |
-| U-C02 | DONE — Round 5 one-CVar experiment set targeting shadow count/radius, VSM, clouds, TSR/TAA and Lumen; Development-only radius control | `round5_experiments.json`; dry-run lists 20 rows (16 treatments, baseline then repeat after each four); six offline fixtures |
+| U-C02 | DONE — Round 5 one-CVar experiment set targeting shadow count/radius, VSM, clouds, TSR/TAA and Lumen; Development-only radius control | `round5_experiments.json`; dry-run lists 20 rows (16 treatments, baseline then repeat after each four); eight offline fixtures |
 | U-C03 | READY FOR LEAD REVIEW — Round 5 owner prompt in BENCHKIT_README | prompt includes console/GPU check, selected-route Development build, dry-run, run/collect steps and no-shipped-look guard |
-| U-C04 | DONE — Round 5 variable-length intake and >5% baseline-drift detection | `round4_benchmark_report.py experiments`; `round5_benchmark.schema.json`; fixtures cover N rows, drift quarantine and one-CVar validation |
+| U-C04 | DONE — Round 5 variable-length intake and >5% baseline-drift detection | `round4_benchmark_report.py experiments`; `round5_benchmark.schema.json`; fixtures cover N rows, identity/drift quarantine and one-CVar validation |
 | U-C05 | DONE — predicted GPU budget and visual-cost table | `U-C05_PREDICTED_GPU_BUDGET.md`; reports no defensible current-build combination, uses historical trials only as retest candidates |
 | U-C06 | Scalability profile proposal (DefaultScalability/DeviceProfiles) for a "Performance" preset, NOT applied | diff file + rationale |
 | U-C07 | Opt-in runtime switch to load that preset for A/B runs only (non-Shipping), unset = unchanged | PRODUCTION CHANGE flag, test |
@@ -74,7 +74,7 @@ verdict (owner authority), never staging *.webm or Saved/.
 | U-A02 | Independent review of today's PRODUCTION CHANGES since 6c7d3fc (D1 attach bundle, T1 tick prerequisites, G1 benchmark selector, CueMode Shipping guard, P17 strafe fields) | DONE (APPROVED in U_A01_U_A04_AUDIT.md) |
 | U-A03 | Independent review of the D5 legacy-defaults table (Scripts/Tools/legacy_defaults_g044.json) against Source | DONE (AGREE: 249/249 native C++ rules match Source) |
 | U-A04 | Review the comparator rules D6b/c/d/O4 for false-PASS risk (like the 2000 vs 1500 case) | DONE (Findings in U_A01_U_A04_AUDIT.md: bracketed token stripping vulnerability & recommendations) |
-| U-A05 | A- batch + commit of the reviewed state | SUBMITTED (A-525 receipt posted; commit pending lead verdict per C-893) |
+| U-A05 | A- batch + commit of the reviewed state | DONE (commit 38680a2) |
 | U-A06 | Arena lighting audit in the editor (read-only): every light, mobility, shadow casting, radius, intensity, cost class | table |
 | U-A07 | Lighting proposal A: fewer shadow casters (e.g. 4 of 12 braziers cast), others unshadowed; predicted ms and screenshots | proposal, no change |
 | U-A08 | Lighting proposal B: baked/static lighting for static braziers + a few dynamic lights; ms and look | proposal |
@@ -182,9 +182,9 @@ DLSS-adapted perf rows:
 | U-C05p | Codex | Player-facing upscaler setting design: Shipping graphics option (Off/DLAA/Quality/Balanced/Performance), default chosen from Round 5 data, fallback to TSR on non-NVIDIA GPUs; design + test plan only until Round 5 lands | design |
 | U-C06p | Codex | Implement U-C05p after the lead's go (PRODUCTION CHANGE, Shipping included, owner-approved via un-park) | lead build + package |
 | U-C07p | Codex | Hitch analysis of Round 4 (U-C08 original) | evidence |
-| U-A06p | AG | Arena lighting audit (read-only, U-A06 original) with per-light shadow cost class | table |
-| U-A07p | AG | Shadow-caster reduction proposal as a cvar/scalability-only experiment if possible (no asset edit), else asset proposal for the owner | proposal |
-| U-A08p | AG | Volumetric cloud / sky cost proposal (cvar-level first) | proposal |
-| U-A09p | AG | Build the Round 5 kit (MakeBenchKit, dependency test green) when the lead says go; verify the staged build contains the DLSS binaries (nvngx_dlss.dll) | kit + hash |
-| U-A10p | AG | A- batch + commit (uproject change included; the engine-level plugin is NOT in git: document the install step in the onboarding page) | hash |
+| U-A06p | AG | Arena lighting audit (read-only, U-A06 original) with per-light shadow cost class | DONE (Table in U_A06P_U_A08P_LIGHTING_AND_ATMOSPHERE_AUDIT.md) |
+| U-A07p | AG | Shadow-caster reduction proposal as a cvar/scalability-only experiment if possible (no asset edit), else asset proposal for the owner | DONE (Options A/B/C in U_A06P_U_A08P_LIGHTING_AND_ATMOSPHERE_AUDIT.md) |
+| U-A08p | AG | Volumetric cloud / sky cost proposal (cvar-level first) | DONE (CVar raymarching & SkyLight proposals in U_A06P_U_A08P_LIGHTING_AND_ATMOSPHERE_AUDIT.md) |
+| U-A09p | AG | Build the Round 5 kit (MakeBenchKit, dependency test green) when the lead says go; verify the staged build contains the DLSS binaries (nvngx_dlss.dll) | DONE (Kit: C:/BenchTransfer/R5/OneBossFight_BenchKit.zip, 6.439 GB, SHA256: 5c5de862033d8e1b82036f122629c7a8035d8acefa9e9e697b27bf8c1c241bdb) |
+| U-A10p | AG | A- batch + commit (uproject change included; the engine-level plugin is NOT in git: document the install step in the onboarding page) | SUBMITTED ([A-527] receipt posted; commit follows lead verdict) |
 Look-changing asset edits (lights, materials) remain proposals for the owner; cvar/scalability experiments and DLSS are approved.

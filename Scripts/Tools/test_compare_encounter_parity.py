@@ -189,10 +189,15 @@ class EncounterParityTests(unittest.TestCase):
         self.assertEqual(compare_messages("first at 4.4 seconds", "first at 4.5 seconds"), [])
         self.assertEqual(compare_messages("13 samples", "12 samples"), [])
         self.assertEqual(compare_messages("series [1, 2, 3]", "series [1, 2, 4]"), [])
+        self.assertEqual(compare_messages("samples [('side roll', 0, 0)]",
+                                          "samples [('side roll', 0, 1)]"), [])
         self.assertEqual(compare_messages("object BP_Boss_C_3 at 0x000008AB", "object BP_Boss_C_1 at 0x000005FE"), [])
         large_delta = compare_messages("boss max health 2000.0", "boss max health 1500.0")
         self.assertTrue(any("numeric token 1 differs" in issue and "control=2000" in issue and "data=1500" in issue
                             for issue in large_delta))
+        bracketed_health = compare_messages("boss [health 2000.0/2000.0]", "boss [health 1500.0/1500.0]")
+        self.assertTrue(any("numeric token" in issue and "control=2000" in issue
+                            for issue in bracketed_health))
         changed_text = compare_messages("state Dormant", "state Fighting")
         self.assertTrue(any("message text differs" in issue for issue in changed_text))
         changed_count = compare_messages("observed 1.0 sample", "observed sample")
@@ -215,6 +220,18 @@ class EncounterParityTests(unittest.TestCase):
         self.assertIn("check-0001", warnings[0])
         self.assertIn("4 samples pelvis [140,133,123,112]", warnings[0])
         self.assertIn("5 samples pelvis [140,133,123,98,81]", warnings[0])
+
+    def test_d6c_bracketed_state_values_fail_without_sample_warning(self) -> None:
+        control = self.timing_receipt("legacy", "one", 0.4)
+        candidate = self.timing_receipt("data", "two", 0.4)
+        for receipt, message in ((control, "state [health 2000/2000]"),
+                                 (candidate, "state [health 1500/1500]")):
+            observable = receipt["observables"]["windup"]  # type: ignore[index]
+            observable.pop("comparison")
+            observable["value"] = {"status": "PASS", "message": message}
+        self.assertTrue(any("numeric token" in issue and "control=2000" in issue
+                            for issue in parity.compare(control, candidate)))
+        self.assertEqual(parity._message_warnings(control, candidate), [])
 
     def test_d6c_exact_typed_per_trial_counts_fail_on_one_boundary_trial(self) -> None:
         control = self.timing_receipt("legacy", "one", 0.4)

@@ -16,7 +16,7 @@ RPG_PERF_SWITCH(FireLights, "FireLights", "0 turns off the point lights of the f
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<int32> CVarFireShadows(TEXT("rpg.Perf.FireShadows"), -1, TEXT("-1 shadows as authored; 0 no fire light casts a shadow; N only the first N braziers keep their shadow (performance experiment)."), ECVF_Default);
 int32 RPGPerf::FireShadows() { return CVarFireShadows.GetValueOnGameThread(); }
-static TAutoConsoleVariable<float> CVarFireRadiusScale(TEXT("rpg.Perf.FireRadiusScale"), 1.f, TEXT("Development-only multiplier for fire point-light attenuation radius; 1 preserves authored radius (performance experiment)."), ECVF_Default);
+static TAutoConsoleVariable<float> CVarFireRadiusScale(TEXT("rpg.Perf.FireRadiusScale"), 1.f, TEXT("Development-only multiplier for fire point-light attenuation radius, clamped to 0.25-1.25; 1 preserves authored radius (performance experiment)."), ECVF_Default);
 float RPGPerf::FireRadiusScale() { const float Value = CVarFireRadiusScale.GetValueOnGameThread(); return FMath::IsFinite(Value) ? FMath::Clamp(Value, 0.25f, 1.25f) : 1.f; }
 #else
 int32 RPGPerf::FireShadows() { return -1; }

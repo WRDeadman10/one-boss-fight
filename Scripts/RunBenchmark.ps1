@@ -68,6 +68,16 @@ $Latest = $BenchmarkDirs | ForEach-Object { Get-ChildItem $_ -Directory -Filter 
 	Sort-Object LastWriteTime -Descending | Select-Object -First 1
 if (-not $Latest) { throw "No results found under: $($BenchmarkDirs -join '; ')" }
 
+# Keep this run's game log next to its results (2026-11-05, Round 5): the engine rotates OneBossFight.log on every launch, so after a
+# long experiment plan the early runs' logs (and their DLSS active-mode lines) would otherwise be gone. Copy only; nothing is deleted.
+foreach ($logDir in @((Join-Path $StageRoot 'OneBossFight\Saved\Logs'), (Join-Path $env:LOCALAPPDATA 'OneBossFight\Saved\Logs'))) {
+	$gameLog = Join-Path $logDir 'OneBossFight.log'
+	if ((Test-Path $gameLog) -and ((Get-Item $gameLog).LastWriteTime -ge $Process.StartTime)) {
+		Copy-Item $gameLog (Join-Path $Latest.FullName 'game.log') -Force
+		break
+	}
+}
+
 $Summary = Get-Content (Join-Path $Latest.FullName 'summary.json') -Raw | ConvertFrom-Json
 Write-Host "Results: $($Latest.FullName)"
 $Summary | Format-List

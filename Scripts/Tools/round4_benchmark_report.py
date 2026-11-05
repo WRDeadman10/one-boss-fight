@@ -238,13 +238,14 @@ def render_report(receipt: Any) -> str:
 
 
 ROUND5_SCHEMA = "onebossfight.round5-benchmark/v1"
-ROUND5_METRICS = ("avg_fps", "p99_ms", "gpu_avg_ms")
+ROUND5_METRICS = ("avg_fps", "p99_ms", "gpu_avg_ms", "gpu_p99_ms")
 ROUND5_IDENTITY_FIELDS = ("build_id", "build_sha256", "build_configuration", "engine_version", "gpu", "gpu_driver",
                           "session_type", "resolution_x", "resolution_y", "map", "fight_mode", "route")
+ROUND5_MODE_TOKENS = {"DLAA": "DLAA", "Quality": "MaxQuality", "Balanced": "Balanced", "Performance": "MaxPerf"}
 
 
 def validate_experiment_receipt(receipt: Any) -> list[str]:
-    """Validate a variable-length Round 5 capture and its one-variable treatments."""
+    """Validate Round 5 runs, active DLSS mode evidence, and comparison inputs."""
     if not isinstance(receipt, dict):
         return ["receipt root must be an object"]
     issues: list[str] = []
@@ -262,8 +263,9 @@ def validate_experiment_receipt(receipt: Any) -> list[str]:
         if not isinstance(run, dict):
             issues.append(f"runs[{index}] must be an object")
             continue
-        for key in ("run_id", "kind", "baseline_group", "cvars", *ROUND5_METRICS,
-                    *ROUND5_IDENTITY_FIELDS, "summary_path", "summary_sha256"):
+        for key in ("run_id", "kind", "baseline_group", "mode", "cvars", *ROUND5_METRICS,
+                    *ROUND5_IDENTITY_FIELDS, "summary_path", "summary_sha256", "active_mode_log_token",
+                    "active_mode_log_line", "image_quality_note"):
             if key not in run:
                 issues.append(f"runs[{index}] missing {key}")
         run_id = run.get("run_id")
@@ -282,8 +284,42 @@ def validate_experiment_receipt(receipt: Any) -> list[str]:
             issues.append(f"runs[{index}] cvars must be an object with nonempty string keys")
         elif kind == "baseline" and cvars:
             issues.append(f"runs[{index}] baseline must not set CVars")
-        elif kind == "treatment" and len(cvars) != 1:
-            issues.append(f"runs[{index}] treatment must set exactly one CVar")
+        elif kind == "treatment" and not 2 <= len(cvars) <= 3:
+            issues.append(f"runs[{index}] treatment must set the DLSS enable and screen percentage, with optional one shadow CVar")
+        mode = run.get("mode")
+        if not isinstance(mode, str) or not mode.strip():
+            issues.append(f"runs[{index}] mode must be a nonempty string")
+        elif kind == "baseline" and mode != "TSR":
+            issues.append(f"runs[{index}] baseline mode must be TSR")
+        elif kind == "treatment":
+            base_mode = mode.split("+", 1)[0].strip()
+            expected_token = ROUND5_MODE_TOKENS.get(base_mode)
+            if not {"r.NGX.DLSS.Enable", "r.ScreenPercentage"}.issubset(cvars):
+                issues.append(f"runs[{index}] treatment cvars must include r.NGX.DLSS.Enable and r.ScreenPercentage")
+            if cvars.get("r.NGX.DLSS.Enable") not in (1, "1", True):
+                issues.append(f"runs[{index}] r.NGX.DLSS.Enable must be 1")
+            if "rpg.Perf.FireShadows" in cvars and cvars["rpg.Perf.FireShadows"] not in (0, "0", 0.0):
+                issues.append(f"runs[{index}] rpg.Perf.FireShadows must be 0 when present")
+            if any(key not in {"r.NGX.DLSS.Enable", "r.ScreenPercentage", "rpg.Perf.FireShadows"} for key in cvars):
+                issues.append(f"runs[{index}] treatment contains an unsupported Round 5 CVar")
+            token = run.get("active_mode_log_token")
+            line = run.get("active_mode_log_line")
+            if expected_token is None:
+                issues.append(f"runs[{index}] unsupported DLSS mode {mode!r}")
+            elif token != expected_token:
+                issues.append(f"runs[{index}] active mode token must be {expected_token!r} for {mode}")
+            if not isinstance(line, str) or "Creating" not in line or "NGXPerfQuality=" not in line or "DenoiseMode=Off" not in line:
+                issues.append(f"runs[{index}] active_mode_log_line must prove an active SR feature with DenoiseMode=Off")
+            elif expected_token and f"NGXPerfQuality={expected_token}" not in line:
+                issues.append(f"runs[{index}] active mode log line does not match {expected_token}")
+        elif kind == "baseline" and run.get("active_mode_log_token") != "TSR":
+            issues.append(f"runs[{index}] baseline active_mode_log_token must be TSR")
+        if not isinstance(run.get("active_mode_log_token"), str) or not run["active_mode_log_token"].strip():
+            issues.append(f"runs[{index}] active_mode_log_token must be nonempty text")
+        if not isinstance(run.get("active_mode_log_line"), str):
+            issues.append(f"runs[{index}] active_mode_log_line must be text")
+        if not isinstance(run.get("image_quality_note"), str):
+            issues.append(f"runs[{index}] image_quality_note must be text (use UNKNOWN if not captured)")
         if kind == "baseline" and isinstance(group, int) and not isinstance(group, bool):
             if group in baselines:
                 issues.append(f"duplicate baseline for group {group}")
@@ -347,17 +383,40 @@ def analyze_experiments(receipt: Any) -> dict[str, Any]:
             identity_differences[field] = [{"run": name, "value": value} for name, value in values]
     comparable = stable and not identity_differences
     comparisons = []
+    by_mode: dict[str, list[dict[str, Any]]] = {}
     for run in runs:
         if run["kind"] != "treatment":
             continue
+        by_mode.setdefault(run["mode"], []).append(run)
         baseline = baselines[run["baseline_group"]]
         comparison = {"run_id": run["run_id"], "baseline_group": run["baseline_group"],
-                      "cvar": next(iter(run["cvars"].items())), "usable": comparable}
+                      "mode": run["mode"], "cvars": run["cvars"], "active_mode_log_token": run["active_mode_log_token"],
+                      "image_quality_note": run["image_quality_note"], "usable": comparable}
         for metric in ROUND5_METRICS:
+            comparison[metric] = run[metric]
             comparison[f"{metric}_delta_percent"] = ((run[metric] - baseline[metric]) / baseline[metric] * 100) if comparable else None
         comparisons.append(comparison)
+    mode_summaries = []
+    baseline_means = {
+        metric: (sum(row[metric] for row in baselines.values()) / len(baselines))
+        if len(baselines) >= 3 else None
+        for metric in ROUND5_METRICS
+    }
+    for mode, mode_runs in sorted(by_mode.items()):
+        summary: dict[str, Any] = {"mode": mode, "run_count": len(mode_runs),
+                                   "image_quality_notes": [row["image_quality_note"] for row in mode_runs]}
+        for metric in ROUND5_METRICS:
+            values = [row[metric] for row in mode_runs]
+            mean = sum(values) / len(values) if len(values) == 3 else None
+            reference = baseline_means[metric]
+            summary[f"{metric}_mean"] = mean
+            summary[f"{metric}_delta_vs_tsr_percent"] = (
+                (mean - reference) / reference * 100 if comparable and mean is not None and reference is not None else None
+            )
+        mode_summaries.append(summary)
     return {"valid": True, "stable": stable, "comparable": comparable, "identity_differences": identity_differences,
-            "issues": [], "baseline_drift": drift, "comparisons": comparisons}
+            "issues": [], "baseline_drift": drift, "baseline_means": baseline_means,
+            "comparisons": comparisons, "mode_summaries": mode_summaries}
 
 
 def render_experiment_report(receipt: Any) -> str:
@@ -368,12 +427,33 @@ def render_experiment_report(receipt: Any) -> str:
              f"- Baseline stability (all metrics within {receipt.get('baseline_metric_tolerance_percent', 5):g}% of group 0): {'PASS' if result['stable'] else 'FAIL'}",
              f"- Setup identity comparable across runs: {'PASS' if not result['identity_differences'] else 'FAIL'}",
              f"- Treatment comparisons usable: {'YES' if result['comparable'] else 'NO — baseline drift or identity mismatch quarantines all treatment deltas'}", "",
-             "| Run | Baseline group | One CVar | avg_fps Δ% | p99_ms Δ% | gpu_avg_ms Δ% |", "|---|---:|---|---:|---:|---:|"]
+             "## TSR reference mean", "",
+             "| Avg FPS | p99 ms | GPU avg ms | GPU p99 ms |", "|---:|---:|---:|---:|"]
+    baseline = result["baseline_means"]
+    lines.append("| " + " | ".join(
+        f"{baseline[metric]:.2f}" if baseline[metric] is not None else "UNKNOWN"
+        for metric in ROUND5_METRICS
+    ) + " |")
+    lines.extend(["", "## Per-mode means (exactly three treatment runs required for a mean)", "",
+             "| Mode | Trials | Mean FPS | Mean p99 ms | Mean GPU p99 ms | Δ FPS vs TSR | Δ p99 vs TSR | Δ GPU p99 vs TSR | Image-quality notes |",
+             "|---|---:|---:|---:|---:|---:|---:|---:|---|"])
+    for row in result["mode_summaries"]:
+        def display(value: float | None, digits: int = 2) -> str:
+            return f"{value:.{digits}f}" if value is not None else "UNKNOWN"
+        deltas = [row[f"{metric}_delta_vs_tsr_percent"] for metric in ("avg_fps", "p99_ms", "gpu_p99_ms")]
+        note = " / ".join(note or "UNKNOWN" for note in row["image_quality_notes"])
+        lines.append(f"| {row['mode']} | {row['run_count']} | {display(row['avg_fps_mean'])} | "
+                     f"{display(row['p99_ms_mean'])} | {display(row['gpu_p99_ms_mean'])} | "
+                     f"{display(deltas[0])}% | {display(deltas[1])}% | {display(deltas[2])}% | {note} |")
+    lines.extend(["", "## Per-run evidence", "", "| Run | Mode | CVars | avg_fps | p99 ms | GPU p99 ms | Δ FPS vs block TSR | Active mode token | Image-quality note |", "|---|---|---|---:|---:|---:|---:|---|---|"])
     for row in result["comparisons"]:
-        name, value = row["cvar"]
-        deltas = [f"{row[key]:+.2f}%" if row[key] is not None else "UNKNOWN" for key in
-                  ("avg_fps_delta_percent", "p99_ms_delta_percent", "gpu_avg_ms_delta_percent")]
-        lines.append(f"| {row['run_id']} | {row['baseline_group']} | `{name}={value}` | " + " | ".join(deltas) + " |")
+        cvars = "; ".join(f"{name}={value}" for name, value in sorted(row["cvars"].items()))
+        values = [f"{row[metric]:.2f}" if row[metric] is not None else "UNKNOWN"
+                  for metric in ("avg_fps", "p99_ms", "gpu_p99_ms")]
+        delta = row["avg_fps_delta_percent"]
+        lines.append(f"| {row['run_id']} | {row['mode']} | `{cvars}` | " + " | ".join(values) +
+                     f" | {f'{delta:+.2f}%' if delta is not None else 'UNKNOWN'} | "
+                     f"{row['active_mode_log_token']} | {row['image_quality_note'] or 'UNKNOWN'} |")
     if result["baseline_drift"]:
         lines.extend(["", "## Baseline drift over tolerance", ""])
         lines.extend(f"- Group {row['group']} {row['metric']}: {row['delta_percent']:.2f}% (limit {row['tolerance_percent']:g}%)."

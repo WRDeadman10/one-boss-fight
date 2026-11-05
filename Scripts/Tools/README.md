@@ -9,7 +9,7 @@ File outputs use the shared `atomic_io.py` helper where replacement or no-overwr
 | `audit_a5_driver_registration.py` | Compare all receipt-registered A5 drivers with RunDrivers and fresh-process runner registration. |
 | `audit_editor_map_loads.py` | Find literal known-map paths passed to `load_asset` in Editor scripts. |
 | `audit_editor_save_safety.py` | Report explicit first-save lines and earlier assertion/guard markers in Editor writers. |
-| `round4_benchmark_report.py` | Inventory Round 4 evidence, compare route identity, or validate N Round 5 experiments and detect >5% repeated-baseline drift. |
+| `round4_benchmark_report.py` | Inventory Round 4 evidence, compare route identity, or validate Round 5 DLSS mode evidence, report per-mode avg FPS/p99/GPU p99 and deltas vs TSR, and detect >5% repeated-baseline drift. |
 | `check_bench_kit_manifest.py` | Check MakeBenchKit copy destinations for duplicates and missing sources. |
 | `check_g2_selection_refusal_expected.py` | Check G2 expected-sheet case/token coverage in its PIE driver. |
 | `check_packaged_smoke_receipt.py` | Validate captured PackagedSmoke tokens against configuration and process exit code. |

@@ -7,25 +7,140 @@
   "baseline_metric_tolerance_percent": 5,
   "baseline_cvar": "",
   "experiments": [
-    {"name":"R5_00_baseline","kind":"baseline","baseline_group":0,"cvar":""},
-    {"name":"R5_01_fire_shadows_8","kind":"treatment","baseline_group":0,"cvar":"rpg.Perf.FireShadows=8"},
-    {"name":"R5_02_fire_shadows_4","kind":"treatment","baseline_group":0,"cvar":"rpg.Perf.FireShadows=4"},
-    {"name":"R5_03_fire_shadows_0","kind":"treatment","baseline_group":0,"cvar":"rpg.Perf.FireShadows=0"},
-    {"name":"R5_04_fire_radius_075","kind":"treatment","baseline_group":0,"cvar":"rpg.Perf.FireRadiusScale=0.75"},
-    {"name":"R5_05_baseline_repeat","kind":"baseline","baseline_group":1,"cvar":""},
-    {"name":"R5_06_fire_radius_050","kind":"treatment","baseline_group":1,"cvar":"rpg.Perf.FireRadiusScale=0.50"},
-    {"name":"R5_07_vsm_local_bias_1","kind":"treatment","baseline_group":1,"cvar":"r.Shadow.Virtual.ResolutionLodBiasLocal=1"},
-    {"name":"R5_08_vsm_local_bias_2","kind":"treatment","baseline_group":1,"cvar":"r.Shadow.Virtual.ResolutionLodBiasLocal=2"},
-    {"name":"R5_09_vsm_local_ray_count_4","kind":"treatment","baseline_group":1,"cvar":"r.Shadow.Virtual.SMRT.RayCountLocal=4"},
-    {"name":"R5_10_baseline_repeat","kind":"baseline","baseline_group":2,"cvar":""},
-    {"name":"R5_11_cloud_view_samples_128","kind":"treatment","baseline_group":2,"cvar":"r.VolumetricCloud.ViewRaySampleMaxCount=128"},
-    {"name":"R5_12_cloud_view_samples_64","kind":"treatment","baseline_group":2,"cvar":"r.VolumetricCloud.ViewRaySampleMaxCount=64"},
-    {"name":"R5_13_cloud_shadow_samples_64","kind":"treatment","baseline_group":2,"cvar":"r.VolumetricCloud.ShadowViewRaySampleMaxCount=64"},
-    {"name":"R5_14_cloud_shadow_samples_32","kind":"treatment","baseline_group":2,"cvar":"r.VolumetricCloud.ShadowViewRaySampleMaxCount=32"},
-    {"name":"R5_15_baseline_repeat","kind":"baseline","baseline_group":3,"cvar":""},
-    {"name":"R5_16_aa_taa","kind":"treatment","baseline_group":3,"cvar":"r.AntiAliasingMethod=2"},
-    {"name":"R5_17_aa_tsr","kind":"treatment","baseline_group":3,"cvar":"r.AntiAliasingMethod=4"},
-    {"name":"R5_18_lumen_downsample_32","kind":"treatment","baseline_group":3,"cvar":"r.Lumen.ScreenProbeGather.DownsampleFactor=32"},
-    {"name":"R5_19_lumen_cache_resolution_16","kind":"treatment","baseline_group":3,"cvar":"r.Lumen.ScreenProbeGather.RadianceCache.ProbeResolution=16"}
-  ]
+    {
+      "name": "R5_00_TSR_anchor_g0",
+      "kind": "baseline",
+      "baseline_group": 0,
+      "mode": "TSR",
+      "cvar": ""
+    },
+    {
+      "name": "R5_01_DLAA_a",
+      "kind": "treatment",
+      "baseline_group": 0,
+      "mode": "DLAA",
+      "trial": 1,
+      "cvar": "r.NGX.DLSS.Enable=1;r.ScreenPercentage=100"
+    },
+    {
+      "name": "R5_02_Quality_a",
+      "kind": "treatment",
+      "baseline_group": 0,
+      "mode": "Quality",
+      "trial": 1,
+      "cvar": "r.NGX.DLSS.Enable=1;r.ScreenPercentage=66.7"
+    },
+    {
+      "name": "R5_03_Balanced_a",
+      "kind": "treatment",
+      "baseline_group": 0,
+      "mode": "Balanced",
+      "trial": 1,
+      "cvar": "r.NGX.DLSS.Enable=1;r.ScreenPercentage=58"
+    },
+    {
+      "name": "R5_04_Performance_a",
+      "kind": "treatment",
+      "baseline_group": 0,
+      "mode": "Performance",
+      "trial": 1,
+      "cvar": "r.NGX.DLSS.Enable=1;r.ScreenPercentage=50"
+    },
+    {
+      "name": "R5_05_TSR_anchor_g1",
+      "kind": "baseline",
+      "baseline_group": 1,
+      "mode": "TSR",
+      "cvar": ""
+    },
+    {
+      "name": "R5_06_Quality_b",
+      "kind": "treatment",
+      "baseline_group": 1,
+      "mode": "Quality",
+      "trial": 2,
+      "cvar": "r.NGX.DLSS.Enable=1;r.ScreenPercentage=66.7"
+    },
+    {
+      "name": "R5_07_Balanced_b",
+      "kind": "treatment",
+      "baseline_group": 1,
+      "mode": "Balanced",
+      "trial": 2,
+      "cvar": "r.NGX.DLSS.Enable=1;r.ScreenPercentage=58"
+    },
+    {
+      "name": "R5_08_Performance_b",
+      "kind": "treatment",
+      "baseline_group": 1,
+      "mode": "Performance",
+      "trial": 2,
+      "cvar": "r.NGX.DLSS.Enable=1;r.ScreenPercentage=50"
+    },
+    {
+      "name": "R5_09_DLAA_b",
+      "kind": "treatment",
+      "baseline_group": 1,
+      "mode": "DLAA",
+      "trial": 2,
+      "cvar": "r.NGX.DLSS.Enable=1;r.ScreenPercentage=100"
+    },
+    {
+      "name": "R5_10_TSR_anchor_g2",
+      "kind": "baseline",
+      "baseline_group": 2,
+      "mode": "TSR",
+      "cvar": ""
+    },
+    {
+      "name": "R5_11_Balanced_c",
+      "kind": "treatment",
+      "baseline_group": 2,
+      "mode": "Balanced",
+      "trial": 3,
+      "cvar": "r.NGX.DLSS.Enable=1;r.ScreenPercentage=58"
+    },
+    {
+      "name": "R5_12_Performance_c",
+      "kind": "treatment",
+      "baseline_group": 2,
+      "mode": "Performance",
+      "trial": 3,
+      "cvar": "r.NGX.DLSS.Enable=1;r.ScreenPercentage=50"
+    },
+    {
+      "name": "R5_13_DLAA_c",
+      "kind": "treatment",
+      "baseline_group": 2,
+      "mode": "DLAA",
+      "trial": 3,
+      "cvar": "r.NGX.DLSS.Enable=1;r.ScreenPercentage=100"
+    },
+    {
+      "name": "R5_14_Quality_c",
+      "kind": "treatment",
+      "baseline_group": 2,
+      "mode": "Quality",
+      "trial": 3,
+      "cvar": "r.NGX.DLSS.Enable=1;r.ScreenPercentage=66.7"
+    },
+    {
+      "name": "R5_15_TSR_anchor_g3",
+      "kind": "baseline",
+      "baseline_group": 3,
+      "mode": "TSR",
+      "cvar": ""
+    }
+  ],
+  "conditional_block": {
+    "name": "Phase 2: selected best DLSS mode + Round 2 fire-shadow reduction",
+    "status": "deferred_until_phase_1_receipt",
+    "selection_rule": "Choose among DLAA, Quality, Balanced, Performance by highest median avg_fps, provided every trial has NGXPerfQuality matching the mode, no baseline drift >5%, p99 does not regress vs TSR by >5%, and owner image-quality notes accept the result. If no mode qualifies, omit Phase 2.",
+    "baseline_cvar": "rpg.Perf.FireShadows=0",
+    "source": "Source/OneBossFight/Arena/RPGPerfSwitches.cpp; Round 2 E18 in Documentation/PERFORMANCE_LOG.md",
+    "run_count": 3,
+    "before_and_after_baseline_anchors": true,
+    "extra_args_template": "-RPGBenchmarkCvars=\"r.NGX.DLSS.Enable=1;r.ScreenPercentage=<selected mode percentage>;rpg.Perf.FireShadows=0\"",
+    "execution": "After Phase 1 is analyzed, record the chosen mode and API-reported percentage in a separate Phase 2 dry-run sheet; take one TSR baseline anchor before and after the three treatments. Do not execute unresolved placeholders."
+  }
 }

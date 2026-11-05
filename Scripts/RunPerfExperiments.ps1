@@ -87,6 +87,9 @@ foreach ($e in $Experiments) {
     $dir = $roots | ForEach-Object { Get-ChildItem $_ -Directory -Filter "$($e.N)_*" -ErrorAction SilentlyContinue } | Sort-Object LastWriteTime -Descending | Select-Object -First 1
     if (-not $dir) { Write-Host "  no result for $($e.N)"; continue }
     $s = Get-Content (Join-Path $dir.FullName 'summary.json') -Raw | ConvertFrom-Json
+    if ($Round5 -and $e.C -and $s.cvars -match '\(UNKNOWN variable\)') {
+        throw "Round 5 experiment $($e.N) requested an unknown console variable; see $((Join-Path $dir.FullName 'summary.json')) and its game log. The run is retained and the experiment series is stopped."
+    }
     $rows += [pscustomobject]@{ Name = $e.N; avg_fps = [math]::Round($s.avg_fps, 1); p99_ms = [math]::Round($s.p99_ms, 1); gpu_avg_ms = [math]::Round($s.gpu_avg_ms, 1); gpu_p99_ms = [math]::Round($s.gpu_p99_ms, 1); game_p99 = [math]::Round($s.game_thread_p99_ms, 1); render_p99 = [math]::Round($s.render_thread_p99_ms, 1); gpu = $s.gpu; fight = $s.fight_started; cvars = $s.cvars }
     Write-Host ("  avg {0} fps, p99 {1} ms, gpu avg {2} ms" -f $rows[-1].avg_fps, $rows[-1].p99_ms, $rows[-1].gpu_avg_ms)
 }

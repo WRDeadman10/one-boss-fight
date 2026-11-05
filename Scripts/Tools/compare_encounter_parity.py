@@ -49,12 +49,29 @@ _INSTANCE_SUFFIX = re.compile(r"(?<=_)\d+\b")
 _BRACKETED_DETAIL = re.compile(r"\[[^\]]*\]")
 _SAMPLE_COUNT = re.compile(r"\b\d+(?=\s+samples\b)", re.IGNORECASE)
 _MESSAGE_NUMBER = re.compile(r"(?<![\w.])[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?(?![\w.])")
+_STATE_KEYWORD = re.compile(r"\b(?:health|posture|poise|damage|stamina|hp)\b", re.IGNORECASE)
+_SAMPLED_SERIES = re.compile(r"\s*[-+\d.eE,;()\s'\"]+\Z")
+_SAMPLED_TUPLES = re.compile(
+    r"\s*\(\s*['\"][^'\"]+['\"]\s*,\s*[-+\d.eE,;()\s]+\)(?:\s*,\s*\(\s*['\"][^'\"]+['\"]\s*,\s*[-+\d.eE,;()\s]+\))*\s*\Z"
+)
+
+
+def _is_sampled_detail(detail: str, before: str) -> bool:
+    """Only treat numeric arrays or details following 'samples' as diagnostics."""
+    if _STATE_KEYWORD.search(detail):
+        return False
+    follows_sample_marker = re.search(r"\bsamples\s*,?\s*\Z", before, re.IGNORECASE)
+    return bool(follows_sample_marker or _SAMPLED_SERIES.fullmatch(detail) or _SAMPLED_TUPLES.fullmatch(detail))
 
 
 def _message_parts(message: str) -> tuple[str, list[float]]:
     without_pointers = _POINTER_TOKEN.sub("", message)
     without_instances = _INSTANCE_SUFFIX.sub("", without_pointers)
-    without_series = _BRACKETED_DETAIL.sub("", without_instances)
+    without_series = re.sub(
+        r"\[([^\]]*)\]",
+        lambda match: "" if _is_sampled_detail(match.group(1), without_instances[:match.start()]) else match.group(0),
+        without_instances,
+    )
     without_sample_count = _SAMPLE_COUNT.sub("", without_series)
     numbers: list[float] = []
     remaining = _MESSAGE_NUMBER.sub(lambda match: numbers.append(float(match.group(0))) or "<N>", without_sample_count)
@@ -83,8 +100,11 @@ def _message_mismatch(left: str, right: str) -> str | None:
 
 def _volatile_message_differs(left: str, right: str) -> bool:
     """Sampled arrays and the count before 'samples' are diagnostic-only, never discarded silently."""
-    left_series = _BRACKETED_DETAIL.findall(left)
-    right_series = _BRACKETED_DETAIL.findall(right)
+    def sampled_details(message: str) -> list[str]:
+        return [match.group(1) for match in re.finditer(r"\[([^\]]*)\]", message)
+                if _is_sampled_detail(match.group(1), message[:match.start()])]
+    left_series = sampled_details(left)
+    right_series = sampled_details(right)
     left_counts = _SAMPLE_COUNT.findall(left)
     right_counts = _SAMPLE_COUNT.findall(right)
     return left_series != right_series or left_counts != right_counts
