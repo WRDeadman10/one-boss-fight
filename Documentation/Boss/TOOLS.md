@@ -4,7 +4,7 @@ The source-only Shipping symbol risk scan for test-named declarations is recorde
 
 The packaged-content check's static-reference scope and named missing-entry fixture are recorded in [PACKAGED_CONTENT_CHECKLIST_AUDIT_S183.md](PACKAGED_CONTENT_CHECKLIST_AUDIT_S183.md).
 
-The Rebuild wrapper's compiler/test exit propagation and log-path handling are recorded in [BUILD_FAILURE_PROPAGATION_AUDIT_S184.md](BUILD_FAILURE_PROPAGATION_AUDIT_S184.md).
+The Rebuild wrapper's compiler/test exit propagation and log-path handling are recorded in `BUILD_FAILURE_PROPAGATION_AUDIT_S184.md` (archived).
 
 The PIE driver timeout, zero-check, and failed-check exit paths are reviewed in [DRIVER_FAILURE_PROPAGATION_AUDIT_S185.md](DRIVER_FAILURE_PROPAGATION_AUDIT_S185.md).
 
@@ -323,15 +323,15 @@ Queue D D103's gap-closer exit/start boundary map is in [GAP_CLOSER_EXIT_BOUNDAR
 
 Queue D D104's cue-jitter deterministic sample audit is in [CUE_JITTER_SEEDED_PROPERTY_AUDIT_D104.md](CUE_JITTER_SEEDED_PROPERTY_AUDIT_D104.md); repeated seeded tuples and safe-range containment are tested, but statistical uniformity and cue association are not claimed.
 
-Queue D D105's selector zero-weight eligibility map is in [SELECTOR_ZERO_WEIGHT_CANDIDATE_AUDIT_D105.md](SELECTOR_ZERO_WEIGHT_CANDIDATE_AUDIT_D105.md); initialization rejects zero weight, and ordinary no-eligible fallback is tested separately.
+Queue D D105's selector zero-weight eligibility map is in `SELECTOR_ZERO_WEIGHT_CANDIDATE_AUDIT_D105.md` (archived); initialization rejects zero weight, and ordinary no-eligible fallback is tested separately.
 
-Queue D D106's selector tie ordering audit is in [SELECTOR_TIE_ORDER_DETERMINISM_AUDIT_D106.md](SELECTOR_TIE_ORDER_DETERMINISM_AUDIT_D106.md); exact ties preserve first input order at zero tie band, and seeded tiers retain input order.
+Queue D D106's selector tie ordering audit is in `SELECTOR_TIE_ORDER_DETERMINISM_AUDIT_D106.md` (archived); exact ties preserve first input order at zero tie band, and seeded tiers retain input order.
 
-Queue D D107's selector reset idempotence map is in [SELECTOR_RESET_IDEMPOTENCE_AUDIT_D107.md](SELECTOR_RESET_IDEMPOTENCE_AUDIT_D107.md); cooldown, repeat, tie-start count, and cone memory are reset while initialization remains active.
+Queue D D107's selector reset idempotence map is in `SELECTOR_RESET_IDEMPOTENCE_AUDIT_D107.md` (archived); cooldown, repeat, tie-start count, and cone memory are reset while initialization remains active.
 
-Queue D D108's executor open-window cleanup map is in [EXECUTOR_OPEN_WINDOW_CLEANUP_AUDIT_D108.md](EXECUTOR_OPEN_WINDOW_CLEANUP_AUDIT_D108.md); model terminal paths converge on `CloseAndClear`, but direct executor window-count assertions remain absent.
+Queue D D108's executor open-window cleanup map is in `EXECUTOR_OPEN_WINDOW_CLEANUP_AUDIT_D108.md` (archived); model terminal paths converge on `CloseAndClear`, but direct executor window-count assertions remain absent.
 
-Queue D D109's executor hit acceptance ordering map is in [EXECUTOR_HIT_ACCEPTANCE_ORDER_AUDIT_D109.md](EXECUTOR_HIT_ACCEPTANCE_ORDER_AUDIT_D109.md); accepted, guarded, and parried counters update only after resolver outcome classification, with no direct executor-counter tests found.
+Queue D D109's executor hit acceptance ordering map is in `EXECUTOR_HIT_ACCEPTANCE_ORDER_AUDIT_D109.md` (archived); accepted, guarded, and parried counters update only after resolver outcome classification, with no direct executor-counter tests found.
 
 Queue D D110's encounter completion/restart matrix is in [ENCOUNTER_COMPLETION_RESTART_MATRIX_D110.md](ENCOUNTER_COMPLETION_RESTART_MATRIX_D110.md); source permits newer-generation restart after success/death and refuses sticky failure, while no actor-level matrix fixture was found.
 

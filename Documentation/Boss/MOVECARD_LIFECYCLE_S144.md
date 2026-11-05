@@ -30,4 +30,4 @@ For offline config data, run the C1 `new_boss.py --dry-run` path through `run_ed
 
 Natural completion is recognized after the model is idle and the owned montage stops; the executor releases any grab, unlocks owned motion, restores playback rate, marks finished and disables ticking (`RPGFrameworkMoveExecutor.cpp:199-208`). `Abort` is idempotent: it releases a held victim, aborts the model token, stops only the owned montage, disables ticking, unlocks motion and logs `[CARD_ABORT]`/cleanup (`:579-596`). `EndPlay` routes through `Abort` (`:603-604`); watchdog, lifecycle/observation failure, stance break, death, arena leash and other callers can also terminate an active card. A successful bake, validation or resolve does not guarantee execution will start or finish.
 
-Source references: [field/default reference](REF_MOVECARD.md), [new-card authoring guide](NEW_CARD_HOWTO.md), [C1 pipeline](C1_NEW_BOSS_HOWTO.md), and [executor reference](REF_EXECUTOR.md).
+Source references: [field/default reference](REF_MOVECARD.md), new-card authoring guide (`NEW_CARD_HOWTO.md`, archived), [C1 pipeline](C1_NEW_BOSS_HOWTO.md), and [executor reference](REF_EXECUTOR.md).

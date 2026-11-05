@@ -19,6 +19,6 @@ Look for `[CARD_START]`, `[CARD_END]`, `[FrameworkProof] playback`, event tokens
 
 This is a source reference. It does not claim a live runtime trace for every branch.
 
-For boss-wide generation reset ordering and which executor/selector/player/proof-hook state persists, see [FRAMEWORK_BOSS_RESET_GUIDE_S145.md](FRAMEWORK_BOSS_RESET_GUIDE_S145.md).
+For boss-wide generation reset ordering and which executor/selector/player/proof-hook state persists, see `FRAMEWORK_BOSS_RESET_GUIDE_S145.md` (archived).
 
-For lifetime versus per-card damage counters and a line-reconciled retained log example, see [EXECUTOR_ACCOUNTING_GUIDE_S146.md](EXECUTOR_ACCOUNTING_GUIDE_S146.md).
+For lifetime versus per-card damage counters and a line-reconciled retained log example, see `EXECUTOR_ACCOUNTING_GUIDE_S146.md` (archived).
