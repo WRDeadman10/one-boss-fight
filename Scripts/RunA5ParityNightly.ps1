@@ -38,7 +38,7 @@ elseif (Test-Path -LiteralPath $OutRoot) {
 
 if (-not $Execute) {
     $completed = @($priorRows | Where-Object Result -eq 'PASS' | ForEach-Object Driver)
-    Write-Output ("DRY RUN - 31 A5 parity pairs; {0} already PASS and {1} pending. Each pair uses fresh legacy/data Editor processes." -f $completed.Count, ($drivers.Count - $completed.Count))
+    Write-Output ("DRY RUN - 31 A5 parity pairs; each calls RunA5ParityPair.ps1 ({0} already PASS and {1} pending). Each pair uses fresh legacy/data Editor processes." -f $completed.Count, ($drivers.Count - $completed.Count))
     foreach ($driver in $drivers) {
         if ($driver -in $completed) { Write-Output ("SKIP {0} (checkpoint PASS)" -f $driver); continue }
         $pairOut = Join-Path $OutRoot $driver

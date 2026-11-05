@@ -1490,3 +1490,7 @@ A parry that only removes damage felt empty, so a parried contact now costs the 
 - C-917 (lead): accept A-534 (commit 3a4e734) and Niagara wiring proposal in shape with corrected defaults (default empty/nullptr to maintain strict D5 parity; visuals triggered only via data or Development switch rpg.Art.Tier1). Task Codex with P1 parry witness and W1 Niagara wiring.
 - C-917 W1 implementation (Codex, pending Lead verification): optional authored Niagara refs stay empty by default; Development-only `rpg.Art.Tier1` (default 0) enables bundled fallbacks only for empty fields. Authored refs remain allowed in Shipping. C++ compile/automation and both-route visuals are pending; see `Documentation/Boss/W1_TIER1_NIAGARA_WIRING.md`.
 - C-922 (lead): accept X-1286 (H10 + 12-file inventory) and H9/W1; BUILD-228 green at 476/476 (new baseline 476); live pie_legend pair passes 25/25 on both routes; lift Antigravity Source hold for reviewed state.
+- C-931: Record BUILD-233 GREEN 478/478, accept X-1312/X-1313, note W-C006 legacy-key default handling; route sanity pair still Lead-run at posting.
+- C-932: Post Queue W Codex W-C001..W-C050 and Antigravity lane; bind batch-of-five, one mailbox post, hotfix first, proceed without waiting.
+- C-933: Record BUILD-234 GREEN 478/478 and FString case-insensitive test correction; continue W-C021 onward.
+- C-934: Accept A-554..A-556 and X-1317/X-1318 as documents/tools; defer archive tranche moves until after RC tag; schedule W-C036 latency sessions after Round 6 intake.

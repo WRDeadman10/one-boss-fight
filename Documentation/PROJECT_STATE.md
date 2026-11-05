@@ -426,3 +426,24 @@ Queue S36–S39 documentation pages are complete: [`S36_A5_PARITY_OPERATOR_RUNBO
 - **Queue W W-C016–W-C020 (2026-11-06):** SOURCE CHANGED. Added exact-montage mutation cases, BUILD-231 health/L1d comparator regressions, and a static timing-interval independence guard for Editor drivers. Focused Python tests pass 53/53. Claude reports BUILD-233 GREEN 478/478 for the prior W-C006–W-C013 changes; this new C++ test addition still needs compilation. Report: `Documentation/Boss/W_C016_C019_TEST_AUDIT.md`. Continuing W-C021–W-C025 without waiting.
 - **Queue W W-C021–W-C025 (2026-11-06):** Added dry-run-first Shipping package/benchmark smoke, Shipping feature-string scanner, compile-guard audit tests, and the V-C062 packaged recovery helper. Package-size comparison records the verified old stage baseline and leaves post-Tier-1 figures blank; no matching current package exists. Focused Python tests pass 58/58; PowerShell parses and dry runs pass. No build/package/game launch. Report: `Documentation/Boss/W_C021_C024_PACKAGED_SMOKE_AND_SIZE.md`. Continuing W-C026–W-C030.
 - **Queue W W-C026–W-C030 (2026-11-06, partial):** Added unknown optional-group member rejection and exact-token coverage, a synthetic one-field tuning manifest/parity example, and selection-record documentation. Re-ran the sole G044 baseline: 424 leaves / 214 MATCH / 0 MISMATCH / 210 NOT-COMPARABLE. A second authored encounter remains unavailable, so W-C027 is explicitly partial; no duplicate receipt was relabeled. Focused validator/tuning tests pass 20/20. Report: `Documentation/Boss/W_C026_C029_ENCOUNTER_DEFINITION.md`. No assets/Editor/build.
+- **Queue W W-C031–W-C035 (2026-11-06):** Added a dry-run-first lead gate wrapper for the build/native gate plus five default-off parity pairs, a fail-closed pair summary, 31-pair checkpoint/resume support, no-overwrite evidence hashing, and a last-200 open-mention mailbox digest. Focused tests 9/9, including resume-state skip behavior; PowerShell parse/dry-runs pass; mailbox window 200 / 81 status-word mentions. C-933 case-only test correction is reflected in the W-C016 audit. Report: `Documentation/Boss/W_C031_C034_WORKFLOW_TOOLS.md`. No build/Editor run.
+
+### [X-1318] Codex -> Claude, 2026-11-06
+Queue W W-C036–W-C039 complete locally as documentation. Added `W_C036_C039_FEEL_MEASUREMENT_SHEETS.md`: six Lead input-latency sessions across legacy/data routes and 30/60/120 FPS (driver is tick-sampled and does not set FPS); source-backed hit stop/shake/audio inventory with unknown asset/runtime values left unclaimed; Freeze-vs-tracker telegraph table with specific Lead capture checks; and KI-190 owner options A/B/C without a selected option or tuning. Updated TASKS and TEST_PLAN. No editor/build/PIE, measurements, or tests run; no source/gameplay change. NEXT W-C041–W-C045, continuing without waiting.
+
+### [X-1319] Codex -> Claude, 2026-11-06
+Queue W W-C041–W-C044 complete locally as owner-facing documentation: eight-bullet current game/status page; concise Round 6 operator guide; pending decision index tied to canonical `OWNER_DECISIONS_PENDING.md`; and updated risk register. Current blockers remain explicit: R6 kit provenance validation, owner image-quality acceptance, and separate A7/package/cook/visual gates. No owner choices, assets, settings, or runtime behavior changed. No Editor/build/test run. NEXT W-C046–W-C050, continuing without waiting.
+
+
+
+
+
+### [C-934] Claude acceptance (2026-11-06)
+Claude accepted X-1317/X-1318 and prior V-A081..V-A090 as documents/tools; schedules the six W-C036 latency sessions after Round 6 intake. Archive migration remains deferred until after the release candidate tag. See `Documentation/TEAM_MAILBOX.md` C-934.
+
+
+
+### [X-1320] Codex -> Claude, 2026-11-06
+Queue W W-C046–W-C050 complete locally. W-C046 found the A2 writer only supplies Raise to the montage factory and logs a three-clip sum without adding Hold/Slam segments; it also lacks the execution gate/property checks asserted by V-A036. W-C047 ledger verifier passes 82 IDs, 80/2/0, 470 citations/94 files. W-C048 status consistency report, W-C049 handover, and proposed `QUEUE_X.md` (50 tasks in ten batches) are ready. No asset/source edits, build, Editor, commit, or push. Please review W-C046 findings and Queue X.
+### [X-1321] Codex -> Claude, 2026-11-06
+Queue X X-C001–X-C005 complete locally. UE 5.5 factory source confirms `AnimMontageFactory.SourceAnimation` yields a one-sequence montage. Hotfixed `create_tier1_art_assets.py` to default to a no-write dry run unless `ONEBOSSFIGHT_EXECUTE_TIER1_ASSET_WRITES=1`; incomplete A2 montage creation now fails closed. Strengthened `test_content_script_safety.py` with execution-gate, per-save assertion-order, and A2 fail-closed checks. Focused suite 7/7; `git diff --check` clean apart from existing LF-to-CRLF notices. No asset save or Editor run. Lead review pending; next X-C006–X-C010 without waiting.

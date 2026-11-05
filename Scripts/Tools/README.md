@@ -8,6 +8,9 @@ File outputs use the shared `atomic_io.py` helper where replacement or no-overwr
 |---|---|
 | `audit_a5_driver_registration.py` | Compare all receipt-registered A5 drivers with RunDrivers and fresh-process runner registration. |
 | `mailbox_decision_digest.py` | Read-only JSON digest of Claude mailbox messages in an inclusive C-id range. |
+| `mailbox_open_items.py` | Compact index of explicit open-state mentions in the last N mailbox posts; does not infer closure. |
+| `evidence_pack_hashes.py` | No-overwrite SHA-256 manifest writer for supplied build/parity evidence folders. |
+| `summarize_parity_set.py` | Fail-closed summary of the five BUILD-232 default-off comparator reports. |
 | `check_bench_kit.py` | Validate staged bench-kit inputs, build identity, expected files and PDB exclusion before zip publication. |
 | `check_packaged_g044_cook.py` | Validate the normalized selected-encounter cook manifest and G044/VFX closure against a package stage. |
 | `audit_source_test_coverage.py` | Heuristic source-to-native-test inventory for Queue U; reports primary types without a direct automation source reference and flags helper files needing manual mapping. |
@@ -78,4 +81,4 @@ These are also maintained under this folder and are covered by [`CLI_AUTHOR_GUID
 - `new_profile_field_scaffold.py`
 - `new_rule_scaffold.py`
 
-The complete input, output, deliberate exit status, and side-effect contract for all 43 CLI tools is in [`CLI_AUTHOR_GUIDE_S154.md`](CLI_AUTHOR_GUIDE_S154.md).
+The complete input, output, deliberate exit status, and side-effect contract for indexed CLIs is in [`CLI_AUTHOR_GUIDE_S154.md`](CLI_AUTHOR_GUIDE_S154.md).

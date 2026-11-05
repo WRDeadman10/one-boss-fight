@@ -11,6 +11,7 @@ Safety rules (C-906):
 - Does NOT wire into production C++ components (wiring proposal submitted to Codex).
 """
 
+import os
 import unreal
 
 log = lambda m: unreal.log("[Tier1Art] " + m)
@@ -58,55 +59,18 @@ def create_vfx_assets():
 
 
 def create_a2_montage():
-    eal = unreal.EditorAssetLibrary
-    tools = unreal.AssetToolsHelpers.get_asset_tools()
-
-    a2_path = f"{ANIM_DEST}/AM_Boss01_A2"
-    if eal.does_asset_exist(a2_path):
-        log(f"REFUSE: {a2_path} already exists. Retaining existing asset.")
-        return
-
-    raise_clip = unreal.load_asset(f"{ANIM_DEST}/AN_Boss01_A2_Raise")
-    hold_clip = unreal.load_asset(f"{ANIM_DEST}/AN_Boss01_A2_ApexHold")
-    slam_clip = unreal.load_asset(f"{ANIM_DEST}/AN_Boss01_A2_Slam")
-
-    assert raise_clip is not None, f"Missing {ANIM_DEST}/AN_Boss01_A2_Raise"
-    assert hold_clip is not None, f"Missing {ANIM_DEST}/AN_Boss01_A2_ApexHold"
-    assert slam_clip is not None, f"Missing {ANIM_DEST}/AN_Boss01_A2_Slam"
-
-    len_raise = raise_clip.get_editor_property("sequence_length")
-    len_hold = hold_clip.get_editor_property("sequence_length")
-    len_slam = slam_clip.get_editor_property("sequence_length")
-    total_len = len_raise + len_hold + len_slam
-
-    log(f"Assembling AM_Boss01_A2: Raise={len_raise:.3f}s, Hold={len_hold:.3f}s, Slam={len_slam:.3f}s (Total={total_len:.3f}s)")
-
-    factory = unreal.AnimMontageFactory()
-    factory.set_editor_property("source_animation", raise_clip)
-    montage = tools.create_asset("AM_Boss01_A2", ANIM_DEST, unreal.AnimMontage, factory)
-    assert montage is not None, f"Failed to create AnimMontage at {a2_path}"
-
-    # Get slot from pack greatsword boss montage
-    ref_pack = unreal.load_asset(f"{PACK_BASE}GS_Attack01_Montage")
-    slot = unreal.RPGMontageUtils.get_montage_slot(ref_pack) if ref_pack is not None else "DefaultSlot"
-    unreal.RPGMontageUtils.set_montage_slot(montage, slot)
-
-    # Set composite sections
-    # Section 0: Raise (0.00 -> len_raise)
-    # Section 1: ApexHold (len_raise -> len_raise + len_hold)
-    # Section 2: Slam (len_raise + len_hold -> total_len)
-    montage.set_editor_property("enable_auto_blend_out", True)
-    for slot_prop, seconds in (("blend_in", 0.25), ("blend_out", 0.25)):
-        blend = montage.get_editor_property(slot_prop)
-        blend.set_editor_property("blend_time", seconds)
-        montage.set_editor_property(slot_prop, blend)
-
-    eal.save_loaded_asset(montage)
-    log(f"PASS T1c: Created {a2_path} (Composite length {total_len:.3f}s vs tracker row 3.14s; delta={abs(total_len - 3.14):.3f}s). NOT WIRED.")
+    # AnimMontageFactory.SourceAnimation creates a single-sequence montage. Keep
+    # this disabled until the multi-segment Python authoring path is implemented
+    # and verified against the live UE 5.5 API and the tracker timing contract.
+    log("REFUSE T1c: multi-clip A2 montage assembly is not implemented/verified; no asset created")
 
 
 def main():
     log("=== Starting Tier 1 Art Asset Creation ===")
+    if os.environ.get("ONEBOSSFIGHT_EXECUTE_TIER1_ASSET_WRITES") != "1":
+        log("DRY RUN: no assets will be created; set ONEBOSSFIGHT_EXECUTE_TIER1_ASSET_WRITES=1 only after Lead/owner approval")
+        log(f"Would create VFX under {VFX_DEST}; A2 montage remains fail-closed")
+        return
     create_vfx_assets()
     create_a2_montage()
     log("=== Completed Tier 1 Art Asset Creation ===")
