@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "onebossfight.round5-benchmark/v1",
+  "title": "One Boss Fight Round 5 experiment receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "baseline_metric_tolerance_percent", "runs"],
+  "properties": {
+    "schema": {"const": "onebossfight.round5-benchmark/v1"},
+    "baseline_metric_tolerance_percent": {"type": "number", "exclusiveMinimum": 0},
+    "runs": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/run"}}
+  },
+  "$defs": {
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "kind", "baseline_group", "cvars", "avg_fps", "p99_ms", "gpu_avg_ms", "build_id", "build_sha256", "build_configuration", "engine_version", "gpu", "gpu_driver", "session_type", "resolution_x", "resolution_y", "map", "fight_mode", "route", "summary_path", "summary_sha256"],
+      "properties": {
+        "run_id": {"type": "string", "minLength": 1},
+        "kind": {"enum": ["baseline", "treatment"]},
+        "baseline_group": {"type": "integer", "minimum": 0},
+        "cvars": {"type": "object", "propertyNames": {"minLength": 1}, "additionalProperties": {"type": ["string", "number", "integer", "boolean"]}},
+        "avg_fps": {"type": "number", "exclusiveMinimum": 0},
+        "p99_ms": {"type": "number", "exclusiveMinimum": 0},
+        "gpu_avg_ms": {"type": "number", "exclusiveMinimum": 0},
+        "build_id": {"type": "string", "minLength": 1},
+        "build_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "build_configuration": {"type": "string", "minLength": 1},
+        "engine_version": {"type": "string", "minLength": 1},
+        "gpu": {"type": "string", "minLength": 1},
+        "gpu_driver": {"type": "string", "minLength": 1},
+        "session_type": {"type": "string", "minLength": 1},
+        "resolution_x": {"type": "integer", "minimum": 1},
+        "resolution_y": {"type": "integer", "minimum": 1},
+        "map": {"type": "string", "minLength": 1},
+        "fight_mode": {"type": "boolean"},
+        "route": {"type": "string", "minLength": 1},
+        "summary_path": {"type": "string", "minLength": 1},
+        "summary_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

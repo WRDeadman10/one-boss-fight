@@ -1,0 +1,93 @@
+﻿Collected: 2026-11-05T15:07:11.4544479+05:30
+Computer: GANPATIGAMERBOI  User: winss
+--- query user (the benchmark user's SESSIONNAME must be 'console', not rdp-tcp#...)
+ USERNAME              SESSIONNAME        ID  STATE   IDLE TIME  LOGON TIME
+>winss                 console            25  Active      14:39  05-11-2026 12:37
+
+--- OS
+
+
+Caption     : Microsoft Windows 11 Pro
+Version     : 10.0.26200
+BuildNumber : 26200
+
+
+
+
+--- CPU and RAM
+
+
+Name                      : AMD Ryzen 5 5500                               
+NumberOfCores             : 6
+NumberOfLogicalProcessors : 12
+MaxClockSpeed             : 3600
+
+
+
+
+
+
+RAM_GB : 31.9
+
+
+
+
+--- GPU(s) and monitor mode
+
+
+Name                        : NVIDIA GeForce RTX 3060
+DriverVersion               : 32.0.16.1088
+DriverDate                  : 22-07-2026 05:30:00
+CurrentHorizontalResolution : 1920
+CurrentVerticalResolution   : 1080
+CurrentRefreshRate          : 143
+VideoProcessor              : NVIDIA GeForce RTX 3060
+
+
+
+
+--- nvidia-smi
+Thu Nov  5 15:07:12 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 610.88                 KMD Version: 610.88        CUDA UMD Version: 13.3     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                  Driver-Model | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 3060      WDDM  |   00000000:10:00.0  On |                  N/A |
+| 89%   56C    P8             13W /  170W |     779MiB /  12288MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A             496    C+G   ...IA App\CEF\NVIDIA Overlay.exe      N/A      |
+|    0   N/A  N/A            4688    C+G   ..._pzs8sxrjxfjjc\app\claude.exe      N/A      |
+|    0   N/A  N/A            5824    C+G   ...App_cw5n1h2txyewy\LockApp.exe      N/A      |
+|    0   N/A  N/A            8168    C+G   ...indows\System32\ShellHost.exe      N/A      |
+|    0   N/A  N/A           11840    C+G   C:\Windows\explorer.exe               N/A      |
+|    0   N/A  N/A           14904    C+G   ...xyewy\ShellExperienceHost.exe      N/A      |
+|    0   N/A  N/A           16160    C+G   ...8bbwe\PhoneExperienceHost.exe      N/A      |
+|    0   N/A  N/A           16956    C+G   ...5n1h2txyewy\TextInputHost.exe      N/A      |
+|    0   N/A  N/A           18504    C+G   ...ntrolPanel\SystemSettings.exe      N/A      |
+|    0   N/A  N/A           18948    C+G   ...em32\ApplicationFrameHost.exe      N/A      |
+|    0   N/A  N/A           19560    C+G   ...2txyewy\CrossDeviceResume.exe      N/A      |
+|    0   N/A  N/A           19960    C+G   ...SnippingTool\SnippingTool.exe      N/A      |
+|    0   N/A  N/A           20800    C+G   ...IA App\CEF\NVIDIA Overlay.exe      N/A      |
+|    0   N/A  N/A           21120    C+G   ...are\IntelGraphicsSoftware.exe      N/A      |
+|    0   N/A  N/A           22152    C+G   ...y\StartMenuExperienceHost.exe      N/A      |
+|    0   N/A  N/A           26520    C+G   ....0.4314.58\msedgewebview2.exe      N/A      |
+|    0   N/A  N/A           28984    C+G   ..._pzs8sxrjxfjjc\app\claude.exe      N/A      |
+|    0   N/A  N/A           30512    C+G   ..._cw5n1h2txyewy\SearchHost.exe      N/A      |
++-----------------------------------------------------------------------------------------+
+
+name, driver_version, clocks.max.graphics [MHz], power.limit [W], pcie.link.gen.current
+NVIDIA GeForce RTX 3060, 610.88, 2115 MHz, 170.00 W, 1
+
+--- power plan
+Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)
+

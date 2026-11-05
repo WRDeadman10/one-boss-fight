@@ -56,20 +56,20 @@ A task is DONE only with an executing test, a tool run with counts, a lead-run r
 | S33 | DONE — one-line index added for every Claude message C-833 through C-877 in `Documentation/DECISIONS.md` | 45 entries |
 | S34 | DONE — closed KI-184 against BUILD-221/C-864/C-865 test and paired evidence; KI-185 remains closed with C-878 evidence | closed rows cite BUILD/C ids |
 | S35 | DONE — Antigravity evidence handover maps A5 parity, D1, D5, T1 and G2 with source paths and warns against guessing a canonical ledger mapping | `Documentation/Boss/S31_S35_ANTIGRAVITY_LEDGER_HANDOVER.md` |
-| S36 | Parity runbook: how to run a pair, read a report, classify WARN rows (D6b/c/d rules) | one page |
-| S37 | Designer guide: how to author a new encounter definition safely (D5 lessons) | one page |
-| S38 | Operator guide: selection, clear with "", refusal tokens (G2) | one page |
-| S39 | Glossary of route/selection terms | — |
-| S40 | X- | — |
+| S36 | DONE — pair execution, receipt generation/comparison, report interpretation, and D6b/c/d/O4 WARN rules documented; added MakeBenchKit local-dependency regression test (2/2; full offline suite 185 passed, 1 skipped) | `Documentation/Boss/S36_A5_PARITY_OPERATOR_RUNBOOK.md`; `Scripts/Tools/test_make_bench_kit_dependencies.py` |
+| S37 | DONE — new encounter authoring sequence, D5 scope, phase/default/approval limits documented | `Documentation/Boss/S37_NEW_ENCOUNTER_DESIGNER_GUIDE.md` |
+| S38 | DONE — G2 select/explicit-clear command, refusal tokens, limits, and unresolved owner evidence documented | `Documentation/Boss/S38_ENCOUNTER_SELECTION_OPERATOR_GUIDE.md` |
+| S39 | DONE — route/selection/glossary terms defined with project references | `Documentation/Boss/S39_ROUTE_SELECTION_GLOSSARY.md` |
+| S40 | DONE — handoff posted as X-1261; accepted by C-886 | `Documentation/TEAM_MAILBOX.md` |
 
 ## S41–S50 Close-out
 | ID | Task | Acceptance |
 |---|---|---|
-| S41 | Owner report draft after the Round 4 benchmark returns (template now, fill later) | template |
-| S42 | Play-test feedback intake template (feel, reactiveness, readability) for the owner's notes | template |
-| S43 | Residual risk register for A7-B | table |
-| S44 | Review of all scripts written today for the UE Python lessons (C-791) | fixes + list |
-| S45 | Write QUEUE_T (50) from what is left; one X- line with section counts | 50 unique IDs |
+| S41 | DONE — Round 4 owner report template separates six run rows and leaves all measured fields blank until owner evidence arrives | `Documentation/Boss/S41_ROUND4_OWNER_REPORT_TEMPLATE.md` |
+| S42 | DONE — play-test intake records feel, responsiveness, readability, and reproducible examples | `Documentation/Boss/S42_PLAYTEST_FEEDBACK_TEMPLATE.md` |
+| S43 | DONE — A7-B residual risks and evidence-based exit rules recorded | `Documentation/Boss/S43_A7_RESIDUAL_RISK_REGISTER.md` |
+| S44 | DONE — C-791 audit found and fixed early profile save; remaining reviewed setup scripts comply with enum/path/map/pre-save lessons | `Documentation/Boss/S44_UE_PYTHON_LESSON_REVIEW.md`; no Editor run |
+| S45 | DONE — Queue T drafted with 50 unique, bounded IDs in ten five-task batches | `Documentation/Boss/QUEUE_T.md`; handoff X-1262 |
 | S46 | Final consistency pass of the docs touched in S31–S39 | no contradictions |
 | S47 | Offline suite timing: keep discovery under 10 s | measured |
 | S48 | Archive superseded Boss docs into Documentation/Archive (move, no delete) with an index | index |

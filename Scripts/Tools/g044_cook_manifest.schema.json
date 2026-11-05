@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "onebossfight.g044-cook-manifest/v1",
+  "title": "Normalized G044 cooked package inventory",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "build_id", "configuration", "root_packages", "packages", "source_manifest_sha256"],
+  "properties": {
+    "schema": {"const": "onebossfight.g044-cook-manifest/v1"},
+    "build_id": {"type": "string", "minLength": 1},
+    "configuration": {"enum": ["Shipping", "Development"]},
+    "root_packages": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selection", "boss", "player"],
+      "properties": {
+        "selection": {"$ref": "#/$defs/gamePackage"},
+        "boss": {"$ref": "#/$defs/gamePackage"},
+        "player": {"$ref": "#/$defs/gamePackage"}
+      }
+    },
+    "packages": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/gamePackage"}},
+    "source_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "gamePackage": {"type": "string", "pattern": "^/Game/(?:[A-Za-z0-9_-]+/)*[A-Za-z0-9_-]+$"}
+  }
+}

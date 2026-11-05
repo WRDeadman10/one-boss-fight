@@ -1,0 +1,47 @@
+{
+  "schema": "onebossfight.a7-release-gates/v1",
+  "source": "Documentation/Boss/P15_A7_PARITY_SUMMARY_DRAFT.md",
+  "policy": {
+    "J049_shipping_selector": "A",
+    "A7_legacy_retirement": "B",
+    "legacy_behavior": "retained as fallback and parity control until release gates close"
+  },
+  "gates": [
+    {
+      "id": "A7-SHIPPING-SELECTOR",
+      "title": "Shipping package and selector policy",
+      "status": "OPEN",
+      "owner": "Lead",
+      "evidence_sources": ["Scripts/Package.ps1", "Scripts/PackagedSmoke.ps1", "Scripts/CheckPackagedLog.ps1", "Documentation/Boss/L026_L030_SHIPPING_SELECTOR_AUDIT.md", "Documentation/Boss/P15_A7_PARITY_SUMMARY_DRAFT.md"],
+      "closure_evidence": [],
+      "close_with": "Retain a selected-root package/cook manifest and packaged selector behavior proof when a real Shipping caller exists; retain legacy startup/fallback evidence."
+    },
+    {
+      "id": "A7-SELECTED-PERFORMANCE",
+      "title": "Selected-route performance on target",
+      "status": "OPEN",
+      "owner": "Owner / Lead",
+      "evidence_sources": ["Scripts/RunBenchmark.ps1", "Scripts/SummarizeBenchmark.py", "Documentation/GATE4_RUNBOOK.md", "Documentation/BENCHKIT_README.md"],
+      "closure_evidence": [],
+      "close_with": "Comparable retained 1920x1080 runs on RTX 2060 Super or owner-approved RTX 3060 stand-in: selected average >=60 FPS, p99 <=16.67 ms, selected p99 no more than 0.5 ms above legacy."
+    },
+    {
+      "id": "A7-SAVE-COOK-COMPATIBILITY",
+      "title": "Save/content compatibility and package cook",
+      "status": "OPEN",
+      "owner": "Lead",
+      "evidence_sources": ["Documentation/Boss/G4_SAVE_CONTENT_COMPATIBILITY_AUDIT.md", "Scripts/Editor/report_g044_dependency_census.py", "Scripts/Tools/validate_encounter_manifest.py", "Documentation/Boss/P15_A7_PARITY_SUMMARY_DRAFT.md"],
+      "closure_evidence": [],
+      "close_with": "Retain the authoritative cook manifest from the next package, verify all selected-route roots/closures against it, and record the compatibility audit disposition."
+    },
+    {
+      "id": "A7-SELECTION-RECOVERY",
+      "title": "Missing/invalid definition recovery",
+      "status": "OPEN",
+      "owner": "Owner / Lead",
+      "evidence_sources": ["Scripts/Editor/pie_selection_refusal.py", "Documentation/Boss/J041_J045_SELECTED_ROUTE_OPERATIONS.md", "Documentation/Boss/P15_A7_PARITY_SUMMARY_DRAFT.md"],
+      "closure_evidence": [],
+      "close_with": "Retain owner-visible refusal screenshots and packaged missing/invalid-definition fail-closed proof, including no legacy bundle activation."
+    }
+  ]
+}

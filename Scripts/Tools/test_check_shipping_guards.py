@@ -14,6 +14,12 @@ scan_text = GUARD_MODULE.scan_text
 
 
 class ShippingGuardTests(unittest.TestCase):
+    def test_project_source_has_no_shipping_visible_guarded_cvar_uses(self):
+        source_root = Path(__file__).resolve().parents[2] / "Source"
+        declarations, findings = GUARD_MODULE.scan_tree(source_root)
+        self.assertGreater(len(declarations), 0)
+        self.assertEqual(findings, [])
+
     def test_guarded_development_use_passes(self):
         source = """#if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<int32> CVarCueMode(TEXT(\"rpg.CueMode\"), 0);

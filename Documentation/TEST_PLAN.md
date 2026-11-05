@@ -1,5 +1,25 @@
 # Test Plan
 
+## Queue T T040/T043/T044/T045/T050 — offline safety audits and closeout
+
+Focused: `python -m unittest Scripts.Tools.test_new_rule_scaffold_collision Scripts.Tools.test_inventory_editor_asset_writers Scripts.Tools.test_ue_python_enum_conventions Scripts.Tools.test_audit_editor_save_safety -v` — 10 passed. The collision fixture preserves an existing scaffold target and creates no additional files. T043 classifies all 357 Editor scripts (29 create, 69 modify, 42 map setup, 217 read-only). T044 checks 357 scripts against the two C-791-confirmed mappings and finds 0 E-prefix/member/integer-cast issues. T045 covers 140 source-classified writers: 79 explicit first saves, 61 without a literal save call, and 33 with at least one pre-save guard marker; these markers require source review and are not proof of complete validation. No Editor/PIE/package/build run.
+
+## Queue T T025/T031/T034/T036/T037 — G2, A5, and bench-kit checks
+
+Focused: `python -m unittest Scripts.Tools.test_audit_a5_driver_registration Scripts.Tools.test_validate_a5_receipt_directory Scripts.Tools.test_check_bench_kit_manifest Scripts.Tools.test_make_bench_kit_dependencies -v` — 15 passed. The registration audit compares all 31 receipt drivers to RunDrivers minimums/timeouts and the A5 runner, with the separate A4 runner accounted for. Receipt-directory fixtures cover a complete pair, missing pair/arm, duplicate IDs, and contradictory IDs/routes. Bench-kit checks cover quoted dot-source dependencies and duplicate Windows destinations; current copy manifest has 8 unique destinations with source files present. Full Scripts/Tools discovery: 231 passed, 1 skipped. No kit was assembled and no Unreal/package/build run occurred.
+
+## Queue T T016/T017/T018/T021/T024 — Shipping smoke and G2 static checks
+
+Focused run: `python -m unittest Scripts.Tools.test_packaged_smoke_receipt Scripts.Tools.test_g2_selection_refusal_expected Scripts.Tools.test_audit_editor_map_loads Scripts.Tools.test_check_shipping_guards Scripts.Tools.test_g2_selection_refusal -v` — 20 passed. Full `python -m unittest discover -s Scripts/Tools` — 218 passed, 1 skipped. Shipping CVar source scan: 35 recognized non-Shipping declarations, 0 Shipping-visible uses. G2 expected sheet: 3 cases / 14 token fragments covered. Editor map audit: 104 known maps; 0 literal map-load violations across 356 parseable scripts; one Python syntax-invalid historical script (line 215) was manually reviewed for `load_asset` map paths. These are offline/source checks only; no package smoke, Editor, PIE, Unreal, or build was run. Receipt validation is for captured PackagedSmoke output and does not itself run the packaged game. Scope/limitations: `Documentation/Boss/T016_T018_T021_T024_SHIPPING_G2_AUDIT.md`.
+
+## Queue T T006–T010 A7 release-gate checklist
+
+`Documentation/Boss/A7_RELEASE_GATE_CHECKLIST.json` mirrors the four release gates in P15 and preserves the current J049=A / A7=B policy. `Scripts/Tools/a7_release_gates.py` checks unique gate IDs, evidence-source paths inside the project, and requires existing closure-evidence paths for CLOSED rows; `--report` suppresses output when invalid and never emits a global completion percentage. Focused fixtures: 7 passed. Full Scripts/Tools discovery: 198 passed, 1 skipped. Live gate evidence remains open.
+
+## Queue T T001–T005 Round 4 evidence tooling
+
+`Scripts/Tools/round4_benchmark_report.py` inventories expected Round 4 summary/frame files and SHA-256 values without modifying them, compares a later inventory against a prior inventory, checks the six measured route/replicate records for identity comparability, and renders route means and release-gate statuses. `Scripts/Tools/round4_benchmark.schema.json` defines the input shape. Focused fixture tests: 6 passed. Full Scripts/Tools discovery: 191 passed, 1 skipped. No owner Round 4 data was present, so no project performance result is claimed. No Unreal, package, or build run.
+
 ## C-865 O4 parity classification (2026-11-05)
 
 `python -m unittest discover -s Scripts/Tools -p
@@ -966,6 +986,8 @@ Detailed run records follow this index. Links point to the first detailed record
 - [x] BUILD-222 (lead, 2026-11-05, after Codex X-1240 G1): benchmark-only encounter selector (-RPGBenchmark -H019EncounterDefinition=) in URPGEncounterSelectionSubsystem, lead-guarded to non-Shipping (J049 stays an owner decision); v1 stray #endif (lead fix); GREEN 463/463. Raw: Docs/BossCombatReview/Execution/Claude/B_C871_BENCHSEL/.
 - [x] G2 SELECTION REFUSAL LIVE (lead, 2026-11-05, BUILD-222): pie_selection_refusal.py 13/13 (v2 after lead fix: clear with rpg.EncounterDefinition ""): missing definition -> HardError EncounterSelection.AssetLoad, transient corrupt manifest hash -> HardError EncounterDefinition.ManifestShape, no legacy bundle leaked, explicit clear -> LegacyNoSelection with full legacy bundle. Raw: Docs/BossCombatReview/Execution/Claude/C872_G2_REFUSAL_v2/.
 - [x] PACKAGES BUILD-222 (lead, 2026-11-05): Shipping and Development packaged (v1 Shipping failed: RPGFrameworkMoveExecutor.cpp:517 used CVarCueMode declared only in non-Shipping; lead fix uses the default 0 in Shipping). Cook check: all 3 G044 roots cooked; of 156 /Game closure packages, 78 uncooked are editor-only skeleton references (control-rig poses/rigs, unused Quinn textures/materials/meshes). Owner kit C:\BenchTransfer\OneBossFight_BenchKit(.zip, 6.26 GB) with the Round 4 prompt in BENCHKIT_README.md. Logs: Docs/BossCombatReview/Execution/Claude/C877_PACKAGE/.
+- [x] ROUND 4 BENCHMARK (owner console session, 2026-11-05, RTX 3060, driver 610.88, BUILD-222 Development, 1920x1080): legacy a/b/c avg 27.29 fps, p99 42.88 ms; data route (G044, ActivatedRegisteredSubset confirmed in each game log) avg 27.10 fps, p99 42.85 ms. A7 regression gate (data p99 <= legacy + 0.5 ms) PASS (-0.03 ms). Absolute target (60 fps, p99 16.67 ms) FAIL on both routes: GPU-bound (render/GPU p99 ~41-43 ms, game thread ~5.6 ms), same cause as rounds 1-2. Hitches only on legacy (r4_legacy_c max 310 ms, warmup 699 ms). Evidence: Docs/BossCombatReview/Execution/Claude/R4_BENCH_20261105/ (zip sha256 ADC0D028...).
+- [x] BUILD-223 (lead, 2026-11-05, performance un-parked): NVIDIA DLSS 4.5 SR plugin v8.9.0 + its dependency StreamlineNGXCommon installed at engine level (Engine/Plugins/Marketplace, not in git) and DLSS enabled in OneBossFight.uproject (Win64). v1 failed: missing StreamlineNGXCommon dependency; GREEN 463/463; log: "Loaded DLSS-SR plugin version 8.9.0-NGX310.9.16". Raw: Docs/BossCombatReview/Execution/Claude/B_C895_DLSS/.
 - [ ] C-845/C-846 H4/H5 driver hotfix (Codex, 2026-11-05): fixed S9 mesh lookup/diagnostic failure isolation and included S6; telegraph now emits four typed timing observables for receipt comparison. Offline suite 127 passed, 1 skipped; live A4/telegraph rerun and parity result remain Lead-owned. Details: `Documentation/Boss/H4_H5_PARITY_DRIVER_HOTFIX.md`.
 - [x] C-840/C-847 D2 + manifest validator: Claude reports health update PASS (1500→2000) with package backups, updated manifest and selection hash; Codex tightened the draft receipt validator to exact tracker/provenance schemas. Actual D2 fixture and live manifest validate with package/evidence hashes; focused validator tests 12/12, full Scripts/Tools 132 passed, 1 skipped. Claude's fresh BUILD-220+D2 A4/death-reset/telegraph/HUD pairs are running; results pending.
 - [ ] Queue Q01–Q05 evidence refresh (Codex, 2026-11-05): regenerated v2 receipts from closed BUILD-219 A4 `_r2` and available BUILD-220 pairs; source hashes and 32 generated artifact hashes verified. A4, DeathReset, Telegraph and BossHud remain comparator FAIL; DormantWake and Damage pass. These logs predate H4/H5/D2 as applicable, so no current fixed-code parity is claimed. Details: `Docs/BossCombatReview/Execution/Codex/Q001_Q005_2026-11-05/Q01_Q05_STATUS.md`.
@@ -1212,3 +1234,30 @@ Detailed run records follow this index. Links point to the first detailed record
 | A5 parity | 31 registered drivers paired live on legacy and selected G044 routes. Lead reports all checks pass; comparator PASS or PASS+WARN under declared stochastic/sampling rules. | [B_C835_PARITY](../Docs/BossCombatReview/Execution/Claude/B_C835_PARITY/); closure C-868 |
 
 BUILD-218–222 summaries and A5 status above reflect Lead-reported evidence; Codex did not run Unreal, build, package, or PIE for these results. Individual historical pair details and qualifications are recorded in the linked raw directories and the entries above in this plan.
+
+## Queue S36–S39 documentation deliverables (2026-11-05)
+
+- `Documentation/Boss/S36_A5_PARITY_OPERATOR_RUNBOOK.md`: inspected runner/receipt/comparator contracts and documented the live-vs-comparison distinction and D6b/c/d/O4 WARN limits. No live pair was run.
+- `Documentation/Boss/S37_NEW_ENCOUNTER_DESIGNER_GUIDE.md`: D5-scoped authoring, receipt validation, preservation, phase, parity, and owner-approval guidance.
+- `Documentation/Boss/S38_ENCOUNTER_SELECTION_OPERATOR_GUIDE.md`: explicit select/clear syntax, G2 refusal tokens, observed limits, and pending owner/package evidence.
+- `Documentation/Boss/S39_ROUTE_SELECTION_GLOSSARY.md`: route, activation, receipt, comparator, WARN, and release-gate definitions.
+- Documentation/reference inspection only; no tests, Editor, build, PIE, or package run.
+
+- **C-885 MakeBenchKit dependency coverage:** `python -I Scripts/Tools/test_make_bench_kit_dependencies.py` — 2/2 passed (manifest coverage + seeded missing-dependency fixture). Full `python -m unittest discover -s Scripts/Tools` — 185 passed, 1 skipped. This is static script-manifest coverage; no bench kit assembly or package/Unreal run.
+
+- **Queue T closeout (T040/T043/T044/T045/T050):** full `python -m unittest discover -s Scripts/Tools` — 241 passed, 1 skipped; focused tests 10/10. Offline checks only; no Unreal/Editor/PIE/package/build run. T045's 140-writer report is a source-classification heuristic, not proof of runtime save safety. See `Documentation/Boss/T050_QUEUE_T_CLOSEOUT.md`.
+
+## Queue U Lane A Batch 1 test & audit verification (2026-11-05)
+
+- **U-A01 Witness Ledger v3.37 verification:** updated Docs/BossCombatReview/Execution/Antigravity/Ledger/witness_status_v3.json to v3.37. Census: 80 WITNESSED / 2 PARTIAL / 0 NOT YET (sum=82). Graduated 5 requirements (BOSS-AWR-004, BOSS-MOV-001, BOSS-HIT-008, BOSS-COM-004, BOSS-SEL-008) based on checked live evidence under B_YAW_CONE, B_FAG5_MOV001, B_FAG4_HIT008, B_FAG23_COM004, B_SEL008_STUCK, and B_LIVE_20261104b. Established route_parity_and_integration_witnesses section covering A5, D1, D5, T1, G2.
+- **U-A02 Production Changes review:** reviewed and approved C++ changes since commit 6c7d3fc (D1 attach bundle, T1 tick prerequisites, G1 benchmark selector, CueMode Shipping guard, P17 strafe fields).
+- **U-A03 D5 Legacy Defaults review:** verified Scripts/Tools/legacy_defaults_g044.json (249/249 comparable rules match Source headers verbatim, 0 mismatches; verdict AGREE).
+- **U-A04 Comparator rules audit:** analyzed D6b/c/d/O4 for false-PASS vulnerability. Identified that bracketed detail stripping in Scripts/Tools/compare_encounter_parity.py risks silently passing critical metric divergences (e.g. 1500 vs 2000 health) as WARN rather than FAIL. Full report: Documentation/Boss/U_A01_U_A04_AUDIT.md.
+
+## Queue U-C01–U05 — Round 5 planning and evidence intake (2026-11-05)
+
+- U-C01 cost model and U-C05 budget sheet distinguish current BUILD-222 Round 4 measurements from historical Round 2 candidates; ProfileGPU pass timings are explicitly single-frame and not additive.
+- U-C02 plan: `Scripts/round5_experiments.json` defines 20 rows (16 single-CVar treatments and four baseline anchors), with each baseline anchor followed by four trials before the next repeat. `powershell -NoProfile -ExecutionPolicy Bypass -File Scripts/RunPerfExperiments.ps1 -Round5 -DryRun` listed all 20 rows; no game process was launched. Added `rpg.Perf.FireRadiusScale` as Development-only CVar; Shipping accessor remains fixed at 1.0. Lead compile is pending.
+- U-C03 Round 5 prompt was added to `Documentation/BENCHKIT_README.md`; Lead review is pending.
+- U-C04 extends `Scripts/Tools/round4_benchmark_report.py` with a variable-length Round 5 receipt validator/reporter. It compares repeat baseline `avg_fps`, `p99_ms`, and `gpu_avg_ms` with group 0 and quarantines all treatment deltas if any metric drifts by more than 5%. Schema: `Scripts/Tools/round5_benchmark.schema.json`.
+- Focused tests: `python -m unittest discover -s Scripts/Tools -p 'test_round5_experiment_plan.py' -v` — 6 passed. No actual Round 5 benchmark was run; owner data and Lead approval are still required. No shipped render settings, assets, or look were changed.

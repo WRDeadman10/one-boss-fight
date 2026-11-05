@@ -1,0 +1,16 @@
+﻿label              | gpu                     | avg_fps | p95_ms | p99_ms | max_ms | game_p99 | render_p99 | gpu_p99 | meets_target
+-------------------+-------------------------+---------+--------+--------+--------+----------+------------+---------+-------------
+g4_baseline_a      | NVIDIA GeForce RTX 3060 | 29.10   | 38.33  | 40.31  | 184.51 | 4.11     | 3.85       | 39.79   | False       
+g4_baseline_b      | NVIDIA GeForce RTX 3060 | 28.37   | 39.32  | 41.45  | 44.11  | 3.51     | 4.01       | 40.99   | False       
+g4_baseline_c      | NVIDIA GeForce RTX 3060 | 29.38   | 37.81  | 39.59  | 40.69  | 3.41     | 3.77       | 39.10   | False       
+g4_warmup          | NVIDIA GeForce RTX 3060 | 29.73   | 37.48  | 39.52  | 40.54  | 3.60     | 4.37       | 39.06   | False       
+smoke              | NVIDIA GeForce RTX 3060 | 33.47   | 32.62  | 34.91  | 694.68 | 4.26     | 5.60       | 34.13   | False       
+r4_legacy_a        | NVIDIA GeForce RTX 3060 | 27.33   | 40.87  | 43.14  | 46.53  | 5.61     | 42.92      | 42.16   | False       
+r4_legacy_b        | NVIDIA GeForce RTX 3060 | 27.25   | 40.97  | 42.91  | 47.15  | 5.62     | 42.70      | 41.82   | False       
+r4_legacy_c        | NVIDIA GeForce RTX 3060 | 27.28   | 40.58  | 42.59  | 310.43 | 6.08     | 42.23      | 41.46   | False       
+r4_legacy_warmup   | NVIDIA GeForce RTX 3060 | 29.87   | 37.22  | 39.63  | 699.27 | 6.80     | 39.19      | 38.32   | False       
+r4_selected_a      | NVIDIA GeForce RTX 3060 | 27.81   | 39.77  | 41.28  | 43.28  | 5.70     | 41.03      | 40.18   | False       
+r4_selected_b      | NVIDIA GeForce RTX 3060 | 26.90   | 41.69  | 43.69  | 47.32  | 5.74     | 43.49      | 42.37   | False       
+r4_selected_c      | NVIDIA GeForce RTX 3060 | 26.58   | 41.49  | 43.59  | 46.76  | 5.52     | 43.19      | 42.35   | False       
+r4_selected_warmup | NVIDIA GeForce RTX 3060 | 27.52   | 40.26  | 42.52  | 45.04  | 5.57     | 42.23      | 41.25   | False       
+

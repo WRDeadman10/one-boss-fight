@@ -14,6 +14,8 @@ namespace RPGPerf
 	bool FireLights();     // rpg.Perf.FireLights: the point light of every fire source
 	/** rpg.Perf.FireShadows: -1 (default) = the shadows as authored; 0 = no fire light casts a shadow; N = only the first N braziers (BrazierFire_00 to BrazierFire_NN, by number) keep their authored shadow, the other lights none. */
 	int32 FireShadows();
+	/** rpg.Perf.FireRadiusScale: Development-only multiplier for fire point-light attenuation radius; 1 preserves the authored radius. */
+	float FireRadiusScale();
 	bool FireFx();         // rpg.Perf.FireFx: the Cascade fire, smoke and spark systems
 	bool GateMist();       // rpg.Perf.GateMist: the cards of the fog gate
 	bool DressingAll();    // rpg.Perf.DressingAll: every instanced mesh of the arena dressing

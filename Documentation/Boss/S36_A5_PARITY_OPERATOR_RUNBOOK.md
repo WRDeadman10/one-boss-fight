@@ -26,6 +26,15 @@ powershell -NoProfile -ExecutionPolicy Bypass -File Scripts/RunA5ParityPair.ps1 
 
 The live runner's `PASS <driver> <arm> <passed>/<total>` means that arm's terminal marker was found, all observed checks passed, and its total met the driver's registered minimum. The nightly `summary.md` records these per-arm results. It does **not** prove matching identity or compare gameplay observables.
 
+For each arm, provide the closed complete log, an identity JSON with the eight required identity fields, a unique run ID, and a new receipt path. Repeat with route-appropriate evidence for legacy and data:
+
+```powershell
+python Scripts/Tools/write_a4_parity_receipt.py --log LEGACY_EDITOR_LOG --identity LEGACY_IDENTITY.json --run-id LEGACY_RUN_ID --out LEGACY.json
+python Scripts/Tools/write_a4_parity_receipt.py --log DATA_EDITOR_LOG --identity DATA_IDENTITY.json --run-id DATA_RUN_ID --out DATA.json
+```
+
+Despite the historical filename, this receipt writer accepts every registered A5 driver. It derives fields only from explicit driver capture messages and refuses unknown drivers or existing receipt outputs; it does not infer missing facts.
+
 To compare closed legacy/data receipts, use:
 
 ```powershell
@@ -44,4 +53,6 @@ Receipts must be separate, complete v2 files with matching run identity except r
 
 Never relabel an unexplained FAIL as WARN. If a row does not match one of these declared categories, keep it FAIL or INCONCLUSIVE and send the raw evidence for review. A5's Lead-reported 31/31 matrix result is parity evidence; it does not close A7 release gates.
 
-Sources: `Scripts/RunA5ParityNightly.ps1`, `Scripts/RunA5ParityPair.ps1`, `Scripts/Tools/write_a4_parity_receipt.py`, `Scripts/Tools/compare_encounter_parity.py`, `Documentation/Boss/P15_A7_PARITY_SUMMARY_DRAFT.md`, and C-857–C-865.
+The companion packaging regression test, `Scripts/Tools/test_make_bench_kit_dependencies.py`, inspects every script in `MakeBenchKit.ps1`'s copy manifest and fails when a literal `Import-Module` or `Join-Path $PSScriptRoot` target is absent from that manifest. It passes 2/2 locally; the full `Scripts/Tools` suite passes 185 tests with one skip.
+
+Sources: `Scripts/MakeBenchKit.ps1`, `Scripts/RunBenchmark.ps1`, `Scripts/RunA5ParityNightly.ps1`, `Scripts/RunA5ParityPair.ps1`, `Scripts/Tools/write_a4_parity_receipt.py`, `Scripts/Tools/compare_encounter_parity.py`, `Documentation/Boss/P15_A7_PARITY_SUMMARY_DRAFT.md`, and C-857–C-865/C-885.

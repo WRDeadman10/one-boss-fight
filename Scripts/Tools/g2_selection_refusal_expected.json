@@ -1,0 +1,20 @@
+{
+  "schema": "onebossfight.g2-selection-refusal-expected/v1",
+  "cases": ["missing", "corrupt_hash", "clear_legacy"],
+  "required_log_tokens": [
+    "[SelectionRefusal]",
+    "G044 definition loaded",
+    "copy is transient",
+    "manifest hash changed only on transient copy",
+    "PIE_BEGIN case=",
+    "route remains selected",
+    "fail-closed HardError",
+    "refusal token",
+    "legacy boss bundle absent",
+    "ShowUI refusal screenshot requested",
+    "fresh empty selection chooses legacy",
+    "fresh legacy route restores boss bundle",
+    "SNAPSHOT ",
+    "RESULT %d/%d passed"
+  ]
+}

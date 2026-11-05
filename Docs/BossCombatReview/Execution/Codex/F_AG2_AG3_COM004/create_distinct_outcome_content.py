@@ -92,7 +92,6 @@ root = profile.get_editor_property('combo_nodes')[0]
 assert [str(e.get_editor_property('to_node')) for e in root.get_editor_property('edges')] == ['B', 'C', 'D', 'E']
 assert [e.get_editor_property('outcome').value for e in root.get_editor_property('edges')] == [0, 1, 2, 3]
 assert str(profile.get_editor_property('combo_root')) == 'A'
-assert lib.save_loaded_asset(profile), 'profile save failed'
 
 subsystem = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
 assert subsystem.new_level(LEVEL_DST), 'new_level failed'
@@ -130,6 +129,7 @@ nav.set_actor_scale3d(unreal.Vector(20.0, 20.0, 5.0))
 light = spawn(unreal.DirectionalLight, unreal.Vector(0.0, 0.0, 500.0), unreal.Rotator(roll=0.0, pitch=-50.0, yaw=30.0))
 assert light is not None
 light.set_actor_label('ProofSun')
+assert lib.save_loaded_asset(profile), 'profile save failed'
 assert unreal.EditorLoadingAndSavingUtils.save_map(world, LEVEL_DST), 'save_map failed'
 assert lib.does_asset_exist(LEVEL_DST), 'saved map not found'  # no map load inside a script
 unreal.log('[FAG23_COM004] profile=%s map=%s outcomes=Hit:B,Whiff:C,Guarded:D,Parried:E' % (PROFILE_DST, LEVEL_DST))

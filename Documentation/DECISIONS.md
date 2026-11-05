@@ -1427,3 +1427,5 @@ A parry that only removes damage felt empty, so a parried contact now costs the 
 - C-875: Accept F5 citation correction; continue H1–H4.
 - C-876: Accept H1/H2 evidence: no current setter callers, no test-only asset, G044 roots covered by always-cook; packaged manifest remains pending.
 - C-877: Open Queue S; prioritize Shipping guard/cook/package evidence and report BUILD-222 package failure plus pending gates.
+- OWNER 2026-11-05 (chat): performance stays PARKED for now; art side later; the team continues on engineering. The owner expects NVIDIA DLSS 4.5 (plugin v8.9.0 for UE 5.5, at C:\UnrealProject\2026.10.16_UE5.5_DLSS4.5Plugin_v8.9.0: DLSS, Streamline, DLSSG, Reflex, NIS) to raise FPS with the current lighting; integration waits until performance is un-parked (it adds plugin dependencies and Shipping redistributables).
+- OWNER 2026-11-05 (chat): performance UN-PARKED ("do what you think is right"). C-895 (lead): DLSS 4.5 SR/DLAA plugin installed at engine level and enabled in the uproject; Frame Generation not usable on RTX 3060/2060 Super; DLSS and cvar/scalability experiments approved, look-changing asset edits stay owner proposals.

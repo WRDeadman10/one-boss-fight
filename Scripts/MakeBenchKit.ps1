@@ -40,7 +40,7 @@ if ($IncludeDevelopment) {
 }
 # BenchmarkEncounterSelection.psm1: RunBenchmark.ps1 imports it (data-route selector, G1); missing it broke Round 4 on the bench PC (2026-11-05).
 # CheckPackagedLog.ps1 and CheckShippingBinary.py: PackagedSmoke.ps1 calls them from its own folder.
-foreach ($f in 'RunBenchmark.ps1', 'BenchmarkEncounterSelection.psm1', 'SummarizeBenchmark.py', 'BenchKit_Collect.ps1', 'PackagedSmoke.ps1', 'CheckPackagedLog.ps1', 'CheckShippingBinary.py', 'RunPerfExperiments.ps1') {
+foreach ($f in 'RunBenchmark.ps1', 'BenchmarkEncounterSelection.psm1', 'SummarizeBenchmark.py', 'BenchKit_Collect.ps1', 'PackagedSmoke.ps1', 'CheckPackagedLog.ps1', 'CheckShippingBinary.py', 'RunPerfExperiments.ps1', 'round5_experiments.json') {
     Copy-Item (Join-Path $Root "Scripts\$f") (Join-Path $Kit "Scripts\$f") -Force
 }
 Copy-Item (Join-Path $Root 'Documentation\BENCHKIT_README.md') (Join-Path $Kit 'BENCHKIT_README.md') -Force

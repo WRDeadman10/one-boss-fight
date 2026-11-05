@@ -44,7 +44,7 @@ void ARPGFireSource::Apply()
 	Light->SetRelativeLocation(FVector(0.f, 0.f, LightHeight));
 	Light->SetLightColor(LightColor);
 	Light->SetIntensity(BaseIntensity);
-	Light->SetAttenuationRadius(AttenuationRadius);
+	Light->SetAttenuationRadius(AttenuationRadius * RPGPerf::FireRadiusScale());
 	Light->SetCastShadows(bCastShadows);
 	if (FireTemplate)
 	{
@@ -96,6 +96,11 @@ void ARPGFireSource::Tick(float DeltaSeconds)
 #if !UE_BUILD_SHIPPING
 	// performance experiments (rpg.Perf.*): see RPGPerfSwitches.h
 	Light->SetVisibility(RPGPerf::FireLights());
+	const float TargetRadius = AttenuationRadius * RPGPerf::FireRadiusScale();
+	if (!FMath::IsNearlyEqual(Light->AttenuationRadius, TargetRadius))
+	{
+		Light->SetAttenuationRadius(TargetRadius);
+	}
 	{
 		const int32 Mode = RPGPerf::FireShadows();
 		bool bShadow = bCastShadows;

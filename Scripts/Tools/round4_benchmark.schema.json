@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "onebossfight.round4-benchmark/v1",
+  "title": "One Boss Fight Round 4 measured run receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "owner", "capture_date", "gpu", "gpu_driver", "session_type", "gpu_utilization_before_pct", "kit_version", "runs"],
+  "properties": {
+    "schema": {"const": "onebossfight.round4-benchmark/v1"},
+    "owner": {"type": "string", "minLength": 1},
+    "capture_date": {"type": "string", "format": "date"},
+    "gpu": {"type": "string", "minLength": 1},
+    "gpu_driver": {"type": "string", "minLength": 1},
+    "session_type": {"type": "string", "minLength": 1},
+    "gpu_utilization_before_pct": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+    "kit_version": {"type": "string", "minLength": 1},
+    "runs": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/run"}}
+  },
+  "$defs": {
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["route", "replicate", "build_id", "build_sha256", "build_configuration", "engine_version", "gpu", "gpu_driver", "session_type", "resolution_x", "resolution_y", "map", "fight_mode", "fight_started", "warmup_seconds", "duration_seconds", "avg_fps", "p99_ms", "summary_path", "summary_sha256", "frames_path", "frames_sha256"],
+      "properties": {
+        "route": {"enum": ["legacy", "selected"]},
+        "replicate": {"enum": ["a", "b", "c"]},
+        "build_id": {"type": "string", "minLength": 1},
+        "build_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "build_configuration": {"type": "string", "minLength": 1},
+        "engine_version": {"type": "string", "minLength": 1},
+        "gpu": {"type": "string", "minLength": 1},
+        "gpu_driver": {"type": "string", "minLength": 1},
+        "session_type": {"type": "string", "minLength": 1},
+        "resolution_x": {"type": "integer", "minimum": 1},
+        "resolution_y": {"type": "integer", "minimum": 1},
+        "map": {"type": "string", "minLength": 1},
+        "fight_mode": {"type": "boolean"},
+        "fight_started": {"type": "boolean"},
+        "warmup_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "avg_fps": {"type": ["number", "null"], "minimum": 0},
+        "p99_ms": {"type": ["number", "null"], "minimum": 0},
+        "summary_path": {"type": "string", "minLength": 1},
+        "summary_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "frames_path": {"type": "string", "minLength": 1},
+        "frames_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

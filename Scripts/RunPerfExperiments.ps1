@@ -11,7 +11,7 @@
   powershell -NoProfile -ExecutionPolicy Bypass -File Scripts\RunPerfExperiments.ps1
   powershell -NoProfile -ExecutionPolicy Bypass -File Scripts\RunPerfExperiments.ps1 -Only E00,E13
 #>
-param([string[]]$Only, [string]$StageDir = '')
+param([string[]]$Only, [string]$StageDir = '', [switch]$Round5, [switch]$DryRun)
 if ($Only) { $Only = @($Only | ForEach-Object { $_ -split ',' }) }
 $ErrorActionPreference = 'Stop'
 $Root = Split-Path -Parent $PSScriptRoot
@@ -20,7 +20,8 @@ if (-not $StageDir) {
     $dev = Join-Path $Root 'Saved\StagedBuilds_Development\Windows'
     if (Test-Path (Join-Path $dev 'OneBossFight.exe')) { $StageDir = $dev }
 }
-Write-Host "Stage: $(if ($StageDir) { $StageDir } else { 'Saved\StagedBuilds\Windows (Shipping)' })"
+if ($DryRun) { Write-Host 'Stage: not used in dry-run; no game will launch.' }
+else { Write-Host "Stage: $(if ($StageDir) { $StageDir } else { 'Saved\StagedBuilds\Windows (Shipping)' })" }
 $Experiments = @(
     # round 3 (2026-10-25): the fire shadows are the main cost (round 2); the GPU profile also shows the volumetric clouds (5.3 ms) and TSR (3.5 ms). R3_00 is repeated at the end and after every fourth experiment to see whether the machine state drifts (round 2 had slow early runs and fast later ones with no explanation).
     @{ N = 'R3_00_baseline';          C = '' },
@@ -40,10 +41,24 @@ $Experiments = @(
     @{ N = 'R3_14_floor_lights_off';  C = 'rpg.Perf.FireLights=0' },
     @{ N = 'R3_15_baseline_end';      C = '' }
 )
+if ($Round5) {
+    $planPath = Join-Path $PSScriptRoot 'round5_experiments.json'
+    $plan = Get-Content $planPath -Raw | ConvertFrom-Json
+    if ($plan.schema -ne 'onebossfight.round5-experiment-plan/v1' -or $plan.round -ne 5) { throw "Invalid Round 5 plan: $planPath" }
+    $Experiments = @($plan.experiments | ForEach-Object { @{ N = $_.name; C = $_.cvar; Kind = $_.kind; Group = $_.baseline_group } })
+}
 if ($Only) { $Experiments = @($Experiments | Where-Object { $name = $_.N; $Only | Where-Object { $name -like "$_*" } }) }
+if ($DryRun) {
+    $Experiments | ForEach-Object { [pscustomobject]@{ Name = $_.N; Kind = $(if ($_.Kind) { $_.Kind } else { 'experiment' }); BaselineGroup = $_.Group; CVar = $_.C } } | Format-Table -AutoSize
+    exit 0
+}
 $run = Join-Path $PSScriptRoot 'RunBenchmark.ps1'
+if ($Round5 -and $env:H019_ENCOUNTER_DEFINITION -ne '/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter') {
+    throw 'Round 5 must measure the selected data route; set H019_ENCOUNTER_DEFINITION to the Queue U README value first.'
+}
+$warmLabel = if ($Round5) { 'R5_warmup' } else { 'pxwarm' }
 Write-Host "Warm-up (thrown away) ..."
-$wargs = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $run, '-Label', 'pxwarm')
+$wargs = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $run, '-Label', $warmLabel)
 if ($StageDir) { $wargs += @('-StageDir', $StageDir) }
 & powershell @wargs | Out-Null
 if ($LASTEXITCODE -ne 0) { throw "Benchmark warm-up failed with exit code $LASTEXITCODE" }

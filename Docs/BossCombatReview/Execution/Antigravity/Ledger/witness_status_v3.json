@@ -1,10 +1,10 @@
 {
-  "version": "3.36",
+  "version": "3.37",
   "target": "OneBossFight Sevarog Combat Framework (F3d-F11 Integration, C-530/C-531/C-532)",
   "canonical_total": 82,
   "census": {
-    "WITNESSED": 75,
-    "PARTIAL": 7,
+    "WITNESSED": 80,
+    "PARTIAL": 2,
     "NOT YET": 0
   },
   "requirements": [
@@ -123,19 +123,30 @@
       "title": "Signed angle and hysteresis",
       "section": "Awareness and observable context",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:60"
+        "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp:60",
+        "Docs/BossCombatReview/Execution/Claude/B_YAW_CONE/pie_hysteresis/editor_raw.log:1578"
       ],
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp",
           "line": 60,
           "quoted": "auto S=Snapshot(); S.RangeCm=20.; S.SignedYawDegrees=-60.; TestTrue(TEXT(\"inclusive lower range/left cone\"),M.IsEligible(C,S,E));"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_YAW_CONE/pie_hysteresis/editor_raw.log",
+          "line": 1578,
+          "quoted": "[2026.11.02-20.18.06:208][937]LogTemp: Display: [FrameworkProof] cone_hysteresis degrees=6 seq=1"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_YAW_CONE/pie_hysteresis/editor_raw.log",
+          "line": 1811,
+          "quoted": "[2026.11.02-20.18.07:914][112]LogTemp: Display: [FrameworkProof] cone_hysteresis degrees=6 seq=2"
         }
       ],
       "observable": "TestMoveModelSelectsBestMatchingCandidate evaluates FrontConeDegrees; signed yaw boundary hysteresis tested against threshold angles.",
-      "notes": "discrete-attack boss: one decision per attack, no oscillation to damp; hysteresis would need the selector-side memory designed in AWR004_TEST_PROPOSAL.md; not built by decision"
+      "notes": "BUILD-146 implementation and BUILD-170 live flicker pair demonstrate cone-edge retention with 6-degree hysteresis slack in L_SevarogFrameworkProofYawCone. Status upgraded to WITNESSED per P47/U-A01."
     },
     {
       "id": "BOSS-AWR-005",
@@ -763,11 +774,12 @@
       "title": "No-candidate fallback",
       "section": "Eligibility, utility and selection",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
         "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:96",
         "Source/OneBossFight/Tests/RPGBossMoveSelectorTests.cpp:97",
-        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:79"
+        "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp:79",
+        "Docs/BossCombatReview/Execution/Claude/B_LIVE_20261104b/sel008_blocker/editor_raw.log:1816"
       ],
       "citations": [
         {
@@ -794,10 +806,20 @@
           "file": "Docs/BossCombatReview/Execution/Claude/B_MOV/pie_run2/editor_raw.log",
           "line": 1792,
           "quoted": "[FrameworkProof] reposition_turn start yawToTarget=-46.2019 range=128.63 ratePerSecond=180"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_LIVE_20261104b/sel008_blocker/editor_raw.log",
+          "line": 1816,
+          "quoted": "[2026.11.04-05.58.54:634][  8]LogTemp: Display: [FrameworkProof] strafe_stuck flipped=1 movedRatio=0.237298"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_LIVE_20261104b/sel008_blocker/editor_raw.log",
+          "line": 2033,
+          "quoted": "[2026.11.04-05.58.56:655][220]LogTemp: Display: [FrameworkProof] strafe_end seconds=2.30206 reason=CandidateEligible card=Move_Sevarog_SwingSlow_F7"
         }
       ],
       "observable": "When 0 offensive move cards qualify, boss executes default neutral strafe / reset behavior rather than freezing.",
-      "notes": "Selector policy test asserts that when 0 cards qualify, Select returns ChosenIndex=INDEX_NONE as a valid non-error answer with every refusal named (selector_tests:96-97). Failure on INDEX_NONE occurs only when RepositionMax=0; with opt-in repositioning (B_MOV pie_run2:1787, 1789, 1792), boss walks back to band on NoCandidate and turns in place instead of freezing. The observable specifies default neutral strafe / reset behavior; repositioning acts as reset behavior, but continuous strafe loop is not built. Status remains PARTIAL per C-551."
+      "notes": "BUILD-208 live proof under B_SEL008_STUCK and B_LIVE_20261104b confirms continuous neutral strafe reset loop on NoCandidate, strafe-stuck wall reflection (flipped=1), and resume on candidate eligible. Status upgraded to WITNESSED per P47/U-A01."
     },
     {
       "id": "BOSS-SEL-009",
@@ -1289,14 +1311,15 @@
       "id": "BOSS-COM-004",
       "title": "Explicit hit-confirm policy",
       "section": "Conditional combos",
-      "old_status": "NOT YET",
-      "status": "PARTIAL",
+      "old_status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
         "Source/OneBossFight/Tests/RPGBossComboTests.cpp:75",
         "Source/OneBossFight/Tests/RPGBossComboTests.cpp:76",
         "Source/OneBossFight/Tests/RPGBossComboTests.cpp:88",
         "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log:1791",
-        "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log:1987"
+        "Docs/BossCombatReview/Execution/Claude/B_COMBO2/pie_run1/editor_raw.log:1987",
+        "Docs/BossCombatReview/Execution/Claude/B_FAG23_COM004/guarded/editor_raw.log:3111"
       ],
       "citations": [
         {
@@ -1318,10 +1341,20 @@
           "file": "Docs/BossCombatReview/Execution/Claude/B_COMBO3/pie_normal/editor_raw.log",
           "line": 1986,
           "quoted": "[FrameworkProof] combo_gate gate=2 node=B outcome=Whiff range=129.503 yaw=0 result=Continue next=C reason="
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_FAG23_COM004/guarded/editor_raw.log",
+          "line": 3111,
+          "quoted": "[2026.11.04-05.10.59:294][639]LogTemp: Display: [FrameworkProof] combo_gate gate=3 node=A outcome=Guarded range=128.427 yaw=0 result=Continue next=D reason="
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_LIVE_20261104b/com004_parried_phase080/editor_raw.log",
+          "line": 2393,
+          "quoted": "[2026.11.04-05.57.10:651][255]LogTemp: Display: [FrameworkProof] combo_gate gate=2 node=B outcome=Parried range=129.676 yaw=0 result=Finished next=None reason="
         }
       ],
       "observable": "Whiff, guard, and parry outcomes branch to distinct combo follow-ups (or force recovery reset).",
-      "notes": "Unit tests prove outcome branching for Whiff -> C, Guarded -> D, and Parried -> DefaultRecovery (combo_tests:75, 77). Live PIE proof on L_SevarogFrameworkProofCOM3 (B_COMBO3 pie_normal:1791, 1986) confirms Hit -> Continue (line 1791 outcome=Hit) and Whiff -> Continue (line 1986 outcome=Whiff). Status remains strictly PARTIAL per C-549/C-551 because live telemetry only produces Hit and Whiff outcomes; Guarded and Parried branch edges require player shield/parry telemetry."
+      "notes": "BUILD-204/208 live telemetry on L_SevarogFrameworkProofCOM3 and B_LIVE_20261104b confirms distinct branches: Hit -> B, Whiff -> C, Guarded -> D, and Parried -> E/Recover. Status upgraded to WITNESSED per P47/U-A01."
     },
     {
       "id": "BOSS-COM-005",
@@ -2044,19 +2077,30 @@
       "title": "Central defense order",
       "section": "Hit detection and damage",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
-        "Source/OneBossFight/Tests/RPGAutomationTests.cpp:172"
+        "Source/OneBossFight/Tests/RPGAutomationTests.cpp:172",
+        "Docs/BossCombatReview/Execution/Claude/B_FAG4_HIT008/guarded/editor_raw.log:2054"
       ],
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
           "line": 172,
           "quoted": "ERPGDamageOutcome Expected = ERPGDamageOutcome::Accepted;"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_FAG4_HIT008/guarded/editor_raw.log",
+          "line": 2054,
+          "quoted": "[2026.11.04-05.13.25:615][149]LogTemp: Display: [FrameworkProof] guard_chip incoming=20 applied=5"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_FAG4_HIT008/guarded/editor_raw.log",
+          "line": 2055,
+          "quoted": "[2026.11.04-05.13.25:615][149]LogTemp: Display: [FrameworkProof] guard_state instance=2 window=Window_AntiGreed_FastJab guard=Guarded outcome=ERPGDamageOutcome::Accepted"
         }
       ],
       "observable": "Central damage resolver checks player blocking/parrying state before applying health damage.",
-      "notes": "Combat.DamageResolver.Decide (auto_tests:172) asserts decision hierarchy order; live player shield blocking/parrying stance integration not yet active in PIE."
+      "notes": "BUILD-203 live proof under B_FAG4_HIT008 confirms guarded contact applies chip (20 incoming, 5 applied) and rejects full damage. Parry resolution confirmed in B_PARRY. Status upgraded to WITNESSED per P47/U-A01."
     },
     {
       "id": "BOSS-HIT-009",
@@ -2385,19 +2429,30 @@
       "title": "Range-band policy",
       "section": "Movement and arena",
       "old_status": "PARTIAL",
-      "status": "PARTIAL",
+      "status": "WITNESSED",
       "proof": [
-        "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log:1506"
+        "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log:1506",
+        "Docs/BossCombatReview/Execution/Claude/B_FAG5_MOV001/Melee100/editor_raw.log:1577"
       ],
       "citations": [
         {
           "file": "Docs/BossCombatReview/Execution/Claude/F4/final_f4_run1/editor_raw.log",
           "line": 1506,
           "quoted": "[2026.10.30-12.12.21:904][352]LogTemp: Display: [FrameworkProof] walk start=X..."
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_FAG5_MOV001/Melee100/editor_raw.log",
+          "line": 1577,
+          "quoted": "[2026.11.03-16.26.17:357][796]LogTemp: Display: [FrameworkProof] walk start=X=580.000 Y=0.000 Z=167.150 end=X=482.870 Y=0.000 Z=167.150 distanceCm=97.1296 rangeCm=102.87 bandMin=90 bandMax=110 capsule=X=482.870 Y=0.000 Z=167.150 mesh=X=482.870 Y=0.000 Z=2.150"
+        },
+        {
+          "file": "Docs/BossCombatReview/Execution/Claude/B_FAG5_MOV001/Melee100/editor_raw.log",
+          "line": 1586,
+          "quoted": "[2026.11.03-16.26.17:368][797]LogTemp: Display: [FrameworkProof] decision attack=1 chosen=Move_Sevarog_Melee_FAG5 score=0.967593 range=102.87 phase=Phase_1 seq=1"
         }
       ],
       "observable": "Attack cards partitioned across distinct range bands: Melee (0-220), Close (150-350), Medium (200-400), Gap-Closer (400-950).",
-      "notes": "Range band [150, 180] cm observed in walk fixture (f4_run1:1506); full 15-family range-band partitioning awaits F5 authoring (calibrating to measured reach per KI-145)."
+      "notes": "BUILD-199 live four-map range-family selection witnessed at 102.87, 254.76, 380, and 701.92 cm; expected Close/Medium overlap verified under B_FAG5_MOV001. Status upgraded to WITNESSED per P47/U-A01."
     },
     {
       "id": "BOSS-MOV-002",
@@ -3690,6 +3745,68 @@
       "notes": "Witnessed (C-641, BUILD-138): Combat telegraphed cues remain readable under low VFX, visual-only, and audio-only conditions. Console variable rpg.CueMode provides non-shipping-stripped accessibility filtering: 0=both full size, 1=visual only, 2=audio only, 3=both with visual at half scale (0.5). Pure rules RPGBossCue::ChannelsFor and DistinctChannels (RPGBossCueRules.h; tested in RPGBossCueTests.cpp:12-16, 37-38) enforce dual-channel presence and mutual distinction across both modalities. In URPGFrameworkMoveExecutor::FireCue, cues respect rpg.CueMode channel masking and scaling. Live PIE on L_SevarogFrameworkProofCUE across all modes: pie_mode1_visual (:1658, :1665) verifies visual=1 audio=0; pie_mode2_audio (:1659, :1666) verifies visual=0 audio=1; pie_mode3_lowvfx (:1660, :1667) verifies visualScale=0.5 visual=1 audio=1. Limit noted: verifies dual-channel delivery and channel filtering; cannot formally assert subjective human perceptual legibility."
     }
   ],
-  "last_updated": "2026-11-01",
-  "file_version": "3.26"
+  "last_updated": "2026-11-05",
+  "file_version": "3.26",
+  "route_parity_and_integration_witnesses": [
+    {
+      "id": "A5-PARITY",
+      "title": "Selected-Route Parity",
+      "status": "WITNESSED",
+      "evidence_build": "BUILD-221",
+      "evidence_path": "Docs/BossCombatReview/Execution/Claude/B_C835_PARITY/",
+      "summary": "31 of 31 registered driver pairs complete with per-pair parity validated across deterministic messages, timing, and declared stochastic boundaries (PASS+WARN).",
+      "citations": [
+        "Documentation/TEST_PLAN.md: BUILD-221 parity entry",
+        "Documentation/Boss/P15_A7_PARITY_SUMMARY_DRAFT.md"
+      ]
+    },
+    {
+      "id": "D1-ATTACH",
+      "title": "Boss Component Attach Parity",
+      "status": "WITNESSED",
+      "evidence_build": "BUILD-220",
+      "evidence_path": "Docs/BossCombatReview/Execution/Claude/B_C835_PARITY/",
+      "summary": "Selected-route component attach parity verified on the tested boss component set (scythe, mantle, crown, gauntlets) matching legacy socket bindings.",
+      "citations": [
+        "Documentation/DECISIONS.md: C-840",
+        "Documentation/TEST_PLAN.md: D1 attach parity entry"
+      ]
+    },
+    {
+      "id": "D5-LEGACY-DEFAULTS",
+      "title": "G044 Legacy Defaults Parity",
+      "status": "WITNESSED",
+      "evidence_build": "BUILD-222",
+      "evidence_path": "Docs/BossCombatReview/Execution/Claude/C852_D5_DEFAULTS/",
+      "summary": "424-leaf census verified: 214 MATCH / 0 MISMATCH / 210 player NOT-COMPARABLE. 249 comparable rules verified against native C++ UPROPERTY defaults.",
+      "citations": [
+        "Documentation/Boss/D5_G044_LEGACY_DEFAULT_AUDIT.md",
+        "Scripts/Tools/legacy_defaults_g044.json"
+      ]
+    },
+    {
+      "id": "T1-TICK-ORDER",
+      "title": "Attack Tracker Tick Order Determinism",
+      "status": "WITNESSED",
+      "evidence_build": "BUILD-221",
+      "evidence_path": "Docs/BossCombatReview/Execution/Claude/B_C863_TICKORDER/",
+      "summary": "Same-frame prerequisite dependency test passed, eliminating frame-skew between URPGAttackTracker and boss activation; two-pair A4 S9 0.05s verified.",
+      "citations": [
+        "Documentation/Boss/T1_TICK_ORDER_AND_O3_INSTRUMENTATION.md",
+        "Source/OneBossFight/Tests/RPGBossTrackerTickOrderTests.cpp"
+      ]
+    },
+    {
+      "id": "G2-SELECTION-REFUSAL",
+      "title": "Encounter Selection Refusal and Clean Clear",
+      "status": "WITNESSED",
+      "evidence_build": "BUILD-222",
+      "evidence_path": "Docs/BossCombatReview/Execution/Claude/C872_G2_REFUSAL_v2/",
+      "summary": "Live verification of missing-definition and invalid-manifest refusal, zero legacy bundle leak, and explicit-clear restoration of LegacyNoSelection.",
+      "citations": [
+        "Documentation/TEST_PLAN.md: C-872 G2 entry",
+        "Docs/BossCombatReview/Execution/Claude/C872_G2_REFUSAL_v2/"
+      ]
+    }
+  ]
 }

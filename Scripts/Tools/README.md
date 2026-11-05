@@ -6,6 +6,16 @@ File outputs use the shared `atomic_io.py` helper where replacement or no-overwr
 
 | Script | Purpose |
 |---|---|
+| `audit_a5_driver_registration.py` | Compare all receipt-registered A5 drivers with RunDrivers and fresh-process runner registration. |
+| `audit_editor_map_loads.py` | Find literal known-map paths passed to `load_asset` in Editor scripts. |
+| `audit_editor_save_safety.py` | Report explicit first-save lines and earlier assertion/guard markers in Editor writers. |
+| `round4_benchmark_report.py` | Inventory Round 4 evidence, compare route identity, or validate N Round 5 experiments and detect >5% repeated-baseline drift. |
+| `check_bench_kit_manifest.py` | Check MakeBenchKit copy destinations for duplicates and missing sources. |
+| `check_g2_selection_refusal_expected.py` | Check G2 expected-sheet case/token coverage in its PIE driver. |
+| `check_packaged_smoke_receipt.py` | Validate captured PackagedSmoke tokens against configuration and process exit code. |
+| `check_ue_python_enum_conventions.py` | Audit confirmed UENUM name/member conventions and integer coercion patterns. |
+| `inventory_editor_asset_writers.py` | Classify Editor scripts as creators, modifiers, map setup, or read-only. |
+| `validate_a5_receipt_directory.py` | Check expected A5 pair IDs and legacy/data receipt arms. |
 | `card_table.py` | Card timing and baked sample count table from JSON. |
 | `check_doc_links.py` | Broken relative Markdown link scan. |
 | `check_evidence_sha256.py` | Verify Claude evidence hash manifests. |

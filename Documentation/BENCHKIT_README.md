@@ -58,6 +58,23 @@ You are helping me measure the frame rate of a game on this PC again (round 3 of
 
 Only the file `bench_results_<computer>_<timestamp>.zip` (one file, a few MB) and the written report from the prompt above (round 2 includes the Development game log with the GPU profile tables, a few MB more). On the development PC: copy the zip into `OneBossFight\Saved\bench_return\`, unzip it there, and the development Claude reads it (`python -I Scripts\SummarizeBenchmark.py --root Saved\bench_return\<unzipped>\runs`).
 
+## Prompt for Claude on the benchmark PC, ROUND 5 (experiment plan; owner review required)
+
+The plan is an experiment only. Do not change project settings, assets, or the shipped look. The result is an RTX 3060 proxy; the RTX 2060 Super remains the release target. Do not claim a release pass from this run.
+
+----------------------------------------------------------------------
+You are helping me test graphics CVars in One Boss Fight (round 5). Report only what you observed. Never edit, delete, move, or clean anything inside KIT\Saved. Do not change drivers, Windows settings, or install software. Do not alter project settings or assets. Run only the Development build so the Development-only `rpg.Perf.*` experiment controls are available. The route must be the selected data route. If any step fails, retain its output and report the exact error; do not silently replace a failed run.
+
+1. **Session and GPU check.** Run `query user`; the benchmark user's session must be `console`, not `rdp-tcp#...`. Run `nvidia-smi`; record GPU, driver, and utilization before start. Stop if this is not the owner's RTX 3060 proxy machine or if another heavy application is using the GPU.
+2. **Select the Development build and data route.** In KIT, set `$dev = (Resolve-Path 'Saved\StagedBuilds_Development\Windows').Path`, confirm `Test-Path "$dev\OneBossFight.exe"` is True, then set `$env:H019_ENCOUNTER_DEFINITION = '/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter'`.
+3. **Check the run list before launching.** Run `powershell -NoProfile -ExecutionPolicy Bypass -File Scripts\RunPerfExperiments.ps1 -Round5 -DryRun`. Confirm that it lists exactly 20 rows: four baseline rows and 16 one-CVar treatments. This is a dry-run; it must not launch the game or touch Saved output.
+4. **Run Round 5.** Only after step 3 is correct, run `powershell -NoProfile -ExecutionPolicy Bypass -File Scripts\RunPerfExperiments.ps1 -Round5 -StageDir $dev`. It makes one discarded warm-up then runs the 20 listed rows in order. Baseline repeat rows follow each block of four treatments. Allow the script to finish; do not touch input during each bot fight. If a row fails, copy the exact error and preserve the folder. Do not restart the complete plan without asking me.
+5. **Report actual measurements.** Show the final printed table verbatim. Include GPU/driver/session/utilization, each baseline and treatment's avg FPS, p99, GPU average, `fight_started`, and actual CVar summary. State that `r.LightMaxDrawDistanceScale` affects global light draw distance, and that the new `rpg.Perf.FireRadiusScale` is Development-only. Do not attribute treatment deltas if any repeated baseline metric differs from baseline group 0 by more than 5%; mark those comparisons unusable.
+6. **Collect and return.** Run `powershell -NoProfile -ExecutionPolicy Bypass -File Scripts\BenchKit_Collect.ps1`. Return the zip path, size, and written report. Do not edit a copy of the experiment plan. Keep the selected-route environment variable set only for these runs, then clear it with `Remove-Item Env:H019_ENCOUNTER_DEFINITION -ErrorAction SilentlyContinue`.
+----------------------------------------------------------------------
+
+The Round 5 plan and one-variable controls are documented in `Documentation/Boss/U-C01_GPU_COST_MODEL.md` and `Scripts/round5_experiments.json`. Round 5 report intake uses `Scripts/Tools/round4_benchmark_report.py experiments <receipt.json>` with `Scripts/Tools/round5_benchmark.schema.json`. Any visual or performance-default change still needs owner approval.
+
 ## Notes
 
 - The build in this kit was packaged on the development PC; `BUILD_INFO.txt` has its time. A newer build may follow; the frame time should not change much.
