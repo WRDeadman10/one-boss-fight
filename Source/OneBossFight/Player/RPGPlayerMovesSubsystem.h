@@ -23,6 +23,20 @@ public:
 	UPROPERTY(Config, EditDefaultsOnly, Category="Encounter|Startup")
 	bool bUseLegacyStartup = true;
 
+	/** Owner decision 2026-11-06 ("retire legacy"): with no explicit selection (no setter call, no benchmark or console path) the world starts the data-driven route
+	 *  with DefaultEncounterDefinition. Native default false so a bare subsystem (tests) is unchanged; Config/DefaultGame.ini sets it True for the game.
+	 *  Non-Shipping opt-out for parity runs: command-line -RPGLegacyStartup or environment variable RPG_LEGACY_STARTUP=1 keeps the legacy route. */
+	UPROPERTY(Config, EditDefaultsOnly, Category="Encounter|Startup")
+	bool bDefaultToDataStartup = false;
+
+	/** The default data startup applies only to this map (short name, PIE prefix ignored): the framework proof levels and test worlds keep the route they always had. */
+	UPROPERTY(Config, EditDefaultsOnly, Category="Encounter|Startup")
+	FString DefaultEncounterMap = TEXT("L_SevarogArena");
+
+	/** Encounter definition used by the default data startup. Empty disables the default (legacy startup resumes). It must stay under a directory the cook always includes. */
+	UPROPERTY(Config, EditDefaultsOnly, Category="Encounter|Startup")
+	FString DefaultEncounterDefinition = TEXT("/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter");
+
 	/** Read-only reflected accessor for editor/runtime diagnostics that need this world's subsystem. */
 	UFUNCTION(BlueprintCallable, Category="Encounter|Diagnostics", meta=(WorldContext="WorldContextObject"))
 	static URPGPlayerMovesSubsystem* GetForWorld(const UObject* WorldContextObject);
@@ -35,6 +49,10 @@ public:
 	/** Captured runtime selection/participant/activation snapshot for opt-in parity tooling. */
 	UFUNCTION(BlueprintCallable, Category="Encounter|Diagnostics")
 	FString BuildEncounterParitySnapshot() const;
+
+	/** Stores DefaultEncounterDefinition as the game instance's selection when none exists (see bDefaultToDataStartup). A load failure leaves the legacy route in place.
+	 *  Runs in PostInitialize and OnWorldBeginPlay; public so tests can drive it. */
+	void ApplyDefaultDataSelection();
 
 	static bool IsPackPlayer(const AActor* Actor);
 	static bool IsPackBoss(const AActor* Actor);

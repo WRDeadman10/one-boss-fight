@@ -85,6 +85,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge|Backward", meta = (ClampMin = "0.0", ClampMax = "1.0"))
 	float NoInputThreshold = 0.1f;
 
+	/** Optional (Elden Ring style, owner request 2026-11-06): the backstep clip. When set, a press with no direction input plays this clip (a hop straight back that keeps
+	 *  facing: no turn, no roll). Empty (the default) keeps today's behavior (turn away and roll). The clip is authored by Antigravity (ER-A1) and has no rotation notify. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge|Backstep")
+	TSoftObjectPtr<UAnimMontage> BackstepMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge|Backstep", meta = (ClampMin = "0.1"))
+	float BackstepPlayRate = 1.0f;
+
+	/** Presses that chose the backstep clip (tests). */
+	UFUNCTION(BlueprintPure, Category = "Dodge")
+	int32 GetBackstepCount() const { return BackstepCount; }
+
 	/** Dodges that turned backward (tests). */
 	UFUNCTION(BlueprintPure, Category = "Dodge")
 	int32 GetBackwardTurnCount() const { return BackwardTurnCount; }
@@ -116,7 +128,10 @@ protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	enum class EKind : uint8 { None, Quick, Full };
+	enum class EKind : uint8 { None, Quick, Full, Backstep };
+
+	/** True when the movement input is below NoInputThreshold (the pawn is standing still as far as the player is concerned). */
+	bool HasNoDirectionInput() const;
 
 	/** Binds the dodge action on the pawn's input component once it exists (it is created when the pawn is possessed). */
 	bool TryBind();
@@ -140,6 +155,7 @@ private:
 	int32 IgnoredPressCount = 0;
 	double LastPressGap = -1.0;
 	int32 BackwardTurnCount = 0;
+	int32 BackstepCount = 0;
 	bool bWasActive = false;
 	bool bTurning = false;
 	float TurnTargetYaw = 0.f;

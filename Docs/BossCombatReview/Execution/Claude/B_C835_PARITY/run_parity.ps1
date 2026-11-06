@@ -40,10 +40,10 @@ function Invoke-Pair([string]$driver, [string]$wrapper, [int]$timeout) {
     Write-Identity $driver "$pair\identity.json"
     foreach ($route in 'legacy', 'data') {
         $env:A5_PARITY_DRIVER = $driver
-        if ($route -eq 'data') { $env:H019_ENCOUNTER_DEFINITION = $definition } else { Remove-Item Env:H019_ENCOUNTER_DEFINITION -ErrorAction SilentlyContinue }
+        if ($route -eq 'data') { $env:H019_ENCOUNTER_DEFINITION = $definition; Remove-Item Env:RPG_LEGACY_STARTUP -ErrorAction SilentlyContinue } else { Remove-Item Env:H019_ENCOUNTER_DEFINITION -ErrorAction SilentlyContinue; $env:RPG_LEGACY_STARTUP = '1' }  # 2026-11-06: the data route is the game default, the legacy arm must opt out
         & $runner -Script "$repo\Scripts\Editor\$wrapper" -OutDir "$pair\$route" -Task "C835-$driver$Suffix-$route" -NullRhi 0 -PyCmd 1 -TimeoutSeconds $timeout
         "$driver $route runner exit=$LASTEXITCODE"
-        Remove-Item Env:H019_ENCOUNTER_DEFINITION, Env:A5_PARITY_DRIVER -ErrorAction SilentlyContinue
+        Remove-Item Env:H019_ENCOUNTER_DEFINITION, Env:A5_PARITY_DRIVER, Env:RPG_LEGACY_STARTUP -ErrorAction SilentlyContinue
         & python "$repo\Scripts\Tools\write_a4_parity_receipt.py" --log "$pair\$route\editor_raw.log" --identity "$pair\identity.json" --run-id "C835-$driver$Suffix-$route" --out "$pair\receipt_$route.json" 2>&1 | ForEach-Object { "$driver $route receipt: $_" }
     }
     & python "$repo\Scripts\Tools\compare_encounter_parity.py" "$pair\receipt_legacy.json" "$pair\receipt_data.json" --verify-source-logs --report-json "$pair\parity_report.json" 2>&1 | Tee-Object "$pair\compare.txt" | ForEach-Object { "$driver compare: $_" }

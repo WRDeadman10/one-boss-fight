@@ -22,8 +22,8 @@ function Invoke-Arm([string]$Route) {
     if (Test-Path -LiteralPath $out) { throw "Refusing existing arm evidence directory: $out" }
     $env:A5_PARITY_DRIVER = $Driver
     $env:A5_DEATH_RESET_REPETITIONS = [string]$DeathResetRepetitions
-    if ($Route -eq 'data') { $env:H019_ENCOUNTER_DEFINITION = $definition }
-    else { Remove-Item Env:H019_ENCOUNTER_DEFINITION -ErrorAction SilentlyContinue }
+    if ($Route -eq 'data') { $env:H019_ENCOUNTER_DEFINITION = $definition; Remove-Item Env:RPG_LEGACY_STARTUP -ErrorAction SilentlyContinue }
+    else { Remove-Item Env:H019_ENCOUNTER_DEFINITION -ErrorAction SilentlyContinue; $env:RPG_LEGACY_STARTUP = '1' } # the data route is the game default since 2026-11-06
     & $runner -Script $driverScript -OutDir $out -Task "A5-$Driver-$Route" -NullRhi 0 -PyCmd 1 -TimeoutSeconds 1500
     if ($LASTEXITCODE -ne 0) { throw "Editor runner failed for $Route arm with exit $LASTEXITCODE" }
     $rawLog = Join-Path $out 'editor_raw.log'
@@ -42,6 +42,6 @@ try {
 }
 finally {
     Remove-Item Env:A5_PARITY_DRIVER -ErrorAction SilentlyContinue
-    Remove-Item Env:H019_ENCOUNTER_DEFINITION -ErrorAction SilentlyContinue
+    Remove-Item Env:H019_ENCOUNTER_DEFINITION, Env:RPG_LEGACY_STARTUP -ErrorAction SilentlyContinue
     Remove-Item Env:A5_DEATH_RESET_REPETITIONS -ErrorAction SilentlyContinue
 }

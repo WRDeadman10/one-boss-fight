@@ -83,9 +83,9 @@ void URPGDodgeTiming::OnDodgeStarted()
 		const float HalfHeight = Walker->GetCapsuleComponent() ? Walker->GetCapsuleComponent()->GetScaledCapsuleHalfHeight() : 90.f;
 		ARPGFlipbookEffect::Spawn(GetWorld(), Walker->GetActorLocation() - FVector(0.f, 0.f, HalfHeight), ERPGEFlipbookKind::DodgeDust, LoadedDodgeDustFlipbook);
 	}
-	if (!bBackwardWithoutInput)
+	if (!bBackwardWithoutInput || Selected == EKind::Backstep)
 	{
-		return;
+		return; // a backstep keeps the facing: the clip itself goes backward, no turn
 	}
 	const ACharacter* Character = Cast<ACharacter>(GetOwner());
 	const UCharacterMovementComponent* Movement = Character ? Character->GetCharacterMovement() : nullptr;
@@ -99,6 +99,13 @@ void URPGDodgeTiming::OnDodgeStarted()
 	bTurning = true;
 	++BackwardTurnCount;
 	UE_LOG(LogRPGDodge, Log, TEXT("dodge %d started with no direction input: turning to yaw %.0f (from %.0f) to dodge backward"), PressCount, TurnTargetYaw, Character->GetActorRotation().Yaw);
+}
+
+bool URPGDodgeTiming::HasNoDirectionInput() const
+{
+	const ACharacter* Character = Cast<ACharacter>(GetOwner());
+	const UCharacterMovementComponent* Movement = Character ? Character->GetCharacterMovement() : nullptr;
+	return Movement && Movement->GetLastInputVector().Size() < NoInputThreshold;
 }
 
 void URPGDodgeTiming::StepBackwardTurn(float DeltaTime)
@@ -286,6 +293,10 @@ FString URPGDodgeTiming::GetStageName() const
 	{
 		return TEXT("None");
 	}
+	if (Selected == EKind::Backstep)
+	{
+		return TEXT("Backstep");
+	}
 	return Selected == EKind::Full ? TEXT("FullRoll") : TEXT("QuickEvade");
 }
 
@@ -310,6 +321,19 @@ void URPGDodgeTiming::OnDodgePressed(const FInputActionInstance& Instance)
 	}
 
 	const bool bActive = IsAbilityActive(Ability);
+	// Elden Ring style backstep (optional clip): no direction input means a hop straight back that keeps facing, whatever the press gap. A running full roll is not interrupted.
+	if (UAnimMontage* Backstep = BackstepMontage.IsNull() ? nullptr : BackstepMontage.LoadSynchronous())
+	{
+		if (HasNoDirectionInput() && !(bActive && Selected == EKind::Full))
+		{
+			Selected = EKind::Backstep;
+			bLastPressFull = false;
+			++BackstepCount;
+			const bool bApplied = ApplyClip(Ability, Backstep, BackstepPlayRate);
+			UE_LOG(LogRPGDodge, Log, TEXT("dodge press %d: backstep (no direction input, %s x%.2f, applied %d, dodge running %d)"), PressCount, *Backstep->GetName(), BackstepPlayRate, bApplied, bActive);
+			return;
+		}
+	}
 	if (!bLastPressFull)
 	{
 		Selected = EKind::Quick;

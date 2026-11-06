@@ -109,7 +109,7 @@ bool URPGPlayerMovesSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 
 void URPGPlayerMovesSubsystem::PostInitialize()
 {
-	Super::PostInitialize();
+	Super::PostInitialize(); ApplyDefaultDataSelection(); // before any pawn spawns, the spawn handler then already sees the selected route
 	// Lead (BUILD-212): restored. The legacy spawn hook must be live before BeginPlay (AttachWitness/AbsentPreservesLegacyStartup
 	// spawn pawns in worlds that never begin play); OnWorldBeginPlay only binds when this did not.
 	if (UWorld* World = GetWorld())
@@ -128,7 +128,7 @@ void URPGPlayerMovesSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 		SpawnHandle = InWorld.AddOnActorSpawnedHandler(FOnActorSpawned::FDelegate::CreateUObject(this, &URPGPlayerMovesSubsystem::OnActorSpawned));
 	}
 	RPGStartupChronology::AtWorldBeginPlay(InWorld);
-	Super::OnWorldBeginPlay(InWorld);
+	Super::OnWorldBeginPlay(InWorld); ApplyDefaultDataSelection(); // no-op when PostInitialize stored it or an explicit selection exists
 	UGameInstance* GameInstance = InWorld.GetGameInstance();
 	URPGEncounterSelectionSubsystem* Selection = GameInstance ? GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>() : nullptr;
 	const bool bSelectionRequested = Selection && Selection->HasSelectionRequest();
@@ -987,4 +987,43 @@ void URPGPlayerMovesSubsystem::ReportActivationFailure(UWorld* World, const FStr
 		GEngine->AddOnScreenDebugMessage(uint64(World->GetUniqueID()), 10.f, FColor::Red,
 			FString::Printf(TEXT("Encounter activation refused: %s"), *Reason));
 	}
+}
+
+// Owner decision 2026-11-06 (retire legacy). Kept at the end of the file so the line citations of the offline audits (compare_manifest_to_legacy_defaults) stay valid.
+#include "HAL/PlatformMisc.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
+
+void URPGPlayerMovesSubsystem::ApplyDefaultDataSelection()
+{
+	if (!bDefaultToDataStartup || DefaultEncounterDefinition.IsEmpty())
+	{
+		return;
+	}
+	UWorld* World = GetWorld();
+	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	URPGEncounterSelectionSubsystem* Selection = GameInstance ? GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>() : nullptr;
+	if (!Selection || Selection->HasSelectionRequest())
+	{
+		return; // an explicit selection (setter, benchmark or console path) always wins
+	}
+	if (UWorld::RemovePIEPrefix(World->GetMapName()) != DefaultEncounterMap)
+	{
+		return;
+	}
+#if !UE_BUILD_SHIPPING
+	if (FParse::Param(FCommandLine::Get(), TEXT("RPGLegacyStartup")) || FPlatformMisc::GetEnvironmentVariable(TEXT("RPG_LEGACY_STARTUP")) == TEXT("1"))
+	{
+		UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] default data startup skipped: legacy startup requested (-RPGLegacyStartup or RPG_LEGACY_STARTUP=1)"));
+		return;
+	}
+#endif
+	URPGBossEncounterDefinition* Definition = Cast<URPGBossEncounterDefinition>(FSoftObjectPath(DefaultEncounterDefinition).TryLoad());
+	if (!Definition)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[EncounterActivation] default data startup: %s did not load, the legacy route stays in place"), *DefaultEncounterDefinition);
+		return;
+	}
+	Selection->SetSelectedDefinition(Definition);
+	UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] default data startup: selected %s for map %s"), *DefaultEncounterDefinition, *DefaultEncounterMap);
 }

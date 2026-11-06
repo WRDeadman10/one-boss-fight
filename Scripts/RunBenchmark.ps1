@@ -40,6 +40,8 @@ $LaunchArgs = @(
 )
 if (-not $Empty) { $LaunchArgs += '-RPGBenchmarkFight' }
 $LaunchArgs += @(Get-H019EncounterArgument -EncounterDefinition $env:H019_ENCOUNTER_DEFINITION)
+# 2026-11-06: the data route is the game default; a run with no selected definition is the legacy control and must say so (ignored by Shipping builds).
+if (-not $env:H019_ENCOUNTER_DEFINITION) { $LaunchArgs += '-RPGLegacyStartup' }
 if ($ExtraArgs) { $LaunchArgs += $ExtraArgs }
 
 # Precaution: every run starts from the default graphics settings. A previous run can leave GameUserSettings.ini behind (suspected, not proven: in the round 2 experiments of 2026-10-25 the first ten runs were slow and the later ones fast with no clear cause). Only the staged game's own Saved\Config and the local data copy of a Shipping build are cleaned, never the project.

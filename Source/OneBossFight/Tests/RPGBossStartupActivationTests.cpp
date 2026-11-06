@@ -1438,4 +1438,56 @@ bool FRPGBossEncounterResetBroadcastsAfterStateUpdate::RunTest(const FString&)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGEncounterDefaultDataStartup,
+	"OneBossFight.Binding.EncounterSelection.DefaultDataStartup",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGEncounterDefaultDataStartup::RunTest(const FString&)
+{
+	// Owner decision 2026-11-06 (retire legacy): with no explicit selection the arena stores the default definition; every other case leaves the selection absent.
+	FStartupActivationWorld Scope;
+	if (!TestNotNull(TEXT("real game-instance test world"), Scope.World)) return false;
+	URPGEncounterSelectionSubsystem* Selection = Scope.GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>();
+	URPGPlayerMovesSubsystem* Moves = Scope.World->GetSubsystem<URPGPlayerMovesSubsystem>();
+	if (!TestNotNull(TEXT("game-instance selection store"), Selection) || !TestNotNull(TEXT("moves subsystem"), Moves)) return false;
+	const FString DefaultPath = Moves->DefaultEncounterDefinition;
+	const FString MapName = UWorld::RemovePIEPrefix(Scope.World->GetMapName());
+	TestTrue(TEXT("the shipped default path is set"), !DefaultPath.IsEmpty());
+	Selection->ClearSelectedDefinition();
+
+	Moves->bDefaultToDataStartup = false;
+	Moves->DefaultEncounterMap = MapName;
+	Moves->ApplyDefaultDataSelection();
+	TestFalse(TEXT("switch off: no selection"), Selection->HasSelectionRequest());
+
+	Moves->bDefaultToDataStartup = true;
+	Moves->DefaultEncounterMap = TEXT("L_SomeOtherMap");
+	Moves->ApplyDefaultDataSelection();
+	TestFalse(TEXT("other map: no selection"), Selection->HasSelectionRequest());
+
+	Moves->DefaultEncounterMap = MapName;
+	Moves->DefaultEncounterDefinition.Reset();
+	Moves->ApplyDefaultDataSelection();
+	TestFalse(TEXT("empty definition path: no selection"), Selection->HasSelectionRequest());
+
+	AddExpectedError(TEXT("DoesNotExist_ER"), EAutomationExpectedErrorFlags::Contains, 0);
+	Moves->DefaultEncounterDefinition = TEXT("/Game/OneBossFight/Data/DoesNotExist_ER.DoesNotExist_ER");
+	Moves->ApplyDefaultDataSelection();
+	TestFalse(TEXT("definition that does not load: legacy stays, no selection"), Selection->HasSelectionRequest());
+
+	Moves->DefaultEncounterDefinition = DefaultPath;
+	Moves->ApplyDefaultDataSelection();
+	TestTrue(TEXT("default on the arena map stores the definition"), Selection->HasSelectionRequest());
+	TestTrue(TEXT("the stored definition is the G044 encounter"), Selection->GetRequestedDefinitionPathForDiagnostics().Contains(TEXT("DA_Sevarog_G044_Encounter")));
+
+	Selection->ClearSelectedDefinition();
+	URPGBossEncounterDefinition* Explicit = Scope.MakeSelection();
+	if (!TestNotNull(TEXT("explicit selection"), Explicit)) return false;
+	Selection->SetSelectedDefinition(Explicit);
+	const FString Before = Selection->GetRequestedDefinitionPathForDiagnostics();
+	Moves->ApplyDefaultDataSelection();
+	TestEqual(TEXT("an explicit selection always wins"), Selection->GetRequestedDefinitionPathForDiagnostics(), Before);
+	Selection->ClearSelectedDefinition();
+	return true;
+}
+
 #endif
