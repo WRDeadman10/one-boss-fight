@@ -29,6 +29,8 @@ struct FInputActionInstance;
  *   - a press while a full roll is running is ignored (no repeated rolls from key repeat or mashing).
  * RPGPlayerMovesSubsystem attaches it to the pack player when that pawn spawns.
  */
+class UInputMappingContext;
+
 UCLASS(ClassGroup = (Player), meta = (BlueprintSpawnableComponent))
 class ONEBOSSFIGHT_API URPGDodgeTiming : public UActorComponent
 {
@@ -37,7 +39,12 @@ class ONEBOSSFIGHT_API URPGDodgeTiming : public UActorComponent
 public:
 	URPGDodgeTiming();
 
-	/** A second press within this many seconds of the previous press gives the full roll. */
+	/** Owner decision 2026-11-06 (Elden Ring dodge: tap = roll or backstep, hold = dash): the double-tap long roll is OFF by default. True restores the old
+	 *  behavior (a second press within DoubleTapWindow gives the full roll). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge")
+	bool bDoubleTapLongRoll = false;
+
+	/** A second press within this many seconds of the previous press gives the full roll (only with bDoubleTapLongRoll). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge", meta = (ClampMin = "0.05"))
 	float DoubleTapWindow = 0.30f;
 
@@ -93,6 +100,42 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge|Backstep", meta = (ClampMin = "0.1"))
 	float BackstepPlayRate = 1.0f;
 
+	/** Owner 2026-11-06 ("All three"): Elden Ring attack inputs on the gamepad (R1 press light, R2 tap strong, R2 hold charged), a project context added ABOVE the
+	 *  pack's IMC_AdvancedControls so it consumes those keys. Empty disables it (the pack's mapping returns: R1 release light, R1 hold charged, R2 strong). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input|EldenRing")
+	TSoftObjectPtr<UInputMappingContext> EldenRingMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input|EldenRing")
+	int32 EldenRingMappingPriority = 10;
+
+	/** The project actions the Elden Ring context maps (R1 press, R2 tap) and the pack actions they replay by injection for InjectSeconds (pie3: the pack
+	 *  starts the strong attack on key DOWN and ignores a Pressed-trigger light, so the keys drive our own actions and the pack's actions are replayed). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input|EldenRing")
+	TSoftObjectPtr<UInputAction> EldenRingLightAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input|EldenRing")
+	TSoftObjectPtr<UInputAction> EldenRingHeavyTapAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input|EldenRing")
+	TSoftObjectPtr<UInputAction> PackLightAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input|EldenRing")
+	TSoftObjectPtr<UInputAction> PackStrongAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input|EldenRing", meta = (ClampMin = "0.02"))
+	float InjectSeconds = 0.12f;
+
+	/** Light / strong replays started by the Elden Ring keys (tests). */
+	UFUNCTION(BlueprintPure, Category = "Input|EldenRing")
+	int32 GetEldenRingLightCount() const { return EldenRingLightCount; }
+
+	UFUNCTION(BlueprintPure, Category = "Input|EldenRing")
+	int32 GetEldenRingStrongCount() const { return EldenRingStrongCount; }
+
+	/** True once the Elden Ring context was added for this pawn's local player (tests). */
+	UFUNCTION(BlueprintPure, Category = "Input|EldenRing")
+	bool IsEldenRingInputActive() const { return bEldenRingContextAdded; }
+
 	/** Presses that chose the backstep clip (tests). */
 	UFUNCTION(BlueprintPure, Category = "Dodge")
 	int32 GetBackstepCount() const { return BackstepCount; }
@@ -132,6 +175,12 @@ private:
 
 	/** True when the movement input is below NoInputThreshold (the pawn is standing still as far as the player is concerned). */
 	bool HasNoDirectionInput() const;
+	/** Adds EldenRingMappingContext to the local player's Enhanced Input subsystem once the pawn is possessed (retried every tick until it succeeds). */
+	void TryAddEldenRingContext();
+	/** Binds the two Elden Ring actions once, and replays the pack's light / strong action while a replay is running. */
+	void TickEldenRingInput();
+	void OnEldenRingLight(const FInputActionInstance& Instance);
+	void OnEldenRingHeavyTap(const FInputActionInstance& Instance);
 
 	/** Binds the dodge action on the pawn's input component once it exists (it is created when the pawn is possessed). */
 	bool TryBind();
@@ -156,6 +205,12 @@ private:
 	double LastPressGap = -1.0;
 	int32 BackwardTurnCount = 0;
 	int32 BackstepCount = 0;
+	bool bEldenRingContextAdded = false;
+	bool bEldenRingActionsBound = false;
+	double InjectLightUntil = -1.0;
+	double InjectStrongUntil = -1.0;
+	int32 EldenRingLightCount = 0;
+	int32 EldenRingStrongCount = 0;
 	bool bWasActive = false;
 	bool bTurning = false;
 	float TurnTargetYaw = 0.f;

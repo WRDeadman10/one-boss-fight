@@ -1144,6 +1144,8 @@ bool FRPGArenaDressingTest::RunTest(const FString& Parameters)
 // Pack content wiring: the pack's own mannequin player and great-sword boss in the arena (editor context: needs the project's content)
 // ---------------------------------------------------------------------------------------------
 
+#include "InputMappingContext.h"
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGPackWiringTest, "OneBossFight.Content.PackWiring",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
 
@@ -1183,6 +1185,8 @@ bool FRPGPackWiringTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("phase two threshold is 0.60"), PhaseDefaults->PhaseTwoHealthFraction, 0.6f);
 	TestFalse(TEXT("legacy fireball is off"), PhaseDefaults->bFireballEnabled);
 	TestEqual(TEXT("double tap window is 0.30 s"), DodgeDefaults->DoubleTapWindow, 0.30f);
+	TestFalse(TEXT("double-tap long roll is off by default (owner 2026-11-06, Elden Ring dodge)"), DodgeDefaults->bDoubleTapLongRoll);
+	TestNotNull(TEXT("Elden Ring gamepad attack context loads (owner 2026-11-06)"), DodgeDefaults->EldenRingMappingContext.LoadSynchronous());
 	TestFalse(TEXT("no blanket critical while the boss is down"), GetDefault<URPGBossStagger>()->bCriticalOnEveryHit);
 
 	// The weapon trace facade (Pack/RPGPackTrace, used by URPGTraceGuard and URPGTraceAudit) reads these names of the pack's trace classes by reflection: a pack update that renames one fails here, not silently in a fight.

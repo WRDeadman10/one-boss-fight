@@ -30,7 +30,7 @@ URPGDodgeTiming::URPGDodgeTiming()
 	QuickMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(
 		TEXT("/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Animations/Roll/Dodge_Small_Forward_Roll_Montage.Dodge_Small_Forward_Roll_Montage")));
 	FullMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(
-		TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage")));
+		TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage"))); EldenRingMappingContext = TSoftObjectPtr<UInputMappingContext>(FSoftObjectPath(TEXT("/Game/OneBossFight/Input/IMC_EldenRing.IMC_EldenRing"))); EldenRingLightAction = TSoftObjectPtr<UInputAction>(FSoftObjectPath(TEXT("/Game/OneBossFight/Input/IA_ER_Light.IA_ER_Light"))); EldenRingHeavyTapAction = TSoftObjectPtr<UInputAction>(FSoftObjectPath(TEXT("/Game/OneBossFight/Input/IA_ER_HeavyTap.IA_ER_HeavyTap"))); PackLightAction = TSoftObjectPtr<UInputAction>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_NormalAttack.IA_NormalAttack"))); PackStrongAction = TSoftObjectPtr<UInputAction>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_StrongAttack.IA_StrongAttack")));
 }
 
 void URPGDodgeTiming::BeginPlay()
@@ -43,7 +43,7 @@ void URPGDodgeTiming::BeginPlay()
 
 void URPGDodgeTiming::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction); TryAddEldenRingContext(); TickEldenRingInput();
 	if (!bBound)
 	{
 		TryBind();
@@ -311,7 +311,7 @@ void URPGDodgeTiming::OnDodgePressed(const FInputActionInstance& Instance)
 	}
 	const double Now = World->GetTimeSeconds();
 	LastPressGap = Now - LastPressTime;
-	bLastPressFull = LastPressGap <= DoubleTapWindow;
+	bLastPressFull = bDoubleTapLongRoll && LastPressGap <= DoubleTapWindow;
 	LastPressTime = Now;
 	++PressCount;
 	UAnimMontage* Quick = QuickMontage.LoadSynchronous();
@@ -358,4 +358,105 @@ void URPGDodgeTiming::OnDodgePressed(const FInputActionInstance& Instance)
 		return;
 	}
 	UE_LOG(LogRPGDodge, Log, TEXT("dodge press %d: full roll chosen, no dodge running, the pack dodges on release (%s, applied %d)"), PressCount, *Full->GetName(), bApplied);
+}
+
+// Owner 2026-11-06 Elden Ring gamepad attack inputs. Kept at the end of the file so existing line citations stay valid.
+#include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
+#include "Engine/LocalPlayer.h"
+#include "GameFramework/PlayerController.h"
+
+void URPGDodgeTiming::TryAddEldenRingContext()
+{
+	if (bEldenRingContextAdded || EldenRingMappingContext.IsNull())
+	{
+		return;
+	}
+	const APawn* Pawn = Cast<APawn>(GetOwner());
+	const APlayerController* Controller = Pawn ? Cast<APlayerController>(Pawn->GetController()) : nullptr;
+	ULocalPlayer* LocalPlayer = Controller ? Controller->GetLocalPlayer() : nullptr;
+	UEnhancedInputLocalPlayerSubsystem* InputSubsystem = LocalPlayer ? LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>() : nullptr;
+	if (!InputSubsystem)
+	{
+		return; // not possessed yet, or not a local player: retried next tick
+	}
+	UInputMappingContext* Context = EldenRingMappingContext.LoadSynchronous();
+	if (!Context)
+	{
+		UE_LOG(LogRPGDodge, Warning, TEXT("%s: Elden Ring input context %s did not load; the pack's attack inputs stay"), *GetOwner()->GetName(), *EldenRingMappingContext.ToString());
+		bEldenRingContextAdded = true; // do not retry every tick
+		return;
+	}
+	if (!InputSubsystem->HasMappingContext(Context))
+	{
+		InputSubsystem->AddMappingContext(Context, EldenRingMappingPriority);
+	}
+	bEldenRingContextAdded = true;
+	UE_LOG(LogRPGDodge, Log, TEXT("%s: Elden Ring input context %s active at priority %d (R1 press light, R2 tap strong, R2 hold charged)"), *GetOwner()->GetName(), *Context->GetName(), EldenRingMappingPriority);
+}
+
+void URPGDodgeTiming::TickEldenRingInput()
+{
+	if (!bEldenRingContextAdded)
+	{
+		return;
+	}
+	APawn* Pawn = Cast<APawn>(GetOwner());
+	if (!bEldenRingActionsBound)
+	{
+		UEnhancedInputComponent* Input = Pawn ? Cast<UEnhancedInputComponent>(Pawn->InputComponent) : nullptr;
+		UInputAction* Light = EldenRingLightAction.LoadSynchronous();
+		UInputAction* HeavyTap = EldenRingHeavyTapAction.LoadSynchronous();
+		if (!Input || !Light || !HeavyTap)
+		{
+			return;
+		}
+		Input->BindAction(Light, ETriggerEvent::Triggered, this, &URPGDodgeTiming::OnEldenRingLight);
+		Input->BindAction(HeavyTap, ETriggerEvent::Triggered, this, &URPGDodgeTiming::OnEldenRingHeavyTap);
+		bEldenRingActionsBound = true;
+	}
+	const UWorld* World = GetWorld();
+	const double Now = World ? World->GetTimeSeconds() : 0.0;
+	if (Now >= InjectLightUntil && Now >= InjectStrongUntil)
+	{
+		return;
+	}
+	const APlayerController* Controller = Pawn ? Cast<APlayerController>(Pawn->GetController()) : nullptr;
+	ULocalPlayer* LocalPlayer = Controller ? Controller->GetLocalPlayer() : nullptr;
+	UEnhancedInputLocalPlayerSubsystem* InputSubsystem = LocalPlayer ? LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>() : nullptr;
+	if (!InputSubsystem)
+	{
+		return;
+	}
+	// The pack reads its own actions as if the key were held for InjectSeconds (press and release), exactly like the PIE drivers press them.
+	if (Now < InjectLightUntil)
+	{
+		if (UInputAction* Action = PackLightAction.LoadSynchronous())
+		{
+			InputSubsystem->InjectInputForAction(Action, FInputActionValue(true), {}, {});
+		}
+	}
+	if (Now < InjectStrongUntil)
+	{
+		if (UInputAction* Action = PackStrongAction.LoadSynchronous())
+		{
+			InputSubsystem->InjectInputForAction(Action, FInputActionValue(true), {}, {});
+		}
+	}
+}
+
+void URPGDodgeTiming::OnEldenRingLight(const FInputActionInstance& Instance)
+{
+	const UWorld* World = GetWorld();
+	InjectLightUntil = (World ? World->GetTimeSeconds() : 0.0) + InjectSeconds;
+	++EldenRingLightCount;
+	UE_LOG(LogRPGDodge, Verbose, TEXT("Elden Ring R1 press: light attack replay %d"), EldenRingLightCount);
+}
+
+void URPGDodgeTiming::OnEldenRingHeavyTap(const FInputActionInstance& Instance)
+{
+	const UWorld* World = GetWorld();
+	InjectStrongUntil = (World ? World->GetTimeSeconds() : 0.0) + InjectSeconds;
+	++EldenRingStrongCount;
+	UE_LOG(LogRPGDodge, Verbose, TEXT("Elden Ring R2 tap: strong attack replay %d"), EldenRingStrongCount);
 }

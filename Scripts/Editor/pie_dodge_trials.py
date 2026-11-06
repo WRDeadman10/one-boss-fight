@@ -75,10 +75,12 @@ def evaluate(label, gaps, pawn, boss):
     gap = dodge.get_last_press_gap()
     window = dodge.get_editor_property("double_tap_window")
     full = dodge.was_last_press_full()
+    # Owner 2026-11-06: the double-tap long roll is off by default (Elden Ring dodge); with it off no press may be full.
+    long_roll_on = bool(dodge.get_editor_property("double_tap_long_roll"))
     rolls = sum(1 for m in state["montages"] if m and "Dodge_To_Idle" in m)
     ok_rule = True
     if gaps:
-        ok_rule = (full == (gap <= window + 1e-9))
+        ok_rule = (full == (long_roll_on and gap <= window + 1e-9))
     else:
         ok_rule = not full
     ok_roll = rolls <= 1
