@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
-#include "Player/RPGDodgeTiming.h"
+#include "Player/RPGDodgeTiming.h" 
+#include "Player/RPGDodgeInputRules.h"
 #include "Player/RPGStartupChronology.h"
 #include "Player/RPGFlipbookEffect.h"
 #include "Pack/RPGBlueprintCall.h"
@@ -324,7 +325,7 @@ void URPGDodgeTiming::OnDodgePressed(const FInputActionInstance& Instance)
 	// Elden Ring style backstep (optional clip): no direction input means a hop straight back that keeps facing, whatever the press gap. A running full roll is not interrupted.
 	if (UAnimMontage* Backstep = BackstepMontage.IsNull() ? nullptr : BackstepMontage.LoadSynchronous())
 	{
-		if (HasNoDirectionInput() && !(bActive && Selected == EKind::Full))
+		if (RPGDodgeInputRules::DecideTap(!HasNoDirectionInput(), true) == RPGDodgeInputRules::EDodgeTapDecision::Backstep && !(bActive && Selected == EKind::Full))
 		{
 			Selected = EKind::Backstep;
 			bLastPressFull = false;

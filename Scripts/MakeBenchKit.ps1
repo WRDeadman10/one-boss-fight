@@ -7,7 +7,7 @@
   Output: <OutDir>\OneBossFight_BenchKit\ (about 3 GB with Shipping only, about 6.5 GB with both). Copy the folder (or the zip) to the other PC, any local drive path without spaces.
 
 .EXAMPLE
-  powershell -NoProfile -ExecutionPolicy Bypass -File Scripts\MakeBenchKit.ps1 -OutDir C:/BenchTransfer -IncludeDevelopment -Zip
+  powershell -NoProfile -ExecutionPolicy Bypass -File Scripts\MakeBenchKit.ps1 -OutDir D:/BenchTransfer -IncludeDevelopment -Zip
 #>
 param([Parameter(Mandatory = $true)][string]$OutDir, [switch]$IncludeDevelopment, [switch]$DevelopmentOnly, [switch]$Zip,
       [string]$ShippingStage = '', [string]$DevelopmentStage = '')
