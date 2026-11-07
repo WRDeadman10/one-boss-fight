@@ -1,0 +1,7 @@
+# Round 6 Phase 1 receipt notes
+
+The validated receipt uses the 13 retained measured runs under `Saved/bench_return/round6_20261106/runs`: four completed TSR anchors and three trials each for DLSS Quality, Balanced, and Performance. It excludes the aborted 14:47:53 anchor and both warm-ups. Per-run measurements, CVar maps, upscaler telemetry, primary-fraction upper bounds, and AA methods come directly from each `summary.json`; each treatment's active-mode line is copied from its run's `game.log`. Build identity is the Development ID `OBF-DEVELOPMENT-20261106T071240Z-ed06b4d6`. The source archive SHA-256 is recorded in `receipt.json`.
+
+No source-backed Phase 1 prediction for GPU savings was found in the experiment plan, the Phase 1 intake, or the cited prediction documents. Treatment `predicted_gpu_saving_ms` is therefore `null` with an explanatory `prediction_note`; the report displays prediction and error as `n/a`. The measured savings remain computed against the four-anchor TSR median. Baseline's zero prediction is only the reference definition. Image quality is not scored per individual run here. The owner later selected DLSS Performance at 50% for Phase 2 and released the 16-run experiment (C-951); this is not a shipped default and does not alter the Phase 1 measurements.
+
+Reproduce: `python Scripts/Tools/round6_benchmark_report.py Docs/BossCombatReview/Execution/Codex/R6_PHASE1/receipt.json`

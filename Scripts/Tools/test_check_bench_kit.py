@@ -5,6 +5,8 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+import re
+import subprocess
 
 MODULE_PATH = Path(__file__).with_name("check_bench_kit.py")
 SPEC = spec_from_file_location("check_bench_kit", MODULE_PATH)
@@ -64,6 +66,57 @@ class BenchKitCheckTests(unittest.TestCase):
         self.assertIn("check_bench_kit.py') @KitCheckArgs", source)
         self.assertLess(source.index("check_bench_kit.py"), source.index("if ($Zip)"))
         self.assertIn("PackagedRunLog.psm1", source)
+
+    def test_package_stamp_output_passes_bench_kit_intake_for_shipping_and_development(self):
+        project = Path(__file__).resolve().parents[2]
+        package_source = (project / "Scripts/Package.ps1").read_text(encoding="utf-8-sig")
+        self.assertIn(
+            "$BuildId = 'OBF-' + $Configuration.ToUpperInvariant() + '-' + (Get-Date).ToUniversalTime().ToString('yyyyMMddTHHmmssZ') + '-' + [guid]::NewGuid().ToString('N').Substring(0, 8)",
+            package_source,
+        )
+
+        evidence = project / "Docs/BossCombatReview/Execution/Claude/B_C947_R6KIT"
+        shipping_info = (evidence / "BUILD_INFO.txt").read_text(encoding="utf-8-sig")
+        shipping_id = re.search(r"(?m)^Package build ID: (.+)$", shipping_info).group(1)
+        self.assertRegex(shipping_id, r"^OBF-SHIPPING-\d{8}T\d{6}Z-[0-9a-f]{8}$")
+        stage_lines = (evidence / "stamps.txt").read_text(encoding="utf-8-sig").splitlines()
+        development_id = next(line.split()[1] for line in stage_lines if line.startswith("DEVELOPMENT "))
+        self.assertRegex(development_id, r"^OBF-DEVELOPMENT-\d{8}T\d{6}Z-[0-9a-f]{8}$")
+
+        checker = project / "Scripts/Tools/check_bench_kit.py"
+        for build_id, configuration, development_only in (
+            (shipping_id, "Shipping", False),
+            (development_id, "Development", True),
+        ):
+            with self.subTest(configuration=configuration), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                create_kit(root, development=True)
+                info = shipping_info.replace(shipping_id, build_id).replace(
+                    "Package configuration: Shipping", f"Package configuration: {configuration}"
+                )
+                (root / "BUILD_INFO.txt").write_text(info, encoding="utf-8")
+                command = [sys.executable, str(checker), "--kit-root", str(root)]
+                if development_only:
+                    command.append("--development-only")
+                else:
+                    command.append("--include-development")
+                result = subprocess.run(command, capture_output=True, text=True, check=False)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertIn('"verdict": "PASS"', result.stdout)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            create_kit(root)
+            obsolete_info = shipping_info.replace(
+                shipping_id, development_id.replace("OBF-DEVELOPMENT-", "OBF-DEV-")
+            ).replace("Package configuration: Shipping", "Package configuration: Development")
+            (root / "BUILD_INFO.txt").write_text(obsolete_info, encoding="utf-8")
+            rejected = subprocess.run(
+                [sys.executable, str(checker), "--kit-root", str(root)],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertNotEqual(rejected.returncode, 0)
+            self.assertIn("must include a generated package build ID", rejected.stdout)
 
 
 if __name__ == "__main__":

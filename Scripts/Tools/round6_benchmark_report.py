@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import statistics
 from pathlib import Path
 from typing import Any
@@ -59,7 +60,7 @@ def validate(receipt: Any) -> list[str]:
             treatments.setdefault(str(mode), []).append(row)
             if row.get("temporal_upscaler") != "DLSS":
                 issues.append(f"{prefix} treatment temporal_upscaler must be DLSS")
-            if not isinstance(row.get("active_mode_log_line"), str) or "Creating NGX DLSS Feature" not in row["active_mode_log_line"]:
+            if not isinstance(row.get("active_mode_log_line"), str) or not re.search(r"Creating\s+NGX DLSS Feature", row["active_mode_log_line"]):
                 issues.append(f"{prefix}.active_mode_log_line must prove active DLSS")
             expected_witness = MODE_WITNESSES.get(str(mode))
             active_mode_line = row.get("active_mode_log_line")
@@ -75,14 +76,20 @@ def validate(receipt: Any) -> list[str]:
             issues.append(f"{prefix}.anti_aliasing_method is required")
         if not isinstance(row.get("cvars"), dict):
             issues.append(f"{prefix}.cvars must be an object")
-        if not isinstance(row.get("predicted_gpu_saving_ms"), (int, float)):
-            issues.append(f"{prefix}.predicted_gpu_saving_ms is required")
+        predicted = row.get("predicted_gpu_saving_ms")
+        if predicted is None:
+            if row.get("kind") == "treatment" and not (isinstance(row.get("prediction_note"), str) and row["prediction_note"].strip()):
+                issues.append(f"{prefix}.prediction_note is required when no prediction is available")
+        elif not isinstance(predicted, (int, float)) or isinstance(predicted, bool):
+            issues.append(f"{prefix}.predicted_gpu_saving_ms must be numeric or null")
     if len(anchors) != 4:
         issues.append("exactly four TSR anchors are required")
     expected_modes = PHASE_MODES[phase]
     for mode in expected_modes:
-        if len(treatments.get(mode, [])) != 3:
-            issues.append(f"{mode} requires exactly three treatments")
+        expected_treatments = 3 if phase == "phase1" else 12
+        if len(treatments.get(mode, [])) != expected_treatments:
+            count_word = "three" if phase == "phase1" else "twelve"
+            issues.append(f"{mode} requires exactly {count_word} treatments")
     return issues
 
 
@@ -99,25 +106,28 @@ def summarize(receipt: dict[str, Any]) -> dict[str, Any]:
     rows = []
     for mode, runs in groups.items():
         median = {m: statistics.median(r[m] for r in runs) for m in METRICS}
-        predicted = statistics.median(float(r["predicted_gpu_saving_ms"]) for r in runs)
+        prediction_values = [r["predicted_gpu_saving_ms"] for r in runs]
+        predicted = statistics.median(float(v) for v in prediction_values) if all(v is not None for v in prediction_values) else None
         measured = baseline["gpu_avg_ms"] - median["gpu_avg_ms"]
         rows.append({"mode": mode, "trials": len(runs), **median,
                      "active_upscaler_proof": all(r["temporal_upscaler"] == "DLSS" and r["active_mode_log_line"] for r in runs),
                      "delta_vs_tsr_percent": {m: round((median[m] - baseline[m]) / baseline[m] * 100, 2) for m in METRICS},
                      "predicted_gpu_saving_ms": predicted,
                      "measured_gpu_saving_ms": round(measured, 3),
-                     "prediction_error_ms": round(measured - predicted, 3),
+                     "prediction_error_ms": round(measured - predicted, 3) if predicted is not None else None,
                      "image_quality_notes": [r.get("image_quality_note", "") for r in runs]})
     return {"schema": SCHEMA, "phase": receipt["phase"], "baseline_median": baseline, "modes": rows}
 
 
 def render(summary: dict[str, Any]) -> str:
-    lines = [f"Round 6 {summary['phase']} — medians; deltas vs four-anchor TSR median",
-             "| Mode | Trials | Avg FPS | p99 ms | GPU avg ms | GPU p99 ms | Active DLSS proof | Δ avg FPS | Δ p99 | Pred. GPU ms saved | Measured GPU ms saved | Error ms |",
+    lines = [f"Round 6 {summary['phase']} - medians; deltas vs four-anchor TSR median",
+             "| Mode | Trials | Avg FPS | p99 ms | GPU avg ms | GPU p99 ms | Active DLSS proof | Delta avg FPS | Delta p99 | Pred. GPU ms saved | Measured GPU ms saved | Error ms |",
              "|---|---:|---:|---:|---:|---:|---|---:|---:|---:|---:|---:|"]
     for r in summary["modes"]:
         d = r["delta_vs_tsr_percent"]
-        lines.append(f"| {r['mode']} | {r['trials']} | {r['avg_fps']:.1f} | {r['p99_ms']:.2f} | {r['gpu_avg_ms']:.2f} | {r['gpu_p99_ms']:.2f} | {'yes' if r['active_upscaler_proof'] else 'no'} | {d['avg_fps']:+.2f}% | {d['p99_ms']:+.2f}% | {r['predicted_gpu_saving_ms']:.2f} | {r['measured_gpu_saving_ms']:+.2f} | {r['prediction_error_ms']:+.2f} |")
+        predicted = f"{r['predicted_gpu_saving_ms']:.2f}" if r["predicted_gpu_saving_ms"] is not None else "n/a"
+        error = f"{r['prediction_error_ms']:+.2f}" if r["prediction_error_ms"] is not None else "n/a"
+        lines.append(f"| {r['mode']} | {r['trials']} | {r['avg_fps']:.1f} | {r['p99_ms']:.2f} | {r['gpu_avg_ms']:.2f} | {r['gpu_p99_ms']:.2f} | {'yes' if r['active_upscaler_proof'] else 'no'} | {d['avg_fps']:+.2f}% | {d['p99_ms']:+.2f}% | {predicted} | {r['measured_gpu_saving_ms']:+.2f} | {error} |")
     for r in summary["modes"]:
         for i, note in enumerate(r["image_quality_notes"], 1):
             if note:

@@ -47,6 +47,8 @@ Copy-Item (Join-Path $Root 'Documentation\BENCHKIT_README.md') (Join-Path $Kit '
 $KitTools = Join-Path $Kit 'Scripts\Tools'
 New-Item -ItemType Directory -Path $KitTools -Force | Out-Null
 Copy-Item (Join-Path $PSScriptRoot 'Tools\check_bench_kit.py') (Join-Path $KitTools 'check_bench_kit.py') -Force
+# Lead fix 2026-11-06: Round 6 step 8 needs the receipt tool on the bench PC; the R6b kit shipped without it.
+Copy-Item (Join-Path $PSScriptRoot 'Tools\round6_benchmark_report.py') (Join-Path $KitTools 'round6_benchmark_report.py') -Force
 $exePath = if ($DevelopmentOnly) { Join-Path $Kit 'Saved\StagedBuilds_Development\Windows\OneBossFight\Binaries\Win64\OneBossFight.exe' } else { Join-Path $Kit 'Saved\StagedBuilds\Windows\OneBossFight\Binaries\Win64\OneBossFight-Win64-Shipping.exe' }
 $exe = Get-Item $exePath
 $exeHash = (Get-FileHash -LiteralPath $exe.FullName -Algorithm SHA256).Hash.ToLowerInvariant()

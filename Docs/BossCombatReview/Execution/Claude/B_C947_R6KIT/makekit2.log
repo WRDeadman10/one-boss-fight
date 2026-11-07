@@ -1,0 +1,18 @@
+﻿Copying the Shipping stage (about 3 GB) ...
+Copying the Development stage (about 3.5 GB) ...
+{
+  "development_only": false,
+  "empty": [],
+  "file_count": 114,
+  "include_development": true,
+  "issues": [],
+  "kit_root": "D:\\BenchTransfer\\R6b\\OneBossFight_BenchKit",
+  "missing": [],
+  "pdb_files": [],
+  "schema": "onebossfight.bench-kit-check/v1",
+  "total_bytes": 7552761916,
+  "verdict": "PASS"
+}
+Kit: D:\BenchTransfer\R6b\OneBossFight_BenchKit
+Zipping to D:\BenchTransfer\R6b\OneBossFight_BenchKit.zip (several minutes) ...
+Zip: D:\BenchTransfer\R6b\OneBossFight_BenchKit.zip

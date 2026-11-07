@@ -1,0 +1,5 @@
+﻿Package build ID: OBF-SHIPPING-20261106T071240Z-ac05f0da
+Package configuration: Shipping
+Executable SHA-256: 2bcc9515c43f848607da057f1e55d0274c6b3fad868c9962b117f425d0a01c35
+Executable time: 2026-11-06T12:04:32.1101577+05:30; size 148851200
+Shipping stage included: True; Development stage included: True

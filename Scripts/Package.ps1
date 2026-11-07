@@ -51,10 +51,12 @@ Write-Host "Packaging $Configuration build -> $StageDir"
 
 if ($LASTEXITCODE -ne 0) { throw "BuildCookRun failed with exit code $LASTEXITCODE" }
 
-if ($Configuration -eq 'Development') {
+# Every configuration gets a build ID (lead fix 2026-11-06: only Development was stamped, as OBF-DEV-..., while Scripts\Tools\check_bench_kit.py requires
+# OBF-SHIPPING-... or OBF-DEVELOPMENT-... for the kit's selected stage, so MakeBenchKit failed for every kit). The game shows the stamp only in non-Shipping builds.
+if ($true) {
 	$StampDirectory = Join-Path $StageDir 'Windows\OneBossFight\Saved'
 	New-Item -ItemType Directory -Path $StampDirectory -Force | Out-Null
-	$BuildId = 'OBF-DEV-' + (Get-Date).ToUniversalTime().ToString('yyyyMMddTHHmmssZ') + '-' + [guid]::NewGuid().ToString('N').Substring(0, 8)
+	$BuildId = 'OBF-' + $Configuration.ToUpperInvariant() + '-' + (Get-Date).ToUniversalTime().ToString('yyyyMMddTHHmmssZ') + '-' + [guid]::NewGuid().ToString('N').Substring(0, 8)
 	$StampPath = Join-Path $StampDirectory 'BuildStamp.txt'
 	Set-Content -LiteralPath $StampPath -Value $BuildId -Encoding ascii
 	Write-Host ("[PACKAGE_BUILD_ID] {0}" -f $BuildId)

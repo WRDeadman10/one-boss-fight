@@ -1,0 +1,294 @@
+{
+  "schema": "onebossfight.round6-benchmark/v1",
+  "phase": "phase1",
+  "build_id": "OBF-DEVELOPMENT-20261106T071240Z-ed06b4d6",
+  "build_configuration": "Development",
+  "raw_archive_sha256": "342582190518453db5fa6739e7ce08478682b28c5becc8c7fb3cd00ec3f10a8e",
+  "source_root": "Saved/bench_return/round6_20261106/runs",
+  "excluded_runs": [
+    "R6M_all_00_TSR_anchor_0_20261106_144753",
+    "R6M_warmup_20261106_144639",
+    "R6M_warmup_20261106_144948"
+  ],
+  "prediction_policy": "Treatment predictions are null because no source-backed Phase 1 estimates were found; prediction_note records this. Baseline prediction is 0 ms by definition of the reference arm.",
+  "runs": [
+    {
+      "run_id": "R6M_all_00_TSR_anchor_0_20261106_145102",
+      "kind": "baseline",
+      "mode": "TSR",
+      "source_summary": "Saved/bench_return/round6_20261106/runs/R6M_all_00_TSR_anchor_0_20261106_145102/summary.json",
+      "temporal_upscaler": "TSR",
+      "effective_primary_screen_percentage": 72.88689017295837,
+      "anti_aliasing_method": 4,
+      "cvars": {
+        "r.NGX.DLSS.Enable": 0,
+        "r.ScreenPercentage": 72.8868961334229
+      },
+      "avg_fps": 26.779602377927954,
+      "p99_ms": 46.034302562475204,
+      "gpu_avg_ms": 36.036205041467845,
+      "gpu_p99_ms": 43.86709976196289,
+      "predicted_gpu_saving_ms": 0
+    },
+    {
+      "run_id": "R6M_all_05_TSR_anchor_1_20261106_145712",
+      "kind": "baseline",
+      "mode": "TSR",
+      "source_summary": "Saved/bench_return/round6_20261106/runs/R6M_all_05_TSR_anchor_1_20261106_145712/summary.json",
+      "temporal_upscaler": "TSR",
+      "effective_primary_screen_percentage": 72.88689017295837,
+      "anti_aliasing_method": 4,
+      "cvars": {
+        "r.NGX.DLSS.Enable": 0,
+        "r.ScreenPercentage": 72.8868961334229
+      },
+      "avg_fps": 26.58099352524682,
+      "p99_ms": 45.63559964299202,
+      "gpu_avg_ms": 36.30524741796623,
+      "gpu_p99_ms": 43.4656982421875,
+      "predicted_gpu_saving_ms": 0
+    },
+    {
+      "run_id": "R6M_all_10_TSR_anchor_2_20261106_150323",
+      "kind": "baseline",
+      "mode": "TSR",
+      "source_summary": "Saved/bench_return/round6_20261106/runs/R6M_all_10_TSR_anchor_2_20261106_150323/summary.json",
+      "temporal_upscaler": "TSR",
+      "effective_primary_screen_percentage": 72.88689017295837,
+      "anti_aliasing_method": 4,
+      "cvars": {
+        "r.NGX.DLSS.Enable": 0,
+        "r.ScreenPercentage": 72.8868961334229
+      },
+      "avg_fps": 26.745443310606007,
+      "p99_ms": 44.669099152088165,
+      "gpu_avg_ms": 36.08448032602426,
+      "gpu_p99_ms": 42.6702995300293,
+      "predicted_gpu_saving_ms": 0
+    },
+    {
+      "run_id": "R6M_all_12_TSR_anchor_end_20261106_150551",
+      "kind": "baseline",
+      "mode": "TSR",
+      "source_summary": "Saved/bench_return/round6_20261106/runs/R6M_all_12_TSR_anchor_end_20261106_150551/summary.json",
+      "temporal_upscaler": "TSR",
+      "effective_primary_screen_percentage": 72.88689017295837,
+      "anti_aliasing_method": 4,
+      "cvars": {
+        "r.NGX.DLSS.Enable": 0,
+        "r.ScreenPercentage": 72.8868961334229
+      },
+      "avg_fps": 26.203526341503167,
+      "p99_ms": 45.84309831261635,
+      "gpu_avg_ms": 36.84563303448483,
+      "gpu_p99_ms": 43.84870147705078,
+      "predicted_gpu_saving_ms": 0
+    },
+    {
+      "run_id": "R6M_Quality_01_dlss_quality_t1_20261106_145216",
+      "kind": "treatment",
+      "mode": "Quality",
+      "source_summary": "Saved/bench_return/round6_20261106/runs/R6M_Quality_01_dlss_quality_t1_20261106_145216/summary.json",
+      "temporal_upscaler": "DLSS",
+      "effective_primary_screen_percentage": 66.69999361038208,
+      "anti_aliasing_method": 4,
+      "cvars": {
+        "r.NGX.DLSS.Enable": 1,
+        "r.ScreenPercentage": 66.7
+      },
+      "avg_fps": 30.23076602710925,
+      "p99_ms": 41.84180125594139,
+      "gpu_avg_ms": 31.742426227538054,
+      "gpu_p99_ms": 39.70800018310547,
+      "predicted_gpu_saving_ms": null,
+      "active_mode_log_line": "[2026.11.06-09.21.13:156][  0]LogDLSSNGXRHI: Creating   NGX DLSS Feature  SrcRect=[0x0->1281x721], DestRect=[0x0->1920x1080], ScaleX=0.667188, ScaleY=0.667593, NGXDLSSPreset=Default(0), NGXDLSSRRPreset=Default(0), NGXPerfQuality=MaxQuality(2), bUseAutoExposure=1, bEnableAlphaUpscaling=0, bReleaseMemoryOnDelete=1, GPUNode=0, GPUVisibility=0x1, DenoiseMode=Off",
+      "source_game_log": "Saved/bench_return/round6_20261106/runs/R6M_Quality_01_dlss_quality_t1_20261106_145216/game.log",
+      "prediction_note": "No source-backed Phase 1 prediction exists for this DLSS mode; this arm measures GPU savings against the four TSR anchors.",
+      "image_quality_note": ""
+    },
+    {
+      "run_id": "R6M_Quality_07_dlss_quality_t2_20261106_145941",
+      "kind": "treatment",
+      "mode": "Quality",
+      "source_summary": "Saved/bench_return/round6_20261106/runs/R6M_Quality_07_dlss_quality_t2_20261106_145941/summary.json",
+      "temporal_upscaler": "DLSS",
+      "effective_primary_screen_percentage": 66.69999361038208,
+      "anti_aliasing_method": 4,
+      "cvars": {
+        "r.NGX.DLSS.Enable": 1,
+        "r.ScreenPercentage": 66.7
+      },
+      "avg_fps": 29.70777692138529,
+      "p99_ms": 42.12519899010658,
+      "gpu_avg_ms": 32.388203642293476,
+      "gpu_p99_ms": 39.5640983581543,
+      "predicted_gpu_saving_ms": null,
+      "active_mode_log_line": "[2026.11.06-09.28.37:806][  0]LogDLSSNGXRHI: Creating   NGX DLSS Feature  SrcRect=[0x0->1281x721], DestRect=[0x0->1920x1080], ScaleX=0.667188, ScaleY=0.667593, NGXDLSSPreset=Default(0), NGXDLSSRRPreset=Default(0), NGXPerfQuality=MaxQuality(2), bUseAutoExposure=1, bEnableAlphaUpscaling=0, bReleaseMemoryOnDelete=1, GPUNode=0, GPUVisibility=0x1, DenoiseMode=Off",
+      "source_game_log": "Saved/bench_return/round6_20261106/runs/R6M_Quality_07_dlss_quality_t2_20261106_145941/game.log",
+      "prediction_note": "No source-backed Phase 1 prediction exists for this DLSS mode; this arm measures GPU savings against the four TSR anchors.",
+      "image_quality_note": ""
+    },
+    {
+      "run_id": "R6M_Quality_09_dlss_quality_t3_20261106_150209",
+      "kind": "treatment",
+      "mode": "Quality",
+      "source_summary": "Saved/bench_return/round6_20261106/runs/R6M_Quality_09_dlss_quality_t3_20261106_150209/summary.json",
+      "temporal_upscaler": "DLSS",
+      "effective_primary_screen_percentage": 66.69999361038208,
+      "anti_aliasing_method": 4,
+      "cvars": {
+        "r.NGX.DLSS.Enable": 1,
+        "r.ScreenPercentage": 66.7
+      },
+      "avg_fps": 29.823776551363068,
+      "p99_ms": 42.07949712872505,
+      "gpu_avg_ms": 32.18236165392998,
+      "gpu_p99_ms": 39.48030090332031,
+      "predicted_gpu_saving_ms": null,
+      "active_mode_log_line": "[2026.11.06-09.31.06:172][  0]LogDLSSNGXRHI: Creating   NGX DLSS Feature  SrcRect=[0x0->1281x721], DestRect=[0x0->1920x1080], ScaleX=0.667188, ScaleY=0.667593, NGXDLSSPreset=Default(0), NGXDLSSRRPreset=Default(0), NGXPerfQuality=MaxQuality(2), bUseAutoExposure=1, bEnableAlphaUpscaling=0, bReleaseMemoryOnDelete=1, GPUNode=0, GPUVisibility=0x1, DenoiseMode=Off",
+      "source_game_log": "Saved/bench_return/round6_20261106/runs/R6M_Quality_09_dlss_quality_t3_20261106_150209/game.log",
+      "prediction_note": "No source-backed Phase 1 prediction exists for this DLSS mode; this arm measures GPU savings against the four TSR anchors.",
+      "image_quality_note": ""
+    },
+    {
+      "run_id": "R6M_Balanced_02_dlss_balanced_t1_20261106_145330",
+      "kind": "treatment",
+      "mode": "Balanced",
+      "source_summary": "Saved/bench_return/round6_20261106/runs/R6M_Balanced_02_dlss_balanced_t1_20261106_145330/summary.json",
+      "temporal_upscaler": "DLSS",
+      "effective_primary_screen_percentage": 57.999998331069946,
+      "anti_aliasing_method": 4,
+      "cvars": {
+        "r.NGX.DLSS.Enable": 1,
+        "r.ScreenPercentage": 58
+      },
+      "avg_fps": 33.53590446858734,
+      "p99_ms": 37.37819939851761,
+      "gpu_avg_ms": 28.45317734643943,
+      "gpu_p99_ms": 35.234798431396484,
+      "predicted_gpu_saving_ms": null,
+      "active_mode_log_line": "[2026.11.06-09.22.27:480][  0]LogDLSSNGXRHI: Creating   NGX DLSS Feature  SrcRect=[0x0->1114x627], DestRect=[0x0->1920x1080], ScaleX=0.580208, ScaleY=0.580556, NGXDLSSPreset=Default(0), NGXDLSSRRPreset=Default(0), NGXPerfQuality=Balanced(1), bUseAutoExposure=1, bEnableAlphaUpscaling=0, bReleaseMemoryOnDelete=1, GPUNode=0, GPUVisibility=0x1, DenoiseMode=Off",
+      "source_game_log": "Saved/bench_return/round6_20261106/runs/R6M_Balanced_02_dlss_balanced_t1_20261106_145330/game.log",
+      "prediction_note": "No source-backed Phase 1 prediction exists for this DLSS mode; this arm measures GPU savings against the four TSR anchors.",
+      "image_quality_note": ""
+    },
+    {
+      "run_id": "R6M_Balanced_04_dlss_balanced_t2_20261106_145558",
+      "kind": "treatment",
+      "mode": "Balanced",
+      "source_summary": "Saved/bench_return/round6_20261106/runs/R6M_Balanced_04_dlss_balanced_t2_20261106_145558/summary.json",
+      "temporal_upscaler": "DLSS",
+      "effective_primary_screen_percentage": 57.999998331069946,
+      "anti_aliasing_method": 4,
+      "cvars": {
+        "r.NGX.DLSS.Enable": 1,
+        "r.ScreenPercentage": 58
+      },
+      "avg_fps": 33.55962401942499,
+      "p99_ms": 37.87149861454964,
+      "gpu_avg_ms": 28.458623019045696,
+      "gpu_p99_ms": 34.967498779296875,
+      "predicted_gpu_saving_ms": null,
+      "active_mode_log_line": "[2026.11.06-09.24.55:465][  0]LogDLSSNGXRHI: Creating   NGX DLSS Feature  SrcRect=[0x0->1114x627], DestRect=[0x0->1920x1080], ScaleX=0.580208, ScaleY=0.580556, NGXDLSSPreset=Default(0), NGXDLSSRRPreset=Default(0), NGXPerfQuality=Balanced(1), bUseAutoExposure=1, bEnableAlphaUpscaling=0, bReleaseMemoryOnDelete=1, GPUNode=0, GPUVisibility=0x1, DenoiseMode=Off",
+      "source_game_log": "Saved/bench_return/round6_20261106/runs/R6M_Balanced_04_dlss_balanced_t2_20261106_145558/game.log",
+      "prediction_note": "No source-backed Phase 1 prediction exists for this DLSS mode; this arm measures GPU savings against the four TSR anchors.",
+      "image_quality_note": ""
+    },
+    {
+      "run_id": "R6M_Balanced_11_dlss_balanced_t3_20261106_150437",
+      "kind": "treatment",
+      "mode": "Balanced",
+      "source_summary": "Saved/bench_return/round6_20261106/runs/R6M_Balanced_11_dlss_balanced_t3_20261106_150437/summary.json",
+      "temporal_upscaler": "DLSS",
+      "effective_primary_screen_percentage": 57.999998331069946,
+      "anti_aliasing_method": 4,
+      "cvars": {
+        "r.NGX.DLSS.Enable": 1,
+        "r.ScreenPercentage": 58
+      },
+      "avg_fps": 33.58416799387205,
+      "p99_ms": 37.619903683662415,
+      "gpu_avg_ms": 28.4521652868495,
+      "gpu_p99_ms": 35.169498443603516,
+      "predicted_gpu_saving_ms": null,
+      "active_mode_log_line": "[2026.11.06-09.33.34:478][  0]LogDLSSNGXRHI: Creating   NGX DLSS Feature  SrcRect=[0x0->1114x627], DestRect=[0x0->1920x1080], ScaleX=0.580208, ScaleY=0.580556, NGXDLSSPreset=Default(0), NGXDLSSRRPreset=Default(0), NGXPerfQuality=Balanced(1), bUseAutoExposure=1, bEnableAlphaUpscaling=0, bReleaseMemoryOnDelete=1, GPUNode=0, GPUVisibility=0x1, DenoiseMode=Off",
+      "source_game_log": "Saved/bench_return/round6_20261106/runs/R6M_Balanced_11_dlss_balanced_t3_20261106_150437/game.log",
+      "prediction_note": "No source-backed Phase 1 prediction exists for this DLSS mode; this arm measures GPU savings against the four TSR anchors.",
+      "image_quality_note": ""
+    },
+    {
+      "run_id": "R6M_Performance_03_dlss_performance_t1_20261106_145444",
+      "kind": "treatment",
+      "mode": "Performance",
+      "source_summary": "Saved/bench_return/round6_20261106/runs/R6M_Performance_03_dlss_performance_t1_20261106_145444/summary.json",
+      "temporal_upscaler": "DLSS",
+      "effective_primary_screen_percentage": 50,
+      "anti_aliasing_method": 4,
+      "cvars": {
+        "r.NGX.DLSS.Enable": 1,
+        "r.ScreenPercentage": 50
+      },
+      "avg_fps": 35.18858107020221,
+      "p99_ms": 35.84960103034973,
+      "gpu_avg_ms": 26.888712881189406,
+      "gpu_p99_ms": 33.2510986328125,
+      "predicted_gpu_saving_ms": null,
+      "active_mode_log_line": "[2026.11.06-09.23.41:472][  0]LogDLSSNGXRHI: Creating   NGX DLSS Feature  SrcRect=[0x0->960x540], DestRect=[0x0->1920x1080], ScaleX=0.500000, ScaleY=0.500000, NGXDLSSPreset=Default(0), NGXDLSSRRPreset=Default(0), NGXPerfQuality=MaxPerf(0), bUseAutoExposure=1, bEnableAlphaUpscaling=0, bReleaseMemoryOnDelete=1, GPUNode=0, GPUVisibility=0x1, DenoiseMode=Off",
+      "source_game_log": "Saved/bench_return/round6_20261106/runs/R6M_Performance_03_dlss_performance_t1_20261106_145444/game.log",
+      "prediction_note": "No source-backed Phase 1 prediction exists for this DLSS mode; this arm measures GPU savings against the four TSR anchors.",
+      "image_quality_note": ""
+    },
+    {
+      "run_id": "R6M_Performance_06_dlss_performance_t2_20261106_145827",
+      "kind": "treatment",
+      "mode": "Performance",
+      "source_summary": "Saved/bench_return/round6_20261106/runs/R6M_Performance_06_dlss_performance_t2_20261106_145827/summary.json",
+      "temporal_upscaler": "DLSS",
+      "effective_primary_screen_percentage": 50,
+      "anti_aliasing_method": 4,
+      "cvars": {
+        "r.NGX.DLSS.Enable": 1,
+        "r.ScreenPercentage": 50
+      },
+      "avg_fps": 35.19371868323794,
+      "p99_ms": 35.94280034303665,
+      "gpu_avg_ms": 27.0633803145452,
+      "gpu_p99_ms": 33.29750061035156,
+      "predicted_gpu_saving_ms": null,
+      "active_mode_log_line": "[2026.11.06-09.27.23:771][  0]LogDLSSNGXRHI: Creating   NGX DLSS Feature  SrcRect=[0x0->960x540], DestRect=[0x0->1920x1080], ScaleX=0.500000, ScaleY=0.500000, NGXDLSSPreset=Default(0), NGXDLSSRRPreset=Default(0), NGXPerfQuality=MaxPerf(0), bUseAutoExposure=1, bEnableAlphaUpscaling=0, bReleaseMemoryOnDelete=1, GPUNode=0, GPUVisibility=0x1, DenoiseMode=Off",
+      "source_game_log": "Saved/bench_return/round6_20261106/runs/R6M_Performance_06_dlss_performance_t2_20261106_145827/game.log",
+      "prediction_note": "No source-backed Phase 1 prediction exists for this DLSS mode; this arm measures GPU savings against the four TSR anchors.",
+      "image_quality_note": ""
+    },
+    {
+      "run_id": "R6M_Performance_08_dlss_performance_t3_20261106_150055",
+      "kind": "treatment",
+      "mode": "Performance",
+      "source_summary": "Saved/bench_return/round6_20261106/runs/R6M_Performance_08_dlss_performance_t3_20261106_150055/summary.json",
+      "temporal_upscaler": "DLSS",
+      "effective_primary_screen_percentage": 50,
+      "anti_aliasing_method": 4,
+      "cvars": {
+        "r.NGX.DLSS.Enable": 1,
+        "r.ScreenPercentage": 50
+      },
+      "avg_fps": 35.164196275815634,
+      "p99_ms": 36.18219867348671,
+      "gpu_avg_ms": 27.13277536407572,
+      "gpu_p99_ms": 33.34859848022461,
+      "predicted_gpu_saving_ms": null,
+      "active_mode_log_line": "[2026.11.06-09.29.51:963][  0]LogDLSSNGXRHI: Creating   NGX DLSS Feature  SrcRect=[0x0->960x540], DestRect=[0x0->1920x1080], ScaleX=0.500000, ScaleY=0.500000, NGXDLSSPreset=Default(0), NGXDLSSRRPreset=Default(0), NGXPerfQuality=MaxPerf(0), bUseAutoExposure=1, bEnableAlphaUpscaling=0, bReleaseMemoryOnDelete=1, GPUNode=0, GPUVisibility=0x1, DenoiseMode=Off",
+      "source_game_log": "Saved/bench_return/round6_20261106/runs/R6M_Performance_08_dlss_performance_t3_20261106_150055/game.log",
+      "prediction_note": "No source-backed Phase 1 prediction exists for this DLSS mode; this arm measures GPU savings against the four TSR anchors.",
+      "image_quality_note": ""
+    }
+  ],
+  "owner_decision": {
+    "source_message": "C-951",
+    "selected_phase2_mode": "Performance",
+    "primary_screen_percentage": 50,
+    "phase2_released": true,
+    "shipped_default": false,
+    "note": "Owner selected Performance for Phase 2 and released the 16-run experiment. This decision does not change Phase 1 measurements."
+  }
+}

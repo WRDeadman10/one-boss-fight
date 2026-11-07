@@ -48,6 +48,8 @@ class MakeBenchKitDependencyTests(unittest.TestCase):
         self.assertIn("round5_experiments.json", manifest)
         self.assertIn("round6_experiments.json", manifest)
         self.assertIn("RunPerfExperiments.ps1", manifest)
+        self.assertIn("check_bench_kit.py", make_kit_text)
+        self.assertIn("round6_benchmark_report.py", make_kit_text)
         self.assertIn("Documentation\\BENCHKIT_README.md", make_kit_text)
         self.assertIn("Copy-Item (Join-Path $Root 'Documentation\\BENCHKIT_README.md')", make_kit_text)
         missing_files = sorted(name for name in manifest if not (SCRIPTS_DIR / name).is_file())

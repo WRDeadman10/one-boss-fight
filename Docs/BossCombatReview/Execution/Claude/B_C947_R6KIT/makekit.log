@@ -1,0 +1,17 @@
+﻿Copying the Shipping stage (about 3 GB) ...
+Copying the Development stage (about 3.5 GB) ...
+{
+  "development_only": false,
+  "empty": [],
+  "file_count": 113,
+  "include_development": true,
+  "issues": [
+    "BUILD_INFO.txt must include a generated package build ID"
+  ],
+  "kit_root": "D:\\BenchTransfer\\R6b\\OneBossFight_BenchKit",
+  "missing": [],
+  "pdb_files": [],
+  "schema": "onebossfight.bench-kit-check/v1",
+  "total_bytes": 7552761839,
+  "verdict": "FAIL"
+}

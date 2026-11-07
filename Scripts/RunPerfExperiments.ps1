@@ -115,7 +115,9 @@ foreach ($e in $Experiments) {
     # empty values are not passed at all (an empty -ExtraArgs made round 2's E00 fail: PowerShell drops the empty argument and then misses the value)
     $rargs = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $run, '-Label', $e.N)
     $launchExtra = (@($extra, $e.Extra) | Where-Object { $_ }) -join ' '
-    if ($launchExtra) { $rargs += @('-ExtraArgs', $launchExtra) }
+    # Lead fix 2026-11-06 (Round 6 on the bench PC): Windows PowerShell 5.1 does not escape embedded quotes when it passes an argument with spaces to a native
+    # process, so -LogCmds="LogDLSS Verbose,..." arrived split and RunBenchmark.ps1 failed (parameter error). Escape them as \" for the nested powershell -File.
+    if ($launchExtra) { $rargs += @('-ExtraArgs', ($launchExtra -replace '"', '\"')) }
     if ($StageDir) { $rargs += @('-StageDir', $StageDir) }
     try {
         & powershell @rargs | Out-Null

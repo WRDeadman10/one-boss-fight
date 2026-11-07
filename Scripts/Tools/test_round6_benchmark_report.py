@@ -50,6 +50,25 @@ class Round6ReportTests(unittest.TestCase):
         value["runs"][4]["temporal_upscaler"] = "TSR"
         self.assertTrue(any("treatment temporal_upscaler must be DLSS" in e for e in r6.validate(value)))
 
+    def test_unpredicted_phase1_savings_are_explicit_and_render_as_na(self):
+        value = fixture()
+        for row in value["runs"]:
+            if row["kind"] == "treatment":
+                row["predicted_gpu_saving_ms"] = None
+                row["prediction_note"] = "No source-backed Phase 1 prediction; this run measures the savings."
+        self.assertEqual(r6.validate(value), [])
+        quality = next(x for x in r6.summarize(value)["modes"] if x["mode"] == "Quality")
+        self.assertIsNone(quality["predicted_gpu_saving_ms"])
+        self.assertIsNone(quality["prediction_error_ms"])
+        self.assertIn("| n/a |", r6.render(r6.summarize(value)))
+        value["runs"][4].pop("prediction_note")
+        self.assertTrue(any("prediction_note is required" in e for e in r6.validate(value)))
+
+    def test_round6_nested_logcmds_quoting_fix_is_present(self):
+        root = Path(__file__).resolve().parents[2]
+        runner = (root / "Scripts/RunPerfExperiments.ps1").read_text(encoding="utf-8")
+        self.assertIn("$launchExtra -replace '\"', '\\\"'", runner)
+
     def test_treatment_missing_active_upscaler_field_is_rejected(self):
         value = fixture()
         del value["runs"][4]["temporal_upscaler"]
@@ -59,6 +78,11 @@ class Round6ReportTests(unittest.TestCase):
         value = fixture()
         value["runs"][4]["active_mode_log_line"] = "DLSS supported"
         self.assertTrue(any("must prove active DLSS" in e for e in r6.validate(value)))
+
+    def test_creation_log_line_accepts_engine_spacing(self):
+        value = fixture()
+        next(x for x in value["runs"] if x["run_id"] == "q0")["active_mode_log_line"] = "LogDLSSNGXRHI: Creating   NGX DLSS Feature NGXPerfQuality=MaxQuality(2)"
+        self.assertEqual(r6.validate(value), [])
 
     def test_missing_mode_witness_is_rejected(self):
         value = fixture()

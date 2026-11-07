@@ -1,0 +1,2 @@
+﻿SHIPPING OBF-SHIPPING-20261106T071240Z-ac05f0da C:\UnrealProject\OneBossFight\Saved\StagedBuilds_Shipping\Windows
+DEVELOPMENT OBF-DEVELOPMENT-20261106T071240Z-ed06b4d6 C:\UnrealProject\OneBossFight\Saved\StagedBuilds\Windows
