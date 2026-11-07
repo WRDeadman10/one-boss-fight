@@ -1,0 +1,14 @@
+﻿[2026.11.07-08.11.29:976][  0]LogPython: [ERAirFields] driver registered; observations are game-tick bounded, not device-latency claims
+[2026.11.07-08.11.30:651][  6]LogPython: [ERAirFields] route=data selection=/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter
+[2026.11.07-08.11.39:401][187]LogPython: [ERAirFields] setup boss held=True player_distance_cm=900
+[2026.11.07-08.11.39:431][187]LogPython: [ERAirFields] assigned air_light=AM_ER_Attack_Air_Light air_heavy=AM_ER_Attack_Air_Heavy_Plunge
+[2026.11.07-08.11.55:811][773]LogPython: [ERAirFields] input_context_active=True
+[2026.11.07-08.11.55:836][774]LogPython: [ERAirFields] case=R1_tap_light baseline=(None, None)
+[2026.11.07-08.11.55:942][778]LogPython: [ERAirFields] sample case=R1_tap_light montage=Attack_PrimaryA_Montage position=0.025 observed_ms=79.35 tick_s=0.02726
+[2026.11.07-08.12.00:496][948]LogPython: [ERAirFields] case=R2_tap_strong baseline=(None, None)
+[2026.11.07-08.12.00:686][955]LogPython: [ERAirFields] sample case=R2_tap_strong montage=Ability_E_Anim_Montage position=0.026 observed_ms=160.28 tick_s=0.02539
+[2026.11.07-08.12.05:174][123]LogPython: [ERAirFields] case=jump_R1_air_light baseline=(None, None)
+[2026.11.07-08.12.05:545][137]LogPython: [ERAirFields] sample case=jump_R1_air_light montage=AM_ER_Attack_Air_Light position=0.026 observed_ms=56.01 tick_s=0.02635
+[2026.11.07-08.12.10:129][311]LogPython: [ERAirFields] case=jump_R2_air_heavy baseline=(None, None)
+[2026.11.07-08.12.10:616][329]LogPython: [ERAirFields] sample case=jump_R2_air_heavy montage=AM_ER_Attack_Air_Heavy_Plunge position=0.031 observed_ms=164.28 tick_s=0.02514
+[2026.11.07-08.12.15:126][458]LogPython: [ERAirFields] finished: all control samples recorded

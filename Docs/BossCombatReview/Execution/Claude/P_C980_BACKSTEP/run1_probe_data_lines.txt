@@ -1,0 +1,12 @@
+﻿[2026.11.07-09.09.54:862][  0]LogPython: [ERBackstep] driver registered; observations are game-tick bounded, not device-latency claims
+[2026.11.07-09.09.55:551][  6]LogPython: [ERBackstep] route=data selection=/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter
+[2026.11.07-09.10.04:503][189]LogPython: [ERBackstep] setup boss held=True player_distance_cm=900
+[2026.11.07-09.10.04:516][189]LogPython: [ERBackstep] assigned backstep=AM_ER_Backstep_Back length=0.4667
+[2026.11.07-09.10.20:679][794]LogPython: [ERBackstep] input_context_active=True
+[2026.11.07-09.10.20:706][795]LogPython: [ERBackstep] case=R1_tap_light baseline=(None, None)
+[2026.11.07-09.10.20:806][799]LogPython: [ERBackstep] sample case=R1_tap_light montage=Attack_PrimaryA_Montage position=0.025 observed_ms=77.04 tick_s=0.02682
+[2026.11.07-09.10.25:371][976]LogPython: [ERBackstep] case=dodge_standing_tap baseline=(None, None)
+[2026.11.07-09.10.25:523][982]LogPython: [ERBackstep] sample case=dodge_standing_tap montage=AM_ER_Backstep_Back position=0.025 observed_ms=126.08 tick_s=0.02523
+[2026.11.07-09.10.30:020][158]LogPython: [ERBackstep] case=dodge_moving_tap baseline=(None, None)
+[2026.11.07-09.10.30:173][164]LogPython: [ERBackstep] sample case=dodge_moving_tap montage=AM_ER_Backstep_Back position=0.025 observed_ms=126.84 tick_s=0.02508
+[2026.11.07-09.10.34:713][344]LogPython: [ERBackstep] finished: all control samples recorded

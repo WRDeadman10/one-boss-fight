@@ -41,10 +41,16 @@ class OptionalTier2HookTests(unittest.TestCase):
         header = read("Source/OneBossFight/Player/RPGLegend.h")
         source = read("Source/OneBossFight/Player/RPGLegend.cpp")
         self.assertRegex(header, r"ParryFeedbackCollection\s*=\s*nullptr")
+        self.assertRegex(header, r"TSoftObjectPtr<UMaterialInterface>\s+ParryDistortionMaterial;")
         self.assertIn('FName ParryPulseParameter = TEXT("ParryPulse")', header)
         request = source.split("bool URPGBossLegend::HandlePlayerParrySlowMotion", 1)[1].split("void URPGBossLegend::TickComponent", 1)[0]
         restore = source.split("void URPGLegendSubsystem::RestoreSlowMotion", 1)[1].split("void URPGLegendSubsystem::CancelAll", 1)[0]
-        self.assertIn("Time->BeginParryFeedbackPulse(ParryFeedbackCollection, ParryPulseParameter, ParrySlowMotionSoundMix)", request)
+        begin_play = source.split("void URPGBossLegend::BeginPlay", 1)[1].split("bool URPGBossLegend::FindParts", 1)[0]
+        begin = source.split("void URPGLegendSubsystem::BeginParryFeedbackPulse", 1)[1].split("void URPGLegendSubsystem::RestoreHitStop", 1)[0]
+        self.assertIn("Time->BeginParryFeedbackPulse(ParryFeedbackCollection, ParryPulseParameter, ParrySlowMotionSoundMix, LoadedParryDistortionMaterial, ParryingActor)", request)
+        self.assertIn("IsTier2PreviewEnabled()", begin_play)
+        self.assertIn("ParryDistortionMaterial.LoadSynchronous()", begin_play)
+        self.assertNotIn("LoadSynchronous", begin)
         self.assertIn("RestoreParryFeedbackPulse();", restore)
         self.assertIn("RPGTier1Visuals::IsTier2PreviewEnabled()", source.split("void URPGLegendSubsystem::BeginParryFeedbackPulse", 1)[1].split("void URPGLegendSubsystem::RestoreHitStop", 1)[0])
 
@@ -81,6 +87,8 @@ class OptionalTier2HookTests(unittest.TestCase):
         plan = read("Documentation/Boss/V_C038_C039_COOK_AND_PARITY_GATES.md")
         self.assertIn('A2.OptionalTrackerMontagePath = TEXT("/Game/OneBossFight/Boss01/Animations/AM_Boss01_A2.AM_Boss01_A2")', tracker)
         self.assertIn('+DirectoriesToAlwaysCook=(Path="/Game/OneBossFight/Boss01")', config)
+        self.assertIn('+DirectoriesToAlwaysCook=(Path="/Game/OneBossFight/VFX")', config)
+        self.assertIn('+DirectoriesToAlwaysCook=(Path="/Game/OneBossFight/Boss")', config)
         block = nightly.split("$drivers = @(", 1)[1].split("\n)", 1)[0]
         drivers = [name for name in block.split("'") if name.startswith("pie_")]
         self.assertEqual(len(drivers), 31)

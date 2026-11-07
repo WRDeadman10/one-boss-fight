@@ -18,6 +18,8 @@ class URPGBossPhases;
 class URPGBossStagger;
 class UMaterialParameterCollection;
 class UMaterialParameterCollectionInstance;
+class UMaterialInterface;
+class UCameraComponent;
 class USoundMix;
 
 namespace RPGBossLegendRules
@@ -108,7 +110,8 @@ public:
 	/** Slows the world to Scale for RealSeconds. Same refusals. */
 	bool RequestSlowMotion(float Scale, float RealSeconds, const URPGBossEncounter* Encounter, uint64 Generation, bool bKillPriority = false);
 	/** Ends every effect now, restores time, stops the shakes. Logs one line only when something was active. */
-	void BeginParryFeedbackPulse(UMaterialParameterCollection* Collection, FName Parameter, USoundMix* SoundMix);
+	void BeginParryFeedbackPulse(UMaterialParameterCollection* Collection, FName Parameter, USoundMix* SoundMix,
+		UMaterialInterface* DistortionMaterial, AActor* ParryingActor);
 	void CancelAll(const TCHAR* Reason);
 
 	UFUNCTION(BlueprintPure, Category = "Legend")
@@ -147,6 +150,10 @@ private:
 	FRPGDilationScope SlowMotion;
 	TWeakObjectPtr<UMaterialParameterCollectionInstance> ParryFeedbackInstance;
 	TWeakObjectPtr<USoundMix> ParryFeedbackSoundMix;
+	TWeakObjectPtr<UCameraComponent> ParryDistortionCamera;
+	TWeakObjectPtr<UMaterialInterface> ParryDistortionMaterial;
+	float SavedParryDistortionWeight = 0.f;
+	bool bParryDistortionWasPresent = false;
 	FName ParryFeedbackParameter;
 	TArray<FStoppedActor> Stopped;
 	TWeakObjectPtr<const URPGBossEncounter> RequestOwner;
@@ -218,6 +225,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Legend|Parry|Visuals")
 	TObjectPtr<UMaterialParameterCollection> ParryFeedbackCollection = nullptr;
 
+	/** Optional post-process distortion added to the parrying player's camera only during the Tier 2 parry scope. Empty by default. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Legend|Parry|Visuals")
+	TSoftObjectPtr<UMaterialInterface> ParryDistortionMaterial;
+	UPROPERTY(Transient)
+	TObjectPtr<UMaterialInterface> LoadedParryDistortionMaterial = nullptr;
+
 	/** Optional SoundMix configured by the asset author for parry low-pass/duck. Null means no audio change. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Legend|Parry|Audio")
 	TObjectPtr<USoundMix> ParrySlowMotionSoundMix = nullptr;
@@ -226,7 +239,7 @@ public:
 	FName ParryPulseParameter = TEXT("ParryPulse");
 
 	/** Called once for each confirmed player parry by URPGPlayerParry::NotifyParried. */
-	bool HandlePlayerParrySlowMotion(RPGParryGrade::EGrade Grade, const FRPGParrySlowMotionConfig* PlayerPolicy = nullptr);
+	bool HandlePlayerParrySlowMotion(RPGParryGrade::EGrade Grade, const FRPGParrySlowMotionConfig* PlayerPolicy = nullptr, AActor* ParryingActor = nullptr);
 	int32 GetParrySlowMotionCount() const { return ParrySlowMotionCount; }
 
 	// Counters (once per event; the drivers read them).

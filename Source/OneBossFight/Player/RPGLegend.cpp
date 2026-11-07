@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGLegend.h"
+#include "Camera/CameraComponent.h"
 #include "Camera/CameraModifier_CameraShake.h"
 #include "Camera/PlayerCameraManager.h"
 #include "Components/CapsuleComponent.h"
@@ -12,6 +13,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
+#include "Materials/MaterialInterface.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGAttackTracker.h"
 #include "Player/RPGTier1VisualRules.h"
@@ -162,7 +164,8 @@ bool URPGLegendSubsystem::RequestSlowMotion(float Scale, float RealSeconds, cons
 	return true;
 }
 
-void URPGLegendSubsystem::BeginParryFeedbackPulse(UMaterialParameterCollection* Collection, FName Parameter, USoundMix* SoundMix)
+void URPGLegendSubsystem::BeginParryFeedbackPulse(UMaterialParameterCollection* Collection, FName Parameter, USoundMix* SoundMix,
+	UMaterialInterface* Material, AActor* ParryingActor)
 {
 	if (!RPGTier1Visuals::IsTier2PreviewEnabled())
 	{
@@ -179,6 +182,22 @@ void URPGLegendSubsystem::BeginParryFeedbackPulse(UMaterialParameterCollection* 
 	{
 		ParryFeedbackInstance = Instance;
 		ParryFeedbackParameter = Parameter;
+	}
+	UCameraComponent* Camera = ParryingActor ? ParryingActor->FindComponentByClass<UCameraComponent>() : nullptr;
+	if (Camera && Material)
+	{
+		for (const FWeightedBlendable& Blendable : Camera->PostProcessSettings.WeightedBlendables.Array)
+		{
+			if (Blendable.Object == Material)
+			{
+				bParryDistortionWasPresent = true;
+				SavedParryDistortionWeight = Blendable.Weight;
+				break;
+			}
+		}
+		Camera->AddOrUpdateBlendable(Material, 1.f);
+		ParryDistortionCamera = Camera;
+		ParryDistortionMaterial = Material;
 	}
 }
 
@@ -223,6 +242,24 @@ void URPGLegendSubsystem::RestoreSlowMotion(const TCHAR* Reason)
 
 void URPGLegendSubsystem::RestoreParryFeedbackPulse()
 {
+	if (UCameraComponent* Camera = ParryDistortionCamera.Get())
+	{
+		if (UMaterialInterface* Material = ParryDistortionMaterial.Get())
+		{
+			if (bParryDistortionWasPresent)
+			{
+				Camera->AddOrUpdateBlendable(Material, SavedParryDistortionWeight);
+			}
+			else
+			{
+				Camera->RemoveBlendable(Material);
+			}
+		}
+	}
+	ParryDistortionCamera.Reset();
+	ParryDistortionMaterial.Reset();
+	SavedParryDistortionWeight = 0.f;
+	bParryDistortionWasPresent = false;
 	if (UWorld* World = GetWorld())
 	{
 		if (USoundMix* SoundMix = ParryFeedbackSoundMix.Get())
@@ -323,6 +360,10 @@ URPGBossLegend::URPGBossLegend()
 void URPGBossLegend::BeginPlay()
 {
 	Super::BeginPlay();
+	if (RPGTier1Visuals::IsTier2PreviewEnabled() && !ParryDistortionMaterial.IsNull())
+	{
+		LoadedParryDistortionMaterial = ParryDistortionMaterial.LoadSynchronous();
+	}
 	if (AActor* Boss = GetOwner())
 	{
 		RPGBossTrackerTickPrerequisite::Add(*this, TrackerTickPrerequisite, Boss->FindComponentByClass<URPGAttackTracker>());
@@ -477,7 +518,7 @@ bool URPGBossLegend::HandleSlowMotion()
 	return true;
 }
 
-bool URPGBossLegend::HandlePlayerParrySlowMotion(RPGParryGrade::EGrade Grade, const FRPGParrySlowMotionConfig* PlayerPolicy)
+bool URPGBossLegend::HandlePlayerParrySlowMotion(RPGParryGrade::EGrade Grade, const FRPGParrySlowMotionConfig* PlayerPolicy, AActor* ParryingActor)
 {
 	if (Grade == RPGParryGrade::EGrade::None || !FindParts() || !EffectsAllowed(false))
 	{
@@ -511,7 +552,7 @@ bool URPGBossLegend::HandlePlayerParrySlowMotion(RPGParryGrade::EGrade Grade, co
 	{
 		return false;
 	}
-	Time->BeginParryFeedbackPulse(ParryFeedbackCollection, ParryPulseParameter, ParrySlowMotionSoundMix);
+	Time->BeginParryFeedbackPulse(ParryFeedbackCollection, ParryPulseParameter, ParrySlowMotionSoundMix, LoadedParryDistortionMaterial, ParryingActor);
 	LastParrySlowMotionTime = NowReal;
 	++ParrySlowMotionCount;
 	return true;

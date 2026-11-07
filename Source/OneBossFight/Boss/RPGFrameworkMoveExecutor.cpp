@@ -10,6 +10,7 @@
 #include "Player/RPGBossFatigueRules.h"
 #include "Player/RPGBossDamage.h"
 #include "Player/RPGPlayerParry.h"
+#include "Player/RPGDodgeTiming.h"
 #include "AIController.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Player/RPGFlipbookEffect.h"
@@ -289,7 +290,7 @@ void URPGFrameworkMoveExecutor::SweepWindows(double PrevPosition,double Position
         if (bBlocking&&Profile->GuardChipFraction>0.f) Payload.HPDamage=float(RPGBossBlockChip::GuardedDamage(IncomingDamage,Profile->GuardChipFraction));
         const FRPGDamageResult Result=Resolver->Resolve(Target.Get(),Payload);
         const RPGBossGuard::EGuardState Guard=RPGBossGuard::Classify(bBlocking,Result.Outcome==ERPGDamageOutcome::Parried);   // the parry window is decided by the resolver
-        if (Result.Outcome==ERPGDamageOutcome::Accepted) {++HitsAccepted;++CardAcceptedHits; AppliedDamage+=Result.HPApplied; if (Guard==RPGBossGuard::EGuardState::Guarded) {++HitsGuarded; if(Profile->GuardChipFraction>0.f) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] guard_chip incoming=%g applied=%g"),IncomingDamage,Result.HPApplied);} if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);}
+        if (Result.Outcome==ERPGDamageOutcome::Accepted) {++HitsAccepted;++CardAcceptedHits; AppliedDamage+=Result.HPApplied; if (Guard==RPGBossGuard::EGuardState::Guarded) {++HitsGuarded; if (URPGDodgeTiming* Timing=Target->FindComponentByClass<URPGDodgeTiming>()) Timing->NotifySuccessfulGuardContact(); if(Profile->GuardChipFraction>0.f) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] guard_chip incoming=%g applied=%g"),IncomingDamage,Result.HPApplied);} if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);}
         else if (Result.Outcome==ERPGDamageOutcome::Parried) {++HitsParried;++CardParriedHits; if (OwnerBoss.IsValid()) RecordParriedContact(OwnerBoss.Get(),Target.Get(),(double(Card->Spec().RecoveryEndSeconds)-double(Card->Spec().ActiveEndSeconds))/CardPlayRate);}
         UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] guard_state instance=%llu window=%s guard=%s outcome=%s"),Token.InstanceId,*W.WindowId.ToString(),RPGBossGuard::Name(Guard),*UEnum::GetValueAsString(Result.Outcome));
         UE_LOG(LogTemp,Display,TEXT("[CARD_HIT] instance=%llu card=%s window=%s outcome=%s hpApplied=%g"),Token.InstanceId,*Card->Spec().MoveId.ToString(),*W.WindowId.ToString(),*UEnum::GetValueAsString(Result.Outcome),Result.HPApplied);
@@ -411,7 +412,7 @@ void URPGFrameworkMoveExecutor::TickGrab(double Position)
             if (bBlocking&&Profile->GuardChipFraction>0.f) Payload.HPDamage=float(RPGBossBlockChip::GuardedDamage(IncomingDamage,Profile->GuardChipFraction));
             const FRPGDamageResult Result=Resolver->Resolve(Target.Get(),Payload);
             const RPGBossGuard::EGuardState Guard=RPGBossGuard::Classify(bBlocking,Result.Outcome==ERPGDamageOutcome::Parried);
-            if (Result.Outcome==ERPGDamageOutcome::Accepted) {++HitsAccepted;++CardAcceptedHits; AppliedDamage+=Result.HPApplied; if (Guard==RPGBossGuard::EGuardState::Guarded) {++HitsGuarded; if(Profile->GuardChipFraction>0.f) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] guard_chip incoming=%g applied=%g"),IncomingDamage,Result.HPApplied);} if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);}
+            if (Result.Outcome==ERPGDamageOutcome::Accepted) {++HitsAccepted;++CardAcceptedHits; AppliedDamage+=Result.HPApplied; if (Guard==RPGBossGuard::EGuardState::Guarded) {++HitsGuarded; if (URPGDodgeTiming* Timing=Target->FindComponentByClass<URPGDodgeTiming>()) Timing->NotifySuccessfulGuardContact(); if(Profile->GuardChipFraction>0.f) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] guard_chip incoming=%g applied=%g"),IncomingDamage,Result.HPApplied);} if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);}
             else if (Result.Outcome==ERPGDamageOutcome::Parried) {++HitsParried;++CardParriedHits; if (OwnerBoss.IsValid()) RecordParriedContact(OwnerBoss.Get(),Target.Get(),(double(Card->Spec().RecoveryEndSeconds)-double(Card->Spec().ActiveEndSeconds))/CardPlayRate);}
             UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] grab_damage instance=%llu key=%s outcome=%s hpApplied=%g"),Token.InstanceId,*GrabHitKey.ToString(),*UEnum::GetValueAsString(Result.Outcome),Result.HPApplied);
         }

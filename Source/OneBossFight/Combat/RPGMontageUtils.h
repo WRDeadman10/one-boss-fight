@@ -30,4 +30,10 @@ public:
 	 *  a montage's notifies, so editor scripts use this to see what a pack clip carries (invulnerability frames, input buffer windows, cancel frames). */
 	UFUNCTION(BlueprintCallable, Category = "RPG|Authoring")
 	static TArray<FString> DescribeNotifies(const UAnimMontage* Montage);
+
+#if WITH_EDITOR
+	/** Sets the first slot's first segment source range, recomputes montage length, updates links, and marks the asset dirty. */
+	UFUNCTION(BlueprintCallable, Category = "RPG|Authoring")
+	static bool SetMontageSegmentRange(UAnimMontage* Montage, float StartTime, float EndTime);
+#endif
 };

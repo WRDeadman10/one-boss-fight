@@ -1,0 +1,28 @@
+﻿[2026.11.07-07.32.19:588][  0]LogPython: [ERControlLatency] driver registered; observations are game-tick bounded, not device-latency claims
+[2026.11.07-07.32.20:353][  5]LogPython: [ERControlLatency] route=legacy (H019_ENCOUNTER_DEFINITION unset)
+[2026.11.07-07.32.29:761][162]LogPython: [ERControlLatency] setup boss held=True player_distance_cm=900
+[2026.11.07-07.32.46:437][646]LogPython: [ERControlLatency] input_context_active=True
+[2026.11.07-07.32.46:465][647]LogPython: [ERControlLatency] case=R1_tap_light baseline=(None, None)
+[2026.11.07-07.32.46:578][651]LogPython: [ERControlLatency] sample case=R1_tap_light montage=Attack_PrimaryA_Montage position=0.027 observed_ms=86.77 tick_s=0.03012
+[2026.11.07-07.32.51:157][808]LogPython: [ERControlLatency] case=R2_tap_strong baseline=(None, None)
+[2026.11.07-07.32.51:356][815]LogPython: [ERControlLatency] sample case=R2_tap_strong montage=Ability_E_Anim_Montage position=0.028 observed_ms=172.19 tick_s=0.02824
+[2026.11.07-07.32.55:839][970]LogPython: [ERControlLatency] case=R2_hold_0.34s baseline=(None, None)
+[2026.11.07-07.32.56:242][984]LogPython: [ERControlLatency] sample case=R2_hold_0.34s montage=Ability_E_Anim_Montage position=0.028 observed_ms=372.87 tick_s=0.02804
+[2026.11.07-07.33.00:739][142]LogPython: [ERControlLatency] case=R2_hold_0.35s_boundary baseline=(None, None)
+[2026.11.07-07.33.01:168][157]LogPython: [ERControlLatency] sample case=R2_hold_0.35s_boundary montage=Ability_E_Anim_Montage position=0.028 observed_ms=400.54 tick_s=0.02958
+[2026.11.07-07.33.05:646][315]LogPython: [ERControlLatency] case=R2_hold_0.36s baseline=(None, None)
+[2026.11.07-07.33.06:031][328]LogPython: [ERControlLatency] sample case=R2_hold_0.36s montage=ChargedAttack_Montage position=0.031 observed_ms=356.63 tick_s=0.03164
+[2026.11.07-07.33.10:571][482]LogPython: [ERControlLatency] case=R2_hold_0.70s baseline=(None, None)
+[2026.11.07-07.33.10:979][496]LogPython: [ERControlLatency] sample case=R2_hold_0.70s montage=ChargedAttack_Montage position=0.029 observed_ms=382.08 tick_s=0.02797
+[2026.11.07-07.33.15:824][660]LogPython: [ERControlLatency] case=jump_R1_air_light baseline=(None, None)
+[2026.11.07-07.33.16:234][674]LogPython: [ERControlLatency] sample case=jump_R1_air_light montage=Attack_PrimaryA_Montage position=0.028 observed_ms=84.37 tick_s=0.02831
+[2026.11.07-07.33.20:800][830]LogPython: [ERControlLatency] case=jump_R2_air_heavy baseline=(None, None)
+[2026.11.07-07.33.21:295][847]LogPython: [ERControlLatency] sample case=jump_R2_air_heavy montage=Ability_E_Anim_Montage position=0.028 observed_ms=171.36 tick_s=0.02674
+[2026.11.07-07.33.25:795][  1]LogPython: [ERControlLatency] case=dodge_standing_tap baseline=(None, None)
+[2026.11.07-07.33.25:975][  7]LogPython: [ERControlLatency] sample case=dodge_standing_tap montage=Dodge_Small_Forward_Roll_Montage position=0.038 observed_ms=152.81 tick_s=0.02879
+[2026.11.07-07.33.30:477][158]LogPython: [ERControlLatency] case=dodge_moving_tap baseline=(None, None)
+[2026.11.07-07.33.30:655][164]LogPython: [ERControlLatency] sample case=dodge_moving_tap montage=Dodge_Small_Forward_Roll_Montage position=0.037 observed_ms=141.94 tick_s=0.02740
+[2026.11.07-07.33.35:125][323]LogPython: [ERControlLatency] case=dodge_double_tap baseline=(None, None)
+[2026.11.07-07.33.35:235][327]LogPython: [ERControlLatency] sample case=dodge_double_tap montage=Dodge_Small_Forward_Roll_Montage position=0.035 observed_ms=84.11 tick_s=0.02483
+[2026.11.07-07.33.37:348][404]LogPython: [ERControlLatency] dodge_double_tap press_delta=2 last_gap_s=0.1368764005601406 last_press_full=False forced_rolls=0
+[2026.11.07-07.33.39:900][497]LogPython: [ERControlLatency] finished: all control samples recorded

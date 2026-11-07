@@ -1502,3 +1502,33 @@ A parry that only removes damage felt empty, so a parried contact now costs the 
 - OWNER 2026-11-07 (chat): DLSS default for players: yes (decide from Round 6 Phase 2; the Phase 2 return zip has not arrived in D:\BenchTransfer\R6b as of this entry).
 - OWNER 2026-11-07 (chat): GATE-07 art approval: the owner reviews VIDEO CLIPS of every new animation (player ER clips, boss recoil) before approval.
 - OWNER 2026-11-07 (chat): bench testing PARKED for now; Round 6 Phase 2 not run; DLSS player default stays undecided (setting implemented with TSR default) until benching resumes (C-954).
+- C-955 implementation record (2026-11-07): Tier 2 Option A parry material, aura, and recoil use empty-default optional references behind the Development preview switch. `AA_C20_TIER2_PRESENTATION_HOOKS.md` records the Source wiring and Lead verification gates; no additional owner decision or shipped-default change was made.
+- AA-C31–C34 audit (2026-11-07): C-944/C-945 provide the source of truth for the accepted gamepad mapping: R1 light, R2 tap strong, R2 hold at 0.35 s charged; the Lead's pie4 passed these routes and standing double-tap no-long-roll. Follow-up probe `pie_er_control_latency.py` is measurement-only and reports game-tick-bounded observations, not physical input latency. No new control threshold, montage timing, asset approval or gameplay tuning is selected here. See `Documentation/Boss/AA_C31_C34_INPUT_TIMING_AND_FEEL_AUDIT.md`.
+
+## Claude mailbox decision index C-935–C-980 (2026-11-06–2026-11-07)
+
+- C-935: Review Queue W batches; preserve HOLD state pending owner instruction.
+- C-936: Keep ledger at 80 WITNESSED / 2 PARTIAL; owner “skip/drop” decisions are not witnesses.
+- C-937: Accept offline parity validator hotfix after retained-pair verification.
+- C-938: End HOLD for owner-requested ER-style player controls.
+- C-939–C-940: Add optional BackstepMontage plumbing; BUILD-235 green.
+- C-941–C-942: Retire legacy default route; accept ER dodge rules and BUILD-237.
+- C-943–C-946: Study reference videos; owner selects guard counter, charged hold, and no double-tap long roll; accept rule/wiring work.
+- C-947: Accept commit 21dbcb18 after BUILD-240 green.
+- C-948–C-951: Deliver R6b kit, intake Phase 1, select Performance/50% for Phase 2; not a shipped default.
+- C-952: Owner selects Tier 2 Option A under empty-default Development preview.
+- C-953: Owner confirms guard works; prior block probes were invalid; require owner video review for every new animation.
+- C-954: Park benchmark testing; leave shipped DLSS default undecided until measurement resumes.
+- C-955: Open Queue AA and order Tier 2/guard-counter implementation; guard-counter integration is unblocked.
+- C-971: Accept Queue AB and order importer fail-closed hotfix; Lead BUILD-245 green.
+- C-972: Accept AirLight; accept AirHeavy for owner review; keep Backstep rejected for R5; record Lead ER latency results and direct Codex to optional air fields.
+- C-973: Accept importer/cook-root work and BUILD-246/CookCoverage; approve empty-default AirLight/AirHeavy montage fields as a test-first production change; order accepted air imports and new unassigned montage assets.
+- C-974: Assign Codex the editor-safe montage segment-range helper as a test-first production change; GuardCounter source slice is F10..F34 (0.8000 s).
+- C-975: Accept X-1379/A-585 and BUILD-247 (483/483); air routes verified in Lead PIE. Codex must add post-air grounded R1/R2 coverage, then continue AB-C26+ without waiting.
+- C-976: Accept R6 Backstep legs; reject upper body; request R7 and continue the animation lane.
+- C-977: Accept Backstep R7 for owner review; send all four clips for owner video review; correct the sword observation; import/create an unassigned Backstep montage.
+- C-978: Accept X-1380/X-1381/A-588; BUILD-248 GREEN 484/484 and Shipping compiles; Lead confirms post-air restoration; raise offline-suite budget to 20 s; trim Backstep/GuardCounter montages.
+- C-979: Accept A-589 Backstep/GuardCounter trims; direct Antigravity to trim air montages against accepted clip ranges; require a strict importer acceptance-prefix hotfix; continue AB-C36+.
+- C-980: Accept Codex/Antigravity receipts and air montage trims; classify A-591 Tier 2 assets as created but not accepted pending previews; invalidate earlier moving-dodge results because synthetic IA_Move did not move the pawn; require real movement input, speed/input logging, corrected Lead reruns, and continued AC work without waiting.
+
+Supporting task-specific status and evidence boundaries: `Documentation/Boss/AA_C41_C44_RELEASE_GATES_AND_DECISION_INDEX.md`; original authority is each message in `Documentation/TEAM_MAILBOX.md`.

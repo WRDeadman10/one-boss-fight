@@ -1,0 +1,12 @@
+﻿[2026.11.07-09.14.30:821][  0]LogPython: [ERBackstep] driver registered; observations are game-tick bounded, not device-latency claims
+[2026.11.07-09.14.31:495][  5]LogPython: [ERBackstep] route=legacy (H019_ENCOUNTER_DEFINITION unset)
+[2026.11.07-09.14.40:716][187]LogPython: [ERBackstep] setup boss held=True player_distance_cm=900
+[2026.11.07-09.14.40:726][187]LogPython: [ERBackstep] assigned backstep=AM_ER_Backstep_Back length=0.4667
+[2026.11.07-09.14.56:817][779]LogPython: [ERBackstep] input_context_active=True
+[2026.11.07-09.14.56:844][780]LogPython: [ERBackstep] case=R1_tap_light baseline=(None, None)
+[2026.11.07-09.14.56:955][784]LogPython: [ERBackstep] sample case=R1_tap_light montage=Attack_PrimaryA_Montage position=0.026 observed_ms=77.50 tick_s=0.02772
+[2026.11.07-09.15.01:507][954]LogPython: [ERBackstep] case=dodge_standing_tap baseline=(None, None)
+[2026.11.07-09.15.01:661][960]LogPython: [ERBackstep] sample case=dodge_standing_tap montage=AM_ER_Backstep_Back position=0.025 observed_ms=128.60 tick_s=0.02617
+[2026.11.07-09.15.06:175][130]LogPython: [ERBackstep] case=dodge_moving_tap baseline=(None, None)
+[2026.11.07-09.15.06:643][148]LogPython: [ERBackstep] sample case=dodge_moving_tap montage=AM_ER_Backstep_Back position=0.026 observed_ms=155.76 tick_s=0.02514
+[2026.11.07-09.15.11:133][320]LogPython: [ERBackstep] finished: all control samples recorded

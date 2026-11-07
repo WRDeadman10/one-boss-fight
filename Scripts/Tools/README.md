@@ -56,6 +56,10 @@ File outputs use the shared `atomic_io.py` helper where replacement or no-overwr
 | `evidence_summary.py` | CSV index of retained editor logs with identity, date, outcome, validator status, and SHA-256. |
 | `framework_results.py` | Parse FrameworkProof RESULT lines. |
 | `list_automation_tests.py` | Automation registration names and locations. |
+| `discover_focused_player_tests.py` | Deterministic AST-only inventory of focused offline player contract tests; does not import or execute them. |
+| `validate_queue_batches.py` | Validate AA-C/AB-C ID order and ten groups of five task rows. |
+| `test_discover_focused_player_tests.py` | Fixture tests for deterministic focused player test discovery. |
+| `test_validate_queue_batches.py` | Queue validator tests for valid groups, duplicate/missing IDs, and malformed grouping. |
 | `list_cvars.py` | Actual `rpg.*` registrations, including perf macro expansions. |
 | `list_todo_markers.py` | TODO/FIXME/XXX markers in owned code/docs. |
 | `log_failures.py` | Error/fatal/failure-like Unreal log lines for manual context review. |

@@ -50,3 +50,30 @@ TArray<FString> URPGMontageUtils::DescribeNotifies(const UAnimMontage* Montage)
 	}
 	return Lines;
 }
+
+#if WITH_EDITOR
+bool URPGMontageUtils::SetMontageSegmentRange(UAnimMontage* Montage, float StartTime, float EndTime)
+{
+	if (!Montage || !FMath::IsFinite(StartTime) || !FMath::IsFinite(EndTime) || StartTime < 0.0f || EndTime <= StartTime
+		|| Montage->SlotAnimTracks.IsEmpty() || Montage->SlotAnimTracks[0].AnimTrack.AnimSegments.IsEmpty())
+	{
+		return false;
+	}
+
+	FAnimSegment& Segment = Montage->SlotAnimTracks[0].AnimTrack.AnimSegments[0];
+	UAnimSequenceBase* Animation = Segment.GetAnimReference();
+	if (!Animation || EndTime > Animation->GetPlayLength())
+	{
+		return false;
+	}
+
+	Montage->Modify();
+	Segment.AnimStartTime = StartTime;
+	Segment.AnimEndTime = EndTime;
+	Montage->SetCompositeLength(Montage->CalculateSequenceLength());
+	Montage->UpdateLinkableElements();
+	Montage->PostEditChange();
+	Montage->MarkPackageDirty();
+	return true;
+}
+#endif

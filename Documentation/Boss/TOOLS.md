@@ -109,6 +109,8 @@ Documented command examples and their `--help` support are checked in [TOOL_USAG
 - Plugin declarations: `py Scripts/Tools/plugin_dependencies.py --root .` (project plugin enables and project-local descriptor dependencies).
 - Legacy source names: `py Scripts/Tools/retired_source_names.py --root .` (occurrence list for selected legacy implementation/pack identifiers; not a verdict).
 - Automation registrations: `py Scripts/Tools/list_automation_tests.py --root .` (test macro names and source lines).
+- Focused offline player contract discovery: `py Scripts/Tools/discover_focused_player_tests.py` (AST-only; deterministic group/test/path/line rows, no imports or test execution; `--json` emits stable JSON).
+- Validate AA/AB Codex task IDs and five-task grouping: `py Scripts/Tools/validate_queue_batches.py --root .`.
 - FrameworkProof token delta: `py Scripts/Tools/compare_framework_tokens.py before.log after.log`.
 - Baked trajectory sanity: `py Scripts/Tools/validate_baked_cards.py card_export.json` (finite 3D points and strictly increasing in-window times).
 - Duplicate move IDs: `py Scripts/Tools/check_move_card_ids.py export_a.json export_b.json`.

@@ -63,7 +63,9 @@ UProgressBar* URPGBossHudWidget::AddBar(UCanvasPanel* Canvas, const TCHAR* Widge
 {
 	UProgressBar* Bar = WidgetTree->ConstructWidget<UProgressBar>(UProgressBar::StaticClass(), WidgetName);
 	// The default style paints a light background behind the unfilled part: make it dark (or clear when another bar or the plate sits behind).
-	Bar->WidgetStyle.BackgroundImage.TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, BackgroundAlpha));
+	FProgressBarStyle BarStyle = Bar->GetWidgetStyle();
+	BarStyle.BackgroundImage.TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, BackgroundAlpha));
+	Bar->SetWidgetStyle(BarStyle);
 	Bar->SetFillColorAndOpacity(Fill);
 	Bar->SetPercent(1.f);
 	UCanvasPanelSlot* PanelSlot = Canvas->AddChildToCanvas(Bar);

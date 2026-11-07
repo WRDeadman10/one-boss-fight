@@ -1187,6 +1187,12 @@ bool FRPGPackWiringTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("double tap window is 0.30 s"), DodgeDefaults->DoubleTapWindow, 0.30f);
 	TestFalse(TEXT("double-tap long roll is off by default (owner 2026-11-06, Elden Ring dodge)"), DodgeDefaults->bDoubleTapLongRoll);
 	TestNotNull(TEXT("Elden Ring gamepad attack context loads (owner 2026-11-06)"), DodgeDefaults->EldenRingMappingContext.LoadSynchronous());
+	TestNotNull(TEXT("Elden Ring R1 light action loads"), DodgeDefaults->EldenRingLightAction.LoadSynchronous());
+	TestNotNull(TEXT("Elden Ring R2 tap action loads"), DodgeDefaults->EldenRingHeavyTapAction.LoadSynchronous());
+	TestTrue(TEXT("optional ER backstep montage is empty by default"), DodgeDefaults->BackstepMontage.IsNull());
+	TestTrue(TEXT("optional guard-counter montage is empty by default"), DodgeDefaults->GuardCounterMontage.IsNull());
+	TestTrue(TEXT("optional air-light montage is empty by default"), DodgeDefaults->AirLightMontage.IsNull());
+	TestTrue(TEXT("optional air-heavy montage is empty by default"), DodgeDefaults->AirHeavyMontage.IsNull());
 	TestFalse(TEXT("no blanket critical while the boss is down"), GetDefault<URPGBossStagger>()->bCriticalOnEveryHit);
 
 	// The weapon trace facade (Pack/RPGPackTrace, used by URPGTraceGuard and URPGTraceAudit) reads these names of the pack's trace classes by reflection: a pack update that renames one fails here, not silently in a fight.

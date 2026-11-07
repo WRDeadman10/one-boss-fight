@@ -1,0 +1,14 @@
+﻿[2026.11.07-08.49.25:213][  0]LogPython: [ERAirRestore] driver registered; waits for airborne montage end and landing before ground R1/R2 follow-ups
+[2026.11.07-08.49.26:080][  5]LogPython: [ERAirRestore] route=data selection=/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter
+[2026.11.07-08.49.35:067][187]LogPython: [ERAirRestore] setup boss held=True player_distance_cm=900
+[2026.11.07-08.49.35:089][187]LogPython: [ERAirRestore] assigned air_light=AM_ER_Attack_Air_Light air_heavy=AM_ER_Attack_Air_Heavy_Plunge
+[2026.11.07-08.49.51:412][788]LogPython: [ERAirRestore] input_context_active=True
+[2026.11.07-08.49.51:437][789]LogPython: [ERAirRestore] case=air_R1_then_ground_R1_R2 baseline=(None, None)
+[2026.11.07-08.49.51:822][804]LogPython: [ERAirRestore] sample case=air_R1_then_ground_R1_R2 montage=AM_ER_Attack_Air_Light position=0.025 observed_ms=77.35 tick_s=0.02693
+[2026.11.07-08.49.53:510][870]LogPython: [ERAirRestore] ground_result case=air_R1_then_ground_R1_R2 label=ground_R1 montage=Attack_PrimaryA_Montage falling=False
+[2026.11.07-08.49.55:122][930]LogPython: [ERAirRestore] ground_result case=air_R1_then_ground_R1_R2 label=ground_R2 montage=Ability_E_Anim_Montage falling=False
+[2026.11.07-08.49.59:607][104]LogPython: [ERAirRestore] case=air_R2_then_ground_R1_R2 baseline=(None, None)
+[2026.11.07-08.50.00:097][123]LogPython: [ERAirRestore] sample case=air_R2_then_ground_R1_R2 montage=AM_ER_Attack_Air_Heavy_Plunge position=0.025 observed_ms=181.00 tick_s=0.02581
+[2026.11.07-08.50.01:686][185]LogPython: [ERAirRestore] ground_result case=air_R2_then_ground_R1_R2 label=ground_R1 montage=Attack_PrimaryA_Montage falling=False
+[2026.11.07-08.50.03:299][248]LogPython: [ERAirRestore] ground_result case=air_R2_then_ground_R1_R2 label=ground_R2 montage=Ability_E_Anim_Montage falling=False
+[2026.11.07-08.50.07:795][424]LogPython: [ERAirRestore] finished: all control samples recorded

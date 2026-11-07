@@ -24,6 +24,7 @@ class OptionalPresentationWiringContractTests(unittest.TestCase):
             self.assertRegex(director, rf"TObjectPtr<[^>]+>\s+{name}\s*=\s*nullptr;")
         for name in ("ParryFeedbackCollection", "ParrySlowMotionSoundMix"):
             self.assertRegex(legend, rf"TObjectPtr<[^>]+>\s+{name}\s*=\s*nullptr;")
+        self.assertRegex(legend, r"TSoftObjectPtr<UMaterialInterface>\s+ParryDistortionMaterial;")
 
         # The four exposed references are default-constructed (null soft references or empty FString), never assigned an asset in a constructor.
         self.assertNotRegex(tracker, r"OptionalTrackerMontagePath\s*=\s*TEXT\(")

@@ -13,20 +13,20 @@ class UInputAction;
 class UMaterialInterface;
 struct FInputActionInstance;
 
+struct FRPGGuardCounterArrayBackup
+{
+	TWeakObjectPtr<UObject> Ability;
+	FName PropertyName = NAME_None;
+	FString ExportedArray;
+};
+
 /**
- * Quick dodge and full roll on the dodge key for the pack's player.
- *
- * The pack already separates a tap from a hold: the dodge starts when the key is released and holding for half a second sprints instead (the sprint consumes the
- * buffered dodge). What it lacks is a second dodge, and it drops a dodge request that arrives while a dodge is still in its opening frames, so a fast double tap
- * (measured: presses 0.14 s apart) never produced a second dodge. This component keeps the pack's input path and ability (stamina cost, direction, state, buffering)
- * and adds, on every press of the dodge action:
- *   - a press more than DoubleTapWindow after the previous press: the quick dodge. The pack dodges when the key is released; this only picks the clip (short and
- *     fast) in the dodge ability instance's montage map, which the ability reads when it activates.
- *   - a press within DoubleTapWindow of the previous press: the full roll. If the quick dodge is running it is ended and the dodge ability is activated again at
- *     once with the full clip, from where the quick dodge has got to (so the roll continues the movement instead of restarting it), and the pack's own dodge on
- *     this key's release is consumed so there is exactly one roll per double tap. If no dodge is running (a slow double tap) only the clip is chosen and the pack
- *     dodges on release as for a tap.
- *   - a press while a full roll is running is ignored (no repeated rolls from key repeat or mashing).
+ * Optional dodge clip selection for the pack's player. The pack still owns input,
+ * stamina, direction, state, and buffering. A single tap selects the quick roll;
+ * when an approved BackstepMontage is assigned, a standing tap selects that
+ * clip instead. The full-roll-on-double-tap behavior is opt-in and disabled by
+ * default (bDoubleTapLongRoll=false); the default second press selects quick
+ * again and is subject to the pack ability's own active/buffer rules.
  * RPGPlayerMovesSubsystem attaches it to the pack player when that pawn spawns.
  */
 class UInputMappingContext;
@@ -38,6 +38,7 @@ class ONEBOSSFIGHT_API URPGDodgeTiming : public UActorComponent
 
 public:
 	URPGDodgeTiming();
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	/** Owner decision 2026-11-06 (Elden Ring dodge: tap = roll or backstep, hold = dash): the double-tap long roll is OFF by default. True restores the old
 	 *  behavior (a second press within DoubleTapWindow gives the full roll). */
@@ -99,6 +100,25 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dodge|Backstep", meta = (ClampMin = "0.1"))
 	float BackstepPlayRate = 1.0f;
+
+	/** Optional guard-counter montage, empty by default. A successful blocked contact arms one R2 tap; absent/invalid montage keeps the pack strong attack unchanged. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Guard Counter")
+	TSoftObjectPtr<UAnimMontage> GuardCounterMontage;
+
+	/** Optional airborne light clip. Empty by default, preserving the pack's existing FallingAttackMontages route. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Air Attacks")
+	TSoftObjectPtr<UAnimMontage> AirLightMontage;
+
+	/** Optional airborne heavy clip. Empty by default, preserving the pack's existing StrongAttackMontages route. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Air Attacks")
+	TSoftObjectPtr<UAnimMontage> AirHeavyMontage;
+
+	/** PROPOSAL only: maximum game-time interval from a successful blocked contact to the R2 counter tap. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Guard Counter", meta = (ClampMin = "0.05", ClampMax = "2.0"))
+	float GuardCounterWindowSeconds = 0.60f;
+
+	/** Called by the boss hit resolver only when an accepted contact was actually guarded. */
+	void NotifySuccessfulGuardContact();
 
 	/** Owner 2026-11-06 ("All three"): Elden Ring attack inputs on the gamepad (R1 press light, R2 tap strong, R2 hold charged), a project context added ABOVE the
 	 *  pack's IMC_AdvancedControls so it consumes those keys. Empty disables it (the pack's mapping returns: R1 release light, R1 hold charged, R2 strong). */
@@ -181,6 +201,10 @@ private:
 	void TickEldenRingInput();
 	void OnEldenRingLight(const FInputActionInstance& Instance);
 	void OnEldenRingHeavyTap(const FInputActionInstance& Instance);
+	bool ApplyGuardCounterMontageOverride(UAnimMontage* Montage);
+	bool ApplyMontageArrayOverride(UAnimMontage* Montage, FName ArrayName);
+	void RestoreGuardCounterMontageOverride();
+	void TickGuardCounterMontageOverride(double Now);
 
 	/** Binds the dodge action on the pawn's input component once it exists (it is created when the pawn is possessed). */
 	bool TryBind();
@@ -202,6 +226,10 @@ private:
 	int32 PressCount = 0;
 	int32 ForcedRollCount = 0;
 	int32 IgnoredPressCount = 0;
+	double LastSuccessfulGuardTime = -1.0e9;
+	double GuardCounterOverrideEndTime = -1.0;
+	TWeakObjectPtr<UAnimMontage> ActiveGuardCounterMontage;
+	TArray<FRPGGuardCounterArrayBackup> GuardCounterArrayBackups;
 	double LastPressGap = -1.0;
 	int32 BackwardTurnCount = 0;
 	int32 BackstepCount = 0;

@@ -1,0 +1,14 @@
+﻿[2026.11.07-08.10.21:117][  0]LogPython: [ERAirFields] driver registered; observations are game-tick bounded, not device-latency claims
+[2026.11.07-08.10.22:007][  5]LogPython: [ERAirFields] route=legacy (H019_ENCOUNTER_DEFINITION unset)
+[2026.11.07-08.10.30:567][200]LogPython: [ERAirFields] setup boss held=True player_distance_cm=900
+[2026.11.07-08.10.30:592][200]LogPython: [ERAirFields] assigned air_light=AM_ER_Attack_Air_Light air_heavy=AM_ER_Attack_Air_Heavy_Plunge
+[2026.11.07-08.10.46:733][811]LogPython: [ERAirFields] input_context_active=True
+[2026.11.07-08.10.46:757][812]LogPython: [ERAirFields] case=R1_tap_light baseline=(None, None)
+[2026.11.07-08.10.46:862][816]LogPython: [ERAirFields] sample case=R1_tap_light montage=Attack_PrimaryA_Montage position=0.025 observed_ms=79.71 tick_s=0.02620
+[2026.11.07-08.10.51:445][996]LogPython: [ERAirFields] case=R2_tap_strong baseline=(None, None)
+[2026.11.07-08.10.51:623][  3]LogPython: [ERAirFields] sample case=R2_tap_strong montage=Ability_E_Anim_Montage position=0.025 observed_ms=148.58 tick_s=0.02451
+[2026.11.07-08.10.56:106][180]LogPython: [ERAirFields] case=jump_R1_air_light baseline=(None, None)
+[2026.11.07-08.10.56:482][195]LogPython: [ERAirFields] sample case=jump_R1_air_light montage=AM_ER_Attack_Air_Light position=0.025 observed_ms=53.06 tick_s=0.02519
+[2026.11.07-08.11.01:061][378]LogPython: [ERAirFields] case=jump_R2_air_heavy baseline=(None, None)
+[2026.11.07-08.11.01:542][397]LogPython: [ERAirFields] sample case=jump_R2_air_heavy montage=AM_ER_Attack_Air_Heavy_Plunge position=0.025 observed_ms=156.44 tick_s=0.02505
+[2026.11.07-08.11.06:023][576]LogPython: [ERAirFields] finished: all control samples recorded

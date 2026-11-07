@@ -15,7 +15,7 @@ $Stamp = Get-Date -Format 'yyyyMMdd_HHmmss'
 $ReceiptPath = Join-Path $Root "Saved\LocalGate\gate_$Stamp.json"
 $Steps = @(
     [pscustomobject]@{ Name = 'build_and_native_tests'; File = 'powershell'; Args = @('-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $PSScriptRoot 'Rebuild.ps1'),'-Tests','-NoRelaunch') },
-    [pscustomobject]@{ Name = 'offline_tool_suite'; File = 'python'; Args = @('-m','unittest','discover','-s','Scripts/Tools') },
+    [pscustomobject]@{ Name = 'offline_tool_suite'; File = 'python'; Args = @((Join-Path $Root 'Scripts/Tools/run_offline_suite_timed.py')) },
     [pscustomobject]@{ Name = 'make_bench_kit_dependency_test'; File = 'python'; Args = @('-m','unittest','discover','-s','Scripts/Tools','-p','test_make_bench_kit_dependencies.py') },
     [pscustomobject]@{ Name = 'shipping_debug_guard'; File = 'python'; Args = @('-I','Scripts/CheckShippingBinary.py',(Join-Path $Root 'Saved\StagedBuilds_Shipping\Windows\OneBossFight\Binaries\Win64\OneBossFight-Win64-Shipping.exe')) },
     [pscustomobject]@{ Name = 'documentation_line_count_guard'; File = 'powershell'; Args = @('-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $PSScriptRoot 'Tools\CheckDocLineCounts.ps1')) }

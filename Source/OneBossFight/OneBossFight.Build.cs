@@ -38,7 +38,8 @@ public class OneBossFight : ModuleRules
 			"AssetRegistry", // content wiring test: dependencies of the pack assets
 			"RenderCore", // game/render thread timings for the benchmark
 			"Renderer", // benchmark-only active temporal upscaler view-family telemetry
-			"RHI"         // GPU frame time for the benchmark
+			"RHI",        // GPU frame time for the benchmark
+			"DLSSBlueprint" // player-selectable DLSS mode through the enabled plugin API
 		});
 
 		// Editor-only authoring helpers (skeleton sockets, montage slots).

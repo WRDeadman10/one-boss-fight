@@ -1,6 +1,6 @@
 # V-C024 — J049-A caller design and asset review list
 
-J049 Option A approves the existing Blueprint-callable `SetSelectedDefinition` route for Shipping, but C-876 found no current content caller. This is a caller design and review inventory only: no test-only caller, menu, map, or asset is created. A7-B remains gated; current legacy startup is unchanged.
+J049 Option A approves the existing Blueprint-callable `SetSelectedDefinition` route for Shipping, but C-876 found no current content caller. This is a caller design and review inventory only: no test-only caller, menu, map, or asset is created. Historical note: when this inventory was written, legacy startup was still the default. Config now selects the data route by default for `L_SevarogArena`; the current path audit and updated caller design are in `AA_C26_C29_DATA_DEFAULT_ROUTE_AND_CALLER.md`. A7-B remains gated.
 
 ## Candidate caller shape
 

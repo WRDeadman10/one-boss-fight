@@ -1,5 +1,17 @@
 # Test Plan
 
+## Queue AA — Tier 2 presentation hooks (2026-11-07)
+
+`Scripts/Tools/test_optional_tier2_hooks.py` and `test_optional_presentation_wiring_contract.py` cover empty defaults, Development-only gating, parry camera material add/restore/remove, MPC and SoundMix scope cleanup, aura/recoil cleanup, and existing `/VFX` + `/Boss` cook roots. Codex runs the focused offline contracts; Lead must run C++ compile, `OneBossFight.Content.CookCoverage`, and PIE with assigned Tier 2 assets. No Unreal build or Editor run by Codex. Details: `Documentation/Boss/AA_C20_TIER2_PRESENTATION_HOOKS.md`.
+
+## Queue AA — C22/C23 scalability and PSO proposals (2026-11-07)
+
+`Documentation/Boss/AA_C22_C23_SCALABILITY_AND_PSO_PROPOSAL.md` keeps the Performance profile owner-gated and defaults unchanged. The R4/R5/R6 frame evidence was inspected from retained artifacts; log/frame timing cannot establish PSO causality, so the existing timestamped Insights follow-up remains the evidence gate. No benchmark, Editor, or Unreal run was performed.
+
+## Queue AA — C26–C29 route controls and caller design (2026-11-07)
+
+`Scripts/Tools/test_default_route_contract.py` passes 4/4 focused static checks for data-default configuration, Development-only legacy parity controls, no fallback after explicit data activation failure, and existing native regression names. `Scripts/RunA5ParityNightly.ps1` dry-run printed 31 commands and did not create its output directory. Lead still owns native automation/build and any live parity run. No Blueprint caller, UI asset, Editor, or UE build was created/run.
+
 ## Queue Z Batch 7 benchmark contract audit (2026-11-06)
 
 `Documentation/Boss/Z031_Z034_BENCHMARK_TELEMETRY_CONTRACT_AUDIT.md` records raw-frame sample/warmup semantics, nearest-rank p99, current target, mode witness requirements and R6 identity gaps. Corrected stale PERF-01 120 FPS acceptance to current 60 FPS / 16.67 ms target. No benchmark or test run.
@@ -1542,6 +1554,16 @@ The optional `parry_slow_motion` group now has an unknown-member negative fixtur
 - ER-C2's pure `RPGDodgeInputRules::DecideTap` and world-free automation coverage for directed roll, standing backstep with a configured clip, legacy roll fallback when the optional clip is empty, and repeated standing backsteps were accepted and included in BUILD-237 (480/480).
 - ER-C1 runtime plan: [`Boss/ER_C1_BACKSTEP_TEST_PLAN.md`](Boss/ER_C1_BACKSTEP_TEST_PLAN.md). The plan covers the empty-clip legacy route, configured standing backstep and unchanged facing, repeated taps, moving quick/double roll, full-roll protection, sprint hold, and unchanged pack stamina ownership. PIE proof remains pending the imported ER-A1 clip and Lead run.
 
+## AA-C31–AA-C33 input latency / feel follow-up
+
+- Lead driver: `Scripts/Editor/pie_er_control_latency.py`. It samples gamepad R1/R2 key-down to observed player montage, R2 holds at 0.34/0.35/0.36/0.70 s, jump+attack, and standing/moving/double-tap dodge; data and legacy routes are run separately. Existing accepted proof is C-945 `pie4` (5/5): context active, R1 light, R2 tap strong, R2 hold charged, and no standing double-tap long roll. The new latency/boundary cases have not been run. Preserve raw log, route and build ID; do not call game-tick observations device latency. C-968 accepts ER-A4 for import only; ER-A1/A2/A3 require R4 before those montage feel cases can be accepted.
+
+## AA-C36–AA-C39 ER contracts and suite timing
+
+- `OneBossFight.Content.PackWiring` now asserts the ER R1/R2 action assets load and optional BackstepMontage/GuardCounterMontage remain empty by default. Lead owns native build/run.
+- `Scripts/Gate.ps1` now uses `Scripts/Tools/run_offline_suite_timed.py` for its offline step. The wrapper fails at 10 s or more; measured run 2026-11-07: 401 tests, 1 skipped, 5.840 s unittest runtime, 6.187 s wrapper elapsed, PASS. This threshold measures the local Python suite only.
+- UE 5.5 deprecated `UProgressBar::WidgetStyle` access was replaced by style getter/setter in `RPGBossHud.cpp`; the recent incremental BUILD-241/242 logs did not compile that file. Lead compile confirmation remains required.
+
 ## Guard counter rules ER-C5
 
 - Added `RPGGuardCounterRules.h` and `RPGGuardCounterRulesTests.cpp`. Automation covers the inclusive counter-window endpoints, out-of-window and no-block cases, nonfinite/invalid timing, armed lifetime boundaries/expiry, no-block and non-strong posture, and fail-closed multiplier inputs. Proposal constants (0.60 s window, 1.20 s arm lifetime, 2.0x strong-hit scale) are not owner-approved tuning.
@@ -1658,3 +1680,73 @@ All four A7 gates remain OPEN. Staged launchers and inner binaries are hashed, b
 - **C-948 X3 ER-C4 owner hand-test sheet (2026-11-06):** Added `Documentation/Boss/ER_HAND_TEST_SHEET.md` with gamepad steps, expected observable result, pass/fail boxes, and notes for each requested control. Standing backstep, both jump attacks, and guard counter are explicitly marked “After clip lands”; cited current input dump sources, and labeled the proposed guard-counter timing as unaccepted. Documentation only; no game/PIE run.
 
 - **Queue AA-C01–C04 offline intake preparation:** Phase 1 receipt CLI validation passed. Added `round6_phase2_intake.py` and fixture tests from the Phase 1 receipt shape; Phase 2 fixture suite passed 8/8. The gate checks exact C-947 R6b Development build identity, 16 rows, and a Performance mode witness for every treatment. Fixed generic report validator's Phase 2 treatment-count check (one mode has twelve treatments across four experimental arms, not three). Phase 1 report tests pass 12/12; full offline suite passed 388 tests, 1 skipped. Added blank Phase 2 intake template and owner decision table. No returned Phase 2 measurements, Unreal, PIE, build, or package run.
+
+- **Queue AA Codex batch AA-C06–AA-C09:** Probe findings are static-only; two retained runs began with a dead player, and one did not prove the player weapon state. The updated hand-test requires positive health/stamina and a player-side animation observation. Guard-counter integration still requires Lead import/build and owner review of ER-A4. No tests, Unreal, PIE, or build were run in this documentation batch.
+
+- **Queue AA Codex batch AA-C11–AA-C14:** Static wiring checklist covers ER-A1 root motion and notifies, existing optional BackstepMontage fallback/tests, ER-A4 successful-block gating, and ER-A2/A3 airborne paths. Owner approval/import and Lead build/PIE remain open. No test, Unreal, import, or build was run in this pass.
+
+- **C08/C16 source handoff:** Focused Python wiring/settings contract tests pass 5/5; `git diff --check` passes with line-ending warnings. Lead BUILD-241 caught an UObject-to-UActorComponent conversion; corrected with an explicit cast and requested a combined rebuild. Native Unreal tests, C-871 compile, PIE, unsupported-GPU behavior, and Shipping persistence remain unverified by Codex.
+- **C17–C19 acceptance:** Menu and fallback behaviors documented in `AA_C17_C19_DLSS_PLAYER_SETTING.md`; unsupported hardware and Shipping/restart checks remain Lead-owned. Default remains Off (TSR).
+- [x] BUILD-241 (lead, 2026-11-07, Codex X-1361..X-1363): AA-C16 DLSS player setting (URPGDLSSGameUserSettings, TSR default, DLAA/Q/B/P, unsupported -> TSR; GameUserSettingsClassName set; DLSSBlueprint module dependency; no Content asset references GameUserSettings) + AA-C08 guard counter (Guarded contact arms one R2 tap; optional empty GuardCounterMontage temporarily swaps StrongAttackMontages and restores). v1 compile error RPGDodgeTiming.cpp:494 (Codex fixed). GREEN 482/482, NEW BASELINE 482. Live guard-counter PIE check and Shipping compile pending. Raw: Docs/BossCombatReview/Execution/Claude/B_C961_DLSSSETTING/.
+- [x] BUILD-241 Shipping compile (lead, 2026-11-07): OneBossFight Win64 Shipping target compiles with the DLSSBlueprint dependency (exit 0, log Docs/BossCombatReview/Execution/Claude/B_C961_DLSSSETTING/shipping_compile.log). Guard counter live check -> owner hand test (Documentation/Boss/ER_HAND_TEST_SHEET.md v2: block a boss hit with L1, then R2).
+- [x] BUILD-242 (lead, 2026-11-07, Codex X-1365): Tier 2 presentation hooks (empty-default ParryDistortionMaterial on the parrying camera under Development rpg.Art.Tier2; blendable scope restore; MPC/SoundMix scope kept): GREEN 482/482 (CookCoverage green). Raw: Docs/BossCombatReview/Execution/Claude/B_C965_TIER2HOOKS/.
+- [x] BUILD-243 (lead, 2026-11-07, Codex X-1369): AA-C31..C35 (RPGDodgeTiming.h comment fix for bDoubleTapLongRoll=false, Lead PIE latency probe Scripts/Editor/pie_er_control_latency.py added, not yet run): GREEN 482/482. Raw: Docs/BossCombatReview/Execution/Claude/B_C969_X1369/.
+- [x] BUILD-244 (lead, 2026-11-07, Codex X-1370): AA-C36..C40 (PackWiring R1/R2 action loads + empty BackstepMontage/GuardCounterMontage defaults; RPGBossHud GetWidgetStyle/SetWidgetStyle, compiled; Gate.ps1 offline suite via run_offline_suite_timed.py, 6.7 s < 10 s): GREEN 482/482. Raw: Docs/BossCombatReview/Execution/Claude/B_C970_X1370/.
+- [x] BUILD-245 (lead, 2026-11-07, Codex X-1372): AB-C01..C05 (URPGDodgeTiming::EndPlay restores the temporary StrongAttackMontages guard-counter override and clears the successful-block timestamp): GREEN 482/482. Raw: Docs/BossCombatReview/Execution/Claude/B_C971_X1372/.
+- [x] PIE ER-LATENCY (lead, 2026-11-07, C-971): pie_er_control_latency.py on legacy and data routes, all 11 cases recorded on both. R1 ~86 ms, R2 tap ~170 ms (fires on release), charged at 0.70 s on both, 0.36 s hold tick-quantized (legacy charged, data strong), dodge on release ~140 ms, double tap = quick roll. Raw: Docs/BossCombatReview/Execution/Claude/P_C971_ERLATENCY/ (SUMMARY.md).
+- [x] BUILD-246 (lead, 2026-11-07, Codex X-1376/X-1377): fail-closed import_er_clips.py (explicit IMPORT_CLIPS + GATE-07 ACCEPTED rows, offline 7/7) and DefaultGame.ini cook root /Game/OneBossFight/Player/Animations: GREEN 482/482, CookCoverage Success. Raw: Docs/BossCombatReview/Execution/Claude/B_C973_X1377/.
+- [x] BUILD-247 (lead, 2026-11-07, Codex X-1379): optional AirLightMontage/AirHeavyMontage (empty defaults, falling-only temporary FallingAttackMontages/StrongAttackMontages overrides): GREEN 483/483. Raw: Docs/BossCombatReview/Execution/Claude/B_C975_X1379/.
+- [x] PIE ER-AIR-FIELDS (lead, 2026-11-07, C-975): runtime-assigned AM_ER_Attack_Air_Light/AM_ER_Attack_Air_Heavy_Plunge, both routes. jump+R1 -> AM_ER_Attack_Air_Light (~55 ms), jump+R2 -> AM_ER_Attack_Air_Heavy_Plunge (~160 ms), grounded R1/R2 unchanged (Attack_PrimaryA/Ability_E). Not covered: a ground attack AFTER an air attack (array restore). Raw: Docs/BossCombatReview/Execution/Claude/P_C975_AIRFIELDS/.
+- [x] BUILD-248 (lead, 2026-11-07, Codex X-1380 + Lead test fixes): editor-only URPGMontageUtils::SetMontageSegmentRange + OneBossFight.Authoring.MontageSegmentRange. v1 C2248 (test wrote protected SequenceLength), v2 crash (UAnimMontage ctor already adds DefaultSlot; test appended a 2nd slot), v3 Lead assertion (setup dirties package); Lead fixed the test to slice the pack Dodge_To_Idle sequence via the ctor slot. v4 GREEN 484/484; Shipping target compiles.
+- [x] PIE ER-AIR-RESTORE (lead, 2026-11-07, C-978): air R1/R2 (runtime-assigned AM_ER montages) then grounded R1/R2 on both routes: ground R1=Attack_PrimaryA, R2=Ability_E after both air cases (arrays restored). Raw: Docs/BossCombatReview/Execution/Claude/B_C978_X1380/, P_C978_AIRRESTORE/.
+- [x] PIE ER-BACKSTEP (lead, 2026-11-07, C-980): runtime-assigned AM_ER_Backstep_Back (0.4667 s), both routes: standing dodge -> AM_ER_Backstep_Back (~128 ms), moving dodge (~480 cm/s, last input -1,0,0) -> Dodge_Small_Forward_Roll (quick), R1 unchanged. Probe note: injected IA_Move did NOT move the pawn (speed 0); the moving case uses pawn add_movement_input. Raw: Docs/BossCombatReview/Execution/Claude/P_C980_BACKSTEP/.
+
+## GuardCounter montage segment authoring and air-array restoration
+
+- `OneBossFight.Authoring.MontageSegmentRange` covers null/empty montage, invalid and out-of-source bounds, setting the accepted F10..F34 range (10/30..34/30 seconds), montage-length recomputation, and package dirtiness. BUILD-248 passes 484/484 and Shipping compiles (C-978); the Lead corrected the native fixture to use the constructor DefaultSlot and a pack sequence.
+- `Scripts/Editor/pie_er_air_restore.py` is the copied Lead PIE probe for both routes. C-978 reports that after each runtime-assigned air R1/R2 case and landing, grounded R1/R2 play Attack_PrimaryA/Ability_E on both routes. This is Lead PIE evidence, not a Codex run or proof of death/reset cleanup.
+
+## Queue AB C31–C35 offline tooling
+
+- `discover_focused_player_tests.py` reports five named offline player-contract files without importing them; current inventory is 19 methods in five groups. Fixture tests: 2/2.
+- `validate_queue_batches.py` validates AA-C01..50 and AB-C01..50, group order, and five task rows per AB batch. Current queue check: AA-C 50/50, AB-C 50/50; fixtures: 3/3.
+- `test_gate_script.py` now executes Gate.ps1 against harmless command stubs under a temporary project root containing spaces. Test file: 4/4. This is not a full gate run.
+## ER clip importer acceptance guard (2026-11-07)
+
+`Scripts/Editor/import_er_clips.py` requires an explicit `IMPORT_CLIPS` comma-list and fails before touching Content if the list is missing, malformed, duplicated, unknown, or not explicitly marked with an affirmative `ACCEPTED` / `DELIVERY ACCEPTED` status prefix in GATE-07. C-979 added prefix-negative regressions; focused offline tests pass 9/9 (X-1383). This checks selector/registry gating and source FBX availability only; it does not run Unreal or validate imported asset type, duration, montage construction, CookCoverage, or gameplay. Lead/Antigravity own those Editor/build checks.
+
+## Optional ER animation cook root (2026-11-07)
+
+`/Game/OneBossFight/Player/Animations` is explicitly included in `DirectoriesToAlwaysCook`; `Scripts/Tools/test_default_route_contract.py` checks that root plus Tier 2 roots. Run Lead native `OneBossFight.Content.CookCoverage`, then verify assigned AnimMontage assets in the staged package after import/creation. The offline check proves config text only; it does not prove a cook or package contains those assets.
+
+## Optional AirLight/AirHeavy montage routes (C-973, 2026-11-07)
+
+New pure native automation cases cover grounded and empty-reference fallback plus airborne light/heavy route selection. `Content.PackWiring` asserts both `AirLightMontage` and `AirHeavyMontage` default null. Focused static contracts cover route-to-array mapping and full array snapshot/restore. Run `python -m unittest Scripts.Tools.test_air_attack_wiring_contract Scripts.Tools.test_guard_counter_wiring_contract -q` (6 tests). Lead must compile/run native tests and PIE both routes with accepted montage assets, verify the pack selection/hit attribution and cleanup, and retain build ID/raw logs. No Codex build/PIE.
+
+## Queue AB AB-C36–C40 control and animation documentation (2026-11-07)
+
+Canonical gamepad mappings and asset review gates are reconciled in `Documentation/Boss/AB_C36_C39_CONTROL_ANIMATION_RECONCILIATION.md`; QA flow is `Documentation/Boss/ER_INPUT_TROUBLESHOOTING.md`. C-978 reports Lead PIE verified grounded R1/R2 restoration after each optional air attack on both routes; this is Lead evidence, not a Codex run. Static lifecycle review found no explicit player death/reset montage-cancel hook or corresponding live test; retain as unverified. The offline suite wrapper default is now 20 seconds following C-978's 9.2 second in-build run; no tests were run by Codex in this batch.
+
+## Queue AB AB-C41–C45 milestone and handoff (2026-11-07)
+
+`Documentation/Boss/AB_C41_C45_MILESTONE_AND_HANDOFF.md` reconciles dated receipts: BUILD-246 482/482, BUILD-247 483/483, BUILD-248 484/484 + Shipping compile (C-978); C-975 air-field PIE and C-978 post-air restoration PIE on both routes; A-590's separate offline suite 419 OK/1 skipped; X-1383 importer fixture 9/9. A-590 reports all four ER montage trims match accepted lengths; A-591 adds the remaining Tier 2 assets. Owner review, saved-field assignment, and Lead runtime verification remain pending. Round 6 Phase 2 remains owner-parked. Queue AC is drafted at 50 tasks / ten batches; no build, PIE, or full suite was run by Codex.
+
+## Queue AC AC-C01–AC-C05 — ER asset acceptance
+
+`Documentation/Boss/AC_C01_C05_ER_ASSET_ACCEPTANCE_AUDIT.md` records strict importer status prefixes (focused fixture 9/9), A-589/A-590 range readbacks for all four clips, editor-only montage-helper validation boundaries, empty-default field assertions, and owner hand-test prerequisites. No Editor/build/PIE by Codex; Antigravity's asset readbacks and Lead's BUILD-248 remain separate evidence.
+
+## Queue AB AB-C46–C50 cross-check and handoff (2026-11-07)
+
+`Documentation/Boss/AB_C46_C50_FINAL_CROSSCHECK_HANDOFF.md` updates ER restore/trim prerequisites from C-978/A-589/A-590 and Tier 2 asset creation status from A-591. Queue AB C01–C50 is closed; AC-C01–C05 are complete and AC-C06–C10 are next. No fresh test, build, Editor, or PIE run by Codex.
+
+## C-980 moving-input probe hotfix
+
+C-980 found that synthetic `IA_Move` injection left player speed/input at zero, invalidating prior `dodge_moving_tap` observations. Both PIE drivers now include active moving-dodge cases using per-tick `pawn.add_movement_input(pawn.get_actor_forward_vector(), 1.0, True)` from time zero to press at 0.30 s; logs record speed and last movement input. KI-196 tracks corrected Lead reruns on both routes. A-592 delivered requested Tier 2 preview evidence; Claude acceptance review and Lead runtime verification remain pending. No PIE run by Codex.
+
+## Queue AC AC-C06–C10 — player montage lifecycle audit
+
+`Documentation/Boss/AC_C06_C10_PLAYER_ATTACK_LIFECYCLE_AUDIT.md` maps player component teardown, boss-only attack tracking, boss-side reset montage stop, temporary ability-array restoration, and current native/offline/live coverage. No explicit general player death/reset attack-montage stop hook or test was found; this remains unverified behavior, not a confirmed defect. Lead observation matrix specifies retained evidence. No Unreal/test/build/PIE run by Codex.
+
+## Queue AC AC-C11–C15 — guard and counter evidence
+
+`Documentation/Boss/AC_C11_C15_GUARD_COUNTER_EVIDENCE.md` reconciles the owner's C-953 confirmation with invalid prior probes, maps accepted guarded contact through the counter timestamp/R2 consume and optional montage fallback, and defines the Lead receipt. Two executor call sites were found; this does not prove every damage route reaches them. The 0.60 s counter window remains a proposal. No runtime/test/build/PIE run by Codex.

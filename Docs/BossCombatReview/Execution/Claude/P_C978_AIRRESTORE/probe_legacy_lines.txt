@@ -1,0 +1,14 @@
+﻿[2026.11.07-08.48.16:704][  0]LogPython: [ERAirRestore] driver registered; waits for airborne montage end and landing before ground R1/R2 follow-ups
+[2026.11.07-08.48.17:369][  5]LogPython: [ERAirRestore] route=legacy (H019_ENCOUNTER_DEFINITION unset)
+[2026.11.07-08.48.26:169][206]LogPython: [ERAirRestore] setup boss held=True player_distance_cm=900
+[2026.11.07-08.48.26:191][206]LogPython: [ERAirRestore] assigned air_light=AM_ER_Attack_Air_Light air_heavy=AM_ER_Attack_Air_Heavy_Plunge
+[2026.11.07-08.48.42:404][805]LogPython: [ERAirRestore] input_context_active=True
+[2026.11.07-08.48.42:431][806]LogPython: [ERAirRestore] case=air_R1_then_ground_R1_R2 baseline=(None, None)
+[2026.11.07-08.48.42:819][821]LogPython: [ERAirRestore] sample case=air_R1_then_ground_R1_R2 montage=AM_ER_Attack_Air_Light position=0.025 observed_ms=79.01 tick_s=0.02751
+[2026.11.07-08.48.44:507][886]LogPython: [ERAirRestore] ground_result case=air_R1_then_ground_R1_R2 label=ground_R1 montage=Attack_PrimaryA_Montage falling=False
+[2026.11.07-08.48.46:115][945]LogPython: [ERAirRestore] ground_result case=air_R1_then_ground_R1_R2 label=ground_R2 montage=Ability_E_Anim_Montage falling=False
+[2026.11.07-08.48.50:621][118]LogPython: [ERAirRestore] case=air_R2_then_ground_R1_R2 baseline=(None, None)
+[2026.11.07-08.48.51:113][137]LogPython: [ERAirRestore] sample case=air_R2_then_ground_R1_R2 montage=AM_ER_Attack_Air_Heavy_Plunge position=0.023 observed_ms=182.27 tick_s=0.02901
+[2026.11.07-08.48.52:694][198]LogPython: [ERAirRestore] ground_result case=air_R2_then_ground_R1_R2 label=ground_R1 montage=Attack_PrimaryA_Montage falling=False
+[2026.11.07-08.48.54:303][260]LogPython: [ERAirRestore] ground_result case=air_R2_then_ground_R1_R2 label=ground_R2 montage=Ability_E_Anim_Montage falling=False
+[2026.11.07-08.48.58:814][435]LogPython: [ERAirRestore] finished: all control samples recorded

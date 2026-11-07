@@ -1,0 +1,14 @@
+Clip: Attack_GuardCounter
+Length: 0.800
+FPS: 30
+Frames: 25 (0 to 24)
+Loop: No (One-shot)
+RootMotion: Yes (Forward straight: (0, 0, 0) to (0, 100, 0) cm in Unreal coordinates, ry=0.0 to -1.0m in Blender)
+RootYaw: 0.0 (Facing strictly preserved throughout)
+WindupEnd: 0.300 (Frame 9)
+HitWindowStart: 0.333 (Frame 10)
+Impact: 0.433 (Frame 13)
+HitWindowEnd: 0.533 (Frame 16)
+RecoverEnd: 0.800 (Frame 24)
+ArmatureHeight: 1.786 m (~180 cm for SK_CombatMannequin)
+Notes: Elden Ring style guard counter attack (ER-A4). Triggers immediately following a successful shield block. Character absorbs impact in guard pose (F0), coils torso and initiates an explosive 100 cm forward step (F4-F9), unleashing a forceful horizontal counter-slash with maximum extension at impact F13 (0.433 s). Follow-through settles cleanly back into combat idle.

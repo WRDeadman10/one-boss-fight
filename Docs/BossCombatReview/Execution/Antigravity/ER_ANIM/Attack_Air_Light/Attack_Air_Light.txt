@@ -1,0 +1,14 @@
+Clip: Attack_Air_Light
+Length: 0.567
+FPS: 30
+Frames: 18 (0 to 17)
+Loop: No (One-shot)
+RootMotion: None (In-place; airborne attack driven by jump physics)
+RootYaw: 0.0 (Facing strictly preserved throughout)
+AirborneWindupEnd: 0.133 (Frame 4)
+HitWindowStart: 0.200 (Frame 6)
+Impact: 0.233 (Frame 7)
+HitWindowEnd: 0.333 (Frame 10)
+RecoverEnd: 0.567 (Frame 17)
+ArmatureHeight: 1.786 m (~180 cm for SK_CombatMannequin)
+Notes: Elden Ring style jump light attack (ER-A2). Initiated mid-air (R1 while jumping), distinct from the ground attack. Character coils upper torso in jump apex (F0-F4) and executes a swift one-handed diagonal air slash across the body with impact at F7 (0.233 s). Follow-through blends seamlessly into falling loop or ground touchdown.

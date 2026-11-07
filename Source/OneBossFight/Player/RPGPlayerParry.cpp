@@ -164,7 +164,7 @@ void URPGPlayerParry::NotifyParried(AActor* Actor)
 				{
 					const URPGCombatParticipant* Participant = Actor->FindComponentByClass<URPGCombatParticipant>();
 					const TSharedPtr<const FRPGParticipantConfig> PlayerConfig = Participant ? Participant->Config() : nullptr;
-					Legend->HandlePlayerParrySlowMotion(Parry->LastGrade, PlayerConfig.IsValid() ? &PlayerConfig->ParrySlowMotion : nullptr);
+					Legend->HandlePlayerParrySlowMotion(Parry->LastGrade, PlayerConfig.IsValid() ? &PlayerConfig->ParrySlowMotion : nullptr, Actor);
 				}
 			}
 		}

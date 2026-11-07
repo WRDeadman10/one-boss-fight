@@ -1,0 +1,13 @@
+Clip: Backstep_Back
+Length: 0.467
+FPS: 30
+Frames: 15 (0 to 14)
+Loop: No (One-shot)
+RootMotion: Yes (Backward straight: (0, 0, 0) to (0, -200, 0) cm in Unreal coordinates, ry=0.0 to 2.0m in Blender)
+RootYaw: 0.0 (Facing strictly preserved throughout)
+IFrameStart: 0.067 (Frame 2)
+IFrameEnd: 0.267 (Frame 8)
+InputBufferOpen: 0.267 (Frame 8)
+RecoverEnd: 0.467 (Frame 14)
+ArmatureHeight: 1.786 m (~180 cm for SK_CombatMannequin)
+Notes: Elden Ring style stationary dodge backstep (ER-A1). Character performs a grounded hop straight backward covering exactly 200 cm of root motion while maintaining forward combat facing. Low body crouch into swift airborne hop; landing cushioned without foot sliding; settles seamlessly into idle stance.
