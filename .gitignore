@@ -186,3 +186,20 @@ Docs/BossCombatReview/Execution/Claude/B_QA001/full_raw-backup-2026.10.31-15.51.
 Docs/BossCombatReview/Execution/Claude/R5_BENCH_20261105/bench_results_round5.zip
 Docs/BossCombatReview/Execution/Claude/R5_BENCH_20261105/evidence_sha256.txt
 Docs/BossCombatReview/Execution/Codex/H019_ORDER/current_log.txt
+
+
+# Untracked historical framework proof assets (owner 2026-11-07, C-953 / C-974)
+Content/OneBossFight/FrameworkProof/DA_Sevarog_ComboOutcome_FAG23.uasset
+Content/OneBossFight/FrameworkProof/DA_Sevarog_ComboOutcome_FAG23b.uasset
+Content/OneBossFight/FrameworkProof/DA_Sevarog_ComboOutcome_FAG23c.uasset
+Content/OneBossFight/FrameworkProof/DA_Sevarog_ComboOutcome_FAG23d.uasset
+Content/OneBossFight/FrameworkProof/DA_Sevarog_NeutralStrafe_SEL008.uasset
+Content/OneBossFight/FrameworkProof/L_SevarogFrameworkProofComboOutcomeFAG23.umap
+Content/OneBossFight/FrameworkProof/L_SevarogFrameworkProofComboOutcomeFAG23b.umap
+Content/OneBossFight/FrameworkProof/L_SevarogFrameworkProofComboOutcomeFAG23c.umap
+Content/OneBossFight/FrameworkProof/L_SevarogFrameworkProofComboOutcomeFAG23d.umap
+Content/OneBossFight/FrameworkProof/L_SevarogFrameworkProofStrafeBlockerSEL008.umap
+Content/OneBossFight/FrameworkProof/L_SevarogFrameworkProofStrafeBlockerSEL008b.umap
+Content/OneBossFight/FrameworkProof/L_SevarogFrameworkProofStrafeBlockerSEL008c.umap
+Content/OneBossFight/FrameworkProof/L_SevarogFrameworkProofStrafeNoWallSEL008.umap
+Content/OneBossFight/FrameworkProof/L_SevarogFrameworkProofStrafeNoWallSEL008c.umap
