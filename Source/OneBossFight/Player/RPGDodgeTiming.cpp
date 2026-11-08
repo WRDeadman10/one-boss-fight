@@ -4,6 +4,7 @@
 #include "Player/RPGAirAttackRules.h"
 #include "Player/RPGGuardCounterRules.h"
 #include "Player/RPGDodgeInputRules.h"
+#include "Player/RPGDodgeActivationRules.h"
 #include "Player/RPGStartupChronology.h"
 #include "Player/RPGFlipbookEffect.h"
 #include "Player/RPGBossDamage.h"
@@ -68,6 +69,12 @@ void URPGDodgeTiming::BeginPlay()
 	{
 		AirHeavyMontage.LoadSynchronous();
 	}
+	if (!BackstepMontage.IsNull())
+	{
+		LoadedBackstepMontage = BackstepMontage.LoadSynchronous();
+		UE_LOG(LogRPGDodge, Log, TEXT("%s: default backstep preloaded (%s)"), *GetOwner()->GetName(),
+			LoadedBackstepMontage ? *LoadedBackstepMontage->GetName() : TEXT("unavailable"));
+	}
 	TryBind();
 }
 
@@ -131,6 +138,52 @@ void URPGDodgeTiming::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	if (!CachedAbility.IsValid())
 	{
 		CachedAbility = FindDodgeAbility();
+	}
+	const UWorld* DodgeWorld = GetWorld();
+	if (PendingDodgeActivationRetryPress > 0 && DodgeWorld
+		&& DodgeWorld->GetTimeSeconds() > PendingDodgeActivationRetryAfterTime + KINDA_SMALL_NUMBER)
+	{
+		UObject* DiagnosticAbility = FindDodgeAbility();
+		const bool bDiagnosticActive = DiagnosticAbility && IsAbilityActive(DiagnosticAbility);
+#if UE_BUILD_DEVELOPMENT
+		double Stamina = 0.0;
+		const bool bStaminaRead = RPGPack::ReadAttribute(GetOwner(), TEXT("Attribute.Stamina"), false, Stamina);
+		UE_LOG(LogRPGDodge, Display, TEXT("first_dodge_activation_trace stage=next_component_tick press=%d ability=%s active=%d stamina_read=%d stamina=%.2f state={%s}"),
+			PendingDodgeActivationDiagnosticPress, DiagnosticAbility ? *DiagnosticAbility->GetClass()->GetName() : TEXT("missing"),
+			bDiagnosticActive ? 1 : 0, bStaminaRead ? 1 : 0, Stamina, *DescribeGuardState());
+#endif
+		const bool bRetry = RPGDodgeActivationRules::ShouldRetryFirstPress(
+			PendingDodgeActivationRetryPress == 1,
+			bPendingDodgeActivationCanActivate,
+			bDiagnosticActive,
+			bFirstDodgeActivationRetryAttempted);
+		if (bRetry)
+		{
+			// Claim the one-shot before invoking Blueprint: an activation callback may re-enter this component.
+			bFirstDodgeActivationRetryAttempted = true;
+			bool bMethodCalled = false;
+			bool bReturnRead = false;
+			const bool bActivated = TryActivateDodgeAbilityByClass(DiagnosticAbility, bMethodCalled, bReturnRead);
+			const bool bActiveAfter = DiagnosticAbility && IsAbilityActive(DiagnosticAbility);
+			const bool bBufferConsumed = (bActivated || bActiveAfter) && ConsumeBufferedDodgeInput();
+#if UE_BUILD_DEVELOPMENT
+			UE_LOG(LogRPGDodge, Display, TEXT("first_dodge_activation_retry press=%d path=TryActivateAbilityByClass method_called=%d result_read=%d activated=%d active_after=%d buffer_consumed=%d force=0"),
+				PendingDodgeActivationRetryPress, bMethodCalled ? 1 : 0,
+				bReturnRead ? 1 : 0, bActivated ? 1 : 0, bActiveAfter ? 1 : 0, bBufferConsumed ? 1 : 0);
+#endif
+		}
+		else
+		{
+#if UE_BUILD_DEVELOPMENT
+			UE_LOG(LogRPGDodge, Display, TEXT("first_dodge_activation_retry press=%d path=none active=%d can_activate=%d already_attempted=%d"),
+				PendingDodgeActivationRetryPress, bDiagnosticActive ? 1 : 0,
+				bPendingDodgeActivationCanActivate ? 1 : 0, bFirstDodgeActivationRetryAttempted ? 1 : 0);
+#endif
+		}
+		PendingDodgeActivationDiagnosticPress = 0;
+		PendingDodgeActivationRetryPress = 0;
+		bPendingDodgeActivationCanActivate = false;
+		PendingDodgeActivationRetryAfterTime = -1.0;
 	}
 	UObject* Ability = CachedAbility.Get();
 	const bool bActive = Ability && IsAbilityActive(Ability);
@@ -239,6 +292,76 @@ UObject* URPGDodgeTiming::FindDodgeAbility() const
 		}
 	}
 	return nullptr;
+}
+
+bool URPGDodgeTiming::TryActivateDodgeAbilityByClass(UObject* Ability, bool& bMethodCalled, bool& bReturnRead)
+{
+	bMethodCalled = false;
+	bReturnRead = false;
+	UObject* Asc = FindComponentByClassName(GetOwner(), TEXT("BP_AdvancedAbilitySystemComponent_C"));
+	if (!Asc || !Ability)
+	{
+		return false;
+	}
+	UFunction* ActivationFunction = Asc->FindFunction(FName(TEXT("Try Activate Ability by Class")));
+	const FProperty* AbilityClassParam = ActivationFunction ? ActivationFunction->FindPropertyByName(TEXT("InAbilityClass")) : nullptr;
+	if (!CastField<FClassProperty>(AbilityClassParam) && !CastField<FObjectProperty>(AbilityClassParam))
+	{
+		return false;
+	}
+	bool bClassInputSet = false;
+	bool bActivated = false;
+	bMethodCalled = CallBlueprintFunction(Asc, ActivationFunction,
+		[&](UFunction& Function, uint8* Params)
+		{
+			if (const FClassProperty* ClassProp = CastField<FClassProperty>(Function.FindPropertyByName(TEXT("InAbilityClass"))))
+			{
+				ClassProp->SetPropertyValue_InContainer(Params, Ability->GetClass());
+				bClassInputSet = true;
+			}
+			else if (const FObjectProperty* ObjectProp = CastField<FObjectProperty>(Function.FindPropertyByName(TEXT("InAbilityClass"))))
+			{
+				ObjectProp->SetObjectPropertyValue(ObjectProp->ContainerPtrToValuePtr<void>(Params), Ability->GetClass());
+				bClassInputSet = true;
+			}
+			if (const FBoolProperty* Force = CastField<FBoolProperty>(Function.FindPropertyByName(TEXT("bForceActivation"))))
+			{
+				Force->SetPropertyValue_InContainer(Params, false);
+			}
+		},
+		[&](UFunction& Function, uint8* Params)
+		{
+			for (TFieldIterator<FBoolProperty> It(&Function); It; ++It)
+			{
+				if (It->HasAnyPropertyFlags(CPF_OutParm | CPF_ReturnParm) && !It->HasAnyPropertyFlags(CPF_ReferenceParm))
+				{
+					bActivated = It->GetPropertyValue_InContainer(Params);
+					bReturnRead = true;
+					break;
+				}
+			}
+		});
+	return bMethodCalled && bClassInputSet && bReturnRead && bActivated;
+}
+
+bool URPGDodgeTiming::ConsumeBufferedDodgeInput() const
+{
+	UObject* Buffer = FindComponentByClassName(GetOwner(), TEXT("BP_InputBufferComponent_C"));
+	const FGameplayTag Tag = FGameplayTag::RequestGameplayTag(DodgeInputTag, false);
+	if (!Buffer || !Tag.IsValid())
+	{
+		return false;
+	}
+	return CallBlueprintFunction(Buffer, TEXT("Add Consumed Buffer Key"),
+		[&](UFunction& Function, uint8* Params)
+		{
+			SetTag(Function, Params, TEXT("InputTag"), Tag);
+			if (const FBoolProperty* Value = CastField<FBoolProperty>(Function.FindPropertyByName(TEXT("Value"))))
+			{
+				Value->SetPropertyValue_InContainer(Params, true);
+			}
+		},
+		[](UFunction&, uint8*) {});
 }
 
 bool URPGDodgeTiming::IsAbilityActive(UObject* Ability) const
@@ -394,6 +517,37 @@ void URPGDodgeTiming::OnDodgePressed(const FInputActionInstance& Instance)
 	bLastPressFull = bDoubleTapLongRoll && LastPressGap <= DoubleTapWindow;
 	LastPressTime = Now;
 	++PressCount;
+	if (PressCount == 1)
+	{
+		bool bCanActivateValue = false;
+		bool bCanActivateReturnRead = false;
+		const bool bCanActivateCalled = CallBlueprintFunction(Ability, TEXT("Can Activate Ability?"),
+			[](UFunction&, uint8*) {},
+			[&](UFunction& Function, uint8* Params)
+			{
+				for (TFieldIterator<FBoolProperty> It(&Function); It; ++It)
+				{
+					if (It->HasAnyPropertyFlags(CPF_OutParm | CPF_ReturnParm))
+					{
+						bCanActivateValue = It->GetPropertyValue_InContainer(Params);
+						bCanActivateReturnRead = true;
+						break;
+					}
+				}
+			});
+		bPendingDodgeActivationCanActivate = bCanActivateCalled && bCanActivateReturnRead && bCanActivateValue;
+		PendingDodgeActivationRetryPress = PressCount;
+		PendingDodgeActivationRetryAfterTime = Now;
+#if UE_BUILD_DEVELOPMENT
+		double Stamina = 0.0;
+		const bool bStaminaRead = RPGPack::ReadAttribute(GetOwner(), TEXT("Attribute.Stamina"), false, Stamina);
+		UE_LOG(LogRPGDodge, Display, TEXT("first_dodge_activation_trace stage=before_project_dodge_handler press=%d ability=%s active=%d can_activate_called=%d can_activate_return_read=%d can_activate=%d stamina_read=%d stamina=%.2f state={%s}"),
+			PressCount, *Ability->GetClass()->GetName(), IsAbilityActive(Ability) ? 1 : 0,
+			bCanActivateCalled ? 1 : 0, bCanActivateReturnRead ? 1 : 0, bCanActivateValue ? 1 : 0,
+			bStaminaRead ? 1 : 0, Stamina, *DescribeGuardState());
+		PendingDodgeActivationDiagnosticPress = PressCount;
+#endif
+	}
 	UAnimMontage* Quick = QuickMontage.LoadSynchronous();
 	UAnimMontage* Full = FullMontage.LoadSynchronous();
 	if (!Quick || !Full)
@@ -403,7 +557,7 @@ void URPGDodgeTiming::OnDodgePressed(const FInputActionInstance& Instance)
 
 	const bool bActive = IsAbilityActive(Ability);
 	// Elden Ring style backstep (optional clip): no direction input means a hop straight back that keeps facing, whatever the press gap. A running full roll is not interrupted.
-	if (UAnimMontage* Backstep = BackstepMontage.IsNull() ? nullptr : BackstepMontage.LoadSynchronous())
+	if (UAnimMontage* Backstep = LoadedBackstepMontage ? LoadedBackstepMontage.Get() : (BackstepMontage.IsNull() ? nullptr : BackstepMontage.LoadSynchronous()))
 	{
 		if (RPGDodgeInputRules::DecideTap(!HasNoDirectionInput(), true) == RPGDodgeInputRules::EDodgeTapDecision::Backstep && !(bActive && Selected == EKind::Full))
 		{

@@ -37,6 +37,25 @@ class AirAttackWiringContractTests(unittest.TestCase):
         self.assertIn("FindFProperty<FArrayProperty>(Ability->GetClass(), Backup.PropertyName)", source)
         self.assertIn("MontageArray->ImportText_Direct", source)
 
+    def test_runtime_default_and_tier2_packages_are_listed_for_cook_manifest_review(self):
+        required = (ROOT / "Scripts/Tools/er_tier2_required_cook_assets.txt").read_text(encoding="utf-8")
+        expected = (
+            "/Game/OneBossFight/Player/Animations/AM_ER_Backstep_Mixamo_V2",
+            "/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter",
+            "/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Light",
+            "/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Heavy_Plunge",
+            "/Game/OneBossFight/Boss01/Animations/AM_Boss01_ParryRecoil",
+            "/Game/OneBossFight/VFX/NS_Boss_PhaseTwoAura",
+            "/Game/OneBossFight/Effects/PPM_ParryDistortion",
+            "/Game/OneBossFight/Data/MPC_CombatFeedback",
+        )
+        for path in expected:
+            self.assertIn(path, required)
+        self.assertNotIn("AM_ER_Backstep_Back", required)
+        package_checker = (ROOT / "Scripts/Tools/check_g044_cook_manifest.py").read_text(encoding="utf-8")
+        self.assertIn("--required", package_checker)
+        self.assertIn("--manifest", package_checker)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -2,14 +2,14 @@
 
 Owner request (chat, 2026-11-06): "full player control like Elden Ring with the same animation. A single press of the dodge button rolls in the current game; in Elden Ring it does not, it only moves away while standing. Jump attack, light attack and heavy attack have different animations." Antigravity is available for Blender animation.
 
-Status (C-1021 / BUILD-255): the owner approved the reel and ordered the ER clips implemented. `URPGDodgeTiming` now defaults all four optional montage paths to the imported `AM_ER` assets; `PackWiring` asserts they load, and BUILD-255 passed 484/484. This is a Source default and build result, not yet a fresh saved-asset/PIE/package acceptance after wiring. Earlier C-1004 PIE r5 confirmed runtime-assigned AirLight -16.0 HP and AirHeavy -22.4 HP on both routes. Guard-counter live hit remains open, as does the C-971 0.36 s R2 route split (KI-192) and the corrected moving-case probe (KI-196). Tier 2 presentation is separately gated; the reel approval does not establish its in-game appearance. Scope is the single-player duel only. No pack asset was deleted or recreated.
+Status (C-1060/C-1063): owner approved `AM_ER_Backstep_Mixamo_V2` as the default backstep. The earlier hand-built `AN/AM_ER_Backstep_Back` is rejected and remains unreferenced in Content. A-640/C-1059 report a 0.567 s two-foot hop, root-bone travel, and the owner-approved showcase clip. Lead BUILD-260 passed 485/485 and no-assignment PIE confirms V2; reps 2/3 moved 84/88 cm without a snap. C-1063 BUILD-261 passed 485/485 but preload/map priming did not fix the first post-draw press (0 cm; later reps 96.6/97.8 cm). Default-wired standing and moving acceptance remains open pending activation diagnostics and fresh Lead probes (KI-199/KI-196). Earlier C-1004 runtime-assigned AirLight/AirHeavy and C-1042 default-wired attack proof retain their own scopes; KI-193 package gate remains open. Scope is the single-player duel only. No pack asset was deleted or recreated.
 
 ## 1. Last measured behavior and current Source defaults
 
 | Control | Today | Source |
 |---|---|---|
 | Dodge tap, moving | Quick roll, `Dodge_Small_Forward_Roll_Montage` 0.43 s about 3 m, i-frames 0.107..0.49 of the 0.667 s clip. C-980's retained backstep probe logged 486.8 cm/s legacy and 474.2 cm/s data with last input `(-1,0,0)` before press, then the quick roll. Earlier zero-speed injected samples are invalid. | DECISIONS "Dodge: tap quick"; `P_C980_BACKSTEP/probe_legacy_lines.txt` and `probe_data_lines.txt`; KI-196 |
-| Dodge tap, standing (no direction input) | Pre-BUILD-255 PIE saw the pack roll. BUILD-255 now defaults `BackstepMontage` to `AM_ER_Backstep_Back`; a fresh PIE run is needed to prove the new standing behavior. | C-971; C-1021 / `RPGDodgeTiming.cpp:41` |
+| Dodge tap, standing (no direction input) | Source default is `AM_ER_Backstep_Mixamo_V2`. Lead no-assignment PIE shows reps 2/3 moving backward 84/88 cm with no snap; first press after R2 draw failed 2/2 and is under test-first hotfix verification. | C-1060/C-1061; `RPGDodgeTiming.cpp`; KI-199; `Documentation/Boss/AN_C01_C05_FIRST_DODGE.md` |
 | Dodge double tap | `bDoubleTapLongRoll` defaults false; second tap selects quick again. The pack ability may buffer or drop it while a dodge is active. | `RPGDodgeTiming.h`, `RPGDodgeTiming.cpp::OnDodgePressed` |
 | Dodge hold | Sprint (pack `GA_PlayerSprint`) | DECISIONS |
 | Jump light attack | BUILD-255 defaults `AirLightMontage` to `AM_ER_Attack_Air_Light`; falling R1 temporarily overrides the pack array. C-1004's runtime-assigned two-route hit proof precedes this default wiring; fresh PIE remains due. | C-1021 / `RPGDodgeTiming.cpp:43`; C-1004 |
@@ -19,7 +19,7 @@ Status (C-1021 / BUILD-255): the owner approved the reel and ordered the ER clip
 
 Canonical intended gamepad mapping: R1 `Gamepad_RightShoulder` -> `IA_ER_Light` -> light on press; R2 `Gamepad_RightTrigger` -> `IA_ER_HeavyTap` tap -> strong, and hold -> charged. C-944/C-945 and `ER_INPUT_DUMP/update2/editor_raw.log` establish mapping intent; C-971 qualifies the observed 0.36 s boundary behavior. C-975 confirms grounded R1/R2 remain on pack routes and optional air routes played when assigned at runtime. C-978 confirms ground R1/R2 array restoration after each air case. The restore-after-air probe is `Scripts/Editor/pie_er_air_restore.py`. See `AA_C31_C34_INPUT_TIMING_AND_FEEL_AUDIT.md` for timing evidence and limits.
 
-All four optional fields now have nonempty Source defaults under C-1021. Clearing a field still restores the pack fallback. C-975/C-1004 exercised runtime assignments before BUILD-255; those runs do not prove the newly default-wired gameplay route.
+All four ER action fields have nonempty Source defaults; the backstep field was replaced with the owner-approved V2 in BUILD-260. Clearing an optional field still restores the pack fallback. Attack runtime-assignment results before BUILD-255 do not prove newly default-wired gameplay; the first-dodge-after-draw failure also remains open until Lead's post-hotfix PIE.
 
 ## 2. Target (Elden Ring behaviour, owner's wording)
 
@@ -38,7 +38,7 @@ Common rules: UE mannequin skeleton used by `SK_CombatMannequin` (reuse the expo
 
 | ID | Clip | Length | Root motion | Notify frames to report |
 |---|---|---|---|---|
-| ER-A1 | `Backstep_Back` | 0.40 to 0.50 s | about 180 to 220 cm straight back (opposite the rig's forward axis, as the pack's root motion defines it; facing unchanged) | i-frame window (target 0.05 to 0.28 s), input buffer open, recover end |
+| ER-A1 | `Backstep_Mixamo_V2` (owner-approved; C-1060) | 0.567 s | Root-track travel -156.75 cm backward Y; Lead PIE reps 2/3 move 84/88 cm without pop; facing unchanged | A-640 readback: i-frames 0.091+0.323 s, InputBuffer 0.198+0.369 s; 0 SetDesiredRotation |
 | ER-A2 | `Attack_Air_Light` | 0.50 to 0.65 s | none (the character is airborne) | hit window start/end, recovery |
 | ER-A3 | `Attack_Air_Heavy_Plunge` | 0.75 to 0.95 s | none; the pose must read correctly when the character lands mid-clip | hit window (start of the downswing to the landing), landing impact frame |
 

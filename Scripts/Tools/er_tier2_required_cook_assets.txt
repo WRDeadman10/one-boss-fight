@@ -1,0 +1,10 @@
+# Owner-approved ER runtime defaults and Tier 2 presentation assets.
+# Feed this exact package list plus a manifest exported from the package under review.
+/Game/OneBossFight/Player/Animations/AM_ER_Backstep_Mixamo_V2
+/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter
+/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Light
+/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Heavy_Plunge
+/Game/OneBossFight/Boss01/Animations/AM_Boss01_ParryRecoil
+/Game/OneBossFight/VFX/NS_Boss_PhaseTwoAura
+/Game/OneBossFight/Effects/PPM_ParryDistortion
+/Game/OneBossFight/Data/MPC_CombatFeedback

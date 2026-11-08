@@ -2,7 +2,7 @@
 
 **Author:** Antigravity (Lane A)  
 **Date:** 2026-11-07  
-**Status:** Owner approved the 7-item reel and ordered implementation (C-1021); this pack remains the visual reference. C-1042 proved default-wired ground/air hits in PIE; package and owner full-fight review remain pending.  
+**Status:** Owner approved the 7-item reel and ordered implementation (C-1021); on C-1060 the owner specifically approved `AM_ER_Backstep_Mixamo_V2` as the backstep default. The earlier `AN/AM_ER_Backstep_Back` hand-built clip was rejected and remains unreferenced. C-1061 reports reps 2/3 moving, but the first standing dodge after R2 draw fails; KI-199's post-hotfix PIE remains open. Other package and full-fight review gates remain separate.
 **Reference Directives:** `[C-968]`, `[C-977]`, `[C-982]`, `[C-985]`, `[C-998]`, `[C-1004]`, `[C-1009]`, `[C-1010]`, `[C-1011]`, `[C-1012]`, `[C-1013]`, `[C-1018]`
 
 ---
@@ -12,7 +12,7 @@
 - **Complete Review Reel:** [OWNER_REEL.mp4](../../Docs/BossCombatReview/Execution/Antigravity/OWNER_REEL.mp4) (1920x1080, H.264, 32.27 s, 3.73 MB; all 7 moves/assets in pack order with 1.5 s title cards)
 - **7-Frame Mid-Frame Strip:** [strip_owner_reel.png](../../Docs/BossCombatReview/Execution/Antigravity/strip_owner_reel.png) (one mid-frame per reviewed asset)
 - **In-game review sheet:** [FIGHT_VIDEO_REVIEW.md](FIGHT_VIDEO_REVIEW.md) (seven unchecked rows for the approved looks in a full-fight capture)
-- **BUILD-255 full-fight capture:** [fight_review.mp4](../../Docs/BossCombatReview/Execution/Claude/P_FIGHTVIDEO/fight_review.mp4) (Lead C-1030; A-628 technical review, owner boxes remain unchecked). First six source PNGs are black; a trim-six ASS/concat input is prepared, but no revised MP4 is reviewed. C-1044 camera trace found arena walls/pillars and boss fill, not boss-caused occlusion; no camera Source change. Guard counter and Tier 2 do not appear in this capture, and the A4 guard hotfix awaits Lead build/probe.
+- **BUILD-259 full-fight capture:** [fight_review2.mp4](../../Docs/BossCombatReview/Execution/Claude/P_FIGHTVIDEO/fight_review2.mp4) (data route; Antigravity's technical observations are indexed in [FIGHT_VIDEO_REVIEW2_AG.md](FIGHT_VIDEO_REVIEW2_AG.md)). Owner full-fight ticks remain pending; do not transfer the earlier BUILD-255 black-first-six finding to this capture. Codex's source/test-boundary audit is in [AN_C36_C40_VIDEO_REVIEW_HANDOFF.md](AN_C36_C40_VIDEO_REVIEW_HANDOFF.md).
 
 ---
 
@@ -23,7 +23,7 @@ The ER-A3 health-damage figure below is from the runtime-assigned C-1004 r5 resu
 | Asset ID | Action | What to Look At | Accepted Verdict | Review Video | 6-Frame Strip |
 |:---:|---|---|:---:|:---:|:---:|
 | **ER-A4** | `Attack_GuardCounter` | 0.800 s counter cleave; upward diagonal slash clearing shield boundary; right-to-left follow-through. | `C-968` | [review_Attack_GuardCounter.mp4](../../Docs/BossCombatReview/Execution/Antigravity/ER_ANIM/Attack_GuardCounter/review_Attack_GuardCounter.mp4) | [strip_Attack_GuardCounter.png](../../Docs/BossCombatReview/Execution/Antigravity/ER_ANIM/Attack_GuardCounter/strip_Attack_GuardCounter.png) |
-| **ER-A1** | `Backstep_Back` | 0.467 s neutral backward hop; backward stride with feet planted; sword held pointing straight up; zero yaw change. | `C-977` | [review_Backstep_Back.mp4](../../Docs/BossCombatReview/Execution/Antigravity/ER_ANIM/Backstep_Back/review_Backstep_Back.mp4) | [strip_Backstep_Back.png](../../Docs/BossCombatReview/Execution/Antigravity/ER_ANIM/Backstep_Back/strip_Backstep_Back.png) |
+| **ER-A1** | `Backstep_Mixamo_V2` | 0.567 s crouched two-foot backward hop, root motion moves the capsule; owner-approved default. First post-R2-draw press failure remains open (KI-199). | `C-1059` / `C-1060` / `C-1061` | [Lead in-game clip](../../Docs/BossCombatReview/Execution/Claude/P_SHOWCASE/backstep_mixamo_clip.mp4) | [six-frame strip](../../Docs/BossCombatReview/Execution/Antigravity/strip_backstep_mixamo_v2.png) |
 | **ER-A2** | `Attack_Air_Light` | 0.600 s horizontal air cleave; PrimaryB forward lunge start; extended leg posture; connects in Lead PIE (-16.0 HP). | `C-972` / `C-998` / `C-1004` | [review_Attack_Air_Light.mp4](../../Docs/BossCombatReview/Execution/Antigravity/ER_ANIM/Attack_Air_Light/review_Attack_Air_Light.mp4) | [strip_Attack_Air_Light.png](../../Docs/BossCombatReview/Execution/Antigravity/ER_ANIM/Attack_Air_Light/strip_Attack_Air_Light.png) |
 | **ER-A3** | `Attack_Air_Heavy_Plunge` | 0.867 s downward air plunge; PrimaryB start transitioning to vertical slam; connects in Lead PIE (-22.4 HP). | `C-972` / `C-998` / `C-1004` | [review_Attack_Air_Heavy_Plunge.mp4](../../Docs/BossCombatReview/Execution/Antigravity/ER_ANIM/Attack_Air_Heavy_Plunge/review_Attack_Air_Heavy_Plunge.mp4) | [strip_Attack_Air_Heavy_Plunge.png](../../Docs/BossCombatReview/Execution/Antigravity/ER_ANIM/Attack_Air_Heavy_Plunge/strip_Attack_Air_Heavy_Plunge.png) |
 
@@ -34,7 +34,7 @@ The ER-A3 health-damage figure below is from the runtime-assigned C-1004 r5 resu
 | Asset ID | Focus | What to Look At | Accepted Verdict | Review Video | Visual Artifact |
 |:---:|---|---|:---:|:---:|:---:|
 | **Tier 2** | `AN_Boss01_ParryRecoil` | 0.600 s boss stagger; backward knockback with greatsword held; full body silhouette and weapon remain inside camera frame. | `C-985` | [review_Boss01_ParryRecoil.mp4](../../Docs/BossCombatReview/Execution/Antigravity/Tier2_Art/review_Boss01_ParryRecoil.mp4) | [strip_Boss01_ParryRecoil.png](../../Docs/BossCombatReview/Execution/Antigravity/Tier2_Art/strip_Boss01_ParryRecoil.png) |
-| **Tier 2 Aura** | `NS_Boss_PhaseTwoAura` | Rising thermal ember flakes around character; boss body mesh and plate materials completely unchanged. | `C-985` | [review_NS_Boss_PhaseTwoAura.mp4](../../Docs/BossCombatReview/Execution/Antigravity/Tier2_Art/review_NS_Boss_PhaseTwoAura.mp4) | [NS_Boss_PhaseTwoAura_After.png](../../Docs/BossCombatReview/Execution/Antigravity/Tier2_Art/NS_Boss_PhaseTwoAura_After.png) |
+| **Tier 2 Aura** | `NS_Boss_PhaseTwoAura` | Rising thermal ember flakes around character; boss body mesh and plate materials completely unchanged. **A-637/C-1053: not visible in full-fight video; C-1062 visibility proposal is awaiting owner approval. No look edit authorized.** | `C-985` | [review_NS_Boss_PhaseTwoAura.mp4](../../Docs/BossCombatReview/Execution/Antigravity/Tier2_Art/review_NS_Boss_PhaseTwoAura.mp4) | [NS_Boss_PhaseTwoAura_After.png](../../Docs/BossCombatReview/Execution/Antigravity/Tier2_Art/NS_Boss_PhaseTwoAura_After.png) |
 | **Tier 2 PPM** | `PPM_ParryDistortion` | Radial chromatic aberration screen shockwave ripple. | `C-982` | [review_PPM_ParryDistortion.mp4](../../Docs/BossCombatReview/Execution/Antigravity/Tier2_Art/review_PPM_ParryDistortion.mp4) | [PPM_ParryDistortion_After.png](../../Docs/BossCombatReview/Execution/Antigravity/Tier2_Art/PPM_ParryDistortion_After.png) |
 
 ---

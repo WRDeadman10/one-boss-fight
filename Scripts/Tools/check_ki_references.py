@@ -16,6 +16,7 @@ def main() -> int:
     root = args.root.resolve()
     known = {int(value) for value in IDS.findall((root / "Documentation/KNOWN_ISSUES.md").read_text(encoding="utf-8"))}
     references = 0
+    missing = 0
     for path in sorted((root / "Source").rglob("*")):
         if not path.is_file() or path.suffix.lower() not in {".h", ".cpp"}:
             continue
@@ -24,8 +25,9 @@ def main() -> int:
                 references += 1
                 if int(value) not in known:
                     print(f"{path.relative_to(root)}:{number}: KI-{value} missing from KNOWN_ISSUES.md")
+                    missing += 1
     print(f"references={references} documented_ids={len(known)}")
-    return 0
+    return int(missing > 0)
 
 
 if __name__ == "__main__":

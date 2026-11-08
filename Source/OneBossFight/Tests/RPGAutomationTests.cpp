@@ -16,6 +16,7 @@
 #include "Arena/RPGGreyboxArena.h"
 #include "Benchmark/RPGFrameStats.h"
 #include "Player/RPGDodgeTiming.h"
+#include "Player/RPGDodgeActivationRules.h"
 #include "Player/RPGBossStagger.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossRules.h"
@@ -453,6 +454,20 @@ bool FRPGAttackClassifyTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("jump-light override selects the pack default attack data"), RPGAttackDataNameForKind(ERPGAttackKind::JumpLight), FName(TEXT("DefaultMeleeAttackData")));
 	TestEqual(TEXT("guard-counter override selects the pack strong attack data"), RPGAttackDataNameForKind(ERPGAttackKind::Strong), FName(TEXT("StrongMeleeAttackData")));
 	TestTrue(TEXT("unknown override has no canonical attack data"), RPGAttackDataNameForKind(ERPGAttackKind::Unknown).IsNone());
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGDodgeActivationRetryTest, "OneBossFight.Dodge.FirstActivationRetry",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGDodgeActivationRetryTest::RunTest(const FString& Parameters)
+{
+	using RPGDodgeActivationRules::ShouldRetryFirstPress;
+	TestTrue(TEXT("retry the first press when allowed but still inactive"), ShouldRetryFirstPress(true, true, false, false));
+	TestFalse(TEXT("never retry a later press"), ShouldRetryFirstPress(false, true, false, false));
+	TestFalse(TEXT("never retry while CanActivate is false"), ShouldRetryFirstPress(true, false, false, false));
+	TestFalse(TEXT("never retry after ability already activated"), ShouldRetryFirstPress(true, true, true, false));
+	TestFalse(TEXT("never issue a second fallback"), ShouldRetryFirstPress(true, true, false, true));
 	return true;
 }
 

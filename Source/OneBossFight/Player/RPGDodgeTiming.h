@@ -226,6 +226,10 @@ private:
 	void OnDodgePressed(const FInputActionInstance& Instance);
 	/** The dodge ability instance the ASC created for this pawn, or null. */
 	UObject* FindDodgeAbility() const;
+	/** One non-forced fallback through the pack ASC if the first allowed input press did not activate. */
+	bool TryActivateDodgeAbilityByClass(UObject* Ability, bool& bMethodCalled, bool& bReturnRead);
+	/** Prevent a buffered copy of the already-retried press from replaying after activation. */
+	bool ConsumeBufferedDodgeInput() const;
 	bool IsAbilityActive(UObject* Ability) const;
 	/** Writes the clip, play rate and nothing else into every entry of the dodge ability instance's montage map. */
 	bool ApplyClip(UObject* Ability, UAnimMontage* Montage, float PlayRate) const;
@@ -239,12 +243,21 @@ private:
 	bool bBound = false;
 	bool bLastPressFull = false;
 	int32 PressCount = 0;
+	/** First-press Development trace deferred one component tick to observe pack activation after IA_Dodge dispatch. */
+	int32 PendingDodgeActivationDiagnosticPress = 0;
+	int32 PendingDodgeActivationRetryPress = 0;
+	bool bPendingDodgeActivationCanActivate = false;
+	bool bFirstDodgeActivationRetryAttempted = false;
+	double PendingDodgeActivationRetryAfterTime = -1.0;
 	int32 ForcedRollCount = 0;
 	int32 IgnoredPressCount = 0;
 	double LastSuccessfulGuardTime = -1.0e9;
 	double LastGuardTagProbeTime = -1.0e9;
 	double LastGuardMonitorLogTime = -1.0e9;
 	TArray<TWeakObjectPtr<UObject>> CachedBlockReactionAbilities;
+	/** Keep the default first-use backstep resident so its first dodge press never blocks on soft loading. */
+	UPROPERTY(Transient)
+	TObjectPtr<UAnimMontage> LoadedBackstepMontage = nullptr;
 	double LastBlockReactionAbilitySearchTime = -1.0e9;
 	bool bWasBlockReactionActive = false;
 	bool bLastObservedBlocking = false;

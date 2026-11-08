@@ -35,7 +35,7 @@ def valid_sample(case, montage, speed, input_size):
     if case == "R1_tap_light":
         return montage == "Attack_PrimaryA_Montage"
     if case == "dodge_standing_tap":
-        return montage == "AM_ER_Backstep_Back" and input_size < 0.1
+        return montage == "AM_ER_Backstep_Mixamo_V2" and input_size < 0.1
     if case == "dodge_moving_tap":
         return montage == "Dodge_Small_Forward_Roll_Montage" and speed >= 50.0 and input_size >= 0.1
     return False
