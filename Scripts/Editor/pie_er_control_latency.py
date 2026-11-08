@@ -12,6 +12,10 @@ Editor startup for the data route; leave unset for legacy. Log prefix:
 import os
 import time
 import unreal
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(unreal.Paths.project_dir()) / "Scripts" / "Editor"))
+import pie_lead_common as plc
 
 LOG = "[ERControlLatency] "
 
@@ -43,25 +47,8 @@ def log(message):
     unreal.log(LOG + message)
 
 
-def comp(actor, class_name):
-    return next((c for c in actor.get_components_by_class(unreal.ActorComponent)
-                 if c.get_class().get_name() == class_name), None)
-
-
-def player_montage(pawn):
-    meshes = pawn.get_components_by_class(unreal.SkeletalMeshComponent)
-    inst = meshes[0].get_anim_instance() if meshes else None
-    montage = inst.get_current_active_montage() if inst else None
-    if not montage:
-        return None, None
-    position = inst.montage_get_position(montage)
-    return montage.get_name(), position
-
-
-def enter_combat_tag():
-    tags = unreal.GameplayTagContainer()
-    tags.import_text('(GameplayTags=((TagName="Ability.EnterCombat")))')
-    return tags
+comp = plc.component
+player_montage = plc.player_montage
 
 
 def set_key(pc, key, down):
@@ -90,8 +77,7 @@ def finish(reason):
         unreal.unregister_slate_post_tick_callback(HANDLE)
         HANDLE = None
     release_all(None)
-    log("finished: " + reason)
-    unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
+    plc.finished(log, reason)
 
 
 def tick(dt):
@@ -125,27 +111,21 @@ def _tick(dt):
         if S["elapsed"] > 20.0:
             finish("no possessed player within 20 game seconds")
         return
-    debug = comp(pawn, "RPGCombatDebug")
+    boss = plc.boss_actor(world)
+    debug = plc.boss_debug(boss)
     if debug:
-        debug.debug_refill_player()
+        plc.refill_player(boss)
 
     if S["phase"] == "setup":
         if S["elapsed"] > 6.0:
-            boss = next((a for a in unreal.GameplayStatics.get_all_actors_of_class(world, unreal.Character)
-                         if a.get_class().get_name() == "BP_ExampleGreatSwordBoss_C"), None)
             if not boss:
                 raise RuntimeError("expected boss not found; cannot hold a stable combat setup")
             encounter = comp(boss, "RPGBossEncounter")
             if encounter:
                 encounter.hold_for_test(True)
             location = boss.get_actor_location()
-            pawn.set_actor_location_and_rotation(unreal.Vector(location.x + 900, location.y, location.z),
-                                                 unreal.Rotator(0, 0, 180), False, True)
-            pc.set_control_rotation(unreal.Rotator(0, 0, 180))
-            asc = comp(pawn, "BP_AdvancedAbilitySystemComponent_C")
-            if not asc:
-                raise RuntimeError("player ability component not found")
-            asc.call_method("Try Activate Abilities By Tag", args=(enter_combat_tag(),))
+            plc.place_player(pc, pawn, (location.x + 900, location.y, location.z), 180)
+            plc.enter_combat(pawn)
             log("setup boss held=%s player_distance_cm=900" % bool(encounter))
             S.update(phase="settle", elapsed=0.0)
         return

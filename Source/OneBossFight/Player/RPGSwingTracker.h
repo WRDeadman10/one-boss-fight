@@ -36,7 +36,7 @@ struct FRPGSwing
 
 /**
  * Swing tracker (Gate 3, M10 and M11). Watches the player's montages every frame; when an attack montage of one of the pack's weapon abilities starts it knows the swing: the combat style (the weapon), the kind
- * (found by looking the montage up in the ability's AttackMontages, StrongAttackMontages, ChargedAttackMontages and FallingAttackMontages arrays: the pack's attack data is only known at the first hit), the stance, and the
+ * (found first from an active project montage override, otherwise by looking the montage up in the ability's AttackMontages, StrongAttackMontages, ChargedAttackMontages and FallingAttackMontages arrays: the pack's attack data is only known at the first hit), the stance, and the
  * weapon attack table row. Then it makes the swing cost what the row says: the pack's own cost (15 stamina per swing, GE_MeleeAttackCost, shared by every weapon) has just been paid, so the difference is taken or
  * given back by setting the stamina attribute (no pack asset is edited; the pack's own Modify Attribute needs enum arguments that a call from C++ does not get right). Hyperarmor (M11, Freeze 20.1): inside the row's window of a swing the player carries the pack's hit stun immunity effect
  * (the same GE_HitStunImmune the boss uses; the player's GA_PlayerHitStun lists Status.HitStunImmune in its blocked tags), so a hit does not interrupt the swing; the damage effect is separate, health is still lost.
@@ -137,8 +137,8 @@ protected:
 private:
 	/** A new attack montage started: classify, number, apply the row. */
 	void OnMontageStarted(const class UAnimMontage* Montage, bool bAirborne);
-	/** The kind of attack of this montage from the player's weapon abilities; Unknown when no ability lists it. */
-	ERPGAttackKind ClassifyMontage(const FString& MontageName, bool bAirborne) const;
+	/** The kind from a matching active project override or the player's weapon ability arrays; Unknown when neither identifies it. */
+	ERPGAttackKind ClassifyMontage(const class UAnimMontage* Montage, bool bAirborne) const;
 	/** Takes Delta stamina (negative: gives back) by setting the current value (clamped to 0 and the maximum); the pack's own Modify Attribute needs enum arguments that a zeroed call does not get right. */
 	bool AddStamina(double Delta);
 	/** Opens or closes the hyperarmor window by the montage position of the current swing. */

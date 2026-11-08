@@ -44,7 +44,7 @@ struct FRPGHitRecord
 	bool bRowFound = false;
 	/** The row's health damage multiplier (1 = the pack's damage, KI-097). */
 	float HealthMultiplier = 1.f;
-	/** Where the attack data came from: "HitData" (read one frame after the event), "TargetAttackData" or "none". */
+	/** AttackData provenance: pack HitData/target property, project MontageOverride normalization, or none. */
 	FName Source;
 
 	FString ToString() const;
@@ -156,6 +156,8 @@ private:
 	{
 		FRPGHitRecord Record;
 		TWeakObjectPtr<UObject> ActiveTarget;
+		/** Captured against the exact active montage at OnHit time, before deferred finalization. */
+		ERPGAttackKind OverrideKind = ERPGAttackKind::Unknown;
 		/** KI-151: the target is a native-health boss: FinalizePending hands it the attack row (ApplyPlayerAttackHit) instead of running the pack scaler, posture and bleed components. */
 		bool bNative = false;
 		/** Test hook only: use this attack kind instead of classifying the pack's attack data (there is none for a synthetic entry). */
@@ -166,7 +168,7 @@ private:
 	bool TryBind();
 	void Unbind();
 	/** Everything known at the moment of the event; the attack data is added by FinalizePending. */
-	FRPGHitRecord BuildRecord(const FHitResult& HitResult, AActor* Target, UObject*& OutActiveTarget) const;
+	FRPGHitRecord BuildRecord(const FHitResult& HitResult, AActor* Target, UObject*& OutActiveTarget, ERPGAttackKind* OutOverrideKind = nullptr) const;
 	/** One frame after the event: reads the active trace target's hit data, classifies the attack, numbers the records and broadcasts them. */
 	void FinalizePending();
 

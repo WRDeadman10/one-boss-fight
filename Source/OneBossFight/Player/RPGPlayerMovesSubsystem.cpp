@@ -36,6 +36,7 @@
 #include "Player/RPGTraceGuard.h"
 #include "Player/RPGCombatDebug.h"
 #include "Player/RPGLegend.h"
+#include "Boss/RPGTier2BossPresentation.h"
 #include "UI/RPGBossHud.h"
 #include "UI/RPGBuildSelect.h"
 #include "UI/RPGFlaskHud.h"
@@ -857,6 +858,10 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn)
 void URPGPlayerMovesSubsystem::AttachBossDiagnostics(AActor* Pawn) const
 {
 	if (!IsPackBoss(Pawn)) return;
+	if (!Pawn->FindComponentByClass<URPGTier2BossPresentation>())
+	{
+		NewObject<URPGTier2BossPresentation>(Pawn, TEXT("RPGTier2BossPresentation"))->RegisterComponent();
+	}
 	if (!Pawn->FindComponentByClass<URPGTraceAudit>())
 	{
 		NewObject<URPGTraceAudit>(Pawn, TEXT("RPGTraceAudit"))->RegisterComponent(); // observer: trace overlap versus damage accepted (empty in Shipping)

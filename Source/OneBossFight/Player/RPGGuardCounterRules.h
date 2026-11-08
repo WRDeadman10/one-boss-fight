@@ -3,10 +3,23 @@
 #pragma once
 
 #include <cmath>
+#include "CoreMinimal.h"
 
 /** Pure guard-counter timing and posture rules. No engine or actor state is owned here. */
 namespace RPGGuardCounterRules
 {
+	/** Match every weapon-style-specific pack reaction (for example GA_Sword_BlockReaction_C). */
+	inline bool IsBlockReactionAbilityClass(const FString& ClassName)
+	{
+		return ClassName.EndsWith(TEXT("BlockReaction_C"), ESearchCase::CaseSensitive);
+	}
+
+	/** A new guarded-contact signal is the pack's block-reaction ability becoming active while the player's block state is up. */
+	inline bool IsNewBlockedContact(bool bBlocking, bool bBlockReactionActive, bool bWasBlockReactionActive) noexcept
+	{
+		return bBlocking && bBlockReactionActive && !bWasBlockReactionActive;
+	}
+
 	// PROPOSAL defaults only; the owner has not approved or live-tested these timings/scales.
 	inline constexpr double ProposedCounterWindowSeconds = 0.60;
 	inline constexpr double ProposedArmedDurationSeconds = 1.20;

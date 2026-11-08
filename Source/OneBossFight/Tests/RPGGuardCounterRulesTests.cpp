@@ -32,6 +32,17 @@ bool FRPGGuardCounterRulesTest::RunTest(const FString& Parameters)
 	TestFalse(TEXT("infinite window is rejected"), IsCounterPress(4.0, 4.0, Inf));
 	TestFalse(TEXT("no-block state cannot counter: its absent-block timestamp is outside the window"), IsCounterPress(-1.0e9, 4.0, 0.60));
 
+	TestTrue(TEXT("sword style block reaction matches suffix"), IsBlockReactionAbilityClass(TEXT("GA_Sword_BlockReaction_C")));
+	TestTrue(TEXT("any weapon style block reaction matches suffix"), IsBlockReactionAbilityClass(TEXT("GA_Polearm_BlockReaction_C")));
+	TestFalse(TEXT("guard input ability is not a block reaction"), IsBlockReactionAbilityClass(TEXT("GA_PlayerGuardBlock_C")));
+	TestFalse(TEXT("near-match without exact suffix is rejected"), IsBlockReactionAbilityClass(TEXT("GA_Sword_BlockReaction")));
+	TestFalse(TEXT("lowercase suffix is rejected"), IsBlockReactionAbilityClass(TEXT("GA_Sword_blockreaction_C")));
+	TestFalse(TEXT("suffix followed by another token is rejected"), IsBlockReactionAbilityClass(TEXT("GA_Sword_BlockReaction_C_Extra")));
+	TestTrue(TEXT("blocking and reaction rising edge arms once"), IsNewBlockedContact(true, true, false));
+	TestFalse(TEXT("steady active reaction does not rearm"), IsNewBlockedContact(true, true, true));
+	TestFalse(TEXT("reaction without block does not arm"), IsNewBlockedContact(false, true, false));
+	TestFalse(TEXT("block without reaction does not arm"), IsNewBlockedContact(true, false, false));
+	TestTrue(TEXT("a later reaction rising edge can rearm"), IsNewBlockedContact(true, true, false));
 	TestEqual(TEXT("armed strong-kind hit uses the configured scale"), PostureScale(true, true, 2.0), 2.0);
 	TestEqual(TEXT("no block means no armed posture bonus"), PostureScale(false, true, 2.0), 1.0);
 	TestEqual(TEXT("armed non-strong hit receives no bonus"), PostureScale(true, false, 2.0), 1.0);

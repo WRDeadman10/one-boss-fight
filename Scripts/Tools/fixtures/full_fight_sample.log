@@ -1,0 +1,8 @@
+[FullFight] FIGHT_START slomo=0.5 frames=D:/FightVideo/sample fps=15
+[FullFight] FRAME 0 g=10.000 action=None
+[FullFight] ACTION light t=0.04 dist=200
+[FullFight] FRAME 1 g=10.080 action=light
+[FullFight] COUNTER t=0.10
+[FullFight] FRAME 2 g=10.200 action=guard
+[FullFight] BOSS_DEAD at 0.3 s
+[FullFight] finished: boss dead

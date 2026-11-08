@@ -5,6 +5,7 @@
 #include "Animation/AnimSequence.h"
 #include "Misc/AutomationTest.h"
 #include "UObject/Package.h"
+#include <limits>
 
 #if WITH_EDITOR
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGMontageSegmentRangeTest,
@@ -19,6 +20,8 @@ bool FRPGMontageSegmentRangeTest::RunTest(const FString& Parameters)
 	// UAnimMontage's constructor already adds an empty DefaultSlot track (UE 5.5), which is the case under test.
 	TestEqual(TEXT("A new montage has one default slot"), EmptyMontage->SlotAnimTracks.Num(), 1);
 	TestFalse(TEXT("A slot without a segment is rejected"), URPGMontageUtils::SetMontageSegmentRange(EmptyMontage, 0.333333f, 1.133333f));
+	EmptyMontage->SlotAnimTracks.Empty();
+	TestFalse(TEXT("A montage with zero slots is rejected"), URPGMontageUtils::SetMontageSegmentRange(EmptyMontage, 0.333333f, 1.133333f));
 
 	UPackage* TestPackage = CreatePackage(TEXT("/Temp/RPGMontageSegmentRangeTest"));
 	TestPackage->ClearDirtyFlag();
@@ -51,6 +54,12 @@ bool FRPGMontageSegmentRangeTest::RunTest(const FString& Parameters)
 	TestPackage->ClearDirtyFlag();
 
 	TestFalse(TEXT("Negative start is rejected"), URPGMontageUtils::SetMontageSegmentRange(Montage, -0.1f, SliceEnd));
+	const float NaN = std::numeric_limits<float>::quiet_NaN();
+	const float Inf = std::numeric_limits<float>::infinity();
+	TestFalse(TEXT("NaN start is rejected"), URPGMontageUtils::SetMontageSegmentRange(Montage, NaN, SliceEnd));
+	TestFalse(TEXT("NaN end is rejected"), URPGMontageUtils::SetMontageSegmentRange(Montage, SliceStart, NaN));
+	TestFalse(TEXT("infinite start is rejected"), URPGMontageUtils::SetMontageSegmentRange(Montage, Inf, SliceEnd));
+	TestFalse(TEXT("infinite end is rejected"), URPGMontageUtils::SetMontageSegmentRange(Montage, SliceStart, Inf));
 	TestFalse(TEXT("Empty range is rejected"), URPGMontageUtils::SetMontageSegmentRange(Montage, SliceStart, SliceStart));
 	TestFalse(TEXT("Range past source animation is rejected"), URPGMontageUtils::SetMontageSegmentRange(Montage, SliceStart, SourceLength + 0.1f));
 	TestTrue(TEXT("Rejected requests leave the segment unchanged"), FMath::IsNearlyEqual(Montage->SlotAnimTracks[0].AnimTrack.AnimSegments[0].AnimEndTime, SourceLength));
@@ -63,6 +72,16 @@ bool FRPGMontageSegmentRangeTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Montage length is recomputed from segment range"), FMath::IsNearlyEqual(Montage->GetPlayLength(), SliceEnd - SliceStart, 1.0e-3f));
 	TestTrue(TEXT("Montage package is marked dirty"), Montage->GetPackage()->IsDirty());
 	TestFalse(TEXT("Source sequence package is not dirtied"), Sequence->GetPackage()->IsDirty());
+	FSlotAnimationTrack SecondSlot;
+	SecondSlot.SlotName = TEXT("SecondarySlot");
+	SecondSlot.AnimTrack.AnimSegments.Add(Segment);
+	Montage->SlotAnimTracks.Add(SecondSlot);
+	TestTrue(TEXT("A valid range with multiple slots edits the first track"),
+		URPGMontageUtils::SetMontageSegmentRange(Montage, SliceStart * 0.5f, SliceEnd * 0.5f));
+	TestTrue(TEXT("First track changed in multi-slot montage"),
+		FMath::IsNearlyEqual(Montage->SlotAnimTracks[0].AnimTrack.AnimSegments[0].AnimEndTime, SliceEnd * 0.5f));
+	TestTrue(TEXT("Second track remains unchanged in multi-slot montage"),
+		FMath::IsNearlyEqual(Montage->SlotAnimTracks[1].AnimTrack.AnimSegments[0].AnimEndTime, SourceLength));
 	return true;
 }
 #endif

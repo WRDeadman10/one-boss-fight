@@ -34,6 +34,28 @@ inline const TCHAR* RPGAttackKindName(ERPGAttackKind Kind)
 	}
 }
 
+/** Resolves the temporary project montage slot by object identity after the pack's ability arrays are restored. */
+template <typename TObject>
+inline ERPGAttackKind RPGResolveActiveMontageOverride(const TObject* Montage, const TObject* ActiveOverrideMontage, ERPGAttackKind ActiveOverrideKind)
+{
+	return Montage && Montage == ActiveOverrideMontage ? ActiveOverrideKind : ERPGAttackKind::Unknown;
+}
+
+/** Canonical pack attack-data asset for a project montage override's semantic kind. */
+inline FName RPGAttackDataNameForKind(ERPGAttackKind Kind)
+{
+	switch (Kind)
+	{
+	case ERPGAttackKind::Light:
+	case ERPGAttackKind::JumpLight: return TEXT("DefaultMeleeAttackData");
+	case ERPGAttackKind::Strong:
+	case ERPGAttackKind::JumpHeavy: return TEXT("StrongMeleeAttackData");
+	case ERPGAttackKind::Charged: return TEXT("ChargedMeleeAttackData");
+	case ERPGAttackKind::Knockdown: return TEXT("MeleeKnockdownAttackData");
+	default: return NAME_None;
+	}
+}
+
 /**
  * The kind of attack from the pack's attack data asset name and the stance. The pack has four melee attack data assets (Default = light, Strong, Charged, Knockdown) shared by all weapons (read by
  * Scripts/Editor/g3_dump_attack_data.py, confirmed by pie_hit_intake.py); the stance decides whether a light or strong attack is a jump attack. Header only so an automation test can check it.

@@ -8,6 +8,7 @@
 #include "Player/RPGFlipbookEffect.h"
 #include "Player/RPGPlayerMovesSubsystem.h"
 #include "Player/RPGSwingTracker.h"
+#include "Player/RPGDodgeTiming.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -358,8 +359,12 @@ void URPGHitIntake::Unbind()
 	BoundCollision.Reset();
 }
 
-FRPGHitRecord URPGHitIntake::BuildRecord(const FHitResult& HitResult, AActor* Target, UObject*& OutActiveTarget) const
+FRPGHitRecord URPGHitIntake::BuildRecord(const FHitResult& HitResult, AActor* Target, UObject*& OutActiveTarget, ERPGAttackKind* OutOverrideKind) const
 {
+	if (OutOverrideKind)
+	{
+		*OutOverrideKind = ERPGAttackKind::Unknown;
+	}
 	FRPGHitRecord Record;
 	Record.Time = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0;
 	Record.Target = Target;
@@ -388,6 +393,13 @@ FRPGHitRecord URPGHitIntake::BuildRecord(const FHitResult& HitResult, AActor* Ta
 				{
 					Record.Montage = Montage->GetFName();
 					Record.bAirborneAtStart = Montage->GetFName() == TrackedMontage && bTrackedAirborneAtStart;
+					if (OutOverrideKind)
+					{
+						if (const URPGDodgeTiming* DodgeTiming = GetOwner()->FindComponentByClass<URPGDodgeTiming>())
+						{
+							*OutOverrideKind = DodgeTiming->GetActiveMontageOverrideKind(Montage);
+						}
+					}
 				}
 			}
 		}
@@ -496,7 +508,7 @@ void URPGHitIntake::HandlePackHit(FHitResult HitResult)
 	}
 	FPending Entry;
 	UObject* ActiveTarget = nullptr;
-	Entry.Record = BuildRecord(HitResult, Target, ActiveTarget);
+	Entry.Record = BuildRecord(HitResult, Target, ActiveTarget, &Entry.OverrideKind);
 	Entry.ActiveTarget = ActiveTarget;
 	Entry.bNative = bNativeBoss;
 	Pending.Add(MoveTemp(Entry));
@@ -553,6 +565,31 @@ void URPGHitIntake::FinalizePending()
 			Record.PackPoiseDamage = ReadFloat(Data, TEXT("PoiseDamage"));
 		}
 		Record.Kind = Entry.bForceKind ? Entry.ForcedKind : RPGClassifyAttack(Record.AttackData, Record.bAirborne || Record.bAirborneAtStart);
+		// Replacing an ability's montage array does not replace the pack
+		// Blueprint's attack-data choice. Resolve the recorded table semantics
+		// from the active override and use the corresponding canonical pack data
+		// for its attack row (posture/bleed and the existing health scaler); the
+		// pack still owns collision and the original hit event.
+		if (!Entry.bForceKind)
+		{
+			const ERPGAttackKind OverrideKind = Entry.OverrideKind;
+			const FName OverrideDataName = RPGAttackDataNameForKind(OverrideKind);
+			if (OverrideKind != ERPGAttackKind::Unknown && !OverrideDataName.IsNone())
+			{
+				Record.Kind = OverrideKind;
+				if (Record.AttackData != OverrideDataName)
+				{
+					const FString DataPath = FString::Printf(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/DataAssets/AttackData/%s.%s"), *OverrideDataName.ToString(), *OverrideDataName.ToString());
+					if (UObject* CanonicalData = StaticLoadObject(UObject::StaticClass(), nullptr, *DataPath))
+					{
+						Record.AttackData = CanonicalData->GetFName();
+						Record.AttackPower = ReadByte(CanonicalData, TEXT("AttackPower"));
+						Record.PackPoiseDamage = ReadFloat(CanonicalData, TEXT("PoiseDamage"));
+						Record.Source = TEXT("MontageOverride");
+					}
+				}
+			}
+		}
 		// The dual swords' strong and jump heavy swings carry the generic Default attack data (the data says Light): when the hit's montage is the montage of the current (or last) swing and the swing tracker found it in the ability's strong or charged array, the swing's kind stands (M13).
 		if (Record.Kind == ERPGAttackKind::Light || Record.Kind == ERPGAttackKind::JumpLight)
 		{

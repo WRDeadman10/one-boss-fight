@@ -182,6 +182,11 @@ void URPGLegendSubsystem::BeginParryFeedbackPulse(UMaterialParameterCollection* 
 	{
 		ParryFeedbackInstance = Instance;
 		ParryFeedbackParameter = Parameter;
+		ParryPulseStartedReal = FPlatformTime::Seconds();
+#if UE_BUILD_DEVELOPMENT
+		UE_LOG(LogRPGLegend, Display, TEXT("Tier2 parry MPC pulse set collection=%s parameter=%s value=1.000"),
+			*GetNameSafe(Collection), *Parameter.ToString());
+#endif
 	}
 	UCameraComponent* Camera = ParryingActor ? ParryingActor->FindComponentByClass<UCameraComponent>() : nullptr;
 	if (Camera && Material)
@@ -198,7 +203,18 @@ void URPGLegendSubsystem::BeginParryFeedbackPulse(UMaterialParameterCollection* 
 		Camera->AddOrUpdateBlendable(Material, 1.f);
 		ParryDistortionCamera = Camera;
 		ParryDistortionMaterial = Material;
+#if UE_BUILD_DEVELOPMENT
+		UE_LOG(LogRPGLegend, Display, TEXT("Tier2 parry blendable added material=%s weight=1.000 target=%s camera=%s count=%d"),
+			*Material->GetName(), *GetNameSafe(ParryingActor), *Camera->GetName(), Camera->PostProcessSettings.WeightedBlendables.Array.Num());
+#endif
 	}
+#if UE_BUILD_DEVELOPMENT
+	else
+	{
+		UE_LOG(LogRPGLegend, Display, TEXT("Tier2 parry blendable skipped material=%s target=%s camera=%s"),
+			*GetNameSafe(Material), *GetNameSafe(ParryingActor), *GetNameSafe(Camera));
+	}
+#endif
 }
 
 void URPGLegendSubsystem::RestoreHitStop(const TCHAR* Reason)
@@ -254,6 +270,11 @@ void URPGLegendSubsystem::RestoreParryFeedbackPulse()
 			{
 				Camera->RemoveBlendable(Material);
 			}
+#if UE_BUILD_DEVELOPMENT
+			UE_LOG(LogRPGLegend, Display, TEXT("Tier2 parry blendable restored material=%s weight=%.3f target=%s camera=%s count=%d"),
+				*Material->GetName(), bParryDistortionWasPresent ? SavedParryDistortionWeight : 0.f,
+				*GetNameSafe(Camera->GetOwner()), *Camera->GetName(), Camera->PostProcessSettings.WeightedBlendables.Array.Num());
+#endif
 		}
 	}
 	ParryDistortionCamera.Reset();
@@ -271,9 +292,13 @@ void URPGLegendSubsystem::RestoreParryFeedbackPulse()
 	if (UMaterialParameterCollectionInstance* Instance = ParryFeedbackInstance.Get())
 	{
 		Instance->SetScalarParameterValue(ParryFeedbackParameter, 0.f);
+#if UE_BUILD_DEVELOPMENT
+		UE_LOG(LogRPGLegend, Display, TEXT("Tier2 parry MPC pulse reset parameter=%s value=0.000"), *ParryFeedbackParameter.ToString());
+#endif
 	}
 	ParryFeedbackInstance.Reset();
 	ParryFeedbackParameter = NAME_None;
+	ParryPulseStartedReal = 0.0;
 }
 
 void URPGLegendSubsystem::CancelAll(const TCHAR* Reason)
@@ -319,6 +344,14 @@ bool URPGLegendSubsystem::TickEffects(float DeltaSeconds)
 		}
 	}
 	const double Now = FPlatformTime::Seconds();
+	if (SlowMotion.bActive && !ParryFeedbackParameter.IsNone())
+	{
+		if (UMaterialParameterCollectionInstance* Instance = ParryFeedbackInstance.Get())
+		{
+			Instance->SetScalarParameterValue(ParryFeedbackParameter,
+				RPGLegendPulseRules::Strength(Now, ParryPulseStartedReal, SlowMotion.DeadlineReal));
+		}
+	}
 	if (HitStop.Expired(Now))
 	{
 		RestoreHitStop(TEXT("expired"));
@@ -343,6 +376,8 @@ URPGBossLegend::URPGBossLegend()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.TickGroup = TG_PostUpdateWork; // after the tracker, phases, stagger and HUD have ticked in the frame
+	ParryDistortionMaterial = TSoftObjectPtr<UMaterialInterface>(FSoftObjectPath(TEXT("/Game/OneBossFight/Effects/PPM_ParryDistortion.PPM_ParryDistortion")));
+	ParryFeedbackCollectionAsset = TSoftObjectPtr<UMaterialParameterCollection>(FSoftObjectPath(TEXT("/Game/OneBossFight/Data/MPC_CombatFeedback.MPC_CombatFeedback")));
 	// Slam: the struct defaults (a thump: instant onset, linear decay, a vertical bump, 5 cm at most: far under the 34 cm spring arm probe).
 	// Roar: a swelling rumble that ends with the 1.5 s clip, felt across the arena.
 	Roar.Duration = 1.5f;
@@ -363,6 +398,10 @@ void URPGBossLegend::BeginPlay()
 	if (RPGTier1Visuals::IsTier2PreviewEnabled() && !ParryDistortionMaterial.IsNull())
 	{
 		LoadedParryDistortionMaterial = ParryDistortionMaterial.LoadSynchronous();
+	}
+	if (RPGTier1Visuals::IsTier2PreviewEnabled() && !ParryFeedbackCollection && !ParryFeedbackCollectionAsset.IsNull())
+	{
+		ParryFeedbackCollection = ParryFeedbackCollectionAsset.LoadSynchronous();
 	}
 	if (AActor* Boss = GetOwner())
 	{
@@ -528,6 +567,10 @@ bool URPGBossLegend::HandlePlayerParrySlowMotion(RPGParryGrade::EGrade Grade, co
 	const bool bPerfect = Grade == RPGParryGrade::EGrade::Perfect;
 	if ((bPerfect && !Policy.bPerfectEnabled) || (!bPerfect && !Policy.bNormalEnabled))
 	{
+#if UE_BUILD_DEVELOPMENT
+		UE_LOG(LogRPGLegend, Display, TEXT("Tier2 parry feedback skipped grade=%d perfectEnabled=%d normalEnabled=%d target=%s"),
+			static_cast<int32>(Grade), Policy.bPerfectEnabled ? 1 : 0, Policy.bNormalEnabled ? 1 : 0, *GetNameSafe(ParryingActor));
+#endif
 		return false;
 	}
 	URPGLegendSubsystem* Time = URPGLegendSubsystem::Get(this);
@@ -552,7 +595,25 @@ bool URPGBossLegend::HandlePlayerParrySlowMotion(RPGParryGrade::EGrade Grade, co
 	{
 		return false;
 	}
-	Time->BeginParryFeedbackPulse(ParryFeedbackCollection, ParryPulseParameter, ParrySlowMotionSoundMix, LoadedParryDistortionMaterial, ParryingActor);
+	UMaterialInterface* Distortion = nullptr;
+	if (RPGTier1Visuals::IsTier2PreviewEnabled() && !ParryDistortionMaterial.IsNull())
+	{
+		if (!LoadedParryDistortionMaterial)
+		{
+			LoadedParryDistortionMaterial = ParryDistortionMaterial.LoadSynchronous(); // supports enabling the opt-in cvar after BeginPlay
+		}
+		Distortion = LoadedParryDistortionMaterial;
+	}
+	if (RPGTier1Visuals::IsTier2PreviewEnabled() && !ParryFeedbackCollection && !ParryFeedbackCollectionAsset.IsNull())
+	{
+		ParryFeedbackCollection = ParryFeedbackCollectionAsset.LoadSynchronous(); // late Development cvar enablement
+	}
+	Time->BeginParryFeedbackPulse(ParryFeedbackCollection, ParryPulseParameter, ParrySlowMotionSoundMix, Distortion, ParryingActor);
+#if UE_BUILD_DEVELOPMENT
+	UE_LOG(LogRPGLegend, Display, TEXT("Tier2 parry feedback requested grade=%d tier2=%d material=%s collection=%s target=%s"),
+		static_cast<int32>(Grade), RPGTier1Visuals::IsTier2PreviewEnabled() ? 1 : 0,
+		*GetNameSafe(Distortion), *GetNameSafe(ParryFeedbackCollection), *GetNameSafe(ParryingActor));
+#endif
 	LastParrySlowMotionTime = NowReal;
 	++ParrySlowMotionCount;
 	return true;

@@ -5,6 +5,7 @@
 #include "Pack/RPGPackReflect.h"
 #include "Player/RPGBossStagger.h"
 #include "Player/RPGSwingRules.h"
+#include "Player/RPGDodgeTiming.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -173,8 +174,21 @@ void URPGSwingTracker::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	UpdateHyperArmor(Montage, Position);
 }
 
-ERPGAttackKind URPGSwingTracker::ClassifyMontage(const FString& MontageName, bool bAirborne) const
+ERPGAttackKind URPGSwingTracker::ClassifyMontage(const UAnimMontage* Montage, bool bAirborne) const
 {
+	if (!Montage)
+	{
+		return ERPGAttackKind::Unknown;
+	}
+	const FString MontageName = Montage->GetName();
+	if (const URPGDodgeTiming* DodgeTiming = GetOwner() ? GetOwner()->FindComponentByClass<URPGDodgeTiming>() : nullptr)
+	{
+		const ERPGAttackKind OverrideKind = DodgeTiming->GetActiveMontageOverrideKind(Montage);
+		if (OverrideKind != ERPGAttackKind::Unknown)
+		{
+			return OverrideKind;
+		}
+	}
 	TArray<UObject*> Abilities;
 	GetAbilities(GetOwner(), Abilities);
 	for (const UObject* Ability : Abilities)
@@ -225,7 +239,7 @@ void URPGSwingTracker::OnMontageStarted(const UAnimMontage* Montage, bool bAirbo
 			Swing.Weapon = Style->GetFName();
 		}
 	}
-	Swing.Kind = ClassifyMontage(Montage->GetName(), bAirborne);
+	Swing.Kind = ClassifyMontage(Montage, bAirborne);
 	Current = Swing;
 	if (!Swing.IsAttack())
 	{

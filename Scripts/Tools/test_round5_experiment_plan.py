@@ -5,6 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import round4_benchmark_report as report
+from process_test_support import run_test_subprocess
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -65,10 +66,10 @@ class Round5ExperimentPlanTests(unittest.TestCase):
 
     def test_dlss_dry_run_lists_planned_rows_without_launching(self):
         import subprocess
-        result = subprocess.run(
+        result = run_test_subprocess(self,
             ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
              str(ROOT / "Scripts/RunPerfExperiments.ps1"), "-Round5", "-DryRun"],
-            cwd=ROOT, capture_output=True, text=True, check=True,
+            timeout=30, cwd=ROOT, capture_output=True, text=True, check=True,
         )
         self.assertIn("Stage: not used in dry-run; no game will launch.", result.stdout)
         self.assertEqual(sum("R5_" in line for line in result.stdout.splitlines()), 16)

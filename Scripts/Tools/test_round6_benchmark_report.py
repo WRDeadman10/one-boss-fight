@@ -5,6 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import round6_benchmark_report as r6
+from process_test_support import run_test_subprocess
 
 
 def fixture():
@@ -118,13 +119,13 @@ class Round6ReportTests(unittest.TestCase):
         import subprocess
         root = Path(__file__).resolve().parents[2]
         script = root / "Scripts/RunPerfExperiments.ps1"
-        phase1 = subprocess.run(["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(script),
+        phase1 = run_test_subprocess(self, ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(script),
                                 "-Round6", "-TsrAnchorScreenPercentage", "100", "-DryRun"],
-                               cwd=root, capture_output=True, text=True, check=True)
-        phase2 = subprocess.run(["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(script),
+                               timeout=30, cwd=root, capture_output=True, text=True, check=True)
+        phase2 = run_test_subprocess(self, ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(script),
                                  "-Round6Tuning", "-TsrAnchorScreenPercentage", "100", "-BestDlssMode", "Performance",
                                  "-BestDlssScreenPercentage", "50", "-Phase1Accepted", "-OwnerImageQualityAccepted", "-DryRun"],
-                                cwd=root, capture_output=True, text=True, check=True)
+                                timeout=30, cwd=root, capture_output=True, text=True, check=True)
         self.assertEqual(sum("R6M_" in line for line in phase1.stdout.splitlines()), 13)
         self.assertEqual(sum("R6T_" in line for line in phase2.stdout.splitlines()), 16)
         self.assertIn("no game will launch", phase1.stdout)

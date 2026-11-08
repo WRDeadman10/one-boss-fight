@@ -44,7 +44,8 @@ namespace AttachWitness
 			TEXT("RPGFootsteps"), TEXT("RPGBossMusic"), TEXT("RPGBossStagger"), TEXT("RPGBossPhases"), TEXT("RPGBossEncounter"), TEXT("RPGBossDormantWake"),
 			TEXT("RPGBossPosture"), TEXT("RPGBossDeath"), TEXT("RPGBossLook"), TEXT("RPGBossBleed"), TEXT("RPGAttackTracker"), TEXT("RPGBossCloseClipSwap"),
 			TEXT("RPGBossShockwave"), TEXT("RPGBossLowSweep"), TEXT("RPGBossHealPunish"), TEXT("RPGDamageResolver"), TEXT("RPGTraceGuard"),
-			TEXT("RPGBossHud"), TEXT("RPGBossLegend"), TEXT("RPGTraceAudit"), TEXT("RPGCombatDebug")};
+			// RPGTier2BossPresentation: Codex AL-C01 (Tier 2 aura/recoil on the live pack boss), attached in AttachBossDiagnostics before the trace audit.
+			TEXT("RPGBossHud"), TEXT("RPGBossLegend"), TEXT("RPGTier2BossPresentation"), TEXT("RPGTraceAudit"), TEXT("RPGCombatDebug")};
 	}
 
 	// The player statements, in the order of the preimage.

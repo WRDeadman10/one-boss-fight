@@ -20,10 +20,11 @@ enum class ERPGDamageOutcome : uint8
 	MissWorld,            // arena geometry stopped the move
 	Superseded,           // another hit of the same move already hurt the player (the wave yields to the central hit)
 	Failed,               // the health attribute could not be written
-	Parried               // the player's parry window was open at the moment of contact: no damage, the hit is spent (owner decision 2026-11-02)
+	Parried,              // the player's parry window was open at the moment of contact: no damage, the hit is spent (owner decision 2026-11-02)
+	Blocked               // a blockable project hit met Status.Blocking: no health damage, hit spent, counter armed
 };
 
-/** What a boss move asks the resolver to do to the player. HP only: boss moves take no posture (Freeze 504); guard and hit reaction are not built (KI-065, KI-067, KI-068). */
+/** What a boss move asks the resolver to do to the player. HP only: boss moves take no posture (Freeze 504). A4 may opt into a zero-chip block; guard stamina and hit reaction remain open (KI-065, KI-067, KI-068). */
 USTRUCT(BlueprintType)
 struct FRPGDamagePayload
 {
@@ -47,6 +48,9 @@ struct FRPGDamagePayload
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	float HPDamage = 0.f;
+
+	/** Opt in only for authored moves whose guard response is supported. A4 low sweep is blockable; other project moves retain their current policy. */
+	bool bCanBeBlocked = false;
 };
 
 USTRUCT(BlueprintType)
@@ -87,6 +91,7 @@ namespace RPGDamageRules
 		case ERPGDamageOutcome::MissWorld: return TEXT("MissWorld");
 		case ERPGDamageOutcome::Superseded: return TEXT("Superseded");
 		case ERPGDamageOutcome::Parried: return TEXT("Parried");
+		case ERPGDamageOutcome::Blocked: return TEXT("Blocked");
 		default: return TEXT("Failed");
 		}
 	}
@@ -101,6 +106,12 @@ namespace RPGDamageRules
 		if (bTargetInvulnerable) { return ERPGDamageOutcome::RejectedInvulnerable; }
 		if (bTargetParrying) { return ERPGDamageOutcome::Parried; } // after the dodge: an i-frame contact is not a parry
 		return ERPGDamageOutcome::Accepted;
+	}
+
+	/** A guarded project hit is considered only after the existing liveness, duplicate, dodge and parry precedence. */
+	inline ERPGDamageOutcome ApplyGuard(ERPGDamageOutcome Base, bool bBlockable, bool bBlocking)
+	{
+		return Base == ERPGDamageOutcome::Accepted && bBlockable && bBlocking ? ERPGDamageOutcome::Blocked : Base;
 	}
 }
 

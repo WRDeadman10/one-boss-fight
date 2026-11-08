@@ -36,6 +36,18 @@ namespace RPGBossLegendRules
 	}
 }
 
+namespace RPGLegendPulseRules
+{
+	inline float Strength(double NowReal, double StartedReal, double DeadlineReal)
+	{
+		if (!FMath::IsFinite(NowReal) || !FMath::IsFinite(StartedReal) || !FMath::IsFinite(DeadlineReal) || DeadlineReal <= StartedReal)
+		{
+			return 0.f;
+		}
+		return static_cast<float>(FMath::Clamp((DeadlineReal - NowReal) / (DeadlineReal - StartedReal), 0.0, 1.0));
+	}
+}
+
 /**
  * The bookkeeping of one time dilation effect, with no engine objects so that it can be tested alone. Rules: a second request while the effect runs never captures the already dilated value
  * as the one to restore (Saved stays what the first request saw), applied values are absolute and never multiplied (0.05, 0.25), and the deadline only ever moves later.
@@ -155,6 +167,7 @@ private:
 	float SavedParryDistortionWeight = 0.f;
 	bool bParryDistortionWasPresent = false;
 	FName ParryFeedbackParameter;
+	double ParryPulseStartedReal = 0.0;
 	TArray<FStoppedActor> Stopped;
 	TWeakObjectPtr<const URPGBossEncounter> RequestOwner;
 	uint64 RequestGeneration = 0;
@@ -225,7 +238,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Legend|Parry|Visuals")
 	TObjectPtr<UMaterialParameterCollection> ParryFeedbackCollection = nullptr;
 
-	/** Optional post-process distortion added to the parrying player's camera only during the Tier 2 parry scope. Empty by default. */
+	/** Soft default is loaded only when Development Tier 2 is enabled, including a late cvar flip. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Legend|Parry|Visuals")
+	TSoftObjectPtr<UMaterialParameterCollection> ParryFeedbackCollectionAsset;
+
+	/** Optional post-process distortion added to the parrying player's camera only during the Tier 2 parry scope; soft default remains gated off. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Legend|Parry|Visuals")
 	TSoftObjectPtr<UMaterialInterface> ParryDistortionMaterial;
 	UPROPERTY(Transient)

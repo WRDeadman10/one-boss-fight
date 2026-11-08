@@ -2,6 +2,7 @@
 
 #include "Player/RPGDamageResolver.h"
 #include "Player/RPGPlayerParry.h"
+#include "Player/RPGDodgeTiming.h"
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
@@ -152,6 +153,11 @@ FRPGDamageResult URPGDamageResolver::Resolve(AActor* Target, const FRPGDamagePay
 	const bool bInvulnerable = bTargetAlive && bAttackerAlive && bCurrent && !bDuplicate && RPGBossDamage::IsInvulnerable(Target);
 	const bool bParrying = bTargetAlive && bAttackerAlive && bCurrent && !bDuplicate && !bInvulnerable && URPGPlayerParry::IsParrying(Target);
 	Result.Outcome = RPGDamageRules::Decide(bTargetAlive, bAttackerAlive, bCurrent, bDuplicate, bInvulnerable, bParrying);
+	// Project-authored geometry bypasses the pack's BlockReaction ability. Only an
+	// explicitly blockable hit against the actual player can take this route.
+	const bool bBlocking = Payload.bCanBeBlocked && Target == UGameplayStatics::GetPlayerPawn(this, 0)
+		&& RPGBossDamage::HasTag(Target, TEXT("Status.Blocking"));
+	Result.Outcome = RPGDamageRules::ApplyGuard(Result.Outcome, Payload.bCanBeBlocked, bBlocking);
 	FName Reason = NAME_None;
 	switch (Result.Outcome)
 	{
@@ -182,6 +188,14 @@ FRPGDamageResult URPGDamageResolver::Resolve(AActor* Target, const FRPGDamagePay
 		Spent.Add(Key); // a parried swing is spent: the other windows of the same swing do not hurt
 		URPGPlayerParry::NotifyParried(Target);
 		Reason = TEXT("parry window");
+		break;
+	case ERPGDamageOutcome::Blocked:
+		Spent.Add(Key);
+		Reason = TEXT("Status.Blocking");
+		if (URPGDodgeTiming* Timing = Target->FindComponentByClass<URPGDodgeTiming>())
+		{
+			Timing->NotifySuccessfulGuardContact();
+		}
 		break;
 	default:
 		break;

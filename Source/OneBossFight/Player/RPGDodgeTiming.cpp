@@ -6,6 +6,7 @@
 #include "Player/RPGDodgeInputRules.h"
 #include "Player/RPGStartupChronology.h"
 #include "Player/RPGFlipbookEffect.h"
+#include "Player/RPGBossDamage.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Animation/AnimMontage.h"
 #include "Components/CapsuleComponent.h"
@@ -35,6 +36,12 @@ URPGDodgeTiming::URPGDodgeTiming()
 		TEXT("/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Animations/Roll/Dodge_Small_Forward_Roll_Montage.Dodge_Small_Forward_Roll_Montage")));
 	FullMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(
 		TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage.Dodge_To_Idle_Montage"))); EldenRingMappingContext = TSoftObjectPtr<UInputMappingContext>(FSoftObjectPath(TEXT("/Game/OneBossFight/Input/IMC_EldenRing.IMC_EldenRing"))); EldenRingLightAction = TSoftObjectPtr<UInputAction>(FSoftObjectPath(TEXT("/Game/OneBossFight/Input/IA_ER_Light.IA_ER_Light"))); EldenRingHeavyTapAction = TSoftObjectPtr<UInputAction>(FSoftObjectPath(TEXT("/Game/OneBossFight/Input/IA_ER_HeavyTap.IA_ER_HeavyTap"))); PackLightAction = TSoftObjectPtr<UInputAction>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_NormalAttack.IA_NormalAttack"))); PackStrongAction = TSoftObjectPtr<UInputAction>(FSoftObjectPath(TEXT("/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_StrongAttack.IA_StrongAttack")));
+	// Elden Ring player clips (owner 2026-11-07: "implement it in the game" after the reel). Assets are notify-authored,
+	// Lead-verified (C-988/C-998/C-1004) and play only through the existing optional paths; clearing a field restores the pack behaviour.
+	BackstepMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/OneBossFight/Player/Animations/AM_ER_Backstep_Back.AM_ER_Backstep_Back")));
+	GuardCounterMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter")));
+	AirLightMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Light.AM_ER_Attack_Air_Light")));
+	AirHeavyMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Heavy_Plunge.AM_ER_Attack_Air_Heavy_Plunge")));
 }
 
 void URPGDodgeTiming::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -65,6 +72,56 @@ void URPGDodgeTiming::BeginPlay()
 void URPGDodgeTiming::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction); TryAddEldenRingContext(); TickEldenRingInput();
+	// The live BP_ExampleGreatSwordBoss does not host RPGFrameworkMoveExecutor.
+	// Observe the pack's player-side reaction ability instead: GA_BlockReaction is
+	// activated by a blocked hit and has a weapon-style-specific class name.
+	// Require Status.Blocking at its rising edge so unrelated reactions cannot arm.
+	AActor* GuardOwner = GetOwner();
+	const double GuardMonitorNow = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0;
+	if (GuardOwner && GuardMonitorNow - LastBlockReactionAbilitySearchTime >= 1.0)
+	{
+		CachedBlockReactionAbilities.Reset();
+		UActorComponent* Asc = Cast<UActorComponent>(FindComponentByClassName(GuardOwner, TEXT("BP_AdvancedAbilitySystemComponent_C")));
+		const FArrayProperty* Created = Asc ? FindFProperty<FArrayProperty>(Asc->GetClass(), TEXT("CreatedAbilities")) : nullptr;
+		const FObjectProperty* Inner = Created ? CastField<FObjectProperty>(Created->Inner) : nullptr;
+		if (Inner)
+		{
+			FScriptArrayHelper Abilities(Created, Created->ContainerPtrToValuePtr<void>(Asc));
+			for (int32 Index = 0; Index < Abilities.Num(); ++Index)
+			{
+				UObject* Ability = Inner->GetObjectPropertyValue(Abilities.GetRawPtr(Index));
+				if (Ability && RPGGuardCounterRules::IsBlockReactionAbilityClass(Ability->GetClass()->GetName()))
+				{
+					CachedBlockReactionAbilities.Add(Ability);
+				}
+			}
+		}
+		LastBlockReactionAbilitySearchTime = GuardMonitorNow;
+	}
+	bool bBlockReactionActive = false;
+	for (const TWeakObjectPtr<UObject>& WeakAbility : CachedBlockReactionAbilities)
+	{
+		if (UObject* Ability = WeakAbility.Get())
+		{
+			bBlockReactionActive |= IsAbilityActive(Ability);
+		}
+	}
+	if (GuardOwner && (bBlockReactionActive || GuardMonitorNow - LastGuardTagProbeTime >= 0.10))
+	{
+		bLastObservedBlocking = RPGBossDamage::HasTag(GuardOwner, TEXT("Status.Blocking"));
+		LastGuardTagProbeTime = GuardMonitorNow;
+	}
+	if (GuardMonitorNow - LastGuardMonitorLogTime >= 1.0)
+	{
+		UE_LOG(LogRPGDodge, Verbose, TEXT("guard contact monitor reactionVariants=%d reactionActive=%d statusBlocking=%d"),
+			CachedBlockReactionAbilities.Num(), bBlockReactionActive ? 1 : 0, bLastObservedBlocking ? 1 : 0);
+		LastGuardMonitorLogTime = GuardMonitorNow;
+	}
+	if (RPGGuardCounterRules::IsNewBlockedContact(bLastObservedBlocking, bBlockReactionActive, bWasBlockReactionActive))
+	{
+		NotifySuccessfulGuardContact();
+	}
+	bWasBlockReactionActive = bBlockReactionActive;
 	if (!bBound)
 	{
 		TryBind();
@@ -478,7 +535,7 @@ void URPGDodgeTiming::OnEldenRingLight(const FInputActionInstance& Instance)
 	{
 		if (UAnimMontage* Montage = AirLightMontage.Get())
 		{
-			ApplyMontageArrayOverride(Montage, TEXT("FallingAttackMontages"));
+			ApplyMontageArrayOverride(Montage, TEXT("FallingAttackMontages"), ERPGAttackKind::JumpLight);
 		}
 	}
 	InjectLightUntil = Now + InjectSeconds;
@@ -511,7 +568,7 @@ void URPGDodgeTiming::OnEldenRingHeavyTap(const FInputActionInstance& Instance)
 		{
 			if (UAnimMontage* Montage = AirHeavyMontage.Get())
 			{
-				ApplyMontageArrayOverride(Montage, TEXT("StrongAttackMontages"));
+				ApplyMontageArrayOverride(Montage, TEXT("StrongAttackMontages"), ERPGAttackKind::JumpHeavy);
 			}
 		}
 	}
@@ -526,12 +583,129 @@ void URPGDodgeTiming::NotifySuccessfulGuardContact()
 	UE_LOG(LogRPGDodge, Log, TEXT("successful guarded contact armed guard counter window %.2f s"), GuardCounterWindowSeconds);
 }
 
-bool URPGDodgeTiming::ApplyGuardCounterMontageOverride(UAnimMontage* Montage)
+bool URPGDodgeTiming::IsGuardCounterArmed() const
 {
-	return ApplyMontageArrayOverride(Montage, TEXT("StrongAttackMontages"));
+	const UWorld* World = GetWorld();
+	return World && RPGGuardCounterRules::IsCounterPress(
+		LastSuccessfulGuardTime, World->GetTimeSeconds(), GuardCounterWindowSeconds);
 }
 
-bool URPGDodgeTiming::ApplyMontageArrayOverride(UAnimMontage* Montage, FName ArrayName)
+void URPGDodgeTiming::DebugArmGuardCounter()
+{
+#if !UE_BUILD_SHIPPING
+	NotifySuccessfulGuardContact();
+#endif
+}
+
+FString URPGDodgeTiming::DescribeGuardState() const
+{
+#if UE_BUILD_DEVELOPMENT
+	const AActor* GuardOwner = GetOwner();
+	if (!GuardOwner)
+	{
+		return TEXT("guard_state owner=missing");
+	}
+
+	FString AbilityRows = TEXT("none");
+	FString BlockAbilityRows = TEXT("none");
+	int32 AbilityCount = 0;
+	UObject* AbilitySystem = FindComponentByClassName(GuardOwner, TEXT("BP_AdvancedAbilitySystemComponent_C"));
+	const FArrayProperty* CreatedAbilities = AbilitySystem ? FindFProperty<FArrayProperty>(AbilitySystem->GetClass(), TEXT("CreatedAbilities")) : nullptr;
+	const FObjectProperty* AbilityProperty = CreatedAbilities ? CastField<FObjectProperty>(CreatedAbilities->Inner) : nullptr;
+	if (AbilityProperty)
+	{
+		TArray<FString> Rows;
+		TArray<FString> BlockRows;
+		FScriptArrayHelper Abilities(CreatedAbilities, CreatedAbilities->ContainerPtrToValuePtr<void>(AbilitySystem));
+		for (int32 Index = 0; Index < Abilities.Num(); ++Index)
+		{
+			UObject* Ability = AbilityProperty->GetObjectPropertyValue(Abilities.GetRawPtr(Index));
+			if (!Ability)
+			{
+				Rows.Add(FString::Printf(TEXT("[%d]=<null>"), Index));
+				continue;
+			}
+			const FString ClassName = Ability->GetClass()->GetName();
+			const bool bActive = IsAbilityActive(Ability);
+			Rows.Add(FString::Printf(TEXT("[%d]=%s active=%d"), Index, *ClassName, bActive ? 1 : 0));
+			if (ClassName.Contains(TEXT("block"), ESearchCase::IgnoreCase) || ClassName.Contains(TEXT("guard"), ESearchCase::IgnoreCase))
+			{
+				BlockRows.Add(FString::Printf(TEXT("%s active=%d"), *ClassName, bActive ? 1 : 0));
+			}
+		}
+		AbilityCount = Rows.Num();
+		AbilityRows = FString::Join(Rows, TEXT("; "));
+		if (!BlockRows.IsEmpty())
+		{
+			BlockAbilityRows = FString::Join(BlockRows, TEXT("; "));
+		}
+	}
+	else if (AbilitySystem)
+	{
+		AbilityRows = TEXT("CreatedAbilities property missing or not an object array");
+	}
+	else
+	{
+		AbilityRows = TEXT("ability system missing");
+	}
+
+	FGameplayTagContainer OwnedTags;
+	bool bOwnedTagsRead = false;
+	RPGPack::CallBlueprintFunction(const_cast<AActor*>(GuardOwner), TEXT("GetOwnedGameplayTags"),
+		[](UFunction&, uint8*) {},
+		[&](UFunction& Function, uint8* Params)
+		{
+			for (TFieldIterator<FStructProperty> It(&Function); It; ++It)
+			{
+				if (It->Struct == FGameplayTagContainer::StaticStruct() && It->HasAnyPropertyFlags(CPF_ReturnParm))
+				{
+					OwnedTags = *It->ContainerPtrToValuePtr<FGameplayTagContainer>(Params);
+					bOwnedTagsRead = true;
+					break;
+				}
+			}
+		});
+	if (!bOwnedTagsRead)
+	{
+		const FStructProperty* GameplayTagsProperty = FindFProperty<FStructProperty>(GuardOwner->GetClass(), TEXT("GameplayTags"));
+		if (GameplayTagsProperty && GameplayTagsProperty->Struct == FGameplayTagContainer::StaticStruct())
+		{
+			OwnedTags = *GameplayTagsProperty->ContainerPtrToValuePtr<FGameplayTagContainer>(GuardOwner);
+			bOwnedTagsRead = true;
+		}
+	}
+	TArray<FString> TagRows;
+	if (bOwnedTagsRead)
+	{
+		for (const FGameplayTag& Tag : OwnedTags.GetGameplayTagArray())
+		{
+			TagRows.Add(Tag.ToString());
+		}
+	}
+	const FString TagList = bOwnedTagsRead ? (TagRows.IsEmpty() ? TEXT("<empty>") : FString::Join(TagRows, TEXT(", "))) : TEXT("GetOwnedGameplayTags missing/unreadable");
+	const bool bBlocking = RPGBossDamage::HasTag(const_cast<AActor*>(GuardOwner), TEXT("Status.Blocking"));
+	const bool bStateBlocking = RPGBossDamage::HasTag(const_cast<AActor*>(GuardOwner), TEXT("State.Blocking"));
+	const bool bAbilityBlock = RPGBossDamage::HasTag(const_cast<AActor*>(GuardOwner), TEXT("Ability.Block"));
+	return FString::Printf(TEXT("owner=%s abilityCount=%d abilities={%s} blockAbilities={%s} ownedTags={%s} statusBlocking=%d stateBlocking=%d abilityBlock=%d"),
+		*GuardOwner->GetName(), AbilityCount, *AbilityRows, *BlockAbilityRows, *TagList,
+		bBlocking ? 1 : 0, bStateBlocking ? 1 : 0, bAbilityBlock ? 1 : 0);
+#else
+	return TEXT("guard_state unavailable outside Development builds");
+#endif
+}
+
+bool URPGDodgeTiming::ApplyGuardCounterMontageOverride(UAnimMontage* Montage)
+{
+	return ApplyMontageArrayOverride(Montage, TEXT("StrongAttackMontages"), ERPGAttackKind::Strong);
+}
+
+ERPGAttackKind URPGDodgeTiming::GetActiveMontageOverrideKind(const UAnimMontage* Montage) const
+{
+	const UAnimMontage* ActiveMontage = ActiveOverrideMontage.Get();
+	return RPGResolveActiveMontageOverride(Montage, ActiveMontage, ActiveOverrideKind);
+}
+
+bool URPGDodgeTiming::ApplyMontageArrayOverride(UAnimMontage* Montage, FName ArrayName, ERPGAttackKind Kind)
 {
 	if (!Montage)
 	{
@@ -625,12 +799,14 @@ bool URPGDodgeTiming::ApplyMontageArrayOverride(UAnimMontage* Montage, FName Arr
 		RestoreGuardCounterMontageOverride();
 		return false;
 	}
-	ActiveGuardCounterMontage = Montage;
+	ActiveOverrideMontage = Montage;
+	ActiveOverrideKind = Kind;
+	bActiveOverrideStarted = false;
 	GuardCounterOverrideEndTime = (GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0) + 1.0;
 	return true;
 }
 
-void URPGDodgeTiming::RestoreGuardCounterMontageOverride()
+void URPGDodgeTiming::RestoreMontageArrayBackups()
 {
 	for (const FRPGGuardCounterArrayBackup& Backup : GuardCounterArrayBackups)
 	{
@@ -642,13 +818,20 @@ void URPGDodgeTiming::RestoreGuardCounterMontageOverride()
 		}
 	}
 	GuardCounterArrayBackups.Reset();
-	ActiveGuardCounterMontage.Reset();
+}
+
+void URPGDodgeTiming::RestoreGuardCounterMontageOverride()
+{
+	RestoreMontageArrayBackups();
+	ActiveOverrideMontage.Reset();
+	ActiveOverrideKind = ERPGAttackKind::Unknown;
+	bActiveOverrideStarted = false;
 	GuardCounterOverrideEndTime = -1.0;
 }
 
 void URPGDodgeTiming::TickGuardCounterMontageOverride(double Now)
 {
-	UAnimMontage* Montage = ActiveGuardCounterMontage.Get();
+	UAnimMontage* Montage = ActiveOverrideMontage.Get();
 	if (!Montage)
 	{
 		if (!GuardCounterArrayBackups.IsEmpty())
@@ -671,7 +854,15 @@ void URPGDodgeTiming::TickGuardCounterMontageOverride(double Now)
 			}
 		}
 	}
-	if (bPlaying || Now >= GuardCounterOverrideEndTime)
+	if (bPlaying)
+	{
+		bActiveOverrideStarted = true;
+		// Restore the pack's arrays as soon as playback begins, but retain the
+		// montage's semantic kind until that montage exits so the swing tracker
+		// and hit intake can classify it on later ticks.
+		RestoreMontageArrayBackups();
+	}
+	else if (bActiveOverrideStarted || Now >= GuardCounterOverrideEndTime)
 	{
 		RestoreGuardCounterMontageOverride();
 	}

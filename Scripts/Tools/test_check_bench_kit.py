@@ -8,6 +8,9 @@ import unittest
 import re
 import subprocess
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from process_test_support import run_test_subprocess
+
 MODULE_PATH = Path(__file__).with_name("check_bench_kit.py")
 SPEC = spec_from_file_location("check_bench_kit", MODULE_PATH)
 CHECK = module_from_spec(SPEC)
@@ -100,7 +103,7 @@ class BenchKitCheckTests(unittest.TestCase):
                     command.append("--development-only")
                 else:
                     command.append("--include-development")
-                result = subprocess.run(command, capture_output=True, text=True, check=False)
+                result = run_test_subprocess(self, command, timeout=15, capture_output=True, text=True, check=False)
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
                 self.assertIn('"verdict": "PASS"', result.stdout)
 
@@ -111,9 +114,9 @@ class BenchKitCheckTests(unittest.TestCase):
                 shipping_id, development_id.replace("OBF-DEVELOPMENT-", "OBF-DEV-")
             ).replace("Package configuration: Shipping", "Package configuration: Development")
             (root / "BUILD_INFO.txt").write_text(obsolete_info, encoding="utf-8")
-            rejected = subprocess.run(
+            rejected = run_test_subprocess(self,
                 [sys.executable, str(checker), "--kit-root", str(root)],
-                capture_output=True, text=True, check=False,
+                timeout=15, capture_output=True, text=True, check=False,
             )
             self.assertNotEqual(rejected.returncode, 0)
             self.assertIn("must include a generated package build ID", rejected.stdout)

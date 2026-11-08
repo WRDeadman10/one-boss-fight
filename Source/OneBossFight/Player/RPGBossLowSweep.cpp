@@ -99,6 +99,7 @@ void URPGBossLowSweep::Test(float FromAngle, float ToAngle)
 	Payload.AttackInstance = LastInstance;
 	Payload.Generation = SweepGeneration;
 	Payload.HPDamage = Damage;
+	Payload.bCanBeBlocked = true; // A4 blade is a physical, guardable contact.
 	URPGDamageResolver* Resolver = URPGDamageResolver::FindOrAdd(GetOwner());
 	const float FeetHeight = RPGBossDamage::FeetZ(Player) - GroundZ;
 	if (FeetHeight >= BladeHeight)
@@ -141,6 +142,10 @@ void URPGBossLowSweep::Test(float FromAngle, float ToAngle)
 		bDamaged = true;
 		++HitCount;
 		UE_LOG(LogRPGSweep, Log, TEXT("blade hit the player at %.0f cm, angle %.0f deg, feet %.0f cm above the floor: health %.0f -> %.0f"), Distance, Angle, FeetHeight, Result.HealthBefore, Result.HealthAfter);
+		break;
+	case ERPGDamageOutcome::Blocked:
+		bDamaged = true; // one guarded blade contact spends this sweep
+		UE_LOG(LogRPGSweep, Log, TEXT("blade blocked by player guard at %.0f cm, angle %.0f deg"), Distance, Angle);
 		break;
 	case ERPGDamageOutcome::Parried:
 		bParriedCounted = true;

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Engine/EngineTypes.h"
+#include "Player/RPGAttackKind.h"
 #include "UObject/SoftObjectPtr.h"
 #include "RPGDodgeTiming.generated.h"
 
@@ -117,8 +118,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Guard Counter", meta = (ClampMin = "0.05", ClampMax = "2.0"))
 	float GuardCounterWindowSeconds = 0.60f;
 
-	/** Called by the boss hit resolver only when an accepted contact was actually guarded. */
+	/** Arms the counter window after a guarded contact is confirmed by the boss resolver or player-side pack reaction observer. */
 	void NotifySuccessfulGuardContact();
+	/** Development probe: true while the most recent confirmed guard remains inside the R2 counter window. */
+	UFUNCTION(BlueprintCallable, Category = "Development|Guard Counter", meta = (DevelopmentOnly))
+	bool IsGuardCounterArmed() const;
+	/** Development probe: synthetically arms the same counter window for isolated R2-path validation. */
+	UFUNCTION(BlueprintCallable, Category = "Development|Guard Counter", meta = (DevelopmentOnly))
+	void DebugArmGuardCounter();
+	/** Development probe: returns the pack-created ability classes/states and the tag container used by the gameplay-tag interface. */
+	UFUNCTION(BlueprintCallable, Category = "Development|Guard Counter", meta = (DevelopmentOnly))
+	FString DescribeGuardState() const;
+	/** The montage currently carrying a temporary attack-array override (kept through playback after arrays are restored). */
+	UAnimMontage* GetActiveMontageOverride() const { return ActiveOverrideMontage.Get(); }
+	/** The semantic attack kind for Montage, or Unknown when it is not the active temporary override. */
+	ERPGAttackKind GetActiveMontageOverrideKind(const UAnimMontage* Montage) const;
 
 	/** Owner 2026-11-06 ("All three"): Elden Ring attack inputs on the gamepad (R1 press light, R2 tap strong, R2 hold charged), a project context added ABOVE the
 	 *  pack's IMC_AdvancedControls so it consumes those keys. Empty disables it (the pack's mapping returns: R1 release light, R1 hold charged, R2 strong). */
@@ -202,7 +216,8 @@ private:
 	void OnEldenRingLight(const FInputActionInstance& Instance);
 	void OnEldenRingHeavyTap(const FInputActionInstance& Instance);
 	bool ApplyGuardCounterMontageOverride(UAnimMontage* Montage);
-	bool ApplyMontageArrayOverride(UAnimMontage* Montage, FName ArrayName);
+	bool ApplyMontageArrayOverride(UAnimMontage* Montage, FName ArrayName, ERPGAttackKind Kind);
+	void RestoreMontageArrayBackups();
 	void RestoreGuardCounterMontageOverride();
 	void TickGuardCounterMontageOverride(double Now);
 
@@ -227,8 +242,16 @@ private:
 	int32 ForcedRollCount = 0;
 	int32 IgnoredPressCount = 0;
 	double LastSuccessfulGuardTime = -1.0e9;
+	double LastGuardTagProbeTime = -1.0e9;
+	double LastGuardMonitorLogTime = -1.0e9;
+	TArray<TWeakObjectPtr<UObject>> CachedBlockReactionAbilities;
+	double LastBlockReactionAbilitySearchTime = -1.0e9;
+	bool bWasBlockReactionActive = false;
+	bool bLastObservedBlocking = false;
 	double GuardCounterOverrideEndTime = -1.0;
-	TWeakObjectPtr<UAnimMontage> ActiveGuardCounterMontage;
+	TWeakObjectPtr<UAnimMontage> ActiveOverrideMontage;
+	ERPGAttackKind ActiveOverrideKind = ERPGAttackKind::Unknown;
+	bool bActiveOverrideStarted = false;
 	TArray<FRPGGuardCounterArrayBackup> GuardCounterArrayBackups;
 	double LastPressGap = -1.0;
 	int32 BackwardTurnCount = 0;

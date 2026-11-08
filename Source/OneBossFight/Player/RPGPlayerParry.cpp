@@ -2,6 +2,7 @@
 
 #include "Player/RPGPlayerParry.h"
 #include "Boss/RPGSevarogDirector.h"
+#include "Boss/RPGTier2BossPresentation.h"
 #include "EnhancedInputComponent.h"
 #include "EngineUtils.h"
 #include "GameFramework/Pawn.h"
@@ -145,6 +146,9 @@ void URPGPlayerParry::NotifyParried(AActor* Actor)
 	{
 		Parry->LastGrade = Parry->GradeNow();
 		++Parry->ParriedCount;
+#if UE_BUILD_DEVELOPMENT
+		UE_LOG(LogRPGParry, Display, TEXT("Tier2 parry contact grade=%s target=%s"), *Parry->LastGradeName(), *GetNameSafe(Actor));
+#endif
 		const FVector SparkLocation = Actor->GetActorLocation() + FVector(0.f, 0.f, 65.f);
 		if (RPGTier1Visuals::SpawnConfiguredEffect(Parry->GetWorld(), Parry->ParrySparkVFX,
 			TEXT("/Game/OneBossFight/VFX/NS_Combat_ParrySpark.NS_Combat_ParrySpark"), SparkLocation, Actor->GetActorRotation()))
@@ -156,7 +160,11 @@ void URPGPlayerParry::NotifyParried(AActor* Actor)
 		{
 			for (TActorIterator<AActor> It(World); It; ++It)
 			{
-				if (URPGSevarogDirector* Director = It->FindComponentByClass<URPGSevarogDirector>())
+				if (URPGTier2BossPresentation* Tier2 = It->FindComponentByClass<URPGTier2BossPresentation>())
+				{
+					Tier2->PlayParryRecoil();
+				}
+				else if (URPGSevarogDirector* Director = It->FindComponentByClass<URPGSevarogDirector>())
 				{
 					Director->PlayParryRecoil();
 				}

@@ -22,7 +22,16 @@ def main() -> int:
 
     command = [sys.executable, "-m", "unittest", "discover", "-s", "Scripts/Tools"]
     started = time.monotonic()
-    result = subprocess.run(command, cwd=ROOT, check=False)
+    try:
+        # Let subprocess.run terminate and reap the suite process when the
+        # budget expires; measuring elapsed time only after return cannot bound
+        # a hung test suite.
+        result = subprocess.run(command, cwd=ROOT, check=False, timeout=args.max_seconds)
+    except subprocess.TimeoutExpired:
+        elapsed = time.monotonic() - started
+        print("OFFLINE_SUITE elapsed_seconds=%.3f limit_seconds=%.3f" % (elapsed, args.max_seconds), flush=True)
+        print("OFFLINE_SUITE_TIMING FAIL: suite process exceeded its wall-time limit", file=sys.stderr)
+        return 2
     elapsed = time.monotonic() - started
     print("OFFLINE_SUITE elapsed_seconds=%.3f limit_seconds=%.3f" % (elapsed, args.max_seconds), flush=True)
     if result.returncode != 0:

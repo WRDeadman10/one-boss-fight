@@ -183,6 +183,13 @@ bool FRPGDamageDecideTest::RunTest(const FString& Parameters)
 	// A rejected contact for invulnerability is never an accepted one, and the names are stable (the drivers read them).
 	TestEqual(TEXT("name of RejectedInvulnerable"), FString(RPGDamageRules::Name(ERPGDamageOutcome::RejectedInvulnerable)), FString(TEXT("RejectedInvulnerable")));
 	TestEqual(TEXT("name of Accepted"), FString(RPGDamageRules::Name(ERPGDamageOutcome::Accepted)), FString(TEXT("Accepted")));
+	TestEqual(TEXT("blockable guarded hit"), RPGDamageRules::ApplyGuard(ERPGDamageOutcome::Accepted, true, true), ERPGDamageOutcome::Blocked);
+	TestEqual(TEXT("unguarded hit"), RPGDamageRules::ApplyGuard(ERPGDamageOutcome::Accepted, true, false), ERPGDamageOutcome::Accepted);
+	TestEqual(TEXT("unblockable hit"), RPGDamageRules::ApplyGuard(ERPGDamageOutcome::Accepted, false, true), ERPGDamageOutcome::Accepted);
+	TestEqual(TEXT("dodge wins over guard"), RPGDamageRules::ApplyGuard(ERPGDamageOutcome::RejectedInvulnerable, true, true), ERPGDamageOutcome::RejectedInvulnerable);
+	TestEqual(TEXT("parry wins over guard"), RPGDamageRules::ApplyGuard(ERPGDamageOutcome::Parried, true, true), ERPGDamageOutcome::Parried);
+	TestEqual(TEXT("duplicate never rearms"), RPGDamageRules::ApplyGuard(ERPGDamageOutcome::RejectedDuplicate, true, true), ERPGDamageOutcome::RejectedDuplicate);
+	TestEqual(TEXT("blocked outcome name"), FString(RPGDamageRules::Name(ERPGDamageOutcome::Blocked)), FString(TEXT("Blocked")));
 	TestEqual(TEXT("A4 damage 20 (0.4 of the Freeze 50)"), GetDefault<URPGBossLowSweep>()->Damage, 20.f);
 	TestEqual(TEXT("A5 damage 12 (0.4 of the Freeze 30)"), GetDefault<URPGBossHealPunish>()->Damage, 12.f);
 	return true;
@@ -417,6 +424,35 @@ bool FRPGAttackClassifyTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("no data is unknown"), Kind(TEXT("None"), false), static_cast<int32>(ERPGAttackKind::Unknown));
 	TestEqual(TEXT("another asset is unknown"), Kind(TEXT("FireBallAttackData"), true), static_cast<int32>(ERPGAttackKind::Unknown));
 	TestEqual(TEXT("names are stable (the drivers read them)"), FString(RPGAttackKindName(ERPGAttackKind::JumpHeavy)), FString(TEXT("JumpHeavy")));
+	const int32 AirLightMontageIdentity = 1;
+	const int32 AirHeavyMontageIdentity = 2;
+	const int32 GuardCounterMontageIdentity = 3;
+	const int32 SameNamedButDifferentMontageIdentity = 4;
+	TestEqual(TEXT("matching active air-light override wins over restored arrays"),
+		static_cast<int32>(RPGResolveActiveMontageOverride(&AirLightMontageIdentity, &AirLightMontageIdentity, ERPGAttackKind::JumpLight)),
+		static_cast<int32>(ERPGAttackKind::JumpLight));
+	TestEqual(TEXT("matching active air-heavy override remains a jump heavy"),
+		static_cast<int32>(RPGResolveActiveMontageOverride(&AirHeavyMontageIdentity, &AirHeavyMontageIdentity, ERPGAttackKind::JumpHeavy)),
+		static_cast<int32>(ERPGAttackKind::JumpHeavy));
+	TestEqual(TEXT("matching guard-counter override is strong"),
+		static_cast<int32>(RPGResolveActiveMontageOverride(&GuardCounterMontageIdentity, &GuardCounterMontageIdentity, ERPGAttackKind::Strong)),
+		static_cast<int32>(ERPGAttackKind::Strong));
+	TestEqual(TEXT("a different montage cannot inherit an active override"),
+		static_cast<int32>(RPGResolveActiveMontageOverride(&SameNamedButDifferentMontageIdentity, &AirHeavyMontageIdentity, ERPGAttackKind::JumpHeavy)),
+		static_cast<int32>(ERPGAttackKind::Unknown));
+	TestEqual(TEXT("a null observed montage cannot inherit an active override"),
+		static_cast<int32>(RPGResolveActiveMontageOverride<int32>(nullptr, &GuardCounterMontageIdentity, ERPGAttackKind::Strong)),
+		static_cast<int32>(ERPGAttackKind::Unknown));
+	TestEqual(TEXT("a null active override cannot classify a normal montage"),
+		static_cast<int32>(RPGResolveActiveMontageOverride<int32>(&GuardCounterMontageIdentity, nullptr, ERPGAttackKind::Strong)),
+		static_cast<int32>(ERPGAttackKind::Unknown));
+	TestEqual(TEXT("the same montage retains its semantic kind after array restoration"),
+		static_cast<int32>(RPGResolveActiveMontageOverride(&GuardCounterMontageIdentity, &GuardCounterMontageIdentity, ERPGAttackKind::Strong)),
+		static_cast<int32>(ERPGAttackKind::Strong));
+	TestEqual(TEXT("jump-heavy override selects the pack strong attack data"), RPGAttackDataNameForKind(ERPGAttackKind::JumpHeavy), FName(TEXT("StrongMeleeAttackData")));
+	TestEqual(TEXT("jump-light override selects the pack default attack data"), RPGAttackDataNameForKind(ERPGAttackKind::JumpLight), FName(TEXT("DefaultMeleeAttackData")));
+	TestEqual(TEXT("guard-counter override selects the pack strong attack data"), RPGAttackDataNameForKind(ERPGAttackKind::Strong), FName(TEXT("StrongMeleeAttackData")));
+	TestTrue(TEXT("unknown override has no canonical attack data"), RPGAttackDataNameForKind(ERPGAttackKind::Unknown).IsNone());
 	return true;
 }
 
@@ -1189,10 +1225,11 @@ bool FRPGPackWiringTest::RunTest(const FString& Parameters)
 	TestNotNull(TEXT("Elden Ring gamepad attack context loads (owner 2026-11-06)"), DodgeDefaults->EldenRingMappingContext.LoadSynchronous());
 	TestNotNull(TEXT("Elden Ring R1 light action loads"), DodgeDefaults->EldenRingLightAction.LoadSynchronous());
 	TestNotNull(TEXT("Elden Ring R2 tap action loads"), DodgeDefaults->EldenRingHeavyTapAction.LoadSynchronous());
-	TestTrue(TEXT("optional ER backstep montage is empty by default"), DodgeDefaults->BackstepMontage.IsNull());
-	TestTrue(TEXT("optional guard-counter montage is empty by default"), DodgeDefaults->GuardCounterMontage.IsNull());
-	TestTrue(TEXT("optional air-light montage is empty by default"), DodgeDefaults->AirLightMontage.IsNull());
-	TestTrue(TEXT("optional air-heavy montage is empty by default"), DodgeDefaults->AirHeavyMontage.IsNull());
+	// Owner 2026-11-07: the Elden Ring clips are wired in by default; each must load as a montage.
+	TestNotNull(TEXT("ER backstep montage loads"), DodgeDefaults->BackstepMontage.LoadSynchronous());
+	TestNotNull(TEXT("ER guard-counter montage loads"), DodgeDefaults->GuardCounterMontage.LoadSynchronous());
+	TestNotNull(TEXT("ER air-light montage loads"), DodgeDefaults->AirLightMontage.LoadSynchronous());
+	TestNotNull(TEXT("ER air-heavy montage loads"), DodgeDefaults->AirHeavyMontage.LoadSynchronous());
 	TestFalse(TEXT("no blanket critical while the boss is down"), GetDefault<URPGBossStagger>()->bCriticalOnEveryHit);
 
 	// The weapon trace facade (Pack/RPGPackTrace, used by URPGTraceGuard and URPGTraceAudit) reads these names of the pack's trace classes by reflection: a pack update that renames one fails here, not silently in a fight.

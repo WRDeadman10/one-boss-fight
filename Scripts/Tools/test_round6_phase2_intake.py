@@ -100,7 +100,7 @@ class Phase2IntakeTests(unittest.TestCase):
             receipt_path = Path(temp_dir) / "receipt.json"
             receipt_path.write_text(json.dumps(phase2_fixture_from_phase1_shape()), encoding="utf-8")
             result = subprocess.run([sys.executable, str(Path(phase2.__file__)), str(receipt_path)],
-                                    capture_output=True, text=True, check=False)
+                                    capture_output=True, text=True, check=False, timeout=10)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("VALID Phase 2 receipt", result.stdout)
         self.assertIn("Performance base", result.stdout)
