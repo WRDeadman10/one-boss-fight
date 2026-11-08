@@ -1,0 +1,9 @@
+﻿draw ready=True
+SEG_BEGIN mixamo_backstep_1 frame=0
+SEG_END mixamo_backstep_1 frame=26
+SEG_BEGIN mixamo_backstep_2 frame=26
+SEG_END mixamo_backstep_2 frame=53
+SEG_BEGIN mixamo_backstep_3 frame=53
+SEG_END mixamo_backstep_3 frame=80
+SUMMARY frames=80
+finished: all segments recorded

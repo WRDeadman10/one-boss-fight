@@ -1,0 +1,25 @@
+﻿draw ready=True
+SEG_BEGIN backstep_1 frame=0
+SEG_END backstep_1 frame=19
+SEG_BEGIN backstep_2 frame=19
+SEG_END backstep_2 frame=37
+SEG_BEGIN air_light_1 frame=37
+SEG_END air_light_1 frame=65
+SEG_BEGIN air_light_2 frame=65
+SEG_END air_light_2 frame=91
+SEG_BEGIN air_heavy_1 frame=91
+SEG_END air_heavy_1 frame=122
+SEG_BEGIN air_heavy_2 frame=122
+SEG_END air_heavy_2 frame=152
+SEG_BEGIN guard_counter_1 frame=152
+SEG_END guard_counter_1 frame=182
+guard_counter_1 started=True armed=True boss_hp 2000.0 -> 1977.614001202345
+SEG_BEGIN guard_counter_2 frame=182
+SEG_END guard_counter_2 frame=209
+guard_counter_2 started=True armed=True boss_hp 1977.614001202345 -> 1955.22800240469
+SEG_BEGIN parry_1 frame=209
+parry press opened=True pos=0.714
+SEG_END parry_1 frame=236
+parry_1 started=True pressed=True
+SUMMARY frames=236
+finished: all segments recorded

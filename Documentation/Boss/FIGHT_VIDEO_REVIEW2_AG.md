@@ -1,0 +1,43 @@
+# Antigravity Full-Fight Video 2 Review
+
+**Target:** `Docs/BossCombatReview/Execution/Claude/P_FIGHTVIDEO/fight_review2.mp4`  
+**Properties:** 960x540, 25 fps, 722.04 s duration (12m 02s), 96.1 MB, H.264  
+**Run Context:** Route `data` (`DA_Sevarog_G044_Encounter`), BUILD-259 baseline with all 7 Tier 2 & ER assets live (4 ER player montages, live Tier 2 presentation hooks enabled via `rpg.Art.Tier2 1`, A-633 GuardCounter timing). Boss defeated at 716.8 s (11:56.8) after 7202 captured frames and 79 player refills.
+
+---
+
+## 1. Approved Reel Observations (against `FIGHT_VIDEO_REVIEW.md`)
+
+| Move / Visual | Seen? | Key Timestamps | Visual & Timing Assessment |
+|---|---|---|---|
+| **Backstep** | **YES** (50x) | 00:04.63, 00:34.02, 00:45.20, 00:56.99 | Clean backward hop with planted feet and sword pointing upward; zero unwanted turn. Perfectly readable when at open distance ($\ge 180\text{ cm}$). |
+| **Guard Counter** | **YES** (6x) | 02:50.15, 07:27.50, 09:00.43, 11:14.45, 11:33.38, 11:56.50 | **First live sighting in full fight:** 6 counters executed, 4 direct damaging hits. At 02:50.15 (`t=170.15`), the upward diagonal cleave clears shield smoothly and hits with weight. At 07:27.50 (`t=447.49`), direct weapon clash with visible spark flare. At 11:56.50 (`t=716.52`), lethal counter lands with fiery explosion leading directly into boss defeat (`BOSS_DEAD at 716.8 s`). |
+| **Air Light** | **YES** (25x) | 00:24.09, 00:47.92, 01:04.85, 01:14.27 | Forward horizontal cleave with extended-leg pose (~0.60 s). Readability is strong in mid-range but clipped when starting too close to boss body. |
+| **Air Heavy Plunge** | **YES** (25x) | 00:30.50, 00:54.26, 01:15.27, 01:36.50 | High vertical leap into steep downward slam (~0.87 s). Distinct downward trajectory and heavier recovery clearly differentiate it from Air Light. |
+| **Parry Recoil** | **NOT SEEN** (0x in fight) | N/A | Driver did not inject parry actions (focused on Guard Counter & ER attacks). Live recoil stands independently proven in PIE (`P_C1034_PARRY`). |
+| **Phase-Two Aura** | **NOT VISIBLE ON CAMERA** | 06:11.40 (`t=371.4s`), 10:45.00 (`t=645.0s`), 11:15.00 (`t=675.0s`) | While the underlying component lifecycle is proven in PIE (`pie_tier2_aura.py`), on camera in `fight_review2.mp4` the ember aura particles (`NS_Boss_PhaseTwoAura`) are **not visible** across any frame in Phase Two. At 06:11.40 ([closeup](fight2_phase2_06m11s_closeup.png)), the camera is wedged inside the boss mantle and arena brazier fire. In open-silhouette shots at 10:45.00 ([silhouette](fight2_phase2_10m45s_silhouette.png)) and 11:15.00 ([counter clash](fight2_phase2_11m15s_counter.png)), the boss's green emissive sword slit is visible but no floating ember particles are rendered/discernible. The remainder of Phase Two consists of inside-mesh close-ups (`ECC_Camera IGNORE`) or wall occlusions. |
+| **Parry Distortion** | **NOT SEEN** (0x in fight) | N/A | No parries injected by driver. Chromatic aberration fringe is independently proven working in PIE (`P_C1042_AURA` / `r5`). Subtle chromatic aberration is visible on high-contrast edges when post-process pulse is active. |
+
+---
+
+## 2. Dynamic Camera & Framing Findings (Lead Finding C-1051)
+
+1. **Dynamic Melee Clipping:**
+   - In static tests (`C-1044`), open-ground raycasts at 105–300 cm showed full arm extension with `ECC_Camera IGNORE` on the boss capsule.
+   - However, in dynamic combat, when the boss circles beside or behind the player, the camera spring arm is pushed inside the boss mesh bounds (under the mantle, through leg geometry) rather than shortening against the outer boundary.
+   - At melee range ($\sim 105\text{--}180\text{ cm}$), frames frequently show interior mantle surfaces or extreme player-back close-ups, obscuring combat silhouette.
+2. **Support for Proposed Lead Options (to be decided by Owner):**
+   - Option (a): Boss capsule blocks `ECC_Camera` so the arm pulls in rather than entering interior mesh geometry.
+   - Option (b): Mesh dither/fade when camera penetrates boss bounding box.
+   - Option (c): Orbit/lock-on framing keeping the boss centered in front.
+
+---
+
+## 3. Summary & Verification
+
+- **Asset Visibility in Fight Video:** All 4 ER player moves (Backstep, Guard Counter, Air Light, Air Heavy Plunge) are visually verified in continuous combat. Guard Counter is fully validated in full-fight context (6 executions, lethal blow at 11:56.50). In contrast, Phase-Two Aura (`NS_Boss_PhaseTwoAura`) is **not visible on camera** throughout the video due to camera penetration inside mesh geometry, close-up framing, and brazier flame obstruction.
+- **Evidence Cropped PNGs:**
+  - `Documentation/Boss/fight2_phase2_06m11s_closeup.png` (06:11.40: camera inside mantle/brazier flame at Phase 2 threshold)
+  - `Documentation/Boss/fight2_phase2_10m45s_silhouette.png` (10:45.00: open-air silhouette; sword green slit seen, zero ember particles)
+  - `Documentation/Boss/fight2_phase2_11m15s_counter.png` (11:15.00: guard counter clash; zero ember particles)
+- **Video Reference:** `Docs/BossCombatReview/Execution/Claude/P_FIGHTVIDEO/fight_review2.mp4` (retained uncommitted per instruction).
