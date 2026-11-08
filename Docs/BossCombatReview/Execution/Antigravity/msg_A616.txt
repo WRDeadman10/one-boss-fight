@@ -1,0 +1,8 @@
+TASK: Queue AC Art Batch 6 (AC-A26..AC-A30: Tier 2 Integration) complete.
+STATUS: Verified against accepted R2/R3 visual evidence and in-engine readbacks.
+Delivery report: Documentation/Boss/AC_A26_A30_TIER2_INTEGRATION_REPORT.md.
+AC-A26: PPM_ParryDistortion radial decay verified (t^2.5 over 0.35 s; 0.015 UV split).
+AC-A27: MPC_CombatFeedback scalars reset to 0.0 cleanly upon fight restart/death.
+AC-A28/A29: NS_Boss_PhaseTwoAura zoom density & AM_Boss01_ParryRecoil framing (headroom >= 170 px) verified.
+Binary .uasset assets remain untouched pending owner review; engine untouched.
+VALIDATION: offline suite 426 OK (1 skip), broken_links=0. NEXT: AC-A31..AC-A35.

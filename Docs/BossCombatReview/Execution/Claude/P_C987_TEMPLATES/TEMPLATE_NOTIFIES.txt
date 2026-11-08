@@ -1,0 +1,42 @@
+﻿== Ability_E_Anim_Montage
+   length 1.267 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25
+   [state] ANS_DisableMovement_C at 0.000 s for 1.267 s
+   [state] ANS_SetDesiredRotation_C at 0.000 s for 0.257 s
+   [state] AnimNotifyState_Trail at 0.000 s for 0.190 s
+   [state] ANS_CollisionTrace_C at 0.432 s for 0.186 s
+   AnimNotify_PlaySound at 0.436 s
+   [state] ANS_InputBuffer_C at 0.439 s for 0.214 s
+   [state] ANS_MovementCancel_C at 0.703 s for 0.564 s
+   FootStep at 0.827 s
+== Attack_PrimaryB_Montage
+   length 1.400 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25
+   [state] ANS_DisableMovement_C at 0.000 s for 1.400 s
+   [state] ANS_SetDesiredRotation_C at 0.000 s for 0.253 s
+   [state] ANS_CancelFrames_C at 0.000 s for 0.273 s
+   AnimNotify_PlaySound at 0.350 s
+   [state] ANS_InputBuffer_C at 0.350 s for 0.214 s
+   [state] ANS_CollisionTrace_C at 0.350 s for 0.186 s
+   [state] ANS_MovementCancel_C at 0.693 s for 0.707 s
+== ChargedAttack_Montage
+   length 2.700 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25
+   [state] ANS_CollisionTrace_C at 0.503 s for 0.502 s
+   [state] ANS_InputBuffer_C at 0.651 s for 0.971 s
+   [state] ANS_MovementCancel_C at 1.803 s for 0.897 s
+== Dodge_Small_Forward_Roll_Montage
+   length 0.667 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25
+   [state] ANS_SetDesiredRotation_C at 0.000 s for 0.285 s
+   [state] ANS_iFrames_C at 0.107 s for 0.383 s
+   [state] ANS_InputBuffer_C at 0.234 s for 0.268 s
+== Dodge_To_Idle_Montage
+   length 2.333 s, rate scale 2.00, sections 1, blend in 0.25 out 0.25
+   [state] ANS_SetDesiredRotation_C at 0.000 s for 0.250 s
+   [state] ANS_iFrames_C at 0.000 s for 0.700 s
+   [state] ANS_InputBuffer_C at 0.485 s for 1.192 s
+   [state] ANS_MovementCancel_C at 1.707 s for 0.627 s
+== HitReact_Back_Montage
+   length 0.800 s, rate scale 1.00, sections 1, blend in 0.00 out 0.25
+   [state] ANS_InputBuffer_C at 0.000 s for 0.395 s
+== HitReact_Front_Montage
+   length 0.800 s, rate scale 1.00, sections 1, blend in 0.00 out 0.25
+   [state] ANS_InputBuffer_C at 0.000 s for 0.467 s
+finished

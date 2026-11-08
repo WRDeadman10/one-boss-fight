@@ -1,5 +1,17 @@
 # Decisions
 
+## Owner reel implementation (C-1021, 2026-11-07)
+
+- The owner approved the reel and directed implementation. The Lead set all four `URPGDodgeTiming` montage Source defaults to the imported `AM_ER` assets; BUILD-255 passed 484/484 and `PackWiring` loads them. Clearing an optional field still falls back to pack behavior. Post-wiring PIE, live guard-counter hit, and package proof remain separate gates.
+
+## Guard-counter block-reaction class matching (C-1013, 2026-11-07)
+
+- C-1017 keeps the C-1016 runtime source unchanged after BUILD-254 acceptance. The next decision depends on a per-tick R2 release/strong-count/montage trace: an accepted counter alone does not prove that the pack strong attack reached playback or boss hit intake.
+- Lead evidence identified the pack reaction as weapon-style classes such as `GA_Sword_BlockReaction_C`, not a generic `GA_BlockReaction_C`. Source detection uses the exact class-name suffix `BlockReaction_C`, scans all created abilities, and still requires `Status.Blocking` at the reaction's rising edge.
+- C-1013 first set the probe to 220 cm / 25 s. C-1014 Lead PIE did not produce a boss attack or block there, so the follow-up uses the reported 900 cm approach setup, max-health readback, and 0.5 s state telemetry while keeping the 25 s guard window. This does not establish the cause of the earlier low-HP/AI state; guarded-contact and R2 acceptance remain unproven pending Lead reruns.
+- C-1015 Lead r6 confirms the data-route guard hook arms. Probe input is driven from a Development-only query of the same timed arm state used by R2 handling, rather than dependence on a guessed log path. C-1016 found C-1015's refill lookup targeted the wrong actor; the current probe obtains `RPGCombatDebug` from the boss. No production behavior/default changes are made; Lead build and both-route counter evidence remain open.
+- C-1016 identifies the debug component owner mismatch and an encounter-reset failure. Live mode now queries the boss-owned `RPGCombatDebug`. A distinct synthetic test-only arm entry point and probe mode isolate R2/counter behavior with the boss held; its output must never be counted as a real blocked-contact witness. Production combat behavior/defaults remain unchanged. Lead owns build and both-route split runs.
+
 ## Opt-in encounter-definition startup route (C-800/C-801, 2026-11-04)
 
 - **Accepted by Claude:** use a typed `URPGBossEncounterDefinition`, a GameInstance selection store, and a transient `ARPGEncounterBinding` built from an exact pre-BeginPlay boss/player census. Preserve `ActivateWorld` and `CompileWorldInput` APIs and do not edit `.umap` assets.
@@ -1505,7 +1517,7 @@ A parry that only removes damage felt empty, so a parried contact now costs the 
 - C-955 implementation record (2026-11-07): Tier 2 Option A parry material, aura, and recoil use empty-default optional references behind the Development preview switch. `AA_C20_TIER2_PRESENTATION_HOOKS.md` records the Source wiring and Lead verification gates; no additional owner decision or shipped-default change was made.
 - AA-C31–C34 audit (2026-11-07): C-944/C-945 provide the source of truth for the accepted gamepad mapping: R1 light, R2 tap strong, R2 hold at 0.35 s charged; the Lead's pie4 passed these routes and standing double-tap no-long-roll. Follow-up probe `pie_er_control_latency.py` is measurement-only and reports game-tick-bounded observations, not physical input latency. No new control threshold, montage timing, asset approval or gameplay tuning is selected here. See `Documentation/Boss/AA_C31_C34_INPUT_TIMING_AND_FEEL_AUDIT.md`.
 
-## Claude mailbox decision index C-935–C-980 (2026-11-06–2026-11-07)
+## Claude mailbox decision index C-935–C-987 (2026-11-06–2026-11-07)
 
 - C-935: Review Queue W batches; preserve HOLD state pending owner instruction.
 - C-936: Keep ledger at 80 WITNESSED / 2 PARTIAL; owner “skip/drop” decisions are not witnesses.
@@ -1518,9 +1530,11 @@ A parry that only removes damage felt empty, so a parried contact now costs the 
 - C-948–C-951: Deliver R6b kit, intake Phase 1, select Performance/50% for Phase 2; not a shipped default.
 - C-952: Owner selects Tier 2 Option A under empty-default Development preview.
 - C-953: Owner confirms guard works; prior block probes were invalid; require owner video review for every new animation.
-- C-954: Park benchmark testing; leave shipped DLSS default undecided until measurement resumes.
+- C-954: Park benchmark testing; Round 6 Phase 2 has not run; leave shipped DLSS default undecided until measurement resumes.
 - C-955: Open Queue AA and order Tier 2/guard-counter implementation; guard-counter integration is unblocked.
-- C-971: Accept Queue AB and order importer fail-closed hotfix; Lead BUILD-245 green.
+- C-971: Accept Queue AB and order importer fail-closed hotfix; Lead BUILD-245 green. Separate retained PIE receipt `P_C971_ERLATENCY` records the 0.36 s R2 route split; this remains game-tick evidence, not device latency.
+- C-954 Codex follow-through: refreshed Round 6 intake/default decision and owner summary to PARKED / NOT RUN; audited DLSS fallback and retained performance claim boundaries in `AC_C26_C30_DLSS_AND_PERFORMANCE_GATES.md`.
+- C-954 offline tooling follow-through: bounded the suite process by its configured timeout and recorded the remaining seven direct test-call timeout gaps; focused-player discovery remains 19 methods / five groups. See `AC_C31_C35_OFFLINE_TEST_BOUNDARDEDNESS.md`.
 - C-972: Accept AirLight; accept AirHeavy for owner review; keep Backstep rejected for R5; record Lead ER latency results and direct Codex to optional air fields.
 - C-973: Accept importer/cook-root work and BUILD-246/CookCoverage; approve empty-default AirLight/AirHeavy montage fields as a test-first production change; order accepted air imports and new unassigned montage assets.
 - C-974: Assign Codex the editor-safe montage segment-range helper as a test-first production change; GuardCounter source slice is F10..F34 (0.8000 s).
@@ -1530,5 +1544,63 @@ A parry that only removes damage felt empty, so a parried contact now costs the 
 - C-978: Accept X-1380/X-1381/A-588; BUILD-248 GREEN 484/484 and Shipping compiles; Lead confirms post-air restoration; raise offline-suite budget to 20 s; trim Backstep/GuardCounter montages.
 - C-979: Accept A-589 Backstep/GuardCounter trims; direct Antigravity to trim air montages against accepted clip ranges; require a strict importer acceptance-prefix hotfix; continue AB-C36+.
 - C-980: Accept Codex/Antigravity receipts and air montage trims; classify A-591 Tier 2 assets as created but not accepted pending previews; invalidate earlier moving-dodge results because synthetic IA_Move did not move the pawn; require real movement input, speed/input logging, corrected Lead reruns, and continued AC work without waiting.
+- C-981: Accept X-1385 and X-1386 as documentation only; require the C-980 movement-input hotfix before further AC work; continue without waiting for review.
+- C-982: Accept PPM_ParryDistortion as a look target only; reject recoil/aura R1 previews; request R2 evidence and separate Lead UE material verification from asset assignment. Reiterate the C-975 commit request; project policy keeps commits owner-controlled unless the owner asks Codex directly.
+- C-983: Accept recoil R2 motion subject to full-body/sword reframe before owner review; accept aura R2 shape but require orange-red colour R3 before owner review. A-593 commits and X-1389 accepted.
+- C-984: Accept X-1390 documentation-only Tier 2 readiness audit; direct Codex to apply the C-983 status correction in GATE-07/KI-191 and continue AC-C26+.
+- C-985: Accept A-594 Tier 2 R3 videos for owner review and X-1391/X-1392; aura colour is described as salmon in the unlit preview, final look belongs to owner/engine review; Lead owns the asset check and runtime verification.
+- C-986: Lead asset check found zero notifies on all five new montages; Codex must correct AA-A08 using real template notify classes/timings before Antigravity authors notifies, then Lead reruns asset check and PIE. The first static correction is `AA_A08_NOTIFY_FRAMES_TABLE.md`; exact Ability_E and hit-react template notify timelines are not in retained export evidence and are explicitly pending rather than invented.
+- C-987: supplied Lead readback for Ability_E, Attack_PrimaryB, dodge, and hit-react templates. Codex completed AA-A08 with real classes and sliced timeline proposals, using accepted ER clip hit-window frames when the template collision trace is outside/early; Backstep intentionally has no yaw/cancel-frame states. Continue AD-C06+; Antigravity owns authoring under lock and Lead owns readback/PIE.
+
+## Claude mailbox decision index C-988–C-991 (2026-11-07)
+
+- C-988: Lead saved-asset check partly rejects A-596; correct Backstep, AirLight, AirHeavy and ParryRecoil; GuardCounter matches. Codex continues Queue AD; Antigravity owns the four repairs.
+- C-989: corrects status to **C-988: 1 of 5 match, re-authoring pending**; accepts X-1398 and directs continued AD-C21+.
+- C-990: accepts X-1399 and directs continued AD-C26+; four montage repairs still pending.
+- C-991: accepts X-1400 and directs Codex to continue AD-C31+; asks Antigravity for a one-line repair status with Lead check output or explicit wait state.
+
+## Claude mailbox decision index C-992–C-994 (2026-11-07)
+
+- C-992: accepts A-597's 5/5 saved-montage readback, reports a live zero-damage ER air-hit failure, and orders the CollisionTrace `AttackData`-unset rule, post-trace MovementCancel windows, and 0.100 s ER blend-in proposal. Antigravity re-authors GuardCounter/AirLight/AirHeavy; Lead reruns the hit test.
+- C-993: accepts the Queue AD closeout, states GuardCounter FootStep absence is cosmetic, and orders C-992's corrected AA-A08 rows before continuing Queue AE.
+
+- C-994: accepts X-1407's hotfix rows and X-1408's Queue AE batch; approves 0.100 s blend-in for the four ER montages; assigns Antigravity the three attack montage re-authorings with Lead readback/t3d proof, followed by Lead hit-test. Codex continues AF-C01+.
+
+Authoritative message text remains in `Documentation/TEAM_MAILBOX.md`; this index is navigational and does not replace asset readbacks or Lead/owner decisions.
+- C-987 follow-through: AD-C11–C15 records the static Tier 2 Development/Shipping, load timing, cleanup, and recoil failure contracts plus a Lead PIE checklist. No owner preview approval or runtime proof is inferred.
+- A-596 follow-through: Antigravity reports the five C-986 montages authored under lock with assert-before-save and readback; its receipt gives timing summaries rounded to 0.01 s. Fresh Lead asset check/PIE remain pending; owner review/assignment remains separate.
+- C-988: partly rejects A-596 against the Lead readback. GuardCounter trace matches; Backstep yaw, AirLight/AirHeavy trace/extra states, and ParryRecoil's missing InputBuffer need correction. Antigravity owns four asset fixes under lock; Lead readback and PIE are required before acceptance.
+- Queue AD-C16–C20: closed KI-195 after bounding the seven remaining direct test subprocesses; focused subprocess fixtures pass 35/35. See `Documentation/Boss/AD_C16_C20_SUBPROCESS_TIMEOUT_HARDENING.md`.
+- Queue AD-C21–C25: discovery is a source-only 19-method/5-group inventory; the montage range helper's editor test covers principal range and dirty-state paths but leaves several edge cases unexercised. Added interrupt-propagation and inherited-output fixtures to the offline timing runner (5/5 focused). BUILD-241..248 remain separate historical Lead counts; see `Documentation/Boss/AD_C21_C25_NATIVE_GATE_AND_AUTHORING_TEST_AUDIT.md` for the next-run evidence checklist.
+- C-989: record animation notify status exactly as “C-988: 1 of 5 match, re-authoring pending”; A-596 is not acceptance evidence.
+- Queue AD-C26–C30: documented BUILD_INFO field provenance/consumer limits, CookCoverage's source-literal boundary, the Shipping smoke/benchmark gameplay-evidence boundary, Package.ps1 stage-root ambiguity (KI-197), and a blank packaged-gameplay capture manifest. See `Documentation/Boss/AD_C26_C30_BUILD_PACKAGE_AND_CAPTURE_AUDIT.md`.
+- C-949/C-951/C-954: Phase 1's 13-run receipt is accepted performance evidence; Performance/50% is the Phase 2 experiment base only; the later C-954 owner instruction parks Phase 2 and keeps the shipped default unchanged. Owner-facing Round 6 summaries now report the measured Phase 1 modes and do not claim that no Phase 1 return exists.
+- Queue AD-C31–C35: matched Round 6 source archive hash and validated receipt, recorded exact Phase 2 park/authorization gates, traced DLSS preference/fallback, corrected stale performance summaries, and refreshed KI-192 from raw 0.36 s route observations. See `Documentation/Boss/AD_C31_C35_PERFORMANCE_AND_OWNER_GATE_AUDIT.md`.
+- A-594: Corrected Tier 2 recoil framing, aura colour, and PPM review MP4 delivered for owner review; suite 422 OK/1 skipped, broken_links=0. Delivery is not owner visual approval or Lead runtime/cook verification.
+- A-595: Queue AA AA-A17–A25 progress delivered; AA-A21 remains waiting on the owner, and the offline receipt remains 422 OK/1 skipped, broken_links=0. Lighting/performance proposals do not replace owner image-quality approval or parked Round 6 Phase 2 evidence.
+- A-593: Antigravity reports separate commits for 14-asset untrack and BUILD-241..248 sources/tools, and delivers recoil/aura R2 previews. This is delivery evidence, not Claude acceptance or Tier 2 asset commit/assignment approval.
+- C-982 Codex follow-through: AC-C21–C25 maps CVar gates, distortion late-enable semantics, aura cleanup, recoil fallback, and distinguishes approved look target, R2 delivery, assignment, runtime, and cook evidence; see `Documentation/Boss/AC_C21_C25_TIER2_READINESS_AUDIT.md`.
 
 Supporting task-specific status and evidence boundaries: `Documentation/Boss/AA_C41_C44_RELEASE_GATES_AND_DECISION_INDEX.md`; original authority is each message in `Documentation/TEAM_MAILBOX.md`.
+
+## AF-C01 — C-994 montage hotfix readback (2026-11-07)
+
+The refreshed A-598 Lead readback confirms the approved 0.100 s blend-ins and corrected air timings. Full t3d files in `Docs/BossCombatReview/Execution/Claude/P_C992_AIRHITS/t3d_a598/` show AttackData absent for GuardCounter and AirLight; the export script omits AirHeavyPlunge, so its full serialized property proof is missing. The completed post-hotfix Lead PIE reruns still show zero damage from both ER air attacks on both routes while controls damage the boss. Keep the saved-property check partial and runtime gate failed; this is an evidence disposition, not a new owner decision.
+
+## AD-C36–C40 — release readiness evidence (2026-11-07)
+
+No product decision made. C-989's C-988 saved-asset readback remains 1/5; four corrections and Lead verification remain pending. C-954 continues to park Phase 2. Gate ownership, evidence limits, release dependencies, and blank owner decision fields are recorded in `Documentation/Boss/AD_C36_C40_RELEASE_GATES_AND_READINESS_AUDIT.md` and `AD_C40_RELEASE_READINESS_DECISION_SHEET.md`.
+
+## C-1006 guard-counter driver correction (2026-11-07)
+
+No product or asset decision made. The Lead-rejected PIE driver was corrected to use the proven `Ability.EnterCombat` path. `ER_GC_ASSIGN=1` is a transient probe-only assignment; it is not approval to save or ship a montage field. Lead's two-route rerun remains the runtime authority. See `Documentation/Boss/AJ_C46_C50_C1006_DRIVER_HOTFIX.md`.
+
+## C-1008 player-side guard-counter event (2026-11-07)
+
+Per Claude's hotfix order, the player timing component now observes the pack `GA_BlockReaction_C` ability's rising active edge together with `Status.Blocking` and arms the existing counter window. This is independent of boss executor presence; the existing executor notification calls remain. The Lead probe injects the pack `IA_Block` action each frame after the proven R2 weapon-draw warmup. Native tests were authored but not run; Lead compile and both-route PIE must confirm the event exists and the injected action blocks before this is considered runtime-verified. No asset field was saved or assigned by Codex.
+
+## C-1011 guard-state diagnostic before rewiring (2026-11-07)
+
+C-1011 reports BUILD-250 GREEN 484/484 but live PIE still failed on both routes: `GA_BlockReaction_C` was not found/active and `Status.Blocking` stayed false in 55 samples, despite `IA_Block` injection. Treat the C-1008 event source as an unverified hypothesis, not accepted runtime behavior. Codex added a Development-only state dump and probe logging so the next Lead run can identify the actual created abilities and owned tags before any further hook changes. No product or asset decision made; Lead build and diagnostic PIE rerun are pending.
+
+- 2026-11-07 (owner, after the review reel): "implement it in the game, then create a video of 1 full fight". The 4 ER clips are wired as URPGDodgeTiming defaults (BUILD-255); clearing a field restores the pack behaviour. Tier 2 effects stay unwired (their director hooks are not on the live Ember Warden). The fight video uses the Lead bot driver Docs/BossCombatReview/Execution/Claude/P_FIGHTVIDEO/pie_full_fight.py (player refilled below 35 HP, boss untouched, in-engine 960x540 frames at 15 fps of game time).

@@ -34,5 +34,16 @@ All Tier 2 art assets have been synthesized and saved in the project content hie
    - In `URPGSevarogDirector`: `PhaseTwoAuraEffect` defaults to empty `TSoftObjectPtr`; `ParryRecoilMontage` defaults to `nullptr`.
 3. **Automated Contracts Coverage:**
    - `python Scripts/Tools/test_optional_tier2_hooks.py`: **6/6 PASS**.
-   - `python -m unittest discover -s Scripts/Tools -p 'test_*.py'`: **419 OK (1 skipped)**.
+   - `python -m unittest discover -s Scripts/Tools -p 'test_*.py'`: **421 OK (1 skipped)**.
    - `python Scripts/Tools/check_doc_links.py`: **broken_links=0**.
+
+---
+
+## 4. Tier 2 Review Deliverables (R3 per C-983)
+
+| Deliverable | Description & Verification | Media Links |
+| :--- | :--- | :--- |
+| **`AN_Boss01_ParryRecoil` (R3)** | Motion accepted C-983 (160 bones, Pelvis -15.30 cm, arm rot 29.15°, spine 14°); R3 reframed with full body (head to toe) and sword inside frame (170 px headroom, 39 px floor clearance). | [review_Boss01_ParryRecoil.mp4](file:///c:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/Tier2_Art/review_Boss01_ParryRecoil.mp4)<br>[strip_Boss01_ParryRecoil.png](file:///c:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/Tier2_Art/strip_Boss01_ParryRecoil.png)<br>[look_Boss01_ParryRecoil.png](file:///c:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/Tier2_Art/look_Boss01_ParryRecoil.png) |
+| **`NS_Boss_PhaseTwoAura` (R3)** | Shape accepted C-983; R3 color delivery: rich emissive orange-to-red (#FF6A1A to #C81E0A) embers and blade flame with bright core, embers fading out as they rise (Z=0.85..1.90m), dark iron body armor completely unchanged (diff: 0). | [review_NS_Boss_PhaseTwoAura.mp4](file:///c:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/Tier2_Art/review_NS_Boss_PhaseTwoAura.mp4)<br>[NS_Boss_PhaseTwoAura_Before.png](file:///c:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/Tier2_Art/NS_Boss_PhaseTwoAura_Before.png)<br>[NS_Boss_PhaseTwoAura_After.png](file:///c:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/Tier2_Art/NS_Boss_PhaseTwoAura_After.png) |
+| **`PPM_ParryDistortion`** | Look target accepted C-982 (radial chromatic aberration fringe + subtle desaturation). Pack-standard review video delivered. | [review_PPM_ParryDistortion.mp4](file:///c:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/Tier2_Art/review_PPM_ParryDistortion.mp4)<br>[PPM_ParryDistortion_Before.png](file:///c:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/Tier2_Art/PPM_ParryDistortion_Before.png)<br>[PPM_ParryDistortion_After.png](file:///c:/UnrealProject/OneBossFight/Docs/BossCombatReview/Execution/Antigravity/Tier2_Art/PPM_ParryDistortion_After.png) |
+| **`MPC_CombatFeedback`** | Parameter `ParryPulse` (scalar, default 0.0). | Created per C-975 |

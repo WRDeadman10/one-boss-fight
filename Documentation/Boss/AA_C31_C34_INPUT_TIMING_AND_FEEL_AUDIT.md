@@ -13,7 +13,7 @@ Clip state from A-581/C-968: ER-A4 GuardCounter is accepted for import; ER-A1 Ba
 | Question | Source evidence | Finding / limit |
 |---|---|---|
 | What is R2 tap supposed to do? | C-944 input dump; C-945 `pie4`; `RPGDodgeTiming.cpp::OnEldenRingHeavyTap` | R2 tap maps to the strong attack; prior Lead PIE observed `Ability_E_Anim_Montage`. A successful guarded contact may substitute its optional counter montage. |
-| What is the R2 hold threshold? | C-944 read-back of `IMC_EldenRing`; C-945 `pie4` runtime proof | 0.35 s: tap is `<0.35 s`; hold at 0.35 s selects `IA_ChargedAttack`. Lead PIE observed `ChargedAttack_Montage`. New probe checks 0.34/0.35/0.36/0.70 s. |
+| What is the R2 hold threshold? | C-944 read-back of `IMC_EldenRing`; C-945 `pie4` runtime proof; C-971 two-route follow-up | Intended mapping is 0.35 s. C-971 observed Ability_E at 0.34/0.35 on both routes and ChargedAttack at 0.70 on both, but 0.36 split: legacy ChargedAttack, data Ability_E. The ~25–32 ms game ticks bound the observation; cause remains unresolved. Raw evidence: `Docs/BossCombatReview/Execution/Claude/P_C971_ERLATENCY/SUMMARY.md`. |
 | Is charged attack a separate C++ callback? | C-945 states R2 hold maps directly to `IA_ChargedAttack`; C++ `URPGDodgeTiming` handles the R2 tap replay. | The separate charged-hold route is authored in the input mapping asset; exercise both routes through the real key mapping. |
 | What montage duration is guaranteed? | C-945 identifies observed montage names, but no asset length or latency distribution is stated in that mailbox result. | Do not infer duration from the control decision. Lead should record observed montage and asset duration per equipped route. |
 

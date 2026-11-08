@@ -1,0 +1,13 @@
+# Queue AK C36–C40 — offline evidence tools
+
+No Unreal, build, package, asset edit or capture was run. Claude holds the full-fight engine lock; review and runtime acceptance remain Lead-owned.
+
+| Task | Result |
+|---|---|
+| C36 | `python Scripts/Tools/check_doc_links.py Documentation/Boss` returned `broken_links=0`. A separate literal-link inventory of `OWNER_REVIEW_PACK.md` found 22 referenced `.mp4`/image paths and 0 missing files. This checks presence, not video content, codec, visual quality, or owner approval. C-1024 confirmed the pack's ER-A3 `-22.4 HP` text against explicit r5 receipts. |
+| C37 | Added `Scripts/Tools/summarize_er_guard_counter.py` to parse one exact `RESULT` marker, retain named fields as strings, list missing fields, and count source swing/hit markers without inferring a hit from an armed state. Isolated parser tests pass 2/2. Both retained C-1020 synthetic r2 `synth_*_lines.txt` parse with no required field absent. Data: arm True, ER strong count 0→1, montage `[]`, boss HP delta 0, hit count 0→0. Legacy: same except montage `['DrawSword_Montage']`. Both show guard source False, counter-accept False, no swing/hit log markers in the line extracts. These are synthetic, not guarded-contact witnesses. |
+| C38 | C-971 raw `probe_legacy_lines.txt:10,12,14,16`: R2 0.34 s strong 372.87 ms/tick 28.04; 0.35 s strong 400.54/29.58; 0.36 s charged 356.63/31.64; 0.70 s charged 382.08/27.97. `probe_data_lines.txt:10,12,14,16`: 0.34 s strong 394.82/27.95; 0.35 s strong 392.63/27.29; 0.36 s strong 393.00/27.80; 0.70 s charged 367.22/26.29. Values are first-observed game-tick delays, not physical device latency or causal proof of threshold behavior. KI-192 remains open. |
+| C39 | C-1024 corrected the initial file-name misread: `P_C992_AIRHITS/BACKUP_NAMING.txt` says `run5_probe_*` are pre-r5 backups holding r4. Explicit `R5_RESULT_probe_data_lines.txt:65,120` and `R5_RESULT_probe_legacy_lines.txt:66,121` record AirLight -15.99 and AirHeavy -22.386 on both routes, matching `control_data_lines.txt:121` for the heavy control. The accepted C-1004 summary and owner pack ER-A3 description are supported for runtime-assigned r5. |
+| C40 | Parser output, link/media inventory and corrected provenance above are the offline receipt. Lead still reruns both default-wired routes after BUILD-256 and verifies package proof before closing KI-193. Corrected guard-counter reruns remain KI-198. |
+
+The parser reports missing fields explicitly and does not substitute zero or success. An empty evidence block or absent `RESULT` is a failure to observe, not a failed game mechanic.

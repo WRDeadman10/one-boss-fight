@@ -1,0 +1,253 @@
+﻿Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" OneBossFightEditor Win64 Development -Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject -WaitMutex -NoHotReload
+Log file: C:\Users\Rushit Vaghela\AppData\Local\UnrealBuildTool\Log.txt
+Using 'git status' to determine working set for adaptive non-unity build (C:\UnrealProject\OneBossFight).
+Invalidating makefile for OneBossFightEditor (working set of source files changed)
+Available x64 toolchains (1):
+ * C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207
+    (Family=14.44.35207, FamilyRank=1, Version=14.44.35214, Is64Bit=True, ReleaseChannel=Latest, Architecture=x64)
+Visual Studio 2022 compiler version 14.44.35214 is not a preferred version. Please use the latest preferred version 14.38.33130
+NGX Using Lib Dir x64 Platform Dir Win64
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'Niagara'.
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'NiagaraEditor'.
+Parsing headers for OneBossFightEditor
+  Running Internal UnrealHeaderTool C:\UnrealProject\OneBossFight\OneBossFight.uproject C:\UnrealProject\OneBossFight\Intermediate\Build\Win64\OneBossFightEditor\Development\OneBossFightEditor.uhtmanifest -WarningsAsErrors -installed
+Total of 3 written
+Reflection code generated for OneBossFightEditor in 5.7273686 seconds
+Building OneBossFightEditor...
+Using Visual Studio 2022 14.44.35214 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+Warning: Visual Studio 2022 compiler is not a preferred version
+[Adaptive Build] Excluded from OneBossFight unity file: RPGDodgeTiming.cpp, RPGHitIntake.cpp, RPGSwingTracker.cpp, RPGAutomationTests.cpp
+Determining max actions to execute in parallel (8 physical cores, 16 logical cores)
+  Executing up to 8 processes, one per physical core
+  Requested 1.5 GB memory per action, 10.54 GB available: limiting max parallel actions to 7
+Using Unreal Build Accelerator local executor to run 138 action(s)
+  Storage capacity 40Gb
+---- Starting trace: 261107_191839 ----
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+------ Building 138 action(s) started ------
+[1/138] Compile [x64] RPGAttackKind.gen.cpp
+[2/138] Compile [x64] OneBossFight.init.gen.cpp
+[3/138] Compile [x64] RPGBossAbortTests.cpp
+[4/138] Compile [x64] RPGBlueprintCall.cpp
+[5/138] Compile [x64] RPGBossActivation.cpp
+[6/138] Compile [x64] RPGBossAttackTrackerAdapters.cpp
+[7/138] Compile [x64] RPGBossAttackTrackerAdaptersTests.cpp
+[8/138] Compile [x64] RPGAttackTracker.cpp
+[9/138] Compile [x64] RPGAutomationTests.cpp
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): error C2665: 'FAutomationTestBase::TestEqual': no overloaded function could convert all the argument types
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(2025): note: could be 'bool FAutomationTestBase::TestEqual(const FString &,FUtf8StringView,FStringView)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const FString &,FUtf8StringView,FStringView)': cannot convert argument 2 from 'FName' to 'FUtf8StringView'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(2018): note: or       'bool FAutomationTestBase::TestEqual(const FString &,FStringView,FUtf8StringView)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const FString &,FStringView,FUtf8StringView)': cannot convert argument 2 from 'FName' to 'FStringView'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(2013): note: or       'bool FAutomationTestBase::TestEqual(const FString &,FStringView,FStringView)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const FString &,FStringView,FStringView)': cannot convert argument 2 from 'FName' to 'FStringView'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(2008): note: or       'bool FAutomationTestBase::TestEqual(const FString &,FUtf8StringView,FUtf8StringView)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const FString &,FUtf8StringView,FUtf8StringView)': cannot convert argument 2 from 'FName' to 'FUtf8StringView'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(2003): note: or       'bool FAutomationTestBase::TestEqual(const FString &,const TCHAR *,const TCHAR *)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const FString &,const TCHAR *,const TCHAR *)': cannot convert argument 2 from 'FName' to 'const TCHAR *'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1998): note: or       'bool FAutomationTestBase::TestEqual(const FString &,const FColor,const FColor)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const FString &,const FColor,const FColor)': cannot convert argument 2 from 'FName' to 'const FColor'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1993): note: or       'bool FAutomationTestBase::TestEqual(const FString &,const FRotator,const FRotator,float)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const FString &,const FRotator,const FRotator,float)': cannot convert argument 2 from 'FName' to 'const FRotator'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1988): note: or       'bool FAutomationTestBase::TestEqual(const FString &,const FTransform,const FTransform,float)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const FString &,const FTransform,const FTransform,float)': cannot convert argument 2 from 'FName' to 'const FTransform'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1983): note: or       'bool FAutomationTestBase::TestEqual(const FString &,const FVector,const FVector,float)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const FString &,const FVector,const FVector,float)': cannot convert argument 2 from 'FName' to 'const FVector'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1978): note: or       'bool FAutomationTestBase::TestEqual(const FString &,const double,const double,double)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const FString &,const double,const double,double)': cannot convert argument 2 from 'FName' to 'const double'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1973): note: or       'bool FAutomationTestBase::TestEqual(const FString &,const float,const float,float)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const FString &,const float,const float,float)': cannot convert argument 2 from 'FName' to 'const float'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1968): note: or       'bool FAutomationTestBase::TestEqual(const FString &,const int32,const int32)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const FString &,const int32,const int32)': cannot convert argument 2 from 'FName' to 'const int32'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1943): note: or       'bool FAutomationTestBase::TestEqual(const TCHAR *,FUtf8StringView,FUtf8StringView)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const TCHAR *,FUtf8StringView,FUtf8StringView)': cannot convert argument 2 from 'FName' to 'FUtf8StringView'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1942): note: or       'bool FAutomationTestBase::TestEqual(const TCHAR *,FStringView,FStringView)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const TCHAR *,FStringView,FStringView)': cannot convert argument 2 from 'FName' to 'FStringView'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1941): note: or       'bool FAutomationTestBase::TestEqual(const TCHAR *,const TCHAR *,const TCHAR *)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const TCHAR *,const TCHAR *,const TCHAR *)': cannot convert argument 2 from 'FName' to 'const TCHAR *'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1940): note: or       'bool FAutomationTestBase::TestEqual(const TCHAR *,const FLinearColor,const FLinearColor)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const TCHAR *,const FLinearColor,const FLinearColor)': cannot convert argument 2 from 'FName' to 'const FLinearColor'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1939): note: or       'bool FAutomationTestBase::TestEqual(const TCHAR *,const FColor,const FColor)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const TCHAR *,const FColor,const FColor)': cannot convert argument 2 from 'FName' to 'const FColor'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1938): note: or       'bool FAutomationTestBase::TestEqual(const TCHAR *,const FRotator,const FRotator,float)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const TCHAR *,const FRotator,const FRotator,float)': cannot convert argument 2 from 'FName' to 'const FRotator'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1937): note: or       'bool FAutomationTestBase::TestEqual(const TCHAR *,const FTransform,const FTransform,float)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const TCHAR *,const FTransform,const FTransform,float)': cannot convert argument 2 from 'FName' to 'const FTransform'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1936): note: or       'bool FAutomationTestBase::TestEqual(const TCHAR *,const FVector,const FVector,float)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const TCHAR *,const FVector,const FVector,float)': cannot convert argument 2 from 'FName' to 'const FVector'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1935): note: or       'bool FAutomationTestBase::TestEqual(const TCHAR *,const double,const double,double)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const TCHAR *,const double,const double,double)': cannot convert argument 2 from 'FName' to 'const double'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1934): note: or       'bool FAutomationTestBase::TestEqual(const TCHAR *,const float,const float,float)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const TCHAR *,const float,const float,float)': cannot convert argument 2 from 'FName' to 'const float'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1932): note: or       'bool FAutomationTestBase::TestEqual(const TCHAR *,const SIZE_T,const SIZE_T)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const TCHAR *,const SIZE_T,const SIZE_T)': cannot convert argument 2 from 'FName' to 'const SIZE_T'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1930): note: or       'bool FAutomationTestBase::TestEqual(const TCHAR *,const int64,const int64)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const TCHAR *,const int64,const int64)': cannot convert argument 2 from 'FName' to 'const int64'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(1929): note: or       'bool FAutomationTestBase::TestEqual(const TCHAR *,const int32,const int32)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const TCHAR *,const int32,const int32)': cannot convert argument 2 from 'FName' to 'const int32'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(2111): note: or       'bool FAutomationTestBase::TestEqual(const FString &,const ValueType &,const ValueType &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const FString &,const ValueType &,const ValueType &)': template parameter 'ValueType' is ambiguous
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: could be 'EName'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: or       'FName'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const FString &,const ValueType &,const ValueType &)': could not deduce template argument for 'const ValueType &' from 'const EName'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Misc\AutomationTest.h(2100): note: or       'bool FAutomationTestBase::TestEqual(const TCHAR *,const ValueType &,const ValueType &)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const TCHAR *,const ValueType &,const ValueType &)': template parameter 'ValueType' is ambiguous
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: could be 'EName'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: or       'FName'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: 'bool FAutomationTestBase::TestEqual(const TCHAR *,const ValueType &,const ValueType &)': could not deduce template argument for 'const ValueType &' from 'const EName'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(439): note: while trying to match the argument list '(const wchar_t [46], FName, const EName)'
+[10/138] Compile [x64] RPGBossBleedAdapters.cpp
+[11/138] Compile [x64] RPGBossActivationTests.cpp
+[12/138] Compile [x64] RPGBenchmarkRunner.cpp
+[13/138] Compile [x64] RPGBossActivationWorldTests.cpp
+[14/138] Compile [x64] RPGBossCloseClipSwapAdapters.cpp
+[15/138] Compile [x64] RPGBossCloseClipSwap.cpp
+[16/138] Compile [x64] RPGBossCueSweepTests.cpp
+[17/138] Compile [x64] RPGBossCueTests.cpp
+[18/138] Compile [x64] RPGBossAuthoredDraftPreflightTests.cpp
+[19/138] Compile [x64] RPGBossDeathAdapters.cpp
+[20/138] Compile [x64] RPGBossDormantWakeAdapters.cpp
+[21/138] Compile [x64] RPGBossBleed.cpp
+[22/138] Compile [x64] RPGBossCloseClipSwapAdaptersTests.cpp
+[23/138] Compile [x64] RPGBossDeath.cpp
+[24/138] Compile [x64] RPGBossEncounterClusterAdapters.cpp
+[25/138] Compile [x64] RPGBossBleedAdaptersTests.cpp
+[26/138] Compile [x64] RPGBossEncounterDefinition.cpp
+[27/138] Compile [x64] RPGBossDormantWakeAdaptersTests.cpp
+[28/138] Compile [x64] RPGBossDeathAdaptersTests.cpp
+[29/138] Compile [x64] RPGBossEncounterDefinition.gen.cpp
+[30/138] Compile [x64] RPGBossEncounterPolicyAdapters.cpp
+[31/138] Compile [x64] RPGBossEncounterClusterAdaptersTests.cpp
+[32/138] Compile [x64] RPGBossFiniteRuleOverflowWitnessTests.cpp
+[33/138] Compile [x64] RPGBossEncounterRestartMatrixTests.cpp
+[34/138] Compile [x64] RPGBossEncounterPolicyAdaptersTests.cpp
+[35/138] Compile [x64] RPGBossHealPunishAdapters.cpp
+[36/138] Compile [x64] RPGBossExecutorHarnessTests.cpp
+[37/138] Compile [x64] RPGBossEncounter.cpp
+[38/138] Compile [x64] RPGBossHealPunish.cpp
+[39/138] Compile [x64] RPGBossFrameworkProfile.cpp
+[40/138] Compile [x64] RPGBossHud.cpp
+[41/138] Compile [x64] RPGBossHealPunishAdaptersTests.cpp
+[42/138] Compile [x64] RPGBossHydrationPreparation.cpp
+[43/138] Compile [x64] RPGBossJavelin.cpp
+[44/138] Compile [x64] RPGBossHydrationPreflight.cpp
+[45/138] Compile [x64] RPGBossLosLeashDeadlineTests.cpp
+[46/138] Compile [x64] RPGBossLookAdapters.cpp
+[47/138] Compile [x64] RPGBossLowSweepAdapters.cpp
+[48/138] Compile [x64] RPGBossHydrationPreflightTests.cpp
+[49/138] Compile [x64] RPGBossHydrationPreparationTests.cpp
+[50/138] Compile [x64] RPGBossLowSweep.cpp
+[51/138] Compile [x64] RPGBossMoveCard.cpp
+[52/138] Compile [x64] RPGBossPhaseAdapters.cpp
+[53/138] Compile [x64] RPGBossLowSweepAdaptersTests.cpp
+[54/138] Compile [x64] RPGBossLookAdaptersTests.cpp
+[55/138] Compile [x64] RPGBossPhaseAdaptersTests.cpp
+[56/138] Compile [x64] RPGBossPhaseFlowAdapters.cpp
+[57/138] Compile [x64] RPGBossPhasesClusterAdapters.cpp
+[58/138] Compile [x64] RPGBossMusic.cpp
+[59/138] Compile [x64] RPGBossPhaseFlowAdaptersTests.cpp
+[60/138] Compile [x64] RPGBossPosture.cpp
+[61/138] Compile [x64] RPGBossQueueDEdgeTests.cpp
+[62/138] Compile [x64] RPGBossPreparationRegistry.cpp
+[63/138] Compile [x64] RPGBossPhases.cpp
+[64/138] Compile [x64] RPGBossPhasesClusterAdaptersTests.cpp
+[65/138] Compile [x64] RPGBossShockwaveAdapters.cpp
+[66/138] Compile [x64] RPGBossShockwave.cpp
+[67/138] Compile [x64] RPGBossProductionPreflightTests.cpp
+[68/138] Compile [x64] RPGBossStaggerClusterAdapters.cpp
+[69/138] Compile [x64] RPGBossShockwaveAdaptersTests.cpp
+[70/138] Compile [x64] RPGBossStaggerPolicyAdapters.cpp
+[71/138] Compile [x64] RPGBossProductionPreparationTests.cpp
+[72/138] Compile [x64] RPGBossPreparationRegistryTests.cpp
+[73/138] Compile [x64] RPGBossTrackRulesSweepTests.cpp
+[74/138] Compile [x64] RPGBossStagger.cpp
+[75/138] Compile [x64] RPGBossTurnLatchBoundaryTests.cpp
+[76/138] Compile [x64] RPGBossStatsAdapters.cpp
+[77/138] Compile [x64] RPGBossWarpExactDurationBoundaryTests.cpp
+[78/138] Compile [x64] RPGBossStaggerPolicyAdaptersTests.cpp
+[79/138] Compile [x64] RPGBossStatsAdaptersTests.cpp
+[80/138] Compile [x64] RPGBossStaggerClusterAdaptersTests.cpp
+[81/138] Compile [x64] RPGBossWorldPreparation.cpp
+[82/138] Compile [x64] RPGBuildLoadout.gen.cpp
+[83/138] Compile [x64] RPGBossWorldInputCompiler.cpp
+[84/138] Compile [x64] RPGBossWorldInputCompilerTests.cpp
+[85/138] Compile [x64] RPGBuildLoadout.cpp
+[86/138] Compile [x64] RPGBuildSelect.gen.cpp
+[87/138] Compile [x64] RPGBossStartupActivationTests.cpp
+[88/138] Compile [x64] RPGCodexTests.cpp
+[89/138] Compile [x64] RPGCombatCatalog.gen.cpp
+[90/138] Compile [x64] RPGBuildTests.cpp
+[91/138] Compile [x64] RPGBossWorldPreparationTests.cpp
+[92/138] Compile [x64] RPGCameraProbe.cpp
+[93/138] Compile [x64] RPGCombatCatalogABI.cpp
+[94/138] Compile [x64] RPGDodgeTiming.gen.cpp
+[95/138] Compile [x64] RPGCombatCatalog.cpp
+[96/138] Compile [x64] RPGBuildSelect.cpp
+[97/138] Compile [x64] RPGCombatCatalogTests.cpp
+[98/138] Compile [x64] RPGDamageResolver.cpp
+[99/138] Compile [x64] RPGCombatDebug.cpp
+[100/138] Compile [x64] RPGEncounterBindingTests.cpp
+[101/138] Compile [x64] RPGEncounterSelectionSubsystem.gen.cpp
+[102/138] Compile [x64] RPGEncounterBinding.gen.cpp
+[103/138] Compile [x64] RPGEncounterBinding.cpp
+[104/138] Compile [x64] RPGDodgeTiming.cpp
+[105/138] Compile [x64] RPGFrameworkBossCharacter.gen.cpp
+[106/138] Compile [x64] RPGEncounterSelectionSubsystem.cpp
+[107/138] Compile [x64] RPGFlaskHud.cpp
+[108/138] Compile [x64] RPGFrameworkMoveExecutor.gen.cpp
+[109/138] Compile [x64] RPGFogGate.cpp
+[110/138] Compile [x64] RPGFrameworkBossController.cpp
+[111/138] Compile [x64] RPGHitIntake.gen.cpp
+[112/138] Compile [x64] RPGFrameworkRuntimeTests.cpp
+[113/138] Compile [x64] RPGFrameworkProofFixture.cpp
+[114/138] Compile [x64] RPGNativeBossHealth.gen.cpp
+[115/138] Compile [x64] RPGLegend.gen.cpp
+[116/138] Compile [x64] RPGFrameworkMoveExecutor.cpp
+[117/138] Compile [x64] RPGHitIntake.cpp
+[118/138] Compile [x64] RPGIFrameMonitor.cpp
+[119/138] Compile [x64] RPGFrameworkBossCharacter.cpp
+[120/138] Compile [x64] RPGPackTrace.cpp
+[121/138] Compile [x64] RPGPlayerMovesSubsystem.gen.cpp
+[122/138] Compile [x64] RPGLegend.cpp
+[123/138] Compile [x64] RPGPlayerMovesAttachWitnessTests.cpp
+[124/138] Compile [x64] RPGRiposteInput.cpp
+[125/138] Compile [x64] RPGSwingTracker.gen.cpp
+[126/138] Compile [x64] RPGStartupChronology.cpp
+[127/138] Compile [x64] RPGScratchRouteA.cpp
+[128/138] Compile [x64] RPGWeaponAttackTable.cpp
+[129/138] Compile [x64] RPGPlayerParry.cpp
+[130/138] Compile [x64] RPGWeaponAttackTable.gen.cpp
+[131/138] Compile [x64] RPGPlayerMovesSubsystem.cpp
+[132/138] Compile [x64] RPGSwingTracker.cpp
+[133/138] Compile [x64] RPGTraceGuard.cpp
+[134/138] Compile [x64] RPGTraceAudit.cpp
+[135/138] Compile [x64] RPGSevarogDirector.cpp
+Trace file written to C:/Users/Rushit Vaghela/AppData/Local/UnrealBuildTool/Log.uba with size 51.8kb
+Total time in Unreal Build Accelerator local executor: 71.29 seconds
+Total execution time: 81.75 seconds

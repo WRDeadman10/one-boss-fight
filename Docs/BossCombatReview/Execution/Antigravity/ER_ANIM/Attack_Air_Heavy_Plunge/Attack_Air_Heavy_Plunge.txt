@@ -3,12 +3,12 @@ Length: 0.867
 FPS: 30
 Frames: 27 (0 to 26)
 Loop: No (One-shot)
-RootMotion: None (In-place; airborne plunge driven by jump physics)
-RootYaw: 0.0 (Facing strictly preserved throughout)
-AirborneWindupEnd: 0.200 (Frame 6)
-HitWindowStart: 0.367 (Frame 11)
-LandingImpact: 0.500 (Frame 15)
-HitWindowEnd: 0.533 (Frame 16)
+RootMotion: Retained from PrimaryB forward lunge (0.200..1.067 s)
+RootYaw: 0.0 (Facing preserved)
+AirborneWindupEnd: 0.150 (Frame 4)
+HitWindowStart: 0.150 (Frame 4)
+LandingImpact: 0.336 (Frame 10)
+HitWindowEnd: 0.336 (Frame 10)
 RecoverEnd: 0.867 (Frame 26)
 ArmatureHeight: 1.786 m (~180 cm for SK_CombatMannequin)
-Notes: Elden Ring style jump heavy plunge attack (ER-A3). Initiated in mid-air (R2 while jumping), the character lifts the greatsword overhead with both hands in airborne apex (F0-F6), drives down with full body weight into a vertical plunge, slamming the sword into the ground at landing impact F15 (0.500 s). Deep squat absorbs impact shock and settles smoothly back into combat idle.
+Notes: Re-sliced per Lead [C-995] to PrimaryB 0.200..1.067 s. Captures the forward strike and downward plunge with root lunge. ANS_MovementCancel_C removed.

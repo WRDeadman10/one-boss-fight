@@ -1,0 +1,19 @@
+[CookAudit] ER Asset OK: AM_ER_Attack_GuardCounter (AnimMontage)
+[CookAudit] ER Asset OK: AM_ER_Backstep_Back (AnimMontage)
+[CookAudit] ER Asset OK: AM_ER_Attack_Air_Light (AnimMontage)
+[CookAudit] ER Asset OK: AM_ER_Attack_Air_Heavy_Plunge (AnimMontage)
+[CookAudit] ER Asset OK: AN_ER_Attack_GuardCounter (AnimSequence)
+[CookAudit] ER Asset OK: AN_ER_Backstep_Back (AnimSequence)
+[CookAudit] ER Asset OK: AN_ER_Attack_Air_Light (AnimSequence)
+[CookAudit] ER Asset OK: AN_ER_Attack_Air_Heavy_Plunge (AnimSequence)
+[CookAudit] Tier 2 Asset OK: AM_Boss01_ParryRecoil (AnimMontage)
+[CookAudit] Tier 2 Asset OK: AN_Boss01_ParryRecoil (AnimSequence)
+[CookAudit] Tier 2 Asset OK: NS_Boss_PhaseTwoAura (NiagaraSystem)
+[CookAudit] Tier 2 Asset OK: PPM_ParryDistortion (Material)
+[CookAudit] Tier 2 Asset OK: MPC_CombatFeedback (MaterialParameterCollection)
+[CookAudit] UI Tex T_Boss01_FlaskPlate: sRGB=True comp=<TextureCompressionSettings.TC_EDITOR_ICON: 7>
+[CookAudit] UI Tex T_Boss01_Flask_Full: sRGB=True comp=<TextureCompressionSettings.TC_EDITOR_ICON: 7>
+[CookAudit] UI Tex T_Boss01_Flask_Half: sRGB=True comp=<TextureCompressionSettings.TC_EDITOR_ICON: 7>
+[CookAudit] UI Tex T_Boss01_Flask_Empty: sRGB=True comp=<TextureCompressionSettings.TC_EDITOR_ICON: 7>
+[CookAudit] Mesh OK: SM_Sevarog_Comet_v1
+[CookAudit] Mesh OK: SM_Boss01_CorpseStatue

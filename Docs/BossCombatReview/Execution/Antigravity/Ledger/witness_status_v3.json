@@ -2650,7 +2650,7 @@
       "citations": [
         {
           "file": "Source/OneBossFight/Tests/RPGAutomationTests.cpp",
-          "line": 875,
+          "line": 895,
           "quoted": "TestTrue(TEXT(\"floor is hit by a downward trace\"), bFloorHit);"
         },
         {

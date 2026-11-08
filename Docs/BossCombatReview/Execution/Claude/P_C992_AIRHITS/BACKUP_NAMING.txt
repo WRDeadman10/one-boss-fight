@@ -1,0 +1,5 @@
+Naming in this folder (Lead):
+- probe_<route>_lines.txt / probe_<route>.log = the LAST run (r5, 2026-11-07 19:40, after A-607): AirHeavy -22.386 HP on both routes.
+- R5_RESULT_* = explicit copies of that r5 result.
+- runN_probe_* = a backup taken BEFORE run N+1, i.e. it holds the result of run N-1/N; "run5_*" holds r4 (AirHeavy -15.99, before A-607 set StrongMeleeAttackData).
+- control_* = pack air attacks with no ER montage assigned.

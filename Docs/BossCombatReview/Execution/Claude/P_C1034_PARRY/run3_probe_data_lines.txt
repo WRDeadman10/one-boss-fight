@@ -1,0 +1,150 @@
+﻿[2026.11.08-00.09.32:082][406]LogPython: [Tier2Parry] A4 requested started=True parried_before=0 distance_cm=250.0 boss_montage=AnimMontage_3
+[2026.11.08-00.09.32:083][406]LogPython: [Tier2Parry] A4 tick g=0.000 pos=0.000 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:099][407]LogPython: [Tier2Parry] A4 tick g=0.006 pos=0.006 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:112][408]LogPython: [Tier2Parry] A4 tick g=0.011 pos=0.011 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:170][409]LogPython: [Tier2Parry] A4 tick g=0.014 pos=0.014 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:184][410]LogPython: [Tier2Parry] A4 tick g=0.028 pos=0.028 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:197][411]LogPython: [Tier2Parry] A4 tick g=0.032 pos=0.032 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:210][412]LogPython: [Tier2Parry] A4 tick g=0.035 pos=0.035 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:270][413]LogPython: [Tier2Parry] A4 tick g=0.039 pos=0.039 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:287][414]LogPython: [Tier2Parry] A4 tick g=0.053 pos=0.053 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:302][415]LogPython: [Tier2Parry] A4 tick g=0.058 pos=0.058 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:346][416]LogPython: [Tier2Parry] A4 tick g=0.061 pos=0.061 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:359][417]LogPython: [Tier2Parry] A4 tick g=0.072 pos=0.072 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:372][418]LogPython: [Tier2Parry] A4 tick g=0.076 pos=0.076 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:421][419]LogPython: [Tier2Parry] A4 tick g=0.079 pos=0.079 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:434][420]LogPython: [Tier2Parry] A4 tick g=0.091 pos=0.091 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:454][421]LogPython: [Tier2Parry] A4 tick g=0.095 pos=0.095 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:499][422]LogPython: [Tier2Parry] A4 tick g=0.099 pos=0.099 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:513][423]LogPython: [Tier2Parry] A4 tick g=0.111 pos=0.111 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:526][424]LogPython: [Tier2Parry] A4 tick g=0.114 pos=0.114 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:576][425]LogPython: [Tier2Parry] A4 tick g=0.117 pos=0.117 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:592][426]LogPython: [Tier2Parry] A4 tick g=0.130 pos=0.130 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:606][427]LogPython: [Tier2Parry] A4 tick g=0.134 pos=0.134 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:621][428]LogPython: [Tier2Parry] A4 tick g=0.137 pos=0.137 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:677][429]LogPython: [Tier2Parry] A4 tick g=0.141 pos=0.141 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:690][430]LogPython: [Tier2Parry] A4 tick g=0.155 pos=0.155 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:703][431]LogPython: [Tier2Parry] A4 tick g=0.158 pos=0.158 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:715][432]LogPython: [Tier2Parry] A4 tick g=0.162 pos=0.162 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:782][433]LogPython: [Tier2Parry] A4 tick g=0.166 pos=0.166 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:795][434]LogPython: [Tier2Parry] A4 tick g=0.181 pos=0.181 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:811][435]LogPython: [Tier2Parry] A4 tick g=0.185 pos=0.185 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:858][436]LogPython: [Tier2Parry] A4 tick g=0.189 pos=0.189 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:872][437]LogPython: [Tier2Parry] A4 tick g=0.200 pos=0.200 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:886][438]LogPython: [Tier2Parry] A4 tick g=0.204 pos=0.204 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:899][439]LogPython: [Tier2Parry] A4 tick g=0.207 pos=0.207 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:958][440]LogPython: [Tier2Parry] A4 tick g=0.211 pos=0.211 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:972][441]LogPython: [Tier2Parry] A4 tick g=0.225 pos=0.225 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.32:987][442]LogPython: [Tier2Parry] A4 tick g=0.229 pos=0.229 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:008][443]LogPython: [Tier2Parry] A4 tick g=0.232 pos=0.232 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:062][444]LogPython: [Tier2Parry] A4 tick g=0.238 pos=0.238 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:078][445]LogPython: [Tier2Parry] A4 tick g=0.251 pos=0.251 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:092][446]LogPython: [Tier2Parry] A4 tick g=0.255 pos=0.255 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:137][447]LogPython: [Tier2Parry] A4 tick g=0.259 pos=0.259 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:154][448]LogPython: [Tier2Parry] A4 tick g=0.270 pos=0.270 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:169][449]LogPython: [Tier2Parry] A4 tick g=0.274 pos=0.274 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:213][450]LogPython: [Tier2Parry] A4 tick g=0.278 pos=0.278 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:227][451]LogPython: [Tier2Parry] A4 tick g=0.289 pos=0.289 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:240][452]LogPython: [Tier2Parry] A4 tick g=0.293 pos=0.293 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:252][453]LogPython: [Tier2Parry] A4 tick g=0.296 pos=0.296 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:268][454]LogPython: [Tier2Parry] A4 tick g=0.300 pos=0.300 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:300][455]LogPython: [Tier2Parry] A4 tick g=0.306 pos=0.306 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:342][456]LogPython: [Tier2Parry] A4 tick g=0.312 pos=0.312 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:354][457]LogPython: [Tier2Parry] A4 tick g=0.321 pos=0.321 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:381][458]LogPython: [Tier2Parry] A4 tick g=0.326 pos=0.326 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:481][459]LogPython: [Tier2Parry] A4 tick g=0.332 pos=0.332 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:494][460]LogPython: [Tier2Parry] A4 tick g=0.356 pos=0.356 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:509][461]LogPython: [Tier2Parry] A4 tick g=0.359 pos=0.359 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:523][462]LogPython: [Tier2Parry] A4 tick g=0.363 pos=0.363 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:539][463]LogPython: [Tier2Parry] A4 tick g=0.367 pos=0.367 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.33:553][464]LogPython: [Tier2Parry] A4 tick g=0.371 pos=0.371 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:131][465]LogPython: [Tier2Parry] A4 tick g=0.376 pos=0.376 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:147][466]LogPython: [Tier2Parry] A4 tick g=0.476 pos=0.476 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:159][467]LogPython: [Tier2Parry] A4 tick g=0.480 pos=0.480 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:169][468]LogPython: [Tier2Parry] A4 tick g=0.483 pos=0.483 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:182][469]LogPython: [Tier2Parry] A4 tick g=0.487 pos=0.487 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:223][470]LogPython: [Tier2Parry] A4 tick g=0.497 pos=0.497 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:252][471]LogPython: [Tier2Parry] A4 tick g=0.504 pos=0.504 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:253][471]LogPython: [Tier2Parry] FRAME label=press_minus_0p1 actual_offset=-0.096 path=D:\FightVideo\tier2_parry_data\press_minus_0p1.png
+[2026.11.08-00.09.34:253][471]LogPython: [Tier2Parry] BLENDABLE before_press count=0 weights=[]
+[2026.11.08-00.09.34:839][477]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:845][478]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:850][479]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:859][480]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:867][481]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:875][482]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:883][483]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:891][484]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:899][485]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:908][486]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:917][487]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:925][488]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:933][489]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:942][490]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:951][491]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:958][492]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:967][493]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:976][494]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:985][495]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.34:992][496]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:001][497]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:009][498]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:017][499]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:025][500]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:033][501]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:041][502]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:050][503]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:058][504]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:067][505]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:074][506]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:082][507]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:091][508]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:099][509]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:108][510]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:116][511]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:125][512]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:134][513]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:142][514]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:149][515]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:158][516]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:166][517]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:176][518]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:184][519]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:192][520]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:200][521]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:209][522]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:217][523]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:225][524]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:234][525]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:242][526]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:251][527]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:258][528]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:266][529]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:275][530]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:283][531]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:292][532]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:301][533]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:309][534]LogPython: [Tier2Parry] A4 tick g=0.515 pos=0.515 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:322][535]LogPython: [Tier2Parry] A4 tick g=0.518 pos=0.518 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:330][536]LogPython: [Tier2Parry] A4 tick g=0.520 pos=0.520 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:361][537]LogPython: [Tier2Parry] A4 tick g=0.527 pos=0.527 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:374][538]LogPython: [Tier2Parry] A4 tick g=0.531 pos=0.531 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:405][539]LogPython: [Tier2Parry] A4 tick g=0.538 pos=0.538 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:433][540]LogPython: [Tier2Parry] A4 tick g=0.545 pos=0.545 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:458][541]LogPython: [Tier2Parry] A4 tick g=0.551 pos=0.551 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:485][542]LogPython: [Tier2Parry] A4 tick g=0.558 pos=0.558 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:511][543]LogPython: [Tier2Parry] A4 tick g=0.564 pos=0.564 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:803][544]LogPython: [Tier2Parry] A4 tick g=0.571 pos=0.571 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:813][545]LogPython: [Tier2Parry] A4 tick g=0.640 pos=0.640 active=True sweep=1 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.08-00.09.35:814][545]LogPython: [Tier2Parry] parry_press at observed A4 active window opened=True pos=0.640 distance_cm=250.0
+[2026.11.08-00.09.35:814][545]LogPython: [Tier2Parry] BLENDABLE at_press count=0 weights=[]
+[2026.11.08-00.09.36:012][554]LogPython: [Tier2Parry] FRAME label=press_plus_0p05 actual_offset=0.050 path=D:\FightVideo\tier2_parry_data\press_plus_0p05.png
+[2026.11.08-00.09.36:012][554]LogPython: [Tier2Parry] BLENDABLE press_plus_0p05 count=0 weights=[]
+[2026.11.08-00.09.36:483][563]LogPython: [Tier2Parry] FRAME label=press_plus_0p15 actual_offset=0.157 path=D:\FightVideo\tier2_parry_data\press_plus_0p15.png
+[2026.11.08-00.09.36:483][563]LogPython: [Tier2Parry] BLENDABLE press_plus_0p15 count=0 weights=[]
+[2026.11.08-00.09.38:034][655]LogPython: [Tier2Parry] FRAME label=press_plus_0p30 actual_offset=0.304 path=D:\FightVideo\tier2_parry_data\press_plus_0p30.png
+[2026.11.08-00.09.38:034][655]LogPython: [Tier2Parry] BLENDABLE press_plus_0p30 count=0 weights=[]
+[2026.11.08-00.09.38:034][655]LogPython: [Tier2Parry] RESULT opened=True real_contact=True parried_delta=1 recoil_montage_seen=True
+[2026.11.08-00.09.38:034][655]LogPython: [Tier2Parry] BLENDABLE after_contact count=0 weights=[]
+[2026.11.08-00.09.38:034][655]LogPython: [Tier2Parry] frames_captured=4/4; requested offsets are reported above, visual PPM proof requires Lead inspection
+[2026.11.08-00.09.38:551][665]LogPython: [Tier2Parry] SUMMARY pass=True reason=witness complete

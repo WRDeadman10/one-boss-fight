@@ -17,7 +17,7 @@ Evidence: `Config/DefaultGame.ini:25-38`; `Source/OneBossFight/Tests/RPGAutomati
 ## AA-C43 — current issue sweep
 
 - KI-191 remains open: Tier 2 material preloads only when the Development switch is enabled at BeginPlay; authored-asset startup and visual checks await Lead PIE.
-- KI-192 remains open: Lead's two-route 0.34/0.35/0.36/0.70 s input probe is pending; the result is game-tick bounded, not physical device latency.
+- KI-192 remains open: C-971 retained two-route PIE records a 0.36 s R2 hold split (legacy ChargedAttack, data Ability_E) at about 35 FPS; adjacent holds match. It is game-tick-bounded evidence, not physical device latency or a root-cause explanation. See `P_C971_ERLATENCY/SUMMARY.md` and `AC_C26_C30_DLSS_AND_PERFORMANCE_GATES.md`.
 - KI-193 added below: ER clip acceptance/import is partial. C-968 permits only GuardCounter import; Backstep and both air clips require R4 motion fixes/review. ENGINE_LOCK is currently owned by Antigravity for the GuardCounter import.
 - Round 6 Phase 2 and benchmark-dependent DLSS default remain parked by the owner (C-954/C-956); Phase 1 numbers are historical intake, not completion of GATE-04.
 

@@ -1,56 +1,52 @@
-# AA-A08: Elden Ring Animation Clip Notify Frames Table
+# AA-A08: montage notify templates and scaled timelines
 
-Author: Antigravity  
-Status: COMPLETE  
-Cross-Reference: Codex `Documentation/Boss/AA_C11_C14_ER_CLIP_WIRING_READINESS.md`, Spec `Documentation/Boss/ER_PLAYER_CONTROLS_SPEC.md`  
-Target Skeleton: `/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin`  
+Status (C-1021 / BUILD-255): the owner approved the reel; all four ER montage paths are nonempty `URPGDodgeTiming` Source defaults and load in `PackWiring` (484/484). A-607's saved notify proof remains: StrongMeleeAttackData on AirHeavy/GuardCounter CollisionTrace, unset AttackData on AirLight. C-1004's earlier runtime-assigned two-route air-hit proof remains AirLight -16.0 HP and AirHeavy -22.4 HP; fresh PIE/package proof after default wiring is still open.
 
----
+## Timeline mapping
 
-## 1. Overview & Code Notify Alignment
+Times are montage seconds. For sliced air clips, map `Attack_PrimaryB_Montage` through the proposed source interval by subtracting slice start and clipping intervals. Table values are millisecond-rounded targets; actual helper output and Lead asset verification remain separate evidence.
 
-This document maps each delivered Elden Ring player animation clip to the exact frame numbers, timestamps (@ 30 fps), and expected gameplay notify events matching the Advanced ARPG Combat and OneBossFight native code contracts (`URPGDodgeTiming`, `RPGFrameworkMoveExecutor`, `FallingAttackMontages`, `air_heavy_selector.py`).
+**C-1003 AttackData rule (supersedes C-992 for strong overrides):** `AttackData=StrongMeleeAttackData` is set on the `ANS_CollisionTrace_C` instances in `AM_ER_Attack_Air_Heavy_Plunge` and `AM_ER_Attack_GuardCounter`; AirLight remains unset so its ability supplies DefaultMeleeAttackData. A-607's raw T3D exports under `Saved/C1003_t3d/` show those properties inside the corresponding notify subobjects. This follows Lead's finding that pack boss health damage is determined by CollisionTrace notify data, while Codex's hit-record normalization controls table classification/posture. C-1004 Lead PIE r5 closed the post-edit two-route air-hit rerun (-16.0 / -22.4 HP as above); C-1021 later supplied owner reel approval and Source defaults. **C-994 approved blend-in:** 0.100 s on all four ER montages; leave ParryRecoil outside this rule.
 
----
+| New montage / length | Template and mapping | Real notify class | Template start / duration (s) | Proposed start / duration (s) | Basis / note |
+|---|---|---|---:|---:|---|
+| `AM_ER_Attack_GuardCounter` / 0.800 s | `Attack_PrimaryA_Montage` / 1.6667 s, scale 0.48 | `ANS_DisableMovement_C` state | 0.000 / 1.667 | 0.000 / 0.800 | scaled |
+| same | same | `ANS_SetDesiredRotation_C` state | 0.000 / 0.257 | 0.000 / 0.123 | scaled |
+| same | same | `ANS_CancelFrames_C` state | 0.000 / 0.286 | 0.000 / 0.137 | scaled |
+| same | same | `ANS_InputBuffer_C` state | 0.315 / 0.250 | 0.151 / 0.120 | scaled |
+| same | same | `ANS_CollisionTrace_C` state | 0.350 / 0.186 | 0.168 / 0.089 | A-607 T3D confirms StrongMeleeAttackData on notify; Lead damage PIE pending |
+| same | same | `AnimNotify_PlaySound` instant | 0.351 / — | 0.168 / — | scaled |
+| same | same | `ANS_MovementCancel_C` state | 0.731 / 0.936 | 0.351 / 0.449 | scaled, clipped at montage end |
+| same | same | `FootStep` instant | 0.827 / — | 0.397 / — | scaled |
+| `AM_ER_Attack_Air_Light` / 0.600 s | `Attack_PrimaryB_Montage` / 1.400 s; slice 0.200–0.800 s; subtract 0.200 | `ANS_DisableMovement_C` state | 0.000 / 1.400 | 0.000 / 0.600 | A-599 Lead readback; source slice retains reported forward strike/lunge |
+| same | same | `ANS_CollisionTrace_C` state | 0.350 / 0.186 | 0.150 / 0.186 | A-607 T3D confirms AttackData unset; ability supplies DefaultMeleeAttackData |
+| `AM_ER_Attack_Air_Heavy_Plunge` / 0.867 s | `Attack_PrimaryB_Montage` / 1.400 s; slice 0.200–1.067 s; subtract 0.200 | `ANS_DisableMovement_C` state | 0.000 / 1.400 | 0.000 / 0.867 | A-599 Lead readback; source slice retains reported forward strike/lunge |
+| same | same | `ANS_InputBuffer_C` state | 0.350 / 0.214 | 0.150 / 0.214 | PrimaryB template; A-599 Lead readback |
+| same | same | `ANS_CollisionTrace_C` state | 0.350 / 0.186 | 0.150 / 0.186 | A-607 T3D confirms StrongMeleeAttackData on notify; Lead damage PIE pending |
+| `AM_ER_Backstep_Back` / 0.467 s | `Dodge_Small_Forward_Roll_Montage` / 0.667 s; scale 0.70 | `ANS_iFrames_C` state | 0.107 / 0.383 | 0.075 / 0.268 | scaled; C-987 confirms class and 0.107 s start / 0.383 s duration in template |
+| same | same | `ANS_InputBuffer_C` state | 0.234 / 0.268 | 0.164 / 0.188 | scaled; dodge exit/input buffer |
+| `AM_Boss01_ParryRecoil` / 0.600 s | `HitReact_Back_Montage` / 0.800 s; scale 0.75 | `ANS_InputBuffer_C` state | 0.000 / 0.395 | 0.000 / 0.296 | scaled; template has no hit or i-frame states |
 
-## 2. Comprehensive Clip Notify Table
+### Deliberate omissions and constraints
 
-| Clip ID | Clip / Montage Name | Frame (30 fps) | Time (s) | Code Notify Name | Pack / Engine Event Class | Gameplay Effect & State Contract |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **ER-A1** | `AN_ER_Backstep_Back` | F0 | 0.000 s | `Montage_Start` | Native Montage Hook | Root motion starts backward (-Y 200 cm), Yaw strictly locked at 0.0°. |
-| | | **F2** | **0.067 s** | `IFrame_Start` | `UAnimNotify_IFrame` | Grants invulnerability frames (matches Elden Ring backstep startup). |
-| | | **F8** | **0.267 s** | `IFrame_End` | `UAnimNotify_IFrame` | Invulnerability window expires. |
-| | | **F8** | **0.267 s** | `InputBuffer_Open` | `UAnimNotify_InputBuffer` | Early input queueing opens for follow-up moves (e.g. backstep attack). |
-| | | **F14** | **0.467 s** | `Recover_End` | `UAnimNotify_Recover` | Backstep ends cleanly into combat idle stance. |
-| **ER-A4** | `AN_ER_Attack_GuardCounter` | F0 | 0.000 s | `Montage_Start` | Native Montage Hook | Initiates forward lunge (+Y 100 cm) from shield guard pose. |
-| | | **F9** | **0.300 s** | `Windup_End` | Native Event | Windup finishes; anticipation apex. |
-| | | **F10** | **0.333 s** | `WeaponTrace_Start` | `UAnimNotifyState_WeaponTrace` | Weapon collision trace activates; active damage window opens. |
-| | | **F13** | **0.433 s** | `Impact_Peak` | `UAnimNotify_PlaySound` / CamShake | Peak hit contact point, triggers impact audio, spark, and high poise-damage delivery. |
-| | | **F16** | **0.533 s** | `WeaponTrace_End` | `UAnimNotifyState_WeaponTrace` | Weapon collision trace deactivates; hit window closes. |
-| | | **F18** | **0.600 s** | `InputBuffer_Open` | `UAnimNotify_InputBuffer` | Allows buffering dodge or follow-up attack. |
-| | | **F24** | **0.800 s** | `Recover_End` | Native Montage End | Counter-slash recovery ends; returns to combat idle. |
-| **ER-A3** | `AN_ER_Attack_Air_Heavy_Plunge` | F0 | 0.000 s | `Montage_Start` | Native Montage Hook | In-place airborne plunge initiated; two-handed sword lift. |
-| | | **F6** | **0.200 s** | `Airborne_Windup_End`| Native Event | Apex overhead sword lift completes; downward plunge accelerates. |
-| | | **F11** | **0.367 s** | `WeaponTrace_Start` | `UAnimNotifyState_WeaponTrace` | Vertical slash hitbox opens while descending. |
-| | | **F15** | **0.500 s** | `Ground_Impact` | `UAnimNotify_CameraShake` / VFX | Character contacts ground; deep knee crouch slam; triggers ground dust/shockwave VFX. |
-| | | **F16** | **0.533 s** | `WeaponTrace_End` | `UAnimNotifyState_WeaponTrace` | Active hit trace concludes. |
-| | | **F18** | **0.600 s** | `InputBuffer_Open` | `UAnimNotify_InputBuffer` | Input buffering opens during squat rebound. |
-| | | **F26** | **0.867 s** | `Recover_End` | Native Montage End | Plunge recovery concludes; smooth return to ground combat idle. |
-| **ER-A2** | `AN_ER_Attack_Air_Light` | F0 | 0.000 s | `Montage_Start` | Native Montage Hook | In-place jump light attack; upper body coils right. |
-| | | **F4** | **0.133 s** | `Airborne_Windup_End`| Native Event | Windup finishes; diagonal slash begins. |
-| | | **F6** | **0.200 s** | `WeaponTrace_Start` | `UAnimNotifyState_WeaponTrace` | Diagonal swipe hitbox activates. |
-| | | **F7** | **0.233 s** | `Impact_Peak` | Audio / Impact Notify | Peak slash arc across chest plane. |
-| | | **F10** | **0.333 s** | `WeaponTrace_End` | `UAnimNotifyState_WeaponTrace` | Weapon hitbox trace closes. |
-| | | **F12** | **0.400 s** | `InputBuffer_Open` | `UAnimNotify_InputBuffer` | Input buffer opens; flows into fall loop or ground landing. |
-| | | **F17** | **0.567 s** | `Recover_End` | Native Montage End | Airborne slash recovers to jump falling cycle. |
+- Do not add `ANS_SetDesiredRotation_C` to Backstep: C-987 says yaw stays locked. `Dodge_Small_Forward_Roll_Montage` has no cancel-frames state; do not invent one. Its `ANS_InputBuffer_C` is the exit window. C-987 notes `ANS_MovementCancel_C` on `Dodge_To_Idle_Montage`, which is not the selected Backstep template.
+- C-995 superseded the earlier air slices/contact windows; A-599 now supplies matching montage timing/property readback for the PrimaryB slices above. The source-motion claim is reported by Antigravity, but numeric hand_r travel-over-window evidence is not in `C995_HOTFIX_EVIDENCE.txt`. No active `ANS_MovementCancel_C` is listed on either air montage. Owner review, revised visual evidence and runtime verification remain pending.
+- A-596's completion claim is superseded by C-988's Lead readback of the saved assets. Do not cite A-596 as evidence of matching montage contents. Lead's five saved-asset lines in `P_C985_ASSETCHECK/check_lines.txt` are the current evidence; a new readback is required after Antigravity's four corrections. No runtime/PIE behavior is established here.
 
----
+### C-988 saved-asset readback findings — historical 1 of 5 match (C-989)
 
-## 3. Integration & Fallback Guarantees
+| Montage | Lead readback from saved assets | Current disposition |
+|---|---|
+| GuardCounter | CollisionTrace 0.168+0.089 matches; saved readback omits the table's FootStep row | C-988 says OK for this asset's hotfix criterion |
+| Backstep | `ANS_SetDesiredRotation_C` 0.000+0.199 in addition to iFrames 0.075+0.268 and InputBuffer 0.164+0.187 | Remove yaw notify per C-987; recheck |
+| AirLight | CollisionTrace 0.119+0.063, plus SetDesiredRotation, CancelFrames, InputBuffer and MovementCancel | Re-author to table only; hit window target 0.200+0.133 on contact frames F6–F10 |
+| AirHeavyPlunge | CollisionTrace 0.296+0.127, plus SetDesiredRotation, `AnimNotifyState_Trail`, sound, InputBuffer and MovementCancel | Re-author to table only; hit window target 0.367+0.166 on contact frames F11–F16 |
+| ParryRecoil | zero notifies | Add `ANS_InputBuffer_C` at 0.000+0.296; recheck |
 
-1. **Root Motion Isolation:**
-   - `AN_ER_Backstep_Back`: 200 cm along -Y in Unreal space.
-   - `AN_ER_Attack_GuardCounter`: 100 cm along +Y in Unreal space.
-   - Air attacks (`AN_ER_Attack_Air_Heavy_Plunge`, `AN_ER_Attack_Air_Light`): Zero root translation; movement driven entirely by player jump trajectory and Unreal gravity.
-2. **Optional Montage Fields:**
-   - In accordance with Codex's `AA-C11..C14`, all montages remain optional `TSoftObjectPtr<UAnimMontage>` fields. If unassigned or failing load, the character automatically falls back to current baseline behaviors (directional roll for dodge, default jump attacks).
+The raw five-line output is the cited saved-asset snapshot; C-988 says Antigravity must run the read-only Lead check again and paste the new five montage lines before claiming correction complete.
+
+### A-597 / C-992 follow-up — accepted Lead readback and live fail
+
+**Historical snapshot as of C-995; superseded for the air-hit runtime result by C-1004:** the five-line Lead readback was accepted by C-992; C-995 accepted A-598's AttackData/blend/cancel readback; C-993 called the missing GuardCounter FootStep cosmetic. At that time post-hotfix PIE still found zero air damage and C-995 ordered new source slices. C-1004 later reports both-route air hits: AirLight -16.0 HP and AirHeavy -22.4 HP. This historical paragraph is not the current runtime status; current status is at the top of this file.
+
+Sources: C-986 and C-987 mailbox posts; `P_C985_ASSETCHECK/check_lines.txt`; `P_C987_TEMPLATES/TEMPLATE_NOTIFIES.txt`; `ER_ANIM/Attack_Air_Light/Attack_Air_Light.txt`; `ER_ANIM/Attack_Air_Heavy_Plunge/Attack_Air_Heavy_Plunge.txt`; `Evidence/exports/PR2_Dodge_Small_Forward_Roll_Montage.t3d`; `Evidence/exports/PR5_GA_Sword_Melee.txt`.

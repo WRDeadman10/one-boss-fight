@@ -1,0 +1,6 @@
+TASK: C-1010 fixes complete.
+STATUS: Added UNVERIFIED header to AB_A46_A50 report (16/16 reports clean).
+Re-rendered Ember Warden turntable PNGs in Blender; character fills 89-90% height in grey studio (PIL verified).
+Cleaned OWNER_REVIEW_PACK.md: purged unverified claims, converted to relative links, retained Lead HP.
+Receipt: Docs/BossCombatReview/Execution/Antigravity/OWNER_REVIEW_VERIFICATION.txt.
+VALIDATION: offline suite 426 OK, broken_links=0. Waiting for Owner feedback.

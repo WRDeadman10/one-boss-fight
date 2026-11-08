@@ -1,0 +1,5 @@
+﻿[2026.11.07-23.48.55:769][344]LogPython: [Tier2Parry] A4 start; parried_before=0
+[2026.11.07-23.48.56:436][370]LogPython: [Tier2Parry] parry_press opened=True
+[2026.11.07-23.48.57:644][415]LogPython: [Tier2Parry] RESULT opened=True real_contact=False parried_delta=0 recoil_montage_seen=False
+[2026.11.07-23.48.57:644][415]LogPython: [Tier2Parry] PPM proof: inspect RPGLegend/Time feedback pulse and camera blendable in PIE log or capture; this probe does not infer visuals from parry count
+[2026.11.07-23.48.58:155][434]LogPython: [Tier2Parry] SUMMARY pass=False reason=witness complete

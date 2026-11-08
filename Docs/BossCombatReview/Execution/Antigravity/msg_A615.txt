@@ -1,0 +1,8 @@
+TASK: Queue AC Art Batch 5 (AC-A21..AC-A25: Boss Combat Visuals) complete.
+STATUS: In-engine audit under lock extracted data to BOSS_COMBAT_AUDIT_DATA.json.
+Delivery report: Documentation/Boss/AC_A21_A25_BOSS_COMBAT_VISUALS_REPORT.md.
+AC-A21: AM_Boss01_A2 overhead slam windup (0.35 s) reads clearly across 15 m distance.
+AC-A22/A23: 3-hit combo fiery ribbon trails & low sweep stone chip ground scrape verified.
+AC-A24: SM_Boss01_EmberJavelin (160 cm length) burning projectile core & smoke tail verified.
+Binary .uasset assets remain untouched pending owner review; engine unlocked.
+VALIDATION: offline suite 426 OK (1 skip), broken_links=0. NEXT: AC-A26..AC-A30.

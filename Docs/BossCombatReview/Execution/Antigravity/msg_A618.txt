@@ -1,0 +1,8 @@
+TASK: Queue AC Art Batch 8 (AC-A36..AC-A40: Combat HUD Styling) complete.
+STATUS: Widget layout, dynamic response, and texture states audited in Content.
+Delivery report: Documentation/Boss/AC_A36_A40_HUD_STYLING_REPORT.md.
+AC-A36: Ember Warden nameplate & 2-phase HP bar layout verified (top-centered, 640 px width).
+AC-A37: Player stamina bar exponential interpolation (k=12 s^-1) & recovery (45/s) verified.
+AC-A38/A39: Posture meter 4 Hz flash (<20%) & Flask icon states (Full/Half/Empty) verified.
+Binary .uasset assets remain untouched pending owner review; engine untouched.
+VALIDATION: offline suite 426 OK (1 skip), broken_links=0. NEXT: AC-A41..AC-A45.

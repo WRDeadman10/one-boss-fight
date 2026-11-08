@@ -1,0 +1,207 @@
+{
+  "batch": "AB-A01..AB-A05",
+  "results": [
+    {
+      "id": "AB-A01",
+      "name": "AM_ER_Attack_GuardCounter",
+      "status": "PASS",
+      "play_length": 0.8,
+      "track_count": 7,
+      "event_count": 7,
+      "notes": [
+        "ANS_CollisionTrace_C verified present"
+      ],
+      "describe_notifies": [
+        "length 0.800 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25",
+        "[state] ANS_DisableMovement_C at 0.000 s for 0.800 s",
+        "[state] ANS_SetDesiredRotation_C at 0.000 s for 0.123 s",
+        "[state] ANS_CancelFrames_C at 0.000 s for 0.137 s",
+        "[state] ANS_InputBuffer_C at 0.151 s for 0.120 s",
+        "[state] ANS_CollisionTrace_C at 0.168 s for 0.089 s",
+        "AnimNotify_PlaySound at 0.168 s",
+        "[state] ANS_MovementCancel_C at 0.351 s for 0.449 s"
+      ],
+      "notifies": [
+        {
+          "class": "ANS_DisableMovement_C",
+          "is_state": true,
+          "start": 0.0,
+          "duration": 0.0
+        },
+        {
+          "class": "ANS_SetDesiredRotation_C",
+          "is_state": true,
+          "start": 0.0,
+          "duration": 0.0
+        },
+        {
+          "class": "ANS_CancelFrames_C",
+          "is_state": true,
+          "start": 0.0,
+          "duration": 0.0
+        },
+        {
+          "class": "ANS_InputBuffer_C",
+          "is_state": true,
+          "start": 0.0,
+          "duration": 0.0
+        },
+        {
+          "class": "ANS_CollisionTrace_C",
+          "is_state": true,
+          "start": 0.0,
+          "duration": 0.0
+        },
+        {
+          "class": "AnimNotify_PlaySound",
+          "is_state": false,
+          "start": 0.0,
+          "duration": 0.0
+        },
+        {
+          "class": "ANS_MovementCancel_C",
+          "is_state": true,
+          "start": 0.0,
+          "duration": 0.0
+        }
+      ]
+    },
+    {
+      "id": "AB-A02",
+      "name": "AM_ER_Attack_Air_Light",
+      "status": "PASS",
+      "play_length": 0.5667,
+      "track_count": 3,
+      "event_count": 3,
+      "notes": [
+        "ANS_CollisionTrace_C verified present"
+      ],
+      "describe_notifies": [
+        "length 0.567 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25",
+        "[state] ANS_DisableMovement_C at 0.000 s for 0.567 s",
+        "[state] ANS_MovementCancel_C at 0.093 s for 0.474 s",
+        "[state] ANS_CollisionTrace_C at 0.200 s for 0.133 s"
+      ],
+      "notifies": [
+        {
+          "class": "ANS_DisableMovement_C",
+          "is_state": true,
+          "start": 0.0,
+          "duration": 0.0
+        },
+        {
+          "class": "ANS_MovementCancel_C",
+          "is_state": true,
+          "start": 0.0,
+          "duration": 0.0
+        },
+        {
+          "class": "ANS_CollisionTrace_C",
+          "is_state": true,
+          "start": 0.0,
+          "duration": 0.0
+        }
+      ]
+    },
+    {
+      "id": "AB-A03",
+      "name": "AM_ER_Attack_Air_Heavy_Plunge",
+      "status": "PASS",
+      "play_length": 0.8667,
+      "track_count": 4,
+      "event_count": 4,
+      "notes": [
+        "ANS_CollisionTrace_C verified present",
+        "ANS_InputBuffer_C verified present"
+      ],
+      "describe_notifies": [
+        "length 0.867 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25",
+        "[state] ANS_DisableMovement_C at 0.000 s for 0.867 s",
+        "[state] ANS_InputBuffer_C at 0.000 s for 0.164 s",
+        "[state] ANS_MovementCancel_C at 0.293 s for 0.574 s",
+        "[state] ANS_CollisionTrace_C at 0.367 s for 0.166 s"
+      ],
+      "notifies": [
+        {
+          "class": "ANS_DisableMovement_C",
+          "is_state": true,
+          "start": 0.0,
+          "duration": 0.0
+        },
+        {
+          "class": "ANS_InputBuffer_C",
+          "is_state": true,
+          "start": 0.0,
+          "duration": 0.0
+        },
+        {
+          "class": "ANS_MovementCancel_C",
+          "is_state": true,
+          "start": 0.0,
+          "duration": 0.0
+        },
+        {
+          "class": "ANS_CollisionTrace_C",
+          "is_state": true,
+          "start": 0.0,
+          "duration": 0.0
+        }
+      ]
+    },
+    {
+      "id": "AB-A04",
+      "name": "AM_ER_Backstep_Back",
+      "status": "PASS",
+      "play_length": 0.4667,
+      "track_count": 2,
+      "event_count": 2,
+      "notes": [
+        "ANS_iFrames_C verified present",
+        "ANS_InputBuffer_C verified present",
+        "ANS_SetDesiredRotation_C correctly omitted (yaw locked forward)"
+      ],
+      "describe_notifies": [
+        "length 0.467 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25",
+        "[state] ANS_iFrames_C at 0.075 s for 0.268 s",
+        "[state] ANS_InputBuffer_C at 0.164 s for 0.187 s"
+      ],
+      "notifies": [
+        {
+          "class": "ANS_iFrames_C",
+          "is_state": true,
+          "start": 0.0,
+          "duration": 0.0
+        },
+        {
+          "class": "ANS_InputBuffer_C",
+          "is_state": true,
+          "start": 0.0,
+          "duration": 0.0
+        }
+      ]
+    },
+    {
+      "id": "AB-A05",
+      "name": "AM_Boss01_ParryRecoil",
+      "status": "PASS",
+      "play_length": 0.6,
+      "track_count": 1,
+      "event_count": 1,
+      "notes": [
+        "ANS_InputBuffer_C verified present"
+      ],
+      "describe_notifies": [
+        "length 0.600 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25",
+        "[state] ANS_InputBuffer_C at 0.000 s for 0.296 s"
+      ],
+      "notifies": [
+        {
+          "class": "ANS_InputBuffer_C",
+          "is_state": true,
+          "start": 0.0,
+          "duration": 0.0
+        }
+      ]
+    }
+  ]
+}

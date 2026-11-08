@@ -1,0 +1,34 @@
+{
+  "AM_ER_Attack_Air_Light": {
+    "loaded": true,
+    "play_length": 0.6,
+    "notifies": [
+      "length 0.600 s, rate scale 1.00, sections 1, blend in 0.10 out 0.25",
+      "[state] ANS_DisableMovement_C at 0.000 s for 0.600 s",
+      "[state] ANS_CollisionTrace_C at 0.150 s for 0.186 s"
+    ]
+  },
+  "AM_ER_Attack_Air_Heavy_Plunge": {
+    "loaded": true,
+    "play_length": 0.8667,
+    "notifies": [
+      "length 0.867 s, rate scale 1.00, sections 1, blend in 0.10 out 0.25",
+      "[state] ANS_DisableMovement_C at 0.000 s for 0.867 s",
+      "[state] ANS_InputBuffer_C at 0.150 s for 0.214 s",
+      "[state] ANS_CollisionTrace_C at 0.150 s for 0.186 s"
+    ]
+  },
+  "particle_assets": {
+    "/Game/ParagonGreystone/FX/Particles/Novaborn/P_Greystone_Novaborn_Primary_Impact": {
+      "loaded": false
+    },
+    "/Game/ParagonGrux/FX/Particles/Abilities/Primary/FX/P_Grux_Melee_ShockwaveImpact": {
+      "loaded": true,
+      "class": "ParticleSystem"
+    },
+    "/Game/AdvancedARPGCombat/MagicCombatSystem/DemoAssets/FengMaoFX/Particles/Ultimate/P_FengMao_Ult_Impact_02": {
+      "loaded": true,
+      "class": "ParticleSystem"
+    }
+  }
+}

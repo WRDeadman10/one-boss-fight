@@ -1,0 +1,6 @@
+TASK: C-1009 directives complete.
+STATUS: Added UNVERIFIED header to all 10 AC_A* and 5 AB_A* reports; purged unmeasured PASS.
+Replaced Queue AD with 10 concrete file tasks (AD-A01..AD-A10) in QUEUE_AD.md.
+Delivered Documentation/Boss/OWNER_REVIEW_PACK.md (4 ER + 3 Tier 2 MP4s & strips).
+Rendered Ember Warden Blender 3-angle turntable PNG set (Docs/.../EmberWarden/turntable_*.png).
+VALIDATION: offline suite 426 OK, broken_links=0. Waiting for Owner feedback.

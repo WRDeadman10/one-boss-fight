@@ -2,7 +2,7 @@
 
 ## Status
 
-Awaiting the Phase 2 return bundle from the benchmark PC. Do not enter or infer results before its receipt arrives. Phase 2 uses the owner-selected DLSS Performance base; the selection is not a shipped default (C-951).
+PARKED by owner (C-954); Phase 2 has not run and no return bundle/results are recorded. Do not start benchmarking until the owner un-parks it. Retain this blank intake for that future return. The owner-selected DLSS Performance / primary 50% value is an experiment base only, not a shipped default (C-951).
 
 ## Bundle identity
 

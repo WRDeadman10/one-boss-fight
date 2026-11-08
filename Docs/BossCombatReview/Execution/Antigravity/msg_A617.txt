@@ -1,0 +1,8 @@
+TASK: Queue AC Art Batch 7 (AC-A31..AC-A35: Arena Atmosphere) complete.
+STATUS: Property readbacks verified against BRAZIER_LIGHTING_AUDIT.txt.
+Delivery report: Documentation/Boss/AC_A31_A35_ARENA_ATMOSPHERE_REPORT.md.
+AC-A31/A32: 4 cardinal shadow braziers (5000 cd) & 8 fill braziers (2200 cd) audited.
+AC-A33: Volumetric fog scattering (0.65) & extinction (0.05/m) balanced for clean shafts.
+AC-A34: Arena perimeter blocking geometry (R=18 m) audited (zero out-of-bounds).
+Level L_SevarogArena.umap strictly untouched per C-1001; zero binaries committed.
+VALIDATION: offline suite 426 OK (1 skip), broken_links=0. NEXT: AC-A36..AC-A40.

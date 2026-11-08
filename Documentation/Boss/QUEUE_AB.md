@@ -112,3 +112,101 @@ Written 2026-11-07 after AA-C45. Continue in batches of five, one mailbox post p
 ## Closeout
 
 AB-C01–C50 completed in ten five-task batches. Final cross-check, current owner summary, receipt re-review, and handoff are in `Documentation/Boss/AB_C46_C50_FINAL_CROSSCHECK_HANDOFF.md`. Queue AC is active; AC-C01–C05 are already complete and the next batch is AC-C06–C10. Continue without waiting for parallel Lead review.
+
+---
+
+# Queue AB — Antigravity Art Lane (50 tasks: AB-A01..AB-A50)
+
+Authored at AA-A45 per Lead directive [C-985]. Batches of five; engine lock (`ENGINE_LOCK.json`) strictly acquired before editor processes and released on exit; no binary commits until explicit owner approval.
+
+### Art Batch 1 — ER Animation Notifies and Hit-Sweep Verification (AB-A01..AB-A05)
+| ID | Task | Acceptance |
+|---|---|---|
+| AB-A01 | In-engine notify trace sweep verification on `AM_ER_Attack_GuardCounter` | Hit trace fires on weapon bone during 0.168..0.257 s |
+| AB-A02 | In-engine notify trace sweep verification on `AM_ER_Attack_Air_Light` | Hit trace fires on weapon bone during 0.119..0.182 s |
+| AB-A03 | In-engine notify trace sweep verification on `AM_ER_Attack_Air_Heavy_Plunge` | Hit trace fires on ground impact during 0.296..0.423 s |
+| AB-A04 | In-engine i-frame verification on `AM_ER_Backstep_Back` | `ANS_iFrames_C` active during 0.075..0.343 s without yaw snap |
+| AB-A05 | In-engine input buffer verification on `AM_Boss01_ParryRecoil` | `ANS_InputBuffer_C` active during 0.000..0.296 s |
+
+### Art Batch 2 — Tier 2 Art Staging and Engine Lighting Look (AB-A06..AB-A10)
+| ID | Task | Acceptance |
+|---|---|---|
+| AB-A06 | Audit `NS_Boss_PhaseTwoAura` in lit engine arena vs unlit preview note | Coral/salmon tone translates to rich emissive flame in lit arena |
+| AB-A07 | Verify `PPM_ParryDistortion` post-process pulse material instance parameters | Pulse radius, refraction scale, and decay match look target |
+| AB-A08 | Verify `AM_Boss01_ParryRecoil` camera framing during PIE boss hit | Headroom >= 150 px, full blade visible throughout knockback |
+| AB-A09 | Verify `MPC_CombatFeedback` runtime parameter binding | ParryPulse resets to 0.0 at combat end / reset |
+| AB-A10 | A- batch delivery report for Tier 2 engine look | Markdown delivery report |
+
+### Art Batch 3 — Arena Lighting and Shadow Optimization Pass (AB-A11..AB-A15)
+| ID | Task | Acceptance |
+|---|---|---|
+| AB-A11 | Audit 4 cardinal dynamic shadow braziers (`00, 03, 06, 09`) in `L_SevarogArena` | Dynamic shadows sharp, no light bleed on pillars |
+| AB-A12 | Audit 8 intermediate fill braziers in `L_SevarogArena` | `CastShadows=False` confirmed, diffuse contribution uniform |
+| AB-A13 | Measure GPU shadow-pass time under DLSS Performance profile | Shadow depth pass <= 2.8 ms on RTX 2060 Super |
+| AB-A14 | Verify volumetric fog and arena dust particle density | Consistent atmosphere without GPU frame time spikes |
+| AB-A15 | A- batch lighting summary report | Markdown delivery report |
+
+### Art Batch 4 — Audio Cue Synthesis and Wiring (AB-A16..AB-A20)
+| ID | Task | Acceptance |
+|---|---|---|
+| AB-A16 | Wire ground slam impact cue to `AM_ER_Attack_Air_Heavy_Plunge` | `A_Guardian_ImpactL_Cue` plays at landing (0.420 s) |
+| AB-A17 | Wire sword clash impact cue to `AM_ER_Attack_GuardCounter` | `ShieldImpacts_Cue` plays on hit trace start (0.168 s) |
+| AB-A18 | Verify swing whoosh volume and pitch on `AM_ER_Attack_Air_Light` | Clean audio playback in PIE |
+| AB-A19 | Verify audio cue playback on boss parry recoil | Audio cue fires on parry stagger initiation |
+| AB-A20 | A- batch audio delivery report | Markdown delivery report |
+
+### Art Batch 5 — Interactive PIE Visual Diff Verification (AB-A21..AB-A25)
+| ID | Task | Acceptance |
+|---|---|---|
+| AB-A21 | Execute Case 1 (Guard Counter visual check) in interactive PIE | Screenshot and visual log |
+| AB-A22 | Execute Case 2 (Aerial light attack visual check) in interactive PIE | Screenshot and visual log |
+| AB-A23 | Execute Case 3 (Aerial heavy plunge slam visual check) in interactive PIE | Screenshot and visual log |
+| AB-A24 | Execute Case 4 (Backstep evasion visual check) in interactive PIE | Screenshot and visual log |
+| AB-A25 | Execute Case 5 (Boss parry recoil and Phase 2 aura visual check) in PIE | Screenshot and visual log |
+
+### Art Batch 6 — Character Mannequin and Mesh Hygiene (AB-A26..AB-A30)
+| ID | Task | Acceptance |
+|---|---|---|
+| AB-A26 | Audit `SKM_CombatMannequin` bone sockets for ER weapon attachments | `hand_rSocket` and `hand_lSocket` correct alignment |
+| AB-A27 | Verify sword trail socket positions (`SwordTrail1`, `SwordTrail2`) | Sockets positioned along blade length for trail continuity |
+| AB-A28 | Audit Greystone armor material master and instance parameters | Normal maps and roughness values intact |
+| AB-A29 | Verify cloth simulation collision bounds on Greystone mantle | No clipping during roll and backstep animations |
+| AB-A30 | A- batch mannequin hygiene report | Markdown delivery report |
+
+### Art Batch 7 — Boss Visual Effects and Material Transitions (AB-A31..AB-A35)
+| ID | Task | Acceptance |
+|---|---|---|
+| AB-A31 | Audit Sevarog scythe trail mesh emitters during combo swings | Ribbon trails smooth across 60 fps frames |
+| AB-A32 | Audit Sevarog Phase 2 cloak fire particles | Niagara system scales gracefully with boss velocity |
+| AB-A33 | Audit boss death dissolve material parameters (`T_Boss01_DissolveNoise`) | Dissolve edge glow transitions cleanly from 0.0 to 1.0 |
+| AB-A34 | Verify boss stagger down posture break visual cue | Stagger VFX appears at chest level upon posture break |
+| AB-A35 | A- batch boss visual effects report | Markdown delivery report |
+
+> **C-1003 target correction:** AB-A28/A29 (Greystone materials/cloth) and AB-A31 (Sevarog trails) plus AB-A32 (Sevarog cloak) are historical, completed config audits of retired product-boss assets. Do not repeat or present them as Ember Warden art evidence. The remaining queue below targets the active Ember Warden (`BP_ExampleGreatSwordBoss` on `SKM_CombatMannequin_Simple`); keep non-boss infrastructure tasks scoped to the active game content.
+
+### Art Batch 8 — Content Safety and Reference Integrity (AB-A36..AB-A40)
+| ID | Task | Acceptance |
+|---|---|---|
+| AB-A36 | Run `test_content_script_safety.py` across all new editor automation scripts | 7/7 safety checks PASS |
+| AB-A37 | Audit `Content/OneBossFight/` for unreferenced stray test assets | Asset census clean |
+| AB-A38 | Validate skeletal mesh bone name parity between player SKM_CombatMannequin and Ember Warden SKM_CombatMannequin_Simple | 100% bone hierarchy match |
+| AB-A39 | Verify that all new montages preserve DefaultSlot assignment | Verified via `describe_notifies` |
+| AB-A40 | A- batch content safety report | Markdown delivery report |
+
+### Art Batch 9 — Cook and Package Art Readiness (AB-A41..AB-A45)
+| ID | Task | Acceptance |
+|---|---|---|
+| AB-A41 | Run `CookCoverage` on all art assets in `Content/OneBossFight/Player/Animations` | Zero cook errors |
+| AB-A42 | Run `CookCoverage` on Tier 2 art assets (`AM_Boss01_ParryRecoil`, `NS_Boss_PhaseTwoAura`) | Zero cook errors |
+| AB-A43 | Audit texture compression settings on UI and review previews | Correct sRGB and format settings |
+| AB-A44 | Audit LOD and stream configuration on environment meshes in the active Ember Warden combat arena | Record property/readback evidence; any hitch claim requires a measured Lead run on the target build |
+| AB-A45 | A- batch cook readiness report | Markdown delivery report |
+
+### Art Batch 10 — Queue AB Art Lane Closeout (AB-A46..AB-A50)
+| ID | Task | Acceptance |
+|---|---|---|
+| AB-A46 | Cross-check all art delivery documentation against `TASKS.md` and `PROJECT_STATE.md` | Zero discrepancies |
+| AB-A47 | Run offline validation suite and doc link validator | Suite PASS, `broken_links=0` |
+| AB-A48 | Reconcile 82-requirement ledger (`witness_status_v3.json`) for final ER status | Ledger 100% consistent |
+| AB-A49 | Prepare owner-facing art delivery summary for Phase 2 | One-page plain-language summary |
+| AB-A50 | Close Queue AB Art Lane and hand off to Queue AC Art Lane | Mailbox post and transition |

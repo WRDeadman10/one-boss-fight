@@ -1,0 +1,18 @@
+﻿[2026.11.07-11.30.57:461][  0]LogPython: [ERAirHits] driver registered; observations are game-tick bounded, not device-latency claims
+[2026.11.07-11.30.58:143][  5]LogPython: [ERAirHits] route=data selection=/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter
+[2026.11.07-11.31.07:652][200]LogPython: [ERAirHits] setup boss held=True player_distance_cm=900
+[2026.11.07-11.31.07:679][200]LogPython: [ERAirHits] assigned air_light=AM_ER_Attack_Air_Light air_heavy=AM_ER_Attack_Air_Heavy_Plunge
+[2026.11.07-11.31.24:180][777]LogPython: [ERAirHits] input_context_active=True
+[2026.11.07-11.31.24:207][778]LogPython: [ERAirHits] case=R1_tap_light baseline=(None, None)
+[2026.11.07-11.31.24:316][782]LogPython: [ERAirHits] sample case=R1_tap_light montage=Attack_PrimaryA_Montage position=0.024 observed_ms=83.00 tick_s=0.03211
+[2026.11.07-11.31.28:857][952]LogPython: [ERAirHits] hit case=R1_tap_light boss_hp_before=2000.0 after=1984.0100005865097 delta=-15.989999413490295
+[2026.11.07-11.31.28:882][953]LogPython: [ERAirHits] case=R2_tap_strong baseline=(None, None)
+[2026.11.07-11.31.29:065][960]LogPython: [ERAirHits] sample case=R2_tap_strong montage=Ability_E_Anim_Montage position=0.026 observed_ms=157.65 tick_s=0.02579
+[2026.11.07-11.31.33:543][129]LogPython: [ERAirHits] hit case=R2_tap_strong boss_hp_before=1984.0100005865097 after=1961.6240017888547 delta=-22.38599879765502
+[2026.11.07-11.31.33:568][130]LogPython: [ERAirHits] case=jump_R1_air_light baseline=(None, None)
+[2026.11.07-11.31.33:937][144]LogPython: [ERAirHits] sample case=jump_R1_air_light montage=AM_ER_Attack_Air_Light position=0.026 observed_ms=53.16 tick_s=0.02486
+[2026.11.07-11.31.38:513][319]LogPython: [ERAirHits] hit case=jump_R1_air_light boss_hp_before=1961.6240017888547 after=1961.6240017888547 delta=0.0
+[2026.11.07-11.31.38:539][320]LogPython: [ERAirHits] case=jump_R2_air_heavy baseline=(None, None)
+[2026.11.07-11.31.39:014][338]LogPython: [ERAirHits] sample case=jump_R2_air_heavy montage=AM_ER_Attack_Air_Heavy_Plunge position=0.025 observed_ms=158.31 tick_s=0.02719
+[2026.11.07-11.31.43:487][509]LogPython: [ERAirHits] hit case=jump_R2_air_heavy boss_hp_before=1961.6240017888547 after=1961.6240017888547 delta=0.0
+[2026.11.07-11.31.43:514][510]LogPython: [ERAirHits] finished: all control samples recorded

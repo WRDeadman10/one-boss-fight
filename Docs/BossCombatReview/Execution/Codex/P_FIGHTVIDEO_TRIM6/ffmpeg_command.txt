@@ -1,0 +1,2 @@
+Run from: C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Codex\P_FIGHTVIDEO_TRIM6
+ffmpeg -y -safe 0 -f concat -i frames.ffconcat -vf ass=actions.ass -fps_mode vfr -c:v libx264 -pix_fmt yuv420p fight_review.mp4

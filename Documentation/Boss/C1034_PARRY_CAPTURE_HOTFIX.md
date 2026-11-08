@@ -1,0 +1,7 @@
+# C-1034 two-route parry probe hotfix
+
+Lead's first `P_C1034_PARRY` run opened the player parry on both routes, but produced no real contact, parry count or recoil. The data-route log puts `A4 start` at line 1611 during the encounter wake clip and `awake, the fight begins` at line 1613, immediately before the fixed 0.66 s press. The script ignored `StartMove`'s return value and did not record boss montage/position or sweep activation, so the first run does not establish a Tier 2 defect.
+
+The probe now waits until `RPGAttackTracker.IsNeutral()` after the wake clip, refuses a failed `StartMove`, logs boss montage, tracker position, active-window state, sweep count and horizontal player distance every tick, then presses when the actual A4 tracker active window opens. A4 uses `RPGBossLowSweep` and the tracker window (`ActiveStartTime` 0.60 s in Source), rather than the pack's ANS_CollisionTrace. The real contact and recoil montage remain separately checked. The full-fight driver retains a 1.0 game-second polling tail after its 2.5 s block injection so a late real guarded contact can still lead to an R2 counter.
+
+Offline check: `python -m py_compile Scripts/Editor/pie_tier2_parry.py Scripts/Editor/pie_full_fight.py` and `python -m unittest Scripts.Editor.test_pie_full_fight_offline` pass (7/7). The new fixture proves a late arm gets an R2 tap without continued block injection, and an unarmed guard ends after the tail. A fresh Lead PIE run is required; this is not a live parry success claim.

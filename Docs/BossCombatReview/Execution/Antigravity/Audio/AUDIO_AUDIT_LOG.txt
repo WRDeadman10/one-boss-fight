@@ -1,0 +1,14 @@
+[AudioAudit] Cue A_Guardian_ImpactL_Cue: vol=0.75 pitch=1.00 class=SC_Enemy att=None node=SoundNodeModulator
+[AudioAudit] Cue ShieldImpacts_Cue: vol=0.75 pitch=1.00 class=None att=None node=SoundNodeRandom
+[AudioAudit] Cue A_Sword_Swing_Cue: vol=0.75 pitch=1.00 class=None att=None node=SoundNodeModulator
+[AudioAudit] Cue SwordImpact_Cue: vol=0.75 pitch=1.00 class=None att=None node=SoundNodeRandom
+[AudioAudit] Error reading raw notifies on AM_ER_Attack_Air_Heavy_Plunge: AnimMontage: Property 'Notifies' for attribute 'notifies' on 'AnimMontage' is protected and cannot be read
+[AudioAudit] Montage AM_ER_Attack_Air_Heavy_Plunge: len=0.8667 sound_notifies=[]
+[AudioAudit] Error reading raw notifies on AM_ER_Attack_GuardCounter: AnimMontage: Property 'Notifies' for attribute 'notifies' on 'AnimMontage' is protected and cannot be read
+[AudioAudit] Montage AM_ER_Attack_GuardCounter: len=0.8000 sound_notifies=[]
+[AudioAudit] Error reading raw notifies on AM_ER_Attack_Air_Light: AnimMontage: Property 'Notifies' for attribute 'notifies' on 'AnimMontage' is protected and cannot be read
+[AudioAudit] Montage AM_ER_Attack_Air_Light: len=0.6000 sound_notifies=[]
+[AudioAudit] Error reading raw notifies on AM_ER_Backstep_Back: AnimMontage: Property 'Notifies' for attribute 'notifies' on 'AnimMontage' is protected and cannot be read
+[AudioAudit] Montage AM_ER_Backstep_Back: len=0.4667 sound_notifies=[]
+[AudioAudit] Error reading raw notifies on AM_Boss01_ParryRecoil: AnimMontage: Property 'Notifies' for attribute 'notifies' on 'AnimMontage' is protected and cannot be read
+[AudioAudit] Montage AM_Boss01_ParryRecoil: len=0.6000 sound_notifies=[]

@@ -17,10 +17,10 @@ Static inventory of `Scripts/Tools/test_*.py` found ten `subprocess.run` call si
 | `test_queue_w_workflows.py:44` | 30 s | PowerShell dry-run; output root is a `TemporaryDirectory`; timeout is bounded. |
 | `test_round5_experiment_plan.py:68` | none | PowerShell dry-run; synchronous and has no timeout. |
 | `test_round6_benchmark_report.py:121,124` | none | Two PowerShell dry-runs; no timeout. |
-| `test_round6_phase2_intake.py:102` | none | CLI runs inside `TemporaryDirectory`; synchronous, no timeout. |
+| `test_round6_phase2_intake.py:102` | 10 s | CLI runs inside `TemporaryDirectory`; timeout kills/waits for the child before temporary-root cleanup. |
 | `test_gate_script.py:64` | 45 s | New end-to-end Gate fixture with temporary root containing spaces; bounded and receipt/artifacts are contained in that temporary root. |
 
-Finding: the eight pre-existing unbounded calls exercise short `--help`, fixture CLI, or dry-run commands, but a regression could hang the suite. Recommend adding conservative per-call timeouts; `subprocess.run` has no orphan process handle to manage after normal return, and its timeout path kills/waits for the child. No process tree is intentionally left running by these tests.
+Finding: seven direct calls remain unbounded. The suite wrapper now passes its 20 s budget to `subprocess.run`, so full discovery cannot wait forever for the direct suite process; direct invocation of an individual test file can still hang on those seven calls. `subprocess.run` timeout kills/waits for the direct child. No process tree is intentionally left running by these tests.
 
 ## AB-C33 — Gate.ps1 path-with-spaces regression
 

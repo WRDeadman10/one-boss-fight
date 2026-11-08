@@ -27,6 +27,6 @@ Correction to the PC's report: these runs used the Development stage, whose buil
 
 ## Open
 
-- Owner: image-quality acceptance of one DLSS mode (it decides Phase 2's base).
-- Step 8 receipt (`onebossfight.round6-benchmark/v1`) built from the raw runs and validated with `round6_benchmark_report.py` (Codex, offline).
-- Phase 2: only after the owner's mode choice and the lead's acceptance.
+- C-951 accepts the Phase 1 performance evidence and selects DLSS Performance at primary 50% as the Phase 2 experiment base; this is not a shipped default.
+- The 13-run `onebossfight.round6-benchmark/v1` receipt was built from the retained raw runs and validated offline. It is stored at `Docs/BossCombatReview/Execution/Codex/R6_PHASE1/receipt.json`.
+- Phase 2 is currently PARKED / NOT RUN under the later owner order C-954. Resume only after an explicit owner un-parks benchmarking; retain the Phase 2 evidence and fallback gates.

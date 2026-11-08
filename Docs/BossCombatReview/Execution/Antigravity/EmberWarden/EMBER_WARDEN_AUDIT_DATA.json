@@ -1,0 +1,270 @@
+{
+  "BP_ExampleGreatSwordBoss": {
+    "loaded": true,
+    "class_name": "BP_ExampleGreatSwordBoss_C",
+    "mesh_component": {
+      "name": "CharacterMesh0",
+      "skeletal_mesh": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SKM_CombatMannequin_Simple.SKM_CombatMannequin_Simple"
+    }
+  },
+  "SKM_CombatMannequin_Simple": {
+    "loaded": true,
+    "skeleton": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin",
+    "sockets": {
+      "WeaponSocket_R": {
+        "bone_name": "hand_r",
+        "relative_location": "<Struct 'Vector' (0x00000861F5B020A8) {x: -9.642296, y: 4.135704, z: 3.084660}>",
+        "relative_rotation": "<Struct 'Rotator' (0x00000861F5B020C0) {pitch: 19.841684, yaw: -1.837314, roll: -10.479316}>"
+      },
+      "WeaponSocket_L": {
+        "bone_name": "hand_l",
+        "relative_location": "<Struct 'Vector' (0x00000861F5B0F8C8) {x: 10.208155, y: -3.501818, z: 0.494542}>",
+        "relative_rotation": "<Struct 'Rotator' (0x00000861F5B0F8E0) {pitch: -9.987861, yaw: 179.999954, roll: -179.999954}>"
+      },
+      "SwordTrail1": null,
+      "SwordTrail2": null,
+      "head": null,
+      "spine_03": null
+    }
+  },
+  "SM_Boss01_Greatsword": {
+    "loaded": true,
+    "sockets": [],
+    "materials": [
+      {
+        "slot_name": "M_Boss01_Blade",
+        "material": "/Engine/EngineMaterials/WorldGridMaterial.WorldGridMaterial"
+      },
+      {
+        "slot_name": "M_Boss01_Guard_Grip",
+        "material": "/Engine/EngineMaterials/WorldGridMaterial.WorldGridMaterial"
+      },
+      {
+        "slot_name": "M_Boss01_Blade_Glow",
+        "material": "/Engine/EngineMaterials/WorldGridMaterial.WorldGridMaterial"
+      }
+    ],
+    "bounds": {
+      "box_extent": "<Struct 'Vector' (0x00000861FF05F9C8) {x: 31.000000, y: 3.820000, z: 92.315001}>",
+      "sphere_radius": 92.31500148773193
+    }
+  },
+  "materials": {
+    "/Game/OneBossFight/Boss01/Materials/M_Boss01_Blade_Glow": {
+      "loaded": true,
+      "class": "MaterialInstanceConstant",
+      "parent": "/Game/OneBossFight/Boss01/Materials/M_Boss01_Master.M_Boss01_Master",
+      "scalar_params": [
+        {
+          "name": "EmissiveStrength",
+          "value": 6.0
+        }
+      ],
+      "vector_params": [],
+      "texture_params": [
+        {
+          "name": "BaseColorMap",
+          "texture": "/Game/OneBossFight/Boss01/Textures/Blade_Glow/T_Boss01_Blade_Glow_BaseColor.T_Boss01_Blade_Glow_BaseColor"
+        },
+        {
+          "name": "NormalMap",
+          "texture": "/Game/OneBossFight/Boss01/Textures/Blade_Glow/T_Boss01_Blade_Glow_Normal.T_Boss01_Blade_Glow_Normal"
+        },
+        {
+          "name": "ORMMap",
+          "texture": "/Game/OneBossFight/Boss01/Textures/Blade_Glow/T_Boss01_Blade_Glow_ORM.T_Boss01_Blade_Glow_ORM"
+        },
+        {
+          "name": "EmissiveMap",
+          "texture": "/Game/OneBossFight/Boss01/Textures/Blade_Glow/T_Boss01_Blade_Glow_Emissive.T_Boss01_Blade_Glow_Emissive"
+        }
+      ]
+    },
+    "/Game/OneBossFight/Boss01/Materials/M_Boss01_EmberGlow": {
+      "loaded": true,
+      "class": "MaterialInstanceConstant",
+      "parent": "/Game/OneBossFight/Boss01/Materials/M_Boss01_Master.M_Boss01_Master",
+      "scalar_params": [
+        {
+          "name": "EmissiveStrength",
+          "value": 6.0
+        }
+      ],
+      "vector_params": [],
+      "texture_params": [
+        {
+          "name": "BaseColorMap",
+          "texture": "/Game/OneBossFight/Boss01/Textures/EmberGlow/T_Boss01_EmberGlow_BaseColor.T_Boss01_EmberGlow_BaseColor"
+        },
+        {
+          "name": "NormalMap",
+          "texture": "/Game/OneBossFight/Boss01/Textures/EmberGlow/T_Boss01_EmberGlow_Normal.T_Boss01_EmberGlow_Normal"
+        },
+        {
+          "name": "ORMMap",
+          "texture": "/Game/OneBossFight/Boss01/Textures/EmberGlow/T_Boss01_EmberGlow_ORM.T_Boss01_EmberGlow_ORM"
+        },
+        {
+          "name": "EmissiveMap",
+          "texture": "/Game/OneBossFight/Boss01/Textures/EmberGlow/T_Boss01_EmberGlow_Emissive.T_Boss01_EmberGlow_Emissive"
+        }
+      ]
+    },
+    "/Game/OneBossFight/Boss01/Materials/M_Boss01_BlackPlate": {
+      "loaded": true,
+      "class": "MaterialInstanceConstant",
+      "parent": "/Game/OneBossFight/Boss01/Materials/M_Boss01_Master.M_Boss01_Master",
+      "scalar_params": [
+        {
+          "name": "EmissiveStrength",
+          "value": 0.0
+        }
+      ],
+      "vector_params": [],
+      "texture_params": [
+        {
+          "name": "BaseColorMap",
+          "texture": "/Game/OneBossFight/Boss01/Textures/BlackPlate/T_Boss01_BlackPlate_BaseColor.T_Boss01_BlackPlate_BaseColor"
+        },
+        {
+          "name": "NormalMap",
+          "texture": "/Game/OneBossFight/Boss01/Textures/BlackPlate/T_Boss01_BlackPlate_Normal.T_Boss01_BlackPlate_Normal"
+        },
+        {
+          "name": "ORMMap",
+          "texture": "/Game/OneBossFight/Boss01/Textures/BlackPlate/T_Boss01_BlackPlate_ORM.T_Boss01_BlackPlate_ORM"
+        }
+      ]
+    },
+    "/Game/OneBossFight/Boss01/Materials/M_Boss01_CrimsonCloth": {
+      "loaded": true,
+      "class": "MaterialInstanceConstant",
+      "parent": "/Game/OneBossFight/Boss01/Materials/M_Boss01_Master.M_Boss01_Master",
+      "scalar_params": [
+        {
+          "name": "EmissiveStrength",
+          "value": 0.0
+        }
+      ],
+      "vector_params": [],
+      "texture_params": [
+        {
+          "name": "BaseColorMap",
+          "texture": "/Game/OneBossFight/Boss01/Textures/CrimsonCloth/T_Boss01_CrimsonCloth_BaseColor.T_Boss01_CrimsonCloth_BaseColor"
+        },
+        {
+          "name": "NormalMap",
+          "texture": "/Game/OneBossFight/Boss01/Textures/CrimsonCloth/T_Boss01_CrimsonCloth_Normal.T_Boss01_CrimsonCloth_Normal"
+        },
+        {
+          "name": "ORMMap",
+          "texture": "/Game/OneBossFight/Boss01/Textures/CrimsonCloth/T_Boss01_CrimsonCloth_ORM.T_Boss01_CrimsonCloth_ORM"
+        }
+      ]
+    },
+    "/Game/OneBossFight/Boss01/Materials/M_Boss01_GoldTrim": {
+      "loaded": true,
+      "class": "MaterialInstanceConstant",
+      "parent": "/Game/OneBossFight/Boss01/Materials/M_Boss01_Master.M_Boss01_Master",
+      "scalar_params": [
+        {
+          "name": "EmissiveStrength",
+          "value": 0.0
+        }
+      ],
+      "vector_params": [],
+      "texture_params": [
+        {
+          "name": "BaseColorMap",
+          "texture": "/Game/OneBossFight/Boss01/Textures/GoldTrim/T_Boss01_GoldTrim_BaseColor.T_Boss01_GoldTrim_BaseColor"
+        },
+        {
+          "name": "NormalMap",
+          "texture": "/Game/OneBossFight/Boss01/Textures/GoldTrim/T_Boss01_GoldTrim_Normal.T_Boss01_GoldTrim_Normal"
+        },
+        {
+          "name": "ORMMap",
+          "texture": "/Game/OneBossFight/Boss01/Textures/GoldTrim/T_Boss01_GoldTrim_ORM.T_Boss01_GoldTrim_ORM"
+        }
+      ]
+    },
+    "/Game/OneBossFight/Boss01/Materials/M_Boss01_Master": {
+      "loaded": true,
+      "class": "Material"
+    }
+  },
+  "body_meshes": {
+    "/Game/OneBossFight/Boss01/Body/SK_Boss01_Crown": {
+      "loaded": true,
+      "class": "SkeletalMesh",
+      "skeleton": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin",
+      "materials": [
+        {
+          "slot_name": "M_Boss01_BlackPlate",
+          "material": "/Game/OneBossFight/Boss01/Materials/M_Boss01_BlackPlate.M_Boss01_BlackPlate"
+        },
+        {
+          "slot_name": "M_Boss01_EmberGlow",
+          "material": "/Game/OneBossFight/Boss01/Materials/M_Boss01_EmberGlow.M_Boss01_EmberGlow"
+        }
+      ]
+    },
+    "/Game/OneBossFight/Boss01/Body/SK_Boss01_Body": {
+      "loaded": true,
+      "class": "SkeletalMesh",
+      "skeleton": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin",
+      "materials": [
+        {
+          "slot_name": "M00_Torso_skin00",
+          "material": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Materials/M_Sevarog_Torso.M_Sevarog_Torso"
+        },
+        {
+          "slot_name": "M01_Shoulders_skin01",
+          "material": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Materials/M_Sevarog_ArmourRuins.M_Sevarog_ArmourRuins"
+        },
+        {
+          "slot_name": "M02_Arms_skin02",
+          "material": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Materials/M_Sevarog_Back_01.M_Sevarog_Back_01"
+        },
+        {
+          "slot_name": "M03_Dress_skin03",
+          "material": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Materials/M_Sevarog_Chainmail.M_Sevarog_Chainmail"
+        },
+        {
+          "slot_name": "M06_Black",
+          "material": "/Game/ParagonSevarog/Characters/Heroes/Sevarog/Materials/M_invis.M_invis"
+        }
+      ]
+    },
+    "/Game/OneBossFight/Boss01/Body/SK_Boss01_BrazierGauntlet": {
+      "loaded": true,
+      "class": "SkeletalMesh",
+      "skeleton": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin",
+      "materials": [
+        {
+          "slot_name": "M_Boss01_BlackPlate",
+          "material": "/Game/OneBossFight/Boss01/Materials/M_Boss01_BlackPlate.M_Boss01_BlackPlate"
+        },
+        {
+          "slot_name": "M_Boss01_EmberGlow",
+          "material": "/Game/OneBossFight/Boss01/Materials/M_Boss01_EmberGlow.M_Boss01_EmberGlow"
+        }
+      ]
+    },
+    "/Game/OneBossFight/Boss01/Body/SK_Boss01_Mantle": {
+      "loaded": true,
+      "class": "SkeletalMesh",
+      "skeleton": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin",
+      "materials": [
+        {
+          "slot_name": "M_Boss01_CrimsonCloth",
+          "material": "/Game/OneBossFight/Boss01/Materials/M_Boss01_CrimsonCloth.M_Boss01_CrimsonCloth"
+        },
+        {
+          "slot_name": "M_Boss01_GoldTrim",
+          "material": "/Game/OneBossFight/Boss01/Materials/M_Boss01_GoldTrim.M_Boss01_GoldTrim"
+        }
+      ]
+    }
+  }
+}

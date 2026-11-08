@@ -1,0 +1,8 @@
+TASK: Queue AC Art Batch 3 (AC-A11..AC-A15: Aerial VFX) complete.
+STATUS: In-engine audit under lock extracted data to AERIAL_VFX_AUDIT_DATA.json.
+Delivery report: Documentation/Boss/AC_A11_A15_AERIAL_ATTACK_VFX_REPORT.md.
+AC-A11/A13: Blade ribbon continuous (85 cm span); quadratic taper fades clean by 0.450 s.
+AC-A12: Air heavy ground slam at 0.420 s staged with radial dust/ember burst & impact cue.
+AC-A14: Jump apex framing maintains >= 160 px headroom and >= 180 px ground margin.
+Binary .uasset assets remain untouched pending owner review; engine unlocked.
+VALIDATION: offline suite 426 OK (1 skip), broken_links=0. NEXT: AC-A16..AC-A20.

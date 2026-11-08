@@ -1,0 +1,18 @@
+﻿[2026.11.07-11.33.24:747][  0]LogPython: [ERAirCtl] driver registered; observations are game-tick bounded, not device-latency claims
+[2026.11.07-11.33.25:454][  6]LogPython: [ERAirCtl] route=legacy (H019_ENCOUNTER_DEFINITION unset)
+[2026.11.07-11.33.34:423][180]LogPython: [ERAirCtl] setup boss held=True player_distance_cm=900
+[2026.11.07-11.33.34:455][180]LogPython: [ERAirCtl] assigned air_light=AM_ER_Attack_Air_Light air_heavy=AM_ER_Attack_Air_Heavy_Plunge
+[2026.11.07-11.33.50:914][756]LogPython: [ERAirCtl] input_context_active=True
+[2026.11.07-11.33.50:940][757]LogPython: [ERAirCtl] case=R1_tap_light baseline=(None, None)
+[2026.11.07-11.33.51:052][761]LogPython: [ERAirCtl] sample case=R1_tap_light montage=Attack_PrimaryA_Montage position=0.026 observed_ms=81.81 tick_s=0.02805
+[2026.11.07-11.33.55:598][930]LogPython: [ERAirCtl] hit case=R1_tap_light boss_hp_before=2000.0 after=1984.0100005865097 delta=-15.989999413490295
+[2026.11.07-11.33.55:625][931]LogPython: [ERAirCtl] case=R2_tap_strong baseline=(None, None)
+[2026.11.07-11.33.55:811][938]LogPython: [ERAirCtl] sample case=R2_tap_strong montage=Ability_E_Anim_Montage position=0.029 observed_ms=160.54 tick_s=0.02658
+[2026.11.07-11.34.00:266][107]LogPython: [ERAirCtl] hit case=R2_tap_strong boss_hp_before=1984.0100005865097 after=1961.6240017888547 delta=-22.38599879765502
+[2026.11.07-11.34.00:294][108]LogPython: [ERAirCtl] case=jump_R1_air_light baseline=(None, None)
+[2026.11.07-11.34.00:663][122]LogPython: [ERAirCtl] sample case=jump_R1_air_light montage=Attack_PrimaryA_Montage position=0.026 observed_ms=53.81 tick_s=0.02536
+[2026.11.07-11.34.05:232][297]LogPython: [ERAirCtl] hit case=jump_R1_air_light boss_hp_before=1961.6240017888547 after=1945.6340023753644 delta=-15.989999413490295
+[2026.11.07-11.34.05:261][298]LogPython: [ERAirCtl] case=jump_R2_air_heavy baseline=(None, None)
+[2026.11.07-11.34.05:729][316]LogPython: [ERAirCtl] sample case=jump_R2_air_heavy montage=Ability_E_Anim_Montage position=0.025 observed_ms=154.22 tick_s=0.02574
+[2026.11.07-11.34.10:193][487]LogPython: [ERAirCtl] hit case=jump_R2_air_heavy boss_hp_before=1945.6340023753644 after=1923.2480035777094 delta=-22.38599879765502
+[2026.11.07-11.34.10:218][488]LogPython: [ERAirCtl] finished: all control samples recorded

@@ -1,0 +1,10 @@
+﻿[2026.11.08-01.31.28:828][325]LogPython: [Tier2Aura] ROUTE data max_health=2000.0
+[2026.11.08-01.31.28:828][325]LogPython: [Tier2Aura] CHECK full_health pass=True aura=[] expected_count=0
+[2026.11.08-01.31.29:841][352]LogPython: [Tier2Aura] HEALTH threshold=1000.0 actual=1000.0
+[2026.11.08-01.31.29:841][352]LogPython: [Tier2Aura] CHECK half_health pass=True aura=[('NiagaraComponent_0', True)] expected_count=1
+[2026.11.08-01.31.30:349][371]LogPython: [Tier2Aura] CHECK tier2_off pass=True aura=[] expected_count=0
+[2026.11.08-01.31.31:385][415]LogPython: [Tier2Aura] CHECK tier2_on_again pass=True aura=[('NiagaraComponent_1', True)] expected_count=1
+[2026.11.08-01.31.32:391][458]LogPython: [Tier2Aura] HEALTH after_reset=2000.0
+[2026.11.08-01.31.32:391][458]LogPython: [Tier2Aura] CHECK encounter_reset pass=True aura=[] expected_count=0
+[2026.11.08-01.31.35:610][571]LogPython: [Tier2Aura] CHECK next_phase pass=True aura=[('NiagaraComponent_2', True)] expected_count=1
+[2026.11.08-01.31.35:611][571]LogPython: [Tier2Aura] SUMMARY pass=True checks=6 reason=witness complete

@@ -1,0 +1,75 @@
+{
+  "animations": {
+    "AM_Boss01_A1": {
+      "loaded": true,
+      "class": "AnimMontage",
+      "play_length": 1.2,
+      "notifies": [
+        "length 1.200 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25",
+        "[state] ANS_DisableMovement_C at 0.000 s for 0.500 s",
+        "[state] ANS_SetDesiredRotation_C at 0.000 s for 0.330 s",
+        "AnimNotify_PlaySound at 0.330 s",
+        "[state] ANS_CollisionTrace_C at 0.350 s for 0.150 s"
+      ]
+    },
+    "AM_Boss01_A2": {
+      "loaded": true,
+      "class": "AnimMontage",
+      "play_length": 0.6,
+      "notifies": [
+        "length 0.600 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25"
+      ]
+    },
+    "AM_Boss01_A3a": {
+      "loaded": true,
+      "class": "AnimMontage",
+      "play_length": 0.8,
+      "notifies": [
+        "length 0.800 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25",
+        "[state] ANS_DisableMovement_C at 0.000 s for 0.600 s",
+        "[state] ANS_SetDesiredRotation_C at 0.000 s for 0.380 s",
+        "AnimNotify_PlaySound at 0.380 s",
+        "[state] ANS_CollisionTrace_C at 0.400 s for 0.200 s",
+        "AN_PerformFollowUp_C at 0.750 s",
+        "AN_EndAnimatingAbility_C at 0.780 s"
+      ]
+    },
+    "AM_Boss01_A3b": {
+      "loaded": true,
+      "class": "AnimMontage",
+      "play_length": 1.3333,
+      "notifies": [
+        "length 1.333 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25",
+        "[state] ANS_DisableMovement_C at 0.000 s for 0.400 s",
+        "[state] ANS_SetDesiredRotation_C at 0.000 s for 0.130 s",
+        "AnimNotify_PlaySound at 0.130 s",
+        "[state] ANS_CollisionTrace_C at 0.150 s for 0.250 s",
+        "AN_EndAnimatingAbility_C at 1.313 s"
+      ]
+    },
+    "AN_Boss01_A4_LowSweep": {
+      "loaded": true,
+      "class": "AnimSequence",
+      "play_length": 1.7667,
+      "notifies": []
+    },
+    "AN_Boss01_A5_JavelinThrow": {
+      "loaded": true,
+      "class": "AnimSequence",
+      "play_length": 1.0,
+      "notifies": []
+    }
+  },
+  "SM_Boss01_EmberJavelin": {
+    "loaded": true,
+    "class": "StaticMesh",
+    "bounds": {
+      "box_extent": [
+        80.0,
+        3.8,
+        2.3
+      ],
+      "sphere_radius": 80.0
+    }
+  }
+}

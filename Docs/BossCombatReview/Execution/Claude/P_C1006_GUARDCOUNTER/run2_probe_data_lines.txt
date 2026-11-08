@@ -1,0 +1,13 @@
+﻿[2026.11.07-14.49.57:133][  0]LogPython: [ERGuardCounter] driver registered; L1 stays held until the source emits successful guarded contact, then R2 is tapped immediately
+[2026.11.07-14.49.57:861][  5]LogPython: [ERGuardCounter] route=data selection=/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter
+[2026.11.07-14.50.09:163][256]LogPython: [ERGuardCounter] setup boss_held=False player_distance_cm=900 enter_combat_tag=Ability.EnterCombat framework_executor_present=False
+[2026.11.07-14.50.21:788][701]LogPython: [ERGuardCounter] runtime_guard_counter_montage_assigned=AM_ER_Attack_GuardCounter saved=False
+[2026.11.07-14.50.21:789][701]LogPython: [ERGuardCounter] input_context_active=True; armed hold L1 while boss AI swings; source guard contact triggers immediate R2 inside configured window=0.60s
+[2026.11.07-14.50.21:789][701]LogPython: [ERGuardCounter] input key=Gamepad_LeftShoulder down=True delivered=True
+[2026.11.07-14.50.22:238][718]LogPython: [ERGuardCounter] boss_montage=GS_Attack04_Montage player_montage=None player_hp=28.0 boss_hp=2000.0
+[2026.11.07-14.50.24:467][799]LogPython: [ERGuardCounter] boss_montage=GS_UnequipWeapon_Montage player_montage=None player_hp=-8.0 boss_hp=2000.0
+[2026.11.07-14.50.27:494][882]LogPython: [ERGuardCounter] boss_montage=AnimMontage_2 player_montage=None player_hp=100.0 boss_hp=500.0
+[2026.11.07-14.50.52:401][964]LogPython: [ERGuardCounter] SUMMARY reason=timed out waiting for source-confirmed guarded contact guarded_contact_confirmed=False counter_sent=False counter_accept_logged=False hp_before=2000.0 hp_after=500.0 boss_hp_delta=-1500.0 record_count_before=0 record_count_after=0
+[2026.11.07-14.50.52:401][964]LogPython: [ERGuardCounter] GUARD_COUNTER_EVIDENCE_BEGIN
+[2026.11.07-14.50.52:401][964]LogPython: [ERGuardCounter] GUARD_COUNTER_EVIDENCE_END
+[2026.11.07-14.50.52:401][964]LogPython: [ERGuardCounter] LIMIT no successful-guard source log was observed; no counter-window acceptance may be claimed

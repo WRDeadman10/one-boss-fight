@@ -1,0 +1,26 @@
+﻿[2026.11.08-02.18.50:226][599]LogPython: [ERA4Counter] DRAW_READY attempt=1 ready=False combat_enabled=False active_montage=None
+[2026.11.08-02.18.51:155][641]LogPython: [ERA4Counter] DRAW_READY attempt=2 ready=True combat_enabled=True active_montage=None
+[2026.11.08-02.18.51:835][668]LogPython: [ERA4Counter] A4_START started=True boss_hp=2000.000 sweep_before=0 lane_cm=140 actual_distance_cm=148.0 block=IA_Block
+[2026.11.08-02.18.52:559][696]LogPython: [ERA4Counter] REAL_GUARD_ARMED game_time=18.750 A4_pos=0.730 active=True sweep_delta=1 player_hp=100.0 guard_state=owner=BP_CombatPlayerCharacter_C_0 abilityCount=19 abilities={[0]=GA_PlayerHitStun_C active=0; [1]=GA_PlayerKnockdown_C active=0; [2]=GA_Player_ExitKnockdown_C active=0; [3]=GA_Player_Ragdoll_Death_C active=0; [4]=GA_Player_Dodge_C active=0; [5]=GA_Jump_C active=0; [6]=GA_Quickslot_C active=0; [7]=GA_PlayerSprint_C active=0; [8]=GA_Sword_BlockReaction_C active=0; [9]=GA_PlayerGuardBlock_C active=1; [10]=GA_Sword_EnterCombat_C active=0; [11]=GA_Sword_Melee_C active=0; [12]=GA_Sword_EnterCombat_C active=0; [13]=GA_Sword_ExitCombat_C active=0; [14]=GA_Sword_QuickSlot_C active=0; [15]=GA_PlayerParry_C active=0; [16]=GA_ConsumeHealthPotion_C active=0; [17]=GA_PortalBlast_C active=0; [18]=GA_Aim_Magic_C active=0} blockAbilities={GA_Sword_BlockReaction_C active=0; GA_PlayerGuardBlock_C active=1} ownedTags={Player.Character, Equipped.Arrow, Status.ActionCommitted, Status.Blocking} statusBlocking=1 stateBlocking=0 abilityBlock=0
+[2026.11.08-02.18.52:585][697]LogPython: [ERA4Counter] COUNTER_R2_PRESS game_time=18.776 armed=True strong_before=0 boss_hp_before=2000.0 distance_cm=148.0
+[2026.11.08-02.18.52:717][702]LogPython: [ERA4Counter] COUNTER_R2_RELEASE game_time=18.908
+[2026.11.08-02.18.52:777][704]LogPython: [ERA4Counter] COUNTER_REACH game_time=18.963 montage=AM_ER_Attack_GuardCounter hand_to_boss_cm=162.2 boss_hp=2000.0
+[2026.11.08-02.18.52:777][704]LogPython: [ERA4Counter] PLAYER_MONTAGE name=AM_ER_Attack_GuardCounter game_time=18.963
+[2026.11.08-02.18.52:796][705]LogPython: [ERA4Counter] COUNTER_REACH game_time=18.988 montage=AM_ER_Attack_GuardCounter hand_to_boss_cm=129.0 boss_hp=2000.0
+[2026.11.08-02.18.52:820][706]LogPython: [ERA4Counter] COUNTER_REACH game_time=19.012 montage=AM_ER_Attack_GuardCounter hand_to_boss_cm=83.1 boss_hp=2000.0
+[2026.11.08-02.18.52:847][707]LogPython: [ERA4Counter] COUNTER_REACH game_time=19.039 montage=AM_ER_Attack_GuardCounter hand_to_boss_cm=122.5 boss_hp=2000.0
+[2026.11.08-02.18.52:872][708]LogPython: [ERA4Counter] COUNTER_REACH game_time=19.064 montage=AM_ER_Attack_GuardCounter hand_to_boss_cm=146.0 boss_hp=2000.0
+[2026.11.08-02.18.52:897][709]LogPython: [ERA4Counter] COUNTER_REACH game_time=19.089 montage=AM_ER_Attack_GuardCounter hand_to_boss_cm=158.0 boss_hp=2000.0
+[2026.11.08-02.18.52:927][710]LogPython: [ERA4Counter] COUNTER_REACH game_time=19.118 montage=AM_ER_Attack_GuardCounter hand_to_boss_cm=162.8 boss_hp=2000.0
+[2026.11.08-02.18.52:952][711]LogPython: [ERA4Counter] COUNTER_REACH game_time=19.144 montage=AM_ER_Attack_GuardCounter hand_to_boss_cm=163.0 boss_hp=2000.0
+[2026.11.08-02.18.52:978][712]LogPython: [ERA4Counter] COUNTER_REACH game_time=19.169 montage=AM_ER_Attack_GuardCounter hand_to_boss_cm=162.4 boss_hp=2000.0
+[2026.11.08-02.18.53:003][713]LogPython: [ERA4Counter] COUNTER_REACH game_time=19.195 montage=AM_ER_Attack_GuardCounter hand_to_boss_cm=161.9 boss_hp=2000.0
+[2026.11.08-02.18.53:034][714]LogPython: [ERA4Counter] COUNTER_REACH game_time=19.223 montage=AM_ER_Attack_GuardCounter hand_to_boss_cm=161.2 boss_hp=2000.0
+[2026.11.08-02.18.53:058][715]LogPython: [ERA4Counter] COUNTER_REACH game_time=19.249 montage=AM_ER_Attack_GuardCounter hand_to_boss_cm=160.6 boss_hp=2000.0
+[2026.11.08-02.18.53:083][716]LogPython: [ERA4Counter] COUNTER_REACH game_time=19.274 montage=AM_ER_Attack_GuardCounter hand_to_boss_cm=160.0 boss_hp=2000.0
+[2026.11.08-02.18.53:109][717]LogPython: [ERA4Counter] COUNTER_REACH game_time=19.300 montage=AM_ER_Attack_GuardCounter hand_to_boss_cm=159.2 boss_hp=2000.0
+[2026.11.08-02.18.53:154][718]LogPython: [ERA4Counter] COUNTER_REACH game_time=19.346 montage=AM_ER_Attack_GuardCounter hand_to_boss_cm=157.5 boss_hp=2000.0
+[2026.11.08-02.18.53:205][719]LogPython: [ERA4Counter] COUNTER_REACH game_time=19.397 montage=AM_ER_Attack_GuardCounter hand_to_boss_cm=153.8 boss_hp=2000.0
+[2026.11.08-02.18.53:254][720]LogPython: [ERA4Counter] COUNTER_REACH game_time=19.443 montage=AM_ER_Attack_GuardCounter hand_to_boss_cm=146.2 boss_hp=2000.0
+[2026.11.08-02.18.55:087][790]LogPython: [ERA4Counter] RESULT pass=False real_guard=True strong_delta=1 counter_montage=True boss_hp_before=2000.0 boss_hp_after=2000.0 boss_hp_delta=0.0
+[2026.11.08-02.18.55:089][790]LogPython: [ERA4Counter] SUMMARY pass=False reason=witness complete

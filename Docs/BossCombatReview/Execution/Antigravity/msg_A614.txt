@@ -1,0 +1,8 @@
+TASK: Queue AC Art Batch 4 (AC-A16..AC-A20: Backstep Visuals) complete.
+STATUS: In-engine audit under lock extracted data to BACKSTEP_EVASION_AUDIT_DATA.json.
+Delivery report: Documentation/Boss/AC_A16_A20_BACKSTEP_EVASION_REPORT.md.
+AC-A16: Takeoff dust motes staged at foot_l/foot_r sockets (0.075 s) with T_ImpactDust_01.
+AC-A17: Zero-yaw camera trajectory verified (0.0 deg delta; forward boss gaze unbroken).
+AC-A18/A19: i-Frame shimmer staged (0.075..0.343 s); clean 0.250 s blend-out into neutral.
+Binary .uasset assets remain untouched pending owner review; engine unlocked.
+VALIDATION: offline suite 426 OK (1 skip), broken_links=0. NEXT: AC-A21..AC-A25.

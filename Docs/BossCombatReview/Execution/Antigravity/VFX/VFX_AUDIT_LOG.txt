@@ -1,0 +1,4 @@
+[VFXAudit] Trail PS: True, Mesh: True
+[VFXAudit] NS_Boss_PhaseTwoAura found
+[VFXAudit] M_Boss01_Remains: True, T_Boss01_DissolveNoise: True
+[VFXAudit] StaggerDown: len=1.0000, StaggerFall: len=0.7000

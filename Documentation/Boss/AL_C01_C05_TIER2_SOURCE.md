@@ -1,0 +1,13 @@
+# Queue AL C01–C05 — live pack-boss Tier 2 Source
+
+**PRODUCTION CHANGE, unbuilt.** The owner approved the seven-item reel (C-1021). Claude C-1025 ordered a live pack-boss implementation; the Lead still holds the engine lock for full-fight capture, so Codex did not build, run native tests, PIE, package, commit or push.
+
+| Task | Evidence and change |
+|---|---|
+| C01 | Dormant `RPGSevarogDirector` has Tier 2 aura/recoil hooks, but the live `BP_ExampleGreatSwordBoss` is identified by `RPGPlayerMovesSubsystem::IsPackBoss` and receives `AttachBossDiagnostics` on both selected and legacy routes. Existing `RPGBossPhases` owns the <=60% health phase rule; `RPGPlayerParry::NotifyParried` is the successful-player-parry signal and previously called only the dormant director. `RPGLegend` owns the player-camera distortion hook but its soft material default was empty and its BeginPlay-only load missed late cvar enablement. |
+| C02 | Added `RPGTier2BossRulesTests.cpp` before production edits. Pure cases cover cvar off, 60% boundary, above threshold, dead/invalid health, dormant boss, duplicate aura suppression and parry-only recoil. Lead native suite `OneBossFight.Art.Tier2Boss.PureRules` has not run. |
+| C03 | Added `RPGTier2BossPresentation` component with soft defaults `NS_Boss_PhaseTwoAura` and `AM_Boss01_ParryRecoil`. Its 0.1 s tick reads pack `Attribute.Health`, shows an attached aura only at 0 < HP <= 60% max while active and Tier 2 enabled, avoids duplicate spawn, and destroys the aura on disable/reset/death/EndPlay. `PlayParryRecoil()` loads the montage only on an opted-in successful parry. Shared pure rules are in `RPGTier2BossRules.h`. |
+| C04 | `RPGPlayerMovesSubsystem::AttachBossDiagnostics` attaches the component once to a live pack boss on both routes. `RPGPlayerParry::NotifyParried` calls it on the successful parry path, falling back to the dormant director only when no live component is present. `RPGLegend` now has the `PPM_ParryDistortion` soft default and loads it lazily on an opted-in parry, including cvar enablement after BeginPlay; disabling Tier 2 prevents passing it to the feedback pulse. `rpg.Art.Tier2` remains Development-only and defaults to 0. |
+| C05 | Updated KI-191, TEST_PLAN, PROJECT_STATE and Queue AL. All live/visual/first-use timing claims remain pending Lead BUILD/native/PIE. Asset paths are backed by files under `Content/OneBossFight/{VFX,Boss01/Animations,Effects}`. |
+
+Lead acceptance: compile, run the named native suite, then PIE on both encounter routes with cvar off/on. Verify aura at threshold and no duplicate or reset leak; confirm a successful player parry plays one recoil and scopes distortion to player camera; measure first-load hitch. The Source path does not prove these runtime outcomes.

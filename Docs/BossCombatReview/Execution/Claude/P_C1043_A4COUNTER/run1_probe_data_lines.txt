@@ -1,0 +1,2 @@
+﻿[2026.11.08-01.49.43:062][486]LogPython: [ERA4Counter] ERROR Traceback (most recent call last):
+[2026.11.08-01.49.43:064][486]LogPython: [ERA4Counter] SUMMARY pass=False reason=exception

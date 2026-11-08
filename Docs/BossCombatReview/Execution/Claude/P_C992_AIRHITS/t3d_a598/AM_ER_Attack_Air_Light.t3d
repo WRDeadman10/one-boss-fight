@@ -1,0 +1,33 @@
+Begin Object Class=/Script/Engine.AnimMontage Name="AM_ER_Attack_Air_Light" ExportPath="/Script/Engine.AnimMontage'/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Light.AM_ER_Attack_Air_Light'"
+   Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_MovementCancel.ANS_MovementCancel_C Name="ANS_MovementCancel_C_0" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_MovementCancel.ANS_MovementCancel_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Light.AM_ER_Attack_Air_Light:ANS_MovementCancel_C_0'"
+   End Object
+   Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_DisableMovement.ANS_DisableMovement_C Name="ANS_DisableMovement_C_0" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_DisableMovement.ANS_DisableMovement_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Light.AM_ER_Attack_Air_Light:ANS_DisableMovement_C_0'"
+   End Object
+   Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CollisionSystem/AnimNotifies/ANS_CollisionTrace.ANS_CollisionTrace_C Name="ANS_CollisionTrace_C_0" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CollisionSystem/AnimNotifies/ANS_CollisionTrace.ANS_CollisionTrace_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Light.AM_ER_Attack_Air_Light:ANS_CollisionTrace_C_0'"
+   End Object
+   Begin Object Class=/Script/Engine.AnimDataModel Name="AnimDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Light.AM_ER_Attack_Air_Light:AnimDataModel'"
+   End Object
+   Begin Object Name="ANS_MovementCancel_C_0" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_MovementCancel.ANS_MovementCancel_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Light.AM_ER_Attack_Air_Light:ANS_MovementCancel_C_0'"
+   End Object
+   Begin Object Name="ANS_DisableMovement_C_0" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_DisableMovement.ANS_DisableMovement_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Light.AM_ER_Attack_Air_Light:ANS_DisableMovement_C_0'"
+   End Object
+   Begin Object Name="ANS_CollisionTrace_C_0" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CollisionSystem/AnimNotifies/ANS_CollisionTrace.ANS_CollisionTrace_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Light.AM_ER_Attack_Air_Light:ANS_CollisionTrace_C_0'"
+   End Object
+   Begin Object Name="AnimDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Light.AM_ER_Attack_Air_Light:AnimDataModel'"
+      NumberOfFrames=34000
+      NumberOfKeys=34001
+   End Object
+   BlendIn=(BlendTime=0.100000)
+   CompositeSections(0)=(SectionName="Default",LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_Air_Light'",SegmentIndex=0,SegmentLength=0.566667,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_Air_Light.AN_ER_Attack_Air_Light'")
+   SlotAnimTracks(0)=(AnimTrack=(AnimSegments=((AnimReference="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_Air_Light.AN_ER_Attack_Air_Light'",CachedPlayLength=1.400000,AnimStartTime=0.600000,AnimEndTime=1.166667))))
+   CommonTargetFrameRate=(Numerator=60)
+   Notifies(0)=(TriggerTimeOffset=0.000100,NotifyName="ANS_DisableMovement",NotifyStateClass="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_DisableMovement.ANS_DisableMovement_C'ANS_DisableMovement_C_0'",Duration=0.566700,EndLink=(LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_Air_Light'",SegmentBeginTime=-1.000000,SegmentLength=-1.000000,LinkValue=0.566700),Guid=661DF7164162DCBC4FAE14844032A8F7,LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_Air_Light'",SegmentIndex=0,SegmentLength=0.566667,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_Air_Light.AN_ER_Attack_Air_Light'")
+   Notifies(1)=(NotifyName="ANS_CollisionTrace",NotifyStateClass="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CollisionSystem/AnimNotifies/ANS_CollisionTrace.ANS_CollisionTrace_C'ANS_CollisionTrace_C_0'",Duration=0.133300,EndLink=(LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_Air_Light'",SegmentIndex=0,SegmentLength=0.566667,LinkValue=0.333300,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_Air_Light.AN_ER_Attack_Air_Light'"),Guid=0A6CC51A4F76482164DF38B7DBFB8056,TrackIndex=2,LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_Air_Light'",SegmentIndex=0,SegmentLength=0.566667,LinkValue=0.200000,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_Air_Light.AN_ER_Attack_Air_Light'")
+   Notifies(2)=(NotifyName="ANS_MovementCancel",NotifyStateClass="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_MovementCancel.ANS_MovementCancel_C'ANS_MovementCancel_C_0'",Duration=0.233400,EndLink=(LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_Air_Light'",SegmentBeginTime=-1.000000,SegmentLength=-1.000000,LinkValue=0.566700),Guid=201F24C24B06796E51CC81A10B79E078,TrackIndex=1,LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_Air_Light'",SegmentIndex=0,SegmentLength=0.566667,LinkValue=0.333300,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_Air_Light.AN_ER_Attack_Air_Light'")
+   SequenceLength=0.566667
+   AnimNotifyTracks(0)=(TrackName="1")
+   AnimNotifyTracks(1)=(TrackName="2")
+   AnimNotifyTracks(2)=(TrackName="3")
+   DataModelInterface=AnimDataModel'AM_ER_Attack_Air_Light:AnimDataModel'
+   Skeleton="/Script/Engine.Skeleton'/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin'"
+End Object

@@ -1,0 +1,34 @@
+{
+  "AM_ER_Attack_GuardCounter": {
+    "loaded": true,
+    "class": "AnimMontage",
+    "play_length": 0.8,
+    "notifies": [
+      "length 0.800 s, rate scale 1.00, sections 1, blend in 0.10 out 0.25",
+      "[state] ANS_DisableMovement_C at 0.000 s for 0.800 s",
+      "[state] ANS_SetDesiredRotation_C at 0.000 s for 0.123 s",
+      "[state] ANS_CancelFrames_C at 0.000 s for 0.137 s",
+      "[state] ANS_InputBuffer_C at 0.151 s for 0.120 s",
+      "[state] ANS_CollisionTrace_C at 0.168 s for 0.089 s",
+      "AnimNotify_PlaySound at 0.168 s",
+      "[state] ANS_MovementCancel_C at 0.351 s for 0.449 s"
+    ],
+    "raw_notifies": []
+  },
+  "camera_setup": {
+    "loaded": true,
+    "spring_arm": "Not found directly on CDO property"
+  },
+  "shield_particles": {
+    "/Game/ParagonSteel/FX/Particles/Steel/Abilities/Bash/FX/P_ShieldBashImpact": {
+      "loaded": true,
+      "class": "ParticleSystem",
+      "bounds": null
+    },
+    "/Game/ParagonSteel/FX/Particles/Steel/Abilities/AbilityArmor/FX/P_Steel_AbilityArmor_Impact": {
+      "loaded": true,
+      "class": "ParticleSystem",
+      "bounds": null
+    }
+  }
+}

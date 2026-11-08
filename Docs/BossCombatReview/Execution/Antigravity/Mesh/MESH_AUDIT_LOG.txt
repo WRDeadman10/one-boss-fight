@@ -1,0 +1,3 @@
+[MeshAudit] SKM_CombatMannequin audit complete. Found 0 sockets.
+[MeshAudit] SM_SteelSword audit complete. Found 0 sockets.
+[MeshAudit] Greystone found: 17 materials, phys=Greystone_PhysicsAsset sockets=0

@@ -1,0 +1,102 @@
+{
+  "cues": {
+    "A_Guardian_ImpactL_Cue": {
+      "found": true,
+      "path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/A_Guardian_ImpactL_Cue",
+      "volume_multiplier": 0.75,
+      "pitch_multiplier": 1.0,
+      "sound_class": "SC_Enemy",
+      "attenuation": "None",
+      "first_node": "SoundNodeModulator"
+    },
+    "ShieldImpacts_Cue": {
+      "found": true,
+      "path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/Combat/ShieldImpacts/ShieldImpacts_Cue",
+      "volume_multiplier": 0.75,
+      "pitch_multiplier": 1.0,
+      "sound_class": "None",
+      "attenuation": "None",
+      "first_node": "SoundNodeRandom"
+    },
+    "A_Sword_Swing_Cue": {
+      "found": true,
+      "path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/A_Sword_Swing_Cue",
+      "volume_multiplier": 0.75,
+      "pitch_multiplier": 1.0,
+      "sound_class": "None",
+      "attenuation": "None",
+      "first_node": "SoundNodeModulator"
+    },
+    "SwordImpact_Cue": {
+      "found": true,
+      "path": "/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/Combat/SwordImpacts/SwordImpact_Cue",
+      "volume_multiplier": 0.75,
+      "pitch_multiplier": 1.0,
+      "sound_class": "None",
+      "attenuation": "None",
+      "first_node": "SoundNodeRandom"
+    }
+  },
+  "montages": {
+    "AM_ER_Attack_Air_Heavy_Plunge": {
+      "found": true,
+      "path": "/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Heavy_Plunge",
+      "length": 0.8667,
+      "notifies": [
+        "length 0.867 s, rate scale 1.00, sections 1, blend in 0.10 out 0.25",
+        "[state] ANS_DisableMovement_C at 0.000 s for 0.867 s",
+        "[state] ANS_InputBuffer_C at 0.150 s for 0.214 s",
+        "[state] ANS_CollisionTrace_C at 0.150 s for 0.186 s"
+      ],
+      "sound_notifies": []
+    },
+    "AM_ER_Attack_GuardCounter": {
+      "found": true,
+      "path": "/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter",
+      "length": 0.8,
+      "notifies": [
+        "length 0.800 s, rate scale 1.00, sections 1, blend in 0.10 out 0.25",
+        "[state] ANS_DisableMovement_C at 0.000 s for 0.800 s",
+        "[state] ANS_SetDesiredRotation_C at 0.000 s for 0.123 s",
+        "[state] ANS_CancelFrames_C at 0.000 s for 0.137 s",
+        "[state] ANS_InputBuffer_C at 0.151 s for 0.120 s",
+        "[state] ANS_CollisionTrace_C at 0.168 s for 0.089 s",
+        "AnimNotify_PlaySound at 0.168 s",
+        "[state] ANS_MovementCancel_C at 0.351 s for 0.449 s"
+      ],
+      "sound_notifies": []
+    },
+    "AM_ER_Attack_Air_Light": {
+      "found": true,
+      "path": "/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Light",
+      "length": 0.6,
+      "notifies": [
+        "length 0.600 s, rate scale 1.00, sections 1, blend in 0.10 out 0.25",
+        "[state] ANS_DisableMovement_C at 0.000 s for 0.600 s",
+        "[state] ANS_CollisionTrace_C at 0.150 s for 0.186 s"
+      ],
+      "sound_notifies": []
+    },
+    "AM_ER_Backstep_Back": {
+      "found": true,
+      "path": "/Game/OneBossFight/Player/Animations/AM_ER_Backstep_Back",
+      "length": 0.4667,
+      "notifies": [
+        "length 0.467 s, rate scale 1.00, sections 1, blend in 0.10 out 0.25",
+        "[state] ANS_iFrames_C at 0.075 s for 0.268 s",
+        "[state] ANS_InputBuffer_C at 0.164 s for 0.187 s"
+      ],
+      "sound_notifies": []
+    },
+    "AM_Boss01_ParryRecoil": {
+      "found": true,
+      "path": "/Game/OneBossFight/Boss01/Animations/AM_Boss01_ParryRecoil",
+      "length": 0.6,
+      "notifies": [
+        "length 0.600 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25",
+        "[state] ANS_InputBuffer_C at 0.000 s for 0.296 s"
+      ],
+      "sound_notifies": []
+    }
+  }
+}

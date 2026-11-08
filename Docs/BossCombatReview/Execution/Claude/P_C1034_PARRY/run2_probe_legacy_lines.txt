@@ -1,0 +1,31 @@
+﻿[2026.11.07-23.58.44:346][421]LogPython: [Tier2Parry] A4 requested started=True parried_before=0 distance_cm=250.0 boss_montage=AnimMontage_3
+[2026.11.07-23.58.44:346][421]LogPython: [Tier2Parry] A4 tick g=0.000 pos=0.000 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:361][422]LogPython: [Tier2Parry] A4 tick g=0.062 pos=0.062 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:375][423]LogPython: [Tier2Parry] A4 tick g=0.077 pos=0.077 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:390][424]LogPython: [Tier2Parry] A4 tick g=0.091 pos=0.091 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:433][425]LogPython: [Tier2Parry] A4 tick g=0.106 pos=0.106 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:448][426]LogPython: [Tier2Parry] A4 tick g=0.149 pos=0.149 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:466][427]LogPython: [Tier2Parry] A4 tick g=0.164 pos=0.164 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:512][428]LogPython: [Tier2Parry] A4 tick g=0.183 pos=0.183 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:527][429]LogPython: [Tier2Parry] A4 tick g=0.228 pos=0.228 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:541][430]LogPython: [Tier2Parry] A4 tick g=0.243 pos=0.243 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:585][431]LogPython: [Tier2Parry] A4 tick g=0.257 pos=0.257 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:599][432]LogPython: [Tier2Parry] A4 tick g=0.301 pos=0.301 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:615][433]LogPython: [Tier2Parry] A4 tick g=0.316 pos=0.316 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:665][434]LogPython: [Tier2Parry] A4 tick g=0.331 pos=0.331 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:681][435]LogPython: [Tier2Parry] A4 tick g=0.381 pos=0.381 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:694][436]LogPython: [Tier2Parry] A4 tick g=0.397 pos=0.397 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:708][437]LogPython: [Tier2Parry] A4 tick g=0.411 pos=0.411 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:766][438]LogPython: [Tier2Parry] A4 tick g=0.424 pos=0.424 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:783][439]LogPython: [Tier2Parry] A4 tick g=0.482 pos=0.482 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:802][440]LogPython: [Tier2Parry] A4 tick g=0.499 pos=0.499 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:817][441]LogPython: [Tier2Parry] A4 tick g=0.519 pos=0.519 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:834][442]LogPython: [Tier2Parry] A4 tick g=0.533 pos=0.533 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:848][443]LogPython: [Tier2Parry] A4 tick g=0.552 pos=0.552 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:869][444]LogPython: [Tier2Parry] A4 tick g=0.573 pos=0.573 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:942][445]LogPython: [Tier2Parry] A4 tick g=0.597 pos=0.597 active=False sweep=0 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:959][446]LogPython: [Tier2Parry] A4 tick g=0.658 pos=0.658 active=True sweep=1 montage=AnimMontage_3 distance_cm=250.0
+[2026.11.07-23.58.44:959][446]LogPython: [Tier2Parry] parry_press at observed A4 active window opened=True pos=0.658 distance_cm=250.0
+[2026.11.07-23.58.45:066][450]LogPython: [Tier2Parry] RESULT opened=True real_contact=True parried_delta=1 recoil_montage_seen=True
+[2026.11.07-23.58.45:066][450]LogPython: [Tier2Parry] PPM proof: inspect RPGLegend/Time feedback pulse and camera blendable in PIE log or capture; this probe does not infer visuals from parry count
+[2026.11.07-23.58.45:569][467]LogPython: [Tier2Parry] SUMMARY pass=True reason=witness complete

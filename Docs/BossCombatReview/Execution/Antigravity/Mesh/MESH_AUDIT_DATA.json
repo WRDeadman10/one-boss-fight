@@ -1,0 +1,104 @@
+{
+  "mannequin": {
+    "found": true,
+    "skeleton": "/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin",
+    "found_sockets": []
+  },
+  "sword": {
+    "found": true,
+    "found_sockets": []
+  },
+  "greystone": {
+    "found": true,
+    "material_count": 17,
+    "materials": [
+      {
+        "slot_index": 0,
+        "slot_name": "M00_HeadTorso_skin00",
+        "material": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Materials/M_Greystone_Torso.M_Greystone_Torso"
+      },
+      {
+        "slot_index": 1,
+        "slot_name": "M01_ShoulderArms_skin01",
+        "material": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Materials/M_Greystone_arms.M_Greystone_arms"
+      },
+      {
+        "slot_index": 2,
+        "slot_name": "M02_Legs_Cloth_skin02",
+        "material": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Materials/M_Greystone_legs.M_Greystone_legs"
+      },
+      {
+        "slot_index": 3,
+        "slot_name": "M03_SwordShieldFur_skin03",
+        "material": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Materials/M_Greystone_shield.M_Greystone_shield"
+      },
+      {
+        "slot_index": 4,
+        "slot_name": "M04_Flesh_Head_skin04",
+        "material": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Materials/M_Greystone_Flesh_head.M_Greystone_Flesh_head"
+      },
+      {
+        "slot_index": 5,
+        "slot_name": "M05_Flesh_Arms_skin05",
+        "material": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Materials/M_Greystone_Flesh_Arms.M_Greystone_Flesh_Arms"
+      },
+      {
+        "slot_index": 6,
+        "slot_name": "M06_HairFurBase_skin06",
+        "material": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Materials/MIC_GreystoneFur.MIC_GreystoneFur"
+      },
+      {
+        "slot_index": 7,
+        "slot_name": "M07_Cloth_skin07",
+        "material": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Materials/M_Greystone_legs.M_Greystone_legs"
+      },
+      {
+        "slot_index": 8,
+        "slot_name": "M08_Hairsheets_skin08",
+        "material": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Materials/MIC_GreystoneHair.MIC_GreystoneHair"
+      },
+      {
+        "slot_index": 9,
+        "slot_name": "M09_Fur_skin09",
+        "material": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Materials/MIC_GreystoneFur.MIC_GreystoneFur"
+      },
+      {
+        "slot_index": 10,
+        "slot_name": "M10_Lashes_skin10",
+        "material": "/Game/ParagonGreystone/Characters/Global/Eyelash/M_EyelashMaster_Inst.M_EyelashMaster_Inst"
+      },
+      {
+        "slot_index": 11,
+        "slot_name": "M11_InnerEye_skin11",
+        "material": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Skins/Dragonlord/Materials/M_Greystone_Dragonlord_EyeRefractive_Inst.M_Greystone_Dragonlord_EyeRefractive_Inst"
+      },
+      {
+        "slot_index": 12,
+        "slot_name": "M12_Eyeshadow_skin12",
+        "material": "/Game/ParagonGreystone/Characters/Global/Eyes/Materials/M_Eye_Occlusion.M_Eye_Occlusion"
+      },
+      {
+        "slot_index": 13,
+        "slot_name": "M13_Eyewet_skin13",
+        "material": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Materials/M_TearLine_Inst2.M_TearLine_Inst2"
+      },
+      {
+        "slot_index": 14,
+        "slot_name": "M14_TeethAndTongue_skin14",
+        "material": "/Game/ParagonGreystone/Characters/Global/Mouth/Materials/M_Mouth_MId_color.M_Mouth_MId_color"
+      },
+      {
+        "slot_index": 15,
+        "slot_name": "M15_Tearduct_skin15",
+        "material": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Materials/M_TearDuct_Darker.M_TearDuct_Darker"
+      },
+      {
+        "slot_index": 16,
+        "slot_name": "M16_StonedMeshes_skin16",
+        "material": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Materials/M_Greystone_RockHair.M_Greystone_RockHair"
+      }
+    ],
+    "physics_asset": "/Game/ParagonGreystone/Characters/Heroes/Greystone/Meshes/Greystone_PhysicsAsset.Greystone_PhysicsAsset",
+    "sockets": []
+  }
+}

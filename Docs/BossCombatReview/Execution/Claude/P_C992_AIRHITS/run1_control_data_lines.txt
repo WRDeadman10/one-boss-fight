@@ -1,0 +1,18 @@
+﻿[2026.11.07-11.34.38:096][  0]LogPython: [ERAirCtl] driver registered; observations are game-tick bounded, not device-latency claims
+[2026.11.07-11.34.38:961][  5]LogPython: [ERAirCtl] route=data selection=/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter
+[2026.11.07-11.34.47:963][195]LogPython: [ERAirCtl] setup boss held=True player_distance_cm=900
+[2026.11.07-11.34.47:989][195]LogPython: [ERAirCtl] assigned air_light=AM_ER_Attack_Air_Light air_heavy=AM_ER_Attack_Air_Heavy_Plunge
+[2026.11.07-11.35.04:225][790]LogPython: [ERAirCtl] input_context_active=True
+[2026.11.07-11.35.04:252][791]LogPython: [ERAirCtl] case=R1_tap_light baseline=(None, None)
+[2026.11.07-11.35.04:358][795]LogPython: [ERAirCtl] sample case=R1_tap_light montage=Attack_PrimaryA_Montage position=0.024 observed_ms=81.20 tick_s=0.02896
+[2026.11.07-11.35.08:904][970]LogPython: [ERAirCtl] hit case=R1_tap_light boss_hp_before=2000.0 after=1984.0100005865097 delta=-15.989999413490295
+[2026.11.07-11.35.08:928][971]LogPython: [ERAirCtl] case=R2_tap_strong baseline=(None, None)
+[2026.11.07-11.35.09:109][978]LogPython: [ERAirCtl] sample case=R2_tap_strong montage=Ability_E_Anim_Montage position=0.025 observed_ms=154.99 tick_s=0.02565
+[2026.11.07-11.35.13:584][152]LogPython: [ERAirCtl] hit case=R2_tap_strong boss_hp_before=1984.0100005865097 after=1961.6240017888547 delta=-22.38599879765502
+[2026.11.07-11.35.13:611][153]LogPython: [ERAirCtl] case=jump_R1_air_light baseline=(None, None)
+[2026.11.07-11.35.13:971][167]LogPython: [ERAirCtl] sample case=jump_R1_air_light montage=Attack_PrimaryA_Montage position=0.024 observed_ms=50.71 tick_s=0.02388
+[2026.11.07-11.35.18:539][346]LogPython: [ERAirCtl] hit case=jump_R1_air_light boss_hp_before=1961.6240017888547 after=1945.6340023753644 delta=-15.989999413490295
+[2026.11.07-11.35.18:565][347]LogPython: [ERAirCtl] case=jump_R2_air_heavy baseline=(None, None)
+[2026.11.07-11.35.19:049][366]LogPython: [ERAirCtl] sample case=jump_R2_air_heavy montage=Ability_E_Anim_Montage position=0.024 observed_ms=176.31 tick_s=0.02540
+[2026.11.07-11.35.23:513][541]LogPython: [ERAirCtl] hit case=jump_R2_air_heavy boss_hp_before=1945.6340023753644 after=1923.2480035777094 delta=-22.38599879765502
+[2026.11.07-11.35.23:538][542]LogPython: [ERAirCtl] finished: all control samples recorded

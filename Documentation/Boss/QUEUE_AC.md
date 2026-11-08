@@ -102,3 +102,100 @@ Proposed next lane after Queue AB. Ten batches of five. Work is static, document
 | AC-C49 | Prepare a compact next-lane handoff | current state, pending gates, paths, verification limits |
 | AC-C50 | Close Queue AC and begin Queue AD batch 1 | one batch completion post; continue without waiting |
 
+
+
+---
+
+# Queue AC — Antigravity Art Lane (50 tasks: AC-A01..AC-A50)
+
+Authored at AB-A45 per Lead directive [C-1005]. Batches of five; engine lock (`ENGINE_LOCK.json`) strictly acquired before editor processes and released on exit; no binary commits until explicit owner approval. Retargeted from retired legacy assets to the active boss: **Ember Warden** (`BP_ExampleGreatSwordBoss` on `SKM_CombatMannequin_Simple`).
+
+### Batch 1 — Ember Warden Boss Character & Greatsword Presentation (AC-A01..AC-A05)
+| ID | Task | Acceptance |
+|---|---|---|
+| AC-A01 | Audit `BP_ExampleGreatSwordBoss` mesh assignment (`SKM_CombatMannequin_Simple`) | Mesh, skeleton, and material bindings verified |
+| AC-A02 | Audit `SM_Boss01_Greatsword` socket alignment (`WeaponSocket_R`) | Sockets positioned along hilt and blade |
+| AC-A03 | Verify Ember Warden emissive flame material instance parameters | Warm emissive fire palette intact on boss plates |
+| AC-A04 | Audit Ember Warden head and crown attachments | Headgear sockets properly bound to head bone |
+| AC-A05 | A- batch Ember Warden character presentation report | Markdown delivery report |
+
+### Batch 2 — Elden Ring Guard Counter Visual Polish (AC-A06..AC-A10)
+| ID | Task | Acceptance |
+|---|---|---|
+| AC-A06 | Visual trace sweep verification for `AM_ER_Attack_GuardCounter` contact | Sweep trajectory clears shield and connects with boss |
+| AC-A07 | Staging of weapon deflection spark burst on guard absorption | Deflection sparks align with shield surface |
+| AC-A08 | Camera pitch stabilization during guard counter execution | Headroom maintained without camera clipping floor |
+| AC-A09 | Motion blur and temporal stability audit on guard counter slash | Clean visual definition across 60 fps frames |
+| AC-A10 | A- batch guard counter polish report | Markdown delivery report |
+
+### Batch 3 — Aerial Attack Particle Ribbons & Trail Continuity (AC-A11..AC-A15)
+| ID | Task | Acceptance |
+|---|---|---|
+| AC-A11 | Audit blade ribbon trail on `AM_ER_Attack_Air_Light` (0.150..0.336 s) | Trail ribbon spans full blade without stepping |
+| AC-A12 | Audit ground impact dust and ember burst on `AM_ER_Attack_Air_Heavy_Plunge` (0.420 s) | Impact debris bursts radially from sword tip |
+| AC-A13 | Verify ribbon trail opacity and taper during aerial recovery | Trail fades cleanly before grounded combat idle |
+| AC-A14 | Audit aerial attack camera tilt and ground framing | Player character fully framed in viewport throughout jump |
+| AC-A15 | A- batch aerial VFX report | Markdown delivery report |
+
+### Batch 4 — Backstep Evasion Visual Decals & Ground Reaction (AC-A16..AC-A20)
+| ID | Task | Acceptance |
+|---|---|---|
+| AC-A16 | Audit foot contact dust puffs during `AM_ER_Backstep_Back` (0.075 s) | Dust motes spawn at feet contact points |
+| AC-A17 | Verify zero-yaw camera trajectory during neutral backstep | Camera preserves forward gaze without jarring snap |
+| AC-A18 | Audit motion trail on backstep i-frame window (0.075..0.343 s) | Subtle invulnerability shimmer during active frames |
+| AC-A19 | Verify transition blending into combat idle from backstep | Clean 0.25 s blend-out into neutral stance |
+| AC-A20 | A- batch backstep evasion report | Markdown delivery report |
+
+### Batch 5 — Ember Warden Combat Attacks & Telegraph Visuals (AC-A21..AC-A25)
+| ID | Task | Acceptance |
+|---|---|---|
+| AC-A21 | Audit Ember Warden overhead leap slam telegraph cue | Visual windup reads clearly across arena distance |
+| AC-A22 | Audit Ember Warden 3-hit combo weapon trail arcs | Broad fiery ribbon trails follow greatsword edge |
+| AC-A23 | Audit Ember Warden low sweep ground debris particles | Stone chip particle burst along blade scrape path |
+| AC-A24 | Audit Ember Warden javelin throw projectile VFX | Flaming projectile core and smoke tail continuous |
+| AC-A25 | A- batch boss combat visuals report | Markdown delivery report |
+
+### Batch 6 — Tier 2 Combat Feedback Integration (AC-A26..AC-A30)
+| ID | Task | Acceptance |
+|---|---|---|
+| AC-A26 | Verify `PPM_ParryDistortion` chromatic aberration radial decay | Ripple dissipates smoothly over 0.35 s window |
+| AC-A27 | Verify `MPC_CombatFeedback` parameter cleanup on fight reset | All feedback scalars reset to 0.0 at combat end |
+| AC-A28 | Verify `NS_Boss_PhaseTwoAura` ember density under dynamic camera zoom | Embers readable in close-up and wide camera orbits |
+| AC-A29 | Audit `AM_Boss01_ParryRecoil` camera framing with Ember Warden mesh | Full boss silhouette visible during recoil stagger |
+| AC-A30 | A- batch Tier 2 integration report | Markdown delivery report |
+
+### Batch 7 — Arena Lighting & Environment Dressing (AC-A31..AC-A35)
+| ID | Task | Acceptance |
+|---|---|---|
+| AC-A31 | Audit 4 cardinal dynamic shadow braziers in Ember Warden arena | Sharp contact shadows on boss and player |
+| AC-A32 | Audit 8 intermediate fill lights diffuse consistency | Warm ambient bounce fills arena without shadow cost |
+| AC-A33 | Verify volumetric fog extinction and scattering balance | Atmospheric shafts visible without blinding contrast |
+| AC-A34 | Audit arena boundary collision geometry and wall decals | Arena perimeter stones block movement cleanly |
+| AC-A35 | A- batch arena atmosphere report | Markdown delivery report |
+
+### Batch 8 — Combat HUD & Boss Presentation Styling (AC-A36..AC-A40)
+| ID | Task | Acceptance |
+|---|---|---|
+| AC-A36 | Audit Ember Warden boss nameplate font and health bar layout | Nameplate and 2-phase health bar centered at top |
+| AC-A37 | Audit player stamina bar depletion and recovery visual response | Smooth fill bar interpolation on actions |
+| AC-A38 | Audit posture meter warning flashing upon break threshold | Visual cue pulses when posture drops below 20% |
+| AC-A39 | Verify flask icon states (`T_Boss01_Flask_Full/Half/Empty`) in HUD | Icon switches cleanly on flask consumption |
+| AC-A40 | A- batch HUD styling report | Markdown delivery report |
+
+### Batch 9 — Asset Packaging & Cook Hygiene (AC-A41..AC-A45)
+| ID | Task | Acceptance |
+|---|---|---|
+| AC-A41 | Cook coverage audit on Ember Warden character and weapon packages | Zero missing package references |
+| AC-A42 | Cook coverage audit on Elden Ring player animation packages | Zero missing animation references |
+| AC-A43 | Audit texture streaming pool allocation for 1080p target | Zero pool overflow warnings on startup |
+| AC-A44 | Audit static mesh LOD transitions in `L_SevarogArena` | LODs switch smoothly across camera distances |
+| AC-A45 | A- batch cook and packaging hygiene report | Markdown delivery report |
+
+### Batch 10 — Queue AC Lane Closeout & Art Release Readiness (AC-A46..AC-A50)
+| ID | Task | Acceptance |
+|---|---|---|
+| AC-A46 | Reconcile all art assets against `PROJECT_STATE.md` and `DECISIONS.md` | Zero documentation contradictions |
+| AC-A47 | Run offline test suite and doc link validator | 100% test pass, zero broken links |
+| AC-A48 | Audit documentation cross-links and reference integrity | All markdown hyperlinks valid |
+| AC-A49 | Prepare owner-facing visual delivery summary for Ember Warden duel | Plain-language review package |
+| AC-A50 | Close Queue AC Art Lane and transition to Queue AD | Final mailbox post and queue handover |

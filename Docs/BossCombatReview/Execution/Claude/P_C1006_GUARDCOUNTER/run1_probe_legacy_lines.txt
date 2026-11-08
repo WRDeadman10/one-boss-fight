@@ -1,0 +1,7 @@
+﻿[2026.11.07-14.29.08:706][  0]LogPython: [ERGuardCounter] driver registered; L1 stays held until the source emits successful guarded contact, then R2 is tapped immediately
+[2026.11.07-14.29.09:398][  6]LogPython: [ERGuardCounter] route=legacy H019_ENCOUNTER_DEFINITION=unset
+[2026.11.07-14.29.20:411][273]LogPython: [ERGuardCounter] ERROR Traceback (most recent call last):
+[2026.11.07-14.29.20:411][273]LogPython: [ERGuardCounter] SUMMARY reason=tick exception guarded_contact_confirmed=False counter_sent=False counter_accept_logged=False hp_before=None hp_after=None boss_hp_delta=unknown record_count_before=None record_count_after=None
+[2026.11.07-14.29.20:411][273]LogPython: [ERGuardCounter] GUARD_COUNTER_EVIDENCE_BEGIN
+[2026.11.07-14.29.20:411][273]LogPython: [ERGuardCounter] GUARD_COUNTER_EVIDENCE_END
+[2026.11.07-14.29.20:411][273]LogPython: [ERGuardCounter] LIMIT no successful-guard source log was observed; no counter-window acceptance may be claimed

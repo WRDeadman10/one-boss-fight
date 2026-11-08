@@ -1,0 +1,13 @@
+# AK-C26–C30 — guard-counter source and evidence map
+
+The latest Lead synthetic r2 trace (C-1020) proved an armed window and R2 release/ER strong handler, but the sword was sheathed and no counter swing played. The draw-gated probe fix (X-1428) has not been rerun. This audit is source-only under the Lead's `ENGINE_LOCK`.
+
+| Task | Source path / current limit |
+|---|---|
+| C26 | `RPGDodgeTiming.cpp:72–124` searches player ASC `CreatedAbilities` for exact case-sensitive `BlockReaction_C` suffix, checks active reaction each tick, refreshes `Status.Blocking` when reaction is active or every 0.10 s, and arms only on a blocked reaction rising edge. First scan is immediate (timestamp starts at -1e9), later rescans occur every 1 s; an ability created and activated between rescans could be missed, but no such live failure is proven. C-1015 r6 observed a data-route arm. |
+| C27 | `OnEldenRingHeavyTap` consumes the valid arm once, attempts the optional GuardCounter montage override, and then replays the pack strong action for `InjectSeconds`. `ApplyMontageArrayOverride` backs up and temporarily replaces `StrongAttackMontages`; `TickGuardCounterMontageOverride` restores arrays when the montage starts but retains its semantic kind until stop, or restores all state after the 1 s timeout. `EndPlay` restores as well. This does not itself prove that the pack starts a swing. |
+| C28 | `RPGSwingTracker` queries `GetActiveMontageOverrideKind(Montage)` before fallback classification. `RPGHitIntake::BuildRecord` captures the same active montage's override kind into its pending entry; deferred finalization maps `Strong` to `StrongMeleeAttackData` if a hit exists. If no montage/swing/collision occurs, this normalization path cannot create boss damage. |
+| C29 | The synthetic probe checks `RPGBuildLoadout.is_combat_enabled()`, which reflects pack `BP_CombatComponent_C.bIsCombatEnabled?`, and requires no active player montage before refill, debug arm and R2. This proves the pack's reported combat mode and idle animation state, not physical sword/socket position or a subsequent ability activation. The bounded three-attempt draw retry and 8 s montage timeout fail explicitly. |
+| C30 | Remaining evidence stages: Lead reruns the draw-gated synthetic probe on both routes to verify counter montage, `Strong` kind, hit data and boss HP delta; then separately runs live guarded contact. The prior r2 failure is a probe setup fault, not yet evidence of a production counter defect. KI-198 stays open. |
+
+No production Source, asset, build, PIE, package or commit change by Codex. Any new trace contradicting this map should be handled as a hotfix before the next batch.

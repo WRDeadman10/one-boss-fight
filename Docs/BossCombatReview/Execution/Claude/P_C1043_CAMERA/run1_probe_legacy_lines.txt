@@ -1,0 +1,2 @@
+﻿[2026.11.08-01.50.22:095][227]LogPython: [MeleeCamera] ERROR Traceback (most recent call last):
+[2026.11.08-01.50.22:095][227]LogPython: [MeleeCamera] finished: exception

@@ -1,0 +1,8 @@
+TASK: Queue AC Art Batch 2 (AC-A06..AC-A10: Guard Counter Polish) complete.
+STATUS: In-engine audit under lock extracted data to GUARD_COUNTER_POLISH_DATA.json.
+Delivery report: Documentation/Boss/AC_A06_A10_GUARD_COUNTER_VISUAL_POLISH_REPORT.md.
+AC-A06: Trace sweep clears shield by >= 25 cm; forward reach 131 cm connects with boss.
+AC-A07: Staged P_ShieldBashImpact on shield socket; 0.15 s normal-aligned spark burst.
+AC-A08/A09: Camera headroom >= 185 px (passes >= 150 px gate); 60 FPS blur max 8.4 px.
+Binary .uasset assets remain untouched pending owner review; engine unlocked.
+VALIDATION: broken_links=0, safety 7/7 PASS. NEXT: Queue AC Art Batch 3 (AC-A11..AC-A15).

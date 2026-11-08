@@ -1,0 +1,15 @@
+﻿[2026.11.07-15.19.54:139][  0]LogPython: [ERGuardCounter] driver registered; pack IA_Block is injected every guard tick until the source emits successful guarded contact, then R2 is tapped immediately
+[2026.11.07-15.19.54:837][  6]LogPython: [ERGuardCounter] route=legacy H019_ENCOUNTER_DEFINITION=unset
+[2026.11.07-15.20.05:834][276]LogPython: [ERGuardCounter] setup boss_held=False player_distance_cm=900 enter_combat_tag=Ability.EnterCombat framework_executor_present=False
+[2026.11.07-15.20.18:339][726]LogPython: [ERGuardCounter] input_context_active=True; starting accepted R2 draw/warmup before IA_Block probe
+[2026.11.07-15.20.18:853][745]LogPython: [ERGuardCounter] input key=Gamepad_RightTrigger down=True delivered=True
+[2026.11.07-15.20.19:548][771]LogPython: [ERGuardCounter] input key=Gamepad_RightTrigger down=False delivered=True
+[2026.11.07-15.20.22:063][863]LogPython: [ERGuardCounter] runtime_guard_counter_montage_assigned=AM_ER_Attack_GuardCounter saved=False
+[2026.11.07-15.20.22:063][863]LogPython: [ERGuardCounter] input_context_active=True; injecting held pack IA_Block every tick while boss AI swings; source guard contact triggers immediate R2 inside configured window=0.60s
+[2026.11.07-15.20.22:082][864]LogPython: [ERGuardCounter] boss_montage=GS_ChargedAttack_Montage player_montage=None player_hp=-8.0 boss_hp=2000.0
+[2026.11.07-15.20.24:206][946]LogPython: [ERGuardCounter] boss_montage=GS_UnequipWeapon_Montage player_montage=None player_hp=-8.0 boss_hp=2000.0
+[2026.11.07-15.20.26:221][995]LogPython: [ERGuardCounter] boss_montage=AnimMontage_2 player_montage=None player_hp=100.0 boss_hp=500.0
+[2026.11.07-15.20.52:620][133]LogPython: [ERGuardCounter] SUMMARY reason=timed out waiting for source-confirmed guarded contact guarded_contact_confirmed=False counter_sent=False counter_accept_logged=False hp_before=2000.0 hp_after=500.0 boss_hp_delta=-1500.0 record_count_before=0 record_count_after=0
+[2026.11.07-15.20.52:620][133]LogPython: [ERGuardCounter] GUARD_COUNTER_EVIDENCE_BEGIN
+[2026.11.07-15.20.52:620][133]LogPython: [ERGuardCounter] GUARD_COUNTER_EVIDENCE_END
+[2026.11.07-15.20.52:620][133]LogPython: [ERGuardCounter] LIMIT no successful-guard source log was observed; no counter-window acceptance may be claimed

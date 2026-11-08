@@ -1,0 +1,21 @@
+{
+  "AM_ER_Backstep_Back": {
+    "loaded": true,
+    "play_length": 0.4667,
+    "notifies": [
+      "length 0.467 s, rate scale 1.00, sections 1, blend in 0.10 out 0.25",
+      "[state] ANS_iFrames_C at 0.075 s for 0.268 s",
+      "[state] ANS_InputBuffer_C at 0.164 s for 0.187 s"
+    ]
+  },
+  "dust_textures": {
+    "/Game/ParagonGreystone/FX/Textures/Smoke/T_ImpactDust_01": {
+      "loaded": true,
+      "class": "Texture2D"
+    },
+    "/Game/ParagonGrux/FX/Textures/Smoke/T_ImpactDust_01": {
+      "loaded": true,
+      "class": "Texture2D"
+    }
+  }
+}

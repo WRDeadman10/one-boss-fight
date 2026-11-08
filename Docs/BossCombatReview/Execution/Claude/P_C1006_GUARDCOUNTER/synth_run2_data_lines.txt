@@ -1,0 +1,15 @@
+﻿[2026.11.07-17.42.29:044][  0]LogPython: [ERGuardCounter] driver registered; live mode injects IA_Block until the armed API rises; ER_GC_SYNTHETIC=1 instead isolates R2 counter handling without claiming a real guard
+[2026.11.07-17.42.29:762][  6]LogPython: [ERGuardCounter] route=data selection=/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter
+[2026.11.07-17.42.32:579][  7]LogPython: [ERGuardCounter] setup synthetic_mode=True boss_held=True player_distance_cm=160 facing_boss=True enter_combat_tag=Ability.EnterCombat framework_executor_present=False boss_hp_before_refill=0.0 boss_hp_max=1000000.0 boss_hp_after_refill=1000000.0 player_hp_after_refill=1000000.0
+[2026.11.07-17.42.44:929][418]LogPython: [ERGuardCounter] input_context_active=True; starting accepted R2 draw/warmup before IA_Block probe
+[2026.11.07-17.42.45:435][437]LogPython: [ERGuardCounter] input key=Gamepad_RightTrigger down=True delivered=True
+[2026.11.07-17.42.46:138][466]LogPython: [ERGuardCounter] input key=Gamepad_RightTrigger down=False delivered=True
+[2026.11.07-17.42.49:244][559]LogPython: [ERGuardCounter] SYNTHETIC_ARM_API asserted=True source_guard_contact_claimed=False player_hp=120.0 boss_hp_before=2000.0 montage=AM_ER_Attack_GuardCounter
+[2026.11.07-17.42.49:244][559]LogPython: [ERGuardCounter] input key=Gamepad_RightTrigger down=True delivered=True
+[2026.11.07-17.42.49:244][559]LogPython: [ERGuardCounter] COUNTER_TAP synthetic_arm_same_editor_tick=True configured_window=0.60s boss_hp_before=2000.0
+[2026.11.07-17.42.49:378][565]LogPython: [ERGuardCounter] input key=Gamepad_RightTrigger down=False delivered=True
+[2026.11.07-17.42.49:378][565]LogPython: [ERGuardCounter] counter key released; sampling result for 2.00s
+[2026.11.07-17.42.51:394][647]LogPython: [ERGuardCounter] ERROR Traceback (most recent call last):
+[2026.11.07-17.42.51:396][647]LogPython: [ERGuardCounter] SUMMARY reason=tick exception synthetic_arm_used=True guard_armed_api_seen=True guard_source_log_seen=False counter_sent=True counter_accept_logged=False player_hp_before=120.0 player_hp_after=120.0 hp_before=2000.0 hp_after=2000.0 boss_hp_delta=0.0 record_count_before=0 record_count_after=0
+[2026.11.07-17.42.51:396][647]LogPython: [ERGuardCounter] GUARD_COUNTER_EVIDENCE_BEGIN
+[2026.11.07-17.42.51:396][647]LogPython: [ERGuardCounter] GUARD_COUNTER_EVIDENCE_END

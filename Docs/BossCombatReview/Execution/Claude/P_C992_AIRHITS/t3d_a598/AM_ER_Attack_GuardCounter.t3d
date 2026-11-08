@@ -1,0 +1,60 @@
+Begin Object Class=/Script/Engine.AnimMontage Name="AM_ER_Attack_GuardCounter" ExportPath="/Script/Engine.AnimMontage'/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter'"
+   Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_SetDesiredRotation.ANS_SetDesiredRotation_C Name="ANS_SetDesiredRotation_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_SetDesiredRotation.ANS_SetDesiredRotation_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter:ANS_SetDesiredRotation_C_1'"
+   End Object
+   Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_MovementCancel.ANS_MovementCancel_C Name="ANS_MovementCancel_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_MovementCancel.ANS_MovementCancel_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter:ANS_MovementCancel_C_1'"
+   End Object
+   Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/Input/AnimNotifies/ANS_InputBuffer.ANS_InputBuffer_C Name="ANS_InputBuffer_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/Input/AnimNotifies/ANS_InputBuffer.ANS_InputBuffer_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter:ANS_InputBuffer_C_1'"
+   End Object
+   Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_DisableMovement.ANS_DisableMovement_C Name="ANS_DisableMovement_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_DisableMovement.ANS_DisableMovement_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter:ANS_DisableMovement_C_1'"
+   End Object
+   Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CollisionSystem/AnimNotifies/ANS_CollisionTrace.ANS_CollisionTrace_C Name="ANS_CollisionTrace_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CollisionSystem/AnimNotifies/ANS_CollisionTrace.ANS_CollisionTrace_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter:ANS_CollisionTrace_C_1'"
+   End Object
+   Begin Object Class=/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_CancelFrames.ANS_CancelFrames_C Name="ANS_CancelFrames_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_CancelFrames.ANS_CancelFrames_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter:ANS_CancelFrames_C_1'"
+   End Object
+   Begin Object Class=/Script/Engine.AnimNotify_PlaySound Name="AnimNotify_PlaySound_1" ExportPath="/Script/Engine.AnimNotify_PlaySound'/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter:AnimNotify_PlaySound_1'"
+   End Object
+   Begin Object Class=/Script/Engine.AnimDataModel Name="AnimDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter:AnimDataModel'"
+   End Object
+   Begin Object Name="ANS_SetDesiredRotation_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_SetDesiredRotation.ANS_SetDesiredRotation_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter:ANS_SetDesiredRotation_C_1'"
+      RotationInterpSpeed=520.000000
+      Desired Rotation Type=NewEnumerator4
+   End Object
+   Begin Object Name="ANS_MovementCancel_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_MovementCancel.ANS_MovementCancel_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter:ANS_MovementCancel_C_1'"
+   End Object
+   Begin Object Name="ANS_InputBuffer_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/Input/AnimNotifies/ANS_InputBuffer.ANS_InputBuffer_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter:ANS_InputBuffer_C_1'"
+   End Object
+   Begin Object Name="ANS_DisableMovement_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_DisableMovement.ANS_DisableMovement_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter:ANS_DisableMovement_C_1'"
+   End Object
+   Begin Object Name="ANS_CollisionTrace_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CollisionSystem/AnimNotifies/ANS_CollisionTrace.ANS_CollisionTrace_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter:ANS_CollisionTrace_C_1'"
+   End Object
+   Begin Object Name="ANS_CancelFrames_C_1" ExportPath="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_CancelFrames.ANS_CancelFrames_C'/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter:ANS_CancelFrames_C_1'"
+   End Object
+   Begin Object Name="AnimNotify_PlaySound_1" ExportPath="/Script/Engine.AnimNotify_PlaySound'/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter:AnimNotify_PlaySound_1'"
+      Sound="/Script/Engine.SoundCue'/Game/AdvancedARPGCombat/MeleeCombatSystem/DemoAssets/SoundFX/A_Sword_Swing_Cue.A_Sword_Swing_Cue'"
+   End Object
+   Begin Object Name="AnimDataModel" ExportPath="/Script/Engine.AnimDataModel'/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter.AM_ER_Attack_GuardCounter:AnimDataModel'"
+      NumberOfFrames=48000
+      NumberOfKeys=48001
+   End Object
+   BlendIn=(BlendTime=0.100000)
+   CompositeSections(0)=(SectionName="Default",LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_GuardCounter'",SegmentIndex=0,SegmentLength=0.800000,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_GuardCounter.AN_ER_Attack_GuardCounter'")
+   SlotAnimTracks(0)=(AnimTrack=(AnimSegments=((AnimReference="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_GuardCounter.AN_ER_Attack_GuardCounter'",CachedPlayLength=1.666667,AnimStartTime=0.333333,AnimEndTime=1.133333))))
+   CommonTargetFrameRate=(Numerator=60)
+   Notifies(0)=(TriggerTimeOffset=0.000100,NotifyName="ANS_DisableMovement",NotifyStateClass="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_DisableMovement.ANS_DisableMovement_C'ANS_DisableMovement_C_1'",Duration=0.800000,EndLink=(LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_GuardCounter'",SegmentBeginTime=-1.000000,SegmentLength=-1.000000,LinkValue=0.800000),Guid=97586009488A1622965B1C9C2CF48ED6,LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_GuardCounter'",SegmentIndex=0,SegmentLength=0.800000,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_GuardCounter.AN_ER_Attack_GuardCounter'")
+   Notifies(1)=(TriggerTimeOffset=0.000100,NotifyName="ANS_SetDesiredRotation",NotifyStateClass="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_SetDesiredRotation.ANS_SetDesiredRotation_C'ANS_SetDesiredRotation_C_1'",Duration=0.123200,EndLink=(LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_GuardCounter'",SegmentIndex=0,SegmentLength=0.800000,LinkValue=0.123200,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_GuardCounter.AN_ER_Attack_GuardCounter'"),Guid=CB2FD5E94B7FA74FFB461B9536CD4CC1,TrackIndex=1,LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_GuardCounter'",SegmentIndex=0,SegmentLength=0.800000,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_GuardCounter.AN_ER_Attack_GuardCounter'")
+   Notifies(2)=(TriggerTimeOffset=0.000100,NotifyName="ANS_CancelFrames",NotifyStateClass="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_CancelFrames.ANS_CancelFrames_C'ANS_CancelFrames_C_1'",Duration=0.137100,EndLink=(LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_GuardCounter'",SegmentIndex=0,SegmentLength=0.800000,LinkValue=0.137100,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_GuardCounter.AN_ER_Attack_GuardCounter'"),Guid=6EA218FF4D485274093544A3B62C1CA7,TrackIndex=2,LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_GuardCounter'",SegmentIndex=0,SegmentLength=0.800000,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_GuardCounter.AN_ER_Attack_GuardCounter'")
+   Notifies(3)=(NotifyName="Input Buffer",NotifyStateClass="/Game/AdvancedARPGCombat/AdvancedCombatFramework/Input/AnimNotifies/ANS_InputBuffer.ANS_InputBuffer_C'ANS_InputBuffer_C_1'",Duration=0.120000,EndLink=(LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_GuardCounter'",SegmentIndex=0,SegmentLength=0.800000,LinkValue=0.271000,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_GuardCounter.AN_ER_Attack_GuardCounter'"),Guid=7EF8E70A4A4B21D63D36818335BCC2DB,TrackIndex=3,LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_GuardCounter'",SegmentIndex=0,SegmentLength=0.800000,LinkValue=0.151000,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_GuardCounter.AN_ER_Attack_GuardCounter'")
+   Notifies(4)=(NotifyName="ANS_CollisionTrace",NotifyStateClass="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CollisionSystem/AnimNotifies/ANS_CollisionTrace.ANS_CollisionTrace_C'ANS_CollisionTrace_C_1'",Duration=0.089400,EndLink=(LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_GuardCounter'",SegmentIndex=0,SegmentLength=0.800000,LinkValue=0.257600,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_GuardCounter.AN_ER_Attack_GuardCounter'"),Guid=02B2FE5546A9F1B45838ADA88857811C,TrackIndex=4,LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_GuardCounter'",SegmentIndex=0,SegmentLength=0.800000,LinkValue=0.168200,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_GuardCounter.AN_ER_Attack_GuardCounter'")
+   Notifies(5)=(NotifyName="PlaySound",Notify="/Script/Engine.AnimNotify_PlaySound'AnimNotify_PlaySound_1'",Guid=CB9792454E6C4F3EDEA4438675F0AF85,TrackIndex=5,LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_GuardCounter'",SegmentIndex=0,SegmentLength=0.800000,LinkValue=0.168400,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_GuardCounter.AN_ER_Attack_GuardCounter'")
+   Notifies(6)=(NotifyName="ANS_MovementCancel",NotifyStateClass="/Game/AdvancedARPGCombat/AdvancedCombatFramework/CoreCombatSystem/AnimNotifies/ANS_MovementCancel.ANS_MovementCancel_C'ANS_MovementCancel_C_1'",Duration=0.449300,EndLink=(LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_GuardCounter'",SegmentIndex=0,SegmentLength=0.800000,LinkValue=0.800000,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_GuardCounter.AN_ER_Attack_GuardCounter'"),Guid=57E471904BCF94EE203A72BA0F73C326,TrackIndex=6,LinkedMontage="/Script/Engine.AnimMontage'AM_ER_Attack_GuardCounter'",SegmentIndex=0,SegmentLength=0.800000,LinkValue=0.350700,LinkedSequence="/Script/Engine.AnimSequence'/Game/OneBossFight/Player/Animations/AN_ER_Attack_GuardCounter.AN_ER_Attack_GuardCounter'")
+   SequenceLength=0.800000
+   AnimNotifyTracks(0)=(TrackName="1")
+   AnimNotifyTracks(1)=(TrackName="2")
+   AnimNotifyTracks(2)=(TrackName="3")
+   AnimNotifyTracks(3)=(TrackName="4")
+   AnimNotifyTracks(4)=(TrackName="5")
+   AnimNotifyTracks(5)=(TrackName="6")
+   AnimNotifyTracks(6)=(TrackName="7")
+   DataModelInterface=AnimDataModel'AM_ER_Attack_GuardCounter:AnimDataModel'
+   Skeleton="/Script/Engine.Skeleton'/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin'"
+End Object

@@ -1,0 +1,90 @@
+{
+  "player_animations": {
+    "/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter": {
+      "found": true,
+      "class": "AnimMontage"
+    },
+    "/Game/OneBossFight/Player/Animations/AM_ER_Backstep_Back": {
+      "found": true,
+      "class": "AnimMontage"
+    },
+    "/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Light": {
+      "found": true,
+      "class": "AnimMontage"
+    },
+    "/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Heavy_Plunge": {
+      "found": true,
+      "class": "AnimMontage"
+    },
+    "/Game/OneBossFight/Player/Animations/AN_ER_Attack_GuardCounter": {
+      "found": true,
+      "class": "AnimSequence"
+    },
+    "/Game/OneBossFight/Player/Animations/AN_ER_Backstep_Back": {
+      "found": true,
+      "class": "AnimSequence"
+    },
+    "/Game/OneBossFight/Player/Animations/AN_ER_Attack_Air_Light": {
+      "found": true,
+      "class": "AnimSequence"
+    },
+    "/Game/OneBossFight/Player/Animations/AN_ER_Attack_Air_Heavy_Plunge": {
+      "found": true,
+      "class": "AnimSequence"
+    }
+  },
+  "tier2_assets": {
+    "/Game/OneBossFight/Boss01/Animations/AM_Boss01_ParryRecoil": {
+      "found": true,
+      "class": "AnimMontage"
+    },
+    "/Game/OneBossFight/Boss01/Animations/AN_Boss01_ParryRecoil": {
+      "found": true,
+      "class": "AnimSequence"
+    },
+    "/Game/OneBossFight/VFX/NS_Boss_PhaseTwoAura": {
+      "found": true,
+      "class": "NiagaraSystem"
+    },
+    "/Game/OneBossFight/Effects/PPM_ParryDistortion": {
+      "found": true,
+      "class": "Material"
+    },
+    "/Game/OneBossFight/Data/MPC_CombatFeedback": {
+      "found": true,
+      "class": "MaterialParameterCollection"
+    }
+  },
+  "ui_textures": {
+    "/Game/OneBossFight/UI/Art/T_Boss01_FlaskPlate": {
+      "found": true,
+      "srgb": true,
+      "compression": "<TextureCompressionSettings.TC_EDITOR_ICON: 7>"
+    },
+    "/Game/OneBossFight/UI/Art/T_Boss01_Flask_Full": {
+      "found": true,
+      "srgb": true,
+      "compression": "<TextureCompressionSettings.TC_EDITOR_ICON: 7>"
+    },
+    "/Game/OneBossFight/UI/Art/T_Boss01_Flask_Half": {
+      "found": true,
+      "srgb": true,
+      "compression": "<TextureCompressionSettings.TC_EDITOR_ICON: 7>"
+    },
+    "/Game/OneBossFight/UI/Art/T_Boss01_Flask_Empty": {
+      "found": true,
+      "srgb": true,
+      "compression": "<TextureCompressionSettings.TC_EDITOR_ICON: 7>"
+    }
+  },
+  "arena_meshes": {
+    "/Game/ParagonSevarog/FX/Meshes/Shapes/SM_Sevarog_Comet_v1": {
+      "found": true,
+      "class": "StaticMesh"
+    },
+    "/Game/OneBossFight/Boss01/Remains/SM_Boss01_CorpseStatue": {
+      "found": true,
+      "class": "StaticMesh"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+﻿[2026.11.07-17.10.59:011][  0]LogPython: [ERGuardCounter] driver registered; pack IA_Block is injected every guard tick until the source emits successful guarded contact, then R2 is tapped immediately
+[2026.11.07-17.10.59:715][  6]LogPython: [ERGuardCounter] route=data selection=/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter
+[2026.11.07-17.11.10:701][271]LogPython: [ERGuardCounter] setup boss_held=False player_distance_cm=900 enter_combat_tag=Ability.EnterCombat framework_executor_present=False boss_hp_before_refill=2000.0 boss_hp_max=2000.0 boss_hp_after_refill=2000.0
+[2026.11.07-17.11.23:363][719]LogPython: [ERGuardCounter] input_context_active=True; starting accepted R2 draw/warmup before IA_Block probe
+[2026.11.07-17.11.23:882][738]LogPython: [ERGuardCounter] input key=Gamepad_RightTrigger down=True delivered=True
+[2026.11.07-17.11.24:580][764]LogPython: [ERGuardCounter] input key=Gamepad_RightTrigger down=False delivered=True
+[2026.11.07-17.11.27:086][858]LogPython: [ERGuardCounter] runtime_guard_counter_montage_assigned=AM_ER_Attack_GuardCounter saved=False
+[2026.11.07-17.11.27:086][858]LogPython: [ERGuardCounter] SUMMARY reason=RPGCombatDebug missing on player; cannot keep the guard probe alive guarded_contact_confirmed=False guard_armed_api_seen=False guard_source_log_seen=False counter_sent=False counter_accept_logged=False player_hp_before=None player_hp_after=None hp_before=None hp_after=None boss_hp_delta=unknown record_count_before=None record_count_after=None
+[2026.11.07-17.11.27:086][858]LogPython: [ERGuardCounter] GUARD_COUNTER_EVIDENCE_BEGIN
+[2026.11.07-17.11.27:086][858]LogPython: [ERGuardCounter] GUARD_COUNTER_EVIDENCE_END
+[2026.11.07-17.11.27:086][858]LogPython: [ERGuardCounter] LIMIT IsGuardCounterArmed never became true; no counter input was sent
+[2026.11.07-17.11.27:086][858]LogPython: [ERGuardCounter] NOTE successful-guard source log was not found in project Saved/Logs; armed-state polling is authoritative for probe input

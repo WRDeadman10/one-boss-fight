@@ -1,0 +1,122 @@
+﻿[2026.11.07-12.18.02:348][  0]LogPython: [ERAirHits] driver registered; observations are game-tick bounded, not device-latency claims
+[2026.11.07-12.18.03:077][  6]LogPython: [ERAirHits] route=legacy (H019_ENCOUNTER_DEFINITION unset)
+[2026.11.07-12.18.12:171][193]LogPython: [ERAirHits] setup boss held=True player_distance_cm=900
+[2026.11.07-12.18.12:196][193]LogPython: [ERAirHits] assigned air_light=AM_ER_Attack_Air_Light air_heavy=AM_ER_Attack_Air_Heavy_Plunge
+[2026.11.07-12.18.28:456][766]LogPython: [ERAirHits] input_context_active=True
+[2026.11.07-12.18.28:481][767]LogPython: [ERAirHits] case=R1_tap_light baseline=(None, None)
+[2026.11.07-12.18.28:595][771]LogPython: [ERAirHits] sample case=R1_tap_light montage=Attack_PrimaryA_Montage position=0.027 observed_ms=87.43 tick_s=0.03187
+[2026.11.07-12.18.33:117][938]LogPython: [ERAirHits] hit case=R1_tap_light boss_hp_before=2000.0 after=1984.0100005865097 delta=-15.989999413490295
+[2026.11.07-12.18.33:142][939]LogPython: [ERAirHits] case=R2_tap_strong baseline=(None, None)
+[2026.11.07-12.18.33:326][946]LogPython: [ERAirHits] sample case=R2_tap_strong montage=Ability_E_Anim_Montage position=0.026 observed_ms=157.56 tick_s=0.02585
+[2026.11.07-12.18.37:765][113]LogPython: [ERAirHits] hit case=R2_tap_strong boss_hp_before=1984.0100005865097 after=1961.6240017888547 delta=-22.38599879765502
+[2026.11.07-12.18.37:790][114]LogPython: [ERAirHits] case=jump_R1_air_light baseline=(None, None)
+[2026.11.07-12.18.38:057][124]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.264 montage=None pos=None falling=True hand_to_boss_cm=239 hand_z=296
+[2026.11.07-12.18.38:081][125]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.291 montage=None pos=None falling=True hand_to_boss_cm=244 hand_z=297
+[2026.11.07-12.18.38:107][126]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.315 montage=None pos=None falling=True hand_to_boss_cm=247 hand_z=297
+[2026.11.07-12.18.38:133][127]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.341 montage=None pos=None falling=True hand_to_boss_cm=250 hand_z=296
+[2026.11.07-12.18.38:162][128]LogPython: [ERAirHits] sample case=jump_R1_air_light montage=AM_ER_Attack_Air_Light position=0.026 observed_ms=55.74 tick_s=0.02558
+[2026.11.07-12.18.38:163][128]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.367 montage=AM_ER_Attack_Air_Light pos=0.026 falling=True hand_to_boss_cm=254 hand_z=274
+[2026.11.07-12.18.38:188][129]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.398 montage=AM_ER_Attack_Air_Light pos=0.052 falling=True hand_to_boss_cm=259 hand_z=257
+[2026.11.07-12.18.38:216][130]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.423 montage=AM_ER_Attack_Air_Light pos=0.082 falling=True hand_to_boss_cm=261 hand_z=243
+[2026.11.07-12.18.38:243][131]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.451 montage=AM_ER_Attack_Air_Light pos=0.107 falling=True hand_to_boss_cm=258 hand_z=237
+[2026.11.07-12.18.38:270][132]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.477 montage=AM_ER_Attack_Air_Light pos=0.133 falling=True hand_to_boss_cm=258 hand_z=237
+[2026.11.07-12.18.38:292][133]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.505 montage=AM_ER_Attack_Air_Light pos=0.159 falling=True hand_to_boss_cm=257 hand_z=235
+[2026.11.07-12.18.38:319][134]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.527 montage=AM_ER_Attack_Air_Light pos=0.186 falling=True hand_to_boss_cm=256 hand_z=231
+[2026.11.07-12.18.38:343][135]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.553 montage=AM_ER_Attack_Air_Light pos=0.210 falling=True hand_to_boss_cm=254 hand_z=227
+[2026.11.07-12.18.38:369][136]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.577 montage=AM_ER_Attack_Air_Light pos=0.236 falling=True hand_to_boss_cm=251 hand_z=221
+[2026.11.07-12.18.38:393][137]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.603 montage=AM_ER_Attack_Air_Light pos=0.261 falling=True hand_to_boss_cm=248 hand_z=214
+[2026.11.07-12.18.38:420][138]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.628 montage=AM_ER_Attack_Air_Light pos=0.286 falling=True hand_to_boss_cm=245 hand_z=206
+[2026.11.07-12.18.38:445][139]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.654 montage=AM_ER_Attack_Air_Light pos=0.312 falling=True hand_to_boss_cm=242 hand_z=197
+[2026.11.07-12.18.38:470][140]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.679 montage=None pos=None falling=True hand_to_boss_cm=240 hand_z=187
+[2026.11.07-12.18.38:495][141]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.705 montage=None pos=None falling=True hand_to_boss_cm=237 hand_z=180
+[2026.11.07-12.18.38:525][142]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.730 montage=None pos=None falling=True hand_to_boss_cm=233 hand_z=173
+[2026.11.07-12.18.38:550][143]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.760 montage=None pos=None falling=True hand_to_boss_cm=227 hand_z=168
+[2026.11.07-12.18.38:575][144]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.785 montage=None pos=None falling=True hand_to_boss_cm=221 hand_z=161
+[2026.11.07-12.18.38:602][145]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.810 montage=None pos=None falling=True hand_to_boss_cm=214 hand_z=154
+[2026.11.07-12.18.38:628][146]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.837 montage=None pos=None falling=True hand_to_boss_cm=208 hand_z=145
+[2026.11.07-12.18.38:656][147]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.864 montage=None pos=None falling=False hand_to_boss_cm=205 hand_z=141
+[2026.11.07-12.18.38:680][148]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.890 montage=None pos=None falling=False hand_to_boss_cm=202 hand_z=132
+[2026.11.07-12.18.38:705][149]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.915 montage=None pos=None falling=False hand_to_boss_cm=201 hand_z=119
+[2026.11.07-12.18.38:734][150]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.941 montage=None pos=None falling=False hand_to_boss_cm=201 hand_z=104
+[2026.11.07-12.18.38:757][151]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.968 montage=None pos=None falling=False hand_to_boss_cm=202 hand_z=90
+[2026.11.07-12.18.38:786][152]LogPython: [ERAirHits] trace case=jump_R1_air_light t=0.992 montage=None pos=None falling=False hand_to_boss_cm=203 hand_z=79
+[2026.11.07-12.18.38:811][153]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.020 montage=None pos=None falling=False hand_to_boss_cm=202 hand_z=78
+[2026.11.07-12.18.38:840][154]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.045 montage=None pos=None falling=False hand_to_boss_cm=201 hand_z=78
+[2026.11.07-12.18.38:868][155]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.074 montage=None pos=None falling=False hand_to_boss_cm=200 hand_z=79
+[2026.11.07-12.18.38:891][156]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.102 montage=None pos=None falling=False hand_to_boss_cm=199 hand_z=79
+[2026.11.07-12.18.38:919][157]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.126 montage=None pos=None falling=False hand_to_boss_cm=198 hand_z=80
+[2026.11.07-12.18.38:943][158]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.153 montage=None pos=None falling=False hand_to_boss_cm=198 hand_z=81
+[2026.11.07-12.18.38:968][159]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.177 montage=None pos=None falling=False hand_to_boss_cm=197 hand_z=82
+[2026.11.07-12.18.38:996][160]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.203 montage=None pos=None falling=False hand_to_boss_cm=196 hand_z=84
+[2026.11.07-12.18.39:022][161]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.230 montage=None pos=None falling=False hand_to_boss_cm=195 hand_z=86
+[2026.11.07-12.18.39:048][162]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.256 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=88
+[2026.11.07-12.18.39:074][163]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.282 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=90
+[2026.11.07-12.18.39:101][164]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.308 montage=None pos=None falling=False hand_to_boss_cm=193 hand_z=92
+[2026.11.07-12.18.39:126][165]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.335 montage=None pos=None falling=False hand_to_boss_cm=193 hand_z=93
+[2026.11.07-12.18.39:157][166]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.360 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=95
+[2026.11.07-12.18.39:185][167]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.391 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=95
+[2026.11.07-12.18.39:210][168]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.418 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=96
+[2026.11.07-12.18.39:234][169]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.444 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=96
+[2026.11.07-12.18.39:262][170]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.468 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=96
+[2026.11.07-12.18.39:285][171]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.497 montage=None pos=None falling=False hand_to_boss_cm=195 hand_z=96
+[2026.11.07-12.18.39:311][172]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.519 montage=None pos=None falling=False hand_to_boss_cm=195 hand_z=96
+[2026.11.07-12.18.39:335][173]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.545 montage=None pos=None falling=False hand_to_boss_cm=195 hand_z=96
+[2026.11.07-12.18.39:362][174]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.571 montage=None pos=None falling=False hand_to_boss_cm=195 hand_z=96
+[2026.11.07-12.18.39:387][175]LogPython: [ERAirHits] trace case=jump_R1_air_light t=1.597 montage=None pos=None falling=False hand_to_boss_cm=195 hand_z=96
+[2026.11.07-12.18.42:746][303]LogPython: [ERAirHits] hit case=jump_R1_air_light boss_hp_before=1961.6240017888547 after=1961.6240017888547 delta=0.0
+[2026.11.07-12.18.42:772][304]LogPython: [ERAirHits] case=jump_R2_air_heavy baseline=(None, None)
+[2026.11.07-12.18.43:033][314]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.262 montage=None pos=None falling=True hand_to_boss_cm=239 hand_z=295
+[2026.11.07-12.18.43:059][315]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.287 montage=None pos=None falling=True hand_to_boss_cm=244 hand_z=297
+[2026.11.07-12.18.43:085][316]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.313 montage=None pos=None falling=True hand_to_boss_cm=247 hand_z=296
+[2026.11.07-12.18.43:112][317]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.339 montage=None pos=None falling=True hand_to_boss_cm=250 hand_z=296
+[2026.11.07-12.18.43:138][318]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.366 montage=None pos=None falling=True hand_to_boss_cm=252 hand_z=297
+[2026.11.07-12.18.43:166][319]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.392 montage=None pos=None falling=True hand_to_boss_cm=254 hand_z=299
+[2026.11.07-12.18.43:189][320]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.418 montage=None pos=None falling=True hand_to_boss_cm=256 hand_z=301
+[2026.11.07-12.18.43:213][321]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.443 montage=None pos=None falling=True hand_to_boss_cm=257 hand_z=302
+[2026.11.07-12.18.43:243][322]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.468 montage=None pos=None falling=True hand_to_boss_cm=257 hand_z=302
+[2026.11.07-12.18.43:271][323]LogPython: [ERAirHits] sample case=jump_R2_air_heavy montage=AM_ER_Attack_Air_Heavy_Plunge position=0.026 observed_ms=185.53 tick_s=0.03014
+[2026.11.07-12.18.43:271][323]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.498 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.026 falling=True hand_to_boss_cm=232 hand_z=285
+[2026.11.07-12.18.43:293][324]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.525 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.050 falling=True hand_to_boss_cm=219 hand_z=262
+[2026.11.07-12.18.43:319][325]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.548 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.076 falling=True hand_to_boss_cm=222 hand_z=237
+[2026.11.07-12.18.43:346][326]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.573 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.102 falling=True hand_to_boss_cm=226 hand_z=219
+[2026.11.07-12.18.43:372][327]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.600 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.127 falling=True hand_to_boss_cm=232 hand_z=212
+[2026.11.07-12.18.43:396][328]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.626 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.152 falling=True hand_to_boss_cm=237 hand_z=204
+[2026.11.07-12.18.43:422][329]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.651 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.178 falling=True hand_to_boss_cm=240 hand_z=195
+[2026.11.07-12.18.43:447][330]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.676 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.204 falling=True hand_to_boss_cm=242 hand_z=186
+[2026.11.07-12.18.43:472][331]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.702 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.229 falling=True hand_to_boss_cm=242 hand_z=176
+[2026.11.07-12.18.43:500][332]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.727 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.256 falling=True hand_to_boss_cm=242 hand_z=165
+[2026.11.07-12.18.43:525][333]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.754 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.281 falling=True hand_to_boss_cm=241 hand_z=152
+[2026.11.07-12.18.43:556][334]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.779 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.311 falling=True hand_to_boss_cm=242 hand_z=136
+[2026.11.07-12.18.43:580][335]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.809 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.337 falling=True hand_to_boss_cm=243 hand_z=121
+[2026.11.07-12.18.43:607][336]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.834 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.363 falling=True hand_to_boss_cm=245 hand_z=104
+[2026.11.07-12.18.43:633][337]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.861 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.388 falling=False hand_to_boss_cm=246 hand_z=99
+[2026.11.07-12.18.43:658][338]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.887 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.414 falling=False hand_to_boss_cm=245 hand_z=99
+[2026.11.07-12.18.43:683][339]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.912 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.439 falling=False hand_to_boss_cm=245 hand_z=99
+[2026.11.07-12.18.43:710][340]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.937 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.465 falling=False hand_to_boss_cm=244 hand_z=98
+[2026.11.07-12.18.43:735][341]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.963 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.491 falling=False hand_to_boss_cm=243 hand_z=98
+[2026.11.07-12.18.43:761][342]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=0.989 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.517 falling=False hand_to_boss_cm=242 hand_z=97
+[2026.11.07-12.18.43:787][343]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.015 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.543 falling=False hand_to_boss_cm=241 hand_z=96
+[2026.11.07-12.18.43:813][344]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.041 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.569 falling=False hand_to_boss_cm=240 hand_z=95
+[2026.11.07-12.18.43:840][345]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.067 montage=AM_ER_Attack_Air_Heavy_Plunge pos=0.596 falling=False hand_to_boss_cm=239 hand_z=95
+[2026.11.07-12.18.43:872][346]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.094 montage=None pos=None falling=False hand_to_boss_cm=237 hand_z=95
+[2026.11.07-12.18.43:897][347]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.125 montage=None pos=None falling=False hand_to_boss_cm=230 hand_z=94
+[2026.11.07-12.18.43:922][348]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.150 montage=None pos=None falling=False hand_to_boss_cm=222 hand_z=94
+[2026.11.07-12.18.43:950][349]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.176 montage=None pos=None falling=False hand_to_boss_cm=213 hand_z=95
+[2026.11.07-12.18.43:980][350]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.203 montage=None pos=None falling=False hand_to_boss_cm=205 hand_z=96
+[2026.11.07-12.18.44:003][351]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.231 montage=None pos=None falling=False hand_to_boss_cm=201 hand_z=97
+[2026.11.07-12.18.44:030][352]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.255 montage=None pos=None falling=False hand_to_boss_cm=198 hand_z=97
+[2026.11.07-12.18.44:059][353]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.283 montage=None pos=None falling=False hand_to_boss_cm=196 hand_z=97
+[2026.11.07-12.18.44:083][354]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.310 montage=None pos=None falling=False hand_to_boss_cm=195 hand_z=96
+[2026.11.07-12.18.44:110][355]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.336 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=96
+[2026.11.07-12.18.44:138][356]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.362 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=96
+[2026.11.07-12.18.44:159][357]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.389 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=96
+[2026.11.07-12.18.44:186][358]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.411 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=96
+[2026.11.07-12.18.44:211][359]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.440 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=96
+[2026.11.07-12.18.44:239][360]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.465 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=96
+[2026.11.07-12.18.44:267][361]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.493 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=96
+[2026.11.07-12.18.44:299][362]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.519 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=96
+[2026.11.07-12.18.44:323][363]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.549 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=96
+[2026.11.07-12.18.44:348][364]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.576 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=96
+[2026.11.07-12.18.44:375][365]LogPython: [ERAirHits] trace case=jump_R2_air_heavy t=1.599 montage=None pos=None falling=False hand_to_boss_cm=194 hand_z=96
+[2026.11.07-12.18.47:729][493]LogPython: [ERAirHits] hit case=jump_R2_air_heavy boss_hp_before=1961.6240017888547 after=1961.6240017888547 delta=0.0
+[2026.11.07-12.18.47:754][494]LogPython: [ERAirHits] finished: all control samples recorded

@@ -1,0 +1,13 @@
+# Queue AK C31–C35 — issue, test and controls census
+
+Read-only evidence audit under Claude's full-fight `ENGINE_LOCK`; documentation corrections only. Claude accepted X-1437–X-1439 in C-1023 and owns BUILD-256 after the capture editor closes. No new build or PIE was run for this census.
+
+| Task | Result and source |
+|---|---|
+| C31 | KI-190 (Strength stamina), KI-191 (Tier 2 runtime), KI-192 (R2 threshold split), KI-193 (default-wired runtime/package), KI-196 (moving probe), KI-197 (package stage identity), and KI-198 (guard counter) remain open. KI-194 is resolved only for C-978's runtime-assigned routes; KI-195 is closed by its offline boundedness tests. C-1024 corrected the initial r5 file-name interpretation; KI-193 now records r5 parity as passed. No inferred closure. |
+| C32 | Removed the duplicate C-1004 r5 pass row in TEST_PLAN and marked the old C-1004 guard-counter plan historical. The retained single r5 pass row now cites explicit `R5_RESULT_probe_*`; older failure and pass history remains in place. Owner approval and Lead default-wired PIE/package gates remain separate. |
+| C33 | PROJECT_STATE current ER/Queue AK handoff names Claude as BUILD-256/PIE reviewer after lock and records C-1024's r5 backup-name clarification. Its Queue AA engine-unlocked statement and older C-998 heading are labeled historical. |
+| C34 | `CONTROLS_STATUS.md`: BUILD-255 484/484 comes from `Docs/BossCombatReview/Execution/Claude/B_C1021_ERWIRING/status.txt`; four montage defaults are `Source/OneBossFight/Player/RPGDodgeTiming.cpp:41–44`; R1/R2 87/172 ms and 0.36/0.70 route outcomes are `P_C971_ERLATENCY/SUMMARY.md:7–12`; moving speeds 486.8/474.2 cm/s are `P_C980_BACKSTEP/probe_legacy_lines.txt:11` and `probe_data_lines.txt:11`. The arena boss name follows current owner/Lead docs; no retired product name was added. |
+| C35 | C-1024 corrected the initial discrepancy: `P_C992_AIRHITS/BACKUP_NAMING.txt` states that `run5_probe_*` are backups from before r5 and hold r4's -15.99 AirHeavy result. The explicit `R5_RESULT_probe_data_lines.txt:120` and `R5_RESULT_probe_legacy_lines.txt:121` each record r5 AirHeavy `-22.38599879765502`, matching `control_data_lines.txt:121`. The earlier C-1004/AJ-C41–C45 parity claim is supported for this runtime-assigned test. |
+
+**Lead action:** run default-wired both-route air-heavy PIE after BUILD-256 and verify actual boss HP delta. KI-193 remains open for that and package proof. C-1020 draw-gated guard-counter synthetic and live-contact checks remain separate KI-198 work. BUILD-256 native tests remain a Lead gate. Initial X-1440 finding was a backup-name misread, corrected by C-1024.

@@ -1,0 +1,11 @@
+﻿[AssetCheck] boss mesh skeleton=/Game/AdvancedARPGCombat/Characters/Heroes/Mannequins/Meshes/SK_CombatMannequin.SK_CombatMannequin
+[AssetCheck] montage Attack_PrimaryA_Montage class=AnimMontage length=1.6667 slots=['DefaultSlot'] skeleton_match=True notifies=['length 1.667 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25', '[state] ANS_DisableMovement_C at 0.000 s for 1.667 s', '[state] ANS_SetDesiredRotation_C at 0.000 s for 0.257 s', '[state] ANS_CancelFrames_C at 0.000 s for 0.286 s', '[state] ANS_InputBuffer_C at 0.315 s for 0.250 s', '[state] ANS_CollisionTrace_C at 0.350 s for 0.186 s', 'AnimNotify_PlaySound at 0.351 s', '[state] ANS_MovementCancel_C at 0.731 s for 0.936 s', 'FootStep at 0.827 s']
+[AssetCheck] montage AM_ER_Attack_GuardCounter class=AnimMontage length=0.8000 slots=['DefaultSlot'] skeleton_match=True notifies=['length 0.800 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25']
+[AssetCheck] montage AM_ER_Backstep_Back class=AnimMontage length=0.4667 slots=['DefaultSlot'] skeleton_match=True notifies=['length 0.467 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25']
+[AssetCheck] montage AM_ER_Attack_Air_Light class=AnimMontage length=0.5667 slots=['DefaultSlot'] skeleton_match=True notifies=['length 0.567 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25']
+[AssetCheck] montage AM_ER_Attack_Air_Heavy_Plunge class=AnimMontage length=0.8667 slots=['DefaultSlot'] skeleton_match=True notifies=['length 0.867 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25']
+[AssetCheck] montage AM_Boss01_ParryRecoil class=AnimMontage length=0.6000 slots=['DefaultSlot'] skeleton_match=True notifies=['length 0.600 s, rate scale 1.00, sections 1, blend in 0.25 out 0.25']
+[AssetCheck] mpc class=MaterialParameterCollection scalars=[('ParryPulse', 0.0)]
+[AssetCheck] ppm class=Material domain=<MaterialDomain.MD_POST_PROCESS: 4>
+[AssetCheck] ns class=NiagaraSystem path=/Game/OneBossFight/VFX/NS_Boss_PhaseTwoAura.NS_Boss_PhaseTwoAura
+[AssetCheck] finished

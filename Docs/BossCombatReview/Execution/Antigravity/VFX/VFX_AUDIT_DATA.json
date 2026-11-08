@@ -1,0 +1,21 @@
+{
+  "scythe_trail": {
+    "particle_system_found": true,
+    "mesh_found": true
+  },
+  "phase_two_aura": {
+    "found": true,
+    "path": "/Game/OneBossFight/VFX/NS_Boss_PhaseTwoAura",
+    "class": "NiagaraSystem"
+  },
+  "dissolve_remains": {
+    "material_found": true,
+    "noise_texture_found": true
+  },
+  "stagger": {
+    "stagger_down_found": true,
+    "stagger_down_length": 1.0,
+    "stagger_fall_found": true,
+    "stagger_fall_length": 0.7
+  }
+}

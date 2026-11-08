@@ -1,0 +1,14 @@
+﻿[2026.11.07-11.29.52:088][  0]LogPython: [ERAirHits] driver registered; observations are game-tick bounded, not device-latency claims
+[2026.11.07-11.29.52:820][  6]LogPython: [ERAirHits] route=legacy (H019_ENCOUNTER_DEFINITION unset)
+[2026.11.07-11.30.04:361][236]LogPython: [ERAirHits] setup boss held=True player_distance_cm=900
+[2026.11.07-11.30.04:395][236]LogPython: [ERAirHits] assigned air_light=AM_ER_Attack_Air_Light air_heavy=AM_ER_Attack_Air_Heavy_Plunge
+[2026.11.07-11.30.20:117][861]LogPython: [ERAirHits] input_context_active=True
+[2026.11.07-11.30.20:136][862]LogPython: [ERAirHits] case=R1_tap_light baseline=(None, None)
+[2026.11.07-11.30.22:400][929]LogPython: [ERAirHits] NO_MONTAGE_START case=R1_tap_light baseline=(None, None) final=(None, None)
+[2026.11.07-11.30.24:942][ 27]LogPython: [ERAirHits] hit case=R1_tap_light boss_hp_before=2000.0 after=2000.0 delta=0.0
+[2026.11.07-11.30.24:975][ 28]LogPython: [ERAirHits] case=R2_tap_strong baseline=(None, None)
+[2026.11.07-11.30.27:101][111]LogPython: [ERAirHits] NO_MONTAGE_START case=R2_tap_strong baseline=(None, None) final=(None, None)
+[2026.11.07-11.30.29:596][209]LogPython: [ERAirHits] hit case=R2_tap_strong boss_hp_before=2000.0 after=2000.0 delta=0.0
+[2026.11.07-11.30.29:640][210]LogPython: [ERAirHits] case=jump_R1_air_light baseline=(None, None)
+[2026.11.07-11.30.29:673][211]LogPython: [ERAirHits] driver error: Traceback (most recent call last):
+[2026.11.07-11.30.29:673][211]LogPython: [ERAirHits] finished: exception
