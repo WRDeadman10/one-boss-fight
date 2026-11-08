@@ -8,6 +8,7 @@ P_SHOWCASE/pie_showcase.py:capture. Codex must not run this Editor script.
 import os
 import math
 import json
+import hashlib
 import re
 import sys
 import time
@@ -29,12 +30,15 @@ DATA_ROUTE = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
 if DATA_ROUTE and DATA_ROUTE != EXPECTED_DATA:
     raise RuntimeError("H019_ENCOUNTER_DEFINITION must be unset or the selected G044 encounter")
 ROUTE = "data" if DATA_ROUTE else "legacy"
+APPROVED_ONLY = os.environ.get("AURA_COMPARE_APPROVED_ONLY", "0") == "1"
 RUN_TAG = os.environ.get("AURA_COMPARE_RUN", datetime.utcnow().strftime("%Y%m%dT%H%M%SZ"))
 if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", RUN_TAG):
     raise RuntimeError("AURA_COMPARE_RUN must be 1-64 safe filename characters")
 OUT = Path("D:/FightVideo/aura_compare") / ROUTE
 MANIFEST = OUT / (RUN_TAG + ".manifest.jsonl")
 FPS = 15.0
+MAX_WARMUP_FRAMES = 20
+WARMUP_BRIGHTNESS_FLOOR = 5.0
 S = {"phase": "start", "elapsed": 0.0, "gen": None, "done": False,
      "component": None, "original": None, "frames": [], "pending": None,
      "last_shot": -1.0}
@@ -43,6 +47,23 @@ HANDLE = None
 
 def log(message):
     unreal.log(LOG + str(message))
+
+
+def capture_phase(label):
+    if label == "approved":
+        return "approved"
+    if label == "boost_candidate":
+        return "candidate"
+    if "discard" in label:
+        return "warmup"
+    return "unknown"
+
+
+def capture_failure(label, reason):
+    phase = capture_phase(label)
+    log("CAPTURE_FAILURE run=%s route=%s phase=%s capture_id=%s label=%s path=%s reason=%s" %
+        (RUN_TAG, ROUTE, phase, RUN_TAG + ":" + label, label, S.get("pending") or "NONE", reason))
+    raise RuntimeError(reason)
 
 
 def actors():
@@ -119,13 +140,31 @@ def write_manifest(label, png, brightness):
                    if item.get_name() == "FollowCamera"), None) if pawn else None
     spring_arm = next(iter(pawn.get_components_by_class(unreal.SpringArmComponent)), None) if pawn else None
     asset = safe_text(lambda: path_of(S["component"].get_asset())) if S["component"] else "UNKNOWN"
+    component = S["component"]
+    active = safe_text(lambda: bool(component.is_active())) if component else "UNKNOWN"
+    attach_parent = safe_text(lambda: path_of(component.get_attach_parent())) if component else "UNKNOWN"
+    attach_socket = safe_text(lambda: component.get_attach_socket_name()) if component else "UNKNOWN"
+    component_position = safe_text(lambda: component.get_world_location()) if component else "UNKNOWN"
+    component_rotation = safe_text(lambda: component.get_world_rotation()) if component else "UNKNOWN"
+    phase = ("approved" if label == "approved" else
+             "candidate" if label == "boost_candidate" else
+             "warmup" if "discard" in label else "unknown")
     health = safe_text(lambda: "%.4f" % attribute(boss, "Get Current Attribute Value")) if boss else "UNKNOWN"
     maximum = safe_text(lambda: "%.4f" % attribute(boss, "GetMaxAttributeValue")) if boss else "UNKNOWN"
     record = {
         "run": RUN_TAG,
+        "capture_id": RUN_TAG + ":" + label,
         "route": ROUTE,
         "frame": label,
+        "phase": phase,
+        "game_time_s": plc.game_time(world),
+        "completion": "READY",
         "asset": asset,
+        "active": active,
+        "attach_parent": attach_parent,
+        "attach_socket": attach_socket,
+        "component_position": component_position,
+        "component_rotation": component_rotation,
         "health": health,
         "max_health": maximum,
         "camera": camera.get_name() if camera else "UNKNOWN",
@@ -135,10 +174,19 @@ def write_manifest(label, png, brightness):
         "mean_gray": round(brightness, 3),
         "png": str(png),
         "png_exists": Path(png).is_file(),
+        "png_sha256": hashlib.sha256(Path(png).read_bytes()).hexdigest(),
     }
     with MANIFEST.open("a", encoding="utf-8") as stream:
         stream.write(json.dumps(record, sort_keys=True) + "\n")
     log("MANIFEST " + json.dumps(record, sort_keys=True))
+    return record
+
+
+def log_frame_ready(label, png, manifest):
+    log("FRAME_READY label=%s path=%s asset=%s active=%s attach_parent=%s attach_socket=%s component_pos=%s component_rot=%s" %
+        (label, png, manifest.get("asset", "UNKNOWN"), manifest.get("active", "UNKNOWN"),
+         manifest.get("attach_parent", "UNKNOWN"), manifest.get("attach_socket", "UNKNOWN"),
+         manifest.get("component_position", "UNKNOWN"), manifest.get("component_rotation", "UNKNOWN")))
 
 
 def capture(label, world):
@@ -157,7 +205,9 @@ def capture(label, world):
     log("CAPTURE_COMMAND " + command)
     unreal.SystemLibrary.execute_console_command(world, command)
     S["frames"].append(label)
-    log("FRAME_REQUEST label=%s g=%.3f resolution=960x540 path=%s" % (label, now, target))
+    phase = capture_phase(label)
+    log("FRAME_REQUEST run=%s route=%s phase=%s capture_id=%s label=%s g=%.3f resolution=960x540 path=%s" %
+        (RUN_TAG, ROUTE, phase, RUN_TAG + ":" + label, label, now, target))
     return True
 
 
@@ -167,7 +217,7 @@ def wait_capture(label, world, discarded=False):
     request_deadline = time.perf_counter() + 20.0
     while not capture(label, world):
         if time.perf_counter() > request_deadline:
-            raise RuntimeError("HighResShot request for %s was never issued" % label)
+            capture_failure(label, "HighResShot request was never issued")
         yield 0.0
     deadline = time.perf_counter() + 20.0
     path = Path(S["pending"])
@@ -187,16 +237,33 @@ def wait_capture(label, world, discarded=False):
                     stable_polls = 0
         yield 0.0
     if brightness is None:
-        raise RuntimeError("HighResShot did not produce a complete readable PNG: %s" %
-                           (S["pending"] or label))
+        capture_failure(label, "HighResShot did not produce a complete readable PNG")
     log("FRAME_BRIGHTNESS label=%s mean_gray=%.3f threshold=5 discarded=%s" %
         (label, brightness, discarded))
     if not discarded and brightness < 5.0:
-        raise RuntimeError("captured frame is too dark: label=%s mean_gray=%.3f threshold=5" %
-                           (label, brightness))
-    write_manifest(label, S["pending"], brightness)
-    log("FRAME_READY label=%s path=%s" % (label, S["pending"]))
+        capture_failure(label, "captured frame below brightness floor: mean_gray=%.3f threshold=5" % brightness)
+    manifest = write_manifest(label, S["pending"], brightness)
+    log_frame_ready(label, S["pending"], manifest)
     S["pending"] = None
+    return brightness
+
+
+def warmup_until_visible(world, label_prefix="warmup_discard"):
+    start = plc.game_time(world)
+    for index in range(1, MAX_WARMUP_FRAMES + 1):
+        label = "%s_%d" % (label_prefix, index)
+        brightness = yield from wait_capture(label, world, discarded=True)
+        elapsed = plc.game_time(world) - start
+        log("WARMUP_PROBE index=%d/%d mean_gray=%.3f floor=%.1f game_elapsed=%.3f" %
+            (index, MAX_WARMUP_FRAMES, brightness, WARMUP_BRIGHTNESS_FLOOR, elapsed))
+        if brightness >= WARMUP_BRIGHTNESS_FLOOR:
+            log("WARMUP_READY frames=%d game_elapsed=%.3f mean_gray=%.3f" %
+                (index, elapsed, brightness))
+            return
+        if elapsed >= 4.0:
+            break
+    raise RuntimeError("warmup brightness floor not reached within %d frames / 4.0 game seconds" %
+                       MAX_WARMUP_FRAMES)
 
 
 def witness():
@@ -235,11 +302,13 @@ def witness():
          (pawn.get_actor_location() - boss.get_actor_location()).length(),
          camera.get_name(), camera.get_world_location(), pc.get_control_rotation(),
          path_of(S["original"])))
-    for index in range(1, 4):
-        label = "warmup_discard_%d" % index
-        yield from wait_capture(label, world, discarded=True)
-    log("WARMUP_DISCARDED count=3 game_time_settle=3.0")
+    log("COMPARE_MODE approved_only=%s run=%s route=%s" % (APPROVED_ONLY, RUN_TAG, ROUTE))
+    yield from warmup_until_visible(world)
     yield from wait_capture("approved", world)
+
+    if APPROVED_ONLY:
+        log("APPROVED_ONLY complete; candidate was not loaded or swapped")
+        return
 
     candidate = unreal.load_asset(CANDIDATE_PATH)
     if not candidate:
@@ -261,10 +330,7 @@ def witness():
         (path_of(actual), S["component"].is_active(),
          attribute(boss, "Get Current Attribute Value"), maximum,
          attribute(boss, "Get Current Attribute Value") / maximum))
-    for index in range(1, 4):
-        label = "candidate_discard_%d" % index
-        yield from wait_capture(label, world, discarded=True)
-    log("CANDIDATE_WARMUP_DISCARDED count=3 game_time_settle=3.0")
+    yield from warmup_until_visible(world, "candidate_discard")
     yield from wait_capture("boost_candidate", world)
 
 
@@ -275,11 +341,7 @@ def finish(reason):
     S["done"] = True
     try:
         if S["component"] and S["original"]:
-            S["component"].set_asset(S["original"])
-            activate = getattr(S["component"], "activate", None)
-            if callable(activate):
-                activate(True)
-            log("RESTORE asset=%s" % path_of(S["component"].get_asset()))
+            restore_original_asset(S["component"], S["original"])
     except Exception as exc:
         log("RESTORE_ERROR %s" % exc)
     unreal.SystemLibrary.execute_console_command(None, "rpg.Art.Tier2 0")
@@ -288,6 +350,18 @@ def finish(reason):
         HANDLE = None
     log("SUMMARY route=%s frames=%s reason=%s output=%s" % (ROUTE, ",".join(S["frames"]), reason, OUT))
     plc.end_play()
+
+
+def restore_original_asset(component, original):
+    component.set_asset(original)
+    activate = getattr(component, "activate", None)
+    if callable(activate):
+        activate(True)
+    restored = path_of(component.get_asset())
+    if restored != path_of(original):
+        raise RuntimeError("transient aura restore mismatch: %s" % restored)
+    log("RESTORE asset=%s verified=true" % restored)
+    return restored
 
 
 def tick(dt):

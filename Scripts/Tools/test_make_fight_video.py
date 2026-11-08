@@ -27,6 +27,42 @@ class FightVideoTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "retain at least one"):
             trim_leading_frames(frames, events, 4)
 
+    def test_trim_keeps_frame_and_ass_offsets_in_same_capture_timeline(self):
+        source_frames = [(i, 10.0 + i * 0.1) for i in range(5)]
+        source_events = [(0.15, "discarded early event"), (0.35, "retained event")]
+        original_frames = list(source_frames)
+        original_events = list(source_events)
+        kept, shifted = trim_leading_frames(source_frames, source_events, 2)
+        self.assertEqual(source_frames, original_frames)
+        self.assertEqual(source_events, original_events)
+        self.assertEqual(kept, [(2, 10.2), (3, 10.3), (4, 10.4)])
+        self.assertEqual(len(shifted), 1)
+        self.assertAlmostEqual(shifted[0][0], 0.15)
+        self.assertEqual(shifted[0][1], "retained event")
+        with tempfile.TemporaryDirectory() as root:
+            folder = Path(root)
+            for index in (2, 3, 4):
+                (folder / f"f_{index:05d}.png").write_bytes(b"png")
+            concat = make_concat(kept, folder)
+            self.assertIn("f_00002.png", concat)
+            self.assertNotIn("f_00000.png", concat)
+        self.assertIn("retained event", make_ass(shifted, 0.3))
+        self.assertNotIn("discarded early event", make_ass(shifted, 0.3))
+
+    def test_review_docs_bind_build255_and_build259_findings_to_distinct_captures(self):
+        root = Path(__file__).resolve().parents[2]
+        build255 = (root / "Documentation/Boss/FIGHT_VIDEO_REVIEW.md").read_text(encoding="utf-8")
+        build259 = (root / "Documentation/Boss/FIGHT_VIDEO_REVIEW2_AG.md").read_text(encoding="utf-8")
+        self.assertIn("BUILD-255", build255)
+        self.assertIn("fight_review.mp4", build255)
+        self.assertIn("first six source PNGs", build255)
+        self.assertIn("Absent in BUILD-255 video", build255)
+        self.assertIn("BUILD-259", build259)
+        self.assertIn("fight_review2.mp4", build259)
+        self.assertIn("Parry Recoil** | **NOT SEEN**", build259)
+        self.assertIn("BUILD-255 `fight_review.mp4` is a separate capture", build259)
+        self.assertNotIn("first six source PNGs", build259)
+
     def test_game_time_durations_and_subtitles(self):
         frames, events = parse_log(FIXTURE.read_text(encoding="utf-8"))
         with tempfile.TemporaryDirectory() as root:
@@ -56,6 +92,13 @@ class FightVideoTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 parse_log("[FullFight] FRAME 0 g=10.0 action=None\n" + line)
 
+    def test_new_run_and_action_ids_preserve_video_parser_frame_compatibility(self):
+        source = ("[FullFight] FRAME 0 g=10.0 marker=smoke:frame:00000 action=light action_id=smoke:action:00001\n"
+                  "[FullFight] ACTION light t=0.1 id=smoke:action:00001 dist=200")
+        frames, events = parse_log(source)
+        self.assertEqual(frames, [(0, 10.0)])
+        self.assertEqual(events, [(0.1, "Light attack")])
+
     def test_spaced_frame_folder_and_single_frame_tail(self):
         frames, _ = parse_log("[FullFight] FRAME 0 g=1.0 action=None")
         with tempfile.TemporaryDirectory() as root:
@@ -76,6 +119,45 @@ class FightVideoTests(unittest.TestCase):
     def test_ass_escaping(self):
         _, events = parse_log("[FullFight] FRAME 0 g=1.0 action=None\n[FullFight] ACTION foo{bar} t=0.1")
         self.assertIn("foo\\{bar\\}", make_ass(events, 1.0))
+
+    def test_real_parry_contact_is_a_caption_and_requires_an_open_attempt(self):
+        valid = ("[FullFight] FRAME 0 g=1.0 action=parry_watch\n"
+                 "[FullFight] PARRY_ATTEMPT instance=4 active=True position=0.720 opened=True parried_before=0\n"
+                 "[FullFight] PARRY_CONTACT instance=4 t=1.1 parried_delta=1 boss_montage=AM_Boss01_ParryRecoil\n"
+                 "[FullFight] PARRY_RECOIL instance=4 t=1.12 montage=AM_Boss01_ParryRecoil\n")
+        frames, events = parse_log(valid)
+        self.assertEqual(len(frames), 1)
+        self.assertIn((1.1, "Successful parry"), events)
+        self.assertIn((1.12, "Boss parry recoil"), events)
+        self.assertIn("Successful parry", make_ass(events, 2.0))
+
+        for bad in (
+                "[FullFight] PARRY_CONTACT instance=4 t=1.1 parried_delta=1 boss_montage=AM_Boss01_ParryRecoil",
+                "[FullFight] PARRY_ATTEMPT instance=4 active=True position=0.720 opened=False parried_before=0\n"
+                "[FullFight] PARRY_CONTACT instance=4 t=1.1 parried_delta=1 boss_montage=AM_Boss01_ParryRecoil",
+                "[FullFight] PARRY_ATTEMPT instance=4 active=True position=0.720 opened=True parried_before=0\n"
+                "[FullFight] PARRY_CONTACT instance=4 t=1.1 parried_delta=2 boss_montage=AM_Boss01_ParryRecoil",
+                "[FullFight] PARRY_RECOIL instance=4 t=1.12 montage=AM_Boss01_ParryRecoil",
+                "[FullFight] PARRY_ATTEMPT instance=4 active=True position=0.720 opened=True parried_before=0\n"
+                "[FullFight] PARRY_CONTACT instance=4 t=1.1 parried_delta=1 boss_montage=AnimMontage_2\n"
+                "[FullFight] PARRY_RECOIL instance=4 t=1.12 montage=AnimMontage_2",
+        ):
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                parse_log("[FullFight] FRAME 0 g=1.0 action=None\n" + bad)
+
+    def test_parry_post_contact_frame_marker_references_a_real_captured_frame(self):
+        source = ("[FullFight] FRAME 0 g=10.0 action=parry_watch\n"
+                  "[FullFight] PARRY_ATTEMPT instance=4 active=True position=0.720 opened=True parried_before=0\n"
+                  "[FullFight] PARRY_CONTACT instance=4 t=0.1 parried_delta=1 boss_montage=AM_Boss01_ParryRecoil\n"
+                  "[FullFight] FRAME 1 g=10.2 action=None\n"
+                  "[FullFight] PARRY_FRAME_READY label=plus_0p05 instance=4 frame=1 t=0.2 actual_offset=0.100 path=D:/frames/f_00001.png\n")
+        frames, events = parse_log(source)
+        self.assertEqual(frames, [(0, 10.0), (1, 10.2)])
+        self.assertIn((0.1, "Successful parry"), events)
+        for changed in (source.replace("frame=1", "frame=9"),
+                        source.replace("actual_offset=0.100", "actual_offset=-0.100")):
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                parse_log(changed)
 
     def test_cli_with_spaced_paths_writes_inputs_without_rendering(self):
         with tempfile.TemporaryDirectory() as root:

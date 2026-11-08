@@ -1,5 +1,9 @@
 # Decisions
 
+## Full-fight excerpt review boundary (AU-C31–C35, 2026-11-09)
+
+- BUILD-255 and BUILD-259 remain separate capture identities. The source audit finds six black lead-in frames in BUILD-255 and seven in BUILD-259; only a BUILD-255 trim-six handoff was generated. No revised video was rendered or reviewed. Whether the owner wants a corrected BUILD-255 excerpt remains undecided; existing owner checklist boxes stay unchecked.
+
 ## Owner reel implementation (C-1021, 2026-11-07)
 
 - The owner approved the reel and directed implementation. The Lead set all four `URPGDodgeTiming` montage Source defaults to the imported `AM_ER` assets; BUILD-255 passed 484/484 and `PackWiring` loads them. Clearing an optional field still falls back to pack behavior. Post-wiring PIE, live guard-counter hit, and package proof remain separate gates.
@@ -1609,3 +1613,7 @@ C-1011 reports BUILD-250 GREEN 484/484 but live PIE still failed on both routes:
 Claude authorized implementing all three camera options as separate Development-only console switches, each defaulting off, while the owner decides among them: `rpg.Camera.BossBlocks`, `rpg.Camera.HideBossInside`, and `rpg.Camera.LockOnFraming`. This authorizes source experiments, not a selected or shipped camera behavior. Keep today's behavior at all-zero settings; Claude builds and runs the dynamic probe per switch, and the owner may later select a one-line default flip. Queue AP starts with BossBlocks only. Its Lead build/two-route probe are pending; see `Documentation/Boss/AP_C01_C05_BOSS_BLOCKS.md` and `Documentation/Boss/QUEUE_AP.md`.
 
 The later Queue AP source experiments retain that boundary. HideBossInside's 5 cm AABB enter/exit margins and LockOnFraming's 0.35 s manual-input grace/120 deg/s yaw cap are provisional implementation values requiring Lead visual/feel validation. No option is selected by Codex; no default is enabled.
+
+AU-C26–C30 treats the reported close-start Air Light crop as an observation to characterize. Its optional Lead test-position input does not change a production start distance and no minimum-distance threshold is selected or encoded; owner/Lead visual review remains open.
+
+AU-C21–C25 adds telemetry and an offline receipt validator only. It does not change any camera option/default or replace the owner selection; unset H019 is DATA-default, and true legacy requires explicit `RPG_LEGACY_STARTUP=1` plus same-run route evidence. The refreshed DATA-default dynamic baseline is still Lead-run; see `Documentation/Boss/AU_C21_C25_DYNAMIC_CAMERA_BASELINE.md`.

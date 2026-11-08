@@ -31,14 +31,16 @@ if ($TimeoutSeconds -lt 10) { throw 'TimeoutSeconds must be at least 10' }
 
 $extraEnv = @{}
 foreach ($entry in $Env) {
-    $pair = $entry.Split('=', 2)
-    if ($pair.Count -ne 2 -or $pair[0] -notmatch '^[A-Za-z_][A-Za-z0-9_]*$') {
-        throw "Invalid -Env entry: $entry (expected NAME=value)"
+    foreach ($rawEntry in ($entry -split ',')) {
+        $pair = $rawEntry.Split('=', 2)
+        if ($pair.Count -ne 2 -or $pair[0] -notmatch '^[A-Za-z_][A-Za-z0-9_]*$') {
+            throw "Invalid -Env entry: $rawEntry (expected NAME=value)"
+        }
+        if ($pair[0] -in @('H019_ENCOUNTER_DEFINITION', 'RPG_LEGACY_STARTUP')) {
+            throw "$($pair[0]) is selected by -Routes"
+        }
+        $extraEnv[$pair[0]] = $pair[1]
     }
-    if ($pair[0] -in @('H019_ENCOUNTER_DEFINITION', 'RPG_LEGACY_STARTUP')) {
-        throw "$($pair[0]) is selected by -Routes"
-    }
-    $extraEnv[$pair[0]] = $pair[1]
 }
 $prefixMatch = [regex]::Match([System.IO.File]::ReadAllText($scriptPath), '(?m)^LOG\s*=\s*"(\[[^\]]+\])')
 if (-not $StopMarker) {
@@ -74,7 +76,9 @@ try {
         $pythonPath = if ($DryRun) { $scriptPath } else {
             (New-Object -ComObject Scripting.FileSystemObject).GetFile($scriptPath).ShortPath
         }
-        $pythonPath = $pythonPath.Replace([char]92, [char]47)
+        # Unreal's `py` ExecCmds parser recognizes script paths only with a
+        # lowercase .py suffix; 8.3 names can preserve an uppercase .PY suffix.
+        $pythonPath = $pythonPath.ToLowerInvariant().Replace([char]92, [char]47)
         if (-not $DryRun -and $pythonPath -match '\s') {
             throw "UE py command requires a path without spaces; 8.3 ShortPath unavailable: $scriptPath"
         }
@@ -100,6 +104,7 @@ try {
         $process = $null
         try {
             foreach ($name in $extraEnv.Keys) {
+                Write-Output "Applying -Env $name=$($extraEnv[$name])"
                 [System.Environment]::SetEnvironmentVariable($name, $extraEnv[$name], 'Process')
             }
             [System.Environment]::SetEnvironmentVariable('H019_ENCOUNTER_DEFINITION', $routeValue, 'Process')

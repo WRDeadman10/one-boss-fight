@@ -13,6 +13,7 @@ def mean_gray(path):
         raise ValueError("not a PNG")
     offset = len(PNG_SIGNATURE)
     width = height = depth = color = interlace = None
+    saw_iend = False
     compressed = []
     while offset + 12 <= len(data):
         size = struct.unpack(">I", data[offset:offset + 4])[0]
@@ -29,8 +30,13 @@ def mean_gray(path):
         elif kind == b"IDAT":
             compressed.append(chunk)
         elif kind == b"IEND":
+            if size != 0:
+                raise ValueError("invalid PNG IEND chunk")
+            saw_iend = True
             break
         offset = end + 4
+    if not saw_iend:
+        raise ValueError("missing PNG IEND chunk")
     if not width or not height or depth != 8 or interlace != 0 or color not in (0, 2, 4, 6):
         raise ValueError("unsupported PNG screenshot format")
     channels = {0: 1, 2: 3, 4: 2, 6: 4}[color]

@@ -6,6 +6,7 @@ not move actors, change collision, or choose a camera fix. Markers:
 [CameraInsideBoss] SAMPLE and finished.
 """
 import math
+import json
 import os
 import re
 import sys
@@ -22,8 +23,12 @@ DATA_ROUTE = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
 EXPECTED_DATA = "/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter"
 if DATA_ROUTE and DATA_ROUTE != EXPECTED_DATA:
     raise RuntimeError("H019_ENCOUNTER_DEFINITION must be unset or the selected G044 encounter")
-ROUTE = "data" if DATA_ROUTE else "legacy"
+LEGACY_STARTUP = os.environ.get("RPG_LEGACY_STARTUP", "") == "1"
+if LEGACY_STARTUP and DATA_ROUTE:
+    raise RuntimeError("RPG_LEGACY_STARTUP=1 cannot be combined with H019_ENCOUNTER_DEFINITION")
+ROUTE = "legacy" if LEGACY_STARTUP else "data"
 CAMERA_PROBE_SCENARIO = re.sub(r"[^A-Za-z0-9_.-]+", "_", os.environ.get("CAMERA_PROBE_SCENARIO", "unspecified").strip())[:64] or "unspecified"
+CAMERA_PROBE_RUN = re.sub(r"[^A-Za-z0-9_-]+", "_", os.environ.get("CAMERA_PROBE_RUN", "camera_probe"))[:64] or "camera_probe"
 CAMERA_OPTION_CVARS = (
     ("boss_blocks", "rpg.Camera.BossBlocks"),
     ("hide_boss_inside", "rpg.Camera.HideBossInside"),
@@ -60,6 +65,21 @@ def camera_option_values():
             value = "UNREADABLE(%s)" % exc
         values.append("%s=%s" % (label, value))
     return " ".join(values)
+
+
+def camera_option_read(cvar):
+    try:
+        return int(unreal.SystemLibrary.get_console_variable_int_value(cvar))
+    except Exception:
+        return "UNKNOWN"
+
+
+def finite_value(value):
+    try:
+        result = float(value)
+        return result if math.isfinite(result) else "UNKNOWN"
+    except (TypeError, ValueError):
+        return "UNKNOWN"
 
 
 def prop(item, name):
@@ -144,6 +164,12 @@ def sample(world, pc, pawn, boss):
         except Exception as exc:
             response = "UNREADABLE(%s)" % exc
         responses.append("%s:%s" % (capsule.get_name(), response))
+    try:
+        player_pos, boss_pos = pawn.get_actor_location(), boss.get_actor_location()
+        bearing = math.degrees(math.atan2(player_pos.y - boss_pos.y, player_pos.x - boss_pos.x))
+        relative_angle = (bearing - boss.get_actor_rotation().yaw + 180.0) % 360.0 - 180.0
+    except Exception:
+        relative_angle = "UNKNOWN"
     # The unfixed arm target omits socket/target offsets in this UE Python API.
     # Keep the trace explicitly estimated and record its hit component only as
     # a companion to the actual camera position and reported spring-arm length.
@@ -166,12 +192,24 @@ def sample(world, pc, pawn, boss):
         sweep_component = "UNREADABLE(%s)" % exc
     log("OPTIONS t=%.3f scenario=%s %s passive=true" %
         (plc.game_time(world), CAMERA_PROBE_SCENARIO, camera_option_values()))
-    log("SAMPLE t=%.3f player_boss_cm=%.1f player=%s boss=%s camera=%s pivot=%s "
+    game_time = finite_value(plc.game_time(world))
+    sample_id = "%s:sample-%06d" % (CAMERA_PROBE_RUN, S["samples"] + 1)
+    structured = {
+        "run": CAMERA_PROBE_RUN, "route": ROUTE, "sample_id": sample_id,
+        "frame_marker_id": sample_id, "frame_time_s": game_time,
+        "game_time_s": game_time, "player_boss_cm": finite_value(boss_distance),
+        "camera_distance_cm": finite_value(current_length), "arm_target_cm": finite_value(actual_arm),
+        "boss_relative_angle_deg": finite_value(relative_angle),
+        "camera_inside_mesh_aabb": inside if isinstance(inside, bool) else "UNKNOWN",
+        "hide_boss_inside": camera_option_read("rpg.Camera.HideBossInside"),
+    }
+    log("SAMPLE_JSON " + json.dumps(structured, sort_keys=True, allow_nan=False))
+    log("SAMPLE t=%.3f sample_id=%s player_boss_cm=%.1f player=%s boss=%s camera=%s pivot=%s "
         "arm_target_cm=%s arm_actual_cm=%.1f approximate_sweep_hit_component=%s "
-        "camera_inside_mesh_aabb=%s inside_component=%s capsule_camera_response=%s unreadable_bounds=%s" %
-        (plc.game_time(world), boss_distance,
+        "boss_relative_angle_deg=%s camera_inside_mesh_aabb=%s inside_component=%s capsule_camera_response=%s unreadable_bounds=%s" %
+        (float(game_time) if game_time != "UNKNOWN" else -1.0, sample_id, boss_distance,
          pawn.get_actor_location(), boss.get_actor_location(), eye, pivot,
-         prop(arm, "target_arm_length"), current_length, sweep_component, inside, component_name,
+         prop(arm, "target_arm_length"), current_length, sweep_component, relative_angle, inside, component_name,
          ";".join(responses) or "none", ",".join(unreadable) or "none"))
 
 
@@ -194,8 +232,9 @@ def tick(dt):
             if S["elapsed"] > 0.5:
                 if DATA_ROUTE:
                     unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + DATA_ROUTE)
-                log("ROUTE route=%s scenario=%s selection=%s circle_range_cm=150..250 passive=true" %
-                    (ROUTE, CAMERA_PROBE_SCENARIO, DATA_ROUTE or "unset (legacy startup)"))
+                log("ROUTE route=%s RPG_LEGACY_STARTUP=%s scenario=%s selection=%s circle_range_cm=150..250 passive=true" %
+                    (ROUTE, int(LEGACY_STARTUP), CAMERA_PROBE_SCENARIO,
+                     DATA_ROUTE or "unset (Data-default)"))
                 unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
                 S.update(phase="wait", elapsed=0.0)
             return

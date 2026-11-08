@@ -13,6 +13,10 @@ FRAME = re.compile(r"\[FullFight\] FRAME (\d+) g=([0-9]+(?:\.[0-9]+)?)\b")
 ACTION = re.compile(r"\[FullFight\] ACTION (\S+) t=([0-9]+(?:\.[0-9]+)?)\b")
 COUNTER = re.compile(r"\[FullFight\] COUNTER t=([0-9]+(?:\.[0-9]+)?)\b")
 BOSS_DEAD = re.compile(r"\[FullFight\] BOSS_DEAD at ([0-9]+(?:\.[0-9]+)?) s\b")
+PARRY_ATTEMPT = re.compile(r"\[FullFight\] PARRY_ATTEMPT instance=(\d+) active=(True|False) position=([0-9]+(?:\.[0-9]+)?) opened=(True|False) parried_before=(\d+)\b")
+PARRY_CONTACT = re.compile(r"\[FullFight\] PARRY_CONTACT instance=(\d+) t=([0-9]+(?:\.[0-9]+)?) parried_delta=(\d+) boss_montage=(\S+)")
+PARRY_RECOIL = re.compile(r"\[FullFight\] PARRY_RECOIL instance=(\d+) t=([0-9]+(?:\.[0-9]+)?) montage=(\S+)")
+PARRY_FRAME_READY = re.compile(r"\[FullFight\] PARRY_FRAME_READY label=(\S+) instance=(\d+) frame=(\d+) t=([0-9]+(?:\.[0-9]+)?) actual_offset=([0-9]+(?:\.[0-9]+)?) path=(.+)$")
 LABELS = {
     "light": "Light attack", "strong": "Strong attack", "backstep": "Backstep",
     "air_light": "Air light", "air_heavy": "Air heavy", "guard": "Guard",
@@ -22,6 +26,10 @@ LABELS = {
 def parse_log(source: str) -> tuple[list[tuple[int, float]], list[tuple[float, str]]]:
     frames = []
     events = []
+    parry_attempts: dict[int, bool] = {}
+    parry_contacts: dict[int, float] = {}
+    parry_recoils: set[int] = set()
+    parry_frame_labels: set[str] = set()
     for line in source.splitlines():
         for marker, pattern in (("FRAME ", FRAME), ("ACTION ", ACTION), ("COUNTER ", COUNTER), ("BOSS_DEAD ", BOSS_DEAD)):
             if "[FullFight] " + marker in line and not pattern.search(line):
@@ -33,6 +41,59 @@ def parse_log(source: str) -> tuple[list[tuple[int, float]], list[tuple[float, s
             if not frames and index != 0:
                 raise ValueError("first FRAME must be 0")
             frames.append((index, game_time))
+        elif "[FullFight] PARRY_ATTEMPT " in line:
+            match = PARRY_ATTEMPT.search(line)
+            if not match:
+                raise ValueError(f"malformed [FullFight] PARRY_ATTEMPT marker: {line}")
+            instance, _, _, opened, _ = match.groups()
+            instance = int(instance)
+            if instance in parry_attempts:
+                raise ValueError(f"duplicate parry attempt for attack instance {instance}")
+            parry_attempts[instance] = opened == "True"
+        elif "[FullFight] PARRY_CONTACT " in line:
+            match = PARRY_CONTACT.search(line)
+            if not match:
+                raise ValueError(f"malformed [FullFight] PARRY_CONTACT marker: {line}")
+            instance, event_time, delta, _montage = match.groups()
+            instance, event_time, delta = int(instance), float(event_time), int(delta)
+            if parry_attempts.get(instance) is not True:
+                raise ValueError(f"parry contact for instance {instance} has no opened attempt")
+            if delta != 1:
+                raise ValueError(f"parry contact for instance {instance} must have exactly one parried-count increment")
+            if instance in parry_contacts:
+                raise ValueError(f"duplicate parry contact for attack instance {instance}")
+            parry_contacts[instance] = event_time
+            events.append((event_time, "Successful parry"))
+        elif "[FullFight] PARRY_RECOIL " in line:
+            match = PARRY_RECOIL.search(line)
+            if not match:
+                raise ValueError(f"malformed [FullFight] PARRY_RECOIL marker: {line}")
+            instance, event_time, montage = int(match[1]), float(match[2]), match[3]
+            if instance not in parry_contacts:
+                raise ValueError(f"parry recoil for instance {instance} has no preceding contact")
+            if "ParryRecoil" not in montage:
+                raise ValueError(f"parry recoil marker names unexpected montage: {montage}")
+            if instance in parry_recoils:
+                raise ValueError(f"duplicate parry recoil marker for attack instance {instance}")
+            parry_recoils.add(instance)
+            events.append((event_time, "Boss parry recoil"))
+        elif "[FullFight] PARRY_FRAME_READY " in line:
+            match = PARRY_FRAME_READY.search(line)
+            if not match:
+                raise ValueError(f"malformed [FullFight] PARRY_FRAME_READY marker: {line}")
+            label, instance, frame, frame_time, offset, path = match.groups()
+            instance, frame, frame_time, offset = int(instance), int(frame), float(frame_time), float(offset)
+            if label in parry_frame_labels:
+                raise ValueError(f"duplicate parry frame label: {label}")
+            parry_frame_labels.add(label)
+            if instance not in parry_contacts:
+                raise ValueError(f"parry frame {label} has no preceding contact")
+            if frame not in {item[0] for item in frames}:
+                raise ValueError(f"parry frame {label} references missing FRAME {frame}")
+            if offset < 0 or abs((frame_time - parry_contacts[instance]) - offset) > 0.02:
+                raise ValueError(f"parry frame {label} has inconsistent contact offset")
+            if not path.strip():
+                raise ValueError(f"parry frame {label} has no image path")
         elif match := ACTION.search(line):
             events.append((float(match[2]), LABELS.get(match[1], match[1])))
         elif match := COUNTER.search(line):

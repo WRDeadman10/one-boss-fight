@@ -1,0 +1,91 @@
+﻿route=data /Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter; player refilled below 35 HP by the boss RPGCombatDebug; boss health and AI untouched
+[2026.11.08-20.48.43:293][  6]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending
+setup boss_hp=2000.0/2000.0 player_hp=0.0/1000000.0
+FIGHT_START slomo=0.5 frames=D:/FightVideo/auparry fps=15
+ACTION light t=0.87 dist=260
+ACTION light t=2.07 dist=246
+ACTION strong t=3.08 dist=246
+ACTION backstep t=4.74 dist=211
+ACTION air_light t=5.76 dist=194
+ACTION guard t=7.52 dist=196
+ACTION light t=11.21 dist=196
+ACTION air_heavy t=12.22 dist=196
+ACTION backstep t=14.31 dist=196
+ACTION guard t=15.34 dist=162
+ACTION strong t=18.85 dist=105
+ACTION parry_watch t=20.50 dist=105
+PARRY_WATCH_RESULT outcome=timeout_no_live_a4 seconds=3.01
+ACTION light t=23.53 dist=253
+ACTION light t=24.71 dist=105
+ACTION strong t=25.75 dist=105
+ACTION backstep t=27.41 dist=167
+ACTION air_light t=28.42 dist=174
+ACTION guard t=30.03 dist=174
+ACTION light t=33.55 dist=185
+ACTION air_heavy t=34.69 dist=185
+ACTION backstep t=36.85 dist=257
+ACTION guard t=37.97 dist=105
+ACTION strong t=41.50 dist=183
+ACTION parry_watch t=43.03 dist=127
+PARRY_WATCH_RESULT outcome=timeout_no_live_a4 seconds=3.03
+ACTION light t=46.10 dist=106
+ACTION light t=47.11 dist=172
+ACTION strong t=48.13 dist=231
+ACTION backstep t=49.69 dist=105
+ACTION air_light t=50.71 dist=213
+ACTION guard t=52.32 dist=258
+ACTION light t=55.84 dist=105
+ACTION air_heavy t=56.97 dist=105
+ACTION backstep t=58.89 dist=194
+ACTION guard t=60.12 dist=161
+COUNTER t=60.54
+ACTION strong t=62.17 dist=105
+ACTION parry_watch t=63.70 dist=214
+PARRY_WATCH_RESULT outcome=timeout_no_live_a4 seconds=3.01
+ACTION light t=74.10 dist=249
+ACTION light t=75.10 dist=105
+ACTION strong t=76.25 dist=105
+ACTION backstep t=77.93 dist=196
+ACTION air_light t=78.94 dist=207
+ACTION guard t=80.57 dist=215
+ACTION light t=84.18 dist=105
+ACTION air_heavy t=85.19 dist=105
+ACTION backstep t=87.10 dist=151
+ACTION guard t=88.30 dist=229
+ACTION strong t=91.93 dist=187
+ACTION parry_watch t=93.44 dist=186
+PARRY_WATCH_RESULT outcome=timeout_no_live_a4 seconds=3.01
+ACTION light t=96.67 dist=258
+ACTION light t=97.82 dist=105
+ACTION strong t=98.83 dist=105
+ACTION backstep t=100.35 dist=105
+ACTION air_light t=101.43 dist=105
+ACTION guard t=103.04 dist=105
+ACTION light t=106.56 dist=215
+ACTION air_heavy t=107.77 dist=215
+ACTION backstep t=110.75 dist=153
+ACTION guard t=111.77 dist=106
+ACTION strong t=115.29 dist=105
+ACTION parry_watch t=116.81 dist=105
+PARRY_WATCH_RESULT outcome=timeout_no_live_a4 seconds=3.11
+ACTION light t=119.95 dist=105
+ACTION light t=121.05 dist=105
+ACTION strong t=122.07 dist=154
+ACTION backstep t=124.62 dist=245
+ACTION air_light t=125.62 dist=106
+ACTION guard t=127.23 dist=128
+ACTION light t=130.75 dist=105
+ACTION air_heavy t=131.85 dist=105
+ACTION backstep t=133.87 dist=105
+ACTION guard t=135.05 dist=115
+ACTION strong t=138.57 dist=241
+ACTION parry_watch t=140.13 dist=106
+PARRY_WATCH_RESULT outcome=timeout_no_live_a4 seconds=3.01
+ACTION light t=143.19 dist=133
+ACTION light t=144.29 dist=177
+ACTION strong t=145.44 dist=177
+ACTION backstep t=146.95 dist=177
+ACTION air_light t=148.20 dist=258
+ACTION guard t=149.94 dist=151
+SUMMARY fight_seconds=150.0 boss_dead=False actions={'light': 20, 'strong': 13, 'backstep': 13, 'air_light': 7, 'guard': 13, 'air_heavy': 6, 'parry_watch': 6, 'counter': 1} player_refills=11 frames=1479
+finished: time limit

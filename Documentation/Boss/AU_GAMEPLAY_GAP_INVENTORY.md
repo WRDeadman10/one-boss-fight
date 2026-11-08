@@ -1,0 +1,34 @@
+# Queue AU gameplay-gap inventory
+
+**Source cut:** Claude C-1121; owner visual dispositions remain those last recorded through C-1077. This is a report-to-status crosswalk, not an independent visual verdict. The owner checklist stays unchanged and unchecked until the owner reviews the capture.
+
+## Findings still open or awaiting disposition
+
+| Finding | Current evidence | Remaining state / owner |
+|---|---|---|
+| Backstep full-fight look | AG reports 50 clean appearances in BUILD-259 `fight_review2.mp4`; the owner checklist row is still unchecked. The default montage itself is owner-approved (`AM_ER_Backstep_Mixamo_V2`). | Owner full-fight tick and timestamp. Do not reopen the approved default without a regression. |
+| Guard Counter full-fight look | AG reports six in BUILD-259, four direct damaging hits, and a lethal final counter at 11:56.50. BUILD-255's earlier missing counter predates the successful BUILD-259 capture. | Owner full-fight tick; retain the two captures as separate versions. |
+| Air Light | AG reports 25 appearances and good mid-range readability; it is clipped when started too close to the boss. | Safe close-range readability is uncharacterized; owner tick is pending. No distance threshold or code defect has been proven. |
+| Air Heavy Plunge | AG reports 25 clearly downward, heavier-looking appearances distinct from Air Light. | Owner full-fight tick is pending. No code defect is described. |
+| Parry Recoil | No parry actions were injected into BUILD-259; separate focused PIE proves the live recoil path. | Full-fight evidence is absent; owner tick cannot be inferred from the focused PIE clip. |
+| Phase-Two Aura | AG reports it not discernible across BUILD-259 Phase Two, including two open-silhouette samples. C-1042 proves lifecycle only. A-646 boost readback was accepted as authoring data; C-1075/C-1077 paired captures failed, and the separate current/origin/spine showcase has no owner disposition. | Full-fight visibility and owner choice remain open. Keep original asset unchanged; no candidate selection or visual approval is recorded. |
+| Parry Distortion | No parries were injected into BUILD-259; focused C-1042 PIE reports a visible RGB split. | Full-fight evidence and owner tick remain open; the separate PIE result does not fill this row. |
+| Dynamic melee camera clipping | C-1051/AG report the spring arm enters boss mantle/leg geometry or faces wall occlusion at melee distance when the boss circles beside/behind the player; open-ground static raycasts missed it. C-1105's nine-start B+C attack/look result is bounded and does not cover continuous circling or full-fight composition. | Camera option A/B/C/B+C remains an owner decision; no production Source/default change is authorized before that choice. |
+| BUILD-255 first frames | Its six initial source PNGs are black; the trim-six subtitle offset was prepared, but no trimmed MP4 or new review is recorded. BUILD-259 is a distinct capture; the BUILD-255 defect must not be transferred to it. | Historical BUILD-255 rendering remains unrevised; it is not a verdict about BUILD-259. |
+| Capture context | BUILD-259 ended at boss death after 79 player refills; the driver reports refill behavior while boss health/AI remain live. The full-fight includes no parry action. | Preserve those limitations when presenting the video; no natural-survival or parry-coverage claim. |
+| First dodge after draw | Owner pack records the C-1067 guarded retry as proven for tested DATA-default standing/moving first presses; the input/trigger/context root cause remains unisolated. | Workaround remains proven for those cases; no new failure is recorded. Investigate only through a test that reproduces a fresh regression; do not add a parity-only legacy run. |
+| Natural A4 parry detection | C-1119 observed natural `GS_Attack04_Montage` in three BEAT samples with no watcher window/attempt and 6,081 repeated timeout lines. Offline hotfix adds montage-transition diagnosis, per-slot timeout deduplication, and requires a live sweep readback for its montage fallback. Native defaults map `GS_Attack04_Montage` to tracker move A1b; true natural A4 pairing is therefore not established by montage observation alone. | Await fresh DATA-default Lead log and verify tracker move/instance/window, montage, live sweep state/count, press result and exact parried-count delta. No parry success is claimed. |
+| Aura comparison first-use black frames / runner env | C-1120's Lead rerun found comma-packed `-Env` reached as one variable and four truly black PNGs before the approved frame; AU-C31 independently found initial fight capture frames black for ~0.74 game seconds. Offline runner now splits/logs each value; aura capture warms until decoded brightness reaches its floor, capped at 20 frames/4 game seconds. | Lead reruns of approved-only capture with a fresh run root remain pending. Existing black captures remain failed evidence; no aura visual verdict or candidate selection. |
+| Full-fight receipt/capture-quality | AU-C36–C40 offline receipt tooling is in place; AU-C40 DATA-default smoke has no live receipt. AU-C41–C44 add frame-status validation and linked `FRAME_CONTEXT`; world occlusion remains explicitly unmeasured. | Claude to run AU-C40 and AU-C45; C45 must include one readable move frame and one visually reviewed obscured case. Logs alone are not image verdicts. |
+
+## Evidence boundaries
+
+- `FIGHT_VIDEO_REVIEW.md` has seven unchecked owner rows. Its BUILD-255 notes and BUILD-259 link describe different captures.
+- `FIGHT_VIDEO_REVIEW2_AG.md` is Antigravity's technical report: four player moves seen, no parry actions, aura not discernible, and dynamic camera intrusion/cropping. Its report does not fill owner boxes.
+- `OWNER_REVIEW_PACK.md` preserves the approved backstep default, KI-199 workaround/root-cause split, the failed aura comparison and the unselected showcase options. It records no owner disposition for the full-fight aura/options.
+- C-1042 focused PIE establishes parry recoil/PPM behavior and aura component lifecycle in controlled probes. Those are separate from full-fight appearance.
+- C-1119/C-1120 offline hotfix contracts do not replace Lead reruns. C-1121 assigned the black-frame source-pixel corroboration to Antigravity; Codex did not re-read or relabel those raw capture files in this cycle.
+
+## AU scope rule
+
+Queue the reproducible code-side capture/diagnostic work (notably missing parry coverage and the failed aura-comparison capture path) with offline test-first contracts and explicit Lead PIE rows. Keep owner-only visual judgments, aura look selection, camera-option selection, and package gates as external actions. Do not turn an observation into a source fix until a focused test reproduces it; then require a Lead DATA-default PIE row before marking it fixed.

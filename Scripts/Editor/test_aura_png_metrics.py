@@ -59,6 +59,28 @@ class AuraPngMetricTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "not a PNG"):
                 mean_gray(path)
 
+    def test_missing_and_truncated_capture_files_are_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with self.assertRaises(FileNotFoundError):
+                mean_gray(root / "missing.png")
+            complete = grayscale_png_rows([[12, 24, 36]], [0])
+            truncated = root / "truncated.png"
+            truncated.write_bytes(complete[:-12])  # pixels decode, but required IEND is absent
+            with self.assertRaisesRegex(ValueError, "IEND"):
+                mean_gray(truncated)
+
+    def test_black_dark_and_usable_frames_keep_distinct_measured_values(self):
+        samples = (("black", [[0, 0, 0]], 0.0),
+                   ("dark", [[2, 3, 2]], 7.0 / 3.0),
+                   ("usable", [[30, 60, 90]], 60.0))
+        with tempfile.TemporaryDirectory() as directory:
+            for name, rows, expected in samples:
+                with self.subTest(name=name):
+                    path = Path(directory) / (name + ".png")
+                    path.write_bytes(grayscale_png_rows(rows, [0]))
+                    self.assertAlmostEqual(mean_gray(path), expected)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -39,6 +39,24 @@ class AuraReadbackTests(unittest.TestCase):
         boss.get_components_by_class = lambda cls: [component("NS_Boss_PhaseTwoAura"), component("NS_Boss_PhaseTwoAura")]
         self.assertFalse(module.check("duplicate", boss, 1))
 
+    def test_lifecycle_probe_covers_above_and_at_half_health_then_resets(self):
+        source = SCRIPT.read_text(encoding="utf-8")
+        above = source.index('attribute(boss, "Set Current Attribute Value", maximum * 0.501)')
+        above_check = source.index('check("above_threshold", boss, 0)', above)
+        at = source.index('attribute(boss, "Set Current Attribute Value", maximum * 0.5)', above_check)
+        at_check = source.index('check("half_health", boss, 1)', at)
+        reset = source.index('check("encounter_reset", boss, 0)', at_check)
+        next_phase = source.index('check("next_phase", boss, 1)', reset)
+        self.assertLess(above, above_check)
+        self.assertLess(above_check, at)
+        self.assertLess(at_check, reset)
+        self.assertLess(reset, next_phase)
+        self.assertIn('"rpg.Art.Tier2 0"', source)
+        self.assertIn('"rpg.Art.Tier2 1"', source)
+        self.assertIn('len(S["checks"]) == 7', source)
+        self.assertIn('"rpg.Art.Tier2 0"', source)
+        self.assertIn('"rpg.Art.Tier2 1"', source)
+
 
 if __name__ == "__main__":
     unittest.main()

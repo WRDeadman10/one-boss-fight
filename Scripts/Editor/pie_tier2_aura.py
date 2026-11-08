@@ -67,6 +67,12 @@ def witness():
     log("ROUTE %s max_health=%.1f" % ("data" if os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip() else "legacy", maximum))
     if maximum <= 0:
         raise RuntimeError("boss max health unavailable")
+    attribute(boss, "Set Current Attribute Value", maximum * 0.501)
+    yield from wait(1.0)
+    log("HEALTH threshold=%.1f actual=%.1f" % (maximum * 0.501, attribute(boss, "Get Current Attribute Value")))
+    check("above_threshold", boss, 0)
+    attribute(boss, "Set Current Attribute Value", maximum)
+    yield from wait(0.5)
     check("full_health", boss, 0)
     attribute(boss, "Set Current Attribute Value", maximum * 0.5)
     yield from wait(1.0)
@@ -101,7 +107,7 @@ def finish(reason):
         unreal.unregister_slate_post_tick_callback(HANDLE)
         HANDLE = None
     log("SUMMARY pass=%s checks=%d reason=%s" %
-        (len(S["checks"]) == 6 and all(S["checks"]), len(S["checks"]), reason))
+        (len(S["checks"]) == 7 and all(S["checks"]), len(S["checks"]), reason))
     plc.end_play()
 
 

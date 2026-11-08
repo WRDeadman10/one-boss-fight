@@ -1,0 +1,6 @@
+﻿route=data /Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter; player refilled below 35 HP by the boss RPGCombatDebug; boss health and AI untouched
+[2026.11.08-20.39.02:163][  7]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending
+setup boss_hp=2000.0/2000.0 player_hp=0.0/1000000.0
+FIGHT_START slomo=0.5 frames=D:/FightVideo/auparry fps=15
+SUMMARY fight_seconds=0.0 boss_dead=False actions={} player_refills=0 frames=1
+finished: player dead
