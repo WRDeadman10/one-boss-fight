@@ -38,14 +38,14 @@ DATA-default route, not a route comparison or a package/default verdict.
 | R10 B | both nominal arms (DATA-default) | 4 hide entries per run, entering at 96–104 cm (Lead C-1090 report) |
 | R11 B+C | both nominal arms (DATA-default) | 0 mesh-AABB and capsule intrusion samples; view-to-boss median 36–37° (Lead C-1090 report) |
 
-R0–R8 remain pending. R11's look-injected condition, additional repetitions,
-and any unrepresented attack/terrain/input cases remain pending. The tracker
+R0–R8 remain pending. C-1105 filled the R11 look-injected condition; additional
+repetitions and other matrix rows remain pending. The tracker
 starts do not prove lunge contact or damage. No true-legacy rerun is queued;
 the acceptance work is DATA-default per C-1104.
 
 The acceptance matrix comprises 12 DATA-default PIE cases. C-1090 supplied two
-DATA-default samples each for R9–R11; those observations do not cover the
-specified look-injected R11 condition. For every remaining or incomplete row,
+DATA-default samples each for R9–R11 without look injection; C-1105 separately
+filled the B+C look-injected R11 condition. For every remaining or incomplete row,
 use a fresh process per case. Camera CVar values must be fully explicit.
 Preserve mode, verified DATA route witness, speed, move list, look injection,
 build ID, start/end, and terminal status in a per-run log and video. If any run
@@ -79,9 +79,9 @@ validation remain separate gates.
 
 Claude reports Lead run `P_C1105_BCLOOK`, BUILD-269, DATA-witnessed, attack
 modes A4/A6 with `CAM_LOOK_TEST=1`: 9 tracker starts, 0 intrusions, 0 hides.
-With C active and B standing down, injected look moved control yaw 41�; the
-view-to-boss angle was 25� before input, 123� during input, 37� at +1 s and
-24� at +2�4 s. This fills the specifically requested look-injected R11 cell;
+With C active and B standing down, injected look moved control yaw 41°; the
+view-to-boss angle was 25° before input, 123° during input, 37° at +1 s and
+24° at +2–4 s. This fills the specifically requested look-injected R11 cell;
 it is one bounded DATA-default observation and does not establish other
 timings, terrains, packaged behavior, or a route comparison. Source: mailbox
 C-1105; Lead logged the TEST_PLAN row.

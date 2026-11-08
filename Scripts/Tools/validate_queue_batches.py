@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the current AA/AB Codex queues contain ten ordered groups of five."""
+"""Validate supported Codex queues contain 50 ordered rows in ten groups of five."""
 from __future__ import annotations
 
 import argparse
@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 
 
-ROW = re.compile(r"^\|\s*(AA-C|AB-C)(\d{2})\s*\|\s*(.*?)\s*\|", re.MULTILINE)
+ROW = re.compile(r"^\|\s*((?:AA|AB|AT)-C)(\d{2})\s*\|\s*(.*?)\s*\|", re.MULTILINE)
 BATCH = re.compile(r"^## Batch (\d+)\b", re.MULTILINE)
 
 
@@ -28,7 +28,7 @@ def validate_queue(text: str, prefix: str) -> list[str]:
     if ids != expected:
         issues.append(f"{prefix}: table IDs must appear once in ascending 01..50 order")
 
-    if prefix == "AB-C":
+    if prefix in {"AB-C", "AT-C"}:
         headings = [int(value) for value in BATCH.findall(text)]
         if headings != list(range(1, 11)):
             issues.append("AB-C: batch headings must be exactly 1..10 in order")
@@ -43,8 +43,8 @@ def validate_queue(text: str, prefix: str) -> list[str]:
                 batch_for_row.append(active_batch)
         counts = [batch_for_row.count(number) for number in range(1, 11)]
         if counts != [5] * 10:
-            issues.append(f"AB-C: each numbered batch must contain five task rows; counts={counts}")
-    else:
+            issues.append(f"{prefix}: each numbered batch must contain five task rows; counts={counts}")
+    if prefix == "AA-C":
         marker_ids = [f"{match.group(1)}{match.group(2)}" for match in matches
                       if match.group(1) == prefix and "x- batch" in match.group(3).lower()]
         # C45 writes the next queue and C50 closes the lane instead of posting a
@@ -62,7 +62,8 @@ def main() -> int:
     args = parser.parse_args()
     root = args.root.resolve()
     cases = (("AA-C", root / "Documentation/Boss/QUEUE_AA.md"),
-             ("AB-C", root / "Documentation/Boss/QUEUE_AB.md"))
+             ("AB-C", root / "Documentation/Boss/QUEUE_AB.md"),
+             ("AT-C", root / "Documentation/Boss/QUEUE_AT.md"))
     issues: list[str] = []
     for prefix, path in cases:
         try:

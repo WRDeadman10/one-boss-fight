@@ -136,21 +136,23 @@ class CameraEngageProbeContract(unittest.TestCase):
         self.assertIn("def drive():", self.source)
         self.assertIn("def tick(dt):", self.source)
 
-    def test_bc_matrix_covers_four_option_states_both_routes_and_attack_and_look_fields(self):
+    def test_bc_matrix_covers_data_default_option_states_and_attack_and_look_fields(self):
         for case in range(12):
             self.assertIn("| R%d |" % case, self.matrix)
         for token in (
             "all off", "HideBossInside=1", "LockOnFraming=1",
-            "HideBossInside=1; LockOnFraming=1", "legacy", "data",
-            "CAM_ATTACK_MOVES=A4,A6", "look injection", "median and p90",
-            "hide duration distribution", "time to reacquire", "original matrix comprises 24 PIE runs",
+            "HideBossInside=1; LockOnFraming=1", "DATA-default", "legacy is a parity control",
+            "no true-legacy camera rerun", "CAM_ATTACK_MOVES=A4,A6", "look injection",
+            "median and p90", "hide duration distribution", "time to reacquire",
+            "acceptance matrix comprises 12 DATA-default PIE cases",
         ):
             self.assertIn(token.lower(), self.matrix.lower())
 
     def test_bc_matrix_preserves_pending_and_no_generalization_boundary(self):
-        self.assertIn("C-1090 has since supplied one B+C attack-mode PIE case", self.matrix)
+        self.assertIn("C-1090 supplied one B+C attack-mode PIE case", self.matrix)
+        self.assertIn("C-1105 later supplied the separate B+C-with-look DATA-default case", self.matrix)
+        self.assertIn("C-1105 filled the R11 look-injected condition", self.matrix)
         self.assertIn("R0–R8 remain pending", self.matrix)
-        self.assertIn("R9–R11 at speed 0.35", self.matrix)
         self.assertIn("A tracker start alone does not prove a hit or a lunge", self.matrix)
         self.assertIn("Owner selection and package", self.matrix)
 

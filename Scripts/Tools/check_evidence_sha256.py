@@ -12,7 +12,12 @@ ENTRY = re.compile(r"^([0-9a-fA-F]{64})(?:\s+(?:\d+\s+)?\*?)(.+?)\s*$")
 
 def check_manifest(manifest: Path) -> list[str]:
     issues: list[str] = []
-    for number, raw in enumerate(manifest.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+    root = manifest.resolve().parent
+    try:
+        lines = manifest.read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError as error:
+        return [f"{manifest}: cannot read manifest: {error}"]
+    for number, raw in enumerate(lines, 1):
         line = raw.strip()
         if not line or line.startswith("#"):
             continue
@@ -21,7 +26,10 @@ def check_manifest(manifest: Path) -> list[str]:
             issues.append(f"{manifest}:{number}: malformed manifest entry")
             continue
         expected, name = match.groups()
-        candidate = (manifest.parent / name.strip()).resolve()
+        candidate = (root / name.strip()).resolve()
+        if not candidate.is_relative_to(root):
+            issues.append(f"{manifest}:{number}: unsafe path escapes manifest root: {name.strip()}")
+            continue
         if not candidate.is_file():
             issues.append(f"{manifest}:{number}: missing {name.strip()}")
             continue

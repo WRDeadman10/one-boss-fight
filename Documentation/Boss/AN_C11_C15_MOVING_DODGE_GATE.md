@@ -1,7 +1,6 @@
 # AN-C11–C15: First Dodge Activation and Moving-Dodge Gate
 
-Status: offline prep complete; KI-199/KI-196 Lead build and PIE evidence pending.  
-Lead owns `ENGINE_LOCK`, build, Editor, and PIE. Codex did not run Unreal.
+Status: DATA-default PIE evidence is accepted for the bounded C-1076 moving cases; KI-199 root cause and package proof remain open, and KI-196 package proof remains open. Lead owns `ENGINE_LOCK`, build, Editor, and PIE. Codex did not run Unreal.
 
 ## C-1099 route-provenance correction
 

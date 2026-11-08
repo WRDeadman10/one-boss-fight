@@ -42,6 +42,10 @@ The offline contract fixes route/trial cardinality, exact five-run schedule, fou
 
 Stop/flag a trial if route differs, `draw_ready=True` or active input context is absent, the exact completion summary is missing, a required montage/tick/time sample is missing or malformed, or build/run identity is unavailable. The shared finish helper emits `[ERControlLatency] SUMMARY finished: all control samples recorded`; log watchers must match `SUMMARY finished:`. Matching the older `] finished:` pattern misses this marker and waits until timeout. Retain each failed raw log and failure output; do not substitute a different trial or silently omit it. If any one trial fails, report the batch incomplete and run a replacement only as a newly identified process, retaining both failed and replacement artifacts. Return all ten raw logs, ten single-run JSON receipts, aggregate JSON, exact commands, route/build/trial manifest, FPS/tick environment, and SHA-256 hashes.
 
+## KI-192 packaged intake (AT-C14)
+
+Use `AR_C31_C35_KI192_PACKAGE_INTAKE.md` as a receipt template for Lead-selected package repetitions. It preserves each run's route witness, trial ID, action/montage, requested hold, observed game tick, completion marker and hash. The fixed five-per-route PIE wrapper above is not a repetition mandate for packaged verification; record Lead's chosen package count and do not pad or merge trials to fit the PIE aggregator. Keep each Shipping Build ID, stage root, stamp, executable hash, UFS/non-UFS manifest hashes and smoke result tied to the same package.
+
 ## C35 — Interpretation boundary
 
 ### C-1100 Lead result (2026-11-08)
@@ -50,7 +54,7 @@ Lead returned 15 valid fresh-process receipts. DATA x10: tap/0.34/0.35 s selecte
 
 No threshold adjustment is made or recommended; retain the current input mapping and treat the ~0.36 s variation as a game-tick boundary observation.
 
-The offline wrapper's prospective schedule remains five fresh processes per route. C-1100's DATA x10/LEGACY x5 set has separate cardinality and must not be passed to the ten-run aggregate command above.
+The offline wrapper's prospective PIE schedule remains five fresh processes per route. C-1100's DATA x10/LEGACY x5 set has separate cardinality and must not be passed to the ten-run aggregate command above.
 
 ### Future packaged gate (separate from C-1100 PIE closure)
 

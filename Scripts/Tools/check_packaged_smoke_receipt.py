@@ -30,7 +30,9 @@ def validate(text: str, configuration: str, exit_code: int) -> list[str]:
     if forbidden:
         issues.append(f"unexpected validation result for other configuration; found {len(forbidden)}")
     if len(process) == 1:
-        status, action, _seconds = process[0]
+        status, action, seconds = process[0]
+        if int(seconds) < 1:
+            issues.append("process survival duration must be at least one second")
         if (status == "PASS") != (action == "remained alive for"):
             issues.append("process status contradicts process detail")
     if len(verdict) == 1 and len(process) == 1 and len(expected) == 1:

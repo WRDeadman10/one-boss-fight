@@ -100,6 +100,14 @@ class ChargeRepeatReceiptTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "exactly ten"):
             repeat.aggregate(paths[:-1], build_id="BUILD-269")
 
+    def test_aggregate_rejects_route_trial_identity_mismatch(self):
+        paths = self.make_runs()
+        value = json.loads(paths[0].read_text(encoding="utf-8"))
+        value["route"] = "data"
+        paths[0].write_text(json.dumps(value), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "trial identity does not match"):
+            repeat.aggregate(paths, build_id="BUILD-269")
+
     def test_aggregate_rejects_mixed_build_and_incomplete_samples(self):
         paths = self.make_runs()
         with self.assertRaisesRegex(ValueError, "build ID does not match"):

@@ -27,10 +27,23 @@ class CameraDefaultPlanTests(unittest.TestCase):
         self.assertFalse(result["config_mutation"])
         self.assertFalse(result["decision_reference_is_verified"])
         self.assertFalse(result["owner_approval_authenticated"])
-        self.assertEqual(result["proposed_config"]["file"], "Config/DefaultGame.ini")
-        self.assertEqual(result["proposed_config"]["applies_to"], ["Development", "Shipping"])
+        config = result["proposed_config"]
+        self.assertEqual(config["file"], "Config/DefaultGame.ini")
+        self.assertEqual(config["applies_to"], ["Development", "Shipping"])
+        self.assertEqual(config["section_proposal"], "[/Script/OneBossFight.RPGCameraRig]")
+        self.assertEqual(config["keys_proposal"], {
+            "bDefaultHideBossInside": "true",
+            "bDefaultLockOnFraming": "true",
+        })
+        self.assertIn("two bool UPROPERTY(Config)", config["runtime_type_proposal"])
+        self.assertEqual(config["missing_or_invalid_fallback"], "false/false (all behavior disabled)")
         self.assertEqual(result["runtime_plan"]["enabled_behaviors"], ["HideBossInside", "LockOnFraming"])
-        self.assertIn("C-1090 covers one B+C", result["evidence_gap"])
+        self.assertIn("outside !UE_BUILD_SHIPPING", result["runtime_plan"]["production_path"])
+        self.assertIn("Development-only test CVar", result["runtime_plan"]["cvar_and_config_rule"])
+        self.assertTrue(any("same-run activation witness" in gate for gate in result["gates"]))
+        self.assertFalse(any("legacy" in gate.lower() for gate in result["gates"]))
+        self.assertIn("C-1090 and C-1105 cover bounded B+C", result["evidence_gap"])
+        self.assertIn("C-1105", result["evidence_gap"])
 
     def test_planner_has_no_file_write_apply_or_save_api(self):
         tree = ast.parse(Path(planner.__file__).read_text(encoding="utf-8"))

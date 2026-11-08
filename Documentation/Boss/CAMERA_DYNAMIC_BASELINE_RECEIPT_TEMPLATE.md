@@ -1,6 +1,6 @@
 # Dynamic melee camera baseline receipt
 
-Use one copy per DATA-default capture stage. Lead owns PIE and fills the fields from the actual run; Codex has not run or pre-populated measurements. Capture a baseline before the owner chooses A/B/C, then repeat the same scenario after the selected option is implemented and reviewed. Do not schedule true-legacy parity reruns solely to restore route wording; legacy remains a parity control under the C-1104 policy.
+Use one copy per DATA-default capture stage. Lead owns PIE and fills the fields from the actual run; Codex has not run or pre-populated measurements. Use the C-1105 DATA-default result to inform owner choice; capture any requested baseline before implementation, then repeat the selected scenario after the owner-selected option is implemented and reviewed. Do not schedule true-legacy parity reruns solely to restore route wording; legacy remains a parity control under the C-1104 policy.
 
 ## Run identity
 
@@ -9,7 +9,7 @@ Use one copy per DATA-default capture stage. Lead owns PIE and fills the fields 
 - Project revision / working tree identifier: `[fill from run]`
 - Build ID and target: `[fill from run]`
 - Configuration and stage root: `[Development | Shipping; exact root]`
-- Encounter activation witness from the same raw log: `[route=legacy | route=data; exact line or missing]`
+- Same-run DATA activation witness for acceptance: `[EncounterActivation] route=data; exact line or missing`
 - Camera CVar requests and effective readback for every option: `[explicit values + source]`
 - Engine version / device / display mode: `[fill from run]`
 - PIE driver and command: `[fill from run]`

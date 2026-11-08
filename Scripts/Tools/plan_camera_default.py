@@ -36,6 +36,7 @@ def build_plan(choice: str | None, owner_decision_ref: str | None) -> dict[str, 
         return {**base, "status": "WAITING_FOR_OWNER", "reason": "a recorded owner decision reference is required"}
 
     values = CHOICES[normalized]
+    enabled = set(values)
     return {
         **base,
         "choice": normalized,
@@ -43,35 +44,39 @@ def build_plan(choice: str | None, owner_decision_ref: str | None) -> dict[str, 
         "proposed_config": {
             "file": "Config/DefaultGame.ini",
             "applies_to": ["Development", "Shipping"],
-            "section_proposal": "[/Script/OneBossFight.RPGCameraSettings]",
-            "key_proposal": "SelectedBehavior",
-            "value_proposal": normalized,
-            "missing_or_invalid_fallback": "None (all behavior disabled)",
+            "section_proposal": "[/Script/OneBossFight.RPGCameraRig]",
+            "keys_proposal": {
+                "bDefaultHideBossInside": "true" if "HideBossInside" in enabled else "false",
+                "bDefaultLockOnFraming": "true" if "LockOnFraming" in enabled else "false",
+            },
+            "runtime_type_proposal": "two bool UPROPERTY(Config) properties",
+            "missing_or_invalid_fallback": "false/false (all behavior disabled)",
         },
         "runtime_plan": {
             "enabled_behaviors": list(values),
-            "production_path": "selected behavior must be available in both configurations",
+            "production_path": "move B/C behavior bodies outside !UE_BUILD_SHIPPING and enable only the selected config behavior",
             "development_diagnostics": "remain guarded by !UE_BUILD_SHIPPING",
-            "development_cvars": "remain test controls and default off; do not become Shipping dependencies",
+            "development_cvars": "remain guarded test overrides and default off; do not become Shipping dependencies",
+            "cvar_and_config_rule": "effective behavior is selected config behavior OR its Development-only test CVar",
         },
         "required_readback": [
-            "effective SelectedBehavior in Development and Shipping",
-            "all-off fallback when config is missing or invalid",
-            "selected behavior and diagnostic symbols/logs in each staged build",
-            "packaged route behavior on legacy and selected-data routes",
+            "effective bDefaultHideBossInside and bDefaultLockOnFraming in Development and Shipping",
+            "false/false fallback when config keys are absent",
+            "selected behavior and Development-only diagnostic symbols/logs in each staged build",
+            "DATA-default packaged route behavior with same-run activation witness",
         ],
         "rollback_plan": [
-            "restore SelectedBehavior=None in the shared default config",
+            "restore bDefaultHideBossInside=false and bDefaultLockOnFraming=false in the shared default config",
             "keep Development-only experiments available only under their existing guard",
-            "rebuild and repackage both configurations, then rerun route smoke checks",
+            "rebuild and repackage both configurations, then rerun the DATA-default smoke check",
         ],
         "gates": [
             "owner confirms the supplied reference is a real decision and the selected option matches its exact text",
             "native config/source contract and full native suite pass",
             "Lead builds both configurations and checks staged config/symbols/logs",
-            "Lead packages and smoke-tests both routes; KI-037/KI-066 coverage reviewed",
+            "Lead packages and smoke-tests the DATA-default route with a same-run activation witness; KI-037/KI-066 coverage reviewed",
         ],
-        "evidence_gap": "C-1090 covers one B+C attack-mode case only; no owner choice, broad matrix, Shipping proof, or package proof is implied",
+        "evidence_gap": "C-1090 and C-1105 cover bounded B+C attack/look cases; no owner choice, full KI-037/KI-066 coverage, Shipping proof, or package proof is implied",
     }
 
 

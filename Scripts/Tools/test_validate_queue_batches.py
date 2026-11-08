@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
-import validate_queue_batches as validator
+from Scripts.Tools import validate_queue_batches as validator
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -19,6 +19,16 @@ def make_ab_queue() -> str:
     return "\n".join(parts)
 
 
+def make_at_queue() -> str:
+    parts = []
+    for batch in range(1, 11):
+        parts.append(f"## Batch {batch} — test")
+        for offset in range(1, 6):
+            number = (batch - 1) * 5 + offset
+            parts.append(f"| AT-C{number:02d} | Task {number} | accepts |")
+    return "\n".join(parts)
+
+
 def make_aa_queue() -> str:
     rows = []
     for number in range(1, 51):
@@ -30,13 +40,15 @@ def make_aa_queue() -> str:
 class QueueBatchValidatorTests(unittest.TestCase):
     def test_current_aa_and_ab_queues_pass(self):
         for prefix, path in (("AA-C", ROOT / "Documentation/Boss/QUEUE_AA.md"),
-                             ("AB-C", ROOT / "Documentation/Boss/QUEUE_AB.md")):
+                             ("AB-C", ROOT / "Documentation/Boss/QUEUE_AB.md"),
+                             ("AT-C", ROOT / "Documentation/Boss/QUEUE_AT.md")):
             with self.subTest(prefix=prefix):
                 self.assertEqual(validator.validate_queue(path.read_text(encoding="utf-8"), prefix), [])
 
     def test_fixtures_accept_exact_ten_groups_of_five(self):
         self.assertEqual(validator.validate_queue(make_aa_queue(), "AA-C"), [])
         self.assertEqual(validator.validate_queue(make_ab_queue(), "AB-C"), [])
+        self.assertEqual(validator.validate_queue(make_at_queue(), "AT-C"), [])
 
     def test_duplicate_missing_and_bad_grouping_are_rejected(self):
         duplicate = make_aa_queue().replace("| AA-C02 |", "| AA-C01 |", 1)
@@ -48,6 +60,11 @@ class QueueBatchValidatorTests(unittest.TestCase):
         regrouped = make_ab_queue().replace("## Batch 3 — test", "## Group 3 — test", 1)
         self.assertTrue(any("batch headings" in issue for issue in validator.validate_queue(regrouped, "AB-C")))
         self.assertTrue(any("counts=" in issue for issue in validator.validate_queue(regrouped, "AB-C")))
+
+        at_missing_row = make_at_queue().replace("| AT-C27 | Task 27 | accepts |\n", "", 1)
+        self.assertTrue(any("missing IDs" in issue for issue in validator.validate_queue(at_missing_row, "AT-C")))
+        at_wrong_heading = make_at_queue().replace("## Batch 8 — test", "## Group 8 — test", 1)
+        self.assertTrue(any("batch headings" in issue for issue in validator.validate_queue(at_wrong_heading, "AT-C")))
 
 
 if __name__ == "__main__":

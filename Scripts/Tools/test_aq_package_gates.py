@@ -51,8 +51,9 @@ class AqPackageGatesContract(unittest.TestCase):
     def test_camera_gate_is_conditional_on_owner_choice_and_combined_run(self):
         text = GATES
         self.assertIn("only after owner selection", text)
-        self.assertIn("c-1090 result covers only that attack-mode case", text)
-        self.assertIn("additional combined scenarios and package evidence remain open", text)
+        self.assertIn("c-1105 adds the requested look-injected data-default b+c case", text)
+        self.assertIn("remaining ki-037/ki-066 gates are owner choice and package proof", text)
+        self.assertIn("do not queue a true-legacy camera rerun", text)
         self.assertIn("does not depend on development-only diagnostic", text)
 
     def test_package_records_build_and_artifact_identity(self):

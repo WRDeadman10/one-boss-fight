@@ -44,6 +44,11 @@ class PackagedSmokeReceiptTests(unittest.TestCase):
         issues = MODULE.validate(SHIPPING, "Shipping", 1)
         self.assertIn("process exit code contradicts verdict", issues)
 
+    def test_zero_second_survival_cannot_be_accepted_as_smoke(self):
+        text = SHIPPING.replace("remained alive for 20 s", "remained alive for 0 s")
+        issues = MODULE.validate(text, "Shipping", 0)
+        self.assertIn("process survival duration must be at least one second", issues)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

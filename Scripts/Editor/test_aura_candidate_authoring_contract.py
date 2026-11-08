@@ -1,0 +1,53 @@
+"""Static contracts for the offline-safe Phase Two aura candidate authoring path."""
+import ast
+from pathlib import Path
+import unittest
+
+
+ROOT = Path(__file__).resolve().parents[2]
+AUTHOR = ROOT / "Scripts/Editor/create_phase_two_aura_boost.py"
+LAUNCHER = ROOT / "Scripts/Editor/run_create_phase_two_aura_boost.ps1"
+
+
+class AuraCandidateAuthoringContracts(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.author_text = AUTHOR.read_text(encoding="utf-8")
+        cls.author_tree = ast.parse(cls.author_text)
+        cls.launcher_text = LAUNCHER.read_text(encoding="utf-8")
+
+    def test_candidate_uses_distinct_source_and_destination_and_refuses_replacement(self):
+        self.assertIn('SOURCE_PATH = "/Game/OneBossFight/VFX/NS_Boss_PhaseTwoAura"', self.author_text)
+        self.assertIn('DEST_NAME = "NS_Boss_PhaseTwoAura_Boost"', self.author_text)
+        self.assertIn("if eal.does_asset_exist(DEST_PATH):", self.author_text)
+        self.assertIn("Leaving intact.", self.author_text)
+        self.assertIn("asset_tools.duplicate_asset(DEST_NAME, DEST_DIR, source_asset)", self.author_text)
+        self.assertIn("eal.save_loaded_asset(boost_asset)", self.author_text)
+        self.assertNotIn("delete_asset", self.author_text)
+        self.assertNotIn("rename_asset", self.author_text)
+
+    def test_existing_target_path_returns_before_any_duplicate_or_save(self):
+        create = next(node for node in self.author_tree.body if isinstance(node, ast.FunctionDef) and node.name == "create_candidate")
+        existing = next(node for node in create.body if isinstance(node, ast.If))
+        called = {
+            node.func.attr if isinstance(node.func, ast.Attribute) else node.func.id
+            for node in ast.walk(existing) if isinstance(node, ast.Call)
+        }
+        self.assertIn("does_asset_exist", called)
+        self.assertIn("load_asset", called)
+        self.assertNotIn("duplicate_asset", called)
+        self.assertNotIn("save_loaded_asset", called)
+        self.assertTrue(any(isinstance(node, ast.Return) for node in ast.walk(existing)))
+
+    def test_launcher_acquires_exclusive_lock_before_engine_and_cleans_only_owned_lock(self):
+        acquire = self.launcher_text.index("New-Item -Path $lockFile -ItemType File -ErrorAction Stop")
+        launch = self.launcher_text.index("& $editor $project")
+        cleanup = self.launcher_text.index("if ($lockAcquired -and (Test-Path $lockFile))")
+        self.assertLess(acquire, launch)
+        self.assertLess(launch, cleanup)
+        self.assertIn("$lockAcquired = $true", self.launcher_text)
+        self.assertNotIn("Test-Path $lockFile) {\n    Write-Error", self.launcher_text)
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)
