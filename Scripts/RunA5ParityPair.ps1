@@ -27,6 +27,14 @@ function Invoke-Arm([string]$Route) {
     & $runner -Script $driverScript -OutDir $out -Task "A5-$Driver-$Route" -NullRhi 0 -PyCmd 1 -TimeoutSeconds 1500
     if ($LASTEXITCODE -ne 0) { throw "Editor runner failed for $Route arm with exit $LASTEXITCODE" }
     $rawLog = Join-Path $out 'editor_raw.log'
+    $activationRoutes = @(
+        Select-String -LiteralPath $rawLog -Pattern '\[EncounterActivation\] route=(legacy|data)\b' |
+            ForEach-Object { [regex]::Match($_.Line, '\[EncounterActivation\] route=(legacy|data)\b').Groups[1].Value } |
+            Sort-Object -Unique
+    )
+    if ($activationRoutes.Count -ne 1 -or $activationRoutes[0] -ne $Route) {
+        throw "EncounterActivation route witness missing or mismatched for $Route; found: $($activationRoutes -join ',')"
+    }
     $final = Select-String -LiteralPath $rawLog -Pattern "\[$prefix\] (RESULT (\d+)/(\d+) passed|SUMMARY (\d+) checks, (\d+) failed)" | Select-Object -Last 1
     if (-not $final) { throw "Missing terminal result for $Driver $Route" }
     if ($final.Line -match 'RESULT (\d+)/(\d+) passed') { $passed = [int]$Matches[1]; $total = [int]$Matches[2] }

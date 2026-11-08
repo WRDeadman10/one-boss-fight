@@ -50,6 +50,21 @@ def buffered_input_tag(pawn):
         return "UNKNOWN"
 
 
+def first_dodge_snapshot(pawn, dodge, case, attempt):
+    """Read current first/repeat state only; does not inject or consume input."""
+    montage, position = plc.player_montage(pawn)
+    return {
+        "case": case,
+        "attempt": attempt,
+        "press_count": dodge.get_press_count(),
+        "backstep_count": dodge.get_backstep_count(),
+        "stage": dodge.get_stage_name(),
+        "active_montage": montage or "NONE",
+        "montage_position": "%.3f" % position if position is not None else "UNKNOWN",
+        "buffered_input_tag": buffered_input_tag(pawn),
+    }
+
+
 def wait(seconds):
     world = actors()[0]
     end = plc.game_time(world) + seconds
@@ -119,9 +134,11 @@ def run():
                 sampled = True
             now = plc.game_time(actors()[0])
             if attempt == 1 and now >= next_sample_time:
-                log("first_dodge_sample active_montage=%s montage_position=%s buffered_input_tag=%s moved_cm=%.1f stage=%s backstep_count=%d" %
-                    (montage or "NONE", "%.3f" % montage_position if montage_position is not None else "UNKNOWN",
-                     buffered_input_tag(pawn), (pawn.get_actor_location() - p0).length(), dodge.get_stage_name(), dodge.get_backstep_count()))
+                snapshot = first_dodge_snapshot(pawn, dodge, CASE, attempt)
+                log("first_dodge_sample stage_label=post_press_observation case=%s press=%d active_montage=%s montage_position=%s buffered_input_tag=%s moved_cm=%.1f stage=%s press_count=%d backstep_count=%d" %
+                    (snapshot["case"], snapshot["attempt"], snapshot["active_montage"], snapshot["montage_position"],
+                     snapshot["buffered_input_tag"], (pawn.get_actor_location() - p0).length(), snapshot["stage"],
+                     snapshot["press_count"], snapshot["backstep_count"]))
                 next_sample_time = now + 0.05
             yield 0.0
         label = ("first_standing_result" if CASE == "standing" else "first_moving_result") if attempt == 1 else "repeat_dodge_result_%d" % attempt

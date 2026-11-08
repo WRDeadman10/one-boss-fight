@@ -15,7 +15,6 @@ $ErrorActionPreference = 'Stop'
 $Root = Split-Path -Parent $PSScriptRoot
 if (-not $ShippingStage) {
     $ShippingStage = Join-Path $Root 'Saved\StagedBuilds_Shipping\Windows'
-    if (-not (Test-Path (Join-Path $ShippingStage 'OneBossFight.exe'))) { $ShippingStage = Join-Path $Root 'Saved\StagedBuilds\Windows' }
 }
 if (-not $DevelopmentStage) { $DevelopmentStage = Join-Path $Root 'Saved\StagedBuilds\Windows' }
 if ($DevelopmentOnly) { $IncludeDevelopment = $true }

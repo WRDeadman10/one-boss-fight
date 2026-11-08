@@ -23,7 +23,11 @@ $ErrorActionPreference = 'Stop'
 $scriptDir = $PSScriptRoot
 if (-not $scriptDir -and $MyInvocation.MyCommand.Path) { $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path }
 if (-not $scriptDir) { $scriptDir = Join-Path (Get-Location).Path 'Scripts' }
-if (-not $ExePath) { $ExePath = Join-Path $scriptDir '..\Saved\StagedBuilds\Windows\OneBossFight.exe' }
+if (-not $ExePath) {
+    $ProjectRoot = Split-Path -Parent $scriptDir
+    $StageName = if ($Configuration -eq 'Shipping') { 'StagedBuilds_Shipping' } else { 'StagedBuilds' }
+    $ExePath = Join-Path $ProjectRoot "Saved\$StageName\Windows\OneBossFight.exe"
+}
 
 $resolvedExe = (Resolve-Path -LiteralPath $ExePath -ErrorAction Stop).Path
 if (-not (Test-Path -LiteralPath $resolvedExe -PathType Leaf)) {

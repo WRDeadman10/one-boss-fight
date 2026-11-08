@@ -133,14 +133,28 @@ def _tick(dt):
     if S["phase"] == "warmup":
         # Match the accepted Lead probe: the first R2 charge draws the weapon;
         # exclude it from the latency samples.
-        if S["elapsed"] >= 0.5 and not S["warmup_sent"]:
+        # Lead hotfix C-1098: one warmup press no longer reliably draws (BUILD-269 runs drew on the 4th press),
+        # so retry the draw press up to 3 times until RPGBuildLoadout reports combat enabled and no montage plays.
+        loadout = comp(pawn, "RPGBuildLoadout")
+        drawn = bool(loadout and loadout.is_combat_enabled())
+        attempts = S.get("warmup_attempts", 0)
+        if not drawn and attempts < 3 and not S["warmup_sent"] and S["elapsed"] >= 0.5:
             set_key(pc, "Gamepad_RightTrigger", True)
             S["warmup_sent"] = True
-        if S["elapsed"] >= 1.2 and "Gamepad_RightTrigger" in S["held"]:
+            S["warmup_press_t"] = S["elapsed"]
+            S["warmup_attempts"] = attempts + 1
+        if S["warmup_sent"] and S["elapsed"] - S.get("warmup_press_t", 0.0) >= 0.7 and "Gamepad_RightTrigger" in S["held"]:
             set_key(pc, "Gamepad_RightTrigger", False)
-        if S["elapsed"] > 3.7:
+        if S["warmup_sent"] and "Gamepad_RightTrigger" not in S["held"] and S["elapsed"] - S.get("warmup_press_t", 0.0) >= 3.2:
+            S["warmup_sent"] = False  # allow another attempt if still sheathed
+        settled = drawn and player_montage(pawn)[0] is None and S["elapsed"] - S.get("warmup_press_t", 0.0) >= 3.2
+        exhausted = S.get("warmup_attempts", 0) >= 3 and not S["warmup_sent"]
+        if settled or exhausted:
+            log("draw_ready=%s attempts=%d" % (drawn, S.get("warmup_attempts", 0)))
             log("input_context_active=%s" % bool(comp(pawn, "RPGDodgeTiming") and
                 comp(pawn, "RPGDodgeTiming").is_elden_ring_input_active()))
+            if not drawn:
+                raise RuntimeError("weapon not drawn after 3 warmup presses; samples would be invalid")
             S.update(phase="arm", elapsed=0.0)
         return
 
@@ -178,7 +192,7 @@ def _tick(dt):
             _, key, down = events[event_index]
             set_key(pc, key, down)
             if down and case.get("move") and event_index == case.get("measure_event", 0):
-                speed = pawn.get_velocity().size()
+                speed = pawn.get_velocity().length()  # UE Python Vector has length(), not size() (Lead hotfix C-1098)
                 last_input = pawn.get_last_movement_input_vector()
                 log("moving_press case=%s speed_cm_s=%.1f last_input=%s" %
                     (case["name"], speed, last_input))

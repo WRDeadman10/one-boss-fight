@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DEFAULT = ROOT / 'Saved' / 'StagedBuilds' / 'Windows' / 'OneBossFight' / 'Binaries' / 'Win64' / 'OneBossFight-Win64-Shipping.exe'
+DEFAULT = ROOT / 'Saved' / 'StagedBuilds_Shipping' / 'Windows' / 'OneBossFight' / 'Binaries' / 'Win64' / 'OneBossFight-Win64-Shipping.exe'
 # DrawDebugCircle is not searched: it is also the name of an Engine function (UKismetSystemLibrary), so it is always in the binary; the project's own call is inside #if !UE_BUILD_SHIPPING (RPGBossShockwave.cpp).
 NAMES = ['rpg.Debug', 'LogRPGDebug']
 

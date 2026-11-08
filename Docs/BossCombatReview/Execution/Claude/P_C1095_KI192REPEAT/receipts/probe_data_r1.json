@@ -1,0 +1,43 @@
+{
+  "build_id": "BUILD-269",
+  "build_id_source": "explicit CLI/operator metadata; not present in parsed rows",
+  "input_sha256": "2ff072f29f081caa6a47f8c9378c08ff76ef59256a7b824e844d5d7421e0fd23",
+  "observations_are_game_tick_bounded_not_device_latency": true,
+  "parser_scope": "structured sample rows from raw Unreal logs; logger/category prefixes and unrelated LogRPG* rows are ignored",
+  "route": "data",
+  "samples": [
+    {
+      "case": "R2_hold_0.34s",
+      "montage": "Ability_E_Anim_Montage",
+      "montage_position_s": 0.029,
+      "nominal_requested_hold_s": 0.34,
+      "observed_game_tick_bounded_ms": 385.13,
+      "tick_s": 0.02616
+    },
+    {
+      "case": "R2_hold_0.35s_boundary",
+      "montage": "Ability_E_Anim_Montage",
+      "montage_position_s": 0.025,
+      "nominal_requested_hold_s": 0.35,
+      "observed_game_tick_bounded_ms": 390.05,
+      "tick_s": 0.02276
+    },
+    {
+      "case": "R2_hold_0.36s",
+      "montage": "Ability_E_Anim_Montage",
+      "montage_position_s": 0.026,
+      "nominal_requested_hold_s": 0.36,
+      "observed_game_tick_bounded_ms": 389.5,
+      "tick_s": 0.02564
+    },
+    {
+      "case": "R2_hold_0.70s",
+      "montage": "ChargedAttack_Montage",
+      "montage_position_s": 0.03,
+      "nominal_requested_hold_s": 0.7,
+      "observed_game_tick_bounded_ms": 368.66,
+      "tick_s": 0.02593
+    }
+  ],
+  "schema": "onebossfight.er-charge-receipt/v1"
+}

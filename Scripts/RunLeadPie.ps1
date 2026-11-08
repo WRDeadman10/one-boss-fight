@@ -4,6 +4,8 @@ environment, editor, or output files. Example:
   ./Scripts/RunLeadPie.ps1 -Script Scripts/Editor/pie_er_guard_counter.py `
     -Routes legacy,data -Env ER_GC_SYNTHETIC=1,ER_GC_ASSIGN=1 `
     -OutputDir Docs/BossCombatReview/Execution/Claude/P_C1006_GUARDCOUNTER -DryRun
+The legacy arm sets RPG_LEGACY_STARTUP=1; both route arms fail closed unless
+the raw editor log contains exactly the requested [EncounterActivation] route.
 #>
 param(
     [Parameter(Mandatory = $true)][string]$Script,
@@ -33,8 +35,8 @@ foreach ($entry in $Env) {
     if ($pair.Count -ne 2 -or $pair[0] -notmatch '^[A-Za-z_][A-Za-z0-9_]*$') {
         throw "Invalid -Env entry: $entry (expected NAME=value)"
     }
-    if ($pair[0] -eq 'H019_ENCOUNTER_DEFINITION') {
-        throw 'H019_ENCOUNTER_DEFINITION is selected by -Routes'
+    if ($pair[0] -in @('H019_ENCOUNTER_DEFINITION', 'RPG_LEGACY_STARTUP')) {
+        throw "$($pair[0]) is selected by -Routes"
     }
     $extraEnv[$pair[0]] = $pair[1]
 }
@@ -81,7 +83,8 @@ try {
             '-unattended', '-nosplash', '-nosound', "-abslog=`"$logPath`""
         )
         if ($DryRun) {
-            Write-Output "DRY RUN route=$route H019_ENCOUNTER_DEFINITION=$routeValue"
+            $legacyStartupValue = if ($route -eq 'legacy') { '1' } else { '(unset)' }
+            Write-Output "DRY RUN route=$route H019_ENCOUNTER_DEFINITION=$routeValue RPG_LEGACY_STARTUP=$legacyStartupValue"
             foreach ($name in ($extraEnv.Keys | Sort-Object)) { Write-Output "DRY RUN env $name=$($extraEnv[$name])" }
             if ($pythonPath -match '\s') { Write-Output 'DRY RUN note: live launch requires an available 8.3 ShortPath for this spaced script path' }
             Write-Output "DRY RUN command: `"$editorExe`" $($arguments -join ' ')"
@@ -90,7 +93,7 @@ try {
             continue
         }
         $savedEnv = @{}
-        $allNames = @($extraEnv.Keys) + @('H019_ENCOUNTER_DEFINITION')
+        $allNames = @($extraEnv.Keys) + @('H019_ENCOUNTER_DEFINITION', 'RPG_LEGACY_STARTUP')
         foreach ($name in $allNames) {
             $savedEnv[$name] = [System.Environment]::GetEnvironmentVariable($name, 'Process')
         }
@@ -100,6 +103,7 @@ try {
                 [System.Environment]::SetEnvironmentVariable($name, $extraEnv[$name], 'Process')
             }
             [System.Environment]::SetEnvironmentVariable('H019_ENCOUNTER_DEFINITION', $routeValue, 'Process')
+            [System.Environment]::SetEnvironmentVariable('RPG_LEGACY_STARTUP', $(if ($route -eq 'legacy') { '1' } else { '' }), 'Process')
             $process = Start-Process -FilePath $editorExe -ArgumentList $arguments -PassThru
             $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
             $seenMarker = $false
@@ -116,12 +120,18 @@ try {
                 $seenMarker = Select-String -LiteralPath $logPath -Pattern $StopMarker -SimpleMatch -Quiet
             }
             if (-not $process.HasExited) { $process.Kill(); $process.WaitForExit() }
-            $result = "${route}: finished=$seenMarker"
+            $activationRoutes = @(
+                Select-String -LiteralPath $logPath -Pattern '\[EncounterActivation\] route=(legacy|data)\b' |
+                    ForEach-Object { [regex]::Match($_.Line, '\[EncounterActivation\] route=(legacy|data)\b').Groups[1].Value } |
+                    Sort-Object -Unique
+            )
+            $routeVerified = ($activationRoutes.Count -eq 1 -and $activationRoutes[0] -eq $route)
+            $result = "${route}: finished=$seenMarker route_verified=$routeVerified"
             $statusLines.Add($result)
-            if (-not $seenMarker) { $hadFailure = $true }
+            if (-not $seenMarker -or -not $routeVerified) { $hadFailure = $true }
             if (Test-Path -LiteralPath $logPath) {
                 Get-Content -LiteralPath $logPath | Where-Object {
-                    ($prefix -and $_.Contains($prefix)) -or $_.Contains('Fatal error')
+                    ($prefix -and $_.Contains($prefix)) -or $_.Contains('[EncounterActivation]') -or $_.Contains('Fatal error')
                 } | Set-Content -LiteralPath $linesPath -Encoding utf8
             } else {
                 "MISSING LOG: $logPath" | Set-Content -LiteralPath $linesPath -Encoding utf8

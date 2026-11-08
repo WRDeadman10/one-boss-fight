@@ -1,0 +1,30 @@
+﻿[2026.11.08-18.16.15:995][  0]LogPython: [ERControlLatency] driver registered; observations are game-tick bounded, not device-latency claims
+[2026.11.08-18.16.16:642][  5]LogPython: [ERControlLatency] route=data selection=/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter
+[2026.11.08-18.16.25:967][191]LogPython: [ERControlLatency] setup boss held=True player_distance_cm=900
+[2026.11.08-18.16.42:413][772]LogPython: [ERControlLatency] draw_ready=True attempts=1
+[2026.11.08-18.16.42:413][772]LogPython: [ERControlLatency] input_context_active=True
+[2026.11.08-18.16.42:435][773]LogPython: [ERControlLatency] case=R1_tap_light baseline=(None, None)
+[2026.11.08-18.16.42:541][777]LogPython: [ERControlLatency] sample case=R1_tap_light montage=Attack_PrimaryA_Montage position=0.026 observed_ms=81.04 tick_s=0.02752
+[2026.11.08-18.16.47:114][947]LogPython: [ERControlLatency] case=R2_tap_strong baseline=(None, None)
+[2026.11.08-18.16.47:304][954]LogPython: [ERControlLatency] sample case=R2_tap_strong montage=Ability_E_Anim_Montage position=0.028 observed_ms=164.34 tick_s=0.02532
+[2026.11.08-18.16.51:774][122]LogPython: [ERControlLatency] case=R2_hold_0.34s baseline=(None, None)
+[2026.11.08-18.16.52:168][137]LogPython: [ERControlLatency] sample case=R2_hold_0.34s montage=Ability_E_Anim_Montage position=0.026 observed_ms=371.74 tick_s=0.02689
+[2026.11.08-18.16.56:658][308]LogPython: [ERControlLatency] case=R2_hold_0.35s_boundary baseline=(None, None)
+[2026.11.08-18.16.57:083][324]LogPython: [ERControlLatency] sample case=R2_hold_0.35s_boundary montage=Ability_E_Anim_Montage position=0.026 observed_ms=395.92 tick_s=0.02514
+[2026.11.08-18.17.01:568][495]LogPython: [ERControlLatency] case=R2_hold_0.36s baseline=(None, None)
+[2026.11.08-18.17.01:988][511]LogPython: [ERControlLatency] sample case=R2_hold_0.36s montage=Ability_E_Anim_Montage position=0.026 observed_ms=388.52 tick_s=0.02589
+[2026.11.08-18.17.06:497][683]LogPython: [ERControlLatency] case=R2_hold_0.70s baseline=(None, None)
+[2026.11.08-18.17.06:891][698]LogPython: [ERControlLatency] sample case=R2_hold_0.70s montage=ChargedAttack_Montage position=0.026 observed_ms=369.00 tick_s=0.02548
+[2026.11.08-18.17.11:744][880]LogPython: [ERControlLatency] case=jump_R1_air_light baseline=(None, None)
+[2026.11.08-18.17.12:151][895]LogPython: [ERControlLatency] sample case=jump_R1_air_light montage=AM_ER_Attack_Air_Light position=0.027 observed_ms=84.79 tick_s=0.03001
+[2026.11.08-18.17.16:711][ 66]LogPython: [ERControlLatency] case=jump_R2_air_heavy baseline=(None, None)
+[2026.11.08-18.17.17:188][ 84]LogPython: [ERControlLatency] sample case=jump_R2_air_heavy montage=AM_ER_Attack_Air_Heavy_Plunge position=0.026 observed_ms=158.07 tick_s=0.02629
+[2026.11.08-18.17.21:679][253]LogPython: [ERControlLatency] case=dodge_standing_tap baseline=(None, None)
+[2026.11.08-18.17.21:760][256]LogPython: [ERControlLatency] sample case=dodge_standing_tap montage=AM_ER_Backstep_Mixamo_V2 position=0.000 observed_ms=52.89 tick_s=0.03209
+[2026.11.08-18.17.26:358][427]LogPython: [ERControlLatency] case=dodge_moving_tap baseline=(None, None)
+[2026.11.08-18.17.26:675][439]LogPython: [ERControlLatency] moving_press case=dodge_moving_tap speed_cm_s=596.7 last_input=<Struct 'Vector' (0x000001FC92898B00) {x: -1.000000, y: 0.000000, z: 0.000000}>
+[2026.11.08-18.17.26:812][444]LogPython: [ERControlLatency] sample case=dodge_moving_tap montage=Dodge_Small_Forward_Roll_Montage position=0.035 observed_ms=137.38 tick_s=0.02581
+[2026.11.08-18.17.31:338][617]LogPython: [ERControlLatency] case=dodge_double_tap baseline=(None, None)
+[2026.11.08-18.17.31:443][621]LogPython: [ERControlLatency] sample case=dodge_double_tap montage=AM_ER_Backstep_Mixamo_V2 position=0.026 observed_ms=79.84 tick_s=0.02568
+[2026.11.08-18.17.33:551][702]LogPython: [ERControlLatency] dodge_double_tap press_delta=2 last_gap_s=0.13074809685349464 last_press_full=False forced_rolls=0
+[2026.11.08-18.17.36:083][800]LogPython: [ERControlLatency] SUMMARY finished: all control samples recorded

@@ -3,8 +3,9 @@
   Cooks and stages a packaged Windows build of One Boss Fight.
 
 .DESCRIPTION
-  Wraps UAT BuildCookRun. Output goes to Saved\StagedBuilds\Windows (git-ignored).
-  Use Development for profiling captures and Shipping for final verification.
+  Wraps UAT BuildCookRun. Development defaults to Saved\StagedBuilds\Windows;
+  Shipping defaults to Saved\StagedBuilds_Shipping\Windows (git-ignored).
+  -StageDir can explicitly override the UAT staging root.
 
 .EXAMPLE
   .\Scripts\Package.ps1
@@ -15,6 +16,9 @@ param(
 	[string]$Configuration = 'Development',
 
 	[string]$EngineRoot = 'C:\Program Files\Epic Games\UE_5.5',
+
+	# Optional UAT staging root (the UAT parent of Windows). Relative paths are project-root-relative.
+	[string]$StageDir = '',
 
 	# Optional post-cook G044 + project VFX closure check. Supply a Lead-reviewed
 	# closure export and a normalized manifest captured from this exact package.
@@ -27,7 +31,30 @@ $ErrorActionPreference = 'Stop'
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $Project = Join-Path $ProjectRoot 'OneBossFight.uproject'
 $Uat = Join-Path $EngineRoot 'Engine\Build\BatchFiles\RunUAT.bat'
-$StageDir = Join-Path $ProjectRoot 'Saved\StagedBuilds'
+$DefaultStageRelative = if ($Configuration -eq 'Shipping') {
+	'Saved\StagedBuilds_Shipping'
+} else {
+	'Saved\StagedBuilds'
+}
+$StageWasOverridden = -not [string]::IsNullOrWhiteSpace($StageDir)
+if (-not $StageWasOverridden) {
+	$StageDir = Join-Path $ProjectRoot $DefaultStageRelative
+} elseif (-not [IO.Path]::IsPathRooted($StageDir)) {
+	$StageDir = Join-Path $ProjectRoot $StageDir
+}
+$StageDir = [IO.Path]::GetFullPath($StageDir)
+
+# Keep the built-in configuration destinations distinct. An explicit custom
+# root remains available for Lead workflows and is reported verbatim below.
+$OtherDefaultRelative = if ($Configuration -eq 'Shipping') {
+	'Saved\StagedBuilds'
+} else {
+	'Saved\StagedBuilds_Shipping'
+}
+$OtherDefaultStage = [IO.Path]::GetFullPath((Join-Path $ProjectRoot $OtherDefaultRelative))
+if (-not $StageWasOverridden -and $StageDir -eq $OtherDefaultStage) {
+	throw "Default $Configuration stage root collides with the other configuration: $StageDir"
+}
 
 if (-not (Test-Path $Uat)) { throw "RunUAT.bat not found at $Uat" }
 
