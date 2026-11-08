@@ -2,18 +2,21 @@
 from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 import math
+import ast
 import sys
 import types
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 PROBE = ROOT / "Scripts/Editor/pie_camera_engage.py"
+MATRIX = ROOT / "Documentation/Boss/AQ_C11_C15_BC_MATRIX.md"
 
 
 class CameraEngageProbeContract(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.source = PROBE.read_text(encoding="utf-8")
+        cls.matrix = MATRIX.read_text(encoding="utf-8")
         cls._old_unreal = sys.modules.get("unreal")
         fake = types.ModuleType("unreal")
 
@@ -52,8 +55,19 @@ class CameraEngageProbeContract(unittest.TestCase):
         self.assertEqual(configured.attack_moves, ("A4", "A6", "Close"))
         self.assertIn('tracker.start_move(move_id, True)', self.source)
         self.assertIn('hold_for_test(True)', self.source)
-        self.assertIn("attack_distance_min_cm=80", self.source)
-        self.assertIn("attack_distance_max_cm=150", self.source)
+        self.assertIn("ATTACK_DISTANCE_MIN_CM = 80.0", self.source)
+        self.assertIn("ATTACK_DISTANCE_MAX_CM = 150.0", self.source)
+        self.assertIn('"ATTACK_START move=', self.source)
+        self.assertIn("attack_band_samples=%d", self.source)
+
+    def test_attack_band_summary_filters_out_of_band_distances(self):
+        values = [79.9, 80.0, 115.0, 150.0, 150.1, 798.0, float("nan")]
+        self.assertEqual(self.probe.attack_band_metrics(values), (3, 80.0, 150.0))
+        count, lower, upper = self.probe.attack_band_metrics([151.0, 798.0])
+        self.assertEqual(count, 0)
+        self.assertTrue(math.isnan(lower))
+        self.assertTrue(math.isnan(upper))
+        self.assertIn('band_count, band_min, band_max = attack_band_metrics(S["attack_dist"])', self.source)
 
     def test_probe_supports_manual_look_injection_switch(self):
         cfg = self.probe.read_configuration({"CAM_LOOK_TEST": "1"})
@@ -93,6 +107,52 @@ class CameraEngageProbeContract(unittest.TestCase):
         self.assertNotIn("save_loaded_asset", self.source)
         self.assertIn("pie_lead_common as plc", self.source)
         self.assertTrue(math.isfinite(self.probe.read_configuration({}).cam_speed))
+
+    def test_telemetry_helpers_do_not_mutate_world_assets_or_global_camera_state(self):
+        tree = ast.parse(self.source)
+        functions = {
+            node.name: node for node in tree.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        }
+        forbidden_calls = {
+            "set_editor_property", "save_asset", "save_loaded_asset",
+            "set_console_variable", "execute_console_command",
+            "set_control_rotation", "add_movement_input", "start_move",
+            "place_player", "reset_for_test", "wake", "hold_for_test",
+            "inject_action", "set_visibility", "set_hidden_in_game",
+        }
+        for name in ("attack_band_metrics", "mesh_inside", "capsule_inside", "sample"):
+            with self.subTest(function=name):
+                calls = {
+                    node.func.attr if isinstance(node.func, ast.Attribute)
+                    else node.func.id if isinstance(node.func, ast.Name) else ""
+                    for node in ast.walk(functions[name]) if isinstance(node, ast.Call)
+                }
+                self.assertFalse(calls & forbidden_calls, sorted(calls & forbidden_calls))
+                for node in ast.walk(functions[name]):
+                    if isinstance(node, ast.Attribute):
+                        self.assertFalse(node.attr.startswith("set_editor_property"))
+        self.assertIn("unreal.SystemLibrary.execute_console_command(None, cmd)", self.source)
+        self.assertIn("def drive():", self.source)
+        self.assertIn("def tick(dt):", self.source)
+
+    def test_bc_matrix_covers_four_option_states_both_routes_and_attack_and_look_fields(self):
+        for case in range(12):
+            self.assertIn("| R%d |" % case, self.matrix)
+        for token in (
+            "all off", "HideBossInside=1", "LockOnFraming=1",
+            "HideBossInside=1; LockOnFraming=1", "legacy", "data",
+            "CAM_ATTACK_MOVES=A4,A6", "look injection", "median and p90",
+            "hide duration distribution", "time to reacquire", "original matrix comprises 24 PIE runs",
+        ):
+            self.assertIn(token.lower(), self.matrix.lower())
+
+    def test_bc_matrix_preserves_pending_and_no_generalization_boundary(self):
+        self.assertIn("C-1090 has since supplied one B+C attack-mode PIE case", self.matrix)
+        self.assertIn("R0–R8 remain pending", self.matrix)
+        self.assertIn("R9–R11 at speed 0.35", self.matrix)
+        self.assertIn("A tracker start alone does not prove a hit or a lunge", self.matrix)
+        self.assertIn("Owner selection and package", self.matrix)
 
 
 if __name__ == "__main__":

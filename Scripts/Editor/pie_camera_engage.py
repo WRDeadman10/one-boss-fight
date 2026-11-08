@@ -23,7 +23,17 @@ CAMERA_CVARS = {
     "rpg.Camera.HideBossInside": 0,
     "rpg.Camera.LockOnFraming": 0,
 }
-CAMERA_MODES = {"orbit", "away", "retreat", "fixed"}
+CAMERA_MODES = {"orbit", "away", "retreat", "fixed", "attack"}
+TRACKER_START_MOVES = {"A2", "A4", "A5", "A6", "Close"}
+ATTACK_DISTANCE_MIN_CM = 80.0
+ATTACK_DISTANCE_MAX_CM = 150.0
+
+
+def attack_band_metrics(distances):
+    """Summarize only finite samples inside the documented attack-distance band."""
+    band = [distance for distance in distances
+            if math.isfinite(distance) and ATTACK_DISTANCE_MIN_CM <= distance <= ATTACK_DISTANCE_MAX_CM]
+    return len(band), min(band) if band else float("nan"), max(band) if band else float("nan")
 
 
 def read_configuration(env=None):
@@ -46,6 +56,12 @@ def read_configuration(env=None):
         raise ValueError("CAM_LOOK_TEST must be 0/1 or false/true")
     look_test = look_text in ("1", "true")
 
+    attack_moves = tuple(item.strip() for item in str(env.get("CAM_ATTACK_MOVES", "A4,A6")).split(",") if item.strip())
+    if not attack_moves or any(item not in TRACKER_START_MOVES for item in attack_moves):
+        raise ValueError("CAM_ATTACK_MOVES must be a comma-separated list of tracker StartMove IDs")
+    if len(set(attack_moves)) != len(attack_moves):
+        raise ValueError("CAM_ATTACK_MOVES must not contain duplicates")
+
     camera_cvars = dict(CAMERA_CVARS)
     seen = set()
     for entry in str(env.get("CAMERA_CVARS", "")).split(";"):
@@ -63,12 +79,13 @@ def read_configuration(env=None):
         seen.add(name)
         camera_cvars[name] = int(value_text)
 
-    return SimpleNamespace(mode=mode, cam_speed=cam_speed, look_test=look_test,
+    return SimpleNamespace(mode=mode, cam_speed=cam_speed, look_test=look_test, attack_moves=attack_moves,
                            camera_cvars=camera_cvars)
 
 
 CONFIG = read_configuration()
-S = {"gen": None, "done": False, "n": 0, "mesh_in": 0, "caps_in": 0, "unread": 0, "arm_short": 0, "dist": [], "hidden": 0}
+S = {"gen": None, "done": False, "n": 0, "mesh_in": 0, "caps_in": 0, "unread": 0, "arm_short": 0, "dist": [], "hidden": 0,
+     "attack_starts": 0, "attack_refusals": 0, "attack_dist": [], "attack_index": 0, "next_attack": 0.0}
 HANDLE = None
 
 
@@ -131,6 +148,8 @@ def sample(world, pc, pawn, boss):
     S["hidden"] += 1 if hidden else 0
     S["arm_short"] += 1 if arm_len < 300.0 else 0
     S["dist"].append(d)
+    if CONFIG.mode == "attack":
+        S["attack_dist"].append(d)
     if names or caps or S["n"] % 10 == 0 or os.environ.get("CAM_VERBOSE"):
         log("SAMPLE n=%d g=%.2f dist=%.0f arm=%.0f mesh_in=%s caps_in=%s hidden=%d unread=%d view_vs_control_yaw=%.0f view_vs_boss_yaw=%.0f control_yaw=%.1f bearing_to_boss=%.1f" %
             (S["n"], plc.game_time(world), d, arm_len, ",".join(names) or "-", caps, hidden, unread, yaw_gap, boss_off, pc.get_control_rotation().yaw, to_b))
@@ -149,13 +168,19 @@ def drive():
         enc.reset_for_test()
         yield from wait(1.0)
         enc.wake()
+        if CONFIG.mode == "attack":
+            enc.hold_for_test(True)
+    tracker = plc.component(boss, "RPGAttackTracker") if CONFIG.mode == "attack" else None
+    if CONFIG.mode == "attack" and not tracker:
+        raise RuntimeError("attack mode requires RPGAttackTracker")
     log("PAWN_COMPONENTS " + ",".join(sorted(set(c.get_class().get_name() for c in pawn.get_components_by_class(unreal.ActorComponent)))))
     log("CONTROLLER " + pc.get_class().get_name())
     plc.refill_player(boss)
     plc.enter_combat(pawn)
     yield from wait(2.0)
     o = boss.get_actor_location()
-    plc.place_player(pc, pawn, (o.x - 180.0, o.y, o.z + 20.0), 0.0)
+    start_distance = 115.0 if CONFIG.mode == "attack" else 180.0
+    plc.place_player(pc, pawn, (o.x - start_distance, o.y, o.z + 20.0), 0.0)
     yield from wait(0.5)
     t0 = plc.game_time(actors()[0])
     next_sample, next_refill = t0, t0
@@ -173,6 +198,10 @@ def drive():
         fx, fy = dx / dist, dy / dist
         side = 1.0 if int((g - t0) / 6.0) % 2 == 0 else -1.0
         radial = 0.8 if dist > 180.0 else (-0.8 if dist < 100.0 else 0.15)
+        if CONFIG.mode == "attack":
+            # Hold an awake boss for deterministic tracker-started attacks, while
+            # the player circles near the overlap band without teleporting.
+            radial = 0.75 if dist > 125.0 else (-0.75 if dist < 105.0 else 0.0)
         mv = unreal.Vector(-fy * side + fx * radial, fx * side + fy * radial, 0.0)
         if CONFIG.mode == "retreat":
             # walk straight away from the boss (pawn faces away, boom points back through the boss); reset to 70 cm every 1.4 s
@@ -200,6 +229,20 @@ def drive():
         elif mode == "fixed" and not S.get("fixed_set"):  # control set once, never again (lets C engage)
             S["fixed_set"] = True
             pc.set_control_rotation(unreal.Rotator(0.0, -12.0, to_boss + 150.0))
+        elif mode == "attack" and CONFIG.camera_cvars["rpg.Camera.LockOnFraming"] == 0:
+            # Keep the camera aimed through the boss to exercise B during actual
+            # attacks; when C is enabled, let lock-on own automatic framing.
+            pc.set_control_rotation(unreal.Rotator(0.0, -12.0, to_boss + 180.0))
+        if mode == "attack" and g >= S["next_attack"] and ATTACK_DISTANCE_MIN_CM <= dist <= ATTACK_DISTANCE_MAX_CM and tracker.is_neutral():
+            move_id = CONFIG.attack_moves[S["attack_index"] % len(CONFIG.attack_moves)]
+            started = bool(tracker.start_move(move_id, True))
+            log("ATTACK_START move=%s started=%s distance_cm=%.1f" % (move_id, started, dist))
+            if started:
+                S["attack_starts"] += 1
+                S["attack_index"] += 1
+            else:
+                S["attack_refusals"] += 1
+            S["next_attack"] = g + (3.5 if started else 1.0)
         if g >= next_refill:
             plc.refill_player(boss)
             next_refill = g + 2.0
@@ -219,8 +262,9 @@ def finish(reason):
         HANDLE = None
     d = S["dist"] or [float("nan")]
     effective_cvars = ";".join("%s %d" % pair for pair in CONFIG.camera_cvars.items())
-    log("SUMMARY mode=%s route=%s cvars=%s finished=%s samples=%d mesh_inside=%d capsule_inside=%d arm_lt300=%d boss_mesh_hidden=%d unreadable=%d dist_min=%.0f dist_max=%.0f boss_off_last10_avg=%.0f" %
-        (CONFIG.mode, ROUTE, effective_cvars, reason, S["n"], S["mesh_in"], S["caps_in"], S["arm_short"], S["hidden"], S["unread"], min(d), max(d), sum(S.get("boss_off",[0])[-10:]) / max(1, len(S.get("boss_off",[0])[-10:]))))
+    band_count, band_min, band_max = attack_band_metrics(S["attack_dist"])
+    log("SUMMARY mode=%s route=%s cvars=%s finished=%s samples=%d mesh_inside=%d capsule_inside=%d arm_lt300=%d boss_mesh_hidden=%d unreadable=%d dist_min=%.0f dist_max=%.0f boss_off_last10_avg=%.0f attack_moves=%s attack_starts=%d attack_refusals=%d attack_band_samples=%d attack_band_min_cm=%.0f attack_band_max_cm=%.0f" %
+        (CONFIG.mode, ROUTE, effective_cvars, reason, S["n"], S["mesh_in"], S["caps_in"], S["arm_short"], S["hidden"], S["unread"], min(d), max(d), sum(S.get("boss_off",[0])[-10:]) / max(1, len(S.get("boss_off",[0])[-10:])), ",".join(CONFIG.attack_moves), S["attack_starts"], S["attack_refusals"], band_count, band_min, band_max))
     plc.end_play()
 
 
