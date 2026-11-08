@@ -2,11 +2,11 @@
 
 ## Purpose and limits
 
-Lead has passed B (HideBossInside) and C (LockOnFraming) individually in DATA-default PIE. C-1090 supplied one B+C attack-mode PIE case in each of two nominally labelled arms; C-1099 later established that both were DATA-default. These are two DATA-default runs, not a two-route comparison. This matrix compares baseline/off, B, C, and B+C on verified routes using the maintained `Scripts/Editor/pie_camera_engage.py`. It is not a general acceptance claim: C-1090 supplies observations for R9–R11 only in DATA-default mode; the R11 look-injected condition and all verified legacy cells remain pending.
+Lead has passed B (HideBossInside) and C (LockOnFraming) individually in DATA-default PIE. C-1090 supplied one B+C attack-mode PIE case in each of two nominally labelled arms; C-1099 later established that both were DATA-default. These are two DATA-default runs, not a two-route comparison. This matrix compares baseline/off, B, C, and B+C in the DATA-default acceptance scope using the maintained `Scripts/Editor/pie_camera_engage.py`. Per C-1104, legacy is a parity control only; no true-legacy camera rerun is queued to restore route wording. C-1090 supplies observations for R9–R11 only in DATA-default mode; C-1105 later supplied the separate B+C-with-look DATA-default case (BUILD-269, A4/A6, CAM_LOOK_TEST=1).
 
 ## Run matrix
 
-Use independent clean Editor processes for every row and route. Each run is 30 seconds of sampled scenario time after setup. For the C input check, set `CAM_LOOK_TEST=1` to inject the pack look action for one second at scenario time 10–11 s. Use the default Move list `A4,A6` for attack rows; it calls `RPGAttackTracker.start_move` while the boss is held awake and the player is in the 80–150 cm band.
+Use an independent clean Editor process for each DATA-default matrix row. Each run is 30 seconds of sampled scenario time after setup. For the C input check, set `CAM_LOOK_TEST=1` to inject the pack look action for one second at scenario time 10–11 s. Use the default Move list `A4,A6` for attack rows; it calls `RPGAttackTracker.start_move` while the boss is held awake and the player is in the 80–150 cm band.
 
 | Case | `CAM_MODE` | Camera CVars (all others 0) | `CAM_SPEED` | Additional inputs | Primary comparison |
 |---|---|---|---:|---|---|
@@ -38,17 +38,19 @@ DATA-default route, not a route comparison or a package/default verdict.
 | R10 B | both nominal arms (DATA-default) | 4 hide entries per run, entering at 96–104 cm (Lead C-1090 report) |
 | R11 B+C | both nominal arms (DATA-default) | 0 mesh-AABB and capsule intrusion samples; view-to-boss median 36–37° (Lead C-1090 report) |
 
-R0–R8 remain pending. R11's look-injected condition, all verified legacy-route
-cells, additional repetitions, and any unrepresented attack/terrain/input cases
-remain pending. The tracker starts do not prove lunge contact or damage.
+R0–R8 remain pending. R11's look-injected condition, additional repetitions,
+and any unrepresented attack/terrain/input cases remain pending. The tracker
+starts do not prove lunge contact or damage. No true-legacy rerun is queued;
+the acceptance work is DATA-default per C-1104.
 
-The target matrix comprises 24 PIE cells (12 cases on two verified routes).
-C-1090 supplied two DATA-default samples each for R9–R11; no verified legacy
-cell was completed. For every remaining run, use a fresh
-process per case and route. Camera CVar values must be fully explicit. Preserve
-mode, route, speed, move list, look injection, build ID, start/end, and terminal
-status in a per-run log and video. If any run lacks a SUMMARY, count it as a
-setup/driver failure; do not treat partial rows as a pass.
+The acceptance matrix comprises 12 DATA-default PIE cases. C-1090 supplied two
+DATA-default samples each for R9–R11; those observations do not cover the
+specified look-injected R11 condition. For every remaining or incomplete row,
+use a fresh process per case. Camera CVar values must be fully explicit.
+Preserve mode, verified DATA route witness, speed, move list, look injection,
+build ID, start/end, and terminal status in a per-run log and video. If any run
+lacks a SUMMARY, count it as a setup/driver failure; do not treat partial rows
+as a pass.
 
 ## Measurements and acceptance fields
 
@@ -70,4 +72,16 @@ validation remain separate gates.
 - Confirm driver registration, route and CVar logs; confirm boss/player components exist and encounter setup completed.
 - After each run, capture `[CamEngage] SUMMARY`, camera transition logs, `LogRPGAttack` lines, process exit, and the matching short video. Store with an immutable run label/build ID and file hashes.
 - Confirm PIE ended and all CVar environment variables were cleared before the next row.
-- Keep all 24 cells individually PENDING until exact artifacts and results are logged. Do not combine repetitions or routes into a single pass claim.
+- Keep each DATA-default acceptance cell pending until its exact scenario, route witness, CVar readback, artifacts, and result are logged. Do not combine repeated runs into a single pass claim.
+
+
+### C-1105 B+C look-injected R11 result
+
+Claude reports Lead run `P_C1105_BCLOOK`, BUILD-269, DATA-witnessed, attack
+modes A4/A6 with `CAM_LOOK_TEST=1`: 9 tracker starts, 0 intrusions, 0 hides.
+With C active and B standing down, injected look moved control yaw 41�; the
+view-to-boss angle was 25� before input, 123� during input, 37� at +1 s and
+24� at +2�4 s. This fills the specifically requested look-injected R11 cell;
+it is one bounded DATA-default observation and does not establish other
+timings, terrains, packaged behavior, or a route comparison. Source: mailbox
+C-1105; Lead logged the TEST_PLAN row.

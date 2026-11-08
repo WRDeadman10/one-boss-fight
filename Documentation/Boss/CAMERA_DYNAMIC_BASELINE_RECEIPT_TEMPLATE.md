@@ -1,11 +1,11 @@
 # Dynamic melee camera baseline receipt
 
-Use one copy per route and capture stage. Lead owns PIE and fills the fields from the actual run; Codex has not run or pre-populated measurements. Capture a baseline before the owner chooses A/B/C, then repeat the same scenario after the selected option is implemented and reviewed.
+Use one copy per DATA-default capture stage. Lead owns PIE and fills the fields from the actual run; Codex has not run or pre-populated measurements. Capture a baseline before the owner chooses A/B/C, then repeat the same scenario after the selected option is implemented and reviewed. Do not schedule true-legacy parity reruns solely to restore route wording; legacy remains a parity control under the C-1104 policy.
 
 ## Run identity
 
 - Stage: `[PRE-CHOICE BASELINE | POST-CHOICE COMPARISON]`
-- Route: `[legacy | data]`
+- Effective route witness: `[route=data; exact same-run activation line]`
 - Project revision / working tree identifier: `[fill from run]`
 - Build ID and target: `[fill from run]`
 - Configuration and stage root: `[Development | Shipping; exact root]`

@@ -13,11 +13,11 @@ Claude accepts `P_C1063_FIRSTDODGE/probe_{legacy,data}_lines.txt` as BUILD-263 d
 - C30: Lead run command follows; do not interpret game-tick observed delay as device latency.
 
 ```powershell
-& ./Scripts/RunLeadPie.ps1 -Script Scripts/Editor/pie_er_default_wiring_dodge.py -Routes @('legacy','data') -OutputDir Docs/BossCombatReview/Execution/Claude/P_AM_C26_C30_DODGE
+& ./Scripts/RunLeadPie.ps1 -Script Scripts/Editor/pie_er_default_wiring_dodge.py -Routes @('data') -OutputDir Docs/BossCombatReview/Execution/Claude/P_AM_C26_C30_DODGE
 ```
 
-Acceptance for this slice: both route logs show three `CHECK ... pass=True` rows and `RESULT pass=True checks=3/3`, with the raw press-time speed/input and exact montage names. Codex did not run Editor, PIE, build or package.
+Acceptance for this slice: the DATA-default log shows three `CHECK ... pass=True` rows and `RESULT pass=True checks=3/3`, with raw press-time speed/input and exact montage names. Legacy is not an acceptance run under C-1104. Codex did not run Editor, PIE, build or package.
 
 ## Future package return contract (AS-C29)
 
-For KI-196 or KI-198 package evidence, return separate configuration/stage identity (Build ID, `BuildStamp.txt`, manifest hashes, executable SHA-256), exact scenario/action, per-process same-run activation witness, and raw log path/hash plus packaged smoke result. A legacy row requires explicit `RPG_LEGACY_STARTUP=1` and `route=legacy` in that raw log; `data` also requires its activation witness. Report the measured controls and damage/counter outcome where relevant. A nominal route label alone cannot establish parity. Until Lead returns and reviews those package artifacts, both issues remain package-open.
+For KI-196 or KI-198 package acceptance, use DATA-default scope and return configuration/stage identity (Build ID, `BuildStamp.txt`, manifest hashes, executable SHA-256), exact scenario/action, same-run `[EncounterActivation] route=data` witness, raw log path/hash and packaged smoke result. Report measured controls and damage/counter outcome where relevant. Per C-1104, do not queue true-legacy first-dodge/camera/parry reruns to restore parity wording; any legacy control is outside this acceptance plan and requires separate authorization. Until Lead returns and reviews package artifacts, both issues remain package-open.

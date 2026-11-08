@@ -40,6 +40,30 @@ class StageIdentityTests(unittest.TestCase):
             self.assertTrue(any("same directory" in item for item in result["issues"]))
             self.assertTrue(any("configuration or format mismatch" in item for item in result["development"]["issues"]))
 
+    def test_resolved_alias_roots_are_a_collision(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            ship = root / "ship"
+            self.make_stage(ship, "Shipping", "a")
+            alias = root / "other" / ".." / "ship"
+            result = CHECK.validate(ship, alias)
+            self.assertEqual("FAIL", result["verdict"])
+            self.assertTrue(any("same directory" in item for item in result["issues"]))
+
+    def test_empty_required_artifact_fails_without_mutation(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            ship, dev = root / "ship", root / "dev"
+            self.make_stage(ship, "Shipping", "a")
+            self.make_stage(dev, "Development", "b")
+            target = ship / "Manifest_NonUFSFiles_Win64.txt"
+            target.write_bytes(b"")
+            before = target.read_bytes()
+            result = CHECK.validate(ship, dev)
+            self.assertEqual("FAIL", result["verdict"])
+            self.assertIn("Manifest_NonUFSFiles_Win64.txt", result["shipping"]["empty"])
+            self.assertEqual(before, target.read_bytes())
+
     def test_missing_stage_artifact_fails_without_writes(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

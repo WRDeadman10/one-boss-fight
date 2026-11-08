@@ -6,6 +6,10 @@ Status: read-only checker and offline contracts complete. The tool has not been 
 
 `Scripts/Tools/er_tier2_required_cook_assets.txt` is the canonical eight-package list: four approved ER player montages, boss parry recoil, phase-two aura, parry distortion material, and combat-feedback MPC. The checker requires exactly eight unique entries and does exact normalized package-path comparison. It does not infer required assets from `DirectoriesToAlwaysCook` or from file names outside the list.
 
+### Source-default path reconciliation (source reference only)
+
+The eight package paths were checked against current C++ soft-object defaults: the four ER montages are in `Source/OneBossFight/Player/RPGDodgeTiming.cpp` (`BackstepMontage`, `GuardCounterMontage`, `AirLightMontage`, `AirHeavyMontage`); the recoil montage and phase-two aura are in `Source/OneBossFight/Boss/RPGTier2BossPresentation.cpp`; and the parry distortion material plus combat-feedback collection are in `Source/OneBossFight/Player/RPGLegend.cpp`. These references agree with the canonical list. A source reference is not evidence that a cooked manifest contains the package or that a packaged process can load it.
+
 ## Checker contract
 
 `Scripts/Tools/ar_er_cook_manifest.py` reads a normalized `onebossfight.g044-cook-manifest/v1` JSON manifest. It reuses the existing schema validator, requires explicit CLI Build ID and configuration, and verifies they exactly match manifest metadata. It computes hashes of both the canonical required list and normalized manifest bytes, retains the manifest's source cook-manifest hash, rejects duplicate/malformed package rows and empty/missing identity, and reports missing required package paths.
@@ -23,7 +27,11 @@ Repeat with `--configuration Development` and that package's exact Build ID. `PA
 
 ## Offline verification
 
-`Scripts/Tools/test_ar_er_cook_manifest.py` covers all required paths present, one missing path, duplicate manifest path, wrong-root substitution, empty manifest, missing identity, mismatched Build ID/configuration, and a malformed one-entry required list. These are temporary synthetic fixtures and do not represent a package. See the current AR batch mailbox receipt for test count and syntax/link results.
+`Scripts/Tools/test_ar_er_cook_manifest.py` covers all required paths present, one missing path, duplicate manifest path, duplicate required-list path, wrong-root substitution, empty manifest, missing identity, mismatched Build ID/configuration, and a malformed one-entry required list. These are temporary synthetic fixtures and do not represent a package. See the current AR batch mailbox receipt for test count and syntax/link results.
+
+## TEST_PLAN claim-boundary audit (AT-C04)
+
+The TEST_PLAN default-wired hit row records the C-1042 DATA/legacy PIE result; it does not claim cook or packaged runtime. Its optional cook-root section requires native CookCoverage, exact same-build manifest comparison, and a separate packaged launch, but points to the generic G044 checker. This gate supplies the narrower eight-path AR/Tier 2 comparison and separates manifest presence, stage identity, and packaged smoke. No TEST_PLAN edit was made; renewed Lead authorization remains required by QUEUE_AT.
 
 ## Lead package and runtime return (AR-C25)
 

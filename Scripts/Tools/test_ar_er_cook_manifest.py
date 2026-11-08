@@ -70,6 +70,14 @@ class ERCookManifestTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "duplicate path"):
             CHECK.compare(self.required, self.manifest, self.value["build_id"], "Shipping")
 
+    def test_duplicate_required_package_path_is_rejected(self):
+        rows = self.required.read_text(encoding="utf-8").splitlines()
+        rows[-1] = rows[-2]
+        self.required.write_text("\n".join(rows) + "\n", encoding="utf-8")
+        self.save()
+        with self.assertRaisesRegex(ValueError, "duplicate package paths"):
+            CHECK.compare(self.required, self.manifest, self.value["build_id"], "Shipping")
+
     def test_wrong_root_does_not_match_required_path(self):
         self.value["packages"][-1] = "/Game/Other/NS_Boss_PhaseTwoAura"
         self.save()
