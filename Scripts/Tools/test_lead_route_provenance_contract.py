@@ -29,7 +29,9 @@ class LeadRouteProvenanceContractTests(unittest.TestCase):
     def test_receipt_ignores_default_startup_route_and_reads_probe_route(self):
         source = (ROOT / "Scripts" / "Tools" / "ar_charge_receipt.py").read_text(encoding="utf-8")
         self.assertIn("(?:ERControlLatency|Showcase)", source)
-        self.assertNotIn("ROUTE_RE = re.compile(r\"\\broute=", source)
+        self.assertIn("ACTIVATION_ROUTE_RE", source)
+        self.assertIn("disagrees with probe route", source)
+        self.assertIn("route_witness_file", source)
 
     def test_runner_handoff_documents_explicit_legacy_and_log_witness(self):
         doc = (ROOT / "Documentation" / "Boss" / "AR_C06_C10_KI192_RECEIPT_TOOL.md").read_text(encoding="utf-8")

@@ -1,9 +1,9 @@
 {
   "build_id": "BUILD-269",
   "build_id_source": "explicit CLI/operator metadata; not present in parsed rows",
-  "input_sha256": "fe10f08bed90c52002a6461464f97b5762405200ce765c4142c278f1e84e2d6c",
+  "input_sha256": "a4df86d3e786074b3d7e5f3cb4e6f6ef10bcf4737e234c7ba5ed77b99d2c8d31",
   "observations_are_game_tick_bounded_not_device_latency": true,
-  "parser_scope": "structured sample rows from raw Unreal logs; logger/category prefixes and unrelated LogRPG* rows are ignored",
+  "parser_scope": "[EncounterActivation] route witness is authoritative; probe route is cross-checked when present; filtered logs require a route witness file",
   "route": "legacy",
   "samples": [
     {

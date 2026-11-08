@@ -1,35 +1,56 @@
-"""Fixture coverage for stage mix-up and missing-identity refusal."""
-import tempfile
+"""Offline synthetic contracts for dual-configuration stage identity checks."""
 from pathlib import Path
-import sys
+import importlib.util
+import tempfile
 import unittest
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from check_stage_identity import REQUIRED, validate
+MODULE = Path(__file__).with_name("check_stage_identity.py")
+SPEC = importlib.util.spec_from_file_location("check_stage_identity_test_module", MODULE)
+CHECK = importlib.util.module_from_spec(SPEC)
+assert SPEC and SPEC.loader
+SPEC.loader.exec_module(CHECK)
 
 
 class StageIdentityTests(unittest.TestCase):
-    def make_stage(self, root, configuration, stamp=None):
-        for name in REQUIRED:
-            path = root / name
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(stamp if name.endswith("BuildStamp.txt") else "present",
-                            encoding="ascii")
+    def make_stage(self, root: Path, configuration: str, suffix: str) -> None:
+        for name in ("OneBossFight.exe", "Manifest_UFSFiles_Win64.txt", "Manifest_NonUFSFiles_Win64.txt"):
+            (root / name).parent.mkdir(parents=True, exist_ok=True)
+            (root / name).write_bytes((name + suffix).encode("ascii"))
+        stamp = f"OBF-{configuration.upper()}-20261108T000000Z-{suffix:0<8}"
+        stamp_path = root / "OneBossFight/Saved/BuildStamp.txt"
+        stamp_path.parent.mkdir(parents=True, exist_ok=True)
+        stamp_path.write_text(stamp, encoding="ascii")
 
-    def test_distinct_valid_stages_and_rejections(self):
-        with tempfile.TemporaryDirectory() as temp:
-            base = Path(temp)
-            ship, dev = base / "Shipping" / "Windows", base / "Development" / "Windows"
-            self.make_stage(ship, "Shipping", "OBF-SHIPPING-20261108T010000Z-a1b2c3d4")
-            self.make_stage(dev, "Development", "OBF-DEVELOPMENT-20261108T011000Z-b2c3d4e5")
-            self.assertEqual(validate(ship, dev)["verdict"], "PASS")
-            self.assertEqual(validate(ship, ship)["verdict"], "FAIL")
-            (dev / "OneBossFight/Saved/BuildStamp.txt").write_text("OBF-SHIPPING-20261108T011000Z-b2c3d4e5")
-            self.assertEqual(validate(ship, dev)["verdict"], "FAIL")
-            (dev / "Manifest_UFSFiles_Win64.txt").unlink()
-            self.assertIn("Manifest_UFSFiles_Win64.txt", str(validate(ship, dev)["issues"]))
-            (ship / "Manifest_NonUFSFiles_Win64.txt").write_text("")
-            self.assertIn("empty stage files", str(validate(ship, dev)["issues"]))
+    def test_distinct_valid_build_stamps_pass(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            ship, dev = root / "ship", root / "dev"
+            self.make_stage(ship, "Shipping", "a")
+            self.make_stage(dev, "Development", "b")
+            result = CHECK.validate(ship, dev)
+            self.assertEqual("PASS", result["verdict"])
+            self.assertEqual("OBF-SHIPPING-20261108T000000Z-a0000000", result["shipping"]["build_id"])
+
+    def test_shared_root_and_configuration_mismatch_fail(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "stage"
+            self.make_stage(root, "Shipping", "a")
+            result = CHECK.validate(root, root)
+            self.assertEqual("FAIL", result["verdict"])
+            self.assertTrue(any("same directory" in item for item in result["issues"]))
+            self.assertTrue(any("configuration or format mismatch" in item for item in result["development"]["issues"]))
+
+    def test_missing_stage_artifact_fails_without_writes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            ship, dev = root / "ship", root / "dev"
+            self.make_stage(ship, "Shipping", "a")
+            self.make_stage(dev, "Development", "b")
+            (ship / "Manifest_UFSFiles_Win64.txt").unlink()
+            result = CHECK.validate(ship, dev)
+            self.assertEqual("FAIL", result["verdict"])
+            self.assertIn("Manifest_UFSFiles_Win64.txt", result["shipping"]["missing"])
+            self.assertFalse((ship / "Manifest_UFSFiles_Win64.txt").exists())
 
 
 if __name__ == "__main__":

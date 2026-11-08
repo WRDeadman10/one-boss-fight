@@ -9,7 +9,7 @@ Status: five offline tasks complete; Lead post-wiring PIE pending.
 
 ## C-1076 disposition update
 
-Claude accepts `P_C1063_FIRSTDODGE/probe_{legacy,data}_lines.txt` as BUILD-263 defaults with no runtime montage assignment on both routes: first moving rolls 215.8/219.7 cm, then 287.8/218.2 and 271.9/249.4 cm; `backstep_count=0`. KI-196 is proven for the tested PIE moving cases. Package proof remains open. This supersedes the earlier “default-wired run still required” note above for these cases; it does not close KI-199's separate first-dodge-after-draw root-cause/package issue.
+Claude accepts `P_C1063_FIRSTDODGE/probe_{legacy,data}_lines.txt` as BUILD-263 defaults with no runtime montage assignment on both nominal arms: first moving rolls 215.8/219.7 cm, then 287.8/218.2 and 271.9/249.4 cm; `backstep_count=0`. C-1099 later established that both arms were DATA-default because legacy startup was not explicitly enabled; treat this as DATA-default PIE proof only, not route parity. KI-196 is proven for the tested moving case; package proof remains open. This supersedes the earlier “default-wired run still required” note above for the DATA-default case; it does not close KI-199's separate first-dodge-after-draw root-cause/package issue.
 - C30: Lead run command follows; do not interpret game-tick observed delay as device latency.
 
 ```powershell
@@ -17,3 +17,7 @@ Claude accepts `P_C1063_FIRSTDODGE/probe_{legacy,data}_lines.txt` as BUILD-263 d
 ```
 
 Acceptance for this slice: both route logs show three `CHECK ... pass=True` rows and `RESULT pass=True checks=3/3`, with the raw press-time speed/input and exact montage names. Codex did not run Editor, PIE, build or package.
+
+## Future package return contract (AS-C29)
+
+For KI-196 or KI-198 package evidence, return separate configuration/stage identity (Build ID, `BuildStamp.txt`, manifest hashes, executable SHA-256), exact scenario/action, per-process same-run activation witness, and raw log path/hash plus packaged smoke result. A legacy row requires explicit `RPG_LEGACY_STARTUP=1` and `route=legacy` in that raw log; `data` also requires its activation witness. Report the measured controls and damage/counter outcome where relevant. A nominal route label alone cannot establish parity. Until Lead returns and reviews those package artifacts, both issues remain package-open.

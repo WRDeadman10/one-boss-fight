@@ -2,6 +2,8 @@
 
 **Later C-1045 validation:** Lead accepted this Source change, BUILD-259 passed 485/485, and both-route PIE proved real A4 `Blocked`, counter arm, R2 acceptance and GuardCounter montage play with no player HP loss. Boss HP remained 2000 at a 250 cm starting distance; the C-1045 140 cm probe is the remaining damaging-hit gate. The unbuilt language below records the original X-1473 handoff state.
 
+**Route provenance correction (C-1099):** the nominal legacy and data arms in `P_C1043_A4COUNTER` were both DATA-default because the legacy arm did not set `RPG_LEGACY_STARTUP=1`. C-1047's accepted real-block/counter/HP observations therefore apply to the tested DATA-default PIE case only; they do not establish legacy parity. Package proof remains open.
+
 ## Evidence and decision
 
 Lead C-1044's clean two-route A4 probe observed `Status.Blocking=1`, active `GA_PlayerGuardBlock`, and one real low-sweep contact, but no `GA_Sword_BlockReaction` and no counter arm. `URPGBossLowSweep` sends its contact to `URPGDamageResolver`, which writes health directly and never invokes the pack's weapon-trace block reaction. The archived M2 damage spec treats A4 as blockable by default and lists a future `Blocked` outcome; no current decision declares A4 unblockable. The new path therefore opts in **A4 only**. A5/A6 and other resolver clients keep their existing policy until separately decided and tested.

@@ -6,6 +6,8 @@ Status: source/config fix and offline contracts complete. Lead dual-package veri
 
 `Scripts/Package.ps1` previously passed `Saved\StagedBuilds` to UAT for both configurations. It now defaults Development to `Saved\StagedBuilds` and Shipping to `Saved\StagedBuilds_Shipping`, so their Windows stages land at the roots already documented by `Scripts/MakeBenchKit.ps1`. The optional `-StageDir` parameter accepts an explicit relative (project-root-relative) or absolute UAT staging root. Configuration is still restricted to Development/Shipping; required-tool, G044 pair-input, and normalized-path setup checks occur before UAT invocation. Build stamps remain under `$StageDir\Windows\OneBossFight\Saved`, the same Build ID format remains, and `-G044RequiredFile` / `-G044CookManifest` continue to be passed to the same checker with the selected configuration.
 
+AS-C11–C15 consumer audit found and corrected one remaining Shipping default: `Scripts/CheckShippingFeatureSymbols.py` now targets `Saved/StagedBuilds_Shipping/Windows/.../OneBossFight-Win64-Shipping.exe`, matching `CheckShippingBinary.py` and `Gate.ps1`. The benchmark kit deliberately remaps project Shipping to kit `Saved/StagedBuilds/Windows` and Development to kit `Saved/StagedBuilds_Development/Windows`; `RunPerfExperiments.ps1` prefers the latter when present and its fallback label now describes that context-dependent mapping. These are static source findings; no stage contents were inspected.
+
 Updated consumers:
 
 - `Scripts/ShippingSmoke.ps1` now plans and runs its package, benchmark, and feature-symbol scan against `Saved\StagedBuilds_Shipping\Windows`, explicitly passing its parent to `Package.ps1 -StageDir`.
@@ -17,7 +19,7 @@ No cleanup, `-clean`, or deletion was added. Explicit caller-supplied stage root
 
 ## Offline contract coverage
 
-`Scripts/Tools/test_package_stage_roots.py` checks default separation and agreement with bench-kit roots; missing-Shipping fallback removal; preservation of `-ShippingStage` and `-DevelopmentStage` overrides; ShippingSmoke and packaged-smoke default routing; explicit path override support; required validation before UAT; and preservation of build-stamp/cook-check arguments. Seven static source contracts pass. They do not run PowerShell, UAT, cook, build, or package.
+`Scripts/Tools/test_package_stage_roots.py` checks default separation and agreement with bench-kit roots; missing-Shipping fallback removal; preservation of `-ShippingStage` and `-DevelopmentStage` overrides; ShippingSmoke and packaged-smoke default routing; explicit path override support; required validation before UAT; preservation of build-stamp/cook-check arguments; and both corrected symbol-scan and benchmark-stage labels. `Scripts/Tools/test_check_stage_identity.py` exercises distinct valid stamps, shared-root/configuration mismatch, and missing-artifact fail-closed behavior in temporary synthetic directories. These tests do not run PowerShell, UAT, cook, build, or package.
 
 ## Lead verification request (AR-C20)
 

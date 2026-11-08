@@ -2,7 +2,7 @@
 
 ## Purpose and limits
 
-Lead has passed B (HideBossInside) and C (LockOnFraming) individually. C-1090 has since supplied one B+C attack-mode PIE case on both routes; those measured rows are filled below. This matrix compares baseline/off, B, C, and B+C on both routes using the maintained `Scripts/Editor/pie_camera_engage.py`. It is not a general acceptance claim: only the exact C-1090 cases are complete; all other cells remain pending.
+Lead has passed B (HideBossInside) and C (LockOnFraming) individually in DATA-default PIE. C-1090 supplied one B+C attack-mode PIE case in each of two nominally labelled arms; C-1099 later established that both were DATA-default. These are two DATA-default runs, not a two-route comparison. This matrix compares baseline/off, B, C, and B+C on verified routes using the maintained `Scripts/Editor/pie_camera_engage.py`. It is not a general acceptance claim: C-1090 supplies observations for R9–R11 only in DATA-default mode; the R11 look-injected condition and all verified legacy cells remain pending.
 
 ## Run matrix
 
@@ -25,25 +25,26 @@ Use independent clean Editor processes for every row and route. Each run is 30 s
 
 ### C-1090 completed cases
 
-The following six rows are the exact attack-mode cases from `P_C1090_ATTACKCAM/`.
+The following six arm/mode cells are the exact attack-mode cases from `P_C1090_ATTACKCAM/`; both nominal route arms are DATA-default per C-1099.
 The runner did not set `CAM_SPEED`, so the maintained probe default 1.0 applies;
 it did not inject IA_Look. All six cases completed with nine A4/A6 tracker
-starts and zero refusals. These are one 30 s scenario per route, not repetitions
-or a package/default verdict.
+starts and zero refusals. Each row has two 30 s samples from the same effective
+DATA-default route, not a route comparison or a package/default verdict.
 
 | Matrix row | Route | Result |
 |---|---|---|
-| R9 off | legacy | 10 mesh-AABB / 9 boss-capsule inside samples; arm shorter than 300 cm: 0 |
-| R9 off | data | 11 mesh-AABB / 10 capsule inside samples; arm shorter than 300 cm: 5 |
-| R10 B | legacy and data | 4 hide entries per run, entering at 96–104 cm (Lead C-1090 report) |
-| R11 B+C | legacy and data | 0 mesh-AABB and capsule intrusion samples; view-to-boss median 36–37° (Lead C-1090 report) |
+| R9 off | nominal arm 1 (DATA-default) | 10 mesh-AABB / 9 boss-capsule inside samples; arm shorter than 300 cm: 0 |
+| R9 off | nominal arm 2 (DATA-default) | 11 mesh-AABB / 10 capsule inside samples; arm shorter than 300 cm: 5 |
+| R10 B | both nominal arms (DATA-default) | 4 hide entries per run, entering at 96–104 cm (Lead C-1090 report) |
+| R11 B+C | both nominal arms (DATA-default) | 0 mesh-AABB and capsule intrusion samples; view-to-boss median 36–37° (Lead C-1090 report) |
 
-R0–R8 remain pending. R9–R11 at speed 0.35, look-injected R11, additional
-repetitions, and any unrepresented attack/terrain/input cases remain pending.
-The tracker starts do not prove lunge contact or damage.
+R0–R8 remain pending. R11's look-injected condition, all verified legacy-route
+cells, additional repetitions, and any unrepresented attack/terrain/input cases
+remain pending. The tracker starts do not prove lunge contact or damage.
 
-The original matrix comprises 24 PIE runs. C-1090 completed R9–R11 on both
-routes; the other 18 runs remain pending. For every remaining run, use a fresh
+The target matrix comprises 24 PIE cells (12 cases on two verified routes).
+C-1090 supplied two DATA-default samples each for R9–R11; no verified legacy
+cell was completed. For every remaining run, use a fresh
 process per case and route. Camera CVar values must be fully explicit. Preserve
 mode, route, speed, move list, look injection, build ID, start/end, and terminal
 status in a per-run log and video. If any run lacks a SUMMARY, count it as a

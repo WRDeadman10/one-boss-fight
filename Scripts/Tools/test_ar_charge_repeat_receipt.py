@@ -9,7 +9,8 @@ from Scripts.Tools import ar_charge_repeat_receipt as repeat
 
 
 def raw_log(route="legacy", context=True, drawn=True, finished=True, cases=None):
-    rows = [f"LogPython: [ERControlLatency] route={route}",
+    rows = [f"LogTemp: Display: [EncounterActivation] route={route} reason=Fixture",
+            f"LogPython: [ERControlLatency] route={route}",
             f"LogPython: [ERControlLatency] input_context_active={str(context)}"]
     if drawn:
         rows.append("LogPython: [ERControlLatency] draw_ready=True attempts=1")
@@ -47,6 +48,16 @@ class ChargeRepeatReceiptTests(unittest.TestCase):
             repeat.stamp(self.write_log("legacy", 1, context=False), build_id="B", route="legacy", trial_index=1)
         with self.assertRaisesRegex(ValueError, "completion marker"):
             repeat.stamp(self.write_log("legacy", 1, finished=False), build_id="B", route="legacy", trial_index=1)
+
+    def test_stamp_requires_activation_witness_and_rejects_probe_disagreement(self):
+        path = self.write_log("legacy", 1)
+        original = path.read_text(encoding="utf-8")
+        path.write_text(original.replace("[EncounterActivation] route=legacy", "[EncounterActivation] route=data"), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "disagrees with probe route=legacy"):
+            repeat.stamp(path, build_id="B", route="legacy", trial_index=1)
+        path.write_text(original.replace("LogTemp: Display: [EncounterActivation] route=legacy reason=Fixture\n", ""), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "route witness"):
+            repeat.stamp(path, build_id="B", route="legacy", trial_index=1)
 
     def test_stamp_rejects_unconfirmed_or_failed_draw_warmup(self):
         with self.assertRaisesRegex(ValueError, "draw_ready=True"):

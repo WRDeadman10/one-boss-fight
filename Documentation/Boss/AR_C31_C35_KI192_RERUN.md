@@ -13,7 +13,7 @@ This gives 40 samples, five independent fresh-process observations for each hold
 
 ## C32 — Explicit per-run identity and batch receipt
 
-`Scripts/Tools/ar_charge_repeat_receipt.py` wraps the existing single-run parser without changing the probe's timing calls or sample payload. The `stamp` command requires the exact run route, Lead Build ID, and trial index 1–5. It verifies `draw_ready=True`, `input_context_active=True`, the exact normal completion summary, and route agreement, then emits stable trial IDs, raw-log SHA-256, and the four original observations. `draw_ready=True` is required so trials taken while still sheathed cannot be misreported as charge-boundary samples. The `aggregate` command accepts exactly ten receipts, requires BUILD ID consistency, exactly the five trial IDs on both routes, one copy of every canonical case per receipt, and records receipt hashes. It preserves per-trial montage/delay/tick observations and produces a descriptive median only; it makes no device-latency or causal claim.
+`Scripts/Tools/ar_charge_repeat_receipt.py` wraps the existing single-run parser without changing the probe's timing calls or sample payload. The `stamp` command requires the exact run route, Lead Build ID, and trial index 1–5. It verifies `draw_ready=True`, `input_context_active=True`, the exact normal completion summary, and route agreement, then emits stable trial IDs, raw-log SHA-256, and the four original observations. Route identity comes from the same-run `[EncounterActivation] route=...` witness; filtered rows alone are insufficient and a disagreeing probe label fails closed. `draw_ready=True` is required so trials taken while still sheathed cannot be misreported as charge-boundary samples. The `aggregate` command accepts exactly ten receipts, requires BUILD ID consistency, exactly the five trial IDs on both routes, one copy of every canonical case per receipt, and records receipt hashes. It preserves per-trial montage/delay/tick observations and produces a descriptive median only; it makes no device-latency or causal claim.
 
 Example per-run receipt (repeat for each log, changing route/index):
 
@@ -51,6 +51,10 @@ Lead returned 15 valid fresh-process receipts. DATA x10: tap/0.34/0.35 s selecte
 No threshold adjustment is made or recommended; retain the current input mapping and treat the ~0.36 s variation as a game-tick boundary observation.
 
 The offline wrapper's prospective schedule remains five fresh processes per route. C-1100's DATA x10/LEGACY x5 set has separate cardinality and must not be passed to the ten-run aggregate command above.
+
+### Future packaged gate (separate from C-1100 PIE closure)
+
+KI-192 package status remains OPEN. A Lead package receipt must identify the exact Shipping Build ID from `BuildStamp.txt`, configuration, stage root, executable SHA-256, both manifest hashes, packaged-smoke result, and the same-run `[EncounterActivation] route=...` witness. Keep true legacy explicit (`RPG_LEGACY_STARTUP=1`) and DATA activation evidenced in each run log. Capture the four existing holds (0.34, 0.35, 0.36, 0.70 s), individual selected action/montage, game tick, and completion marker. Lead sets the repetition count and environment before running; this offline gate adds no new count or threshold. Reject any label-only route, mixed-build receipt, missing witness, or incomplete hold set. This does not upgrade PIE to package evidence.
 
 Compare future route observations against adjacent hold controls and report counts plus individual results. Game-tick sampling does not establish physical latency or additional causality.
 

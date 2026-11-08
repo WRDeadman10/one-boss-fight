@@ -12,7 +12,7 @@ def find_tokens(data: bytes) -> list[str]:
 
 def main() -> int:
     binary = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(
-        "Saved/StagedBuilds/Windows/OneBossFight/Binaries/Win64/OneBossFight-Win64-Shipping.exe"
+        "Saved/StagedBuilds_Shipping/Windows/OneBossFight/Binaries/Win64/OneBossFight-Win64-Shipping.exe"
     )
     if not binary.is_file():
         print(f"FAIL no Shipping executable at {binary}")

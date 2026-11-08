@@ -8,9 +8,13 @@ Use one copy per route and capture stage. Lead owns PIE and fills the fields fro
 - Route: `[legacy | data]`
 - Project revision / working tree identifier: `[fill from run]`
 - Build ID and target: `[fill from run]`
+- Configuration and stage root: `[Development | Shipping; exact root]`
+- Encounter activation witness from the same raw log: `[route=legacy | route=data; exact line or missing]`
+- Camera CVar requests and effective readback for every option: `[explicit values + source]`
 - Engine version / device / display mode: `[fill from run]`
 - PIE driver and command: `[fill from run]`
 - Run ID, date/time, log path, capture/video path: `[fill from run]`
+- Raw log SHA-256 and process exit/terminal status: `[fill from run]`
 - Camera option selected by owner (post-choice only): `[A | B | C | pending]`
 
 ## Scenario and observations
@@ -26,6 +30,7 @@ Use one copy per route and capture stage. Lead owns PIE and fills the fields fro
 - Boss capsule `ECC_Camera` response: `[readback per route]`
 - Camera and player/boss silhouettes: `[capture references; describe only observed clipping/occlusion]`
 - Wall/floor safety evidence: `[capture/log reference and observed result]`
+- Post-run option reset / cleanup readback: `[all selected CVars returned to zero; evidence or not run]`
 
 ## Comparison and disposition
 

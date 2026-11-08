@@ -3,6 +3,10 @@
 Status: offline prep complete; KI-199/KI-196 Lead build and PIE evidence pending.  
 Lead owns `ENGINE_LOCK`, build, Editor, and PIE. Codex did not run Unreal.
 
+## C-1099 route-provenance correction
+
+The nominal legacy arms in C-1063/C-1067 did not enable `RPG_LEGACY_STARTUP=1`; treat those observations as DATA-default. They establish the tested DATA-default workaround only and do not establish legacy parity. A future Lead cell counts as legacy only when the runner explicitly selects legacy and that same raw run contains `[EncounterActivation] route=legacy`; the requested route label alone is insufficient. DATA also requires the same-run activation witness. Keep the prior raw logs unchanged.
+
 ## Findings and corrections
 
 - C-980's `P_C980_BACKSTEP` moving cases are runtime-assigned and report press-time movement (legacy 486.8 cm/s; data 474.2 cm/s) followed by the quick roll. They prove the movement classification in that assigned setup only. They do not prove the current Source default or first-dodge activation.
@@ -22,7 +26,11 @@ Run four fresh Editor processes under the Lead's lock, preserving a separate out
 | legacy | `moving` | nonzero press-time input and >=50 cm/s; `Dodge_Small_Forward_Roll_Montage`; forward travel |
 | data | `moving` | nonzero press-time input and >=50 cm/s; `Dodge_Small_Forward_Roll_Montage`; forward travel |
 
-For each fresh run, inspect `draw_ready`, scenario/expected montage, first-press `Can Activate Ability?` query, `CreatedAbilities` active flags, owned tags, stamina, `first_dodge_activation_trace` before/after, montage, and capsule displacement. The two repeats are controls, not substitutes for the first press. Preserve the exact log when a query is unavailable; `CanActivate` and next-tick active state are not the hidden pack `TryActivate` boolean.
+For each fresh run, inspect the activation route witness first, then `draw_ready`, scenario/expected montage, first-press `Can Activate Ability?` query, `CreatedAbilities` active flags, owned tags, stamina, `first_dodge_activation_trace` before/after, montage, and capsule displacement. The two repeats are controls, not substitutes for the first press. Preserve the exact log when a query is unavailable; `CanActivate` and next-tick active state are not the hidden pack `TryActivate` boolean.
+
+## Minimum Lead return fields (AS-C24)
+
+Return one row per route/scenario/process with: build ID and configuration; runner command and `RPG_LEGACY_STARTUP` value; activation witness; raw-log path and SHA-256; draw-ready state/attempt; standing or moving scenario and expected montage; first input timestamp/press-time movement; first-press CanActivate and reachable activation-trace fields; ability-active/tags/stamina; montage and capsule travel; repeat control results; full process exit/completion status. Mark unavailable fields explicitly rather than inferring them. Route status is decided by the activation witness. This schema does not require a new run count or claim root-cause proof.
 
 Example invocation (the Lead runner owns lock and route-specific output):
 

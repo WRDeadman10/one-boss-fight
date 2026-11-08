@@ -9,6 +9,8 @@ BENCH_KIT = ROOT / "Scripts" / "MakeBenchKit.ps1"
 SHIPPING_SMOKE = ROOT / "Scripts" / "ShippingSmoke.ps1"
 PACKAGED_SMOKE = ROOT / "Scripts" / "PackagedSmoke.ps1"
 SHIPPING_CHECK = ROOT / "Scripts" / "CheckShippingBinary.py"
+SHIPPING_FEATURE_SYMBOLS = ROOT / "Scripts" / "CheckShippingFeatureSymbols.py"
+PERF_EXPERIMENTS = ROOT / "Scripts" / "RunPerfExperiments.ps1"
 
 
 class PackageStageRootTests(unittest.TestCase):
@@ -19,6 +21,8 @@ class PackageStageRootTests(unittest.TestCase):
         cls.shipping_smoke = SHIPPING_SMOKE.read_text(encoding="utf-8")
         cls.packaged_smoke = PACKAGED_SMOKE.read_text(encoding="utf-8")
         cls.shipping_check = SHIPPING_CHECK.read_text(encoding="utf-8")
+        cls.shipping_feature_symbols = SHIPPING_FEATURE_SYMBOLS.read_text(encoding="utf-8")
+        cls.perf_experiments = PERF_EXPERIMENTS.read_text(encoding="utf-8")
 
     def test_default_shipping_and_development_roots_are_distinct(self):
         self.assertIn("if ($Configuration -eq 'Shipping')", self.package)
@@ -63,6 +67,14 @@ class PackageStageRootTests(unittest.TestCase):
         self.assertIn("--configuration $Configuration", self.package)
         self.assertIn('"-stagingdirectory=$StageDir"', self.package)
         self.assertIn("-StageDir $PackageStage", self.shipping_smoke)
+
+    def test_shipping_feature_symbol_default_uses_shipping_stage_root(self):
+        self.assertIn("Saved/StagedBuilds_Shipping/Windows/OneBossFight/Binaries/Win64/OneBossFight-Win64-Shipping.exe", self.shipping_feature_symbols)
+        self.assertNotIn("Saved/StagedBuilds/Windows/OneBossFight/Binaries/Win64/OneBossFight-Win64-Shipping.exe", self.shipping_feature_symbols)
+
+    def test_perf_experiments_keep_development_stage_priority_and_label(self):
+        self.assertIn("Saved\\StagedBuilds_Development\\Windows", self.perf_experiments)
+        self.assertIn("Saved\\StagedBuilds\\Windows (RunBenchmark default; Development in project, Shipping in kit)", self.perf_experiments)
 
 
 if __name__ == "__main__":

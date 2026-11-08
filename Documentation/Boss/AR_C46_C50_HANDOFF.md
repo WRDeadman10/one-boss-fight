@@ -14,7 +14,7 @@
 ## Five-batch record
 
 - **AR-C01–C05:** static KI-192 callback/threshold audit; Antigravity A-649 accepted the audit. C-1099 corrects C-971's nominal legacy arm to DATA-default, and C-1100 closes the tick-quantised boundary for PIE with true legacy evidence. No tuning.
-- **AR-C06–C10:** fail-closed receipt parser and Lead runner spec; route detection now uses the probe marker and the Lead runner validates the actual activation route. C-971 historical build identity remains unknown.
+- **AR-C06–C10:** fail-closed receipt parser and Lead runner spec; route identity comes from the same-run activation witness, with probe-label disagreement rejected and filtered input requiring an explicit witness file. C-971 historical build identity remains unknown.
 - **AR-C11–C15:** static KI-199 input/retry path audit; no root cause assigned.
 - **AR-C16–C20:** Development/Shipping stage-root separation and aligned consumers; C-1096 accepted offline contracts; Lead package remains parked.
 - **AR-C21–C25:** read-only eight-package cook-manifest checker; C-1097 accepted; no actual cook/package claim.
@@ -25,7 +25,7 @@
 
 ## Closeout verification
 
-The AR queue has ten five-task batches, IDs AR-C01 through AR-C50 in order, unique IDs, and a nonempty task/acceptance and external-gate column for each row. Historical offline suite baselines were 42/42 at closeout and 46/46 after C-1098; C-1099 adds route-runner and parser contracts (current combined count is in the C-1099 correction report). No Codex Unreal/Editor/PIE/build/cook/package/commit/push was performed.
+The AR queue has ten five-task batches, IDs AR-C01 through AR-C50 in order, unique IDs, and a nonempty task/acceptance and external-gate column for each row. C-1101 hotfix tests prove C-971 nominal legacy route mismatch is rejected while true-legacy and DATA activation witnesses are accepted. Historical suite results 42/42 and 46/46 predate this route hotfix; the current route/runner/repeat-receipt focused set includes 32 tests, with stage-root checks making the combined AS validation set 44. Claude C-1103 accepted X-1556/X-1557 after independently checking all three retained route fixtures and the filtered-input refusal; Claude reports that Antigravity regenerated all 10 P_C1095 receipts from full logs with activation-witnessed routes. Codex did not inspect or edit those raw logs. No Codex Unreal/Editor/PIE/build/cook/package/commit/push was performed.
 
 ## Latest mailbox review and file boundary
 
@@ -45,9 +45,9 @@ The nominal post-retirement legacy arms that only unset `H019_ENCOUNTER_DEFINITI
 
 ## Next authorized actions
 
-1. Claude posts the finished BUILD-269 KI-192 artifacts; Codex can then verify and aggregate without editing raw evidence.
+1. Lead reviews X-1555 / the C-1101 route-witness parser hotfix; no commit or raw-log edit by Codex.
 2. Lead supplies the outstanding Development/Shipping package, cook manifest, stage identity, and packaged route receipts for KI-193/KI-197.
-3. Owner records stamina policy and camera option; no implementation/default change is authorized before those decisions.
+3. Owner records stamina policy and camera option; no implementation/default change is authorized before those decisions. QUEUE_AS outlines the next bounded offline work through AS-C45.
 4. Lead supplies any requested KI-199 build/PIE/package evidence; root-cause attribution remains a separate reviewed task.
 
 Claude and the owner may choose the sequencing of those external gates. This offline queue closeout does not mark them complete.

@@ -6,7 +6,7 @@ Date: 2026-11-09. This audit changes route attribution only. Lead's gameplay obs
 
 Since the 2026-11-06 legacy-retirement decision, an unset `H019_ENCOUNTER_DEFINITION` selects the DATA default. A legacy run must set `RPG_LEGACY_STARTUP=1` or launch with `-RPGLegacyStartup`, and the same raw log must contain `[EncounterActivation] route=legacy`. A requested route or a driver label alone is not proof.
 
-`Scripts/RunLeadPie.ps1` now sets `RPG_LEGACY_STARTUP=1` for `-Routes legacy`, clears it for data, retains `[EncounterActivation]` lines in the filtered log, and fails the run unless the exact requested activation route is witnessed. `Scripts/RunA5ParityPair.ps1` already sets the explicit legacy environment and now applies the same fail-closed activation check. The KI-192 receipt parser reads the probe-specific `[ERControlLatency] route=...` (historical C-971 `[Showcase] route=...`) rather than confusing it with the DATA-default startup phrase.
+`Scripts/RunLeadPie.ps1` now sets `RPG_LEGACY_STARTUP=1` for `-Routes legacy`, clears it for data, retains `[EncounterActivation]` lines in the filtered log, and fails the run unless the exact requested activation route is witnessed. `Scripts/RunA5ParityPair.ps1` already sets the explicit legacy environment and now applies the same fail-closed activation check. The KI-192 receipt parser now derives route only from the same-run `[EncounterActivation] route=...` witness, cross-checks the probe label, rejects disagreement, and requires a same-run route-witness file for filtered logs without activation output (C-1101 hotfix; Lead review pending).
 
 ## Cited claims requiring route relabel
 
@@ -22,4 +22,4 @@ The cited claim families above are the audited Lead “both routes” statements
 
 ## Validation and boundary
 
-Offline contracts cover the runner's explicit environment and actual activation-marker gate, plus receipt parsing when a full editor log includes DATA-default startup text and a probe-specific legacy route. No Editor, PIE, build, package, commit, or raw live-run processing was performed by Codex.
+Offline contracts cover the runner's explicit environment and activation-marker gate, plus receipt behavior for full logs, filtered files with same-run witness files, route disagreements, and Lead-provided mislabelled/true-legacy/data fixture paths. No Editor, PIE, build, package, commit, or raw live-run processing was performed by Codex.

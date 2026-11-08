@@ -23,7 +23,7 @@ if (-not $StageDir) {
     if (Test-Path (Join-Path $dev 'OneBossFight.exe')) { $StageDir = $dev }
 }
 if ($DryRun) { Write-Host 'Stage: not used in dry-run; no game will launch.' }
-else { Write-Host "Stage: $(if ($StageDir) { $StageDir } else { 'Saved\StagedBuilds\Windows (Shipping)' })" }
+else { Write-Host "Stage: $(if ($StageDir) { $StageDir } else { 'Saved\StagedBuilds\Windows (RunBenchmark default; Development in project, Shipping in kit)' })" }
 $Experiments = @(
     # round 3 (2026-10-25): the fire shadows are the main cost (round 2); the GPU profile also shows the volumetric clouds (5.3 ms) and TSR (3.5 ms). R3_00 is repeated at the end and after every fourth experiment to see whether the machine state drifts (round 2 had slow early runs and fast later ones with no explanation).
     @{ N = 'R3_00_baseline';          C = '' },
