@@ -25,6 +25,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tier2")
 	TSoftObjectPtr<UNiagaraSystem> PhaseTwoAuraEffect;
 
+	/** Optional mesh socket for the phase-two aura. NAME_None preserves the approved mesh-origin attachment. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tier2")
+	FName AuraAttachSocket = NAME_None;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tier2")
 	TSoftObjectPtr<UAnimMontage> ParryRecoilMontage;
 

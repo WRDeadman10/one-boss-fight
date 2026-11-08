@@ -1,6 +1,6 @@
 # C-1065: First Dodge Activation Retry Hotfix
 
-Status: BUILD-263 compiled and the full Lead suite passed 486/486. The retained `P_SHOWCASE/showcase_def4.log` shows the reproduced first standing press after draw entering the one-shot retry, `activated=1`, `active_after=1`, `buffer_consumed=1`, then `AM_ER_Backstep_Mixamo_V2` playing with root motion (83.9 cm total displacement by the end of rep 1); i-frames also activated. Reps 2 and 3 moved 80.2 cm and 98.8 cm. This validates the recovery on the retained showcase case, not the underlying pack InputBuffer/Enhanced Input/context cause, both-route/moving behavior, or absence of a delayed duplicate in all timing cases. KI-199 remains open. Evidence folder: `Docs/BossCombatReview/Execution/Claude/B_C1067_DODGERETRY/`.
+Status: workaround proven in PIE on both routes, standing and moving; root cause not isolated; package open. BUILD-263 compiled and the full Lead suite passed 486/486. Lead's both-route first-dodge probe reports the first standing dodge after draw moves about 84 cm, the moving first dodge rolls 215.8/219.7 cm with backstep_count=0, repeats work, and the non-forced one-shot retry fires once with no duplicate. The retained `P_SHOWCASE/showcase_def4.log` confirms the first standing press's retry returned `activated=1`, `active_after=1`, `buffer_consumed=1`, then `AM_ER_Backstep_Mixamo_V2` played with root motion (83.9 cm total displacement by the end of rep 1); i-frames also activated. Package proof remains open. The source pack InputBuffer/Enhanced Input/context mechanism was not independently isolated. Evidence folder: `Docs/BossCombatReview/Execution/Claude/B_C1067_DODGERETRY/`.
 
 ## Evidence and bounded change
 
@@ -18,4 +18,8 @@ Development log `first_dodge_activation_retry` reports the selected path, method
 
 ## Lead validation and remaining acceptance
 
-BUILD-263 built successfully and the full native suite passed 486/486. The Lead showcase repro now passes the first standing case as summarized above. Still run `Scripts/Editor/probe_first_dodge_after_draw.py` fresh on legacy/data with `FIRST_DODGE_CASE=standing` and `moving`; require first moving quick-roll with press-time input/velocity and forward travel, repeated presses, and no buffered duplicate after the animation. Preserve logs and check the retry did not fire on an already-active ability. The underlying InputBuffer/trigger/context path remains unisolated. Keep KI-199 open until the broader route/case matrix and duplicate check pass.
+BUILD-263 built successfully and the full native suite passed 486/486. Lead C-1067 reports the fresh both-route standing/moving first-use matrix passed, repeats were normal, and there was no duplicate activation. KI-199 is closed for PIE. Keep package proof open, and reopen the issue if a first-use failure or delayed duplicate recurs; the original InputBuffer/trigger/context mechanism remains unisolated.
+
+## AO-C21–C25 diagnostic follow-through
+
+No new Lead root-cause readback has arrived. Codex's offline diagnostic handoff adds only `Get Buffered Input Tag` and current montage-position observations to the existing no-assignment probe. It does not expose the notify state's live InputBuffer window, both Enhanced Input trigger phases, or active mapping-context changes. It adds no new action binding, activation call, context mutation, montage assignment, or input delay; KI-199 remains unchanged. See `AO_C21_C25_FIRST_DODGE_DIAGNOSTIC_HANDOFF.md`.

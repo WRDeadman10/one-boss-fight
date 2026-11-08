@@ -6,6 +6,10 @@ Status: five offline tasks complete; Lead post-wiring PIE pending.
 - C27: `Scripts/Editor/pie_er_default_wiring_dodge.py` removes the C-980 runtime backstep assignment, logs the Source default, and records speed, last and pending input at the actual key-down for standing and moving taps. Moving input is applied for 0.30 s before press. Observed montage and press-time movement are separate checks; the probe requires standing `AM_ER_Backstep_Back` with input below 0.1, and moving `Dodge_Small_Forward_Roll_Montage` with input >=0.1 and speed >=50 cm/s. It also checks ground R1 remained usable.
 - C28: focused offline input/velocity boundary test passed 1/1. Python syntax and two-route runner dry run passed; no UE ran.
 - C29: KI-196 remains OPEN but now acknowledges C-980's corrected runtime-assigned movement observations. The new default-wired two-route PIE is still required before classifying the Source default in live play. The owner-facing controls status reflects this distinction.
+
+## C-1076 disposition update
+
+Claude accepts `P_C1063_FIRSTDODGE/probe_{legacy,data}_lines.txt` as BUILD-263 defaults with no runtime montage assignment on both routes: first moving rolls 215.8/219.7 cm, then 287.8/218.2 and 271.9/249.4 cm; `backstep_count=0`. KI-196 is proven for the tested PIE moving cases. Package proof remains open. This supersedes the earlier “default-wired run still required” note above for these cases; it does not close KI-199's separate first-dodge-after-draw root-cause/package issue.
 - C30: Lead run command follows; do not interpret game-tick observed delay as device latency.
 
 ```powershell

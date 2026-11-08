@@ -1,0 +1,33 @@
+﻿[2026.11.08-13.31.25:988][  0]LogPython: [CamEngage] driver registered route=data
+[2026.11.08-13.31.26:263][  1]LogPython: [CamEngage] CVAR rpg.Camera.BossBlocks 1
+[2026.11.08-13.31.29:230][  2]LogRPGCamera: BP_CombatPlayerCharacter_C_0: camera boom moved from the mesh to the capsule (pivot stays at -1800, 0, 98)
+[2026.11.08-13.31.29:230][  2]LogRPGCamera: BP_CombatPlayerCharacter_C_0: camera rig applied: arm 370 cm, probe 34 cm, pitch -70 to 32, lag 10 (max 60 cm)
+[2026.11.08-13.31.29:281][  2]LogRPGCamera: BossBlocks enabled for BP_ExampleGreatSwordBoss_C_3 (authored ECC_Camera response=0)
+[2026.11.08-13.31.37:209][229]LogPython: [CamEngage] SAMPLE n=10 g=8.24 dist=226 arm=372 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.38:314][268]LogPython: [CamEngage] SAMPLE n=20 g=9.34 dist=223 arm=365 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.39:456][309]LogPython: [CamEngage] SAMPLE n=30 g=10.46 dist=222 arm=366 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.40:499][346]LogPython: [CamEngage] SAMPLE n=40 g=11.54 dist=152 arm=366 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.41:641][387]LogPython: [CamEngage] SAMPLE n=50 g=12.68 dist=212 arm=361 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.42:912][430]LogPython: [CamEngage] SAMPLE n=60 g=13.90 dist=233 arm=374 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.44:065][472]LogPython: [CamEngage] SAMPLE n=70 g=15.06 dist=223 arm=367 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.46:003][508]LogPython: [CamEngage] SAMPLE n=80 g=16.73 dist=220 arm=362 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.47:102][548]LogPython: [CamEngage] SAMPLE n=90 g=17.83 dist=224 arm=369 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.48:238][588]LogPython: [CamEngage] SAMPLE n=100 g=18.96 dist=183 arm=375 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.49:362][628]LogPython: [CamEngage] SAMPLE n=110 g=20.09 dist=225 arm=363 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.50:473][668]LogPython: [CamEngage] SAMPLE n=120 g=21.20 dist=225 arm=365 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.51:594][708]LogPython: [CamEngage] SAMPLE n=130 g=22.32 dist=221 arm=371 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.52:721][748]LogPython: [CamEngage] SAMPLE n=140 g=23.45 dist=225 arm=376 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.53:832][788]LogPython: [CamEngage] SAMPLE n=150 g=24.56 dist=224 arm=364 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.54:949][828]LogPython: [CamEngage] SAMPLE n=160 g=25.68 dist=225 arm=364 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.56:043][868]LogPython: [CamEngage] SAMPLE n=170 g=26.77 dist=226 arm=376 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.57:166][908]LogPython: [CamEngage] SAMPLE n=180 g=27.89 dist=224 arm=369 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.58:282][948]LogPython: [CamEngage] SAMPLE n=190 g=29.01 dist=226 arm=367 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.31.59:407][988]LogPython: [CamEngage] SAMPLE n=200 g=30.13 dist=189 arm=375 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.32.00:518][ 28]LogPython: [CamEngage] SAMPLE n=210 g=31.24 dist=207 arm=370 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.32.01:612][ 68]LogPython: [CamEngage] SAMPLE n=220 g=32.34 dist=223 arm=365 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.32.02:742][108]LogPython: [CamEngage] SAMPLE n=230 g=33.47 dist=144 arm=360 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.32.03:858][148]LogPython: [CamEngage] SAMPLE n=240 g=34.59 dist=226 arm=360 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.32.04:991][188]LogPython: [CamEngage] SAMPLE n=250 g=35.72 dist=224 arm=365 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.32.06:090][228]LogPython: [CamEngage] SAMPLE n=260 g=36.82 dist=235 arm=391 mesh_in=- caps_in=False hidden=1 unread=4
+[2026.11.08-13.32.06:257][234]LogPython: [CamEngage] SUMMARY route=data cvars=rpg.Camera.BossBlocks 1 finished=complete samples=261 mesh_inside=0 capsule_inside=0 arm_lt300=0 boss_mesh_hidden=261 unreadable=261 dist_min=139 dist_max=240
+[2026.11.08-13.32.06:331][235]LogRPGCamera: BossBlocks restored BP_ExampleGreatSwordBoss_C_3 ECC_Camera response=0

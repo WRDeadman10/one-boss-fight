@@ -1,0 +1,59 @@
+﻿[2026.11.08-14.01.57:989][  0]LogPython: [CamEngage] driver registered route=legacy
+[2026.11.08-14.01.58:281][  1]LogPython: [CamEngage] CVAR rpg.Camera.HideBossInside 1
+[2026.11.08-14.01.58:281][  1]LogPython: [CamEngage] CVAR rpg.Camera.LockOnFraming 0
+[2026.11.08-14.02.01:357][  2]LogRPGCamera: BP_CombatPlayerCharacter_C_0: camera boom moved from the mesh to the capsule (pivot stays at -1800, 0, 98)
+[2026.11.08-14.02.01:357][  2]LogRPGCamera: BP_CombatPlayerCharacter_C_0: camera rig applied: arm 370 cm, probe 34 cm, pitch -70 to 32, lag 10 (max 60 cm)
+[2026.11.08-14.02.09:317][229]LogPython: [CamEngage] SAMPLE n=10 g=8.19 dist=189 arm=400 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=89 boom_vs_boss_yaw=91
+[2026.11.08-14.02.10:511][269]LogPython: [CamEngage] SAMPLE n=20 g=9.39 dist=184 arm=396 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=115 boom_vs_boss_yaw=65
+[2026.11.08-14.02.10:820][280]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=213.5
+[2026.11.08-14.02.10:851][281]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=213.7
+[2026.11.08-14.02.11:693][308]LogPython: [CamEngage] SAMPLE n=30 g=10.56 dist=116 arm=401 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=94 boom_vs_boss_yaw=86
+[2026.11.08-14.02.12:839][349]LogPython: [CamEngage] SAMPLE n=40 g=11.72 dist=187 arm=398 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=104 boom_vs_boss_yaw=76
+[2026.11.08-14.02.13:937][387]LogPython: [CamEngage] SAMPLE n=50 g=12.82 dist=187 arm=394 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=86 boom_vs_boss_yaw=94
+[2026.11.08-14.02.15:080][426]LogPython: [CamEngage] SAMPLE n=60 g=13.96 dist=179 arm=375 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=94 boom_vs_boss_yaw=86
+[2026.11.08-14.02.16:322][469]LogPython: [CamEngage] SAMPLE n=70 g=15.19 dist=188 arm=397 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=93 boom_vs_boss_yaw=87
+[2026.11.08-14.02.16:564][477]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=209.7
+[2026.11.08-14.02.17:222][479]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=257.8
+[2026.11.08-14.02.18:153][503]LogPython: [CamEngage] SAMPLE n=80 g=16.80 dist=136 arm=390 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=95 boom_vs_boss_yaw=85
+[2026.11.08-14.02.19:312][543]LogPython: [CamEngage] SAMPLE n=90 g=17.96 dist=181 arm=393 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=93 boom_vs_boss_yaw=87
+[2026.11.08-14.02.20:439][583]LogPython: [CamEngage] SAMPLE n=100 g=19.08 dist=115 arm=390 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=169 boom_vs_boss_yaw=11
+[2026.11.08-14.02.21:199][610]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=227.2
+[2026.11.08-14.02.21:228][611]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=224.9
+[2026.11.08-14.02.21:590][623]LogPython: [CamEngage] SAMPLE n=110 g=20.23 dist=185 arm=397 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=103 boom_vs_boss_yaw=77
+[2026.11.08-14.02.22:725][663]LogPython: [CamEngage] SAMPLE n=120 g=21.37 dist=185 arm=396 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=113 boom_vs_boss_yaw=67
+[2026.11.08-14.02.23:902][703]LogPython: [CamEngage] SAMPLE n=130 g=22.55 dist=186 arm=397 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=93 boom_vs_boss_yaw=87
+[2026.11.08-14.02.25:037][743]LogPython: [CamEngage] SAMPLE n=140 g=23.68 dist=186 arm=398 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=94 boom_vs_boss_yaw=86
+[2026.11.08-14.02.26:170][783]LogPython: [CamEngage] SAMPLE n=150 g=24.81 dist=144 arm=392 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=95 boom_vs_boss_yaw=85
+[2026.11.08-14.02.27:238][822]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=222.1
+[2026.11.08-14.02.27:274][823]LogPython: [CamEngage] SAMPLE n=160 g=25.92 dist=185 arm=397 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=113 boom_vs_boss_yaw=67
+[2026.11.08-14.02.27:302][824]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=232.4
+[2026.11.08-14.02.27:334][825]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=212.4
+[2026.11.08-14.02.27:488][831]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=222.4
+[2026.11.08-14.02.27:514][832]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=211.7
+[2026.11.08-14.02.27:652][837]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=213.9
+[2026.11.08-14.02.27:701][839]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=219.5
+[2026.11.08-14.02.27:728][840]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=209.2
+[2026.11.08-14.02.28:371][863]LogPython: [CamEngage] SAMPLE n=170 g=27.01 dist=152 arm=386 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=95 boom_vs_boss_yaw=85
+[2026.11.08-14.02.29:505][903]LogPython: [CamEngage] SAMPLE n=180 g=28.15 dist=186 arm=394 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=93 boom_vs_boss_yaw=87
+[2026.11.08-14.02.30:395][934]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=209.7
+[2026.11.08-14.02.30:424][935]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=217.1
+[2026.11.08-14.02.30:650][943]LogPython: [CamEngage] SAMPLE n=190 g=29.29 dist=147 arm=397 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=90 boom_vs_boss_yaw=90
+[2026.11.08-14.02.31:800][983]LogPython: [CamEngage] SAMPLE n=200 g=30.44 dist=187 arm=395 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=93 boom_vs_boss_yaw=87
+[2026.11.08-14.02.32:949][ 23]LogPython: [CamEngage] SAMPLE n=210 g=31.59 dist=183 arm=396 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=93 boom_vs_boss_yaw=87
+[2026.11.08-14.02.33:060][ 27]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=224.4
+[2026.11.08-14.02.33:095][ 28]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=215.0
+[2026.11.08-14.02.34:094][ 63]LogPython: [CamEngage] SAMPLE n=220 g=32.74 dist=199 arm=382 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=122 boom_vs_boss_yaw=58
+[2026.11.08-14.02.35:228][103]LogPython: [CamEngage] SAMPLE n=230 g=33.87 dist=187 arm=398 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=93 boom_vs_boss_yaw=87
+[2026.11.08-14.02.35:483][112]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=226.8
+[2026.11.08-14.02.35:515][113]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=217.8
+[2026.11.08-14.02.36:379][143]LogPython: [CamEngage] SAMPLE n=240 g=35.02 dist=116 arm=400 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=94 boom_vs_boss_yaw=86
+[2026.11.08-14.02.37:218][174]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=229.9
+[2026.11.08-14.02.37:248][175]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=219.8
+[2026.11.08-14.02.37:278][176]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=228.3
+[2026.11.08-14.02.37:310][177]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=218.7
+[2026.11.08-14.02.37:335][178]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=216.7
+[2026.11.08-14.02.37:479][183]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=225.6
+[2026.11.08-14.02.37:486][183]LogPython: [CamEngage] SAMPLE n=250 g=36.13 dist=185 arm=397 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=112 boom_vs_boss_yaw=68
+[2026.11.08-14.02.37:508][184]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=222.6
+[2026.11.08-14.02.37:560][186]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=214.9
+[2026.11.08-14.02.38:310][212]LogPython: [CamEngage] SUMMARY mode=away route=legacy cvars=rpg.Camera.HideBossInside 1;rpg.Camera.LockOnFraming 0 finished=complete samples=257 mesh_inside=0 capsule_inside=0 arm_lt300=0 boss_mesh_hidden=257 unreadable=0 dist_min=115 dist_max=212 boss_off_last10_avg=85

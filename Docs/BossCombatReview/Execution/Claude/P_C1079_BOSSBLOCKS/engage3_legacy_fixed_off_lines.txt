@@ -1,0 +1,32 @@
+﻿[2026.11.08-14.04.15:373][  0]LogPython: [CamEngage] driver registered route=legacy
+[2026.11.08-14.04.15:653][  1]LogPython: [CamEngage] CVAR rpg.Camera.HideBossInside 0
+[2026.11.08-14.04.15:653][  1]LogPython: [CamEngage] CVAR rpg.Camera.LockOnFraming 0
+[2026.11.08-14.04.18:522][  2]LogRPGCamera: BP_CombatPlayerCharacter_C_0: camera boom moved from the mesh to the capsule (pivot stays at -1800, 0, 98)
+[2026.11.08-14.04.18:522][  2]LogRPGCamera: BP_CombatPlayerCharacter_C_0: camera rig applied: arm 370 cm, probe 34 cm, pitch -70 to 32, lag 10 (max 60 cm)
+[2026.11.08-14.04.26:384][231]LogPython: [CamEngage] SAMPLE n=10 g=8.18 dist=193 arm=338 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=85 boom_vs_boss_yaw=66
+[2026.11.08-14.04.27:524][271]LogPython: [CamEngage] SAMPLE n=20 g=9.32 dist=193 arm=389 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=99 boom_vs_boss_yaw=103
+[2026.11.08-14.04.28:619][311]LogPython: [CamEngage] SAMPLE n=30 g=10.41 dist=181 arm=405 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=40 boom_vs_boss_yaw=90
+[2026.11.08-14.04.29:761][353]LogPython: [CamEngage] SAMPLE n=40 g=11.56 dist=187 arm=325 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=165 boom_vs_boss_yaw=78
+[2026.11.08-14.04.30:944][395]LogPython: [CamEngage] SAMPLE n=50 g=12.74 dist=184 arm=425 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=78 boom_vs_boss_yaw=63
+[2026.11.08-14.04.32:123][434]LogPython: [CamEngage] SAMPLE n=60 g=13.92 dist=201 arm=354 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=73 boom_vs_boss_yaw=67
+[2026.11.08-14.04.33:345][478]LogPython: [CamEngage] SAMPLE n=70 g=15.12 dist=185 arm=347 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=162 boom_vs_boss_yaw=76
+[2026.11.08-14.04.35:096][512]LogPython: [CamEngage] SAMPLE n=80 g=16.66 dist=176 arm=407 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=63 boom_vs_boss_yaw=78
+[2026.11.08-14.04.36:240][552]LogPython: [CamEngage] SAMPLE n=90 g=17.81 dist=183 arm=365 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=83 boom_vs_boss_yaw=87
+[2026.11.08-14.04.37:362][592]LogPython: [CamEngage] SAMPLE n=100 g=18.93 dist=188 arm=320 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=162 boom_vs_boss_yaw=81
+[2026.11.08-14.04.38:483][632]LogPython: [CamEngage] SAMPLE n=110 g=20.05 dist=184 arm=391 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=103 boom_vs_boss_yaw=88
+[2026.11.08-14.04.39:626][672]LogPython: [CamEngage] SAMPLE n=120 g=21.20 dist=186 arm=410 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=11 boom_vs_boss_yaw=57
+[2026.11.08-14.04.40:761][712]LogPython: [CamEngage] SAMPLE n=130 g=22.33 dist=156 arm=329 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=176 boom_vs_boss_yaw=88
+[2026.11.08-14.04.41:891][752]LogPython: [CamEngage] SAMPLE n=140 g=23.46 dist=186 arm=386 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=109 boom_vs_boss_yaw=88
+[2026.11.08-14.04.43:018][792]LogPython: [CamEngage] SAMPLE n=150 g=24.58 dist=174 arm=405 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=12 boom_vs_boss_yaw=90
+[2026.11.08-14.04.44:161][832]LogPython: [CamEngage] SAMPLE n=160 g=25.73 dist=188 arm=352 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=149 boom_vs_boss_yaw=87
+[2026.11.08-14.04.45:284][872]LogPython: [CamEngage] SAMPLE n=170 g=26.85 dist=197 arm=427 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=4 boom_vs_boss_yaw=58
+[2026.11.08-14.04.46:421][912]LogPython: [CamEngage] SAMPLE n=180 g=27.99 dist=186 arm=321 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=136 boom_vs_boss_yaw=77
+[2026.11.08-14.04.47:540][952]LogPython: [CamEngage] SAMPLE n=190 g=29.11 dist=183 arm=416 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=68 boom_vs_boss_yaw=87
+[2026.11.08-14.04.48:692][992]LogPython: [CamEngage] SAMPLE n=200 g=30.26 dist=129 arm=327 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=130 boom_vs_boss_yaw=86
+[2026.11.08-14.04.49:811][ 32]LogPython: [CamEngage] SAMPLE n=210 g=31.38 dist=167 arm=348 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=167 boom_vs_boss_yaw=86
+[2026.11.08-14.04.50:934][ 72]LogPython: [CamEngage] SAMPLE n=220 g=32.50 dist=183 arm=396 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=99 boom_vs_boss_yaw=87
+[2026.11.08-14.04.52:067][112]LogPython: [CamEngage] SAMPLE n=230 g=33.64 dist=186 arm=411 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=26 boom_vs_boss_yaw=54
+[2026.11.08-14.04.53:175][152]LogPython: [CamEngage] SAMPLE n=240 g=34.74 dist=173 arm=394 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=114 boom_vs_boss_yaw=87
+[2026.11.08-14.04.54:300][192]LogPython: [CamEngage] SAMPLE n=250 g=35.87 dist=186 arm=409 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=29 boom_vs_boss_yaw=87
+[2026.11.08-14.04.55:432][232]LogPython: [CamEngage] SAMPLE n=260 g=37.00 dist=189 arm=326 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=108 boom_vs_boss_yaw=65
+[2026.11.08-14.04.55:487][234]LogPython: [CamEngage] SUMMARY mode=fixed route=legacy cvars=rpg.Camera.HideBossInside 0;rpg.Camera.LockOnFraming 0 finished=complete samples=260 mesh_inside=0 capsule_inside=0 arm_lt300=0 boss_mesh_hidden=260 unreadable=0 dist_min=129 dist_max=334 boss_off_last10_avg=74

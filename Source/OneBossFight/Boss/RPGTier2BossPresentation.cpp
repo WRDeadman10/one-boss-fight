@@ -50,7 +50,7 @@ void URPGTier2BossPresentation::TickComponent(float DeltaTime, ELevelTick TickTy
 	UNiagaraSystem* Aura = Mesh ? PhaseTwoAuraEffect.LoadSynchronous() : nullptr;
 	if (Aura)
 	{
-		AuraComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(Aura, Mesh, NAME_None, FVector::ZeroVector,
+		AuraComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(Aura, Mesh, AuraAttachSocket, FVector::ZeroVector,
 			FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, true);
 		bAuraActivatedThisPhase = IsValid(AuraComponent);
 	}

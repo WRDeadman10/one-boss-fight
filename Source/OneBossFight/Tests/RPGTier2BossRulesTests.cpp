@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Misc/AutomationTest.h"
 #include "Boss/RPGTier2BossRules.h"
+#include "Boss/RPGTier2BossPresentation.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGTier2BossRulesTest,
@@ -26,6 +27,31 @@ bool FRPGTier2BossRulesTest::RunTest(const FString&)
 	TestFalse(TEXT("Tier 2 off does not recoil"), ShouldPlayParryRecoil(false, true));
 	TestTrue(TEXT("successful parry and enabled recoils"), ShouldPlayParryRecoil(true, true));
 	TestTrue(TEXT("a later distinct successful parry may recoil"), ShouldPlayParryRecoil(true, true));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGTier2AuraAttachSocketDefaultTest,
+	"OneBossFight.Art.Tier2Boss.AuraAttachSocketDefault",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGTier2AuraAttachSocketDefaultTest::RunTest(const FString&)
+{
+	const URPGTier2BossPresentation* DefaultPresentation = NewObject<URPGTier2BossPresentation>();
+	TestNotNull(TEXT("presentation component constructs"), DefaultPresentation);
+	if (!DefaultPresentation)
+	{
+		return false;
+	}
+	TestTrue(TEXT("default socket preserves mesh-origin attachment"), DefaultPresentation->AuraAttachSocket.IsNone());
+
+	URPGTier2BossPresentation* OptInPresentation = NewObject<URPGTier2BossPresentation>();
+	TestNotNull(TEXT("opt-in presentation component constructs"), OptInPresentation);
+	if (!OptInPresentation)
+	{
+		return false;
+	}
+	OptInPresentation->AuraAttachSocket = FName(TEXT("spine_03"));
+	TestEqual(TEXT("explicit socket is retained for an owner-approved look"), OptInPresentation->AuraAttachSocket, FName(TEXT("spine_03")));
 	return true;
 }
 #endif

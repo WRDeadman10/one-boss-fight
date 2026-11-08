@@ -40,6 +40,16 @@ def key(pc, name, down):
     (STATE["held"].add if down else STATE["held"].discard)(name)
 
 
+def buffered_input_tag(pawn):
+    buffer = plc.component(pawn, "BP_InputBufferComponent_C")
+    if buffer is None:
+        return "UNKNOWN"
+    try:
+        return str(buffer.call_method("Get Buffered Input Tag"))
+    except Exception:
+        return "UNKNOWN"
+
+
 def wait(seconds):
     world = actors()[0]
     end = plc.game_time(world) + seconds
@@ -89,22 +99,30 @@ def run():
                 yield 0.0
         p0 = pawn.get_actor_location()
         n0 = dodge.get_press_count()
-        log("press_observables case=%s press=%d speed_cm_s=%.1f last_input_size=%.3f pending_input_size=%.3f" %
+        buffer_before = buffered_input_tag(pawn)
+        log("press_observables case=%s press=%d speed_cm_s=%.1f last_input_size=%.3f pending_input_size=%.3f buffered_input_tag=%s" %
             (CASE, attempt, pawn.get_velocity().length(), pawn.get_last_movement_input_vector().length(),
-             pawn.get_pending_movement_input_vector().length()))
+             pawn.get_pending_movement_input_vector().length(), buffer_before))
         key(pc, DODGE, True)
         yield 0.0
         key(pc, DODGE, False)
+        buffer_after_press = buffered_input_tag(pawn)
+        log("buffered_input_observation case=%s press=%d before=%s after_one_input_tick=%s" %
+            (CASE, attempt, buffer_before, buffer_after_press))
         log("%s case=%s press_count_before=%d" % ("first_standing_dodge" if attempt == 1 and CASE == "standing" else "first_moving_dodge" if attempt == 1 else "repeat_dodge_press_%d" % attempt, CASE, n0))
         end = plc.game_time(actors()[0]) + 0.75
         sampled = False
+        next_sample_time = plc.game_time(actors()[0])
         while plc.game_time(actors()[0]) < end:
-            montage = plc.player_montage(pawn)[0]
+            montage, montage_position = plc.player_montage(pawn)
             if montage is not None:
                 sampled = True
-            if attempt == 1:
-                log("first_dodge_sample active_montage=%s moved_cm=%.1f stage=%s backstep_count=%d" %
-                    (montage, (pawn.get_actor_location() - p0).length(), dodge.get_stage_name(), dodge.get_backstep_count()))
+            now = plc.game_time(actors()[0])
+            if attempt == 1 and now >= next_sample_time:
+                log("first_dodge_sample active_montage=%s montage_position=%s buffered_input_tag=%s moved_cm=%.1f stage=%s backstep_count=%d" %
+                    (montage or "NONE", "%.3f" % montage_position if montage_position is not None else "UNKNOWN",
+                     buffered_input_tag(pawn), (pawn.get_actor_location() - p0).length(), dodge.get_stage_name(), dodge.get_backstep_count()))
+                next_sample_time = now + 0.05
             yield 0.0
         label = ("first_standing_result" if CASE == "standing" else "first_moving_result") if attempt == 1 else "repeat_dodge_result_%d" % attempt
         log("%s montage_seen=%s moved_cm=%.1f press_count=%d backstep_count=%d" %

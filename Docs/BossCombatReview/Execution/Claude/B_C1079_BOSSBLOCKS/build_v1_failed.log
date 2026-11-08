@@ -1,0 +1,37 @@
+﻿Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" OneBossFightEditor Win64 Development -Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject -WaitMutex -NoHotReload
+Log file: C:\Users\Rushit Vaghela\AppData\Local\UnrealBuildTool\Log.txt
+Using 'git status' to determine working set for adaptive non-unity build (C:\UnrealProject\OneBossFight).
+Invalidating makefile for OneBossFightEditor (working set of source files changed)
+Available x64 toolchains (1):
+ * C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207
+    (Family=14.44.35207, FamilyRank=1, Version=14.44.35214, Is64Bit=True, ReleaseChannel=Latest, Architecture=x64)
+Visual Studio 2022 compiler version 14.44.35214 is not a preferred version. Please use the latest preferred version 14.38.33130
+NGX Using Lib Dir x64 Platform Dir Win64
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'Niagara'.
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'NiagaraEditor'.
+Parsing headers for OneBossFightEditor
+  Running Internal UnrealHeaderTool C:\UnrealProject\OneBossFight\OneBossFight.uproject C:\UnrealProject\OneBossFight\Intermediate\Build\Win64\OneBossFightEditor\Development\OneBossFightEditor.uhtmanifest -WarningsAsErrors -installed
+Total of 1 written
+Reflection code generated for OneBossFightEditor in 1.9299436 seconds
+Building OneBossFightEditor...
+Using Visual Studio 2022 14.44.35214 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+Warning: Visual Studio 2022 compiler is not a preferred version
+[Adaptive Build] Excluded from OneBossFight unity file: RPGTier2BossPresentation.cpp, RPGCameraRig.cpp, RPGTier2BossRulesTests.cpp
+Determining max actions to execute in parallel (8 physical cores, 16 logical cores)
+  Executing up to 8 processes, one per physical core
+Using Unreal Build Accelerator local executor to run 7 action(s)
+  Storage capacity 40Gb
+---- Starting trace: 261108_184826 ----
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+------ Building 7 action(s) started ------
+[1/7] Compile [x64] RPGCameraRig.gen.cpp
+[2/7] Compile [x64] RPGCameraRig.cpp
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGCameraRig.cpp(213): error C2039: 'GetBounds': is not a member of 'UPrimitiveComponent'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Engine\Classes\Components\PrimitiveComponent.h(251): note: see declaration of 'UPrimitiveComponent'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Player\RPGCameraRig.cpp(213): error C2737: 'Bounds': const object must be initialized
+[3/7] Compile [x64] RPGAutomationTests.cpp
+[4/7] Compile [x64] RPGPlayerMovesSubsystem.cpp
+Trace file written to C:/Users/Rushit Vaghela/AppData/Local/UnrealBuildTool/Log.uba with size 3.7kb
+Total time in Unreal Build Accelerator local executor: 7.18 seconds
+Total execution time: 12.33 seconds

@@ -10,6 +10,10 @@
 class USpringArmComponent;
 class UCameraComponent;
 class UCapsuleComponent;
+class UPrimitiveComponent;
+class AActor;
+class APlayerController;
+class UInputAction;
 
 /**
  * Camera set-up of the pack player (a spring arm "CameraBoom" with a "FollowCamera", both inside BP_CombatPlayerCharacter). The pack's camera has four weaknesses that let it end up in the ground:
@@ -62,15 +66,37 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
 	void Apply();
 	void ApplyPitchLimits() const;
+	void ApplyBossCameraCollisionOption();
+	void RestoreBossCameraCollisionOption();
+	void ApplyBossHideInsideOption();
+	void RestoreBossHideInsideOption();
+	void ApplyLockOnFramingOption(float DeltaTime);
+	void RestoreLockOnFramingOption();
 
 	UPROPERTY(Transient)
 	TObjectPtr<USpringArmComponent> Boom;
 	UPROPERTY(Transient)
 	TObjectPtr<UCameraComponent> Camera;
+	UPROPERTY(Transient)
+	TObjectPtr<UInputAction> LockOnLookAction;
+	TWeakObjectPtr<UCapsuleComponent> BossCameraCapsule;
+	TEnumAsByte<ECollisionResponse> OriginalBossCameraResponse = ECR_Ignore;
+	bool bHasOriginalBossCameraResponse = false;
+	TWeakObjectPtr<AActor> BossHideActor;
+	TWeakObjectPtr<APlayerController> BossHideController;
+	TArray<TWeakObjectPtr<UPrimitiveComponent>> BossHideAddedComponents;
+	int32 BossHideActiveMeshCount = 0;
+	double BossHideStartedSeconds = 0.0;
+	bool bBossHideActive = false;
+	TWeakObjectPtr<AActor> LockOnTarget;
+	float LockOnManualInputSecondsRemaining = 0.f;
+	bool OriginalLockOnUsePawnControlRotation = false;
+	bool bHasOriginalLockOnUsePawnControlRotation = false;
 	bool bApplied = false;
 };

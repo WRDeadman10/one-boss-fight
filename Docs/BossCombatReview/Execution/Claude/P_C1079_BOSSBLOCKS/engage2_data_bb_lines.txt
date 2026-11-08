@@ -1,0 +1,60 @@
+﻿[2026.11.08-13.37.21:863][  0]LogPython: [CamEngage] driver registered route=data
+[2026.11.08-13.37.22:166][  1]LogPython: [CamEngage] CVAR rpg.Camera.BossBlocks 1
+[2026.11.08-13.37.22:166][  1]LogPython: [CamEngage] CVAR rpg.Camera.HideBossInside 0
+[2026.11.08-13.37.25:315][  2]LogRPGCamera: BP_CombatPlayerCharacter_C_0: camera boom moved from the mesh to the capsule (pivot stays at -1800, 0, 98)
+[2026.11.08-13.37.25:315][  2]LogRPGCamera: BP_CombatPlayerCharacter_C_0: camera rig applied: arm 370 cm, probe 34 cm, pitch -70 to 32, lag 10 (max 60 cm)
+[2026.11.08-13.37.25:366][  2]LogRPGCamera: BossBlocks enabled for BP_ExampleGreatSwordBoss_C_3 (authored ECC_Camera response=0)
+[2026.11.08-13.37.32:883][219]LogPython: [CamEngage] SAMPLE n=10 g=7.88 dist=187 arm=413 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.34:352][260]LogPython: [CamEngage] SAMPLE n=20 g=9.34 dist=178 arm=115 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.34:945][281]LogPython: [CamEngage] SAMPLE n=25 g=9.93 dist=162 arm=61 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.35:209][289]LogPython: [CamEngage] SAMPLE n=27 g=10.20 dist=137 arm=37 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.35:458][298]LogPython: [CamEngage] SAMPLE n=29 g=10.45 dist=116 arm=10 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.35:601][302]LogPython: [CamEngage] SAMPLE n=30 g=10.59 dist=116 arm=14 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.35:705][306]LogPython: [CamEngage] SAMPLE n=31 g=10.70 dist=120 arm=23 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.36:756][342]LogPython: [CamEngage] SAMPLE n=40 g=11.76 dist=178 arm=320 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.37:895][381]LogPython: [CamEngage] SAMPLE n=50 g=12.89 dist=184 arm=365 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.39:100][424]LogPython: [CamEngage] SAMPLE n=60 g=14.06 dist=180 arm=323 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.40:311][464]LogPython: [CamEngage] SAMPLE n=70 g=15.31 dist=193 arm=342 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.40:603][473]LogPython: [CamEngage] SAMPLE n=72 g=15.54 dist=188 arm=109 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.40:691][476]LogPython: [CamEngage] SAMPLE n=73 g=15.65 dist=188 arm=95 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.40:797][480]LogPython: [CamEngage] SAMPLE n=74 g=15.80 dist=180 arm=85 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.41:300][496]LogPython: [CamEngage] SAMPLE n=78 g=16.25 dist=183 arm=99 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.42:302][500]LogPython: [CamEngage] SAMPLE n=80 g=17.03 dist=209 arm=114 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.43:467][540]LogPython: [CamEngage] SAMPLE n=90 g=18.20 dist=200 arm=416 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.44:608][580]LogPython: [CamEngage] SAMPLE n=100 g=19.34 dist=175 arm=389 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.45:724][620]LogPython: [CamEngage] SAMPLE n=110 g=20.46 dist=199 arm=431 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.46:755][656]LogPython: [CamEngage] SAMPLE n=119 g=21.49 dist=185 arm=113 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.46:865][660]LogPython: [CamEngage] SAMPLE n=120 g=21.60 dist=186 arm=104 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.47:336][676]LogPython: [CamEngage] SAMPLE n=124 g=22.07 dist=203 arm=108 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.47:464][680]LogPython: [CamEngage] SAMPLE n=125 g=22.20 dist=205 arm=116 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.47:579][684]LogPython: [CamEngage] SAMPLE n=126 g=22.32 dist=203 arm=123 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.47:695][688]LogPython: [CamEngage] SAMPLE n=127 g=22.43 dist=196 arm=134 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.48:058][700]LogPython: [CamEngage] SAMPLE n=130 g=22.79 dist=187 arm=341 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.49:201][740]LogPython: [CamEngage] SAMPLE n=140 g=23.94 dist=183 arm=322 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.50:348][780]LogPython: [CamEngage] SAMPLE n=150 g=25.08 dist=147 arm=365 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.51:492][820]LogPython: [CamEngage] SAMPLE n=160 g=26.22 dist=185 arm=320 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.52:661][860]LogPython: [CamEngage] SAMPLE n=170 g=27.40 dist=187 arm=129 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.53:018][872]LogPython: [CamEngage] SAMPLE n=173 g=27.75 dist=184 arm=89 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.53:515][888]LogPython: [CamEngage] SAMPLE n=177 g=28.25 dist=181 arm=87 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.53:757][896]LogPython: [CamEngage] SAMPLE n=179 g=28.49 dist=157 arm=66 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.53:879][900]LogPython: [CamEngage] SAMPLE n=180 g=28.61 dist=141 arm=49 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.54:012][904]LogPython: [CamEngage] SAMPLE n=181 g=28.74 dist=124 arm=25 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.55:095][940]LogPython: [CamEngage] SAMPLE n=190 g=29.82 dist=187 arm=419 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.56:235][980]LogPython: [CamEngage] SAMPLE n=200 g=30.97 dist=173 arm=356 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.57:362][ 20]LogPython: [CamEngage] SAMPLE n=210 g=32.10 dist=186 arm=422 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.58:500][ 60]LogPython: [CamEngage] SAMPLE n=220 g=33.23 dist=186 arm=425 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.58:841][ 72]LogPython: [CamEngage] SAMPLE n=223 g=33.57 dist=182 arm=100 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.58:962][ 76]LogPython: [CamEngage] SAMPLE n=224 g=33.70 dist=186 arm=95 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.59:078][ 80]LogPython: [CamEngage] SAMPLE n=225 g=33.81 dist=186 arm=91 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.59:196][ 84]LogPython: [CamEngage] SAMPLE n=226 g=33.93 dist=184 arm=86 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.59:313][ 88]LogPython: [CamEngage] SAMPLE n=227 g=34.05 dist=171 arm=72 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.59:559][ 96]LogPython: [CamEngage] SAMPLE n=229 g=34.29 dist=154 arm=55 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.59:685][100]LogPython: [CamEngage] SAMPLE n=230 g=34.42 dist=148 arm=52 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.59:815][104]LogPython: [CamEngage] SAMPLE n=231 g=34.55 dist=142 arm=50 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.37.59:944][108]LogPython: [CamEngage] SAMPLE n=232 g=34.68 dist=137 arm=48 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.38.00:079][112]LogPython: [CamEngage] SAMPLE n=233 g=34.81 dist=131 arm=51 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.38.00:199][116]LogPython: [CamEngage] SAMPLE n=234 g=34.93 dist=126 arm=53 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0
+[2026.11.08-13.38.00:885][139]LogPython: [CamEngage] SAMPLE n=240 g=35.62 dist=188 arm=322 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.38.02:040][179]LogPython: [CamEngage] SAMPLE n=250 g=36.77 dist=144 arm=359 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.38.02:189][184]LogPython: [CamEngage] SUMMARY route=data cvars=rpg.Camera.BossBlocks 1;rpg.Camera.HideBossInside 0 finished=complete samples=251 mesh_inside=28 capsule_inside=0 arm_lt300=55 boss_mesh_hidden=251 unreadable=0 dist_min=116 dist_max=212
+[2026.11.08-13.38.02:262][185]LogRPGCamera: BossBlocks restored BP_ExampleGreatSwordBoss_C_3 ECC_Camera response=0

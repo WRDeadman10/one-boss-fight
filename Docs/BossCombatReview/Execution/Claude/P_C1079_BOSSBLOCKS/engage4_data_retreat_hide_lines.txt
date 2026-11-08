@@ -1,0 +1,92 @@
+﻿[2026.11.08-14.43.17:865][  0]LogPython: [CamEngage] driver registered route=data
+[2026.11.08-14.43.18:182][  1]LogPython: [CamEngage] CVAR rpg.Camera.HideBossInside 1
+[2026.11.08-14.43.18:182][  1]LogPython: [CamEngage] CVAR rpg.Camera.LockOnFraming 0
+[2026.11.08-14.43.21:157][  2]LogRPGCamera: BP_CombatPlayerCharacter_C_0: camera boom moved from the mesh to the capsule (pivot stays at -1800, 0, 98)
+[2026.11.08-14.43.21:157][  2]LogRPGCamera: BP_CombatPlayerCharacter_C_0: camera rig applied: arm 370 cm, probe 34 cm, pitch -70 to 32, lag 10 (max 60 cm)
+[2026.11.08-14.43.28:429][219]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=47.6
+[2026.11.08-14.43.28:500][222]LogPython: [CamEngage] SAMPLE n=6 g=7.68 dist=423 arm=433 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.28:856][230]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=178.3
+[2026.11.08-14.43.29:061][237]LogPython: [CamEngage] SAMPLE n=10 g=8.24 dist=754 arm=432 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.29:712][262]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=57.4
+[2026.11.08-14.43.29:786][264]LogPython: [CamEngage] SAMPLE n=16 g=8.95 dist=410 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.29:877][268]LogPython: [CamEngage] SAMPLE n=17 g=9.05 dist=472 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.30:066][274]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=157.1
+[2026.11.08-14.43.30:238][281]LogPython: [CamEngage] SAMPLE n=20 g=9.42 dist=691 arm=434 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.31:350][322]LogPython: [CamEngage] SAMPLE n=30 g=10.53 dist=529 arm=428 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=33 boom_vs_boss_yaw=178
+[2026.11.08-14.43.32:514][370]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=57.8
+[2026.11.08-14.43.32:520][370]LogPython: [CamEngage] SAMPLE n=40 g=11.70 dist=377 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.32:662][374]LogPython: [CamEngage] SAMPLE n=41 g=11.85 dist=462 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.32:785][379]LogPython: [CamEngage] SAMPLE n=42 g=11.97 dist=534 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.32:885][385]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=170.5
+[2026.11.08-14.43.33:692][416]LogPython: [CamEngage] SAMPLE n=50 g=12.87 dist=238 arm=414 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.33:985][424]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=52.7
+[2026.11.08-14.43.34:029][424]LogPython: [CamEngage] SAMPLE n=52 g=13.17 dist=416 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0 boom_vs_control_yaw=7 boom_vs_boss_yaw=176
+[2026.11.08-14.43.34:111][426]LogPython: [CamEngage] SAMPLE n=53 g=13.29 dist=493 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0 boom_vs_control_yaw=13 boom_vs_boss_yaw=178
+[2026.11.08-14.43.34:333][437]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=260.3
+[2026.11.08-14.43.34:925][460]LogPython: [CamEngage] SAMPLE n=60 g=14.11 dist=85 arm=429 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.35:404][478]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=35.6
+[2026.11.08-14.43.35:411][478]LogPython: [CamEngage] SAMPLE n=64 g=14.59 dist=399 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.35:531][483]LogPython: [CamEngage] SAMPLE n=65 g=14.70 dist=463 arm=432 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.35:634][487]LogPython: [CamEngage] SAMPLE n=66 g=14.81 dist=529 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.35:766][494]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=184.4
+[2026.11.08-14.43.36:771][503]LogPython: [CamEngage] SAMPLE n=70 g=15.76 dist=252 arm=316 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=166
+[2026.11.08-14.43.37:933][548]LogPython: [CamEngage] SAMPLE n=80 g=16.93 dist=959 arm=429 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=24 boom_vs_boss_yaw=180
+[2026.11.08-14.43.39:080][591]LogPython: [CamEngage] SAMPLE n=90 g=18.07 dist=798 arm=424 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=39 boom_vs_boss_yaw=180
+[2026.11.08-14.43.39:838][620]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=47.3
+[2026.11.08-14.43.39:847][620]LogPython: [CamEngage] SAMPLE n=97 g=18.84 dist=388 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.39:970][625]LogPython: [CamEngage] SAMPLE n=98 g=18.96 dist=461 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.40:201][635]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=179.7
+[2026.11.08-14.43.40:208][635]LogPython: [CamEngage] SAMPLE n=100 g=19.20 dist=607 arm=434 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=3 boom_vs_boss_yaw=179
+[2026.11.08-14.43.41:351][679]LogPython: [CamEngage] SAMPLE n=110 g=20.34 dist=445 arm=431 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=22 boom_vs_boss_yaw=180
+[2026.11.08-14.43.42:501][724]LogPython: [CamEngage] SAMPLE n=120 g=21.49 dist=284 arm=434 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.42:657][730]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=54.4
+[2026.11.08-14.43.42:721][732]LogPython: [CamEngage] SAMPLE n=122 g=21.71 dist=411 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.42:828][737]LogPython: [CamEngage] SAMPLE n=123 g=21.82 dist=480 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.42:930][741]LogPython: [CamEngage] SAMPLE n=124 g=21.92 dist=540 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.43:018][745]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=165.9
+[2026.11.08-14.43.43:621][769]LogPython: [CamEngage] SAMPLE n=130 g=22.61 dist=85 arm=434 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.44:062][786]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=57.4
+[2026.11.08-14.43.44:068][786]LogPython: [CamEngage] SAMPLE n=134 g=23.06 dist=378 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.44:194][791]LogPython: [CamEngage] SAMPLE n=135 g=23.18 dist=452 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=1 boom_vs_boss_yaw=179
+[2026.11.08-14.43.44:308][796]LogPython: [CamEngage] SAMPLE n=136 g=23.30 dist=524 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0 boom_vs_control_yaw=5 boom_vs_boss_yaw=179
+[2026.11.08-14.43.44:425][801]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=185.2
+[2026.11.08-14.43.44:754][814]LogPython: [CamEngage] SAMPLE n=140 g=23.74 dist=795 arm=433 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=16 boom_vs_boss_yaw=180
+[2026.11.08-14.43.45:566][845]LogPython: [CamEngage] SAMPLE n=147 g=24.56 dist=435 arm=433 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0 boom_vs_control_yaw=11 boom_vs_boss_yaw=180
+[2026.11.08-14.43.45:686][849]LogPython: [CamEngage] SAMPLE n=148 g=24.68 dist=507 arm=433 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0 boom_vs_control_yaw=11 boom_vs_boss_yaw=180
+[2026.11.08-14.43.45:925][858]LogPython: [CamEngage] SAMPLE n=150 g=24.91 dist=646 arm=433 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=11 boom_vs_boss_yaw=180
+[2026.11.08-14.43.47:070][902]LogPython: [CamEngage] SAMPLE n=160 g=26.06 dist=497 arm=429 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=35 boom_vs_boss_yaw=179
+[2026.11.08-14.43.48:208][946]LogPython: [CamEngage] SAMPLE n=170 g=27.20 dist=316 arm=434 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=179
+[2026.11.08-14.43.48:317][950]LogPython: [CamEngage] SAMPLE n=171 g=27.31 dist=382 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0 boom_vs_control_yaw=4 boom_vs_boss_yaw=179
+[2026.11.08-14.43.48:339][951]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=57.2
+[2026.11.08-14.43.48:429][954]LogPython: [CamEngage] SAMPLE n=172 g=27.42 dist=451 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0 boom_vs_control_yaw=8 boom_vs_boss_yaw=179
+[2026.11.08-14.43.48:696][965]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=238.1
+[2026.11.08-14.43.49:360][991]LogPython: [CamEngage] SAMPLE n=180 g=28.35 dist=159 arm=353 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.49:681][  3]LogPython: [CamEngage] SAMPLE n=183 g=28.67 dist=348 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.49:729][  5]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=54.7
+[2026.11.08-14.43.49:784][  7]LogPython: [CamEngage] SAMPLE n=184 g=28.77 dist=408 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.49:896][ 12]LogPython: [CamEngage] SAMPLE n=185 g=28.89 dist=476 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.49:995][ 16]LogPython: [CamEngage] SAMPLE n=186 g=28.99 dist=536 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.50:084][ 20]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=162.0
+[2026.11.08-14.43.50:458][ 35]LogPython: [CamEngage] SAMPLE n=190 g=29.45 dist=813 arm=434 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.51:122][ 61]LogPython: [CamEngage] SAMPLE n=196 g=30.11 dist=370 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.51:141][ 62]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=50.6
+[2026.11.08-14.43.51:242][ 66]LogPython: [CamEngage] SAMPLE n=197 g=30.23 dist=441 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.51:364][ 71]LogPython: [CamEngage] SAMPLE n=198 g=30.35 dist=513 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0 boom_vs_control_yaw=4 boom_vs_boss_yaw=179
+[2026.11.08-14.43.51:501][ 77]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=178.4
+[2026.11.08-14.43.51:601][ 81]LogPython: [CamEngage] SAMPLE n=200 g=30.59 dist=659 arm=434 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=10 boom_vs_boss_yaw=179
+[2026.11.08-14.43.52:629][121]LogPython: [CamEngage] SAMPLE n=209 g=31.62 dist=428 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=11 boom_vs_boss_yaw=180
+[2026.11.08-14.43.52:739][125]LogPython: [CamEngage] SAMPLE n=210 g=31.73 dist=494 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0 boom_vs_control_yaw=11 boom_vs_boss_yaw=180
+[2026.11.08-14.43.53:864][168]LogPython: [CamEngage] SAMPLE n=220 g=32.86 dist=321 arm=434 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.53:973][172]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=46.1
+[2026.11.08-14.43.53:980][172]LogPython: [CamEngage] SAMPLE n=221 g=32.97 dist=390 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.54:091][176]LogPython: [CamEngage] SAMPLE n=222 g=33.08 dist=456 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.54:209][181]LogPython: [CamEngage] SAMPLE n=223 g=33.20 dist=527 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.54:326][186]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=170.3
+[2026.11.08-14.43.55:058][215]LogPython: [CamEngage] SAMPLE n=230 g=34.05 dist=192 arm=384 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=10 boom_vs_boss_yaw=178
+[2026.11.08-14.43.56:153][256]LogPython: [CamEngage] SAMPLE n=240 g=35.14 dist=850 arm=431 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=23 boom_vs_boss_yaw=180
+[2026.11.08-14.43.56:804][281]LogRPGCamera: HideBossInside enter meshes=5 camera_to_boss_cm=48.1
+[2026.11.08-14.43.56:845][282]LogPython: [CamEngage] SAMPLE n=246 g=35.84 dist=407 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.56:949][286]LogPython: [CamEngage] SAMPLE n=247 g=35.94 dist=470 arm=434 mesh_in=RPGLookBody,RPGLookPiece_SK_Boss01_Crown,RPGLookPiece_SK_Boss01_Mantle,RPGLookPiece_SK_Boss01_BrazierGauntlet caps_in=True hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.57:167][295]LogRPGCamera: HideBossInside exit_or_restore meshes=5 camera_to_boss_cm=172.5
+[2026.11.08-14.43.57:292][300]LogPython: [CamEngage] SAMPLE n=250 g=36.28 dist=675 arm=434 mesh_in=- caps_in=False hidden=1 unread=0 boom_vs_control_yaw=0 boom_vs_boss_yaw=180
+[2026.11.08-14.43.58:053][330]LogPython: [CamEngage] SUMMARY mode=retreat route=data cvars=rpg.Camera.HideBossInside 1;rpg.Camera.LockOnFraming 0 finished=complete samples=256 mesh_inside=37 capsule_inside=21 arm_lt300=0 boss_mesh_hidden=256 unreadable=0 dist_min=85 dist_max=959 boss_off_last10_avg=180

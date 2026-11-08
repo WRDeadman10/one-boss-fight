@@ -6,6 +6,8 @@ not move actors, change collision, or choose a camera fix. Markers:
 [CameraInsideBoss] SAMPLE and finished.
 """
 import math
+import os
+import re
 import sys
 from pathlib import Path
 
@@ -14,7 +16,19 @@ import unreal
 sys.path.insert(0, str(Path(unreal.Paths.project_dir()) / "Scripts" / "Editor"))
 import pie_lead_common as plc
 
-PREFIX = "[CameraInsideBoss] "
+LOG = "[CameraInsideBoss] "
+PREFIX = LOG
+DATA_ROUTE = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
+EXPECTED_DATA = "/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter"
+if DATA_ROUTE and DATA_ROUTE != EXPECTED_DATA:
+    raise RuntimeError("H019_ENCOUNTER_DEFINITION must be unset or the selected G044 encounter")
+ROUTE = "data" if DATA_ROUTE else "legacy"
+CAMERA_PROBE_SCENARIO = re.sub(r"[^A-Za-z0-9_.-]+", "_", os.environ.get("CAMERA_PROBE_SCENARIO", "unspecified").strip())[:64] or "unspecified"
+CAMERA_OPTION_CVARS = (
+    ("boss_blocks", "rpg.Camera.BossBlocks"),
+    ("hide_boss_inside", "rpg.Camera.HideBossInside"),
+    ("lock_on_framing", "rpg.Camera.LockOnFraming"),
+)
 S = {"phase": "start", "elapsed": 0.0, "samples": 0, "done": False}
 HANDLE = None
 
@@ -35,6 +49,17 @@ def point_in_aabb(point, center, extent):
 
 def log(message):
     unreal.log(PREFIX + str(message))
+
+
+def camera_option_values():
+    values = []
+    for label, cvar in CAMERA_OPTION_CVARS:
+        try:
+            value = int(unreal.SystemLibrary.get_console_variable_int_value(cvar))
+        except Exception as exc:
+            value = "UNREADABLE(%s)" % exc
+        values.append("%s=%s" % (label, value))
+    return " ".join(values)
 
 
 def prop(item, name):
@@ -139,6 +164,8 @@ def sample(world, pc, pawn, boss):
             sweep_component = "UNREADABLE_HIT_RESULT"
     except Exception as exc:
         sweep_component = "UNREADABLE(%s)" % exc
+    log("OPTIONS t=%.3f scenario=%s %s passive=true" %
+        (plc.game_time(world), CAMERA_PROBE_SCENARIO, camera_option_values()))
     log("SAMPLE t=%.3f player_boss_cm=%.1f player=%s boss=%s camera=%s pivot=%s "
         "arm_target_cm=%s arm_actual_cm=%.1f approximate_sweep_hit_component=%s "
         "camera_inside_mesh_aabb=%s inside_component=%s capsule_camera_response=%s unreadable_bounds=%s" %
@@ -156,7 +183,7 @@ def finish(reason):
     if HANDLE is not None:
         unreal.unregister_slate_post_tick_callback(HANDLE)
         HANDLE = None
-    log("finished: %s samples=%d" % (reason, S["samples"]))
+    log("SUMMARY route=%s finished=%s samples=%d" % (ROUTE, reason, S["samples"]))
     plc.end_play(unreal)
 
 
@@ -165,6 +192,10 @@ def tick(dt):
         S["elapsed"] += dt
         if S["phase"] == "start":
             if S["elapsed"] > 0.5:
+                if DATA_ROUTE:
+                    unreal.SystemLibrary.execute_console_command(None, "rpg.EncounterDefinition " + DATA_ROUTE)
+                log("ROUTE route=%s scenario=%s selection=%s circle_range_cm=150..250 passive=true" %
+                    (ROUTE, CAMERA_PROBE_SCENARIO, DATA_ROUTE or "unset (legacy startup)"))
                 unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
                 S.update(phase="wait", elapsed=0.0)
             return

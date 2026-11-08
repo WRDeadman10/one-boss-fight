@@ -1,0 +1,31 @@
+﻿[2026.11.08-13.39.39:413][  0]LogPython: [CamEngage] driver registered route=data
+[2026.11.08-13.39.39:692][  1]LogPython: [CamEngage] CVAR rpg.Camera.BossBlocks 0
+[2026.11.08-13.39.39:692][  1]LogPython: [CamEngage] CVAR rpg.Camera.HideBossInside 1
+[2026.11.08-13.39.42:664][  2]LogRPGCamera: BP_CombatPlayerCharacter_C_0: camera boom moved from the mesh to the capsule (pivot stays at -1800, 0, 98)
+[2026.11.08-13.39.42:664][  2]LogRPGCamera: BP_CombatPlayerCharacter_C_0: camera rig applied: arm 370 cm, probe 34 cm, pitch -70 to 32, lag 10 (max 60 cm)
+[2026.11.08-13.39.50:303][227]LogPython: [CamEngage] SAMPLE n=10 g=7.94 dist=179 arm=419 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.39.51:638][265]LogPython: [CamEngage] SAMPLE n=20 g=9.29 dist=192 arm=422 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.39.52:739][305]LogPython: [CamEngage] SAMPLE n=30 g=10.39 dist=185 arm=369 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.39.53:936][344]LogPython: [CamEngage] SAMPLE n=40 g=11.59 dist=149 arm=320 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.39.55:116][386]LogPython: [CamEngage] SAMPLE n=50 g=12.77 dist=182 arm=359 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.39.56:343][428]LogPython: [CamEngage] SAMPLE n=60 g=13.97 dist=174 arm=324 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.39.57:512][469]LogPython: [CamEngage] SAMPLE n=70 g=15.17 dist=172 arm=365 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.39.59:522][507]LogPython: [CamEngage] SAMPLE n=80 g=16.83 dist=148 arm=431 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.00:670][546]LogPython: [CamEngage] SAMPLE n=90 g=17.98 dist=246 arm=417 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.01:811][586]LogPython: [CamEngage] SAMPLE n=100 g=19.12 dist=116 arm=371 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.02:960][626]LogPython: [CamEngage] SAMPLE n=110 g=20.27 dist=190 arm=415 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.04:071][666]LogPython: [CamEngage] SAMPLE n=120 g=21.38 dist=185 arm=419 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.05:236][706]LogPython: [CamEngage] SAMPLE n=130 g=22.55 dist=156 arm=348 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.06:363][746]LogPython: [CamEngage] SAMPLE n=140 g=23.68 dist=186 arm=320 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.07:475][786]LogPython: [CamEngage] SAMPLE n=150 g=24.79 dist=146 arm=362 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.08:579][826]LogPython: [CamEngage] SAMPLE n=160 g=25.89 dist=186 arm=321 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.09:732][866]LogPython: [CamEngage] SAMPLE n=170 g=27.04 dist=133 arm=343 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.10:888][907]LogPython: [CamEngage] SAMPLE n=180 g=28.19 dist=201 arm=401 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.12:003][949]LogPython: [CamEngage] SAMPLE n=190 g=29.32 dist=161 arm=427 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.13:118][990]LogPython: [CamEngage] SAMPLE n=200 g=30.43 dist=175 arm=416 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.14:187][ 30]LogPython: [CamEngage] SAMPLE n=210 g=31.50 dist=171 arm=388 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.15:299][ 75]LogPython: [CamEngage] SAMPLE n=220 g=32.61 dist=203 arm=430 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.16:399][115]LogPython: [CamEngage] SAMPLE n=230 g=33.71 dist=187 arm=407 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.17:521][162]LogPython: [CamEngage] SAMPLE n=240 g=34.83 dist=186 arm=345 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.18:649][202]LogPython: [CamEngage] SAMPLE n=250 g=35.96 dist=189 arm=324 mesh_in=- caps_in=False hidden=1 unread=0
+[2026.11.08-13.40.19:553][239]LogPython: [CamEngage] SUMMARY route=data cvars=rpg.Camera.BossBlocks 0;rpg.Camera.HideBossInside 1 finished=complete samples=257 mesh_inside=0 capsule_inside=0 arm_lt300=0 boss_mesh_hidden=257 unreadable=0 dist_min=116 dist_max=261

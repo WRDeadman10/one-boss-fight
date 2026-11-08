@@ -1,0 +1,33 @@
+# Queue AO-C16–C20: aura comparison controls and evidence boundaries
+
+**Status:** Offline readiness complete. Codex did not launch the Editor, build, PIE, cook, package, or modify content. The Lead owns runtime captures and visual review; the owner owns look approval.
+
+## Paired capture controls and limits
+
+`Scripts/Editor/pie_aura_comparison.py` selects and logs one route per process, resets/wakes/holds one boss, sets its health to 50% of the read maximum, places the player at a 260 cm lane from the boss, and uses the same existing `FollowCamera`. After 3 game seconds of setup settle it discards 3 startup frames and captures the approved asset. It swaps only the transient Niagara component's system to the candidate, explicitly activates it, verifies its asset path/activity, waits 3 game seconds, discards 3 transition frames, and captures the candidate. Each screenshot request uses serialized `HighResShot 960x540`; capture retries until issued and waits for a stable, readable PNG. Mean gray is logged per frame and retained frames below 5 are rejected. Candidate failure or restore/error paths remain explicit.
+
+The script does not force a camera transform, lighting, exposure, boss orientation or elapsed world time to a common authored value. The screenshots are sequential; the camera may track/rotate, and the one-second transition allows time/exposure effects to differ. The 260 cm player lane and same camera component are setup controls, not proof that the whole boss is visible or that framing is pixel-identical. Lead must inspect both images and report deviations. The driver itself makes no visual-quality verdict.
+
+AO-C17 adds one JSONL manifest record after each PNG is confirmed. Each line records run tag, route, frame label, active Niagara asset path, health/max health, camera identity and position, control rotation, spring-arm pivot position, PNG path, `png_exists`, and decoded mean-gray value. Read failures are represented as `UNKNOWN`; a reused run manifest is refused. Screenshots and manifest are written under `D:/FightVideo/aura_compare/<route>/` with the run tag in each filename, following `P_SHOWCASE/pie_showcase.py`'s absolute-path convention. The exact `HighResShot` command is logged and each frame wait is bounded at 20 seconds, including stable-file/readability polling. The route/build identity still needs to be associated with the Lead's run-level status/log, because the Editor-side driver cannot prove a build hash by itself.
+
+## Emitter readback reconciliation
+
+Mailbox evidence:
+
+- **A-641:** reported the old aura approximately 50 particles/s, size 4–8 cm, emissive multiplier approximately 3.0. It proposed an unimplemented boost: 2.5x spawn, 1.5x size, 3x emissive, larger bounds, and spine/weapon attachment. C-1062 says the look proposal went to the owner; it does not record approval.
+- **A-644 / C-1071:** confirmed the separate candidate asset exists and candidate bounds read back as ±250 cm (old ±100 cm). Claude rejected the A-644 “targets” as proof for spawn/size/emissive and requested emitter/module values.
+- **A-645:** Antigravity reports the old and candidate emitters have the same values: Smoke 20 p/s (size 300–500), Sparks1 40 p/s (size 4–8 × 40–80, uniform 8–12), Sparks2 30 p/s (size 100–150), Spiral1 10 p/s (size 6–12, mesh 0.8–1.6), and Wave burst 1. Its reported continuous total is 100 p/s. Both have `User.Color_*` RGBA white, RGB scale white, and emissive multiplier 1.0. It says the candidate duplicated baseline emitters and differs in bounds.
+
+A-645's detailed values do not reconcile with A-641's approximate old values or its stated boost targets. A-646 reports candidate-only before/after values (Sparks1 40→100 p/s, Sparks2 30→75 p/s, continuous 100→205 p/s; Sparks1 size min (4,40)→(6,60) cm and max (8,80)→(12,120) cm; User.Scale_All 1.0→1.5; emissive 3x; bounds ±250 vs ±100). C-1075 accepts A-646 as authored readback. This does not establish rendered appearance or owner approval. C-1075's data frames were black (reported mean gray 0.1) and the legacy candidate readback was inactive. C-1077 reports that the Codex retry/activation/settle hotfix still produced mean gray 0.000 on both routes; the legacy run failed after its approved frame. Claude's separate showcase captured current, boost-at-origin and boost-on-spine options (reported means 52.8/77.2/71.3), sent to the owner. Static code comparison finds matching reset/wake order, same game world capture context, absolute HighResShot paths, and no view/ShowFlag changes in either script. A likely unproven difference is phase setup: comparison writes 50% health before `enter_combat`, while showcase enters combat, then sets full health and later crosses to 50% after selecting each effect. This may mean the comparison bypasses the phase-two presentation transition, but no runtime cause is established. The approved asset remains untouched.
+
+## Evidence layers kept separate
+
+| Layer | Current state | What it establishes |
+|---|---|---|
+| Authored asset/readback | A-646 candidate-only changed-module report, accepted by Claude C-1075 | Candidate authoring values as reported; not a visual verdict. |
+| Transient paired PIE | C-1075 failed with black data frames/inactive legacy candidate; C-1077 says hotfix rerun remains black on both routes (mean gray 0.000) | No successful paired comparison or visual conclusion. Static setup-order difference is a hypothesis, not a proven cause. |
+| Full-fight visibility | A-637 accepted in C-1053: aura not visible on camera in fight video 2 | The existing aura was not discernible in that full-fight recording; no conclusion about a future candidate. |
+| Owner approval | C-1077 says three separate showcase options were sent to the owner; no disposition is recorded | Do not infer approval from delivery or technical capture. |
+| Cook/package | KI-191/KI-193 gates remain open | Neither asset presence nor PIE proves staged content or packaged runtime behavior. |
+
+KI-191 remains partial. Keep the Lead paired capture, owner visual decision, full-fight visibility, and package proof as separate gates. The approved aura asset remains untouched by Codex. C-1075 accepted A-646's candidate-only authoring readback, then rejected the comparison output; C-1077 reports the hotfixed rerun also rendered black on both routes. The separate showcase has rendered three owner options, but it does not validate the paired comparison driver. Static review suggests a phase-two trigger-order difference (50% health before combat in comparison versus a later full-to-half transition in showcase); treat this only as a hypothesis pending a Lead-directed follow-up. No owner look decision is recorded.
