@@ -1,0 +1,38 @@
+﻿Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" OneBossFightEditor Win64 Development -Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject -WaitMutex -NoHotReload
+Log file: C:\Users\Rushit Vaghela\AppData\Local\UnrealBuildTool\Log.txt
+Using 'git status' to determine working set for adaptive non-unity build (C:\UnrealProject\OneBossFight).
+Parsing headers for OneBossFightEditor
+  Running Internal UnrealHeaderTool C:\UnrealProject\OneBossFight\OneBossFight.uproject C:\UnrealProject\OneBossFight\Intermediate\Build\Win64\OneBossFightEditor\Development\OneBossFightEditor.uhtmanifest -WarningsAsErrors -installed
+Total of 2 written
+Reflection code generated for OneBossFightEditor in 6.7335189 seconds
+Building OneBossFightEditor...
+Using Visual Studio 2022 14.44.35214 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+Warning: Visual Studio 2022 compiler is not a preferred version
+[Adaptive Build] Excluded from OneBossFight unity file: RPGTier2BossPresentation.cpp, RPGBossLowSweep.cpp, RPGDamageResolver.cpp, RPGDodgeTiming.cpp, RPGHitIntake.cpp, RPGLegend.cpp, RPGPlayerMovesSubsystem.cpp, RPGPlayerParry.cpp, RPGSwingTracker.cpp, RPGAutomationTests.cpp, RPGGuardCounterRulesTests.cpp, RPGMontageUtilsTests.cpp, RPGPlayerMovesAttachWitnessTests.cpp, RPGPresentationRulesTests.cpp, RPGTier2BossRulesTests.cpp
+Determining max actions to execute in parallel (8 physical cores, 16 logical cores)
+  Executing up to 8 processes, one per physical core
+Using Unreal Build Accelerator local executor to run 14 action(s)
+  Storage capacity 40Gb
+---- Starting trace: 261108_141838 ----
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+------ Building 14 action(s) started ------
+UbaSessionServer - Allocation failed in MapViewOfFile (The paging file is too small for this operation to complete.).. process will sleep and try again
+[1/14] Compile [x64] RPGDodgeTiming.gen.cpp
+[2/14] Compile [x64] RPGDamageResolver.cpp
+[3/14] Compile [x64] RPGCombatDebug.cpp
+[4/14] Compile [x64] RPGHitIntake.cpp
+[5/14] Compile [x64] RPGBossStartupActivationTests.cpp
+[6/14] Compile [x64] OneBossFight.init.gen.cpp
+[7/14] Compile [x64] RPGAutomationTests.cpp
+[8/14] Compile [x64] RPGFrameworkMoveExecutor.cpp
+[9/14] Compile [x64] RPGSwingTracker.cpp
+[10/14] Compile [x64] RPGDodgeTiming.cpp
+[11/14] Compile [x64] RPGPlayerMovesSubsystem.cpp
+[12/14] Link [x64] UnrealEditor-OneBossFight.lib
+[13/14] Link [x64] UnrealEditor-OneBossFight.dll
+   Creating object C:\UnrealProject\OneBossFight\Binaries\Win64\UnrealEditor-OneBossFight.exp
+[14/14] WriteMetadata OneBossFightEditor.target (UBA disabled)
+Trace file written to C:/Users/Rushit Vaghela/AppData/Local/UnrealBuildTool/Log.uba with size 6.0kb
+Total time in Unreal Build Accelerator local executor: 13.30 seconds
+Total execution time: 21.17 seconds

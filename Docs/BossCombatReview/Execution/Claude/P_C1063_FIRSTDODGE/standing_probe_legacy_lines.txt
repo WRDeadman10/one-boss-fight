@@ -1,0 +1,44 @@
+﻿[2026.11.08-10.02.07:709][  0]LogPython: [FirstDodgeAfterDraw] driver registered; Lead must hold ENGINE_LOCK and inspect the first result against repeat controls
+[2026.11.08-10.02.11:265][  2]LogPython: [FirstDodgeAfterDraw] runtime_default=<Object '/Game/OneBossFight/Player/Animations/AM_ER_Backstep_Mixamo_V2.AM_ER_Backstep_Mixamo_V2' (0x000009100018A800) Class 'AnimMontage'>
+[2026.11.08-10.02.25:931][504]LogPython: [FirstDodgeAfterDraw] draw_ready=True draw_attempt=3 combat_enabled=True montage=None
+[2026.11.08-10.02.25:931][504]LogPython: [FirstDodgeAfterDraw] scenario=standing expected_first_montage=AM_ER_Backstep_Mixamo_V2 runtime_assignment=none
+[2026.11.08-10.02.25:931][504]LogPython: [FirstDodgeAfterDraw] press_observables case=standing press=1 speed_cm_s=0.0 last_input_size=0.000 pending_input_size=0.000
+[2026.11.08-10.02.25:979][505]LogPython: [FirstDodgeAfterDraw] first_standing_dodge case=standing press_count_before=0
+[2026.11.08-10.02.25:980][505]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=0.0 stage=None backstep_count=1
+[2026.11.08-10.02.26:007][506]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=AM_ER_Backstep_Mixamo_V2 moved_cm=2.5 stage=Backstep backstep_count=1
+[2026.11.08-10.02.26:032][507]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=AM_ER_Backstep_Mixamo_V2 moved_cm=5.7 stage=Backstep backstep_count=1
+[2026.11.08-10.02.26:059][508]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=AM_ER_Backstep_Mixamo_V2 moved_cm=9.6 stage=Backstep backstep_count=1
+[2026.11.08-10.02.26:079][509]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=AM_ER_Backstep_Mixamo_V2 moved_cm=12.8 stage=Backstep backstep_count=1
+[2026.11.08-10.02.26:106][510]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=AM_ER_Backstep_Mixamo_V2 moved_cm=17.6 stage=Backstep backstep_count=1
+[2026.11.08-10.02.26:123][511]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=AM_ER_Backstep_Mixamo_V2 moved_cm=23.4 stage=Backstep backstep_count=1
+[2026.11.08-10.02.26:172][512]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=AM_ER_Backstep_Mixamo_V2 moved_cm=39.0 stage=Backstep backstep_count=1
+[2026.11.08-10.02.26:212][513]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=AM_ER_Backstep_Mixamo_V2 moved_cm=51.8 stage=Backstep backstep_count=1
+[2026.11.08-10.02.26:233][514]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=AM_ER_Backstep_Mixamo_V2 moved_cm=56.9 stage=Backstep backstep_count=1
+[2026.11.08-10.02.26:283][515]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=AM_ER_Backstep_Mixamo_V2 moved_cm=70.3 stage=Backstep backstep_count=1
+[2026.11.08-10.02.26:307][516]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=79.0 stage=Backstep backstep_count=1
+[2026.11.08-10.02.26:332][517]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=83.1 stage=Backstep backstep_count=1
+[2026.11.08-10.02.26:356][518]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=84.3 stage=Backstep backstep_count=1
+[2026.11.08-10.02.26:382][519]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=84.3 stage=Backstep backstep_count=1
+[2026.11.08-10.02.26:407][520]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=84.3 stage=Backstep backstep_count=1
+[2026.11.08-10.02.26:432][521]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=84.3 stage=Backstep backstep_count=1
+[2026.11.08-10.02.26:458][522]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=84.3 stage=Backstep backstep_count=1
+[2026.11.08-10.02.26:479][523]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=84.3 stage=None backstep_count=1
+[2026.11.08-10.02.26:508][524]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=84.3 stage=None backstep_count=1
+[2026.11.08-10.02.26:527][525]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=84.3 stage=None backstep_count=1
+[2026.11.08-10.02.26:549][526]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=84.3 stage=None backstep_count=1
+[2026.11.08-10.02.26:569][527]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=84.3 stage=None backstep_count=1
+[2026.11.08-10.02.26:589][528]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=84.3 stage=None backstep_count=1
+[2026.11.08-10.02.26:612][529]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=84.3 stage=None backstep_count=1
+[2026.11.08-10.02.26:634][530]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=84.3 stage=None backstep_count=1
+[2026.11.08-10.02.26:657][531]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=84.3 stage=None backstep_count=1
+[2026.11.08-10.02.26:679][532]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=84.3 stage=None backstep_count=1
+[2026.11.08-10.02.26:705][533]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=84.3 stage=None backstep_count=1
+[2026.11.08-10.02.26:726][534]LogPython: [FirstDodgeAfterDraw] first_dodge_sample active_montage=None moved_cm=84.3 stage=None backstep_count=1
+[2026.11.08-10.02.26:749][535]LogPython: [FirstDodgeAfterDraw] first_standing_result montage_seen=True moved_cm=84.3 press_count=1 backstep_count=1
+[2026.11.08-10.02.27:771][579]LogPython: [FirstDodgeAfterDraw] press_observables case=standing press=2 speed_cm_s=0.0 last_input_size=0.000 pending_input_size=0.000
+[2026.11.08-10.02.27:791][580]LogPython: [FirstDodgeAfterDraw] repeat_dodge_press_2 case=standing press_count_before=1
+[2026.11.08-10.02.28:554][613]LogPython: [FirstDodgeAfterDraw] repeat_dodge_result_2 montage_seen=True moved_cm=82.9 press_count=2 backstep_count=2
+[2026.11.08-10.02.29:573][657]LogPython: [FirstDodgeAfterDraw] press_observables case=standing press=3 speed_cm_s=0.0 last_input_size=0.000 pending_input_size=0.000
+[2026.11.08-10.02.29:599][658]LogPython: [FirstDodgeAfterDraw] repeat_dodge_press_3 case=standing press_count_before=2
+[2026.11.08-10.02.30:353][691]LogPython: [FirstDodgeAfterDraw] repeat_dodge_result_3 montage_seen=True moved_cm=81.7 press_count=3 backstep_count=3
+[2026.11.08-10.02.30:353][691]LogPython: [FirstDodgeAfterDraw] finished: probe complete

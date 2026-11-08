@@ -1,0 +1,5 @@
+﻿[2026.11.08-08.51.24:987][  0]LogPython: [FirstDodgeAfterDraw] driver registered; Lead must hold ENGINE_LOCK and inspect the first result against repeat controls
+[2026.11.08-08.51.28:591][  2]LogPython: [FirstDodgeAfterDraw] runtime_default=<Object '/Game/OneBossFight/Player/Animations/AM_ER_Backstep_Mixamo_V2.AM_ER_Backstep_Mixamo_V2' (0x0000068AB6F08C00) Class 'AnimMontage'>
+[2026.11.08-08.51.54:406][974]LogPython: [FirstDodgeAfterDraw] draw_ready=False draw_attempt=3 combat_enabled=False
+[2026.11.08-08.51.54:406][974]LogPython: [FirstDodgeAfterDraw] ERROR R2 weapon draw did not reach combat-ready state
+[2026.11.08-08.51.54:406][974]LogPython: [FirstDodgeAfterDraw] finished: probe error
