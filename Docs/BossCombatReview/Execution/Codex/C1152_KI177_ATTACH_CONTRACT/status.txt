@@ -1,0 +1,1 @@
+BUILD exit 0; native automation suite exit 0; success=492 fail=0; StanceBreakPendingState=PASS; DataRouteParryContactAttachContract=PASS

@@ -1469,4 +1469,52 @@ bool FRPGCookCoverageTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+// C-1150: pin the pack parry observer on the selected/data activation path, not only legacy wiring.
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGDataRouteParryContactAttachContract,
+	"OneBossFight.Player.DataRouteParryContactAttachContract",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+
+bool FRPGDataRouteParryContactAttachContract::RunTest(const FString& Parameters)
+{
+	const FString SourcePath = FPaths::ProjectDir() / TEXT("Source/OneBossFight/Player/RPGPlayerMovesSubsystem.cpp");
+	FString Source;
+	if (!TestTrue(TEXT("player moves subsystem source is readable"), FFileHelper::LoadFileToString(Source, *SourcePath))) return false;
+
+	auto FunctionBody = [&Source](const FString& Signature) -> FString
+	{
+		const int32 SignatureAt = Source.Find(Signature, ESearchCase::CaseSensitive);
+		if (SignatureAt == INDEX_NONE) return FString();
+		const int32 OpenAt = Source.Find(TEXT("{"), ESearchCase::CaseSensitive, ESearchDir::FromStart, SignatureAt);
+		if (OpenAt == INDEX_NONE) return FString();
+		int32 Depth = 0;
+		for (int32 Index = OpenAt; Index < Source.Len(); ++Index)
+		{
+			if (Source[Index] == TEXT('{')) ++Depth;
+			else if (Source[Index] == TEXT('}') && --Depth == 0) return Source.Mid(OpenAt, Index - OpenAt + 1);
+		}
+		return FString();
+	};
+
+	const FString WorldBegin = FunctionBody(TEXT("void URPGPlayerMovesSubsystem::OnWorldBeginPlay"));
+	const FString ActorSpawn = FunctionBody(TEXT("void URPGPlayerMovesSubsystem::OnActorSpawned"));
+	const FString Diagnostics = FunctionBody(TEXT("void URPGPlayerMovesSubsystem::AttachBossDiagnostics"));
+	TestTrue(TEXT("world-begin handler was found"), !WorldBegin.IsEmpty());
+	TestTrue(TEXT("spawn handler was found"), !ActorSpawn.IsEmpty());
+	TestTrue(TEXT("shared boss diagnostics helper was found"), !Diagnostics.IsEmpty());
+	if (WorldBegin.IsEmpty() || ActorSpawn.IsEmpty() || Diagnostics.IsEmpty()) return false;
+
+	const int32 WorldDataBranch = WorldBegin.Find(TEXT("if (bSelectionRequested)"), ESearchCase::CaseSensitive);
+	const int32 WorldDataAttach = WorldBegin.Find(TEXT("AttachBossDiagnostics(*It)"), ESearchCase::CaseSensitive);
+	TestTrue(TEXT("existing data-route world-begin branch attaches boss diagnostics"), WorldDataBranch != INDEX_NONE && WorldDataAttach > WorldDataBranch);
+
+	const int32 SpawnSelectedBranch = ActorSpawn.Find(TEXT("if (bSelectedMode)"), ESearchCase::CaseSensitive);
+	const int32 SpawnDiagnosticsAttach = ActorSpawn.Find(TEXT("AttachBossDiagnostics(Actor)"), ESearchCase::CaseSensitive);
+	TestTrue(TEXT("selected/data actor-spawn branch attaches boss diagnostics"), SpawnSelectedBranch != INDEX_NONE && SpawnDiagnosticsAttach > SpawnSelectedBranch);
+
+	TestTrue(TEXT("shared diagnostics helper filters to pack bosses"), Diagnostics.Contains(TEXT("if (!IsPackBoss(Pawn)) return;")));
+	TestTrue(TEXT("shared diagnostics helper ensures the parry observer exists"), Diagnostics.Contains(TEXT("FindComponentByClass<URPGPackParryContact>()")));
+	TestTrue(TEXT("shared diagnostics helper registers a missing parry observer"), Diagnostics.Contains(TEXT("NewObject<URPGPackParryContact>(Pawn")) && Diagnostics.Contains(TEXT("RegisterComponent()")));
+	return true;
+}
+
 #endif // WITH_DEV_AUTOMATION_TESTS

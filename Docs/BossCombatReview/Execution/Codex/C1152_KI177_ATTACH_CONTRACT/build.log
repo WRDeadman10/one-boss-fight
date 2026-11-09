@@ -1,0 +1,42 @@
+Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" OneBossFightEditor Win64 Development -Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject -WaitMutex -NoHotReload
+Log file: C:\Users\Rushit Vaghela\AppData\Local\UnrealBuildTool\Log.txt
+Using 'git status' to determine working set for adaptive non-unity build (C:\UnrealProject\OneBossFight).
+Invalidating makefile for OneBossFightEditor (working set of source files changed)
+Available x64 toolchains (1):
+ * C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207
+    (Family=14.44.35207, FamilyRank=1, Version=14.44.35214, Is64Bit=True, ReleaseChannel=Latest, Architecture=x64)
+Visual Studio 2022 compiler version 14.44.35214 is not a preferred version. Please use the latest preferred version 14.38.33130
+NGX Using Lib Dir x64 Platform Dir Win64
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'Niagara'.
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'NiagaraEditor'.
+Building OneBossFightEditor...
+Using Visual Studio 2022 14.44.35214 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+Warning: Visual Studio 2022 compiler is not a preferred version
+[Adaptive Build] Excluded from OneBossFight unity file: RPGAutomationTests.cpp, RPGBossExecutorHarnessTests.cpp
+Determining max actions to execute in parallel (8 physical cores, 16 logical cores)
+  Executing up to 8 processes, one per physical core
+Using Unreal Build Accelerator local executor to run 5 action(s)
+  Storage capacity 40Gb
+---- Starting trace: 261109_093830 ----
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+------ Building 5 action(s) started ------
+[1/5] Compile [x64] RPGBossExecutorHarnessTests.cpp
+[2/5] Compile [x64] RPGAutomationTests.cpp
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(1516): error C2665: 'FString::Contains': no overloaded function could convert all the argument types
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\UnrealString.h.inl(1374): note: could be 'bool FString::Contains(const FString::ElementType *,ESearchCase::Type,ESearchDir::Type) const'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(1516): note: 'bool FString::Contains(const FString::ElementType *,ESearchCase::Type,ESearchDir::Type) const': cannot convert argument 1 from 'bool' to 'const FString::ElementType *'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(1516): note: Conversion from integral type to pointer type requires reinterpret_cast, C-style cast or parenthesized function-style cast
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\UnrealString.h.inl(1359): note: or       'bool FString::Contains(CharRangeType &&,ESearchCase::Type,ESearchDir::Type) const'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(1516): note: 'bool FString::Contains(CharRangeType &&,ESearchCase::Type,ESearchDir::Type) const': could not deduce template argument for 'CharRangeElementType'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Containers\UnrealString.h.inl(1351): note: 'TElementType_T' : Failed to specialize alias template
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Traits\ElementType.h(57): note: 'Type': is not a member of any direct or indirect base class of 'TElementType<CharRangeType>'
+        with
+        [
+            CharRangeType=bool
+        ]
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(1516): note: while trying to match the argument list '(bool)'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGAutomationTests.cpp(1516): error C2143: syntax error: missing ')' before ';'
+Trace file written to C:/Users/Rushit Vaghela/AppData/Local/UnrealBuildTool/Log.uba with size 4.8kb
+Total time in Unreal Build Accelerator local executor: 5.66 seconds
+Total execution time: 9.56 seconds

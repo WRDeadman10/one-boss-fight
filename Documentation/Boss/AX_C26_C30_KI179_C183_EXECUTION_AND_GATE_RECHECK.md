@@ -1,0 +1,16 @@
+# AX-C26–C30 — KI-179–183 execution and gate recheck
+
+Date: 2026-11-09. Offline source/status review plus the already-run C-1152 native suite result; no new runtime, package, or asset inspection in this batch.
+
+| Task | Finding | Evidence / limit |
+|---|---|---|
+| AX-C26 / KI-179 | The watchdog is observed in `URPGFrameworkMoveExecutor::TickComponent`; the transient executor harness explicitly avoids claiming watchdog observation because its world tick is not verified. | `RPGFrameworkMoveExecutor.cpp:177-193`; `RPGBossExecutorHarnessTests.cpp:144-145`. Prior live timeout proof remains distinct from automation coverage. Need a fixture that proves it advances world/component ticks before adding a watchdog assertion. |
+| AX-C27 / KI-180 | The reactive-dodge calculation widens `RecentHits` and `HitsToStart` to `int64` before subtraction/addition and caps at `MaxChance`. The MAX_int32 boundary assertions are included in `QueueEBoundaries`; the full native suite now compiled and passed 492/492, so this regression has execution evidence. | `RPGBossReactiveDodgeRules.h:14-22`; `RPGBossQueueEBoundaryTests.cpp:243-247`; `C1152_KI177_ATTACH_CONTRACT/suite_complete.log`. This validates the rule test and compiled implementation, not ordinary gameplay reachability. KI row can be refreshed from “execution unverified” after Lead review. |
+| AX-C28 / KI-181 | The selector marks any model-eligible card eligible before converting the product to `float`; a subnormal product may therefore produce score zero. A sole eligible zero-score candidate is selected, while the existing two-candidate test keeps zero outside a positive score's tie tier. | `RPGBossMoveSelector.cpp:59-67,71-80`; `RPGBossMoveSelectorTests.cpp:265-279,353-364`. The behavior is directly tested and remains a selection-semantics question; no authored profile or runtime occurrence is established. Do not add an epsilon/minimum without defining intended ordering and tie semantics. |
+| AX-C29 / KI-182 | Available status still separates a passing selected-route single death/reset cycle from the optional x3 repeated-reset robustness run. | `KNOWN_ISSUES.md` KI-182 and `Documentation/Boss/H001_RESPAWN_REBIND_DESIGN.md`; C-868's existing 25/25 paired result is single-cycle evidence. No newer x3 result was found in the inspected status trail. The legacy fallback/release policy is independent. |
+| AX-C30 / KI-183 | `SetSelectedDefinition` is BlueprintCallable and stores the object; the command-line/CVar selection paths remain `!UE_BUILD_SHIPPING`. The existing C-873 H1 search returned zero Blueprint call sites in 11,738 Content packages. | `RPGEncounterSelectionSubsystem.h:30`, `.cpp:18-23,58-66,79`; `Docs/BossCombatReview/Execution/Claude/C873_H1_SETTER_CALLERS/result.json`. Source decision permits the API, but there is still no real Blueprint caller or packaged setter proof. No test-only Shipping asset is warranted. |
+
+## Validation and limits
+
+Source/document review only for KI-179 and KI-181–183. The 492/492 native suite referenced under AX-C27 was built and run for C-1152, not specifically as a KI-180 experiment. No changes to production behavior, assets, package contents, or KI dispositions are made here. KI-179, KI-181, KI-182's x3 run, and KI-183's caller/package gate remain open as scoped above.
+

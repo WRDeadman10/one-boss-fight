@@ -59,3 +59,27 @@ Findings: `Documentation/Boss/AX_C11_C15_TOOLING_AND_SHIPPING_SOURCE_AUDIT.md`. 
 | AX-C20 | Trace KI-173 next-tick riposte callback state guard and reset cleanup. | Identify the request/generation gap while preserving the required ordering-test and intent gate. |
 
 Findings: `Documentation/Boss/AX_C16_C20_KI169_C173_GATE_AUDIT.md`. No script execution, asset operation, tests, or production change.
+
+## Batch 5 — KI-172/173 generation-guarded test-first proposal
+
+| Task | Work | Acceptance |
+|---|---|---|
+| AX-C21 | Reuse the participant-generation identity pattern from `RPGPackParryContact` as the proposal basis. | Encounter generation and per-operation callback identity are distinguished. |
+| AX-C22 | Specify KI-172 reset-before-next-tick native regression ordering and observable state. | Old-generation hit must have zero side effects; same-generation and fresh-generation controls are required. |
+| AX-C23 | Propose the narrow KI-172 pending-record generation guard and reset cleanup only after the test fails. | No production implementation is made; timer scheduling and hit merge semantics stay covered. |
+| AX-C24 | Specify KI-173 abort/reset/rearm/new-riposte callback ordering and observables. | Stale callback must not start clips or clean up/mutate a newer request. |
+| AX-C25 | Propose KI-173 request serial plus encounter generation guard and reconcile the reproduction gate. | Test-first sequence and acceptance criteria are documented; KI statuses remain unchanged. |
+
+Proposal: `Documentation/Boss/AX_C21_C25_KI172_173_GENERATION_FIX_PROPOSAL.md`. Source-only design; no implementation, tests or runtime claim.
+
+## Batch 6 — KI-179–183 execution and gate recheck
+
+| Task | Work | Acceptance |
+|---|---|---|
+| AX-C26 | Reconcile watchdog execution code and existing harness limitations. | Tick-dependent runtime behavior is not presented as automation coverage. |
+| AX-C27 | Recheck the reactive-dodge maximum-counter fix and native test execution evidence. | Rule arithmetic, boundary assertion, and gameplay reachability are distinguished. |
+| AX-C28 | Audit subnormal-score handling and current zero-score tie behavior. | Tested selector semantics are reported; no epsilon or product-policy assumption is introduced. |
+| AX-C29 | Reconcile KI-182's single-reset closure against the optional repeated-reset evidence. | The unrun x3 case and release-policy separation remain explicit. |
+| AX-C30 | Reconcile the Shipping selection API, its source guards, caller search, and proof gate. | API allowance is not presented as an exercised Blueprint caller or package proof. |
+
+Findings: `Documentation/Boss/AX_C26_C30_KI179_C183_EXECUTION_AND_GATE_RECHECK.md`. No production changes, package inspection, or new runtime run.

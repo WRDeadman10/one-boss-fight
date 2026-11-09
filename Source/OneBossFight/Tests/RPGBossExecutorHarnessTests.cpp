@@ -151,4 +151,82 @@ bool FBossExecutorLifecycleHarness::RunTest(const FString&)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBossParryRecoveryLifecycleHarness,
+	"OneBossFight.Framework.ParryRecovery.StanceBreakPendingState",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+
+bool FBossParryRecoveryLifecycleHarness::RunTest(const FString&)
+{
+	FExecutorHarnessWorld Scope;
+	if (!TestNotNull(TEXT("engine-backed transient world is available"), Scope.World)) return false;
+	TStrongObjectPtr<URPGBossFrameworkProfile> Profile(LoadObject<URPGBossFrameworkProfile>(nullptr,
+		TEXT("/Game/OneBossFight/FrameworkProof/DA_Sevarog_SelectorProof_F5.DA_Sevarog_SelectorProof_F5")));
+	if (!TestNotNull(TEXT("authored F5 hittable posture profile is available"), Profile.Get())) return false;
+	TStrongObjectPtr<URPGBossFrameworkProfile> TestProfile(DuplicateObject<URPGBossFrameworkProfile>(Profile.Get(), GetTransientPackage()));
+	if (!TestNotNull(TEXT("transient posture profile copy is available"), TestProfile.Get())) return false;
+	// Keep the cloned authored profile's posture tuple internally complete and make it hittable.
+	// ValidateProfile requires an F5 boss health/damage pair plus all five posture values in range.
+	TestProfile->BossMaxHealth=100.f; TestProfile->PlayerHitDamage=10.f;
+	TestProfile->PostureMax=1.f; TestProfile->PlayerPostureHitAmount=1.f; TestProfile->StaggerSeconds=1.f;
+	TestProfile->PostureRegenDelaySeconds=0.f; TestProfile->PostureRegenPerSecond=0.f;
+	TestProfile->ParryPostureAmount=1.f;
+	TUniquePtr<FRPGFrameworkDependencies> Dependencies;
+	FString Error;
+	if (!RPGFramework::ResolveProfile(TestProfile.Get(), Dependencies, Error))
+	{
+		AddError(FString::Printf(TEXT("parry recovery fixture dependency setup failed: %s"), *Error));
+		return false;
+	}
+	ARPGFrameworkBossCharacter* Boss = Scope.World->SpawnActor<ARPGFrameworkBossCharacter>(FVector(0, 0, 300), FRotator::ZeroRotator);
+	APawn* Target = Scope.World->SpawnActor<APawn>(FVector(300, 0, 300), FRotator::ZeroRotator);
+	if (!TestNotNull(TEXT("boss actor setup succeeds"), Boss) || !TestNotNull(TEXT("explicit target setup succeeds"), Target)) return false;
+	Scope.World->BeginPlay();
+	Boss->GetMesh()->SetSkeletalMesh(Dependencies->Mesh.Get());
+	Boss->GetMesh()->SetAnimInstanceClass(Dependencies->AnimClass.Get());
+	Boss->GetMesh()->InitAnim(true);
+	Boss->Dependencies = MoveTemp(Dependencies);
+	Boss->Target = Target;
+	Boss->bInitialized = true; Boss->bHittable=true; Boss->Health=Boss->MaxHealth=100.; Boss->Posture=1.;
+	Boss->GenerationId = 7;
+	Boss->bArrived = true; // Keep this lifecycle fixture independent of map navigation.
+	if (Boss->Dependencies->StaggerStart.IsValid()) Boss->Dependencies->StaggerStart.Reset();
+	for (auto& Candidate : Boss->Dependencies->Candidates) Candidate.bHyperArmor=false;
+	URPGFrameworkMoveExecutor* Executor = Boss->FindComponentByClass<URPGFrameworkMoveExecutor>();
+	if (!TestNotNull(TEXT("boss owns the production executor component"), Executor)) return false;
+	if (!Executor->Initialize(Boss, *Boss->Dependencies, Target, 41, 7, Error))
+	{
+		AddError(FString::Printf(TEXT("parry recovery executor setup failed: %s"), *Error));
+		return false;
+	}
+	FRPGBossDecisionSnapshot Snapshot;
+	Snapshot.EncounterId=41; Snapshot.Generation=7; Snapshot.TargetId=1; Snapshot.FrameId=1;
+	Snapshot.PhaseId=Boss->Dependencies->FirstCard()->Spec().PhaseId; Snapshot.ClockSeconds=0.;
+	Snapshot.RangeCm=(Boss->Dependencies->FirstCard()->Spec().MinRangeCm+Boss->Dependencies->FirstCard()->Spec().MaxRangeCm)*.5;
+	Snapshot.bTargetValid=true; Snapshot.bNeutral=true;
+	if (!Executor->StartCard(Boss->Dependencies->FirstCard(), Snapshot, Error))
+	{
+		AddError(FString::Printf(TEXT("parried attack start failed: %s"), *Error));
+		return false;
+	}
+	Boss->bStartedMove=true;
+	Boss->NoteParried(1., 1.25, 2);
+	TestEqual(TEXT("parry initially queues its grade recovery"), Boss->PendingParryRecoverySeconds, 1.25);
+
+	// Apply the queued reaction through the production posture-damage path while the parried move is active.
+	Boss->bParryReactionPending=false;
+	Boss->PendingParryReactionScale=0.;
+	Boss->ApplyHit(0., Boss->Dependencies->Profile->ParryPostureAmount, 0.);
+	TestTrue(TEXT("parry posture reaction causes a posture break"), Boss->bStaggered);
+	TestTrue(TEXT("posture break aborts the active move"), Executor->IsIdle());
+	TestEqual(TEXT("pending recovery remains queued at the break boundary"), Boss->PendingParryRecoverySeconds, 1.25);
+	TestEqual(TEXT("pending recovery grade remains queued at the break boundary"), Boss->PendingParryRecoveryGrade, 2);
+	Boss->EndStagger();
+	TestFalse(TEXT("stagger ends after executor recovery"), Boss->bStaggered);
+	TestFalse(TEXT("aborted move is not left marked as started"), Boss->bStartedMove);
+	TestEqual(TEXT("deferred recovery remains pending after the aborted move is rearmed"), Boss->PendingParryRecoverySeconds, 1.25);
+	TestEqual(TEXT("the aborted move did not consume the deferred recovery deadline"), Boss->ParryRecoveryUntil, 0.);
+	Boss->Destroy();
+	return true;
+}
+
 #endif
