@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGAttackTracker.h"
+#include "Player/RPGMontageNotifyTiming.h"
 #include "Player/RPGPresentationRules.h"
 #include "Player/RPGTelegraphRules.h"
 #include "Player/RPGBossEncounter.h"
@@ -16,6 +17,12 @@
 #include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRPGAttack, Log, All);
+
+class FRPGMontageNotifyTimingCache
+{
+public:
+	RPGMontageNotifyTiming::FCache Cache;
+};
 
 static TAutoConsoleVariable<float> CVarRPGCloseTelegraph(TEXT("rpg.CloseTelegraph"), 0.4f,
 	TEXT("Close-attack telegraph: the time in seconds from the start of an A3 stage to its active window (A1 and A1b: at most 0.35). The pack's stand-in clips have 0.14 to 0.17 s, the Freeze asks for 0.35 to 0.40 s (KI-102); the montage play rate is lowered until the active window. 0.4 is the default until the authored clips arrive (owner, 2026-10-24); 0 keeps the pack's pacing."), ECVF_Default);
@@ -111,6 +118,7 @@ FRPGAttackTrackerConfig::FRPGAttackTrackerConfig()
 URPGAttackTracker::URPGAttackTracker()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	NotifyTimingCache = MakeShared<FRPGMontageNotifyTimingCache>();
 	const FRPGAttackTrackerConfig NativeDefaults;
 	Attacks = NativeDefaults.Attacks;
 	bEnabled = NativeDefaults.bEnabled;
@@ -191,7 +199,7 @@ bool URPGAttackTracker::PlayClip(const FRPGAttackTiming& Timing)
 	return Anim->PlaySlotAnimationAsDynamicMontage(Clip, SlotName, 0.1f, 0.2f, 1.f, 1, -1.f, 0.f) != nullptr;
 }
 
-bool URPGAttackTracker::BranchAllowedNow() const
+bool URPGAttackTracker::BranchAllowedNow(float Range, float ConeDegrees) const
 {
 	const AActor* Boss = GetOwner();
 	const APawn* Player = UGameplayStatics::GetPlayerPawn(this, 0);
@@ -200,12 +208,12 @@ bool URPGAttackTracker::BranchAllowedNow() const
 		return false;
 	}
 	const FVector ToPlayer = (Player->GetActorLocation() - Boss->GetActorLocation()) * FVector(1.f, 1.f, 0.f);
-	if (ToPlayer.Size() > BranchRange)
+	if (ToPlayer.Size() > Range)
 	{
 		return false;
 	}
 	const FVector Forward = (Boss->GetActorForwardVector() * FVector(1.f, 1.f, 0.f)).GetSafeNormal();
-	return FVector::DotProduct(Forward, ToPlayer.GetSafeNormal()) >= FMath::Cos(FMath::DegreesToRadians(BranchConeDegrees * 0.5f));
+	return FVector::DotProduct(Forward, ToPlayer.GetSafeNormal()) >= FMath::Cos(FMath::DegreesToRadians(ConeDegrees * 0.5f));
 }
 
 bool URPGAttackTracker::PlayMoveMontageForTest(FName MoveId)
@@ -280,7 +288,7 @@ bool URPGAttackTracker::StartMove(FName MoveId, bool bForce)
 void URPGAttackTracker::End(const TCHAR* Reason, float Position)
 {
 	RestoreTelegraph();
-	const FRPGAttackTiming* Timing = Attacks.IsValidIndex(TimingIndex) ? &Attacks[TimingIndex] : nullptr;
+	const FRPGAttackTiming* Timing = bHasEffectiveTiming ? &EffectiveTiming : (Attacks.IsValidIndex(TimingIndex) ? &Attacks[TimingIndex] : nullptr);
 	if (Timing && Position < Timing->RecoveryEndTime - 0.1f)
 	{
 		++InterruptedCount;
@@ -293,6 +301,7 @@ void URPGAttackTracker::End(const TCHAR* Reason, float Position)
 	UE_LOG(LogRPGAttack, Log, TEXT("%s: attack %s instance %d ended (%s) at %.2f s, phase was %s, yaw drift after commit %.1f deg"), *GetOwner()->GetName(), *CurrentMove.ToString(), AttackInstance, Reason, Position, *GetPhaseName(), MaxYawDrift);
 	Phase = EPhase::None;
 	TimingIndex = INDEX_NONE;
+	bHasEffectiveTiming = false;
 }
 
 void URPGAttackTracker::RestoreTelegraph()
@@ -415,7 +424,26 @@ void URPGAttackTracker::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	{
 		return; // a stage the branch check stopped is still blending out
 	}
-	const FRPGAttackTiming& Timing = Attacks[Index];
+	FRPGAttackTiming Timing = Attacks[Index];
+	float EffectiveBranchRange = BranchRange;
+	float EffectiveBranchConeDegrees = BranchConeDegrees;
+	if (bUseMontageNotifyTimings && Montage)
+	{
+		FString NotifyError;
+		bool bWarnOnce = false;
+		const uint64 NotifyAttackInstance = static_cast<uint64>(AttackInstance + (Phase == EPhase::None ? 1 : 0));
+		if (NotifyTimingCache.IsValid() && !NotifyTimingCache->Cache.Resolve(true, Montage, NotifyAttackInstance, Timing.MoveId, Timing,
+			BranchRange, BranchConeDegrees, Timing, EffectiveBranchRange, EffectiveBranchConeDegrees, NotifyError, bWarnOnce))
+		{
+			if (bWarnOnce)
+			{
+				UE_LOG(LogRPGAttack, Warning, TEXT("%s: invalid optional montage timing annotation for %s: %s; legacy timing retained"),
+					*GetOwner()->GetName(), *Timing.MoveId.ToString(), *NotifyError);
+			}
+		}
+	}
+	EffectiveTiming = Timing;
+	bHasEffectiveTiming = true;
 	const float Position = Anim->Montage_GetPosition(Montage);
 	LastPosition = Position;
 
@@ -443,25 +471,27 @@ void URPGAttackTracker::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 				--AttackInstance;
 				Phase = EPhase::None;
 				TimingIndex = INDEX_NONE;
+				bHasEffectiveTiming = false;
 				return;
 			}
 		}
 		if (Timing.bBranchStage)
 		{
 			// Freeze 16 A3: slash 2 only when the player is in the frontal cone and in range at the branch check (the start of this stage). A failed check stops the stage before it can hurt.
-			if (BranchAllowedNow())
+			if (BranchAllowedNow(EffectiveBranchRange, EffectiveBranchConeDegrees))
 			{
 				++BranchAllowed;
 			}
 			else
 			{
 				++BranchDenied;
-				UE_LOG(LogRPGAttack, Log, TEXT("%s: attack %s denied by the branch check (range %.0f, cone %.0f deg), montage stopped"), *GetOwner()->GetName(), *CurrentMove.ToString(), BranchRange, BranchConeDegrees);
+				UE_LOG(LogRPGAttack, Log, TEXT("%s: attack %s denied by the branch check (range %.0f, cone %.0f deg), montage stopped"), *GetOwner()->GetName(), *CurrentMove.ToString(), EffectiveBranchRange, EffectiveBranchConeDegrees);
 				Anim->Montage_Stop(0.15f, Montage);
 				DeniedMontage = Montage;
 				--AttackInstance;
 				Phase = EPhase::None;
 				TimingIndex = INDEX_NONE;
+				bHasEffectiveTiming = false;
 				return;
 			}
 		}

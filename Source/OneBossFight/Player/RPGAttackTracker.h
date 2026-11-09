@@ -11,6 +11,7 @@
  * so they do not depend on the play rate. Names ending in Time are timestamps, names ending in Duration are durations.
  */
 class UAnimMontage;
+class FRPGMontageNotifyTimingCache;
 
 USTRUCT(BlueprintType)
 struct FRPGAttackTiming
@@ -106,6 +107,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 	bool bEnabled = true;
 
+	/** Opt-in read of validated URPGANS_BossMoveTiming annotations from the active montage. Empty/missing annotations keep the legacy table. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Montage Timing")
+	bool bUseMontageNotifyTimings = false;
+
 	/** Starts the pack ability that plays this move now (tests and scripted fights). bForce skips the ability's own activation conditions (blocked tags, cooldown). Returns false if the move is unknown or the ability refused.
 	 *  A move with a ClipPath (A4, A5) has no pack ability: its clip plays as a dynamic montage in the pack's montage slot; without bForce it starts only when the boss plays no montage and is in no stance break,
 	 *  phase transition or sleep. */
@@ -124,6 +129,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Attack|Diagnostics")
 	float GetActiveWindowStartTime() const
 	{
+		if (bHasEffectiveTiming && EffectiveTiming.MoveId == CurrentMove) return EffectiveTiming.ActiveStartTime;
 		const FRPGAttackTiming* Timing = Attacks.FindByPredicate([this](const FRPGAttackTiming& Item) { return Item.MoveId == CurrentMove; });
 		return Timing ? Timing->ActiveStartTime : -1.f;
 	}
@@ -131,6 +137,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Attack|Diagnostics")
 	float GetActiveWindowEndTime() const
 	{
+		if (bHasEffectiveTiming && EffectiveTiming.MoveId == CurrentMove) return EffectiveTiming.ActiveEndTime;
 		const FRPGAttackTiming* Timing = Attacks.FindByPredicate([this](const FRPGAttackTiming& Item) { return Item.MoveId == CurrentMove; });
 		return Timing ? Timing->ActiveEndTime : -1.f;
 	}
@@ -229,7 +236,7 @@ private:
 	void End(const TCHAR* Reason, float Position);
 	void RestoreTelegraph();
 	void UpdateTelegraph(UAnimMontage* Montage, const FRPGAttackTiming& Timing, float Position);
-	bool BranchAllowedNow() const;
+	bool BranchAllowedNow(float Range, float ConeDegrees) const;
 	bool PlayClip(const FRPGAttackTiming& Timing);
 	int32 FindTimingIndex(const UAnimMontage* Montage) const;
 
@@ -253,6 +260,9 @@ private:
 	float LastStageWindupSeconds = -1.f;
 	double StageWorldStart = -1.0;
 	TWeakObjectPtr<UAnimMontage> TelegraphMontage;
+	TSharedPtr<FRPGMontageNotifyTimingCache> NotifyTimingCache;
+	FRPGAttackTiming EffectiveTiming;
+	bool bHasEffectiveTiming = false;
 	float DeathCheckTimer = 0.f;
 	bool bDead = false;
 	TWeakObjectPtr<const UAnimMontage> DeniedMontage;
