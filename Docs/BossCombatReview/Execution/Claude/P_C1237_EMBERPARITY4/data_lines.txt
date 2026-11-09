@@ -1,0 +1,301 @@
+﻿[2026.11.09-20.28.35:011][  6]LogTemp: Display: [EncounterActivation] default data startup: selected /Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter for map L_SevarogArena
+[2026.11.09-20.28.35:070][  6]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending
+[2026.11.09-20.28.37:842][ 67]LogPython: [EmberNotifyParity] CHECK PASS component tracker exists 
+[2026.11.09-20.28.37:842][ 67]LogPython: [EmberNotifyParity] CHECK PASS component encounter exists 
+[2026.11.09-20.28.37:842][ 67]LogPython: [EmberNotifyParity] CHECK PASS component debug exists 
+[2026.11.09-20.28.37:842][ 67]LogPython: [EmberNotifyParity] CHECK PASS component parry exists 
+[2026.11.09-20.28.37:842][ 67]LogPython: [EmberNotifyParity] CHECK PASS component pawn exists 
+[2026.11.09-20.28.37:842][ 67]LogPython: [EmberNotifyParity] CHECK PASS component boss exists 
+[2026.11.09-20.28.37:842][ 67]LogPython: [EmberNotifyParity] CHECK PASS LogRPGAttack source log is fresh for this PIE run C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Claude\P_C1237_EMBERPARITY4\data.log
+[2026.11.09-20.28.37:843][ 67]LogPython: [EmberNotifyParity] WAKE_HEARTBEAT elapsed=0.0 dormant=False waking=True
+[2026.11.09-20.28.39:887][153]LogPython: [EmberNotifyParity] WAKE_HEARTBEAT elapsed=2.0 dormant=False waking=True
+[2026.11.09-20.28.41:278][201]LogPython: [EmberNotifyParity] CHECK PASS encounter awake before first move dormant=False waking=False
+[2026.11.09-20.28.41:279][201]LogPython: [EmberNotifyParity] WARMUP_BEGIN move=A1 mode=off measured=false parry=disabled
+[2026.11.09-20.28.41:735][212]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Committed pos=0.34
+[2026.11.09-20.28.41:735][212]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Active pos=0.37
+[2026.11.09-20.28.41:908][220]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Recovery pos=0.51
+[2026.11.09-20.28.42:336][237]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Complete pos=0.93 prior=Recovery reason=montage stopped
+[2026.11.09-20.28.42:336][237]LogPython: [EmberNotifyParity] CHECK PASS unmeasured A1 warm-up reaches Recovery end phases={"Active": 0.37, "Committed": 0.34, "Complete": 0.93, "Recovery": 0.51} end_reason=montage stopped
+[2026.11.09-20.28.42:753][247]LogPython: [EmberNotifyParity] CHECK PASS timing off A1 timing flag readback readback=False
+[2026.11.09-20.28.42:755][247]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=off move=A1
+[2026.11.09-20.28.43:325][258]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Committed pos=0.34
+[2026.11.09-20.28.43:325][258]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Active pos=0.35
+[2026.11.09-20.28.43:541][265]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Recovery pos=0.68
+[2026.11.09-20.28.43:734][272]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Complete pos=0.91 prior=Recovery reason=montage stopped
+[2026.11.09-20.28.43:734][272]LogPython: [EmberNotifyParity] CHECK PASS timing off A1 natural recovery end phases={"Active": 0.35, "Committed": 0.34, "Complete": 0.91, "Recovery": 0.68} end_reason=montage stopped end_phase=Recovery log_error=None
+[2026.11.09-20.28.44:139][287]LogPython: [EmberNotifyParity] CHECK PASS timing off A3a timing flag readback readback=False
+[2026.11.09-20.28.44:141][287]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=off move=A3a
+[2026.11.09-20.28.44:790][313]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3a phase=Committed pos=0.45
+[2026.11.09-20.28.44:790][313]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3a phase=Active pos=0.45
+[2026.11.09-20.28.44:790][313]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3a phase=Complete pos=0.54 prior=Active reason=montage stopped
+[2026.11.09-20.28.44:791][313]LogPython: [EmberNotifyParity] CHECK PASS timing off A3a natural recovery end phases={"Active": 0.45, "Committed": 0.45, "Complete": 0.54} end_reason=montage stopped end_phase=Active log_error=None
+[2026.11.09-20.28.45:132][320]LogPython: [EmberNotifyParity] CHECK PASS timing off A3b timing flag readback readback=False
+[2026.11.09-20.28.45:132][320]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=off move=A3b
+[2026.11.09-20.28.45:378][329]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3b phase=Committed pos=0.13
+[2026.11.09-20.28.45:378][329]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3b phase=Active pos=0.16
+[2026.11.09-20.28.45:577][336]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3b phase=Recovery pos=0.41
+[2026.11.09-20.28.46:411][371]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3b phase=Complete pos=1.07 prior=Recovery reason=montage stopped
+[2026.11.09-20.28.46:411][371]LogPython: [EmberNotifyParity] CHECK PASS timing off A3b natural recovery end phases={"Active": 0.16, "Committed": 0.13, "Complete": 1.07, "Recovery": 0.41} end_reason=montage stopped end_phase=Recovery log_error=None
+[2026.11.09-20.28.46:765][386]LogPython: [EmberNotifyParity] CHECK PASS timing on A1 timing flag readback readback=True
+[2026.11.09-20.28.46:765][386]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=on move=A1
+[2026.11.09-20.28.47:217][401]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A1 phase=Committed pos=0.36
+[2026.11.09-20.28.47:217][401]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A1 phase=Active pos=0.36
+[2026.11.09-20.28.47:426][409]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A1 phase=Recovery pos=0.55
+[2026.11.09-20.28.47:835][425]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A1 phase=Complete pos=0.95 prior=Recovery reason=montage stopped
+[2026.11.09-20.28.47:835][425]LogPython: [EmberNotifyParity] CHECK PASS timing on A1 natural recovery end phases={"Active": 0.36, "Committed": 0.36, "Complete": 0.95, "Recovery": 0.55} end_reason=montage stopped end_phase=Recovery log_error=None
+[2026.11.09-20.28.48:161][437]LogPython: [EmberNotifyParity] CHECK PASS timing on A3a timing flag readback readback=True
+[2026.11.09-20.28.48:162][437]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=on move=A3a
+[2026.11.09-20.28.48:680][457]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3a phase=Committed pos=0.42
+[2026.11.09-20.28.48:680][457]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3a phase=Active pos=0.42
+[2026.11.09-20.28.48:877][465]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3a phase=Complete pos=0.55 prior=Active reason=montage stopped
+[2026.11.09-20.28.48:877][465]LogPython: [EmberNotifyParity] CHECK PASS timing on A3a natural recovery end phases={"Active": 0.42, "Committed": 0.42, "Complete": 0.55} end_reason=montage stopped end_phase=Active log_error=None
+[2026.11.09-20.28.49:179][478]LogPython: [EmberNotifyParity] CHECK PASS timing on A3b timing flag readback readback=True
+[2026.11.09-20.28.49:179][478]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=on move=A3b
+[2026.11.09-20.28.49:475][490]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3b phase=Committed pos=0.14
+[2026.11.09-20.28.49:475][490]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3b phase=Active pos=0.16
+[2026.11.09-20.28.49:676][497]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3b phase=Recovery pos=0.43
+[2026.11.09-20.28.50:521][528]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3b phase=Complete pos=1.08 prior=Recovery reason=montage stopped
+[2026.11.09-20.28.50:521][528]LogPython: [EmberNotifyParity] CHECK PASS timing on A3b natural recovery end phases={"Active": 0.16, "Committed": 0.14, "Complete": 1.08, "Recovery": 0.43} end_reason=montage stopped end_phase=Recovery log_error=None
+[2026.11.09-20.28.50:836][543]LogPython: [EmberNotifyParity] CHECK PASS parry off A1 timing flag readback readback=False
+[2026.11.09-20.28.50:837][543]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=parry mode=off move=A1
+[2026.11.09-20.28.50:853][543]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.50:853][543]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=off move=A1 pos=1.0812 opened=True press_before=0 press_after=1 distance_cm=120.0 in_control_band=True target=0.270 lead=0.080
+[2026.11.09-20.28.50:865][544]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.50:942][545]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.50:959][546]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=120.2 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.50:973][547]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=120.4 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.50:985][548]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=120.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.50:998][549]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=120.9 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:013][550]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=121.4 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:039][551]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=122.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:125][552]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=124.4 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:147][553]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=129.2 action=retreat band_cm=115.0-125.0
+[2026.11.09-20.28.51:166][554]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.0 action=clamp band_cm=115.0-125.0
+[2026.11.09-20.28.51:182][555]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.0 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.51:202][556]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=114.8 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.51:250][557]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=113.9 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.51:266][558]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=109.5 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.51:299][559]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=107.4 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.51:315][560]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=106.7 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.51:330][561]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=107.0 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.51:376][562]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=107.6 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.51:391][563]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=112.1 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.51:406][564]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=114.3 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.51:461][565]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:477][566]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:504][567]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:518][568]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:533][569]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:547][570]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:566][571]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:590][572]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:627][573]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:673][574]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:691][575]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:728][576]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:802][577]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:816][578]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:831][579]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:886][580]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.51:913][581]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.52:642][582]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.52:926][583]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.52:937][584]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.52:962][585]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.52:973][586]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.52:990][587]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:035][588]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:073][589]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:095][590]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:120][591]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:156][592]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:166][593]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:191][594]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A1 distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:216][595]LogPython: [EmberNotifyParity] CHECK FAIL parry off A1 NotifyParried contact contacts=[] press_opened=True parried_counter_delta=0
+[2026.11.09-20.28.53:216][595]LogPython: [EmberNotifyParity] CHECK FAIL parry off A1 shared counter increments once delta=0
+[2026.11.09-20.28.53:566][609]LogPython: [EmberNotifyParity] CHECK PASS parry off A3a timing flag readback readback=False
+[2026.11.09-20.28.53:567][609]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=parry mode=off move=A3a
+[2026.11.09-20.28.53:578][609]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:578][609]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=off move=A3a pos=0.9035 opened=True press_before=1 press_after=2 distance_cm=120.0 in_control_band=True target=0.420 lead=0.080
+[2026.11.09-20.28.53:590][610]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:614][611]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:639][612]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:669][613]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=120.1 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:693][614]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=120.3 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:718][615]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=120.8 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:743][616]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=121.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:781][617]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=122.9 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:793][618]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=124.8 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.53:818][619]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=127.5 action=retreat band_cm=115.0-125.0
+[2026.11.09-20.28.53:843][620]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.0 action=clamp band_cm=115.0-125.0
+[2026.11.09-20.28.53:867][621]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.0 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.53:892][622]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=114.4 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.53:918][623]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=112.7 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.53:943][624]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=110.1 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.53:987][625]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=106.0 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.53:999][626]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=106.5 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.54:028][627]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=107.2 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.54:051][628]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=109.0 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.54:077][629]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=111.7 action=approach band_cm=115.0-125.0
+[2026.11.09-20.28.54:103][630]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:128][631]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:154][632]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:191][633]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:205][634]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:232][635]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:259][636]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:287][637]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:314][638]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:340][639]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:365][640]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:401][641]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:419][642]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:445][643]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:472][644]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:496][645]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:522][646]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:548][647]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:574][648]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:619][649]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:630][650]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:655][651]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:682][652]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:708][653]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:735][654]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:759][655]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3a distance_cm=115.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.54:783][656]LogPython: [EmberNotifyParity] CHECK FAIL parry off A3a NotifyParried contact contacts=[] press_opened=True parried_counter_delta=0
+[2026.11.09-20.28.54:784][656]LogPython: [EmberNotifyParity] CHECK FAIL parry off A3a shared counter increments once delta=0
+[2026.11.09-20.28.55:136][670]LogPython: [EmberNotifyParity] CHECK PASS parry off A3b timing flag readback readback=False
+[2026.11.09-20.28.55:137][670]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=parry mode=off move=A3b
+[2026.11.09-20.28.55:151][670]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3b distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:151][670]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=off move=A3b pos=0.5357 opened=True press_before=2 press_after=3 distance_cm=120.0 in_control_band=True target=0.100 lead=0.080
+[2026.11.09-20.28.55:159][671]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3b distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:182][672]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3b distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:222][673]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3b distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:237][674]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3b distance_cm=120.1 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:261][675]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3b distance_cm=120.3 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:288][676]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3b distance_cm=120.7 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:311][677]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3b distance_cm=121.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:337][678]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3b distance_cm=122.7 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:361][679]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3b distance_cm=124.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:384][680]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3b distance_cm=127.0 action=retreat band_cm=115.0-125.0
+[2026.11.09-20.28.55:441][681]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=off move=A3b distance_cm=130.0 action=retreat band_cm=115.0-125.0
+[2026.11.09-20.28.55:441][681]LogPython: [EmberNotifyParity] PARRY_CONTACT arm=parry mode=off move=A3b pos=0.2735 source=URPGPlayerParry.NotifyParried counter=GetParriedCount before=0 after=1 delta=1
+[2026.11.09-20.28.55:441][681]LogPython: [EmberNotifyParity] CHECK PASS parry off A3b NotifyParried contact contacts=[0.27352309226989746] press_opened=True parried_counter_delta=1
+[2026.11.09-20.28.55:441][681]LogPython: [EmberNotifyParity] CHECK PASS parry off A3b shared counter increments once delta=1
+[2026.11.09-20.28.55:776][695]LogPython: [EmberNotifyParity] CHECK PASS parry on A1 timing flag readback readback=True
+[2026.11.09-20.28.55:777][695]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=parry mode=on move=A1
+[2026.11.09-20.28.55:790][695]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:790][695]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=on move=A1 pos=0.2735 opened=False press_before=3 press_after=4 distance_cm=120.0 in_control_band=True target=0.270 lead=0.080
+[2026.11.09-20.28.55:801][696]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:844][697]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:858][698]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:884][699]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=120.1 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:910][700]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=120.4 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:936][701]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=120.9 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:963][702]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=121.9 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.55:989][703]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=123.4 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:012][704]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=125.6 action=retreat band_cm=115.0-125.0
+[2026.11.09-20.28.56:039][705]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=129.3 action=retreat band_cm=115.0-125.0
+[2026.11.09-20.28.56:067][706]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=115.0 action=clamp band_cm=115.0-125.0
+[2026.11.09-20.28.56:067][706]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=on move=A1 pos=0.2898 opened=True press_before=4 press_after=5 distance_cm=115.0 in_control_band=True target=0.270 lead=0.080
+[2026.11.09-20.28.56:091][707]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=115.7 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:117][708]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=116.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:149][709]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=117.4 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:174][710]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=118.2 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:201][711]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=119.3 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:227][712]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=120.5 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:267][713]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A1 distance_cm=122.2 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:267][713]LogPython: [EmberNotifyParity] PARRY_CONTACT arm=parry mode=on move=A1 pos=0.4761 source=URPGPlayerParry.NotifyParried counter=GetParriedCount before=1 after=2 delta=1
+[2026.11.09-20.28.56:267][713]LogPython: [EmberNotifyParity] CHECK PASS parry on A1 NotifyParried contact contacts=[0.47611165046691895] press_opened=True parried_counter_delta=1
+[2026.11.09-20.28.56:267][713]LogPython: [EmberNotifyParity] CHECK PASS parry on A1 shared counter increments once delta=1
+[2026.11.09-20.28.56:629][724]LogPython: [EmberNotifyParity] CHECK PASS parry on A3a timing flag readback readback=True
+[2026.11.09-20.28.56:629][724]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=parry mode=on move=A3a
+[2026.11.09-20.28.56:639][724]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:639][724]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=on move=A3a pos=0.4761 opened=False press_before=5 press_after=6 distance_cm=120.0 in_control_band=True target=0.420 lead=0.080
+[2026.11.09-20.28.56:666][725]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:683][726]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:708][727]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:735][728]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=120.1 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:762][729]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=120.4 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:789][730]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=120.9 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:814][731]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=121.8 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:840][732]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=123.3 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:883][733]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=126.2 action=retreat band_cm=115.0-125.0
+[2026.11.09-20.28.56:898][734]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=115.0 action=clamp band_cm=115.0-125.0
+[2026.11.09-20.28.56:923][735]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=116.9 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:950][736]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=120.1 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.56:976][737]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.7 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:002][738]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=129.7 action=retreat band_cm=115.0-125.0
+[2026.11.09-20.28.57:028][739]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=115.0 action=clamp band_cm=115.0-125.0
+[2026.11.09-20.28.57:054][740]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=115.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:054][740]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=on move=A3a pos=0.4251 opened=True press_before=6 press_after=7 distance_cm=115.0 in_control_band=True target=0.420 lead=0.080
+[2026.11.09-20.28.57:091][741]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=115.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:108][742]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=115.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:133][743]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=115.1 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:160][744]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=115.4 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:191][745]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=116.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:216][746]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=117.1 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:243][747]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=118.8 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:268][748]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=121.2 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:308][749]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.8 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:324][750]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:351][751]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:376][752]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:402][753]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:428][754]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:453][755]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:492][756]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:512][757]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:539][758]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:565][759]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:592][760]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:622][761]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:644][762]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:672][763]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:708][764]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:723][765]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:750][766]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:777][767]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:801][768]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:832][769]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3a distance_cm=124.6 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.57:858][770]LogPython: [EmberNotifyParity] CHECK FAIL parry on A3a NotifyParried contact contacts=[] press_opened=True parried_counter_delta=0
+[2026.11.09-20.28.57:858][770]LogPython: [EmberNotifyParity] CHECK FAIL parry on A3a shared counter increments once delta=0
+[2026.11.09-20.28.58:232][784]LogPython: [EmberNotifyParity] CHECK PASS parry on A3b timing flag readback readback=True
+[2026.11.09-20.28.58:233][784]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=parry mode=on move=A3b
+[2026.11.09-20.28.58:245][784]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3b distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.58:245][784]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=on move=A3b pos=0.5308 opened=True press_before=7 press_after=8 distance_cm=120.0 in_control_band=True target=0.100 lead=0.080
+[2026.11.09-20.28.58:258][785]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3b distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.58:285][786]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3b distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.58:323][787]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3b distance_cm=120.0 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.58:338][788]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3b distance_cm=120.1 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.58:364][789]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3b distance_cm=120.4 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.58:393][790]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3b distance_cm=120.9 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.58:418][791]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3b distance_cm=121.8 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.58:445][792]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3b distance_cm=123.4 action=hold band_cm=115.0-125.0
+[2026.11.09-20.28.58:475][793]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3b distance_cm=126.2 action=retreat band_cm=115.0-125.0
+[2026.11.09-20.28.58:516][794]LogPython: [EmberNotifyParity] PARRY_CONTROL_RANGE mode=on move=A3b distance_cm=115.0 action=clamp band_cm=115.0-125.0
+[2026.11.09-20.28.58:516][794]LogPython: [EmberNotifyParity] PARRY_CONTACT arm=parry mode=on move=A3b pos=0.2693 source=URPGPlayerParry.NotifyParried counter=GetParriedCount before=2 after=3 delta=1
+[2026.11.09-20.28.58:516][794]LogPython: [EmberNotifyParity] CHECK PASS parry on A3b NotifyParried contact contacts=[0.2692737877368927] press_opened=True parried_counter_delta=1
+[2026.11.09-20.28.58:516][794]LogPython: [EmberNotifyParity] CHECK PASS parry on A3b shared counter increments once delta=1
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] CHECK PASS A1 Committed parity off=0.34 on=0.36 tolerance=0.080
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] CHECK PASS A1 Active parity off=0.35 on=0.36 tolerance=0.080
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] CHECK FAIL A1 Recovery parity off=0.68 on=0.55 tolerance=0.080
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] CHECK PASS A1 Complete parity reason=montage stopped off=0.91 on=0.95 delta=0.040 tolerance=0.080
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] CHECK FAIL off A1 C-1132 contact observed=[] target=0.3510 tolerance=0.080
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] CHECK FAIL on A1 C-1132 contact observed=[0.47611165046691895] target=0.3510 tolerance=0.080
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] CHECK PASS A3a Committed parity off=0.45 on=0.42 tolerance=0.080
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] CHECK PASS A3a Active parity off=0.45 on=0.42 tolerance=0.080
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] INFO A3a Recovery parity not applicable: matching montage stopped in Active
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] CHECK PASS A3a Complete parity reason=montage stopped off=0.54 on=0.55 delta=0.010 tolerance=0.080
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] CHECK FAIL off A3a C-1132 contact observed=[] target=0.4840 tolerance=0.080
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] CHECK FAIL on A3a C-1132 contact observed=[] target=0.4840 tolerance=0.080
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] CHECK PASS A3b Committed parity off=0.13 on=0.14 tolerance=0.080
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] CHECK PASS A3b Active parity off=0.16 on=0.16 tolerance=0.080
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] CHECK PASS A3b Recovery parity off=0.41 on=0.43 tolerance=0.080
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] CHECK PASS A3b Complete parity reason=montage stopped off=1.07 on=1.08 delta=0.010 tolerance=0.080
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] CHECK FAIL off A3b C-1132 contact observed=[0.27352309226989746] target=0.1520 tolerance=0.080
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] CHECK FAIL on A3b C-1132 contact observed=[0.2692737877368927] target=0.1520 tolerance=0.080
+[2026.11.09-20.28.58:874][808]LogPython: [EmberNotifyParity] RESULT FAIL checks=43/56 C1132_tolerance=0.080s
+[2026.11.09-20.28.58:887][808]LogPython: [EmberNotifyParity] RECEIPT {"checks":56,"rows":{"parry:off:A1":{"ended":false,"natural_recovery_end":false,"parry_contacts":[],"phases":{},"started":false},"parry:off:A3a":{"ended":false,"natural_recovery_end":false,"parry_contacts":[],"phases":{},"started":false},"parry:off:A3b":{"ended":false,"natural_recovery_end":false,"parry_contacts":[0.27352309226989746],"parry_counter_delta":1,"phases":{},"started":false},"parry:on:A1":{"ended":false,"natural_recovery_end":false,"parry_contacts":[0.47611165046691895],"parry_counter_delta":1,"phases":{},"started":false},"parry:on:A3a":{"ended":false,"natural_recovery_end":false,"parry_contacts":[],"phases":{},"started":false},"parry:on:A3b":{"ended":false,"natural_recovery_end":false,"parry_contacts":[0.2692737877368927],"parry_counter_delta":1,"phases":{},"started":false},"timing:off:A1":{"end_phase":"Recovery","end_reason":"montage stopped","ended":true,"natural_recovery_end":true,"parry_contacts":[],"phases":{"Active":0.35,"Committed":0.34,"Complete":0.91,"Recovery":0.68},"started":true},"timing:off:A3a":{"end_phase":"Active","end_reason":"montage stopped","ended":true,"natural_recovery_end":false,"parry_contacts":[],"phases":{"Active":0.45,"Committed":0.45,"Complete":0.54},"started":true},"timing:off:A3b":{"end_phase":"Recovery","end_reason":"montage stopped","ended":true,"natural_recovery_end":true,"parry_contacts":[],"phases":{"Active":0.16,"Committed":0.13,"Complete":1.07,"Recovery":0.41},"started":true},"timing:on:A1":{"end_phase":"Recovery","end_reason":"montage stopped","ended":true,"natural_recovery_end":true,"parry_contacts":[],"phases":{"Active":0.36,"Committed":0.36,"Complete":0.95,"Recovery":0.55},"started":true},"timing:on:A3a":{"end_phase":"Active","end_reason":"montage stopped","ended":true,"natural_recovery_end":false,"parry_contacts":[],"phases":{"Active":0.42,"Committed":0.42,"Complete":0.55},"started":true},"timing:on:A3b":{"end_phase":"Recovery","end_reason":"montage stopped","ended":true,"natural_recovery_end":true,"parry_contacts":[],"phases":{"Active":0.16,"Committed":0.14,"Complete":1.08,"Recovery":0.43},"started":true}}}
+[2026.11.09-20.28.58:887][808]LogPython: [EmberNotifyParity] finished: parity probe complete

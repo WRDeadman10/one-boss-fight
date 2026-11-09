@@ -375,6 +375,8 @@ public:
 	UPROPERTY(EditAnywhere) FRPGDeathConfig Death;
 	/** Tracker configuration. Old definitions receive native defaults additively; these are not proof of serialized values. */
 	UPROPERTY(EditAnywhere) FRPGAttackTrackerConfig AttackTracker;
+	/** Per-boss opt-in for montage-authored notify timing. Existing definitions default off and retain the native legacy timing table. */
+	UPROPERTY(EditAnywhere, Category="Attack|Montage Timing") bool bUseMontageNotifyTimings = false;
 	UPROPERTY(EditAnywhere) TArray<FRPGPhaseConfig> Phases;
 	UPROPERTY(EditAnywhere) TSoftObjectPtr<USkeleton> Skeleton;
 	UPROPERTY(EditAnywhere) TArray<TSoftObjectPtr<UAnimSequenceBase>> Animations;
@@ -425,6 +427,7 @@ struct FRPGParticipantConfig
 	FRPGCloseClipSwapConfig CloseClipSwap;
 	FRPGDeathConfig Death;
 	FRPGAttackTrackerConfig AttackTracker;
+	bool bUseMontageNotifyTimings = false;
 	TArray<FRPGPhaseConfig> Phases;
 	TArray<FRPGParityField> Fields;
 	TSharedPtr<const RPGCombatRegistry::FEpoch> Content;

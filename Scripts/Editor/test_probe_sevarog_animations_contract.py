@@ -48,8 +48,9 @@ class TestProbeSevarogAnimationsContract(unittest.TestCase):
         self.assertIn("probe_root_motion", code)
         self.assertIn("enable_root_motion", code)
 
-        # AnimationLibrary.get_animation_notify_events used
+        # AnimationLibrary.get_animation_notify_events and guarded notify_name used
         self.assertIn("get_animation_notify_events", code)
+        self.assertIn("notify_name", code)
         self.assertNotIn("get_editor_property(\"notifies\")", code)
 
         # Strictly read-only

@@ -31,9 +31,15 @@ class TestEmberNotifyTimingParityContract(unittest.TestCase):
 
     def setUp(self):
         self.driver.S["rows"] = {}
+        self.driver.S["clean_rows"] = {}
+        self.driver.S["hitch_retries"] = []
+        self.driver.S["hitch_exhausted"] = []
+        self.driver.S["checks"] = []
+        self.driver.S["current_trial"] = None
+        self.driver.S["result_emitted"] = False
 
     def test_native_attack_log_transitions_are_read(self):
-        trial = ("timing", "off", "A3a")
+        trial = ("timing", "off", "A3a", 1)
         for line in (
             "LogRPGAttack: BP_ExampleGreatSwordBoss_C: attack A3a instance 4 begins (generation 1)",
             "LogRPGAttack: BP_ExampleGreatSwordBoss_C: attack A3a committed at 0.40 s, heading 90.0 deg",
@@ -42,7 +48,7 @@ class TestEmberNotifyTimingParityContract(unittest.TestCase):
             "LogRPGAttack: BP_ExampleGreatSwordBoss_C: attack A3a instance 4 ended (montage stopped) at 0.81 s, phase was Recovery, yaw drift after commit 0.0 deg",
         ):
             self.driver.parse_attack_line(line, trial)
-        row = self.driver.S["rows"][("timing", "off", "A3a")]
+        row = self.driver.S["rows"][("timing", "off", "A3a", 1)]
         self.assertEqual(row["phases"], {"Committed": 0.40, "Active": 0.43,
                                          "Recovery": 0.61, "Complete": 0.81})
         self.assertTrue(row["natural_recovery_end"])
@@ -50,23 +56,130 @@ class TestEmberNotifyTimingParityContract(unittest.TestCase):
     def test_early_montage_stop_is_not_a_natural_recovery_end(self):
         line = ("LogRPGAttack: BP_ExampleGreatSwordBoss_C: attack A3b instance 2 "
                 "ended (montage stopped) at 0.29 s, phase was Active, yaw drift after commit 0.0 deg")
-        self.driver.parse_attack_line(line, ("timing", "on", "A3b"))
-        row = self.driver.S["rows"][("timing", "on", "A3b")]
+        self.driver.parse_attack_line(line, ("timing", "on", "A3b", 1))
+        row = self.driver.S["rows"][("timing", "on", "A3b", 1)]
         self.assertTrue(row["ended"])
         self.assertFalse(row["natural_recovery_end"])
         self.assertEqual(row["phases"]["Complete"], 0.29)
 
-    def test_driver_separates_timing_and_parry_arms_and_avoids_phase_polling(self):
+    def test_a3a_pack_chain_stop_in_active_is_accepted_as_terminal(self):
+        line = ("LogRPGAttack: BP_ExampleGreatSwordBoss_C: attack A3a instance 8 "
+                "ended (montage stopped) at 0.54 s, phase was Active, yaw drift after commit 0.0 deg")
+        self.driver.parse_attack_line(line, ("timing", "off", "A3a", 1))
+        row = self.driver.S["rows"][("timing", "off", "A3a", 1)]
+        self.assertEqual(row["end_reason"], "montage stopped")
+        self.assertEqual(row["end_phase"], "Active")
+        self.assertFalse(row["natural_recovery_end"])
+
+    def test_terminal_comparison_requires_matching_end_reason(self):
+        evaluate = self.driver.evaluate_terminal_parity
+        off = {"ended": True, "end_reason": "montage stopped", "phases": {"Complete": 0.54}}
+        on = {"ended": True, "end_reason": "montage stopped", "phases": {"Complete": 0.58}}
+        self.assertEqual(evaluate("A3a", off, on)[0], "PASS")
+        on["phases"]["Complete"] = 0.70
+        self.assertEqual(evaluate("A3a", off, on)[0], "FAIL")
+        on["end_reason"] = "interrupted"
+        self.assertEqual(evaluate("A3a", off, on)[0], "INFO")
+        on["end_reason"] = None
+        self.assertEqual(evaluate("A3a", off, on)[0], "INFO")
+
+    def test_tick_over_limit_marks_trial_hitch_and_exact_limit_is_clean(self):
+        self.driver.S["current_trial"] = {"enabled": False, "label": "off", "move": "A1", "attempt": 1}
+        self.driver.note_trial_tick(0.1)
+        row = self.driver.S["rows"][("timing", "off", "A1", 1)]
+        self.assertFalse(row["hitch"])
+        self.driver.note_trial_tick(0.100001)
+        self.assertTrue(row["hitch"])
+        self.assertAlmostEqual(row["max_tick_delta"], 0.100001)
+
+    def test_hitch_retry_limit_and_result_receipt_are_explicit(self):
+        self.assertEqual(self.driver.MAX_HITCH_RETRIES, 3)
         with open(DRIVER_PATH, encoding="utf-8") as source_file:
             source = source_file.read()
-        self.assertIn('for arm in ("timing", "parry")', source)
-        self.assertIn('if arm == "parry" and not parry_sent', source)
-        self.assertIn('source=URPGPlayerParry.NotifyParried', source)
-        self.assertIn('PARRY_PRESS_TARGET_SECONDS = {"A1": 0.27, "A3a": 0.42, "A3b": 0.10}', source)
+        self.assertIn("range(1, MAX_HITCH_RETRIES + 2)", source)
+        self.assertIn('"RESULT %s clean_trials=%d/6 hitch_retries=%d retry_log=%s', source)
+        self.assertIn('"TRIAL_TICK mode=%s move=%s attempt=%d delta=%.6f"', source)
+        self.assertIn('outcome=%s max_delta=%.6f', source)
+
+    def test_result_counts_only_selected_clean_trials_and_lists_retries(self):
+        messages = []
+        old_log = self.driver.unreal.log
+        self.driver.unreal.log = messages.append
+        try:
+            self.driver.S["clean_rows"] = {("off", "A1"): {"clean": True}}
+            self.driver.S["rows"] = {("timing", "on", "A1", 1): {"hitch": True}}
+            self.driver.S["hitch_retries"] = [{"mode": "on", "move": "A1", "retry_attempt": 2}]
+            self.driver.S["checks"] = [True]
+            self.driver.emit_result()
+        finally:
+            self.driver.unreal.log = old_log
+        result = next(message for message in messages if "RESULT " in message)
+        self.assertIn("clean_trials=1/6 hitch_retries=1", result)
+        self.assertIn('retry_log=[{"mode":"on","move":"A1","retry_attempt":2}]', result)
+
+    def test_hitched_attempt_is_repeated_and_clean_attempt_is_selected(self):
+        calls = []
+
+        def fake_attempt(enabled, move, attempt, _tracker, _debug, _pawn, _boss):
+            calls.append(attempt)
+            row = {"hitch": attempt == 1, "max_tick_delta": 0.25 if attempt == 1 else 0.02,
+                   "started": True, "ended": True, "clean": attempt > 1,
+                   "timing_flag_ok": True, "completion_ok": True, "phases": {},
+                   "natural_recovery_end": True}
+            if False:
+                yield 0.0
+            return row, enabled
+
+        original = self.driver.run_attempt
+        self.driver.run_attempt = fake_attempt
+        try:
+            task = self.driver.run_one(False, "A1", None, None, None, None)
+            self.assertEqual(next(task), 0.35)
+            with self.assertRaises(StopIteration):
+                next(task)
+        finally:
+            self.driver.run_attempt = original
+        self.assertEqual(calls, [1, 2])
+        self.assertEqual(self.driver.S["clean_rows"][("off", "A1")]["max_tick_delta"], 0.02)
+        self.assertEqual(self.driver.S["hitch_retries"][0]["retry_attempt"], 2)
+
+    def test_hitch_retries_stop_after_three_repeats(self):
+        calls = []
+
+        def always_hitch(enabled, move, attempt, _tracker, _debug, _pawn, _boss):
+            calls.append(attempt)
+            row = {"hitch": True, "max_tick_delta": 0.2, "started": True, "ended": True,
+                   "clean": False, "phases": {}}
+            if False:
+                yield 0.0
+            return row, enabled
+
+        original = self.driver.run_attempt
+        self.driver.run_attempt = always_hitch
+        try:
+            list(self.driver.run_one(False, "A1", None, None, None, None))
+        finally:
+            self.driver.run_attempt = original
+        self.assertEqual(calls, [1, 2, 3, 4])
+        self.assertEqual(len(self.driver.S["hitch_retries"]), 3)
+        self.assertEqual(len(self.driver.S["hitch_exhausted"]), 1)
+        self.assertIsNone(self.driver.S["clean_rows"][("off", "A1")])
+        self.assertFalse(self.driver.S["checks"][-1])
+
+    def test_driver_is_timing_only_and_avoids_phase_polling(self):
+        with open(DRIVER_PATH, encoding="utf-8") as source_file:
+            source = source_file.read()
+        self.assertIn('TASKS = [(enabled, move) for enabled in (False, True) for move in MOVES]', source)
+        self.assertIn('for enabled, move in TASKS', source)
+        self.assertNotIn('"parry"', source)
+        self.assertNotIn("parry.press()", source)
+        self.assertNotIn("get_parried_count", source)
+        self.assertNotIn("URPGPlayerParry", source)
+        self.assertIn("evaluate_terminal_parity(move, off, on)", source)
         self.assertIn('encounter.is_dormant() or encounter.is_waking()', source)
         self.assertIn('yield from warmup_move(tracker, debug, pawn, boss)', source)
         self.assertLess(source.index('yield from warmup_move(tracker, debug, pawn, boss)'),
-                        source.index('for arm, enabled, move in TASKS'))
+                        source.index('for enabled, move in TASKS'))
         self.assertNotIn("tracker.get_phase_name()", source)
         self.assertNotIn("tracker.get_current_move()", source)
 
@@ -105,20 +218,6 @@ class TestEmberNotifyTimingParityContract(unittest.TestCase):
             self.driver.S["pie_start_wall_time"] = os.path.getmtime(log_path) + 1
             self.assertFalse(self.driver.validate_attack_log_freshness())
             self.assertIn("predates PIE start", self.driver.S["log_error"])
-
-    def test_confirmed_count_is_the_shared_notify_parried_counter(self):
-        parry_cpp = os.path.join(PROJECT_ROOT, "Source", "OneBossFight", "Player", "RPGPlayerParry.cpp")
-        parry_h = os.path.join(PROJECT_ROOT, "Source", "OneBossFight", "Player", "RPGPlayerParry.h")
-        with open(parry_cpp, encoding="utf-8") as source_file:
-            implementation = source_file.read()
-        with open(parry_h, encoding="utf-8") as source_file:
-            declaration = source_file.read()
-        self.assertIn("bool URPGPlayerParry::NotifyParried(AActor* Actor, AActor* Boss", implementation)
-        self.assertIn("++Parry->ParriedCount;", implementation)
-        self.assertIn("int32 GetParriedCount() const { return ParriedCount; }", declaration)
-        with open(DRIVER_PATH, encoding="utf-8") as source_file:
-            self.assertIn("parry.get_parried_count()", source_file.read())
-
 
 if __name__ == "__main__":
     unittest.main()

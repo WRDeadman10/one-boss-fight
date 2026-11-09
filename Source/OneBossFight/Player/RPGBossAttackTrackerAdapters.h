@@ -11,6 +11,7 @@ namespace RPGBossAttackTrackerAdapters
 	inline constexpr const TCHAR* FieldVetoIllegalStarts = TEXT("AttackTracker.bVetoIllegalStarts");
 	inline constexpr const TCHAR* FieldBranchRange = TEXT("AttackTracker.BranchRange");
 	inline constexpr const TCHAR* FieldBranchConeDegrees = TEXT("AttackTracker.BranchConeDegrees");
+	inline constexpr const TCHAR* FieldUseMontageNotifyTimings = TEXT("bUseMontageNotifyTimings");
 
 	ONEBOSSFIGHT_API bool ValidateAttackTracker(const FRPGAttackTrackerConfig& Config, FString& OutError);
 	ONEBOSSFIGHT_API bool IsNativeDefault(const FRPGAttackTrackerConfig& Config);

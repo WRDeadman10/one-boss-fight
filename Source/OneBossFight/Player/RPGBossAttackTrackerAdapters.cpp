@@ -147,6 +147,7 @@ namespace RPGBossAttackTrackerAdapters
 		Tracker->bVetoIllegalStarts = Config.AttackTracker.bVetoIllegalStarts;
 		Tracker->BranchRange = Config.AttackTracker.BranchRange;
 		Tracker->BranchConeDegrees = Config.AttackTracker.BranchConeDegrees;
+		Tracker->bUseMontageNotifyTimings = Config.bUseMontageNotifyTimings;
 		return true;
 	}
 

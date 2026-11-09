@@ -4,6 +4,7 @@
 #include "Player/RPGBossAttackTrackerAdapters.h"
 #include "Player/RPGBossEncounter.h"
 #include "Player/RPGLegend.h"
+#include "Player/RPGAttackTracker.h"
 #include "Engine/World.h"
 #include "Misc/ScopeExit.h"
 #include "UObject/GarbageCollection.h"
@@ -35,6 +36,37 @@ bool FRPGEncounterBindingDraftTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("proposal defaults are carried into the participant snapshot"), Config->ParrySlowMotion.bPerfectEnabled
 		&& FMath::IsNearlyEqual(Config->ParrySlowMotion.PerfectScale, 0.30f) && FMath::IsNearlyEqual(Config->ParrySlowMotion.PerfectSeconds, 0.35f)
 		&& !Config->ParrySlowMotion.bNormalEnabled && FMath::IsNearlyEqual(Config->ParrySlowMotion.CooldownSeconds, 0.60f));
+	TestFalse(TEXT("existing boss definitions default to legacy attack timing"), Def->bUseMontageNotifyTimings);
+	TestFalse(TEXT("compiled existing definition carries timing opt-in as false"), Config->bUseMontageNotifyTimings);
+	TestTrue(TEXT("default-off timing mode receives additive provenance"), Config->Fields.ContainsByPredicate([](const FRPGParityField& Entry)
+		{ return Entry.FieldPath == RPGBossAttackTrackerAdapters::FieldUseMontageNotifyTimings; }));
+	Def->bUseMontageNotifyTimings = true;
+	FRPGParityField TimingOptIn = Field;
+	TimingOptIn.FieldPath = RPGBossAttackTrackerAdapters::FieldUseMontageNotifyTimings;
+	TimingOptIn.Type = TEXT("bool"); TimingOptIn.Value = TEXT("true");
+	TimingOptIn.Destination = TEXT("URPGAttackTracker.bUseMontageNotifyTimings");
+	Def->Fields.Add(TimingOptIn);
+	TSharedPtr<const FRPGParticipantConfig> EnabledConfig;
+	const FRPGHydrationResult EnabledCompiled = RPGCombatHydration::CompileSyntheticParticipant(*Def, RPGCombatRegistry::Legacy(), FString::ChrN(64, TEXT('b')), EnabledConfig);
+	TestTrue(TEXT("source-backed boss timing opt-in compiles into the participant snapshot"), EnabledCompiled.IsReady()
+		&& EnabledConfig.IsValid() && EnabledConfig->bUseMontageNotifyTimings);
+	if (EnabledConfig.IsValid())
+	{
+		AActor* TrackerOwner = NewObject<AActor>(GetTransientPackage());
+		URPGAttackTracker* Tracker = TrackerOwner ? NewObject<URPGAttackTracker>(TrackerOwner) : nullptr;
+		FString TrackerError;
+		TestTrue(TEXT("enabled definition configures the tracker before encounter component registration"), Tracker
+			&& RPGBossAttackTrackerAdapters::ConfigureAttackTracker(*Tracker, *EnabledConfig, TrackerError) && TrackerError.IsEmpty());
+		TestTrue(TEXT("tracker receives the explicitly enabled definition value"), Tracker && Tracker->bUseMontageNotifyTimings);
+	}
+	TSharedPtr<const FRPGParticipantConfig> MissingTimingProvenance;
+	Def->Fields.RemoveAll([&](const FRPGParityField& Entry) { return Entry.FieldPath == RPGBossAttackTrackerAdapters::FieldUseMontageNotifyTimings; });
+	const FRPGHydrationResult MissingTimingSource = RPGCombatHydration::CompileSyntheticParticipant(*Def, RPGCombatRegistry::Legacy(), FString::ChrN(64, TEXT('b')), MissingTimingProvenance);
+	TestTrue(TEXT("enabled timing mode without explicit source provenance is rejected"), !MissingTimingSource.IsReady()
+		&& !MissingTimingProvenance.IsValid() && MissingTimingSource.Errors.ContainsByPredicate([](const FString& Error)
+		{ return Error.StartsWith(TEXT("MontageNotifyTimings.ProvenanceMissing:")); }));
+	Def->bUseMontageNotifyTimings = false;
+	Def->Fields.RemoveAll([&](const FRPGParityField& Entry) { return Entry.FieldPath == RPGBossAttackTrackerAdapters::FieldUseMontageNotifyTimings; });
 	TestTrue(TEXT("typed default membership carries the complete parry policy"), Config->Fields.ContainsByPredicate([](const FRPGParityField& Entry) { return Entry.FieldPath == RPGParrySlowMotionConfigRules::FieldCooldownSeconds; }));
 	Def->AttackTracker.bEnabled = false;
 	TSharedPtr<const FRPGParticipantConfig> MissingTrackerFields;

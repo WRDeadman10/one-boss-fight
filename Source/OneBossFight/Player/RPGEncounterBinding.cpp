@@ -155,6 +155,10 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
 		Result.Fail(TEXT("ParrySlowMotion.ProvenanceMissing: non-default parry feedback requires all seven typed source fields"));
 	}
 	if (Fields.IsEmpty()) { Result.Fail(TEXT("field manifest required")); }
+	if (D.bUseMontageNotifyTimings && !Fields.Contains(FString(RPGBossAttackTrackerAdapters::FieldUseMontageNotifyTimings)))
+	{
+		Result.Fail(TEXT("MontageNotifyTimings.ProvenanceMissing: an enabled per-boss opt-in requires a typed source field"));
+	}
 	if (!Result.IsReady()) { return Result; }
 	auto Value = MakeShared<FRPGParticipantConfig>();
 	Value->BossId = D.DefinitionId; Value->PresentationId = D.PresentationId;
@@ -177,6 +181,22 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
 	Value->CloseClipSwap = D.CloseClipSwap;
 	Value->Death = D.Death;
 	Value->AttackTracker = D.AttackTracker;
+	Value->bUseMontageNotifyTimings = D.bUseMontageNotifyTimings;
+	if (!D.bUseMontageNotifyTimings && !Fields.Contains(FString(RPGBossAttackTrackerAdapters::FieldUseMontageNotifyTimings)))
+	{
+		FRPGParityField DefaultTimingMode;
+		DefaultTimingMode.FieldPath = RPGBossAttackTrackerAdapters::FieldUseMontageNotifyTimings;
+		DefaultTimingMode.Type = TEXT("native-default-membership");
+		DefaultTimingMode.Value = TEXT("false; legacy attack timing mode remains enabled");
+		DefaultTimingMode.SourcePath = TEXT("URPGBossDefinition::bUseMontageNotifyTimings default");
+		DefaultTimingMode.SourceSite = TEXT("typed definition default; additive to existing definitions");
+		DefaultTimingMode.Origin = TEXT("native default");
+		DefaultTimingMode.Precedence = TEXT("per-boss opt-in; false unless explicitly authored true");
+		DefaultTimingMode.Destination = TEXT("URPGAttackTracker.bUseMontageNotifyTimings");
+		DefaultTimingMode.FirstRead = TEXT("RPGCombatHydration participant compilation");
+		DefaultTimingMode.Witness = TEXT("false copied to the data-route tracker configuration");
+		Value->Fields.Add(MoveTemp(DefaultTimingMode));
+	}
 	if (RPGBossAttackTrackerAdapters::IsNativeDefault(D.AttackTracker))
 	{
 		for (const TCHAR* Path : AttackTrackerFieldPaths)

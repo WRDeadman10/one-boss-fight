@@ -1,0 +1,71 @@
+﻿[2026.11.09-20.59.49:630][  6]LogTemp: Display: [EncounterActivation] default data startup: selected /Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter for map L_SevarogArena
+[2026.11.09-20.59.49:693][  6]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending
+[2026.11.09-20.59.52:597][ 67]LogPython: [EmberNotifyParity] CHECK PASS component tracker exists 
+[2026.11.09-20.59.52:597][ 67]LogPython: [EmberNotifyParity] CHECK PASS component encounter exists 
+[2026.11.09-20.59.52:597][ 67]LogPython: [EmberNotifyParity] CHECK PASS component debug exists 
+[2026.11.09-20.59.52:597][ 67]LogPython: [EmberNotifyParity] CHECK PASS component pawn exists 
+[2026.11.09-20.59.52:597][ 67]LogPython: [EmberNotifyParity] CHECK PASS component boss exists 
+[2026.11.09-20.59.52:597][ 67]LogPython: [EmberNotifyParity] CHECK PASS LogRPGAttack source log is fresh for this PIE run C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Claude\P_C1239_EMBERPARITY5\data.log
+[2026.11.09-20.59.52:598][ 67]LogPython: [EmberNotifyParity] WAKE_HEARTBEAT elapsed=0.0 dormant=False waking=True
+[2026.11.09-20.59.54:688][140]LogPython: [EmberNotifyParity] WAKE_HEARTBEAT elapsed=2.1 dormant=False waking=True
+[2026.11.09-20.59.56:349][185]LogPython: [EmberNotifyParity] CHECK PASS encounter awake before first move dormant=False waking=False
+[2026.11.09-20.59.56:350][185]LogPython: [EmberNotifyParity] WARMUP_BEGIN move=A1 mode=off measured=false
+[2026.11.09-20.59.56:936][205]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Committed pos=0.35
+[2026.11.09-20.59.56:937][205]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Active pos=0.37
+[2026.11.09-20.59.56:937][205]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Recovery pos=0.51
+[2026.11.09-20.59.57:511][227]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Complete pos=0.93 prior=Recovery reason=montage stopped
+[2026.11.09-20.59.57:511][227]LogPython: [EmberNotifyParity] CHECK PASS unmeasured A1 warm-up reaches Recovery end phases={"Active": 0.37, "Committed": 0.35, "Complete": 0.93, "Recovery": 0.51} end_reason=montage stopped
+[2026.11.09-20.59.57:888][235]LogPython: [EmberNotifyParity] CHECK PASS timing off A1 timing flag readback readback=False
+[2026.11.09-20.59.57:889][235]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=off move=A1
+[2026.11.09-20.59.58:318][251]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Committed pos=0.33
+[2026.11.09-20.59.58:318][251]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Active pos=0.37
+[2026.11.09-20.59.58:514][259]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Recovery pos=0.50
+[2026.11.09-20.59.58:949][274]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Complete pos=0.95 prior=Recovery reason=montage stopped
+[2026.11.09-20.59.58:949][274]LogPython: [EmberNotifyParity] CHECK PASS timing off A1 natural recovery end phases={"Active": 0.37, "Committed": 0.33, "Complete": 0.95, "Recovery": 0.5} end_reason=montage stopped end_phase=Recovery log_error=None
+[2026.11.09-20.59.59:292][289]LogPython: [EmberNotifyParity] CHECK PASS timing off A3a timing flag readback readback=False
+[2026.11.09-20.59.59:293][289]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=off move=A3a
+[2026.11.09-20.59.59:756][307]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3a phase=Committed pos=0.40
+[2026.11.09-20.59.59:756][307]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3a phase=Active pos=0.42
+[2026.11.09-20.59.59:960][313]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3a phase=Complete pos=0.53 prior=Active reason=montage stopped
+[2026.11.09-20.59.59:960][313]LogPython: [EmberNotifyParity] CHECK PASS timing off A3a natural recovery end phases={"Active": 0.42, "Committed": 0.4, "Complete": 0.53} end_reason=montage stopped end_phase=Active log_error=None
+[2026.11.09-21.00.00:302][326]LogPython: [EmberNotifyParity] CHECK PASS timing off A3b timing flag readback readback=False
+[2026.11.09-21.00.00:302][326]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=off move=A3b
+[2026.11.09-21.00.00:588][337]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3b phase=Committed pos=0.14
+[2026.11.09-21.00.00:589][337]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3b phase=Active pos=0.17
+[2026.11.09-21.00.00:809][345]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3b phase=Recovery pos=0.42
+[2026.11.09-21.00.01:609][378]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3b phase=Complete pos=1.07 prior=Recovery reason=montage stopped
+[2026.11.09-21.00.01:610][378]LogPython: [EmberNotifyParity] CHECK PASS timing off A3b natural recovery end phases={"Active": 0.17, "Committed": 0.14, "Complete": 1.07, "Recovery": 0.42} end_reason=montage stopped end_phase=Recovery log_error=None
+[2026.11.09-21.00.01:998][392]LogPython: [EmberNotifyParity] CHECK PASS timing on A1 timing flag readback readback=True
+[2026.11.09-21.00.01:999][392]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=on move=A1
+[2026.11.09-21.00.02:445][409]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A1 phase=Committed pos=0.34
+[2026.11.09-21.00.02:445][409]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A1 phase=Active pos=0.39
+[2026.11.09-21.00.02:645][417]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A1 phase=Recovery pos=0.51
+[2026.11.09-21.00.03:108][431]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A1 phase=Complete pos=0.93 prior=Recovery reason=montage stopped
+[2026.11.09-21.00.03:108][431]LogPython: [EmberNotifyParity] CHECK PASS timing on A1 natural recovery end phases={"Active": 0.39, "Committed": 0.34, "Complete": 0.93, "Recovery": 0.51} end_reason=montage stopped end_phase=Recovery log_error=None
+[2026.11.09-21.00.03:396][443]LogPython: [EmberNotifyParity] CHECK PASS timing on A3a timing flag readback readback=True
+[2026.11.09-21.00.03:397][443]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=on move=A3a
+[2026.11.09-21.00.03:941][464]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3a phase=Committed pos=0.43
+[2026.11.09-21.00.03:941][464]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3a phase=Active pos=0.43
+[2026.11.09-21.00.04:101][471]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3a phase=Complete pos=0.49 prior=Active reason=montage stopped
+[2026.11.09-21.00.04:101][471]LogPython: [EmberNotifyParity] CHECK PASS timing on A3a natural recovery end phases={"Active": 0.43, "Committed": 0.43, "Complete": 0.49} end_reason=montage stopped end_phase=Active log_error=None
+[2026.11.09-21.00.04:451][485]LogPython: [EmberNotifyParity] CHECK PASS timing on A3b timing flag readback readback=True
+[2026.11.09-21.00.04:452][485]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=on move=A3b
+[2026.11.09-21.00.05:383][491]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3b phase=Committed pos=0.53
+[2026.11.09-21.00.05:383][491]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3b phase=Recovery pos=0.53
+[2026.11.09-21.00.05:942][513]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3b phase=Complete pos=1.06 prior=Recovery reason=montage stopped
+[2026.11.09-21.00.05:942][513]LogPython: [EmberNotifyParity] CHECK PASS timing on A3b natural recovery end phases={"Committed": 0.53, "Complete": 1.06, "Recovery": 0.53} end_reason=montage stopped end_phase=Recovery log_error=None
+[2026.11.09-21.00.06:287][527]LogPython: [EmberNotifyParity] CHECK PASS A1 Committed parity off=0.33 on=0.34 tolerance=0.080
+[2026.11.09-21.00.06:287][527]LogPython: [EmberNotifyParity] CHECK PASS A1 Active parity off=0.37 on=0.39 tolerance=0.080
+[2026.11.09-21.00.06:287][527]LogPython: [EmberNotifyParity] CHECK PASS A1 Recovery parity off=0.5 on=0.51 tolerance=0.080
+[2026.11.09-21.00.06:287][527]LogPython: [EmberNotifyParity] CHECK PASS A1 Complete parity reason=montage stopped off=0.95 on=0.93 delta=0.020 tolerance=0.080
+[2026.11.09-21.00.06:287][527]LogPython: [EmberNotifyParity] CHECK PASS A3a Committed parity off=0.4 on=0.43 tolerance=0.080
+[2026.11.09-21.00.06:287][527]LogPython: [EmberNotifyParity] CHECK PASS A3a Active parity off=0.42 on=0.43 tolerance=0.080
+[2026.11.09-21.00.06:287][527]LogPython: [EmberNotifyParity] INFO A3a Recovery parity not applicable: matching montage stopped in Active
+[2026.11.09-21.00.06:287][527]LogPython: [EmberNotifyParity] CHECK PASS A3a Complete parity reason=montage stopped off=0.53 on=0.49 delta=0.040 tolerance=0.080
+[2026.11.09-21.00.06:287][527]LogPython: [EmberNotifyParity] CHECK FAIL A3b Committed parity off=0.14 on=0.53 tolerance=0.080
+[2026.11.09-21.00.06:287][527]LogPython: [EmberNotifyParity] CHECK FAIL A3b Active parity off=0.17 on=None tolerance=0.080
+[2026.11.09-21.00.06:287][527]LogPython: [EmberNotifyParity] CHECK FAIL A3b Recovery parity off=0.42 on=0.53 tolerance=0.080
+[2026.11.09-21.00.06:287][527]LogPython: [EmberNotifyParity] CHECK PASS A3b Complete parity reason=montage stopped off=1.07 on=1.06 delta=0.010 tolerance=0.080
+[2026.11.09-21.00.06:287][527]LogPython: [EmberNotifyParity] RESULT FAIL checks=28/31 C1132_tolerance=0.080s
+[2026.11.09-21.00.06:300][527]LogPython: [EmberNotifyParity] RECEIPT {"checks":31,"rows":{"timing:off:A1":{"end_phase":"Recovery","end_reason":"montage stopped","ended":true,"natural_recovery_end":true,"phases":{"Active":0.37,"Committed":0.33,"Complete":0.95,"Recovery":0.5},"started":true},"timing:off:A3a":{"end_phase":"Active","end_reason":"montage stopped","ended":true,"natural_recovery_end":false,"phases":{"Active":0.42,"Committed":0.4,"Complete":0.53},"started":true},"timing:off:A3b":{"end_phase":"Recovery","end_reason":"montage stopped","ended":true,"natural_recovery_end":true,"phases":{"Active":0.17,"Committed":0.14,"Complete":1.07,"Recovery":0.42},"started":true},"timing:on:A1":{"end_phase":"Recovery","end_reason":"montage stopped","ended":true,"natural_recovery_end":true,"phases":{"Active":0.39,"Committed":0.34,"Complete":0.93,"Recovery":0.51},"started":true},"timing:on:A3a":{"end_phase":"Active","end_reason":"montage stopped","ended":true,"natural_recovery_end":false,"phases":{"Active":0.43,"Committed":0.43,"Complete":0.49},"started":true},"timing:on:A3b":{"end_phase":"Recovery","end_reason":"montage stopped","ended":true,"natural_recovery_end":true,"phases":{"Committed":0.53,"Complete":1.06,"Recovery":0.53},"started":true}}}
+[2026.11.09-21.00.06:300][527]LogPython: [EmberNotifyParity] finished: parity probe complete

@@ -122,7 +122,7 @@ def safe_prop(obj, prop_names, fallback="n/a"):
 
 
 def probe_notifies(asset):
-    """Safely extracts notify class names using AnimationLibrary.get_animation_notify_events."""
+    """Safely extracts notify class names or notify_name using AnimationLibrary.get_animation_notify_events."""
     try:
         events = list(AL.get_animation_notify_events(asset))
         if not events:
@@ -137,8 +137,16 @@ def probe_notifies(asset):
                 obj = st if st is not None else no
                 if obj is not None:
                     cls_name = obj.get_class().get_name()
+                else:
+                    nname = safe_prop(ev, ("notify_name", "event_name"))
+                    if nname != "n/a" and nname:
+                        cls_name = f"NamedNotify({nname})"
             except Exception:
                 pass
+            if cls_name == "Unknown":
+                nname = safe_prop(ev, ("notify_name", "event_name"))
+                if nname != "n/a" and nname:
+                    cls_name = f"NamedNotify({nname})"
             classes.append(cls_name)
         return f"{len(events)} notifies: [{', '.join(classes)}]"
     except Exception as ex:
