@@ -1,0 +1,95 @@
+﻿Using bundled DotNet SDK version: 8.0.300
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" OneBossFightEditor Win64 Development -Project=C:\UnrealProject\OneBossFight\OneBossFight.uproject -WaitMutex -NoHotReload
+Log file: C:\Users\Rushit Vaghela\AppData\Local\UnrealBuildTool\Log.txt
+Using 'git status' to determine working set for adaptive non-unity build (C:\UnrealProject\OneBossFight).
+Invalidating makefile for OneBossFightEditor (source file added)
+Available x64 toolchains (1):
+ * C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207
+    (Family=14.44.35207, FamilyRank=1, Version=14.44.35214, Is64Bit=True, ReleaseChannel=Latest, Architecture=x64)
+Visual Studio 2022 compiler version 14.44.35214 is not a preferred version. Please use the latest preferred version 14.38.33130
+NGX Using Lib Dir x64 Platform Dir Win64
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'Niagara'.
+Warning: Plugin 'UnrealClaude' does not list plugin 'Niagara' as a dependency, but module 'UnrealClaude' depends on module 'NiagaraEditor'.
+Parsing headers for OneBossFightEditor
+  Running Internal UnrealHeaderTool C:\UnrealProject\OneBossFight\OneBossFight.uproject C:\UnrealProject\OneBossFight\Intermediate\Build\Win64\OneBossFightEditor\Development\OneBossFightEditor.uhtmanifest -WarningsAsErrors -installed
+Total of 5 written
+Reflection code generated for OneBossFightEditor in 3.2555302 seconds
+Building OneBossFightEditor...
+Using Visual Studio 2022 14.44.35214 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+Warning: Visual Studio 2022 compiler is not a preferred version
+[Adaptive Build] Excluded from OneBossFight unity file: RPGFrameworkBossCharacter.cpp, RPGAttackTracker.cpp, RPGBossPosture.cpp, RPGCameraRig.cpp, RPGDamageResolver.cpp, RPGPackParryContact.cpp, RPGPlayerMovesSubsystem.cpp, RPGPlayerParry.cpp, RPGBossExecutorHarnessTests.cpp, RPGPackParryContactTests.cpp, RPGSourceTestGapTests.cpp
+Determining max actions to execute in parallel (8 physical cores, 16 logical cores)
+  Executing up to 8 processes, one per physical core
+  Requested 1.5 GB memory per action, 11.17 GB available: limiting max parallel actions to 7
+Using Unreal Build Accelerator local executor to run 58 action(s)
+  Storage capacity 40Gb
+---- Starting trace: 261109_075827 ----
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+------ Building 58 action(s) started ------
+[1/58] Compile [x64] OneBossFight.init.gen.cpp
+[2/58] Compile [x64] RPGBossCloseClipSwapAdaptersTests.cpp
+[3/58] Compile [x64] RPGBossActivationTests.cpp
+[4/58] Compile [x64] RPGBossAuthoredDraftPreflightTests.cpp
+[5/58] Compile [x64] RPGBossActivationWorldTests.cpp
+[6/58] Compile [x64] RPGBossDeath.cpp
+[7/58] Compile [x64] RPGAutomationTests.cpp
+[8/58] Compile [x64] RPGBossBleedAdaptersTests.cpp
+[9/58] Compile [x64] RPGBossDormantWakeAdaptersTests.cpp
+[10/58] Compile [x64] RPGBossEncounterClusterAdaptersTests.cpp
+[11/58] Compile [x64] RPGBossEncounterRestartMatrixTests.cpp
+[12/58] Compile [x64] RPGBossDeathAdaptersTests.cpp
+[13/58] Compile [x64] RPGBossEncounterPolicyAdaptersTests.cpp
+[14/58] Compile [x64] RPGBossExecutorHarnessTests.cpp
+[15/58] Compile [x64] RPGBossEncounter.cpp
+[16/58] Compile [x64] RPGBossHud.cpp
+[17/58] Compile [x64] RPGBossHealPunishAdaptersTests.cpp
+[18/58] Compile [x64] RPGBossHydrationPreflight.cpp
+[19/58] Compile [x64] RPGBossLookAdaptersTests.cpp
+[20/58] Compile [x64] RPGBossLowSweepAdaptersTests.cpp
+[21/58] Compile [x64] RPGBossHydrationPreflightTests.cpp
+[22/58] Compile [x64] RPGBossPhaseAdaptersTests.cpp
+[23/58] Compile [x64] RPGBossPosture.gen.cpp
+[24/58] Compile [x64] RPGBossHydrationPreparationTests.cpp
+[25/58] Compile [x64] RPGBossPhaseFlowAdaptersTests.cpp
+[26/58] Compile [x64] RPGBossPosture.cpp
+[27/58] Compile [x64] RPGBossPhases.cpp
+[28/58] Compile [x64] RPGBossPhasesClusterAdaptersTests.cpp
+[29/58] Compile [x64] RPGBossShockwaveAdaptersTests.cpp
+[30/58] Compile [x64] RPGBossProductionPreflightTests.cpp
+[31/58] Compile [x64] RPGBossStagger.cpp
+[32/58] Compile [x64] RPGBossProductionPreparationTests.cpp
+[33/58] Compile [x64] RPGBossPreparationRegistryTests.cpp
+[34/58] Compile [x64] RPGBossStatsAdapters.cpp
+[35/58] Compile [x64] RPGBossStaggerPolicyAdaptersTests.cpp
+[36/58] Compile [x64] RPGBossStatsAdaptersTests.cpp
+[37/58] Compile [x64] RPGBossStaggerClusterAdaptersTests.cpp
+[38/58] Compile [x64] RPGFrameworkBossCharacter.gen.cpp
+[39/58] Compile [x64] RPGCameraProbe.cpp
+[40/58] Compile [x64] RPGCombatDebug.cpp
+[41/58] Compile [x64] RPGBossWorldInputCompilerTests.cpp
+[42/58] Compile [x64] RPGDamageResolver.cpp
+[43/58] Compile [x64] RPGBossWorldPreparationTests.cpp
+[44/58] Compile [x64] RPGPackParryContact.gen.cpp
+[45/58] Compile [x64] RPGPackParryContactTests.cpp
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGPackParryContactTests.cpp(32): error C2039: 'QuietNaN': is not a member of 'TNumericLimits<double>'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Math\NumericLimits.h(270): note: see declaration of 'TNumericLimits<double>'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGPackParryContactTests.cpp(32): error C3861: 'QuietNaN': identifier not found
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGPackParryContactTests.cpp(34): error C2039: 'QuietNaN': is not a member of 'TNumericLimits<double>'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Math\NumericLimits.h(270): note: see declaration of 'TNumericLimits<double>'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGPackParryContactTests.cpp(34): error C3861: 'QuietNaN': identifier not found
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGPackParryContactTests.cpp(74): error C2039: 'QuietNaN': is not a member of 'TNumericLimits<double>'
+C:\Program Files\Epic Games\UE_5.5\Engine\Source\Runtime\Core\Public\Math\NumericLimits.h(270): note: see declaration of 'TNumericLimits<double>'
+C:\UnrealProject\OneBossFight\Source\OneBossFight\Tests\RPGPackParryContactTests.cpp(74): error C3861: 'QuietNaN': identifier not found
+[46/58] Compile [x64] RPGFrameworkBossController.cpp
+[47/58] Compile [x64] RPGPackParryContact.cpp
+[48/58] Compile [x64] RPGPlayerParry.gen.cpp
+[49/58] Compile [x64] RPGHitIntake.cpp
+[50/58] Compile [x64] RPGFrameworkProofFixture.cpp
+[51/58] Compile [x64] RPGFrameworkBossCharacter.cpp
+[52/58] Compile [x64] RPGFrameworkMoveExecutor.cpp
+[53/58] Compile [x64] RPGSourceTestGapTests.cpp
+[54/58] Compile [x64] RPGPlayerMovesSubsystem.cpp
+[55/58] Compile [x64] RPGPlayerParry.cpp
+Trace file written to C:/Users/Rushit Vaghela/AppData/Local/UnrealBuildTool/Log.uba with size 16.9kb
+Total time in Unreal Build Accelerator local executor: 41.24 seconds
+Total execution time: 48.37 seconds

@@ -18,7 +18,7 @@
 
 ## C-1121 feedback and hotfix state
 
-C-1119/C-1120 were handled ahead of AU-C36+ as requested in C-1121. X-1589 reported the fixes and AU-C41–C44; X-1590 explicitly acknowledged C-1121 and left the black-PNG source-pixel corroboration to Antigravity. Claude had not yet returned a verdict at this closeout. The latest native source cross-check shows `GS_Attack04_Montage` mapped to A1b while A4's configured clip is `AN_Boss01_A4_LowSweep`; the montage fallback is gated by an actual active low-sweep component and remains unverified at runtime.
+C-1119/C-1120 were handled ahead of AU-C36+ as requested in C-1121. X-1589 reported the fixes and AU-C41–C44; X-1590 explicitly acknowledged C-1121 and left the black-PNG source-pixel corroboration to Antigravity. C-1122 accepted X-1589–X-1591 offline and accepted A-655's black-PNG confirmation. Claude queued AU-C15 aura first, then AU-C10 parry, with AU-C40/C45 after; no new run result accompanied the verdict. The latest native source cross-check shows `GS_Attack04_Montage` mapped to A1b while A4's configured clip is `AN_Boss01_A4_LowSweep`; the montage fallback is gated by an actual active low-sweep component and remains unverified at runtime. A-655's f_00005 first-visible report has no BUILD ID in the mailbox and is retained separately from AU-C31's BUILD-255/259 counts.
 
 ## Batch results and limits
 

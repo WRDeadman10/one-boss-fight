@@ -1,0 +1,95 @@
+﻿route=data /Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter; player refilled below 35 HP by the boss RPGCombatDebug; boss health and AI untouched
+[2026.11.08-23.13.45:645][  6]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending
+setup boss_hp=2000.0/2000.0 player_hp=0.0/1000000.0
+FIGHT_START slomo=0.5 frames=D:/FightVideo/auparry_only fps=15
+PARRY_DIAG montage=None tracker_move=None tracker_instance=0 tracker_active=False tracker_position=0.000 sweep_active=False sweep_count=0
+PARRY_DIAG montage=GS_EquipWeapon_Montage tracker_move=None tracker_instance=0 tracker_active=False tracker_position=0.000 sweep_active=False sweep_count=0
+PARRY_DIAG montage=None tracker_move=None tracker_instance=0 tracker_active=False tracker_position=0.000 sweep_active=False sweep_count=0
+PARRY_DIAG montage=Idle_Turn_Left_180_Anim_Montage tracker_move=None tracker_instance=0 tracker_active=False tracker_position=0.000 sweep_active=False sweep_count=0
+PARRY_DIAG montage=None tracker_move=None tracker_instance=0 tracker_active=False tracker_position=0.000 sweep_active=False sweep_count=0
+PARRY_DIAG montage=AM_Boss01_A3b tracker_move=None tracker_instance=0 tracker_active=False tracker_position=0.000 sweep_active=False sweep_count=0
+PARRY_DIAG montage=AM_Boss01_A3b tracker_move=A3b tracker_instance=1 tracker_active=True tracker_position=0.261 sweep_active=False sweep_count=0
+PARRY_WINDOW_OBSERVED instance=1 move=A3b source=tracker position=0.261 active=true montage_position=0.261
+PARRY_ATTEMPT instance=1 move=A3b active=True source=tracker montage=AM_Boss01_A3b sweep_active=False sweep_count=0 position=0.261 opened=True parried_before=0 press_count_before=0 press_count_after=1 sweep_parried_before=0
+ACTION parry_watch t=3.45 id=fight:action:00001 source=opportunistic
+PARRY_BLENDABLE at_press camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=AM_Boss01_A3b tracker_move=A3b tracker_instance=1 tracker_active=False tracker_position=0.406 sweep_active=False sweep_count=0
+PARRY_RESULT instance=1 outcome=no_contact parried_before=0 parried_after=0
+PARRY_DIAG montage=None tracker_move=None tracker_instance=1 tracker_active=False tracker_position=1.083 sweep_active=False sweep_count=0
+PARRY_DIAG montage=Mid01_Anim_Montage tracker_move=None tracker_instance=1 tracker_active=False tracker_position=1.083 sweep_active=False sweep_count=0
+PARRY_DIAG montage=None tracker_move=None tracker_instance=1 tracker_active=False tracker_position=1.083 sweep_active=False sweep_count=0
+PARRY_DIAG montage=Mid01_Anim_Montage tracker_move=None tracker_instance=1 tracker_active=False tracker_position=1.083 sweep_active=False sweep_count=0
+PARRY_DIAG montage=None tracker_move=None tracker_instance=1 tracker_active=False tracker_position=1.083 sweep_active=False sweep_count=0
+PARRY_DIAG montage=Mid01_Anim_Montage tracker_move=None tracker_instance=1 tracker_active=False tracker_position=1.083 sweep_active=False sweep_count=0
+PARRY_DIAG montage=None tracker_move=None tracker_instance=1 tracker_active=False tracker_position=1.083 sweep_active=False sweep_count=0
+PARRY_DIAG montage=AM_Boss01_A1 tracker_move=None tracker_instance=1 tracker_active=False tracker_position=1.083 sweep_active=False sweep_count=0
+PARRY_DIAG montage=AM_Boss01_A1 tracker_move=A1 tracker_instance=2 tracker_active=True tracker_position=0.364 sweep_active=False sweep_count=0
+PARRY_WINDOW_OBSERVED instance=2 move=A1 source=tracker position=0.364 active=true montage_position=0.364
+PARRY_ATTEMPT instance=2 move=A1 active=True source=tracker montage=AM_Boss01_A1 sweep_active=False sweep_count=0 position=0.364 opened=True parried_before=0 press_count_before=1 press_count_after=2 sweep_parried_before=0
+ACTION parry_watch t=39.42 id=fight:action:00002 source=opportunistic
+PARRY_BLENDABLE at_press camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=AM_Boss01_A1 tracker_move=A1 tracker_instance=2 tracker_active=False tracker_position=0.574 sweep_active=False sweep_count=0
+PARRY_RESULT instance=2 outcome=no_contact parried_before=0 parried_after=0
+PARRY_DIAG montage=None tracker_move=None tracker_instance=2 tracker_active=False tracker_position=0.949 sweep_active=False sweep_count=0
+PARRY_DIAG montage=GS_Attack04_Montage tracker_move=None tracker_instance=2 tracker_active=False tracker_position=0.949 sweep_active=False sweep_count=0
+PARRY_DIAG montage=GS_Attack04_Montage tracker_move=A1b tracker_instance=3 tracker_active=True tracker_position=0.219 sweep_active=False sweep_count=0
+PARRY_WINDOW_OBSERVED instance=3 move=A1b source=tracker position=0.219 active=true montage_position=0.219
+PARRY_ATTEMPT instance=3 move=A1b active=True source=tracker montage=GS_Attack04_Montage sweep_active=False sweep_count=0 position=0.219 opened=True parried_before=0 press_count_before=2 press_count_after=3 sweep_parried_before=0
+ACTION parry_watch t=40.53 id=fight:action:00003 source=opportunistic
+PARRY_BLENDABLE at_press camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=GS_Attack04_Montage tracker_move=A1b tracker_instance=3 tracker_active=False tracker_position=0.525 sweep_active=False sweep_count=0
+PARRY_RESULT instance=3 outcome=no_contact parried_before=0 parried_after=0
+PARRY_DIAG montage=None tracker_move=A1b tracker_instance=3 tracker_active=False tracker_position=0.917 sweep_active=False sweep_count=0
+PARRY_DIAG montage=AM_Boss01_A3b tracker_move=None tracker_instance=3 tracker_active=False tracker_position=0.917 sweep_active=False sweep_count=0
+PARRY_DIAG montage=AM_Boss01_A3b tracker_move=A3b tracker_instance=4 tracker_active=True tracker_position=0.180 sweep_active=False sweep_count=0
+PARRY_WINDOW_OBSERVED instance=4 move=A3b source=tracker position=0.180 active=true montage_position=0.180
+PARRY_ATTEMPT instance=4 move=A3b active=True source=tracker montage=AM_Boss01_A3b sweep_active=False sweep_count=0 position=0.180 opened=True parried_before=0 press_count_before=3 press_count_after=4 sweep_parried_before=0
+ACTION parry_watch t=43.58 id=fight:action:00004 source=opportunistic
+PARRY_BLENDABLE at_press camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=AM_Boss01_A3b tracker_move=A3b tracker_instance=4 tracker_active=False tracker_position=0.431 sweep_active=False sweep_count=0
+PARRY_RESULT instance=4 outcome=no_contact parried_before=0 parried_after=0
+PARRY_DIAG montage=None tracker_move=None tracker_instance=4 tracker_active=False tracker_position=1.081 sweep_active=False sweep_count=0
+PARRY_DIAG montage=GS_Attack04_Montage tracker_move=None tracker_instance=4 tracker_active=False tracker_position=1.081 sweep_active=False sweep_count=0
+PARRY_DIAG montage=GS_Attack04_Montage tracker_move=A1b tracker_instance=5 tracker_active=True tracker_position=0.166 sweep_active=False sweep_count=0
+PARRY_WINDOW_OBSERVED instance=5 move=A1b source=tracker position=0.166 active=true montage_position=0.166
+PARRY_ATTEMPT instance=5 move=A1b active=True source=tracker montage=GS_Attack04_Montage sweep_active=False sweep_count=0 position=0.166 opened=True parried_before=0 press_count_before=4 press_count_after=5 sweep_parried_before=0
+ACTION parry_watch t=45.15 id=fight:action:00005 source=opportunistic
+PARRY_BLENDABLE at_press camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=GS_Attack04_Montage tracker_move=A1b tracker_instance=5 tracker_active=False tracker_position=0.464 sweep_active=False sweep_count=0
+PARRY_RESULT instance=5 outcome=no_contact parried_before=0 parried_after=0
+PARRY_DIAG montage=None tracker_move=A1b tracker_instance=5 tracker_active=False tracker_position=1.021 sweep_active=False sweep_count=0
+PARRY_DIAG montage=Mid01_Anim_Montage tracker_move=None tracker_instance=5 tracker_active=False tracker_position=1.021 sweep_active=False sweep_count=0
+PARRY_DIAG montage=None tracker_move=None tracker_instance=5 tracker_active=False tracker_position=1.021 sweep_active=False sweep_count=0
+PARRY_DIAG montage=Mid01_Anim_Montage tracker_move=None tracker_instance=5 tracker_active=False tracker_position=1.021 sweep_active=False sweep_count=0
+PARRY_DIAG montage=AM_Boss01_A3a tracker_move=None tracker_instance=5 tracker_active=False tracker_position=1.021 sweep_active=False sweep_count=0
+PARRY_DIAG montage=AM_Boss01_A3a tracker_move=A3a tracker_instance=6 tracker_active=True tracker_position=0.438 sweep_active=False sweep_count=0
+PARRY_WINDOW_OBSERVED instance=6 move=A3a source=tracker position=0.438 active=true montage_position=0.438
+PARRY_ATTEMPT instance=6 move=A3a active=True source=tracker montage=AM_Boss01_A3a sweep_active=False sweep_count=0 position=0.438 opened=True parried_before=0 press_count_before=5 press_count_after=6 sweep_parried_before=0
+ACTION parry_watch t=64.03 id=fight:action:00006 source=opportunistic
+PARRY_BLENDABLE at_press camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=None tracker_move=None tracker_instance=6 tracker_active=False tracker_position=0.549 sweep_active=False sweep_count=0
+PARRY_RESULT instance=6 outcome=no_contact parried_before=0 parried_after=0
+PARRY_DIAG montage=Mid01_Anim_Montage tracker_move=None tracker_instance=6 tracker_active=False tracker_position=0.549 sweep_active=False sweep_count=0
+PARRY_DIAG montage=None tracker_move=None tracker_instance=6 tracker_active=False tracker_position=0.549 sweep_active=False sweep_count=0
+PARRY_DIAG montage=GS_ChargedAttack_Montage tracker_move=None tracker_instance=6 tracker_active=False tracker_position=0.549 sweep_active=False sweep_count=0
+PARRY_DIAG montage=GS_ChargedAttack_Montage tracker_move=A2 tracker_instance=7 tracker_active=True tracker_position=2.004 sweep_active=False sweep_count=0
+PARRY_WINDOW_OBSERVED instance=7 move=A2 source=tracker position=2.004 active=true montage_position=2.004
+PARRY_ATTEMPT instance=7 move=A2 active=True source=tracker montage=GS_ChargedAttack_Montage sweep_active=False sweep_count=0 position=2.004 opened=True parried_before=0 press_count_before=6 press_count_after=7 sweep_parried_before=0
+ACTION parry_watch t=77.57 id=fight:action:00007 source=opportunistic
+PARRY_BLENDABLE at_press camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=GS_ChargedAttack_Montage tracker_move=A2 tracker_instance=7 tracker_active=False tracker_position=2.112 sweep_active=False sweep_count=0
+PARRY_RESULT instance=7 outcome=no_contact parried_before=0 parried_after=0
+PARRY_DIAG montage=None tracker_move=A2 tracker_instance=7 tracker_active=False tracker_position=2.728 sweep_active=False sweep_count=0
+PARRY_DIAG montage=Mid01_Anim_Montage tracker_move=None tracker_instance=7 tracker_active=False tracker_position=2.728 sweep_active=False sweep_count=0
+PARRY_DIAG montage=None tracker_move=None tracker_instance=7 tracker_active=False tracker_position=2.728 sweep_active=False sweep_count=0
+PARRY_DIAG montage=GS_ChargedAttack_Montage tracker_move=None tracker_instance=7 tracker_active=False tracker_position=2.728 sweep_active=False sweep_count=0
+PARRY_DIAG montage=GS_ChargedAttack_Montage tracker_move=A2 tracker_instance=8 tracker_active=True tracker_position=2.026 sweep_active=False sweep_count=0
+PARRY_WINDOW_OBSERVED instance=8 move=A2 source=tracker position=2.026 active=true montage_position=2.026
+PARRY_ATTEMPT instance=8 move=A2 active=True source=tracker montage=GS_ChargedAttack_Montage sweep_active=False sweep_count=0 position=2.026 opened=True parried_before=0 press_count_before=7 press_count_after=8 sweep_parried_before=0
+ACTION parry_watch t=88.72 id=fight:action:00008 source=opportunistic
+PARRY_BLENDABLE at_press camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=GS_ChargedAttack_Montage tracker_move=A2 tracker_instance=8 tracker_active=False tracker_position=2.113 sweep_active=False sweep_count=0
+PARRY_RESULT instance=8 outcome=no_contact parried_before=0 parried_after=0
+PARRY_DIAG montage=None tracker_move=A2 tracker_instance=8 tracker_active=False tracker_position=2.724 sweep_active=False sweep_count=0
+SUMMARY fight_seconds=90.0 boss_dead=False actions_json={"parry_watch": 8} player_refills=5 player_deaths=0 frames=894
+finished: time limit

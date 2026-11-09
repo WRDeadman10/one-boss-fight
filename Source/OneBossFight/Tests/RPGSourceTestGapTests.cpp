@@ -23,6 +23,7 @@ bool FRPGPlayerParryComponentContractTest::RunTest(const FString& Parameters)
     TestTrue(TEXT("first press opens the timing window"), Parry->Press());
     TestTrue(TEXT("window is open at its opening instant"), Parry->IsWindowOpen());
     TestEqual(TEXT("accepted and rejected attempts are counted"), Parry->PressCount, 1);
+    TestEqual(TEXT("Blueprint press-count accessor matches the native counter"), Parry->GetPressCount(), 1);
     TestFalse(TEXT("a second press during cooldown is rejected"), Parry->Press());
     TestEqual(TEXT("the rejected attempt is counted"), Parry->PressCount, 2);
 
@@ -34,6 +35,7 @@ bool FRPGPlayerParryComponentContractTest::RunTest(const FString& Parameters)
         OwnedParry->Press();
         URPGPlayerParry::NotifyParried(Player);
         TestEqual(TEXT("one confirmed contact increments the successful-parry counter exactly once"), OwnedParry->ParriedCount, 1);
+        TestEqual(TEXT("Blueprint parried-count accessor matches the native counter"), OwnedParry->GetParriedCount(), 1);
         TestEqual(TEXT("the successful contact records its timing grade"), OwnedParry->LastGradeName(), FString(TEXT("Perfect")));
     }
     else

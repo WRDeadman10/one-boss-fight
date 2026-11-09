@@ -19,7 +19,7 @@ class LockOnFramingContract(unittest.TestCase):
         )[0]
 
     def test_development_switch_defaults_off_and_is_independent(self):
-        self.assertRegex(self.cpp, r"#if\s+!UE_BUILD_SHIPPING[\s\S]*?rpg\.Camera\.LockOnFraming[\s\S]*?\b0\s*,")
+        self.assertRegex(self.cpp, r"#if\s+!UE_BUILD_SHIPPING[\s\S]*?rpg\.Camera\.LockOnFraming[\s\S]*?-1\s*,")
 
     def test_only_local_player_camera_tracks_pack_boss_and_restores_on_loss(self):
         method = self.method()
@@ -103,7 +103,8 @@ class LockOnFramingContract(unittest.TestCase):
 
     def test_three_switches_are_separate_default_off_tick_and_endplay_paths(self):
         for name in ("BossBlocks", "HideBossInside", "LockOnFraming"):
-            self.assertRegex(self.cpp, rf"rpg\.Camera\.{name}\"\), 0")
+            expected = -1 if name in ("HideBossInside", "LockOnFraming") else 0
+            self.assertRegex(self.cpp, rf"rpg\.Camera\.{name}\"\), {expected}")
         tick = self.cpp.split("void URPGCameraRig::TickComponent(", 1)[1]
         for method_name in ("ApplyBossCameraCollisionOption", "ApplyBossHideInsideOption", "ApplyLockOnFramingOption"):
             self.assertIn(method_name + "(", tick)

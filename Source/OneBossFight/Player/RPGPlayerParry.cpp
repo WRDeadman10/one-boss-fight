@@ -12,6 +12,7 @@
 #include "Player/RPGParryCostRules.h"
 #include "Player/RPGLegend.h"
 #include "Player/RPGTier1VisualRules.h"
+#include "Player/RPGBossPosture.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRPGParry, Log, All);
 
@@ -142,41 +143,59 @@ bool URPGPlayerParry::IsParrying(const AActor* Actor)
 
 void URPGPlayerParry::NotifyParried(AActor* Actor)
 {
-	if (URPGPlayerParry* Parry = Actor ? Actor->FindComponentByClass<URPGPlayerParry>() : nullptr)
+	if (Actor)
 	{
-		Parry->LastGrade = Parry->GradeNow();
-		++Parry->ParriedCount;
+		static uint64 LegacySerial = 0;
+		NotifyParried(Actor, nullptr, FString::Printf(TEXT("legacy|%llu"), static_cast<unsigned long long>(++LegacySerial)), 0, RPGParryGrade::EGrade::None);
+	}
+}
+
+bool URPGPlayerParry::NotifyParried(AActor* Actor, AActor* Boss, const FString& AttackKey, uint64 Generation, RPGParryGrade::EGrade Grade)
+{
+	URPGPlayerParry* Parry = Actor ? Actor->FindComponentByClass<URPGPlayerParry>() : nullptr;
+	if (!Parry || !Parry->RewardDeduplicator.TryAccept(Generation, AttackKey))
+	{
+		return false;
+	}
+	Parry->LastGrade = Grade == RPGParryGrade::EGrade::None ? Parry->GradeNow() : Grade;
+	++Parry->ParriedCount;
 #if UE_BUILD_DEVELOPMENT
-		UE_LOG(LogRPGParry, Display, TEXT("Tier2 parry contact grade=%s target=%s"), *Parry->LastGradeName(), *GetNameSafe(Actor));
+	UE_LOG(LogRPGParry, Display, TEXT("[PARRY] reward key=%s grade=%s target=%s boss=%s"), *AttackKey, *Parry->LastGradeName(), *GetNameSafe(Actor), *GetNameSafe(Boss));
 #endif
-		const FVector SparkLocation = Actor->GetActorLocation() + FVector(0.f, 0.f, 65.f);
-		if (RPGTier1Visuals::SpawnConfiguredEffect(Parry->GetWorld(), Parry->ParrySparkVFX,
-			TEXT("/Game/OneBossFight/VFX/NS_Combat_ParrySpark.NS_Combat_ParrySpark"), SparkLocation, Actor->GetActorRotation()))
+	const FVector SparkLocation = Actor->GetActorLocation() + FVector(0.f, 0.f, 65.f);
+	if (RPGTier1Visuals::SpawnConfiguredEffect(Parry->GetWorld(), Parry->ParrySparkVFX,
+		TEXT("/Game/OneBossFight/VFX/NS_Combat_ParrySpark.NS_Combat_ParrySpark"), SparkLocation, Actor->GetActorRotation()))
+	{
+		++Parry->Tier1VisualSpawnCount;
+	}
+	if (Parry->bCostPending) Parry->bPendingParried = true;
+	if (Boss)
+	{
+		if (URPGTier2BossPresentation* Tier2 = Boss->FindComponentByClass<URPGTier2BossPresentation>()) Tier2->PlayParryRecoil();
+		else if (URPGSevarogDirector* Director = Boss->FindComponentByClass<URPGSevarogDirector>()) Director->PlayParryRecoil();
+		if (URPGBossPosture* Posture = Boss->FindComponentByClass<URPGBossPosture>()) Posture->QueueParryPostureDamage();
+	}
+	if (UWorld* World = Parry->GetWorld())
+	{
+		for (TActorIterator<AActor> It(World); It; ++It)
 		{
-			++Parry->Tier1VisualSpawnCount;
-		}
-		if (Parry->bCostPending) Parry->bPendingParried = true;
-		if (UWorld* World = Parry->GetWorld())
-		{
-			for (TActorIterator<AActor> It(World); It; ++It)
+			if (!Boss && It->FindComponentByClass<URPGTier2BossPresentation>())
 			{
-				if (URPGTier2BossPresentation* Tier2 = It->FindComponentByClass<URPGTier2BossPresentation>())
-				{
-					Tier2->PlayParryRecoil();
-				}
-				else if (URPGSevarogDirector* Director = It->FindComponentByClass<URPGSevarogDirector>())
-				{
-					Director->PlayParryRecoil();
-				}
-				if (URPGBossLegend* Legend = It->FindComponentByClass<URPGBossLegend>())
-				{
-					const URPGCombatParticipant* Participant = Actor->FindComponentByClass<URPGCombatParticipant>();
-					const TSharedPtr<const FRPGParticipantConfig> PlayerConfig = Participant ? Participant->Config() : nullptr;
-					Legend->HandlePlayerParrySlowMotion(Parry->LastGrade, PlayerConfig.IsValid() ? &PlayerConfig->ParrySlowMotion : nullptr, Actor);
-				}
+				It->FindComponentByClass<URPGTier2BossPresentation>()->PlayParryRecoil();
+			}
+			else if (!Boss && It->FindComponentByClass<URPGSevarogDirector>())
+			{
+				It->FindComponentByClass<URPGSevarogDirector>()->PlayParryRecoil();
+			}
+			if (URPGBossLegend* Legend = It->FindComponentByClass<URPGBossLegend>())
+			{
+				const URPGCombatParticipant* Participant = Actor->FindComponentByClass<URPGCombatParticipant>();
+				const TSharedPtr<const FRPGParticipantConfig> PlayerConfig = Participant ? Participant->Config() : nullptr;
+				Legend->HandlePlayerParrySlowMotion(Parry->LastGrade, PlayerConfig.IsValid() ? &PlayerConfig->ParrySlowMotion : nullptr, Actor);
 			}
 		}
 	}
+	return true;
 }
 
 void URPGPlayerParry::FinishStaminaCost()

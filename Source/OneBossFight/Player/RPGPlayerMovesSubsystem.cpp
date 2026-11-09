@@ -11,6 +11,7 @@
 #include "Combat/RPGInputTestUtils.h"
 #include "Player/RPGDodgeTiming.h"
 #include "Player/RPGPlayerParry.h"
+#include "Player/RPGPackParryContact.h"
 #include "Player/RPGIFrameMonitor.h"
 #include "Player/RPGHitIntake.h"
 #include "Player/RPGSwingTracker.h"
@@ -808,6 +809,10 @@ void URPGPlayerMovesSubsystem::AttachLegacyBossBundle(AActor* Pawn) const
 	if (IsPackBoss(Pawn))
 	{
 		URPGDamageResolver::FindOrAdd(Pawn); // the one place that lowers the player's health for the boss's moves
+		if (!Pawn->FindComponentByClass<URPGPackParryContact>())
+		{
+			NewObject<URPGPackParryContact>(Pawn, TEXT("RPGPackParryContact"))->RegisterComponent(); // always-on native observer for parry decisions made inside the pack's melee trace
+		}
 		if (!Pawn->FindComponentByClass<URPGTraceGuard>())
 		{
 			NewObject<URPGTraceGuard>(Pawn, TEXT("RPGTraceGuard"))->RegisterComponent(); // closes the pack's weapon trace on every interrupt, carries the hit set per instance, blocks hits through walls
@@ -858,6 +863,12 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn)
 void URPGPlayerMovesSubsystem::AttachBossDiagnostics(AActor* Pawn) const
 {
 	if (!IsPackBoss(Pawn)) return;
+	// Lead fix C-1150: the pack parry observer was only attached by AttachLegacyBossBundle, so the data route (the shipped
+	// game) never had it. AttachBossDiagnostics runs on both routes; the FindComponent guard keeps the legacy attach unique.
+	if (!Pawn->FindComponentByClass<URPGPackParryContact>())
+	{
+		NewObject<URPGPackParryContact>(Pawn, TEXT("RPGPackParryContact"))->RegisterComponent();
+	}
 	if (!Pawn->FindComponentByClass<URPGTier2BossPresentation>())
 	{
 		NewObject<URPGTier2BossPresentation>(Pawn, TEXT("RPGTier2BossPresentation"))->RegisterComponent();

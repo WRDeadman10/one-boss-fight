@@ -186,7 +186,10 @@ FRPGDamageResult URPGDamageResolver::Resolve(AActor* Target, const FRPGDamagePay
 		break;
 	case ERPGDamageOutcome::Parried:
 		Spent.Add(Key); // a parried swing is spent: the other windows of the same swing do not hurt
-		URPGPlayerParry::NotifyParried(Target);
+		URPGPlayerParry::NotifyParried(Target, GetOwner(),
+			RPGPackParry::BuildAttackKey(Payload.Generation, GetOwner()->GetUniqueID(), Payload.MoveId, Payload.AttackInstance, NAME_None, 0.0),
+			Payload.Generation,
+			Target->FindComponentByClass<URPGPlayerParry>()->GradeNow());
 		Reason = TEXT("parry window");
 		break;
 	case ERPGDamageOutcome::Blocked:

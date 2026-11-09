@@ -120,6 +120,14 @@ URPGBossPosture::EDrainResult URPGBossPosture::ApplyPostureDamage(float Amount, 
 	return EDrainResult::Applied;
 }
 
+void URPGBossPosture::QueueParryPostureDamage()
+{
+	if (FMath::IsFinite(ParryPostureDamage) && ParryPostureDamage > 0.f)
+	{
+		PendingParryPostureDamage += ParryPostureDamage;
+	}
+}
+
 void URPGBossPosture::SetPostureForTest(float Value)
 {
 #if !UE_BUILD_SHIPPING
@@ -139,6 +147,7 @@ void URPGBossPosture::SetPostureForTest(float Value)
 
 void URPGBossPosture::ResetPool()
 {
+	PendingParryPostureDamage = 0.f;
 	Hold = EHold::None;
 	HeldValue = 0.f;
 	Posture = PostureMax;
@@ -216,6 +225,12 @@ void URPGBossPosture::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	if (Posture < 0.f)
 	{
 		Posture = PostureMax;
+	}
+	if (PendingParryPostureDamage > 0.f)
+	{
+		const float Pending = PendingParryPostureDamage;
+		PendingParryPostureDamage = 0.f;
+		ApplyPostureDamage(Pending, TEXT("confirmed parry"));
 	}
 	if (Hold != EHold::None)
 	{

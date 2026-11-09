@@ -24,7 +24,7 @@ class UInputAction;
  * This component applies the settings once the player exists (no pack asset is edited), moves the boom onto the capsule at the same place, and keeps the pitch limits. The spring arm's own collision stays the only
  * obstruction handling (no second correction fights it). rpg.CameraDebug 1 draws the pivot, the camera, the arm and the clearance below the camera.
  */
-UCLASS(ClassGroup = (Camera))
+UCLASS(ClassGroup = (Camera), Config = Game, DefaultConfig)
 class ONEBOSSFIGHT_API URPGCameraRig : public UActorComponent
 {
 	GENERATED_BODY()
@@ -56,6 +56,14 @@ public:
 	/** Attach the boom to the capsule (same world place) instead of the animated mesh, so a ragdoll or an animation cannot carry the pivot away. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Follow")
 	bool bAttachBoomToCapsule = true;
+
+	/** Default-off option B: hide boss mesh primitives only for this local camera when the camera enters the boss capsule. */
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Camera|Options")
+	bool bDefaultHideBossInside = false;
+
+	/** Default-off option C: gently frame the boss in front while retaining manual look input. */
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "Camera|Options")
+	bool bDefaultLockOnFraming = false;
 
 	/** Height of the camera centre above the floor straight below it (cm), or a negative number when nothing is below. For tests and the debug view. */
 	UFUNCTION(BlueprintPure, Category = "Camera")

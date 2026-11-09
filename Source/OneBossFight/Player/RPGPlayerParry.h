@@ -7,6 +7,7 @@
 #include "InputAction.h"
 #include "Player/RPGParryRules.h"
 #include "Player/RPGParryGradeRules.h"
+#include "Player/RPGPackParryRules.h"
 #include "RPGPlayerParry.generated.h"
 
 /**
@@ -45,6 +46,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Parry")
 	bool IsWindowOpen() const;
 
+	/** Read-only counter accessors for runtime diagnostics and capture receipts. */
+	UFUNCTION(BlueprintPure, Category = "Parry|Diagnostics")
+	int32 GetPressCount() const { return PressCount; }
+
+	UFUNCTION(BlueprintPure, Category = "Parry|Diagnostics")
+	int32 GetParriedCount() const { return ParriedCount; }
+
 	/** Timing grade of a contact at the current game time, or None outside the valid window. */
 	RPGParryGrade::EGrade GradeNow() const;
 	FString LastGradeName() const;
@@ -53,6 +61,8 @@ public:
 	static bool IsParrying(const AActor* Actor);
 	/** Called by the damage resolver when a contact is actually parried. */
 	static void NotifyParried(AActor* Actor);
+	/** Shared once-per-attack reward entry for pack contacts and project resolver contacts. */
+	static bool NotifyParried(AActor* Actor, AActor* Boss, const FString& AttackKey, uint64 Generation, RPGParryGrade::EGrade Grade);
 
 	int32 PressCount = 0, ParriedCount = 0;
 	int32 Tier1VisualSpawnCount = 0;
@@ -76,5 +86,6 @@ private:
 	bool bCostPending = false, bPendingParried = false, bRollbackPending = false;
 	int32 RefundRetries = 0; // audit X-450: a failed refund write is retried a few times, then given up with a log line
 	RPGParryGrade::EGrade LastGrade = RPGParryGrade::EGrade::None;
+	RPGPackParry::FRewardDeduplicator RewardDeduplicator;
 	double StaminaBeforeCost = 0., PaidStaminaCost = 0.;
 };

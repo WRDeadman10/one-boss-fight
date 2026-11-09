@@ -17,8 +17,8 @@ class CameraOptionsIndependenceContract(unittest.TestCase):
 
     def test_three_distinct_switches_are_development_only_and_default_off(self):
         for name in ("BossBlocks", "HideBossInside", "LockOnFraming"):
-            matches = re.findall(rf'TEXT\("rpg\.Camera\.{name}"\),\s*(\d+)', self.cpp)
-            self.assertEqual(matches, ["0"], name)
+            matches = re.findall(rf'TEXT\("rpg\.Camera\.{name}"\),\s*(-?\d+)', self.cpp)
+            self.assertEqual(matches, ["0" if name == "BossBlocks" else "-1"], name)
         for declaration in ("CVarCameraBossBlocks", "CVarCameraHideBossInside", "CVarCameraLockOnFraming"):
             self.assertIn(declaration, self.cpp.split("#endif", 1)[0])
 

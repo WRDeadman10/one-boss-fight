@@ -15,7 +15,7 @@ class HideBossInsideContract(unittest.TestCase):
         cls.header = HEADER.read_text(encoding="utf-8")
 
     def test_development_switch_defaults_off_and_is_independent(self):
-        self.assertRegex(self.cpp, r"#if\s+!UE_BUILD_SHIPPING[\s\S]*?rpg\.Camera\.HideBossInside[\s\S]*?\b0\s*,")
+        self.assertRegex(self.cpp, r"#if\s+!UE_BUILD_SHIPPING[\s\S]*?rpg\.Camera\.HideBossInside[\s\S]*?-1\s*,")
 
     def test_only_local_player_controller_hides_mesh_primitives(self):
         self.assertIn("HiddenPrimitiveComponents", self.cpp)
@@ -94,7 +94,7 @@ class HideBossInsideContract(unittest.TestCase):
 
     def test_camera_switches_remain_independent_and_endplay_cleans_both(self):
         self.assertRegex(self.cpp, r"CVarCameraBossBlocks\(TEXT\(\"rpg\.Camera\.BossBlocks\"\), 0")
-        self.assertRegex(self.cpp, r"CVarCameraHideBossInside\(TEXT\(\"rpg\.Camera\.HideBossInside\"\), 0")
+        self.assertRegex(self.cpp, r"CVarCameraHideBossInside\(TEXT\(\"rpg\.Camera\.HideBossInside\"\), -1")
         tick = self.cpp.split("void URPGCameraRig::TickComponent(", 1)[1]
         self.assertIn("ApplyBossCameraCollisionOption();", tick)
         self.assertIn("ApplyBossHideInsideOption();", tick)

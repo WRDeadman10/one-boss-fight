@@ -24,10 +24,10 @@ static TAutoConsoleVariable<int32> CVarCameraDebug(TEXT("rpg.CameraDebug"), 0, T
 #if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable<int32> CVarCameraBossBlocks(TEXT("rpg.Camera.BossBlocks"), 0,
 	TEXT("Development camera experiment: 1 makes the live pack boss capsule block ECC_Camera; 0 restores its authored response."), ECVF_Default);
-static TAutoConsoleVariable<int32> CVarCameraHideBossInside(TEXT("rpg.Camera.HideBossInside"), 0,
-	TEXT("Development camera experiment: 1 hides boss mesh primitives only for the local player camera while inside the boss capsule."), ECVF_Default);
-static TAutoConsoleVariable<int32> CVarCameraLockOnFraming(TEXT("rpg.Camera.LockOnFraming"), 0,
-	TEXT("Development camera experiment: 1 gently frames the pack boss in front while preserving manual camera input."), ECVF_Default);
+static TAutoConsoleVariable<int32> CVarCameraHideBossInside(TEXT("rpg.Camera.HideBossInside"), -1,
+	TEXT("Development override: -1 uses RPGCameraRig config, 0 disables local boss hide, 1 enables it."), ECVF_Default);
+static TAutoConsoleVariable<int32> CVarCameraLockOnFraming(TEXT("rpg.Camera.LockOnFraming"), -1,
+	TEXT("Development override: -1 uses RPGCameraRig config, 0 disables lock-on framing, 1 enables it."), ECVF_Default);
 #endif
 
 namespace
@@ -168,8 +168,11 @@ void URPGCameraRig::RestoreBossCameraCollisionOption()
 
 void URPGCameraRig::ApplyBossHideInsideOption()
 {
+	int32 Override = -1;
 #if !UE_BUILD_SHIPPING
-	const bool bEnabled = CVarCameraHideBossInside.GetValueOnGameThread() != 0;
+	Override = CVarCameraHideBossInside.GetValueOnGameThread();
+#endif
+	const bool bEnabled = Override >= 0 ? Override != 0 : bDefaultHideBossInside;
 	if (!bEnabled)
 	{
 		RestoreBossHideInsideOption();
@@ -290,7 +293,6 @@ void URPGCameraRig::ApplyBossHideInsideOption()
 			BossHideAddedComponents.Add(Component);
 		}
 	}
-#endif
 }
 
 void URPGCameraRig::RestoreBossHideInsideOption()
@@ -324,8 +326,11 @@ void URPGCameraRig::RestoreBossHideInsideOption()
 
 void URPGCameraRig::ApplyLockOnFramingOption(float DeltaTime)
 {
+	int32 Override = -1;
 #if !UE_BUILD_SHIPPING
-	const bool bEnabled = CVarCameraLockOnFraming.GetValueOnGameThread() != 0;
+	Override = CVarCameraLockOnFraming.GetValueOnGameThread();
+#endif
+	const bool bEnabled = Override >= 0 ? Override != 0 : bDefaultLockOnFraming;
 	if (!bEnabled)
 	{
 		RestoreLockOnFramingOption();
@@ -415,7 +420,6 @@ void URPGCameraRig::ApplyLockOnFramingOption(float DeltaTime)
 	}
 	// The input action, not ControlRotation deltas, owns the manual grace period;
 	// this avoids mistaking pack camera-assist writes for player input.
-#endif
 }
 
 void URPGCameraRig::RestoreLockOnFramingOption()
@@ -535,8 +539,8 @@ void URPGCameraRig::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	}
 	ApplyPitchLimits(); // a controller change (respawn) brings a new camera manager state; this is a few assignments
 	ApplyBossCameraCollisionOption(); // non-Shipping experiment; default off and restores the capsule's authored response
-	ApplyBossHideInsideOption(); // non-Shipping experiment; controller-local primitive hide only
-	ApplyLockOnFramingOption(DeltaTime); // non-Shipping experiment; rate-limited lock-on yaw follows the boss through ControlRotation
+	ApplyBossHideInsideOption(); // config-defaulted optional hide; Development CVar overrides remain available
+	ApplyLockOnFramingOption(DeltaTime); // config-defaulted optional framing; Development CVar override preserves manual look
 #if !UE_BUILD_SHIPPING
 	if (CVarCameraDebug.GetValueOnGameThread() > 0 && Camera)
 	{

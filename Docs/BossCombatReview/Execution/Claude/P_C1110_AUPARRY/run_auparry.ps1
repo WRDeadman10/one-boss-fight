@@ -16,7 +16,7 @@ try {
   $deadline = (Get-Date).AddMinutes($TimeoutMin); $done = $false
   while (-not $p.HasExited -and (Get-Date) -lt $deadline) { Start-Sleep 5; if ((Test-Path $log) -and (Select-String -Path $log -Pattern '\[FullFight\] finished:' -Quiet)) { $done = $true; Start-Sleep 8; break } }
   if (-not $p.HasExited) { $p.Kill(); $p.WaitForExit() }
-  Select-String -Path $log -Pattern '\[FullFight\] (route|setup|FIGHT_START|ACTION|COUNTER|PARRY|BOSS_DEAD|SUMMARY|finished|driver error)|Traceback|EncounterActivation\] route' | ForEach-Object { $_.Line -replace '^.*?\[FullFight\] ', '' } | Out-File "$dir\fight_${Tag}_lines.txt" -Encoding utf8
+  Select-String -Path $log -Pattern '\[FullFight\] (route|setup|FIGHT_START|ACTION|COUNTER|PARRY|PLAYER_HIT|BOSS_DEAD|SUMMARY|finished|driver error)|Traceback|EncounterActivation\] route' | ForEach-Object { $_.Line -replace '^.*?\[FullFight\] ', '' } | Out-File "$dir\fight_${Tag}_lines.txt" -Encoding utf8
   "finished=$done frames=$((Get-ChildItem $Frames -Filter 'f_*.png').Count)" | Tee-Object "$dir\status_$Tag.txt"
 } finally {
   $env:FIGHT_MAX = $null; $env:ER_FIGHT_TIER2 = $null; $env:FIGHT_FRAMES = $null; $env:H019_ENCOUNTER_DEFINITION = $null

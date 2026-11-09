@@ -38,6 +38,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Posture", meta = (ClampMin = "0.0"))
 	float RegenPerSecond = 13.f;
 
+	/** Optional posture drain for a confirmed player parry; zero preserves current behavior until the owner chooses a value. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Posture|Parry", meta = (ClampMin = "0.0"))
+	float ParryPostureDamage = 0.f;
+
 	/** Keep the pack's poise attribute full so the pack's own hit stun never starts (the posture pool is this component's, see the class comment). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Posture")
 	bool bPinPackPoise = true;
@@ -67,6 +71,9 @@ public:
 	 * Applied: the pool is lowered (clamped at zero), the regeneration timer restarts, and a pool at zero asks the stance break gate (URPGBossStagger::RequestBreak) once.
 	 */
 	EDrainResult ApplyPostureDamage(float Amount, const TCHAR* Source);
+
+	/** Queue the configured parry drain for this component's next tick, after the active pack trace sweep has completed. */
+	void QueueParryPostureDamage();
 
 	/** Test drivers only: puts the pool at a value, counted as a drain when it lowers it (a hit would have done so). Does not ask for a break. */
 	UFUNCTION(BlueprintCallable, Category = "Posture")
@@ -142,6 +149,7 @@ private:
 	int32 BreakRequests = 0;
 	float LastDrainAmount = 0.f;
 	FString LastDrainSource;
+	float PendingParryPostureDamage = 0.f;
 	FString LastBreakResult = TEXT("none");
 	double LastDrainTime = -1.0;
 	bool bConfigured = false;

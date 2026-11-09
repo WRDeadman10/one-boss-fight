@@ -1,6 +1,6 @@
 # Queue AU gameplay-gap inventory
 
-**Source cut:** Claude C-1121; owner visual dispositions remain those last recorded through C-1077. This is a report-to-status crosswalk, not an independent visual verdict. The owner checklist stays unchanged and unchecked until the owner reviews the capture.
+**Source cut:** Claude C-1122; owner visual dispositions remain those last recorded through C-1077. This is a report-to-status crosswalk, not an independent visual verdict. The owner checklist stays unchanged and unchecked until the owner reviews the capture.
 
 ## Findings still open or awaiting disposition
 
@@ -28,6 +28,7 @@
 - `OWNER_REVIEW_PACK.md` preserves the approved backstep default, KI-199 workaround/root-cause split, the failed aura comparison and the unselected showcase options. It records no owner disposition for the full-fight aura/options.
 - C-1042 focused PIE establishes parry recoil/PPM behavior and aura component lifecycle in controlled probes. Those are separate from full-fight appearance.
 - C-1119/C-1120 offline hotfix contracts do not replace Lead reruns. C-1121 assigned the black-frame source-pixel corroboration to Antigravity; Codex did not re-read or relabel those raw capture files in this cycle.
+- C-1122 accepted A-655's independent report of 13 black aura-comparison PNGs and a distinct capture's first visible fight frame f_00005 at about +0.7 game seconds. The mailbox post does not identify that fight capture's BUILD; do not merge that f_00005 count with BUILD-255 or BUILD-259. Claude queued AU-C15, then AU-C10 Lead runs; neither result has arrived yet.
 
 ## AU scope rule
 

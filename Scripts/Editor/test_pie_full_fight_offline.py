@@ -41,7 +41,34 @@ class FightPortTests(unittest.TestCase):
     def tearDown(self):
         self.unreal_patch.stop()
 
-    def test_natural_a4_montage_and_live_sweep_are_tracker_independent_witness(self):
+    def test_parry_control_distance_actions_keep_a_no_input_comparison_band(self):
+        action = self.driver.parry_control_distance_action
+        self.assertEqual(action(140.0), "clamp")
+        self.assertEqual(action(130.0), "retreat")
+        self.assertEqual(action(120.0), "hold")
+        self.assertEqual(action(110.0), "approach")
+        self.assertEqual(action(None), "unknown")
+
+    def test_parry_control_is_opt_in_exclusive_and_does_not_press_or_attack(self):
+        source = DRIVER.read_text(encoding="utf-8")
+        self.assertIn('PARRY_ONLY_CONTROL = os.environ.get("PARRY_ONLY_CONTROL", "0") == "1"', source)
+        self.assertIn('if PARRY_ONLY_CONTROL:', source)
+        control_branch = source.split('if PARRY_ONLY_CONTROL:', 1)[1].split('if FIGHT_DODGE_ONLY:', 1)[0]
+        parry_branch = source.split('if FIGHT_PARRY_ONLY:', 1)[-1].split('if FIGHT_DODGE_ONLY:', 1)[0]
+        shared_step = source.split('def parry_control_distance_step(', 1)[1].split('\ndef ', 1)[0]
+        self.assertIn('parry_control_distance_step(pawn, boss, pc, dist, "control")', control_branch)
+        self.assertIn('parry_control_distance_step(pawn, boss, pc, dist, "parry")', parry_branch)
+        self.assertIn('parry_control_distance_action(distance_cm)', shared_step)
+        self.assertIn('press=%d attacks=0', shared_step)
+        self.assertNotIn('key(pc,', control_branch + shared_step)
+        self.assertNotIn('inject_action', control_branch + shared_step)
+        self.assertIn('PARRY_CONTROL_HARD_MAX_DISTANCE_CM = 130.0', source)
+
+    def test_any_active_tracker_move_is_a_parry_window_and_a4_sweep_is_fallback_only(self):
+        state = self.driver.parry_window_state("A1b", True, 44, "GS_Attack04_Montage", False, 3)
+        self.assertEqual(state, (True, 44, "tracker"))
+        state = self.driver.parry_window_state("A3a", True, 46, "OtherMontage", False, 0)
+        self.assertEqual(state, (True, 46, "tracker"))
         state = self.driver.parry_window_state("A1b", False, 44, "GS_Attack04_Montage", True, 3)
         self.assertEqual(state, (True, 3, "boss_montage_sweep"))
         self.assertEqual(self.driver.parry_window_state("A1b", False, 44,
@@ -49,10 +76,255 @@ class FightPortTests(unittest.TestCase):
         self.assertEqual(self.driver.parry_window_state("A4", True, 45,
                          "OtherMontage", True, 4), (True, 45, "tracker"))
 
+    def test_parry_diag_records_active_window_edges_even_without_montage_change(self):
+        source = DRIVER.read_text(encoding="utf-8")
+        self.assertIn('is_active != S.get("last_parry_diag_active")', source)
+        self.assertIn('"last_parry_diag_active": None', source)
+
+    def test_parry_press_targets_use_montage_origin_and_never_fall_back_to_window_fraction(self):
+        self.assertEqual(self.driver.parry_press_target("A1b", "GS_Attack04_Montage"), (0.12, "tracker_move"))
+        self.assertEqual(self.driver.parry_press_target("A3b", "AM_Boss01_A3b"), (0.10, "tracker_move"))
+        self.assertEqual(self.driver.parry_press_target("A1", "AM_Boss01_A1"), (0.27, "tracker_move"))
+        self.assertEqual(self.driver.parry_press_target("A3a", "AM_Boss01_A3a"), (0.42, "tracker_move"))
+        self.assertEqual(self.driver.parry_press_target("A2", "GS_ChargedAttack"), (1.92, "tracker_move"))
+        self.assertEqual(self.driver.parry_press_target("None", "Mid01_Anim_Montage"), (0.62, "montage_name"))
+        self.assertEqual(self.driver.parry_press_target("None", "GS_SprintAttackFollowUp_Montage"), (None, "log_only"))
+        self.assertEqual(self.driver.parry_press_target("UnknownMove", "OtherMontage"), (None, "no_timing_target"))
+
+    def test_parry_timing_contract_is_independent_of_tracker_window_bounds(self):
+        source = DRIVER.read_text(encoding="utf-8")
+        self.assertIn('PARRY_MOVE_PRESS_POSITIONS = {"A1b": 0.12', source)
+        self.assertIn('PARRY_MONTAGE_PRESS_POSITIONS = {"Mid01_Anim_Montage": 0.62}', source)
+        self.assertIn('PARRY_LOG_ONLY_MONTAGES = {"GS_SprintAttackFollowUp_Montage"}', source)
+        self.assertIn('current_montage_position >= schedule["target_position"]', source)
+        self.assertNotIn('start_value + 0.60 * (end_value - start_value)', source)
+
+    def test_dodge_contact_targets_use_c1132_montage_origin_positions_minus_015(self):
+        expected = {
+            ("A1b", "GS_Attack04_Montage", 1): (0.190, 0.040, "tracker_move"),
+            ("A3b", "AM_Boss01_A3b", 1): (0.152, 0.002, "tracker_move"),
+            ("A1", "AM_Boss01_A1", 1): (0.351, 0.201, "tracker_move"),
+            ("A3a", "AM_Boss01_A3a", 1): (0.484, 0.334, "tracker_move"),
+            ("A2", "GS_ChargedAttack", 1): (1.974, 1.824, "tracker_move"),
+            ("None", "Mid01_Anim_Montage", 1): (0.70, 0.55, "montage_name"),
+            ("None", "GS_SprintAttackFollowUp_Montage", 1): (0.070, 0.0, "montage_name_clamped"),
+            ("None", "GS_SprintAttackFollowUp_Montage", 2): (0.456, 0.306, "montage_name"),
+        }
+        for args, target in expected.items():
+            with self.subTest(args=args):
+                actual = self.driver.dodge_contact_target(*args)
+                self.assertEqual(actual[0], target[0])
+                self.assertAlmostEqual(actual[1], target[1])
+                self.assertEqual(actual[2], target[2])
+        self.assertEqual(self.driver.dodge_contact_target("Unknown", "Other", 1), (None, None, "no_timing_target"))
+
+    def test_dodge_tag_probe_reports_true_false_and_unknown_without_mutation(self):
+        class Pawn:
+            def __init__(self, value):
+                self.value = value
+                self.calls = []
+            def call_method(self, name, args=()):
+                self.calls.append((name, args))
+                if name != "HasMatchingGameplayTag":
+                    raise AssertionError("tag probe must be read-only")
+                return self.value
+        class Tag:
+            def __init__(self):
+                self.value = None
+            def import_text(self, value):
+                self.value = value
+        with patch.object(self.driver.unreal, "GameplayTag", Tag, create=True):
+            for value in (True, False):
+                pawn = Pawn(value)
+                self.assertIs(self.driver.invulnerability_tag_active(pawn), value)
+                self.assertEqual([name for name, _ in pawn.calls], ["HasMatchingGameplayTag"])
+                self.assertEqual(pawn.calls[0][1][0].value, '(TagName="Status.Invulnerable")')
+            self.assertIsNone(self.driver.invulnerability_tag_active(None))
+            self.assertIsNone(self.driver.invulnerability_tag_active(types.SimpleNamespace()))
+
+    def test_dodge_watch_logs_i_frame_tag_rise_delay_after_press(self):
+        class Tag:
+            def import_text(self, _value):
+                pass
+        tag = {"active": True}
+        pawn = types.SimpleNamespace(
+            call_method=lambda name, args=(): tag["active"] if name == "HasMatchingGameplayTag" else None,
+            add_movement_input=lambda *_args: None)
+        tracker = types.SimpleNamespace(get_current_move=lambda: "None")
+        pending = {"id": "run:dodge:0001", "montage": "Mid01_Anim_Montage",
+                   "playback_key": ("Mid01_Anim_Montage", 1), "press_position": 0.55,
+                   "contact_position": 0.70, "distance_cm": 180.0, "source": "montage_name",
+                   "contact_observed": False, "contact_time": None,
+                   "i_frame_tag_active_at_contact": None, "player_hit_followed": False,
+                   "press_time": 4.0, "iframe_press_state": False,
+                   "iframe_last_state": False, "iframe_rise_delay": None}
+        self.driver.S.update(action="dodge_watch", action_t=0.0, action_id="run:dodge:0001",
+                             held=set(), counts={}, fight_time=4.2, tick_dt=0.1,
+                             dodge_watch_seen=set(), dodge_watch_scheduled={},
+                             dodge_watch_pending=[pending], dodge_attempt_count=1,
+                             parry_montage_last_position={"Mid01_Anim_Montage": 0.58},
+                             parry_montage_occurrences={"Mid01_Anim_Montage": 1})
+        with patch.object(self.driver.unreal, "GameplayTag", Tag, create=True), \
+             patch.object(self.driver, "comp", return_value=tracker), \
+             patch.object(self.driver.plc, "player_montage",
+                          return_value=("Mid01_Anim_Montage", 0.60)):
+            self.driver.dodge_watch_step(pawn, object(), object(), 180.0)
+        rise = next(line for line in self.logs if "DODGE_IFRAME_TAG_RISE" in line)
+        self.assertIn("delay_since_press=0.200", rise)
+
+    def test_mid01_dodge_target_waits_for_only_mid01_and_sprint_montages(self):
+        spec = importlib.util.spec_from_file_location("pie_full_fight_targeted_test", DRIVER)
+        targeted = importlib.util.module_from_spec(spec)
+        with patch.dict(os.environ, {"FIGHT_DODGE_ONLY": "1", "FIGHT_DODGE_TARGET": "Mid01"}), \
+             patch.dict(sys.modules, {"unreal": self.ue}):
+            spec.loader.exec_module(targeted)
+        self.assertFalse(targeted.dodge_target_allowed("AM_Boss01_A1"))
+        self.assertTrue(targeted.dodge_target_allowed("Mid01_Anim_Montage"))
+        self.assertTrue(targeted.dodge_target_allowed("GS_SprintAttackFollowUp_Montage"))
+        contact, press, source = targeted.dodge_target_for_montage("A1", "Mid01_Anim_Montage", 1)
+        self.assertEqual((contact, source), (0.70, "montage_name"))
+        self.assertAlmostEqual(press, 0.55)
+        self.assertEqual(targeted.dodge_target_for_montage("A1", "AM_Boss01_A1", 1),
+                         (None, None, "target_filtered"))
+
+    def test_dodge_watch_presses_at_montage_target_samples_tag_and_links_following_hit(self):
+        class Tag:
+            def import_text(self, _value):
+                pass
+        state = {"position": 0.54, "pressed": [], "tag": True}
+        tracker = types.SimpleNamespace(get_current_move=lambda: "None")
+        pawn = types.SimpleNamespace(
+            call_method=lambda name, args=(): state["tag"] if name == "HasMatchingGameplayTag" else None,
+            add_movement_input=lambda *_args: None)
+        boss = object()
+        pc = object()
+        with patch.object(self.driver.unreal, "GameplayTag", Tag, create=True), \
+             patch.object(self.driver, "comp", side_effect=lambda actor, name: tracker if name == "RPGAttackTracker" else None), \
+             patch.object(self.driver.plc, "player_montage",
+                          side_effect=lambda _actor: ("Mid01_Anim_Montage", state["position"])), \
+             patch.object(self.driver, "key", side_effect=lambda _pc, key, down:
+                          state["pressed"].append((key, down)) or
+                          (self.driver.S["held"].add(key) if down else self.driver.S["held"].discard(key))):
+            self.driver.S.update(action=None, action_t=0.0, action_id=None, action_count=0,
+                                 held=set(), counts={}, fight_time=1.0, tick_dt=0.1,
+                                 dodge_watch_seen=set(), dodge_watch_scheduled={},
+                                 dodge_watch_pending=[], dodge_attempt_count=0,
+                                 parry_montage_last_position={}, parry_montage_occurrences={})
+            self.driver.dodge_watch_step(pawn, boss, pc, 180.0)
+            self.assertEqual(state["pressed"], [])
+            state["position"] = 0.55
+            self.driver.dodge_watch_step(pawn, boss, pc, 180.0)
+            self.assertTrue(any(down for _key, down in state["pressed"]))
+            state["position"] = 0.70
+            self.driver.S["fight_time"] = 1.2
+            self.driver.dodge_watch_step(pawn, boss, pc, 180.0)
+            attempt = next(line for line in self.logs if "DODGE_ATTEMPT" in line)
+            self.assertIn("i_frame_tag_active_at_contact=true", attempt)
+            self.assertIn("target_contact_position=0.700", attempt)
+            state["position"] = 0.73
+            self.driver.S["fight_time"] = 1.3
+            self.driver.dodge_watch_step(pawn, boss, pc, 180.0, player_hit_this_tick=True)
+            self.assertTrue(any("DODGE_HIT_LINK" in line and "PLAYER_HIT_FOLLOWED" in line
+                                for line in self.logs))
+            state["position"] = 0.76
+            self.driver.S["fight_time"] = 1.6
+            self.driver.dodge_watch_step(pawn, boss, pc, 180.0)
+        result = next(line for line in self.logs if "DODGE_RESULT" in line)
+        self.assertIn("player_hit_followed=true", result)
+
+    def test_dodge_only_mode_is_opt_in_and_uses_separate_watch_path(self):
+        source = DRIVER.read_text(encoding="utf-8")
+        self.assertIn('FIGHT_DODGE_ONLY = os.environ.get("FIGHT_DODGE_ONLY", "0") == "1"', source)
+        self.assertIn('if FIGHT_DODGE_ONLY:', source)
+        self.assertIn('dodge_watch_step(pawn, boss, pc, dist, player_hit_this_tick)', source)
+        self.assertIn('DODGE_ATTEMPT', source)
+        self.assertIn('i_frame_tag_active_at_contact=', source)
+        self.assertIn('DODGE_IFRAME_TAG_RISE', source)
+        self.assertIn('FIGHT_DODGE_TARGET = os.environ.get("FIGHT_DODGE_TARGET", "all").strip()', source)
+        self.assertIn('player_hit_followed=', source)
+        self.assertIn('DODGE_ONLY_PLAYER_DISTANCE_CM = 200.0', source)
+        dodge_branch = source.split('if FIGHT_DODGE_ONLY:', 1)[-1].split('if S["action"] != "parry_watch":', 1)[0]
+        self.assertIn('if dist > DODGE_ONLY_PLAYER_DISTANCE_CM:', dodge_branch)
+        self.assertIn('DODGE_RANGE_CLAMP', dodge_branch)
+        self.assertIn('DODGE_ONLY_PLAYER_DISTANCE_CM - 5.0', dodge_branch)
+
+    def test_montage_target_attempts_without_a_tracker_window_and_uses_a_unique_synthetic_instance(self):
+        state = {"presses": 0, "parried": 0}
+        tracker = types.SimpleNamespace(get_current_move=lambda: "None", get_attack_instance=lambda: 0,
+                                        is_active_window=lambda: False, get_position=lambda: 0.0)
+        parry = types.SimpleNamespace(press=lambda: state.__setitem__("presses", state["presses"] + 1) or True,
+                                      get_parried_count=lambda: state["parried"],
+                                      get_press_count=lambda: state["presses"], window_seconds=0.2)
+        boss = types.SimpleNamespace(get_actor_location=lambda: types.SimpleNamespace(x=250.0, y=0.0, z=0.0))
+        pawn = types.SimpleNamespace(get_actor_location=lambda: types.SimpleNamespace(x=0.0, y=0.0, z=0.0))
+        with patch.object(self.driver, "comp", side_effect=lambda actor, name: {
+                "RPGAttackTracker": tracker, "RPGBossLowSweep": None,
+                "RPGPlayerParry": parry}[name]), patch.object(self.driver.plc, "player_montage",
+                return_value=("Mid01_Anim_Montage", 0.62)), patch.object(self.driver.plc, "health", return_value=100.0):
+            self.driver.S.update(action="parry_watch", action_t=0.1, held=set(), fight_time=5.0, counts={},
+                                 parry_watch_seen=set(), parry_watch_observed=set(), parry_watch_scheduled={},
+                                 parry_watch_pending=None)
+            self.driver.parry_watch_step(pawn, boss)
+        self.assertEqual(state["presses"], 1)
+        attempt = next(line for line in self.logs if "PARRY_ATTEMPT" in line)
+        self.assertIn("move=UNTRACKED", attempt)
+        self.assertIn("source=montage_target", attempt)
+        self.assertIn("instance=1000000", attempt)
+        self.assertIn("position=0.620", attempt)
+
+    def test_sprint_followup_is_reported_as_untracked_without_pressing(self):
+        state = {"presses": 0}
+        tracker = types.SimpleNamespace(get_current_move=lambda: "None", get_attack_instance=lambda: 0,
+                                        is_active_window=lambda: False, get_position=lambda: 0.0)
+        parry = types.SimpleNamespace(press=lambda: state.__setitem__("presses", state["presses"] + 1) or True,
+                                      get_parried_count=lambda: 0, get_press_count=lambda: state["presses"])
+        with patch.object(self.driver, "comp", side_effect=lambda actor, name: {
+                "RPGAttackTracker": tracker, "RPGBossLowSweep": None,
+                "RPGPlayerParry": parry}[name]), patch.object(self.driver.plc, "player_montage",
+                return_value=("GS_SprintAttackFollowUp_Montage", 0.07)):
+            self.driver.S.update(action="parry_watch", action_t=0.1, held=set(), counts={},
+                                 parry_watch_seen=set(), parry_watch_observed=set(), parry_watch_scheduled={},
+                                 parry_watch_pending=None)
+            self.driver.parry_watch_step(object(), object())
+        self.assertEqual(state["presses"], 0)
+        self.assertTrue(any("PARRY_UNTRACKED_BOSS_HITTER" in line and "action=log_only" in line
+                            for line in self.logs))
+
+    def test_tracker_exposes_active_window_bounds_to_blueprint_and_python(self):
+        header = (DRIVER.parents[2] / "Source" / "OneBossFight" / "Player" /
+                  "RPGAttackTracker.h").read_text(encoding="utf-8")
+        self.assertIn("Attacks.FindByPredicate", header)
+        for getter in ("GetActiveWindowStartTime", "GetActiveWindowEndTime"):
+            self.assertIn('UFUNCTION(BlueprintPure, Category = "Attack|Diagnostics")', header)
+            self.assertIn("float " + getter + "() const", header)
+
+    def test_player_hit_marker_binds_hp_drop_to_boss_tracker_and_montage_position(self):
+        tracker = types.SimpleNamespace(get_current_move=lambda: "A2", get_attack_instance=lambda: 14,
+                                        get_position=lambda: 1.77)
+        with patch.object(self.driver, "comp", return_value=tracker), \
+             patch.object(self.driver, "montage", return_value="GS_ChargedAttack"), \
+             patch.object(self.driver.plc, "player_montage", return_value=("GS_ChargedAttack", 1.77)):
+            self.driver.S["fight_time"] = 12.5
+            self.driver.log_player_hit(object(), object(), 100.0, 64.0)
+        marker = next(line for line in self.logs if "PLAYER_HIT" in line)
+        for field in ("hp_before=100.0", "hp_after=64.0", "damage=36.0", "boss_move=A2",
+                      "boss_instance=14", "boss_montage=GS_ChargedAttack", "montage_position=1.77"):
+            self.assertIn(field, marker)
+
+    def test_parry_receipt_uses_blueprint_counter_accessors(self):
+        source = DRIVER.read_text(encoding="utf-8")
+        header = (DRIVER.parents[2] / "Source" / "OneBossFight" / "Player" /
+                  "RPGPlayerParry.h").read_text(encoding="utf-8")
+        self.assertIn("parry.get_parried_count()", source)
+        self.assertIn("parry.get_press_count()", source)
+        for getter in ("GetParriedCount", "GetPressCount"):
+            marker = "int32 " + getter + "() const { return "
+            self.assertIn("UFUNCTION(BlueprintPure, Category = \"Parry|Diagnostics\")\n\t" + marker, header)
+
     def test_parry_timeout_marker_is_once_per_slot(self):
         source = DRIVER.read_text(encoding="utf-8")
         self.assertIn('"parry_timeout_action_ids": set()', source)
-        self.assertIn('outcome=timeout_no_live_a4 slot=%s', source)
+        self.assertIn('outcome=timeout_no_live_tracker_window slot=%s', source)
         self.assertIn('PARRY_DIAG montage=%s', source)
 
     def test_action_schedule_and_frame_rate_match_retained(self):
@@ -95,9 +367,9 @@ class FightPortTests(unittest.TestCase):
         self.assertNotIn("AIR_LIGHT_MIN_DISTANCE", source)
         self.assertNotIn("min_air_light_distance", source)
 
-    def test_parry_watch_is_bounded_and_observes_only_a_live_a4_window(self):
+    def test_parry_watch_is_bounded_and_does_not_press_without_live_tracker_window(self):
         self.assertEqual(self.driver.PARRY_WATCH_SECONDS, 3.0)
-        tracker = types.SimpleNamespace(get_current_move=lambda: "A3", is_active_window=lambda: True,
+        tracker = types.SimpleNamespace(get_current_move=lambda: "A3", is_active_window=lambda: False,
                                         get_attack_instance=lambda: 4, get_position=lambda: 0.72)
         sweep = types.SimpleNamespace(get_parried_count=lambda: 0)
         parry = types.SimpleNamespace(press=lambda: self.fail("parry pressed outside A4"))
@@ -110,23 +382,30 @@ class FightPortTests(unittest.TestCase):
         self.assertIsNone(self.driver.S["parry_watch_pending"])
         self.assertEqual(self.driver.S["parry_watch_seen"], set())
 
-    def test_parry_attempt_is_not_success_until_live_sweep_count_increments(self):
-        state = {"move": "A4", "active": True, "instance": 9, "parried": 2}
+    def test_parry_attempt_is_not_success_until_player_parried_count_increments(self):
+        state = {"move": "A1b", "active": True, "instance": 9, "parried": 2, "presses": 0, "sweep": 0}
         tracker = types.SimpleNamespace(get_current_move=lambda: state["move"],
                                         is_active_window=lambda: state["active"],
-                                        get_attack_instance=lambda: state["instance"], get_position=lambda: 0.72)
-        sweep = types.SimpleNamespace(get_parried_count=lambda: state["parried"])
-        parry = types.SimpleNamespace(press=lambda: True)
+                                        get_attack_instance=lambda: state["instance"], get_position=lambda: 0.80,
+                                        get_active_window_start_time=lambda: 0.60,
+                                        get_active_window_end_time=lambda: 0.90)
+        sweep = types.SimpleNamespace(get_parried_count=lambda: state["sweep"])
+        parry = types.SimpleNamespace(press=lambda: state.__setitem__("presses", state["presses"] + 1) or True,
+                                      get_parried_count=lambda: state["parried"],
+                                      get_press_count=lambda: state["presses"], window_seconds=0.25)
+        pawn = types.SimpleNamespace(get_actor_location=lambda: types.SimpleNamespace(x=0.0, y=0.0, z=0.0))
+        boss = types.SimpleNamespace(get_actor_location=lambda: types.SimpleNamespace(x=250.0, y=0.0, z=0.0))
         with patch.object(self.driver, "comp", side_effect=lambda actor, name: {
                 "RPGAttackTracker": tracker, "RPGBossLowSweep": sweep,
-                "RPGPlayerParry": parry}[name]), patch.object(self.driver, "montage", return_value="A4"):
+                "RPGPlayerParry": parry}[name]), patch.object(self.driver.plc, "player_montage",
+                return_value=("GS_Attack04_Montage", 0.12)):
             self.driver.S.update(action="parry_watch", action_t=0.2, counts={},
                                  parry_watch_seen=set(), parry_watch_pending=None)
-            self.driver.parry_watch_step(object(), object())
+            self.driver.parry_watch_step(pawn, boss)
             self.assertEqual(self.driver.S["counts"].get("parry_contact", 0), 0)
             self.assertIsNotNone(self.driver.S["parry_watch_pending"])
             state["parried"] += 1
-            self.driver.parry_watch_step(object(), object())
+            self.driver.parry_watch_step(pawn, boss)
         self.assertEqual(self.driver.S["counts"]["parry_contact"], 1)
         self.assertIsNone(self.driver.S["parry_watch_pending"])
         self.assertTrue(any("PARRY_CONTACT" in line for line in self.logs))
@@ -134,24 +413,45 @@ class FightPortTests(unittest.TestCase):
         self.assertTrue(any("PARRY_BLENDABLE at_contact" in line for line in self.logs))
 
     def test_opportunistic_parry_observes_during_action_and_attempts_when_neutral(self):
-        state = {"move": "A4", "active": True, "instance": 31, "parried": 4, "presses": 0}
+        state = {"move": "A1b", "active": True, "instance": 31, "parried": 4, "presses": 0,
+                 "position": 0.75, "montage_position": 0.0}
         tracker = types.SimpleNamespace(get_current_move=lambda: state["move"],
                                         is_active_window=lambda: state["active"],
-                                        get_attack_instance=lambda: state["instance"], get_position=lambda: 0.75)
-        sweep = types.SimpleNamespace(get_parried_count=lambda: state["parried"])
-        parry = types.SimpleNamespace(press=lambda: state.__setitem__("presses", state["presses"] + 1) or True)
+                                        get_attack_instance=lambda: state["instance"], get_position=lambda: state["position"],
+                                        get_active_window_start_time=lambda: 0.60,
+                                        get_active_window_end_time=lambda: 0.90)
+        sweep = types.SimpleNamespace(get_parried_count=lambda: 0)
+        parry = types.SimpleNamespace(press=lambda: state.__setitem__("presses", state["presses"] + 1) or True,
+                                      get_parried_count=lambda: state["parried"],
+                                      get_press_count=lambda: state["presses"], window_seconds=0.25)
+        pawn = types.SimpleNamespace(get_actor_location=lambda: types.SimpleNamespace(x=0.0, y=0.0, z=0.0))
+        boss = types.SimpleNamespace(get_actor_location=lambda: types.SimpleNamespace(x=250.0, y=0.0, z=0.0))
         with patch.object(self.driver, "comp", side_effect=lambda actor, name: {
                 "RPGAttackTracker": tracker, "RPGBossLowSweep": sweep,
-                "RPGPlayerParry": parry}[name]), patch.object(self.driver, "camera_blendables", return_value="camera=FollowCamera count=0"):
+                "RPGPlayerParry": parry}[name]), patch.object(self.driver.plc, "player_montage",
+                side_effect=lambda actor: ("GS_Attack04_Montage", state["montage_position"])), \
+             patch.object(self.driver, "camera_blendables", return_value="camera=FollowCamera count=0"), \
+             patch.object(self.driver.plc, "health", return_value=1000.0):
             self.driver.S.update(action="light", action_t=0.1, held=set(), fight_time=8.0, counts={},
                                  parry_watch_seen=set(), parry_watch_observed=set(), parry_watch_pending=None)
             self.driver.parry_watch_step(object(), object())
             self.assertEqual(state["presses"], 0)
-            self.assertTrue(any("PARRY_WINDOW_OBSERVED instance=31" in line for line in self.logs))
+            self.assertTrue(any("PARRY_TARGET_SCHEDULED instance=31" in line for line in self.logs))
             self.driver.S["action"] = None
-            self.driver.parry_watch_step(object(), object())
+            state["position"] = 0.12
+            state["montage_position"] = 0.12
+            self.driver.parry_watch_step(pawn, boss)
         self.assertEqual(state["presses"], 1)
-        self.assertEqual(self.driver.S["parry_watch_pending"], {"instance": 31, "parried_before": 4})
+        self.assertEqual(self.driver.S["parry_watch_pending"], {"instance": 31, "move": "A1b",
+                         "source": "tracker", "parried_before": 4, "press_count_after": 1,
+                         "sweep_parried_before": 0, "distance_cm": 250.0,
+                         "player_hp_before": 1000.0, "attempt_time": 8.0,
+                         "parry_window_seconds": 0.25, "tracker_window_seconds": 0.30000000000000004,
+                         "watch_limit_seconds": 0.6, "boss_montage": "GS_Attack04_Montage"})
+        attempt = next(line for line in self.logs if "PARRY_ATTEMPT" in line)
+        self.assertIn("distance_cm=250.0", attempt)
+        self.assertIn("player_hp_before=1000.0", attempt)
+        self.assertIn("watch_limit_seconds=0.60", attempt)
         self.assertEqual(self.driver.S["action"], "parry_watch")
 
     def test_parry_only_mode_suppresses_normal_action_cycle(self):
@@ -160,14 +460,60 @@ class FightPortTests(unittest.TestCase):
         self.assertIn('if FIGHT_PARRY_ONLY:', source)
         self.assertIn('S["action"] = None', source)
 
-    def test_refused_parry_press_is_recorded_without_contact_credit(self):
-        tracker = types.SimpleNamespace(get_current_move=lambda: "A4", is_active_window=lambda: True,
-                                        get_attack_instance=lambda: 10, get_position=lambda: 0.72)
+    def test_no_contact_reports_attempt_distance_hp_delta_and_observed_window_seconds(self):
+        state = {"move": "A1", "active": True, "instance": 33, "parried": 0, "presses": 0, "hp": 1000.0,
+                 "montage_position": 0.25}
+        tracker = types.SimpleNamespace(get_current_move=lambda: state["move"],
+                                        is_active_window=lambda: state["active"],
+                                        get_attack_instance=lambda: state["instance"], get_position=lambda: state["position"],
+                                        get_active_window_start_time=lambda: 0.40,
+                                        get_active_window_end_time=lambda: 0.60)
         sweep = types.SimpleNamespace(get_parried_count=lambda: 0)
-        parry = types.SimpleNamespace(press=lambda: False)
+        parry = types.SimpleNamespace(press=lambda: state.__setitem__("presses", state["presses"] + 1) or True,
+                                      get_parried_count=lambda: state["parried"],
+                                      get_press_count=lambda: state["presses"], window_seconds=0.25)
+        pawn = types.SimpleNamespace(get_actor_location=lambda: types.SimpleNamespace(x=0.0, y=0.0, z=0.0))
+        boss = types.SimpleNamespace(get_actor_location=lambda: types.SimpleNamespace(x=200.0, y=0.0, z=0.0))
         with patch.object(self.driver, "comp", side_effect=lambda actor, name: {
                 "RPGAttackTracker": tracker, "RPGBossLowSweep": sweep,
-                "RPGPlayerParry": parry}[name]):
+                "RPGPlayerParry": parry}[name]), patch.object(self.driver.plc, "health", side_effect=lambda actor: state["hp"]), \
+             patch.object(self.driver.plc, "player_montage", side_effect=lambda actor: ("AM_Boss01_A1", state["montage_position"])):
+            self.driver.S.update(action="parry_watch", action_t=0.2, fight_time=4.0, counts={},
+                                 parry_watch_seen=set(), parry_watch_observed=set(), parry_watch_pending=None)
+            self.driver.parry_watch_step(pawn, boss)
+            self.assertIsNone(self.driver.S["parry_watch_pending"])
+            state["montage_position"] = 0.28
+            self.driver.S["fight_time"] = 4.1
+            self.driver.parry_watch_step(pawn, boss)
+            tracker.is_active_window = lambda: False
+            state["hp"] = 930.0
+            self.driver.S.update(action_t=0.61, fight_time=4.71)
+            self.driver.parry_watch_step(pawn, boss)
+        result = next(line for line in self.logs if "PARRY_RESULT" in line)
+        self.assertIn("outcome=no_contact", result)
+        self.assertIn("distance_cm=200.0", result)
+        self.assertIn("player_hp_before=1000.0", result)
+        self.assertIn("player_hp_after=930.0", result)
+        self.assertIn("player_hp_delta=-70.0", result)
+        self.assertIn("player_took_damage=true", result)
+        self.assertIn("window_seconds=0.61", result)
+        self.assertIn("parry_window_seconds=0.2", result)
+        self.assertIn("tracker_window_seconds=0.200", result)
+
+    def test_refused_parry_press_is_recorded_without_contact_credit(self):
+        tracker = types.SimpleNamespace(get_current_move=lambda: "A1b", is_active_window=lambda: True,
+                                        get_attack_instance=lambda: 10, get_position=lambda: 0.80,
+                                        get_active_window_start_time=lambda: 0.60,
+                                        get_active_window_end_time=lambda: 0.90)
+        sweep = types.SimpleNamespace(get_parried_count=lambda: 0)
+        press_state = {"count": 0}
+        parry = types.SimpleNamespace(press=lambda: press_state.__setitem__("count", press_state["count"] + 1) or False,
+                                      get_parried_count=lambda: 0,
+                                      get_press_count=lambda: press_state["count"])
+        with patch.object(self.driver, "comp", side_effect=lambda actor, name: {
+                "RPGAttackTracker": tracker, "RPGBossLowSweep": sweep,
+                "RPGPlayerParry": parry}[name]), patch.object(self.driver.plc, "player_montage",
+                return_value=("GS_Attack04_Montage", 0.12)):
             self.driver.S.update(action="parry_watch", action_t=0.2, counts={},
                                  parry_watch_seen=set(), parry_watch_pending=None)
             self.driver.parry_watch_step(object(), object())
@@ -176,15 +522,21 @@ class FightPortTests(unittest.TestCase):
         self.assertTrue(any("outcome=window_refused" in line for line in self.logs))
 
     def test_multiple_parry_count_increments_fail_closed_and_capture_frames_are_labeled(self):
-        state = {"move": "A4", "active": True, "instance": 12, "parried": 0}
+        state = {"move": "A1b", "active": True, "instance": 12, "parried": 0}
         tracker = types.SimpleNamespace(get_current_move=lambda: state["move"],
                                         is_active_window=lambda: state["active"],
-                                        get_attack_instance=lambda: state["instance"], get_position=lambda: 0.72)
+                                        get_attack_instance=lambda: state["instance"], get_position=lambda: 0.80,
+                                        get_active_window_start_time=lambda: 0.60,
+                                        get_active_window_end_time=lambda: 0.90)
         sweep = types.SimpleNamespace(get_parried_count=lambda: state["parried"])
-        parry = types.SimpleNamespace(press=lambda: True)
+        press_state = {"count": 0}
+        parry = types.SimpleNamespace(press=lambda: press_state.__setitem__("count", press_state["count"] + 1) or True,
+                                      get_parried_count=lambda: state["parried"],
+                                      get_press_count=lambda: press_state["count"])
         with patch.object(self.driver, "comp", side_effect=lambda actor, name: {
                 "RPGAttackTracker": tracker, "RPGBossLowSweep": sweep,
-                "RPGPlayerParry": parry}[name]), patch.object(self.driver, "montage", return_value="AM_Boss01_ParryRecoil"), \
+                "RPGPlayerParry": parry}[name]), patch.object(self.driver.plc, "player_montage",
+                return_value=("GS_Attack04_Montage", 0.12)), \
              patch.object(self.driver, "camera_blendables", return_value="camera=FollowCamera count=1 weights=[PPM_ParryDistortion=1.000]"):
             self.driver.S.update(action="parry_watch", action_t=0.2, counts={}, fight_time=1.0,
                                  parry_watch_seen=set(), parry_watch_pending=None)
@@ -232,7 +584,7 @@ class FightPortTests(unittest.TestCase):
             get_components_by_class=lambda _cls: [])), "camera=missing")
 
     def test_parry_watch_times_out_without_a4_and_fails_closed_on_missing_components(self):
-        tracker = types.SimpleNamespace(get_current_move=lambda: "A3", is_active_window=lambda: True,
+        tracker = types.SimpleNamespace(get_current_move=lambda: "A3", is_active_window=lambda: False,
                                         get_attack_instance=lambda: 11, get_position=lambda: 0.8)
         sweep = types.SimpleNamespace(get_parried_count=lambda: 0)
         parry = types.SimpleNamespace(press=lambda: self.fail("parry pressed without A4"))
@@ -243,10 +595,10 @@ class FightPortTests(unittest.TestCase):
                                  counts={}, parry_watch_seen=set(), parry_watch_pending=None)
             self.driver.parry_watch_step(object(), object())
             self.assertIsNone(self.driver.S["action"])
-            self.assertTrue(any("timeout_no_live_a4" in line for line in self.logs))
-            self.driver.S.update(action="parry_watch", action_t=0.1)
-            with patch.object(self.driver, "comp", return_value=None):
-                self.driver.parry_watch_step(object(), object())
+        self.assertTrue(any("timeout_no_live_tracker_window" in line for line in self.logs))
+        self.driver.S.update(action="parry_watch", action_t=0.1)
+        with patch.object(self.driver, "comp", return_value=None):
+            self.driver.parry_watch_step(object(), object())
         self.assertIsNone(self.driver.S["action"])
         self.assertTrue(any("outcome=missing_component" in line for line in self.logs))
 
@@ -273,7 +625,8 @@ class FightPortTests(unittest.TestCase):
                                                 "data", True, "a" * 64)
         self.assertEqual(provenance, {"run": "run_7", "build_id": "BUILD-259",
                                       "map": "L_SevarogArena", "route": "data",
-                                      "tier2": True, "tool_sha256": "a" * 64})
+                                      "tier2": True, "tool_sha256": "a" * 64,
+                                      "frame_context_schema": 1})
         state = {"fight_time": 12.345, "boss_dead": False,
                  "counts": {"light": 2, "counter": 1}, "refills": 3,
                  "player_deaths": 1, "frame": 45, "boss_health_start": 2000,
@@ -353,6 +706,7 @@ class FightPortTests(unittest.TestCase):
         dodge = types.SimpleNamespace(is_guard_counter_armed=lambda: True)
         with patch.object(self.driver, "actors", return_value=(object(), pc, pawn, boss)), \
              patch.object(self.driver, "capture"), \
+             patch.object(self.driver, "parry_watch_step"), \
              patch.object(self.driver, "attr", return_value=100.0), \
              patch.object(self.driver, "face", return_value=100.0), \
              patch.object(self.driver, "comp", return_value=dodge), \
@@ -366,6 +720,7 @@ class FightPortTests(unittest.TestCase):
         self.game_seconds = 1.2
         with patch.object(self.driver, "actors", return_value=(object(), pc, pawn, boss)), \
              patch.object(self.driver, "capture"), \
+             patch.object(self.driver, "parry_watch_step"), \
              patch.object(self.driver, "attr", return_value=100.0), \
              patch.object(self.driver, "face", return_value=100.0), \
              patch.object(self.driver, "comp", return_value=dodge):

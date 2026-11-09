@@ -120,6 +120,21 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Attack")
 	float GetPosition() const { return LastPosition; }
 
+	/** Read-only montage-local bounds for the currently tracked move's damage window. */
+	UFUNCTION(BlueprintPure, Category = "Attack|Diagnostics")
+	float GetActiveWindowStartTime() const
+	{
+		const FRPGAttackTiming* Timing = Attacks.FindByPredicate([this](const FRPGAttackTiming& Item) { return Item.MoveId == CurrentMove; });
+		return Timing ? Timing->ActiveStartTime : -1.f;
+	}
+
+	UFUNCTION(BlueprintPure, Category = "Attack|Diagnostics")
+	float GetActiveWindowEndTime() const
+	{
+		const FRPGAttackTiming* Timing = Attacks.FindByPredicate([this](const FRPGAttackTiming& Item) { return Item.MoveId == CurrentMove; });
+		return Timing ? Timing->ActiveEndTime : -1.f;
+	}
+
 	UFUNCTION(BlueprintPure, Category = "Attack")
 	bool GetTiming(FName MoveId, FRPGAttackTiming& OutTiming) const;
 

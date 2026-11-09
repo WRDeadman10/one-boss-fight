@@ -43,7 +43,9 @@ namespace AttachWitness
 		return TArray<FString>{
 			TEXT("RPGFootsteps"), TEXT("RPGBossMusic"), TEXT("RPGBossStagger"), TEXT("RPGBossPhases"), TEXT("RPGBossEncounter"), TEXT("RPGBossDormantWake"),
 			TEXT("RPGBossPosture"), TEXT("RPGBossDeath"), TEXT("RPGBossLook"), TEXT("RPGBossBleed"), TEXT("RPGAttackTracker"), TEXT("RPGBossCloseClipSwap"),
-			TEXT("RPGBossShockwave"), TEXT("RPGBossLowSweep"), TEXT("RPGBossHealPunish"), TEXT("RPGDamageResolver"), TEXT("RPGTraceGuard"),
+			TEXT("RPGBossShockwave"), TEXT("RPGBossLowSweep"), TEXT("RPGBossHealPunish"), TEXT("RPGDamageResolver"),
+			// RPGPackParryContact: Codex C-1141 (pack-traced parry reward observer), attached right after the damage resolver (Lead fix C-1145).
+			TEXT("RPGPackParryContact"), TEXT("RPGTraceGuard"),
 			// RPGTier2BossPresentation: Codex AL-C01 (Tier 2 aura/recoil on the live pack boss), attached in AttachBossDiagnostics before the trace audit.
 			TEXT("RPGBossHud"), TEXT("RPGBossLegend"), TEXT("RPGTier2BossPresentation"), TEXT("RPGTraceAudit"), TEXT("RPGCombatDebug")};
 	}

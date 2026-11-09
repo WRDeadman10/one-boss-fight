@@ -33,6 +33,8 @@ This file contains Antigravity's technical observations for BUILD-259. The seven
 | Separate showcase renders | The authored preview variants and their isolated framing; not full-fight or runtime proof. | Owner disposition of the specific current/boosted aura option remains open. |
 
 The latest aura capture recovery is also bounded: C-1120 identified comma-packed runner environment values and first-use black HighResShot frames. Codex's offline fixes now split and log each `-Env` value and warm up on decoded brightness, capped at 20 frames/4 game seconds; Claude owns the rerun. No new visual finding is claimed here until a Lead capture is reviewed.
+
+**C-1122 evidence note:** Claude accepted Antigravity's independent confirmation that 13 aura-comparison PNGs were black and reported a separate fight capture's first visible frame as `f_00005` at approximately +0.7 game seconds. The mailbox receipt does not identify that fight frame's BUILD/capture ID; keep it attached to A-655/C-1122 and do not merge it into BUILD-255's six-black-frame or BUILD-259's seven-black-frame counts.
 | **Parry Distortion** | **NOT SEEN** (0x in fight) | N/A | No parries injected by driver. Chromatic aberration fringe is independently proven working in PIE (`P_C1042_AURA` / `r5`). Subtle chromatic aberration is visible on high-contrast edges when post-process pulse is active. |
 
 ---

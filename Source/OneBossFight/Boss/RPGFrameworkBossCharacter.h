@@ -63,6 +63,9 @@ public:
     virtual void Tick(float Delta) override;
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
 private:
+#if WITH_DEV_AUTOMATION_TESTS
+    friend class FBossParryRecoveryLifecycleHarness;
+#endif
     UPROPERTY(VisibleAnywhere) TObjectPtr<URPGFrameworkMoveExecutor> Executor;
     TUniquePtr<FRPGFrameworkDependencies> Dependencies;
     TWeakObjectPtr<APawn> Target;
