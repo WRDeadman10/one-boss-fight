@@ -111,6 +111,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack|Montage Timing")
 	bool bUseMontageNotifyTimings = false;
 
+	/** Runtime test switch for the Lead-only notify parity probe; avoids editor-property writes on a live Blueprint component in PIE. Shipping setter calls are ignored. */
+	UFUNCTION(BlueprintCallable, Category = "Attack|Testing")
+	void SetUseMontageNotifyTimingsForTest(bool bUseNotifyTimings);
+
+	UFUNCTION(BlueprintPure, Category = "Attack|Testing")
+	bool GetUseMontageNotifyTimingsForTest() const { return bUseMontageNotifyTimings; }
+
 	/** Starts the pack ability that plays this move now (tests and scripted fights). bForce skips the ability's own activation conditions (blocked tags, cooldown). Returns false if the move is unknown or the ability refused.
 	 *  A move with a ClipPath (A4, A5) has no pack ability: its clip plays as a dynamic montage in the pack's montage slot; without bForce it starts only when the boss plays no montage and is in no stance break,
 	 *  phase transition or sleep. */

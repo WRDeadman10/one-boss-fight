@@ -187,4 +187,19 @@ bool FRPGMontageNotifyTimingRulesTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGAttackTrackerNotifyTimingTestSwitchTest,
+	"OneBossFight.Boss.AttackTracker.NotifyTimingTestSwitch",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGAttackTrackerNotifyTimingTestSwitchTest::RunTest(const FString& Parameters)
+{
+	URPGAttackTracker* Tracker = NewObject<URPGAttackTracker>(GetTransientPackage());
+	if (!TestNotNull(TEXT("transient attack tracker exists"), Tracker)) return false;
+	TestFalse(TEXT("notify timing switch remains off by default"), Tracker->GetUseMontageNotifyTimingsForTest());
+	Tracker->SetUseMontageNotifyTimingsForTest(true);
+	TestTrue(TEXT("callable test switch enables notify timing"), Tracker->GetUseMontageNotifyTimingsForTest());
+	Tracker->SetUseMontageNotifyTimingsForTest(false);
+	TestFalse(TEXT("callable test switch restores the default mode"), Tracker->GetUseMontageNotifyTimingsForTest());
+	return true;
+}
+
 #endif

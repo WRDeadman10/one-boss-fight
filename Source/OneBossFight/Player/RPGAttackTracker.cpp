@@ -127,6 +127,15 @@ URPGAttackTracker::URPGAttackTracker()
 	BranchConeDegrees = NativeDefaults.BranchConeDegrees;
 }
 
+void URPGAttackTracker::SetUseMontageNotifyTimingsForTest(bool bUseNotifyTimings)
+{
+#if UE_BUILD_SHIPPING
+	(void)bUseNotifyTimings;
+#else
+	bUseMontageNotifyTimings = bUseNotifyTimings;
+#endif
+}
+
 int32 URPGAttackTracker::FindTimingIndex(const UAnimMontage* Montage) const
 {
 	if (!Montage)

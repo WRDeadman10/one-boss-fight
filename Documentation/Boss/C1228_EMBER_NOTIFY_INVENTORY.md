@@ -363,4 +363,32 @@ When authorized by Lead for application:
    - Place `URPGANS_BossMoveTiming` from `0.000 s` to `1.3333 s`.
    - Parameters: `MoveId=A3b`, `CommitTime=0.130`, `WindowStartTime=0.150`, `WindowEndTime=0.400`, `RecoveryEndTime=1.3333`, `TrackTurnRate=360.0`, `bBranchStage=true`, `BranchRange=400.0`, `BranchConeDegrees=120.0`, `bAuthoredWindup=true`.
 
+### 8.3. C-1233b Read-Only Draft: `AM_Boss01_A2` Composite Timing Analysis & Delta Flags
+
+**Authority:** Claude Lead Directive `[C-1233]` (2026-11-10).  
+**Status:** DRAFT / AUDIT ONLY. Zero assets modified. Do not author `AM_Boss01_A2`.
+
+`AM_Boss01_A2` is a 3-section composite montage (total duration `3.134 s`) consisting of `AN_Boss01_A2_Raise` (0.000..0.600 s), `AN_Boss01_A2_ApexHold` (0.600..1.767 s), and `AN_Boss01_A2_Slam` (1.767..3.134 s). The following table audits the in-montage anim notify timings against authoritative native tracker values in `RPGAttackTracker.cpp:35-44`:
+
+| Timing Point | Native Tracker Table (`RPGAttackTracker.cpp`) | In-Montage Notify (`AM_Boss01_A2`) | Delta (\(|\Delta|\)) | Tolerance Flag (> 0.02 s) | Analysis & Corrective Rationale |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **Commit Time** | `1.680 s` | `1.687 s` (`Notify_AttackCommit`) | `+0.007 s` (+7 ms) | **PASS** (\(\le 0.02\text{ s}\)) | Well within 1 frame (16.67 ms). Aligns with heading lock at apex of weapon raise. |
+| **Window Start** | `1.930 s` | `1.937 s` (`Notify_ActiveStart`) | `+0.007 s` (+7 ms) | **PASS** (\(\le 0.02\text{ s}\)) | Ground contact frame; aligns with active damage initiation. |
+| **Window End** | `2.110 s` | `2.107 s` (`Notify_ActiveEnd`) | `-0.003 s` (-3 ms) | **PASS** (\(\le 0.02\text{ s}\)) | Shockwave spawn / damage window conclusion frame. |
+| **Recovery Blend vs Table End** | `3.140 s` | `2.884 s` (`Notify_RecoveryBlend`) | **-0.256 s** (-256 ms) | **FLAGGED (> 0.02 s)** | **CRITICAL:** `Notify_RecoveryBlend` at 2.884 s marks the *commencement of blend-out*, NOT ability end. Using 2.884 s would truncate recovery by 256 ms. |
+| **Montage End vs Table End** | `3.140 s` | `3.134 s` (End of Sequence) | `-0.006 s` (-6 ms) | **PASS** (\(\le 0.02\text{ s}\)) | Composite sequence finish (2.884 s + 0.250 s blend-out = 3.134 s) matches table `3.140 s` within 6 ms. |
+
+#### Proposed `URPGANS_BossMoveTiming` Draft Values for `AM_Boss01_A2` (When Authorized):
+- **`MoveId`**: `A2`
+- **`CommitTime`**: `1.680 s` (or `1.687 s`, \(\Delta = 7\text{ ms}\))
+- **`WindowStartTime`**: `1.930 s` (or `1.937 s`, \(\Delta = 7\text{ ms}\))
+- **`WindowEndTime`**: `2.110 s` (or `2.107 s`, \(\Delta = 3\text{ ms}\))
+- **`RecoveryEndTime`**: **`3.134 s`** (Full composite completion; must NOT use `2.884 s`)
+- **`TrackTurnRate`**: `120.0 deg/s` (Slow tracking during weapon raise per `RPGAttackTracker.cpp:50`)
+- **`bBranchStage`**: `false`
+- **`BranchRange`**: `0.0 cm`
+- **`BranchConeDegrees`**: `120.0 deg`
+- **`bAuthoredWindup`**: `true`
+- **Dedicated Track Span**: `0.000 s` to `3.134 s`.
+
 **Discipline Notice:** Strictly no asset modifications were made during this draft. Assets will only be edited via an automated, locked commandlet script upon Lead's explicit approval.

@@ -1,0 +1,94 @@
+﻿[2026.11.09-19.22.10:921][  6]LogTemp: Display: [EncounterActivation] default data startup: selected /Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter for map L_SevarogArena
+[2026.11.09-19.22.10:982][  6]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending
+[2026.11.09-19.22.13:862][ 66]LogPython: [EmberNotifyParity] CHECK PASS component tracker exists 
+[2026.11.09-19.22.13:862][ 66]LogPython: [EmberNotifyParity] CHECK PASS component encounter exists 
+[2026.11.09-19.22.13:862][ 66]LogPython: [EmberNotifyParity] CHECK PASS component debug exists 
+[2026.11.09-19.22.13:862][ 66]LogPython: [EmberNotifyParity] CHECK PASS component parry exists 
+[2026.11.09-19.22.13:862][ 66]LogPython: [EmberNotifyParity] CHECK PASS component pawn exists 
+[2026.11.09-19.22.13:862][ 66]LogPython: [EmberNotifyParity] CHECK PASS component boss exists 
+[2026.11.09-19.22.13:862][ 66]LogPython: [EmberNotifyParity] CHECK PASS off A1 timing flag readback readback=False
+[2026.11.09-19.22.13:863][ 66]LogPython: [EmberNotifyParity] CHECK PASS off A1 montage starts 
+[2026.11.09-19.22.13:863][ 66]LogPython: [EmberNotifyParity] MOVE_BEGIN mode=off move=A1
+[2026.11.09-19.22.15:493][125]LogPython: [EmberNotifyParity] CHECK FAIL off A1 tracker completed phases={}
+[2026.11.09-19.22.15:493][125]LogPython: [EmberNotifyParity] CHECK FAIL off A1 parry contact recorded contacts=[]
+[2026.11.09-19.22.15:867][136]LogPython: [EmberNotifyParity] CHECK PASS off A3a timing flag readback readback=False
+[2026.11.09-19.22.15:867][136]LogPython: [EmberNotifyParity] CHECK PASS off A3a montage starts 
+[2026.11.09-19.22.15:867][136]LogPython: [EmberNotifyParity] MOVE_BEGIN mode=off move=A3a
+[2026.11.09-19.22.15:914][137]LogPython: [EmberNotifyParity] TRANSITION mode=off move=A3a phase=Windup pos=0.0312 commit_pos=-1.0000 active_pos=-1.0000
+[2026.11.09-19.22.16:286][145]LogPython: [EmberNotifyParity] TRANSITION mode=off move=A3a phase=Committed pos=0.3967 commit_pos=0.3967 active_pos=-1.0000
+[2026.11.09-19.22.16:339][146]LogPython: [EmberNotifyParity] TRANSITION mode=off move=A3a phase=Active pos=0.4506 commit_pos=0.3967 active_pos=0.4506
+[2026.11.09-19.22.16:339][146]LogPython: [EmberNotifyParity] PARRY_PRESS mode=off move=A3a pos=0.4506 opened=True target=0.4840 lead=0.080
+[2026.11.09-19.22.16:449][150]LogPython: [EmberNotifyParity] TRANSITION mode=off move=A3a phase=Complete pos=0.5421
+[2026.11.09-19.22.16:449][150]LogPython: [EmberNotifyParity] CHECK PASS off A3a tracker completed phases={"Active": 0.45057412981987, "Committed": 0.39665693044662476, "Complete": 0.5421465635299683}
+[2026.11.09-19.22.16:449][150]LogPython: [EmberNotifyParity] CHECK FAIL off A3a parry contact recorded contacts=[]
+[2026.11.09-19.22.16:772][162]LogPython: [EmberNotifyParity] CHECK PASS off A3b timing flag readback readback=False
+[2026.11.09-19.22.16:772][162]LogPython: [EmberNotifyParity] CHECK PASS off A3b montage starts 
+[2026.11.09-19.22.16:772][162]LogPython: [EmberNotifyParity] MOVE_BEGIN mode=off move=A3b
+[2026.11.09-19.22.16:772][162]LogPython: [EmberNotifyParity] PARRY_PRESS mode=off move=A3b pos=0.5421 opened=False target=0.1520 lead=0.080
+[2026.11.09-19.22.16:802][163]LogPython: [EmberNotifyParity] TRANSITION mode=off move=A3b phase=Windup pos=0.0073 commit_pos=0.3967 active_pos=0.4506
+[2026.11.09-19.22.16:928][167]LogPython: [EmberNotifyParity] PARRY_PRESS mode=off move=A3b pos=0.0897 opened=False target=0.1520 lead=0.080
+[2026.11.09-19.22.16:954][168]LogPython: [EmberNotifyParity] TRANSITION mode=off move=A3b phase=Committed pos=0.1342 commit_pos=0.1342 active_pos=0.4506
+[2026.11.09-19.22.16:954][168]LogPython: [EmberNotifyParity] PARRY_PRESS mode=off move=A3b pos=0.1342 opened=False target=0.1520 lead=0.080
+[2026.11.09-19.22.17:016][169]LogPython: [EmberNotifyParity] TRANSITION mode=off move=A3b phase=Active pos=0.1613 commit_pos=0.1342 active_pos=0.1613
+[2026.11.09-19.22.17:016][169]LogPython: [EmberNotifyParity] PARRY_PRESS mode=off move=A3b pos=0.1613 opened=False target=0.1520 lead=0.080
+[2026.11.09-19.22.17:053][170]LogPython: [EmberNotifyParity] PARRY_PRESS mode=off move=A3b pos=0.2226 opened=False target=0.1520 lead=0.080
+[2026.11.09-19.22.17:069][171]LogPython: [EmberNotifyParity] PARRY_PRESS mode=off move=A3b pos=0.2597 opened=False target=0.1520 lead=0.080
+[2026.11.09-19.22.17:144][172]LogPython: [EmberNotifyParity] PARRY_PRESS mode=off move=A3b pos=0.2759 opened=False target=0.1520 lead=0.080
+[2026.11.09-19.22.17:241][173]LogPython: [EmberNotifyParity] PARRY_PRESS mode=off move=A3b pos=0.3508 opened=False target=0.1520 lead=0.080
+[2026.11.09-19.22.17:270][174]LogPython: [EmberNotifyParity] TRANSITION mode=off move=A3b phase=Recovery pos=0.4476 commit_pos=0.1342 active_pos=0.1613
+[2026.11.09-19.22.17:270][174]LogPython: [EmberNotifyParity] PARRY_PRESS mode=off move=A3b pos=0.4476 opened=True target=0.1520 lead=0.080
+[2026.11.09-19.22.17:941][192]LogPython: [EmberNotifyParity] TRANSITION mode=off move=A3b phase=Complete pos=1.0523
+[2026.11.09-19.22.17:941][192]LogPython: [EmberNotifyParity] CHECK PASS off A3b tracker completed phases={"Active": 0.16126969456672668, "Committed": 0.13419899344444275, "Complete": 1.052336573600769, "Recovery": 0.44760948419570923}
+[2026.11.09-19.22.17:941][192]LogPython: [EmberNotifyParity] CHECK FAIL off A3b parry contact recorded contacts=[]
+[2026.11.09-19.22.18:318][207]LogPython: [EmberNotifyParity] CHECK PASS on A1 timing flag readback readback=True
+[2026.11.09-19.22.18:319][207]LogPython: [EmberNotifyParity] CHECK PASS on A1 montage starts 
+[2026.11.09-19.22.18:319][207]LogPython: [EmberNotifyParity] MOVE_BEGIN mode=on move=A1
+[2026.11.09-19.22.18:319][207]LogPython: [EmberNotifyParity] PARRY_PRESS mode=on move=A1 pos=1.0523 opened=True target=0.3510 lead=0.080
+[2026.11.09-19.22.18:334][208]LogPython: [EmberNotifyParity] TRANSITION mode=on move=A1 phase=Windup pos=0.0299 commit_pos=0.1342 active_pos=0.1613
+[2026.11.09-19.22.18:664][220]LogPython: [EmberNotifyParity] TRANSITION mode=on move=A1 phase=Active pos=0.3591 commit_pos=0.3591 active_pos=0.3591
+[2026.11.09-19.22.18:825][228]LogPython: [EmberNotifyParity] TRANSITION mode=on move=A1 phase=Recovery pos=0.5235 commit_pos=0.3591 active_pos=0.3591
+[2026.11.09-19.22.19:298][237]LogPython: [EmberNotifyParity] TRANSITION mode=on move=A1 phase=Complete pos=0.9390
+[2026.11.09-19.22.19:298][237]LogPython: [EmberNotifyParity] CHECK PASS on A1 tracker completed phases={"Active": 0.3591077923774719, "Complete": 0.9389769434928894, "Recovery": 0.5234612226486206}
+[2026.11.09-19.22.19:298][237]LogPython: [EmberNotifyParity] CHECK FAIL on A1 parry contact recorded contacts=[]
+[2026.11.09-19.22.19:625][251]LogPython: [EmberNotifyParity] CHECK PASS on A3a timing flag readback readback=True
+[2026.11.09-19.22.19:625][251]LogPython: [EmberNotifyParity] CHECK PASS on A3a montage starts 
+[2026.11.09-19.22.19:625][251]LogPython: [EmberNotifyParity] MOVE_BEGIN mode=on move=A3a
+[2026.11.09-19.22.19:625][251]LogPython: [EmberNotifyParity] PARRY_PRESS mode=on move=A3a pos=0.9390 opened=True target=0.4840 lead=0.080
+[2026.11.09-19.22.19:641][252]LogPython: [EmberNotifyParity] TRANSITION mode=on move=A3a phase=Windup pos=0.0152 commit_pos=0.3591 active_pos=0.3591
+[2026.11.09-19.22.20:016][268]LogPython: [EmberNotifyParity] TRANSITION mode=on move=A3a phase=Committed pos=0.3883 commit_pos=0.3883 active_pos=0.3591
+[2026.11.09-19.22.20:041][269]LogPython: [EmberNotifyParity] TRANSITION mode=on move=A3a phase=Active pos=0.4106 commit_pos=0.3883 active_pos=0.4106
+[2026.11.09-19.22.20:194][273]LogPython: [EmberNotifyParity] TRANSITION mode=on move=A3a phase=Complete pos=0.5395
+[2026.11.09-19.22.20:194][273]LogPython: [EmberNotifyParity] CHECK PASS on A3a tracker completed phases={"Active": 0.41058221459388733, "Committed": 0.38828352093696594, "Complete": 0.539516806602478}
+[2026.11.09-19.22.20:194][273]LogPython: [EmberNotifyParity] CHECK FAIL on A3a parry contact recorded contacts=[]
+[2026.11.09-19.22.20:564][289]LogPython: [EmberNotifyParity] CHECK PASS on A3b timing flag readback readback=True
+[2026.11.09-19.22.20:564][289]LogPython: [EmberNotifyParity] CHECK PASS on A3b montage starts 
+[2026.11.09-19.22.20:564][289]LogPython: [EmberNotifyParity] MOVE_BEGIN mode=on move=A3b
+[2026.11.09-19.22.20:564][289]LogPython: [EmberNotifyParity] PARRY_PRESS mode=on move=A3b pos=0.5395 opened=True target=0.1520 lead=0.080
+[2026.11.09-19.22.20:586][290]LogPython: [EmberNotifyParity] TRANSITION mode=on move=A3b phase=Windup pos=0.0212 commit_pos=0.3883 active_pos=0.4106
+[2026.11.09-19.22.20:713][295]LogPython: [EmberNotifyParity] TRANSITION mode=on move=A3b phase=Committed pos=0.1461 commit_pos=0.1461 active_pos=0.4106
+[2026.11.09-19.22.20:729][296]LogPython: [EmberNotifyParity] TRANSITION mode=on move=A3b phase=Active pos=0.1648 commit_pos=0.1461 active_pos=0.1648
+[2026.11.09-19.22.20:857][301]LogPython: [EmberNotifyParity] PARRY_CONTACT mode=on move=A3b pos=0.2916 total=2
+[2026.11.09-19.22.20:881][302]LogPython: [EmberNotifyParity] TRANSITION mode=on move=A3b phase=Complete pos=0.2916
+[2026.11.09-19.22.20:881][302]LogPython: [EmberNotifyParity] CHECK PASS on A3b tracker completed phases={"Active": 0.16484859585762024, "Committed": 0.14605319499969482, "Complete": 0.29159095883369446}
+[2026.11.09-19.22.20:882][302]LogPython: [EmberNotifyParity] CHECK PASS on A3b parry contact recorded contacts=[0.29159095883369446]
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK FAIL A1 Committed parity off=None on=None tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK FAIL A1 Active parity off=None on=0.3591077923774719 tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK FAIL A1 Recovery parity off=None on=0.5234612226486206 tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK FAIL A1 Complete parity off=None on=0.9389769434928894 tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK FAIL off A1 C-1132 contact observed=[] target=0.3510 tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK FAIL on A1 C-1132 contact observed=[] target=0.3510 tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK PASS A3a Committed parity off=0.39665693044662476 on=0.38828352093696594 tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK PASS A3a Active parity off=0.45057412981987 on=0.41058221459388733 tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK FAIL A3a Recovery parity off=None on=None tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK PASS A3a Complete parity off=0.5421465635299683 on=0.539516806602478 tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK FAIL off A3a C-1132 contact observed=[] target=0.4840 tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK FAIL on A3a C-1132 contact observed=[] target=0.4840 tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK PASS A3b Committed parity off=0.13419899344444275 on=0.14605319499969482 tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK PASS A3b Active parity off=0.16126969456672668 on=0.16484859585762024 tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK FAIL A3b Recovery parity off=0.44760948419570923 on=None tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK FAIL A3b Complete parity off=1.052336573600769 on=0.29159095883369446 tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK FAIL off A3b C-1132 contact observed=[] target=0.1520 tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] CHECK FAIL on A3b C-1132 contact observed=[0.29159095883369446] target=0.1520 tolerance=0.080
+[2026.11.09-19.22.21:239][315]LogPython: [EmberNotifyParity] RESULT FAIL checks=29/48 C1132_tolerance=0.080s
+[2026.11.09-19.22.21:241][315]LogPython: [EmberNotifyParity] RECEIPT {"checks":48,"rows":{"off:A1":{"ended":false,"parry_contacts":[],"phases":{},"started":false},"off:A3a":{"ended":true,"parry_contacts":[],"phases":{"Active":0.45057412981987,"Committed":0.39665693044662476,"Complete":0.5421465635299683},"started":true},"off:A3b":{"ended":true,"parry_contacts":[],"phases":{"Active":0.16126969456672668,"Committed":0.13419899344444275,"Complete":1.052336573600769,"Recovery":0.44760948419570923},"started":true},"on:A1":{"ended":true,"parry_contacts":[],"phases":{"Active":0.3591077923774719,"Complete":0.9389769434928894,"Recovery":0.5234612226486206},"started":true},"on:A3a":{"ended":true,"parry_contacts":[],"phases":{"Active":0.41058221459388733,"Committed":0.38828352093696594,"Complete":0.539516806602478},"started":true},"on:A3b":{"ended":true,"parry_contacts":[0.29159095883369446],"phases":{"Active":0.16484859585762024,"Committed":0.14605319499969482,"Complete":0.29159095883369446},"started":true}}}
+[2026.11.09-19.22.21:241][315]LogPython: [EmberNotifyParity] finished: parity probe complete
