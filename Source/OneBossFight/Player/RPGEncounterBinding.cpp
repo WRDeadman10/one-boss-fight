@@ -158,6 +158,7 @@ static FRPGHydrationResult CompileParticipantImpl(const URPGBossDefinition& D,
 	if (!Result.IsReady()) { return Result; }
 	auto Value = MakeShared<FRPGParticipantConfig>();
 	Value->BossId = D.DefinitionId; Value->PresentationId = D.PresentationId;
+	Value->PhaseTwoAuraEffect = D.PhaseTwoAuraEffect;
 	Value->Schema = D.Schema; Value->StableManifestHash = Hash;
 	Value->Stats = D.Stats; Value->Phases = D.Phases; Value->Fields = D.Fields;
 	Value->EncounterPolicy = D.EncounterPolicy;

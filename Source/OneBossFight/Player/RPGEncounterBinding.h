@@ -355,6 +355,8 @@ public:
 	UPROPERTY(EditAnywhere) int32 Schema = 1;
 	UPROPERTY(EditAnywhere) FName DefinitionId;
 	UPROPERTY(EditAnywhere) FName PresentationId;
+	/** Optional boss-authored Tier 2 aura. Null preserves the presentation component's project default. */
+	UPROPERTY(EditAnywhere, Category="Presentation") TSoftObjectPtr<UNiagaraSystem> PhaseTwoAuraEffect;
 	UPROPERTY(EditAnywhere) FRPGBossStatsConfig Stats;
 	UPROPERTY(EditAnywhere) FRPGEncounterPolicyConfig EncounterPolicy;
 	UPROPERTY(EditAnywhere) FRPGParrySlowMotionConfig ParrySlowMotion;
@@ -403,6 +405,7 @@ struct FRPGHydrationResult
 struct FRPGParticipantConfig
 {
 	FName BossId, PresentationId;
+	TSoftObjectPtr<UNiagaraSystem> PhaseTwoAuraEffect;
 	FString StableManifestHash;
 	int32 Schema = 1;
 	FRPGBossStatsConfig Stats;

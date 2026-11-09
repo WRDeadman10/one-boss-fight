@@ -873,6 +873,20 @@ void URPGPlayerMovesSubsystem::AttachBossDiagnostics(AActor* Pawn) const
 	{
 		NewObject<URPGTier2BossPresentation>(Pawn, TEXT("RPGTier2BossPresentation"))->RegisterComponent();
 	}
+	if (ActiveSelectionDefinition.IsValid()
+		&& ActiveSelectionDefinition->BossDefinition.ToSoftObjectPath() == ActiveBossDefinitionPath)
+	{
+		if (URPGBossDefinition* BossDefinition = ActiveSelectionDefinition->BossDefinition.LoadSynchronous())
+		{
+			if (!BossDefinition->PhaseTwoAuraEffect.IsNull())
+			{
+				if (URPGTier2BossPresentation* Presentation = Pawn->FindComponentByClass<URPGTier2BossPresentation>())
+				{
+					Presentation->PhaseTwoAuraEffect = BossDefinition->PhaseTwoAuraEffect;
+				}
+			}
+		}
+	}
 	if (!Pawn->FindComponentByClass<URPGTraceAudit>())
 	{
 		NewObject<URPGTraceAudit>(Pawn, TEXT("RPGTraceAudit"))->RegisterComponent(); // observer: trace overlap versus damage accepted (empty in Shipping)

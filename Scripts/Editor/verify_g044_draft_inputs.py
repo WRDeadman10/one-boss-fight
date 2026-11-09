@@ -22,7 +22,7 @@ ASSETS = {
 }
 EXPECTED_CLASS = "/Script/OneBossFight.RPGBossDefinition"
 FIELDS = (
-    "schema", "definition_id", "presentation_id", "stats", "encounter_policy",
+    "schema", "definition_id", "presentation_id", "phase_two_aura_effect", "stats", "encounter_policy",
     "stagger_policy", "phase_flow", "fireball", "phase_dependencies", "stagger_profile",
     "dormant_wake", "bleed", "low_sweep", "shockwave", "heal_punish", "look",
     "close_clip_swap", "death", "attack_tracker", "phases", "skeleton", "animations", "fields",

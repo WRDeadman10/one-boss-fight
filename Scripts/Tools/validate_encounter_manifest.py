@@ -11,7 +11,7 @@ from pathlib import Path
 
 SCHEMA = "onebossfight.encounter-manifest/v1"
 REQUIRED_FIELDS = {
-    "schema", "definition_id", "presentation_id", "stats", "encounter_policy",
+    "schema", "definition_id", "presentation_id", "phase_two_aura_effect", "stats", "encounter_policy",
     "stagger_policy", "phase_flow", "fireball", "phase_dependencies", "stagger_profile",
     "dormant_wake", "bleed", "low_sweep", "shockwave", "heal_punish", "look",
     "close_clip_swap", "death", "phases", "skeleton", "animations", "fields",
@@ -241,6 +241,12 @@ def validate(receipt, source_snapshots_dir=None, project_root=None):
                     if any(not isinstance(field.get(key), str) or not field[key] for key in REQUIRED_PROVENANCE - {"source_sha256"}):
                         errors.append(where + " provenance values must be nonempty strings")
             _validate_optional_parry_slow_motion(row, role, seen_fields, errors)
+            aura = row.get("phase_two_aura_effect")
+            if aura not in (None, ""):
+                if not isinstance(aura, dict) or not isinstance(aura.get("object_path"), str) or not aura["object_path"].startswith("/Game/"):
+                    errors.append(role + " phase_two_aura_effect must be null or a /Game soft object path")
+                elif "PhaseTwoAuraEffect" not in seen_fields:
+                    errors.append(role + " PhaseTwoAuraEffect requires a matching provenance field")
             if draft_provenance_mode:
                 _validate_attack_tracker(row, role, errors, draft_provenance_mode)
                 provenance = row.get("source_provenance")

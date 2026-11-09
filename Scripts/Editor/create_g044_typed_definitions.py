@@ -22,7 +22,7 @@ TARGETS = {
     "player": ("DA_Sevarog_G044_PlayerDefinition", False),
 }
 TOP_LEVEL_FIELDS = {
-    "Schema", "DefinitionId", "PresentationId", "Stats", "EncounterPolicy",
+    "Schema", "DefinitionId", "PresentationId", "PhaseTwoAuraEffect", "Stats", "EncounterPolicy",
     "StaggerPolicy", "PhaseFlow", "Fireball", "PhaseDependencies",
     "StaggerProfile", "DormantWake", "Bleed", "LowSweep", "Shockwave",
     "HealPunish", "Look", "CloseClipSwap", "Death", "AttackTracker", "Phases", "Skeleton",

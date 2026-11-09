@@ -16,7 +16,7 @@ URPGTier2BossPresentation::URPGTier2BossPresentation()
 {
 	PrimaryComponentTick.bCanEverTick = UE_BUILD_DEVELOPMENT != 0;
 	PrimaryComponentTick.TickInterval = 0.1f;
-	PhaseTwoAuraEffect = TSoftObjectPtr<UNiagaraSystem>(FSoftObjectPath(TEXT("/Game/OneBossFight/VFX/NS_Boss_PhaseTwoAura.NS_Boss_PhaseTwoAura")));
+	PhaseTwoAuraEffect = TSoftObjectPtr<UNiagaraSystem>(FSoftObjectPath(TEXT("/Game/OneBossFight/VFX/NS_Boss_PhaseTwoAura_BoostLite_Authored.NS_Boss_PhaseTwoAura_BoostLite_Authored")));
 	ParryRecoilMontage = TSoftObjectPtr<UAnimMontage>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Animations/AM_Boss01_ParryRecoil.AM_Boss01_ParryRecoil")));
 }
 
