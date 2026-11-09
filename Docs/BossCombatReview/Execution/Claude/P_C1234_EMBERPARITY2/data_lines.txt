@@ -1,0 +1,84 @@
+﻿[2026.11.09-19.38.42:228][  6]LogTemp: Display: [EncounterActivation] default data startup: selected /Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter for map L_SevarogArena
+[2026.11.09-19.38.42:292][  6]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending
+[2026.11.09-19.38.45:376][ 68]LogPython: [EmberNotifyParity] CHECK PASS component tracker exists 
+[2026.11.09-19.38.45:376][ 68]LogPython: [EmberNotifyParity] CHECK PASS component encounter exists 
+[2026.11.09-19.38.45:376][ 68]LogPython: [EmberNotifyParity] CHECK PASS component debug exists 
+[2026.11.09-19.38.45:376][ 68]LogPython: [EmberNotifyParity] CHECK PASS component parry exists 
+[2026.11.09-19.38.45:376][ 68]LogPython: [EmberNotifyParity] CHECK PASS component pawn exists 
+[2026.11.09-19.38.45:376][ 68]LogPython: [EmberNotifyParity] CHECK PASS component boss exists 
+[2026.11.09-19.38.45:376][ 68]LogPython: [EmberNotifyParity] CHECK PASS LogRPGAttack source log available ..\..\..\..\..\..\UnrealProject\OneBossFight\Saved\Logs\c1210_full_suite.log
+[2026.11.09-19.38.45:376][ 68]LogPython: [EmberNotifyParity] WAKE_HEARTBEAT elapsed=0.0 dormant=False waking=True
+[2026.11.09-19.38.47:531][140]LogPython: [EmberNotifyParity] WAKE_HEARTBEAT elapsed=2.2 dormant=False waking=True
+[2026.11.09-19.38.48:811][174]LogPython: [EmberNotifyParity] CHECK PASS encounter awake before first move dormant=False waking=False
+[2026.11.09-19.38.48:811][174]LogPython: [EmberNotifyParity] CHECK PASS timing off A1 timing flag readback readback=False
+[2026.11.09-19.38.48:812][174]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=off move=A1
+[2026.11.09-19.38.50:544][229]LogPython: [EmberNotifyParity] CHECK FAIL timing off A1 natural recovery end phases={} end_reason=None log_error=None
+[2026.11.09-19.38.50:909][236]LogPython: [EmberNotifyParity] CHECK PASS timing off A3a timing flag readback readback=False
+[2026.11.09-19.38.50:909][236]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=off move=A3a
+[2026.11.09-19.38.52:153][283]LogPython: [EmberNotifyParity] CHECK FAIL timing off A3a natural recovery end phases={} end_reason=None log_error=None
+[2026.11.09-19.38.52:473][297]LogPython: [EmberNotifyParity] CHECK PASS timing off A3b timing flag readback readback=False
+[2026.11.09-19.38.52:474][297]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=off move=A3b
+[2026.11.09-19.38.54:288][368]LogPython: [EmberNotifyParity] CHECK FAIL timing off A3b natural recovery end phases={} end_reason=None log_error=None
+[2026.11.09-19.38.54:643][381]LogPython: [EmberNotifyParity] CHECK PASS timing on A1 timing flag readback readback=True
+[2026.11.09-19.38.54:644][381]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=on move=A1
+[2026.11.09-19.38.56:250][439]LogPython: [EmberNotifyParity] CHECK FAIL timing on A1 natural recovery end phases={} end_reason=None log_error=None
+[2026.11.09-19.38.56:605][452]LogPython: [EmberNotifyParity] CHECK PASS timing on A3a timing flag readback readback=True
+[2026.11.09-19.38.56:605][452]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=on move=A3a
+[2026.11.09-19.38.58:451][496]LogPython: [EmberNotifyParity] CHECK FAIL timing on A3a natural recovery end phases={} end_reason=None log_error=None
+[2026.11.09-19.38.58:816][510]LogPython: [EmberNotifyParity] CHECK PASS timing on A3b timing flag readback readback=True
+[2026.11.09-19.38.58:817][510]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=on move=A3b
+[2026.11.09-19.39.00:618][580]LogPython: [EmberNotifyParity] CHECK FAIL timing on A3b natural recovery end phases={} end_reason=None log_error=None
+[2026.11.09-19.39.00:978][594]LogPython: [EmberNotifyParity] CHECK PASS parry off A1 timing flag readback readback=False
+[2026.11.09-19.39.00:978][594]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=parry mode=off move=A1
+[2026.11.09-19.39.00:979][594]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=off move=A1 pos=1.0822 opened=True target=0.3510 lead=0.080
+[2026.11.09-19.39.02:602][657]LogPython: [EmberNotifyParity] CHECK FAIL parry off A1 NotifyParried contact contacts=[] press_opened=True
+[2026.11.09-19.39.02:961][671]LogPython: [EmberNotifyParity] CHECK PASS parry off A3a timing flag readback readback=False
+[2026.11.09-19.39.02:962][671]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=parry mode=off move=A3a
+[2026.11.09-19.39.02:963][671]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=off move=A3a pos=0.9309 opened=True target=0.4840 lead=0.080
+[2026.11.09-19.39.04:167][718]LogPython: [EmberNotifyParity] CHECK FAIL parry off A3a NotifyParried contact contacts=[] press_opened=True
+[2026.11.09-19.39.04:525][732]LogPython: [EmberNotifyParity] CHECK PASS parry off A3b timing flag readback readback=False
+[2026.11.09-19.39.04:526][732]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=parry mode=off move=A3b
+[2026.11.09-19.39.04:526][732]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=off move=A3b pos=0.5395 opened=True target=0.1520 lead=0.080
+[2026.11.09-19.39.04:821][743]LogPython: [EmberNotifyParity] PARRY_CONTACT arm=parry mode=off move=A3b pos=0.2829 source=NotifyParried total=1
+[2026.11.09-19.39.04:821][743]LogPython: [EmberNotifyParity] CHECK PASS parry off A3b NotifyParried contact contacts=[0.28286460041999817] press_opened=True
+[2026.11.09-19.39.05:175][757]LogPython: [EmberNotifyParity] CHECK PASS parry on A1 timing flag readback readback=True
+[2026.11.09-19.39.05:176][757]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=parry mode=on move=A1
+[2026.11.09-19.39.05:176][757]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=on move=A1 pos=0.2829 opened=False target=0.3510 lead=0.080
+[2026.11.09-19.39.05:455][768]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=on move=A1 pos=0.2805 opened=True target=0.3510 lead=0.080
+[2026.11.09-19.39.05:714][778]LogPython: [EmberNotifyParity] PARRY_CONTACT arm=parry mode=on move=A1 pos=0.5386 source=NotifyParried total=2
+[2026.11.09-19.39.05:714][778]LogPython: [EmberNotifyParity] CHECK PASS parry on A1 NotifyParried contact contacts=[0.5386044383049011] press_opened=True
+[2026.11.09-19.39.06:081][792]LogPython: [EmberNotifyParity] CHECK PASS parry on A3a timing flag readback readback=True
+[2026.11.09-19.39.06:082][792]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=parry mode=on move=A3a
+[2026.11.09-19.39.06:082][792]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=on move=A3a pos=0.5386 opened=False target=0.4840 lead=0.080
+[2026.11.09-19.39.06:491][808]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=on move=A3a pos=0.4100 opened=True target=0.4840 lead=0.080
+[2026.11.09-19.39.06:691][816]LogPython: [EmberNotifyParity] PARRY_CONTACT arm=parry mode=on move=A3a pos=0.5358 source=NotifyParried total=3
+[2026.11.09-19.39.06:691][816]LogPython: [EmberNotifyParity] CHECK PASS parry on A3a NotifyParried contact contacts=[0.5357874035835266] press_opened=True
+[2026.11.09-19.39.07:056][830]LogPython: [EmberNotifyParity] CHECK PASS parry on A3b timing flag readback readback=True
+[2026.11.09-19.39.07:057][830]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=parry mode=on move=A3b
+[2026.11.09-19.39.07:057][830]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=on move=A3b pos=0.5358 opened=False target=0.1520 lead=0.080
+[2026.11.09-19.39.07:132][833]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=on move=A3b pos=0.0751 opened=False target=0.1520 lead=0.080
+[2026.11.09-19.39.07:157][834]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=on move=A3b pos=0.1004 opened=False target=0.1520 lead=0.080
+[2026.11.09-19.39.07:182][835]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=on move=A3b pos=0.1254 opened=False target=0.1520 lead=0.080
+[2026.11.09-19.39.07:208][836]LogPython: [EmberNotifyParity] PARRY_PRESS arm=parry mode=on move=A3b pos=0.1512 opened=True target=0.1520 lead=0.080
+[2026.11.09-19.39.08:864][900]LogPython: [EmberNotifyParity] CHECK FAIL parry on A3b NotifyParried contact contacts=[] press_opened=True
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK FAIL A1 Committed parity off=None on=None tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK FAIL A1 Active parity off=None on=None tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK FAIL A1 Recovery parity off=None on=None tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK FAIL A1 Complete parity off=None on=None tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK FAIL off A1 C-1132 contact observed=[] target=0.3510 tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK FAIL on A1 C-1132 contact observed=[0.5386044383049011] target=0.3510 tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK FAIL A3a Committed parity off=None on=None tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK FAIL A3a Active parity off=None on=None tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK FAIL A3a Recovery parity off=None on=None tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK FAIL A3a Complete parity off=None on=None tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK FAIL off A3a C-1132 contact observed=[] target=0.4840 tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK PASS on A3a C-1132 contact observed=[0.5357874035835266] target=0.4840 tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK FAIL A3b Committed parity off=None on=None tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK FAIL A3b Active parity off=None on=None tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK FAIL A3b Recovery parity off=None on=None tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK FAIL A3b Complete parity off=None on=None tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK FAIL off A3b C-1132 contact observed=[0.28286460041999817] target=0.1520 tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] CHECK FAIL on A3b C-1132 contact observed=[] target=0.1520 tolerance=0.080
+[2026.11.09-19.39.09:225][914]LogPython: [EmberNotifyParity] RESULT FAIL checks=24/50 C1132_tolerance=0.080s
+[2026.11.09-19.39.09:226][914]LogPython: [EmberNotifyParity] RECEIPT {"checks":50,"rows":{"parry:off:A1":{"ended":false,"natural_recovery_end":false,"parry_contacts":[],"phases":{},"started":false},"parry:off:A3a":{"ended":false,"natural_recovery_end":false,"parry_contacts":[],"phases":{},"started":false},"parry:off:A3b":{"ended":false,"natural_recovery_end":false,"parry_contacts":[0.28286460041999817],"phases":{},"started":false},"parry:on:A1":{"ended":false,"natural_recovery_end":false,"parry_contacts":[0.5386044383049011],"phases":{},"started":false},"parry:on:A3a":{"ended":false,"natural_recovery_end":false,"parry_contacts":[0.5357874035835266],"phases":{},"started":false},"parry:on:A3b":{"ended":false,"natural_recovery_end":false,"parry_contacts":[],"phases":{},"started":false},"timing:off:A1":{"ended":false,"natural_recovery_end":false,"parry_contacts":[],"phases":{},"started":false},"timing:off:A3a":{"ended":false,"natural_recovery_end":false,"parry_contacts":[],"phases":{},"started":false},"timing:off:A3b":{"ended":false,"natural_recovery_end":false,"parry_contacts":[],"phases":{},"started":false},"timing:on:A1":{"ended":false,"natural_recovery_end":false,"parry_contacts":[],"phases":{},"started":false},"timing:on:A3a":{"ended":false,"natural_recovery_end":false,"parry_contacts":[],"phases":{},"started":false},"timing:on:A3b":{"ended":false,"natural_recovery_end":false,"parry_contacts":[],"phases":{},"started":false}}}
+[2026.11.09-19.39.09:226][914]LogPython: [EmberNotifyParity] finished: parity probe complete

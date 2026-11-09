@@ -22,6 +22,7 @@ class TestAuthorEmberMoveTimingContract(unittest.TestCase):
         # Must strictly target OneBossFight/Boss01/Animations
         self.assertIn('DEST_ROOT = "/Game/OneBossFight/Boss01/Animations"', code)
         self.assertIn("AM_Boss01_A1", code)
+        self.assertIn("AM_Boss01_A2", code)
         self.assertIn("AM_Boss01_A3a", code)
         self.assertIn("AM_Boss01_A3b", code)
 
@@ -42,6 +43,21 @@ class TestAuthorEmberMoveTimingContract(unittest.TestCase):
         self.assertIn('"window_end_time": 0.600', code)
         self.assertIn('"window_start_time": 0.150', code)
         self.assertIn('"window_end_time": 0.400', code)
+
+    def test_c1234_a2_spec_contract(self):
+        """Verifies Directive [C-1234] requirements for AM_Boss01_A2:
+        - RecoveryEndTime = 3.134 (montage length <= 3.140 table within 0.02s)
+        - TrackTurnRate = 120.0 (slow tracking)
+        - bAuthoredWindup = False (A2 row does not set it; default false)
+        - Span: 0.000..3.134
+        """
+        with open(self.script_path, "r", encoding="utf-8") as f:
+            code = f.read()
+
+        # C-1235 Lead: AM_Boss01_A2 is a 0.600 s single-section clip, so A2 must NOT be authored on it
+        # (table times 1.68-3.14 exceed its length; strict audit OrderOrBounds).
+        self.assertNotIn('f"{DEST_ROOT}/AM_Boss01_A2": {', code)
+        self.assertIn("A2 removed", code)
 
     def test_static_class_resolution_and_nonzero_exit(self):
         with open(self.script_path, "r", encoding="utf-8") as f:

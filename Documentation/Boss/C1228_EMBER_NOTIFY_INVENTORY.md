@@ -24,7 +24,7 @@ This inventory directly supports task `C-1228a` (Codex's montage-notify timing o
 | Move ID | Asset Name | Asset Type | Length | Sections | Existing Notifies | Tracker Commit | Tracker Active | Parry Window | Tracker Source Line |
 | :--- | :--- | :--- | :--- | :---: | :--- | :---: | :---: | :---: | :--- |
 | **A1** | [`AM_Boss01_A1`](file:///c:/UnrealProject/OneBossFight/Content/OneBossFight/Boss01/Animations/AM_Boss01_A1.uasset) | Montage | 1.200 s | 1 | Rotation, Sound, Trace, DisableMov | 0.33 s | 0.35 .. 0.50 s | 0.35 .. 0.50 s | [`RPGAttackTracker.cpp:66`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGAttackTracker.cpp#L66) |
-| **A2** | [`AM_Boss01_A2`](file:///c:/UnrealProject/OneBossFight/Content/OneBossFight/Boss01/Animations/AM_Boss01_A2.uasset) | Composite Montage | 3.134 s | 3 | Commit, ActiveStart, ActiveEnd, Blend | 1.68 s | 1.93 .. 2.11 s | Ground slam (unparryable) | [`RPGAttackTracker.cpp:35-44`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGAttackTracker.cpp#L35-L44) |
+| **A2** | [`AM_Boss01_A2`](file:///c:/UnrealProject/OneBossFight/Content/OneBossFight/Boss01/Animations/AM_Boss01_A2.uasset) | Partial Montage (Raise Only) | 0.600 s | 1 | `AN_Boss01_A2_Raise` only (unassembled) | N/A (unwired) | N/A | Ground slam tell only (unwired) | [`RPGAttackTracker.cpp:35-44`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGAttackTracker.cpp#L35-L44) |
 | **A3a** | [`AM_Boss01_A3a`](file:///c:/UnrealProject/OneBossFight/Content/OneBossFight/Boss01/Animations/AM_Boss01_A3a.uasset) | Montage | 0.800 s | 1 | Rotation, Sound, Trace, FollowUp, EndAbi | 0.38 s | 0.40 .. 0.60 s | 0.40 .. 0.60 s | [`RPGAttackTracker.cpp:68`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGAttackTracker.cpp#L68) |
 | **A3b** | [`AM_Boss01_A3b`](file:///c:/UnrealProject/OneBossFight/Content/OneBossFight/Boss01/Animations/AM_Boss01_A3b.uasset) | Montage | 1.333 s | 1 | Rotation, Sound, Trace, EndAbi, DisableMov | 0.13 s | 0.15 .. 0.40 s | 0.15 .. 0.40 s | [`RPGAttackTracker.cpp:69`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGAttackTracker.cpp#L69) |
 | **A4** | [`AN_Boss01_A4_LowSweep`](file:///c:/UnrealProject/OneBossFight/Content/OneBossFight/Boss01/Animations/AN_Boss01_A4_LowSweep.uasset) | Dynamic Montage | 1.767 s | 1 (dyn) | Programmatic (`URPGBossLowSweep`) | 0.40 s | 0.60 .. 0.90 s | Sweep (jump only) | [`RPGAttackTracker.cpp:86-95`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGAttackTracker.cpp#L86-L95) |
@@ -63,30 +63,23 @@ This inventory directly supports task `C-1228a` (Codex's montage-notify timing o
 
 ---
 
-### 3.2. `AM_Boss01_A2` — Delayed Overhead Slam (Move `A2`)
+### 3.2. `AM_Boss01_A2` — Delayed Overhead Slam (Move `A2`, Partial / Unassembled Montage)
 - **Asset Path:** `/Game/OneBossFight/Boss01/Animations/AM_Boss01_A2.AM_Boss01_A2`
-- **Total Composite Length:** `3.134 s` (vs tracker `RecoveryEndTime` 3.140 s; \(\Delta = -6\text{ ms}\))
-- **Blend In / Out:** 0.25 s blend-in, 0.25 s blend-out
-- **Composite Sections (3 sections):**
-  1. `AN_Boss01_A2_Raise`: `0.000 s .. 0.600 s` (duration 0.600 s) — initial weapon lift
-  2. `AN_Boss01_A2_ApexHold`: `0.600 s .. 1.767 s` (duration 1.167 s) — apex hold and delay tell
-  3. `AN_Boss01_A2_Slam`: `1.767 s .. 3.134 s` (duration 1.367 s) — power descent and floor impact
-- **Authored Anim Notifies:**
-  1. `Notify_AttackCommit` at `1.687 s` (within `AN_Boss01_A2_ApexHold` at relative +1.087 s)
-  2. `Notify_ActiveStart` at `1.937 s` (within `AN_Boss01_A2_Slam` at relative +0.170 s; ground contact)
-  3. `Notify_ActiveEnd` at `2.107 s` (within `AN_Boss01_A2_Slam` at relative +0.340 s; shockwave trigger)
-  4. `Notify_RecoveryBlend` at `2.884 s` (blend-out trigger to 3.134 s)
-- **`RPGAttackTracker.cpp` Mapping:**
-  - Registered at: [`Source/OneBossFight/Player/RPGAttackTracker.cpp:35-44`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGAttackTracker.cpp#L35-L44)
-  - Optional tracker path: [`Source/OneBossFight/Player/RPGAttackTracker.cpp:38`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGAttackTracker.cpp#L38) (`/Game/OneBossFight/Boss01/Animations/AM_Boss01_A2.AM_Boss01_A2`)
-  - Optional path match logic: [`Source/OneBossFight/Player/RPGAttackTracker.cpp:142`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGAttackTracker.cpp#L142)
-  - Preview cvar: `rpg.AttackTracker.A2PreviewClip` at [`Source/OneBossFight/Player/RPGAttackTracker.cpp:24-25, 224-227`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGAttackTracker.cpp#L24-L25)
-  - Stand-in fallback: `GS_ChargedAttack_Montage` (3.400 s)
-  - **Tell / Windup Window:** `0.000 s .. 1.680 s` (`TrackTurnRate = 120.0 deg/s`)
-  - **Commitment Point (`CommitTime`):** `1.680 s` (tracker) vs `1.687 s` (notify; \(\Delta = +7\text{ ms} < 1\text{ frame}\))
-  - **Active Window (`ActiveStartTime` .. `ActiveEndTime`):** `1.930 s .. 2.110 s` (tracker) vs `1.937 s .. 2.107 s` (notifies; \(\Delta \le 7\text{ ms}\))
-  - **Parry Contact Window:** Ground slam / radial shockwave (~330 cm radius, non-directional; cannot be standard parried per Freeze 16 & Freeze 30.2 item 1; requires dodge roll / spatial evasion)
-  - **Recovery Window (`RecoveryEndTime`):** `2.110 s .. 3.140 s` (tracker) vs `2.107 s .. 3.134 s` (montage end)
+- **Asset Play Length:** `0.600000 s` (Verified via C-1235 Lead read-only probe `probe_a2_length.log`)
+- **Montage Sections (1 section):**
+  - Section 0 (`Default`): `0.000 s .. 0.600 s` playing source sequence `AN_Boss01_A2_Raise` only (initial weapon raise tell).
+- **Source Sequences on Disk (3 sequences):**
+  1. `AN_Boss01_A2_Raise`: `0.000 s .. 0.600 s` (duration 0.600 s) — initial weapon lift tell (the only sequence wired into `AM_Boss01_A2`).
+  2. `AN_Boss01_A2_ApexHold`: `0.600 s .. 1.767 s` (duration 1.167 s) — apex hold / delayed tell (standalone sequence on disk; not wired into montage).
+  3. `AN_Boss01_A2_Slam`: `1.767 s .. 3.134 s` (duration 1.367 s) — power descent and ground impact (standalone sequence on disk; not wired into montage).
+  *Origin of the 3.134 s Composite Assumption:* Summing the durations of the 3 raw source sequences yields 0.600 + 1.167 + 1.367 = 3.134 s. However, downstream sequences `ApexHold` and `Slam` were never spliced into `AM_Boss01_A2`.
+- **Authoring & Timing Compatibility (REJECTED per C-1235):**
+  - Table values (`CommitTime=1.68`, `ActiveStartTime=1.93`, `ActiveEndTime=2.11`, `RecoveryEndTime=3.14`) cannot live on a 0.600 s montage.
+  - Attempting to author these times on `AM_Boss01_A2` causes the validator to fail with `OrderOrBounds` (window start 1.93 s > montage length 0.600 s).
+- **Production Routing:**
+  - Registered as `OptionalTrackerMontagePath` at [`Source/OneBossFight/Player/RPGAttackTracker.cpp:38`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGAttackTracker.cpp#L38).
+  - In live combat, Move A2 uses the pack stand-in `GS_ChargedAttack_Montage` (3.400 s) with native table timings (`RPGAttackTracker.cpp:35-44`).
+  - Splicing `AM_Boss01_A2` into a complete composite montage is parked as an art task.
 
 ---
 
@@ -363,32 +356,23 @@ When authorized by Lead for application:
    - Place `URPGANS_BossMoveTiming` from `0.000 s` to `1.3333 s`.
    - Parameters: `MoveId=A3b`, `CommitTime=0.130`, `WindowStartTime=0.150`, `WindowEndTime=0.400`, `RecoveryEndTime=1.3333`, `TrackTurnRate=360.0`, `bBranchStage=true`, `BranchRange=400.0`, `BranchConeDegrees=120.0`, `bAuthoredWindup=true`.
 
-### 8.3. C-1233b Read-Only Draft: `AM_Boss01_A2` Composite Timing Analysis & Delta Flags
+### 8.3. C-1235 Read-Only Audit: `AM_Boss01_A2` Montage Length & Authoring Rejection
 
-**Authority:** Claude Lead Directive `[C-1233]` (2026-11-10).  
-**Status:** DRAFT / AUDIT ONLY. Zero assets modified. Do not author `AM_Boss01_A2`.
+**Authority:** Claude Lead Directives `[C-1233]`, `[C-1234]`, `[C-1235]` (2026-11-10).  
+**Status:** REJECTED / PARKED. Zero asset modifications. Do not author `AM_Boss01_A2`.
 
-`AM_Boss01_A2` is a 3-section composite montage (total duration `3.134 s`) consisting of `AN_Boss01_A2_Raise` (0.000..0.600 s), `AN_Boss01_A2_ApexHold` (0.600..1.767 s), and `AN_Boss01_A2_Slam` (1.767..3.134 s). The following table audits the in-montage anim notify timings against authoritative native tracker values in `RPGAttackTracker.cpp:35-44`:
-
-| Timing Point | Native Tracker Table (`RPGAttackTracker.cpp`) | In-Montage Notify (`AM_Boss01_A2`) | Delta (\(|\Delta|\)) | Tolerance Flag (> 0.02 s) | Analysis & Corrective Rationale |
-| :--- | :---: | :---: | :---: | :---: | :--- |
-| **Commit Time** | `1.680 s` | `1.687 s` (`Notify_AttackCommit`) | `+0.007 s` (+7 ms) | **PASS** (\(\le 0.02\text{ s}\)) | Well within 1 frame (16.67 ms). Aligns with heading lock at apex of weapon raise. |
-| **Window Start** | `1.930 s` | `1.937 s` (`Notify_ActiveStart`) | `+0.007 s` (+7 ms) | **PASS** (\(\le 0.02\text{ s}\)) | Ground contact frame; aligns with active damage initiation. |
-| **Window End** | `2.110 s` | `2.107 s` (`Notify_ActiveEnd`) | `-0.003 s` (-3 ms) | **PASS** (\(\le 0.02\text{ s}\)) | Shockwave spawn / damage window conclusion frame. |
-| **Recovery Blend vs Table End** | `3.140 s` | `2.884 s` (`Notify_RecoveryBlend`) | **-0.256 s** (-256 ms) | **FLAGGED (> 0.02 s)** | **CRITICAL:** `Notify_RecoveryBlend` at 2.884 s marks the *commencement of blend-out*, NOT ability end. Using 2.884 s would truncate recovery by 256 ms. |
-| **Montage End vs Table End** | `3.140 s` | `3.134 s` (End of Sequence) | `-0.006 s` (-6 ms) | **PASS** (\(\le 0.02\text{ s}\)) | Composite sequence finish (2.884 s + 0.250 s blend-out = 3.134 s) matches table `3.140 s` within 6 ms. |
-
-#### Proposed `URPGANS_BossMoveTiming` Draft Values for `AM_Boss01_A2` (When Authorized):
-- **`MoveId`**: `A2`
-- **`CommitTime`**: `1.680 s` (or `1.687 s`, \(\Delta = 7\text{ ms}\))
-- **`WindowStartTime`**: `1.930 s` (or `1.937 s`, \(\Delta = 7\text{ ms}\))
-- **`WindowEndTime`**: `2.110 s` (or `2.107 s`, \(\Delta = 3\text{ ms}\))
-- **`RecoveryEndTime`**: **`3.134 s`** (Full composite completion; must NOT use `2.884 s`)
-- **`TrackTurnRate`**: `120.0 deg/s` (Slow tracking during weapon raise per `RPGAttackTracker.cpp:50`)
-- **`bBranchStage`**: `false`
-- **`BranchRange`**: `0.0 cm`
-- **`BranchConeDegrees`**: `120.0 deg`
-- **`bAuthoredWindup`**: `true`
-- **Dedicated Track Span**: `0.000 s` to `3.134 s`.
-
-**Discipline Notice:** Strictly no asset modifications were made during this draft. Assets will only be edited via an automated, locked commandlet script upon Lead's explicit approval.
+#### 8.3.1. Asset Probe Readback vs Historical Assumption
+Claude Lead's C-1235 engine probe (`Docs/BossCombatReview/Execution/Claude/B_C1235_EMBERA2/probe_a2_length.log`) verified the ground truth:
+```
+[A2Probe] AM_Boss01_A1 play_length=1.200000 sections=1
+[A2Probe] AM_Boss01_A2 play_length=0.600000 sections=1
+[A2Probe] AM_Boss01_A3a play_length=0.800000 sections=1
+[A2Probe] AM_Boss01_A3b play_length=1.333333 sections=1
+```
+- **Asset Ground Truth:** `AM_Boss01_A2` is 0.600 s long with exactly 1 section (`Default`, playing `AN_Boss01_A2_Raise`).
+- **Discrepancy Root Cause:** The 3.134 s composite claim in earlier drafts resulted from summing the lengths of three individual asset sequences on disk (`AN_Boss01_A2_Raise` [0.600 s] + `AN_Boss01_A2_ApexHold` [1.167 s] + `AN_Boss01_A2_Slam` [1.367 s] = 3.134 s). Crucially, the latter two sequences were never spliced together into `AM_Boss01_A2`.
+- **Validation Failure:** Authoring native table timings (Commit=1.68 s, Active=1.93..2.11 s, Recovery=3.14 s) onto a 0.600 s montage triggers `URPGMontageNotifyTiming` validation failure (`INVALID OrderOrBounds: ActiveStartTime (1.93) > MontageLength (0.60)`).
+- **Resolution:**
+  - `AM_Boss01_A2` authoring is **REJECTED** and removed from `Scripts/Editor/author_ember_move_timing.py`.
+  - A2 timing remains native table-driven (`RPGAttackTracker.cpp:41-50`) playing through pack stand-in `GS_ChargedAttack_Montage` (3.400 s).
+  - Full composite assembly of `AM_Boss01_A2` is parked as an art task.

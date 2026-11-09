@@ -1,16 +1,17 @@
 """
 Authors URPGANS_BossMoveTiming anim notify state on Ember Warden close montages:
   - AM_Boss01_A1 (A1)
+  - AM_Boss01_A2 (A2)
   - AM_Boss01_A3a (A3a)
   - AM_Boss01_A3b (A3b)
 
-Authority: Claude Lead Directives [C-1231], [C-1232] (2026-11-10).
+Authority: Claude Lead Directives [C-1231], [C-1232], [C-1234] (2026-11-10).
 Discipline:
-  - Saves ONLY those 3 assets under /Game/OneBossFight/Boss01/Animations/.
+  - Saves ONLY those 4 assets under /Game/OneBossFight/Boss01/Animations/.
   - Refuses /Game/AdvancedARPGCombat/ fail-closed.
   - Pre-mutation safety: verifies 'BossMoveTiming' track contains no unrelated notifies.
   - Idempotent: replaces its own state on dedicated track 'BossMoveTiming' and never duplicates it.
-  - Preserves all other notifies untouched.
+  - Preserves all other notifies untouched (using C-1233 Lead ev_prop/ev_signature helpers).
   - Resolves UClass via unreal.RPGANS_BossMoveTiming.static_class() (fallback load_class).
   - Prints verified readback after reload.
   - Exits non-zero on any failure.
@@ -41,6 +42,9 @@ SPECS = {
         "span_start": 0.000,
         "span_dur": 1.200,
     },
+    # C-1235 Lead: A2 removed. AM_Boss01_A2 is a 0.600 s single-section clip (the raise only; see
+    # Claude/B_C1235_EMBERA2/probe_a2_length.log), not the 3.134 s composite the inventory assumed, so the table times
+    # 1.68-3.14 cannot be annotated on it (strict audit: InvalidMontageNotifyTiming.OrderOrBounds).
     f"{DEST_ROOT}/AM_Boss01_A3a": {
         "move_id": "A3a",
         "commit_time": 0.380,
@@ -218,22 +222,27 @@ def author_all_timings():
         # If TRACK_NAME already exists, verify that all events on it are exclusively BossMoveTiming
         existing_tracks = list(AL.get_animation_notify_track_names(m))
         if TRACK_NAME in existing_tracks:
-            track_idx = existing_tracks.index(TRACK_NAME)
-            for ev in initial_events:
-                ev_track = ev_prop(ev, ("track_index",), None)
-                if ev_track is None:
-                    raise RuntimeError(f"REFUSAL: cannot read notify track index on {path}; refusing to remove '{TRACK_NAME}'")
-                if ev_track == track_idx:
-                    st = ev.get_editor_property("notify_state_class")
-                    no = ev.get_editor_property("notify")
-                    obj = st if st is not None else no
-                    if obj is not None and "BossMoveTiming" not in obj.get_class().get_name():
-                        msg = f"REFUSAL: Pre-existing track '{TRACK_NAME}' contains unrelated notify '{obj.get_class().get_name()}' on {path}!"
-                        log_err(msg)
-                        raise RuntimeError(msg)
-
-            log(f"Removing pre-existing '{TRACK_NAME}' track for clean idempotent re-authoring...")
+            # C-1235 Lead fix: UE 5.5 Python does not expose FAnimNotifyEvent.track_index, so the per-event track check
+            # cannot run. Instead remove the track IN MEMORY, then verify every non-timing notify is still present before
+            # anything is saved. On any loss we raise: the commandlet exits without saving, so the asset on disk is untouched.
+            log(f"Removing pre-existing '{TRACK_NAME}' track (in memory) for clean idempotent re-authoring...")
             AL.remove_animation_notify_track(m, TRACK_NAME)
+            after_remove = []
+            for ev in AL.get_animation_notify_events(m):
+                st = ev.get_editor_property("notify_state_class")
+                no = ev.get_editor_property("notify")
+                obj = st if st is not None else no
+                if obj is None:
+                    continue
+                cname = obj.get_class().get_name()
+                if "BossMoveTiming" in cname:
+                    raise RuntimeError(f"REFUSAL: a BossMoveTiming state outside track '{TRACK_NAME}' remains on {path}; not saving")
+                after_remove.append(ev_signature(ev, cname))
+            if sorted(after_remove) != sorted(non_timing_pre):
+                raise RuntimeError(
+                    f"REFUSAL: Pre-existing track '{TRACK_NAME}' contains unrelated notify (removal changed other notifies) on {path}; not saving. "
+                    f"Pre: {non_timing_pre}, After: {after_remove}"
+                )
 
         # Add dedicated timing track
         AL.add_animation_notify_track(m, TRACK_NAME)
