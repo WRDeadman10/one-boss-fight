@@ -93,6 +93,50 @@ C357 could read notify names but its Python API could not read notify absolute t
 
 Sevarog-specific numeric parameters live in his encounter definition. AI branch conditions reference data IDs and validated ranges. Reuse A4/A5/A6-style modules where mechanics match; add a unique module only when the move cannot be represented by existing module configuration. New Sevarog content must not require a new shared-core `if (Sevarog)` path or changes to Ember defaults.
 
+## Phase 3 — Greystone player switchover (plan only; no switch authorized)
+
+The C-1227 blind visual result identifies Candidate_A / Greystone as the fit-test winner (47/48); this is not the owner's switch decision. The owner has the comparison image, and must authorize the player change separately. Root-motion fidelity is still an acceptance gate. This section is a plan only: it does not change the active player class, defaults, ability assets, or any pack asset.
+
+### Isolation boundary and reuse
+
+Reuse the October 19 `GreystonePack` retarget set (238 pack animations) and its Greystone visual animation setup as the starting point. Create a separate project child player Blueprint, e.g. `/Game/OneBossFight/Player/Greystone/BP_GreystoneERPlayer`, derived from the existing pack player child/base setup. Put the Greystone mesh, existing Greystone visual AnimBP, and the four opt-in ER montage fields on this child only. Change only the active arena/player-spawn selection after owner approval and Lead review. Keep the existing mannequin player Blueprint, `AdvancedARPGCombat` assets, `GreystonePack` animation/ability maps, and pack-source montages untouched. Never retarget or repoint the pack's 238 source references to ER or to new `_Fit` assets; the prior retarget lesson is to isolate the character in a child Blueprint.
+
+The fit pipeline produced target **AnimSequences** under the candidate FitTest root; it did not create approved runtime montage wrappers. The `_Fit_Greystone` montage names below are proposed wrapper names, not assets claimed to exist. For each approved source montage, create a separate Greystone wrapper on the Greystone-compatible skeleton, put the corresponding `_Fit_Greystone` sequence in its slot, preserve section/blend/root-motion settings, then independently read back its notify track after save/reopen. Montage notifies do not transfer merely because the underlying sequence was retargeted. Do not assign these soft references to a shared CDO or default asset; assign them only in the new child player's `URPGDodgeTiming` component.
+
+### ER montage, ability, and notify routing
+
+| Player action | Existing source montage / retarget sequence | Isolated target montage (proposed) | Ability/property route on the child | Notify and behavior requirements |
+|---|---|---|---|---|
+| Neutral-input backstep | `AM_ER_Backstep_Mixamo_V2`; `AN_ER_Backstep_Mixamo_V2_Fit_Greystone` | `AM_ER_Backstep_Mixamo_V2_Fit_Greystone` | `URPGDodgeTiming.BackstepMontage`; `BackstepPlayRate` stays 1.0 unless separately approved. `URPGDodgeTiming` inserts it into the `GA_Player_Dodge` `DodgeMontage` map for the neutral-input tap. | Preserve `ANS_iFrames` 0.075–0.343 s and `ANS_InputBuffer` 0.164–0.351 s, zero yaw delta, end/interrupt cleanup, and root-motion extraction. The regular quick/full roll entries in the DodgeMontage map remain the existing GreystonePack `_Grey` retargets. |
+| Air light | `AM_ER_Attack_Air_Light`; `AN_ER_Attack_Air_Light_Fit_Greystone` | `AM_ER_Attack_Air_Light_Fit_Greystone` | `URPGDodgeTiming.AirLightMontage`; temporary override of weapon abilities' `FallingAttackMontages`, classified as `JumpLight`. | Preserve `ANS_DisableMovement` 0.000–0.600 s and `ANS_CollisionTrace` 0.150–0.336 s with default melee attack data; retain source notify timing and verify trace attachment/hit attribution. |
+| Air heavy plunge | `AM_ER_Attack_Air_Heavy_Plunge`; `AN_ER_Attack_Air_Heavy_Plunge_Fit_Greystone` | `AM_ER_Attack_Air_Heavy_Plunge_Fit_Greystone` | `URPGDodgeTiming.AirHeavyMontage`; temporary override of `StrongAttackMontages`, classified as `JumpHeavy`. | Preserve `ANS_DisableMovement` 0.000–0.867 s, `ANS_InputBuffer` 0.150–0.364 s, `ANS_CollisionTrace` 0.150–0.336 s with `StrongMeleeAttackData`, and the 0.420 s impact event. Confirm trace and movement-cancel behavior from saved montage readback. |
+| Guard counter | `AM_ER_Attack_GuardCounter`; `AN_ER_Attack_GuardCounter_Fit_Greystone` | `AM_ER_Attack_GuardCounter_Fit_Greystone` | `URPGDodgeTiming.GuardCounterMontage`; a successful guarded contact arms the existing counter input window; R2 inserts this montage in `StrongAttackMontages`, classified as `Strong`. | Preserve `ANS_DisableMovement` 0.000–0.800 s, `ANS_SetDesiredRotation` 0.000–0.123 s, `ANS_CancelFrames` 0.000–0.137 s, `ANS_InputBuffer` 0.151–0.271 s, `ANS_CollisionTrace` 0.168–0.257 s with `StrongMeleeAttackData`, sound at 0.168 s, and `ANS_MovementCancel` 0.351–0.800 s. Keep the existing counter window unchanged. |
+
+These are the four ER montage overrides currently represented by `URPGDodgeTiming` source fields. Ground light/heavy/charged, sprint and dodge attacks, guard/block, quick/full roll, flask, locomotion, hit-react, death, and other pack actions continue through the existing GreystonePack retargets and their existing ability montage maps / Greystone AnimBP. Do not replace those arrays with the four ER clips. In particular, `GA_Player_Dodge.DodgeMontage` keeps the GreystonePack quick/full roll map; the fit-test Dodge_Small_Forward_Roll is a pack control, not an imported ER roll. The ER roll is not part of the current four imported ER clips and must not be represented as already available.
+
+The child also must override `URPGDodgeTiming.QuickMontage` and `FullMontage` to the matching existing GreystonePack `_Grey` quick/full roll montages. The current C++ defaults for those two fields point at mannequin pack montage assets; leaving them inherited would cause the component's runtime `GA_Player_Dodge.DodgeMontage` substitutions to insert mannequin montages into the Greystone child's ability. Preserve the existing `DodgeMontage` map values as the pack baseline, confirm the exact `_Grey` asset object paths from the existing Greystone child readback before authoring, and verify the component restores the array after montage completion/interruption. Also inventory and snapshot each weapon ability's `AttackMontages`, `StrongAttackMontages`, `ChargedAttackMontages`, `FallingAttackMontages`, `SprintAttackMontages`, and `DodgeAttackMontages`; these remain the existing GreystonePack `_Grey` entries except during the four documented transient ER overrides. Preserve all pack notify tracks exactly as authored; no pack notify is reauthored for this player switch.
+
+### Root-motion and functional acceptance checklist
+
+Lead performs the following after a separate owner switch approval, using the mannequin and the child player in the same map, inputs, start transforms, play rates, and flat unobstructed floor. Record horizontal capsule displacement from montage start to completion in world units; separate authored animation root motion from input/ability movement, collision, gravity, and camera lag. Use at least five paired trials per move and report each trial, mean, range, and failed/blocked attempts.
+
+| Move | Required target distance | Pass rule |
+|---|---:|---|
+| ER neutral-input backstep | 84–98 cm | Both mannequin reference and Greystone child finish in range, and paired displacement differs by no more than 10%; preserve the facing/yaw rule and i-frame/buffer intervals above. |
+| GreystonePack full roll | 215–290 cm | Both reference and child finish in range with no more than 10% paired displacement difference; confirm the unchanged GreystonePack DodgeMontage map is actually used. |
+
+For both actions, verify root-motion mode, root lock, retarget root settings, play rate, capsule path, slope/start-state, notify open/close and interruption cleanup; a visually similar pose or the blind single-node score does not prove movement fidelity. If either distance fails, keep the player switch blocked and diagnose source extraction, retarget root mapping, ability movement, or collision separately. Do not silently tune the montage play rate or ability movement to force a pass. If an ER roll is later proposed, first import/approve its source, create a distinct retarget and montage, inventory its notifies, and add a separate root-motion gate.
+
+### Switch gates and rollback
+
+1. Owner explicitly approves switching the active player after seeing the blind result; Lead reviews this plan and verifies the four target montage assets and child property assignments.
+2. Verify every target montage's skeleton, slot, sections, root-motion mode, notify classes/times/durations, and referenced target sequence after save/reopen. Compare against the source table above; unknown/missing events block the switch.
+3. Lead runs the paired backstep/roll displacement matrix and input paths for backstep, quick/full roll, ground attacks, air light/heavy, guard counter, block/parry, flask, locomotion, and hit/death. Confirm same-gameplay ability grants, trace sources and weapon/socket behavior; only visual mesh/animation sources should vary.
+4. Add/retain a child-isolation regression: no `AdvancedARPGCombat` or pack-source asset depends on the new child or `_Fit_Greystone` montages; the active game-mode/map spawn is the only selected player route. Existing pack mannequin tests must still pass unchanged.
+5. Lead validates CookCoverage, all four soft references in the staged/cooked package, startup/input smoke, and no missing montage/AnimBP dependencies. Record the prior active player class and provide rollback by restoring that single spawn selection; do not delete the child or retargets during rollback.
+
+Until all gates pass, the mannequin player remains the active default and the isolated child is not selected. The visual winner result, a single-node score, and this plan do not establish runtime animation or root-motion acceptance.
+
 ## Sequencing and ownership
 
 1. Lead reviews this plan, including the multiple A2 windows, parry target policy, notify serialization, and interruption behavior. Phase 1 sword/trace acceptance is complete per C-1200; this review covers the separate architecture/migration plan.
@@ -106,4 +150,7 @@ Sevarog-specific numeric parameters live in his encounter definition. AI branch 
 - `Source/OneBossFight/Player/RPGAttackTracker.h/.cpp` — existing timing fields, values, montage resolution, move and branch behavior.
 - `Documentation/Boss/C1132_PARRY_MONTAGE_ORIGIN_TARGETS.md` — Lead-reported montage-origin contacts and limits.
 - `Documentation/Boss/C1172_EMBER_VISUAL_WEAPON_TRACE.md` — Phase 1 sword work; visual alignment, hand-follow, single-rendered-sword, trace parity, and parry acceptance are Lead-verified in C-1200 (BUILD-279).
+- `Source/OneBossFight/Player/RPGDodgeTiming.h/.cpp` and `RPGSwingTracker.cpp` — current optional player montage fields, input routes, temporary ability-array overrides, and attack classification.
+- `Documentation/Boss/AB_A46_A50_FINAL_ART_DELIVERY_AND_HANDOFF.md` — source ER montage slots and authored notify inventory; saved target montage readback is still a switch gate.
+- `Documentation/Boss/C1174_PLAYER_FIT_TEST_SCORECARD.md` and C-1227 in `Documentation/TEAM_MAILBOX.md` — blind visual outcome, candidate mapping, root-motion thresholds, and owner decision boundary.
 - `Documentation/TEST_PLAN.md` and the Lead C-1152 evidence folder — runtime acceptance should be linked when the migration is implemented, not claimed by this plan.

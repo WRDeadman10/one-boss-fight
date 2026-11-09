@@ -1,5 +1,9 @@
 # Decisions
 
+## C-1227 — Player character fit-test blind evaluation & visual verdict (2026-11-09)
+
+The blind visual fit test across Greystone (Candidate_A), Grux (Candidate_B), and Steel (Candidate_C) evaluated against the Mannequin baseline control (Candidate_0) across 6 standardized clips (Backstep Mixamo V2, Air Light, Air Heavy Plunge, Guard Counter, Pack Roll control, Pack Block control) unanimously identified Greystone as the only viable player hero candidate (47/48 visual points, 97.9%, 0 zeroes). Steel suffered catastrophic socket detachment (shield floating detached 1m in mid-air on Air Light, Plunge, and BlockLoop; 3/48, 18 zeroes), and Grux failed Soulslike player knight aesthetics and shield ergonomics (weapon slicing through skull/spine on BlockLoop, bestial hunch; 13/48, 6 zeroes). Greystone is established as the visual fit-test winner. Final player class switch remains gated on Owner decision and in-game root-motion fidelity validation (84–98 cm backstep, 215–290 cm roll in PIE).
+
 ## C-1196 — migrate the live typed Ember Look data (2026-11-09)
 
 The Lead identified the typed Ember definition referenced by `DA_Sevarog_G044_Encounter` as the live data-route override: its Look config has `HeavySwordSocket_R` and identity offset, so it bypasses the tuned component defaults. Update only that project-owned typed definition to `SwordSocket=hand_r` and `SwordAttachOffset=FTransform(rotation=(19.84,-1.84,-10.48), location=(0,0,0))`. The Codex Editor script is allow-listed to that exact package and refuses pack paths; the Lead executes it under `ENGINE_LOCK.json`. No pack asset or encounter asset edit is authorized by this order. The existing `Saved/G044/encounter_manifest.json` receipt is not overwritten; the Lead determines whether the pipeline requires a new receipt after the data save.
