@@ -25,11 +25,11 @@ The headless commandlet probe was executed by Claude Lead under lock C-1155 agai
 
 | Asset Name | Log Line | Play Length (s) | Num Sections | Section Names | Root Motion | Notifies |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `Swing1_Medium_Montage` | 1154–1155 | 1.133317 | 1 | `[0] 'Default'` | `n/a` | 2 notifies: `[Unknown, Unknown]` |
-| `Swing2_Medium_Montage` | 1156–1157 | 1.133317 | 1 | `[0] 'Default'` | `n/a` | 2 notifies: `[Unknown, Unknown]` |
+| `Swing1_Medium_Montage` | 1154–1155 | 1.133317 | 1 | `[0] 'Default'` | `n/a` | 2 notifies: `[NamedNotify(SaveAttack), NamedNotify(ResetCombo)]` |
+| `Swing2_Medium_Montage` | 1156–1157 | 1.133317 | 1 | `[0] 'Default'` | `n/a` | 2 notifies: `[NamedNotify(ResetCombo), NamedNotify(SaveAttack)]` |
 | `LevelStart_Montage` | 1158–1159 | 5.000000 | 1 | `[0] 'Default'` | `n/a` | 1 notify: `[AnimNotify_PlayParticleEffect]` |
 
-*Notes on Unknown notifies:* These are native Paragon skeleton/named notifies or FX cues without a typed C++ `UAnimNotify` class object. `probe_sevarog_animations.py` has been updated with a guarded `notify_name` read for Claude's rerun.
+*Notes on Notifies:* In probe v1, the Swing montages printed `Unknown` class because they are plain skeleton/named notifies (`NamedNotify(SaveAttack)` and `NamedNotify(ResetCombo)`), which are legacy Paragon combo-chaining window markers. Probe v2 (`Docs/BossCombatReview/Execution/Claude/P_C1240_SEVAROGPROBE2/probe_sevarog.log`, lines 1154 & 1156) confirmed their identity via guarded `notify_name` read.
 
 ---
 

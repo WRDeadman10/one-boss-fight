@@ -1,0 +1,367 @@
+﻿[2026.11.09-21.18.53:662][  7]LogTemp: Display: [EncounterActivation] default data startup: selected /Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter for map L_SevarogArena
+[2026.11.09-21.18.53:719][  7]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending
+[2026.11.09-21.18.56:506][ 68]LogPython: [EmberNotifyParity] CHECK PASS component tracker exists 
+[2026.11.09-21.18.56:506][ 68]LogPython: [EmberNotifyParity] CHECK PASS component encounter exists 
+[2026.11.09-21.18.56:506][ 68]LogPython: [EmberNotifyParity] CHECK PASS component debug exists 
+[2026.11.09-21.18.56:506][ 68]LogPython: [EmberNotifyParity] CHECK PASS component pawn exists 
+[2026.11.09-21.18.56:506][ 68]LogPython: [EmberNotifyParity] CHECK PASS component boss exists 
+[2026.11.09-21.18.56:507][ 68]LogPython: [EmberNotifyParity] CHECK PASS LogRPGAttack source log is fresh for this PIE run C:\UnrealProject\OneBossFight\Docs\BossCombatReview\Execution\Claude\P_C1240_EMBERPARITY6\data.log
+[2026.11.09-21.18.56:507][ 68]LogPython: [EmberNotifyParity] WAKE_HEARTBEAT elapsed=0.0 dormant=False waking=True
+[2026.11.09-21.18.58:599][139]LogPython: [EmberNotifyParity] WAKE_HEARTBEAT elapsed=2.1 dormant=False waking=True
+[2026.11.09-21.19.00:097][179]LogPython: [EmberNotifyParity] CHECK PASS encounter awake before first move dormant=False waking=False
+[2026.11.09-21.19.00:099][179]LogPython: [EmberNotifyParity] WARMUP_BEGIN move=A1 mode=off measured=false
+[2026.11.09-21.19.00:662][197]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Committed pos=0.39
+[2026.11.09-21.19.00:662][197]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Active pos=0.39
+[2026.11.09-21.19.00:662][197]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Recovery pos=0.51
+[2026.11.09-21.19.01:184][215]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Complete pos=0.93 prior=Recovery reason=montage stopped
+[2026.11.09-21.19.01:184][215]LogPython: [EmberNotifyParity] CHECK PASS unmeasured A1 warm-up reaches Recovery end phases={"Active": 0.39, "Committed": 0.39, "Complete": 0.93, "Recovery": 0.51} end_reason=montage stopped
+[2026.11.09-21.19.01:442][227]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=off move=A1 attempt=1
+[2026.11.09-21.19.01:471][228]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.014367
+[2026.11.09-21.19.01:654][229]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.031017
+[2026.11.09-21.19.01:727][230]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.125000
+[2026.11.09-21.19.01:727][230]LogPython: [EmberNotifyParity] TRIAL_HITCH mode=off move=A1 attempt=1 delta=0.125000 limit=0.100
+[2026.11.09-21.19.01:793][231]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.071795
+[2026.11.09-21.19.01:808][232]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.067276
+[2026.11.09-21.19.01:824][233]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.014402
+[2026.11.09-21.19.01:881][234]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.015676
+[2026.11.09-21.19.01:893][234]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Committed pos=0.37
+[2026.11.09-21.19.01:893][234]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Active pos=0.37
+[2026.11.09-21.19.01:907][235]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.056494
+[2026.11.09-21.19.01:921][236]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.027734
+[2026.11.09-21.19.01:937][237]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.014158
+[2026.11.09-21.19.01:952][238]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.014267
+[2026.11.09-21.19.01:970][239]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.015111
+[2026.11.09-21.19.02:002][240]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.018243
+[2026.11.09-21.19.02:015][241]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.030860
+[2026.11.09-21.19.02:051][242]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.015267
+[2026.11.09-21.19.02:088][243]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.035507
+[2026.11.09-21.19.02:099][243]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Recovery pos=0.51
+[2026.11.09-21.19.02:113][244]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.037939
+[2026.11.09-21.19.02:158][245]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.023893
+[2026.11.09-21.19.02:176][246]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.046283
+[2026.11.09-21.19.02:196][247]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.017776
+[2026.11.09-21.19.02:209][248]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.017608
+[2026.11.09-21.19.02:258][249]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.015259
+[2026.11.09-21.19.02:273][250]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.049033
+[2026.11.09-21.19.02:295][251]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.014666
+[2026.11.09-21.19.02:332][252]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.020462
+[2026.11.09-21.19.02:352][253]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.037122
+[2026.11.09-21.19.02:373][254]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.021184
+[2026.11.09-21.19.02:395][255]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.019568
+[2026.11.09-21.19.02:418][256]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.023370
+[2026.11.09-21.19.02:462][257]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.024388
+[2026.11.09-21.19.02:480][258]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.042729
+[2026.11.09-21.19.02:499][259]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=1 delta=0.016289
+[2026.11.09-21.19.02:513][259]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Complete pos=0.95 prior=Recovery reason=montage stopped
+[2026.11.09-21.19.02:513][259]LogPython: [EmberNotifyParity] TRIAL_RECEIPT mode=off move=A1 attempt=1 outcome=HITCH max_delta=0.125000 started=True ended=True
+[2026.11.09-21.19.02:513][259]LogPython: [EmberNotifyParity] HITCH_RETRY mode=off move=A1 hitch_attempt=1 retry_attempt=2 max_delta=0.125000
+[2026.11.09-21.19.02:878][275]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=off move=A1 attempt=2
+[2026.11.09-21.19.02:979][276]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.029125
+[2026.11.09-21.19.02:994][277]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.061602
+[2026.11.09-21.19.03:010][278]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.057252
+[2026.11.09-21.19.03:026][279]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.015878
+[2026.11.09-21.19.03:041][280]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.013844
+[2026.11.09-21.19.03:058][281]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.016455
+[2026.11.09-21.19.03:075][282]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.016520
+[2026.11.09-21.19.03:098][283]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.017919
+[2026.11.09-21.19.03:129][284]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.023999
+[2026.11.09-21.19.03:150][285]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.030270
+[2026.11.09-21.19.03:189][286]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.020352
+[2026.11.09-21.19.03:212][287]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.038434
+[2026.11.09-21.19.03:232][288]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.024137
+[2026.11.09-21.19.03:250][289]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.019743
+[2026.11.09-21.19.03:276][290]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.017276
+[2026.11.09-21.19.03:299][291]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.028059
+[2026.11.09-21.19.03:313][291]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Committed pos=0.33
+[2026.11.09-21.19.03:313][291]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Active pos=0.36
+[2026.11.09-21.19.03:330][292]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.021756
+[2026.11.09-21.19.03:350][293]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.030696
+[2026.11.09-21.19.03:376][294]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.019784
+[2026.11.09-21.19.03:401][295]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.024410
+[2026.11.09-21.19.03:428][296]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.027051
+[2026.11.09-21.19.03:453][297]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.022339
+[2026.11.09-21.19.03:471][298]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.030157
+[2026.11.09-21.19.03:495][299]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.017381
+[2026.11.09-21.19.03:519][300]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.024366
+[2026.11.09-21.19.03:531][300]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Recovery pos=0.50
+[2026.11.09-21.19.03:545][301]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.023678
+[2026.11.09-21.19.03:571][302]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.025486
+[2026.11.09-21.19.03:601][303]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.026930
+[2026.11.09-21.19.03:653][304]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.029660
+[2026.11.09-21.19.03:694][305]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.052237
+[2026.11.09-21.19.03:718][306]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.040606
+[2026.11.09-21.19.03:756][307]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.023287
+[2026.11.09-21.19.03:784][308]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.038367
+[2026.11.09-21.19.03:798][309]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.028812
+[2026.11.09-21.19.03:823][310]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.014449
+[2026.11.09-21.19.03:881][311]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.022727
+[2026.11.09-21.19.03:896][312]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.060201
+[2026.11.09-21.19.03:909][313]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.014323
+[2026.11.09-21.19.03:930][314]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A1 attempt=2 delta=0.014236
+[2026.11.09-21.19.03:944][314]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A1 phase=Complete pos=0.94 prior=Recovery reason=montage stopped
+[2026.11.09-21.19.03:945][314]LogPython: [EmberNotifyParity] TRIAL_RECEIPT mode=off move=A1 attempt=2 outcome=CLEAN max_delta=0.061602 started=True ended=True
+[2026.11.09-21.19.03:945][314]LogPython: [EmberNotifyParity] CHECK PASS timing off A1 clean-trial flag readback readback_matches=True
+[2026.11.09-21.19.03:945][314]LogPython: [EmberNotifyParity] CHECK PASS timing off A1 natural recovery end phases={"Active": 0.36, "Committed": 0.33, "Complete": 0.94, "Recovery": 0.5} end_reason=montage stopped end_phase=Recovery log_error=None
+[2026.11.09-21.19.04:299][329]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=off move=A3a attempt=1
+[2026.11.09-21.19.04:332][330]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.026054
+[2026.11.09-21.19.04:369][331]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.034541
+[2026.11.09-21.19.04:395][332]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.036291
+[2026.11.09-21.19.04:417][333]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.026059
+[2026.11.09-21.19.04:443][334]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.023443
+[2026.11.09-21.19.04:465][335]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.024270
+[2026.11.09-21.19.04:488][336]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.022856
+[2026.11.09-21.19.04:533][337]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.022779
+[2026.11.09-21.19.04:562][338]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.043469
+[2026.11.09-21.19.04:581][339]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.031097
+[2026.11.09-21.19.04:600][340]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.019075
+[2026.11.09-21.19.04:614][341]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.018358
+[2026.11.09-21.19.04:628][342]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.014320
+[2026.11.09-21.19.04:643][343]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.013130
+[2026.11.09-21.19.04:669][344]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.014419
+[2026.11.09-21.19.04:692][345]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.027182
+[2026.11.09-21.19.04:712][346]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.023723
+[2026.11.09-21.19.04:736][347]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.020228
+[2026.11.09-21.19.04:747][347]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3a phase=Committed pos=0.40
+[2026.11.09-21.19.04:748][347]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3a phase=Active pos=0.40
+[2026.11.09-21.19.04:761][348]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.023893
+[2026.11.09-21.19.04:787][349]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.024840
+[2026.11.09-21.19.04:815][350]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.024965
+[2026.11.09-21.19.04:844][351]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.029175
+[2026.11.09-21.19.04:865][352]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.028382
+[2026.11.09-21.19.04:890][353]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.022239
+[2026.11.09-21.19.04:917][354]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.024288
+[2026.11.09-21.19.04:940][355]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3a attempt=1 delta=0.025750
+[2026.11.09-21.19.04:953][355]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3a phase=Complete pos=0.53 prior=Active reason=montage stopped
+[2026.11.09-21.19.04:954][355]LogPython: [EmberNotifyParity] TRIAL_RECEIPT mode=off move=A3a attempt=1 outcome=CLEAN max_delta=0.043469 started=True ended=True
+[2026.11.09-21.19.04:954][355]LogPython: [EmberNotifyParity] CHECK PASS timing off A3a clean-trial flag readback readback_matches=True
+[2026.11.09-21.19.04:954][355]LogPython: [EmberNotifyParity] CHECK PASS timing off A3a natural recovery end phases={"Active": 0.4, "Committed": 0.4, "Complete": 0.53} end_reason=montage stopped end_phase=Active log_error=None
+[2026.11.09-21.19.05:316][368]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=off move=A3b attempt=1
+[2026.11.09-21.19.05:343][369]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.014146
+[2026.11.09-21.19.05:375][370]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.027979
+[2026.11.09-21.19.05:393][371]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.028487
+[2026.11.09-21.19.05:410][372]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.020296
+[2026.11.09-21.19.05:427][373]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.017616
+[2026.11.09-21.19.05:452][374]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.017318
+[2026.11.09-21.19.05:467][375]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.024717
+[2026.11.09-21.19.05:535][376]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.015232
+[2026.11.09-21.19.05:548][376]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3b phase=Committed pos=0.13
+[2026.11.09-21.19.05:548][376]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3b phase=Active pos=0.15
+[2026.11.09-21.19.05:566][377]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.069375
+[2026.11.09-21.19.05:583][378]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.030084
+[2026.11.09-21.19.05:600][379]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.015949
+[2026.11.09-21.19.05:644][380]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.017996
+[2026.11.09-21.19.05:659][381]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.044804
+[2026.11.09-21.19.05:673][382]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.014661
+[2026.11.09-21.19.05:689][383]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.014678
+[2026.11.09-21.19.05:744][384]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.014645
+[2026.11.09-21.19.05:771][385]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.055878
+[2026.11.09-21.19.05:788][386]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.026569
+[2026.11.09-21.19.05:801][387]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.016046
+[2026.11.09-21.19.05:816][388]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.014921
+[2026.11.09-21.19.05:867][389]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.013076
+[2026.11.09-21.19.05:882][390]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.053123
+[2026.11.09-21.19.05:896][391]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.013600
+[2026.11.09-21.19.05:911][392]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.013605
+[2026.11.09-21.19.05:967][393]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.015906
+[2026.11.09-21.19.05:979][393]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3b phase=Recovery pos=0.46
+[2026.11.09-21.19.05:993][394]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.055961
+[2026.11.09-21.19.06:008][395]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.026888
+[2026.11.09-21.19.06:022][396]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.014356
+[2026.11.09-21.19.06:069][397]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.014386
+[2026.11.09-21.19.06:083][398]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.046863
+[2026.11.09-21.19.06:100][399]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.013923
+[2026.11.09-21.19.06:120][400]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.016191
+[2026.11.09-21.19.06:168][401]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.018894
+[2026.11.09-21.19.06:192][402]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.050083
+[2026.11.09-21.19.06:205][403]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.023179
+[2026.11.09-21.19.06:219][404]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.013216
+[2026.11.09-21.19.06:235][405]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.014189
+[2026.11.09-21.19.06:253][406]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.014446
+[2026.11.09-21.19.06:315][407]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.019210
+[2026.11.09-21.19.06:328][408]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.062413
+[2026.11.09-21.19.06:371][409]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.014218
+[2026.11.09-21.19.06:396][410]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.042132
+[2026.11.09-21.19.06:412][411]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.025520
+[2026.11.09-21.19.06:426][412]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.014297
+[2026.11.09-21.19.06:470][413]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.013696
+[2026.11.09-21.19.06:510][414]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.045366
+[2026.11.09-21.19.06:576][415]LogPython: [EmberNotifyParity] TRIAL_TICK mode=off move=A3b attempt=1 delta=0.039646
+[2026.11.09-21.19.06:589][415]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=off move=A3b phase=Complete pos=1.08 prior=Recovery reason=montage stopped
+[2026.11.09-21.19.06:590][415]LogPython: [EmberNotifyParity] TRIAL_RECEIPT mode=off move=A3b attempt=1 outcome=CLEAN max_delta=0.069375 started=True ended=True
+[2026.11.09-21.19.06:590][415]LogPython: [EmberNotifyParity] CHECK PASS timing off A3b clean-trial flag readback readback_matches=True
+[2026.11.09-21.19.06:590][415]LogPython: [EmberNotifyParity] CHECK PASS timing off A3b natural recovery end phases={"Active": 0.15, "Committed": 0.13, "Complete": 1.08, "Recovery": 0.46} end_reason=montage stopped end_phase=Recovery log_error=None
+[2026.11.09-21.19.06:891][427]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=on move=A1 attempt=1
+[2026.11.09-21.19.06:996][428]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.026624
+[2026.11.09-21.19.07:019][429]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.030096
+[2026.11.09-21.19.07:036][430]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.099337
+[2026.11.09-21.19.07:047][431]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.015851
+[2026.11.09-21.19.07:060][432]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.013029
+[2026.11.09-21.19.07:122][433]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.012075
+[2026.11.09-21.19.07:137][434]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.061672
+[2026.11.09-21.19.07:151][435]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.015540
+[2026.11.09-21.19.07:199][436]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.014044
+[2026.11.09-21.19.07:224][437]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.046604
+[2026.11.09-21.19.07:238][438]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.025077
+[2026.11.09-21.19.07:253][439]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.014582
+[2026.11.09-21.19.07:298][440]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.015980
+[2026.11.09-21.19.07:313][441]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.044563
+[2026.11.09-21.19.07:327][442]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.013864
+[2026.11.09-21.19.07:373][443]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.015779
+[2026.11.09-21.19.07:385][444]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.045072
+[2026.11.09-21.19.07:397][444]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A1 phase=Committed pos=0.33
+[2026.11.09-21.19.07:397][444]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A1 phase=Active pos=0.36
+[2026.11.09-21.19.07:410][445]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.012783
+[2026.11.09-21.19.07:423][446]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.024279
+[2026.11.09-21.19.07:477][447]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.012189
+[2026.11.09-21.19.07:491][448]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.054835
+[2026.11.09-21.19.07:504][449]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.014207
+[2026.11.09-21.19.07:553][450]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.013433
+[2026.11.09-21.19.07:568][451]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.048109
+[2026.11.09-21.19.07:581][452]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.014747
+[2026.11.09-21.19.07:592][453]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.013229
+[2026.11.09-21.19.07:656][454]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.011589
+[2026.11.09-21.19.07:667][454]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A1 phase=Recovery pos=0.52
+[2026.11.09-21.19.07:682][455]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.063180
+[2026.11.09-21.19.07:696][456]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.025707
+[2026.11.09-21.19.07:709][457]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.013982
+[2026.11.09-21.19.07:725][458]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.013025
+[2026.11.09-21.19.07:737][459]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.015290
+[2026.11.09-21.19.07:762][460]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.013166
+[2026.11.09-21.19.07:831][461]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.025332
+[2026.11.09-21.19.07:862][462]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.069421
+[2026.11.09-21.19.07:878][463]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.030284
+[2026.11.09-21.19.07:892][464]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.015382
+[2026.11.09-21.19.07:908][465]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.014380
+[2026.11.09-21.19.07:962][466]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.015232
+[2026.11.09-21.19.07:979][467]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.055299
+[2026.11.09-21.19.07:993][468]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.016240
+[2026.11.09-21.19.08:044][469]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A1 attempt=1 delta=0.014461
+[2026.11.09-21.19.08:055][469]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A1 phase=Complete pos=0.90 prior=Recovery reason=montage stopped
+[2026.11.09-21.19.08:055][469]LogPython: [EmberNotifyParity] TRIAL_RECEIPT mode=on move=A1 attempt=1 outcome=CLEAN max_delta=0.099337 started=True ended=True
+[2026.11.09-21.19.08:055][469]LogPython: [EmberNotifyParity] CHECK PASS timing on A1 clean-trial flag readback readback_matches=True
+[2026.11.09-21.19.08:055][469]LogPython: [EmberNotifyParity] CHECK PASS timing on A1 natural recovery end phases={"Active": 0.36, "Committed": 0.33, "Complete": 0.9, "Recovery": 0.52} end_reason=montage stopped end_phase=Recovery log_error=None
+[2026.11.09-21.19.08:419][484]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=on move=A3a attempt=1
+[2026.11.09-21.19.08:445][485]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=1 delta=0.061384
+[2026.11.09-21.19.08:458][486]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=1 delta=0.025912
+[2026.11.09-21.19.08:473][487]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=1 delta=0.014339
+[2026.11.09-21.19.08:488][488]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=1 delta=0.014932
+[2026.11.09-21.19.09:063][489]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=1 delta=0.014005
+[2026.11.09-21.19.09:324][490]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=1 delta=0.125000
+[2026.11.09-21.19.09:324][490]LogPython: [EmberNotifyParity] TRIAL_HITCH mode=on move=A3a attempt=1 delta=0.125000 limit=0.100
+[2026.11.09-21.19.09:337][490]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3a phase=Committed pos=0.53
+[2026.11.09-21.19.09:337][490]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3a phase=Active pos=0.53
+[2026.11.09-21.19.09:348][491]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=1 delta=0.125000
+[2026.11.09-21.19.09:349][491]LogPython: [EmberNotifyParity] TRIAL_HITCH mode=on move=A3a attempt=1 delta=0.125000 limit=0.100
+[2026.11.09-21.19.09:358][492]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=1 delta=0.024771
+[2026.11.09-21.19.09:373][493]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=1 delta=0.009411
+[2026.11.09-21.19.09:401][494]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=1 delta=0.014977
+[2026.11.09-21.19.09:454][495]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=1 delta=0.027667
+[2026.11.09-21.19.09:466][495]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3a phase=Complete pos=0.53 prior=Active reason=montage stopped
+[2026.11.09-21.19.09:466][495]LogPython: [EmberNotifyParity] TRIAL_RECEIPT mode=on move=A3a attempt=1 outcome=HITCH max_delta=0.125000 started=True ended=True
+[2026.11.09-21.19.09:466][495]LogPython: [EmberNotifyParity] HITCH_RETRY mode=on move=A3a hitch_attempt=1 retry_attempt=2 max_delta=0.125000
+[2026.11.09-21.19.09:790][508]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=on move=A3a attempt=2
+[2026.11.09-21.19.09:816][509]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.026124
+[2026.11.09-21.19.09:842][510]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.025802
+[2026.11.09-21.19.09:866][511]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.025683
+[2026.11.09-21.19.09:893][512]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.025181
+[2026.11.09-21.19.09:917][513]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.026611
+[2026.11.09-21.19.09:943][514]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.023801
+[2026.11.09-21.19.09:970][515]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.026104
+[2026.11.09-21.19.09:995][516]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.026048
+[2026.11.09-21.19.10:020][517]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.025874
+[2026.11.09-21.19.10:052][518]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.024826
+[2026.11.09-21.19.10:073][519]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.031710
+[2026.11.09-21.19.10:100][520]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.022216
+[2026.11.09-21.19.10:125][521]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.026109
+[2026.11.09-21.19.10:153][522]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.025288
+[2026.11.09-21.19.10:178][523]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.026696
+[2026.11.09-21.19.10:202][524]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.026279
+[2026.11.09-21.19.10:228][525]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.024627
+[2026.11.09-21.19.10:253][526]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.024672
+[2026.11.09-21.19.10:278][527]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.026553
+[2026.11.09-21.19.10:292][527]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3a phase=Committed pos=0.39
+[2026.11.09-21.19.10:292][527]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3a phase=Active pos=0.41
+[2026.11.09-21.19.10:305][528]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.024424
+[2026.11.09-21.19.10:330][529]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.026632
+[2026.11.09-21.19.10:359][530]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.024926
+[2026.11.09-21.19.10:387][531]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.029871
+[2026.11.09-21.19.10:412][532]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.026239
+[2026.11.09-21.19.10:434][533]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.026222
+[2026.11.09-21.19.10:462][534]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.022260
+[2026.11.09-21.19.10:486][535]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3a attempt=2 delta=0.027324
+[2026.11.09-21.19.10:496][535]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3a phase=Complete pos=0.54 prior=Active reason=montage stopped
+[2026.11.09-21.19.10:496][535]LogPython: [EmberNotifyParity] TRIAL_RECEIPT mode=on move=A3a attempt=2 outcome=CLEAN max_delta=0.031710 started=True ended=True
+[2026.11.09-21.19.10:496][535]LogPython: [EmberNotifyParity] CHECK PASS timing on A3a clean-trial flag readback readback_matches=True
+[2026.11.09-21.19.10:497][535]LogPython: [EmberNotifyParity] CHECK PASS timing on A3a natural recovery end phases={"Active": 0.41, "Committed": 0.39, "Complete": 0.54} end_reason=montage stopped end_phase=Active log_error=None
+[2026.11.09-21.19.10:847][549]LogPython: [EmberNotifyParity] MOVE_BEGIN arm=timing mode=on move=A3b attempt=1
+[2026.11.09-21.19.10:872][550]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.024563
+[2026.11.09-21.19.10:896][551]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025680
+[2026.11.09-21.19.10:923][552]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.024230
+[2026.11.09-21.19.10:947][553]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.026834
+[2026.11.09-21.19.10:977][554]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.024600
+[2026.11.09-21.19.11:002][555]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.028938
+[2026.11.09-21.19.11:029][556]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025704
+[2026.11.09-21.19.11:054][557]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.026382
+[2026.11.09-21.19.11:078][558]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025601
+[2026.11.09-21.19.11:089][558]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3b phase=Committed pos=0.13
+[2026.11.09-21.19.11:089][558]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3b phase=Active pos=0.16
+[2026.11.09-21.19.11:104][559]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.023737
+[2026.11.09-21.19.11:128][560]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.026066
+[2026.11.09-21.19.11:154][561]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.024392
+[2026.11.09-21.19.11:179][562]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.024896
+[2026.11.09-21.19.11:204][563]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025318
+[2026.11.09-21.19.11:229][564]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025226
+[2026.11.09-21.19.11:254][565]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.024930
+[2026.11.09-21.19.11:284][566]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025599
+[2026.11.09-21.19.11:294][566]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3b phase=Recovery pos=0.41
+[2026.11.09-21.19.11:309][567]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.029172
+[2026.11.09-21.19.11:334][568]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.024889
+[2026.11.09-21.19.11:360][569]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025417
+[2026.11.09-21.19.11:385][570]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025903
+[2026.11.09-21.19.11:410][571]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025263
+[2026.11.09-21.19.11:435][572]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025061
+[2026.11.09-21.19.11:461][573]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.024437
+[2026.11.09-21.19.11:487][574]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025863
+[2026.11.09-21.19.11:512][575]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025885
+[2026.11.09-21.19.11:537][576]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025628
+[2026.11.09-21.19.11:562][577]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025547
+[2026.11.09-21.19.11:592][578]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.024214
+[2026.11.09-21.19.11:616][579]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.029869
+[2026.11.09-21.19.11:642][580]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.024563
+[2026.11.09-21.19.11:667][581]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025656
+[2026.11.09-21.19.11:691][582]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025312
+[2026.11.09-21.19.11:719][583]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.024954
+[2026.11.09-21.19.11:747][584]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025624
+[2026.11.09-21.19.11:769][585]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.028915
+[2026.11.09-21.19.11:796][586]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.021910
+[2026.11.09-21.19.11:822][587]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.026932
+[2026.11.09-21.19.11:847][588]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.026636
+[2026.11.09-21.19.11:872][589]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.024456
+[2026.11.09-21.19.11:903][590]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025663
+[2026.11.09-21.19.11:927][591]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.030417
+[2026.11.09-21.19.11:954][592]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025130
+[2026.11.09-21.19.11:980][593]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025880
+[2026.11.09-21.19.12:003][594]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.025288
+[2026.11.09-21.19.12:031][595]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.024206
+[2026.11.09-21.19.12:055][596]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.027259
+[2026.11.09-21.19.12:080][597]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.024345
+[2026.11.09-21.19.12:103][598]LogPython: [EmberNotifyParity] TRIAL_TICK mode=on move=A3b attempt=1 delta=0.024961
+[2026.11.09-21.19.12:115][598]LogPython: [EmberNotifyParity] LOG_TRANSITION arm=timing mode=on move=A3b phase=Complete pos=1.08 prior=Recovery reason=montage stopped
+[2026.11.09-21.19.12:115][598]LogPython: [EmberNotifyParity] TRIAL_RECEIPT mode=on move=A3b attempt=1 outcome=CLEAN max_delta=0.030417 started=True ended=True
+[2026.11.09-21.19.12:115][598]LogPython: [EmberNotifyParity] CHECK PASS timing on A3b clean-trial flag readback readback_matches=True
+[2026.11.09-21.19.12:115][598]LogPython: [EmberNotifyParity] CHECK PASS timing on A3b natural recovery end phases={"Active": 0.16, "Committed": 0.13, "Complete": 1.08, "Recovery": 0.41} end_reason=montage stopped end_phase=Recovery log_error=None
+[2026.11.09-21.19.12:465][612]LogPython: [EmberNotifyParity] CHECK PASS A1 Committed parity off=0.33 on=0.33 tolerance=0.080
+[2026.11.09-21.19.12:465][612]LogPython: [EmberNotifyParity] CHECK PASS A1 Active parity off=0.36 on=0.36 tolerance=0.080
+[2026.11.09-21.19.12:465][612]LogPython: [EmberNotifyParity] CHECK PASS A1 Recovery parity off=0.5 on=0.52 tolerance=0.080
+[2026.11.09-21.19.12:465][612]LogPython: [EmberNotifyParity] CHECK PASS A1 Complete parity reason=montage stopped off=0.94 on=0.9 delta=0.040 tolerance=0.080
+[2026.11.09-21.19.12:465][612]LogPython: [EmberNotifyParity] CHECK PASS A3a Committed parity off=0.4 on=0.39 tolerance=0.080
+[2026.11.09-21.19.12:465][612]LogPython: [EmberNotifyParity] CHECK PASS A3a Active parity off=0.4 on=0.41 tolerance=0.080
+[2026.11.09-21.19.12:465][612]LogPython: [EmberNotifyParity] INFO A3a Recovery parity not applicable: matching montage stopped in Active
+[2026.11.09-21.19.12:465][612]LogPython: [EmberNotifyParity] CHECK PASS A3a Complete parity reason=montage stopped off=0.53 on=0.54 delta=0.010 tolerance=0.080
+[2026.11.09-21.19.12:465][612]LogPython: [EmberNotifyParity] CHECK PASS A3b Committed parity off=0.13 on=0.13 tolerance=0.080
+[2026.11.09-21.19.12:465][612]LogPython: [EmberNotifyParity] CHECK PASS A3b Active parity off=0.15 on=0.16 tolerance=0.080
+[2026.11.09-21.19.12:465][612]LogPython: [EmberNotifyParity] CHECK PASS A3b Recovery parity off=0.46 on=0.41 tolerance=0.080
+[2026.11.09-21.19.12:465][612]LogPython: [EmberNotifyParity] CHECK PASS A3b Complete parity reason=montage stopped off=1.08 on=1.08 delta=0.000 tolerance=0.080
+[2026.11.09-21.19.12:465][612]LogPython: [EmberNotifyParity] RESULT PASS clean_trials=6/6 hitch_retries=2 retry_log=[{"hitch_attempt":1,"max_tick_delta":0.125,"mode":"off","move":"A1","retry_attempt":2},{"hitch_attempt":1,"max_tick_delta":0.125,"mode":"on","move":"A3a","retry_attempt":2}] exhausted=[] checks=31/31 C1132_tolerance=0.080s
+[2026.11.09-21.19.12:477][612]LogPython: [EmberNotifyParity] RECEIPT {"attempts":{"off:A1:1":{"clean":false,"completion_ok":true,"end_phase":"Recovery","end_reason":"montage stopped","ended":true,"hitch":true,"max_tick_delta":0.125,"natural_recovery_end":true,"phases":{"Active":0.37,"Committed":0.37,"Complete":0.95,"Recovery":0.51},"started":true,"timing_flag_ok":true},"off:A1:2":{"clean":true,"completion_ok":true,"end_phase":"Recovery","end_reason":"montage stopped","ended":true,"hitch":false,"max_tick_delta":0.06160249933600426,"natural_recovery_end":true,"phases":{"Active":0.36,"Committed":0.33,"Complete":0.94,"Recovery":0.5},"started":true,"timing_flag_ok":true},"off:A3a:1":{"clean":true,"completion_ok":true,"end_phase":"Active","end_reason":"montage stopped","ended":true,"hitch":false,"max_tick_delta":0.04346870258450508,"natural_recovery_end":false,"phases":{"Active":0.4,"Committed":0.4,"Complete":0.53},"started":true,"timing_flag_ok":true},"off:A3b:1":{"clean":true,"completion_ok":true,"end_phase":"Recovery","end_reason":"montage stopped","ended":true,"hitch":false,"max_tick_delta":0.06937450170516968,"natural_recovery_end":true,"phases":{"Active":0.15,"Committed":0.13,"Complete":1.08,"Recovery":0.46},"started":true,"timing_flag_ok":true},"on:A1:1":{"clean":true,"completion_ok":true,"end_phase":"Recovery","end_reason":"montage stopped","ended":true,"hitch":false,"max_tick_delta":0.09933669865131378,"natural_recovery_end":true,"phases":{"Active":0.36,"Committed":0.33,"Complete":0.9,"Recovery":0.52},"started":true,"timing_flag_ok":true},"on:A3a:1":{"clean":false,"completion_ok":true,"end_phase":"Active","end_reason":"montage stopped","ended":true,"hitch":true,"max_tick_delta":0.125,"natural_recovery_end":false,"phases":{"Active":0.53,"Committed":0.53,"Complete":0.53},"started":true,"timing_flag_ok":true},"on:A3a:2":{"clean":true,"completion_ok":true,"end_phase":"Active","end_reason":"montage stopped","ended":true,"hitch":false,"max_tick_delta":0.03170979768037796,"natural_recovery_end":false,"phases":{"Active":0.41,"Committed":0.39,"Complete":0.54},"started":true,"timing_flag_ok":true},"on:A3b:1":{"clean":true,"completion_ok":true,"end_phase":"Recovery","end_reason":"montage stopped","ended":true,"hitch":false,"max_tick_delta":0.03041740134358406,"natural_recovery_end":true,"phases":{"Active":0.16,"Committed":0.13,"Complete":1.08,"Recovery":0.41},"started":true,"timing_flag_ok":true}},"checks":31,"clean_rows":{"off:A1":{"clean":true,"completion_ok":true,"end_phase":"Recovery","end_reason":"montage stopped","ended":true,"hitch":false,"max_tick_delta":0.06160249933600426,"natural_recovery_end":true,"phases":{"Active":0.36,"Committed":0.33,"Complete":0.94,"Recovery":0.5},"started":true,"timing_flag_ok":true},"off:A3a":{"clean":true,"completion_ok":true,"end_phase":"Active","end_reason":"montage stopped","ended":true,"hitch":false,"max_tick_delta":0.04346870258450508,"natural_recovery_end":false,"phases":{"Active":0.4,"Committed":0.4,"Complete":0.53},"started":true,"timing_flag_ok":true},"off:A3b":{"clean":true,"completion_ok":true,"end_phase":"Recovery","end_reason":"montage stopped","ended":true,"hitch":false,"max_tick_delta":0.06937450170516968,"natural_recovery_end":true,"phases":{"Active":0.15,"Committed":0.13,"Complete":1.08,"Recovery":0.46},"started":true,"timing_flag_ok":true},"on:A1":{"clean":true,"completion_ok":true,"end_phase":"Recovery","end_reason":"montage stopped","ended":true,"hitch":false,"max_tick_delta":0.09933669865131378,"natural_recovery_end":true,"phases":{"Active":0.36,"Committed":0.33,"Complete":0.9,"Recovery":0.52},"started":true,"timing_flag_ok":true},"on:A3a":{"clean":true,"completion_ok":true,"end_phase":"Active","end_reason":"montage stopped","ended":true,"hitch":false,"max_tick_delta":0.03170979768037796,"natural_recovery_end":false,"phases":{"Active":0.41,"Committed":0.39,"Complete":0.54},"started":true,"timing_flag_ok":true},"on:A3b":{"clean":true,"completion_ok":true,"end_phase":"Recovery","end_reason":"montage stopped","ended":true,"hitch":false,"max_tick_delta":0.03041740134358406,"natural_recovery_end":true,"phases":{"Active":0.16,"Committed":0.13,"Complete":1.08,"Recovery":0.41},"started":true,"timing_flag_ok":true}},"hitch_exhausted":[],"hitch_retries":[{"hitch_attempt":1,"max_tick_delta":0.125,"mode":"off","move":"A1","retry_attempt":2},{"hitch_attempt":1,"max_tick_delta":0.125,"mode":"on","move":"A3a","retry_attempt":2}]}
+[2026.11.09-21.19.12:477][612]LogPython: [EmberNotifyParity] finished: parity probe complete
