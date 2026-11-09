@@ -130,7 +130,7 @@ This inventory directly supports task `C-1228a` (Codex's montage-notify timing o
 - **`RPGAttackTracker.cpp` Mapping:**
   - Registered at: [`Source/OneBossFight/Player/RPGAttackTracker.cpp:69`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGAttackTracker.cpp#L69)
   - Lookup binding: [`Source/OneBossFight/Player/RPGAttackTracker.cpp:141`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGAttackTracker.cpp#L141)
-  - Branch evaluation: [`Source/OneBossFight/Player/RPGAttackTracker.cpp:449-467`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGAttackTracker.cpp#L449-L467) (`BranchAllowedNow()` validates range \(\le 350\text{ cm}\) and frontal cone \(\le 120^\circ\))
+  - Branch evaluation: [`Source/OneBossFight/Player/RPGAttackTracker.cpp:449-467`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGAttackTracker.cpp#L449-L467) (`BranchAllowedNow()` validates range \(\le 400\text{ cm}\) and frontal cone \(\le 120^\circ\))
   - Ability swap route: [`Source/OneBossFight/Player/RPGBossCloseClipSwap.cpp:45`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGBossCloseClipSwap.cpp#L45) and [`RPGBossCloseClipSwapRules.h:14`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGBossCloseClipSwapRules.h#L14) (swaps pack `GS_Attack02_Montage`)
   - **Tell / Windup Window:** `0.000 s .. 0.130 s` (`TrackTurnRate = 360.0 deg/s`, `bBranchStage = true`, `bAuthoredWindup = true`)
   - **Commitment Point (`CommitTime`):** `0.130 s` (heading locks; exact match with `ANS_SetDesiredRotation_C` end and audio tell at 0.130 s)
@@ -283,7 +283,7 @@ namespace RPGMontageNotifyTiming
 - **`A3a` (`AM_Boss01_A3a`):**
   - `MontageLength = 0.800f`, `TellStartTime = 0.000f`, `CommitTime = 0.380f`, `WindowStartTime = 0.400f`, `WindowEndTime = 0.600f`, `ParryContactTime = 0.400f`, `RecoveryEndTime = 0.800f`, `TrackTurnRate = 360.f`, `bAuthoredWindup = true`
 - **`A3b` (`AM_Boss01_A3b`):**
-  - `MontageLength = 1.3333f`, `TellStartTime = 0.000f`, `CommitTime = 0.130f`, `WindowStartTime = 0.150f`, `WindowEndTime = 0.400f`, `ParryContactTime = 0.150f`, `RecoveryEndTime = 1.3333f`, `TrackTurnRate = 360.f`, `bBranchStage = true`, `BranchRange = 350.f`, `BranchConeDegrees = 120.f`, `bAuthoredWindup = true`
+  - `MontageLength = 1.3333f`, `TellStartTime = 0.000f`, `CommitTime = 0.130f`, `WindowStartTime = 0.150f`, `WindowEndTime = 0.400f`, `ParryContactTime = 0.150f`, `RecoveryEndTime = 1.3333f`, `TrackTurnRate = 360.f`, `bBranchStage = true`, `BranchRange = 400.f`, `BranchConeDegrees = 120.f`, `bAuthoredWindup = true`
 
 ---
 
@@ -325,3 +325,42 @@ pg.CloseTelegraph (0.4s) |
 | **A3b** | GS_Attack02_Montage | **0.141 s .. 0.444 s**<br>*(start 0.141s, dur 0.303s)* | **0.150 s .. 0.400 s** | **+0.009 s** (+9 ms / +0.5 frames) | **-0.044 s** (-44 ms / -2.6 frames) | **YES (-44 ms on End)** | Swapped with AM_Boss01_A3b via RPGBossCloseClipSwap |
 
 This explains why RPGBossCloseClipSwapRules explicitly maps GS_Attack03_Montage -> AM_Boss01_A1, GS_Attack01_Montage -> AM_Boss01_A3a, and GS_Attack02_Montage -> AM_Boss01_A3b: the authored clips lengthen the tell from a hasty 0.11-0.16s to a readable 0.35-0.40s.
+
+---
+
+## 8. C-1230c Proposed `URPGANS_BossMoveTiming` Parameter Values (Draft — No Asset Mutation)
+
+**Authority:** Claude Lead Directive `[C-1230]` (2026-11-09).  
+**Status:** DRAFT ONLY. Zero assets modified. No `URPGANS_BossMoveTiming` notify states added to any `.uasset`. Applying them to assets requires a formal Lead verdict and engine lock.
+
+The following table defines the proposed parameter values for `URPGANS_BossMoveTiming` notify states to be authored on the three core Ember Warden attack montages (`AM_Boss01_A1`, `AM_Boss01_A3a`, and `AM_Boss01_A3b`), derived directly from the verified C1228 inventory and authoritative `URPGAttackTracker` rows:
+
+### 8.1. Proposed Parameter Table
+
+| Parameter Field | Type | `AM_Boss01_A1` (`A1`) | `AM_Boss01_A3a` (`A3a`) | `AM_Boss01_A3b` (`A3b`) | Origin / Rationale |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **`MoveId`** | `FName` | `A1` | `A3a` | `A3b` | Exact move identifier matching `RPGAttackTracker.cpp` rows |
+| **`CommitTime`** | `float` | **0.330 s** | **0.380 s** | **0.130 s** | Aligns with end of `ANS_SetDesiredRotation_C` and audio tell |
+| **`WindowStartTime`** | `float` | **0.350 s** | **0.400 s** | **0.150 s** | Exact start of `ANS_CollisionTrace_C` active damage window |
+| **`WindowEndTime`** | `float` | **0.500 s** | **0.600 s** | **0.400 s** | Exact end of `ANS_CollisionTrace_C` active damage window |
+| **`RecoveryEndTime`** | `float` | **1.200 s** | **0.800 s** | **1.3333 s** | End of ability animation / blend out to idle |
+| **`TrackTurnRate`** | `float` | **360.0 deg/s** | **360.0 deg/s** | **360.0 deg/s** | Native tracker turn rate for close attacks (`RPGAttackTracker.cpp:61`) |
+| **`bBranchStage`** | `bool` | `false` | `false` | **`true`** | A3b is the follow-up combo branch stage requiring frontal player check |
+| **`BranchRange`** | `float` | `0.0 cm` *(unused)* | `0.0 cm` *(unused)* | **400.0 cm** | Native default branch proximity threshold (`FRPGAttackTrackerConfig`, `RPGAttackTracker.h:162`) |
+| **`BranchConeDegrees`** | `float` | `120.0 deg` *(default)* | `120.0 deg` *(default)* | **120.0 deg** | Native frontal cone arc for A3b branch check (`RPGAttackTracker.cpp:481`) |
+| **`bAuthoredWindup`** | `bool` | `true` | `true` | `true` | Flags move as having authored readable windup (bypasses stand-in dilation) |
+
+### 8.2. Target Asset Insertion Tracks
+
+When authorized by Lead for application:
+1. **`AM_Boss01_A1`** (`/Game/OneBossFight/Boss01/Animations/AM_Boss01_A1`):
+   - Place `URPGANS_BossMoveTiming` on a dedicated Notify Track from `0.000 s` to `1.200 s` (span of entire montage).
+   - Parameters: `MoveId=A1`, `CommitTime=0.330`, `WindowStartTime=0.350`, `WindowEndTime=0.500`, `RecoveryEndTime=1.200`, `TrackTurnRate=360.0`, `bBranchStage=false`, `bAuthoredWindup=true`.
+2. **`AM_Boss01_A3a`** (`/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3a`):
+   - Place `URPGANS_BossMoveTiming` from `0.000 s` to `0.800 s`.
+   - Parameters: `MoveId=A3a`, `CommitTime=0.380`, `WindowStartTime=0.400`, `WindowEndTime=0.600`, `RecoveryEndTime=0.800`, `TrackTurnRate=360.0`, `bBranchStage=false`, `bAuthoredWindup=true`.
+3. **`AM_Boss01_A3b`** (`/Game/OneBossFight/Boss01/Animations/AM_Boss01_A3b`):
+   - Place `URPGANS_BossMoveTiming` from `0.000 s` to `1.3333 s`.
+   - Parameters: `MoveId=A3b`, `CommitTime=0.130`, `WindowStartTime=0.150`, `WindowEndTime=0.400`, `RecoveryEndTime=1.3333`, `TrackTurnRate=360.0`, `bBranchStage=true`, `BranchRange=400.0`, `BranchConeDegrees=120.0`, `bAuthoredWindup=true`.
+
+**Discipline Notice:** Strictly no asset modifications were made during this draft. Assets will only be edited via an automated, locked commandlet script upon Lead's explicit approval.

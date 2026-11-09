@@ -10,6 +10,8 @@ public class OneBossFightEditor : ModuleRules
 			"Core",
 			"CoreUObject",
 			"Engine",
+			"OneBossFight",
+			"AssetRegistry",
 			"UnrealEd",
 			"Niagara",
 			"NiagaraEditor",
