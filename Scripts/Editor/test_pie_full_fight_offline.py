@@ -187,6 +187,22 @@ class FightPortTests(unittest.TestCase):
         self.assertEqual(targeted.dodge_target_for_montage("A1", "AM_Boss01_A1", 1),
                          (None, None, "target_filtered"))
 
+    def test_mid01_dodge_probe_starts_and_holds_in_parry_close_range_band(self):
+        spec = importlib.util.spec_from_file_location("pie_full_fight_range_targeted_test", DRIVER)
+        targeted = importlib.util.module_from_spec(spec)
+        with patch.dict(os.environ, {"FIGHT_DODGE_ONLY": "1", "FIGHT_DODGE_TARGET": "Mid01"}), \
+             patch.dict(sys.modules, {"unreal": self.ue}):
+            spec.loader.exec_module(targeted)
+        self.assertEqual(targeted.MID01_DODGE_SETUP_DISTANCE_CM, 120.0)
+        self.assertEqual(targeted.parry_control_distance_action(115.0), "hold")
+        self.assertEqual(targeted.parry_control_distance_action(120.0), "hold")
+        self.assertEqual(targeted.parry_control_distance_action(125.0), "hold")
+        self.assertEqual(targeted.parry_control_distance_action(128.0), "retreat")
+        self.assertEqual(targeted.parry_control_distance_action(110.0), "approach")
+        source = DRIVER.read_text(encoding="utf-8")
+        self.assertIn('MID01_DODGE_SETUP_DISTANCE_CM if FIGHT_DODGE_ONLY and FIGHT_DODGE_TARGET == "Mid01"', source)
+        self.assertIn('parry_control_distance_step(pawn, boss, pc, dist, "mid01_dodge")', source)
+
     def test_dodge_watch_presses_at_montage_target_samples_tag_and_links_following_hit(self):
         class Tag:
             def import_text(self, _value):

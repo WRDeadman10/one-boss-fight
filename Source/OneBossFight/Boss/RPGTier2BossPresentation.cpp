@@ -23,7 +23,7 @@ URPGTier2BossPresentation::URPGTier2BossPresentation()
 void URPGTier2BossPresentation::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	const bool bTier2Enabled = RPGTier1Visuals::IsTier2PreviewEnabled();
+	const bool bTier2Enabled = RPGTier1Visuals::IsTier2PresentationEnabled();
 	if (!bTier2Enabled)
 	{
 		ClearAura();
@@ -58,7 +58,7 @@ void URPGTier2BossPresentation::TickComponent(float DeltaTime, ELevelTick TickTy
 
 bool URPGTier2BossPresentation::PlayParryRecoil()
 {
-	if (!RPGTier2BossRules::ShouldPlayParryRecoil(RPGTier1Visuals::IsTier2PreviewEnabled(), true))
+	if (!RPGTier2BossRules::ShouldPlayParryRecoil(RPGTier1Visuals::IsTier2PresentationEnabled(), true))
 	{
 		return false;
 	}

@@ -46,6 +46,7 @@ PARRY_MOVE_PRESS_POSITIONS = {"A1b": 0.12, "A3b": 0.10, "A1": 0.27, "A3a": 0.42,
 PARRY_MONTAGE_PRESS_POSITIONS = {"Mid01_Anim_Montage": 0.62}
 PARRY_LOG_ONLY_MONTAGES = {"GS_SprintAttackFollowUp_Montage"}
 DODGE_ONLY_PLAYER_DISTANCE_CM = 200.0
+MID01_DODGE_SETUP_DISTANCE_CM = 120.0
 DODGE_PRESS_LEAD_SECONDS = 0.15
 DODGE_INPUT_HOLD_SECONDS = 0.10
 DODGE_ACTION_LOCK_SECONDS = 0.45
@@ -1049,7 +1050,8 @@ def _tick(dt):
         if pawn and boss and S["elapsed"] > 6.0:
             plc.enter_combat(pawn)
             bl = boss.get_actor_location()
-            setup_distance = (180.0 if FIGHT_DODGE_ONLY else
+            setup_distance = (MID01_DODGE_SETUP_DISTANCE_CM if FIGHT_DODGE_ONLY and FIGHT_DODGE_TARGET == "Mid01" else
+                              180.0 if FIGHT_DODGE_ONLY else
                               120.0 if (PARRY_ONLY_CONTROL or FIGHT_PARRY_ONLY) else 700.0)
             plc.place_player(pc, pawn, (bl.x + setup_distance, bl.y, bl.z), 180)
             S["boss_health_start"] = attr(boss, "Attribute.Health")
@@ -1133,7 +1135,12 @@ def _tick(dt):
     if FIGHT_PARRY_ONLY:
         dist = parry_control_distance_step(pawn, boss, pc, dist, "parry")
     if FIGHT_DODGE_ONLY:
-        if dist > DODGE_ONLY_PLAYER_DISTANCE_CM:
+        if FIGHT_DODGE_TARGET == "Mid01":
+            # C-1164's Lead run only reached Mid01 near 115 cm; keep this
+            # targeted probe in the same conservative 115-125 cm band used
+            # by parry-close instead of waiting at the generic 195-200 cm.
+            dist = parry_control_distance_step(pawn, boss, pc, dist, "mid01_dodge")
+        elif dist > DODGE_ONLY_PLAYER_DISTANCE_CM:
             measured_dist = dist
             bl = boss.get_actor_location()
             plc.place_player(pc, pawn, (bl.x + DODGE_ONLY_PLAYER_DISTANCE_CM - 5.0, bl.y, bl.z), 180)

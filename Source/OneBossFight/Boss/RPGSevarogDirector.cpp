@@ -1,4 +1,4 @@
-﻿// Copyright One Boss Fight. All Rights Reserved.
+// Copyright One Boss Fight. All Rights Reserved.
 
 #include "Boss/RPGSevarogDirector.h"
 #include "Pack/RPGBlueprintCall.h"
@@ -194,7 +194,7 @@ void URPGSevarogDirector::EnterPhaseTwo()
 
 void URPGSevarogDirector::ApplyPhaseTwoVisuals()
 {
-	if (!RPGTier1Visuals::IsTier2PreviewEnabled())
+	if (!RPGTier1Visuals::IsTier2PresentationEnabled())
 	{
 		return;
 	}
@@ -243,7 +243,7 @@ void URPGSevarogDirector::ClearPhaseTwoVisuals()
 
 bool URPGSevarogDirector::PlayParryRecoil()
 {
-	if (!RPGTier1Visuals::IsTier2PreviewEnabled() || !ParryRecoilMontage)
+	if (!RPGTier1Visuals::IsTier2PresentationEnabled() || !ParryRecoilMontage)
 	{
 		return false;
 	}

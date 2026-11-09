@@ -10,7 +10,7 @@ class UAnimMontage;
 class UNiagaraComponent;
 class UNiagaraSystem;
 
-/** Optional Tier 2 effects on the live pack boss. Attached by RPGPlayerMovesSubsystem on either route. */
+/** Config-enabled Tier 2 effects on the live pack boss. Attached by RPGPlayerMovesSubsystem on either route. */
 UCLASS(ClassGroup = (Boss))
 class ONEBOSSFIGHT_API URPGTier2BossPresentation : public UActorComponent
 {

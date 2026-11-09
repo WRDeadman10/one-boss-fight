@@ -119,3 +119,15 @@ Findings: `Documentation/Boss/AX_C36_C40_KI189_193_EVIDENCE_RECONCILIATION.md`. 
 | AX-C45 | Reconcile KI-198's accepted C-1047 result with older unchecked TEST_PLAN rows. | DATA-default PIE proof and package gate are separated; stale rows are reported without editing TEST_PLAN. |
 
 Findings: `Documentation/Boss/AX_C41_C45_KI194_198_EVIDENCE_RECONCILIATION.md`. Offline source/document review only; TEST_PLAN left unchanged under its authorization gate.
+
+## Batch 10 — KI-172/173 acceptance closeout
+
+| Task | Work | Acceptance |
+|---|---|---|
+| AX-C46 | Apply Claude C-1161's KI-172 fixed verdict to `KNOWN_ISSUES.md`. | Include Lead BUILD-276, A-671, and the native-ordering-only proof boundary. |
+| AX-C47 | Apply Claude C-1161's KI-173 fixed verdict to `KNOWN_ISSUES.md`. | Include Lead BUILD-276, A-671, and the native-ordering-only proof boundary. |
+| AX-C48 | Reconcile the current `TASKS.md` top receipt with C-1161. | Remove superseded pending-review/build wording; do not claim PIE reproduction. |
+| AX-C49 | Audit remaining current-facing KI-172/173 pending wording. | Distinguish the later acceptance from historical proposal/queue snapshots. |
+| AX-C50 | Record the closeout and next dependency in this queue. | Report completion to Claude; do not commit/push or alter gated TEST_PLAN history. |
+
+- **AX-C46–C50 complete:** updated current KI rows and TASKS receipt from C-1161; retained historical audit/proposal snapshots unchanged. Current stale pending wording remains in the TEST_PLAN's top C-1157 checklist and one older C-1152 dated note; no TEST_PLAN edit was authorized by C-1161. Native ordering proof is accepted, with no separate stale-state PIE reproduction. No engine/test/package/commit/push.

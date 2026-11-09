@@ -22,8 +22,8 @@ namespace RPGTier1Visuals
 
 	/** Always false outside Development: authored references remain usable there. */
 	ONEBOSSFIGHT_API bool IsTier1PreviewEnabled();
-	/** Always false outside Development; gates optional Tier 2 presentation hooks. */
-	ONEBOSSFIGHT_API bool IsTier2PreviewEnabled();
+	/** Uses the Game config default in all builds; Development supports explicit 0/1 overrides. */
+	ONEBOSSFIGHT_API bool IsTier2PresentationEnabled();
 	ONEBOSSFIGHT_API UNiagaraComponent* SpawnConfiguredEffect(UWorld* World,
 		const TSoftObjectPtr<UNiagaraSystem>& Authored, const TCHAR* Tier1Path,
 		const FVector& Location, const FRotator& Rotation, const FVector& Scale = FVector::OneVector);

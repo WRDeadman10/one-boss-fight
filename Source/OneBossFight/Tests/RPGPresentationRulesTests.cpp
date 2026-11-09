@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Misc/AutomationTest.h"
 #include "Player/RPGPresentationRules.h"
+#include "Player/RPGPresentationSettings.h"
 #include "Player/RPGLegend.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -11,10 +12,16 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGPresentationRules,
 bool FRPGPresentationRules::RunTest(const FString&)
 {
 	using namespace RPGPresentationRules;
-	TestTrue(TEXT("Development CVar enables Tier 2 when nonzero"), IsTier2PreviewEnabledForBuild(true, 1));
-	TestTrue(TEXT("any nonzero Development CVar enables Tier 2"), IsTier2PreviewEnabledForBuild(true, -1));
-	TestFalse(TEXT("zero keeps Tier 2 disabled in Development"), IsTier2PreviewEnabledForBuild(true, 0));
-	TestFalse(TEXT("a non-Development build ignores a nonzero CVar"), IsTier2PreviewEnabledForBuild(false, 1));
+	TestTrue(TEXT("configured default enables Tier 2 in Development"), IsTier2PresentationEnabledForBuild(true, true, -1));
+	TestFalse(TEXT("configured off remains off without a Development override"), IsTier2PresentationEnabledForBuild(true, false, -1));
+	TestFalse(TEXT("Development CVar zero overrides configured on"), IsTier2PresentationEnabledForBuild(true, true, 0));
+	TestTrue(TEXT("Development CVar one overrides configured off"), IsTier2PresentationEnabledForBuild(true, false, 1));
+	TestFalse(TEXT("invalid negative Development override fails closed"), IsTier2PresentationEnabledForBuild(true, true, -2));
+	TestFalse(TEXT("invalid positive Development override fails closed"), IsTier2PresentationEnabledForBuild(true, true, 2));
+	TestTrue(TEXT("non-Development builds use configured on and ignore the CVar"), IsTier2PresentationEnabledForBuild(false, true, 0));
+	TestFalse(TEXT("non-Development builds use configured off and ignore the CVar"), IsTier2PresentationEnabledForBuild(false, false, 1));
+	const URPGPresentationSettings* PresentationSettings = GetDefault<URPGPresentationSettings>();
+	TestTrue(TEXT("Tier 2 presentation config default is on"), PresentationSettings->bTier2PresentationEnabled);
 	const URPGBossLegend* Legend = GetDefault<URPGBossLegend>();
 	TestEqual(TEXT("Tier 2 MPC has an exact soft default path"), Legend->ParryFeedbackCollectionAsset.ToSoftObjectPath().ToString(),
 		FString(TEXT("/Game/OneBossFight/Data/MPC_CombatFeedback.MPC_CombatFeedback")));

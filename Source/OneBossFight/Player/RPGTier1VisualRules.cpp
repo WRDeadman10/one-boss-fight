@@ -1,6 +1,7 @@
 // Copyright One Boss Fight. All Rights Reserved.
 
 #include "Player/RPGTier1VisualRules.h"
+#include "Player/RPGPresentationSettings.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraSystem.h"
@@ -12,8 +13,8 @@ namespace
 {
 	TAutoConsoleVariable<int32> CVarTier1Art(TEXT("rpg.Art.Tier1"), 0,
 		TEXT("Development-only Tier 1 Niagara preview when a visual override field is empty."), ECVF_Default);
-	TAutoConsoleVariable<int32> CVarTier2Art(TEXT("rpg.Art.Tier2"), 0,
-		TEXT("Development-only opt-in for optional Tier 2 presentation hooks."), ECVF_Default);
+	TAutoConsoleVariable<int32> CVarTier2Art(TEXT("rpg.Art.Tier2"), -1,
+		TEXT("Development-only Tier 2 override: 0=off, 1=on, -1=use Game config; other values fail closed."), ECVF_Default);
 }
 #endif
 
@@ -26,12 +27,13 @@ bool RPGTier1Visuals::IsTier1PreviewEnabled()
 #endif
 }
 
-bool RPGTier1Visuals::IsTier2PreviewEnabled()
+bool RPGTier1Visuals::IsTier2PresentationEnabled()
 {
+	const bool bConfiguredDefault = GetDefault<URPGPresentationSettings>()->bTier2PresentationEnabled;
 #if UE_BUILD_DEVELOPMENT
-	return RPGPresentationRules::IsTier2PreviewEnabledForBuild(true, CVarTier2Art.GetValueOnGameThread());
+	return RPGPresentationRules::IsTier2PresentationEnabledForBuild(true, bConfiguredDefault, CVarTier2Art.GetValueOnGameThread());
 #else
-	return RPGPresentationRules::IsTier2PreviewEnabledForBuild(false, 0);
+	return RPGPresentationRules::IsTier2PresentationEnabledForBuild(false, bConfiguredDefault, -1);
 #endif
 }
 

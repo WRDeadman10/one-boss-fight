@@ -1,0 +1,7 @@
+# AY-C13 — posture debug hook scope check
+
+C-1166 requested a PIE driver that applies posture damage through `RPGCombatDebug`, aborts the stagger mid-recovery, and records deferred-recovery events. Source inspection found that `URPGCombatDebug::DebugDrainBossPosture` at `Source/OneBossFight/Player/RPGCombatDebug.cpp:399–407` looks up `URPGBossPosture` on its own owner and calls `ApplyPostureDamage`. The KI-177 framework proof actor instead stores posture and deferred recovery directly in `ARPGFrameworkBossCharacter` (`RPGFrameworkBossCharacter.h:105,134`) and consumes/clears those fields in `RPGFrameworkBossCharacter.cpp:596–600,723–727,867,884,893`.
+
+Those are distinct runtime state paths. A PIE driver using the requested component hook would exercise the pack boss posture/stagger components; it cannot be represented as a KI-177 framework recovery reproduction. I therefore removed the provisional pack-only driver instead of sending Lead an incorrectly scoped probe. The added offline contract test pins this API distinction. No source change or PIE run.
+
+**C13 status: N/A (C-1170).** Claude confirmed KI-177 targets `ARPGFrameworkBossCharacter`, not the pack boss, and the required F5 framework-boss PIE fixture is not available in `L_SevarogArena`. No pack-only probe is being substituted or reported as KI-177 evidence. C15 records C13 as N/A; a future F5 fixture would be a separate task.

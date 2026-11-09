@@ -23,6 +23,11 @@ class AuraComparisonContracts(unittest.TestCase):
         self.assertIn("path_of(actual) != CANDIDATE_PATH", source)
         self.assertIn('restore_original_asset(S["component"], S["original"])', source)
 
+    def test_candidate_asset_can_be_selected_by_lead_environment(self):
+        self.assertIn('os.environ.get("AURA_COMPARE_CANDIDATE", CANDIDATE_DEFAULT_PATH)', self.source)
+        self.assertIn('candidate asset path is outside the aura candidate namespace', self.source)
+        self.assertIn('AURA_COMPARE_CANDIDATE', self.source)
+
     def test_comparison_controls_health_framing_resolution_and_capture_completion(self):
         source = self.source
         for marker in ('maximum * 0.5', 'fraction=%.4f', 'distance=260.0',

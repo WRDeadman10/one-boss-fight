@@ -24,7 +24,13 @@ from aura_png_metrics import mean_gray
 
 LOG = "[AuraCompare] "
 APPROVED_PATH = "/Game/OneBossFight/VFX/NS_Boss_PhaseTwoAura.NS_Boss_PhaseTwoAura"
-CANDIDATE_PATH = "/Game/OneBossFight/VFX/NS_Boss_PhaseTwoAura_Boost.NS_Boss_PhaseTwoAura_Boost"
+CANDIDATE_DEFAULT_PATH = "/Game/OneBossFight/VFX/NS_Boss_PhaseTwoAura_Boost.NS_Boss_PhaseTwoAura_Boost"
+CANDIDATE_PATH = os.environ.get("AURA_COMPARE_CANDIDATE", CANDIDATE_DEFAULT_PATH).strip() or CANDIDATE_DEFAULT_PATH
+if not re.fullmatch(r"/Game/OneBossFight/VFX/(NS_Boss_PhaseTwoAura_[A-Za-z0-9_]+)\.\1", CANDIDATE_PATH):
+    raise RuntimeError("candidate asset path is outside the aura candidate namespace")
+MANIFEST_SCHEMA = 1
+AURA_COMPARE_BUILD_ID = os.environ.get("AURA_COMPARE_BUILD_ID", "UNKNOWN").strip() or "UNKNOWN"
+AURA_COMPARE_MAP = os.environ.get("AURA_COMPARE_MAP", "UNKNOWN").strip() or "UNKNOWN"
 EXPECTED_DATA = "/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter"
 DATA_ROUTE = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
 if DATA_ROUTE and DATA_ROUTE != EXPECTED_DATA:
@@ -152,9 +158,12 @@ def write_manifest(label, png, brightness):
     health = safe_text(lambda: "%.4f" % attribute(boss, "Get Current Attribute Value")) if boss else "UNKNOWN"
     maximum = safe_text(lambda: "%.4f" % attribute(boss, "GetMaxAttributeValue")) if boss else "UNKNOWN"
     record = {
+        "schema": MANIFEST_SCHEMA,
         "run": RUN_TAG,
         "capture_id": RUN_TAG + ":" + label,
         "route": ROUTE,
+        "build_id": AURA_COMPARE_BUILD_ID,
+        "map": AURA_COMPARE_MAP,
         "frame": label,
         "phase": phase,
         "game_time_s": plc.game_time(world),

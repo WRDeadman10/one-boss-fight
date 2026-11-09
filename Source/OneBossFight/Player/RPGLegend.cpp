@@ -167,7 +167,7 @@ bool URPGLegendSubsystem::RequestSlowMotion(float Scale, float RealSeconds, cons
 void URPGLegendSubsystem::BeginParryFeedbackPulse(UMaterialParameterCollection* Collection, FName Parameter, USoundMix* SoundMix,
 	UMaterialInterface* Material, AActor* ParryingActor)
 {
-	if (!RPGTier1Visuals::IsTier2PreviewEnabled())
+	if (!RPGTier1Visuals::IsTier2PresentationEnabled())
 	{
 		return;
 	}
@@ -395,11 +395,11 @@ URPGBossLegend::URPGBossLegend()
 void URPGBossLegend::BeginPlay()
 {
 	Super::BeginPlay();
-	if (RPGTier1Visuals::IsTier2PreviewEnabled() && !ParryDistortionMaterial.IsNull())
+	if (RPGTier1Visuals::IsTier2PresentationEnabled() && !ParryDistortionMaterial.IsNull())
 	{
 		LoadedParryDistortionMaterial = ParryDistortionMaterial.LoadSynchronous();
 	}
-	if (RPGTier1Visuals::IsTier2PreviewEnabled() && !ParryFeedbackCollection && !ParryFeedbackCollectionAsset.IsNull())
+	if (RPGTier1Visuals::IsTier2PresentationEnabled() && !ParryFeedbackCollection && !ParryFeedbackCollectionAsset.IsNull())
 	{
 		ParryFeedbackCollection = ParryFeedbackCollectionAsset.LoadSynchronous();
 	}
@@ -596,7 +596,7 @@ bool URPGBossLegend::HandlePlayerParrySlowMotion(RPGParryGrade::EGrade Grade, co
 		return false;
 	}
 	UMaterialInterface* Distortion = nullptr;
-	if (RPGTier1Visuals::IsTier2PreviewEnabled() && !ParryDistortionMaterial.IsNull())
+	if (RPGTier1Visuals::IsTier2PresentationEnabled() && !ParryDistortionMaterial.IsNull())
 	{
 		if (!LoadedParryDistortionMaterial)
 		{
@@ -604,14 +604,14 @@ bool URPGBossLegend::HandlePlayerParrySlowMotion(RPGParryGrade::EGrade Grade, co
 		}
 		Distortion = LoadedParryDistortionMaterial;
 	}
-	if (RPGTier1Visuals::IsTier2PreviewEnabled() && !ParryFeedbackCollection && !ParryFeedbackCollectionAsset.IsNull())
+	if (RPGTier1Visuals::IsTier2PresentationEnabled() && !ParryFeedbackCollection && !ParryFeedbackCollectionAsset.IsNull())
 	{
 		ParryFeedbackCollection = ParryFeedbackCollectionAsset.LoadSynchronous(); // late Development cvar enablement
 	}
 	Time->BeginParryFeedbackPulse(ParryFeedbackCollection, ParryPulseParameter, ParrySlowMotionSoundMix, Distortion, ParryingActor);
 #if UE_BUILD_DEVELOPMENT
 	UE_LOG(LogRPGLegend, Display, TEXT("Tier2 parry feedback requested grade=%d tier2=%d material=%s collection=%s target=%s"),
-		static_cast<int32>(Grade), RPGTier1Visuals::IsTier2PreviewEnabled() ? 1 : 0,
+		static_cast<int32>(Grade), RPGTier1Visuals::IsTier2PresentationEnabled() ? 1 : 0,
 		*GetNameSafe(Distortion), *GetNameSafe(ParryFeedbackCollection), *GetNameSafe(ParryingActor));
 #endif
 	LastParrySlowMotionTime = NowReal;

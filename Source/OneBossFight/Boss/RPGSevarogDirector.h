@@ -45,7 +45,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase")
 	TObjectPtr<UAnimMontage> PhaseRoarMontage;
 
-	/** Optional Tier 2 phase-two aura. Empty by default and only previewed in Development with rpg.Art.Tier2=1. */
+	/** Optional authored aura asset. Tier 2 presentation is enabled by Game config in all builds; Development can override it. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase|Visuals")
 	TSoftObjectPtr<UNiagaraSystem> PhaseTwoAuraEffect;
 
@@ -55,7 +55,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Phase|Visuals")
 	FName PhaseTwoGlowParameter = TEXT("PhaseTwoGlow");
 
-	/** Optional recoil montage; parry hit stop is unchanged when unset or when Tier 2 preview is off. */
+	/** Optional recoil montage; parry hit stop remains unchanged when unset or Tier 2 is disabled. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parry|Visuals")
 	TObjectPtr<UAnimMontage> ParryRecoilMontage = nullptr;
 

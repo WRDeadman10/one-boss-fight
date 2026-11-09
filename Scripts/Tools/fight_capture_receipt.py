@@ -15,30 +15,36 @@ REFILL_RE = re.compile(r"\[FullFight\] PLAYER_REFILL count=(\d+) t=([0-9.eE+-]+)
 DEATH_RE = re.compile(r"\[FullFight\] PLAYER_DEATH count=(\d+) t=([0-9.eE+-]+) reason=(.+)")
 BOSS_DEAD_RE = re.compile(r"\[FullFight\] BOSS_DEAD at ([0-9.eE+-]+) s")
 ROUTE_RE = re.compile(r"\[EncounterActivation\] route=(legacy|data)\b")
+FRAME_CONTEXT_SCHEMA = 1
 FINISH_RE = re.compile(r"\[FullFight\] finished: (.+)$")
-CONTACT_RE = re.compile(r"\[FullFight\] PARRY_CONTACT instance=(\d+) t=([0-9.eE+-]+) parried_delta=(\d+) boss_montage=(\S+)")
+CONTACT_RE = re.compile(r"\[FullFight\] PARRY_CONTACT instance=(\d+) move=(\S+) source=(\S+) t=([0-9.eE+-]+) parried_before=(\d+) parried_after=(\d+) parried_delta=(\d+) press_count=(\d+) sweep_parried_before=(\d+) sweep_parried_after=(\d+) boss_montage=(\S+)")
 PARRY_DIAG_RE = re.compile(r"\[FullFight\] PARRY_DIAG montage=(\S+) tracker_move=(\S+) tracker_instance=(\d+) tracker_active=(true|false) tracker_position=([0-9.eE+-]+) sweep_active=(true|false) sweep_count=(\d+)")
-PARRY_TIMEOUT_RE = re.compile(r"\[FullFight\] PARRY_WATCH_RESULT outcome=timeout_no_live_a4 slot=(\S+) seconds=([0-9.eE+-]+)")
-PARRY_ATTEMPT_RE = re.compile(r"\[FullFight\] PARRY_ATTEMPT instance=(\d+) active=(true|false) source=(\S+) montage=(\S+) sweep_active=(true|false) sweep_count=(\d+) position=([0-9.eE+-]+) opened=(true|false) parried_before=(\d+)")
+PARRY_TIMEOUT_RE = re.compile(r"\[FullFight\] PARRY_WATCH_RESULT outcome=timeout_no_live_(?:a4|tracker_window) slot=(\S+) seconds=([0-9.eE+-]+)")
+PARRY_ATTEMPT_RE = re.compile(r"\[FullFight\] PARRY_ATTEMPT instance=(\d+) move=(\S+) active=(true|false) source=(\S+) montage=(\S+) sweep_active=(true|false) sweep_count=(\d+) position=([0-9.eE+-]+) opened=(true|false) parried_before=(\d+) press_count_before=(\d+) press_count_after=(\d+) sweep_parried_before=(\d+)")
+PARRY_RESULT_RE = re.compile(r"\[FullFight\] PARRY_RESULT instance=(\d+) outcome=(\S+) (.+)")
 
 
 def validate_parry_diagnostics(lines):
-    transitions, timeouts, attempts = [], [], []
-    previous_montage = None
+    transitions, timeouts, attempts, results = [], [], [], []
+    previous_transition = None
+    attempt_instances = set()
+    previous_press_count = None
     timeout_slots = set()
+    result_instances = set()
     for line in lines:
         if "[FullFight] PARRY_DIAG " in line:
             match = PARRY_DIAG_RE.search(line)
             if not match:
                 raise ValueError("malformed PARRY_DIAG transition")
             montage, move, instance, active, position, sweep, sweep_count = match.groups()
-            if montage == previous_montage:
-                raise ValueError("duplicate montage transition diagnostic")
-            previous_montage = montage
+            transition = (montage, active)
+            if transition == previous_transition:
+                raise ValueError("duplicate montage/active transition diagnostic")
+            previous_transition = transition
             transitions.append({"montage": montage, "tracker_move": move, "tracker_instance": int(instance),
                                 "tracker_active": active == "true", "tracker_position": _number(position, "tracker position"),
                                 "sweep_active": sweep == "true", "sweep_count": int(sweep_count)})
-        elif "outcome=timeout_no_live_a4" in line:
+        elif "outcome=timeout_no_live_a4" in line or "outcome=timeout_no_live_tracker_window" in line:
             match = PARRY_TIMEOUT_RE.search(line)
             if not match:
                 raise ValueError("malformed parry timeout slot")
@@ -47,11 +53,47 @@ def validate_parry_diagnostics(lines):
                 raise ValueError("duplicate timeout slot")
             timeout_slots.add(slot)
             timeouts.append({"slot": slot, "seconds": _number(seconds, "parry timeout seconds")})
+        elif "[FullFight] PARRY_RESULT " in line:
+            match = PARRY_RESULT_RE.search(line)
+            if not match:
+                raise ValueError("malformed PARRY_RESULT")
+            instance, outcome, details = match.groups()
+            if int(instance) not in attempt_instances:
+                raise ValueError("parry result has no preceding attempt")
+            if int(instance) in result_instances:
+                raise ValueError("duplicate parry result instance")
+            result_instances.add(int(instance))
+            if outcome == "no_contact":
+                values = re.fullmatch(r"parried_before=(\d+) parried_after=(\d+)", details)
+                if not values:
+                    raise ValueError("malformed PARRY_RESULT no_contact")
+                before, after = map(int, values.groups())
+                if before != after:
+                    raise ValueError("no-contact parry counter changed")
+                results.append({"instance": int(instance), "outcome": outcome,
+                                "parried_before": before, "parried_after": after})
+            elif outcome == "window_refused":
+                refused = re.fullmatch(r"parried_before=(\d+)", details)
+                if not refused:
+                    raise ValueError("malformed PARRY_RESULT window_refused")
+                results.append({"instance": int(instance), "outcome": outcome,
+                                "parried_before": int(refused.group(1))})
+            elif outcome == "unexpected_parried_delta":
+                delta = re.fullmatch(r"delta=(\d+)", details)
+                if not delta or int(delta.group(1)) <= 1:
+                    raise ValueError("malformed PARRY_RESULT unexpected delta")
+                results.append({"instance": int(instance), "outcome": outcome, "delta": int(delta.group(1))})
+            elif outcome == "interrupted" and re.fullmatch(r"reason=.+", details):
+                results.append({"instance": int(instance), "outcome": outcome,
+                                "reason": details[len("reason="): ]})
+            else:
+                raise ValueError("malformed PARRY_RESULT outcome")
         elif "[FullFight] PARRY_ATTEMPT " in line:
             match = PARRY_ATTEMPT_RE.search(line)
             if not match:
                 raise ValueError("malformed PARRY_ATTEMPT source receipt")
-            instance, active, source, montage, sweep_active, sweep_count, position, opened, before = match.groups()
+            (instance, move, active, source, montage, sweep_active, sweep_count, position,
+             opened, before, press_before, press_after, sweep_before) = match.groups()
             if active != "true":
                 raise ValueError("parry attempt is not tied to a live window")
             if source == "boss_montage_sweep" and not (
@@ -59,11 +101,25 @@ def validate_parry_diagnostics(lines):
                 raise ValueError("A4 montage fallback lacks a live sweep witness")
             if source not in ("tracker", "boss_montage_sweep"):
                 raise ValueError("unknown parry window source")
-            attempts.append({"instance": int(instance), "source": source, "montage": montage,
+            if min(int(instance), int(sweep_count), int(before), int(press_before),
+                   int(press_after), int(sweep_before)) < 0:
+                raise ValueError("negative parry attempt counter")
+            _number(position, "parry attempt position")
+            if int(instance) in attempt_instances:
+                raise ValueError("duplicate parry attempt instance")
+            if previous_press_count is not None and int(press_before) != previous_press_count:
+                raise ValueError("parry attempt press counter sequence is discontinuous")
+            if int(press_after) != int(press_before) + 1:
+                raise ValueError("parry attempt press counter did not increment exactly once")
+            attempt_instances.add(int(instance))
+            previous_press_count = int(press_after)
+            attempts.append({"instance": int(instance), "move": move, "source": source, "montage": montage,
                              "sweep_active": sweep_active == "true", "sweep_count": int(sweep_count),
                              "position": _number(position, "parry attempt position"),
-                             "opened": opened == "true", "parried_before": int(before)})
-    return {"transitions": transitions, "timeouts": timeouts, "attempts": attempts}
+                             "opened": opened == "true", "parried_before": int(before),
+                             "press_count_before": int(press_before), "press_count_after": int(press_after),
+                             "sweep_parried_before": int(sweep_before)})
+    return {"transitions": transitions, "timeouts": timeouts, "attempts": attempts, "results": results}
 
 
 def _json_marker(lines, prefix, name):
@@ -102,7 +158,7 @@ def parse_receipt(source):
     for key in summary_fields:
         if key not in summary:
             raise ValueError("missing summary total/field %s" % key)
-    required = ("run", "build_id", "map", "route", "tier2", "tool_sha256")
+    required = ("run", "build_id", "map", "route", "tier2", "tool_sha256", "frame_context_schema")
     for key in required:
         if key not in provenance or provenance[key] in (None, "", "UNKNOWN"):
             raise ValueError("missing or unknown provenance %s" % key)
@@ -112,6 +168,8 @@ def parse_receipt(source):
         raise ValueError("tier2 provenance must be boolean")
     if not re.fullmatch(r"[0-9a-f]{64}", str(provenance["tool_sha256"])):
         raise ValueError("invalid tool_sha256")
+    if type(provenance["frame_context_schema"]) is not int or provenance["frame_context_schema"] != FRAME_CONTEXT_SCHEMA:
+        raise ValueError("unsupported frame_context_schema")
     run = str(provenance["run"])
     if summary.get("run") != run:
         raise ValueError("summary run does not match provenance")
@@ -155,10 +213,21 @@ def parse_receipt(source):
             match = CONTACT_RE.search(line)
             if not match:
                 raise ValueError("malformed PARRY_CONTACT marker")
-            instance, when, delta, montage = match.groups()
-            if int(delta) != 1:
+            (instance, move, source, when, before, after, delta, press_count,
+             sweep_before, sweep_after, montage) = match.groups()
+            if min(int(instance), int(before), int(after), int(delta), int(press_count),
+                   int(sweep_before), int(sweep_after)) < 0:
+                raise ValueError("negative parry contact counter")
+            if int(delta) != 1 or int(after) - int(before) != 1:
                 raise ValueError("parry contact lacks an exact-one parried-count increment")
-            contacts.append({"instance": int(instance), "time": _number(when, "parry contact time")})
+            if source not in ("tracker", "boss_montage_sweep") or int(press_count) < 1:
+                raise ValueError("parry contact lacks a valid source/press witness")
+            if int(sweep_after) < int(sweep_before):
+                raise ValueError("sweep parry counter regressed")
+            contacts.append({"instance": int(instance), "move": move, "source": source,
+                             "time": _number(when, "parry contact time"),
+                             "parried_before": int(before), "parried_after": int(after),
+                             "press_count": int(press_count), "sweep_parried_delta": int(sweep_after)-int(sweep_before)})
         elif "[FullFight] FRAME_CONTEXT " in line:
             raw = line.split("[FullFight] FRAME_CONTEXT ", 1)[1]
             try:
@@ -173,12 +242,19 @@ def parse_receipt(source):
                                 "world_occlusion")
             if any(key not in context for key in required_context):
                 raise ValueError("FRAME_CONTEXT missing required field")
-            if context["world_occlusion"] not in ("UNMEASURED", "UNKNOWN"):
+            if type(context.get("schema")) is not int or context["schema"] != FRAME_CONTEXT_SCHEMA:
+                raise ValueError("unsupported FRAME_CONTEXT schema")
+            for field in ("run", "frame_marker_id", "action_id"):
+                if not isinstance(context[field], str) or not context[field]:
+                    raise ValueError("FRAME_CONTEXT identity fields must be non-empty strings")
+            if not isinstance(context["world_occlusion"], str) or context["world_occlusion"] not in ("UNMEASURED", "UNKNOWN"):
                 raise ValueError("world_occlusion cannot claim clear without a trace receipt")
-            if context["camera_inside_boss_component_bounds"] not in (True, False, "UNKNOWN"):
+            bounds_state = context["camera_inside_boss_component_bounds"]
+            if (type(bounds_state) is not bool and bounds_state != "UNKNOWN"):
                 raise ValueError("invalid camera bounds state")
             for field in ("player_in_camera_frame_estimate", "boss_in_camera_frame_estimate"):
-                if context[field] not in (True, False, "UNKNOWN"):
+                value = context[field]
+                if type(value) is not bool and value != "UNKNOWN":
                     raise ValueError("invalid camera framing estimate")
             for field in ("camera_position", "player_position", "boss_position"):
                 value = context[field]
@@ -309,11 +385,64 @@ def parse_receipt(source):
     for name in required_names[:7]:
         by_action.setdefault(name, [])
     parry_diagnostics = validate_parry_diagnostics(lines)
+    attempts_by_instance = {row["instance"]: row for row in parry_diagnostics["attempts"]}
+    seen_result_instances = set()
+    contact_instances = {row["instance"] for row in contacts}
+    for result in parry_diagnostics["results"]:
+        instance = result["instance"]
+        attempt = attempts_by_instance.get(instance)
+        if attempt is None:
+            raise ValueError("parry result has no preceding attempt")
+        if instance in seen_result_instances:
+            raise ValueError("duplicate parry result instance")
+        seen_result_instances.add(instance)
+        if result["outcome"] == "window_refused":
+            if (attempt["opened"] or result["parried_before"] != attempt["parried_before"] or
+                    instance in contact_instances):
+                raise ValueError("window-refused result contradicts attempt")
+        elif result["outcome"] == "no_contact":
+            if (not attempt["opened"] or result["parried_before"] != attempt["parried_before"] or
+                    instance in contact_instances):
+                raise ValueError("no-contact result contradicts attempt")
+    action_ids = {action_id: action["name"] for action_id, action in actions.items()}
+    for timeout in parry_diagnostics["timeouts"]:
+        if action_ids.get(timeout["slot"]) != "parry_watch":
+            raise ValueError("parry timeout slot has no matching parry_watch action")
+    attempt_line_by_instance = {int(match.group(1)): index for index, line in enumerate(lines)
+                                if (match := PARRY_ATTEMPT_RE.search(line))}
+    contact_line_by_instance = {int(match.group(1)): index for index, line in enumerate(lines)
+                                if (match := CONTACT_RE.search(line))}
+    seen_contact_instances = set()
+    previous_contact_count = None
+    for contact in contacts:
+        attempt = attempts_by_instance.get(contact["instance"])
+        if contact["instance"] in seen_contact_instances:
+            raise ValueError("duplicate successful parry contact")
+        seen_contact_instances.add(contact["instance"])
+        if previous_contact_count is not None and contact["parried_before"] != previous_contact_count:
+            raise ValueError("successful parry counter sequence is discontinuous")
+        if (attempt is None or not attempt["opened"] or
+                attempt_line_by_instance.get(contact["instance"], len(lines)) >=
+                contact_line_by_instance.get(contact["instance"], -1) or
+                attempt["move"] != contact["move"] or
+                attempt["source"] != contact["source"] or
+                attempt["press_count_after"] != contact["press_count"] or
+                attempt["parried_before"] != contact["parried_before"]):
+            if attempt is not None and not attempt["opened"]:
+                raise ValueError("contact attempt did not open")
+            raise ValueError("parry contact has no preceding matching attempt")
+        previous_contact_count = contact["parried_after"]
+    for instance in attempts_by_instance:
+        terminal_events = int(instance in contact_instances) + int(instance in seen_result_instances)
+        if terminal_events != 1:
+            raise ValueError("parry attempt lacks exactly one terminal outcome")
     return {"run": run, "build_id": provenance["build_id"], "map": provenance["map"],
+            "frame_context_schema": FRAME_CONTEXT_SCHEMA,
             "route_witness": routes[0], "tier2": provenance["tier2"], "tool_sha256": provenance["tool_sha256"],
             "fight_seconds": float(summary["fight_seconds"]), "boss_dead": summary_dead,
             "ending_reason": finishes[0], "action_counts": counts, "actions": by_action,
             "successful_parries": len(contacts), "player_refills": len(refills),
+            "parry_contacts": contacts,
             "player_deaths": len(deaths), "frames": frame_rows, "frame_context": context_rows,
             "parry_diagnostics": parry_diagnostics,
             "boss_health_start": summary.get("boss_health_start"),

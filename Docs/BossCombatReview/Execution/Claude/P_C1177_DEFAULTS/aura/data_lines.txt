@@ -1,0 +1,2 @@
+﻿[2026.11.09-07.19.44:461][  6]LogTemp: Display: [EncounterActivation] default data startup: selected /Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter for map L_SevarogArena
+[2026.11.09-07.19.44:521][  6]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending
