@@ -2,14 +2,19 @@
 Read-only probe for Ember Warden animation assets under /Game/OneBossFight/Boss01/Animations/.
 Prints play_length, num_sections, section names, and notifies for montages and sequences.
 
-Authority: Claude Lead Directive [C-1235] (2026-11-10).
+Authority: Claude Lead Directives [C-1235], [C-1236] (2026-11-10).
 Discipline:
   - Strictly read-only; saves zero assets.
-  - Can be run headless:
-    UnrealEditor.exe OneBossFight.uproject -run=pythonscript -script=Scripts/Editor/probe_ember_montages.py -unattended -nosound -nosplash -nullrhi
+  - Fail-safe: every property read is guarded so an unexposed 5.5 Python property logs 'n/a' rather than aborting.
+  - Uses confirmed 5.5 APIs:
+    * AnimationLibrary.get_animation_notify_events(asset) for notifies.
+    * m.get_num_sections() and m.get_section_name(i) for montage sections.
+    * m.get_play_length() / s.get_play_length() for duration.
 """
 
 import unreal
+
+AL = unreal.AnimationLibrary
 
 ANIM_ROOT = "/Game/OneBossFight/Boss01/Animations"
 
@@ -47,6 +52,24 @@ def log(msg):
     unreal.log(f"[EmberProbe] {msg}")
 
 
+def safe_call(fn, desc, fallback="n/a"):
+    """Executes fn and returns its string result, or 'n/a <desc>' if an exception occurs."""
+    try:
+        val = fn()
+        return str(val) if val is not None else fallback
+    except Exception as ex:
+        return f"n/a ({desc}: {type(ex).__name__})"
+
+
+def safe_prop(obj, prop_name, fallback="n/a"):
+    """Reads an editor property safely, returning fallback if not exposed in UE 5.5."""
+    try:
+        val = obj.get_editor_property(prop_name)
+        return str(val) if val is not None else fallback
+    except Exception:
+        return fallback
+
+
 def probe_montages():
     log("=== EMBER MONTAGES ===")
     for name in MONTAGES:
@@ -56,37 +79,55 @@ def probe_montages():
             log(f"MISSING {name}")
             continue
 
-        length = m.get_play_length()
-        num_sections = m.get_num_sections()
-        log(f"MONTAGE {name}: play_length={length:.6f} sections={num_sections}")
+        length_str = safe_call(lambda: f"{m.get_play_length():.6f}", "play_length")
+        num_sections_val = 0
+        try:
+            num_sections_val = m.get_num_sections()
+            sections_str = str(num_sections_val)
+        except Exception:
+            sections_str = "n/a (get_num_sections)"
 
-        for sec_idx in range(num_sections):
-            sec_name = m.get_section_name(sec_idx)
-            sec_start = m.get_section_start_time(sec_idx)
-            sec_len = m.get_section_length(sec_idx)
-            log(f"  section[{sec_idx}] '{sec_name}': start={sec_start:.4f} len={sec_len:.4f}")
+        log(f"MONTAGE {name}: play_length={length_str} sections={sections_str}")
 
-        # List all notifies
-        notifies = m.get_editor_property("notifies")
-        log(f"  notifies count={len(notifies) if notifies else 0}")
-        if notifies:
-            for i, ev in enumerate(notifies):
-                cls = ev.get_editor_property("notify_state_class") or ev.get_editor_property("notify")
-                cls_name = cls.get_name() if cls else "None"
-                # Display / trigger time
-                time_val = None
-                for tprop in ("link_value", "trigger_time_offset"):
-                    try:
-                        time_val = ev.get_editor_property(tprop)
-                        break
-                    except Exception:
-                        pass
-                dur_val = None
+        if isinstance(num_sections_val, int) and num_sections_val > 0:
+            for sec_idx in range(num_sections_val):
+                sec_name = safe_call(lambda idx=sec_idx: m.get_section_name(idx), f"sec_name[{sec_idx}]")
+                sec_start = safe_call(lambda idx=sec_idx: f"{m.get_section_start_time(idx):.4f}", f"sec_start[{sec_idx}]")
+                sec_len = safe_call(lambda idx=sec_idx: f"{m.get_section_length(idx):.4f}", f"sec_len[{sec_idx}]")
+                log(f"  section[{sec_idx}] '{sec_name}': start={sec_start} len={sec_len}")
+
+        # Rule 2: Use AnimationLibrary.get_animation_notify_events(m)
+        notifies = []
+        try:
+            notifies = list(AL.get_animation_notify_events(m))
+            log(f"  notifies count={len(notifies)}")
+        except Exception as ex:
+            log(f"  notifies count=n/a (get_animation_notify_events: {type(ex).__name__})")
+
+        for i, ev in enumerate(notifies):
+            cls_name = "None"
+            try:
+                st = ev.get_editor_property("notify_state_class")
+                no = ev.get_editor_property("notify")
+                obj = st if st is not None else no
+                if obj is not None:
+                    cls_name = obj.get_class().get_name()
+            except Exception:
+                pass
+
+            time_val = "n/a"
+            for tfield in ("trigger_time_offset", "link_value"):
                 try:
-                    dur_val = ev.get_editor_property("duration")
+                    val = ev.get_editor_property(tfield)
+                    if val is not None:
+                        time_val = f"{float(val):.4f}"
+                        break
                 except Exception:
                     pass
-                log(f"    notify[{i}] cls={cls_name} time={time_val} dur={dur_val}")
+
+            dur_val = safe_prop(ev, "duration", fallback="n/a")
+            track_val = safe_prop(ev, "track_index", fallback="n/a")
+            log(f"    notify[{i}] cls={cls_name} time={time_val} dur={dur_val} track={track_val}")
 
 
 def probe_sequences():
@@ -98,15 +139,12 @@ def probe_sequences():
             log(f"MISSING {name}")
             continue
 
-        try:
-            length = s.get_play_length()
-            log(f"SEQUENCE {name}: play_length={length:.6f}")
-        except Exception as ex:
-            log(f"SEQUENCE {name}: error reading length ({ex})")
+        length_str = safe_call(lambda: f"{s.get_play_length():.6f}", "seq_length")
+        log(f"SEQUENCE {name}: play_length={length_str}")
 
 
 def main():
-    log("Starting read-only Ember animation asset audit probe...")
+    log("Starting read-only Ember animation asset audit probe (C-1236 guarded)...")
     probe_montages()
     probe_sequences()
     log("Audit probe complete.")

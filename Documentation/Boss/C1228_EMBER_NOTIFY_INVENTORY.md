@@ -33,7 +33,7 @@ This inventory directly supports task `C-1228a` (Codex's montage-notify timing o
 | **A2** *(stand-in)* | `GS_ChargedAttack_Montage` | Pack Montage | 3.400 s | 1 | DisableMov, 2x Trace, 2x Sound | 1.68 s | 1.93 .. 2.11 s | Ground slam (unparryable) | [`RPGAttackTracker.cpp:35-44`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGAttackTracker.cpp#L35-L44) |
 | **A6** *(stand-in)* | `GS_LeapAttack_Montage` | Pack Montage | 1.867 s | 1 | 2x Rotation, Trace | 0.16 s | 0.75 .. 1.17 s | Ground landing | [`RPGAttackTracker.cpp:74-82`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGAttackTracker.cpp#L74-L82) |
 | **Parry Recoil** | [`AM_Boss01_ParryRecoil`](file:///c:/UnrealProject/OneBossFight/Content/OneBossFight/Boss01/Animations/AM_Boss01_ParryRecoil.uasset) | Montage | 0.600 s | 1 | `ANS_InputBuffer_C` (0.000..0.296 s) | N/A | Stun Reaction | Parry Result | [`RPGTier2BossPresentation.cpp:20,59-68`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Boss/RPGTier2BossPresentation.cpp#L20) |
-| **Death** | [`AM_Boss01_DeathLegend`](file:///c:/UnrealProject/OneBossFight/Content/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.uasset) | Montage | 3.400 s | 1 | No blend out (pose frozen at 2.50 s+) | N/A | Death State | Defeated State | [`RPGBossDeath.cpp:38,227-312`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGBossDeath.cpp#L38) |
+| **Death** | [`AM_Boss01_DeathLegend`](file:///c:/UnrealProject/OneBossFight/Content/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.uasset) | Montage | 3.500 s | 1 | No blend out (pose frozen at 2.50 s+) | N/A | Death State | Defeated State | [`RPGBossDeath.cpp:38,227-312`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGBossDeath.cpp#L38) |
 | **Phase Roar** | [`AN_Boss01_PhaseRoar`](file:///c:/UnrealProject/OneBossFight/Content/OneBossFight/Boss01/Animations/AN_Boss01_PhaseRoar.uasset) | Sequence Clip | 1.800 s | 1 | Played via `RPGBossClips::Play` | N/A | Phase Transition | Invulnerable | [`RPGBossPhases.cpp:56,301-305`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGBossPhases.cpp#L56) |
 
 ---
@@ -189,10 +189,10 @@ This inventory directly supports task `C-1228a` (Codex's montage-notify timing o
 
 ### 3.8. `AM_Boss01_DeathLegend` — Ember Warden Legend Death Montage
 - **Asset Path:** `/Game/OneBossFight/Boss01/Animations/AM_Boss01_DeathLegend.AM_Boss01_DeathLegend`
-- **Source Sequence:** `AN_Boss01_DeathLegend` (Length: 3.400 s)
+- **Source Sequence:** `AN_Boss01_DeathLegend` (Length: `3.500 s`, verified via `Docs/BossCombatReview/Execution/Claude/P_C1236_EMBERPROBE/probe2.log`)
 - **Asset Properties:** `enable_auto_blend_out = false` (configured via `Scripts/Editor/make_death_montage.py` so final defeated pose remains frozen on ground)
 - **Sections:** 1 composite section:
-  - `Default` / `AN_Boss01_DeathLegend`: [0.000 s .. 3.400 s]
+  - `Default` / `AN_Boss01_DeathLegend`: [0.000 s .. 3.500 s]
 - **C++ Source Mapping:**
   - Soft path definition: [`Source/OneBossFight/Player/RPGBossDeath.cpp:38`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGBossDeath.cpp#L38)
   - Loading & montage resolution: [`Source/OneBossFight/Player/RPGBossDeath.cpp:146-172`](file:///c:/UnrealProject/OneBossFight/Source/OneBossFight/Player/RPGBossDeath.cpp#L146-L172)
