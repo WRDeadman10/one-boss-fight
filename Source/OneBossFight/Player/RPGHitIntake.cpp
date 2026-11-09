@@ -7,6 +7,7 @@
 #include "Player/RPGBossPosture.h"
 #include "Player/RPGFlipbookEffect.h"
 #include "Player/RPGPlayerMovesSubsystem.h"
+#include "Player/RPGBossEncounter.h"
 #include "Player/RPGSwingTracker.h"
 #include "Player/RPGDodgeTiming.h"
 #include "Animation/AnimInstance.h"
@@ -173,7 +174,46 @@ void URPGHitIntake::BeginPlay()
 void URPGHitIntake::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Unbind();
+	if (URPGBossEncounter* Encounter = ResetBroadcastSource.Get())
+	{
+		Encounter->OnResetBroadcast().Remove(ResetBroadcastHandle);
+	}
+	ResetBroadcastSource.Reset();
+	ResetBroadcastHandle.Reset();
+	if (UWorld* World = GetWorld(); World && FinalizePendingTimer.IsValid())
+	{
+		World->GetTimerManager().ClearTimer(FinalizePendingTimer);
+	}
 	Super::EndPlay(EndPlayReason);
+}
+
+void URPGHitIntake::BindEncounter(URPGBossEncounter* Encounter)
+{
+	if (!Encounter || ResetBroadcastSource.Get() == Encounter)
+	{
+		return;
+	}
+	if (URPGBossEncounter* Previous = ResetBroadcastSource.Get())
+	{
+		Previous->OnResetBroadcast().Remove(ResetBroadcastHandle);
+	}
+	ResetBroadcastSource = Encounter;
+	ResetBroadcastHandle = Encounter->OnResetBroadcast().AddUObject(this, &URPGHitIntake::OnEncounterReset);
+}
+
+void URPGHitIntake::OnEncounterReset(uint64 ParticipantGeneration, int32 ResetCount)
+{
+	URPGBossEncounter* Encounter = ResetBroadcastSource.Get();
+	Pending.RemoveAll([Encounter](const FPending& Entry) { return Entry.Encounter.Get() == Encounter; });
+	if (Pending.IsEmpty() && bFinalizeScheduled)
+	{
+		if (UWorld* World = GetWorld(); World && FinalizePendingTimer.IsValid())
+		{
+			World->GetTimerManager().ClearTimer(FinalizePendingTimer);
+		}
+		FinalizePendingTimer.Invalidate();
+		bFinalizeScheduled = false;
+	}
 }
 
 void URPGHitIntake::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -465,6 +505,12 @@ void URPGHitIntake::InjectBossPendingHitForTest(AActor* Boss, FName Weapon, ERPG
 		Entry.Record = BuildRecord(FHitResult(Boss, nullptr, Boss->GetActorLocation(), FVector::UpVector), Boss, ActiveTarget);
 		Entry.Record.Weapon = Weapon;
 		Entry.Record.Montage = FName(TEXT("FrameworkProofSyntheticSwing"));
+		if (URPGBossEncounter* Encounter = Boss->FindComponentByClass<URPGBossEncounter>())
+		{
+			BindEncounter(Encounter);
+			Entry.Encounter = Encounter;
+			Entry.EncounterGeneration = Encounter->GetParticipantGeneration();
+		}
 		Entry.bNative = true;
 		Entry.bForceKind = true;
 		Entry.ForcedKind = Kind;
@@ -474,7 +520,7 @@ void URPGHitIntake::InjectBossPendingHitForTest(AActor* Boss, FName Weapon, ERPG
 	if (!bFinalizeScheduled && GetWorld())
 	{
 		bFinalizeScheduled = true;
-		GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateUObject(this, &URPGHitIntake::FinalizePending));
+		FinalizePendingTimer = GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateUObject(this, &URPGHitIntake::FinalizePending));
 	}
 #endif
 }
@@ -511,17 +557,24 @@ void URPGHitIntake::HandlePackHit(FHitResult HitResult)
 	Entry.Record = BuildRecord(HitResult, Target, ActiveTarget, &Entry.OverrideKind);
 	Entry.ActiveTarget = ActiveTarget;
 	Entry.bNative = bNativeBoss;
+	if (URPGBossEncounter* Encounter = Target ? Target->FindComponentByClass<URPGBossEncounter>() : nullptr)
+	{
+		BindEncounter(Encounter);
+		Entry.Encounter = Encounter;
+		Entry.EncounterGeneration = Encounter->GetParticipantGeneration();
+	}
 	Pending.Add(MoveTemp(Entry));
 	if (!bFinalizeScheduled && GetWorld())
 	{
 		bFinalizeScheduled = true;
-		GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateUObject(this, &URPGHitIntake::FinalizePending));
+		FinalizePendingTimer = GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateUObject(this, &URPGHitIntake::FinalizePending));
 	}
 }
 
 void URPGHitIntake::FinalizePending()
 {
 	bFinalizeScheduled = false;
+	FinalizePendingTimer.Invalidate();
 	const bool bShared = Pending.Num() > 1;
 	TArray<FPending> Batch = MoveTemp(Pending);
 	Pending.Reset();
@@ -529,6 +582,14 @@ void URPGHitIntake::FinalizePending()
 	TArray<FName> SeenMontages;
 	for (FPending& Entry : Batch)
 	{
+		if (Entry.EncounterGeneration != 0)
+		{
+			const URPGBossEncounter* Encounter = Entry.Encounter.Get();
+			if (!Encounter || Encounter->GetParticipantGeneration() != Entry.EncounterGeneration)
+			{
+				continue;
+			}
+		}
 		FRPGHitRecord& Record = Entry.Record;
 		if (Record.Montage != NAME_None && SeenMontages.Contains(Record.Montage))
 		{

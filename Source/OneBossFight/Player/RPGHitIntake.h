@@ -5,12 +5,14 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Engine/EngineTypes.h"
+#include "Engine/TimerHandle.h"
 #include "Player/RPGAttackKind.h"
 #include "Player/RPGDamageScale.h"
 #include "Player/RPGWeaponAttackTable.h"
 #include "RPGHitIntake.generated.h"
 
 class UMaterialInterface;
+class URPGBossEncounter;
 
 /** What one player hit on the boss was (Gate 3, M7): who, with which weapon and which attack data, in what stance. Plain data, no Unreal object is held strongly. */
 struct FRPGHitRecord
@@ -152,10 +154,15 @@ protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
+#if WITH_DEV_AUTOMATION_TESTS
+	friend class FKI172PendingHitGenerationResetOrdering;
+#endif
 	struct FPending
 	{
 		FRPGHitRecord Record;
 		TWeakObjectPtr<UObject> ActiveTarget;
+		TWeakObjectPtr<URPGBossEncounter> Encounter;
+		uint64 EncounterGeneration = 0;
 		/** Captured against the exact active montage at OnHit time, before deferred finalization. */
 		ERPGAttackKind OverrideKind = ERPGAttackKind::Unknown;
 		/** KI-151: the target is a native-health boss: FinalizePending hands it the attack row (ApplyPlayerAttackHit) instead of running the pack scaler, posture and bleed components. */
@@ -167,6 +174,8 @@ private:
 
 	bool TryBind();
 	void Unbind();
+	void BindEncounter(URPGBossEncounter* Encounter);
+	void OnEncounterReset(uint64 ParticipantGeneration, int32 ResetCount);
 	/** Everything known at the moment of the event; the attack data is added by FinalizePending. */
 	FRPGHitRecord BuildRecord(const FHitResult& HitResult, AActor* Target, UObject*& OutActiveTarget, ERPGAttackKind* OutOverrideKind = nullptr) const;
 	/** One frame after the event: reads the active trace target's hit data, classifies the attack, numbers the records and broadcasts them. */
@@ -191,6 +200,9 @@ private:
 	float BindRetryTimer = 0.f;
 	TArray<FPending> Pending;
 	bool bFinalizeScheduled = false;
+	FTimerHandle FinalizePendingTimer;
+	TWeakObjectPtr<URPGBossEncounter> ResetBroadcastSource;
+	FDelegateHandle ResetBroadcastHandle;
 	float BleedOverride = -1.f;
 	bool bBound = false;
 	bool bWarnedSignature = false;

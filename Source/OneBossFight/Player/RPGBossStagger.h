@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Engine/TimerHandle.h"
 #include "UObject/SoftObjectPtr.h"
 #include "Player/RPGBossRules.h"
 #include "RPGBossStagger.generated.h"
@@ -236,12 +237,16 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
+#if WITH_DEV_AUTOMATION_TESTS
+	friend class FKI173RiposteGenerationResetOrdering;
+	int32 RiposteStartDispatchCountForTest = 0;
+#endif
 	enum class EPhase : uint8 { Idle, Down, GetUp };
 
 	void StartStagger();
 	/** Accepted press with the clips available: the execution is requested now and starts next frame (after the pack's own handling of the same press). */
 	bool BeginRiposteExecution(const AActor* PlayerActor);
-	void StartRiposteClips();
+	void StartRiposteClips(uint64 RequestSerial, uint64 EncounterGeneration);
 	void TickRiposte(double Now);
 	void ApplyRiposteImpact();
 	/** After the execution the player may stand inside the boss's capsule (the clip ends 60 cm from the boss's centre): the collision between them is switched back on and the player is slid out to the contact distance in 0.25 s. */
@@ -284,6 +289,8 @@ private:
 	FVector RiposteAlignTo = FVector::ZeroVector;
 	int32 RiposteImpacts = 0;
 	int32 RiposteAborts = 0;
+	uint64 RiposteRequestSerial = 0;
+	FTimerHandle RiposteStartTimer;
 	TWeakObjectPtr<ACharacter> RipostePlayer;
 	TWeakObjectPtr<UAnimMontage> RipostePlayerMontage;
 

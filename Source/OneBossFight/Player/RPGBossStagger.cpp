@@ -431,6 +431,12 @@ void URPGBossStagger::StartStagger()
 
 void URPGBossStagger::EndStagger(bool bResumeBehaviour, bool bClearCooldown)
 {
+	RiposteRequestSerial = RiposteRequestSerial == MAX_uint64 ? MAX_uint64 : RiposteRequestSerial + 1;
+	if (UWorld* World = GetWorld(); World && RiposteStartTimer.IsValid())
+	{
+		World->GetTimerManager().ClearTimer(RiposteStartTimer);
+	}
+	RiposteStartTimer.Invalidate();
 	if (bRiposteRunning)
 	{
 		EndRiposteExecution(false, TEXT("the stance break ended"));
@@ -565,16 +571,30 @@ bool URPGBossStagger::BeginRiposteExecution(const AActor* PlayerActor)
 		return false;
 	}
 	RipostePlayer = Player;
+	RiposteRequestSerial = RiposteRequestSerial == MAX_uint64 ? MAX_uint64 : RiposteRequestSerial + 1;
+	const URPGBossEncounter* Encounter = GetOwner()->FindComponentByClass<URPGBossEncounter>();
+	const uint64 EncounterGeneration = Encounter ? Encounter->GetParticipantGeneration() : 0;
+	const uint64 RequestSerial = RiposteRequestSerial;
 	bRiposteRunning = true;
 	bRiposteStarted = false;
 	bRiposteImpactDone = false;
 	bRiposteUsed = true; // once per stance break; further presses are rejected from now on
-	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateUObject(this, &URPGBossStagger::StartRiposteClips));
+	RiposteStartTimer = GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateUObject(this, &URPGBossStagger::StartRiposteClips, RequestSerial, EncounterGeneration));
 	return true;
 }
 
-void URPGBossStagger::StartRiposteClips()
+void URPGBossStagger::StartRiposteClips(uint64 RequestSerial, uint64 EncounterGeneration)
 {
+	const URPGBossEncounter* Encounter = GetOwner() ? GetOwner()->FindComponentByClass<URPGBossEncounter>() : nullptr;
+	const uint64 CurrentGeneration = Encounter ? Encounter->GetParticipantGeneration() : 0;
+	if (RequestSerial != RiposteRequestSerial || EncounterGeneration != CurrentGeneration)
+	{
+		return; // this next-tick start belongs to an aborted/reset riposte; it must not clean up a newer request
+	}
+#if WITH_DEV_AUTOMATION_TESTS
+	++RiposteStartDispatchCountForTest;
+#endif
+	RiposteStartTimer.Invalidate();
 	ACharacter* Player = RipostePlayer.Get();
 	ACharacter* Boss = Cast<ACharacter>(GetOwner());
 	if (!bRiposteRunning || !Player || !Boss || Phase != EPhase::Down)
@@ -824,6 +844,12 @@ FString URPGBossStagger::TryBreakForTest()
 
 void URPGBossStagger::AbortStagger()
 {
+	RiposteRequestSerial = RiposteRequestSerial == MAX_uint64 ? MAX_uint64 : RiposteRequestSerial + 1;
+	if (UWorld* World = GetWorld(); World && RiposteStartTimer.IsValid())
+	{
+		World->GetTimerManager().ClearTimer(RiposteStartTimer);
+	}
+	RiposteStartTimer.Invalidate();
 	// A reset leaves nothing behind (Freeze 18.3 line 791): the cooldown, the riposte and the posture hold go in every case, also when no break is running.
 	CooldownEnd = 0.0;
 	RiposteArmedUntil = -1.0;
@@ -842,6 +868,12 @@ void URPGBossStagger::AbortStagger()
 
 void URPGBossStagger::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	RiposteRequestSerial = RiposteRequestSerial == MAX_uint64 ? MAX_uint64 : RiposteRequestSerial + 1;
+	if (UWorld* World = GetWorld(); World && RiposteStartTimer.IsValid())
+	{
+		World->GetTimerManager().ClearTimer(RiposteStartTimer);
+	}
+	RiposteStartTimer.Invalidate();
 	Phase = EPhase::Idle;
 	Super::EndPlay(EndPlayReason);
 }

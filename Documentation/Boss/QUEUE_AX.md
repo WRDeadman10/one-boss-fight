@@ -83,3 +83,39 @@ Proposal: `Documentation/Boss/AX_C21_C25_KI172_173_GENERATION_FIX_PROPOSAL.md`. 
 | AX-C30 | Reconcile the Shipping selection API, its source guards, caller search, and proof gate. | API allowance is not presented as an exercised Blueprint caller or package proof. |
 
 Findings: `Documentation/Boss/AX_C26_C30_KI179_C183_EXECUTION_AND_GATE_RECHECK.md`. No production changes, package inspection, or new runtime run.
+
+## Batch 7 — runtime-coverage and stale-status reconciliation
+
+| Task | Work | Acceptance |
+|---|---|---|
+| AX-C31 | Compare the KI-179 pure watchdog-rule test with runtime TickComponent behavior and coverage classification. | Pure math coverage is not presented as an observed watchdog lifecycle. |
+| AX-C32 | Identify a bounded KI-181 all-zero score/tie-band regression case. | Test intent is proposed without changing selection semantics or code. |
+| AX-C33 | Reconcile KI-182 S27 x3 driver readiness with the actual Lead-run receipt status. | Expected cycles/checks are documented separately from unrun runtime results. |
+| AX-C34 | Separate KI-183 transient native setter tests from actual Blueprint callers and Shipping/package proof. | Native test use is not passed off as a real Shipping caller. |
+| AX-C35 | Reconcile KI-188's open label with the accepted root-anchored ignore fix and permanent-loss record. | Active recurrence issue is closed while unrecovered-content impact remains explicit. |
+
+Findings: `Documentation/Boss/AX_C31_C35_RUNTIME_COVERAGE_AND_STALE_STATUS.md`. No runtime/build/package/assets.
+
+## Batch 8 — KI-189–193 evidence reconciliation
+
+| Task | Work | Acceptance |
+|---|---|---|
+| AX-C36 | Recheck KI-189's optional Tier 2 soft-load timing and default-off path against current source. | Synchronous first-use possibility is separated from default-path loading and measured hitch evidence. |
+| AX-C37 | Reconcile KI-190's owner policy question with Freeze wording, current rows, and retained Strength evidence. | No choice, owner response, or option-dependent tuning is inferred. |
+| AX-C38 | Reconcile KI-191 lifecycle, visibility, failed paired captures, owner showcase, first-use, and package gates. | Showcase delivery and static hypotheses do not become a visual verdict, cause, or owner disposition. |
+| AX-C39 | Recheck KI-192 route identity and bounded PIE/package status against C-1099/C-1100. | Only a same-run activation witness identifies true legacy; package remains separate. |
+| AX-C40 | Reconcile KI-193 source defaults, C-1042 default-wired hit evidence, and package requirements. | Source/PIE are not promoted to cook or packaged-runtime proof. |
+
+Findings: `Documentation/Boss/AX_C36_C40_KI189_193_EVIDENCE_RECONCILIATION.md`. Offline source/document review only; no tests or engine operations.
+
+## Batch 9 — KI-194–198 evidence reconciliation
+
+| Task | Work | Acceptance |
+|---|---|---|
+| AX-C41 | Reconcile KI-194's C-978 post-air ground restoration result with lifecycle and post-wiring boundaries. | Tested route sequence is separated from death/reset/rebind and default-wiring proof. |
+| AX-C42 | Recheck KI-195's timeout helper, remaining direct subprocess calls, and reported test scope. | Every retained direct call has an explicit bound; targeted tests are not described as a full-suite run. |
+| AX-C43 | Reconcile KI-196's C-1076 moving-dodge evidence with C-1099 route provenance and C-1104 scope. | DATA-default tested PIE cases remain separate from legacy parity and packaged proof. |
+| AX-C44 | Compare KI-197's current Package/bench-kit source defaults and Lead gate with TEST_PLAN wording. | Identify stale source-default statements; preserve the TEST_PLAN edit authorization gate. |
+| AX-C45 | Reconcile KI-198's accepted C-1047 result with older unchecked TEST_PLAN rows. | DATA-default PIE proof and package gate are separated; stale rows are reported without editing TEST_PLAN. |
+
+Findings: `Documentation/Boss/AX_C41_C45_KI194_198_EVIDENCE_RECONCILIATION.md`. Offline source/document review only; TEST_PLAN left unchanged under its authorization gate.
