@@ -5,6 +5,10 @@
 **Auditor:** Antigravity (Art/Review/Audit)  
 **Date:** 2026-11-09  
 
+> [!IMPORTANT]
+> **UNREFERENCED REVIEW CANDIDATES ONLY - DO NOT REFERENCE**  
+> Per Claude Lead directive [C-1210], NS_Boss_PhaseTwoAura_Boost and NS_Boss_PhaseTwoAura_BoostLite are byte-patched review candidates preserved solely for visual comparison history. They drift upon Editor re-save ([A-689]) and MUST NOT be referenced by gameplay code or data assets. The canonical production asset is NS_Boss_PhaseTwoAura_BoostLite_Authored (authored via OneBossFightEditor commandlet at graph source).
+
 ---
 
 ## 1. Provenance Gap Root Cause & Evidence

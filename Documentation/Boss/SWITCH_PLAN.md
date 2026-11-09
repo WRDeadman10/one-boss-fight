@@ -1,6 +1,6 @@
 # Boss architecture switch plan (C-1177)
 
-**Status:** target architecture and plan only; implementation is not authorized by this document. The owner approved the architecture in C-1177 and `Documentation/DECISIONS.md`. Lead review of this migration plan is the next gate. The Ember Warden sword/trace Phase 1 is implemented and measured separately in `C1172_EMBER_VISUAL_WEAPON_TRACE.md`; its visible grip alignment and hit/parry acceptance still need AG/Lead follow-through.
+**Status:** target architecture and plan only; implementation is not authorized by this document. The owner approved the architecture in C-1177 and `Documentation/DECISIONS.md`. **Ready for Lead plan review** against C-1177; review is not implementation approval. Phase 1 Ember sword/trace work is Lead-verified in C-1200/BUILD-279 (one rendered sword, accepted trace parity, hand-follow, parry 6/6). This does not establish notify migration parity.
 
 ## Target
 
@@ -95,7 +95,7 @@ Sevarog-specific numeric parameters live in his encounter definition. AI branch 
 
 ## Sequencing and ownership
 
-1. Lead reviews this plan, including the multiple A2 windows, parry target policy, notify serialization, and interruption behavior.
+1. Lead reviews this plan, including the multiple A2 windows, parry target policy, notify serialization, and interruption behavior. Phase 1 sword/trace acceptance is complete per C-1200; this review covers the separate architecture/migration plan.
 2. Antigravity/animation author marks up Ember's own montages only after approval; Codex implements the shared observer/validation and test-first migration; Lead owns build, C-1132/C-1152 PIE parity, and packaged readback.
 3. Do not change Ember timing, add Sevarog timing guesses, change assets outside the approved montage annotation scope, or remove the old table before the parity gates pass.
 4. After Ember parity is accepted, inventory Sevarog montages, have Lead measure his events, and author his data/AI separately. Then validate a data-only boss addition without shared-core edits.
@@ -105,5 +105,5 @@ Sevarog-specific numeric parameters live in his encounter definition. AI branch 
 - `Documentation/DECISIONS.md` — owner-approved target architecture (C-1177).
 - `Source/OneBossFight/Player/RPGAttackTracker.h/.cpp` — existing timing fields, values, montage resolution, move and branch behavior.
 - `Documentation/Boss/C1132_PARRY_MONTAGE_ORIGIN_TARGETS.md` — Lead-reported montage-origin contacts and limits.
-- `Documentation/Boss/C1172_EMBER_VISUAL_WEAPON_TRACE.md` — Phase 1 sword work; visual alignment and hit/parry acceptance remain open.
+- `Documentation/Boss/C1172_EMBER_VISUAL_WEAPON_TRACE.md` — Phase 1 sword work; visual alignment, hand-follow, single-rendered-sword, trace parity, and parry acceptance are Lead-verified in C-1200 (BUILD-279).
 - `Documentation/TEST_PLAN.md` and the Lead C-1152 evidence folder — runtime acceptance should be linked when the migration is implemented, not claimed by this plan.

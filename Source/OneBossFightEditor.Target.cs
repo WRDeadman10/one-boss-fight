@@ -11,5 +11,6 @@ public class OneBossFightEditorTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V5;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_5;
 		ExtraModuleNames.Add("OneBossFight");
+		ExtraModuleNames.Add("OneBossFightEditor");
 	}
 }
