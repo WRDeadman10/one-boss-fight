@@ -2,11 +2,15 @@
 
 #include "Player/RPGTraceGuard.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Engine/StaticMesh.h"
+#include "Engine/StaticMeshSocket.h"
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGAttackTracker.h"
+#include "Player/RPGBossLook.h"
 #include "Player/RPGBossTrackerTickPrerequisite.h"
 #include "Player/RPGBossDamage.h"
 
@@ -57,6 +61,78 @@ FString URPGTraceGuard::GetMissingPackNames() const
 	return Missing;
 }
 
+void URPGTraceGuard::RefreshVisualWeaponTraceSource(AActor* Boss)
+{
+	if (!Target.IsValid())
+	{
+		return;
+	}
+	if (!bOriginalTraceCaptured)
+	{
+		UPrimitiveComponent* PackMesh = Target.GetMesh();
+		TArray<FName> PackSockets;
+		Target.GetSockets(PackSockets);
+		if (PackMesh && PackSockets.Num() >= 2)
+		{
+			OriginalTraceMesh = PackMesh;
+			OriginalTraceSockets = MoveTemp(PackSockets);
+			bOriginalTraceCaptured = true;
+		}
+	}
+	if (!bOriginalTraceCaptured)
+	{
+		return; // never make the hidden pack mesh or a visual mesh an accidental fallback
+	}
+	UPrimitiveComponent* DesiredMesh = OriginalTraceMesh.Get();
+	TArray<FName> DesiredSockets = OriginalTraceSockets;
+	if (URPGBossLook* Look = Boss->FindComponentByClass<URPGBossLook>())
+	{
+		if (UStaticMeshComponent* Sword = Look->GetSwordComponent())
+		{
+			TArray<TPair<int32, FName>> NumberedSockets;
+			const UStaticMesh* StaticMesh = Sword->GetStaticMesh();
+			if (StaticMesh)
+			{
+				for (const TObjectPtr<UStaticMeshSocket>& SocketPtr : StaticMesh->Sockets)
+				{
+					const UStaticMeshSocket* Socket = SocketPtr.Get();
+					const FName Name = Socket ? Socket->SocketName : NAME_None;
+					const FString Text = Name.ToString();
+					if (!Text.StartsWith(TEXT("Trace_"), ESearchCase::CaseSensitive))
+					{
+						continue;
+					}
+					const FString Suffix = Text.RightChop(6);
+					if (Suffix.IsNumeric())
+					{
+						NumberedSockets.Emplace(FCString::Atoi(*Suffix), Name);
+					}
+				}
+			}
+			NumberedSockets.Sort([](const TPair<int32, FName>& A, const TPair<int32, FName>& B) { return A.Key < B.Key; });
+			if (NumberedSockets.Num() >= 2)
+			{
+				DesiredMesh = Sword;
+				DesiredSockets.Reset(NumberedSockets.Num());
+				for (const TPair<int32, FName>& Entry : NumberedSockets)
+				{
+					DesiredSockets.Add(Entry.Value);
+				}
+			}
+		}
+	}
+	if (Target.GetMesh() == DesiredMesh && AppliedTraceMesh.Get() == DesiredMesh && AppliedTraceSockets == DesiredSockets)
+	{
+		return;
+	}
+	if (Target.SetTraceSource(DesiredMesh, DesiredSockets))
+	{
+		AppliedTraceMesh = DesiredMesh;
+		AppliedTraceSockets = DesiredSockets;
+		UE_LOG(LogRPGTraceGuard, Log, TEXT("%s: weapon trace source=%s sockets=%d (%s)"), *Boss->GetName(), *GetNameSafe(DesiredMesh), DesiredSockets.Num(), DesiredMesh == OriginalTraceMesh.Get() ? TEXT("pack fallback") : TEXT("visual sword"));
+	}
+}
+
 void URPGTraceGuard::CloseTraceNow(FName Reason)
 {
 	if (!bEnabled || !bCloseOnInterrupt || !Target.IsValid())
@@ -96,6 +172,7 @@ void URPGTraceGuard::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	{
 		return;
 	}
+	RefreshVisualWeaponTraceSource(Boss);
 	// The temporary seed of the previous frame lived for exactly one pack sample: take it out before anything is evaluated again.
 	if (AActor* Seed = TempSeed.Get())
 	{

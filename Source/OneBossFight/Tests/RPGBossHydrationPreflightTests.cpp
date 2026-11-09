@@ -124,10 +124,10 @@ namespace PreflightTests
 			TEXT("AttackTracker.Attacks"), TEXT("AttackTracker.bEnabled"), TEXT("AttackTracker.bVetoIllegalStarts"), TEXT("AttackTracker.BranchRange"), TEXT("AttackTracker.BranchConeDegrees")};
 	}
 
-	TArray<FString> OptionalParryPaths()
+	TArray<FString> OptionalPlanPaths()
 	{
 		return {TEXT("ParrySlowMotion.bPerfectEnabled"), TEXT("ParrySlowMotion.PerfectScale"), TEXT("ParrySlowMotion.PerfectSeconds"), TEXT("ParrySlowMotion.bNormalEnabled"),
-			TEXT("ParrySlowMotion.NormalScale"), TEXT("ParrySlowMotion.NormalSeconds"), TEXT("ParrySlowMotion.CooldownSeconds")};
+			TEXT("ParrySlowMotion.NormalScale"), TEXT("ParrySlowMotion.NormalSeconds"), TEXT("ParrySlowMotion.CooldownSeconds"), TEXT("Look.SwordAttachOffset")};
 	}
 
 	FRPGParityField MakeField(const FString& Path)
@@ -772,7 +772,7 @@ bool FRPGPreflightConfigTest::RunTest(const FString& Parameters)
 		ExpectRejected(*this, F, TEXT("attack multiplier below 1 (unsupported by the native reset)"), WithBossConfig(Spec), TEXT("Preflight.PhaseRejected"), TEXT("UnsupportedNativeDamageScale"));
 	}
 
-	// Each required manifest path of the 19 plans (14 typed and 5 configuration-independent parity consumers), one at a time; optional parry paths are excluded.
+	// Each required manifest path of the 19 plans (14 typed and 5 configuration-independent parity consumers), one at a time; optional typed paths are excluded.
 	for (const FString& Path : AllRequiredPaths(PhaseTwo))
 	{
 		FConfigSpec Spec = Base;
@@ -1013,7 +1013,7 @@ bool FRPGPreflightDependenciesTest::RunTest(const FString& Parameters)
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// DD13/F1: the expanded native subset plus tracker and parry-feedback plans (19 plans per boss-core member: 14 typed and 5 configuration-independent parity consumers). Required paths (115) and optional parry paths (7) are independently listed here,
+// DD13/F1: the expanded native subset plus tracker and parry-feedback plans (19 plans per boss-core member: 14 typed and 5 configuration-independent parity consumers). Required paths (115) and optional typed paths (seven parry fields plus the look offset) are independently listed here,
 // not derived from the factories under test; fixture manifests carry required paths only, proving optional fields can be absent.
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1110,9 +1110,9 @@ bool FRPGPreflightExpandedTest::RunTest(const FString& Parameters)
 		TestTrue(FString::Printf(TEXT("%s: the instance names are the legacy names in the same order"), *Who), bNames);
 		TestTrue(FString::Printf(TEXT("%s: every plan has its callback (built, never run) and the class leases are the plan classes"), *Who), bCallbacks && bLeases);
 		TestTrue(FString::Printf(TEXT("%s: no native class and no instance name appears twice"), *Who), DistinctClasses.Num() == 19 && DistinctNames.Num() == 19);
-		// Required paths remain unchanged. The seven new parry fields are explicitly optional and counted separately.
+		// Required paths remain unchanged. Seven parry fields and the additive look offset are optional and counted separately.
 		const TArray<FString> ExpectedPaths = AllRequiredPaths(Selected);
-		const TArray<FString> ExpectedOptionalPaths = OptionalParryPaths();
+		const TArray<FString> ExpectedOptionalPaths = OptionalPlanPaths();
 		bool bUnion = ExpectedPaths.Num() == 115 && Union.Num() == 115 && SumOfRequired == 115;
 		for (const FString& Path : ExpectedPaths)
 		{
@@ -1122,7 +1122,7 @@ bool FRPGPreflightExpandedTest::RunTest(const FString& Parameters)
 		{
 			bUnion = bUnion && OptionalUnion.Contains(Path) && !Union.Contains(Path);
 		}
-		TestTrue(FString::Printf(TEXT("%s: all 115 required paths are unchanged and the seven parry paths are optional"), *Who), bUnion && OptionalUnion.Num() == 7 && SumOfOptional == 7);
+		TestTrue(FString::Printf(TEXT("%s: all 115 required paths are unchanged and eight additive paths are optional"), *Who), bUnion && OptionalUnion.Num() == 8 && SumOfOptional == 8);
 		// The selected phase decides the phase paths: no default first or last phase.
 		TestTrue(FString::Printf(TEXT("%s: the selected phase paths are named and the other phase's are not"), *Who),
 			Union.Contains(FString::Printf(TEXT("Phases[%s].EntryHealthFraction"), *Selected.ToString())) && !Union.Contains(FString::Printf(TEXT("Phases[%s].EntryHealthFraction"), *Other.ToString())));

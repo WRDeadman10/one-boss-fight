@@ -1,0 +1,1 @@
+﻿[2026.11.09-07.28.47:410][  6]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending

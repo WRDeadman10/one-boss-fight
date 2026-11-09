@@ -34,6 +34,8 @@ namespace RPGPackTrace
 		void GetHitSet(TArray<AActor*>& Out) const;
 		UPrimitiveComponent* GetMesh() const;
 		void GetSockets(TArray<FName>& Out) const;
+		/** Repoints the live target and reseeds its prior socket positions. Rejects missing/invalid socket sets. */
+		bool SetTraceSource(UPrimitiveComponent* Mesh, const TArray<FName>& Sockets);
 		double GetBaseRadius() const;
 		double GetRadiusModifier() const;
 		bool HasAbility() const;

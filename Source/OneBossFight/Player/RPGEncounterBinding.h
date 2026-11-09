@@ -283,6 +283,7 @@ struct FRPGLookConfig
 	};
 	UPROPERTY(EditAnywhere) TSoftObjectPtr<UStaticMesh> Sword = TSoftObjectPtr<UStaticMesh>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Weapons/SM_Boss01_Greatsword.SM_Boss01_Greatsword")));
 	UPROPERTY(EditAnywhere) FName SwordSocket = TEXT("HeavySwordSocket_R");
+	UPROPERTY(EditAnywhere) FTransform SwordAttachOffset = FTransform::Identity;
 };
 
 /** C275 staged authored structure only; runtime reflection/swap remains unresolved. */

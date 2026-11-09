@@ -13,7 +13,8 @@ DEFINE_LOG_CATEGORY_STATIC(LogRPGBossLook, Log, All);
 
 URPGBossLook::URPGBossLook()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.TickGroup = TG_PostUpdateWork;
 	Body = TSoftObjectPtr<USkeletalMesh>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Body/SK_Boss01_Body.SK_Boss01_Body")));
 	Pieces = {
 		TSoftObjectPtr<USkeletalMesh>(FSoftObjectPath(TEXT("/Game/OneBossFight/Boss01/Body/SK_Boss01_Crown.SK_Boss01_Crown"))),
@@ -36,6 +37,15 @@ void URPGBossLook::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Revert();
 	Super::EndPlay(EndPlayReason);
+}
+
+void URPGBossLook::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (bApplied && bEnabled)
+	{
+		HidePackWeapons();
+	}
 }
 
 void URPGBossLook::SetEnabledForTest(bool bOn)
@@ -84,22 +94,15 @@ void URPGBossLook::Apply()
 	Leader->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 	bSavedHidden = Leader->bHiddenInGame;
 	Leader->SetHiddenInGame(true, /*bPropagateToChildren=*/false);
-	// The pack's own sword is a separate static mesh component ("Weapon Mesh", SM_KwangSword) attached to the pack mesh's socket (hand in combat, back sheath otherwise): hiding the pack mesh does not hide its children, so it is hidden here, or the boss would carry two swords (review D). Its sockets still drive the pack's weapon trace.
+	// Keep the pack's Weapon Mesh component and sockets alive for the trace fallback;
+	// the active tick reasserts its render-hidden state after pack wake/equip events.
 	HiddenPackWeapons.Reset();
 	PackWeaponWasHidden.Reset();
-	TInlineComponentArray<UStaticMeshComponent*> StaticMeshes(GetOwner());
-	for (UStaticMeshComponent* Candidate : StaticMeshes)
-	{
-		if (Candidate && Candidate->GetAttachParent() == Leader && Candidate->GetName().Contains(TEXT("Weapon")))
-		{
-			HiddenPackWeapons.Add(Candidate);
-			PackWeaponWasHidden.Add(Candidate->bHiddenInGame);
-			Candidate->SetHiddenInGame(true, /*bPropagateToChildren=*/true);
-		}
-	}
+	PackWeaponWasVisible.Reset();
+	HidePackWeapons();
 	if (HiddenPackWeapons.Num() == 0)
 	{
-		UE_LOG(LogRPGBossLook, Warning, TEXT("%s: no pack weapon mesh (a static mesh named Weapon... on the pack mesh) was found: the pack's sword may still be drawn next to the new one"), *GetOwner()->GetName());
+		UE_LOG(LogRPGBossLook, Warning, TEXT("%s: no pack weapon mesh (a static mesh named Weapon... on the pack mesh) was found during Apply; will keep searching while the look is active"), *GetOwner()->GetName());
 	}
 
 	BodyComponent = MakeFollower(BodyMesh, TEXT("RPGLookBody"));
@@ -123,14 +126,28 @@ void URPGBossLook::Apply()
 		SwordComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		SwordComponent->SetGenerateOverlapEvents(false);
 		SwordComponent->RegisterComponent();
-		// A missing socket would attach the sword at the body's origin without a word: say so and use the hand bone instead.
+		// Attach by the configured socket or bone name. Fall back to the hand, then the
+		// legacy pack socket; report any fallback instead of silently changing the pose.
 		FName AttachName = SwordSocket;
 		if (!BodyComponent->DoesSocketExist(AttachName))
 		{
-			UE_LOG(LogRPGBossLook, Warning, TEXT("%s: the body has no socket %s: the sword goes on the bone hand_r (wrong grip)"), *GetOwner()->GetName(), *SwordSocket.ToString());
-			AttachName = TEXT("hand_r");
+			UE_LOG(LogRPGBossLook, Warning, TEXT("%s: body has no bone/socket %s; trying fallback bones/sockets"), *GetOwner()->GetName(), *SwordSocket.ToString());
+			AttachName = NAME_None;
+			for (const FName FallbackName : {FName(TEXT("hand_r")), FName(TEXT("HeavySwordSocket_R"))})
+			{
+				if (BodyComponent->DoesSocketExist(FallbackName))
+				{
+					AttachName = FallbackName;
+					break;
+				}
+			}
+			if (AttachName.IsNone())
+			{
+				UE_LOG(LogRPGBossLook, Warning, TEXT("%s: body has no hand_r or HeavySwordSocket_R fallback; sword attaches to body root"), *GetOwner()->GetName());
+			}
 		}
 		SwordComponent->AttachToComponent(BodyComponent, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, false), AttachName);
+		SwordComponent->SetRelativeTransform(SwordAttachOffset);
 	}
 	else
 	{
@@ -138,6 +155,35 @@ void URPGBossLook::Apply()
 	}
 	bApplied = true;
 	UE_LOG(LogRPGBossLook, Log, TEXT("%s: the boss look is on: body %s, %d of %d pieces, sword %s on %s, the pack mesh and %d pack weapon mesh(es) are hidden and the pack mesh still drives the pose"), *GetOwner()->GetName(), *BodyMesh->GetName(), PieceCount, Pieces.Num(), SwordComponent ? *SwordComponent->GetStaticMesh()->GetName() : TEXT("none"), SwordComponent ? *SwordComponent->GetAttachSocketName().ToString() : TEXT("-"), HiddenPackWeapons.Num());
+}
+
+void URPGBossLook::HidePackWeapons()
+{
+	const ACharacter* Character = Cast<ACharacter>(GetOwner());
+	USkeletalMeshComponent* Leader = Character ? Character->GetMesh() : nullptr;
+	if (!Leader || !GetOwner())
+	{
+		return;
+	}
+	TInlineComponentArray<UStaticMeshComponent*> StaticMeshes(GetOwner());
+	for (UStaticMeshComponent* Candidate : StaticMeshes)
+	{
+		if (!Candidate || Candidate->GetAttachParent() != Leader || !Candidate->GetName().Contains(TEXT("Weapon")))
+		{
+			continue;
+		}
+		const int32 ExistingIndex = HiddenPackWeapons.IndexOfByKey(Candidate);
+		if (ExistingIndex == INDEX_NONE)
+		{
+			HiddenPackWeapons.Add(Candidate);
+			PackWeaponWasHidden.Add(Candidate->bHiddenInGame);
+			PackWeaponWasVisible.Add(Candidate->IsVisible());
+		}
+		// The pack's wake/equip path can call visibility setters after Apply. Reassert
+		// both states late each frame; never clear the mesh, since trace fallback reads sockets.
+		Candidate->SetVisibility(false, /*bPropagateToChildren=*/true);
+		Candidate->SetHiddenInGame(true, /*bPropagateToChildren=*/true);
+	}
 }
 
 void URPGBossLook::Revert()
@@ -170,11 +216,13 @@ void URPGBossLook::Revert()
 	{
 		if (UStaticMeshComponent* Weapon = HiddenPackWeapons[Index])
 		{
+			Weapon->SetVisibility(PackWeaponWasVisible.IsValidIndex(Index) && PackWeaponWasVisible[Index], true);
 			Weapon->SetHiddenInGame(PackWeaponWasHidden.IsValidIndex(Index) && PackWeaponWasHidden[Index], true);
 		}
 	}
 	HiddenPackWeapons.Reset();
 	PackWeaponWasHidden.Reset();
+	PackWeaponWasVisible.Reset();
 	if (const ACharacter* Character = Cast<ACharacter>(GetOwner()))
 	{
 		if (USkeletalMeshComponent* Leader = Character->GetMesh())

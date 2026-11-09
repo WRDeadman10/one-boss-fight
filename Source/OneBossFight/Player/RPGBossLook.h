@@ -15,7 +15,7 @@ class UStaticMeshComponent;
 /**
  * The boss's final look (G2-15): Antigravity's body (SK_Boss01_Body) with the crown, the mantle, the brazier gauntlet and the hero greatsword in its hand. The pack boss mesh stays what drives the fight (animation, montages, physics asset,
  * collision, the pack's weapon trace sockets, the ragdoll) and only stops being drawn; the new body and its pieces are skeletal mesh components attached to it that follow its pose (leader pose component, same bone names), so "the same fight plays"
- * with another face. The greatsword is a static mesh on the body's own socket HeavySwordSocket_R (the sword's origin is the grip, the blade is +Z). The followers inherit the pack mesh's scale.
+ * with another face. The greatsword is a static mesh attached to the body's configured bone/socket with a per-boss relative offset. The followers inherit the pack mesh's scale.
  * Attached to the pack boss by RPGPlayerMovesSubsystem; off with bEnabled or SetEnabledForTest(false) (the pack mesh is shown again, the pieces are destroyed).
  */
 UCLASS(ClassGroup = (Boss))
@@ -39,9 +39,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Look")
 	TSoftObjectPtr<UStaticMesh> Sword;
 
-	/** The socket of the body mesh the sword is attached to (HeavySwordSocket_R on hand_r: relative location (-13.9, 2.6, 4.9), rotation pitch -28, yaw 168.8, roll 12.8). */
+	/** A bone or socket name on the body mesh. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Look")
-	FName SwordSocket = TEXT("HeavySwordSocket_R");
+	FName SwordSocket = TEXT("hand_r");
+
+	/** Optional per-boss sword pose relative to SwordSocket; identity preserves the pre-offset attachment behavior. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Look")
+	FTransform SwordAttachOffset = FTransform(FRotator(19.84f, -1.84f, -10.48f), FVector::ZeroVector);
 
 	UFUNCTION(BlueprintPure, Category = "Look")
 	bool IsApplied() const { return bApplied; }
@@ -70,10 +74,13 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
 	/** Builds the look; idempotent. Runs one frame after BeginPlay (the pack's Blueprint sets its mesh at the start). */
 	void Apply();
+	/** Reassert hidden render state after the pack's equip/wake Blueprint shows its child weapon. */
+	void HidePackWeapons();
 
 	bool bApplied = false;
 	int32 PieceCount = 0;
@@ -94,4 +101,5 @@ private:
 	TArray<TObjectPtr<UStaticMeshComponent>> HiddenPackWeapons;
 
 	TArray<bool> PackWeaponWasHidden;
+	TArray<bool> PackWeaponWasVisible;
 };

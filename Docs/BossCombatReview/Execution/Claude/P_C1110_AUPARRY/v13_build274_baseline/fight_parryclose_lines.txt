@@ -1,0 +1,369 @@
+﻿route=data /Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter; player refilled below 35 HP by the boss RPGCombatDebug; boss health and AI untouched
+[2026.11.09-03.39.34:035][  7]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending
+setup boss_hp=2000.0/2000.0 player_hp=0.0/1000000.0 player_boss_cm=120.0
+FIGHT_START slomo=0.5 frames=D:/FightVideo/auparryclose fps=15
+PARRY_CONTROL_RANGE mode=parry t=0.00 distance_cm=120.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_DIAG montage=None tracker_move=None tracker_instance=0 tracker_active=False tracker_position=0.000 sweep_active=False sweep_count=0
+PLAYER_HIT t=0.434 hp_before=1000000.0 hp_after=100.0 damage=999900.0 boss_move=None boss_instance=0 boss_montage=None tracker_position=0.000 montage_position=UNKNOWN player_status_tags=statusParryActive=false,statusBlocking=false,stateBlocking=false,abilityParry=false,abilityBlock=false,statusInvulnerable=false pack_impact_outcome=UNKNOWN
+PARRY_DIAG montage=GS_EquipWeapon_Montage tracker_move=None tracker_instance=0 tracker_active=False tracker_position=0.000 sweep_active=False sweep_count=0
+PARRY_CONTROL_RANGE mode=parry t=2.10 distance_cm=120.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_DIAG montage=None tracker_move=None tracker_instance=0 tracker_active=False tracker_position=0.000 sweep_active=False sweep_count=0
+PARRY_DIAG montage=Idle_Turn_Left_180_Anim_Montage tracker_move=None tracker_instance=0 tracker_active=False tracker_position=0.000 sweep_active=False sweep_count=0
+PARRY_DIAG montage=None tracker_move=None tracker_instance=0 tracker_active=False tracker_position=0.000 sweep_active=False sweep_count=0
+PARRY_DIAG montage=AM_Boss01_A1 tracker_move=None tracker_instance=0 tracker_active=False tracker_position=0.000 sweep_active=False sweep_count=0
+PARRY_TARGET_SCHEDULED instance=1 move=A1 source=tracker montage=AM_Boss01_A1 montage_position=0.004 press_target=0.270 target_source=tracker_move tracker_active=False
+PARRY_ATTEMPT instance=1 move=A1 active=False source=tracker montage=AM_Boss01_A1 sweep_active=False sweep_count=0 position=0.297 opened=True parried_before=0 press_count_before=0 press_count_after=1 sweep_parried_before=0 distance_cm=129.2 player_hp_before=100.0 parry_window_seconds=0.2 tracker_window_seconds=0.150 watch_limit_seconds=0.60 window_start=0.350 window_end=0.500 target_source=tracker_move player_status_tags=statusParryActive=true,statusBlocking=false,stateBlocking=false,abilityParry=false,abilityBlock=false,statusInvulnerable=false pack_impact_outcome=UNKNOWN
+ACTION parry_watch t=3.68 id=fight:action:00001 source=opportunistic
+PARRY_BLENDABLE at_press camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=AM_Boss01_A1 tracker_move=A1 tracker_instance=1 tracker_active=True tracker_position=0.356 sweep_active=False sweep_count=0
+PARRY_DIAG montage=AM_Boss01_ParryRecoil tracker_move=A1 tracker_instance=1 tracker_active=False tracker_position=0.554 sweep_active=False sweep_count=0
+PARRY_CONTACT instance=1 move=A1 source=tracker t=3.934 parried_before=0 parried_after=1 parried_delta=1 press_count=1 sweep_parried_before=0 sweep_parried_after=0 boss_montage=AM_Boss01_ParryRecoil
+PARRY_BLENDABLE at_contact camera=FollowCamera count=1 weights=[PPM_ParryDistortion=1.000]
+PARRY_RECOIL instance=1 t=3.934 montage=AM_Boss01_ParryRecoil
+PARRY_FRAME_REQUEST label=plus_0p05 instance=1 frame=38 t=4.015 actual_offset=0.081 path=D:/FightVideo/auparryclose/f_00038.png
+PARRY_FRAME_READY label=plus_0p05 instance=1 frame=38 t=4.015 actual_offset=0.081 path=D:/FightVideo/auparryclose/f_00038.png
+PARRY_BLENDABLE plus_0p05 camera=FollowCamera count=0 weights=[]
+PARRY_FRAME_REQUEST label=plus_0p15 instance=1 frame=39 t=4.087 actual_offset=0.154 path=D:/FightVideo/auparryclose/f_00039.png
+PARRY_FRAME_READY label=plus_0p15 instance=1 frame=39 t=4.087 actual_offset=0.154 path=D:/FightVideo/auparryclose/f_00039.png
+PARRY_BLENDABLE plus_0p15 camera=FollowCamera count=0 weights=[]
+PARRY_CONTROL_RANGE mode=parry t=4.10 distance_cm=120.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_FRAME_REQUEST label=plus_0p30 instance=1 frame=40 t=4.266 actual_offset=0.332 path=D:/FightVideo/auparryclose/f_00040.png
+PARRY_FRAME_READY label=plus_0p30 instance=1 frame=40 t=4.266 actual_offset=0.332 path=D:/FightVideo/auparryclose/f_00040.png
+PARRY_BLENDABLE plus_0p30 camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=None tracker_move=None tracker_instance=1 tracker_active=False tracker_position=0.554 sweep_active=False sweep_count=0
+PARRY_CONTROL_RANGE mode=parry t=6.14 distance_cm=115.0 action=clamp press=1 attacks=0 hard_max_cm=130.0
+PARRY_DIAG montage=GS_ChargedAttack_Montage tracker_move=None tracker_instance=1 tracker_active=False tracker_position=0.554 sweep_active=False sweep_count=0
+PARRY_TARGET_SCHEDULED instance=2 move=A2 source=tracker montage=GS_ChargedAttack_Montage montage_position=0.006 press_target=1.920 target_source=tracker_move tracker_active=False
+PARRY_CONTROL_RANGE mode=parry t=8.16 distance_cm=122.1 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_ATTEMPT instance=2 move=A2 active=False source=tracker montage=GS_ChargedAttack_Montage sweep_active=False sweep_count=0 position=1.926 opened=True parried_before=1 press_count_before=1 press_count_after=2 sweep_parried_before=0 distance_cm=131.2 player_hp_before=100.0 parry_window_seconds=0.2 tracker_window_seconds=0.180 watch_limit_seconds=0.60 window_start=1.930 window_end=2.110 target_source=tracker_move player_status_tags=statusParryActive=true,statusBlocking=false,stateBlocking=false,abilityParry=false,abilityBlock=false,statusInvulnerable=false pack_impact_outcome=UNKNOWN
+ACTION parry_watch t=8.45 id=fight:action:00002 source=opportunistic
+PARRY_BLENDABLE at_press camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=GS_ChargedAttack_Montage tracker_move=A2 tracker_instance=2 tracker_active=True tracker_position=1.938 sweep_active=False sweep_count=0
+PARRY_DIAG montage=GS_ChargedAttack_Montage tracker_move=A2 tracker_instance=2 tracker_active=False tracker_position=2.152 sweep_active=False sweep_count=0
+PARRY_DIAG montage=AM_Boss01_ParryRecoil tracker_move=A2 tracker_instance=2 tracker_active=False tracker_position=2.211 sweep_active=False sweep_count=0
+PARRY_CONTACT instance=2 move=A2 source=tracker t=8.730 parried_before=1 parried_after=2 parried_delta=1 press_count=2 sweep_parried_before=0 sweep_parried_after=0 boss_montage=AM_Boss01_ParryRecoil
+PARRY_BLENDABLE at_contact camera=FollowCamera count=0 weights=[]
+PARRY_RECOIL instance=2 t=8.730 montage=AM_Boss01_ParryRecoil
+PARRY_FRAME_REQUEST label=plus_0p05 instance=2 frame=86 t=8.934 actual_offset=0.204 path=D:/FightVideo/auparryclose/f_00086.png
+PARRY_FRAME_READY label=plus_0p05 instance=2 frame=86 t=8.934 actual_offset=0.204 path=D:/FightVideo/auparryclose/f_00086.png
+PARRY_BLENDABLE plus_0p05 camera=FollowCamera count=0 weights=[]
+PARRY_FRAME_REQUEST label=plus_0p15 instance=2 frame=87 t=9.007 actual_offset=0.277 path=D:/FightVideo/auparryclose/f_00087.png
+PARRY_FRAME_READY label=plus_0p15 instance=2 frame=87 t=9.007 actual_offset=0.277 path=D:/FightVideo/auparryclose/f_00087.png
+PARRY_BLENDABLE plus_0p15 camera=FollowCamera count=0 weights=[]
+PARRY_FRAME_REQUEST label=plus_0p30 instance=2 frame=88 t=9.074 actual_offset=0.344 path=D:/FightVideo/auparryclose/f_00088.png
+PARRY_FRAME_READY label=plus_0p30 instance=2 frame=88 t=9.074 actual_offset=0.344 path=D:/FightVideo/auparryclose/f_00088.png
+PARRY_BLENDABLE plus_0p30 camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=None tracker_move=None tracker_instance=2 tracker_active=False tracker_position=2.211 sweep_active=False sweep_count=0
+PARRY_DIAG montage=GS_Attack04_Montage tracker_move=None tracker_instance=2 tracker_active=False tracker_position=2.211 sweep_active=False sweep_count=0
+PARRY_TARGET_SCHEDULED instance=3 move=A1b source=tracker montage=GS_Attack04_Montage montage_position=0.015 press_target=0.120 target_source=tracker_move tracker_active=False
+PARRY_ATTEMPT instance=3 move=A1b active=False source=tracker montage=GS_Attack04_Montage sweep_active=False sweep_count=0 position=0.138 opened=True parried_before=2 press_count_before=2 press_count_after=3 sweep_parried_before=0 distance_cm=131.2 player_hp_before=100.0 parry_window_seconds=0.2 tracker_window_seconds=0.300 watch_limit_seconds=0.60 window_start=0.160 window_end=0.460 target_source=tracker_move player_status_tags=statusParryActive=true,statusBlocking=false,stateBlocking=false,abilityParry=false,abilityBlock=false,statusInvulnerable=false pack_impact_outcome=UNKNOWN
+ACTION parry_watch t=9.59 id=fight:action:00003 source=opportunistic
+PARRY_BLENDABLE at_press camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=GS_Attack04_Montage tracker_move=A1b tracker_instance=3 tracker_active=True tracker_position=0.162 sweep_active=False sweep_count=0
+PARRY_DIAG montage=AM_Boss01_ParryRecoil tracker_move=A1b tracker_instance=3 tracker_active=True tracker_position=0.371 sweep_active=False sweep_count=0
+PARRY_CONTACT instance=3 move=A1b source=tracker t=9.851 parried_before=2 parried_after=3 parried_delta=1 press_count=3 sweep_parried_before=0 sweep_parried_after=0 boss_montage=AM_Boss01_ParryRecoil
+PARRY_BLENDABLE at_contact camera=FollowCamera count=1 weights=[PPM_ParryDistortion=1.000]
+PARRY_RECOIL instance=3 t=9.851 montage=AM_Boss01_ParryRecoil
+PARRY_DIAG montage=AM_Boss01_ParryRecoil tracker_move=None tracker_instance=3 tracker_active=False tracker_position=0.371 sweep_active=False sweep_count=0
+PARRY_FRAME_REQUEST label=plus_0p05 instance=3 frame=96 t=9.926 actual_offset=0.074 path=D:/FightVideo/auparryclose/f_00096.png
+PARRY_FRAME_READY label=plus_0p05 instance=3 frame=96 t=9.926 actual_offset=0.074 path=D:/FightVideo/auparryclose/f_00096.png
+PARRY_BLENDABLE plus_0p05 camera=FollowCamera count=0 weights=[]
+PARRY_FRAME_REQUEST label=plus_0p15 instance=3 frame=98 t=10.163 actual_offset=0.312 path=D:/FightVideo/auparryclose/f_00098.png
+PARRY_CONTROL_RANGE mode=parry t=10.16 distance_cm=122.1 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_FRAME_READY label=plus_0p15 instance=3 frame=98 t=10.163 actual_offset=0.312 path=D:/FightVideo/auparryclose/f_00098.png
+PARRY_BLENDABLE plus_0p15 camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=None tracker_move=None tracker_instance=3 tracker_active=False tracker_position=0.371 sweep_active=False sweep_count=0
+PARRY_FRAME_REQUEST label=plus_0p30 instance=3 frame=99 t=10.233 actual_offset=0.381 path=D:/FightVideo/auparryclose/f_00099.png
+PARRY_FRAME_READY label=plus_0p30 instance=3 frame=99 t=10.233 actual_offset=0.381 path=D:/FightVideo/auparryclose/f_00099.png
+PARRY_BLENDABLE plus_0p30 camera=FollowCamera count=0 weights=[]
+PARRY_CONTROL_RANGE mode=parry t=12.31 distance_cm=118.5 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_DIAG montage=AM_Boss01_A3a tracker_move=None tracker_instance=3 tracker_active=False tracker_position=0.371 sweep_active=False sweep_count=0
+PARRY_TARGET_SCHEDULED instance=4 move=A3a source=tracker montage=AM_Boss01_A3a montage_position=0.012 press_target=0.420 target_source=tracker_move tracker_active=False
+PLAYER_HIT t=13.238 hp_before=100.0 hp_after=64.0 damage=36.0 boss_move=A3a boss_instance=4 boss_montage=AM_Boss01_A3a tracker_position=0.465 montage_position=0.465 player_status_tags=statusParryActive=false,statusBlocking=false,stateBlocking=false,abilityParry=false,abilityBlock=false,statusInvulnerable=false pack_impact_outcome=UNKNOWN
+PARRY_DIAG montage=AM_Boss01_A3a tracker_move=A3a tracker_instance=4 tracker_active=True tracker_position=0.465 sweep_active=False sweep_count=0
+PARRY_ATTEMPT instance=4 move=A3a active=True source=tracker montage=AM_Boss01_A3a sweep_active=False sweep_count=0 position=0.465 opened=True parried_before=3 press_count_before=3 press_count_after=4 sweep_parried_before=0 distance_cm=125.0 player_hp_before=64.0 parry_window_seconds=0.2 tracker_window_seconds=0.200 watch_limit_seconds=0.60 window_start=0.400 window_end=0.600 target_source=tracker_move player_status_tags=statusParryActive=true,statusBlocking=false,stateBlocking=false,abilityParry=false,abilityBlock=false,statusInvulnerable=false pack_impact_outcome=UNKNOWN
+ACTION parry_watch t=13.24 id=fight:action:00004 source=opportunistic
+PARRY_BLENDABLE at_press camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=None tracker_move=None tracker_instance=4 tracker_active=False tracker_position=0.548 sweep_active=False sweep_count=0
+PARRY_RESULT instance=4 outcome=no_contact parried_before=3 parried_after=3 distance_cm=125.0 player_hp_before=64.0 player_hp_after=64.0 player_hp_delta=0.0 player_took_damage=false window_seconds=0.12 parry_window_seconds=0.2 tracker_window_seconds=0.200 watch_limit_seconds=0.60
+PARRY_CONTROL_RANGE mode=parry t=14.31 distance_cm=127.0 action=retreat press=1 attacks=0 hard_max_cm=130.0
+PARRY_DIAG montage=GS_ChargedAttack_Montage tracker_move=None tracker_instance=4 tracker_active=False tracker_position=0.548 sweep_active=False sweep_count=0
+PARRY_TARGET_SCHEDULED instance=5 move=A2 source=tracker montage=GS_ChargedAttack_Montage montage_position=0.005 press_target=1.920 target_source=tracker_move tracker_active=False
+PARRY_CONTROL_RANGE mode=parry t=16.46 distance_cm=116.9 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_ATTEMPT instance=5 move=A2 active=False source=tracker montage=GS_ChargedAttack_Montage sweep_active=False sweep_count=0 position=1.920 opened=True parried_before=3 press_count_before=4 press_count_after=5 sweep_parried_before=0 distance_cm=126.4 player_hp_before=64.0 parry_window_seconds=0.2 tracker_window_seconds=0.180 watch_limit_seconds=0.60 window_start=1.930 window_end=2.110 target_source=tracker_move player_status_tags=statusParryActive=true,statusBlocking=false,stateBlocking=false,abilityParry=false,abilityBlock=false,statusInvulnerable=false pack_impact_outcome=UNKNOWN
+ACTION parry_watch t=18.12 id=fight:action:00005 source=opportunistic
+PARRY_BLENDABLE at_press camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=GS_ChargedAttack_Montage tracker_move=A2 tracker_instance=5 tracker_active=True tracker_position=1.941 sweep_active=False sweep_count=0
+PARRY_DIAG montage=AM_Boss01_ParryRecoil tracker_move=A2 tracker_instance=5 tracker_active=False tracker_position=2.144 sweep_active=False sweep_count=0
+PARRY_CONTACT instance=5 move=A2 source=tracker t=18.345 parried_before=3 parried_after=4 parried_delta=1 press_count=5 sweep_parried_before=0 sweep_parried_after=0 boss_montage=AM_Boss01_ParryRecoil
+PARRY_BLENDABLE at_contact camera=FollowCamera count=1 weights=[PPM_ParryDistortion=1.000]
+PARRY_RECOIL instance=5 t=18.345 montage=AM_Boss01_ParryRecoil
+PARRY_FRAME_REQUEST label=plus_0p05 instance=5 frame=178 t=18.422 actual_offset=0.076 path=D:/FightVideo/auparryclose/f_00178.png
+PARRY_FRAME_READY label=plus_0p05 instance=5 frame=178 t=18.422 actual_offset=0.076 path=D:/FightVideo/auparryclose/f_00178.png
+PARRY_BLENDABLE plus_0p05 camera=FollowCamera count=0 weights=[]
+PARRY_CONTROL_RANGE mode=parry t=18.47 distance_cm=116.9 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_FRAME_REQUEST label=plus_0p15 instance=5 frame=179 t=18.499 actual_offset=0.154 path=D:/FightVideo/auparryclose/f_00179.png
+PARRY_FRAME_READY label=plus_0p15 instance=5 frame=179 t=18.499 actual_offset=0.154 path=D:/FightVideo/auparryclose/f_00179.png
+PARRY_BLENDABLE plus_0p15 camera=FollowCamera count=0 weights=[]
+PARRY_FRAME_REQUEST label=plus_0p30 instance=5 frame=180 t=18.672 actual_offset=0.326 path=D:/FightVideo/auparryclose/f_00180.png
+PARRY_FRAME_READY label=plus_0p30 instance=5 frame=180 t=18.672 actual_offset=0.326 path=D:/FightVideo/auparryclose/f_00180.png
+PARRY_BLENDABLE plus_0p30 camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=None tracker_move=None tracker_instance=5 tracker_active=False tracker_position=2.144 sweep_active=False sweep_count=0
+PARRY_DIAG montage=GS_ChargedAttack_Montage tracker_move=None tracker_instance=5 tracker_active=False tracker_position=2.144 sweep_active=False sweep_count=0
+PARRY_TARGET_SCHEDULED instance=6 move=A2 source=tracker montage=GS_ChargedAttack_Montage montage_position=0.006 press_target=1.920 target_source=tracker_move tracker_active=False
+PARRY_CONTROL_RANGE mode=parry t=20.48 distance_cm=116.9 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_DIAG montage=GS_ChargedAttack_Montage tracker_move=A2 tracker_instance=6 tracker_active=True tracker_position=2.028 sweep_active=False sweep_count=0
+PARRY_ATTEMPT instance=6 move=A2 active=True source=tracker montage=GS_ChargedAttack_Montage sweep_active=False sweep_count=0 position=2.028 opened=True parried_before=4 press_count_before=5 press_count_after=6 sweep_parried_before=0 distance_cm=126.4 player_hp_before=64.0 parry_window_seconds=0.2 tracker_window_seconds=0.180 watch_limit_seconds=0.60 window_start=1.930 window_end=2.110 target_source=tracker_move player_status_tags=statusParryActive=true,statusBlocking=false,stateBlocking=false,abilityParry=false,abilityBlock=false,statusInvulnerable=false pack_impact_outcome=UNKNOWN
+ACTION parry_watch t=21.07 id=fight:action:00006 source=opportunistic
+PARRY_BLENDABLE at_press camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=GS_ChargedAttack_Montage tracker_move=A2 tracker_instance=6 tracker_active=False tracker_position=2.112 sweep_active=False sweep_count=0
+PARRY_RESULT instance=6 outcome=no_contact parried_before=4 parried_after=4 distance_cm=126.4 player_hp_before=64.0 player_hp_after=64.0 player_hp_delta=0.0 player_took_damage=false window_seconds=0.68 parry_window_seconds=0.2 tracker_window_seconds=0.180 watch_limit_seconds=0.60
+PARRY_DIAG montage=None tracker_move=A2 tracker_instance=6 tracker_active=False tracker_position=2.754 sweep_active=False sweep_count=0
+PARRY_CONTROL_RANGE mode=parry t=22.48 distance_cm=108.3 action=approach press=1 attacks=0 hard_max_cm=130.0
+PARRY_DIAG montage=AM_Boss01_A3b tracker_move=None tracker_instance=6 tracker_active=False tracker_position=2.754 sweep_active=False sweep_count=0
+PARRY_TARGET_SCHEDULED instance=7 move=A3b source=tracker montage=AM_Boss01_A3b montage_position=0.007 press_target=0.100 target_source=tracker_move tracker_active=False
+PARRY_ATTEMPT instance=7 move=A3b active=False source=tracker montage=AM_Boss01_A3b sweep_active=False sweep_count=0 position=0.107 opened=True parried_before=4 press_count_before=6 press_count_after=7 sweep_parried_before=0 distance_cm=106.5 player_hp_before=64.0 parry_window_seconds=0.2 tracker_window_seconds=0.250 watch_limit_seconds=0.60 window_start=0.150 window_end=0.400 target_source=tracker_move player_status_tags=statusParryActive=true,statusBlocking=false,stateBlocking=false,abilityParry=false,abilityBlock=false,statusInvulnerable=false pack_impact_outcome=UNKNOWN
+ACTION parry_watch t=24.03 id=fight:action:00007 source=opportunistic
+PARRY_BLENDABLE at_press camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=AM_Boss01_A3b tracker_move=A3b tracker_instance=7 tracker_active=True tracker_position=0.188 sweep_active=False sweep_count=0
+PARRY_DIAG montage=AM_Boss01_ParryRecoil tracker_move=A3b tracker_instance=7 tracker_active=True tracker_position=0.317 sweep_active=False sweep_count=0
+PARRY_CONTACT instance=7 move=A3b source=tracker t=24.237 parried_before=4 parried_after=5 parried_delta=1 press_count=7 sweep_parried_before=0 sweep_parried_after=0 boss_montage=AM_Boss01_ParryRecoil
+PARRY_BLENDABLE at_contact camera=FollowCamera count=1 weights=[PPM_ParryDistortion=1.000]
+PARRY_RECOIL instance=7 t=24.237 montage=AM_Boss01_ParryRecoil
+PARRY_DIAG montage=AM_Boss01_ParryRecoil tracker_move=None tracker_instance=7 tracker_active=False tracker_position=0.317 sweep_active=False sweep_count=0
+PARRY_FRAME_REQUEST label=plus_0p05 instance=7 frame=235 t=24.312 actual_offset=0.075 path=D:/FightVideo/auparryclose/f_00235.png
+PARRY_FRAME_READY label=plus_0p05 instance=7 frame=235 t=24.312 actual_offset=0.075 path=D:/FightVideo/auparryclose/f_00235.png
+PARRY_BLENDABLE plus_0p05 camera=FollowCamera count=0 weights=[]
+PARRY_FRAME_REQUEST label=plus_0p15 instance=7 frame=236 t=24.388 actual_offset=0.151 path=D:/FightVideo/auparryclose/f_00236.png
+PARRY_FRAME_READY label=plus_0p15 instance=7 frame=236 t=24.388 actual_offset=0.151 path=D:/FightVideo/auparryclose/f_00236.png
+PARRY_BLENDABLE plus_0p15 camera=FollowCamera count=0 weights=[]
+PARRY_FRAME_REQUEST label=plus_0p30 instance=7 frame=237 t=24.567 actual_offset=0.331 path=D:/FightVideo/auparryclose/f_00237.png
+PARRY_CONTROL_RANGE mode=parry t=24.57 distance_cm=105.6 action=approach press=1 attacks=0 hard_max_cm=130.0
+PARRY_FRAME_READY label=plus_0p30 instance=7 frame=237 t=24.567 actual_offset=0.331 path=D:/FightVideo/auparryclose/f_00237.png
+PARRY_BLENDABLE plus_0p30 camera=FollowCamera count=0 weights=[]
+PARRY_DIAG montage=None tracker_move=None tracker_instance=7 tracker_active=False tracker_position=0.317 sweep_active=False sweep_count=0
+PARRY_CONTROL_RANGE mode=parry t=26.68 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=28.68 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=30.69 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=32.83 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=34.84 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=36.86 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=38.86 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=40.87 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=43.01 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=45.02 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=47.04 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=49.17 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=51.18 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=53.19 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=55.27 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=57.35 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=59.50 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=61.64 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=63.65 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=65.67 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=67.78 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=69.93 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=71.93 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=73.94 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=75.94 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=77.96 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=80.07 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=82.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=84.21 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=86.33 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+PARRY_CONTROL_RANGE mode=parry t=88.47 distance_cm=119.0 action=hold press=1 attacks=0 hard_max_cm=130.0
+SUMMARY fight_seconds=90.0 boss_dead=False actions_json={"parry_contact": 5, "parry_watch": 7} player_refills=1 player_deaths=0 frames=878
+finished: time limit

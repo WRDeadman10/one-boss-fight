@@ -235,6 +235,40 @@ void RPGPackTrace::FTarget::GetSockets(TArray<FName>& Out) const
 	}
 }
 
+bool RPGPackTrace::FTarget::SetTraceSource(UPrimitiveComponent* Mesh, const TArray<FName>& Sockets)
+{
+	UObject* Target = Object.Get();
+	if (!Target || !Mesh || Sockets.Num() < 2)
+	{
+		return false;
+	}
+	for (const FName Socket : Sockets)
+	{
+		if (Socket.IsNone() || !Mesh->DoesSocketExist(Socket))
+		{
+			return false;
+		}
+	}
+	FObjectPropertyBase* MeshProperty = CastField<FObjectPropertyBase>(Find(Target, TEXT("Current Collision Mesh")));
+	FArrayProperty* SocketProperty = CastField<FArrayProperty>(Find(Target, TEXT("CollisionSockets")));
+	FNameProperty* SocketInner = SocketProperty ? CastField<FNameProperty>(SocketProperty->Inner) : nullptr;
+	if (!MeshProperty || !SocketInner)
+	{
+		return false;
+	}
+	MeshProperty->SetObjectPropertyValue_InContainer(Target, Mesh);
+	FScriptArrayHelper SocketArray(SocketProperty, SocketProperty->ContainerPtrToValuePtr<void>(Target));
+	SocketArray.EmptyValues(Sockets.Num());
+	for (const FName Socket : Sockets)
+	{
+		const int32 Index = SocketArray.AddValue();
+		SocketInner->SetPropertyValue(SocketArray.GetRawPtr(Index), Socket);
+	}
+	// The pack stores previous positions on activation and uses them for swept traces. Refresh immediately
+	// after changing the source so the first sample cannot sweep from the hidden pack weapon.
+	return CallBlueprintFunction(Target, TEXT("UpdateTraceLocations"), [](UFunction&, uint8*) {}, [](UFunction&, uint8*) {});
+}
+
 double RPGPackTrace::FTarget::GetBaseRadius() const
 {
 	return ReadDouble(Object.Get(), TEXT("CollisionRadius"), -1.0);

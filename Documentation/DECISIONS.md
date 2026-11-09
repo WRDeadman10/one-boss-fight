@@ -1,5 +1,13 @@
 # Decisions
 
+## C-1196 — migrate the live typed Ember Look data (2026-11-09)
+
+The Lead identified the typed Ember definition referenced by `DA_Sevarog_G044_Encounter` as the live data-route override: its Look config has `HeavySwordSocket_R` and identity offset, so it bypasses the tuned component defaults. Update only that project-owned typed definition to `SwordSocket=hand_r` and `SwordAttachOffset=FTransform(rotation=(19.84,-1.84,-10.48), location=(0,0,0))`. The Codex Editor script is allow-listed to that exact package and refuses pack paths; the Lead executes it under `ENGINE_LOCK.json`. No pack asset or encounter asset edit is authorized by this order. The existing `Saved/G044/encounter_manifest.json` receipt is not overwritten; the Lead determines whether the pipeline requires a new receipt after the data save.
+
+## C-1197 — Unreal Python transform readback (2026-11-09)
+
+Unreal Python exposes `FTransform.rotation` as `Quat`; the updater must call `.rotator()` before reading pitch/yaw/roll. The initial updater attempt failed before save and changed no asset. The corrected updater includes an offline fake-Quat contract; 2/2 focused checks pass. Lead must rerun the corrected script under the lock before treating the typed Look data as migrated.
+
 ## Full-fight excerpt review boundary (AU-C31–C35, 2026-11-09)
 
 - BUILD-255 and BUILD-259 remain separate capture identities. The source audit finds six black lead-in frames in BUILD-255 and seven in BUILD-259; only a BUILD-255 trim-six handoff was generated. No revised video was rendered or reviewed. Whether the owner wants a corrected BUILD-255 excerpt remains undecided; existing owner checklist boxes stay unchecked.
@@ -1625,3 +1633,6 @@ After the C-1133 three-way capture and the Development playtest build, the owner
 
 ## 2026-11-09 Owner: Elden Ring-style boss architecture (C-1177)
 Bosses are independent (own animations, attack patterns, attack animations; ER-like behaviour, data-driven); only the player must be exactly ER in controls and animation. The owner agreed to the target architecture: (1) shared C++ core (damage, poise/posture, parry, i-frames, stagger, camera); (2) each attack's timing (active/hit window, warning tell, parry contact) marked as notifies on that boss's own montages and read by the shared code, as FromSoftware's TAE event tracks do, replacing C++ timing tables such as the URPGAttackTracker defaults; (3) per-boss numbers in the encounter definition (params); (4) behaviour in the boss AI (behaviour tree + data move list); (5) special attacks as add-on modules selected by the boss data (reusable modules with per-boss settings, one-off modules for unique mechanics). Goal: a new boss (Sevarog first) is added by marking up its animations and writing its data, with no core code changes. Ember Warden keeps today's values as its data.
+
+## 2026-11-09 C-1194 Ember sword defaults and typed look precedence
+`URPGBossLook`'s native constructor defaults are Ember-specific (`SwordSocket=hand_r`, zero location, rotation `(19.84,-1.84,-10.48)`). `FRPGLookConfig.SwordAttachOffset` stays optional by identity default; a configured look is applied as its explicit value. The live G044 encounter references the Ember typed draft, whose canonical saved manifest contains `look.sword_socket=HeavySwordSocket_R` and no `SwordAttachOffset`; therefore the selected data route continues to use the legacy socket/identity pose until its per-boss data record is migrated. Do not edit the live record as part of this source task; Lead acceptance and later C-1177 data migration remain separate.

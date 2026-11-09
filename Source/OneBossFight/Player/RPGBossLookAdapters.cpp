@@ -171,6 +171,7 @@ namespace RPGBossLookAdapters
 		Look->Pieces = Config.Look.Pieces;
 		Look->Sword = Config.Look.Sword;
 		Look->SwordSocket = Config.Look.SwordSocket;
+		Look->SwordAttachOffset = Config.Look.SwordAttachOffset;
 		return true;
 	}
 
@@ -180,6 +181,7 @@ namespace RPGBossLookAdapters
 		Plan.Class = URPGBossLook::StaticClass();
 		Plan.InstanceName = TEXT("RPGBossLook");
 		Plan.RequiredFields = {FieldbEnabled, FieldBody, FieldPieces, FieldSword, FieldSwordSocket};
+		Plan.OptionalFields = {FieldSwordAttachOffset};
 		Plan.Configure = &ConfigureLook;
 		return Plan;
 	}

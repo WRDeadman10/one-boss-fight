@@ -1,0 +1,97 @@
+﻿[2026.11.09-09.50.11:162][  0]LogPython: [SwordCloseup] driver registered
+[2026.11.09-09.50.13:932][  2]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending
+[2026.11.09-09.50.20:965][193]LogPython: [SwordCloseup] CAMERA angle=35 player_pos=(-188.40497018646812, -131.92258036074062, 166.14999151229858)
+[2026.11.09-09.50.22:156][221]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_000.png exists=True g=7.582
+[2026.11.09-09.50.22:425][227]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_001.png exists=True g=7.582
+[2026.11.09-09.50.23:370][251]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_002.png exists=True g=7.592
+[2026.11.09-09.50.24:441][294]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_003.png exists=True g=7.604
+[2026.11.09-09.50.25:511][337]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_004.png exists=True g=7.656
+[2026.11.09-09.50.26:563][382]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_005.png exists=True g=7.668
+[2026.11.09-09.50.27:621][433]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_006.png exists=True g=7.679
+[2026.11.09-09.50.28:689][477]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_007.png exists=True g=7.691
+[2026.11.09-09.50.29:726][530]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_008.png exists=True g=7.699
+[2026.11.09-09.50.31:433][605]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_009.png exists=True g=7.707
+[2026.11.09-09.50.31:728][611]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_010.png exists=True g=7.707
+[2026.11.09-09.50.32:005][617]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_011.png exists=True g=7.707
+[2026.11.09-09.50.32:919][686]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_012.png exists=True g=7.716
+[2026.11.09-09.50.33:940][760]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_013.png exists=True g=7.724
+[2026.11.09-09.50.35:061][835]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_014.png exists=True g=7.732
+[2026.11.09-09.50.36:052][908]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_015.png exists=True g=7.741
+[2026.11.09-09.50.37:109][982]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_016.png exists=True g=7.749
+[2026.11.09-09.50.38:165][ 58]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_017.png exists=True g=7.757
+[2026.11.09-09.50.39:221][131]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_018.png exists=True g=7.766
+[2026.11.09-09.50.40:260][206]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_019.png exists=True g=7.774
+[2026.11.09-09.50.41:329][280]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_020.png exists=True g=7.782
+[2026.11.09-09.50.42:386][354]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_021.png exists=True g=7.791
+[2026.11.09-09.50.43:422][428]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_022.png exists=True g=7.799
+[2026.11.09-09.50.44:485][503]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_023.png exists=True g=7.807
+[2026.11.09-09.50.45:524][576]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_024.png exists=True g=7.816
+[2026.11.09-09.50.46:619][651]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_025.png exists=True g=7.824
+[2026.11.09-09.50.47:631][722]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_026.png exists=True g=7.832
+[2026.11.09-09.50.48:701][796]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_027.png exists=True g=7.841
+[2026.11.09-09.50.49:756][870]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_028.png exists=True g=7.849
+[2026.11.09-09.50.50:826][943]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_029.png exists=True g=7.857
+[2026.11.09-09.50.51:857][ 16]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/idle_a35_030.png exists=True g=7.866
+[2026.11.09-09.50.53:315][ 93]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/idle_a35_031.png exists=True g=8.211
+[2026.11.09-09.50.54:762][179]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/idle_a35_032.png exists=True g=8.561
+[2026.11.09-09.50.54:809][180]LogPython: [SwordCloseup] CLOSE started=True angle=35
+[2026.11.09-09.50.55:092][186]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_033.png exists=True g=8.884
+[2026.11.09-09.50.56:406][268]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_034.png exists=True g=9.012
+[2026.11.09-09.50.56:752][275]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_035.png exists=True g=9.142
+[2026.11.09-09.50.58:038][354]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_036.png exists=True g=9.242
+[2026.11.09-09.50.59:283][436]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_037.png exists=True g=9.340
+[2026.11.09-09.50.59:665][443]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_038.png exists=True g=9.492
+[2026.11.09-09.51.00:915][522]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_039.png exists=True g=9.591
+[2026.11.09-09.51.01:247][529]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_040.png exists=True g=9.742
+[2026.11.09-09.51.02:517][611]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_041.png exists=True g=9.842
+[2026.11.09-09.51.03:808][691]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_042.png exists=True g=9.942
+[2026.11.09-09.51.04:188][698]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_043.png exists=True g=10.102
+[2026.11.09-09.51.05:410][781]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_044.png exists=True g=10.202
+[2026.11.09-09.51.05:782][788]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_045.png exists=True g=10.354
+[2026.11.09-09.51.07:024][868]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_046.png exists=True g=10.451
+[2026.11.09-09.51.08:289][949]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_047.png exists=True g=10.550
+[2026.11.09-09.51.08:662][956]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_048.png exists=True g=10.705
+[2026.11.09-09.51.09:894][ 35]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_049.png exists=True g=10.803
+[2026.11.09-09.51.10:283][ 42]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_050.png exists=True g=10.961
+[2026.11.09-09.51.11:495][119]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_051.png exists=True g=11.058
+[2026.11.09-09.51.12:792][198]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_052.png exists=True g=11.156
+[2026.11.09-09.51.13:177][205]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_053.png exists=True g=11.322
+[2026.11.09-09.51.14:417][284]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_054.png exists=True g=11.421
+[2026.11.09-09.51.14:819][291]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_055.png exists=True g=11.587
+[2026.11.09-09.51.16:009][371]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_056.png exists=True g=11.684
+[2026.11.09-09.51.17:305][452]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_057.png exists=True g=11.782
+[2026.11.09-09.51.18:821][505]LogPython: [SwordCloseup] CAMERA angle=90 player_pos=(131.9225803607406, -188.40497018646812, 166.14999151229858)
+[2026.11.09-09.51.19:749][535]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a90_058.png exists=True g=14.041
+[2026.11.09-09.51.20:025][541]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a90_059.png exists=True g=14.351
+[2026.11.09-09.51.21:064][612]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a90_060.png exists=True g=14.359
+[2026.11.09-09.51.22:150][681]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/idle_a90_061.png exists=True g=14.368
+[2026.11.09-09.51.23:504][767]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/idle_a90_062.png exists=True g=14.717
+[2026.11.09-09.51.23:927][775]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/idle_a90_063.png exists=True g=15.148
+[2026.11.09-09.51.24:964][852]LogPython: [SwordCloseup] CLOSE started=True angle=90
+[2026.11.09-09.51.25:290][858]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_064.png exists=True g=15.460
+[2026.11.09-09.51.26:570][938]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_065.png exists=True g=15.559
+[2026.11.09-09.51.26:893][945]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_066.png exists=True g=15.703
+[2026.11.09-09.51.28:183][ 27]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_067.png exists=True g=15.803
+[2026.11.09-09.51.28:531][ 34]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_068.png exists=True g=15.951
+[2026.11.09-09.51.29:733][112]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_069.png exists=True g=16.042
+[2026.11.09-09.51.31:042][194]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_070.png exists=True g=16.133
+[2026.11.09-09.51.32:313][278]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_071.png exists=True g=16.234
+[2026.11.09-09.51.32:656][285]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_072.png exists=True g=16.376
+[2026.11.09-09.51.33:911][368]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_073.png exists=True g=16.473
+[2026.11.09-09.51.34:292][375]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_074.png exists=True g=16.631
+[2026.11.09-09.51.35:515][452]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_075.png exists=True g=16.730
+[2026.11.09-09.51.36:792][532]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_076.png exists=True g=16.827
+[2026.11.09-09.51.37:153][539]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_077.png exists=True g=16.968
+[2026.11.09-09.51.38:397][620]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_078.png exists=True g=17.067
+[2026.11.09-09.51.38:774][627]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_079.png exists=True g=17.224
+[2026.11.09-09.51.39:982][705]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_080.png exists=True g=17.313
+[2026.11.09-09.51.41:271][787]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_081.png exists=True g=17.412
+[2026.11.09-09.51.41:652][794]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_082.png exists=True g=17.573
+[2026.11.09-09.51.42:884][876]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_083.png exists=True g=17.673
+[2026.11.09-09.51.43:265][883]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_084.png exists=True g=17.835
+[2026.11.09-09.51.44:467][963]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_085.png exists=True g=17.930
+[2026.11.09-09.51.45:743][ 44]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_086.png exists=True g=18.029
+[2026.11.09-09.51.46:106][ 51]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_087.png exists=True g=18.183
+[2026.11.09-09.51.47:350][132]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_088.png exists=True g=18.281
+[2026.11.09-09.51.47:735][139]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_089.png exists=True g=18.439
+[2026.11.09-09.51.50:193][268]LogPython: [SwordCloseup] finished: all angles recorded frames=90

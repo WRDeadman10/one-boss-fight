@@ -14,19 +14,36 @@ FRAMEWORK_BOSS_H = ROOT / "Source/OneBossFight/Boss/RPGFrameworkBossCharacter.h"
 class AYLeadDriverContracts(unittest.TestCase):
     def test_c12_opens_real_parry_then_checks_new_pawn_before_cooldown_probe(self):
         source = RESET_DRIVER.read_text(encoding="utf-8")
-        self.assertIn('("parry window lifecycle", setup_parry_lifecycle, noop, 0.0, 0.0)', source)
+        self.assertIn('("parry lifecycle via real A4 hit", setup_parry_lifecycle, act_real_boss_hit, 0.0, 0.0)', source)
         self.assertIn('opened = bool(parry.press())', source)
         self.assertIn('active = bool(parry.is_window_open())', source)
         self.assertIn('has_tag(pawn, "Status.ParryActive")', source)
-        self.assertIn('p["dbg"].debug_set_player_health(0.0)', source)
+        self.assertIn('debug_set_player_health(1.0)', source)
+        self.assertIn('start_move("A4", True)', source)
+        self.assertIn('stage=real_hit_started move=A4', source)
+        self.assertIn('stage=real_hit_wait', source)
+        self.assertIn('real_hit_seen_damage', source)
+        self.assertIn('C12 A4 real hit reduced 1-HP pawn before respawn', source)
+        self.assertNotIn('debug_set_player_health(0.0)', source)
+        self.assertNotIn('Ability.Dead', source)
         self.assertIn('parry_window_before_probe=%s status_parry_active_before_probe=%s', source)
         self.assertIn('cooldown_ready = bool(parry.press())', source)
         self.assertIn('new_parried == 0 and press_before == 0 and cooldown_ready and press_after == 1', source)
         self.assertIn('not new_window and new_tag is False', source)
-        self.assertIn('PARRY_LIFECYCLE stage=death_request', source)
-        self.assertIn('matching_spawned_candidates=', source)
-        self.assertIn('RESPAWN_WAIT elapsed=%.1f controller_pawn=%s class=%s', source)
-        self.assertIn('> 45.0', source)
+        self.assertIn('is_new_pawn', source)
+        self.assertIn('real_hit_deadline', source)
+
+    def test_tracker_script_start_api_distinguishes_gameplay_abilities_from_preview_montages(self):
+        tracker = (ROOT / "Source/OneBossFight/Player/RPGAttackTracker.cpp").read_text(encoding="utf-8")
+        start_move = tracker.split("bool URPGAttackTracker::StartMove", 1)[1].split("void URPGAttackTracker::End", 1)[0]
+        preview = tracker.split("bool URPGAttackTracker::PlayMoveMontageForTest", 1)[1].split("FString URPGAttackTracker::GetPhaseName", 1)[0]
+        self.assertIn('TEXT("A2"), TEXT("Ability.Melee.CloseRare")', start_move)
+        self.assertIn('TEXT("Close"), TEXT("Ability.Melee.Close")', start_move)
+        self.assertIn('TEXT("A6"), TEXT("Ability.Melee.LeapAttack")', start_move)
+        self.assertIn('!T.ClipPath.IsEmpty()', start_move)  # A4/A5 authored clip route
+        self.assertIn('if (!Timing->ClipPath.IsEmpty())', preview)
+        self.assertIn('Anim->Montage_Play(Montage)', preview)
+        self.assertIn('a bare montage does not hurt', start_move)
 
     def test_c13_debug_posture_hook_does_not_target_framework_boss_state(self):
         debug_source = COMBAT_DEBUG.read_text(encoding="utf-8")

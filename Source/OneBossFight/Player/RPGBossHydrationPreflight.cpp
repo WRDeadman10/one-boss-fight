@@ -513,8 +513,8 @@ namespace RPGBossHydrationPreflight
 				{
 					FailMember(Result, TEXT("Preflight.ParrySlowMotionProvenanceMissing"), Label, TEXT("non-default parry slow-motion config requires all seven typed source fields"));
 				}
-				// The plans of this member are built here only to be CHECKED (class, instance name, callback bound, no duplicate) and for the union of 115 required paths plus seven separately counted optional parry paths, the selected-phase
-				// paths from the explicit selected id. The seven parry-policy paths are optional typed inputs. Membership only; a Value text is never authority. No callback is invoked.
+				// The plans of this member are built here only to be CHECKED (class, instance name, callback bound, no duplicate) and for the union of 115 required paths plus eight separately counted optional typed paths (seven parry fields and the look sword offset), the selected-phase
+				// paths from the explicit selected id. Optional paths are typed inputs. Membership only; a Value text is never authority. No callback is invoked.
 				const TArray<FRPGComponentPlan> MemberPlans = MakeBossCorePlans(Request.SelectedPhaseId);
 				for (const FString& Problem : CheckPlans(MemberPlans))
 				{

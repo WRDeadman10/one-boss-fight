@@ -84,7 +84,8 @@ namespace LookTests
 		R.Body = Mesh(MakePath(TEXT("/OtherSynthetic/Look/B"), TEXT("BodyB")));
 		R.Pieces = {Mesh(MakePath(TEXT("/OtherSynthetic/Look/B"), TEXT("Gauntlet")))};
 		R.Sword = Weapon(MakePath(TEXT("/OtherSynthetic/Look/B"), TEXT("SwordB")));
-		R.SwordSocket = TEXT("GripB");
+		R.SwordSocket = TEXT("hand_r");
+		R.SwordAttachOffset = FTransform(FRotator(19.84f, -1.84f, -10.48f), FVector::ZeroVector);
 		return R;
 	}
 	FRPGParticipantConfig Config(const FRPGLookConfig& R)
@@ -101,12 +102,14 @@ namespace LookTests
 		R.Pieces = Look.Pieces;
 		R.Sword = Look.Sword;
 		R.SwordSocket = Look.SwordSocket;
+		R.SwordAttachOffset = Look.SwordAttachOffset;
 		return R;
 	}
 	bool Same(const FRPGLookConfig& A, const FRPGLookConfig& B)
 	{
 		if (A.bEnabled != B.bEnabled || A.Body.ToSoftObjectPath() != B.Body.ToSoftObjectPath()
-			|| A.Sword.ToSoftObjectPath() != B.Sword.ToSoftObjectPath() || A.SwordSocket != B.SwordSocket || A.Pieces.Num() != B.Pieces.Num())
+			|| A.Sword.ToSoftObjectPath() != B.Sword.ToSoftObjectPath() || A.SwordSocket != B.SwordSocket
+			|| !A.SwordAttachOffset.Equals(B.SwordAttachOffset) || A.Pieces.Num() != B.Pieces.Num())
 		{
 			return false;
 		}
@@ -225,16 +228,19 @@ bool FRPGLookAssignTest::RunTest(const FString& Parameters)
 	AActor* Owner = Scope.Spawn();
 	if (!TestNotNull(TEXT("owner"), Owner)) { return false; }
 	TStrongObjectPtr<URPGBossLook> Look(NewObject<URPGBossLook>(Owner, TEXT("RPGBossLook")));
+	TestTrue(TEXT("Ember component defaults use the tuned hand grip"), Look->SwordSocket == FName(TEXT("hand_r"))
+		&& Look->SwordAttachOffset.Equals(FTransform(FRotator(19.84f, -1.84f, -10.48f), FVector::ZeroVector)));
 	TStrongObjectPtr<URPGBossPosture> Other(NewObject<URPGBossPosture>(Owner));
 	const float OtherBefore = Other->PostureMax;
 	const auto Before = Owned(Owner);
 	const FRuntime Runtime(*Look);
 	const FRPGComponentPlan Plan = RPGBossLookAdapters::MakeLookPlan();
-	TestTrue(TEXT("exact class/name and five exact paths, without duplicates"), Plan.Class == URPGBossLook::StaticClass()
-		&& Plan.InstanceName == FName(TEXT("RPGBossLook")) && Plan.RequiredFields == Paths());
+	TestTrue(TEXT("exact class/name and required paths plus optional offset field, without duplicates"), Plan.Class == URPGBossLook::StaticClass()
+		&& Plan.InstanceName == FName(TEXT("RPGBossLook")) && Plan.RequiredFields == Paths()
+		&& Plan.OptionalFields == TArray<FString>{TEXT("Look.SwordAttachOffset")});
 	if (!TestTrue(TEXT("plan callback exists"), static_cast<bool>(Plan.Configure))) { return false; }
 	FString Error = TEXT("stale diagnostic");
-	TestTrue(TEXT("callback copies all five nondefault fields"), Plan.Configure(*Look, Config(RecordA()), Error) && Error.IsEmpty() && Same(Read(*Look), RecordA()));
+	TestTrue(TEXT("callback copies fields including the optional nondefault offset"), Plan.Configure(*Look, Config(RecordB()), Error) && Error.IsEmpty() && Same(Read(*Look), RecordB()));
 	TestTrue(TEXT("runtime, lifecycle, owner component set and unrelated component unchanged"), Runtime.SameAs(FRuntime(*Look))
 		&& SameOwned(Before, Owned(Owner)) && Other->PostureMax == OtherBefore && Look->GetOwner() == Owner && Look->GetOuter() == Owner);
 	TestTrue(TEXT("second call writes another complete record"), Plan.Configure(*Look, Config(RecordB()), Error) && Same(Read(*Look), RecordB()) && Runtime.SameAs(FRuntime(*Look)));
@@ -438,9 +444,10 @@ bool FRPGLookAuthoringTest::RunTest(const FString& Parameters)
 		++Count;
 		TestTrue(TEXT("authored field editable"), It->HasAnyPropertyFlags(CPF_Edit));
 	}
-	TestEqual(TEXT("exact five authored properties"), Count, 5);
+	TestEqual(TEXT("exact six authored properties"), Count, 6);
 	TestNotNull(TEXT("enabled bool"), CastField<FBoolProperty>(Struct->FindPropertyByName(TEXT("bEnabled"))));
 	TestNotNull(TEXT("socket FName"), CastField<FNameProperty>(Struct->FindPropertyByName(TEXT("SwordSocket"))));
+	TestNotNull(TEXT("optional sword attach transform"), CastField<FStructProperty>(Struct->FindPropertyByName(TEXT("SwordAttachOffset"))));
 	const FSoftObjectProperty* Body = CastField<FSoftObjectProperty>(Struct->FindPropertyByName(TEXT("Body")));
 	const FSoftObjectProperty* Sword = CastField<FSoftObjectProperty>(Struct->FindPropertyByName(TEXT("Sword")));
 	const FArrayProperty* Pieces = CastField<FArrayProperty>(Struct->FindPropertyByName(TEXT("Pieces")));
@@ -450,7 +457,14 @@ bool FRPGLookAuthoringTest::RunTest(const FString& Parameters)
 	const FStructProperty* Property = CastField<FStructProperty>(URPGBossDefinition::StaticClass()->FindPropertyByName(TEXT("Look")));
 	TestTrue(TEXT("editable Data Asset record"), Property && Property->Struct == Struct && Property->HasAnyPropertyFlags(CPF_Edit));
 	const FRPGLookConfig Default;
-	TestTrue(TEXT("all five native defaults including constructor soft paths"), Same(Default, Read(*GetDefault<URPGBossLook>())));
+	const FRPGLookConfig ComponentDefaults = Read(*GetDefault<URPGBossLook>());
+	TestTrue(TEXT("native config defaults preserve asset soft paths"), Default.bEnabled == ComponentDefaults.bEnabled
+		&& Default.Body.ToSoftObjectPath() == ComponentDefaults.Body.ToSoftObjectPath()
+		&& Default.Pieces.Num() == ComponentDefaults.Pieces.Num()
+		&& Default.Sword.ToSoftObjectPath() == ComponentDefaults.Sword.ToSoftObjectPath());
+	TestTrue(TEXT("identity offset keeps the legacy attachment transform"), Default.SwordAttachOffset.Equals(FTransform::Identity));
+	TestTrue(TEXT("Ember component defaults use its tuned hand grip"), ComponentDefaults.SwordSocket == FName(TEXT("hand_r"))
+		&& ComponentDefaults.SwordAttachOffset.Equals(FTransform(FRotator(19.84f, -1.84f, -10.48f), FVector::ZeroVector)));
 	TestTrue(TEXT("explicit declared baseline"), Default.bEnabled && Default.SwordSocket == FName(TEXT("HeavySwordSocket_R")) && Default.Pieces.Num() == 3
 		&& Default.Body.ToString().EndsWith(TEXT("/Body/SK_Boss01_Body.SK_Boss01_Body"))
 		&& Default.Sword.ToString().EndsWith(TEXT("/Weapons/SM_Boss01_Greatsword.SM_Boss01_Greatsword")));

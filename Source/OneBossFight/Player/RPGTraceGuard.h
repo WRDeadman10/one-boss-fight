@@ -52,6 +52,18 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Trace")
 	bool IsPackTraceActive() const;
 
+	UFUNCTION(BlueprintPure, Category = "Trace")
+	UPrimitiveComponent* GetTraceSourceComponent() const { return Target.GetMesh(); }
+
+	UFUNCTION(BlueprintCallable, Category = "Trace")
+	void GetTraceSocketNames(TArray<FName>& Out) const { Target.GetSockets(Out); }
+
+	UFUNCTION(BlueprintPure, Category = "Trace")
+	UPrimitiveComponent* GetFallbackTraceSourceComponent() const { return OriginalTraceMesh.Get(); }
+
+	UFUNCTION(BlueprintCallable, Category = "Trace")
+	void GetFallbackTraceSocketNames(TArray<FName>& Out) const { Out = OriginalTraceSockets; }
+
 	/** True while this actor sits in the pack's hit set only because the wall gate put it there for one sample (the audit must not count that as a hit). */
 	bool IsSeed(const AActor* Actor) const { return Actor && TempSeed.Get() == Actor; }
 
@@ -88,6 +100,11 @@ protected:
 
 private:
 	RPGPackTrace::FTarget Target;
+	TWeakObjectPtr<UPrimitiveComponent> OriginalTraceMesh;
+	TArray<FName> OriginalTraceSockets;
+	TWeakObjectPtr<UPrimitiveComponent> AppliedTraceMesh;
+	TArray<FName> AppliedTraceSockets;
+	bool bOriginalTraceCaptured = false;
 	TWeakObjectPtr<AActor> TempSeed;
 	int32 SeedWindow = 0;
 	TArray<TWeakObjectPtr<AActor>> LastSet;
@@ -100,4 +117,5 @@ private:
 	int32 OccludedSamples = 0;
 	int32 CarryCount = 0;
 	float OpenRefreshError = 0.f;
+	void RefreshVisualWeaponTraceSource(AActor* Boss);
 };

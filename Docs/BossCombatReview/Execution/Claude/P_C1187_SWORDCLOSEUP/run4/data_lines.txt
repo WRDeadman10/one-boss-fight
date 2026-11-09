@@ -1,0 +1,118 @@
+﻿[2026.11.09-12.06.49:221][  0]LogPython: [SwordCloseup] driver registered
+[2026.11.09-12.06.52:037][  2]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending
+[2026.11.09-12.06.59:044][190]LogPython: [SwordCloseup] MESH after_wake comp=Weapon Mesh mesh=SM_KwangSword visible=False hidden_in_game=n/a parent=CharacterMesh0 socket=HeavySwordSheath_Back
+[2026.11.09-12.06.59:044][190]LogPython: [SwordCloseup] MESH after_wake comp=RPGLookSword mesh=SM_Boss01_Greatsword visible=True hidden_in_game=n/a parent=RPGLookBody socket=hand_r
+[2026.11.09-12.06.59:044][190]LogPython: [SwordCloseup] MESH after_wake comp=CharacterMesh0 mesh=SKM_CombatMannequin_Simple visible=False hidden_in_game=n/a parent=CollisionCylinder socket=None
+[2026.11.09-12.06.59:044][190]LogPython: [SwordCloseup] MESH after_wake comp=RPGLookBody mesh=SK_Boss01_Body visible=True hidden_in_game=n/a parent=CharacterMesh0 socket=None
+[2026.11.09-12.06.59:044][190]LogPython: [SwordCloseup] MESH after_wake comp=RPGLookPiece_SK_Boss01_Crown mesh=SK_Boss01_Crown visible=True hidden_in_game=n/a parent=CharacterMesh0 socket=None
+[2026.11.09-12.06.59:044][190]LogPython: [SwordCloseup] MESH after_wake comp=RPGLookPiece_SK_Boss01_Mantle mesh=SK_Boss01_Mantle visible=True hidden_in_game=n/a parent=CharacterMesh0 socket=None
+[2026.11.09-12.06.59:044][190]LogPython: [SwordCloseup] MESH after_wake comp=RPGLookPiece_SK_Boss01_BrazierGauntlet mesh=SK_Boss01_BrazierGauntlet visible=True hidden_in_game=n/a parent=CharacterMesh0 socket=None
+[2026.11.09-12.06.59:045][190]LogPython: [SwordCloseup] CAMERA angle=35 player_pos=(-188.40497018646812, -131.92258036074062, 166.14999151229858)
+[2026.11.09-12.07.00:243][217]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_000.png exists=True g=7.477
+[2026.11.09-12.07.00:491][223]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_001.png exists=True g=7.877
+[2026.11.09-12.07.01:537][251]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_002.png exists=True g=7.926
+[2026.11.09-12.07.02:540][296]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_003.png exists=True g=7.957
+[2026.11.09-12.07.03:585][340]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_004.png exists=True g=7.969
+[2026.11.09-12.07.04:654][384]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_005.png exists=True g=7.982
+[2026.11.09-12.07.05:695][438]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_006.png exists=True g=7.991
+[2026.11.09-12.07.06:766][489]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_007.png exists=True g=8.002
+[2026.11.09-12.07.08:490][547]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_008.png exists=True g=8.010
+[2026.11.09-12.07.08:734][553]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_009.png exists=True g=8.010
+[2026.11.09-12.07.09:008][559]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_010.png exists=True g=8.010
+[2026.11.09-12.07.09:964][629]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_011.png exists=True g=8.019
+[2026.11.09-12.07.11:002][704]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_012.png exists=True g=8.027
+[2026.11.09-12.07.12:058][780]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_013.png exists=True g=8.035
+[2026.11.09-12.07.13:116][853]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_014.png exists=True g=8.044
+[2026.11.09-12.07.14:158][925]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_015.png exists=True g=8.052
+[2026.11.09-12.07.15:250][  0]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_016.png exists=True g=8.060
+[2026.11.09-12.07.16:276][ 74]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_017.png exists=True g=8.069
+[2026.11.09-12.07.17:329][148]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_018.png exists=True g=8.077
+[2026.11.09-12.07.18:397][222]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_019.png exists=True g=8.085
+[2026.11.09-12.07.19:475][297]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_020.png exists=True g=8.094
+[2026.11.09-12.07.20:513][370]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_021.png exists=True g=8.102
+[2026.11.09-12.07.21:567][443]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_022.png exists=True g=8.110
+[2026.11.09-12.07.22:609][517]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_023.png exists=True g=8.119
+[2026.11.09-12.07.23:663][591]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_024.png exists=True g=8.127
+[2026.11.09-12.07.24:716][666]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_025.png exists=True g=8.135
+[2026.11.09-12.07.25:776][740]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_026.png exists=True g=8.144
+[2026.11.09-12.07.26:837][815]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_027.png exists=True g=8.152
+[2026.11.09-12.07.27:885][886]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_028.png exists=True g=8.160
+[2026.11.09-12.07.28:924][959]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a35_029.png exists=True g=8.169
+[2026.11.09-12.07.29:980][ 33]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/idle_a35_030.png exists=True g=8.177
+[2026.11.09-12.07.31:460][111]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/idle_a35_031.png exists=True g=8.538
+[2026.11.09-12.07.32:873][197]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/idle_a35_032.png exists=True g=8.865
+[2026.11.09-12.07.33:929][274]LogPython: [SwordCloseup] CLOSE started=True angle=35
+[2026.11.09-12.07.33:929][274]LogPython: [SwordCloseup] MESH swing_a35 comp=Weapon Mesh mesh=SM_KwangSword visible=False hidden_in_game=n/a parent=CharacterMesh0 socket=HeavySwordSheath_Back
+[2026.11.09-12.07.33:929][274]LogPython: [SwordCloseup] MESH swing_a35 comp=RPGLookSword mesh=SM_Boss01_Greatsword visible=True hidden_in_game=n/a parent=RPGLookBody socket=hand_r
+[2026.11.09-12.07.33:929][274]LogPython: [SwordCloseup] MESH swing_a35 comp=CharacterMesh0 mesh=SKM_CombatMannequin_Simple visible=False hidden_in_game=n/a parent=CollisionCylinder socket=None
+[2026.11.09-12.07.33:929][274]LogPython: [SwordCloseup] MESH swing_a35 comp=RPGLookBody mesh=SK_Boss01_Body visible=True hidden_in_game=n/a parent=CharacterMesh0 socket=None
+[2026.11.09-12.07.33:929][274]LogPython: [SwordCloseup] MESH swing_a35 comp=RPGLookPiece_SK_Boss01_Crown mesh=SK_Boss01_Crown visible=True hidden_in_game=n/a parent=CharacterMesh0 socket=None
+[2026.11.09-12.07.33:929][274]LogPython: [SwordCloseup] MESH swing_a35 comp=RPGLookPiece_SK_Boss01_Mantle mesh=SK_Boss01_Mantle visible=True hidden_in_game=n/a parent=CharacterMesh0 socket=None
+[2026.11.09-12.07.33:929][274]LogPython: [SwordCloseup] MESH swing_a35 comp=RPGLookPiece_SK_Boss01_BrazierGauntlet mesh=SK_Boss01_BrazierGauntlet visible=True hidden_in_game=n/a parent=CharacterMesh0 socket=None
+[2026.11.09-12.07.34:242][280]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_033.png exists=True g=9.196
+[2026.11.09-12.07.34:636][287]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_034.png exists=True g=9.352
+[2026.11.09-12.07.35:828][367]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_035.png exists=True g=9.445
+[2026.11.09-12.07.36:154][374]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_036.png exists=True g=9.588
+[2026.11.09-12.07.37:433][454]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_037.png exists=True g=9.689
+[2026.11.09-12.07.38:697][532]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_038.png exists=True g=9.780
+[2026.11.09-12.07.39:058][539]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_039.png exists=True g=9.920
+[2026.11.09-12.07.40:302][620]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_040.png exists=True g=10.019
+[2026.11.09-12.07.40:677][627]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_041.png exists=True g=10.175
+[2026.11.09-12.07.41:865][703]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_042.png exists=True g=10.262
+[2026.11.09-12.07.43:169][786]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_043.png exists=True g=10.362
+[2026.11.09-12.07.43:534][793]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_044.png exists=True g=10.518
+[2026.11.09-12.07.44:778][874]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_045.png exists=True g=10.619
+[2026.11.09-12.07.46:052][953]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_046.png exists=True g=10.719
+[2026.11.09-12.07.46:425][960]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_047.png exists=True g=10.874
+[2026.11.09-12.07.47:640][ 36]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_048.png exists=True g=10.964
+[2026.11.09-12.07.47:997][ 43]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_049.png exists=True g=11.124
+[2026.11.09-12.07.49:256][124]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_050.png exists=True g=11.222
+[2026.11.09-12.07.50:515][207]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_051.png exists=True g=11.320
+[2026.11.09-12.07.50:894][214]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_052.png exists=True g=11.475
+[2026.11.09-12.07.52:117][295]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_053.png exists=True g=11.574
+[2026.11.09-12.07.52:482][302]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_054.png exists=True g=11.726
+[2026.11.09-12.07.53:661][380]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_055.png exists=True g=11.810
+[2026.11.09-12.07.54:977][463]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_056.png exists=True g=11.909
+[2026.11.09-12.07.55:358][470]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_057.png exists=True g=12.065
+[2026.11.09-12.07.56:551][550]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a35_058.png exists=True g=12.155
+[2026.11.09-12.07.59:036][683]LogPython: [SwordCloseup] CAMERA angle=90 player_pos=(131.9225803607406, -188.40497018646812, 166.14999151229858)
+[2026.11.09-12.08.00:008][712]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a90_059.png exists=True g=14.480
+[2026.11.09-12.08.00:306][718]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a90_060.png exists=True g=14.736
+[2026.11.09-12.08.01:312][787]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/warm_a90_061.png exists=True g=14.744
+[2026.11.09-12.08.02:372][860]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/idle_a90_062.png exists=True g=14.752
+[2026.11.09-12.08.03:778][947]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/idle_a90_063.png exists=True g=15.099
+[2026.11.09-12.08.04:157][954]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/idle_a90_064.png exists=True g=15.461
+[2026.11.09-12.08.05:174][ 33]LogPython: [SwordCloseup] CLOSE started=True angle=90
+[2026.11.09-12.08.05:174][ 33]LogPython: [SwordCloseup] MESH swing_a90 comp=Weapon Mesh mesh=SM_KwangSword visible=False hidden_in_game=n/a parent=CharacterMesh0 socket=HeavySwordSheath_Back
+[2026.11.09-12.08.05:174][ 33]LogPython: [SwordCloseup] MESH swing_a90 comp=RPGLookSword mesh=SM_Boss01_Greatsword visible=True hidden_in_game=n/a parent=RPGLookBody socket=hand_r
+[2026.11.09-12.08.05:174][ 33]LogPython: [SwordCloseup] MESH swing_a90 comp=CharacterMesh0 mesh=SKM_CombatMannequin_Simple visible=False hidden_in_game=n/a parent=CollisionCylinder socket=None
+[2026.11.09-12.08.05:174][ 33]LogPython: [SwordCloseup] MESH swing_a90 comp=RPGLookBody mesh=SK_Boss01_Body visible=True hidden_in_game=n/a parent=CharacterMesh0 socket=None
+[2026.11.09-12.08.05:174][ 33]LogPython: [SwordCloseup] MESH swing_a90 comp=RPGLookPiece_SK_Boss01_Crown mesh=SK_Boss01_Crown visible=True hidden_in_game=n/a parent=CharacterMesh0 socket=None
+[2026.11.09-12.08.05:174][ 33]LogPython: [SwordCloseup] MESH swing_a90 comp=RPGLookPiece_SK_Boss01_Mantle mesh=SK_Boss01_Mantle visible=True hidden_in_game=n/a parent=CharacterMesh0 socket=None
+[2026.11.09-12.08.05:174][ 33]LogPython: [SwordCloseup] MESH swing_a90 comp=RPGLookPiece_SK_Boss01_BrazierGauntlet mesh=SK_Boss01_BrazierGauntlet visible=True hidden_in_game=n/a parent=CharacterMesh0 socket=None
+[2026.11.09-12.08.05:503][ 39]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_065.png exists=True g=15.797
+[2026.11.09-12.08.05:847][ 46]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_066.png exists=True g=15.947
+[2026.11.09-12.08.07:092][127]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_067.png exists=True g=16.039
+[2026.11.09-12.08.08:374][209]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_068.png exists=True g=16.137
+[2026.11.09-12.08.08:720][216]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_069.png exists=True g=16.283
+[2026.11.09-12.08.09:973][297]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_070.png exists=True g=16.396
+[2026.11.09-12.08.11:338][380]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_071.png exists=True g=16.526
+[2026.11.09-12.08.11:708][387]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_072.png exists=True g=16.658
+[2026.11.09-12.08.12:938][467]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_073.png exists=True g=16.757
+[2026.11.09-12.08.14:229][546]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_074.png exists=True g=16.854
+[2026.11.09-12.08.14:577][553]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_075.png exists=True g=17.003
+[2026.11.09-12.08.15:839][634]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_076.png exists=True g=17.102
+[2026.11.09-12.08.16:212][641]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_077.png exists=True g=17.260
+[2026.11.09-12.08.17:447][719]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_078.png exists=True g=17.361
+[2026.11.09-12.08.18:725][798]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_079.png exists=True g=17.459
+[2026.11.09-12.08.19:056][805]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_080.png exists=True g=17.615
+[2026.11.09-12.08.20:328][886]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_081.png exists=True g=17.707
+[2026.11.09-12.08.21:578][968]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_082.png exists=True g=17.806
+[2026.11.09-12.08.21:935][975]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_083.png exists=True g=17.958
+[2026.11.09-12.08.23:185][ 58]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_084.png exists=True g=18.057
+[2026.11.09-12.08.23:581][ 65]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_085.png exists=True g=18.214
+[2026.11.09-12.08.24:799][147]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_086.png exists=True g=18.312
+[2026.11.09-12.08.26:091][228]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_087.png exists=True g=18.412
+[2026.11.09-12.08.26:476][235]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_088.png exists=True g=18.578
+[2026.11.09-12.08.27:708][316]LogPython: [SwordCloseup] FRAME D:/FightVideo/sword_closeup/swing_a90_089.png exists=True g=18.676
+[2026.11.09-12.08.29:230][369]LogPython: [SwordCloseup] finished: all angles recorded frames=90

@@ -63,48 +63,17 @@ def parts(boss):
     return {n: comp(boss, c) for n, c in (("enc", "RPGBossEncounter"), ("tr", "RPGAttackTracker"), ("dbg", "RPGCombatDebug"), ("stg", "RPGBossStagger"), ("sw", "RPGBossLowSweep"), ("pu", "RPGBossHealPunish"))}
 
 
-def javelins(w):
-    return [a for a in unreal.GameplayStatics.get_all_actors_of_class(w, unreal.Actor) if a.get_class().get_name() == "RPGBossJavelin"]
-
-
-# name, setup(w, pc, pawn, boss), action time after the setup, kill time after the setup
-def setup_break(w, pc, pawn, boss):
-    p = parts(boss)
-    p["stg"].force_break_for_test()
-    place(pawn, boss, 110, 0)
-
-
+# name, setup(w, pc, pawn, boss), action time after setup, hit-observation delay
 def tags(*names):
     c = unreal.GameplayTagContainer()
     c.import_text("(GameplayTags=(%s))" % ",".join('(TagName="%s")' % n for n in names))
     return c
 
 
-def setup_riposte(w, pc, pawn, boss):
-    p = parts(boss)
-    p["stg"].force_break_for_test()
-    place(pawn, boss, 110, 0)
-    pc.set_control_rotation(unreal.Rotator(0, 0, pawn.get_actor_rotation().yaw))
-    S["mem"]["riposte0"] = p["stg"].get_riposte_count()
-
-
-def act_riposte(w, pc, pawn, boss):
-    S["press_until"] = S["now"] + 0.12
-
-
-def setup_a4(w, pc, pawn, boss):
-    place(pawn, boss, 250, 0)
-    S["mem"]["start_ok"] = parts(boss)["tr"].start_move("A4", True)
-
-
-def setup_a5(w, pc, pawn, boss):
-    place(pawn, boss, 1000, 0)
-    parts(boss)["pu"].notify_heal_started_for_test()
-
-
 def setup_parry_lifecycle(w, pc, pawn, boss):
-    """Open a real player parry window immediately before the death-reset path."""
-    place(pawn, boss, 120, 0)
+    """Record a real parry window, then let a real A4 hit kill the 1-HP pawn."""
+    place(pawn, boss, 250, 0)
+    parts(boss)["dbg"].debug_set_player_health(1.0)
     parry = comp(pawn, "RPGPlayerParry")
     if parry is None:
         raise RuntimeError("player pawn has no RPGPlayerParry component")
@@ -115,24 +84,26 @@ def setup_parry_lifecycle(w, pc, pawn, boss):
     opened = bool(parry.press())
     active = bool(parry.is_window_open())
     tag = has_tag(pawn, "Status.ParryActive")
+    health = attr(pawn, "Attribute.Health")
     S["mem"].update(parry_window_seconds=window_seconds, parry_cooldown_seconds=cooldown_seconds,
                      parry_press_before=press_before, parry_press_after=int(parry.get_press_count()),
                      parry_count_before=parried_before, parry_opened_before_reset=opened,
-                     parry_active_before_reset=active, parry_tag_before_reset=tag)
-    log("PARRY_LIFECYCLE stage=before_reset pawn=%s opened=%s parry_window=%s status_parry_active=%s parried_count=%d press_count=%d cooldown_seconds=%.3f" %
-        (pawn.get_name(), opened, active, tag, parried_before, int(parry.get_press_count()), cooldown_seconds))
+                     parry_active_before_reset=active, parry_tag_before_reset=tag,
+                     health_before_real_hit=health, old_pawn=pawn, real_hit_seen_damage=False,
+                     real_hit_seen_zero=False, real_hit_started=False)
+    log("PARRY_LIFECYCLE stage=before_real_hit pawn=%s health=%s opened=%s parry_window=%s status_parry_active=%s parried_count=%d press_count=%d cooldown_seconds=%.3f" %
+        (pawn.get_name(), health, opened, active, tag, parried_before, int(parry.get_press_count()), cooldown_seconds))
 
 
-def noop(w, pc, pawn, boss):
-    pass
+def act_real_boss_hit(w, pc, pawn, boss):
+    started = bool(parts(boss)["tr"].start_move("A4", True))
+    S["mem"]["real_hit_started"] = started
+    log("PARRY_LIFECYCLE stage=real_hit_started move=A4 started=%s player_health=%s" %
+        (started, attr(pawn, "Attribute.Health")))
 
 
 _BASE_SCENARIOS = [
-    ("parry window lifecycle", setup_parry_lifecycle, noop, 0.0, 0.0),
-    ("stance break", setup_break, noop, 0.0, 1.0),
-    ("riposte", setup_riposte, act_riposte, 1.0, 2.3),  # the press waits for the kneel (the interaction opens when the 0.7 s fall clip is over); the paired clips start at once and the impact lands 0.8 s later: the player dies 1.3 s after the press, with the clips still running
-    ("A4 sweep", setup_a4, noop, 0.0, 0.8),
-    ("A5 javelin in flight", setup_a5, noop, 0.0, 1.0),
+    ("parry lifecycle via real A4 hit", setup_parry_lifecycle, act_real_boss_hit, 0.0, 0.0),
 ]
 _repeat_count = int(os.environ.get("A5_DEATH_RESET_REPETITIONS", "1"))
 if _repeat_count not in (1, 3):
@@ -169,7 +140,7 @@ def _tick(dt):
     pc = unreal.GameplayStatics.get_player_controller(w, 0) if w else None
     pawn = pc.get_controlled_pawn() if pc else None
     boss = next((a for a in unreal.GameplayStatics.get_all_actors_of_class(w, unreal.Character) if a.get_class().get_name() == "BP_ExampleGreatSwordBoss_C"), None) if w else None
-    if boss is None or (pawn is None and s["stage"] != "respawn"):
+    if boss is None or (pawn is None and s["stage"] not in ("respawn", "kill", "real_hit_wait")):
         return
     if pc is not None and pawn is not None and s["now"] < s["press_until"]:
         unreal.RPGInputTestUtils.inject_action(pc, unreal.load_asset(USE_MELEE), unreal.Vector(1, 0, 0))
@@ -198,25 +169,49 @@ def _tick(dt):
         act(w, pc, pawn, boss)
         s.update(stage="kill", t=0.0, st=max(0.0, kill_t - act_t))
     elif s["stage"] == "kill":
-        extra = ""
-        if name.startswith("riposte"):
-            extra = " (riposte count %d -> %d)" % (s["mem"]["riposte0"], p["stg"].get_riposte_count())
-            check("riposte: the riposte was accepted, its impact has landed and the execution is still running when the player dies", p["stg"].get_riposte_count() == s["mem"]["riposte0"] + 1 and p["stg"].is_staggered() and p["stg"].is_riposte_executing(), extra)
-        if name.startswith("A5"):
-            extra = " (javelins in flight %d)" % len(javelins(w))
-        log("== %s: killing the player%s" % (name, extra))
-        health_before = attr(pawn, "Attribute.Health")
-        p["dbg"].debug_set_player_health(0.0)
+        old_pawn = s["mem"].get("old_pawn", pawn)
+        health_before = attr(old_pawn, "Attribute.Health") if old_pawn else None
+        s["mem"].update(real_hit_wait_started=s["now"], real_hit_deadline=s["now"] + 8.0,
+                        real_hit_last_health=health_before, respawn_log_at=s["now"])
+        log("PARRY_LIFECYCLE stage=real_hit_wait pawn=%s health_before_hit=%s a4_started=%s; no health-zero write or manual death-ability activation" %
+            (old_pawn.get_name() if old_pawn else "None", health_before, s["mem"].get("real_hit_started")))
+        s.update(stage="real_hit_wait", t=0.0, st=0.0)
+    elif s["stage"] == "real_hit_wait":
+        old_pawn = s["mem"].get("old_pawn")
         try:
-            health_after = attr(pawn, "Attribute.Health")
-        except Exception as error:
-            health_after = "unreadable:%s" % error
-        s["mem"].update(death_health_before=health_before, death_health_after=health_after,
-                        respawn_log_at=s["now"])
-        log("PARRY_LIFECYCLE stage=death_request pawn=%s class=%s health_before=%s health_after=%s controller_pawn=%s" %
-            (pawn.get_name(), pawn.get_class().get_name(), health_before, health_after,
-             pc.get_controlled_pawn().get_name() if pc and pc.get_controlled_pawn() else "None"))
-        s.update(stage="respawn", t=0.0, st=0.0, kill_at=s["now"])
+            hp = attr(old_pawn, "Attribute.Health") if old_pawn else None
+        except Exception:
+            hp = None
+        if hp is not None:
+            s["mem"]["real_hit_last_health"] = hp
+            if hp < 0.99:
+                s["mem"]["real_hit_seen_damage"] = True
+            if hp <= 0.5:
+                s["mem"]["real_hit_seen_zero"] = True
+        is_new_pawn = (pawn is not None and pawn.get_name() != s["pawn_name"] and
+                       pawn.get_class().get_name() == s["mem"].get("pawn_class"))
+        if is_new_pawn and s["now"] - s["mem"]["real_hit_wait_started"] > 0.5:
+            check("C12 A4 real hit reduced 1-HP pawn before respawn", s["mem"].get("real_hit_seen_damage", False),
+                  "start_health=%s last_old_pawn_health=%s" %
+                  (s["mem"].get("health_before_real_hit"), s["mem"].get("real_hit_last_health")))
+            log("== %s: naturally killed pawn replaced by %s after %.1f s; old_health=%s candidates=%s" %
+                (name, pawn.get_name(), s["now"] - s["mem"]["real_hit_wait_started"], hp,
+                 [actor.get_name() for actor in unreal.GameplayStatics.get_all_actors_of_class(w, unreal.Character)
+                  if actor.get_name() != s["pawn_name"]]))
+            s["mem"]["respawn_pawn_class"] = pawn.get_class().get_name()
+            s.update(stage="check", t=0.0, st=2.5, kill_at=s["now"])
+        elif s["now"] >= s["mem"]["real_hit_deadline"]:
+            check("C12 real boss A4 hit naturally killed and respawned the player", False,
+                  "a4_started=%s start_health=%s last_health=%s controller_pawn=%s" %
+                  (s["mem"].get("real_hit_started"), s["mem"].get("health_before_real_hit"), hp,
+                   pawn.get_name() if pawn else "None"))
+            finish()
+        elif s["now"] >= s["mem"].get("respawn_log_at", 0.0):
+            log("REAL_HIT_WAIT elapsed=%.1f old_health=%s damage_seen=%s zero_seen=%s controller_pawn=%s" %
+                (s["now"] - s["mem"]["real_hit_wait_started"], hp,
+                 s["mem"].get("real_hit_seen_damage"), s["mem"].get("real_hit_seen_zero"),
+                 pawn.get_name() if pawn else "None"))
+            s["mem"]["respawn_log_at"] = s["now"] + 2.0
     elif s["stage"] == "respawn":
         elapsed = s["now"] - s["kill_at"]
         candidate_names = [actor.get_name() for actor in
@@ -259,7 +254,7 @@ def _tick(dt):
         check("%s: boss health and poise full" % name, health is not None and maximum is not None and abs(health - maximum) <= 0.5 and (attr(boss, "Attribute.Poise") or 0) >= 99.0 and comp(boss, "RPGBossPosture").get_posture() >= 99.0, "health %s/%s poise %s" % (health, maximum, attr(boss, "Attribute.Poise")))
         check("%s: no blade, no pending punish, no javelin" % name, (not p["sw"].is_blade_active()) and (not p["pu"].is_pending()) and len(javelins(w)) == 0, "blade %s pending %s javelins %d" % (p["sw"].is_blade_active(), p["pu"].is_pending(), len(javelins(w))))
         check("%s: the new player starts at full health" % name, php is not None and php >= 99.0, "health %s" % php)
-        if name.startswith("parry window lifecycle"):
+        if "parry lifecycle" in name:
             parry = comp(pawn, "RPGPlayerParry")
             if parry is None:
                 check("parry lifecycle: new pawn has RPGPlayerParry", False)

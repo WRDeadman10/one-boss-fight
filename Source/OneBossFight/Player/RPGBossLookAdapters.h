@@ -23,6 +23,7 @@ namespace RPGBossLookAdapters
 	inline constexpr const TCHAR* FieldPieces = TEXT("Look.Pieces");
 	inline constexpr const TCHAR* FieldSword = TEXT("Look.Sword");
 	inline constexpr const TCHAR* FieldSwordSocket = TEXT("Look.SwordSocket");
+	inline constexpr const TCHAR* FieldSwordAttachOffset = TEXT("Look.SwordAttachOffset");
 	ONEBOSSFIGHT_API bool ValidateLook(const FRPGLookConfig& Record, FString& OutError);
 	ONEBOSSFIGHT_API bool ConfigureLook(UActorComponent& Component, const FRPGParticipantConfig& Config, FString& OutError);
 	ONEBOSSFIGHT_API FRPGComponentPlan MakeLookPlan();
