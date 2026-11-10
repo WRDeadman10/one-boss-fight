@@ -35,14 +35,15 @@ class C1276SevarogS6S8ContractTests(unittest.TestCase):
     def test_s8_channel_drain_satisfies_rpg_boss_move_card_cpp_rules(self) -> None:
         commit, rec = 0.200, 1.803
         clip_len = 1.833333
-        start, end, interval = 0.267, 1.267, 0.250
+        start, end, interval = 0.267, 1.267, 0.200
         tick_dmg, heal_frac, cone_range, cone_half = 8.0, 0.50, 650.0, 45.0
         self.assertLessEqual(rec, clip_len)
         self.assertGreaterEqual(start, commit)
         self.assertLess(start, end)
         self.assertLessEqual(end, rec)
         self.assertGreater(interval, 0.0)
-        tick_count = math.floor(((end - start) + 1e-4) / interval) + 1
+        # Matches RPGBossChannelDrainRules::TickCount & TickChannelDrain:486 (start + interval * (n + 1))
+        tick_count = math.floor(((end - start) + 1e-4) / interval)
         self.assertEqual(tick_count, 5)
         self.assertTrue(1 <= tick_count <= 64)
         self.assertTrue(0.0 <= heal_frac <= 1.0)
@@ -51,8 +52,10 @@ class C1276SevarogS6S8ContractTests(unittest.TestCase):
         max_total = tick_count * tick_dmg
         # Total full-channel damage sits between S5 (25) and S3 (55)
         self.assertTrue(25.0 < max_total < 55.0)
-        # S6 signature sits above S3 (55)
+        # S6 signature sits above S3 (55) and Decision 1 tick cadence is documented
         self.assertIn("`65.0`", self.text)
+        self.assertIn("`0.200`", self.text)
+        self.assertIn("AdditionalPhaseIds", self.text)
 
     def test_phase_pools_satisfy_x14_attack_count_non_starvation(self) -> None:
         attack_count = 3

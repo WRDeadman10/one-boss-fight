@@ -65,7 +65,7 @@ Baseline reference values (`Docs/BossCombatReview/Execution/Antigravity/MoveCard
 | `ChannelDrain.bEnabled` | `true` | Channel-only spell card (`Windows = []`, `AreaEffect.bEnabled = false`) |
 | `ChannelDrain.StartSeconds` | `0.267` | `>= CommitSeconds 0.200` |
 | `ChannelDrain.EndSeconds` | `1.267` | `<= RecoveryEndSeconds 1.803` |
-| `ChannelDrain.TickIntervalSeconds` | `0.250` | Produces **`5` deterministic ticks** (`0.267, 0.517, 0.767, 1.017, 1.267`; `1 <= 5 <= 64`) |
+| `ChannelDrain.TickIntervalSeconds` | **`0.200`** *(C-1280 Decision 1)* | Produces **`5` deterministic ticks** per `TickChannelDrain:486` (`start + 0.200*(n+1)` = **`0.467, 0.667, 0.867, 1.067, 1.267`**; `TickCount = floor((1.0001)/0.200) = 5`, `1 <= 5 <= 64`) |
 | `ChannelDrain.TickDamage` | **`8.0`** *(provisional)* | **`5 x 8.0 = 40.0` max channel total** (between `S5` `25.0` and `S3` `55.0`), while escaping after 1–2 ticks costs only `8.0–16.0` HP |
 | `ChannelDrain.HealFraction` | `0.50` | Heals `50%` of actual `HPApplied` (max `20.0` boss HP if all `5` ticks connect; `0` on dodge/block/invulnerable; `0 <= 0.50 <= 1.0`) |
 | `ChannelDrain.ConeRangeCm` | `650.0` | Mid-range frontal cone (`0 < 650 <= 2000`) |
@@ -76,12 +76,16 @@ Baseline reference values (`Docs/BossCombatReview/Execution/Antigravity/MoveCard
 
 ---
 
-## 3. `C-1276c` / `[C-1277]`: Sevarog Phase Plan Table (`S1–S8`, Consistent with `X14`)
+## 3. `C-1276c` / `[C-1277]` / `[C-1280]`: Sevarog Phase Plan Table (`S1–S8`, Shared-Card `AdditionalPhaseIds`)
 
-Per `BB_X11_X15_SEVAROG_DESIGN.md` (`X14`, `RPGBossFrameworkProfile.cpp:218-226`, `RPGBossMoveModel::IsEligible`) and Lead verdict `[C-1277]`:
-- **Canonical Pool Rule (`[C-1277]`):**
-  - `Phase_1`: `S1`, `S2`, `S3`, `S4->S5`, `S7` (`5` eligible cards)
-  - `Phase_2` (`<= 60%` HP): keeps `Phase_1` cards (`S1`, `S2`, `S3`, `S4->S5`, `S7` — shared same card assets if selector supports multi-phase eligibility, preserving `>= AttackCount=3` anti-starvation without `_P2` duplicate cards unless Codex confirms single-phase-only `file:line`) and **unlocks `S6` and `S8`** (`7` eligible cards in `Phase_2`).
+Per `BB_X11_X15_SEVAROG_DESIGN.md` (`X14`), Lead verdict `[C-1277]`, and **Decision 2 (`[C-1280]`)**:
+- **Schema Extension (`[C-1280]` Decision 2):** `FRPGBossMoveCardSpec` gains one optional additive field `TArray<FName> AdditionalPhaseIds` (default empty = legacy single-phase behaviour):
+  - `RPGBossMoveModel.cpp:32` (`MoveModel.Phase`) passes when `S.PhaseId == Spec.PhaseId` OR `AdditionalPhaseIds.Contains(S.PhaseId)`.
+  - `RPGBossFrameworkProfile.cpp:221-225` (F6c + KI-149 non-starvation pool checks) counts each card in every phase it is eligible for (`PoolOne` if `PhaseId` or `AdditionalPhaseIds` matches phase one; `PoolTwo` likewise).
+  - Validator rejects `None`, entries equal to `PhaseId`, duplicates, or `> 4` entries. **Zero `_P2` duplicate card assets.**
+- **Canonical Sevarog Card Assignment (`[C-1280]`):**
+  - `Phase_1` + `AdditionalPhaseIds = [Phase_2]`: **`S1`, `S2`, `S3`, `S4`, `S5`, `S7`** (`5` selector openers in `Phase_1`, all retained in `Phase_2`).
+  - `Phase_2` (`PhaseTwoFraction = 0.6`, `PhaseTwoId = Phase_2`): **`S6`, `S8`** (`AdditionalPhaseIds = []`; `Phase_2` total eligible selector pool = `7` >= `AttackCount=3`, zero starvation).
 
 | Card | Sequence | Phase Availability (`[C-1277]`) | Role | Provis. Damage | Provis. Cooldown (`s`) | Selector Range (`cm`) | Notes / Source |
 |---|---|---|---|---:|---:|---:|---|

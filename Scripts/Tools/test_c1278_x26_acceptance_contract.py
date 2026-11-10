@@ -36,7 +36,17 @@ class C1278X26AcceptanceAndDeathContractTests(unittest.TestCase):
                 token in self.executor_cpp or token in self.boss_cpp,
                 f"Expected verbatim C++ log token: {token}",
             )
-        for ref in ("MoveModel.Phase", "90–150 cm", "radius=225", "scale=0.55", "seconds=2.5"):
+        for ref in (
+            "MoveModel.Phase",
+            "AdditionalPhaseIds",
+            "90–150 cm",
+            "radius=225",
+            "scale=0.55",
+            "seconds=2.5",
+            "tickInterval=0.2",
+            "0.467, 0.667, 0.867, 1.067, 1.267",
+            "ticks=5",
+        ):
             self.assertIn(ref, self.acceptance)
 
     def test_bc_a10_death_front_frame_citations_present(self) -> None:

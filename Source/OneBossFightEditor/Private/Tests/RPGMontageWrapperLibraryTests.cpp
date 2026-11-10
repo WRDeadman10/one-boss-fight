@@ -47,6 +47,21 @@ bool FRPGMontageWrapperLibrarySynthetic::RunTest(const FString&)
 		TestEqual(TEXT("all source sections are preserved"), Wrapper->CompositeSections.Num(), SourceSections);
 		TestEqual(TEXT("all slot names are preserved"), Wrapper->SlotAnimTracks.Num(), SourceSlots);
 		TestEqual(TEXT("all montage notifies are preserved"), Wrapper->Notifies.Num(), SourceNotifies);
+		TArray<FString> SourceRows;
+		TArray<FString> TargetRows;
+		SourceRows = URPGMontageWrapperLibrary::DescribeMontageNotifies(Source);
+		TargetRows = URPGMontageWrapperLibrary::DescribeMontageNotifies(Wrapper);
+		TestEqual(TEXT("one source readback row per notify"), SourceRows.Num(), SourceNotifies);
+		TestEqual(TEXT("one target readback row per notify"), TargetRows.Num(), SourceNotifies);
+		if (SourceRows.Num() > 0 && TargetRows.Num() == SourceRows.Num())
+		{
+			TestTrue(TEXT("source row includes timing, track, slot, and segment path"),
+				SourceRows[0].Contains(TEXT("class=")) && SourceRows[0].Contains(TEXT("trigger=")) &&
+				SourceRows[0].Contains(TEXT("duration=")) && SourceRows[0].Contains(TEXT("track=")) &&
+				SourceRows[0].Contains(TEXT("slots=[")) && SourceRows[0].Contains(*Source->GetFirstAnimReference()->GetPathName()));
+			TestTrue(TEXT("target row points to retarget sequence and reports its length"),
+				TargetRows[0].Contains(*TargetSequence->GetPathName()) && TargetRows[0].Contains(TEXT("@")));
+		}
 		TestEqual(TEXT("source rate scale is preserved"), Wrapper->RateScale, 1.25f);
 		TestFalse(TEXT("source auto blend-out setting is preserved"), Wrapper->bEnableAutoBlendOut);
 		TestTrue(TEXT("source root motion translation setting is preserved"), Wrapper->bEnableRootMotionTranslation);
@@ -78,6 +93,22 @@ bool FRPGMontageWrapperLibrarySynthetic::RunTest(const FString&)
 			TEXT("/Game/OneBossFight/Player/Greystone/TooShort_") + FGuid::NewGuid().ToString(EGuidFormats::Digits), Error));
 	TestTrue(TEXT("short-target rejection identifies notify end"),
 		Error.StartsWith(TEXT("MontageWrapper.TargetShorterThanLastNotify")));
+	UAnimMontage* TransientWrapper = URPGMontageWrapperLibrary::CreateRetargetWrapper(
+		SourceAsset, TargetSequence, TargetSkeleton, TEXT(""), Error);
+	TestNotNull(TEXT("transient wrapper is created without a destination package"), TransientWrapper);
+	TestTrue(TEXT("transient wrapper creation has no error"), Error.IsEmpty());
+	if (TransientWrapper)
+	{
+		TestTrue(TEXT("transient wrapper has transient flags"), TransientWrapper->HasAnyFlags(RF_Transient));
+		TestEqual(TEXT("transient wrapper outer is transient package"), TransientWrapper->GetOutermost(), GetTransientPackage());
+		TArray<FString> SourceRows;
+		TArray<FString> TargetRows;
+		SourceRows = URPGMontageWrapperLibrary::DescribeMontageNotifies(SourceAsset);
+		TargetRows = URPGMontageWrapperLibrary::DescribeMontageNotifies(TransientWrapper);
+		TestEqual(TEXT("transient path preserves one row per source notify"), TargetRows.Num(), SourceRows.Num());
+	}
+	const TArray<FString> InvalidRows = URPGMontageWrapperLibrary::DescribeMontageNotifies(nullptr);
+	TestTrue(TEXT("null montage readback clears output"), InvalidRows.IsEmpty());
 	return true;
 }
 #endif

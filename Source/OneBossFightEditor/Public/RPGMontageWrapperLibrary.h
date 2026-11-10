@@ -19,4 +19,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category="OneBossFight|Animation Authoring")
 	static UAnimMontage* CreateRetargetWrapper(UAnimMontage* Source, UAnimSequence* TargetSequence,
 		USkeleton* TargetSkeleton, FString PackagePath, FString& OutError);
+
+	/** Create a non-saving retarget copy in the transient package for source-vs-target validation. */
+	UFUNCTION(BlueprintCallable, Category="OneBossFight|Animation Authoring")
+	static UAnimMontage* CreateTransientRetargetWrapper(UAnimMontage* Source, UAnimSequence* TargetSequence,
+		USkeleton* TargetSkeleton, FString& OutError);
+
+	/** One deterministic row per notify, including notify timing, notify track, montage slots, and segment references/lengths. */
+	UFUNCTION(BlueprintCallable, Category="OneBossFight|Animation Authoring")
+	static TArray<FString> DescribeMontageNotifies(const UAnimMontage* Montage);
 };

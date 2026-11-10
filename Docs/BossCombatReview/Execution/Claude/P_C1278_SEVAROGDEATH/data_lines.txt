@@ -1,0 +1,23 @@
+﻿[2026.11.10-15.59.01:697][  0]LogPython: [SevarogFrames] driver registered; waiting for PIE
+[2026.11.10-15.59.04:348][  2]LogTemp: Display: [EncounterActivation] default data startup: selected /Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter for map L_SevarogArena
+[2026.11.10-15.59.04:416][  2]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending
+[2026.11.10-15.59.06:171][  5]LogPython: [SevarogFrames] START mesh=Sevarog clips=1 fps=15 view=side
+[2026.11.10-15.59.29:625][793]LogPython: [SevarogFrames] WARM_OK clip=Death_front attempts=18
+[2026.11.10-15.59.30:229][807]LogPython: [SevarogFrames] FRAME clip=Death_front index=000 time=0.000 bytes=845722 bright=1
+[2026.11.10-15.59.31:496][875]LogPython: [SevarogFrames] FRAME clip=Death_front index=001 time=0.067 bytes=841524 bright=1
+[2026.11.10-15.59.32:821][943]LogPython: [SevarogFrames] FRAME clip=Death_front index=002 time=0.133 bytes=839136 bright=1
+[2026.11.10-15.59.33:444][957]LogPython: [SevarogFrames] FRAME clip=Death_front index=003 time=0.200 bytes=849202 bright=1
+[2026.11.10-15.59.34:775][ 23]LogPython: [SevarogFrames] FRAME clip=Death_front index=004 time=0.267 bytes=855824 bright=1
+[2026.11.10-15.59.36:142][100]LogPython: [SevarogFrames] FRAME clip=Death_front index=005 time=0.333 bytes=855060 bright=1
+[2026.11.10-15.59.36:761][116]LogPython: [SevarogFrames] FRAME clip=Death_front index=006 time=0.400 bytes=849200 bright=1
+[2026.11.10-15.59.38:025][181]LogPython: [SevarogFrames] FRAME clip=Death_front index=007 time=0.467 bytes=849780 bright=1
+[2026.11.10-15.59.39:342][250]LogPython: [SevarogFrames] FRAME clip=Death_front index=008 time=0.533 bytes=851590 bright=1
+[2026.11.10-15.59.39:941][265]LogPython: [SevarogFrames] FRAME clip=Death_front index=009 time=0.600 bytes=845673 bright=1
+[2026.11.10-15.59.41:227][330]LogPython: [SevarogFrames] FRAME clip=Death_front index=010 time=0.667 bytes=834439 bright=1
+[2026.11.10-15.59.42:647][401]LogPython: [SevarogFrames] FRAME clip=Death_front index=011 time=0.733 bytes=856383 bright=1
+[2026.11.10-15.59.43:167][413]LogPython: [SevarogFrames] FRAME clip=Death_front index=012 time=0.800 bytes=850624 bright=1
+[2026.11.10-15.59.44:515][483]LogPython: [SevarogFrames] FRAME clip=Death_front index=013 time=0.867 bytes=845523 bright=1
+[2026.11.10-15.59.45:907][553]LogPython: [SevarogFrames] FRAME clip=Death_front index=014 time=0.933 bytes=839529 bright=1
+[2026.11.10-15.59.46:511][568]LogPython: [SevarogFrames] FRAME clip=Death_front index=015 time=0.967 bytes=854686 bright=1
+[2026.11.10-15.59.46:513][568]LogPython: [SevarogFrames] PLAYER_MESH_RESTORED asset=SKM_CombatMannequin_Simple
+[2026.11.10-15.59.46:513][568]LogPython: [SevarogFrames] finished: complete shots=16

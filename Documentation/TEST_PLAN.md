@@ -1,5 +1,191 @@
 # Test Plan
 
+## Queue BD Codex X36–X40 (2026-11-10)
+
+- [x] Inventoried source-side combat log/string-format candidates as unprofiled hypotheses; no cost inference.
+- [x] Mapped per-card hit/damage deltas against lifetime counters and current C-1262a receipt checks.
+- [x] Mapped watchdog/card terminal log outcomes against the live-driver status fields; proposed missing failure counters in a Lead-owned receipt schema.
+- [x] Reconciled performance target: RTX 2060 Super, 60 FPS average and p99 <=16.67 ms; RTX 3060 is proxy only, and later owner decision supersedes the older proxy-as-final wording.
+- No profiler, benchmark, tests, or engine operation was run. Report: `Documentation/Boss/BD_X36_X40_OBSERVABILITY_PERFORMANCE_AUDIT.md`.
+
+## Queue BD Codex X31–X35 (2026-11-10)
+
+- [x] Reconciled Queue BD batch status entries across task, test, project-state, and batch-report docs; corrected Batch 6's summary from 4/4 manifest-only tests to 13/13 combined focused validator tests.
+- [x] Rechecked C-1258a/C-1262a/C-1257 evidence summaries: C-1258a's initial S1–S3 result is historical; C-1262a later confirms four in-band cards and S4 Whiff->S5, while S1/S2 contact at 140 cm and general approach navigation remain open.
+- [x] Marked the older BUILD-294 follow-up absence as a run-time snapshot superseded by BUILD-295 rather than a current open gate.
+- [x] Updated onboarding/build/package instructions to require C-1155 task-specific runners, both locks, no running UnrealEditor process, and pinned suite hash.
+- No engine/build/UHT/Shipping/PIE/cook/package operation was run in this documentation batch.
+- Report: `Documentation/Boss/BD_X31_X35_DOCUMENTATION_CONSISTENCY.md`.
+
+## Queue BD Codex X26–X30 (2026-11-10)
+
+- [x] Receipt validators reject malformed top-level receipt shapes; evidence-manifest reader now reports invalid UTF-8 instead of raising.
+- [x] Focused evidence-manifest, A5 receipt and queue validator tests: 13/13 passed.
+- [x] Documented traversal/source-identity and Markdown-link parser scope limits with offline command index.
+- No captured evidence, engine/build/UHT/Shipping/PIE/cook operation was performed.
+
+## Queue BD Codex X21–X25 (2026-11-10)
+
+- [x] Inventoried selected test-facing reflected declarations and guard patterns.
+- [x] Matched selected native automation registration names to source.
+- [x] Wrote Lead evidence checklist for UHT, Shipping reflection/symbol, and Blueprint visibility; no stripping claim made.
+- No tests/build/UHT/Shipping/Editor/PIE run in this batch.
+
+## Queue BD Codex X16–X20 (2026-11-10)
+
+- [x] Mapped resolver identity/precedence, ChannelDrain and area-effect teardown, owned-tag retry helper, encounter-reset boundary, and temporary speed rebasing/restoration.
+- [x] Distinguished current pure retry-policy coverage from untested timer/reflected-tag integration.
+- No tests were changed or run; runtime/PIE acceptance remains open.
+
+## Queue BD Codex X11–X15 (2026-11-10)
+
+- [x] Rechecked local Greystone content path; child/wrapper directory is absent at this snapshot.
+- [x] Reviewed wrapper allowlist/refusal guards, registered-created-only rollback, single-tap quick-roll plan, and cook-root limitation.
+- No Editor, authoring, asset mutation, cook, build, PIE, or runtime proof performed.
+
+## Queue BD Codex X06–X10 (2026-11-10)
+
+- [x] Reconciled candidate card plan, reported trace limitations, combo-edge evidence, and source selector/profile rules.
+- [x] Preserved the Swing1 skipped-active-window recapture and production encounter binding gates.
+- No new tests or runtime evidence were produced; raw evidence and assets were not touched.
+
+## Queue BD Codex X01–X05 (2026-11-10)
+
+- [x] Mapped native-health and pack-HUD source paths, framework death completion, proof versus production initialization, and proof-fixture generation guards.
+- [x] Drafted the six-item Lead acceptance checklist for a future framework encounter integration.
+- Static audit only; no runtime/test/build/editor/PIE/package result is claimed. Production binding and acceptance remain open.
+
+## Queue BC Codex X46–X50 closeout (2026-11-10)
+
+- [x] Workspace documentation link scan reports 0 broken links; report/queue paths resolve.
+- [x] Reconciled framework HUD/death/retry and Greystone package/cook gates with existing reports.
+- No runtime/build/test/asset acceptance is claimed; Lead/owner gates remain open as listed in the reports.
+
+## Queue BC Codex X41–X45 (2026-11-10)
+
+- [x] Checked mailbox through X-1840; no Claude verdict on BC-X01–X40 was present, so no review hotfix was pending.
+- [x] Inventoried C-1271/C-1272/C-1273 and A-741 evidence references without opening raw evidence.
+- [x] Synchronized BC completion through X44 and authored `Documentation/Boss/QUEUE_BD.md` with 50 scoped tasks.
+- C-1155 locked-runner requirements from C-1272/C-1273 remain mandatory for any authorized engine work. This batch was mailbox and documentation review only.
+
+## Queue BC Codex X36–X40 (2026-11-10)
+
+- [x] Inventoried test UFUNCTIONs in named damage resolver, framework boss, and dodge timing classes; Shipping reflection absence remains unproven.
+- [x] Compared C-1155 documentation and runner behavior; updated onboarding and full-suite command cautions.
+- [x] Read-only Greystone wrapper verifier AST contract passes 1/1, rejecting asset create/save/delete/rename/duplicate and property-write calls.
+- No UHT/Shipping/build/full-suite/Unreal/PIE or engine lock operation was performed.
+
+## Queue BC Codex X31–X35 (2026-11-10)
+
+- [x] Audited disabled defaults, metadata copy, effect-only admission, and add-on mutual exclusion against existing tests/source.
+- [x] Mapped card-local ChannelDrain tick lifecycle and Abort/EndPlay cleanup; no independent channel timer exists.
+- [x] Audited temporary speed rebase/restore rules and corrected stale EndPlay tag cleanup issue status.
+- No tests/code/build/Unreal/PIE/cook/asset action was performed in this batch; runtime and focused failure-injection gates remain open.
+
+## Queue BC Codex X26–X30 (2026-11-10)
+
+- [x] Inventoried representative offline evidence, receipt, queue, and manifest validators; no Lead-owned raw evidence was passed to them.
+- [x] Hardened A5 receipt validation against non-object JSON receipt and identity shapes; focused regression is included.
+- [x] Added evidence-manifest parent/absolute traversal, listed-source identity, and hash mismatch coverage.
+- [x] Focused validator tests: 9/9 passed; changed Python files compile; Documentation link scan: 0 broken.
+- No full suite/build/Unreal/PIE/cook or evidence mutation was performed.
+
+## Queue BC Codex X21–X25 (2026-11-10)
+
+- [x] Recorded the outgoing resolver's alive/stale/duplicate/i-frame/parry/guard decision order and accepted-key spend policy.
+- [x] Mapped native boss health separately from pack player-health writes; no parity assumption.
+- [x] Audited shared parry reward dedupe and observer generation reset.
+- [ ] Add focused deterministic coverage for failed i-frame removal during reset and persistent parry stamina-write failure at EndPlay; no runtime defect is claimed.
+- No tests/build/Unreal/PIE action was performed.
+
+## Queue BC Codex X16–X20 (2026-11-10)
+
+- [x] Read-only workspace check confirms `BP_GreystoneERPlayer` and four wrapper packages are absent; four Greystone fit sequences are present.
+- [x] Audited wrapper allowlist/refusal behavior and documented notify-readback observability limits.
+- [x] Audited default-off startup replacement, fail-safe fallback, and driver CVar reset path.
+- [x] Mapped Greystone always-cook roots to CookCoverage's source-literal contract; no actual cook/package claim.
+- Asset-dependent readback and route verification remain blocked for Lead. No Unreal/build/test/cook/PIE/asset operation was performed.
+
+## Queue BC Codex X11–X15 (2026-11-10)
+
+- [x] Static lifecycle map covers transient spawn, executor ownership, controller setup, movement completion, health/death idempotence, and EndPlay.
+- [x] Recorded the framework boss's missing HUD health/death/retry integration and a minimal native-health adapter/signal proposal.
+- No runtime or test claims were added; no Unreal/build/PIE/test run was performed.
+
+## Queue BC Codex X06–X10 (2026-11-10)
+
+- [x] Inventoried selected C-1256a/C-1258a/C-1262a status receipt hashes; raw logs were not opened.
+- [x] Cross-checked the accepted C-1254 card names/combo edge and authoring-field source table against the script.
+- [x] Audited driver/refusal guards and found a narrow missing explicit transient actor cleanup on one error branch; PIE shutdown remains the outer cleanup.
+- [ ] Full restart/teardown lifecycle automation coverage remains absent from the inspected test set; no runtime failure is claimed.
+- [x] Corrected C-1262a evidence folder link in the new boss checklist to `C1262A_SEVAROG_DIAG`.
+- No Unreal/build/PIE/test run was performed.
+
+## Queue BC Codex X01–X05 (2026-11-10)
+
+- [x] Added AreaEffect/ChannelDrain nonfinite and boundary cases, add-on/defensive conflict checks, and default-off immutable snapshot coverage in `RPGBossMoveCardTests.cpp`.
+- [x] Reviewed these cases as metadata-only: they use synthetic paths and pure validation/compile-preview; no asset loads or transient worlds.
+- [ ] Native automation suite remains unrun; Lead locked Development build and DD27j-pinned suite required.
+- No Unreal/build/PIE action was performed.
+
+## Queue BB Codex X46–X50 (2026-11-10)
+
+- [x] Reconciled BB Codex X01–X45 status across TASKS, TEST_PLAN, PROJECT_STATE, and KNOWN_ISSUES; current gates and evidence are in `Documentation/Boss/BB_X46_X50_CLOSEOUT.md`.
+- [ ] X41–X44 native property tests remain unexecuted. Lead must run the locked Development build and DD27j-pinned full suite before acceptance.
+- No Unreal/build/PIE/Shipping/profiler activity for closeout.
+
+## Queue BB Codex X41–X45 (2026-11-10)
+
+- [x] Added deterministic property/boundary loops in `RPGBossMoveCardTests.cpp` for AreaEffect radius/delay, ChannelDrain tick-count/heal bounds, and forward-defense telegraph/backstep limits.
+- [ ] Native automation tests are not run yet. Lead-owned locked Development build and DD27j-hash-pinned suite required; do not report these tests as passing until that receipt arrives.
+- [x] Created `Documentation/Boss/QUEUE_BC.md` with 50 tasks in ten five-task batches.
+- No Unreal, build, PIE, Shipping, or profiler action was performed.
+
+## Queue BB Codex X36–X40 (2026-11-10)
+
+- [x] X36–X37 static source route audit recorded in `Documentation/Boss/BB_X36_X40_FRAMEWORK_AUDIT.md`; actual parry contact and live damage parity still require Lead PIE.
+- [ ] X38 Shipping reflection surface is not proven: `ResolveForTest` and `NoteOverlapForTest` UFUNCTION declarations are unguarded although their implementations are inert in Shipping. Lead Shipping build/UHT inventory remains pending.
+- [ ] X39 no-allocation claim is not proven by source; identified FString construction candidates in `URPGDamageResolver::Resolve` and optional channel tick path. Needs profiling only if this path is performance-relevant.
+- [x] X40 evidence path added to `Documentation/Boss/NEW_BOSS_CHECKLIST.md`; explicitly scoped to framework proof and open integration gates.
+- No Unreal, Shipping build, PIE, or performance capture was run for this static batch.
+
+## Queue BB Codex X31–X35 (2026-11-10)
+
+- [x] Added a read-only UE 5.5 saved-wrapper notify readback driver plus offline contract; `python -m unittest Scripts.Tools.test_bb_x31_greystone_wrapper_readback_contract` passed 3/3. Driver itself is Lead-run after authoring.
+- [ ] X31 saved-package readback is pending: the approved Greystone output package path is absent, so the Editor driver fails closed until authoring completes.
+- [ ] X32–X35 are blocked on the missing child BP and four wrapper packages; see `Documentation/Boss/BB_X31_X35_GREYSTONE_FOLLOWUP.md`.
+- No Editor, Unreal, build, PIE, CookCoverage, or asset save was performed.
+
+## Queue BB Codex X26–X30 (2026-11-10)
+
+- [x] Static source audit: X29 framework HUD health binding and X30 framework death-to-encounter completion; findings and failing scenarios are in `Documentation/Boss/BB_X26_X30_FRAMEWORK_BINDING_AUDIT.md`.
+- [ ] X26 transient S7/S8 production-validator dry-run is blocked until add-on values have a source; only visual timing marks exist for these effects.
+- [ ] X27 is blocked: `rpg.EncounterDefinition` selects a data definition but current world binding requires a pack boss and does not activate the Sevarog framework actor.
+- [ ] X28 is blocked: current dev-test initialization suppresses selector entry; the existing driver calls forced `StartCardForTest`/`StartComboForTest`.
+- No editor, Unreal, build, suite, PIE, card/map asset save, or pack edit was performed for these static audits.
+
+## Queue BB Codex X11–X15 (2026-11-10)
+
+- [x] S6 `Ultimate_Swing_120fps` transient production-validator dry-run: PASS, `NO_PACKAGES_SAVED=1`; both C-1155 locks released. Evidence: `Docs/BossCombatReview/Execution/Codex/C1274_S6_DRYRUN/`.
+- [ ] Lead review must reconcile C-1242's visually marked 0.667–0.867 s window with the probe's two notify intervals (0.6583–0.7833 and 0.8333–0.9167 s) and run live acceptance before timing is treated as verified.
+- [x] X12–X15 are design-only; no assets, map, production C++, or runtime behavior changed. Details and source gates: `Documentation/Boss/BB_X11_X15_SEVAROG_DESIGN.md`.
+
+## Queue BB Codex X16–X20 — Subjugation area-effect add-on (2026-11-10)
+
+- [x] C-1155 locked Development build: exit 0.
+- [x] DD27j-hash-pinned `Automation RunTests OneBossFight`: 504 started, 504 passed, 0 failed; `OneBossFight.Framework.MoveCard.AreaEffect` passed; `TEST COMPLETE. EXIT CODE: 0`.
+- [x] Both lock files released. No PIE, card asset, map, or pack asset was touched.
+- [ ] Lead PIE acceptance remains required for delayed target-ground placement, guard/i-frame outcomes, snare speed rebasing and expiry, and abort/reset cleanup before Subjugation authoring.
+- Evidence and implementation limits: `Docs/BossCombatReview/Execution/Codex/C1274_AREA_EFFECT/` and `Documentation/Boss/C1274_SUBJUGATION_AREA_EFFECT.md`.
+
+## Queue BB Codex X21–X25 — Soul Siphon channel/drain add-on (2026-11-10)
+
+- [x] C-1155 locked Development build: exit 0.
+- [x] DD27j-hash-pinned `Automation RunTests OneBossFight`: 505 started, 505 passed, 0 failed; `OneBossFight.Framework.MoveCard.ChannelDrain` passed; `TEST COMPLETE. EXIT CODE: 0`.
+- [x] Both lock files released. No PIE, card asset, map, or pack asset was touched.
+- [ ] Lead PIE acceptance remains required for live cone/facing behavior, hit-key dedupe, block/parry/i-frame handling, capped heal, and interruption on stagger/death/reset before Soul Siphon authoring.
+- Evidence and implementation limits: `Docs/BossCombatReview/Execution/Codex/C1274_CHANNEL_DRAIN/` and `Documentation/Boss/C1274_SOUL_SIPHON_CHANNEL_DRAIN.md`.
+
 ## Navigation & Current Milestone Index (`BB-A36..A40`, 2026-11-10)
 
 - **Master C-1227+ Evidence Table:** [`Documentation/Boss/BB_A26_A30_EVIDENCE_INDEX_C1227_ONWARD.md`](file:///C:/UnrealProject/OneBossFight/Documentation/Boss/BB_A26_A30_EVIDENCE_INDEX_C1227_ONWARD.md)
@@ -7,6 +193,14 @@
 - **Active Greystone Player Switch Track:** `C-1227` blind fit (47/48), `C-1257a/b`, `C-1268` wrapper / `URPGMontageWrapperLibrary` gate
 - **Closed Ember Warden Timing Notify Gate:** `BUILD-282..287`, `EMBER NOTIFY PARITY`, `EMBER TIMING PARITY GATE PASS` (`C-1240`, `6/6` clean trials, opt-in default OFF)
 - **Hygiene Check (`BB-A36..A40`):** Removed 2 duplicate entries (`BUILD-31-AG` Look Toolkit row at old line 737 and duplicate `Queue Z Batch 8 audit note` at old line 1958), verified `broken_links=0`.
+
+## C-1269 Greystone montage wrapper and Sevarog trace (2026-11-10)
+
+- [x] C-1155 locked OneBossFightEditor Development build succeeded; the DD27j-hash-pinned `Automation RunTests OneBossFight` suite completed 503/503 with 0 failures. `OneBossFight.Editor.MontageWrapper.SyntheticCopyAndGuards` passed in a transient, non-saving Editor-Cmd run. Logs: `Docs/BossCombatReview/Execution/Codex/C1269_GREYSTONE_WRAPPER/`.
+- [x] The no-save C-1155 PIE trace sampled Swing1_Medium (20 frames) and Swing2_Medium (37 frames) through clip end (0.060 s callback tolerance), using the capsule component's world location for distance. `MAP_SAVED=0`; both lock files released. Logs: `Docs/BossCombatReview/Execution/Codex/C1269_X03_TRACE/`.
+- [x] `author_greystone_player.py` uses the Editor-only C++ wrapper and compares source and reloaded notify event class/state/time/duration through `AnimationLibrary.get_animation_notify_events`; Python syntax check passed. Lead owns `--write` real-asset authoring.
+- [x] X04 recommends a provisional S1/S2 90–120 cm band with existing active-window timing and bridge-equivalent punish margins; exact S2 hit threshold remains unverified. See `Documentation/Boss/C1269_S1_S2_RANGE_PROPOSAL.md`.
+- [ ] X05 card authoring is blocked pending Lead approval; no card assets were changed.
 
 ## C-1258a Sevarog in-band PIE retry (2026-11-10)
 
@@ -2062,10 +2256,13 @@ All four A7 gates remain OPEN. Staged launchers and inner binaries are hashed, b
 - [x] BUILD-291 + SEVAROG DRAFT DATA AUTHORED (lead, 2026-11-10, X-1792 C-1253a: profile Cards/ComboNodes BlueprintReadWrite; Codex transient --dry-run all validators PASS, 0 saved): GREEN 498/498. Lead real authoring run 5 (P_C1254_SEVAROGAUTHOR) exit 0, every card + profile passed the C++ bridge before save; saved ONLY /Game/OneBossFight/Data/Sevarog/: DA_Move_Sevarog_{Swing1_Medium,Swing2_Medium,Swing3_Slow,Speedburst,Swing1_FAST_v2}_C1247, DA_Boss_Sevarog_FrameworkProfile_Draft, DA_Boss_Sevarog_Draft (unselected, bUseMontageNotifyTimings=false). Validator margins: S1/S2 light punish +0.303 (needs 0.300: thin, tune), S3 +0.603, S4 forward counterplay +0.086. Provisional F5/C-1250 values; no runtime/PIE yet. Pack /Game/ParagonSevarog untouched.
 - [x] BUILD-292 Dev-only framework boss test bridge (lead acceptance, 2026-11-10, X-1798 C-1255: InitializeWithProfileForTest/StartCardForTest, Shipping no-op, null-profile test): GREEN 499/499. First live Sevarog PIE (P_C1256_SEVAROGLIVE, DATA route_verified): profile PASS (4 candidates), LIVE_API PASS for both bridge functions, then failed before spawn: "guarded GameplayStatics runtime spawn API unavailable" (no UE 5.5 Python call spawns an actor into the PIE world). Driver also expects follow-up Move_Sevarog_Swing1_FAST_v2 although C-1251 made S5 Swing1_Medium. No spawn, no save.
 - [x] BUILD-293 SpawnFrameworkBossForTest (lead acceptance, 2026-11-10, X-1800 C-1256a): GREEN 500/500. Live Sevarog PIE 2 (P_C1257_SEVAROGLIVE2, DATA route_verified): profile PASS, all three bridge calls PASS, SPAWN PASS (Sevarog framework boss in L_SevarogArena, 205.6 cm from the player), CARD_START Move_Sevarog_Swing1_Medium, then CARD_ABORT reason=Framework.Nav.MoveFailed -> boss failed (bossInactive=1), so S2 timed out. Cause: target outside the card range (205.6 vs 90-180 cm) so the executor requested a nav approach that failed in the arena. Driver/setup issue, not card data.
-- [x] BUILD-294 + FIRST FULL LIVE SEVAROG RUN (lead, 2026-11-10, X-1804/X-1805 C-1258a: non-Shipping rpg.BossProofSkipInitialWalk default 0, clip-tail watchdog): GREEN 500/500. P_C1262_SEVAROGLIVE3 (DATA route_verified): all four cards started and ended reason=Finished, all in band. S3 Swing3_Slow step-in warp moved 37.7/50 cm (blocked by the player capsule) and HIT 55. S4 Speedburst dash warp moved exactly 330 cm (450 -> 120 standoff, ease on). OPEN: S1/S2 Swing1/2_Medium at 140 cm hitsAccepted=0 (no hit); S4 (a defensive, no-window card) logged hitsAccepted=1 appliedDamage=55 then CARD_ABORT Framework.Boss.TargetLifeOrHealthChanged and the S5 Swing1_Medium follow-up was not observed; all 4 screenshots black (10,195 bytes each).
+- [x] BUILD-294 + FIRST FULL LIVE SEVAROG RUN (lead, 2026-11-10, X-1804/X-1805 C-1258a: non-Shipping rpg.BossProofSkipInitialWalk default 0, clip-tail watchdog): GREEN 500/500. P_C1262_SEVAROGLIVE3 (DATA route_verified): all four cards started and ended reason=Finished, all in band. S3 Swing3_Slow step-in warp moved 37.7/50 cm (blocked by the player capsule) and HIT 55. S4 Speedburst dash warp moved exactly 330 cm (450 -> 120 standoff, ease on). At that run, S1/S2 at 140 cm missed; S4's later target-life abort prevented observing S5; all screenshots were black. The S4/S5 observation was superseded by BUILD-295 below; the S1/S2 reach gap remains open.
 - [x] BUILD-295 + SEVAROG LIVE RUN 4 (lead, 2026-11-10, X-1806 C-1262a per-card hit deltas + isolated-combo budget reset; X-1809 non-Shipping default-off rpg.GreystonePlayerTestPawn; DirectoriesToAlwaysCook +/Game/OneBossFight/Player/Greystone): GREEN 501/501. P_C1265_SEVAROGLIVE4 (DATA route_verified): S1/S2 at 140 cm finish with 0 card hits (still open); S3 slam step-in 37.0 cm, hit 55; S4 dash 330 cm, card delta 0/0 (the earlier 55 was a lifetime total from S3), then the REAL combo gate chained S4 Whiff -> S5 Swing1_Medium (combo_step depth 2) at 120 cm, which HIT for 25. Four bright screenshots (805-829 KB). Note: Swing1_Medium connects at 120 cm but not at 140 cm, which points to a reach/range-band mismatch; C-1265b trace data decides.
 - [x] C-1268 Lead runs (2026-11-10): (1) Sevarog full-clip trace (Codex run_c1265b_clip_trace.ps1, Claude/C1265B_CLIP_TRACE): card started, then the driver failed "clip trace requires boss SkeletalMeshComponent and player CapsuleComponent"; 0 trace frames. (2) author_greystone_player.py --write (Claude/P_C1268_GREYSTONEAUTHOR): failed before any create/save: "AnimMontage: Failed to find property composite_sections" (not exposed to UE 5.5 Python); Content unchanged. Source readback found the backstep montage ANS_iFrames at 0.091 s for 0.323 s versus the SWITCH_PLAN table 0.075 s for 0.268 s: the wrapper must copy the SOURCE timings.
-- [x] C-1262a Sevarog trace/attribution/combo diagnostic (Codex, 2026-11-10): Dev build PASS; full suite 501/501. PIE: S1-S4 all finish in band; S3 per-card delta 1/55; S4 per-card delta 0/0 while lifetime totals remain 1/55; actual S4 Whiff gate continues to S5, which starts and finishes; target-health invariant remains stable; 4 bright warmed screenshots; no map save; locks released. Geometry shows actor yaw correctly faces the player, but S1's marked sweep near-misses and S2's sweep remains far from the player capsule. C-1242 marks remain visual candidates; no window edits made. See `Documentation/Boss/C1262A_SEVAROG_TRACE_AND_COMBO_DIAGNOSIS.md` and `Docs/BossCombatReview/Execution/Codex/C1262A_SEVAROG_DIAG/`.
+- [x] BUILD-296 (lead acceptance, 2026-11-10, X-1821..X-1838: URPGMontageWrapperLibrary::CreateRetargetWrapper editor-only, FRPGBossAreaEffect + FRPGBossChannelDrain optional add-ons default off, owned-tag teardown retry owners, property sweeps): GREEN 505/505. Greystone --write run (B_C1274_GREYSTONE) failed before any save: "notify event exposes no readable time field through AnimationLibrary" (FAnimNotifyEvent times are not readable from UE 5.5 Python, known since C-1238). verify_greystone_wrapper_readback.py failed on import (author_greystone_player not on sys.path). Content unchanged.
+- [x] C-1275a transient wrapper notify readback (Codex, 2026-11-10): C++ `URPGMontageWrapperLibrary::DescribeMontageNotifies` now returns class, trigger time, duration, notify track index, slots, and all segment animation paths/lengths. Empty `CreateRetargetWrapper` destination creates the retarget copy in `/Engine/Transient`. Fixed sibling import path; transient Editor driver verified all four source/target pairs, saving 0 assets. Python AST PASS; focused offline contracts 5/5; locked Editor Development build exit 0; pinned full suite 506/506 (`cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec`); locks released 2/2. This does not replace Lead `--write` and saved-package readback. Report/evidence: `Documentation/Boss/C1275A_TRANSIENT_NOTIFY_READBACK.md`, `Docs/BossCombatReview/Execution/Codex/C1275A_TRANSIENT_NOTIFY_READBACK/Run_20261110_160407/`.
+- [x] BUILD-297 + GREYSTONE AUTHORED (lead acceptance, 2026-11-10, X-1857 C-1275a DescribeMontageNotifies readback, Lead C-1280/C-1282): GREEN 506/506 (Claude/B_C1280_GREYSTONE2, pinned DD27j hash; build up to date, no Source change since the Codex C-1275a build; status.txt written by the Lead after the runner's hash step aborted on a console redirect in the folder). author_greystone_player.py --write: attempt 1 FAILED `TypeError create_retarget_wrapper() takes at most 4 arguments (5 given)` (stale out-param call, untested by C-1275a); attempt 2 saved + reloaded + read back all four wrappers, then the child BP failed on `SubobjectDataBlueprintFunctionLibrary.is_root` (UE 5.5 exposes is_root_actor/is_root_component), rollback deleted 5/5; attempt 3 (author3.log) PASS after the two Lead fixes: SAVED_COUNT=5 PACKAGE_COUNT=5 PACK_PATH_WRITES=0 DEFAULT_PLAYER_UNCHANGED=1 under /Game/OneBossFight/Player/Greystone/ (BP_GreystoneERPlayer + 4 `_Fit_Greystone` wrappers); post-save reload readback matched the SOURCE notify rows (backstep ANS_iFrames trigger 0.0907 s duration 0.323 s, ANS_InputBuffer 0.1983/0.3684; Air_Light 2, Air_Heavy 3, GuardCounter 7 notifies), child CHILD_READBACK all six URPGDodgeTiming fields. Process exit 1 is a handled editor ensure (FindInBlueprintManager.cpp:2539) from reloading the new BP, not a script failure. verify_greystone_wrapper_readback.py RESULT=PASS wrappers=4 transient=1 saves=0. BB-A15 probe: child_exists=True, 15 materials / 17 slots, textures 0 (get_used_textures refuses MaterialInstanceConstant). Mannequin stays the default; root-motion/trace/parry gates and the owner clip review are still open.
+- [x] C-1262a Sevarog trace/attribution/combo diagnostic (Codex, 2026-11-10): Dev build PASS; full suite 501/501 via `Scripts/Editor/run_c1262a_locked_build.ps1`, whose source pins `-DD27jManifestHash=cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec`; the C-1155 PIE runner records route `DATA` / `route_verified`. PIE: S1-S4 all finish in band; S3 per-card delta 1/55; S4 per-card delta 0/0 while lifetime totals remain 1/55; actual S4 Whiff gate continues to S5, which starts and finishes; target-health invariant remains stable; 4 bright warmed screenshots; no map save; locks released. Geometry shows actor yaw correctly faces the player, but S1's marked sweep near-misses and S2's sweep remains far from the player capsule. C-1242 marks remain visual candidates; no window edits made. See `Documentation/Boss/C1262A_SEVAROG_TRACE_AND_COMBO_DIAGNOSIS.md` and `Docs/BossCombatReview/Execution/Codex/C1262A_SEVAROG_DIAG/`.
 - [ ] C-1257a/b Greystone switch preparation (Codex, 2026-11-10): C-1257b Development build exit 0 and full suite 501/501 after adding the planned cook root `/Game/OneBossFight/Player/Greystone`; the first suite exposed CookCoverage and is retained under `Docs/BossCombatReview/Execution/Codex/C1257B_GREYSTONE_ROOT_MOTION/`. Test-only `rpg.GreystonePlayerTestPawn` defaults to 0, is compiled out of Shipping, and leaves the GameMode/default route unchanged. The paired root-motion driver is syntax-checked but not run; Lead owns PIE. C-1257a remains NOT READY: UE 5.5 Python exposes `AnimSegment` but not `AnimTrack` or `SlotAnimationTrack`, so no valid segmented transient montage / target notify readback is available; last dry-run saved 0 assets/packages and released both locks. `bDoubleTapLongRoll` is false by source default; the driver will not enable it to force the full-roll gate. See X-1811 and `Docs/BossCombatReview/Execution/Codex/C1257A_GREYSTONE_DRY_RUN/`.
 - [x] C-1227 player fit test (lead, 2026-11-09, C-1174): ER clip set (Mixamo backstep V2, air light, air heavy plunge, guard counter) + 2 pack controls (quick roll, block loop) retargeted to 3 candidates via Codex retarget_er_fit_candidate.py (v4: outputs under /Game/OneBossFight/Player/FitTest only) and captured by the Lead driver P_C1225_FITLEAD/pie_fit_lead.py (216 bright frames, mannequin baseline vs candidate, 2 views x 3 poses). AG blind scores (frozen before reveal, SHA-256 fec0b389... verified): Candidate_A = GREYSTONE 47/48, Candidate_B = GRUX 13/48 (hunch, weapon through head, floor clipping), Candidate_C = STEEL 3/48 (shield floats ~1 m, empty fist swings, self-intersection). Root-motion fidelity not yet measured on the retargets (single-node pose captures). Owner image P_SHOWCASE/fit_greystone_vs_mannequin.png. Frames D:/FightVideo/fit_test/.
 - [x] AURA SHOWCASE (lead, 2026-11-08, A-646, C-1077): P_SHOWCASE/pie_aura_showcase.py, data route, boss held at 50 % HP, player 450 cm, Tier 2 on; runtime PhaseTwoAuraEffect swap. Each segment shows its Niagara asset active: current NS_Boss_PhaseTwoAura (small ground fire ring, mean gray 52.8), NS_Boss_PhaseTwoAura_Boost at the origin (large burst around the boss, 77.2), Boost at spine_03 (fire rising on the body, 71.3). Owner clip P_SHOWCASE/aura_options.mp4 plus aura_compare.png. Codex pie_aura_comparison.py still produces black frames (mean 0.0, cause unknown).
@@ -2354,3 +2551,22 @@ Evidence: Docs/BossCombatReview/Execution/Codex/C1253A_TRANSIENT_DRYRUN/; task d
 ## Queue_50 Batch 10 closeout (tasks 46–50, 2026-11-10)
 
 Tasks 46–49 were reconciled against current parry stamina, optional overlay data, resolver `Parried` totals, and the JSON combo sample/native route test. Their source implementations already existed and were left unchanged in this batch. Task 50 reconciled current accepted Sevarog asset status, the new bridge evidence, and outstanding live PIE gate across project status docs. The source validation above included the Batch 10 native tests; no separate gameplay or PIE run was performed. See `Documentation/Boss/QUEUE_50_BATCH10_CLOSEOUT.md`.
+
+## Queue BD Batch 9 (BD-X41–X45, 2026-11-10)
+
+- Mailbox history through X-1850 contained no Claude verdict on BD-X01–X40; no review hotfix was pending. C-1265/C-1266/C-1268/C-1269/C-1272/C-1273 were indexed from messages and existing documentation only; raw evidence was not opened.
+- The reported BUILD-295 GREEN 501/501 remains Lead-owned; C-1262a's separate 501/501 Codex receipt remains separately attributed. Reported S3/S4/S5 progress does not close the Sevarog approach-navigation or S1/S2 trace/contact gates. Greystone authoring failure before asset creation is not saved-asset verification.
+- C-1273's PID 9808 was absent at the process check and no UnrealEditor process was active. X-1851 informed Claude. No suite rerun or engine operation was performed.
+- Documentation handoff and successor queue: `Documentation/Boss/BD_X41_X45_REVIEW_QUEUE_AND_SYNC.md`, `Documentation/Boss/QUEUE_BE.md`. No tests/engine/build/PIE/cook/package/assets/locks run for this batch.
+
+## Queue BD Batch 10 closeout (BD-X46–X50, 2026-11-10)
+
+- Queue BD closed in ten batches. Its source/documentation findings keep framework HUD/death/retry, Sevarog approach navigation and S1/S2 alignment, Greystone saved-asset/readback and cook/package gates, UHT/Shipping reflection evidence, and target-hardware performance acceptance open as scoped in the batch reports.
+- No Lead review verdict was present through X-1852 when checked. No new runtime/test/build/asset/package evidence was created by this closeout. Next offline lane: `Documentation/Boss/QUEUE_BE.md`.
+- Report: `Documentation/Boss/BD_X46_X50_CLOSEOUT.md`; no tests or engine operation.
+
+## Queue BE Batch 1 (BE-X01–X05, 2026-11-10)
+
+- Static source audit mapped framework native health/death versus pack HUD and encounter health/event assumptions, and compared proof restart guards with production selection prerequisites.
+- The report proposes Lead acceptance observations for health binding, idempotent completion, retry generation, actor replacement, pack regression, and teardown. It does not infer a production integration or exclude unrelated Blueprint paths.
+- No tests/build/Editor/PIE/asset operation. Report: `Documentation/Boss/BE_X01_X05_FRAMEWORK_INTEGRATION_AUDIT.md`.

@@ -1,0 +1,2 @@
+BUILD exit 0; SUITE exit 0; success=506 fail=0
+(status.txt written by Lead after the run: run_build297.ps1 aborted in its hash step because the console redirect file sat in this folder; build.log, suite.log, pre/post_state.txt are the original outputs)
