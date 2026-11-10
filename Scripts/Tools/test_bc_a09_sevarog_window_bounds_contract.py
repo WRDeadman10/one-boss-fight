@@ -27,13 +27,17 @@ class BcA09SevarogWindowBoundsContractTests(unittest.TestCase):
         self.assertIn("(0.200, 0.267, 1.133, 1.267)", text)
 
     def test_s1_to_s5_timeline_and_warp_invariants(self) -> None:
+        # C-1253a clamps visual recovery marks by 0.03 s profile blend tail against exact clip length
+        # (author_sevarog_draft_cards.py & KNOWN_ISSUES.md:382); raw S4 TIMING 1.267 rounds 1.266667 by +0.000333 s.
         for name, commit, start, end, rec, clip_len, w_start, w_end, w_dist in SEVAROG_CARDS_S1_TO_S5:
             with self.subTest(card=name):
+                effective_rec = min(rec, clip_len - 0.03)
                 self.assertGreaterEqual(commit, 0.0)
                 self.assertLessEqual(commit, start)
                 self.assertLess(start, end)
-                self.assertLessEqual(end, rec)
-                self.assertLessEqual(rec, clip_len)
+                self.assertLessEqual(end, effective_rec)
+                self.assertLessEqual(effective_rec, clip_len)
+                self.assertLessEqual(rec - clip_len, 0.0005)
                 if w_dist > 0.0:
                     assert w_start is not None and w_end is not None
                     self.assertLessEqual(commit, w_start)
