@@ -1,0 +1,38 @@
+﻿[2026.11.10-12.06.52:227][  0]LogPython: [SevarogLive] PROFILE PASS path=/Game/OneBossFight/Data/Sevarog/DA_Boss_Sevarog_FrameworkProfile_Draft candidates=4 move_ids=Move_Sevarog_Swing1_Medium,Move_Sevarog_Swing2_Medium,Move_Sevarog_Swing3_Slow,Move_Sevarog_Speedburst
+[2026.11.10-12.06.52:227][  0]LogPython: [SevarogLive] PROFILE COMBO_NODES count=2 source=Move_Sevarog_Speedburst followup=Move_Sevarog_Swing1_Medium target_node=S5
+[2026.11.10-12.06.52:227][  0]LogPython: [SevarogLive] LIVE_API PASS initialize_with_profile_for_test=1 start_card_for_test=1 start_combo_for_test=1 spawn_framework_boss_for_test=1
+[2026.11.10-12.06.52:227][  0]LogPython: [SevarogLive] READY awaiting PIE; profile=/Game/OneBossFight/Data/Sevarog/DA_Boss_Sevarog_FrameworkProfile_Draft optionalShots=True
+[2026.11.10-12.06.52:482][  1]LogPython: [SevarogLive] WAITING_FOR_PIE
+[2026.11.10-12.06.54:178][  2]LogTemp: Display: [EncounterActivation] default data startup: selected /Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter for map L_SevarogArena
+[2026.11.10-12.06.54:234][  2]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending
+[2026.11.10-12.06.54:994][  2]LogPython: [SevarogLive] AMBIENT_ENCOUNTER isolated actor=BP_ExampleGreatSwordBoss_C_3 held=1 hidden=1 destroyed_in_pie=1
+[2026.11.10-12.06.54:995][  2]LogPython: [SevarogLive] VIEWPORT_PREWARM requested thresholdBytes=300000 spacingSeconds=0.15
+[2026.11.10-12.07.16:613][785]LogPython: [SevarogLive] VIEWPORT_PREWARM ready=1 bytes=819883 warmBrightStreak=2
+[2026.11.10-12.07.16:613][785]LogPython: [SevarogLive] HEARTBEAT missing_boss=1 player=1
+[2026.11.10-12.07.16:614][785]LogPython: [SevarogLive] TEST_HOOK skip_initial_walk=1 scope=standalone_test_authorized_target_in_profile_band
+[2026.11.10-12.07.16:616][785]LogPython: [SevarogLive] SETUP stage=before_initialize move=Move_Sevarog_Swing1_Medium requestedRangeCm=140.0 actualDistanceCm=140.0 cardBandCm=90.0..180.0 inBand=1 bossYaw=180.00 targetYaw=0.00 relativeToBoss=X-140.0_Y0.0_Z0.0
+[2026.11.10-12.07.16:619][785]LogPython: [SevarogLive] INIT_RESULT type=str repr=''
+[2026.11.10-12.07.16:619][785]LogPython: [SevarogLive] NAV_DIAG after_init controller=RPGFrameworkBossController controller_pawn_match=UNEXPOSED recast_navmesh_class=1 recast_actor_count=1; inspect [FrameworkProof] test_nav_probe, test_walk_skipped, nav request/fullPath and MoveFailed
+[2026.11.10-12.07.16:620][785]LogPython: [SevarogLive] SPAWN PASS actor=RPGFrameworkBossCharacter_0 initialPlayerDistanceCm=190.5
+[2026.11.10-12.07.16:721][786]LogPython: [SevarogLive] SETUP stage=before_request move=Move_Sevarog_Swing1_Medium requestedRangeCm=140.0 actualDistanceCm=140.0 cardBandCm=90.0..180.0 inBand=1 bossYaw=180.00 targetYaw=0.00 relativeToBoss=X-140.0_Y0.0_Z-129.1
+[2026.11.10-12.07.16:721][786]LogPython: [SevarogLive] CARD accepted move=Move_Sevarog_Swing1_Medium targetDistanceCm=140.0 inBand=1
+[2026.11.10-12.07.16:721][786]LogPython: [SevarogLive] SHOT_WARMUP requested move=Move_Sevarog_Swing1_Medium thresholdBytes=300000 spacingSeconds=0.15
+[2026.11.10-12.07.20:844][997]LogPython: [SevarogLive] SHOT_READY move=Move_Sevarog_Swing1_Medium bytes=821864 path=D:/FightVideo/sevarog_live\Move_Sevarog_Swing1_Medium_216c3c13.png warmBrightStreak=2
+[2026.11.10-12.07.22:708][ 67]LogPython: [SevarogLive] SETUP stage=before_request move=Move_Sevarog_Swing2_Medium requestedRangeCm=140.0 actualDistanceCm=140.0 cardBandCm=90.0..180.0 inBand=1 bossYaw=180.00 targetYaw=0.00 relativeToBoss=X-140.0_Y0.0_Z-69.0
+[2026.11.10-12.07.22:708][ 67]LogPython: [SevarogLive] CARD request move=Move_Sevarog_Swing2_Medium
+[2026.11.10-12.07.22:708][ 67]LogPython: [SevarogLive] CARD accepted move=Move_Sevarog_Swing2_Medium targetDistanceCm=140.0 inBand=1
+[2026.11.10-12.07.22:708][ 67]LogPython: [SevarogLive] SHOT_WARMUP requested move=Move_Sevarog_Swing2_Medium thresholdBytes=300000 spacingSeconds=0.15
+[2026.11.10-12.07.25:793][213]LogPython: [SevarogLive] SHOT_READY move=Move_Sevarog_Swing2_Medium bytes=827775 path=D:/FightVideo/sevarog_live\Move_Sevarog_Swing2_Medium_5c5aaed9.png warmBrightStreak=2
+[2026.11.10-12.07.27:737][290]LogPython: [SevarogLive] SETUP stage=before_request move=Move_Sevarog_Swing3_Slow requestedRangeCm=140.0 actualDistanceCm=140.0 cardBandCm=90.0..180.0 inBand=1 bossYaw=180.00 targetYaw=0.00 relativeToBoss=X-140.0_Y0.0_Z-69.0
+[2026.11.10-12.07.27:737][290]LogPython: [SevarogLive] CARD request move=Move_Sevarog_Swing3_Slow
+[2026.11.10-12.07.27:737][290]LogPython: [SevarogLive] CARD accepted move=Move_Sevarog_Swing3_Slow targetDistanceCm=140.0 inBand=1
+[2026.11.10-12.07.27:737][290]LogPython: [SevarogLive] SHOT_WARMUP requested move=Move_Sevarog_Swing3_Slow thresholdBytes=300000 spacingSeconds=0.15
+[2026.11.10-12.07.30:816][437]LogPython: [SevarogLive] SHOT_READY move=Move_Sevarog_Swing3_Slow bytes=829066 path=D:/FightVideo/sevarog_live\Move_Sevarog_Swing3_Slow_5ef076af.png warmBrightStreak=2
+[2026.11.10-12.07.32:792][514]LogPython: [SevarogLive] SETUP stage=before_request move=Move_Sevarog_Speedburst requestedRangeCm=450.0 actualDistanceCm=450.0 cardBandCm=300.0..650.0 inBand=1 bossYaw=180.00 targetYaw=0.00 relativeToBoss=X-450.0_Y0.0_Z-69.0
+[2026.11.10-12.07.32:792][514]LogPython: [SevarogLive] CARD request move=Move_Sevarog_Speedburst
+[2026.11.10-12.07.32:793][514]LogPython: [SevarogLive] COMBO_START root=Move_Sevarog_Speedburst mode=real_combo_gate
+[2026.11.10-12.07.32:793][514]LogPython: [SevarogLive] CARD accepted move=Move_Sevarog_Speedburst targetDistanceCm=450.0 inBand=1
+[2026.11.10-12.07.32:793][514]LogPython: [SevarogLive] SHOT_WARMUP requested move=Move_Sevarog_Speedburst thresholdBytes=300000 spacingSeconds=0.15
+[2026.11.10-12.07.35:808][662]LogPython: [SevarogLive] SHOT_READY move=Move_Sevarog_Speedburst bytes=805086 path=D:/FightVideo/sevarog_live\Move_Sevarog_Speedburst_f2ab7eb9.png warmBrightStreak=2
+[2026.11.10-12.07.37:805][746]LogPython: [SevarogLive] COMBO_EXPECTED followup=Move_Sevarog_Swing1_Medium; require native combo_gate and combo_step receipts
+[2026.11.10-12.07.49:815][249]LogPython: [SevarogLive] finished: driver complete: S1-S3 standalone and S4->S5 combo receipts are in the UE log shots=4

@@ -11,6 +11,7 @@
 #if WITH_DEV_AUTOMATION_TESTS
 
 #include "Arena/RPGArenaDressing.h"
+#include "Boss/RPGBossCardTelemetry.h"
 #include "Arena/RPGEmberField.h"
 #include "Arena/RPGFireSource.h"
 #include "Arena/RPGGreyboxArena.h"
@@ -158,6 +159,25 @@ bool FRPGFrameStatsGateTest::RunTest(const FString& Parameters)
 // ---------------------------------------------------------------------------------------------
 // Damage resolver decision order (Freeze 12.1)
 // ---------------------------------------------------------------------------------------------
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGBossCardTelemetryDeltaTest, "OneBossFight.Boss.CardTelemetry.PerCardDelta",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGBossCardTelemetryDeltaTest::RunTest(const FString& Parameters)
+{
+	const RPGBossCardTelemetry::FDelta First = RPGBossCardTelemetry::Since(1, 0, 55., 0.);
+	TestEqual(TEXT("first card owns its one hit"), First.AcceptedHits, 1);
+	TestEqual(TEXT("first card owns its damage"), First.AppliedDamage, 55.);
+	const RPGBossCardTelemetry::FDelta Defensive = RPGBossCardTelemetry::Since(1, 1, 55., 55.);
+	TestEqual(TEXT("following defensive card has no attributed hit"), Defensive.AcceptedHits, 0);
+	TestEqual(TEXT("following defensive card has no attributed damage"), Defensive.AppliedDamage, 0.);
+	const RPGBossCardTelemetry::FDelta Later = RPGBossCardTelemetry::Since(2, 1, 80., 55.);
+	TestEqual(TEXT("later hit is measured from its own baseline"), Later.AcceptedHits, 1);
+	TestEqual(TEXT("later card damage is its own delta"), Later.AppliedDamage, 25.);
+	const RPGBossCardTelemetry::FDelta CounterReset = RPGBossCardTelemetry::Since(0, 1, 0., 55.);
+	TestEqual(TEXT("reset totals cannot create a negative hit count"), CounterReset.AcceptedHits, 0);
+	TestEqual(TEXT("reset totals cannot create negative damage"), CounterReset.AppliedDamage, 0.);
+	return true;
+}
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGDamageDecideTest, "OneBossFight.Combat.DamageResolver.Decide",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter)

@@ -14,6 +14,7 @@
 #include "Engine/World.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
+#include "NavigationSystem.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGHitIntake.h"
 #include "Player/RPGBossGuardRules.h"
@@ -44,6 +45,7 @@ static TAutoConsoleVariable<int32> CVarBossTurnLatch(TEXT("rpg.BossProofTurnLatc
 static TAutoConsoleVariable<FString> CVarBossProofPlayerDrink(TEXT("rpg.BossProofPlayerDrink"),TEXT(""),TEXT("Test hook (BOSS-SEL-009): comma separated seconds after the boss's first attack of an encounter at which the target plays its DrinkingPotion montage (game clock). Empty = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<FString> CVarBossProofPlayerDodge(TEXT("rpg.BossProofPlayerDodge"),TEXT(""),TEXT("Test hook (BOSS-AWR-008): comma separated 'seconds' (backward) or 'seconds:F' (forward) after the boss's first attack of an encounter at which the target is launched away from / toward the boss (game clock). Empty = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossProofTargetFault(TEXT("rpg.BossProofTargetFault"),0,TEXT("Test hook (BOSS-AWR-001): 1 sets the target's health to 0, 2 destroys the target pawn, when the boss starts its first attack of an encounter. 0 = off. Not compiled into shipping builds."),ECVF_Default);
+static TAutoConsoleVariable<int32> CVarBossProofSkipInitialWalk(TEXT("rpg.BossProofSkipInitialWalk"),0,TEXT("Test hook (C-1258a): 1 skips the initial approach only when a test-authorized target is already within the profile band. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossComboDuplicateGate(TEXT("rpg.BossComboDuplicateGate"),0,TEXT("Test hook (BOSS-COM-005): 1 evaluates every combo branch gate a second time with the SAME gate id right after the first, and logs that the duplicate was ignored without changing the combo state."),ECVF_Default);
 static TAutoConsoleVariable<float> CVarBossProofYawProbe(TEXT("rpg.BossProofYawProbe"),0.f,TEXT("Test hook: positive degrees replaces selector snapshot yaw with a period-24 sinusoid centered at half the first card cone; <= 0 = off. Not compiled into shipping builds."),ECVF_Default);
 #endif
@@ -137,6 +139,23 @@ bool ARPGFrameworkBossCharacter::InitializeProofInternal(ARPGFrameworkProofFixtu
     GetCharacterMovement()->MaxWalkSpeed=P.WalkSpeedCmPerSecond;GetCharacterMovement()->SetMovementMode(MOVE_Walking);
     StartedAt=GetWorld()->GetTimeSeconds();WalkStart=GetActorLocation();bInitialized=true;
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] dependencies mesh=%s skeleton=%s animClass=%s sequence=%s slot=%s resolved=1 label=%s"),*Dependencies->Mesh->GetPathName(),*Dependencies->FirstCard()->Spec().Skeleton.ToSoftObjectPath().ToString(),*Dependencies->AnimClass->GetPathName(),*Dependencies->FirstCard()->Spec().Sequence.ToSoftObjectPath().ToString(),*Dependencies->FirstCard()->Spec().SlotName.ToString(),*Dependencies->Profile->FixtureLabel.Replace(TEXT(" "),TEXT("_")));
+    const double InitialRange=FVector::Dist2D(GetActorLocation(),InTarget->GetActorLocation());
+    if(bTestAuthorized)
+    {
+        UNavigationSystemV1* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());FNavLocation SpawnProjected;
+        const bool bSpawnProjected=Nav&&Nav->ProjectPointToNavigation(GetActorLocation(),SpawnProjected);
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] test_nav_probe system=%d spawnProjected=%d spawn=%s projected=%s projectionDeltaCm=%g"),
+            Nav?1:0,bSpawnProjected?1:0,*GetActorLocation().ToCompactString(),bSpawnProjected?*SpawnProjected.Location.ToCompactString():TEXT("none"),
+            bSpawnProjected?FVector::Dist(GetActorLocation(),SpawnProjected.Location):-1.);
+    }
+    if(bTestAuthorized&&CVarBossProofSkipInitialWalk.GetValueOnGameThread()>0&&GetCharacterMovement()->IsMovingOnGround()&&InitialRange>=P.BandMinCm&&InitialRange<=P.BandMaxCm)
+    {
+        // The test bridge may receive an explicitly positioned in-band target. Avoid issuing an unnecessary path request
+        // whose later MoveFailed would deactivate an otherwise ready test actor before its requested card can start.
+        bArrived=true;GetCharacterMovement()->StopMovementImmediately();AI->StopOwnedWalk();
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] test_walk_skipped reason=target_in_profile_band rangeCm=%g bandMin=%g bandMax=%g navSkipped=1"),InitialRange,P.BandMinCm,P.BandMaxCm);
+        return true;
+    }
     if(!AI->WalkToBand(this,Error)){Fail(Error);return false;}return true;
 }
 bool ARPGFrameworkBossCharacter::StartCardForTest(FName MoveId)
@@ -162,6 +181,37 @@ bool ARPGFrameworkBossCharacter::StartCardForTest(FName MoveId)
     bStartedMove=true;bFatigueFinishedCardSeen=false;
     Selector.NoteStarted(CardIndex,Snapshot.ClockSeconds);
     ComboHitsAtStart=Executor->AcceptedHits();ComboGuardedAtStart=Executor->GuardedHits();ComboParriedAtStart=Executor->ParriedHits();
+    return true;
+#endif
+}
+bool ARPGFrameworkBossCharacter::StartComboForTest(FName RootMoveId)
+{
+#if UE_BUILD_SHIPPING
+    return false;
+#else
+    if(!bTestInitialized||!bInitialized||bFailed||bDead||bSucceeded||!Dependencies||!Executor||RootMoveId.IsNone()||!Executor->IsIdle())return false;
+    const int32 RootIndex=RPGBossCombo::FindNode(ComboGraph,ComboGraph.Root);
+    if(RootIndex==INDEX_NONE||ComboGraph.Nodes[RootIndex].MoveId!=RootMoveId)return false;
+    int32 CardIndex=INDEX_NONE;
+    for(int32 I=0;I<Dependencies->Candidates.Num();++I)
+        if(Dependencies->Candidates[I].Card.IsValid()&&Dependencies->Candidates[I].Card->Spec().MoveId==RootMoveId){CardIndex=I;break;}
+    if(CardIndex==INDEX_NONE)return false;
+    double TargetMax=0.,TargetHealth=0.;
+    if(!RPGPack::ReadAttribute(Target.Get(),TEXT("Attribute.Health"),true,TargetMax)||!FMath::IsFinite(TargetMax)||TargetMax<=0.
+        ||!RPGPack::WriteAttribute(Target.Get(),TEXT("Attribute.Health"),TargetMax)||!RPGPack::ReadAttribute(Target.Get(),TEXT("Attribute.Health"),false,TargetHealth)||!FMath::IsNearlyEqual(TargetHealth,TargetMax))return false;
+    TargetHPBefore=ExpectedTargetHP=TargetHealth;
+    if(bHittable)Health=MaxHealth;
+    if(PostureEnabled()){Posture=Dependencies->Profile->PostureMax;LastPostureDrain=-1.;bStaggered=false;}
+    if(Executor->DidFinish()&&!Executor->PrepareNextAttack())return false;
+    // This hook starts an isolated test combo after any standalone test cards;
+    // those cards must not consume the profile's per-combo attack budget.
+    AttacksDone=0;
+    ComboState=RPGBossCombo::FComboState();ComboState.Node=ComboGraph.Root;bComboActive=true;bComboPausing=false;ComboPendingCard=INDEX_NONE;
+    const FRPGBossDecisionSnapshot Snapshot=MakeSnapshot();FString Error;
+    if(!Executor->StartCard(Dependencies->Candidates[CardIndex].Card,Snapshot,Error)){bComboActive=false;return false;}
+    bStartedMove=true;bFatigueFinishedCardSeen=false;Selector.NoteStarted(CardIndex,Snapshot.ClockSeconds);
+    ComboHitsAtStart=Executor->AcceptedHits();ComboGuardedAtStart=Executor->GuardedHits();ComboParriedAtStart=Executor->ParriedHits();
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_test_start node=%s move=%s depth=%d attackBudgetReset=1"),*ComboState.Node.ToString(),*RootMoveId.ToString(),ComboState.Depth);
     return true;
 #endif
 }

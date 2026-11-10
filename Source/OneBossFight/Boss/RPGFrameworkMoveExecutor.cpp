@@ -53,6 +53,7 @@ static TAutoConsoleVariable<float> CVarBossProofMotionIntruder(TEXT("rpg.BossPro
 #endif
 static TAutoConsoleVariable<int32> CVarBossProofStaleCallback(TEXT("rpg.BossProofStaleCallback"),0,TEXT("Test hook (BOSS-EXE-004): 1 sends a late abort callback of the PREVIOUS (aborted) attack to the move model right after the next attack started; it must be refused and the new attack must live. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossProofSuppressMontageEnd(TEXT("rpg.BossProofSuppressMontageEnd"),0,TEXT("Test hook (BOSS-EXE-007 / ANM-007): 1 stops feeding the montage position to the move model once the card has played 0.3 s, as if the end notifications were dropped; the watchdog must then abort the card. 0 = off. Not compiled into shipping builds."),ECVF_Default);
+static TAutoConsoleVariable<int32> CVarBossProofTraceGeometry(TEXT("rpg.BossProofTraceGeometry"),0,TEXT("Test-only sweep geometry receipt: logs active weapon segment and target capsule transforms for each collision substep. 0 = off; not compiled into shipping builds."),ECVF_Default);
 #endif
 URPGFrameworkMoveExecutor::URPGFrameworkMoveExecutor()
 {
@@ -128,6 +129,7 @@ bool URPGFrameworkMoveExecutor::StartCard(const TSharedPtr<const FRPGCompiledBos
     Card=NextCard;
     CardOriginalPlayRate=Card->Spec().PlayRate; CardPlayRate=CardOriginalPlayRate;
     CardAcceptedHits=CardParriedHits=0;
+    CardHitsAtStart=HitsAccepted; CardDamageAtStart=AppliedDamage;
     if (Profile->FatigueFloor>0.f)
     {
         RPGBossFatigue::FConfig Fatigue; Fatigue.GraceWhiffs=Profile->FatigueGraceWhiffs; Fatigue.MinRateScale=Profile->FatigueFloor;
@@ -143,10 +145,10 @@ bool URPGFrameworkMoveExecutor::StartCard(const TSharedPtr<const FRPGCompiledBos
         UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] telegraph_scale card=%s rate=%g"),*Card->Spec().MoveId.ToString(),CardPlayRate);
     }
     // BOSS-EXE-007: the watchdog budget of this card. A healthy card must end inside it, otherwise the watchdog would abort it: refuse such a card here, named.
-    CardWatchdogTimeoutSeconds=RPGBossTrack::WatchdogTimeoutSeconds(Card->Spec().RecoveryEndSeconds,CardPlayRate);
+    CardWatchdogTimeoutSeconds=RPGBossTrack::WatchdogTimeoutSeconds(Card->Spec().RecoveryEndSeconds,CardPlayRate,Card->Metadata().ClipLengthSeconds,Profile->BlendOutSeconds);
     if (CardWatchdogTimeoutSeconds>=0.&&Card->Spec().HoldMaxSeconds>0.f) CardWatchdogTimeoutSeconds+=double(Card->Spec().HoldMaxSeconds);   // BOSS-ANM-003: the watchdog allows the longest hold
     if (CardWatchdogTimeoutSeconds<0.||(double(Card->Metadata().ClipLengthSeconds)-double(Profile->BlendOutSeconds))/CardPlayRate>CardWatchdogTimeoutSeconds) {Error=TEXT("Framework.Playback.WatchdogWindow");return false;}
-    bWatchdogFired=false; bSuppressLogged=false; bHoldActive=bHoldDone=false; CuesFiredMask=0; PreloadCues();
+    bWatchdogFired=false; bSuppressLogged=false; bPlaybackEndLogged=false; bHoldActive=bHoldDone=false; CuesFiredMask=0; PreloadCues();
     // Loaded dependency only. No Resolve/Load call or alternate animation path in the playback consumer.
     SetComponentTickEnabled(true);
     UAnimSequence* Sequence=Card->Spec().Sequence.Get();
@@ -200,12 +202,18 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
 #endif
     if (Model_.State()==ERPGBossMoveModelState::Idle)
     {
-        if (!Anim->Montage_IsActive(OwnedMontage))
+        const bool bMontagePlaying=IsValid(Anim)&&IsValid(OwnedMontage)&&Anim->Montage_IsPlaying(OwnedMontage);
+        const float MontageWeight=IsValid(Anim)?Anim->GetSlotMontageGlobalWeight(Card->Spec().SlotName):0.f;
+        if (!bMontagePlaying&&MontageWeight<=KINDA_SMALL_NUMBER)
         {
+            // UE can leave a naturally ended dynamic montage active after its blend-out weight reaches zero.
+            // Clear that inert instance explicitly once the model has crossed RecoveryEnd.
+            if(IsValid(Anim)&&IsValid(OwnedMontage)&&Anim->Montage_IsActive(OwnedMontage))Anim->Montage_Stop(0.f,OwnedMontage);
             if (bTrackCommitLogged) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] heading_locked instance=%llu yawAtCommit=%g maxDriftAfterCommitDegrees=%g"),Token.InstanceId,double(TrackYawAtCommit),TrackDriftMax);
             ReleaseGrab(TEXT("CardEnded"),true);
             UnlockMotion(TEXT("Finished")); ++CleanupLogCount;
-            UE_LOG(LogTemp,Display,TEXT("[CARD_END] instance=%llu card=%s reason=Finished hitsAccepted=%d appliedDamage=%g"),Token.InstanceId,*Card->Spec().MoveId.ToString(),HitsAccepted,AppliedDamage);
+            const RPGBossCardTelemetry::FDelta CardResult=RPGBossCardTelemetry::Since(HitsAccepted,CardHitsAtStart,AppliedDamage,CardDamageAtStart);
+            UE_LOG(LogTemp,Display,TEXT("[CARD_END] instance=%llu card=%s reason=Finished cardHitsAccepted=%d cardAppliedDamage=%g totalHitsAccepted=%d totalAppliedDamage=%g"),Token.InstanceId,*Card->Spec().MoveId.ToString(),CardResult.AcceptedHits,CardResult.AppliedDamage,HitsAccepted,AppliedDamage);
             RestoreCardPlayRate();OwnedMontage=nullptr;bFinished=true;SetComponentTickEnabled(false);UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] cleanup reason=Finished modelIdle=1 ownedMontageStopped=1"));
         }
         return;
@@ -213,7 +221,7 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
     // A montage reaching its natural blend-out point (clip length - blend out) stops itself, possibly between two ticks. That is a finish when the last
     // observed position was within 1.5 ticks (or the blend-out span, whichever is larger) of that point (the profile guarantees RecoveryEnd + BlendOut <= clip length); anything earlier is an interruption.
     const bool bPlaying=Anim->Montage_IsPlaying(OwnedMontage);
-    const double NaturalEnd=Card->Metadata().ClipLengthSeconds-Profile->BlendOutSeconds;
+    const double NaturalEnd=FMath::Max(double(Card->Metadata().ClipLengthSeconds)-double(Profile->BlendOutSeconds),double(Card->Spec().RecoveryEndSeconds));
     if (!bPlaying&&LastPosition+FMath::Max(double(Delta)*CardPlayRate*1.5,double(Profile->BlendOutSeconds))<NaturalEnd) {Fail(TEXT("Framework.Playback.EarlyStop"));return;}
     const double Position=bPlaying?Anim->Montage_GetPosition(OwnedMontage):FMath::Max(NaturalEnd,LastPosition);
     const float Node=Anim->GetSlotNodeGlobalWeight(Card->Spec().SlotName), Weight=Anim->GetSlotMontageGlobalWeight(Card->Spec().SlotName);
@@ -241,7 +249,7 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
 #endif
     if (bPlaying&&((!bSawPoseWeight&&Now-StartWorldSeconds>Profile->BlendInSeconds)||((Node<=0.f||Weight<=0.f)&&Position>=Card->Spec().ActiveStartSeconds)))
     {Fail(TEXT("Framework.Playback.NoSlotContribution"));return;}
-    if (!bPlaying) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] montage_natural_end instance=%llu lastPosition=%g naturalEnd=%g"),Token.InstanceId,LastPosition,NaturalEnd);
+    if (!bPlaying&&!bPlaybackEndLogged) {bPlaybackEndLogged=true;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] montage_natural_end instance=%llu lastPosition=%g naturalEnd=%g"),Token.InstanceId,LastPosition,NaturalEnd);}
     {
         // BOSS-ANM-004: the pure rule (RPGBossTrack::StepYaw) turns at most the card's TrackDegreesPerSecond until the heading is committed, then the yaw is locked.
         const bool bCommitted=Model_.HeadingCommitted();
@@ -344,6 +352,15 @@ void URPGFrameworkMoveExecutor::SweepWindows(double PrevPosition,double Position
             const FVector PoseA0=Keys[I-1].A, PoseB0=Keys[I-1].B, PoseA1=Keys[I].A, PoseB1=Keys[I].B;
             const FVector Axis=PoseB1-PoseA1; const double Length=Axis.Size();
             if (Length<KINDA_SMALL_NUMBER) continue;
+            if (CVarBossProofTraceGeometry.GetValueOnGameThread()>0)
+            {
+                const ACharacter* TargetCharacter=Cast<ACharacter>(Target.Get());
+                const UCapsuleComponent* TargetCapsule=TargetCharacter?TargetCharacter->GetCapsuleComponent():nullptr;
+                const FVector TargetLocation=Target->GetActorLocation();
+                UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] sweep_geometry instance=%llu window=%s localFrom=%g localTo=%g step=%d weaponA0=%s weaponB0=%s weaponA1=%s weaponB1=%s target=%s targetYaw=%g capsuleRadius=%g capsuleHalfHeight=%g weaponRadius=%g"),
+                    Token.InstanceId,*W.WindowId.ToString(),Lo,Hi,I,*PoseA0.ToCompactString(),*PoseB0.ToCompactString(),*PoseA1.ToCompactString(),*PoseB1.ToCompactString(),
+                    *TargetLocation.ToCompactString(),double(Target->GetActorRotation().Yaw),TargetCapsule?double(TargetCapsule->GetScaledCapsuleRadius()):-1.,TargetCapsule?double(TargetCapsule->GetScaledCapsuleHalfHeight()):-1.,double(W.RadiusCm));
+            }
             const FQuat Rotation=FQuat::FindBetweenNormals(FVector::UpVector,Axis/Length);
             const FCollisionShape Shape=FCollisionShape::MakeCapsule(W.RadiusCm,float(Length*.5)+W.RadiusCm);
             TArray<FHitResult> Hits;

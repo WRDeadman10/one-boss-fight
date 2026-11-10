@@ -46,6 +46,7 @@
 #include "Sound/SoundBase.h"
 #include "EngineUtils.h"
 #include "GameFramework/Pawn.h"
+#include "GameFramework/PlayerController.h"
 #include "Engine/World.h"
 #include "Engine/GameInstance.h"
 #include "Engine/Engine.h"
@@ -101,6 +102,11 @@ namespace
 static TAutoConsoleVariable<int32> CVarEncounterSpawnGate(
 	TEXT("rpg.EncounterLifecycle.SpawnGate"), 0,
 	TEXT("Temporary diagnostic: 1 logs pack pawn spawn-gate state. 0 = off. Not compiled into Shipping."), ECVF_Default);
+static TAutoConsoleVariable<int32> CVarGreystonePlayerTestPawn(
+	TEXT("rpg.GreystonePlayerTestPawn"), 0,
+	TEXT("Development-only C-1257 test switch: 1 replaces the first spawned pack player pawn with /Game/OneBossFight/Player/Greystone/BP_GreystoneERPlayer; 0 keeps the configured mannequin pawn. Not compiled into Shipping."), ECVF_Default);
+
+constexpr TCHAR GreystoneTestPawnClassPath[] = TEXT("/Game/OneBossFight/Player/Greystone/BP_GreystoneERPlayer.BP_GreystoneERPlayer_C");
 #endif
 
 bool URPGPlayerMovesSubsystem::ShouldCreateSubsystem(UObject* Outer) const
@@ -315,6 +321,17 @@ void URPGPlayerMovesSubsystem::OnActorSpawned(AActor* Actor)
 		UE_LOG(LogTemp, Display, TEXT("[EncounterLifecycle] spawn_player timestamp=%.6f generation=%llu reset_count=%d actor_id=%u"),
 			FPlatformTime::Seconds(), static_cast<unsigned long long>(Generation), ResetCount, static_cast<uint32>(Actor->GetUniqueID()));
 	}
+	// This is an explicit C-1257 Development test route only. Defer until the
+	// GameMode has possessed its normal spawn, then replace that pawn in-place.
+#if !UE_BUILD_SHIPPING
+	if (World && World->IsGameWorld() && CVarGreystonePlayerTestPawn.GetValueOnGameThread() != 0
+		&& bSpawnIsPackPlayer && Actor->GetClass()->GetPathName() != GreystoneTestPawnClassPath)
+	{
+		World->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateUObject(
+			this, &URPGPlayerMovesSubsystem::ReplacePackPlayerWithGreystoneForTest, TWeakObjectPtr<APawn>(Cast<APawn>(Actor))));
+		return;
+	}
+#endif
 	if (bSelectedMode)
 	{
 		if (LastAcceptedParticipantGeneration > 0 && World && World->HasBegunPlay() && IsPackPlayer(Actor))
@@ -339,6 +356,56 @@ void URPGPlayerMovesSubsystem::OnActorSpawned(AActor* Actor)
 	}
 	if (!bUseLegacyStartup) return;
 	Attach(Actor);
+}
+
+void URPGPlayerMovesSubsystem::ReplacePackPlayerWithGreystoneForTest(TWeakObjectPtr<APawn> SpawnedPackPawn)
+{
+#if !UE_BUILD_SHIPPING
+	APawn* OldPawn = SpawnedPackPawn.Get();
+	UWorld* World = GetWorld();
+	if (!IsValid(OldPawn) || !World || !World->IsGameWorld()
+		|| CVarGreystonePlayerTestPawn.GetValueOnGameThread() == 0)
+	{
+		return;
+	}
+	APlayerController* PlayerController = World->GetFirstPlayerController();
+	if (!PlayerController || PlayerController->GetPawn() != OldPawn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[GreystonePlayerTest] replacement skipped: default pawn is not possessed by player controller 0"));
+		return;
+	}
+	UClass* GreystonePawnClass = LoadClass<APawn>(nullptr, GreystoneTestPawnClassPath);
+	const AActor* GreystonePawnDefault = GreystonePawnClass ? Cast<AActor>(GreystonePawnClass->GetDefaultObject()) : nullptr;
+	if (!IsValid(GreystonePawnDefault) || !IsPackPlayer(GreystonePawnDefault))
+	{
+		UE_LOG(LogTemp, Error, TEXT("[GreystonePlayerTest] replacement refused: child pawn class missing or not derived from the pack player's parent (%s)"),
+			GreystoneTestPawnClassPath);
+		return;
+	}
+	FActorSpawnParameters SpawnParameters;
+	// Preserve the baseline pawn's exact start transform for paired root-motion trials.
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParameters.Owner = PlayerController;
+	APawn* NewPawn = World->SpawnActor<APawn>(GreystonePawnClass, OldPawn->GetActorTransform(), SpawnParameters);
+	if (!IsValid(NewPawn))
+	{
+		UE_LOG(LogTemp, Error, TEXT("[GreystonePlayerTest] replacement spawn failed; mannequin remains possessed"));
+		return;
+	}
+	PlayerController->Possess(NewPawn);
+	if (PlayerController->GetPawn() != NewPawn)
+	{
+		if (PlayerController->GetPawn() != OldPawn)
+		{
+			PlayerController->Possess(OldPawn);
+		}
+		NewPawn->Destroy();
+		UE_LOG(LogTemp, Error, TEXT("[GreystonePlayerTest] possession failed; mannequin remains possessed"));
+		return;
+	}
+	OldPawn->Destroy();
+	UE_LOG(LogTemp, Display, TEXT("[GreystonePlayerTest] selected test child=%s default_changed=0"), *NewPawn->GetClass()->GetPathName());
+#endif
 }
 
 void URPGPlayerMovesSubsystem::BindResetBroadcast(AActor* Boss)

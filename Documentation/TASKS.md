@@ -504,10 +504,7 @@ Nobody commits except U. A row is changed only by its owner; others write a note
   - **Draft Data Authored:** `BUILD-291` (`TEST_PLAN.md` line 2057; `P_C1254_SEVAROGAUTHOR`, suite 498/498). Authored 5 MoveCards (`Swing1_Medium`, `Swing2_Medium`, `Swing3_Slow`, `Speedburst`, `Swing1_FAST_v2`), `DA_Boss_Sevarog_FrameworkProfile_Draft`, and `DA_Boss_Sevarog_Draft` under `/Game/OneBossFight/Data/Sevarog/`.
   - **Test Bridge & Spawning:** `BUILD-292` / `BUILD-293` (`TEST_PLAN.md` lines 2058–2059; suite 500/500, `SpawnFrameworkBossForTest` live transient actor spawn verified in arena).
   - **First Full Live Run (Milestone Achieved):** `BUILD-294` (`TEST_PLAN.md` line 2060; `P_C1262_SEVAROGLIVE3`, DATA route_verified, suite 500/500). All 4 cards started and finished `reason=Finished` within band. S3 (`Swing3_Slow`) step-in warp moved 37.7/50 cm (capsule-blocked) and connected for 55 damage. S4 (`Speedburst`) dash warp moved exactly 330 cm (450 -> 120 cm standoff, eased).
-  - **Open Items (C-1262 / Codex C-1262a in progress):**
-    1. S1/S2 (`Swing1_Medium` / `Swing2_Medium`) at 140 cm: `hitsAccepted=0` (investigating weapon trace endpoints vs player capsule, boss facing, and mark timings).
-    2. S4 Damage Attribution / Abort: defensive card logged `hitsAccepted=1 appliedDamage=55` then `CARD_ABORT reason=Framework.Boss.TargetLifeOrHealthChanged` before S5 combo could trigger.
-    3. Screenshots: 4 captures were empty/black (10,195 bytes); warm-up pattern needed.
+  - **C-1262a Codex diagnosis / PIE self-test:** BUILD and full suite PASS 501/501. S1/S2 miss because the active weapon sweep does not intersect the player capsule at 140 cm; actor yaw is correctly toward the player. C-1242 timings remain visual candidates; no speculative window changes. S3's 55 hit was being shown in S4's lifetime totals, not as S4 damage; logs now separate per-card deltas from lifetime totals and a native test covers it. Driver-only test budget reset allows S4 Whiff -> S5; PIE confirmed S5 starts and finishes. Viewport prewarm prevents test-target health reset during screenshot startup; four bright captures retained. Evidence: `TEST_PLAN.md` C-1262a row and `Documentation/Boss/C1262A_SEVAROG_TRACE_AND_COMBO_DIAGNOSIS.md`. Lead review/re-mark of C-1242 S1/S2 contact candidates remains open.
 
 - **Greystone Player Character Switch (Approved by Owner):**
   - **Owner Verdict:** Approved player character change to Greystone (unanimous winner in `TEST_PLAN.md` `C-1227 player fit test`, 47/48, 97.9% score).
@@ -518,6 +515,8 @@ Nobody commits except U. A row is changed only by its owner; others write a note
     3. Root-motion distance verification: paired PIE tests (Greystone vs mannequin <= 10% distance delta: backstep 84–98 cm, roll 215–290 cm).
     4. Combat trace and parry confirmation.
     5. Owner video review against evaluation criteria in `Documentation/Boss/C1257C_GREYSTONE_OWNER_REVIEW_CHECKLIST.md`.
+
+  - **C-1257 implementation status (2026-11-10):** C-1257b test-only selector compiles; Development build and suite 501/501 pass. The default route is unchanged; Lead-run paired PIE remains pending. The driver supplies dodge input only and measures resulting actor displacement without synthetic forward movement input; it reports per-move mean/range and failed attempts (X-1812–X-1813). C-1257a is not ready: UE 5.5 Python lacks the reflected montage track structs required for valid transient target-notify readback; zero assets/packages were saved. Effective full-roll input also needs confirmation because the source default disables double-tap full roll (C-939 forbids enabling that behavior). See `TEST_PLAN.md` C-1257a/b and X-1811–X-1813.
 
 - **Owner Decisions Pending:**
   - **SFX Audition Reel Selection Only:** Selection among exported candidate sound cues (Batches 1–3 in `D:/FightVideo/SFX_audition/`, manifests `Documentation/Boss/SFX_03_AUDITION_MANIFEST.md` and `Documentation/Boss/SFX_06_BATCH3_AUDITION_MANIFEST.md`) for Parry, Parry Recoil, Phase 2 Aura, Backstep, and Stance Break. All other previous gates are resolved or scoped.

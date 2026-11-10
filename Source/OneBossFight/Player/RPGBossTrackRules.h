@@ -144,11 +144,12 @@ namespace RPGBossTrack
     inline bool IsHeavyAttackKind(ERPGAttackKind Kind){return Kind==ERPGAttackKind::Strong||Kind==ERPGAttackKind::Charged||Kind==ERPGAttackKind::JumpHeavy;}
     inline EPlayerActivity ClassifyPlayerActivity(bool bFlaskKnown,bool bHeavyInProgress){return bFlaskKnown?EPlayerActivity::Flask:(bHeavyInProgress?EPlayerActivity::HeavyCommit:EPlayerActivity::None);}
     inline const TCHAR* PlayerActivityName(EPlayerActivity A){return A==EPlayerActivity::Flask?TEXT("Flask"):(A==EPlayerActivity::HeavyCommit?TEXT("HeavyCommit"):TEXT("None"));}
-    /** BOSS-EXE-007 (executor watchdog): a card that is still running this many WORLD seconds after its start is aborted: RecoveryEndSeconds / PlayRate + 0.5 s. Negative = invalid input (the card is refused at start). */
-    inline double WatchdogTimeoutSeconds(float RecoveryEndSeconds,float PlayRate)
+    /** BOSS-EXE-007 (executor watchdog): allow both RecoveryEnd and the montage's natural clip tail, then add 0.5 s world-time tolerance. Negative = invalid input (the card is refused at start). */
+    inline double WatchdogTimeoutSeconds(float RecoveryEndSeconds,float PlayRate,float ClipLengthSeconds=0.f,float BlendOutSeconds=0.f)
     {
-        if (!FMath::IsFinite(RecoveryEndSeconds)||!FMath::IsFinite(PlayRate)||!(RecoveryEndSeconds>0.f)||!(PlayRate>0.f)) return -1.;
-        return double(RecoveryEndSeconds)/double(PlayRate)+0.5;
+        if (!FMath::IsFinite(RecoveryEndSeconds)||!FMath::IsFinite(PlayRate)||!FMath::IsFinite(ClipLengthSeconds)||!FMath::IsFinite(BlendOutSeconds)||!(RecoveryEndSeconds>0.f)||!(PlayRate>0.f)||ClipLengthSeconds<0.f||BlendOutSeconds<0.f) return -1.;
+        const double NaturalEnd=FMath::Max(double(ClipLengthSeconds)-double(BlendOutSeconds),double(RecoveryEndSeconds));
+        return (NaturalEnd+double(BlendOutSeconds))/double(PlayRate)+0.5;
     }
     /** Yaw after one tick: the shortest way toward Target, at most DegPerSecond * Dt (wrap safe); unchanged when committed, when the rate is not positive or Dt is not positive. */
     inline float StepYaw(float Current,float Target,float DegPerSecond,float Dt,bool bCommitted)

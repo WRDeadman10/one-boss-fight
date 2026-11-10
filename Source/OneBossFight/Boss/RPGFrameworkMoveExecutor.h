@@ -3,6 +3,7 @@
 #include "Components/ActorComponent.h"
 #include "Player/RPGBossMoveModel.h"
 #include "Player/RPGBossTrackRules.h"
+#include "Boss/RPGBossCardTelemetry.h"
 #include "RPGFrameworkMoveExecutor.generated.h"
 class ARPGFrameworkBossCharacter;
 class APawn;
@@ -57,6 +58,7 @@ private:
     TWeakObjectPtr<URPGDamageResolver> Resolver;
     int32 HitsAccepted=0, HitsGuarded=0, HitsParried=0; double AppliedDamage=0.;
     int32 CardAcceptedHits=0,CardParriedHits=0;
+    int32 CardHitsAtStart=0; double CardDamageAtStart=0.;
     TWeakObjectPtr<ARPGFrameworkBossCharacter> OwnerBoss;
     TWeakObjectPtr<APawn> Target;
     UPROPERTY(Transient) TObjectPtr<UAnimInstance> Anim;
@@ -65,7 +67,7 @@ private:
     TSharedPtr<const FRPGCompiledBossMoveCard> Card;
     FRPGBossMoveModel Model_;
     FRPGBossAttackToken Token;
-    bool bInitialized=false, bAborted=false, bFinished=false, bSawPoseWeight=false;
+    bool bInitialized=false, bAborted=false, bFinished=false, bSawPoseWeight=false, bPlaybackEndLogged=false;
     double StartWorldSeconds=0., LastWorldSeconds=0., LastPosition=0.;
     /** BOSS-ANM-004 telemetry of the heading tracking of the running attack (log lines heading_commit / heading_locked). */
     double TrackTurned=0., TrackMaxRate=0., TrackDriftMax=0.; float TrackYawAtCommit=0.f; bool bTrackCommitLogged=false;

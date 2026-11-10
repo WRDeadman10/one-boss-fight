@@ -29,6 +29,10 @@ public:
 #endif
     bool StartCardForTest(FName MoveId);
 #if WITH_EDITORONLY_DATA
+    UFUNCTION(BlueprintCallable, Category = "Framework proof|Test")
+#endif
+    bool StartComboForTest(FName RootMoveId);
+#if WITH_EDITORONLY_DATA
     UFUNCTION(BlueprintCallable, Category = "Framework proof|Test", meta=(WorldContext="WorldContextObject"))
 #endif
     static ARPGFrameworkBossCharacter* SpawnFrameworkBossForTest(UObject* WorldContextObject,TSubclassOf<ARPGFrameworkBossCharacter> CharacterClass,FVector Location,FRotator Rotation);

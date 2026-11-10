@@ -501,10 +501,12 @@ bool FFrameworkRepositionProfile::RunTest(const FString&)
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkExecutorWatchdogRule,"OneBossFight.Framework.Runtime.ExecutorWatchdogRule",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
 bool FFrameworkExecutorWatchdogRule::RunTest(const FString&)
 {
-    // BOSS-EXE-007: timeout = RecoveryEndSeconds / PlayRate + 0.5 s of world time; invalid input is negative (the card is refused at start).
+    // BOSS-EXE-007: timeout covers both recovery and the montage's clip tail before adding 0.5 s of world-time tolerance.
     TestEqual(TEXT("1.65 s at rate 1"),RPGBossTrack::WatchdogTimeoutSeconds(1.65f,1.f),2.15,1.e-6);
     TestEqual(TEXT("1.65 s at rate 2 is faster"),RPGBossTrack::WatchdogTimeoutSeconds(1.65f,2.f),1.325,1.e-6);
     TestEqual(TEXT("0.4833 s at rate 0.5 is slower"),RPGBossTrack::WatchdogTimeoutSeconds(.4833f,.5f),0.4833/0.5+0.5,1.e-4);
+    TestEqual(TEXT("clip natural end plus authored blend-out gets its own watchdog budget"),RPGBossTrack::WatchdogTimeoutSeconds(1.10333f,1.f,1.60333f,.1f),2.10333,1.e-5);
+    TestEqual(TEXT("recovery plus authored blend-out determines the watchdog when later"),RPGBossTrack::WatchdogTimeoutSeconds(1.65f,1.f,1.2f,.1f),2.25,1.e-6);
     for(float Bad:{0.f,-1.f,std::numeric_limits<float>::quiet_NaN(),std::numeric_limits<float>::infinity()})
     {
         TestTrue(TEXT("bad recovery end is invalid"),RPGBossTrack::WatchdogTimeoutSeconds(Bad,1.f)<0.);

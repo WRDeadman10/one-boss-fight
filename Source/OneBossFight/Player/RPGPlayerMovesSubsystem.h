@@ -59,6 +59,7 @@ public:
 
 private:
 	void OnActorSpawned(AActor* Actor);
+	void ReplacePackPlayerWithGreystoneForTest(TWeakObjectPtr<APawn> SpawnedPackPawn);
 	void OnEncounterResetBroadcast(uint64 ParticipantGeneration, int32 ResetCount);
 	void OnRebindPoll();
 	void OnRebindTimeout();
