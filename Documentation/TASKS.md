@@ -322,8 +322,6 @@ rot=(pitch=-27.9990, yaw=168.8316, roll=12.8017) on bone hand_r, scale (1.0, 1.0
 
 - **Queue Z Batch 8 (Z036–Z040, 2026-11-06):** `Documentation/Boss/Z036_Z039_COMPARATOR_REQUIREMENTS_SHIPPING_AUDIT.md` confirms 5/82 exact matrix registration/source pairs, unresolved G044 numeric-token and parity health false-passes, and a three-token PASS on two byte-identical Shipping executables. Package-wide symbol coverage and provenance remain open. No tests or build/runtime operation. Continuing Z041–Z045.
 
-- **Queue Z Batch 8 (Z036–Z040, 2026-11-06):** `Documentation/Boss/Z036_Z039_COMPARATOR_REQUIREMENTS_SHIPPING_AUDIT.md` confirms 5/82 exact matrix registration/source pairs, unresolved G044 numeric-token and parity health false-passes, and a three-token PASS on two byte-identical Shipping executables. Package-wide symbol coverage and provenance remain open. No tests or build/runtime operation. Continuing Z041–Z045.
-
 - **Queue Z Batch 7 (Z031–Z035, 2026-11-06):** documented sample/discard and nearest-rank semantics, active target and R4/R5 measurement limits, DLSS/TSR witnesses and R6 provenance gaps in `Documentation/Boss/Z031_Z034_BENCHMARK_TELEMETRY_CONTRACT_AUDIT.md`. Corrected stale PERF-01 120 FPS gate to current 60 FPS / 16.67 ms. R6 return still absent. No benchmark/test/Editor/build/package run. Continuing Z036–Z040.
 
 - **Queue Z Batch 6 (Z026–Z030, 2026-11-06):** read-only content/writer/load/reference audit in `Documentation/Boss/Z026_Z029_CONTENT_SAFETY_REFERENCE_AUDIT.md`. Writer inventory is heuristic; synchronous load paths have unmeasured hitch risk; vendor mounts remain protected; V-A037/V-A068 asset census counts conflict (743/827) and need a current Editor receipt. No asset operation or test/build/Editor run. Continuing Z031–Z035.
@@ -2315,8 +2313,6 @@ pg.BossProofCenterBias 0 (Claude/B_MOV002/pie_control_bias0_v2/editor_raw.log sh
 - **[x] QUEUE_200_D D38 reposition turn-latch test audit (Codex, 2026-11-03): mapped exact inclusive 150° latch boundary, reversal, zero-rate, one-step arrival, and reset callsites. Tests cover representative +/-170 and -90 cases but not deadband neighbors, zero/wrap, refused-state preservation, or lifecycle reset assertions. Static review only. See `Documentation/Boss/REPOSITION_TURN_LATCH_TEST_AUDIT_D38.md`.
 
 - **[x] QUEUE_200_D D39 reposition budget source audit (Codex, 2026-11-03): profile permits max 0–8; out-of-band controller-walk attempts increment/cap, while in-band turn-in-place uses a separate 3-second timeout. Successful card start resets the count; actor-level attempt/cap tests are absent. Static review only. See `Documentation/Boss/REPOSITION_BUDGET_SOURCE_AUDIT_D39.md`.
-
-- **[x] QUEUE_200_D D38 reposition turn-latch test audit (Codex, 2026-11-03): mapped exact inclusive 150° latch boundary, reversal, zero-rate, one-step arrival, and reset callsites. Tests cover representative +/-170 and -90 cases but not deadband neighbors, zero/wrap, refused-state preservation, or lifecycle reset assertions. Static review only. See `Documentation/Boss/REPOSITION_TURN_LATCH_TEST_AUDIT_D38.md`.
 
 - **[ ] C-727 combo fallback follow-up (Codex, 2026-11-03): added a new pure engine-free test for model refusal on a fresh snapshot followed by ordinary selector fallback to a different eligible card. Test not run; actor/executor integration remains outside this test.
 
