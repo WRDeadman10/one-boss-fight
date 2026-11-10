@@ -11,46 +11,46 @@ class APawn;
 /** Combo graph data (BOSS-COM rows): the hit outcome an edge may require. Guarded and Parried are part of the data contract; the boss reports Hit or Whiff today (no guard telemetry yet). */
 UENUM(BlueprintType)   // BlueprintType: exposes the enum to editor Python content scripts (F-AG2/AG3); no runtime effect
 enum class ERPGBossComboOutcome : uint8 { Hit, Whiff, Guarded, Parried };
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FRPGBossComboEdgeData
 {
     GENERATED_BODY()
-    UPROPERTY(EditAnywhere) FName ToNode;
-    UPROPERTY(EditAnywhere) float MinRangeCm=0.f;
-    UPROPERTY(EditAnywhere) float MaxRangeCm=1.e6f;
-    UPROPERTY(EditAnywhere) float MaxAbsYawDegrees=180.f;
-    UPROPERTY(EditAnywhere) bool bAnyOutcome=true;
-    UPROPERTY(EditAnywhere) ERPGBossComboOutcome Outcome=ERPGBossComboOutcome::Hit;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FName ToNode;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float MinRangeCm=0.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float MaxRangeCm=1.e6f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float MaxAbsYawDegrees=180.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bAnyOutcome=true;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) ERPGBossComboOutcome Outcome=ERPGBossComboOutcome::Hit;
     /** BOSS-PAC-002: seconds the boss waits in neutral before the next card of the combo (0..5), a deliberate tempo pause. Design value, proposed. */
-    UPROPERTY(EditAnywhere) float TempoPauseSeconds=0.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float TempoPauseSeconds=0.f;
 };
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FRPGBossComboNodeData
 {
     GENERATED_BODY()
-    UPROPERTY(EditAnywhere) FName NodeId;
-    UPROPERTY(EditAnywhere) FName MoveId;   // MoveId of one of the profile's cards
-    UPROPERTY(EditAnywhere) TArray<FRPGBossComboEdgeData> Edges;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FName NodeId;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FName MoveId;   // MoveId of one of the profile's cards
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FRPGBossComboEdgeData> Edges;
 };
 /** F5: one selectable card with its cooldown and authored weight (proof values, design values, proposed). */
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FRPGBossProfileCard
 {
     GENERATED_BODY()
-    UPROPERTY(EditAnywhere) TSoftObjectPtr<URPGBossMoveCard> Card;
-    UPROPERTY(EditAnywhere) float CooldownSeconds=0.f;
-    UPROPERTY(EditAnywhere) float Weight=1.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) TSoftObjectPtr<URPGBossMoveCard> Card;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float CooldownSeconds=0.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float Weight=1.f;
     /** BOSS-DEF-004: during the ACTIVE state of this card a player hit costs health but no posture, so it cannot start a stance break. Design choice, proposed. */
-    UPROPERTY(EditAnywhere) bool bHyperArmor=false;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bHyperArmor=false;
     /** BOSS-PHS-005: score factor of this card while the boss has detected kiting / hugging (profile AntiCheese fields); 1 = no preference, (0,100]. Design values, proposed. */
-    UPROPERTY(EditAnywhere) float KiteWeightMultiplier=1.f;
-    UPROPERTY(EditAnywhere) float HugWeightMultiplier=1.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float KiteWeightMultiplier=1.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float HugWeightMultiplier=1.f;
     /** BOSS-AWR-008: score factor of this card (the forward roll-catch / gap-closer) while the boss has seen the target dodge BACKWARDS DodgeBackThreshold times in its last DodgeHistoryDepth dodges; (0,100], 1 = no preference. Design values, proposed. */
-    UPROPERTY(EditAnywhere) float BackDodgeWeightMultiplier=1.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float BackDodgeWeightMultiplier=1.f;
     /** BOSS-AWR-006: score factor of this card (the fast anti-greed card) while the target is drinking a flask or committed to a heavy attack at the decision; (0,100], 1 = no preference. Design value, proposed. */
-    UPROPERTY(EditAnywhere) float GreedWeightMultiplier=1.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float GreedWeightMultiplier=1.f;
     /** BOSS-PAC-003: this card is a heavy finisher: its recovery must also leave time for the player's HEAVY punish (margin 0), not only the light one. */
-    UPROPERTY(EditAnywhere) bool bHeavyFinisher=false;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bHeavyFinisher=false;
 };
 UCLASS(BlueprintType)
 class ONEBOSSFIGHT_API URPGBossFrameworkProfile : public UPrimaryDataAsset
@@ -79,7 +79,7 @@ public:
     UPROPERTY(EditAnywhere) float HitStepCm=0.f;
     UPROPERTY(EditAnywhere) int32 HitMaxSubsteps=0;
     /** F5 ("F5 fixture"): the selector chooses among Cards for each of AttackCount attacks; Card must then stay empty. F3/F4: Cards empty. */
-    UPROPERTY(EditAnywhere) TArray<FRPGBossProfileCard> Cards;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FRPGBossProfileCard> Cards;
     UPROPERTY(EditAnywhere) float RepeatPenalty=0.f;
     UPROPERTY(EditAnywhere) int32 RepeatMemory=0;
     /** BOSS-SEL-005 (opt-in, F5 fixture only, 0 = off): bounded random tie break inside the top score tier of the selector, [0,0.5], with its seed. Design values, proposed. */
@@ -141,7 +141,7 @@ public:
     UPROPERTY(EditAnywhere) TSoftObjectPtr<UAnimSequence> PhaseTransitionAnim;
     UPROPERTY(EditAnywhere) FName AnimSlotName=TEXT("FullBody");
     /** Combo graph (F5 fixture only, empty = no combos): when the selector starts the card of ComboRoot's node the boss follows the graph at every branch gate (RPGBossComboRules.h). Design values, proposed. */
-    UPROPERTY(EditAnywhere) TArray<FRPGBossComboNodeData> ComboNodes;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FRPGBossComboNodeData> ComboNodes;
     UPROPERTY(EditAnywhere) FName ComboRoot;
     UPROPERTY(EditAnywhere) int32 ComboMaxDepth=3;
     /** Repositioning (F5 fixture only, 0 = off = fail closed with Framework.Selector.NoCandidate as before): when no card is eligible at a decision the boss walks back to its band and decides again, at most this many times in a row (1..8). Design value, proposed. */

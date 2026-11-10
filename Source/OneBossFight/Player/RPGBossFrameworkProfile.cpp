@@ -234,7 +234,7 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
             }
         // The proof target must survive every attack of the run at the worst card damage.
         if (WorstHit*P->AttackCount>=P->TargetHealth) {Error=TEXT("Framework.Profile.DamageBudget");return false;}
-        // BOSS-DEF-005: a defensive card (a backstep) cannot be spammed.
+        // BOSS-DEF-005: a defensive reposition cannot be spammed.
         for (const auto& C:D->Candidates) if (C.Card->Spec().bDefensive&&!RPGBossDefense::CooldownOk(C.CooldownSeconds))
         {
             UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] defense_check card=%s check=Cooldown cooldownSeconds=%g requiredSeconds=%g ok=0"),*C.Card->Spec().MoveId.ToString(),double(C.CooldownSeconds),RPGBossDefense::MinCooldownSeconds);
@@ -262,9 +262,10 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
                 if (S.bDefensive)
                 {
                     const double After=RPGBossPunish::RecoverySeconds(S.WarpEndSeconds,S.RecoveryEndSeconds,S.PlayRate);
-                    const double Counter=RPGBossDefense::CounterplayMarginSeconds(S.MaxRangeCm,S.bWarpAway?double(S.WarpMaxDistanceCm):0.,After,Moves);
+                    const double Counter=RPGBossDefense::CounterplayMarginSeconds(S.MaxRangeCm,S.bWarpAway?double(S.WarpMaxDistanceCm):0.,double(S.WarpStandoffCm),S.bWarpAway,After,Moves);
+                    const double CounterplayEndDistanceCm=S.bWarpAway?double(S.MaxRangeCm+S.WarpMaxDistanceCm):double(S.WarpStandoffCm);
                     const bool bCounterOk=RPGBossPunish::PunishOk(Counter,0.);
-                    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] defense_check card=%s check=Counterplay recoveryAfterMoveSeconds=%g backstepCm=%g counterplayMarginSeconds=%g ok=%d"),*S.MoveId.ToString(),After,S.bWarpAway?double(S.WarpMaxDistanceCm):0.,Counter,bCounterOk?1:0);
+                    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] defense_check card=%s check=Counterplay recoveryAfterMoveSeconds=%g counterplayEndDistanceCm=%g counterplayMarginSeconds=%g ok=%d"),*S.MoveId.ToString(),After,CounterplayEndDistanceCm,Counter,bCounterOk?1:0);
                     if (!bCounterOk) {Error=TEXT("Framework.Profile.DefenseCounterplay");return false;}
                 }
             }

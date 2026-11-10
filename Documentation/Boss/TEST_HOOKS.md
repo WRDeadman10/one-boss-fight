@@ -1,6 +1,6 @@
 # Runtime test and measurement console variables
 
-Inventory source: actual CVar/console-command registrations in `Source/OneBossFight` plus the nine `rpg.Perf.*` controls (seven macro expansions and separately declared FireShadows and FireRadiusScale controls). Current source has 53 names: 44 non-performance controls listed below and nine performance controls summarized in the performance section. This source audit excludes names found only in comments, tests, or caller strings. Six controls (`rpg.BossOverlay`, `rpg.CloseTelegraph`, `rpg.Build`, `rpg.CameraDebug`, `rpg.Legend`, `rpg.LegendShakeScale`) are Shipping-visible runtime controls, not test-only hooks; the prior C-702 mailbox disposition records that set as intentional. The remaining test/proof registrations are excluded from Shipping by `!UE_BUILD_SHIPPING` or Development-only guards. Defaults below are declaration defaults; confirm the source declaration before use.
+Inventory source: `python Scripts/Tools/list_cvars.py` scans current project CVar registrations (and `Source/OneBossFight` guards), excluding comments, tests, and caller strings. The current scan finds 54 `rpg.*` CVar names, including the nine `rpg.Perf.*` controls (seven macro expansions plus FireShadows and FireRadiusScale, summarized below). Six controls (`rpg.BossOverlay`, `rpg.CloseTelegraph`, `rpg.Build`, `rpg.CameraDebug`, `rpg.Legend`, `rpg.LegendShakeScale`) are Shipping-visible runtime controls, not test-only hooks; the prior C-702 mailbox disposition records that set as intentional. The remaining test/proof registrations are excluded from Shipping by `!UE_BUILD_SHIPPING` or Development-only guards. Defaults below are declaration defaults; confirm the source declaration before use. `rpg.DeterminismSeed` is a console command rather than a CVar and is documented separately.
 
 ## Framework proof hooks
 
@@ -43,6 +43,9 @@ Inventory source: actual CVar/console-command registrations in `Source/OneBossFi
 | `rpg.WakeClip` | 1 | 0 skips authored wake clip in tests. |
 | `rpg.CloseTelegraph` | 0.4 | Close-attack windup seconds; 0 restores raw pack pacing. |
 | `rpg.CameraProbe` | 0 | 1 logs camera framing; 2 stages 300/600/900 cm; 3 adds turned-away negative control. |
+| `rpg.Camera.BossBlocks` | 0 | Development experiment: 1 makes the live pack boss capsule block `ECC_Camera`; 0 restores its authored response. |
+| `rpg.Camera.HideBossInside` | -1 | Development override: -1 uses camera-rig config, 0 disables local boss hiding, 1 enables it. |
+| `rpg.Camera.LockOnFraming` | -1 | Development override: -1 uses camera-rig config, 0 disables lock-on framing, 1 enables it. |
 | `rpg.ScreenshotAt` | -1 | Game time for screenshot; negative disables. |
 | `rpg.ScreenshotShowUI` | 1 | Include Slate UI in screenshot. |
 | `rpg.ScreenshotQuit` | 0 | Quit standalone 20 frames after screenshot. |
@@ -58,6 +61,6 @@ Inventory source: actual CVar/console-command registrations in `Source/OneBossFi
 
 ## Arena performance switches
 
-All `rpg.Perf.*` switches are compiled as runtime controls outside Shipping; their macro default is 1 (on). `rpg.Perf.FireShadows` defaults to -1 (authored); 0 disables fire-light shadows, positive N retains only first N. `rpg.Perf.FireRadiusScale` defaults to 1 and clamps to 0.25–1.25; 1 preserves authored fire-light attenuation radius. Other controls: `FireLights` (fire point lights), `FireFx` (fire/smoke/sparks), `GateMist` (fog gate), `DressingAll` (all arena dressing instances), `DressingMist` (mist sheets), `DressingShadows` (dressing shadows), and `Embers` (ember field). Set to 0 to disable the named contribution for performance experiments. `rpg.Perf.*` are not gameplay tuning controls.
+All nine performance controls are compiled outside Shipping. `rpg.Perf.FireLights`, `rpg.Perf.FireFx`, `rpg.Perf.GateMist`, `rpg.Perf.DressingAll`, `rpg.Perf.DressingMist`, `rpg.Perf.DressingShadows`, and `rpg.Perf.Embers` default to 1 (on); set one to 0 to disable its named arena contribution. `rpg.Perf.FireShadows` defaults to -1 (authored); 0 disables fire-light shadows, positive N retains only the first N. `rpg.Perf.FireRadiusScale` defaults to 1 and clamps to 0.25–1.25; 1 preserves authored fire-light attenuation radius. These are performance experiments, not gameplay tuning controls.
 
 Inventory is a source snapshot; update it whenever registrations or guards change. Names found only in comments, tests, or caller strings are not registrations.

@@ -1,0 +1,9 @@
+﻿[2026.11.08-11.40.24:106][  0]LogPython: [AuraCompare] driver registered; Lead-only, no asset save; candidate must exist before run
+[2026.11.08-11.40.24:775][  5]LogPython: [AuraCompare] ROUTE route=legacy selection=unset (legacy startup)
+[2026.11.08-11.40.37:872][304]LogPython: [AuraCompare] SETUP route=legacy health=1000.00 max=2000.00 fraction=0.5000 player_boss_cm=264.4 camera=FollowCamera camera_pos=<Struct 'Vector' (0x000001F84F6D90F0) {x: -630.000000, y: 10.000856, z: 158.149995}> control_rot=<Struct 'Rotator' (0x000001F84FC95140) {pitch: 0.000000, yaw: 0.000000, roll: 0.000000}> asset=/Game/OneBossFight/VFX/NS_Boss_PhaseTwoAura.NS_Boss_PhaseTwoAura
+[2026.11.08-11.40.37:874][304]LogPython: [AuraCompare] FRAME_REQUEST label=warmup_discard g=10.313 resolution=960x540 path=..\..\..\..\..\..\UnrealProject\OneBossFight\Saved\AuraComparison\20261108T114024Z\legacy\warmup_discard.png
+[2026.11.08-11.40.38:454][310]LogPython: [AuraCompare] FRAME_READY label=warmup_discard path=..\..\..\..\..\..\UnrealProject\OneBossFight\Saved\AuraComparison\20261108T114024Z\legacy\warmup_discard.png
+[2026.11.08-11.40.38:454][310]LogPython: [AuraCompare] WARMUP_DISCARDED label=warmup_discard
+[2026.11.08-11.40.38:468][310]LogPython: [AuraCompare] ERROR Traceback (most recent call last):
+[2026.11.08-11.40.38:468][310]LogPython: [AuraCompare] RESTORE asset=/Game/OneBossFight/VFX/NS_Boss_PhaseTwoAura.NS_Boss_PhaseTwoAura
+[2026.11.08-11.40.38:469][310]LogPython: [AuraCompare] SUMMARY route=legacy frames=warmup_discard reason=error output=..\..\..\..\..\..\UnrealProject\OneBossFight\Saved\AuraComparison\20261108T114024Z\legacy

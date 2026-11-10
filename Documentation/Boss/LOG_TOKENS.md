@@ -1,6 +1,6 @@
 # FrameworkProof log token reference
 
-The source of truth is `Docs/BossCombatReview/Execution/Antigravity/Reviews/validate_framework_proof_logs.py`, variable `SCHEMAS`. Each token below is accepted only with its declared payload pattern there; this index names the semantic fields in source schema order. The 2026-11-03 audit found 138 schema entries, 138 emitted tokens, and 133 retained valid samples. Cross-line semantic rules also apply, so matching one line is not proof of a successful run.
+The source of truth is `Docs/BossCombatReview/Execution/Antigravity/Reviews/validate_framework_proof_logs.py`, variable `SCHEMAS`. Each token below is accepted only with its declared payload pattern there; this index names the semantic fields in source schema order. The current token audit reports 138 schema entries and 138 emitted tokens, with semantic and source indexes complete (`python -I Scripts/Tools/check_validator_tokens.py`). Cross-line semantic rules also apply, so matching one line is not proof of a successful run.
 
 | Token | Payload fields / purpose |
 |---|---|

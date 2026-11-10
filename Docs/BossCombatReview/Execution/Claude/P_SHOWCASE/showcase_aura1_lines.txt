@@ -1,0 +1,12 @@
+﻿draw ready=True
+aura_current niagara=[('NS_Boss_PhaseTwoAura', True)]
+SEG_BEGIN aura_current frame=0
+SEG_END aura_current frame=24
+aura_boost niagara=[('NS_Boss_PhaseTwoAura_Boost', True)]
+SEG_BEGIN aura_boost frame=24
+SEG_END aura_boost frame=48
+aura_boost_spine03 niagara=[('NS_Boss_PhaseTwoAura_Boost', True)]
+SEG_BEGIN aura_boost_spine03 frame=48
+SEG_END aura_boost_spine03 frame=72
+SUMMARY frames=72
+finished: all segments recorded

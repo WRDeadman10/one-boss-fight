@@ -1,0 +1,220 @@
+﻿[2026.11.09-22.10.30:284][  0]LogPython: [SevarogFrames] driver registered; waiting for PIE
+[2026.11.09-22.10.33:212][  2]LogTemp: Display: [EncounterActivation] default data startup: selected /Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter for map L_SevarogArena
+[2026.11.09-22.10.33:280][  2]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending
+[2026.11.09-22.10.35:075][  5]LogPython: [SevarogFrames] START mesh=Sevarog clips=8 fps=15 view=side
+[2026.11.09-22.10.53:998][772]LogPython: [SevarogFrames] WARM_OK clip=Swing1_Medium attempts=14
+[2026.11.09-22.10.54:531][786]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=000 time=0.000 bytes=856418 bright=1
+[2026.11.09-22.10.55:824][867]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=001 time=0.067 bytes=854370 bright=1
+[2026.11.09-22.10.57:175][949]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=002 time=0.133 bytes=865652 bright=1
+[2026.11.09-22.10.57:697][963]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=003 time=0.200 bytes=857291 bright=1
+[2026.11.09-22.10.59:044][ 45]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=004 time=0.267 bytes=845636 bright=1
+[2026.11.09-22.10.59:534][ 58]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=005 time=0.333 bytes=852734 bright=1
+[2026.11.09-22.11.00:889][140]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=006 time=0.400 bytes=843134 bright=1
+[2026.11.09-22.11.01:416][154]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=007 time=0.467 bytes=852662 bright=1
+[2026.11.09-22.11.02:707][235]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=008 time=0.533 bytes=848876 bright=1
+[2026.11.09-22.11.04:049][321]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=009 time=0.600 bytes=848763 bright=1
+[2026.11.09-22.11.04:539][335]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=010 time=0.667 bytes=867757 bright=1
+[2026.11.09-22.11.05:859][415]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=011 time=0.733 bytes=866090 bright=1
+[2026.11.09-22.11.06:346][429]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=012 time=0.800 bytes=869439 bright=1
+[2026.11.09-22.11.07:687][513]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=013 time=0.867 bytes=866037 bright=1
+[2026.11.09-22.11.08:183][527]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=014 time=0.933 bytes=872243 bright=1
+[2026.11.09-22.11.09:519][610]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=015 time=1.000 bytes=865812 bright=1
+[2026.11.09-22.11.10:014][624]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=016 time=1.067 bytes=865868 bright=1
+[2026.11.09-22.11.11:354][707]LogPython: [SevarogFrames] FRAME clip=Swing1_Medium index=017 time=1.133 bytes=866528 bright=1
+[2026.11.09-22.11.13:251][803]LogPython: [SevarogFrames] WARM_OK clip=Swing2_Medium attempts=2
+[2026.11.09-22.11.14:585][887]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=000 time=0.000 bytes=868564 bright=1
+[2026.11.09-22.11.15:084][901]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=001 time=0.067 bytes=869373 bright=1
+[2026.11.09-22.11.16:414][981]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=002 time=0.133 bytes=859290 bright=1
+[2026.11.09-22.11.16:909][995]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=003 time=0.200 bytes=844499 bright=1
+[2026.11.09-22.11.18:238][ 76]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=004 time=0.267 bytes=844107 bright=1
+[2026.11.09-22.11.18:743][ 90]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=005 time=0.333 bytes=844422 bright=1
+[2026.11.09-22.11.20:020][166]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=006 time=0.400 bytes=829210 bright=1
+[2026.11.09-22.11.21:349][248]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=007 time=0.467 bytes=866143 bright=1
+[2026.11.09-22.11.21:864][262]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=008 time=0.533 bytes=865149 bright=1
+[2026.11.09-22.11.23:169][343]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=009 time=0.600 bytes=848235 bright=1
+[2026.11.09-22.11.23:672][357]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=010 time=0.667 bytes=858531 bright=1
+[2026.11.09-22.11.25:011][439]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=011 time=0.733 bytes=855738 bright=1
+[2026.11.09-22.11.25:525][453]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=012 time=0.800 bytes=847905 bright=1
+[2026.11.09-22.11.26:853][535]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=013 time=0.867 bytes=838736 bright=1
+[2026.11.09-22.11.27:360][549]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=014 time=0.933 bytes=851574 bright=1
+[2026.11.09-22.11.28:653][630]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=015 time=1.000 bytes=838131 bright=1
+[2026.11.09-22.11.29:178][644]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=016 time=1.067 bytes=836560 bright=1
+[2026.11.09-22.11.30:461][723]LogPython: [SevarogFrames] FRAME clip=Swing2_Medium index=017 time=1.133 bytes=849315 bright=1
+[2026.11.09-22.11.32:330][820]LogPython: [SevarogFrames] WARM_OK clip=Swing3_Slow attempts=2
+[2026.11.09-22.11.32:829][834]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=000 time=0.000 bytes=852110 bright=1
+[2026.11.09-22.11.34:170][916]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=001 time=0.067 bytes=831973 bright=1
+[2026.11.09-22.11.34:697][930]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=002 time=0.133 bytes=842633 bright=1
+[2026.11.09-22.11.36:048][ 13]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=003 time=0.200 bytes=851005 bright=1
+[2026.11.09-22.11.37:391][ 94]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=004 time=0.267 bytes=857167 bright=1
+[2026.11.09-22.11.37:906][108]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=005 time=0.333 bytes=847767 bright=1
+[2026.11.09-22.11.39:214][189]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=006 time=0.400 bytes=848081 bright=1
+[2026.11.09-22.11.39:742][203]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=007 time=0.467 bytes=856932 bright=1
+[2026.11.09-22.11.41:032][283]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=008 time=0.533 bytes=841647 bright=1
+[2026.11.09-22.11.41:573][297]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=009 time=0.600 bytes=843293 bright=1
+[2026.11.09-22.11.42:873][378]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=010 time=0.667 bytes=839000 bright=1
+[2026.11.09-22.11.43:394][392]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=011 time=0.733 bytes=842045 bright=1
+[2026.11.09-22.11.44:731][475]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=012 time=0.800 bytes=840098 bright=1
+[2026.11.09-22.11.46:073][558]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=013 time=0.867 bytes=827392 bright=1
+[2026.11.09-22.11.46:607][572]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=014 time=0.933 bytes=842535 bright=1
+[2026.11.09-22.11.47:897][651]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=015 time=1.000 bytes=839841 bright=1
+[2026.11.09-22.11.48:424][665]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=016 time=1.067 bytes=845691 bright=1
+[2026.11.09-22.11.49:712][745]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=017 time=1.133 bytes=836781 bright=1
+[2026.11.09-22.11.50:217][759]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=018 time=1.200 bytes=831184 bright=1
+[2026.11.09-22.11.51:498][838]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=019 time=1.267 bytes=842392 bright=1
+[2026.11.09-22.11.52:003][852]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=020 time=1.333 bytes=840823 bright=1
+[2026.11.09-22.11.53:348][934]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=021 time=1.400 bytes=841629 bright=1
+[2026.11.09-22.11.53:871][948]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=022 time=1.467 bytes=842516 bright=1
+[2026.11.09-22.11.55:170][ 24]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=023 time=1.533 bytes=824059 bright=1
+[2026.11.09-22.11.56:505][106]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=024 time=1.600 bytes=825692 bright=1
+[2026.11.09-22.11.57:014][120]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=025 time=1.667 bytes=838767 bright=1
+[2026.11.09-22.11.58:299][199]LogPython: [SevarogFrames] FRAME clip=Swing3_Slow index=026 time=1.700 bytes=837707 bright=1
+[2026.11.09-22.12.00:195][300]LogPython: [SevarogFrames] WARM_OK clip=Swing1_FAST_v2 attempts=2
+[2026.11.09-22.12.00:689][314]LogPython: [SevarogFrames] FRAME clip=Swing1_FAST_v2 index=000 time=0.000 bytes=852463 bright=1
+[2026.11.09-22.12.02:035][399]LogPython: [SevarogFrames] FRAME clip=Swing1_FAST_v2 index=001 time=0.067 bytes=847028 bright=1
+[2026.11.09-22.12.02:564][413]LogPython: [SevarogFrames] FRAME clip=Swing1_FAST_v2 index=002 time=0.133 bytes=862065 bright=1
+[2026.11.09-22.12.03:897][495]LogPython: [SevarogFrames] FRAME clip=Swing1_FAST_v2 index=003 time=0.200 bytes=847462 bright=1
+[2026.11.09-22.12.04:456][509]LogPython: [SevarogFrames] FRAME clip=Swing1_FAST_v2 index=004 time=0.267 bytes=842983 bright=1
+[2026.11.09-22.12.05:743][589]LogPython: [SevarogFrames] FRAME clip=Swing1_FAST_v2 index=005 time=0.333 bytes=837144 bright=1
+[2026.11.09-22.12.06:309][603]LogPython: [SevarogFrames] FRAME clip=Swing1_FAST_v2 index=006 time=0.400 bytes=861846 bright=1
+[2026.11.09-22.12.07:606][682]LogPython: [SevarogFrames] FRAME clip=Swing1_FAST_v2 index=007 time=0.467 bytes=866407 bright=1
+[2026.11.09-22.12.08:952][767]LogPython: [SevarogFrames] FRAME clip=Swing1_FAST_v2 index=008 time=0.533 bytes=862939 bright=1
+[2026.11.09-22.12.10:815][862]LogPython: [SevarogFrames] WARM_OK clip=Speedburst attempts=2
+[2026.11.09-22.12.11:312][876]LogPython: [SevarogFrames] FRAME clip=Speedburst index=000 time=0.000 bytes=825280 bright=1
+[2026.11.09-22.12.12:598][958]LogPython: [SevarogFrames] FRAME clip=Speedburst index=001 time=0.067 bytes=841098 bright=1
+[2026.11.09-22.12.13:956][ 45]LogPython: [SevarogFrames] FRAME clip=Speedburst index=002 time=0.133 bytes=840095 bright=1
+[2026.11.09-22.12.14:443][ 58]LogPython: [SevarogFrames] FRAME clip=Speedburst index=003 time=0.200 bytes=834079 bright=1
+[2026.11.09-22.12.15:779][138]LogPython: [SevarogFrames] FRAME clip=Speedburst index=004 time=0.267 bytes=845434 bright=1
+[2026.11.09-22.12.16:280][152]LogPython: [SevarogFrames] FRAME clip=Speedburst index=005 time=0.333 bytes=848024 bright=1
+[2026.11.09-22.12.17:623][232]LogPython: [SevarogFrames] FRAME clip=Speedburst index=006 time=0.400 bytes=844195 bright=1
+[2026.11.09-22.12.18:162][246]LogPython: [SevarogFrames] FRAME clip=Speedburst index=007 time=0.467 bytes=845271 bright=1
+[2026.11.09-22.12.19:456][324]LogPython: [SevarogFrames] FRAME clip=Speedburst index=008 time=0.533 bytes=837122 bright=1
+[2026.11.09-22.12.19:971][338]LogPython: [SevarogFrames] FRAME clip=Speedburst index=009 time=0.600 bytes=840827 bright=1
+[2026.11.09-22.12.21:257][418]LogPython: [SevarogFrames] FRAME clip=Speedburst index=010 time=0.667 bytes=837449 bright=1
+[2026.11.09-22.12.21:811][432]LogPython: [SevarogFrames] FRAME clip=Speedburst index=011 time=0.733 bytes=842744 bright=1
+[2026.11.09-22.12.23:105][514]LogPython: [SevarogFrames] FRAME clip=Speedburst index=012 time=0.800 bytes=849352 bright=1
+[2026.11.09-22.12.24:452][601]LogPython: [SevarogFrames] FRAME clip=Speedburst index=013 time=0.867 bytes=843508 bright=1
+[2026.11.09-22.12.24:945][615]LogPython: [SevarogFrames] FRAME clip=Speedburst index=014 time=0.933 bytes=834905 bright=1
+[2026.11.09-22.12.26:279][698]LogPython: [SevarogFrames] FRAME clip=Speedburst index=015 time=1.000 bytes=828278 bright=1
+[2026.11.09-22.12.26:798][712]LogPython: [SevarogFrames] FRAME clip=Speedburst index=016 time=1.067 bytes=845652 bright=1
+[2026.11.09-22.12.28:078][791]LogPython: [SevarogFrames] FRAME clip=Speedburst index=017 time=1.133 bytes=832612 bright=1
+[2026.11.09-22.12.29:419][876]LogPython: [SevarogFrames] FRAME clip=Speedburst index=018 time=1.200 bytes=832440 bright=1
+[2026.11.09-22.12.30:743][959]LogPython: [SevarogFrames] FRAME clip=Speedburst index=019 time=1.267 bytes=831283 bright=1
+[2026.11.09-22.12.32:621][ 56]LogPython: [SevarogFrames] WARM_OK clip=Ultimate_Swing_120fps attempts=2
+[2026.11.09-22.12.33:149][ 70]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=000 time=0.000 bytes=858261 bright=1
+[2026.11.09-22.12.34:520][149]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=001 time=0.067 bytes=847001 bright=1
+[2026.11.09-22.12.34:965][162]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=002 time=0.133 bytes=854276 bright=1
+[2026.11.09-22.12.36:239][241]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=003 time=0.200 bytes=847518 bright=1
+[2026.11.09-22.12.36:752][256]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=004 time=0.267 bytes=845644 bright=1
+[2026.11.09-22.12.38:047][335]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=005 time=0.333 bytes=856938 bright=1
+[2026.11.09-22.12.38:564][349]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=006 time=0.400 bytes=851136 bright=1
+[2026.11.09-22.12.39:862][429]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=007 time=0.467 bytes=855694 bright=1
+[2026.11.09-22.12.40:384][443]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=008 time=0.533 bytes=859976 bright=1
+[2026.11.09-22.12.41:724][525]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=009 time=0.600 bytes=845803 bright=1
+[2026.11.09-22.12.42:262][539]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=010 time=0.667 bytes=852722 bright=1
+[2026.11.09-22.12.43:598][617]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=011 time=0.733 bytes=840492 bright=1
+[2026.11.09-22.12.44:121][631]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=012 time=0.800 bytes=858155 bright=1
+[2026.11.09-22.12.45:506][712]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=013 time=0.867 bytes=838805 bright=1
+[2026.11.09-22.12.46:857][795]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=014 time=0.933 bytes=858652 bright=1
+[2026.11.09-22.12.47:331][809]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=015 time=1.000 bytes=865345 bright=1
+[2026.11.09-22.12.48:671][892]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=016 time=1.067 bytes=859696 bright=1
+[2026.11.09-22.12.49:202][906]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=017 time=1.133 bytes=850342 bright=1
+[2026.11.09-22.12.50:499][985]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=018 time=1.200 bytes=856531 bright=1
+[2026.11.09-22.12.51:018][999]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=019 time=1.267 bytes=863058 bright=1
+[2026.11.09-22.12.52:302][ 79]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=020 time=1.333 bytes=861735 bright=1
+[2026.11.09-22.12.52:808][ 93]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=021 time=1.400 bytes=865150 bright=1
+[2026.11.09-22.12.54:147][177]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=022 time=1.467 bytes=843769 bright=1
+[2026.11.09-22.12.54:641][191]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=023 time=1.533 bytes=864888 bright=1
+[2026.11.09-22.12.55:917][269]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=024 time=1.600 bytes=856717 bright=1
+[2026.11.09-22.12.57:275][356]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=025 time=1.667 bytes=865848 bright=1
+[2026.11.09-22.12.57:799][370]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=026 time=1.733 bytes=855603 bright=1
+[2026.11.09-22.12.59:117][452]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=027 time=1.800 bytes=843606 bright=1
+[2026.11.09-22.12.59:630][466]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=028 time=1.867 bytes=844719 bright=1
+[2026.11.09-22.13.00:953][547]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=029 time=1.933 bytes=838399 bright=1
+[2026.11.09-22.13.02:371][629]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=030 time=2.000 bytes=847765 bright=1
+[2026.11.09-22.13.02:788][642]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=031 time=2.067 bytes=850799 bright=1
+[2026.11.09-22.13.04:118][722]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=032 time=2.133 bytes=844567 bright=1
+[2026.11.09-22.13.04:624][736]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=033 time=2.200 bytes=856099 bright=1
+[2026.11.09-22.13.05:901][816]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=034 time=2.267 bytes=863665 bright=1
+[2026.11.09-22.13.07:243][901]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=035 time=2.333 bytes=855230 bright=1
+[2026.11.09-22.13.08:575][984]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=036 time=2.400 bytes=852212 bright=1
+[2026.11.09-22.13.09:913][ 66]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=037 time=2.467 bytes=855309 bright=1
+[2026.11.09-22.13.11:273][149]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=038 time=2.533 bytes=849490 bright=1
+[2026.11.09-22.13.11:771][163]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=039 time=2.600 bytes=842293 bright=1
+[2026.11.09-22.13.13:081][243]LogPython: [SevarogFrames] FRAME clip=Ultimate_Swing_120fps index=040 time=2.633 bytes=838367 bright=1
+[2026.11.09-22.13.15:028][339]LogPython: [SevarogFrames] WARM_OK clip=Subjugation attempts=2
+[2026.11.09-22.13.15:522][355]LogPython: [SevarogFrames] FRAME clip=Subjugation index=000 time=0.000 bytes=846564 bright=1
+[2026.11.09-22.13.16:860][438]LogPython: [SevarogFrames] FRAME clip=Subjugation index=001 time=0.067 bytes=844377 bright=1
+[2026.11.09-22.13.17:342][452]LogPython: [SevarogFrames] FRAME clip=Subjugation index=002 time=0.133 bytes=849655 bright=1
+[2026.11.09-22.13.18:679][533]LogPython: [SevarogFrames] FRAME clip=Subjugation index=003 time=0.200 bytes=847733 bright=1
+[2026.11.09-22.13.19:212][547]LogPython: [SevarogFrames] FRAME clip=Subjugation index=004 time=0.267 bytes=849877 bright=1
+[2026.11.09-22.13.20:505][627]LogPython: [SevarogFrames] FRAME clip=Subjugation index=005 time=0.333 bytes=854640 bright=1
+[2026.11.09-22.13.21:060][641]LogPython: [SevarogFrames] FRAME clip=Subjugation index=006 time=0.400 bytes=842688 bright=1
+[2026.11.09-22.13.22:346][721]LogPython: [SevarogFrames] FRAME clip=Subjugation index=007 time=0.467 bytes=850762 bright=1
+[2026.11.09-22.13.22:854][735]LogPython: [SevarogFrames] FRAME clip=Subjugation index=008 time=0.533 bytes=860757 bright=1
+[2026.11.09-22.13.24:147][815]LogPython: [SevarogFrames] FRAME clip=Subjugation index=009 time=0.600 bytes=860486 bright=1
+[2026.11.09-22.13.24:675][829]LogPython: [SevarogFrames] FRAME clip=Subjugation index=010 time=0.667 bytes=858959 bright=1
+[2026.11.09-22.13.25:957][907]LogPython: [SevarogFrames] FRAME clip=Subjugation index=011 time=0.733 bytes=855826 bright=1
+[2026.11.09-22.13.26:442][921]LogPython: [SevarogFrames] FRAME clip=Subjugation index=012 time=0.800 bytes=857892 bright=1
+[2026.11.09-22.13.27:764][  2]LogPython: [SevarogFrames] FRAME clip=Subjugation index=013 time=0.867 bytes=849255 bright=1
+[2026.11.09-22.13.28:329][ 16]LogPython: [SevarogFrames] FRAME clip=Subjugation index=014 time=0.933 bytes=844659 bright=1
+[2026.11.09-22.13.29:638][ 96]LogPython: [SevarogFrames] FRAME clip=Subjugation index=015 time=1.000 bytes=835097 bright=1
+[2026.11.09-22.13.30:151][110]LogPython: [SevarogFrames] FRAME clip=Subjugation index=016 time=1.067 bytes=842941 bright=1
+[2026.11.09-22.13.31:480][193]LogPython: [SevarogFrames] FRAME clip=Subjugation index=017 time=1.133 bytes=846262 bright=1
+[2026.11.09-22.13.31:987][207]LogPython: [SevarogFrames] FRAME clip=Subjugation index=018 time=1.200 bytes=839472 bright=1
+[2026.11.09-22.13.33:316][286]LogPython: [SevarogFrames] FRAME clip=Subjugation index=019 time=1.267 bytes=838929 bright=1
+[2026.11.09-22.13.33:873][300]LogPython: [SevarogFrames] FRAME clip=Subjugation index=020 time=1.333 bytes=847888 bright=1
+[2026.11.09-22.13.35:163][382]LogPython: [SevarogFrames] FRAME clip=Subjugation index=021 time=1.400 bytes=831830 bright=1
+[2026.11.09-22.13.36:498][465]LogPython: [SevarogFrames] FRAME clip=Subjugation index=022 time=1.467 bytes=850458 bright=1
+[2026.11.09-22.13.37:044][479]LogPython: [SevarogFrames] FRAME clip=Subjugation index=023 time=1.533 bytes=841960 bright=1
+[2026.11.09-22.13.38:352][559]LogPython: [SevarogFrames] FRAME clip=Subjugation index=024 time=1.600 bytes=841658 bright=1
+[2026.11.09-22.13.38:851][573]LogPython: [SevarogFrames] FRAME clip=Subjugation index=025 time=1.667 bytes=853636 bright=1
+[2026.11.09-22.13.40:149][652]LogPython: [SevarogFrames] FRAME clip=Subjugation index=026 time=1.733 bytes=842145 bright=1
+[2026.11.09-22.13.40:651][666]LogPython: [SevarogFrames] FRAME clip=Subjugation index=027 time=1.800 bytes=851924 bright=1
+[2026.11.09-22.13.41:993][748]LogPython: [SevarogFrames] FRAME clip=Subjugation index=028 time=1.867 bytes=834198 bright=1
+[2026.11.09-22.13.42:522][762]LogPython: [SevarogFrames] FRAME clip=Subjugation index=029 time=1.933 bytes=848656 bright=1
+[2026.11.09-22.13.43:796][837]LogPython: [SevarogFrames] FRAME clip=Subjugation index=030 time=2.000 bytes=840739 bright=1
+[2026.11.09-22.13.45:136][919]LogPython: [SevarogFrames] FRAME clip=Subjugation index=031 time=2.067 bytes=849441 bright=1
+[2026.11.09-22.13.45:651][933]LogPython: [SevarogFrames] FRAME clip=Subjugation index=032 time=2.133 bytes=845278 bright=1
+[2026.11.09-22.13.46:933][ 11]LogPython: [SevarogFrames] FRAME clip=Subjugation index=033 time=2.200 bytes=849189 bright=1
+[2026.11.09-22.13.47:443][ 25]LogPython: [SevarogFrames] FRAME clip=Subjugation index=034 time=2.267 bytes=845679 bright=1
+[2026.11.09-22.13.48:747][107]LogPython: [SevarogFrames] FRAME clip=Subjugation index=035 time=2.333 bytes=845537 bright=1
+[2026.11.09-22.13.49:287][121]LogPython: [SevarogFrames] FRAME clip=Subjugation index=036 time=2.400 bytes=859850 bright=1
+[2026.11.09-22.13.50:553][199]LogPython: [SevarogFrames] FRAME clip=Subjugation index=037 time=2.467 bytes=843282 bright=1
+[2026.11.09-22.13.51:063][213]LogPython: [SevarogFrames] FRAME clip=Subjugation index=038 time=2.533 bytes=854246 bright=1
+[2026.11.09-22.13.52:337][294]LogPython: [SevarogFrames] FRAME clip=Subjugation index=039 time=2.600 bytes=849116 bright=1
+[2026.11.09-22.13.52:854][308]LogPython: [SevarogFrames] FRAME clip=Subjugation index=040 time=2.667 bytes=850491 bright=1
+[2026.11.09-22.13.54:129][387]LogPython: [SevarogFrames] FRAME clip=Subjugation index=041 time=2.733 bytes=842637 bright=1
+[2026.11.09-22.13.54:636][401]LogPython: [SevarogFrames] FRAME clip=Subjugation index=042 time=2.800 bytes=842268 bright=1
+[2026.11.09-22.13.55:924][482]LogPython: [SevarogFrames] FRAME clip=Subjugation index=043 time=2.867 bytes=841459 bright=1
+[2026.11.09-22.13.57:800][580]LogPython: [SevarogFrames] WARM_OK clip=Soul_Siphon attempts=2
+[2026.11.09-22.13.58:293][594]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=000 time=0.000 bytes=850102 bright=1
+[2026.11.09-22.13.59:614][674]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=001 time=0.067 bytes=849560 bright=1
+[2026.11.09-22.14.00:947][757]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=002 time=0.133 bytes=848408 bright=1
+[2026.11.09-22.14.01:458][772]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=003 time=0.200 bytes=845880 bright=1
+[2026.11.09-22.14.02:789][854]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=004 time=0.267 bytes=844783 bright=1
+[2026.11.09-22.14.03:357][869]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=005 time=0.333 bytes=848328 bright=1
+[2026.11.09-22.14.04:642][948]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=006 time=0.400 bytes=850917 bright=1
+[2026.11.09-22.14.05:155][962]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=007 time=0.467 bytes=844393 bright=1
+[2026.11.09-22.14.06:448][ 45]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=008 time=0.533 bytes=845944 bright=1
+[2026.11.09-22.14.06:941][ 59]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=009 time=0.600 bytes=844623 bright=1
+[2026.11.09-22.14.08:281][141]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=010 time=0.667 bytes=844799 bright=1
+[2026.11.09-22.14.08:808][155]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=011 time=0.733 bytes=839655 bright=1
+[2026.11.09-22.14.10:173][235]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=012 time=0.800 bytes=837434 bright=1
+[2026.11.09-22.14.11:502][318]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=013 time=0.867 bytes=845273 bright=1
+[2026.11.09-22.14.12:007][332]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=014 time=0.933 bytes=839364 bright=1
+[2026.11.09-22.14.13:273][408]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=015 time=1.000 bytes=842048 bright=1
+[2026.11.09-22.14.13:783][423]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=016 time=1.067 bytes=844930 bright=1
+[2026.11.09-22.14.15:120][506]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=017 time=1.133 bytes=834068 bright=1
+[2026.11.09-22.14.15:655][521]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=018 time=1.200 bytes=841751 bright=1
+[2026.11.09-22.14.16:959][603]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=019 time=1.267 bytes=840511 bright=1
+[2026.11.09-22.14.17:469][617]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=020 time=1.333 bytes=832519 bright=1
+[2026.11.09-22.14.18:740][699]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=021 time=1.400 bytes=840972 bright=1
+[2026.11.09-22.14.19:255][714]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=022 time=1.467 bytes=847172 bright=1
+[2026.11.09-22.14.20:579][794]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=023 time=1.533 bytes=841714 bright=1
+[2026.11.09-22.14.21:090][808]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=024 time=1.600 bytes=841630 bright=1
+[2026.11.09-22.14.22:366][884]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=025 time=1.667 bytes=853136 bright=1
+[2026.11.09-22.14.22:897][898]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=026 time=1.733 bytes=852399 bright=1
+[2026.11.09-22.14.24:173][975]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=027 time=1.800 bytes=841923 bright=1
+[2026.11.09-22.14.24:695][989]LogPython: [SevarogFrames] FRAME clip=Soul_Siphon index=028 time=1.833 bytes=834801 bright=1
+[2026.11.09-22.14.24:697][989]LogPython: [SevarogFrames] PLAYER_MESH_RESTORED asset=SKM_CombatMannequin_Simple
+[2026.11.09-22.14.24:697][989]LogPython: [SevarogFrames] finished: complete shots=206

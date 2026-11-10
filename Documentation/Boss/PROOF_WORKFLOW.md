@@ -26,6 +26,14 @@ powershell -ExecutionPolicy Bypass -File Scripts\Rebuild.ps1 -Tests -NoRelaunch
 
 The wrapper builds `OneBossFightEditor Win64 Development`, runs `Automation RunTests OneBossFight` with `-unattended -nullrhi -nosound -nosplash`, and leaves the editor closed. Preserve its raw logs and verify the completion counts and failures; wrapper success alone is insufficient.
 
+For the Sevarog candidate's non-saving Editor validation, the exact locked command used was:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File Scripts/Editor/run_c1253a_locked_validation.ps1
+```
+
+That runner performs the Development Editor build, transient-object authoring dry-run with both production C++ validators, and full `OneBossFight` suite. Its retained logs and status are under `Docs/BossCombatReview/Execution/Codex/C1253A_TRANSIENT_DRYRUN/`. It does not save Sevarog content or provide PIE/package proof.
+
 ## 3. PIE drivers
 
 PIE driver evidence is a separate live-engine proof. Open the project editor with `-nosound`, ensure the project bridge is available, then use the checked-in runner:

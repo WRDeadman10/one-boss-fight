@@ -175,6 +175,8 @@ bool FBossMoveCardRejections::RunTest(const FString&)
     // BOSS-DEF-005: a defensive card has no hit window and no damage, its move starts after a readable telegraph (0.25 s), a backstep stays within 250 cm; bWarpAway belongs to a defensive card.
     auto MakeBackstep=[](FInput& F){F.S.Windows.Reset();F.S.HPDamage=0.f;F.S.bDefensive=true;F.S.bWarpAway=true;F.S.WarpStartSeconds=.4f;F.S.WarpEndSeconds=.7f;F.S.WarpMaxDistanceCm=150.f;F.S.WarpStandoffCm=300.f;F.S.ActiveStartSeconds=.4f;F.S.CommitSeconds=.1f;F.S.ActiveEndSeconds=.7f;F.S.RecoveryEndSeconds=1.2f;};
     {FInput F;MakeBackstep(F);TestTrue(TEXT("a backstep card without hit windows is valid"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}
+    Reject([&](FInput& F){MakeBackstep(F);F.S.bWarpAway=false;F.S.WarpMaxDistanceCm=0.f;F.S.WarpMaxAngleDegrees=30.f;},TEXT("MoveCard.Defensive"));
+    {FInput F;MakeBackstep(F);F.S.bWarpAway=false;F.S.WarpMaxDistanceCm=150.f;TestTrue(TEXT("a forward defensive reposition with positive distance is valid"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}
     Reject([&](FInput& F){F.S.Windows.Reset();},TEXT("MoveCard.Window"));   // no hit window and not defensive
     Reject([&](FInput& F){MakeBackstep(F);F.S.HPDamage=5.f;},TEXT("MoveCard.Defensive"));
     {FInput F;MakeBackstep(F);F.S.WarpStartSeconds=.3125f;F.S.ActiveStartSeconds=.3125f;TestTrue(TEXT("a move that starts at exactly 0.25 real seconds (0.3125 card seconds at rate 1.25) is valid"),RPGBossMoveCards::Validate(F.S,F.M).IsValid());}

@@ -27,8 +27,8 @@ This is a field guide to `FRPGBossMoveCardSpec` and its nested window/cue record
 | `WarpMaxDistanceCm`, `WarpMaxAngleDegrees` | cm, degrees | Bounded warp budget; distance ≤ 1000 cm and angle ≤ 180 degrees. |
 | `WarpStandoffCm` | cm | Desired stopping distance from target for the bounded warp. |
 | `WarpEaseInOut` | boolean | Optional smoothstep distribution; requires positive warp distance. |
-| `bDefensive` | boolean | Defensive/backstep card: no hit windows and zero HP damage. |
-| `bWarpAway` | boolean | Only for defensive cards; backstep budget must be >0 and ≤250 cm. |
+| `bDefensive` | boolean | Defensive card: no hit windows and zero HP damage. A forward defensive reposition (`bWarpAway=false`) requires a positive `WarpMaxDistanceCm`; its move endpoint is checked from the target's standoff. |
+| `bWarpAway` | boolean | Only for defensive cards; a backstep requires `0 < WarpMaxDistanceCm ≤ 250 cm`. |
 | `HoldAtSeconds` | seconds | Zero/zero hold range disables hold. When enabled, commit ≤ hold point < active start. |
 | `HoldMinSeconds`, `HoldMaxSeconds` | seconds | Seeded hold duration range, with 0 < min ≤ max ≤ 3 seconds. |
 | `HoldSeed` | integer | Seed for deterministic hold selection. |
@@ -61,4 +61,4 @@ Each `FRPGBakedBladeSample` has `TimeSeconds` (seconds), `BaseCS` (component-spa
 
 ## Validation boundary
 
-Use the offline/native spec validation for schema, finite values, timing, geometry, and window rules. `CompileMetadata` is a metadata-only preview and does not grant playback capability. Real execution requires `CompileResolved` with already resolved skeleton, animation, and mesh assets on the game thread. The validator deliberately does not load assets or fill defaults.
+Use the offline/native spec validation for schema, finite values, timing, geometry, and window rules. Forward defensive cards need a positive distance budget because runtime warp otherwise performs no reposition; backsteps use the stricter 250 cm cap. `CompileMetadata` is a metadata-only preview and does not grant playback capability. Real execution requires `CompileResolved` with already resolved skeleton, animation, and mesh assets on the game thread. The validator deliberately does not load assets or fill defaults.

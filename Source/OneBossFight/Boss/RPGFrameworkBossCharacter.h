@@ -20,6 +20,18 @@ class ONEBOSSFIGHT_API ARPGFrameworkBossCharacter : public ACharacter, public IR
 public:
     ARPGFrameworkBossCharacter();
     bool InitializeProof(ARPGFrameworkProofFixture* Fixture,URPGBossFrameworkProfile* Profile,APawn* Target,uint64 Encounter,uint64 Generation,FString& Error);
+#if WITH_EDITORONLY_DATA
+    UFUNCTION(BlueprintCallable, Category = "Framework proof|Test")
+#endif
+    bool InitializeWithProfileForTest(URPGBossFrameworkProfile* Profile,APawn* Target,FString& Error);
+#if WITH_EDITORONLY_DATA
+    UFUNCTION(BlueprintCallable, Category = "Framework proof|Test")
+#endif
+    bool StartCardForTest(FName MoveId);
+#if WITH_EDITORONLY_DATA
+    UFUNCTION(BlueprintCallable, Category = "Framework proof|Test", meta=(WorldContext="WorldContextObject"))
+#endif
+    static ARPGFrameworkBossCharacter* SpawnFrameworkBossForTest(UObject* WorldContextObject,TSubclassOf<ARPGFrameworkBossCharacter> CharacterClass,FVector Location,FRotator Rotation);
 #if WITH_DEV_AUTOMATION_TESTS
     /** Initializes the real proof actor/target path for transient-world automation, omitting only the map-owned navigation request. */
 #endif
@@ -63,6 +75,7 @@ public:
     virtual void Tick(float Delta) override;
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
 private:
+    bool InitializeProofInternal(ARPGFrameworkProofFixture* Fixture,URPGBossFrameworkProfile* Profile,APawn* Target,uint64 Encounter,uint64 Generation,FString& Error,bool bAllowDevTest);
 #if WITH_DEV_AUTOMATION_TESTS
     friend class FBossParryRecoveryLifecycleHarness;
 #endif
@@ -75,6 +88,7 @@ private:
     double StartedAt=0., TargetHPBefore=0., ExpectedTargetHP=0.;
     FVector WalkStart=FVector::ZeroVector;
     bool bInitialized=false,bFailed=false,bArrived=false,bStartedMove=false,bSucceeded=false;
+    bool bTestInitialized=false;
     FRPGBossMoveSelector Selector;
     void Die();
     double Health=0., MaxHealth=0.;

@@ -1649,3 +1649,6 @@ The byte-patched Boost Lite candidate is not the production path. C-1202 authori
 
 ## C-1210 - Boost Lite Authored Acceptance and Production Switch (2026-11-09)
 Lead verified BUILD-280 (GREEN 494/494) and paired capture P_C1209_AURAAUTHORED (BoostLite_Authored mean 63.9 vs C-1133 byte-patched 65.0, matching look, boss silhouette readable). The production switch points URPGTier2BossPresentation::PhaseTwoAuraEffect and the per-boss data field to /Game/OneBossFight/VFX/NS_Boss_PhaseTwoAura_BoostLite_Authored. The legacy byte-patched candidates NS_Boss_PhaseTwoAura_Boost and NS_Boss_PhaseTwoAura_BoostLite remain strictly unreferenced review candidates for visual comparison history; do not reference them in gameplay code or data assets.
+
+## C-1251 — Sevarog draft authoring follow-up (2026-11-10)
+Claude chose `Swing1_Medium` for the S4 Whiff follow-up because `Swing1_FAST_v2` fails the light-punish margin; keep the fast card out of the active profile. For defensive counterplay, compute end distance as `MaxRange + BackstepCm` when `bWarpAway`, otherwise `WarpStandoffCm`. This preserves the backstep result and gives the proposed S4 forward warp a source estimate of +0.1167 s. These are source/authoring decisions; Lead's native asset validation and PIE acceptance remain open.

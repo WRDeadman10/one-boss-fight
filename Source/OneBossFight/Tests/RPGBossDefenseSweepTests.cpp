@@ -19,9 +19,11 @@ bool FBossDefenseSweep::RunTest(const FString&)
     TestFalse(TEXT("cooldown safely below minimum fails"),CooldownOk(MinCooldownSeconds-Eps));
     RPGBossPunish::FPlayerMoves Moves; Moves.LightStartupSeconds=.35; Moves.HeavyStartupSeconds=.55; Moves.RunSpeedCmPerSecond=600.; Moves.ReachCm=150.;
     const double Needed=.35+RPGBossPunish::TravelSeconds(350.,150.,600.);
-    TestTrue(TEXT("counterplay with explicit safety margin passes"),RPGBossPunish::PunishOk(CounterplayMarginSeconds(200.,150.,Needed+.02,Moves),.01));
-    TestFalse(TEXT("counterplay below required window fails"),RPGBossPunish::PunishOk(CounterplayMarginSeconds(200.,150.,Needed-.02,Moves),.01));
-    TestFalse(TEXT("non-finite move values fail closed"),RPGBossPunish::PunishOk(CounterplayMarginSeconds(200.,150.,1.,RPGBossPunish::FPlayerMoves()),0.));
+    TestTrue(TEXT("counterplay with explicit safety margin passes"),RPGBossPunish::PunishOk(CounterplayMarginSeconds(200.,150.,120.,true,Needed+.02,Moves),.01));
+    TestFalse(TEXT("counterplay below required window fails"),RPGBossPunish::PunishOk(CounterplayMarginSeconds(200.,150.,120.,true,Needed-.02,Moves),.01));
+    TestFalse(TEXT("non-finite move values fail closed"),RPGBossPunish::PunishOk(CounterplayMarginSeconds(200.,150.,120.,true,1.,RPGBossPunish::FPlayerMoves()),0.));
+    TestTrue(TEXT("forward warp uses standoff for travel"),
+        FMath::IsNearlyEqual(CounterplayMarginSeconds(650.,450.,120.,false,.467,Moves),.467-(.35+0.),1.e-6));
     return true;
 }
 #endif

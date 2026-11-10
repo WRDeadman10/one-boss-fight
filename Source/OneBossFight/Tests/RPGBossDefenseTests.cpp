@@ -20,10 +20,12 @@ bool FBossDefenseRules::RunTest(const FString&)
     TestFalse(TEXT("2.9 s and NaN are not"),CooldownOk(2.9)||CooldownOk(std::numeric_limits<double>::quiet_NaN()));
     RPGBossPunish::FPlayerMoves M;M.LightStartupSeconds=.35;M.HeavyStartupSeconds=.5;M.RunSpeedCmPerSecond=600.;M.ReachCm=150.;
     // range 200 + backstep 150 = 350, 200 cm outside the reach = 0.3333 s of walking; + 0.35 s startup = 0.6833 s needed
-    TestTrue(TEXT("0.75 s of recovery after the move leaves a window"),CounterplayMarginSeconds(200.,150.,.75,M)>0.);
-    TestTrue(TEXT("the margin is 0.75 - 0.6833"),FMath::IsNearlyEqual(CounterplayMarginSeconds(200.,150.,.75,M),.75-(.35+200./600.),1e-6));
-    TestFalse(TEXT("0.6 s of recovery does not"),RPGBossPunish::PunishOk(CounterplayMarginSeconds(200.,150.,.6,M),0.));
-    TestFalse(TEXT("a longer backstep needs more recovery"),RPGBossPunish::PunishOk(CounterplayMarginSeconds(200.,250.,.75,M),0.));
+    TestTrue(TEXT("0.75 s of recovery after the backstep leaves a window"),CounterplayMarginSeconds(200.,150.,120.,true,.75,M)>0.);
+    TestTrue(TEXT("backstep margin remains 0.75 - 0.6833"),FMath::IsNearlyEqual(CounterplayMarginSeconds(200.,150.,120.,true,.75,M),.75-(.35+200./600.),1e-6));
+    TestFalse(TEXT("0.6 s of recovery does not"),RPGBossPunish::PunishOk(CounterplayMarginSeconds(200.,150.,120.,true,.6,M),0.));
+    TestFalse(TEXT("a longer backstep needs more recovery"),RPGBossPunish::PunishOk(CounterplayMarginSeconds(200.,250.,120.,true,.75,M),0.));
+    TestTrue(TEXT("forward warp counterplay starts at its standoff, not its selector range"),
+        FMath::IsNearlyEqual(CounterplayMarginSeconds(650.,450.,120.,false,.467,M),.467-(.35+0.),1e-6));
     return true;
 }
 #endif

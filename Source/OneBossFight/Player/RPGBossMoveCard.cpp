@@ -95,6 +95,7 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
     if (S.bDefensive)
     {
         if (!S.Windows.IsEmpty() || S.HPDamage != 0.f) Fail(R, TEXT("MoveCard.Defensive"), TEXT("a defensive card has no hit window and no damage"));
+        if (!S.bWarpAway && !(S.WarpMaxDistanceCm > 0.f)) Fail(R, TEXT("MoveCard.Defensive"), TEXT("a forward defensive reposition needs a positive distance budget"));
         const double MoveStart = (S.WarpMaxDistanceCm > 0.f || S.WarpMaxAngleDegrees > 0.f) ? double(S.WarpStartSeconds) : double(S.ActiveStartSeconds);
         if (!RPGBossDefense::TelegraphOk(MoveStart, S.PlayRate)) Fail(R, TEXT("MoveCard.Defensive"), TEXT("the move starts less than 0.25 s after the card starts"));
         if (S.bWarpAway && !RPGBossDefense::BackstepDistanceOk(S.WarpMaxDistanceCm)) Fail(R, TEXT("MoveCard.Defensive"), TEXT("a backstep needs 0 < distance <= 250 cm"));

@@ -19,7 +19,8 @@ bool FBossTrackRulesSweep::RunTest(const FString&)
         }
     }
     TestTrue(TEXT("StepYaw is finite and within one tick's angular budget across the 360x360 grid"),bYawFinite&&bYawBounded);
-    bool bWarpFinite=true, bWarpBounded=true, bWarpMonotonic=true, bGrabTransitions=true, bRingFinite=true;
+    bool bWarpFinite=true, bWarpBounded=true, bWarpMonotonic=true, bGrabTransitions=true, bRingFinite=true, bRingMonotonic=true, bRingContact=true;
+    double PreviousFront=-1.;
     for (int32 Range=0;Range<=3600;Range+=10)
     {
         const double Needed=double(Range), Budget=137.25;
@@ -38,11 +39,17 @@ bool FBossTrackRulesSweep::RunTest(const FString&)
         bGrabTransitions&=GrabStep(Grab,false,.25,.5,false)==EGrabEvent::None;
         bGrabTransitions&=GrabStep(Grab,false,.5,.5,false)==EGrabEvent::Released&&!Grab.bHeld;
         const double Radius=RingFront(20.,700.,double(Range)/1000.);
-        bRingFinite&=FMath::IsFinite(Radius)&&Radius>=20.&&RingTouches(Radius-5.,Radius,10.,Radius-2.,2.,0.,50.)==RingTouches(Radius-5.,Radius,10.,Radius-2.,2.,0.,50.);
+        bRingFinite&=FMath::IsFinite(Radius)&&Radius>=20.;
+        bRingMonotonic&=Radius+1.e-9>=PreviousFront;
+        PreviousFront=Radius;
+        bRingContact&=RingTouches(Radius-5.,Radius,10.,Radius-2.,2.,0.,50.);
+        bRingContact&=!RingTouches(Radius-5.,Radius,10.,Radius+100.,2.,0.,50.);
+        bRingContact&=!RingTouches(Radius-5.,Radius,10.,Radius-2.,2.,51.,50.);
     }
     TestTrue(TEXT("warp is finite, bounded, and monotonic across the range grid"),bWarpFinite&&bWarpBounded&&bWarpMonotonic);
     TestTrue(TEXT("grab catches, holds, and releases across the range grid"),bGrabTransitions);
-    TestTrue(TEXT("ring front/contact stay finite and deterministic across the range grid"),bRingFinite);
+    TestTrue(TEXT("ring front is finite and monotonic across the range grid"),bRingFinite&&bRingMonotonic);
+    TestTrue(TEXT("ring detects overlap and rejects distant or vertically clear targets"),bRingContact);
     return true;
 }
 #endif

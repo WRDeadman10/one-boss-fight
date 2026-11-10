@@ -8,6 +8,7 @@
 #include "Player/RPGBossRules.h"
 #include "Player/RPGBossOverlayRules.h"
 #include "Boss/RPGFrameworkMoveExecutor.h"
+#include "Boss/RPGFrameworkBossCharacter.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimSequence.h"
 #include "Animation/Skeleton.h"
@@ -41,6 +42,30 @@ URPGBossMoveCard* Card()
     S.MinRangeCm=250.f;S.MaxRangeCm=350.f;S.FrontConeDegrees=120.f;S.TrackDegreesPerSecond=90.f;S.HPDamage=0.f;
     FRPGBossMoveWindow W;W.WindowId=TEXT("Telemetry");W.HitGroup=TEXT("NoDamage");W.StartSeconds=.65f;W.EndSeconds=1.05f;W.SocketA=TEXT("weapon_r");W.SocketB=TEXT("root_weapon_end_r");W.RadiusCm=8.f;S.Windows.Add(W);return A;
 }
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkLiveTestBridgeNullProfile,"OneBossFight.Framework.Runtime.LiveTestBridgeNullProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkLiveTestBridgeNullProfile::RunTest(const FString&)
+{
+    FString Error;
+#if UE_BUILD_SHIPPING
+    TestFalse(TEXT("shipping bridge initialization is a no-op"),ARPGFrameworkBossCharacter::StaticClass()->GetDefaultObject<ARPGFrameworkBossCharacter>()->InitializeWithProfileForTest(nullptr,nullptr,Error));
+#else
+    const bool bInitialized=ARPGFrameworkBossCharacter::StaticClass()->GetDefaultObject<ARPGFrameworkBossCharacter>()->InitializeWithProfileForTest(nullptr,nullptr,Error);
+    TestFalse(TEXT("null profile is refused"),bInitialized);
+    TestEqual(TEXT("null profile refusal is explicit"),Error,FString(TEXT("Framework.Boss.Profile")));
+#endif
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkLiveTestBridgeSpawnRejectsInvalidInputs,"OneBossFight.Framework.Runtime.LiveTestBridgeSpawnRejectsInvalidInputs",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkLiveTestBridgeSpawnRejectsInvalidInputs::RunTest(const FString&)
+{
+#if UE_BUILD_SHIPPING
+    TestNull(TEXT("shipping spawn bridge is a no-op"),ARPGFrameworkBossCharacter::SpawnFrameworkBossForTest(nullptr,ARPGFrameworkBossCharacter::StaticClass(),FVector::ZeroVector,FRotator::ZeroRotator));
+#else
+    TestNull(TEXT("null world is refused"),ARPGFrameworkBossCharacter::SpawnFrameworkBossForTest(nullptr,ARPGFrameworkBossCharacter::StaticClass(),FVector::ZeroVector,FRotator::ZeroRotator));
+    TestNull(TEXT("null class is refused"),ARPGFrameworkBossCharacter::SpawnFrameworkBossForTest(nullptr,TSubclassOf<ARPGFrameworkBossCharacter>(),FVector::ZeroVector,FRotator::ZeroRotator));
+#endif
+    return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkProfileDomains,"OneBossFight.Framework.Runtime.ProfileDomains",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
 bool FFrameworkProfileDomains::RunTest(const FString&)

@@ -14,6 +14,7 @@ namespace RPGBossRecoveryWindow
         {
             return FMath::IsFinite(PerfectFraction)&&FMath::IsFinite(GoodFraction)&&FMath::IsFinite(LateFraction)&&
                 PerfectFraction>=0.&&PerfectFraction<=1.&&GoodFraction>=0.&&GoodFraction<=1.&&LateFraction>=0.&&LateFraction<=1.&&
+                PerfectFraction>=GoodFraction&&GoodFraction>=LateFraction&&
                 FMath::IsFinite(MinSeconds)&&FMath::IsFinite(MaxSeconds)&&MinSeconds>0.&&MaxSeconds>=MinSeconds;
         }
     };

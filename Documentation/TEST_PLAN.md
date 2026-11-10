@@ -1,5 +1,19 @@
 # Test Plan
 
+## C-1256a Sevarog PIE-world spawn bridge (2026-11-10)
+
+- [x] Development build PASS; full `Automation RunTests OneBossFight`: 500 started, 500 passed, 0 failed (DD27j hash `cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec`). Spawn bridge null-world/null-class refusal automation passed.
+- [x] Lead-assigned self-test in `L_SevarogArena`: profile and combo readback passed; reflected init/start/spawn APIs passed; transient actor spawned at 205.6 cm; S1 started; driver requested PIE stop. No map save.
+- [ ] Claude full live run and acceptance remain pending. Codex did not execute cards beyond the first S1 start.
+- Evidence: `Docs/BossCombatReview/Execution/Codex/C1256A_SPAWN_BRIDGE/`; handoff: `Documentation/Boss/C1256A_SEVAROG_RUNTIME_SPAWN_BRIDGE.md`.
+
+## C-1250a Sevarog draft authoring source contract (2026-11-10)
+
+- [x] `python -m unittest Scripts.Editor.test_author_sevarog_draft_cards_contract` — 8/8 pass; checks C-1250 S3/S4 values, Definition/Profile payload provenance, fail-closed Editor bridge use, validation-before-save order, and no selection asset creation.
+- [x] `python -m py_compile Scripts/Editor/author_sevarog_draft_cards.py Scripts/Editor/test_author_sevarog_draft_cards_contract.py` — pass.
+- [x] `git diff --check` — pass (line-ending warnings only).
+- [ ] Lead Editor run remains pending. The script prints estimated punish margins from the witnessed C-637 startup/run-speed and PAC003 reach inputs, then relies on the C++ bridge; it never auto-tunes or bypasses validation.
+
 ## C-1239a hitch-aware timing parity retries (2026-11-10)
 
 - [x] Every measured callback delta is logged. Deltas `> 0.1 s` flag that attempt HITCH; the same mode/move is repeated up to three times, with attempt-isolated transition rows.
@@ -17,6 +31,36 @@
 - [ ] Strict annotation audit and Lead-accepted parity PIE remain future gates; no Sevarog authoring or PIE is claimed.
 - Walk: `Documentation/Boss/C1239_SEVAROG_CHECKLIST_WALK.md`.
 - Plan: `Documentation/Boss/C1239_SEVAROG_DEFINITION_DATA_PLAN.md`.
+
+## C-1241a Sevarog shared-route plan correction (2026-11-10)
+
+- [x] Source review documents the existing selector eligibility/scoring/cooldown/repeat behavior, card-to-dynamic-montage start, combo graph, and shared stagger sequence driver with file:line citations. Ordinary Sevarog attacks are data on the shared selector/profile route; no second selector or stagger driver is proposed.
+- [x] Source review documents the existing Sevarog director's distance gate, phase-two threshold/speed/roar/aura, optional recoil, entrance ability/hold, and lightning scheduling. The current entrance route is an ability class, not a direct `LevelStart_Montage` field; its assigned ability and project-owned clip remain to be verified.
+- [x] Remaining route integration is explicitly conditional on proving whether the selected encounter actor is bound to the shared framework profile. The card player is sequence-backed dynamic montage playback and does not activate an ability; arbitrary montage-only card playback is unsupported unless a real use case requires a narrow adapter.
+- [ ] Root-bone translation probe, Sevarog actor/profile/entrance binding readback, animation/socket/hit-window authoring, strict audit, and Lead parity PIE remain open. Docs only for this correction; no Unreal or PIE run.
+- Plan: `Documentation/Boss/C1239_SEVAROG_DEFINITION_DATA_PLAN.md`.
+
+## C-1242a Sevarog clip frame capture driver (2026-11-10)
+
+- [x] Offline contract: `python -m unittest Scripts.Editor.test_pie_sevarog_clip_frames_contract -v` — 8 tests pass, including project-local mesh/sequence path existence, 15 Hz endpoint sampling, collision refusal, player mesh restoration, side-view capture naming, no asset-save calls, and the UE 5.5 position/wait API contract.
+- [x] Syntax: `python -m py_compile Scripts/Editor/pie_sevarog_clip_frames.py Scripts/Editor/sevarog_clip_frame_rules.py Scripts/Editor/test_pie_sevarog_clip_frames_contract.py` — pass.
+- [x] Lead run C-1243: try 1 stopped at frame 0 because `tick_animation` is not exposed in UE 5.5 Python; the Lead removed it and `refresh_bone_transforms`, using the proven `set_position` then 0.15 s game wait pattern. Try 2 captured 206 bright 960x540 frames, 0 dark, across all eight sequences; the player mesh was restored and no assets were saved. Codex did not run Unreal or PIE.
+- [x] Lead supplied visual contact markings for all eight clips in C-1245; they are design candidates with about ±0.067 s sampling uncertainty, not measured trace windows. Codex's two requested card-row drafts and their validator blockers are recorded below.
+
+## C-1245 Sevarog draft card rows (2026-11-10)
+
+- [x] Lead's C-1245 contact markings were converted to documentation-only candidate rows for Speedburst and Swing3_Slow; source values are cited in `Documentation/Boss/C1245_SEVAROG_DRAFT_CARD_ROWS.md`.
+- [x] C-1246 corrected the contact sheet's last-frame time: Swing3_Slow ends at 1.700 s, matching probe length. Source audit shows Speedburst can use the defensive no-window/no-damage path with `bWarpAway=false` to close toward the target; it cannot be a normal damaging card without a direct window. Missing sockets/radius, resolved skeleton/slot, warp budgets, commit/rate, cooldown/counterplay, and damage remain TBD.
+- [ ] These are not runnable/accepted cards. Resolve schema/asset metadata and validator blockers, then verify actual hit traces and movement in Lead-owned PIE before authoring runtime data. No tests, Unreal, PIE, or build were run for this document-only task.
+- Draft: `Documentation/Boss/C1245_SEVAROG_DRAFT_CARD_ROWS.md`.
+
+## C-1246a Sevarog defensive forward warp audit (2026-11-10)
+
+- [x] `TickWarp` moves toward the target when `bWarpAway=false`; `bDefensive` validation permits no windows and zero damage. No validator or code add-on is required to represent a no-damage forward reposition.
+- [x] A Speedburst warp window candidate of 0.267–1.133 s is structurally inside its proposed movement envelope, conditional on `CommitSeconds <= 0.267`, positive play rate/warp budget, telegraph `WarpStartSeconds / PlayRate >= 0.25`, cooldown >=3 s, and profile counterplay checks. A Whiff combo edge can route to a `Swing1_FAST_v2` card, if both cards and graph/attack budget are configured.
+- [x] Swing3 step-in 0.467–0.533 s satisfies the card contract with commit 0.467 and active end 0.667: `Commit <= WarpStart < WarpEnd <= ActiveEnd`.
+- [ ] No profile values or runtime behavior are accepted by this source-only audit. Codex did not run tests, Unreal, PIE, or a build.
+- Draft/audit: `Documentation/Boss/C1245_SEVAROG_DRAFT_CARD_ROWS.md`.
 
 ## C-1237a per-boss montage notify timing opt-in (2026-11-10)
 
@@ -1999,6 +2043,12 @@ All four A7 gates remain OPEN. Staged launchers and inner binaries are hashed, b
 - [x] C-1237 Ember notify timing parity ACCEPTED (lead, 2026-11-10, X-1752 driver, P_C1237_EMBERPARITY4, DATA route_verified): timing arm off vs on matches for A1/A3a/A3b (A3a paired chain stop = INFO); the only timing CHECK FAIL is A1 Recovery off 0.68 vs on 0.55, a single long-frame tick sample (other A1 runs log 0.51-0.55 in both modes). Parry arm failed (parried_counter_delta=0) because the press used a STALE montage position (PARRY_PRESS pos=1.0812 logged before "A1 instance 8 begins"), i.e. it fired before the move started: a driver bug, not a timing effect. Parry is independent of tracker timing (it rides the unchanged ANS_CollisionTrace windows, C-1229c 0.000 s deltas; pack parry 6/6 in BUILD-279), so the parry arm is dropped from this parity gate. Cumulative evidence across P_C1233/P_C1234/P_C1235/P_C1237: every repeat transition pair agrees within 0.03 s except first-play and single-frame hitches.
 - [x] BUILD-287 Per-boss montage-timing opt-in (lead acceptance, 2026-11-10, X-1754 C-1237a: URPGBossDefinition::bUseMontageNotifyTimings default false, applied to URPGAttackTracker via ConfigureAttackTracker; enabling it without a typed source field fails hydration with MontageNotifyTimings.ProvenanceMissing): GREEN 497/497 (pinned DD27j hash still passes). Sevarog read-only probe (A-718, P_C1239_SEVAROGPROBE): exit 0, 0 Python errors, 0 Content changes; Swing1/Swing2_Medium_Montage 1.133 s, LevelStart_Montage 5.0 s, montage root_motion n/a, Swing notifies are unnamed-class (Unknown). Timing-only parity rerun P_C1239_EMBERPARITY5 (DATA, route_verified): 28/31; the 3 fails are one A3b on-run whose first tracker tick came at 0.53 s (commit and recovery both logged 0.53 s, active never sampled) = a ~0.5 s frame hitch; earlier A3b on-runs: 0.15/0.15/0.41.
 - [x] EMBER TIMING PARITY GATE PASS (lead, 2026-11-10, C-1240, X-1757 hitch-retry driver, P_C1240_EMBERPARITY6, DATA route_verified): RESULT PASS clean_trials=6/6, checks 31/31, hitch_retries=2 (A1 off and A3a on, max tick delta 0.125 s, each clean on retry), exhausted none. Notify timing ON reproduces the native table for Ember A1/A3a/A3b; per-boss opt-in stays default off. Sevarog probe v2 (A-720 notify_name guard, P_C1240_SEVAROGPROBE2): exit 0, 0 Python errors, 0 Content changes; Swing1/Swing2_Medium_Montage notifies = NamedNotify SaveAttack + ResetCombo.
+- [x] SEVAROG CLIP FRAMES (lead, 2026-11-10, C-1243, X-1764 driver + Lead fix: SkeletalMeshComponent.tick_animation/refresh_bone_transforms are not exposed in UE 5.5 Python, replaced by set_position + 0.15 s game wait; try 1 failed at frame 0, P_C1243_SEVAROGFRAMES_try1): 206 bright 960x540 side-view frames at 15 Hz, 0 dark: Swing1_Medium 18, Swing2_Medium 18, Swing3_Slow 27, Swing1_FAST_v2 9, Speedburst 20, Ultimate_Swing_120fps 41, Subjugation 44, Soul_Siphon 29. Pose changes frame to frame (Lead visual check of Swing1_Medium). Frames + numbered contact sheets on D:/FightVideo/sevarog_frames (not in repo). No assets saved; player mesh restored. Raw: P_C1243_SEVAROGFRAMES/.
+- [x] BUILD-288 Editor-only boss card validation bridge (lead acceptance, 2026-11-10, X-1776 C-1249: URPGBossCardValidationLibrary in OneBossFightEditor wraps RPGBossMoveCards::Validate/CompileMetadata/CompileResolved and RPGFramework::ResolveProfile; read-only): GREEN 498/498 incl. OneBossFight.Editor.BossCardValidationBridge.SyntheticParity. Sevarog rig readback (C-1248, P_C1248_SEVAROGREADBACK): mesh+5 sequences share Sevarog_Skeleton, root_motion False, weapon_r/root_weapon_end_r are bones (DoesSocketExist accepts), 29 sockets incl. HammerSocket/HammerCenter; 0 Content changes. Raw: B_C1249_VALBRIDGE/.
+- [x] BUILD-289 Combo reflection + forward-defense counterplay (lead acceptance, 2026-11-10, X-1782 C-1251a: combo edge/node USTRUCTs + outcome UENUM BlueprintType; counterplay end distance = MaxRange+backstep for warp-away, WarpStandoffCm for forward warp, backstep margin preserved by native test): GREEN 498/498. Sevarog authoring run 3 (P_C1252_SEVAROGAUTHOR): estimates S1/S2 +0.333, S3 +0.633, S4 forward counterplay +0.117 (was -0.717), then REFUSED again before any save: the script looks up camel-cased Rpg* Python names (RpgBossComboEdgeData etc.) but UE exposes RPGBoss*; FRPGBossProfileCard is still a non-BlueprintType USTRUCT. Content unchanged. Lead runs 1-2 (P_C1251_SEVAROGAUTHOR) refused earlier: bridge name, combo types.
+- [x] BUILD-290 Python-constructed move/profile structs BlueprintType + forward defensive card requires WarpMaxDistanceCm>0 (lead acceptance, 2026-11-10, X-1789 C-1252a): GREEN 498/498. Sevarog authoring run 4 (P_C1253_SEVAROGAUTHOR) exit 3, REFUSED before save: "Failed to convert type list to property ComboNodes (ArrayProperty)" on URPGBossFrameworkProfile; Codex preflight did not exercise the ComboNodes write. Content unchanged.
+- [x] BUILD-291 + SEVAROG DRAFT DATA AUTHORED (lead, 2026-11-10, X-1792 C-1253a: profile Cards/ComboNodes BlueprintReadWrite; Codex transient --dry-run all validators PASS, 0 saved): GREEN 498/498. Lead real authoring run 5 (P_C1254_SEVAROGAUTHOR) exit 0, every card + profile passed the C++ bridge before save; saved ONLY /Game/OneBossFight/Data/Sevarog/: DA_Move_Sevarog_{Swing1_Medium,Swing2_Medium,Swing3_Slow,Speedburst,Swing1_FAST_v2}_C1247, DA_Boss_Sevarog_FrameworkProfile_Draft, DA_Boss_Sevarog_Draft (unselected, bUseMontageNotifyTimings=false). Validator margins: S1/S2 light punish +0.303 (needs 0.300: thin, tune), S3 +0.603, S4 forward counterplay +0.086. Provisional F5/C-1250 values; no runtime/PIE yet. Pack /Game/ParagonSevarog untouched.
+- [x] BUILD-292 Dev-only framework boss test bridge (lead acceptance, 2026-11-10, X-1798 C-1255: InitializeWithProfileForTest/StartCardForTest, Shipping no-op, null-profile test): GREEN 499/499. First live Sevarog PIE (P_C1256_SEVAROGLIVE, DATA route_verified): profile PASS (4 candidates), LIVE_API PASS for both bridge functions, then failed before spawn: "guarded GameplayStatics runtime spawn API unavailable" (no UE 5.5 Python call spawns an actor into the PIE world). Driver also expects follow-up Move_Sevarog_Swing1_FAST_v2 although C-1251 made S5 Swing1_Medium. No spawn, no save.
 - [x] C-1227 player fit test (lead, 2026-11-09, C-1174): ER clip set (Mixamo backstep V2, air light, air heavy plunge, guard counter) + 2 pack controls (quick roll, block loop) retargeted to 3 candidates via Codex retarget_er_fit_candidate.py (v4: outputs under /Game/OneBossFight/Player/FitTest only) and captured by the Lead driver P_C1225_FITLEAD/pie_fit_lead.py (216 bright frames, mannequin baseline vs candidate, 2 views x 3 poses). AG blind scores (frozen before reveal, SHA-256 fec0b389... verified): Candidate_A = GREYSTONE 47/48, Candidate_B = GRUX 13/48 (hunch, weapon through head, floor clipping), Candidate_C = STEEL 3/48 (shield floats ~1 m, empty fist swings, self-intersection). Root-motion fidelity not yet measured on the retargets (single-node pose captures). Owner image P_SHOWCASE/fit_greystone_vs_mannequin.png. Frames D:/FightVideo/fit_test/.
 - [x] AURA SHOWCASE (lead, 2026-11-08, A-646, C-1077): P_SHOWCASE/pie_aura_showcase.py, data route, boss held at 50 % HP, player 450 cm, Tier 2 on; runtime PhaseTwoAuraEffect swap. Each segment shows its Niagara asset active: current NS_Boss_PhaseTwoAura (small ground fire ring, mean gray 52.8), NS_Boss_PhaseTwoAura_Boost at the origin (large burst around the boss, 77.2), Boost at spine_03 (fire rising on the body, 71.3). Owner clip P_SHOWCASE/aura_options.mp4 plus aura_compare.png. Codex pie_aura_comparison.py still produces black frames (mean 0.0, cause unknown).
 - [x] PIE FIRST-DODGE-AFTER-DRAW (Lead, C-1063 / C-1067): BUILD-261 historically reproduced the first press failing; superseded by BUILD-263. C-1067 reports both-route standing first V2 travel (~84 cm), moving first quick rolls (216–220 cm; backstep_count=0), normal repeats and no duplicate activation. KI-199 closed for PIE; package gate remains open. See the BUILD-263 row above and `Documentation/Boss/AN_C11_C15_MOVING_DODGE_GATE.md`.
@@ -2228,3 +2278,61 @@ Codex offline contracts: `python -m unittest Scripts.Editor.test_camera_config_o
 
 - Offline parity-driver contracts and Python syntax are recorded in `Documentation/Boss/C1235_EMBER_NOTIFY_PARITY_DRIVER_HOTFIX.md`.
 - Lead-only PIE rerun is required to validate the A3a paired chain-end behavior and parry success at the controlled 115–125 cm distance. Codex did not run PIE.
+
+## C-1247a Sevarog first-five MoveCard plan (2026-11-10)
+
+Documentation-only paper walk: `Documentation/Boss/C1247_SEVAROG_FIRST_FIVE_CARD_PLAN.md`. No MoveCard assets or editor script were created; no runtime tests were run. The validator review identifies unresolved actual Sevarog skeleton/slot/socket metadata, S3 step-in budget, and S4 profile counterplay. Queue S S17 confirms no Ember Warden framework MoveCard source exists in this checkout, so the Sevarog F5 values are not represented as Ember-derived; Claude approval/source is pending before authoring.
+
+## C-1248a Sevarog authoring contract (2026-11-10)
+
+Lead-run tool: `Scripts/Editor/author_sevarog_draft_cards.py`. The C-1249 Editor-only bridge now exposes production C++ card/profile validation; script tests it against in-memory objects before any save. Offline source contract passed 7/7. Editor Development build succeeded and full `Automation RunTests OneBossFight` passed 498/498 with `DD27jManifestHash=cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec`; `OneBossFight.Editor.BossCardValidationBridge.SyntheticParity` passed. Engine lock was removed. No Sevarog authoring script or asset creation was executed; S3/S4 values and complete profile/definition payloads remain gated.
+
+## C-1251a Sevarog combo reflection and forward counterplay (2026-11-10)
+
+- [x] Offline contract `python -m unittest Scripts.Editor.test_author_sevarog_draft_cards_contract -v` — 9/9 pass; covers reflectable combo types, both counterplay distance branches, medium S5 follow-up/profile exclusion, bridge lookup aliases, and validation-before-save order.
+- [x] `python -m py_compile Scripts/Editor/author_sevarog_draft_cards.py` — pass.
+- [x] Editor Development build exit 0; full `Automation RunTests OneBossFight` — 498/498, 0 failed. DD27j hash `cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec`. Defense Rules and Sweep tests passed; evidence and lock receipts are under `Docs/BossCombatReview/Execution/Codex/C1251_FORWARD_DEFENSE/`; both C-1155 locks released.
+- [ ] Lead acceptance build and guarded authoring script rerun; no assets were authored by Codex.
+
+C-1250a's initial forward-defense margin estimate (-0.7166 s) is superseded by C-1251a's corrected standoff rule and +0.1167 s source estimate.
+
+## Queue_50 Batch 6 (tasks 26–30, 2026-11-10)
+
+- Audited the existing track/cue/punish/defense/combo sweep and seeded property tests against their acceptance criteria.
+- Replaced the track sweep's tautological `RingTouches(...) == RingTouches(...)` check with actual overlap, distant-target, and vertical-clearance assertions, and added finite/monotonic `RingFront` coverage across the range grid.
+- The defense sweep file has concurrent Lead edits for the forward-counterplay branch; Codex did not modify it. No build or test run in this pass; Lead owns execution and review.
+- C-1252a adds a native rejection case for forward defensive reposition with zero distance even when angle budget is positive, plus a positive-distance acceptance case. The Editor Python authoring contract checks exact-case reflection, `--preflight-only` and its no-create/no-save boundary (11/11). Editor Development build passes; UE Python preflight reports all required names/paths/properties OK with no missing entries and no assets created/saved; full automation suite passes 498/498 under the pinned DD27j hash. Logs: `Docs/BossCombatReview/Execution/Codex/C1252A_PREFLIGHT_TYPES/`.
+- Queue_50 Batch 7's five pure-rule acceptance tests all passed in the C-1252A suite: `OneBossFight.Framework.RecoveryWindow.Rules`, `BlockChip.Rules`, `TelegraphScale.Rules`, `Aggro.Rules`, and `Fatigue.Rules`. The rules remain opt-in and unwired; telegraph scaling's eight inputs match current RPGAttackTracker active-start values.
+- Queue_50 Batch 8: offline contracts pass 12/12; five tool scripts compile. Summary and compare utilities were run against real parried PIE logs. Documentation links scan returned 0 broken links. Evidence manifest scan found 10 mismatches among 144 manifests / 2,255 entries; mailbox audit found three historical gaps (X-21..50, A-215, A-236..237). No historical manifests or mailbox entries were changed. Details: `Documentation/Boss/QUEUE_50_BATCH8_TOOLS.md`.
+
+## C-1253a Sevarog transient authoring dry-run (2026-11-10)
+
+- [x] python -m unittest Scripts.Editor.test_author_sevarog_draft_cards_contract -q — 11/11 pass; includes typed reflected arrays, complete transient dry-run and no-create/no-save contract.
+- [x] python -m py_compile Scripts/Editor/author_sevarog_draft_cards.py — pass.
+- [x] Editor Development build exit 0; --dry-run validated all five move cards and the complete F5 profile through the C++ bridge; all verdicts PASS, exact punish and defense values are in dry-run.log, and the terminal marker is DRY-RUN COMPLETE all validators passed, 0 saved.
+- [x] Full Automation RunTests OneBossFight — 498/498, 0 failed; DD27j hash cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec.
+- [x] Both C-1155 locks released; Editor closed; target paths remain absent. No package assets, PIE, commit, or push.
+
+Evidence: Docs/BossCombatReview/Execution/Codex/C1253A_TRANSIENT_DRYRUN/; task details and exact validator values: Documentation/Boss/C1253A_TRANSIENT_AUTHORING_DRYRUN.md.
+
+## Queue_50 Batch 9 documentation (tasks 41–45, 2026-11-10)
+
+- The new-card guide now states the forward defensive positive-distance requirement and backstep 250 cm maximum from the native validator.
+- The proof workflow includes the exact C-1253a locked build/dry-run/suite command and its evidence folder, with no-saved-content and no-PIE limits.
+- The test-hook CVar inventory matches the source scanner's 54 names; all performance CVar names/defaults are explicit. The console command is separately identified.
+- The log-token guide matches 138 current validator schemas and emitted tokens. `check_validator_tokens.py` passes; exact documentation table comparison has no missing or extra tokens.
+- The issue digest now indexes current outstanding owner visual, package, first-dodge, natural A4, camera, and Sevarog gates. No tests/build/Editor/PIE/package operation was run for this documentation batch. Details: `Documentation/Boss/QUEUE_50_BATCH9_DOCUMENTATION.md`.
+
+## C-1255 Sevarog live bridge validation (2026-11-10)
+
+- [x] Confirmed the proof fixture has no profile command-line/CVar/config input; it requires a proof GameMode and map-owned fixture fields.
+- [x] Added Development/editor-reflected `InitializeWithProfileForTest` and `StartCardForTest` on `ARPGFrameworkBossCharacter`. The test initializer requires standalone mode and same-world target, then uses production `ResolveProfile`/`InitializeProof` internals; Shipping bodies refuse/no-op. No map/default encounter edits.
+- [x] Null-profile automation test `OneBossFight.Framework.Runtime.LiveTestBridgeNullProfile` passed.
+- [x] Editor Development build exit 0. Full `Automation RunTests OneBossFight`: 499 completed, 0 failed; DD27j manifest `cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec`.
+- [x] `python -m py_compile Scripts/Editor/pie_sevarog_framework_live.py` passed. The C-1155 transient profile/API reflection runner reports `PROFILE_PASS=1`, `BRIDGE_PASS=1`, `TRANSIENT_FINISHED=1`, `SPAWNED=0`, `FULL_PIE=0`, `MAP_SAVED=0`.
+- [x] C-1155 locks released. No PIE, content save, commit, or push. Logs: `Docs/BossCombatReview/Execution/Codex/C1255_LIVE_BRIDGE/`.
+- [ ] Lead full PIE of the driver after READY; Codex has not run the live sequence.
+
+## Queue_50 Batch 10 closeout (tasks 46–50, 2026-11-10)
+
+Tasks 46–49 were reconciled against current parry stamina, optional overlay data, resolver `Parried` totals, and the JSON combo sample/native route test. Their source implementations already existed and were left unchanged in this batch. Task 50 reconciled current accepted Sevarog asset status, the new bridge evidence, and outstanding live PIE gate across project status docs. The source validation above included the Batch 10 native tests; no separate gameplay or PIE run was performed. See `Documentation/Boss/QUEUE_50_BATCH10_CLOSEOUT.md`.

@@ -1,0 +1,11 @@
+﻿[2026.11.10-03.19.34:031][  0]LogPython: [SevarogLive] PROFILE PASS path=/Game/OneBossFight/Data/Sevarog/DA_Boss_Sevarog_FrameworkProfile_Draft candidates=4 move_ids=Move_Sevarog_Swing1_Medium,Move_Sevarog_Swing2_Medium,Move_Sevarog_Swing3_Slow,Move_Sevarog_Speedburst
+[2026.11.10-03.19.34:031][  0]LogPython: [SevarogLive] PROFILE COMBO_NODES count=2 followup=Move_Sevarog_Swing1_FAST_v2 present=0
+[2026.11.10-03.19.34:031][  0]LogPython: [SevarogLive] LIVE_API PASS initialize_with_profile_for_test=1 start_card_for_test=1
+[2026.11.10-03.19.34:031][  0]LogPython: [SevarogLive] READY awaiting PIE; profile=/Game/OneBossFight/Data/Sevarog/DA_Boss_Sevarog_FrameworkProfile_Draft optionalShots=True
+[2026.11.10-03.19.34:328][  1]LogPython: [SevarogLive] WAITING_FOR_PIE
+[2026.11.10-03.19.36:678][  2]LogTemp: Display: [EncounterActivation] default data startup: selected /Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter for map L_SevarogArena
+[2026.11.10-03.19.36:745][  2]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending
+[2026.11.10-03.19.37:670][  2]LogPython: [SevarogLive] HEARTBEAT missing_boss=1 player=1
+[2026.11.10-03.19.37:670][  2]LogPython: [SevarogLive] ERROR guarded GameplayStatics runtime spawn API unavailable
+[2026.11.10-03.19.37:671][  2]LogPython: [SevarogLive] Traceback (most recent call last):
+[2026.11.10-03.19.37:671][  2]LogPython: [SevarogLive] finished: failed: guarded GameplayStatics runtime spawn API unavailable shots=0

@@ -14,6 +14,9 @@ bool FBossRecoveryWindowRules::RunTest(const FString&)
     TestTrue(TEXT("short positive recovery respects minimum"),Seconds(RPGParryGrade::EGrade::Late,.01)==.05);
     TestTrue(TEXT("invalid grade and invalid recovery fail closed"),Seconds(RPGParryGrade::EGrade::None,1.)<0.&&Seconds(RPGParryGrade::EGrade::Good,0.)<0.);
     FConfig Bad; Bad.MaxSeconds=0.; TestTrue(TEXT("invalid config fails closed"),Seconds(RPGParryGrade::EGrade::Perfect,1.,Bad)<0.);
+    FConfig InvertedGradeOrder; InvertedGradeOrder.PerfectFraction=.2; InvertedGradeOrder.GoodFraction=.6;
+    TestFalse(TEXT("grade fractions must preserve Perfect >= Good >= Late"),InvertedGradeOrder.IsValid());
+    TestTrue(TEXT("inverted grade fractions fail closed"),Seconds(RPGParryGrade::EGrade::Perfect,1.,InvertedGradeOrder)<0.);
     for(int32 I=1;I<=1000;++I)
     {
         const double Recovery=double(I)/100.;

@@ -25,6 +25,8 @@ def audit(path: Path) -> list[str]:
             if len(lines) > 1:
                 issues.append(f"{party}-{value}: duplicate headers at lines {','.join(map(str, lines))}")
         values = sorted(seen)
+        if values and values[0] > 1:
+            issues.append(f"{party}: skipped IDs 1..{values[0] - 1}")
         for previous, current in zip(values, values[1:]):
             if current > previous + 1:
                 issues.append(f"{party}: skipped IDs {previous + 1}..{current - 1}")

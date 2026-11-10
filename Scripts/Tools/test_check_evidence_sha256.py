@@ -19,6 +19,17 @@ class EvidenceSha256ManifestTests(unittest.TestCase):
             manifest.write_text(f"{digest}  receipt.txt\n", encoding="utf-8")
             self.assertEqual(check_manifest(manifest), [])
 
+    def test_utf8_bom_manifest_passes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "pack"
+            root.mkdir()
+            payload = root / "receipt.txt"
+            payload.write_text("synthetic evidence", encoding="utf-8")
+            digest = hashlib.sha256(payload.read_bytes()).hexdigest()
+            manifest = root / "evidence_sha256.txt"
+            manifest.write_text(f"\ufeff{digest}  receipt.txt\n", encoding="utf-8")
+            self.assertEqual(check_manifest(manifest), [])
+
     def test_parent_traversal_is_rejected_even_when_hash_matches(self):
         with tempfile.TemporaryDirectory() as temporary:
             base = Path(temporary)

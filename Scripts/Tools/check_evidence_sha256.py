@@ -14,7 +14,8 @@ def check_manifest(manifest: Path) -> list[str]:
     issues: list[str] = []
     root = manifest.resolve().parent
     try:
-        lines = manifest.read_text(encoding="utf-8", errors="replace").splitlines()
+        # PowerShell's historical UTF-8 output commonly prefixes the file with a BOM.
+        lines = manifest.read_text(encoding="utf-8-sig", errors="replace").splitlines()
     except OSError as error:
         return [f"{manifest}: cannot read manifest: {error}"]
     for number, raw in enumerate(lines, 1):
@@ -51,7 +52,13 @@ def main() -> int:
     issues = [issue for manifest in manifests for issue in check_manifest(manifest)]
     for issue in issues:
         print(issue)
-    print(f"manifests={len(manifests)} entries_checked={sum(len(m.read_text(encoding='utf-8', errors='replace').splitlines()) for m in manifests)} mismatches={len(issues)}")
+    entries_checked = 0
+    for manifest in manifests:
+        for raw in manifest.read_text(encoding="utf-8-sig", errors="replace").splitlines():
+            line = raw.strip()
+            if line and not line.startswith("#") and ENTRY.match(line):
+                entries_checked += 1
+    print(f"manifests={len(manifests)} entries_checked={entries_checked} mismatches={len(issues)}")
     return 1 if issues else 0
 
 
