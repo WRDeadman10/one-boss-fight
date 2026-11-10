@@ -143,3 +143,35 @@ All assets below exist physically on disk under `Content/OneBossFight/GreystoneP
 3. **Execution of Technical Gates:**
    - Run C-1257b paired root-motion PIE tests (mannequin vs Greystone <= 10% distance difference).
    - Capture owner review video reel and evaluate against `C1257C_GREYSTONE_OWNER_REVIEW_CHECKLIST.md`.
+
+---
+
+## 6. Repo Reproducibility (Gate G0)
+
+Per Claude Lead Directive `[C-1260]`, the Greystone player dependencies must be verifiable and reproducible from the repository before Greystone can become the default player character.
+
+### 6.1 Historical Origin of `.gitignore` Exclusion
+- **Commit:** `36725f8f` (2026-10-20), *"Align project to Master Design Freeze v1.2, deliver Boss01 rest pose FBX, calibrated animations, and Greatsword"*.
+- **Documentation Policy (`Documentation/DECISIONS.md:460–462`):**
+  > *"Third-party content is never committed: `.gitignore` covers every third-party folder, including the pack copies and retargets under `Content/OneBossFight` (`GreystonePack`, `SevarogPack`, `Characters/Greystone`) and the archived copies. Files left the git index only (still on disk); commits already made keep their history."*
+- **Active Git Ignore Rules:**
+  - `.gitignore:82`: `Content/Paragon*/` (excludes all raw Paragon packs).
+  - `.gitignore:115`: `Content/OneBossFight/GreystonePack/` (excludes all 393 retargeted pack assets).
+- **Impact on Fresh Clones:** A fresh clone from remote git possesses `git ls-files = 0` for `GreystonePack` and `ParagonGreystone`. The retargeted montages and mesh exist **only on this local machine**.
+
+### 6.2 Precise Disk Footprint Measurements (Asset Audit)
+
+| Dependency Scope | Asset Category | File Count | Exact Byte Size | Size (MB) |
+| :--- | :--- | :--- | :--- | :--- |
+| **Full GreystonePack** | Entire directory `Content/OneBossFight/GreystonePack/` | **393 files** | **103,125,890 bytes** | **98.35 MB** |
+| **Child Gameplay Subset** | 20 montages + 19 sequences + `BP_GreystonePlayer` + `ABP_CombatCharacter_Grey` + 2 linked layer AnimBPs | **43 files** | **8,796,522 bytes** | **8.39 MB** |
+| **Paragon Core Mesh** | `Greystone.uasset`, `Greystone_Skeleton.uasset`, `Greystone_PhysicsAsset.uasset` under `ParagonGreystone/.../Meshes/` | **3 files** | **26,602,005 bytes** | **25.37 MB** |
+| **Paragon Materials** | 15 material uassets under `ParagonGreystone/.../Materials/` | **15 files** | **2,199,213 bytes** | **2.10 MB** |
+| **Paragon Textures** | 39 texture uassets under `ParagonGreystone/.../Textures/` | **39 files** | **289,232,694 bytes** | **275.83 MB** |
+| **Total ParagonGreystone** | Full raw asset folder `Content/ParagonGreystone/` | **1,735 files** | **2,280,171,217 bytes** | **2,174.54 MB** (2.17 GB) |
+
+### 6.3 Gate G0 Resolution Options for Owner Decision
+1. **Option 1 (Minimal Git LFS Tracking):** Track strictly the **43-file child gameplay subset (8.39 MB)** plus the **3-file mesh/skeleton (25.37 MB)** and **materials (2.10 MB)** in repository Git LFS (~35.86 MB total without heavy 4K textures, or ~311 MB with textures). This guarantees any clone or CI machine can build and package Greystone out-of-the-box.
+2. **Option 2 (Deterministic Setup Bootstrap Script):** Keep third-party assets off git; provide an unattended script (`Scripts/Editor/bootstrap_greystone_assets.py`) that runs during initial workspace setup to retarget `GreystonePack` from the locally imported Paragon pack.
+3. **Current Operating Boundary:** Until the Owner makes the Gate G0 decision, Greystone implementation and C-1257 technical validation proceed on the local workstation where all 393 assets are verified present.
+
