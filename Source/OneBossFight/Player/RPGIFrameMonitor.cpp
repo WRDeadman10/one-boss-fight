@@ -9,6 +9,7 @@
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "Pack/RPGBlueprintCall.h"
+#include "Pack/RPGOwnedTagCleanup.h"
 #include "Player/RPGBossDamage.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRPGIFrame, Log, All);
@@ -158,7 +159,11 @@ void URPGIFrameMonitor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	if (bTag && bOwnedNow)
 	{
-		RemoveTag(TEXT("EndPlay")); // audit X-441 #14: a removed monitor must not leave Status.Invulnerable set on a live pawn
+		const bool bRemoved = RemoveTag(TEXT("EndPlay")); // X-1783 item 14: do not leave a live pawn's tag without a retry owner
+		if (!bRemoved)
+		{
+			RPGOwnedTagCleanup::ScheduleAfterRemovalFailure(GetOwner(), TEXT("Status.Invulnerable"), TEXT("RPGIFrameMonitor.EndPlay"));
+		}
 		bTag = false;
 		bOwnedNow = false;
 	}

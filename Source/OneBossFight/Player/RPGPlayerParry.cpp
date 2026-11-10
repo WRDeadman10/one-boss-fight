@@ -9,6 +9,7 @@
 #include "Engine/World.h"
 #include "GameplayTagContainer.h"
 #include "Pack/RPGBlueprintCall.h"
+#include "Pack/RPGOwnedTagCleanup.h"
 #include "Player/RPGParryCostRules.h"
 #include "Player/RPGLegend.h"
 #include "Player/RPGTier1VisualRules.h"
@@ -237,6 +238,10 @@ void URPGPlayerParry::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	for (int32 Attempt = 0; bCostPending && Attempt < 5; ++Attempt) FinishStaminaCost();
 	for (int32 Attempt = 0; bTagOn && Attempt < 5; ++Attempt) SetParryTag(false, TEXT("EndPlay"));
+	if (bTagOn)
+	{
+		RPGOwnedTagCleanup::ScheduleAfterRemovalFailure(GetOwner(), TEXT("Status.ParryActive"), TEXT("RPGPlayerParry.EndPlay"));
+	}
 	Super::EndPlay(EndPlayReason);
 }
 
