@@ -32,11 +32,12 @@ For each animation state captured in the Greystone review reel / gameplay showca
 
 ## 3. Pre-Populated Capture & Clip Routing (`BC-A24`, `[C-1282]` Status)
 
-- **Root-Motion Paired Evidence (Currently Executing under `[C-1282]`):**
-  - Mannequin control arm: `Docs/BossCombatReview/Execution/Claude/P_C1282_GREYSTONE_RM_MANNEQUIN/` (**IN-FLIGHT / PENDING**)
-  - Greystone child arm: `Docs/BossCombatReview/Execution/Claude/P_C1282_GREYSTONE_RM_GREYSTONE/` (**IN-FLIGHT / PENDING**)
-- **Owner 8-Slot Visual Review Frames / Reel Destination (`BC-A21..A23`):**
-  - Target folder: `D:/FightVideo/greystone_review/` (**PENDING CAPTURE** — populated once root-motion + visual review capture passes execute; stitched clip never staged in git).
+- **Root-Motion Paired Evidence (`[C-1284]` / `[C-1285]` Status):**
+  - **Mannequin Reference Baseline (`P_C1282_GREYSTONE_RM3_*` Run 3):** Backstep `5/5` started, **`76.3 cm` mean (`72.1–80.4 cm`) at montage end** (prior `C-1063` measured to rest `96.6–97.8 cm`; driver Run 4 adds idle wait + measure-to-rest `SETTLE`); Quick Roll `2/5` at **`243.6–253.8 cm`** (`215–290 cm` band; roll 3 swallowed while prior roll still blending out -> Run 4 waits for `speed < 5 cm/s` & no active montage).
+  - **Greystone Blocker 1 — `0.00 cm` Root Motion (Root Cause Identified `[C-1285]`):** Greystone child possessed `BP_GreystoneERPlayer_C`, played `AM_ER_Backstep_Mixamo_V2_Fit_Greystone` (`i-frames` active `0.095–0.108 s`, matching copied `0.091–0.414 s` window) and `Dodge_Small_Forward_Roll_Montage_Grey`, but displaced `0.00 cm` on `5/5` backsteps and `3/3` quick rolls. Root cause (`P_C1284_GREYSTONE_ROOTBONE`): IK retargeter defaulted `Root` chain FK `TranslationMode = None` (`IKRetargetSettings.h:86`), baking travel into `pelvis` (`180.81 cm` pelvis vs `0.00 cm` root on backstep; `511.64 cm` pelvis vs `0.00 cm` root on `Dodge_Small_Forward_Roll_Grey`). **Mandatory Retarget Contract:** Every Greystone retarget must map `Root -> Root` with FK `TranslationMode = GLOBALLY_SCALED` + prove root XY travel via `AnimationLibrary.get_bone_pose_for_time` (`*_RM` ER sequences + `_Grey` pack sequences) before Owner review clip capture.
+  - **Greystone Blocker 2 — `KI-052` `GetMainAnimBP` Log Flood (`[C-1284]`):** `457` `"Accessed None"` warnings (`281` before first press) from `ABP_UnarmedLayer_Grey` / `ABP_CombatAnimLayersBase_Grey` (absent in mannequin arm); tracked as open Greystone visual/log gate prior to Owner clip capture.
+- **Owner 8-Slot Visual Review Frames / Reel Destination (`BC-A21..A23` -> `BD-A21..A22`):**
+  - Target folder: `D:/FightVideo/greystone_review/` (**PENDING CAPTURE** — blocked on `_RM` re-retarget & `KI-052` triage; stitched clip never staged in git).
   - Pre-mapped clip slots (`01–08` matching Section 2 above): `01_Idle`, `02_Run`, `03_LightAttack`, `04_HeavyAttack`, `05_Roll` (`215–290 cm` gate), `06_Backstep` (`84–98 cm` gate), `07_GuardCounter`, `08_Plunge`.
 
 ---
