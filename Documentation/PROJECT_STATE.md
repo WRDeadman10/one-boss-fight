@@ -270,6 +270,44 @@ Open owner/playtest work includes the arena feel/camera/lock-on tests, whole-fig
 - Fight benchmark: `Scripts/RunBenchmark.ps1` (packaged) or `UnrealEditor.exe <uproject> /Game/OneBossFight/Levels/L_SevarogArena -game -RPGBenchmark -RPGBenchmarkFight -RPGBenchmarkQuit -RPGBenchmarkLabel=x -windowed -ResX=1920 -ResY=1080 -NoSound`.
 - Content rebuild order after a pack re-import: `Scripts/install_poise.py`, `Scripts/Editor/poise_data.py`, `repoint_player_refs.py`, `copy_sockets_to_greystone.py` (sockets live on the mesh, not the skeleton), then `sevarog_pack_01..11` in order.
 
+### Required local packs (fresh machine workspace setup)
+Per project policy (`DECISIONS.md:460–462`), third-party marketplace/vault content is never committed to git remote (`.gitignore:82`, `.gitignore:115`). A fresh clone requires the following local packs installed into `Content/`:
+1. **Advanced ARPG Combat System V3**
+   - **Expected Folder:** `Content/AdvancedARPGCombat/`
+   - **Source:** Epic Games Vault / Fab (`Unreal Assets/Advanced ARPG Combat System V3 - Unreal Engine`).
+   - **Import Helper:** `Scripts/ImportAssetClosure.py`.
+2. **Paragon Greystone**
+   - **Expected Folder:** `Content/ParagonGreystone/`
+   - **Source:** Epic Games Vault / Fab (Paragon: Greystone pack). Provides core mesh, skeleton, materials, textures, and hero sequence assets.
+3. **Paragon Sevarog**
+   - **Expected Folder:** `Content/ParagonSevarog/`
+   - **Source:** Epic Games Vault / Fab (Paragon: Sevarog pack). Provides boss mesh, skeleton, abilities, and animations.
+
+### Bootstrap regeneration paths for retarget copies & character assets
+When setting up a fresh machine or regenerating local derived assets, run the following bootstrap scripts in the Unreal Editor (via `run_in_editor.py` or `-ExecutePythonScript`):
+1. **GreystonePack (`Content/OneBossFight/GreystonePack/`)**:
+   - **Retarget Animations/Montages:** `Scripts/Editor/retarget_pack_to_greystone.py` (creates `IK_CombatMannequin` and `RTG_CombatMannequin_To_Greystone`, batch-retargets 393 pack assets with `_Grey` suffix).
+   - **Player Blueprint Setup:** `Scripts/Editor/setup_grey_player.py`.
+   - **Mesh Sockets:** `Scripts/Editor/copy_sockets_to_greystone.py` (copies weapon/shield sockets onto the skeletal mesh, as UE sockets reside on the mesh rather than the skeleton).
+   - **Layer/Slot Repair Helpers:** `Scripts/Editor/fix_grey_layers_1.py`, `Scripts/Editor/fix_grey_layers_2.py`, `Scripts/Editor/fix_grey_default_layer.py`, `Scripts/Editor/check_grey_layers.py`.
+2. **SevarogPack (`Content/OneBossFight/SevarogPack/`)**:
+   - Built directly against native `ParagonSevarog` sequences (no humanoid retargeter script; uses sequence wrappers and proxy sockets):
+     - `Scripts/Editor/sevarog_pack_01_proxy.py` (creates `SM_SevarogScytheProxy` weapon collision mesh with 6 trace sockets).
+     - `Scripts/Editor/sevarog_pack_02_montages_abilities.py` / `sevarog_pack_02b_toggle_only.py` (montages and abilities).
+     - `Scripts/Editor/sevarog_pack_03_info_style_pawn.py` / `sevarog_pack_03b_soft_refs.py` (info data asset, combat style, pawn).
+     - `Scripts/Editor/sevarog_pack_04_level.py` through `sevarog_pack_10_combo_telegraph.py` (level, parity, director, bolt, turn, charge, telegraph).
+     - `Scripts/Editor/greystone_sevarog_11_polish.py` (final polish pass).
+   - **Framework Boss Cards (`Content/OneBossFight/FrameworkProof/`):** `Scripts/Editor/author_sevarog_draft_cards.py` (authors live framework boss cards S1–S4 from `ParagonSevarog` sequences).
+3. **FitTest (`Content/OneBossFight/Player/FitTest/`)**:
+   - **Retarget ER Fit Candidates:** `Scripts/Editor/retarget_er_fit_candidate.py` (runs with `-ERFitCandidate=Greystone -nosound`; uses `SOURCE_IK_RIG = /Game/OneBossFight/GreystonePack/IK_CombatMannequin` to retarget candidates into `/Game/OneBossFight/Player/FitTest/<Candidate>`).
+   - **Fit Validation Probe:** `Scripts/Editor/pie_fit_capture.py`.
+4. **Pack Customization Re-application (Post-Import Rebuild)**:
+   - Poise attribute & data: `Scripts/install_poise.py`, `Scripts/Editor/poise_data.py`.
+   - Player references: `Scripts/Editor/repoint_player_refs.py`.
+   - Air attack montages & selector: `Scripts/Editor/air_light_attacks.py`, `Scripts/air_heavy_selector.py`.
+   - Poise armor & hit reactions: `Scripts/poise_by_power.py`, `Scripts/Editor/boss_poise_armor.py`.
+   - Arena boss wiring: `Scripts/Editor/arena_use_pack_boss.py`.
+
 ## This machine (checked 2026-10-21; the earlier sessions ran on another one)
 - Project `C:\UnrealProject\OneBossFight`, engine `C:\Program Files\Epic Games\UE_5.5` (5.5.4; the scripts' default path is right), Visual Studio 2022 Community (MSVC 14.44: UBT prefers 14.38 and warns, the build works), Python 3.10 on PATH, Git LFS 3.6.
 - The UnrealClaude plugin is NOT in the repo: it lives in `Engine\Plugins\Marketplace\UnrealClaude` (installed by the owner); without it the uproject does not even build (UBT: "Unable to find plugin").
@@ -575,3 +613,4 @@ C-994 approved 0.100 s blend-in for all four ER montages. A-598's refreshed full
 - **C-1249 Sevarog validation bridge:** the Editor-only UFUNCTION wrapper calls production `CompileResolved`/`Validate` and `ResolveProfile`/`ValidateProfile`; the authoring tool validates in-memory cards/profile before saving. Updated the C1247 plan to record the bridge as complete. S3 warp, S4 selector/punish and complete definition/profile fields remain TBD and gated. Offline contract 7/7; locked Editor build succeeded; full suite 498/498 with required DD27j hash, including synthetic bridge parity. Lock released; no Sevarog assets or PIE run.
 - **C-1251a Sevarog authoring source hotfix:** combo types are Python-reflectable; forward defensive counterplay uses warp standoff while backsteps retain max-range-plus-backstep; S4 Whiff follow-up is `Swing1_Medium`, with `Swing1_FAST_v2` excluded from the active profile. Offline contract 9/9, syntax pass, Editor build exit 0, full suite 498/498 at DD27j hash `cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec`; locks released. Lead acceptance build, script rerun and PIE remain open; no assets authored.
 - **C-1254 accepted Sevarog authoring / C-1255 live bridge:** Lead accepted the five cards, profile, and unselected definition under `/Game/OneBossFight/Data/Sevarog/`; source margins are S1/S2 +0.303 s, S3 +0.603 s, S4 +0.086 s. C-1255 approved and added editor-reflected, Shipping-no-op `InitializeWithProfileForTest`/`StartCardForTest` after confirming no existing proof GameMode profile input. Build passes and the complete suite is 499/499. C-1254a driver passed profile/API transient verification and is READY for Lead PIE; no PIE has run yet. See `Documentation/Boss/QUEUE_50_BATCH10_CLOSEOUT.md` and `TEST_PLAN.md`.
+- **C-1258a (2026-11-10; C-1260 follow-up applied):** Sevarog live driver reads each card band, repositions to 140 cm for S1–S3 / 450 cm for S4, and logs measured in-band distances. The C-1155 PIE self-test started and finished S1–S3; no S4, map save, or lock remains. Diagnosis: one RecastNavMesh actor and `RPGFrameworkBossController` exist; boss spawn projected 217.275 cm below its Z, and a full path request later completed as `Framework.Nav.MoveFailed`. The in-band walk skip is gated by `rpg.BossProofSkipInitialWalk` (non-Shipping, default off, additionally requires test authorization); live approach behavior is unchanged. Watchdog allowance uses clip natural-end/blend-out and recovery timing; native tests cover both limiting cases. Follow-up build and suite pass 500/500, PIE again confirms S1–S3 start/end with the explicit test hook enabled. General approach navigation remains open in `KNOWN_ISSUES.md`. Evidence/handoff: `Docs/BossCombatReview/Execution/Codex/C1258A_RANGE_RETRY/`, `Documentation/Boss/C1258A_SEVAROG_IN_BAND_NAV_AND_END.md`.

@@ -146,18 +146,19 @@ All assets below exist physically on disk under `Content/OneBossFight/GreystoneP
 
 ---
 
-## 6. Repo Reproducibility (Gate G0)
+## 6. Repo Reproducibility (Gate G0) — Closed by Existing Policy
 
-Per Claude Lead Directive `[C-1260]`, the Greystone player dependencies must be verifiable and reproducible from the repository before Greystone can become the default player character.
+Per Claude Lead Directive `[C-1260]` and `[C-1261]`, Gate G0 has been evaluated and is **CLOSED BY EXISTING POLICY** (`DECISIONS.md:460–462`).
 
-### 6.1 Historical Origin of `.gitignore` Exclusion
-- **Commit:** `36725f8f` (2026-10-20), *"Align project to Master Design Freeze v1.2, deliver Boss01 rest pose FBX, calibrated animations, and Greatsword"*.
+### 6.1 Existing Project Exclusion Policy
 - **Documentation Policy (`Documentation/DECISIONS.md:460–462`):**
   > *"Third-party content is never committed: `.gitignore` covers every third-party folder, including the pack copies and retargets under `Content/OneBossFight` (`GreystonePack`, `SevarogPack`, `Characters/Greystone`) and the archived copies. Files left the git index only (still on disk); commits already made keep their history."*
 - **Active Git Ignore Rules:**
   - `.gitignore:82`: `Content/Paragon*/` (excludes all raw Paragon packs).
   - `.gitignore:115`: `Content/OneBossFight/GreystonePack/` (excludes all 393 retargeted pack assets).
-- **Impact on Fresh Clones:** A fresh clone from remote git possesses `git ls-files = 0` for `GreystonePack` and `ParagonGreystone`. The retargeted montages and mesh exist **only on this local machine**.
+- **Parity with Core Project Setup:**
+  `git ls-files` is `0` for `Content/AdvancedARPGCombat` and `Content/ParagonSevarog` as well. The entire project already relies on local third-party packs installed on the developer workstation. Greystone adds no novel reproducibility risk or git-tracking deviation.
+- **Gate G0 Status:** **CLOSED**. No Owner decision is required to permit local development, and switching the default player character is not gated on Git LFS tracking.
 
 ### 6.2 Precise Disk Footprint Measurements (Asset Audit)
 
@@ -168,10 +169,11 @@ Per Claude Lead Directive `[C-1260]`, the Greystone player dependencies must be 
 | **Paragon Core Mesh** | `Greystone.uasset`, `Greystone_Skeleton.uasset`, `Greystone_PhysicsAsset.uasset` under `ParagonGreystone/.../Meshes/` | **3 files** | **26,602,005 bytes** | **25.37 MB** |
 | **Paragon Materials** | 15 material uassets under `ParagonGreystone/.../Materials/` | **15 files** | **2,199,213 bytes** | **2.10 MB** |
 | **Paragon Textures** | 39 texture uassets under `ParagonGreystone/.../Textures/` | **39 files** | **289,232,694 bytes** | **275.83 MB** |
-| **Total ParagonGreystone** | Full raw asset folder `Content/ParagonGreystone/` | **1,735 files** | **2,280,171,217 bytes** | **2,174.54 MB** (2.17 GB) |
+| **Total Minimal Functional Footprint** | Gameplay subset + core mesh + materials + required textures | **100 files** | **326,826,434 bytes** | **~311.69 MB (~312 MB)** |
+| **Full ParagonGreystone** | Full raw asset folder `Content/ParagonGreystone/` | **1,735 files** | **2,280,171,217 bytes** | **2,174.54 MB** (2.17 GB) |
 
-### 6.3 Gate G0 Resolution Options for Owner Decision
-1. **Option 1 (Minimal Git LFS Tracking):** Track strictly the **43-file child gameplay subset (8.39 MB)** plus the **3-file mesh/skeleton (25.37 MB)** and **materials (2.10 MB)** in repository Git LFS (~35.86 MB total without heavy 4K textures, or ~311 MB with textures). This guarantees any clone or CI machine can build and package Greystone out-of-the-box.
-2. **Option 2 (Deterministic Setup Bootstrap Script):** Keep third-party assets off git; provide an unattended script (`Scripts/Editor/bootstrap_greystone_assets.py`) that runs during initial workspace setup to retarget `GreystonePack` from the locally imported Paragon pack.
-3. **Current Operating Boundary:** Until the Owner makes the Gate G0 decision, Greystone implementation and C-1257 technical validation proceed on the local workstation where all 393 assets are verified present.
+### 6.3 Bootstrap & Tracking Disposition
+1. **Option 1 (Hypothetical Git LFS Tracking):** If ever required for headless CI, tracking the full functional Greystone player (gameplay subset + mesh/skeleton + materials + textures) requires ~311.69 MB (~312 MB), not the textureless 35.86 MB estimate.
+2. **Option 2 (Deterministic Local Bootstrap — Current Project Standard):** In accordance with existing project practice (`PROJECT_STATE.md`), assets are reconstructed locally via unattended bootstrap scripts from pristine third-party packs (`Scripts/Editor/retarget_pack_to_greystone.py`, `setup_grey_player.py`, `copy_sockets_to_greystone.py`).
+3. **Current Operating Boundary:** Development proceeds locally where all 393 assets are verified present. The switch to Greystone remains gated exclusively on technical validation (root motion, notify readback, parry/trace bounds, Owner clip review against `C1257C_GREYSTONE_OWNER_REVIEW_CHECKLIST.md`).
 
