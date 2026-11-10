@@ -7,7 +7,7 @@
 - `D:/FightVideo/sevarog_frames/_sheets/Stun_Loop_sheet.png` (`32` frames `0–31`, `2.033 s` C1239 length)
 - `D:/FightVideo/sevarog_frames/_sheets/Stun_End_sheet.png` (`12` frames `0–11`, `0.733 s` C1239 length)
 - `D:/FightVideo/sevarog_frames/_sheets/LevelStart_sheet.png` (`41` captured frames `0–40` / `2.667 s` of `5.000 s` `LevelStart_Montage` — partial `41/75` per `[C-1274]`)
-- `Death_front`: **`BLOCKED` (`0` frames captured on disk)** — capture still pending per `[C-1274]`.
+- `D:/FightVideo/sevarog_frames/_sheets/Death_front_sheet.png` (`16` bright frames `0–15` / `0.000–0.967 s` captured per `[C-1279]` / `Claude/P_C1278_SEVAROGDEATH`, `DATA route_verified`; `0` dark frames)
 
 ---
 
@@ -53,7 +53,19 @@ Matches shared `URPGBossFrameworkProfile` slots `StaggerStartAnim`, `StaggerLoop
 
 ---
 
-## 3. Remaining Capture Blockers
+## 3. `Death_front` (`000–015`, `0.000–0.967 s`) Frame Breakdown (`[C-1279]`)
 
-- **`Death_front` (`0.967 s` probe length):** **`BLOCKED`** (`0` PNG frames captured yet; Lead capture pending per `[C-1274]`).
-- **`LevelStart` tail (`Frames 41–74`):** Partial `41/75`; full idle settle & hammer shoulder-lift occur in the uncaptured `2.733–5.000 s` second half.
+Visual observation from `D:/FightVideo/sevarog_frames/_sheets/Death_front_sheet.png` (`16` bright frames, `0` dark frames, `Claude/P_C1278_SEVAROGDEATH`, `DATA route_verified`):
+
+| Frame Span (`15 Hz`) | Montage Time (`s`) | Observed Pose in `Death_front_sheet.png` | Phase Role |
+|---|---:|---|---|
+| `000–001` | `0.000–0.067` | Standing upright facing away/forward (`000`); arms & cloak sleeves flare outward on `001` as fatal knockback begins | Hit knockback onset |
+| **`002–009`** | `0.133–0.600` | **Collapse onset (`002–005`):** arms splay wide, knees leave vertical alignment, torso pitches steeply backward off balance; (`006–009`) descends supine toward cobblestones as weapon passes mid-center before dropping right (`009`) | Backward topple & collapse |
+| **`010–012`** | `0.667–0.800` | **Ground contact (`010` @ `0.667 s`):** upper back/shoulders strike stone tiles cleanly; left arm & clawed fingers slam flat left (`010–011`); legs rebound briefly upward (`011–012`) | Primary floor impact |
+| **`013–015`** | `0.867–0.967` | Legs settle downward toward arena floor (`013`); **`014–015` (`0.933–0.967 s`) reach stationary final supine rest pose** with outstretched clawed hands and idle cloak folds | **Final rest (`015 = 0.967 s` clip end; clean hold/fade)** |
+
+---
+
+## 4. Remaining Capture Blocker
+
+- **`LevelStart` tail (`Frames 41–74` / `2.733–5.000 s`):** Still partial (`41/75`); full idle settle & hammer shoulder-lift occur in the uncaptured `2.733–5.000 s` tail (queued for later capture per `[C-1279]`).
