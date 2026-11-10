@@ -57,11 +57,12 @@ class C1276SevarogS6S8ContractTests(unittest.TestCase):
     def test_phase_pools_satisfy_x14_attack_count_non_starvation(self) -> None:
         attack_count = 3
         phase1_cards = ("S1", "S2", "S3", "S4", "S7")
-        phase2_cards = ("S1_P2", "S2_P2", "S3_P2", "S4_P2", "S6", "S8")
+        phase2_cards = ("S1", "S2", "S3", "S4", "S6", "S7", "S8")
         self.assertGreaterEqual(len(phase1_cards), attack_count)
         self.assertGreaterEqual(len(phase2_cards), attack_count)
-        for token in ("Phase_1", "Phase_2", "S1_P2", "S6", "S7", "S8"):
+        for token in ("Phase_1", "Phase_2", "90–150", "S6", "S7", "S8"):
             self.assertIn(token, self.text)
+        self.assertNotIn("260.0", self.text)
 
 
 if __name__ == "__main__":

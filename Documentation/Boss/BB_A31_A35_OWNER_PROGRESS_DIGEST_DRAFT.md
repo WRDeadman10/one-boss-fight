@@ -1,6 +1,6 @@
 # BB-A31..A35: Owner Progress Digest Draft (Held for Lead)
 
-**Queue Lane:** `QUEUE_BB` Tasks `BB-A31`..`BB-A35` (Antigravity)  
+**Queue Lane:** `QUEUE_BB` Tasks `BB-A31`..`BB-A35` -> Refreshed under `QUEUE_BC_AG` Tasks `BC-A34`..`BC-A35` (Antigravity)  
 **Status:** DRAFT ONLY (Held for Lead review & transmission; do not send directly)  
 
 ---
@@ -12,22 +12,22 @@
 
 ---
 
-## 2. Current Milestone Status (As of 2026-11-10)
+## 2. Current Milestone Status (As of 2026-11-10 `[C-1277]`)
 
 - **Ember Warden Timing Route — Closed (`C-1240`):**
   - Montage notify timings match legacy table timings across all clean trials (`6/6` pass, `BUILD-285..287`), kept opt-in default-off (`bUseMontageNotifyTimings=false`).
   - Optional composite `AM_Boss01_A2` (`Raise + ApexHold + Slam`) documented as Plan Only (`BB_A21_A23`); pack `GS_ChargedAttack_Montage` stays default unless you approve a visual change later.
 
-- **Sevarog Framework Boss — Live in Arena (`BUILD-291..295`, `501/501` tests):**
-  - Draft cards (`S1..S5`), profile, and test spawn bridge run live in `L_SevarogArena`.
+- **Sevarog Framework Boss — Live in Arena (`BUILD-296`, `505/505` tests):**
+  - `S1..S5` draft cards (`Swing1_Medium`, `Swing2_Medium`, `Swing3_Slow`, `Speedburst -> Swing1_Medium`) run live in `L_SevarogArena`; `S1`/`S2` selector `MaxRangeCm` tightened to `90–120 cm` per Lead `[C-1274]` (`140 cm` whiff fixed).
   - Heavy Slam (`S3`) hits for `55` dmg; Dash (`S4` `Speedburst`, `330 cm` warp) chains cleanly on whiff into `S5` (`Swing1_Medium`) for `25` dmg.
-  - **Two active engineering items (no owner action needed):** fixing `S1`/`S2` swing trace alignment at `140 cm` (`C-1265b` full-clip trace in progress) and diagnosing elevated-spawn `MoveFailed` path-follow termination (`X09`/`BB-A25`).
-  - Sevarog card SFX, voice-bark, signature timing marks, and Phase-2 Niagara aura candidates are specced offline with zero runtime wiring (`BB-A06..A14`, `BB-A24`).
+  - Signatures `S6` (`Ultimate_Swing_120fps`, one continuous 360° cleave `0.667–0.900 s`, `90–150 cm`, `65` dmg), `S7` (`Subjugation` AoE + snare, `35` dmg), and `S8` (`Soul_Siphon` 5-tick cone drain + heal) approved as provisional values (`[C-1277]`) for Codex `X26` card authoring and subsequent PIE tuning.
+  - Sevarog card SFX, voice-bark, and Phase-2 Niagara aura specs stay staged offline (`BB-A11..A14`, `BC-A26..A30`). `Stun_Start`/`Stun_Loop`/`Stun_End` frame sheets complete (`BC-A10`); `LevelStart` tail & `Death_front` await next free engine window.
 
-- **Greystone Player Switch — Approved & Under Technical Gates (`[C-1257]`..`[C-1269]`):**
+- **Greystone Player Switch — Approved & Under Technical Gates (`[C-1257]`..`[C-1275]`):**
   - Approved by you (`47/48`, `97.9%` blind fit score). Third-party local pack policy closes repo reproducibility (`[C-1261]`, `~312 MB` local functional footprint; zero pack edits).
   - Roll fidelity gate aligned to your single-tap directional quick roll (`215–290 cm`, within `10%` of mannequin) + neutral backstep (`84–98 cm`), keeping double-tap long roll disabled (`[C-1265]`).
-  - Hit UE 5.5 Python montage API limit (`composite_sections`); Lead ordered editor-only C++ `URPGMontageWrapperLibrary::CreateRetargetWrapper` (`[C-1269]`) so exact source notify timings copy before paired PIE + your 8-slot review clip (`BB_A03` storyboard). Mannequin remains default until every gate passes.
+  - Editor-only C++ `URPGMontageWrapperLibrary` landed & green (`[C-1275]`, `BUILD-296` `505/505`); Codex is completing `C-1275a` readback logging before paired PIE + your 8-slot review clip (`BB_A03` storyboard). Mannequin remains default until every gate passes.
 
 ---
 

@@ -38,7 +38,7 @@ class BcA01MontageWrapperContractTests(unittest.TestCase):
         )
         for token in required_tokens:
             self.assertIn(token, self.cpp, f"Missing guard token: {token}")
-        self.assertIn("DuplicateObject<UAnimMontage>(Source, Package, AssetName)", self.cpp)
+        self.assertIn("DuplicateObject<UAnimMontage>(Source, Outer, AssetName", self.cpp)
         self.assertIn("Segment.SetAnimReference(TargetSequence, false)", self.cpp)
         # Ensure wrapper library never saves or mutates source/pack assets
         self.assertNotIn("SavePackage", self.cpp)

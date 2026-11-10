@@ -26,7 +26,7 @@ Cross-checked `D:/FightVideo/sevarog_frames/_sheets/Ultimate_Swing_120fps_sheet.
    - `CommitSeconds = 0.600` (`Frame 009`)
    - Single continuous blade window: `ActiveStartSeconds = 0.667`, `ActiveEndSeconds = 0.900` (covers `Burst #1` + `012` front pivot + `Burst #2` before overhead exit `014 = 0.933 s`, extending `C-1242`'s `0.867 s` by `33 ms`) under **one `HitGroup_ScytheBlade`** (`1` max hit per activation; optional secondary shockwave ring can share `HitGroup_ScytheBlade`).
    - `RecoveryEndSeconds = 2.603` (`2.633333 s` clip minus `0.03 s` profile blend tail).
-   - `FrontConeDegrees = 360.0`, `MinRangeCm = 90.0`, `MaxRangeCm = 260.0`, **`HPDamage = 65.0`** *(provisional, tune after PIE — flagship Phase-2 Ult sitting above `S3` heavy slam `55.0`)*.
+   - `FrontConeDegrees = 360.0`, `MinRangeCm = 90.0`, `MaxRangeCm = 150.0` *(corrected per `[C-1277]`: live hammer reach is ~120–130 cm and `S6` has no warp, so `260 cm` was unsupported)*, **`HPDamage = 65.0`** *(provisional, tune after PIE — flagship Phase-2 Ult sitting above `S3` heavy slam `55.0`)*.
 
 ---
 
@@ -76,24 +76,21 @@ Baseline reference values (`Docs/BossCombatReview/Execution/Antigravity/MoveCard
 
 ---
 
-## 3. `C-1276c`: Sevarog Phase Plan Table (`S1–S8`, Consistent with `X14`)
+## 3. `C-1276c` / `[C-1277]`: Sevarog Phase Plan Table (`S1–S8`, Consistent with `X14`)
 
-Per `BB_X11_X15_SEVAROG_DESIGN.md` (`X14`, `RPGBossFrameworkProfile.cpp:218-226`, `RPGBossMoveModel::IsEligible`):
-- Every card belongs to **one** `PhaseId` (`Phase_1` or `Phase_2`).
-- `AttackCount = 3` (`author_sevarog_draft_cards.py:58`), and profile validation rejects **starvation** if a phase pool has fewer than `AttackCount` cards all on positive cooldowns.
-- Therefore **`Phase_2` must include short-cooldown Phase-2 melee core variants (`S1_P2`, `S2_P2`, `S3_P2`) alongside signatures `S6` and `S8`** (so `Phase_2` has `>= 5` eligible cards, zero starvation risk while keeping signature cooldowns `10–12 s` meaningful!).
+Per `BB_X11_X15_SEVAROG_DESIGN.md` (`X14`, `RPGBossFrameworkProfile.cpp:218-226`, `RPGBossMoveModel::IsEligible`) and Lead verdict `[C-1277]`:
+- **Canonical Pool Rule (`[C-1277]`):**
+  - `Phase_1`: `S1`, `S2`, `S3`, `S4->S5`, `S7` (`5` eligible cards)
+  - `Phase_2` (`<= 60%` HP): keeps `Phase_1` cards (`S1`, `S2`, `S3`, `S4->S5`, `S7` — shared same card assets if selector supports multi-phase eligibility, preserving `>= AttackCount=3` anti-starvation without `_P2` duplicate cards unless Codex confirms single-phase-only `file:line`) and **unlocks `S6` and `S8`** (`7` eligible cards in `Phase_2`).
 
-| Card / Variant | Sequence | Phase Pool (`PhaseId`) | Role | Provis. Damage | Provis. Cooldown (`s`) | Selector Range (`cm`) | Notes / Source |
+| Card | Sequence | Phase Availability (`[C-1277]`) | Role | Provis. Damage | Provis. Cooldown (`s`) | Selector Range (`cm`) | Notes / Source |
 |---|---|---|---|---:|---:|---:|---|
-| **`S1`** (`Move_Sevarog_Swing1_Medium`) | `Swing1_Medium` | **`Phase_1`** | Close left-to-right sweep (opener) | `25.0` | `1.0` | `90–120` *(C-1274)* | Core Phase-1 pressure |
-| **`S2`** (`Move_Sevarog_Swing2_Medium`) | `Swing2_Medium` | **`Phase_1`** | Close cross-body return sweep | `25.0` | `1.0` | `90–120` *(C-1274)* | Core Phase-1 pressure |
-| **`S3`** (`Move_Sevarog_Swing3_Slow`) | `Swing3_Slow` | **`Phase_1`** | Delayed heavy overhead slam | `55.0` | `3.5` | `90–180` | High-punish heavy (`+0.603 s`) |
-| **`S4`** (`Move_Sevarog_Speedburst`) + `S5` combo | `Speedburst` -> `Swing1_Medium` | **`Phase_1`** | `3.0–6.5 m` forward dash (`0` dmg) + whiff cleave (`25.0`) | `0` / `25.0` | `4.0` | `300–650` | Gap closer (`S4->S5` depth 2) |
-| **`S7`** (`Move_Sevarog_Subjugation`) | `Subjugation` | **`Phase_1`** | Ranged delayed ground AoE + snare (`AreaEffect`) | **`35.0`** | `8.0` | `300–900` | Anti-kiting mid/far hex (`C-1276b`) |
-| **`S1_P2` / `S2_P2`** *(Phase-2 core variants)* | `Swing1_Medium` / `Swing2_Medium` | **`Phase_2`** | Aggressive close sweeps (`1.0 s` CD, optional `1.1x` rate later) | `25.0` | `1.0` | `90–120` | Required `X14` anti-starvation core (`>= AttackCount 3`) |
-| **`S3_P2`** *(Phase-2 heavy variant)* | `Swing3_Slow` | **`Phase_2`** | Phase-2 heavy overhead slam | `55.0` | `3.5` | `90–180` | Heavy mixup alongside Ult |
-| **`S4_P2`** *(Phase-2 dash variant)* | `Speedburst` | **`Phase_2`** | Phase-2 gap closer | `0` *(or S5)* | `4.0` | `300–650` | Closes distance for Phase-2 mixups |
-| **`S6`** (`Move_Sevarog_Ultimate_Swing`) | `Ultimate_Swing_120fps` | **`Phase_2`** | **360° Signature Cleave** (`0.667–0.900 s`) | **`65.0`** | `12.0` | `90–260` | Unlock at `<= 60%` HP (`C-1276a`) |
-| **`S8`** (`Move_Sevarog_Soul_Siphon`) | `Soul_Siphon` | **`Phase_2`** | **Frontal Channel Drain + Self-Heal** (`ChannelDrain`) | **`8.0 x 5`** | `10.0` | `220–620` | Unlock at `<= 60%` HP (`C-1276b`) |
+| **`S1`** (`Move_Sevarog_Swing1_Medium`) | `Swing1_Medium` | **`Phase_1` + `Phase_2`** | Close left-to-right sweep (opener) | `25.0` | `1.0` | `90–120` *(C-1274)* | Core close pressure |
+| **`S2`** (`Move_Sevarog_Swing2_Medium`) | `Swing2_Medium` | **`Phase_1` + `Phase_2`** | Close cross-body return sweep | `25.0` | `1.0` | `90–120` *(C-1274)* | Core close pressure |
+| **`S3`** (`Move_Sevarog_Swing3_Slow`) | `Swing3_Slow` | **`Phase_1` + `Phase_2`** | Delayed heavy overhead slam | `55.0` | `3.5` | `90–180` | High-punish heavy (`+0.603 s`) |
+| **`S4`** (`Move_Sevarog_Speedburst`) + `S5` combo | `Speedburst` -> `Swing1_Medium` | **`Phase_1` + `Phase_2`** | `3.0–6.5 m` forward dash (`0` dmg) + whiff cleave (`25.0`) | `0` / `25.0` | `4.0` | `300–650` | Gap closer (`S4->S5` depth 2) |
+| **`S7`** (`Move_Sevarog_Subjugation`) | `Subjugation` | **`Phase_1` + `Phase_2`** | Ranged delayed ground AoE + snare (`AreaEffect`) | **`35.0`** | `8.0` | `300–900` | Anti-kiting mid/far hex (`C-1276b`) |
+| **`S6`** (`Move_Sevarog_Ultimate_Swing`) | `Ultimate_Swing_120fps` | **`Phase_2` (`<= 60%` HP)** | **360° Signature Cleave** (`0.667–0.900 s`, `HitGroup_ScytheBlade`) | **`65.0`** | `12.0` | **`90–150`** *(C-1277)* | No warp; live hammer reach `~120–130 cm` |
+| **`S8`** (`Move_Sevarog_Soul_Siphon`) | `Soul_Siphon` | **`Phase_2` (`<= 60%` HP)** | **Frontal Channel Drain + Self-Heal** (`ChannelDrain`) | **`8.0 x 5`** | `10.0` | `220–620` | Frontal `45°` half-angle drain (`C-1276b`) |
 
 *Companion Contract Verification:* [`test_c1276_sevarog_s6_s8_contract.py`](file:///C:/UnrealProject/OneBossFight/Scripts/Tools/test_c1276_sevarog_s6_s8_contract.py).
