@@ -1,0 +1,16 @@
+﻿[2026.11.10-03.49.32:574][  0]LogPython: [SevarogLive] PROFILE PASS path=/Game/OneBossFight/Data/Sevarog/DA_Boss_Sevarog_FrameworkProfile_Draft candidates=4 move_ids=Move_Sevarog_Swing1_Medium,Move_Sevarog_Swing2_Medium,Move_Sevarog_Swing3_Slow,Move_Sevarog_Speedburst
+[2026.11.10-03.49.32:574][  0]LogPython: [SevarogLive] PROFILE COMBO_NODES count=2 source=Move_Sevarog_Speedburst followup=Move_Sevarog_Swing1_Medium target_node=S5
+[2026.11.10-03.49.32:574][  0]LogPython: [SevarogLive] LIVE_API PASS initialize_with_profile_for_test=1 start_card_for_test=1 spawn_framework_boss_for_test=1
+[2026.11.10-03.49.32:574][  0]LogPython: [SevarogLive] READY awaiting PIE; profile=/Game/OneBossFight/Data/Sevarog/DA_Boss_Sevarog_FrameworkProfile_Draft optionalShots=True
+[2026.11.10-03.49.32:877][  1]LogPython: [SevarogLive] WAITING_FOR_PIE
+[2026.11.10-03.49.34:808][  2]LogTemp: Display: [EncounterActivation] default data startup: selected /Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter for map L_SevarogArena
+[2026.11.10-03.49.34:865][  2]LogTemp: Display: [EncounterActivation] route=data reason=StoredDefinition outcome=Pending
+[2026.11.10-03.49.35:520][  2]LogPython: [SevarogLive] HEARTBEAT missing_boss=1 player=1
+[2026.11.10-03.49.35:526][  2]LogPython: [SevarogLive] INIT_RESULT type=str repr=''
+[2026.11.10-03.49.35:526][  2]LogPython: [SevarogLive] SPAWN PASS actor=RPGFrameworkBossCharacter_0 initialPlayerDistanceCm=205.6
+[2026.11.10-03.49.35:963][  3]LogPython: [SevarogLive] CARD accepted move=Move_Sevarog_Swing1_Medium targetDistanceCm=205.6
+[2026.11.10-03.49.35:964][  3]LogPython: [SevarogLive] SHOT requested move=Move_Sevarog_Swing1_Medium path=D:/FightVideo/sevarog_live\Move_Sevarog_Swing1_Medium_b8b5b2d9.png
+[2026.11.10-03.49.45:672][321]LogPython: [SevarogLive] CARD request move=Move_Sevarog_Swing2_Medium
+[2026.11.10-03.50.20:806][590]LogPython: [SevarogLive] ERROR card start timed out move=Move_Sevarog_Swing2_Medium
+[2026.11.10-03.50.20:807][590]LogPython: [SevarogLive] Traceback (most recent call last):
+[2026.11.10-03.50.20:807][590]LogPython: [SevarogLive] finished: failed: card start timed out move=Move_Sevarog_Swing2_Medium shots=1
