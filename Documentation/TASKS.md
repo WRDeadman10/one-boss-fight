@@ -1,5 +1,7 @@
 # Tasks
 
+- **C-1258a Sevarog in-band navigation retry (2026-11-10):** driver sets and reads back per-card in-band distances; self-test completed S1/S2/S3 start/end in PIE. One RecastNavMesh actor and the expected AI controller were present, while spawn projection was 217.275 cm below the boss and the original full-path request later failed; general navigation remains unproven and is recorded in `KNOWN_ISSUES.md`. The walk-skip is now an explicit standalone test hook, non-Shipping and default off. Watchdog budget is derived from card clip end, authored blend-out and recovery, with native coverage. Development build 0; full suite 500/500; no S4 or map save; locks released. See `Documentation/Boss/C1258A_SEVAROG_IN_BAND_NAV_AND_END.md` and `Docs/BossCombatReview/Execution/Codex/C1258A_RANGE_RETRY/`.
+
 - **C-1256a Sevarog PIE-world spawn bridge (2026-11-10):** added the Shipping-no-op `SpawnFrameworkBossForTest` API with game-world/class validation and collision-safe transient spawn; the driver now reads the combo follow-up from `ComboNodes`. Development build exit 0; full suite 500/500; Lead-assigned PIE self-test passed through spawned + first S1 started, then stopped. Full five-card live run remains with Claude. C-1155 locks released. Evidence: `Docs/BossCombatReview/Execution/Codex/C1256A_SPAWN_BRIDGE/`; handoff: `Documentation/Boss/C1256A_SEVAROG_RUNTIME_SPAWN_BRIDGE.md`.
 
 - **C-1250a Sevarog first-five authoring payload (2026-11-10):** populated S3 warp and S4 selector/forward-warp values per Claude's C-1250 decision; added F5-derived profile inputs, explicit definition defaults/identity, depth-2 S4 Whiff→S5 combo, source coverage guards, and pre-validation punish-margin estimates. Offline authoring contract passes 8/8; py_compile and `git diff --check` pass. No Unreal/editor/script execution and no assets authored; Lead owns the C++ validation and any S4 counterplay decision. See `Documentation/Boss/C1247_SEVAROG_FIRST_FIVE_CARD_PLAN.md`.
@@ -489,14 +491,44 @@ the in-editor content work listed in section 3). U = the project owner (decision
 **Status:** Todo, Doing, Built (code done, not proved), Verified (tests or a run passed, noted), Blocked (reason given).
 Nobody commits except U. A row is changed only by its owner; others write a note under "Notes".
 
-## Dashboard (updated 2026-11-04; this file is the master tracker: every task, its status and the remaining work)
+## Dashboard (updated 2026-11-10; this file is the master tracker: every task, its status and the remaining work)
 
+### Current Track Status & Active Milestones (2026-11-10)
+
+- **Ember Warden Notify Route (Proven & Closed):**
+  - The notify-based timing route (`URPGANS_BossMoveTiming` on Ember A1/A3a/A3b) is live-proven against legacy code defaults.
+  - Parity gate: **PASS** (`TEST_PLAN.md` row `EMBER NOTIFY PARITY`, `P_C1234_EMBERPARITY2`, repeat offsets <= 0.03 s across trials; `BUILD-285` strict audit MATCH, full suite 497/497).
+  - Production stance: default stays **OFF** (`bUseMontageNotifyTimings=false`) as a verified opt-in configuration.
+
+- **Sevarog Framework Boss Pipeline (Active Milestone):**
+  - **Draft Data Authored:** `BUILD-291` (`TEST_PLAN.md` line 2057; `P_C1254_SEVAROGAUTHOR`, suite 498/498). Authored 5 MoveCards (`Swing1_Medium`, `Swing2_Medium`, `Swing3_Slow`, `Speedburst`, `Swing1_FAST_v2`), `DA_Boss_Sevarog_FrameworkProfile_Draft`, and `DA_Boss_Sevarog_Draft` under `/Game/OneBossFight/Data/Sevarog/`.
+  - **Test Bridge & Spawning:** `BUILD-292` / `BUILD-293` (`TEST_PLAN.md` lines 2058–2059; suite 500/500, `SpawnFrameworkBossForTest` live transient actor spawn verified in arena).
+  - **First Full Live Run (Milestone Achieved):** `BUILD-294` (`TEST_PLAN.md` line 2060; `P_C1262_SEVAROGLIVE3`, DATA route_verified, suite 500/500). All 4 cards started and finished `reason=Finished` within band. S3 (`Swing3_Slow`) step-in warp moved 37.7/50 cm (capsule-blocked) and connected for 55 damage. S4 (`Speedburst`) dash warp moved exactly 330 cm (450 -> 120 cm standoff, eased).
+  - **Open Items (C-1262 / Codex C-1262a in progress):**
+    1. S1/S2 (`Swing1_Medium` / `Swing2_Medium`) at 140 cm: `hitsAccepted=0` (investigating weapon trace endpoints vs player capsule, boss facing, and mark timings).
+    2. S4 Damage Attribution / Abort: defensive card logged `hitsAccepted=1 appliedDamage=55` then `CARD_ABORT reason=Framework.Boss.TargetLifeOrHealthChanged` before S5 combo could trigger.
+    3. Screenshots: 4 captures were empty/black (10,195 bytes); warm-up pattern needed.
+
+- **Greystone Player Character Switch (Approved by Owner):**
+  - **Owner Verdict:** Approved player character change to Greystone (unanimous winner in `TEST_PLAN.md` `C-1227 player fit test`, 47/48, 97.9% score).
+  - **Gate G0 Status:** Closed by existing policy (`DECISIONS.md:460–462`; third-party packs are local-only and git-ignored, ~312 MB functional footprint documented in `Documentation/Boss/C1259_GREYSTONE_SOURCE_INVENTORY.md` and `PROJECT_STATE.md`).
+  - **Active Technical Gates (C-1257a / C-1257b):**
+    1. Child Blueprint & wrapper authoring: author 4 proposed `_Fit_Greystone` wrappers (`Backstep_Mixamo_V2`, `Attack_Air_Light`, `Attack_Air_Heavy_Plunge`, `Attack_GuardCounter`) with verified notify windows.
+    2. Notify readback & save validation.
+    3. Root-motion distance verification: paired PIE tests (Greystone vs mannequin <= 10% distance delta: backstep 84–98 cm, roll 215–290 cm).
+    4. Combat trace and parry confirmation.
+    5. Owner video review against evaluation criteria in `Documentation/Boss/C1257C_GREYSTONE_OWNER_REVIEW_CHECKLIST.md`.
+
+- **Owner Decisions Pending:**
+  - **SFX Audition Reel Selection Only:** Selection among exported candidate sound cues (Batches 1–3 in `D:/FightVideo/SFX_audition/`, manifests `Documentation/Boss/SFX_03_AUDITION_MANIFEST.md` and `Documentation/Boss/SFX_06_BATCH3_AUDITION_MANIFEST.md`) for Parry, Parry Recoil, Phase 2 Aura, Backstep, and Stance Break. All other previous gates are resolved or scoped.
+
+### Historical Track Snapshots
 
 - **Legacy retired as the default (owner 2026-11-06, "Yes, retire legacy", C-941):** the arena now starts the data-driven route (G044 definition) with no selection; explicit selection still wins; legacy stays only as a non-Shipping parity control (`-RPGLegacyStartup` or `RPG_LEGACY_STARTUP=1`, set by `RunBenchmark.ps1` and the parity runners when no definition is given) and as the fallback if the definition fails to load. A7 gates (packaged Shipping proof incl. cook, selected-route performance) are NOT closed by this; a REPACKAGE is needed before the owner sees it in a packaged game.
 
 - **ER controls, owner "All three" (2026-11-06, C-944):** DONE and live-proven (pie_er_inputs 5/5, BUILD-239): Elden Ring gamepad attacks (R1 press light, R2 tap strong, R2 hold charged) and no double-tap long roll. Guard counter: Codex rule ER-C5 accepted (X-1352); integration blocked on a finding: in the arena the gamepad guard key held in PIE never produced a block (probe1-3); next: confirm guarding in the owner hand test or a deeper probe, then hook the block event and the posture bonus. Clips ER-A1..A4 with Antigravity.
 
-- **Elden Ring controls (owner 2026-11-06, C-939):** standing dodge tap = backstep that keeps facing, jump light and jump heavy get their own clips. Spec and task split: `Boss/ER_PLAYER_CONTROLS_SPEC.md`. Antigravity: ER-A1 Backstep_Back first, then ER-A4 guard counter, ER-A2/A3 (Blender). Lead: ER-C1 plumbing and BUILD-237 green 480/480; the optional clip remains dormant until imported. Codex ER-C2 was accepted (C-942). ER-C5 pure guard-counter rules and tests are authored; Lead build/run pending. ER-C1 runtime cases: `Boss/ER_C1_BACKSTEP_TEST_PLAN.md`. ER-C5 proposal defaults are in `RPGGuardCounterRules.h`; no owner approval or runtime proof is implied.
+- **Elden Ring controls (owner 2026-11-06, C-939):** standing dodge tap = backstep that keeps facing, jump light and jump heavy get their own clips. Spec and task split: `Documentation/Boss/ER_PLAYER_CONTROLS_SPEC.md`. Antigravity: ER-A1 Backstep_Back first, then ER-A4 guard counter, ER-A2/A3 (Blender). Lead: ER-C1 plumbing and BUILD-237 green 480/480; the optional clip remains dormant until imported. Codex ER-C2 was accepted (C-942). ER-C5 pure guard-counter rules and tests are authored; Lead build/run pending. ER-C1 runtime cases: `Documentation/Boss/ER_C1_BACKSTEP_TEST_PLAN.md`. ER-C5 proposal defaults are in `RPGGuardCounterRules.h`; no owner approval or runtime proof is implied.
 ### C-824 G044 phase decision
 
 - **Claude confirmed `PhaseTwo` is the selected phase-transition record; the fight starts in its implicit base phase. Receipt and new-selection authoring constants now use `PhaseTwo`; the source property comment and G044 guide explain the field semantics. G044 is ready for Claude's headless run and PIE; Codex made no asset changes. Details: `Documentation/Boss/G044_ENCOUNTER_SELECTION_PIE_EXPECTED.md`.
