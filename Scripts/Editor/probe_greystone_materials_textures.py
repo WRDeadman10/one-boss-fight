@@ -69,16 +69,99 @@ def _collect_mesh_materials(mesh_obj) -> list[dict]:
 
 
 def _collect_used_textures(mat_obj) -> list[str]:
+    """Walk MaterialInterface parent/base_material chain and extract parameter + used textures read-only."""
     if mat_obj is None or unreal is None:
         return []
-    if not hasattr(unreal, "MaterialEditingLibrary") or not hasattr(unreal.MaterialEditingLibrary, "get_used_textures"):
-        return []
-    try:
-        textures = unreal.MaterialEditingLibrary.get_used_textures(mat_obj) or []
-    except Exception as exc:
-        _log(f"WARN get_used_textures failed for {_object_path(mat_obj)}: {exc}")
-        return []
-    return sorted({p for p in (_object_path(t) for t in textures) if p})
+    mat_lib = getattr(unreal, "MaterialEditingLibrary", None)
+    found: set[str] = set()
+    visited: set[str] = set()
+    queue = [mat_obj]
+    root_materials = []
+
+    # 1) Walk MaterialInstance parent chain, collecting explicit texture parameter values
+    while queue:
+        cur = queue.pop(0)
+        if cur is None:
+            continue
+        cur_id = _object_path(cur) or str(id(cur))
+        if cur_id in visited:
+            continue
+        visited.add(cur_id)
+
+        if hasattr(cur, "get_editor_property"):
+            try:
+                tpvs = cur.get_editor_property("texture_parameter_values") or []
+            except Exception:
+                tpvs = []
+            for entry in tpvs:
+                try:
+                    tex = entry.get_editor_property("parameter_value")
+                except Exception:
+                    tex = None
+                tex_path = _object_path(tex)
+                if tex_path:
+                    found.add(tex_path)
+            try:
+                parent_obj = cur.get_editor_property("parent")
+            except Exception:
+                parent_obj = None
+            if parent_obj is not None:
+                queue.append(parent_obj)
+
+        if mat_lib is not None and hasattr(mat_lib, "get_texture_parameter_names") and hasattr(
+            mat_lib, "get_material_instance_texture_parameter_value"
+        ):
+            try:
+                param_names = mat_lib.get_texture_parameter_names(cur) or []
+            except Exception:
+                param_names = []
+            for pname in param_names:
+                for target in (mat_obj, cur):
+                    try:
+                        tex = mat_lib.get_material_instance_texture_parameter_value(target, pname)
+                    except Exception:
+                        tex = None
+                    tex_path = _object_path(tex)
+                    if tex_path:
+                        found.add(tex_path)
+
+        mat_cls = getattr(unreal, "Material", None)
+        is_base_material = isinstance(cur, mat_cls) if isinstance(mat_cls, type) else False
+        if not is_base_material and not hasattr(cur, "get_editor_property"):
+            is_base_material = True
+        if is_base_material:
+            root_materials.append(cur)
+
+    # 2) Resolve UMaterial base directly (handles UMaterialInterface::GetBaseMaterial)
+    if hasattr(mat_obj, "get_base_material"):
+        try:
+            base_mat = mat_obj.get_base_material()
+        except Exception:
+            base_mat = None
+        if base_mat is not None:
+            root_materials.append(base_mat)
+
+    # 3) Query MaterialEditingLibrary.get_used_textures only on resolved base Material objects
+    if mat_lib is not None and hasattr(mat_lib, "get_used_textures"):
+        seen_roots: set[str] = set()
+        for base_mat in root_materials:
+            if base_mat is None:
+                continue
+            base_id = _object_path(base_mat) or str(id(base_mat))
+            if base_id in seen_roots:
+                continue
+            seen_roots.add(base_id)
+            try:
+                textures = mat_lib.get_used_textures(base_mat) or []
+            except Exception as exc:
+                _log(f"WARN get_used_textures failed for {_object_path(base_mat)}: {exc}")
+                textures = []
+            for t in textures:
+                tex_path = _object_path(t)
+                if tex_path:
+                    found.add(tex_path)
+
+    return sorted(found)
 
 
 def _collect_package_dependencies(package_path: str) -> dict[str, list[str]]:

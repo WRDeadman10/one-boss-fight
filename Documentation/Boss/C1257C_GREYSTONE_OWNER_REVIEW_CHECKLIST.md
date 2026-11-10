@@ -30,7 +30,18 @@ For each animation state captured in the Greystone review reel / gameplay showca
 
 ---
 
-## 3. Prerequisite Gates Before Switch Activation
+## 3. Pre-Populated Capture & Clip Routing (`BC-A24`, `[C-1282]` Status)
+
+- **Root-Motion Paired Evidence (Currently Executing under `[C-1282]`):**
+  - Mannequin control arm: `Docs/BossCombatReview/Execution/Claude/P_C1282_GREYSTONE_RM_MANNEQUIN/` (**IN-FLIGHT / PENDING**)
+  - Greystone child arm: `Docs/BossCombatReview/Execution/Claude/P_C1282_GREYSTONE_RM_GREYSTONE/` (**IN-FLIGHT / PENDING**)
+- **Owner 8-Slot Visual Review Frames / Reel Destination (`BC-A21..A23`):**
+  - Target folder: `D:/FightVideo/greystone_review/` (**PENDING CAPTURE** — populated once root-motion + visual review capture passes execute; stitched clip never staged in git).
+  - Pre-mapped clip slots (`01–08` matching Section 2 above): `01_Idle`, `02_Run`, `03_LightAttack`, `04_HeavyAttack`, `05_Roll` (`215–290 cm` gate), `06_Backstep` (`84–98 cm` gate), `07_GuardCounter`, `08_Plunge`.
+
+---
+
+## 4. Prerequisite Gates Before Switch Activation
 
 1. **Root-Motion PIE Fidelity Gate (C-1257b):**
    - Paired mannequin vs Greystone-child travel difference must be within <= 10% (backstep 84–98 cm, roll 215–290 cm) with zero play-rate hacking.
