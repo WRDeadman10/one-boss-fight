@@ -6,6 +6,8 @@
 #include "Player/RPGEncounterBinding.h"
 #include "RPGBossEncounterDefinition.generated.h"
 
+class URPGBossFrameworkProfile;
+
 /** Authored selection for one encounter. It stores configuration, never actor references. */
 UCLASS(BlueprintType)
 class ONEBOSSFIGHT_API URPGBossEncounterDefinition : public UPrimaryDataAsset
@@ -24,6 +26,9 @@ public:
 	UPROPERTY(EditAnywhere, Category="Encounter") FName InitialBossPhase;
 	UPROPERTY(EditAnywhere, Category="Definitions") TSoftObjectPtr<URPGBossDefinition> BossDefinition;
 	UPROPERTY(EditAnywhere, Category="Definitions") TSoftObjectPtr<URPGBossDefinition> PlayerDefinition;
+	/** Explicit opt-in encounter variant. It requires the default-off rpg.FrameworkEncounterSelection CVar and a placed framework boss participant. */
+	UPROPERTY(EditAnywhere, Category="Framework") bool bUseFrameworkBoss = false;
+	UPROPERTY(EditAnywhere, Category="Framework") TSoftObjectPtr<URPGBossFrameworkProfile> FrameworkBossProfile;
 
 	/** Structural validation only. Definition contents are validated by the accepted compiler before registration. */
 	bool ValidateSelectionRecord(FString& OutError) const;

@@ -83,6 +83,8 @@ private:
 	RPGParry::FState State;
 	bool bBound = false;
 	bool bTagOn = false;
+	/** Generation that opened the currently owned parry tag. */
+	uint64 OwnedTagGeneration = 0;
 	bool bCostPending = false, bPendingParried = false, bRollbackPending = false;
 	int32 RefundRetries = 0; // audit X-450: a failed refund write is retried a few times, then given up with a log line
 	RPGParryGrade::EGrade LastGrade = RPGParryGrade::EGrade::None;

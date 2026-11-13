@@ -11,6 +11,14 @@ class APawn;
 class URPGBossEncounterDefinition;
 class UWorld;
 
+namespace RPGEncounterSelectionRules
+{
+	inline bool AllowsFrameworkDefinition(bool bRequested, int32 FrameworkSelectionOptIn)
+	{
+		return !bRequested || FrameworkSelectionOptIn == 1;
+	}
+}
+
 namespace RPGEncounterPlayerIdentity
 {
 	/** Counts locally possessed, valid, live pack-player pawns and returns the sole pawn when exactly one exists. */
@@ -24,17 +32,23 @@ class ONEBOSSFIGHT_API URPGEncounterSelectionSubsystem : public UGameInstanceSub
 	GENERATED_BODY()
 
 public:
+	#if WITH_EDITORONLY_DATA
+	UFUNCTION(BlueprintCallable, Category="Encounter|Test", meta=(WorldContext="WorldContextObject"))
+	#endif
+	static URPGEncounterSelectionSubsystem* GetForWorld(const UObject* WorldContextObject);
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
 	UFUNCTION(BlueprintCallable, Category="Encounter") void SetSelectedDefinition(URPGBossEncounterDefinition* Definition);
 	UFUNCTION(BlueprintCallable, Category="Encounter") void ClearSelectedDefinition();
 	UFUNCTION(BlueprintPure, Category="Encounter") bool HasSelectionRequest() const;
-	UFUNCTION(BlueprintPure, Category="Encounter") FString GetSelectionDiagnostic() const { return SelectionDiagnostic; }
+	UFUNCTION(BlueprintPure, Category="Encounter") FString GetSelectionDiagnostic() const;
 	/** Read-only requested path for diagnostics; does not synchronously load an unresolved asset. */
 	FString GetRequestedDefinitionPathForDiagnostics() const;
 	/** Read-only selected asset's stored membership digest; empty when a console path is unresolved. */
 	FString GetRequestedManifestHashForDiagnostics() const;
+	/** Read-only selected asset's initial phase; none when a console path is unresolved. */
+	FName GetRequestedInitialBossPhaseForDiagnostics() const;
 
 	/** Resolve the selected soft path on demand. A nonempty but invalid path remains a selected request and must fail closed. */
 	URPGBossEncounterDefinition* ResolveSelectedDefinition(FString& OutError);
@@ -49,6 +63,9 @@ public:
 private:
 	UPROPERTY(Transient) TObjectPtr<URPGBossEncounterDefinition> SelectedDefinition;
 	UPROPERTY(Transient) FString SelectionDiagnostic;
+	/** Diagnostics may be published by the explicit off-thread refusal path; protect reads/writes without touching world state. */
+	mutable FCriticalSection SelectionDiagnosticMutex;
+	void RecordSelectionDiagnostic(const FString& Diagnostic);
 	/** Benchmark-only startup selection. Empty unless -RPGBenchmark and its explicit H019 argument are both present. */
 	FString BenchmarkDefinitionPath;
 	bool BuildWorldBindingInternal(UWorld& World, uint64 ParticipantGeneration, int32 ResetCount, bool bAllowBegunPlay, ARPGEncounterBinding*& OutBinding,

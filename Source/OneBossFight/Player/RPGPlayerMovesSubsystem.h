@@ -49,6 +49,11 @@ public:
 	/** Captured runtime selection/participant/activation snapshot for opt-in parity tooling. */
 	UFUNCTION(BlueprintCallable, Category="Encounter|Diagnostics")
 	FString BuildEncounterParitySnapshot() const;
+	/** Development-only deferred opt-in activation used after a transient test boss has spawned in a begun PIE world. */
+#if WITH_EDITORONLY_DATA
+	UFUNCTION(BlueprintCallable, Category="Encounter|Test")
+#endif
+	bool ActivateDeferredSelectionForTest();
 
 	/** Stores DefaultEncounterDefinition as the game instance's selection when none exists (see bDefaultToDataStartup). A load failure leaves the legacy route in place.
 	 *  Runs in PostInitialize and OnWorldBeginPlay; public so tests can drive it. */

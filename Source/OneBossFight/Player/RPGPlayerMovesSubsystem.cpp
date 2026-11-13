@@ -2,6 +2,7 @@
 
 #include "Player/RPGPlayerMovesSubsystem.h"
 #include "Player/RPGBossEncounterDefinition.h"
+#include "Boss/RPGFrameworkBossCharacter.h"
 
 #include "Player/RPGEncounterSelectionSubsystem.h"
 #include "Player/RPGEncounterBinding.h"
@@ -18,6 +19,7 @@
 #include "Player/RPGBuildLoadout.h"
 #include "Player/RPGBossStagger.h"
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGNativeBossHealth.h"
 #include "Player/RPGBossDormantWake.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGAttackTracker.h"
@@ -169,11 +171,49 @@ void URPGPlayerMovesSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 			}
 		}
 		URPGBossEncounterDefinition* Definition = bReady ? Selection->ResolveSelectedDefinition(Error) : nullptr;
+		if (bReady && Definition && IsValid(Binding))
+		{
+			for (const FRPGPlacedParticipantBinding& Participant : Binding->Participants)
+			{
+				if (Participant.Slot != Definition->BossSlot || !IsValid(Participant.Actor)) { continue; }
+				if (const IRPGNativeBossHealth* Native = Cast<IRPGNativeBossHealth>(Participant.Actor))
+				{
+					const bool bUninitializedSelectedFramework = Definition->bUseFrameworkBoss
+						&& Cast<ARPGFrameworkBossCharacter>(Participant.Actor) && Native->NativeEncounterGeneration() == 0;
+					if (Native->NativeEncounterGeneration() != Binding->ParticipantGeneration && !bUninitializedSelectedFramework)
+					{
+						bReady = false;
+						Error = TEXT("EncounterActivation.NativeGenerationMismatch");
+					}
+				}
+			}
+		}
 		if (Definition) { LastEncounterManifestHash = Definition->StableManifestHash; }
 		if (bReady && Definition)
 		{
 			FRPGWorldActivationResult Attempt = RPGBossActivation::ActivateWorld(&InWorld, Binding, Selections, Definition->StableManifestHash);
-			if (Attempt.Succeeded())
+			bool bSelectedFrameworkInitialized = true;
+			if (Attempt.Succeeded() && Definition->bUseFrameworkBoss)
+			{
+				ARPGFrameworkBossCharacter* FrameworkBoss = nullptr;
+				APawn* SelectedPlayer = nullptr;
+				for (const FRPGPlacedParticipantBinding& Participant : Binding->Participants)
+				{
+					if (Participant.Slot == Definition->BossSlot) { FrameworkBoss = Cast<ARPGFrameworkBossCharacter>(Participant.Actor); }
+					else if (Participant.Slot == Definition->PlayerSlot) { SelectedPlayer = Cast<APawn>(Participant.Actor); }
+				}
+				bSelectedFrameworkInitialized = IsValid(FrameworkBoss) && IsValid(SelectedPlayer)
+					&& FrameworkBoss->InitializeSelectedEncounter(*Binding, SelectedPlayer, Error);
+				if (!bSelectedFrameworkInitialized)
+				{
+					if (Error.IsEmpty()) { Error = TEXT("Framework.Boss.SelectedParticipantMissing"); }
+					const FRPGPreparationAbortReport Release = Attempt.Release();
+					if (!Release.Errors.IsEmpty()) { Error += TEXT("; cleanup: ") + FString::Join(Release.Errors, TEXT("; ")); }
+					Attempt.Outcome = ERPGWorldActivationOutcome::HardError;
+					Attempt.Reason = FName(TEXT("ActivationWorld.FrameworkInitialization"));
+				}
+			}
+			if (Attempt.Succeeded() && bSelectedFrameworkInitialized)
 			{
 				LastEncounterOutcome = TEXT("Activated");
 				LastEncounterReason.Reset();
@@ -188,6 +228,24 @@ void URPGPlayerMovesSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 				ActiveBossDefinitionPath = Definition->BossDefinition.ToSoftObjectPath();
 				ActivePlayerDefinitionPath = Definition->PlayerDefinition.ToSoftObjectPath();
 				LastAcceptedParticipantGeneration = Binding->ParticipantGeneration;
+				for (const FRPGPlacedParticipantBinding& Participant : Binding->Participants)
+				{
+					AActor* SelectedBoss = Participant.Actor;
+					if (Participant.Slot == Definition->BossSlot && IsValid(SelectedBoss) && SelectedBoss->GetClass()->ImplementsInterface(URPGNativeBossHealth::StaticClass())
+						&& !SelectedBoss->FindComponentByClass<URPGBossHud>())
+					{
+						NewObject<URPGBossHud>(SelectedBoss, TEXT("RPGBossHud"))->RegisterComponent();
+					}
+					if (Participant.Slot == Definition->BossSlot && IsValid(SelectedBoss) && SelectedBoss->GetClass()->ImplementsInterface(URPGNativeBossHealth::StaticClass())
+						&& !SelectedBoss->FindComponentByClass<URPGBossMusic>())
+					{
+						URPGBossMusic* Music = NewObject<URPGBossMusic>(SelectedBoss, TEXT("RPGBossMusic"));
+						Music->Music = LoadObject<USoundBase>(nullptr, TEXT("/Game/OneBossFight/Audio/MX_Boss01_Phase1.MX_Boss01_Phase1"), nullptr, LOAD_NoWarn);
+						if (!Music->Music) { Music->Music = LoadObject<USoundBase>(nullptr, TEXT("/Game/StarterContent/Audio/Starter_Music_Cue.Starter_Music_Cue")); }
+						Music->PhaseTwoMusic = LoadObject<USoundBase>(nullptr, TEXT("/Game/OneBossFight/Audio/MX_Boss01_Phase2.MX_Boss01_Phase2"), nullptr, LOAD_NoWarn);
+						Music->RegisterComponent();
+					}
+				}
 				for (TActorIterator<APawn> It(&InWorld); It; ++It)
 				{
 					if (IsPackBoss(*It)) { BindResetBroadcast(*It); break; }
@@ -195,7 +253,7 @@ void URPGPlayerMovesSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 			}
 			else
 			{
-				Error = Attempt.Errors.IsEmpty() ? Attempt.Reason.ToString() : FString::Join(Attempt.Errors, TEXT("; "));
+				if (Error.IsEmpty()) { Error = Attempt.Errors.IsEmpty() ? Attempt.Reason.ToString() : FString::Join(Attempt.Errors, TEXT("; ")); }
 				if (Attempt.Batch.IsValid())
 				{
 					double ReleaseStartSeconds = 0.0;
@@ -628,7 +686,7 @@ FString URPGPlayerMovesSubsystem::BuildEncounterParitySnapshot() const
 	const UWorld* World = GetWorld();
 	const ARPGEncounterBinding* Binding = Cast<ARPGEncounterBinding>(ActiveTransientBinding.Get());   // the weak pointer is typed AActor
 	const bool bHasBinding = IsValid(Binding);
-	const bool bSelected = LastEncounterRoute == TEXT("data");
+	const bool bActiveBinding = IsValid(Binding);
 
 	TSharedRef<FJsonObject> Root = MakeShared<FJsonObject>();
 	Root->SetStringField(TEXT("schema"), TEXT("onebossfight.encounter-runtime-snapshot/v1"));
@@ -641,27 +699,21 @@ FString URPGPlayerMovesSubsystem::BuildEncounterParitySnapshot() const
 	Root->SetNumberField(TEXT("reset_count"), bHasBinding ? Binding->ResetCount : 0);
 
 	TSharedRef<FJsonObject> Selection = MakeShared<FJsonObject>();
-	Selection->SetBoolField(TEXT("selected"), bSelected);
-	Selection->SetStringField(TEXT("definition"), bHasBinding ? Binding->SelectionDefinitionPath : FString());
-	Selection->SetStringField(TEXT("manifest_sha256"), bHasBinding ? Binding->StableManifestHash : LastEncounterManifestHash);
+	const UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	const URPGEncounterSelectionSubsystem* Store = GameInstance ? GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>() : nullptr;
+	const bool bHasRequest = Store && Store->HasSelectionRequest();
+	Selection->SetBoolField(TEXT("selected"), bHasBinding || bHasRequest);
+	Selection->SetBoolField(TEXT("active_binding"), bHasBinding);
+	Selection->SetBoolField(TEXT("request_pending"), !bHasBinding && bHasRequest);
+	Selection->SetStringField(TEXT("definition"), bHasBinding ? Binding->SelectionDefinitionPath
+		: (bHasRequest ? Store->GetRequestedDefinitionPathForDiagnostics() : FString()));
+	Selection->SetStringField(TEXT("manifest_sha256"), bHasBinding ? Binding->StableManifestHash
+		: (bHasRequest ? Store->GetRequestedManifestHashForDiagnostics() : FString()));
 	Selection->SetStringField(TEXT("encounter_instance"), bHasBinding ? Binding->EncounterInstance.ToString() : FString());
 	Selection->SetStringField(TEXT("boss_slot"), bHasBinding ? Binding->BossSlot.ToString() : ActiveBossSlot.ToString());
 	Selection->SetStringField(TEXT("player_slot"), bHasBinding ? Binding->PlayerSlot.ToString() : ActivePlayerSlot.ToString());
-	Selection->SetStringField(TEXT("initial_boss_phase"), bHasBinding ? Binding->InitialBossPhase.ToString() : ActiveBossPhase.ToString());
-	if (!bHasBinding && bSelected)
-	{
-		if (UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr)
-		{
-			if (const URPGEncounterSelectionSubsystem* Store = GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>())
-			{
-				Selection->SetStringField(TEXT("definition"), Store->GetRequestedDefinitionPathForDiagnostics());
-				if (LastEncounterManifestHash.IsEmpty())
-				{
-					Selection->SetStringField(TEXT("manifest_sha256"), Store->GetRequestedManifestHashForDiagnostics());
-				}
-			}
-		}
-	}
+	Selection->SetStringField(TEXT("initial_boss_phase"), bHasBinding ? Binding->InitialBossPhase.ToString()
+		: (bHasRequest ? Store->GetRequestedInitialBossPhaseForDiagnostics().ToString() : FString()));
 	Root->SetObjectField(TEXT("selection"), Selection);
 
 	TSharedRef<FJsonObject> Activation = MakeShared<FJsonObject>();
@@ -1123,4 +1175,113 @@ void URPGPlayerMovesSubsystem::ApplyDefaultDataSelection()
 	}
 	Selection->SetSelectedDefinition(Definition);
 	UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] default data startup: selected %s for map %s"), *DefaultEncounterDefinition, *DefaultEncounterMap);
+}
+
+bool URPGPlayerMovesSubsystem::ActivateDeferredSelectionForTest()
+{
+#if UE_BUILD_SHIPPING
+	return false;
+#else
+	UWorld* World = GetWorld();
+	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	URPGEncounterSelectionSubsystem* Selection = GameInstance ? GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>() : nullptr;
+	IConsoleVariable* FrameworkGate = IConsoleManager::Get().FindConsoleVariable(TEXT("rpg.FrameworkEncounterSelection"));
+	if (!IsInGameThread() || !World || !World->IsGameWorld() || !World->HasBegunPlay() || World->GetNetMode() != NM_Standalone
+		|| !Selection || !Selection->HasSelectionRequest() || !FrameworkGate || FrameworkGate->GetInt() != 1)
+	{
+		LastEncounterOutcome = TEXT("HardError");
+		LastEncounterReason = TEXT("EncounterActivation.DeferredTestAuthority");
+		return false;
+	}
+	// A begun arena can already own its configured pack selection. The deferred
+	// test path may replace only that transient lease, after the test driver has
+	// isolated/destroyed the pack boss; production startup remains untouched.
+	if (ActiveDataActivation.Batch.IsValid())
+	{
+		const FRPGPreparationAbortReport OldRelease = ActiveDataActivation.ReleaseForRebind();
+		if (!OldRelease.IsClean())
+		{
+			LastEncounterOutcome = TEXT("HardError");
+			LastEncounterReason = TEXT("EncounterActivation.DeferredTestPriorLeaseRelease");
+			return false;
+		}
+		if (AActor* OldBinding = ActiveTransientBinding.Get()) { OldBinding->Destroy(); }
+		ActiveTransientBinding.Reset();
+		ActiveSelectionDefinition.Reset();
+	}
+	FString Error;
+	URPGBossEncounterDefinition* Definition = Selection->ResolveSelectedDefinition(Error);
+	if (!Definition || !Definition->bUseFrameworkBoss)
+	{
+		LastEncounterOutcome = TEXT("HardError");
+		LastEncounterReason = Error.IsEmpty() ? TEXT("EncounterActivation.DeferredTestFrameworkDefinitionRequired") : Error;
+		return false;
+	}
+	ARPGEncounterBinding* Binding = nullptr;
+	TArray<RPGBossWorldInputCompiler::FSelection> Selections;
+	if (!Selection->BuildWorldBindingForRebind(*World, 1, 0, Binding, Selections, Error) || !IsValid(Binding))
+	{
+		if (IsValid(Binding)) { Binding->Destroy(); }
+		LastEncounterOutcome = TEXT("HardError");
+		LastEncounterReason = Error.IsEmpty() ? TEXT("EncounterActivation.DeferredTestCensus") : Error;
+		return false;
+	}
+	ARPGFrameworkBossCharacter* Boss = nullptr;
+	APawn* Player = nullptr;
+	for (const FRPGPlacedParticipantBinding& Participant : Binding->Participants)
+	{
+		if (Participant.Slot == Definition->BossSlot) { Boss = Cast<ARPGFrameworkBossCharacter>(Participant.Actor); }
+		else if (Participant.Slot == Definition->PlayerSlot) { Player = Cast<APawn>(Participant.Actor); }
+	}
+	if (!IsValid(Boss) || !IsValid(Player))
+	{
+		Binding->Destroy();
+		LastEncounterOutcome = TEXT("HardError");
+		LastEncounterReason = TEXT("EncounterActivation.DeferredTestParticipants");
+		return false;
+	}
+	FRPGWorldActivationResult Attempt = RPGBossActivation::ActivateWorldForRebind(World, Binding, Selections,
+		Definition->StableManifestHash, Binding->ParticipantGeneration);
+	if (!Attempt.Succeeded() || !Boss->InitializeSelectedEncounterForTest(Binding, Player, Error))
+	{
+		if (Error.IsEmpty()) { Error = Attempt.Errors.IsEmpty() ? Attempt.Reason.ToString() : FString::Join(Attempt.Errors, TEXT("; ")); }
+		const FRPGPreparationAbortReport Release = Attempt.ReleaseForRebind();
+		if (!Release.Errors.IsEmpty()) { Error += TEXT("; cleanup: ") + FString::Join(Release.Errors, TEXT("; ")); }
+		Binding->Destroy();
+		LastEncounterOutcome = TEXT("HardError");
+		LastEncounterReason = Error;
+		return false;
+	}
+	LastEncounterRoute = TEXT("data");
+	LastEncounterOutcome = TEXT("Activated");
+	LastEncounterReason.Reset();
+	LastEncounterManifestHash = Definition->StableManifestHash;
+	UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] deferred_selected route=data definition=%s hash=%s bossSlot=%s playerSlot=%s generation=%llu"),
+		*Definition->GetPathName(), *Definition->StableManifestHash, *Definition->BossSlot.ToString(), *Definition->PlayerSlot.ToString(),
+		static_cast<unsigned long long>(Binding->ParticipantGeneration));
+	ActiveTransientBinding = Binding;
+	ActiveDataActivation = MoveTemp(Attempt);
+	ActiveSelectionDefinition = Definition;
+	ActiveManifestHash = Definition->StableManifestHash;
+	ActiveEncounterInstance = Binding->EncounterInstance;
+	ActiveBossSlot = Definition->BossSlot;
+	ActivePlayerSlot = Definition->PlayerSlot;
+	ActiveBossPhase = Definition->InitialBossPhase;
+	ActiveBossDefinitionPath = Definition->BossDefinition.ToSoftObjectPath();
+	ActivePlayerDefinitionPath = Definition->PlayerDefinition.ToSoftObjectPath();
+	LastAcceptedParticipantGeneration = Binding->ParticipantGeneration;
+	AttachSelectedPlayerComponents(Player);
+	AttachBossDiagnostics(Boss);
+	if (!Boss->FindComponentByClass<URPGBossHud>()) { NewObject<URPGBossHud>(Boss, TEXT("RPGBossHud"))->RegisterComponent(); }
+	if (!Boss->FindComponentByClass<URPGBossMusic>())
+	{
+		URPGBossMusic* Music = NewObject<URPGBossMusic>(Boss, TEXT("RPGBossMusic"));
+		Music->Music = LoadObject<USoundBase>(nullptr, TEXT("/Game/OneBossFight/Audio/MX_Boss01_Phase1.MX_Boss01_Phase1"), nullptr, LOAD_NoWarn);
+		Music->PhaseTwoMusic = LoadObject<USoundBase>(nullptr, TEXT("/Game/OneBossFight/Audio/MX_Boss01_Phase2.MX_Boss01_Phase2"), nullptr, LOAD_NoWarn);
+		Music->RegisterComponent();
+	}
+	UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] route=data reason=DeferredTestOptIn outcome=Activated definition=%s generation=%llu"),
+		*Definition->GetPathName(), static_cast<unsigned long long>(Binding->ParticipantGeneration));
+	return true;
+#endif
 }

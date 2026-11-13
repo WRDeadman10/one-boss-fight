@@ -46,6 +46,12 @@ void URPGBossShockwave::Launch()
 	{
 		return;
 	}
+	if (!IsLandingAllowed(Boss->GetActorLocation(), LandingArenaCenter, LandingArenaRadiusCm))
+	{
+		// BQ-16 / KI-065 (opt-in): a landing outside the configured arena starts no wave.
+		UE_LOG(LogRPGWave, Log, TEXT("%s: wave refused, landing outside the arena (radius %.0f)"), *GetOwner()->GetName(), LandingArenaRadiusCm);
+		return;
+	}
 	Origin = Boss->GetActorLocation();
 	GroundZ = Origin.Z - (Boss->GetCapsuleComponent() ? Boss->GetCapsuleComponent()->GetScaledCapsuleHalfHeight() : 0.f);
 	Radius = StartRadius;
@@ -115,6 +121,7 @@ void URPGBossShockwave::Resolve()
 	Payload.AttackInstance = LastInstance;
 	Payload.Generation = LaunchGeneration;
 	Payload.HPDamage = Damage;
+	Payload.bRequestHitReaction = true; // BQ-17: no effect unless rpg.Boss.ProjectHitReaction is on
 	URPGDamageResolver* Resolver = URPGDamageResolver::FindOrAdd(GetOwner());
 	Resolver->NoteOverlap(Payload);
 	double Health = 0.0;

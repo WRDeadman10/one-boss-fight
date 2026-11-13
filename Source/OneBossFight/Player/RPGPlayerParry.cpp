@@ -240,7 +240,7 @@ void URPGPlayerParry::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	for (int32 Attempt = 0; bTagOn && Attempt < 5; ++Attempt) SetParryTag(false, TEXT("EndPlay"));
 	if (bTagOn)
 	{
-		RPGOwnedTagCleanup::ScheduleAfterRemovalFailure(GetOwner(), TEXT("Status.ParryActive"), TEXT("RPGPlayerParry.EndPlay"));
+		RPGOwnedTagCleanup::ScheduleAfterRemovalFailure(GetOwner(), TEXT("Status.ParryActive"), TEXT("RPGPlayerParry.EndPlay"), OwnedTagGeneration);
 	}
 	Super::EndPlay(EndPlayReason);
 }
@@ -256,5 +256,13 @@ void URPGPlayerParry::SetParryTag(bool bOn, const TCHAR* Reason)
 	const TCHAR* Param = bOn ? TEXT("TagToAdd") : TEXT("TagToRemove");
 	const bool bCalled = RPGPack::CallBlueprintFunction(GetOwner(), Function, [&Tag, Param](UFunction& F, uint8* P) { RPGPack::SetTag(F, P, Param, Tag); }, [](UFunction&, uint8*) {});
 	bTagOn = bOn ? bCalled : !bCalled; // audit X-441 #15: a failed removal keeps ownership so a later tick or EndPlay retries
+	if (bOn && bCalled)
+	{
+		OwnedTagGeneration = RPGOwnedTagCleanup::CurrentGeneration(GetOwner());
+	}
+	else if (!bOn && bCalled)
+	{
+		OwnedTagGeneration = 0;
+	}
 	UE_LOG(LogRPGParry, Display, TEXT("[FrameworkProof] parry_tag state=%s call=%s reason=%s"), bOn ? TEXT("added") : TEXT("removed"), bCalled ? TEXT("ok") : TEXT("failed"), Reason);
 }

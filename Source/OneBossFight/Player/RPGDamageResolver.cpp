@@ -4,6 +4,8 @@
 #include "Player/RPGPlayerParry.h"
 #include "Player/RPGDodgeTiming.h"
 #include "Engine/World.h"
+#include "Animation/AnimMontage.h"
+#include "HAL/IConsoleManager.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "Pack/RPGBlueprintCall.h"
@@ -11,6 +13,10 @@
 #include "Player/RPGBossEncounter.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRPGDamage, Log, All);
+
+// BQ-17 (KI-067/068): default off, so behaviour is unchanged until it is switched on deliberately.
+static TAutoConsoleVariable<int32> CVarProjectHitReaction(TEXT("rpg.Boss.ProjectHitReaction"), 0,
+	TEXT("1 plays ProjectHitReactionMontage on the player after a non-lethal accepted A4/A5/A6 hit; 0 (default) damage only, unchanged."), ECVF_Default);
 
 using namespace RPGPack;
 
@@ -202,6 +208,16 @@ FRPGDamageResult URPGDamageResolver::Resolve(AActor* Target, const FRPGDamagePay
 		break;
 	default:
 		break;
+	}
+	if (RPGDamageRules::ShouldRequestHitReaction(CVarProjectHitReaction.GetValueOnGameThread() != 0, Payload.bRequestHitReaction, Result.Outcome, Result.bLethal, !ProjectHitReactionMontage.IsNull()))
+	{
+		ACharacter* Hit = Cast<ACharacter>(Target);
+		UAnimMontage* Montage = ProjectHitReactionMontage.LoadSynchronous();
+		if (Hit && Montage)
+		{
+			Hit->PlayAnimMontage(Montage);
+			UE_LOG(LogRPGDamage, Log, TEXT("%s: hit reaction %s played (KI-067/068)"), *Payload.MoveId.ToString(), *Montage->GetName());
+		}
 	}
 	Record(Payload, Result.Outcome, Reason, Result.HealthBefore, Result.HealthAfter);
 	return Result;

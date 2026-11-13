@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "RPGDamageResolver.generated.h"
 
+class UAnimMontage;
+
 /** What happened to one contact between a boss move and the player (SPEC M2, Freeze 12.1 and 21). */
 UENUM(BlueprintType)
 enum class ERPGDamageOutcome : uint8
@@ -51,6 +53,9 @@ struct FRPGDamagePayload
 
 	/** Opt in only for authored moves whose guard response is supported. A4 low sweep is blockable; other project moves retain their current policy. */
 	bool bCanBeBlocked = false;
+
+	/** BQ-17 (KI-067/068): A4, A5 and A6 opt in. A reaction plays only when rpg.Boss.ProjectHitReaction is 1 (default 0) and ProjectHitReactionMontage is set. */
+	bool bRequestHitReaction = false;
 };
 
 USTRUCT(BlueprintType)
@@ -113,6 +118,13 @@ namespace RPGDamageRules
 	{
 		return Base == ERPGDamageOutcome::Accepted && bBlockable && bBlocking ? ERPGDamageOutcome::Blocked : Base;
 	}
+
+	/** BQ-17 (KI-067/068): a project hit asks for a reaction only when the CVar is on, the move opted in, the health was really taken, the hit was not lethal
+	 *  (Freeze 1267: a lethal hit is followed by nothing but the death) and a montage is configured. Pure, so a test can pin it. */
+	inline bool ShouldRequestHitReaction(bool bCVarOn, bool bMoveOptIn, ERPGDamageOutcome Outcome, bool bLethal, bool bHasMontage)
+	{
+		return bCVarOn && bMoveOptIn && Outcome == ERPGDamageOutcome::Accepted && !bLethal && bHasMontage;
+	}
 }
 
 /**
@@ -135,6 +147,10 @@ public:
 	/** Audit entries kept (the newest). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (ClampMin = "8"))
 	int32 MaxAuditEntries = 64;
+
+	/** BQ-17 (KI-067/068): the player montage for an opted-in project hit. Unset (the default) = no reaction. The asset to use is an ENG/ART choice. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	TSoftObjectPtr<UAnimMontage> ProjectHitReactionMontage;
 
 	/** Overlap notes of one swing closer than this (seconds) are one entry: a contact episode, not one entry per tick. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (ClampMin = "0.0"))
@@ -185,11 +201,15 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Damage")
 	FString BuildSummaryLine() const;
 
-	/** Tests (the hooks stay in every build: UHT does not evaluate the shipping switch): resolves a payload against the first player pawn. Returns the outcome name. Generation -1 = the current one. */
+	/** Editor test hook: resolves a payload against the first player pawn. The C++ stub remains available but is not reflected in Shipping. Generation -1 = the current one. */
+	#if WITH_EDITORONLY_DATA
 	UFUNCTION(BlueprintCallable, Category = "Damage")
+	#endif
 	FString ResolveForTest(FName MoveId, int32 Instance, float HP, FName HitKey, int32 Generation = -1);
 
+	#if WITH_EDITORONLY_DATA
 	UFUNCTION(BlueprintCallable, Category = "Damage")
+	#endif
 	void NoteOverlapForTest(FName MoveId, int32 Instance, FName HitKey);
 
 private:

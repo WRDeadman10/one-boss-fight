@@ -139,6 +139,7 @@ void URPGBossStagger::TickClipDown(UAnimInstance* Anim, double Elapsed, double N
 		ClipStage = EClipStage::GetUp;
 		Phase = EPhase::GetUp;
 		PhaseStart = Now;
+		ReapplyImmunityForGetUp();  // BQ-19 (no-op unless opted in)
 		UE_LOG(LogRPGStagger, Log, TEXT("%s: down for %.2f s, %d critical hits, getting up (clip, rate -%.2f)"), *GetOwner()->GetName(), Elapsed, CriticalHitCount, GetUpRate);
 	}
 }
@@ -170,6 +171,38 @@ UAnimInstance* URPGBossStagger::GetAnimInstance() const
 {
 	const ACharacter* Character = Cast<ACharacter>(GetOwner());
 	return Character && Character->GetMesh() ? Character->GetMesh()->GetAnimInstance() : nullptr;
+}
+
+void URPGBossStagger::ApplyHitStunImmunity(UObject* Asc)
+{
+	if (Asc)
+	{
+		if (UClass* Effect = ImmunityEffect.LoadSynchronous())
+		{
+			CallBlueprintFunction(Asc, TEXT("Apply Gameplay Effect by Class"),
+				[&](UFunction& F, uint8* P)
+				{
+					if (const FClassProperty* ClassProp = CastField<FClassProperty>(F.FindPropertyByName(TEXT("GameplayEffectClass"))))
+					{
+						ClassProp->SetPropertyValue_InContainer(P, Effect);
+					}
+					if (const FNumericProperty* Level = CastField<FNumericProperty>(F.FindPropertyByName(TEXT("Level"))))
+					{
+						Level->SetIntPropertyValue(Level->ContainerPtrToValuePtr<void>(P), static_cast<int64>(1));
+					}
+				},
+				[](UFunction&, uint8*) {});
+		}
+	}
+}
+
+void URPGBossStagger::ReapplyImmunityForGetUp()
+{
+	// BQ-19 / KI-074 (opt-in): the 4 s effect barely covers the ~3.9 s sequence and a riposte can stretch the break to ~5.5 s;
+	// re-applying at the get-up start covers the rest of the sequence.
+	if (!bReapplyImmunityAtGetUp) return;
+	ApplyHitStunImmunity(FindComponentByClassName(GetOwner(), TEXT("BP_AdvancedAbilitySystemComponent_C")));
+	UE_LOG(LogRPGStagger, Log, TEXT("%s: hit stun immunity re-applied at get-up (KI-074)"), *GetOwner()->GetName());
 }
 
 void URPGBossStagger::BeginPlay()
@@ -258,6 +291,7 @@ void URPGBossStagger::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 			}
 			Phase = EPhase::GetUp;
 			PhaseStart = Now;
+			ReapplyImmunityForGetUp();  // BQ-19 (no-op unless opted in)
 			UE_LOG(LogRPGStagger, Log, TEXT("%s: down for %.2f s, %d critical hits, getting up"), *GetOwner()->GetName(), Elapsed, CriticalHitCount);
 		}
 		return;
@@ -387,25 +421,7 @@ void URPGBossStagger::StartStagger()
 	// The flinch ability would end its montage under ours: end it first.
 	EndPackFlinch();
 	// Temporary immunity (4 s) so further hits do not replay a flinch over the pose.
-	if (Asc)
-	{
-		if (UClass* Effect = ImmunityEffect.LoadSynchronous())
-		{
-			CallBlueprintFunction(Asc, TEXT("Apply Gameplay Effect by Class"),
-				[&](UFunction& F, uint8* P)
-				{
-					if (const FClassProperty* ClassProp = CastField<FClassProperty>(F.FindPropertyByName(TEXT("GameplayEffectClass"))))
-					{
-						ClassProp->SetPropertyValue_InContainer(P, Effect);
-					}
-					if (const FNumericProperty* Level = CastField<FNumericProperty>(F.FindPropertyByName(TEXT("Level"))))
-					{
-						Level->SetIntPropertyValue(Level->ContainerPtrToValuePtr<void>(P), static_cast<int64>(1));
-					}
-				},
-				[](UFunction&, uint8*) {});
-		}
-	}
+	ApplyHitStunImmunity(Asc);  // BQ-19: extracted verbatim
 	HoldBehaviour();
 	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
 	{
@@ -774,6 +790,10 @@ void URPGBossStagger::EndRiposteExecution(bool bCompleted, const TCHAR* Why, boo
 			if (APlayerController* Controller = Cast<APlayerController>(Player->GetController()))
 			{
 				Player->EnableInput(Controller);
+				if (ShouldFlushInputOnRestore(bBossAlive, bPlayerAlive, bFlushInputAfterRiposte))
+				{
+					Controller->FlushPressedKeys();  // BQ-13 / KI-085: release keys whose release events DisableInput dropped
+				}
 			}
 		}
 	}

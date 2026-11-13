@@ -10,9 +10,14 @@ class ONEBOSSFIGHT_API ARPGFrameworkBossController : public AAIController
 public:
     bool WalkToBand(ARPGFrameworkBossCharacter* Boss,FString& Error);
     void StopOwnedWalk();
+    FString LastNavigationDiagnostic() const { return LastDiagnostic; }
     virtual void OnMoveCompleted(FAIRequestID RequestID,const FPathFollowingResult& Result) override;
     virtual void OnUnPossess() override;
 private:
     FAIRequestID OwnedRequest=FAIRequestID::InvalidRequest;
     TWeakObjectPtr<ARPGFrameworkBossCharacter> BossOwner;
+    FVector OwnedGoal=FVector::ZeroVector;
+    FName OwnedRoute=NAME_None;
+    uint64 OwnedGeneration=0;
+    FString LastDiagnostic;
 };

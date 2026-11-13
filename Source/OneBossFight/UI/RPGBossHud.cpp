@@ -13,6 +13,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGNativeBossHealth.h"
 #include "Player/RPGBuildLoadout.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGBossPosture.h"
@@ -150,7 +151,8 @@ void URPGBossHudWidget::DisableRetry()
 
 bool URPGBossHudWidget::IsRetryShown() const
 {
-	return bRetryEnabled && GetWorld() && GetWorld()->GetRealTimeSeconds() >= RetryShowAt;
+	const UWorld* World = GetWorld();
+	return World && RPGBossRetryPresentation::ShouldShow(bRetryEnabled, World->GetRealTimeSeconds(), RetryShowAt);
 }
 
 void URPGBossHudWidget::Detach()
@@ -353,6 +355,14 @@ void URPGBossHud::HidePackBar()
 
 void URPGBossHud::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	if (AActor* Boss = GetOwner())
+	{
+		if (IRPGNativeBossHealth* NativeHealth = Cast<IRPGNativeBossHealth>(Boss); NativeHealth && NativeTerminalHandle.IsValid())
+		{
+			NativeHealth->NativeTerminalDelegate().Remove(NativeTerminalHandle);
+		}
+	}
+	NativeTerminalHandle.Reset();
 	if (Widget)
 	{
 		// The pack destroys the boss a few seconds after its death: the victory banner must outlive it, so a dead boss hands the widget over to finish its fade.
@@ -369,30 +379,58 @@ void URPGBossHud::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
+void URPGBossHud::BeginPlay()
+{
+	Super::BeginPlay();
+	if (AActor* Boss = GetOwner())
+	{
+		if (IRPGNativeBossHealth* NativeHealth = Cast<IRPGNativeBossHealth>(Boss))
+		{
+			NativeTerminalHandle = NativeHealth->NativeTerminalDelegate().AddUObject(this, &URPGBossHud::HandleNativeTerminal);
+		}
+	}
+}
+
+void URPGBossHud::HandleNativeTerminal(AActor* Boss, uint64 Generation)
+{
+	if (!IsValid(Boss) || Boss != GetOwner()) { return; }
+	IRPGNativeBossHealth* NativeHealth = Cast<IRPGNativeBossHealth>(Boss);
+	if (!NativeHealth) { return; }
+	double Health = 0.0;
+	const bool bHaveHealth = NativeHealth->ReadNativeHealth(false, Health);
+	const uint64 Completed = FMath::Max(VictoryFiredGeneration, NativeTerminalGeneration);
+	if (!RPGBossTerminalRules::ShouldAccept(NativeHealth->NativeEncounterGeneration(), Generation, Completed, bHaveHealth, Health)) { return; }
+	NativeTerminalGeneration = Generation;
+	bSeenAlive = true;
+}
+
 void URPGBossHud::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	const UWorld* World = GetWorld();
 	AActor* Boss = GetOwner();
+	IRPGNativeBossHealth* NativeHealth = Boss ? Cast<IRPGNativeBossHealth>(Boss) : nullptr;
 	FindParts();
-	if (!World || !Boss || !Encounter)
+	if (!World || !Boss || (!Encounter && !NativeHealth))
 	{
 		return;
 	}
 	EnsureWidget();
 	const double Now = World->GetRealTimeSeconds();
-	if (bHidePackBar && Now >= NextPackBarCheck)
+	if (Encounter && bHidePackBar && Now >= NextPackBarCheck)
 	{
 		NextPackBarCheck = Now + 0.2;
 		HidePackBar();
 	}
 
 	// A reset (generation change) clears everything that belongs to the old fight: banner, bar, victory latch.
-	const uint64 Generation = Encounter->GetParticipantGeneration();
+	const uint64 Generation = Encounter ? Encounter->GetParticipantGeneration() : NativeHealth->NativeEncounterGeneration();
 	if (Generation != LastGeneration)
 	{
 		LastGeneration = Generation;
-		bSeenAlive = false;
+		const bool bTerminalAlreadyObservedForGeneration = NativeHealth && NativeTerminalGeneration == Generation;
+		bSeenAlive = bTerminalAlreadyObservedForGeneration;
+		if (!bTerminalAlreadyObservedForGeneration) { NativeTerminalGeneration = 0; }
 		bWasStaggered = false;
 		FlashEnd = 0.0;
 		if (Widget)
@@ -414,12 +452,16 @@ void URPGBossHud::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 
 	double Health = 0.0;
 	double MaxHealth = 1.0;
-	const bool bHaveHealth = RPGPack::ReadAttribute(Boss, TEXT("Attribute.Health"), /*bMax=*/false, Health) && RPGPack::ReadAttribute(Boss, TEXT("Attribute.Health"), /*bMax=*/true, MaxHealth) && MaxHealth > 0.0;
+	const bool bHaveRawHealth = Encounter
+		? RPGPack::ReadAttribute(Boss, TEXT("Attribute.Health"), /*bMax=*/false, Health) && RPGPack::ReadAttribute(Boss, TEXT("Attribute.Health"), /*bMax=*/true, MaxHealth)
+		: NativeHealth->ReadNativeHealth(false, Health) && NativeHealth->ReadNativeHealth(true, MaxHealth);
+	const bool bHaveHealth = bHaveRawHealth && RPGBossHealthPresentation::IsSnapshotValid(Health, MaxHealth);
 	if (bHaveHealth && Health > 0.0)
 	{
 		bSeenAlive = true;
 	}
-	const bool bDead = bHaveHealth && Health <= 0.0 && bSeenAlive;
+	const bool bDead = RPGBossHealthPresentation::IsVictory(bHaveHealth, Health, bSeenAlive)
+		|| (NativeHealth && NativeTerminalGeneration == Generation && bHaveHealth && FMath::IsFinite(Health) && Health <= 0.0);
 
 	if (bDead)
 	{
@@ -453,7 +495,7 @@ void URPGBossHud::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 			}
 		}
 	}
-	else if (Encounter->IsDormant())
+	else if (Encounter ? Encounter->IsDormant() : !NativeHealth->IsNativeEncounterActive())
 	{
 		State = EState::Dormant;
 	}
@@ -468,7 +510,7 @@ void URPGBossHud::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 
 	FRPGBossHudState Hud;
 	Hud.bShowBar = State == EState::Fighting;
-	Hud.Health = bHaveHealth ? FMath::Clamp(static_cast<float>(Health / MaxHealth), 0.f, 1.f) : 1.f;
+	Hud.Health = bHaveHealth ? RPGBossHealthPresentation::Fraction(Health, MaxHealth) : 1.f;
 	Hud.Name = BossName;
 	Hud.Prompt = PromptText;
 	Hud.Subtitle = Phases && Phases->IsPhaseTwo() ? PhaseTwoSubtitle : FText::GetEmpty();

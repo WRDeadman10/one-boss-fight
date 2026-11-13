@@ -1367,7 +1367,7 @@ bool FRPGPackWiringTest::RunTest(const FString& Parameters)
 
 	// The arena level: one pack great-sword boss with the great-sword boss data (the boss Blueprint defaults to the sword mob's data: sword mob montages, 100 HP),
 	// and none of the retired Sevarog pawns.
-	UPackage* LevelPackage = LoadPackage(nullptr, TEXT("/Game/OneBossFight/Levels/L_SevarogArena"), LOAD_None);
+	UPackage* LevelPackage = LoadPackage(nullptr, TEXT("/Game/OneBossFight/Maps/L_SevarogArena"), LOAD_None);
 	UWorld* Level = LevelPackage ? UWorld::FindWorldInPackage(LevelPackage) : nullptr;
 	if (TestNotNull(TEXT("L_SevarogArena"), Level))
 	{

@@ -21,7 +21,9 @@ public:
     void SetExplicitTarget(APawn* Pawn);
     void InvalidateTarget();
     /** Test drivers only: the explicit restart authority of the proof (there is no player respawn loop): restores the target's health and restarts the boss. */
+#if WITH_EDITORONLY_DATA
     UFUNCTION(BlueprintCallable, Category = "Framework proof")
+#endif
     bool RestartEncounterForTest(int32 NewGeneration);
     virtual void BeginPlay() override;
     virtual void Tick(float Delta) override;

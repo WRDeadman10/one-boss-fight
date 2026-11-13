@@ -69,6 +69,39 @@ struct FRPGBossMoveWindow
     UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FRPGBakedBladeSample> BakedSamples;
 };
 
+/** Optional, disabled-by-default delayed area effect anchored to the target's ground point at ReleaseSeconds. */
+USTRUCT(BlueprintType)
+struct FRPGBossAreaEffect
+{
+    GENERATED_BODY()
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bEnabled = false;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float ReleaseSeconds = 0.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float DelaySeconds = 0.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float RadiusCm = 0.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float Damage = 0.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float SnareSeconds = 0.f;
+    /** 1 = unchanged speed; values between 0 and 1 apply a temporary speed multiplier. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float SnareSpeedScale = 1.f;
+};
+
+/** Optional cone channel. Each crossed tick has a unique per-card hit identity and heals only from accepted HP damage. */
+USTRUCT(BlueprintType)
+struct FRPGBossChannelDrain
+{
+    GENERATED_BODY()
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bEnabled = false;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float StartSeconds = 0.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float EndSeconds = 0.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float TickIntervalSeconds = 0.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float TickDamage = 0.f;
+    /** Fraction of actual HP applied by each accepted tick; capped by boss missing health. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float HealFraction = 0.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float ConeRangeCm = 0.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) float ConeHalfAngleDegrees = 0.f;
+    /** True samples current boss facing for each tick; false uses the heading at channel start. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bTrackFacingEachTick = true;
+};
+
 USTRUCT(BlueprintType)
 struct FRPGBossMoveCardSpec
 {
@@ -78,6 +111,8 @@ struct FRPGBossMoveCardSpec
     UPROPERTY(EditAnywhere, BlueprintReadWrite) FName MoveId;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) FName FamilyId;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) FName PhaseId;
+    /** Optional additional encounter phases in which this card may be selected; empty preserves scalar PhaseId behavior. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FName> AdditionalPhaseIds;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) TSoftObjectPtr<USkeleton> Skeleton;
     /** Exactly ONE source. No load or fallback inside pure validation. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite) TSoftObjectPtr<UAnimSequence> Sequence;
@@ -115,6 +150,10 @@ struct FRPGBossMoveCardSpec
     /** BOSS-AWR-005: the card is refused when the vertical separation to the target is above this many cm (floor-plane cards: a target on a ledge or in the air). 0 = no vertical limit (every card authored before this field). */
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float MaxVerticalDeltaCm = 0.f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) float HPDamage = 0.f;
+    /** Optional target-ground delayed AoE; absent/disabled preserves the existing window-only behavior. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FRPGBossAreaEffect AreaEffect;
+    /** Optional channel/drain timeline; absent/disabled preserves current behavior. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite) FRPGBossChannelDrain ChannelDrain;
     /** First backend is in-place only. True is a named unsupported capability, not silently ignored. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bUsesRootMotion = false;
     UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FRPGBossMoveWindow> Windows;
@@ -161,6 +200,9 @@ private:
 namespace RPGBossMoveCards
 {
     /** No object loads, creation, registration, callback, mutation, defaulting or tuning. */
+    ONEBOSSFIGHT_API bool IsEligibleInPhase(const FRPGBossMoveCardSpec& Spec, FName PhaseId);
+    /** Conservative total HP-loss budget per card execution across direct, area-effect and channel-drain payloads. */
+    ONEBOSSFIGHT_API double DamageBudget(const FRPGBossMoveCardSpec& Spec);
     ONEBOSSFIGHT_API FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& Spec, const FRPGBossMoveMetadata& Metadata);
     /** Pure immutable preview; HasResolvedAssets=false. Clears stale output before every attempt. */
     ONEBOSSFIGHT_API FRPGBossMoveIssues CompileMetadata(const FRPGBossMoveCardSpec& Spec, const FRPGBossMoveMetadata& Metadata,

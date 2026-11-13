@@ -162,7 +162,7 @@ void URPGIFrameMonitor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		const bool bRemoved = RemoveTag(TEXT("EndPlay")); // X-1783 item 14: do not leave a live pawn's tag without a retry owner
 		if (!bRemoved)
 		{
-			RPGOwnedTagCleanup::ScheduleAfterRemovalFailure(GetOwner(), TEXT("Status.Invulnerable"), TEXT("RPGIFrameMonitor.EndPlay"));
+			RPGOwnedTagCleanup::ScheduleAfterRemovalFailure(GetOwner(), TEXT("Status.Invulnerable"), TEXT("RPGIFrameMonitor.EndPlay"), OwnedTagGeneration);
 		}
 		bTag = false;
 		bOwnedNow = false;
@@ -220,6 +220,7 @@ void URPGIFrameMonitor::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		const float Tolerance = Step + 0.004f;
 		const bool bInside = bHasWindow && Position >= WindowStart - Tolerance && Position <= WindowEnd + Tolerance;
 		bOwnedNow = bInside || bForceOwned;
+		OwnedTagGeneration = bOwnedNow ? RPGOwnedTagCleanup::CurrentGeneration(GetOwner()) : 0;
 		TagSince = Now;
 		MontageGoneSince = -1.0;
 		FRecord R;
@@ -260,6 +261,10 @@ void URPGIFrameMonitor::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		UE_LOG(LogRPGIFrame, Log, TEXT("%s: invulnerable off (%s) at %.3f"), *GetOwner()->GetName(), Reason, EndPosition);
 	}
 	bTag = bNow;
+	if (!bTag)
+	{
+		OwnedTagGeneration = 0;
+	}
 
 	if (bTag && bOwnedNow)
 	{

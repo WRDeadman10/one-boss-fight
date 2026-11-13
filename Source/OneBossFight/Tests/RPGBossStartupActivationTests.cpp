@@ -10,6 +10,7 @@
 #include "Engine/SkeletalMesh.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
+#include "HAL/IConsoleManager.h"
 #include "TimerManager.h"
 #include "Animation/Skeleton.h"
 #include "Animation/AnimSequenceBase.h"
@@ -19,7 +20,9 @@
 #include "GameFramework/WorldSettings.h"
 #include "Audio/RPGFootsteps.h"
 #include "Player/RPGBossEncounter.h"
+#include "Boss/RPGFrameworkBossCharacter.h"
 #include "Player/RPGBossEncounterDefinition.h"
+#include "Player/RPGBossFrameworkProfile.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGCombatCatalog.h"
 #include "Player/RPGBossStagger.h"
@@ -272,6 +275,16 @@ bool FRPGEncounterSelectionRecordValidation::RunTest(const FString&)
 	FString Error;
 	TestTrue(TEXT("complete typed record is accepted structurally"), Encounter->ValidateSelectionRecord(Error));
 	TestTrue(TEXT("success clears diagnostic"), Error.IsEmpty());
+	TestTrue(TEXT("pack definition remains allowed while framework selector is off"), RPGEncounterSelectionRules::AllowsFrameworkDefinition(false, 0));
+	TestFalse(TEXT("framework definition is refused with opt-in unset"), RPGEncounterSelectionRules::AllowsFrameworkDefinition(true, 0));
+	TestTrue(TEXT("framework definition is allowed only with explicit opt-in"), RPGEncounterSelectionRules::AllowsFrameworkDefinition(true, 1));
+	Encounter->bUseFrameworkBoss = true;
+	TestFalse(TEXT("framework selection requires a framework profile"), Encounter->ValidateSelectionRecord(Error));
+	TestEqual(TEXT("missing framework profile refusal is stable"), Error, FString(TEXT("EncounterDefinition.FrameworkProfile")));
+	Encounter->FrameworkBossProfile = TSoftObjectPtr<URPGBossFrameworkProfile>(NewObject<URPGBossFrameworkProfile>(GetTransientPackage()));
+	TestTrue(TEXT("framework definition with profile is structurally valid"), Encounter->ValidateSelectionRecord(Error));
+	Encounter->bUseFrameworkBoss = false;
+	Encounter->FrameworkBossProfile.Reset();
 	Encounter->EncounterInstance.Invalidate();
 	TestFalse(TEXT("invalid encounter GUID is refused"), Encounter->ValidateSelectionRecord(Error));
 	TestEqual(TEXT("invalid GUID token is stable"), Error, FString(TEXT("EncounterDefinition.InstanceId")));
@@ -301,6 +314,66 @@ bool FRPGEncounterSelectionRecordValidation::RunTest(const FString&)
 	Encounter->PlayerDefinition = TSoftObjectPtr<URPGBossDefinition>();
 	TestFalse(TEXT("missing player definition is rejected"), Encounter->ValidateSelectionRecord(Error));
 	TestEqual(TEXT("missing definition token"), Error, FString(TEXT("EncounterDefinition.Definitions")));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRPGFrameworkEncounterOptInBinding,
+	"OneBossFight.Binding.EncounterSelection.FrameworkOptInAndExactBinding",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+bool FRPGFrameworkEncounterOptInBinding::RunTest(const FString&)
+{
+	FStartupActivationWorld Scope;
+	if (!TestNotNull(TEXT("real game-instance test world"), Scope.World)) return false;
+	IConsoleVariable* Gate = IConsoleManager::Get().FindConsoleVariable(TEXT("rpg.FrameworkEncounterSelection"));
+	if (!TestNotNull(TEXT("default-off framework selection CVar"), Gate)) return false;
+	const int32 Previous = Gate->GetInt();
+	ON_SCOPE_EXIT { Gate->Set(Previous, ECVF_SetByCode); };
+	Gate->Set(0, ECVF_SetByCode);
+	URPGEncounterSelectionSubsystem* Selection = Scope.GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>();
+	if (!TestNotNull(TEXT("selection subsystem"), Selection)) return false;
+	URPGBossEncounterDefinition* Definition = Scope.MakeSelection();
+	Definition->bUseFrameworkBoss = true;
+	Definition->FrameworkBossProfile = TSoftObjectPtr<URPGBossFrameworkProfile>(NewObject<URPGBossFrameworkProfile>(GetTransientPackage()));
+	Selection->SetSelectedDefinition(Definition);
+	ARPGEncounterBinding* Binding = nullptr;
+	TArray<RPGBossWorldInputCompiler::FSelection> Selections;
+	FString Error;
+	TestFalse(TEXT("default-off gate refuses framework definition before census"), Selection->BuildWorldBinding(*Scope.World, Binding, Selections, Error));
+	TestEqual(TEXT("default-off reason is explicit"), Error, FString(TEXT("EncounterSelection.FrameworkOptInRequired")));
+	Gate->Set(1, ECVF_SetByCode);
+	ARPGFrameworkBossCharacter* FrameworkBoss = Scope.World->SpawnActor<ARPGFrameworkBossCharacter>(FVector::ZeroVector, FRotator::ZeroRotator);
+	APawn* Player = Scope.SpawnPackPawn(PlayerClassPath, FVector(1000.f, 0.f, 0.f));
+	TestNotNull(TEXT("placed native framework boss"), FrameworkBoss);
+	TestTrue(TEXT("one local player is possessed"), Scope.PossessPlayer(Player));
+	if (!TestNotNull(TEXT("framework boss"), FrameworkBoss) || !TestNotNull(TEXT("player"), Player)) return false;
+	TestTrue(TEXT("explicit opt-in binds the framework boss and player"), Selection->BuildWorldBinding(*Scope.World, Binding, Selections, Error));
+	if (!TestNotNull(TEXT("transient framework binding"), Binding)) return false;
+	TestEqual(TEXT("selected generation is carried without narrowing"), Binding->ParticipantGeneration, uint64(1));
+	TestEqual(TEXT("typed framework profile is carried on the binding"), Binding->FrameworkBossProfile.Get(), Definition->FrameworkBossProfile.Get());
+	TestTrue(TEXT("only selected framework boss and player become participants"), Binding->Participants.Num() == 2
+		&& Binding->Participants.ContainsByPredicate([FrameworkBoss](const FRPGPlacedParticipantBinding& Item) { return Item.Actor == FrameworkBoss; })
+		&& Binding->Participants.ContainsByPredicate([Player](const FRPGPlacedParticipantBinding& Item) { return Item.Actor == Player; }));
+	Binding->Destroy();
+	FrameworkBoss->Destroy();
+	Definition->bUseFrameworkBoss = false;
+	Definition->FrameworkBossProfile.Reset();
+	Gate->Set(0, ECVF_SetByCode);
+	APawn* PackBoss = Scope.SpawnPackPawn(BossClassPath, FVector(0.f, 3000.f, 0.f));
+	TestNotNull(TEXT("legacy pack boss candidate"), PackBoss);
+	TestTrue(TEXT("pack definition retains selection while framework gate is off"), Selection->BuildWorldBinding(*Scope.World, Binding, Selections, Error));
+	if (TestNotNull(TEXT("pack binding"), Binding))
+	{
+		TestTrue(TEXT("pack binding still selects the pack boss"), Binding->Participants.ContainsByPredicate(
+			[PackBoss](const FRPGPlacedParticipantBinding& Item) { return Item.Slot == FName(TEXT("Boss")) && Item.Actor == PackBoss; }));
+		Binding->Destroy();
+	}
+	Definition->bUseFrameworkBoss = true;
+	Definition->FrameworkBossProfile = TSoftObjectPtr<URPGBossFrameworkProfile>(NewObject<URPGBossFrameworkProfile>(GetTransientPackage()));
+	Gate->Set(1, ECVF_SetByCode);
+	FrameworkBoss = Scope.World->SpawnActor<ARPGFrameworkBossCharacter>(FVector::ZeroVector, FRotator::ZeroRotator);
+	Scope.SpawnPackPawn(BossClassPath, FVector(0.f, 3000.f, 0.f));
+	TestFalse(TEXT("mixed framework and pack boss census is refused before a second binding"), Selection->BuildWorldBinding(*Scope.World, Binding, Selections, Error));
+	TestEqual(TEXT("mixed route refusal is stable"), Error, FString(TEXT("EncounterSelection.Census")));
 	return true;
 }
 
@@ -1134,6 +1207,9 @@ bool FRPGEncounterSelectionThreadAndWorldRefusal::RunTest(const FString&)
 	if (!TestNotNull(TEXT("selection-owner game world"), Scope.World) || !TestNotNull(TEXT("foreign game world"), ForeignScope.World)) return false;
 	URPGEncounterSelectionSubsystem* Selection = Scope.GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>();
 	if (!TestNotNull(TEXT("game-instance selection store"), Selection)) return false;
+	FString SeedDiagnostic;
+	Selection->ResolveSelectedDefinition(SeedDiagnostic);
+	TestEqual(TEXT("fixture seeds an absent-selection diagnostic"), Selection->GetSelectionDiagnostic(), FString(TEXT("EncounterSelection.Absent")));
 
 	ARPGEncounterBinding* Binding = nullptr;
 	TArray<RPGBossWorldInputCompiler::FSelection> Selections;
@@ -1144,11 +1220,13 @@ bool FRPGEncounterSelectionThreadAndWorldRefusal::RunTest(const FString&)
 	}).Get();
 	TestFalse(TEXT("off-thread selection request refuses before world access"), bOffThreadBuilt);
 	TestEqual(TEXT("off-thread selection has its exact refusal token"), Error, FString(TEXT("EncounterSelection.NotGameThread")));
+	TestEqual(TEXT("off-thread refusal replaces the old diagnostic safely"), Selection->GetSelectionDiagnostic(), FString(TEXT("EncounterSelection.NotGameThread")));
 	TestNull(TEXT("off-thread refusal creates no binding"), Binding);
 
 	Error.Reset();
 	TestFalse(TEXT("a game world owned by another game instance is refused"), Selection->BuildWorldBinding(*ForeignScope.World, Binding, Selections, Error));
 	TestEqual(TEXT("foreign world has its exact refusal token"), Error, FString(TEXT("EncounterSelection.WorldState")));
+	TestEqual(TEXT("foreign-world refusal replaces the diagnostic"), Selection->GetSelectionDiagnostic(), FString(TEXT("EncounterSelection.WorldState")));
 	TestNull(TEXT("foreign-world refusal creates no binding"), Binding);
 	TestTrue(TEXT("foreign-world refusal publishes no participant selections"), Selections.IsEmpty());
 	return true;

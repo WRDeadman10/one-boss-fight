@@ -79,7 +79,9 @@ public:
 	void OnEncounterReset();
 
 	/** Tests: the next tag edge (or a tag that is already set) is treated as montage-owned although no montage is playing, to exercise the stale watchdog. */
+	#if WITH_EDITORONLY_DATA
 	UFUNCTION(BlueprintCallable, Category = "IFrame")
+	#endif
 	void DebugForceOwned(bool bOwned);
 
 	/** The component of the first player pawn, or null. */
@@ -130,6 +132,8 @@ private:
 	int32 StaleCleared = 0;
 	int32 DeathCleared = 0;
 	int32 ResetCleared = 0;
+	/** Generation that owned the last observer-confirmed dodge tag. */
+	uint64 OwnedTagGeneration = 0;
 	bool bWasAlive = true;
 	TMap<TWeakObjectPtr<const UAnimMontage>, FVector2D> WindowCache; // montage -> (start, end); (-1, -1) when it has none
 };

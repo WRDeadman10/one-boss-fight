@@ -29,7 +29,7 @@ bool FRPGBossMoveModel::IsEligible(const TSharedPtr<const FRPGCompiledBossMoveCa
         !FMath::IsFinite(S.SignedYawDegrees) || FMath::Abs(S.SignedYawDegrees)>180.0 ||
         !FMath::IsFinite(S.VerticalDeltaCm) || S.VerticalDeltaCm<0.0 || S.VerticalDeltaCm>1.e6)
         return Refuse(Error,TEXT("MoveModel.SnapshotDomain"));
-    if (S.PhaseId!=Card->Spec().PhaseId) return Refuse(Error,TEXT("MoveModel.Phase"));
+    if (!RPGBossMoveCards::IsEligibleInPhase(Card->Spec(),S.PhaseId)) return Refuse(Error,TEXT("MoveModel.Phase"));
     if (S.RangeCm<Card->Spec().MinRangeCm || S.RangeCm>Card->Spec().MaxRangeCm)
         return Refuse(Error,TEXT("MoveModel.Range"));
     // FrontConeDegrees is the FULL cone width; slack is also a full-cone width. Zero slack preserves the original boundary.

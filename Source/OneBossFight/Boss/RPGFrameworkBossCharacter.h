@@ -11,6 +11,7 @@
 #include "RPGFrameworkBossCharacter.generated.h"
 class URPGFrameworkMoveExecutor;
 class ARPGFrameworkProofFixture;
+class ARPGEncounterBinding;
 class UAnimMontage;
 class UAnimSequence;
 UCLASS()
@@ -20,6 +21,12 @@ class ONEBOSSFIGHT_API ARPGFrameworkBossCharacter : public ACharacter, public IR
 public:
     ARPGFrameworkBossCharacter();
     bool InitializeProof(ARPGFrameworkProofFixture* Fixture,URPGBossFrameworkProfile* Profile,APawn* Target,uint64 Encounter,uint64 Generation,FString& Error);
+    /** Production-selected route initialization after its typed binding and generation have passed preflight. */
+    bool InitializeSelectedEncounter(const ARPGEncounterBinding& Binding, APawn* SelectedTarget, FString& Error);
+#if WITH_EDITORONLY_DATA
+    UFUNCTION(BlueprintCallable, Category = "Framework proof|Test")
+#endif
+    bool InitializeSelectedEncounterForTest(const ARPGEncounterBinding* Binding, APawn* SelectedTarget, FString& Error);
 #if WITH_EDITORONLY_DATA
     UFUNCTION(BlueprintCallable, Category = "Framework proof|Test")
 #endif
@@ -28,6 +35,30 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Framework proof|Test")
 #endif
     bool StartCardForTest(FName MoveId);
+    /** Lead-only health setup hook for repeatable phase-two live checks; unavailable in Shipping. */
+#if WITH_EDITORONLY_DATA
+    UFUNCTION(BlueprintCallable, Category = "Framework proof|Test")
+#endif
+    bool SetBossHealthFractionForTest(double Fraction);
+    /** Test-only first attack: production selector chooses from the resolved profile, with no forced MoveId. */
+#if WITH_EDITORONLY_DATA
+    UFUNCTION(BlueprintCallable, Category = "Framework proof|Test")
+#endif
+    FName StartSelectedCardForTest();
+#if WITH_EDITORONLY_DATA
+    UFUNCTION(BlueprintPure, Category = "Framework proof|Test")
+#endif
+    FName GetOutcomeForTest() const;
+    /** X26-IMPL-B1: the phase the selector reads now (Phase_1 until the latch); test drivers gate post-transition probes on it. */
+#if WITH_EDITORONLY_DATA
+    UFUNCTION(BlueprintPure, Category = "Framework proof|Test")
+#endif
+    FName GetCurrentPhaseForTest() const;
+    /** Development-only path diagnostic for the Lead live-run summary. */
+#if WITH_EDITORONLY_DATA
+    UFUNCTION(BlueprintPure, Category = "Framework proof|Test")
+#endif
+    FString GetNavigationResultForTest() const;
 #if WITH_EDITORONLY_DATA
     UFUNCTION(BlueprintCallable, Category = "Framework proof|Test")
 #endif
@@ -59,6 +90,8 @@ public:
     bool Failed() const {return bFailed;}
     /** F4: the executor reports every accepted hit so the target-health invariant expects exactly that loss. */
     void NoteDamageApplied(double Applied) {ExpectedTargetHP-=Applied;}
+    /** C-1274 channel add-on: heal by actual accepted player HP damage, capped at authored boss maximum. */
+    double HealFromChannel(double Requested);
     /** The player parried a contact of this boss (called by the move executor): schedules the posture reaction of the profile (ParryPostureAmount) at the start of the next tick. */
     void NoteParried(double PostureScale=1.0,double RecoverySeconds=0.,int32 RecoveryGrade=0){
         const double SafeScale=FMath::IsFinite(PostureScale)?FMath::Clamp(PostureScale,0.0,1.0):0.0;
@@ -68,6 +101,10 @@ public:
     }
     // IRPGNativeBossHealth
     virtual bool ReadNativeHealth(bool bMax, double& Out) const override { if (!bHittable) return false; Out = bMax ? MaxHealth : Health; return true; }
+    virtual uint64 NativeEncounterGeneration() const override { return GenerationId; }
+    virtual bool IsNativeEncounterActive() const override { return bInitialized && bArrived && !bDead && !bFailed; }
+    virtual bool IsNativePhaseTwo() const override { return Dependencies && Dependencies->Profile.IsValid() && CurrentPhaseId == Dependencies->Profile->PhaseTwoId; }
+    virtual FRPGNativeBossTerminalDelegate& NativeTerminalDelegate() override { return NativeTerminal; }
     virtual double ApplyPlayerHit(double Multiplier) override;
     virtual double ApplyPlayerAttackHit(const FRPGWeaponAttackRow& Row, double Multiplier) override;
     bool IsDead() const { return bDead; }
@@ -79,9 +116,11 @@ public:
     virtual void Tick(float Delta) override;
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
 private:
-    bool InitializeProofInternal(ARPGFrameworkProofFixture* Fixture,URPGBossFrameworkProfile* Profile,APawn* Target,uint64 Encounter,uint64 Generation,FString& Error,bool bAllowDevTest);
+    bool InitializeProofInternal(ARPGFrameworkProofFixture* Fixture,URPGBossFrameworkProfile* Profile,APawn* Target,uint64 Encounter,uint64 Generation,FString& Error,bool bAllowDevTest,bool bAllowSelectedRoute=false);
+    bool StartTestCardAtIndex(int32 CardIndex, FRPGBossDecisionSnapshot Snapshot);
 #if WITH_DEV_AUTOMATION_TESTS
     friend class FBossParryRecoveryLifecycleHarness;
+    friend class FBossHealthPresentationSnapshot;
 #endif
     UPROPERTY(VisibleAnywhere) TObjectPtr<URPGFrameworkMoveExecutor> Executor;
     TUniquePtr<FRPGFrameworkDependencies> Dependencies;
@@ -89,10 +128,11 @@ private:
     TWeakObjectPtr<AController> TargetController;
     TWeakObjectPtr<ARPGFrameworkProofFixture> ProofFixture;
     uint64 EncounterId=0, GenerationId=0;
+    FRPGNativeBossTerminalDelegate NativeTerminal;
     double StartedAt=0., TargetHPBefore=0., ExpectedTargetHP=0.;
     FVector WalkStart=FVector::ZeroVector;
     bool bInitialized=false,bFailed=false,bArrived=false,bStartedMove=false,bSucceeded=false;
-    bool bTestInitialized=false;
+    bool bTestInitialized=false,bSelectedRouteInitialized=false,bTestWalkSkipped=false,bTestHealthOverridePending=false;
     FRPGBossMoveSelector Selector;
     void Die();
     double Health=0., MaxHealth=0.;

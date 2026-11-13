@@ -7,6 +7,14 @@
 #include "Components/ActorComponent.h"
 #include "RPGBossHud.generated.h"
 
+namespace RPGBossRetryPresentation
+{
+	inline bool ShouldShow(bool bEnabled, double NowSeconds, double ShowAtSeconds)
+	{
+		return bEnabled && FMath::IsFinite(NowSeconds) && FMath::IsFinite(ShowAtSeconds) && NowSeconds >= ShowAtSeconds;
+	}
+}
+
 class UBorder;
 class UCanvasPanel;
 class UCanvasPanelSlot;
@@ -123,7 +131,7 @@ private:
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRPGVictoryDelegate, uint64, Generation);
 
 /**
- * Encounter presentation owner for the pack's boss (Freeze 18.2, 18.3 and 32): decides the encounter state from the boss itself and drives the HUD.
+ * Encounter presentation owner for the active boss participant (pack attributes or an explicitly selected native health provider): drives the HUD.
  *   Dormant   the boss sleeps (or the encounter was reset): no bar;
  *   Fighting  name banner on waking, bar, posture bar, phase subtitle, riposte prompt while a riposte would be accepted;
  *   Victory   the boss has died after being seen alive: "<name> falls" banner and OnVictory, broadcast exactly once per encounter generation.
@@ -192,15 +200,18 @@ public:
 	bool IsPostureFlashing() const { return Last.bPostureFlash; }
 
 protected:
+	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
+	friend class FBossHealthPresentationSnapshot;
 	enum class EState : uint8 { Dormant, Fighting, Victory };
 
 	void FindParts();
 	void EnsureWidget();
 	void HidePackBar();
+	void HandleNativeTerminal(AActor* Boss, uint64 Generation);
 
 	UPROPERTY(Transient)
 	TObjectPtr<URPGBossHudWidget> Widget;
@@ -219,6 +230,8 @@ private:
 	uint64 VictoryFiredGeneration = 0;
 	int32 VictoryCount = 0;
 	bool bSeenAlive = false;
+	uint64 NativeTerminalGeneration = 0;
+	FDelegateHandle NativeTerminalHandle;
 	bool bWasStaggered = false;
 	bool bPlayerLocked = false;
 	double FlashEnd = 0.0;

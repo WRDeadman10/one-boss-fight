@@ -7,10 +7,11 @@
 namespace BossMoveModelFixture
 {
 // Synthetic, metadata-only scheduling input: not real assets, tuned combat or playback proof.
-TSharedPtr<const FRPGCompiledBossMoveCard> Card(bool bZeroStart=false, float Rate=2.f, float MaxVertical=0.f, float MinRange=20.f, float MaxRange=400.f)
+TSharedPtr<const FRPGCompiledBossMoveCard> Card(bool bZeroStart=false, float Rate=2.f, float MaxVertical=0.f, float MinRange=20.f, float MaxRange=400.f, bool bTwoPhase=false)
 {
     FRPGBossMoveCardSpec S; FRPGBossMoveMetadata M; S.MaxVerticalDeltaCm=MaxVertical;
     S.Schema=1; S.MoveId=TEXT("SyntheticMove"); S.FamilyId=TEXT("SyntheticFamily"); S.PhaseId=TEXT("SyntheticPhase");
+    if (bTwoPhase) S.AdditionalPhaseIds.Add(TEXT("SyntheticPhaseTwo"));
     S.Skeleton=TSoftObjectPtr<USkeleton>(FSoftObjectPath(TEXT("/Game/OneBossFight/Data/TypedABIFixtures/F1/Skeleton.Skeleton")));
     S.Sequence=TSoftObjectPtr<UAnimSequence>(FSoftObjectPath(TEXT("/Game/OneBossFight/Data/TypedABIFixtures/F1/Sequence.Sequence")));
     S.SlotName=TEXT("SyntheticSlot"); S.PlayRate=Rate; S.CommitSeconds=.25f; S.ActiveStartSeconds=.5f;
@@ -50,6 +51,12 @@ bool FBossMoveModelEligibility::RunTest(const FString&)
     Reject([](auto& S){S.Generation=2;},TEXT("MoveModel.Generation"));
     Reject([](auto& S){S.EncounterId=8;},TEXT("MoveModel.Generation"));
     Reject([](auto& S){S.PhaseId=TEXT("Other");},TEXT("MoveModel.Phase"));
+    auto MultiPhase=Card(false,2.f,0.f,20.f,400.f,true);
+    auto PhaseTwo=Snapshot(); PhaseTwo.PhaseId=TEXT("SyntheticPhaseTwo");
+    TestTrue(TEXT("additional phase accepts the same compiled card"),M.IsEligible(MultiPhase,PhaseTwo,E));
+    PhaseTwo.PhaseId=TEXT("SyntheticPhaseThree");
+    TestFalse(TEXT("unlisted additional phase is refused"),M.IsEligible(MultiPhase,PhaseTwo,E));
+    TestEqual(TEXT("unlisted additional phase has named refusal"),E,FString(TEXT("MoveModel.Phase")));
     Reject([](auto& S){S.RangeCm=19.;},TEXT("MoveModel.Range"));
     Reject([](auto& S){S.RangeCm=401.;},TEXT("MoveModel.Range"));
     Reject([](auto& S){S.SignedYawDegrees=60.01;},TEXT("MoveModel.Cone"));

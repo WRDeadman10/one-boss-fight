@@ -9,9 +9,10 @@ static TAutoConsoleVariable<float> CVarBossProofCenterBias(TEXT("rpg.BossProofCe
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
 #include "Navigation/PathFollowingComponent.h"
+#include "Boss/RPGBossNavigationDiagnostics.h"
 bool ARPGFrameworkBossController::WalkToBand(ARPGFrameworkBossCharacter* Boss,FString& Error)
 {
-    Error.Reset();
+    Error.Reset();LastDiagnostic.Reset();
     if (!IsValid(Boss)||GetPawn()!=Boss||!IsValid(Boss->ExplicitTarget())||!Boss->ProofProfile())
     {Error=TEXT("Framework.Nav.OwnerTarget");return false;}
     const auto& P=*Boss->ProofProfile(); const FVector Target=Boss->ExplicitTarget()->GetActorLocation();
@@ -43,15 +44,25 @@ bool ARPGFrameworkBossController::WalkToBand(ARPGFrameworkBossCharacter* Boss,FS
     const FPathFollowingRequestResult R=MoveTo(Request,&Path);
     if (R.Code==EPathFollowingRequestResult::Failed||!Path.IsValid()||Path->IsPartial())
     {StopOwnedWalk();Error=TEXT("Framework.Nav.NoFullPath");return false;}
-    OwnedRequest=R.MoveId;
-    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] nav request=%u projected=%s fullPath=1 result=%d"),uint32(OwnedRequest),*Projected.Location.ToString(),int32(R.Code));
-    if(R.Code==EPathFollowingRequestResult::AlreadyAtGoal) {OwnedRequest=FAIRequestID::InvalidRequest;Boss->WalkArrived();}
+    OwnedRequest=R.MoveId;OwnedGoal=Projected.Location;OwnedRoute=FName(*Boss->ProofProfile()->FixtureLabel);OwnedGeneration=Boss->NativeEncounterGeneration();LastDiagnostic.Reset();
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] nav request=%u projected=%s fullPath=1 result=%d route=%s generation=%llu"),uint32(OwnedRequest),*Projected.Location.ToString(),int32(R.Code),*OwnedRoute.ToString(),static_cast<unsigned long long>(OwnedGeneration));
+    if(R.Code==EPathFollowingRequestResult::AlreadyAtGoal)
+    {
+        LastDiagnostic=RPGBossNavigationDiagnostics::Format(OwnedRoute,OwnedGeneration,uint32(OwnedRequest),EPathFollowingResult::Success,FPathFollowingResultFlags::AlreadyAtGoal,Boss->GetActorLocation(),OwnedGoal);
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] nav_terminal %s"),*LastDiagnostic);
+        OwnedRequest=FAIRequestID::InvalidRequest;Boss->WalkArrived();
+    }
     return true;
 }
 void ARPGFrameworkBossController::OnMoveCompleted(FAIRequestID RequestID,const FPathFollowingResult& Result)
 {
     Super::OnMoveCompleted(RequestID,Result);
     if (OwnedRequest==FAIRequestID::InvalidRequest||RequestID!=OwnedRequest) return;
+    if (BossOwner.IsValid())
+    {
+        LastDiagnostic=RPGBossNavigationDiagnostics::Format(OwnedRoute,OwnedGeneration,uint32(RequestID),Result.Code.GetValue(),Result.Flags,BossOwner->GetActorLocation(),OwnedGoal);
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] nav_terminal %s"),*LastDiagnostic);
+    }
     OwnedRequest=FAIRequestID::InvalidRequest;
     if (!BossOwner.IsValid()) return;
     if (Result.Code==EPathFollowingResult::Success) BossOwner->WalkArrived();

@@ -49,6 +49,23 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave", meta = (ClampMin = "1.0"))
 	float Speed = 1000.f;
 
+	/** BQ-16 / KI-065 (opt-in, 0 = off = unchanged): the leap's landing point is chosen by the pack, not validated. When > 0, a landing
+	 *  farther than this (horizontal cm) from LandingArenaCenter starts no wave and logs the refusal (fail closed). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave", meta = (ClampMin = "0.0"))
+	float LandingArenaRadiusCm = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave")
+	FVector LandingArenaCenter = FVector::ZeroVector;
+
+	/** BQ-16 pure seam: true when the landing may start a wave. Finite radius <= 0 (off) always allows; any non-finite radius or a NaN landing refuses. */
+	static bool IsLandingAllowed(const FVector& Landing, const FVector& Center, float ArenaRadiusCm)
+	{
+		if (!FMath::IsFinite(ArenaRadiusCm)) return false;  // X-2338: every non-finite radius (NaN, +inf, -inf) fails closed
+		if (ArenaRadiusCm <= 0.f) return true;              // finite <= 0 is the off state (unchanged)
+		if (Landing.ContainsNaN() || Center.ContainsNaN()) return false;
+		return FVector::DistSquared2D(Landing, Center) <= FMath::Square(double(ArenaRadiusCm));
+	}
+
 	/** Width of the wave front (cm), so the band passes a point for Thickness / Speed seconds. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wave", meta = (ClampMin = "1.0"))
 	float Thickness = 180.f;

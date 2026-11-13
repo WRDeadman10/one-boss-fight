@@ -100,6 +100,7 @@ void URPGBossLowSweep::Test(float FromAngle, float ToAngle)
 	Payload.Generation = SweepGeneration;
 	Payload.HPDamage = Damage;
 	Payload.bCanBeBlocked = true; // A4 blade is a physical, guardable contact.
+	Payload.bRequestHitReaction = true; // BQ-17: no effect unless rpg.Boss.ProjectHitReaction is on
 	URPGDamageResolver* Resolver = URPGDamageResolver::FindOrAdd(GetOwner());
 	const float FeetHeight = RPGBossDamage::FeetZ(Player) - GroundZ;
 	if (FeetHeight >= BladeHeight)

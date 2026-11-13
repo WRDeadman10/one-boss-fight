@@ -11,6 +11,7 @@
 #include "RPGEncounterBinding.generated.h"
 
 class URPGBossEncounter;
+class URPGBossFrameworkProfile;
 class URPGCombatContextSubsystem;
 class UAnimMontage;
 class UAnimSequence;
@@ -459,6 +460,8 @@ public:
 	UPROPERTY(Transient) FName InitialBossPhase;
 	UPROPERTY(Transient) FName BossSlot;
 	UPROPERTY(Transient) FName PlayerSlot;
+	/** Framework profile carried only by definitions that explicitly select the native framework route. */
+	UPROPERTY(Transient) TObjectPtr<URPGBossFrameworkProfile> FrameworkBossProfile = nullptr;
 	/** Selected-route lifecycle identity; zero is invalid. */
 	UPROPERTY(Transient) uint64 ParticipantGeneration = 0;
 	/** Diagnostic reset count carried across the transient binding replacement. */

@@ -119,6 +119,11 @@ public:
     /** Opt-in (F5 lane): scale ParryPostureAmount by the player's Perfect/Good/Late parry grade. False preserves the unscaled reaction. */
     UPROPERTY(EditAnywhere) bool bParryGradeScale=false;
     UPROPERTY(EditAnywhere) int32 AttackCount=0;
+    /** BQ-01 / KI-155 (opt-in, 0..8; 0 = the existing KI-149 rule, so existing profiles validate unchanged): how many parried or
+     *  posture-broken aborts the cooldown pool must absorb. An abort starts its card's cooldown without consuming one of the
+     *  AttackCount attacks; > 0 makes compilation refuse pools that would starve (Framework.Profile.PhaseCooldownStarvation for
+     *  phased profiles, Framework.Profile.CooldownStarvation otherwise). Needs the F5 fixture and AttackCount > 0. */
+    UPROPERTY(EditAnywhere) int32 MaxAbortedAttacks=0;
     /** Optional (both > 0 or both 0): the boss's own health and what one player hit takes off it (design values, proposed). 0 = not hittable. */
     UPROPERTY(EditAnywhere) float BossMaxHealth=0.f;
     UPROPERTY(EditAnywhere) float PlayerHitDamage=0.f;
@@ -206,6 +211,18 @@ namespace RPGFramework
     /** Pure (KI-149 Tier 1, spec in Antigravity validate_ki149_tier1.py): can a pool of cards with these cooldowns always offer a card on each of AttackCount consecutive attacks?
      *  Yes when one card has no cooldown, or when there are at least AttackCount cards (k-1 earlier attacks put at most k-1 cards on cooldown). Refuses AttackCount < 1. */
     ONEBOSSFIGHT_API bool PhasePoolCannotStarve(const TArray<float>& CooldownSeconds,int32 AttackCount);
+    /** BQ-01 / KI-155 (pure, not yet wired into ValidateProfile; lead decision): like PhasePoolCannotStarve, but a parried or
+     *  posture-broken card is aborted after its cooldown started WITHOUT consuming one of the AttackCount attacks, so each such
+     *  abort costs one extra selection. Conservative: stagger time is ignored (cooldowns are assumed not to expire meanwhile).
+     *  Refuses AttackCount < 1 and MaxAbortedAttacks < 0. */
+    ONEBOSSFIGHT_API bool PhasePoolCannotStarveWithAborts(const TArray<float>& CooldownSeconds,int32 AttackCount,int32 MaxAbortedAttacks);
+    /** BQ-01 (pure decision used by profile compilation): the starvation error token for a compiled pool, or an empty string.
+     *  Phased: both phase pools must survive AttackCount attacks plus MaxAbortedAttacks aborts (MaxAbortedAttacks 0 = KI-149).
+     *  Unphased: checked only when MaxAbortedAttacks > 0 (opt-in), against the whole pool. */
+    ONEBOSSFIGHT_API FString CooldownStarvationError(bool bPhased,const TArray<float>& AllPool,const TArray<float>& PhaseOnePool,
+        const TArray<float>& PhaseTwoPool,int32 AttackCount,int32 MaxAbortedAttacks);
+    ONEBOSSFIGHT_API void AddCandidateCooldownToPhasePools(const FRPGBossMoveCardSpec& Spec,float CooldownSeconds,
+        FName PhaseOne,FName PhaseTwo,TArray<float>& OutPhaseOne,TArray<float>& OutPhaseTwo);
     ONEBOSSFIGHT_API bool ValidateProfile(const URPGBossFrameworkProfile& Profile,FString& Error);
     ONEBOSSFIGHT_API bool ResolveProfile(URPGBossFrameworkProfile* Profile,TUniquePtr<FRPGFrameworkDependencies>& Out,FString& Error);
     ONEBOSSFIGHT_API bool HasSlotNode(UAnimInstance* Instance,FName Slot);

@@ -2,16 +2,20 @@
 #include "Player/RPGEncounterSelectionSubsystem.h"
 
 #include "Engine/World.h"
+#include "Engine/GameInstance.h"
 #include "EngineUtils.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Pawn.h"
 #include "HAL/IConsoleManager.h"
+#include "Misc/ScopeLock.h"
 #include "Misc/CommandLine.h"
 #include "Misc/Parse.h"
 #include "Player/RPGEncounterBinding.h"
 #include "Player/RPGBossDamage.h"
 #include "Player/RPGBossEncounterDefinition.h"
+#include "Player/RPGBossFrameworkProfile.h"
 #include "Player/RPGPlayerMovesSubsystem.h"
+#include "Boss/RPGFrameworkBossCharacter.h"
 
 namespace
 {
@@ -23,6 +27,12 @@ namespace
 		TEXT("Encounter-definition asset path for the opt-in data startup route; empty preserves legacy startup."),
 		ECVF_Cheat);
 #endif
+	int32 GFrameworkEncounterSelection = 0;
+	FAutoConsoleVariableRef CVarFrameworkEncounterSelection(
+		TEXT("rpg.FrameworkEncounterSelection"),
+		GFrameworkEncounterSelection,
+		TEXT("Opt in to selecting a placed native framework boss from an encounter definition; default 0 preserves the pack selection route."),
+		ECVF_Cheat);
 }
 
 int32 RPGEncounterPlayerIdentity::CountLocalPossessedPlayers(UWorld& World, APawn*& OutPlayer)
@@ -45,11 +55,18 @@ int32 RPGEncounterPlayerIdentity::CountLocalPossessedPlayers(UWorld& World, APaw
 	return Count;
 }
 
+URPGEncounterSelectionSubsystem* URPGEncounterSelectionSubsystem::GetForWorld(const UObject* WorldContextObject)
+{
+	UWorld* World = WorldContextObject ? WorldContextObject->GetWorld() : nullptr;
+	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	return GameInstance ? GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>() : nullptr;
+}
+
 void URPGEncounterSelectionSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	SelectedDefinition = nullptr;
-	SelectionDiagnostic.Reset();
+	RecordSelectionDiagnostic(FString());
 	BenchmarkDefinitionPath.Reset();
 	// This opt-in path exists only for paired packaged benchmark captures. An unset
 	// argument leaves the historical startup path and command line unchanged.
@@ -71,7 +88,7 @@ void URPGEncounterSelectionSubsystem::Initialize(FSubsystemCollectionBase& Colle
 void URPGEncounterSelectionSubsystem::Deinitialize()
 {
 	SelectedDefinition = nullptr;
-	SelectionDiagnostic.Reset();
+	RecordSelectionDiagnostic(FString());
 	BenchmarkDefinitionPath.Reset();
 	Super::Deinitialize();
 }
@@ -79,13 +96,13 @@ void URPGEncounterSelectionSubsystem::Deinitialize()
 void URPGEncounterSelectionSubsystem::SetSelectedDefinition(URPGBossEncounterDefinition* Definition)
 {
 	SelectedDefinition = Definition;
-	SelectionDiagnostic.Reset();
+	RecordSelectionDiagnostic(FString());
 }
 
 void URPGEncounterSelectionSubsystem::ClearSelectedDefinition()
 {
 	SelectedDefinition = nullptr;
-	SelectionDiagnostic.Reset();
+	RecordSelectionDiagnostic(FString());
 	BenchmarkDefinitionPath.Reset();
 #if !UE_BUILD_SHIPPING
 	GEncounterDefinitionPath.Reset();
@@ -119,6 +136,11 @@ FString URPGEncounterSelectionSubsystem::GetRequestedManifestHashForDiagnostics(
 	return IsValid(SelectedDefinition) ? SelectedDefinition->StableManifestHash : FString();
 }
 
+FName URPGEncounterSelectionSubsystem::GetRequestedInitialBossPhaseForDiagnostics() const
+{
+	return IsValid(SelectedDefinition) ? SelectedDefinition->InitialBossPhase : NAME_None;
+}
+
 URPGBossEncounterDefinition* URPGEncounterSelectionSubsystem::ResolveSelectedDefinition(FString& OutError)
 {
 	OutError.Reset();
@@ -135,15 +157,27 @@ URPGBossEncounterDefinition* URPGEncounterSelectionSubsystem::ResolveSelectedDef
 		if (!SelectedDefinition)
 		{
 			OutError = TEXT("EncounterSelection.AssetLoad");
-			SelectionDiagnostic = OutError;
+			RecordSelectionDiagnostic(OutError);
 			return nullptr;
 		}
 		return SelectedDefinition;
 	}
 	// Lead fix (C-871): removed a stray #endif left by the X-1240 edit (C1020).
 	OutError = HasSelectionRequest() ? TEXT("EncounterSelection.AssetLoad") : TEXT("EncounterSelection.Absent");
-	SelectionDiagnostic = OutError;
+	RecordSelectionDiagnostic(OutError);
 	return nullptr;
+}
+
+FString URPGEncounterSelectionSubsystem::GetSelectionDiagnostic() const
+{
+	FScopeLock Lock(&SelectionDiagnosticMutex);
+	return SelectionDiagnostic;
+}
+
+void URPGEncounterSelectionSubsystem::RecordSelectionDiagnostic(const FString& Diagnostic)
+{
+	FScopeLock Lock(&SelectionDiagnosticMutex);
+	SelectionDiagnostic = Diagnostic;
 }
 
 bool URPGEncounterSelectionSubsystem::BuildWorldBinding(UWorld& World, ARPGEncounterBinding*& OutBinding,
@@ -164,37 +198,52 @@ bool URPGEncounterSelectionSubsystem::BuildWorldBindingInternal(UWorld& World, u
 	OutBinding = nullptr;
 	OutSelections.Reset();
 	OutError.Reset();
-	if (!IsInGameThread()) { OutError = TEXT("EncounterSelection.NotGameThread"); return false; }
+	if (!IsInGameThread()) { OutError = TEXT("EncounterSelection.NotGameThread"); RecordSelectionDiagnostic(OutError); return false; }
 	if (!World.IsGameWorld() || (World.HasBegunPlay() && !bAllowBegunPlay) || World.GetGameInstance() != GetGameInstance())
 	{
 		OutError = TEXT("EncounterSelection.WorldState");
+		RecordSelectionDiagnostic(OutError);
 		return false;
 	}
 
 	FString DefinitionError;
 	URPGBossEncounterDefinition* Definition = ResolveSelectedDefinition(DefinitionError);
-	if (!Definition) { OutError = DefinitionError; return false; }
+	if (!Definition) { OutError = DefinitionError; RecordSelectionDiagnostic(OutError); return false; }
 	if (ParticipantGeneration == 0 || ParticipantGeneration == MAX_uint64 || ResetCount < 0)
 	{
 		OutError = ParticipantGeneration == MAX_uint64 ? TEXT("EncounterActivation.GenerationExhausted")
 			: (ResetCount < 0 ? TEXT("EncounterActivation.ResetCountInvalid") : TEXT("EncounterActivation.GenerationMismatch"));
+		RecordSelectionDiagnostic(OutError);
 		return false;
 	}
-	if (!Definition->ValidateSelectionRecord(OutError)) { SelectionDiagnostic = OutError; return false; }
+	if (!Definition->ValidateSelectionRecord(OutError)) { RecordSelectionDiagnostic(OutError); return false; }
+	if (!RPGEncounterSelectionRules::AllowsFrameworkDefinition(Definition->bUseFrameworkBoss, GFrameworkEncounterSelection))
+	{
+		OutError = TEXT("EncounterSelection.FrameworkOptInRequired");
+		RecordSelectionDiagnostic(OutError);
+		return false;
+	}
 
 	APawn* Boss = nullptr;
 	int32 BossCount = 0;
+	int32 CompetingPackBossCount = 0;
 	for (TActorIterator<APawn> It(&World); It; ++It)
 	{
 		APawn* Pawn = *It;
-		if (URPGPlayerMovesSubsystem::IsPackBoss(Pawn)) { ++BossCount; Boss = Pawn; }
+		if (!IsValid(Pawn)) { continue; }
+		if (URPGPlayerMovesSubsystem::IsPackBoss(Pawn)) { ++CompetingPackBossCount; }
+		const bool bCandidate = Definition->bUseFrameworkBoss
+			? Pawn->IsA<ARPGFrameworkBossCharacter>()
+			: URPGPlayerMovesSubsystem::IsPackBoss(Pawn);
+		if (bCandidate) { ++BossCount; Boss = Pawn; }
 	}
 	APawn* Player = nullptr;
 	const int32 PlayerCount = RPGEncounterPlayerIdentity::CountLocalPossessedPlayers(World, Player);
-	if (BossCount != 1 || PlayerCount != 1 || !IsValid(Boss) || !IsValid(Player) || Boss == Player)
+	if (BossCount != 1 || PlayerCount != 1 || !IsValid(Boss) || !IsValid(Player) || Boss == Player
+		|| (Definition->bUseFrameworkBoss && CompetingPackBossCount != 0))
 	{
 		OutError = TEXT("EncounterSelection.Census");
-		SelectionDiagnostic = OutError;
+		RecordSelectionDiagnostic(OutError);
 		return false;
 	}
 	if (Boss->GetWorld() != &World || Player->GetWorld() != &World
@@ -202,16 +251,23 @@ bool URPGEncounterSelectionSubsystem::BuildWorldBindingInternal(UWorld& World, u
 		|| Boss->IsActorBeginningPlay() || Player->IsActorBeginningPlay())
 	{
 		OutError = TEXT("EncounterSelection.ActorState");
-		SelectionDiagnostic = OutError;
+		RecordSelectionDiagnostic(OutError);
 		return false;
 	}
 
 	URPGBossDefinition* BossData = Definition->BossDefinition.LoadSynchronous();
 	URPGBossDefinition* PlayerData = Definition->PlayerDefinition.LoadSynchronous();
+	URPGBossFrameworkProfile* FrameworkProfile = Definition->bUseFrameworkBoss ? Definition->FrameworkBossProfile.LoadSynchronous() : nullptr;
 	if (!IsValid(BossData) || !IsValid(PlayerData) || BossData == PlayerData)
 	{
 		OutError = TEXT("EncounterSelection.DefinitionLoad");
-		SelectionDiagnostic = OutError;
+		RecordSelectionDiagnostic(OutError);
+		return false;
+	}
+	if (Definition->bUseFrameworkBoss && !IsValid(FrameworkProfile))
+	{
+		OutError = TEXT("EncounterSelection.FrameworkProfileLoad");
+		RecordSelectionDiagnostic(OutError);
 		return false;
 	}
 	const bool bPhaseExists = BossData->Phases.ContainsByPredicate([&Definition](const FRPGPhaseConfig& Phase)
@@ -221,7 +277,7 @@ bool URPGEncounterSelectionSubsystem::BuildWorldBindingInternal(UWorld& World, u
 	if (!bPhaseExists)
 	{
 		OutError = TEXT("EncounterSelection.Phase");
-		SelectionDiagnostic = OutError;
+		RecordSelectionDiagnostic(OutError);
 		return false;
 	}
 
@@ -233,7 +289,7 @@ bool URPGEncounterSelectionSubsystem::BuildWorldBindingInternal(UWorld& World, u
 	if (!IsValid(Binding))
 	{
 		OutError = TEXT("EncounterSelection.BindingSpawn");
-		SelectionDiagnostic = OutError;
+		RecordSelectionDiagnostic(OutError);
 		return false;
 	}
 	Binding->EncounterInstance = Definition->EncounterInstance;
@@ -244,6 +300,7 @@ bool URPGEncounterSelectionSubsystem::BuildWorldBindingInternal(UWorld& World, u
 	Binding->PlayerSlot = Definition->PlayerSlot;
 	Binding->ParticipantGeneration = ParticipantGeneration;
 	Binding->ResetCount = ResetCount;
+	Binding->FrameworkBossProfile = FrameworkProfile;
 
 	FRPGPlacedParticipantBinding BossParticipant;
 	BossParticipant.Slot = Definition->BossSlot;
@@ -272,6 +329,6 @@ bool URPGEncounterSelectionSubsystem::BuildWorldBindingInternal(UWorld& World, u
 	OutSelections.Add(PlayerSelection);
 
 	OutBinding = Binding;
-	SelectionDiagnostic.Reset();
+	RecordSelectionDiagnostic(FString());
 	return true;
 }

@@ -1,5 +1,6 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Boss/RPGFrameworkBossCharacter.h"
+#include "Player/RPGEncounterBinding.h"
 #include <limits>
 #include "Boss/RPGFrameworkBossController.h"
 #include "Boss/RPGFrameworkMoveExecutor.h"
@@ -61,7 +62,59 @@ ARPGFrameworkBossCharacter::ARPGFrameworkBossCharacter()
 }
 bool ARPGFrameworkBossCharacter::InitializeProof(ARPGFrameworkProofFixture* Fixture,URPGBossFrameworkProfile* Profile,APawn* InTarget,uint64 Encounter,uint64 Generation,FString& Error)
 {
-    return InitializeProofInternal(Fixture,Profile,InTarget,Encounter,Generation,Error,false);
+    return InitializeProofInternal(Fixture,Profile,InTarget,Encounter,Generation,Error,false,false);
+}
+bool ARPGFrameworkBossCharacter::InitializeSelectedEncounter(const ARPGEncounterBinding& Binding, APawn* SelectedTarget, FString& Error)
+{
+    Error.Reset();
+    const bool bOwnsSelectedBoss = Binding.Participants.ContainsByPredicate([this, &Binding](const FRPGPlacedParticipantBinding& Participant)
+    {
+        return Participant.Slot == Binding.BossSlot && Participant.Actor.Get() == this && Participant.TargetSlot == Binding.PlayerSlot;
+    });
+    const bool bOwnsSelectedTarget = Binding.Participants.ContainsByPredicate([SelectedTarget, &Binding](const FRPGPlacedParticipantBinding& Participant)
+    {
+        return Participant.Slot == Binding.PlayerSlot && Participant.Actor.Get() == SelectedTarget && Participant.TargetSlot == Binding.BossSlot;
+    });
+    if (!Binding.FrameworkBossProfile || !Binding.ParticipantGeneration || !Binding.EncounterInstance.IsValid()
+        || !bOwnsSelectedBoss || !bOwnsSelectedTarget || Binding.GetWorld() != GetWorld() || !IsValid(SelectedTarget)
+        || SelectedTarget->GetWorld() != GetWorld() || HasActorBegunPlay() || IsActorBeginningPlay())
+    {
+        Error = TEXT("Framework.Boss.SelectedBinding");
+        return false;
+    }
+    const uint64 RuntimeEncounterId = static_cast<uint64>(Binding.GetUniqueID());
+    return InitializeProofInternal(nullptr, Binding.FrameworkBossProfile, SelectedTarget, RuntimeEncounterId,
+        Binding.ParticipantGeneration, Error, false, true);
+}
+bool ARPGFrameworkBossCharacter::InitializeSelectedEncounterForTest(const ARPGEncounterBinding* Binding, APawn* SelectedTarget, FString& Error)
+{
+#if UE_BUILD_SHIPPING
+    Error = TEXT("Framework.Boss.TestHookUnavailable");
+    return false;
+#else
+    Error.Reset();
+    const bool bOwnsSelectedBoss = IsValid(Binding) && Binding->Participants.ContainsByPredicate([this, Binding](const FRPGPlacedParticipantBinding& Participant)
+    {
+        return Participant.Slot == Binding->BossSlot && Participant.Actor.Get() == this && Participant.TargetSlot == Binding->PlayerSlot;
+    });
+    const bool bOwnsSelectedTarget = IsValid(Binding) && Binding->Participants.ContainsByPredicate([SelectedTarget, Binding](const FRPGPlacedParticipantBinding& Participant)
+    {
+        return Participant.Slot == Binding->PlayerSlot && Participant.Actor.Get() == SelectedTarget && Participant.TargetSlot == Binding->BossSlot;
+    });
+    if (!IsValid(Binding) || !Binding->FrameworkBossProfile || !Binding->ParticipantGeneration || !Binding->EncounterInstance.IsValid()
+        || !bOwnsSelectedBoss || !bOwnsSelectedTarget || Binding->GetWorld() != GetWorld() || !IsValid(SelectedTarget)
+        || SelectedTarget->GetWorld() != GetWorld() || !HasActorBegunPlay() || !SelectedTarget->HasActorBegunPlay()
+        || !GetWorld() || !GetWorld()->IsGameWorld() || GetNetMode() != NM_Standalone)
+    {
+        Error = TEXT("Framework.Boss.DeferredTestBinding");
+        return false;
+    }
+    const uint64 RuntimeEncounterId = static_cast<uint64>(Binding->GetUniqueID());
+    // This is an opt-in live route check, not a proof-fixture test start. Keep
+    // test-only start APIs disabled so Tick exercises the production selector.
+    return InitializeProofInternal(nullptr, Binding->FrameworkBossProfile, SelectedTarget, RuntimeEncounterId,
+        Binding->ParticipantGeneration, Error, false, true);
+#endif
 }
 bool ARPGFrameworkBossCharacter::InitializeWithProfileForTest(URPGBossFrameworkProfile* Profile,APawn* InTarget,FString& Error)
 {
@@ -70,7 +123,7 @@ bool ARPGFrameworkBossCharacter::InitializeWithProfileForTest(URPGBossFrameworkP
 #else
     Error.Reset();
     if(!IsValid(Profile)){Error=TEXT("Framework.Boss.Profile");return false;}
-    return InitializeProofInternal(nullptr,Profile,InTarget,1,1,Error,true);
+    return InitializeProofInternal(nullptr,Profile,InTarget,1,1,Error,true,false);
 #endif
 }
 ARPGFrameworkBossCharacter* ARPGFrameworkBossCharacter::SpawnFrameworkBossForTest(UObject* WorldContextObject,TSubclassOf<ARPGFrameworkBossCharacter> CharacterClass,FVector Location,FRotator Rotation)
@@ -87,12 +140,12 @@ ARPGFrameworkBossCharacter* ARPGFrameworkBossCharacter::SpawnFrameworkBossForTes
     return World->SpawnActor<ARPGFrameworkBossCharacter>(CharacterClass,Location,Rotation,Params);
 #endif
 }
-bool ARPGFrameworkBossCharacter::InitializeProofInternal(ARPGFrameworkProofFixture* Fixture,URPGBossFrameworkProfile* Profile,APawn* InTarget,uint64 Encounter,uint64 Generation,FString& Error,bool bAllowDevTest)
+bool ARPGFrameworkBossCharacter::InitializeProofInternal(ARPGFrameworkProofFixture* Fixture,URPGBossFrameworkProfile* Profile,APawn* InTarget,uint64 Encounter,uint64 Generation,FString& Error,bool bAllowDevTest,bool bAllowSelectedRoute)
 {
     Error.Reset();
     const bool bFixtureAuthorized=IsValid(Fixture)&&Fixture->GetWorld()==GetWorld()&&Fixture->Authorizes(this,InTarget);
     const bool bTestAuthorized=bAllowDevTest&&!UE_BUILD_SHIPPING&&GetNetMode()==NM_Standalone&&IsValid(InTarget)&&InTarget->GetWorld()==GetWorld();
-    if(bInitialized||!IsInGameThread()||(!bFixtureAuthorized&&!bTestAuthorized)||
+    if(bInitialized||!IsInGameThread()||(!bFixtureAuthorized&&!bTestAuthorized&&!bAllowSelectedRoute)||
         !GetWorld()||GetNetMode()!=NM_Standalone||!IsValid(InTarget)||InTarget==this||InTarget->GetWorld()!=GetWorld()||!Encounter||!Generation)
     {Error=TEXT("Framework.Boss.ProofAuthority");return false;}
     TUniquePtr<FRPGFrameworkDependencies> D;
@@ -108,7 +161,12 @@ bool ARPGFrameworkBossCharacter::InitializeProofInternal(ARPGFrameworkProofFixtu
     Target=InTarget;TargetController=InTarget->GetController();ArenaOrigin=D->Profile->bArenaCenterAuthored?D->Profile->ArenaCenter:InTarget->GetActorLocation();
     if(!ValidateTarget(TargetHPBefore)){Target.Reset();Error=TEXT("Framework.Boss.TargetHealth");return false;}
     ExpectedTargetHP=TargetHPBefore;
-    Dependencies=MoveTemp(D);ProofFixture=Fixture;bTestInitialized=bTestAuthorized;EncounterId=Encounter;GenerationId=Generation;
+    Dependencies=MoveTemp(D);ProofFixture=Fixture;bTestInitialized=bTestAuthorized;bSelectedRouteInitialized=bAllowSelectedRoute;EncounterId=Encounter;GenerationId=Generation;
+    if(bSelectedRouteInitialized)
+    {
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] selected_route_initialized route=data profile=%s generation=%llu targetHealthAfterPackStyle=%g testStartApis=0"),
+            *Dependencies->Profile->GetName(),GenerationId,TargetHPBefore);
+    }
     if (Dependencies->Candidates.Num()>0)
     {
         FRPGBossSelectorConfig Config; Config.RepeatPenalty=Dependencies->Profile->RepeatPenalty; Config.RepeatMemory=Dependencies->Profile->RepeatMemory; Config.TieBand=Dependencies->Profile->SelectorTieBand; Config.TieSeed=Dependencies->Profile->SelectorTieSeed;
@@ -117,7 +175,7 @@ bool ARPGFrameworkBossCharacter::InitializeProofInternal(ARPGFrameworkProofFixtu
         if (!Selector.Initialize(Config,List,Error)) {Fail(Error);return false;}
     }
     const auto& P=*Dependencies->Profile.Get();
-    ComboGraph=RPGFramework::BuildComboGraph(*Dependencies->Profile.Get());bComboActive=false;ResetBleed();CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId;bPhaseTwoLatched=false;Posture=double(Dependencies->Profile->PostureMax);LastPostureDrain=-1.;bStaggered=bStaggerAbortedAttack=false;StrafeDirFlip=1;StrafeStuck=RPGBossStuck::FStuck();YawProbeSampleIndex=0;PendingParryRecoverySeconds=ParryRecoveryUntil=0.;PendingParryRecoveryGrade=0;AggroBand=RPGBossAggro::EBand::Balanced;AggroDodgeTimes.Reset();FatigueWhiffs=0;bFatigueFinishedCardSeen=false;
+    ComboGraph=RPGFramework::BuildComboGraph(*Dependencies->Profile.Get());bComboActive=false;ResetBleed();CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId;bPhaseTwoLatched=false;bTestHealthOverridePending=false;Posture=double(Dependencies->Profile->PostureMax);LastPostureDrain=-1.;bStaggered=bStaggerAbortedAttack=false;StrafeDirFlip=1;StrafeStuck=RPGBossStuck::FStuck();YawProbeSampleIndex=0;PendingParryRecoverySeconds=ParryRecoveryUntil=0.;PendingParryRecoveryGrade=0;AggroBand=RPGBossAggro::EBand::Balanced;AggroDodgeTimes.Reset();FatigueWhiffs=0;bFatigueFinishedCardSeen=false;
     if (Dependencies->Profile->BossMaxHealth>0.f)
     {
         bHittable=true; MaxHealth=Health=Dependencies->Profile->BossMaxHealth;
@@ -148,14 +206,17 @@ bool ARPGFrameworkBossCharacter::InitializeProofInternal(ARPGFrameworkProofFixtu
             Nav?1:0,bSpawnProjected?1:0,*GetActorLocation().ToCompactString(),bSpawnProjected?*SpawnProjected.Location.ToCompactString():TEXT("none"),
             bSpawnProjected?FVector::Dist(GetActorLocation(),SpawnProjected.Location):-1.);
     }
+#if !UE_BUILD_SHIPPING
     if(bTestAuthorized&&CVarBossProofSkipInitialWalk.GetValueOnGameThread()>0&&GetCharacterMovement()->IsMovingOnGround()&&InitialRange>=P.BandMinCm&&InitialRange<=P.BandMaxCm)
     {
         // The test bridge may receive an explicitly positioned in-band target. Avoid issuing an unnecessary path request
         // whose later MoveFailed would deactivate an otherwise ready test actor before its requested card can start.
         bArrived=true;GetCharacterMovement()->StopMovementImmediately();AI->StopOwnedWalk();
         UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] test_walk_skipped reason=target_in_profile_band rangeCm=%g bandMin=%g bandMax=%g navSkipped=1"),InitialRange,P.BandMinCm,P.BandMaxCm);
+        bTestWalkSkipped=true;
         return true;
     }
+#endif
     if(!AI->WalkToBand(this,Error)){Fail(Error);return false;}return true;
 }
 bool ARPGFrameworkBossCharacter::StartCardForTest(FName MoveId)
@@ -168,15 +229,128 @@ bool ARPGFrameworkBossCharacter::StartCardForTest(FName MoveId)
     for(int32 I=0;I<Dependencies->Candidates.Num();++I)
         if(Dependencies->Candidates[I].Card.IsValid()&&Dependencies->Candidates[I].Card->Spec().MoveId==MoveId){CardIndex=I;break;}
     if(CardIndex==INDEX_NONE)return false;
+    return StartTestCardAtIndex(CardIndex,MakeSnapshot());
+#endif
+}
+bool ARPGFrameworkBossCharacter::SetBossHealthFractionForTest(double Fraction)
+{
+#if UE_BUILD_SHIPPING
+    return false;
+#else
+    if (!bTestInitialized || !bInitialized || !bHittable || !IsValid(GetWorld())
+        || GetWorld()->GetNetMode() != NM_Standalone || !FMath::IsFinite(Fraction)
+        || Fraction <= 0.0 || Fraction > 1.0 || MaxHealth <= 0.0 || bPhaseTwoLatched)
+    {
+        return false;
+    }
+    const double Before = Health;
+    Health = MaxHealth * Fraction;
+    bTestHealthOverridePending = true;
+    UE_LOG(LogTemp, Display, TEXT("[FrameworkProof] test_health_fraction before=%g after=%g max=%g fraction=%g shipping=0"),
+        Before, Health, MaxHealth, Fraction);
+    return true;
+#endif
+}
+FName ARPGFrameworkBossCharacter::StartSelectedCardForTest()
+{
+#if UE_BUILD_SHIPPING
+    return NAME_None;
+#else
+    if(!bTestInitialized||!bInitialized||bFailed||bDead||bSucceeded||!Dependencies||!Executor||!Executor->IsIdle()||!Target.IsValid())return NAME_None;
+    // X26-IMPL-B1: the production Tick holds the selector while the F11 phase-transition clip plays; a test request must not bypass that hold.
+    if(bPhaseHold)
+    {
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] autonomous_test_refusal reason=PhaseHold phase=%s generation=%llu"),*CurrentPhaseId.ToString(),GenerationId);
+        return NAME_None;
+    }
+    FRPGBossDecisionSnapshot Snapshot=MakeSnapshot();
+    FRPGBossSelectorDecision Decision;
+    const FRPGBossSelectorContext Context;
+    if(!Selector.Select(Executor->Model(),Snapshot,Decision,Context))
+    {
+        UE_LOG(LogTemp,Warning,TEXT("[FrameworkProof] autonomous_test_refusal reason=SelectorFailure phase=%s generation=%llu"),*Snapshot.PhaseId.ToString(),GenerationId);
+        return NAME_None;
+    }
+    if(Decision.ChosenIndex==INDEX_NONE||!Decision.MoveId.IsValid())
+    {
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] autonomous_test_refusal reason=NoCandidate phase=%s generation=%llu"),*Snapshot.PhaseId.ToString(),GenerationId);
+        return NAME_None;
+    }
+    if(Decision.Traces.IsValidIndex(Decision.ChosenIndex))Snapshot.ConeHoldSlackDegrees=Decision.Traces[Decision.ChosenIndex].ConeHoldSlackDegrees;
+    for(const FRPGBossSelectorTrace& Trace:Decision.Traces)
+    {
+        if(Trace.bEligible)
+        {
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] candidate attack=%d card=%s score=%g seq=%d"),AttacksDone+1,*Trace.MoveId.ToString(),Trace.Score,DecisionSeq+1);
+        }
+        else
+        {
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] refusal attack=%d card=%s reason=%s seq=%d"),AttacksDone+1,*Trace.MoveId.ToString(),*Trace.Refusal,DecisionSeq+1);
+        }
+    }
+    ++DecisionSeq;
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] autonomous_test_selection move=%s phase=%s generation=%llu index=%d score=%g"),
+        *Decision.MoveId.ToString(),*Snapshot.PhaseId.ToString(),GenerationId,Decision.ChosenIndex,Decision.Score);
+    if(!StartTestCardAtIndex(Decision.ChosenIndex,Snapshot))
+    {
+        UE_LOG(LogTemp,Warning,TEXT("[FrameworkProof] autonomous_test_refusal reason=StartRefused move=%s phase=%s generation=%llu"),*Decision.MoveId.ToString(),*Snapshot.PhaseId.ToString(),GenerationId);
+        return NAME_None;
+    }
+    return Decision.MoveId;
+#endif
+}
+FName ARPGFrameworkBossCharacter::GetCurrentPhaseForTest() const
+{
+#if UE_BUILD_SHIPPING
+    return NAME_None;
+#else
+    return bInitialized?CurrentPhaseId:FName(NAME_None);
+#endif
+}
+FName ARPGFrameworkBossCharacter::GetOutcomeForTest() const
+{
+#if UE_BUILD_SHIPPING
+    return TEXT("Unavailable");
+#else
+    if(bDead)return TEXT("BossDefeated");
+    if(bSucceeded)return TEXT("Succeeded");
+    if(bFailed)return TEXT("Failed");
+    return bInitialized?TEXT("Active"):TEXT("NotInitialized");
+#endif
+}
+FString ARPGFrameworkBossCharacter::GetNavigationResultForTest() const
+{
+#if UE_BUILD_SHIPPING
+    return TEXT("Unavailable");
+#else
+    if (bTestWalkSkipped)
+    {
+        const FString Route=Dependencies&&Dependencies->Profile.IsValid()?Dependencies->Profile->FixtureLabel:TEXT("Unknown");
+        return FString::Printf(TEXT("status=TEST_WALK_SKIPPED route=%s generation=%llu"),*Route,static_cast<unsigned long long>(GenerationId));
+    }
+    const ARPGFrameworkBossController* NavigationController=Cast<ARPGFrameworkBossController>(GetController());
+    const FString Result=NavigationController?NavigationController->LastNavigationDiagnostic():FString();
+    return Result.IsEmpty()?TEXT("PENDING"):Result;
+#endif
+}
+bool ARPGFrameworkBossCharacter::StartTestCardAtIndex(int32 CardIndex,FRPGBossDecisionSnapshot Snapshot)
+{
+#if UE_BUILD_SHIPPING
+    return false;
+#else
+    if(!bTestInitialized||!bInitialized||bFailed||bDead||bSucceeded||!Dependencies||!Executor||!Executor->IsIdle()
+        ||!Dependencies->Candidates.IsValidIndex(CardIndex)||!Dependencies->Candidates[CardIndex].Card.IsValid())return false;
     double TargetMax=0.,TargetHealth=0.;
     if(!RPGPack::ReadAttribute(Target.Get(),TEXT("Attribute.Health"),true,TargetMax)||!FMath::IsFinite(TargetMax)||TargetMax<=0.
         ||!RPGPack::WriteAttribute(Target.Get(),TEXT("Attribute.Health"),TargetMax)||!RPGPack::ReadAttribute(Target.Get(),TEXT("Attribute.Health"),false,TargetHealth)||!FMath::IsNearlyEqual(TargetHealth,TargetMax))return false;
     TargetHPBefore=ExpectedTargetHP=TargetHealth;
-    if(bHittable)Health=MaxHealth;
+    const bool bPreserveTestHealth=bTestHealthOverridePending;
+    if(bHittable&&!bPreserveTestHealth)Health=MaxHealth;
     if(PostureEnabled()){Posture=Dependencies->Profile->PostureMax;LastPostureDrain=-1.;bStaggered=false;}
     if(Executor->DidFinish()&&!Executor->PrepareNextAttack())return false;
-    const FRPGBossDecisionSnapshot Snapshot=MakeSnapshot();FString Error;
+    FString Error;
     if(!Executor->StartCard(Dependencies->Candidates[CardIndex].Card,Snapshot,Error))return false;
+    if(bPreserveTestHealth)bTestHealthOverridePending=false;
     bComboActive=false;bComboPausing=false;ComboPendingCard=INDEX_NONE;
     bStartedMove=true;bFatigueFinishedCardSeen=false;
     Selector.NoteStarted(CardIndex,Snapshot.ClockSeconds);
@@ -200,7 +374,8 @@ bool ARPGFrameworkBossCharacter::StartComboForTest(FName RootMoveId)
     if(!RPGPack::ReadAttribute(Target.Get(),TEXT("Attribute.Health"),true,TargetMax)||!FMath::IsFinite(TargetMax)||TargetMax<=0.
         ||!RPGPack::WriteAttribute(Target.Get(),TEXT("Attribute.Health"),TargetMax)||!RPGPack::ReadAttribute(Target.Get(),TEXT("Attribute.Health"),false,TargetHealth)||!FMath::IsNearlyEqual(TargetHealth,TargetMax))return false;
     TargetHPBefore=ExpectedTargetHP=TargetHealth;
-    if(bHittable)Health=MaxHealth;
+    const bool bPreserveTestHealth=bTestHealthOverridePending;
+    if(bHittable&&!bPreserveTestHealth)Health=MaxHealth;
     if(PostureEnabled()){Posture=Dependencies->Profile->PostureMax;LastPostureDrain=-1.;bStaggered=false;}
     if(Executor->DidFinish()&&!Executor->PrepareNextAttack())return false;
     // This hook starts an isolated test combo after any standalone test cards;
@@ -209,6 +384,7 @@ bool ARPGFrameworkBossCharacter::StartComboForTest(FName RootMoveId)
     ComboState=RPGBossCombo::FComboState();ComboState.Node=ComboGraph.Root;bComboActive=true;bComboPausing=false;ComboPendingCard=INDEX_NONE;
     const FRPGBossDecisionSnapshot Snapshot=MakeSnapshot();FString Error;
     if(!Executor->StartCard(Dependencies->Candidates[CardIndex].Card,Snapshot,Error)){bComboActive=false;return false;}
+    if(bPreserveTestHealth)bTestHealthOverridePending=false;
     bStartedMove=true;bFatigueFinishedCardSeen=false;Selector.NoteStarted(CardIndex,Snapshot.ClockSeconds);
     ComboHitsAtStart=Executor->AcceptedHits();ComboGuardedAtStart=Executor->GuardedHits();ComboParriedAtStart=Executor->ParriedHits();
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] combo_test_start node=%s move=%s depth=%d attackBudgetReset=1"),*ComboState.Node.ToString(),*RootMoveId.ToString(),ComboState.Depth);
@@ -361,7 +537,7 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
         UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] target_shift_injected n=%d dx=%g dy=%g dz=%g"),ProofShiftsDone+1,Move.X,Move.Y,Move.Z);++ProofShiftsDone;
     }
 #endif
-    double HP=0.;const FName Fault=(ProofFixture.IsValid()||bTestInitialized)?TargetFault(HP):FName(TEXT("Invalid"));const bool bTargetOk=Fault.IsNone();
+    double HP=0.;const FName Fault=(ProofFixture.IsValid()||bTestInitialized||bSelectedRouteInitialized)?TargetFault(HP):FName(TEXT("Invalid"));const bool bTargetOk=Fault.IsNone();
     // BOSS-MOV-005: a leashing profile does not fail when the target leaves the arena: the boss goes home and waits, and resumes when the target is back.
     if(Fault==FName(TEXT("OffArena"))&&Dependencies->Profile->bArenaLeash){HandleLeash();return;}
     if(bLeashed&&bTargetOk)
@@ -488,10 +664,10 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
         if(float(Posture)>Before+KINDA_SMALL_NUMBER&&!bPostureRegenLogged){bPostureRegenLogged=true;UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] posture_regen_start posture=%g sinceLastDrainSeconds=%g delaySeconds=%g perSecond=%g"),double(Before),GetWorld()->GetTimeSeconds()-LastPostureDrain,double(P.PostureRegenDelaySeconds),double(P.PostureRegenPerSecond));}
         if(float(Posture)>Before+KINDA_SMALL_NUMBER&&FMath::IsNearlyEqual(float(Posture),P.PostureMax)){UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] posture_regen_full posture=%g max=%g"),Posture,double(P.PostureMax));}
     }
-    if(bArrived&&!bStartedMove&&!bTestInitialized)
+    if(bArrived&&!bStartedMove)
     {
         // BOSS-AWR-007: no sight of the target (a pillar): no decision, no blind strike: search where it was last seen, go back to the band when it is seen again.
-        if(P.LosSearchSeconds>0.f)
+        if(!bTestInitialized&&P.LosSearchSeconds>0.f)
         {
             auto* LosAI=Cast<ARPGFrameworkBossController>(GetController());
             if(Los.bLost)
@@ -536,6 +712,9 @@ void ARPGFrameworkBossCharacter::Tick(float Delta)
                 }
             }
         }
+        // Standalone test actors use the same neutral phase gate but never enter the autonomous production selector;
+        // their test driver explicitly requests StartSelectedCardForTest after observing the phase receipt.
+        if(bTestInitialized)return;
         const FVector D=Target->GetActorLocation()-GetActorLocation();FRPGBossDecisionSnapshot S;
         S.EncounterId=EncounterId;S.Generation=GenerationId;S.TargetId=uint64(Target->GetUniqueID());S.FrameId=GFrameCounter;
         S.PhaseId=CurrentPhaseId;S.ClockSeconds=GetWorld()->GetTimeSeconds();S.RangeCm=D.Size2D();
@@ -754,6 +933,15 @@ double ARPGFrameworkBossCharacter::ApplyPlayerHit(double Multiplier)
     const auto& P=*Dependencies->Profile.Get();
     return ApplyHit(Multiplier,double(P.PlayerPostureHitAmount)*Multiplier,double(P.BleedBuildupPerHit)*Multiplier);
 }
+double ARPGFrameworkBossCharacter::HealFromChannel(double Requested)
+{
+    if (!bInitialized||!bHittable||bDead||bFailed||!FMath::IsFinite(Requested)||Requested<=0.||!FMath::IsFinite(Health)||!FMath::IsFinite(MaxHealth)||MaxHealth<=0.) return 0.;
+    const double Before=Health;
+    Health=FMath::Min(MaxHealth,Health+Requested);
+    const double Applied=Health-Before;
+    if (Applied>0.) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] channel_heal applied=%g healthBefore=%g healthAfter=%g max=%g"),Applied,Before,Health,MaxHealth);
+    return Applied;
+}
 double ARPGFrameworkBossCharacter::ApplyPlayerAttackHit(const FRPGWeaponAttackRow& Row, double Multiplier)
 {
     if (!bHittable||bDead||bFailed||!bInitialized||!FMath::IsFinite(Multiplier)||Multiplier<0.||!FMath::IsFinite(Row.HealthDamageMultiplier)||Row.HealthDamageMultiplier<0.f) return 0.;
@@ -777,7 +965,7 @@ double ARPGFrameworkBossCharacter::ApplyHit(double HealthFactor, double PostureA
         }
         else
         {
-            const double Drain=FMath::Min(Posture,PostureAmount);
+            const double Drain=FMath::Min(Posture,RPGBossMath::SanitizeDrainAmount(PostureAmount));  // BQ-04: NaN/inf/negative row posture drains 0
             Posture-=Drain; LastPostureDrain=Now; bPostureRegenLogged=false;
             UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] posture_drain amount=%g postureBefore=%g postureAfter=%g max=%g"),Drain,Posture+Drain,Posture,double(Dependencies->Profile->PostureMax));
             RPGBossRules::FFlags Flags; Flags.bDead=bDead; Flags.bStaggered=bStaggered;
@@ -983,7 +1171,7 @@ bool ARPGFrameworkBossCharacter::RestartEncounter(uint64 NewGeneration,FString& 
     double HP=0.; if (!ValidateTarget(HP)) {Error=TEXT("Framework.Boss.TargetHealth");return false;}
     if (!Executor->Rearm(NewGeneration,Error)) return false;
     const TCHAR* OldState=bDead?TEXT("Dead"):TEXT("Finished");
-    GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; StrafeStartedAt=-1.; StrafeLastTick=-1.; StrafeLastLog=-1.; StrafeDirFlip=1; StrafeStuck=RPGBossStuck::FStuck(); YawProbeSampleIndex=0; RepositionTurnStartedAt=-1.;RepositionLatch=RPGBossTrack::FTurnLatch(); bParryReactionPending=false; PendingParryReactionScale=0.;PendingParryRecoverySeconds=ParryRecoveryUntil=0.;PendingParryRecoveryGrade=0;AggroBand=RPGBossAggro::EBand::Balanced;AggroDodgeTimes.Reset();FatigueWhiffs=0;bFatigueFinishedCardSeen=false; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;
+    GenerationId=NewGeneration; TargetHPBefore=ExpectedTargetHP=HP; AttacksDone=0; StrafeStartedAt=-1.; StrafeLastTick=-1.; StrafeLastLog=-1.; StrafeDirFlip=1; StrafeStuck=RPGBossStuck::FStuck(); YawProbeSampleIndex=0; RepositionTurnStartedAt=-1.;RepositionLatch=RPGBossTrack::FTurnLatch(); bParryReactionPending=false; PendingParryReactionScale=0.;PendingParryRecoverySeconds=ParryRecoveryUntil=0.;PendingParryRecoveryGrade=0;AggroBand=RPGBossAggro::EBand::Balanced;AggroDodgeTimes.Reset();FatigueWhiffs=0;bFatigueFinishedCardSeen=false; bStartedMove=false; bArrived=false; bSucceeded=false; bDead=false;bTestHealthOverridePending=false;
     if (bHittable) Health=MaxHealth;
     Posture=double(Dependencies->Profile->PostureMax); LastPostureDrain=-1.; bPostureRegenLogged=false; bStaggered=bStaggerAbortedAttack=false; StopF11Clip(); bStaggerAnimActive=bPhaseHold=false; bComboActive=false; RepositionsInARow=0; DodgeHistory=RPGBossTrack::FDodgeHistory(); bDodgeWasFast=false; DodgesSeen=0; ProofDodgeStart=-1.; ProofDodgesDone=0; Los=RPGBossTrack::FLosMemory(); bLosWalking=false; bDrinkWasPlaying=bFlaskPending=bFlaskKnown=false; FlaskPerceivedCount=0; ProofDrinkStart=-1.; ProofDrinksDone=0; KiteStreak=HugStreak=0; bComboPausing=false; ComboPendingCard=INDEX_NONE; bLeashed=bLeashAtCenter=false; ProofShiftStart=-1.; ProofShiftsDone=0; bBystanderSpawned=false; bTargetFaultInjected=false; ProofHitStart=-1.; ProofHitsDone=0; ResetBleed();
     Selector.Reset(); CurrentPhaseId=Dependencies->FirstCard()->Spec().PhaseId; bPhaseTwoLatched=false;
@@ -1004,6 +1192,7 @@ void ARPGFrameworkBossCharacter::Die()
     if(auto* AI=Cast<ARPGFrameworkBossController>(GetController()))AI->StopOwnedWalk();
     GetCharacterMovement()->StopMovementImmediately();GetCharacterMovement()->DisableMovement();
     Executor->Abort(TEXT("BossDead"));StopF11Clip();bStaggerAnimActive=bPhaseHold=false;
+    NativeTerminal.Broadcast(this, GenerationId);
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] boss_dead generation=%llu executorAborted=1"),GenerationId);
     UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] RESULT outcome=BossDefeated acceptedHits=%d attacks=%d"),Executor->AcceptedHits(),AttacksDone+(bStartedMove?1:0));
 }

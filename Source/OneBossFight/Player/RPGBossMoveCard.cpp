@@ -1,5 +1,6 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Player/RPGBossMoveCard.h"
+#include "Player/RPGBossChannelDrainRules.h"
 #include "Player/RPGBossCueRules.h"
 #include "Player/RPGBossDefenseRules.h"
 #include "Animation/AnimMontage.h"
@@ -22,6 +23,29 @@ namespace
         return true;
     }
 }
+bool IsEligibleInPhase(const FRPGBossMoveCardSpec& S, FName PhaseId)
+{
+    return !PhaseId.IsNone() && (S.PhaseId == PhaseId || S.AdditionalPhaseIds.Contains(PhaseId));
+}
+double DamageBudget(const FRPGBossMoveCardSpec& S)
+{
+    constexpr double InvalidBudget = TNumericLimits<double>::Max();
+    if (!FMath::IsFinite(S.HPDamage) || S.HPDamage < 0.f) return InvalidBudget;
+    double Total = S.HPDamage;
+    if (S.AreaEffect.bEnabled)
+    {
+        if (!FMath::IsFinite(S.AreaEffect.Damage) || S.AreaEffect.Damage < 0.f) return InvalidBudget;
+        Total += S.AreaEffect.Damage;
+    }
+    if (S.ChannelDrain.bEnabled)
+    {
+        if (!FMath::IsFinite(S.ChannelDrain.TickDamage) || S.ChannelDrain.TickDamage < 0.f) return InvalidBudget;
+        const int32 Ticks = RPGBossChannelDrain::TickCount(S.ChannelDrain.StartSeconds, S.ChannelDrain.EndSeconds, S.ChannelDrain.TickIntervalSeconds);
+        if (Ticks <= 0) return InvalidBudget;
+        Total += double(Ticks) * S.ChannelDrain.TickDamage;
+    }
+    return FMath::IsFinite(Total) ? Total : InvalidBudget;
+}
 struct FCompiler
 {
     static void Publish(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMetadata& M,
@@ -33,6 +57,12 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
     FRPGBossMoveIssues R;
     if (S.Schema != 1 || S.MoveId.IsNone() || S.FamilyId.IsNone() || S.PhaseId.IsNone())
         Fail(R, TEXT("MoveCard.Identity"), TEXT("Schema/MoveId/FamilyId/PhaseId"));
+    if (S.AdditionalPhaseIds.Num() > 4) Fail(R,TEXT("MoveCard.AdditionalPhaseIds"),TEXT("at most four additional phases"));
+    TSet<FName> SeenAdditionalPhases;
+    for (FName AdditionalPhase : S.AdditionalPhaseIds)
+        if (AdditionalPhase.IsNone() || AdditionalPhase == S.PhaseId || SeenAdditionalPhases.Contains(AdditionalPhase))
+            Fail(R,TEXT("MoveCard.AdditionalPhaseIds"),TEXT("entries must be non-None, distinct, and different from PhaseId"));
+        else SeenAdditionalPhases.Add(AdditionalPhase);
     const bool bSequence = !S.Sequence.IsNull(), bMontage = !S.Montage.IsNull();
     if (bSequence == bMontage) Fail(R, TEXT("MoveCard.AnimationSource"), TEXT("exactly one sequence OR montage"));
     const FSoftObjectPath Requested = bSequence ? S.Sequence.ToSoftObjectPath() : S.Montage.ToSoftObjectPath();
@@ -57,6 +87,37 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
     Number(R, TEXT("FrontConeDegrees"), S.FrontConeDegrees);
     Number(R, TEXT("MaxVerticalDeltaCm"), S.MaxVerticalDeltaCm);
     Number(R, TEXT("HPDamage"), S.HPDamage);
+    if (S.AreaEffect.bEnabled)
+    {
+        const FRPGBossAreaEffect& E=S.AreaEffect;
+        Number(R,TEXT("AreaEffect.ReleaseSeconds"),E.ReleaseSeconds);
+        Number(R,TEXT("AreaEffect.DelaySeconds"),E.DelaySeconds);
+        Number(R,TEXT("AreaEffect.RadiusCm"),E.RadiusCm,true);
+        Number(R,TEXT("AreaEffect.Damage"),E.Damage);
+        Number(R,TEXT("AreaEffect.SnareSeconds"),E.SnareSeconds);
+        Number(R,TEXT("AreaEffect.SnareSpeedScale"),E.SnareSpeedScale,true);
+        if (E.DelaySeconds>10.f || E.RadiusCm>2000.f || E.SnareSeconds>30.f || E.SnareSpeedScale>1.f ||
+            E.ReleaseSeconds<S.CommitSeconds || E.ReleaseSeconds+E.DelaySeconds>S.RecoveryEndSeconds ||
+            (E.SnareSeconds==0.f && E.SnareSpeedScale!=1.f) ||
+            (E.SnareSeconds>0.f && E.SnareSpeedScale>=1.f) || (E.Damage==0.f && E.SnareSeconds==0.f) || S.bDefensive)
+            Fail(R,TEXT("MoveCard.AreaEffect"),TEXT("bounds, release time, snare pairing, nonempty effect, or defensive conflict"));
+    }
+    if (S.ChannelDrain.bEnabled)
+    {
+        const FRPGBossChannelDrain& C=S.ChannelDrain;
+        Number(R,TEXT("ChannelDrain.StartSeconds"),C.StartSeconds);
+        Number(R,TEXT("ChannelDrain.EndSeconds"),C.EndSeconds);
+        Number(R,TEXT("ChannelDrain.TickIntervalSeconds"),C.TickIntervalSeconds,true);
+        Number(R,TEXT("ChannelDrain.TickDamage"),C.TickDamage,true);
+        Number(R,TEXT("ChannelDrain.HealFraction"),C.HealFraction);
+        Number(R,TEXT("ChannelDrain.ConeRangeCm"),C.ConeRangeCm,true);
+        Number(R,TEXT("ChannelDrain.ConeHalfAngleDegrees"),C.ConeHalfAngleDegrees,true);
+        const int32 TickCount=RPGBossChannelDrain::TickCount(C.StartSeconds,C.EndSeconds,C.TickIntervalSeconds);
+        if (!(C.StartSeconds>=S.CommitSeconds&&C.StartSeconds<C.EndSeconds&&C.EndSeconds<=S.RecoveryEndSeconds) ||
+            C.TickIntervalSeconds<=0.f || TickCount<1 || TickCount>64 || C.HealFraction>1.f || C.ConeRangeCm>2000.f || C.ConeHalfAngleDegrees>180.f || (C.TickDamage==0.f&&C.HealFraction==0.f) ||
+            S.bDefensive || S.AreaEffect.bEnabled)
+            Fail(R,TEXT("MoveCard.ChannelDrain"),TEXT("timeline, tick count, cone/heal bounds, or conflicting add-on"));
+    }
     // BOSS-ANM-006: the warp is off when both budgets are 0; otherwise a window after the commit inside the active end, and bounded budgets.
     Number(R, TEXT("WarpStartSeconds"), S.WarpStartSeconds); Number(R, TEXT("WarpEndSeconds"), S.WarpEndSeconds);
     Number(R, TEXT("WarpMaxDistanceCm"), S.WarpMaxDistanceCm); Number(R, TEXT("WarpMaxAngleDegrees"), S.WarpMaxAngleDegrees); Number(R, TEXT("WarpStandoffCm"), S.WarpStandoffCm);
@@ -90,7 +151,7 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
     if (!(S.CommitSeconds <= S.ActiveStartSeconds && S.ActiveStartSeconds < S.ActiveEndSeconds &&
         S.ActiveEndSeconds <= S.RecoveryEndSeconds && S.RecoveryEndSeconds <= M.ClipLengthSeconds))
         Fail(R, TEXT("MoveCard.Timeline"), TEXT("commit<=activeStart<activeEnd<=recoveryEnd<=clipLength"));
-    if (S.Windows.IsEmpty() && !S.bDefensive) Fail(R, TEXT("MoveCard.Window"), TEXT("no hit windows"));
+    if (S.Windows.IsEmpty() && !S.bDefensive && !S.AreaEffect.bEnabled && !S.ChannelDrain.bEnabled) Fail(R, TEXT("MoveCard.Window"), TEXT("no hit windows or secondary effect"));
     // BOSS-DEF-005: a defensive card has no hit window and no damage; its move starts after a readable telegraph; a backstep needs a move budget and stays within the cap.
     if (S.bDefensive)
     {
@@ -157,7 +218,7 @@ FRPGBossMoveIssues Validate(const FRPGBossMoveCardSpec& S, const FRPGBossMoveMet
     // BOSS-HIT-010: a secondary window needs a direct window of the same hit group (shared dedupe), and a card cannot be all secondary.
     {
         TSet<FName> DirectGroups; for (const FRPGBossMoveWindow& W : S.Windows) if (!W.bSecondary) DirectGroups.Add(W.HitGroup);
-        if (DirectGroups.IsEmpty() && !S.bDefensive) Fail(R, TEXT("MoveCard.Window"), TEXT("no direct window"));
+        if (DirectGroups.IsEmpty() && !S.bDefensive && !S.AreaEffect.bEnabled && !S.ChannelDrain.bEnabled) Fail(R, TEXT("MoveCard.Window"), TEXT("no direct window or secondary effect"));
         for (int32 I = 0; I < S.Windows.Num(); ++I) if (S.Windows[I].bSecondary && !DirectGroups.Contains(S.Windows[I].HitGroup))
             Fail(R, TEXT("MoveCard.Window"), FString::Printf(TEXT("Windows[%d] secondary without a direct window in its hit group"), I));
     }

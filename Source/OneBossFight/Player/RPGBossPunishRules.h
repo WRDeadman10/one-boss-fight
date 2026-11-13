@@ -10,6 +10,12 @@
  */
 namespace RPGBossPunish
 {
+    /** Channel-only cards bypass strike-recovery only when their data supplies a way to evade the channel. */
+    inline bool RequiresRecoveryPunishCheck(bool bDefensive, bool bPureChannelDrain, double ConeHalfAngleDegrees, bool bTrackFacingEachTick)
+    {
+        const bool bCanEscapeChannel=(FMath::IsFinite(ConeHalfAngleDegrees)&&ConeHalfAngleDegrees>=0.&&ConeHalfAngleDegrees<180.)||!bTrackFacingEachTick;
+        return !bDefensive && !(bPureChannelDrain&&bCanEscapeChannel);
+    }
     /** What the boss data needs to know about the player's moves, measured from the pack's own assets (see RPGBossPunish.h). */
     struct FPlayerMoves
     {

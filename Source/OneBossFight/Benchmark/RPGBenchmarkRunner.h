@@ -8,6 +8,20 @@
 #include "RPGBenchmarkRunner.generated.h"
 
 class ACameraActor;
+
+/** BQ-21 (D4, BENCHMARK_RUN_RECEIPT_V1 proposal): pure helpers for the per-run identity block in summary.json. */
+namespace RPGBenchmarkReceipt
+{
+	/** Maps the Windows SESSIONNAME value to the schema's device.session_type: "Console" -> console, "RDP-..." -> remote, anything else
+	 *  (empty, unset, another platform) -> unknown. Never guesses "console", so a strict intake cannot treat an unknown session as a target run. */
+	inline FString ClassifySession(const FString& SessionName)
+	{
+		const FString Trimmed = SessionName.TrimStartAndEnd();
+		if (Trimmed.Equals(TEXT("Console"), ESearchCase::IgnoreCase)) { return TEXT("console"); }
+		if (Trimmed.StartsWith(TEXT("RDP-"), ESearchCase::IgnoreCase)) { return TEXT("remote"); }
+		return TEXT("unknown");
+	}
+}
 class FBenchmarkViewMetricsCapture;
 
 /**

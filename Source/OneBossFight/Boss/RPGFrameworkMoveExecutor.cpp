@@ -1,5 +1,6 @@
 // Copyright One Boss Fight. All Rights Reserved.
 #include "Boss/RPGFrameworkMoveExecutor.h"
+#include "Boss/RPGFrameworkPerfAttribution.h"
 #include "Player/RPGBossTrackRules.h"
 #include "Player/RPGBossApproachRules.h"
 #include "Player/RPGBossCueRules.h"
@@ -8,6 +9,7 @@
 #include "Player/RPGBossRecoveryWindowRules.h"
 #include "Player/RPGBossTelegraphScaleRules.h"
 #include "Player/RPGBossFatigueRules.h"
+#include "Player/RPGBossChannelDrainRules.h"
 #include "Player/RPGBossDamage.h"
 #include "Player/RPGPlayerParry.h"
 #include "Player/RPGDodgeTiming.h"
@@ -30,6 +32,10 @@
 #include "GameFramework/Character.h"
 #include "Components/CapsuleComponent.h"
 #include "CollisionQueryParams.h"
+#include "TimerManager.h"
+#include "HAL/PlatformTime.h"
+#include "Misc/EngineVersion.h"
+#include "Misc/ScopeExit.h"
 
 namespace
 {
@@ -55,6 +61,32 @@ static TAutoConsoleVariable<int32> CVarBossProofStaleCallback(TEXT("rpg.BossProo
 static TAutoConsoleVariable<int32> CVarBossProofSuppressMontageEnd(TEXT("rpg.BossProofSuppressMontageEnd"),0,TEXT("Test hook (BOSS-EXE-007 / ANM-007): 1 stops feeding the montage position to the move model once the card has played 0.3 s, as if the end notifications were dropped; the watchdog must then abort the card. 0 = off. Not compiled into shipping builds."),ECVF_Default);
 static TAutoConsoleVariable<int32> CVarBossProofTraceGeometry(TEXT("rpg.BossProofTraceGeometry"),0,TEXT("Test-only sweep geometry receipt: logs active weapon segment and target capsule transforms for each collision substep. 0 = off; not compiled into shipping builds."),ECVF_Default);
 #endif
+#if !UE_BUILD_SHIPPING
+static TAutoConsoleVariable<int32> CVarRPGFrameworkPerfAttribution(TEXT("rpg.Perf.FrameworkAttribution"), 0,
+	TEXT("Development-only framework executor CPU scope attribution. 0=off; 1=emit bounded 5 s sample windows. GPU component attribution is unavailable; do not infer it from frame totals."), ECVF_Default);
+namespace
+{
+	void RecordFrameworkPerfTick(double CpuMilliseconds, const TCHAR* MapName, double Now)
+	{
+		static RPGFrameworkPerfAttribution::FWindow Window;
+		static double WindowStart = 0.0;
+		static FGuid RunId;
+		if (Window.Samples == 0)
+		{
+			WindowStart = Now;
+			if (!RunId.IsValid()) RunId = FGuid::NewGuid();
+		}
+		Window.RecordMilliseconds(CpuMilliseconds);
+		if (Now - WindowStart < 5.0) return;
+		UE_LOG(LogTemp, Display, TEXT("[FrameworkPerf] run=%s project_build_id=unavailable engine=%s map=%s category=executor_tick_inclusive_cpu samples=%llu cpu_total_ms=%.3f cpu_max_ms=%.3f sample_start=%.6f sample_end=%.6f gpu_component_ms=NA gpu_attribution=unavailable"),
+			*RunId.ToString(EGuidFormats::Digits), *FEngineVersion::Current().ToString(), MapName,
+			static_cast<unsigned long long>(Window.Samples), double(Window.TotalMicroseconds) / 1000.0,
+			double(Window.MaxMicroseconds) / 1000.0, WindowStart, Now);
+		Window.Reset();
+		WindowStart = Now;
+	}
+}
+#endif
 URPGFrameworkMoveExecutor::URPGFrameworkMoveExecutor()
 {
     PrimaryComponentTick.bCanEverTick=true; PrimaryComponentTick.bStartWithTickEnabled=false;
@@ -64,7 +96,7 @@ bool URPGFrameworkMoveExecutor::ValidatePlaybackCard(const TSharedPtr<const FRPG
 {
     Error.Reset();
     if (!C||!C->HasResolvedAssets()) {Error=TEXT("Framework.Playback.UnresolvedPreview");return false;}
-    if (!RPGBossMoveCards::Validate(C->Spec(),C->Metadata()).IsValid()||!C->Spec().Montage.IsNull()||C->Spec().Sequence.IsNull()||!C->Spec().SectionName.IsNone()||((bDamage&&!C->Spec().bDefensive)?!(C->Spec().HPDamage>0.f):C->Spec().HPDamage!=0.f))
+    if (!RPGBossMoveCards::Validate(C->Spec(),C->Metadata()).IsValid()||!C->Spec().Montage.IsNull()||C->Spec().Sequence.IsNull()||!C->Spec().SectionName.IsNone()||((bDamage&&!C->Spec().bDefensive)?!(C->Spec().HPDamage>0.f|| (C->Spec().AreaEffect.bEnabled&&C->Spec().AreaEffect.Damage>0.f)||(C->Spec().ChannelDrain.bEnabled&&C->Spec().ChannelDrain.TickDamage>0.f)):C->Spec().HPDamage!=0.f))
     {Error=TEXT("Framework.Playback.SequenceTelemetryOnly");return false;}
     return true;
 }
@@ -148,7 +180,7 @@ bool URPGFrameworkMoveExecutor::StartCard(const TSharedPtr<const FRPGCompiledBos
     CardWatchdogTimeoutSeconds=RPGBossTrack::WatchdogTimeoutSeconds(Card->Spec().RecoveryEndSeconds,CardPlayRate,Card->Metadata().ClipLengthSeconds,Profile->BlendOutSeconds);
     if (CardWatchdogTimeoutSeconds>=0.&&Card->Spec().HoldMaxSeconds>0.f) CardWatchdogTimeoutSeconds+=double(Card->Spec().HoldMaxSeconds);   // BOSS-ANM-003: the watchdog allows the longest hold
     if (CardWatchdogTimeoutSeconds<0.||(double(Card->Metadata().ClipLengthSeconds)-double(Profile->BlendOutSeconds))/CardPlayRate>CardWatchdogTimeoutSeconds) {Error=TEXT("Framework.Playback.WatchdogWindow");return false;}
-    bWatchdogFired=false; bSuppressLogged=false; bPlaybackEndLogged=false; bHoldActive=bHoldDone=false; CuesFiredMask=0; PreloadCues();
+    bWatchdogFired=false; bSuppressLogged=false; bPlaybackEndLogged=false; bHoldActive=bHoldDone=false; CuesFiredMask=0; bAreaEffectReleased=bAreaEffectResolved=false; AreaEffectCenter=FVector::ZeroVector; bChannelFacingCaptured=false; ChannelFacingYaw=0.f; ChannelTickIndex=0; PreloadCues();
     // Loaded dependency only. No Resolve/Load call or alternate animation path in the playback consumer.
     SetComponentTickEnabled(true);
     UAnimSequence* Sequence=Card->Spec().Sequence.Get();
@@ -178,6 +210,20 @@ bool URPGFrameworkMoveExecutor::StartCard(const TSharedPtr<const FRPGCompiledBos
 }
 void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActorComponentTickFunction* Tick)
 {
+#if !UE_BUILD_SHIPPING
+	const bool bMeasureFrameworkTick = CVarRPGFrameworkPerfAttribution.GetValueOnGameThread() != 0;
+	const double FrameworkTickStart = bMeasureFrameworkTick ? FPlatformTime::Seconds() : 0.0;
+	ON_SCOPE_EXIT
+	{
+		if (bMeasureFrameworkTick)
+		{
+			const double FrameworkTickEnd = FPlatformTime::Seconds();
+			const UWorld* World = GetWorld();
+			const FString MapName = World ? World->GetMapName() : TEXT("none");
+			RecordFrameworkPerfTick((FrameworkTickEnd - FrameworkTickStart) * 1000.0, *MapName, FrameworkTickEnd);
+		}
+	};
+#endif
     Super::TickComponent(Delta,Type,Tick);
     if (!bInitialized||!OwnedMontage) return;
     auto Fail=[this](const TCHAR* E){if(OwnerBoss.IsValid())OwnerBoss->Fail(E);else Abort(E);};
@@ -277,6 +323,8 @@ void URPGFrameworkMoveExecutor::TickComponent(float Delta,ELevelTick Type,FActor
     LogEvents(Events);
     TickWarp(PrevPosition,Position);
     SweepWindows(PrevPosition,Position);
+    TickAreaEffect(PrevPosition,Position);
+    TickChannelDrain(PrevPosition,Position);
     TickGrab(Position);
     TickCues(PrevPosition,Position);
     if (Model_.State()==ERPGBossMoveModelState::Idle) StopOwned(Profile->BlendOutSeconds);
@@ -352,6 +400,7 @@ void URPGFrameworkMoveExecutor::SweepWindows(double PrevPosition,double Position
             const FVector PoseA0=Keys[I-1].A, PoseB0=Keys[I-1].B, PoseA1=Keys[I].A, PoseB1=Keys[I].B;
             const FVector Axis=PoseB1-PoseA1; const double Length=Axis.Size();
             if (Length<KINDA_SMALL_NUMBER) continue;
+#if !UE_BUILD_SHIPPING
             if (CVarBossProofTraceGeometry.GetValueOnGameThread()>0)
             {
                 const ACharacter* TargetCharacter=Cast<ACharacter>(Target.Get());
@@ -361,6 +410,7 @@ void URPGFrameworkMoveExecutor::SweepWindows(double PrevPosition,double Position
                     Token.InstanceId,*W.WindowId.ToString(),Lo,Hi,I,*PoseA0.ToCompactString(),*PoseB0.ToCompactString(),*PoseA1.ToCompactString(),*PoseB1.ToCompactString(),
                     *TargetLocation.ToCompactString(),double(Target->GetActorRotation().Yaw),TargetCapsule?double(TargetCapsule->GetScaledCapsuleRadius()):-1.,TargetCapsule?double(TargetCapsule->GetScaledCapsuleHalfHeight()):-1.,double(W.RadiusCm));
             }
+#endif
             const FQuat Rotation=FQuat::FindBetweenNormals(FVector::UpVector,Axis/Length);
             const FCollisionShape Shape=FCollisionShape::MakeCapsule(W.RadiusCm,float(Length*.5)+W.RadiusCm);
             TArray<FHitResult> Hits;
@@ -376,6 +426,143 @@ void URPGFrameworkMoveExecutor::SweepWindows(double PrevPosition,double Position
         if (!bContact) continue;
         if (W.bGrab) { if (!bGrabUsed&&!Grab.bHeld) BeginGrab(W); continue; }   // BOSS-HIT-012: the contact catches, the damage comes at the release
         ApplyHit(W);
+    }
+}
+void URPGFrameworkMoveExecutor::TickAreaEffect(double PrevPosition,double Position)
+{
+    if (!Card.IsValid()||!Card->Spec().AreaEffect.bEnabled||!Target.IsValid()||!OwnerBoss.IsValid()) return;
+    const FRPGBossAreaEffect& Effect=Card->Spec().AreaEffect;
+    if (!bAreaEffectReleased&&PrevPosition<Effect.ReleaseSeconds&&Position>=Effect.ReleaseSeconds)
+    {
+        AreaEffectCenter=Target->GetActorLocation();
+        if (const ACharacter* Character=Cast<ACharacter>(Target.Get()))
+            if (const UCapsuleComponent* Capsule=Character->GetCapsuleComponent()) AreaEffectCenter.Z-=Capsule->GetScaledCapsuleHalfHeight();
+        bAreaEffectReleased=true;
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] area_effect state=Released instance=%llu card=%s center=%s cardTime=%g release=%g delay=%g radius=%g"),Token.InstanceId,*Card->Spec().MoveId.ToString(),*AreaEffectCenter.ToString(),Position,double(Effect.ReleaseSeconds),double(Effect.DelaySeconds),double(Effect.RadiusCm));
+    }
+    if (!bAreaEffectReleased||bAreaEffectResolved||Position<Effect.ReleaseSeconds+Effect.DelaySeconds) return;
+    bAreaEffectResolved=true;
+    ACharacter* TargetCharacter=Cast<ACharacter>(Target.Get());
+    if (!TargetCharacter||TargetCharacter->IsActorBeingDestroyed()) return;
+    FVector TargetGround=TargetCharacter->GetActorLocation();
+    float TargetRadius=0.f;
+    if (const UCapsuleComponent* Capsule=TargetCharacter->GetCapsuleComponent())
+    {
+        TargetGround.Z-=Capsule->GetScaledCapsuleHalfHeight();
+        TargetRadius=Capsule->GetScaledCapsuleRadius();
+    }
+    const double Distance=FVector::Dist2D(TargetGround,AreaEffectCenter);
+    const bool bInside=Distance<=double(Effect.RadiusCm+TargetRadius);
+    UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] area_effect state=Resolve instance=%llu distanceCm=%g radiusCm=%g targetRadiusCm=%g inside=%d cardTime=%g"),Token.InstanceId,Distance,double(Effect.RadiusCm),double(TargetRadius),bInside?1:0,Position);
+    if (!bInside) return;
+
+    bool bEffectAccepted=Effect.Damage<=0.f;
+    if (Effect.Damage>0.f&&Profile&&Profile->bDamageEnabled&&Resolver.IsValid())
+    {
+        FRPGDamagePayload Payload;
+        Payload.MoveId=Card->Spec().MoveId; Payload.AttackInstance=int32(Token.InstanceId); Payload.Generation=Token.Generation;
+        Payload.HitKey=TEXT("AreaEffect"); Payload.HPDamage=Effect.Damage;
+        const bool bBlocking=RPGBossDamage::HasTag(Target.Get(),TEXT("Status.Blocking"));
+        if (bBlocking&&Profile->GuardChipFraction>0.f) Payload.HPDamage=float(RPGBossBlockChip::GuardedDamage(Payload.HPDamage,Profile->GuardChipFraction));
+        const FRPGDamageResult Result=Resolver->Resolve(Target.Get(),Payload);
+        bEffectAccepted=Result.Outcome==ERPGDamageOutcome::Accepted;
+        if (bEffectAccepted)
+        {
+            ++HitsAccepted; ++CardAcceptedHits; AppliedDamage+=Result.HPApplied;
+            if (OwnerBoss.IsValid()) OwnerBoss->NoteDamageApplied(Result.HPApplied);
+        }
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] area_effect_damage instance=%llu outcome=%s hpApplied=%g healthBefore=%g healthAfter=%g"),Token.InstanceId,*UEnum::GetValueAsString(Result.Outcome),Result.HPApplied,Result.HealthBefore,Result.HealthAfter);
+    }
+    if (bEffectAccepted&&Effect.SnareSeconds>0.f&&!RPGBossDamage::HasTag(Target.Get(),TEXT("Status.Invulnerable")))
+    {
+        if (AreaSnareTarget.IsValid()) ClearAreaSnare(true);
+        if (UCharacterMovementComponent* Movement=TargetCharacter->GetCharacterMovement(); Movement&&Movement->MaxWalkSpeed>0.f)
+        {
+            AreaSnareTarget=TargetCharacter; AreaSnareBaseSpeed=Movement->MaxWalkSpeed; AreaSnareScale=Effect.SnareSpeedScale;
+            AreaSnareAppliedSpeed=AreaSnareBaseSpeed*AreaSnareScale; Movement->MaxWalkSpeed=AreaSnareAppliedSpeed;
+            AreaSnareEndsAt=GetWorld()->GetTimeSeconds()+double(Effect.SnareSeconds);
+            FTimerDelegate UpdateDelegate=FTimerDelegate::CreateUObject(this,&URPGFrameworkMoveExecutor::TickAreaSnare);
+            GetWorld()->GetTimerManager().SetTimer(AreaSnareTimer,UpdateDelegate,.05f,true);
+            UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] area_effect_snare state=Started instance=%llu scale=%g seconds=%g baseSpeed=%g"),Token.InstanceId,double(AreaSnareScale),double(Effect.SnareSeconds),double(AreaSnareBaseSpeed));
+        }
+    }
+}
+void URPGFrameworkMoveExecutor::TickAreaSnare()
+{
+    ACharacter* Character=AreaSnareTarget.Get();
+    UCharacterMovementComponent* Movement=Character?Character->GetCharacterMovement():nullptr;
+    if (!Movement||!GetWorld()) {ClearAreaSnare(false);return;}
+    if (GetWorld()->GetTimeSeconds()>=AreaSnareEndsAt) {EndAreaSnare();return;}
+    if (!FMath::IsNearlyEqual(Movement->MaxWalkSpeed,AreaSnareAppliedSpeed,.5f))
+    {
+        // Rebase if another movement policy changes its unmodified speed while this temporary multiplier is active.
+        AreaSnareBaseSpeed=Movement->MaxWalkSpeed; AreaSnareAppliedSpeed=AreaSnareBaseSpeed*AreaSnareScale;
+        Movement->MaxWalkSpeed=AreaSnareAppliedSpeed;
+    }
+}
+void URPGFrameworkMoveExecutor::EndAreaSnare()
+{
+    ClearAreaSnare(true);
+}
+void URPGFrameworkMoveExecutor::ClearAreaSnare(bool bRestoreSpeed)
+{
+    if (GetWorld()) GetWorld()->GetTimerManager().ClearTimer(AreaSnareTimer);
+    if (bRestoreSpeed)
+    {
+        if (ACharacter* Character=AreaSnareTarget.Get())
+            if (UCharacterMovementComponent* Movement=Character->GetCharacterMovement(); Movement&&FMath::IsNearlyEqual(Movement->MaxWalkSpeed,AreaSnareAppliedSpeed,.5f)) Movement->MaxWalkSpeed=AreaSnareBaseSpeed;
+    }
+    if (AreaSnareTarget.IsValid()) UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] area_effect_snare state=Ended restored=%d"),bRestoreSpeed?1:0);
+    AreaSnareTarget.Reset(); AreaSnareBaseSpeed=AreaSnareAppliedSpeed=0.f; AreaSnareScale=1.f; AreaSnareEndsAt=0.;
+}
+void URPGFrameworkMoveExecutor::TickChannelDrain(double PrevPosition,double Position)
+{
+    if (!Card.IsValid()||!Card->Spec().ChannelDrain.bEnabled||!OwnerBoss.IsValid()||!Target.IsValid()) return;
+    const FRPGBossChannelDrain& Channel=Card->Spec().ChannelDrain;
+    if (!bChannelFacingCaptured&&PrevPosition<Channel.StartSeconds&&Position>=Channel.StartSeconds)
+    {
+        ChannelFacingYaw=OwnerBoss->GetActorRotation().Yaw;
+        bChannelFacingCaptured=true;
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] channel state=Started instance=%llu card=%s start=%g end=%g tickInterval=%g facingYaw=%g trackFacing=%d"),Token.InstanceId,*Card->Spec().MoveId.ToString(),double(Channel.StartSeconds),double(Channel.EndSeconds),double(Channel.TickIntervalSeconds),double(ChannelFacingYaw),Channel.bTrackFacingEachTick?1:0);
+    }
+    if (!bChannelFacingCaptured) return;
+    const int32 MaxTicks=RPGBossChannelDrain::TickCount(Channel.StartSeconds,Channel.EndSeconds,Channel.TickIntervalSeconds);
+    while (ChannelTickIndex<MaxTicks)
+    {
+        const double TickAt=double(Channel.StartSeconds)+double(Channel.TickIntervalSeconds)*double(ChannelTickIndex+1);
+        if (TickAt>double(Channel.EndSeconds)+1.e-4||PrevPosition>=TickAt||Position<TickAt) break;
+        ++ChannelTickIndex;
+        FVector ToTarget=Target->GetActorLocation()-OwnerBoss->GetActorLocation();
+        const double Range=ToTarget.Size2D(); ToTarget.Z=0.f;
+        const FRotator AimRotation(0.f,Channel.bTrackFacingEachTick?OwnerBoss->GetActorRotation().Yaw:ChannelFacingYaw,0.f);
+        const FVector Forward=AimRotation.Vector(); const double Dot=ToTarget.IsNearlyZero()?1.0:double(FVector::DotProduct(Forward,ToTarget.GetSafeNormal2D()));
+        const double MinDot=FMath::Cos(FMath::DegreesToRadians(double(Channel.ConeHalfAngleDegrees)));
+        const bool bInside=Range<=Channel.ConeRangeCm&&Dot>=MinDot;
+        FString Outcome=TEXT("Miss"); double Applied=0.,Healed=0.;
+        if (bInside&&Profile&&Profile->bDamageEnabled&&Resolver.IsValid())
+        {
+            FRPGDamagePayload Payload;
+            Payload.MoveId=Card->Spec().MoveId; Payload.AttackInstance=int32(Token.InstanceId); Payload.Generation=Token.Generation;
+            Payload.HitKey=FName(*FString::Printf(TEXT("ChannelTick_%d"),ChannelTickIndex)); Payload.HPDamage=Channel.TickDamage;
+            if (RPGBossDamage::HasTag(Target.Get(),TEXT("Status.Blocking"))&&Profile->GuardChipFraction>0.f)
+                Payload.HPDamage=float(RPGBossBlockChip::GuardedDamage(Payload.HPDamage,Profile->GuardChipFraction));
+            const FRPGDamageResult Result=Resolver->Resolve(Target.Get(),Payload);
+            Outcome=UEnum::GetValueAsString(Result.Outcome); Applied=Result.HPApplied;
+            if (Result.Outcome==ERPGDamageOutcome::Accepted)
+            {
+                ++HitsAccepted; ++CardAcceptedHits; AppliedDamage+=Applied;
+                OwnerBoss->NoteDamageApplied(Applied);
+                double BossHealth=0.,BossMaxHealth=0.;
+                if (OwnerBoss->ReadNativeHealth(false,BossHealth)&&OwnerBoss->ReadNativeHealth(true,BossMaxHealth))
+                    Healed=OwnerBoss->HealFromChannel(RPGBossChannelDrain::CappedHeal(Applied,double(Channel.HealFraction),BossHealth,BossMaxHealth));
+            }
+        }
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] channel_tick instance=%llu tick=%d cardTime=%g rangeCm=%g dot=%g inCone=%d outcome=%s hpApplied=%g bossHealed=%g"),Token.InstanceId,ChannelTickIndex,TickAt,Range,Dot,bInside?1:0,*Outcome,Applied,Healed);
+    }
+    if (ChannelTickIndex>=MaxTicks&&Position>=Channel.EndSeconds)
+    {
+        UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] channel state=Ended instance=%llu ticks=%d"),Token.InstanceId,ChannelTickIndex);
+        bChannelFacingCaptured=false;
     }
 }
 void URPGFrameworkMoveExecutor::BeginGrab(const FRPGBossMoveWindow& W)
@@ -604,6 +791,7 @@ void URPGFrameworkMoveExecutor::RestoreCardPlayRate()
 void URPGFrameworkMoveExecutor::Abort(const FString& Reason)
 {
     // Cleanup runs exactly once: a clean finish or an earlier abort makes later calls (Fail, EndPlay) no-ops.
+    ClearAreaSnare(true);
     if (bAborted||bFinished) return;
     ReleaseGrab(*Reason,true);   // BOSS-HIT-012: every abort (stagger, death, leash, watchdog, EndPlay, a failure) frees a held victim first
     TArray<FRPGBossMoveModelEvent> Events; FString Error;
@@ -626,4 +814,4 @@ void URPGFrameworkMoveExecutor::Abort(const FString& Reason)
 bool URPGFrameworkMoveExecutor::IsIdle() const {return Model_.State()==ERPGBossMoveModelState::Idle&&!OwnedMontage;}
 bool URPGFrameworkMoveExecutor::IsClean() const {return IsIdle();}
 void URPGFrameworkMoveExecutor::EndPlay(const EEndPlayReason::Type Reason)
-{Abort(TEXT("EndPlay"));Super::EndPlay(Reason);}
+{ClearAreaSnare(true);Abort(TEXT("EndPlay"));Super::EndPlay(Reason);}

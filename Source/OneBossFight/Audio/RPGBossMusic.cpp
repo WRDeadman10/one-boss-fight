@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGBossEncounter.h"
+#include "Player/RPGNativeBossHealth.h"
 #include "Player/RPGBossPhases.h"
 #include "Player/RPGLegend.h"
 #include "Sound/SoundBase.h"
@@ -140,6 +141,7 @@ void URPGBossMusic::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	AActor* Boss = GetOwner();
+	IRPGNativeBossHealth* NativeHealth = Boss ? Cast<IRPGNativeBossHealth>(Boss) : nullptr;
 	if (Boss && !Encounter)
 	{
 		Encounter = Boss->FindComponentByClass<URPGBossEncounter>(); // added after this component by the subsystem
@@ -148,22 +150,25 @@ void URPGBossMusic::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	{
 		Phases = Boss->FindComponentByClass<URPGBossPhases>();
 	}
-	if (!Boss || !Encounter)
+	if (!Boss || (!Encounter && !NativeHealth))
 	{
 		return;
 	}
 	double Health = 1.0;
-	const bool bHaveHealth = RPGPack::ReadAttribute(Boss, TEXT("Attribute.Health"), /*bMax=*/false, Health);
-	const bool bDead = bHaveHealth && Health <= 0.0;
+	const bool bHaveHealth = Encounter
+		? RPGPack::ReadAttribute(Boss, TEXT("Attribute.Health"), /*bMax=*/false, Health)
+		: NativeHealth->ReadNativeHealth(false, Health);
+	const bool bDead = bHaveHealth && FMath::IsFinite(Health) && Health <= 0.0;
 
 	// The track the fight asks for now. None while the boss sleeps or is dead (Freeze 783: music fades without restarting the combat theme), Phase 2 from the phase two threshold.
 	// Once Phase 2 plays it stays until the fight ends: a console switch of rpg.Legend in the middle never swaps back.
-	if (Encounter->IsDormant() || bDead)
+	if ((Encounter && Encounter->IsDormant()) || (NativeHealth && !NativeHealth->IsNativeEncounterActive() && !bDead) || bDead)
 	{
 		StopAll(bDead);
 		return;
 	}
-	const bool bSwapWanted = bSwapAtPhaseTwo && PhaseTwoMusic && URPGLegendSubsystem::IsLegendOn() && Phases && Phases->IsPhaseTwo();
+	const bool bPhaseTwo = Encounter ? (Phases && Phases->IsPhaseTwo()) : NativeHealth->IsNativePhaseTwo();
+	const bool bSwapWanted = bSwapAtPhaseTwo && PhaseTwoMusic && URPGLegendSubsystem::IsLegendOn() && bPhaseTwo;
 	if (ActiveTrack == ETrack::None)
 	{
 		StartTrack(bSwapWanted ? ETrack::Phase2 : ETrack::Phase1); // a boss that wakes already in phase two starts straight on the climax

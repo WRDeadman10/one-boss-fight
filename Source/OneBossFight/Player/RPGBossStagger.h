@@ -46,6 +46,15 @@ public:
 
 	/** Frontal riposte (Freeze 17.4): the player must stand within RiposteRange cm (centre to centre, horizontal) in front of the boss (a cone of RiposteConeDegrees in total) and press Light Attack
 	 *  while the boss is down. The first hit that follows within RiposteArmSeconds is multiplied by CriticalMultiplier, once per stance break; every other hit is normal damage. */
+	/** BQ-13 / KI-085 (opt-in, default off): flush the player's pressed keys right after the riposte restores input. DisableInput
+	 *  drops key-release events, so a sprint/guard key released during the execution can stay latched; flushing releases it. A key
+	 *  still physically held must then be pressed again (feel decision, so off by default). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Riposte")
+	bool bFlushInputAfterRiposte = false;
+
+	/** BQ-13 pure seam: true when the riposte's input restore should also flush pressed keys. */
+	static bool ShouldFlushInputOnRestore(bool bBossAlive, bool bPlayerAlive, bool bFlushEnabled) { return bFlushEnabled && bBossAlive && bPlayerAlive; }
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Riposte", meta = (ClampMin = "10.0"))
 	float RiposteRange = 150.f;
 
@@ -183,6 +192,10 @@ public:
 	/** The pack's temporary hit stun immunity effect (4 s, enough for the fall, the hold and the get-up). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stagger")
 	TSoftClassPtr<UObject> ImmunityEffect;
+
+	/** BQ-19 / KI-074 (opt-in, default off): re-apply ImmunityEffect when the get-up starts, so a late hit cannot replay a flinch. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stagger")
+	bool bReapplyImmunityAtGetUp = false;
 
 	UFUNCTION(BlueprintPure, Category = "Stagger")
 	bool IsStaggered() const { return Phase != EPhase::Idle; }
@@ -331,4 +344,7 @@ private:
 	int32 DroppedStaggered = 0;
 	int32 DroppedCooldown = 0;
 	TWeakObjectPtr<UObject> CachedHitStun;
+private:
+	void ApplyHitStunImmunity(UObject* Asc);
+	void ReapplyImmunityForGetUp();
 };

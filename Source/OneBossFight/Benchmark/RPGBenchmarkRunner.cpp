@@ -20,6 +20,9 @@
 #include "HAL/IConsoleManager.h"
 #include "HAL/PlatformMemory.h"
 #include "HAL/PlatformMisc.h"
+#include "HAL/PlatformProcess.h"
+#include "Misc/Guid.h"
+#include "Misc/SecureHash.h"
 #include "HAL/PlatformTime.h"
 #include "HAL/CriticalSection.h"
 #include "RHIGlobals.h"
@@ -475,6 +478,21 @@ void ARPGBenchmarkRunner::WriteResults(const FRPGFrameStats& Stats) const
 	Json->SetStringField(TEXT("timestamp"), Stamp);
 	Json->SetStringField(TEXT("map"), GetWorld() ? GetWorld()->GetMapName() : FString());
 	Json->SetBoolField(TEXT("fight_mode"), bFightMode);
+	{
+		// BQ-21 (D4): per-run identity, following the BENCHMARK_RUN_RECEIPT_V1 proposal (not yet adopted). Additive nested object, so existing
+		// consumers that read the flat fields are unaffected. The machine name is never written in clear: only an MD5 fingerprint, enough to
+		// tell runs on the same host apart. Binary and package hashes are left to the intake step (hashing the package here would distort the run).
+		const TSharedRef<FJsonObject> Identity = MakeShared<FJsonObject>();
+		Identity->SetStringField(TEXT("schema_hint"), TEXT("BENCHMARK_RUN_RECEIPT_V1 (proposal)"));
+		Identity->SetStringField(TEXT("run_id"), FGuid::NewGuid().ToString(EGuidFormats::Digits));
+		Identity->SetStringField(TEXT("completed_at_utc"), FDateTime::UtcNow().ToIso8601());
+		Identity->SetStringField(TEXT("build_version"), FApp::GetBuildVersion());
+		Identity->SetNumberField(TEXT("engine_changelist"), FEngineVersion::Current().GetChangelist());
+		Identity->SetStringField(TEXT("build_configuration"), LexToString(FApp::GetBuildConfiguration()));
+		Identity->SetStringField(TEXT("session_type"), RPGBenchmarkReceipt::ClassifySession(FPlatformMisc::GetEnvironmentVariable(TEXT("SESSIONNAME"))));
+		Identity->SetStringField(TEXT("host_fingerprint_md5"), FMD5::HashAnsiString(FPlatformProcess::ComputerName()));
+		Json->SetObjectField(TEXT("run_identity"), Identity);
+	}
 	Json->SetBoolField(TEXT("fight_started"), bFightStarted); // false in a fight-mode run means the bot never found the boss: the run measured an idle arena and is not valid
 	Json->SetStringField(TEXT("engine_version"), FEngineVersion::Current().ToString());
 	Json->SetStringField(TEXT("build_configuration"), LexToString(FApp::GetBuildConfiguration()));

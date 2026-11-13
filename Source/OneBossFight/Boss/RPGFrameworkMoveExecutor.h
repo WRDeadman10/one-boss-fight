@@ -80,6 +80,13 @@ private:
     void BeginGrab(const FRPGBossMoveWindow& Window);
     void ReleaseGrab(const TCHAR* Reason,bool bInterrupted);
     void TickGrab(double Position);
+    /** X17: target-ground delayed area effect; one encounter target in this duel. */
+    void TickAreaEffect(double PrevPosition,double Position);
+    /** X22: card-local cone ticks; all executor abort paths terminate the channel. */
+    void TickChannelDrain(double PrevPosition,double Position);
+    void TickAreaSnare();
+    void EndAreaSnare();
+    void ClearAreaSnare(bool bRestoreSpeed);
     /** BOSS-ANM-006: the bounded warp of the running card: what it has used of its budgets so far. */
     void TickWarp(double PrevPosition,double Position);
     /** BOSS-ANM-005: while a card runs the executor owns the boss's motion: navigation is stopped and the movement component disabled; both come back when the card ends or is aborted. */
@@ -101,6 +108,15 @@ private:
     double WarpMovedCm=0., WarpTurnedDeg=0., WarpEaseDistanceCm=0.; bool bWarpEaseDistanceSet=false, bWarpEaseLogged=false, bWarpSummaryLogged=false;
     RPGBossTrack::FGrabState Grab; bool bGrabUsed=false; double GrabReleaseAt=0.; FName GrabWindowId; FName GrabHitKey;
     TWeakObjectPtr<ACharacter> Held; TEnumAsByte<ECollisionEnabled::Type> HeldCapsuleCollision=ECollisionEnabled::QueryAndPhysics;
+    FVector AreaEffectCenter=FVector::ZeroVector;
+    bool bAreaEffectReleased=false,bAreaEffectResolved=false;
+    bool bChannelFacingCaptured=false;
+    float ChannelFacingYaw=0.f;
+    int32 ChannelTickIndex=0;
+    TWeakObjectPtr<ACharacter> AreaSnareTarget;
+    FTimerHandle AreaSnareTimer;
+    float AreaSnareBaseSpeed=0.f,AreaSnareAppliedSpeed=0.f,AreaSnareScale=1.f;
+    double AreaSnareEndsAt=0.;
     double DecisionYawDeg=0.;    // BOSS-AWR-002: the signed yaw to the target in the same decision snapshot
     double DecisionRangeCm=0.;   // BOSS-AWR-002: the range of the decision snapshot the running attack was started with
 };

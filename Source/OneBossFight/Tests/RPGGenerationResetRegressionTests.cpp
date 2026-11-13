@@ -7,6 +7,7 @@
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "Player/RPGBossEncounter.h"
+#include "Pack/RPGOwnedTagCleanup.h"
 #include "Player/RPGBossStagger.h"
 #include "Player/RPGHitIntake.h"
 #include "TimerManager.h"
@@ -131,6 +132,26 @@ bool FKI173RiposteGenerationResetOrdering::RunTest(const FString&)
 	TestTrue(TEXT("new-generation riposte request is accepted"), Stagger->TryRiposte(PlayerB));
 	Scope.FlushNextTick();
 	TestEqual(TEXT("stale callback is inert and only current request dispatches"), Stagger->RiposteStartDispatchCountForTest, 1);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOwnedTagCleanupRejectsPriorGeneration,
+	"OneBossFight.Player.OwnedTagCleanup.PriorGenerationCannotRemoveCurrentTag",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter)
+
+bool FOwnedTagCleanupRejectsPriorGeneration::RunTest(const FString&)
+{
+	FGenerationRegressionWorld Scope;
+	if (!TestNotNull(TEXT("engine-backed transient world is available"), Scope.World)) return false;
+	AActor* Owner = Scope.World->SpawnActor<AActor>(FVector::ZeroVector, FRotator::ZeroRotator);
+	AActor* OtherOwner = Scope.World->SpawnActor<AActor>(FVector(100.f, 0.f, 0.f), FRotator::ZeroRotator);
+	if (!TestNotNull(TEXT("same owner is available"), Owner) || !TestNotNull(TEXT("different owner is available"), OtherOwner)) return false;
+	TestTrue(TEXT("cleanup may remove its tag for the same actor and generation"),
+		RPGOwnedTagCleanup::MayRemoveForGeneration(Owner, Owner, 7, 7));
+	TestFalse(TEXT("delayed removal from generation 7 cannot remove generation 8 tag on the same actor"),
+		RPGOwnedTagCleanup::MayRemoveForGeneration(Owner, Owner, 7, 8));
+	TestFalse(TEXT("same generation token cannot authorize a different actor"),
+		RPGOwnedTagCleanup::MayRemoveForGeneration(Owner, OtherOwner, 7, 7));
 	return true;
 }
 

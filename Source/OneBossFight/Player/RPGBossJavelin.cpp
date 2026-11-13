@@ -142,6 +142,7 @@ void ARPGBossJavelin::Tick(float DeltaSeconds)
 		Payload.AttackInstance = AttackInstance;
 		Payload.Generation = Generation;
 		Payload.HPDamage = Damage;
+		Payload.bRequestHitReaction = true; // BQ-17: no effect unless rpg.Boss.ProjectHitReaction is on
 		URPGDamageResolver* Resolver = URPGDamageResolver::FindOrAdd(Boss);
 		Resolver->NoteOverlap(Payload);
 		const FRPGDamageResult Result = Resolver->Resolve(Player, Payload);

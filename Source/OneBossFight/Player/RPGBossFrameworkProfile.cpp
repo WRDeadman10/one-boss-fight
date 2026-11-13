@@ -25,6 +25,28 @@ bool PhasePoolCannotStarve(const TArray<float>& Cooldowns,int32 AttackCount)
     for (float C:Cooldowns) if (FMath::IsFinite(C) && C<=0.f) return true;
     return false;
 }
+bool PhasePoolCannotStarveWithAborts(const TArray<float>& Cooldowns,int32 AttackCount,int32 MaxAbortedAttacks)
+{
+    if (AttackCount<1 || MaxAbortedAttacks<0) return false;
+    // Each abort is one more selection drawn from the same pool before the budget is spent (KI-155).
+    return PhasePoolCannotStarve(Cooldowns,AttackCount+MaxAbortedAttacks);
+}
+FString CooldownStarvationError(bool bPhased,const TArray<float>& AllPool,const TArray<float>& PhaseOnePool,
+    const TArray<float>& PhaseTwoPool,int32 AttackCount,int32 MaxAbortedAttacks)
+{
+    if (bPhased)
+        return (PhasePoolCannotStarveWithAborts(PhaseOnePool,AttackCount,MaxAbortedAttacks)&&PhasePoolCannotStarveWithAborts(PhaseTwoPool,AttackCount,MaxAbortedAttacks))
+            ? FString() : FString(TEXT("Framework.Profile.PhaseCooldownStarvation"));
+    if (MaxAbortedAttacks>0 && !PhasePoolCannotStarveWithAborts(AllPool,AttackCount,MaxAbortedAttacks))
+        return TEXT("Framework.Profile.CooldownStarvation");
+    return FString();
+}
+void AddCandidateCooldownToPhasePools(const FRPGBossMoveCardSpec& Spec,float CooldownSeconds,
+    FName PhaseOne,FName PhaseTwo,TArray<float>& OutPhaseOne,TArray<float>& OutPhaseTwo)
+{
+    if (RPGBossMoveCards::IsEligibleInPhase(Spec,PhaseOne)) OutPhaseOne.Add(CooldownSeconds);
+    if (RPGBossMoveCards::IsEligibleInPhase(Spec,PhaseTwo)) OutPhaseTwo.Add(CooldownSeconds);
+}
 RPGBossCombo::FComboGraph BuildComboGraph(const URPGBossFrameworkProfile& P)
 {
     RPGBossCombo::FComboGraph G; G.Root=P.ComboRoot; G.MaxDepth=P.ComboMaxDepth;
@@ -94,6 +116,7 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
     if (!FMath::IsFinite(P.ArenaRadiusCm) || P.ArenaRadiusCm<0.f || P.ArenaRadiusCm>1.e6f || (P.ArenaRadiusCm>0.f && !bF5)) return Fail(TEXT("Framework.Profile.Domain"));
     if (P.bArenaLeash && !(P.ArenaRadiusCm>0.f)) return Fail(TEXT("Framework.Profile.Domain"));
     if (P.bPhaseSupersedesStagger && !(bF5 && P.PostureMax>0.f && P.PhaseTwoFraction>0.f)) return Fail(TEXT("Framework.Profile.Domain"));
+    if (P.MaxAbortedAttacks<0 || P.MaxAbortedAttacks>8 || (P.MaxAbortedAttacks>0 && !(bF5 && P.AttackCount>0))) return Fail(TEXT("Framework.Profile.Domain"));  // BQ-01
     if (!FMath::IsFinite(P.ArenaCenterBias)||P.ArenaCenterBias<0.f||P.ArenaCenterBias>1.f||!FMath::IsFinite(P.CenterBiasStartFraction)||!(P.CenterBiasStartFraction>0.f)||P.CenterBiasStartFraction>1.f||P.ArenaCenter.ContainsNaN()||
         ((P.ArenaCenterBias>0.f||P.bArenaCenterAuthored)&&!(P.ArenaRadiusCm>0.f))) return Fail(TEXT("Framework.Profile.Domain"));
     {
@@ -189,7 +212,9 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
             S.ActiveStartSeconds<=P->BlendInSeconds||S.RecoveryEndSeconds+P->BlendOutSeconds>1.e6f)
         {Error=TEXT("Framework.Profile.SequenceTelemetryOnly");return false;}
         // F3 cards are telemetry only; an F4/F5 card must damage, by less than the target's health (one hit never kills the proof target).
-        if ((P->bDamageEnabled&&!S.bDefensive)?!(S.HPDamage>0.f&&S.HPDamage<P->TargetHealth):S.HPDamage!=0.f)
+        // AreaEffect and ChannelDrain are real damage payloads too; conservatively budget all paths that can land in one card execution.
+        const double CardDamageBudget=RPGBossMoveCards::DamageBudget(S);
+        if ((P->bDamageEnabled&&!S.bDefensive)?!(CardDamageBudget>0.&&CardDamageBudget<P->TargetHealth):CardDamageBudget!=0.)
         {Error=P->bDamageEnabled?TEXT("Framework.Profile.DamageCard"):TEXT("Framework.Profile.SequenceTelemetryOnly");return false;}
         USkeleton* Skeleton=S.Skeleton.LoadSynchronous(); UAnimSequence* Sequence=S.Sequence.LoadSynchronous();
         const auto* Generated=Cast<UAnimBlueprintGeneratedClass>(Anim);
@@ -213,17 +238,38 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
             const FName MoveId=Candidate.Card->Spec().MoveId;
             if (ResolvedMoveIds.Contains(MoveId)) {Error=TEXT("Framework.Profile.Combo.DuplicateMoveId");return false;}
             ResolvedMoveIds.Add(MoveId);
-            WorstHit=FMath::Max(WorstHit,Candidate.Card->Spec().HPDamage); D->Candidates.Add(Candidate);
+            WorstHit=FMath::Max(WorstHit,static_cast<float>(RPGBossMoveCards::DamageBudget(Candidate.Card->Spec()))); D->Candidates.Add(Candidate);
         }
         // F6c: every card belongs to phase one (the first card's phase) or to PhaseTwoId, and each phase has at least one card.
         if (P->PhaseTwoFraction>0.f)
         {
             const FName One=D->Candidates[0].Card->Spec().PhaseId; int32 InOne=0,InTwo=0;
-            for (const auto& C:D->Candidates){const FName Id=C.Card->Spec().PhaseId; if (Id==One) ++InOne; else if (Id==P->PhaseTwoId) ++InTwo; else {Error=TEXT("Framework.Profile.PhaseCards");return false;}}
+            for (const auto& C:D->Candidates)
+            {
+                const FRPGBossMoveCardSpec& Spec=C.Card->Spec();
+                for (FName AdditionalPhase : Spec.AdditionalPhaseIds)
+                    if (AdditionalPhase!=One&&AdditionalPhase!=P->PhaseTwoId) {Error=TEXT("Framework.Profile.PhaseCards");return false;}
+                const bool bInOne=RPGBossMoveCards::IsEligibleInPhase(Spec,One);
+                const bool bInTwo=RPGBossMoveCards::IsEligibleInPhase(Spec,P->PhaseTwoId);
+                if (!bInOne&&!bInTwo) {Error=TEXT("Framework.Profile.PhaseCards");return false;}
+                if (bInOne) ++InOne;
+                if (bInTwo) ++InTwo;
+            }
             if (One==P->PhaseTwoId||InOne<1||InTwo<1) {Error=TEXT("Framework.Profile.PhaseCards");return false;}
             // KI-149: each phase pool must be able to offer a card on every attack (up to AttackCount of them can fall in one phase).
-            TArray<float> PoolOne,PoolTwo; for (const auto& C:D->Candidates) (C.Card->Spec().PhaseId==One?PoolOne:PoolTwo).Add(C.CooldownSeconds);
-            if (!PhasePoolCannotStarve(PoolOne,P->AttackCount)||!PhasePoolCannotStarve(PoolTwo,P->AttackCount)) {Error=TEXT("Framework.Profile.PhaseCooldownStarvation");return false;}
+            TArray<float> PoolOne,PoolTwo;
+            for (const auto& C:D->Candidates) AddCandidateCooldownToPhasePools(C.Card->Spec(),C.CooldownSeconds,One,P->PhaseTwoId,PoolOne,PoolTwo);
+            // BQ-01: MaxAbortedAttacks 0 keeps the KI-149 rule exactly; > 0 also budgets parried aborts (KI-155).
+            const FString Starved=CooldownStarvationError(true,{},PoolOne,PoolTwo,P->AttackCount,P->MaxAbortedAttacks);
+            if (!Starved.IsEmpty()) {Error=Starved;return false;}
+        }
+        // BQ-01 / KI-155 (opt-in): an unphased profile that declares an abort budget must survive it.
+        if (!(P->PhaseTwoFraction>0.f) && P->MaxAbortedAttacks>0)
+        {
+            TArray<float> AllPool;
+            for (const auto& C:D->Candidates) AllPool.Add(C.CooldownSeconds);
+            const FString Starved=CooldownStarvationError(false,AllPool,{},{},P->AttackCount,P->MaxAbortedAttacks);
+            if (!Starved.IsEmpty()) {Error=Starved;return false;}
         }
         // Combo graph: every node plays one of the profile's cards.
         if (P->ComboNodes.Num()>0)
@@ -255,8 +301,14 @@ bool ResolveProfile(URPGBossFrameworkProfile* P,TUniquePtr<FRPGFrameworkDependen
                 const double Recovery=RPGBossPunish::RecoverySeconds(S.ActiveEndSeconds,S.RecoveryEndSeconds,S.PlayRate), Travel=RPGBossPunish::TravelSeconds(S.MaxRangeCm,Moves.ReachCm,Moves.RunSpeedCmPerSecond);
                 const double LightMargin=RPGBossPunish::MarginSeconds(Recovery,Moves.LightStartupSeconds,Travel), HeavyMargin=RPGBossPunish::MarginSeconds(Recovery,Moves.HeavyStartupSeconds,Travel);
                 // A defensive card (a backstep) is not an attack: its fairness is the DEF-005 counterplay rule below, not the attack-recovery margin.
-                const bool bLightOk=S.bDefensive||RPGBossPunish::PunishOk(LightMargin,double(P->PunishMarginSeconds)), bHeavyOk=S.bDefensive||!C.bHeavyFinisher||RPGBossPunish::PunishOk(HeavyMargin,0.);
-                UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] punish_check card=%s recoverySeconds=%g lightStartupSeconds=%g heavyStartupSeconds=%g travelSeconds=%g lightMarginSeconds=%g heavyMarginSeconds=%g requiredSeconds=%g heavyFinisher=%d ok=%d"),*S.MoveId.ToString(),Recovery,Moves.LightStartupSeconds,Moves.HeavyStartupSeconds,Travel,LightMargin,HeavyMargin,double(P->PunishMarginSeconds),C.bHeavyFinisher?1:0,(bLightOk&&bHeavyOk)?1:0);
+                const bool bPureChannelDrain=S.ChannelDrain.bEnabled&&!S.AreaEffect.bEnabled&&S.HPDamage==0.f&&S.Windows.IsEmpty();
+                const bool bCheckRecoveryPunish=RPGBossPunish::RequiresRecoveryPunishCheck(S.bDefensive,bPureChannelDrain,
+                    double(S.ChannelDrain.ConeHalfAngleDegrees),S.ChannelDrain.bTrackFacingEachTick);
+                const bool bLightOk=!bCheckRecoveryPunish||RPGBossPunish::PunishOk(LightMargin,double(P->PunishMarginSeconds)), bHeavyOk=S.bDefensive||!C.bHeavyFinisher||RPGBossPunish::PunishOk(HeavyMargin,0.);
+                const TCHAR* RecoveryGate=bCheckRecoveryPunish?TEXT("Required"):
+                    (bPureChannelDrain&&S.ChannelDrain.ConeHalfAngleDegrees<180.f?TEXT("ExemptConeEscape"):
+                    (bPureChannelDrain&&!S.ChannelDrain.bTrackFacingEachTick?TEXT("ExemptFixedFacing"):TEXT("ExemptDefensive")));
+                UE_LOG(LogTemp,Display,TEXT("[FrameworkProof] punish_check card=%s recoverySeconds=%g lightStartupSeconds=%g heavyStartupSeconds=%g travelSeconds=%g lightMarginSeconds=%g heavyMarginSeconds=%g requiredSeconds=%g heavyFinisher=%d recoveryGate=%s ok=%d"),*S.MoveId.ToString(),Recovery,Moves.LightStartupSeconds,Moves.HeavyStartupSeconds,Travel,LightMargin,HeavyMargin,double(P->PunishMarginSeconds),C.bHeavyFinisher?1:0,RecoveryGate,(bLightOk&&bHeavyOk)?1:0);
                 if (!bLightOk||!bHeavyOk) {Error=TEXT("Framework.Profile.PunishMargin");return false;}
                 // BOSS-DEF-005: after a backstep the player must still be able to walk in and punish before the recovery ends.
                 if (S.bDefensive)

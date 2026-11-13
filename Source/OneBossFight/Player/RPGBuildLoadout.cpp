@@ -627,6 +627,26 @@ bool URPGBuildLoadout::SyncLock(bool bBossPresent, bool bBossDormant)
 		}
 		return false; // the pack would not take it: not asked again until the wish changes
 	}
+	if (!bWant)
+	{
+		ReturnToWeaponAttempts = 0;
+	}
+	else if (bReturnToWeaponBeforeLock)
+	{
+		// BQ-28 (KI-091): never lock the player on the staff. One cycle per poll; the lock is retried on the next poll.
+		if (UObject* Equipment = FindComponentByClassName(GetOwner(), TEXT("BP_EquipmentComponent_C")))
+		{
+			FWeaponSlotInfo Slot;
+			FString Why;
+			if (ReadWeaponSlot(Equipment, Slot, Why) && Rules::ShouldReturnToWeaponBeforeLock(true, bWant, Slot.ItemCount, Slot.ActiveIndex, Slot.WeaponIndex, ReturnToWeaponAttempts, MaxAttempts))
+			{
+				++ReturnToWeaponAttempts;
+				CallBlueprintFunction(Equipment, TEXT("Next Equip Slot Active Index"), [&](UFunction& F, uint8* P) { SetIntParam(F, P, TEXT("InEquipSlotType"), GWeaponSlotByte); }, [](UFunction&, uint8*) {});
+				AddEvent(FString::Printf(TEXT("the boss is awake but the active item is %d, not the weapon item %d: cycled back before the lock (KI-091, attempt %d)"), Slot.ActiveIndex, Slot.WeaponIndex, ReturnToWeaponAttempts));
+				return false;
+			}
+		}
+	}
 	if (!CallSetSlotDisabled(bWant))
 	{
 		++LockFailureStreak;
@@ -635,6 +655,7 @@ bool URPGBuildLoadout::SyncLock(bool bBossPresent, bool bBossDormant)
 	}
 	bLocked = bWant;
 	LockFailureStreak = 0;
+	ReturnToWeaponAttempts = 0;
 	if (bWant)
 	{
 		++LockCount;
