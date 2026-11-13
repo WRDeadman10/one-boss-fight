@@ -4,7 +4,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from blender_exec import execute_blender
 
-code = r"""
+code = r'''
 import bpy
 import os
 import math
@@ -500,7 +500,7 @@ for f in range(106):
 
 export_clip("ACT_Boss01_Wake", 0, 105, "AN_Boss01_Wake.fbx")
 result = {"status": "ok"}
-"""
+'''
 
 res = execute_blender(code)
 print(res)
