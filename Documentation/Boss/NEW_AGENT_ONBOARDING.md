@@ -18,6 +18,8 @@ Never commit or push, discard another agent's work, run two editor/driver chains
 
 ## Useful commands
 
+Engine commands below are reference examples only. Before any Codex/Lead build, automation run, Editor script, or PIE run, follow the C-1155 team protocol: use the task-specific locked runner that creates both lock files atomically with an ownership token and the required DD27j manifest hash. `Scripts/Rebuild.ps1` is not itself a C-1155 lock manager; do not invoke it directly for an engine run unless the applicable Lead protocol explicitly wraps it.
+
 ```powershell
 # Build (editor closes first and relaunches with -nosound by default)
 powershell -ExecutionPolicy Bypass -File Scripts\Rebuild.ps1

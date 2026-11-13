@@ -1,0 +1,283 @@
+{
+  "schema": "onebossfight.pending-definition-inputs/v1",
+  "manifest_state": "PENDING",
+  "authoring_evidence": false,
+  "executable": false,
+  "definition_target": "/Game/OneBossFight/Data/Sevarog/DA_Boss_Sevarog_Draft (Stats, Phases[Phase_1]) for DA_Sevarog_Framework_Encounter",
+  "decision_request": "X-1991",
+  "prepared_by": "C (implementer), BK-76..80, assigned in X-1996, 2026-11-11",
+  "warning": "PENDING provenance record only. Not authoring evidence, not asset data, not an approval. Do not author from it.",
+  "rows": [
+    {
+      "field_path": "Stats.MaxHealth",
+      "type": "float",
+      "units": "hp",
+      "status": "SOURCE_BACKED_AWAITING_OWNER",
+      "value": 1500.0,
+      "citations": [
+        {
+          "path": "Content/OneBossFight/SevarogPack/SevarogEnemyInfo.uasset",
+          "scope": "file",
+          "sha256": "8098da6faffcb09f87a0f890af5423200dc8a09caca2369c407a8e556a78862a"
+        },
+        {
+          "path": "Documentation/DECISIONS.md",
+          "scope": "excerpt",
+          "line": 249,
+          "excerpt": "| Data | `SevarogEnemyInfo`: 1500 health, 100 poise (poise gate from stage 4 applies), attack 35, 1000 souls, behaviour tree `BT_ExampleBoss`, name \"Sevarog\" |",
+          "sha256": "58c514815327d254cafa287908a6d228808ce9a23bd666cc10ce5314c9258c51"
+        }
+      ],
+      "note": "Sevarog-owned pack data (SevarogEnemyInfo, PIE-verified 2026-10-19). Value read from the DECISIONS row; the authoring run must read it back from the asset itself. Owner yes/no requested in X-1991."
+    },
+    {
+      "field_path": "Stats.MaxPosture",
+      "type": "float",
+      "units": "posture points",
+      "status": "SOURCE_BACKED_AWAITING_OWNER",
+      "value": 100.0,
+      "citations": [
+        {
+          "path": "Content/OneBossFight/SevarogPack/SevarogEnemyInfo.uasset",
+          "scope": "file",
+          "sha256": "8098da6faffcb09f87a0f890af5423200dc8a09caca2369c407a8e556a78862a"
+        },
+        {
+          "path": "Documentation/DECISIONS.md",
+          "scope": "excerpt",
+          "line": 249,
+          "excerpt": "| Data | `SevarogEnemyInfo`: 1500 health, 100 poise (poise gate from stage 4 applies), attack 35, 1000 souls, behaviour tree `BT_ExampleBoss`, name \"Sevarog\" |",
+          "sha256": "58c514815327d254cafa287908a6d228808ce9a23bd666cc10ce5314c9258c51"
+        }
+      ],
+      "note": "The pack field is 'poise' (100); mapping pack poise to the project's MaxPosture pool is an interpretation the owner must confirm (X-1991)."
+    },
+    {
+      "field_path": "Stats.PostureRegenDelay",
+      "type": "float",
+      "units": "s",
+      "status": "OWNER_DECISION_REQUIRED",
+      "value": null,
+      "candidate": 6.0,
+      "candidate_note": "design-freeze native default, not Sevarog evidence",
+      "citations": [
+        {
+          "path": "Source/OneBossFight/Player/RPGBossPosture.h",
+          "scope": "excerpt",
+          "line": 35,
+          "excerpt": "float RegenDelaySeconds = 6.f;",
+          "sha256": "bf63eed10da876833606abaf1048b69f564817321fc34fa91206d949d7deb262"
+        },
+        {
+          "path": "Documentation/Boss/C1239_SEVAROG_DEFINITION_DATA_PLAN.md",
+          "scope": "excerpt",
+          "line": 21,
+          "excerpt": "| `Stats`, `EncounterPolicy`, `ParrySlowMotion`, `StaggerPolicy`, `PhaseFlow`, `Phases` | No values proposed. Select only after source/owner design inputs are available and record each selected non-default value in `Fields`. | Existing C++ defaults describe authoring defaults and are not evidence of desired Sevarog behavior or serialized values. |",
+          "sha256": "fe0ec8b1d8e556442177c403ea065a81305f95cdf6f2a0c5ac89f97836f1ef80"
+        },
+        {
+          "path": "Documentation/TEAM_MAILBOX.md",
+          "scope": "excerpt",
+          "line": 32303,
+          "excerpt": "Decision needed to unblock BK-59 deferred Sevarog definition authoring. Claude's C-1303 research found source-backed Sevarog MaxHealth=1500 and MaxPosture=100 in Content/OneBossFight/SevarogPack/SevarogEnemyInfo.uasset (SHA-256 8098da6faffcb09f87a0f890af5423200dc8a09caca2369c407a8e556a78862a; also documented/PIE-verified in DECISIONS.md:249). It also found the approved Phase_1 threshold 0.6 in C-1280 Decision 2 and the Sevarog author script; the selected phase maps this value to PhaseTwoHealthFraction. Please approve/reject these exact fields. Two other fields lack Sevarog-specific sources and need an explicit choice: (a) PostureRegenDelay=6.0 seconds and PostureRegenRate=13.0/s from the design-freeze native posture rules; (b) Phase_1 Speed/Rate/Attack multipliers=1.0/1.0/1.0 (identity/no change). Reply yes/no for each group, or supply alternatives. I will not author the unsourced groups before your choice. This is a data decision only; BK-59 remains unaccepted pending C-1155 no-save PIE after authoring/readback.",
+          "sha256": "b939ff3e3d59bf71d8e30b34f1c96b63c4a4fcf609b3d42c00b3b113e943ffbd"
+        }
+      ],
+      "note": "No Sevarog-specific source. C-1239 bars native defaults as authored choices; owner choice requested in X-1991 (a)."
+    },
+    {
+      "field_path": "Stats.PostureRegenRate",
+      "type": "float",
+      "units": "posture points per s",
+      "status": "OWNER_DECISION_REQUIRED",
+      "value": null,
+      "candidate": 13.0,
+      "candidate_note": "design-freeze native default, not Sevarog evidence",
+      "citations": [
+        {
+          "path": "Source/OneBossFight/Player/RPGBossPosture.h",
+          "scope": "excerpt",
+          "line": 39,
+          "excerpt": "float RegenPerSecond = 13.f;",
+          "sha256": "7189e81f2f42d51dd9212def3715887ac44a95d024da07329f9f3e363086dfa8"
+        },
+        {
+          "path": "Documentation/Boss/C1239_SEVAROG_DEFINITION_DATA_PLAN.md",
+          "scope": "excerpt",
+          "line": 21,
+          "excerpt": "| `Stats`, `EncounterPolicy`, `ParrySlowMotion`, `StaggerPolicy`, `PhaseFlow`, `Phases` | No values proposed. Select only after source/owner design inputs are available and record each selected non-default value in `Fields`. | Existing C++ defaults describe authoring defaults and are not evidence of desired Sevarog behavior or serialized values. |",
+          "sha256": "fe0ec8b1d8e556442177c403ea065a81305f95cdf6f2a0c5ac89f97836f1ef80"
+        },
+        {
+          "path": "Documentation/TEAM_MAILBOX.md",
+          "scope": "excerpt",
+          "line": 32303,
+          "excerpt": "Decision needed to unblock BK-59 deferred Sevarog definition authoring. Claude's C-1303 research found source-backed Sevarog MaxHealth=1500 and MaxPosture=100 in Content/OneBossFight/SevarogPack/SevarogEnemyInfo.uasset (SHA-256 8098da6faffcb09f87a0f890af5423200dc8a09caca2369c407a8e556a78862a; also documented/PIE-verified in DECISIONS.md:249). It also found the approved Phase_1 threshold 0.6 in C-1280 Decision 2 and the Sevarog author script; the selected phase maps this value to PhaseTwoHealthFraction. Please approve/reject these exact fields. Two other fields lack Sevarog-specific sources and need an explicit choice: (a) PostureRegenDelay=6.0 seconds and PostureRegenRate=13.0/s from the design-freeze native posture rules; (b) Phase_1 Speed/Rate/Attack multipliers=1.0/1.0/1.0 (identity/no change). Reply yes/no for each group, or supply alternatives. I will not author the unsourced groups before your choice. This is a data decision only; BK-59 remains unaccepted pending C-1155 no-save PIE after authoring/readback.",
+          "sha256": "b939ff3e3d59bf71d8e30b34f1c96b63c4a4fcf609b3d42c00b3b113e943ffbd"
+        }
+      ],
+      "note": "No Sevarog-specific source. Owner choice requested in X-1991 (a)."
+    },
+    {
+      "field_path": "Phases[Phase_1].PhaseId",
+      "type": "name",
+      "units": "",
+      "status": "SOURCE_BACKED",
+      "value": "Phase_1",
+      "citations": [
+        {
+          "path": "Scripts/Editor/author_framework_encounter_definition.py",
+          "scope": "excerpt",
+          "line": 15,
+          "excerpt": "PHASE = \"Phase_1\"  # Native selector's authored first phase (RPGFrameworkBossCharacter.h).",
+          "sha256": "6a73596807caeed4015657aef1bcbb40400a84557fa4b63709a9784722d3dd98"
+        },
+        {
+          "path": "Documentation/TEAM_MAILBOX.md",
+          "scope": "excerpt",
+          "line": 30440,
+          "excerpt": "Test-first (model refusal/acceptance, pool counting, validator rejects). Sevarog data: S1, S2, S3, S4, S5, S7 = PhaseId Phase_1 + AdditionalPhaseIds [Phase_2]; S6, S8 = PhaseId Phase_2; profile PhaseTwoFraction 0.6, PhaseTwoId Phase_2.",
+          "sha256": "ffbb951f23d81dba5be966b9969d6d6ed2b4d9adc4c002cbc6d110e3a7c99b59"
+        }
+      ],
+      "note": "Structural identity of the native selector's first phase (author script) and the C-1280 card phase sets; not a tuning value."
+    },
+    {
+      "field_path": "Phases[Phase_1].EntryHealthFraction",
+      "type": "float",
+      "units": "fraction of max health",
+      "status": "SOURCE_BACKED_AWAITING_OWNER",
+      "value": 0.6,
+      "citations": [
+        {
+          "path": "Documentation/TEAM_MAILBOX.md",
+          "scope": "excerpt",
+          "line": 30440,
+          "excerpt": "Test-first (model refusal/acceptance, pool counting, validator rejects). Sevarog data: S1, S2, S3, S4, S5, S7 = PhaseId Phase_1 + AdditionalPhaseIds [Phase_2]; S6, S8 = PhaseId Phase_2; profile PhaseTwoFraction 0.6, PhaseTwoId Phase_2.",
+          "sha256": "ffbb951f23d81dba5be966b9969d6d6ed2b4d9adc4c002cbc6d110e3a7c99b59"
+        },
+        {
+          "path": "Scripts/Editor/author_sevarog_draft_cards.py",
+          "scope": "excerpt",
+          "line": 79,
+          "excerpt": "\"phase_two_fraction\": 0.6,",
+          "sha256": "bee6affc86a044d72700eb7b2185a667e7ed19e981329b11be27614e05927bfe"
+        },
+        {
+          "path": "Source/OneBossFight/Player/RPGBossPhaseAdapters.cpp",
+          "scope": "excerpt",
+          "line": 171,
+          "excerpt": "Phases->PhaseTwoHealthFraction = Record->EntryHealthFraction;",
+          "sha256": "74d98b0e65923303dc4dd2fcfdcf7c468f548cb5db4ab04f6820c6cf0828f536"
+        },
+        {
+          "path": "Documentation/TEAM_MAILBOX.md",
+          "scope": "excerpt",
+          "line": 32366,
+          "excerpt": "FINDING: your ensure_bk56_60_sevarog_initial_phase.py:33-36 wrote the draft's Phase_1 with entry_health_fraction 0.0 (the invalid zero behind X-1988; validation needs 0<x<=1) and unapproved 1.0 multipliers; the authoring step must replace both after the owner answers.",
+          "sha256": "3b75bacecf018261ebda260fbf1c1afaeb95bd41cf46e052bef465df482ed17d"
+        }
+      ],
+      "note": "The selected initial phase record's EntryHealthFraction feeds PhaseTwoHealthFraction (adapter). 0.6 is the C-1280 Sevarog threshold. The current draft row was written as 0.0 by the prerequisite script, which validation rejects (0 < x <= 1). Owner yes/no requested in X-1991."
+    },
+    {
+      "field_path": "Phases[Phase_1].SpeedMultiplier",
+      "type": "float",
+      "units": "multiplier",
+      "status": "OWNER_DECISION_REQUIRED",
+      "value": null,
+      "candidate": 1.0,
+      "candidate_note": "identity (no change); current asset value reported in C-1307, still unapproved",
+      "citations": [
+        {
+          "path": "Documentation/TEAM_MAILBOX.md",
+          "scope": "excerpt",
+          "line": 32366,
+          "excerpt": "FINDING: your ensure_bk56_60_sevarog_initial_phase.py:33-36 wrote the draft's Phase_1 with entry_health_fraction 0.0 (the invalid zero behind X-1988; validation needs 0<x<=1) and unapproved 1.0 multipliers; the authoring step must replace both after the owner answers.",
+          "sha256": "3b75bacecf018261ebda260fbf1c1afaeb95bd41cf46e052bef465df482ed17d"
+        },
+        {
+          "path": "Documentation/Boss/C1239_SEVAROG_DEFINITION_DATA_PLAN.md",
+          "scope": "excerpt",
+          "line": 21,
+          "excerpt": "| `Stats`, `EncounterPolicy`, `ParrySlowMotion`, `StaggerPolicy`, `PhaseFlow`, `Phases` | No values proposed. Select only after source/owner design inputs are available and record each selected non-default value in `Fields`. | Existing C++ defaults describe authoring defaults and are not evidence of desired Sevarog behavior or serialized values. |",
+          "sha256": "fe0ec8b1d8e556442177c403ea065a81305f95cdf6f2a0c5ac89f97836f1ef80"
+        },
+        {
+          "path": "Documentation/TEAM_MAILBOX.md",
+          "scope": "excerpt",
+          "line": 32303,
+          "excerpt": "Decision needed to unblock BK-59 deferred Sevarog definition authoring. Claude's C-1303 research found source-backed Sevarog MaxHealth=1500 and MaxPosture=100 in Content/OneBossFight/SevarogPack/SevarogEnemyInfo.uasset (SHA-256 8098da6faffcb09f87a0f890af5423200dc8a09caca2369c407a8e556a78862a; also documented/PIE-verified in DECISIONS.md:249). It also found the approved Phase_1 threshold 0.6 in C-1280 Decision 2 and the Sevarog author script; the selected phase maps this value to PhaseTwoHealthFraction. Please approve/reject these exact fields. Two other fields lack Sevarog-specific sources and need an explicit choice: (a) PostureRegenDelay=6.0 seconds and PostureRegenRate=13.0/s from the design-freeze native posture rules; (b) Phase_1 Speed/Rate/Attack multipliers=1.0/1.0/1.0 (identity/no change). Reply yes/no for each group, or supply alternatives. I will not author the unsourced groups before your choice. This is a data decision only; BK-59 remains unaccepted pending C-1155 no-save PIE after authoring/readback.",
+          "sha256": "b939ff3e3d59bf71d8e30b34f1c96b63c4a4fcf609b3d42c00b3b113e943ffbd"
+        }
+      ],
+      "note": "No Sevarog source. 1.0 is not assumed approved (X-1996); owner choice requested in X-1991 (b)."
+    },
+    {
+      "field_path": "Phases[Phase_1].RateMultiplier",
+      "type": "float",
+      "units": "multiplier",
+      "status": "OWNER_DECISION_REQUIRED",
+      "value": null,
+      "candidate": 1.0,
+      "candidate_note": "identity (no change); current asset value reported in C-1307, still unapproved",
+      "citations": [
+        {
+          "path": "Documentation/TEAM_MAILBOX.md",
+          "scope": "excerpt",
+          "line": 32366,
+          "excerpt": "FINDING: your ensure_bk56_60_sevarog_initial_phase.py:33-36 wrote the draft's Phase_1 with entry_health_fraction 0.0 (the invalid zero behind X-1988; validation needs 0<x<=1) and unapproved 1.0 multipliers; the authoring step must replace both after the owner answers.",
+          "sha256": "3b75bacecf018261ebda260fbf1c1afaeb95bd41cf46e052bef465df482ed17d"
+        },
+        {
+          "path": "Documentation/Boss/C1239_SEVAROG_DEFINITION_DATA_PLAN.md",
+          "scope": "excerpt",
+          "line": 21,
+          "excerpt": "| `Stats`, `EncounterPolicy`, `ParrySlowMotion`, `StaggerPolicy`, `PhaseFlow`, `Phases` | No values proposed. Select only after source/owner design inputs are available and record each selected non-default value in `Fields`. | Existing C++ defaults describe authoring defaults and are not evidence of desired Sevarog behavior or serialized values. |",
+          "sha256": "fe0ec8b1d8e556442177c403ea065a81305f95cdf6f2a0c5ac89f97836f1ef80"
+        },
+        {
+          "path": "Documentation/TEAM_MAILBOX.md",
+          "scope": "excerpt",
+          "line": 32303,
+          "excerpt": "Decision needed to unblock BK-59 deferred Sevarog definition authoring. Claude's C-1303 research found source-backed Sevarog MaxHealth=1500 and MaxPosture=100 in Content/OneBossFight/SevarogPack/SevarogEnemyInfo.uasset (SHA-256 8098da6faffcb09f87a0f890af5423200dc8a09caca2369c407a8e556a78862a; also documented/PIE-verified in DECISIONS.md:249). It also found the approved Phase_1 threshold 0.6 in C-1280 Decision 2 and the Sevarog author script; the selected phase maps this value to PhaseTwoHealthFraction. Please approve/reject these exact fields. Two other fields lack Sevarog-specific sources and need an explicit choice: (a) PostureRegenDelay=6.0 seconds and PostureRegenRate=13.0/s from the design-freeze native posture rules; (b) Phase_1 Speed/Rate/Attack multipliers=1.0/1.0/1.0 (identity/no change). Reply yes/no for each group, or supply alternatives. I will not author the unsourced groups before your choice. This is a data decision only; BK-59 remains unaccepted pending C-1155 no-save PIE after authoring/readback.",
+          "sha256": "b939ff3e3d59bf71d8e30b34f1c96b63c4a4fcf609b3d42c00b3b113e943ffbd"
+        }
+      ],
+      "note": "No Sevarog source; owner choice requested in X-1991 (b)."
+    },
+    {
+      "field_path": "Phases[Phase_1].AttackMultiplier",
+      "type": "float",
+      "units": "multiplier",
+      "status": "OWNER_DECISION_REQUIRED",
+      "value": null,
+      "candidate": 1.0,
+      "candidate_note": "identity (no change); current asset value reported in C-1307, still unapproved",
+      "citations": [
+        {
+          "path": "Documentation/TEAM_MAILBOX.md",
+          "scope": "excerpt",
+          "line": 32366,
+          "excerpt": "FINDING: your ensure_bk56_60_sevarog_initial_phase.py:33-36 wrote the draft's Phase_1 with entry_health_fraction 0.0 (the invalid zero behind X-1988; validation needs 0<x<=1) and unapproved 1.0 multipliers; the authoring step must replace both after the owner answers.",
+          "sha256": "3b75bacecf018261ebda260fbf1c1afaeb95bd41cf46e052bef465df482ed17d"
+        },
+        {
+          "path": "Documentation/Boss/C1239_SEVAROG_DEFINITION_DATA_PLAN.md",
+          "scope": "excerpt",
+          "line": 21,
+          "excerpt": "| `Stats`, `EncounterPolicy`, `ParrySlowMotion`, `StaggerPolicy`, `PhaseFlow`, `Phases` | No values proposed. Select only after source/owner design inputs are available and record each selected non-default value in `Fields`. | Existing C++ defaults describe authoring defaults and are not evidence of desired Sevarog behavior or serialized values. |",
+          "sha256": "fe0ec8b1d8e556442177c403ea065a81305f95cdf6f2a0c5ac89f97836f1ef80"
+        },
+        {
+          "path": "Documentation/TEAM_MAILBOX.md",
+          "scope": "excerpt",
+          "line": 32303,
+          "excerpt": "Decision needed to unblock BK-59 deferred Sevarog definition authoring. Claude's C-1303 research found source-backed Sevarog MaxHealth=1500 and MaxPosture=100 in Content/OneBossFight/SevarogPack/SevarogEnemyInfo.uasset (SHA-256 8098da6faffcb09f87a0f890af5423200dc8a09caca2369c407a8e556a78862a; also documented/PIE-verified in DECISIONS.md:249). It also found the approved Phase_1 threshold 0.6 in C-1280 Decision 2 and the Sevarog author script; the selected phase maps this value to PhaseTwoHealthFraction. Please approve/reject these exact fields. Two other fields lack Sevarog-specific sources and need an explicit choice: (a) PostureRegenDelay=6.0 seconds and PostureRegenRate=13.0/s from the design-freeze native posture rules; (b) Phase_1 Speed/Rate/Attack multipliers=1.0/1.0/1.0 (identity/no change). Reply yes/no for each group, or supply alternatives. I will not author the unsourced groups before your choice. This is a data decision only; BK-59 remains unaccepted pending C-1155 no-save PIE after authoring/readback.",
+          "sha256": "b939ff3e3d59bf71d8e30b34f1c96b63c4a4fcf609b3d42c00b3b113e943ffbd"
+        }
+      ],
+      "note": "No Sevarog source; owner choice requested in X-1991 (b)."
+    }
+  ]
+}

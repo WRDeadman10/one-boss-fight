@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onebossfight.local/schemas/bk7_shipping_receipt.v1.json",
+  "title": "BK-7 Win64 Shipping evidence receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["receipt_version", "build_id", "engine_root", "target", "configuration", "project", "stage_root", "source_head", "dirty_file_count", "artifacts", "checks", "shipping_smoke", "verdict"],
+  "properties": {
+    "receipt_version": {"const": 1},
+    "build_id": {"type": "string", "minLength": 1},
+    "engine_root": {"type": "string", "minLength": 1},
+    "target": {"const": "Win64"},
+    "configuration": {"const": "Shipping"},
+    "project": {"type": "string", "minLength": 1},
+    "stage_root": {"type": "string", "minLength": 1},
+    "source_head": {"type": "string", "minLength": 1},
+    "dirty_file_count": {"type": "integer", "minimum": 0},
+    "artifacts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["uat_log", "shipping_executable", "reflection_dump"],
+      "properties": {
+        "uat_log": {"$ref": "#/$defs/logArtifact"},
+        "shipping_executable": {"$ref": "#/$defs/binaryArtifact"},
+        "reflection_dump": {
+          "type": "object", "additionalProperties": false,
+          "required": ["build_id", "command", "arguments", "path", "sha256"],
+          "properties": {"build_id": {"type": "string", "minLength": 1}, "command": {"type": "string", "minLength": 1}, "arguments": {"type": "array", "items": {"type": "string"}}, "path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha256"}}
+        }
+      }
+    },
+    "checks": {
+      "type": "object", "additionalProperties": false,
+      "required": ["buildcookrun_exit", "reflection_dump_exit", "shipping_binary_guard_exit", "feature_symbol_guard_exit", "source_guard_exit"],
+      "properties": {
+        "buildcookrun_exit": {"type": "integer"}, "reflection_dump_exit": {"type": "integer"},
+        "shipping_binary_guard_exit": {"type": "integer"}, "feature_symbol_guard_exit": {"type": "integer"}, "source_guard_exit": {"type": "integer"}
+      }
+    },
+    "shipping_smoke": {"const": "NOT_RUN"},
+    "verdict": {"enum": ["PASS", "FAIL"]}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "logArtifact": {"type": "object", "additionalProperties": false, "required": ["build_id", "path", "sha256"], "properties": {"build_id": {"type": "string", "minLength": 1}, "path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha256"}}},
+    "binaryArtifact": {"type": "object", "additionalProperties": false, "required": ["build_id", "path", "bytes", "sha256"], "properties": {"build_id": {"type": "string", "minLength": 1}, "path": {"type": "string", "minLength": 1}, "bytes": {"type": "integer", "minimum": 1}, "sha256": {"$ref": "#/$defs/sha256"}}}
+  }
+}

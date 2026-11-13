@@ -2,6 +2,8 @@
 
 The source-only Shipping symbol risk scan for test-named declarations is recorded in [SHIPPING_SYMBOL_RISK_AUDIT_S182.md](SHIPPING_SYMBOL_RISK_AUDIT_S182.md); suspected visibility is not binary proof.
 
+**Lane BO (2026-11-12):** the fail-closed exit codes and the opt-in `--redact` flag for sharing report output are described in `BO_TOOL_BEHAVIOUR_GUIDE.md`; the evidence is in `BO_LANE_REDACTION_ACCEPTANCE.md`.
+
 The packaged-content check's static-reference scope and named missing-entry fixture are recorded in [PACKAGED_CONTENT_CHECKLIST_AUDIT_S183.md](PACKAGED_CONTENT_CHECKLIST_AUDIT_S183.md).
 
 The Rebuild wrapper's compiler/test exit propagation and log-path handling are recorded in `BUILD_FAILURE_PROPAGATION_AUDIT_S184.md` (archived).
@@ -338,3 +340,84 @@ Queue D D109's executor hit acceptance ordering map is in `EXECUTOR_HIT_ACCEPTAN
 Queue D D110's encounter completion/restart matrix is in [ENCOUNTER_COMPLETION_RESTART_MATRIX_D110.md](ENCOUNTER_COMPLETION_RESTART_MATRIX_D110.md); source permits newer-generation restart after success/death and refuses sticky failure, while no actor-level matrix fixture was found.
 
 Claude's additive Queue D tooling dispositions for D50/D54/D57/D58 are recorded in [QUEUE_D_LEAD_DISPOSITIONS_HOTFIX.md](QUEUE_D_LEAD_DISPOSITIONS_HOTFIX.md); the offline focused suite passed 24 tests with one host-dependent symlink skip. Live PIE behavior remains pending Lead verification.
+
+## Index of tools without a usage section above (BP-37, 2026-11-13)
+
+Generated from each file's module docstring. Run `--help` for usage; see `Scripts/Tools/README.md` for the full table and `Documentation/Boss/BO_TOOL_BEHAVIOUR_GUIDE.md` for fail-closed/redaction behaviour.
+
+| Tool | Kind | Purpose |
+|---|---|---|
+| `Scripts/Tools/a7_release_gates.py` | command | Validate and render the evidence state of the A7 release gates. |
+| `Scripts/Tools/air_light_receipt.py` | library module | Fail-closed parser for timestamped Air Light action-context records. |
+| `Scripts/Tools/aq_evidence_freshness.py` | library module | Classify evidence identity metadata without opening or changing raw artifacts. |
+| `Scripts/Tools/ar_charge_receipt.py` | command | Read-only parser for retained ER control-latency R2 hold log rows. |
+| `Scripts/Tools/ar_charge_repeat_receipt.py` | command (not test-executed; see NO_RUN in test_bp_cli_smoke) | Stamp and aggregate independent route-identified R2 charge trial receipts. |
+| `Scripts/Tools/ar_er_cook_manifest.py` | command (not test-executed; see NO_RUN in test_bp_cli_smoke) | Read-only same-build check for the eight ER/Tier 2 cook package paths. |
+| `Scripts/Tools/audit_a5_driver_registration.py` | command | Cross-check receipt-registered A5 drivers against the RunDrivers schedule. |
+| `Scripts/Tools/audit_editor_map_loads.py` | command | Find literal known-map paths passed to load_asset in Scripts/Editor Python. |
+| `Scripts/Tools/audit_editor_save_safety.py` | command | Report first explicit save and preceding assertions/overwrite guards in Editor writers. |
+| `Scripts/Tools/audit_source_error_token_coverage.py` | command | Inventory source error/refusal tokens and show literal references in native tests. |
+| `Scripts/Tools/audit_source_test_coverage.py` | command (not test-executed; see NO_RUN in test_bp_cli_smoke) | Heuristic inventory of implementation translation units and test references. |
+| `Scripts/Tools/aura_warmup_receipt.py` | command (not test-executed; see NO_RUN in test_bp_cli_smoke) | Validate that approved/candidate aura captures followed a bright warmup in the same run. |
+| `Scripts/Tools/bind_owner_approval.py` | library module | BK-97 (C, implementer; X-2003): pure binding adapter between a raw owner mailbox message, the approval envelope |
+| `Scripts/Tools/bind_receipt_source.py` | library module | BK-122/123 (C, implementer; X-2012, X-2013): pure adapter that binds a Sevarog executor receipt to its owner mailbox source. |
+| `Scripts/Tools/build_parry_addendum_reel.py` | command (not test-executed; see NO_RUN in test_bp_cli_smoke) | Build Parry SFX Addendum Audition Reel (C-1186). |
+| `Scripts/Tools/build_sfx_audition_reel.py` | command (not test-executed; see NO_RUN in test_bp_cli_smoke) | Build the Owner SFX Audition Reel (SFX-03) using ffmpeg. |
+| `Scripts/Tools/build_sfx_batch3_reel.py` | command (not test-executed; see NO_RUN in test_bp_cli_smoke) | Build the Owner SFX Batch 3 Audition Reel (C-1204) using ffmpeg. |
+| `Scripts/Tools/camera_probe_receipt.py` | library module | Fail-closed validation for dynamic camera probe JSONL samples. |
+| `Scripts/Tools/check_bench_kit.py` | command | Validate a freshly assembled bench kit before it is copied or zipped. |
+| `Scripts/Tools/check_bench_kit_manifest.py` | command | Validate the literal copy manifest in Scripts/MakeBenchKit.ps1. |
+| `Scripts/Tools/check_g044_cook_manifest.py` | command | Compare required G044 /Game package paths with a packaged cook manifest. |
+| `Scripts/Tools/check_g2_selection_refusal_expected.py` | command | Check that the G2 expected-sheet cases and tokens remain in its PIE driver. |
+| `Scripts/Tools/check_packaged_g044_cook.py` | command (not test-executed; see NO_RUN in test_bp_cli_smoke) | Check a normalized package manifest against G044 closure and project VFX assets. |
+| `Scripts/Tools/check_packaged_smoke_receipt.py` | command | Validate captured stdout from Scripts/PackagedSmoke.ps1. |
+| `Scripts/Tools/check_stage_identity.py` | command | Read-only preflight for distinct Shipping and Development UAT stage roots. |
+| `Scripts/Tools/check_ue_python_enum_conventions.py` | command | Flag known UE Python UENUM prefix/member/integer-cast hazards. |
+| `Scripts/Tools/compare_determinism_runs.py` | command (not test-executed; see NO_RUN in test_bp_cli_smoke) | Validate and compare the six U-C07 Lead-run determinism arms. |
+| `Scripts/Tools/compare_encounter_parity.py` | command | Fail-closed comparison of paired legacy/data encounter-driver JSON receipts. |
+| `Scripts/Tools/compare_manifest_to_legacy_defaults.py` | command (not test-executed; see NO_RUN in test_bp_cli_smoke) | Compare every typed G044 boss/player setting against cited legacy defaults. |
+| `Scripts/Tools/diff_a5_nightly_reports.py` | command | Compare two complete RunA5ParityNightly.ps1 Markdown summaries. |
+| `Scripts/Tools/diff_phase_two_auras.py` | command (not test-executed; see NO_RUN in test_bp_cli_smoke) | Read-only parameter diff between approved baseline NS_Boss_PhaseTwoAura and candidate NS_Boss_PhaseTwoAura_Boost. |
+| `Scripts/Tools/encounter_parity_receipt.py` | library module | Pure builders and strict validation for captured encounter parity receipts. |
+| `Scripts/Tools/evidence_pack_hashes.py` | command | Write a fresh evidence_sha256.txt into each supplied evidence folder. |
+| `Scripts/Tools/fight_capture_receipt.py` | command | Validate a single-run full-fight capture log and return machine-readable evidence. |
+| `Scripts/Tools/fight_review_observation.py` | command (not test-executed; see NO_RUN in test_bp_cli_smoke) | Validate human-coded visual observations against same-run frame identities. |
+| `Scripts/Tools/find_orphan_docs.py` | command | Finds unreferenced (.md, .patch, .txt) documents under Documentation/ and Docs/ that are candidates for cleanup. |
+| `Scripts/Tools/inventory_editor_asset_writers.py` | command | Build a source-only inventory of Scripts/Editor Python writers. |
+| `Scripts/Tools/mailbox_decision_digest.py` | command | Emit a read-only JSON digest of Claude decision messages in a C-id range. |
+| `Scripts/Tools/mailbox_open_items.py` | command | Compact explicit open-state mentions in the last N team mailbox posts. |
+| `Scripts/Tools/make_fight_video.py` | command | Turn [FullFight] game-time frames and action markers into ffmpeg/ASS inputs. |
+| `Scripts/Tools/normalize_cook_package_manifest.py` | command | Normalize an explicit captured cook-manifest export without inferring packages. |
+| `Scripts/Tools/normalize_encounter_selection_graph.py` | command | Normalize an explicit Editor selection-graph export for cook reachability checks. |
+| `Scripts/Tools/plan_camera_default.py` | command | Print a no-write plan for a future, owner-authorized camera default. |
+| `Scripts/Tools/plan_sevarog_definition_repair.py` | library module | BK-92/93 (C, implementer; X-2002): PROPOSAL-ONLY planner for an in-place Sevarog definition repair. |
+| `Scripts/Tools/round4_benchmark_report.py` | command | Inventory and summarize supplied Round 4 benchmark evidence, without editing it. |
+| `Scripts/Tools/round6_benchmark_report.py` | command | Validate and summarize Round 6 receipts; never edits benchmark evidence. |
+| `Scripts/Tools/round6_phase2_intake.py` | command | Strict offline intake gate for the owner-approved Round 6 Phase 2 receipt. |
+| `Scripts/Tools/run_bo_lane_tests.py` | command | BO-46: one-command offline runner for the lane BO test suites (KI-163..167 tool hardening and --redact). |
+| `Scripts/Tools/run_offline_suite_timed.py` | command | Run the Scripts/Tools unittest suite and enforce its wall-time budget. |
+| `Scripts/Tools/runner_status_receipt_proposal.py` | library module | BK-167..169 (C, implementer; X-2033): PROPOSED versioned status receipt for C-1155 runners, with a pure validator. |
+| `Scripts/Tools/runner_status_receipt_proposal_v1_1.py` | library module | BK-171..175 (C, implementer; X-2034): PROPOSED status receipt v1.1 for C-1155 runners - stricter successor of |
+| `Scripts/Tools/runner_status_receipt_proposal_v1_2.py` | library module | BK-176..180 (C, implementer; X-2038): PROPOSED status receipt v1.2 for C-1155 runners - successor of v1.1 |
+| `Scripts/Tools/scan_doc_citations.py` | command (not test-executed; see NO_RUN in test_bp_cli_smoke) | scan_doc_citations.py - Scanner to detect uncited measurements in Lane A documents. |
+| `Scripts/Tools/scan_pie_driver_safety.py` | command | Offline inventory of PIE driver RESULT and key-release readiness risks. |
+| `Scripts/Tools/sevarog_executor_contract.py` | library module | BK-102 (C, implementer; X-2004): pure state-machine contract for a FUTURE Sevarog definition executor. |
+| `Scripts/Tools/sevarog_receipt_v2_proposal.py` | library module | BK-132..135 (C, implementer; X-2017): PROPOSED v2 evidence schema for Sevarog executor receipts. |
+| `Scripts/Tools/summarize_encounter_cost.py` | command | Summarize cold/warm Lead cost samples without dropping run identities. |
+| `Scripts/Tools/summarize_er_guard_counter.py` | command | Summarize retained ER guard-counter probe markers without inferring a hit. |
+| `Scripts/Tools/summarize_memory_soak.py` | command | Summarize completed U-C05 legacy and selected 50-reset memory-soak logs. |
+| `Scripts/Tools/summarize_packaged_metrics.py` | command | Summarize Lead-captured packaged metrics by phase without mixing identities. |
+| `Scripts/Tools/summarize_parity_set.py` | command | (no module docstring; see the source) |
+| `Scripts/Tools/validate_a5_receipt_directory.py` | command | Check expected A5 receipt-pair IDs and exactly one legacy/data arm per pair. |
+| `Scripts/Tools/validate_encounter_manifest.py` | command | Validate the canonical G044 membership receipt without Unreal or file writes. |
+| `Scripts/Tools/validate_owner_approval_envelope.py` | command | BK-86..89 (C, implementer; X-1999): read-only validator for a SYNTHETIC owner approval envelope. |
+| `Scripts/Tools/validate_pending_definition_inputs.py` | command | BK-78 (C, implementer; X-1996): read-only validator for a PENDING definition-input provenance manifest. |
+| `Scripts/Tools/validate_sevarog_executor_receipt.py` | library module | BK-112: pure schema validator for future Sevarog executor receipts; validates claims, performs no operations. |
+| `Scripts/Tools/verify_bf_x05_selected_route.py` | command | Fail-closed predicate checker for a Lead-transcribed BF-X05 evidence receipt. |
+| `Scripts/Tools/verify_bk56_60_receipts.py` | command | BK-66..68 (C, implementer; X-1993): read-only verifier for one BK-56..60 runner receipt bundle. |
+| `Scripts/Tools/verify_bk7_shipping_receipt.py` | command | Fail-closed structural and artifact-hash validation for BK-7 Shipping receipts. |
+| `Scripts/Tools/verify_c1278_x26_live_log.py` | command | Check a Lead PIE log against the C-1278 X26 live acceptance table. |
+| `Scripts/Tools/verify_encounter_package_graph.py` | command | Verify normalized encounter soft-reference reachability against a cook package manifest. |
+| `Scripts/Tools/verify_framework_perf_receipt.py` | command | Validate explicit framework CPU scope receipts without treating frame GPU as boss-attributed. |
+| `Scripts/Tools/write_a4_parity_receipt.py` | command | Finalize an A4 driver capture as a v2 receipt after the source log is closed. |
+| `Scripts/Tools/run_bp_lane_tests.py` | command | BP-46: run the Queue BP static and in-process test suites in this process and print one row per suite. |

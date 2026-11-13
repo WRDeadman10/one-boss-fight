@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onebossfight.invalid/schemas/benchmark-run-receipt-v1.json",
+  "title": "One Boss Fight immutable benchmark run receipt",
+  "description": "Proposed per-run provenance envelope. It records one measurement and references immutable raw artifacts; it does not make a run valid by itself.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "run_id", "started_at_utc", "completed_at_utc", "runner", "authorization",
+    "source", "build", "engine_version", "scenario", "device", "capture", "artifacts", "metrics", "validity"
+  ],
+  "properties": {
+    "schema": {"const": "onebossfight.benchmark-run-receipt/v1"},
+    "run_id": {"type": "string", "minLength": 1, "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+    "started_at_utc": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "completed_at_utc": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "runner": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "version", "sha256"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "authorization": {
+      "type": "object", "additionalProperties": false,
+      "required": ["task_reference", "approval_reference"],
+      "properties": {
+        "task_reference": {"type": "string", "minLength": 1},
+        "approval_reference": {"type": "string", "minLength": 1}
+      }
+    },
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["revision", "tree_sha256"],
+      "properties": {
+        "revision": {"type": "string", "minLength": 7},
+        "tree_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "build": {
+      "type": "object", "additionalProperties": false,
+      "required": ["configuration", "build_id", "binary_sha256", "package_manifest_sha256"],
+      "properties": {
+        "configuration": {"enum": ["Development", "Shipping"]},
+        "build_id": {"type": "string", "minLength": 1},
+        "binary_sha256": {"$ref": "#/$defs/sha256"},
+        "package_manifest_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "engine_version": {"type": "string", "minLength": 1},
+    "scenario": {
+      "type": "object", "additionalProperties": false,
+      "required": ["map", "route", "route_witness", "fight_mode", "phase", "resolution_x", "resolution_y", "window_mode", "vsync", "dynamic_resolution", "cvars"],
+      "properties": {
+        "map": {"type": "string", "minLength": 1},
+        "route": {"type": "string", "minLength": 1},
+        "route_witness": {"type": "string", "minLength": 1},
+        "fight_mode": {"type": "boolean"},
+        "phase": {"type": "string", "minLength": 1},
+        "resolution_x": {"type": "integer", "minimum": 1},
+        "resolution_y": {"type": "integer", "minimum": 1},
+        "window_mode": {"type": "string", "minLength": 1},
+        "vsync": {"type": "boolean"},
+        "dynamic_resolution": {"type": "boolean"},
+        "cvars": {"type": "object", "additionalProperties": {"type": ["string", "number", "boolean"]}}
+      }
+    },
+    "device": {
+      "type": "object", "additionalProperties": false,
+      "required": ["gpu", "gpu_device_id", "gpu_driver", "cpu", "ram_gb", "os", "session_type", "target_class"],
+      "properties": {
+        "gpu": {"type": "string", "minLength": 1},
+        "gpu_device_id": {"type": "string", "minLength": 1},
+        "gpu_driver": {"type": "string", "minLength": 1},
+        "cpu": {"type": "string", "minLength": 1},
+        "ram_gb": {"type": "number", "exclusiveMinimum": 0},
+        "os": {"type": "string", "minLength": 1},
+        "session_type": {"enum": ["console", "remote", "virtual", "unknown"]},
+        "target_class": {"enum": ["target", "proxy"]}
+      }
+    },
+    "capture": {
+      "type": "object", "additionalProperties": false,
+      "required": ["warmup_seconds", "measured_seconds", "frame_count", "percentile_method"],
+      "properties": {
+        "warmup_seconds": {"type": "number", "minimum": 0},
+        "measured_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "frame_count": {"type": "integer", "minimum": 1},
+        "percentile_method": {"const": "nearest-rank"}
+      }
+    },
+    "artifacts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["frames_csv", "summary_json", "raw_log"],
+      "properties": {
+        "frames_csv": {"$ref": "#/$defs/artifact"},
+        "summary_json": {"$ref": "#/$defs/artifact"},
+        "raw_log": {"$ref": "#/$defs/artifact"}
+      }
+    },
+    "metrics": {
+      "type": "object", "additionalProperties": false,
+      "required": ["average_fps", "average_frame_ms", "p95_frame_ms", "p99_frame_ms", "max_frame_ms", "game_thread_p99_ms", "render_thread_p99_ms", "gpu_p99_ms", "frames_over_16_67_ms", "fight_started", "terminal_outcome"],
+      "properties": {
+        "average_fps": {"type": "number", "exclusiveMinimum": 0},
+        "average_frame_ms": {"type": "number", "exclusiveMinimum": 0},
+        "p95_frame_ms": {"type": "number", "exclusiveMinimum": 0},
+        "p99_frame_ms": {"type": "number", "exclusiveMinimum": 0},
+        "max_frame_ms": {"type": "number", "exclusiveMinimum": 0},
+        "game_thread_p99_ms": {"type": "number", "minimum": 0},
+        "render_thread_p99_ms": {"type": "number", "minimum": 0},
+        "gpu_p99_ms": {"type": "number", "minimum": 0},
+        "frames_over_16_67_ms": {"type": "integer", "minimum": 0},
+        "fight_started": {"type": "boolean"},
+        "terminal_outcome": {"type": "string", "minLength": 1}
+      }
+    },
+    "validity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["verdict", "reasons"],
+      "properties": {
+        "verdict": {"enum": ["not_validated", "valid", "invalid"]},
+        "reasons": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "target_gate_met": {"type": "boolean"}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256", "bytes"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

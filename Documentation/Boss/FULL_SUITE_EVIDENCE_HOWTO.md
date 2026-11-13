@@ -4,6 +4,8 @@ This guide distinguishes the headless Unreal automation suite from the PIE regre
 
 ## Full build plus Unreal automation suite
 
+**C-1155 lock gate:** this how-to's generic `Rebuild.ps1` command documents the build/test shape but does not create or verify the two engine locks. For an actual run, use the task-specific locked runner, which must acquire both locks with an ownership token, pass the pinned DD27j manifest hash, and release only locks it owns. Do not run the generic command as a substitute for that protocol.
+
 1. Confirm the intended checkout and binary. The rebuild script requests a normal close only for editor processes whose command line identifies this checkout, waits for teardown, and stops only a confirmed matching PID tree if it remains hung. See the [editor/staging lock runbook](../GATE4_RUNBOOK.md#editor-and-staging-locks). Run it from the project root in PowerShell:
 
    ```powershell

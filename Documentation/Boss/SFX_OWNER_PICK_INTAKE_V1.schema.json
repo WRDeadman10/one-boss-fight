@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onebossfight.local/schemas/sfx-owner-pick-intake-v1.json",
+  "title": "One Boss Fight SFX Owner Pick Intake v1",
+  "description": "Proposal only. Records an explicit Owner disposition for one SFX event without inferring a preference. It does not authorize wiring.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "event_id", "event_name", "status", "options", "owner_decision"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "event_id": { "type": "string", "pattern": "^SFX-[0-9]{2}$" },
+    "event_name": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["pending", "selected", "none"] },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["A", "B", "C"],
+      "properties": {
+        "A": { "$ref": "#/$defs/option" },
+        "B": { "$ref": "#/$defs/option" },
+        "C": { "$ref": "#/$defs/option" }
+      }
+    },
+    "owner_decision": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["choice", "owner_evidence"],
+      "properties": {
+        "choice": { "enum": ["A", "B", "C", "None"] },
+        "owner_evidence": { "type": "string", "minLength": 1, "description": "Mailbox message ID or directly cited owner decision record." },
+        "decided_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "wiring_gate": { "const": "blocked_until_owner_pick_and_lead_review" }
+  },
+  "$defs": {
+    "option": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["asset_path", "asset_kind", "source_document"],
+      "properties": {
+        "asset_path": { "type": "string", "pattern": "^/Game/" },
+        "asset_kind": { "enum": ["SoundWave", "SoundCue", "DialogueWave", "unknown"] },
+        "source_document": { "type": "string", "minLength": 1 },
+        "audition_clip": { "type": ["string", "null"] }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "pending" } } },
+      "then": { "properties": { "owner_decision": { "type": "null" } } }
+    },
+    {
+      "if": { "properties": { "status": { "enum": ["selected", "none"] } } },
+      "then": { "properties": { "owner_decision": { "type": "object" } } }
+    }
+  ]
+}

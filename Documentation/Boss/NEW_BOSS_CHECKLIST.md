@@ -27,6 +27,21 @@ This checklist covers a third boss using the existing generic encounter and atta
 
 The generic data path supports configuration already represented by the definition, adapters, attack tracker, and annotated montage events. A new boss needs an add-on code module when it introduces a unique move decision rule, target-selection mechanic, custom phase behavior, new interaction/contact semantics, a new runtime component or adapter, or timing/data semantics the existing generic tracker cannot express. Document the smallest reusable extension and add native tests before wiring it. Do not encode a unique mechanic as misleading timing data.
 
+## 5. Sevarog framework proof evidence (2026-11-10)
+
+Sevarog currently has a separate native framework-boss proof path; this evidence does not mean that `URPGBossEncounterDefinition` activates the framework actor or that the pack-boss HUD/death flow is integrated.
+
+| Proof slice | Evidence | Proven scope | Still open |
+|---|---|---|---|
+| Runtime spawn bridge | `Docs/BossCombatReview/Execution/Codex/C1256A_SPAWN_BRIDGE/`; `Documentation/Boss/C1256A_SEVAROG_RUNTIME_SPAWN_BRIDGE.md` | Transient framework actor spawn and S1 start self-test | Lead owns the complete live sequence and framework encounter/HUD integration |
+| Range/retry behavior | `Docs/BossCombatReview/Execution/Codex/C1258A_RANGE_RETRY/`; `Documentation/Boss/C1258A_SEVAROG_IN_BAND_NAV_AND_END.md` | S1–S3 start/end under the explicit test-authorized in-band path | General approach navigation remains unresolved |
+| Trace/combo | `Docs/BossCombatReview/Execution/Codex/C1262A_SEVAROG_DIAG/`; `Documentation/Boss/C1262A_SEVAROG_TRACE_AND_COMBO_DIAGNOSIS.md` | Primary four-card self-test, including S4 whiff → S5 follow-up | S1/S2 weapon-sweep contact misses at the tested distance; timing/value acceptance remains Lead-owned |
+| Signature add-on source | `Docs/BossCombatReview/Execution/Codex/C1274_AREA_EFFECT/`, `C1274_CHANNEL_DRAIN/`; `Documentation/Boss/C1274_SUBJUGATION_AREA_EFFECT.md`, `C1274_SOUL_SIPHON_CHANNEL_DRAIN.md` | Optional target-ground effect and channel/drain source contracts, native test suites | Lead PIE acceptance and owner/Lead S7/S8 values; no card assets authored |
+
+Keep proof actors transient and test-only until the data-route binding, native-health HUD, encounter-end/retry behavior, and shipping/cook gates are separately accepted. Current detailed findings: `Documentation/Boss/BB_X26_X30_FRAMEWORK_BINDING_AUDIT.md` and `Documentation/Boss/BB_X36_X40_FRAMEWORK_AUDIT.md`.
+
+Lifecycle and minimum HUD/encounter integration options are audited in `Documentation/Boss/BC_X11_X15_FRAMEWORK_LIFECYCLE.md`; this proposal does not change runtime code or certify a production framework route.
+
 ## Completion record
 
 The third-boss proof is complete only when the definition is source-backed, the strict audit passes, the Lead accepts a fresh parity PIE receipt, and every remaining code-only mechanic is listed with an owner and scope. Until then, report the exact gate still open; do not treat authoring plans or offline tests as runtime proof.

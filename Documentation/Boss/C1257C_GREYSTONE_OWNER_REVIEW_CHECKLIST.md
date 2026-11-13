@@ -30,23 +30,26 @@ For each animation state captured in the Greystone review reel / gameplay showca
 
 ---
 
-## 3. Pre-Populated Capture & Clip Routing (`BC-A24`, `[C-1282]` Status)
+## 3. Pre-Populated Capture & Clip Routing (`BC-A24`, `[C-1289]` Status)
 
-- **Root-Motion Paired Evidence (`[C-1284]` / `[C-1285]` Status):**
-  - **Mannequin Reference Baseline (`P_C1282_GREYSTONE_RM3_*` Run 3):** Backstep `5/5` started, **`76.3 cm` mean (`72.1–80.4 cm`) at montage end** (prior `C-1063` measured to rest `96.6–97.8 cm`; driver Run 4 adds idle wait + measure-to-rest `SETTLE`); Quick Roll `2/5` at **`243.6–253.8 cm`** (`215–290 cm` band; roll 3 swallowed while prior roll still blending out -> Run 4 waits for `speed < 5 cm/s` & no active montage).
-  - **Greystone Blocker 1 — `0.00 cm` Root Motion (Root Cause Identified `[C-1285]`):** Greystone child possessed `BP_GreystoneERPlayer_C`, played `AM_ER_Backstep_Mixamo_V2_Fit_Greystone` (`i-frames` active `0.095–0.108 s`, matching copied `0.091–0.414 s` window) and `Dodge_Small_Forward_Roll_Montage_Grey`, but displaced `0.00 cm` on `5/5` backsteps and `3/3` quick rolls. Root cause (`P_C1284_GREYSTONE_ROOTBONE`): IK retargeter defaulted `Root` chain FK `TranslationMode = None` (`IKRetargetSettings.h:86`), baking travel into `pelvis` (`180.81 cm` pelvis vs `0.00 cm` root on backstep; `511.64 cm` pelvis vs `0.00 cm` root on `Dodge_Small_Forward_Roll_Grey`). **Mandatory Retarget Contract:** Every Greystone retarget must map `Root -> Root` with FK `TranslationMode = GLOBALLY_SCALED` + prove root XY travel via `AnimationLibrary.get_bone_pose_for_time` (`*_RM` ER sequences + `_Grey` pack sequences) before Owner review clip capture.
-  - **Greystone Blocker 2 — `KI-052` `GetMainAnimBP` Log Flood (`[C-1284]`):** `457` `"Accessed None"` warnings (`281` before first press) from `ABP_UnarmedLayer_Grey` / `ABP_CombatAnimLayersBase_Grey` (absent in mannequin arm); tracked as open Greystone visual/log gate prior to Owner clip capture.
+- **Root-Motion Paired Evidence (`[C-1289]` Run 4 — `P_C1282_GREYSTONE_RM4_*`):**
+  - **Root Fix & Re-Author Verified:** `A_C1285_GREYSTONE_ROOTFIX/fix_write_editor_status.txt` (`FIX_editor pass=True`) updated `RTG_ERFit_Greystone` Root FK to `GLOBALLY_SCALED` and emitted `Saved/ERFitRM_20261111_023747.json` (`AN_ER_Backstep_Mixamo_V2_Fit_GreystoneRM`: source root `156.75 cm`, output root `180.81 cm`, `root_ratio = 1.15346`). `B_C1286_GREYSTONE_RM` recreated the five C-1282 wrapper/BP assets on the `*_RM` sequences (`SAVED_COUNT=5`, readback `0`, `replace_write pass=True`).
+  - **RM4 Paired Gate Numbers (`finished=True route_verified=True`):**
+    - **Mannequin Control (`P_C1282_GREYSTONE_RM4_MANNEQUIN`):** Backstep `5/5` (`79.89–86.48 cm`, mean **`83.83 cm`**, montage end `74.99–81.15 cm`); Quick Roll `5/5` (`260.30–271.73 cm`, mean **`264.28 cm`**, `5/5` in `215–290 cm`).
+    - **Greystone (`P_C1282_GREYSTONE_RM4_GREYSTONE`):** Backstep (`AM_ER_Backstep_Mixamo_V2_Fit_Greystone`) **`5/5`** at **`98.03–100.20 cm`** (mean **`99.35 cm`**, montage end `91.12–94.11 cm`). Quick Roll (`Dodge_Small_Forward_Roll_Montage_Grey`) `4/5` at **`0.00 cm`** + trial 5 `MONTAGE_NOT_OBSERVED` (pack `_Grey` remains pelvis-baked until `BK-1`).
+  - **`[C-1289]` Decision 1 (Skeleton-Scaled Pairing Gate):** Keep `GLOBALLY_SCALED` (no foot sliding); evaluate Greystone distance in the scaled band (`Mannequin band × root_ratio = 97–113 cm` backstep, `248–334 cm` quick roll) and pairing `<= 10%` after dividing by `root_ratio` (`99.35 / 1.15346 = 86.13 cm` vs `83.83 cm`, **`+2.75%`**; `~+2.8%` rounded: **Backstep Gate PASS**). **Quick Roll Gate: OPEN** until Codex `BK-1` re-retargets the Greystone pack roll/dodge sequences.
+  - **Greystone Blocker — `KI-052` `GetMainAnimBP` Log Flood (`[C-1284]`):** `457` `"Accessed None"` warnings (`281` before first press) from `ABP_UnarmedLayer_Grey` / `ABP_CombatAnimLayersBase_Grey` (absent in mannequin arm); tracked prior to Owner clip capture (`[C-1289]` Decision 3 runs clip capture after `BK-1`).
 - **Owner 8-Slot Visual Review Frames / Reel Destination (`BC-A21..A23` -> `BD-A21..A22`):**
-  - Target folder: `D:/FightVideo/greystone_review/` (**PENDING CAPTURE** — blocked on `_RM` re-retarget & `KI-052` triage; stitched clip never staged in git).
-  - Pre-mapped clip slots (`01–08` matching Section 2 above): `01_Idle`, `02_Run`, `03_LightAttack`, `04_HeavyAttack`, `05_Roll` (`215–290 cm` gate), `06_Backstep` (`84–98 cm` gate), `07_GuardCounter`, `08_Plunge`.
+  - Target folder: `D:/FightVideo/greystone_review/` (**PENDING CAPTURE** — scheduled after `BK-1` `[C-1289]` Decision 3; stitched clip never staged in git).
+  - Pre-mapped clip slots (`01–08` matching Section 2 above): `01_Idle`, `02_Run`, `03_LightAttack`, `04_HeavyAttack`, `05_Roll` (`248–334 cm` scaled / `215–290 cm` normalized), `06_Backstep` (`97–113 cm` scaled / `84–98 cm` normalized — RM4 **PASS**), `07_GuardCounter`, `08_Plunge`.
 
 ---
 
 ## 4. Prerequisite Gates Before Switch Activation
 
-1. **Root-Motion PIE Fidelity Gate (C-1257b):**
-   - Paired mannequin vs Greystone-child travel difference must be within <= 10% (backstep 84–98 cm, roll 215–290 cm) with zero play-rate hacking.
+1. **Root-Motion PIE Fidelity Gate (`[C-1289]` Decision 1):**
+   - Paired mannequin vs `(Greystone / root_ratio)` travel difference must be `<= 10%` (`root_ratio` read from `Saved/ERFitRM_*.json`, e.g. `1.15346` -> scaled bands `97–113 cm` backstep **PASS**, `248–334 cm` roll **OPEN until `BK-1`**) with zero play-rate hacking.
 2. **Owner Review & Sign-Off:**
-   - Owner explicitly reviews the captured footage across the 8 slots above and confirms acceptance.
+   - Owner explicitly reviews the captured footage across the 8 slots above (seeing both normalized and raw scaled measurements per `[C-1289]` Decision 1) and confirms acceptance.
 3. **Fail-Closed Default:**
-   - Until both gates are formally satisfied and approved, the player character remains the default Mannequin.
+   - Until both gates are formally satisfied and approved (`[C-1289]` Decision 3), the player character remains the default Mannequin.
