@@ -121,13 +121,19 @@ public:
 	/** Arms the counter window after a guarded contact is confirmed by the boss resolver or player-side pack reaction observer. */
 	void NotifySuccessfulGuardContact();
 	/** Development probe: true while the most recent confirmed guard remains inside the R2 counter window. */
+	#if WITH_EDITORONLY_DATA
 	UFUNCTION(BlueprintCallable, Category = "Development|Guard Counter", meta = (DevelopmentOnly))
+	#endif
 	bool IsGuardCounterArmed() const;
 	/** Development probe: synthetically arms the same counter window for isolated R2-path validation. */
+	#if WITH_EDITORONLY_DATA
 	UFUNCTION(BlueprintCallable, Category = "Development|Guard Counter", meta = (DevelopmentOnly))
+	#endif
 	void DebugArmGuardCounter();
 	/** Development probe: returns the pack-created ability classes/states and the tag container used by the gameplay-tag interface. */
+	#if WITH_EDITORONLY_DATA
 	UFUNCTION(BlueprintCallable, Category = "Development|Guard Counter", meta = (DevelopmentOnly))
+	#endif
 	FString DescribeGuardState() const;
 	/** The montage currently carrying a temporary attack-array override (kept through playback after arrays are restored). */
 	UAnimMontage* GetActiveMontageOverride() const { return ActiveOverrideMontage.Get(); }
@@ -181,6 +187,10 @@ public:
 	/** True when the last press chose the full roll (tests and debugging). */
 	UFUNCTION(BlueprintPure, Category = "Dodge")
 	bool WasLastPressFull() const { return bLastPressFull; }
+
+	/** BQ-14 / KI-059 pure seams (moved verbatim from HasNoDirectionInput / OnDodgePressed; behaviour unchanged). */
+	static bool IsNoDirectionInput(float InputSize, float Threshold) { return InputSize < Threshold; }
+	static bool IsDoubleTapLongRoll(bool bEnabled, double PressGapSeconds, float WindowSeconds) { return bEnabled && PressGapSeconds <= WindowSeconds; }
 
 	/** Number of presses seen, and how many of them forced a roll over a running quick dodge (tests). */
 	UFUNCTION(BlueprintPure, Category = "Dodge")

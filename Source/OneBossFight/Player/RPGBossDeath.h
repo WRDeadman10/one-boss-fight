@@ -28,7 +28,7 @@ enum class ERPGBossDeathMode : uint8
 
 /**
  * The boss's death clip (G2-9, A-12): Antigravity's AN_Boss01_DeathLegend (3.5 s, the boss collapses to its knees by 2.5 s and the last second is the same slumped pose). The pack kills the boss with its ragdoll death
- * ability (GA_EnemyRagdollDeath_C, tag Ability.Dead) and destroys the actor a few seconds later (KI-083). Which of the two designs fits is decided by the probes (pie_death_probe.py, see Documentation/DEATH_CLIP_NOTES.md):
+ * ability (GA_EnemyRagdollDeath_C, tag Ability.Dead) and destroys the actor a few seconds later (KI-136). Which of the two designs fits is decided by the probes (pie_death_probe.py, see Documentation/DEATH_CLIP_NOTES.md):
  *   PackMontage: one frame after BeginPlay, and again one frame after every encounter reset (and every PackPollSeconds, in case the ability instance is a new one), the live ability's DeathMontages array is set to
  *                the montage AM_Boss01_DeathLegend (Scripts/Editor/make_death_montage.py). The pack plays it and does the rest. The array holds either montages or the pack's F_AbilityMontage structs; both are handled by reflection.
  *   OwnClip:     on the first frame the boss's health is 0 the clip plays through RPGBossClips (as the stagger clips do), is paused at HoldAtSeconds so the kneeling pose stays, and every tick while dead the mesh is kept
@@ -96,7 +96,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Death")
 	FString GetDeathStateName() const;
 
-	/** True from the frame the boss's health reads 0 until the health is back (the pack destroys a dead boss about 4.35 s later: KI-083). The encounter does not reset a boss in this state. */
+	/** True from the frame the boss's health reads 0 until the health is back (the pack destroys a dead boss about 4.35 s later: KI-136). The encounter does not reset a boss in this state. */
 	bool IsDeathActive() const { return State != EState::Alive; }
 
 	/** "pack_montage" or "own_clip". */

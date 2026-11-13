@@ -43,6 +43,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Build")
 	bool bLockWeaponSlotInFight = true; // blocks the quickslot ability (Ability.Quickslot) while the boss is awake; the equipment slot's own disabled flags are never used (the whole-slot flag switches the weapon's hits off, the per item flag does not stop the cycle)
 
+	/** BQ-28 (KI-091, opt-in, default off): when the lock is about to engage and the weapon slot's active item is not its weapon item (the magic
+	 *  staff), ask the pack to cycle back first, so the fight never starts locked in MagicCombatStyle. At most MaxAttempts cycles, then the lock engages anyway. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Build")
+	bool bReturnToWeaponBeforeLock = false;
+
 	/** On: the equip waits until the pack's combat mode is off (weapon sheathed). Off by default: the pack's own quickslot works in combat mode too (probe 2026-10-22). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Build")
 	bool bApplyOnlyOutOfCombat = false;
@@ -217,6 +222,7 @@ private:
 
 	bool bLocked = false;
 	int32 LockFailureStreak = 0;
+	int32 ReturnToWeaponAttempts = 0; // BQ-28: cycles asked since the lock was last wanted
 	/** Polls in a row in which the equip call could not be made at all (the pack not ready); CallFailureLimit of them use one attempt. */
 	int32 CallFailureStreak = 0;
 	static constexpr int32 CallFailureLimit = 20;

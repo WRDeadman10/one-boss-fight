@@ -15,8 +15,12 @@ import unreal
 
 sys.path.insert(0, str(Path(unreal.Paths.project_dir()) / "Scripts" / "Editor"))
 import pie_lead_common as plc
+import greystone_pawn_gate as greystone_gate
 
 PREFIX = "[Tier2Parry] "
+TARGET = greystone_gate.target_from_env(os.environ.get(greystone_gate.ENV_NAME))
+if TARGET is None:
+    raise RuntimeError("C1257_PLAYER_TARGET must be mannequin or greystone")
 RUN_TAG = time.strftime("run_%Y%m%d_%H%M%S")
 S = {"phase": "start", "elapsed": 0.0, "gen": None, "wake": 0.0,
      "done": False, "result": False, "frame_pending": None, "frames": []}
@@ -109,7 +113,7 @@ def request_frame(world, label, elapsed):
 
 def frame_folder():
     route = "data" if os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip() else "legacy"
-    return Path(os.environ.get("TIER2_PARRY_FRAMES", "D:/FightVideo/tier2_parry_" + route)) / RUN_TAG
+    return Path(os.environ.get("TIER2_PARRY_FRAMES", "D:/FightVideo/tier2_parry_" + route)) / TARGET / RUN_TAG
 
 
 def warmup_frame(world):
@@ -233,8 +237,8 @@ def witness():
         if contact and recoil_seen and next_frame == len(targets):
             break
         yield 0.0
-    log("RESULT opened=%s real_contact=%s parried_delta=%d recoil_montage_seen=%s" %
-        (opened, contact, sweep.get_parried_count() - initial, recoil_seen))
+    log("RESULT target=%s opened=%s real_contact=%s parried_delta=%d recoil_montage_seen=%s" %
+        (TARGET, opened, contact, sweep.get_parried_count() - initial, recoil_seen))
     log("BLENDABLE after_contact %s" % camera_blendables(pawn))
     log("frames_captured=%d/%d; requested offsets are reported above, visual PPM proof requires Lead inspection" %
         (len(S["frames"]), 6))
@@ -247,6 +251,7 @@ def finish(reason):
     if S["done"]:
         return
     S["done"] = True
+    console(greystone_gate.restore_command())
     try:
         _, _, _, boss = actors()
         encounter = plc.component(boss, "RPGBossEncounter") if boss else None
@@ -261,7 +266,7 @@ def finish(reason):
     if HANDLE is not None:
         unreal.unregister_slate_post_tick_callback(HANDLE)
         HANDLE = None
-    log("SUMMARY pass=%s reason=%s" % (S["result"], reason))
+    log("SUMMARY target=%s pass=%s reason=%s" % (TARGET, S["result"], reason))
     plc.end_play()
 
 
@@ -276,6 +281,8 @@ def tick(dt):
                 selection = os.environ.get("H019_ENCOUNTER_DEFINITION", "").strip()
                 if selection:
                     console("rpg.EncounterDefinition " + selection)
+                console(greystone_gate.cvar_command(TARGET))
+                log("pawn_route target=%s cvar_command=%s" % (TARGET, greystone_gate.cvar_command(TARGET)))
                 console("rpg.Art.Tier2 1")
                 console("rpg.Legend 1")
                 unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
@@ -283,6 +290,9 @@ def tick(dt):
             return
         if S["phase"] == "wait":
             world, pc, pawn, boss = actors()
+            if pawn is not None and not greystone_gate.possession_ok(TARGET, pawn.get_class().get_name()):
+                finish("pawn possession mismatch requested=%s actual=%s" % (TARGET, pawn.get_class().get_name()))
+                return
             if all((world, pc, pawn, boss)) and S["elapsed"] > 6.0:
                 S.update(phase="run", gen=witness())
             elif S["elapsed"] > 25.0:

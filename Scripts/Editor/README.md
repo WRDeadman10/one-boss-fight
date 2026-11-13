@@ -29,6 +29,7 @@ This directory has 340 Python editor scripts. This index uses each module docstr
 - The complete offline CLI inventory and support-file exclusions are recorded in `Documentation/Boss/OFFLINE_TOOL_INVENTORY_AUDIT_S180.md`.
 - Test/proof console-variable build guards and documented Shipping-visible exceptions are reviewed in `Documentation/Boss/SHIPPING_GUARD_INVENTORY_AUDIT_S181.md`.
 - Inspect driver-specific comments and Documentation/TEST_PLAN.md; a script name does not imply a passing result.
+- **Superseded, do not run:** `fix_grey_layers_1.py` and `fix_grey_layers_2.py` are replaced by `repair_grey_layer_parents.py` (BQ-56 / KI-040). The old step 2 reparents every AnimBlueprint found in GreystonePack without checking the current parent. Use the replacement's dry run first; any Editor write remains C-1155-gated.
 
 ## Script index
 

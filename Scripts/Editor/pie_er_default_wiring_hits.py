@@ -12,8 +12,12 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(unreal.Paths.project_dir()) / "Scripts" / "Editor"))
 import pie_lead_common as plc
+import greystone_pawn_gate as greystone_gate
 
 LOG = "[ERDefaultHits] "
+TARGET = greystone_gate.target_from_env(os.environ.get(greystone_gate.ENV_NAME))
+if TARGET is None:
+    raise RuntimeError("C1257_PLAYER_TARGET must be mannequin or greystone")
 INPUT_ROOT = "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/"
 MOVE_ACTION = "/Game/OneBossFight/Input/IA_Move"
 
@@ -81,12 +85,13 @@ def finish(reason):
     if S["done"]:
         return
     S["done"] = True
+    unreal.SystemLibrary.execute_console_command(None, greystone_gate.restore_command())
     if HANDLE is not None:
         unreal.unregister_slate_post_tick_callback(HANDLE)
         HANDLE = None
     release_all(None)
-    log("RESULT pass=%s checks=%d/4 reason=%s" %
-        (len(S["checks"]) == 4 and all(S["checks"]), sum(S["checks"]), reason))
+    log("RESULT target=%s pass=%s checks=%d/4 reason=%s" %
+        (TARGET, len(S["checks"]) == 4 and all(S["checks"]), sum(S["checks"]), reason))
     plc.finished(log, reason)
 
 
@@ -116,6 +121,8 @@ def _tick(dt):
                 log("route=data selection=" + selection)
             else:
                 log("route=legacy (H019_ENCOUNTER_DEFINITION unset)")
+            unreal.SystemLibrary.execute_console_command(None, greystone_gate.cvar_command(TARGET))
+            log("pawn_route target=%s cvar_command=%s" % (TARGET, greystone_gate.cvar_command(TARGET)))
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
             S.update(phase="setup", elapsed=0.0)
         return
@@ -127,6 +134,9 @@ def _tick(dt):
     if pawn is None:
         if S["elapsed"] > 20.0:
             finish("no possessed player within 20 game seconds")
+        return
+    if not greystone_gate.possession_ok(TARGET, pawn.get_class().get_name()):
+        finish("pawn possession mismatch requested=%s actual=%s" % (TARGET, pawn.get_class().get_name()))
         return
     boss = boss_actor(world)
     debug = plc.boss_debug(boss)

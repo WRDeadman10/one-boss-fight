@@ -11,6 +11,16 @@
 
 DEFINE_LOG_CATEGORY_STATIC(LogRPGPosture, Log, All);
 
+#if !UE_BUILD_SHIPPING
+#include "HAL/IConsoleManager.h"
+// BQ-67 (KI-057): Development-only test switch, never in Shipping (BQ-23 guard rule). 1 (default) = pin as authored.
+static TAutoConsoleVariable<int32> CVarPinPackPoiseTest(TEXT("rpg.Posture.PinPackPoiseTest"), 1,
+	TEXT("Development test switch: 0 suspends URPGBossPosture's pin of the pack poise attribute so a PIE driver can measure the pack's 20/50 poise cost per hit (KI-057). 1 (default) keeps the pin. Not compiled into Shipping."), ECVF_Default);
+static int32 PinPackPoiseTestSwitch() { return CVarPinPackPoiseTest.GetValueOnGameThread(); }
+#else
+static int32 PinPackPoiseTestSwitch() { return 1; }
+#endif
+
 using namespace RPGPack;
 
 namespace
@@ -87,7 +97,7 @@ void URPGBossPosture::PinPackPoise()
 
 URPGBossPosture::EDrainResult URPGBossPosture::ApplyPostureDamage(float Amount, const TCHAR* Source)
 {
-	if (Amount <= 0.f || Posture < 0.f || IsDeadOrDormant())
+	if (!RPGBossMath::IsValidDrainAmount(Amount) || Posture < 0.f || IsDeadOrDormant())  // BQ-04: NaN/inf amounts ignored, never applied
 	{
 		return EDrainResult::Ignored;
 	}
@@ -218,7 +228,7 @@ void URPGBossPosture::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	{
 		bConfigured = ConfigureAttribute(); // the pack creates its extended attributes a moment after BeginPlay
 	}
-	if (bPinPackPoise && bConfigured)
+	if (ShouldPinPackPoise(bPinPackPoise, bConfigured, PinPackPoiseTestSwitch()))  // BQ-67: the test switch defaults to 1, behaviour unchanged
 	{
 		PinPackPoise();
 	}

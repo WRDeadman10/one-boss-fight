@@ -46,6 +46,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Posture")
 	bool bPinPackPoise = true;
 
+	/** BQ-67 (KI-057): the pin applies only when the property is on, the attribute is configured and the Development test switch
+	 *  rpg.Posture.PinPackPoiseTest is not 0 (default 1; Shipping always 1). Setting the switch to 0 lets a PIE driver see the pack's
+	 *  own 20 (light) / 50 (heavy) poise subtraction on the boss, which the pin otherwise writes back every tick. Pure, for a native test. */
+	static bool ShouldPinPackPoise(bool bPinProperty, bool bAttributeConfigured, int32 TestSwitch)
+	{
+		return bPinProperty && bAttributeConfigured && TestSwitch != 0;
+	}
+
 	UFUNCTION(BlueprintPure, Category = "Posture")
 	float GetPosture() const { return Posture; }
 

@@ -4,11 +4,13 @@
 #include "Player/RPGBossSweepSampling.h"
 #include "Player/RPGBossStaggerAnimRules.h"
 #include "Player/RPGBossTrackRules.h"
+#include "Player/RPGBossPunishRules.h"
 #include "Player/RPGBossStrafeRules.h"
 #include "Player/RPGBossRules.h"
 #include "Player/RPGBossOverlayRules.h"
 #include "Boss/RPGFrameworkMoveExecutor.h"
 #include "Boss/RPGFrameworkBossCharacter.h"
+#include "Boss/RPGBossNavigationDiagnostics.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimSequence.h"
 #include "Animation/Skeleton.h"
@@ -78,6 +80,9 @@ bool FFrameworkProfileDomains::RunTest(const FString&)
     for(Field F:Fields)for(float V:{0.f,-1.f,1000001.f,std::numeric_limits<float>::infinity(),std::numeric_limits<float>::quiet_NaN()})
     {Fill(*P);P.Get()->*F=V;TestFalse(TEXT("all positive fields fail closed"),RPGFramework::ValidateProfile(*P,Error));}
     Fill(*P);P->bAlignmentAuthored=false;TestFalse(TEXT("alignment not guessed"),RPGFramework::ValidateProfile(*P,Error));
+    Fill(*P);P->MaxAbortedAttacks=0;TestTrue(TEXT("BQ-01 default abort budget keeps the control valid"),RPGFramework::ValidateProfile(*P,Error));
+    Fill(*P);P->MaxAbortedAttacks=1;TestFalse(TEXT("BQ-01 abort budget needs the F5 fixture and attacks"),RPGFramework::ValidateProfile(*P,Error));
+    Fill(*P);P->MaxAbortedAttacks=-1;TestFalse(TEXT("BQ-01 negative abort budget fails closed"),RPGFramework::ValidateProfile(*P,Error));
     Fill(*P);P->BandMinCm=P->BandMaxCm;TestFalse(TEXT("strict band order"),RPGFramework::ValidateProfile(*P,Error));
     Fill(*P);P->AcceptanceCm=50.f;TestFalse(TEXT("arrival tolerance must fit band"),RPGFramework::ValidateProfile(*P,Error));
     Fill(*P);P->AnimClass.Reset();TestFalse(TEXT("required animation class"),RPGFramework::ValidateProfile(*P,Error));
@@ -191,6 +196,16 @@ bool FFrameworkSelectorProfile::RunTest(const FString&)
 {
     using namespace FrameworkRuntimeFixture;
     TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    FRPGBossMoveCardSpec SharedPhaseCard; SharedPhaseCard.PhaseId=TEXT("Phase_1"); SharedPhaseCard.AdditionalPhaseIds.Add(TEXT("Phase_2"));
+    TArray<float> SharedPoolOne,SharedPoolTwo;
+    RPGFramework::AddCandidateCooldownToPhasePools(SharedPhaseCard,3.f,TEXT("Phase_1"),TEXT("Phase_2"),SharedPoolOne,SharedPoolTwo);
+    TestEqual(TEXT("shared candidate contributes to Phase 1 pool"),SharedPoolOne.Num(),1);
+    TestEqual(TEXT("shared candidate also contributes to Phase 2 pool"),SharedPoolTwo.Num(),1);
+    SharedPhaseCard.AdditionalPhaseIds.Reset();
+    SharedPoolOne.Reset();SharedPoolTwo.Reset();
+    RPGFramework::AddCandidateCooldownToPhasePools(SharedPhaseCard,3.f,TEXT("Phase_1"),TEXT("Phase_2"),SharedPoolOne,SharedPoolTwo);
+    TestEqual(TEXT("legacy candidate remains in its primary phase pool"),SharedPoolOne.Num(),1);
+    TestEqual(TEXT("legacy candidate does not enter another phase pool"),SharedPoolTwo.Num(),0);
     auto F5=[&P](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
         FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);};
     F5();TestTrue(TEXT("explicit F5 profile valid"),RPGFramework::ValidateProfile(*P,Error));
@@ -316,6 +331,34 @@ bool FFrameworkPhasePoolStarvation::RunTest(const FString&)
         TArray<float> Positive;Positive.Init(2.f,Cards);
         TestEqual(*FString::Printf(TEXT("positive-cooldown pool cards=%d attacks=%d"),Cards,Attacks),PhasePoolCannotStarve(Positive,Attacks),Cards>=Attacks);
         if(Cards<Attacks){TArray<float> WithZero=Positive;WithZero.Add(0.f);TestTrue(*FString::Printf(TEXT("zero-cooldown filler cards=%d attacks=%d"),Cards,Attacks),PhasePoolCannotStarve(WithZero,Attacks));}
+    }
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkPhasePoolAbortStarvation,"OneBossFight.Framework.Runtime.PhasePoolAbortStarvation",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkPhasePoolAbortStarvation::RunTest(const FString&)
+{
+    // BQ-01 / KI-155: the PARRY-profile trace - two cooled cards, two attacks, one parried abort - passes the attack-count rule
+    // but starves on the retry; the abort-aware rule refuses it. Written, not compiled (Lead C-1155 build required).
+    using RPGFramework::PhasePoolCannotStarve; using RPGFramework::PhasePoolCannotStarveWithAborts;
+    TestTrue(TEXT("KI-155 trace passes the attack-count rule"),PhasePoolCannotStarve({3.f,3.f},2));
+    TestFalse(TEXT("KI-155 trace: one abort starves two cooled cards"),PhasePoolCannotStarveWithAborts({3.f,3.f},2,1));
+    TestTrue(TEXT("a third cooled card covers one abort"),PhasePoolCannotStarveWithAborts({3.f,3.f,3.f},2,1));
+    TestTrue(TEXT("a zero-cooldown card covers any number of aborts"),PhasePoolCannotStarveWithAborts({3.f,0.f},2,5));
+    TestTrue(TEXT("zero aborts equals the attack-count rule"),PhasePoolCannotStarveWithAborts({3.f,2.f},2,0)==PhasePoolCannotStarve({3.f,2.f},2));
+    TestFalse(TEXT("negative abort budget refused"),PhasePoolCannotStarveWithAborts({0.f},1,-1));
+    TestFalse(TEXT("attack count below one refused"),PhasePoolCannotStarveWithAborts({0.f},0,1));
+    // X-2320: the compile-time decision actually fails closed for the KI-155 trace once a profile declares its abort budget.
+    using RPGFramework::CooldownStarvationError;
+    TestTrue(TEXT("unphased KI-155 trace refused with an abort budget"),CooldownStarvationError(false,{3.f,3.f},{},{},2,1)==TEXT("Framework.Profile.CooldownStarvation"));
+    TestTrue(TEXT("unphased profile without an abort budget unchanged (opt-in)"),CooldownStarvationError(false,{3.f,3.f},{},{},2,0).IsEmpty());
+    TestTrue(TEXT("unphased budget covered by a third card"),CooldownStarvationError(false,{3.f,3.f,3.f},{},{},2,1).IsEmpty());
+    TestTrue(TEXT("phased: zero aborts keeps the KI-149 rule"),CooldownStarvationError(true,{},{3.f,3.f},{3.f,3.f},2,0).IsEmpty());
+    TestTrue(TEXT("phased: one abort starves a two-card phase"),CooldownStarvationError(true,{},{3.f,3.f},{3.f,3.f,3.f},2,1)==TEXT("Framework.Profile.PhaseCooldownStarvation"));
+    TestTrue(TEXT("phased: KI-149 refusal unchanged"),CooldownStarvationError(true,{},{3.f},{3.f,3.f},2,0)==TEXT("Framework.Profile.PhaseCooldownStarvation"));
+    for(int32 Attacks=1;Attacks<=6;++Attacks)for(int32 Aborts=0;Aborts<=3;++Aborts)for(int32 Cards=0;Cards<=9;++Cards)
+    {
+        TArray<float> Cooled;Cooled.Init(2.f,Cards);
+        TestTrue(*FString::Printf(TEXT("cooled cards=%d attacks=%d aborts=%d"),Cards,Attacks,Aborts),PhasePoolCannotStarveWithAborts(Cooled,Attacks,Aborts)==(Cards>=Attacks+Aborts));
     }
     return true;
 }
@@ -907,6 +950,11 @@ bool FFrameworkPunishProfile::RunTest(const FString&)
 {
     // BOSS-PAC-003 / PAC-005: the profile domain of the punish margin: off by default, (0,5] with both player montages and a reach in the F5 lane; a heavy finisher needs the margin on.
     using namespace FrameworkRuntimeFixture;
+    TestTrue(TEXT("ordinary attack cards use the recovery punish gate"),RPGBossPunish::RequiresRecoveryPunishCheck(false,false,0.,true));
+    TestFalse(TEXT("defensive cards do not use the attack recovery gate"),RPGBossPunish::RequiresRecoveryPunishCheck(true,false,0.,true));
+    TestFalse(TEXT("narrow pure channel can be escaped without turning"),RPGBossPunish::RequiresRecoveryPunishCheck(false,true,45.,true));
+    TestFalse(TEXT("fixed-facing pure channel can be escaped even with a full cone"),RPGBossPunish::RequiresRecoveryPunishCheck(false,true,180.,false));
+    TestTrue(TEXT("full-cone tracking pure channel has no escape and keeps the gate"),RPGBossPunish::RequiresRecoveryPunishCheck(false,true,180.,true));
     TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
     auto F5=[&](){Fill(*P);P->FixtureLabel=TEXT("F5 fixture");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
         FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);P->PunishMarginSeconds=0.f;P->PlayerReachCm=0.f;P->PlayerLightMontage.Reset();P->PlayerHeavyMontage.Reset();};
@@ -920,6 +968,18 @@ bool FFrameworkPunishProfile::RunTest(const FString&)
     F5();P->Cards[0].bHeavyFinisher=true;TestFalse(TEXT("a heavy finisher with the margin off refused"),RPGFramework::ValidateProfile(*P,Error));
     F5();On();P->Cards[0].bHeavyFinisher=true;TestTrue(TEXT("a heavy finisher with the margin on is valid"),RPGFramework::ValidateProfile(*P,Error));
     {TStrongObjectPtr<URPGBossFrameworkProfile> F3(NewObject<URPGBossFrameworkProfile>());Fill(*F3);F3->PunishMarginSeconds=.3f;TestFalse(TEXT("outside the F5 lane refused"),RPGFramework::ValidateProfile(*F3,Error));}
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkNavigationDiagnosticFormatting,"OneBossFight.Framework.Runtime.NavigationDiagnosticFormatting",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkNavigationDiagnosticFormatting::RunTest(const FString&)
+{
+    using RPGBossNavigationDiagnostics::Format;
+    const FVector Actor(10.f,20.f,300.f),Goal(110.f,220.f,0.f);
+    const FString Success=Format(TEXT("LiveRoute"),9,42,EPathFollowingResult::Success,FPathFollowingResultFlags::Success,Actor,Goal);
+    TestTrue(TEXT("success result includes route generation request and remaining ground distance"),Success.Contains(TEXT("route=LiveRoute generation=9 request=42 code=Success"))&&Success.Contains(TEXT("remainingCm=223.6")));
+    TestTrue(TEXT("invalid result is explicit"),Format(TEXT("R"),1,1,EPathFollowingResult::Invalid,0,Actor,Goal).Contains(TEXT("code=Invalid")));
+    TestTrue(TEXT("blocked result retains the blocked flag"),Format(TEXT("R"),1,2,EPathFollowingResult::Blocked,FPathFollowingResultFlags::Blocked,Actor,Goal).Contains(TEXT("code=Blocked codeValue=1 flags=0x0002")));
+    TestTrue(TEXT("aborted result retains abort flags"),Format(TEXT("R"),2,3,EPathFollowingResult::Aborted,FPathFollowingResultFlags::UserAbort,Actor,Goal).Contains(TEXT("code=Aborted codeValue=3 flags=0x0008")));
     return true;
 }
 #endif

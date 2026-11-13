@@ -123,7 +123,7 @@ void URPGBossDeath::EndPlay(const EEndPlayReason::Type EndPlayReason)
 			ARPGBossRemains::Spawn(World, LastRemainsTransform, LoadedRemainsMesh, LoadedRemainsMaterial, LoadedRemainsBurst);
 		}
 	}
-	// The pack destroys a dead boss a few seconds after its death (KI-083): from here on the mesh, its physics and its montages are not touched.
+	// The pack destroys a dead boss a few seconds after its death (KI-136): from here on the mesh, its physics and its montages are not touched.
 	bEnding = true;
 	bGuardActive = false;
 	Super::EndPlay(EndPlayReason);

@@ -239,7 +239,7 @@ bool URPGDodgeTiming::HasNoDirectionInput() const
 {
 	const ACharacter* Character = Cast<ACharacter>(GetOwner());
 	const UCharacterMovementComponent* Movement = Character ? Character->GetCharacterMovement() : nullptr;
-	return Movement && Movement->GetLastInputVector().Size() < NoInputThreshold;
+	return Movement && IsNoDirectionInput(Movement->GetLastInputVector().Size(), NoInputThreshold);  // BQ-14 seam
 }
 
 void URPGDodgeTiming::StepBackwardTurn(float DeltaTime)
@@ -514,7 +514,7 @@ void URPGDodgeTiming::OnDodgePressed(const FInputActionInstance& Instance)
 	}
 	const double Now = World->GetTimeSeconds();
 	LastPressGap = Now - LastPressTime;
-	bLastPressFull = bDoubleTapLongRoll && LastPressGap <= DoubleTapWindow;
+	bLastPressFull = IsDoubleTapLongRoll(bDoubleTapLongRoll, LastPressGap, DoubleTapWindow);  // BQ-14 seam
 	LastPressTime = Now;
 	++PressCount;
 	if (PressCount == 1)

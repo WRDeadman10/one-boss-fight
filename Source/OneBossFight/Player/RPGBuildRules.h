@@ -258,6 +258,14 @@ namespace RPGBuildRules
 		return bLockEnabled && bBossPresent && !bBossDormant;
 	}
 
+	/** BQ-28 (KI-091, opt-in): before the fight lock engages, cycle the slot back to its weapon item when the player left it on another item
+	 *  (the ExampleMagicStaff, MagicCombatStyle), so the lock never freezes the player on the staff. Bounded: after MaxAttempts cycles that did
+	 *  not reach the weapon, the lock engages anyway (the old behaviour) rather than cycling for ever. */
+	inline bool ShouldReturnToWeaponBeforeLock(bool bOptIn, bool bWantLock, int32 ItemCount, int32 ActiveIndex, int32 WeaponIndex, int32 AttemptsSoFar, int32 MaxAttempts)
+	{
+		return bOptIn && bWantLock && ItemCount > 1 && ActiveIndex != WeaponIndex && AttemptsSoFar < FMath::Max(MaxAttempts, 1);
+	}
+
 	// ---------------------------------------------------------------------------------------------
 	// The HUD line (the truth rule: it names the weapon the player really holds, never the choice alone)
 	// ---------------------------------------------------------------------------------------------

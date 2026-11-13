@@ -44,11 +44,17 @@ void URPGANS_ChargeToTarget::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimS
 	{
 		return;
 	}
+	// ClampMin is editor metadata, not a runtime guarantee: old or externally authored
+	// notify data can still contain invalid values. Fail closed before any normalization.
+	if (!FMath::IsFinite(StopDistance) || StopDistance < 0.f || !FMath::IsFinite(MaxSpeed) || MaxSpeed < 0.f)
+	{
+		return;
+	}
 
 	FVector ToTarget = Target->GetActorLocation() - Character->GetActorLocation();
 	ToTarget.Z = 0.f;
 	const float Distance = ToTarget.Size();
-	if (Distance <= StopDistance)
+	if (!FMath::IsFinite(Distance) || Distance <= StopDistance || Distance <= SMALL_NUMBER)
 	{
 		return;
 	}
@@ -63,7 +69,15 @@ void URPGANS_ChargeToTarget::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimS
 			RemainingReal = FMath::Max((WindowEndTime - Anim->Montage_GetPosition(Montage)) / Rate, 0.05f);
 		}
 	}
+	if (!FMath::IsFinite(RemainingReal) || RemainingReal <= SMALL_NUMBER)
+	{
+		return;
+	}
 	const float Speed = FMath::Min((Distance - StopDistance) / RemainingReal, MaxSpeed);
+	if (!FMath::IsFinite(Speed) || Speed < 0.f)
+	{
+		return;
+	}
 	const FVector Direction = ToTarget / Distance;
 	Movement->Velocity = FVector(Direction.X * Speed, Direction.Y * Speed, Movement->Velocity.Z);
 }
