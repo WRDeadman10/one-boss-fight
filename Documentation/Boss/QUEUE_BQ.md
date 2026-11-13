@@ -21,15 +21,15 @@ C (implementer), 2026-11-13, per X-2318. Codex is the lead and Antigravity the r
 
 **Execution boundary (inherited X-2295 practice):** no tool `main()`, CLI, subprocess, editor or engine run by C. Validation is static and in-process only.
 
-## Pending decisions that gate tasks
+## Decision register (only pending rows gate tasks)
 
 | ID | Decision |
 |---|---|
 | O1 | X-1991: Sevarog Stats, Phase_1 and posture regen, identity multipliers |
 | O2 | SFX picks |
-| O3 | Phase-2 aura A/B/C |
+| O3 (resolved 2026-11-09; C-1168/C-1210) | Boost Lite authored and live; not a pending gate |
 | O4 | Greystone as the default player |
-| O5 | camera B/C |
+| O5 (resolved 2026-11-09; C-1168) | Camera option C only; lock-on framing is live |
 | O6 | benchmark hardware |
 | O7 | M14 balance knobs |
 | O8 | KI-174 leash/pause intent (Lead) |
@@ -58,8 +58,8 @@ C (implementer), 2026-11-13, per X-2318. Codex is the lead and Antigravity the r
 | **15** | **BQ-71..74** D5/D6/D7: Shipping pipeline command sheet, packaged smoke checklist and stage-provenance checker inputs. SRC, with the runs as ENG. **BQ-75** report |
 | **16** | **BQ-76..79** D3: perf attribution test plan; D1/D10 benchmark and shader-failure triage plans. SRC, with ENG/OWN O6. **BQ-80** report |
 | **17** | **BQ-81..84** A1/A5–A7: Sevarog definition authoring and deferred PIE once O1 lands; prepared, and **not started without O1**. OWN, then ENG. **BQ-85** report |
-| **18** | **BQ-86..89** E1/E3/E8: SFX wiring and aura hookup scaffolds, shake and music tuning knobs, prepared for O2/O3 (scaffolds SRC, hookup OWN/ART). **BQ-90** report |
-| **19** | **BQ-91..94** A19/B10/C8: legacy retirement, default-player switch and camera choice packages, prepared for O4/O5 and the gates. OWN/ENG. **BQ-95** report |
+| **18** | **BQ-86..89** E1/E3/E8: SFX cue-plan scaffold for O2, aura decision reconciliation (Boost Lite already authored/live), and shake/music tuning knobs for O7 (scaffolds SRC, hookup OWN/ART). **BQ-90** report |
+| **19** | **BQ-91..94** A19/B10/C8: legacy retirement and default-player switch packages for O4 and release gates; reconcile O5 (option C already decided/live). OWN/ENG. **BQ-95** report |
 | **20** | **BQ-96..99** cumulative evidence, an updated playable-build gate list, owner decision digest refresh, and status sync. SRC. **BQ-100** lane closeout |
 
 **Per-batch handoff:** the task IDs, changed files, the commands actually run with their results, red checks, gates still open, and an explicit "not compiled / not run" statement where it applies.

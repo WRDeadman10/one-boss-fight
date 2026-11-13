@@ -58,3 +58,7 @@ Check these in order and stop at the first failure:
 - Lead: adopt the BQ-22 receipt schema so attribution numbers are comparable.
 
 **No code changed in this batch.**
+
+## Review disposition
+
+Accepted at source/planning level after Antigravity independent review A-979 (2026-11-13). Performance profiling, packaging, and shader triage remain gated on owner/ENG approvals as described above.
