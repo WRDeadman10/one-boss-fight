@@ -8,6 +8,11 @@ import re
 import subprocess
 from pathlib import Path
 
+import os
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BP-17: sibling atomic_io as a script or via -m
+from atomic_io import atomic_write_text
+
 
 FRAME = re.compile(r"\[FullFight\] FRAME (\d+) g=([0-9]+(?:\.[0-9]+)?)\b")
 ACTION = re.compile(r"\[FullFight\] ACTION (\S+) t=([0-9]+(?:\.[0-9]+)?)\b")
@@ -162,6 +167,16 @@ def make_ass(events: list[tuple[float, str]], duration: float) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _platform_newlines(text: str) -> str:
+    """BP-17: Path.write_text(text) without newline= translates "\n" to os.linesep; atomic_write_text writes bytes as
+    given. Translating first keeps the output byte-identical to the former text-mode writes."""
+    return text.replace("\n", os.linesep)
+
+
+def _write_platform_text(path: Path, text: str, encoding: str = "utf-8") -> None:
+    atomic_write_text(path, _platform_newlines(text), encoding=encoding)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--log", required=True, type=Path)
@@ -170,6 +185,8 @@ def main() -> int:
     parser.add_argument("--trim-leading-frames", type=int, default=0,
                         help="measured all-black lead-in PNG count; shifts subtitle times by the same game-time offset")
     args = parser.parse_args()
+    if not args.log.is_file():  # BP-11: a missing input is a named usage error (exit 2), not a traceback
+        parser.error(f"input file not found: {args.log}")
     frames, events = parse_log(args.log.read_text(encoding="utf-8", errors="replace"))
     frames, events = trim_leading_frames(frames, events, args.trim_leading_frames)
     concat = make_concat(frames, args.frames)
@@ -178,13 +195,13 @@ def main() -> int:
     concat_path = args.out / "frames.ffconcat"
     ass_path = args.out / "actions.ass"
     video_path = args.out / "fight_review.mp4"
-    concat_path.write_text(concat, encoding="utf-8")
-    ass_path.write_text(make_ass(events, duration), encoding="utf-8")
+    atomic_write_text(concat_path, _platform_newlines(concat))  # BP-17: atomic; same bytes as text-mode write_text
+    _write_platform_text(ass_path, make_ass(events, duration), encoding="utf-8")
     # Run in the output folder so the ASS filter never has to parse a Windows drive colon or a spaced path.
     command = ["ffmpeg", "-y", "-safe", "0", "-f", "concat", "-i", concat_path.name,
                "-vf", f"ass={ass_path.name}", "-fps_mode", "vfr", "-c:v", "libx264", "-pix_fmt", "yuv420p", video_path.name]
     rendered_command = subprocess.list2cmdline(command)
-    (args.out / "ffmpeg_command.txt").write_text(f"Run from: {args.out.resolve()}\n{rendered_command}\n", encoding="utf-8")
+    atomic_write_text(args.out / "ffmpeg_command.txt", _platform_newlines(f"Run from: {args.out.resolve()}\n{rendered_command}\n"))
     print(f"Run from: {args.out.resolve()}")
     print(rendered_command)
     return 0

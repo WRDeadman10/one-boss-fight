@@ -89,6 +89,8 @@ class QueueCToolTests(unittest.TestCase):
         self.assertTrue(any("unsafe path 'escape.log'" in issue for issue in issues))
 
     def test_evidence_manifest_documents_dot_alias_as_separate_entries(self):
+        # BK-221..225 / X-2068 (audit E5): this test used to document the old behaviour (a dot alias accepted as a
+        # second entry). The verifier now deduplicates on the normalized resolved path, so the alias is refused.
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             evidence = root / "run.log"
@@ -99,7 +101,9 @@ class QueueCToolTests(unittest.TestCase):
                 {"file": "run.log", "sha256": digest},
                 {"file": "./run.log", "sha256": digest},
             ]}), encoding="utf-8")
-            self.assertEqual(verify_evidence_manifest(manifest), [])
+            issues = verify_evidence_manifest(manifest)
+            self.assertEqual(len(issues), 1, issues)
+            self.assertIn("duplicate file entry './run.log'", issues[0])
 
     def test_expected_sheet_enabled_and_control_log_pair(self):
         with tempfile.TemporaryDirectory() as tmp:

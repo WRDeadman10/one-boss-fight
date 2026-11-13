@@ -7,12 +7,23 @@ import json
 import math
 from pathlib import Path
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BO: helper import works as a script or as Scripts.Tools.*
+from json_input import JsonInputError, fail, load_json, require_objects
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("cards_json", type=Path)
     args = parser.parse_args()
-    cards = json.loads(args.cards_json.read_text(encoding="utf-8")).get("cards", [])
+    try:  # BO-04 / KI-166: name the input and fail closed on malformed JSON or a wrong shape.
+        cards = require_objects(args.cards_json, load_json(args.cards_json, dict).get("cards", []), "cards")
+        for index, card in enumerate(cards):
+            windows = require_objects(args.cards_json, card.get("Windows", []), f"cards[{index}].Windows")
+            for w, window in enumerate(windows):
+                require_objects(args.cards_json, window.get("BakedSamples", []), f"cards[{index}].Windows[{w}].BakedSamples")
+    except JsonInputError as error:
+        return fail(error)
     issues = samples = 0
     for card in cards:
         for window in card.get("Windows", []):

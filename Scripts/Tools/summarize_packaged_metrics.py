@@ -15,6 +15,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BP-01/02: sibling imports work as a script or as `python -m Scripts.Tools.*`
 from atomic_io import atomic_write_text
 
 SCHEMA = "onebossfight.packaged-metric-runs/v1"
@@ -188,7 +190,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--report-json", type=Path, help="optional report path outside the evidence receipt/logs")
     args = parser.parse_args(argv)
     try:
-        data = json.loads(args.receipt.read_text(encoding="utf-8"))
+        data = json.loads(args.receipt.read_text(encoding="utf-8-sig"))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         print(f"INCONCLUSIVE: cannot read receipt: {exc}", file=sys.stderr)
         return 2

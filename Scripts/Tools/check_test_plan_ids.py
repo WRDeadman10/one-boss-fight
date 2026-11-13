@@ -9,13 +9,18 @@ from pathlib import Path
 ROW = re.compile(r"^\|\s*BUILD-(\d+)\s*\|", re.M)
 
 
+def build_ids(text: str):
+    """BP-34: (BUILD ids in table order, sorted duplicate ids) from TEST_PLAN text; moved from main()."""
+    ids = [int(value) for value in ROW.findall(text)]
+    return ids, sorted({value for value in ids if ids.count(value) > 1})
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--root", type=Path, default=Path("."))
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])  # BP-03: repo root, not the current folder
     args = parser.parse_args()
     path = args.root / "Documentation/TEST_PLAN.md"
-    ids = [int(value) for value in ROW.findall(path.read_text(encoding="utf-8"))]
-    duplicates = sorted({value for value in ids if ids.count(value) > 1})
+    ids, duplicates = build_ids(path.read_text(encoding="utf-8"))
     if duplicates:
         print("duplicate BUILD IDs: " + ", ".join(f"BUILD-{value:03d}" for value in duplicates))
     if ids != sorted(ids):

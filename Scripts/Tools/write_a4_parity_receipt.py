@@ -346,7 +346,7 @@ def main(argv: list[str] | None = None) -> int:
         if out_path.exists():
             raise ReceiptError(f"refusing to overwrite existing receipt: {out_path}")
         try:
-            identity = json.loads(args.identity.read_text(encoding="utf-8"))
+            identity = json.loads(args.identity.read_text(encoding="utf-8-sig"))
         except (OSError, UnicodeError, json.JSONDecodeError) as exc:
             raise ReceiptError(f"cannot read identity JSON: {exc}") from exc
         if not isinstance(identity, dict):

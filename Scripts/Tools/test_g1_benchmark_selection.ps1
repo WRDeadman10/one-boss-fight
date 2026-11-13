@@ -8,7 +8,7 @@ $parseErrors = $null
 if ($parseErrors.Count) { throw "RunBenchmark.ps1 parse failed: $($parseErrors -join '; ')" }
 Import-Module $modulePath -Force
 
-$baseline = @('/Game/OneBossFight/Levels/L_SevarogArena', '-RPGBenchmark', '-RPGBenchmarkFight', '-NoSound')
+$baseline = @('/Game/OneBossFight/Maps/L_SevarogArena', '-RPGBenchmark', '-RPGBenchmarkFight', '-NoSound')
 $unset = @($baseline + @(Get-H019EncounterArgument -EncounterDefinition ''))
 if (($unset -join "`0") -cne ($baseline -join "`0")) { throw 'Unset selection changed the benchmark launch argument vector.' }
 

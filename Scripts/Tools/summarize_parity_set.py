@@ -4,6 +4,10 @@ import argparse
 import json
 from pathlib import Path
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BP-06: sibling json_input as a script or via -m
+from json_input import JsonInputError, fail, load_json, require_objects
+
 DRIVERS = ("pie_phase_reset", "pie_boss_death", "pie_authored_close_clips", "pie_legend", "pie_iframes")
 
 
@@ -15,7 +19,11 @@ def summarize(root: Path, suffix: str) -> dict[str, object]:
         if not report_path.is_file():
             rows.append({"driver": driver, "status": "MISSING", "issues": ["parity_report.json absent"]})
             continue
-        report = json.loads(report_path.read_text(encoding="utf-8"))
+        try:  # BP-09: a malformed report marks that pair INVALID (named) instead of aborting the whole summary
+            report = load_json(report_path, dict)
+        except JsonInputError as error:
+            rows.append({"driver": driver, "status": "INVALID", "issues": [str(error)]})
+            continue
         rows.append({"driver": driver, "status": report.get("status", "INVALID"),
                      "exit_code": report.get("exit_code"), "issues": report.get("issues", [])})
     return {"schema": "onebossfight.selected-parity-summary/v1", "pairs": rows,

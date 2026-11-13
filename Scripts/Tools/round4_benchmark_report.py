@@ -60,7 +60,7 @@ def inventory(root: Path, expected: Any = None) -> dict[str, Any]:
                          "bytes": path.stat().st_size, "sha256": sha256(path)}
                 if name == "summary.json":
                     try:
-                        summary = json.loads(path.read_text(encoding="utf-8"))
+                        summary = json.loads(path.read_text(encoding="utf-8-sig"))
                         if not isinstance(summary, dict):
                             raise ValueError("root is not an object")
                         entry["label"] = summary.get("label")
@@ -478,11 +478,11 @@ def main() -> int:
     args = parser.parse_args()
     try:
         if args.command == "inventory":
-            expected = json.loads(args.expected.read_text(encoding="utf-8")) if args.expected else None
+            expected = json.loads(args.expected.read_text(encoding="utf-8-sig")) if args.expected else None
             value = inventory(args.root, expected)
             print(json.dumps(value, indent=2, sort_keys=True))
             return 1 if value["issues"] else 0
-        value = json.loads(args.receipt.read_text(encoding="utf-8"))
+        value = json.loads(args.receipt.read_text(encoding="utf-8-sig"))
         if args.command == "experiments":
             result = analyze_experiments(value)
             print(render_experiment_report(value), end="")

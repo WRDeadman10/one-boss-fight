@@ -31,7 +31,7 @@ def load_requirements(expected: Path) -> tuple[dict[str, object], int]:
 
 def audit(command: Path, expected: Path) -> tuple[list[str], list[str]]:
     requirements, _ = load_requirements(expected)
-    raw = json.loads(command.read_text(encoding="utf-8"))
+    raw = json.loads(command.read_text(encoding="utf-8-sig"))
     if not isinstance(raw, list) or any(not isinstance(item, str) for item in raw):
         raise ValueError("command.json must be an array of argument strings")
     args = [normalize_arg(item) for item in raw]

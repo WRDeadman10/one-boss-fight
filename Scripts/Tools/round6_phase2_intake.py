@@ -8,6 +8,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BP-01/02: sibling imports work as a script or as `python -m Scripts.Tools.*`
 from round6_benchmark_report import MODE_WITNESSES, SCHEMA, render, summarize, validate
 
 

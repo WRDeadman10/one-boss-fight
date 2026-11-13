@@ -9,6 +9,10 @@ import argparse
 import json
 import sys
 from pathlib import Path
+
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BP-17: sibling atomic_io as a script or via -m
+from atomic_io import atomic_write_text
 from typing import Any
 
 EXPORT_SCHEMA = "onebossfight.encounter-selection-graph-export/v1"
@@ -81,12 +85,12 @@ def main(argv: list[str] | None = None) -> int:
             print("INCONCLUSIVE: output aliases captured export; refusing to overwrite source evidence", file=sys.stderr)
             return 2
     try:
-        source = json.loads(args.export.read_text(encoding="utf-8"))
+        source = json.loads(args.export.read_text(encoding="utf-8-sig"))
         result = normalize(source)
         encoded = json.dumps(result, sort_keys=True, indent=2) + "\n"
         if args.output:
             args.output.parent.mkdir(parents=True, exist_ok=True)
-            args.output.write_text(encoded, encoding="utf-8", newline="\n")
+            atomic_write_text(args.output, encoded)  # BP-17: atomic replace; same LF bytes as before
         else:
             sys.stdout.write(encoded)
     except (OSError, UnicodeError, json.JSONDecodeError, InputError) as exc:

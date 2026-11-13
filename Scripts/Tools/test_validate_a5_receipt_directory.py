@@ -58,6 +58,24 @@ class A5ReceiptDirectoryTests(unittest.TestCase):
             self.assertTrue(any("CONTRADICTORY pair IDs" in issue for issue in issues))
             self.assertTrue(any("CONTRADICTORY legacy arm route" in issue for issue in issues))
 
+    def test_malformed_json_shapes_are_reported_without_crashing(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            pair = root / "pie_one"
+            pair.mkdir()
+            (pair / "receipt_legacy.json").write_text("[]", encoding="utf-8")
+            (pair / "receipt_data.json").write_text(json.dumps({"identity": []}), encoding="utf-8")
+            issues = MODULE.validate(root, ["pie_one"])
+            self.assertTrue(any("INVALID receipt object" in issue for issue in issues))
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            pair = root / "pie_one"
+            write_arm(pair / "receipt_legacy.json", "pie_one", "legacy")
+            (pair / "receipt_data.json").write_text(json.dumps({"identity": []}), encoding="utf-8")
+            issues = MODULE.validate(root, ["pie_one"])
+            self.assertTrue(any("MISSING pair ID" in issue for issue in issues))
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

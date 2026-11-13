@@ -312,7 +312,7 @@ def main(argv=None):
                         help="project root used to verify draft package/evidence hashes (default: inferred from Saved/G044 receipt path)")
     args = parser.parse_args(argv)
     try:
-        receipt = json.loads(args.receipt.read_text(encoding="utf-8"))
+        receipt = json.loads(args.receipt.read_text(encoding="utf-8-sig"))
     except (OSError, json.JSONDecodeError) as exc:
         print("FAIL: " + str(exc), file=sys.stderr)
         return 2

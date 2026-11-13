@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import argparse
+import os
 from pathlib import Path
 import re
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BP-01/02: sibling imports work as a script or as `python -m Scripts.Tools.*`
 from inventory_editor_asset_writers import classify
 from atomic_io import atomic_create_text
 
@@ -66,8 +69,13 @@ def main() -> int:
     if args.output:
         try:
             atomic_create_text(args.output, report)
-        except FileExistsError:
-            print(f"REFUSED existing audit output: {args.output}")
+        except FileExistsError as error:
+            # O1 (BK-271..275): FileExistsError also comes from parent creation when a parent component is a file
+            # (or from exhausted temp names); only claim "existing" when the output path really exists.
+            if os.path.lexists(args.output):
+                print(f"REFUSED existing audit output: {args.output}")
+            else:
+                print(f"REFUSED cannot create audit output: {args.output}: {error}")
             return 2
         print(f"WROTE {args.output}")
     else:

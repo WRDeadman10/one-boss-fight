@@ -7,12 +7,16 @@ import collections
 import re
 from pathlib import Path
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BO: helper import works as a script or as Scripts.Tools.*
+from redaction import add_redact_argument, display_path, display_row, install_stream_redaction, redaction_scope
+
 PREFIX = re.compile(r"\[FrameworkProof\]\s+(\S+)(.*)")
 FIELD = re.compile(r"([A-Za-z_][A-Za-z0-9_]*)=([^\s]+)")
 WINDOW_CARD = re.compile(r"^Window_(.+?)_(?:Primary|Secondary|Ring)$")
 
 
-def summarize(path: Path) -> dict[str, object]:
+def summarize(path: Path, redact: bool = False) -> dict[str, object]:
     tokens: collections.Counter[str] = collections.Counter()
     outcomes: collections.Counter[str] = collections.Counter()
     cards: dict[str, dict[str, object]] = {}
@@ -54,7 +58,7 @@ def summarize(path: Path) -> dict[str, object]:
             except ValueError:
                 pass
     return {
-        "file": str(path), "tokens": dict(sorted(tokens.items())),
+        "file": display_path(path, redact), "tokens": dict(sorted(tokens.items())),
         "decisions": decisions, "parried_outcomes": parried,
         "guarded_outcomes": guarded, "accepted_outcomes": accepted,
         "reported_accepted_hits": reported_hits[-1] if reported_hits else None,
@@ -75,17 +79,21 @@ def _per_card(instances: dict[str, dict[str, object]]) -> list[dict[str, object]
     return [grouped[key] for key in sorted(grouped)]
 
 
+@redaction_scope  # BO-18: restore the caller's streams when main ends
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("logs", nargs="+", type=Path, help="one or more editor/PIE logs")
+    add_redact_argument(parser)  # BO-05 / KI-167
     args = parser.parse_args()
+    if args.redact:  # BO-23: only ever enable here; never unwrap a caller-owned wrapper when the flag is absent
+        install_stream_redaction(True)  # BO-06..09: mask absolute machine paths in every printed line
     failed = False
     for path in args.logs:
         if not path.is_file():
-            print(f"ERROR missing log: {path}")
+            print(f"ERROR missing log: {display_path(path, args.redact)}")
             failed = True
             continue
-        result = summarize(path)
+        result = summarize(path, args.redact)
         print(f"\n{result['file']}")
         print("token counts:", result["tokens"])
         print(f"decisions={result['decisions']} hits accepted={result['accepted_outcomes']} parried={result['parried_outcomes']} guarded={result['guarded_outcomes']} reported={result['reported_accepted_hits']}")

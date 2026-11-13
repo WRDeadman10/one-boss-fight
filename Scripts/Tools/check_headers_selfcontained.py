@@ -30,7 +30,7 @@ def inspect(path: Path, source_root: Path) -> list[str]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--root", type=Path, default=Path("."))
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
     args = parser.parse_args()
     repo = args.root.resolve()
     source = repo / "Source/OneBossFight"

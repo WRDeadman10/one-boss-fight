@@ -24,13 +24,18 @@ def validate(root: Path, expected_ids: list[str]) -> list[str]:
             issues.append(f"MISSING data arm for {pair_dir.relative_to(root).as_posix()}")
             continue
         try:
-            legacy = json.loads(legacy_path.read_text(encoding="utf-8"))
-            data = json.loads(data_path.read_text(encoding="utf-8"))
+            legacy = json.loads(legacy_path.read_text(encoding="utf-8-sig"))
+            data = json.loads(data_path.read_text(encoding="utf-8-sig"))
         except (OSError, UnicodeError, json.JSONDecodeError) as error:
             issues.append(f"INVALID receipt in {pair_dir.relative_to(root).as_posix()}: {error}")
             continue
-        left = legacy.get("identity", {}).get("driver") if isinstance(legacy, dict) else None
-        right = data.get("identity", {}).get("driver") if isinstance(data, dict) else None
+        if not isinstance(legacy, dict) or not isinstance(data, dict):
+            issues.append(f"INVALID receipt object in {pair_dir.relative_to(root).as_posix()}: expected JSON objects")
+            continue
+        left_identity = legacy.get("identity")
+        right_identity = data.get("identity")
+        left = left_identity.get("driver") if isinstance(left_identity, dict) else None
+        right = right_identity.get("driver") if isinstance(right_identity, dict) else None
         if not isinstance(left, str) or not left or not isinstance(right, str) or not right:
             issues.append(f"MISSING pair ID (identity.driver) in {pair_dir.relative_to(root).as_posix()}")
             continue
@@ -62,7 +67,7 @@ def main() -> int:
     parser.add_argument("--expected", type=Path, required=True, help="JSON array of expected identity.driver IDs")
     args = parser.parse_args()
     try:
-        expected = json.loads(args.expected.read_text(encoding="utf-8"))
+        expected = json.loads(args.expected.read_text(encoding="utf-8-sig"))
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
         print(f"[A5_RECEIPT_DIRECTORY] FAIL invalid expected IDs: {error}")
         return 2

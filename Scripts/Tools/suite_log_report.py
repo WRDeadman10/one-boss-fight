@@ -8,11 +8,15 @@ import re
 from collections import Counter
 from pathlib import Path
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BO: helper import works as a script or as Scripts.Tools.*
+from redaction import add_redact_argument, display_path, display_row, install_stream_redaction, redaction_scope
+
 COMPLETED = re.compile(r"Test Completed\. Result=\{([^}]+)\} Name=\{([^}]*)\}(?: Path=\{([^}]*)\})?")
 COMPLETE_MARKER = "TEST COMPLETE. EXIT CODE: 0"
 
 
-def summarize(path: Path) -> dict[str, object]:
+def summarize(path: Path, redact: bool = False) -> dict[str, object]:
     tests = []
     for number, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
         match = COMPLETED.search(line)
@@ -23,20 +27,24 @@ def summarize(path: Path) -> dict[str, object]:
     counts = Counter(test["result"] for test in tests)
     duplicate_keys = sorted(key for key, count in Counter(test["path"] or test["name"] for test in tests).items() if count > 1)
     complete = COMPLETE_MARKER in path.read_text(encoding="utf-8", errors="replace")
-    return {"file": str(path), "complete": complete, "finished": len(tests), "passed": counts["Success"],
+    return {"file": display_path(path, redact), "complete": complete, "finished": len(tests), "passed": counts["Success"],
             "failed": len(tests) - counts["Success"], "failures": failures,
             "duplicate_names": duplicate_keys, "tests": tests}
 
 
+@redaction_scope  # BO-18: restore the caller's streams when main ends
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("log", type=Path)
     parser.add_argument("--json", action="store_true", help="emit stable machine-readable JSON")
     parser.add_argument("--allow-partial", action="store_true", help="summarize without a terminal successful-suite marker; output is not a pass certificate")
+    add_redact_argument(parser)  # BO-05 / KI-167
     args = parser.parse_args()
+    if args.redact:  # BO-23: only ever enable here; never unwrap a caller-owned wrapper when the flag is absent
+        install_stream_redaction(True)  # BO-06..09: mask absolute machine paths in every printed line
     if not args.log.is_file():
         parser.error(f"missing log: {args.log}")
-    report = summarize(args.log)
+    report = summarize(args.log, args.redact)
     if report["finished"] == 0:
         if args.json:
             print(json.dumps(report, sort_keys=True, indent=2))

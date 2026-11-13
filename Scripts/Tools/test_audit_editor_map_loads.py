@@ -14,10 +14,10 @@ SPEC.loader.exec_module(MODULE)
 
 class EditorMapLoadAuditTests(unittest.TestCase):
     def setUp(self):
-        self.known = {"/Game/OneBossFight/Levels/L_SevarogArena"}
+        self.known = {"/Game/OneBossFight/Maps/L_SevarogArena"}
 
     def test_known_map_load_is_flagged(self):
-        findings = MODULE.scan_text('unreal.load_asset("/Game/OneBossFight/Levels/L_SevarogArena")', self.known, "map.py")
+        findings = MODULE.scan_text('unreal.load_asset("/Game/OneBossFight/Maps/L_SevarogArena")', self.known, "map.py")
         self.assertEqual(len(findings), 1)
         self.assertIn("map package", findings[0])
 

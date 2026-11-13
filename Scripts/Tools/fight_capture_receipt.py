@@ -459,6 +459,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--log", required=True, type=Path)
     args = parser.parse_args()
+    if not args.log.is_file():  # BP-11: a missing input is a named usage error (exit 2), not a traceback
+        parser.error(f"input file not found: {args.log}")
     print(json.dumps(parse_receipt(args.log.read_text(encoding="utf-8", errors="replace")),
                      indent=2, sort_keys=True))
     return 0

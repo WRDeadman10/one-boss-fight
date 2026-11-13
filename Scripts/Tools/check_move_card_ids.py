@@ -7,6 +7,20 @@ import collections
 import json
 from pathlib import Path
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BP-06: sibling json_input as a script or via -m
+from json_input import JsonInputError, fail, load_json, require_objects
+
+
+def load_cards(path: Path) -> list:
+    """BP-07: a card export is a list of card objects or an object with a "cards" list; raises JsonInputError otherwise."""
+    data = load_json(path, (dict, list))
+    if isinstance(data, dict):  # X-2298: an object export must carry an explicit "cards" list ({} is not an empty export)
+        if "cards" not in data:
+            raise JsonInputError(f"{path}: object export has no \"cards\" key")
+        data = data["cards"]
+    return require_objects(path, data, "cards")
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -14,9 +28,12 @@ def main() -> int:
     args = parser.parse_args()
     found = collections.defaultdict(list)
     paths = list(dict.fromkeys(path.resolve() for path in args.exports))
-    for path in paths:
-        data = json.loads(path.read_text(encoding="utf-8"))
-        for card in data if isinstance(data, list) else data.get("cards", []):
+    try:  # BP-07: validate every export before reporting anything
+        loaded = [(path, load_cards(path)) for path in paths]
+    except JsonInputError as error:
+        return fail(error)
+    for path, cards in loaded:
+        for card in cards:
             ident = card.get("MoveId") or card.get("moveId")
             if ident:
                 found[ident].append(str(path))

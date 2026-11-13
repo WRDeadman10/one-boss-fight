@@ -8,11 +8,22 @@ from pathlib import Path
 
 
 ROW = re.compile(r"^\|\s*((?:AA|AB|AT)-C)(\d{2})\s*\|\s*(.*?)\s*\|", re.MULTILINE)
+TASK_ROW_START = re.compile(r"^\s*\|\s*((?:AA|AB|AT)-C\d{2})\b")
 BATCH = re.compile(r"^## Batch (\d+)\b", re.MULTILINE)
 
 
 def validate_queue(text: str, prefix: str) -> list[str]:
     issues: list[str] = []
+    for line_number, line in enumerate(text.splitlines(), 1):
+        start = TASK_ROW_START.match(line)
+        if start is None or not start.group(1).startswith(prefix):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        # Queue families use different column counts (AA/AB use three,
+        # AT uses five); require at least task/description plus acceptance
+        # content without hardcoding one family's full table schema.
+        if len(cells) < 3 or any(not cell for cell in cells):
+            issues.append(f"{prefix}: malformed task table row at line {line_number}: {start.group(1)}")
     matches = list(ROW.finditer(text))
     ids = [f"{match.group(1)}{match.group(2)}" for match in matches if match.group(1) == prefix]
     expected = [f"{prefix}{number:02d}" for number in range(1, 51)]

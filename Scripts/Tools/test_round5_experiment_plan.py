@@ -19,7 +19,7 @@ def receipt():
                      "build_id": "BUILD-222", "build_sha256": "c" * 64, "build_configuration": "Development",
                      "engine_version": "UE5.5.4", "gpu": "NVIDIA RTX 3060", "gpu_driver": "610.88",
                      "session_type": "console", "resolution_x": 1920, "resolution_y": 1080,
-                     "map": "/Game/OneBossFight/Levels/L_SevarogArena", "fight_mode": True, "route": "selected",
+                     "map": "/Game/OneBossFight/Maps/L_SevarogArena", "fight_mode": True, "route": "selected",
                      "summary_path": f"baseline_{group}/summary.json", "summary_sha256": "a" * 64,
                      "active_mode_log_token": "TSR", "active_mode_log_line": "", "image_quality_note": "Native TSR reference"})
         rows.append({"run_id": f"trial_{group}", "kind": "treatment", "baseline_group": group,
@@ -28,7 +28,7 @@ def receipt():
                          "build_id": "BUILD-222", "build_sha256": "c" * 64, "build_configuration": "Development",
                          "engine_version": "UE5.5.4", "gpu": "NVIDIA RTX 3060", "gpu_driver": "610.88",
                          "session_type": "console", "resolution_x": 1920, "resolution_y": 1080,
-                         "map": "/Game/OneBossFight/Levels/L_SevarogArena", "fight_mode": True, "route": "selected",
+                         "map": "/Game/OneBossFight/Maps/L_SevarogArena", "fight_mode": True, "route": "selected",
                          "summary_path": f"trial_{group}/summary.json", "summary_sha256": "b" * 64,
                          "active_mode_log_token": "MaxQuality",
                          "active_mode_log_line": "LogDLSSNGXRHI: Creating NGX DLSS Feature NGXPerfQuality=MaxQuality(3), DenoiseMode=Off",

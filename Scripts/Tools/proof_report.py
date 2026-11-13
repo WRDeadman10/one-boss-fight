@@ -7,6 +7,10 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BO: helper import works as a script or as Scripts.Tools.*
+from redaction import add_redact_argument, display_path, display_row, install_stream_redaction, redaction_scope
+
 
 INLINE = re.compile(r"`([^`]+)`")
 PASS_HEADING = re.compile(r"^##\s+PASS\s*$", re.IGNORECASE)
@@ -58,7 +62,7 @@ def evidence_stale_reasons(log, manifest):
     from verify_evidence_manifest import verify
     reasons = verify(manifest)
     try:
-        data = json.loads(manifest.read_text(encoding="utf-8"))
+        data = json.loads(manifest.read_text(encoding="utf-8-sig"))
         entry = next((item for item in data.get("files", [])
                       if isinstance(item, dict) and item.get("file") == log.name), None)
         if entry is None:
@@ -111,6 +115,7 @@ def run_completeness_issues(log):
     return issues
 
 
+@redaction_scope  # BO-18: restore the caller's streams when main ends
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("log", type=Path, help="PIE editor_raw.log")
@@ -125,7 +130,10 @@ def main():
     parser.add_argument("--control-expect-profile", help="required profile identity for the paired control log")
     parser.add_argument("--control-expect-source", help="expected source hash/identity recorded in the control log")
     parser.add_argument("--require-complete-run", action="store_true", help="require a FrameworkProof RESULT and orderly editor shutdown marker")
+    add_redact_argument(parser)  # BO-05 / KI-167
     args = parser.parse_args()
+    if args.redact:  # BO-23: only ever enable here; never unwrap a caller-owned wrapper when the flag is absent
+        install_stream_redaction(True)  # BO-06..09: mask absolute machine paths in every printed line
     root = Path(__file__).resolve().parents[2]
     if not args.log.is_file() or not args.expected.is_file() or (args.control_log and not args.control_log.is_file()):
         parser.error("log, expected sheet, and any supplied control log must exist")
@@ -135,7 +143,7 @@ def main():
         for chunk in iter(lambda: source.read(1024 * 1024), b""):
             digest.update(chunk)
     mtime = datetime.fromtimestamp(args.log.stat().st_mtime, timezone.utc).isoformat(timespec="seconds")
-    print("Input log: %s | mtime_utc=%s | sha256=%s" % (args.log.resolve(), mtime, digest.hexdigest()))
+    print("Input log: %s | mtime_utc=%s | sha256=%s" % (display_path(args.log.resolve(), args.redact), mtime, digest.hexdigest()))
     expected_identity = {key: value for key, value in (("map", args.expect_map), ("profile", args.expect_profile), ("run_id", args.expect_run_id), ("source", args.expect_source)) if value is not None}
     identity_failures = check_identity(args.log, expected_identity)
     control_expected_identity = {key: value for key, value in (("map", args.control_expect_map), ("profile", args.control_expect_profile), ("source", args.control_expect_source)) if value is not None}

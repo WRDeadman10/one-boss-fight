@@ -11,7 +11,7 @@ IDS = re.compile(r"\bKI-(\d{3})\b")
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--root", type=Path, default=Path("."))
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])  # BP-03: repo root, not the current folder
     args = parser.parse_args()
     root = args.root.resolve()
     known = {int(value) for value in IDS.findall((root / "Documentation/KNOWN_ISSUES.md").read_text(encoding="utf-8"))}

@@ -10,7 +10,21 @@ import sys
 from pathlib import Path
 from typing import Any
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BP-01/02: sibling imports work as a script or as `python -m Scripts.Tools.*`
 from atomic_io import atomic_write_text
+
+
+def output_aliases(output: Path, inputs) -> Path | None:
+    """BK-301..305: return the input that `output` would overwrite (same resolved path or same file), else None."""
+    target = Path(output).resolve()
+    for item in inputs:
+        candidate = Path(item)
+        if candidate.resolve() == target:
+            return candidate
+        if target.exists() and candidate.exists() and target.samefile(candidate):
+            return candidate
+    return None
 
 
 SCHEMA = "onebossfight.encounter-cost-runs/v1"
@@ -110,8 +124,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("receipt", type=Path, help="Lead-captured cold/warm cost receipt JSON")
     parser.add_argument("--report-json", type=Path, help="optional atomic JSON report destination")
     args = parser.parse_args(argv)
+    if args.report_json and output_aliases(args.report_json, [args.receipt]) is not None:
+        print("INCONCLUSIVE: report destination aliases an evidence input", file=sys.stderr)
+        return 2
     try:
-        data = json.loads(args.receipt.read_text(encoding="utf-8"))
+        data = json.loads(args.receipt.read_text(encoding="utf-8-sig"))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         report = summarize(None, str(args.receipt))
         report["issues"] = [f"cannot read valid UTF-8 receipt: {exc}"]

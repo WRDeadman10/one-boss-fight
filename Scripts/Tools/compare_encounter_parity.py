@@ -229,7 +229,7 @@ class ReceiptError(ValueError):
 
 def read_receipt(path: Path, expected_route: str) -> dict[str, Any]:
     try:
-        value = json.loads(path.read_text(encoding="utf-8"))
+        value = json.loads(path.read_text(encoding="utf-8-sig"))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         raise ReceiptError(f"{path}: cannot read valid UTF-8 JSON ({exc})") from exc
     if not isinstance(value, dict):

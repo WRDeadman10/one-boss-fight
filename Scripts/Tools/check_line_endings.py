@@ -7,6 +7,19 @@ from pathlib import Path
 import sys
 
 
+def line_ending_counts(data: bytes):
+    """BP-34: (CRLF, lone LF, lone CR) counts, or None for binary data (NUL in the first 4 KiB); moved from main()."""
+    if b"\0" in data[:4096]:
+        return None
+    crlf = data.count(b"\r\n")
+    return crlf, data.count(b"\n") - crlf, data.count(b"\r") - crlf
+
+
+def is_mixed(crlf: int, lf: int, cr: int) -> bool:
+    """BP-34: mixed CRLF+LF endings or any lone CR; moved from main()."""
+    return bool((crlf and lf) or cr)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path("."))
@@ -23,13 +36,12 @@ def main() -> int:
             data = path.read_bytes()
         except OSError:
             continue
-        if b"\0" in data[:4096]:
+        counted = line_ending_counts(data)
+        if counted is None:
             continue
         files += 1
-        crlf = data.count(b"\r\n")
-        lf = data.count(b"\n") - crlf
-        cr = data.count(b"\r") - crlf
-        if (crlf and lf) or cr:
+        crlf, lf, cr = counted
+        if is_mixed(crlf, lf, cr):
             mixed += 1
             print(f"{path}: CRLF={crlf} LF={lf} lone_CR={cr}")
     print(f"files={files} mixed_or_lone_cr={mixed}")

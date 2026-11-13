@@ -53,7 +53,7 @@ def audit(root: Path, index: Path) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
-    parser.add_argument("--index", type=Path, default=Path("Documentation/Boss/TOOLS.md"))
+    parser.add_argument("--index", type=Path, default=Path(__file__).resolve().parents[2] / "Documentation" / "Boss" / "TOOLS.md")
     args = parser.parse_args()
     root = args.root.resolve()
     index = args.index if args.index.is_absolute() else root / args.index

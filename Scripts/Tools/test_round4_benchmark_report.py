@@ -15,7 +15,7 @@ def receipt():
                 "build_sha256": "a" * 64, "build_configuration": "Development",
                 "engine_version": "UE5.5.4", "gpu": "NVIDIA RTX 3060", "gpu_driver": "610.88",
                 "session_type": "console", "resolution_x": 1920, "resolution_y": 1080,
-                "map": "/Game/OneBossFight/Levels/L_SevarogArena", "fight_mode": True,
+                "map": "/Game/OneBossFight/Maps/L_SevarogArena", "fight_mode": True,
                 "fight_started": True, "warmup_seconds": 5, "duration_seconds": 60,
                 "avg_fps": base + index, "p99_ms": (15.0 if route == "legacy" else 15.2) + index * .1,
                 "summary_path": f"{route}_{rep}_summary.json", "summary_sha256": "c" * 64,

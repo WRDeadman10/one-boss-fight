@@ -12,7 +12,7 @@ PATTERN = re.compile("|".join(re.escape(x) for x in TERMS))
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--root", type=Path, default=Path("."))
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
     args = parser.parse_args()
     count = 0
     for path in sorted((args.root / "Source").rglob("*")):

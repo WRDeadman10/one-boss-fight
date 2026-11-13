@@ -6,6 +6,10 @@ import argparse
 import json
 from pathlib import Path
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BP-06: sibling json_input as a script or via -m
+from json_input import JsonInputError, fail, load_json, require_objects
+
 
 def audit(sheet: dict, driver: str) -> list[str]:
     issues = []
@@ -26,12 +30,32 @@ def audit(sheet: dict, driver: str) -> list[str]:
     return issues
 
 
+def load_sheet(path: Path) -> dict:
+    """BP-06 (+ X-2298): the expected sheet must be a JSON object whose "cases" and "required_log_tokens" are nonempty
+    lists of unique strings. Element types are validated BEFORE any set() use, so a malformed but valid-JSON sheet (for
+    example {"cases": [{}]}) is a named JsonInputError (exit 2), never an uncaught TypeError."""
+    sheet = load_json(path, dict)
+    for key in ("cases", "required_log_tokens"):
+        values = sheet.get(key)
+        if not isinstance(values, list) or not values:
+            raise JsonInputError(f"{path}: {key} must be a nonempty list")
+        bad = [index for index, item in enumerate(values) if not isinstance(item, str)]
+        if bad:
+            raise JsonInputError(f"{path}: {key}[{bad[0]}] must be a string, found {type(values[bad[0]]).__name__}")
+        if len(values) != len(set(values)):
+            raise JsonInputError(f"{path}: {key} contains duplicate values")
+    return sheet
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sheet", type=Path, default=Path(__file__).with_name("g2_selection_refusal_expected.json"))
     parser.add_argument("--driver", type=Path, default=Path(__file__).parents[1] / "Editor" / "pie_selection_refusal.py")
     args = parser.parse_args()
-    sheet = json.loads(args.sheet.read_text(encoding="utf-8"))
+    try:
+        sheet = load_sheet(args.sheet)
+    except JsonInputError as error:
+        return fail(error)
     driver = args.driver.read_text(encoding="utf-8")
     issues = audit(sheet, driver)
     if issues:

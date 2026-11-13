@@ -10,6 +10,10 @@ import argparse
 import re
 from pathlib import Path
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BP-17: sibling atomic_io as a script or via -m
+from atomic_io import atomic_create_text
+
 
 LITERAL_RE = re.compile(r'TEXT\s*\(\s*"([^"\\]*(?:\\.[^"\\]*)*)"\s*\)')
 TOKEN_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z][A-Za-z0-9_]*)+")
@@ -18,6 +22,17 @@ CONTEXT_RE = re.compile(
     re.IGNORECASE,
 )
 
+
+
+_REPO = Path(__file__).resolve().parents[2]
+
+
+def _display(path: Path) -> str:
+    """BP-03: print repo-relative POSIX paths whether the inputs came from the (now absolute) defaults or a relative argument."""
+    try:
+        return path.resolve().relative_to(_REPO).as_posix()
+    except ValueError:
+        return path.as_posix()
 
 def scan(source_root: Path, tests_root: Path):
     tests = [p for p in tests_root.rglob("*") if p.suffix in {".cpp", ".h"}]
@@ -36,12 +51,12 @@ def scan(source_root: Path, tests_root: Path):
                     continue
                 token = match.group(0)
                 record = records.setdefault(token, {"sites": [], "tests": []})
-                site = {"path": path.as_posix(), "line": line_no}
+                site = {"path": _display(path), "line": line_no}
                 if site not in record["sites"]:
                     record["sites"].append(site)
     for token, record in records.items():
         record["sites"].sort(key=lambda row: (row["path"], row["line"]))
-        record["tests"] = sorted(p.as_posix() for p, content in test_text.items() if token in content)
+        record["tests"] = sorted(_display(p) for p, content in test_text.items() if token in content)
     return records
 
 
@@ -74,15 +89,15 @@ def render(records):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source", type=Path, default=Path("Source/OneBossFight"))
-    parser.add_argument("--tests", type=Path, default=Path("Source/OneBossFight/Tests"))
-    parser.add_argument("--output", type=Path, default=Path("Documentation/Boss/U_C08_ERROR_PATH_AUDIT.md"))
+    parser.add_argument("--source", type=Path, default=Path(__file__).resolve().parents[2] / "Source" / "OneBossFight")  # BP-03: repo-root defaults
+    parser.add_argument("--tests", type=Path, default=Path(__file__).resolve().parents[2] / "Source" / "OneBossFight" / "Tests")
+    parser.add_argument("--output", type=Path, default=Path(__file__).resolve().parents[2] / "Documentation" / "Boss" / "U_C08_ERROR_PATH_AUDIT.md")
     args = parser.parse_args()
     if args.output.exists():
         parser.error(f"refusing to overwrite existing report: {args.output}")
     records = scan(args.source, args.tests)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(render(records), encoding="utf-8", newline="\n")
+    atomic_create_text(args.output, render(records))  # BP-17: atomic, no-overwrite; same LF bytes as before
     print(f"tokens={len(records)} direct_test_refs={sum(bool(r['tests']) for r in records.values())} report={args.output}")
 
 

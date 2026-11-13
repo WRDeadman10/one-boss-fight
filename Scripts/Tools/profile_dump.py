@@ -7,6 +7,10 @@ import json
 from pathlib import Path
 import sys
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BO: helper import works as a script or as Scripts.Tools.*
+from json_input import JsonInputError, fail, load_json
+
 
 def walk(value, prefix=""):
     if isinstance(value, dict):
@@ -25,7 +29,10 @@ def main() -> int:
     args = parser.parse_args()
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(errors="replace")
-    data = json.loads(args.profile_json.read_text(encoding="utf-8"))
+    try:  # BO-04 / KI-166: name the input and fail closed; a profile is a JSON object.
+        data = load_json(args.profile_json, dict)
+    except JsonInputError as error:
+        return fail(error)
     print("FIELD\tVALUE")
     for key, value in walk(data):
         print(f"{key}\t{json.dumps(value, ensure_ascii=False)}")

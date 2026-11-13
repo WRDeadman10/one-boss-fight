@@ -35,7 +35,7 @@ def audit(path: Path) -> list[str]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mailbox", nargs="?", type=Path, default=Path("Documentation/TEAM_MAILBOX.md"))
+    parser.add_argument("mailbox", nargs="?", type=Path, default=Path(__file__).resolve().parents[2] / "Documentation" / "TEAM_MAILBOX.md")
     args = parser.parse_args()
     if not args.mailbox.is_file():
         parser.error(f"mailbox not found: {args.mailbox}")

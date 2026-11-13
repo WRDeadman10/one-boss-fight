@@ -110,7 +110,7 @@ def main() -> int:
     parser.add_argument("--report", action="store_true", help="render a text report instead of validation diagnostics")
     args = parser.parse_args()
     try:
-        value = json.loads(args.checklist.read_text(encoding="utf-8"))
+        value = json.loads(args.checklist.read_text(encoding="utf-8-sig"))
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
         print(f"ERROR: {error}", file=sys.stderr)
         return 2

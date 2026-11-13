@@ -6,13 +6,27 @@ import argparse
 import json
 from pathlib import Path
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BO: helper import works as a script or as Scripts.Tools.*
+from json_input import JsonInputError, fail, load_json, require_objects
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("card_json", type=Path)
     args = parser.parse_args()
-    data = json.loads(args.card_json.read_text(encoding="utf-8"))
-    cards = data if isinstance(data, list) else data.get("cards", [data])
+    try:  # BO-04 / KI-166: validate the whole shape before printing anything (no partial table on bad input).
+        data = load_json(args.card_json, (dict, list))
+        cards = require_objects(args.card_json, data if isinstance(data, list) else data.get("cards", [data]), "cards")
+        for index, card in enumerate(cards):
+            windows = card.get("Windows", card.get("windows", [])) or []
+            require_objects(args.card_json, windows, f"cards[{index}].Windows")
+            for w, window in enumerate(windows):
+                baked = window.get("BakedSamples", window.get("bakedSamples", [])) or []
+                if not isinstance(baked, list):
+                    raise JsonInputError(f"{args.card_json}: cards[{index}].Windows[{w}].BakedSamples must be a list")
+    except JsonInputError as error:
+        return fail(error)
     print("MOVE\tCLIP\tCOMMIT\tACTIVE START\tACTIVE END\tRECOVERY\tBAKED SAMPLES")
     for card in cards:
         windows = card.get("Windows", card.get("windows", [])) or []

@@ -10,6 +10,11 @@ from pathlib import Path
 MARKER = re.compile(r"\b(TODO|FIXME|XXX)\b", re.I)
 
 
+def marker_lines(text: str) -> list:
+    """BP-34: (1-based line number, line) for every TODO/FIXME/XXX line; moved from main()."""
+    return [(number, line) for number, line in enumerate(text.splitlines(), 1) if MARKER.search(line)]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("root", nargs="?", type=Path, default=Path("."))
@@ -25,10 +30,9 @@ def main() -> int:
         if any(part in ignored for part in path.parts):
             continue
         try:
-            for number, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
-                if MARKER.search(line):
-                    count += 1
-                    print(f"{path}:{number}: {line.strip()}")
+            for number, line in marker_lines(path.read_text(encoding="utf-8", errors="replace")):
+                count += 1
+                print(f"{path}:{number}: {line.strip()}")
         except OSError:
             continue
     print(f"markers={count}")

@@ -66,6 +66,17 @@ class QueueBatchValidatorTests(unittest.TestCase):
         at_wrong_heading = make_at_queue().replace("## Batch 8 — test", "## Group 8 — test", 1)
         self.assertTrue(any("batch headings" in issue for issue in validator.validate_queue(at_wrong_heading, "AT-C")))
 
+    def test_malformed_markdown_task_rows_are_rejected(self):
+        empty_task = make_ab_queue().replace(
+            "| AB-C01 | Task 1 | accepts |", "| AB-C01 | | accepts |", 1)
+        issues = validator.validate_queue(empty_task, "AB-C")
+        self.assertTrue(any("malformed task table row" in issue and "AB-C01" in issue for issue in issues))
+
+        short_row = make_at_queue().replace(
+            "| AT-C01 | Task 1 | accepts |", "| AT-C01 | Task 1 |", 1)
+        issues = validator.validate_queue(short_row, "AT-C")
+        self.assertTrue(any("malformed task table row" in issue and "AT-C01" in issue for issue in issues))
+
 
 if __name__ == "__main__":
     unittest.main()

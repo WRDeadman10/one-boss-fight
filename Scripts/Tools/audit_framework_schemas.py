@@ -6,6 +6,8 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BP-01/02: sibling imports work as a script or as `python -m Scripts.Tools.*`
 from check_validator_tokens import emitted_tokens, table_tokens
 
 FIELD = re.compile(r"([A-Za-z_][A-Za-z0-9_]*)=([^\s]+)")

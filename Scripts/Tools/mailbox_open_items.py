@@ -7,6 +7,10 @@ import json
 import re
 from pathlib import Path
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BP-26: sibling text_input as a script or via -m
+from text_input import TextInputError, read_text_input
+
 HEADER = re.compile(r"^### \[(?P<id>[A-Z]+-\d+)\] (?P<header>[^\r\n]*)$", re.MULTILINE)
 OPEN_SIGNAL = re.compile(r"\b(?:OPEN|WAITING|PENDING|BLOCKED|PARTIAL|REVIEW REQUESTED|DECISION NEEDED)\b", re.I)
 
@@ -35,8 +39,8 @@ def main() -> int:
     if args.limit < 1:
         parser.error("--limit must be positive")
     try:
-        result = digest(args.mailbox.read_text(encoding="utf-8"), args.limit)
-    except (OSError, UnicodeError) as exc:
+        result = digest(read_text_input(args.mailbox), args.limit)  # BP-26: strict; BOM stripped; UTF-16 fails closed
+    except (OSError, UnicodeError, TextInputError) as exc:
         parser.error(str(exc))
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0

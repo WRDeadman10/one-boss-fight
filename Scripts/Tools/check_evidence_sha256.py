@@ -42,7 +42,7 @@ def check_manifest(manifest: Path) -> list[str]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("root", nargs="?", type=Path, default=Path("."), help="repository root")
+    parser.add_argument("root", nargs="?", type=Path, default=Path(__file__).resolve().parents[2], help="repository root")
     args = parser.parse_args()
     base = args.root.resolve() / "Docs" / "BossCombatReview" / "Execution" / "Claude"
     manifests = sorted(base.glob("B_*/evidence_sha256.txt"))

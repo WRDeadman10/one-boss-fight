@@ -165,7 +165,7 @@ def main() -> int:
         metadata = None
         manifest_path = args.manifest or args.normalized_manifest
         if args.normalized_manifest:
-            normalized = json.loads(args.normalized_manifest.read_text(encoding="utf-8"))
+            normalized = json.loads(args.normalized_manifest.read_text(encoding="utf-8-sig"))
             cooked, issues, roots = validate_normalized_manifest(normalized, required)
             if issues:
                 for issue in issues:

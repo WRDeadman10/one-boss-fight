@@ -6,20 +6,32 @@ import argparse
 import json
 from pathlib import Path
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BO: helper import works as a script or as Scripts.Tools.*
+from json_input import JsonInputError, fail, load_json, require_objects
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--root", type=Path, default=Path("."))
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
     args = parser.parse_args()
     root = args.root.resolve()
     project = next(iter(root.glob("*.uproject")), None)
     if project is None:
         parser.error("no .uproject found at root")
-    enabled = {entry.get("Name"): entry.get("Enabled") for entry in json.loads(project.read_text(encoding="utf-8")).get("Plugins", [])}
     descriptors = sorted((root / "Plugins").rglob("*.uplugin")) if (root / "Plugins").exists() else []
+    try:  # BO-04 / KI-166: parse every descriptor up front so a bad file fails closed before any row is printed.
+        entries = require_objects(project, load_json(project, dict).get("Plugins", []), "Plugins")
+        parsed = {}
+        for path in descriptors:
+            parsed[path] = load_json(path, dict)
+            require_objects(path, parsed[path].get("Plugins", []), "Plugins")
+    except JsonInputError as error:
+        return fail(error)
+    enabled = {entry.get("Name"): entry.get("Enabled") for entry in entries}
     found = set()
     for path in descriptors:
-        data = json.loads(path.read_text(encoding="utf-8"))
+        data = parsed[path]
         name = data.get("FriendlyName") or path.stem
         found.add(path.stem)
         deps = [x.get("Name", "") for x in data.get("Plugins", [])]

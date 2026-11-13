@@ -7,6 +7,11 @@ import json
 import re
 from pathlib import Path
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BP-17: sibling atomic_io as a script or via -m
+from atomic_io import atomic_write_text
+from text_input import read_text_input
+
 ROOT = Path(__file__).resolve().parents[2]
 HEADER = re.compile(r"^### \[(?P<id>[A-Z]+-\d+)\] (?P<header>[^\r\n]*)$", re.MULTILINE)
 
@@ -47,12 +52,12 @@ def main() -> int:
     parser.add_argument("--output", type=Path, help="write JSON here; stdout by default")
     args = parser.parse_args()
     try:
-        result = digest(args.mailbox.read_text(encoding="utf-8"), args.start, args.end)
+        result = digest(read_text_input(args.mailbox), args.start, args.end)  # BP-26: strict; BOM stripped; UTF-16 fails closed
         payload = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
     except (OSError, UnicodeError, ValueError) as exc:
         parser.error(str(exc))
     if args.output:
-        args.output.write_text(payload, encoding="utf-8", newline="\n")
+        atomic_write_text(args.output, payload)  # BP-17: atomic replace; same LF bytes as before
     else:
         print(payload, end="")
     return 0

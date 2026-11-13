@@ -15,6 +15,10 @@ import sys
 from pathlib import Path
 from typing import List, Tuple
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BP-26: sibling text_input as a script or via -m
+from text_input import TextInputError, read_text_input
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 BOSS_DOCS_DIR = REPO_ROOT / "Documentation" / "Boss"
 
@@ -60,7 +64,7 @@ def line_has_citation(context_lines: List[str]) -> bool:
 def scan_file(file_path: Path) -> List[Tuple[int, str, str]]:
     """Scan a markdown document and return list of (line_num, match_str, line_text) for uncited claims."""
     findings = []
-    lines = file_path.read_text(encoding="utf-8", errors="ignore").splitlines()
+    lines = read_text_input(file_path).splitlines()  # BP-26: strict (was errors="ignore", which silently dropped bytes)
 
     # Check if document has global Sources block
     doc_text = "\n".join(lines[:25])
@@ -89,7 +93,10 @@ def scan_all_va_docs(docs_dir: Path = BOSS_DOCS_DIR) -> dict[str, List[Tuple[int
     pattern = str(docs_dir / "V_A*.md")
     for file_str in sorted(glob.glob(pattern)):
         fp = Path(file_str)
-        findings = scan_file(fp)
+        try:
+            findings = scan_file(fp)
+        except TextInputError as error:  # BP-26: an undecodable doc is reported as a finding, never silently skipped
+            findings = [(0, "UNREADABLE", str(error))]
         if findings:
             results[fp.name] = findings
     return results

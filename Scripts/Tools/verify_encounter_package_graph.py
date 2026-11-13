@@ -130,8 +130,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("manifest", type=Path, help="normalized cook package manifest JSON")
     args = parser.parse_args(argv)
     try:
-        graph = json.loads(args.graph.read_text(encoding="utf-8"))
-        manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
+        graph = json.loads(args.graph.read_text(encoding="utf-8-sig"))
+        manifest = json.loads(args.manifest.read_text(encoding="utf-8-sig"))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         print(f"INCONCLUSIVE: cannot read valid UTF-8 inputs: {exc}", file=sys.stderr)
         return 2

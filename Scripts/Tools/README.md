@@ -4,6 +4,8 @@ Scripts here inspect source, docs, manifests, JSON exports, mailboxes or existin
 
 File outputs use the shared `atomic_io.py` helper where replacement or no-overwrite publication is needed; the S171 audit and failure-injection fixture are linked from `Documentation/Boss/TOOLS.md`.
 
+Fail-closed exit codes and the opt-in `--redact` flag for sharing report output (lane BO, KI-163..167): `Documentation/Boss/BO_TOOL_BEHAVIOUR_GUIDE.md`. Run the lane's tests with `python Scripts/Tools/run_bo_lane_tests.py`.
+
 | Script | Purpose |
 |---|---|
 | `audit_a5_driver_registration.py` | Compare all receipt-registered A5 drivers with RunDrivers and fresh-process runner registration. |
@@ -73,6 +75,65 @@ File outputs use the shared `atomic_io.py` helper where replacement or no-overwr
 | `summarize_framework_log.py` | Per-token, outcome and per-card proof log summary. |
 | `token_coverage.py` | Compare schema tokens with evidence logs; optionally emit first-real-sample path/line manifest. |
 | `validate_baked_cards.py` | Baked sample time/coordinate sanity on card JSON. |
+| `a7_release_gates.py` | Validate and render the evidence state of the A7 release gates. |
+| `air_light_receipt.py` | Fail-closed parser for timestamped Air Light action-context records. |
+| `aq_evidence_freshness.py` | Classify evidence identity metadata without opening or changing raw artifacts. |
+| `ar_charge_receipt.py` | Read-only parser for retained ER control-latency R2 hold log rows. |
+| `ar_charge_repeat_receipt.py` | Stamp and aggregate independent route-identified R2 charge trial receipts. |
+| `ar_er_cook_manifest.py` | Read-only same-build check for the eight ER/Tier 2 cook package paths. |
+| `audit_framework_schemas.py` | Audit FrameworkProof schema duplicates, source/docs mapping, log samples, and regex looseness. |
+| `audit_source_error_token_coverage.py` | Inventory source error/refusal tokens and show literal references in native tests. |
+| `aura_warmup_receipt.py` | Validate that approved/candidate aura captures followed a bright warmup in the same run. |
+| `bind_owner_approval.py` | BK-97 (C, implementer; X-2003): pure binding adapter between a raw owner mailbox message, the approval envelope |
+| `bind_receipt_source.py` | BK-122/123 (C, implementer; X-2012, X-2013): pure adapter that binds a Sevarog executor receipt to its owner mailbox source. |
+| `build_parry_addendum_reel.py` | Build Parry SFX Addendum Audition Reel (C-1186). |
+| `build_sfx_audition_reel.py` | Build the Owner SFX Audition Reel (SFX-03) using ffmpeg. |
+| `build_sfx_batch3_reel.py` | Build the Owner SFX Batch 3 Audition Reel (C-1204) using ffmpeg. |
+| `camera_probe_receipt.py` | Fail-closed validation for dynamic camera probe JSONL samples. |
+| `check_g044_cook_manifest.py` | Compare required G044 /Game package paths with a packaged cook manifest. |
+| `check_stage_identity.py` | Read-only preflight for distinct Shipping and Development UAT stage roots. |
+| `check_validator_tokens.py` | Check FrameworkProof UE_LOG tokens against validator and documentation indexes. |
+| `compare_determinism_runs.py` | Validate and compare the six U-C07 Lead-run determinism arms. |
+| `compare_encounter_parity.py` | Fail-closed comparison of paired legacy/data encounter-driver JSON receipts. |
+| `compare_manifest_to_legacy_defaults.py` | Compare every typed G044 boss/player setting against cited legacy defaults. |
+| `diff_phase_two_auras.py` | Read-only parameter diff between approved baseline NS_Boss_PhaseTwoAura and candidate NS_Boss_PhaseTwoAura_Boost. |
+| `encounter_parity_receipt.py` | Pure builders and strict validation for captured encounter parity receipts. |
+| `fight_capture_receipt.py` | Validate a single-run full-fight capture log and return machine-readable evidence. |
+| `fight_review_observation.py` | Validate human-coded visual observations against same-run frame identities. |
+| `find_orphan_docs.py` | Finds unreferenced (.md, .patch, .txt) documents under Documentation/ and Docs/ that are candidates for cleanup. |
+| `make_fight_video.py` | Turn [FullFight] game-time frames and action markers into ffmpeg/ASS inputs. |
+| `new_profile_field_scaffold.py` | Print the project's eight review sites for adding an opt-in profile field. |
+| `new_rule_scaffold.py` | Generate a header, automation-test, and designer-reference skeleton for a pure rule. |
+| `normalize_cook_package_manifest.py` | Normalize an explicit captured cook-manifest export without inferring packages. |
+| `normalize_encounter_selection_graph.py` | Normalize an explicit Editor selection-graph export for cook reachability checks. |
+| `plan_camera_default.py` | Print a no-write plan for a future, owner-authorized camera default. |
+| `plan_sevarog_definition_repair.py` | BK-92/93 (C, implementer; X-2002): PROPOSAL-ONLY planner for an in-place Sevarog definition repair. |
+| `round6_benchmark_report.py` | Validate and summarize Round 6 receipts; never edits benchmark evidence. |
+| `round6_phase2_intake.py` | Strict offline intake gate for the owner-approved Round 6 Phase 2 receipt. |
+| `run_bo_lane_tests.py` | BO-46: one-command offline runner for the lane BO test suites (KI-163..167 tool hardening and --redact). |
+| `run_offline_suite_timed.py` | Run the Scripts/Tools unittest suite and enforce its wall-time budget. |
+| `runner_status_receipt_proposal.py` | BK-167..169 (C, implementer; X-2033): PROPOSED versioned status receipt for C-1155 runners, with a pure validator. |
+| `runner_status_receipt_proposal_v1_1.py` | BK-171..175 (C, implementer; X-2034): PROPOSED status receipt v1.1 for C-1155 runners - stricter successor of |
+| `runner_status_receipt_proposal_v1_2.py` | BK-176..180 (C, implementer; X-2038): PROPOSED status receipt v1.2 for C-1155 runners - successor of v1.1 |
+| `scan_doc_citations.py` | scan_doc_citations.py - Scanner to detect uncited measurements in Lane A documents. |
+| `scan_pie_driver_safety.py` | Offline inventory of PIE driver RESULT and key-release readiness risks. |
+| `sevarog_executor_contract.py` | BK-102 (C, implementer; X-2004): pure state-machine contract for a FUTURE Sevarog definition executor. |
+| `sevarog_receipt_v2_proposal.py` | BK-132..135 (C, implementer; X-2017): PROPOSED v2 evidence schema for Sevarog executor receipts. |
+| `summarize_encounter_cost.py` | Summarize cold/warm Lead cost samples without dropping run identities. |
+| `summarize_er_guard_counter.py` | Summarize retained ER guard-counter probe markers without inferring a hit. |
+| `summarize_packaged_metrics.py` | Summarize Lead-captured packaged metrics by phase without mixing identities. |
+| `validate_encounter_manifest.py` | Validate the canonical G044 membership receipt without Unreal or file writes. |
+| `validate_owner_approval_envelope.py` | BK-86..89 (C, implementer; X-1999): read-only validator for a SYNTHETIC owner approval envelope. |
+| `validate_pending_definition_inputs.py` | BK-78 (C, implementer; X-1996): read-only validator for a PENDING definition-input provenance manifest. |
+| `validate_sevarog_executor_receipt.py` | BK-112: pure schema validator for future Sevarog executor receipts; validates claims, performs no operations. |
+| `verify_bf_x05_selected_route.py` | Fail-closed predicate checker for a Lead-transcribed BF-X05 evidence receipt. |
+| `verify_bk56_60_receipts.py` | BK-66..68 (C, implementer; X-1993): read-only verifier for one BK-56..60 runner receipt bundle. |
+| `verify_bk7_shipping_receipt.py` | Fail-closed structural and artifact-hash validation for BK-7 Shipping receipts. |
+| `verify_c1278_x26_live_log.py` | Check a Lead PIE log against the C-1278 X26 live acceptance table. |
+| `verify_encounter_package_graph.py` | Verify normalized encounter soft-reference reachability against a cook package manifest. |
+| `verify_framework_perf_receipt.py` | Validate explicit framework CPU scope receipts without treating frame GPU as boss-attributed. |
+| `write_a4_parity_receipt.py` | Finalize an A4 driver capture as a v2 receipt after the source log is closed. |
+| `run_bp_lane_tests.py` | BP-46: run the Queue BP static and in-process test suites in this process and print one row per suite. |
 
 Reports can contain heuristic suspects. Read the code/context before treating a match as a defect; these tools do not replace builds, automation tests, PIE evidence, or owner review.
 

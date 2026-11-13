@@ -7,6 +7,10 @@ import json
 import re
 import statistics
 from pathlib import Path
+
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BP-06: sibling json_input as a script or via -m
+from json_input import JsonInputError, fail, load_json, require_objects
 from typing import Any
 
 
@@ -135,12 +139,20 @@ def render(summary: dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def load_receipt(path: Path):
+    """BP-08: parse the receipt; its shape is checked by validate(). Raises JsonInputError naming the file."""
+    return load_json(path)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("receipt", type=Path)
     parser.add_argument("--json", action="store_true", help="print summary as JSON")
     args = parser.parse_args()
-    value = json.loads(args.receipt.read_text(encoding="utf-8"))
+    try:
+        value = load_receipt(args.receipt)
+    except JsonInputError as error:
+        return fail(error)
     issues = validate(value)
     if issues:
         print("INVALID: " + "; ".join(issues))

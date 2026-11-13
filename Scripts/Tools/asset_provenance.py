@@ -7,6 +7,10 @@ import ast
 import re
 from pathlib import Path
 
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # BO: helper import works as a script or as Scripts.Tools.*
+from redaction import add_redact_argument, display_path, display_row, install_stream_redaction, redaction_scope
+
 ASSET_PATH = re.compile(r"/Game/[A-Za-z0-9_./-]+")
 
 
@@ -46,11 +50,15 @@ def declarations(script: Path):
     return source, rows
 
 
+@redaction_scope  # BO-18: restore the caller's streams when main ends
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("script", type=Path)
     parser.add_argument("--evidence", type=Path, action="append", default=[], help="log file or directory to search for declared asset paths")
+    add_redact_argument(parser)  # BO-05 / KI-167
     args = parser.parse_args()
+    if args.redact:  # BO-23: only ever enable here; never unwrap a caller-owned wrapper when the flag is absent
+        install_stream_redaction(True)  # BO-06..09: mask absolute machine paths in every printed line
     if not args.script.is_file():
         parser.error(f"authoring script does not exist: {args.script}")
     try:
@@ -60,7 +68,7 @@ def main() -> int:
         return 2
     source_rows = [row for row in rows if any(key in row[1].upper() for key in ("SOURCE", "_SRC"))]
     dest_rows = [row for row in rows if any(key in row[1].upper() for key in ("DEST", "_DST", "_PATH")) or row[1].upper() in {"PROFILE_NAME", "LEVEL_NAME", "MAP_NAME"}]
-    print(f"SCRIPT {args.script.resolve()}")
+    print(f"SCRIPT {display_path(args.script.resolve(), args.redact)}")
     for label, selected in (("SOURCE", source_rows), ("DESTINATION", dest_rows)):
         if not selected:
             print(f"{label} unknown (no statically declared source/destination variable)")
@@ -76,7 +84,7 @@ def main() -> int:
             content = log.read_text(encoding="utf-8", errors="replace")
             for line_number, line in enumerate(content.splitlines(), 1):
                 if any(path in line for path in asset_literals):
-                    print(f"EVIDENCE {log}:{line_number}: {line.strip()}")
+                    print(f"EVIDENCE {display_path(log, args.redact)}:{line_number}: {display_row(line.strip(), args.redact)}")
                     evidence_refs += 1
     if args.evidence and not evidence_refs:
         print("EVIDENCE no declared script asset path was found in supplied logs")
