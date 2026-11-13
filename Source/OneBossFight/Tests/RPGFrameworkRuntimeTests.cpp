@@ -25,7 +25,7 @@ namespace FrameworkRuntimeFixture
 void Fill(URPGBossFrameworkProfile& P)
 {
     P.bAggroEnabled=false;P.bAlignmentAuthored=false;P.bArenaCenterAuthored=false;P.bArenaLeash=false;
-    P.bDamageEnabled=false;P.bPhaseSupersedesStagger=false;P.bRangeBandPartition=false;
+    P.bDamageEnabled=false;P.bPhaseSupersedesStagger=false;P.bRangeBandPartition=false;P.MaxAbortedAttacks=0;
     P.HitStepCm=0.f;P.HitMaxSubsteps=0;P.BossMaxHealth=0.f;P.PlayerHitDamage=0.f;
     P.FixtureLabel=TEXT("F3 fixture");P.Mesh=TSoftObjectPtr<USkeletalMesh>(FSoftObjectPath(TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Meshes/Sevarog.Sevarog")));
     P.AnimClass=TSoftClassPtr<UAnimInstance>(FSoftObjectPath(TEXT("/Game/ParagonSevarog/Characters/Heroes/Sevarog/Sevarog_AnimBlueprint.Sevarog_AnimBlueprint_C")));

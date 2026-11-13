@@ -12,8 +12,20 @@ namespace RPGBossMath
 {
 	/** Posture after one regeneration tick (Freeze 17.2): nothing at the maximum, nothing until Delay seconds after the last drain (LastDrainTime < 0: never drained), else PerSecond * Dt, never above Max.
 	 *  A pool at zero stays there unless bFromZero: the caller says that nothing holds it (a stance break holds the pool at zero itself; a request for a break that was dropped does not hold it and must not leave the pool stuck). */
+	/** BQ-04 (KI-128 family): a posture drain amount is applied only when finite and positive. A NaN amount would pass an
+	 *  `Amount <= 0` guard and FMath::Max(0, Posture - NaN) returns NaN, poisoning the pool permanently; +inf is refused too. */
+	inline bool IsValidDrainAmount(float Amount) { return FMath::IsFinite(Amount) && Amount > 0.f; }
+	/** BQ-04: framework-boss posture sink. A non-finite or negative requested posture amount drains nothing (0), exactly like a
+	 *  zero amount today; without it, Min(Posture, NaN) is NaN (Posture <= NaN is false) and `Posture -= NaN` poisons the pool. */
+	inline double SanitizeDrainAmount(double Amount) { return (FMath::IsFinite(Amount) && Amount > 0.) ? Amount : 0.; }
+
 	inline float RegenStep(float Posture, float Max, double WorldTime, double LastDrainTime, float Delay, float PerSecond, float Dt, bool bFromZero = false)
 	{
+		// Reject NaN operands before arithmetic; UE's optimized Development build may use fast floating-point assumptions.
+		if (FMath::IsNaN(PerSecond) || FMath::IsNaN(Dt))
+		{
+			return Posture;
+		}
 		if ((Posture <= 0.f && !bFromZero) || Posture >= Max)
 		{
 			return Posture;
@@ -22,7 +34,14 @@ namespace RPGBossMath
 		{
 			return Posture;
 		}
-		return FMath::Min(Max, Posture + PerSecond * Dt);
+		// BQ-04 (X-2325, KI-128): a finite overflow to +inf still clamps to Max via Min(Max, +inf). Only a NaN next value (NaN rate or Dt
+		// from a caller that skipped validation) would poison the pool (Min(Max, NaN) is NaN), and -inf would store -inf; both keep the posture.
+		const float Next = Posture + PerSecond * Dt;
+		if (FMath::IsNaN(Next))
+		{
+			return Posture;
+		}
+		return FMath::IsFinite(Next) ? FMath::Min(Max, Next) : (Next > 0.f ? Max : Posture);  // +inf -> Max; -inf -> unchanged
 	}
 
 	/** Why a riposte press is refused, in the order the checks are made. */

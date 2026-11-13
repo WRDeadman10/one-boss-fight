@@ -14,10 +14,7 @@ bool FPostureDrainFiniteTest::RunTest(const FString&)
 {
 	const float NaN = std::numeric_limits<float>::quiet_NaN();
 	const float Inf = std::numeric_limits<float>::infinity();
-	// The hazard the guard closes: Max(0, finite - NaN) is NaN, so the old `Amount <= 0` guard let NaN poison the pool.
-	TestFalse(TEXT("NaN passes an `Amount <= 0` guard"), NaN <= 0.f);
-	TestTrue(TEXT("Max(0, Posture - NaN) is NaN"), FMath::IsNaN(FMath::Max(0.f, 50.f - NaN)));
-	// The guard: finite and positive only.
+	// The production guard must reject non-finite input before relying on optimized floating-point comparisons/arithmetic.
 	TestFalse(TEXT("NaN refused"), RPGBossMath::IsValidDrainAmount(NaN));
 	TestFalse(TEXT("+inf refused"), RPGBossMath::IsValidDrainAmount(Inf));
 	TestFalse(TEXT("-inf refused"), RPGBossMath::IsValidDrainAmount(-Inf));
@@ -29,7 +26,6 @@ bool FPostureDrainFiniteTest::RunTest(const FString&)
 	// Accepted amounts keep the pool finite and clamped (the arithmetic ApplyPostureDamage performs).
 	TestTrue(TEXT("a FLT_MAX drain clamps to zero"), FMath::Max(0.f, 100.f - std::numeric_limits<float>::max()) == 0.f);
 	// Framework boss sink (ApplyHit via ApplyPlayerAttackHit: Row.PostureDamage is not finite-checked upstream).
-	TestTrue(TEXT("Min(Posture, NaN) is NaN without the sink guard"), FMath::IsNaN(FMath::Min(50.0, double(NaN))));
 	TestTrue(TEXT("NaN row posture drains 0"), RPGBossMath::SanitizeDrainAmount(double(NaN)) == 0.);
 	TestTrue(TEXT("+inf row posture drains 0"), RPGBossMath::SanitizeDrainAmount(double(Inf)) == 0.);
 	TestTrue(TEXT("negative row posture drains 0"), RPGBossMath::SanitizeDrainAmount(-5.) == 0.);
@@ -42,6 +38,7 @@ bool FPostureDrainFiniteTest::RunTest(const FString&)
 	TestTrue(TEXT("regen: NaN dt keeps posture"), RegenStep(40.f, 100.f, 20.0, 0.0, 6.f, 13.f, NaN) == 40.f);
 	TestTrue(TEXT("regen: finite overflow clamps to max"), RegenStep(40.f, 100.f, 20.0, 0.0, 6.f, std::numeric_limits<float>::max(), 10.f) == 100.f);
 	TestTrue(TEXT("regen: +inf rate clamps to max"), RegenStep(40.f, 100.f, 20.0, 0.0, 6.f, Inf, 1.f) == 100.f);
+	TestTrue(TEXT("regen: NaN intermediate keeps posture"), RegenStep(40.f, 100.f, 20.0, 0.0, 6.f, Inf, 0.f) == 40.f);
 	TestTrue(TEXT("regen: normal step unchanged"), RegenStep(40.f, 100.f, 20.0, 0.0, 6.f, 13.f, 1.f) == 53.f);
 	TestTrue(TEXT("regen: -inf rate keeps posture"), RegenStep(40.f, 100.f, 20.0, 0.0, 6.f, -Inf, 1.f) == 40.f);
 	TestTrue(TEXT("regen: result stays finite for NaN input"), FMath::IsFinite(RegenStep(40.f, 100.f, 20.0, 0.0, 6.f, NaN, NaN)));

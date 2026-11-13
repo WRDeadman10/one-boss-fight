@@ -23,7 +23,8 @@ namespace RPGPackParry
 	inline ECandidateDecision EvaluateCandidate(bool bHealthKnown, double HealthBefore, double HealthNow,
 		double ElapsedSeconds, double RequiredSeconds = 0.1, double LossTolerance = 0.001)
 	{
-		if (!FMath::IsFinite(ElapsedSeconds))
+		if (!FMath::IsFinite(ElapsedSeconds) || !FMath::IsFinite(RequiredSeconds) || RequiredSeconds < 0.0 ||
+			!FMath::IsFinite(LossTolerance) || LossTolerance < 0.0)
 		{
 			return ECandidateDecision::Rejected;
 		}
@@ -31,9 +32,7 @@ namespace RPGPackParry
 		{
 			return ECandidateDecision::Pending;
 		}
-		if (!bHealthKnown || !FMath::IsFinite(HealthBefore) || !FMath::IsFinite(HealthNow) ||
-			!FMath::IsFinite(RequiredSeconds) || RequiredSeconds < 0.0 ||
-			!FMath::IsFinite(LossTolerance) || LossTolerance < 0.0)
+		if (!bHealthKnown || !FMath::IsFinite(HealthBefore) || !FMath::IsFinite(HealthNow))
 		{
 			return ECandidateDecision::Rejected;
 		}

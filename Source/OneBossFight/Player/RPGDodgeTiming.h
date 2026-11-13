@@ -189,7 +189,7 @@ public:
 	bool WasLastPressFull() const { return bLastPressFull; }
 
 	/** BQ-14 / KI-059 pure seams (moved verbatim from HasNoDirectionInput / OnDodgePressed; behaviour unchanged). */
-	static bool IsNoDirectionInput(float InputSize, float Threshold) { return InputSize < Threshold; }
+	static bool IsNoDirectionInput(float InputSize, float Threshold) { return FMath::IsFinite(InputSize) && FMath::IsFinite(Threshold) && InputSize < Threshold; }
 	static bool IsDoubleTapLongRoll(bool bEnabled, double PressGapSeconds, float WindowSeconds) { return bEnabled && PressGapSeconds <= WindowSeconds; }
 
 	/** Number of presses seen, and how many of them forced a roll over a running quick dodge (tests). */
