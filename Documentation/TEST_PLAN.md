@@ -1,5 +1,148 @@
 # Test Plan
 
+## Current status reconciliation (2026-11-11)
+
+- Queue BQ Gate 1 (2026-11-13): first C-1155 run built successfully but had 4/573 suite failures. After the reviewed NaN/fixture hotfixes (AG A-987/A-988; Claude C-1608/C-1609), the locked rerun passed: Development build exit 0; DD27j-pinned suite 573/573, exit 0; 2/2 locks released, none retained. Gate 1 build/suite criteria PASS. No PIE, package, or asset operation; owner visual/playability check remains separate. Reports/evidence: `Documentation/Boss/BQ_GATE1_C1155_FIRST_RUN.md`, `Docs/BossCombatReview/Execution/Codex/B_GATE1_BQ/Run_20261113_103554_41953579/`.
+
+- BK-56/57 offline source gate routes selected/deferred actors through production selector Tick and uses a passive bounded driver monitor without explicit test-start calls. C-1155 `Run_20261111_090828` compiled the snapshot correction, passed the DD27j-pinned suite 511/511 and combined focused contracts 12/12, and passed Python compilation plus saved-definition readback. Deferred PIE remains blocked because the Sevarog draft has unsourced zero Stats/phase values and no field manifest (C-1239); no live acceptance is claimed. See `Documentation/Boss/BK_56_60_DEFERRED_PRODUCTION_TICK.md`.
+- BK-61..65 receipt hotfix: the C-1155 runner now records the PIE process exit in `pie_exit.txt` and includes `PIE_EXIT` in success status; caught in-run failures write `failure_status.txt` before rethrow/lock cleanup. Focused source contracts pass 8/8 and PowerShell parsing passes. These offline checks do not verify actual process-exit receipts; repeat the bounded run only after the Sevarog data gate is resolved.
+- BK-71..75 adds a read-only success-log verifier: it requires source-order activation before the later navigation pass, a traced production decision, no test-start/save evidence, and an eligible terminal result. Lead corrected the runner order predicate and pinned it with a source contract. Deferred source contracts pass 8/8 and verifier fixtures 33/33; PowerShell parse passes. No live successful log exists yet; do not claim one until a future C-1155 run clears the Sevarog data gate.
+- BK-76..80 adds a pending-only input provenance manifest and read-only validator; unknown top-level approval claims and stale excerpt line numbers are rejected. The Phase_1 prerequisite helper now refuses missing or invalid authored inputs instead of writing zero threshold/identity multipliers. Manifest tests pass 15/15, deferred contracts 9/9, source hash/line verification and Python compilation pass. No asset was authored; C-1155 remains gated on Owner decisions.
+- BK-81..85 audit found five manifest-validator gaps and an encounter-author pre-write dependency check gap. Lead hotfixes now reject non-finite values, partial excerpts, unknown fields, duplicate JSON keys, invalid candidates, and repository-root escapes; encounter creation and readback validate referenced Stats and exactly one valid Phase_1 first. Adversarial tests 15/15, original manifest tests 15/15, AST guard 2/2, exact source verification VALID, py_compile and scoped diff-check pass. No Unreal/build/asset operation; approved non-destructive draft repair and Stats authoring still require Owner decisions.
+- BK-86..90 prepares a synthetic Owner-approval envelope only; it emits no production manifest and authorizes nothing. Lead review hardened it to require the exact complete body under an Owner header in `Documentation/TEAM_MAILBOX.md`, with full-line quotations, token-boundary field names, and rejection of conditional language, root escapes, malformed decision types, and huge numeric values. Envelope tests: 20 total (19 pass, 1 symlink test skipped on this Windows host); no actual Owner reply or asset data was processed. The non-destructive draft repair path and Stats authoring are still missing.
+
+- Framework, Sevarog, Greystone, and Shipping source/test receipts do not close Lead-owned live route, saved-asset, Shipping/UHT, package, or target-hardware gates. See the current Queue BI batch reports and `Documentation/Boss/QUEUE_BI.md`.
+- Later BE-X21–X25 / BF-X11–X15 reflection contracts report the current test declarations guarded with `WITH_EDITORONLY_DATA`; the historical Queue BB X36–X40 row below that says the two damage-resolver declarations are unguarded describes an earlier source state. Keep that historical record, but do not treat it as a current-source finding. Shipping UHT/runtime reflection proof remains open.
+- Read-only inventory in `BI_X36_X40_SHIPPING_PACKAGE_READINESS.md` initially misstated the Shipping root `OneBossFight.exe` as missing; a later presence recheck finds it and the other required listed stage artifacts present. No checker, hashes, source/UAT binding, build, or smoke was run; Shipping identity/acceptance remains open.
+- Queue BJ reconciliations X26–X45 corrected the stage-presence claim, preserved the 1920×1080 60 FPS average / p99 <=16.67 ms RTX 2060 Super target (RTX 3060 remains proxy), and kept SFX/Sevarog Owner choices pending. Reports are under `Documentation/Boss/BJ_X26_X30_SHIPPING_IDENTITY_REFLECTION_EVIDENCE.md`, `BJ_X31_X35_PERFORMANCE_TARGET_AND_PROVENANCE.md`, and `BJ_X36_X40_OWNER_CHOICE_STATUS.md`; no runtime/package/performance evidence was added.
+- Queue BJ is closed 50/50. No Lead/Owner acceptance gates changed; see `Documentation/Boss/BJ_X46_X50_CLOSEOUT.md`. The successor `Documentation/Boss/QUEUE_BK.md` contains blank intake/traceability tasks only; no new test or runtime evidence is claimed.
+- Queue BI closeout confirms the 1080p/60 FPS average and p99 <=16.67 ms RTX 2060 Super release gate remains unmeasured here; proxy data is not target-hardware acceptance. See `Documentation/Boss/BI_X46_X50_CLOSEOUT.md`.
+
+## Queue BI X01–X05 benchmark receipt contracts (2026-11-11)
+
+- [x] Source-mapped current summary producer and consumer plus R4 and R6 receipt layers; their provenance coverage is explicitly distinguished.
+- [x] Drafted `Documentation/Boss/BENCHMARK_RUN_RECEIPT_V1.schema.json` and a positive/negative fixture plan in `Documentation/Boss/BI_X01_X05_BENCHMARK_RECEIPT_SCHEMA.md`.
+- [ ] Schema adoption, parser/fixture implementation, and Lead policy decisions remain open; existing benchmark artifacts and producers are unchanged.
+- No tests, benchmark, profiler, Engine, Editor, build, package, or asset operation was performed.
+
+## Queue BF X46–X50 closeout (2026-11-11)
+
+- [x] Reconciled framework, S1–S8, Greystone, Shipping/package, and performance source/proxy status against current project handoffs and mailbox through A-799/X-1895.
+- [x] Preserved the separation between source-ready work, Lead live/saved acceptance, Owner visual decisions, and proxy performance results.
+- Queue BF is closed 50/50; next Codex lane is `Documentation/Boss/QUEUE_BI.md`. Antigravity continues `Documentation/Boss/QUEUE_BH_AG.md`.
+- No tests, engine, Editor, build, package, benchmark, profiler, or asset operation was performed. Report: `Documentation/Boss/BF_X46_X50_CLOSEOUT.md`.
+
+## Queue BF X41–X45 performance and owner-gate audit (2026-11-11)
+
+- [x] Inventoried source-level combat formatting/logging candidates; costs and call frequency remain unmeasured.
+- [x] Compared the current 60 FPS / p99 16.67 ms release target and logged captures with per-run identity fields. RTX 2060 Super acceptance remains open; retained summaries lack per-run host/session and unique build/binary identity.
+- [x] Separated accepted Ember BoostLite bounds/rates from proposed, unselected Sevarog Niagara constraints; no runtime cost or hard live-particle cap inferred.
+- [x] Reconciled pending Owner SFX/aura/4-move choices and Lead Greystone/live/Shipping/performance gates from current docs/mailbox through A-796.
+- [x] Drafted offline/source successor `Documentation/Boss/QUEUE_BI.md` (50 tasks, ten batches of five); no overlap with active Antigravity queue intended.
+- No tests, doc-link scan, profiler, benchmark, Editor, Unreal, build, package, or asset operation was performed in this batch. Report: `Documentation/Boss/BF_X41_X45_PERFORMANCE_AND_OWNER_GATES.md`.
+
+## Queue BF X21–X25 damage and cleanup audit (2026-11-11)
+
+- [x] Source-mapped incoming/outgoing damage precedence, duplicate-key identity, generation reset, and accepted/parried/blocked spend rules.
+- [x] Reviewed existing pure retry tests: alive/failure policy, attempts `-10`, `1–6`, `10000`, capped delay, and failure-then-success schedule are covered; no new pure test was needed.
+- [x] Documented unverified live-actor reuse risk: deferred removal retries retain only weak actor/tag identity, without a generation-scoped ownership fence.
+- No build, runtime, timer-cancel, or two-generation live actor test was performed. Report: `Documentation/Boss/BF_X21_X25_DAMAGE_CLEANUP_AUDIT.md`.
+
+## Queue BF X16–X20 MoveCard validation (2026-11-11)
+
+- [x] Offline author preflight mirrors the C++ numeric ceiling and phase-membership refusal rules; exact eight candidate IDs inspected without Unreal or saves; focused contract 3/3 passed.
+- [x] Native `MoveCard.Numbers` now sweeps MaxVerticalDelta, warp and hold scalar fields; added NaN/Infinity checks for every ring numeric member and cue timestamp, and mixed valid/invalid additional-phase cases.
+- [x] C-1155 Development build exit 0; DD27j-pinned `OneBossFight` suite 509/509 passed, 0 failed; both locks released; no assets.
+- [ ] Lead live authored-card asset/PIE acceptance remains separate; offline candidate preflight is not the Unreal C++ bridge or saved-asset proof.
+- Report and receipt: `Documentation/Boss/BF_X16_X20_MOVE_CARD_VALIDATION.md`; `Docs/BossCombatReview/Execution/Codex/BF_X16_X20_MOVE_CARD_VALIDATION/Run_20261110_192136/`.
+
+## Queue BF X11–X15 Shipping reflection and build evidence (2026-11-11)
+
+- [x] Reflection inventory/guard, declaration-definition parity, and deliberately unguarded fixture contract: 3/3 passed.
+- [x] C-1155 Development build exit 0; DD27j-pinned suite 509/509 passed, 0 failed; both locks released; no assets.
+- [x] Development reflection source shows ten scoped test-only Blueprint functions in the framework character, proof fixture and damage resolver; `RestartEncounterForTest` reflection macro is now `WITH_EDITORONLY_DATA` guarded.
+- [ ] Lead Shipping/UHT reflection dump and packaged smoke remain required; Development/UHT does not prove Shipping reflection absence.
+- Report and receipt: `Documentation/Boss/BF_X11_X15_SHIPPING_REFLECTION.md`; `Docs/BossCombatReview/Execution/Codex/BF_X11_X15_SHIPPING_REFLECTION/Run_20261110_191006/`.
+
+## Queue BF X06–X10 navigation and autonomous driver resilience (2026-11-11)
+
+- [x] Autonomous time cap defaults/fallback/clamps, missing selection, terminal/time-cap results, idempotent callback cleanup and End PIE; route/generation mismatch and malformed-summary refusal: 6/6 offline tests passed.
+- [x] Source audit confirms owned-request filtering and invalidation before terminal state dispatch; the live driver now refuses route/generation mismatch and controller possession mismatch.
+- [ ] Lead live map acceptance remains pending: Recast/projection, selected actor identity, full path, terminal result/geometry, repeat, and clean PIE shutdown.
+- No Unreal/Editor/build/native-suite run. Report: `Documentation/Boss/BF_X06_X10_NAVIGATION_DRIVER.md`.
+
+## Queue BF X01–X05 framework route support (2026-11-11)
+
+- [x] Native presentation test covers accepting the next generation, rejecting the prior generation after advancement, and refusing a terminal callback from a replacement actor.
+- [x] C-1155 Development build exit 0; DD27j-pinned full suite 509/509, 0 failed, complete; `OneBossFight.BossHealth.PresentationSnapshot` passed; locks released 2/2; no assets.
+- [ ] Lead live selected-framework route acceptance: confirm actor/slot/generation, HUD health, one terminal/victory, retry/reset new generation, old callback refusal and default-off pack regression using the report's acceptance sheet.
+- Audit finding: selector `GetSelectionDiagnostic()` can be empty/stale for early thread/world/generation rejection although `OutError` reports the current token. See `Documentation/Boss/BF_X01_X05_FRAMEWORK_ROUTE_SUPPORT.md`.
+## Queue BE X46–X50 closeout (2026-11-11)
+
+- [x] Reconciled Codex batch receipts X01–X40: C-1155 Development build exit 0 for all eight batches; pinned suite totals 507/507, 508/508, 508/508, then 509/509 for X16–X40.
+- [x] Live framework route/retry, Sevarog saved-card/live-reach, navigation, add-on runtime, Shipping/UHT, Greystone motion/parry, package and performance gates remain distinct and open where no Lead acceptance is recorded.
+- [x] Queue BE source-engineering lane closed; successors: `Documentation/Boss/QUEUE_BF.md` (Codex) and `Documentation/Boss/QUEUE_BE_AG.md` (Antigravity).
+- No engine or suite rerun was performed for this documentation closeout. See `Documentation/Boss/BE_X46_X50_CLOSEOUT.md`.
+
+## Queue BE X41–X45 review/evidence sync (2026-11-11)
+
+- [x] Checked mailbox through A-759/X-1877; no BE-X01–X40 reject or new C-1286 verdict was present in that history.
+- [x] Lead evidence inventory uses mailbox/TEST_PLAN path and status metadata only; raw run outputs were not opened.
+- [x] Current live gates remain pending where no Lead evidence is recorded: framework route/retry, S1/S2 saved authoring and reach, navigation, add-on runtime, Shipping/UHT, and Greystone motion/parry/default-route decisions.
+- [x] Successor `Documentation/Boss/QUEUE_BF.md` defines ten batches of five; documentation-only, no suite run.
+- Report: `Documentation/Boss/BE_X41_X45_REVIEW_QUEUE_SYNC.md`.
+
+## Queue BE X36–X40 owned-tag cleanup resilience (2026-11-11)
+
+- [x] Source contract 6/6 and Python compile passed; native retry-policy coverage includes negative/first/normal/capped/large attempts.
+- [x] C-1155 Development build exit 0; DD27j-pinned suite 509/509, 0 failed; `OwnedTagCleanup.RetryPolicy` passed; no assets; both locks released.
+- [ ] No live PIE/tag-stack test was run. Weak owner prevents retrying after actor destruction; a still-live reused actor does not expose a generic generation token to this helper.
+- Report and receipt: `Documentation/Boss/BE_X36_X40_OWNED_TAG_CLEANUP.md`; `Docs/BossCombatReview/Execution/Codex/BE_X36_X40_OWNED_TAG_CLEANUP/Run_20261110_184057/`.
+
+## Queue BE X31–X35 optional add-on lifecycle (2026-11-11)
+
+- [x] BUILD-296 verdict intake: Claude accepted the default-off AreaEffect/ChannelDrain add-ons; no rejected behavior was pending for hotfix.
+- [x] Lifecycle source contract 6/6 and Python compile passed; native ChannelDrain boundary assertions added for partial accepted damage and missing-health cap.
+- [x] C-1155 Development build exit 0; DD27j-pinned suite 509/509, 0 failed; AreaEffect and ChannelDrain tests passed; no assets; both locks released.
+- [ ] Claude live add-on acceptance remains separate; static contract does not simulate timers or PIE movement restoration.
+- Report and receipt: `Documentation/Boss/BE_X31_X35_ADDON_LIFECYCLE.md`; `Docs/BossCombatReview/Execution/Codex/BE_X31_X35_ADDON_LIFECYCLE/Run_20261110_183601/`.
+
+## Queue BE X26–X30 approved S1/S2 ranges (2026-11-11)
+
+- [x] Offline range contract 3/3; authoring source and contract `py_compile` passed.
+- [x] C-1155 runner `Scripts/Editor/run_be_x26_x30_locked_validation.ps1`: Development build 0; transient no-save dry-run 0; approved S1/S2 rows 90–120 cm; baseline light margin 0.352996 s (rounded +0.353); pinned suite 509/509, 0 failed; no assets; both locks released.
+- [ ] Claude saved-asset authoring and live S1/S2 checks, including exact S2 reach. Transient validation does not establish saved-asset or live acceptance.
+- Report and receipt: `Documentation/Boss/BE_X26_X30_S1_S2_RANGE.md`; `Docs/BossCombatReview/Execution/Codex/BE_X26_X30_S1_S2_RANGE/Run_20261110_182845/`.
+
+## Queue BE X21–X25 Shipping reflection boundary (2026-11-10)
+
+- [x] Offline declaration/reflection contract 4/4; existing Shipping guard contract 4/4.
+- [x] C-1155 Development build exit 0; DD27j-pinned suite 509/509 started / passed, 0 failed; no assets; both locks released.
+- [ ] Lead Shipping/UHT proof: record target/config/platform, UHT log and warnings, Shipping reflection dump for test functions absent and production APIs present, and packaged smoke result. No local Shipping claim is made.
+- Report and receipt: `Documentation/Boss/BE_X21_X25_SHIPPING_REFLECTION.md`; `Docs/BossCombatReview/Execution/Codex/BE_X21_X25_SHIPPING_REFLECTION/Run_20261110_181101/`.
+
+## Queue BE X16–X20 navigation diagnostics (2026-11-10)
+
+- [x] Offline contract 3/3; live driver and test `py_compile` passed; shipping guards 4/4.
+- [x] C-1155 Development build exit 0; DD27j-pinned suite 509/509 started / passed, 0 failed; `Framework.Runtime.NavigationDiagnosticFormatting` passed; no assets; both locks released.
+- [ ] Claude live map run: reconcile route/generation/request, Recast presence and projection, full-path result, terminal code/flags and position/distance; missing terminal evidence fails closed.
+- Report and receipt: `Documentation/Boss/BE_X16_X20_NAVIGATION_DIAGNOSIS.md`; `Docs/BossCombatReview/Execution/Codex/BE_X16_X20_NAVIGATION_DIAGNOSTICS/Run_20261110_180400/`.
+
+## Queue BE X11–X15 autonomous selector (2026-11-10)
+
+- [x] Offline selector-driver contract: 3/3; Python compile passed; shipping guards 4/4.
+- [x] C-1155 Development build exit 0; DD27j-pinned suite 508/508 started / passed, 0 failed; native `BossHealth.PresentationSnapshot` passed; no assets; both locks released.
+- [ ] Claude live selected-framework route acceptance: observe selector choice and terminal HUD/death/retry behavior on the map; saved-route and new-generation/reload evidence remain Lead-owned.
+- Report and receipt: `Documentation/Boss/BE_X11_X15_AUTONOMOUS_SELECTOR.md`; `Docs/BossCombatReview/Execution/Codex/BE_X11_X15_AUTONOMOUS_SELECTOR/Run_20261110_175316/`.
+
+## C-1280 X26 phase eligibility (2026-11-10)
+
+- [x] C-1155 runner `Scripts/Editor/run_c1280_x26_locked_validation.ps1`: Development build exit 0; Editor dry-run exit 0, all validators pass, zero saved assets; pinned suite 507 started / 507 passed / 0 failed with DD27j manifest `cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec`; both locks released. The S8 log explicitly records `recoveryGate=ExemptConeEscape` from the approved data.
+- [x] Focused offline checks: `test_check_shipping_guards.py` 4/4; `test_author_sevarog_draft_cards_contract.py` 13/13; authoring driver `py_compile` passed.
+- [x] Native test paths include `OneBossFight.Framework.MoveCard.DamageBudget`, `.MoveCard.Rejections`, `.MoveModel.Eligibility`, and `.Runtime.SelectorProfile`.
+- [ ] Claude live check against the C1278 table remains pending. This receipt does not claim PIE or saved-asset acceptance.
+- Report: `Documentation/Boss/C1280_X26_PHASE_ELIGIBILITY.md`; run: `Docs/BossCombatReview/Execution/Codex/C1280_X26_PHASE_ELIGIBILITY/Run_20261110_165108/`.
+
 ## Queue BD Codex X36–X40 (2026-11-10)
 
 - [x] Inventoried source-side combat log/string-format candidates as unprofiled hypotheses; no cost inference.
@@ -159,7 +302,7 @@
 ## Queue BB Codex X26–X30 (2026-11-10)
 
 - [x] Static source audit: X29 framework HUD health binding and X30 framework death-to-encounter completion; findings and failing scenarios are in `Documentation/Boss/BB_X26_X30_FRAMEWORK_BINDING_AUDIT.md`.
-- [ ] X26 transient S7/S8 production-validator dry-run is blocked until add-on values have a source; only visual timing marks exist for these effects.
+- [x] X26 transient production-validator dry-run completed after C-1280 approved provisional S7/S8 values and shared phase eligibility. Build exit 0; no-save editor dry-run PASS; pinned suite 507/507; live C1278 PIE acceptance remains Lead-owned and pending. See `Documentation/Boss/C1280_X26_PHASE_ELIGIBILITY.md`.
 - [ ] X27 is blocked: `rpg.EncounterDefinition` selects a data definition but current world binding requires a pack boss and does not activate the Sevarog framework actor.
 - [ ] X28 is blocked: current dev-test initialization suppresses selector entry; the existing driver calls forced `StartCardForTest`/`StartComboForTest`.
 - No editor, Unreal, build, suite, PIE, card/map asset save, or pack edit was performed for these static audits.
@@ -2262,6 +2405,12 @@ All four A7 gates remain OPEN. Staged launchers and inner binaries are hashed, b
 - [x] BUILD-296 (lead acceptance, 2026-11-10, X-1821..X-1838: URPGMontageWrapperLibrary::CreateRetargetWrapper editor-only, FRPGBossAreaEffect + FRPGBossChannelDrain optional add-ons default off, owned-tag teardown retry owners, property sweeps): GREEN 505/505. Greystone --write run (B_C1274_GREYSTONE) failed before any save: "notify event exposes no readable time field through AnimationLibrary" (FAnimNotifyEvent times are not readable from UE 5.5 Python, known since C-1238). verify_greystone_wrapper_readback.py failed on import (author_greystone_player not on sys.path). Content unchanged.
 - [x] C-1275a transient wrapper notify readback (Codex, 2026-11-10): C++ `URPGMontageWrapperLibrary::DescribeMontageNotifies` now returns class, trigger time, duration, notify track index, slots, and all segment animation paths/lengths. Empty `CreateRetargetWrapper` destination creates the retarget copy in `/Engine/Transient`. Fixed sibling import path; transient Editor driver verified all four source/target pairs, saving 0 assets. Python AST PASS; focused offline contracts 5/5; locked Editor Development build exit 0; pinned full suite 506/506 (`cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec`); locks released 2/2. This does not replace Lead `--write` and saved-package readback. Report/evidence: `Documentation/Boss/C1275A_TRANSIENT_NOTIFY_READBACK.md`, `Docs/BossCombatReview/Execution/Codex/C1275A_TRANSIENT_NOTIFY_READBACK/Run_20261110_160407/`.
 - [x] BUILD-297 + GREYSTONE AUTHORED (lead acceptance, 2026-11-10, X-1857 C-1275a DescribeMontageNotifies readback, Lead C-1280/C-1282): GREEN 506/506 (Claude/B_C1280_GREYSTONE2, pinned DD27j hash; build up to date, no Source change since the Codex C-1275a build; status.txt written by the Lead after the runner's hash step aborted on a console redirect in the folder). author_greystone_player.py --write: attempt 1 FAILED `TypeError create_retarget_wrapper() takes at most 4 arguments (5 given)` (stale out-param call, untested by C-1275a); attempt 2 saved + reloaded + read back all four wrappers, then the child BP failed on `SubobjectDataBlueprintFunctionLibrary.is_root` (UE 5.5 exposes is_root_actor/is_root_component), rollback deleted 5/5; attempt 3 (author3.log) PASS after the two Lead fixes: SAVED_COUNT=5 PACKAGE_COUNT=5 PACK_PATH_WRITES=0 DEFAULT_PLAYER_UNCHANGED=1 under /Game/OneBossFight/Player/Greystone/ (BP_GreystoneERPlayer + 4 `_Fit_Greystone` wrappers); post-save reload readback matched the SOURCE notify rows (backstep ANS_iFrames trigger 0.0907 s duration 0.323 s, ANS_InputBuffer 0.1983/0.3684; Air_Light 2, Air_Heavy 3, GuardCounter 7 notifies), child CHILD_READBACK all six URPGDodgeTiming fields. Process exit 1 is a handled editor ensure (FindInBlueprintManager.cpp:2539) from reloading the new BP, not a script failure. verify_greystone_wrapper_readback.py RESULT=PASS wrappers=4 transient=1 saves=0. BB-A15 probe: child_exists=True, 15 materials / 17 slots, textures 0 (get_used_textures refuses MaterialInstanceConstant). Mannequin stays the default; root-motion/trace/parry gates and the owner clip review are still open.
+- [x] BUILD-298 (lead acceptance, 2026-11-11, Codex X-1862..X-1887: X26 AdditionalPhaseIds + effect damage budget + ChannelDrain escape exemption, Queue BE Batches 1-10 (framework health/HUD/death->victory/retry, default-off rpg.FrameworkEncounterSelection, id-free selector test start, navigation result diagnostics, WITH_EDITORONLY_DATA test-hook guards, S1/S2 90-120 rows), Queue BF X01-X20): GREEN 509/509 (Claude/B_C1286_BEACCEPT, pinned DD27j hash, build exit 0, suite exit 0, fail=0). Source-level acceptance only: the selected framework route live cycle (HUD/victory/retry), the X26 S6-S8 live check (C1278 table) and the Greystone RM4 pairing remain Lead live gates.
+- [ ] GREYSTONE ROOT-MOTION GATE runs 1-3 (lead, 2026-11-10, C-1282..C-1284, pie_greystone_root_motion.py mannequin vs greystone, DATA route_verified in every arm): run 1 (P_C1282_GREYSTONE_RM_*) 0 trials: SetKeyDown(Gamepad_FaceButton_Right) returned False 1.4 s after possession (UPlayerInput::InputKey reports a pressed key unhandled until an Enhanced Input mapping holds it); the greystone arm did possess BP_GreystoneERPlayer_C. Run 2 (RM2) after adding the accepted first-dodge warm-up (Ability.EnterCombat, 12 s settle, R2 draw): the backstep played in both arms (LogRPGDodge, i-frames 0.098-0.101 s), the driver's montage-name helper (str(UObject) suffix split) never matched; fixed. Run 3 (RM3): mannequin backstep 5/5 at 72.1-80.4 cm measured at montage end (mean 76.3; the 84-98 band is the C-1063 measure-to-rest number), quick roll 243.6 / 253.8 cm in band, roll 3 swallowed after a mid-blend reset; greystone arm: wrapper backstep and the pack Dodge_Small_Forward_Roll_Montage_Grey both started on every press (i-frames at 0.095-0.108 s of the wrapper) but displacement 0.00 cm on all 8 trials = the Greystone child applies no montage root motion, with the KI-052 GetMainAnimBP None flood from ABP_UnarmedLayer_Grey/ABP_CombatAnimLayersBase_Grey (457 lines, 0 in the mannequin arm). Read-only probe P_C1283_GREYSTONE_RMPROBE: ABP_CombatCharacter_Grey root_motion_mode=ROOT_MOTION_FROM_MONTAGES_ONLY, default_land_movement_mode=Walking, fit backstep sequence and Dodge_Small_Forward_Roll_Grey enable_root_motion=True / REF_POSE / force_root_lock=False (Air_Light and GuardCounter fit sequences enable_root_motion=False). Root-bone probe P_C1284_GREYSTONE_ROOTBONE: the fit backstep has root xy 0.00 cm / pelvis 180.81 cm (source root 156.75) and Dodge_Small_Forward_Roll_Grey root 0.00 / pelvis 511.64 (source root 435.14): the IK retargets put the root motion in the pelvis (chain FK TranslationMode None). Lead fix in progress (Root chain Globally Scaled, re-retarget, re-author); driver run 4 adds refill, settle and measure-to-rest. GATE OPEN.
+- [x] GREYSTONE ROOT-MOTION FIX + GATE RUN 4 (lead, 2026-11-11, C-1285..C-1289): RTG_ERFit_Greystone Root chain FK translation GLOBALLY_SCALED (was None), re-retarget through the full editor (A_C1285_GREYSTONE_ROOTFIX/fix_write_editor.log; the -run=pythonscript commandlet asserts SlateApplication.h:307 on IKRetargetBatchOperation): AN_ER_Backstep_Mixamo_V2_Fit_GreystoneRM root xy 180.81 cm / pelvis 1.57 (source root 156.75, ratio 1.153), four _RM sequences saved, manifest Saved/ERFitRM_20261111_023747.json. Re-author B_C1286_GREYSTONE_RM: five C-1282 assets deleted (referencers inside the set only) and recreated on the _RM sequences, SAVED_COUNT=5, readback 4/4. Gate run 4 (P_C1282_GREYSTONE_RM4_*, DATA route_verified, driver with refill / settle / measure-to-rest): mannequin backstep 5/5 79.89-86.48 cm mean 83.83, quick roll 5/5 260.30-271.73 mean 264.28; greystone backstep 5/5 98.03-100.20 mean 99.35 (ratio 1.185 = skeleton scale, root motion works), Dodge_Small_Forward_Roll_Grey 0.00 cm (GreystonePack _Grey set still pelvis-baked, BK-1). C-1289 Decision 1: Greystone bands read per skeleton scale (x1.153: backstep 97-113, roll 248-334) and pairing after /1.153 (86.2 vs 83.83 = +2.8%): BACKSTEP GATE PASS; quick roll gate OPEN until BK-1; trace/parry and owner clips after BK-1; mannequin stays default.
+- [x] X26 SEVAROG S1-S8 AUTHORED (lead, 2026-11-11, C-1277/C-1280/C-1285 values, Codex X-1864 authoring source, Claude/A_C1286_SEVAROG_X26): replace_sevarog_draft_assets.py deleted the seven C-1254 draft assets after proving every referencer sits inside the set; author_sevarog_draft_cards.py recreated DA_Move_Sevarog_{Swing1_Medium,Swing2_Medium,Swing3_Slow,Speedburst,Swing1_FAST_v2}_C1247 (S1/S2 90-120 cm, light margin 0.352996 s), DA_Move_Sevarog_{Ultimate_Swing_120fps,Subjugation,Soul_Siphon}_C1277, DA_Boss_Sevarog_FrameworkProfile_Draft (8 cards, PhaseTwoFraction 0.6) and DA_Boss_Sevarog_Draft through the C++ validation bridge, exit 0, 0 refusals, 10 saves. Live check (C1278 table: phase gating, S6 one hit, S7 release/delay/snare, S8 five ticks) waits for the BK-2 driver mode; the S1-S5 regression on the 8-card profile runs in the same pass.
+- [ ] X26 LIVE CHECK run 1 (lead, 2026-11-11 03:20-03:55, Codex BK-2 driver X-1923, Claude/P_C1292_X26_A..E, DATA route_verified in all five arms, verify_c1278_x26_live_log.py receipts x26_verify.json): A (S1,S2,S3,S4->S5,S7 stationary): S1-S3 accepted at 110 cm in the 90-120 band, S4->S5 combo accepted, S7 Released at 0.815 s (center = player ground) then CARD_ABORT Framework.Boss.TargetLifeOrHealthChanged (target_health_mismatch actual=100 expected=800); B (S6+S8 at SEVAROG_LIVE_BOSS_HEALTH_FRACTION=0.5): test_health_fraction 250->125 applied, S6 never started, same invariant, timed out; C (S7 dodge-out): PASS X26-S7a + X26-S7-dodge-out (release 0.819 s, Resolve at 1.5796 s distanceCm=594.6 inside=0, no damage); D/E (autonomous selector 60 s at 1.0 / 0.5): selector chose Swing3_Slow, hit for 55, then the same invariant (expected=745), no phase rows. Root cause (A-828, accepted C-1294): KI-150, the pack equips SwordCombatStyle about 9 s after PIE start and resets player Health/Max after the framework boss captured ExpectedTargetHP. Fixes at source (X-1945 phase gate + health hook survival, X-1949 driver waits for PackStyleKnown) await Codex's locked build; run 2 follows. Rows passed so far: S7a, S7 dodge-out (2/8). GATE OPEN.
+- [x] X26 R4 Phase 1/Phase 2 gate (Lead, 2026-11-11; independently verified by AG A-840): fresh Development build + pinned DD27j suite exit 0, 511/511, locks released; `P_C1297_X26R4_E` finished with DATA route verified and no asset saves. `x26_verify.json` reports X26-P1 PASS and X26-P2 PASS; other rows are absent/FAIL in this P1/P2-only run by design. P2 contains one Phase_1→Phase_2 transition at 125/250 health followed by distinct S6 and S8 selector decisions at 115 cm and 400 cm and both corresponding starts. Aggregate: all seven C1278 table checks pass, plus the S7 dodge-out mode (8/8 rows including the variant). The deferred framework-selection live arm (BK-3) remains open separately. Build receipt: `Docs/BossCombatReview/Execution/Codex/B_C1297_PHASE2_BUILD_1127Z/`; live receipt: `Docs/BossCombatReview/Execution/Codex/P_C1297_X26R4_E/`. S4→S5's 120 cm boundary remains separate and unresolved.
 - [x] C-1262a Sevarog trace/attribution/combo diagnostic (Codex, 2026-11-10): Dev build PASS; full suite 501/501 via `Scripts/Editor/run_c1262a_locked_build.ps1`, whose source pins `-DD27jManifestHash=cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec`; the C-1155 PIE runner records route `DATA` / `route_verified`. PIE: S1-S4 all finish in band; S3 per-card delta 1/55; S4 per-card delta 0/0 while lifetime totals remain 1/55; actual S4 Whiff gate continues to S5, which starts and finishes; target-health invariant remains stable; 4 bright warmed screenshots; no map save; locks released. Geometry shows actor yaw correctly faces the player, but S1's marked sweep near-misses and S2's sweep remains far from the player capsule. C-1242 marks remain visual candidates; no window edits made. See `Documentation/Boss/C1262A_SEVAROG_TRACE_AND_COMBO_DIAGNOSIS.md` and `Docs/BossCombatReview/Execution/Codex/C1262A_SEVAROG_DIAG/`.
 - [ ] C-1257a/b Greystone switch preparation (Codex, 2026-11-10): C-1257b Development build exit 0 and full suite 501/501 after adding the planned cook root `/Game/OneBossFight/Player/Greystone`; the first suite exposed CookCoverage and is retained under `Docs/BossCombatReview/Execution/Codex/C1257B_GREYSTONE_ROOT_MOTION/`. Test-only `rpg.GreystonePlayerTestPawn` defaults to 0, is compiled out of Shipping, and leaves the GameMode/default route unchanged. The paired root-motion driver is syntax-checked but not run; Lead owns PIE. C-1257a remains NOT READY: UE 5.5 Python exposes `AnimSegment` but not `AnimTrack` or `SlotAnimationTrack`, so no valid segmented transient montage / target notify readback is available; last dry-run saved 0 assets/packages and released both locks. `bDoubleTapLongRoll` is false by source default; the driver will not enable it to force the full-roll gate. See X-1811 and `Docs/BossCombatReview/Execution/Codex/C1257A_GREYSTONE_DRY_RUN/`.
 - [x] C-1227 player fit test (lead, 2026-11-09, C-1174): ER clip set (Mixamo backstep V2, air light, air heavy plunge, guard counter) + 2 pack controls (quick roll, block loop) retargeted to 3 candidates via Codex retarget_er_fit_candidate.py (v4: outputs under /Game/OneBossFight/Player/FitTest only) and captured by the Lead driver P_C1225_FITLEAD/pie_fit_lead.py (216 bright frames, mannequin baseline vs candidate, 2 views x 3 poses). AG blind scores (frozen before reveal, SHA-256 fec0b389... verified): Candidate_A = GREYSTONE 47/48, Candidate_B = GRUX 13/48 (hunch, weapon through head, floor clipping), Candidate_C = STEEL 3/48 (shield floats ~1 m, empty fist swings, self-intersection). Root-motion fidelity not yet measured on the retargets (single-node pose captures). Owner image P_SHOWCASE/fit_greystone_vs_mannequin.png. Frames D:/FightVideo/fit_test/.
@@ -2567,6 +2716,102 @@ Tasks 46–49 were reconciled against current parry stamina, optional overlay da
 
 ## Queue BE Batch 1 (BE-X01–X05, 2026-11-10)
 
-- Static source audit mapped framework native health/death versus pack HUD and encounter health/event assumptions, and compared proof restart guards with production selection prerequisites.
-- The report proposes Lead acceptance observations for health binding, idempotent completion, retry generation, actor replacement, pack regression, and teardown. It does not infer a production integration or exclude unrelated Blueprint paths.
-- No tests/build/Editor/PIE/asset operation. Report: `Documentation/Boss/BE_X01_X05_FRAMEWORK_INTEGRATION_AUDIT.md`.
+- [x] Native health snapshot validation covers missing/uninitialized provider, zero/negative/nonfinite max, invalid health, and clamped fractions; generation-tagged terminal guards cover current, duplicate, stale, future-completion, and positive-health events.
+- [x] Native `Die()` signals once per generation; HUD binds/unbinds with component lifetime and routes to its existing once-per-generation victory/retry path. Selected native participant gets HUD and shared phase music; pack health/HUD/music route remains.
+- [x] Offline integration contract 5/5; shipping guard contract 4/4; C-1155 Development build exit 0; pinned full suite 507/507, 0 failed, DD27j `cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec`; no assets; locks 2/2 released.
+- [ ] Lead live selected-framework route acceptance remains pending. No saved asset or default route change is claimed.
+- Report: `Documentation/Boss/BE_X01_X05_FRAMEWORK_INTEGRATION_AUDIT.md`; receipt: `Docs/BossCombatReview/Execution/Codex/BE_X01_X05_FRAMEWORK_INTEGRATION/Run_20261110_171659/`.
+
+## Queue BE Batch 2 (BE-X06–X10, 2026-11-10)
+
+- [x] Framework boss/profile encounter-definition schema is explicit; invalid/missing profile combinations refuse structurally.
+- [x] `rpg.FrameworkEncounterSelection` is code-default-off; opt-in refusal happens before census/binding mutation; no project config default changed.
+- [x] Native test covers opt-in exact participants/profile/generation, pack selection with gate off, mixed framework/pack refusal; existing absent-selection legacy coverage retained.
+- [x] C-1155 Development build exit 0; pinned full suite 508/508, 0 failed, complete; DD27j `cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec`; no assets; locks 2/2 released.
+- [ ] Claude live selected-framework map acceptance remains pending; this batch makes no saved asset or packaged-route claim.
+- Report: `Documentation/Boss/BE_X06_X10_FRAMEWORK_SELECTION.md`; receipt: `Docs/BossCombatReview/Execution/Codex/BE_X06_X10_FRAMEWORK_SELECTION/Run_20261110_173330/`.
+
+## Queue BF: Sevarog live acceptance questions (2026-11-11)
+
+Use `Documentation/Boss/C1278_X26_LIVE_CHECK_ACCEPTANCE_TABLE.md` for exact predicates and pass/fail thresholds. Keep these observations separate: (1) saved S1/S2 90–120 cm values and measured S2 reach/contact; (2) Phase 1 refusal and one Phase 2 unlock/pool; (3) S6 exactly one accepted 65-damage hit within 90–150 cm; (4) S7 release-center snapshot, delayed radius/capsule resolution, and accepted-only snare/restore; (5) S8 five fixed-facing ticks, 8 damage/at-most-4 heal per accepted tick, and zero effect on misses; (6) cancellation and owned-speed restoration for each tested interruption. Identify actor/card, run/build, and each result. The transient reports do not close saved-asset or PIE acceptance. Audit summary: `Documentation/Boss/BF_X26_X30_SEVAROG_CARD_AND_LIVE_EVIDENCE_AUDIT.md`.
+
+## Queue BF: Greystone paired motion capture (2026-11-11)
+
+For each mannequin/Greystone arm, bind the result to the same map/build, initial transform, montage/action, input time, frame rate, warm-up, camera and measurement interval. Record actor/generation, montage/source and retarget output, root/pelvis XY displacement, start/end and total actor transform, movement mode and root-motion extraction settings, contact/damage result, action timestamps, and warnings/errors. Treat saved-property readback, PIE motion, Shipping/package identity, and default-player selection as separate gates. Do not switch the default pawn until the explicit Lead/Owner gate closes. Details and source limits: `Documentation/Boss/BF_X31_X35_GREYSTONE_AUTHORING_AND_MOTION_GATES.md`.
+
+## Queue BF: offline queue and evidence integrity checks (2026-11-11)
+
+`Scripts/Tools/validate_queue_batches.py` focused contracts: `python -m unittest Scripts.Tools.test_validate_queue_batches -v` (4/4); current support is AA/AB/AT, not newer queue formats. `verify_evidence_manifest.py` contracts: 4 passed; symlink fixture skipped on Windows because symlink creation lacked privilege. C-1155 batch status includes exit/count/manifest-hash/no-assets fields; lock owner identity is ephemeral and source/build identity is not complete in the retained status. See `Documentation/Boss/BF_X36_X40_QUEUE_AND_EVIDENCE_TOOLING_AUDIT.md`.
+
+## Queue BK-2 X26 live verifier and driver support
+
+- Focused offline command: `python -m unittest Scripts.Tools.test_bk2_x26_driver_contract Scripts.Tools.test_verify_c1278_x26_live_log Scripts.Tools.test_c1278_x26_acceptance_contract` (23 tests passed). The BK-2 source contract covers test-actor phase gating without production selection, preservation of the one-shot health fraction through card/combo start, candidate/refusal tracing, and pack-style readiness before test target initialization.
+- Python syntax command: `python -m py_compile Scripts/Editor/pie_sevarog_framework_live.py Scripts/Tools/verify_c1278_x26_live_log.py` (passed).
+- A-827/A-828 hotfix: test actors now share the neutral phase gate but return before the production selector; `SetBossHealthFractionForTest` is preserved through the next successful test card/combo start. Driver waits up to 30 seconds for `BP_CombatComponent_C.CurrentCombatStyle` before spawning the standalone test boss, matching the Lead fixture's health initialization ordering. Offline source contracts pass, but no native build/PIE result is claimed. Runtime gate remains Lead-owned: run the driver and `verify_c1278_x26_live_log.py` only against the C-1278 Lead PIE log. C-1155 build/pinned suite and PIE are pending Claude's explicit engine release.
+- Receipt: `Documentation/Boss/BK_06_10_X26_DRIVER_SUPPORT.md`.
+
+## BK-51..55 deferred framework selection
+
+- Shipping reflection allowlist regression: `python Scripts/Tools/test_bf_x11_x15_shipping_reflection_contract.py -v` (3/3); editor-only reflected test methods must be listed and have C++ definitions.
+- Offline contracts: `python Scripts/Tools/test_bk51_bk55_framework_deferred_selection_contract.py -v` and `python Scripts/Tools/test_bk3_bf_x05_verifier.py -v`.
+- Syntax: compile the changed Python files inside Unreal Editor's Python environment or use an `unreal` module stub; ordinary CPython cannot import `unreal` from the asset-author script.
+- Asset authoring stays dry-run unless explicitly invoked with `--write` during a Lead-released Editor session. Retain post-save object/readback evidence; do not alter the map/default.
+- A future live BF-X05 run must show PACK_STYLE_READY, pack isolation/destruction, transient spawn, encounter path, `rpg.FrameworkEncounterSelection=1`, and deferred activation success in that order. Preserve raw logs and fill all existing BF-X05 rows from one build/map pair. A receipt alone is not live proof.
+- Native compilation, Shipping reflection, saved asset readback and live route acceptance remain open pending an engine release.
+- A-831 source follow-up verification: deferred-selection contract 5/5; Shipping reflection contract 3/3; X26 live-log verifier 15/15; BK2 driver contract 9/9. No build/Editor/PIE was run because C-1297 bars engine use until Claude's BUILD-299 analysis. S8 `bossHealed=0` is not resolved by these offline checks.
+- A-832 diagnosed S8 `bossHealed=0` as full-health capping after S6 consumed the one-shot half-health override. To witness healing, a separate released arm can request S8 before S6 through `SEVAROG_LIVE_CARDS`; this recommendation is not a live result. A-832 reports the broader offline suite green, with one Windows symlink test skipped.
+
+## BK-91..95 proposal planner
+
+- Run `python -I -m unittest discover -s Scripts/Tools -p "test_plan_sevarog_definition_repair.py" -q` (12 synthetic cases).
+- Run `python -I -m py_compile Scripts/Tools/plan_sevarog_definition_repair.py Scripts/Tools/test_plan_sevarog_definition_repair.py`.
+- This planner is data-only and does not perform asset operations. These checks do not validate an editor executor or authorize data authoring; future execution must bind the verified Owner envelope and provenance metadata to one source message, and must wait for X-1991 decisions.
+
+## BK-96..100 owner-binding tests
+
+- Run `python -I -m unittest discover -s Scripts/Tools -p "test_bind_owner_approval.py" -q` (11 synthetic cases).
+- Run `python -I -m unittest discover -s Scripts/Tools -p "test_plan_sevarog_definition_repair.py" -q` (12 synthetic cases).
+- Run `python -I -m py_compile Scripts/Tools/bind_owner_approval.py Scripts/Tools/test_bind_owner_approval.py`.
+- A future executor must read the complete real mailbox file once and pass that exact text to the pure binder; the pure function cannot authenticate arbitrary caller-supplied text. Owner decisions still gate writes.
+
+## BK-101..105 executor-contract tests
+
+- Run `python -I -m unittest discover -s Scripts/Tools -p "test_sevarog_executor_contract.py" -q` (15 synthetic cases after lead hotfix).
+- Neighbor contracts: binding 11/11; planner 12/12.
+- The contract's current lock acquisition API takes explicit `created_paths` receipts from atomic create outcomes. Token equality alone is not proof of creation. No real lock or asset operation is performed by these tests.
+
+BK-101..105 follow-up test: mixed known and unknown `created_paths` must fail closed while retaining the verified known lock in `locks_to_release`; executor-contract suite is now 16/16.
+
+## BK-106..110 executor-contract adversarial tests
+
+- Run `python -I -m unittest discover -s Scripts/Tools -p "test_sevarog_executor_contract_adversarial.py" -q` (12/12).
+- Run neighboring contract, binder, and planner suites: 16/16, 11/11, and 12/12.
+- Verify Python compilation and scoped `git diff --check`. No real locks or asset operations.
+
+## BK-111..115 receipt validator tests
+
+- Run `python -I -m unittest discover -s Scripts/Tools -p "test_validate_sevarog_executor_receipt.py" -q` (9 synthetic cases).
+- Run `python -I -m py_compile Scripts/Tools/validate_sevarog_executor_receipt.py Scripts/Tools/test_validate_sevarog_executor_receipt.py`.
+- Receipts validate schema and stated consistency only; they are not runtime proof or write authorization.
+
+BK-111..115 follow-up test: a list-valued `outcome` returns invalid without raising. Receipt suite is 10/10.
+
+## BK-116..120 receipt validator lead hotfix
+
+- `python -I -m unittest discover -s Scripts/Tools -p "test_validate_sevarog_executor_receipt.py" -q` — 12/12.
+- `python -I -m unittest discover -s Scripts/Tools -p "test_validate_sevarog_executor_receipt_adversarial.py" -q` — 12/12, all former G1–G6 expected failures now pass as regressions.
+- Neighboring executor contract suites — 16/16 and 12/12; Python compilation passed.
+- No file/lock/asset operation, Unreal, build, or runtime evidence. Receipt structure is not proof of events or authorization; X-1991 remains open.
+- Report: `Documentation/Boss/BK_116_120_RECEIPT_VALIDATOR_ADVERSARIAL_AUDIT.md`.
+
+## BK-121..125 receipt/source binding adapter
+
+- `python -I -m unittest discover -s Scripts/Tools -p "test_bind_receipt_source.py" -q` — 12/12.
+- `python -I -m unittest discover -s Scripts/Tools -p "test_validate_sevarog_executor_receipt.py" -q` — 12/12.
+- `python -I -m unittest discover -s Scripts/Tools -p "test_validate_sevarog_executor_receipt_adversarial.py" -q` — 12/12.
+- `python -I -m unittest discover -s Scripts/Tools -p "test_bind_owner_approval.py" -q` — 11/11.
+- Python compilation passed. Adapter is text-binding evidence only and requires caller injection of canonical validator/binder functions; no runtime or authorization proof. X-1991 remains unresolved.
+- Lead hotfix: malformed injected validator return shapes fail closed; adapter suite 12/12.
+- Report: `Documentation/Boss/BK_121_125_RECEIPT_SOURCE_BINDING.md`.
+
+BK-126..130 lead hotfix: refusal with malformed non-list lock records and source-adapter malformed dependencies now fail closed; validator results marked valid must also carry an empty errors list; surrogate bodies are refused. Base receipt suite 13/13, source adapter 14/14, existing receipt adversarial 12/12, binder 11/11, executor contract 16/16, contract adversarial 12/12; Python compilation and scoped diff-check passed. Claude's BK-126..130 test module currently has four unexpected successes until he removes expectedFailure markers and refreshes its report. No runtime/asset/lock operation; X-1991 remains unresolved.

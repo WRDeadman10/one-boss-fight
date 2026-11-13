@@ -5,14 +5,15 @@ This runbook executes G4-1 through G4-3. The final gate is a packaged 1920x1080 
 ## Preconditions
 
 1. Use an active, unlocked **console** Windows session. Before every benchmark set, run `query user`; the benchmark user's `SESSIONNAME` must be `console`, never `rdp-tcp#...`. Remote Desktop can select `Microsoft Remote Display Adapter` rather than the NVIDIA GPU, invalidating the run (C-8; KI-093).
-2. Close the Unreal Editor before packaging. Close browsers, capture tools, launchers, and other GPU-heavy applications before every benchmark set.
-3. After **every** warm-up or recorded run, read that run's `summary.json`. Discard the run unless its `gpu` field names the expected NVIDIA card; `Remote Display` or `Virtual` means the result is invalid. For a fight-mode run, also discard it unless `fight_started` is `true`. Record the hardware line from this same `summary.json`, not a previously copied log table, with the driver version, CPU, RAM, OS, UE version, monitor mode, and VSync state.
-4. Use the same 1920x1080 windowed launch mode for all compared runs. Record every launch cvar exactly as passed to `-ExtraArgs`.
-5. Do not compare results from different build configurations or driver versions. Re-package after a code, content, or config change.
+2. Packaging/cooking, Editor-Cmd, builds, and tests are engine use. Run them only through the Lead-approved task-specific C-1155 locked runner: it must acquire both `ENGINE_LOCK.json` files, abort if either lock exists or any `UnrealEditor*` process is running, and release only locks it owns. Any automation suite must include `-DD27jManifestHash=cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec`. Do not invoke the bare `Scripts/Package.ps1`, `Scripts/Rebuild.ps1`, `Build.bat`, or `UnrealEditor-Cmd.exe` commands in this runbook. If the approved package runner is unavailable, stop before launching an engine process and ask Claude to provide/assign one.
+3. Close the Unreal Editor before packaging. Close browsers, capture tools, launchers, and other GPU-heavy applications before every benchmark set.
+4. After **every** warm-up or recorded run, read that run's `summary.json`. Discard the run unless its `gpu` field names the expected NVIDIA card; `Remote Display` or `Virtual` means the result is invalid. For a fight-mode run, also discard it unless `fight_started` is `true`. Record the hardware line from this same `summary.json`, not a previously copied log table, with the driver version, CPU, RAM, OS, UE version, monitor mode, and VSync state.
+5. Use the same 1920x1080 windowed launch mode for all compared runs. Record every launch cvar exactly as passed to `-ExtraArgs`.
+6. Do not compare results from different build configurations or driver versions. Re-package after a code, content, or config change.
 
 ## Editor and staging locks
 
-- `Scripts/Rebuild.ps1` closes only `UnrealEditor.exe` processes whose command line contains this checkout's full `OneBossFight.uproject` path. If it cannot inspect process command lines, it fails before closing anything or building. It waits for those PIDs, then uses `taskkill.exe /PID <pid> /T /F` only for the matching hung editor process tree.
+- Historical note only: `Scripts/Rebuild.ps1` attempts project-path process matching, but that behavior does not acquire C-1155 locks and is not safe authorization to launch an engine process. Do not use it for this runbook.
 - To diagnose a lock, list candidate process IDs and command lines first; do not use `Stop-Process -Name UnrealEditor`, `taskkill /IM`, wildcard process names, or command-line-pattern kills. Example read-only inspection:
 
   ```powershell

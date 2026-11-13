@@ -34,22 +34,22 @@ The duel uses the supplied Advanced ARPG Combat input layout.
 
 ## Run A Packaged Build
 
-1. Package the project with `Scripts/Package.ps1`.
+1. Have Claude run packaging through a Lead-approved C-1155 locked runner. Do not invoke `Scripts/Package.ps1` directly; packaging/cooking launches engine tools and must acquire both locks, abort on either existing lock or any running UnrealEditor process, and release only owned locks.
 2. Launch the staged `OneBossFight.exe` produced under `Saved/StagedBuilds/Windows`.
 3. For a short launcher-and-log smoke check, use `Scripts/PackagedSmoke.ps1`.
 
-The verified Shipping package has passed its binary debug-off check, staged-content manifest check, and launcher smoke check. A full packaged fight and win/retry hand check remain open.
+The historical Shipping package passed its binary debug-off check, staged-content manifest check, and launcher smoke check. A full packaged fight and win/retry hand check remain open. Any new package/cook must run through a Lead-approved C-1155 locked runner; do not run `Scripts/Package.ps1` directly.
 
 ## Verification Status
 
-- `32/32` automation tests passed in the recorded current build.
-- The latest PIE regression gate recorded `32/33` passing rows; the outstanding failure is the intermittent `pie_legend` trial tracked as KI-103.
-- The Gate 4 soak completed `30` encounters with `213/213` checks.
+- The latest Lead-verified full suite is BUILD-295 at 501/501; the separate later Codex locked C-1262a verification also reached 501/501. See `Documentation/TEST_PLAN.md`; the receipts have different owners.
+- Live Sevarog evidence covers four primary cards, with the S1/S2 trace-contact reach gap at 140 cm and general approach navigation still open; see `Documentation/TEST_PLAN.md` and `Documentation/KNOWN_ISSUES.md`.
+- Historical PIE regression and Gate 4 soak counts remain in the dated `Documentation/TEST_PLAN.md` entries and are not presented here as current acceptance.
 - Current balance verification uses the 2,000-health boss, 3-percent bleed proc (60 damage), starter 0.39 multiplier, and the three build choices.
 
 ## Performance Target
 
-The release target is a packaged 1920x1080 full encounter at at least 60 FPS average with a p99 frame time at or below 16.67 ms, on an RTX 2060 Super. The valid 60 FPS result is still pending: current packaged captures through Remote Desktop are invalid for this hardware decision. A console-session run whose benchmark summary names the NVIDIA GPU remains required.
+The release target is a packaged 1920x1080 full encounter at at least 60 FPS average with a p99 frame time at or below 16.67 ms, on an RTX 2060 Super. The owner-console RTX 3060 proxy runs are valid proxy evidence but remain below the absolute target; the target-hardware acceptance is still pending. See the latest phase results in `Documentation/PERFORMANCE_LOG.md` and the current owner decision in `Documentation/DECISIONS.md`.
 
 [SCREENSHOT: benchmark or performance capture]
 
@@ -63,6 +63,8 @@ Current progress per milestone is the dashboard at the top of `Documentation/TAS
 
 ## Build From Source
 
+Engine builds and automation suites are Lead-owned unless explicitly assigned. Use only the task-specific C-1155 locked runner; never execute the raw build/test commands or `Scripts/Rebuild.ps1` below. The runner must acquire both `ENGINE_LOCK.json` files, refuse any existing lock or running `UnrealEditor*` process, and remove only locks it owns. Automation suites must include `-DD27jManifestHash=cd088e394e42a930b47120d76831d517e92c9d7dbbd140920402fc577be129ec`. If no approved runner exists for the task, stop before launching the engine and ask Claude to provide one.
+
 ### Requirements
 
 - Unreal Engine 5.5.4 (launcher install)
@@ -71,26 +73,22 @@ Current progress per milestone is the dashboard at the top of `Documentation/TAS
 
 ### Build
 
-```powershell
-& "C:\Program Files\Epic Games\UE_5.5\Engine\Build\BatchFiles\Build.bat" OneBossFightEditor Win64 Development "-Project=<path>\OneBossFight.uproject" -WaitMutex
-```
+The `Build.bat` invocation is intentionally omitted here; select the task-specific locked runner assigned by Claude.
 
-Then open `OneBossFight.uproject`. Close the editor before structural C++ changes (new modules/classes need a restart).
+Open `OneBossFight.uproject` only under the explicit owner/Lead editor handoff and applicable C-1155 lock. Close the editor before structural C++ changes (new modules/classes need a restart).
 
 ### Test
 
-Headless automation tests (close the editor first or run alongside it):
+Headless automation tests are run only through a task-specific C-1155 locked runner, after confirming no `UnrealEditor*` process is running. The raw generic invocation is intentionally omitted; the runner supplies the pinned `-DD27jManifestHash` and verifies complete successful test rows.
 
-```powershell
-& "C:\Program Files\Epic Games\UE_5.5\Engine\Binaries\Win64\UnrealEditor-Cmd.exe" "<path>\OneBossFight.uproject" -ExecCmds="Automation RunTests OneBossFight; Quit" -nullrhi -unattended -nosplash -NoSound -testexit="Automation Test Queue Empty"
-```
+Do not start `UnrealEditor-Cmd.exe` directly for this suite.
 
 ### Content setup and scripts
 
 | Script | Purpose |
 |---|---|
-| `Scripts/Editor/setup_m1_content.py` | Idempotent headless setup of BP_PlayerCharacter, BP_RPGGameMode, L_Greybox, L_Benchmark. Run with `UnrealEditor-Cmd.exe <uproject> -run=pythonscript -script=<path> -unattended -nullrhi`. |
-| `Scripts/Package.ps1` | Cook and stage a Development or Shipping build to `Saved/StagedBuilds`. |
+| `Scripts/Editor/setup_m1_content.py` | Historical headless setup utility. Any Editor-Cmd execution requires an explicitly assigned task-specific C-1155 locked runner; do not run this command directly. |
+| `Scripts/Package.ps1` | Cook and stage a Development or Shipping build to `Saved/StagedBuilds`; invoke only through an approved C-1155 locked package runner. |
 | `Scripts/RunBenchmark.ps1 -Label <name>` | Run the packaged benchmark at 1920x1080 and print `summary.json` (avg FPS, p95/p99, frames over budget). |
 
 Decisions, performance log, test plan and known issues are in `Documentation/`.
