@@ -47,11 +47,11 @@ class RepointContract(unittest.TestCase):
             self.assertEqual(grey, rolls[kind]["source_grey_montage"])
             self.assertEqual(rm, out_root + "/Montages/" + kind + "/" + grey.rsplit("/", 1)[-1] + suffix)
 
-    def test_grey_paths_match_the_authored_child_defaults(self):
+    def test_rm_paths_match_the_authored_child_defaults(self):
         au = ast.parse(AUTHOR.read_text(encoding="utf-8"))
         fields = ast.literal_eval(literal_assign(au, "CHILD_FIELDS"))
         for field in ("QuickMontage", "FullMontage"):
-            self.assertEqual(self.module.REPOINTS[field][0], fields[field])
+            self.assertEqual(self.module.REPOINTS[field][1], fields[field])
         # author: CHILD_PATH = ALLOWLIST + "BP_GreystoneERPlayer"
         allowlist = ast.literal_eval(literal_assign(au, "ALLOWLIST"))
         self.assertEqual(self.module.CHILD_PATH, allowlist + "BP_GreystoneERPlayer")

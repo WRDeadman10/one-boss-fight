@@ -1,5 +1,6 @@
 """Offline source contract for the Lead-run Sevarog authoring script."""
 import ast
+import importlib.util
 from pathlib import Path
 import unittest
 
@@ -22,12 +23,54 @@ class SevarogDraftAuthoringContract(unittest.TestCase):
         for forbidden in ("duplicate_asset(", "delete_asset(", "rename_asset("):
             self.assertNotIn(forbidden, self.source)
 
-    def test_all_five_sequences_use_same_sevarog_skeleton_and_marked_timings(self):
-        self.assertEqual(self.source.count("/Animations/"), 7)  # five Sevarog clips plus two read-only player montages
+    def test_c1277_rows_have_approved_values_and_phase_membership(self):
+        spec = importlib.util.spec_from_file_location("sevarog_draft_contract", SCRIPT)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        cards = module.read_f5_cards(ROOT)
+        rows = module.build_candidate_specs(cards)
+        module.validate_source_coverage(rows)
+        self.assertEqual(module.unresolved_gates(rows), [])
+        self.assertEqual(len(rows), 8)
+        by_id = {row["move_id"]: row for row in rows}
+        s6 = by_id["Move_Sevarog_Ultimate_Swing_120fps_C1277"]
+        self.assertEqual((s6["min_range_cm"], s6["max_range_cm"], s6["active_start_seconds"],
+                          s6["active_end_seconds"], s6["hp_damage"], s6["phase_id"]),
+                         (90.0, 150.0, 0.667, 0.900, 65.0, "Phase_2"))
+        s7 = by_id["Move_Sevarog_Subjugation_C1277"]
+        self.assertEqual(s7["phase_id"], "Phase_1")
+        self.assertEqual(s7["additional_phase_ids"], ["Phase_2"])
+        self.assertEqual(s7["area_effect"]["release_seconds"], 0.800)
+        s8 = by_id["Move_Sevarog_Soul_Siphon_C1277"]
+        self.assertEqual(s8["channel_drain"]["tick_interval_seconds"], 0.200)
+        self.assertFalse(s8["channel_drain"]["track_facing_each_tick"])
+
+    def test_phase_membership_is_shared_by_model_validator_and_starvation_pools(self):
+        card_h = (ROOT / "Source/OneBossFight/Player/RPGBossMoveCard.h").read_text(encoding="utf-8")
+        card_cpp = (ROOT / "Source/OneBossFight/Player/RPGBossMoveCard.cpp").read_text(encoding="utf-8")
+        model = (ROOT / "Source/OneBossFight/Player/RPGBossMoveModel.cpp").read_text(encoding="utf-8")
+        profile = (ROOT / "Source/OneBossFight/Player/RPGBossFrameworkProfile.cpp").read_text(encoding="utf-8")
+        native_tests = (ROOT / "Source/OneBossFight/Tests/RPGBossMoveCardTests.cpp").read_text(encoding="utf-8")
+        self.assertIn("TArray<FName> AdditionalPhaseIds", card_h)
+        self.assertIn('"MoveCard.AdditionalPhaseIds"', card_cpp)
+        self.assertIn("RPGBossMoveCards::IsEligibleInPhase(Card->Spec(),S.PhaseId)", model)
+        self.assertIn("AddCandidateCooldownToPhasePools(C.Card->Spec()", profile)
+        self.assertIn("additional phase accepts the same compiled card", (ROOT / "Source/OneBossFight/Tests/RPGBossMoveModelTests.cpp").read_text(encoding="utf-8"))
+        self.assertIn("invalid AdditionalPhaseIds rejected", native_tests)
+        self.assertIn("shared candidate also contributes to Phase 2 pool", (ROOT / "Source/OneBossFight/Tests/RPGFrameworkRuntimeTests.cpp").read_text(encoding="utf-8"))
+
+    def test_all_eight_sequences_use_same_sevarog_skeleton_and_marked_timings(self):
+        self.assertEqual(self.source.count("/Animations/"), 10)  # eight Sevarog clips plus two read-only player montages
         self.assertIn("/Meshes/Sevarog_Skeleton.Sevarog_Skeleton", self.source)
         self.assertIn("(0.467, 0.533, 0.667, 1.700)", self.source)
         self.assertIn("(0.200, 0.267, 1.133, 1.267)", self.source)
         self.assertIn("provisional, tune after PIE", self.source)
+        self.assertIn("AdditionalPhaseIds", self.source)
+        self.assertIn('"phase_two_fraction": 0.6', self.source)
+        self.assertIn('"phase_two_id": "Phase_2"', self.source)
+        self.assertIn('"tick_interval_seconds": 0.200', self.source)
+        self.assertIn('"area_effect": {"release_seconds": 0.800', self.source)
+        self.assertIn('"channel_drain": {"start_seconds": 0.267', self.source)
 
     def test_c1250_s3_s4_approved_values_and_no_unresolved_card_numbers(self):
         self.assertIn('"warp_max_distance_cm": 50.0', self.source)
@@ -43,7 +86,7 @@ class SevarogDraftAuthoringContract(unittest.TestCase):
         self.assertIn('"warp_standoff_cm": 120.0', self.source)
         self.assertIn('"combo_nodes": {"$runtime_combo": "S4_WHiff_S5_MEDIUM"}', self.source)
         self.assertIn('"Move_Sevarog_Swing1_Medium"', self.source)
-        self.assertIn("profile_rows = rows[:4]", self.source)
+        self.assertIn('profile_rows = [row for row in rows if row["profile_candidate"]]', self.source)
         self.assertIn('"candidate_weight": 1.0', self.source)
         self.assertIn('"DA_Move_Sevarog_Speedburst_C1247"', self.source)
         self.assertIn("def validate_source_coverage(rows):", self.source)
@@ -117,6 +160,8 @@ class SevarogDraftAuthoringContract(unittest.TestCase):
         self.assertIn("new_object(definition_class)", dry_run_text)
         self.assertIn("validate_card(created[row[\"move_id\"]]", dry_run_text)
         self.assertIn("validate_profile(profile)", dry_run_text)
+        self.assertIn("targets_before = {path:", dry_run_text)
+        self.assertIn("dry-run changed target package existence", dry_run_text)
         self.assertNotIn("create_asset(", dry_run_text)
         self.assertNotIn("save_loaded_asset(", dry_run_text)
         self.assertIn("VALIDATOR framework_profile verdict=", dry_run_text)

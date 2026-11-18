@@ -25,4 +25,4 @@ boss.set_editor_property("EnemyInfoRef", info)
 print("boss info ->", boss.get_editor_property("EnemyInfoRef").get_name())
 # The pack boss is born with Status.HitStunImmune, which would stop any stagger: Scripts/Editor/boss_poise_armor.py removes it from the Blueprint default (run it first).
 print("boss gameplay tags ->", boss.get_editor_property("GameplayTags").export_text())
-print("saved:", unreal.EditorLoadingAndSavingUtils.save_map(world, "/Game/OneBossFight/Levels/L_SevarogArena"))
+print("saved:", unreal.EditorLoadingAndSavingUtils.save_map(world, "/Game/OneBossFight/Maps/L_SevarogArena"))

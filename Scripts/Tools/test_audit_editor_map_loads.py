@@ -26,7 +26,7 @@ class EditorMapLoadAuditTests(unittest.TestCase):
         self.assertEqual(findings, [])
 
     def test_constant_concatenated_map_path_is_flagged(self):
-        source = 'unreal.EditorAssetLibrary.load_asset("/Game/OneBossFight/Levels/" + "L_SevarogArena")'
+        source = 'unreal.EditorAssetLibrary.load_asset("/Game/OneBossFight/Maps/" + "L_SevarogArena")'
         self.assertEqual(len(MODULE.scan_text(source, self.known)), 1)
 
     def test_dynamic_path_is_outside_static_audit_scope(self):

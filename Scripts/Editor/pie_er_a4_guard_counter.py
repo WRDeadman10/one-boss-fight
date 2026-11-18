@@ -9,18 +9,23 @@ import unreal
 
 sys.path.insert(0, str(Path(unreal.Paths.project_dir()) / "Scripts" / "Editor"))
 import pie_lead_common as plc
+from pie_driver_support import FinalResult, MappingReadinessGate
 
 LOG = "[ERA4Counter] "
 BLOCK_PATH = "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_Block"
 R2 = "Gamepad_RightTrigger"
 LANE_DISTANCE_CM = 140.0  # A4's authored 60–380 cm band; close enough for the counter clip's ~130 cm reach.
 S = {"phase": "start", "elapsed": 0.0, "gen": None, "wake": 0.0,
-     "done": False, "result": False, "r2_down": False}
+     "done": False, "result": False, "r2_down": False,
+     "mapping_gate": MappingReadinessGate(5.0)}
 HANDLE = None
 
 
 def log(message):
     unreal.log(LOG + str(message))
+
+
+FINAL_RESULT = FinalResult(log, "pie_er_a4_guard_counter")
 
 
 def wait(seconds):
@@ -47,8 +52,10 @@ def boss_montage(boss):
 
 def key(pc, down):
     if not unreal.RPGInputTestUtils.set_key_down(pc, R2, down):
-        raise RuntimeError("R2 input refused")
+        log("input_refused key=%s down=%s" % (R2, down))
+        return False
     S["r2_down"] = down
+    return True
 
 
 def block(pc, action):
@@ -87,14 +94,31 @@ def witness():
     plc.refill_player(boss)
     yield from wait(2.2)
     plc.enter_combat(pawn)
+    yield from wait(1.0)
+    # Gate the first synthetic key event on the real Enhanced Input mapping.
+    last_poll = time.perf_counter()
+    while True:
+        yield 0.0
+        now = time.perf_counter()
+        status = S["mapping_gate"].poll(
+            now - last_poll, lambda: dodge.is_elden_ring_input_active())
+        last_poll = now
+        if status == "ready":
+            log("mapping_readiness=ready waited_s=%.3f" % S["mapping_gate"].elapsed)
+            break
+        if status != "waiting":
+            log("mapping_readiness=%s waited_s=%.3f" %
+                (status, S["mapping_gate"].elapsed))
+            return
     # Draw before moving into the blade lane. C-1043 showed the style switch
     # can land after the first fixed wait, so poll readiness and retry.
-    yield from wait(1.0)
     draw_ready_state = False
     for attempt in range(1, 4):
-        key(pc, True)
+        if not key(pc, True):
+            return
         yield from wait(0.7)
-        key(pc, False)
+        if not key(pc, False):
+            return
         deadline = time.perf_counter() + 5.0
         while time.perf_counter() < deadline:
             ready_now = draw_ready(loadout, pawn)
@@ -120,8 +144,6 @@ def witness():
     facing = math.degrees(math.atan2(origin.y - pos[1], origin.x - pos[0]))
     plc.place_player(pc, pawn, pos, facing)
     yield from wait(0.4)
-    if not dodge.is_elden_ring_input_active():
-        raise RuntimeError("Elden Ring input context inactive")
     for _ in range(10):
         block(pc, action)
         yield 0.0
@@ -159,7 +181,8 @@ def witness():
     strong_before = dodge.get_elden_ring_strong_count()
     hp_before = plc.health(boss)
     press_time = plc.game_time(world)
-    key(pc, True)
+    if not key(pc, True):
+        return
     log("COUNTER_R2_PRESS game_time=%.3f armed=True strong_before=%d boss_hp_before=%s distance_cm=%.1f" %
         (press_time, strong_before, hp_before, (pawn.get_actor_location() - boss.get_actor_location()).length()))
     montages = set()
@@ -168,7 +191,8 @@ def witness():
     while plc.game_time(world) < observe_until:
         now = plc.game_time(world)
         if S["r2_down"] and now >= release_at:
-            key(pc, False)
+            if not key(pc, False):
+                return
             log("COUNTER_R2_RELEASE game_time=%.3f" % now)
         name, _ = plc.player_montage(pawn)
         meshes = pawn.get_components_by_class(unreal.SkeletalMeshComponent)
@@ -184,7 +208,7 @@ def witness():
     hp_after = plc.health(boss)
     strong_after = dodge.get_elden_ring_strong_count()
     S["result"] = valid_counter(armed, montages, hp_before, hp_after)
-    log("RESULT pass=%s real_guard=%s strong_delta=%d counter_montage=%s boss_hp_before=%s boss_hp_after=%s boss_hp_delta=%s" %
+    log("COUNTER_RESULT pass=%s real_guard=%s strong_delta=%d counter_montage=%s boss_hp_before=%s boss_hp_after=%s boss_hp_delta=%s" %
         (S["result"], armed, strong_after - strong_before,
          "AM_ER_Attack_GuardCounter" in montages, hp_before, hp_after,
          hp_after - hp_before if hp_after is not None and hp_before is not None else "unreadable"))
@@ -207,6 +231,7 @@ def finish(reason):
     if HANDLE is not None:
         unreal.unregister_slate_post_tick_callback(HANDLE)
         HANDLE = None
+    FINAL_RESULT.emit(S["result"], reason, real_counter=S["result"])
     log("SUMMARY pass=%s reason=%s" % (S["result"], reason))
     plc.end_play()
 

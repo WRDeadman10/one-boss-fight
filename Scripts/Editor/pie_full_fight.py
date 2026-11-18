@@ -20,6 +20,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(unreal.Paths.project_dir()) / "Scripts" / "Editor"))
 import pie_lead_common as plc
+from pie_driver_support import FinalResult, MappingReadinessGate
 
 FRAMES = os.environ.get("FIGHT_FRAMES", "D:/FightVideo/fight")
 FIGHT_RUN = re.sub(r"[^A-Za-z0-9_-]+", "_", os.environ.get("FIGHT_RUN", "fight"))[:64] or "fight"
@@ -102,11 +103,15 @@ S = {"phase": "start", "elapsed": 0.0, "fight_time": 0.0, "held": set(), "cycle"
      "dodge_watch_seen": set(), "dodge_watch_scheduled": {},
      "dodge_watch_pending": [], "dodge_attempt_count": 0,
      "pending_parry_frame": None, "air_light_count": 0, "action_instance": None}
+S["mapping_gate"] = MappingReadinessGate(5.0)
 HANDLE = None
 
 
 def log(m):
     unreal.log(LOG + str(m))
+
+
+FINAL_RESULT = FinalResult(log, "pie_full_fight")
 
 
 def action_id(run, ordinal):
@@ -391,8 +396,13 @@ def actors():
 
 
 def key(pc, k, down):
-    unreal.RPGInputTestUtils.set_key_down(pc, k, down)
+    if not unreal.RPGInputTestUtils.set_key_down(pc, k, down):
+        message = "SetKeyDown refused key=%s down=%s" % (k, down)
+        log("INPUT_REFUSED " + message)
+        S["input_error"] = message
+        return False
     (S["held"].add if down else S["held"].discard)(k)
+    return True
 
 
 def release_all(pc):
@@ -492,6 +502,9 @@ def finish(reason):
     except Exception:
         boss_health_end, boss_ai_end = "UNKNOWN", "UNKNOWN"
     summary = receipt_summary(S, reason, boss_health_end, boss_ai_end)
+    FINAL_RESULT.emit(S["boss_dead"] and not S.get("input_error"), reason,
+                      boss_dead=S["boss_dead"], input_error=S.get("input_error", "none"),
+                      frames=S["frame"])
     log("RECEIPT_SUMMARY " + json.dumps(summary, sort_keys=True, allow_nan=False))
     log("SUMMARY fight_seconds=%.1f boss_dead=%s actions_json=%s player_refills=%d player_deaths=%d frames=%d" %
         (S["fight_time"], S["boss_dead"], json.dumps(S["counts"], sort_keys=True),
@@ -1021,6 +1034,8 @@ def parry_feedback_step(boss):
 def tick(dt):
     try:
         _tick(dt)
+        if S.get("input_error") and not S["done"]:
+            finish("input refused: " + S["input_error"])
     except Exception:
         import traceback
         log("driver error: " + traceback.format_exc())
@@ -1060,9 +1075,20 @@ def _tick(dt):
             log("setup boss_hp=%s/%s player_hp=%s/%s player_boss_cm=%.1f" % (attr(boss, "Attribute.Health"), attr(boss, "Attribute.Health", True), attr(pawn, "Attribute.Health"), attr(pawn, "Attribute.Health", True), setup_distance))
             log("BOSS_BASELINE hp=%s max_hp=%s ai_controller=%s driver_mutations=0" %
                 (S["boss_health_start"], S["boss_health_max_start"], S["boss_ai_controller_start"]))
-            S.update(phase="draw", elapsed=0.0)
+            S.update(phase="mapping_ready", elapsed=0.0)
         elif S["elapsed"] > 30.0:
             finish("no player/boss within 30 s")
+        return
+    if S["phase"] == "mapping_ready":
+        timing = plc.component(pawn, "RPGDodgeTiming") if pawn else None
+        status = S["mapping_gate"].poll(
+            dt, lambda: bool(timing and timing.is_elden_ring_input_active()))
+        if status in ("ready", "timeout", "readiness_error", "invalid_delta"):
+            log("mapping_readiness=%s waited_s=%.3f" % (status, S["mapping_gate"].elapsed))
+            if status != "ready":
+                finish("input mapping " + status)
+                return
+            S.update(phase="draw", elapsed=0.0)
         return
     if S["phase"] == "draw":
         if 0.3 <= S["elapsed"] and R2 not in S["held"] and S["elapsed"] < 0.4:

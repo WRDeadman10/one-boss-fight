@@ -8,6 +8,10 @@
 #include "TimerManager.h"
 #include "RPGPlayerMovesSubsystem.generated.h"
 
+class URPGEncounterSelectionSubsystem;
+class URPGBossEncounterDefinition;
+struct FActorsInitializedParams;
+
 /**
  * Adds this project's moves to the Advanced ARPG pack's pawns without editing the pack: when the pack player pawn (BP_CombatPlayerCharacter or a child) spawns, in any
  * game world, it gets a URPGDodgeTiming component (a new pawn after a respawn gets its own); the pack great-sword boss (BP_ExampleGreatSwordBoss) gets a
@@ -37,6 +41,12 @@ public:
 	UPROPERTY(Config, EditDefaultsOnly, Category="Encounter|Startup")
 	FString DefaultEncounterDefinition = TEXT("/Game/OneBossFight/Data/DA_Sevarog_G044_Encounter.DA_Sevarog_G044_Encounter");
 
+	/** Explicit opt-in route for the Sevarog arena. It swaps the GameMode's pack boss for the native framework encounter. */
+	UPROPERTY(Config, EditDefaultsOnly, Category="Encounter|Startup")
+	bool bEnableSevarogFrameworkArenaRoute = false;
+	UPROPERTY(Config, EditDefaultsOnly, Category="Encounter|Startup")
+	FString SevarogFrameworkRouteDefinition = TEXT("/Game/OneBossFight/Data/Sevarog/DA_Sevarog_Framework_Encounter.DA_Sevarog_Framework_Encounter");
+
 	/** Read-only reflected accessor for editor/runtime diagnostics that need this world's subsystem. */
 	UFUNCTION(BlueprintCallable, Category="Encounter|Diagnostics", meta=(WorldContext="WorldContextObject"))
 	static URPGPlayerMovesSubsystem* GetForWorld(const UObject* WorldContextObject);
@@ -61,9 +71,22 @@ public:
 
 	static bool IsPackPlayer(const AActor* Actor);
 	static bool IsPackBoss(const AActor* Actor);
+	bool IsSevarogFrameworkArenaRouteEnabled() const;
 
 private:
 	void OnActorSpawned(AActor* Actor);
+	void OnActorPreSpawnInitialization(AActor* Actor);
+	void OnWorldInitializedActors(const FActorsInitializedParams& Params);
+	void ReplacePlacedArenaBosses(UWorld* World);
+	void TrySpawnPendingArenaFrameworkBoss(UWorld* World);
+	void RetryPendingArenaFrameworkBoss();
+	FString BuildArenaCensusDiagnostic(UWorld* World) const;
+	void SuppressArenaBoss(AActor* PackBoss);
+	void ReplaceSuppressedArenaBoss(AActor* PackBoss);
+	void SpawnFrameworkArenaBoss(UWorld* World, const FTransform& SpawnTransform, bool bWorldHasBegunPlay);
+	bool ResolveSevarogFrameworkArenaDefinition(URPGEncounterSelectionSubsystem* Selection, URPGBossEncounterDefinition*& OutDefinition, FString& OutError) const;
+	void RefuseSevarogFrameworkArenaRoute(UWorld* World, const TCHAR* Reason, const FString& Detail);
+	void LogArenaPackBossHudCount(UWorld* World, const TCHAR* Stage) const;
 	void ReplacePackPlayerWithGreystoneForTest(TWeakObjectPtr<APawn> SpawnedPackPawn);
 	void OnEncounterResetBroadcast(uint64 ParticipantGeneration, int32 ResetCount);
 	void OnRebindPoll();
@@ -107,5 +130,14 @@ private:
 	FString LastEncounterManifestHash;
 
 	FDelegateHandle SpawnHandle;
+	FDelegateHandle PreSpawnHandle;
+	FDelegateHandle WorldInitializedActorsHandle;
+	FTimerHandle ArenaFrameworkBossRetryHandle;
+	TMap<TWeakObjectPtr<AActor>, FTransform> SuppressedArenaBossTransforms;
+	bool bArenaPlacedBossesHandled = false;
+	bool bArenaFrameworkReplacementAttempted = false;
+	bool bPendingArenaFrameworkBossSpawn = false;
+	int32 ArenaFrameworkBossRetryCount = 0;
+	FTransform PendingArenaFrameworkBossTransform = FTransform::Identity;
 	uint64 NextEncounterTimingOperationId = 1;
 };

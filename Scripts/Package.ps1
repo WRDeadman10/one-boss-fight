@@ -63,7 +63,7 @@ if ([string]::IsNullOrWhiteSpace($G044RequiredFile) -ne [string]::IsNullOrWhiteS
 }
 
 # Only the maps we ship are cooked.
-$Maps = '/Game/OneBossFight/Levels/L_SevarogArena'
+$Maps = '/Game/OneBossFight/Maps/L_SevarogArena'
 
 Write-Host "Packaging $Configuration build -> $StageDir"
 

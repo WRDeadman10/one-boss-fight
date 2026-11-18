@@ -222,6 +222,26 @@ bool FFrameworkSelectorProfile::RunTest(const FString&)
     Fill(*P);FRPGBossProfileCard C;C.Card=P->Card;P->Cards.Add(C);TestFalse(TEXT("F3 profile cannot carry a card list"),RPGFramework::ValidateProfile(*P,Error));
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkProductionProfile,"OneBossFight.Framework.Runtime.ProductionProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
+bool FFrameworkProductionProfile::RunTest(const FString&)
+{
+    using namespace FrameworkRuntimeFixture;
+    TStrongObjectPtr<URPGBossFrameworkProfile> P(NewObject<URPGBossFrameworkProfile>());FString Error;
+    auto Prod=[&P](){Fill(*P);P->FixtureLabel=TEXT("Production");P->bDamageEnabled=true;P->HitStepCm=15.f;P->HitMaxSubsteps=8;P->RepeatPenalty=.2f;P->RepeatMemory=2;P->AttackCount=2;
+        FRPGBossProfileCard C;C.Card=P->Card;C.CooldownSeconds=1.f;C.Weight=1.f;P->Card.Reset();P->Cards.Reset();P->Cards.Add(C);};
+    Prod();TestTrue(TEXT("explicit Production profile valid"),RPGFramework::ValidateProfile(*P,Error));
+    Prod();P->bRangeBandPartition=true;TestTrue(TEXT("range partition remains available in Production"),RPGFramework::ValidateProfile(*P,Error));
+    Prod();P->Cards.Reset();TestFalse(TEXT("Production needs at least one card"),RPGFramework::ValidateProfile(*P,Error));
+    Prod();P->Card=P->Cards[0].Card;TestFalse(TEXT("Production cannot also carry the single card"),RPGFramework::ValidateProfile(*P,Error));
+    for(int32 V:{0,-1,9}){Prod();P->AttackCount=V;TestFalse(TEXT("production attack count domain"),RPGFramework::ValidateProfile(*P,Error));}
+    for(float V:{0.f,-1.f,1.5f,std::numeric_limits<float>::quiet_NaN()}){Prod();P->RepeatPenalty=V;TestFalse(TEXT("production repeat penalty domain"),RPGFramework::ValidateProfile(*P,Error));}
+    for(int32 V:{0,9}){Prod();P->RepeatMemory=V;TestFalse(TEXT("production repeat memory domain"),RPGFramework::ValidateProfile(*P,Error));}
+    Prod();P->Cards[0].CooldownSeconds=-1.f;TestFalse(TEXT("production cooldown domain"),RPGFramework::ValidateProfile(*P,Error));
+    Prod();P->Cards[0].Weight=0.f;TestFalse(TEXT("production weight domain"),RPGFramework::ValidateProfile(*P,Error));
+    Prod();P->Cards[0].Card.Reset();TestFalse(TEXT("production null candidate card"),RPGFramework::ValidateProfile(*P,Error));
+    Prod();P->bDamageEnabled=false;TestFalse(TEXT("Production label needs the damage flag"),RPGFramework::ValidateProfile(*P,Error));
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FFrameworkGuardChipProfile,"OneBossFight.Framework.Runtime.GuardChipProfile",EAutomationTestFlags::EditorContext|EAutomationTestFlags::ProductFilter)
 bool FFrameworkGuardChipProfile::RunTest(const FString&)
 {

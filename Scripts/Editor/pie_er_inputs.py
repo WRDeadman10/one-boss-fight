@@ -11,9 +11,12 @@ Montage names are logged for every case; checks match by substring (light "Prima
 Log prefix [ERInputs]. Writes no asset; sets no component property in PIE (KI-083).
 """
 import unreal
+from pie_driver_support import FinalResult, MappingReadinessGate
 
 log = lambda m: unreal.log("[ERInputs] " + m)
-state = {"phase": "start", "t": 0.0, "res": [], "case": 0, "ct": 0.0, "seen": [], "key_down": False}
+state = {"phase": "start", "t": 0.0, "res": [], "case": 0, "ct": 0.0, "seen": [],
+         "key_down": False, "held": set(), "done": False,
+         "mapping_gate": MappingReadinessGate(5.0)}
 handle = None
 
 # (name, key, hold seconds, expected substring, forbidden substring)
@@ -25,6 +28,8 @@ CASES = [
     ("E3 R2 tap plays the strong attack", "Gamepad_RightTrigger", 0.12, "Ability_E", "Charged"),
 ]
 CASE_LENGTH = 3.0
+
+FINAL_RESULT = FinalResult(log, "pie_er_inputs")
 
 
 def comp(actor, name):
@@ -51,12 +56,41 @@ def check(name, ok, detail=""):
 
 def finish():
     global handle
+    if state["done"]:
+        return
+    state["done"] = True
     if handle:
         unreal.unregister_slate_post_tick_callback(handle)
         handle = None
+    try:
+        world = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
+        pc = unreal.GameplayStatics.get_player_controller(world, 0) if world else None
+    except Exception:
+        pc = None
+    for held_key in tuple(state["held"]):
+        try:
+            unreal.RPGInputTestUtils.set_key_down(pc, held_key, False)
+        except Exception:
+            pass
+    state["held"].clear()
     bad = [n for n, ok in state["res"] if not ok]
+    FINAL_RESULT.emit(not bad and state.get("terminal_reason") == "all input cases recorded",
+                      state.get("terminal_reason", "driver stopped"),
+                      checks=len(state["res"]), failed=len(bad))
     log("SUMMARY %d checks, %d failed %s" % (len(state["res"]), len(bad), bad))
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
+
+
+def send_key(pc, key_name, down):
+    ok = unreal.RPGInputTestUtils.set_key_down(pc, key_name, down)
+    if not ok:
+        log("input_refused key=%s down=%s" % (key_name, down))
+        return False
+    if down:
+        state["held"].add(key_name)
+    else:
+        state["held"].discard(key_name)
+    return True
 
 
 def _tick(dt):
@@ -89,7 +123,17 @@ def _tick(dt):
             comp(pawn, "BP_AdvancedAbilitySystemComponent_C").call_method("Try Activate Abilities By Tag", args=(tags("Ability.EnterCombat"),))
             s["held"] = s["t"]
         if "held" in s and s["t"] - s["held"] > 12.0:
-            check("E1 Elden Ring input context active on the player", bool(dodge and dodge.is_elden_ring_input_active()))
+            s.update(phase="mapping_ready", mapping_wait=0.0)
+        return
+    if s["phase"] == "mapping_ready":
+        status = s["mapping_gate"].poll(dt, lambda: bool(dodge and dodge.is_elden_ring_input_active()))
+        if status in ("ready", "timeout", "readiness_error", "invalid_delta"):
+            check("E1 Enhanced Input mapping became ready", status == "ready")
+            log("mapping_readiness=%s waited_s=%.3f" % (status, s["mapping_gate"].elapsed))
+            if status != "ready":
+                s["terminal_reason"] = "input mapping " + status
+                finish()
+                return
             s.update(phase="case", case=0, ct=0.0, seen=[])
         return
     if dbg:
@@ -98,7 +142,11 @@ def _tick(dt):
         name, key, hold, want, forbid = CASES[s["case"]]
         s["ct"] += dt
         if s["ct"] <= dt + 1e-6 and not s["key_down"]:
-            unreal.RPGInputTestUtils.set_key_down(pc, key, True)
+            if not send_key(pc, key, True):
+                s["res"].append((name + " key press accepted", False))
+                s["terminal_reason"] = "input mapping refused press"
+                finish()
+                return
             s["key_down"] = True
             s["held_seen"] = []
         m = montage(pawn)
@@ -107,7 +155,11 @@ def _tick(dt):
         if s["key_down"] and m:
             s["held_seen"].append(m)
         if s["key_down"] and s["ct"] >= hold:
-            unreal.RPGInputTestUtils.set_key_down(pc, key, False)
+            if not send_key(pc, key, False):
+                s["res"].append((name + " key release accepted", False))
+                s["terminal_reason"] = "input mapping refused release"
+                finish()
+                return
             s["key_down"] = False
         if s["ct"] >= CASE_LENGTH:
             seen = s["seen"]
@@ -138,6 +190,7 @@ def _tick(dt):
             full = dodge.was_last_press_full() if dodge else None
             check("E5 standing double tap gives no long roll", (full is False) and not any("Dodge_To_Idle" in x for x in s["seen"]),
                   "last_press_full=%s presses=%s montages=%s" % (full, dodge.get_press_count() if dodge else None, s["seen"]))
+            s["terminal_reason"] = "all input cases recorded"
             finish()
             s["phase"] = "done"
 

@@ -53,6 +53,6 @@ if world.get_name() == "L_SevarogArena":
         runner = unreal.EditorLevelLibrary.spawn_actor_from_class(unreal.RPGBenchmarkRunner, unreal.Vector(0, 0, 100))
         runner.set_actor_label("BenchmarkRunner")
         log("benchmark runner placed")
-    unreal.EditorLoadingAndSavingUtils.save_map(world, "/Game/OneBossFight/Levels/L_SevarogArena")
+    unreal.EditorLoadingAndSavingUtils.save_map(world, "/Game/OneBossFight/Maps/L_SevarogArena")
 else:
     log("open L_SevarogArena to place the benchmark runner (current: %s)" % world.get_name())

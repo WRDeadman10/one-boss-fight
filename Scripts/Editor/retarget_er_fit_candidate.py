@@ -22,6 +22,41 @@ except ImportError:  # Allows offline contract inspection outside the Editor.
     unreal = None
 
 
+def ensure_root_chain_globally_scaled(source_rig, target_rig, retargeter_controller):
+    """C-1285: IK Retargeter chain FK TranslationMode defaults to None, so the root bone stayed at 0 and the"""
+    """root motion was baked into the pelvis (P_C1284_GREYSTONE_ROOTBONE). Ensure a Root chain (root->root) on both"""
+    """rigs, map them, and set the target Root chain FK translation_mode to GLOBALLY_SCALED."""
+    names = {}
+    for label, rig in (("source", source_rig), ("target", target_rig)):
+        rig_controller = unreal.IKRigController.get_controller(rig)
+        found = None
+        for chain in rig_controller.get_retarget_chains():
+            start = str(chain.get_editor_property("start_bone").get_editor_property("bone_name"))
+            end = str(chain.get_editor_property("end_bone").get_editor_property("bone_name"))
+            if start == "root" and end == "root":
+                found = str(chain.get_editor_property("chain_name"))
+                break
+        if found is None:
+            found = str(rig_controller.add_retarget_chain("Root", "root", "root", ""))
+            if found in ("", "None"):
+                raise RuntimeError("could not add a Root chain to the %s IK rig" % label)
+            unreal.EditorAssetLibrary.save_loaded_asset(rig)
+        names[label] = found
+    if str(retargeter_controller.get_source_chain(names["target"])) != names["source"]:
+        if not retargeter_controller.set_source_chain(names["source"], names["target"]):
+            raise RuntimeError("could not map the Root chains in the retargeter")
+    settings = retargeter_controller.get_retarget_chain_settings(names["target"])
+    fk = settings.get_editor_property("fk")
+    fk.set_editor_property("translation_mode", unreal.RetargetTranslationMode.GLOBALLY_SCALED)
+    fk.set_editor_property("translation_alpha", 1.0)
+    settings.set_editor_property("fk", fk)
+    if not retargeter_controller.set_retarget_chain_settings(names["target"], settings):
+        raise RuntimeError("set_retarget_chain_settings failed for the Root chain")
+    mode = retargeter_controller.get_retarget_chain_settings(names["target"]).get_editor_property("fk").get_editor_property("translation_mode")
+    unreal.log("[RootChain] %s -> %s fk_translation_mode=%s" % (names["source"], names["target"], mode))
+    return names["target"]
+
+
 CANDIDATES = {
     "Steel": {
         "mesh": "/Game/ParagonSteel/Characters/Heroes/Steel/Meshes/Steel",
@@ -209,6 +244,7 @@ def main():
         controller.set_preview_mesh(unreal.RetargetSourceOrTarget.SOURCE, source_mesh)
         controller.set_preview_mesh(unreal.RetargetSourceOrTarget.TARGET, candidate_mesh)
         controller.auto_map_chains(unreal.AutoMapChainType.FUZZY, True)
+        ensure_root_chain_globally_scaled(source_rig, target_rig, controller)  # C-1285 root motion on the root bone
         unreal.EditorAssetLibrary.save_loaded_asset(retargeter)
 
     # UE 5.5's exposed duplicate_and_retarget API emits beside its inputs.

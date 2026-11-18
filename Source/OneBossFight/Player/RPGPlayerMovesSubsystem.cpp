@@ -3,7 +3,9 @@
 #include "Player/RPGPlayerMovesSubsystem.h"
 #include "Player/RPGBossEncounterDefinition.h"
 #include "Boss/RPGFrameworkBossCharacter.h"
-
+#include "Player/RPGBossFrameworkProfile.h"
+#include "Engine/SkeletalMesh.h"
+#include "Pack/RPGBlueprintCall.h"
 #include "Player/RPGEncounterSelectionSubsystem.h"
 #include "Player/RPGEncounterBinding.h"
 #include "Player/RPGBossActivation.h"
@@ -49,6 +51,13 @@
 #include "EngineUtils.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
+#include "AIController.h"
+#include "BrainComponent.h"
+#include "Components/ActorComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Animation/AnimInstance.h"
+#include "Blueprint/UserWidget.h"
+#include "UObject/UObjectIterator.h"
 #include "Engine/World.h"
 #include "Engine/GameInstance.h"
 #include "Engine/Engine.h"
@@ -124,7 +133,9 @@ void URPGPlayerMovesSubsystem::PostInitialize()
 	// spawn pawns in worlds that never begin play); OnWorldBeginPlay only binds when this did not.
 	if (UWorld* World = GetWorld())
 	{
+		PreSpawnHandle = World->AddOnActorPreSpawnInitialization(FOnActorSpawned::FDelegate::CreateUObject(this, &URPGPlayerMovesSubsystem::OnActorPreSpawnInitialization));
 		SpawnHandle = World->AddOnActorSpawnedHandler(FOnActorSpawned::FDelegate::CreateUObject(this, &URPGPlayerMovesSubsystem::OnActorSpawned));
+		WorldInitializedActorsHandle = FWorldDelegates::OnWorldInitializedActors.AddUObject(this, &URPGPlayerMovesSubsystem::OnWorldInitializedActors);
 	}
 }
 
@@ -135,7 +146,12 @@ void URPGPlayerMovesSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	// actor-spawn delegate is ready, and all preexisting actors are handled by the census below.
 	if (!SpawnHandle.IsValid())
 	{
+		PreSpawnHandle = InWorld.AddOnActorPreSpawnInitialization(FOnActorSpawned::FDelegate::CreateUObject(this, &URPGPlayerMovesSubsystem::OnActorPreSpawnInitialization));
 		SpawnHandle = InWorld.AddOnActorSpawnedHandler(FOnActorSpawned::FDelegate::CreateUObject(this, &URPGPlayerMovesSubsystem::OnActorSpawned));
+	}
+	if (!WorldInitializedActorsHandle.IsValid())
+	{
+		WorldInitializedActorsHandle = FWorldDelegates::OnWorldInitializedActors.AddUObject(this, &URPGPlayerMovesSubsystem::OnWorldInitializedActors);
 	}
 	RPGStartupChronology::AtWorldBeginPlay(InWorld);
 	Super::OnWorldBeginPlay(InWorld); ApplyDefaultDataSelection(); // no-op when PostInitialize stored it or an explicit selection exists
@@ -146,8 +162,32 @@ void URPGPlayerMovesSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	LastEncounterOutcome = bSelectionRequested ? TEXT("Pending") : (bUseLegacyStartup ? TEXT("LegacyNoSelection") : TEXT("LegacyStartupDisabled"));
 	LastEncounterReason.Reset();
 	LastEncounterManifestHash.Reset();
+	if (IsSevarogFrameworkArenaRouteEnabled() && !bSelectionRequested)
+	{
+		RefuseSevarogFrameworkArenaRoute(&InWorld, TEXT("DefinitionNotSelected"), TEXT("the route switch is on but no framework definition was selected"));
+		return;
+	}
 	if (bSelectionRequested)
 	{
+		if (IsSevarogFrameworkArenaRouteEnabled())
+		{
+			URPGBossEncounterDefinition* RouteDefinition = nullptr;
+			FString DefinitionError;
+			if (!ResolveSevarogFrameworkArenaDefinition(Selection, RouteDefinition, DefinitionError))
+			{
+				RefuseSevarogFrameworkArenaRoute(&InWorld, TEXT("DefinitionInvalid"), DefinitionError);
+				return;
+			}
+			LastEncounterOutcome = TEXT("PendingArenaBossSpawn");
+			LastEncounterReason.Reset();
+			UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] route=SevarogFrameworkArena outcome=PendingArenaBossSpawn definition=%s"), *RouteDefinition->GetPathName());
+			for (TActorIterator<APawn> It(&InWorld); It; ++It)
+			{
+				AttachSelectedPlayerComponents(*It);
+				AttachBossDiagnostics(*It);
+			}
+			return;
+		}
 		UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] route=data reason=StoredDefinition outcome=Pending"));
 		double OperationStartSeconds = 0.0;
 		const uint64 OperationId = BeginEncounterTiming(TEXT("selected_startup"), OperationStartSeconds);
@@ -318,6 +358,7 @@ void URPGPlayerMovesSubsystem::Deinitialize()
 	{
 		World->GetTimerManager().ClearTimer(RebindTimeoutHandle);
 		World->GetTimerManager().ClearTimer(RebindPollHandle);
+		World->GetTimerManager().ClearTimer(ArenaFrameworkBossRetryHandle);
 	}
 	if (URPGBossEncounter* Source = ResetBroadcastSource.Get()) { Source->OnResetBroadcast().Remove(ResetBroadcastHandle); }
 	ResetBroadcastSource.Reset();
@@ -335,14 +376,30 @@ void URPGPlayerMovesSubsystem::Deinitialize()
 	LegacyBossComponents.Reset();
 	if (UWorld* World = GetWorld())
 	{
+		World->RemoveOnActorPreSpawnInitialization(PreSpawnHandle);
 		World->RemoveOnActorSpawnedHandler(SpawnHandle);
 	}
+	if (WorldInitializedActorsHandle.IsValid())
+	{
+		FWorldDelegates::OnWorldInitializedActors.Remove(WorldInitializedActorsHandle);
+		WorldInitializedActorsHandle.Reset();
+	}
+	SuppressedArenaBossTransforms.Reset();
 	Super::Deinitialize();
 }
 
 void URPGPlayerMovesSubsystem::OnActorSpawned(AActor* Actor)
 {
 	UWorld* World = GetWorld();
+	if (Actor && Actor->Tags.Contains(TEXT("ArenaRoute.Suppressed")))
+	{
+		ReplaceSuppressedArenaBoss(Actor);
+		return;
+	}
+	if (World && bPendingArenaFrameworkBossSpawn && IsPackPlayer(Actor))
+	{
+		TrySpawnPendingArenaFrameworkBoss(World);
+	}
 	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
 	URPGEncounterSelectionSubsystem* Selection = GameInstance ? GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>() : nullptr;
 	const bool bSpawnIsPackPlayer = IsPackPlayer(Actor);
@@ -414,6 +471,540 @@ void URPGPlayerMovesSubsystem::OnActorSpawned(AActor* Actor)
 	}
 	if (!bUseLegacyStartup) return;
 	Attach(Actor);
+}
+
+bool URPGPlayerMovesSubsystem::IsSevarogFrameworkArenaRouteEnabled() const
+{
+	UWorld* World = GetWorld();
+	return bEnableSevarogFrameworkArenaRoute && World
+		&& UWorld::RemovePIEPrefix(World->GetMapName()) == TEXT("L_SevarogArena");
+}
+
+bool URPGPlayerMovesSubsystem::ResolveSevarogFrameworkArenaDefinition(URPGEncounterSelectionSubsystem* Selection,
+	URPGBossEncounterDefinition*& OutDefinition, FString& OutError) const
+{
+	OutDefinition = nullptr;
+	OutError.Reset();
+	if (!Selection)
+	{
+		OutError = TEXT("EncounterSelectionSubsystemUnavailable");
+		return false;
+	}
+	OutDefinition = Selection->ResolveSelectedDefinition(OutError);
+	if (!IsValid(OutDefinition))
+	{
+		if (OutError.IsEmpty()) { OutError = TEXT("EncounterDefinitionUnavailable"); }
+		return false;
+	}
+	if (!OutDefinition->bUseFrameworkBoss)
+	{
+		OutError = TEXT("SelectedDefinitionIsNotFrameworkEnabled");
+		return false;
+	}
+	if (!OutDefinition->ValidateSelectionRecord(OutError)) { return false; }
+	if (!OutDefinition->BossDefinition.LoadSynchronous() || !OutDefinition->PlayerDefinition.LoadSynchronous()
+		|| !OutDefinition->FrameworkBossProfile.LoadSynchronous())
+	{
+		OutError = TEXT("FrameworkDefinitionDependencyLoadFailed");
+		return false;
+	}
+	return true;
+}
+
+void URPGPlayerMovesSubsystem::RefuseSevarogFrameworkArenaRoute(UWorld* World, const TCHAR* Reason, const FString& Detail)
+{
+	LastEncounterRoute = TEXT("SevarogFrameworkArena");
+	LastEncounterOutcome = TEXT("HardError");
+	LastEncounterReason = FString::Printf(TEXT("EncounterActivation.ArenaRoute.%s"), Reason);
+	UE_LOG(LogTemp, Error, TEXT("[EncounterActivation] arena_route_refused reason=%s detail=%s"), Reason, *Detail);
+	ReportActivationFailure(World, LastEncounterReason);
+}
+
+void URPGPlayerMovesSubsystem::LogArenaPackBossHudCount(UWorld* World, const TCHAR* Stage) const
+{
+	int32 Count = 0;
+	if (World)
+	{
+		for (TObjectIterator<UUserWidget> It; It; ++It)
+		{
+			UUserWidget* Widget = *It;
+			if (IsValid(Widget) && Widget->GetWorld() == World && Widget->IsInViewport()
+				&& Widget->GetClass()->GetName().Contains(TEXT("BP_BossHUD")))
+			{
+				++Count;
+			}
+		}
+	}
+	UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] arena_pack_boss_hud stage=%s viewport_count=%d"), Stage, Count);
+}
+
+void URPGPlayerMovesSubsystem::OnActorPreSpawnInitialization(AActor* Actor)
+{
+	if (!Actor || !IsPackBoss(Actor) || !IsSevarogFrameworkArenaRouteEnabled()) { return; }
+	Actor->Tags.AddUnique(TEXT("ArenaRoute.Suppressed"));
+	SuppressedArenaBossTransforms.Add(Actor, Actor->GetActorTransform());
+	UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] arena_pack_boss_flagged actor=%s actor_id=%u transform=%s"),
+		*Actor->GetName(), static_cast<uint32>(Actor->GetUniqueID()), *Actor->GetActorTransform().ToHumanReadableString());
+}
+
+void URPGPlayerMovesSubsystem::OnWorldInitializedActors(const FActorsInitializedParams& Params)
+{
+	UWorld* World = Params.World;
+	if (!World || World != GetWorld() || bArenaPlacedBossesHandled || !IsSevarogFrameworkArenaRouteEnabled()) { return; }
+	bArenaPlacedBossesHandled = true;
+	ReplacePlacedArenaBosses(World);
+}
+
+void URPGPlayerMovesSubsystem::ReplacePlacedArenaBosses(UWorld* World)
+{
+	if (!World || !IsSevarogFrameworkArenaRouteEnabled()) { return; }
+	TArray<AActor*> PackBosses;
+	FTransform SpawnTransform = FTransform::Identity;
+	bool bHasSpawnTransform = false;
+	for (TActorIterator<AActor> It(World); It; ++It)
+	{
+		AActor* Actor = *It;
+		if (!IsPackBoss(Actor)) { continue; }
+		if (!bHasSpawnTransform)
+		{
+			SpawnTransform = Actor->GetActorTransform();
+			bHasSpawnTransform = true;
+		}
+		PackBosses.Add(Actor);
+	}
+	if (PackBosses.IsEmpty())
+	{
+		RefuseSevarogFrameworkArenaRoute(World, TEXT("PlacedPackBossMissing"), TEXT("no placed pack boss was present at world actor initialization"));
+		return;
+	}
+
+	// Resolve before touching the placed actors. Invalid selection still suppresses every pack boss,
+	// so the opt-in route cannot silently fall back to the Ember fight.
+	UGameInstance* GameInstance = World->GetGameInstance();
+	URPGEncounterSelectionSubsystem* Selection = GameInstance ? GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>() : nullptr;
+	URPGBossEncounterDefinition* Definition = nullptr;
+	FString Error;
+	const bool bDefinitionReady = ResolveSevarogFrameworkArenaDefinition(Selection, Definition, Error);
+	for (AActor* PackBoss : PackBosses)
+	{
+		if (IsValid(PackBoss))
+		{
+			PackBoss->Tags.AddUnique(TEXT("ArenaRoute.Suppressed"));
+			SuppressArenaBoss(PackBoss);
+		}
+	}
+	if (!bDefinitionReady)
+	{
+		bArenaFrameworkReplacementAttempted = true;
+		RefuseSevarogFrameworkArenaRoute(World, TEXT("DefinitionInvalid"), Error);
+		LogArenaPackBossHudCount(World, TEXT("refused"));
+		return;
+	}
+	bPendingArenaFrameworkBossSpawn = true;
+	PendingArenaFrameworkBossTransform = SpawnTransform;
+	TrySpawnPendingArenaFrameworkBoss(World);
+}
+
+void URPGPlayerMovesSubsystem::TrySpawnPendingArenaFrameworkBoss(UWorld* World)
+{
+	if (!World) { return; }
+	if (!bPendingArenaFrameworkBossSpawn || bArenaFrameworkReplacementAttempted)
+	{
+		World->GetTimerManager().ClearTimer(ArenaFrameworkBossRetryHandle);
+		return;
+	}
+	bool bLocalPackPlayerPossessed = false;
+	bool bPlayerHealthReady = false;
+	RPGPack::FAttributeReadDiagnostic HealthDiag;
+	FString CombatStyleDiag = TEXT("unpossessed");
+
+	for (TActorIterator<APlayerController> It(World); It; ++It)
+	{
+		APlayerController* Controller = *It;
+		if (IsValid(Controller) && Controller->IsLocalController() && IsPackPlayer(Controller->GetPawn()))
+		{
+			bLocalPackPlayerPossessed = true;
+			APawn* PlayerPawn = Controller->GetPawn();
+			if (PlayerPawn)
+			{
+				CombatStyleDiag = RPGPack::GetPlayerCombatStyleDiagnostic(PlayerPawn);
+				if (RPGPack::ReadAttributeDetailed(PlayerPawn, TEXT("Attribute.Health"), false, HealthDiag))
+				{
+					if (HealthDiag.Status == RPGPack::EAttributeReadStatus::Valid &&
+						FMath::IsFinite(HealthDiag.Value) && HealthDiag.Value > 0.0)
+					{
+						bPlayerHealthReady = true;
+					}
+					else if (HealthDiag.Status == RPGPack::EAttributeReadStatus::Valid &&
+						HealthDiag.Value == 0.0 && HealthDiag.bMaxValueReadable &&
+						FMath::IsFinite(HealthDiag.MaxValue) && HealthDiag.MaxValue >= 999999.0)
+					{
+						// BT-52: Bare-map sentinel state (current health 0, uninitialized max ~1e6).
+						// Resolve profile TargetHealth and initialize pack player health before boss activation.
+						UGameInstance* GameInstance = World->GetGameInstance();
+						URPGEncounterSelectionSubsystem* Selection = GameInstance ? GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>() : nullptr;
+						URPGBossEncounterDefinition* Definition = nullptr;
+						FString DefError;
+						if (!ResolveSevarogFrameworkArenaDefinition(Selection, Definition, DefError) || !IsValid(Definition))
+						{
+							World->GetTimerManager().ClearTimer(ArenaFrameworkBossRetryHandle);
+							bArenaFrameworkReplacementAttempted = true;
+							bPendingArenaFrameworkBossSpawn = false;
+							RefuseSevarogFrameworkArenaRoute(World, TEXT("DefinitionInvalid"), DefError.IsEmpty() ? TEXT("route requires valid definition") : DefError);
+							return;
+						}
+						URPGBossFrameworkProfile* FrameworkProfile = Definition->FrameworkBossProfile.LoadSynchronous();
+						if (!IsValid(FrameworkProfile))
+						{
+							World->GetTimerManager().ClearTimer(ArenaFrameworkBossRetryHandle);
+							bArenaFrameworkReplacementAttempted = true;
+							bPendingArenaFrameworkBossSpawn = false;
+							RefuseSevarogFrameworkArenaRoute(World, TEXT("FrameworkProfileMissing"), TEXT("FrameworkBossProfile could not be loaded"));
+							return;
+						}
+						const double TargetHealthValue = static_cast<double>(FrameworkProfile->TargetHealth);
+						if (!FMath::IsFinite(TargetHealthValue) || TargetHealthValue <= 0.0)
+						{
+							World->GetTimerManager().ClearTimer(ArenaFrameworkBossRetryHandle);
+							bArenaFrameworkReplacementAttempted = true;
+							bPendingArenaFrameworkBossSpawn = false;
+							RefuseSevarogFrameworkArenaRoute(World, TEXT("TargetHealthInvalid"),
+								FString::Printf(TEXT("Profile TargetHealth %g is not finite and positive"), TargetHealthValue));
+							return;
+						}
+						double MaxBack = 0.0;
+						double CurrentBack = 0.0;
+						const bool bMaxWritten = RPGPack::WriteMaxAttribute(PlayerPawn, TEXT("Attribute.Health"), TargetHealthValue);
+						const bool bMaxVerified = bMaxWritten && RPGPack::ReadAttribute(PlayerPawn, TEXT("Attribute.Health"), true, MaxBack) && FMath::IsFinite(MaxBack) && FMath::IsNearlyEqual(MaxBack, TargetHealthValue);
+						const bool bCurrentWritten = bMaxVerified && RPGPack::WriteAttribute(PlayerPawn, TEXT("Attribute.Health"), TargetHealthValue);
+						const bool bCurrentVerified = bCurrentWritten && RPGPack::ReadAttribute(PlayerPawn, TEXT("Attribute.Health"), false, CurrentBack) && FMath::IsFinite(CurrentBack) && FMath::IsNearlyEqual(CurrentBack, TargetHealthValue);
+						if (!bMaxWritten || !bMaxVerified || !bCurrentWritten || !bCurrentVerified)
+						{
+							World->GetTimerManager().ClearTimer(ArenaFrameworkBossRetryHandle);
+							bArenaFrameworkReplacementAttempted = true;
+							bPendingArenaFrameworkBossSpawn = false;
+							RefuseSevarogFrameworkArenaRoute(World, TEXT("TargetHealthInitFailed"),
+								FString::Printf(TEXT("write_max=%d verify_max=%d max_back=%g write_cur=%d verify_cur=%d cur_back=%g target=%g"),
+									bMaxWritten ? 1 : 0, bMaxVerified ? 1 : 0, MaxBack, bCurrentWritten ? 1 : 0, bCurrentVerified ? 1 : 0, CurrentBack, TargetHealthValue));
+							return;
+						}
+						UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] arena_player_sentinel_initialized targetHealth=%g maxBack=%g curBack=%g profile=%s"),
+							TargetHealthValue, MaxBack, CurrentBack, *FrameworkProfile->GetName());
+						RPGPack::ReadAttributeDetailed(PlayerPawn, TEXT("Attribute.Health"), false, HealthDiag);
+						bPlayerHealthReady = (HealthDiag.Status == RPGPack::EAttributeReadStatus::Valid &&
+							FMath::IsFinite(HealthDiag.Value) && HealthDiag.Value > 0.0);
+					}
+					else if (HealthDiag.Status == RPGPack::EAttributeReadStatus::Valid &&
+						HealthDiag.Value == 0.0 && HealthDiag.bMaxValueReadable &&
+						FMath::IsFinite(HealthDiag.MaxValue) && HealthDiag.MaxValue < 999999.0)
+					{
+						// Player has 0 health with a non-sentinel authored/live maximum (e.g. 100): player is dead.
+						World->GetTimerManager().ClearTimer(ArenaFrameworkBossRetryHandle);
+						bArenaFrameworkReplacementAttempted = true;
+						bPendingArenaFrameworkBossSpawn = false;
+						RefuseSevarogFrameworkArenaRoute(World, TEXT("PlayerHealthDead"),
+							FString::Printf(TEXT("player health is 0 with non-sentinel max %g"), HealthDiag.MaxValue));
+						return;
+					}
+				}
+			}
+			break;
+		}
+	}
+	if (bLocalPackPlayerPossessed && bPlayerHealthReady)
+	{
+		World->GetTimerManager().ClearTimer(ArenaFrameworkBossRetryHandle);
+		ArenaFrameworkBossRetryCount = 0;
+		bArenaFrameworkReplacementAttempted = true;
+		bPendingArenaFrameworkBossSpawn = false;
+		const FString MaxHpStr = HealthDiag.bMaxValueReadable ? FString::Printf(TEXT("%g"), HealthDiag.MaxValue) : TEXT("unreadable");
+		const FString TagParamStr = HealthDiag.InputParamName.IsEmpty() ? TEXT("none") : HealthDiag.InputParamName;
+		UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] route=SevarogFrameworkArena outcome=PlayerHealthReady hp=%g max_hp=%s tag_bound=%d tag_param=%s style=%s comp=%s fn=%s prop=%s type=%s flags=0x%llx"),
+			HealthDiag.Value, *MaxHpStr, HealthDiag.bInputTagBound ? 1 : 0, *TagParamStr, *CombatStyleDiag,
+			*HealthDiag.ComponentClass, *HealthDiag.FunctionName, *HealthDiag.OutputParamName, *HealthDiag.OutputParamType,
+			static_cast<unsigned long long>(HealthDiag.OutputParamFlags));
+		SpawnFrameworkArenaBoss(World, PendingArenaFrameworkBossTransform, World->HasBegunPlay());
+		return;
+	}
+
+	constexpr int32 MaxPossessionRetries = 100; // 100 x 50 ms = bounded 5-second wait.
+	constexpr int32 MaxHealthRetries = 600;     // 600 x 50 ms = bounded 30-second wait for pack style and health.
+	const int32 MaxRetries = bLocalPackPlayerPossessed ? MaxHealthRetries : MaxPossessionRetries;
+	if (++ArenaFrameworkBossRetryCount > MaxRetries)
+	{
+		World->GetTimerManager().ClearTimer(ArenaFrameworkBossRetryHandle);
+		bArenaFrameworkReplacementAttempted = true;
+		bPendingArenaFrameworkBossSpawn = false;
+		const FString Census = BuildArenaCensusDiagnostic(World);
+		RefuseSevarogFrameworkArenaRoute(World, bLocalPackPlayerPossessed ? TEXT("PlayerHealthTimeout") : TEXT("PlayerPossessionTimeout"), Census);
+		return;
+	}
+	LastEncounterRoute = TEXT("SevarogFrameworkArena");
+	LastEncounterOutcome = bLocalPackPlayerPossessed ? TEXT("PendingArenaPlayerHealth") : TEXT("PendingArenaPlayerPossession");
+
+	FString HealthDiagnostic;
+	switch (HealthDiag.Status)
+	{
+	case RPGPack::EAttributeReadStatus::Valid:
+		HealthDiagnostic = FMath::IsFinite(HealthDiag.Value) ? FString::Printf(TEXT("hp=%g"), HealthDiag.Value) : TEXT("nonfinite");
+		break;
+	case RPGPack::EAttributeReadStatus::SchemaMismatch:
+		HealthDiagnostic = FString::Printf(TEXT("schema_mismatch(prop=%s,type=%s,flags=0x%llx)"),
+			*HealthDiag.OutputParamName, *HealthDiag.OutputParamType, static_cast<unsigned long long>(HealthDiag.OutputParamFlags));
+		break;
+	case RPGPack::EAttributeReadStatus::InvocationFailed:
+	default:
+		HealthDiagnostic = TEXT("unreadable");
+		break;
+	}
+
+	const FString MaxHpStr = HealthDiag.bMaxValueReadable ? FString::Printf(TEXT("%g"), HealthDiag.MaxValue) : TEXT("unreadable");
+	const FString TagParamStr = HealthDiag.InputParamName.IsEmpty() ? TEXT("none") : HealthDiag.InputParamName;
+
+	UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] route=SevarogFrameworkArena outcome=%s retry=%d health=%s max_hp=%s tag_bound=%d tag_param=%s style=%s comp=%s fn=%s prop=%s type=%s flags=0x%llx"),
+		*LastEncounterOutcome, ArenaFrameworkBossRetryCount, *HealthDiagnostic, *MaxHpStr,
+		HealthDiag.bInputTagBound ? 1 : 0, *TagParamStr, *CombatStyleDiag,
+		*HealthDiag.ComponentClass, *HealthDiag.FunctionName, *HealthDiag.OutputParamName, *HealthDiag.OutputParamType,
+		static_cast<unsigned long long>(HealthDiag.OutputParamFlags));
+	if (!World->GetTimerManager().IsTimerActive(ArenaFrameworkBossRetryHandle))
+	{
+		World->GetTimerManager().SetTimer(ArenaFrameworkBossRetryHandle,
+			FTimerDelegate::CreateUObject(this, &URPGPlayerMovesSubsystem::RetryPendingArenaFrameworkBoss), 0.05f, true);
+	}
+}
+
+void URPGPlayerMovesSubsystem::RetryPendingArenaFrameworkBoss()
+{
+	TrySpawnPendingArenaFrameworkBoss(GetWorld());
+}
+
+FString URPGPlayerMovesSubsystem::BuildArenaCensusDiagnostic(UWorld* World) const
+{
+	if (!World) { return TEXT("BossCount=0 PlayerCount=0 CompetingPackBossCount=0 BossClasses=<no-world>"); }
+	int32 BossCount = 0;
+	int32 CompetingPackBossCount = 0;
+	TArray<FString> BossClasses;
+	for (TActorIterator<APawn> It(World); It; ++It)
+	{
+		APawn* Pawn = *It;
+		if (!IsValid(Pawn) || Pawn->IsActorBeingDestroyed() || Pawn->IsPendingKillPending()
+			|| Pawn->Tags.Contains(TEXT("ArenaRoute.Suppressed"))) { continue; }
+		if (Pawn->IsA<ARPGFrameworkBossCharacter>())
+		{
+			++BossCount;
+			BossClasses.Add(Pawn->GetClass()->GetPathName());
+		}
+		else if (IsPackBoss(Pawn))
+		{
+			++CompetingPackBossCount;
+			BossClasses.Add(Pawn->GetClass()->GetPathName());
+		}
+	}
+	int32 PlayerCount = 0;
+	for (TActorIterator<APlayerController> It(World); It; ++It)
+	{
+		APlayerController* Controller = *It;
+		if (IsValid(Controller) && Controller->IsLocalController() && IsPackPlayer(Controller->GetPawn())) { ++PlayerCount; }
+	}
+	BossClasses.Sort();
+	return FString::Printf(TEXT("BossCount=%d PlayerCount=%d CompetingPackBossCount=%d BossClasses=%s"),
+		BossCount, PlayerCount, CompetingPackBossCount,
+		BossClasses.IsEmpty() ? TEXT("<none>") : *FString::Join(BossClasses, TEXT(",")));
+}
+
+void URPGPlayerMovesSubsystem::SuppressArenaBoss(AActor* PackBoss)
+{
+	if (!IsValid(PackBoss)) { return; }
+	bool bPackMontageActive = false;
+	TInlineComponentArray<USkeletalMeshComponent*> Meshes(PackBoss);
+	for (USkeletalMeshComponent* Mesh : Meshes)
+	{
+		if (Mesh && Mesh->GetAnimInstance() && Mesh->GetAnimInstance()->IsAnyMontagePlaying()) { bPackMontageActive = true; break; }
+	}
+	// Stop any pack AI work before destroying the actor. This is not a counter of task ticks;
+	// raw BehaviorTree attack-task execution remains uninstrumented until an actual task hook exists.
+	if (AAIController* AI = Cast<AAIController>(Cast<APawn>(PackBoss) ? Cast<APawn>(PackBoss)->GetController() : nullptr))
+	{
+		AI->StopMovement();
+		if (UBrainComponent* Brain = AI->GetBrainComponent())
+		{
+			Brain->StopLogic(TEXT("Sevarog framework arena route"));
+		}
+	}
+	UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] arena_pack_boss_suppressed actor=%s began_play=%d montage_active=%d"),
+		*PackBoss->GetName(), PackBoss->HasActorBegunPlay() ? 1 : 0, bPackMontageActive ? 1 : 0);
+	PackBoss->SetActorTickEnabled(false);
+	PackBoss->SetActorEnableCollision(false);
+	TInlineComponentArray<UActorComponent*> Components(PackBoss);
+	for (UActorComponent* Component : Components) { if (IsValid(Component)) { Component->SetComponentTickEnabled(false); } }
+	PackBoss->Destroy();
+}
+
+void URPGPlayerMovesSubsystem::ReplaceSuppressedArenaBoss(AActor* PackBoss)
+{
+	UWorld* World = GetWorld();
+	if (!IsValid(PackBoss) || !World || !IsSevarogFrameworkArenaRouteEnabled()) { return; }
+	if (bArenaFrameworkReplacementAttempted || bPendingArenaFrameworkBossSpawn)
+	{
+		SuppressArenaBoss(PackBoss);
+		return;
+	}
+	FTransform SpawnTransform = PackBoss->GetActorTransform();
+	if (const FTransform* Recorded = SuppressedArenaBossTransforms.Find(PackBoss)) { SpawnTransform = *Recorded; }
+	SuppressedArenaBossTransforms.Remove(PackBoss);
+	UGameInstance* GameInstance = World->GetGameInstance();
+	URPGEncounterSelectionSubsystem* Selection = GameInstance ? GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>() : nullptr;
+	URPGBossEncounterDefinition* Definition = nullptr;
+	FString Error;
+	const bool bDefinitionReady = ResolveSevarogFrameworkArenaDefinition(Selection, Definition, Error);
+	SuppressArenaBoss(PackBoss);
+	if (!bDefinitionReady)
+	{
+		bArenaFrameworkReplacementAttempted = true;
+		RefuseSevarogFrameworkArenaRoute(World, TEXT("DefinitionInvalid"), Error);
+		LogArenaPackBossHudCount(World, TEXT("refused"));
+		return;
+	}
+	bPendingArenaFrameworkBossSpawn = true;
+	PendingArenaFrameworkBossTransform = SpawnTransform;
+	TrySpawnPendingArenaFrameworkBoss(World);
+}
+
+void URPGPlayerMovesSubsystem::SpawnFrameworkArenaBoss(UWorld* World, const FTransform& SpawnTransform, bool bWorldHasBegunPlay)
+{
+	if (!World || !IsSevarogFrameworkArenaRouteEnabled()) { return; }
+	UGameInstance* GameInstance = World->GetGameInstance();
+	URPGEncounterSelectionSubsystem* Selection = GameInstance ? GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>() : nullptr;
+	URPGBossEncounterDefinition* Definition = nullptr;
+	FString Error;
+	if ((!bWorldHasBegunPlay && !World->AreActorsInitialized()) || !ResolveSevarogFrameworkArenaDefinition(Selection, Definition, Error))
+	{
+		RefuseSevarogFrameworkArenaRoute(World, TEXT("DefinitionInvalid"), Error.IsEmpty() ? TEXT("route requires initialized world actors") : Error);
+		LogArenaPackBossHudCount(World, TEXT("refused"));
+		return;
+	}
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParameters.bDeferConstruction = true;
+	ARPGFrameworkBossCharacter* Boss = World->SpawnActor<ARPGFrameworkBossCharacter>(ARPGFrameworkBossCharacter::StaticClass(), SpawnTransform, SpawnParameters);
+	if (!IsValid(Boss))
+	{
+		RefuseSevarogFrameworkArenaRoute(World, TEXT("FrameworkBossSpawnFailed"), TEXT("SpawnActor returned null"));
+		LogArenaPackBossHudCount(World, TEXT("spawn_failed"));
+		return;
+	}
+
+	// BT-21: Bind selected FrameworkBossProfile mesh and animation class to deferred framework boss before production preflight.
+	URPGBossFrameworkProfile* FrameworkProfile = Definition->FrameworkBossProfile.LoadSynchronous();
+	if (!IsValid(FrameworkProfile))
+	{
+		Boss->Destroy();
+		RefuseSevarogFrameworkArenaRoute(World, TEXT("FrameworkProfileMissing"), TEXT("FrameworkBossProfile could not be synchronously loaded"));
+		LogArenaPackBossHudCount(World, TEXT("profile_missing"));
+		return;
+	}
+	USkeletalMesh* ProfileMesh = FrameworkProfile->Mesh.LoadSynchronous();
+	if (!IsValid(ProfileMesh))
+	{
+		Boss->Destroy();
+		RefuseSevarogFrameworkArenaRoute(World, TEXT("FrameworkMeshMissing"), TEXT("FrameworkBossProfile.Mesh could not be synchronously loaded"));
+		LogArenaPackBossHudCount(World, TEXT("mesh_missing"));
+		return;
+	}
+	if (USkeletalMeshComponent* MeshComponent = Boss->GetMesh())
+	{
+		MeshComponent->SetSkeletalMesh(ProfileMesh);
+		MeshComponent->SetRelativeTransform(FrameworkProfile->MeshRelativeTransform);
+		if (!FrameworkProfile->AnimClass.IsNull())
+		{
+			UClass* ProfileAnimClass = FrameworkProfile->AnimClass.LoadSynchronous();
+			if (!ProfileAnimClass)
+			{
+				Boss->Destroy();
+				RefuseSevarogFrameworkArenaRoute(World, TEXT("FrameworkAnimClassMissing"), TEXT("FrameworkBossProfile.AnimClass could not be synchronously loaded"));
+				LogArenaPackBossHudCount(World, TEXT("animclass_missing"));
+				return;
+			}
+			MeshComponent->SetAnimInstanceClass(ProfileAnimClass);
+		}
+	}
+	ARPGEncounterBinding* Binding = nullptr;
+	TArray<RPGBossWorldInputCompiler::FSelection> Selections;
+	if (!Selection || !Selection->BuildWorldBindingForRebind(*World, 1, 0, Binding, Selections, Error) || !IsValid(Binding))
+	{
+		const FString Census = BuildArenaCensusDiagnostic(World);
+		if (IsValid(Binding)) { Binding->Destroy(); }
+		Boss->Destroy();
+		const FString Detail = FString::Printf(TEXT("%s %s"), Error.IsEmpty() ? TEXT("EncounterActivation.ArenaCensus") : *Error, *Census);
+		RefuseSevarogFrameworkArenaRoute(World, TEXT("BindingFailed"), Detail);
+		return;
+	}
+	int32 FrameworkBossCountAtBinding = 0;
+	int32 PackBossCountAtBinding = 0;
+	for (TActorIterator<APawn> It(World); It; ++It)
+	{
+		if ((*It)->Tags.Contains(TEXT("ArenaRoute.Suppressed"))) { continue; }
+		if (Cast<ARPGFrameworkBossCharacter>(*It)) { ++FrameworkBossCountAtBinding; }
+		else if (IsPackBoss(*It)) { ++PackBossCountAtBinding; }
+	}
+	UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] arena_binding framework=%d pack=%d generation=%llu"),
+		FrameworkBossCountAtBinding, PackBossCountAtBinding, static_cast<unsigned long long>(Binding->ParticipantGeneration));
+	APawn* Player = nullptr;
+	bool bBossIsSelectedParticipant = false;
+	for (const FRPGPlacedParticipantBinding& Participant : Binding->Participants)
+	{
+		if (Definition && Participant.Slot == Definition->BossSlot && Participant.Actor.Get() == Boss) { bBossIsSelectedParticipant = true; }
+		if (Definition && Participant.Slot == Definition->PlayerSlot) { Player = Cast<APawn>(Participant.Actor); }
+	}
+	if (!Definition || !Definition->bUseFrameworkBoss || !bBossIsSelectedParticipant || !IsValid(Player))
+	{
+		Binding->Destroy();
+		Boss->Destroy();
+		RefuseSevarogFrameworkArenaRoute(World, TEXT("ParticipantValidationFailed"), Error.IsEmpty() ? TEXT("EncounterActivation.ArenaParticipants") : Error);
+		return;
+	}
+	FRPGWorldActivationResult Attempt = RPGBossActivation::ActivateWorldForRebind(World, Binding, Selections,
+		Definition->StableManifestHash, Binding->ParticipantGeneration);
+	if (!Attempt.Succeeded()
+		|| !Boss->InitializeSelectedEncounter(*Binding, Player, Error))
+	{
+		if (Error.IsEmpty()) { Error = Attempt.Errors.IsEmpty() ? TEXT("EncounterActivation.ArenaFrameworkInitialization") : FString::Join(Attempt.Errors, TEXT("; ")); }
+		const FRPGPreparationAbortReport Release = Attempt.ReleaseForRebind();
+		if (!Release.Errors.IsEmpty()) { Error += TEXT("; cleanup: ") + FString::Join(Release.Errors, TEXT("; ")); }
+		Binding->Destroy();
+		Boss->Destroy();
+		RefuseSevarogFrameworkArenaRoute(World, TEXT("FrameworkInitializationFailed"), Error);
+		return;
+	}
+	if (!Boss->FindComponentByClass<URPGBossHud>()) { NewObject<URPGBossHud>(Boss, TEXT("RPGBossHud"))->RegisterComponent(); }
+	if (!Boss->FindComponentByClass<URPGBossMusic>())
+	{
+		URPGBossMusic* Music = NewObject<URPGBossMusic>(Boss, TEXT("RPGBossMusic"));
+		Music->Music = LoadObject<USoundBase>(nullptr, TEXT("/Game/OneBossFight/Audio/MX_Boss01_Phase1.MX_Boss01_Phase1"), nullptr, LOAD_NoWarn);
+		if (!Music->Music) { Music->Music = LoadObject<USoundBase>(nullptr, TEXT("/Game/StarterContent/Audio/Starter_Music_Cue.Starter_Music_Cue")); }
+		Music->PhaseTwoMusic = LoadObject<USoundBase>(nullptr, TEXT("/Game/OneBossFight/Audio/MX_Boss01_Phase2.MX_Boss01_Phase2"), nullptr, LOAD_NoWarn);
+		Music->RegisterComponent();
+	}
+	Boss->FinishSpawning(SpawnTransform);
+	LastEncounterRoute = TEXT("data");
+	LastEncounterOutcome = TEXT("Activated");
+	LastEncounterReason.Reset();
+	LastEncounterManifestHash = Definition->StableManifestHash;
+	ActiveTransientBinding = Binding;
+	ActiveDataActivation = MoveTemp(Attempt);
+	ActiveSelectionDefinition = Definition;
+	ActiveManifestHash = Definition->StableManifestHash;
+	ActiveEncounterInstance = Binding->EncounterInstance;
+	ActiveBossSlot = Definition->BossSlot;
+	ActivePlayerSlot = Definition->PlayerSlot;
+	ActiveBossPhase = Definition->InitialBossPhase;
+	ActiveBossDefinitionPath = Definition->BossDefinition.ToSoftObjectPath();
+	ActivePlayerDefinitionPath = Definition->PlayerDefinition.ToSoftObjectPath();
+	LastAcceptedParticipantGeneration = Binding->ParticipantGeneration;
+	UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] route=SevarogFrameworkArena outcome=Activated boss=%s player=%s generation=%llu"),
+		*Boss->GetClass()->GetPathName(), *Player->GetClass()->GetPathName(), static_cast<unsigned long long>(Binding->ParticipantGeneration));
+	LogArenaPackBossHudCount(World, TEXT("replacement_complete"));
 }
 
 void URPGPlayerMovesSubsystem::ReplacePackPlayerWithGreystoneForTest(TWeakObjectPtr<APawn> SpawnedPackPawn)
@@ -982,6 +1573,7 @@ void URPGPlayerMovesSubsystem::Attach(AActor* Pawn)
 void URPGPlayerMovesSubsystem::AttachBossDiagnostics(AActor* Pawn) const
 {
 	if (!IsPackBoss(Pawn)) return;
+	if (Pawn->Tags.Contains(TEXT("ArenaRoute.Suppressed"))) return; // C-1632: the suppressed arena pack boss gets no diagnostics
 	// Lead fix C-1150: the pack parry observer was only attached by AttachLegacyBossBundle, so the data route (the shipped
 	// game) never had it. AttachBossDiagnostics runs on both routes; the FindComponent guard keeps the legacy attach unique.
 	if (!Pawn->FindComponentByClass<URPGPackParryContact>())
@@ -1145,36 +1737,57 @@ void URPGPlayerMovesSubsystem::ReportActivationFailure(UWorld* World, const FStr
 
 void URPGPlayerMovesSubsystem::ApplyDefaultDataSelection()
 {
-	if (!bDefaultToDataStartup || DefaultEncounterDefinition.IsEmpty())
-	{
-		return;
-	}
 	UWorld* World = GetWorld();
+	const bool bArenaRoute = IsSevarogFrameworkArenaRouteEnabled();
+	if (!World || (!bArenaRoute && (!bDefaultToDataStartup || DefaultEncounterDefinition.IsEmpty()))) { return; }
 	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
 	URPGEncounterSelectionSubsystem* Selection = GameInstance ? GameInstance->GetSubsystem<URPGEncounterSelectionSubsystem>() : nullptr;
-	if (!Selection || Selection->HasSelectionRequest())
+	if (!Selection)
 	{
-		return; // an explicit selection (setter, benchmark or console path) always wins
-	}
-	if (UWorld::RemovePIEPrefix(World->GetMapName()) != DefaultEncounterMap)
-	{
+		if (bArenaRoute) { RefuseSevarogFrameworkArenaRoute(World, TEXT("SelectionSubsystemUnavailable"), TEXT("no encounter selection subsystem")); }
 		return;
 	}
+	if (bArenaRoute && Selection->HasSelectionRequest())
+	{
+		URPGBossEncounterDefinition* ExistingDefinition = nullptr;
+		FString ExistingError;
+		if (!ResolveSevarogFrameworkArenaDefinition(Selection, ExistingDefinition, ExistingError))
+		{
+			RefuseSevarogFrameworkArenaRoute(World, TEXT("ExplicitDefinitionInvalid"), ExistingError);
+		}
+		return; // explicit selections still win, but the enabled arena route never falls back to the pack
+	}
+	if (Selection->HasSelectionRequest()) { return; }
+	if (!bArenaRoute && UWorld::RemovePIEPrefix(World->GetMapName()) != DefaultEncounterMap) { return; }
 #if !UE_BUILD_SHIPPING
-	if (FParse::Param(FCommandLine::Get(), TEXT("RPGLegacyStartup")) || FPlatformMisc::GetEnvironmentVariable(TEXT("RPG_LEGACY_STARTUP")) == TEXT("1"))
+	if (!bArenaRoute && (FParse::Param(FCommandLine::Get(), TEXT("RPGLegacyStartup")) || FPlatformMisc::GetEnvironmentVariable(TEXT("RPG_LEGACY_STARTUP")) == TEXT("1")))
 	{
 		UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] default data startup skipped: legacy startup requested (-RPGLegacyStartup or RPG_LEGACY_STARTUP=1)"));
 		return;
 	}
 #endif
-	URPGBossEncounterDefinition* Definition = Cast<URPGBossEncounterDefinition>(FSoftObjectPath(DefaultEncounterDefinition).TryLoad());
+	const FString RequestedDefinitionPath = bArenaRoute && !SevarogFrameworkRouteDefinition.IsEmpty()
+		? SevarogFrameworkRouteDefinition : DefaultEncounterDefinition;
+	URPGBossEncounterDefinition* Definition = Cast<URPGBossEncounterDefinition>(FSoftObjectPath(RequestedDefinitionPath).TryLoad());
 	if (!Definition)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[EncounterActivation] default data startup: %s did not load, the legacy route stays in place"), *DefaultEncounterDefinition);
+		if (bArenaRoute) { RefuseSevarogFrameworkArenaRoute(World, TEXT("DefinitionLoadFailed"), RequestedDefinitionPath); }
+		else { UE_LOG(LogTemp, Warning, TEXT("[EncounterActivation] default data startup: %s did not load, the legacy route stays in place"), *RequestedDefinitionPath); }
 		return;
 	}
+	if (bArenaRoute)
+	{
+		FString DefinitionError;
+		if (!Definition->bUseFrameworkBoss || !Definition->ValidateSelectionRecord(DefinitionError)
+			|| !Definition->BossDefinition.LoadSynchronous() || !Definition->PlayerDefinition.LoadSynchronous()
+			|| !Definition->FrameworkBossProfile.LoadSynchronous())
+		{
+			RefuseSevarogFrameworkArenaRoute(World, TEXT("DefinitionInvalid"), DefinitionError.IsEmpty() ? RequestedDefinitionPath : DefinitionError);
+			return;
+		}
+	}
 	Selection->SetSelectedDefinition(Definition);
-	UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] default data startup: selected %s for map %s"), *DefaultEncounterDefinition, *DefaultEncounterMap);
+	UE_LOG(LogTemp, Display, TEXT("[EncounterActivation] default data startup: selected %s for map %s"), *RequestedDefinitionPath, *DefaultEncounterMap);
 }
 
 bool URPGPlayerMovesSubsystem::ActivateDeferredSelectionForTest()

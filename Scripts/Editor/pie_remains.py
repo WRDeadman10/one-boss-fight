@@ -1,10 +1,13 @@
 """Death-remains driver: kill through debug_kill_boss (health 0 and the pack's Ability.Dead, the path pie_boss_death uses; a single injected light attack is not reliable here: the boss has to be fully awake first), wait for the pack to destroy the boss, verify the statue forms, then retry. Log prefix [Remains]."""
 import os
 import unreal
+from pie_driver_support import FinalResult, MappingReadinessGate
 
 log = lambda text: unreal.log("[Remains] " + text)
-state = {"phase": "start", "time": 0.0, "checks": [], "world": None, "released": False}
+state = {"phase": "start", "time": 0.0, "checks": [], "world": None, "released": False,
+         "done": False, "retry_mapping_gate": MappingReadinessGate(5.0)}
 handle = None
+FINAL_RESULT = FinalResult(log, "pie_remains")
 
 
 def check(name, passed, detail=""):
@@ -33,14 +36,26 @@ def tags(*names):
     return value
 
 
-def finish():
+def finish(reason="completed"):
     global handle
-    if handle:
+    if state["done"]:
+        return
+    state["done"] = True
+    if handle is not None:
         unreal.unregister_slate_post_tick_callback(handle)
         handle = None
+    try:
+        world = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
+        controller = unreal.GameplayStatics.get_player_controller(world, 0) if world else None
+        if controller and state.get("retry_pressed") and not state["released"]:
+            unreal.RPGInputTestUtils.set_key_down(controller, "R", False)
+    except Exception:
+        pass
+    passed = bool(state["checks"]) and all(state["checks"]) and reason == "completed"
+    FINAL_RESULT.emit(passed, reason, checks=len(state["checks"]), passed=sum(bool(x) for x in state["checks"]))
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
     passed = sum(1 for value in state["checks"] if value)
-    log("RESULT %d/%d passed" % (passed, len(state["checks"])))
+    log("SUMMARY checks_passed=%d checks_total=%d" % (passed, len(state["checks"])))
 
 
 def tick(delta):
@@ -97,28 +112,48 @@ def tick(delta):
             if statues and (statues[0].is_fully_formed() or state["time"] > 3.5):
                 statue = statues[0]
                 check("R3 remains reaches Dissolve 1.0", statue.is_fully_formed() and statue.get_dissolve() >= 0.999, "%.3f" % statue.get_dissolve())
-                unreal.RPGInputTestUtils.set_key_down(controller, "R", True)
-                state.update(phase="retry", time=0.0)
+                state.update(phase="retry_mapping", time=0.0)
             elif state["time"] > 5.0:
                 check("R3 remains reaches Dissolve 1.0", False, "no formed remains")
-                unreal.RPGInputTestUtils.set_key_down(controller, "R", True)
+                state.update(phase="retry_mapping", time=0.0)
+            return
+
+        if state["phase"] == "retry_mapping":
+            timing = component(pawn, "RPGDodgeTiming")
+            status = state["retry_mapping_gate"].poll(
+                delta, lambda: bool(timing and timing.is_elden_ring_input_active()))
+            if status in ("ready", "timeout", "readiness_error", "invalid_delta"):
+                log("mapping_readiness=%s waited_s=%.3f" %
+                    (status, state["retry_mapping_gate"].elapsed))
+                if status != "ready":
+                    check("R4 retry mapping becomes ready before key press", False, status)
+                    finish("input mapping " + status)
+                    return
+                if not unreal.RPGInputTestUtils.set_key_down(controller, "R", True):
+                    check("R4 retry key press is accepted", False, "R press refused")
+                    finish("retry key press refused")
+                    return
+                state["retry_pressed"] = True
                 state.update(phase="retry", time=0.0)
             return
 
         if state["phase"] == "retry":
             if not state["released"] and state["time"] >= 0.15:
-                unreal.RPGInputTestUtils.set_key_down(controller, "R", False)
+                if not unreal.RPGInputTestUtils.set_key_down(controller, "R", False):
+                    check("R4 retry key release is accepted", False, "R release refused")
+                    finish("retry key release refused")
+                    return
                 state["released"] = True
             if str(world) != state["world"]:
                 check("R4 retry resets the level with no remains actor", len(statues) == 0, str(len(statues)))
-                finish()
+                finish("completed")
             elif state["time"] > 12.0:
                 check("R4 retry resets the level with no remains actor", False, "level did not reload")
-                finish()
+                finish("retry timeout")
     except Exception:
         import traceback
         check("driver did not raise", False, traceback.format_exc())
-        finish()
+        finish("driver exception")
 
 
 handle = unreal.register_slate_post_tick_callback(tick)

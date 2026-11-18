@@ -6,6 +6,7 @@ and ends PIE. Run only when the Lead has handed over the Editor.
 Log prefix [SevarogFrames]; stop marker "[SevarogFrames] finished:".
 """
 import os
+import re
 import sys
 import time
 import traceback
@@ -40,6 +41,12 @@ CLIPS = (
     "Subjugation",
     "Soul_Siphon",
 )
+# C-1271 Lead: optional comma-separated override (e.g. SEVAROG_CLIPS=Stun_Start,Stun_Loop) for extra capture sets;
+# names must be bare sequence names under ANIM_ROOT. Unset keeps the original eight clips.
+_override = os.environ.get("SEVAROG_CLIPS", "").strip()
+if _override:
+    # '+' or ',' separate names (RunLeadPie.ps1 -Env splits on commas, so use '+' there).
+    CLIPS = tuple(n.strip() for n in re.split(r"[,+]", _override) if re.fullmatch(r"[A-Za-z0-9_]+", n.strip()))
 
 STATE = {
     "world_requested": False,

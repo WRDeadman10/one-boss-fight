@@ -6,7 +6,7 @@
   "definition_target": "/Game/OneBossFight/Data/Sevarog/DA_Boss_Sevarog_Draft (Stats, Phases[Phase_1]) for DA_Sevarog_Framework_Encounter",
   "decision_request": "X-1991",
   "prepared_by": "C (implementer), BK-76..80, assigned in X-1996, 2026-11-11",
-  "warning": "PENDING provenance record only. Not authoring evidence, not asset data, not an approval. Do not author from it.",
+  "warning": "Historical PENDING-only provenance snapshot. The later owner approval is separately recorded in DECISIONS.md O1 / Claude mailbox C-1619 and Scripts/Editor/sevarog_o1_inputs.json. This pending record remains non-executable and is not the authoring source.",
   "rows": [
     {
       "field_path": "Stats.MaxHealth",
@@ -23,7 +23,7 @@
         {
           "path": "Documentation/DECISIONS.md",
           "scope": "excerpt",
-          "line": 249,
+          "line": 253,
           "excerpt": "| Data | `SevarogEnemyInfo`: 1500 health, 100 poise (poise gate from stage 4 applies), attack 35, 1000 souls, behaviour tree `BT_ExampleBoss`, name \"Sevarog\" |",
           "sha256": "58c514815327d254cafa287908a6d228808ce9a23bd666cc10ce5314c9258c51"
         }
@@ -45,7 +45,7 @@
         {
           "path": "Documentation/DECISIONS.md",
           "scope": "excerpt",
-          "line": 249,
+          "line": 253,
           "excerpt": "| Data | `SevarogEnemyInfo`: 1500 health, 100 poise (poise gate from stage 4 applies), attack 35, 1000 souls, behaviour tree `BT_ExampleBoss`, name \"Sevarog\" |",
           "sha256": "58c514815327d254cafa287908a6d228808ce9a23bd666cc10ce5314c9258c51"
         }
@@ -128,7 +128,7 @@
         {
           "path": "Scripts/Editor/author_framework_encounter_definition.py",
           "scope": "excerpt",
-          "line": 15,
+          "line": 19,
           "excerpt": "PHASE = \"Phase_1\"  # Native selector's authored first phase (RPGFrameworkBossCharacter.h).",
           "sha256": "6a73596807caeed4015657aef1bcbb40400a84557fa4b63709a9784722d3dd98"
         },

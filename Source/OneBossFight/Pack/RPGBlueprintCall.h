@@ -130,20 +130,94 @@ namespace RPGPack
 		return CallBlueprintFunction(Target, Function, Fill, Read);
 	}
 
-	inline void SetTag(UFunction& Function, uint8* Params, const TCHAR* ParamName, const FGameplayTag& Tag)
+	inline FString GetPropertyTypeName(const FProperty* Prop)
 	{
-		if (const FStructProperty* Prop = CastField<FStructProperty>(Function.FindPropertyByName(ParamName)))
+		if (!Prop)
 		{
-			*Prop->ContainerPtrToValuePtr<FGameplayTag>(Params) = Tag;
+			return TEXT("<none>");
 		}
+		if (const FStructProperty* StructProp = CastField<FStructProperty>(Prop))
+		{
+			return StructProp->Struct ? StructProp->Struct->GetName() : TEXT("FStructProperty");
+		}
+		return Prop->GetCPPType(nullptr, 0);
+	}
+
+	inline bool SetTag(UFunction& Function, uint8* Params, const TCHAR* ParamName, const FGameplayTag& Tag, FString* OutParamName = nullptr, FString* OutParamType = nullptr)
+	{
+		const FProperty* Found = Function.FindPropertyByName(ParamName);
+		if (Found)
+		{
+			if (const FStructProperty* StructProp = CastField<FStructProperty>(Found))
+			{
+				if (StructProp->HasAnyPropertyFlags(CPF_Parm) && !StructProp->HasAnyPropertyFlags(CPF_OutParm | CPF_ReturnParm) && StructProp->Struct == TBaseStructure<FGameplayTag>::Get())
+				{
+					if (OutParamName) { *OutParamName = StructProp->GetName(); }
+					if (OutParamType) { *OutParamType = GetPropertyTypeName(StructProp); }
+					*StructProp->ContainerPtrToValuePtr<FGameplayTag>(Params) = Tag;
+					return true;
+				}
+			}
+			if (OutParamName) { *OutParamName = Found->GetName(); }
+			if (OutParamType) { *OutParamType = GetPropertyTypeName(Found); }
+			return false;
+		}
+
+		// Fallback: search for input FGameplayTag parameters across the function; must find exactly one candidate
+		const FStructProperty* SingleCandidate = nullptr;
+		int32 CandidateCount = 0;
+		for (TFieldIterator<FProperty> It(&Function); It; ++It)
+		{
+			if (It->HasAnyPropertyFlags(CPF_Parm) && !It->HasAnyPropertyFlags(CPF_OutParm | CPF_ReturnParm))
+			{
+				if (const FStructProperty* StructProp = CastField<FStructProperty>(*It))
+				{
+					if (StructProp->Struct == TBaseStructure<FGameplayTag>::Get())
+					{
+						SingleCandidate = StructProp;
+						++CandidateCount;
+					}
+				}
+			}
+		}
+
+		if (CandidateCount == 1 && SingleCandidate)
+		{
+			if (OutParamName) { *OutParamName = SingleCandidate->GetName(); }
+			if (OutParamType) { *OutParamType = GetPropertyTypeName(SingleCandidate); }
+			*SingleCandidate->ContainerPtrToValuePtr<FGameplayTag>(Params) = Tag;
+			return true;
+		}
+
+		if (CandidateCount > 1)
+		{
+			if (OutParamName) { *OutParamName = TEXT("<ambiguous_multiple_gameplay_tag_params>"); }
+			if (OutParamType) { *OutParamType = TEXT("FGameplayTag"); }
+			return false;
+		}
+
+		if (OutParamName) { *OutParamName = TEXT("<none>"); }
+		if (OutParamType) { *OutParamType = TEXT("<none>"); }
+		return false;
 	}
 
 	inline double ReadNumber(UFunction& Function, uint8* Params, const TCHAR* ParamName)
 	{
 		if (const FNumericProperty* Prop = CastField<FNumericProperty>(Function.FindPropertyByName(ParamName)))
 		{
-			const void* Value = Prop->ContainerPtrToValuePtr<void>(Params);
-			return Prop->IsFloatingPoint() ? Prop->GetFloatingPointPropertyValue(Value) : static_cast<double>(Prop->GetSignedIntPropertyValue(Value));
+			if (Prop->HasAnyPropertyFlags(CPF_Parm) && Prop->HasAnyPropertyFlags(CPF_OutParm | CPF_ReturnParm))
+			{
+				const void* Value = Prop->ContainerPtrToValuePtr<void>(Params);
+				return Prop->IsFloatingPoint() ? Prop->GetFloatingPointPropertyValue(Value) : static_cast<double>(Prop->GetSignedIntPropertyValue(Value));
+			}
+		}
+		if (const FNumericProperty* RetProp = CastField<FNumericProperty>(Function.GetReturnProperty()))
+		{
+			if (RetProp->HasAnyPropertyFlags(CPF_Parm) && RetProp->HasAnyPropertyFlags(CPF_OutParm | CPF_ReturnParm))
+			{
+				const void* Value = RetProp->ContainerPtrToValuePtr<void>(Params);
+				return RetProp->IsFloatingPoint() ? RetProp->GetFloatingPointPropertyValue(Value) : static_cast<double>(RetProp->GetSignedIntPropertyValue(Value));
+			}
 		}
 		return 0.0;
 	}
@@ -206,27 +280,263 @@ namespace RPGPack
 		return bActive;
 	}
 
-	/** Reads a current attribute value from the pack's attribute component. */
-	inline bool ReadAttribute(const AActor* Actor, const TCHAR* AttributeTag, bool bMax, double& Value)
+	enum class EAttributeReadStatus : uint8
 	{
+		Valid,
+		InvocationFailed,
+		SchemaMismatch
+	};
+
+	struct FAttributeReadDiagnostic
+	{
+		EAttributeReadStatus Status = EAttributeReadStatus::InvocationFailed;
+		double Value = 0.0;
+		double MaxValue = 0.0;
+		bool bMaxValueReadable = false;
+		bool bInputTagBound = false;
+		FString InputParamName;
+		FString InputParamType;
+		FString ComponentClass;
+		FString FunctionName;
+		FString OutputParamName;
+		FString OutputParamType;
+		uint64 OutputParamFlags = 0;
+	};
+
+	/** Reads an attribute value from the pack's attribute component with detailed reflection schema validation. */
+	inline bool ReadAttributeDetailed(const AActor* Actor, const TCHAR* AttributeTag, bool bMax, FAttributeReadDiagnostic& OutDiagnostic)
+	{
+		OutDiagnostic = FAttributeReadDiagnostic();
+
 		// A boss with native health (the framework Sevarog) answers for itself: every boss-health reader sees it through here.
 		if (AttributeTag && FCString::Stricmp(AttributeTag, TEXT("Attribute.Health")) == 0)
 		{
 			if (const IRPGNativeBossHealth* Native = Cast<const IRPGNativeBossHealth>(Actor))
 			{
-				Value = 0.0;
-				return Native->ReadNativeHealth(bMax, Value);
+				OutDiagnostic.ComponentClass = TEXT("IRPGNativeBossHealth");
+				OutDiagnostic.FunctionName = TEXT("ReadNativeHealth");
+				OutDiagnostic.OutputParamName = TEXT("NativeHealth");
+				OutDiagnostic.OutputParamType = TEXT("double");
+				OutDiagnostic.bInputTagBound = false;
+				OutDiagnostic.InputParamName = TEXT("native_na");
+				OutDiagnostic.InputParamType = TEXT("native_na");
+				double NativeVal = 0.0;
+				if (Native->ReadNativeHealth(bMax, NativeVal))
+				{
+					OutDiagnostic.Status = EAttributeReadStatus::Valid;
+					OutDiagnostic.Value = NativeVal;
+					double NativeMaxVal = 0.0;
+					if (Native->ReadNativeHealth(true, NativeMaxVal))
+					{
+						OutDiagnostic.MaxValue = NativeMaxVal;
+						OutDiagnostic.bMaxValueReadable = true;
+					}
+					return true;
+				}
+				OutDiagnostic.Status = EAttributeReadStatus::InvocationFailed;
+				return false;
 			}
 		}
+
 		UObject* Attributes = FindCachedAttributesComponent(Actor);
 		const FGameplayTag Tag = FGameplayTag::RequestGameplayTag(FName(AttributeTag), false);
 		if (!Attributes || !Tag.IsValid())
 		{
+			OutDiagnostic.Status = EAttributeReadStatus::InvocationFailed;
+			if (Attributes)
+			{
+				OutDiagnostic.ComponentClass = Attributes->GetClass()->GetName();
+			}
 			return false;
 		}
+
+		OutDiagnostic.ComponentClass = Attributes->GetClass()->GetName();
+		const TCHAR* DesiredFuncName = bMax ? TEXT("GetMaxAttributeValue") : TEXT("Get Current Attribute Value");
+		UFunction* Function = FindCachedAttributeFunction(Actor, DesiredFuncName);
+		if (!Function)
+		{
+			OutDiagnostic.Status = EAttributeReadStatus::InvocationFailed;
+			return false;
+		}
+		OutDiagnostic.FunctionName = Function->GetName();
+
+		// Inspect function properties for the numeric output parameter (must be marked CPF_OutParm or CPF_ReturnParm)
+		auto IsNumericOutParam = [](const FProperty* Prop) -> const FNumericProperty*
+		{
+			if (Prop && Prop->HasAnyPropertyFlags(CPF_Parm) && Prop->HasAnyPropertyFlags(CPF_OutParm | CPF_ReturnParm))
+			{
+				return CastField<FNumericProperty>(Prop);
+			}
+			return nullptr;
+		};
+
+		const FProperty* CandidateProp = Function->FindPropertyByName(TEXT("Value"));
+		const FNumericProperty* NumericProp = IsNumericOutParam(CandidateProp);
+
+		if (!NumericProp)
+		{
+			const FProperty* RetProp = Function->GetReturnProperty();
+			if (const FNumericProperty* RetNumeric = IsNumericOutParam(RetProp))
+			{
+				CandidateProp = RetProp;
+				NumericProp = RetNumeric;
+			}
+		}
+
+		if (!NumericProp)
+		{
+			OutDiagnostic.Status = EAttributeReadStatus::SchemaMismatch;
+			if (!CandidateProp)
+			{
+				CandidateProp = Function->FindPropertyByName(TEXT("Value"));
+			}
+			if (!CandidateProp)
+			{
+				CandidateProp = Function->GetReturnProperty();
+			}
+			if (!CandidateProp)
+			{
+				for (TFieldIterator<FProperty> It(Function); It; ++It)
+				{
+					if (It->HasAnyPropertyFlags(CPF_Parm) && It->HasAnyPropertyFlags(CPF_OutParm | CPF_ReturnParm))
+					{
+						CandidateProp = *It;
+						break;
+					}
+				}
+			}
+			if (CandidateProp)
+			{
+				OutDiagnostic.OutputParamName = CandidateProp->GetName();
+				OutDiagnostic.OutputParamType = GetPropertyTypeName(CandidateProp);
+				OutDiagnostic.OutputParamFlags = CandidateProp->GetPropertyFlags();
+			}
+			UE_LOG(LogRPGPack, Warning, TEXT("ReadAttribute schema mismatch on %s::%s: function has no numeric 'Value' out-parameter or return-parameter (observed property '%s', flags=0x%llx)"),
+				*Attributes->GetClass()->GetName(), *Function->GetName(), CandidateProp ? *CandidateProp->GetName() : TEXT("<none>"),
+				CandidateProp ? static_cast<unsigned long long>(CandidateProp->GetPropertyFlags()) : 0ULL);
+			return false;
+		}
+
+		OutDiagnostic.OutputParamName = NumericProp->GetName();
+		OutDiagnostic.OutputParamType = GetPropertyTypeName(NumericProp);
+		OutDiagnostic.OutputParamFlags = NumericProp->GetPropertyFlags();
+
+		bool bTagBound = false;
+		double ExtractedValue = 0.0;
+		const bool bCalled = CallBlueprintFunction(Attributes, Function,
+			[&](UFunction& F, uint8* P)
+			{
+				bTagBound = SetTag(F, P, TEXT("AttributeTag"), Tag, &OutDiagnostic.InputParamName, &OutDiagnostic.InputParamType);
+			},
+			[&](UFunction& F, uint8* P)
+			{
+				const void* ContainerVal = NumericProp->ContainerPtrToValuePtr<void>(P);
+				ExtractedValue = NumericProp->IsFloatingPoint()
+					? NumericProp->GetFloatingPointPropertyValue(ContainerVal)
+					: static_cast<double>(NumericProp->GetSignedIntPropertyValue(ContainerVal));
+			});
+
+		OutDiagnostic.bInputTagBound = bTagBound;
+		if (!bTagBound)
+		{
+			OutDiagnostic.Status = EAttributeReadStatus::SchemaMismatch;
+			UE_LOG(LogRPGPack, Warning, TEXT("ReadAttribute schema mismatch on %s::%s: could not bind input tag '%s' (observed input param '%s', type '%s')"),
+				*Attributes->GetClass()->GetName(), *Function->GetName(), AttributeTag,
+				*OutDiagnostic.InputParamName, *OutDiagnostic.InputParamType);
+			return false;
+		}
+
+		if (!bCalled)
+		{
+			OutDiagnostic.Status = EAttributeReadStatus::InvocationFailed;
+			return false;
+		}
+
+		OutDiagnostic.Status = EAttributeReadStatus::Valid;
+		OutDiagnostic.Value = ExtractedValue;
+
+		if (bMax)
+		{
+			OutDiagnostic.MaxValue = ExtractedValue;
+			OutDiagnostic.bMaxValueReadable = true;
+		}
+		else
+		{
+			UFunction* MaxFunc = FindCachedAttributeFunction(Actor, TEXT("GetMaxAttributeValue"));
+			if (MaxFunc)
+			{
+				const FProperty* MaxCandidate = MaxFunc->FindPropertyByName(TEXT("Value"));
+				const FNumericProperty* MaxNumeric = IsNumericOutParam(MaxCandidate);
+				if (!MaxNumeric)
+				{
+					MaxNumeric = IsNumericOutParam(MaxFunc->GetReturnProperty());
+				}
+				if (MaxNumeric)
+				{
+					double MaxExtracted = 0.0;
+					bool bMaxTagBound = false;
+					const bool bMaxCalled = CallBlueprintFunction(Attributes, MaxFunc,
+						[&](UFunction& F, uint8* P)
+						{
+							bMaxTagBound = SetTag(F, P, TEXT("AttributeTag"), Tag);
+						},
+						[&](UFunction& F, uint8* P)
+						{
+							const void* ContainerVal = MaxNumeric->ContainerPtrToValuePtr<void>(P);
+							MaxExtracted = MaxNumeric->IsFloatingPoint()
+								? MaxNumeric->GetFloatingPointPropertyValue(ContainerVal)
+								: static_cast<double>(MaxNumeric->GetSignedIntPropertyValue(ContainerVal));
+						});
+					if (bMaxCalled && bMaxTagBound && FMath::IsFinite(MaxExtracted))
+					{
+						OutDiagnostic.MaxValue = MaxExtracted;
+						OutDiagnostic.bMaxValueReadable = true;
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+	/** Reads a current attribute value from the pack's attribute component. */
+	inline bool ReadAttribute(const AActor* Actor, const TCHAR* AttributeTag, bool bMax, double& Value)
+	{
+		FAttributeReadDiagnostic Diag;
+		const bool bOk = ReadAttributeDetailed(Actor, AttributeTag, bMax, Diag);
+		if (bOk && Diag.Status == EAttributeReadStatus::Valid)
+		{
+			Value = Diag.Value;
+			return true;
+		}
 		Value = 0.0;
-		return CallBlueprintFunction(Attributes, FindCachedAttributeFunction(Actor, bMax ? TEXT("GetMaxAttributeValue") : TEXT("Get Current Attribute Value")),
-			[&](UFunction& F, uint8* P) { SetTag(F, P, TEXT("AttributeTag"), Tag); }, [&](UFunction& F, uint8* P) { Value = ReadNumber(F, P, TEXT("Value")); });
+		return false;
+	}
+
+	/** Safely inspects the player's current combat style asset marker without mutation. */
+	inline FString GetPlayerCombatStyleDiagnostic(const AActor* PlayerPawn)
+	{
+		if (!PlayerPawn)
+		{
+			return TEXT("null_player");
+		}
+		const UObject* Combat = FindComponentByClassName(PlayerPawn, TEXT("BP_CombatComponent_C"));
+		if (!Combat)
+		{
+			return TEXT("no_combat_comp");
+		}
+		const FProperty* Prop = Combat->GetClass()->FindPropertyByName(FName(TEXT("CurrentCombatStyle")));
+		if (!Prop)
+		{
+			return TEXT("no_style_prop");
+		}
+		const FObjectProperty* ObjProp = CastField<FObjectProperty>(Prop);
+		if (!ObjProp)
+		{
+			return TEXT("style_not_object");
+		}
+		const UObject* Style = ObjProp->GetObjectPropertyValue(ObjProp->ContainerPtrToValuePtr<void>(Combat));
+		return Style ? Style->GetName() : TEXT("None");
 	}
 
 	inline bool WriteAttribute(const AActor* Actor, const TCHAR* AttributeTag, double Value)

@@ -20,7 +20,7 @@ $arms = @(
     @{ Name = 'wrong_class'; Definition = '/Game/OneBossFight/VFX/NS_Boss_ShockwaveRing.NS_Boss_ShockwaveRing' }
 )
 foreach ($arm in $arms) {
-    $args = @('/Game/OneBossFight/Levels/L_SevarogArena', '-nosound', '-log', '-RPGBenchmark', "-H019EncounterDefinition=$($arm.Definition)")
+    $args = @('/Game/OneBossFight/Maps/L_SevarogArena', '-nosound', '-log', '-RPGBenchmark', "-H019EncounterDefinition=$($arm.Definition)")
     if (-not $Execute) {
         Write-Output ("[DRY-RUN] {0} `"{1}`" {2}" -f $arm.Name, $resolved, ($args -join ' '))
         continue

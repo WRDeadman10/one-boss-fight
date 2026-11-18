@@ -159,7 +159,13 @@ bool ARPGFrameworkBossCharacter::InitializeProofInternal(ARPGFrameworkProofFixtu
         {Error=TEXT("Framework.Boss.TestTargetHealthInit");return false;}
     }
     Target=InTarget;TargetController=InTarget->GetController();ArenaOrigin=D->Profile->bArenaCenterAuthored?D->Profile->ArenaCenter:InTarget->GetActorLocation();
-    if(!ValidateTarget(TargetHPBefore)){Target.Reset();Error=TEXT("Framework.Boss.TargetHealth");return false;}
+    const FName InitialTargetFault=TargetFault(TargetHPBefore);
+    if(!InitialTargetFault.IsNone())
+    {
+        Target.Reset();
+        Error=FString::Printf(TEXT("Framework.Boss.TargetHealth[fault=%s,hp=%g]"),*InitialTargetFault.ToString(),TargetHPBefore);
+        return false;
+    }
     ExpectedTargetHP=TargetHPBefore;
     Dependencies=MoveTemp(D);ProofFixture=Fixture;bTestInitialized=bTestAuthorized;bSelectedRouteInitialized=bAllowSelectedRoute;EncounterId=Encounter;GenerationId=Generation;
     if(bSelectedRouteInitialized)

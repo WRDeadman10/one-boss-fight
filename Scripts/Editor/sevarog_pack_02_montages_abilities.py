@@ -211,7 +211,7 @@ if not ONLY_TOGGLE:
         react[key] = ability_montage(react[key], hitreact)
     cdo.set_editor_property("Hit React Montages", react)
     hs.modify()
-unreal.BlueprintEditorLibrary.compile_blueprint(hs)
+    unreal.BlueprintEditorLibrary.compile_blueprint(hs)
     unreal.EditorAssetLibrary.save_loaded_asset(hs, False)
     log("GA_Sev_HitStun directions = %d -> AM_Sevarog_HitReact" % len(list(react.keys())))
 

@@ -15,7 +15,11 @@ public class OneBossFightEditor : ModuleRules
 			"UnrealEd",
 			"Niagara",
 			"NiagaraEditor",
-			"AssetTools"
+			"AssetTools",
+			"AnimGraph",
+			"BlueprintGraph",
+			"IKRig",
+			"IKRigDeveloper"
 		});
 	}
 }

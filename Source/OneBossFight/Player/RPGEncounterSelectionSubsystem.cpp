@@ -217,7 +217,9 @@ bool URPGEncounterSelectionSubsystem::BuildWorldBindingInternal(UWorld& World, u
 		return false;
 	}
 	if (!Definition->ValidateSelectionRecord(OutError)) { RecordSelectionDiagnostic(OutError); return false; }
-	if (!RPGEncounterSelectionRules::AllowsFrameworkDefinition(Definition->bUseFrameworkBoss, GFrameworkEncounterSelection))
+	const URPGPlayerMovesSubsystem* Moves = World.GetSubsystem<URPGPlayerMovesSubsystem>();
+	const int32 FrameworkOptIn = GFrameworkEncounterSelection == 1 || (Moves && Moves->IsSevarogFrameworkArenaRouteEnabled()) ? 1 : 0;
+	if (!RPGEncounterSelectionRules::AllowsFrameworkDefinition(Definition->bUseFrameworkBoss, FrameworkOptIn))
 	{
 		OutError = TEXT("EncounterSelection.FrameworkOptInRequired");
 		RecordSelectionDiagnostic(OutError);
@@ -231,6 +233,7 @@ bool URPGEncounterSelectionSubsystem::BuildWorldBindingInternal(UWorld& World, u
 	{
 		APawn* Pawn = *It;
 		if (!IsValid(Pawn)) { continue; }
+		if (Pawn->Tags.Contains(TEXT("ArenaRoute.Suppressed"))) { continue; }
 		if (URPGPlayerMovesSubsystem::IsPackBoss(Pawn)) { ++CompetingPackBossCount; }
 		const bool bCandidate = Definition->bUseFrameworkBoss
 			? Pawn->IsA<ARPGFrameworkBossCharacter>()

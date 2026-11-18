@@ -5,21 +5,21 @@ Inspects all ARPGFireSource actors and lighting in L_SevarogArena.
 import unreal
 
 def inspect_braziers():
-    level_path = "/Game/OneBossFight/Levels/L_SevarogArena"
+    level_path = "/Game/OneBossFight/Maps/L_SevarogArena"
     unreal.EditorLevelLibrary.load_level(level_path)
-    
+
     world = unreal.EditorLevelLibrary.get_editor_world()
     actors = unreal.EditorLevelLibrary.get_all_level_actors()
-    
+
     fire_actors = []
     for a in actors:
         if a.get_class().get_name() == "RPGFireSource":
             fire_actors.append(a)
-            
+
     unreal.log(f"[BrazierAudit] Found {len(fire_actors)} RPGFireSource actors in {level_path}")
-    
+
     cardinals = ["BrazierFire_00", "BrazierFire_03", "BrazierFire_06", "BrazierFire_09"]
-    
+
     results = []
     for a in sorted(fire_actors, key=lambda x: x.get_actor_label()):
         label = a.get_actor_label()
@@ -28,7 +28,7 @@ def inspect_braziers():
         intensity = a.get_editor_property("BaseIntensity")
         color = a.get_editor_property("LightColor")
         loc = a.get_actor_location()
-        
+
         is_cardinal = any(c in label for c in cardinals)
         results.append({
             "label": label,

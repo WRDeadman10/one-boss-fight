@@ -13,6 +13,7 @@ device-latency measurement or standalone gameplay acceptance.
 import os
 import time
 import unreal
+from pie_driver_support import FinalResult, MappingReadinessGate
 
 LOG = "[ERAirReach] "
 MOVE_ACTION = "/Game/OneBossFight/Input/IA_Move"
@@ -32,11 +33,15 @@ CASES = [
 
 STATE = {"phase": "start", "elapsed": 0.0, "case": 0, "event": 0,
          "baseline": None, "held": set(), "handle": None,
-         "sample_elapsed": 0.0, "observed_montage": False}
+         "sample_elapsed": 0.0, "observed_montage": False,
+         "mapping_gate": MappingReadinessGate(5.0)}
 
 
 def log(message):
     unreal.log(LOG + str(message))
+
+
+FINAL_RESULT = FinalResult(log, "pie_er_air_reach")
 
 
 def component(actor, class_name):
@@ -77,11 +82,13 @@ def enter_combat_tag():
 
 def set_key(pc, key, down):
     if not unreal.RPGInputTestUtils.set_key_down(pc, key, down):
-        raise RuntimeError("SetKeyDown failed for " + key)
+        log("input_refused key=%s down=%s" % (key, down))
+        return False
     if down:
         STATE["held"].add(key)
     else:
         STATE["held"].discard(key)
+    return True
 
 
 def release_all(pc):
@@ -110,7 +117,8 @@ def finish(reason):
         release_all(pc)
     except Exception:
         STATE["held"].clear()
-    log("finished: " + reason)
+    FINAL_RESULT.emit(reason == "all reach cases recorded", reason,
+                      cases_recorded=STATE.get("case", 0))
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
 
 
@@ -196,18 +204,35 @@ def _tick(delta_seconds):
         return
 
     if STATE["phase"] == "settle":
-        if STATE["elapsed"] > 8.0:
-            STATE.update(phase="warmup", elapsed=0.0, warmup_pressed=False, warmup_released=False)
+        if STATE["elapsed"] > 12.0:
+            STATE.update(phase="mapping_ready", elapsed=0.0)
+        return
+
+    if STATE["phase"] == "mapping_ready":
+        timing = component(pawn, "RPGDodgeTiming")
+        status = STATE["mapping_gate"].poll(
+            delta_seconds, lambda: bool(timing and timing.is_elden_ring_input_active()))
+        if status in ("ready", "timeout", "readiness_error", "invalid_delta"):
+            log("mapping_readiness=%s waited_s=%.3f" % (status, STATE["mapping_gate"].elapsed))
+            if status != "ready":
+                finish("input mapping " + status)
+                return
+            STATE.update(phase="warmup", elapsed=0.0,
+                         warmup_pressed=False, warmup_released=False)
         return
 
     if STATE["phase"] == "warmup":
         if STATE["elapsed"] >= 0.5 and not STATE["warmup_pressed"]:
-            set_key(pc, "Gamepad_RightTrigger", True)
+            if not set_key(pc, "Gamepad_RightTrigger", True):
+                finish("input mapping refused warmup press")
+                return
             STATE["warmup_pressed"] = True
-        if STATE["elapsed"] >= 0.8 and not STATE["warmup_released"]:
-            set_key(pc, "Gamepad_RightTrigger", False)
+        if STATE["elapsed"] >= 1.2 and not STATE["warmup_released"]:
+            if not set_key(pc, "Gamepad_RightTrigger", False):
+                finish("input mapping refused warmup release")
+                return
             STATE["warmup_released"] = True
-        if STATE["elapsed"] > 3.0:
+        if STATE["elapsed"] > 3.7:
             timing = component(pawn, "RPGDodgeTiming")
             log("input_context_active=%s" % bool(timing and timing.is_elden_ring_input_active()))
             STATE.update(phase="arm", elapsed=0.0, case=0)
@@ -237,7 +262,9 @@ def _tick(delta_seconds):
         while STATE["event"] < len(events) and STATE["elapsed"] >= events[STATE["event"]][0]:
             event_index = STATE["event"]
             _, key, down = events[event_index]
-            set_key(pc, key, down)
+            if not set_key(pc, key, down):
+                finish("input mapping refused key event")
+                return
             if down and event_index == case.get("measure_event", 0):
                 STATE["press_real"] = time.perf_counter()
             STATE["event"] += 1

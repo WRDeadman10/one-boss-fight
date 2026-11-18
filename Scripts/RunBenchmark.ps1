@@ -16,7 +16,7 @@ param(
 	[string]$Label = 'run',
 	[int]$ResX = 1920,
 	[int]$ResY = 1080,
-	[string]$Map = '/Game/OneBossFight/Levels/L_SevarogArena',
+	[string]$Map = '/Game/OneBossFight/Maps/L_SevarogArena',
 	[switch]$Empty,   # empty-arena orbit camera instead of the full fight
 	[string]$ExtraArgs = '',
 	[switch]$KeepConfig,

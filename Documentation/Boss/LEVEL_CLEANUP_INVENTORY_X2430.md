@@ -45,3 +45,7 @@ Their companion `DA_Sevarog_*` proof profiles are separate assets and are not pa
 
 - `Content/OneBossFight/Levels/NewFolder` (X-2431) **does not exist on disk**. It was probably only a Content Browser virtual folder, so nothing needs removing.
 - Owner decisions needed: approve (a); decide on (b); confirm keeping `Levels/` as the maps folder.
+
+## Final disposition (X-2432, 2026-11-13)
+
+The earlier recommendation above was the read-only inventory recommendation before the owner directed the move and cleanup. The owner subsequently instructed that the latest play map be placed in `Maps/` and temporary maps removed. Completed: `L_SevarogArena` is now `/Game/OneBossFight/Maps/L_SevarogArena`; the former `Levels/` package is an Unreal redirector retained for references. The 20 maps listed above were deleted through Unreal's asset API in four batches of five. L_AssetProof, the 57 docs/evidence maps, and the 5 P35 census maps remain. Rollback copies and per-batch receipts are under `Saved/MapCleanupBackup_20261113/` and `Saved/MapCleanup/DeleteRun_20261113_114709/`. No build or PIE was run after relocation.

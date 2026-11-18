@@ -1,5 +1,8 @@
 """Author the isolated C-1257 Greystone ER player candidate.
 
+C-1286: the wrappers now wrap the *_Fit_GreystoneRM sequences (root motion on the root bone, C-1285 fix);
+the earlier *_Fit_Greystone sequences carried the root motion in the pelvis.
+
 Default mode is --dry-run: it validates source montage and retarget sequence
 readbacks without constructing montage USTRUCTs in Python. Pass --write only for the approved Lead-run authoring
 path. Write mode creates five new assets only under ALLOWLIST, saves then
@@ -27,7 +30,7 @@ WRITE_MODE = False
 MONTAGES = [
     {
         "source": "/Game/OneBossFight/Player/Animations/AM_ER_Backstep_Mixamo_V2",
-        "sequence": "/Game/OneBossFight/Player/FitTest/Greystone/AN_ER_Backstep_Mixamo_V2_Fit_Greystone",
+        "sequence": "/Game/OneBossFight/Player/FitTest/Greystone/AN_ER_Backstep_Mixamo_V2_Fit_GreystoneRM",
         "name": "AM_ER_Backstep_Mixamo_V2_Fit_Greystone",
         "field": "backstep_montage",
         "track_names": ["1", "2"],
@@ -36,7 +39,7 @@ MONTAGES = [
     },
     {
         "source": "/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Light",
-        "sequence": "/Game/OneBossFight/Player/FitTest/Greystone/AN_ER_Attack_Air_Light_Fit_Greystone",
+        "sequence": "/Game/OneBossFight/Player/FitTest/Greystone/AN_ER_Attack_Air_Light_Fit_GreystoneRM",
         "name": "AM_ER_Attack_Air_Light_Fit_Greystone",
         "field": "air_light_montage",
         "track_names": ["1", "2"],
@@ -47,7 +50,7 @@ MONTAGES = [
     },
     {
         "source": "/Game/OneBossFight/Player/Animations/AM_ER_Attack_Air_Heavy_Plunge",
-        "sequence": "/Game/OneBossFight/Player/FitTest/Greystone/AN_ER_Attack_Air_Heavy_Plunge_Fit_Greystone",
+        "sequence": "/Game/OneBossFight/Player/FitTest/Greystone/AN_ER_Attack_Air_Heavy_Plunge_Fit_GreystoneRM",
         "name": "AM_ER_Attack_Air_Heavy_Plunge_Fit_Greystone",
         "field": "air_heavy_montage",
         "track_names": ["1", "2", "3"],
@@ -59,7 +62,7 @@ MONTAGES = [
     },
     {
         "source": "/Game/OneBossFight/Player/Animations/AM_ER_Attack_GuardCounter",
-        "sequence": "/Game/OneBossFight/Player/FitTest/Greystone/AN_ER_Attack_GuardCounter_Fit_Greystone",
+        "sequence": "/Game/OneBossFight/Player/FitTest/Greystone/AN_ER_Attack_GuardCounter_Fit_GreystoneRM",
         "name": "AM_ER_Attack_GuardCounter_Fit_Greystone",
         "field": "guard_counter_montage",
         "track_names": ["1", "2", "3", "4", "5", "6", "7"],
@@ -93,8 +96,8 @@ CHILD_FIELDS = {
     "AirLightMontage": "air_light_montage",
     "AirHeavyMontage": "air_heavy_montage",
     "GuardCounterMontage": "guard_counter_montage",
-    "QuickMontage": "/Game/OneBossFight/GreystonePack/Characters/Heroes/Mannequins/Animations/Roll/Dodge_Small_Forward_Roll_Montage_Grey",
-    "FullMontage": "/Game/OneBossFight/GreystonePack/MeleeCombatSystem/Animations/Dodge/Dodge_To_Idle_Montage_Grey",
+    "QuickMontage": "/Game/OneBossFight/Player/Greystone/RootMotion/Montages/quick/Dodge_Small_Forward_Roll_Montage_Grey_RM",
+    "FullMontage": "/Game/OneBossFight/Player/Greystone/RootMotion/Montages/full/Dodge_To_Idle_Montage_Grey_RM",
 }
 EXPECTED = {
     "ANS_iFrames": (0.075, 0.343), "ANS_InputBuffer": (0.164, 0.351),

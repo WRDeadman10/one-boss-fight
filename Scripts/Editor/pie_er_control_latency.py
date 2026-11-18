@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(unreal.Paths.project_dir()) / "Scripts" / "Editor"))
 import pie_lead_common as plc
+from pie_driver_support import FinalResult, MappingReadinessGate
 
 LOG = "[ERControlLatency] "
 
@@ -39,12 +40,16 @@ CASES = [
 ]
 S = {"phase": "start", "elapsed": 0.0, "case": 0, "event": 0,
      "baseline": None, "last_position": None, "press_real": None,
-     "observed": False, "held": set(), "done": False}
+     "observed": False, "held": set(), "done": False,
+     "mapping_gate": MappingReadinessGate(5.0)}
 HANDLE = None
 
 
 def log(message):
     unreal.log(LOG + message)
+
+
+FINAL_RESULT = FinalResult(log, "pie_er_control_latency")
 
 
 comp = plc.component
@@ -53,12 +58,14 @@ player_montage = plc.player_montage
 
 def set_key(pc, key, down):
     ok = unreal.RPGInputTestUtils.set_key_down(pc, key, down)
+    if not ok:
+        log("input_refused key=%s down=%s" % (key, down))
+        return False
     if down:
         S["held"].add(key)
     else:
         S["held"].discard(key)
-    if not ok:
-        raise RuntimeError("SetKeyDown failed for " + key)
+    return True
 
 
 def release_all(pc):
@@ -73,10 +80,15 @@ def release_all(pc):
 
 def finish(reason):
     global HANDLE
+    if S["done"]:
+        return
+    S["done"] = True
     if HANDLE is not None:
         unreal.unregister_slate_post_tick_callback(HANDLE)
         HANDLE = None
     release_all(None)
+    FINAL_RESULT.emit(reason == "all control samples recorded", reason,
+                      samples_completed=S.get("case", 0), total_samples=len(CASES))
     plc.finished(log, reason)
 
 
@@ -139,12 +151,16 @@ def _tick(dt):
         drawn = bool(loadout and loadout.is_combat_enabled())
         attempts = S.get("warmup_attempts", 0)
         if not drawn and attempts < 3 and not S["warmup_sent"] and S["elapsed"] >= 0.5:
-            set_key(pc, "Gamepad_RightTrigger", True)
+            if not set_key(pc, "Gamepad_RightTrigger", True):
+                finish("input mapping refused warmup press")
+                return
             S["warmup_sent"] = True
             S["warmup_press_t"] = S["elapsed"]
             S["warmup_attempts"] = attempts + 1
         if S["warmup_sent"] and S["elapsed"] - S.get("warmup_press_t", 0.0) >= 0.7 and "Gamepad_RightTrigger" in S["held"]:
-            set_key(pc, "Gamepad_RightTrigger", False)
+            if not set_key(pc, "Gamepad_RightTrigger", False):
+                finish("input mapping refused warmup release")
+                return
         if S["warmup_sent"] and "Gamepad_RightTrigger" not in S["held"] and S["elapsed"] - S.get("warmup_press_t", 0.0) >= 3.2:
             S["warmup_sent"] = False  # allow another attempt if still sheathed
         settled = drawn and player_montage(pawn)[0] is None and S["elapsed"] - S.get("warmup_press_t", 0.0) >= 3.2
@@ -160,6 +176,18 @@ def _tick(dt):
 
     if S["phase"] == "settle":
         if S["elapsed"] > 12.0:
+            S.update(phase="mapping_ready", elapsed=0.0)
+        return
+
+    if S["phase"] == "mapping_ready":
+        timing = comp(pawn, "RPGDodgeTiming")
+        status = S["mapping_gate"].poll(
+            dt, lambda: bool(timing and timing.is_elden_ring_input_active()))
+        if status in ("ready", "timeout", "readiness_error", "invalid_delta"):
+            log("mapping_readiness=%s waited_s=%.3f" % (status, S["mapping_gate"].elapsed))
+            if status != "ready":
+                finish("input mapping " + status)
+                return
             S.update(phase="warmup", elapsed=0.0, warmup_sent=False)
         return
 
@@ -190,7 +218,9 @@ def _tick(dt):
         while S["event"] < len(events) and S["elapsed"] >= events[S["event"]][0]:
             event_index = S["event"]
             _, key, down = events[event_index]
-            set_key(pc, key, down)
+            if not set_key(pc, key, down):
+                finish("input mapping refused key event")
+                return
             if down and case.get("move") and event_index == case.get("measure_event", 0):
                 speed = pawn.get_velocity().length()  # UE Python Vector has length(), not size() (Lead hotfix C-1098)
                 last_input = pawn.get_last_movement_input_vector()

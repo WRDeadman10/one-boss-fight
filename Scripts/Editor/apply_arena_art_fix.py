@@ -1,6 +1,6 @@
 import unreal
 
-LEVEL = "/Game/OneBossFight/Levels/L_SevarogArena"
+LEVEL = "/Game/OneBossFight/Maps/L_SevarogArena"
 DR = "/Game/Deadly_Ruins/"
 
 def main():

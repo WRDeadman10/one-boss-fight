@@ -19,7 +19,7 @@ try:
 except ImportError:
     lib = None
 
-LEVELS = ["/Game/OneBossFight/Levels/L_SevarogArena", "/Game/OneBossFight/Levels/L_Greybox"]
+LEVELS = ["/Game/OneBossFight/Maps/L_SevarogArena", "/Game/OneBossFight/Levels/L_Greybox"]
 RUINS = "/Game/Deadly_Ruins/"
 MATERIAL_DIR = "/Game/OneBossFight/Environment/Materials"
 FLOOR_REPEATS = 18.0
@@ -40,7 +40,7 @@ def build_floor_material():
     else:
         mi = unreal.AssetToolsHelpers.get_asset_tools().create_asset(
             "MI_Arena_Floor", MATERIAL_DIR, unreal.MaterialInstanceConstant, unreal.MaterialInstanceConstantFactoryNew())
-    
+
     mi.set_editor_property("parent", unreal.load_asset(RUINS + "Materials/MasterMaterial/MM_Prop_Detail"))
     mel = unreal.MaterialEditingLibrary
     mel.set_material_instance_texture_parameter_value(
@@ -49,7 +49,7 @@ def build_floor_material():
         mi, "Input_Normal", unreal.load_asset(RUINS + "Textures/TilingEnvironment/T_BrickFloor_Normal"))
     mel.set_material_instance_texture_parameter_value(
         mi, "Input_RMA", unreal.load_asset(RUINS + "Textures/TilingEnvironment/T_BrickFloor_RMA"))
-    
+
     mel.set_material_instance_scalar_parameter_value(mi, "Tiling", FLOOR_REPEATS)
     mel.set_material_instance_scalar_parameter_value(mi, "Roughness_Multiply", FLOOR_ROUGHNESS)
     mel.set_material_instance_scalar_parameter_value(mi, "Strength_Normal", FLOOR_NORMAL_STRENGTH)

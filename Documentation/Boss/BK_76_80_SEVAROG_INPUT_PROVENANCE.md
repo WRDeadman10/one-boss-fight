@@ -58,13 +58,11 @@ It always checks:
 - JSON parse of the manifest → OK.
 - `git diff --check` on the three new data and code files → clean.
 
-## Unresolved owner choice (unchanged from X-1991)
+## Owner approval recorded (C-1619)
 
-1. Approve 1500 / 100 from SevarogEnemyInfo, including the poise-to-posture mapping.
-2. Posture regen: 6 s / 13 per s (design freeze), or other values.
-3. Phase_1 threshold 0.6, and multipliers 1.0 / 1.0 / 1.0 or other values.
+Owner replied “Yes, approve all” to O1. Claude recorded that reply and its complete value set in `DECISIONS.md` (O1 / X-1991): MaxHealth 1500, MaxPosture 100, Phase_1 threshold 0.6, posture regen delay 6 s at 13/s, and Phase_1 speed/rate/attack multipliers 1.0. The executable source record is the separate `Scripts/Editor/sevarog_o1_inputs.json`, checked by `sevarog_o1_inputs.py` against the exact DECISIONS excerpt and its SHA-256. This separate record truthfully attributes the owner's chat answer to Claude's C-1619 recording.
 
-After the answer, a separate APPROVED manifest (out of scope here) should cite the owner's reply; the authoring step must then also correct the 0.0 threshold and unapproved multipliers now in the draft asset.
+The JSON above remains a historical, PENDING-only audit snapshot. Its validator intentionally rejects approval states and its old per-field statuses are not upgraded; the warning points to the approved source record. The authoring scripts now consume only the separate approved record. The draft asset still needs a locked Editor write and readback; no asset or map was touched by this source update.
 
 ## Lead review and safety hotfix
 

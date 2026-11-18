@@ -67,28 +67,29 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
 {
     Error.Reset();
     auto Fail=[&](const TCHAR* E){Error=E;return false;};
-    const bool bF3=P.FixtureLabel==TEXT("F3 fixture"), bF4=P.FixtureLabel==TEXT("F4 fixture"), bF5=P.FixtureLabel==TEXT("F5 fixture");
-    if (!(bF3||bF4||bF5) || (bF4||bF5)!=P.bDamageEnabled || P.Mesh.IsNull() || P.AnimClass.IsNull() || P.TargetPawnClass.IsNull() ||
-        (bF5 ? (P.Cards.Num()<1||!P.Card.IsNull()) : (P.Card.IsNull()||P.Cards.Num()>0)))
+    const bool bF3=P.FixtureLabel==TEXT("F3 fixture"), bF4=P.FixtureLabel==TEXT("F4 fixture"), bF5=P.FixtureLabel==TEXT("F5 fixture"), bProd=P.FixtureLabel==TEXT("Production");
+    const bool bSelector=bF5||bProd;
+    if (!(bF3||bF4||bSelector) || (bF4||bSelector)!=P.bDamageEnabled || P.Mesh.IsNull() || P.AnimClass.IsNull() || P.TargetPawnClass.IsNull() ||
+        (bSelector ? (P.Cards.Num()<1||!P.Card.IsNull()) : (P.Card.IsNull()||P.Cards.Num()>0)))
         return Fail(TEXT("Framework.Profile.Identity"));
-    if (P.bRangeBandPartition && !bF5)
+    if (P.bRangeBandPartition && !bSelector)
         return Fail(TEXT("Framework.Profile.Domain"));
     if (P.bDamageEnabled && (!FMath::IsFinite(P.HitStepCm) || P.HitStepCm<=0.f || P.HitStepCm>1.e6f || P.HitMaxSubsteps<1 || P.HitMaxSubsteps>64))
         return Fail(TEXT("Framework.Profile.Domain"));
     if ((P.BossMaxHealth>0.f)!=(P.PlayerHitDamage>0.f) || !FMath::IsFinite(P.BossMaxHealth) || !FMath::IsFinite(P.PlayerHitDamage) || P.BossMaxHealth<0.f || P.PlayerHitDamage<0.f ||
         P.BossMaxHealth>1.e6f || P.PlayerHitDamage>P.BossMaxHealth)
         return Fail(TEXT("Framework.Profile.Domain"));
-    // F6c: phases need the selector (F5), a hittable boss, a fraction strictly inside (0,1) and a named second phase; no fraction, no name.
+    // F6c: phases need the selector (F5/Production), a hittable boss, a fraction strictly inside (0,1) and a named second phase; no fraction, no name.
     if (P.PhaseTwoFraction!=0.f || !P.PhaseTwoId.IsNone())
-        if (!bF5 || P.BossMaxHealth<=0.f || !FMath::IsFinite(P.PhaseTwoFraction) || P.PhaseTwoFraction<=0.f || P.PhaseTwoFraction>=1.f || P.PhaseTwoId.IsNone())
+        if (!bSelector || P.BossMaxHealth<=0.f || !FMath::IsFinite(P.PhaseTwoFraction) || P.PhaseTwoFraction<=0.f || P.PhaseTwoFraction>=1.f || P.PhaseTwoId.IsNone())
             return Fail(TEXT("Framework.Profile.Phase"));
-    // F8: posture needs the selector lane (F5) and a hittable boss; the five values are all zero (off) or a coherent set (token Framework.Profile.Posture).
+    // F8: posture needs the selector lane (F5/Production) and a hittable boss; the five values are all zero (off) or a coherent set (token Framework.Profile.Posture).
     {
         const float Values[]={P.PostureMax,P.PlayerPostureHitAmount,P.StaggerSeconds,P.PostureRegenDelaySeconds,P.PostureRegenPerSecond};
         bool bAnyPosture=false; for (float V:Values) bAnyPosture|=(V!=0.f);
         if (bAnyPosture)
         {
-            bool bOk=bF5&&P.BossMaxHealth>0.f; for (float V:Values) bOk&=(FMath::IsFinite(V)&&V>=0.f&&V<=1.e6f);
+            bool bOk=bSelector&&P.BossMaxHealth>0.f; for (float V:Values) bOk&=(FMath::IsFinite(V)&&V>=0.f&&V<=1.e6f);
             bOk=bOk&&P.PostureMax>0.f&&P.PlayerPostureHitAmount>0.f&&P.PlayerPostureHitAmount<=P.PostureMax&&P.StaggerSeconds>=.5f&&P.StaggerSeconds<=60.f;
             if (!bOk) return Fail(TEXT("Framework.Profile.Posture"));
         }
@@ -100,23 +101,23 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
         {
             if (P.AnimSlotName.IsNone()) return Fail(TEXT("Framework.Profile.StaggerAnim.SlotNameEmpty"));
             if ((bStart||bLoop||bEnd)&&!(bStart&&bLoop&&bEnd)) return Fail(TEXT("Framework.Profile.StaggerAnim.CoherentSet"));
-            if (bStart&&!(bF5&&P.PostureMax>0.f)) return Fail(TEXT("Framework.Profile.StaggerAnim.NoPosture"));
-            if (bPhaseClip&&(!bF5||P.BossMaxHealth<=0.f||!(P.PhaseTwoFraction>0.f)||P.PhaseTwoId.IsNone())) return Fail(TEXT("Framework.Profile.PhaseTransitionAnim.Phaseless"));
+            if (bStart&&!(bSelector&&P.PostureMax>0.f)) return Fail(TEXT("Framework.Profile.StaggerAnim.NoPosture"));
+            if (bPhaseClip&&(!bSelector||P.BossMaxHealth<=0.f||!(P.PhaseTwoFraction>0.f)||P.PhaseTwoId.IsNone())) return Fail(TEXT("Framework.Profile.PhaseTransitionAnim.Phaseless"));
         }
     }
-    // Combo graph: only in the selector lane (F5), a valid DAG (RPGBossCombo::Validate, token Framework.Profile.<Combo token>); the cards of its nodes are checked in ResolveProfile.
+    // Combo graph: only in the selector lane (F5/Production), a valid DAG (RPGBossCombo::Validate, token Framework.Profile.<Combo token>); the cards of its nodes are checked in ResolveProfile.
     if (P.ComboNodes.Num()>0 || !P.ComboRoot.IsNone())
     {
-        if (!bF5) return Fail(TEXT("Framework.Profile.Domain"));
+        if (!bSelector) return Fail(TEXT("Framework.Profile.Domain"));
         const FString ComboToken=RPGBossCombo::Validate(BuildComboGraph(P));
         if (!ComboToken.IsEmpty()) {Error=FString::Printf(TEXT("Framework.Profile.%s"),*ComboToken);return false;}
     }
-    if (P.RepositionMax<0 || P.RepositionMax>8 || (P.RepositionMax>0 && !bF5) || !FMath::IsFinite(P.RepositionTurnDegPerSecond) || P.RepositionTurnDegPerSecond<0.f || P.RepositionTurnDegPerSecond>720.f || ((P.RepositionMax>0)!=(P.RepositionTurnDegPerSecond>0.f)))
+    if (P.RepositionMax<0 || P.RepositionMax>8 || (P.RepositionMax>0 && !bSelector) || !FMath::IsFinite(P.RepositionTurnDegPerSecond) || P.RepositionTurnDegPerSecond<0.f || P.RepositionTurnDegPerSecond>720.f || ((P.RepositionMax>0)!=(P.RepositionTurnDegPerSecond>0.f)))
         return Fail(TEXT("Framework.Profile.Domain"));
-    if (!FMath::IsFinite(P.ArenaRadiusCm) || P.ArenaRadiusCm<0.f || P.ArenaRadiusCm>1.e6f || (P.ArenaRadiusCm>0.f && !bF5)) return Fail(TEXT("Framework.Profile.Domain"));
+    if (!FMath::IsFinite(P.ArenaRadiusCm) || P.ArenaRadiusCm<0.f || P.ArenaRadiusCm>1.e6f || (P.ArenaRadiusCm>0.f && !bSelector)) return Fail(TEXT("Framework.Profile.Domain"));
     if (P.bArenaLeash && !(P.ArenaRadiusCm>0.f)) return Fail(TEXT("Framework.Profile.Domain"));
-    if (P.bPhaseSupersedesStagger && !(bF5 && P.PostureMax>0.f && P.PhaseTwoFraction>0.f)) return Fail(TEXT("Framework.Profile.Domain"));
-    if (P.MaxAbortedAttacks<0 || P.MaxAbortedAttacks>8 || (P.MaxAbortedAttacks>0 && !(bF5 && P.AttackCount>0))) return Fail(TEXT("Framework.Profile.Domain"));  // BQ-01
+    if (P.bPhaseSupersedesStagger && !(bSelector && P.PostureMax>0.f && P.PhaseTwoFraction>0.f)) return Fail(TEXT("Framework.Profile.Domain"));
+    if (P.MaxAbortedAttacks<0 || P.MaxAbortedAttacks>8 || (P.MaxAbortedAttacks>0 && !(bSelector && P.AttackCount>0))) return Fail(TEXT("Framework.Profile.Domain"));  // BQ-01
     if (!FMath::IsFinite(P.ArenaCenterBias)||P.ArenaCenterBias<0.f||P.ArenaCenterBias>1.f||!FMath::IsFinite(P.CenterBiasStartFraction)||!(P.CenterBiasStartFraction>0.f)||P.CenterBiasStartFraction>1.f||P.ArenaCenter.ContainsNaN()||
         ((P.ArenaCenterBias>0.f||P.bArenaCenterAuthored)&&!(P.ArenaRadiusCm>0.f))) return Fail(TEXT("Framework.Profile.Domain"));
     {
@@ -124,59 +125,59 @@ bool ValidateProfile(const URPGBossFrameworkProfile& P,FString& Error)
         auto Mult=[](float V){return FMath::IsFinite(V)&&V>0.f&&V<=100.f;};
         bool bMultOk=true; for (const FRPGBossProfileCard& C:P.Cards) bMultOk=bMultOk&&Mult(C.KiteWeightMultiplier)&&Mult(C.HugWeightMultiplier)&&Mult(C.BackDodgeWeightMultiplier)&&Mult(C.GreedWeightMultiplier);
         if (!FMath::IsFinite(P.AntiCheeseKiteRangeCm)||!FMath::IsFinite(P.AntiCheeseHugRangeCm)||P.AntiCheeseKiteRangeCm<0.f||P.AntiCheeseHugRangeCm<0.f||P.AntiCheeseKiteRangeCm>1.e5f||P.AntiCheeseHugRangeCm>1.e5f||
-            P.AntiCheeseStreak<1||P.AntiCheeseStreak>8||(bAnti&&!bF5)||!bMultOk||(P.AntiCheeseKiteRangeCm>0.f&&P.AntiCheeseHugRangeCm>0.f&&P.AntiCheeseHugRangeCm>=P.AntiCheeseKiteRangeCm))
+            P.AntiCheeseStreak<1||P.AntiCheeseStreak>8||(bAnti&&!bSelector)||!bMultOk||(P.AntiCheeseKiteRangeCm>0.f&&P.AntiCheeseHugRangeCm>0.f&&P.AntiCheeseHugRangeCm>=P.AntiCheeseKiteRangeCm))
             return Fail(TEXT("Framework.Profile.Domain"));
     }
     if (P.ReactionDelayMinSeconds!=0.f||P.ReactionDelayMaxSeconds!=0.f)
-        if (!bF5||RPGBossTrack::ReactionDelaySeconds(P.ReactionDelayMinSeconds,P.ReactionDelayMaxSeconds,P.ReactionSeed,0)<0.) return Fail(TEXT("Framework.Profile.Domain"));
-    if (!FMath::IsFinite(P.LosSearchSeconds)||P.LosSearchSeconds<0.f||P.LosSearchSeconds>30.f||(P.LosSearchSeconds>0.f&&!bF5)) return Fail(TEXT("Framework.Profile.Domain"));   // finite first: a NaN compares unreliably under fast-math
-    if (P.DodgeHistoryDepth<0||P.DodgeHistoryDepth>8||(P.DodgeHistoryDepth>0&&(!bF5||P.DodgeBackThreshold<1||P.DodgeBackThreshold>P.DodgeHistoryDepth||!FMath::IsFinite(P.DodgeSpeedCm)||!(P.DodgeSpeedCm>0.f)||P.DodgeSpeedCm>1.e5f))) return Fail(TEXT("Framework.Profile.Domain"));
+        if (!bSelector||RPGBossTrack::ReactionDelaySeconds(P.ReactionDelayMinSeconds,P.ReactionDelayMaxSeconds,P.ReactionSeed,0)<0.) return Fail(TEXT("Framework.Profile.Domain"));
+    if (!FMath::IsFinite(P.LosSearchSeconds)||P.LosSearchSeconds<0.f||P.LosSearchSeconds>30.f||(P.LosSearchSeconds>0.f&&!bSelector)) return Fail(TEXT("Framework.Profile.Domain"));   // finite first: a NaN compares unreliably under fast-math
+    if (P.DodgeHistoryDepth<0||P.DodgeHistoryDepth>8||(P.DodgeHistoryDepth>0&&(!bSelector||P.DodgeBackThreshold<1||P.DodgeBackThreshold>P.DodgeHistoryDepth||!FMath::IsFinite(P.DodgeSpeedCm)||!(P.DodgeSpeedCm>0.f)||P.DodgeSpeedCm>1.e5f))) return Fail(TEXT("Framework.Profile.Domain"));
     // BOSS-PAC-003 / PAC-005: the punish margin is an F5 lane check with its player data.
     {
         bool bFinisher=false; for (const FRPGBossProfileCard& C:P.Cards) bFinisher=bFinisher||C.bHeavyFinisher;
         const bool bOn=P.PunishMarginSeconds!=0.f;
         if (!FMath::IsFinite(P.PunishMarginSeconds)||!FMath::IsFinite(P.PlayerReachCm)||P.PunishMarginSeconds<0.f||P.PunishMarginSeconds>5.f||P.PlayerReachCm<0.f||P.PlayerReachCm>2000.f||
-            (bOn&&(!bF5||P.PlayerLightMontage.IsNull()||P.PlayerHeavyMontage.IsNull()))||(!bOn&&bFinisher)) return Fail(TEXT("Framework.Profile.Domain"));
+            (bOn&&(!bSelector||P.PlayerLightMontage.IsNull()||P.PlayerHeavyMontage.IsNull()))||(!bOn&&bFinisher)) return Fail(TEXT("Framework.Profile.Domain"));
     }
-    // F9: bleed needs the selector lane (F5) and a hittable boss; BleedBuildupPerHit 0 = off (the other four then 0 too), else a coherent set (token Framework.Profile.Bleed).
+    // F9: bleed needs the selector lane (F5/Production) and a hittable boss; BleedBuildupPerHit 0 = off (the other four then 0 too), else a coherent set (token Framework.Profile.Bleed).
     {
         const float Values[]={P.BleedBuildupPerHit,P.BleedInitialThreshold,P.BleedThresholdIncrease,P.BleedThresholdMax,P.BleedHpFraction};
         bool bAnyBleed=false; for (float V:Values) bAnyBleed|=(V!=0.f);
         if (bAnyBleed)
         {
-            bool bOk=bF5&&P.BossMaxHealth>0.f; for (float V:Values) bOk&=(FMath::IsFinite(V)&&V>=0.f&&V<=1.e6f);
+            bool bOk=bSelector&&P.BossMaxHealth>0.f; for (float V:Values) bOk&=(FMath::IsFinite(V)&&V>=0.f&&V<=1.e6f);
             bOk=bOk&&P.BleedBuildupPerHit>0.f&&P.BleedInitialThreshold>=1.f&&P.BleedThresholdMax>=P.BleedInitialThreshold&&P.BleedHpFraction>0.f&&P.BleedHpFraction<=1.f;
             if (!bOk) return Fail(TEXT("Framework.Profile.Bleed"));
         }
     }
-    if (!FMath::IsFinite(P.SelectorTieBand) || P.SelectorTieBand<0.f || P.SelectorTieBand>0.5f || ((P.SelectorTieBand>0.f || P.SelectorTieSeed!=0) && !bF5))
+    if (!FMath::IsFinite(P.SelectorTieBand) || P.SelectorTieBand<0.f || P.SelectorTieBand>0.5f || ((P.SelectorTieBand>0.f || P.SelectorTieSeed!=0) && !bSelector))
         return Fail(TEXT("Framework.Profile.Domain"));
-    if (!FMath::IsFinite(P.ConeHysteresisDegrees)||P.ConeHysteresisDegrees<0.f||P.ConeHysteresisDegrees>40.f||(P.ConeHysteresisDegrees>0.f&&!bF5))
+    if (!FMath::IsFinite(P.ConeHysteresisDegrees)||P.ConeHysteresisDegrees<0.f||P.ConeHysteresisDegrees>40.f||(P.ConeHysteresisDegrees>0.f&&!bSelector))
         return Fail(TEXT("Framework.Profile.ConeHysteresis"));
-    if (!FMath::IsFinite(P.NeutralStrafeSeconds)||P.NeutralStrafeSeconds<0.f||P.NeutralStrafeSeconds>20.f||(P.NeutralStrafeSeconds>0.f&&(!bF5||P.WalkSpeedCmPerSecond<=0.f)))
+    if (!FMath::IsFinite(P.NeutralStrafeSeconds)||P.NeutralStrafeSeconds<0.f||P.NeutralStrafeSeconds>20.f||(P.NeutralStrafeSeconds>0.f&&(!bSelector||P.WalkSpeedCmPerSecond<=0.f)))
         return Fail(TEXT("Framework.Profile.NeutralStrafe"));
     if (!FMath::IsFinite(P.NeutralStrafeMinHoldSeconds)||!FMath::IsFinite(P.NeutralStrafeMaxHoldSeconds)||P.NeutralStrafeMinHoldSeconds<=0.||P.NeutralStrafeMaxHoldSeconds<P.NeutralStrafeMinHoldSeconds||
-        ((P.NeutralStrafeMinHoldSeconds!=.8||P.NeutralStrafeMaxHoldSeconds!=1.6)&&!bF5))
+        ((P.NeutralStrafeMinHoldSeconds!=.8||P.NeutralStrafeMaxHoldSeconds!=1.6)&&!bSelector))
         return Fail(TEXT("Framework.Profile.NeutralStrafe"));
-    if (!FMath::IsFinite(P.GuardChipFraction)||P.GuardChipFraction<0.f||P.GuardChipFraction>1.f||(P.GuardChipFraction>0.f&&!bF5))
+    if (!FMath::IsFinite(P.GuardChipFraction)||P.GuardChipFraction<0.f||P.GuardChipFraction>1.f||(P.GuardChipFraction>0.f&&!bSelector))
         return Fail(TEXT("Framework.Profile.GuardChip"));
-    if (!FMath::IsFinite(P.ParryRecoveryScale)||P.ParryRecoveryScale<0.f||P.ParryRecoveryScale>3.f||(P.ParryRecoveryScale>0.f&&!bF5))
+    if (!FMath::IsFinite(P.ParryRecoveryScale)||P.ParryRecoveryScale<0.f||P.ParryRecoveryScale>3.f||(P.ParryRecoveryScale>0.f&&!bSelector))
         return Fail(TEXT("Framework.Profile.ParryRecovery"));
-    if (!FMath::IsFinite(P.ParryFairMinScale)||P.ParryFairMinScale<=0.f||P.ParryFairMinScale>1.f||(P.ParryFairTelegraph&&!bF5))
+    if (!FMath::IsFinite(P.ParryFairMinScale)||P.ParryFairMinScale<=0.f||P.ParryFairMinScale>1.f||(P.ParryFairTelegraph&&!bSelector))
         return Fail(TEXT("Framework.Profile.ParryFairTelegraph"));
     {
         RPGBossAggro::FConfig C; C.EnterCloseCm=P.AggroEnterCloseCm;C.ExitCloseCm=P.AggroExitCloseCm;C.EnterFarCm=P.AggroEnterFarCm;C.ExitFarCm=P.AggroExitFarCm;
         C.EnterDodgeRate=P.AggroDodgeEnterRate;C.ExitDodgeRate=P.AggroDodgeExitRate;C.DodgeRateWindowSeconds=P.AggroDodgeWindowSeconds;
-        if (!RPGBossAggro::IsValid(C)||(P.bAggroEnabled&&(!bF5||!FMath::IsFinite(P.DodgeSpeedCm)||P.DodgeSpeedCm<=0.f||P.DodgeSpeedCm>1.e5f))) return Fail(TEXT("Framework.Profile.Aggro"));
+        if (!RPGBossAggro::IsValid(C)||(P.bAggroEnabled&&(!bSelector||!FMath::IsFinite(P.DodgeSpeedCm)||P.DodgeSpeedCm<=0.f||P.DodgeSpeedCm>1.e5f))) return Fail(TEXT("Framework.Profile.Aggro"));
     }
     if (P.FatigueGraceWhiffs<0||P.FatigueGraceWhiffs>100||!FMath::IsFinite(P.FatigueFloor)||P.FatigueFloor<0.f||P.FatigueFloor>1.f||
-        ((P.FatigueGraceWhiffs!=0||P.FatigueFloor!=0.f)&&(!bF5||P.FatigueFloor<=0.f)))
+        ((P.FatigueGraceWhiffs!=0||P.FatigueFloor!=0.f)&&(!bSelector||P.FatigueFloor<=0.f)))
         return Fail(TEXT("Framework.Profile.Fatigue"));
-    if (!FMath::IsFinite(P.ParryPostureAmount)||P.ParryPostureAmount<0.f||(P.ParryPostureAmount>0.f&&(!bF5||P.PostureMax<=0.f||P.ParryPostureAmount>P.PostureMax)))
+    if (!FMath::IsFinite(P.ParryPostureAmount)||P.ParryPostureAmount<0.f||(P.ParryPostureAmount>0.f&&(!bSelector||P.PostureMax<=0.f||P.ParryPostureAmount>P.PostureMax)))
         return Fail(TEXT("Framework.Profile.ParryPosture"));
-    if (P.bParryGradeScale&&!bF5)
+    if (P.bParryGradeScale&&!bSelector)
         return Fail(TEXT("Framework.Profile.ParryGradeScale"));
-    if (bF5)
+    if (bSelector)
     {
         if (!FMath::IsFinite(P.RepeatPenalty) || P.RepeatPenalty<=0.f || P.RepeatPenalty>1.f || P.RepeatMemory<1 || P.RepeatMemory>8 || P.AttackCount<1 || P.AttackCount>8)
             return Fail(TEXT("Framework.Profile.Domain"));

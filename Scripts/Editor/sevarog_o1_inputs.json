@@ -1,0 +1,21 @@
+{
+  "schema": "onebossfight.owner-approved-sevarog-o1/v1",
+  "decision": "O1",
+  "owner_reply": "Yes, approve all",
+  "recorded_by": "Claude in C-1619",
+  "source": {
+    "path": "Documentation/DECISIONS.md",
+    "excerpt": "## 2026-11-13 Owner: O1 / X-1991 Sevarog values approved (C-1619)\nOwner chat answer to the lead's question \"Approve the Sevarog values (health 1500, posture 100, phase 2 at 60%)?\": \"Yes, approve all\". Approved set, as listed in the 2026-11-13 truth audit step 2 and X-2428: MaxHealth 1500, MaxPosture 100, Phase_1 threshold 0.6 (phase 2 below 60%), posture regen delay 6 s at 13 per second, Phase_1 Speed/Rate/Attack multipliers 1.0/1.0/1.0. This unblocks BK-3 and Queue BQ Batch 17 (BQ-81..85): author the values into DA_Boss_Sevarog_Draft, write the framework encounter definition and field manifest, then run the deferred PIE under C-1155.",
+    "sha256": "00e087df998901a5b24af38c7396ff0563e391daf85aa9559a4694bb010b69bd"
+  },
+  "values": {
+    "Stats.MaxHealth": 1500.0,
+    "Stats.MaxPosture": 100.0,
+    "Stats.PostureRegenDelay": 6.0,
+    "Stats.PostureRegenRate": 13.0,
+    "Phases[Phase_1].EntryHealthFraction": 0.6,
+    "Phases[Phase_1].SpeedMultiplier": 1.0,
+    "Phases[Phase_1].RateMultiplier": 1.0,
+    "Phases[Phase_1].AttackMultiplier": 1.0
+  }
+}

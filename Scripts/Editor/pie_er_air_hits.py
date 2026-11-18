@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(unreal.Paths.project_dir()) / "Scripts" / "Editor"))
 import pie_lead_common as plc
+from pie_driver_support import FinalResult, MappingReadinessGate
 
 LOG = "[ERAirHits] "
 INPUT_ROOT = "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/"
@@ -28,12 +29,16 @@ CASES = [
 ]
 S = {"phase": "start", "elapsed": 0.0, "case": 0, "event": 0,
      "baseline": None, "last_position": None, "press_real": None,
-     "observed": False, "held": set(), "done": False}
+     "observed": False, "held": set(), "done": False,
+     "mapping_gate": MappingReadinessGate(5.0)}
 HANDLE = None
 
 
 def log(message):
     unreal.log(LOG + message)
+
+
+FINAL_RESULT = FinalResult(log, "pie_er_air_hits")
 
 
 comp = plc.component
@@ -43,12 +48,14 @@ boss_actor = plc.boss_actor
 
 def set_key(pc, key, down):
     ok = unreal.RPGInputTestUtils.set_key_down(pc, key, down)
+    if not ok:
+        log("input_refused key=%s down=%s" % (key, down))
+        return False
     if down:
         S["held"].add(key)
     else:
         S["held"].discard(key)
-    if not ok:
-        raise RuntimeError("SetKeyDown failed for " + key)
+    return True
 
 
 def release_all(pc):
@@ -67,6 +74,8 @@ def finish(reason):
         unreal.unregister_slate_post_tick_callback(HANDLE)
         HANDLE = None
     release_all(None)
+    FINAL_RESULT.emit(reason == "all control samples recorded", reason,
+                      cases_recorded=S.get("case", 0))
     plc.finished(log, reason)
 
 
@@ -133,14 +142,30 @@ def _tick(dt):
             S.update(phase="settle", elapsed=0.0)
         return
 
+    if S["phase"] == "mapping_ready":
+        timing = comp(pawn, "RPGDodgeTiming")
+        status = S["mapping_gate"].poll(
+            dt, lambda: bool(timing and timing.is_elden_ring_input_active()))
+        if status in ("ready", "timeout", "readiness_error", "invalid_delta"):
+            log("mapping_readiness=%s waited_s=%.3f" % (status, S["mapping_gate"].elapsed))
+            if status != "ready":
+                finish("input mapping " + status)
+                return
+            S.update(phase="warmup", elapsed=0.0, warmup_sent=False)
+        return
+
     if S["phase"] == "warmup":
         # Match the accepted Lead probe: the first R2 charge draws the weapon;
         # exclude it from the latency samples.
         if S["elapsed"] >= 0.5 and not S["warmup_sent"]:
-            set_key(pc, "Gamepad_RightTrigger", True)
+            if not set_key(pc, "Gamepad_RightTrigger", True):
+                finish("input mapping refused warmup press")
+                return
             S["warmup_sent"] = True
         if S["elapsed"] >= 1.2 and "Gamepad_RightTrigger" in S["held"]:
-            set_key(pc, "Gamepad_RightTrigger", False)
+            if not set_key(pc, "Gamepad_RightTrigger", False):
+                finish("input mapping refused warmup release")
+                return
         if S["elapsed"] > 3.7:
             log("input_context_active=%s" % bool(comp(pawn, "RPGDodgeTiming") and
                 comp(pawn, "RPGDodgeTiming").is_elden_ring_input_active()))
@@ -149,7 +174,7 @@ def _tick(dt):
 
     if S["phase"] == "settle":
         if S["elapsed"] > 12.0:
-            S.update(phase="warmup", elapsed=0.0, warmup_sent=False)
+            S.update(phase="mapping_ready", elapsed=0.0)
         return
 
     if S["phase"] == "arm":
@@ -182,7 +207,9 @@ def _tick(dt):
         while S["event"] < len(events) and S["elapsed"] >= events[S["event"]][0]:
             event_index = S["event"]
             _, key, down = events[event_index]
-            set_key(pc, key, down)
+            if not set_key(pc, key, down):
+                finish("input mapping refused key event")
+                return
             if down and event_index == case.get("measure_event", 0):
                 S["press_real"] = time.perf_counter()
             S["event"] += 1

@@ -7,11 +7,14 @@ input delivery. Health/stamina are refilled each tick through RPGCombatDebug.
 No cause is inferred. Log prefix [BlockProbeV4].
 """
 import unreal
+from pie_driver_support import FinalResult, MappingReadinessGate
 
 log = lambda message: unreal.log("[BlockProbeV4] " + str(message))
-state = {"phase": "start", "t": 0.0, "last": {}, "handle": None}
+state = {"phase": "start", "t": 0.0, "last": {}, "handle": None, "done": False,
+         "mapping_gate": MappingReadinessGate(5.0)}
 
 IA_BLOCK = "/Game/AdvancedARPGCombat/MeleeCombatSystem/Blueprints/Input/InputActions/IA_Block"
+FINAL_RESULT = FinalResult(log, "pie_er_block_probe")
 
 
 def comp(actor, class_name):
@@ -70,6 +73,9 @@ def release_inputs(pc):
 
 
 def finish(reason):
+    if state["done"]:
+        return
+    state["done"] = True
     handle = state.get("handle")
     if handle:
         unreal.unregister_slate_post_tick_callback(handle)
@@ -79,6 +85,8 @@ def finish(reason):
         release_inputs(pc)
     except Exception:
         pass
+    FINAL_RESULT.emit(reason == "both guard input arms complete", reason,
+                      inject_ok=state.get("inject_ok", 0), inject_fail=state.get("inject_fail", 0))
     log("SUMMARY finished reason=%s" % reason)
     unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_end_play()
 
@@ -134,6 +142,16 @@ def _tick(delta_seconds):
     phase = state["phase"]
     if phase == "wake":
         if state["t"] > 6.0:
+            timing = comp(pawn, "RPGDodgeTiming")
+            readiness = state["mapping_gate"].poll(
+                delta_seconds, lambda: bool(timing and timing.is_elden_ring_input_active()))
+            if readiness in ("waiting",):
+                return
+            log("mapping_readiness=%s waited_s=%.3f" %
+                (readiness, state["mapping_gate"].elapsed))
+            if readiness != "ready":
+                finish("input mapping " + readiness)
+                return
             boss_location = boss.get_actor_location()
             forward = boss.get_actor_forward_vector()
             pawn.set_actor_location(unreal.Vector(boss_location.x + forward.x * 220,
@@ -147,6 +165,9 @@ def _tick(delta_seconds):
             if encounter:
                 encounter.hold_for_test(True)
             result = unreal.RPGInputTestUtils.set_key_down(pc, "R", True)
+            if not result:
+                finish("input mapping refused combat-toggle press")
+                return
             state.update(phase="combat_toggle", t=0.0, toggle_press=result,
                          toggle_released=False, player_montages_seen=set(), weapon_montage_seen=False)
             log("COMBAT toggle mapped_key=R pressed_via_input_mapping=%s boss_held=True" % result)
@@ -155,6 +176,9 @@ def _tick(delta_seconds):
     if phase == "combat_toggle":
         if not state["toggle_released"] and state["t"] >= 0.15:
             released = unreal.RPGInputTestUtils.set_key_down(pc, "R", False)
+            if not released:
+                finish("input mapping refused combat-toggle release")
+                return
             state["toggle_released"] = True
             log("COMBAT toggle mapped_key=R released=%s" % released)
         montage_names = active_montages(pawn)

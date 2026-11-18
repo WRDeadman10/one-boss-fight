@@ -1,6 +1,6 @@
 import unreal
 
-LEVEL = "/Game/OneBossFight/Levels/L_SevarogArena"
+LEVEL = "/Game/OneBossFight/Maps/L_SevarogArena"
 DR = "/Game/Deadly_Ruins/"
 MAT_DIR = "/Game/OneBossFight/Environment/Materials"
 
@@ -15,7 +15,7 @@ def setup_materials():
     else:
         floor_mi = unreal.AssetToolsHelpers.get_asset_tools().create_asset(
             "MI_Arena_Floor", MAT_DIR, unreal.MaterialInstanceConstant, unreal.MaterialInstanceConstantFactoryNew())
-    
+
     # Use MM_Prop_Detail as parent
     master = unreal.load_asset(DR + "Materials/MasterMaterial/MM_Prop_Detail")
     floor_mi.set_editor_property("parent", master)
@@ -24,11 +24,11 @@ def setup_materials():
     albedo = unreal.load_asset(DR + "Textures/TilingEnvironment/T_Brick_1_Albedo")
     normal = unreal.load_asset(DR + "Textures/TilingEnvironment/T_Brick_1_Normal")
     rma = unreal.load_asset(DR + "Textures/TilingEnvironment/T_Brick_1_RMA")
-    
+
     mel.set_material_instance_texture_parameter_value(floor_mi, "Input_Albedo", albedo)
     mel.set_material_instance_texture_parameter_value(floor_mi, "Input_Normal", normal)
     mel.set_material_instance_texture_parameter_value(floor_mi, "Input_RMA", rma)
-    
+
     # 20 repeats across 60m = 3 meters per tile repeat, realistic cobblestone scale
     mel.set_material_instance_scalar_parameter_value(floor_mi, "Tiling", 20.0)
     mel.set_material_instance_scalar_parameter_value(floor_mi, "Roughness_Multiply", 0.65)
@@ -42,7 +42,7 @@ def setup_materials():
 
 def main():
     floor_mi = setup_materials()
-    
+
     arenas = [a for a in unreal.EditorLevelLibrary.get_all_level_actors() if isinstance(a, unreal.RPGGreyboxArena)]
     if not arenas:
         print("No RPGGreyboxArena found!")
@@ -56,7 +56,7 @@ def main():
     pillar = unreal.load_asset(DR + "Meshes/Architecture/SM_I_Pillar2")
     pillar_broken = unreal.load_asset(DR + "Meshes/Architecture/SM__pillar2")
     pillar_cracked = unreal.load_asset(DR + "Meshes/Architecture/SM__pillar3")
-    
+
     arena.set_editor_property("PillarIntact", pillar)
     arena.set_editor_property("PillarCracked", pillar_cracked)
     arena.set_editor_property("PillarBroken", pillar_broken)
@@ -75,7 +75,7 @@ def main():
     arch = unreal.load_asset(DR + "Meshes/Architecture/SM_archway_1")
     arena.set_editor_property("EntranceArch", arch)
     arena.set_editor_property("ArchMaterial", None)
-    
+
     brazier = unreal.load_asset(DR + "Meshes/Prop/SM_Brazer")
     arena.set_editor_property("Brazier", brazier)
     arena.set_editor_property("BrazierMaterial", unreal.load_asset(DR + "Materials/Instances/MI_TIling_Metal"))

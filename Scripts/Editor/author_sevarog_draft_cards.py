@@ -11,6 +11,7 @@ import sys
 
 
 PACKAGE_DIR = "/Game/OneBossFight/Data/Sevarog"
+MOVE_CARD_NUMBER_CEILING = 1_000_000
 DEFINITION_NAME = "DA_Boss_Sevarog_Draft"
 PROFILE_NAME = "DA_Boss_Sevarog_FrameworkProfile_Draft"
 CARD_NAMES = (
@@ -19,6 +20,9 @@ CARD_NAMES = (
     "DA_Move_Sevarog_Swing3_Slow_C1247",
     "DA_Move_Sevarog_Speedburst_C1247",
     "DA_Move_Sevarog_Swing1_FAST_v2_C1247",
+    "DA_Move_Sevarog_Ultimate_Swing_120fps_C1277",
+    "DA_Move_Sevarog_Subjugation_C1277",
+    "DA_Move_Sevarog_Soul_Siphon_C1277",
 )
 F5_SOURCE = "Docs/BossCombatReview/Execution/Antigravity/MoveCards/move_cards_f5_set.json"
 CONTACT_SOURCE = "Documentation/Boss/C1242_SEVAROG_CONTACT_MARKING.md"
@@ -30,6 +34,9 @@ SEQUENCE_PATHS = (
     SEVAROG_ROOT + "/Animations/Swing3_Slow.Swing3_Slow",
     SEVAROG_ROOT + "/Animations/Speedburst.Speedburst",
     SEVAROG_ROOT + "/Animations/Swing1_FAST_v2.Swing1_FAST_v2",
+    SEVAROG_ROOT + "/Animations/Ultimate_Swing_120fps.Ultimate_Swing_120fps",
+    SEVAROG_ROOT + "/Animations/Subjugation.Subjugation",
+    SEVAROG_ROOT + "/Animations/Soul_Siphon.Soul_Siphon",
 )
 # Definition identity/skeleton are the only authored definition fields; every
 # other member retains its declared C++ default. bUseMontageNotifyTimings is
@@ -69,6 +76,8 @@ FRAMEWORK_PROFILE_FIELDS = {
     "player_light_montage": {"$soft_object": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/Attack_PrimaryA_Montage.Attack_PrimaryA_Montage"},
     "player_heavy_montage": {"$soft_object": "/Game/AdvancedARPGCombat/MeleeCombatSystem/Animations/1Handed/ChargedAttack_Montage.ChargedAttack_Montage"},
     "player_reach_cm": 150.0,
+    "phase_two_fraction": 0.6,
+    "phase_two_id": "Phase_2",
 }
 
 FIELD_SOURCES = {
@@ -82,6 +91,7 @@ FIELD_SOURCES = {
 }
 PROFILE_FIELD_SOURCES = {
     key: ("C-1250" if key in {"combo_root", "combo_max_depth", "combo_nodes"} else
+          "C-1277/C-1280 approved provisional phase threshold and identity" if key in {"phase_two_fraction", "phase_two_id"} else
           "C-1250 selector has per-card ranges; RPGBossFrameworkProfile.cpp:52,200" if key == "range_band_partition" else
           FIELD_SOURCES["framework punish values"] if key.startswith(("punish_", "player_")) else
           FIELD_SOURCES["framework dependency classes"] if key in {"mesh", "anim_class", "target_pawn_class"} else
@@ -92,27 +102,28 @@ DEFINITION_FIELD_SOURCES = {key: FIELD_SOURCES["definition identity/skeleton/not
                             for key in DRAFT_DEFINITION_FIELDS}
 CARD_FIELD_SOURCES = {
     "asset_name": "C-1247 named draft allowlist",
-    "move_id": "C-1247 named MoveId table",
-    "family_id": F5_SOURCE + "; C-1250 S4 gap-closer family",
-    "phase_id": F5_SOURCE + " Phase_1",
+    "move_id": "C-1247 named MoveId table; C-1277 approved S6-S8 identities",
+    "family_id": F5_SOURCE + "; C-1250 S4 gap-closer family; C-1277 S6-S8 provisional families",
+    "phase_id": F5_SOURCE + " Phase_1; C-1277/C-1280 S6-S8 phases",
+    "additional_phase_ids": "C-1280 shared availability decision; FRPGBossMoveCardSpec.AdditionalPhaseIds",
     "skeleton": "C-1248 Sevarog rig readback",
-    "sequence": "C-1248 Sevarog rig readback",
+    "sequence": "C-1248 Sevarog rig readback; C-1277 S6-S8 animation identities",
     "montage": F5_SOURCE + " Montage=null",
     "slot_name": F5_SOURCE + " FullBody",
     "section_name": F5_SOURCE + " SectionName=None",
     "play_rate": "C++ FRPGBossMoveCardSpec default 1.0; RPGBossMoveCard.h",
-    "commit_seconds": CONTACT_SOURCE + "; C-1242 approved timing marks",
-    "active_start_seconds": CONTACT_SOURCE + "; C-1242 approved timing marks",
-    "active_end_seconds": CONTACT_SOURCE + "; C-1242 approved timing marks",
-    "recovery_end_seconds": CONTACT_SOURCE + "; C-1242 approved timing marks",
+    "commit_seconds": CONTACT_SOURCE + "; C-1242 existing cards; C-1277 approved S6-S8 timings",
+    "active_start_seconds": CONTACT_SOURCE + "; C-1242 existing cards; C-1277 approved S6-S8 timings",
+    "active_end_seconds": CONTACT_SOURCE + "; C-1242 existing cards; C-1277 approved S6-S8 timings",
+    "recovery_end_seconds": CONTACT_SOURCE + "; C-1242 existing cards; C-1277 approved S6-S8 timings",
     "track_degrees_per_second": F5_SOURCE + " (or C++ source default for S4)",
-    "min_range_cm": F5_SOURCE + " (S4 override: C-1250)",
-    "max_range_cm": F5_SOURCE + " (S4 override: C-1250)",
-    "front_cone_degrees": F5_SOURCE + " (S4 override: C-1250)",
+    "min_range_cm": F5_SOURCE + " (S4 override: C-1250; S1/S2 override: C-1274 approved 90 cm); C-1277 S6-S8",
+    "max_range_cm": F5_SOURCE + " (S4 override: C-1250; S1/S2 override: C-1274 approved 120 cm); C-1277 S6-S8, S6 corrected by C-1277",
+    "front_cone_degrees": F5_SOURCE + " (S4 override: C-1250); C-1277 S6-S8",
     "max_vertical_delta_cm": "C++ FRPGBossMoveCardSpec declared default; S4 explicit C-1250",
-    "hp_damage": F5_SOURCE + " (S4 non-damaging defensive card: C++ validator contract)",
-    "cooldown_seconds": F5_SOURCE + " (S4 override: C-1250)",
-    "candidate_weight": F5_SOURCE + " (S4 uses FRPGBossProfileCard declared default 1.0)",
+    "hp_damage": F5_SOURCE + " (S4 non-damaging defensive card: C++ validator contract); C-1277 S6-S8",
+    "cooldown_seconds": F5_SOURCE + " (S4 override: C-1250); C-1277 S7/S8, S6 HeavySlam F5 analog",
+    "candidate_weight": F5_SOURCE + " (S4 override: C-1250); S6 HeavySlam F5 analog; C++ profile-card default for S7/S8",
     "warp_start_seconds": "C-1242 timing / C-1250 S3/S4",
     "warp_end_seconds": "C-1242 timing / C-1250 S3/S4",
     "warp_max_distance_cm": "C-1250",
@@ -130,6 +141,9 @@ CARD_FIELD_SOURCES = {
     "windows": F5_SOURCE + " socket/group/radius; C-1242 supplies revised contact interval",
     "source_analog": F5_SOURCE + " MoveId map; S4 has no analogue per C-1250",
     "source_status": "C-1248 approval requires provisional, tune after PIE",
+    "profile_candidate": "C-1280 Phase_1/Phase_2 selector availability",
+    "area_effect": "C-1277 approved provisional S7 values; C++ FRPGBossAreaEffect",
+    "channel_drain": "C-1280 approved provisional S8 values; C++ FRPGBossChannelDrain",
 }
 
 
@@ -185,6 +199,8 @@ REFLECTED_TYPE_ALIASES = {
     "RPGBossComboOutcome": ("RpgBossComboOutcome",),
     "RPGBossMoveCardSpec": ("RpgBossMoveCardSpec",),
     "RPGBossMoveWindow": ("RpgBossMoveWindow",),
+    "RPGBossAreaEffect": ("RpgBossAreaEffect",),
+    "RPGBossChannelDrain": ("RpgBossChannelDrain",),
     "RPGBossProfileCard": ("RpgBossProfileCard",),
     "RPGBossCardValidationLibrary": ("RpgBossCardValidationLibrary",),
 }
@@ -206,8 +222,33 @@ def reflected_type(unreal_module, exact_name):
 
 
 def is_finite_nonnegative(value, field):
-    require(type(value) in (int, float) and math.isfinite(float(value)) and value >= 0,
-            field + " must be a finite nonnegative number")
+    valid = type(value) in (int, float)
+    if valid:
+        try:
+            number = float(value)
+            valid = math.isfinite(number) and 0 <= number <= MOVE_CARD_NUMBER_CEILING
+        except (OverflowError, ValueError):
+            valid = False
+    require(valid, field + " must be finite and in [0, 1000000]")
+
+
+def phase_membership_error(row):
+    """Mirror the C++ card's non-None, unique, bounded phase membership rule."""
+    primary = row.get("phase_id")
+    additional = row.get("additional_phase_ids")
+    if not isinstance(primary, str) or not primary.strip():
+        return "phase_id must be a nonempty name"
+    if not isinstance(additional, list):
+        return "additional_phase_ids must be a list of names"
+    if len(additional) > 4:
+        return "additional_phase_ids allows at most four names"
+    if any(not isinstance(item, str) or not item.strip() for item in additional):
+        return "additional_phase_ids entries must be nonempty names"
+    if primary in additional:
+        return "additional_phase_ids must differ from phase_id"
+    if len(set(additional)) != len(additional):
+        return "additional_phase_ids entries must be distinct"
+    return None
 
 
 def validate_write_path(path):
@@ -244,7 +285,7 @@ def read_f5_cards(project_root):
 def build_candidate_specs(f5_cards):
     """Build values; None is a deliberate gate and is never silently defaulted."""
     rows = []
-    for index, asset_name in enumerate(CARD_NAMES):
+    for index, asset_name in enumerate(CARD_NAMES[:len(F5_ANALOG_IDS)]):
         analog_id = F5_ANALOG_IDS[index]
         analog = f5_cards.get(analog_id) if analog_id else None
         if analog_id:
@@ -259,6 +300,8 @@ def build_candidate_specs(f5_cards):
             "move_id": asset_name.removeprefix("DA_").replace("_C1247", ""),
             "family_id": FAMILY_IDS[index],
             "phase_id": "Phase_1",
+            "additional_phase_ids": ["Phase_2"],
+            "profile_candidate": index < 4,
             "skeleton": SKELETON_PATH,
             "sequence": SEQUENCE_PATHS[index],
             "montage": "",
@@ -292,6 +335,8 @@ def build_candidate_specs(f5_cards):
             "hp_damage": 0.0 if index == 3 else analog.get("HPDamage"),
             "uses_root_motion": False,
             "windows": [],
+            "area_effect": None,
+            "channel_drain": None,
             "cooldown_seconds": analog.get("CooldownSeconds") if analog else None,
             "candidate_weight": analog.get("BaseUtility") if analog else None,
             "source_analog": analog_id,
@@ -346,7 +391,113 @@ def build_candidate_specs(f5_cards):
                 "baked_samples": [],
             }]
         rows.append(row)
+    # C-1277/C-1280 provisional Sevarog rows. S7 shares both phases; S6/S8
+    # unlock only in Phase_2. Values remain explicitly tune-after-PIE.
+    rows.extend([
+        {
+            "asset_name": CARD_NAMES[5], "move_id": "Move_Sevarog_Ultimate_Swing_120fps_C1277",
+            "family_id": "Family_06_HeavySlam", "phase_id": "Phase_2", "additional_phase_ids": [],
+            "profile_candidate": True, "skeleton": SKELETON_PATH, "sequence": SEQUENCE_PATHS[5],
+            "montage": "", "slot_name": "FullBody", "section_name": "None", "play_rate": 1.0,
+            "commit_seconds": 0.600, "active_start_seconds": 0.667, "active_end_seconds": 0.900,
+            "recovery_end_seconds": 2.603, "track_degrees_per_second": 0.0,
+            "warp_start_seconds": 0.0, "warp_end_seconds": 0.0, "warp_max_distance_cm": 0.0,
+            "warp_max_angle_degrees": 0.0, "warp_standoff_cm": 0.0, "warp_ease_in_out": False,
+            "defensive": False, "warp_away": False, "hold_at_seconds": 0.0, "hold_min_seconds": 0.0,
+            "hold_max_seconds": 0.0, "hold_seed": 0, "cues": [], "min_range_cm": 90.0,
+            "max_range_cm": 150.0, "front_cone_degrees": 360.0, "max_vertical_delta_cm": 0.0,
+            "hp_damage": 65.0, "uses_root_motion": False, "windows": [{
+                "window_id": "Window_Move_Sevarog_Ultimate_Swing_120fps_C1277",
+                "hit_group": "HitGroup_ScytheBlade", "start_seconds": 0.667, "end_seconds": 0.900,
+                "socket_a": "weapon_r", "socket_b": "root_weapon_end_r", "radius_cm": 15.0,
+                "secondary": False, "ring": False, "grab": False, "baked_samples": [],}],
+            "cooldown_seconds": f5_cards["Move_Sevarog_HeavySlam_F5"].get("CooldownSeconds"),
+            "candidate_weight": f5_cards["Move_Sevarog_HeavySlam_F5"].get("BaseUtility"),
+            "source_analog": "Move_Sevarog_HeavySlam_F5", "source_status": "provisional, tune after PIE",
+            "area_effect": None, "channel_drain": None,
+        },
+        {
+            "asset_name": CARD_NAMES[6], "move_id": "Move_Sevarog_Subjugation_C1277",
+            "family_id": "Family_07_AreaEffect", "phase_id": "Phase_1", "additional_phase_ids": ["Phase_2"],
+            "profile_candidate": True, "skeleton": SKELETON_PATH, "sequence": SEQUENCE_PATHS[6],
+            "montage": "", "slot_name": "FullBody", "section_name": "None", "play_rate": 1.0,
+            "commit_seconds": 0.733, "active_start_seconds": 0.800, "active_end_seconds": 0.867,
+            "recovery_end_seconds": 2.836, "track_degrees_per_second": 0.0,
+            "warp_start_seconds": 0.0, "warp_end_seconds": 0.0, "warp_max_distance_cm": 0.0,
+            "warp_max_angle_degrees": 0.0, "warp_standoff_cm": 0.0, "warp_ease_in_out": False,
+            "defensive": False, "warp_away": False, "hold_at_seconds": 0.0, "hold_min_seconds": 0.0,
+            "hold_max_seconds": 0.0, "hold_seed": 0, "cues": [], "min_range_cm": 300.0,
+            "max_range_cm": 900.0, "front_cone_degrees": 140.0, "max_vertical_delta_cm": 0.0,
+            "hp_damage": 0.0, "uses_root_motion": False, "windows": [], "cooldown_seconds": 8.0,
+            "candidate_weight": 1.0, "source_analog": None, "source_status": "provisional, tune after PIE",
+            "area_effect": {"release_seconds": 0.800, "delay_seconds": 0.750, "radius_cm": 225.0,
+                            "damage": 35.0, "snare_seconds": 2.50, "snare_speed_scale": 0.55},
+            "channel_drain": None,
+        },
+        {
+            "asset_name": CARD_NAMES[7], "move_id": "Move_Sevarog_Soul_Siphon_C1277",
+            "family_id": "Family_08_ChannelDrain", "phase_id": "Phase_2", "additional_phase_ids": [],
+            "profile_candidate": True, "skeleton": SKELETON_PATH, "sequence": SEQUENCE_PATHS[7],
+            "montage": "", "slot_name": "FullBody", "section_name": "None", "play_rate": 1.0,
+            "commit_seconds": 0.200, "active_start_seconds": 0.267, "active_end_seconds": 1.267,
+            "recovery_end_seconds": 1.803, "track_degrees_per_second": 0.0,
+            "warp_start_seconds": 0.0, "warp_end_seconds": 0.0, "warp_max_distance_cm": 0.0,
+            "warp_max_angle_degrees": 0.0, "warp_standoff_cm": 0.0, "warp_ease_in_out": False,
+            "defensive": False, "warp_away": False, "hold_at_seconds": 0.0, "hold_min_seconds": 0.0,
+            "hold_max_seconds": 0.0, "hold_seed": 0, "cues": [], "min_range_cm": 220.0,
+            "max_range_cm": 620.0, "front_cone_degrees": 90.0, "max_vertical_delta_cm": 0.0,
+            "hp_damage": 0.0, "uses_root_motion": False, "windows": [], "cooldown_seconds": 10.0,
+            "candidate_weight": 1.0, "source_analog": None, "source_status": "provisional, tune after PIE",
+            "area_effect": None,
+            "channel_drain": {"start_seconds": 0.267, "end_seconds": 1.267,
+                               "tick_interval_seconds": 0.200, "tick_damage": 8.0,
+                               "heal_fraction": 0.50, "cone_range_cm": 650.0,
+                               "cone_half_angle_degrees": 45.0, "track_facing_each_tick": False},
+        },
+    ])
+    apply_approved_s1_s2_ranges(rows)
     return rows
+
+
+APPROVED_S1_S2_RANGE_CM = {
+    "Move_Sevarog_Swing1_Medium": (90.0, 120.0),
+    "Move_Sevarog_Swing2_Medium": (90.0, 120.0),
+}
+
+
+def is_within_approved_s1_s2_range(move_id, minimum, maximum):
+    """Inclusive 90..120 cm gate, restricted to the approved S1/S2 card IDs."""
+    if move_id not in APPROVED_S1_S2_RANGE_CM:
+        return True
+    return (type(minimum) in (int, float) and type(maximum) in (int, float)
+            and math.isfinite(float(minimum)) and math.isfinite(float(maximum))
+            and 90.0 <= float(minimum) <= float(maximum) <= 120.0)
+
+
+def apply_approved_s1_s2_ranges(rows):
+    """Apply C-1274's exact range only; leave timings and hit windows untouched."""
+    found = {move_id: 0 for move_id in APPROVED_S1_S2_RANGE_CM}
+    for row in rows:
+        move_id = row.get("move_id")
+        if move_id not in APPROVED_S1_S2_RANGE_CM:
+            continue
+        found[move_id] += 1
+        require(is_within_approved_s1_s2_range(move_id, 90.0, 120.0),
+                move_id + " violates the inclusive approved range bounds")
+        row["min_range_cm"], row["max_range_cm"] = APPROVED_S1_S2_RANGE_CM[move_id]
+        require(is_within_approved_s1_s2_range(move_id, row["min_range_cm"], row["max_range_cm"]),
+                move_id + " failed the post-override inclusive range check")
+    for move_id, count in found.items():
+        require(count == 1, move_id + " must appear exactly once before applying C-1274 range")
+
+
+def approved_s1_s2_light_margin(max_range_cm=120.0):
+    """Recompute approved C-1269 bridge baseline at the C-1274 range ceiling."""
+    require(is_within_approved_s1_s2_range("Move_Sevarog_Swing1_Medium", 90.0, max_range_cm),
+            "approved baseline max range is outside C-1274 bounds")
+    recovery, light_startup, reach, run_speed = 0.703333, 0.350337, 150.0, 600.0
+    travel = max(0.0, max_range_cm - reach) / run_speed
+    return recovery - light_startup - travel
 
 
 def build_combo(unreal_module, report=False):
@@ -385,7 +536,9 @@ def ue_array(unreal_module, element_type, values):
 
 
 def log_punish_estimates(rows):
-    """Print source-based estimate for the Lead's S4 fail-closed decision."""
+    """Print the approved S1/S2 baseline and per-row estimates for the draft profile."""
+    approved_light_margin = approved_s1_s2_light_margin()
+    print("[SevarogDraft] APPROVED_S1_S2_RANGE_BASELINE source=C-1269+C-1274 maxRangeCm=120.000 reachCm=150.000 recoverySeconds=0.703333 lightStartupSeconds=0.350337 travelSeconds=0.000000 lightMarginSeconds=%.6f rounded=%.3f requiredSeconds=0.300000 windows=unchanged" % (approved_light_margin, approved_light_margin))
     # C-637 witness: light startup 0.3503 s, run speed 600 cm/s;
     # PAC003 design reach 150 cm. These are estimates, C++ remains authority.
     reach, run_speed, startup, required = 150.0, 600.0, 0.3503, 0.3
@@ -424,6 +577,28 @@ def unresolved_gates(rows):
                     errors.append(row["move_id"] + "." + name + " awaits Lead approval")
         if row["move_id"].endswith("Swing3_Slow") and row["warp_max_distance_cm"] is None:
             errors.append(row["move_id"] + ".warp budget awaits Lead approval")
+        phase_error = phase_membership_error(row)
+        if phase_error:
+            errors.append(row["move_id"] + "." + phase_error)
+        if row["area_effect"] is not None:
+            required = {"release_seconds", "delay_seconds", "radius_cm", "damage", "snare_seconds", "snare_speed_scale"}
+            if set(row["area_effect"]) != required:
+                errors.append(row["move_id"] + ".area_effect fields are incomplete or unexpected")
+            for name, value in row["area_effect"].items():
+                is_finite_nonnegative(value, row["move_id"] + ".area_effect." + name)
+            if row["area_effect"].get("release_seconds", 0) + row["area_effect"].get("delay_seconds", 0) > row["recovery_end_seconds"]:
+                errors.append(row["move_id"] + ".area_effect resolves after recovery")
+        if row["channel_drain"] is not None:
+            required = {"start_seconds", "end_seconds", "tick_interval_seconds", "tick_damage", "heal_fraction",
+                        "cone_range_cm", "cone_half_angle_degrees", "track_facing_each_tick"}
+            if set(row["channel_drain"]) != required:
+                errors.append(row["move_id"] + ".channel_drain fields are incomplete or unexpected")
+            for name, value in row["channel_drain"].items():
+                if name != "track_facing_each_tick":
+                    is_finite_nonnegative(value, row["move_id"] + ".channel_drain." + name)
+            channel = row["channel_drain"]
+            if channel.get("tick_interval_seconds", 0) <= 0 or channel.get("start_seconds", 0) < row["commit_seconds"] or channel.get("end_seconds", 0) > row["recovery_end_seconds"]:
+                errors.append(row["move_id"] + ".channel_drain timeline is invalid")
         for name, value in row.items():
             if name.endswith("_seconds") or name.endswith("_cm") or name.endswith("_degrees"):
                 if value is not None:
@@ -433,7 +608,7 @@ def unresolved_gates(rows):
 
 def require_editor_module(unreal_module):
     require(unreal_module is not None, "UE Python module unavailable")
-    for name in ("Paths", "EditorAssetLibrary", "AssetToolsHelpers", "DataAssetFactory", "SoftObjectPath"):
+    for name in ("Paths", "EditorAssetLibrary", "AssetToolsHelpers", "DataAssetFactory", "SoftObjectPath", "Name"):
         require(getattr(unreal_module, name, None) is not None,
                 "required UE Python API is unavailable: unreal." + name)
     return unreal_module
@@ -593,7 +768,9 @@ def make_card_spec(unreal_module, row, loaded_assets, report=False):
     spec = spec_class()
     field_map = {
         "schema": 1, "move_id": row["move_id"], "family_id": row["family_id"],
-        "phase_id": row["phase_id"], "skeleton": loaded_assets["skeleton"],
+        "phase_id": row["phase_id"],
+        "additional_phase_ids": ue_array(unreal_module, unreal_module.Name, row["additional_phase_ids"]),
+        "skeleton": loaded_assets["skeleton"],
         "sequence": loaded_assets[row["sequence"]],
         "montage": None, "slot_name": row["slot_name"], "section_name": row["section_name"],
         "play_rate": row["play_rate"], "commit_seconds": row["commit_seconds"],
@@ -609,10 +786,23 @@ def make_card_spec(unreal_module, row, loaded_assets, report=False):
         "front_cone_degrees": row["front_cone_degrees"], "max_vertical_delta_cm": row["max_vertical_delta_cm"],
         "hp_damage": row["hp_damage"], "uses_root_motion": row["uses_root_motion"],
         "windows": [make_window(unreal_module, window, report) for window in row["windows"]],
+        "area_effect": make_optional_struct(unreal_module, "RPGBossAreaEffect", row["area_effect"], report),
+        "channel_drain": make_optional_struct(unreal_module, "RPGBossChannelDrain", row["channel_drain"], report),
     }
     for name, value in field_map.items():
         set_property(spec, name, value, ("FRPGBossMoveCardSpec." + name) if report else None)
     return spec
+
+
+def make_optional_struct(unreal_module, type_name, values, report=False):
+    value = reflected_type(unreal_module, type_name)
+    require(value is not None, "reflected F" + type_name + " Python type unavailable")
+    result = value()
+    if values:
+        for name, item in values.items():
+            set_property(result, name, item, ("F" + type_name + "." + name) if report else None)
+        set_property(result, "enabled", True, ("F" + type_name + ".bEnabled") if report else None)
+    return result
 
 
 def clamp_marked_recovery_to_clip(rows, loaded_assets):
@@ -672,7 +862,7 @@ def create_and_validate_assets(unreal_module, rows, loaded_assets, bridge):
     candidates = []
     # C-1251 removes the punish-failing fast swing from the active profile.
     # Its allowlisted standalone card is still validated and saved as source data.
-    profile_rows = rows[:4]
+    profile_rows = [row for row in rows if row["profile_candidate"]]
     for row in profile_rows:
         candidate = candidate_class()
         fields = {
@@ -728,9 +918,10 @@ def dry_run(unreal_module, rows, bridge):
     """Run the production authoring path on transient objects; never create packages or save."""
     target_paths = [PACKAGE_DIR + "/" + DEFINITION_NAME, PACKAGE_DIR + "/" + PROFILE_NAME]
     target_paths.extend(PACKAGE_DIR + "/" + name for name in CARD_NAMES)
-    for path in target_paths:
-        require(not unreal_module.EditorAssetLibrary.does_asset_exist(path),
-                "dry-run refuses because write target exists: " + path)
+    targets_before = {path: bool(unreal_module.EditorAssetLibrary.does_asset_exist(path)) for path in target_paths}
+    existing = [path for path, present in targets_before.items() if present]
+    if existing:
+        print("[SevarogDraft] DRY_RUN_EXISTING_TARGETS read_only=%d" % len(existing))
 
     loaded_assets = {}
     for path in (SKELETON_PATH,) + SEQUENCE_PATHS + (SEVAROG_ROOT + "/Meshes/Sevarog.Sevarog",):
@@ -768,7 +959,9 @@ def dry_run(unreal_module, rows, bridge):
         set_property(profile, name, materialize_approved_value(unreal_module, value, created))
     profile_cards = []
     candidate_class = reflected_type(unreal_module, "RPGBossProfileCard")
-    for row in rows[:4]:
+    for row in rows:
+        if not row["profile_candidate"]:
+            continue
         candidate = candidate_class()
         fields = {
             "card": created[row["move_id"]], "cooldown_seconds": row["cooldown_seconds"],
@@ -801,13 +994,13 @@ def dry_run(unreal_module, rows, bridge):
     # ValidateProfile emits authoritative punish_check and defense_check numbers
     # from the production formulas into the UE log. Also print every authored input.
     for row in rows[:4]:
-        print("[SevarogDraft] DRY_RUN_CARD move=%s activeEnd=%.6f recoveryEnd=%.6f playRate=%.6f maxRangeCm=%.3f defensive=%d warpAway=%d warpDistanceCm=%.3f warpStandoffCm=%.3f" %
+        print("[SevarogDraft] DRY_RUN_CARD move=%s activeEnd=%.6f recoveryEnd=%.6f playRate=%.6f minRangeCm=%.3f maxRangeCm=%.3f defensive=%d warpAway=%d warpDistanceCm=%.3f warpStandoffCm=%.3f" %
               (row["move_id"], row["active_end_seconds"], row["recovery_end_seconds"], row["play_rate"],
-               row["max_range_cm"], int(row["defensive"]), int(row["warp_away"]),
+               row["min_range_cm"], row["max_range_cm"], int(row["defensive"]), int(row["warp_away"]),
                row["warp_max_distance_cm"], row["warp_standoff_cm"]))
     for path in target_paths:
-        require(not unreal_module.EditorAssetLibrary.does_asset_exist(path),
-                "dry-run unexpectedly created a target package: " + path)
+        require(bool(unreal_module.EditorAssetLibrary.does_asset_exist(path)) == targets_before[path],
+                "dry-run changed target package existence: " + path)
     print("[SevarogDraft] DRY-RUN COMPLETE all validators passed, 0 saved")
 
 
